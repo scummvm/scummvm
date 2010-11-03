@@ -26,6 +26,8 @@
 #ifndef ASYLUM_ACTIONAREA_H
 #define ASYLUM_ACTIONAREA_H
 
+#include "asylum/shared.h"
+
 #include "common/array.h"
 
 namespace Asylum {
@@ -50,7 +52,7 @@ public:
 	int32 polyIdx;
 	int32 field_84;
 	int32 field_88;
-	int32 soundResId;
+	ResourceId soundResourceId;
 	int32 field_90;
 	int32 paletteValue;
 	int32 array[5];

@@ -26,18 +26,17 @@
 #ifndef ASYLUM_RESOURCEPACK_H
 #define ASYLUM_RESOURCEPACK_H
 
+#include "asylum/shared.h"
+
 #include "common/array.h"
 #include "common/file.h"
 
 namespace Asylum {
 
-#define RESID(id)  ((id >> 16) & 0x7FFF)
-#define RESIDX(id) (id & 0xFFFF)
-
 struct ResourceEntry {
 	byte   *data;
-	uint32 size;
-	uint32 offset;
+	uint32  size;
+	uint32  offset;
 };
 
 class ResourcePack {
@@ -46,7 +45,7 @@ public:
 	ResourcePack(int32 resourceIndex);
 	~ResourcePack();
 
-	ResourceEntry *getResource(uint32 resourceId);
+	ResourceEntry *getResource(ResourceId resourceId);
 	uint32 getResourceCount() {
 		return _resources.size();
 	}

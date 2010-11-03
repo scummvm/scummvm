@@ -196,22 +196,22 @@ VideoText::~VideoText() {
 	delete _fontResource;
 }
 
-void VideoText::loadFont(ResourcePack *resPack, int32 resId) {
+void VideoText::loadFont(ResourcePack *resPack, ResourceId resourceId) {
 	delete _fontResource;
 
-	_fontResource = new GraphicResource(resPack, resId);
+	_fontResource = new GraphicResource(resPack, resourceId);
 
-	if (resId > 0) {
+	if (resourceId > 0) {
 		// load font flag data
 		_curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F;
 	}
 }
 
-void VideoText::drawMovieSubtitle(byte *screenBuffer, int32 resId) {
+void VideoText::drawMovieSubtitle(byte *screenBuffer, ResourceId resourceId) {
 	Common::String textLine[4];
 	Common::String tmpLine;
 	int32 curLine = 0;
-	ResourceEntry *textRes = _textPack->getResource(resId);
+	ResourceEntry *textRes = _textPack->getResource(resourceId);
 	char *text = strdup((const char *)textRes->data);	// for strtok
 	char *tok  = strtok(text, " ");
 	int32 startY  = 420; // starting y for up to 2 subtitles

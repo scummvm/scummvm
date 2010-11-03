@@ -232,7 +232,7 @@ public:
 
 	int32  x;
 	int32  y;
-	uint32 graphicResourceId;
+	ResourceId graphicResourceId;
 	int32  field_C; // BarrierIndex? Mask index?
 	uint32 frameNum;
 	uint32 frameCount;
@@ -262,7 +262,7 @@ public:
 	int32  walkingSound4;
 	int32  field_64C;
 	int32  field_650;
-	int32  grResTable[55];
+	ResourceId  graphicResourceIds[55];
 	char   name[256];
 	int32  field_830[20];
 	int32  field_880[20];
@@ -274,7 +274,7 @@ public:
 	int32  flags2;
 	int32  field_934;
 	int32  field_938;
-	ResourceId  soundResId; // field_93C
+	ResourceId  soundResourceId; // field_93C
 	int32  numberValue01;
 	int32  field_944;
 	int32  field_948;

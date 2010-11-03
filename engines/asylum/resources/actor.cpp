@@ -275,8 +275,8 @@ void Actor::walkTo(int32 curX, int32 curY) {
 }
 
 void Actor::stopSound() {
-	if (soundResId && _scene->vm()->sound()->isPlaying(soundResId))
-		_scene->vm()->sound()->stopSound(soundResId);
+	if (soundResourceId && _scene->vm()->sound()->isPlaying(soundResourceId))
+		_scene->vm()->sound()->stopSound(soundResourceId);
 }
 
 void Actor::setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame) {
@@ -325,7 +325,7 @@ void Actor::faceTarget(int32 targetId, int32 targetType) {
 		}
 
 		Barrier *barrier = _scene->worldstats()->getBarrierByIndex(barrierIdx);
-		GraphicResource *gra = new GraphicResource(_scene->getResourcePack(), barrier->resId);
+		GraphicResource *gra = new GraphicResource(_scene->getResourcePack(), barrier->resourceId);
 
 		// FIXME
 		// The original actually grabs the current frame of the target
@@ -478,7 +478,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 
 	case kActorStatusDisabled:
 		updateGraphicData(15);
-		graphicResourceId = grResTable[(direction > 4 ? 8 - direction : direction) + 15];
+		graphicResourceId = graphicResourceIds[(direction > 4 ? 8 - direction : direction) + 15];
 
 		// TODO set word_446EE4 to -1. This global seems to be used with screen blitting
 		break;
@@ -530,7 +530,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			frameNum = 0;
 
 			if (_index > 12)
-				graphicResourceId = grResTable[direction + 30];
+				graphicResourceId = graphicResourceIds[direction + 30];
 
 			if (_scene->getPlayerActorIndex() == _index) {
 				resource->load(_scene->getResourcePack(), graphicResourceId);
@@ -538,10 +538,10 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			}
 
 			if (_index == 11)
-				graphicResourceId = grResTable[_scene->getGlobalDirection() > 4 ? 8 - _scene->getGlobalDirection() : _scene->getGlobalDirection()];
+				graphicResourceId = graphicResourceIds[_scene->getGlobalDirection() > 4 ? 8 - _scene->getGlobalDirection() : _scene->getGlobalDirection()];
 
 			// Reload the graphic resource if the resource ID has changed
-			if (resource->getEntryNum() != graphicResourceId)
+			if (resource->getResourceId() != graphicResourceId)
 				resource->load(_scene->getResourcePack(), graphicResourceId);
 
 			frameCount = resource->getFrameCount();
@@ -553,7 +553,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 }
 
 void Actor::updateGraphicData(uint32 offset) {
-	graphicResourceId = grResTable[(direction > 4 ? 8 - direction : direction) + offset];
+	graphicResourceId = graphicResourceIds[(direction > 4 ? 8 - direction : direction) + offset];
 
 	GraphicResource *resource = new GraphicResource(_scene->getResourcePack(), graphicResourceId);
 	frameCount = resource->getFrameCount();
@@ -568,17 +568,17 @@ void Actor::setDirectionFrom(uint32 parameter, DirectionFrom from) {
 
 void Actor::setDirection(int actorDirection) {
 	direction = (actorDirection > 4) ? 8 - actorDirection : actorDirection;
-	int32 grResId;
+	ResourceId resourceId;
 
 	if (field_944 != 5) {
 		switch (status) {
 		case 0x04:
 		case 0x05:
 		case 0x0E: {
-			grResId = grResTable[direction + 5];
+			resourceId = graphicResourceIds[direction + 5];
 			// FIXME this seems kind of wasteful just to grab a frame count
-			GraphicResource *gra = new GraphicResource(_scene->getResourcePack(), grResId);
-			grResId = grResId;
+			GraphicResource *gra = new GraphicResource(_scene->getResourcePack(), resourceId);
+			resourceId = resourceId;
 			frameCount = gra->getFrameCount();
 			delete gra;
 		}
@@ -592,19 +592,19 @@ void Actor::setDirection(int actorDirection) {
 					// but I'm assuming if control drops through to here, getActor() would
 					// pull the right object because the _playerActorIndex should == 11
 					if (direction > 4)
-						grResId = grResTable[8 - direction];
+						resourceId = graphicResourceIds[8 - direction];
 					else
-						grResId = grResTable[direction];
+						resourceId = graphicResourceIds[direction];
 				}
 			}
 			break;
 		case 0x01:
 		case 0x02:
 		case 0x0C:
-			grResId = grResTable[direction];
+			resourceId = graphicResourceIds[direction];
 			break;
 		case 0x08:
-			grResId = grResTable[direction + 20];
+			resourceId = graphicResourceIds[direction + 20];
 			break;
 		default:
 			warning ("[setActorDirection] default case hit with status of %d", status);
@@ -747,7 +747,7 @@ void Actor::updateActorSub01() {
 		// Check if the actor's name is "Crow"?
 		if (_scene->vm()->getRandom(100) < 50) {
 			// TODO
-			// Check if soundResId04 is assigned, and if so,
+			// Check if soundResourceId04 is assigned, and if so,
 			// if it's playing
 			// If true, check characterSub407260(10)
 			// and if that's true, do characterDirection(9)
@@ -760,7 +760,7 @@ void Actor::updateActorSub01() {
 			if (_scene->vm()->isGameFlagNotSet(kGameFlagScriptProcessing)) { // processing action list
 				if (isVisible()) {
 					// if some_encounter_flag
-					// if !soundResId04
+					// if !soundResourceId04
 					if (_scene->vm()->getRandom(100) < 50) {
 						if (_scene->getSceneIndex() == 13) {
 							; // sub414810(507)
@@ -784,7 +784,7 @@ void Actor::updateActorSub01() {
 
 
 bool Actor::defaultDirectionLoaded(int grResTableIdx) {
-	return grResTable[grResTableIdx] != grResTable[5];
+	return graphicResourceIds[grResTableIdx] != graphicResourceIds[5];
 }
 
 } // end of namespace Asylum

@@ -71,8 +71,8 @@ void ResourcePack::init(const char *resourceFile) {
 	}
 }
 
-ResourceEntry *ResourcePack::getResource(uint32 resourceId) {
-	uint16 index = RESIDX(resourceId);
+ResourceEntry *ResourcePack::getResource(ResourceId resourceId) {
+	uint16 index = resourceId & 0xFFFF;
 	if (!_resources[index].data) {
 		// Load the requested resource if it's not loaded already
 		_packFile.seek(_resources[index].offset, SEEK_SET);

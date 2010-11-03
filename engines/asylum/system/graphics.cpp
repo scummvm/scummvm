@@ -29,16 +29,16 @@
 
 namespace Asylum {
 
-GraphicResource::GraphicResource(ResourcePack *resPack, uint32 entry) {
-	load(resPack, entry);
+GraphicResource::GraphicResource(ResourcePack *resPack, ResourceId id) {
+	load(resPack, id);
 }
 
-void GraphicResource::load(ResourcePack *resPack, uint32 entry) {
+void GraphicResource::load(ResourcePack *resPack, ResourceId id) {
 	// Clear previously loaded data
 	clear();
 
-	ResourceEntry *resEntry = resPack->getResource(entry);
-	_entryNum = entry;
+	ResourceEntry *resEntry = resPack->getResource(id);
+	_resourceId = id;
 	init(resEntry->data, resEntry->size);
 }
 

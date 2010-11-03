@@ -26,15 +26,18 @@
 #ifndef ASYLUM_ENCOUNTERS_H
 #define ASYLUM_ENCOUNTERS_H
 
+#include "asylum/shared.h"
+
 #include "common/array.h"
-#include "asylum/scene.h"
 
 namespace Asylum {
+
+class Scene;
 
 typedef struct EncounterItem {
 	int32 keywordIndex;
 	int32 field2;
-	int32 scriptResId;
+	ResourceId scriptResourceId;
 	int32 array[50];
 	int16 value;
 } EncounterItem;
@@ -47,7 +50,7 @@ typedef struct EncounterStruct {
 	int32 frameNum;
 	int32 transTableNum;
 	int32 status;
-	int32 grResId;
+	ResourceId graphicResourceId;
 } EncounterStruct;
 
 class Encounter {

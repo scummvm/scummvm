@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	resources/actionlist.o \
 	resources/actor.o \
 	resources/barrier.o \
+	resources/encounters.o \
 	resources/polygons.o \
 	resources/worldstats.o \
 	system/config.o \
@@ -15,12 +16,13 @@ MODULE_OBJS := \
 	system/speech.o \
 	system/text.o \
 	system/video.o \
+	views/blowuppuzzle.o \
 	views/menu.o \
 	views/scene.o \
 	asylum.o \
-	detection.o \
 	console.o \
-	respack.o 
+	detection.o \
+	respack.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)

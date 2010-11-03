@@ -23,10 +23,15 @@
  *
  */
 
-#include "asylum/blowuppuzzle.h"
+#include "asylum/views/blowuppuzzle.h"
+
+#include "asylum/views/scene.h"
+
+#include "asylum/system/config.h"
+#include "asylum/system/graphics.h"
+
 #include "asylum/respack.h"
-#include "asylum/graphics.h"
-#include "asylum/config.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -43,7 +48,7 @@ BlowUpPuzzleVCR::BlowUpPuzzleVCR(Scene *scene): BlowUpPuzzle(scene) {
 	_leftClickDown	 = false;
 	_rightClickDown  = false;
 	_active			 = false;
-	_bgResource		 = _scene->getGraphicResource(_scene->worldstats()->grResId[0]);
+	_bgResource		 = _scene->getGraphicResource(_scene->worldstats()->graphicResourceIds[0]);
 	_tvScreenAnimIdx = 0;
 	_isAccomplished  = false;
 
@@ -68,14 +73,14 @@ void BlowUpPuzzleVCR::openBlowUp() {
 	_scene->vm()->sound()->stopAllSounds(true);
 
 	// Load the graphics palette
-	_scene->vm()->screen()->setPalette(_scene->getResourcePack(), _scene->worldstats()->grResId[29]);
+	_scene->vm()->screen()->setPalette(_scene->getResourcePack(), _scene->worldstats()->graphicResourceIds[29]);
 
 	// show blow up puzzle BG
 	GraphicFrame *bg = _bgResource->getFrame(0);
 	_scene->vm()->screen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
 
 	// Set mouse cursor
-	_cursor->load(_scene->worldstats()->grResId[28]);
+	_cursor->set(_scene->worldstats()->graphicResourceIds[28], 0, 2);
 	_cursor->show();
 
 	_leftClickUp    = false;
@@ -93,7 +98,7 @@ void BlowUpPuzzleVCR::handleEvent(Common::Event *event, bool doUpdate) {
 
 	switch (_ev->type) {
 	case Common::EVENT_MOUSEMOVE:
-		_cursor->setCoords(_ev->mouse.x, _ev->mouse.y);
+		_cursor->move(_ev->mouse.x, _ev->mouse.y);
 		break;
 	case Common::EVENT_LBUTTONUP:
 		_leftClickUp = true;
@@ -112,7 +117,7 @@ void BlowUpPuzzleVCR::handleEvent(Common::Event *event, bool doUpdate) {
 		update();
 }
 
-void BlowUpPuzzle::playSound(int32 resourceId, bool loop) {
+void BlowUpPuzzle::playSound(ResourceId resourceId, bool loop) {
 	_scene->vm()->sound()->playSound(_scene->getResourcePack(), resourceId, Config.sfxVolume, loop, 0, true);
 }
 
@@ -153,8 +158,8 @@ void BlowUpPuzzleVCR::update() {
 	updateStopButton();
 
 	if (_buttonsState[kPower] == kON) {
-		_scene->vm()->screen()->addGraphicToQueue(_scene->worldstats()->grResId[22], _tvScreenAnimIdx, 0, 37, 0, 0, 1);
-		_scene->vm()->screen()->addGraphicToQueue(_scene->worldstats()->grResId[23], _tvScreenAnimIdx++, 238, 22, 0, 0, 1);
+		_scene->vm()->screen()->addGraphicToQueue(_scene->worldstats()->graphicResourceIds[22], _tvScreenAnimIdx, 0, 37, 0, 0, 1);
+		_scene->vm()->screen()->addGraphicToQueue(_scene->worldstats()->graphicResourceIds[23], _tvScreenAnimIdx++, 238, 22, 0, 0, 1);
 		_tvScreenAnimIdx %= 6;
 	}
 
@@ -179,17 +184,17 @@ void BlowUpPuzzleVCR::update() {
 	}
 }
 
-GraphicQueueItem BlowUpPuzzleVCR::getGraphicJackItem(int resId) {
+GraphicQueueItem BlowUpPuzzleVCR::getGraphicJackItem(ResourceId resourceId) {
 	GraphicQueueItem jackItemOnHand;
 
-	int jackY = _cursor->y();
-	if (_cursor->y() < 356) {
+	int jackY = _cursor->position().y;
+	if (_cursor->position().y < 356) {
 		jackY = 356;
 	}
 
-	jackItemOnHand.resId = _scene->worldstats()->grResId[resId];
+	jackItemOnHand.resourceId = _scene->worldstats()->graphicResourceIds[resourceId];
 	jackItemOnHand.frameIdx = 0;
-	jackItemOnHand.x = _cursor->x() - 114;
+	jackItemOnHand.x = _cursor->position().x - 114;
 	jackItemOnHand.y = jackY - 14;
 	jackItemOnHand.priority = 1;
 
@@ -199,117 +204,117 @@ GraphicQueueItem BlowUpPuzzleVCR::getGraphicJackItem(int resId) {
 GraphicQueueItem BlowUpPuzzleVCR::getGraphicShadowItem() {
 	GraphicQueueItem shadowItem;
 
-	int shadowY = (_cursor->y() - 356) / 4;
-	if (_cursor->y() < 356) {
+	int shadowY = (_cursor->position().y - 356) / 4;
+	if (_cursor->position().y < 356) {
 		shadowY = 0;
 	}
-	shadowItem.resId = _scene->worldstats()->grResId[30];
+	shadowItem.resourceId = _scene->worldstats()->graphicResourceIds[30];
 	shadowItem.frameIdx = 0;
-	shadowItem.x = _cursor->x() - shadowY;
+	shadowItem.x = _cursor->position().x - shadowY;
 	shadowItem.y = 450;
 	shadowItem.priority = 2;
 
 	return shadowItem;
 }
 
-void BlowUpPuzzleVCR::updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo pluggedOnRed, VCRDrawInfo pluggedOnYellow, VCRDrawInfo pluggedOnBlack, int resIdOnHand) {
+void BlowUpPuzzleVCR::updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo pluggedOnRed, VCRDrawInfo pluggedOnYellow, VCRDrawInfo pluggedOnBlack, ResourceId resourceIdOnHand) {
 	GraphicQueueItem item;
 
 	switch (_jacksState[jack]) {
 	case kOnTable:
-		item.resId = _scene->worldstats()->grResId[onTable.resId];
+		item.resourceId = _scene->worldstats()->graphicResourceIds[onTable.resourceId];
 		item.frameIdx = 0;
 		item.x = onTable.x;
 		item.y = onTable.y;
 		item.priority = 3;
 		break;
 	case kPluggedOnRed:
-		item.resId = _scene->worldstats()->grResId[pluggedOnRed.resId];
+		item.resourceId = _scene->worldstats()->graphicResourceIds[pluggedOnRed.resourceId];
 		item.frameIdx = 0;
 		item.x = 329;
 		item.y = 407;
 		item.priority = 3;
 		break;
 	case kPluggedOnYellow:
-		item.resId = _scene->worldstats()->grResId[pluggedOnYellow.resId];
+		item.resourceId = _scene->worldstats()->graphicResourceIds[pluggedOnYellow.resourceId];
 		item.frameIdx = 0;
 		item.x = 402;
 		item.y = 413;
 		item.priority = 3;
 		break;
 	case kPluggedOnBlack:
-		item.resId = _scene->worldstats()->grResId[pluggedOnBlack.resId];
+		item.resourceId = _scene->worldstats()->graphicResourceIds[pluggedOnBlack.resourceId];
 		item.frameIdx = 0;
 		item.x = 477;
 		item.y = 418;
 		item.priority = 3;
 		break;
 	case kOnHand: {
-		GraphicQueueItem jackItemOnHand = getGraphicJackItem(resIdOnHand);
+		GraphicQueueItem jackItemOnHand = getGraphicJackItem(resourceIdOnHand);
 		_scene->vm()->screen()->addGraphicToQueue(jackItemOnHand);
 
 		item = getGraphicShadowItem();
 	}
 	break;
 	default:
-		item.resId = 0;
+		item.resourceId = 0;
 		break;
 	}
 
-	if (item.resId != 0)
+	if (item.resourceId != 0)
 		_scene->vm()->screen()->addGraphicToQueue(item);
 }
 
 void BlowUpPuzzleVCR::updateBlackJack() {
 	VCRDrawInfo onTable;
-	onTable.resId = 1;
+	onTable.resourceId = 1;
 	onTable.x = 0;
 	onTable.y = 411;
 
 	VCRDrawInfo pluggedOnRed;
-	pluggedOnRed.resId = 5;
+	pluggedOnRed.resourceId = 5;
 
 	VCRDrawInfo pluggedOnYellow;
-	pluggedOnYellow.resId = 8;
+	pluggedOnYellow.resourceId = 8;
 
 	VCRDrawInfo pluggedOnBlack;
-	pluggedOnBlack.resId = 11;
+	pluggedOnBlack.resourceId = 11;
 
 	updateJack(kBlack, onTable, pluggedOnRed, pluggedOnYellow, pluggedOnBlack, 27);
 }
 
 void BlowUpPuzzleVCR::updateRedJack() {
 	VCRDrawInfo onTable;
-	onTable.resId = 2;
+	onTable.resourceId = 2;
 	onTable.x = 76;
 	onTable.y = 428;
 
 	VCRDrawInfo pluggedOnRed;
-	pluggedOnRed.resId = 4;
+	pluggedOnRed.resourceId = 4;
 
 	VCRDrawInfo pluggedOnYellow;
-	pluggedOnYellow.resId = 7;
+	pluggedOnYellow.resourceId = 7;
 
 	VCRDrawInfo pluggedOnBlack;
-	pluggedOnBlack.resId = 10;
+	pluggedOnBlack.resourceId = 10;
 
 	updateJack(kRed, onTable, pluggedOnRed, pluggedOnYellow, pluggedOnBlack, 25);
 }
 
 void BlowUpPuzzleVCR::updateYellowJack() {
 	VCRDrawInfo onTable;
-	onTable.resId = 3;
+	onTable.resourceId = 3;
 	onTable.x = 187;
 	onTable.y = 439;
 
 	VCRDrawInfo pluggedOnRed;
-	pluggedOnRed.resId = 6;
+	pluggedOnRed.resourceId = 6;
 
 	VCRDrawInfo pluggedOnYellow;
-	pluggedOnYellow.resId = 9;
+	pluggedOnYellow.resourceId = 9;
 
 	VCRDrawInfo pluggedOnBlack;
-	pluggedOnBlack.resId = 12;
+	pluggedOnBlack.resourceId = 12;
 
 	updateJack(kYellow, onTable, pluggedOnRed, pluggedOnYellow, pluggedOnBlack, 26);
 }
@@ -321,13 +326,13 @@ int BlowUpPuzzleVCR::setJackOnHole(int jackType, JackState plugged) {
 		if (_jacksState[jackType-1] == kOnHand) {
 			_jacksState[jackType-1] = plugged;
 			_holesState[plugged-1] = jackType; // set jack on red
-			playSound(_scene->worldstats()->grResId[44]);
+			playSound(_scene->worldstats()->graphicResourceIds[44]);
 		}
 	} else if (jackType == 0) {
 		jackType = _holesState[plugged-1];
 		_jacksState[jackType-1] = kOnHand;
 		_holesState[plugged-1] = 0;
-		playSound(_scene->worldstats()->grResId[43]);
+		playSound(_scene->worldstats()->graphicResourceIds[43]);
 		return 0;
 	}
 	return 1;
@@ -338,7 +343,7 @@ void BlowUpPuzzleVCR::updateButton(Button button, VCRDrawInfo btON, VCRDrawInfo 
 
 	switch (_buttonsState[button]) {
 	case kON:
-		item.resId = _scene->worldstats()->grResId[btON.resId];
+		item.resourceId = _scene->worldstats()->graphicResourceIds[btON.resourceId];
 		item.frameIdx = 0;
 		item.x = btON.x;
 		item.y = btON.y;
@@ -346,30 +351,30 @@ void BlowUpPuzzleVCR::updateButton(Button button, VCRDrawInfo btON, VCRDrawInfo 
 		break;
 	case kDownON:
 	case kDownOFF:
-		item.resId = _scene->worldstats()->grResId[btDown.resId];
+		item.resourceId = _scene->worldstats()->graphicResourceIds[btDown.resourceId];
 		item.frameIdx = 0;
 		item.x = btDown.x;
 		item.y = btDown.y;
 		item.priority = 3;
 		break;
 	default:
-		item.resId = 0;
+		item.resourceId = 0;
 		break;
 	}
 
-	if (item.resId != 0)
+	if (item.resourceId != 0)
 		_scene->vm()->screen()->addGraphicToQueue(item);
 
 }
 
 void BlowUpPuzzleVCR::updatePowerButton() {
 	VCRDrawInfo btON;
-	btON.resId = 17;
+	btON.resourceId = 17;
 	btON.x = 512;
 	btON.y = 347;
 
 	VCRDrawInfo btDown;
-	btDown.resId = 21;
+	btDown.resourceId = 21;
 	btDown.x = 506;
 	btDown.y = 343;
 
@@ -378,12 +383,12 @@ void BlowUpPuzzleVCR::updatePowerButton() {
 
 void BlowUpPuzzleVCR::updateRewindButton() {
 	VCRDrawInfo btON;
-	btON.resId = 14;
+	btON.resourceId = 14;
 	btON.x = 248;
 	btON.y = 347;
 
 	VCRDrawInfo btDown;
-	btDown.resId = 18;
+	btDown.resourceId = 18;
 	btDown.x = 245;
 	btDown.y = 344;
 
@@ -392,12 +397,12 @@ void BlowUpPuzzleVCR::updateRewindButton() {
 
 void BlowUpPuzzleVCR::updatePlayButton() {
 	VCRDrawInfo btON;
-	btON.resId = 16;
+	btON.resourceId = 16;
 	btON.x = 401;
 	btON.y = 359;
 
 	VCRDrawInfo btDown;
-	btDown.resId = 20;
+	btDown.resourceId = 20;
 	btDown.x = 391;
 	btDown.y = 355;
 
@@ -406,12 +411,12 @@ void BlowUpPuzzleVCR::updatePlayButton() {
 
 void BlowUpPuzzleVCR::updateStopButton() {
 	VCRDrawInfo btON;
-	btON.resId = 15;
+	btON.resourceId = 15;
 	btON.x = 330;
 	btON.y = 354;
 
 	VCRDrawInfo btDown;
-	btDown.resId = 19;
+	btDown.resourceId = 19;
 	btDown.x = 326;
 	btDown.y = 350;
 
@@ -431,27 +436,27 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
 	}
 
 	if (!showCursor) {
-		if (inPolyRegion(_cursor->x(), _cursor->y(), kRewindButton)
-		        || inPolyRegion(_cursor->x(), _cursor->y(), kStopButton)
-		        || inPolyRegion(_cursor->x(), _cursor->y(), kPlayButton)
-		        || inPolyRegion(_cursor->x(), _cursor->y(), kPowerButton)
-		        || inPolyRegion(_cursor->x(), _cursor->y(), kBlackJack)
-		        || inPolyRegion(_cursor->x(), _cursor->y(), kRedJack)
-		        || inPolyRegion(_cursor->x(), _cursor->y(), kYellowJack)) {
+		if (inPolyRegion(_cursor->position().x, _cursor->position().y, kRewindButton)
+		        || inPolyRegion(_cursor->position().x, _cursor->position().y, kStopButton)
+		        || inPolyRegion(_cursor->position().x, _cursor->position().y, kPlayButton)
+		        || inPolyRegion(_cursor->position().x, _cursor->position().y, kPowerButton)
+		        || inPolyRegion(_cursor->position().x, _cursor->position().y, kBlackJack)
+		        || inPolyRegion(_cursor->position().x, _cursor->position().y, kRedJack)
+		        || inPolyRegion(_cursor->position().x, _cursor->position().y, kYellowJack)) {
 			_cursor->animate();
 		} else {
-			if ((inPolyRegion(_cursor->x(), _cursor->y(), kRedHole) && _holesState[kPluggedOnRed-1])
-			        || (inPolyRegion(_cursor->x(), _cursor->y(), kYellowHole) && _holesState[kPluggedOnYellow-1])
-			        || (inPolyRegion(_cursor->x(), _cursor->y(), kBlackHole) && _holesState[kPluggedOnBlack-1])) {
-				if (_cursor->currentFrame() != 2) { // reset cursor
+			if ((inPolyRegion(_cursor->position().x, _cursor->position().y, kRedHole) && _holesState[kPluggedOnRed-1])
+			        || (inPolyRegion(_cursor->position().x, _cursor->position().y, kYellowHole) && _holesState[kPluggedOnYellow-1])
+			        || (inPolyRegion(_cursor->position().x, _cursor->position().y, kBlackHole) && _holesState[kPluggedOnBlack-1])) {
+				if (_cursor->currentFrame != 2) { // reset cursor
 					_cursor->show();
-					_cursor->set(2);
+					_cursor->set(2, 0, 2);
 					_cursor->animate();
 				}
 			} else {
-				if (_cursor->currentFrame() != 0) { // reset cursor
+				if (_cursor->currentFrame != 0) { // reset cursor
 					_cursor->show();
-					_cursor->set(0);
+					_cursor->set(0, 0, 2);
 					_cursor->animate();
 				}
 			}
@@ -476,17 +481,17 @@ void BlowUpPuzzleVCR::handleMouseDown() {
 	}
 
 	// Plug-in jacks
-	if (inPolyRegion(_cursor->x(), _cursor->y(), kRedHole)) {
+	if (inPolyRegion(_cursor->position().x, _cursor->position().y, kRedHole)) {
 		if (!setJackOnHole(jackType, kPluggedOnRed)) {
 			return;
 		}
 	}
-	if (inPolyRegion(_cursor->x(), _cursor->y(), kYellowHole)) {
+	if (inPolyRegion(_cursor->position().x, _cursor->position().y, kYellowHole)) {
 		if (!setJackOnHole(jackType, kPluggedOnYellow)) {
 			return;
 		}
 	}
-	if (inPolyRegion(_cursor->x(), _cursor->y(), kBlackHole)) {
+	if (inPolyRegion(_cursor->position().x, _cursor->position().y, kBlackHole)) {
 		if (!setJackOnHole(jackType, kPluggedOnBlack)) {
 			// TODO: this will probably segfault!
 			if (_holesState[kBlackHole] != kPluggedOnYellow && _buttonsState[kPower] == 1) {
@@ -501,27 +506,27 @@ void BlowUpPuzzleVCR::handleMouseDown() {
 
 	// Put jacks on table --
 	if (jackType) {
-		if (_cursor->x() >= (int32)BlowUpPuzzleVCRPolies[kBlackJack].left && _cursor->x() <= (int32)BlowUpPuzzleVCRPolies[kYellowJack].right &&
-		        _cursor->y() >= (int32)BlowUpPuzzleVCRPolies[kBlackJack].top  && _cursor->y() <= (int32)BlowUpPuzzleVCRPolies[kYellowJack].bottom) {
+		if (_cursor->position().x >= (int32)BlowUpPuzzleVCRPolies[kBlackJack].left && _cursor->position().x <= (int32)BlowUpPuzzleVCRPolies[kYellowJack].right &&
+		        _cursor->position().y >= (int32)BlowUpPuzzleVCRPolies[kBlackJack].top  && _cursor->position().y <= (int32)BlowUpPuzzleVCRPolies[kYellowJack].bottom) {
 			_jacksState[jackType-1] = kOnTable;
-			playSound(_scene->worldstats()->grResId[50]);
+			playSound(_scene->worldstats()->graphicResourceIds[50]);
 			_cursor->show();
 		}
 		return;
 	}
 
 	// Get Jacks from Table
-	if (inPolyRegion(_cursor->x(), _cursor->y(), kBlackJack)) {
+	if (inPolyRegion(_cursor->position().x, _cursor->position().y, kBlackJack)) {
 		_jacksState[kBlack] = kOnHand;
-	} else if (inPolyRegion(_cursor->x(), _cursor->y(), kRedJack)) {
+	} else if (inPolyRegion(_cursor->position().x, _cursor->position().y, kRedJack)) {
 		_jacksState[kRed] = kOnHand;
-	} else if (inPolyRegion(_cursor->x(), _cursor->y(), kYellowJack)) {
+	} else if (inPolyRegion(_cursor->position().x, _cursor->position().y, kYellowJack)) {
 		_jacksState[kYellow] = kOnHand;
 	}
 
 	// VCR button regions
-	if (inPolyRegion(_cursor->x(), _cursor->y(), kRewindButton)) {
-		playSound(_scene->worldstats()->grResId[39]);
+	if (inPolyRegion(_cursor->position().x, _cursor->position().y, kRewindButton)) {
+		playSound(_scene->worldstats()->graphicResourceIds[39]);
 		if (!_buttonsState[kRewind]) {
 			_buttonsState[kRewind] = kDownON;
 			return;
@@ -530,8 +535,8 @@ void BlowUpPuzzleVCR::handleMouseDown() {
 			_buttonsState[kRewind] = kDownOFF;
 			return;
 		}
-	} else if (inPolyRegion(_cursor->x(), _cursor->y(), kPlayButton)) {
-		playSound(_scene->worldstats()->grResId[39]);
+	} else if (inPolyRegion(_cursor->position().x, _cursor->position().y, kPlayButton)) {
+		playSound(_scene->worldstats()->graphicResourceIds[39]);
 		if (!_buttonsState[kPlay]) {
 			_buttonsState[kPlay] = kDownON;
 			return;
@@ -540,8 +545,8 @@ void BlowUpPuzzleVCR::handleMouseDown() {
 			_buttonsState[kPlay] = kDownOFF;
 			return;
 		}
-	} else if (inPolyRegion(_cursor->x(), _cursor->y(), kStopButton)) {
-		playSound(_scene->worldstats()->grResId[39]);
+	} else if (inPolyRegion(_cursor->position().x, _cursor->position().y, kStopButton)) {
+		playSound(_scene->worldstats()->graphicResourceIds[39]);
 		if (_buttonsState[kStop]) {
 			if (_buttonsState[kStop] == kON) {
 				_buttonsState[kStop] = kDownOFF;
@@ -551,8 +556,8 @@ void BlowUpPuzzleVCR::handleMouseDown() {
 			_buttonsState[kStop] = kDownON;
 			return;
 		}
-	} else if (inPolyRegion(_cursor->x(), _cursor->y(), kPowerButton)) {
-		playSound(_scene->worldstats()->grResId[39]);
+	} else if (inPolyRegion(_cursor->position().x, _cursor->position().y, kPowerButton)) {
+		playSound(_scene->worldstats()->graphicResourceIds[39]);
 
 		if (!_buttonsState[kPower] && _holesState[kPluggedOnBlack-1] == kBlack + 1 && _holesState[kPluggedOnRed-1] && _holesState[kPluggedOnYellow-1]) {
 			_buttonsState[kPower] = kDownON;
@@ -567,7 +572,7 @@ void BlowUpPuzzleVCR::handleMouseUp() {
 		return;
 
 	if (_buttonsState[kPower] == kDownON) {
-		playSound(_scene->worldstats()->grResId[47], true);
+		playSound(_scene->worldstats()->graphicResourceIds[47], true);
 		_buttonsState[kPower]  = kON;
 		_buttonsState[kStop]   = kON;
 		_buttonsState[kPlay]   = kON;
@@ -582,7 +587,7 @@ void BlowUpPuzzleVCR::handleMouseUp() {
 
 	if (_buttonsState[kRewind] == kDownOFF) {
 		_buttonsState[kRewind] = kON;
-		playSound(_scene->worldstats()->grResId[46]);
+		playSound(_scene->worldstats()->graphicResourceIds[46]);
 	} else if (_buttonsState[kRewind] == kDownON) {
 		_buttonsState[kRewind] = kOFF;
 	}
@@ -590,7 +595,7 @@ void BlowUpPuzzleVCR::handleMouseUp() {
 	if (_buttonsState[kPlay] == kDownOFF) {
 		_buttonsState[kPlay] = kON;
 		if (_holesState[kPluggedOnRed-1] == kRed + 1 && _holesState[kPluggedOnYellow-1] == kYellow + 1 && _holesState[kPluggedOnBlack-1] == kBlack + 1) {
-			_scene->vm()->setGameFlag(220);
+			_scene->vm()->setGameFlag(kGameFlagSolveVCRBlowUpPuzzle);
 			_isAccomplished = true;
 		}
 	} else if (_buttonsState[kPlay] == kDownON) {

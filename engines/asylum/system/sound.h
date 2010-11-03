@@ -34,7 +34,7 @@
 namespace Asylum {
 
 typedef struct SoundItem {
-	ResourceId resId;
+	ResourceId resourceId;
 	int32 field_4;
 	int32 field_8;
 	int32 field_C;
@@ -42,7 +42,7 @@ typedef struct SoundItem {
 } SoundItem;
 
 typedef struct FrameSoundItem {
-	ResourceId resId;
+	ResourceId resourceId;
 	int32 frameIdx;
 	int32 index;
 	int32 field_C;
@@ -54,7 +54,7 @@ typedef struct FrameSoundItem {
 typedef struct AmbientSoundItem {
 	int32 field_0;
 	int32 flags;
-	ResourceId resId;
+	ResourceId resourceId;
 	int32 field_C;
 	int32 field_10;
 	int32 field_14;
@@ -65,7 +65,7 @@ typedef struct AmbientSoundItem {
 } AmbientSoundItem;
 
 typedef struct SoundBufferItem {
-	ResourceId resId;
+	ResourceId resourceId;
 	Audio::SoundHandle handle;
 	int32 unknown;
 } SoundBufferItem;
@@ -75,8 +75,8 @@ public:
 	Sound(Audio::Mixer *mixer);
 	~Sound();
 
-	bool addToSoundBuffer(ResourceId resId);
-    void removeFromSoundBuffer(ResourceId resId);
+	bool addToSoundBuffer(ResourceId resourceId);
+    void removeFromSoundBuffer(ResourceId resourceId);
 	void clearSoundBuffer();
 
 	/**
@@ -84,21 +84,21 @@ public:
 	 *
 	 * @param overwrite determine if _soundHandle should be overwritten if still active
 	 */
-	void playSound(ResourcePack *pack, ResourceId resId, int32 volume, bool looping = false, int32 panning = 0, bool overwrite = false);
-	void playSound(ResourcePack *pack, ResourceId resId, bool looping, int32 volume, int32 panning);
+	void playSound(ResourcePack *pack, ResourceId resourceId, int32 volume, bool looping = false, int32 panning = 0, bool overwrite = false);
+	void playSound(ResourcePack *pack, ResourceId resourceId, bool looping, int32 volume, int32 panning);
 	void playSound(ResourceEntry *resource, bool looping, int32 volume, int32 panning);
-	void playSound(ResourceId resId, bool looping, int32 volume, int32 panning, bool fromBuffer = false);
-	void stopSound(ResourceId resId);
+	void playSound(ResourceId resourceId, bool looping, int32 volume, int32 panning, bool fromBuffer = false);
+	void stopSound(ResourceId resourceId);
 	void stopSound();
 	void stopAllSounds(bool stopSpeechAndMusic = false);
 
-	void playSpeech(ResourceId resId);
+	void playSpeech(ResourceId resourceId);
 
-	void playMusic(ResourcePack *pack, ResourceId resId);
-	void playMusic(ResourceId resId);
+	void playMusic(ResourcePack *pack, ResourceId resourceId);
+	void playMusic(ResourceId resourceId);
 	void stopMusic();
 
-	void setVolume(ResourceId resId, double volume);
+	void setVolume(ResourceId resourceId, double volume);
 
 	/**
 	 * Check if the buffered sound sample that matches the provided id currently
@@ -108,7 +108,7 @@ public:
 	 * music or speech, as those resources aren't managed beyond simple
 	 * start/stop requests.
 	 */
-	bool isPlaying(ResourceId resId);
+	bool isPlaying(ResourceId resourceId);
 
 	/**
 	 * Check if the unmanaged sound handle is in use
@@ -116,7 +116,7 @@ public:
 	 * This is useful for checking the active state of a sound
 	 * in a blowuppuzzle
 	 */
-	bool isPlaying() { return _mixer->isSoundHandleActive(_soundHandle);	}
+	bool isPlaying() { return _mixer->isSoundHandleActive(_soundHandle); }
 
 private:
 	Audio::Mixer       *_mixer;
@@ -142,7 +142,7 @@ private:
 	 * Find the index within the _soundBuffer array of the
 	 * sound sample with provided id.
 	 */
-	int32  getBufferPosition(int32 resId);
+	int32  getBufferPosition(ResourceId resourceId);
 	void playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte *soundData, int32 soundDataLength, bool loop = false, int32 vol = 0, int32 pan = 0);
 };
 

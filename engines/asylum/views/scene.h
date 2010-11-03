@@ -182,7 +182,7 @@ protected:
 	 * Check if the mouse cursor is currently intersecting
 	 * a graphic resource at the supplied coordinates
 	 */
-	bool hitTestPixel(int32 grResId, int32 frame, int16 x, int16 y, bool flipped);
+	bool hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped);
 	/** .text:0040E8A0
 	 * Checks if the supplied coordinates are inside an action area, barrier or
 	 * actor, and returns -1 if nothing was found, or the type of hit if found
@@ -282,7 +282,6 @@ private:
 	int queueBarrierUpdates();
 	bool isBarrierVisible(BarrierItem *barrier);
 	bool isBarrierOnScreen(BarrierItem *barrier);
-	int32 getRandomResId(BarrierItem *barrier);
 
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 

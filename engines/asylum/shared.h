@@ -39,7 +39,7 @@ enum GameFlag {
 	kGameFlagFinishGame           = 901
 };
 
-typedef int32 ResourceId;
+typedef int ResourceId;
 
 enum ResourceIdEnum {
 	kResourceSound_80120001 = 0x80120001,

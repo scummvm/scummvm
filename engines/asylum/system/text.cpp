@@ -44,15 +44,15 @@ Text::~Text() {
 }
 
 // loadFont at address 00435640
-void Text::loadFont(ResourcePack *resPack, uint32 resId) {
-	if (_fontResource && resId == _fontResource->getEntryNum())
+void Text::loadFont(ResourcePack *resPack, ResourceId resourceId) {
+	if (_fontResource && resourceId == _fontResource->getResourceId())
 		return;
 
 	delete _fontResource;
 
-	_fontResource = new GraphicResource(resPack, resId);
+	_fontResource = new GraphicResource(resPack, resourceId);
 
-	if (resId > 0) {
+	if (resourceId > 0) {
 		// load font flag data
 		_curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F;
 	}
@@ -79,13 +79,13 @@ int32 Text::getTextWidth(const char *text) {
 	return width;
 }
 
-int32 Text::getResTextWidth(uint32 resId) {
-	ResourceEntry *textRes = _textPack->getResource(resId);
+int32 Text::getResTextWidth(ResourceId resourceId) {
+	ResourceEntry *textRes = _textPack->getResource(resourceId);
 	return getTextWidth((char*)textRes->data);
 }
 
-char* Text::getResText(uint32 resId) {
-	ResourceEntry *textRes = _textPack->getResource(resId);
+char* Text::getResText(ResourceId resourceId) {
+	ResourceEntry *textRes = _textPack->getResource(resourceId);
 	return (char*)textRes->data;
 }
 
@@ -104,8 +104,8 @@ void Text::drawText(const char *text) {
 	}
 }
 
-void Text::drawResText(uint32 resId) {
-	ResourceEntry *textRes = _textPack->getResource(resId);
+void Text::drawResText(ResourceId resourceId) {
+	ResourceEntry *textRes = _textPack->getResource(resourceId);
 	drawText((char*)textRes->data);
 }
 
@@ -115,16 +115,16 @@ void Text::drawTextCentered(int32 x, int32 y, int32 width, const char *text) {
 	drawText(text);
 }
 
-void Text::drawResTextWithValueCentered(int32 x, int32 y, int32 width, uint32 resId, int32 value) {
-	ResourceEntry *textRes = _textPack->getResource(resId);
+void Text::drawResTextWithValueCentered(int32 x, int32 y, int32 width, ResourceId resourceId, int32 value) {
+	ResourceEntry *textRes = _textPack->getResource(resourceId);
 	char *text = (char *)textRes->data;
 	char txt[100];
 	sprintf(txt, text, value);
 	drawTextCentered(x, y, width, txt);
 }
 
-void Text::drawResTextCentered(int32 x, int32 y, int32 width, uint32 resId) {
-	ResourceEntry *textRes = _textPack->getResource(resId);
+void Text::drawResTextCentered(int32 x, int32 y, int32 width, ResourceId resourceId) {
+	ResourceEntry *textRes = _textPack->getResource(resourceId);
 	drawTextCentered(x, y, width, (char *)textRes->data);
 }
 
@@ -136,8 +136,8 @@ void Text::drawText(int32 x, int32 y, const char *text) {
     }
 }
 
-void Text::drawResText(int32 x, int32 y, uint32 resId) {
-	ResourceEntry *textRes = _textPack->getResource(resId);
+void Text::drawResText(int32 x, int32 y, ResourceId resourceId) {
+	ResourceEntry *textRes = _textPack->getResource(resourceId);
 	drawText(x, y, (char *)textRes->data);
 }
 
@@ -147,8 +147,8 @@ void Text::drawTextAlignRight(int32 x, int32 y, const char *text) {
 	drawText(text);
 }
 
-void Text::drawResTextAlignRight(int32 x, int32 y, uint32 resId) {
-	ResourceEntry *textRes = _textPack->getResource(resId);
+void Text::drawResTextAlignRight(int32 x, int32 y, ResourceId resourceId) {
+	ResourceEntry *textRes = _textPack->getResource(resourceId);
 	drawTextAlignRight(x, y, (char *)textRes->data);
 }
 

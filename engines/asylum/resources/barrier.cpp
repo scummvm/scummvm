@@ -44,23 +44,24 @@ void Barrier::destroyAndRemoveFromQueue() {
 	destroy();
 	flags|= kBarrierFlag20000;
 
-	_scene->vm()->screen()->deleteGraphicFromQueue(resId);
+	_scene->vm()->screen()->deleteGraphicFromQueue(resourceId);
 }
 
 int32 Barrier::getRandomId() {
 	int32 numRes = 0;
-	int32 rndResId[5];
-	memset(&rndResId, 0, sizeof(rndResId));
+	ResourceId randomResourceIds[5];
+	memset(&randomResourceIds, 0, sizeof(randomResourceIds));
 	for (int32 i = 0; i < 5; i++) {
 		if (field_68C[i]) {
-			rndResId[numRes] = field_68C[i];
+			randomResourceIds[numRes] = field_68C[i];
 			numRes++;
 		}
 	}
-	if (numRes > 0)
-		return rndResId[rand() % numRes];
 
-	return resId;
+	if (numRes > 0)
+		return randomResourceIds[rand() % numRes];
+
+	return resourceId;
 }
 
 int32 Barrier::checkFlags() {
@@ -80,10 +81,10 @@ void Barrier::setNextFrame(int32 targetFlags) {
 void Barrier::updateSoundItems(Sound *snd) {
 	for (int32 i = 0; i < 16; i++) {
 		SoundItem *item = &soundItems[i];
-		if (snd->isPlaying(item->resId)) {
+		if (snd->isPlaying(item->resourceId)) {
 			if (item->field_4) {
-				snd->stopSound(item->resId);
-				item->resId   = 0;
+				snd->stopSound(item->resourceId);
+				item->resourceId   = 0;
 				item->field_4 = 0;
 			}
 		}
@@ -96,8 +97,8 @@ void Barrier::updateSoundItems(Sound *snd) {
 }
 
 void Barrier::stopSound() {
-	if (_scene->vm()->sound()->isPlaying(soundResId))
-		_scene->vm()->sound()->stopSound(soundResId);
+	if (_scene->vm()->sound()->isPlaying(soundResourceId))
+		_scene->vm()->sound()->stopSound(soundResourceId);
 }
 
 } // end of namespace Asylum

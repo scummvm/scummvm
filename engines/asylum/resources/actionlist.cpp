@@ -377,7 +377,7 @@ IMPLEMENT_OPCODE(PlayAnimation) {
 			_scene->setGlobalX(barrier->x);
 			_scene->setGlobalY(barrier->y);
 		} else {
-			GraphicResource *res = new GraphicResource(_scene->getResourcePack(), barrier->resId);
+			GraphicResource *res = new GraphicResource(_scene->getResourcePack(), barrier->resourceId);
 			GraphicFrame *frame = res->getFrame(barrier->frameIdx);
 
 			_scene->setGlobalX(frame->x + (frame->getWidth() >> 1) + barrier->x);
@@ -788,7 +788,7 @@ IMPLEMENT_OPCODE(SetVolume) {
 		volume = 0;
 	}
 
-	_scene->vm()->sound()->setVolume(item.resId, volume);
+	_scene->vm()->sound()->setVolume(item.resourceId, volume);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1110,7 +1110,7 @@ IMPLEMENT_OPCODE(JumpBarrierFrame) {
 // Opcode 0x52
 IMPLEMENT_OPCODE(DeleteGraphics) {
 	for (uint i = 0; i < 55; i++)
-		_scene->vm()->screen()->deleteGraphicFromQueue(_scene->getActor(cmd->param1)->grResTable[cmd->param1]);
+		_scene->vm()->screen()->deleteGraphicFromQueue(_scene->getActor(cmd->param1)->graphicResourceIds[cmd->param1]);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1194,7 +1194,7 @@ IMPLEMENT_OPCODE(SetResourcePalette) {
 	if (cmd->param1 < 0)
 		error("Invalid resource id in opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
 
-	_scene->worldstats()->currentPaletteId = _scene->worldstats()->grResId[cmd->param1];
+	_scene->worldstats()->currentPaletteId = _scene->worldstats()->graphicResourceIds[cmd->param1];
 
 	_scene->vm()->screen()->setPalette(_scene->getResourcePack(), _scene->worldstats()->currentPaletteId);
 	_scene->vm()->screen()->setGammaLevel(_scene->getResourcePack(), _scene->worldstats()->currentPaletteId, 0);

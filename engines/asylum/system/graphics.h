@@ -26,9 +26,12 @@
 #ifndef ASYLUM_GRAPHICS_H
 #define ASYLUM_GRAPHICS_H
 
-#include "common/array.h"
-#include "graphics/surface.h"
 #include "asylum/respack.h"
+#include "asylum/shared.h"
+
+#include "graphics/surface.h"
+
+#include "common/array.h"
 
 namespace Asylum {
 
@@ -49,10 +52,10 @@ class GraphicResource {
 public:
 
 	GraphicResource() {}
-	GraphicResource(ResourcePack *resPack, uint32 entry);
+	GraphicResource(ResourcePack *resPack, ResourceId id);
 	~GraphicResource();
 
-	void load(ResourcePack *resPack, uint32 entry);
+	void load(ResourcePack *resPack, ResourceId id);
 
 	/**
 	 * Copies an animation frame to the target buffer
@@ -65,14 +68,14 @@ public:
 	void copySpriteToDest(byte *dest, uint32 frame);
 
 	GraphicFrame *getFrame(uint32 frame);
-	uint32        getEntryNum()   { return _entryNum; }
+	ResourceId    getResourceId() { return _resourceId; }
 	int32         getFlags()      { return _flags; }
 	uint32        getFrameCount() { return _frames.size(); }
 
 private:
 	Common::Array <GraphicFrame> _frames;
 	int32 _flags;
-	uint32 _entryNum;
+	ResourceId _resourceId;
 
 	void init(byte *data, int32 size);
 	void clear();

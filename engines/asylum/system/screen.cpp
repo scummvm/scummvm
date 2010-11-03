@@ -111,7 +111,7 @@ void Screen::setPalette(byte *rgbPalette) {
 	_vm->_system->setPalette(palette, 0, 256);
 }
 
-void Screen::setGammaLevel(ResourcePack *resPack, int32 entry, int32 val) {
+void Screen::setGammaLevel(ResourcePack *resPack, ResourceId id, int32 val) {
 	error("[Screen::setGammaLevel] not implemented");
 }
 
@@ -133,9 +133,9 @@ void Screen::palFade(uint32 red, int32 milliseconds, int32 param) {
 	error("[Screen::palFade] not implemented");
 }
 
-void Screen::addGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority) {
+void Screen::addGraphicToQueue(ResourceId resourceId, int32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority) {
 	GraphicQueueItem item;
-	item.resId = resId;
+	item.resourceId = resourceId;
 	item.x = x;
 	item.y = y;
 	item.frameIdx = frameIdx;
@@ -146,7 +146,7 @@ void Screen::addGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, in
 	_queueItems.push_back(item);
 }
 
-void Screen::addCrossFadeGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority) {
+void Screen::addCrossFadeGraphicToQueue(ResourceId resourceId, int32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority) {
 	error("[Screen::addCrossFadeGraphicToQueue] not implemented");
 }
 
@@ -161,7 +161,7 @@ void Screen::drawGraphicsInQueue() {
 	graphicsSelectionSort();
 
 	for (uint32 i = 0; i < _queueItems.size(); i++) {
-		GraphicResource *grRes = _vm->scene()->getGraphicResource(_queueItems[i].resId);
+		GraphicResource *grRes = _vm->scene()->getGraphicResource(_queueItems[i].resourceId);
 		GraphicFrame    *fra   = grRes->getFrame(_queueItems[i].frameIdx);
 
 		copyToBackBufferWithTransparency((byte *)fra->surface.pixels,
@@ -200,9 +200,9 @@ void Screen::swapGraphicItem(int32 item1, int32 item2) {
 	_queueItems[item2] = temp;
 }
 
-void Screen::deleteGraphicFromQueue(int32 resId) {
+void Screen::deleteGraphicFromQueue(ResourceId resourceId) {
 	for (uint32 i = 0; i < _queueItems.size(); i++) {
-		if (_queueItems[i].resId == resId) {
+		if (_queueItems[i].resourceId == resourceId) {
 			_queueItems.remove_at(i);
 			break;
 		}

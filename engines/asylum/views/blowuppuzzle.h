@@ -26,13 +26,10 @@
 #ifndef ASYLUM_BLOWUPPUZZLE_H
 #define ASYLUM_BLOWUPPUZZLE_H
 
+#include "asylum/shared.h"
+
 #include "common/events.h"
 #include "common/rect.h"
-
-#include "asylum/asylum.h"
-#include "asylum/respack.h"
-#include "asylum/graphics.h"
-#include "asylum/cursor.h"
 
 namespace Asylum {
 
@@ -41,6 +38,7 @@ class Screen;
 class Sound;
 class Video;
 class Cursor;
+class GraphicResource;
 struct GraphicQueueItem;
 
 class BlowUpPuzzle {
@@ -68,7 +66,7 @@ protected:
 	GraphicResource *_bgResource;
 
 	virtual void update() {};
-	void playSound(int32 resourceId, bool loop = false);
+	void playSound(ResourceId resourceId, bool loop = false);
 
 }; // end of class BlowUpPuzzle
 
@@ -76,7 +74,7 @@ protected:
 // ---- VCR -------------------
 
 typedef struct VCRDrawInfo {
-	int32 resId;
+	ResourceId resourceId;
 	int32 x;
 	int32 y;
 } VCRDrawInfo;
@@ -156,9 +154,9 @@ private:
 
 	void updateCursorInPolyRegion();
 
-	GraphicQueueItem getGraphicJackItem(int resId);
+	GraphicQueueItem getGraphicJackItem(ResourceId resourceId);
 	GraphicQueueItem getGraphicShadowItem();
-	void updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo pluggedOnRed, VCRDrawInfo pluggedOnYellow, VCRDrawInfo pluggedOnBlack, int resIdOnHand);
+	void updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo pluggedOnRed, VCRDrawInfo pluggedOnYellow, VCRDrawInfo pluggedOnBlack, ResourceId resourceIdOnHand);
 	void updateBlackJack();
 	void updateRedJack();
 	void updateYellowJack();

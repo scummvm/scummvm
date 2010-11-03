@@ -72,7 +72,7 @@ public:
 	void stopSound();
 
 	int32		   id;
-	uint32		   resId;
+	ResourceId     resourceId;
 	int32		   x;
 	int32		   y;
 	Common::Rect   boundingRect;
@@ -105,7 +105,7 @@ public:
 	int32		   soundY;
 	int32		   field_688;
 	int32		   field_68C[5];
-	int32		   soundResId;
+	ResourceId     soundResourceId;
 	int32		   field_6A4;
 
 private:
