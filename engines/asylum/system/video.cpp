@@ -52,7 +52,7 @@ Video::~Video() {
 	delete _text;
 }
 
-bool Video::playVideo(int32 videoNumber, VideoSubtitles subtitles) {
+bool Video::playVideo(int32 videoNumber, bool showSubtitles) {
 	bool lastMouseState = false;
 	char filename[20];
 
@@ -63,9 +63,9 @@ bool Video::playVideo(int32 videoNumber, VideoSubtitles subtitles) {
 	lastMouseState = g_system->showMouse(false);
 	if (result) {
 		_skipVideo = false;
-		if(subtitles == kSubtitlesOn) {
+
+		if (showSubtitles)
 			loadSubtitles(videoNumber);
-		}
 
 		uint16 x = (g_system->getWidth() - _smkDecoder->getWidth()) / 2;
 		uint16 y = (g_system->getHeight() - _smkDecoder->getHeight()) / 2;
@@ -78,7 +78,7 @@ bool Video::playVideo(int32 videoNumber, VideoSubtitles subtitles) {
 				if (frame) {
 					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 
-					if(subtitles) {
+					if(showSubtitles) {
 						Graphics::Surface *screen = g_system->lockScreen();
 						performPostProcessing((byte *)screen->pixels);
 						g_system->unlockScreen();

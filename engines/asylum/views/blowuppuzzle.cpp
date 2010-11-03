@@ -174,7 +174,7 @@ void BlowUpPuzzleVCR::update() {
 
 		// TODO: fade palette to grey
 
-		_scene->vm()->video()->playVideo(2, kSubtitlesOn);
+		_scene->vm()->video()->playVideo(2, true);
 
 		_isAccomplished = false;
 		_active = false;

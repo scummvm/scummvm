@@ -58,18 +58,8 @@
  */
 namespace Asylum {
 
-// XXX
-// If defined, this will play the scene title loading up
-// progress before the scene is entered. This is
-// just a convenience, as there's no need for the type
-// of pre-loading that was performed in the original
-#define SHOW_SCENE_LOADING
-
-//#define SHOW_SCENE_TIMES
-
-// XXX If defined, this flag will prevent the intro movies
-// from being played whenever the engine is started
-#define SKIP_INTRO
+// If defined, will show the scene update times on the debugger output
+//#define DEBUG_SCENE_TIMES
 
 // XXX
 // I'm not sure if system endian-ness would have any
