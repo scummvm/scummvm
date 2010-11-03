@@ -117,7 +117,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 			_vm->_screen->updateShakeScreen();
 			_vm->_screen->_fullRefresh = true;
 			_vm->updateInput();
-			_vm->updateScreen();
+			_vm->drawScreen();
 
 			_soundChunkFramesLeft--;
 			if (_soundChunkFramesLeft <= _framesPerSoundChunk) {
