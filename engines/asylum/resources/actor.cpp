@@ -720,12 +720,12 @@ void Actor::setRawResources(uint8 *data) {
 // Unknown methods
 //////////////////////////////////////////////////////////////////////////
 
-bool Actor::process(int32 x, int32 y) {
+bool Actor::process(int32 actorX, int32 actorY) {
 	error("[Actor::process] not implemented!");
 }
 
-void Actor::processStatus(int32 x, int32 y, bool doSpeech) {
-	if (process(x, y)) {
+void Actor::processStatus(int32 actorX, int32 actorY, bool doSpeech) {
+	if (process(actorX, actorY)) {
 		if (_status <= kActorStatus11)
 			updateStatus(kActorStatus2);
 		else

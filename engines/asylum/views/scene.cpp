@@ -1147,7 +1147,7 @@ void Scene::processUpdateList() {
 				// Adjust barrier flags
 				if (BYTE1(barrier->flags) & kBarrierFlag80 || intersects) {
 					if (BYTE1(barrier->flags) & kBarrierFlag20)
-						barrier->flags = BYTE1(barrier->flags) & 0xBF | kBarrierFlag80;
+						barrier->flags = (BYTE1(barrier->flags) & 0xBF) | kBarrierFlag80;
 				} else {
 					if (BYTE1(barrier->flags) & kBarrierFlag20) {
 						barrier->flags = BYTE1(barrier->flags) | kBarrierFlag40;
