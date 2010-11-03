@@ -884,7 +884,10 @@ IMPLEMENT_OPCODE(PlayMovie) {
 			check = true;
 	}
 
-	if (!check && _scene->matteVar2 == 0 && _scene->worldstats()->musicCurrentResourceId != kResourceMusic_FFFFFD66)
+	// XXX casting kResourceMusic_FFFFFD66 to silence a GCC warning
+	if (!check &&
+		_scene->matteVar2 == 0 &&
+		_scene->worldstats()->musicCurrentResourceId != (int)kResourceMusic_FFFFFD66)
 		if (_scene->vm()->sound()->isCacheOk())
 			_scene->vm()->sound()->playMusic(_scene->getResourcePack(), _scene->worldstats()->musicCurrentResourceId + kResourceMusic_80020000);
 
@@ -1046,11 +1049,11 @@ IMPLEMENT_OPCODE(IncrementParam2) {
 IMPLEMENT_OPCODE(WaitUntilFramePlayed) {
 	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
-	uint32 frameNum = cmd->param2;
+	int32 frameNum = cmd->param2;
 	if (frameNum == -1)
 		frameNum = barrier->getFrameCount() - 1;
 
-	if (barrier->getFrameIndex() != frameNum) {
+	if ((int32)barrier->getFrameIndex() != frameNum) {
 		_lineIncrement = 1;
 		_waitCycle     = true;
 	}
@@ -1451,20 +1454,20 @@ IMPLEMENT_OPCODE(JumpBarrierFrame) {
 	if (cmd->param2 == -1)
 		cmd->param2 = barrier->getFrameCount() - 1;
 
-	if (cmd->param3)
-		if(barrier->getFrameIndex() == (uint32)cmd->param2) {
+	if (cmd->param3) {
+		if(barrier->getFrameIndex() == (uint32)cmd->param2)
 			return;
-	} else if (cmd->param4)
-		if (barrier->getFrameIndex() < (uint32)cmd->param2) {
+	} else if (cmd->param4) {
+		if (barrier->getFrameIndex() < (uint32)cmd->param2)
 			return;
-	} else if (cmd->param5)
-		if (barrier->getFrameIndex() > (uint32)cmd->param2) {
+	} else if (cmd->param5) {
+		if (barrier->getFrameIndex() > (uint32)cmd->param2)
 			return;
-	} else if (cmd->param6)
-		if (barrier->getFrameIndex() <= (uint32)cmd->param2) {
+	} else if (cmd->param6) {
+		if (barrier->getFrameIndex() <= (uint32)cmd->param2)
 			return;
-	} else if (cmd->param7)
-		if (barrier->getFrameIndex() >= (uint32)cmd->param2) {
+	} else if (cmd->param7) {
+		if (barrier->getFrameIndex() >= (uint32)cmd->param2)
 			return;
 	} else if (!cmd->param8 || barrier->getFrameIndex() != (uint32)cmd->param2) {
 		return;

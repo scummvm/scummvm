@@ -289,7 +289,7 @@ void Barrier::update() {
 		if (BYTE1(flags) & kBarrierFlag2) {
 			if (_frameIndex == _frameCount - 1) {
 				_frameIndex--;
-				flags = BYTE1(flags) & 0xFD | kBarrierFlag4;
+				flags = (BYTE1(flags) & 0xFD) | kBarrierFlag4;
 			} else {
 				_frameIndex++;
 			}
@@ -298,7 +298,7 @@ void Barrier::update() {
 				_frameIndex--;
 			} else {
 				_frameIndex++;
-				flags = BYTE1(flags) & 0xFB | kBarrierFlag2;
+				flags = (BYTE1(flags) & 0xFB) | kBarrierFlag2;
 			}
 		}
 	}
