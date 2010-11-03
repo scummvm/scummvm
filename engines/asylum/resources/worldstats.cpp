@@ -254,7 +254,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		barrier->field_7C = stream->readSint32LE();
 		barrier->field_80 = stream->readSint32LE();
 		barrier->polyIdx	 = stream->readSint32LE();
-		barrier->flags2	 = stream->readSint32LE();
+		barrier->actionType	 = stream->readSint32LE();
 
 		for (i = 0; i < 10; i++)
 			barrier->gameFlags[i] = (GameFlag)stream->readSint32LE();
@@ -300,9 +300,8 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	// need to jump all unused barriers data to where actors data start
 	stream->seek(0xA6D7A);
 
-	for (int32 a = 0; a < numActors; a++) {
-		int32 i;
-		Actor *actor = new Actor(_scene);
+	for (ActorIndex index = 0; index < numActors; index++) {
+		Actor *actor = new Actor(_scene, index);
 
 		actor->x          = stream->readSint32LE();
 		actor->y          = stream->readSint32LE();
@@ -336,7 +335,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		// TODO skip field_68 till field_617
 		stream->skip(0x5B0);
 
-		for (i = 0; i < 8; i++)
+		for (int32 i = 0; i < 8; i++)
 			actor->reaction[i] = stream->readSint32LE();
 
 		actor->field_638     = stream->readSint32LE();
@@ -347,25 +346,25 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		actor->field_64C     = stream->readSint32LE();
 		actor->field_650     = stream->readSint32LE();
 
-		for (i = 0; i < 55; i++)
+		for (int32 i = 0; i < 55; i++)
 			actor->graphicResourceIds[i] = stream->readSint32LE();
 
 		stream->read(actor->name, sizeof(actor->name));
 
-		for (i = 0; i < 20; i++)
+		for (int32 i = 0; i < 20; i++)
 			actor->field_830[i] = stream->readSint32LE();
 
-		for (i = 0; i < 20; i++)
+		for (int32 i = 0; i < 20; i++)
 			actor->field_880[i] = stream->readSint32LE();
 
-		for (i = 0; i < 20; i++)
+		for (int32 i = 0; i < 20; i++)
 			actor->field_8D0[i] = stream->readSint32LE();
 
 		actor->actionIdx2 = stream->readSint32LE();
 		actor->field_924  = stream->readSint32LE();
 		actor->tickValue = stream->readSint32LE();
 		actor->field_92C  = stream->readSint32LE();
-		actor->flags2     = stream->readSint32LE();
+		actor->actionType     = stream->readSint32LE();
 		actor->field_934  = stream->readSint32LE();
 		actor->field_938  = stream->readSint32LE();
 		actor->soundResourceId = stream->readSint32LE();

@@ -33,15 +33,14 @@
 namespace Asylum {
 
 enum BarrierFlag {
+	kBarrierFlagDestroyed = -2,
 	kBarrierFlag4         = 0x4,
 	kBarrierFlag8         = 0x8,
 	kBarrierFlag20        = 0x20,
+	kBarrierFlagC000      = 0xC000,
 	kBarrierFlag10000     = 0x10000,
 	kBarrierFlag10E38     = 0x10E38,
-	kBarrierFlag20000     = 0x20000,
-	kBarrierFlagFFFEF1C7  = 0xFFFEF1C7,
-	kBarrierFlagFFFEFFFF  = 0xFFFEFFFF,
-	kBarrierFlagDestroyed = 0xFFFFFFFE
+	kBarrierFlag20000     = 0x20000
 };
 
 class Scene;
@@ -90,7 +89,7 @@ public:
 	int32		   field_7C; // to do with calculating
 	int32		   field_80; // actor intersection
 	int32		   polyIdx;
-	int32		   flags2;
+	int32		   actionType;
 	GameFlag	   gameFlags[10];
 	int32		   field_B4;
 	int32		   tickCount;

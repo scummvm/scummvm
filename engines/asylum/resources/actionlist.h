@@ -155,7 +155,11 @@ private:
 	void resetQueue();
 
 	void enableBarrier(ScriptEntry *cmd, BarrierEnableType type);
+	void setActionFlag(ScriptEntry *cmd, ActionType flag); //|
+	void clearActionFlag(ScriptEntry *cmd, ActionType flag); //&
+	void jumpIfActionFlag(ScriptEntry *cmd, ActionType flag);
 
+	//////////////////////////////////////////////////////////////////////////
 	// Opcode functions
 	DECLARE_OPCODE(Return);
 	DECLARE_OPCODE(SetGameFlag);
@@ -176,20 +180,20 @@ private:
 	DECLARE_OPCODE(DestroyBarrier);
 	DECLARE_OPCODE(_unk12_JMP_WALK_ACTOR);
 	DECLARE_OPCODE(_unk13_JMP_WALK_ACTOR);
-	DECLARE_OPCODE(_unk14_JMP_WALK_ACTOR);
+	DECLARE_OPCODE(JumpIfActorCoordinates);
 	DECLARE_OPCODE(_unk15);
 	DECLARE_OPCODE(ResetAnimation);
-	DECLARE_OPCODE(ClearFlag1Bit0);
+	DECLARE_OPCODE(SetBarrierDestroyed);
 	DECLARE_OPCODE(_unk18_PLAY_SND);
-	DECLARE_OPCODE(JumpIfFlag2Bit0);
-	DECLARE_OPCODE(SetFlag2Bit0);
-	DECLARE_OPCODE(ClearFlag2Bit0);
-	DECLARE_OPCODE(JumpIfFlag2Bit2);
-	DECLARE_OPCODE(SetFlag2Bit2);
-	DECLARE_OPCODE(ClearFlag2Bit2);
-	DECLARE_OPCODE(JumpIfFlag2Bit1);
-	DECLARE_OPCODE(SetFlag2Bit1);
-	DECLARE_OPCODE(ClearFlag2Bit1);
+	DECLARE_OPCODE(JumpIfActionFind);
+	DECLARE_OPCODE(SetActionFind);
+	DECLARE_OPCODE(clearActionFind);
+	DECLARE_OPCODE(JumpIfActionGrab);
+	DECLARE_OPCODE(SetActionGrab);
+	DECLARE_OPCODE(ClearActionGrab);
+	DECLARE_OPCODE(JumpIfActionTalk);
+	DECLARE_OPCODE(SetActionTalk);
+	DECLARE_OPCODE(ClearActionTalk);
 	DECLARE_OPCODE(_unk22);
 	DECLARE_OPCODE(_unk23);
 	DECLARE_OPCODE(_unk24);

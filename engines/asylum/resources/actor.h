@@ -74,8 +74,7 @@ enum ActorType {
 };
 
 enum ActorFlags {
-	kVisible     = 0x01,
-	kHidden      = 0xFFFFFFFE
+	kActorFlagVisible = 1
 };
 
 enum DirectionFrom {
@@ -179,7 +178,7 @@ enum ActorResources {
 
 class Actor {
 public:
-	Actor(Scene *scene);
+	Actor(Scene *scene, ActorIndex index);
 	virtual ~Actor();
 
 	/**
@@ -191,7 +190,7 @@ public:
 	void setRawResources(uint8* data);
 
 	// Visibility
-	bool isVisible() { return flags & kVisible; }
+	bool isVisible() { return flags & kActorFlagVisible; }
 	void setVisible(bool value);
 
 	/** .text:0040A260
@@ -215,6 +214,13 @@ public:
 
 	bool defaultDirectionLoaded(int grResTableIdx);
 
+	void stopSound();
+	bool process(int32 x, int32 y);
+	void processStatus(int32 x, int32 y, bool doSpeech);
+
+	void speech(int32 a1);
+
+	//////////////////////////////////////////////////////////////////////////
 	// OLD METHODS
 	// TODO ALL of these need to be depreciated in favour
 	// of the proper functions from the original
@@ -224,9 +230,9 @@ public:
 	void drawActorAt(int32 curX, int32 curY);
 	void drawActor();
 	void walkTo(int32 curX, int32 curY);
+	//////////////////////////////////////////////////////////////////////////
 
 
-	void stopSound();
 
 	int32 currentAction; // TODO depreciate
 
@@ -271,7 +277,7 @@ public:
 	int32  field_924;
 	int32  tickValue;
 	int32  field_92C;
-	int32  flags2;
+	int32  actionType;
 	int32  field_934;
 	int32  field_938;
 	ResourceId  soundResourceId; // field_93C

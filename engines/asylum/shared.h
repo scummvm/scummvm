@@ -46,6 +46,14 @@ enum ResourceIdEnum {
 	kResourceSound_80120006 = 0x80120006
 };
 
+enum ActionType {
+	kActionTypeNone = 0,
+	kActionTypeFind = 1,
+	kActionTypeTalk = 2,
+	kActionType3 = 3,
+	kActionTypeGrab = 4
+};
+
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 #define CLEAR_ARRAY(type, name) { \

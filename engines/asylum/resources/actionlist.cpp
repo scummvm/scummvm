@@ -53,20 +53,20 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene) : _scen
 	ADD_OPCODE(DestroyBarrier);
 	ADD_OPCODE(_unk12_JMP_WALK_ACTOR);
 	ADD_OPCODE(_unk13_JMP_WALK_ACTOR);
-	ADD_OPCODE(_unk14_JMP_WALK_ACTOR);
+	ADD_OPCODE(JumpIfActorCoordinates);
 	ADD_OPCODE(_unk15);
 	ADD_OPCODE(ResetAnimation);
-	ADD_OPCODE(ClearFlag1Bit0);
+	ADD_OPCODE(SetBarrierDestroyed);
 	ADD_OPCODE(_unk18_PLAY_SND);
-	ADD_OPCODE(JumpIfFlag2Bit0);
-	ADD_OPCODE(SetFlag2Bit0);
-	ADD_OPCODE(ClearFlag2Bit0);
-	ADD_OPCODE(JumpIfFlag2Bit2);
-	ADD_OPCODE(SetFlag2Bit2);
-	ADD_OPCODE(ClearFlag2Bit2);
-	ADD_OPCODE(JumpIfFlag2Bit1);
-	ADD_OPCODE(SetFlag2Bit1);
-	ADD_OPCODE(ClearFlag2Bit1);
+	ADD_OPCODE(JumpIfActionFind);
+	ADD_OPCODE(SetActionFind);
+	ADD_OPCODE(clearActionFind);
+	ADD_OPCODE(JumpIfActionGrab);
+	ADD_OPCODE(SetActionGrab);
+	ADD_OPCODE(ClearActionGrab);
+	ADD_OPCODE(JumpIfActionTalk);
+	ADD_OPCODE(SetActionTalk);
+	ADD_OPCODE(ClearActionTalk);
 	ADD_OPCODE(_unk22);
 	ADD_OPCODE(_unk23);
 	ADD_OPCODE(_unk24);
@@ -358,14 +358,14 @@ IMPLEMENT_OPCODE(PlayAnimation) {
 
 	// Update flags
 	if (cmd->param4) {
-		barrier->flags &= kBarrierFlagFFFEF1C7;
+		barrier->flags &= ~kBarrierFlag10E38;
         barrier->flags |= kBarrierFlag20;
 	} else if (cmd->param3) {
-		barrier->flags &= kBarrierFlagFFFEF1C7;
+		barrier->flags &= ~kBarrierFlag10E38;
 		barrier->flags |= kBarrierFlag10000;
 	} else if (barrier->flags & kBarrierFlag10000) {
 		barrier->flags |= kBarrierFlag8;
-		barrier->flags &= kBarrierFlagFFFEFFFF;
+		barrier->flags &= ~kBarrierFlag10000;
 	} else if (!(barrier->flags & kBarrierFlag10E38)) {
 		barrier->flags |= kBarrierFlag8;
 	}
@@ -519,19 +519,57 @@ IMPLEMENT_OPCODE(DestroyBarrier) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x12
 IMPLEMENT_OPCODE(_unk12_JMP_WALK_ACTOR) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	Actor *actor = _scene->getActor();
+
+	if (actor->process(cmd->param2, cmd->param3))
+		return;
+
+	_currentLine = cmd->param4;
+
+	if (cmd->param5)
+		actor->speech(1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x13
 IMPLEMENT_OPCODE(_unk13_JMP_WALK_ACTOR) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	Actor *actor = _scene->getActor();
+
+	if (actor->status != kActorStatus2 && actor->status != kActorStatus13) {
+		if (cmd->param5 != 2) {
+
+			if (cmd->param2 == -1 || cmd->param3 == -1) {
+				actor->setDirection(cmd->param4);
+			} else if ((actor->x1 + actor->x2) == cmd->param2 && (actor->y1 + actor->y2) == cmd->param3) {
+				actor->setDirection(cmd->param4);
+			} else {
+				actor->processStatus(cmd->param2, cmd->param3, cmd->param4);
+
+				if (cmd->param5 == 1) {
+					cmd->param5 = 2;
+					_lineIncrement = 1;
+				}
+			}
+		} else {
+			cmd->param5 = 1;
+			_lineIncrement = 0;
+
+			if ((actor->x1 + actor->x2) == cmd->param2 && (actor->y1 + actor->y2) == cmd->param3)
+				actor->setDirection(cmd->param4);
+		}
+	} else {
+		if (cmd->param5 == 2)
+			_lineIncrement = 1;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x14
-IMPLEMENT_OPCODE(_unk14_JMP_WALK_ACTOR) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(JumpIfActorCoordinates) {
+	Actor *actor = _scene->getActor();
+
+	if ((actor->x1 + actor->x2) != cmd->param2 || (actor->y1 + actor->y2) != cmd->param3)
+		_lineIncrement = cmd->param4;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -545,18 +583,18 @@ IMPLEMENT_OPCODE(_unk15) {
 IMPLEMENT_OPCODE(ResetAnimation) {
 	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
-	if ((barrier->flags & 0x10000) == 0)
-		barrier->frameIdx = 0;
-	else
+	if (barrier->flags & kBarrierFlag10000)
 		barrier->frameIdx = barrier->frameCount - 1;
+	else
+		barrier->frameIdx = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x17
-IMPLEMENT_OPCODE(ClearFlag1Bit0) {
+IMPLEMENT_OPCODE(SetBarrierDestroyed) {
 	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
-	barrier->flags &= 0xFFFFFFFE;
+	barrier->flags &= kBarrierFlagDestroyed;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -567,76 +605,56 @@ IMPLEMENT_OPCODE(_unk18_PLAY_SND) {
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x19
-IMPLEMENT_OPCODE(JumpIfFlag2Bit0) {
-	int targetType = cmd->param2;
-
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
-	// TODO targetType == 7 is trying to access an out of bounds actor
-	// look at the disassembly again
-
-	if (targetType <= 0)
-		_done = (_scene->worldstats()->getBarrierById(cmd->param1)->flags2 & 1) == 0;
-	else
-		if (targetType == 1) // v4 == 1, so 1
-			_done = (_scene->worldstats()->getActionAreaById(cmd->param1)->actionType & 1) == 0;
-		else
-			_done = (_scene->worldstats()->actors[cmd->param1]->flags2 & 1) == 0;
+IMPLEMENT_OPCODE(JumpIfActionFind) {
+	jumpIfActionFlag(cmd, kActionTypeFind);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1A
-IMPLEMENT_OPCODE(SetFlag2Bit0) {
-	int targetType = cmd->param2;
-
-	if (targetType == 2)
-		_scene->worldstats()->actors[cmd->param1]->flags2 |= 1;
-	else
-		if (targetType == 1)
-			_scene->worldstats()->getActionAreaById(cmd->param1)->actionType |= 1;
-		else
-			_scene->worldstats()->getBarrierById(cmd->param1)->flags2 |= 1;
+IMPLEMENT_OPCODE(SetActionFind) {
+	setActionFlag(cmd, kActionTypeFind);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1B
-IMPLEMENT_OPCODE(ClearFlag2Bit0) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(clearActionFind) {
+	clearActionFlag(cmd, kActionTypeFind);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1C
-IMPLEMENT_OPCODE(JumpIfFlag2Bit2) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(JumpIfActionGrab) {
+	jumpIfActionFlag(cmd, kActionTypeGrab);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1D
-IMPLEMENT_OPCODE(SetFlag2Bit2) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(SetActionGrab) {
+	setActionFlag(cmd, kActionTypeGrab);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1E
-IMPLEMENT_OPCODE(ClearFlag2Bit2) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(ClearActionGrab) {
+	clearActionFlag(cmd, kActionTypeGrab);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1F
-IMPLEMENT_OPCODE(JumpIfFlag2Bit1) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(JumpIfActionTalk) {
+	jumpIfActionFlag(cmd, kActionTypeTalk);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x20
-IMPLEMENT_OPCODE(SetFlag2Bit1) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(SetActionTalk) {
+	setActionFlag(cmd, kActionTypeTalk);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x21
-IMPLEMENT_OPCODE(ClearFlag2Bit1) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _opcodes[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+IMPLEMENT_OPCODE(ClearActionTalk) {
+	clearActionFlag(cmd, kActionTypeTalk);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1259,7 +1277,7 @@ IMPLEMENT_OPCODE(SetBarrierLastFrameIdx) {
 
 	if (barrier->frameIdx == barrier->frameCount - 1) {
 		_lineIncrement = 0;
-		barrier->flags &= kBarrierFlagFFFEF1C7;
+		barrier->flags &= ~kBarrierFlag10E38;
 	} else {
 		_lineIncrement = 1;
 	}
@@ -1310,4 +1328,63 @@ void ActionList::enableBarrier(ScriptEntry *cmd, BarrierEnableType type) {
 	error("[ActionList::enableBarrier] not implemented!");
 }
 
+void ActionList::setActionFlag(ScriptEntry *cmd, ActionType flag) {
+	switch (cmd->param2) {
+	default:
+		_scene->worldstats()->getBarrierById(cmd->param1)->actionType |= flag;
+		break;
+
+	case 1:
+		_scene->worldstats()->getActionAreaById(cmd->param1)->actionType |= flag;
+		break;
+
+	case 2:
+		_scene->worldstats()->actors[cmd->param1]->actionType |= flag;
+		break;
+	}
+}
+
+void ActionList::clearActionFlag(ScriptEntry *cmd, ActionType flag) {
+	switch (cmd->param2) {
+	default:
+		_scene->worldstats()->getBarrierById(cmd->param1)->actionType &= ~flag;
+		break;
+
+	case 1:
+		_scene->worldstats()->getActionAreaById(cmd->param1)->actionType &= ~flag;
+		break;
+
+	case 2:
+		_scene->worldstats()->actors[cmd->param1]->actionType &= ~flag;
+		break;
+	}
+}
+
+void ActionList::jumpIfActionFlag(ScriptEntry *cmd, ActionType flag) {
+	bool done = false;
+
+	switch (cmd->param3) {
+	default:
+		done = (_scene->worldstats()->actors[cmd->param1]->actionType & flag) == 0;
+		break;
+
+	case 0:
+		done = (_scene->worldstats()->getBarrierById(cmd->param1)->actionType & flag) == 0;
+		break;
+
+	case 1:
+		done = (_scene->worldstats()->getActionAreaById(cmd->param1)->actionType & flag) == 0;
+		break;
+	}
+
+	if (!done)
+		return;
+
+	int32 opcode = _currentScript->commands[cmd->param2].opcode;
+	if (opcode == 0x10 || opcode == 0) { // Return
+		_currentLine = cmd->param2;
+	} else {
+		_done = true;
+	}
+}
 } // end of namespace Asylum
