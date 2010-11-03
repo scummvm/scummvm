@@ -182,6 +182,13 @@ public:
 	// Shared methods
 	void resetActor0();
 
+
+		/** .text:00408980
+	 * Determine if the supplied point intersects
+	 * an action area's active region
+	 */
+	int32 findActionArea(const Common::Point pt);
+
 protected:
 	/** .text:0040EA50
 	 * Run various hit tests and return the index,
@@ -207,11 +214,7 @@ protected:
 	 * actor, and returns -1 if nothing was found, or the type of hit if found
 	 */
 	int32 hitTestScene(const Common::Point pt, HitType &type);
-	/** .text:00408980
-	 * Determine if the supplied point intersects
-	 * an action area's active region
-	 */
-	int32 findActionArea(const Common::Point pt);
+
 	/** .text:0040EAA0
 	 * Check if a barrier exist at the supplied coordinates.
 	 * If so, return it's index within the barriers array, if not,

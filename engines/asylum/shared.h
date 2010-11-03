@@ -56,7 +56,6 @@ typedef int ResourceId;
 
 enum ResourceIdEnum {
 	kResourceNone            = 0,
-	kResourceSpeech_453      = 0x1C5,
 	kResourceSpeech_8000050A = 0x8000050A,
 	kResourceMusic_80020000  = 0x80020000,
 	kResourceMusic_80020001  = 0x80020001,

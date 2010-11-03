@@ -37,14 +37,15 @@
 namespace Asylum {
 
 Actor::Actor(Scene *scene, ActorIndex index) : _scene(scene), _index(index) {
+	// TODO Init all variables
 
-	// Update private variables
+	// update-related variables
 	_actorUpdateCounter = 0;
 	_enableFromStatus7 = false;
 }
 
 Actor::~Actor() {
-
+	// TODO destroy data
 
 	// Zero passed pointers
 	_scene = NULL;
@@ -207,10 +208,9 @@ void Actor::update() {
 					}
 				} else {
 					if (_scene->vm()->isGameFlagSet(kGameFlag556)) {
-						Sound *sound  = _scene->vm()->sound();
 						Actor *player = _scene->getActor();
 
-						sound->playSpeech(kResourceSpeech_453);
+						_scene->speech()->play(453);
 						setVisible(false);
 
 						player->updateStatus(kActorStatus3);
@@ -232,6 +232,7 @@ void Actor::update() {
 						player->setFrameNumber(0);
 						_scene->getActor(0)->setTickValue(_scene->vm()->getTick());
 
+						Sound *sound  = _scene->vm()->sound();
 						if (sound->isCacheOk())
 							sound->playMusic(_scene->getResourcePack(), kResourceMusic_80020001);
 
@@ -314,14 +315,14 @@ void Actor::update() {
 	case kActorStatusDisabled:
 		_frameNumber = (_frameNumber + 1) % _frameCount;
 
-		if (_scene->vm()->getTick() - _tickValue > 300) {
+		if (_scene->vm()->globalTickValue - _tickValue > 300) {
 			if (_scene->vm()->getRandom(100) < 50) {
 				if (!_scene->vm()->sound()->soundResourceId || !_scene->vm()->sound()->isPlaying(_scene->vm()->sound()->soundResourceId)) {
 					if (isDefaultDirection(10))
 						updateStatus(kActorStatus9);
 				}
 			}
-			_tickValue = _scene->vm()->getTick();
+			_tickValue = _scene->vm()->globalTickValue;
 		}
 		break;
 
@@ -740,46 +741,75 @@ void Actor::updateStatus3_19() {
 }
 
 void Actor::updateStatusEnabled() {
-	// TODO make sure this is right
 	_frameNumber = (_frameNumber + 1) % _frameCount;
-	if (_scene->vm()->getTick() - _tickValue > 300) {
-		// TODO
-		// Check if the actor's name is "Crow"?
-		if (_scene->vm()->getRandom(100) < 50) {
-			// TODO
-			// Check if soundResourceId04 is assigned, and if so,
-			// if it's playing
-			// If true, check characterSub407260(10)
-			// and if that's true, do characterDirection(9)
+
+	// Actor: Crow
+	if (_scene->vm()->globalTickValue - _tickValue > 300) {
+		if (strcmp(_name, "Crow")) {
+			if (_scene->vm()->getRandom(100) < 50
+			 && (!_scene->vm()->sound()->soundResourceId || !_scene->vm()->sound()->isPlaying(_scene->vm()->sound()->soundResourceId))
+			 && isDefaultDirection(10))
+				updateStatus(kActorStatus9);
+
+			_tickValue = _scene->vm()->globalTickValue;
 		}
 	}
 
-	// if act == getActor()
-	if (_scene->vm()->tempTick07) {
-		if (_scene->vm()->getTick() - _scene->vm()->tempTick07 > 500) {
-			if (_scene->vm()->isGameFlagNotSet(kGameFlagScriptProcessing)) { // processing action list
-				if (isVisible()) {
-					// if some_encounter_flag
-					// if !soundResourceId04
-					if (_scene->vm()->getRandom(100) < 50) {
-						if (_scene->getSceneIndex() == 13) {
-							; // sub414810(507)
-						} else {
-							; // sub4146d0(4)
-						}
-					}
+	// Actor: Player
+	if (_index == _scene->getPlayerActorIndex()) {
+		if (_scene->vm()->globalTickValue_2 && (_scene->vm()->globalTickValue - _scene->vm()->globalTickValue_2) > 500) {
+
+			if (_scene->vm()->isGameFlagNotSet(kGameFlagScriptProcessing)
+			 && isVisible()
+			 && !_scene->vm()->encounter()->getFlag(kEncounterFlag2)
+			 && !_scene->vm()->sound()->soundResourceId) {
+				if (_scene->vm()->getRandom(100) < 50) {
+					if (_scene->worldstats()->numChapter == 13)
+						_scene->speech()->play(507);
+					else
+						_scene->playSpeech(4);
 				}
 			}
+			_tickValue = _scene->vm()->globalTickValue;
+			_scene->vm()->globalTickValue_2 = _scene->vm()->globalTickValue;
 		}
-		_tickValue = _scene->vm()->getTick();
+
+		return;
 	}
-	// else
-	// TODO now there's something to do with the
-	// character's name and "Big Crow", or "Crow".
-	// Quite a bit of work to do yet, but it only seems to
-	// take effect when the character index doesn't equal
-	// the currentPlayerIndex (so I'm guessing this is a
-	// one off situation).
+
+	// Actor:: BigCrow
+	if (strcmp(_name, "Big Crow")) {
+		error("[Actor::updateStatusEnabled] Big Crow logic not implemented!");
+		return;
+	}
+
+	// All other actors
+	if (_scene->vm()->getRandom(10) < 5) {
+		switch (_scene->vm()->getRandom(4)) {
+		default:
+			break;
+
+		case 0:
+			setPosition(10, 1350, 0, 0);
+			processStatus(1460, -100, false);
+			break;
+
+		case 1:
+			setPosition(300, 0, 0, 0);
+			processStatus(1700, 1400, false);
+			break;
+
+		case 2:
+			setPosition(1560, -100, 0, 0);
+			processStatus(-300, 1470, false);
+			break;
+
+		case 3:
+			setPosition(1150, 1400, 0, 0);
+			processStatus(-250, 0, false);
+			break;
+		}
+	}
 }
 
 void Actor::updateStatus9() {
@@ -851,7 +881,29 @@ void Actor::updateStatus21() {
 }
 
 void Actor::updateFinish() {
-	error("[Actor::updateFinish] not implemented!");
+	if (_field_944 == 4 || !isVisible())
+		return;
+
+	int32 areaIndex = _scene->findActionArea(Common::Point(x2 + x1, y2 + y1));
+	if (areaIndex == _actionIdx3 || areaIndex == -1)
+		return;
+
+	ActionArea *area = _scene->worldstats()->actions[areaIndex];
+	ActionArea *actorArea = _scene->worldstats()->actions[_actionIdx3];
+	if (!_scene->actions()->isProcessingSkipped()) {
+		_scene->actions()->queueScript(actorArea->actionListIdx2, _index);
+		_scene->actions()->queueScript(area->scriptIndex, _index);
+	}
+
+	if (!area->paletteValue || area->paletteValue == actorArea->paletteValue || _index) {
+		if (area->paletteValue != actorArea->paletteValue && !_index)
+			_scene->vm()->screen()->startPaletteFade(area->paletteValue, 50, 3);
+
+		_actionIdx3 = areaIndex;
+	} else {
+		_scene->vm()->screen()->startPaletteFade(area->paletteValue, 50, 3);
+		_actionIdx3 = areaIndex;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
