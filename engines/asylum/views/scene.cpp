@@ -382,7 +382,7 @@ void Scene::enterScene() {
 	if (!_titleLoaded) {
 		_title = new SceneTitle(this);
 		// disable input polling
-		_actions->allowInput = false;
+		_actions->_allowInput = false;
 	} else {
 #endif
 		_vm->screen()->setPalette(_resPack, _ws->palette);
@@ -438,12 +438,12 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 		break;
 
 	case Common::EVENT_LBUTTONUP:
-		if (_actions->allowInput)
+		if (_actions->doesAllowInput())
 			_leftClick = true;
 		break;
 
 	case Common::EVENT_RBUTTONUP:
-		if (_actions->allowInput) {
+		if (_actions->doesAllowInput()) {
 			// TODO This isn't always going to be the magnifying glass
 			// Should check the current pointer region to identify the type
 			// of cursor to use
@@ -453,13 +453,13 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 		break;
 
 	case Common::EVENT_RBUTTONDOWN:
-		if (_actions->allowInput)
+		if (_actions->doesAllowInput())
 			_rightButton = true;
 		break;
 
 	default:
 		break;
-	
+
 	}
 
 	// FIXME just updating because a left click event
@@ -534,7 +534,7 @@ int Scene::updateScene() {
 
 	// Adjust Screen
 	startTick = _vm->getTick();
-	
+
 	if (g_debugScrolling) { // DEBUG ScreenScrolling
 		debugScreenScrolling(_bgResource->getFrame(0));
 	} else {

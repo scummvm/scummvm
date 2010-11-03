@@ -119,7 +119,7 @@ bool Console::cmdPlayVideo(int32 argc, const char **argv) {
 		return true;
 	}
 
-	_vm->scene()->actions()->delayedVideoIndex = atoi(argv[1]);
+	_vm->scene()->actions()->setDelayedVideoIndex(atoi(argv[1]));
 
 	return false;
 }
@@ -146,7 +146,7 @@ bool Console::cmdChangeScene(int32 argc, const char **argv) {
 		return true;
 	}
 
-	_vm->scene()->actions()->delayedSceneIndex = atoi(argv[1]);
+	_vm->scene()->actions()->setDelayedSceneIndex(atoi(argv[1]));
 	// FIXME push the script index into the script queue
 	// XXX is this right or should it be ws->actionListIdx???
 	//_vm->scene()->actions()->setScriptByIndex(0);
