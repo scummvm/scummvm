@@ -117,7 +117,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 }
 
 void Scene::initialize() {
-	_vm->setGameFlag(183);
+	_vm->setGameFlag(kGameFlagScriptProcessing);
 
 	_playerActorIdx = 0;
 
@@ -345,7 +345,7 @@ void Scene::update() {
 		} else {
 			_speech->_textResIdx = 0;
 			_speech->_soundResIdx = 0;
-			_vm->clearGameFlag(219);
+			_vm->clearGameFlag(kGameFlag219);
 		}
 }
 }
@@ -930,14 +930,14 @@ void Scene::updateAmbientSounds() {
 		AmbientSoundItem *snd = &_ws->ambientSounds[i];
 
 		for (int32 f = 0; f < 6; f++) {
-			int gameFlag = snd->flagNum[f];
+			GameFlag gameFlag = snd->flagNum[f];
 			if (gameFlag >= 0) {
 				if (_vm->isGameFlagNotSet(gameFlag)) {
 					processSound = false;
 					break;
 				}
 			} else {
-				if (_vm->isGameFlagSet(-gameFlag)) {
+				if (_vm->isGameFlagSet((GameFlag)-gameFlag)) {
 					processSound = false;
 					break;
 				}

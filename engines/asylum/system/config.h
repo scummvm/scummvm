@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_CONFIGURATIONMANAGER_H_
-#define ASYLUM_CONFIGURATIONMANAGER_H_
+#ifndef ASYLUM_CONFIGURATIONMANAGER_H
+#define ASYLUM_CONFIGURATIONMANAGER_H
 
 #include "common/array.h"
 #include "common/singleton.h"

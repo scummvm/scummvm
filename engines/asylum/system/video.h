@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_VIDEO_H_
-#define ASYLUM_VIDEO_H_
+#ifndef ASYLUM_VIDEO_H
+#define ASYLUM_VIDEO_H
 
 #include "sound/mixer.h"
 #include "graphics/surface.h"

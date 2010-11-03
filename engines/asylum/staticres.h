@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_STATICRES_H_
-#define ASYLUM_STATICRES_H_
+#ifndef ASYLUM_STATICRES_H
+#define ASYLUM_STATICRES_H
 
 namespace Asylum {
 
@@ -107,4 +107,4 @@ const uint8 angleTable03[256] = {
 
 } // end of namespace Asylum
 
-#endif /* ASYLUM_STATICRES_H_ */
+#endif /* ASYLUM_STATICRES_H */

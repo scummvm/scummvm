@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_POLYGONS_H_
-#define ASYLUM_POLYGONS_H_
+#ifndef ASYLUM_POLYGONS_H
+#define ASYLUM_POLYGONS_H
 
 #include "common/array.h"
 #include "common/rect.h"

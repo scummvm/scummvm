@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_MENU_H_
-#define ASYLUM_MENU_H_
+#ifndef ASYLUM_MENU_H
+#define ASYLUM_MENU_H
 
 #include "common/events.h"
 

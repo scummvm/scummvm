@@ -23,12 +23,13 @@
  *
  */
 
-#ifndef ASYLUM_SOUND_H_
-#define ASYLUM_SOUND_H_
-
-#include "sound/mixer.h"
+#ifndef ASYLUM_SOUND_H
+#define ASYLUM_SOUND_H
 
 #include "asylum/respack.h"
+#include "asylum/shared.h"
+
+#include "sound/mixer.h"
 
 namespace Asylum {
 
@@ -57,7 +58,7 @@ typedef struct AmbientSoundItem {
 	int32 field_C;
 	int32 field_10;
 	int32 field_14;
-	int32    flagNum[6];
+	GameFlag flagNum[6];
 	int32 x;
 	int32 y;
 

@@ -184,7 +184,7 @@ bool ActionList::process() {
 	_waitCycle     = false;
 	_lineIncrement = 1;
 
-	_scene->vm()->setGameFlag(183);
+	_scene->vm()->setGameFlag(kGameFlagScriptProcessing);
 
 	if (_currentScript)
 		while (!_done && !_waitCycle) {
@@ -227,7 +227,7 @@ bool ActionList::process() {
 		}
 	}
 
-	_scene->vm()->clearGameFlag(183);
+	_scene->vm()->clearGameFlag(kGameFlagScriptProcessing);
 
 	return false;
 }
@@ -282,7 +282,7 @@ IMPLEMENT_OPCODE(Return) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x01
 IMPLEMENT_OPCODE(SetGameFlag) {
-	int flagNum = cmd->param1;
+	GameFlag flagNum = (GameFlag)cmd->param1;
 
 	if (flagNum >= 0)
 		_scene->vm()->setGameFlag(flagNum);
@@ -291,7 +291,7 @@ IMPLEMENT_OPCODE(SetGameFlag) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x02
 IMPLEMENT_OPCODE(ClearGameFlag) {
-	int flagNum = cmd->param1;
+	GameFlag flagNum = (GameFlag)cmd->param1;
 
 	if (flagNum >= 0)
 		_scene->vm()->clearGameFlag(flagNum);
@@ -300,7 +300,7 @@ IMPLEMENT_OPCODE(ClearGameFlag) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x03
 IMPLEMENT_OPCODE(ToggleGameFlag) {
-	int flagNum = cmd->param1;
+	GameFlag flagNum = (GameFlag)cmd->param1;
 
 	if (flagNum >= 0)
 		_scene->vm()->toggleGameFlag(flagNum);
@@ -309,7 +309,7 @@ IMPLEMENT_OPCODE(ToggleGameFlag) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x04
 IMPLEMENT_OPCODE(JumpIfGameFlag) {
-	int flagNum = cmd->param1;
+	GameFlag flagNum = (GameFlag)cmd->param1;
 
 	if (flagNum) {
 		bool doJump = _scene->vm()->isGameFlagSet(flagNum);
@@ -922,7 +922,7 @@ IMPLEMENT_OPCODE(PlaySpeech) {
 		cmd->param5 = _scene->speech()->play(cmd->param1);
 
 		if (cmd->param2) {
-			_scene->vm()->setGameFlag(183);
+			_scene->vm()->setGameFlag(kGameFlagScriptProcessing);
 			cmd->param4 = 2;
 			if (cmd->param6) {
 				_scene->vm()->setFlag(kFlagType1);
@@ -932,14 +932,14 @@ IMPLEMENT_OPCODE(PlaySpeech) {
 		}
 
 		if (cmd->param3 && !cmd->param6)
-			_scene->vm()->setGameFlag(219);
+			_scene->vm()->setGameFlag(kGameFlag219);
 	}
 
 	if (_scene->vm()->sound()->isPlaying(cmd->param5)) {
 		_lineIncrement = 1;
 	}
 
-	_scene->vm()->clearGameFlag(183);
+	_scene->vm()->clearGameFlag(kGameFlagScriptProcessing);
 	cmd->param4 = 0;
 
 	if (cmd->param3) {
@@ -947,7 +947,7 @@ IMPLEMENT_OPCODE(PlaySpeech) {
 			_scene->vm()->clearFlag(kFlagType1);
 			_scene->vm()->clearFlag(kFlagType2);
 		} else {
-			_scene->vm()->clearGameFlag(219);
+			_scene->vm()->clearGameFlag(kGameFlag219);
 		}
 	}
 

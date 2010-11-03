@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_RESOURCEPACK_H_
-#define ASYLUM_RESOURCEPACK_H_
+#ifndef ASYLUM_RESOURCEPACK_H
+#define ASYLUM_RESOURCEPACK_H
 
 #include "common/array.h"
 #include "common/file.h"

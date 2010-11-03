@@ -23,53 +23,22 @@
  *
  */
 
-#ifndef ASYLUM_ENCOUNTERS_H
-#define ASYLUM_ENCOUNTERS_H
-
-#include "common/array.h"
-#include "asylum/scene.h"
+#ifndef ASYLUM_SHARED_H
+#define ASYLUM_SHARED_H
 
 namespace Asylum {
 
-typedef struct EncounterItem {
-	int32 keywordIndex;
-	int32 field2;
-	int32 scriptResId;
-	int32 array[50];
-	int16 value;
-} EncounterItem;
+enum GameFlag {
+	kGameFlag4 = 4,
+	kGameFlag12 = 12,
+	kGameFlagScriptProcessing     = 183,
+	kGameFlagCommentLeavingCell   = 214,
+	kGameFlag219                  = 219,
+	kGameFlagSolveVCRBlowUpPuzzle = 220,
+	kGameFlag279                  = 279,
+	kGameFlagFinishGame           = 901
+};
 
-typedef struct EncounterStruct {
-	int32 x1;
-	int32 y1;
-	int32 x2;
-	int32 y2;
-	int32 frameNum;
-	int32 transTableNum;
-	int32 status;
-	int32 grResId;
-} EncounterStruct;
+} // End of namespace Asylum
 
-class Encounter {
-public:
-	Encounter(Scene *scene);
-	virtual ~Encounter();
-
-	void setVariable(int32 idx, int32 value) {
-		_variables[idx] = value;
-	}
-	void run(int32 encounterIdx, int32 barrierId1, int32 barrierId2, int32 characterIdx);
-
-private:
-	int16 *_variables;
-	int16 _anvilStyleFlag;
-
-	EncounterItem *_currentEncounter;
-	Common::Array<EncounterItem> _items;
-	Scene *_scene;
-
-}; // end of class Encounter
-
-} // end of namespace Asylum
-
-#endif
+#endif // ASYLUM_SHARED_H

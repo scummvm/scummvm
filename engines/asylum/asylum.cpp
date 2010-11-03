@@ -173,8 +173,8 @@ void AsylumEngine::startGame() {
 	// Enter first scene
 	if(!_introPlaying)
 	{
-		setGameFlag(4);
-		setGameFlag(12);
+		setGameFlag(kGameFlag4);
+		setGameFlag(kGameFlag12);
 		_scene->enterScene();
 	}
 }
@@ -190,8 +190,8 @@ void AsylumEngine::playIntro() {
 
 	_screen->clearScreen();
 
-	setGameFlag(4);
-	setGameFlag(12);
+	setGameFlag(kGameFlag4);
+	setGameFlag(kGameFlag12);
 
 	// Play the intro sound sample (the screen is blacked out, you hear
 	// an alarm sounding and men talking about.
@@ -313,7 +313,7 @@ void AsylumEngine::processDelayedEvents() {
 	int sceneIdx = _scene->actions()->getDelayedSceneIndex();
 	// XXX Flag 183 indicates whether the actionlist is currently
 	// processing
-	if (sceneIdx >= 0 && isGameFlagNotSet(183)) {
+	if (sceneIdx >= 0 && isGameFlagNotSet(kGameFlagScriptProcessing)) {
 		_sound->stopMusic();
 		_sound->stopAllSounds();
 
@@ -330,23 +330,23 @@ void AsylumEngine::processDelayedEvents() {
 //////////////////////////////////////////////////////////////////////////
 // Game flags
 //////////////////////////////////////////////////////////////////////////
-void AsylumEngine::setGameFlag(int flag) {
+void AsylumEngine::setGameFlag(GameFlag flag) {
 	_gameFlags[flag / 32] |= 1 << flag % -32;
 }
 
-void AsylumEngine::clearGameFlag(int flag) {
+void AsylumEngine::clearGameFlag(GameFlag flag) {
 	_gameFlags[flag / 32] &= ~(1 << flag % -32);
 }
 
-void AsylumEngine::toggleGameFlag(int flag) {
+void AsylumEngine::toggleGameFlag(GameFlag flag) {
 	_gameFlags[flag / 32] ^= 1 << flag % -32;
 }
 
-bool AsylumEngine::isGameFlagSet(int flag) {
+bool AsylumEngine::isGameFlagSet(GameFlag flag) {
 	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 != 0;
 }
 
-bool AsylumEngine::isGameFlagNotSet(int flag) {
+bool AsylumEngine::isGameFlagNotSet(GameFlag flag) {
 	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 == 0;
 }
 

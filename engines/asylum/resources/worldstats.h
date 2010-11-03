@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_WORLDSTATS_H_
-#define ASYLUM_WORLDSTATS_H_
+#ifndef ASYLUM_WORLDSTATS_H
+#define ASYLUM_WORLDSTATS_H
 
 #include "common/rect.h"
 #include "common/array.h"

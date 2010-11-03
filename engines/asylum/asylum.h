@@ -27,6 +27,7 @@
 #define ASYLUM_ENGINE_H
 
 #include "asylum/console.h"
+#include "asylum/shared.h"
 
 #include "common/random.h"
 #include "common/scummsys.h"
@@ -57,11 +58,6 @@
  */
 namespace Asylum {
 
-enum FlagType {
-	kFlagType1 = 0,
-	kFlagType2
-};
-
 // XXX
 // If defined, this will play the scene title loading up
 // progress before the scene is entered. This is
@@ -85,6 +81,13 @@ enum FlagType {
 #else
 #define LOBYTE(word) ((word >> 24) & 0xFF)
 #endif
+
+//////////////////////////////////////////////////////////////////////////
+// Flags
+enum FlagType {
+	kFlagType1 = 0,
+	kFlagType2
+};
 
 class Encounter;
 class MainMenu;
@@ -131,11 +134,11 @@ public:
 	Text* text()     { return _text; }
 
 	// Flags
-	void setGameFlag(int flag);
-	void clearGameFlag(int flag);
-	void toggleGameFlag(int flag);
-	bool isGameFlagSet(int flag);
-	bool isGameFlagNotSet(int flag);
+	void setGameFlag(GameFlag flag);
+	void clearGameFlag(GameFlag flag);
+	void toggleGameFlag(GameFlag flag);
+	bool isGameFlagSet(GameFlag flag);
+	bool isGameFlagNotSet(GameFlag flag);
 
 	// Misc
 	uint getRandom(uint max) { return _rnd.getRandomNumber(max); }
