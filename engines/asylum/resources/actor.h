@@ -23,17 +23,46 @@
  *
  */
 
-#ifndef ASYLUM_ACTOR_H_
-#define ASYLUM_ACTOR_H_
+#ifndef ASYLUM_ACTOR_H
+#define ASYLUM_ACTOR_H
+
+#include "asylum/system/graphics.h"
 
 #include "asylum/respack.h"
-#include "asylum/system/graphics.h"
 
 namespace Asylum {
 
 class Scene;
 class Screen;
 class ActionArea;
+
+typedef int ActorIndex;
+
+enum ActorStatus {
+	kActorStatus1 = 1,
+	kActorStatus2,
+	kActorStatus3,
+	kActorStatusEnabled,
+	kActorStatusDisabled,
+	kActorStatus6,
+	kActorStatus7,
+	kActorStatus8,
+	kActorStatus9,
+	kActorStatus10,
+	kActorStatus11,
+	kActorStatus12,
+	kActorStatus13,
+	kActorStatus14,
+	kActorStatus15,
+	kActorStatus16,
+	kActorStatus17,
+	kActorStatus18,
+	kActorStatus19,
+	kActorStatus20,
+	kActorStatus21
+};
+
+typedef int ActorDirection;
 
 // TODO: check if the names match the actor type
 enum ActorType {
@@ -162,11 +191,17 @@ public:
 
 	void faceTarget(int32 targetId, int32 targetType);
 
+	void update();
+
 	/** .text:00401320
 	 * TODO
 	 */
-	void updateActor_401320();
+	void updateDirection();
+	void setDirection(ActorDirection direction);
 
+	void updateStatus(ActorStatus status);
+
+	bool defaultDirectionLoaded(int grResTableIdx);
 
 	// FIXME
 	// I don't really like how this is used in the scene constructor
@@ -186,6 +221,9 @@ public:
 	void drawActor();
 	void walkTo(int32 curX, int32 curY);
 
+
+	void stopSound();
+
 	int32 currentAction; // TODO depreciate
 
 	int32  x;
@@ -199,9 +237,9 @@ public:
 	int32  x2;
 	int32  y2;
 	Common::Rect boundingRect;
-	int32  direction;
+	ActorDirection direction;
 	int32  field_3C;
-	int32  updateType;
+	ActorStatus status;
 	int32  field_44;
 	int32  priority;
 	int32  flags;
@@ -266,6 +304,9 @@ private:
 	ResourcePack    *_resPack;
 	GraphicResource *_graphic;
 	ActionArea      *_currentWalkArea;
+
+	// Our current index
+	ActorIndex _index;
 
 	GraphicFrame *getFrame();
 	int32 getAngle(int32 ax1, int32 ay1, int32 ax2, int32 ay2);

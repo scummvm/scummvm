@@ -53,7 +53,7 @@ int32 Barrier::getRandomId() {
 }
 
 int32 Barrier::checkFlags() {
-	return flags & 1 && (flags & 8 || flags & 0x10000);
+	return (flags & 1) && (flags & 8 || flags & 0x10000);
 }
 
 void Barrier::setNextFrame(int32 targetFlags) {
