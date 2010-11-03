@@ -116,17 +116,18 @@ protected:
 	};
 	
 	struct SavegameItem {
-		Common::String _filename;
+		int _slotNum;
 		Common::String _description;
 		SavegameItem()
-			: _filename(""), _description("") {}
-		SavegameItem(Common::String filename, Common::String description)
-			: _filename(filename), _description(description) {}
+			: _slotNum(-1), _description("") {}
+		SavegameItem(int slotNum, Common::String description)
+			: _slotNum(slotNum), _description(description) {}
 	};
 
 	PictureEngine *_vm;
 	Graphics::Surface *_background;
 
+	bool _running;
 	MenuID _currMenuID, _newMenuID;
 	ItemID _currItemID;
 	int _top;
@@ -163,7 +164,9 @@ protected:
 	void shadeRect(int x, int y, int w, int h, byte color1, byte color2);
 	void drawString(int16 x, int16 y, int w, uint fontNum, byte color, const char *text);
 
-	void initSavegames();
+	SavegameItem *getSavegameItemByID(ItemID id);
+
+	int loadSavegamesList();
 	void setSavegameCaptions();
 	void scrollSavegames(int delta);
 	void clickSavegameItem(ItemID id);

@@ -111,6 +111,8 @@ public:
 	const Common::String& getTargetName() const { return _targetName; }
 
 	void setupSysStrings();
+	void requestSavegame(int slotNum, Common::String &description);
+	void requestLoadgame(int slotNum);
 
 	void loadScene(uint resIndex);
 
@@ -149,6 +151,10 @@ public:
 	Sound *_sound;
 
 	Common::String _sysStrings[kSysStrCount];
+
+	int _saveLoadRequested;
+	int _saveLoadSlot;
+	Common::String _saveLoadDescription;
 
 	uint _sceneResIndex;
 	int16 _sceneWidth, _sceneHeight;

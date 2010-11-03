@@ -185,6 +185,7 @@ public:
 	// Sprite drawing
 	void drawSprite(const SpriteDrawItem &sprite);
 	void drawSpriteCore(byte *dest, SpriteFilter &reader, const SpriteDrawItem &sprite);
+	void blastSprite(int16 x, int16 y, int16 fragmentId, int16 resIndex, uint16 flags);
 
 	// Verb line
 	void updateVerbLine(int16 slotIndex, int16 slotOffset);
@@ -254,6 +255,7 @@ public:
 	bool _fullRefresh;
 	bool _guiRefresh;
 
+	bool createSpriteDrawItem(const DrawRequest &drawRequest, SpriteDrawItem &sprite);
 	void addDrawRequest(const DrawRequest &drawRequest);
 
 };

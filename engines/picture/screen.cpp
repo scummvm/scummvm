@@ -72,7 +72,7 @@ Screen::Screen(PictureEngine *vm) : _vm(vm) {
 	// Talk text
 	_talkTextItemNum = 0;
 	memset(_talkTextItems, 0, sizeof(_talkTextItems));
-	_talkTextX = 0;//TODO correct init values
+	_talkTextX = 0;
 	_talkTextY = 0;
 	_talkTextFontColor = 0;
 	_talkTextMaxWidth = 520;
@@ -204,7 +204,7 @@ void Screen::addStaticSprite(byte *spriteItem) {
 	drawRequest.flags = READ_LE_UINT16(spriteItem + 8);
 	drawRequest.scaling = 0;
 
-	//debug(0, "Screen::addStaticSprite() x = %d; y = %d; baseColor = %d; resIndex = %d; flags = %04X", drawRequest.x, drawRequest.y, drawRequest.baseColor, drawRequest.resIndex, drawRequest.flags);
+	debug(0, "Screen::addStaticSprite() x = %d; y = %d; baseColor = %d; resIndex = %d; flags = %04X", drawRequest.x, drawRequest.y, drawRequest.baseColor, drawRequest.resIndex, drawRequest.flags);
 
 	addDrawRequest(drawRequest);
 
@@ -270,6 +270,26 @@ void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, i
 }
 
 void Screen::clearSprites() {
+
+}
+
+void Screen::blastSprite(int16 x, int16 y, int16 fragmentId, int16 resIndex, uint16 flags) {
+
+	DrawRequest drawRequest;
+	SpriteDrawItem sprite;
+
+	drawRequest.x = x;
+	drawRequest.y = y;
+	drawRequest.baseColor = _vm->_palette->findFragment(fragmentId) & 0xFF;
+	drawRequest.resIndex = resIndex;
+	drawRequest.flags = flags;
+	drawRequest.scaling = 0;
+
+	if (createSpriteDrawItem(drawRequest, sprite)) {
+		sprite.x -= _vm->_cameraX;
+		sprite.y -= _vm->_cameraY;
+		drawSprite(sprite);
+	}
 
 }
 

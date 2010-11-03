@@ -37,16 +37,27 @@
 #include "picture/picture.h"
 #include "picture/menu.h"
 #include "picture/palette.h"
+#include "picture/render.h"
 #include "picture/resource.h"
 #include "picture/screen.h"
 
 namespace Picture {
 
 MenuSystem::MenuSystem(PictureEngine *vm) : _vm(vm) {
+}
+
+MenuSystem::~MenuSystem() {
+}
+
+int MenuSystem::run() {
+
+	debug("MenuSystem::run()");
+
+	_background = new Graphics::Surface();
+	_background->create(640, 400, 1);
+
 	_currMenuID = kMenuIdNone;
 	_newMenuID = kMenuIdMain;
-	_newMenuID = kMenuIdSave;
-	_newMenuID = kMenuIdLoad;
 	_currItemID = kItemIdNone;
 	_editingDescription = false;
 	_needRedraw = false;
@@ -57,32 +68,23 @@ MenuSystem::MenuSystem(PictureEngine *vm) : _vm(vm) {
 	_cfgMusicVolume = 10;
 	_cfgSoundFXVolume = 10;
 	_cfgBackgroundVolume = 10;
-}
-
-MenuSystem::~MenuSystem() {
-}
-
-int MenuSystem::run() {
-
-	_background = new Graphics::Surface();
-	_background->create(640, 400, 1);
-
+	_running = true;    	
 	_top = 30 - _vm->_guiHeight / 2;
 	_needRedraw = false;
 
-	memset(_vm->_screen->_frontScreen, 250, 640 * 400);
+	// TODO: buildColorTransTable2
+	_vm->_palette->buildColorTransTable(0, 16, 7);
+
+	_vm->_screen->_renderQueue->clear();
+	_vm->_screen->blastSprite(0x140 + _vm->_cameraX, 0x175 + _vm->_cameraY, 0, 1, 0x4000);
 
 	memcpy(_background->pixels, _vm->_screen->_frontScreen, 640 * 400);
 
-	_vm->_palette->buildColorTransTable(0, 16, 7);
-
 	shadeRect(60, 39, 520, 246, 30, 94);
 
-	_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
-
-	while (1) {
+	while (_running) {
 		update();
-		_vm->updateScreen();
+		_vm->_system->updateScreen();
 	}
 	
 	delete _background;
@@ -101,7 +103,8 @@ void MenuSystem::update() {
 	handleEvents();
 
 	if (_needRedraw) {
-		_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen + 39 * 640 + 60, 640, 60, 39, 520, 247);
+		//_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen + 39 * 640 + 60, 640, 60, 39, 520, 247);
+		_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
 		debug("redraw");
 		_needRedraw = false;
 	}
@@ -120,7 +123,7 @@ void MenuSystem::handleEvents() {
 			handleKeyDown(event.kbd);
 			break;
 		case Common::EVENT_QUIT:
-			// TODO: quitGame();
+			_running = false;
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			handleMouseMove(event.mouse.x, event.mouse.y);
@@ -189,8 +192,12 @@ void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
 			setItemCaption(_editingDescriptionItem, _editingDescriptionItem->caption.c_str());
 			drawItem(_editingDescriptionID, true);
 		} else if (kbd.keycode == Common::KEYCODE_RETURN) {
+			SavegameItem *savegameItem = getSavegameItemByID(_editingDescriptionID);
 			_editingDescription = false;
-			_newMenuID = kMenuIdMain;
+			_vm->requestSavegame(savegameItem->_slotNum, _editingDescriptionItem->caption);
+			_running = false;
+		} else if (kbd.keycode == Common::KEYCODE_ESCAPE) {
+			_editingDescription = false;
 		}
 	}
 }
@@ -224,6 +231,8 @@ void MenuSystem::setItemCaption(Item *item, const char *caption) {
 
 void MenuSystem::initMenu(MenuID menuID) {
 
+	int newSlotNum;
+
 	_items.clear();
 
 	memcpy(_vm->_screen->_frontScreen, _background->pixels, 640 * 400);
@@ -251,7 +260,7 @@ void MenuSystem::initMenu(MenuID menuID) {
 		addClickTextItem(kItemIdSavegame5, 0, 115 + 20 * 4, 300, 0, "SAVEGAME 5", 231, 234);
 		addClickTextItem(kItemIdSavegame6, 0, 115 + 20 * 5, 300, 0, "SAVEGAME 6", 231, 234);
 		addClickTextItem(kItemIdSavegame7, 0, 115 + 20 * 6, 300, 0, "SAVEGAME 7", 231, 234);
-		initSavegames();
+		loadSavegamesList();
 		setSavegameCaptions();
 		break;
 	case kMenuIdSave:
@@ -266,8 +275,8 @@ void MenuSystem::initMenu(MenuID menuID) {
 		addClickTextItem(kItemIdSavegame5, 0, 115 + 20 * 4, 300, 0, "SAVEGAME 5", 231, 234);
 		addClickTextItem(kItemIdSavegame6, 0, 115 + 20 * 5, 300, 0, "SAVEGAME 6", 231, 234);
 		addClickTextItem(kItemIdSavegame7, 0, 115 + 20 * 6, 300, 0, "SAVEGAME 7", 231, 234);
-		initSavegames();
-		_savegames.push_back(SavegameItem("", Common::String::printf("GAME %03d", _savegames.size() + 1)));
+		newSlotNum = loadSavegamesList() + 1;
+		_savegames.push_back(SavegameItem(newSlotNum, Common::String::printf("GAME %03d", _savegames.size() + 1)));
 		setSavegameCaptions();
 		break;
 	case kMenuIdVolumes:
@@ -339,6 +348,7 @@ void MenuSystem::clickItem(ItemID id) {
 		break;
 	case kItemIdPlay:
 		debug("kItemIdPlay");
+		_running = false;
 		break;
 	case kItemIdQuit:
 		debug("kItemIdQuit");
@@ -412,6 +422,7 @@ void MenuSystem::restoreRect(int x, int y, int w, int h) {
 }
 
 void MenuSystem::shadeRect(int x, int y, int w, int h, byte color1, byte color2) {
+#if 0
 	byte *src = (byte*)_background->getBasePtr(x, y);
 	for (int xc = 0; xc < w; xc++) {
 		src[xc] = color1;
@@ -428,6 +439,20 @@ void MenuSystem::shadeRect(int x, int y, int w, int h, byte color1, byte color2)
 		}
 		src += 640;
 	}
+#endif	
+	byte *src = (byte*)_background->getBasePtr(x, y);
+	for (int xc = 0; xc < w; xc++) {
+		src[xc] = color2;
+		src[xc + h * 640] = color1;
+	}
+	src += 640;
+	w -= 1;
+	h -= 1;
+	while (h--) {
+		src[0] = color2;
+		src[w] = color1;
+		src += 640;
+	}
 }
 
 void MenuSystem::drawString(int16 x, int16 y, int w, uint fontNum, byte color, const char *text) {
@@ -440,11 +465,13 @@ void MenuSystem::drawString(int16 x, int16 y, int w, uint fontNum, byte color, c
 	_needRedraw = true;
 }
 
-void MenuSystem::initSavegames() {
+int MenuSystem::loadSavegamesList() {
+
+	int maxSlotNum = -1;
 
 	_savegameListTopIndex = 0;
 	_savegames.clear();
-	
+
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Picture::PictureEngine::SaveHeader header;
 	Common::String pattern = _vm->getTargetName();
@@ -455,32 +482,45 @@ void MenuSystem::initSavegames() {
 	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
-		Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
-		if (in) {
-			if (_vm->readSaveHeader(in, false, header) == Picture::PictureEngine::kRSHENoError) {
-				_savegames.push_back(SavegameItem(*file, header.description));
-				debug("%s -> %s", file->c_str(), header.description.c_str());
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+		if (slotNum > maxSlotNum)
+			maxSlotNum = slotNum;
+
+		if (slotNum >= 0 && slotNum <= 999) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				if (Picture::PictureEngine::readSaveHeader(in, false, header) == Picture::PictureEngine::kRSHENoError) {
+					_savegames.push_back(SavegameItem(slotNum, header.description));
+					debug("%s -> %s", file->c_str(), header.description.c_str());
+				}
+				delete in;
 			}
-			delete in;
 		}
 	}
 
-#if 0
-	// DEBUG: Add some more items
-	_savegames.push_back(SavegameItem("abc", "Test 1"));
-	_savegames.push_back(SavegameItem("abc", "Test 2"));
-	_savegames.push_back(SavegameItem("abc", "Test 3"));
-	_savegames.push_back(SavegameItem("abc", "Test 4"));
-	_savegames.push_back(SavegameItem("abc", "Test 5"));
-	_savegames.push_back(SavegameItem("abc", "Test 6"));
-	_savegames.push_back(SavegameItem("abc", "Test 7"));
-	_savegames.push_back(SavegameItem("abc", "Test 8"));
-	_savegames.push_back(SavegameItem("abc", "Test 9"));
-	_savegames.push_back(SavegameItem("abc", "Test 10"));
-	_savegames.push_back(SavegameItem("abc", "Test 11"));
-	_savegames.push_back(SavegameItem("abc", "Test 12"));
-#endif	
+	return maxSlotNum;
+}
 
+MenuSystem::SavegameItem *MenuSystem::getSavegameItemByID(ItemID id) {
+	switch (id) {
+	case kItemIdSavegame1:
+		return &_savegames[_savegameListTopIndex + 0];
+	case kItemIdSavegame2:
+		return &_savegames[_savegameListTopIndex + 1];
+	case kItemIdSavegame3:
+		return &_savegames[_savegameListTopIndex + 2];
+	case kItemIdSavegame4:
+		return &_savegames[_savegameListTopIndex + 3];
+	case kItemIdSavegame5:
+		return &_savegames[_savegameListTopIndex + 4];
+	case kItemIdSavegame6:
+		return &_savegames[_savegameListTopIndex + 5];
+	case kItemIdSavegame7:
+		return &_savegames[_savegameListTopIndex + 6];
+	default:
+		return NULL;
+	}
 }
 
 void MenuSystem::setSavegameCaptions() {
@@ -510,33 +550,11 @@ void MenuSystem::scrollSavegames(int delta) {
 
 void MenuSystem::clickSavegameItem(ItemID id) {
 	if (_currMenuID == kMenuIdLoad) {
-		SavegameItem *savegameItem;
-		switch (id) {
-		case kItemIdSavegame1:
-			savegameItem = &_savegames[_savegameListTopIndex + 0];
-			break;
-		case kItemIdSavegame2:
-			savegameItem = &_savegames[_savegameListTopIndex + 1];
-			break;
-		case kItemIdSavegame3:
-			savegameItem = &_savegames[_savegameListTopIndex + 2];
-			break;
-		case kItemIdSavegame4:
-			savegameItem = &_savegames[_savegameListTopIndex + 3];
-			break;
-		case kItemIdSavegame5:
-			savegameItem = &_savegames[_savegameListTopIndex + 4];
-			break;
-		case kItemIdSavegame6:
-			savegameItem = &_savegames[_savegameListTopIndex + 5];
-			break;
-		case kItemIdSavegame7:
-			savegameItem = &_savegames[_savegameListTopIndex + 6];
-			break;
-		default:
-			return;
-		}
-		debug("filename = [%s]; description = [%s]", savegameItem->_filename.c_str(), savegameItem->_description.c_str());
+		SavegameItem *savegameItem = getSavegameItemByID(id);
+		debug("slotNum = [%d]; description = [%s]", savegameItem->_slotNum, savegameItem->_description.c_str());
+		//_vm->loadgame(savegameItem->_filename.c_str());
+		_vm->requestLoadgame(savegameItem->_slotNum);
+		_running = false;
 	} else {
 		_editingDescription = true;
 		_editingDescriptionItem = getItem(id);

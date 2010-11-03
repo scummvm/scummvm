@@ -38,6 +38,7 @@
 
 #include "picture/picture.h"
 #include "picture/animation.h"
+#include "picture/menu.h"
 #include "picture/movie.h"
 #include "picture/palette.h"
 #include "picture/resource.h"
@@ -182,6 +183,14 @@ void ScriptInterpreter::runScript() {
 
 		if (_vm->_movieSceneFlag)
 			_vm->_mouseButton = 0;
+
+		if (_vm->_saveLoadRequested != 0) {
+			if (_vm->_saveLoadRequested == 1)
+				_vm->loadGameState(_vm->_saveLoadSlot);
+			else if (_vm->_saveLoadRequested == 2)
+				_vm->saveGameState(_vm->_saveLoadSlot, _vm->_saveLoadDescription.c_str());
+			_vm->_saveLoadRequested = 0;
+		}
 			
 		if (_switchLocalDataNear) {
 			_switchLocalDataNear = false;
@@ -1039,20 +1048,38 @@ void ScriptInterpreter::sfClearScreen() {
 }
 
 void ScriptInterpreter::sfHandleInput() {
-	// TODO: Recheck what this does
 	int16 varOfs = arg16(3);
 	int16 keyCode = 0;
 	if (_vm->_rightButtonDown) {
 		keyCode = 1;
 	} else {
-		// TODO: Handle Escape
-		// TODO: Set keyboard scancode
+		/* Convert keyboard scancode to IBM PC scancode
+			Only scancodes known to be used (so far) are converted
+		*/
+		switch (_vm->_keyState.keycode) {
+		case Common::KEYCODE_ESCAPE: 
+			keyCode = 1;
+			break;
+		case Common::KEYCODE_F10:
+			keyCode = 68;
+			break;
+		default:
+			break;			
+		}
 	}
 	localWrite16(varOfs, keyCode);
 }
 
 void ScriptInterpreter::sfRunOptionsScreen() {
-	// TODO
+	_vm->_screen->loadMouseCursor(12);
+	_vm->_palette->loadAddPalette(9, 224);
+	_vm->_palette->setDeltaPalette(_vm->_palette->getMainPalette(), 7, 0, 31, 224);
+	_vm->_screen->finishTalkTextItems();
+	_vm->_screen->clearSprites();
+	_vm->_system->showMouse(true);
+	_vm->_menuSystem->run();
+	_vm->_keyState.reset();
+	_switchLocalDataNear = true;
 }
 
 /* NOTE: The opcodes sfPrecacheSprites, sfPrecacheSounds1, sfPrecacheSounds2 and

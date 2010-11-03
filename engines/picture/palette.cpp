@@ -201,6 +201,12 @@ void Palette::buildColorTransTable(byte limit, char deltaValue, byte mask) {
 
 }
 
+void Palette::buildColorTransTable2(byte limit, char deltaValue, byte mask) {
+
+	// TODO
+
+}
+
 void Palette::saveState(Common::WriteStream *out) {
 
 	// Save currently active palette

@@ -195,18 +195,16 @@ protected:
 	int _scalerStatus;
 };
 
-void Screen::addDrawRequest(const DrawRequest &drawRequest) {
-
+bool Screen::createSpriteDrawItem(const DrawRequest &drawRequest, SpriteDrawItem &sprite) {
 	int16 scaleValueX, scaleValueY;
 	int16 xoffs, yoffs;
 	byte *spriteData;
 	int16 frameNum;
 
-	SpriteDrawItem sprite;
 	memset(&sprite, 0, sizeof(SpriteDrawItem));
 
 	if (drawRequest.flags == 0xFFFF)
-		return;
+		return false;
 
 	frameNum = drawRequest.flags & 0x0FFF;
 
@@ -217,7 +215,7 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	sprite.priority = drawRequest.y;
 	sprite.resIndex = drawRequest.resIndex;
 	sprite.frameNum = frameNum;
-	
+
 	spriteData = _vm->_res->load(drawRequest.resIndex)->data;
 	
 	if (drawRequest.flags & 0x1000) {
@@ -235,15 +233,14 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	// First initialize the sprite item with the values from the sprite resource
 
 	SpriteFrameEntry spriteFrameEntry(spriteData + frameNum * 12);
-	
+
 	if (spriteFrameEntry.w == 0 || spriteFrameEntry.h == 0)
-		return;
+		return false;
 	
 	sprite.offset = spriteFrameEntry.offset;
 
 	sprite.width = spriteFrameEntry.w;
 	sprite.height = spriteFrameEntry.h;
-
 	sprite.origWidth = spriteFrameEntry.w;
 	sprite.origHeight = spriteFrameEntry.h;
 
@@ -280,7 +277,7 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 			sprite.width = sprite.origWidth - scaleValueX;
 			sprite.height = sprite.origHeight - 1 - scaleValueY;
 			if (sprite.width <= 0 || sprite.height <= 0)
-				return;
+				return false;
 			xoffs -= (xoffs * scaleValue) / 100;
 			yoffs -= (yoffs * scaleValue) / 100;
 		}
@@ -303,7 +300,7 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 
 		sprite.height -= clipHeight;
 		if (sprite.height <= 0)
-			return;
+			return false;
 		
 		sprite.y = _vm->_cameraY;
 
@@ -334,7 +331,6 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 		}
 		
 		spriteFrameData = spriteData + sprite.offset;
-		
 		// Now the sprite's offset is adjusted to point to the starting line
 		if ((sprite.flags & 0x10) == 0) {
 			while (skipHeight--) {
@@ -361,7 +357,7 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	if (sprite.y + sprite.height - _vm->_cameraY - _vm->_cameraHeight > 0)
 		sprite.height -= sprite.y + sprite.height - _vm->_cameraY - _vm->_cameraHeight;
 	if (sprite.height <= 0)
-		return;
+		return false;
 
 	sprite.skipX = 0;
 
@@ -393,10 +389,15 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	}
 
 	if (sprite.width <= 0)
-		return;
+		return false;
 
-	_renderQueue->addSprite(sprite);
-	
+	return true;
+}
+
+void Screen::addDrawRequest(const DrawRequest &drawRequest) {
+	SpriteDrawItem sprite;
+	if (createSpriteDrawItem(drawRequest, sprite))
+		_renderQueue->addSprite(sprite);
 }
 
 void Screen::drawSprite(const SpriteDrawItem &sprite) {

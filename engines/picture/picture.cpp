@@ -107,7 +107,9 @@ Common::Error PictureEngine::run() {
 	_counter02 = 0;
 	_movieSceneFlag = false;
 	_flag01 = 0;
-	
+
+	_saveLoadRequested = 0;
+		
 	_cameraX = 0;
 	_cameraY = 0;
 	_newCameraX = 0;
@@ -150,9 +152,9 @@ Common::Error PictureEngine::run() {
 	
 	_sound = new Sound(this);
 
-	_system->showMouse(true);
-
 	syncSoundSettings();
+
+	_system->showMouse(true);
 
 	setupSysStrings();
 
@@ -212,6 +214,17 @@ void PictureEngine::setupSysStrings() {
 		sysStrings += strlen(sysStrings) + 1;
 	}
 	// TODO: Set yes/no chars
+}
+
+void PictureEngine::requestSavegame(int slotNum, Common::String &description) {
+	_saveLoadRequested = 2;
+	_saveLoadSlot = slotNum;
+	_saveLoadDescription = description;
+}
+
+void PictureEngine::requestLoadgame(int slotNum) {
+	_saveLoadRequested = 1;
+	_saveLoadSlot = slotNum;
 }
 
 void PictureEngine::loadScene(uint resIndex) {

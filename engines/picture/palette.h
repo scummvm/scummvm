@@ -62,6 +62,7 @@ public:
 	void clearFragments();
 
 	void buildColorTransTable(byte limit, char deltaValue, byte mask);
+	void buildColorTransTable2(byte limit, char deltaValue, byte mask);
 	byte getColorTransPixel(byte pixel) const { return _colorTransTable[pixel]; }
 
 	byte *getMainPalette() { return _mainPalette; }
