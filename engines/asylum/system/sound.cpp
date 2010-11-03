@@ -98,6 +98,10 @@ void Sound::setVolume(ResourceId resourceId, double volume) {
 	error("[Sound::setVolume] not implemented");
 }
 
+int32 Sound::getAdjustedVolume(int32 volume) {
+	error("[Sound::getAdjustedVolume] not implemented");
+}
+
 int32 Sound::getBufferPosition(ResourceId resourceId) {
 	int32 pos = -1;
 
@@ -236,18 +240,19 @@ void Sound::playSpeech(ResourceId resourceId) {
 	playSoundData(Audio::Mixer::kSpeechSoundType, &_speechHandle, ent->data, ent->size, false, 0, 0);
 }
 
-void Sound::playMusic(ResourceId resourceId) {
-	stopMusic();
-
-	// TODO Play music :P
-	error("[Sound::playMusic] not implemented");
+void Sound::setSpeech(ResourceId sound, ResourceId speechText) {
+	error("[Sound::setSpeech] not implemented!");
 }
 
-void Sound::playMusic(ResourcePack *pack, ResourceId resourceId) {
+void Sound::playMusic(ResourcePack *pack, ResourceId resourceId, int32 volume) {
 	stopMusic();
 
 	ResourceEntry *resource = pack->getResource(resourceId);
-	playSoundData(Audio::Mixer::kMusicSoundType, &_musicHandle, resource->data, resource->size, true, Config.musicVolume, 0);
+	playSoundData(Audio::Mixer::kMusicSoundType, &_musicHandle, resource->data, resource->size, true, volume, 0);
+}
+
+void Sound::changeMusic(ResourcePack *pack, ResourceId resourceId, int32 musicStatusExt) {
+	error("[Sound::changeMusic] not implemented!");
 }
 
 void Sound::stopMusic() {

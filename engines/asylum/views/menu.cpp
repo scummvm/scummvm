@@ -135,6 +135,10 @@ void MainMenu::closeMenu() {
 	_vm->sound()->stopMusic();
 }
 
+void MainMenu::showOptions() {
+	error("[MainMenu::showOptions] : not implemented!");
+}
+
 void MainMenu::handleEvent(Common::Event *event, bool doUpdate) {
 	_ev = event;
 

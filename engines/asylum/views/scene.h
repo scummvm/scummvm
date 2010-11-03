@@ -130,7 +130,6 @@ public:
 	ActorIndex getPlayerActorIndex() { return _playerActorIdx; }
 
 	void setPlayerActorIndex(ActorIndex index) { _playerActorIdx = index; }
-
 	void changePlayerActorIndex(ActorIndex index);
 
 	/**
@@ -138,7 +137,7 @@ public:
 	 * WorldStats actor list. Default parameter just
 	 * gets the instance associated with _playerActorIdx
 	 */
-	Actor* getActor(ActorIndex index = -1);
+	Actor* getActor(ActorIndex index = kActorPlayer);
 
 	/** .text:00407260
 	 * Check the actor at actorIndex to see if the currently loaded
@@ -162,6 +161,23 @@ public:
 	ActorDirection getGlobalDirection() { return _globalDirection; }
 
 	bool updateSceneCoordinates(int32 targetX, int32 targetY, int32 val, bool checkSceneCoords = false, int32 *param = NULL);
+
+
+	void updatePlayerChapter9(int32 param);
+
+	// TODO: make sure it is the right place and make private
+	ResourceId playSpeech(int32 a1);
+	ResourceId playSpeech(int32 a1, int32 id);
+
+	int processActor(int *x, int *param);
+
+	void updatePalette(int32 param);
+	void makeGreyPalette();
+	int matteBarHeight;
+	int matteVar1;
+	int matteVar2;
+	bool mattePlaySound;
+	bool matteInitialized;
 
 protected:
 	/** .text:0040EA50

@@ -26,7 +26,7 @@
 #ifndef ASYLUM_ACTIONLIST_H
 #define ASYLUM_ACTIONLIST_H
 
-#include "asylum/views/scene.h"
+#include "asylum/resources/actor.h"
 
 #include "common/array.h"
 #include "common/func.h"
@@ -154,10 +154,12 @@ private:
 	 */
 	void resetQueue();
 
+	// Opcode helper functions
 	void enableBarrier(ScriptEntry *cmd, BarrierEnableType type);
 	void setActionFlag(ScriptEntry *cmd, ActionType flag); //|
 	void clearActionFlag(ScriptEntry *cmd, ActionType flag); //&
 	void jumpIfActionFlag(ScriptEntry *cmd, ActionType flag);
+	void setNextLine(int32 line);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Opcode functions
@@ -178,16 +180,16 @@ private:
 	DECLARE_OPCODE(EnableActor);
 	DECLARE_OPCODE(EnableBarriers);
 	DECLARE_OPCODE(DestroyBarrier);
-	DECLARE_OPCODE(_unk12_JMP_WALK_ACTOR);
-	DECLARE_OPCODE(_unk13_JMP_WALK_ACTOR);
+	DECLARE_OPCODE(JumpActorSpeech);
+	DECLARE_OPCODE(JumpAndSetDirection);
 	DECLARE_OPCODE(JumpIfActorCoordinates);
-	DECLARE_OPCODE(_unk15);
+	DECLARE_OPCODE(Nop);
 	DECLARE_OPCODE(ResetAnimation);
 	DECLARE_OPCODE(SetBarrierDestroyed);
-	DECLARE_OPCODE(_unk18_PLAY_SND);
+	DECLARE_OPCODE(JumpIfSoundPlayingAndPlaySound);
 	DECLARE_OPCODE(JumpIfActionFind);
 	DECLARE_OPCODE(SetActionFind);
-	DECLARE_OPCODE(clearActionFind);
+	DECLARE_OPCODE(ClearActionFind);
 	DECLARE_OPCODE(JumpIfActionGrab);
 	DECLARE_OPCODE(SetActionGrab);
 	DECLARE_OPCODE(ClearActionGrab);
@@ -198,9 +200,9 @@ private:
 	DECLARE_OPCODE(_unk23);
 	DECLARE_OPCODE(_unk24);
 	DECLARE_OPCODE(RunEncounter);
-	DECLARE_OPCODE(JumpIfFlag2Bit4);
-	DECLARE_OPCODE(SetFlag2Bit4);
-	DECLARE_OPCODE(ClearFlag2Bit4);
+	DECLARE_OPCODE(JumpIfAction16);
+	DECLARE_OPCODE(SetAction16);
+	DECLARE_OPCODE(ClearAction16);
 	DECLARE_OPCODE(SetActorField638);
 	DECLARE_OPCODE(JumpIfActorField638);
 	DECLARE_OPCODE(ChangeScene);
@@ -216,17 +218,17 @@ private:
 	DECLARE_OPCODE(SetVolume);
 	DECLARE_OPCODE(Jump);
 	DECLARE_OPCODE(RunBlowUpPuzzle);
-	DECLARE_OPCODE(JumpIfFlag2Bit3);
-	DECLARE_OPCODE(SetFlag2Bit3);
-	DECLARE_OPCODE(ClearFlag2Bit3);
+	DECLARE_OPCODE(JumpIfAction8);
+	DECLARE_OPCODE(SetAction8);
+	DECLARE_OPCODE(ClearAction8);
 	DECLARE_OPCODE(_unk3B_PALETTE_MOD);
 	DECLARE_OPCODE(IncrementParam2);
 	DECLARE_OPCODE(WaitUntilFramePlayed);
 	DECLARE_OPCODE(UpdateWideScreen);
 	DECLARE_OPCODE(JumpIfActor);
-	DECLARE_OPCODE(_unk40_SOUND);
+	DECLARE_OPCODE(PlaySpeechScene);
 	DECLARE_OPCODE(PlaySpeech);
-	DECLARE_OPCODE(_unk42);
+	DECLARE_OPCODE(PlaySpeechScene2);
 	DECLARE_OPCODE(MoveScenePositionFromActor);
 	DECLARE_OPCODE(PaletteFade);
 	DECLARE_OPCODE(StartPaletteFadeThread);
@@ -238,7 +240,7 @@ private:
 	DECLARE_OPCODE(ChangePlayerActorIndex);
 	DECLARE_OPCODE(ChangeActorStatus);
 	DECLARE_OPCODE(StopSound);
-	DECLARE_OPCODE(_unk4E_RANDOM_COMMAND);
+	DECLARE_OPCODE(JumpRandom);
 	DECLARE_OPCODE(ClearScreen);
 	DECLARE_OPCODE(Quit);
 	DECLARE_OPCODE(JumpBarrierFrame);
@@ -254,11 +256,11 @@ private:
 	DECLARE_OPCODE(_unk5B);
 	DECLARE_OPCODE(QueueScript);
 	DECLARE_OPCODE(_unk5D);
-	DECLARE_OPCODE(ClearActorField970);
+	DECLARE_OPCODE(ClearActorFields);
 	DECLARE_OPCODE(SetBarrierLastFrameIdx);
 	DECLARE_OPCODE(_unk60_SET_OR_CLR_ACTIONAREA_FLAG);
 	DECLARE_OPCODE(_unk61);
-	DECLARE_OPCODE(_unk62_SHOW_OPTIONS_SCREEN);
+	DECLARE_OPCODE(ShowOptionsScreen);
 	DECLARE_OPCODE(_unk63);
 }; // end of class ActionList
 

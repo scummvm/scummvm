@@ -1510,6 +1510,33 @@ void Scene::debugShowActors() {
 	}
 }
 
+void Scene::updatePlayerChapter9(int32 param) {
+	error("[Scene::updatePlayerChapter9] not implemented!");
+}
+
+ResourceId Scene::playSpeech(int32 a1) {
+	error("[Scene::playSpeech] not implemented!");
+}
+
+ResourceId Scene::playSpeech(int32 a1, int32 a2) {
+	error("[Scene::playSpeech] not implemented!");
+}
+
+int Scene::processActor(int *x, int *param) {
+	error("[Scene::processActor] not implemented!");
+}
+
+void  Scene::updatePalette(int32 param) {
+	error("[Scene::updatePalette] not implemented!");
+}
+
+void Scene::makeGreyPalette() {
+	error("[Scene::makeGreyPalette] not implemented!");
+}
+
+//////////////////////////////////////////////////////////////////////////
+// SceneTitle
+//////////////////////////////////////////////////////////////////////////
 SceneTitle::SceneTitle(Scene *scene): _scene(scene) {
 	_start = _scene->vm()->getTick();
 

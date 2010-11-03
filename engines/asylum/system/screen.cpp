@@ -129,8 +129,12 @@ void Screen::clearScreen() {
 	_vm->_system->fillScreen(0);
 }
 
-void Screen::palFade(uint32 red, int32 milliseconds, int32 param) {
+void Screen::paletteFade(uint32 red, int32 milliseconds, int32 param) {
 	error("[Screen::palFade] not implemented");
+}
+
+void Screen::startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param) {
+	error("[Screen::startPaletteFade] not implemented");
 }
 
 void Screen::addGraphicToQueue(ResourceId resourceId, int32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority) {

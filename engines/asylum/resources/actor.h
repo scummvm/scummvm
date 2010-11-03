@@ -39,6 +39,10 @@ class ActionArea;
 
 typedef int ActorIndex;
 
+enum ActorIndexes {
+	kActorPlayer = -1
+};
+
 enum ActorStatus {
 	kActorStatus1 = 1,
 	kActorStatus2,
@@ -199,7 +203,7 @@ public:
 	 */
 	void setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame);
 
-	void faceTarget(int32 targetId, int32 targetType);
+	void faceTarget(int32 targetId, DirectionFrom targetType);
 
 	void update();
 
@@ -208,7 +212,6 @@ public:
 	 */
 	void updateDirection();
 	void setDirection(ActorDirection direction);
-	void setDirectionFrom(uint32 parameter, DirectionFrom from);
 
 	void updateStatus(ActorStatus status);
 
@@ -218,7 +221,12 @@ public:
 	bool process(int32 x, int32 y);
 	void processStatus(int32 x, int32 y, bool doSpeech);
 
-	void speech(int32 a1);
+	// Unknown methods
+	void process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 param8, int32 param9);
+	bool process_408B20(Common::Point *point, ActorDirection direction, int count, bool hasDelta);
+	void process_41BC00(int32 reactionIndex, int32 numberValue01Add);
+	void process_41BCC0(int32 reactionIndex, int32 numberValue01Substract);
+	bool process_41BDB0(int32 reactionIndex, bool testNumberValue01);
 
 	//////////////////////////////////////////////////////////////////////////
 	// OLD METHODS

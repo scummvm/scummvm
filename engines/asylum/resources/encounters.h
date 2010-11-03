@@ -34,6 +34,11 @@ namespace Asylum {
 
 class Scene;
 
+enum EncounterFlag{
+	kEncounterFlag2 = 2,
+	kEncounterFlag5 = 5
+};
+
 typedef struct EncounterItem {
 	int32 keywordIndex;
 	int32 field2;
@@ -63,6 +68,9 @@ public:
 	}
 	void run(int32 encounterIdx, int32 barrierId1, int32 barrierId2, int32 characterIdx);
 
+	int32 getFlag(EncounterFlag flag);
+	void setFlag(EncounterFlag flag, int32 val);
+
 private:
 	int16 *_variables;
 	int16 _anvilStyleFlag;
@@ -70,6 +78,8 @@ private:
 	EncounterItem *_currentEncounter;
 	Common::Array<EncounterItem> _items;
 	Scene *_scene;
+
+	int32 _flags[5];
 
 }; // end of class Encounter
 

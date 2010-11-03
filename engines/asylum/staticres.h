@@ -34,6 +34,21 @@ const int MenuIconFixedXpos[12] = { 28, 128, 225, 320, 410, 528, 16, 115, 237, 3
 /** Default Actor Indices by Scene */
 const int actorType[16] = {0, 0, 0, 0, 1, 0, 2, 0, 3, 0, 1, 1, 3, 0, 0, 0};
 
+// Delta array for points
+static const struct {
+	int x;
+	int y;
+} deltaPointsArray[8] = {
+	{0,          0xFFFFFFFF},
+	{0xFFFFFFFF, 0xFFFFFFFF},
+	{0xFFFFFFFF, 0},
+	{0xFFFFFFFF, 1},
+	{0,          1},
+	{1,          1},
+	{1,          0},
+	{1,          0xFFFFFFFF}
+};
+
 // We hardcode all the text resources here. It makes the resulting code easier,
 // otherwise we'll have to read the text resources in the same obscure way
 // they're stored in VIDS.CAP.
