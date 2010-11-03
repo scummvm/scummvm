@@ -1155,7 +1155,7 @@ IMPLEMENT_OPCODE(_unk53) {
 // Opcode 0x54
 IMPLEMENT_OPCODE(_unk54_SET_ACTIONLIST_6EC) {
 	if (cmd->param2)
-		_currentScript->field_1BB0 = _scene->vm()->_rnd.getRandomNumber(cmd->param1);
+		_currentScript->field_1BB0 = _scene->vm()->getRandom(cmd->param1);
 	else
 		_currentScript->field_1BB0 = cmd->param1;
 }

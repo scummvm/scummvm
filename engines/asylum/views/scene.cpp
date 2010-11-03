@@ -24,8 +24,12 @@
  */
 
 #include "asylum/views/scene.h"
+
 #include "asylum/resources/actor.h"
+
 #include "asylum/system/config.h"
+
+#include "asylum/staticres.h"
 
 namespace Asylum {
 
@@ -275,7 +279,7 @@ void Scene::updateActorDirection(int actorIndex, int param) {
 		// active (via the global at .data:00543504)
 		// FIXME skipping for now
 		if (0) {
-			if (vm()->_rnd.getRandomBit() == 1 && defaultActorDirectionLoaded(actorIndex, 15)) {
+			if (vm()->getRandomBit() == 1 && defaultActorDirectionLoaded(actorIndex, 15)) {
 				actor->frameNum = 0;
 				if (actor->direction > 4)
 					actor->direction = 8 - actor->direction;
@@ -1022,7 +1026,7 @@ void Scene::updateActor(int32 actorIdx) {
 			actor->frameNum = frameNum % actor->frameCount;
 
 			if (_vm->getTick() - actor->tickValue1 > 300) {
-				if (vm()->_rnd.getRandomNumber(100) < 50) {
+				if (vm()->getRandom(100) < 50) {
 					// TODO: check sound playing
 				}
 				actor->tickValue1 = _vm->getTick();
@@ -1082,7 +1086,7 @@ void Scene::updateActorSub01(Actor *act) {
 	if (_vm->getTick() - act->tickValue1 > 300) {
 		// TODO
 		// Check if the actor's name is "Crow"?
-		if (vm()->_rnd.getRandomNumber(100) < 50) {
+		if (vm()->getRandom(100) < 50) {
 			// TODO
 			// Check if soundResId04 is assigned, and if so,
 			// if it's playing
@@ -1098,7 +1102,7 @@ void Scene::updateActorSub01(Actor *act) {
 				if (act->visible()) {
 					// if some_encounter_flag
 						// if !soundResId04
-							if (vm()->_rnd.getRandomNumber(100) < 50) {
+							if (vm()->getRandom(100) < 50) {
 								if (_sceneIdx == 13) {
 									; // sub414810(507)
 								} else {
@@ -1159,7 +1163,7 @@ void Scene::updateBarriers() {
 						int equalZero = frameIdx == 0;
 						if (!frameIdx) {
 							if (_vm->getTick() - barrier->tickCount >= 1000 * barrier->tickCount2) {
-								if (vm()->_rnd.getRandomNumber(barrier->field_C0) == 1) {
+								if (vm()->getRandom(barrier->field_C0) == 1) {
 									if (barrier->field_68C[0]) {
 										// TODO: fix this, and find a better way to get frame count
 										// Sometimes we get wrong random resource id
@@ -1202,7 +1206,7 @@ void Scene::updateBarriers() {
 						}
 					} else if ((flag & 0xFF) & 8) { // check this
 						if (_vm->getTick() - barrier->tickCount >= 1000 * barrier->tickCount2) {
-							if (vm()->_rnd.getRandomNumber(barrier->field_C0) == 1) { // TODO: THIS ISNT WORKING
+							if (vm()->getRandom(barrier->field_C0) == 1) { // TODO: THIS ISNT WORKING
 								barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
 								barrier->tickCount = _vm->getTick();
 								canPlaySound = true;
@@ -1324,12 +1328,12 @@ void Scene::updateAmbientSounds() {
 				}
 				if (loflag & 2) {
 					int tmpVol = volume;
-					if (vm()->_rnd.getRandomNumber(10000) < 10) {
+					if (vm()->getRandom(10000) < 10) {
 						if (snd->field_0) {
 							_vm->sound()->playSound(snd->resId, false, volume, panning, false);
 						} else {
 							// FIXME will this even work?
-							tmpVol += (vm()->_rnd.getRandomNumber(500)) * (((vm()->_rnd.getRandomNumber(100) >= 50) - 1) & 2) - 1;
+							tmpVol += (vm()->getRandom(500)) * (((vm()->getRandom(100) >= 50) - 1) & 2) - 1;
 							if (tmpVol <= -10000)
 								volume = -10000;
 							if (volume >= 0)
@@ -1337,7 +1341,7 @@ void Scene::updateAmbientSounds() {
 							else
 								if (tmpVol <= -10000)
 									tmpVol = -10000;
-							_vm->sound()->playSound(snd->resId, 0, tmpVol, vm()->_rnd.getRandomNumber(20001) - 10000);
+							_vm->sound()->playSound(snd->resId, 0, tmpVol, vm()->getRandom(20001) - 10000);
 						}
 					}
 				} else {

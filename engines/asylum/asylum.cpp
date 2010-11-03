@@ -23,25 +23,37 @@
  *
  */
 
+#include "asylum/asylum.h"
+
+#include "asylum/system/config.h"
+#include "asylum/system/screen.h"
+#include "asylum/system/sound.h"
+#include "asylum/system/text.h"
+
+#include "asylum/views/scene.h"
+#include "asylum/views/menu.h"
+
+#include "asylum/console.h"
+#include "asylum/respack.h"
+
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
-#include "common/system.h"
-#include "common/file.h"
 #include "common/EventRecorder.h"
 
-#include "engines/advancedDetector.h"
 #include "engines/util.h"
-
-#include "asylum/asylum.h"
-#include "asylum/respack.h"
-#include "asylum/system/config.h"
 
 namespace Asylum {
 
-AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
-		: Engine(system) {
+AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd) {
 
+	// Add default search directories
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "vids");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
+
+	// Initialize custom debug levels
 	DebugMan.addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
 	DebugMan.addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
 	DebugMan.addDebugChannel(kDebugLevelSprites, "Sprites", "Sprites debugging");
@@ -53,45 +65,35 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 	DebugMan.addDebugChannel(kDebugLevelScene, "Scene", "Scene process and draw debugging");
 	DebugMan.addDebugChannel(kDebugLevelBarriers, "Barriers", "Debug Barrier Objects");
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "vids");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
-
+	// Initialize random number source
 	g_eventRec.registerRandomSource(_rnd, "asylum");
 }
 
 AsylumEngine::~AsylumEngine() {
-	DebugMan.clearAllDebugChannels();
-
 	delete _console;
-	delete _scene;
-	delete _mainMenu;
-	delete _video;
-	delete _sound;
-	delete _screen;
 	//delete _encounter;
+	delete _mainMenu;
+	delete _scene;
+	delete _screen;
+	delete _sound;
 	delete _text;
+	delete _video;
+
+	// Zero passed pointers
+	_gameDescription = NULL;
 }
 
 Common::Error AsylumEngine::run() {
-	Common::Error err;
-	err = init();
-	if (err != Common::kNoError)
-		return err;
-
-	return go();
-}
-
-// Will do the same as subroutine at address 0041A500
-Common::Error AsylumEngine::init() {
+	// Initialize the graphics
 	initGraphics(640, 480, true);
 
+	// Create debugger. It requires GFX to be initialized
+	_console   = new Console(this);
+
+	// Create all manager classes
 	_screen    = new Screen(this);
 	_sound     = new Sound(_mixer);
 	_video     = new Video(_mixer);
-	_console   = new Console(this);
 	_text      = new Text(_screen);
 	_mainMenu  = 0;
 	_scene     = 0;
@@ -105,10 +107,7 @@ Common::Error AsylumEngine::init() {
 
 	memset(_gameFlags, 0, 1512);
 
-	return Common::kNoError;
-}
-
-Common::Error AsylumEngine::go() {
+	// Start the game
     g_system->showMouse(true);
 
 	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing) (address 00411CD0)
@@ -131,7 +130,7 @@ Common::Error AsylumEngine::go() {
 	//}
 
 	while (!shouldQuit()) {
-		checkForEvent(true);
+		handleEvents(true);
 		waitForTimer(55);
 	}
 
@@ -142,7 +141,7 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 	uint32 start_time = _system->getMillis();
 
 	while (_system->getMillis() < start_time + msec_delay) {
-		checkForEvent(false);
+		handleEvents(false);
 		if (_scene) {
 			processDelayedEvents();
 		}
@@ -152,10 +151,8 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 
 void AsylumEngine::startGame() {
 	// TODO: reset what need to be reset for a new game
-
-	if (_scene) {
+	if (_scene)
 		delete _scene;
-	}
 
 	_scene = new Scene(5, this);
 
@@ -201,7 +198,13 @@ void AsylumEngine::playIntro() {
 	_sound->playSound(0x80120007, false, Config.sfxVolume, 0);
 }
 
-void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
+void AsylumEngine::handleEvents(bool doUpdate) { // k_sub_40AE30 (0040AE30)
+	// Make sure the debugger is present
+	if (!_console)
+		error("AsylumEngine::handleEvents: called before the required subsystems have been initialized!");
+
+	// Show the debugger if required
+	_console->onFrame();
 
 	// NOTE
 	// In the original version of Sanitarium, the control loop for the sound
@@ -230,8 +233,15 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 
 	Common::Event ev;
 
-	if (_system->getEventManager()->pollEvent(ev)) {
-		if (ev.type == Common::EVENT_KEYDOWN) {
+	if (_eventMan->pollEvent(ev)) {
+		switch (ev.type) {
+		default:
+			break;
+
+		case Common::EVENT_KEYDOWN:
+			if ((ev.kbd.flags & Common::KBD_CTRL) && ev.kbd.keycode == Common::KEYCODE_d)
+				_console->attach();
+
 			if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				// Toggle menu
 				if (_mainMenu->isActive()) {
@@ -259,11 +269,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 				}
 			}
 			*/
-			if (ev.kbd.flags == Common::KBD_CTRL) {
-				if (ev.kbd.keycode == Common::KEYCODE_d)
-					_console->attach();
-			}
-
+			break;
 		}
 	}
 
@@ -272,9 +278,6 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 			(_scene && _scene->isActive())) //|| (_scene && _scene->getBlowUpPuzzle()->isActive()))
 			// Copy background image
 			_screen->copyBackBufferToScreen();
-
-		if (_console->isActive())
-			_console->onFrame();
 	}
 
 
@@ -300,7 +303,6 @@ void AsylumEngine::processDelayedEvents() {
 		_video->playVideo(videoIdx, kSubtitlesOn);
 		_scene->actions()->setDelayedVideoIndex(-1);
 
-
 		if (_mainMenu->isActive())
 			_mainMenu->openMenu();
 		else if (_scene->isActive())
@@ -325,6 +327,9 @@ void AsylumEngine::processDelayedEvents() {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Game flags
+//////////////////////////////////////////////////////////////////////////
 void AsylumEngine::setGameFlag(int flag) {
 	_gameFlags[flag / 32] |= 1 << flag % -32;
 }
@@ -344,6 +349,5 @@ bool AsylumEngine::isGameFlagSet(int flag) {
 bool AsylumEngine::isGameFlagNotSet(int flag) {
 	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 == 0;
 }
-
 
 } // namespace Asylum

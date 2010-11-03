@@ -25,8 +25,13 @@
 
 #include "asylum/system/video.h"
 
+#include "asylum/system//graphics.h"
+#include "asylum/system/text.h"
+
+#include "asylum/staticres.h"
+
 namespace Asylum {
-	
+
 Video::Video(Audio::Mixer *mixer): _skipVideo(false) {
 	Common::Event stopEvent;
 	_stopEvents.clear();
@@ -35,7 +40,7 @@ Video::Video(Audio::Mixer *mixer): _skipVideo(false) {
 	_stopEvents.push_back(stopEvent);
 
 	_smkDecoder = new Graphics::SmackerDecoder(mixer);
-	
+
 	_text = new VideoText();
 	ResourcePack *resPack = new ResourcePack(1);
 	_text->loadFont(resPack, 57);	// video font
@@ -61,27 +66,27 @@ bool Video::playVideo(int32 videoNumber, VideoSubtitles subtitles) {
 		if(subtitles == kSubtitlesOn) {
 			loadSubtitles(videoNumber);
 		}
-		
+
 		uint16 x = (g_system->getWidth() - _smkDecoder->getWidth()) / 2;
 		uint16 y = (g_system->getHeight() - _smkDecoder->getHeight()) / 2;
-	
+
 		while (!_smkDecoder->endOfVideo() && !_skipVideo) {
 			processVideoEvents();
 			if (_smkDecoder->needsUpdate()) {
 				Graphics::Surface *frame = _smkDecoder->decodeNextFrame();
-				
+
 				if (frame) {
 					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
-					
+
 					if(subtitles) {
 						Graphics::Surface *screen = g_system->lockScreen();
 						performPostProcessing((byte *)screen->pixels);
 						g_system->unlockScreen();
 					}
-					
+
 					if (_smkDecoder->hasDirtyPalette())
 						_smkDecoder->setSystemPalette();
-						
+
 					g_system->updateScreen();
 				}
 			}
@@ -113,7 +118,7 @@ void Video::performPostProcessing(byte *screen) {
 
 void Video::loadSubtitles(int32 videoNumber) {
 	// Read vids.cap
-	
+
 	char movieToken[10];
 	sprintf(movieToken, "[MOV%03d]", videoNumber);
 
@@ -161,7 +166,7 @@ void Video::processVideoEvents() {
 		if (curEvent.type == Common::EVENT_RTL || curEvent.type == Common::EVENT_QUIT) {
 			_skipVideo = true;
 		}
-	
+
 		for (Common::List<Common::Event>::const_iterator iter = _stopEvents.begin(); iter != _stopEvents.end(); ++iter) {
 			if (curEvent.type == iter->type) {
 				if (iter->type == Common::EVENT_KEYDOWN || iter->type == Common::EVENT_KEYUP) {

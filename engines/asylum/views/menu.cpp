@@ -23,10 +23,13 @@
  *
  */
 
-#include "asylum/respack.h"
 #include "asylum/views/menu.h"
+
 #include "asylum/system/graphics.h"
 #include "asylum/system/config.h"
+
+#include "asylum/respack.h"
+#include "asylum/staticres.h"
 
 namespace Asylum {
 
@@ -639,7 +642,7 @@ void MainMenu::updateSubMenuReturnToGame() {
 	_vm->text()->drawResText(0x80000713);
 
 	// action
-	if (_leftClick) { 
+	if (_leftClick) {
 		// Main menu
 		if (_cursor->position().x >= 285 && _cursor->position().x <= 285 + _vm->text()->getResTextWidth(0x80000713) && _cursor->position().y >= 273 && _cursor->position().y <= 273 + 24)
 			exitSubMenu();
