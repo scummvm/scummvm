@@ -109,13 +109,24 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 static const ADParams detectionParams = {
 	(const byte *)Asylum::gameDescriptions,
 	sizeof(ADGameDescription),
-	0, // number of md5 bytes
+	// number of md5 bytes
+	0,
+	// List of all engine targets
 	asylumGames,
-	0, // no obsolete targets data
+	// no obsolete targets data
+	0,
+	// Name of single gameid (optional)
 	"asylum",
-	Asylum::fileBasedFallback, // file-based detection data to enable not yet known versions to start
+	// file-based detection data to enable not yet known versions to start
+	Asylum::fileBasedFallback,
+	// Flags
 	kADFlagPrintWarningOnFileBasedFallback,
-	Common::GUIO_NONE
+	// Additional GUI options (for every game}
+	Common::GUIO_NONE,
+	// Maximum directory depth
+	1,
+	// List of directory globs
+	0
 };
 
 class AsylumMetaEngine : public AdvancedMetaEngine {
