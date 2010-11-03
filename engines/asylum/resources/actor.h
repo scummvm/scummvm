@@ -61,7 +61,8 @@ public:
 	void setBarrierIndex(int32 index) { _field_3C = index; }
 	void setDirection(ActorDirection direction) { _direction = direction; }
 	void setFrameCount(int32 count) { _frameCount = count; }
-	void setFrameNumber(int32 number) { _frameNumber = number; }
+	void setFrameIndex(int32 number) { _frameIndex = number; }
+	void setNumberFlag01(int32 number) { _numberFlag01 = number; }
 	void setPriority(int32 priority) { _priority = priority; }
 	void setResourceId(ResourceId id) { _resourceId = id; }
 	void setStatus(ActorStatus status) { _status = status; }
@@ -77,7 +78,7 @@ public:
 	Common::Rect  *getBoundingRect() { return &_boundingRect; }
 	ActorDirection getDirection() { return _direction; }
 	uint32         getFrameCount() { return _frameCount; }
-	uint32         getFrameNum() { return _frameNumber; }
+	uint32         getFrameIndex() { return _frameIndex; }
 	int32          getReaction(uint32 index) { return _reaction[index]; }
 	ResourceId     getResourceId() { return _resourceId; }
 	ResourceId     getResourcesId(uint32 index) { return _graphicResourceIds[index]; }
@@ -118,8 +119,13 @@ public:
 	void setVisible(bool value);
 
 	/////////////////////////////////////////////////////////////////////////
-	// Update & status
+	// Drawing & update
 	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Draws the actor
+	 */
+	void draw();
 
 	/**
 	 * Updates the actor.
@@ -197,6 +203,7 @@ public:
 	void process_41BC00(int32 reactionIndex, int32 numberValue01Add);
 	void process_41BCC0(int32 reactionIndex, int32 numberValue01Substract);
 	bool process_41BDB0(int32 reactionIndex, bool testNumberValue01);
+	void update_40DE20();
 
 private:
 	AsylumEngine *_vm;
@@ -211,8 +218,8 @@ private:
 	// Data
 	//////////////////////////////////////////////////////////////////////////
 	ResourceId _resourceId;
-	int32  _field_C; // BarrierIndex? Mask index?
-	uint32 _frameNumber;
+	int32  _barrierIndex;
+	uint32 _frameIndex;
 	uint32 _frameCount;
 	// x1, y1, x2, y2
 	Common::Rect _boundingRect;
@@ -341,6 +348,12 @@ private:
 	 */
 	bool isDefaultDirection(int index);
 
+	/**
+	 * Gets the graphics flags for queuing the actor graphics
+	 *
+	 * @return The graphics flags. 
+	 */
+	int32 getGraphicsFlags();
 
 
 }; // end of class MainActor

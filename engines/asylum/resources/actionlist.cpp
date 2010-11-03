@@ -57,13 +57,13 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene) : _scen
 	ADD_OPCODE(EnableActor);
 	ADD_OPCODE(EnableBarriers);
 	ADD_OPCODE(Return);
-	ADD_OPCODE(DestroyBarrier);
+	ADD_OPCODE(RemoveBarrier);
 	ADD_OPCODE(JumpActorSpeech);
 	ADD_OPCODE(JumpAndSetDirection);
 	ADD_OPCODE(JumpIfActorCoordinates);
 	ADD_OPCODE(Nop);
 	ADD_OPCODE(ResetAnimation);
-	ADD_OPCODE(SetBarrierDestroyed);
+	ADD_OPCODE(DisableBarrier);
 	ADD_OPCODE(JumpIfSoundPlayingAndPlaySound);
 	ADD_OPCODE(JumpIfActionFind);
 	ADD_OPCODE(SetActionFind);
@@ -507,13 +507,13 @@ IMPLEMENT_OPCODE(EnableBarriers) {
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x11
-IMPLEMENT_OPCODE(DestroyBarrier) {
+IMPLEMENT_OPCODE(RemoveBarrier) {
 	if (!cmd->param1)
 		return;
 
 	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
-	barrier->destroyAndRemoveFromQueue();
+	barrier->disableAndRemoveFromQueue();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -591,10 +591,10 @@ IMPLEMENT_OPCODE(ResetAnimation) {
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x17
-IMPLEMENT_OPCODE(SetBarrierDestroyed) {
+IMPLEMENT_OPCODE(DisableBarrier) {
 	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
-	barrier->flags &= kBarrierFlagDestroyed;
+	barrier->disable();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -823,7 +823,7 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub) {
 		GraphicResource *res = new GraphicResource(_scene->getResourcePack(), id);
 		actor->setResourceId(id);
 		actor->setFrameCount(res->getFrameCount());
-		actor->setFrameNumber(0);
+		actor->setFrameIndex(0);
 		actor->setDirection(direction);
 		actor->updateStatus(actor->getStatus() <= kActorStatus11 ? kActorStatus3 : kActorStatus19);
 		delete res;
@@ -915,7 +915,7 @@ IMPLEMENT_OPCODE(ResumeProcessing) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x31
 IMPLEMENT_OPCODE(ResetSceneRect) {
-	_scene->worldstats()->sceneRectIdx = LOBYTE(cmd->param1);
+	_scene->worldstats()->sceneRectIdx = LO_BYTE(cmd->param1);
 	_scene->vm()->screen()->paletteFade(0, 25, 10);
 	_scene->vm()->setFlag(kFlagTypeSceneRectChanged);
 
@@ -1296,7 +1296,7 @@ IMPLEMENT_OPCODE(_unk46) {
 			if (cmd->param5) {
 				_scene->getActor(cmd->param5)->updateStatus(kActorStatusEnabled);
 			} else if (cmd->param4 != cmd->param3 && cmd->param4) {
-				_scene->worldstats()->getBarrierById(cmd->param3)->destroy();
+				_scene->worldstats()->getBarrierById(cmd->param3)->disable();
 				_scene->worldstats()->getBarrierById(cmd->param4)->setNextFrame(_scene->worldstats()->getBarrierById(cmd->param4)->flags);
 			}
 
@@ -1316,7 +1316,7 @@ IMPLEMENT_OPCODE(_unk46) {
 		} else {
 			if (cmd->param4 != cmd->param3) {
 				if (cmd->param4)
-					_scene->worldstats()->getBarrierById(cmd->param4)->destroy();
+					_scene->worldstats()->getBarrierById(cmd->param4)->disable();
 
 				if (cmd->param3)
 					_scene->worldstats()->getBarrierById(cmd->param3)->setNextFrame(_scene->worldstats()->getBarrierById(cmd->param4)->flags);
@@ -1589,7 +1589,7 @@ IMPLEMENT_OPCODE(SetBarrierFrameIdxFlaged) {
 	if (cmd->param3)
 		barrier->flags = 1 | barrier->flags;
 	else
-		barrier->flags &= kBarrierFlagDestroyed;
+		barrier->flags &= ~kBarrierFlagEnabled;
 
 	barrier->setFrameIndex(cmd->param2);
 }

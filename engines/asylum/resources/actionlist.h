@@ -181,13 +181,13 @@ private:
 	DECLARE_OPCODE(DisableActor);
 	DECLARE_OPCODE(EnableActor);
 	DECLARE_OPCODE(EnableBarriers);
-	DECLARE_OPCODE(DestroyBarrier);
+	DECLARE_OPCODE(RemoveBarrier);
 	DECLARE_OPCODE(JumpActorSpeech);
 	DECLARE_OPCODE(JumpAndSetDirection);
 	DECLARE_OPCODE(JumpIfActorCoordinates);
 	DECLARE_OPCODE(Nop);
 	DECLARE_OPCODE(ResetAnimation);
-	DECLARE_OPCODE(SetBarrierDestroyed);
+	DECLARE_OPCODE(DisableBarrier);
 	DECLARE_OPCODE(JumpIfSoundPlayingAndPlaySound);
 	DECLARE_OPCODE(JumpIfActionFind);
 	DECLARE_OPCODE(SetActionFind);

@@ -704,7 +704,7 @@ int32 Scene::hitTestScene(const Common::Point pt, HitType &type) {
 	int32 result = findActionArea(Common::Point(top, left));
 
 	if (result != -1) {
-		if (LOBYTE(_ws->actions[result]->actionType) & 8) {
+		if (LO_BYTE(_ws->actions[result]->actionType) & 8) {
 			type = kHitActionArea;
 			return result;
 		}
@@ -721,10 +721,10 @@ bool Scene::hitTestActor(const Common::Point pt) {
 	getActorPosition(act, &actPos);
 
 	int32 hitFrame;
-	if (act->getFrameNum() >= act->getFrameCount())
-		hitFrame = 2 * act->getFrameNum() - act->getFrameCount() - 1;
+	if (act->getFrameIndex() >= act->getFrameCount())
+		hitFrame = 2 * act->getFrameIndex() - act->getFrameCount() - 1;
 	else
-		hitFrame = act->getFrameNum();
+		hitFrame = act->getFrameIndex();
 
 	return hitTestPixel(act->getResourceId(),
 		hitFrame,
@@ -805,7 +805,7 @@ void Scene::updateAmbientSounds() {
 						; // TODO setSoundVolume(snd->resourceId, 0);
 				}
 			} else {
-				int loflag = LOBYTE(snd->flags);
+				int loflag = LO_BYTE(snd->flags);
 				if (snd->field_0) {
 					; // TODO calculate panning at point
 				} else {
@@ -1009,33 +1009,45 @@ bool Scene::updateSceneCoordinates(int32 targetX, int32 targetY, int32 A0, bool 
 	return false;
 }
 
-// ----------------------------------
-// ---------- DRAW REGION -----------
-// ----------------------------------
+void Scene::adjustCoordinates(int32 x, int32 y, Common::Point *point) {
+	if (!point)
+		error("[Scene::adjustCoordinates] Invalid point parameter!");
 
+	point->x = x - _ws->xLeft;
+	point->y = y - _ws->yTop;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Scene drawing
+//////////////////////////////////////////////////////////////////////////
 int Scene::drawScene() {
-
 	_vm->screen()->clearGraphicsInQueue();
 
 	if (_skipDrawScene) {
 		_vm->screen()->clearScreen();
 	} else {
 		// Draw scene background
-		GraphicFrame *bg = _bgResource->getFrame(0);
+		_vm->screen()->draw(_bgResource, 0, -_ws->xLeft, -_ws->yTop, 0);
 
-		_vm->screen()->copyToBackBuffer(
-			((byte *)bg->surface.pixels) + _ws->yTop * bg->surface.w + _ws->xLeft,
-			bg->surface.w,
-			0,
-			0,
-			640,
-			480);
+		// Draw actors on the update list
+		buildUpdateList();
+		drawUpdateList();
 
-		drawActorsAndBarriers();
-		queueActorUpdates();
-		queueBarrierUpdates();
+		if (_ws->numChapter == 11)
+			checkVisibleActorsPriority();
 
-		// TODO: draw main actor stuff
+		// Queue updates
+		for (uint32 i = 0; i < _ws->actors.size(); i++)
+			_ws->actors[i]->draw();
+
+		for (uint32 i = 0; i < _ws->barriers.size(); i++)
+			_ws->barriers[i]->draw();
+
+		Actor *player = getActor();
+		if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10)
+			player->update_40DE20();
+		else
+			player->setNumberFlag01(0);
 
 		_vm->screen()->drawGraphicsInQueue();
 	}
@@ -1043,7 +1055,38 @@ int Scene::drawScene() {
 	return 1;
 }
 
-void Scene::drawActorsAndBarriers() {
+bool Scene::updateListCompare(const UpdateItem &item1, const UpdateItem &item2) {
+	return item1.priority - item2.priority;
+}
+
+void Scene::checkVisibleActorsPriority() {
+	error("[Scene::checkVisibleActorsPriority] not implemented");
+}
+
+void Scene::adjustActorPriority(ActorIndex index) {
+	error("[Scene::adjustActorPriority] not implemented");
+}
+
+void Scene::buildUpdateList() {
+	_updateList.clear();
+
+	for (uint32 i = 0; i < _ws->actors.size(); i++) {
+		Actor *actor = _ws->actors[i];
+
+		if (actor->isVisible()) {
+			UpdateItem item;
+			item.index = i;
+			item.priority = actor->y1 + actor->y2;
+
+			_updateList.push_back(item);
+		}
+	}
+
+	// Sort the list (the original uses qsort, so we may have to revert to that if our sort isn't behaving the same)
+	Common::sort(_updateList.begin(), _updateList.end(), &Scene::updateListCompare);
+}
+
+void Scene::drawUpdateList() {
 	// TODO this is supposed to be looping through
 	// a collection of CharacterUpdateItems. Since
 	// we're only on scene 1 atm, and there is only one
@@ -1085,7 +1128,93 @@ void Scene::drawActorsAndBarriers() {
 
 			// XXX from .text:0040a4d1
 			for (int32 barIdx = 0; barIdx < _ws->numBarriers; barIdx++) {
-				_ws->barriers[barIdx]->draw(act, pt);
+				Barrier *bar    = _ws->barriers[barIdx];
+				bool actInBar   = bar->getBoundingRect()->contains(*act->getBoundingRect());
+				bool intersects = false;
+
+				// TODO verify that my funky LOBYTE macro actually
+				// works the way I assume it should :P
+				if (!actInBar) {
+					if (LO_BYTE(bar->flags) & 0x20)
+						if (!(LO_BYTE(bar->flags) & 0x80))
+							// XXX not sure if this will work, as it's
+							// supposed to set 0x40 to the lobyte...
+							bar->flags |= 0x40;
+					continue;
+				}
+
+				if (bar->flags & 2) {
+					// TODO refactor
+					if (bar->getField74() || bar->getField78() ||
+						bar->getField7C() || bar->getField80())
+						intersects = (pt.y > bar->getField78() + (bar->getField80() - bar->getField78()) * (pt.x - bar->getField74()) / (bar->getField7C() - bar->getField74())) == 0;
+					else
+						intersects = true;
+				} else {
+					if (bar->flags & 0x40) {
+						PolyDefinitions *poly = &_polygons->entries[bar->getPolygonIndex()];
+						if (pt.x > 0 && pt.y > 0 && poly->numPoints > 0)
+							intersects = poly->contains(pt.x, pt.y);
+						else
+							;//warning ("[drawActorsAndBarriers] trying to find intersection of uninitialized point");
+					}
+					// XXX the original has an else case here that
+					// assigns intersects the value of the
+					// flags & 2 check, which doesn't make any sense since
+					// that path would never have been taken if code
+					// execution had made it's way here.
+				}
+				if (LO_BYTE(bar->flags) & 0x80 || intersects) {
+					if (LO_BYTE(bar->flags) & 0x20)
+						// XXX not sure if this will work, as it's
+						// supposed to set this value on the lobyte...
+						bar->flags &= 0xBF | 0x80;
+					else
+						// XXX another lobyte assignment...
+						bar->flags |= 0x40;
+						// TODO label jump up a few lines here. Investigate...
+				}
+				if (bar->flags & 4) {
+					if (intersects) {
+						if(act->flags & 2)
+							;//warning ("[drawActorsAndBarriers] Assigning mask to masked character [%s]", bar->name);
+						else {
+							// TODO there's a call to sub_40ac10 that does
+							// a point calculation, but the result doesn't appear to
+							// ever be used, and the object passed in as a parameter
+							// isn't updated
+							act->setBarrierIndex(barIdx);
+							act->flags |= 2;
+						}
+					}
+				} else {
+					if (intersects) {
+						// XXX assuming the following:
+						// "if ( *(int *)((char *)&scene.characters[0].priority + v18) < *(v12_barrierPtr + 35) )"
+						// is the same as what I'm comparing :P
+						if (act->getPriority() < bar->getPriority()) {
+							act->setField934(1);
+							act->setPriority(bar->getPriority() + 3);
+							// TODO there's a block of code here that seems
+							// to loop through the CharacterUpdateItems and do some
+							// priority adjustment. Since I'm not using CharacterUpdateItems as of yet,
+							// I'm not sure what to do here
+							// The loop seems to occur if:
+							// (a) there are still character items to process
+							// (b) sceneNumber != 2 && actor->field_944 != 1
+						}
+					} else {
+						if (act->getPriority() > bar->getPriority() || act->getPriority() == 1) {
+							act->setField934(1);
+							act->setPriority(bar->getPriority() - 1);
+							// TODO another character update loop
+							// This time it looks like there's another
+							// intersection test, and more updates
+							// to field_934 and field_944, then
+							// priority updates
+						}
+					}
+				}
 			} // end for (barriers)
 		}
 	} // end for (actors)
@@ -1096,66 +1225,6 @@ void Scene::getActorPosition(Actor *actor, Common::Point *pt) {
 	pt->x = actor->x1 - _ws->xLeft;
 	pt->y = actor->y1 - _ws->yTop;
 }
-
-int Scene::queueActorUpdates() {
-	if (_ws->numActors > 0) {
-		Common::Point pt;
-		for (int32 a = 0; a < _ws->numActors; a++) {
-			Actor *actor = _ws->actors[a];
-
-			if ((actor->flags & 0xFF) & 1) { // check this mask
-				getActorPosition(actor, &pt);
-				//pt.x += actor->x;
-				//pt.y += actor->y;
-
-				int32 frameNum = actor->getFrameNum();
-				if (actor->getFrameNum() >= actor->getFrameCount()) {
-					frameNum = 2 * actor->getFrameCount() - actor->getFrameNum() - 1;
-				}
-
-				if ((actor->flags & 0xFF) & 2) {
-					// TODO: sub_40AC10
-
-
-
-				} else {
-					// TODO: get flag value from character_DeadSarah_sub_40A140
-					_vm->screen()->addGraphicToQueue(actor->getResourceId(), frameNum, pt.x, pt.y, ((actor->getDirection() < 5) - 1) & 2, actor->getField96C(), actor->getPriority());
-				}
-			}
-		}
-	}
-
-	return 1;
-}
-
-int Scene::queueBarrierUpdates() {
-	int32 barriersCount = (int32)_ws->barriers.size();
-
-	if (barriersCount > 0) {
-		for (int32 b = 0; b < barriersCount; b++) {
-			Barrier *barrier = _ws->barriers[b];
-
-			if (!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
-				if (barrier->isOnScreen()) {
-					//TODO: need to do something here yet
-
-					if (barrier->getField67C() <= 0 || barrier->getField67C() >= 4) { // TODO: still missing a condition for game quality config
-						_vm->screen()->addGraphicToQueue(barrier->getResourceId(), barrier->getFrameIndex(), barrier->x, barrier->y, (barrier->flags >> 11) & 2, barrier->getField67C() - 3, barrier->getPriority());
-					} else {
-						// TODO: Do Cross Fade
-						// parameters: barrier->resourceId, barrier->frameIdx, barrier->x, barrier->y, _ws->backgroundImage, _ws->xLeft, _ws->yTop, 0, 0, barrier->field_67C - 1
-						_vm->screen()->addGraphicToQueue(barrier->getResourceId(), barrier->getFrameIndex(), barrier->x, barrier->y, 0, 0, 0);
-					}
-				}
-			}
-		}
-	}
-
-	return 1;
-}
-
-
 // ----------------------------------
 // ---------- SCREEN REGION -----------
 // ----------------------------------

@@ -61,8 +61,8 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	x                 = stream->readSint32LE();
 	y                 = stream->readSint32LE();
 	_resourceId       = stream->readSint32LE();
-	_field_C          = stream->readSint32LE();
-	_frameNumber      = stream->readSint32LE();
+	_barrierIndex     = stream->readSint32LE();
+	_frameIndex      = stream->readSint32LE();
 	_frameCount       = stream->readSint32LE();
 	x1                = stream->readSint32LE();
 	y1                = stream->readSint32LE();
@@ -168,7 +168,32 @@ void Actor::setVisible(bool value) {
 /////////////////////////////////////////////////////////////////////////
 // Update & status
 //////////////////////////////////////////////////////////////////////////
+void Actor::draw() {
+	if (!isVisible())
+		return;
 
+	// Draw the actor
+	Common::Point point;
+	getScene()->adjustCoordinates(x + x1, y + y1, &point);
+
+	// Compute frame index
+	int32 frameIndex = _frameIndex;
+	if (_frameIndex >= _frameCount)
+		frameIndex = 2 * _frameCount - _frameIndex - 1;
+
+	if (HI_BYTE(flags) & kActorFlag2) {
+		Barrier *barrier = getWorld()->barriers[_barrierIndex];
+		getScene()->adjustCoordinates(barrier->x, barrier->y, &point);
+
+		error("[Actor::draw] Cross fade not implemented!");
+		//getScreen()->addGraphicToQueue(_resourceId, frameIndex, point.x, point.y, barrier->_resourceId, point.x, point.y, getGraphicsFlags(), _priority);
+
+		// Update flags
+		flags &= ~kActorFlag2;
+	} else {
+		getScreen()->addGraphicToQueue(_resourceId, frameIndex, point.x, point.y, getGraphicsFlags(), _field_96C, _priority);
+	}
+}
 
 void Actor::update() {
 	if (!isVisible())
@@ -189,8 +214,8 @@ void Actor::update() {
 	case kActorStatus17:
 		if (getWorld()->numChapter == 2) {
 			if (_index > 12) {
-				if (_frameNumber <= _frameCount - 1) {
-					++_frameNumber;
+				if (_frameIndex <= _frameCount - 1) {
+					++_frameIndex;
 				} else {
 					setVisible(false);
 					getScene()->getActor(_index + 9)->setVisible(false);
@@ -198,13 +223,13 @@ void Actor::update() {
 			}
 
 			if (_index == 11) {
-				if (_frameNumber <= _frameCount - 1) {
+				if (_frameIndex <= _frameCount - 1) {
 					// Looks like a simple check using the counter, since it doesn't seem to be used anywhere else
 					if (_actorUpdateCounter <= 0) {
 						++_actorUpdateCounter;
 					} else {
 						_actorUpdateCounter = 0;
-						++_frameNumber;
+						++_frameIndex;
 					}
 				} else {
 					if (_vm->isGameFlagSet(kGameFlag556)) {
@@ -229,7 +254,7 @@ void Actor::update() {
 						_vm->setGameFlag(kGameFlag279);
 						_vm->setGameFlag(kGameFlag368);
 
-						player->setFrameNumber(0);
+						player->setFrameIndex(0);
 						getScene()->getActor(0)->setTickValue(_vm->getTick());
 
 						Sound *sound  = _vm->sound();
@@ -256,8 +281,8 @@ void Actor::update() {
 			}
 
 			if (_index == getScene()->getPlayerActorIndex()) {
-				if (_frameNumber <= _frameCount - 1) {
-					++_frameNumber;
+				if (_frameIndex <= _frameCount - 1) {
+					++_frameIndex;
 				} else {
 					_vm->clearGameFlag(kGameFlag239);
 					getScene()->getActor(10)->updateStatus(kActorStatus14);
@@ -271,8 +296,8 @@ void Actor::update() {
 
 		} else if (getWorld()->numChapter == 11) {
 			if (_index == getScene()->getPlayerActorIndex()) {
-				if (_frameNumber <= _frameCount - 1)
-					++_frameNumber;
+				if (_frameIndex <= _frameCount - 1)
+					++_frameIndex;
 				else
 					getScene()->resetActor0();
 			}
@@ -313,7 +338,7 @@ void Actor::update() {
 		break;
 
 	case kActorStatusDisabled:
-		_frameNumber = (_frameNumber + 1) % _frameCount;
+		_frameIndex = (_frameIndex + 1) % _frameCount;
 
 		if (_vm->globalTickValue - _tickValue > 300) {
 			if (_vm->getRandom(100) < 50) {
@@ -406,14 +431,14 @@ void Actor::update() {
 
 	case kActorStatus6:
 	case kActorStatus10:
-		_frameNumber = (_frameNumber + 1) % _frameCount;
+		_frameIndex = (_frameIndex + 1) % _frameCount;
 		break;
 
 	case kActorStatus8:
 		if (_vm->encounter()->getFlag(kEncounterFlag2)
 		 || !_soundResourceId
 		 || getSound()->isPlaying(_soundResourceId)) {
-			_frameNumber = (_frameNumber + 1) % _frameCount;
+			_frameIndex = (_frameIndex + 1) % _frameCount;
 		} else {
 			updateStatus(kActorStatusEnabled);
 			_soundResourceId = kResourceNone;
@@ -522,14 +547,14 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 	case kActorStatus18:
 		if (getWorld()->numChapter == 2) {
 			GraphicResource *resource = new GraphicResource();
-			_frameNumber = 0;
+			_frameIndex = 0;
 
 			if (_index > 12)
 				_resourceId = _graphicResourceIds[_direction + 30];
 
 			if (getScene()->getPlayerActorIndex() == _index) {
 				resource->load(getScene()->getResourcePack(), _resourceId);
-				_frameNumber = resource->getFrameCount() - 1;
+				_frameIndex = resource->getFrameCount() - 1;
 			}
 
 			if (_index == 11)
@@ -670,7 +695,7 @@ void Actor::setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame)
 		updateFromDirection(newDirection);
 
 	if (frame > 0)
-		_frameNumber = frame;
+		_frameIndex = frame;
 }
 
 
@@ -730,7 +755,9 @@ bool Actor::process_41BDB0(int32 reactionIndex, bool testNumberValue01) {
 	error("[Actor::process_41BC00] not implemented!");
 }
 
-
+void Actor::update_40DE20() {
+	error("[Actor::update_40DE20] not implemented!");
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Update methods
@@ -741,7 +768,7 @@ void Actor::updateStatus3_19() {
 }
 
 void Actor::updateStatusEnabled() {
-	_frameNumber = (_frameNumber + 1) % _frameCount;
+	_frameIndex = (_frameIndex + 1) % _frameCount;
 
 	// Actor: Crow
 	if (_vm->globalTickValue - _tickValue > 300) {
@@ -1017,11 +1044,23 @@ void Actor::updateGraphicData(uint32 offset) {
 	_frameCount = resource->getFrameCount();
 	delete resource;
 
-	_frameNumber = 0;
+	_frameIndex = 0;
 }
 
 bool Actor::isDefaultDirection(int index) {
 	return _graphicResourceIds[index] != _graphicResourceIds[5];
+}
+
+int32 Actor::getGraphicsFlags() {
+	if (getWorld()->numChapter == 11) {
+		int res = strcmp((char *)&_name, "Dead Sarah");
+
+		if (res == 0)
+			return res;
+	}
+
+	// TODO replace by readable version
+	return ((_direction < 5) - 1) & 2;
 }
 
 } // end of namespace Asylum
