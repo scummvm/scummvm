@@ -133,7 +133,7 @@ bool Sound::addToSoundBuffer(ResourceId resourceId) {
 	if (exists < 0) {
 		SoundBufferItem sound;
 		sound.resourceId = resourceId;
-        sound.handle = _soundHandle;
+		sound.handle = _soundHandle;
 		_soundBuffer.push_back(sound);
 	}
 
@@ -141,7 +141,7 @@ bool Sound::addToSoundBuffer(ResourceId resourceId) {
 }
 
 void Sound::removeFromSoundBuffer(ResourceId resourceId) {
-    int32 pos = getBufferPosition(resourceId);
+	int32 pos = getBufferPosition(resourceId);
 
 	if (pos >= 0) {
 		_soundBuffer.remove_at(pos);
@@ -161,9 +161,9 @@ bool Sound::isPlaying(ResourceId resourceId) {
 		SoundBufferItem snd = _soundBuffer[pos];
 		if (_mixer->isSoundHandleActive(snd.handle)) {
 			return true;
-        } else {
-            removeFromSoundBuffer(resourceId);
-        }
+		} else {
+			removeFromSoundBuffer(resourceId);
+		}
 	}
 
 	return false;
@@ -198,7 +198,7 @@ void Sound::playSound(ResourcePack *pack, ResourceId resourceId, bool looping, i
 		} else {
 			ResourceEntry *ent = _soundPack->getResource(resourceId);
 			playSoundData(Audio::Mixer::kSFXSoundType, &snd.handle, ent->data, ent->size, looping, volume, panning);
-            addToSoundBuffer(resourceId);
+			addToSoundBuffer(resourceId);
 		}
 	}
 
@@ -213,7 +213,7 @@ void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 p
 		} else {
 			ResourceEntry *ent = _soundPack->getResource(resourceId);
 			playSound(ent, looping, volume, panning);
-            addToSoundBuffer(resourceId);
+			addToSoundBuffer(resourceId);
 		}
 	}
 }

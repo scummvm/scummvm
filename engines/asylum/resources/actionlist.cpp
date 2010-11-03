@@ -935,7 +935,7 @@ IMPLEMENT_OPCODE(ChangeMusicById) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x33
 IMPLEMENT_OPCODE(StopMusic) {
-	_scene->vm()->sound()->changeMusic(_scene->getResourcePack(), kResourceMusic_FFFFFD66, 0);
+	_scene->vm()->sound()->changeMusic(_scene->getResourcePack(), (int)kResourceMusic_FFFFFD66, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
