@@ -61,17 +61,6 @@ namespace Asylum {
 // If defined, will show the scene update times on the debugger output
 //#define DEBUG_SCENE_TIMES
 
-// XXX
-// I'm not sure if system endian-ness would have any
-// effect on the byte order of the data files, but I guess
-// it won't hurt to keep this here until we can test
-// on a big-endian system
-#ifndef SCUMM_BIG_ENDIAN
-#define LOBYTE(word) (word & 0xFF)
-#else
-#define LOBYTE(word) ((word >> 24) & 0xFF)
-#endif
-
 //////////////////////////////////////////////////////////////////////////
 // Flags
 enum FlagType {

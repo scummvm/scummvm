@@ -37,6 +37,19 @@ Screen::~Screen() {
 	_backBuffer.free();
 }
 
+void Screen::draw(GraphicResource *resource, uint32 frameIndex, int32 x, int32 y, int32 flags) {
+
+	// Get the frame to draw
+	GraphicFrame *frame = resource->getFrame(frameIndex);
+
+	copyToBackBuffer(((byte *)frame->surface.pixels) - y * frame->surface.w - x,
+	                 frame->surface.w,
+	                 0,
+	                 0,
+	                 640,
+	                 480);
+}
+
 void Screen::copyBackBufferToScreen() {
 	_vm->_system->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
 }

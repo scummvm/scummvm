@@ -164,6 +164,7 @@ public:
 
 	bool updateSceneCoordinates(int32 targetX, int32 targetY, int32 val, bool checkSceneCoords = false, int32 *param = NULL);
 
+	void adjustCoordinates(int32 x, int32 y, Common::Point *point);
 
 	void updatePlayerChapter9(int32 param);
 
@@ -258,6 +259,13 @@ private:
 	int32 _sceneYTop;
 	Common::Rational _sceneOffsetAdd;
 
+	struct UpdateItem {
+		ActorIndex index;
+		int32 priority;
+	};
+
+	Common::Array<UpdateItem> _updateList;
+
 	void update();
 	void startMusic();
 
@@ -297,16 +305,22 @@ private:
 
 	void updateScreen();
 
-	int drawScene();
-	/** .text:0040A3C0
-	 * TODO add description
-	 */
-	void drawActorsAndBarriers();
-	int queueActorUpdates();
-	int queueBarrierUpdates();
-	bool isBarrierVisible(BarrierItem *barrier);
-	bool isBarrierOnScreen(BarrierItem *barrier);
 
+	//////////////////////////////////////////////////////////////////////////
+	// Scene drawing
+	//////////////////////////////////////////////////////////////////////////
+	int drawScene();
+
+	void buildUpdateList();
+	void drawUpdateList();
+	static bool updateListCompare(const UpdateItem &item1, const UpdateItem &item2);
+
+	void checkVisibleActorsPriority();
+	void adjustActorPriority(ActorIndex index);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Scene debugging
+	//////////////////////////////////////////////////////////////////////////
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
 	void debugScreenScrolling(GraphicFrame *bg);

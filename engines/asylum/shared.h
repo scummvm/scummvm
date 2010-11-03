@@ -120,7 +120,8 @@ enum ActorStatus {
 typedef int ActorDirection;
 
 enum ActorFlags {
-	kActorFlagVisible = 1
+	kActorFlagVisible = 1,
+	kActorFlag2       = 2
 };
 
 enum DirectionFrom {
@@ -226,10 +227,12 @@ enum ActorResources {
 // Barrier
 //////////////////////////////////////////////////////////////////////////
 enum BarrierFlag {
-	kBarrierFlagDestroyed = -2,
+	kBarrierFlagEnabled   = 0x1,
+	kBarrierFlag2         = 0x2,
 	kBarrierFlag4         = 0x4,
 	kBarrierFlag8         = 0x8,
 	kBarrierFlag20        = 0x20,
+	kBarrierFlag40        = 0x40,
 	kBarrierFlagC000      = 0xC000,
 	kBarrierFlag10000     = 0x10000,
 	kBarrierFlag10E38     = 0x10E38,
@@ -261,6 +264,12 @@ enum BarrierFlag {
 #define getScreen() _vm->screen()
 #define getWorld()  _vm->scene()->worldstats()
 
+
+//////////////////////////////////////////////////////////////////////////
+// Sub-integer partial access macros
+//////////////////////////////////////////////////////////////////////////
+#define LO_BYTE(d)   (*((char*)&(d)))
+#define HI_BYTE(d)   (*((char*)&(d)+1))
 
 
 

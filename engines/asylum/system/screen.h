@@ -51,6 +51,8 @@ public:
 	Screen(AsylumEngine *_vm);
 	~Screen();
 
+	void draw(GraphicResource *resource, uint32 frameIndex, int32 x, int32 y, int32 flags);
+
 	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 	void copyBackBufferToScreen();

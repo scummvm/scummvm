@@ -109,13 +109,14 @@ void Barrier::load(Common::SeekableReadStream *stream) {
 }
 
 
-void Barrier::destroy() {
-	flags &= kBarrierFlagDestroyed;
+void Barrier::disable() {
+	flags &= ~kBarrierFlagEnabled;
 }
 
-void Barrier::destroyAndRemoveFromQueue() {
-	destroy();
-	flags|= kBarrierFlag20000;
+void Barrier::disableAndRemoveFromQueue() {
+	disable();
+
+	flags |= kBarrierFlag20000;
 
 	getScreen()->deleteGraphicFromQueue(_resourceId);
 }
@@ -129,119 +130,60 @@ bool Barrier::isOnScreen() {
 
 	barrierRect.translate(x, y);
 
-	return isVisible() && (flags & 1) && screenRect.intersects(barrierRect);
+	return isVisible() && (flags & kBarrierFlagEnabled) && screenRect.intersects(barrierRect);
 }
 
 bool Barrier::isVisible() {
-	if ((flags & 0xFF) & 1) {
-		for (int32 f = 0; f < 10; f++) {
-			bool   isSet = false;
-			GameFlag flag  = _gameFlags[f];
+	if (flags & kBarrierFlagEnabled) {
+
+		// Check each game flag
+		for (int32 i = 0; i < 10; i++) {
+			GameFlag flag = _gameFlags[i];
+			bool ok = false;
 
 			if (flag <= 0)
-				isSet = _vm->isGameFlagNotSet(flag);
+				ok = _vm->isGameFlagNotSet((GameFlag)-flag);
 			else
-				isSet = _vm->isGameFlagSet(flag);
+				ok = _vm->isGameFlagSet(flag);
 
-			if (!isSet)
+			if (!ok)
 				return false;
 		}
+
+		// All flags were ok, we are done!
 		return true;
 	}
+
 	return false;
 }
 
 /////////////////////////////////////////////////////////////////////////
 // Update
 //////////////////////////////////////////////////////////////////////////
-void Barrier::draw(Actor *actor, Common::Point &pt) {
-	bool actInBar   = _boundingRect.contains(*actor->getBoundingRect());
-	bool intersects = false;
-
-	// TODO verify that my funky LOBYTE macro actually
-	// works the way I assume it should :P
-	if (!actInBar) {
-		if (LOBYTE(flags) & 0x20)
-			if (!(LOBYTE(flags) & 0x80))
-				// XXX not sure if this will work, as it's
-				// supposed to set 0x40 to the lobyte...
-				flags |= 0x40;
+void Barrier::draw() {
+	if (LO_BYTE(flags) & kBarrierFlag4)
 		return;
-	}
 
-	if (flags & 2) {
-		// TODO refactor
-		if (_field_74 || _field_78 ||
-			_field_7C || _field_80)
-			intersects = (pt.y > _field_78 + (_field_80 - _field_78) * (pt.x - _field_74) / (_field_7C - _field_74)) == 0;
-		else
-			intersects = true;
-	} else {
-		if (flags & 0x40) {
-			PolyDefinitions *poly = &getScene()->polygons()->entries[_polygonIndex];
-			if (pt.x > 0 && pt.y > 0 && poly->numPoints > 0)
-				intersects = poly->contains(pt.x, pt.y);
-			else
-				;//warning ("[drawActorsAndBarriers] trying to find intersection of uninitialized point");
-		}
-		// XXX the original has an else case here that
-		// assigns intersects the value of the
-		// flags & 2 check, which doesn't make any sense since
-		// that path would never have been taken if code
-		// execution had made it's way here.
-	}
-	if (LOBYTE(flags) & 0x80 || intersects) {
-		if (LOBYTE(flags) & 0x20)
-			// XXX not sure if this will work, as it's
-			// supposed to set this value on the lobyte...
-			flags &= 0xBF | 0x80;
-		else
-			// XXX another lobyte assignment...
-			flags |= 0x40;
-		// TODO label jump up a few lines here. Investigate...
-	}
-	if (flags & 4) {
-		if (intersects) {
-			if(actor->flags & 2)
-				;//warning ("[drawActorsAndBarriers] Assigning mask to masked character [%s]", _name);
-			else {
-				// TODO there's a call to sub_40ac10 that does
-				// a point calculation, but the result doesn't appear to
-				// ever be used, and the object passed in as a parameter
-				// isn't updated
-				actor->setBarrierIndex(getWorld()->getBarrierIndexById(_id));
-				actor->flags |= 2;
-			}
-		}
-	} else {
-		if (intersects) {
-			// XXX assuming the following:
-			// "if ( *(int *)((char *)&scene.characters[0].priority + v18) < *(v12_barrierPtr + 35) )"
-			// is the same as what I'm comparing :P
-			if (actor->getPriority() < _priority) {
-				actor->setField934(1);
-				actor->setPriority(_priority + 3);
-				// TODO there's a block of code here that seems
-				// to loop through the CharacterUpdateItems and do some
-				// priority adjustment. Since I'm not using CharacterUpdateItems as of yet,
-				// I'm not sure what to do here
-				// The loop seems to occur if:
-				// (a) there are still character items to process
-				// (b) sceneNumber != 2 && actor->field_944 != 1
-			}
-		} else {
-			if (actor->getPriority() > _priority || actor->getPriority() == 1) {
-				actor->setField934(1);
-				actor->setPriority(_priority - 1);
-				// TODO another character update loop
-				// This time it looks like there's another
-				// intersection test, and more updates
-				// to field_934 and field_944, then
-				// priority updates
-			}
-		}
+	if (HI_BYTE(flags) & kBarrierFlag40)
+		return;
+
+	if (!isOnScreen())
+		return;
+
+	// Draw the barrier
+	Common::Point point;
+	getScene()->adjustCoordinates(x, y, &point);
+
+	if (_field_67C <= 0 || _field_67C >= 4 || Config.performance <= 1)
+		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, x, y, (flags >> 11) & kBarrierFlag2, _field_67C - 3, _priority);
+	else {
+		// TODO: Do Cross Fade
+		//getScreen()->addGraphicToQueue(_resourceId, _frameIndex, x, y, getWorld()->backgroundImage, getWorld()->xLeft, getWorld()->yTop, 0, 0, _field_67C - 1);
+		error("[Barrier::draw] Crossfade not implemented!");
 	}
 }
+
+
 
 void Barrier::update() {
 	bool canPlaySound = false;
@@ -360,7 +302,7 @@ void Barrier::update() {
 		}
 
 		if (canPlaySound) {
-			updateSoundItems(_vm->sound());
+			updateSoundItems();
 			stopSound();
 		}
 	}
@@ -368,10 +310,9 @@ void Barrier::update() {
 }
 
 void Barrier::setNextFrame(int32 targetFlags) {
-	int32 newFlag = targetFlags | 1 | flags;
-	flags |= targetFlags | 1;
+	flags |= targetFlags | kBarrierFlagEnabled;
 
-	if (newFlag & 0x10000)
+	if (flags & kBarrierFlag10000)
 		_frameIndex = _frameCount - 1;
 	else
 		_frameIndex = 0;
@@ -380,13 +321,15 @@ void Barrier::setNextFrame(int32 targetFlags) {
 /////////////////////////////////////////////////////////////////////////
 // Misc
 /////////////////////////////////////////////////////////////////////////
-void Barrier::updateSoundItems(Sound *snd) {
-	for (int32 i = 0; i < 16; i++) {
+void Barrier::updateSoundItems() {
+	for (int32 i = 0; i < ARRAYSIZE(_soundItems); i++) {
+
 		SoundItem *item = &_soundItems[i];
-		if (snd->isPlaying(item->resourceId)) {
+
+		if (getSound()->isPlaying(item->resourceId)) {
 			if (item->field_4) {
-				snd->stopSound(item->resourceId);
-				item->resourceId   = 0;
+				getSound()->stopSound(item->resourceId);
+				item->resourceId = kResourceNone;
 				item->field_4 = 0;
 			}
 		}
@@ -402,10 +345,11 @@ void Barrier::stopSound() {
 
 void Barrier::stopAllSounds() {
 	for (int i = 0; i < ARRAYSIZE(_soundItems); i++)
-		if (_soundItems[i].resourceId)
+		if (_soundItems[i].resourceId) {
 			getSound()->stopSound(_soundItems[i].resourceId);
+			_soundItems[i].resourceId = kResourceNone;
+		}
 }
-
 
 int32 Barrier::getRandomId() {
 	int32 numRes = 0;
@@ -425,20 +369,7 @@ int32 Barrier::getRandomId() {
 }
 
 bool Barrier::checkFlags() {
-	return (flags & 1) && (flags & 8 || flags & 0x10000);
-}
-
-bool Barrier::checkGameFlags() {
-	if (LOBYTE(flags) & 1) {
-		for (int32 i = 0; i < 10; i++) {
-			if (_vm->isGameFlagSet(_gameFlags[i]))
-				return true;
-		}
-
-		return true;
-	}
-
-	return false;
+	return (flags & kBarrierFlagEnabled) && (flags & kBarrierFlag8 || flags & kBarrierFlag10000);
 }
 
 } // end of namespace Asylum

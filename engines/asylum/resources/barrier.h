@@ -65,11 +65,15 @@ public:
 	int32          getPriority() { return _priority; }
 	ResourceId     getResourceId() { return _resourceId; }
 
+	int32          getField74() { return _field_74; }
+	int32          getField78() { return _field_78; }
+	int32          getField7C() { return _field_7C; }
+	int32          getField80() { return _field_80; }
 	int32          getField67C() { return _field_67C; }
 	int32          getField688() { return _field_688; }
 
 	/////////////////////////////////////////////////////////////////////////
-	// Loading & destroying
+	// Loading & disabling
 	/////////////////////////////////////////////////////////////////////////
 
 	/**
@@ -80,14 +84,14 @@ public:
 	void load(Common::SeekableReadStream *stream);
 
 	/**
-	 * Sets the barrier destroyed flag
+	 * Sets the barrier disabled flag
 	 */
-	void destroy();
+	void disable();
 
 	/**
 	 * Sets the barrier destroyed flag and remove this barrier from the graphics queue
 	 */
-	void destroyAndRemoveFromQueue();
+	void disableAndRemoveFromQueue();
 
 	/////////////////////////////////////////////////////////////////////////
 	// Visibility
@@ -114,7 +118,7 @@ public:
 	/**
 	 * Draws the barrier
 	 */
-	void draw(Actor *actor, Common::Point &pt);
+	void draw();
 
 	/**
 	 * Updates the barrier.
@@ -136,7 +140,7 @@ public:
 	 * Check if any items in the barrier sound array are playing,
 	 * and based on their flag values, stop them accordingly
 	 */
-	void updateSoundItems(Sound *snd);
+	void updateSoundItems();
 
 	/**
 	 * Stop the barrier related sounds
@@ -144,13 +148,11 @@ public:
 	void stopSound();
 
 	/**
-	 * Stop all barrier sounds.
+	 * Stop all barrier sounds (called from scripts)
 	 */
 	void stopAllSounds();
 
 	bool checkFlags();
-
-	bool checkGameFlags();
 
 	int32 getRandomId(); // TODO Give this a better name?
 
