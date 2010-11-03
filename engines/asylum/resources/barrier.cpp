@@ -25,11 +25,11 @@
 
 #include "asylum/resources/barrier.h"
 
+#include "asylum/views/scene.h"
+
 namespace Asylum {
 
-Barrier::Barrier() {
-	// TODO Auto-generated constructor stub
-
+Barrier::Barrier(Scene *scene) : _scene(scene) {
 }
 
 Barrier::~Barrier() {
@@ -37,7 +37,14 @@ Barrier::~Barrier() {
 }
 
 void Barrier::destroy() {
-	flags &= 0xFFFFFFFE;
+	flags &= kBarrierFlagDestroyed;
+}
+
+void Barrier::destroyAndRemoveFromQueue() {
+	destroy();
+	flags|= kBarrierFlag20000;
+
+	_scene->vm()->screen()->deleteGraphicFromQueue(resId);
 }
 
 int32 Barrier::getRandomId() {
@@ -87,4 +94,10 @@ void Barrier::updateSoundItems(Sound *snd) {
 	// many calls to this method, I'm leaving this comment as a reminder
 	// until all dependant methods are implemented
 }
+
+void Barrier::stopSound() {
+	if (_scene->vm()->sound()->isPlaying(soundResId))
+		_scene->vm()->sound()->stopSound(soundResId);
+}
+
 } // end of namespace Asylum

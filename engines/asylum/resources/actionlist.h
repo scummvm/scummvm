@@ -45,7 +45,7 @@ namespace Asylum {
 
 #define ADD_OPCODE(name) { \
 	Opcode *func = new Opcode(#name, new Common::Functor1Mem<ScriptEntry *, void, ActionList>(this, &ActionList::k##name)); \
-	_actions.push_back(func); \
+	_opcodes.push_back(func); \
 }
 
 class Scene;
@@ -64,16 +64,21 @@ public:
 	 * Initialize the script element at actionIndex to
 	 * the actor at actorIndex
 	 */
-	void queueScript(int32 actionIndex, int32 actorIndex);
+	void queueScript(int32 scriptIndex, ActorIndex actorIndex);
 
 	// Accessors
-	bool doesAllowInput() { return _allowInput; }
 	int32 getDelayedVideoIndex() const { return _delayedVideoIndex; }
 	void setDelayedVideoIndex(int32 val) { _delayedVideoIndex = val; }
 	int32 getDelayedSceneIndex() const { return _delayedSceneIndex; }
 	void setDelayedSceneIndex(int32 val) { _delayedSceneIndex = val; }
 
 private:
+	enum BarrierEnableType {
+		kBarrierEnableType0,
+		kBarrierEnableType1,
+		kBarrierEnableType2
+	};
+
 	typedef struct ScriptEntry {
 		int32 numLines; // Only set on the first line of each script
 		int32 opcode;
@@ -86,7 +91,6 @@ private:
 		int32 param7;
 		int32 param8;
 		int32 param9;
-
 	} ScriptEntry;
 
 	typedef struct Script {
@@ -97,19 +101,20 @@ private:
 	} Script;
 
 	typedef struct ScriptQueueEntry {
-		int32 actionListIndex;
-		int32 actorIndex;
+		int32 scriptIndex;
+		ActorIndex actorIndex;
 	} ScriptQueueEntry;
 
-	typedef Common::Functor1<ScriptEntry *, void> ActionFunctor;
+	// Opcodes
+	typedef Common::Functor1<ScriptEntry *, void> OpcodeFunctor;
 
 	struct Opcode {
-		const char *name;
-		ActionFunctor *func;
+		const char    *name;
+		OpcodeFunctor *func;
 
-		Opcode(const char* funcName, ActionFunctor *function) {
-			name = funcName;
-			func = function;
+		Opcode(const char* opcodeName, OpcodeFunctor *functor) {
+			name = opcodeName;
+			func = functor;
 		}
 
 		~Opcode() {
@@ -117,15 +122,15 @@ private:
 		}
 	};
 
+	// Parent
 	Scene *_scene;
 
-	// Script data
-	Common::Array<Script> _entries;
-	Common::Stack<ScriptQueueEntry> _scripts;
-	Common::Array<Opcode *> _actions;
+	// Script queue and data
+	Common::Array<Opcode *>         _opcodes;
+	Common::Stack<ScriptQueueEntry> _queue;
+	Common::Array<Script>           _scripts;
 
 	bool              _skipProcessing;
-	bool              _allowInput;
 	int32             _currentLine;
 	int32             _currentLoops;
 	Script           *_currentScript;
@@ -133,6 +138,7 @@ private:
 	int32             _delayedSceneIndex;
 	int32             _delayedVideoIndex;
 	bool              _done;
+	bool              _exit;
 	int32             _lineIncrement;
 	bool              _waitCycle;
 
@@ -142,6 +148,13 @@ private:
 	 * @param stream the script data stream
 	 */
 	void load(Common::SeekableReadStream *stream);
+
+	/**
+	 * Resets the queue.
+	 */
+	void resetQueue();
+
+	void enableBarrier(ScriptEntry *cmd, BarrierEnableType type);
 
 	// Opcode functions
 	DECLARE_OPCODE(Return);
@@ -196,21 +209,21 @@ private:
 	DECLARE_OPCODE(ChangeMusicById);
 	DECLARE_OPCODE(StopMusic);
 	DECLARE_OPCODE(_unk34_Status);
-	DECLARE_OPCODE(_unk35);
-	DECLARE_OPCODE(_unk36);
+	DECLARE_OPCODE(SetVolume);
+	DECLARE_OPCODE(Jump);
 	DECLARE_OPCODE(RunBlowUpPuzzle);
 	DECLARE_OPCODE(JumpIfFlag2Bit3);
 	DECLARE_OPCODE(SetFlag2Bit3);
 	DECLARE_OPCODE(ClearFlag2Bit3);
 	DECLARE_OPCODE(_unk3B_PALETTE_MOD);
-	DECLARE_OPCODE(_unk3C_CMP_VAL);
+	DECLARE_OPCODE(IncrementParam2);
 	DECLARE_OPCODE(WaitUntilFramePlayed);
 	DECLARE_OPCODE(UpdateWideScreen);
-	DECLARE_OPCODE(_unk3F);
+	DECLARE_OPCODE(JumpIfActor);
 	DECLARE_OPCODE(_unk40_SOUND);
 	DECLARE_OPCODE(PlaySpeech);
 	DECLARE_OPCODE(_unk42);
-	DECLARE_OPCODE(_unk43);
+	DECLARE_OPCODE(MoveScenePositionFromActor);
 	DECLARE_OPCODE(PaletteFade);
 	DECLARE_OPCODE(StartPaletteFadeThread);
 	DECLARE_OPCODE(_unk46);
@@ -218,15 +231,15 @@ private:
 	DECLARE_OPCODE(_unk48_MATTE_01);
 	DECLARE_OPCODE(_unk49_MATTE_90);
 	DECLARE_OPCODE(JumpIfSoundPlaying);
-	DECLARE_OPCODE(ChangePlayerCharacterIndex);
+	DECLARE_OPCODE(ChangePlayerActorIndex);
 	DECLARE_OPCODE(ChangeActorStatus);
 	DECLARE_OPCODE(StopSound);
 	DECLARE_OPCODE(_unk4E_RANDOM_COMMAND);
 	DECLARE_OPCODE(ClearScreen);
 	DECLARE_OPCODE(Quit);
 	DECLARE_OPCODE(JumpBarrierFrame);
-	DECLARE_OPCODE(_unk52);
-	DECLARE_OPCODE(_unk53);
+	DECLARE_OPCODE(DeleteGraphics);
+	DECLARE_OPCODE(SetActorField944);
 	DECLARE_OPCODE(_unk54_SET_ACTIONLIST_6EC);
 	DECLARE_OPCODE(_unk55);
 	DECLARE_OPCODE(_unk56);
@@ -235,7 +248,7 @@ private:
 	DECLARE_OPCODE(_unk59);
 	DECLARE_OPCODE(_unk5A);
 	DECLARE_OPCODE(_unk5B);
-	DECLARE_OPCODE(_unk5C);
+	DECLARE_OPCODE(QueueScript);
 	DECLARE_OPCODE(_unk5D);
 	DECLARE_OPCODE(ClearActorField970);
 	DECLARE_OPCODE(SetBarrierLastFrameIdx);
@@ -243,7 +256,6 @@ private:
 	DECLARE_OPCODE(_unk61);
 	DECLARE_OPCODE(_unk62_SHOW_OPTIONS_SCREEN);
 	DECLARE_OPCODE(_unk63);
-
 }; // end of class ActionList
 
 } // end of namespace Asylum

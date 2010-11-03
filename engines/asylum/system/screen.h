@@ -60,8 +60,13 @@ public:
 	void setPalette(ResourcePack *resPack, int32 entry) {
 		setPalette(resPack->getResource(entry)->data + 32);
 	}
+
+	void setGammaLevel(ResourcePack *resPack, int32 entry, int32 val);
+
 	void drawWideScreen(int16 barSize);
 	void clearScreen();
+
+	void palFade(uint32 red, int32 milliseconds, int32 param);
 
 	void addGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority);
 	void addCrossFadeGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority);

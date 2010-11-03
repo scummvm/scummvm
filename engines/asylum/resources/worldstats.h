@@ -65,7 +65,7 @@ public:
 	int32 font1;
 	int32 font2;
 	int32 font3;
-	int32 palette;
+	int32 currentPaletteId;
 	int32 cellShadeMask1;
 	int32 cellShadeMask2;
 	int32 cellShadeMask3;
@@ -97,21 +97,21 @@ public:
 	int32 sceneTitleGrResId;
 	int32 sceneTitlePalResId;
 	int32 actorType;
-	int32 soundResId[50];
+	ResourceId soundResId[50];
 	AmbientSoundItem ambientSounds[15];
 	int32 numAmbientSound;
 	int32 musicStatus;
-	int32 musicCurrentResId;
+	ResourceId musicCurrentResId;
 	int32 musicFlag;
-	int32 musicResId;
+	ResourceId musicResId;
 	int32 musicStatusExt;
 
 	// FIXME: Investigate if we need to actually reserve maxsize for this arrays.
 	// It always have that size under scene file and they are always save in savegames.
-	Common::Array<Barrier>    barriers; // maxsize 400
-	Common::Array<Actor>      actors;   // maxsize 50
+	Common::Array<Barrier*>    barriers; // maxsize 400
+	Common::Array<Actor*>      actors;   // maxsize 50
 	// TODO add rest fields
-	Common::Array<ActionArea> actions;  // maxsize 400
+	Common::Array<ActionArea*> actions;  // maxsize 400
 	// TODO add rest fields
 	int32 field_E860C;
 	// TODO add rest fields

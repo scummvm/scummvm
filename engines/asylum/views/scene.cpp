@@ -103,13 +103,8 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	// TODO figure out what field_120 is used for
 	_ws->field_120 = -1;
 
-	for (int32 a = 0; a < _ws->numActors; a++) {
-		_ws->actors[a].tickValue1 = _vm->getTick();
-		// FIXME This is a hack just to get the current resource
-		// pack and scene into the actor instance(s)
-		_ws->actors[a].setResourcePack(_resPack);
-		_ws->actors[a].setScene(this);
-	}
+	for (int32 a = 0; a < _ws->numActors; a++)
+		_ws->actors[a]->tickValue = _vm->getTick();
 
 	// TODO: init action list
 
@@ -124,7 +119,7 @@ void Scene::initialize() {
 	if (_ws->numBarriers > 0) {
 		int32 priority = 0x0FFB;
 		for (int32 b = 0; b < _ws->numBarriers; b++) {
-			Barrier *barrier  = &_ws->barriers[b];
+			Barrier *barrier  = _ws->barriers[b];
 			barrier->priority = priority;
 			barrier->flags &= 0xFFFF3FFF;
 			priority -= 4;
@@ -151,7 +146,7 @@ void Scene::initialize() {
 
 	if (_ws->numActors > 1) {
 		for (int32 a = 1; a < _ws->numActors; a++) {
-			Actor *act = &_ws->actors[a];
+			Actor *act = _ws->actors[a];
 			act->flags |= 1;
 			act->direction = 1;
 			getActor(a)->updateStatus(kActorStatusEnabled);
@@ -181,7 +176,7 @@ void Scene::initialize() {
 
 	// TODO sceneRectChangedFlag = 1;
 
-	actor->tickValue1= _vm->getTick();
+	actor->tickValue= _vm->getTick();
 	// XXX This initialization was already done earlier,
 	// so I'm not sure why we need to do it again. Investigate.
 	actor->updateDirection();
@@ -221,7 +216,7 @@ Scene::~Scene() {
 }
 
 Actor* Scene::getActor(int index) {
-	return &_ws->actors[(index != -1) ? index : _playerActorIdx];
+	return _ws->actors[(index != -1) ? index : _playerActorIdx];
 }
 
 void Scene::enterScene() {
@@ -232,7 +227,7 @@ void Scene::enterScene() {
 		_actions->_allowInput = false;
 	} else {
 #endif
-		_vm->screen()->setPalette(_resPack, _ws->palette);
+		_vm->screen()->setPalette(_resPack, _ws->currentPaletteId);
 		_background = _bgResource->getFrame(0);
 		_vm->screen()->copyToBackBuffer(
 			((byte *)_background->surface.pixels) + _ws->yTop * _background->surface.w + _ws->xLeft, _background->surface.w,
@@ -241,7 +236,7 @@ void Scene::enterScene() {
 		// FIXME
 		// I don't know that this is the right way to initialize the cursor
 		// when the scene is started. Check against the original to see
-		// when the cursor is initalized, and then how it reacts to the
+		// when the cursor is initialized, and then how it reacts to the
 		// show_cursor opcode
 		Cursor::create(_cursor, _resPack, _ws->curMagnifyingGlass);
 		_cursor->show();
@@ -285,22 +280,22 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 		break;
 
 	case Common::EVENT_LBUTTONUP:
-		if (_actions->doesAllowInput())
+		//if (_actions->doesAllowInput())
 			_leftClick = true;
 		break;
 
 	case Common::EVENT_RBUTTONUP:
-		if (_actions->doesAllowInput()) {
+		//if (_actions->doesAllowInput()) {
 			// TODO This isn't always going to be the magnifying glass
 			// Should check the current pointer region to identify the type
 			// of cursor to use
 			Cursor::create(_cursor, _resPack, _ws->curMagnifyingGlass);
 			_rightButton    = false;
-		}
+		//}
 		break;
 
 	case Common::EVENT_RBUTTONDOWN:
-		if (_actions->doesAllowInput())
+		//if (_actions->doesAllowInput())
 			_rightButton = true;
 		break;
 
@@ -607,10 +602,10 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 			int32 targetUpdateType = 0;
 			switch (type) {
 			case kHitActionArea:
-				targetUpdateType = _ws->actions[targetIdx].actionType;
+				targetUpdateType = _ws->actions[targetIdx]->actionType;
 				break;
 			case kHitBarrier:
-				targetUpdateType = _ws->barriers[targetIdx].flags2;
+				targetUpdateType = _ws->barriers[targetIdx]->flags2;
 				break;
 			case kHitActor:
 				targetUpdateType = getActor(targetIdx)->status;
@@ -651,10 +646,10 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 int32 Scene::hitTestBarrier(const Common::Point pt) {
 	int32 targetIdx = -1;
 	for (int32 i = 0; i < _ws->numBarriers; i++) {
-		Barrier b = _ws->barriers[i];
+		Barrier *b = _ws->barriers[i];
 		if (_ws->isBarrierOnScreen(i))
-			if (b.polyIdx)
-				if (hitTestPixel(b.resId, b.frameIdx, pt.x, pt.y, b.flags & 0x1000)) {
+			if (b->polyIdx)
+				if (hitTestPixel(b->resId, b->frameIdx, pt.x, pt.y, b->flags & 0x1000)) {
 					targetIdx = i;
 					break;
 				}
@@ -683,7 +678,7 @@ int32 Scene::hitTest(const Common::Point pt, HitType &type) {
 int32 Scene::hitTestActionArea(const Common::Point pt) {
 	int32 targetIdx = findActionArea(Common::Point(_ws->xLeft + pt.x, _ws->yTop + pt.y));
 
-	if ( targetIdx == -1 || !(_ws->actions[targetIdx].actionType & 0x17))
+	if ( targetIdx == -1 || !(_ws->actions[targetIdx]->actionType & 0x17))
 		targetIdx = -1;
 
 	return targetIdx;
@@ -696,8 +691,8 @@ int32 Scene::findActionArea(const Common::Point pt) {
 	// the original did
 	int32 targetIdx = -1;
 	for (int32 i = 0; i < _ws->numActions; i++) {
-		ActionArea a = _ws->actions[i];
-		PolyDefinitions p = _polygons->entries[a.polyIdx];
+		ActionArea *a = _ws->actions[i];
+		PolyDefinitions p = _polygons->entries[a->polyIdx];
 		if (p.contains(pt.x, pt.y)) {
 			targetIdx = i;
 			break;
@@ -714,7 +709,7 @@ int32 Scene::hitTestScene(const Common::Point pt, HitType &type) {
 	int32 result = findActionArea(Common::Point(top, left));
 
 	if (result != -1) {
-		if (LOBYTE(_ws->actions[result].actionType) & 8) {
+		if (LOBYTE(_ws->actions[result]->actionType) & 8) {
 			type = kHitActionArea;
 			return result;
 		}
@@ -761,21 +756,8 @@ bool Scene::hitTestPixel(int32 grResId, int32 frame, int16 x, int16 y, bool flip
 	return rect.contains(x, y);
 }
 
-
-void Scene::stopSound(int32 barrierIndex, int32 actorIndex) {
-	int32 sndResId = 0;
-
-	if (actorIndex) {
-		sndResId = getActor(actorIndex)->soundResId;
-	} else {
-		if (barrierIndex) {
-			sndResId = _ws->barriers[barrierIndex].soundResId;
-		}
-	}
-
-	if (_vm->sound()->isPlaying(sndResId)) {
-		_vm->sound()->stopSound(sndResId);
-	}
+void Scene::changePlayerActorIndex(ActorIndex index) {
+	error("[Scene::changePlayerActorIndex] not implemented");
 }
 
 void Scene::updateActors() {
@@ -792,7 +774,7 @@ void Scene::updateBarriers() {
 
 	if (barriersCount > 0) {
 		for (int32 b = 0; b < barriersCount; b++) {
-			Barrier *barrier = &_ws->barriers[b];
+			Barrier *barrier = _ws->barriers[b];
 
 			if (barrier->field_3C == 4) {
 				if (_ws->isBarrierVisible(b)) {
@@ -910,7 +892,7 @@ void Scene::updateBarriers() {
 
 				if (canPlaySound) {
 					barrier->updateSoundItems(_vm->sound());
-					stopSound(b, 0);
+					barrier->stopSound();
 				}
 
 				// TODO: get sound functions according with scene
@@ -1100,6 +1082,69 @@ void Scene::updateAdjustScreen() {
 
 }
 
+bool Scene::updateSceneCoordinates(int32 targetX, int32 targetY, int32 A0, bool checkSceneCoords, int32 *param) {
+	Common::Rect *sr = &_ws->sceneRects[_ws->sceneRectIdx];
+
+	_ws->targetX = targetX;
+	_ws->targetY = targetY;
+
+	_ws->field_A0 = A0;
+
+	// Adjust coordinates
+	if (checkSceneCoords)
+		if (_ws->targetX + 640 > _ws->width)
+			_ws->targetX = _ws->width - 640;
+
+	if (_ws->targetX < sr->left)
+		_ws->targetX = sr->left;
+
+	if (_ws->targetY < sr->top)
+		_ws->targetY = sr->top;
+
+	if (_ws->targetX + 640 > sr->right)
+		_ws->targetX = sr->right - 640;
+
+	if (_ws->targetY + 480 < sr->bottom)
+		_ws->targetY = sr->bottom - 480;
+
+	if (checkSceneCoords)
+		if (_ws->targetY + 480 > _ws->height)
+			_ws->targetY = _ws->height - 480;
+
+	// Adjust scene offsets & coordinates
+	_sceneOffset = 0;
+	_sceneXLeft = _ws->xLeft;
+	_sceneYTop  = _ws->yTop;
+
+	int32 diffX = _ws->targetX - _ws->xLeft;
+	int32 diffY = _ws->targetY - _ws->yTop;
+
+	if (abs(diffX) <= abs(diffY)) {
+		if (_ws->yTop > _ws->targetY)
+			_ws->field_A0 = -_ws->field_A0;
+
+		_sceneOffsetAdd = Common::Rational(_ws->field_A0, diffY) * diffX;
+
+		if (param != NULL && abs(diffY) <= abs(_ws->field_A0)) {
+			_ws->targetX = -1;
+			*param = 0;
+			return true;
+		}
+	} else {
+		if (_ws->xLeft > _ws->targetX)
+			_ws->field_A0 = -_ws->field_A0;
+
+		_sceneOffsetAdd = Common::Rational(_ws->field_A0, diffX) * diffY;
+
+		if (param != NULL && abs(diffX) <= abs(_ws->field_A0)) {
+			_ws->targetX = -1;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 // ----------------------------------
 // ---------- DRAW REGION -----------
 // ----------------------------------
@@ -1141,7 +1186,7 @@ void Scene::drawActorsAndBarriers() {
 	// character, this will have to do :P
 	for (int32 i = 0; i < _ws->numActors; i++) {
 		int actorRegPt = 0;
-		Actor *act = &_ws->actors[i];
+		Actor *act = _ws->actors[i];
 		Common::Point pt;
 
 		// XXX Since we're not using CharacterUpdateItems,
@@ -1176,7 +1221,7 @@ void Scene::drawActorsAndBarriers() {
 
 			// XXX from .text:0040a4d1
 			for (int32 barIdx = 0; barIdx < _ws->numBarriers; barIdx++) {
-				Barrier *bar    = &_ws->barriers[barIdx];
+				Barrier *bar    = _ws->barriers[barIdx];
 				bool actInBar   = bar->boundingRect.contains(act->boundingRect);
 				bool intersects = false;
 
@@ -1278,7 +1323,7 @@ int Scene::queueActorUpdates() {
 	if (_ws->numActors > 0) {
 		Common::Point pt;
 		for (int32 a = 0; a < _ws->numActors; a++) {
-			Actor *actor = &_ws->actors[a];
+			Actor *actor = _ws->actors[a];
 
 			if ((actor->flags & 0xFF) & 1) { // check this mask
 				getActorPosition(actor, &pt);
@@ -1311,7 +1356,7 @@ int Scene::queueBarrierUpdates() {
 
 	if (barriersCount > 0) {
 		for (int32 b = 0; b < barriersCount; b++) {
-			Barrier *barrier = &_ws->barriers[b];
+			Barrier *barrier = _ws->barriers[b];
 
 			if (!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
 				if (_ws->isBarrierOnScreen(b)) {
@@ -1433,14 +1478,14 @@ void Scene::debugShowPolygons() {
 void Scene::debugShowBarriers() {
 	for (int32 p = 0; p < _ws->numBarriers; p++) {
 		Graphics::Surface surface;
-		Barrier b = _ws->barriers[p];
+		Barrier *b = _ws->barriers[p];
 
-		if (b.flags & 0x20) {
-			surface.create(b.boundingRect.right - b.boundingRect.left + 1,
-			               b.boundingRect.bottom - b.boundingRect.top + 1,
+		if (b->flags & 0x20) {
+			surface.create(b->boundingRect.right - b->boundingRect.left + 1,
+			               b->boundingRect.bottom - b->boundingRect.top + 1,
 			               1);
-			surface.frameRect(b.boundingRect, 0x22);
-			copyToBackBufferClipped(&surface, b.x, b.y);
+			surface.frameRect(b->boundingRect, 0x22);
+			copyToBackBufferClipped(&surface, b->x, b->y);
 		}
 
 		surface.free();
@@ -1451,14 +1496,14 @@ void Scene::debugShowBarriers() {
 void Scene::debugShowActors() {
 	for (int32 p = 0; p < _ws->numActors; p++) {
 		Graphics::Surface surface;
-		Actor a = _ws->actors[p];
+		Actor *a = _ws->actors[p];
 
-		if (a.flags & 2) {
-			surface.create(a.boundingRect.right - a.boundingRect.left + 1,
-			               a.boundingRect.bottom - a.boundingRect.top + 1,
+		if (a->flags & 2) {
+			surface.create(a->boundingRect.right - a->boundingRect.left + 1,
+			               a->boundingRect.bottom - a->boundingRect.top + 1,
 			               1);
-			surface.frameRect(a.boundingRect, 0x22);
-			copyToBackBufferClipped(&surface, a.x, a.y);
+			surface.frameRect(a->boundingRect, 0x22);
+			copyToBackBufferClipped(&surface, a->x, a->y);
 		}
 
 		surface.free();

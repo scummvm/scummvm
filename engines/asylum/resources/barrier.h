@@ -32,12 +32,27 @@
 
 namespace Asylum {
 
+enum BarrierFlag {
+	kBarrierFlag4         = 0x4,
+	kBarrierFlag8         = 0x8,
+	kBarrierFlag20        = 0x20,
+	kBarrierFlag10000     = 0x10000,
+	kBarrierFlag10E38     = 0x10E38,
+	kBarrierFlag20000     = 0x20000,
+	kBarrierFlagFFFEF1C7  = 0xFFFEF1C7,
+	kBarrierFlagFFFEFFFF  = 0xFFFEFFFF,
+	kBarrierFlagDestroyed = 0xFFFFFFFE
+};
+
+class Scene;
+
 class Barrier {
 public:
-	Barrier();
+	Barrier(Scene *scene);
 	virtual ~Barrier();
 
 	void destroy();
+	void destroyAndRemoveFromQueue();
 
 	bool   visible();
 	int32 getRandomId(); // TODO Give this a better name?
@@ -53,6 +68,8 @@ public:
 	 * and based on their flag values, stop them accordingly
 	 */
 	void updateSoundItems(Sound *snd);
+
+	void stopSound();
 
 	int32		   id;
 	uint32		   resId;
@@ -90,6 +107,9 @@ public:
 	int32		   field_68C[5];
 	int32		   soundResId;
 	int32		   field_6A4;
+
+private:
+	Scene *_scene;
 
 }; // end of class Barrier
 

@@ -39,6 +39,23 @@ enum GameFlag {
 	kGameFlagFinishGame           = 901
 };
 
+typedef int32 ResourceId;
+
+enum ResourceIdEnum {
+	kResourceSound_80120001 = 0x80120001,
+	kResourceSound_80120006 = 0x80120006
+};
+
+//////////////////////////////////////////////////////////////////////////
+// Helpers
+#define CLEAR_ARRAY(type, name) { \
+	for (Common::Array<type *>::iterator it = name.begin(); it != name.end(); it++) {\
+		delete *it; \
+		*it = NULL; \
+	} \
+	name.clear(); \
+}
+
 } // End of namespace Asylum
 
 #endif // ASYLUM_SHARED_H
