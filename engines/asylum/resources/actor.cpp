@@ -35,10 +35,10 @@
 
 namespace Asylum {
 
-Actor::Actor() {
-	_graphic         = 0;
+Actor::Actor() : _currentWalkArea(NULL), _graphic(NULL), _resPack(NULL) {
 	currentAction    = 0;
-	_currentWalkArea = 0;
+
+	// TODO initialize other class variables
 }
 
 Actor::~Actor() {
@@ -47,11 +47,11 @@ Actor::~Actor() {
 	// free _resources?
 }
 
-void Actor::visible(bool value) {
-	if (value) //	TODO - enums for flags (0x01 is visible)
-		flags |= 0x01;
+void Actor::setVisible(bool value) {
+	if (value)
+		flags |= kVisible;
 	else
-		flags &= 0xFFFFFFFE;
+		flags &= kHidden;
 
 	stopSound();
 }
@@ -480,7 +480,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 
 	case kActorStatusDisabled:
 		updateGraphicData(15);
-		grResId = grResTable[(direction > 4 ? 8 - direction : direction) + 15];
+		graphicResourceId = grResTable[(direction > 4 ? 8 - direction : direction) + 15];
 
 		// TODO set word_446EE4 to -1. This global seems to be used with screen blitting
 		break;
@@ -495,8 +495,8 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			_scene->setActorIndex(0);
 
 			// Hide this actor and the show the other one
-			visible(false);
-			actor->visible(true);
+			setVisible(false);
+			actor->setVisible(true);
 
 			_scene->vm()->clearGameFlag(kGameFlag279);
 
@@ -528,25 +528,25 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 
 	case kActorStatus18:
 		if (_scene->worldstats()->numChapter == 2) {
-			GraphicResource *gra = new GraphicResource();
+			GraphicResource *resource = new GraphicResource();
 			frameNum = 0;
 
 			if (_index > 12)
-				grResId = grResTable[direction + 30];
+				graphicResourceId = grResTable[direction + 30];
 
 			if (_scene->getActorIndex() == _index) {
-				gra->load(_resPack, grResId);
-				frameNum = gra->getFrameCount() - 1;
+				resource->load(_resPack, graphicResourceId);
+				frameNum = resource->getFrameCount() - 1;
 			}
 
 			if (_index == 11)
-				grResId = grResTable[_scene->getGlobalDirection() > 4 ? 8 - _scene->getGlobalDirection() : _scene->getGlobalDirection()];
+				graphicResourceId = grResTable[_scene->getGlobalDirection() > 4 ? 8 - _scene->getGlobalDirection() : _scene->getGlobalDirection()];
 
 			// Reload the graphic resource if the resource ID has changed
-			if (gra->getEntryNum() != grResId)
-				gra->load(_resPack, grResId);
+			if (resource->getEntryNum() != graphicResourceId)
+				resource->load(_resPack, graphicResourceId);
 
-			frameCount = gra->getFrameCount();
+			frameCount = resource->getFrameCount();
 		}
 		break;
 	}
@@ -555,11 +555,11 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 }
 
 void Actor::updateGraphicData(uint32 offset) {
-	grResId = grResTable[(direction > 4 ? 8 - direction : direction) + offset];
+	graphicResourceId = grResTable[(direction > 4 ? 8 - direction : direction) + offset];
 
-	GraphicResource *gra = new GraphicResource(_resPack, grResId);
-	frameCount = gra->getFrameCount();
-	delete gra;
+	GraphicResource *resource = new GraphicResource(_resPack, graphicResourceId);
+	frameCount = resource->getFrameCount();
+	delete resource;
 
 	frameNum = 0;
 }
@@ -610,7 +610,7 @@ void Actor::setDirection(int actorDirection) {
 }
 
 void Actor::update() {
-	if (visible()) {
+	if (isVisible()) {
 		// printf("Actor updateType = 0x%02X\n", actor->updateType);
 
 		switch (status) {
@@ -722,7 +722,7 @@ void Actor::updateActorSub01() {
 	if (_scene->vm()->tempTick07) {
 		if (_scene->vm()->getTick() - _scene->vm()->tempTick07 > 500) {
 			if (_scene->vm()->isGameFlagNotSet(kGameFlagScriptProcessing)) { // processing action list
-				if (visible()) {
+				if (isVisible()) {
 					// if some_encounter_flag
 					// if !soundResId04
 					if (_scene->vm()->getRandom(100) < 50) {

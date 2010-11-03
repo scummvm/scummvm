@@ -48,9 +48,6 @@ namespace Asylum {
 	_actions.push_back(func); \
 }
 
-#define GET_ACTOR() \
-	Actor *actor = (cmd->param1 == -1) ? _scene->getActor() : &_scene->worldstats()->actors[cmd->param1];
-
 class Scene;
 
 class ActionList {

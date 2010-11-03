@@ -37,6 +37,8 @@ public:
 	Barrier();
 	virtual ~Barrier();
 
+	void destroy();
+
 	bool   visible();
 	int32 getRandomId(); // TODO Give this a better name?
 	bool   onscreen();

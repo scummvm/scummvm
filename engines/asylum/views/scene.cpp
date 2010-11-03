@@ -736,7 +736,7 @@ bool Scene::hitTestActor(const Common::Point pt) {
 	else
 		hitFrame = act->frameNum;
 
-	return hitTestPixel(act->grResId,
+	return hitTestPixel(act->graphicResourceId,
 		hitFrame,
 		pt.x - act->x - actPos.x,
 		pt.y - act->y - actPos.y,
@@ -1297,7 +1297,7 @@ int Scene::queueActorUpdates() {
 
 				} else {
 					// TODO: get flag value from character_DeadSarah_sub_40A140
-					_vm->screen()->addGraphicToQueue(actor->grResId, frameNum, pt.x, pt.y, ((actor->direction < 5) - 1) & 2, actor->field_96C, actor->priority);
+					_vm->screen()->addGraphicToQueue(actor->graphicResourceId, frameNum, pt.x, pt.y, ((actor->direction < 5) - 1) & 2, actor->field_96C, actor->priority);
 				}
 			}
 		}

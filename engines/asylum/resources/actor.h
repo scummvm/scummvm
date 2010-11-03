@@ -72,6 +72,11 @@ enum ActorType {
     kAztec   = 3
 };
 
+enum ActorFlags {
+	kVisible     = 0x01,
+	kHidden      = 0xFFFFFFFE
+};
+
 // TODO investigate other actor resources (from other
 // scenes) to see if the unused blocks in the actor
 // definition are in fact used elsewhere
@@ -177,11 +182,9 @@ public:
 	 */
 	void setRawResources(uint8* data);
 
-	bool visible() {
-		return flags & 0x01;
-	}
-
-	void visible(bool value);
+	// Visibility
+	bool isVisible() { return flags & kVisible; }
+	void setVisible(bool value);
 
 	/** .text:0040A260
 	 * Initialize the x1/y1 values of the actor, update the active animation frame
@@ -228,7 +231,7 @@ public:
 
 	int32  x;
 	int32  y;
-	uint32 grResId;
+	uint32 graphicResourceId;
 	int32  field_C; // BarrierIndex? Mask index?
 	uint32 frameNum;
 	uint32 frameCount;
@@ -301,9 +304,9 @@ private:
 	Scene *_scene;
 	int32 _resources[61];
 
-	ResourcePack    *_resPack;
-	GraphicResource *_graphic;
 	ActionArea      *_currentWalkArea;
+	GraphicResource *_graphic;
+	ResourcePack    *_resPack;
 
 	// Our current index
 	ActorIndex _index;
