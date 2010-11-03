@@ -781,48 +781,6 @@ bool Scene::hitTestPixel(int32 grResId, int32 frame, int16 x, int16 y, bool flip
 	return rect.contains(x, y);
 }
 
-void Scene::updateActorSub01(Actor *act) {
-	// TODO make sure this is right
-	act->frameNum = act->frameNum + 1 % act->frameCount;
-	if (_vm->getTick() - act->tickValue1 > 300) {
-		// TODO
-		// Check if the actor's name is "Crow"?
-		if (vm()->getRandom(100) < 50) {
-			// TODO
-			// Check if soundResId04 is assigned, and if so,
-			// if it's playing
-			// If true, check characterSub407260(10)
-			// and if that's true, do characterDirection(9)
-		}
-	}
-
-	// if act == getActor()
-	if (_vm->tempTick07) {
-		if (_vm->getTick() - _vm->tempTick07 > 500) {
-			if (_vm->isGameFlagNotSet(183)) { // processing action list
-				if (act->visible()) {
-					// if some_encounter_flag
-						// if !soundResId04
-							if (vm()->getRandom(100) < 50) {
-								if (_sceneIdx == 13) {
-									; // sub414810(507)
-								} else {
-									; // sub4146d0(4)
-								}
-							}
-				}
-			}
-		}
-		act->tickValue1 = _vm->getTick();
-	}
-	// else
-	// TODO now there's something to do with the
-	// character's name and "Big Crow", or "Crow".
-	// Quite a bit of work to do yet, but it only seems to
-	// take effect when the character index doesn't equal
-	// the currentPlayerIndex (so I'm guessing this is a
-	// one off situation).
-}
 
 void Scene::stopSound(int32 barrierIndex, int32 actorIndex) {
 	int32 sndResId = 0;

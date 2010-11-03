@@ -492,34 +492,6 @@ IMPLEMENT_OPCODE(DisableActor) {
 	GET_ACTOR();
 
 	actor->updateStatus(kActorStatusDisabled);
-
-	//if (cmd->param5 != 2) {
-	//	if (act->updateType != 2 && act->updateType != 13) {
-	//		if (cmd->param2 != -1 || cmd->param3 != -1)
-	//			_scene->updateActorDirection(actorIndex, cmd->param4);
-	//		else {
-	//			if ((act->x1 + act->x2) != cmd->param2 ||
-	//				(act->y1 + act->y2) != cmd->param3) {
-	//				; // TODO updatecharacter_sub_408910
-	//				// TODO if (cmd->param5)
-	//				// cmd->param5 = 2
-	//				// v245 = true
-	//			} else
-	//				_scene->updateActorDirection(actorIndex, cmd->param4);
-	//		}
-	//	}
-	//	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
-	//}
-
-	//if (act->updateType != 2 && act->updateType != 13) {
-	//	cmd->param5 = 1;
-	//	// v245 = false
-	//	if ((act->x1 + act->x2) != cmd->param2 ||
-	//		(act->y1 + act->y2) != cmd->param3) {
-	//		_scene->updateActorDirection(actorIndex, cmd->param4);
-	//	}
-	//}
-	//error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
 }
 
 //////////////////////////////////////////////////////////////////////////

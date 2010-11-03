@@ -30,17 +30,35 @@
 namespace Asylum {
 
 GraphicResource::GraphicResource(ResourcePack *resPack, uint32 entry) {
+	load(resPack, entry);
+}
+
+void GraphicResource::load(ResourcePack *resPack, uint32 entry) {
+	// Clear previously loaded data
+	clear();
+
 	ResourceEntry *resEntry = resPack->getResource(entry);
 	_entryNum = entry;
 	init(resEntry->data, resEntry->size);
 }
 
 GraphicResource::~GraphicResource() {
+	clear();
+}
+
+void GraphicResource::clear() {
 	for (uint32 i = 0; i < _frames.size(); i++) {
 		_frames[i].surface.free();
 	}
 
 	_frames.clear();
+}
+
+GraphicFrame *GraphicResource::getFrame(uint32 frame) {
+	if (frame > _frames.size())
+		error("[GraphicResource::getFrame] Invalid frame index (was: %d, max:%d)", frame, _frames.size());
+
+	return &_frames[frame];
 }
 
 void GraphicResource::init(byte *data, int32 size) {

@@ -161,11 +161,13 @@ public:
 	int32 calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act);
 
 
-	// Global coordinates
+	// Shared global Data
 	uint32 getGlobalX() const   { return _globalX; }
 	void setGlobalX(uint32 val) { _globalX = val; }
 	uint32 getGlobalY() const   { return _globalY; }
 	void setGlobalY(uint32 val) { _globalY = val; }
+
+	ActorDirection getGlobalDirection() { return _globalDirection; }
 
 protected:
 	/** .text:0040EA50
@@ -203,6 +205,7 @@ protected:
 	 * return -1
 	 */
 	int32 hitTestBarrier(const Common::Point pt);
+
 private:
 	AsylumEngine  *_vm;
 	Common::Event *_ev;
@@ -215,6 +218,7 @@ private:
 	bool  _rightButton;
 	bool  _isActive;
 	bool  _skipDrawScene;
+	ActorDirection _globalDirection;
 
 	WorldStats   *_ws;
 	Polygons     *_polygons;
@@ -250,10 +254,6 @@ private:
 	 */
 	void handleMouseUpdate(int direction, Common::Rect rect);
 
-	/**
-	 * TODO give more meaningful name
-	 */
-	void updateActorSub01(Actor *act);
 	/** .text:0040CBD0
 	 * TODO add description
 	 */

@@ -311,6 +311,13 @@ private:
 	GraphicFrame *getFrame();
 	int32 getAngle(int32 ax1, int32 ay1, int32 ax2, int32 ay2);
 
+	void updateGraphicData(uint32 offset);
+
+	/**
+	 * TODO give more meaningful name
+	 */
+	void updateActorSub01();
+
 }; // end of class MainActor
 
 } // end of namespace Asylum
