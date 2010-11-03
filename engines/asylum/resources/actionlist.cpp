@@ -109,7 +109,7 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene)
 	ADD_OPCODE(_unk49_MATTE_90);
 	ADD_OPCODE(JumpIfSoundPlaying);
 	ADD_OPCODE(ChangePlayerCharacterIndex);
-	ADD_OPCODE(ChangeActorField40);
+	ADD_OPCODE(ChangeActorStatus);
 	ADD_OPCODE(StopSound);
 	ADD_OPCODE(_unk4E_RANDOM_COMMAND);
 	ADD_OPCODE(ClearScreen);
@@ -340,48 +340,61 @@ IMPLEMENT_OPCODE(ShowCursor) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x07
 IMPLEMENT_OPCODE(PlayAnimation) {
-	int barrierId    = cmd->param1;
-	int barrierIndex = _scene->worldstats()->getBarrierIndexById(barrierId);
-	Barrier *barrier = _scene->worldstats()->getBarrierByIndex(barrierIndex);
+	Barrier *barrier = _scene->worldstats()->getBarrierById(cmd->param1);
 
 	if (cmd->param2 == 2) {
-		if (!barrier->checkFlags()) {
+		if (!barrier->checkFlags())
 			cmd->param2 = 1;
-		}
+
 		_lineIncrement = 1;
+
+		return;
+	}
+
+	// Update flags
+	if (cmd->param4) {
+		barrier->flags &= 0xFFFEF1C7;
+        barrier->flags |= 0x20;
+	} else if (cmd->param3) {
+		barrier->flags &= 0xFFFEF1C7;
+		barrier->flags |= 0x10000;
+	// FIXME: This should be the correct code but this causes a regression
+	// Investigate barrier drawing to see if there is some wrong code there
+	//} else if (barrier->flags & 0x10000) {
+	//	barrier->flags |= 8;
+	//	barrier->flags &= 0xFFFEFFFF;
+	//} else if (!(barrier->flags & 0x10E38)) {
+	//	barrier->flags |= 8;
+	//}
 	} else {
-		if (cmd->param4) {
-			barrier->flags &= 0xFFFEF1C7;
-            barrier->flags |= 0x20;
-		} else if (cmd->param3) {
-			barrier->flags &= 0xFFFEF1C7;
-			barrier->flags |= 0x10000;
-		} else {
-			barrier->flags &= 0x10000;
+		barrier->flags &= 0x10000;
+		if (barrier->flags == 0) {
+			barrier->flags &= 0x10E38;
 			if (barrier->flags == 0) {
-				barrier->flags &= 0x10E38;
-				if (barrier->flags == 0) {
-					barrier->flags |= 8;
-				}
-			} else {
 				barrier->flags |= 8;
-				barrier->flags &= 0xFFFEFFFF;
 			}
-		}
-
-		barrier->setNextFrame(barrier->flags);
-
-		if (barrier->field_688 == 1) {
-			// TODO: get barrier position
-		}
-
-		if (cmd->param2) {
-			cmd->param2 = 2;
-			_lineIncrement = 1;
+		} else {
+			barrier->flags |= 8;
+			barrier->flags &= 0xFFFEFFFF;
 		}
 	}
 
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	barrier->setNextFrame(barrier->flags);
+
+	if (barrier->field_688 == 1) {
+		if (barrier->flags & 4) {
+			_scene->setGlobalX(barrier->x);
+			_scene->setGlobalY(barrier->y);
+		} else {
+			// TODO: get barrier position
+			error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+		}
+	}
+
+	if (cmd->param2) {
+		cmd->param2 = 2;
+		_lineIncrement = 1;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -443,38 +456,28 @@ IMPLEMENT_OPCODE(MoveScenePosition) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x09
 IMPLEMENT_OPCODE(HideActor) {
-	Actor *actor = 0;
-	actor = (cmd->param1 == -1) ?
-			_scene->getActor() :
-			&_scene->worldstats()->actors[cmd->param1];
+	Actor *actor = (cmd->param1 == -1) ? _scene->getActor() : &_scene->worldstats()->actors[cmd->param1];
 
 	actor->visible(false);
-	actor->updateActor_401320();
-
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	actor->updateDirection();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0A
 IMPLEMENT_OPCODE(ShowActor) {
-	Actor *actor = 0;
-
-	// TODO revisit when actor selection is cleaned up
-	if (cmd->param1 == -1)
-		actor = _scene->getActor();
-	else
-		actor = &_scene->worldstats()->actors[cmd->param1];
+	GET_ACTOR();
 
 	actor->visible(true);
-	actor->updateActor_401320();
+	actor->updateDirection();
 	actor->tickValue1 = _scene->vm()->getTick();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0B
 IMPLEMENT_OPCODE(SetActorPosition) {
-	Actor *act = _scene->getActor(cmd->param1);
-	act->setPosition(cmd->param2, cmd->param3, cmd->param4, cmd->param5);
+	Actor *actor = _scene->getActor(cmd->param1);
+
+	actor->setPosition(cmd->param2, cmd->param3, cmd->param4, cmd->param5);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -486,54 +489,46 @@ IMPLEMENT_OPCODE(SetSceneMotionStatus) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0D
 IMPLEMENT_OPCODE(DisableActor) {
-	int32 actorIndex = (cmd->param1 == -1) ? 0 : cmd->param1;
-	Actor *act = _scene->getActor(actorIndex);
+	GET_ACTOR();
 
-	if (cmd->param5 != 2) {
-		if (act->updateType != 2 && act->updateType != 13) {
-			if (cmd->param2 != -1 || cmd->param3 != -1)
-				_scene->updateActorDirection(actorIndex, cmd->param4);
-			else {
-				if ((act->x1 + act->x2) != cmd->param2 ||
-					(act->y1 + act->y2) != cmd->param3) {
-					; // TODO updatecharacter_sub_408910
-					// TODO if (cmd->param5)
-					// cmd->param5 = 2
-					// v245 = true
-				} else
-					_scene->updateActorDirection(actorIndex, cmd->param4);
-			}
-		}
-		error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
-	}
+	actor->updateStatus(kActorStatusDisabled);
 
-	if (act->updateType != 2 && act->updateType != 13) {
-		cmd->param5 = 1;
-		// v245 = false
-		if ((act->x1 + act->x2) != cmd->param2 ||
-			(act->y1 + act->y2) != cmd->param3) {
-			_scene->updateActorDirection(actorIndex, cmd->param4);
-		}
-	}
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	//if (cmd->param5 != 2) {
+	//	if (act->updateType != 2 && act->updateType != 13) {
+	//		if (cmd->param2 != -1 || cmd->param3 != -1)
+	//			_scene->updateActorDirection(actorIndex, cmd->param4);
+	//		else {
+	//			if ((act->x1 + act->x2) != cmd->param2 ||
+	//				(act->y1 + act->y2) != cmd->param3) {
+	//				; // TODO updatecharacter_sub_408910
+	//				// TODO if (cmd->param5)
+	//				// cmd->param5 = 2
+	//				// v245 = true
+	//			} else
+	//				_scene->updateActorDirection(actorIndex, cmd->param4);
+	//		}
+	//	}
+	//	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	//}
+
+	//if (act->updateType != 2 && act->updateType != 13) {
+	//	cmd->param5 = 1;
+	//	// v245 = false
+	//	if ((act->x1 + act->x2) != cmd->param2 ||
+	//		(act->y1 + act->y2) != cmd->param3) {
+	//		_scene->updateActorDirection(actorIndex, cmd->param4);
+	//	}
+	//}
+	//error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0E
 IMPLEMENT_OPCODE(EnableActor) {
-	int actorIndex = 0;
+	GET_ACTOR();
 
-	if (cmd->param1 == -1)
-		;//actorIndex = _scene->getWorldStats()->playerActor;
-	else
-		actorIndex = cmd->param1;
-
-	/* TODO implement enableActorSub()
-	if (_scene->worldstats()->actors[actorIndex].updateType == 5)
-		enableActorSub(actorIndex, 4);
-	*/
-
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	if (actor->status == kActorStatusDisabled)
+		actor->updateStatus(kActorStatusEnabled);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1069,25 +1064,22 @@ IMPLEMENT_OPCODE(ChangePlayerCharacterIndex) {
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4C
-IMPLEMENT_OPCODE(ChangeActorField40) {
-	// TODO: figure out what is this field and what values are set
-	int actorIdx  = cmd->param1;
-	int fieldType = cmd->param2;
+IMPLEMENT_OPCODE(ChangeActorStatus) {
+	ActorIndex actorIdx  = cmd->param1;
 
-	if (fieldType) {
-		if (_scene->worldstats()->actors[actorIdx].updateType < 11)
-			_scene->worldstats()->actors[actorIdx].updateType = 14;
+	if (cmd->param2) {
+		if (_scene->worldstats()->actors[actorIdx].status < kActorStatus11)
+			_scene->worldstats()->actors[actorIdx].status = kActorStatus14;
 	} else {
-		_scene->worldstats()->actors[actorIdx].updateType = 4;
+		_scene->worldstats()->actors[actorIdx].status = kActorStatusEnabled;
 	}
-
-	error("Incomplete opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4D
 IMPLEMENT_OPCODE(StopSound) {
-	error("Unhandled opcode %s (0x%02X) in Scene %d Line %d", _actions[cmd->opcode]->name, cmd->opcode, _scene->getSceneIndex(), _currentLine);
+	if (_scene->vm()->sound()->isPlaying(cmd->param1))
+		_scene->vm()->sound()->stopSound(cmd->param1);
 }
 
 //////////////////////////////////////////////////////////////////////////

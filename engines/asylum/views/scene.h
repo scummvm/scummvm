@@ -126,35 +126,23 @@ public:
 	/**
 	 * Return the index of the current player actor
 	 */
-	int getActorIndex() { return _playerActorIdx; }
+	ActorIndex getActorIndex() { return _playerActorIdx; }
+
+	void setActorIndex(ActorIndex index) { _playerActorIdx = index; }
+
 	/**
 	 * Get a reference to an actor object from the
 	 * WorldStats actor list. Default parameter just
 	 * gets the instance associated with _playerActorIdx
 	 */
-	Actor* getActor(int index = -1);
-	/** .text:004072A0
-	 * Based on the value of param, replace the actor
-	 * graphic from the actor's grResTable
-	 *
-	 * TODO figure out exactly what param means
-	 */
-	void updateActorDirection(int actorIndex, int param);
-	/** .text:0040A2E0
-	 * If the actor index is invalid, load the default actor,
-	 * then call updateActorDirection with a param of 4
-	 */
-	void updateActorDirectionDefault(int actorIndex);
+	Actor* getActor(ActorIndex index = -1);
+
 	/** .text:00407260
 	 * Check the actor at actorIndex to see if the currently loaded
 	 * graphic resource matches the resource at grResTable[5]
 	 */
 	bool defaultActorDirectionLoaded(int actorIndex, int grResTableIdx);
 
-	/** .text:00407A00
-	 * TODO
-	 */
-	void setActorDirection(Actor *act, int direction);
 	/** .text:00414C30
 	 * Check if a sound resource is playing for the barrier,
 	 * or actor that is specified, and if so, stop playing the
@@ -171,6 +159,13 @@ public:
 	 * sample's volume based on the actor's position
 	 */
 	int32 calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act);
+
+
+	// Global coordinates
+	uint32 getGlobalX() const   { return _globalX; }
+	void setGlobalX(uint32 val) { _globalX = val; }
+	uint32 getGlobalY() const   { return _globalY; }
+	void setGlobalY(uint32 val) { _globalY = val; }
 
 protected:
 	/** .text:0040EA50
@@ -234,6 +229,9 @@ private:
 	GraphicResource *_bgResource;
 	GraphicFrame    *_background;
 
+	uint32 _globalX;
+	uint32 _globalY;
+
 	void update();
 	void startMusic();
 
@@ -251,10 +249,7 @@ private:
 	 * TODO
 	 */
 	void handleMouseUpdate(int direction, Common::Rect rect);
-	/** .text:0040B740
-	 * TODO add description
-	 */
-	void updateActor(int32 actorIdx);
+
 	/**
 	 * TODO give more meaningful name
 	 */

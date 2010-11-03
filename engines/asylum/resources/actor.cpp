@@ -52,7 +52,8 @@ void Actor::visible(bool value) {
 		flags |= 0x01;
 	else
 		flags &= 0xFFFFFFFE;
-		// TODO object_sound_sub_414c30
+
+	stopSound();
 }
 
 /*
@@ -275,6 +276,11 @@ void Actor::walkTo(int32 curX, int32 curY) {
 	drawActor();
 }
 
+void Actor::stopSound() {
+	if (soundResId && _scene->vm()->sound()->isPlaying(soundResId))
+		_scene->vm()->sound()->stopSound(soundResId);
+}
+
 void Actor::setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame) {
 	x1 = newX - x2;
 	y1 = newY - y2;
@@ -432,14 +438,305 @@ int32 Actor::getAngle(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
 	return result;
 }
 
-void Actor::updateActor_401320() {
+void Actor::updateDirection() {
 	if(field_970) {
 		// TODO
 		// This update is only ever done if action script 0x5D is called, and
 		// the resulting switch sets field_970. Investigate 401A30 for further
 		// details
-		warning("[updateActor_401320] logic not implemented");
+		error("[Actor::updateDirection] logic not implemented");
 	}
+}
+
+void Actor::updateStatus(ActorStatus actorStatus) {
+	GraphicResource *gra;
+
+	switch (actorStatus) {
+	case kActorStatus16:
+		frameNum = 0;
+		if (direction > 4)
+			direction = 8 - direction;
+		grResId = grResTable[15];
+		gra = new GraphicResource(_resPack, grResId);
+		frameCount = gra->getFrameCount();
+		delete gra;
+		break;
+	case kActorStatus18:
+		if (_scene->worldstats()->numChapter > 2) {
+			frameNum = 0;
+			if (_index > 12)
+				grResId = grResTable[30];
+			if (_scene->getActorIndex() == _index) {
+				gra = new GraphicResource(_resPack, grResId);
+				frameNum = gra->getFrameCount() - 1;
+				delete gra;
+			}
+
+			if (_index == 11) {
+				// TODO check a global variable (that likely
+				// relates to direction) to see if it's > 4,
+				// and if so, subtract it from 8. Then use this
+				// to set actor[11].grResId
+			}
+
+			// FIXME I know this seems wasteful, but it's how the
+			// original worked. I guess this is to set the framecount
+			// regardless of the actorIndex value, though it assumes
+			// the actor's grResId has been set.
+			gra = new GraphicResource(_resPack, grResId);
+			frameCount = gra->getFrameCount();
+			delete gra;
+		}
+		break;
+	case kActorStatus15:
+		// TODO Refactor, because this is identical to case 16,
+		// other than a different grResTable index
+		frameNum = 0;
+		if (direction > 4)
+			direction = 8 - direction;
+		grResId = grResTable[10];
+		gra = new GraphicResource(_resPack, grResId);
+		frameCount = gra->getFrameCount();
+		delete gra;
+		break;
+	case kActorStatus9:
+		// TODO Check if there is an encounter currently
+		// active (via the global at .data:00543504)
+		// FIXME skipping for now
+		if (0) {
+			if (_scene->vm()->getRandomBit() == 1 && defaultDirectionLoaded(15)) {
+				frameNum = 0;
+				if (direction > 4)
+					direction = 8 - direction;
+				grResId = grResTable[15];
+				gra = new GraphicResource(_resPack, grResId);
+				frameCount = gra->getFrameCount();
+				delete gra;
+			} else {
+				frameNum = 0;
+				if (direction > 4)
+					direction = 8 - direction;
+				grResId = grResTable[10];
+				gra = new GraphicResource(_resPack, grResId);
+				frameCount = gra->getFrameCount();
+				delete gra;
+			}
+		}
+		break;
+	case kActorStatusEnabled:
+	case kActorStatus6:
+	case kActorStatus14:
+		frameNum = 0;
+		if (direction > 4)
+			direction = 8 - direction;
+		grResId = grResTable[15];
+		gra = new GraphicResource(_resPack, grResId);
+		frameCount = gra->getFrameCount();
+		delete gra;
+		break;
+	case kActorStatus1:
+	case kActorStatus12:
+		// TODO check if sceneNumber == 2 && actorIndex == _playerActorInde
+		// && field_40 equals/doesn't equal a bunch of values,
+		// then set direction like other cases
+		break;
+	case kActorStatus2:
+	case kActorStatus13:
+		frameNum = 0;
+		if (direction > 4)
+			direction = 8 - direction;
+		grResId = grResTable[direction];
+		gra = new GraphicResource(_resPack, grResId);
+		frameCount = gra->getFrameCount();
+		delete gra;
+		break;
+	case kActorStatusDisabled:
+		frameNum = 0;
+		if (direction > 4)
+			direction = 8 - direction;
+		grResId = grResTable[direction];
+		gra = new GraphicResource(_resPack, grResId);
+		frameCount = gra->getFrameCount();
+		delete gra;
+		// TODO set word_446EE4 to -1. This global seems to
+		// be used with screen blitting
+		break;
+	case kActorStatus3:
+	case kActorStatus19:
+		// TODO check if the actor's name is equal to
+		// "Big Crow"???
+		break;
+	case kActorStatus7:
+		if (_scene->worldstats()->numChapter == 2 && _index == 10 && _scene->vm()->isGameFlagSet(279)) {
+			Actor *act0 = _scene->getActor(0);
+			act0->x1 = x2 + x1 - act0->x2;
+			act0->y1 = y2 + y1 - act0->y2;
+			act0->direction = 4;
+			_scene->setActorIndex(0);
+			// TODO disableCharacterVisible(actorIndex)
+			// TODO enableActorVisible(0)
+			_scene->vm()->clearGameFlag(279);
+			// TODO some cursor update
+		}
+		break;
+	case kActorStatus8:
+	case kActorStatus10:
+	case kActorStatus17:
+		frameNum = 0;
+		if (direction > 4)
+			direction = 8 - direction;
+		grResId = grResTable[20];
+		gra = new GraphicResource(_resPack, grResId);
+		frameCount = gra->getFrameCount();
+		delete gra;
+		break;
+	}
+
+	status = actorStatus;
+}
+
+void Actor::setDirection(int actorDirection) {
+	direction = (actorDirection > 4) ? 8 - actorDirection : actorDirection;
+	int32 grResId;
+
+	if (field_944 != 5) {
+		switch (status) {
+		case 0x04:
+		case 0x05:
+		case 0x0E: {
+			grResId = grResTable[direction + 5];
+			// FIXME this seems kind of wasteful just to grab a frame count
+			GraphicResource *gra = new GraphicResource(_resPack, grResId);
+			grResId = grResId;
+			frameCount = gra->getFrameCount();
+			delete gra;
+				   }
+				   break;
+		case 0x12:
+			if (_scene->worldstats()->numChapter == 2) {
+				if (_scene->getActorIndex() == 11) {
+					// NOTE this is supposed to explicitely point to the actor 11 reference,
+					// (_ws->actors[11])
+					// but I'm assuming if control drops through to here, getActor() would
+					// pull the right object because the _playerActorIndex should == 11
+					if (direction > 4)
+						grResId = grResTable[8 - direction];
+					else
+						grResId = grResTable[direction];
+				}
+			}
+			break;
+		case 0x01:
+		case 0x02:
+		case 0x0C:
+			grResId = grResTable[direction];
+			break;
+		case 0x08:
+			grResId = grResTable[direction + 20];
+			break;
+		default:
+			warning ("[setActorDirection] default case hit with status of %d", status);
+		}
+	}
+}
+
+void Actor::update() {
+	if (visible()) {
+		// printf("Actor updateType = 0x%02X\n", actor->updateType);
+
+		switch (status) {
+
+		case 0x10:
+			if (_scene->worldstats()->numChapter == 2) {
+				// TODO: updateCharacterSub14()
+			} else if (_scene->worldstats()->numChapter == 1) {
+				if (_scene->getActorIndex() == _index) {
+					// TODO: updateActorSub21();
+				}
+			}
+			break;
+		case 0x11:
+			if (_scene->worldstats()->numChapter == 2) {
+				// TODO: put code here
+			} else if (_scene->worldstats()->numChapter == 11) {
+				if (_scene->getActorIndex() == _index) {
+					// TODO: put code here
+				}
+			}
+			break;
+		case 0xF:
+			if (_scene->worldstats()->numChapter == 2) {
+				// TODO: put code here
+			} else if (_scene->worldstats()->numChapter == 11) {
+				// TODO: put code here
+			}
+			break;
+		case 0x12:
+			if (_scene->worldstats()->numChapter == 2) {
+				// TODO: put code here
+			}
+			break;
+		case 0x5: {
+			frameNum = (frameNum + 1) % frameCount;
+
+			if (_scene->vm()->getTick() - tickValue1 > 300) {
+				if (_scene->vm()->getRandom(100) < 50) {
+					// TODO: check sound playing
+				}
+				tickValue1 = _scene->vm()->getTick();
+			}
+				  }
+				  break;
+		case 0xC:
+			if (_scene->worldstats()->numChapter == 2) {
+				// TODO: put code here
+			} else if (_scene->worldstats()->numChapter == 11) {
+				// TODO: put code here
+			}
+		case 0x1:
+			// TODO: do actor direction
+			break;
+		case 0x2:
+		case 0xD:
+			// TODO: do actor direction
+			break;
+		case 0x3:
+		case 0x13:
+			// TODO: updateCharacterSub05();
+			break;
+		case 0x7:
+			// TODO: something
+			break;
+		case 0x4:
+			if (field_944 != 5) {
+				//updateActorSub01(actor);
+			}
+			break;
+		case 0xE:
+			// TODO: updateCharacterSub02(1, actorIdx);
+			break;
+		case 0x15:
+			// TODO: updateCharacterSub06(1, actorIdx);
+			break;
+		case 0x9:
+			// TODO: updateCharacterSub03(1, actorIdx);
+			break;
+		case 0x6:
+		case 0xA:
+			frameNum = (frameNum + 1) % frameCount;
+			break;
+		case 0x8:
+			// TODO: actor sound
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+
+bool Actor::defaultDirectionLoaded(int grResTableIdx) {
+	return grResTable[grResTableIdx] != grResTable[5];
 }
 
 } // end of namespace Asylum

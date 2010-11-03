@@ -98,6 +98,8 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	g_debugBarriers  = 0;
 	g_debugScrolling = 0;
 
+	_globalX = _globalY = 0;
+
 	// TODO figure out what field_120 is used for
 	_ws->field_120 = -1;
 
@@ -145,14 +147,14 @@ void Scene::initialize() {
 			345 - actor->boundingRect.bottom);
 
 	actor->flags |= 1;
-	updateActorDirection(_playerActorIdx, 4);
+	actor->updateStatus(kActorStatusEnabled);
 
 	if (_ws->numActors > 1) {
 		for (int32 a = 1; a < _ws->numActors; a++) {
 			Actor *act = &_ws->actors[a];
 			act->flags |= 1;
 			act->direction = 1;
-			updateActorDirection(a, 4);
+			getActor(a)->updateStatus(kActorStatusEnabled);
 			act->x1 -= act->x2;
 			act->y1 -= act->y2;
 			act->boundingRect.bottom = act->y2;
@@ -182,7 +184,7 @@ void Scene::initialize() {
 	actor->tickValue1= _vm->getTick();
 	// XXX This initialization was already done earlier,
 	// so I'm not sure why we need to do it again. Investigate.
-	updateActorDirectionDefault(_playerActorIdx);
+	actor->updateDirection();
 
 	if (_ws->numChapter == 9) {
 		// TODO changeActorIndex(1); .text:00405140
@@ -220,165 +222,6 @@ Scene::~Scene() {
 
 Actor* Scene::getActor(int index) {
 	return &_ws->actors[(index != -1) ? index : _playerActorIdx];
-}
-
-void Scene::updateActorDirection(int actorIndex, int param) {
-	Actor *actor = getActor(actorIndex);
-	GraphicResource *gra;
-
-	switch (param) {
-	case 16:
-		actor->frameNum = 0;
-		if (actor->direction > 4)
-			actor->direction = 8 - actor->direction;
-		actor->grResId = actor->grResTable[15];
-		gra = new GraphicResource(_resPack, actor->grResId);
-		actor->frameCount = gra->getFrameCount();
-		delete gra;
-		break;
-	case 18:
-		if (_ws->numChapter > 2) {
-			actor->frameNum = 0;
-			if (actorIndex > 12)
-				actor->grResId = actor->grResTable[30];
-			if (_playerActorIdx == actorIndex) {
-				gra = new GraphicResource(_resPack, actor->grResId);
-				actor->frameNum = gra->getFrameCount() - 1;
-				delete gra;
-			}
-
-			if (actorIndex == 11) {
-				// TODO check a global variable (that likely
-				// relates to direction) to see if it's > 4,
-				// and if so, subtract it from 8. Then use this
-				// to set actor[11].grResId
-			}
-
-			// FIXME I know this seems wasteful, but it's how the
-			// original worked. I guess this is to set the framecount
-			// regardless of the actorIndex value, though it assumes
-			// the actor's grResId has been set.
-			gra = new GraphicResource(_resPack, actor->grResId);
-			actor->frameCount = gra->getFrameCount();
-			delete gra;
-		}
-		break;
-	case 15:
-		// TODO Refactor, because this is identical to case 16,
-		// other than a different grResTable index
-		actor->frameNum = 0;
-		if (actor->direction > 4)
-			actor->direction = 8 - actor->direction;
-		actor->grResId = actor->grResTable[10];
-		gra = new GraphicResource(_resPack, actor->grResId);
-		actor->frameCount = gra->getFrameCount();
-		delete gra;
-		break;
-	case 9:
-		// TODO Check if there is an encounter currently
-		// active (via the global at .data:00543504)
-		// FIXME skipping for now
-		if (0) {
-			if (vm()->getRandomBit() == 1 && defaultActorDirectionLoaded(actorIndex, 15)) {
-				actor->frameNum = 0;
-				if (actor->direction > 4)
-					actor->direction = 8 - actor->direction;
-				actor->grResId = actor->grResTable[15];
-				gra = new GraphicResource(_resPack, actor->grResId);
-				actor->frameCount = gra->getFrameCount();
-				delete gra;
-			} else {
-				actor->frameNum = 0;
-				if (actor->direction > 4)
-					actor->direction = 8 - actor->direction;
-				actor->grResId = actor->grResTable[10];
-				gra = new GraphicResource(_resPack, actor->grResId);
-				actor->frameCount = gra->getFrameCount();
-				delete gra;
-			}
-		}
-		break;
-	case 4:
-	case 6:
-	case 14:
-		actor->frameNum = 0;
-		if (actor->direction > 4)
-			actor->direction = 8 - actor->direction;
-		actor->grResId = actor->grResTable[15];
-		gra = new GraphicResource(_resPack, actor->grResId);
-		actor->frameCount = gra->getFrameCount();
-		delete gra;
-		break;
-	case 1:
-	case 12:
-		// TODO check if sceneNumber == 2 && actorIndex == _playerActorInde
-		// && actor->field_40 equals/doesn't equal a bunch of values,
-		// then set direction like other cases
-		break;
-	case 2:
-	case 13:
-		actor->frameNum = 0;
-		if (actor->direction > 4)
-			actor->direction = 8 - actor->direction;
-		actor->grResId = actor->grResTable[actor->direction];
-		gra = new GraphicResource(_resPack, actor->grResId);
-		actor->frameCount = gra->getFrameCount();
-		delete gra;
-		break;
-	case 5:
-		actor->frameNum = 0;
-		if (actor->direction > 4)
-			actor->direction = 8 - actor->direction;
-		actor->grResId = actor->grResTable[actor->direction];
-		gra = new GraphicResource(_resPack, actor->grResId);
-		actor->frameCount = gra->getFrameCount();
-		delete gra;
-		// TODO set word_446EE4 to -1. This global seems to
-		// be used with screen blitting
-		break;
-	case 3:
-	case 19:
-		// TODO check if the actor's name is equal to
-		// "Big Crow"???
-		break;
-	case 7:
-		if (_ws->numChapter == 2 && actorIndex == 10 && _vm->isGameFlagSet(279)) {
-			Actor *act0 = getActor(0);
-			act0->x1 = actor->x2 + actor->x1 - act0->x2;
-			act0->y1 = actor->y2 + actor->y1 - act0->y2;
-			act0->direction = 4;
-			_playerActorIdx = 0;
-			// TODO disableCharacterVisible(actorIndex)
-			// TODO enableActorVisible(0)
-			_vm->clearGameFlag(279);
-			// TODO some cursor update
-		}
-		break;
-	case 8:
-	case 10:
-	case 17:
-		actor->frameNum = 0;
-		if (actor->direction > 4)
-			actor->direction = 8 - actor->direction;
-		actor->grResId = actor->grResTable[20];
-		gra = new GraphicResource(_resPack, actor->grResId);
-		actor->frameCount = gra->getFrameCount();
-		delete gra;
-		break;
-	}
-
-	actor->updateType = param;
-}
-
-void Scene::updateActorDirectionDefault(int actorIndex) {
-	if (actorIndex == -1)
-		actorIndex = _playerActorIdx;
-	updateActorDirection(actorIndex, 4);
-}
-
-bool Scene::defaultActorDirectionLoaded(int actorIndex, int grResTableIdx) {
-	Actor *actor = getActor(actorIndex);
-	return actor->grResTable[grResTableIdx] != actor->grResTable[5];
 }
 
 void Scene::enterScene() {
@@ -513,28 +356,28 @@ int Scene::updateScene() {
 	// Mouse
 	startTick = _vm->getTick();
 	updateMouse();
-	debugC(kDebugLevelScene, "UpdateMouse Time: %d", _vm->getTick() - startTick);
+	//debugC(kDebugLevelScene, "UpdateMouse Time: %d", _vm->getTick() - startTick);
 
 	// Actors
 	startTick = _vm->getTick();
 	for (int32 a = 0; a < _ws->numActors; a++)
-		updateActor(a);
-	debugC(kDebugLevelScene, "UpdateActors Time: %d", _vm->getTick() - startTick);
+		getActor(a)->update();
+	//debugC(kDebugLevelScene, "UpdateActors Time: %d", _vm->getTick() - startTick);
 
 	// Barriers
 	startTick = _vm->getTick();
 	updateBarriers();
-	debugC(kDebugLevelScene, "UpdateBarriers Time: %d", _vm->getTick() - startTick);
+	//debugC(kDebugLevelScene, "UpdateBarriers Time: %d", _vm->getTick() - startTick);
 
 	// Ambient Sounds
 	startTick = _vm->getTick();
 	updateAmbientSounds();
-	debugC(kDebugLevelScene, "UpdateAmbientSounds Time: %d", _vm->getTick() - startTick);
+	//debugC(kDebugLevelScene, "UpdateAmbientSounds Time: %d", _vm->getTick() - startTick);
 
 	// Music
 	startTick = _vm->getTick();
 	updateMusic();
-	debugC(kDebugLevelScene, "UpdateMusic Time: %d", _vm->getTick() - startTick);
+	//debugC(kDebugLevelScene, "UpdateMusic Time: %d", _vm->getTick() - startTick);
 
 	// Adjust Screen
 	startTick = _vm->getTick();
@@ -544,7 +387,7 @@ int Scene::updateScene() {
 	} else {
 		updateAdjustScreen();
 	}
-	debugC(kDebugLevelScene, "AdjustScreenStart Time: %d", _vm->getTick() - startTick);
+	//debugC(kDebugLevelScene, "AdjustScreenStart Time: %d", _vm->getTick() - startTick);
 
 	// Update Debug
 	if (g_debugPolygons)
@@ -702,53 +545,8 @@ void Scene::updateMouse() {
 	handleMouseUpdate(dir, actorPos);
 
 	if (dir >= 0) {
-		if (act->updateType == 1 || act->updateType == 12)
-			setActorDirection(act, dir);
-	}
-}
-
-void Scene::setActorDirection(Actor *act, int direction) {
-	act->direction = (direction > 4) ? 8 - direction : direction;
-	int32 grResId;
-
-	if (act->field_944 != 5) {
-		switch (act->updateType) {
-		case 0x04:
-		case 0x05:
-		case 0x0E: {
-			grResId = act->grResTable[act->direction + 5];
-			// FIXME this seems kind of wasteful just to grab a frame count
-			GraphicResource *gra = new GraphicResource(_resPack, grResId);
-			act->grResId = grResId;
-			act->frameCount = gra->getFrameCount();
-			delete gra;
-		}
-			break;
-		case 0x12:
-			if (_ws->numChapter == 2) {
-				if (_playerActorIdx == 11) {
-					// NOTE this is supposed to explicitely point to the actor 11 reference,
-					// (_ws->actors[11])
-					// but I'm assuming if control drops through to here, getActor() would
-					// pull the right object because the _playerActorIndex should == 11
-					if (act->direction > 4)
-						act->grResId = act->grResTable[8 - act->direction];
-					else
-						act->grResId = act->grResTable[act->direction];
-				}
-			}
-			break;
-		case 0x01:
-		case 0x02:
-		case 0x0C:
-			act->grResId = act->grResTable[act->direction];
-			break;
-		case 0x08:
-			act->grResId = act->grResTable[act->direction + 20];
-			break;
-		default:
-			warning ("[setActorDirection] default case hit with updateType of %d", act->updateType);
-		}
+		if (act->status == 1 || act->status == 12)
+			act->setDirection(dir);
 	}
 }
 
@@ -767,7 +565,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 	// whether the event manager is handling a right mouse down
 	// event
 	if (_cursor->field_11 & 2) {
-		if (act->updateType == 1 || act->updateType == 12) {
+		if (act->status == 1 || act->status == 12) {
 			if (direction >= 0) {
 				newGrResId = _ws->curScrollUp + direction;
 				_cursor->set(newGrResId, 0, 2);
@@ -775,7 +573,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 		}
 	}
 
-	if (act->updateType == 6 || act->updateType == 10) {
+	if (act->status == 6 || act->status == 10) {
 		newGrResId = _ws->curHand;
 		_cursor->set(newGrResId, 0, 2);
 	} else {
@@ -835,7 +633,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 				targetUpdateType = _ws->barriers[targetIdx].flags2;
 				break;
 			case kHitActor:
-				targetUpdateType = getActor(targetIdx)->updateType;
+				targetUpdateType = getActor(targetIdx)->status;
 				break;
 			default:
 				// TODO LOBYTE(hitType)
@@ -981,103 +779,6 @@ bool Scene::hitTestPixel(int32 grResId, int32 frame, int16 x, int16 y, bool flip
 	delete gra;
 
 	return rect.contains(x, y);
-}
-
-void Scene::updateActor(int32 actorIdx) {
-	Actor *actor = getActor();
-
-	if (actor->visible()) {
-		// printf("Actor updateType = 0x%02X\n", actor->updateType);
-
-		switch (actor->updateType) {
-
-		case 0x10:
-			if (_ws->numChapter == 2) {
-				// TODO: updateCharacterSub14()
-			} else if (_ws->numChapter == 1) {
-				if (_playerActorIdx == actorIdx) {
-					// TODO: updateActorSub21();
-				}
-			}
-			break;
-		case 0x11:
-			if (_ws->numChapter == 2) {
-				// TODO: put code here
-			} else if (_ws->numChapter == 11) {
-				if (_playerActorIdx == actorIdx) {
-					// TODO: put code here
-				}
-			}
-			break;
-		case 0xF:
-			if (_ws->numChapter == 2) {
-				// TODO: put code here
-			} else if (_ws->numChapter == 11) {
-				// TODO: put code here
-			}
-			break;
-		case 0x12:
-			if (_ws->numChapter == 2) {
-				// TODO: put code here
-			}
-			break;
-		case 0x5: {
-			int32 frameNum = actor->frameNum + 1;
-			actor->frameNum = frameNum % actor->frameCount;
-
-			if (_vm->getTick() - actor->tickValue1 > 300) {
-				if (vm()->getRandom(100) < 50) {
-					// TODO: check sound playing
-				}
-				actor->tickValue1 = _vm->getTick();
-			}
-		}
-		break;
-		case 0xC:
-			if (_ws->numChapter == 2) {
-				// TODO: put code here
-			} else if (_ws->numChapter == 11) {
-				// TODO: put code here
-			}
-		case 0x1:
-			// TODO: do actor direction
-			break;
-		case 0x2:
-		case 0xD:
-			// TODO: do actor direction
-			break;
-		case 0x3:
-		case 0x13:
-			// TODO: updateCharacterSub05();
-			break;
-		case 0x7:
-			// TODO: something
-			break;
-		case 0x4:
-			if (actor->field_944 != 5) {
-				updateActorSub01(actor);
-			}
-			break;
-		case 0xE:
-			// TODO: updateCharacterSub02(1, actorIdx);
-			break;
-		case 0x15:
-			// TODO: updateCharacterSub06(1, actorIdx);
-			break;
-		case 0x9:
-			// TODO: updateCharacterSub03(1, actorIdx);
-			break;
-		case 0x6:
-		case 0xA:
-			actor->frameNum = (actor->frameNum + 1) % actor->frameCount;
-			break;
-		case 0x8:
-			// TODO: actor sound
-			break;
-		default:
-			break;
-		}
-	}
 }
 
 void Scene::updateActorSub01(Actor *act) {

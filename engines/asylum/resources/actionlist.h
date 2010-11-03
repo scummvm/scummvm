@@ -48,6 +48,9 @@ namespace Asylum {
 	_actions.push_back(func); \
 }
 
+#define GET_ACTOR() \
+	Actor *actor = (cmd->param1 == -1) ? _scene->getActor() : &_scene->worldstats()->actors[cmd->param1];
+
 class Scene;
 
 class ActionList {
@@ -219,7 +222,7 @@ private:
 	DECLARE_OPCODE(_unk49_MATTE_90);
 	DECLARE_OPCODE(JumpIfSoundPlaying);
 	DECLARE_OPCODE(ChangePlayerCharacterIndex);
-	DECLARE_OPCODE(ChangeActorField40);
+	DECLARE_OPCODE(ChangeActorStatus);
 	DECLARE_OPCODE(StopSound);
 	DECLARE_OPCODE(_unk4E_RANDOM_COMMAND);
 	DECLARE_OPCODE(ClearScreen);
