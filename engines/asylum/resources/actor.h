@@ -76,8 +76,8 @@ public:
 	int32          getActionIndex3() { return _actionIdx3; }
 	Common::Rect  *getBoundingRect() { return &_boundingRect; }
 	ActorDirection getDirection() { return _direction; }
-	int32          getFrameCount() { return _frameCount; }
-	int32          getFrameNum() { return _frameNumber; }
+	uint32         getFrameCount() { return _frameCount; }
+	uint32         getFrameNum() { return _frameNumber; }
 	int32          getReaction(uint32 index) { return _reaction[index]; }
 	ResourceId     getResourceId() { return _resourceId; }
 	ResourceId     getResourcesId(uint32 index) { return _graphicResourceIds[index]; }
@@ -91,6 +91,12 @@ public:
 	/////////////////////////////////////////////////////////////////////////
 	// Data
 	/////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Loads the actor data
+	 *
+	 * @param stream If non-null, the Common::SeekableReadStream to load from
+	 */
 	void load(Common::SeekableReadStream *stream);
 
 	/////////////////////////////////////////////////////////////////////////
@@ -203,7 +209,7 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
-
+	//////////////////////////////////////////////////////////////////////////
 	ResourceId _resourceId;
 	int32  _field_C; // BarrierIndex? Mask index?
 	uint32 _frameNumber;

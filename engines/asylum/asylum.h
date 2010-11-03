@@ -63,7 +63,7 @@ namespace Asylum {
 // progress before the scene is entered. This is
 // just a convenience, as there's no need for the type
 // of pre-loading that was performed in the original
-// #define SHOW_SCENE_LOADING
+#define SHOW_SCENE_LOADING
 
 //#define SHOW_SCENE_TIMES
 

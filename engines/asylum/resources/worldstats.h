@@ -121,12 +121,6 @@ public:
 
 	int32 getBarrierIndexById(int32 id);
 	Barrier* getBarrierById(int32 id);
-	Barrier* getBarrierByIndex(int32 idx);
-
-	bool isBarrierOnScreen(int32 idx);
-	bool isBarrierVisible(int32 idx);
-	// TODO this needs a better name
-	bool checkBarrierFlagsCondition(int32 idx);
 
 private:
 	Scene *_scene;

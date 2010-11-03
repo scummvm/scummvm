@@ -57,7 +57,7 @@ ActionArea* WorldStats::getActionAreaById(int32 id) {
 
 int32 WorldStats::getBarrierIndexById(int32 id) {
 	for (int32 i = 0; i < numBarriers; i++) {
-		if (barriers[i]->id == id)
+		if (barriers[i]->getId() == id)
 			return i;
 	}
 
@@ -66,58 +66,6 @@ int32 WorldStats::getBarrierIndexById(int32 id) {
 
 Barrier* WorldStats::getBarrierById(int32 id) {
 	return barriers[getBarrierIndexById(id)];
-}
-
-Barrier* WorldStats::getBarrierByIndex(int32 idx) {
-	return barriers[idx];
-}
-
-bool WorldStats::isBarrierOnScreen(int32 idx) {
-	Barrier *b = getBarrierByIndex(idx);
-
-	Common::Rect screenRect  = Common::Rect(xLeft, yTop, xLeft + 640, yTop + 480);
-	Common::Rect barrierRect = b->boundingRect;
-	barrierRect.translate(b->x, b->y);
-	return isBarrierVisible(idx) && (b->flags & 1) && screenRect.intersects(barrierRect);
-}
-
-bool WorldStats::isBarrierVisible(int32 idx) {
-	Barrier *b = getBarrierByIndex(idx);
-
-	if ((b->flags & 0xFF) & 1) {
-		for (int32 f = 0; f < 10; f++) {
-			bool   isSet = false;
-			GameFlag flag  = b->gameFlags[f];
-
-			if (flag <= 0)
-				isSet = _scene->vm()->isGameFlagNotSet(flag); // -flag
-			else
-				isSet = _scene->vm()->isGameFlagSet(flag);
-
-			if (!isSet)
-				return false;
-		}
-		return true;
-	}
-	return false;
-}
-
-bool WorldStats::checkBarrierFlagsCondition(int32 idx) {
-	Barrier *b = getBarrierByIndex(idx);
-	bool result;
-
-	if (LOBYTE(b->flags) & 1) {
-		for (int32 i = 0; i < 10; i++) {
-			result = _scene->vm()->isGameFlagSet(b->gameFlags[i]);
-			if (result)
-				return result;
-		}
-		result = true;
-	} else {
-		result = false;
-	}
-
-	return result;
 }
 
 // FIXME: load necessary World Stats content
@@ -225,74 +173,8 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	musicStatusExt    = stream->readSint32LE();
 
 	for (int32 a = 0; a < numBarriers; a++) {
-		int32 i;
-		Barrier *barrier = new Barrier(_scene);
-
-		barrier->id	  = stream->readSint32LE();
-		barrier->resourceId = stream->readSint32LE();
-		barrier->x	  = stream->readSint32LE();
-		barrier->y	  = stream->readSint32LE();
-
-		barrier->boundingRect.left	= stream->readSint32LE() & 0xFFFF;
-		barrier->boundingRect.top	= stream->readSint32LE() & 0xFFFF;
-		barrier->boundingRect.right	= stream->readSint32LE() & 0xFFFF;
-		barrier->boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
-
-		barrier->field_20   = stream->readSint32LE();
-		barrier->frameIdx   = stream->readSint32LE();
-		barrier->frameCount = stream->readSint32LE();
-		barrier->field_2C   = stream->readSint32LE();
-		barrier->field_30   = stream->readSint32LE();
-		barrier->field_34   = stream->readSint32LE();
-		barrier->flags	   = stream->readSint32LE();
-		barrier->field_3C   = stream->readSint32LE();
-
-		stream->read(barrier->name, sizeof(barrier->name));
-
-		barrier->field_74 = stream->readSint32LE();
-		barrier->field_78 = stream->readSint32LE();
-		barrier->field_7C = stream->readSint32LE();
-		barrier->field_80 = stream->readSint32LE();
-		barrier->polyIdx	 = stream->readSint32LE();
-		barrier->actionType	 = stream->readSint32LE();
-
-		for (i = 0; i < 10; i++)
-			barrier->gameFlags[i] = (GameFlag)stream->readSint32LE();
-
-		barrier->field_B4	  = stream->readSint32LE();
-		barrier->tickCount	  = stream->readSint32LE();
-		barrier->tickCount2	  = stream->readSint32LE();
-		barrier->field_C0	  = stream->readSint32LE();
-		barrier->priority	  = stream->readSint32LE();
-		barrier->actionListIdx = stream->readSint32LE();
-
-		for (i = 0; i < 16; i++) {
-			barrier->soundItems[i].resourceId	  = stream->readSint32LE();
-			barrier->soundItems[i].field_4 = stream->readSint32LE();
-			barrier->soundItems[i].field_8 = stream->readSint32LE();
-			barrier->soundItems[i].field_C = stream->readSint32LE();
-
-		}
-
-		for (i = 0; i < 50; i++) {
-			barrier->frameSoundItems[i].resourceId	= stream->readSint32LE();
-			barrier->frameSoundItems[i].frameIdx = stream->readSint32LE();
-			barrier->frameSoundItems[i].index	= stream->readSint32LE();
-			barrier->frameSoundItems[i].field_C	= stream->readSint32LE();
-			barrier->frameSoundItems[i].field_10 = stream->readSint32LE();
-			barrier->frameSoundItems[i].field_14 = stream->readSint32LE();
-		}
-
-		barrier->field_67C = stream->readSint32LE();
-		barrier->soundX	  = stream->readSint32LE();
-		barrier->soundY	  = stream->readSint32LE();
-		barrier->field_688 = stream->readSint32LE();
-
-		for (i = 0; i < 5; i++)
-			barrier->field_68C[i] = stream->readSint32LE();
-
-		barrier->soundResourceId = stream->readSint32LE();
-		barrier->field_6A4  = stream->readSint32LE();
+		Barrier *barrier = new Barrier(_scene->vm());
+		barrier->load(stream);
 
 		barriers.push_back(barrier);
 	}

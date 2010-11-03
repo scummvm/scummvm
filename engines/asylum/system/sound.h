@@ -35,15 +35,15 @@
 
 namespace Asylum {
 
-typedef struct SoundItem {
+struct SoundItem {
 	ResourceId resourceId;
 	int32 field_4;
 	int32 field_8;
 	int32 field_C;
 
-} SoundItem;
+};
 
-typedef struct FrameSoundItem {
+struct FrameSoundItem {
 	ResourceId resourceId;
 	int32 frameIdx;
 	int32 index;
@@ -51,9 +51,9 @@ typedef struct FrameSoundItem {
 	int32 field_10;
 	int32 field_14;
 
-} FrameSoundItem;
+};
 
-typedef struct AmbientSoundItem {
+struct AmbientSoundItem {
 	int32 field_0;
 	int32 flags;
 	ResourceId resourceId;
@@ -64,13 +64,13 @@ typedef struct AmbientSoundItem {
 	int32 x;
 	int32 y;
 
-} AmbientSoundItem;
+};
 
-typedef struct SoundBufferItem {
+struct SoundBufferItem {
 	ResourceId resourceId;
 	Audio::SoundHandle handle;
 	int32 unknown;
-} SoundBufferItem;
+};
 
 class Sound {
 public:

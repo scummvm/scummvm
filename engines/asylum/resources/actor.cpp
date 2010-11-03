@@ -617,16 +617,16 @@ void Actor::faceTarget(int32 targetId, DirectionFrom from) {
 		return;
 
 	case kDirectionFromBarrier: {
-		int32 barrierIndex = getWorld()->getBarrierIndexById(targetId);
-		if (barrierIndex == -1) {
+		Barrier *barrier = getWorld()->getBarrierById(targetId);
+		if (!barrier) {
 			warning("[Actor::faceTarget] No Barrier found for id %d", targetId);
 			return;
 		}
 
-		Barrier *barrier = getWorld()->getBarrierByIndex(barrierIndex);
 
-		GraphicResource *resource = new GraphicResource(getScene()->getResourcePack(), barrier->resourceId);
-		GraphicFrame *frame = resource->getFrame(barrier->frameIdx);
+
+		GraphicResource *resource = new GraphicResource(getScene()->getResourcePack(), barrier->getResourceId());
+		GraphicFrame *frame = resource->getFrame(barrier->getFrameIndex());
 
 		newX = (frame->surface.w >> 1) + barrier->x;
 		newY = (frame->surface.h >> 1) + barrier->y;
