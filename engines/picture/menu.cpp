@@ -276,7 +276,7 @@ void MenuSystem::initMenu(MenuID menuID) {
 		addClickTextItem(kItemIdSavegame6, 0, 115 + 20 * 5, 300, 0, "SAVEGAME 6", 231, 234);
 		addClickTextItem(kItemIdSavegame7, 0, 115 + 20 * 6, 300, 0, "SAVEGAME 7", 231, 234);
 		newSlotNum = loadSavegamesList() + 1;
-		_savegames.push_back(SavegameItem(newSlotNum, Common::String::printf("GAME %03d", _savegames.size() + 1)));
+		_savegames.push_back(SavegameItem(newSlotNum, Common::String::format("GAME %03d", _savegames.size() + 1)));
 		setSavegameCaptions();
 		break;
 	case kMenuIdVolumes:
