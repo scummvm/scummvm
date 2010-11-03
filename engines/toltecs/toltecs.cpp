@@ -105,7 +105,9 @@ Common::Error ToltecsEngine::run() {
 	_counter02 = 0;
 	_movieSceneFlag = false;
 	_flag01 = 0;
-	
+
+	_saveLoadRequested = 0;
+		
 	_cameraX = 0;
 	_cameraY = 0;
 	_newCameraX = 0;
@@ -148,9 +150,9 @@ Common::Error ToltecsEngine::run() {
 	
 	_sound = new Sound(this);
 
-	_system->showMouse(true);
-
 	syncSoundSettings();
+
+	_system->showMouse(true);
 
 	setupSysStrings();
 
@@ -210,6 +212,17 @@ void ToltecsEngine::setupSysStrings() {
 		sysStrings += strlen(sysStrings) + 1;
 	}
 	// TODO: Set yes/no chars
+}
+
+void ToltecsEngine::requestSavegame(int slotNum, Common::String &description) {
+	_saveLoadRequested = 2;
+	_saveLoadSlot = slotNum;
+	_saveLoadDescription = description;
+}
+
+void ToltecsEngine::requestLoadgame(int slotNum) {
+	_saveLoadRequested = 1;
+	_saveLoadSlot = slotNum;
 }
 
 void ToltecsEngine::loadScene(uint resIndex) {
