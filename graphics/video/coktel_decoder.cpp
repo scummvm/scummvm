@@ -685,6 +685,10 @@ Surface *PreIMDDecoder::decodeNextFrame() {
 
 void PreIMDDecoder::processFrame() {
 	uint16 frameSize = _stream->readUint16LE();
+	if (frameSize == 0) {
+		_curFrame++;
+		return;
+	}
 
 	uint32 nextFramePos = _stream->pos() + frameSize + 2;
 
