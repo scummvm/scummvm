@@ -32,9 +32,9 @@
 
 
 const char lua_ident[] =
-  "$Lua: " LUA_RELEASE " " LUA_COPYRIGHT " $\n"
-  "$Authors: " LUA_AUTHORS " $\n"
-  "$URL$\n";
+  "Lua: " LUA_RELEASE " " LUA_COPYRIGHT " \n"
+  "Authors: " LUA_AUTHORS " \n"
+  "URL: www.lua.org\n";
 
 
 
