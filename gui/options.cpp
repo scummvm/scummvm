@@ -98,6 +98,7 @@ void OptionsDialog::init() {
 	_renderModePopUp = 0;
 	_fullscreenCheckbox = 0;
 	_aspectCheckbox = 0;
+	_unditheringCheckbox = 0;
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
 	_oplPopUp = 0;
@@ -192,6 +193,7 @@ void OptionsDialog::open() {
 		// Aspect ratio setting
 		_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 #endif // SMALL_SCREEN_DEVICE
+		_unditheringCheckbox->setState(ConfMan.getBool("sci_undither", _domain));
 	}
 
 	// Audio options
@@ -297,6 +299,7 @@ void OptionsDialog::close() {
 			if (_enableGraphicSettings) {
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 				ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
+				ConfMan.setBool("sci_undither", _unditheringCheckbox->getState(), _domain);
 
 				bool isSet = false;
 
@@ -320,6 +323,7 @@ void OptionsDialog::close() {
 			} else {
 				ConfMan.removeKey("fullscreen", _domain);
 				ConfMan.removeKey("aspect_ratio", _domain);
+				ConfMan.removeKey("sci_undither", _domain);
 				ConfMan.removeKey("gfx_mode", _domain);
 				ConfMan.removeKey("render_mode", _domain);
 			}
@@ -506,6 +510,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_fullscreenCheckbox->setEnabled(enabled);
 	_aspectCheckbox->setEnabled(enabled);
 #endif
+	_unditheringCheckbox->setEnabled(enabled);
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -645,6 +650,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	// Aspect ratio checkbox
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for 320x200 games"));
+	_unditheringCheckbox = new CheckboxWidget(boss, prefix + "grUnditherCheckbox", _("Remove SCI dithering"), _("Remove dithering artifacts from early SCI EGA games"));
 
 	_enableGraphicSettings = true;
 }

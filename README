@@ -1949,6 +1949,7 @@ The following keywords are recognized:
 
     fullscreen      bool     Fullscreen mode
     aspect_ratio    bool     Enable aspect ratio correction
+    sci_undither    bool     Remove dithering artifacts from early SCI EGA games
     gfx_mode        string   Graphics mode (normal, 2x, 3x, 2xsai,
                              super2xsai, supereagle, advmame2x, advmame3x,
                              hq2x, hq3x, tv2x, dotmatrix)
