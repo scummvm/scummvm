@@ -55,17 +55,22 @@ public:
 	virtual ~Console(void);
 
 private:
+	AsylumEngine *_vm;
+
+	bool cmdHelp(int argc, const char **argv);
+
+	bool cmdListFiles(int argc, const char **argv);
+
+	bool cmdListActions(int32 argc, const char **argv);
+	bool cmdListActors(int32 argc, const char **argv);
+	bool cmdListFlags(int32 argc, const char **argv);
+	bool cmdListObjects(int32 argc, const char **argv);
+
 	bool cmdPlayVideo(int32 argc, const char **argv);
 	bool cmdRunScript(int32 argc, const char **argv);
 	bool cmdChangeScene(int32 argc, const char **argv);
-	bool cmdShowFlags(int32 argc, const char **argv);
+
 	bool cmdToggleFlag(int32 argc, const char **argv);
-	bool cmdDumpActionArea(int32 argc, const char **argv);
-
-	void printActionAreaStats(ActionArea *a);
-
-private:
-	AsylumEngine *_vm;
 };
 
 } // End of namespace Asylum

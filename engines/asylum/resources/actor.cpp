@@ -707,6 +707,14 @@ void Actor::stopSound() {
 		getSound()->stopSound(_soundResourceId);
 }
 
+Common::String Actor::toString() {
+	Common::String output;
+
+	output += Common::String::format("Actor %d: %s\n", _index, _name);
+
+	return output;
+}
+
 void Actor::setRawResources(uint8 *data) {
 	byte *dataPtr = data;
 
@@ -918,7 +926,7 @@ void Actor::updateFinish() {
 	ActionArea *area = getWorld()->actions[areaIndex];
 	ActionArea *actorArea = getWorld()->actions[_actionIdx3];
 	if (!getScene()->actions()->isProcessingSkipped()) {
-		getScene()->actions()->queueScript(actorArea->actionListIdx2, _index);
+		getScene()->actions()->queueScript(actorArea->scriptIndex2, _index);
 		getScene()->actions()->queueScript(area->scriptIndex, _index);
 	}
 

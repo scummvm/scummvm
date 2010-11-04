@@ -56,7 +56,7 @@ public:
 	Video(Audio::Mixer *mixer);
 	virtual ~Video();
 
-	bool playVideo(int32 videoNumber, bool showSubtitles);
+	void playVideo(int32 videoNumber, bool showSubtitles);
 
 private:
 	void performPostProcessing(byte *screen);

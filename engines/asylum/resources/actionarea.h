@@ -34,8 +34,8 @@ namespace Asylum {
 
 class ActionArea {
 public:
-	ActionArea();
-	virtual ~ActionArea();
+	ActionArea() {}
+	virtual ~ActionArea() {}
 
 	char  name[52];
 	int32 id;
@@ -45,7 +45,7 @@ public:
 	int32 field_44;
 	int32 flags;
 	int32 scriptIndex;
-	int32 actionListIdx2;
+	int32 scriptIndex2;
 	int32 actionType; // aka flags2: 0-none, 1-findwhat, 2-talk, 3-findwhat??, 4-grab
 	int32 flagNums[10];
 	int32 field_7C;
@@ -57,6 +57,8 @@ public:
 	int32 paletteValue;
 	int32 array[5];
 	int32 volume;
+
+	Common::String toString();
 
 }; // end of class ActionArea
 

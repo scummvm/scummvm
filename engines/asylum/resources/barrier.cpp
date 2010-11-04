@@ -445,4 +445,12 @@ bool Barrier::checkFlags() {
 	return (flags & kBarrierFlagEnabled) && (flags & kBarrierFlag8 || flags & kBarrierFlag10000);
 }
 
+Common::String Barrier::toString() {
+	Common::String output;
+
+	output += Common::String::format("Barrier %d: %s\n", _id, _name);
+
+	return output;
+}
+
 } // end of namespace Asylum
