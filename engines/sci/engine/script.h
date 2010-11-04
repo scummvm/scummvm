@@ -238,9 +238,10 @@ public:
 	void mcpyInOut(int dst, const void *src, size_t n);
 
 	/**
-	 * Finds the pointer where a block of a specific type starts from
+	 * Finds the pointer where a block of a specific type starts from,
+	 * in SCI0 - SCI1 games
 	 */
-	byte *findBlock(int type, int skipBlockIndex = -1);
+	byte *findBlockSCI0(int type, int startBlockIndex = -1);
 
 private:
 	/**
@@ -267,6 +268,8 @@ private:
 	 * @param segmentId	The script's segment id
 	 */
 	void initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId);
+
+	void syncHeap(Common::Serializer &ser);
 };
 
 } // End of namespace Sci

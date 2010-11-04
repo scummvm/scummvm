@@ -2286,7 +2286,7 @@ bool ResourceManager::hasSci1Voc900() {
 	return offset == res->size;
 }
 
-// Same function as Script::findBlock(). Slight code
+// Same function as Script::findBlockSCI0(). Slight code
 // duplication here, but this has been done to keep the resource
 // manager independent from the rest of the engine
 static byte *findSci0ExportsBlock(byte *buffer) {

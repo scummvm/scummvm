@@ -152,17 +152,17 @@ void Script::load(ResourceManager *resMan) {
 		_localsOffset = _scriptSize + 4;
 		_localsCount = READ_SCI11ENDIAN_UINT16(_buf + _localsOffset - 2);
 	} else {
-		_exportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS);
+		_exportTable = (const uint16 *)findBlockSCI0(SCI_OBJ_EXPORTS);
 		if (_exportTable) {
 			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable + 1);
 			_exportTable += 3;	// skip header plus 2 bytes (_exportTable is a uint16 pointer)
 		}
-		_synonyms = findBlock(SCI_OBJ_SYNONYMS);
+		_synonyms = findBlockSCI0(SCI_OBJ_SYNONYMS);
 		if (_synonyms) {
 			_numSynonyms = READ_SCI11ENDIAN_UINT16(_synonyms + 2) / 4;
 			_synonyms += 4;	// skip header
 		}
-		const byte* localsBlock = findBlock(SCI_OBJ_LOCALVARS);
+		const byte* localsBlock = findBlockSCI0(SCI_OBJ_LOCALVARS);
 		if (localsBlock) {
 			_localsOffset = localsBlock - _buf + 4;
 			_localsCount = (READ_LE_UINT16(_buf + _localsOffset - 2) - 4) >> 1;	// half block size
@@ -337,10 +337,10 @@ uint16 Script::validateExportFunc(int pubfunct) {
 	// in Camelot and script 306 in KQ4). Such offsets are usually small (i.e. < 10),
 	// thus easily distinguished from actual code offsets.
 	// This only makes sense for SCI0-SCI1, as the export table in SCI1.1+ games
-	// is located at a specific address, thus findBlock() won't work.
+	// is located at a specific address, thus findBlockSCI0() won't work.
 	// Fixes bugs #3039785 and #3037595.
 	if (offset < 10 && getSciVersion() <= SCI_VERSION_1_LATE) {
-		const uint16 *secondExportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS, 0);
+		const uint16 *secondExportTable = (const uint16 *)findBlockSCI0(SCI_OBJ_EXPORTS, 0);
 
 		if (secondExportTable) {
 			secondExportTable += 3;	// skip header plus 2 bytes (secondExportTable is a uint16 pointer)
@@ -352,7 +352,7 @@ uint16 Script::validateExportFunc(int pubfunct) {
 	return offset;
 }
 
-byte *Script::findBlock(int type, int skipBlockIndex) {
+byte *Script::findBlockSCI0(int type, int startBlockIndex) {
 	byte *buf = _buf;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 	int blockIndex = 0;
@@ -361,16 +361,16 @@ byte *Script::findBlock(int type, int skipBlockIndex) {
 		buf += 2;
 
 	do {
-		int seekerType = READ_LE_UINT16(buf);
+		int blockType = READ_LE_UINT16(buf);
 
-		if (seekerType == 0)
+		if (blockType == 0)
 			break;
-		if (seekerType == type && blockIndex != skipBlockIndex)
+		if (blockType == type && blockIndex > startBlockIndex)
 			return buf;
 
-		int seekerSize = READ_LE_UINT16(buf + 2);
-		assert(seekerSize > 0);
-		buf += seekerSize;
+		int blockSize = READ_LE_UINT16(buf + 2);
+		assert(blockSize > 0);
+		buf += blockSize;
 		blockIndex++;
 	} while (1);
 
@@ -428,7 +428,7 @@ void Script::initialiseClasses(SegManager *segMan) {
 		seeker = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
 		mult = 2;
 	} else {
-		seeker = findBlock(SCI_OBJ_CLASS);
+		seeker = findBlockSCI0(SCI_OBJ_CLASS);
 		mult = 1;
 	}
 
@@ -518,7 +518,7 @@ void Script::initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
 	} while ((uint32)(seeker - _buf) < getScriptSize() - 2);
 
-	byte *relocationBlock = findBlock(SCI_OBJ_POINTERS);
+	byte *relocationBlock = findBlockSCI0(SCI_OBJ_POINTERS);
 	if (relocationBlock)
 		relocate(make_reg(segmentId, relocationBlock - getBuf() + 4));
 }
