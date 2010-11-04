@@ -139,6 +139,13 @@ public:
 	 */
 	bool checkFlags();
 
+	/**
+	 * Convert this object into a string representation.
+	 *
+	 * @return A string representation of this object.
+	 */
+	Common::String toString();
+
 private:
 	AsylumEngine *_vm;
 

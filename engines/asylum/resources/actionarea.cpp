@@ -27,13 +27,16 @@
 
 namespace Asylum {
 
-ActionArea::ActionArea() {
-	// TODO Auto-generated constructor stub
+Common::String ActionArea::toString() {
+	Common::String output;
 
-}
+	output += Common::String::format("Action %d: %s\n", id, name);
+	output += Common::String::format("           flags=%d      scriptIndex=%d      scriptIndex2=%d   type=%d\n", flags, scriptIndex, actionType, polyIdx);
+	output += Common::String::format("           sound=%d      polygon=%d          palette=%d        volume=%d\n", soundResourceId, scriptIndex2, paletteValue, volume);
+	output += Common::String::format("           field01=%d    field02=%d          field40=%d        field44=%d\n", field01, field02, field_40, field_44);
+	output += Common::String::format("           field7C=%d    field84=%d          field88=%d        field90=%d\n", field_7C, field_84, field_88, field_90);
 
-ActionArea::~ActionArea() {
-	// TODO Auto-generated destructor stub
+	return output;
 }
 
 } // end of namespace Asylum

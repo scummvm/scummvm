@@ -52,52 +52,52 @@ Video::~Video() {
 	delete _text;
 }
 
-bool Video::playVideo(int32 videoNumber, bool showSubtitles) {
-	bool lastMouseState = false;
+void Video::playVideo(int32 videoNumber, bool showSubtitles) {
 	char filename[20];
-
 	sprintf(filename, "mov%03d.smk", videoNumber);
 
-	bool result = _smkDecoder->loadFile(filename);
+	if (!_smkDecoder->loadFile(filename)) {
+		_smkDecoder->close();
 
-	lastMouseState = g_system->showMouse(false);
-	if (result) {
-		_skipVideo = false;
-
-		if (showSubtitles)
-			loadSubtitles(videoNumber);
-
-		uint16 x = (g_system->getWidth() - _smkDecoder->getWidth()) / 2;
-		uint16 y = (g_system->getHeight() - _smkDecoder->getHeight()) / 2;
-
-		while (!_smkDecoder->endOfVideo() && !_skipVideo) {
-			processVideoEvents();
-			if (_smkDecoder->needsUpdate()) {
-				Graphics::Surface *frame = _smkDecoder->decodeNextFrame();
-
-				if (frame) {
-					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
-
-					if(showSubtitles) {
-						Graphics::Surface *screen = g_system->lockScreen();
-						performPostProcessing((byte *)screen->pixels);
-						g_system->unlockScreen();
-					}
-
-					if (_smkDecoder->hasDirtyPalette())
-						_smkDecoder->setSystemPalette();
-
-					g_system->updateScreen();
-				}
-			}
-			g_system->delayMillis(10);
-		}
+		error("[Video::playVideo] Invalid video index (%d)", videoNumber);
 	}
+
+	bool lastMouseState = g_system->showMouse(false);
+	_skipVideo = false;
+
+	if (showSubtitles)
+		loadSubtitles(videoNumber);
+
+	uint16 x = (g_system->getWidth() - _smkDecoder->getWidth()) / 2;
+	uint16 y = (g_system->getHeight() - _smkDecoder->getHeight()) / 2;
+
+	while (!_smkDecoder->endOfVideo() && !_skipVideo) {
+		processVideoEvents();
+		if (_smkDecoder->needsUpdate()) {
+			Graphics::Surface *frame = _smkDecoder->decodeNextFrame();
+
+			if (frame) {
+				g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+
+				if(showSubtitles) {
+					Graphics::Surface *screen = g_system->lockScreen();
+					performPostProcessing((byte *)screen->pixels);
+					g_system->unlockScreen();
+				}
+
+				if (_smkDecoder->hasDirtyPalette())
+					_smkDecoder->setSystemPalette();
+
+				g_system->updateScreen();
+			}
+		}
+		g_system->delayMillis(10);
+	}
+
+
 	_smkDecoder->close();
 	_subtitles.clear();
 	g_system->showMouse(lastMouseState);
-
-	return result;
 }
 
 void Video::performPostProcessing(byte *screen) {

@@ -214,7 +214,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		action->field_44       = stream->readSint32LE();
 		action->flags          = stream->readSint32LE();
 		action->scriptIndex = stream->readSint32LE();
-		action->actionListIdx2 = stream->readSint32LE();
+		action->scriptIndex2 = stream->readSint32LE();
 		action->actionType     = stream->readSint32LE();
 
 		for (int32 aa1 = 0; aa1 < 10; aa1++)

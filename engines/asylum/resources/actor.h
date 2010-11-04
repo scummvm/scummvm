@@ -189,9 +189,17 @@ public:
 	void stopSound();
 
 	/**
+	 * Convert this object into a string representation.
+	 *
+	 * @return A string representation of this object.
+	 */
+	Common::String toString();
+
+	/**
 	 * Clears actor data fields (TODO what are those fields?)
 	 */
 	void clearFields() { memset(&_field_970, 0, 52); }
+
 
 	/**
 	 * TEMPORARY: Initialize the 500 byte resource index from the scene
