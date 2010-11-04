@@ -170,7 +170,7 @@ PSP_EBOOT_PIC1 = pic1.png
 PSP_EBOOT_SND0 = NULL
 PSP_EBOOT_PSAR = NULL
 
-LDFLAGS += -Wl,-Tmain_prog.ld
+LDFLAGS += -Wl,-T../../plugins/psp/main_prog.ld
 
 all: $(PSP_EBOOT)
 

@@ -2226,7 +2226,7 @@ PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backend
 		_elf_loader=yes
 		DEFINES="$DEFINES -DMIPS_TARGET"
 _mak_plugins='
-LDFLAGS				+= -Wl,-T$(srcdir)/backends/platform/psp/main_prog.ld
+LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
 '
 		;;

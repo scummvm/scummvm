@@ -245,13 +245,6 @@ typedef struct {
 #define R_PPC_REL24			10
 #define R_PPC_REL32			26
 
-// Mock function to get value of global pointer for MIPS
-#define getGP() { \
-	uint32 __valgp; \
-	__asm__ ("add %0, $gp, $0" : "=r"(__valgp) : ); \
-	__valgp; \
-}
-
 #endif // defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
 #endif /* BACKENDS_ELF_H */
