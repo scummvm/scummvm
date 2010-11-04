@@ -320,24 +320,30 @@ bool DLObject::load() {
 			return false;
 	}
 
-	Common::ScopedPtrC<Elf32_Shdr> shdr(loadSectionHeaders(&ehdr));
+	Elf32_Shdr *shdr = loadSectionHeaders(&ehdr);
 	if (!shdr)
 		return false;
 
 	_symtab_sect = loadSymbolTable(&ehdr, shdr);
-	if (_symtab_sect < 0)
+	if (_symtab_sect < 0) {
+		free(shdr);
 		return false;
+	}
 		
-	if (!loadStringTable(shdr))
+	if (!loadStringTable(shdr)) {
+		free(shdr);
 		return false;
+	}
 	
 	// Offset by our segment allocated address
 	// must use _segmentVMA here for multiple segments (MIPS)
 	_segmentOffset = ptrdiff_t(_segment) - _segmentVMA;
 	relocateSymbols(_segmentOffset);
 
-	if (!relocateRels(&ehdr, shdr))
+	if (!relocateRels(&ehdr, shdr)) {
+		free(shdr);
 		return false;
+	}
 
 	return true;
 }
