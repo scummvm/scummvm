@@ -483,6 +483,7 @@ void AudioStreamInstance::setVolume(int32 volume) {
 
 AudioStreamPackage::AudioStreamPackage(ToonEngine *vm) : _vm(vm) {
 	_indexBuffer = 0;
+	_file = 0;
 }
 
 AudioStreamPackage::~AudioStreamPackage() {
