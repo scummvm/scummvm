@@ -193,8 +193,8 @@ void GfxPalette::modifyAmigaPalette(byte *data) {
 }
 
 static byte blendColours(byte c1, byte c2) {
-	// linear:
-	// return (c1/2+c2/2)+(c1&1+c2&1)/2;
+	// linear
+	// return (c1/2+c2/2)+((c1&1)+(c2&1))/2;
 
 	// gamma 2.2
 	double t = 0.5 + (pow (c1/255.0, 2.2/1.0) * 255.0) + 
