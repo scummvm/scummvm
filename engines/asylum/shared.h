@@ -42,9 +42,19 @@ enum GameFlag {
 	kGameFlag239                  = 239,
 	kGameFlag279                  = 279,
 	kGameFlag368                  = 368,
+	kGameFlag371                  = 371,
+	kGameFlag447                  = 447,
+	kGameFlag448                  = 448,
+	kGameFlag450                  = 450,
+	kGameFlag451                  = 451,
+	kGameFlag452                  = 452,
+	kGameFlag453                  = 453,
+	kGameFlag454                  = 454,
+	kGameFlag455                  = 455,
 	kGameFlag556                  = 556,
 	kGameFlagFinishGame           = 901,
-	kGameFlag1131                 = 1131
+	kGameFlag1131                 = 1131,
+	kGameFlag1137                 = 1137
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -98,7 +108,7 @@ enum ActorStatus {
 	kActorStatus2,
 	kActorStatus3,
 	kActorStatusEnabled,
-	kActorStatusDisabled,
+	kActorStatusDisabled,    // 5
 	kActorStatus6,
 	kActorStatus7,
 	kActorStatus8,
@@ -226,6 +236,25 @@ enum ActorResources {
 //////////////////////////////////////////////////////////////////////////
 // Object
 //////////////////////////////////////////////////////////////////////////
+enum ObjectId {
+	kObjectInvalid                 = -1,
+	kObjectNone                    = 0,
+	kObjectHeadBanger              = 101,
+	kObjectAngelFlares             = 112,
+	kObjectGuyFalls                = 434,
+	kObjectOpeningGate             = 485,
+	kObjectNPC033StartEnc          = 1338,
+	kObjectNPC033GetBook           = 1343,
+	kObjectCrow1FlysAway           = 1485,
+	kObjectCrow1Pecks              = 1486,
+	kObjectCrow2AmbientPecks       = 1495,
+	kObjectCrow2FlysAway           = 1500,
+	kObjectCrow3FlysAway           = 1502,
+	kObjectCrow3Pecks              = 1503,
+	kObjectCrow4FlysAway           = 1506,
+	kObjectCrow4Pecks              = 1507
+};
+
 enum ObjectFlag {
 	kObjectFlagEnabled   = 0x1,
 	kObjectFlag2         = 0x2,
@@ -262,11 +291,12 @@ enum ObjectFlag {
 #define rnd(val) _vm->getRandom(val)
 
 // Engine subclasses
-#define getSound()  _vm->sound()
-#define getScene()  _vm->scene()
-#define getScreen() _vm->screen()
-#define getSpeech() _vm->scene()->speech()
-#define getWorld()  _vm->scene()->worldstats()
+#define getEncounter() _vm->encounter()
+#define getSound()     _vm->sound()
+#define getScene()     _vm->scene()
+#define getScreen()    _vm->screen()
+#define getSpeech()    _vm->scene()->speech()
+#define getWorld()     _vm->scene()->worldstats()
 
 //////////////////////////////////////////////////////////////////////////
 // Sub-integer partial access macros
