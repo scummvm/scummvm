@@ -125,7 +125,7 @@ enum ActorFlags {
 };
 
 enum DirectionFrom {
-	kDirectionFromBarrier = 0,
+	kDirectionFromObject = 0,
 	kDirectionFromPolygons = 1,
 	kDirectionFromActor = 2,
 	kDirectionFromParameters = 3
@@ -224,23 +224,23 @@ enum ActorResources {
 };
 
 //////////////////////////////////////////////////////////////////////////
-// Barrier
+// Object
 //////////////////////////////////////////////////////////////////////////
-enum BarrierFlag {
-	kBarrierFlagEnabled   = 0x1,
-	kBarrierFlag2         = 0x2,
-	kBarrierFlag4         = 0x4,
-	kBarrierFlag6         = 0x6,
-	kBarrierFlag8         = 0x8,
-	kBarrierFlag10        = 0x10,
-	kBarrierFlag20        = 0x20,
-	kBarrierFlag40        = 0x40,
-	kBarrierFlag80        = 0x80,
-	kBarrierFlagC000      = 0xC000,
-	kBarrierFlag10000     = 0x10000,
-	kBarrierFlag10E38     = 0x10E38,
-	kBarrierFlag20000     = 0x20000,
-	kBarrierFlag40000     = 0x40000
+enum ObjectFlag {
+	kObjectFlagEnabled   = 0x1,
+	kObjectFlag2         = 0x2,
+	kObjectFlag4         = 0x4,
+	kObjectFlag6         = 0x6,
+	kObjectFlag8         = 0x8,
+	kObjectFlag10        = 0x10,
+	kObjectFlag20        = 0x20,
+	kObjectFlag40        = 0x40,
+	kObjectFlag80        = 0x80,
+	kObjectFlagC000      = 0xC000,
+	kObjectFlag10000     = 0x10000,
+	kObjectFlag10E38     = 0x10E38,
+	kObjectFlag20000     = 0x20000,
+	kObjectFlag40000     = 0x40000
 };
 
 //////////////////////////////////////////////////////////////////////////

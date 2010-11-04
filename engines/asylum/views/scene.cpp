@@ -38,7 +38,7 @@ namespace Asylum {
 #define SCROLL_STEP 10
 
 int g_debugPolygons;
-int g_debugBarriers;
+int g_debugObjects;
 int g_debugScrolling;
 
 Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
@@ -96,7 +96,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	_skipDrawScene = 0;
 
 	g_debugPolygons  = 0;
-	g_debugBarriers  = 0;
+	g_debugObjects  = 0;
 	g_debugScrolling = 0;
 
 	_globalX = _globalY = 0;
@@ -118,12 +118,12 @@ void Scene::initialize() {
 
 	_playerActorIdx = 0;
 
-	if (_ws->numBarriers > 0) {
+	if (_ws->numObjects > 0) {
 		int32 priority = 4091;
-		for (int32 b = 0; b < _ws->numBarriers; b++) {
-			Barrier *barrier  = _ws->barriers[b];
-			barrier->setPriority(priority);
-			barrier->flags &= ~kBarrierFlagC000;
+		for (int32 b = 0; b < _ws->numObjects; b++) {
+			Object *object  = _ws->objects[b];
+			object->setPriority(priority);
+			object->flags &= ~kObjectFlagC000;
 			priority -= 4;
 		}
 	}
@@ -355,7 +355,7 @@ int Scene::updateScene() {
 	// Update each part of the scene
 	MESURE_TICKS(updateMouse);
 	MESURE_TICKS(updateActors);
-	MESURE_TICKS(updateBarriers);
+	MESURE_TICKS(updateObjects);
 	MESURE_TICKS(updateAmbientSounds);
 	MESURE_TICKS(updateMusic);
 	MESURE_TICKS(updateScreen);
@@ -363,8 +363,8 @@ int Scene::updateScene() {
 	// Update Debug
 	if (g_debugPolygons)
 		debugShowPolygons();
-	if (g_debugBarriers)
-		debugShowBarriers();
+	if (g_debugObjects)
+		debugShowObjects();
 
 	if (_actions->process())
 		return 1;
@@ -600,8 +600,8 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 			case kHitActionArea:
 				targetUpdateType = _ws->actions[targetIdx]->actionType;
 				break;
-			case kHitBarrier:
-				targetUpdateType = _ws->barriers[targetIdx]->actionType;
+			case kHitObject:
+				targetUpdateType = _ws->objects[targetIdx]->actionType;
 				break;
 			case kHitActor:
 				targetUpdateType = getActor(targetIdx)->getStatus();
@@ -639,13 +639,13 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 
 }
 
-int32 Scene::hitTestBarrier(const Common::Point pt) {
+int32 Scene::hitTestObject(const Common::Point pt) {
 	int32 targetIdx = -1;
-	for (int32 i = 0; i < _ws->numBarriers; i++) {
-		Barrier *barrier = _ws->barriers[i];
-		if (barrier->isOnScreen())
-			if (barrier->getPolygonIndex())
-				if (hitTestPixel(barrier->getResourceId(), barrier->getFrameIndex(), pt.x, pt.y, barrier->flags & 0x1000)) {
+	for (int32 i = 0; i < _ws->numObjects; i++) {
+		Object *object = _ws->objects[i];
+		if (object->isOnScreen())
+			if (object->getPolygonIndex())
+				if (hitTestPixel(object->getResourceId(), object->getFrameIndex(), pt.x, pt.y, object->flags & 0x1000)) {
 					targetIdx = i;
 					break;
 				}
@@ -655,7 +655,7 @@ int32 Scene::hitTestBarrier(const Common::Point pt) {
 
 int32 Scene::hitTest(const Common::Point pt, HitType &type) {
 	type = kHitNone;
-	int32 targetIdx = hitTestBarrier(pt);
+	int32 targetIdx = hitTestObject(pt);
 	if (targetIdx == -1) {
 		targetIdx = hitTestActionArea(pt);
 		if (targetIdx == -1) {
@@ -666,7 +666,7 @@ int32 Scene::hitTest(const Common::Point pt, HitType &type) {
 			type = kHitActionArea;
 		}
 	} else {
-		type = kHitBarrier;
+		type = kHitObject;
 	}
 	return targetIdx;
 }
@@ -711,7 +711,7 @@ int32 Scene::hitTestScene(const Common::Point pt, HitType &type) {
 		}
 	}
 
-	// TODO barrier and actor checks
+	// TODO object and actor checks
 
 	return result;
 }
@@ -761,9 +761,9 @@ void Scene::updateActors() {
 		_ws->actors[i]->update();
 }
 
-void Scene::updateBarriers() {
-	for (uint32 i = 0; i < _ws->barriers.size(); i++)
-		_ws->barriers[i]->update();
+void Scene::updateObjects() {
+	for (uint32 i = 0; i < _ws->objects.size(); i++)
+		_ws->objects[i]->update();
 }
 
 void Scene::updateAmbientSounds() {
@@ -1041,8 +1041,8 @@ int Scene::drawScene() {
 		for (uint32 i = 0; i < _ws->actors.size(); i++)
 			_ws->actors[i]->draw();
 
-		for (uint32 i = 0; i < _ws->barriers.size(); i++)
-			_ws->barriers[i]->draw();
+		for (uint32 i = 0; i < _ws->objects.size(); i++)
+			_ws->objects[i]->draw();
 
 		Actor *player = getActor();
 		if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10)
@@ -1111,71 +1111,71 @@ void Scene::processUpdateList() {
 			// Our actor rect
 			Common::Rect actorRect(actor->x1, actor->y1, actor->x1 + actor->getBoundingRect()->right, bottomRight);
 
-			// Process barriers
-			for (int32 j = 0; j < _ws->numBarriers; j++) {
-				Barrier *barrier = _ws->barriers[i];
+			// Process objects
+			for (int32 j = 0; j < _ws->numObjects; j++) {
+				Object *object = _ws->objects[i];
 
-				// Skip hidden barriers
-				if (!barrier->isOnScreen())
+				// Skip hidden objects
+				if (!object->isOnScreen())
 					continue;
 
-				// Rect for the barrier
-				Common::Rect barrierRect(barrier->x, barrier->y, barrier->x + barrier->getBoundingRect()->right, barrier->y + barrier->getBoundingRect()->bottom);
+				// Rect for the object
+				Common::Rect objectRect(object->x, object->y, object->x + object->getBoundingRect()->right, object->y + object->getBoundingRect()->bottom);
 
 				// Check that the rects are contained
-				if (!barrierRect.contains(actorRect)) {
-					if (BYTE1(barrier->flags) & kBarrierFlag20)
-						if (!(BYTE1(barrier->flags) & kBarrierFlag80))
-							barrier->flags = BYTE1(barrier->flags) | kBarrierFlag40;
+				if (!objectRect.contains(actorRect)) {
+					if (BYTE1(object->flags) & kObjectFlag20)
+						if (!(BYTE1(object->flags) & kObjectFlag80))
+							object->flags = BYTE1(object->flags) | kObjectFlag40;
 					continue;
 				}
 
-				// Check if it intersects with either the barrier rect or the related polygon
+				// Check if it intersects with either the object rect or the related polygon
 				bool intersects = false;
-				if (barrier->flags & kBarrierFlag2) {
-					intersects = pointIntersectsRect(point, *barrier->getRect());
+				if (object->flags & kObjectFlag2) {
+					intersects = pointIntersectsRect(point, *object->getRect());
 				} else {
-					if (barrier->flags & kBarrierFlag40) {
-						PolyDefinitions *poly = &_polygons->entries[barrier->getPolygonIndex()];
+					if (object->flags & kObjectFlag40) {
+						PolyDefinitions *poly = &_polygons->entries[object->getPolygonIndex()];
 						if (point.x > 0 && point.y > 0 && poly->numPoints > 0)
 							intersects = poly->contains(point);
 						else
-							warning ("[drawActorsAndBarriers] trying to find intersection of uninitialized point");
+							warning ("[drawActorsAndObjects] trying to find intersection of uninitialized point");
 					}
 				}
 
-				// Adjust barrier flags
-				if (BYTE1(barrier->flags) & kBarrierFlag80 || intersects) {
-					if (BYTE1(barrier->flags) & kBarrierFlag20)
-						barrier->flags = (BYTE1(barrier->flags) & 0xBF) | kBarrierFlag80;
+				// Adjust object flags
+				if (BYTE1(object->flags) & kObjectFlag80 || intersects) {
+					if (BYTE1(object->flags) & kObjectFlag20)
+						object->flags = (BYTE1(object->flags) & 0xBF) | kObjectFlag80;
 				} else {
-					if (BYTE1(barrier->flags) & kBarrierFlag20) {
-						barrier->flags = BYTE1(barrier->flags) | kBarrierFlag40;
+					if (BYTE1(object->flags) & kObjectFlag20) {
+						object->flags = BYTE1(object->flags) | kObjectFlag40;
 					}
 				}
 
-				if (barrier->flags & kBarrierFlag4) {
+				if (object->flags & kObjectFlag4) {
 					if (intersects && LOBYTE(actor->flags) & kActorFlagMasked) {
 						error("[Scene::processUpdateList] Assigning mask to masked character [%s]", actor->getName());
 					} else {
-						adjustCoordinates(barrier->x, barrier->y, &point);
-						actor->setBarrierIndex(j);
+						adjustCoordinates(object->x, object->y, &point);
+						actor->setObjectIndex(j);
 						actor->flags |= kActorFlagMasked;
 					}
 				} else {
 					if (intersects) {
-						if (actor->getPriority() < barrier->getPriority()) {
+						if (actor->getPriority() < object->getPriority()) {
 							actor->setField934(1);
-							actor->setPriority(barrier->getPriority() + 3);
+							actor->setPriority(object->getPriority() + 3);
 
 							if (_updateList[i].index > _updateList[0].index) {
 								error("[Scene::processUpdateList] list update not implemented!");
 							}
 						}
 					} else {
-						if (actor->getPriority() > barrier->getPriority() || actor->getPriority() == 1) {
+						if (actor->getPriority() > object->getPriority() || actor->getPriority() == 1) {
 							actor->setField934(1);
-							actor->setPriority(barrier->getPriority() - 1);
+							actor->setPriority(object->getPriority() - 1);
 
 							if (_updateList[i].index > _updateList[0].index) {
 								error("[Scene::processUpdateList] list update not implemented!");
@@ -1183,7 +1183,7 @@ void Scene::processUpdateList() {
 						}
 					}
 				}
-			} // end processing barriers
+			} // end processing objects
 
 			// Update all other actors
 			for (uint32 k = 0; k < _updateList.size(); k++) {
@@ -1255,11 +1255,11 @@ void Scene::adjustActorPriority(ActorIndex index) {
 //////////////////////////////////////////////////////////////////////////
 // Spec functions
 //////////////////////////////////////////////////////////////////////////
-void Scene::specChapter1(Barrier *barrier, ActorIndex actorIndex) {
-	if (actorIndex == -1 && barrier == NULL)
+void Scene::specChapter1(Object *object, ActorIndex actorIndex) {
+	if (actorIndex == -1 && object == NULL)
 		error("[Scene::specChapter1] Both arguments cannot be empty!");
 
-	ResourceId id = (actorIndex == -1) ? barrier->getSoundResourceId() : getActor(actorIndex)->getSoundResourceId();
+	ResourceId id = (actorIndex == -1) ? object->getSoundResourceId() : getActor(actorIndex)->getSoundResourceId();
 
 	if (!_vm->encounter()->getFlag(kEncounterFlag2)) {
 		if (!id || !getSound()->isPlaying(id))
@@ -1268,22 +1268,22 @@ void Scene::specChapter1(Barrier *barrier, ActorIndex actorIndex) {
 	}
 
 	if (actorIndex == -1) {
-		switch (barrier->getId()) {
+		switch (object->getId()) {
 		default:
 			break;
 
 		case 101:
-			if (barrier->getFrameIndex() == 2)
-				barrier->getFrameSoundItem(0)->resourceId = _ws->graphicResourceIds[rnd(2) ? 37 : 38];
+			if (object->getFrameIndex() == 2)
+				object->getFrameSoundItem(0)->resourceId = _ws->graphicResourceIds[rnd(2) ? 37 : 38];
 			break;
 
 		case 112:
-			if (barrier->getFrameIndex() == 5)
+			if (object->getFrameIndex() == 5)
 				getSpeech()->play(81);
 			break;
 
 		case 434:
-			if (barrier->getFrameIndex() == 23)
+			if (object->getFrameIndex() == 23)
 				getSpeech()->play(82);
 			break;
 		}
@@ -1403,25 +1403,25 @@ void Scene::debugShowPolygons() {
 	}
 }
 
-// BARRIER DEBUGGING
-void Scene::debugShowBarriers() {
-	for (int32 p = 0; p < _ws->numBarriers; p++) {
+// OBJECT DEBUGGING
+void Scene::debugShowObjects() {
+	for (int32 p = 0; p < _ws->numObjects; p++) {
 		Graphics::Surface surface;
-		Barrier *barrier = _ws->barriers[p];
+		Object *object = _ws->objects[p];
 
-		if (barrier->flags & 0x20) {
-			surface.create(barrier->getBoundingRect()->right - barrier->getBoundingRect()->left + 1,
-			               barrier->getBoundingRect()->bottom - barrier->getBoundingRect()->top + 1,
+		if (object->flags & 0x20) {
+			surface.create(object->getBoundingRect()->right - object->getBoundingRect()->left + 1,
+			               object->getBoundingRect()->bottom - object->getBoundingRect()->top + 1,
 			               1);
-			surface.frameRect(*barrier->getBoundingRect(), 0x22);
-			copyToBackBufferClipped(&surface, barrier->x, barrier->y);
+			surface.frameRect(*object->getBoundingRect(), 0x22);
+			copyToBackBufferClipped(&surface, object->x, object->y);
 		}
 
 		surface.free();
 	}
 }
 
-// BARRIER DEBUGGING
+// ACTOR DEBUGGING
 void Scene::debugShowActors() {
 	for (int32 p = 0; p < _ws->numActors; p++) {
 		Graphics::Surface surface;
@@ -1467,7 +1467,7 @@ void Scene::resetActor0() {
 	error("[Scene::resetActor0] not implemented!");
 }
 
-void Scene::callSpecFunction(Barrier* barrier, ActorIndex index) {
+void Scene::callSpecFunction(Object* object, ActorIndex index) {
 	// The original uses a function array, we just use switch for now there is only 11 entries
 	switch (_ws->numChapter) {
 	default:

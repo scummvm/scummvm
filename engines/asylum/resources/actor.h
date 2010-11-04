@@ -58,7 +58,7 @@ public:
 
 
 	void setActionIndex2(int32 index) { _actionIdx2 = index; }
-	void setBarrierIndex(int32 index) { _barrierIndex = index; }
+	void setObjectIndex(int32 index) { _objectIndex = index; }
 	void setDirection(ActorDirection direction) { _direction = direction; }
 	void setFrameCount(int32 count) { _frameCount = count; }
 	void setFrameIndex(int32 number) { _frameIndex = number; }
@@ -232,7 +232,7 @@ private:
 	// Data
 	//////////////////////////////////////////////////////////////////////////
 	ResourceId _resourceId;
-	int32  _barrierIndex;
+	int32  _objectIndex;
 	uint32 _frameIndex;
 	uint32 _frameCount;
 	// x1, y1, x2, y2

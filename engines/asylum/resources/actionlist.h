@@ -75,10 +75,10 @@ public:
 	bool isProcessingSkipped() { return _skipProcessing; }
 
 private:
-	enum BarrierEnableType {
-		kBarrierEnableType0,
-		kBarrierEnableType1,
-		kBarrierEnableType2
+	enum ObjectEnableType {
+		kObjectEnableType0,
+		kObjectEnableType1,
+		kObjectEnableType2
 	};
 
 	typedef struct ScriptEntry {
@@ -157,7 +157,7 @@ private:
 	void resetQueue();
 
 	// Opcode helper functions
-	void enableBarrier(ScriptEntry *cmd, BarrierEnableType type);
+	void enableObject(ScriptEntry *cmd, ObjectEnableType type);
 	void setActionFlag(ScriptEntry *cmd, ActionType flag); //|
 	void clearActionFlag(ScriptEntry *cmd, ActionType flag); //&
 	void jumpIfActionFlag(ScriptEntry *cmd, ActionType flag);
@@ -180,14 +180,14 @@ private:
 	DECLARE_OPCODE(SetSceneMotionStatus);
 	DECLARE_OPCODE(DisableActor);
 	DECLARE_OPCODE(EnableActor);
-	DECLARE_OPCODE(EnableBarriers);
-	DECLARE_OPCODE(RemoveBarrier);
+	DECLARE_OPCODE(EnableObjects);
+	DECLARE_OPCODE(RemoveObject);
 	DECLARE_OPCODE(JumpActorSpeech);
 	DECLARE_OPCODE(JumpAndSetDirection);
 	DECLARE_OPCODE(JumpIfActorCoordinates);
 	DECLARE_OPCODE(Nop);
 	DECLARE_OPCODE(ResetAnimation);
-	DECLARE_OPCODE(DisableBarrier);
+	DECLARE_OPCODE(DisableObject);
 	DECLARE_OPCODE(JumpIfSoundPlayingAndPlaySound);
 	DECLARE_OPCODE(JumpIfActionFind);
 	DECLARE_OPCODE(SetActionFind);
@@ -210,7 +210,7 @@ private:
 	DECLARE_OPCODE(ChangeScene);
 	DECLARE_OPCODE(_unk2C_ActorSub);
 	DECLARE_OPCODE(PlayMovie);
-	DECLARE_OPCODE(StopAllBarriersSounds);
+	DECLARE_OPCODE(StopAllObjectsSounds);
 	DECLARE_OPCODE(StopProcessing);
 	DECLARE_OPCODE(ResumeProcessing);
 	DECLARE_OPCODE(ResetSceneRect);
@@ -245,21 +245,21 @@ private:
 	DECLARE_OPCODE(JumpRandom);
 	DECLARE_OPCODE(ClearScreen);
 	DECLARE_OPCODE(Quit);
-	DECLARE_OPCODE(JumpBarrierFrame);
+	DECLARE_OPCODE(JumpObjectFrame);
 	DECLARE_OPCODE(DeleteGraphics);
 	DECLARE_OPCODE(SetActorField944);
 	DECLARE_OPCODE(_unk54_SET_ACTIONLIST_6EC);
 	DECLARE_OPCODE(_unk55);
 	DECLARE_OPCODE(_unk56);
 	DECLARE_OPCODE(SetResourcePalette);
-	DECLARE_OPCODE(SetBarrierFrameIdxFlaged);
+	DECLARE_OPCODE(SetObjectFrameIdxFlaged);
 	DECLARE_OPCODE(_unk59);
 	DECLARE_OPCODE(_unk5A);
 	DECLARE_OPCODE(_unk5B);
 	DECLARE_OPCODE(QueueScript);
 	DECLARE_OPCODE(_unk5D);
 	DECLARE_OPCODE(ClearActorFields);
-	DECLARE_OPCODE(SetBarrierLastFrameIdx);
+	DECLARE_OPCODE(SetObjectLastFrameIdx);
 	DECLARE_OPCODE(_unk60_SET_OR_CLR_ACTIONAREA_FLAG);
 	DECLARE_OPCODE(_unk61);
 	DECLARE_OPCODE(ShowOptionsScreen);

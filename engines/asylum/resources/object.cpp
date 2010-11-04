@@ -23,7 +23,7 @@
  *
  */
 
-#include "asylum/resources/barrier.h"
+#include "asylum/resources/object.h"
 
 #include "asylum/resources/actor.h"
 
@@ -31,16 +31,16 @@
 
 namespace Asylum {
 
-Barrier::Barrier(AsylumEngine *engine) : _vm(engine) {
+Object::Object(AsylumEngine *engine) : _vm(engine) {
 }
 
-Barrier::~Barrier() {
+Object::~Object() {
 }
 
 /////////////////////////////////////////////////////////////////////////
 // Loading & destroying
 /////////////////////////////////////////////////////////////////////////
-void Barrier::load(Common::SeekableReadStream *stream) {
+void Object::load(Common::SeekableReadStream *stream) {
 	_id	  = stream->readSint32LE();
 	_resourceId = stream->readSint32LE();
 	x	  = stream->readSint32LE();
@@ -109,14 +109,14 @@ void Barrier::load(Common::SeekableReadStream *stream) {
 }
 
 
-void Barrier::disable() {
-	flags &= ~kBarrierFlagEnabled;
+void Object::disable() {
+	flags &= ~kObjectFlagEnabled;
 }
 
-void Barrier::disableAndRemoveFromQueue() {
+void Object::disableAndRemoveFromQueue() {
 	disable();
 
-	flags |= kBarrierFlag20000;
+	flags |= kObjectFlag20000;
 
 	getScreen()->deleteGraphicFromQueue(_resourceId);
 }
@@ -124,17 +124,17 @@ void Barrier::disableAndRemoveFromQueue() {
 /////////////////////////////////////////////////////////////////////////
 // Visibility
 //////////////////////////////////////////////////////////////////////////
-bool Barrier::isOnScreen() {
+bool Object::isOnScreen() {
 	Common::Rect screenRect  = Common::Rect(getWorld()->xLeft, getWorld()->yTop, getWorld()->xLeft + 640, getWorld()->yTop + 480);
-	Common::Rect barrierRect = Common::Rect(_boundingRect);
+	Common::Rect objectRect = Common::Rect(_boundingRect);
 
-	barrierRect.translate(x, y);
+	objectRect.translate(x, y);
 
-	return isVisible() && (flags & kBarrierFlagEnabled) && screenRect.intersects(barrierRect);
+	return isVisible() && (flags & kObjectFlagEnabled) && screenRect.intersects(objectRect);
 }
 
-bool Barrier::isVisible() {
-	if (flags & kBarrierFlagEnabled) {
+bool Object::isVisible() {
+	if (flags & kObjectFlagEnabled) {
 
 		// Check each game flag
 		for (int32 i = 0; i < 10; i++) {
@@ -160,30 +160,30 @@ bool Barrier::isVisible() {
 /////////////////////////////////////////////////////////////////////////
 // Update
 //////////////////////////////////////////////////////////////////////////
-void Barrier::draw() {
-	if (LOBYTE(flags) & kBarrierFlag4)
+void Object::draw() {
+	if (LOBYTE(flags) & kObjectFlag4)
 		return;
 
-	if (BYTE1(flags) & kBarrierFlag40)
+	if (BYTE1(flags) & kObjectFlag40)
 		return;
 
 	if (!isOnScreen())
 		return;
 
-	// Draw the barrier
+	// Draw the object
 	Common::Point point;
 	getScene()->adjustCoordinates(x, y, &point);
 
 	if (_field_67C <= 0 || _field_67C >= 4 || Config.performance <= 1)
-		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, x, y, (flags >> 11) & kBarrierFlag2, _field_67C - 3, _priority);
+		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, x, y, (flags >> 11) & kObjectFlag2, _field_67C - 3, _priority);
 	else {
 		// TODO: Do Cross Fade
 		//getScreen()->addGraphicToQueue(_resourceId, _frameIndex, x, y, getWorld()->backgroundImage, getWorld()->xLeft, getWorld()->yTop, 0, 0, _field_67C - 1);
-		error("[Barrier::draw] Crossfade not implemented!");
+		error("[Object::draw] Crossfade not implemented!");
 	}
 }
 
-void Barrier::update() {
+void Object::update() {
 	bool doPlaySounds = false;
 
 	if (_field_3C != 4)
@@ -195,13 +195,13 @@ void Barrier::update() {
 	}
 
 	// Examine flags
-	if (flags & kBarrierFlag20) {
+	if (flags & kObjectFlag20) {
 		if (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt()) {
 			_frameIndex =((_frameIndex + 1) % _frameCount);
 			_tickCount = _vm->getTick();
 			doPlaySounds = true;
 		}
-	} else if (flags & kBarrierFlag10) {
+	} else if (flags & kObjectFlag10) {
 
 		bool isFirstFrame = (_frameIndex == 0);
 
@@ -230,7 +230,7 @@ void Barrier::update() {
 				doPlaySounds = true;
 			}
 		}
-	} else if (BYTE1(flags) & kBarrierFlag8) {
+	} else if (BYTE1(flags) & kObjectFlag8) {
 		if (_vm->getTick() - _tickCount >= 1000 * _tickCount2) {
 			if (_vm->getRandom(_field_C0) == 1)
 				_frameIndex =((_frameIndex + 1) % _frameCount);
@@ -238,7 +238,7 @@ void Barrier::update() {
 			_tickCount = _vm->getTick();
 			doPlaySounds = true;
 		}
-	} else if (flags & kBarrierFlag8) {
+	} else if (flags & kObjectFlag8) {
 
 		if (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt()) {
 
@@ -253,7 +253,7 @@ void Barrier::update() {
 					delete gra;
 				}
 			} else {
-				flags &= ~kBarrierFlag8;
+				flags &= ~kObjectFlag8;
 				if (_field_688 == 1) {
 					getScene()->setGlobalX(-1);
 					getScene()->setGlobalY(-1);
@@ -262,14 +262,14 @@ void Barrier::update() {
 			_tickCount = _vm->getTick();
 			doPlaySounds = true;
 		}
-	} else if (!(BYTE1(flags) & kBarrierFlag6)) {
+	} else if (!(BYTE1(flags) & kObjectFlag6)) {
 
-		if ((flags & kBarrierFlag10000) && (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt())) {
+		if ((flags & kObjectFlag10000) && (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt())) {
 
 			++_frameIndex;
 
 			if (_frameIndex <= 0) {
-				flags &= ~kBarrierFlag10000;
+				flags &= ~kObjectFlag10000;
 				if (_field_688 == 1) {
 					getScene()->setGlobalX(-1);
 					getScene()->setGlobalY(-1);
@@ -286,24 +286,24 @@ void Barrier::update() {
 			doPlaySounds = true;
 		}
 	} else if (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt()) {
-		if (BYTE1(flags) & kBarrierFlag2) {
+		if (BYTE1(flags) & kObjectFlag2) {
 			if (_frameIndex == _frameCount - 1) {
 				_frameIndex--;
-				flags = (BYTE1(flags) & 0xFD) | kBarrierFlag4;
+				flags = (BYTE1(flags) & 0xFD) | kObjectFlag4;
 			} else {
 				_frameIndex++;
 			}
-		} else if (BYTE1(flags) & kBarrierFlag4) {
+		} else if (BYTE1(flags) & kObjectFlag4) {
 			if (_frameIndex) {
 				_frameIndex--;
 			} else {
 				_frameIndex++;
-				flags = (BYTE1(flags) & 0xFB) | kBarrierFlag2;
+				flags = (BYTE1(flags) & 0xFB) | kObjectFlag2;
 			}
 		}
 	}
 
-	if (flags & kBarrierFlag40000) {
+	if (flags & kObjectFlag40000) {
 		if (_frameIndex == _frameCount - 1) {
 			if (_field_B4 <= 15) {
 				_field_B4 -= 2;
@@ -315,7 +315,7 @@ void Barrier::update() {
 			}
 
 			if (!_field_B4)
-				flags &= ~kBarrierFlag10E38;
+				flags &= ~kObjectFlag10E38;
 		}
 	}
 
@@ -325,10 +325,10 @@ void Barrier::update() {
 	getScene()->callSpecFunction(this, -1);
 }
 
-void Barrier::setNextFrame(int32 targetFlags) {
-	flags |= targetFlags | kBarrierFlagEnabled;
+void Object::setNextFrame(int32 targetFlags) {
+	flags |= targetFlags | kObjectFlagEnabled;
 
-	if (flags & kBarrierFlag10000)
+	if (flags & kObjectFlag10000)
 		_frameIndex = _frameCount - 1;
 	else
 		_frameIndex = 0;
@@ -337,7 +337,7 @@ void Barrier::setNextFrame(int32 targetFlags) {
 /////////////////////////////////////////////////////////////////////////
 // Misc
 /////////////////////////////////////////////////////////////////////////
-void Barrier::playSounds() {
+void Object::playSounds() {
 	int32 soundX = 0;
 	int32 soundY = 0;
 
@@ -347,7 +347,7 @@ void Barrier::playSounds() {
 	} else {
 		GraphicResource *resource = new GraphicResource(getScene()->getResourcePack(), _resourceId);
 
-		if (LOBYTE(flags) & kBarrierFlag4) {
+		if (LOBYTE(flags) & kObjectFlag4) {
 			soundX = x + (resource->getFlags() >> 1);
 			soundY = y + (resource->getFlags2() >> 1);
 		} else {
@@ -389,10 +389,10 @@ void Barrier::playSounds() {
 		}
 	}
 
-	//warning("[Barrier::playSounds] not implemented!");
+	//warning("[Object::playSounds] not implemented!");
 }
 
-void Barrier::updateSoundItems() {
+void Object::updateSoundItems() {
 	for (int32 i = 0; i < ARRAYSIZE(_soundItems); i++) {
 
 		SoundItem *item = &_soundItems[i];
@@ -409,12 +409,12 @@ void Barrier::updateSoundItems() {
 	stopSound();
 }
 
-void Barrier::stopSound() {
+void Object::stopSound() {
 	if (getSound()->isPlaying(_soundResourceId))
 		getSound()->stopSound(_soundResourceId);
 }
 
-void Barrier::stopAllSounds() {
+void Object::stopAllSounds() {
 	for (int i = 0; i < ARRAYSIZE(_soundItems); i++)
 		if (_soundItems[i].resourceId) {
 			getSound()->stopSound(_soundItems[i].resourceId);
@@ -422,7 +422,7 @@ void Barrier::stopAllSounds() {
 		}
 }
 
-int32 Barrier::getRandomResourceId() {
+int32 Object::getRandomResourceId() {
 	// Initialize random resource id array
 	ResourceId shuffle[5];
 	memset(&shuffle, 0, sizeof(shuffle));
@@ -436,19 +436,19 @@ int32 Barrier::getRandomResourceId() {
 	}
 
 	if (count == 0)
-		error("[Barrier::getRandomId] Could not get a random resource Id");
+		error("[Object::getRandomId] Could not get a random resource Id");
 
 	return shuffle[_vm->getRandom(count)];
 }
 
-bool Barrier::checkFlags() {
-	return (flags & kBarrierFlagEnabled) && (flags & kBarrierFlag8 || flags & kBarrierFlag10000);
+bool Object::checkFlags() {
+	return (flags & kObjectFlagEnabled) && (flags & kObjectFlag8 || flags & kObjectFlag10000);
 }
 
-Common::String Barrier::toString() {
+Common::String Object::toString() {
 	Common::String output;
 
-	output += Common::String::format("Barrier %d: %s\n", _id, _name);
+	output += Common::String::format("Object %d: %s\n", _id, _name);
 
 	return output;
 }

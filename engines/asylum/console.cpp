@@ -36,7 +36,7 @@
 namespace Asylum {
 
 extern int32 g_debugPolygons;
-extern int32 g_debugBarriers;
+extern int32 g_debugObjects;
 extern int32 g_debugScrolling;
 
 Console::Console(AsylumEngine *engine) : _vm(engine) {
@@ -58,7 +58,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 
 	// Variables
 	DVar_Register("show_polygons",  &g_debugPolygons, DVAR_INT, 0);
-	DVar_Register("show_objects",   &g_debugBarriers, DVAR_INT, 0);
+	DVar_Register("show_objects",   &g_debugObjects, DVAR_INT, 0);
 	DVar_Register("use_scrolling",  &g_debugScrolling, DVAR_INT, 0);
 }
 
@@ -79,7 +79,7 @@ bool Console::cmdHelp(int, const char **) {
 	DebugPrintf(" debugflag_enable  - Enables a debug flag\n");
 	DebugPrintf(" debugflag_disable - Disables a debug flag\n");
 	DebugPrintf(" show_polygons     - Show polygons\n");
-	DebugPrintf(" show_barriers     - Show objects\n");
+	DebugPrintf(" show_objects     - Show objects\n");
 	DebugPrintf(" use_scrolling     - Use scrolling\n");
 	DebugPrintf("\n");
 	DebugPrintf("Commands\n");
@@ -219,19 +219,19 @@ bool Console::cmdListObjects(int32 argc, const char **argv) {
 	}
 
 	if (argc == 1) {
-		for (uint32 i = 0; i < getWorld()->barriers.size(); i++)
-			DebugPrintf("%s\n", getWorld()->barriers[i]->toString().c_str());
+		for (uint32 i = 0; i < getWorld()->objects.size(); i++)
+			DebugPrintf("%s\n", getWorld()->objects[i]->toString().c_str());
 
 	} else {
 		int index = atoi(argv[1]);
-		int maxIndex = getWorld()->barriers.size() - 1;
+		int maxIndex = getWorld()->objects.size() - 1;
 
 		if (index < 0 || index > maxIndex) {
 			DebugPrintf("[error] index should be between 0 and %d\n", maxIndex);
 			return true;
 		}
 
-		DebugPrintf("%s\n", getWorld()->barriers[index]->toString().c_str());
+		DebugPrintf("%s\n", getWorld()->objects[index]->toString().c_str());
 	}
 
 	return true;

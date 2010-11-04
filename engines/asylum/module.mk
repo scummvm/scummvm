@@ -4,7 +4,7 @@ MODULE_OBJS := \
 	resources/actionarea.o \
 	resources/actionlist.o \
 	resources/actor.o \
-	resources/barrier.o \
+	resources/object.o \
 	resources/encounters.o \
 	resources/polygons.o \
 	resources/worldstats.o \
