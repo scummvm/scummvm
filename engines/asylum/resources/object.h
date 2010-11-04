@@ -60,13 +60,14 @@ public:
 	uint32          getFrameIndex() { return _frameIndex; }
 	uint32          getFrameCount() { return _frameCount; }
 	FrameSoundItem *getFrameSoundItem(uint32 index) { assert(index < ARRAYSIZE(_frameSoundItems)); return &_frameSoundItems[index]; }
-	int32           getId() { return _id; }
+	ObjectId        getId() { return _id; }
 	int32           getPolygonIndex() { return _polygonIndex; }
 	int32           getPriority() { return _priority; }
 	ResourceId      getResourceId() { return _resourceId; }
 	ResourceId      getSoundResourceId() { return _soundResourceId; }
 
 	Common::Rect   *getRect()     { return &_rect; }
+	int32           getSoundY()   { return _soundY; }
 	int32           getField67C() { return _field_67C; }
 	int32           getField688() { return _field_688; }
 
@@ -154,7 +155,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 	//////////////////////////////////////////////////////////////////////////
-	int32		   _id;
+	ObjectId       _id;
 	ResourceId     _resourceId;
 	// x, y
 	Common::Rect   _boundingRect;

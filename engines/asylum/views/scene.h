@@ -31,7 +31,6 @@
 #include "asylum/system/graphics.h"
 #include "asylum/resources/worldstats.h"
 #include "asylum/resources/polygons.h"
-#include "asylum/resources/actionlist.h"
 #include "asylum/system/text.h"
 #include "asylum/system/cursor.h"
 #include "asylum/system/speech.h"
@@ -45,15 +44,17 @@
 namespace Asylum {
 
 class ActionList;
-class Screen;
-class Sound;
-class Video;
-class Cursor;
-class Text;
 //class BlowUpPuzzle;
-struct ObjectItem;
-class WorldStats;
+class Cursor;
+class Screen;
+class Special;
 class Speech;
+class Sound;
+class Text;
+class Video;
+class WorldStats;
+
+struct ObjectItem;
 
 enum HitType {
 	kHitNone       = -1,
@@ -116,6 +117,7 @@ public:
 	void setScenePosition(int x, int y);
 
 	AsylumEngine* vm() { return _vm; }
+	Special *special() { return _special; }
 	WorldStats* worldstats() { return _ws; }
 	Polygons* polygons() { return _polygons; }
 	ActionList* actions() { return _actions; }
@@ -139,7 +141,7 @@ public:
 	 * WorldStats actor list. Default parameter just
 	 * gets the instance associated with _playerActorIdx
 	 */
-	Actor* getActor(ActorIndex index = kActorPlayer);
+	Actor* getActor(ActorIndex index = kActorNone);
 
 	/** .text:00407260
 	 * Check the actor at actorIndex to see if the currently loaded
@@ -185,9 +187,15 @@ public:
 	// Shared methods
 	void resetActor0();
 
-	void callSpecFunction(Object* object, ActorIndex index);
+	int32 getActorUpdateFlag() { return _actorUpdateFlag; }
+	void setActorUpdateFlag(int32 val) { _actorUpdateFlag = val; }
 
-		/** .text:00408980
+	int32 getActorUpdateFlag2() { return _actorUpdateFlag2; }
+	void setActorUpdateFlag2(int32 val) { _actorUpdateFlag2 = val; }
+
+	ResourceId savedResourceIds[11]; // TODO are those really resource ids?
+
+	/** .text:00408980
 	 * Determine if the supplied point intersects
 	 * an action area's active region
 	 */
@@ -248,6 +256,7 @@ private:
 	Cursor       *_cursor;
 	ResourcePack *_resPack;
 	ResourcePack *_musPack;
+	Special      *_special;
 	//BlowUpPuzzle *_blowUp;
 
 	GraphicResource *_bgResource;
@@ -266,6 +275,9 @@ private:
 	};
 
 	Common::Array<UpdateItem> _updateList;
+
+	int32 _actorUpdateFlag;
+	int32 _actorUpdateFlag2;
 
 	void update();
 	void startMusic();
@@ -318,11 +330,6 @@ private:
 
 	void checkVisibleActorsPriority();
 	void adjustActorPriority(ActorIndex index);
-
-	//////////////////////////////////////////////////////////////////////////
-	// Spec functions
-	//////////////////////////////////////////////////////////////////////////
-	void specChapter1(Object *object, ActorIndex actorIndex);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers

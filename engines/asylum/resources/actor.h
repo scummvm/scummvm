@@ -167,7 +167,7 @@ public:
 	 * @param target Identifier for the target.
 	 * @param from   direction to face from.
 	 */
-	void faceTarget(int32 target, DirectionFrom from);
+	void faceTarget(ObjectId target, DirectionFrom from);
 
 	/**
 	 * Initialize the x1/y1 values of the actor, update the active animation frame and, if the current direction isn't 8, update the actor's direction.

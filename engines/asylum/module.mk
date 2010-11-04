@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	resources/object.o \
 	resources/encounters.o \
 	resources/polygons.o \
+	resources/special.o \
 	resources/worldstats.o \
 	system/config.o \
 	system/cursor.o \

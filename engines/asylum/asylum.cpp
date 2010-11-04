@@ -25,6 +25,7 @@
 
 #include "asylum/asylum.h"
 
+#include "asylum/resources/actionlist.h"
 #include "asylum/resources/encounters.h"
 
 #include "asylum/system/config.h"

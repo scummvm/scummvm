@@ -55,17 +55,12 @@ ActionArea* WorldStats::getActionAreaById(int32 id) {
 	return actions[index];
 }
 
-int32 WorldStats::getObjectIndexById(int32 id) {
-	for (int32 i = 0; i < numObjects; i++) {
+Object* WorldStats::getObjectById(ObjectId id) {
+	for (int32 i = 0; i < numObjects; i++)
 		if (objects[i]->getId() == id)
-			return i;
-	}
+			return objects[i];
 
-	return -1;
-}
-
-Object* WorldStats::getObjectById(int32 id) {
-	return objects[getObjectIndexById(id)];
+	return NULL;
 }
 
 // FIXME: load necessary World Stats content

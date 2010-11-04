@@ -345,7 +345,7 @@ IMPLEMENT_OPCODE(ShowCursor) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x07
 IMPLEMENT_OPCODE(PlayAnimation) {
-	Object *object = _scene->worldstats()->getObjectById(cmd->param1);
+	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param2 == 2) {
 		if (object->checkFlags())
@@ -479,7 +479,7 @@ IMPLEMENT_OPCODE(EnableActor) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0F
 IMPLEMENT_OPCODE(EnableObjects) {
-	Object *object = _scene->worldstats()->getObjectById(cmd->param1);
+	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
 
 	if (!_currentScript->counter && _scene->worldstats()->numChapter != 13)
 		_scene->vm()->sound()->playSound(cmd->param3 ? kResourceSound_80120006 : kResourceSound_80120001, false, Config.sfxVolume, 0);
@@ -511,7 +511,7 @@ IMPLEMENT_OPCODE(RemoveObject) {
 	if (!cmd->param1)
 		return;
 
-	Object *object = _scene->worldstats()->getObjectById(cmd->param1);
+	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
 
 	object->disableAndRemoveFromQueue();
 }
@@ -581,7 +581,7 @@ IMPLEMENT_OPCODE(Nop) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x16
 IMPLEMENT_OPCODE(ResetAnimation) {
-	Object *object = _scene->worldstats()->getObjectById(cmd->param1);
+	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
 
 	if (object->flags & kObjectFlag10000)
 		object->setFrameIndex(object->getFrameCount() - 1);
@@ -592,7 +592,7 @@ IMPLEMENT_OPCODE(ResetAnimation) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x17
 IMPLEMENT_OPCODE(DisableObject) {
-	Object *object = _scene->worldstats()->getObjectById(cmd->param1);
+	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
 
 	object->disable();
 }
@@ -898,7 +898,7 @@ IMPLEMENT_OPCODE(PlayMovie) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2E
 IMPLEMENT_OPCODE(StopAllObjectsSounds) {
-	Object *object = _scene->worldstats()->getObjectById(cmd->param1);
+	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
 
 	object->stopAllSounds();
 }
@@ -1047,7 +1047,7 @@ IMPLEMENT_OPCODE(IncrementParam2) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3D
 IMPLEMENT_OPCODE(WaitUntilFramePlayed) {
-	Object *object = _scene->worldstats()->getObjectById(cmd->param1);
+	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
 
 	int32 frameNum = cmd->param2;
 	if (frameNum == -1)
@@ -1082,7 +1082,7 @@ IMPLEMENT_OPCODE(UpdateWideScreen) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3F
 IMPLEMENT_OPCODE(JumpIfActor) {
-	ActorIndex index = (cmd->param1 == -1) ? _scene->getPlayerActorIndex() : cmd->param1;
+	ActorIndex index = (cmd->param1 == kActorNone) ? _scene->getPlayerActorIndex() : cmd->param1;
 
 	if (_currentQueueEntry.actorIndex != index)
 		_currentLine = cmd->param2 - 1;
@@ -1299,8 +1299,10 @@ IMPLEMENT_OPCODE(_unk46) {
 			if (cmd->param5) {
 				_scene->getActor(cmd->param5)->updateStatus(kActorStatusEnabled);
 			} else if (cmd->param4 != cmd->param3 && cmd->param4) {
-				_scene->worldstats()->getObjectById(cmd->param3)->disable();
-				_scene->worldstats()->getObjectById(cmd->param4)->setNextFrame(_scene->worldstats()->getObjectById(cmd->param4)->flags);
+				_scene->worldstats()->getObjectById((ObjectId)cmd->param3)->disable();
+
+				Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param4);
+				object->setNextFrame(object->flags);
 			}
 
 			_scene->vm()->clearGameFlag(kGameFlagScriptProcessing);
@@ -1319,10 +1321,10 @@ IMPLEMENT_OPCODE(_unk46) {
 		} else {
 			if (cmd->param4 != cmd->param3) {
 				if (cmd->param4)
-					_scene->worldstats()->getObjectById(cmd->param4)->disable();
+					_scene->worldstats()->getObjectById((ObjectId)cmd->param4)->disable();
 
 				if (cmd->param3)
-					_scene->worldstats()->getObjectById(cmd->param3)->setNextFrame(_scene->worldstats()->getObjectById(cmd->param4)->flags);
+					_scene->worldstats()->getObjectById((ObjectId)cmd->param3)->setNextFrame(_scene->worldstats()->getObjectById((ObjectId)cmd->param4)->flags);
 			}
 
 			cmd->param6 = 1;
@@ -1334,7 +1336,7 @@ IMPLEMENT_OPCODE(_unk46) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x47
 IMPLEMENT_OPCODE(ActorFaceObject) {
-	_scene->getActor(cmd->param1)->faceTarget(cmd->param2, (DirectionFrom)cmd->param3);
+	_scene->getActor(cmd->param1)->faceTarget((ObjectId)cmd->param2, (DirectionFrom)cmd->param3);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1449,7 +1451,7 @@ IMPLEMENT_OPCODE(Quit) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x51
 IMPLEMENT_OPCODE(JumpObjectFrame) {
-	Object *object = _scene->worldstats()->getObjectById(cmd->param1);
+	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param2 == -1)
 		cmd->param2 = object->getFrameCount() - 1;
@@ -1535,7 +1537,7 @@ IMPLEMENT_OPCODE(_unk55) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x56
 IMPLEMENT_OPCODE(_unk56) {
-	Actor *actor = _scene->getActor(cmd->param2 == 2 ? -1 : cmd->param1);
+	Actor *actor = _scene->getActor(cmd->param2 == 2 ? kActorNone : cmd->param1);
 
 	if (actor->getStatus() == kActorStatus2 || actor->getStatus() == kActorStatus13) {
 		if (cmd->param2 == 2)
@@ -1549,7 +1551,7 @@ IMPLEMENT_OPCODE(_unk56) {
 		_lineIncrement = 0;
 
 		if ((actor->x1 + actor->x2 == cmd->param6) && (actor->y1 + actor->y2 == cmd->param7)) {
-			_scene->getActor()->faceTarget(cmd->param1, kDirectionFromActor);
+			_scene->getActor()->faceTarget((ObjectId)cmd->param1, kDirectionFromActor);
 			actor->updateFromDirection((actor->getDirection() + 4) & 7);
 		} else {
 			_currentLine = cmd->param3;
@@ -1587,7 +1589,7 @@ IMPLEMENT_OPCODE(SetResourcePalette) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x58
 IMPLEMENT_OPCODE(SetObjectFrameIdxFlaged) {
-	Object *object = _scene->worldstats()->getObjectById(cmd->param1);
+	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param3)
 		object->flags = 1 | object->flags;
@@ -1600,7 +1602,7 @@ IMPLEMENT_OPCODE(SetObjectFrameIdxFlaged) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x59
 IMPLEMENT_OPCODE(_unk59) {
-	Object *object = _scene->worldstats()->getObjectById(cmd->param1);
+	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param2) {
 		object->flags |= kObjectFlag40000;
@@ -1623,7 +1625,7 @@ IMPLEMENT_OPCODE(_unk5A) {
 IMPLEMENT_OPCODE(_unk5B) {
 	if (cmd->param2 >= 0 && cmd->param2 <= 3) {
 		if (cmd->param1) {
-			Object *object = _scene->worldstats()->getObjectById(cmd->param1);
+			Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
 
 			object->setField67C(cmd->param2);
 
@@ -1661,7 +1663,7 @@ IMPLEMENT_OPCODE(ClearActorFields) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5F
 IMPLEMENT_OPCODE(SetObjectLastFrameIdx) {
-	Object *object = _scene->worldstats()->getObjectById(cmd->param1);
+	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
 
 	if (object->getFrameIndex() == object->getFrameCount() - 1) {
 		_lineIncrement = 0;
@@ -1732,7 +1734,7 @@ void ActionList::enableObject(ScriptEntry *cmd, ObjectEnableType type) {
 void ActionList::setActionFlag(ScriptEntry *cmd, ActionType flag) {
 	switch (cmd->param2) {
 	default:
-		_scene->worldstats()->getObjectById(cmd->param1)->actionType |= flag;
+		_scene->worldstats()->getObjectById((ObjectId)cmd->param1)->actionType |= flag;
 		break;
 
 	case 1:
@@ -1748,7 +1750,7 @@ void ActionList::setActionFlag(ScriptEntry *cmd, ActionType flag) {
 void ActionList::clearActionFlag(ScriptEntry *cmd, ActionType flag) {
 	switch (cmd->param2) {
 	default:
-		_scene->worldstats()->getObjectById(cmd->param1)->actionType &= ~flag;
+		_scene->worldstats()->getObjectById((ObjectId)cmd->param1)->actionType &= ~flag;
 		break;
 
 	case 1:
@@ -1770,7 +1772,7 @@ void ActionList::jumpIfActionFlag(ScriptEntry *cmd, ActionType flag) {
 		break;
 
 	case 0:
-		done = (_scene->worldstats()->getObjectById(cmd->param1)->actionType & flag) == 0;
+		done = (_scene->worldstats()->getObjectById((ObjectId)cmd->param1)->actionType & flag) == 0;
 		break;
 
 	case 1:

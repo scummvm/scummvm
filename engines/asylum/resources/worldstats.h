@@ -119,8 +119,7 @@ public:
 	int32 getActionAreaIndexById(int32 id);
 	ActionArea* getActionAreaById(int32 id);
 
-	int32 getObjectIndexById(int32 id);
-	Object* getObjectById(int32 id);
+	Object* getObjectById(ObjectId id);
 
 private:
 	Scene *_scene;
