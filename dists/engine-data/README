@@ -1,6 +1,10 @@
 engine-data README
 -------------------------------------------------------------------------------
 
+hugo.dat:
+This file contains all the hardcoded logic, strings and fonts used by Hugo
+engine. Those information were stored in the original executables.
+
 kyra.dat:
 The 'kyra.dat' file is created by extracting hardcoded data, like the
 roomtable, inventory names, various strings, tables for shapes and sequence
@@ -15,3 +19,6 @@ mp3/ogg/flac encoded need the datafile.
 
 sky.cpt:
 TODO
+
+toon.dat:
+'toon.dat' contains all the strings hardcoded in the original executables.

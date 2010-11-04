@@ -1388,8 +1388,6 @@ enum action_t {                                     // Parameters:
 	OLD_SONG           = 49                         // Added by Strangerke - Set currently playing sound, old way: that is, using a string index instead of a reference in a file
 };
 
-#define NORMAL_TPS     9                            // Number of ticks (frames) per second
-
 // Enumerate object numbers.  ALL objects must have an entry here in order.
 enum objid_1w {
 	HERO = 0,    DOOR1_1w,    EYES1_1w,  EYES2_1w,    BAT_1w,      PKIN_1w,      KEY_1w,      FENCE_1w,   TREE1_1w,
