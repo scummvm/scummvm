@@ -115,6 +115,7 @@ public:
 	void adjustBackUpscaledCoordinates(int16 &y, int16 &x);
 
 	void dither(bool addToFlag);
+	void ditherForceMemorial(byte color);
 	void debugUnditherSetState(bool flag);
 	int16 *unditherGetMemorial();
 

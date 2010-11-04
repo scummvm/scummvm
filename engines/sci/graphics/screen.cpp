@@ -616,6 +616,11 @@ void GfxScreen::dither(bool addToFlag) {
 	}
 }
 
+// Force a color combination into memorial
+void GfxScreen::ditherForceMemorial(byte color) {
+	_unditherMemorial[color] = 256;
+}
+
 void GfxScreen::debugUnditherSetState(bool flag) {
 	_unditherState = flag;
 }

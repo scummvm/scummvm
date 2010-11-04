@@ -754,6 +754,15 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 			// Dithering EGA pictures
 			if (isEGA) {
 				_screen->dither(_addToFlag);
+				switch (g_sci->getGameId()) {
+				case GID_SQ3:
+					switch (_resourceId) {
+					case 154: // SQ3: intro, ship gets sucked in
+						_screen->ditherForceMemorial(0xD0);
+						break;
+					}
+					break;
+				}
 			}
 			return;
 		default:
