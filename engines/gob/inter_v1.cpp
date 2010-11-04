@@ -813,12 +813,12 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 	byte cmd;
 	bool boolRes;
 
-	// WORKAROUND: Windows Gob1 OUTODDV reload goblin stuck bug present in original
-	if ((_vm->getGameType() == kGameTypeGob1) && (_vm->_game->_script->pos() == 11294) &&
-			!scumm_stricmp(_vm->_game->_curTotFile, "avt00.tot") && VAR(59) == 1) {
-		warning("Workaround for Win Gob1 OUTODDV Reload Goblin Stuck Bug...");
+	// WORKAROUND: Gob1 goblin stuck on reload bugs present in original - bugs #3018918 and 3065914
+	if ((_vm->getGameType() == kGameTypeGob1) && (_vm->_game->_script->pos() == 2933) &&
+			!scumm_stricmp(_vm->_game->_curTotFile, "inter.tot") && VAR(285) != 0) {
+		warning("Workaround for Gob1 Goblin Stuck On Reload Bug applied...");
+		// VAR(59) actually locks goblin movement, but these variables trigger this in the script.
 		WRITE_VAR(285, 0);
-		WRITE_VAR(59, 0);
 	}
 
 	boolRes = _vm->_game->_script->evalBoolResult();
