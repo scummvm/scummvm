@@ -29,7 +29,6 @@ MODULE_OBJS := \
 	plugins/elf/arm-loader.o \
 	plugins/elf/elf-provider.o \
 	plugins/elf/version.o \
-	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
 	plugins/sdl/sdl-provider.o \
 	plugins/win32/win32-provider.o \
