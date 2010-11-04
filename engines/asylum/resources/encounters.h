@@ -66,7 +66,7 @@ public:
 	void setVariable(int32 idx, int32 value) {
 		_variables[idx] = value;
 	}
-	void run(int32 encounterIdx, int32 barrierId1, int32 barrierId2, int32 characterIdx);
+	void run(int32 encounterIdx, int32 objectId1, int32 objectId2, int32 characterIdx);
 
 	int32 getFlag(EncounterFlag flag);
 	void setFlag(EncounterFlag flag, int32 val);

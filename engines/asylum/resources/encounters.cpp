@@ -84,7 +84,7 @@ void Encounter::setFlag(EncounterFlag flag, int32 val) {
 	_flags[flag] = val;
 }
 
-void Encounter::run(int32 encounterIdx, int32 barrierId1, int32 barrierId2, int32 characterIdx) {
+void Encounter::run(int32 encounterIdx, int32 objectId1, int32 objectId2, int32 characterIdx) {
 	// Line: 12/15 :: 0x25 (1, 1584, 1584, 0, 0, 0, 0, 0, 0) // First Encounter
 
 	//debugC(kDebugLevelEncounter, "Running Encounter %d", encounterIdx);
@@ -93,7 +93,7 @@ void Encounter::run(int32 encounterIdx, int32 barrierId1, int32 barrierId2, int3
 	setVariable(1, 0);
 	setVariable(2, _currentEncounter->value);
 
-	//Barrier *b1 = _scene->worldstats()->getBarrierById(barrierId1);
+	//Object *b1 = _scene->worldstats()->getObjectById(objectId1);
 	/*
 	 int32 __cdecl runEncounter(int32 newMessageHandler, int32 encounterIndex, int32 objectId1, int32 objectId2, int32 characterIndex)
 	{

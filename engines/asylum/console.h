@@ -42,7 +42,7 @@ enum kDebugLevels {
 	kDebugLevelSound     = 1 << 6,
 	kDebugLevelSavegame  = 1 << 7,
 	kDebugLevelScene     = 1 << 8,
-	kDebugLevelBarriers  = 1 << 9,
+	kDebugLevelObjects   = 1 << 9,
 	kDebugLevelActor     = 1 << 10
 };
 

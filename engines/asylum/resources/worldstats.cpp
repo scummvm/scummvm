@@ -33,7 +33,7 @@ WorldStats::WorldStats(Common::SeekableReadStream *stream, Scene *scene)
 }
 
 WorldStats::~WorldStats() {
-	CLEAR_ARRAY(Barrier, barriers);
+	CLEAR_ARRAY(Object, objects);
 	CLEAR_ARRAY(Actor, actors);
 	CLEAR_ARRAY(ActionArea, actions);
 }
@@ -55,17 +55,17 @@ ActionArea* WorldStats::getActionAreaById(int32 id) {
 	return actions[index];
 }
 
-int32 WorldStats::getBarrierIndexById(int32 id) {
-	for (int32 i = 0; i < numBarriers; i++) {
-		if (barriers[i]->getId() == id)
+int32 WorldStats::getObjectIndexById(int32 id) {
+	for (int32 i = 0; i < numObjects; i++) {
+		if (objects[i]->getId() == id)
 			return i;
 	}
 
 	return -1;
 }
 
-Barrier* WorldStats::getBarrierById(int32 id) {
-	return barriers[getBarrierIndexById(id)];
+Object* WorldStats::getObjectById(int32 id) {
+	return objects[getObjectIndexById(id)];
 }
 
 // FIXME: load necessary World Stats content
@@ -114,7 +114,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	motionStatus = stream->readSint32LE();
 	field_8C     = stream->readSint32LE();
 	numActions   = stream->readSint32LE();
-	numBarriers  = stream->readSint32LE();
+	numObjects  = stream->readSint32LE();
 	targetX      = stream->readSint32LE();
 	targetY      = stream->readSint32LE();
 	field_A0     = stream->readSint32LE();
@@ -172,14 +172,14 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	musicResourceId        = stream->readSint32LE();
 	musicStatusExt    = stream->readSint32LE();
 
-	for (int32 a = 0; a < numBarriers; a++) {
-		Barrier *barrier = new Barrier(_scene->vm());
-		barrier->load(stream);
+	for (int32 a = 0; a < numObjects; a++) {
+		Object *object = new Object(_scene->vm());
+		object->load(stream);
 
-		barriers.push_back(barrier);
+		objects.push_back(object);
 	}
 
-	// need to jump all unused barriers data to where actors data start
+	// need to jump all unused objects data to where actors data start
 	stream->seek(0xA6D7A);
 
 	for (ActorIndex index = 0; index < numActors; index++) {

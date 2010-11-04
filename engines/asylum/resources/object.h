@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_BARRIER_H
-#define ASYLUM_BARRIER_H
+#ifndef ASYLUM_OBJECT_H
+#define ASYLUM_OBJECT_H
 
 #include "asylum/shared.h"
 
@@ -38,10 +38,10 @@ namespace Asylum {
 class Actor;
 class AsylumEngine;
 
-class Barrier {
+class Object {
 public:
-	Barrier(AsylumEngine *engine);
-	virtual ~Barrier();
+	Object(AsylumEngine *engine);
+	virtual ~Object();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Public variables & accessors
@@ -75,19 +75,19 @@ public:
 	/////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Loads the barrier data
+	 * Loads the object data
 	 *
 	 * @param stream If non-null, the Common::SeekableReadStream to load from
 	 */
 	void load(Common::SeekableReadStream *stream);
 
 	/**
-	 * Sets the barrier disabled flag
+	 * Sets the object disabled flag
 	 */
 	void disable();
 
 	/**
-	 * Sets the barrier destroyed flag and remove this barrier from the graphics queue
+	 * Sets the object destroyed flag and remove this object from the graphics queue
 	 */
 	void disableAndRemoveFromQueue();
 
@@ -96,7 +96,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Query if this barrier is on screen.
+	 * Query if this object is on screen.
 	 *
 	 * @return true if on screen, false if not.
 	 */
@@ -107,12 +107,12 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Draws the barrier
+	 * Draws the object
 	 */
 	void draw();
 
 	/**
-	 * Updates the barrier.
+	 * Updates the object.
 	 */
 	void update();
 
@@ -128,12 +128,12 @@ public:
 	////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Stop all barrier sounds (called from scripts)
+	 * Stop all object sounds (called from scripts)
 	 */
 	void stopAllSounds();
 
 	/**
-	 * Checks the barrier flags
+	 * Checks the object flags
 	 *
 	 * @return true if it succeeds, false if it fails.
 	 */
@@ -188,37 +188,37 @@ private:
 	int32		   _field_6A4;
 
 	/**
-	 * Query if this barrier is visible.
+	 * Query if this object is visible.
 	 *
 	 * @return true if visible, false if not.
 	 */
 	bool isVisible();
 
 	/**
-	 * Play barrier sounds
+	 * Play object sounds
 	 */
 	void playSounds();
 
 	/**
-	 * Check if any items in the barrier sound array are playing,
+	 * Check if any items in the object sound array are playing,
 	 * and based on their flag values, stop them accordingly
 	 */
 	void updateSoundItems();
 
 	/**
-	 * Stop the barrier related sounds
+	 * Stop the object related sounds
 	 */
 	void stopSound();
 
 	/**
-	 * Gets a random resource identifier for this barrier (using the list in _randomResourceIds)
+	 * Gets a random resource identifier for this object (using the list in _randomResourceIds)
 	 *
 	 * @return The random resource identifier.
 	 */
 	int32 getRandomResourceId();
 
-}; // end of class Barrier
+}; // end of class Object
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_OBJECT_H

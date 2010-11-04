@@ -30,7 +30,7 @@
 #include "common/array.h"
 
 #include "asylum/resources/actor.h"
-#include "asylum/resources/barrier.h"
+#include "asylum/resources/object.h"
 #include "asylum/resources/actionarea.h"
 #include "asylum/views/scene.h"
 #include "asylum/system/sound.h"
@@ -78,7 +78,7 @@ public:
 	int32 motionStatus;
 	int32 field_8C;
 	int32 numActions; // field_90
-	int32 numBarriers;
+	int32 numObjects;
 	int32 targetX;
 	int32 targetY;
 	int32 field_A0;
@@ -108,7 +108,7 @@ public:
 
 	// FIXME: Investigate if we need to actually reserve maxsize for this arrays.
 	// It always have that size under scene file and they are always save in savegames.
-	Common::Array<Barrier*>    barriers; // maxsize 400
+	Common::Array<Object*>    objects; // maxsize 400
 	Common::Array<Actor*>      actors;   // maxsize 50
 	// TODO add rest fields
 	Common::Array<ActionArea*> actions;  // maxsize 400
@@ -119,8 +119,8 @@ public:
 	int32 getActionAreaIndexById(int32 id);
 	ActionArea* getActionAreaById(int32 id);
 
-	int32 getBarrierIndexById(int32 id);
-	Barrier* getBarrierById(int32 id);
+	int32 getObjectIndexById(int32 id);
+	Object* getObjectById(int32 id);
 
 private:
 	Scene *_scene;

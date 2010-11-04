@@ -61,7 +61,7 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	x                 = stream->readSint32LE();
 	y                 = stream->readSint32LE();
 	_resourceId       = stream->readSint32LE();
-	_barrierIndex     = stream->readSint32LE();
+	_objectIndex     = stream->readSint32LE();
 	_frameIndex      = stream->readSint32LE();
 	_frameCount       = stream->readSint32LE();
 	x1                = stream->readSint32LE();
@@ -182,11 +182,11 @@ void Actor::draw() {
 		frameIndex = 2 * _frameCount - _frameIndex - 1;
 
 	if (LOBYTE(flags) & kActorFlagMasked) {
-		Barrier *barrier = getWorld()->barriers[_barrierIndex];
-		getScene()->adjustCoordinates(barrier->x, barrier->y, &point);
+		Object *object = getWorld()->objects[_objectIndex];
+		getScene()->adjustCoordinates(object->x, object->y, &point);
 
 		error("[Actor::draw] Cross fade not implemented!");
-		//getScreen()->addGraphicToQueue(_resourceId, frameIndex, point.x, point.y, barrier->_resourceId, point.x, point.y, getGraphicsFlags(), _priority);
+		//getScreen()->addGraphicToQueue(_resourceId, frameIndex, point.x, point.y, object->_resourceId, point.x, point.y, getGraphicsFlags(), _priority);
 
 		// Update flags
 		flags &= ~kActorFlagMasked;
@@ -641,20 +641,20 @@ void Actor::faceTarget(int32 targetId, DirectionFrom from) {
 		error("[Actor::faceTarget] Invalid direction input: %d (should be 0-3)", from);
 		return;
 
-	case kDirectionFromBarrier: {
-		Barrier *barrier = getWorld()->getBarrierById(targetId);
-		if (!barrier) {
-			warning("[Actor::faceTarget] No Barrier found for id %d", targetId);
+	case kDirectionFromObject: {
+		Object *object = getWorld()->getObjectById(targetId);
+		if (!object) {
+			warning("[Actor::faceTarget] No Object found for id %d", targetId);
 			return;
 		}
 
 
 
-		GraphicResource *resource = new GraphicResource(getScene()->getResourcePack(), barrier->getResourceId());
-		GraphicFrame *frame = resource->getFrame(barrier->getFrameIndex());
+		GraphicResource *resource = new GraphicResource(getScene()->getResourcePack(), object->getResourceId());
+		GraphicFrame *frame = resource->getFrame(object->getFrameIndex());
 
-		newX = (frame->surface.w >> 1) + barrier->x;
-		newY = (frame->surface.h >> 1) + barrier->y;
+		newX = (frame->surface.w >> 1) + object->x;
+		newY = (frame->surface.h >> 1) + object->y;
 
 		delete resource;
 		}

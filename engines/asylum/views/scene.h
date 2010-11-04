@@ -51,14 +51,14 @@ class Video;
 class Cursor;
 class Text;
 //class BlowUpPuzzle;
-struct BarrierItem;
+struct ObjectItem;
 class WorldStats;
 class Speech;
 
 enum HitType {
 	kHitNone       = -1,
 	kHitActionArea = 2,
-	kHitBarrier    = 3,
+	kHitObject    = 3,
 	kHitActor      = 4
 };
 
@@ -185,7 +185,7 @@ public:
 	// Shared methods
 	void resetActor0();
 
-	void callSpecFunction(Barrier* barrier, ActorIndex index);
+	void callSpecFunction(Object* object, ActorIndex index);
 
 		/** .text:00408980
 	 * Determine if the supplied point intersects
@@ -214,17 +214,17 @@ protected:
 	 */
 	bool hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped);
 	/** .text:0040E8A0
-	 * Checks if the supplied coordinates are inside an action area, barrier or
+	 * Checks if the supplied coordinates are inside an action area, object or
 	 * actor, and returns -1 if nothing was found, or the type of hit if found
 	 */
 	int32 hitTestScene(const Common::Point pt, HitType &type);
 
 	/** .text:0040EAA0
-	 * Check if a barrier exist at the supplied coordinates.
-	 * If so, return it's index within the barriers array, if not,
+	 * Check if a object exist at the supplied coordinates.
+	 * If so, return it's index within the objects array, if not,
 	 * return -1
 	 */
-	int32 hitTestBarrier(const Common::Point pt);
+	int32 hitTestObject(const Common::Point pt);
 
 private:
 	AsylumEngine  *_vm;
@@ -272,7 +272,7 @@ private:
 
 	/** .text:0040B5B0
 	 * Loop through the various update blocks (actors,
-	 * barriers, mouse, music, sfx, screenPosition), then
+	 * objects, mouse, music, sfx, screenPosition), then
 	 * process the current action script
 	 */
 	int updateScene();
@@ -290,7 +290,7 @@ private:
 	/** .text:0040CBD0
 	 * TODO add description
 	 */
-	void updateBarriers();
+	void updateObjects();
 	/** .text:00409BA0
 	 * TODO add description
 	 */
@@ -322,7 +322,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Spec functions
 	//////////////////////////////////////////////////////////////////////////
-	void specChapter1(Barrier *barrier, ActorIndex actorIndex);
+	void specChapter1(Object *object, ActorIndex actorIndex);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
@@ -336,7 +336,7 @@ private:
 
 	void debugScreenScrolling(GraphicFrame *bg);
 	void debugShowPolygons();
-	void debugShowBarriers();
+	void debugShowObjects();
 	void debugShowActors();
 	void debugShowWalkRegion(PolyDefinitions *poly);
 
