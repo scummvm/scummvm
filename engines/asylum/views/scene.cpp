@@ -25,8 +25,10 @@
 
 #include "asylum/views/scene.h"
 
+#include "asylum/resources/actionlist.h"
 #include "asylum/resources/actor.h"
 #include "asylum/resources/encounters.h"
+#include "asylum/resources/special.h"
 
 #include "asylum/system/config.h"
 
@@ -111,6 +113,11 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 
 	_title = new SceneTitle(this);
 	_titleLoaded = false;
+
+	_special = new Special(_vm);
+
+	_actorUpdateFlag = 0;
+	_actorUpdateFlag2 = 0;
 }
 
 void Scene::initialize() {
@@ -213,8 +220,13 @@ Scene::~Scene() {
 	delete _title;
 }
 
-Actor* Scene::getActor(int index) {
-	return _ws->actors[(index != -1) ? index : _playerActorIdx];
+Actor* Scene::getActor(ActorIndex index) {
+	ActorIndex computedIndex =  (index != -1) ? index : _playerActorIdx;
+
+	if (computedIndex < 0 || computedIndex >= (int)_ws->actors.size())
+		error("[Scene::getActor] Invalid actor index: %d ([0-%d] allowed)", computedIndex, _ws->actors.size() - 1);
+
+	return _ws->actors[computedIndex];
 }
 
 void Scene::enterScene() {
@@ -1253,44 +1265,6 @@ void Scene::adjustActorPriority(ActorIndex index) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Spec functions
-//////////////////////////////////////////////////////////////////////////
-void Scene::specChapter1(Object *object, ActorIndex actorIndex) {
-	if (actorIndex == -1 && object == NULL)
-		error("[Scene::specChapter1] Both arguments cannot be empty!");
-
-	ResourceId id = (actorIndex == -1) ? object->getSoundResourceId() : getActor(actorIndex)->getSoundResourceId();
-
-	if (!_vm->encounter()->getFlag(kEncounterFlag2)) {
-		if (!id || !getSound()->isPlaying(id))
-			if (Config.performance > 2)
-				error("[Scene::specChapter1] Sound function not implemented!");
-	}
-
-	if (actorIndex == -1) {
-		switch (object->getId()) {
-		default:
-			break;
-
-		case 101:
-			if (object->getFrameIndex() == 2)
-				object->getFrameSoundItem(0)->resourceId = _ws->graphicResourceIds[rnd(2) ? 37 : 38];
-			break;
-
-		case 112:
-			if (object->getFrameIndex() == 5)
-				getSpeech()->play(81);
-			break;
-
-		case 434:
-			if (object->getFrameIndex() == 23)
-				getSpeech()->play(82);
-			break;
-		}
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
 bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {
@@ -1465,33 +1439,6 @@ void Scene::makeGreyPalette() {
 
 void Scene::resetActor0() {
 	error("[Scene::resetActor0] not implemented!");
-}
-
-void Scene::callSpecFunction(Object* object, ActorIndex index) {
-	// The original uses a function array, we just use switch for now there is only 11 entries
-	switch (_ws->numChapter) {
-	default:
-		error("[Scene::callSpecFunction] Invalid chapter");
-
-	case 0:
-		// Nothing to do here
-		break;
-
-	case 1:
-		break;
-
-	case 2:
-	case 3:
-	case 4:
-	case 5:
-	case 6:
-	case 7:
-	case 8:
-	case 9:
-	case 10:
-		error("[Scene::callSpecFunction] No implemented!");
-		break;
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -24,6 +24,8 @@
  */
 
 #include "asylum/resources/actor.h"
+
+#include "asylum/resources/actionlist.h"
 #include "asylum/resources/encounters.h"
 #include "asylum/resources/worldstats.h"
 
@@ -631,8 +633,8 @@ void Actor::updateFromDirection(ActorDirection actorDirection) {
 	}
 }
 
-void Actor::faceTarget(int32 targetId, DirectionFrom from) {
-	debugC(kDebugLevelActor, "[Actor::faceTarget] Facing target %d using direction from %d", targetId, from);
+void Actor::faceTarget(ObjectId id, DirectionFrom from) {
+	debugC(kDebugLevelActor, "[Actor::faceTarget] Facing target %d using direction from %d", id, from);
 
 	int32 newX, newY;
 
@@ -642,9 +644,9 @@ void Actor::faceTarget(int32 targetId, DirectionFrom from) {
 		return;
 
 	case kDirectionFromObject: {
-		Object *object = getWorld()->getObjectById(targetId);
+		Object *object = getWorld()->getObjectById(id);
 		if (!object) {
-			warning("[Actor::faceTarget] No Object found for id %d", targetId);
+			warning("[Actor::faceTarget] No Object found for id %d", id);
 			return;
 		}
 
@@ -661,9 +663,9 @@ void Actor::faceTarget(int32 targetId, DirectionFrom from) {
 		break;
 
 	case kDirectionFromPolygons: {
-		int32 actionIndex = getWorld()->getActionAreaIndexById(targetId);
+		int32 actionIndex = getWorld()->getActionAreaIndexById(id);
 		if (actionIndex == -1) {
-			warning("[Actor::faceTarget] No ActionArea found for id %d", targetId);
+			warning("[Actor::faceTarget] No ActionArea found for id %d", id);
 			return;
 		}
 
@@ -680,7 +682,7 @@ void Actor::faceTarget(int32 targetId, DirectionFrom from) {
 		break;
 
 	case kDirectionFromParameters:
-		newX = newY = targetId;
+		newX = newY = id;
 		break;
 	}
 

@@ -26,6 +26,7 @@
 #include "asylum/console.h"
 
 #include "asylum/resources/actionarea.h"
+#include "asylum/resources/actionlist.h"
 
 #include "asylum/views/scene.h"
 

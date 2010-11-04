@@ -26,6 +26,7 @@
 #include "asylum/resources/object.h"
 
 #include "asylum/resources/actor.h"
+#include "asylum/resources/special.h"
 
 #include "asylum/views/scene.h"
 
@@ -41,7 +42,7 @@ Object::~Object() {
 // Loading & destroying
 /////////////////////////////////////////////////////////////////////////
 void Object::load(Common::SeekableReadStream *stream) {
-	_id	  = stream->readSint32LE();
+	_id   = (ObjectId)stream->readSint32LE();
 	_resourceId = stream->readSint32LE();
 	x	  = stream->readSint32LE();
 	y	  = stream->readSint32LE();
@@ -322,7 +323,7 @@ void Object::update() {
 	if (doPlaySounds)
 		playSounds();
 
-	getScene()->callSpecFunction(this, -1);
+	getScene()->special()->run(this, -1);
 }
 
 void Object::setNextFrame(int32 targetFlags) {
@@ -447,6 +448,8 @@ bool Object::checkFlags() {
 
 Common::String Object::toString() {
 	Common::String output;
+
+	debugC(kDebugLevelObjects, "kObject%s           = %d,", _name, _id);
 
 	output += Common::String::format("Object %d: %s\n", _id, _name);
 

@@ -43,6 +43,7 @@ enum GameFlag {
 	kGameFlag279                  = 279,
 	kGameFlag368                  = 368,
 	kGameFlag371                  = 371,
+	kGameFlag387                  = 387,
 	kGameFlag447                  = 447,
 	kGameFlag448                  = 448,
 	kGameFlag450                  = 450,
@@ -55,6 +56,20 @@ enum GameFlag {
 	kGameFlagFinishGame           = 901,
 	kGameFlag1131                 = 1131,
 	kGameFlag1137                 = 1137
+};
+
+enum ChapterIndex {
+	kChapterNone = 0,
+	kChapter1,
+	kChapter2,
+	kChapter3,
+	kChapter4,
+	kChapter5,
+	kChapter6,
+	kChapter7,
+	kChapter8,
+	kChapter9,
+	kChapter10
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -95,7 +110,7 @@ enum ActionType {
 typedef int ActorIndex;
 
 enum ActorIndexes {
-	kActorPlayer = -1,
+	kActorNone = -1,
 	// TODO: check if the names match the actor type
 	kActorMax     = 0,
 	kActorSarah   = 1,
