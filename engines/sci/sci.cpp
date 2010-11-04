@@ -180,7 +180,7 @@ Common::Error SciEngine::run() {
 	g_eventRec.registerRandomSource(_rng, "sci");
 
 	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("sci_undither", "false");
+	ConfMan.registerDefault("sci_undither", "true");
 	ConfMan.registerDefault("sci_originalsaveload", "false");
 	ConfMan.registerDefault("native_fb01", "false");
 
