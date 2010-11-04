@@ -595,10 +595,10 @@ void AudioManager::killAllAmbientSFX()
 		if (ambient->_enabled) {
 			ambient->_enabled = false;
 			ambient->_id = -1;
-
-			if (_channels[ambient->_channel] && _channels[ambient->_channel]->isPlaying()) {
+			if (ambient->_channel >= 0 && _channels[ambient->_channel] && _channels[ambient->_channel]->isPlaying()) {
 				_channels[ambient->_channel]->stop(false);
 			}
+			ambient->_channel = -1;
 		}
 	}
 }
