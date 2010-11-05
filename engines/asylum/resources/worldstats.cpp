@@ -116,13 +116,10 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	field_8C     = stream->readSint32LE();
 	numActions   = stream->readSint32LE();
 	numObjects  = stream->readSint32LE();
-	targetX      = stream->readSint32LE();
-	targetY      = stream->readSint32LE();
-	field_A0     = stream->readSint32LE();
-	field_A4     = stream->readSint32LE();
-	field_A8     = stream->readSint32LE();
-	field_AC     = stream->readSint32LE();
-	field_B0     = stream->readSint32LE();
+
+	for (int32 c = 0; c < 7; c++)
+		coordinates[c] = stream->readSint32LE();
+
 	numActors    = stream->readSint32LE();
 
 	stereoReversedFlag = stream->readSint32LE();

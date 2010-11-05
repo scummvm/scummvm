@@ -242,10 +242,16 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 			Object *obj386 = getWorld()->objects[386];
 
 			actor->x1 = obj386->getSoundY();
-			//actor->y1 = obj386->getField688() + ;
+			actor->y1 = obj386->getField688() + getWorld()->coordinates[22 - actorIndex];
+			actor->setFrameIndex(obj386->getField67C());
+			actor->setDirection(obj386->getField6A4());
 
+			// Get the resource Id
+			Actor *actor0 = getScene()->getActor(0);
+			Actor *actor13 = getScene()->getActor(13);
+			ResourceId id = actor0->getResourcesId(actor13->getDirection() > 4 ? 8 - actor13->getDirection() : actor13->getDirection());
 
-			error("[Special::chapter2] Logic for actors 22-29 not implemented!");
+			actor->setResourceId(id);
 		}
 		break;
 
@@ -279,27 +285,125 @@ void Special::chapter3(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::chapter4(Object *object, ActorIndex actorIndex) {
+	playChapterSound(object, actorIndex);
 
+	if (actorIndex != kActorInvalid)
+		return;
+
+	switch (object->getId()) {
+	default:
+		break;
+
+	case kObjectNPC033StartEnc:
+		if (object->getFrameIndex() == 15)
+			_vm->setGameFlag(kGameFlag387);
+		break;
+
+	case kObjectNPC033GetBook:
+		if (object->getFrameIndex() == 6)
+			_vm->clearGameFlag(kGameFlag387);
+		break;
+	}
 }
 
 void Special::chapter5(Object *object, ActorIndex actorIndex) {
+	setPaletteGamma(kResourcePalette_8001003B, getWorld()->currentPaletteId);
+
 	playChapterSound(object, actorIndex);
 
-	if (actorIndex == kActorInvalid) {
-		switch (object->getId()) {
-		default:
-			break;
+	if (actorIndex != kActorInvalid)
+		return;
 
-		case kObjectNPC033StartEnc:
-			if (object->getFrameIndex() == 15)
-				_vm->setGameFlag(kGameFlag387);
-			break;
+	switch (object->getId()) {
+	default:
+		break;
 
-		case kObjectNPC033GetBook:
-			if (object->getFrameIndex() == 6)
-				_vm->clearGameFlag(kGameFlag387);
-			break;
+	case kObjectBubbles:
+		if (_vm->isGameFlagSet(kGameFlag244)) {
+			if (object->getFrameIndex() == object->getFrameCount() - 1) {
+				_vm->clearGameFlag(kGameFlag244);
+				_vm->setGameFlag(kGameFlag245);
+
+				Object *glow = getWorld()->getObjectById(kObjectGlow);
+				glow->setNextFrame(glow->flags);
+			}
 		}
+		break;
+
+	case kObjectGlow:
+		if (_vm->isGameFlagSet(kGameFlag245)) {
+			if (object->getFrameIndex() == object->getFrameCount() - 1) {
+				_vm->clearGameFlag(kGameFlag245);
+				_vm->setGameFlag(kGameFlag246);
+
+				Object *dome = getWorld()->getObjectById(kObjectDome);
+				dome->setNextFrame(dome->flags);
+			}
+		} else {
+			if (object->getFrameIndex() == 1) {
+				FrameSoundItem *item = object->getFrameSoundItem(0);
+
+				item->resourceId = kResourceNone;
+				item->frameIndex = 0;
+				item->index      = 0;
+			}
+		}
+		break;
+
+	case kObjectDome:
+		if (_vm->isGameFlagSet(kGameFlag246)) {
+			if (object->getFrameIndex() == object->getFrameCount() - 1) {
+				_vm->clearGameFlag(kGameFlag246);
+				_vm->setGameFlag(kGameFlag247);
+
+				Object *redlight = getWorld()->getObjectById(kObjectRedLight);
+				redlight->setNextFrame(redlight->flags);
+			}
+		}
+		break;
+
+	case kObjectRedLight:
+		if (_vm->isGameFlagSet(kGameFlag247)) {
+			if (object->getFrameIndex() == object->getFrameCount() - 1) {
+				_vm->clearGameFlag(kGameFlag247);
+				_vm->setGameFlag(kGameFlag248);
+
+				Object *ring = getWorld()->getObjectById(kObjectRing);
+				ring->setNextFrame(ring->flags);
+			}
+		}
+		break;
+
+	case kObjectRing:
+		if (_vm->isGameFlagSet(kGameFlag248)) {
+			if (object->getFrameIndex() == object->getFrameCount() - 1) {
+				_vm->clearGameFlag(kGameFlag248);
+
+				Object *ball = getWorld()->getObjectById(kObjectBallMovesUpright);
+				ball->setNextFrame(ball->flags);
+			}
+		}
+		break;
+
+	case kObjectBallMovesUpright:
+		if (object->getFrameIndex() == 7) {
+			Object *gears = getWorld()->getObjectById(kObjectGearsLightUp);
+			gears->setNextFrame(gears->flags);
+		} else {
+			if (object->getFrameIndex() == 1) {
+				FrameSoundItem *item = object->getFrameSoundItem(0);
+
+				item->resourceId = kResourceNone;
+				item->frameIndex = 0;
+				item->index      = 0;
+			}
+		}
+		break;
+
+	case kObjectGearsLightUp:
+		if (object->getFrameIndex() == object->getFrameCount() - 1)
+			_vm->setGameFlag(kGameFlag243);
+		break;
 	}
 }
 
@@ -415,7 +519,63 @@ void Special::chapter8(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::chapter9(Object *object, ActorIndex actorIndex) {
+	playChapterSound(object, actorIndex);
 
+	if (actorIndex != kActorInvalid)
+		return;
+
+	switch(object->getId()) {
+	default:
+		break;
+
+	case kObjectBodySlides1:
+	case kObjectBodySlides2:
+	case kObjectBodySlides3:
+	case kObjectBodySlides4:
+	case kObjectBodySlides5:
+	case kObjectBodySlides6:
+		if (object->getFrameIndex() == 3) {
+			int counter = 0;
+
+			for (int i = 0; i < 6; ++i)
+				if (_vm->isGameFlagSet((GameFlag)(kGameFlag776 + i)))
+					++counter;
+
+			switch (counter) {
+			default:
+				break;
+
+			case 0:
+				getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2524)]->scriptIndex, kActorMax);
+				break;
+
+			case 1:
+				getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2518)]->scriptIndex, kActorMax);
+				break;
+
+			case 2:
+				getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2519)]->scriptIndex, kActorMax);
+				break;
+
+			case 3:
+				getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2520)]->scriptIndex, kActorMax);
+				break;
+
+			case 4:
+				getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2521)]->scriptIndex, kActorMax);
+				break;
+
+			case 5:
+				getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2522)]->scriptIndex, kActorMax);
+				break;
+
+			case 6:
+				getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2523)]->scriptIndex, kActorMax);
+				break;
+			}
+		}
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -500,6 +660,13 @@ void Special::playSoundChapter7(Object *object, ActorIndex actorIndex) {
 
 void Special::playSoundChapter8(Object *object, ActorIndex actorIndex) {
 	error("[Special::playSoundChapter2] Not implemented!");
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Misc
+//////////////////////////////////////////////////////////////////////////
+void Special::setPaletteGamma(ResourceId palette1, ResourceId palette2) {
+	error("[Special::setPaletteGamma] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////

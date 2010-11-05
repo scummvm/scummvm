@@ -40,6 +40,12 @@ enum GameFlag {
 	kGameFlagSolveVCRBlowUpPuzzle = 220,
 	kGameFlag238                  = 238,
 	kGameFlag239                  = 239,
+	kGameFlag243                  = 243,
+	kGameFlag244                  = 244,
+	kGameFlag245                  = 245,
+	kGameFlag246                  = 246,
+	kGameFlag247                  = 247,
+	kGameFlag248                  = 248,
 	kGameFlag279                  = 279,
 	kGameFlag368                  = 368,
 	kGameFlag371                  = 371,
@@ -53,6 +59,7 @@ enum GameFlag {
 	kGameFlag454                  = 454,
 	kGameFlag455                  = 455,
 	kGameFlag556                  = 556,
+	kGameFlag776                  = 776,
 	kGameFlagFinishGame           = 901,
 	kGameFlag1009                 = 1009,
 	kGameFlag1021                 = 1021,
@@ -84,18 +91,19 @@ enum ChapterIndex {
 typedef unsigned int ResourceId;
 
 enum ResourceIdEnum {
-	kResourceNone            = 0,
-	kResourceSpeech_8000050A = 0x8000050A,
-	kResourceMusic_80020000  = 0x80020000,
-	kResourceMusic_80020001  = 0x80020001,
-	kResourceSound_80030203  = 0x80030203,
+	kResourceNone              = 0,
+	kResourceSpeech_8000050A   = 0x8000050A,
+	kResourcePalette_8001003B  = 0x8001003B,
+	kResourceMusic_80020000    = 0x80020000,
+	kResourceMusic_80020001    = 0x80020001,
+	kResourceSound_80030203    = 0x80030203,
 	// Base resource 0x80120000
-	kResourceSound_80120001  = 0x80120001,
-	kResourceSound_80120002  = 0x80120002,
-	kResourceSound_80120005  = 0x80120005,
-	kResourceSound_80120006  = 0x80120006,
-	kResourceSoundIntro      = 0x80120007,
-	kResourceMusic_FFFFFD66  = 0xFFFFFD66
+	kResourceSound_80120001    = 0x80120001,
+	kResourceSound_80120002    = 0x80120002,
+	kResourceSound_80120005    = 0x80120005,
+	kResourceSound_80120006    = 0x80120006,
+	kResourceSoundIntro        = 0x80120007,
+	kResourceMusic_FFFFFD66    = 0xFFFFFD66
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -266,6 +274,13 @@ enum ObjectId {
 	kObjectAngelFlares             = 112,
 	kObjectGuyFalls                = 434,
 	kObjectOpeningGate             = 485,
+	kObjectBubbles                 = 1185,
+	kObjectGlow                    = 1186,
+	kObjectDome                    = 1187,
+	kObjectRedLight                = 1188,
+	kObjectRing                    = 1189,
+	kObjectBallMovesUpright        = 1190,
+	kObjectGearsLightUp            = 1191,
 	kObjectGlobe                   = 1261,
 	kObjectFreezerHallInterior     = 1337,
 	kObjectNPC033StartEnc          = 1338,
@@ -277,7 +292,13 @@ enum ObjectId {
 	kObjectCrow3FlysAway           = 1502,
 	kObjectCrow3Pecks              = 1503,
 	kObjectCrow4FlysAway           = 1506,
-	kObjectCrow4Pecks              = 1507
+	kObjectCrow4Pecks              = 1507,
+	kObjectBodySlides1             = 2514,
+	kObjectBodySlides2             = 2515,
+	kObjectBodySlides3             = 2516,
+	kObjectBodySlides4             = 2517,
+	kObjectBodySlides5             = 2518,
+	kObjectBodySlides6             = 2519,
 };
 
 enum ObjectFlag {

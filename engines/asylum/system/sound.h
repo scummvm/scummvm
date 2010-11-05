@@ -50,7 +50,7 @@ struct SoundItem {
 
 struct FrameSoundItem {
 	ResourceId resourceId;
-	int32 frameIdx;
+	int32 frameIndex;
 	int32 index;
 	int32 field_C;
 	int32 field_10;
