@@ -192,7 +192,7 @@ void AsylumEngine::playIntro() {
 
 	// Play the intro sound sample (the screen is blacked out, you hear
 	// an alarm sounding and men talking about.
-	_sound->playSound((int)kResourceSoundIntro);
+	_sound->playSound(kResourceSoundIntro);
 }
 
 void AsylumEngine::handleEvents(bool doUpdate) { // k_sub_40AE30 (0040AE30)

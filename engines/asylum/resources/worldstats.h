@@ -59,7 +59,7 @@ public:
 	int32 curScrollUpRight;
 	int32 curHand;
 	int32 curMagnifyingGlass;
-	int32 curTalkNPC;
+	ResourceId curTalkNPC;
 	int32 curGrabPointer;
 	int32 curTalkNPC2;
 	int32 font1;

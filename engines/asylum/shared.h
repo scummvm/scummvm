@@ -81,7 +81,7 @@ enum ChapterIndex {
 // Resources
 //////////////////////////////////////////////////////////////////////////
 
-typedef int ResourceId;
+typedef unsigned int ResourceId;
 
 enum ResourceIdEnum {
 	kResourceNone            = 0,
