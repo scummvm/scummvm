@@ -30,6 +30,8 @@
 namespace Asylum {
 
 Encounter::Encounter(Scene *scene) {
+	memset(_flags, 0, sizeof(_flags));
+
 	Common::File file;
 
 	// TODO error checks
