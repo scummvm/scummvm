@@ -143,9 +143,11 @@ public:
 	/**
 	 * Convert this object into a string representation.
 	 *
+	 * @param shortString toggle for displaying the full dump or just a
+	 *                    short summary string
 	 * @return A string representation of this object.
 	 */
-	Common::String toString();
+	Common::String toString(bool shortString = true);
 
 private:
 	AsylumEngine *_vm;
