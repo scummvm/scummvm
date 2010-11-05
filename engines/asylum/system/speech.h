@@ -26,10 +26,13 @@
 #ifndef ASYLUM_SPEECH_H
 #define ASYLUM_SPEECH_H
 
-#include "asylum/respack.h"
-#include "asylum/views/scene.h"
+#include "asylum/shared.h"
+
+#include "common/scummsys.h"
 
 namespace Asylum {
+
+class Scene;
 
 class Speech {
 public:

@@ -27,8 +27,14 @@
 
 #include "asylum/resources/actor.h"
 #include "asylum/resources/special.h"
+#include "asylum/resources/worldstats.h"
+
+#include "asylum/system/graphics.h"
+#include "asylum/system/screen.h"
 
 #include "asylum/views/scene.h"
+
+#include "asylum/asylum.h"
 
 namespace Asylum {
 
@@ -85,7 +91,6 @@ void Object::load(Common::SeekableReadStream *stream) {
 		_soundItems[i].field_4 = stream->readSint32LE();
 		_soundItems[i].field_8 = stream->readSint32LE();
 		_soundItems[i].field_C = stream->readSint32LE();
-
 	}
 
 	for (int i = 0; i < 50; i++) {

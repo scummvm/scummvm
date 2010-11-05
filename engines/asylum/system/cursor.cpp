@@ -23,9 +23,11 @@
  *
  */
 
-#include "graphics/cursorman.h"
-
 #include "asylum/system/cursor.h"
+
+#include "asylum/system/graphics.h"
+
+#include "graphics/cursorman.h"
 
 namespace Asylum {
 

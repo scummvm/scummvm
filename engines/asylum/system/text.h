@@ -26,11 +26,14 @@
 #ifndef ASYLUM_TEXT_H
 #define ASYLUM_TEXT_H
 
-#include "asylum/system/screen.h"
-#include "asylum/respack.h"
+#include "asylum/shared.h"
+
+#include "common/scummsys.h"
 
 namespace Asylum {
 
+class GraphicResource;
+class ResourcePack;
 class Screen;
 
 class Text {

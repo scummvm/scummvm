@@ -23,9 +23,12 @@
  *
  */
 
-#include "asylum/asylum.h"
+
 #include "asylum/system/config.h"
 #include "asylum/system/sound.h"
+
+#include "asylum/asylum.h"
+#include "asylum/respack.h"
 
 #include "common/stream.h"
 

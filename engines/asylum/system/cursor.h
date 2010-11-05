@@ -26,11 +26,14 @@
 #ifndef ASYLUM_CURSOR_H
 #define ASYLUM_CURSOR_H
 
-#include "asylum/system/graphics.h"
-
 #include "asylum/shared.h"
 
+#include "common/rect.h"
+
 namespace Asylum {
+
+class GraphicResource;
+class ResourcePack;
 
 /**
  * Asylum cursors are GraphicResources, and are stored in

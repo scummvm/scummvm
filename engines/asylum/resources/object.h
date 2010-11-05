@@ -212,7 +212,7 @@ private:
 	void stopSound();
 
 	/**
-	 * Sets the volume. 
+	 * Sets the volume.
 	 */
 	void setVolume();
 

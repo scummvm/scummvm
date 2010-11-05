@@ -27,6 +27,13 @@
 
 #include "asylum/resources/worldstats.h"
 
+#include "asylum/system/graphics.h"
+
+#include "asylum/views/scene.h"
+
+#include "asylum/asylum.h"
+#include "asylum/respack.h"
+
 namespace Asylum {
 
 Screen::Screen(AsylumEngine *vm) : _vm(vm) {
@@ -104,6 +111,10 @@ void Screen::copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x
 	}
 
 	_vm->_system->unlockScreen();
+}
+
+void Screen::setPalette(ResourcePack *resPack, ResourceId id) {
+	setPalette(resPack->getResource(id)->data + 32);
 }
 
 void Screen::setPalette(byte *rgbPalette) {

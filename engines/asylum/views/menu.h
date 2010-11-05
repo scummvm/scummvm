@@ -28,17 +28,14 @@
 
 #include "common/events.h"
 
-#include "asylum/asylum.h"
-#include "asylum/respack.h"
-#include "asylum/views/scene.h"
-#include "asylum/system/graphics.h"
-#include "asylum/system/text.h"
-#include "asylum/system/cursor.h"
-
 namespace Asylum {
 
-class Text;
+class AsylumEngine;
 class Cursor;
+class GraphicResource;
+class ResourcePack;
+class Scene;
+class Text;
 
 class MainMenu {
 public:

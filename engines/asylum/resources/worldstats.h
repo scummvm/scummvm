@@ -26,16 +26,18 @@
 #ifndef ASYLUM_WORLDSTATS_H
 #define ASYLUM_WORLDSTATS_H
 
+#include "asylum/system/sound.h"
+
 #include "common/rect.h"
 #include "common/array.h"
 
-#include "asylum/resources/actor.h"
-#include "asylum/resources/object.h"
-#include "asylum/resources/actionarea.h"
-#include "asylum/views/scene.h"
-#include "asylum/system/sound.h"
-
 namespace Asylum {
+
+class Actor;
+class Object;
+class Scene;
+
+struct ActionArea;
 
 class WorldStats {
 public:

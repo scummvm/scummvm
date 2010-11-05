@@ -26,18 +26,19 @@
 #ifndef ASYLUM_ACTOR_H
 #define ASYLUM_ACTOR_H
 
-#include "asylum/respack.h"
 #include "asylum/shared.h"
 
 #include "common/rect.h"
+#include "common/stream.h"
 
 namespace Asylum {
 
-class ActionArea;
 class AsylumEngine;
-struct GraphicFrame;
 class GraphicResource;
 class Screen;
+
+struct ActionArea;
+struct GraphicFrame;
 
 class Actor {
 public:

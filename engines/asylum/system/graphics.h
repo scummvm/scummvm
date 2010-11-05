@@ -26,7 +26,6 @@
 #ifndef ASYLUM_GRAPHICS_H
 #define ASYLUM_GRAPHICS_H
 
-#include "asylum/respack.h"
 #include "asylum/shared.h"
 
 #include "graphics/surface.h"
@@ -34,6 +33,8 @@
 #include "common/array.h"
 
 namespace Asylum {
+
+class ResourcePack;
 
 struct GraphicFrame {
 	int32 size;
