@@ -432,7 +432,7 @@ IMPLEMENT_OPCODE(MoveScenePosition) {
 IMPLEMENT_OPCODE(HideActor) {
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	actor->setVisible(false);
+	actor->hide();
 	actor->updateDirection();
 }
 
@@ -441,7 +441,7 @@ IMPLEMENT_OPCODE(HideActor) {
 IMPLEMENT_OPCODE(ShowActor) {
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	actor->setVisible(true);
+	actor->show();
 	actor->updateDirection();
 	actor->setLastScreenUpdate(_vm->getTick());
 }
@@ -1083,7 +1083,7 @@ IMPLEMENT_OPCODE(UpdateWideScreen) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3F
 IMPLEMENT_OPCODE(JumpIfActor) {
-	ActorIndex index = (cmd->param1 == kActorNone) ? getScene()->getPlayerActorIndex() : cmd->param1;
+	ActorIndex index = (cmd->param1 == kActorInvalid) ? getScene()->getPlayerActorIndex() : cmd->param1;
 
 	if (_currentQueueEntry.actorIndex != index)
 		_currentLine = cmd->param2 - 1;
@@ -1538,7 +1538,7 @@ IMPLEMENT_OPCODE(_unk55) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x56
 IMPLEMENT_OPCODE(_unk56) {
-	Actor *actor = getScene()->getActor(cmd->param2 == 2 ? kActorNone : cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param2 == 2 ? kActorInvalid : cmd->param1);
 
 	if (actor->getStatus() == kActorStatus2 || actor->getStatus() == kActorStatus13) {
 		if (cmd->param2 == 2)
