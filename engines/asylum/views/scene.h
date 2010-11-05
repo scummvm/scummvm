@@ -118,6 +118,7 @@ public:
 	//BlowUpPuzzle* getBlowUpPuzzle() { return _blowUp;}
 	//void setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
 	void setScenePosition(int x, int y);
+	void setSkipDrawScene(bool skip) { _skipDrawScene = skip; }
 
 	AsylumEngine* vm() { return _vm; }
 

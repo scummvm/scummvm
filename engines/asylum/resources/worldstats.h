@@ -82,12 +82,6 @@ public:
 	int32 numActions; // field_90
 	int32 numObjects;
 	int32 coordinates[7];
-	//int32 targetY;
-	//int32 field_A0;
-	//int32 field_A4;
-	//int32 field_A8;
-	//int32 field_AC;
-	//int32 field_B0;
 	int32 numActors;
 	int32 stereoReversedFlag;
 	Common::Rect sceneRects[6]; // including scene size rect

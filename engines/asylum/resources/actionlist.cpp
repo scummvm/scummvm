@@ -1439,12 +1439,10 @@ IMPLEMENT_OPCODE(JumpRandom) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4F
 IMPLEMENT_OPCODE(ClearScreen) {
-	if (cmd->param1) {
+	getScene()->setSkipDrawScene(cmd->param1);
+
+	if (cmd->param1)
 		getScreen()->clearScreen();
-		_vm->setFlag(kFlagTypeSkipDraw);
-	} else {
-		_vm->clearFlag(kFlagTypeSkipDraw);
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////
