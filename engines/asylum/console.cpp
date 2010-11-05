@@ -53,6 +53,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 	DCmd_Register("actions",        WRAP_METHOD(Console, cmdListActions));
 	DCmd_Register("actors",         WRAP_METHOD(Console, cmdListActors));
 	DCmd_Register("flags",          WRAP_METHOD(Console, cmdListFlags));
+	DCmd_Register("object",         WRAP_METHOD(Console, cmdShowObject));
 	DCmd_Register("objects",        WRAP_METHOD(Console, cmdListObjects));
 
 	DCmd_Register("video",          WRAP_METHOD(Console, cmdPlayVideo));
@@ -94,6 +95,7 @@ bool Console::cmdHelp(int, const char **) {
 	DebugPrintf(" actors  - show actors information\n");
 	DebugPrintf(" action  - show action information\n");
 	DebugPrintf(" flags   - show flags\n");
+	DebugPrintf(" object  - inspect a particular object\n");
 	DebugPrintf(" objects - show objects information\n");
 	DebugPrintf("\n");
 	DebugPrintf(" video   - play a video\n");
@@ -217,18 +219,18 @@ bool Console::cmdListFlags(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdListObjects(int32 argc, const char **argv) {
-	if (argc != 1 && argc != 3) {
-		DebugPrintf("Syntax: %s [id|idx] <value> (use nothing for all)\n", argv[0]);
+bool Console::cmdShowObject(int32 argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Syntax: %s [id|idx] <target>\n", argv[0]);
 		return true;
 	}
 
-	if (argc == 3) {
+	if (argc == 2) {
 		if (Common::String(argv[1]) == "id") {
 			int id = atoi(argv[2]);
 			for (uint32 i = 0; i < getWorld()->objects.size(); i++) {
 				if (getWorld()->objects[i]->getId() == id) {
-					DebugPrintf("%s\n", getWorld()->objects[i]->toString(false).c_str());
+					DebugPrintf("%s", getWorld()->objects[i]->toString(false).c_str());
 					return true;
 				}
 			}
@@ -242,14 +244,35 @@ bool Console::cmdListObjects(int32 argc, const char **argv) {
 				return true;
 			}
 
-			DebugPrintf("%s\n", getWorld()->objects[index]->toString().c_str());
+			DebugPrintf("%s", getWorld()->objects[index]->toString().c_str());
 
 		} else {
 			DebugPrintf("[error] valid options are 'id' and 'idx'\n");
 		}
-	} else {
-		for (uint32 i = 0; i < getWorld()->objects.size(); i++)
-			DebugPrintf("%s\n", getWorld()->objects[i]->toString().c_str());
+	}
+
+	return true;
+}
+
+bool Console::cmdListObjects(int32 argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Syntax: %s [onscreen|*]\n", argv[0]);
+		return true;
+	}
+
+	if (argc == 2) {
+		if (Common::String(argv[1]) == "onscreen") {
+			for (uint32 i = 0; i < getWorld()->objects.size(); i++) {
+				if (getWorld()->objects[i]->isOnScreen()) {
+					DebugPrintf("%s", getWorld()->objects[i]->toString().c_str());
+				}
+			}
+		} else if (Common::String(argv[1]) == "*"){
+			for (uint32 i = 0; i < getWorld()->objects.size(); i++)
+				DebugPrintf("%s", getWorld()->objects[i]->toString().c_str());
+		} else {
+			DebugPrintf("[error] valid options are 'onscreen' and '*'\n");
+		}
 	}
 
 	return true;
