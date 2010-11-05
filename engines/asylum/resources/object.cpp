@@ -471,12 +471,10 @@ bool Object::checkFlags() {
 Common::String Object::toString(bool shortString) {
 	Common::String output;
 
-	debugC(kDebugLevelObjects, "kObject%s           = %d,", _name, _id);
-
 	output += Common::String::format("Object %d: %s\n", _id, _name);
 
 	if (!shortString) {
-		output += Common::String::format("    resourceId:      %u (0x%X)\n", _resourceId, _resourceId);
+		output += Common::String::format("    resourceId:      %u (0x%X) - (pack %d - index %d)\n", _resourceId, _resourceId, (_resourceId >> 16) & 0x7FFF, (int16)_resourceId);
 		output += Common::String::format("    x:               %d\n", x);
 		output += Common::String::format("    y:               %d\n", y);
 		output += Common::String::format("    flags:           %d\n", flags);
