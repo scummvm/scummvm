@@ -400,6 +400,7 @@ const char *textData_1d[] = {
 	"It is already locked",
 	"It is already unlocked",
 	"It is locked",
+// 10
 	"It is already closed",
 	"It is already smashed",
 	"It is already open",
@@ -410,6 +411,7 @@ const char *textData_1d[] = {
 	"You already oiled it,\nwhy don't you just\nopen it???",
 	"Despite your best efforts the\nbolt refuses to budge",
 	"I believe you already did!",
+//20
 	"Ok.",
 	"The shed seems to have fallen\ninto disuse and is pretty\nmuch full of garbage, either\nbroken or rusted to pieces.\nYou are just on the point of\nleaving when you notice an\noilcan sitting on a shelf",
 	"I said it's an oil-CAN,\nnot an oil-LAMP dummy!",
@@ -420,6 +422,7 @@ const char *textData_1d[] = {
 	"It is you, the hero.",
 	"Why not try opening it?",
 	"I can see no more than\nyou at this moment",
+//30
 	"They appear to be looking at you!",
 	"It's just flapping around up there",
 	"There appears to be\nsomething inside it",
@@ -430,6 +433,7 @@ const char *textData_1d[] = {
 	"It appears to be a halloween mask\nlooking somewhat like a grotesque\nmonkey's head!",
 	"I don't think you want to mess with\nthis guy!",
 	"A rather yummy looking pork chop",
+// 40
 	"This little oilcan looks like\nit contains some oil",
 	"Believe me, this is no Lassie!",
 	"It looks like a serviceable\nboat.  I wonder whether it\nwould get you to the other side?",
@@ -440,6 +444,7 @@ const char *textData_1d[] = {
 	"He looks totally gone!",
 	"He has a certain charm,\nI suppose!",
 	"Well, it's sort of\nround and rubbery!",
+// 50
 	"Nobody answers!",
 	".",                            // No song
 	".O0L5CL1DL3D#CL6..L5CL1DL3D#CL6G#L1GGFEbEbDL5CL1DL3D#CL6..L5CL1DL3D#CL6O1L1C>B<CC#DD#L3ECO2L1F.FE.CD.DC.>A<L3DL6CL1CDEL1F.FE.CD.DC.>A<Eb..L9D>L1GGAA#A#<L6C>L1AAA#<CCL6DL1>GGGbGGAA#A#AGG<DL9CL1CDEF.FE.CD.DC.>A<L3DL6CL1>AAGFFA<CCD#DDC>BbBbA<DDDL9DL1>GGAA#A#<L3CL1DEEL3FL1C>L3AL6<DL1C.C>B.<CC#.DD#.EL3FGG#AL1BbFDBbFDAFCAFCGECGECAFCAFCBbFDBbFDAFCAFC>CB<CC#DEF>..F.",
@@ -461,6 +466,7 @@ const char *textData_2d[] = {
 	"That wouldn't work",
 	"It is already closed",
 	"It is already smashed",
+// 10
 	"It is already open",
 	"There is nothing in there",
 	"Cousin Harry is too convulsed\nwith laughter to talk!",
@@ -468,10 +474,10 @@ const char *textData_2d[] = {
 	"You don't have any\nmore quarters!",
 	"Click!\nOops, I think you\nemptied it buster!",
 	"Ok.",
-	"Ok.",
 	"Now it's gone for ever!",
 	"You break off a shoot and\nplace it near the cat.\nThe cat awakes from its\nreverie and sniffs your\ngift excitedly.  After 5\nminutes of friendly play\nit falls asleep again,\nrather contentedly!",
 	"Why don't you just\ntry reading it?",
+// 20
 	"Quietly opening it, you quickly\nscan it.  It appears to be a\nletter from Hester's attorney\nconcerning the life insurance\npolicy on Great Uncle Horace.\nFeeling rather uncomfortable\nabout reading other peoples'\nmail, you return it to its\nenvelope without reading any\nfurther.",
 	"It won't open!",
 	"Just walk through!\nThis door will\nopen automatically!",
@@ -482,6 +488,7 @@ const char *textData_2d[] = {
 	"It is the pretty Penelope!",
 	"Why not try opening it?",
 	"You see a saucy looking french maid!",
+//30
 	"What a cute doggy!",
 	"He looks at least\n200 years old!!",
 	"You can see a rather impressive\nbook collection.\nOne yellow book in particular\nseems to stand out",
@@ -492,6 +499,7 @@ const char *textData_2d[] = {
 	"The rope looks climbable",
 	"Ugh! The garlic smells foul!",
 	"The gardener returns your stare!",
+// 40
 	"You can see 4 colored buttons.\nUnderneath the buttons is some\nlettering.  The lettering is\nvery faded and you can only make\nout the following characters\nunder the green button:\nb*g *a*pe*",
 	"They are small but have\nvery vicious looking\nproboscises",
 	"It is one of the rarer\nvenomous species:\nbeautiful but very deadly!",
@@ -502,6 +510,7 @@ const char *textData_2d[] = {
 	"Just your regular genie type!",
 	"It's Hugo's affable cousin Harry!",
 	"It's Hugo's lovable aunt Hester!",
+// 50
 	"Yes, there is an envelope\non the table with a letter\ninside it!",
 	"This mysterious fellow calls himself\n""the Doctor"".\nWho he is and where he comes from\nI have simply no idea!",
 	"It's the cook!",
@@ -512,6 +521,7 @@ const char *textData_2d[] = {
 	"It looks real, I\nwonder if it works?",
 	"Looking through the\nkeyhole, you can\nsee the key has been\nleft in the lock.\nToo bad it's on the\nother side!",
 	"It is a magnifying glass\nused (for example) for\nreading small print.",
+// 60
 	"It is a pretty solid\nlooking safe, I don't\nthink there's any way\nto open it unless you\nknow the combination!",
 	"It is an extremely intricate\nlooking device, I'm afraid\nit's workings are quite\nbeyond me!",
 	"It has some printing\non it, some of which\nis readable.",
@@ -522,6 +532,7 @@ const char *textData_2d[] = {
 	"It's not locked!",
 	"You need to say which\ncolor button to press!",
 	".",
+// 70
 	".O2L1C^EGBACEAGAGFEDEFG^GCGvD^GvG^GvEFEDC.^C.vC^EGBACEAGAGFEDEFG^GCGvD^GvG^GvEFEDC.^C.vCDCvABAG.^CDCvABAG.^C.CvBA.^D.vB^CvBAGvG^ABvC^EGBACEAGAGFEDEFG^GCGvD^GvG^GvEFEDC.^C.",
 	".O2L1CEG^C.",
 	".O3L1CvGEC.",
@@ -547,6 +558,7 @@ const char *textData_3d[] = {
 	"You don't have anything\nto stick in it.",
 	"There are three things\nrequired to perform an\nexorcism.  You do not\nhave all of them...",
 	"That wouldn't work.",
+// 10
 	"It is already closed.",
 	"It is already smashed.",
 	"It is already open.",
@@ -557,6 +569,7 @@ const char *textData_3d[] = {
 	"It is already lit.",
 	"It is not lit.",
 	"Ok.",
+// 20
 	"Now it's gone for ever!",
 	"It won't open!",
 	"          LOST!\n\nNear the mighty boulder,\nMy precious crystal ball,\nI guess I couldn't hold 'er,\nSo I must've let her fall!\n\nIf anyone should find it,\nPlease return it to my keep,\nBe careful if you use it,\nFor its powers runneth deep!\n\nsigned:  The old man.",
@@ -567,6 +580,7 @@ const char *textData_3d[] = {
 	"It's not locked!",
 	"It is the handsome Hugo!",
 	"It is the pretty Penelope!",
+// 30
 	"It doesn't look too badly damaged.",
 	"The vines look pretty sturdy.",
 	"Not the kind of guy you'd\nwant to meet in a dark alley!",
@@ -577,6 +591,7 @@ const char *textData_3d[] = {
 	"It is a flask for\nholding drinking water.",
 	"It is gray and furry\nand rather cute!",
 	"It is a small cage suitable\nfor holding small animals.",
+// 40
 	"You can see a blowpipe with\nsome darts full of\nsleeping potion!",
 	"It's just sitting there,\nminding its own business!",
 	"It is a box of bouillon cubes\nnormally used as seasoning in\ncooking but often carried for\nemergency rations in aircraft.",
@@ -587,6 +602,7 @@ const char *textData_3d[] = {
 	"The ghost does not appear\nto be very friendly and\nwill not let you pass.",
 	"The bell is small and golden.\nIt makes a pleasant tinkling\nring which you find rather\ncomforting for some reason.",
 	"The book is old and very worn.\nThe pages although yellow with\nage, still have discernible\nwriting on them.  You feel\nthe book has hidden powers.",
+//50
 	"The candle stick is golden and\nvery heavy.  The flickering of\nthe candle feels comforting,\neven in the daylight.",
 	".",
 	".O4L1C.C.C.",
@@ -597,6 +613,7 @@ const char *textData_3d[] = {
 	".O0L1CC#CC#CC#CC#CC#CC#CC#CC#CC#.",
 	".O1L3^CvL1G.GL3G#L1G.....L1B..^C.",
 	"O3L1E.vE^EF.vF^FE.vE^EF.vF^FE.F.G.A.G.A.B.^C.D.DbCvB.^D.Db.C.E.F.L4EFL6E.",
+// 60
 	"O2L4G^CvGEL6CL2AGEL4GL9D.",
 	".O2L1AAbAA#BAL2G^CvGL1^CvC.",
 	".O2L1DGB^D.vB^L5D.",
@@ -1825,34 +1842,34 @@ const uint16 *arrayReqs_3d[] = {rDummy, rpins_3d, rcheese_3d, rcrystal_3d, rexor
 // [+ viewx (or -1), viewy, direction for exits only]
 
 hotspot_t hotspots_1w[] = {
-	{0,   30, 132,  50, 168, kALscr1_1w,    33,  175, Common::KEYCODE_UP},		// Front of house to hall
-	{1,   99, 178, 136, 186, kALscr10_1w,   110, 181, Common::KEYCODE_DOWN},	// Hall to front of house
-	{1,  288, 110, 315, 175, kALscr13_1w,   290, 171, Common::KEYCODE_RIGHT},	// Hall to dining room
-	{1,  199, 110, 243, 158, kALscr15_1w,   211, 155, Common::KEYCODE_UP},		// Hall to kitchen
-	{1,  268,  53, 302, 101, kALscr115_1w,  273, 98,  Common::KEYCODE_RIGHT},	// Hall to lab
-	{2,  158, 132, 193, 140, kALscr21_1w,   168, 132, Common::KEYCODE_DOWN},	// Bed1 to hall
-	{3,    3,  73,  14, 168, kALscr31_1w,   12,  161, Common::KEYCODE_LEFT},	// Dining room to hall
-	{3,   47,  66,  63, 126, kALscr35_1w,   62,  124, Common::KEYCODE_LEFT},	// Dining room to kitchen
-	{4,  126, 165, 160, 173, kALscr41_1w,   135, 166, Common::KEYCODE_DOWN},	// Bathroom to hall
-	{5,  215, 169, 272, 177, kALscr51_1w,   242, 172, Common::KEYCODE_DOWN},	// Kitchen to hall
-	{5,  262,  79, 280, 146, kALscr53_1w,   270, 140, Common::KEYCODE_RIGHT},	// Kitchen to dining room
-	{5,  213,  79, 244, 133, kALscr56_1w,   222, 140, Common::KEYCODE_UP},		// Kitchen to garden
-	{5,   25,  87,  43, 157, kALscr57_1w,   44,  150, Common::KEYCODE_LEFT},	// Kitchen to store room
-	{6,  232, 180, 312, 192, kALscr65_1w,   250, 180, Common::KEYCODE_DOWN},	// Garden to kitchen
-	{7,  263,  90, 285, 156, kALscr75_1w,   265, 150, Common::KEYCODE_RIGHT},	// Store room to kitchen
-	{8,  150, 141, 186, 143, kALscr89_1w,   152, 142, Common::KEYCODE_RIGHT},	// Basement to batcave
-	{8,   80,  30, 144,  58, kALscr87_1w,   120, 60,  Common::KEYCODE_UP},		// Basement to storeroom
-	{9,   95,  74, 147, 109, kALscr910_1w,  108, 108, Common::KEYCODE_UP},		// Batcave to mummy room
-	{9,  250, 177, 319, 185, kALscr98_1w,   275, 179, Common::KEYCODE_DOWN},	// Batcave to basement
-	{10,  30, 178, 218, 188, kALscr109_1w,  107, 178, Common::KEYCODE_DOWN},	// Mummy room to batcave
-	{10, 258,  57, 282, 122, kALscr1011_1w, 265, 125, Common::KEYCODE_UP},		// Mummy room to lake room
-	{11,  43, 180,  88, 193, kALscr1110_1w, 55,  182, Common::KEYCODE_DOWN},	// Lake room to mummy room
-	{11, 300,  30, 319,  86, kALscr1112_1w, 300, 70,  Common::KEYCODE_RIGHT},	// Lake room to dead-end
-	{12,  52, 175, 295, 190, kALscr1211_1w, 142, 176, Common::KEYCODE_DOWN},	// Dead-end to lake room
-	{12, 137,  33, 178,  80, kALscr1213_1w, 152, 75,  Common::KEYCODE_UP},		// Dead-end to jail
-	{15,  19, 110,  34, 182, kALscr151_1w,  30,  177, Common::KEYCODE_LEFT},	// Laboratory to hall
-	{15, 109, 150, 144, 156, kALbox_1w,     -1,  -1,  -1},						// Professor's box
-	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}            // End of list marker
+	{0,   30, 132,  50, 168, kALscr1_1w,    33,  175, Common::KEYCODE_UP},     // Front of house to hall
+	{1,   99, 178, 136, 186, kALscr10_1w,   110, 181, Common::KEYCODE_DOWN},   // Hall to front of house
+	{1,  288, 110, 315, 175, kALscr13_1w,   290, 171, Common::KEYCODE_RIGHT},  // Hall to dining room
+	{1,  199, 110, 243, 158, kALscr15_1w,   211, 155, Common::KEYCODE_UP},     // Hall to kitchen
+	{1,  268,  53, 302, 101, kALscr115_1w,  273, 98,  Common::KEYCODE_RIGHT},  // Hall to lab
+	{2,  158, 132, 193, 140, kALscr21_1w,   168, 132, Common::KEYCODE_DOWN},   // Bed1 to hall
+	{3,    3,  73,  14, 168, kALscr31_1w,   12,  161, Common::KEYCODE_LEFT},   // Dining room to hall
+	{3,   47,  66,  63, 126, kALscr35_1w,   62,  124, Common::KEYCODE_LEFT},   // Dining room to kitchen
+	{4,  126, 165, 160, 173, kALscr41_1w,   135, 166, Common::KEYCODE_DOWN},   // Bathroom to hall
+	{5,  215, 169, 272, 177, kALscr51_1w,   242, 172, Common::KEYCODE_DOWN},   // Kitchen to hall
+	{5,  262,  79, 280, 146, kALscr53_1w,   270, 140, Common::KEYCODE_RIGHT},  // Kitchen to dining room
+	{5,  213,  79, 244, 133, kALscr56_1w,   222, 140, Common::KEYCODE_UP},     // Kitchen to garden
+	{5,   25,  87,  43, 157, kALscr57_1w,   44,  150, Common::KEYCODE_LEFT},   // Kitchen to store room
+	{6,  232, 180, 312, 192, kALscr65_1w,   250, 180, Common::KEYCODE_DOWN},   // Garden to kitchen
+	{7,  263,  90, 285, 156, kALscr75_1w,   265, 150, Common::KEYCODE_RIGHT},  // Store room to kitchen
+	{8,  150, 141, 186, 143, kALscr89_1w,   152, 142, Common::KEYCODE_RIGHT},  // Basement to batcave
+	{8,   80,  30, 144,  58, kALscr87_1w,   120, 60,  Common::KEYCODE_UP},     // Basement to storeroom
+	{9,   95,  74, 147, 109, kALscr910_1w,  108, 108, Common::KEYCODE_UP},     // Batcave to mummy room
+	{9,  250, 177, 319, 185, kALscr98_1w,   275, 179, Common::KEYCODE_DOWN},   // Batcave to basement
+	{10,  30, 178, 218, 188, kALscr109_1w,  107, 178, Common::KEYCODE_DOWN},   // Mummy room to batcave
+	{10, 258,  57, 282, 122, kALscr1011_1w, 265, 125, Common::KEYCODE_UP},     // Mummy room to lake room
+	{11,  43, 180,  88, 193, kALscr1110_1w, 55,  182, Common::KEYCODE_DOWN},   // Lake room to mummy room
+	{11, 300,  30, 319,  86, kALscr1112_1w, 300, 70,  Common::KEYCODE_RIGHT},  // Lake room to dead-end
+	{12,  52, 175, 295, 190, kALscr1211_1w, 142, 176, Common::KEYCODE_DOWN},   // Dead-end to lake room
+	{12, 137,  33, 178,  80, kALscr1213_1w, 152, 75,  Common::KEYCODE_UP},     // Dead-end to jail
+	{15,  19, 110,  34, 182, kALscr151_1w,  30,  177, Common::KEYCODE_LEFT},   // Laboratory to hall
+	{15, 109, 150, 144, 156, kALbox_1w,     -1,  -1,  -1},                     // Professor's box
+	{-1,  -1,  -1,  -1,  -1, 0,             -1,  -1,  -1}                      // End of list marker
 };
 
 hotspot_t hotspots_2w[] = {
@@ -1873,7 +1890,7 @@ hotspot_t hotspots_2w[] = {
 	{9,   34,  76,  66, 137, kALscr0908_2w,  64,  133, Common::KEYCODE_LEFT},  // inside shed to shed
 	{10,   0,  96,  15, 160, kALscr1007_2w,  10,  132, Common::KEYCODE_LEFT},  // venus to backdoor
 	{10, 299,  96, 319, 160, kALscrgate1_2w, 301, 124, Common::KEYCODE_RIGHT}, // venus to gates
-	{10,  32,  97, 298, 158, kALvenus_2w,    -1,  -1,  -1},                     // venus fly traps
+	{10,  32,  97, 298, 158, kALvenus_2w,    -1,  -1,  -1},                    // venus fly traps
 	{11,   0, 155,  12, 185, kALscr1108_2w,  11,  172, Common::KEYCODE_LEFT},  // gates (open) to shed
 	{12,   0, 155,  12, 185, kALscr1108_2w,  11,  172, Common::KEYCODE_LEFT},  // gates (close) to shed
 	{11, 300, 157, 319, 185, kALscr1113_2w,  301, 172, Common::KEYCODE_RIGHT}, // gates (open) to stream
@@ -1881,7 +1898,7 @@ hotspot_t hotspots_2w[] = {
 	{11, 145, 103, 195, 145, kAL11maze_2w,   167, 143, Common::KEYCODE_UP},    // gatesopn to maze
 	{13,   0, 133,  14, 163, kALscrgate2_2w, 14,  145, Common::KEYCODE_LEFT},  // stream to gates
 	{13, 303, 146, 319, 173, kALscr1314_2w,  305, 153, Common::KEYCODE_RIGHT}, // stream to zapper
-	{13, 158, 115, 226, 147, kALbridge_2w,   -1,  -1,  -1},                     // bridge over stream
+	{13, 158, 115, 226, 147, kALbridge_2w,   -1,  -1,  -1},                    // bridge over stream
 	{14,   0,  96,  14, 160, kALscr1413_2w,  10,  134, Common::KEYCODE_LEFT},  // zapper to stream
 	{14, 301,  96, 319, 160, kALscr1415_2w,  302, 134, Common::KEYCODE_RIGHT}, // zapper to mushroom
 	{15,   0,  96,  16, 130, kALscr1514_2w,  14,  130, Common::KEYCODE_LEFT},  // mushroom to zapper
@@ -1895,7 +1912,7 @@ hotspot_t hotspots_2w[] = {
 	{18,   0, 122,  15, 181, kALscr1819l_2w, 13,  136, Common::KEYCODE_LEFT},  // phonebox to street (left)
 	{18,   0, 175, 319, 199, kALscr1819c_2w, 155, 177, Common::KEYCODE_DOWN},  // phonebox to street (center)
 	{18, 304,  95, 319, 199, kALscr1819r_2w, 307, 136, Common::KEYCODE_RIGHT}, // phonebox to street (right)
-	{18,  15, 122,  56, 130, kALphonebox_2w, -1,  -1,  -1},                     // in the phonebox
+	{18,  15, 122,  56, 130, kALphonebox_2w, -1,  -1,  -1},                    // in the phonebox
 	{19,   0, 122,  20, 183, kALscr1918l_2w, 19,  131, Common::KEYCODE_LEFT},  // street to phonebox (left)
 	{19,   0, 175, 319, 199, kALscr1918c_2w, 153, 175, Common::KEYCODE_DOWN},  // street to phonebox (center)
 	{19, 301, 122, 319, 199, kALscr1918r_2w, 304, 131, Common::KEYCODE_RIGHT}, // street to phonebox (right)
@@ -1907,7 +1924,7 @@ hotspot_t hotspots_2w[] = {
 	{23, 273,  40, 296, 100, kALscr2326_2w,  291, 87,  Common::KEYCODE_RIGHT}, // threeway to passage
 	{24, 300,  83, 319, 183, kALscr2423_2w,  304, 120, Common::KEYCODE_RIGHT}, // lampcave to threeway
 	{25,   0,  98,  15, 171, kALscr2523_2w,  14,  167, Common::KEYCODE_LEFT},  // chasm to threeway
-	{25, 172,  95, 221, 172, kALchasm_2w,    -1,  -1,  -1},                     // chasm
+	{25, 172,  95, 221, 172, kALchasm_2w,    -1,  -1,  -1},                    // chasm
 	{26,   0,  94,  19, 179, kALscr2623_2w,  17,  157, Common::KEYCODE_LEFT},  // passage to threeway
 	{26, 300,  87, 319, 179, kALscr2627_2w,  302, 157, Common::KEYCODE_RIGHT}, // passage to ladder
 	{27,   0, 100,  15, 180, kALscr2726_2w,  14,  152, Common::KEYCODE_LEFT},  // ladder to passage
@@ -1928,18 +1945,18 @@ hotspot_t hotspots_2w[] = {
 	{34,   7, 180, 311, 199, kALscr3429_2w,  168, 186, Common::KEYCODE_DOWN},  // hall3 to hall2
 	{35,  65, 176, 101, 188, kALscr3534_2w,  74,  178, Common::KEYCODE_DOWN},  // organ to hall3
 	{36, 238, 164, 272, 177, kALscr3634_2w,  250, 166, Common::KEYCODE_DOWN},  // hestroom to hall3
-	{36,  62, 140, 158, 158, kALhtable_2w,   -1,  -1,  -1},                     // hestroom table
+	{36,  62, 140, 158, 158, kALhtable_2w,   -1,  -1,  -1},                    // hestroom table
 	{37, 253,  82, 286,  84, kALscr3718_2w,  254, 83,  Common::KEYCODE_RIGHT}, // retupmoc to phonebox
 	{38, 275, 116, 307, 166, kALscr3829_2w,  279, 164, Common::KEYCODE_RIGHT}, // hall1 to hall2
 	{38, 142, 108, 172, 150, kALscr3834_2w,  152, 150, Common::KEYCODE_UP},    // hall1 to hall3
 	{MAZE_SCREEN + 59, 100, 140, 180, 160, kALexitmaze_2w, 133, 143, Common::KEYCODE_DOWN},  // Exit maze
-	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}            // End of list marker
+	{-1, -1,  -1,  -1,  -1,  0,              -1,  -1,  -1}                     // End of list marker
 };
 
 hotspot_t hotspots_3w[] = {
 	{CRASH_3w,      0, 163,  30, 190, kALcrash_web_3w,       11, 176, Common::KEYCODE_LEFT},
 	{CRASH_3w,    164, 102, 205, 144, kALplane_3w,          178, 153, Common::KEYCODE_UP},
-	{PLANE_3w,    120, 126, 220, 170, kALexit_3w,             0,   0, Common::KEYCODE_DOWN},		// Hero invisible so exit is instant
+	{PLANE_3w,    120, 126, 220, 170, kALexit_3w,             0,   0, Common::KEYCODE_DOWN},  // Hero invisible so exit is instant
 	{WEB_3w,      296,  73, 319, 190, kALweb_crash_3w,      307, 149, Common::KEYCODE_RIGHT},
 	{WEB_3w,        0, 156,  30, 190, kALweb_path_3w,        15, 182, Common::KEYCODE_LEFT},
 	{PATH_UL_3w,  293, 161, 319, 190, kALpath_web_3w,       305, 181, Common::KEYCODE_RIGHT},
@@ -1991,7 +2008,7 @@ hotspot_t hotspots_3w[] = {
 	{WBASE_3w,    295, 146, 319, 190, kALwbase_wfall_3w,    306, 154, Common::KEYCODE_RIGHT},
 	{WBASE_3w,      0, 149,  26, 190, kALwbase_garden_3w,    14, 154, Common::KEYCODE_LEFT},
 	{GARDEN_3w,   294, 165, 319, 190, kALgarden_wbase_3w,   306, 177, Common::KEYCODE_RIGHT},
-	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}            // End of list marker
+	{-1,          -1,  -1,  -1,  -1,  0,                    -1,  -1,  -1} // End of list marker
 };
 
 hotspot_t hotspots_1d[] = {
@@ -2022,7 +2039,7 @@ hotspot_t hotspots_1d[] = {
 	{12, 137, 67,  178, 76,  kALscr1213_1d, -1, -1, -1},   // Dead-end to jail
 	{15, 19,  171, 34,  182, kALscr151_1d,  -1, -1, -1},   // Laboratory to hall
 	{15, 109, 150, 144, 156, kALbox_1d,     -1, -1, -1},   // Professor's box
-	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}            // End of list marker
+	{-1, -1,  -1,  -1,  -1,  0,             -1, -1, -1}    // End of list marker
 };
 
 hotspot_t hotspots_2d[] = {
@@ -2103,7 +2120,7 @@ hotspot_t hotspots_2d[] = {
 	{38, 275, 156, 307, 166, kALscr3829_2d,  -1, -1, -1},  // hall1 to hall2
 	{38, 142, 138, 172, 150, kALscr3834_2d,  -1, -1, -1},  // hall1 to hall3
 	{MAZE_SCREEN+59, 100, 140, 180, 160, kALexitmaze_2d, -1, -1, -1},  // Exit maze
-	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}            // End of list marker
+	{-1,  -1,  -1,  -1,  -1, 0,              -1, -1, -1}   // End of list marker
 };
 
 hotspot_t hotspots_3d[] = {
@@ -2160,7 +2177,7 @@ hotspot_t hotspots_3d[] = {
 	{WBASE_3d,    295, 146, 319, 190, kALwbase_wfall_3d,    -1, -1, -1},
 	{WBASE_3d,      0, 149,  26, 190, kALwbase_garden_3d,   -1, -1, -1},
 	{GARDEN_3d,   294, 165, 319, 190, kALgarden_wbase_3d,   -1, -1, -1},
-	{-1,  -1,  -1,  -1,  -1,  0,  -1,  -1,  -1}            // End of list marker
+	{-1,           -1,  -1,  -1,  -1, 0,                    -1, -1, -1}  // End of list marker
 };
 
 // List all objects that can appear in inventory list
@@ -4874,22 +4891,22 @@ const cmd *cmdList_3d[] = {
 // The following are lists of actions invoked when entering a screen
 // They consist of actions which occur no matter which door is entered
 // See the list of 'hotspots' and 'Open' cmds for door specific actions
-uint16 s0acts_1w[]  = {kALclosedoor1_1w, kALblinkeyes1_1w, kALightning_1w, kALbat_1w,    0};	// House
-uint16 s1acts_1w[]  = {kALblinkeyes2_1w, kALridprof_1w,    0};						// Hall
-uint16 s2acts_1w[]  = {0};													// Bed1
-uint16 s3acts_1w[]  = {kALbut_1w,        kALrepredeye_1w,  kALreplips_1w,  kALreparm_1w, 0};		// dining room
-uint16 s4acts_1w[]  = {0};													// Bathroom
-uint16 s5acts_1w[]  = {0};													// Kitchen
-uint16 s6acts_1w[]  = {0};													// Garden
-uint16 s7acts_1w[]  = {kALdog_1w,        0};											// Store room
-uint16 s8acts_1w[]  = {kALhelp_1w,       0};											// Basement
-uint16 s9acts_1w[]  = {kALbatattack_1w,  0};									// Batcave
-uint16 s10acts_1w[] = {kALmum_1w,        0};											// Mummy room
-uint16 s11acts_1w[] = {0};													// Lake room
-uint16 s12acts_1w[] = {0};													// Dead end
-uint16 s13acts_1w[] = {kALjail_1w,       0};											// Jail
-uint16 s14acts_1w[] = {kALgoodbye_1w,    0};										// The end
-uint16 s15acts_1w[] = {kALlab_1w,        kALbox_1w,        0};									// Laboratory
+uint16 s0acts_1w[]  = {kALclosedoor1_1w, kALblinkeyes1_1w, kALightning_1w, kALbat_1w,    0}; // House
+uint16 s1acts_1w[]  = {kALblinkeyes2_1w, kALridprof_1w,    0};                               // Hall
+uint16 s2acts_1w[]  = {0};                                                                   // Bed1
+uint16 s3acts_1w[]  = {kALbut_1w,        kALrepredeye_1w,  kALreplips_1w,  kALreparm_1w, 0}; // dining room
+uint16 s4acts_1w[]  = {0};                                                                   // Bathroom
+uint16 s5acts_1w[]  = {0};                                                                   // Kitchen
+uint16 s6acts_1w[]  = {0};                                                                   // Garden
+uint16 s7acts_1w[]  = {kALdog_1w,        0};                                                 // Store room
+uint16 s8acts_1w[]  = {kALhelp_1w,       0};                                                 // Basement
+uint16 s9acts_1w[]  = {kALbatattack_1w,  0};                                                 // Batcave
+uint16 s10acts_1w[] = {kALmum_1w,        0};                                                 // Mummy room
+uint16 s11acts_1w[] = {0};                                                                   // Lake room
+uint16 s12acts_1w[] = {0};                                                                   // Dead end
+uint16 s13acts_1w[] = {kALjail_1w,       0};                                                 // Jail
+uint16 s14acts_1w[] = {kALgoodbye_1w,    0};                                                 // The end
+uint16 s15acts_1w[] = {kALlab_1w,        kALbox_1w,        0};                               // Laboratory
 
 const uint16 *screenActs_1w[] = {
 	s0acts_1w,  s1acts_1w,  s2acts_1w,  s3acts_1w,  s4acts_1w,
@@ -4898,66 +4915,66 @@ const uint16 *screenActs_1w[] = {
 	s15acts_1w
 };
 
-uint16 s0acts_2w[]  = {kALscr01Story_2w, 0};				// House
-uint16 s1acts_2w[]  = {kALpenny1_2w,     kALmaid_2w, kALheroxy01_2w, 0};// Hall
-uint16 s2acts_2w[]  = {kALscr02_2w,      0};				// Bed1
-uint16 s3acts_2w[]  = {kALscr03_2w,      0};				// Bed2
-uint16 s4acts_2w[]  = {kALscr04_2w,      0};				// Murder
-uint16 s6acts_2w[]  = {kALscr06_2w,      0};				// Kitchen
-uint16 s9acts_2w[]  = {kALscr09_2w,      0};				// In shed
-uint16 s10acts_2w[] = {kALscr10_2w,      0};				// Venus
-uint16 s14acts_2w[] = {kALscr14_2w,      0};				// Bug attack
-uint16 s15acts_2w[] = {kALscr15_2w,      0};				// Old man
-uint16 s17acts_2w[] = {kALmap0_2w,       0};				// Snakepit
-uint16 s18acts_2w[] = {kALmap1_2w,       0};				// Phonebox
-uint16 s25acts_2w[] = {kALscr25_2w,      0};				// Chasm
-uint16 s29acts_2w[] = {kALscr29_2w,      0};				// Hall2
-uint16 s30acts_2w[] = {kALscr30_2w,      0};				// Lounge
-uint16 s31acts_2w[] = {kALmaidp_2w,      0};				// Parlor
-uint16 s33acts_2w[] = {kALscr33_2w,      0};				// Boxroom
-uint16 s34acts_2w[] = {kALscr34_2w,      0};				// Hall3
-uint16 s35acts_2w[] = {kALscr35_2w,      0};				// Organ
-uint16 s36acts_2w[] = {kALscr36_2w,      0};				// Hestroom
-uint16 s37acts_2w[] = {kALsong3_2w,      0};				// Retupmoc
+uint16 s0acts_2w[]  = {kALscr01Story_2w, 0};                             // House
+uint16 s1acts_2w[]  = {kALpenny1_2w,     kALmaid_2w, kALheroxy01_2w, 0}; // Hall
+uint16 s2acts_2w[]  = {kALscr02_2w,      0};                             // Bed1
+uint16 s3acts_2w[]  = {kALscr03_2w,      0};                             // Bed2
+uint16 s4acts_2w[]  = {kALscr04_2w,      0};                             // Murder
+uint16 s6acts_2w[]  = {kALscr06_2w,      0};                             // Kitchen
+uint16 s9acts_2w[]  = {kALscr09_2w,      0};                             // In shed
+uint16 s10acts_2w[] = {kALscr10_2w,      0};                             // Venus
+uint16 s14acts_2w[] = {kALscr14_2w,      0};                             // Bug attack
+uint16 s15acts_2w[] = {kALscr15_2w,      0};                             // Old man
+uint16 s17acts_2w[] = {kALmap0_2w,       0};                             // Snakepit
+uint16 s18acts_2w[] = {kALmap1_2w,       0};                             // Phonebox
+uint16 s25acts_2w[] = {kALscr25_2w,      0};                             // Chasm
+uint16 s29acts_2w[] = {kALscr29_2w,      0};                             // Hall2
+uint16 s30acts_2w[] = {kALscr30_2w,      0};                             // Lounge
+uint16 s31acts_2w[] = {kALmaidp_2w,      0};                             // Parlor
+uint16 s33acts_2w[] = {kALscr33_2w,      0};                             // Boxroom
+uint16 s34acts_2w[] = {kALscr34_2w,      0};                             // Hall3
+uint16 s35acts_2w[] = {kALscr35_2w,      0};                             // Organ
+uint16 s36acts_2w[] = {kALscr36_2w,      0};                             // Hestroom
+uint16 s37acts_2w[] = {kALsong3_2w,      0};                             // Retupmoc
 const uint16 *screenActs_2w[] = {
 	/*  0 */ s0acts_2w,  s1acts_2w,  s2acts_2w,  s3acts_2w,  s4acts_2w,
-	         0,       s6acts_2w,  0,       0,       s9acts_2w,
-	/* 10 */ s10acts_2w, 0,       0,       0,       s14acts_2w,
-	         s15acts_2w, 0,       s17acts_2w, s18acts_2w, 0,
-	/* 20 */ 0,       0,       0,       0,       0,
-	         s25acts_2w, 0,       0,       0,       s29acts_2w,
-	/* 30 */ s30acts_2w, s31acts_2w, 0,       s33acts_2w, s34acts_2w,
-	         s35acts_2w, s36acts_2w, s37acts_2w, 0,       0,
-	/* 40 */ 0,       0,       0,       0,       0,
-	         0,       0,       0,       0,       0,
-	/* 50 */ 0,       0,       0,       0,       0,
-	         0,       0,       0,       0,       0,
-	/* 60 */ 0,       0,       0,       0,       0,
-	         0,       0,       0,       0,       0,
-	/* 70 */ 0,       0,       0,       0,       0,
-	         0,       0,       0,       0,       0,
-	/* 80 */ 0,       0,       0,       0,       0,
-	         0,       0,       0,       0,       0,
-	/* 90 */ 0,       0,       0,       0,       0,
-	         0,       0,       0,       0,       0,
-	/*100 */ 0,       0,       0
+	         0,          s6acts_2w,  0,          0,          s9acts_2w,
+	/* 10 */ s10acts_2w, 0,          0,          0,          s14acts_2w,
+	         s15acts_2w, 0,          s17acts_2w, s18acts_2w, 0,
+	/* 20 */ 0,          0,          0,          0,          0,
+	         s25acts_2w, 0,          0,          0,          s29acts_2w,
+	/* 30 */ s30acts_2w, s31acts_2w, 0,          s33acts_2w, s34acts_2w,
+	         s35acts_2w, s36acts_2w, s37acts_2w, 0,          0,
+	/* 40 */ 0,          0,          0,          0,          0,
+	         0,          0,          0,          0,          0,
+	/* 50 */ 0,          0,          0,          0,          0,
+	         0,          0,          0,          0,          0,
+	/* 60 */ 0,          0,          0,          0,          0,
+	         0,          0,          0,          0,          0,
+	/* 70 */ 0,          0,          0,          0,          0,
+	         0,          0,          0,          0,          0,
+	/* 80 */ 0,          0,          0,          0,          0,
+	         0,          0,          0,          0,          0,
+	/* 90 */ 0,          0,          0,          0,          0,
+	         0,          0,          0,          0,          0,
+	/*100 */ 0,          0,          0
 };
 
 uint16 s0acts_3w[]  = {kALcrashStory_3w, kALhorizon_3w,   0}; // Crash site
-uint16 s1acts_3w[]  = {kALweb_3w,        0};		// Spider's web
-uint16 s2acts_3w[]  = {kALbridgetest_3w, kALbridgetip_3w, 0};// Bridge1
-uint16 s13acts_3w[] = {kALhut_in_3w,     kALmouse_3w,     0};// In hut
-uint16 s15acts_3w[] = {kALoldman_3w,     kALflash_3w,     0};// Oldman
-uint16 s18acts_3w[] = {kALcamp_3w,       0};		// At camp
-uint16 s19acts_3w[] = {kALsunset_3w,     0};		// Bye bye!
-uint16 s23acts_3w[] = {kALpath_3w,       0};		// Elephant
+uint16 s1acts_3w[]  = {kALweb_3w,        0};                  // Spider's web
+uint16 s2acts_3w[]  = {kALbridgetest_3w, kALbridgetip_3w, 0}; // Bridge1
+uint16 s13acts_3w[] = {kALhut_in_3w,     kALmouse_3w,     0}; // In hut
+uint16 s15acts_3w[] = {kALoldman_3w,     kALflash_3w,     0}; // Oldman
+uint16 s18acts_3w[] = {kALcamp_3w,       0};                  // At camp
+uint16 s19acts_3w[] = {kALsunset_3w,     0};                  // Bye bye!
+uint16 s23acts_3w[] = {kALpath_3w,       0};                  // Elephant
 const uint16 *screenActs_3w[] = {
-	/*  0 */ s0acts_3w,  s1acts_3w, s2acts_3w, 0,       0,
-	         0,       0,      0,      0,       0,
-	/* 10 */ 0,       0,      0,      s13acts_3w, 0,
-	         s15acts_3w, 0,      0,      s18acts_3w, s19acts_3w,
-	/* 20 */ 0,       0,      0,      s23acts_3w, 0,
-	         0,       0,      0,      0,       0,
+	/*  0 */ s0acts_3w,  s1acts_3w, s2acts_3w, 0,          0,
+	         0,          0,         0,         0,          0,
+	/* 10 */ 0,          0,         0,         s13acts_3w, 0,
+	         s15acts_3w, 0,         0,         s18acts_3w, s19acts_3w,
+	/* 20 */ 0,          0,         0,         s23acts_3w, 0,
+	         0,          0,         0,         0,          0,
 	/* 30 */ 0
 };
 
@@ -4986,49 +5003,49 @@ const uint16 *screenActs_1d[] = {
 };
 
 
-uint16 s0acts_2d[]  = {kALscr01_2d,  kALsong1_2d, 0};					// House
-uint16 s1acts_2d[]  = {kALpenny1_2d, kALmaid_2d,  kALheroxy01_2d, 0};	// Hall
-uint16 s2acts_2d[]  = {kALscr02_2d,  0};									// Bed1
-uint16 s3acts_2d[]  = {kALscr03_2d,  0};									// Bed2
-uint16 s4acts_2d[]  = {kALscr04_2d,  0};									// Murder
-uint16 s6acts_2d[]  = {kALscr06_2d,  0};									// Kitchen
-uint16 s9acts_2d[]  = {kALscr09_2d,  0};									// In shed
-uint16 s10acts_2d[] = {kALscr10_2d,  0};									// Venus
-uint16 s14acts_2d[] = {kALscr14_2d,  0};									// Bug attack
-uint16 s15acts_2d[] = {kALscr15_2d,  0};									// Old man
-uint16 s17acts_2d[] = {kALmap0_2d,   0};									// Snakepit
-uint16 s18acts_2d[] = {kALmap1_2d,   0};									// Phonebox
-uint16 s29acts_2d[] = {kALscr29_2d,  0};									// Hall2
-uint16 s30acts_2d[] = {kALscr30_2d,  0};									// Lounge
-uint16 s31acts_2d[] = {kALmaidp_2d,  0};									// Parlor
-uint16 s33acts_2d[] = {kALscr33_2d,  0};									// Boxroom
-uint16 s34acts_2d[] = {kALscr34_2d,  0};									// Hall3
-uint16 s35acts_2d[] = {kALscr35_2d,  0};									// Organ
-uint16 s36acts_2d[] = {kALscr36_2d,  0};									// Hestroom
-uint16 s37acts_2d[] = {kALsong3_2d,  0};									// Retupmoc
+uint16 s0acts_2d[]  = {kALscr01_2d,  kALsong1_2d, 0};                  // House
+uint16 s1acts_2d[]  = {kALpenny1_2d, kALmaid_2d,  kALheroxy01_2d, 0};  // Hall
+uint16 s2acts_2d[]  = {kALscr02_2d,  0};                               // Bed1
+uint16 s3acts_2d[]  = {kALscr03_2d,  0};                               // Bed2
+uint16 s4acts_2d[]  = {kALscr04_2d,  0};                               // Murder
+uint16 s6acts_2d[]  = {kALscr06_2d,  0};                               // Kitchen
+uint16 s9acts_2d[]  = {kALscr09_2d,  0};                               // In shed
+uint16 s10acts_2d[] = {kALscr10_2d,  0};                               // Venus
+uint16 s14acts_2d[] = {kALscr14_2d,  0};                               // Bug attack
+uint16 s15acts_2d[] = {kALscr15_2d,  0};                               // Old man
+uint16 s17acts_2d[] = {kALmap0_2d,   0};                               // Snakepit
+uint16 s18acts_2d[] = {kALmap1_2d,   0};                               // Phonebox
+uint16 s29acts_2d[] = {kALscr29_2d,  0};                               // Hall2
+uint16 s30acts_2d[] = {kALscr30_2d,  0};                               // Lounge
+uint16 s31acts_2d[] = {kALmaidp_2d,  0};                               // Parlor
+uint16 s33acts_2d[] = {kALscr33_2d,  0};                               // Boxroom
+uint16 s34acts_2d[] = {kALscr34_2d,  0};                               // Hall3
+uint16 s35acts_2d[] = {kALscr35_2d,  0};                               // Organ
+uint16 s36acts_2d[] = {kALscr36_2d,  0};                               // Hestroom
+uint16 s37acts_2d[] = {kALsong3_2d,  0};                               // Retupmoc
 
 const uint16 *screenActs_2d[] = {
 	s0acts_2d,  s1acts_2d,  s2acts_2d,  s3acts_2d,  s4acts_2d,
-	0,       s6acts_2d,  0,       0,       s9acts_2d,
-	s10acts_2d, 0,       0,       0,       s14acts_2d,
-	s15acts_2d, 0,       s17acts_2d, s18acts_2d, 0,
-	0,       0,       0,       0,       0,
-	0,       0,       0,       0,       s29acts_2d,
-	s30acts_2d, s31acts_2d, 0,       s33acts_2d, s34acts_2d,
-	s35acts_2d, s36acts_2d, s37acts_2d, 0,       0,
-	0,       0,       0,       0,       0,
-	0,       0,       0,       0,       0,
-	0,       0,       0,       0,       0,
-	0,       0,       0,       0,       0,
-	0,       0,       0,       0,       0,
-	0,       0,       0,       0,       0,
-	0,       0,       0,       0,       0,
-	0,       0,       0,       0,       0,
-	0,       0,       0,       0,       0,
-	0,       0,       0,       0,       0,
-	0,       0,       0,       0,       0,
-	0,       0,       0,       0,       0,
-	0,       0,       0
+	0,          s6acts_2d,  0,          0,          s9acts_2d,
+	s10acts_2d, 0,          0,          0,          s14acts_2d,
+	s15acts_2d, 0,          s17acts_2d, s18acts_2d, 0,
+	0,          0,          0,          0,          0,
+	0,          0,          0,          0,          s29acts_2d,
+	s30acts_2d, s31acts_2d, 0,          s33acts_2d, s34acts_2d,
+	s35acts_2d, s36acts_2d, s37acts_2d, 0,          0,
+	0,          0,          0,          0,          0,
+	0,          0,          0,          0,          0,
+	0,          0,          0,          0,          0,
+	0,          0,          0,          0,          0,
+	0,          0,          0,          0,          0,
+	0,          0,          0,          0,          0,
+	0,          0,          0,          0,          0,
+	0,          0,          0,          0,          0,
+	0,          0,          0,          0,          0,
+	0,          0,          0,          0,          0,
+	0,          0,          0,          0,          0,
+	0,          0,          0,          0,          0,
+	0,          0,          0
 };
 
 uint16 s0acts_3d[]  = {kALcrashStory_3d, 0};              // Crash site
@@ -6818,7 +6835,7 @@ act8 ascr0203_2w   = {NEW_SCREEN, 40,              3};
 act8 ascr11maze_2w = {NEW_SCREEN, 0,               MAZE_SCREEN + 59};// Enter maze
 act8 ascr3435_2w   = {NEW_SCREEN, DOORDELAY,       35}; // Goto to organ
 act8 ascr3436_2w   = {NEW_SCREEN, DOORDELAY,       36}; // Goto to hestroom
-act8 ascrmaze_2w   = {NEW_SCREEN, 0,               11};			// Maze exit to gatesopn
+act8 ascrmaze_2w   = {NEW_SCREEN, 0,               11}; // Maze exit to gatesopn
 act8 ascr01_2w     = {NEW_SCREEN, STORYDELAY + 10, 1};
 act8 askip5_2w     = {NEW_SCREEN, 0,               3};
 
