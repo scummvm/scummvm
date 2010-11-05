@@ -32,43 +32,15 @@
 #include "backends/plugins/elf/mips-loader.h"
 
 class PSPDLObject : public MIPSDLObject {
-public:
-	PSPDLObject() :
-		MIPSDLObject() {
-	}
-
-	virtual ~PSPDLObject() {
-		unload();
-	}
-
 protected:
-	virtual void *allocSegment(size_t boundary, size_t size) const {
-		return memalign(boundary, size);
-	}
-
-	virtual void freeSegment(void *segment) const {
-		free(segment);
-	}
-
 	virtual void flushDataCache(void *ptr, uint32 len) const {
 		sceKernelDcacheWritebackRange(ptr, len);
 		sceKernelIcacheInvalidateRange(ptr, len);
 	}
 };
 
-class PSPPlugin : public ELFPlugin {
-public:
-	PSPPlugin(const Common::String &filename) :
-		ELFPlugin(filename) {
-	}
-
-	virtual DLObject *makeDLObject() {
-		return new PSPDLObject();
-	}
-};
-
 Plugin *PSPPluginProvider::createPlugin(const Common::FSNode &node) const {
-	return new PSPPlugin(node.getPath());
+	return new TemplatedELFPlugin<PSPDLObject>(node.getPath());
 }
 
 #endif // defined(DYNAMIC_MODULES) && defined(__PSP__)

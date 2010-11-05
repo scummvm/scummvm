@@ -137,7 +137,7 @@ bool ELFPlugin::loadPlugin() {
 	}
 #endif
 
-	_dlHandle->discard_symtab();
+	_dlHandle->discardSymtab();
 
 	return ret;
 }

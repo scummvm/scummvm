@@ -32,43 +32,15 @@
 #include "backends/plugins/elf/arm-loader.h"
 
 class DSDLObject : public ARMDLObject {
-public:
-	DSDLObject() :
-		ARMDLObject() {
-	}
-
-	virtual ~DSDLObject() {
-		unload();
-	}
-
 protected:
-	virtual void *allocSegment(size_t boundary, size_t size) const {
-		return memalign(boundary, size);
-	}
-
-	virtual void freeSegment(void *segment) const {
-		free(segment);
-	}
-
 	virtual void flushDataCache(void *ptr, uint32 len) const {
 		DC_FlushRange(ptr, len);
 		IC_InvalidateRange(ptr, len);
 	}
 };
 
-class DSPlugin : public ELFPlugin {
-public:
-	DSPlugin(const Common::String &filename) :
-		ELFPlugin(filename) {
-	}
-
-	virtual DLObject *makeDLObject() {
-		return new DSDLObject();
-	}
-};
-
 Plugin *DSPluginProvider::createPlugin(const Common::FSNode &node) const {
-	return new DSPlugin(node.getPath());
+	return new TemplatedELFPlugin<DSDLObject>(node.getPath());
 }
 
 #endif // defined(DYNAMIC_MODULES) && defined(__DS__)

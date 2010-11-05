@@ -281,7 +281,7 @@ bool MIPSDLObject::loadSegment(Elf32_Phdr *phdr) {
 	// We need to take account of non-allocated segment for shorts
 	if (phdr->p_flags & PF_X) {	// This is a relocated segment
 		// Attempt to allocate memory for segment
-		_segment = (byte *)allocSegment(phdr->p_align, phdr->p_memsz);
+		_segment = (byte *)memalign(phdr->p_align, phdr->p_memsz);
 
 		if (!_segment) {
 			warning("elfloader: Out of memory.");
@@ -328,7 +328,10 @@ bool MIPSDLObject::loadSegment(Elf32_Phdr *phdr) {
 // Unload all objects from memory
 void MIPSDLObject::unload() {
 	DLObject::unload();
-	
+	freeShortsSegment();
+}
+
+void MIPSDLObject::freeShortsSegment() {
 	if (_shortsSegment) {
 		ShortsMan.deleteSegment(_shortsSegment);
 		_shortsSegment = 0;

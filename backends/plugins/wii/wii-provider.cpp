@@ -32,43 +32,15 @@
 #include "backends/plugins/elf/ppc-loader.h"
 
 class WiiDLObject : public PPCDLObject {
-public:
-	WiiDLObject() :
-		PPCDLObject() {
-	}
-
-	virtual ~WiiDLObject() {
-		unload();
-	}
-
 protected:
-	virtual void *allocSegment(size_t boundary, size_t size) const {
-		return memalign(boundary, size);
-	}
-
-	virtual void freeSegment(void *segment) const {
-		free(segment);
-	}
-
 	virtual void flushDataCache(void *ptr, uint32 len) const {
 		DCFlushRange(ptr, len);
 		ICInvalidateRange(ptr, len);
 	}
 };
 
-class WiiPlugin : public ELFPlugin {
-public:
-	WiiPlugin(const Common::String &filename) :
-		ELFPlugin(filename) {
-	}
-
-	virtual DLObject *makeDLObject() {
-		return new WiiDLObject();
-	}
-};
-
 Plugin *WiiPluginProvider::createPlugin(const Common::FSNode &node) const {
-	return new WiiPlugin(node.getPath());
+	return new TemplatedELFPlugin<WiiDLObject>(node.getPath());
 }
 
 #endif // defined(DYNAMIC_MODULES) && defined(__WII__)

@@ -34,6 +34,8 @@
 #include "common/fs.h"
 #include "common/ptr.h"
 
+#include <malloc.h>	// for memalign()
+
 DLObject::DLObject() :
 	_file(0),
 	_segment(0),
@@ -49,10 +51,13 @@ DLObject::DLObject() :
 }
 
 DLObject::~DLObject() {
+	discardSymtab();
+	free(_segment);
+	_segment = 0;
 }
 
 // Expel the symbol table from memory
-void DLObject::discard_symtab() {
+void DLObject::discardSymtab() {
 	free(_symtab);
 	_symtab = 0;
 
@@ -64,9 +69,9 @@ void DLObject::discard_symtab() {
 
 // Unload all objects from memory
 void DLObject::unload() {
-	discard_symtab();
+	discardSymtab();
 
-	freeSegment(_segment);
+	free(_segment);
 
 	_segment = 0;
 	_segmentSize = 0;
@@ -160,7 +165,7 @@ bool DLObject::readProgramHeaders(Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, Elf32_Half
 }
 
 bool DLObject::loadSegment(Elf32_Phdr *phdr) {
-	_segment = (byte *)allocSegment(phdr->p_align, phdr->p_memsz);
+	_segment = (byte *)memalign(phdr->p_align, phdr->p_memsz);
 
 	if (!_segment) {
 		warning("elfloader: Out of memory.");

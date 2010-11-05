@@ -29,23 +29,7 @@
 #include "backends/plugins/elf/mips-loader.h"
 
 class PS2DLObject : public MIPSDLObject {
-public:
-	PS2DLObject() :
-		MIPSDLObject() {
-	}
-
-	virtual ~PS2DLObject() {
-		unload();
-	}
-
 protected:
-	virtual void *allocSegment(size_t boundary, size_t size) const {
-		return memalign(boundary, size);
-	}
-
-	virtual void freeSegment(void *segment) const {
-		free(segment);
-	}
 
 	virtual void flushDataCache(void *, uint32) const {
 		FlushCache(0);
@@ -53,19 +37,8 @@ protected:
 	}
 };
 
-class PS2Plugin : public ELFPlugin {
-public:
-	PS2Plugin(const Common::String &filename) :
-		ELFPlugin(filename) {
-	}
-
-	virtual DLObject *makeDLObject() {
-		return new PS2DLObject();
-	}
-};
-
 Plugin *PS2PluginProvider::createPlugin(const Common::FSNode &node) const {
-	return new PS2Plugin(node.getPath());
+	return new TemplatedELFPlugin<PS2DLObject>(node.getPath());
 }
 
 #endif // defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)

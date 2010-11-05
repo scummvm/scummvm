@@ -84,8 +84,6 @@ protected:
 	virtual bool relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) = 0;
 
 	// platform specific
-	virtual void *allocSegment(size_t boundary, size_t size) const = 0;
-	virtual void freeSegment(void *segment) const = 0;
 	virtual void flushDataCache(void *ptr, uint32 len) const = 0;
 
 public:
@@ -95,7 +93,7 @@ public:
 	bool open(const char *path);
 	bool close();
 	void *symbol(const char *name);
-	void discard_symtab();
+	void discardSymtab();
 };
 
 #endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) */

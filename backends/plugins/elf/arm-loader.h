@@ -36,11 +36,6 @@ class ARMDLObject : public DLObject {
 protected:
 	virtual bool relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment);
 	virtual bool relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
-
-public:
-	ARMDLObject() :
-		DLObject() {
-	}
 };
 
 #endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(ARM_TARGET) */

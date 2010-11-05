@@ -36,11 +36,6 @@ class PPCDLObject : public DLObject {
 protected:
 	virtual bool relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment);
 	virtual bool relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
-
-public:
-	PPCDLObject() :
-		DLObject() {
-	}
 };
 
 #endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(PPC_TARGET) */

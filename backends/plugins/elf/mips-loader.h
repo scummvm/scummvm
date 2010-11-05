@@ -45,11 +45,16 @@ protected:
 	virtual bool loadSegment(Elf32_Phdr *phdr);
 	virtual void unload();
 
+	void freeShortsSegment();
+
 public:
 	MIPSDLObject() :
 		DLObject() {
 		_shortsSegment = NULL;
 		_gpVal = 0;
+	}
+	~MIPSDLObject() {
+		freeShortsSegment();
 	}
 };
 

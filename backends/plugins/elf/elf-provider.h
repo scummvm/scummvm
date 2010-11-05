@@ -71,6 +71,19 @@ public:
 	void unloadPlugin();
 };
 
+template<class T>
+class TemplatedELFPlugin : public ELFPlugin {
+public:
+	TemplatedELFPlugin(const Common::String &filename) :
+		ELFPlugin(filename) {
+	}
+
+	virtual DLObject *makeDLObject() {
+		return new T();
+	}
+};
+
+
 class ELFPluginProvider : public FilePluginProvider {
 protected:
 	virtual Plugin *createPlugin(const Common::FSNode &node) const = 0;
