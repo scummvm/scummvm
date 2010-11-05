@@ -773,13 +773,13 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		if (charPtr)
 			drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->bytesPerPixel);
 		else if (_vm->_cjkFont)
-			_vm->_cjkFont->drawChar(dst, chr, vs->pitch, vs->bytesPerPixel, _color, _shadowColor);
+			_vm->_cjkFont->drawChar(vs, chr, _left, drawTop, _color, _shadowColor);
 	} else {
 		dst = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier);
 		if (charPtr)
 			drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.bytesPerPixel, (_vm->_textSurfaceMultiplier == 2 && !is2byte));
 		else if (_vm->_cjkFont)
-			_vm->_cjkFont->drawChar(dst, chr, _vm->_textSurface.pitch, vs->bytesPerPixel, _color, _shadowColor);
+			_vm->_cjkFont->drawChar(_vm->_textSurface, chr, _left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier, _color, _shadowColor);
 		if (is2byte)
 			origWidth /= _vm->_textSurfaceMultiplier;
 	}
@@ -799,17 +799,14 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		_str.bottom = _top + height / _vm->_textSurfaceMultiplier;
 }
 
-void CharsetRendererV3::drawChar(int chr, const Graphics::Surface &s, int x, int y) {
+void CharsetRendererV3::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 	const byte *charPtr;
 	byte *dst;
 	int width, height;
 	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
 	if (is2byte) {
 		if (_vm->_game.platform == Common::kPlatformFMTowns) {
-			width = _vm->_cjkFont->getCharWidth(chr);
-			height = _vm->_cjkFont->getFontHeight();
-			dst = (byte *)s.pixels + y * s.pitch + x;
-			_vm->_cjkFont->drawChar(dst, chr, s.pitch, s.bytesPerPixel, _color, _shadowColor);
+			_vm->_cjkFont->drawChar(s, chr, x * _vm->_textSurfaceMultiplier, y * _vm->_textSurfaceMultiplier, _color, _shadowColor);
 			return;
 		} else {
 			charPtr = _vm->get2byteCharPtr(chr);
@@ -1079,9 +1076,9 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 			drawTop = _top - _vm->_screenTop;
 		}
 
-		if (!charPtr && _vm->_cjkFont)
-			_vm->_cjkFont->drawChar(dstPtr, _vm->_cjkChar, dstSurface.pitch, dstSurface.bytesPerPixel, _vm->_townsCharsetColorMap[1], _shadowColor);
-		else if (is2byte) {
+		if (!charPtr && _vm->_cjkFont) {
+			_vm->_cjkFont->drawChar(dstSurface, _vm->_cjkChar, _left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop) * _vm->_textSurfaceMultiplier, _vm->_townsCharsetColorMap[1], _shadowColor);
+		} else if (is2byte) {
 			drawBits1(dstSurface, dstPtr, charPtr, drawTop, origWidth, origHeight, dstSurface.bytesPerPixel);
 		} else {
 			drawBitsN(dstSurface, dstPtr, charPtr, *_fontPtr, drawTop, origWidth, origHeight, _vm->_textSurfaceMultiplier == 2);
@@ -1124,7 +1121,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 	}
 }
 
-void CharsetRendererClassic::drawChar(int chr, const Graphics::Surface &s, int x, int y) {
+void CharsetRendererClassic::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 	const byte *charPtr;
 	byte *dst;
 	int width, height;
@@ -1133,10 +1130,7 @@ void CharsetRendererClassic::drawChar(int chr, const Graphics::Surface &s, int x
 	if (is2byte) {
 		enableShadow(true);
 		if (_vm->_game.platform == Common::kPlatformFMTowns) {
-			width = _vm->_cjkFont->getCharWidth(chr);
-			height = _vm->_cjkFont->getFontHeight();
-			dst = (byte *)s.pixels + y * s.pitch + x;
-			_vm->_cjkFont->drawChar(dst, chr, s.pitch, s.bytesPerPixel, _color, _shadowColor);
+			_vm->_cjkFont->drawChar(s, chr, x * _vm->_textSurfaceMultiplier, y * _vm->_textSurfaceMultiplier, _color, _shadowColor);
 			return;
 		} else {
 			charPtr = _vm->get2byteCharPtr(chr);
@@ -1525,7 +1519,7 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 		_str.bottom = _top + height;
 }
 
-void CharsetRendererNES::drawChar(int chr, const Graphics::Surface &s, int x, int y) {
+void CharsetRendererNES::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 	byte *charPtr, *dst;
 	int width, height;
 

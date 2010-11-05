@@ -1025,7 +1025,7 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns && _game.id == GID_MONKEY && vs->number == kVerbVirtScreen && rect.bottom <= 154)
-		rect.right = 320;
+		rect.right = 319;
 #endif
 
 	markRectAsDirty(vs->number, rect, USAGE_BIT_RESTORED);

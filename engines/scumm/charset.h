@@ -75,7 +75,7 @@ public:
 	virtual ~CharsetRenderer();
 
 	virtual void printChar(int chr, bool ignoreCharsetMask) = 0;
-	virtual void drawChar(int chr, const Graphics::Surface &s, int x, int y) {}
+	virtual void drawChar(int chr, Graphics::Surface &s, int x, int y) {}
 
 	int getStringWidth(int a, const byte *str);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
@@ -134,7 +134,7 @@ public:
 	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 
 	void printChar(int chr, bool ignoreCharsetMask);
-	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
+	void drawChar(int chr, Graphics::Surface &s, int x, int y);
 
 	int getCharWidth(uint16 chr);
 
@@ -155,7 +155,7 @@ public:
 
 	void setCurID(int32 id) {}
 	void printChar(int chr, bool ignoreCharsetMask);
-	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
+	void drawChar(int chr, Graphics::Surface &s, int x, int y);
 
 	int getFontHeight() { return 8; }
 	int getCharWidth(uint16 chr) { return 8; }
@@ -169,7 +169,7 @@ public:
 	CharsetRendererV3(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 
 	void printChar(int chr, bool ignoreCharsetMask);
-	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
+	void drawChar(int chr, Graphics::Surface &s, int x, int y);
 	void setCurID(int32 id);
 	void setColor(byte color);
 	int getCharWidth(uint16 chr);

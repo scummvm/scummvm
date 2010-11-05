@@ -138,9 +138,12 @@ const uint8 *FontSJISBase::flipCharacter(const uint8 *glyph, const int w) const 
 }
 #endif
 
-void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const {
+void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW, int maxH) const {
 	const uint8 *glyphSource = 0;
 	int width = 0, height = 0;
+	int outlineExtraWidth = 2, outlineExtraHeight = 2;
+	int outlineXOffset = 0, outlineYOffset = 0;
+
 	if (is8x16(ch)) {
 		glyphSource = getCharData8x16(ch);
 		width = 8;
@@ -150,6 +153,21 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 		width = 16;
 		height = 16;
 	}
+
+	if (maxW != -1 && maxW < width) {
+		width = maxW;
+		outlineExtraWidth = 0;
+		outlineXOffset = 1;
+	}
+	
+	if (maxH != -1 && maxH < height) {
+		height = maxH;
+		outlineExtraHeight = 0;
+		outlineYOffset = 1;
+	}
+
+	if (width <= 0 || height <= 0)
+		return;
 
 	if (!glyphSource) {
 		warning("FontSJISBase::drawChar: Font does not offer data for %02X %02X", ch & 0xFF, ch >> 8);
@@ -169,15 +187,15 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 
 	if (bpp == 1) {
 		if (_drawMode == kOutlineMode) {
-			blitCharacter<uint8>(outline, width + 2, height + 2, (uint8 *)dst, pitch, c2);
-			blitCharacter<uint8>(glyphSource, width, height, (uint8 *)dst + pitch + 1, pitch, c1);
+			blitCharacter<uint8>(outline, width + outlineExtraWidth, height + outlineExtraHeight, (uint8 *)dst, pitch, c2);
+			blitCharacter<uint8>(glyphSource, width - outlineXOffset, height - outlineYOffset, (uint8 *)dst + pitch + 1, pitch, c1);
 		} else {
 			blitCharacter<uint8>(glyphSource, width, height, (uint8 *)dst, pitch, c1, c2);
 		}
 	} else if (bpp == 2) {
 		if (_drawMode == kOutlineMode) {
-			blitCharacter<uint16>(outline, width + 2, height + 2, (uint8 *)dst, pitch, c2);
-			blitCharacter<uint16>(glyphSource, width, height, (uint8 *)dst + pitch + 2, pitch, c1);
+			blitCharacter<uint16>(outline, width + outlineExtraWidth, height + outlineExtraHeight, (uint8 *)dst, pitch, c2);
+			blitCharacter<uint16>(glyphSource, width - outlineXOffset, height - outlineYOffset, (uint8 *)dst + pitch + 2, pitch, c1);
 		} else {
 			blitCharacter<uint16>(glyphSource, width, height, (uint8 *)dst, pitch, c1, c2);
 		}

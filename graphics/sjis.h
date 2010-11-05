@@ -115,13 +115,9 @@ public:
 
 	/**
 	 * Draws a SJIS encoded character on the given surface.
-	 *
-	 * TODO: Currently there is no assurance, that this method will only draw within
-	 * the surface boundaries. Thus the caller has to assure the glyph will fit at
-	 * the specified position.
 	 */
 	void drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 c1, uint32 c2) const {
-		drawChar(dst.getBasePtr(x, y), ch, c1, c2, dst.pitch, dst.bytesPerPixel);
+		drawChar(dst.getBasePtr(x, y), ch, dst.pitch, dst.bytesPerPixel, c1, c2, dst.w - x, dst.h - y);
 	}
 
 	/**
@@ -133,8 +129,10 @@ public:
 	 * @param bpp   bytes per pixel of the destination buffer
 	 * @param c1    forground color
 	 * @param c2    outline color
+	 * @param maxW  max draw width (to ensure that character drawing takes place within surface boundaries)
+	 * @param maxH  max draw height (to ensure that character drawing takes place within surface boundaries)
 	 */
-	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const = 0;
+	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW = -1, int maxH = -1) const = 0;
 };
 
 /**
@@ -154,7 +152,7 @@ public:
 
 	uint getCharWidth(uint16 ch) const;
 
-	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const;
+	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW = -1, int maxH = -1) const;
 private:
 	template<typename Color>
 	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c1, Color c2 = 0) const;
