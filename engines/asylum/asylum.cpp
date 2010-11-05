@@ -311,6 +311,10 @@ void AsylumEngine::processDelayedEvents() {
 	// XXX Flag 183 indicates whether the actionlist is currently
 	// processing
 	if (sceneIdx >= 0 && isGameFlagNotSet(kGameFlagScriptProcessing)) {
+
+		// Reset delayed scene
+		_scene->actions()->setDelayedSceneIndex(-1);
+
 		_sound->stopMusic();
 		_sound->stopAllSounds();
 
@@ -319,8 +323,6 @@ void AsylumEngine::processDelayedEvents() {
 
 		_scene = new Scene(sceneIdx, this);
 		_scene->enterScene();
-
-		_scene->actions()->setDelayedSceneIndex(-1);
 	}
 }
 
