@@ -280,12 +280,17 @@ bool Console::cmdChangeScene(int32 argc, const char **argv) {
 		return true;
 	}
 
-	if (atoi(argv[1]) - 4 < 1 || atoi(argv[1]) - 4 >= 15) {
-		DebugPrintf("[Error] Invalid world: %d\n", atoi(argv[1]));
+	int index = atoi(argv[1]);
+
+	// Check if the scene exists
+	char filename[20];
+	sprintf(filename, "scn.%03d", index);
+	if (!SearchMan.hasFile(filename)) {
+		DebugPrintf("[Error] Scene %d does not exists\n", index);
 		return true;
 	}
 
-	_vm->scene()->actions()->setDelayedSceneIndex(atoi(argv[1]));
+	_vm->scene()->actions()->setDelayedSceneIndex(index);
 	// FIXME push the script index into the script queue
 	// XXX is this right or should it be ws->actionListIdx???
 	//_vm->scene()->actions()->setScriptByIndex(0);
