@@ -443,6 +443,8 @@ void Route::processRoute() {
 					turnedFl = true;
 				}
 				break;
+			default:
+				break;
 			}
 		}
 	} else if (_vm->_hero->vx == 0 && _vm->_hero->vy == 0) {
