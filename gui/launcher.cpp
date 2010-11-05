@@ -342,7 +342,7 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("render_mode", _domain) ||
 		ConfMan.hasKey("fullscreen", _domain) ||
 		ConfMan.hasKey("aspect_ratio", _domain) ||
-		ConfMan.hasKey("sci_undither", _domain);
+		ConfMan.hasKey("disable_dithering", _domain);
 	_globalGraphicsOverride->setState(e);
 
 	e = ConfMan.hasKey("music_driver", _domain) ||

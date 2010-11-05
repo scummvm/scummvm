@@ -216,7 +216,7 @@
 			<widget name = 'grFullscreenCheckbox'
 					type = 'Checkbox'
 			/>
-			<widget name = 'grUnditherCheckbox'
+			<widget name = 'grDisableDitheringCheckbox'
 					type = 'Checkbox'
 			/>
 		</layout>

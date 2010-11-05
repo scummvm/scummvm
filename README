@@ -1926,92 +1926,92 @@ An example config file looks as follows:
 
 The following keywords are recognized:
 
-    path            string   The path to where a game's data files are
-    autosave_period number   The seconds between autosaving (default: 300)
-    save_slot       number   The savegame number to load on startup.
-    savepath        string   The path to where a game will store its
-                             savegames.
-    versioninfo     string   The version of the ScummVM that created the
-                             configuration file.
+    path               string   The path to where a game's data files are
+    autosave_period    number   The seconds between autosaving (default: 300)
+    save_slot          number   The savegame number to load on startup.
+    savepath           string   The path to where a game will store its
+                                savegames.
+    versioninfo        string   The version of the ScummVM that created the
+                                configuration file.
 
-    gameid          string   The real id of a game. Useful if you have
-                             several versions of the same game, and want
-                             different aliases for them. See the example.
-    description     string   The description of the game as it will appear
-                             in the launcher.
+    gameid             string   The real id of a game. Useful if you have
+                                several versions of the same game, and want
+                                different aliases for them. See the example.
+    description        string   The description of the game as it will appear
+                                in the launcher.
 
-    language        string   Specify language (en, us, de, fr, it, pt, es,
-                             jp, zh, kr, se, gb, hb, cz, ru)
-    speech_mute     bool     If true, speech is muted
-    subtitles       bool     Set to true to enable subtitles.
-    talkspeed       number   Text delay in SCUMM games, or text speed in
-                             other games.
+    language           string   Specify language (en, us, de, fr, it, pt, es,
+                                jp, zh, kr, se, gb, hb, cz, ru)
+    speech_mute        bool     If true, speech is muted
+    subtitles          bool     Set to true to enable subtitles.
+    talkspeed          number   Text delay in SCUMM games, or text speed in
+                                other games.
 
-    fullscreen      bool     Fullscreen mode
-    aspect_ratio    bool     Enable aspect ratio correction
-    sci_undither    bool     Remove dithering artifacts from early SCI EGA games
-    gfx_mode        string   Graphics mode (normal, 2x, 3x, 2xsai,
-                             super2xsai, supereagle, advmame2x, advmame3x,
-                             hq2x, hq3x, tv2x, dotmatrix)
+    fullscreen         bool     Fullscreen mode
+    aspect_ratio       bool     Enable aspect ratio correction
+    disable_dithering  bool     Remove dithering artifacts from EGA games
+    gfx_mode           string   Graphics mode (normal, 2x, 3x, 2xsai,
+                                super2xsai, supereagle, advmame2x, advmame3x,
+                                hq2x, hq3x, tv2x, dotmatrix)
 
-    confirm_exit    bool     Ask for confirmation by the user before quitting
-                             (SDL backend only).
-    cdrom           number   Number of CD-ROM unit to use for audio. If
-                             negative, don't even try to access the CD-ROM.
-    joystick_num    number   Number of joystick device to use for input
-    music_driver    string   The music engine to use.
-    opl_driver      string   The AdLib (OPL) emulator to use.
-    output_rate     number   The output sample rate to use, in Hz. Sensible
-                             values are 11025, 22050 and 44100.
-    alsa_port       string   Port to use for output when using the
-                             ALSA music driver.
-    music_volume    number   The music volume setting (0-255)
-    multi_midi      bool     If true, enable combination AdLib and native
-                             MIDI.
-    soundfont       string   The SoundFont to use for MIDI playback. (Only
-                             supported by some MIDI drivers.)
-    native_mt32     bool     If true, disable GM emulation and assume that
-                             there is a true Roland MT-32 available.
-    enable_gs       bool     If true, enable Roland GS-specific features to
-                             enhance GM emulation. If native_mt32 is also
-                             true, the GS device will select an MT-32 map
-                             to play the correct instruments.
-    sfx_volume      number   The sfx volume setting (0-255)
-    tempo           number   The music tempo (50-200) (default: 100)
-    speech_volume   number   The speech volume setting (0-255)
-    midi_gain       number   The MIDI gain (0-1000) (default: 100) (Only
-                             supported by some MIDI drivers.)
+    confirm_exit       bool     Ask for confirmation by the user before quitting
+                                (SDL backend only).
+    cdrom              number   Number of CD-ROM unit to use for audio. If
+                                negative, don't even try to access the CD-ROM.
+    joystick_num       number   Number of joystick device to use for input
+    music_driver       string   The music engine to use.
+    opl_driver         string   The AdLib (OPL) emulator to use.
+    output_rate        number   The output sample rate to use, in Hz. Sensible
+                                values are 11025, 22050 and 44100.
+    alsa_port          string   Port to use for output when using the
+                                ALSA music driver.
+    music_volume       number   The music volume setting (0-255)
+    multi_midi         bool     If true, enable combination AdLib and native
+                                MIDI.
+    soundfont          string   The SoundFont to use for MIDI playback. (Only
+                                supported by some MIDI drivers.)
+    native_mt32        bool     If true, disable GM emulation and assume that
+                                there is a true Roland MT-32 available.
+    enable_gs          bool     If true, enable Roland GS-specific features to
+                                enhance GM emulation. If native_mt32 is also
+                                true, the GS device will select an MT-32 map
+                                to play the correct instruments.
+    sfx_volume         number   The sfx volume setting (0-255)
+    tempo              number   The music tempo (50-200) (default: 100)
+    speech_volume      number   The speech volume setting (0-255)
+    midi_gain          number   The MIDI gain (0-1000) (default: 100) (Only
+                                supported by some MIDI drivers.)
 
-    copy_protection bool     Enable copy protection in certain games, in those
-                             cases where ScummVM disables it by default.
-    demo_mode       bool     Start demo in Maniac Mansion
-    alt_intro       bool     Use alternative intro for CD versions of
-                             Beneath a Steel Sky and Flight of the Amazon
-                             Queen
+    copy_protection    bool     Enable copy protection in certain games, in
+                                those cases where ScummVM disables it by default.
+    demo_mode          bool     Start demo in Maniac Mansion
+    alt_intro          bool     Use alternative intro for CD versions of
+                                Beneath a Steel Sky and Flight of the Amazon
+                                Queen
 
-    boot_param      number   Pass this number to the boot script
+    boot_param         number   Pass this number to the boot script
 
 Broken Sword II adds the following non-standard keywords:
 
-    gfx_details     number   Graphics details setting (0-3)
-    music_mute      bool     If true, music is muted
-    object_labels   bool     If true, object labels are enabled
-    reverse_stereo  bool     If true, stereo channels are reversed
-    sfx_mute        bool     If true, sound effects are muted
+    gfx_details        number   Graphics details setting (0-3)
+    music_mute         bool     If true, music is muted
+    object_labels      bool     If true, object labels are enabled
+    reverse_stereo     bool     If true, stereo channels are reversed
+    sfx_mute           bool     If true, sound effects are muted
 
 Flight of the Amazon Queen adds the following non-standard keywords:
 
-    music_mute      bool     If true, music is muted
-    sfx_mute        bool     If true, sound effects are muted
+    music_mute         bool     If true, music is muted
+    sfx_mute           bool     If true, sound effects are muted
 
 Simon the Sorcerer 1 and 2 add the following non-standard keywords:
 
-    music_mute      bool     If true, music is muted
-    sfx_mute        bool     If true, sound effects are muted
+    music_mute         bool     If true, music is muted
+    sfx_mute           bool     If true, sound effects are muted
 
 The Legend of Kyrandia adds the following non-standard keyword:
 
-    walkspeed       int      The walk speed (0-4)
+    walkspeed          int      The walk speed (0-4)
 
 
 9.0) Compiling:

@@ -180,7 +180,6 @@ Common::Error SciEngine::run() {
 	g_eventRec.registerRandomSource(_rng, "sci");
 
 	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("sci_undither", "true");
 	ConfMan.registerDefault("sci_originalsaveload", "false");
 	ConfMan.registerDefault("native_fb01", "false");
 
@@ -210,7 +209,7 @@ Common::Error SciEngine::run() {
 
 	// Initialize the game screen
 	_gfxScreen = new GfxScreen(_resMan);
-	_gfxScreen->debugUnditherSetState(ConfMan.getBool("sci_undither"));
+	_gfxScreen->debugUnditherSetState(ConfMan.getBool("disable_dithering"));
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
