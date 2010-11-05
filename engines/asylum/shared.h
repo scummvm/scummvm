@@ -320,8 +320,7 @@ enum ObjectFlag {
 	kObjectFlag10000     = 0x10000,
 	kObjectFlag10E38     = 0x10E38,
 	kObjectFlag20000     = 0x20000,
-	kObjectFlag40000     = 0x40000,
-	kObjectFlagDisabled  = 0xFFFFFFFF
+	kObjectFlag40000     = 0x40000
 };
 
 //////////////////////////////////////////////////////////////////////////
