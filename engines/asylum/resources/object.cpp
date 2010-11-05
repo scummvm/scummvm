@@ -390,7 +390,7 @@ void Object::playSounds() {
 		}
 	}
 
-	//warning("[Object::playSounds] not implemented!");
+	setVolume();
 }
 
 void Object::updateSoundItems() {
@@ -421,6 +421,21 @@ void Object::stopAllSounds() {
 			getSound()->stopSound(_soundItems[i].resourceId);
 			_soundItems[i].resourceId = kResourceNone;
 		}
+}
+
+void Object::setVolume() {
+	if (!_soundResourceId || !getSound()->isPlaying(_soundResourceId))
+		return;
+
+	GraphicResource *resource = new GraphicResource(getScene()->getResourcePack(), _resourceId);
+	GraphicFrame *frame = resource->getFrame(_frameIndex);
+
+	// Compute volume
+	int32 volume = Config.voiceVolume + getSound()->calculateVolumeAdjustement((frame->getWidth() >> 1) + x, (frame->getHeight() >> 1) + y, _field_6A4, 0);
+	if (volume < -10000)
+		volume = -10000;
+
+	getSound()->setVolume(_soundResourceId, volume);
 }
 
 int32 Object::getRandomResourceId() {
