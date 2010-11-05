@@ -219,8 +219,8 @@ void Actor::update() {
 				if (_frameIndex <= _frameCount - 1) {
 					++_frameIndex;
 				} else {
-					setVisible(false);
-					getScene()->getActor(_index + 9)->setVisible(false);
+					hide();
+					getScene()->getActor(_index + 9)->hide();
 				}
 			}
 
@@ -238,7 +238,7 @@ void Actor::update() {
 						Actor *player = getScene()->getActor();
 
 						getScene()->speech()->play(453);
-						setVisible(false);
+						hide();
 
 						player->updateStatus(kActorStatus3);
 						player->setResourceId(player->getResourcesId(35));
@@ -288,7 +288,7 @@ void Actor::update() {
 				} else {
 					_vm->clearGameFlag(kGameFlag239);
 					getScene()->getActor(10)->updateStatus(kActorStatus14);
-					setVisible(false);
+					hide();
 					_vm->setGameFlag(kGameFlag238);
 
 					// Queue script
@@ -516,8 +516,8 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			getScene()->setPlayerActorIndex(0);
 
 			// Hide this actor and the show the other one
-			setVisible(false);
-			actor->setVisible(true);
+			hide();
+			actor->show();
 
 			_vm->clearGameFlag(kGameFlag279);
 

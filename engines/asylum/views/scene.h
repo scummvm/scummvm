@@ -142,7 +142,7 @@ public:
 	 * WorldStats actor list. Default parameter just
 	 * gets the instance associated with _playerActorIdx
 	 */
-	Actor* getActor(ActorIndex index = kActorNone);
+	Actor* getActor(ActorIndex index = kActorInvalid);
 
 	/** .text:00407260
 	 * Check the actor at actorIndex to see if the currently loaded

@@ -118,11 +118,14 @@ public:
 	bool isVisible() { return flags & kActorFlagVisible; }
 
 	/**
-	 * Sets actor visibility
-	 *
-	 * @param value true to set to visible, false to set to hidden.
+	 * Shows this actor.
 	 */
-	void setVisible(bool value);
+	void show() { setVisible(true); }
+
+	/**
+	 * Hides this actor.
+	 */
+	void hide() { setVisible(false); }
 
 	/////////////////////////////////////////////////////////////////////////
 	// Drawing & update
@@ -328,6 +331,17 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Misc
 	//////////////////////////////////////////////////////////////////////////
+
+ 	/**
+	 * Sets actor visibility
+	 *
+	 * @param value true to set to visible, false to set to hidden.
+	 */
+	void setVisible(bool value);
+
+	/**
+	 * Sets the volume.
+	 */
 	void setVolume();
 
 	//////////////////////////////////////////////////////////////////////////

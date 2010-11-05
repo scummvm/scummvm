@@ -25,6 +25,7 @@
 
 #include "asylum/resources/special.h"
 
+#include "asylum/resources/actionlist.h"
 #include "asylum/resources/actor.h"
 #include "asylum/resources/object.h"
 #include "asylum/resources/encounters.h"
@@ -107,7 +108,7 @@ void Special::chapter1(Object *object, ActorIndex actorIndex) {
 	// Play chapter sound
 	playChapterSound(object, actorIndex);
 
-	if (actorIndex == kActorNone) {
+	if (actorIndex == kActorInvalid) {
 		switch (object->getId()) {
 		default:
 			break;
@@ -132,7 +133,7 @@ void Special::chapter1(Object *object, ActorIndex actorIndex) {
 
 void Special::chapter2(Object *object, ActorIndex actorIndex) {
 	// Check objects
-	if (actorIndex == kActorNone) {
+	if (actorIndex == kActorInvalid) {
 		switch (object->getId()) {
 		default:
 			break;
@@ -263,7 +264,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 
 			_vm->setGameFlag(kGameFlag219);
 
-			actor->setVisible(false);
+			actor->hide();
 		}
 		break;
 	}
@@ -280,7 +281,7 @@ void Special::chapter4(Object *object, ActorIndex actorIndex) {
 void Special::chapter5(Object *object, ActorIndex actorIndex) {
 	playChapterSound(object, actorIndex);
 
-	if (actorIndex == kActorNone) {
+	if (actorIndex == kActorInvalid) {
 		switch (object->getId()) {
 		default:
 			break;
@@ -310,7 +311,99 @@ void Special::chapter6(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::chapter7(Object *object, ActorIndex actorIndex) {
+	playChapterSound(object, actorIndex);
 
+	if (actorIndex == kActorInvalid) {
+		switch (object->getId()) {
+		default:
+			break;
+
+		case kObjectGlobe:
+			if (!getSound()->isPlaying(getSound()->soundResourceId)) {
+				_vm->clearGameFlag(kGameFlag1009);
+				getCursor()->show();
+			}
+			break;
+
+		case kObjectFreezerHallInterior:
+			Actor *player = getScene()->getActor();
+
+			if (_vm->isGameFlagSet(kGameFlag1021)) {
+				if (player->getReaction(0)) {
+
+					if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
+						getSound()->playSound(kResourceSound_80120002);
+						player->updateStatus(kActorStatusEnabled);
+					} else {
+						getSound()->playSound(kResourceSound_80120005);
+						player->updateStatus(kActorStatus6);
+					}
+
+					_vm->setGameFlag(kGameFlag1023);
+				} else {
+					_vm->setGameFlag(kGameFlag1022);
+				}
+
+				_vm->clearGameFlag(kGameFlag1021);
+			}
+
+			if (_vm->isGameFlagSet(kGameFlag1023)) {
+				if (player->getField638()) {
+					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(player->getField638() == 3 ? 2447 : 2448)]->scriptIndex,
+					                         getScene()->getPlayerActorIndex());
+					_vm->clearGameFlag(kGameFlag1023);
+				} else if (player->getStatus() != kActorStatus6) {
+					_vm->clearGameFlag(kGameFlag1023);
+					_vm->setGameFlag(kGameFlag1022);
+				}
+			}
+
+			if (_vm->isGameFlagSet(kGameFlag1022)) {
+				_vm->clearGameFlag(kGameFlag1022);
+				getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2445)]->scriptIndex,
+				                         getScene()->getPlayerActorIndex());
+			}
+			break;
+		}
+	} else {
+		if (_vm->isGameFlagSet(kGameFlag1108))
+			return;
+
+		Actor *actor0 = getScene()->getActor(0);
+		Actor *actor1 = getScene()->getActor(1);
+		Actor *actor2 = getScene()->getActor(2);
+
+		switch (actorIndex) {
+		default:
+			break;
+
+		case 1:
+			if (actor0->getDirection() < 2 || actor0->getDirection() == 7) {
+				actor1->hide();
+				actor2->show();
+			} else if (actor0->getDirection() == 2 || actor0->getDirection() == 3) {
+				actor1->x1 = actor0->x1;
+				actor1->y1 = actor0->y1 - 15;
+			} else if (actor0->getDirection() == 5 || actor0->getDirection() == 6) {
+				actor1->x1 = actor0->x1 + 20;
+				actor1->y1 = actor0->y1 - 15;
+			} else {
+				actor1->x1 = actor0->x1 + 5;
+				actor1->y1 = actor0->y1 - 10;
+			}
+			break;
+
+		case 2:
+			if (actor0->getDirection() <= 2 || actor0->getDirection() >= 7) {
+				actor2->x1 = actor0->x1 + 10;
+				actor2->y1 = actor0->y1 - 10;
+			} else {
+				actor2->hide();
+				actor1->show();
+			}
+			break;
+		}
+	}
 }
 
 void Special::chapter8(Object *object, ActorIndex actorIndex) {
@@ -409,10 +502,10 @@ void Special::playSoundChapter8(Object *object, ActorIndex actorIndex) {
 // Helpers
 //////////////////////////////////////////////////////////////////////////
 ResourceId Special::getResourceId(Object *object, ActorIndex actorIndex) {
-	if (actorIndex == kActorNone && object == NULL)
+	if (actorIndex == kActorInvalid && object == NULL)
 		error("[Special::getResourceId] Both arguments cannot be NULL/empty!");
 
-	return (actorIndex == kActorNone) ? object->getSoundResourceId() : getScene()->getActor(actorIndex)->getSoundResourceId();
+	return (actorIndex == kActorInvalid) ? object->getSoundResourceId() : getScene()->getActor(actorIndex)->getSoundResourceId();
 }
 
 void Special::checkObject(Object *object, GameFlag flagToSet, GameFlag flagToClear, ObjectId objectId) {
@@ -420,7 +513,7 @@ void Special::checkObject(Object *object, GameFlag flagToSet, GameFlag flagToCle
 		_vm->setGameFlag(flagToSet);
 		_vm->clearGameFlag(flagToClear);
 
-		if (objectId != kActorNone)
+		if (objectId != kObjectNone)
 			getWorld()->getObjectById(objectId)->setFrameIndex(0);
 		else
 			object->setFrameIndex(0);

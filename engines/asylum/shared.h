@@ -54,6 +54,11 @@ enum GameFlag {
 	kGameFlag455                  = 455,
 	kGameFlag556                  = 556,
 	kGameFlagFinishGame           = 901,
+	kGameFlag1009                 = 1009,
+	kGameFlag1021                 = 1021,
+	kGameFlag1022                 = 1022,
+	kGameFlag1023                 = 1023,
+	kGameFlag1108                 = 1108,
 	kGameFlag1131                 = 1131,
 	kGameFlag1137                 = 1137
 };
@@ -84,7 +89,10 @@ enum ResourceIdEnum {
 	kResourceMusic_80020000  = 0x80020000,
 	kResourceMusic_80020001  = 0x80020001,
 	kResourceSound_80030203  = 0x80030203,
+	// Base resource 0x80120000
 	kResourceSound_80120001  = 0x80120001,
+	kResourceSound_80120002  = 0x80120002,
+	kResourceSound_80120005  = 0x80120005,
 	kResourceSound_80120006  = 0x80120006,
 	kResourceSoundIntro      = 0x80120007,
 	kResourceMusic_FFFFFD66  = 0xFFFFFD66
@@ -110,7 +118,7 @@ enum ActionType {
 typedef int ActorIndex;
 
 enum ActorIndexes {
-	kActorNone = -1,
+	kActorInvalid = -1,
 	// TODO: check if the names match the actor type
 	kActorMax     = 0,
 	kActorSarah   = 1,
@@ -258,6 +266,8 @@ enum ObjectId {
 	kObjectAngelFlares             = 112,
 	kObjectGuyFalls                = 434,
 	kObjectOpeningGate             = 485,
+	kObjectGlobe                   = 1261,
+	kObjectFreezerHallInterior     = 1337,
 	kObjectNPC033StartEnc          = 1338,
 	kObjectNPC033GetBook           = 1343,
 	kObjectCrow1FlysAway           = 1485,
@@ -311,6 +321,7 @@ enum ObjectFlag {
 #define getSound()     _vm->sound()
 #define getScene()     _vm->scene()
 #define getScreen()    _vm->screen()
+#define getScript()    _vm->scene()->actions()
 #define getSpeech()    _vm->scene()->speech()
 #define getWorld()     _vm->scene()->worldstats()
 
