@@ -466,12 +466,43 @@ bool Object::checkFlags() {
 	return (flags & kObjectFlagEnabled) && (flags & kObjectFlag8 || flags & kObjectFlag10000);
 }
 
-Common::String Object::toString() {
+Common::String Object::toString(bool shortString) {
 	Common::String output;
 
 	debugC(kDebugLevelObjects, "kObject%s           = %d,", _name, _id);
 
 	output += Common::String::format("Object %d: %s\n", _id, _name);
+
+	if (!shortString) {
+		output += Common::String::format("    resourceId:      %u (0x%X)\n", _resourceId, _resourceId);
+		output += Common::String::format("    x:               %d\n", x);
+		output += Common::String::format("    y:               %d\n", y);
+		output += Common::String::format("    flags:           %d\n", flags);
+		output += Common::String::format("    actionType:      %d\n", actionType);
+		output += Common::String::format("    boundingRect:    top[%d], left[%d], right[%d], bottom[%d]\n", _boundingRect.top, _boundingRect.left, _boundingRect.right, _boundingRect.bottom);
+		output += Common::String::format("    field_20:        %d\n", _field_20);
+		output += Common::String::format("    frameIndex:      %u\n", _frameIndex);
+		output += Common::String::format("    frameCount:      %u\n", _frameCount);
+		output += Common::String::format("    field_2C:        %d\n", _field_2C);
+		output += Common::String::format("    field_30:        %d\n", _field_30);
+		output += Common::String::format("    field_34:        %d\n", _field_34);
+		output += Common::String::format("    field_3C:        %d\n", _field_3C);
+		output += Common::String::format("    rect:            top[%d], left[%d], right[%d], bottom[%d]\n", _rect.top, _rect.left, _rect.right, _rect.bottom);
+		output += Common::String::format("    polygonIndex:    %d\n", _polygonIndex);
+		output += Common::String::format("    field_B4:        %d\n", _field_B4);
+		output += Common::String::format("    tickCount:       %d\n", _tickCount);
+		output += Common::String::format("    tickCount2:      %d\n", _tickCount2);
+		output += Common::String::format("    field_C0:        %d\n", _field_C0);
+		output += Common::String::format("    priority:        %d\n", _priority);
+		output += Common::String::format("    actionListIdx:   %d\n", _actionListIdx);
+		output += Common::String::format("    field_67C:       %d\n", _field_67C);
+		output += Common::String::format("    soundX:          %d\n", _soundX);
+		output += Common::String::format("    soundY:          %d\n", _soundY);
+		output += Common::String::format("    field_688:       %d\n", _field_688);
+		output += Common::String::format("    soundResourceId: %d\n", _soundResourceId);
+		output += Common::String::format("    field_6A4:       %d\n", _field_6A4);
+
+	}
 
 	return output;
 }

@@ -218,25 +218,38 @@ bool Console::cmdListFlags(int32 argc, const char **argv) {
 }
 
 bool Console::cmdListObjects(int32 argc, const char **argv) {
-	if (argc != 1 && argc != 2) {
-		DebugPrintf("Syntax: %s <index> (use nothing for all)\n", argv[0]);
+	if (argc != 1 && argc != 3) {
+		DebugPrintf("Syntax: %s [id|idx] <value> (use nothing for all)\n", argv[0]);
 		return true;
 	}
 
-	if (argc == 1) {
+	if (argc == 3) {
+		if (Common::String(argv[1]) == "id") {
+			int id = atoi(argv[2]);
+			for (uint32 i = 0; i < getWorld()->objects.size(); i++) {
+				if (getWorld()->objects[i]->getId() == id) {
+					DebugPrintf("%s\n", getWorld()->objects[i]->toString(false).c_str());
+					return true;
+				}
+			}
+			DebugPrintf("No object with id %d found\n", id);
+		} else if (Common::String(argv[1]) == "idx") {
+			int index = atoi(argv[2]);
+			int maxIndex = getWorld()->objects.size() - 1;
+
+			if (index < 0 || index > maxIndex) {
+				DebugPrintf("[error] index should be between 0 and %d\n", maxIndex);
+				return true;
+			}
+
+			DebugPrintf("%s\n", getWorld()->objects[index]->toString().c_str());
+
+		} else {
+			DebugPrintf("[error] valid options are 'id' and 'idx'\n");
+		}
+	} else {
 		for (uint32 i = 0; i < getWorld()->objects.size(); i++)
 			DebugPrintf("%s\n", getWorld()->objects[i]->toString().c_str());
-
-	} else {
-		int index = atoi(argv[1]);
-		int maxIndex = getWorld()->objects.size() - 1;
-
-		if (index < 0 || index > maxIndex) {
-			DebugPrintf("[error] index should be between 0 and %d\n", maxIndex);
-			return true;
-		}
-
-		DebugPrintf("%s\n", getWorld()->objects[index]->toString().c_str());
 	}
 
 	return true;
