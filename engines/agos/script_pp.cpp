@@ -336,13 +336,12 @@ void AGOSEngine_PuzzlePack::opp_loadMouseImage() {
 
 void AGOSEngine_PuzzlePack::opp_message() {
 	// 63: show string nl
-
+	const byte *stringPtr = getStringPtrByID(getNextStringID());
 	if (getBitFlag(105)) {
 		// Swampy adventures
-		getStringPtrByID(getNextStringID());
-//		printInfoText(getStringPtrByID(getNextStringID()));
+		printInfoText((const char *)stringPtr);
 	} else {
-		showMessageFormat("%s\n", getStringPtrByID(getNextStringID()));
+		showMessageFormat("%s\n", stringPtr);
 	}
 }
 

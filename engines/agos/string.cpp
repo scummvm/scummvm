@@ -27,6 +27,9 @@
 
 #include "common/file.h"
 
+#include "gui/about.h"
+#include "gui/message.h"
+
 #include "agos/agos.h"
 #include "agos/intern.h"
 
@@ -559,6 +562,162 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 }
 
 #ifdef ENABLE_AGOS2
+// Swampy Adventures specific
+void AGOSEngine_PuzzlePack::printInfoText(const char *itemText) {
+	const char *itemName = NULL;
+	int flag = (_mouse.y / 32) * 20 + (_mouse.x / 32) + 1300;
+
+	switch (_variableArray[999]) {
+		case 80:
+			if (_variableArray[flag]) {
+				if (_variableArray[flag] == 201)
+					itemName = " Bridge: ";
+				if (_variableArray[flag] == 231 || _variableArray[flag] == 241)
+					itemName = " Log: ";
+				if (_variableArray[flag] == 281)
+					itemName = " Rubble: ";
+				if (_variableArray[flag] == 291)
+					itemName = " Boulder: ";
+				if (_variableArray[flag] == 311)
+					itemName = " Key: ";
+				if (_variableArray[flag] == 312)
+					itemName = " Spanner: ";
+				if (_variableArray[flag] == 321)
+					itemName = " Gate: ";
+				if (_variableArray[flag] == 331)
+					itemName = " Crate: ";
+			} else {
+				flag -= 300;
+				if (_variableArray[flag] == 2)
+					itemName = " Water: ";
+				if (_variableArray[flag] == 5)
+					itemName = " Exit: ";
+				if ((_variableArray[flag] == 5) && (_variableArray[81] == 10))
+					itemName = " Gem: ";
+				if (_variableArray[flag] == 236 || _variableArray[flag] == 246)
+					itemName = " Floating Log: ";
+				if (_variableArray[flag] == 400)
+					itemName = " Valve: ";
+			}
+			break;
+
+		case 81:
+			if (_variableArray[flag]) {
+				if (_variableArray[flag] == 281)
+					itemName = " Cracked Block: ";
+				if (_variableArray[flag] == 291)
+					itemName = " Boulder: ";
+				if (_variableArray[flag] == 331)
+					itemName = " Block: ";
+				if (_variableArray[flag] == 341)
+					itemName = " Switch: ";
+				if (_variableArray[flag] == 343)
+					itemName = " Button: ";
+				if ((_variableArray[flag] > 430) && (_variableArray[flag] < 480))
+					itemName = " Mosaic Block: ";
+			} else {
+				flag -= 300;
+				if (_variableArray[flag] == 5)
+					itemName = " Exit: ";
+				if ((_variableArray[flag] == 5) && (_variableArray[82] == 10))
+					itemName = " Gem: ";
+			}
+			break;
+			
+		case 82:
+			if (_variableArray[flag]) {
+				if (_variableArray[flag] == 201 || _variableArray[flag] == 211)
+					itemName = " Unstable Track: ";
+				if (_variableArray[flag] == 281)
+					itemName = " Rubble Pile: ";
+				if (_variableArray[flag] == 291)
+					itemName = " Boulder: ";
+				if (_variableArray[flag] == 331)
+					itemName = " Crate: ";
+				if (_variableArray[flag] == 401 || _variableArray[flag] == 405)
+					itemName = " Cart: ";
+			} else {
+				flag -= 300;
+				if (_variableArray[flag] == 4)
+					itemName = " Hole: ";
+				if (_variableArray[flag] == 5)
+					itemName = " Exit: ";
+				if ((_variableArray[flag] == 5) && (_variableArray[83] == 10))
+					itemName = " Gem: ";
+				if ((_variableArray[flag] > 5) && (_variableArray[flag] < 10))
+					itemName = " Buffer Track: ";
+				if ((_variableArray[flag] > 9) && (_variableArray[flag] < 40))
+					itemName = " Track: ";
+				if (_variableArray[flag] == 300)
+					itemName = " Boulder: ";
+			}
+			break;
+
+		case 83:
+			if (_variableArray[flag]) {
+				if (_variableArray[flag] == 201)
+					itemName = " Broken Floor: ";
+				if (_variableArray[flag] == 231 || _variableArray[flag] == 241)
+					itemName = " Barrel: ";
+				if (_variableArray[flag] == 281)
+					itemName = " Cracked Rock: ";
+				if (_variableArray[flag] == 291)
+					itemName = " Spacehopper: ";
+				if (_variableArray[flag] == 311)
+					itemName = " Key: ";
+				if (_variableArray[flag] == 321)
+					itemName = " Trapdoor: ";
+				if (_variableArray[flag] == 324)
+					itemName = " Trapdoor: ";
+				if (_variableArray[flag] == 331)
+					itemName = " Crate: ";
+			} else {
+				flag -= 300;
+				if (_variableArray[flag] == 4)
+					itemName = " Hole: ";
+				if (_variableArray[flag] == 239 || _variableArray[flag] == 249)
+					itemName = " Barrel: ";
+			}
+			break;
+
+		case 84:
+			if (_variableArray[flag]) {
+				if (_variableArray[flag] == 201)
+					itemName = " Floating Platform: ";
+				if (_variableArray[flag] == 231)
+					itemName = " Cauldron: ";
+				if (_variableArray[flag] == 281)
+					itemName = " Cracked Block: ";
+				if (_variableArray[flag] == 311 || _variableArray[flag] == 312)
+					itemName = " Key: ";
+				if (_variableArray[flag] == 321 || _variableArray[flag] == 361 || _variableArray[flag] == 371)
+					itemName = " Gate: ";
+				if (_variableArray[flag] == 331)
+					itemName = " Chest: ";
+				if (_variableArray[flag] == 332)
+					itemName = " Jewel: ";
+				if (_variableArray[flag] == 351 || _variableArray[flag] == 352)
+					itemName = " Babies: ";
+			} else {
+				flag -= 300;
+				if (_variableArray[flag] == 6)
+					itemName = " Slime: ";
+				if (_variableArray[flag] == 334)
+					itemName = " Chest: ";
+			}
+			break;
+
+		default:
+			break;
+	}
+
+	if (itemName != NULL) {
+		Common::String buf = Common::String::format("%s\n%s", itemName, itemText);
+		GUI::TimedMessageDialog dialog(buf, 1500);
+		dialog.runModal();
+	}
+}
+
 // The Feeble Files specific
 void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
 	char convertedString[320];

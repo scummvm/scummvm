@@ -2098,6 +2098,8 @@ protected:
 	void startOverlayAnims();
 	void startAnOverlayAnim();
 
+	void printInfoText(const char *itemText);
+
 	virtual char *genSaveName(int slot);
 };
 
