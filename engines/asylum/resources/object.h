@@ -212,6 +212,11 @@ private:
 	void stopSound();
 
 	/**
+	 * Sets the volume. 
+	 */
+	void setVolume();
+
+	/**
 	 * Gets a random resource identifier for this object (using the list in _randomResourceIds)
 	 *
 	 * @return The random resource identifier.
