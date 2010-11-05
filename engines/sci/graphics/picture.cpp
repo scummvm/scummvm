@@ -760,7 +760,11 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					case 154: // SQ3: intro, ship gets sucked in
 						_screen->ditherForceMemorial(0xD0);
 						break;
+					default:
+						break;
 					}
+					break;
+				default:
 					break;
 				}
 			}
