@@ -443,9 +443,6 @@ void Route::processRoute() {
 					turnedFl = true;
 				}
 				break;
-			case GO_SPACE:
-				warning("Unhandled gameStatus.go_for GO_STATUS");
-				break;
 			}
 		}
 	} else if (_vm->_hero->vx == 0 && _vm->_hero->vy == 0) {
@@ -493,7 +490,7 @@ bool Route::startRoute(go_t go_for, int16 id, int16 cx, int16 cy) {
 	bool foundFl = false;                           // TRUE if route found ok
 	if ((foundFl = findRoute(cx, cy))) {            // Found a route?
 		gameStatus.routeIndex = _routeListIndex;    // Node index
-		_vm->_hero->vx = _vm->_hero->vy = 0;      // Stop manual motion
+		_vm->_hero->vx = _vm->_hero->vy = 0;        // Stop manual motion
 	}
 
 	return foundFl;
