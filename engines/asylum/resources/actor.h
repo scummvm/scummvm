@@ -223,6 +223,11 @@ public:
 	bool process_41BDB0(int32 reactionIndex, bool testNumberValue01);
 	void update_40DE20();
 
+	//////////////////////////////////////////////////////////////////////////
+	// Static update methods
+	//////////////////////////////////////////////////////////////////////////
+	static void enableActorsChapter2(AsylumEngine *engine);
+
 private:
 	AsylumEngine *_vm;
 
