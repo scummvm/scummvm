@@ -301,17 +301,14 @@ protected:
 class PluginManager : public Common::Singleton<PluginManager> {
 	typedef Common::Array<PluginProvider *> ProviderList;
 private:
-	PluginList _plugins[PLUGIN_TYPE_MAX];
+	PluginList _pluginsInMem[PLUGIN_TYPE_MAX];
 	ProviderList _providers;
 
-	PluginList _allPlugs;
+	PluginList _allEnginePlugins;
 	PluginList::iterator _currentPlugin;
 
-	bool _skipStaticPlugs;
-
-	uint _nonEnginePlugs;
-
 	bool tryLoadPlugin(Plugin *plugin);
+	void addToPluginsInMemList(Plugin *plugin);
 	
 	friend class Common::Singleton<SingletonBaseType>;
 	PluginManager();
@@ -321,14 +318,15 @@ public:
 
 	void addPluginProvider(PluginProvider *pp);
 
+	void loadNonEnginePluginsAndEnumerate();	
 	void loadFirstPlugin();
 	bool loadNextPlugin();
 	
 	void loadPlugins();
 	void unloadPlugins();
-	void unloadPluginsExcept(PluginType type, const Plugin *plugin);
+	void unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin = true);
 
-	const PluginList &getPlugins(PluginType t) { return _plugins[t]; }
+	const PluginList &getPlugins(PluginType t) { return _pluginsInMem[t]; }
 };
 
 #endif

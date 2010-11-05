@@ -107,7 +107,7 @@ static const EnginePlugin *detectPlugin() {
 	printf("%s", "  Looking for a plugin supporting this gameid... ");
 
 #if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
-	GameDescriptor game = EngineMan.findGameOnePlugAtATime(gameid, &plugin);
+	GameDescriptor game = EngineMan.findGameOnePluginAtATime(gameid, &plugin);
 #else
  	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 #endif
@@ -216,6 +216,11 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	// Run the engine
 	Common::Error result = engine->run();
 
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
+	// do our best to prevent fragmentation by unloading as soon as we can
+	PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
+#endif	
+	
 	// Inform backend that the engine finished
 	system.engineDone();
 
@@ -343,7 +348,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 #if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
 	// Only load non-engine plugins and first engine plugin initially in this case.
-	PluginManager::instance().loadFirstPlugin();
+	PluginManager::instance().loadNonEnginePluginsAndEnumerate();
 #else
  	// Load the plugins.
  	PluginManager::instance().loadPlugins();
@@ -363,6 +368,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// config file and the plugins have been loaded.
 	Common::Error res;
 
+	// TODO: deal with settings that require plugins to be loaded
 	if ((res = Base::processSettings(command, settings)) != Common::kArgumentNotProcessed)
 		return res;
 
@@ -431,9 +437,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 			// PluginManager::instance().unloadPlugins();
 
-#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
-			PluginManager::instance().loadFirstPlugin();
-#else
+#if !defined(ONE_PLUGIN_AT_A_TIME)
 			PluginManager::instance().loadPlugins();
 #endif
 		} else {
