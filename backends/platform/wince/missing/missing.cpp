@@ -36,14 +36,7 @@
 #include <tchar.h>
 #include <string.h>
 #include <stdlib.h>
-#include "sys/stat.h"
-#ifndef __GNUC__
-#include "sys/time.h"
-#else
 #include <stdio.h>
-#endif
-#include "time.h"
-#include "dirent.h"
 #include "common/debug.h"
 
 char *strdup(const char *strSource);
@@ -76,44 +69,8 @@ void *bsearch(const void *key, const void *base, size_t nmemb,
 	return NULL;
 }
 
-static WIN32_FIND_DATA wfd;
+static char cwd[MAX_PATH+1] = "";
 
-int stat(const char *fname, struct stat *ss) {
-	TCHAR fnameUnc[MAX_PATH+1];
-	HANDLE handle;
-	int len;
-
-	if (fname == NULL || ss == NULL)
-		return -1;
-
-	/* Special case (dummy on WinCE) */
-	len = strlen(fname);
-	if (len >= 2 && fname[len-1] == '.' && fname[len-2] == '.' &&
-		(len == 2 || fname[len-3] == '\\')) {
-		/* That's everything implemented so far */
-		memset(ss, 0, sizeof(struct stat));
-		ss->st_size = 1024;
-		ss->st_mode |= S_IFDIR;
-		return 0;
-	}
-
-	MultiByteToWideChar(CP_ACP, 0, fname, -1, fnameUnc, MAX_PATH);
-	handle = FindFirstFile(fnameUnc, &wfd);
-	FindClose(handle);
-	if (handle == INVALID_HANDLE_VALUE)
-		return -1;
-	else
-	{
-		/* That's everything implemented so far */
-		memset(ss, 0, sizeof(struct stat));
-		ss->st_size = wfd.nFileSizeLow;
-		if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-			ss->st_mode |= S_IFDIR;
-	}
-	return 0;
-}
-
-char cwd[MAX_PATH+1] = "";
 EXT_C char *getcwd(char *buffer, int maxlen) {
 	TCHAR fileUnc[MAX_PATH+1];
 	char* plast;
@@ -227,112 +184,6 @@ int _access(const char *path, int mode) {
 
 // evc only functions follow
 #ifndef __GNUC__
-
-/* Limited dirent implementation. Used by UI.C and DEVICES.C */
-DIR* opendir(const char* fname) {
-	DIR* pdir;
-	char fnameMask[MAX_PATH+1];
-	TCHAR fnameUnc[MAX_PATH+1];
-	char nameFound[MAX_PATH+1];
-
-	if (fname == NULL)
-		return NULL;
-
-	strcpy(fnameMask, fname);
-	if (!strlen(fnameMask) || fnameMask[strlen(fnameMask)-1] != '\\')
-		strncat(fnameMask, "\\", MAX_PATH-strlen(fnameMask)-1);
-	strncat(fnameMask, "*.*", MAX_PATH-strlen(fnameMask)-4);
-
-	pdir = (DIR*)malloc(sizeof(DIR)+strlen(fname));
-	pdir->dd_dir.d_ino = 0;
-	pdir->dd_dir.d_reclen = 0;
-	pdir->dd_dir.d_name = 0;
-	pdir->dd_dir.d_namlen = 0;
-
-	pdir->dd_handle = 0;
-	pdir->dd_stat = 0;
-	strcpy(pdir->dd_name, fname); /* it has exactly enough space for fname and nul char */
-
-	MultiByteToWideChar(CP_ACP, 0, fnameMask, -1, fnameUnc, MAX_PATH);
-	if ((pdir->dd_handle = (long)FindFirstFile(fnameUnc, &wfd)) == (long)INVALID_HANDLE_VALUE) {
-		free(pdir);
-		return NULL;
-	} else {
-		WideCharToMultiByte(CP_ACP, 0, wfd.cFileName, -1, nameFound, MAX_PATH, NULL, NULL);
-
-		pdir->dd_dir.d_name = strdup(nameFound);
-		pdir->dd_dir.d_namlen = strlen(nameFound);
-	}
-	return pdir;
-}
-
-struct dirent* readdir(DIR* dir) {
-	char nameFound[MAX_PATH+1];
-	static struct dirent dummy;
-
-	if (dir->dd_stat == 0) {
-		dummy.d_name = ".";
-		dummy.d_namlen = 1;
-		dir->dd_stat ++;
-		return &dummy;
-	} else if (dir->dd_stat == 1) {
-		dummy.d_name = "..";
-		dummy.d_namlen = 2;
-		dir->dd_stat ++;
-		return &dummy;
-	} else if (dir->dd_stat == 2) {
-		dir->dd_stat++;
-		return &dir->dd_dir;
-	} else {
-		if (FindNextFile((HANDLE)dir->dd_handle, &wfd) == 0) {
-			dir->dd_stat = -1;
-			return NULL;
-		}
-		WideCharToMultiByte(CP_ACP, 0, wfd.cFileName, -1, nameFound, MAX_PATH, NULL, NULL);
-
-		free(dir->dd_dir.d_name);
-
-		dir->dd_dir.d_name = strdup(nameFound);
-		dir->dd_dir.d_namlen = strlen(nameFound);
-
-		dir->dd_stat ++;
-
-		return &dir->dd_dir;
-	}
-}
-
-int closedir(DIR* dir) {
-	if (dir == NULL)
-		return 0;
-
-	if (dir->dd_handle)
-		FindClose((HANDLE)dir->dd_handle);
-
-	free(dir->dd_dir.d_name);
-	free(dir);
-	return 1;
-}
-
-/* Make directory, Unix style */
-void mkdir(char* dirname, int mode) {
-	char  path[MAX_PATH+1];
-	TCHAR pathUnc[MAX_PATH+1];
-	char *ptr;
-	strncpy(path, dirname, MAX_PATH);
-	if (*path == '/')
-		*path = '\\';
-	/* Run through the string and attempt creating all subdirs on the path */
-	for (ptr = path+1; *ptr; ptr ++) {
-		if (*ptr == '\\' || *ptr == '/') {
-			*ptr = 0;
-			MultiByteToWideChar(CP_ACP, 0, path, -1, pathUnc, MAX_PATH);
-			CreateDirectory(pathUnc, 0);
-			*ptr = '\\';
-		}
-	}
-	MultiByteToWideChar(CP_ACP, 0, path, -1, pathUnc, MAX_PATH);
-	CreateDirectory(pathUnc, 0);
-}
 
 char *strdup(const char *strSource) {
 	char *buffer;

@@ -69,14 +69,10 @@ char *strpbrk(const char *s, const char *accept);
 #include <string.h>
 #include <io.h>
 #include <stdarg.h>
-#include <fcntl.h>
-#include <conio.h>
-#include <malloc.h>
 #include <assert.h>
 #include <mmsystem.h>
 #include <ctype.h>
 //#include <direct.h>
-#include <time.h>
 
 #ifdef __MINGW32CE__
 	void *bsearch(const void *, const void *, size_t, size_t, int (*x) (const void *, const void *));
