@@ -833,12 +833,13 @@ struct status_t {                                   // Game status (not saved)
 	bool     initSaveFl;                            // Force save of initial game
 	bool     storyModeFl;                           // Game is telling story - no commands
 	bool     gameOverFl;                            // Game is over - hero knobbled
-	bool     playbackFl;                            // Game is in playback mode
-	bool     recordFl;                              // Game is in record mode
+// Strangerke - Suppress as related to playback
+//	bool     playbackFl;                            // Game is in playback mode
+//	bool     recordFl;                              // Game is in record mode
 	bool     demoFl;                                // Game is in demo mode
 	bool     debugFl;                               // Game is in debug mode
 	bool     textBoxFl;                             // Game is (halted) in text box
-//	Strangerke - Not used ?
+// Strangerke - Not used ?
 //	bool     mmtimeFl;                               // Multimedia timer supported
 	bool     lookFl;                                // Toolbar "look" button pressed
 	bool     recallFl;                              // Toolbar "recall" button pressed

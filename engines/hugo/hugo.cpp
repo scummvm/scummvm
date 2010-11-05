@@ -920,11 +920,12 @@ void HugoEngine::initStatus() {
 	_status.initSaveFl    = true;                   // Force initial save
 	_status.storyModeFl   = false;                  // Not in story mode
 	_status.gameOverFl    = false;                  // Hero not knobbled yet
-	_status.recordFl      = false;                  // Not record mode
-	_status.playbackFl    = false;                  // Not playback mode
+// Strangerke - Suppress as related to playback
+//	_status.recordFl      = false;                  // Not record mode
+//	_status.playbackFl    = false;                  // Not playback mode
 	_status.demoFl        = false;                  // Not demo mode
 	_status.textBoxFl     = false;                  // Not processing a text box
-//	Strangerke - Not used ?
+// Strangerke - Not used ?
 //	_status.mmtime        = false;                   // Multimedia timer support
 	_status.lookFl        = false;                  // Toolbar "look" button
 	_status.recallFl      = false;                  // Toolbar "recall" button
