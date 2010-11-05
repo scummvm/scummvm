@@ -247,7 +247,7 @@ void Actor::update() {
 						player->setFrameCount(resource->getFrameCount());
 						delete resource;
 
-						getScene()->getCursor()->hide();
+						getCursor()->hide();
 						getScene()->getActor(0)->updateFromDirection(4);
 
 						// Queue script
@@ -521,7 +521,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 
 			_vm->clearGameFlag(kGameFlag279);
 
-			getScene()->getCursor()->show();
+			getCursor()->show();
 		}
 		break;
 

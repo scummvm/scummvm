@@ -108,7 +108,6 @@ public:
 	bool isActive() { return _isActive; }
 	int  getSceneIndex() { return _sceneIdx; }
 
-	Cursor* getCursor() { return _cursor; }
 	ResourcePack* getResourcePack() { return _resPack; }
 	ResourcePack* getMusicPack() { return _musPack; }
 	GraphicResource* getGraphicResource(int32 entry) { return new GraphicResource(_resPack, entry); }
@@ -117,11 +116,13 @@ public:
 	void setScenePosition(int x, int y);
 
 	AsylumEngine* vm() { return _vm; }
-	Special *special() { return _special; }
-	WorldStats* worldstats() { return _ws; }
-	Polygons* polygons() { return _polygons; }
-	ActionList* actions() { return _actions; }
-	Speech* speech() { return _speech; }
+
+	ActionList  *actions()    { return _actions; }
+	Cursor      *cursor()     { return _cursor; }
+	Polygons    *polygons()   { return _polygons; }
+	Special     *special()    { return _special; }
+	Speech      *speech()     { return _speech; }
+	WorldStats  *worldstats() { return _ws; }
 
 	/** .text:0040A1B0
 	 * Get the supplied actor's position relative to the

@@ -71,7 +71,8 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	_polygons = new Polygons(fd);
 	// jump to action list data
 	fd->seek(0xE868E + _polygons->size * _polygons->numEntries);
-	_actions = new ActionList(fd, this);
+	_actions = new ActionList(_vm);
+	_actions->load(fd);
 
 	fd->close();
 	delete fd;
