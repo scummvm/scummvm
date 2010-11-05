@@ -197,9 +197,9 @@ static byte blendColours(byte c1, byte c2) {
 	// return (c1/2+c2/2)+((c1&1)+(c2&1))/2;
 
 	// gamma 2.2
-	double t = 0.5 + (pow (c1/255.0, 2.2/1.0) * 255.0) + 
-	           0.5 + (pow (c2/255.0, 2.2/1.0) * 255.0);
-	return (byte)(0.5 + (pow (0.5*t/255.0, 1.0/2.2) * 255.0));
+	double t = (pow(c1/255.0, 2.2/1.0) * 255.0) + 
+	           (pow(c2/255.0, 2.2/1.0) * 255.0);
+	return (byte)(0.5 + (pow(0.5*t/255.0, 1.0/2.2) * 255.0));
 }
 
 void GfxPalette::setEGA() {
