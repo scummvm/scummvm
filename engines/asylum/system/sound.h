@@ -28,12 +28,17 @@
 
 #include "asylum/system/config.h"
 
-#include "asylum/respack.h"
 #include "asylum/shared.h"
+
+#include "common/array.h"
 
 #include "sound/mixer.h"
 
 namespace Asylum {
+
+class ResourcePack;
+
+struct ResourceEntry;
 
 struct SoundItem {
 	ResourceId resourceId;

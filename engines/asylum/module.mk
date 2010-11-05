@@ -1,7 +1,6 @@
 MODULE := engines/asylum
 
 MODULE_OBJS := \
-	resources/actionarea.o \
 	resources/actionlist.o \
 	resources/actor.o \
 	resources/object.o \

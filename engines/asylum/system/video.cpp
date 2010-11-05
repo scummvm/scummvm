@@ -25,9 +25,10 @@
 
 #include "asylum/system/video.h"
 
-#include "asylum/system//graphics.h"
+#include "asylum/system/graphics.h"
 #include "asylum/system/text.h"
 
+#include "asylum/respack.h"
 #include "asylum/staticres.h"
 
 namespace Asylum {

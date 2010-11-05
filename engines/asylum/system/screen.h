@@ -26,14 +26,17 @@
 #ifndef ASYLUM_SCREEN_H
 #define ASYLUM_SCREEN_H
 
-#include "asylum/asylum.h"
-#include "asylum/respack.h"
-#include "asylum/system/graphics.h"
+#include "asylum/shared.h"
 
-#include "common/system.h"  // for OSystem
+#include "common/array.h"
+
 #include "graphics/surface.h"
 
 namespace Asylum {
+
+class AsylumEngine;
+class GraphicResource;
+class ResourcePack;
 
 typedef struct GraphicQueueItem {
 	ResourceId resourceId;
@@ -59,9 +62,7 @@ public:
 	void copyRectToScreen(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 	void copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 	void setPalette(byte *rgbPalette);
-	void setPalette(ResourcePack *resPack, ResourceId id) {
-		setPalette(resPack->getResource(id)->data + 32);
-	}
+	void setPalette(ResourcePack *resPack, ResourceId id);
 
 	void setGammaLevel(ResourcePack *resPack, ResourceId id, int32 val);
 

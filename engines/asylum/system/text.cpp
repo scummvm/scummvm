@@ -25,6 +25,11 @@
 
 #include "asylum/system/text.h"
 
+#include "asylum/system/graphics.h"
+#include "asylum/system/screen.h"
+
+#include "asylum/respack.h"
+
 #include "common/endian.h"
 
 namespace Asylum {

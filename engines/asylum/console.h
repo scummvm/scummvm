@@ -47,7 +47,8 @@ enum kDebugLevels {
 };
 
 class AsylumEngine;
-class ActionArea;
+
+struct ActionArea;
 
 class Console : public GUI::Debugger {
 public:

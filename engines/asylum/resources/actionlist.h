@@ -52,6 +52,41 @@ class Actor;
 class AsylumEngine;
 class Scene;
 
+struct ActionArea {
+	char  name[52];
+	int32 id;
+	int32 field01;
+	int32 field02;
+	int32 field_40;
+	int32 field_44;
+	int32 flags;
+	int32 scriptIndex;
+	int32 scriptIndex2;
+	int32 actionType;    ///< flag (see ActionType enumeration)
+	int32 flagNums[10];
+	int32 field_7C;
+	int32 polyIdx;
+	int32 field_84;
+	int32 field_88;
+	ResourceId soundResourceId;
+	int32 field_90;
+	int32 paletteValue;
+	int32 array[5];
+	int32 volume;
+
+	Common::String toString() {
+		Common::String output;
+
+		output += Common::String::format("Action %d: %s\n", id, name);
+		output += Common::String::format("           flags=%d      scriptIndex=%d      scriptIndex2=%d   type=%d\n", flags, scriptIndex, actionType, polyIdx);
+		output += Common::String::format("           sound=%d      polygon=%d          palette=%d        volume=%d\n", soundResourceId, scriptIndex2, paletteValue, volume);
+		output += Common::String::format("           field01=%d    field02=%d          field40=%d        field44=%d\n", field01, field02, field_40, field_44);
+		output += Common::String::format("           field7C=%d    field84=%d          field88=%d        field90=%d\n", field_7C, field_84, field_88, field_90);
+
+		return output;
+	}
+};
+
 class ActionList {
 public:
 	ActionList(AsylumEngine *engine);

@@ -26,17 +26,12 @@
 #ifndef ASYLUM_SCENE_H
 #define ASYLUM_SCENE_H
 
-#include "asylum/asylum.h"
-#include "asylum/respack.h"
-#include "asylum/system/graphics.h"
-#include "asylum/resources/worldstats.h"
-#include "asylum/resources/polygons.h"
-#include "asylum/system/text.h"
-#include "asylum/system/cursor.h"
-#include "asylum/system/speech.h"
+#include "asylum/shared.h"
 
+#include "common/array.h"
 #include "common/events.h"
 #include "common/rational.h"
+#include "graphics/surface.h"
 
 #define SCENE_FILE_MASK "scn.%03d"
 #define MUSIC_FILE_MASK "mus.%03d"
@@ -44,8 +39,14 @@
 namespace Asylum {
 
 class ActionList;
+class Actor;
+class AsylumEngine;
 //class BlowUpPuzzle;
 class Cursor;
+class GraphicResource;
+class Polygons;
+class ResourcePack;
+class Scene;
 class Screen;
 class Special;
 class Speech;
@@ -54,7 +55,10 @@ class Text;
 class Video;
 class WorldStats;
 
+struct AmbientSoundItem;
+struct GraphicFrame;
 struct ObjectItem;
+struct PolyDefinitions;
 
 enum HitType {
 	kHitNone       = -1,
@@ -110,7 +114,7 @@ public:
 
 	ResourcePack* getResourcePack() { return _resPack; }
 	ResourcePack* getMusicPack() { return _musPack; }
-	GraphicResource* getGraphicResource(int32 entry) { return new GraphicResource(_resPack, entry); }
+	GraphicResource* getGraphicResource(int32 entry);
 	//BlowUpPuzzle* getBlowUpPuzzle() { return _blowUp;}
 	//void setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
 	void setScenePosition(int x, int y);

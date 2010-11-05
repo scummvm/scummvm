@@ -26,16 +26,17 @@
 #ifndef ASYLUM_VIDEO_H
 #define ASYLUM_VIDEO_H
 
-#include "sound/mixer.h"
-#include "graphics/surface.h"
-#include "graphics/video/smk_decoder.h"
+#include "asylum/shared.h"
 
 #include "common/array.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/list.h"
 
-#include "asylum/asylum.h"
+#include "graphics/surface.h"
+#include "graphics/video/smk_decoder.h"
+
+#include "sound/mixer.h"
 
 namespace Asylum {
 

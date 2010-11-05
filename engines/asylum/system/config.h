@@ -29,7 +29,6 @@
 #include "common/array.h"
 #include "common/singleton.h"
 #include "common/config-manager.h"
-#include "video.h"
 
 namespace Asylum {
 

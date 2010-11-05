@@ -28,11 +28,23 @@
 #include "asylum/resources/actionlist.h"
 #include "asylum/resources/actor.h"
 #include "asylum/resources/encounters.h"
+#include "asylum/resources/object.h"
+#include "asylum/resources/polygons.h"
 #include "asylum/resources/special.h"
+#include "asylum/resources/worldstats.h"
 
 #include "asylum/system/config.h"
+#include "asylum/system/cursor.h"
+#include "asylum/system/graphics.h"
+#include "asylum/system/screen.h"
+#include "asylum/system/speech.h"
+#include "asylum/system/text.h"
 
+#include "asylum/asylum.h"
+#include "asylum/respack.h"
 #include "asylum/staticres.h"
+
+#include "common/file.h"
 
 namespace Asylum {
 
@@ -196,6 +208,10 @@ void Scene::initialize() {
 		// TODO changeActorIndex(1); .text:00405140
 		_ws->field_E860C = -1;
 	}
+}
+
+GraphicResource* Scene::getGraphicResource(int32 entry) {
+	return new GraphicResource(_resPack, entry);
 }
 
 void Scene::startMusic() {

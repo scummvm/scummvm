@@ -29,6 +29,10 @@
 #include "asylum/resources/actor.h"
 #include "asylum/resources/object.h"
 #include "asylum/resources/encounters.h"
+#include "asylum/resources/worldstats.h"
+
+#include "asylum/system/cursor.h"
+#include "asylum/system/speech.h"
 
 #include "asylum/views/scene.h"
 

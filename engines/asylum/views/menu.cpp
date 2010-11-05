@@ -25,11 +25,19 @@
 
 #include "asylum/views/menu.h"
 
-#include "asylum/system/graphics.h"
 #include "asylum/system/config.h"
+#include "asylum/system/cursor.h"
+#include "asylum/system/graphics.h"
+#include "asylum/system/screen.h"
+#include "asylum/system/sound.h"
+#include "asylum/system/text.h"
+
+#include "asylum/views/scene.h"
 
 #include "asylum/respack.h"
 #include "asylum/staticres.h"
+
+#include "asylum/asylum.h"
 
 namespace Asylum {
 
