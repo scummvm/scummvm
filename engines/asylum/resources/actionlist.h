@@ -26,7 +26,7 @@
 #ifndef ASYLUM_ACTIONLIST_H
 #define ASYLUM_ACTIONLIST_H
 
-#include "asylum/resources/actor.h"
+#include "asylum/shared.h"
 
 #include "common/array.h"
 #include "common/func.h"
@@ -48,12 +48,21 @@ namespace Asylum {
 	_opcodes.push_back(func); \
 }
 
+class Actor;
+class AsylumEngine;
 class Scene;
 
 class ActionList {
 public:
-	ActionList(Common::SeekableReadStream *stream, Scene *scene);
+	ActionList(AsylumEngine *engine);
 	virtual ~ActionList();
+
+	/**
+	 * Loads the script entries
+	 *
+	 * @param stream the script data stream
+	 */
+	void load(Common::SeekableReadStream *stream);
 
 	/**
 	 * Process the current script
@@ -124,8 +133,8 @@ private:
 		}
 	};
 
-	// Parent
-	Scene *_scene;
+	// Engine
+	AsylumEngine *_vm;
 
 	// Script queue and data
 	Common::Array<Opcode *>         _opcodes;
@@ -145,16 +154,14 @@ private:
 	bool              _waitCycle;
 
 	/**
-	 * Loads the script entries
-	 *
-	 * @param stream the script data stream
-	 */
-	void load(Common::SeekableReadStream *stream);
-
-	/**
 	 * Resets the queue.
 	 */
 	void resetQueue();
+
+	/**
+	 * Resets the queue and local variables
+	 */
+	void reset();
 
 	// Opcode helper functions
 	void enableObject(ScriptEntry *cmd, ObjectEnableType type);

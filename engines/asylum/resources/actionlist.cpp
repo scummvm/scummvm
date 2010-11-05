@@ -38,7 +38,7 @@
 
 namespace Asylum {
 
-ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene) : _scene(scene) {
+ActionList::ActionList(AsylumEngine *engine) : _vm(engine) {
 	// Build list of opcodes
 	ADD_OPCODE(Return);
 	ADD_OPCODE(SetGameFlag);
@@ -141,22 +141,7 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene) : _scen
 	ADD_OPCODE(ShowOptionsScreen);
 	ADD_OPCODE(_unk63);
 
-	// Reset script queue
-	resetQueue();
-
-	// Load data
-	load(stream);
-
-	_skipProcessing    = false;
-	_currentLine       = 0;
-	_currentLoops      = 0;
-	_currentScript     = NULL;
-	_delayedSceneIndex = -1;
-	_delayedVideoIndex = -1;
-	_done = false;
-	_exit = false;
-	_lineIncrement = 0;
-	_waitCycle = false;
+	reset();
 }
 
 ActionList::~ActionList() {
@@ -167,79 +152,7 @@ ActionList::~ActionList() {
 	_queue.clear();
 
 	// Zero-out passed pointers
-	_scene = NULL;
-}
-
-void ActionList::resetQueue() {
-	_queue.clear();
-}
-
-void ActionList::queueScript(int scriptIndex, ActorIndex actorIndex) {
-	// When the skipProcessing flag is set, do not queue any more scripts
-	if (_skipProcessing)
-		return;
-
-	ScriptQueueEntry entry;
-	entry.scriptIndex = scriptIndex;
-	entry.actorIndex  = actorIndex;
-
-	// If there's currently no script for the processor to run,
-	// assign it directly and skip the stack push. If however the
-	// current script is assigned, push the script to the stack
-	if (_currentScript)
-		_queue.push(entry);
-	else {
-		_currentQueueEntry = entry;
-		_currentScript     = &_scripts[entry.scriptIndex];
-	}
-}
-
-bool ActionList::process() {
-	_done          = false;
-	_exit          = false;
-	_waitCycle     = false;
-	_lineIncrement = 1;
-
-	_scene->vm()->setGameFlag(kGameFlagScriptProcessing);
-
-	if (_currentScript) {
-		while (!_done && !_waitCycle) {
-			_lineIncrement = 0; //Reset line increment value
-
-			ScriptEntry *cmd = &_currentScript->commands[_currentLine];
-
-			int32 opcode = cmd->opcode;
-
-			debugC(kDebugLevelScripts, "[0x%02X] %s(%d, %d, %d, %d, %d, %d, %d, %d, %d)",
-			       opcode, _opcodes[opcode]->name,
-			       cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
-			       cmd->param6, cmd->param7, cmd->param8, cmd->param9);
-
-			// Execute opcode
-			(*_opcodes[opcode]->func)(cmd);
-
-			if (_exit)
-				return true;
-
-			if (!_lineIncrement)
-				_currentLine ++;
-		}
-
-		if (_done) {
-			_currentLine  = 0;
-
-			if (!_queue.empty()) {
-				_currentQueueEntry = _queue.pop();
-				_currentScript     = &_scripts[_currentQueueEntry.scriptIndex];
-			} else {
-				_currentScript = NULL;
-			}
-		}
-	}
-
-	_scene->vm()->clearGameFlag(kGameFlagScriptProcessing);
-
-	return false;
+	_vm = NULL;
 }
 
 void ActionList::load(Common::SeekableReadStream *stream) {
@@ -277,6 +190,94 @@ void ActionList::load(Common::SeekableReadStream *stream) {
 	}
 }
 
+void ActionList::reset() {
+	// Reset script queue
+	resetQueue();
+
+	_skipProcessing    = false;
+	_currentLine       = 0;
+	_currentLoops      = 0;
+	_currentScript     = NULL;
+	_delayedSceneIndex = -1;
+	_delayedVideoIndex = -1;
+	_done = false;
+	_exit = false;
+	_lineIncrement = 0;
+	_waitCycle = false;
+}
+
+void ActionList::resetQueue() {
+	_queue.clear();
+}
+
+void ActionList::queueScript(int scriptIndex, ActorIndex actorIndex) {
+	// When the skipProcessing flag is set, do not queue any more scripts
+	if (_skipProcessing)
+		return;
+
+	ScriptQueueEntry entry;
+	entry.scriptIndex = scriptIndex;
+	entry.actorIndex  = actorIndex;
+
+	// If there's currently no script for the processor to run,
+	// assign it directly and skip the stack push. If however the
+	// current script is assigned, push the script to the stack
+	if (_currentScript)
+		_queue.push(entry);
+	else {
+		_currentQueueEntry = entry;
+		_currentScript     = &_scripts[entry.scriptIndex];
+	}
+}
+
+bool ActionList::process() {
+	_done          = false;
+	_exit          = false;
+	_waitCycle     = false;
+	_lineIncrement = 1;
+
+	_vm->setGameFlag(kGameFlagScriptProcessing);
+
+	if (_currentScript) {
+		while (!_done && !_waitCycle) {
+			_lineIncrement = 0; //Reset line increment value
+
+			ScriptEntry *cmd = &_currentScript->commands[_currentLine];
+
+			int32 opcode = cmd->opcode;
+
+			debugC(kDebugLevelScripts, "[0x%02X] %s(%d, %d, %d, %d, %d, %d, %d, %d, %d)",
+			       opcode, _opcodes[opcode]->name,
+			       cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
+			       cmd->param6, cmd->param7, cmd->param8, cmd->param9);
+
+			// Execute opcode
+			(*_opcodes[opcode]->func)(cmd);
+
+			if (_exit)
+				return true;
+
+			if (!_lineIncrement)
+				_currentLine ++;
+		}
+
+		if (_done) {
+			_currentLine  = 0;
+
+			if (!_queue.empty()) {
+				_currentQueueEntry = _queue.pop();
+				_currentScript     = &_scripts[_currentQueueEntry.scriptIndex];
+			} else {
+				_currentScript = NULL;
+			}
+		}
+	}
+
+	_vm->clearGameFlag(kGameFlagScriptProcessing);
+
+	return false;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Opcode Functions
 //////////////////////////////////////////////////////////////////////////
@@ -294,7 +295,7 @@ IMPLEMENT_OPCODE(SetGameFlag) {
 	GameFlag flagNum = (GameFlag)cmd->param1;
 
 	if (flagNum >= 0)
-		_scene->vm()->setGameFlag(flagNum);
+		_vm->setGameFlag(flagNum);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -303,7 +304,7 @@ IMPLEMENT_OPCODE(ClearGameFlag) {
 	GameFlag flagNum = (GameFlag)cmd->param1;
 
 	if (flagNum >= 0)
-		_scene->vm()->clearGameFlag(flagNum);
+		_vm->clearGameFlag(flagNum);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -312,7 +313,7 @@ IMPLEMENT_OPCODE(ToggleGameFlag) {
 	GameFlag flagNum = (GameFlag)cmd->param1;
 
 	if (flagNum >= 0)
-		_scene->vm()->toggleGameFlag(flagNum);
+		_vm->toggleGameFlag(flagNum);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -321,7 +322,7 @@ IMPLEMENT_OPCODE(JumpIfGameFlag) {
 	if (cmd->param1 < 0)
 		return;
 
-	bool doJump = (cmd->param2) ? _scene->vm()->isGameFlagSet((GameFlag)cmd->param1) : _scene->vm()->isGameFlagNotSet((GameFlag)cmd->param1);
+	bool doJump = (cmd->param2) ? _vm->isGameFlagSet((GameFlag)cmd->param1) : _vm->isGameFlagNotSet((GameFlag)cmd->param1);
 	if (!doJump)
 		return;
 
@@ -331,21 +332,21 @@ IMPLEMENT_OPCODE(JumpIfGameFlag) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x05
 IMPLEMENT_OPCODE(HideCursor) {
-	_scene->getCursor()->hide();
+	getCursor()->hide();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x06
 IMPLEMENT_OPCODE(ShowCursor) {
-	_scene->getCursor()->show();
+	getCursor()->show();
 
-	_scene->vm()->clearFlag(kFlagType1);
+	_vm->clearFlag(kFlagType1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x07
 IMPLEMENT_OPCODE(PlayAnimation) {
-	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
+	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param2 == 2) {
 		if (object->checkFlags())
@@ -374,14 +375,14 @@ IMPLEMENT_OPCODE(PlayAnimation) {
 
 	if (object->getField688() == 1) {
 		if (object->flags & kObjectFlag4) {
-			_scene->setGlobalX(object->x);
-			_scene->setGlobalY(object->y);
+			getScene()->setGlobalX(object->x);
+			getScene()->setGlobalY(object->y);
 		} else {
-			GraphicResource *res = new GraphicResource(_scene->getResourcePack(), object->getResourceId());
+			GraphicResource *res = new GraphicResource(getScene()->getResourcePack(), object->getResourceId());
 			GraphicFrame *frame = res->getFrame(object->getFrameIndex());
 
-			_scene->setGlobalX(frame->x + (frame->getWidth() >> 1) + object->x);
-			_scene->setGlobalY(frame->y + (frame->getHeight() >> 1) + object->y);
+			getScene()->setGlobalX(frame->x + (frame->getWidth() >> 1) + object->x);
+			getScene()->setGlobalY(frame->y + (frame->getHeight() >> 1) + object->y);
 
 			delete res;
 		}
@@ -397,27 +398,27 @@ IMPLEMENT_OPCODE(PlayAnimation) {
 // Opcode 0x08
 IMPLEMENT_OPCODE(MoveScenePosition) {
 	if (cmd->param3 < 1) {
-		_scene->worldstats()->xLeft = cmd->param1;
-		_scene->worldstats()->yTop  = cmd->param2;
-		_scene->worldstats()->motionStatus = 3;
+		getWorld()->xLeft = cmd->param1;
+		getWorld()->yTop  = cmd->param2;
+		getWorld()->motionStatus = 3;
 
 	} else if (!cmd->param4) {
-		_scene->worldstats()->motionStatus = 5;
+		getWorld()->motionStatus = 5;
 
-		_scene->updateSceneCoordinates(cmd->param1,
+		getScene()->updateSceneCoordinates(cmd->param1,
 			                           cmd->param2,
 		                               cmd->param3);
 
 	} else if (cmd->param5) {
-		if (_scene->worldstats()->motionStatus == 2)
+		if (getWorld()->motionStatus == 2)
 			_lineIncrement = 1;
 		else
 			cmd->param5 = 0;
 	} else {
 		cmd->param5 = 1;
-		_scene->worldstats()->motionStatus = 2;
+		getWorld()->motionStatus = 2;
 
-		_scene->updateSceneCoordinates(cmd->param1,
+		getScene()->updateSceneCoordinates(cmd->param1,
 		                               cmd->param2,
 		                               cmd->param3,
 		                               true);
@@ -429,7 +430,7 @@ IMPLEMENT_OPCODE(MoveScenePosition) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x09
 IMPLEMENT_OPCODE(HideActor) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->setVisible(false);
 	actor->updateDirection();
@@ -438,17 +439,17 @@ IMPLEMENT_OPCODE(HideActor) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0A
 IMPLEMENT_OPCODE(ShowActor) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->setVisible(true);
 	actor->updateDirection();
-	actor->setLastScreenUpdate(_scene->vm()->getTick());
+	actor->setLastScreenUpdate(_vm->getTick());
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0B
 IMPLEMENT_OPCODE(SetActorPosition) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->setPosition(cmd->param2, cmd->param3, cmd->param4, cmd->param5);
 }
@@ -456,13 +457,13 @@ IMPLEMENT_OPCODE(SetActorPosition) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0C
 IMPLEMENT_OPCODE(SetSceneMotionStatus) {
-	_scene->worldstats()->motionStatus = cmd->param1;
+	getWorld()->motionStatus = cmd->param1;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0D
 IMPLEMENT_OPCODE(DisableActor) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->updateStatus(kActorStatusDisabled);
 }
@@ -470,7 +471,7 @@ IMPLEMENT_OPCODE(DisableActor) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0E
 IMPLEMENT_OPCODE(EnableActor) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (actor->getStatus() == kActorStatusDisabled)
 		actor->updateStatus(kActorStatusEnabled);
@@ -479,10 +480,10 @@ IMPLEMENT_OPCODE(EnableActor) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0F
 IMPLEMENT_OPCODE(EnableObjects) {
-	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
+	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
-	if (!_currentScript->counter && _scene->worldstats()->numChapter != 13)
-		_scene->vm()->sound()->playSound(cmd->param3 ? kResourceSound_80120006 : kResourceSound_80120001, false, Config.sfxVolume, 0);
+	if (!_currentScript->counter && getWorld()->numChapter != 13)
+		_vm->sound()->playSound(cmd->param3 ? kResourceSound_80120006 : kResourceSound_80120001, false, Config.sfxVolume, 0);
 
 	if (_currentScript->counter >= (3 * cmd->param2 - 1)) {
 		_currentScript->counter = 0;
@@ -511,7 +512,7 @@ IMPLEMENT_OPCODE(RemoveObject) {
 	if (!cmd->param1)
 		return;
 
-	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
+	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	object->disableAndRemoveFromQueue();
 }
@@ -519,7 +520,7 @@ IMPLEMENT_OPCODE(RemoveObject) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x12
 IMPLEMENT_OPCODE(JumpActorSpeech) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (actor->process(cmd->param2, cmd->param3))
 		return;
@@ -527,13 +528,13 @@ IMPLEMENT_OPCODE(JumpActorSpeech) {
 	_currentLine = cmd->param4;
 
 	if (cmd->param5)
-		_scene->playSpeech(1);
+		getScene()->playSpeech(1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x13
 IMPLEMENT_OPCODE(JumpAndSetDirection) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (actor->getStatus() != kActorStatus2 && actor->getStatus() != kActorStatus13) {
 		if (cmd->param5 != 2) {
@@ -566,7 +567,7 @@ IMPLEMENT_OPCODE(JumpAndSetDirection) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x14
 IMPLEMENT_OPCODE(JumpIfActorCoordinates) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if ((actor->x1 + actor->x2) != cmd->param2 || (actor->y1 + actor->y2) != cmd->param3)
 		_lineIncrement = cmd->param4;
@@ -581,7 +582,7 @@ IMPLEMENT_OPCODE(Nop) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x16
 IMPLEMENT_OPCODE(ResetAnimation) {
-	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
+	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (object->flags & kObjectFlag10000)
 		object->setFrameIndex(object->getFrameCount() - 1);
@@ -592,7 +593,7 @@ IMPLEMENT_OPCODE(ResetAnimation) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x17
 IMPLEMENT_OPCODE(DisableObject) {
-	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
+	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	object->disable();
 }
@@ -601,13 +602,13 @@ IMPLEMENT_OPCODE(DisableObject) {
 // Opcode 0x18
 IMPLEMENT_OPCODE(JumpIfSoundPlayingAndPlaySound) {
 	if (cmd->param2 == 2) {
-		if (_scene->vm()->sound()->isPlaying(cmd->param1))
+		if (_vm->sound()->isPlaying(cmd->param1))
 			_lineIncrement = 1;
 		else
 			cmd->param2 = 1;
-	} else if (!_scene->vm()->sound()->isPlaying(cmd->param1)) {
-		int32 vol = _scene->vm()->sound()->getAdjustedVolume(abs(Config.sfxVolume));
-		_scene->vm()->sound()->playSound(cmd->param1, cmd->param4, -((abs(cmd->param3) + vol) * (abs(cmd->param3) + vol)), 0);
+	} else if (!_vm->sound()->isPlaying(cmd->param1)) {
+		int32 vol = _vm->sound()->getAdjustedVolume(abs(Config.sfxVolume));
+		_vm->sound()->playSound(cmd->param1, cmd->param4, -((abs(cmd->param3) + vol) * (abs(cmd->param3) + vol)), 0);
 
 		if (cmd->param2 == 1) {
 			cmd->param2 = 2;
@@ -673,7 +674,7 @@ IMPLEMENT_OPCODE(ClearActionTalk) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x22
 IMPLEMENT_OPCODE(_unk22) {
-	Actor *actor = _scene->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry.actorIndex);
+	Actor *actor = getScene()->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry.actorIndex);
 
 	actor->process_41BC00(cmd->param1, cmd->param2);
 }
@@ -681,7 +682,7 @@ IMPLEMENT_OPCODE(_unk22) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x23
 IMPLEMENT_OPCODE(_unk23) {
-	Actor *actor = _scene->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry.actorIndex);
+	Actor *actor = getScene()->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry.actorIndex);
 
 	actor->process_41BCC0(cmd->param1, cmd->param2);
 }
@@ -689,7 +690,7 @@ IMPLEMENT_OPCODE(_unk23) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x24
 IMPLEMENT_OPCODE(_unk24) {
-	Actor *actor = _scene->getActor(cmd->param4 ? cmd->param4 : _currentQueueEntry.actorIndex);
+	Actor *actor = getScene()->getActor(cmd->param4 ? cmd->param4 : _currentQueueEntry.actorIndex);
 
 	actor->process_41BDB0(cmd->param1, cmd->param3);
 }
@@ -697,7 +698,7 @@ IMPLEMENT_OPCODE(_unk24) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x25
 IMPLEMENT_OPCODE(RunEncounter) {
-	Encounter *encounter = _scene->vm()->encounter();
+	Encounter *encounter = _vm->encounter();
 
 	encounter->setFlag(kEncounterFlag5, cmd->param5);
 
@@ -735,7 +736,7 @@ IMPLEMENT_OPCODE(ClearAction16) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x29
 IMPLEMENT_OPCODE(SetActorField638) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->setField638(cmd->param2);
 }
@@ -743,7 +744,7 @@ IMPLEMENT_OPCODE(SetActorField638) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2A
 IMPLEMENT_OPCODE(JumpIfActorField638) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (actor->getField638())
 		_currentLine = cmd->param3;
@@ -752,15 +753,15 @@ IMPLEMENT_OPCODE(JumpIfActorField638) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2B
 IMPLEMENT_OPCODE(ChangeScene) {
-	_scene->getActor(0)->updateStatus(kActorStatusDisabled);
+	getScene()->getActor(0)->updateStatus(kActorStatusDisabled);
 	resetQueue();
 
 	// Fade screen to black
-	_scene->vm()->screen()->paletteFade(0, 75, 8);
-	_scene->vm()->screen()->clearScreen();
+	getScreen()->paletteFade(0, 75, 8);
+	getScreen()->clearScreen();
 
 	// Stop all sounds & music
-	_scene->vm()->sound()->stopAllSounds(true);
+	_vm->sound()->stopAllSounds(true);
 
 	// Change the scene number
 	_delayedSceneIndex = cmd->param1 + 4;
@@ -771,8 +772,8 @@ IMPLEMENT_OPCODE(ChangeScene) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2C
 IMPLEMENT_OPCODE(_unk2C_ActorSub) {
-	Actor *player = _scene->getActor();
-	Actor *actor = _scene->getActor(_currentQueueEntry.actorIndex);
+	Actor *player = getScene()->getActor();
+	Actor *actor = getScene()->getActor(_currentQueueEntry.actorIndex);
 	Common::Point playerPoint(player->x1 + player->x2, player->y1 + player->y2);
 	ActorDirection direction = (cmd->param2 == 8) ? player->getDirection() : cmd->param2;
 
@@ -820,7 +821,7 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub) {
 		else
 			id = actor->getResourcesId(5 * cmd->param1 + direction + 30);
 
-		GraphicResource *res = new GraphicResource(_scene->getResourcePack(), id);
+		GraphicResource *res = new GraphicResource(getScene()->getResourcePack(), id);
 		actor->setResourceId(id);
 		actor->setFrameCount(res->getFrameCount());
 		actor->setFrameIndex(0);
@@ -836,17 +837,17 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2D
 IMPLEMENT_OPCODE(PlayMovie) {
-	if (_scene->matteBarHeight < 170) {
+	if (getScene()->matteBarHeight < 170) {
 		_lineIncrement = 1;
 
-		if (!_scene->matteBarHeight) {
-			_scene->getCursor()->hide();
-			_scene->makeGreyPalette();
-			_scene->matteVar1 = 1;
-			_scene->matteBarHeight = 1;
-			_scene->matteVar2 = 0;
-			_scene->mattePlaySound = (cmd->param3 == 0);
-			_scene->matteInitialized = (cmd->param2 == 0);
+		if (!getScene()->matteBarHeight) {
+			getCursor()->hide();
+			getScene()->makeGreyPalette();
+			getScene()->matteVar1 = 1;
+			getScene()->matteBarHeight = 1;
+			getScene()->matteVar2 = 0;
+			getScene()->mattePlaySound = (cmd->param3 == 0);
+			getScene()->matteInitialized = (cmd->param2 == 0);
 			_delayedVideoIndex = cmd->param1;
 		}
 
@@ -854,19 +855,19 @@ IMPLEMENT_OPCODE(PlayMovie) {
 	}
 
 	bool check = false;
-	ActionArea *area = _scene->worldstats()->actions[_scene->getActor()->getActionIndex3()];
+	ActionArea *area = getWorld()->actions[getScene()->getActor()->getActionIndex3()];
 	if (area->paletteValue) {
-		_scene->vm()->screen()->setPalette(_scene->getResourcePack(), area->paletteValue);
-		_scene->vm()->screen()->setGammaLevel(_scene->getResourcePack(), area->paletteValue, 0);
+		getScreen()->setPalette(getScene()->getResourcePack(), area->paletteValue);
+		getScreen()->setGammaLevel(getScene()->getResourcePack(), area->paletteValue, 0);
 	} else {
-		_scene->vm()->screen()->setPalette(_scene->getResourcePack(), _scene->worldstats()->currentPaletteId);
-		_scene->vm()->screen()->setGammaLevel(_scene->getResourcePack(), _scene->worldstats()->currentPaletteId, 0);
+		getScreen()->setPalette(getScene()->getResourcePack(), getWorld()->currentPaletteId);
+		getScreen()->setGammaLevel(getScene()->getResourcePack(), getWorld()->currentPaletteId, 0);
 	}
 
-	_scene->matteBarHeight = 0;
+	getScene()->matteBarHeight = 0;
 	_lineIncrement = 0;
 
-	if (!_scene->mattePlaySound && _currentScript->commands[0].numLines != 0) {
+	if (!getScene()->mattePlaySound && _currentScript->commands[0].numLines != 0) {
 		bool found = true;
 		int index = 0;
 
@@ -886,19 +887,19 @@ IMPLEMENT_OPCODE(PlayMovie) {
 
 	// XXX casting kResourceMusic_FFFFFD66 to silence a GCC warning
 	if (!check &&
-		_scene->matteVar2 == 0 &&
-		_scene->worldstats()->musicCurrentResourceId != (int)kResourceMusic_FFFFFD66)
-		if (_scene->vm()->sound()->isCacheOk())
-			_scene->vm()->sound()->playMusic(_scene->getResourcePack(), _scene->worldstats()->musicCurrentResourceId + kResourceMusic_80020000);
+		getScene()->matteVar2 == 0 &&
+		getWorld()->musicCurrentResourceId != (int)kResourceMusic_FFFFFD66)
+		if (_vm->sound()->isCacheOk())
+			_vm->sound()->playMusic(getScene()->getResourcePack(), getWorld()->musicCurrentResourceId + kResourceMusic_80020000);
 
-	_scene->getCursor()->show();
-	_scene->matteVar2 = 0;
+	getCursor()->show();
+	getScene()->matteVar2 = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2E
 IMPLEMENT_OPCODE(StopAllObjectsSounds) {
-	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
+	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	object->stopAllSounds();
 }
@@ -918,24 +919,24 @@ IMPLEMENT_OPCODE(ResumeProcessing) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x31
 IMPLEMENT_OPCODE(ResetSceneRect) {
-	_scene->worldstats()->sceneRectIdx = LOBYTE(cmd->param1);
-	_scene->vm()->screen()->paletteFade(0, 25, 10);
-	_scene->vm()->setFlag(kFlagTypeSceneRectChanged);
+	getWorld()->sceneRectIdx = LOBYTE(cmd->param1);
+	getScreen()->paletteFade(0, 25, 10);
+	_vm->setFlag(kFlagTypeSceneRectChanged);
 
-	_scene->worldstats()->xLeft = _scene->worldstats()->sceneRects[_scene->worldstats()->sceneRectIdx].left;
-	_scene->worldstats()->yTop  = _scene->worldstats()->sceneRects[_scene->worldstats()->sceneRectIdx].top;
+	getWorld()->xLeft = getWorld()->sceneRects[getWorld()->sceneRectIdx].left;
+	getWorld()->yTop  = getWorld()->sceneRects[getWorld()->sceneRectIdx].top;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x32
 IMPLEMENT_OPCODE(ChangeMusicById) {
-	_scene->vm()->sound()->changeMusic(_scene->getResourcePack(), cmd->param1, cmd->param2 ? 2 : 1);
+	_vm->sound()->changeMusic(getScene()->getResourcePack(), cmd->param1, cmd->param2 ? 2 : 1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x33
 IMPLEMENT_OPCODE(StopMusic) {
-	_scene->vm()->sound()->changeMusic(_scene->getResourcePack(), (int)kResourceMusic_FFFFFD66, 0);
+	_vm->sound()->changeMusic(getScene()->getResourcePack(), (int)kResourceMusic_FFFFFD66, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -952,7 +953,7 @@ IMPLEMENT_OPCODE(_unk34_Status) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x35
 IMPLEMENT_OPCODE(SetVolume) {
-	AmbientSoundItem item = _scene->worldstats()->ambientSounds[cmd->param1];
+	AmbientSoundItem item = getWorld()->ambientSounds[cmd->param1];
 	int var = cmd->param2 + item.field_C;
 
 	double volume = -((Config.sfxVolume + var) * (Config.ambientVolume + var));
@@ -964,7 +965,7 @@ IMPLEMENT_OPCODE(SetVolume) {
 		volume = 0;
 	}
 
-	_scene->vm()->sound()->setVolume(item.resourceId, volume);
+	_vm->sound()->setVolume(item.resourceId, volume);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -976,10 +977,10 @@ IMPLEMENT_OPCODE(Jump) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x37
 IMPLEMENT_OPCODE(RunBlowUpPuzzle) {
-	_scene->vm()->screen()->clearScreen();
-	_scene->vm()->screen()->clearGraphicsInQueue();
+	getScreen()->clearScreen();
+	getScreen()->clearGraphicsInQueue();
 
-	_scene->vm()->switchMessageHandler(_scene->vm()->getMessageHandler(cmd->param1));
+	_vm->switchMessageHandler(_vm->getMessageHandler(cmd->param1));
 
 	_currentLine++;
 
@@ -1008,24 +1009,24 @@ IMPLEMENT_OPCODE(ClearAction8) {
 // Opcode 0x3B
 IMPLEMENT_OPCODE(_unk3B_PALETTE_MOD) {
 	if (!cmd->param2) {
-		_scene->makeGreyPalette();
+		getScene()->makeGreyPalette();
 		cmd->param2 = 1;
 	}
 
 	if (cmd->param1 >= 22) {
-		_scene->vm()->screen()->clearScreen();
+		getScreen()->clearScreen();
 
 		cmd->param1 = 0;
 		cmd->param2 = 0;
 		_currentLine++;
 
-		_scene->vm()->screen()->clearGraphicsInQueue();
+		getScreen()->clearGraphicsInQueue();
 
 		_exit = true;
 		return;
 	}
 
-	_scene->updatePalette(cmd->param1);
+	getScene()->updatePalette(cmd->param1);
 
 	_lineIncrement = 1;
 	++cmd->param1;
@@ -1047,7 +1048,7 @@ IMPLEMENT_OPCODE(IncrementParam2) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3D
 IMPLEMENT_OPCODE(WaitUntilFramePlayed) {
-	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
+	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	int32 frameNum = cmd->param2;
 	if (frameNum == -1)
@@ -1069,9 +1070,9 @@ IMPLEMENT_OPCODE(UpdateWideScreen) {
 		cmd->param1 = 0;
 		_lineIncrement = 0;
 
-		_scene->matteBarHeight = 0;
+		getScene()->matteBarHeight = 0;
 	} else {
-		_scene->vm()->screen()->drawWideScreen(4 * barSize);
+		getScreen()->drawWideScreen(4 * barSize);
 
 		_lineIncrement = 1;
 		++cmd->param1;
@@ -1082,7 +1083,7 @@ IMPLEMENT_OPCODE(UpdateWideScreen) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3F
 IMPLEMENT_OPCODE(JumpIfActor) {
-	ActorIndex index = (cmd->param1 == kActorNone) ? _scene->getPlayerActorIndex() : cmd->param1;
+	ActorIndex index = (cmd->param1 == kActorNone) ? getScene()->getPlayerActorIndex() : cmd->param1;
 
 	if (_currentQueueEntry.actorIndex != index)
 		_currentLine = cmd->param2 - 1;
@@ -1095,48 +1096,48 @@ IMPLEMENT_OPCODE(PlaySpeechScene) {
 		return;
 
 	if (cmd->param4 != 2) {
-		cmd->param5 = _scene->playSpeech(cmd->param1);
+		cmd->param5 = getScene()->playSpeech(cmd->param1);
 
 		if (cmd->param2) {
-			_scene->vm()->setGameFlag(kGameFlagScriptProcessing);
+			_vm->setGameFlag(kGameFlagScriptProcessing);
 			cmd->param4 = 2;
 			if (cmd->param6) {
-				_scene->vm()->setFlag(kFlagType1);
-				_scene->vm()->setFlag(kFlagType2);
+				_vm->setFlag(kFlagType1);
+				_vm->setFlag(kFlagType2);
 			}
 			_lineIncrement = 1;
 		}
 
 		if (cmd->param3 && !cmd->param6)
-			_scene->vm()->setGameFlag(kGameFlag219);
+			_vm->setGameFlag(kGameFlag219);
 
 		return;
 	}
 
-	if (_scene->vm()->sound()->isPlaying((ResourceId)cmd->param5)) {
+	if (_vm->sound()->isPlaying((ResourceId)cmd->param5)) {
 		_lineIncrement = 1;
 		return;
 	}
 
-	_scene->vm()->clearGameFlag(kGameFlagScriptProcessing);
+	_vm->clearGameFlag(kGameFlagScriptProcessing);
 	cmd->param4 = 0;
 
 	if (cmd->param3) {
 		if (cmd->param6) {
-			_scene->vm()->clearFlag(kFlagType1);
-			_scene->vm()->clearFlag(kFlagType2);
+			_vm->clearFlag(kFlagType1);
+			_vm->clearFlag(kFlagType2);
 
 			return;
 		} else {
-			_scene->vm()->clearGameFlag(kGameFlag219);
+			_vm->clearGameFlag(kGameFlag219);
 		}
 	}
 
 	if (!cmd->param6) {
 		cmd->param6 = 1;
 	} else {
-		_scene->vm()->clearFlag(kFlagType1);
-		_scene->vm()->clearFlag(kFlagType2);
+		_vm->clearFlag(kFlagType1);
+		_vm->clearFlag(kFlagType2);
 	}
 }
 
@@ -1147,48 +1148,48 @@ IMPLEMENT_OPCODE(PlaySpeech) {
 		return;
 
 	if (cmd->param4 != 2) {
-		cmd->param5 = _scene->speech()->play(cmd->param1);
+		cmd->param5 = getScene()->speech()->play(cmd->param1);
 
 		if (cmd->param2) {
-			_scene->vm()->setGameFlag(kGameFlagScriptProcessing);
+			_vm->setGameFlag(kGameFlagScriptProcessing);
 			cmd->param4 = 2;
 			if (cmd->param6) {
-				_scene->vm()->setFlag(kFlagType1);
-				_scene->vm()->setFlag(kFlagType2);
+				_vm->setFlag(kFlagType1);
+				_vm->setFlag(kFlagType2);
 			}
 			_lineIncrement = 1;
 		}
 
 		if (cmd->param3 && !cmd->param6)
-			_scene->vm()->setGameFlag(kGameFlag219);
+			_vm->setGameFlag(kGameFlag219);
 
 		return;
 	}
 
-	if (_scene->vm()->sound()->isPlaying((ResourceId)cmd->param5)) {
+	if (_vm->sound()->isPlaying((ResourceId)cmd->param5)) {
 		_lineIncrement = 1;
 		return;
 	}
 
-	_scene->vm()->clearGameFlag(kGameFlagScriptProcessing);
+	_vm->clearGameFlag(kGameFlagScriptProcessing);
 	cmd->param4 = 0;
 
 	if (cmd->param3) {
 		if (cmd->param6) {
-			_scene->vm()->clearFlag(kFlagType1);
-			_scene->vm()->clearFlag(kFlagType2);
+			_vm->clearFlag(kFlagType1);
+			_vm->clearFlag(kFlagType2);
 
 			return;
 		} else {
-			_scene->vm()->clearGameFlag(kGameFlag219);
+			_vm->clearGameFlag(kGameFlag219);
 		}
 	}
 
 	if (!cmd->param6) {
 		cmd->param6 = 1;
 	} else {
-		_scene->vm()->clearFlag(kFlagType1);
-		_scene->vm()->clearFlag(kFlagType2);
+		_vm->clearFlag(kFlagType1);
+		_vm->clearFlag(kFlagType2);
 	}
 }
 
@@ -1199,12 +1200,12 @@ IMPLEMENT_OPCODE(PlaySpeechScene2) {
 		return;
 
 	if (cmd->param5 == 2) {
-		if (_scene->vm()->sound()->isPlaying(cmd->param6)) {
+		if (_vm->sound()->isPlaying(cmd->param6)) {
 			_lineIncrement = 1;
 			return;
 		}
 
-		_scene->vm()->clearGameFlag(kGameFlagScriptProcessing);
+		_vm->clearGameFlag(kGameFlagScriptProcessing);
 
 		cmd->param5 = 0;
 
@@ -1214,58 +1215,58 @@ IMPLEMENT_OPCODE(PlaySpeechScene2) {
 				return;
 			}
 		} if (!cmd->param7) {
-			_scene->vm()->clearGameFlag(kGameFlag219);
+			_vm->clearGameFlag(kGameFlag219);
 			cmd->param7 = 1;
 			return;
 		}
 
-		_scene->vm()->clearFlag(kFlagType1);
-		_scene->vm()->clearFlag(kFlagType2);
+		_vm->clearFlag(kFlagType1);
+		_vm->clearFlag(kFlagType2);
 		return;
 	}
 
-	cmd->param6 = _scene->playSpeech(cmd->param1, cmd->param2);
+	cmd->param6 = getScene()->playSpeech(cmd->param1, cmd->param2);
 
 	if (cmd->param3) {
-		_scene->vm()->setGameFlag(kGameFlagScriptProcessing);
+		_vm->setGameFlag(kGameFlagScriptProcessing);
 
 		cmd->param5 = 2;
 
 		if (cmd->param7) {
-			_scene->vm()->clearFlag(kFlagType1);
-			_scene->vm()->clearFlag(kFlagType2);
+			_vm->clearFlag(kFlagType1);
+			_vm->clearFlag(kFlagType2);
 		}
 
 		_lineIncrement = 1;
 	}
 
 	if (cmd->param4 && !cmd->param7)
-		_scene->vm()->setGameFlag(kGameFlag219);
+		_vm->setGameFlag(kGameFlag219);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x43
 IMPLEMENT_OPCODE(MoveScenePositionFromActor) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (!cmd->param3) {
-		_scene->worldstats()->motionStatus = 5;
+		getWorld()->motionStatus = 5;
 
-		_scene->updateSceneCoordinates(actor->x1 + Common::Rational(actor->x2, 2).toInt() - 320,
+		getScene()->updateSceneCoordinates(actor->x1 + Common::Rational(actor->x2, 2).toInt() - 320,
 			                           actor->y1 + Common::Rational(actor->y2, 2).toInt() - 240,
 		                               cmd->param2);
 	} else if (cmd->param6) {
-		if (_scene->worldstats()->motionStatus == 2) {
+		if (getWorld()->motionStatus == 2) {
 			_lineIncrement = 1;
 		} else {
 			cmd->param6 = 0;
-			_scene->worldstats()->targetX = -1;
+			getWorld()->targetX = -1;
 		}
 	} else {
 		cmd->param6 = 1;
-		_scene->worldstats()->motionStatus = 2;
+		getWorld()->motionStatus = 2;
 
-		if (_scene->updateSceneCoordinates(actor->x1 + Common::Rational(actor->x2, 2).toInt() - 320,
+		if (getScene()->updateSceneCoordinates(actor->x1 + Common::Rational(actor->x2, 2).toInt() - 320,
 										   actor->y1 + Common::Rational(actor->y2, 2).toInt() - 240,
 										   cmd->param2,
 										   true,
@@ -1279,52 +1280,52 @@ IMPLEMENT_OPCODE(MoveScenePositionFromActor) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x44
 IMPLEMENT_OPCODE(PaletteFade) {
-	_scene->vm()->screen()->paletteFade(0, cmd->param1, cmd->param2);
+	getScreen()->paletteFade(0, cmd->param1, cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x45
 IMPLEMENT_OPCODE(StartPaletteFadeThread) {
-	_scene->vm()->screen()->startPaletteFade(_scene->worldstats()->currentPaletteId, cmd->param1, cmd->param2);
+	getScreen()->startPaletteFade(getWorld()->currentPaletteId, cmd->param1, cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x46
 IMPLEMENT_OPCODE(_unk46) {
 	if (cmd->param6) {
-		if (_scene->vm()->sound()->isPlaying(_scene->vm()->sound()->soundResourceId)) {
+		if (_vm->sound()->isPlaying(_vm->sound()->soundResourceId)) {
 			_lineIncrement = 1;
 		} else {
 			cmd->param6 = 0;
 			if (cmd->param5) {
-				_scene->getActor(cmd->param5)->updateStatus(kActorStatusEnabled);
+				getScene()->getActor(cmd->param5)->updateStatus(kActorStatusEnabled);
 			} else if (cmd->param4 != cmd->param3 && cmd->param4) {
-				_scene->worldstats()->getObjectById((ObjectId)cmd->param3)->disable();
+				getWorld()->getObjectById((ObjectId)cmd->param3)->disable();
 
-				Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param4);
+				Object *object = getWorld()->getObjectById((ObjectId)cmd->param4);
 				object->setNextFrame(object->flags);
 			}
 
-			_scene->vm()->clearGameFlag(kGameFlagScriptProcessing);
+			_vm->clearGameFlag(kGameFlagScriptProcessing);
 
-			_scene->vm()->sound()->soundResourceId = 0;
-			_scene->vm()->sound()->speechTextResourceId = 0;
+			_vm->sound()->soundResourceId = 0;
+			_vm->sound()->speechTextResourceId = 0;
 		}
 	} else {
-		_scene->vm()->setGameFlag(kGameFlagScriptProcessing);
-		_scene->vm()->sound()->setSpeech(cmd->param1 + kResourceSound_80030203, cmd->param1 + kResourceSpeech_8000050A);
+		_vm->setGameFlag(kGameFlagScriptProcessing);
+		_vm->sound()->setSpeech(cmd->param1 + kResourceSound_80030203, cmd->param1 + kResourceSpeech_8000050A);
 
 		if (cmd->param2) {
-			_scene->getActor(cmd->param5)->updateStatus(kActorStatus8);
+			getScene()->getActor(cmd->param5)->updateStatus(kActorStatus8);
 			cmd->param6 = 1;
 			_lineIncrement = 1;
 		} else {
 			if (cmd->param4 != cmd->param3) {
 				if (cmd->param4)
-					_scene->worldstats()->getObjectById((ObjectId)cmd->param4)->disable();
+					getWorld()->getObjectById((ObjectId)cmd->param4)->disable();
 
 				if (cmd->param3)
-					_scene->worldstats()->getObjectById((ObjectId)cmd->param3)->setNextFrame(_scene->worldstats()->getObjectById((ObjectId)cmd->param4)->flags);
+					getWorld()->getObjectById((ObjectId)cmd->param3)->setNextFrame(getWorld()->getObjectById((ObjectId)cmd->param4)->flags);
 			}
 
 			cmd->param6 = 1;
@@ -1336,25 +1337,25 @@ IMPLEMENT_OPCODE(_unk46) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x47
 IMPLEMENT_OPCODE(ActorFaceObject) {
-	_scene->getActor(cmd->param1)->faceTarget((ObjectId)cmd->param2, (DirectionFrom)cmd->param3);
+	getScene()->getActor(cmd->param1)->faceTarget((ObjectId)cmd->param2, (DirectionFrom)cmd->param3);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x48
 IMPLEMENT_OPCODE(_unk48_MATTE_01) {
-	_scene->matteVar1 = 0;
-	_scene->matteInitialized = true;
+	getScene()->matteVar1 = 0;
+	getScene()->matteInitialized = true;
 
-	if (_scene->matteBarHeight >= 170) {
-		_scene->matteBarHeight = 0;
+	if (getScene()->matteBarHeight >= 170) {
+		getScene()->matteBarHeight = 0;
 		_lineIncrement = 0;
-		_scene->getCursor()->show();
+		getCursor()->show();
 	} else {
 		_lineIncrement = 1;
 
-		if (!_scene->matteBarHeight) {
-			_scene->getCursor()->hide();
-			_scene->matteBarHeight = 1;
+		if (!getScene()->matteBarHeight) {
+			getCursor()->hide();
+			getScene()->matteBarHeight = 1;
 		}
 	}
 }
@@ -1362,20 +1363,20 @@ IMPLEMENT_OPCODE(_unk48_MATTE_01) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x49
 IMPLEMENT_OPCODE(_unk49_MATTE_90) {
-	_scene->matteVar1 = 0;
-	_scene->matteInitialized = true;
-	_scene->mattePlaySound = true;
+	getScene()->matteVar1 = 0;
+	getScene()->matteInitialized = true;
+	getScene()->mattePlaySound = true;
 
-	if (_scene->matteBarHeight >= 170) {
-		_scene->matteBarHeight = 0;
+	if (getScene()->matteBarHeight >= 170) {
+		getScene()->matteBarHeight = 0;
 		_lineIncrement = 0;
-		_scene->getCursor()->show();
+		getCursor()->show();
 	} else {
 		_lineIncrement = 1;
 
-		if (!_scene->matteBarHeight) {
-			_scene->getCursor()->hide();
-			_scene->matteBarHeight = 90;
+		if (!getScene()->matteBarHeight) {
+			getCursor()->hide();
+			getScene()->matteBarHeight = 90;
 		}
 	}
 }
@@ -1384,10 +1385,10 @@ IMPLEMENT_OPCODE(_unk49_MATTE_90) {
 // Opcode 0x4A
 IMPLEMENT_OPCODE(JumpIfSoundPlaying) {
 	if (cmd->param3 == 1) {
-		if (_scene->vm()->sound()->isPlaying(cmd->param1)) {
+		if (_vm->sound()->isPlaying(cmd->param1)) {
 			_currentLine = cmd->param2;
 		}
-	} else if (!_scene->vm()->sound()->isPlaying(cmd->param1)) {
+	} else if (!_vm->sound()->isPlaying(cmd->param1)) {
 		_currentLine = cmd->param2;
 	}
 }
@@ -1395,13 +1396,13 @@ IMPLEMENT_OPCODE(JumpIfSoundPlaying) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4B
 IMPLEMENT_OPCODE(ChangePlayerActorIndex) {
-	_scene->changePlayerActorIndex(cmd->param1);
+	getScene()->changePlayerActorIndex(cmd->param1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4C
 IMPLEMENT_OPCODE(ChangeActorStatus) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (cmd->param2) {
 		if (actor->getStatus() < kActorStatus11)
@@ -1414,14 +1415,14 @@ IMPLEMENT_OPCODE(ChangeActorStatus) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4D
 IMPLEMENT_OPCODE(StopSound) {
-	if (_scene->vm()->sound()->isPlaying(cmd->param1))
-		_scene->vm()->sound()->stopSound(cmd->param1);
+	if (_vm->sound()->isPlaying(cmd->param1))
+		_vm->sound()->stopSound(cmd->param1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4E
 IMPLEMENT_OPCODE(JumpRandom) {
-	if (_scene->vm()->getRandom(cmd->param1) < (uint32)cmd->param2)
+	if (_vm->getRandom(cmd->param1) < (uint32)cmd->param2)
 		return;
 
 	setNextLine(cmd->param3);
@@ -1431,18 +1432,18 @@ IMPLEMENT_OPCODE(JumpRandom) {
 // Opcode 0x4F
 IMPLEMENT_OPCODE(ClearScreen) {
 	if (cmd->param1) {
-		_scene->vm()->screen()->clearScreen();
-		_scene->vm()->setFlag(kFlagTypeSkipDraw);
+		getScreen()->clearScreen();
+		_vm->setFlag(kFlagTypeSkipDraw);
 	} else {
-		_scene->vm()->clearFlag(kFlagTypeSkipDraw);
+		_vm->clearFlag(kFlagTypeSkipDraw);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x50
 IMPLEMENT_OPCODE(Quit) {
-	_scene->vm()->screen()->clearScreen();
-	_scene->vm()->quitGame();
+	getScreen()->clearScreen();
+	_vm->quitGame();
 
 	// We need to exit the interpreter loop so we get back to the event loop and get the quit message
 	_exit = true;
@@ -1451,7 +1452,7 @@ IMPLEMENT_OPCODE(Quit) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x51
 IMPLEMENT_OPCODE(JumpObjectFrame) {
-	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
+	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param2 == -1)
 		cmd->param2 = object->getFrameCount() - 1;
@@ -1482,13 +1483,13 @@ IMPLEMENT_OPCODE(JumpObjectFrame) {
 // Opcode 0x52
 IMPLEMENT_OPCODE(DeleteGraphics) {
 	for (uint i = 0; i < 55; i++)
-		_scene->vm()->screen()->deleteGraphicFromQueue(_scene->getActor(cmd->param1)->getResourcesId(cmd->param1));
+		getScreen()->deleteGraphicFromQueue(getScene()->getActor(cmd->param1)->getResourcesId(cmd->param1));
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x53
 IMPLEMENT_OPCODE(SetActorField944) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->setField944(cmd->param2);
 }
@@ -1497,7 +1498,7 @@ IMPLEMENT_OPCODE(SetActorField944) {
 // Opcode 0x54
 IMPLEMENT_OPCODE(_unk54_SET_ACTIONLIST_6EC) {
 	if (cmd->param2)
-		_currentScript->field_1BB0 = _scene->vm()->getRandom(cmd->param1);
+		_currentScript->field_1BB0 = _vm->getRandom(cmd->param1);
 	else
 		_currentScript->field_1BB0 = cmd->param1;
 }
@@ -1537,7 +1538,7 @@ IMPLEMENT_OPCODE(_unk55) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x56
 IMPLEMENT_OPCODE(_unk56) {
-	Actor *actor = _scene->getActor(cmd->param2 == 2 ? kActorNone : cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param2 == 2 ? kActorNone : cmd->param1);
 
 	if (actor->getStatus() == kActorStatus2 || actor->getStatus() == kActorStatus13) {
 		if (cmd->param2 == 2)
@@ -1551,7 +1552,7 @@ IMPLEMENT_OPCODE(_unk56) {
 		_lineIncrement = 0;
 
 		if ((actor->x1 + actor->x2 == cmd->param6) && (actor->y1 + actor->y2 == cmd->param7)) {
-			_scene->getActor()->faceTarget((ObjectId)cmd->param1, kDirectionFromActor);
+			getScene()->getActor()->faceTarget((ObjectId)cmd->param1, kDirectionFromActor);
 			actor->updateFromDirection((actor->getDirection() + 4) & 7);
 		} else {
 			_currentLine = cmd->param3;
@@ -1560,8 +1561,8 @@ IMPLEMENT_OPCODE(_unk56) {
 		int32 x = 0;
 		int32 y = 0; // FIXME: is is set somewhere else?
 
-		if (_scene->processActor(&x, &cmd->param4) == 1) {
-			_scene->getActor()->processStatus(x, y, cmd->param4);
+		if (getScene()->processActor(&x, &cmd->param4) == 1) {
+			getScene()->getActor()->processStatus(x, y, cmd->param4);
 			cmd->param6 = x;
 			cmd->param7 = y;
 
@@ -1571,7 +1572,7 @@ IMPLEMENT_OPCODE(_unk56) {
 			}
 		} else {
 			if (cmd->param4)
-				_scene->playSpeech(1);
+				getScene()->playSpeech(1);
 
 			_currentLine = cmd->param3;
 		}
@@ -1581,15 +1582,15 @@ IMPLEMENT_OPCODE(_unk56) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x57
 IMPLEMENT_OPCODE(SetResourcePalette) {
-	_scene->worldstats()->currentPaletteId = _scene->worldstats()->graphicResourceIds[cmd->param1];
-	_scene->vm()->screen()->setPalette(_scene->getResourcePack(), _scene->worldstats()->currentPaletteId);
-	_scene->vm()->screen()->setGammaLevel(_scene->getResourcePack(), _scene->worldstats()->currentPaletteId, 0);
+	getWorld()->currentPaletteId = getWorld()->graphicResourceIds[cmd->param1];
+	getScreen()->setPalette(getScene()->getResourcePack(), getWorld()->currentPaletteId);
+	getScreen()->setGammaLevel(getScene()->getResourcePack(), getWorld()->currentPaletteId, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x58
 IMPLEMENT_OPCODE(SetObjectFrameIdxFlaged) {
-	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
+	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param3)
 		object->flags = 1 | object->flags;
@@ -1602,7 +1603,7 @@ IMPLEMENT_OPCODE(SetObjectFrameIdxFlaged) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x59
 IMPLEMENT_OPCODE(_unk59) {
-	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
+	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param2) {
 		object->flags |= kObjectFlag40000;
@@ -1617,7 +1618,7 @@ IMPLEMENT_OPCODE(_unk59) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5A
 IMPLEMENT_OPCODE(_unk5A) {
-	_scene->getActor(cmd->param1)->setActionIndex2(cmd->param2);
+	getScene()->getActor(cmd->param1)->setActionIndex2(cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1625,14 +1626,14 @@ IMPLEMENT_OPCODE(_unk5A) {
 IMPLEMENT_OPCODE(_unk5B) {
 	if (cmd->param2 >= 0 && cmd->param2 <= 3) {
 		if (cmd->param1) {
-			Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
+			Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 			object->setField67C(cmd->param2);
 
 			if (object->getField67C())
 				object->setField67C(object->getField67C() + 3);
 		} else {
-			_scene->getActor(cmd->param3)->setField96C(cmd->param2);
+			getScene()->getActor(cmd->param3)->setField96C(cmd->param2);
 		}
 	}
 }
@@ -1640,13 +1641,13 @@ IMPLEMENT_OPCODE(_unk5B) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5C
 IMPLEMENT_OPCODE(QueueScript) {
-	queueScript( _scene->worldstats()->getActionAreaById(cmd->param1)->scriptIndex, cmd->param2);
+	queueScript( getWorld()->getActionAreaById(cmd->param1)->scriptIndex, cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5D
 IMPLEMENT_OPCODE(_unk5D) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->process_401830(cmd->param2, cmd->param3, cmd->param4, cmd->param5, cmd->param6, cmd->param7, cmd->param8, cmd->param9);
 }
@@ -1654,7 +1655,7 @@ IMPLEMENT_OPCODE(_unk5D) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5E
 IMPLEMENT_OPCODE(ClearActorFields) {
-	Actor *actor = _scene->getActor(cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param1);
 
 	// Clear fields starting from field_970
 	actor->clearFields();
@@ -1663,7 +1664,7 @@ IMPLEMENT_OPCODE(ClearActorFields) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5F
 IMPLEMENT_OPCODE(SetObjectLastFrameIdx) {
-	Object *object = _scene->worldstats()->getObjectById((ObjectId)cmd->param1);
+	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (object->getFrameIndex() == object->getFrameCount() - 1) {
 		_lineIncrement = 0;
@@ -1676,7 +1677,7 @@ IMPLEMENT_OPCODE(SetObjectLastFrameIdx) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x60
 IMPLEMENT_OPCODE(_unk60_SET_OR_CLR_ACTIONAREA_FLAG) {
-	ActionArea *area = _scene->worldstats()->getActionAreaById(cmd->param1);
+	ActionArea *area = getWorld()->getActionAreaById(cmd->param1);
 
 	if (cmd->param2)
 		area->flags |= 1;
@@ -1688,14 +1689,14 @@ IMPLEMENT_OPCODE(_unk60_SET_OR_CLR_ACTIONAREA_FLAG) {
 // Opcode 0x61
 IMPLEMENT_OPCODE(_unk61) {
 	if (cmd->param2) {
-		if (_scene->worldstats()->field_E860C == -1) {
+		if (getWorld()->field_E860C == -1) {
 			_lineIncrement = 0;
 			cmd->param2 = 0;
 		} else {
 			_lineIncrement = 1;
 		}
 	} else {
-		_scene->updatePlayerChapter9(cmd->param1);
+		getScene()->updatePlayerChapter9(cmd->param1);
 		cmd->param2 = 1;
 		_lineIncrement = 1;
 	}
@@ -1704,18 +1705,18 @@ IMPLEMENT_OPCODE(_unk61) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x62
 IMPLEMENT_OPCODE(ShowOptionsScreen) {
-	_scene->vm()->menu()->showOptions();
+	_vm->menu()->showOptions();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x63
 IMPLEMENT_OPCODE(_unk63) {
 	if (cmd->param1) {
-		_scene->vm()->setFlag(kFlagType1);
-		_scene->vm()->setFlag(kFlagType2);
+		_vm->setFlag(kFlagType1);
+		_vm->setFlag(kFlagType2);
 	}
 
-	if (_scene->vm()->sound()->isPlaying(_scene->vm()->sound()->soundResourceId)) {
+	if (_vm->sound()->isPlaying(_vm->sound()->soundResourceId)) {
 		_lineIncrement = 1;
 		return;
 	} else if (!cmd->param1) {
@@ -1734,15 +1735,15 @@ void ActionList::enableObject(ScriptEntry *cmd, ObjectEnableType type) {
 void ActionList::setActionFlag(ScriptEntry *cmd, ActionType flag) {
 	switch (cmd->param2) {
 	default:
-		_scene->worldstats()->getObjectById((ObjectId)cmd->param1)->actionType |= flag;
+		getWorld()->getObjectById((ObjectId)cmd->param1)->actionType |= flag;
 		break;
 
 	case 1:
-		_scene->worldstats()->getActionAreaById(cmd->param1)->actionType |= flag;
+		getWorld()->getActionAreaById(cmd->param1)->actionType |= flag;
 		break;
 
 	case 2:
-		_scene->worldstats()->actors[cmd->param1]->actionType |= flag;
+		getWorld()->actors[cmd->param1]->actionType |= flag;
 		break;
 	}
 }
@@ -1750,15 +1751,15 @@ void ActionList::setActionFlag(ScriptEntry *cmd, ActionType flag) {
 void ActionList::clearActionFlag(ScriptEntry *cmd, ActionType flag) {
 	switch (cmd->param2) {
 	default:
-		_scene->worldstats()->getObjectById((ObjectId)cmd->param1)->actionType &= ~flag;
+		getWorld()->getObjectById((ObjectId)cmd->param1)->actionType &= ~flag;
 		break;
 
 	case 1:
-		_scene->worldstats()->getActionAreaById(cmd->param1)->actionType &= ~flag;
+		getWorld()->getActionAreaById(cmd->param1)->actionType &= ~flag;
 		break;
 
 	case 2:
-		_scene->worldstats()->actors[cmd->param1]->actionType &= ~flag;
+		getWorld()->actors[cmd->param1]->actionType &= ~flag;
 		break;
 	}
 }
@@ -1768,15 +1769,15 @@ void ActionList::jumpIfActionFlag(ScriptEntry *cmd, ActionType flag) {
 
 	switch (cmd->param3) {
 	default:
-		done = (_scene->worldstats()->actors[cmd->param1]->actionType & flag) == 0;
+		done = (getWorld()->actors[cmd->param1]->actionType & flag) == 0;
 		break;
 
 	case 0:
-		done = (_scene->worldstats()->getObjectById((ObjectId)cmd->param1)->actionType & flag) == 0;
+		done = (getWorld()->getObjectById((ObjectId)cmd->param1)->actionType & flag) == 0;
 		break;
 
 	case 1:
-		done = (_scene->worldstats()->getActionAreaById(cmd->param1)->actionType & flag) == 0;
+		done = (getWorld()->getActionAreaById(cmd->param1)->actionType & flag) == 0;
 		break;
 	}
 
