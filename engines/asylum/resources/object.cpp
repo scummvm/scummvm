@@ -180,9 +180,9 @@ void Object::draw() {
 	Common::Point point;
 	getScene()->adjustCoordinates(x, y, &point);
 
-	if (_field_67C <= 0 || _field_67C >= 4 || Config.performance <= 1)
+	if (_field_67C <= 0 || _field_67C >= 4 || Config.performance <= 1) {
 		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, x, y, (flags >> 11) & kObjectFlag2, _field_67C - 3, _priority);
-	else {
+	} else {
 		// TODO: Do Cross Fade
 		//getScreen()->addGraphicToQueue(_resourceId, _frameIndex, x, y, getWorld()->backgroundImage, getWorld()->xLeft, getWorld()->yTop, 0, 0, _field_67C - 1);
 		error("[Object::draw] Crossfade not implemented!");

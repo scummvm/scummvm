@@ -628,7 +628,7 @@ void Special::playChapterSound(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::playSoundChapter1(Object *object, ActorIndex actorIndex) {
-	error("[Special::playSoundChapter2] Not implemented!");
+	//error("[Special::playSoundChapter1] Not implemented!");
 }
 
 void Special::playSoundChapter2(Object *object, ActorIndex actorIndex) {
@@ -636,23 +636,23 @@ void Special::playSoundChapter2(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::playSoundChapter3(Object *object, ActorIndex actorIndex) {
-	error("[Special::playSoundChapter2] Not implemented!");
+	error("[Special::playSoundChapter3] Not implemented!");
 }
 
 void Special::playSoundChapter4(Object *object, ActorIndex actorIndex) {
-	error("[Special::playSoundChapter2] Not implemented!");
+	error("[Special::playSoundChapter4] Not implemented!");
 }
 
 void Special::playSoundChapter6(Object *object, ActorIndex actorIndex) {
-	error("[Special::playSoundChapter2] Not implemented!");
+	error("[Special::playSoundChapter6] Not implemented!");
 }
 
 void Special::playSoundChapter7(Object *object, ActorIndex actorIndex) {
-	error("[Special::playSoundChapter2] Not implemented!");
+	error("[Special::playSoundChapter7] Not implemented!");
 }
 
 void Special::playSoundChapter8(Object *object, ActorIndex actorIndex) {
-	error("[Special::playSoundChapter2] Not implemented!");
+	error("[Special::playSoundChapter8] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////

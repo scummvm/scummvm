@@ -428,15 +428,15 @@ void Actor::update() {
 		break;
 
 	case kActorStatus14:
-		void updateStatus14();
+		updateStatus14();
 		break;
 
 	case kActorStatus21:
-		void updateStatus21();
+		updateStatus21();
 		break;
 
 	case kActorStatus9:
-		void updateStatus9();
+		updateStatus9();
 		break;
 
 	case kActorStatus6:
@@ -837,7 +837,7 @@ void Actor::updateStatusEnabled() {
 
 	// Actor: Crow
 	if (_vm->screenUpdatesCount - _lastScreenUpdate > 300) {
-		if (strcmp(_name, "Crow")) {
+		if (strcmp((char *)&_name, "Crow")) {
 			if (_vm->getRandom(100) < 50
 			 && (!getSound()->soundResourceId || !getSound()->isPlaying(getSound()->soundResourceId))
 			 && isDefaultDirection(10))
