@@ -780,6 +780,51 @@ void Actor::update_40DE20() {
 }
 
 //////////////////////////////////////////////////////////////////////////
+// Static update methods
+//////////////////////////////////////////////////////////////////////////
+void Actor::enableActorsChapter2(AsylumEngine *_vm) {
+	_vm->clearGameFlag(kGameFlag438);
+	_vm->clearGameFlag(kGameFlag439);
+	_vm->clearGameFlag(kGameFlag440);
+	_vm->clearGameFlag(kGameFlag441);
+	_vm->clearGameFlag(kGameFlag442);
+
+	// Update shared data
+	for (int i = 0; i < 9; i++) {
+		// TODO find out which data is updated
+	}
+
+	getScene()->getActor(13)->updateStatus(kActorStatusEnabled);
+	getScene()->getActor(13)->processStatus(2300, 71, false);
+
+	getScene()->getActor(14)->updateStatus(kActorStatusEnabled);
+	getScene()->getActor(14)->processStatus(2600, 1300, false);
+
+	getScene()->getActor(15)->updateStatus(kActorStatusEnabled);
+	getScene()->getActor(15)->processStatus(2742, 615, false);
+
+	getScene()->getActor(16)->updateStatus(kActorStatusEnabled);
+	getScene()->getActor(16)->processStatus(2700, 1200, false);
+
+	getScene()->getActor(17)->updateStatus(kActorStatusEnabled);
+	getScene()->getActor(17)->processStatus(2751, 347, false);
+
+	getScene()->getActor(18)->updateStatus(kActorStatusEnabled);
+	getScene()->getActor(18)->processStatus(2420, 284, false);
+
+	getScene()->getActor(19)->updateStatus(kActorStatusEnabled);
+	getScene()->getActor(19)->processStatus(2800, 370, false);
+
+	getScene()->getActor(20)->updateStatus(kActorStatusEnabled);
+	getScene()->getActor(20)->processStatus(1973, 1, false);
+
+	getScene()->getActor(21)->updateStatus(kActorStatusEnabled);
+	getScene()->getActor(21)->processStatus(2541, 40, false);
+
+	error("[Actor::enableActorsChapter2] Missing update shared data part!");
+}
+
+//////////////////////////////////////////////////////////////////////////
 // Update methods
 //////////////////////////////////////////////////////////////////////////
 
