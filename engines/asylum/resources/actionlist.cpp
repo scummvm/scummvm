@@ -1268,7 +1268,7 @@ IMPLEMENT_OPCODE(MoveScenePositionFromActor) {
 			_lineIncrement = 1;
 		} else {
 			cmd->param6 = 0;
-			getWorld()->targetX = -1;
+			getWorld()->coordinates[0] = -1;
 		}
 	} else {
 		cmd->param6 = 1;

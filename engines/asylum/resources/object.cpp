@@ -95,7 +95,7 @@ void Object::load(Common::SeekableReadStream *stream) {
 
 	for (int i = 0; i < 50; i++) {
 		_frameSoundItems[i].resourceId	= stream->readSint32LE();
-		_frameSoundItems[i].frameIdx = stream->readSint32LE();
+		_frameSoundItems[i].frameIndex = stream->readSint32LE();
 		_frameSoundItems[i].index	= stream->readSint32LE();
 		_frameSoundItems[i].field_C	= stream->readSint32LE();
 		_frameSoundItems[i].field_10 = stream->readSint32LE();
@@ -439,6 +439,8 @@ void Object::setVolume() {
 	int32 volume = Config.voiceVolume + getSound()->calculateVolumeAdjustement((frame->getWidth() >> 1) + x, (frame->getHeight() >> 1) + y, _field_6A4, 0);
 	if (volume < -10000)
 		volume = -10000;
+
+	delete resource;
 
 	getSound()->setVolume(_soundResourceId, volume);
 }

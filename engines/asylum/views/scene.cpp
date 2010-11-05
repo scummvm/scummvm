@@ -278,19 +278,23 @@ void Scene::setScenePosition(int x, int y) {
 	GraphicFrame *bg = _bgResource->getFrame(0);
 	//_startX = x;
 	//_startY = y;
-	_ws->targetX = x;
-	_ws->targetY = y;
 
-	if (_ws->targetX < 0)
-		_ws->targetX = 0;
-	if (_ws->targetX > (bg->surface.w - 640))
-		_ws->targetX = bg->surface.w - 640;
+	int32 *targetX = &_ws->coordinates[0];
+	int32 *targetY = &_ws->coordinates[1];
+
+	*targetX = x;
+	*targetY = y;
+
+	if (*targetX < 0)
+		*targetX = 0;
+	if (*targetX > (bg->surface.w - 640))
+		*targetX = bg->surface.w - 640;
 
 
-	if (_ws->targetY < 0)
-		_ws->targetY = 0;
-	if (_ws->targetY > (bg->surface.h - 480))
-		_ws->targetY = bg->surface.h - 480;
+	if (*targetY < 0)
+		*targetY = 0;
+	if (*targetY > (bg->surface.h - 480))
+		*targetY = bg->surface.h - 480;
 }
 
 void Scene::handleEvent(Common::Event *event, bool doUpdate) {
@@ -976,62 +980,66 @@ void Scene::updateAdjustScreen() {
 
 }
 
-bool Scene::updateSceneCoordinates(int32 targetX, int32 targetY, int32 A0, bool checkSceneCoords, int32 *param) {
+bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkSceneCoords, int32 *param) {
 	Common::Rect *sr = &_ws->sceneRects[_ws->sceneRectIdx];
 
-	_ws->targetX = targetX;
-	_ws->targetY = targetY;
+	int32 *targetX = &_ws->coordinates[0];
+	int32 *targetY = &_ws->coordinates[1];
+	int32 *coord3  = &_ws->coordinates[2];
 
-	_ws->field_A0 = A0;
+	*targetX = tX;
+	*targetY = tY;
+
+	*coord3 = A0;
 
 	// Adjust coordinates
 	if (checkSceneCoords)
-		if (_ws->targetX + 640 > _ws->width)
-			_ws->targetX = _ws->width - 640;
+		if (*targetX + 640 > _ws->width)
+			*targetX = _ws->width - 640;
 
-	if (_ws->targetX < sr->left)
-		_ws->targetX = sr->left;
+	if (*targetX < sr->left)
+		*targetX = sr->left;
 
-	if (_ws->targetY < sr->top)
-		_ws->targetY = sr->top;
+	if (*targetY < sr->top)
+		*targetY = sr->top;
 
-	if (_ws->targetX + 640 > sr->right)
-		_ws->targetX = sr->right - 640;
+	if (*targetX + 640 > sr->right)
+		*targetX = sr->right - 640;
 
-	if (_ws->targetY + 480 < sr->bottom)
-		_ws->targetY = sr->bottom - 480;
+	if (*targetY + 480 < sr->bottom)
+		*targetY = sr->bottom - 480;
 
 	if (checkSceneCoords)
-		if (_ws->targetY + 480 > _ws->height)
-			_ws->targetY = _ws->height - 480;
+		if (*targetY + 480 > _ws->height)
+			*targetY = _ws->height - 480;
 
 	// Adjust scene offsets & coordinates
 	_sceneOffset = 0;
 	_sceneXLeft = _ws->xLeft;
 	_sceneYTop  = _ws->yTop;
 
-	int32 diffX = _ws->targetX - _ws->xLeft;
-	int32 diffY = _ws->targetY - _ws->yTop;
+	int32 diffX = *targetX - _ws->xLeft;
+	int32 diffY = *targetY - _ws->yTop;
 
 	if (abs(diffX) <= abs(diffY)) {
-		if (_ws->yTop > _ws->targetY)
-			_ws->field_A0 = -_ws->field_A0;
+		if (_ws->yTop > *targetY)
+			*coord3 = -*coord3;
 
-		_sceneOffsetAdd = Common::Rational(_ws->field_A0, diffY) * diffX;
+		_sceneOffsetAdd = Common::Rational(*coord3, diffY) * diffX;
 
-		if (param != NULL && abs(diffY) <= abs(_ws->field_A0)) {
-			_ws->targetX = -1;
+		if (param != NULL && abs(diffY) <= abs(*coord3)) {
+			*targetX = -1;
 			*param = 0;
 			return true;
 		}
 	} else {
-		if (_ws->xLeft > _ws->targetX)
-			_ws->field_A0 = -_ws->field_A0;
+		if (_ws->xLeft > *targetX)
+			*coord3 = -*coord3;
 
-		_sceneOffsetAdd = Common::Rational(_ws->field_A0, diffX) * diffY;
+		_sceneOffsetAdd = Common::Rational(*coord3, diffX) * diffY;
 
-		if (param != NULL && abs(diffX) <= abs(_ws->field_A0)) {
-			_ws->targetX = -1;
+		if (param != NULL && abs(diffX) <= abs(*coord3)) {
+			*targetX = -1;
 			return true;
 		}
 	}

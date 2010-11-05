@@ -70,6 +70,7 @@ public:
 	int32           getSoundY()   { return _soundY; }
 	int32           getField67C() { return _field_67C; }
 	int32           getField688() { return _field_688; }
+	int32           getField6A4() { return _field_6A4; }
 
 	/////////////////////////////////////////////////////////////////////////
 	// Loading & disabling

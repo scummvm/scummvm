@@ -575,6 +575,8 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 				resource->load(getScene()->getResourcePack(), _resourceId);
 
 			_frameCount = resource->getFrameCount();
+
+			delete resource;
 		}
 		break;
 	}
