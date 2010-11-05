@@ -893,7 +893,6 @@ IMPLEMENT_OPCODE(PlayMovie) {
 			check = true;
 	}
 
-	// XXX casting kResourceMusic_FFFFFD66 to silence a GCC warning
 	if (!check &&
 		getScene()->matteVar2 == 0 &&
 		getWorld()->musicCurrentResourceId != kResourceMusic_FFFFFD66)
