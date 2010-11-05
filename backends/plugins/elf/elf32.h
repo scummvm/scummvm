@@ -88,6 +88,7 @@ typedef struct {
 #define EM_MIPS		8
 #define EM_PPC		20
 #define EM_ARM		40
+#define EM_SH		42
 
 // Program header (contains info about segment)
 typedef struct {
