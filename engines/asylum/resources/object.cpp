@@ -116,7 +116,7 @@ void Object::load(Common::SeekableReadStream *stream) {
 
 
 void Object::disable() {
-	flags &= ~kObjectFlagEnabled;
+	flags &= kObjectFlagDisabled;
 }
 
 void Object::disableAndRemoveFromQueue() {
