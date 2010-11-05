@@ -12,6 +12,7 @@ TEST_LIBS    := sound/libsound.a common/libcommon.a
 TEST_FLAGS   := --runner=StdioPrinter
 TEST_CFLAGS  := -I$(srcdir)/test/cxxtest
 TEST_LDFLAGS := $(LIBS)
+TEST_CXXFLAGS := $(filter-out -Wglobal-constructors,$(CXXFLAGS))
 
 ifdef HAVE_GCC3
 # In test/common/str.h, we test a zero length format string. This causes GCC
@@ -28,7 +29,7 @@ endif
 test: test/runner
 	./test/runner
 test/runner: test/runner.cpp $(TEST_LIBS)
-	$(QUIET_LINK)$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TEST_LDFLAGS) $(TEST_CFLAGS) -o $@ $+
+	$(QUIET_LINK)$(CXX) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_LDFLAGS) $(TEST_CFLAGS) -o $@ $+
 test/runner.cpp: $(TESTS)
 	@mkdir -p test
 	$(srcdir)/test/cxxtest/cxxtestgen.py $(TEST_FLAGS) -o $@ $+
