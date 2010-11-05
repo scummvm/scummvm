@@ -155,7 +155,7 @@ public:
 	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW = -1, int maxH = -1) const;
 private:
 	template<typename Color>
-	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c1, Color c2 = 0, bool clipShadowRight = false, bool clipShadowBottom = false) const;
+	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const;
 	void createOutline(uint8 *outline, const uint8 *glyph, const int w, const int h) const;
 
 #ifndef DISABLE_FLIPPED_MODE

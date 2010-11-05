@@ -53,7 +53,7 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 }
 
 template<typename Color>
-void FontSJISBase::blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c1, Color c2, bool shadowClipRight, bool shadowClipBottom) const {
+void FontSJISBase::blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const {
 	for (int y = 0; y < h; ++y) {
 		Color *d = (Color *)dst;
 		dst += pitch;
@@ -63,17 +63,9 @@ void FontSJISBase::blitCharacter(const uint8 *glyph, const int w, const int h, u
 			if (!(x % 8))
 				mask = *glyph++;
 
-			if (mask & 0x80) {
-				*d = c1;
-				if (_drawMode == kShadowMode || _drawMode == kFMTownsShadowMode) {
-					if (!(shadowClipRight && (x == w - 1)))
-						d[1] = c2;
-					if (!(shadowClipBottom && (y == h - 1)))
-						d[pitch] = c2;
-				}
-				if (_drawMode == kShadowMode && !(shadowClipRight && (x == w - 1)) && !(shadowClipBottom && (y == h - 1)))
-					d[pitch + 1] = c2;
-			}
+			if (mask & 0x80)
+				*d = c;
+
 			++d;
 			mask <<= 1;
 		}
@@ -147,7 +139,6 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 	int width = 0, height = 0;
 	int outlineExtraWidth = 2, outlineExtraHeight = 2;
 	int outlineXOffset = 0, outlineYOffset = 0;
-	bool shadowClipRight = false, shadowClipBottom = false;
 
 	if (is8x16(ch)) {
 		glyphSource = getCharData8x16(ch);
@@ -163,14 +154,12 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 		width = maxW;
 		outlineExtraWidth = 0;
 		outlineXOffset = 1;
-		shadowClipRight = true;
 	}
 	
 	if (maxH != -1 && maxH < height) {
 		height = maxH;
 		outlineExtraHeight = 0;
 		outlineYOffset = 1;
-		shadowClipBottom = true;
 	}
 
 	if (width <= 0 || height <= 0)
@@ -196,15 +185,29 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 		if (_drawMode == kOutlineMode) {
 			blitCharacter<uint8>(outline, width + outlineExtraWidth, height + outlineExtraHeight, (uint8 *)dst, pitch, c2);
 			blitCharacter<uint8>(glyphSource, width - outlineXOffset, height - outlineYOffset, (uint8 *)dst + pitch + 1, pitch, c1);
-		} else {
-			blitCharacter<uint8>(glyphSource, width, height, (uint8 *)dst, pitch, c1, c2, shadowClipRight, shadowClipBottom);
+		} else {			
+			if (_drawMode != kDefaultMode) {
+				blitCharacter<uint8>(glyphSource, width - outlineXOffset, height, ((uint8*)dst) + 1, pitch, c2);
+				blitCharacter<uint8>(glyphSource, width, height - outlineYOffset, ((uint8*)dst) + pitch, pitch, c2);
+				if (_drawMode == kShadowMode)
+					blitCharacter<uint8>(glyphSource, width - outlineXOffset, height - outlineYOffset, ((uint8*)dst) + pitch + 1, pitch, c2);
+			}
+
+			blitCharacter<uint8>(glyphSource, width, height, (uint8 *)dst, pitch, c1);
 		}
 	} else if (bpp == 2) {
 		if (_drawMode == kOutlineMode) {
 			blitCharacter<uint16>(outline, width + outlineExtraWidth, height + outlineExtraHeight, (uint8 *)dst, pitch, c2);
 			blitCharacter<uint16>(glyphSource, width - outlineXOffset, height - outlineYOffset, (uint8 *)dst + pitch + 2, pitch, c1);
 		} else {
-			blitCharacter<uint16>(glyphSource, width, height, (uint8 *)dst, pitch, c1, c2, shadowClipRight, shadowClipBottom);
+			if (_drawMode != kDefaultMode) {
+				blitCharacter<uint16>(glyphSource, width - outlineXOffset, height, ((uint8*)dst) + 2, pitch, c2);
+				blitCharacter<uint16>(glyphSource, width, height - outlineYOffset, ((uint8*)dst) + pitch, pitch, c2);
+				if (_drawMode == kShadowMode)
+					blitCharacter<uint16>(glyphSource, width - outlineXOffset, height - outlineYOffset, ((uint8*)dst) + pitch + 2, pitch, c2);
+			}
+
+			blitCharacter<uint16>(glyphSource, width, height, (uint8 *)dst, pitch, c1);
 		}
 	} else {
 		error("FontSJISBase::drawChar: unsupported bpp: %d", bpp);
