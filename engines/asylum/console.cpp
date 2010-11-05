@@ -225,30 +225,28 @@ bool Console::cmdShowObject(int32 argc, const char **argv) {
 		return true;
 	}
 
-	if (argc == 2) {
-		if (Common::String(argv[1]) == "id") {
-			int id = atoi(argv[2]);
-			for (uint32 i = 0; i < getWorld()->objects.size(); i++) {
-				if (getWorld()->objects[i]->getId() == id) {
-					DebugPrintf("%s", getWorld()->objects[i]->toString(false).c_str());
-					return true;
-				}
-			}
-			DebugPrintf("No object with id %d found\n", id);
-		} else if (Common::String(argv[1]) == "idx") {
-			int index = atoi(argv[2]);
-			int maxIndex = getWorld()->objects.size() - 1;
-
-			if (index < 0 || index > maxIndex) {
-				DebugPrintf("[error] index should be between 0 and %d\n", maxIndex);
+	if (Common::String(argv[1]) == "id") {
+		int id = atoi(argv[2]);
+		for (uint32 i = 0; i < getWorld()->objects.size(); i++) {
+			if (getWorld()->objects[i]->getId() == id) {
+				DebugPrintf("%s", getWorld()->objects[i]->toString(false).c_str());
 				return true;
 			}
-
-			DebugPrintf("%s", getWorld()->objects[index]->toString().c_str());
-
-		} else {
-			DebugPrintf("[error] valid options are 'id' and 'idx'\n");
 		}
+		DebugPrintf("No object with id %d found\n", id);
+	} else if (Common::String(argv[1]) == "idx") {
+		int index = atoi(argv[2]);
+		int maxIndex = getWorld()->objects.size() - 1;
+
+		if (index < 0 || index > maxIndex) {
+			DebugPrintf("[error] index should be between 0 and %d\n", maxIndex);
+			return true;
+		}
+
+		DebugPrintf("%s", getWorld()->objects[index]->toString(false).c_str());
+
+	} else {
+		DebugPrintf("[error] valid options are 'id' and 'idx'\n");
 	}
 
 	return true;
