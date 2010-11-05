@@ -254,7 +254,7 @@ bool ActionList::process() {
 
 			int32 opcode = cmd->opcode;
 
-			debugC(kDebugLevelScripts, "[0x%02X] %s(%d, %d, %d, %d, %d, %d, %d, %d, %d)",
+			debugC(kDebugLevelScripts, "[0x%02X] %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
 			       opcode, _opcodes[opcode]->name,
 			       cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
 			       cmd->param6, cmd->param7, cmd->param8, cmd->param9);
@@ -491,7 +491,7 @@ IMPLEMENT_OPCODE(EnableObjects) {
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (!_currentScript->counter && getWorld()->numChapter != 13)
-		_vm->sound()->playSound(cmd->param3 ? kResourceSound_80120006 : kResourceSound_80120001, false, Config.sfxVolume, 0);
+		_vm->sound()->playSound(cmd->param3 ? kResourceSound_80120006 : kResourceSound_80120001);
 
 	if (_currentScript->counter >= (3 * cmd->param2 - 1)) {
 		_currentScript->counter = 0;
@@ -896,7 +896,7 @@ IMPLEMENT_OPCODE(PlayMovie) {
 	// XXX casting kResourceMusic_FFFFFD66 to silence a GCC warning
 	if (!check &&
 		getScene()->matteVar2 == 0 &&
-		getWorld()->musicCurrentResourceId != (int)kResourceMusic_FFFFFD66)
+		getWorld()->musicCurrentResourceId != kResourceMusic_FFFFFD66)
 		if (_vm->sound()->isCacheOk())
 			_vm->sound()->playMusic(getScene()->getResourcePack(), getWorld()->musicCurrentResourceId + kResourceMusic_80020000);
 
@@ -1451,7 +1451,8 @@ IMPLEMENT_OPCODE(Quit) {
 	getScreen()->clearScreen();
 	_vm->quitGame();
 
-	// We need to exit the interpreter loop so we get back to the event loop and get the quit message
+	// We need to exit the interpreter loop so we get back to the event loop
+	// and get the quit message
 	_exit = true;
 }
 
@@ -1647,7 +1648,7 @@ IMPLEMENT_OPCODE(_unk5B) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5C
 IMPLEMENT_OPCODE(QueueScript) {
-	queueScript( getWorld()->getActionAreaById(cmd->param1)->scriptIndex, cmd->param2);
+	queueScript(getWorld()->getActionAreaById(cmd->param1)->scriptIndex, cmd->param2);
 }
 
 //////////////////////////////////////////////////////////////////////////

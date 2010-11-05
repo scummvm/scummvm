@@ -303,7 +303,7 @@ enum ObjectId {
 	kObjectBodySlides3             = 2516,
 	kObjectBodySlides4             = 2517,
 	kObjectBodySlides5             = 2518,
-	kObjectBodySlides6             = 2519,
+	kObjectBodySlides6             = 2519
 };
 
 enum ObjectFlag {
