@@ -110,8 +110,14 @@ void Screen::displayRect(int16 x, int16 y, int16 dx, int16 dy) {
 void Screen::remapPal(uint16 oldIndex, uint16 newIndex) {
 	debugC(1, kDebugDisplay, "Remap_pal(%d, %d)", oldIndex, newIndex);
 
-	warning("STUB: Remap_pal()");
-	//bminfo.bmiColors[oldIndex] = ctab[newIndex];
+	byte pal[4];
+
+	pal[0] = _vm->_palette[newIndex * 4 + 0];
+	pal[1] = _vm->_palette[newIndex * 4 + 1];
+	pal[2] = _vm->_palette[newIndex * 4 + 2];
+	pal[3] = _vm->_palette[newIndex * 4 + 3];
+
+	g_system->setPalette(pal, oldIndex, 1);
 }
 
 void Screen::savePal(Common::WriteStream *f) {
