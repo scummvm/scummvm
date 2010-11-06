@@ -61,8 +61,10 @@ public:
 	void     drawRectangle(bool filledFl, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int color);
 	void     drawShape(int x, int y, int color1, int color2);
 	void     drawStatusText();
+	void     freePalette();
 	void     initDisplay();
 	void     initNewScreenDisplay();
+	void     loadPalette(Common::File &in);
 	void     moveImage(image_pt srcImage, uint16 x1, uint16 y1, uint16 dx, uint16 dy, uint16 width1, image_pt dstImage, uint16 x2, uint16 y2, uint16 width2);
 	void     remapPal(uint16 oldIndex, uint16 newIndex);
 	void     restorePal(Common::SeekableReadStream *f);
@@ -97,9 +99,12 @@ protected:
 	HugoEngine *_vm;
 
 	// Fonts used in dib (non-GDI)
-	byte _fnt;                                      // Current font number
-	byte _fontdata[NUM_FONTS][FONTSIZE];            // Font data
+	byte  _fnt;                                     // Current font number
+	byte  _fontdata[NUM_FONTS][FONTSIZE];           // Font data
 	byte *_font[NUM_FONTS][FONT_LEN];               // Ptrs to each char
+	byte *_palette;
+
+	byte  _paletteSize;
 
 private:
 	viewdib_t _frontBuffer;

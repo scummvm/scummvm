@@ -123,7 +123,6 @@ public:
 	byte  *_screen_p;
 	byte  _heroImage;
 
-	byte  *_palette;
 	byte  *_introX;
 	byte  *_introY;
 	byte  *_screenStates;
@@ -262,7 +261,6 @@ protected:
 private:
 	int _mouseX;
 	int _mouseY;
-	byte _paletteSize;
 	byte _introXSize;
 	status_t _status;                               // Game status structure
 
@@ -275,17 +273,17 @@ private:
 // Vinterstum: These shouldn't be static, but we get weird pathfinding issues (and Valgrind warnings) without.
 // Needs more investigation. Alignment issues?
 
-	static overlay_t _boundary;                             // Boundary overlay file
-	static overlay_t _overlay;                              // First overlay file
-	static overlay_t _ovlBase;                              // First overlay base file
-	static overlay_t _objBound;                             // Boundary file marks object baselines
+	static overlay_t _boundary;                     // Boundary overlay file
+	static overlay_t _overlay;                      // First overlay file
+	static overlay_t _ovlBase;                      // First overlay base file
+	static overlay_t _objBound;                     // Boundary file marks object baselines
 
 	GameType _gameType;
 	Common::Platform _platform;
 	bool _packedFl;
 
-	int _score;                         // Holds current score
-	int _maxscore;                      // Holds maximum score
+	int _score;                                     // Holds current score
+	int _maxscore;                                  // Holds maximum score
 
 	char **loadTextsVariante(Common::File &in, uint16 *arraySize);
 	char ***loadTextsArray(Common::File &in);

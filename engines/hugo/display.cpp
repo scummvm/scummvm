@@ -48,7 +48,7 @@ namespace Hugo {
 #define INY(Y, B) (Y >= B->y && Y <= B->y + B->dy)
 #define OVERLAP(A, B) ((INX(A->x, B) || INX(A->x + A->dx, B) || INX(B->x, A) || INX(B->x + B->dx, A)) && (INY(A->y, B) || INY(A->y + A->dy, B) || INY(B->y, A) || INY(B->y + B->dy, A)))
 
-Screen::Screen(HugoEngine *vm) : _vm(vm) {
+Screen::Screen(HugoEngine *vm) : _vm(vm), _palette(0) {
 
 }
 
@@ -58,7 +58,7 @@ Screen::~Screen() {
 void Screen::createPal() {
 	debugC(1, kDebugDisplay, "createPal");
 
-	g_system->setPalette(_vm->_palette, 0, NUM_COLORS);
+	g_system->setPalette(_palette, 0, NUM_COLORS);
 }
 
 /**
@@ -112,10 +112,10 @@ void Screen::remapPal(uint16 oldIndex, uint16 newIndex) {
 
 	byte pal[4];
 
-	pal[0] = _vm->_palette[newIndex * 4 + 0];
-	pal[1] = _vm->_palette[newIndex * 4 + 1];
-	pal[2] = _vm->_palette[newIndex * 4 + 2];
-	pal[3] = _vm->_palette[newIndex * 4 + 3];
+	pal[0] = _palette[newIndex * 4 + 0];
+	pal[1] = _palette[newIndex * 4 + 1];
+	pal[2] = _palette[newIndex * 4 + 2];
+	pal[3] = _palette[newIndex * 4 + 3];
 
 	g_system->setPalette(pal, oldIndex, 1);
 }
@@ -488,5 +488,24 @@ void Screen::initNewScreenDisplay() {
 	// Stop premature object display in Display_list(D_DISPLAY)
 	_vm->getGameStatus().newScreenFl = true;
 }
+
+/**
+* Load palette from Hugo.dat
+*/
+void Screen::loadPalette(Common::File &in) {
+	// Read palette
+	_paletteSize = in.readUint16BE();
+	_palette = (byte *)malloc(sizeof(byte) * _paletteSize);
+	for (int i = 0; i < _paletteSize; i++)
+		_palette[i] = in.readByte();
+}
+
+/**
+* Free palette
+*/
+void Screen::freePalette() {
+	free(_palette);
+}
+
 } // End of namespace Hugo
 

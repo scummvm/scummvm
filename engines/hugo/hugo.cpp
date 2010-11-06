@@ -64,7 +64,7 @@ command_t   _line;                              // Line of user text input
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd), _mouseX(0), _mouseY(0),
 	_textData(0), _stringtData(0), _screenNames(0), _textEngine(0), _textIntro(0), _textMouse(0), _textParser(0), _textSchedule(0),
 	_textUtil(0), _arrayNouns(0), _arrayVerbs(0), _arrayReqs(0), _hotspots(0), _invent(0), _uses(0), _catchallList(0),
-	_backgroundObjects(0), _points(0), _cmdList(0), _screenActs(0), _heroImage(0), _defltTunes(0), _palette(0), _introX(0),
+	_backgroundObjects(0), _points(0), _cmdList(0), _screenActs(0), _heroImage(0), _defltTunes(0), _introX(0),
 	_introY(0), _maxInvent(0), _numBonuses(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0), _screenStates(0),
 	_numObj(0), _score(0), _maxscore(0), _backgroundObjectsSize(0), _screenActsSize(0), _usesSize(0)
 
@@ -96,7 +96,7 @@ HugoEngine::~HugoEngine() {
 	free(_arrayVerbs);
 
 	free(_screenNames);
-	free(_palette);
+	_screen->freePalette();
 	free(_textEngine);
 	free(_textIntro);
 	free(_introX);
@@ -410,11 +410,7 @@ bool HugoEngine::loadHugoDat() {
 	// Read screenNames
 	_screenNames = loadTextsVariante(in, &_numScreens);
 
-	// Read palette
-	_paletteSize = in.readUint16BE();
-	_palette = (byte *)malloc(sizeof(byte) * _paletteSize);
-	for (int i = 0; i < _paletteSize; i++)
-		_palette[i] = in.readByte();
+	_screen->loadPalette(in);
 
 	// Read textEngine
 	_textEngine = loadTexts(in);
