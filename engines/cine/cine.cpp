@@ -56,6 +56,7 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Eng
 	DebugMan.addDebugChannel(kCineDebugScript, "Script", "Script debug level");
 	DebugMan.addDebugChannel(kCineDebugPart,   "Part",   "Part debug level");
 	DebugMan.addDebugChannel(kCineDebugSound,  "Sound",  "Sound debug level");
+	_console = new CineConsole(this);
 
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -74,7 +75,9 @@ CineEngine::~CineEngine() {
 	if (getGameType() == Cine::GType_OS) {
 		freeErrmessDat();
 	}
+
 	DebugMan.clearAllDebugChannels();
+	delete _console;
 }
 
 Common::Error CineEngine::run() {

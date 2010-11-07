@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	anim.o \
 	bg.o \
 	bg_list.o \
+	console.o \
 	cine.o \
 	detection.o \
 	gfx.o \

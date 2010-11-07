@@ -49,6 +49,7 @@
 #include "cine/anim.h"
 #include "cine/bg_list.h"
 #include "cine/various.h"
+#include "cine/console.h"
 
 //#define DUMP_SCRIPTS
 
@@ -99,6 +100,8 @@ struct SeqListElement;
 
 typedef Common::HashMap<Common::String, const char *> StringPtrHashMap;
 
+class CineConsole;
+
 class CineEngine : public Engine {
 
 protected:
@@ -137,6 +140,8 @@ public:
 	StringPtrHashMap _volumeEntriesMap;
 	TextHandler _textHandler;
 
+	GUI::Debugger *getDebugger() { return _console; }
+
 	bool _restartRequested;
 
 private:
@@ -151,6 +156,7 @@ private:
 	void mainLoop(int bootScriptIdx);
 	void readVolCnf();
 
+	CineConsole *_console;
 	bool _preLoad;
 	int _timerDelayMultiplier;
 
