@@ -545,10 +545,12 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 
 	// Get CARD/HSPT data and dump their scripts
 	if (!scumm_stricmp(argv[2], "CARD")) {
-		// FIXME: It's weird to use debugN here and not DebugPrintf. But
-		// then again, dumpScript() uses debugN, and it is non-trivial
-		// to modify that to use DebugPrintf. Hence for now we gotta
-		// make do...
+		// Use debugN to print these because the scripts can get very large and would
+		// really be useless if the the text console is not used. A DumpFile could also
+		// theoretically be used, but I (clone2727) typically use this dynamically and
+		// don't want countless files laying around without game context. If one would
+		// want a file of a script they could just redirect stdout to a file or use
+		// deriven.
 		debugN("\n\nDumping scripts for %s\'s card %d!\n", argv[1], (uint16)atoi(argv[3]));
 		debugN("==================================\n\n");
 		Common::SeekableReadStream *cardStream = _vm->getRawData(MKID_BE('CARD'), (uint16)atoi(argv[3]));
@@ -560,7 +562,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		}
 		delete cardStream;
 	} else if (!scumm_stricmp(argv[2], "HSPT")) {
-		// FIXME: It's weird to use debugN here and not DebugPrintf. See above!
+		// See above for why this is printed via debugN
 		debugN("\n\nDumping scripts for %s\'s card %d hotspots!\n", argv[1], (uint16)atoi(argv[3]));
 		debugN("===========================================\n\n");
 
@@ -583,7 +585,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		DebugPrintf("%s doesn't have any scripts!\n", argv[2]);
 	}
 
-	// FIXME: It's weird to use debugN here and not DebugPrintf. See above!
+	// See above for why this is printed via debugN
 	debugN("\n\n");
 
 	_vm->changeToStack(oldStack);
