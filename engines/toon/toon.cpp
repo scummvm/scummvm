@@ -790,7 +790,7 @@ ToonEngine::~ToonEngine() {
 	delete _fontRenderer;
 	delete _fontToon;
 	delete _fontEZ;
-	delete[] _hotspots;
+	delete _hotspots;
 
 	DebugMan.clearAllDebugChannels();
 	delete _console;
