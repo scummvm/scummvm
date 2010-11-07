@@ -41,8 +41,8 @@ uint32 HugoEngine::getFeatures() const {
 static const PlainGameDescriptor hugoGames[] = {
 	// Games
 	{"hugo1", "Hugo 1: Hugo's House of Horrors"},
-	{"hugo2", "Hugo 2: Hugo's Mystery Adventure"},
-	{"hugo3", "Hugo 3: Hugo's Amazon Adventure"},
+	{"hugo2", "Hugo 2: Whodunit?"},
+	{"hugo3", "Hugo 3: Jungle of Doom"},
 	{0, 0}
 };
 

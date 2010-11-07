@@ -985,16 +985,28 @@ void HugoEngine::initialize() {
 
 	_rnd->setSeed(42);                              // Kick random number generator
 
-	switch (getGameType()) {
-	case kGameTypeHugo1:
-		_episode = "\"HUGO'S HOUSE OF HORRORS\"";
+	switch (_gameVariant) {
+	case kGameVariantH1Dos:
+		_episode = "\"Hugo's House of Horrors\"";
 		_picDir = "";
 		break;
-	case kGameTypeHugo2:
+	case kGameVariantH2Dos:
+		_episode = "\"Hugo 2: Whodunit?\"";
+		_picDir = "hugo2/";
+		break;
+	case kGameVariantH3Dos:
+		_episode = "\"Hugo III: Jungle of Doom\"";
+		_picDir = "hugo3/";
+		break;
+	case kGameVariantH1Win:
+		_episode = "\"Hugo's Horrific Adventure\"";
+		_picDir = "";
+		break;
+	case kGameVariantH2Win:
 		_episode = "\"Hugo's Mystery Adventure\"";
 		_picDir = "hugo2/";
 		break;
-	case kGameTypeHugo3:
+	case kGameVariantH3Win:
 		_episode = "\"Hugo's Amazon Adventure\"";
 		_picDir = "hugo3/";
 		break;

@@ -53,6 +53,9 @@ class RandomSource;
  * - Hugo's House of Horror
  * - Whodunit?
  * - Jungle of Doom
+ * - Hugo's Horrific Adventure
+ * - Hugo's Mystery Adventure
+ * - Hugo's Amazon Adventure
  */
 namespace Hugo {
 
