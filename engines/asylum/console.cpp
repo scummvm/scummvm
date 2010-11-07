@@ -173,7 +173,7 @@ bool Console::cmdListActors(int32 argc, const char **argv) {
 			return true;
 		}
 
-		DebugPrintf("%s\n", getWorld()->actors[index]->toString().c_str());
+		DebugPrintf("%s\n", getWorld()->actors[index]->toString(false).c_str());
 	}
 
 	return true;

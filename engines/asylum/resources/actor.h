@@ -195,9 +195,11 @@ public:
 	/**
 	 * Convert this object into a string representation.
 	 *
+	 * @param shortString toggle whether to output a summary or
+	 *                    detailed view of the actor object
 	 * @return A string representation of this object.
 	 */
-	Common::String toString();
+	Common::String toString(bool shortString = true);
 
 	/**
 	 * Clears actor data fields (TODO what are those fields?)
