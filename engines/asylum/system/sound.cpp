@@ -260,6 +260,9 @@ void Sound::setSpeech(ResourceId sound, ResourceId speechText) {
 }
 
 void Sound::playMusic(ResourcePack *pack, ResourceId resourceId, int32 volume) {
+	if (resourceId == kResourceNone)
+		return;
+
 	stopMusic();
 
 	ResourceEntry *resource = pack->getResource(resourceId);
