@@ -28,7 +28,6 @@
 
 #include "common/array.h"
 #include "common/hash-str.h"
-#include "engines/savestate.h"	// TODO: Push this #include out to .cpp files needing it
 
 /**
  * A simple structure used to map gameids (like "monkey", "sword1", ...) to
