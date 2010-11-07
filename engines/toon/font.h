@@ -33,7 +33,7 @@ namespace Toon {
 class FontRenderer {
 public:
 	FontRenderer(ToonEngine *vm);
-	~FontRenderer(void);
+	~FontRenderer();
 
 	void setFont(Animation *font);
 	void computeSize(Common::String origText, int32 *retX, int32 *retY);

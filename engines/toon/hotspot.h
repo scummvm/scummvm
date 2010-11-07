@@ -51,7 +51,7 @@ private:
 class Hotspots {
 public:
 	Hotspots(ToonEngine *vm);
-	~Hotspots(void);
+	~Hotspots();
 
 	bool LoadRif(Common::String rifName, Common::String additionalRifName);
 	int32 Find(int32 x, int32 y);

@@ -184,6 +184,7 @@ void PakFile::open(Common::SeekableReadStream *rs, Common::String packName, bool
 
 	if (preloadEntirePackage) {
 		_bufferSize = rs->size();
+		delete[] _buffer;
 		_buffer = new uint8[_bufferSize];
 		rs->seek(0);
 		rs->read(_buffer, _bufferSize);
@@ -191,9 +192,7 @@ void PakFile::open(Common::SeekableReadStream *rs, Common::String packName, bool
 }
 
 void PakFile::close() {
-	if (_buffer) {
-		delete[] _buffer;
-	}
+	delete[] _buffer;
 
 	if (_fileHandle) {
 		_fileHandle->close();
@@ -205,11 +204,11 @@ PakFile::~PakFile() {
 	close();
 }
 
-
 PakFile::PakFile() {
-	_fileHandle = 0;
-	_buffer = 0;
 	_bufferSize = 0;
+	_buffer = NULL;
+
+	_fileHandle = NULL;
 }
 
 } // End of namespace Toon

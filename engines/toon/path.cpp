@@ -126,7 +126,7 @@ PathFinding::PathFinding(ToonEngine *vm) : _vm(vm) {
 	_width = 0;
 	_height = 0;
 	_heap = new PathFindingHeap();
-	_gridTemp = 0;
+	_gridTemp = NULL;
 	_numBlockingRects = 0;
 }
 
@@ -135,6 +135,7 @@ PathFinding::~PathFinding(void) {
 		_heap->unload();
 		delete _heap;
 	}
+	delete[] _gridTemp;
 }
 
 bool PathFinding::isWalkable(int32 x, int32 y) {
@@ -323,8 +324,7 @@ void PathFinding::init(Picture *mask) {
 	_currentMask = mask;
 	_heap->unload();
 	_heap->init(_width * _height);
-	if (_gridTemp)
-		delete[] _gridTemp;
+	delete[] _gridTemp;
 	_gridTemp = new int32[_width*_height];
 }
 

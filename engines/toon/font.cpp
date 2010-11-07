@@ -32,7 +32,9 @@ FontRenderer::FontRenderer(ToonEngine *vm) : _vm(vm) {
 	_currentFontColor[1] = 0xc8;
 	_currentFontColor[2] = 0xcb;
 	_currentFontColor[3] = 0xce;
+}
 
+FontRenderer::~FontRenderer() {
 }
 
 // mapping extended characters required for foreign versions to font (animation)

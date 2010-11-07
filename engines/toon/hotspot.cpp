@@ -33,6 +33,8 @@ Hotspots::Hotspots(ToonEngine *vm) : _vm(vm) {
 	_numItems = 0;
 }
 
+Hotspots::~Hotspots() {
+}
 
 void Hotspots::load(Common::ReadStream *Stream) {
 	delete[] _items;

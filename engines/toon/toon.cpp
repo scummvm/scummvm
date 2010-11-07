@@ -755,6 +755,10 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	DebugMan.addDebugChannel(kDebugTools, "Tools", "Tools debug level");
 	DebugMan.addDebugChannel(kDebugText, "Text", "Text debug level");
 
+	_hotspots = NULL;
+	_fontRenderer = NULL;
+	_fontToon = NULL;
+	_fontEZ = NULL;
 	_console = new ToonConsole(this);
 
 	switch (_language) {
@@ -783,6 +787,11 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 }
 
 ToonEngine::~ToonEngine() {
+	delete _fontRenderer;
+	delete _fontToon;
+	delete _fontEZ;
+	delete[] _hotspots;
+
 	DebugMan.clearAllDebugChannels();
 	delete _console;
 }

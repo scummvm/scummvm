@@ -130,7 +130,13 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 }
 
 Picture::Picture(ToonEngine *vm) : _vm(vm) {
+	_data = NULL;
+	_palette = NULL;
+}
 
+Picture::~Picture() {
+	delete[] _data;
+	delete[] _palette;
 }
 
 void Picture::setupPalette() {
