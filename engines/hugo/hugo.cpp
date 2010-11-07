@@ -79,6 +79,7 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Inventory debug level");
 	DebugMan.addDebugChannel(kDebugObject, "Object", "Object debug level");
 
+	_console = new HugoConsole(this);
 }
 
 HugoEngine::~HugoEngine() {
@@ -144,6 +145,9 @@ HugoEngine::~HugoEngine() {
 	delete _screen;
 	delete _scheduler;
 	delete _file;
+
+	DebugMan.clearAllDebugChannels();
+	delete _console;
 }
 
 GameType HugoEngine::getGameType() const {
@@ -250,6 +254,10 @@ Common::Error HugoEngine::run() {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
+					this->getDebugger()->attach();
+					this->getDebugger()->onFrame();
+				}
 				_parser->keyHandler(event.kbd.keycode, 0);
 				break;
 			case Common::EVENT_MOUSEMOVE:

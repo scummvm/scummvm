@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 #include "common/file.h"
+#include "hugo/console.h"
 
 // This include is here temporarily while the engine is being refactored.
 #include "hugo/game.h"
@@ -156,6 +157,8 @@ public:
 	uint16    _drop;
 	uint16    _numObj;
 
+	GUI::Debugger *getDebugger() { return _console; }
+
 	Common::RandomSource *_rnd;
 
 	const char *_episode;
@@ -263,6 +266,8 @@ private:
 	status_t _status;                               // Game status structure
 
 	static HugoEngine *s_Engine;
+
+	HugoConsole *_console;
 
 // The following are bit plane display overlays which mark travel boundaries,
 // foreground stationary objects and baselines for those objects (used to

@@ -1,6 +1,7 @@
 MODULE := engines/hugo
 
 MODULE_OBJS := \
+	console.o \
 	detection.o \
 	display.o \
 	display_v1d.o \
