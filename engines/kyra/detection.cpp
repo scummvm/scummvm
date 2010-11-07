@@ -50,7 +50,7 @@ const char * const directoryGlobs[] = {
 	0
 };
 
-const ADParams detectionParams = {
+static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)adGameDescs,
 	// Size of that superset structure

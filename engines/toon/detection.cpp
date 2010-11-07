@@ -112,13 +112,21 @@ static const char * const directoryGlobs[] = {
 };
 
 static const ADParams detectionParams = {
+	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Toon::gameDescriptions,
+	// Size of that superset structure
 	sizeof(ADGameDescription),
-	5000, // number of md5 bytes
+	// Number of bytes to compute MD5 sum for
+	5000,
+	// List of all engine targets
 	ToonGames,
-	0, // no obsolete targets data
+	// Structure for autoupgrading obsolete targets
+	0,
+	// Name of single gameid (optional)
 	"toon",
+	// List of files for file-based fallback detection (optional)
 	Toon::fileBasedFallback,
+	// Flags
 	0,
 	// Additional GUI options (for every game}
 	Common::GUIO_NONE,

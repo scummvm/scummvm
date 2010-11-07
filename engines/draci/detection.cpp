@@ -86,7 +86,7 @@ const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Draci
 
-const ADParams detectionParams = {
+static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Draci::gameDescriptions,
 	// Size of that superset structure
@@ -103,7 +103,7 @@ const ADParams detectionParams = {
 	0,
 	// Flags
 	0,
-	// Global GUI options
+	// Additional GUI options (for every game}
 	Common::GUIO_NONE,
 	// Maximum directory depth
 	1,

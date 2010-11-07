@@ -130,13 +130,21 @@ static const char *directoryGlobs[] = {
 };
 
 static const ADParams detectionParams = {
+	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Touche::gameDescriptions,
+	// Size of that superset structure
 	sizeof(ADGameDescription),
-	4096, // number of md5 bytes
+	// Number of bytes to compute MD5 sum for
+	4096,
+	// List of all engine targets
 	toucheGames,
-	0, // no obsolete targets data
+	// Structure for autoupgrading obsolete targets
+	0,
+	// Name of single gameid (optional)
 	"touche",
-	Touche::fileBasedFallback, // file-based detection data to enable not yet known versions to start
+	// List of files for file-based fallback detection (optional)
+	Touche::fileBasedFallback,
+	// Flags
 	kADFlagPrintWarningOnFileBasedFallback,
 	// Additional GUI options (for every game}
 	Common::GUIO_NONE,
