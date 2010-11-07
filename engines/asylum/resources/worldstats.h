@@ -33,6 +33,14 @@
 
 namespace Asylum {
 
+#define ACTORS_MAX_COUNT   50
+#define OBJECTS_MAX_COUNT 400
+#define ACTIONS_MAX_COUNT 400
+
+#define ACTORS_SIZE   2468
+#define OBJECTS_SIZE  1704
+#define ACTIONS_SIZE  180
+
 class Actor;
 class Object;
 class Scene;
@@ -79,10 +87,10 @@ public:
 	int32 height;
 	int32 motionStatus;
 	int32 field_8C;
-	int32 numActions; // field_90
-	int32 numObjects;
+	//uint32 numActions;
+	//uint32 numObjects;
 	int32 coordinates[7];
-	int32 numActors;
+	//uint32 numActors;
 	int32 stereoReversedFlag;
 	Common::Rect sceneRects[6]; // including scene size rect
 	uint8 sceneRectIdx;

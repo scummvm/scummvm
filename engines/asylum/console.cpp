@@ -265,9 +265,15 @@ bool Console::cmdListObjects(int32 argc, const char **argv) {
 					DebugPrintf("%s", getWorld()->objects[i]->toString().c_str());
 				}
 			}
+
+			DebugPrintf("Total: %d\n", getWorld()->objects.size());
+
 		} else if (Common::String(argv[1]) == "*"){
 			for (uint32 i = 0; i < getWorld()->objects.size(); i++)
 				DebugPrintf("%s", getWorld()->objects[i]->toString().c_str());
+
+			DebugPrintf("Total: %d\n", getWorld()->objects.size());
+
 		} else {
 			DebugPrintf("[error] valid options are 'onscreen' and '*'\n");
 		}

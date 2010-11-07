@@ -119,7 +119,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	// TODO figure out what field_120 is used for
 	_ws->field_120 = -1;
 
-	for (int32 a = 0; a < _ws->numActors; a++)
+	for (uint32 a = 0; a < _ws->actors.size(); a++)
 		_ws->actors[a]->setLastScreenUpdate(_vm->getTick());
 
 	// TODO: init action list
@@ -138,9 +138,9 @@ void Scene::initialize() {
 
 	_playerActorIdx = 0;
 
-	if (_ws->numObjects > 0) {
+	if (_ws->objects.size() > 0) {
 		int32 priority = 4091;
-		for (int32 b = 0; b < _ws->numObjects; b++) {
+		for (uint32 b = 0; b < _ws->objects.size(); b++) {
 			Object *object  = _ws->objects[b];
 			object->setPriority(priority);
 			object->flags &= ~kObjectFlagC000;
@@ -167,8 +167,8 @@ void Scene::initialize() {
 	actor->flags |= 1;
 	actor->updateStatus(kActorStatusEnabled);
 
-	if (_ws->numActors > 1) {
-		for (int32 a = 1; a < _ws->numActors; a++) {
+	if (_ws->actors.size() > 1) {
+		for (uint32 a = 1; a < _ws->actors.size(); a++) {
 			Actor *act = _ws->actors[a];
 			act->flags |= 1;
 			act->setDirection(1);
@@ -674,7 +674,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 
 int32 Scene::hitTestObject(const Common::Point pt) {
 	int32 targetIdx = -1;
-	for (int32 i = 0; i < _ws->numObjects; i++) {
+	for (uint32 i = 0; i < _ws->objects.size(); i++) {
 		Object *object = _ws->objects[i];
 		if (object->isOnScreen())
 			if (object->getPolygonIndex())
@@ -719,7 +719,7 @@ int32 Scene::findActionArea(const Common::Point pt) {
 	// function, as this doesn't do any of the flag checking
 	// the original did
 	int32 targetIdx = -1;
-	for (int32 i = 0; i < _ws->numActions; i++) {
+	for (uint32 i = 0; i < _ws->actions.size(); i++) {
 		ActionArea *a = _ws->actions[i];
 		PolyDefinitions p = _polygons->entries[a->polyIdx];
 		if (p.contains(pt.x, pt.y)) {
@@ -1149,7 +1149,7 @@ void Scene::processUpdateList() {
 			Common::Rect actorRect(actor->x1, actor->y1, actor->x1 + actor->getBoundingRect()->right, bottomRight);
 
 			// Process objects
-			for (int32 j = 0; j < _ws->numObjects; j++) {
+			for (uint32 j = 0; j < _ws->objects.size(); j++) {
 				Object *object = _ws->objects[i];
 
 				// Skip hidden objects
@@ -1404,7 +1404,7 @@ void Scene::debugShowPolygons() {
 
 // OBJECT DEBUGGING
 void Scene::debugShowObjects() {
-	for (int32 p = 0; p < _ws->numObjects; p++) {
+	for (uint32 p = 0; p < _ws->objects.size(); p++) {
 		Graphics::Surface surface;
 		Object *object = _ws->objects[p];
 
@@ -1422,7 +1422,7 @@ void Scene::debugShowObjects() {
 
 // ACTOR DEBUGGING
 void Scene::debugShowActors() {
-	for (int32 p = 0; p < _ws->numActors; p++) {
+	for (uint32 p = 0; p < _ws->actors.size(); p++) {
 		Graphics::Surface surface;
 		Actor *a = _ws->actors[p];
 

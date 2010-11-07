@@ -45,7 +45,7 @@ WorldStats::~WorldStats() {
 }
 
 int32 WorldStats::getActionAreaIndexById(int32 id) {
-	for (int32 i = 0; i < numActions; i++) {
+	for (uint32 i = 0; i < actions.size(); i++) {
 		if (actions[i]->id == id)
 			return i;
 	}
@@ -62,7 +62,7 @@ ActionArea* WorldStats::getActionAreaById(int32 id) {
 }
 
 Object* WorldStats::getObjectById(ObjectId id) {
-	for (int32 i = 0; i < numObjects; i++)
+	for (uint32 i = 0; i < objects.size(); i++)
 		if (objects[i]->getId() == id)
 			return objects[i];
 
@@ -114,13 +114,13 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	height       = stream->readSint32LE();
 	motionStatus = stream->readSint32LE();
 	field_8C     = stream->readSint32LE();
-	numActions   = stream->readSint32LE();
-	numObjects  = stream->readSint32LE();
+	uint32 numActions   = stream->readUint32LE();
+	uint32 numObjects  = stream->readUint32LE();
 
 	for (int32 c = 0; c < 7; c++)
 		coordinates[c] = stream->readSint32LE();
 
-	numActors    = stream->readSint32LE();
+	uint32 numActors    = stream->readUint32LE();
 
 	stereoReversedFlag = stream->readSint32LE();
 
@@ -143,7 +143,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	sceneTitleGraphicResourceId  = stream->readSint32LE();
 	sceneTitlePaletteResourceId = stream->readSint32LE();
-	actorType          = stream->readSint32LE();
+	actorType          = stream->readUint32LE();
 
 	for (int32 s = 0; s < 50; s++)
 		soundResourceIds[s] = stream->readSint32LE();
@@ -170,25 +170,25 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	musicResourceId        = stream->readSint32LE();
 	musicStatusExt    = stream->readSint32LE();
 
-	for (int32 a = 0; a < numObjects; a++) {
+	for (uint32 a = 0; a < numObjects; a++) {
 		Object *object = new Object(_scene->vm());
 		object->load(stream);
 
 		objects.push_back(object);
 	}
 
-	// need to jump all unused objects data to where actors data start
-	stream->seek(0xA6D7A);
+	// Jump over unused objects
+	stream->seek((OBJECTS_MAX_COUNT - numObjects) * OBJECTS_SIZE, SEEK_CUR);
 
-	for (ActorIndex index = 0; index < numActors; index++) {
+	for (ActorIndex index = 0; index < (int)numActors; index++) {
 		Actor *actor = new Actor(_scene->vm(), index);
 		actor->load(stream);
 
 		actors.push_back(actor);
 	}
 
-	// TODO Take this out, it shouldn't be here (TEST ONLY)
-	stream->seek(0xA73B6);
+	// Jump over unused actors
+	stream->seek((ACTORS_MAX_COUNT - numActors) * ACTORS_SIZE, SEEK_CUR);
 
 	uint8 mainActorData[500];
 	stream->read(mainActorData, 500);
@@ -201,7 +201,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	stream->seek(0xD6B5A); // where action items start
 
 	// FIXME Figure out all the actions items
-	for (int32 a = 0; a < numActions; a++) {
+	for (uint32 a = 0; a < numActions; a++) {
 		ActionArea *action = new ActionArea();
 
 		stream->read(action->name, 52);
@@ -233,6 +233,9 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 		actions.push_back(action);
 	}
+
+	// Jump over unused actions
+	stream->seek((ACTIONS_MAX_COUNT - numActions) * ACTIONS_SIZE, SEEK_CUR);
 }
 
 } // end of namespace Asylum
