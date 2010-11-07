@@ -73,36 +73,36 @@ void MacResManager::close() {
 	delete _stream; _stream = 0;
 }
 
-bool MacResManager::hasDataFork() {
+bool MacResManager::hasDataFork() const {
 	return !_baseFileName.empty();
 }
 
-bool MacResManager::hasResFork() {
+bool MacResManager::hasResFork() const {
 	return !_baseFileName.empty() && _mode != kResForkNone;
 }
 
-uint32 MacResManager::getResForkSize() {
+uint32 MacResManager::getResForkSize() const {
 	if (!hasResFork())
 		return 0;
 
 	return _resForkSize;
 }
 
-Common::String MacResManager::computeResForkMD5AsString(uint32 length) {
+String MacResManager::computeResForkMD5AsString(uint32 length) const {
 	if (!hasResFork())
-		return Common::String();
+		return String();
 
 	SeekableSubReadStream resForkStream(_stream, _resForkOffset, _resForkOffset + _resForkSize);
 	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize));
 }
 
-bool MacResManager::open(Common::String filename) {
+bool MacResManager::open(String filename) {
 	close();
 
 #ifdef MACOSX
 	// Check the actual fork on a Mac computer
-	Common::String fullPath = ConfMan.get("path") + "/" + filename + "/..namedfork/rsrc";
-	Common::SeekableReadStream *macResForkRawStream = StdioStream::makeFromPath(fullPath, false);
+	String fullPath = ConfMan.get("path") + "/" + filename + "/..namedfork/rsrc";
+	SeekableReadStream *macResForkRawStream = StdioStream::makeFromPath(fullPath, false);
 
 	if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
 		_baseFileName = filename;
@@ -112,7 +112,7 @@ bool MacResManager::open(Common::String filename) {
 	delete macResForkRawStream;
 #endif
 
-	Common::File *file = new Common::File();
+	File *file = new File();
 
 	// First, let's try to see if the Mac converted name exists
 	if (file->open("._" + filename) && loadFromAppleDouble(*file)) {
@@ -156,13 +156,13 @@ bool MacResManager::open(Common::String filename) {
 	return false;
 }
 
-bool MacResManager::open(Common::FSNode path, Common::String filename) {
+bool MacResManager::open(FSNode path, String filename) {
 	close();
 
 #ifdef MACOSX
 	// Check the actual fork on a Mac computer
-	Common::String fullPath = path.getPath() + "/" + filename + "/..namedfork/rsrc";
-	Common::SeekableReadStream *macResForkRawStream = StdioStream::makeFromPath(fullPath, false);
+	String fullPath = path.getPath() + "/" + filename + "/..namedfork/rsrc";
+	SeekableReadStream *macResForkRawStream = StdioStream::makeFromPath(fullPath, false);
 
 	if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
 		_baseFileName = filename;
@@ -173,7 +173,7 @@ bool MacResManager::open(Common::FSNode path, Common::String filename) {
 #endif
 
 	// First, let's try to see if the Mac converted name exists
-	Common::FSNode fsNode = path.getChild("._" + filename);
+	FSNode fsNode = path.getChild("._" + filename);
 	if (fsNode.exists() && !fsNode.isDirectory()) {
 		SeekableReadStream *stream = fsNode.createReadStream();
 		if (loadFromAppleDouble(*stream)) {
@@ -226,7 +226,7 @@ bool MacResManager::open(Common::FSNode path, Common::String filename) {
 	return false;
 }
 
-bool MacResManager::loadFromAppleDouble(Common::SeekableReadStream &stream) {
+bool MacResManager::loadFromAppleDouble(SeekableReadStream &stream) {
 	if (stream.readUint32BE() != 0x00051607) // tag
 		return false;
 
@@ -251,7 +251,7 @@ bool MacResManager::loadFromAppleDouble(Common::SeekableReadStream &stream) {
 	return false;
 }
 
-bool MacResManager::isMacBinary(Common::SeekableReadStream &stream) {
+bool MacResManager::isMacBinary(SeekableReadStream &stream) {
 	byte infoHeader[MBI_INFOHDR];
 	int resForkOffset = -1;
 
@@ -279,7 +279,7 @@ bool MacResManager::isMacBinary(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-bool MacResManager::loadFromMacBinary(Common::SeekableReadStream &stream) {
+bool MacResManager::loadFromMacBinary(SeekableReadStream &stream) {
 	byte infoHeader[MBI_INFOHDR];
 	stream.read(infoHeader, MBI_INFOHDR);
 
@@ -308,14 +308,14 @@ bool MacResManager::loadFromMacBinary(Common::SeekableReadStream &stream) {
 	return load(stream);
 }
 
-bool MacResManager::loadFromRawFork(Common::SeekableReadStream &stream) {
+bool MacResManager::loadFromRawFork(SeekableReadStream &stream) {
 	_mode = kResForkRaw;
 	_resForkOffset = 0;
 	_resForkSize = stream.size();
 	return load(stream);
 }
 
-bool MacResManager::load(Common::SeekableReadStream &stream) {
+bool MacResManager::load(SeekableReadStream &stream) {
 	if (_mode == kResForkNone)
 		return false;
 
@@ -343,7 +343,7 @@ bool MacResManager::load(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-Common::SeekableReadStream *MacResManager::getDataFork() {
+SeekableReadStream *MacResManager::getDataFork() {
 	if (!_stream)
 		return NULL;
 
@@ -353,7 +353,7 @@ Common::SeekableReadStream *MacResManager::getDataFork() {
 		return new SeekableSubReadStream(_stream, MBI_INFOHDR, MBI_INFOHDR + dataSize);
 	}
 
-	Common::File *file = new Common::File();
+	File *file = new File();
 	if (file->open(_baseFileName))
 		return file;
 	delete file;
@@ -396,7 +396,7 @@ MacResTagArray MacResManager::getResTagArray() {
 	return tagArray;
 }
 
-Common::String MacResManager::getResName(uint32 typeID, uint16 resID) {
+String MacResManager::getResName(uint32 typeID, uint16 resID) const {
 	int typeNum = -1;
 
 	for (int i = 0; i < _resMap.numTypes; i++)
@@ -415,7 +415,7 @@ Common::String MacResManager::getResName(uint32 typeID, uint16 resID) {
 	return "";
 }
 
-Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, uint16 resID) {
+SeekableReadStream *MacResManager::getResource(uint32 typeID, uint16 resID) {
 	int typeNum = -1;
 	int resNum = -1;
 
@@ -447,7 +447,7 @@ Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, uint16 res
 	return _stream->readStream(len);
 }
 
-Common::SeekableReadStream *MacResManager::getResource(const Common::String &filename) {
+SeekableReadStream *MacResManager::getResource(const String &filename) {
 	for (uint32 i = 0; i < _resMap.numTypes; i++) {
 		for (uint32 j = 0; j < _resTypes[i].items; j++) {
 			if (_resLists[i][j].nameOffset != -1 && filename.equalsIgnoreCase(_resLists[i][j].name)) {
@@ -466,7 +466,7 @@ Common::SeekableReadStream *MacResManager::getResource(const Common::String &fil
 	return 0;
 }
 
-Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, const Common::String &filename) {
+SeekableReadStream *MacResManager::getResource(uint32 typeID, const String &filename) {
 	for (uint32 i = 0; i < _resMap.numTypes; i++) {
 		if (_resTypes[i].id != typeID)
 			continue;
@@ -543,7 +543,7 @@ void MacResManager::readMap() {
 
 void MacResManager::convertCrsrCursor(byte *data, int datasize, byte **cursor, int *w, int *h,
 				int *hotspot_x, int *hotspot_y, int *keycolor, bool colored, byte **palette, int *palSize) {
-	Common::MemoryReadStream dis(data, datasize);
+	MemoryReadStream dis(data, datasize);
 	int i, b;
 	byte imageByte;
 	byte *iconData;

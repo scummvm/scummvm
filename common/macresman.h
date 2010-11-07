@@ -33,8 +33,8 @@ namespace Common {
 
 class FSNode;
 
-typedef Common::Array<uint16> MacResIDArray;
-typedef Common::Array<uint32> MacResTagArray;
+typedef Array<uint16> MacResIDArray;
+typedef Array<uint32> MacResTagArray;
 
 /**
  * Class for reading Mac Binary files.
@@ -46,14 +46,14 @@ public:
 	MacResManager();
 	~MacResManager();
 
-	bool open(Common::String filename);
-	bool open(Common::FSNode path, Common::String filename);
+	bool open(String filename);
+	bool open(FSNode path, String filename);
 	void close();
 
-	bool hasDataFork();
-	bool hasResFork();
+	bool hasDataFork() const;
+	bool hasResFork() const;
 
-	static bool isMacBinary(Common::SeekableReadStream &stream);
+	static bool isMacBinary(SeekableReadStream &stream);
 
 	/**
 	 * Read resource from the Mac Binary file
@@ -61,7 +61,7 @@ public:
 	 * @param resID Resource ID to fetch
 	 * @return Pointer to a SeekableReadStream with loaded resource
 	 */
-	Common::SeekableReadStream *getResource(uint32 typeID, uint16 resID);
+	SeekableReadStream *getResource(uint32 typeID, uint16 resID);
 
 	/**
 	 * Read resource from the Mac Binary file
@@ -69,7 +69,7 @@ public:
 	 * @param filename filename of the resource
 	 * @return Pointer to a SeekableReadStream with loaded resource
 	 */
-	Common::SeekableReadStream *getResource(const Common::String &filename);
+	SeekableReadStream *getResource(const String &filename);
 
 	/**
 	 * Read resource from the Mac Binary file
@@ -77,14 +77,14 @@ public:
 	 * @param filename filename of the resource
 	 * @return Pointer to a SeekableReadStream with loaded resource
 	 */
-	Common::SeekableReadStream *getResource(uint32 typeID, const Common::String &filename);
+	SeekableReadStream *getResource(uint32 typeID, const String &filename);
 
-	Common::SeekableReadStream *getDataFork();
-	Common::String getResName(uint32 typeID, uint16 resID);
-	uint32 getResForkSize();
-	Common::String computeResForkMD5AsString(uint32 length = 0);
+	SeekableReadStream *getDataFork();
+	String getResName(uint32 typeID, uint16 resID) const;
+	uint32 getResForkSize() const;
+	String computeResForkMD5AsString(uint32 length = 0) const;
 
-	Common::String getBaseFileName() { return _baseFileName; }
+	String getBaseFileName() const { return _baseFileName; }
 
 	/**
 	 * Convert cursor from crsr format to format suitable for feeding to CursorMan
@@ -117,14 +117,14 @@ public:
 	MacResTagArray getResTagArray();
 
 private:
-	Common::SeekableReadStream *_stream;
-	Common::String _baseFileName;
+	SeekableReadStream *_stream;
+	String _baseFileName;
 
-	bool load(Common::SeekableReadStream &stream);
+	bool load(SeekableReadStream &stream);
 
-	bool loadFromRawFork(Common::SeekableReadStream &stream);
-	bool loadFromMacBinary(Common::SeekableReadStream &stream);
-	bool loadFromAppleDouble(Common::SeekableReadStream &stream);
+	bool loadFromRawFork(SeekableReadStream &stream);
+	bool loadFromMacBinary(SeekableReadStream &stream);
+	bool loadFromAppleDouble(SeekableReadStream &stream);
 
 	enum {
 		kResForkNone = 0,
