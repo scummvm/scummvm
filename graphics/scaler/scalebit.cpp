@@ -39,34 +39,26 @@
 #include "graphics/scaler/scale2x.h"
 #include "graphics/scaler/scale3x.h"
 
-#if defined(HAVE_ALLOCA_H)
-#include <alloca.h>
-#endif
-
-#include <assert.h>
-#include <stdlib.h>
-
 #define DST(bits, num)	(scale2x_uint ## bits *)dst ## num
 #define SRC(bits, num)	(const scale2x_uint ## bits *)src ## num
 
 /**
  * Apply the Scale2x effect on a group of rows. Used internally.
  */
-static inline void stage_scale2x(void* dst0, void* dst1, const void* src0, const void* src1, const void* src2, unsigned pixel, unsigned pixel_per_row)
-{
+static inline void stage_scale2x(void* dst0, void* dst1, const void* src0, const void* src1, const void* src2, unsigned pixel, unsigned pixel_per_row) {
 	switch (pixel) {
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-		case 1 : scale2x_8_mmx(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
-		case 2 : scale2x_16_mmx(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
-		case 4 : scale2x_32_mmx(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
+	case 1 : scale2x_8_mmx(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
+	case 2 : scale2x_16_mmx(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
+	case 4 : scale2x_32_mmx(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
 #elif defined(USE_ARM_SCALER_ASM)
-		case 1 : scale2x_8_arm(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
-		case 2 : scale2x_16_arm(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
-		case 4 : scale2x_32_arm(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
+	case 1 : scale2x_8_arm(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
+	case 2 : scale2x_16_arm(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
+	case 4 : scale2x_32_arm(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
 #else
-		case 1 : scale2x_8_def(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
-		case 2 : scale2x_16_def(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
-		case 4 : scale2x_32_def(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
+	case 1 : scale2x_8_def(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
+	case 2 : scale2x_16_def(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
+	case 4 : scale2x_32_def(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
 #endif
 	}
 }
@@ -74,20 +66,18 @@ static inline void stage_scale2x(void* dst0, void* dst1, const void* src0, const
 /**
  * Apply the Scale3x effect on a group of rows. Used internally.
  */
-static inline void stage_scale3x(void* dst0, void* dst1, void* dst2, const void* src0, const void* src1, const void* src2, unsigned pixel, unsigned pixel_per_row)
-{
+static inline void stage_scale3x(void* dst0, void* dst1, void* dst2, const void* src0, const void* src1, const void* src2, unsigned pixel, unsigned pixel_per_row) {
 	switch (pixel) {
-		case 1 : scale3x_8_def(DST(8,0), DST(8,1), DST(8,2), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
-		case 2 : scale3x_16_def(DST(16,0), DST(16,1), DST(16,2), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
-		case 4 : scale3x_32_def(DST(32,0), DST(32,1), DST(32,2), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
+	case 1 : scale3x_8_def(DST(8,0), DST(8,1), DST(8,2), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
+	case 2 : scale3x_16_def(DST(16,0), DST(16,1), DST(16,2), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
+	case 4 : scale3x_32_def(DST(32,0), DST(32,1), DST(32,2), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
 	}
 }
 
 /**
  * Apply the Scale4x effect on a group of rows. Used internally.
  */
-static inline void stage_scale4x(void* dst0, void* dst1, void* dst2, void* dst3, const void* src0, const void* src1, const void* src2, const void* src3, unsigned pixel, unsigned pixel_per_row)
-{
+static inline void stage_scale4x(void* dst0, void* dst1, void* dst2, void* dst3, const void* src0, const void* src1, const void* src2, const void* src3, unsigned pixel, unsigned pixel_per_row) {
 	stage_scale2x(dst0, dst1, src0, src1, src2, pixel, 2 * pixel_per_row);
 	stage_scale2x(dst2, dst3, src1, src2, src3, pixel, 2 * pixel_per_row);
 }
@@ -102,16 +92,15 @@ static inline void stage_scale4x(void* dst0, void* dst1, void* dst2, void* dst3,
  * The source bitmap isn't modified.
  * The destination bitmap must be manually allocated before calling the function,
  * note that the resulting size is exactly 2x2 times the size of the source bitmap.
- * \param void_dst Pointer at the first pixel of the destination bitmap.
- * \param dst_slice Size in bytes of a destination bitmap row.
- * \param void_src Pointer at the first pixel of the source bitmap.
- * \param src_slice Size in bytes of a source bitmap row.
- * \param pixel Bytes per pixel of the source and destination bitmap.
- * \param width Horizontal size in pixels of the source bitmap.
- * \param height Vertical size in pixels of the source bitmap.
+ * @param void_dst Pointer at the first pixel of the destination bitmap.
+ * @param dst_slice Size in bytes of a destination bitmap row.
+ * @param void_src Pointer at the first pixel of the source bitmap.
+ * @param src_slice Size in bytes of a source bitmap row.
+ * @param pixel Bytes per pixel of the source and destination bitmap.
+ * @param width Horizontal size in pixels of the source bitmap.
+ * @param height Vertical size in pixels of the source bitmap.
  */
-static void scale2x(void* void_dst, unsigned dst_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height)
-{
+static void scale2x(void* void_dst, unsigned dst_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height) {
 	unsigned char* dst = (unsigned char*)void_dst;
 	const unsigned char* src = (const unsigned char*)void_src;
 	unsigned count;
@@ -140,16 +129,15 @@ static void scale2x(void* void_dst, unsigned dst_slice, const void* void_src, un
  * The source bitmap isn't modified.
  * The destination bitmap must be manually allocated before calling the function,
  * note that the resulting size is exactly 3x3 times the size of the source bitmap.
- * \param void_dst Pointer at the first pixel of the destination bitmap.
- * \param dst_slice Size in bytes of a destination bitmap row.
- * \param void_src Pointer at the first pixel of the source bitmap.
- * \param src_slice Size in bytes of a source bitmap row.
- * \param pixel Bytes per pixel of the source and destination bitmap.
- * \param width Horizontal size in pixels of the source bitmap.
- * \param height Vertical size in pixels of the source bitmap.
+ * @param void_dst Pointer at the first pixel of the destination bitmap.
+ * @param dst_slice Size in bytes of a destination bitmap row.
+ * @param void_src Pointer at the first pixel of the source bitmap.
+ * @param src_slice Size in bytes of a source bitmap row.
+ * @param pixel Bytes per pixel of the source and destination bitmap.
+ * @param width Horizontal size in pixels of the source bitmap.
+ * @param height Vertical size in pixels of the source bitmap.
  */
-static void scale3x(void* void_dst, unsigned dst_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height)
-{
+static void scale3x(void* void_dst, unsigned dst_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height) {
 	unsigned char* dst = (unsigned char*)void_dst;
 	const unsigned char* src = (const unsigned char*)void_src;
 	unsigned count;
@@ -179,18 +167,17 @@ static void scale3x(void* void_dst, unsigned dst_slice, const void* void_src, un
  * and a vertical size of 6 rows. The memory of this buffer must not be allocated
  * in video memory because it's also read and not only written. Generally
  * a heap (malloc) or a stack (alloca) buffer is the best choices.
- * \param void_dst Pointer at the first pixel of the destination bitmap.
- * \param dst_slice Size in bytes of a destination bitmap row.
- * \param void_mid Pointer at the first pixel of the buffer bitmap.
- * \param mid_slice Size in bytes of a buffer bitmap row.
- * \param void_src Pointer at the first pixel of the source bitmap.
- * \param src_slice Size in bytes of a source bitmap row.
- * \param pixel Bytes per pixel of the source and destination bitmap.
- * \param width Horizontal size in pixels of the source bitmap.
- * \param height Vertical size in pixels of the source bitmap.
+ * @param void_dst Pointer at the first pixel of the destination bitmap.
+ * @param dst_slice Size in bytes of a destination bitmap row.
+ * @param void_mid Pointer at the first pixel of the buffer bitmap.
+ * @param mid_slice Size in bytes of a buffer bitmap row.
+ * @param void_src Pointer at the first pixel of the source bitmap.
+ * @param src_slice Size in bytes of a source bitmap row.
+ * @param pixel Bytes per pixel of the source and destination bitmap.
+ * @param width Horizontal size in pixels of the source bitmap.
+ * @param height Vertical size in pixels of the source bitmap.
  */
-static void scale4x_buf(void* void_dst, unsigned dst_slice, void* void_mid, unsigned mid_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height)
-{
+static void scale4x_buf(void* void_dst, unsigned dst_slice, void* void_mid, unsigned mid_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height) {
 	unsigned char* dst = (unsigned char*)void_dst;
 	const unsigned char* src = (const unsigned char*)void_src;
 	unsigned count;
@@ -242,16 +229,15 @@ static void scale4x_buf(void* void_dst, unsigned dst_slice, void* void_mid, unsi
  * note that the resulting size is exactly 4x4 times the size of the source bitmap.
  * \note This function operates like ::scale4x_buf() but the intermediate buffer is
  * automatically allocated in the stack.
- * \param void_dst Pointer at the first pixel of the destination bitmap.
- * \param dst_slice Size in bytes of a destination bitmap row.
- * \param void_src Pointer at the first pixel of the source bitmap.
- * \param src_slice Size in bytes of a source bitmap row.
- * \param pixel Bytes per pixel of the source and destination bitmap.
- * \param width Horizontal size in pixels of the source bitmap.
- * \param height Vertical size in pixels of the source bitmap.
+ * @param void_dst Pointer at the first pixel of the destination bitmap.
+ * @param dst_slice Size in bytes of a destination bitmap row.
+ * @param void_src Pointer at the first pixel of the source bitmap.
+ * @param src_slice Size in bytes of a source bitmap row.
+ * @param pixel Bytes per pixel of the source and destination bitmap.
+ * @param width Horizontal size in pixels of the source bitmap.
+ * @param height Vertical size in pixels of the source bitmap.
  */
-static void scale4x(void* void_dst, unsigned dst_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height)
-{
+static void scale4x(void* void_dst, unsigned dst_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height) {
 	unsigned mid_slice;
 	void* mid;
 
@@ -279,10 +265,10 @@ static void scale4x(void* void_dst, unsigned dst_slice, const void* void_src, un
 
 /**
  * Check if the scale implementation is applicable at the given arguments.
- * \param scale Scale factor. 2, 3 or 4.
- * \param pixel Bytes per pixel of the source and destination bitmap.
- * \param width Horizontal size in pixels of the source bitmap.
- * \param height Vertical size in pixels of the source bitmap.
+ * @param scale Scale factor. 2, 3 or 4.
+ * @param pixel Bytes per pixel of the source and destination bitmap.
+ * @param width Horizontal size in pixels of the source bitmap.
+ * @param height Vertical size in pixels of the source bitmap.
  * \return
  *   - -1 on precondition violated.
  *   - 0 on success.
@@ -332,14 +318,14 @@ int scale_precondition(unsigned scale, unsigned pixel, unsigned width, unsigned 
 /**
  * Apply the Scale effect on a bitmap.
  * This function is simply a common interface for ::scale2x(), ::scale3x() and ::scale4x().
- * \param scale Scale factor. 2, 3 or 4.
- * \param void_dst Pointer at the first pixel of the destination bitmap.
- * \param dst_slice Size in bytes of a destination bitmap row.
- * \param void_src Pointer at the first pixel of the source bitmap.
- * \param src_slice Size in bytes of a source bitmap row.
- * \param pixel Bytes per pixel of the source and destination bitmap.
- * \param width Horizontal size in pixels of the source bitmap.
- * \param height Vertical size in pixels of the source bitmap.
+ * @param scale Scale factor. 2, 3 or 4.
+ * @param void_dst Pointer at the first pixel of the destination bitmap.
+ * @param dst_slice Size in bytes of a destination bitmap row.
+ * @param void_src Pointer at the first pixel of the source bitmap.
+ * @param src_slice Size in bytes of a source bitmap row.
+ * @param pixel Bytes per pixel of the source and destination bitmap.
+ * @param width Horizontal size in pixels of the source bitmap.
+ * @param height Vertical size in pixels of the source bitmap.
  */
 void scale(unsigned scale, void* void_dst, unsigned dst_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height)
 {

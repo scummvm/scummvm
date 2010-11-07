@@ -37,13 +37,10 @@
 #include "graphics/scaler/intern.h"
 #include "graphics/scaler/scale2x.h"
 
-#include <assert.h>
-
 /***************************************************************************/
 /* Scale2x C implementation */
 
-static inline void scale2x_8_def_single(scale2x_uint8* __restrict__ dst, const scale2x_uint8* __restrict__ src0, const scale2x_uint8* __restrict__ src1, const scale2x_uint8* __restrict__ src2, unsigned count)
-{
+static inline void scale2x_8_def_single(scale2x_uint8* __restrict__ dst, const scale2x_uint8* __restrict__ src0, const scale2x_uint8* __restrict__ src1, const scale2x_uint8* __restrict__ src2, unsigned count) {
 	/* central pixels */
 	while (count) {
 		if (src0[0] != src2[0] && src1[-1] != src1[1]) {
@@ -62,8 +59,7 @@ static inline void scale2x_8_def_single(scale2x_uint8* __restrict__ dst, const s
 	}
 }
 
-static inline void scale2x_16_def_single(scale2x_uint16* __restrict__ dst, const scale2x_uint16* __restrict__ src0, const scale2x_uint16* __restrict__ src1, const scale2x_uint16* __restrict__ src2, unsigned count)
-{
+static inline void scale2x_16_def_single(scale2x_uint16* __restrict__ dst, const scale2x_uint16* __restrict__ src0, const scale2x_uint16* __restrict__ src1, const scale2x_uint16* __restrict__ src2, unsigned count) {
 	/* central pixels */
 	while (count) {
 		if (src0[0] != src2[0] && src1[-1] != src1[1]) {
@@ -82,8 +78,7 @@ static inline void scale2x_16_def_single(scale2x_uint16* __restrict__ dst, const
 	}
 }
 
-static inline void scale2x_32_def_single(scale2x_uint32* __restrict__ dst, const scale2x_uint32* __restrict__ src0, const scale2x_uint32* __restrict__ src1, const scale2x_uint32* __restrict__ src2, unsigned count)
-{
+static inline void scale2x_32_def_single(scale2x_uint32* __restrict__ dst, const scale2x_uint32* __restrict__ src0, const scale2x_uint32* __restrict__ src1, const scale2x_uint32* __restrict__ src2, unsigned count) {
 	/* central pixels */
 	while (count) {
 		if (src0[0] != src2[0] && src1[-1] != src1[1]) {
@@ -107,16 +102,15 @@ static inline void scale2x_32_def_single(scale2x_uint32* __restrict__ dst, const
  * The function is implemented in C.
  * The pixels over the left and right borders are assumed of the same color of
  * the pixels on the border.
- * \param src0 Pointer at the first pixel of the previous row.
- * \param src1 Pointer at the first pixel of the current row.
- * \param src2 Pointer at the first pixel of the next row.
- * \param count Length in pixels of the src0, src1 and src2 rows.
+ * @param src0 Pointer at the first pixel of the previous row.
+ * @param src1 Pointer at the first pixel of the current row.
+ * @param src2 Pointer at the first pixel of the next row.
+ * @param count Length in pixels of the src0, src1 and src2 rows.
  * It must be at least 2.
- * \param dst0 First destination row, double length in pixels.
- * \param dst1 Second destination row, double length in pixels.
+ * @param dst0 First destination row, double length in pixels.
+ * @param dst1 Second destination row, double length in pixels.
  */
-void scale2x_8_def(scale2x_uint8* dst0, scale2x_uint8* dst1, const scale2x_uint8* src0, const scale2x_uint8* src1, const scale2x_uint8* src2, unsigned count)
-{
+void scale2x_8_def(scale2x_uint8* dst0, scale2x_uint8* dst1, const scale2x_uint8* src0, const scale2x_uint8* src1, const scale2x_uint8* src2, unsigned count) {
 	scale2x_8_def_single(dst0, src0, src1, src2, count);
 	scale2x_8_def_single(dst1, src2, src1, src0, count);
 }
@@ -124,16 +118,15 @@ void scale2x_8_def(scale2x_uint8* dst0, scale2x_uint8* dst1, const scale2x_uint8
 /**
  * Scale by a factor of 2 a row of pixels of 16 bits.
  * This function operates like scale2x_8_def() but for 16 bits pixels.
- * \param src0 Pointer at the first pixel of the previous row.
- * \param src1 Pointer at the first pixel of the current row.
- * \param src2 Pointer at the first pixel of the next row.
- * \param count Length in pixels of the src0, src1 and src2 rows.
+ * @param src0 Pointer at the first pixel of the previous row.
+ * @param src1 Pointer at the first pixel of the current row.
+ * @param src2 Pointer at the first pixel of the next row.
+ * @param count Length in pixels of the src0, src1 and src2 rows.
  * It must be at least 2.
- * \param dst0 First destination row, double length in pixels.
- * \param dst1 Second destination row, double length in pixels.
+ * @param dst0 First destination row, double length in pixels.
+ * @param dst1 Second destination row, double length in pixels.
  */
-void scale2x_16_def(scale2x_uint16* dst0, scale2x_uint16* dst1, const scale2x_uint16* src0, const scale2x_uint16* src1, const scale2x_uint16* src2, unsigned count)
-{
+void scale2x_16_def(scale2x_uint16* dst0, scale2x_uint16* dst1, const scale2x_uint16* src0, const scale2x_uint16* src1, const scale2x_uint16* src2, unsigned count) {
 	scale2x_16_def_single(dst0, src0, src1, src2, count);
 	scale2x_16_def_single(dst1, src2, src1, src0, count);
 }
@@ -141,16 +134,15 @@ void scale2x_16_def(scale2x_uint16* dst0, scale2x_uint16* dst1, const scale2x_ui
 /**
  * Scale by a factor of 2 a row of pixels of 32 bits.
  * This function operates like scale2x_8_def() but for 32 bits pixels.
- * \param src0 Pointer at the first pixel of the previous row.
- * \param src1 Pointer at the first pixel of the current row.
- * \param src2 Pointer at the first pixel of the next row.
- * \param count Length in pixels of the src0, src1 and src2 rows.
+ * @param src0 Pointer at the first pixel of the previous row.
+ * @param src1 Pointer at the first pixel of the current row.
+ * @param src2 Pointer at the first pixel of the next row.
+ * @param count Length in pixels of the src0, src1 and src2 rows.
  * It must be at least 2.
- * \param dst0 First destination row, double length in pixels.
- * \param dst1 Second destination row, double length in pixels.
+ * @param dst0 First destination row, double length in pixels.
+ * @param dst1 Second destination row, double length in pixels.
  */
-void scale2x_32_def(scale2x_uint32* dst0, scale2x_uint32* dst1, const scale2x_uint32* src0, const scale2x_uint32* src1, const scale2x_uint32* src2, unsigned count)
-{
+void scale2x_32_def(scale2x_uint32* dst0, scale2x_uint32* dst1, const scale2x_uint32* src0, const scale2x_uint32* src1, const scale2x_uint32* src2, unsigned count) {
 	scale2x_32_def_single(dst0, src0, src1, src2, count);
 	scale2x_32_def_single(dst1, src2, src1, src0, count);
 }
@@ -198,8 +190,7 @@ void scale2x_32_def(scale2x_uint32* dst0, scale2x_uint32* dst1, const scale2x_ui
  *      %mm6 -> *current_upper
  *      %mm7 -> *current
  */
-static inline void scale2x_8_mmx_single(scale2x_uint8* dst, const scale2x_uint8* src0, const scale2x_uint8* src1, const scale2x_uint8* src2, unsigned count)
-{
+static inline void scale2x_8_mmx_single(scale2x_uint8* dst, const scale2x_uint8* src0, const scale2x_uint8* src1, const scale2x_uint8* src2, unsigned count) {
 	assert(count >= 16);
 	assert(count % 8 == 0);
 
@@ -276,8 +267,7 @@ static inline void scale2x_8_mmx_single(scale2x_uint8* dst, const scale2x_uint8*
 	);
 }
 
-static inline void scale2x_16_mmx_single(scale2x_uint16* dst, const scale2x_uint16* src0, const scale2x_uint16* src1, const scale2x_uint16* src2, unsigned count)
-{
+static inline void scale2x_16_mmx_single(scale2x_uint16* dst, const scale2x_uint16* src0, const scale2x_uint16* src1, const scale2x_uint16* src2, unsigned count) {
 	assert(count >= 8);
 	assert(count % 4 == 0);
 
@@ -354,8 +344,7 @@ static inline void scale2x_16_mmx_single(scale2x_uint16* dst, const scale2x_uint
 	);
 }
 
-static inline void scale2x_32_mmx_single(scale2x_uint32* dst, const scale2x_uint32* src0, const scale2x_uint32* src1, const scale2x_uint32* src2, unsigned count)
-{
+static inline void scale2x_32_mmx_single(scale2x_uint32* dst, const scale2x_uint32* src0, const scale2x_uint32* src1, const scale2x_uint32* src2, unsigned count) {
 	assert(count >= 4);
 	assert(count % 2 == 0);
 
@@ -445,16 +434,15 @@ static inline void scale2x_32_mmx_single(scale2x_uint32* dst, const scale2x_uint
  * instruction before any floating-point operation.
  * The pixels over the left and right borders are assumed of the same color of
  * the pixels on the border.
- * \param src0 Pointer at the first pixel of the previous row.
- * \param src1 Pointer at the first pixel of the current row.
- * \param src2 Pointer at the first pixel of the next row.
- * \param count Length in pixels of the src0, src1 and src2 rows. It must
+ * @param src0 Pointer at the first pixel of the previous row.
+ * @param src1 Pointer at the first pixel of the current row.
+ * @param src2 Pointer at the first pixel of the next row.
+ * @param count Length in pixels of the src0, src1 and src2 rows. It must
  * be at least 16 and a multiple of 8.
- * \param dst0 First destination row, double length in pixels.
- * \param dst1 Second destination row, double length in pixels.
+ * @param dst0 First destination row, double length in pixels.
+ * @param dst1 Second destination row, double length in pixels.
  */
-void scale2x_8_mmx(scale2x_uint8* dst0, scale2x_uint8* dst1, const scale2x_uint8* src0, const scale2x_uint8* src1, const scale2x_uint8* src2, unsigned count)
-{
+void scale2x_8_mmx(scale2x_uint8* dst0, scale2x_uint8* dst1, const scale2x_uint8* src0, const scale2x_uint8* src1, const scale2x_uint8* src2, unsigned count) {
 	if (count % 8 != 0 || count < 16) {
 		scale2x_8_def(dst0, dst1, src0, src1, src2, count);
 	} else {
@@ -469,16 +457,15 @@ void scale2x_8_mmx(scale2x_uint8* dst0, scale2x_uint8* dst1, const scale2x_uint8
 /**
  * Scale by a factor of 2 a row of pixels of 16 bits.
  * This function operates like scale2x_8_mmx() but for 16 bits pixels.
- * \param src0 Pointer at the first pixel of the previous row.
- * \param src1 Pointer at the first pixel of the current row.
- * \param src2 Pointer at the first pixel of the next row.
- * \param count Length in pixels of the src0, src1 and src2 rows. It must
+ * @param src0 Pointer at the first pixel of the previous row.
+ * @param src1 Pointer at the first pixel of the current row.
+ * @param src2 Pointer at the first pixel of the next row.
+ * @param count Length in pixels of the src0, src1 and src2 rows. It must
  * be at least 8 and a multiple of 4.
- * \param dst0 First destination row, double length in pixels.
- * \param dst1 Second destination row, double length in pixels.
+ * @param dst0 First destination row, double length in pixels.
+ * @param dst1 Second destination row, double length in pixels.
  */
-void scale2x_16_mmx(scale2x_uint16* dst0, scale2x_uint16* dst1, const scale2x_uint16* src0, const scale2x_uint16* src1, const scale2x_uint16* src2, unsigned count)
-{
+void scale2x_16_mmx(scale2x_uint16* dst0, scale2x_uint16* dst1, const scale2x_uint16* src0, const scale2x_uint16* src1, const scale2x_uint16* src2, unsigned count) {
 	if (count % 4 != 0 || count < 8) {
 		scale2x_16_def(dst0, dst1, src0, src1, src2, count);
 	} else {
@@ -493,16 +480,15 @@ void scale2x_16_mmx(scale2x_uint16* dst0, scale2x_uint16* dst1, const scale2x_ui
 /**
  * Scale by a factor of 2 a row of pixels of 32 bits.
  * This function operates like scale2x_8_mmx() but for 32 bits pixels.
- * \param src0 Pointer at the first pixel of the previous row.
- * \param src1 Pointer at the first pixel of the current row.
- * \param src2 Pointer at the first pixel of the next row.
- * \param count Length in pixels of the src0, src1 and src2 rows. It must
+ * @param src0 Pointer at the first pixel of the previous row.
+ * @param src1 Pointer at the first pixel of the current row.
+ * @param src2 Pointer at the first pixel of the next row.
+ * @param count Length in pixels of the src0, src1 and src2 rows. It must
  * be at least 4 and a multiple of 2.
- * \param dst0 First destination row, double length in pixels.
- * \param dst1 Second destination row, double length in pixels.
+ * @param dst0 First destination row, double length in pixels.
+ * @param dst1 Second destination row, double length in pixels.
  */
-void scale2x_32_mmx(scale2x_uint32* dst0, scale2x_uint32* dst1, const scale2x_uint32* src0, const scale2x_uint32* src1, const scale2x_uint32* src2, unsigned count)
-{
+void scale2x_32_mmx(scale2x_uint32* dst0, scale2x_uint32* dst1, const scale2x_uint32* src0, const scale2x_uint32* src1, const scale2x_uint32* src2, unsigned count) {
 	if (count % 2 != 0 || count < 4) {
 		scale2x_32_def(dst0, dst1, src0, src1, src2, count);
 	} else {
