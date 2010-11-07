@@ -242,6 +242,7 @@ ScummVM Team
        Max Horn              - Backend & Engine APIs, file API, sound mixer,
                                audiostreams, data structures, etc.
        Eugene Sandulenko
+       Johannes Schickel
 
     GUI:
        Vicent Marti

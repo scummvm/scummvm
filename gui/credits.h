@@ -268,6 +268,7 @@ static const char *credits[] = {
 "C0""Max Horn",
 "C2""Backend & Engine APIs, file API, sound mixer, audiostreams, data structures, etc.",
 "C0""Eugene Sandulenko",
+"C0""Johannes Schickel",
 "",
 "C1""GUI",
 "C0""Vicent Marti",
