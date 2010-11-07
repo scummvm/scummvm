@@ -449,6 +449,12 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 			Common::String fname = fileDesc->fileName;
 			SizeMD5 tmp;
 
+			if (filesSizeMD5.contains(fname))
+				continue;
+
+			// FIXME/TODO: We don't handle the case that a file is listed as a regular
+			// file and as one with resource fork.
+
 			if (g->flags & ADGF_MACRESFORK) {
 				Common::MacResManager *macResMan = new Common::MacResManager();
 
@@ -462,7 +468,7 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 				delete macResMan;
 			} else {
-				if (allFiles.contains(fname) && !filesSizeMD5.contains(fname)) {
+				if (allFiles.contains(fname)) {
 					debug(3, "+ %s", fname.c_str());
 
 					Common::File testFile;
