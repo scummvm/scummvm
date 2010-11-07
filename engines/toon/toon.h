@@ -102,6 +102,7 @@ public:
 	char **_specialInfoLine;
 
 	Common::Error run();
+	GUI::Debugger *getDebugger() { return _console; }
 	bool showMainmenu(bool &loadedGame);
 	void init();
 	bool loadToonDat();

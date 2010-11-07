@@ -239,11 +239,11 @@ void ToonEngine::parseInput() {
 						dialog.runModal();
 					}
 				}
-				// FIXME - Triggering Debug Console currently causes a segfault.
-				//if (event.kbd.keycode == Common::KEYCODE_d) {
-				//	this->getDebugger()->attach();
-				//	this->getDebugger()->onFrame();
-				//}
+
+				if (event.kbd.keycode == Common::KEYCODE_d) {
+					this->getDebugger()->attach();
+					this->getDebugger()->onFrame();
+				}
 			}
 			break;
 // Strangerke - Commented (not used)
