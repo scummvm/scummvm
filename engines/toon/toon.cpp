@@ -239,6 +239,11 @@ void ToonEngine::parseInput() {
 						dialog.runModal();
 					}
 				}
+				// FIXME - Triggering Debug Console currently causes a segfault.
+				//if (event.kbd.keycode == Common::KEYCODE_d) {
+				//	this->getDebugger()->attach();
+				//	this->getDebugger()->onFrame();
+				//}
 			}
 			break;
 // Strangerke - Commented (not used)
@@ -750,6 +755,8 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	DebugMan.addDebugChannel(kDebugTools, "Tools", "Tools debug level");
 	DebugMan.addDebugChannel(kDebugText, "Text", "Text debug level");
 
+	_console = new ToonConsole(this);
+
 	switch (_language) {
 	case Common::EN_GRB:
 	case Common::EN_USA:
@@ -776,7 +783,8 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 }
 
 ToonEngine::~ToonEngine() {
-
+	DebugMan.clearAllDebugChannels();
+	delete _console;
 }
 
 void ToonEngine::flushPalette() {

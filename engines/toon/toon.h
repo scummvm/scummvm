@@ -41,6 +41,7 @@
 #include "toon/font.h"
 #include "toon/text.h"
 #include "toon/audio.h"
+#include "toon/console.h"
 
 #define TOON_DAT_VER_MAJ 0  // 1 byte
 #define TOON_DAT_VER_MIN 3  // 1 byte
@@ -417,6 +418,8 @@ protected:
 	bool _firstFrame;
 	bool _isDemo;
 	bool _showConversationText;
+private:
+	ToonConsole *_console;
 };
 
 } // End of namespace Toon

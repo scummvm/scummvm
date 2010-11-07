@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	anim.o \
 	audio.o \
 	character.o \
+	console.o \
 	conversation.o \
 	detection.o \
 	drew.o \
