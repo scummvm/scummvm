@@ -1863,7 +1863,7 @@ if test -n "$_host"; then
 			_dynamic_modules=no
 			_plugins_default=static
 			# Force use of libmad, libtremor and zlib
-			_mad=yes
+			_mad=no
 			_tremor=yes
 			_zlib=yes
 			_port_mk="backends/platform/n64/n64.mk"
