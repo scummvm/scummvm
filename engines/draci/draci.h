@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 #include "common/random.h"
+#include "draci/console.h"
 
 struct ADGameDescription;
 
@@ -75,6 +76,8 @@ public:
 	virtual Common::Error saveGameState(int slot, const char *desc);
 	virtual bool canSaveGameStateCurrently();
 
+	GUI::Debugger *getDebugger() { return _console; }
+
 	Screen *_screen;
 	Mouse *_mouse;
 	Game *_game;
@@ -108,6 +111,8 @@ public:
 	Common::RandomSource _rnd;
 
 	int32 _pauseStartTime;
+private:
+	DraciConsole *_console;
 };
 
 enum {

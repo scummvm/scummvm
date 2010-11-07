@@ -3,6 +3,7 @@ MODULE := engines/draci
 MODULE_OBJS := \
 	animation.o \
 	barchive.o \
+	console.o \
 	detection.o \
 	draci.o \
 	font.o \
