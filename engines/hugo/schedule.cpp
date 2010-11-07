@@ -42,7 +42,7 @@
 
 namespace Hugo {
 
-Scheduler::Scheduler(HugoEngine *vm) : _vm(vm) {
+Scheduler::Scheduler(HugoEngine *vm) : _vm(vm), _actListArr(0) {
 }
 
 Scheduler::~Scheduler() {
@@ -829,9 +829,11 @@ void Scheduler::loadActListArr(Common::File &in) {
 void Scheduler::freeActListArr() {
 	debugC(6, kDebugSchedule, "freeActListArr()");
 
-	for (int i = 0; i < _actListArrSize; i++)
-		free(_actListArr[i]);
-	free(_actListArr);
+	if (_actListArr) {
+		for (int i = 0; i < _actListArrSize; i++)
+			free(_actListArr[i]);
+		free(_actListArr);
+	}
 }
 
 /**

@@ -46,7 +46,7 @@
 
 namespace Hugo {
 
-ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm) {
+ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0) {
 }
 
 ObjectHandler::~ObjectHandler() {

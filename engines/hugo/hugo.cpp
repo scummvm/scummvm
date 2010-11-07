@@ -86,13 +86,17 @@ HugoEngine::~HugoEngine() {
 	free(_textData);
 	free(_stringtData);
 
-	for (int i = 0; _arrayNouns[i]; i++)
-		free(_arrayNouns[i]);
-	free(_arrayNouns);
+	if (_arrayNouns) {
+		for (int i = 0; _arrayNouns[i]; i++)
+			free(_arrayNouns[i]);
+		free(_arrayNouns);
+	}
 
-	for (int i = 0; _arrayVerbs[i]; i++)
-		free(_arrayVerbs[i]);
-	free(_arrayVerbs);
+	if (_arrayVerbs) {
+		for (int i = 0; _arrayVerbs[i]; i++)
+			free(_arrayVerbs[i]);
+		free(_arrayVerbs);
+	}
 
 	free(_screenNames);
 	_screen->freePalette();
@@ -108,25 +112,33 @@ HugoEngine::~HugoEngine() {
 	free(_hotspots);
 	free(_invent);
 
-	for (int i = 0; i < _usesSize; i++)
-		free(_uses[i].targets);
-	free(_uses);
+	if (_uses) {
+		for (int i = 0; i < _usesSize; i++)
+			free(_uses[i].targets);
+		free(_uses);
+	}
 
 	free(_catchallList);
 
-	for (int i = 0; i < _backgroundObjectsSize; i++)
-		free(_backgroundObjects[i]);
-	free(_backgroundObjects);
+	if (_backgroundObjects) {
+		for (int i = 0; i < _backgroundObjectsSize; i++)
+			free(_backgroundObjects[i]);
+		free(_backgroundObjects);
+	}
 
 	free(_points);
 
-	for (int i = 0; i < _cmdListSize; i++)
-		free(_cmdList[i]);
-	free(_cmdList);
+	if (_cmdList) {
+		for (int i = 0; i < _cmdListSize; i++)
+			free(_cmdList[i]);
+		free(_cmdList);
+	}
 
-	for (int i = 0; i < _screenActsSize; i++)
-		free(_screenActs[i]);
-	free(_screenActs);
+	if (_cmdList) {
+		for (int i = 0; i < _screenActsSize; i++)
+			free(_screenActs[i]);
+		free(_screenActs);
+	}
 
 	_object->freeObjectArr();
 	_scheduler->freeActListArr();
