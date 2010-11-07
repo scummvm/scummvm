@@ -88,10 +88,17 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		{
 			"drascula",
 			0,
-			AD_ENTRY1s("packet.001", "c6a8697396e213a18472542d5f547cb4", 32847563),
+			{
+				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
+				// HACK: List packet.001 twice to ensure this detector entry
+				// is ranked just as high as the others (which each have two
+				// detection files).
+				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
+				{NULL, 0, NULL, 0}
+			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_KEEPMATCH | GF_PACKED,
+			GF_PACKED,
 			GUIO_NONE
 		},
 	},

@@ -244,18 +244,21 @@ GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 	if (cleanupPirated(matches))
 		return detectedGames;
 
-	// Use fallback detector if there were no matches by other means
 	if (matches.empty()) {
+		// Use fallback detector if there were no matches by other means
 		const ADGameDescription *fallbackDesc = fallbackDetect(fslist);
 		if (fallbackDesc != 0) {
 			GameDescriptor desc(toGameDescriptor(*fallbackDesc, params.list));
 			updateGameDescriptor(desc, fallbackDesc, params);
 			detectedGames.push_back(desc);
 		}
-	} else for (uint i = 0; i < matches.size(); i++) { // Otherwise use the found matches
-		GameDescriptor desc(toGameDescriptor(*matches[i], params.list));
-		updateGameDescriptor(desc, matches[i], params);
-		detectedGames.push_back(desc);
+	} else {
+		// Otherwise use the found matches
+		for (uint i = 0; i < matches.size(); i++) {
+			GameDescriptor desc(toGameDescriptor(*matches[i], params.list));
+			updateGameDescriptor(desc, matches[i], params);
+			detectedGames.push_back(desc);
+		}
 	}
 
 	return detectedGames;
@@ -502,6 +505,7 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 			continue;
 
 		bool allFilesPresent = true;
+		int curFilesMatched = 0;
 
 		// Try to match all files for this game
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
@@ -526,12 +530,13 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 			}
 
 			debug(3, "Matched file: %s", tstr.c_str());
+			curFilesMatched++;
 		}
 
 		// We found at least one entry with all required files present.
 		// That means that we got new variant of the game.
 		//
-		// Wihtout this check we would have errorneous checksum display
+		// Without this check we would have erroneous checksum display
 		// where only located files will be enlisted.
 		//
 		// Potentially this could rule out variants where some particular file
@@ -544,22 +549,11 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 			debug(2, "Found game: %s (%s %s/%s) (%d)", g->gameid, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 
-			// Count the number of matching files. Then, only keep those
-			// entries which match a maximal amount of files.
-			int curFilesMatched = 0;
-			for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++)
-				curFilesMatched++;
-
 			if (curFilesMatched > maxFilesMatched) {
 				debug(2, " ... new best match, removing all previous candidates");
 				maxFilesMatched = curFilesMatched;
 
-				for (uint j = 0; j < matched.size();) {
-					if (matched[j]->flags & ADGF_KEEPMATCH)
-						 ++j;
-					else
-						matched.remove_at(j);
-				}
+				matched.clear();	// Remove any prior, lower ranked matches.
 				matched.push_back(g);
 			} else if (curFilesMatched == maxFilesMatched) {
 				matched.push_back(g);

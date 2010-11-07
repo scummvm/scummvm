@@ -212,8 +212,13 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 	if (fslist.empty())
 		return NULL;
 
+	// TODO: The following code is essentially a slightly modified copy of the
+	// complete code of function detectGame() in engines/advancedDetector.cpp.
+	// That quite some hefty and undesirable code duplication. Its only purpose
+	// seems to be to treat filenames of the form "foo1.ext" as "foo.ext".
+	// It would be nice to avoid this code duplication.
+
 	// First we compose a hashmap of all files in fslist.
-	// Includes nifty stuff like removing trailing dots and ignoring case.
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) {
 			if (!scumm_stricmp(file->getName().c_str(), "dw2")) {
@@ -337,12 +342,7 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 			if (curFilesMatched > maxFilesMatched) {
 				maxFilesMatched = curFilesMatched;
 
-				for (uint j = 0; j < matched.size();) {
-					if (matched[j]->flags & ADGF_KEEPMATCH)
-						 ++j;
-					else
-						matched.remove_at(j);
-				}
+				matched.clear();	// Remove any prior, lower ranked matches.
 				matched.push_back((const ADGameDescription *)g);
 			} else if (curFilesMatched == maxFilesMatched) {
 				matched.push_back((const ADGameDescription *)g);
