@@ -126,8 +126,6 @@ public:
 	byte  *_introX;
 	byte  *_introY;
 	byte  *_screenStates;
-	byte  *_arrayFont[3];
-	int16  _arrayFontSize[3];
 	char  **_textData;
 	char  **_stringtData;
 	char  **_screenNames;

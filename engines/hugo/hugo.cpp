@@ -79,8 +79,6 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Inventory debug level");
 	DebugMan.addDebugChannel(kDebugObject, "Object", "Object debug level");
 
-	for (int j = 0; j < NUM_FONTS; j++)
-		_arrayFont[j] = 0;
 }
 
 HugoEngine::~HugoEngine() {
@@ -135,14 +133,7 @@ HugoEngine::~HugoEngine() {
 	free(_defltTunes);
 	free(_screenStates);
 
-	if (_arrayFont[0])
-		free(_arrayFont[0]);
-
-	if (_arrayFont[1])
-		free(_arrayFont[1]);
-
-	if (_arrayFont[2])
-		free(_arrayFont[2]);
+	_screen->freeFonts();
 
 	delete _object;
 	delete _sound;
@@ -729,35 +720,8 @@ bool HugoEngine::loadHugoDat() {
 	}
 
 	_scheduler->loadAlNewscrIndex(in);
+	_screen->loadFontArr(in);
 
-	if (_gameVariant > 2) {
-		_arrayFontSize[0] = in.readUint16BE();
-		_arrayFont[0] = (byte *)malloc(sizeof(byte) * _arrayFontSize[0]);
-		for (int j = 0; j < _arrayFontSize[0]; j++)
-			_arrayFont[0][j] = in.readByte();
-
-		_arrayFontSize[1] = in.readUint16BE();
-		_arrayFont[1] = (byte *)malloc(sizeof(byte) * _arrayFontSize[1]);
-		for (int j = 0; j < _arrayFontSize[1]; j++)
-			_arrayFont[1][j] = in.readByte();
-
-		_arrayFontSize[2] = in.readUint16BE();
-		_arrayFont[2] = (byte *)malloc(sizeof(byte) * _arrayFontSize[2]);
-		for (int j = 0; j < _arrayFontSize[2]; j++)
-			_arrayFont[2][j] = in.readByte();
-	} else {
-		numElem = in.readUint16BE();
-		for (int j = 0; j < numElem; j++)
-			in.readByte();
-
-		numElem = in.readUint16BE();
-		for (int j = 0; j < numElem; j++)
-			in.readByte();
-
-		numElem = in.readUint16BE();
-		for (int j = 0; j < numElem; j++)
-			in.readByte();
-	}
 	return true;
 }
 

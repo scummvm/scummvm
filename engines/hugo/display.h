@@ -50,6 +50,7 @@ public:
 	virtual ~Screen();
 
 	virtual void loadFont(int16 fontId) = 0;
+	virtual void loadFontArr(Common::File &in) = 0;
 
 	int16    fontHeight();
 	int16    stringLength(const char *s);
@@ -61,6 +62,7 @@ public:
 	void     drawRectangle(bool filledFl, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int color);
 	void     drawShape(int x, int y, int color1, int color2);
 	void     drawStatusText();
+	void     freeFonts();
 	void     freePalette();
 	void     initDisplay();
 	void     initNewScreenDisplay();
@@ -98,13 +100,17 @@ public:
 protected:
 	HugoEngine *_vm;
 
+	bool fontLoadedFl[NUM_FONTS];
+
 	// Fonts used in dib (non-GDI)
+	byte *_arrayFont[NUM_FONTS];
 	byte  _fnt;                                     // Current font number
 	byte  _fontdata[NUM_FONTS][FONTSIZE];           // Font data
 	byte *_font[NUM_FONTS][FONT_LEN];               // Ptrs to each char
 	byte *_palette;
-
 	byte  _paletteSize;
+
+	int16 _arrayFontSize[NUM_FONTS];
 
 private:
 	viewdib_t _frontBuffer;
@@ -126,6 +132,7 @@ public:
 	~Screen_v1d();
 
 	void loadFont(int16 fontId);
+	void loadFontArr(Common::File &in);
 };
 
 class Screen_v1w : public Screen {
@@ -134,6 +141,7 @@ public:
 	~Screen_v1w();
 
 	void loadFont(int16 fontId);
+	void loadFontArr(Common::File &in);
 };
 
 } // End of namespace Hugo
