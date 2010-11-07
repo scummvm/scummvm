@@ -1396,9 +1396,9 @@ MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableRe
 
 	// TODO: Not sure about order of Mouse Down, Mouse Drag and Mouse Up
 	//       Or whether this is slightly different...
-	printf("Type 10 _mouseDownOpcode: %d\n", _mouseDownOpcode);
-	printf("Type 10 _mouseDragOpcode: %d\n", _mouseDragOpcode);
-	printf("Type 10 _mouseUpOpcode: %d\n", _mouseUpOpcode);
+	debugCN(kDebugResource, "Type 10 _mouseDownOpcode: %d\n", _mouseDownOpcode);
+	debugCN(kDebugResource, "Type 10 _mouseDragOpcode: %d\n", _mouseDragOpcode);
+	debugCN(kDebugResource, "Type 10 _mouseUpOpcode: %d\n", _mouseUpOpcode);
 
 	for (byte i = 0; i < 4; i++) {
 		debugC(kDebugResource, "\tList %d:", i);
@@ -1452,9 +1452,9 @@ MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableRe
 
 	// TODO: Not sure about order of Mouse Down, Mouse Drag and Mouse Up
 	//       Or whether this is slightly different...
-	printf("Type 11 _mouseDownOpcode: %d\n", _mouseDownOpcode);
-	printf("Type 11 _mouseDragOpcode: %d\n", _mouseDragOpcode);
-	printf("Type 11 _mouseUpOpcode: %d\n", _mouseUpOpcode);
+	debugCN(kDebugResource, "Type 11 _mouseDownOpcode: %d\n", _mouseDownOpcode);
+	debugCN(kDebugResource, "Type 11 _mouseDragOpcode: %d\n", _mouseDragOpcode);
+	debugCN(kDebugResource, "Type 11 _mouseUpOpcode: %d\n", _mouseUpOpcode);
 
 	for (byte i = 0; i < 3; i++) {
 		debugC(kDebugResource, "\tList %d:", i);
@@ -1511,14 +1511,14 @@ MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableRe
 
 	// TODO: Think that u0 and u1 are animation frames to be
 	//       drawn for var == 0 and var == 1
-	printf("Type 12 _state0Frame: %d\n", _state0Frame);
-	printf("Type 12 _state1Frame: %d\n", _state1Frame);
+	debugCN(kDebugResource, "Type 12 _state0Frame: %d\n", _state0Frame);
+	debugCN(kDebugResource, "Type 12 _state1Frame: %d\n", _state1Frame);
 
 	// TODO: Not sure about order of Mouse Down, Mouse Drag and Mouse Up
 	//       Or whether this is slightly different...
-	printf("Type 12 _mouseDownOpcode: %d\n", _mouseDownOpcode);
-	printf("Type 12 _mouseDragOpcode: %d\n", _mouseDragOpcode);
-	printf("Type 12 _mouseUpOpcode: %d\n", _mouseUpOpcode);
+	debugCN(kDebugResource, "Type 12 _mouseDownOpcode: %d\n", _mouseDownOpcode);
+	debugCN(kDebugResource, "Type 12 _mouseDragOpcode: %d\n", _mouseDragOpcode);
+	debugCN(kDebugResource, "Type 12 _mouseUpOpcode: %d\n", _mouseUpOpcode);
 
 	for (byte i = 0; i < 3; i++) {
 		debugC(kDebugResource, "\tList %d:", i);

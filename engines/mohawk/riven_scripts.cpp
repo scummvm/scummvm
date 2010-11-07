@@ -157,14 +157,14 @@ void RivenScript::setupOpcodes() {
 
 static void printTabs(byte tabs) {
 	for (byte i = 0; i < tabs; i++)
-		printf ("\t");
+		debugN("\t");
 }
 
 void RivenScript::dumpScript(Common::StringArray varNames, Common::StringArray xNames, byte tabs) {
 	if (_stream->pos() != 0)
 		_stream->seek(0);
 
-	printTabs(tabs); printf ("Stream Type %d:\n", _scriptType);
+	printTabs(tabs); debugN("Stream Type %d:\n", _scriptType);
 	dumpCommands(varNames, xNames, tabs + 1);
 }
 
@@ -178,50 +178,50 @@ void RivenScript::dumpCommands(Common::StringArray varNames, Common::StringArray
 			if (_stream->readUint16BE() != 2)
 				warning ("if-then-else unknown value is not 2");
 			uint16 var = _stream->readUint16BE();
-			printTabs(tabs); printf("switch (%s) {\n", varNames[var].c_str());
+			printTabs(tabs); debugN("switch (%s) {\n", varNames[var].c_str());
 			uint16 logicBlockCount = _stream->readUint16BE();
 			for (uint16 j = 0; j < logicBlockCount; j++) {
 				uint16 varCheck = _stream->readUint16BE();
 				printTabs(tabs + 1);
 				if (varCheck == 0xFFFF)
-					printf("default:\n");
+					debugN("default:\n");
 				else
-					printf("case %d:\n", varCheck);
+					debugN("case %d:\n", varCheck);
 				dumpCommands(varNames, xNames, tabs + 2);
-				printTabs(tabs + 2); printf("break;\n");
+				printTabs(tabs + 2); debugN("break;\n");
 			}
-			printTabs(tabs); printf("}\n");
+			printTabs(tabs); debugN("}\n");
 		} else if (command == 7) { // Use the variable name
 			_stream->readUint16BE(); // Skip the opcode var count
 			printTabs(tabs);
 			uint16 var = _stream->readUint16BE();
-			printf("%s = %d;\n", varNames[var].c_str(), _stream->readUint16BE());
+			debugN("%s = %d;\n", varNames[var].c_str(), _stream->readUint16BE());
 		} else if (command == 17) { // Use the external command name
 			_stream->readUint16BE(); // Skip the opcode var count
 			printTabs(tabs);
-			printf("%s(", xNames[_stream->readUint16BE()].c_str());
+			debugN("%s(", xNames[_stream->readUint16BE()].c_str());
 			uint16 varCount = _stream->readUint16BE();
 			for (uint16 j = 0; j < varCount; j++) {
-				printf("%d", _stream->readUint16BE());
+				debugN("%d", _stream->readUint16BE());
 				if (j != varCount - 1)
-					printf(", ");
+					debugN(", ");
 			}
-			printf (");\n");
+			debugN(");\n");
 		} else if (command == 24) { // Use the variable name
 			_stream->readUint16BE(); // Skip the opcode var count
 			printTabs(tabs);
 			uint16 var = _stream->readUint16BE();
-			printf ("%s += %d;\n", varNames[var].c_str(), _stream->readUint16BE());
+			debugN("%s += %d;\n", varNames[var].c_str(), _stream->readUint16BE());
 		} else {
 			printTabs(tabs);
 			uint16 varCount = _stream->readUint16BE();
-			printf("%s(", _opcodes[command].desc);
+			debugN("%s(", _opcodes[command].desc);
 			for (uint16 j = 0; j < varCount; j++) {
-				printf("%d", _stream->readUint16BE());
+				debugN("%d", _stream->readUint16BE());
 				if (j != varCount - 1)
-					printf(", ");
+					debugN(", ");
 			}
-			printf(");\n");
+			debugN(");\n");
 		}
 	}
 }
@@ -513,14 +513,14 @@ void RivenScript::fadeAmbientSounds(uint16 op, uint16 argc, uint16 *argv) {
 // Command 38: Play a movie with extra parameters (movie id, delay high, delay low, record type, record id)
 void RivenScript::complexPlayMovie(uint16 op, uint16 argc, uint16 *argv) {
 	warning("STUB: complexPlayMovie");
-	printf ("\tMovie ID = %d\n", argv[0]);
-	printf ("\tDelay = %d\n", (argv[1] << 16) + argv[2]);
+	debugN("\tMovie ID = %d\n", argv[0]);
+	debugN("\tDelay = %d\n", (argv[1] << 16) + argv[2]);
 	if (argv[3] == 0) {
-		printf ("\tDraw PLST %d\n", argv[4]);
+		debugN("\tDraw PLST %d\n", argv[4]);
 	} else if (argv[3] == 40) {
-		printf ("\tPlay SLST %d\n", argv[4]);
+		debugN("\tPlay SLST %d\n", argv[4]);
 	} else {
-		error ("Unknown complexPlayMovie record type %d", argv[3]);
+		error("Unknown complexPlayMovie record type %d", argv[3]);
 	}
 }
 

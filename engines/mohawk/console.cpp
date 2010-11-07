@@ -545,8 +545,12 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 
 	// Get CARD/HSPT data and dump their scripts
 	if (!scumm_stricmp(argv[2], "CARD")) {
-		printf ("\n\nDumping scripts for %s\'s card %d!\n", argv[1], (uint16)atoi(argv[3]));
-		printf ("==================================\n\n");
+		// FIXME: It's weird to use debugN here and not DebugPrintf. But
+		// then again, dumpScript() uses debugN, and it is non-trivial
+		// to modify that to use DebugPrintf. Hence for now we gotta
+		// make do...
+		debugN("\n\nDumping scripts for %s\'s card %d!\n", argv[1], (uint16)atoi(argv[3]));
+		debugN("==================================\n\n");
 		Common::SeekableReadStream *cardStream = _vm->getRawData(MKID_BE('CARD'), (uint16)atoi(argv[3]));
 		cardStream->seek(4);
 		RivenScriptList scriptList = _vm->_scriptMan->readScripts(cardStream, false);
@@ -556,15 +560,16 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		}
 		delete cardStream;
 	} else if (!scumm_stricmp(argv[2], "HSPT")) {
-		printf ("\n\nDumping scripts for %s\'s card %d hotspots!\n", argv[1], (uint16)atoi(argv[3]));
-		printf ("===========================================\n\n");
+		// FIXME: It's weird to use debugN here and not DebugPrintf. See above!
+		debugN("\n\nDumping scripts for %s\'s card %d hotspots!\n", argv[1], (uint16)atoi(argv[3]));
+		debugN("===========================================\n\n");
 
 		Common::SeekableReadStream *hsptStream = _vm->getRawData(MKID_BE('HSPT'), (uint16)atoi(argv[3]));
 
 		uint16 hotspotCount = hsptStream->readUint16BE();
 
 		for (uint16 i = 0; i < hotspotCount; i++) {
-			printf ("Hotspot %d:\n", i);
+			debugN("Hotspot %d:\n", i);
 			hsptStream->seek(22, SEEK_CUR);	// Skip non-script related stuff
 			RivenScriptList scriptList = _vm->_scriptMan->readScripts(hsptStream, false);
 			for (uint32 j = 0; j < scriptList.size(); j++) {
@@ -578,7 +583,8 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		DebugPrintf("%s doesn't have any scripts!\n", argv[2]);
 	}
 
-	printf("\n\n");
+	// FIXME: It's weird to use debugN here and not DebugPrintf. See above!
+	debugN("\n\n");
 
 	_vm->changeToStack(oldStack);
 

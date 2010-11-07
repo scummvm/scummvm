@@ -294,17 +294,16 @@ void MystScriptParser::varUnusedCheck(uint16 op, uint16 var) {
 }
 
 void MystScriptParser::unknown(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// NOTE: printf used here instead of debug, so unknown opcodes are always reported...
-	printf("Unimplemented opcode 0x%02x (%d)\n", op, op);
-	printf("\tUses var %d\n", var);
-	printf("\tArg count = %d\n", argc);
-	if (argc)
-		printf("\tArgs: ");
-	for (uint16 i = 0; i < argc; i++) {
-		if (i == argc - 1)
-			printf("%d\n", argv[i]);
-		else
-			printf("%d, ", argv[i]);
+	warning("Unimplemented opcode 0x%02x (%d)", op, op);
+	warning("\tUses var %d", var);
+	warning("\tArg count = %d", argc);
+	if (argc) {
+		Common::String str;
+		str += Common::String::format("%d", argv[0]);
+		for (uint16 i = 1; i < argc; i++) {
+			str += Common::String::format(", %d", argv[i]);
+		}
+		warning("\tArgs: %s\n", str.c_str());
 	}
 }
 
@@ -1529,7 +1528,7 @@ void MystScriptParser::opcode_102(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			debugC(kDebugScript, "\tstartTime: %d", startTime);
 			debugC(kDebugScript, "\tendTime: %d", endTime);
 
-			printf("TODO: Opcode %d Movie Time Index %d to %d\n", op, startTime, endTime);
+			warning("TODO: Opcode %d Movie Time Index %d to %d", op, startTime, endTime);
 			// TODO: Need version of playMovie blocking which allows selection
 			//       of start and finish points.
 			_vm->_video->playMovie(_vm->wrapMovieFilename("bkroom", kStoneshipStack), 159, 99);
@@ -2488,7 +2487,7 @@ void MystScriptParser::opcode_121(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			uint16 startTime = argv[0];
 			uint16 endTime = argv[1];
 
-			printf("TODO: Opcode %d Movie Time Index %d to %d\n", op, startTime, endTime);
+			warning("TODO: Opcode %d Movie Time Index %d to %d\n", op, startTime, endTime);
 			// TODO: Need version of playMovie blocking which allows selection
 			//       of start and finish points.
 			_vm->_video->playMovie(_vm->wrapMovieFilename("ewindow", kMechanicalStack), 253, 0);
@@ -2550,7 +2549,7 @@ void MystScriptParser::opcode_123(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			uint16 start_time = argv[0];
 			uint16 end_time = argv[1];
 
-			printf("TODO: Opcode %d Movie Time Index %d to %d\n", op, start_time, end_time);
+			warning("TODO: Opcode %d Movie Time Index %d to %d\n", op, start_time, end_time);
 			// TODO: Need version of playMovie blocking which allows selection
 			//       of start and finish points.
 			// TODO: Not 100% sure about movie position
