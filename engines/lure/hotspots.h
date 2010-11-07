@@ -158,8 +158,7 @@ public:
 	void clear();
 	void reset(RoomPathsData &src);
 	PathFinderResult process();
-	void list(char *buffer);
-	void list() { list(NULL); }
+	Common::String getDebugInfo() const;
 
 	void pop() { _list.erase(_list.begin()); }
 	WalkingActionEntry &top() { return **_list.begin(); }

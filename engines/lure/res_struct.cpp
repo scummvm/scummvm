@@ -1439,77 +1439,42 @@ CurrentActionEntry *CurrentActionEntry::loadFromStream(Common::ReadStream *strea
 	return result;
 }
 
-void CurrentActionStack::list(char *buffer) {
-	ActionsList::iterator i;
+Common::String CurrentActionStack::getDebugInfo() const {
+	Common::String buffer;
+	ActionsList::const_iterator i;
 
-	if (buffer) {
-		sprintf(buffer, "CurrentActionStack::list num_actions=%d\n", size());
-		buffer += strlen(buffer);
-	}
-	else
-		printf("CurrentActionStack::list num_actions=%d\n", size());
+	buffer += Common::String::format("CurrentActionStack::list num_actions=%d\n", size());
 
 	for (i = _actions.begin(); i != _actions.end(); ++i) {
 		CurrentActionEntry *entry = (*i).get();
-		if (buffer) {
-			sprintf(buffer, "style=%d room#=%d", entry->action(), entry->roomNumber());
-			buffer += strlen(buffer);
-		}
-		else
-			printf("style=%d room#=%d", entry->action(), entry->roomNumber());
+		buffer += Common::String::format("style=%d room#=%d", entry->action(), entry->roomNumber());
 
 		if (entry->hasSupportData()) {
 			CharacterScheduleEntry &rec = entry->supportData();
 
-			if (buffer) {
-				sprintf(buffer, ", action=%d params=", rec.action());
-				buffer += strlen(buffer);
-			}
-			else
-				printf(", action=%d params=", rec.action());
+			buffer += Common::String::format(", action=%d params=", rec.action());
 
 			if (rec.numParams() == 0)
-				if (buffer) {
-					strcat(buffer, "none");
-					buffer += strlen(buffer);
-				}
-				else
-					printf("none");
+				buffer += "none";
 			else {
-				for (int ctr = 0; ctr < rec.numParams(); ++ctr) {
-					if (ctr != 0) {
-						if (buffer) {
-							strcpy(buffer, ", ");
-							buffer += strlen(buffer);
-						}
-						else
-							printf(", ");
-					}
-
-					if (buffer) {
-						sprintf(buffer, "%d", rec.param(ctr));
-						buffer += strlen(buffer);
-					} else
-						printf("%d", rec.param(ctr));
+				buffer += Common::String::format("%d", rec.param(0));
+				for (int ctr = 1; ctr < rec.numParams(); ++ctr) {
+					buffer += Common::String::format(", %d", rec.param(ctr));
 				}
 			}
 		}
-		if (buffer) {
-			sprintf(buffer, "\n");
-			buffer += strlen(buffer);
-		}
-		else
-			printf("\n");
+		buffer += "\n";
 	}
+
+	return buffer;
 }
 
 void CurrentActionStack::saveToStream(Common::WriteStream *stream) {
 	ActionsList::iterator i;
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action stack");
-	char buffer[MAX_DESC_SIZE];
-	list(buffer);
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "%s", buffer);
+	Common::String buffer = getDebugInfo();
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "%s", buffer.c_str());
 
 	for (i = _actions.begin(); i != _actions.end(); ++i) {
 		CurrentActionEntry *rec = (*i).get();

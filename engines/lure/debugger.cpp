@@ -352,15 +352,13 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 	} else {
 		if (strcmp(argv[2], "schedule") == 0) {
 			// List any current schedule for the character
-			hs->npcSchedule.list(buffer);
-			DebugPrintf("%s", buffer);
+			DebugPrintf("%s", hs->npcSchedule.getDebugInfo().c_str());
 		}
 		if (!h)
 			DebugPrintf("The specified hotspot is not currently active\n");
 		else if (strcmp(argv[2], "paths") == 0) {
 			// List any paths for a charcter
-			h->pathFinder().list(buffer);
-			DebugPrintf("%s", buffer);
+			DebugPrintf("%s", h->pathFinder().getDebugInfo().c_str());
 		}
 		else if (strcmp(argv[2], "pixels") == 0) {
 			// List the pixel data for the hotspot

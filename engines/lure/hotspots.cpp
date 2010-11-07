@@ -2496,10 +2496,9 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 	bool bumpedPlayer;
 
 	if (h.currentActions().action() != WALKING) {
-		char buffer[MAX_DESC_SIZE];
-		h.currentActions().list(buffer);
+		Common::String buffer = h.currentActions().getDebugInfo();
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot standard character p=(%d,%d,%d) bs=%d\n%s",
-			h.x(), h.y(), h.roomNumber(), h.blockedState(), buffer);
+			h.x(), h.y(), h.roomNumber(), h.blockedState(), buffer.c_str());
 	}
 
 	// Handle any active talk dialog
@@ -2902,12 +2901,12 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 	Action hsAction;
 	uint16 hotspotId;
 	HotspotData *hotspot;
-	char buffer[MAX_DESC_SIZE];
+	Common::String buffer;
 
-	h.currentActions().list(buffer);
+	buffer = h.currentActions().getDebugInfo();
 	debugC(ERROR_DETAILED, kLureDebugAnimations,
 		"Hotspot player anim handler p=(%d,%d,%d) bs=%d\n%s",
-		h.x(), h.y(), h.roomNumber(), h.blockedState(), buffer);
+		h.x(), h.y(), h.roomNumber(), h.blockedState(), buffer.c_str());
 
 	h.handleTalkDialog();
 
@@ -3037,10 +3036,10 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		if (pfResult == PF_UNFINISHED) break;
 
 		// Pathfinding is now complete
-		pathFinder.list(buffer);
+		buffer = pathFinder.getDebugInfo();
 		debugC(ERROR_DETAILED, kLureDebugAnimations,
 			"Pathfind processing done; result=%d, walkFlag=%d\n%s",
-			pfResult, h.walkFlag(), buffer);
+			pfResult, h.walkFlag(), buffer.c_str());
 
 		if ((pfResult != PF_OK) && (h.walkFlag() || (pfResult != PF_DEST_OCCUPIED))) {
 
@@ -4374,25 +4373,17 @@ final_step:
 	return result;
 }
 
-void PathFinder::list(char *buffer) {
-	if (buffer) {
-		sprintf(buffer, "Pathfinder::list\n");
-		buffer += strlen(buffer);
-	}
-	else {
-		printf("Pathfinder::list\n");
-	}
+Common::String PathFinder::getDebugInfo() const {
+	Common::String buffer;
+	buffer += "Pathfinder::list(\n";
 
-	WalkingActionList::iterator i;
+	WalkingActionList::const_iterator i;
 	for (i = _list.begin(); i != _list.end(); ++i) {
 		WalkingActionEntry *e = (*i).get();
-		if (buffer) {
-			sprintf(buffer, "Direction=%d, numSteps=%d\n", e->direction(), e->numSteps());
-			buffer += strlen(buffer);
-		}
-		else
-			printf("Direction=%d, numSteps=%d\n", e->direction(), e->numSteps());
+		buffer += Common::String::format("Direction=%d, numSteps=%d\n", e->direction(), e->numSteps());
 	}
+
+	return buffer;
 }
 
 void PathFinder::processCell(uint16 *p) {
