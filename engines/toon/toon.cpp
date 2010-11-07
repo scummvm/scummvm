@@ -241,8 +241,8 @@ void ToonEngine::parseInput() {
 				}
 
 				if (event.kbd.keycode == Common::KEYCODE_d) {
-					this->getDebugger()->attach();
-					this->getDebugger()->onFrame();
+					_console->attach();
+					_console->onFrame();
 				}
 			}
 			break;
