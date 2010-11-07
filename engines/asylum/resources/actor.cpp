@@ -719,10 +719,30 @@ void Actor::stopSound() {
 		getSound()->stopSound(_soundResourceId);
 }
 
-Common::String Actor::toString() {
+Common::String Actor::toString(bool shortString) {
 	Common::String output;
 
 	output += Common::String::format("Actor %d: %s\n", _index, _name);
+	if (!shortString) {
+		output += Common::String::format("resourceId:   %d (0x%X): \n", _resourceId, _resourceId);
+		output += Common::String::format("objectIndex:  %d: \n", _objectIndex);
+		output += Common::String::format("frameIndex:   %d: \n", _frameIndex);
+		output += Common::String::format("frameCount:   %d: \n", _frameCount);
+		output += Common::String::format("x:            %d: \n", x);
+		output += Common::String::format("y:            %d: \n", y);
+		output += Common::String::format("x1:           %d: \n", x1);
+		output += Common::String::format("y1:           %d: \n", y1);
+		output += Common::String::format("x2:           %d: \n", x2);
+		output += Common::String::format("y2:           %d: \n", y2);
+		output += Common::String::format("flags:        %d: \n", flags);
+		output += Common::String::format("actionType:   %d: \n", actionType);
+		output += Common::String::format("boundingRect: top[%d] left[%d] right[%d] bottom[%d]: \n", _boundingRect.top, _boundingRect.left, _boundingRect.right, _boundingRect.bottom);
+		output += Common::String::format("direction:    %d: \n", _direction);
+		output += Common::String::format("field_3C:     %d: \n", _field_3C);
+		output += Common::String::format("status:       %d: \n", _status);
+		output += Common::String::format("field_44:     %d: \n", _field_44);
+		output += Common::String::format("priority:     %d: \n", _priority);
+	}
 
 	return output;
 }
