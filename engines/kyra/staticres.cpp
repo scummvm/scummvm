@@ -57,7 +57,7 @@ bool checkKyraDat(Common::SeekableReadStream *file) {
 
 	uint8 digestCalc[16];
 	file->seek(0, SEEK_SET);
-	if (!Common::md5_file(*file, digestCalc, size))
+	if (!Common::computeStreamMD5(*file, digestCalc, size))
 		return false;
 
 	for (int i = 0; i < 16; ++i)

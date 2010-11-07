@@ -29,14 +29,14 @@ static const char *md5_test_digest[] = {
 
 class MD5TestSuite : public CxxTest::TestSuite {
 	public:
-	void test_md5_file() {
+	void test_computeStreamMD5() {
 		int i, j;
 		char output[33];
 		unsigned char md5sum[16];
 
 		for (i = 0; i < 7; i++) {
 			Common::MemoryReadStream stream((const byte *)md5_test_string[i], strlen(md5_test_string[i]));
-			Common::md5_file(stream, md5sum);
+			Common::computeStreamMD5(stream, md5sum);
 
 			for (j = 0; j < 16; j++) {
 				sprintf(output + j * 2, "%02x", md5sum[j]);

@@ -357,7 +357,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 struct SizeMD5 {
 	int size;
-	char md5[32+1];
+	Common::String md5;
 };
 
 typedef Common::HashMap<Common::String, SizeMD5, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeMD5Map;
@@ -374,7 +374,7 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 	printf("of the game you tried to add and its version/language/etc.:\n");
 
 	for (SizeMD5Map::const_iterator file = filesSizeMD5.begin(); file != filesSizeMD5.end(); ++file)
-		printf("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5, file->_value.size);
+		printf("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
 
 	printf("\n");
 }
@@ -459,10 +459,9 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 				Common::MacResManager *macResMan = new Common::MacResManager();
 
 				if (macResMan->open(parent, fname)) {
-					if (!macResMan->getResForkMD5(tmp.md5, params.md5Bytes))
-						tmp.md5[0] = 0;
+					tmp.md5 = macResMan->computeResForkMD5AsString(params.md5Bytes);
 					tmp.size = macResMan->getResForkSize();
-					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
+					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
 					filesSizeMD5[fname] = tmp;
 				}
 
@@ -475,14 +474,12 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 					if (testFile.open(allFiles[fname])) {
 						tmp.size = (int32)testFile.size();
-						if (!md5_file_string(testFile, tmp.md5, params.md5Bytes))
-							tmp.md5[0] = 0;
+						tmp.md5 = Common::computeStreamMD5AsString(testFile, params.md5Bytes);
 					} else {
 						tmp.size = -1;
-						tmp.md5[0] = 0;
 					}
 
-					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
+					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
 					filesSizeMD5[fname] = tmp;
 				}
 			}
@@ -523,8 +520,8 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 				break;
 			}
 
-			if (fileDesc->md5 != NULL && 0 != strcmp(fileDesc->md5, filesSizeMD5[tstr].md5)) {
-				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesSizeMD5[tstr].md5);
+			if (fileDesc->md5 != NULL && fileDesc->md5 != filesSizeMD5[tstr].md5) {
+				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesSizeMD5[tstr].md5.c_str());
 				fileMissing = true;
 				break;
 			}

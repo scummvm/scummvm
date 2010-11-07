@@ -82,7 +82,7 @@ public:
 	Common::SeekableReadStream *getDataFork();
 	Common::String getResName(uint32 typeID, uint16 resID);
 	uint32 getResForkSize();
-	bool getResForkMD5(char *md5str, uint32 length);
+	Common::String computeResForkMD5AsString(uint32 length = 0);
 
 	Common::String getBaseFileName() { return _baseFileName; }
 

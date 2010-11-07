@@ -855,11 +855,10 @@ bool SoundGen2GS::loadInstrumentHeaders(const Common::FSNode &exePath, const IIg
 		// Check instrument set's md5sum
 		data->seek(exeInfo.instSetStart);
 
-		char md5str[32+1];
-		Common::md5_file_string(*data, md5str, exeInfo.instSet.byteCount);
-		if (scumm_stricmp(md5str, exeInfo.instSet.md5)) {
+		Common::String md5str = Common::computeStreamMD5AsString(*data, exeInfo.instSet.byteCount);
+		if (md5str != exeInfo.instSet.md5) {
 			warning("Unknown Apple IIGS instrument set (md5: %s) in %s, trying to use it nonetheless",
-				md5str, exePath.getPath().c_str());
+				md5str.c_str(), exePath.getPath().c_str());
 		}
 
 		// Read in the instrument set one instrument at a time
@@ -898,12 +897,11 @@ bool SoundGen2GS::loadWaveFile(const Common::FSNode &wavePath, const IIgsExeInfo
 	// Check that we got the whole wave file
 	if (uint8Wave && uint8Wave->size() == SIERRASTANDARD_SIZE) {
 		// Check wave file's md5sum
-		char md5str[32+1];
-		Common::md5_file_string(*uint8Wave, md5str, SIERRASTANDARD_SIZE);
-		if (scumm_stricmp(md5str, exeInfo.instSet.waveFileMd5)) {
+		Common::String md5str = Common::computeStreamMD5AsString(*uint8Wave, SIERRASTANDARD_SIZE);
+		if (md5str != exeInfo.instSet.waveFileMd5) {
 			warning("Unknown Apple IIGS wave file (md5: %s, game: %s).\n" \
 				"Please report the information on the previous line to the ScummVM team.\n" \
-				"Using the wave file as it is - music may sound weird", md5str, exeInfo.exePrefix);
+				"Using the wave file as it is - music may sound weird", md5str.c_str(), exeInfo.exePrefix);
 		}
 
 		uint8Wave->seek(0); // Seek wave to its start

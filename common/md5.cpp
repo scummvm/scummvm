@@ -246,7 +246,7 @@ void md5_finish(md5_context *ctx, uint8 digest[16]) {
 }
 
 
-bool md5_file(ReadStream &stream, uint8 digest[16], uint32 length) {
+bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length) {
 
 #ifdef DISABLE_MD5
 	memset(digest, 0, 16);
@@ -267,12 +267,14 @@ bool md5_file(ReadStream &stream, uint8 digest[16], uint32 length) {
 	while ((i = stream.read(buf, readlen)) > 0) {
 		md5_update(&ctx, buf, i);
 
-		length -= i;
-		if (restricted && length == 0)
-			break;
+		if (restricted) {
+			length -= i;
+			if (length == 0)
+				break;
 
-		if (restricted && sizeof(buf) > length)
-			readlen = length;
+			if (sizeof(buf) > length)
+				readlen = length;
+		}
 	}
 
 	md5_finish(&ctx, digest);
@@ -280,16 +282,16 @@ bool md5_file(ReadStream &stream, uint8 digest[16], uint32 length) {
 	return true;
 }
 
-bool md5_file_string(ReadStream &stream, char *md5str, uint32 length) {
+String computeStreamMD5AsString(ReadStream &stream, uint32 length) {
+	String md5;
 	uint8 digest[16];
-	if (!md5_file(stream, digest, length))
-		return false;
-
-	for (int i = 0; i < 16; i++) {
-		snprintf(md5str + i*2, 3, "%02x", (int)digest[i]);
+	if (computeStreamMD5(stream, digest, length)) {
+		for (int i = 0; i < 16; i++) {
+			md5 += String::format("%02x", (int)digest[i]);
+		}
 	}
 
-	return true;
+	return md5;
 }
 
 } // End of namespace Common

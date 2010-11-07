@@ -1369,34 +1369,36 @@ bool ScummNESFile::generateIndex() {
 bool ScummNESFile::open(const Common::String &filename) {
 
 	if (_ROMset == kROMsetNum) {
-		char md5str[32+1];
+		Common::String md5str;
 		File f;
 		f.open(filename);
-		if (f.isOpen() && Common::md5_file_string(f, md5str)) {
+		if (f.isOpen())
+			md5str = Common::computeStreamMD5AsString(f);
+		if (!md5str.empty()) {
 
-			if (!strcmp(md5str, "3905799e081b80a61d4460b7b733c206")) {
+			if (md5str == "3905799e081b80a61d4460b7b733c206") {
 				_ROMset = kROMsetUSA;
 				debug(1, "ROM contents verified as Maniac Mansion (USA)");
-			} else if (!strcmp(md5str, "d8d07efcb88f396bee0b402b10c3b1c9")) {
+			} else if (md5str == "d8d07efcb88f396bee0b402b10c3b1c9") {
 				_ROMset = kROMsetEurope;
 				debug(1, "ROM contents verified as Maniac Mansion (Europe)");
-			} else if (!strcmp(md5str, "22d07d6c386c9c25aca5dac2a0c0d94b")) {
+			} else if (md5str == "22d07d6c386c9c25aca5dac2a0c0d94b") {
 				_ROMset = kROMsetSweden;
 				debug(1, "ROM contents verified as Maniac Mansion (Sweden)");
-			} else if (!strcmp(md5str, "81bbfa181184cb494e7a81dcfa94fbd9")) {
+			} else if (md5str == "81bbfa181184cb494e7a81dcfa94fbd9") {
 				_ROMset = kROMsetFrance;
 				debug(2, "ROM contents verified as Maniac Mansion (France)");
-			} else if (!strcmp(md5str, "257f8c14d8c584f7ddd601bcb00920c7")) {
+			} else if (md5str == "257f8c14d8c584f7ddd601bcb00920c7") {
 				_ROMset = kROMsetGermany;
 				debug(2, "ROM contents verified as Maniac Mansion (Germany)");
-			} else if (!strcmp(md5str, "f163cf53f7850e43fb482471e5c52e1a")) {
+			} else if (md5str == "f163cf53f7850e43fb482471e5c52e1a") {
 				_ROMset = kROMsetSpain;
 				debug(2, "ROM contents verified as Maniac Mansion (Spain)");
-			} else if (!strcmp(md5str, "54a68a5f5e3c86da42b7ca5f51e79b1d")) {
+			} else if (md5str == "54a68a5f5e3c86da42b7ca5f51e79b1d") {
 				_ROMset = kROMsetItaly;
 				debug(2, "ROM contents verified as Maniac Mansion (Italy)");
 			} else {
-				error("Unsupported Maniac Mansion ROM, md5: %s", md5str);
+				error("Unsupported Maniac Mansion ROM, md5: %s", md5str.c_str());
 				return false;
 			}
 		} else {

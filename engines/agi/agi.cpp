@@ -459,9 +459,8 @@ int AgiEngine::agiLoadResource(int r, int n) {
 	if (i == errOK && getGameID() == GID_GOLDRUSH && r == rPICTURE && n == 147 && _game.dirPic[n].len == 1982) {
 		uint8 *pic = _game.pictures[n].rdata;
 		Common::MemoryReadStream picStream(pic, _game.dirPic[n].len);
-		char md5str[32+1];
-		Common::md5_file_string(picStream, md5str, _game.dirPic[n].len);
-		if (scumm_stricmp(md5str, "1c685eb048656cedcee4eb6eca2cecea") == 0) {
+		Common::String md5str = Common::computeStreamMD5AsString(picStream, _game.dirPic[n].len);
+		if (md5str == "1c685eb048656cedcee4eb6eca2cecea") {
 			pic[0x042] = 0x4B; // 0x49 -> 0x4B
 			pic[0x043] = 0x66; // 0x26 -> 0x66
 			pic[0x204] = 0x68; // 0x28 -> 0x68

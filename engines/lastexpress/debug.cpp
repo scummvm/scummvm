@@ -281,9 +281,8 @@ bool Debugger::cmdDumpFiles(int argc, const char **) {
 			restoreArchive(); \
 			return true; \
 		} \
-		char md5str[32+1]; \
-		Common::md5_file_string(*stream, md5str, (uint32)stream->size()); \
-		debugC(1, kLastExpressDebugResource, "%s, %d, %s", (*it)->getName().c_str(), stream->size(), (char *)&md5str); \
+		Common::String md5str = Common::computeStreamMD5AsString(*stream); \
+		debugC(1, kLastExpressDebugResource, "%s, %d, %s", (*it)->getName().c_str(), stream->size(), md5str.c_str()); \
 		delete stream; \
 	} \
 }

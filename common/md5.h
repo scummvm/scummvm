@@ -26,18 +26,35 @@
 #define COMMON_MD5_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Common {
 
 class ReadStream;
 
-bool md5_file(ReadStream &stream, uint8 digest[16], uint32 length = 0);
+/**
+ * Compute the MD5 checksum of the content of the given ReadStream.
+ * The 128 bit MD5 checksum is returned directly in the array digest.
+ * If length is set to a positive value, then only the first length
+ * bytes of the stream are used to compute the checksum.
+ * @param[in] stream	the stream of whose data the MD5 is computed
+ * @param[out] digest	the computed MD5 checksum
+ * @param[in] length	the number of bytes for which to compute the checksum; 0 means all
+ * @return true on success, false if an error occurred
+ */
+bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length = 0);
 
-// The following method work similar to the above one, but
-// instead of computing the binary MD5 digest, it produces
-// a human readable lowercase hexstring representing the digest.
-// The md5str parameter must point to a buffer of 32+1 chars.
-bool md5_file_string(ReadStream &stream, char *md5str, uint32 length = 0);
+/**
+ * Compute the MD5 checksum of the content of the given ReadStream.
+ * The 128 bit MD5 checksum is converted to a human readable
+ * lowercase hex string of length 32.
+ * If length is set to a positive value, then only the first length
+ * bytes of the stream are used to compute the checksum.
+ * @param[in] stream	the stream of whose data the MD5 is computed
+ * @param[in] length	the number of bytes for which to compute the checksum; 0 means all
+ * @return the MD5 as a hex string on success, and an empty string if an error occurred
+ */
+String computeStreamMD5AsString(ReadStream &stream, uint32 length = 0);
 
 } // End of namespace Common
 

@@ -88,14 +88,12 @@ uint32 MacResManager::getResForkSize() {
 	return _resForkSize;
 }
 
-bool MacResManager::getResForkMD5(char *md5str, uint32 length) {
+Common::String MacResManager::computeResForkMD5AsString(uint32 length) {
 	if (!hasResFork())
-		return false;
+		return Common::String();
 
-	ReadStream *stream = new SeekableSubReadStream(_stream, _resForkOffset, _resForkOffset + _resForkSize);
-	bool retVal = md5_file_string(*stream, md5str, MIN<uint32>(length, _resForkSize));
-	delete stream;
-	return retVal;
+	SeekableSubReadStream resForkStream(_stream, _resForkOffset, _resForkOffset + _resForkSize);
+	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize));
 }
 
 bool MacResManager::open(Common::String filename) {

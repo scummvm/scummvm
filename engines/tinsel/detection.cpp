@@ -191,7 +191,7 @@ bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 
 struct SizeMD5 {
 	int size;
-	char md5[32+1];
+	Common::String md5;
 };
 typedef Common::HashMap<Common::String, SizeMD5, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeMD5Map;
 typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
@@ -268,11 +268,9 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 
 				if (testFile.open(allFiles[fname])) {
 					tmp.size = (int32)testFile.size();
-					if (!md5_file_string(testFile, tmp.md5, detectionParams.md5Bytes))
-						tmp.md5[0] = 0;
+					tmp.md5 = computeStreamMD5AsString(testFile, detectionParams.md5Bytes);
 				} else {
 					tmp.size = -1;
-					tmp.md5[0] = 0;
 				}
 
 				filesSizeMD5[fname] = tmp;
@@ -318,7 +316,7 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 				break;
 			}
 
-			if (fileDesc->md5 != NULL && 0 != strcmp(fileDesc->md5, filesSizeMD5[tstr].md5)) {
+			if (fileDesc->md5 != NULL && fileDesc->md5 != filesSizeMD5[tstr].md5) {
 				fileMissing = true;
 				break;
 			}
