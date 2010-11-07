@@ -901,8 +901,7 @@ Common::Error loadSavegameData(int saveGameIdx) {
 			}
 
 			/*if (j < 2) {
-				printf("Unsupported mono file load!\n");
-				ASSERT(0);
+				error("Unsupported mono file load");
 				//loadFileMode1(filesDatabase[j].subData.name,filesDatabase[j].subData.var4);
 			} else */
 			if (strlen(filesDatabase[i].subData.name) > 0) {

@@ -62,7 +62,7 @@ unsigned long int currentOffset;
 
 unsigned long int dumpIdx = 0;
 
-FILE *fHandle = NULL;
+FILE *fHandle = NULL;	// FIXME: Use Common::DumpFile instead of FILE
 
 #define DECOMPILER_STACK_DEPTH 100
 #define DECOMPILER_STACK_ENTRY_SIZE 5000
@@ -409,7 +409,7 @@ int decompLoadVar() {
 		return (0);
 	}
 	default: {
-		printf("Unsupported type %d in opcodeType0\n",
+		debug("Unsupported type %d in opcodeType0",
 		       currentScriptOpcodeType);
 		failed = 1;
 	}
@@ -483,7 +483,7 @@ int decompSaveVar() {
 		break;
 	}
 	default: {
-		printf("Unsupported type %d in opcodeType1\n",
+		debug("Unsupported type %d in opcodeType1",
 		       currentScriptOpcodeType);
 		failed = 1;
 	}
@@ -521,14 +521,14 @@ int decompOpcodeType2() {
 			pushDecomp("freeString[%d][%s]", short1,
 			           decompSaveOpcodeVar);
 		} else {
-			printf("Unsupported type %d in opcodeType2\n",
+			debug("Unsupported type %d in opcodeType2",
 			       byte1 & 7);
 			failed = 1;
 		}
 		break;
 	}
 	default: {
-		printf("Unsupported type %d in opcodeType2\n",
+		debug("Unsupported type %d in opcodeType2",
 		       currentScriptOpcodeType);
 		failed = 1;
 	}
@@ -1264,7 +1264,7 @@ int decompFunction() {
 	}
 	default: {
 		addDecomp("OP_%X", currentScriptOpcodeType);
-		printf("OPCODE: %X\n", currentScriptOpcodeType);
+		debug("OPCODE: %X", currentScriptOpcodeType);
 		failed = 1;
 		break;
 	}
@@ -1354,7 +1354,7 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 
 	resolveVarName("0", 0x20, temp, scriptName);
 
-	printf("decompiling script %d - %s\n", idx, scriptName);
+	debug("decompiling script %d - %s", idx, scriptName);
 
 	// return;
 
@@ -1394,17 +1394,17 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 		currentScriptOpcodeType = opcodeType & 7;
 
 		if (!decompOpcodeTypeTable[(opcodeType & 0xFB) >> 3]) {
-			printf("Unsupported opcode type %d in decomp\n",
+			debug("Unsupported opcode type %d in decomp",
 			       (opcodeType & 0xFB) >> 3);
 			return;
 		}
 
-		//printf("Optype: %d\n",(opcodeType&0xFB)>>3);
+		//debug("Optype: %d",(opcodeType&0xFB)>>3);
 
 		decompOpcodeTypeTable[(opcodeType & 0xFB) >> 3]();
 
 		if (failed) {
-			printf("Aborting decompilation..\n");
+			debug("Aborting decompilation..");
 			fclose(fHandle);
 			return;
 		}

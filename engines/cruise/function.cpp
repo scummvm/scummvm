@@ -67,8 +67,6 @@ int16 Op_Strcpy() {
 	char *ptr1 = (char *)popPtr();
 	char *ptr2 = (char *)popPtr();
 
-	//printf("strcpy %s\n",ptr1);
-
 	while (*ptr1) {
 		*ptr2 = *ptr1;
 
@@ -1994,7 +1992,6 @@ int32 opcodeType8() {
 		return (-21);
 
 	if (opcode < ARRAYSIZE(opcodeTablePtr) && opcodeTablePtr[opcode]) {
-		//	printf("Function: %d\n",opcode);
 		pushVar(opcodeTablePtr[opcode]());
 		return (0);
 	} else {

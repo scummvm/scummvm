@@ -44,11 +44,11 @@ gfxEntryStruct* linkedMsgList = NULL;
 
 void MemoryList() {
 	if (!_vm->_memList.empty()) {
-		printf("Current list of un-freed memory blocks:\n");
+		debug("Current list of un-freed memory blocks:");
 		Common::List<byte *>::iterator i;
 		for (i = _vm->_memList.begin(); i != _vm->_memList.end(); ++i) {
 			byte *v = *i;
-			printf("%s - %d\n", (const char *)(v - 68), *((int32 *)(v - 72)));
+			debug("%s - %d", (const char *)(v - 68), *((int32 *)(v - 72)));
 		}
 	}
 }

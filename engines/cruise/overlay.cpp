@@ -662,6 +662,7 @@ int loadOverlay(const char *scriptName) {
 #endif
 #ifdef DUMP_OBJECT
 	{
+		// TODO: Rewrite this to use Common::DumpFile
 		int i;
 		FILE *fHandle;
 		char nameBundle[100];
