@@ -123,7 +123,7 @@ static const ADParams detectionParams = {
 	// Flags
 	0,
 	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
+	Common::GUIO_NOLAUNCHLOAD,
 	// Maximum directory depth
 	1,
 	// List of directory globs
