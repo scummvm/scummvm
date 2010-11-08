@@ -684,11 +684,11 @@ Surface *PreIMDDecoder::decodeNextFrame() {
 }
 
 void PreIMDDecoder::processFrame() {
+	_curFrame++;
+
 	uint16 frameSize = _stream->readUint16LE();
-	if (frameSize == 0) {
-		_curFrame++;
+	if (_stream->eos() || (frameSize == 0))
 		return;
-	}
 
 	uint32 nextFramePos = _stream->pos() + frameSize + 2;
 
@@ -752,8 +752,6 @@ void PreIMDDecoder::processFrame() {
 	}
 
 	_stream->seek(nextFramePos);
-
-	_curFrame++;
 }
 
 // Just a simple blit
