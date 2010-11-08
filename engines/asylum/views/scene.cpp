@@ -57,7 +57,142 @@ int g_debugPolygons;
 int g_debugObjects;
 int g_debugScrolling;
 
-Scene::Scene(ResourcePackId packId, AsylumEngine *engine): _vm(engine) {
+Scene::Scene(AsylumEngine *engine): _vm(engine) {
+	// TODO Initialize data
+}
+
+Scene::~Scene() {
+	delete _ws;
+	delete _polygons;
+	delete _actions;
+
+	delete _bgResource;
+	//delete _blowUp;
+
+	delete _title;
+}
+
+void Scene::enter(ResourcePackId packId) {
+	_vm->setGameFlag(kGameFlagScriptProcessing);
+
+	getCursor()->hide();
+
+	_playerActorIdx = 0;
+
+	// Load the scene data
+	load(packId);
+
+	// Set wheel indices
+	setWheelObjectIndices();
+
+	// Adjust object priority
+	if (_ws->objects.size() > 0) {
+		int32 priority = 4091;
+
+		for (uint32 i = 0; i < _ws->objects.size(); i++) {
+			Object *object  = _ws->objects[i];
+			object->setPriority(priority);
+			object->flags &= ~kObjectFlagC000;
+			priority -= 4;
+		}
+	}
+
+	// Set the cursor to magnifying glass
+	getCursor()->set(_ws->curMagnifyingGlass);
+	getCursor()->show();
+
+	// Clear the graphic queue
+	getScreen()->clearGraphicsInQueue();
+
+	_ws->sceneRectIdx = 0;
+	_ws->motionStatus = 1;
+
+	// Update current player bounding rectangle
+	Actor *player = getActor();
+	Common::Rect *boundingRect = player->getBoundingRect();
+	boundingRect->bottom = player->y2;
+	boundingRect->right  = player->x2 * 2;
+
+	// Adjust scene bounding rect
+	_ws->boundingRect = Common::Rect(195, 115, 445 - boundingRect->right, 345 - boundingRect->bottom);
+
+	// Hide actor
+	player->hide();
+	player->updateStatus(kActorStatusEnabled);
+
+	// Update current player coordinates
+	player->x1 -= player->x2;
+	player->y1 -= player->y2;
+
+	// Update all other actors
+	if (_ws->actors.size() > 1) {
+		for (uint32 i = 1; i < _ws->actors.size(); i++) {
+			Actor *actor = _ws->actors[i];
+
+			actor->hide();
+			actor->setDirection(1);
+			actor->updateStatus(kActorStatusEnabled);
+
+			actor->x1 -= actor->x2;
+			actor->y1 -= actor->y2;
+
+			actor->getBoundingRect()->bottom = actor->y2;
+			actor->getBoundingRect()->right  = 2 * actor->x2;
+		}
+	}
+
+	// Queue scene script
+	if (_ws->scriptIndex)
+		_actions->queueScript(_ws->scriptIndex, 0);
+
+	// Clear the graphic queue (FIXME: not sure why we need to do this again)
+	getScreen()->clearGraphicsInQueue();
+
+	// Load trans tables
+	// TODO loadTransTables(3, field_64/68/7C)
+	// TODO setTransTable(1)
+	warning("[Scene::enter] missing transtable init!");
+
+	// Setup font
+	getText()->loadFont(_ws->font1);
+
+	// Play scene intro dialog
+	playIntroSpeech();
+
+	// Set actor type
+	_ws->actorType = actorType[_ws->chapter];
+
+	// Play intro music
+	ResourceId musicId = kResourceNone;
+	if (_ws->musicCurrentResourceIndex != kResourceMusicStopped && _ws->chapter != kChapter1 && getSound()->isCacheOk())
+		musicId = MAKE_RESOURCE(kResourcePackMusic, _ws->musicCurrentResourceIndex);
+
+	getSound()->playMusic(musicId);
+
+	// Update global values
+	_vm->globalTickValue_2 = 1;
+	_vm->screenUpdatesCount = 1;
+
+	player->setLastScreenUpdate(_vm->getTick());
+	player->updateStatus(kActorStatusEnabled);
+
+	if (_ws->chapter == kChapter9) {
+		changePlayer(1);
+		_ws->field_E860C = -1;
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// FIXME: get rid of this
+	_isActive = true;
+	getScreen()->setPalette(_ws->currentPaletteId);
+	_background = _bgResource->getFrame(0);
+	_vm->screen()->copyToBackBuffer(
+		((byte *)_background->surface.pixels) + _ws->yTop * _background->surface.w + _ws->xLeft, _background->surface.w,
+		0, 0, 640, 480);
+}
+
+void Scene::load(ResourcePackId packId) {
 	_packId = packId;
 
 	char filename[10];
@@ -98,13 +233,8 @@ Scene::Scene(ResourcePackId packId, AsylumEngine *engine): _vm(engine) {
 	// the title screen overwriting the font
 	_vm->text()->loadFont(_ws->font1);
 
-	//char musPackFileName[10];
-	//sprintf(musPackFileName, MUSIC_FILE_MASK, packId);
-	////_musPack = new ResourcePack(musPackFileName);
-
 	_bgResource    = new GraphicResource(_vm, _ws->backgroundImage);
 	//_blowUp        = 0;
-	_cursor        = 0;
 	_background    = 0;
 	_leftClick     = false;
 	_rightButton   = false;
@@ -134,103 +264,6 @@ Scene::Scene(ResourcePackId packId, AsylumEngine *engine): _vm(engine) {
 	_actorUpdateFlag2 = 0;
 }
 
-void Scene::initialize() {
-	_vm->setGameFlag(kGameFlagScriptProcessing);
-
-	_playerActorIdx = 0;
-
-	if (_ws->objects.size() > 0) {
-		int32 priority = 4091;
-		for (uint32 b = 0; b < _ws->objects.size(); b++) {
-			Object *object  = _ws->objects[b];
-			object->setPriority(priority);
-			object->flags &= ~kObjectFlagC000;
-			priority -= 4;
-		}
-	}
-
-	Cursor::create(_vm, _cursor, _ws->curMagnifyingGlass);
-
-	_ws->sceneRectIdx = 0;
-	_vm->screen()->clearScreen(); // XXX was clearGraphicsInQueue()
-	_ws->motionStatus = 1;
-
-	Actor *actor = getActor();
-	Common::Rect *boundinRect = actor->getBoundingRect();
-	boundinRect->bottom = actor->y2;
-	boundinRect->right  = actor->x2 * 2;
-
-	_ws->boundingRect = Common::Rect(195,
-			115,
-			445 - boundinRect->right,
-			345 - boundinRect->bottom);
-
-	actor->flags |= 1;
-	actor->updateStatus(kActorStatusEnabled);
-
-	if (_ws->actors.size() > 1) {
-		for (uint32 a = 1; a < _ws->actors.size(); a++) {
-			Actor *act = _ws->actors[a];
-			act->flags |= 1;
-			act->setDirection(1);
-			act->updateStatus(kActorStatusEnabled);
-			act->x1 -= act->x2;
-			act->y1 -= act->y2;
-			boundinRect->bottom = act->y2;
-			boundinRect->right  = 2 * act->x2;
-		}
-	}
-
-	int32 actionIdx = _ws->actionListIdx;
-	if (actionIdx)
-		_actions->queueScript(actionIdx, 0);
-
-	// XXX not sure why we need to do this again
-	_vm->screen()->clearScreen();
-	// TODO loadTransTables(3, field_64/68/7C)
-	// TODO setTransTable(1)
-	_vm->text()->loadFont(_ws->font1);
-	// TODO preloadGraphics() .text:00410F10
-	// TODO sound_sub(sceneNumber) .text:0040E750
-	_ws->actorType = actorType[_ws->chapter];
-
-	startMusic();
-
-	_vm->screenUpdatesCount = 1;
-
-	// TODO sceneRectChangedFlag = 1;
-
-	actor->setLastScreenUpdate(_vm->getTick());
-	// XXX This initialization was already done earlier,
-	// so I'm not sure why we need to do it again. Investigate.
-	actor->updateDirection();
-
-	if (_ws->chapter == kChapter9) {
-		// TODO changeActorIndex(1); .text:00405140
-		_ws->field_E860C = -1;
-	}
-}
-
-void Scene::startMusic() {
-	ResourceId musicId = kResourceNone;
-	if (_ws->musicCurrentResourceIndex != kResourceMusicStopped && _ws->chapter != kChapter1 && getSound()->isCacheOk())
-		musicId = MAKE_RESOURCE(kResourcePackMusic, _ws->musicCurrentResourceIndex);
-
-	getSound()->playMusic(musicId);
-}
-
-Scene::~Scene() {
-	delete _ws;
-	delete _polygons;
-	delete _actions;
-
-	delete _cursor;
-	delete _bgResource;
-	//delete _blowUp;
-
-	delete _title;
-}
-
 Actor* Scene::getActor(ActorIndex index) {
 	ActorIndex computedIndex =  (index != -1) ? index : _playerActorIdx;
 
@@ -238,34 +271,6 @@ Actor* Scene::getActor(ActorIndex index) {
 		error("[Scene::getActor] Invalid actor index: %d ([0-%d] allowed)", computedIndex, _ws->actors.size() - 1);
 
 	return _ws->actors[computedIndex];
-}
-
-void Scene::enterScene() {
-	if (Config.showSceneLoading && !_titleLoaded) {
-		_title->load();
-		// disable input polling
-		//_actions->_allowInput = false;
-	} else {
-		_vm->screen()->setPalette(_ws->currentPaletteId);
-		_background = _bgResource->getFrame(0);
-		_vm->screen()->copyToBackBuffer(
-			((byte *)_background->surface.pixels) + _ws->yTop * _background->surface.w + _ws->xLeft, _background->surface.w,
-			0, 0, 640, 480);
-
-		// FIXME
-		// I don't know that this is the right way to initialize the cursor
-		// when the scene is started. Check against the original to see
-		// when the cursor is initialized, and then how it reacts to the
-		// show_cursor opcode
-		Cursor::create(_vm, _cursor, _ws->curMagnifyingGlass);
-		_cursor->show();
-
-		startMusic();
-
-		_walking  = false;
-	}
-
-	_isActive = true;
 }
 
 void Scene::setScenePosition(int x, int y) {
@@ -297,8 +302,8 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	switch (_ev->type) {
 
 	case Common::EVENT_MOUSEMOVE:
-		if (_cursor)
-			_cursor->move(_ev->mouse.x, _ev->mouse.y);
+		if (getCursor())
+			getCursor()->move(_ev->mouse.x, _ev->mouse.y);
 		break;
 
 	case Common::EVENT_LBUTTONUP:
@@ -311,7 +316,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 			// TODO This isn't always going to be the magnifying glass
 			// Should check the current pointer region to identify the type
 			// of cursor to use
-			Cursor::create(_vm, _cursor, _ws->curMagnifyingGlass);
+			getCursor()->set(_ws->curMagnifyingGlass);
 			_rightButton    = false;
 		//}
 		break;
@@ -343,7 +348,7 @@ void Scene::update() {
 			_title->update(_vm->getTick());
 			if (_title->loadingComplete()) {
 				_titleLoaded = true;
-				enterScene();
+				// FIXME enterScene();
 			}
 			return;
 		}
@@ -426,15 +431,15 @@ void Scene::updateMouse() {
 	int  dir = -1;
 	bool done = false;
 
-	if (_cursor->position().x < actorPos.left) {
-		if (_cursor->position().y >= actorPos.top) {
-			if (_cursor->position().y > actorPos.bottom) {
+	if (getCursor()->position().x < actorPos.left) {
+		if (getCursor()->position().y >= actorPos.top) {
+			if (getCursor()->position().y > actorPos.bottom) {
 				if (act->getDirection() == 2) {
-					if (_cursor->position().y - actorPos.bottom > 10)
+					if (getCursor()->position().y - actorPos.bottom > 10)
 						dir = 3;
 				} else {
 					if (act->getDirection() == 4) {
-						if (actorPos.left - _cursor->position().x > 10)
+						if (actorPos.left - getCursor()->position().x > 10)
 							dir = 3;
 					} else {
 						dir = 3;
@@ -442,11 +447,11 @@ void Scene::updateMouse() {
 				}
 			} else {
 				if (act->getDirection() == 1) {
-					if (_cursor->position().y - actorPos.top > 10)
+					if (getCursor()->position().y - actorPos.top > 10)
 						dir = 2;
 				} else {
 					if (act->getDirection() == 3) {
-						if (actorPos.bottom - _cursor->position().y > 10)
+						if (actorPos.bottom - getCursor()->position().y > 10)
 							dir = 2;
 					} else {
 						dir = 2;
@@ -456,28 +461,28 @@ void Scene::updateMouse() {
 		} else {
 			if (act->getDirection()) {
 				if (act->getDirection() == 2) {
-					if (actorPos.top - _cursor->position().y > 10)
+					if (actorPos.top - getCursor()->position().y > 10)
 						dir = 1;
 				} else {
 					dir = 1;
 				}
 			} else {
-				if (actorPos.left - _cursor->position().x > 10)
+				if (actorPos.left - getCursor()->position().x > 10)
 					dir = 1;
 			}
 		}
 		done = true;
 	}
 
-	if (!done && _cursor->position().x <= actorPos.right) {
-		if (_cursor->position().y >= actorPos.top) {
-			if (_cursor->position().y > actorPos.bottom) {
+	if (!done && getCursor()->position().x <= actorPos.right) {
+		if (getCursor()->position().y >= actorPos.top) {
+			if (getCursor()->position().y > actorPos.bottom) {
 				if (act->getDirection() == 3) {
-					if (_cursor->position().x - actorPos.left > 10)
+					if (getCursor()->position().x - actorPos.left > 10)
 						dir = 4;
 				} else {
 					if (act->getDirection() == 5) {
-						if (actorPos.right - _cursor->position().x > 10)
+						if (actorPos.right - getCursor()->position().x > 10)
 							dir = 4;
 					} else {
 						dir = 4;
@@ -486,11 +491,11 @@ void Scene::updateMouse() {
 			}
 		} else {
 			if (act->getDirection() == 1) {
-				if (_cursor->position().x - actorPos.left > 10)
+				if (getCursor()->position().x - actorPos.left > 10)
 					dir = 0;
 			} else {
 				if (act->getDirection() == 7) {
-					if (actorPos.right - _cursor->position().x > 10)
+					if (actorPos.right - getCursor()->position().x > 10)
 						dir = 0;
 				} else {
 					dir = 0;
@@ -500,28 +505,28 @@ void Scene::updateMouse() {
 		done = true;
 	}
 
-	if (!done && _cursor->position().y < actorPos.top) {
+	if (!done && getCursor()->position().y < actorPos.top) {
 		if (act->getDirection()) {
 			if (act->getDirection() == 6) {
-				if (actorPos.top - _cursor->position().y > 10)
+				if (actorPos.top - getCursor()->position().y > 10)
 					dir = 7;
 			} else {
 				dir = 7;
 			}
 		} else {
-			if (_cursor->position().x - actorPos.right > 10)
+			if (getCursor()->position().x - actorPos.right > 10)
 				dir = 7;
 		}
 		done = true;
 	}
 
-	if (!done && _cursor->position().y <= actorPos.bottom) {
+	if (!done && getCursor()->position().y <= actorPos.bottom) {
 		if (act->getDirection() == 5) {
-			if (actorPos.bottom - _cursor->position().y > 10)
+			if (actorPos.bottom - getCursor()->position().y > 10)
 				dir = 6;
 		} else {
 			if (act->getDirection() == 7) {
-				if (_cursor->position().y - actorPos.top > 10)
+				if (getCursor()->position().y - actorPos.top > 10)
 					dir = 6;
 			} else {
 				dir = 6;
@@ -531,13 +536,13 @@ void Scene::updateMouse() {
 	}
 
 	if (!done && act->getDirection() == 4) {
-		if (_cursor->position().x - actorPos.right <= 10)
+		if (getCursor()->position().x - actorPos.right <= 10)
 			done = true;
 		if (!done)
 			dir = 5;
 	}
 
-	if (!done && (act->getDirection() != 6 || _cursor->position().y - actorPos.bottom > 10))
+	if (!done && (act->getDirection() != 6 || getCursor()->position().y - actorPos.bottom > 10))
 		dir = 5;
 
 	handleMouseUpdate(dir, actorPos);
@@ -554,31 +559,31 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 	HitType type = kHitNone;
 
 	// TODO if encounter_flag03
-	if (0 && _cursor->graphicResourceId != _ws->curTalkNPC)
-		_cursor->set(_ws->curTalkNPC, 0, 2);
+	if (0 && getCursor()->graphicResourceId != _ws->curTalkNPC)
+		getCursor()->set(_ws->curTalkNPC, 0, 2);
 
 	Actor *act = getActor(); // get the player actor reference
 
 	// XXX field_11 seems to have something to do with
 	// whether the event manager is handling a right mouse down
 	// event
-	if (_cursor->field_11 & 2) {
+	if (getCursor()->field_11 & 2) {
 		if (act->getStatus() == 1 || act->getStatus() == 12) {
 			if (direction >= 0) {
 				newGraphicResourceId = (ResourceId)(_ws->curScrollUp + direction);
-				_cursor->set(newGraphicResourceId, 0, 2);
+				getCursor()->set(newGraphicResourceId, 0, 2);
 			}
 		}
 	}
 
 	if (act->getStatus() == 6 || act->getStatus() == 10) {
 		newGraphicResourceId = _ws->curHand;
-		_cursor->set(newGraphicResourceId, 0, 2);
+		getCursor()->set(newGraphicResourceId, 0, 2);
 	} else {
 		if (act->getField638()) {
-			if (_cursor->position().x >= rect.left && _cursor->position().x <= rlimit &&
-				_cursor->position().y >= rect.top  && _cursor->position().y <= rect.bottom &&
-				hitTestActor(_cursor->position())) {
+			if (getCursor()->position().x >= rect.left && getCursor()->position().x <= rlimit &&
+				getCursor()->position().y >= rect.top  && getCursor()->position().y <= rect.bottom &&
+				hitTestActor(getCursor()->position())) {
 				// TODO LOTS of work here, because apparently we need to use
 				// field_638 as an index into _ws->field_D6AC8, which is not
 				// yet defined as part of worldstats, but according to IDA, is:
@@ -589,7 +594,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 			} else {
 				// TODO pass a reference to hitType so it can be populated by
 				// hitTestScene
-				newGraphicResourceId = hitTestScene(_cursor->position(), type);
+				newGraphicResourceId = hitTestScene(getCursor()->position(), type);
 				if (newGraphicResourceId != -1) {
 					warning ("Can't set mouse cursor, field_D6AC8 not handled ... yet");
 					// TODO
@@ -602,24 +607,24 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 			}
 			return; // return result;
 		}
-		int32 targetIdx = hitTest(_cursor->position(), type);
+		int32 targetIdx = hitTest(getCursor()->position(), type);
 
-		//printf ("Mouse X(%d)/Y(%d) = %d\n", _cursor->position().x, _cursor->position().y, type);
-		if (_cursor->position().x >= rect.left && _cursor->position().x <= rlimit &&
-			_cursor->position().y >= rect.top  && _cursor->position().y <= rect.bottom &&
-			hitTestActor(_cursor->position())) {
+		//printf ("Mouse X(%d)/Y(%d) = %d\n", getCursor()->position().x, getCursor()->position().y, type);
+		if (getCursor()->position().x >= rect.left && getCursor()->position().x <= rlimit &&
+			getCursor()->position().y >= rect.top  && getCursor()->position().y <= rect.bottom &&
+			hitTestActor(getCursor()->position())) {
 			if (act->getReaction(0)) {
-				_cursor->set(_ws->curGrabPointer, 0, 2);
+				getCursor()->set(_ws->curGrabPointer, 0, 2);
 				return;
 			}
 		}
 		if (targetIdx == -1) {
 			if (_ws->chapter != kChapter2 || _playerActorIdx != 10) {
-				if (_cursor->flags)
-					_cursor->set(_ws->curMagnifyingGlass, 0, 2);
+				if (getCursor()->flags)
+					getCursor()->set(_ws->curMagnifyingGlass, 0, 2);
 			} else {
-				if (_cursor->flags)
-					_cursor->set(_ws->curTalkNPC2, 0, 2);
+				if (getCursor()->flags)
+					getCursor()->set(_ws->curTalkNPC2, 0, 2);
 			}
 		} else {
 			int32 targetUpdateType = 0;
@@ -638,23 +643,23 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 				break;
 			}
 
-			if (targetUpdateType & 1 && _cursor->flags != 2) {
-				_cursor->set(_ws->curMagnifyingGlass, 0, 2);
+			if (targetUpdateType & 1 && getCursor()->flags != 2) {
+				getCursor()->set(_ws->curMagnifyingGlass, 0, 2);
 			} else {
 				if (targetUpdateType & 4) {
-					_cursor->set(_ws->curHand, 0, 2);
+					getCursor()->set(_ws->curHand, 0, 2);
 				} else {
 					if (targetUpdateType & 2) {
-						_cursor->set(_ws->curTalkNPC, 0, 2);
+						getCursor()->set(_ws->curTalkNPC, 0, 2);
 					} else {
-						if (targetUpdateType & 0x10 && _cursor->flags != 2) {
-							_cursor->set(_ws->curTalkNPC2, 0, 2);
+						if (targetUpdateType & 0x10 && getCursor()->flags != 2) {
+							getCursor()->set(_ws->curTalkNPC2, 0, 2);
 						} else {
 							if (_ws->chapter != kChapter2 && _playerActorIdx != 10) {
-								_cursor->set(_ws->curMagnifyingGlass, 0, 0);
+								getCursor()->set(_ws->curMagnifyingGlass, 0, 0);
 							} else {
-								if (_cursor->flags)
-									_cursor->set(_ws->curTalkNPC2, 0, 2);
+								if (getCursor()->flags)
+									getCursor()->set(_ws->curTalkNPC2, 0, 2);
 							}
 						}
 					}
@@ -779,7 +784,7 @@ bool Scene::hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, b
 	return rect.contains(x, y);
 }
 
-void Scene::changePlayerActorIndex(ActorIndex index) {
+void Scene::changePlayer(ActorIndex index) {
 	error("[Scene::changePlayerActorIndex] not implemented");
 }
 
@@ -918,6 +923,14 @@ void Scene::updateScreen() {
 	} else {
 		updateAdjustScreen();
 	}
+}
+
+void Scene::setWheelObjectIndices() {
+	warning("[Scene::setWheelObjectIndices] not implemented!");
+}
+
+void Scene::playIntroSpeech() {
+	warning("[Scene::playIntroSpeech] not implemented!");
 }
 
 void Scene::updateAdjustScreen() {
@@ -1090,8 +1103,6 @@ int Scene::drawScene() {
 bool Scene::updateListCompare(const UpdateItem &item1, const UpdateItem &item2) {
 	return item1.priority - item2.priority;
 }
-
-
 
 void Scene::buildUpdateList() {
 	_updateList.clear();
@@ -1339,15 +1350,15 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 
 void Scene::debugScreenScrolling(GraphicFrame *bg) {
 	// Horizontal scrolling
-	if (_cursor->position().x < SCREEN_EDGES && _ws->xLeft >= SCROLL_STEP)
+	if (getCursor()->position().x < SCREEN_EDGES && _ws->xLeft >= SCROLL_STEP)
 		_ws->xLeft -= SCROLL_STEP;
-	else if (_cursor->position().x > 640 - SCREEN_EDGES && _ws->xLeft <= bg->surface.w - 640 - SCROLL_STEP)
+	else if (getCursor()->position().x > 640 - SCREEN_EDGES && _ws->xLeft <= bg->surface.w - 640 - SCROLL_STEP)
 		_ws->xLeft += SCROLL_STEP;
 
 	// Vertical scrolling
-	if (_cursor->position().y < SCREEN_EDGES && _ws->yTop >= SCROLL_STEP)
+	if (getCursor()->position().y < SCREEN_EDGES && _ws->yTop >= SCROLL_STEP)
 		_ws->yTop -= SCROLL_STEP;
-	else if (_cursor->position().y > 480 - SCREEN_EDGES && _ws->yTop <= bg->surface.h - 480 - SCROLL_STEP)
+	else if (getCursor()->position().y > 480 - SCREEN_EDGES && _ws->yTop <= bg->surface.h - 480 - SCROLL_STEP)
 		_ws->yTop += SCROLL_STEP;
 }
 

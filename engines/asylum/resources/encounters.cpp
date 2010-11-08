@@ -25,11 +25,13 @@
 
 #include "asylum/resources/encounters.h"
 
+#include "asylum/asylum.h"
+
 #include "common/file.h"
 
 namespace Asylum {
 
-Encounter::Encounter(Scene *scene) {
+Encounter::Encounter(AsylumEngine *engine) : _vm(engine) {
 	memset(_flags, 0, sizeof(_flags));
 
 	Common::File file;
@@ -65,8 +67,6 @@ Encounter::Encounter(Scene *scene) {
 	}
 
 	file.close();
-
-	_scene = scene;
 }
 
 //////////////////////////////////////////////////////////////////////////

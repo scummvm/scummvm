@@ -96,7 +96,7 @@ public:
 	uint8 sceneRectIdx;
 	uint8 field_11D[3];
 	int32 field_120;
-	int32 actionListIdx;	 // actionList start index
+	int32 scriptIndex;	 // actionList start index
 	ResourceId graphicResourceIds[100];
 	ResourceId sceneTitleGraphicResourceId;
 	ResourceId sceneTitlePaletteResourceId;

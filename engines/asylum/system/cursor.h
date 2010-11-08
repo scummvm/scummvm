@@ -45,12 +45,6 @@ public:
 	virtual ~Cursor();
 
 	/**
-	 * Generate a new cursor instance from the resource id
-	 * within the resource pack provided.
-	 */
-	static void create(AsylumEngine *engine, Cursor *&cursor, ResourceId id);
-
-	/**
 	 * Show the current cursor
 	 */
 	void show();
@@ -60,13 +54,14 @@ public:
 	 */
 	void hide();
 
-	/** .text:00435400
+	/**
 	 * Set the current cursor instance to the graphic resource provide.
 	 * The frames parameter defaults to -1, which in this case means that the
 	 * frame count should be derived from the graphic resource as opposed to being
-	 * explicitely set.
+	 * explicitly set.
 	 */
-	void set(ResourceId resourceId, int32 cntr, int32 flgs, int32 frames = -1);
+	void set(ResourceId resourceId, int32 cntr = 0, int32 flgs = 0, int32 frames = -1);
+
 	/**
 	 * Set the x/y coordinates of the cursor
 	 */

@@ -136,7 +136,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	field_11D[1]  = stream->readByte();
 	field_11D[2]  = stream->readByte();
 	field_120     = stream->readSint32LE();
-	actionListIdx = stream->readSint32LE();
+	scriptIndex = stream->readSint32LE();
 
 	for (int32 gr = 0; gr < 100; gr++)
 		graphicResourceIds[gr] = (ResourceId)stream->readSint32LE();

@@ -56,23 +56,6 @@ void Cursor::load(int32 index) {
 }
 */
 
-void Cursor::create(AsylumEngine *engine, Cursor *&cursor, ResourceId id) {
-	// If the current cursor resource is already assigned
-	// to the id value we're sending, just return
-	// TODO this simplifies a lot of additional validation calls
-	// in Scene::handleMouseUpdate, but there may be a scenario
-	// where we WANT to reset the curor to the id supplied, even
-	// if it's the same as what's assigned ... investigate
-	if (cursor) {
-		if (cursor->graphicResourceId != id)
-			delete cursor;
-		else
-			return;
-	}
-	cursor = new Cursor(engine);
-	cursor->set(id, 0, 0);
-}
-
 void Cursor::hide() {
 	CursorMan.showMouse(false);
 }
