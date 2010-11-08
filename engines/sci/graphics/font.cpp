@@ -99,4 +99,32 @@ void GfxFontFromResource::draw(uint16 chr, int16 top, int16 left, byte color, bo
 	}
 }
 
+#ifdef ENABLE_SCI32
+
+void GfxFontFromResource::drawToBuffer(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput, byte *buffer, int16 bufWidth, int16 bufHeight) {
+	int charWidth = MIN<int>(getCharWidth(chr), bufWidth - left);
+	int charHeight = MIN<int>(getCharHeight(chr), bufHeight - top);
+	byte b = 0, mask = 0xFF;
+	int y = 0;
+	int16 greyedTop = top;
+
+	byte *pIn = getCharData(chr);
+	for (int i = 0; i < charHeight; i++, y++) {
+		if (greyedOutput)
+			mask = ((greyedTop++) % 2) ? 0xAA : 0x55;
+		for (int done = 0; done < charWidth; done++) {
+			if ((done & 7) == 0) // fetching next data byte
+				b = *(pIn++) & mask;
+			if (b & 0x80) {	// if MSB is set - paint it
+				_screen->putFontPixel(top, left + done, y, color);
+				int offset = (top + y) * bufWidth + (left + done);
+				buffer[offset] = color;
+			}
+			b = b << 1;
+		}
+	}
+}
+
+#endif
+
 } // End of namespace Sci

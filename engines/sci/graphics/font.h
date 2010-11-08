@@ -56,6 +56,10 @@ public:
 	byte getHeight();
 	byte getCharWidth(uint16 chr);
 	void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput);
+#ifdef ENABLE_SCI32
+	// SCI2/2.1 equivalent
+	void drawToBuffer(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput, byte *buffer, int16 width, int16 height);
+#endif
 
 private:
 	byte getCharHeight(uint16 chr);
