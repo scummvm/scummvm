@@ -78,17 +78,6 @@ public:
 	// This option will prevent the intro movies from being played whenever the engine is started
 	bool showIntro;
 
-	//////////////////////////////////////////////////////////////////////////
-	// TO REMOVE ??
-	//////////////////////////////////////////////////////////////////////////
-	// XXX Throwing some globals in here until
-	// I know how to better handle them
-	int  word_446EE4;
-
-	Common::Array<int>  movieSubtitles;
-	Common::Array<int>  encounterSubtitles; // FIXME: take this out
-	//////////////////////////////////////////////////////////////////////////
-
 	/**
 	 * Load configuration file
 	 */
