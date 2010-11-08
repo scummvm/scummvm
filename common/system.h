@@ -33,8 +33,6 @@
 
 #include "graphics/pixelformat.h"
 
-#include "backends/audiocd/audiocd.h"
-
 namespace Audio {
 	class Mixer;
 }
@@ -54,6 +52,7 @@ namespace Common {
 	class HardwareKeySet;
 }
 
+class AudioCDManager;
 class FilesystemFactory;
 
 /**

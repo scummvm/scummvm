@@ -24,6 +24,8 @@
 
 #include "sound/softsynth/pcspk.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "testbed/sound.h"
 
 namespace Testbed {

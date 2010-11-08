@@ -45,6 +45,8 @@
 
 #include "sound/mixer.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "graphics/thumbnail.h"
 
 namespace Scumm {

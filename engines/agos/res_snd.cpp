@@ -30,6 +30,8 @@
 #include "agos/agos.h"
 #include "agos/vga.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/mods/protracker.h"

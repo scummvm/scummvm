@@ -28,6 +28,8 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 

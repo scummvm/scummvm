@@ -30,6 +30,8 @@
 
 #include "common/config-manager.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "drascula/drascula.h"
 
 namespace Drascula {

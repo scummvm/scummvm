@@ -75,6 +75,8 @@
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "sound/mixer.h"
 
 using Common::File;

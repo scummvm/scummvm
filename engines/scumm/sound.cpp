@@ -36,6 +36,8 @@
 #include "scumm/sound.h"
 #include "scumm/util.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "sound/decoders/adpcm.h"
 #include "sound/decoders/flac.h"
 #include "sound/mididrv.h"

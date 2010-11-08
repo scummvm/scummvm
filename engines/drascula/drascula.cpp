@@ -30,6 +30,8 @@
 #include "common/savefile.h"
 #include "common/config-manager.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "base/plugins.h"
 #include "base/version.h"
 

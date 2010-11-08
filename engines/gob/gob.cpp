@@ -28,6 +28,7 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 
+#include "backends/audiocd/audiocd.h"
 #include "base/plugins.h"
 #include "common/config-manager.h"
 #include "common/md5.h"

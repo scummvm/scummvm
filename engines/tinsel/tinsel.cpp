@@ -36,6 +36,8 @@
 #include "common/serializer.h"
 #include "common/stream.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"

@@ -27,6 +27,7 @@
 #include "groovie/groovie.h"
 #include "groovie/resource.h"
 
+#include "backends/audiocd/audiocd.h"
 #include "common/config-manager.h"
 #include "common/macresman.h"
 #include "sound/midiparser.h"

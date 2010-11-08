@@ -30,6 +30,8 @@
 #include "kyra/sound_intern.h"
 #include "kyra/screen.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "sound/audiostream.h"
 #include "sound/decoders/raw.h"
 

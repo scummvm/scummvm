@@ -31,6 +31,9 @@
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "sound/decoders/adpcm.h"
+
+#include "backends/audiocd/audiocd.h"
+
 #include "common/config-manager.h"
 #include "common/file.h"
 

@@ -27,6 +27,8 @@
 #include "common/str.h"
 #include "common/util.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "gob/gob.h"
 #include "gob/sound/cdrom.h"
 #include "gob/dataio.h"

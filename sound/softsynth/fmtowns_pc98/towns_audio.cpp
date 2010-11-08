@@ -25,6 +25,7 @@
 
 #include "sound/softsynth/fmtowns_pc98/towns_audio.h"
 #include "common/endian.h"
+#include "backends/audiocd/audiocd.h"
 
 
 class TownsAudio_PcmChannel {

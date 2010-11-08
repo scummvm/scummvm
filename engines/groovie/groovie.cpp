@@ -37,6 +37,7 @@
 #include "common/events.h"
 #include "common/macresman.h"
 
+#include "backends/audiocd/audiocd.h"
 #include "engines/util.h"
 #include "graphics/fontman.h"
 #include "sound/mixer.h"

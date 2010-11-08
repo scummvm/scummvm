@@ -37,6 +37,8 @@
 #include "agos/agos.h"
 #include "agos/vga.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "graphics/surface.h"
 
 #include "sound/mididrv.h"

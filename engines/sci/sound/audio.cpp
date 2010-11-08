@@ -29,6 +29,8 @@
 #include "sci/engine/seg_manager.h"
 #include "sci/sound/audio.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "common/file.h"
 #include "common/system.h"
 

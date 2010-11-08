@@ -32,6 +32,8 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "gui/about.h"
 
 #include "graphics/surface.h"
