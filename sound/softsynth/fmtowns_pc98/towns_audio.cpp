@@ -24,7 +24,6 @@
  */
 
 #include "sound/softsynth/fmtowns_pc98/towns_audio.h"
-#include "sound/audiocd.h"
 #include "common/endian.h"
 
 
@@ -1405,8 +1404,8 @@ void TownsAudioInterface::updateOutputVolume() {
 	int volume = (int)(((float)(maxVol * 255) / 63.0f));
 	int balance = maxVol ? (int)( ( ((int)_outputLevel[13] - _outputLevel[12]) * 127) / (float)maxVol) : 0;
 
-	AudioCD.setVolume(volume);
-	AudioCD.setBalance(balance);
+	g_system->getAudioCDManager()->setVolume(volume);
+	g_system->getAudioCDManager()->setBalance(balance);
 }
 
 const uint8 TownsAudioInterface::_chanFlags[] = {

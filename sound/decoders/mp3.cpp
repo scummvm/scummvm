@@ -31,7 +31,6 @@
 #include "common/stream.h"
 #include "common/util.h"
 
-#include "sound/audiocd.h"
 #include "sound/audiostream.h"
 
 #include <mad.h>

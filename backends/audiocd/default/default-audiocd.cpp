@@ -23,33 +23,24 @@
  *
  */
 
-#include "sound/audiocd.h"
+#include "backends/audiocd/default/default-audiocd.h"
 #include "sound/audiostream.h"
-#include "sound/decoders/mp3.h"
-#include "sound/decoders/vorbis.h"
-#include "sound/decoders/flac.h"
-#include "engines/engine.h"
-#include "common/util.h"
 #include "common/system.h"
 
-DECLARE_SINGLETON(Audio::AudioCDManager)
-
-namespace Audio {
-
-AudioCDManager::AudioCDManager() {
+DefaultAudioCDManager::DefaultAudioCDManager() {
 	_cd.playing = false;
 	_cd.track = 0;
 	_cd.start = 0;
 	_cd.duration = 0;
 	_cd.numLoops = 0;
-	_cd.volume = Mixer::kMaxChannelVolume;
+	_cd.volume = Audio::Mixer::kMaxChannelVolume;
 	_cd.balance = 0;
 	_mixer = g_system->getMixer();
 	_emulating = false;
 	assert(_mixer);
 }
 
-void AudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool only_emulate) {
+void DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool only_emulate) {
 	if (numLoops != 0 || startFrame != 0) {
 		_cd.track = track;
 		_cd.numLoops = numLoops;
@@ -65,14 +56,14 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration,
 		Audio::SeekableAudioStream *stream = 0;
 
 		for (int i = 0; !stream && i < 2; ++i)
-			stream = SeekableAudioStream::openStreamFile(trackName[i]);
+			stream = Audio::SeekableAudioStream::openStreamFile(trackName[i]);
 
 		// Stop any currently playing emulated track
 		_mixer->stopHandle(_handle);
 
 		if (stream != 0) {
-			Timestamp start = Timestamp(0, startFrame, 75);
-			Timestamp end = duration ? Timestamp(0, startFrame + duration, 75) : stream->getLength();
+			Audio::Timestamp start = Audio::Timestamp(0, startFrame, 75);
+			Audio::Timestamp end = duration ? Audio::Timestamp(0, startFrame + duration, 75) : stream->getLength();
 
 			/*
 			FIXME: Seems numLoops == 0 and numLoops == 1 both indicate a single repetition,
@@ -80,39 +71,38 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration,
 			repetitions. Finally, -1 means infinitely many
 			*/
 			_emulating = true;
-			_mixer->playStream(Mixer::kMusicSoundType, &_handle,
-			                        makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
-
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle,
+			                        Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
 		} else {
 			_emulating = false;
 			if (!only_emulate)
-				g_system->playCD(track, numLoops, startFrame, duration);
+				playCD(track, numLoops, startFrame, duration);
 		}
 	}
 }
 
-void AudioCDManager::stop() {
+void DefaultAudioCDManager::stop() {
 	if (_emulating) {
 		// Audio CD emulation
 		_mixer->stopHandle(_handle);
 		_emulating = false;
 	} else {
 		// Real Audio CD
-		g_system->stopCD();
+		stopCD();
 	}
 }
 
-bool AudioCDManager::isPlaying() const {
+bool DefaultAudioCDManager::isPlaying() const {
 	if (_emulating) {
 		// Audio CD emulation
 		return _mixer->isSoundHandleActive(_handle);
 	} else {
 		// Real Audio CD
-		return g_system->pollCD();
+		return pollCD();
 	}
 }
 
-void AudioCDManager::setVolume(byte volume) {
+void DefaultAudioCDManager::setVolume(byte volume) {
 	_cd.volume = volume;
 	if (_emulating) {
 		// Audio CD emulation
@@ -128,7 +118,7 @@ void AudioCDManager::setVolume(byte volume) {
 	}
 }
 
-void AudioCDManager::setBalance(int8 balance) {
+void DefaultAudioCDManager::setBalance(int8 balance) {
 	_cd.balance = balance;
 	if (_emulating) {
 		// Audio CD emulation
@@ -144,7 +134,7 @@ void AudioCDManager::setBalance(int8 balance) {
 	}
 }
 
-void AudioCDManager::updateCD() {
+void DefaultAudioCDManager::update() {
 	if (_emulating) {
 		// Check whether the audio track stopped playback
 		if (!_mixer->isSoundHandleActive(_handle)) {
@@ -156,16 +146,12 @@ void AudioCDManager::updateCD() {
 			_emulating = false;
 		}
 	} else {
-		g_system->updateCD();
+		updateCD();
 	}
 }
 
-AudioCDManager::Status AudioCDManager::getStatus() const {
-	// TODO: This could be improved for "real" CD playback.
-	// But to do that, we would have to extend the OSystem interface.
+DefaultAudioCDManager::Status DefaultAudioCDManager::getStatus() const {
 	Status info = _cd;
 	info.playing = isPlaying();
 	return info;
 }
-
-} // End of namespace Audio

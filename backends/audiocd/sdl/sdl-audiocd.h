@@ -23,33 +23,35 @@
  *
  */
 
-#include "common/system.h"
+#ifndef BACKENDS_AUDIOCD_SDL_H
+#define BACKENDS_AUDIOCD_SDL_H
 
-OSystem *g_system = 0;
+#include "backends/audiocd/default/default-audiocd.h"
 
-OSystem::OSystem() {
-}
+#if defined(__SYMBIAN32__)
+#include <esdl\SDL.h>
+#else
+#include <SDL.h>
+#endif
 
-OSystem::~OSystem() {
-}
+/**
+ * The SDL audio cd manager. Implements real audio cd playback.
+ */
+class SdlAudioCDManager : public DefaultAudioCDManager {
+public:
+	SdlAudioCDManager();
+	virtual ~SdlAudioCDManager();
 
-bool OSystem::setGraphicsMode(const char *name) {
-	if (!name)
-		return false;
+protected:
+	virtual bool openCD(int drive);
+	virtual void updateCD();
+	virtual bool pollCD() const;
+	virtual void playCD(int track, int num_loops, int start_frame, int duration);
+	virtual void stopCD();
 
-	// Special case for the 'default' filter
-	if (!scumm_stricmp(name, "normal") || !scumm_stricmp(name, "default")) {
-		return setGraphicsMode(getDefaultGraphicsMode());
-	}
+	SDL_CD *_cdrom;
+	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;
+	uint32 _cdEndTime, _cdStopTime;
+};
 
-	const GraphicsMode *gm = getSupportedGraphicsModes();
-
-	while (gm->name) {
-		if (!scumm_stricmp(gm->name, name)) {
-			return setGraphicsMode(gm->id);
-		}
-		gm++;
-	}
-
-	return false;
-}
+#endif

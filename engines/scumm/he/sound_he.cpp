@@ -36,7 +36,6 @@
 #include "common/util.h"
 
 #include "sound/decoders/adpcm.h"
-#include "sound/audiocd.h"
 #include "sound/decoders/flac.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"

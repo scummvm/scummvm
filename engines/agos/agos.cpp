@@ -41,7 +41,6 @@
 
 #include "sound/mididrv.h"
 #include "sound/mods/protracker.h"
-#include "sound/audiocd.h"
 
 namespace AGOS {
 
@@ -901,7 +900,7 @@ AGOSEngine::~AGOSEngine() {
 	_midi.close();
 	delete _driver;
 
-	AudioCD.stop();
+	_system->getAudioCDManager()->stop();
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
 		delete[] _itemHeap[i];

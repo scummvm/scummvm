@@ -1,7 +1,6 @@
 MODULE := sound
 
 MODULE_OBJS := \
-	audiocd.o \
 	audiostream.o \
 	fmopl.o \
 	mididrv.o \

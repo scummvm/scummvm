@@ -25,6 +25,7 @@
 
 #include "backends/base-backend.h"
 #include "backends/events/default/default-events.h"
+#include "backends/audiocd/default/default-audiocd.h"
 #include "gui/message.h"
 
 void BaseBackend::displayMessageOnOSD(const char *msg) {
@@ -71,6 +72,14 @@ void BaseBackend::fillScreen(uint32 col) {
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 
+BaseBackend::BaseBackend() {
+	_audiocdManager = 0;
+}
+
+BaseBackend::~BaseBackend() {
+	delete _audiocdManager;
+}
+
 Common::SeekableReadStream *BaseBackend::createConfigReadStream() {
 	Common::FSNode file(DEFAULT_CONFIG_FILE);
 	return file.createReadStream();
@@ -83,4 +92,16 @@ Common::WriteStream *BaseBackend::createConfigWriteStream() {
 	Common::FSNode file(DEFAULT_CONFIG_FILE);
 	return file.createWriteStream();
 #endif
+}
+
+AudioCDManager *BaseBackend::getAudioCDManager() {
+	if (!_audiocdManager)
+		_audiocdManager = new DefaultAudioCDManager();
+	return _audiocdManager;
+}
+
+void BaseBackend::resetGraphicsScale() {
+	// As a hack, we use 0 here. Backends should override this method
+	// and provide their own.
+	setGraphicsMode(0);
 }

@@ -23,31 +23,40 @@
  *
  */
 
-#ifndef BACKENDS_BASE_BACKEND_H
-#define BACKENDS_BASE_BACKEND_H
+#ifndef BACKENDS_AUDIOCD_DEFAULT_H
+#define BACKENDS_AUDIOCD_DEFAULT_H
 
-#include "common/system.h"
-#include "backends/events/default/default-events.h"
+#include "backends/audiocd/audiocd.h"
+#include "sound/mixer.h"
 
-class BaseBackend : public OSystem, Common::EventSource {
+/**
+ * The default audio cd manager. Implements emulation of audio cd playback.
+ */
+class DefaultAudioCDManager : public AudioCDManager {
 public:
-	BaseBackend();
-	~BaseBackend();
+	DefaultAudioCDManager();
+	virtual ~DefaultAudioCDManager() {}
 
-	virtual Common::EventManager *getEventManager();
-	virtual void displayMessageOnOSD(const char *msg);
-	virtual void fillScreen(uint32 col);
+	void play(int track, int numLoops, int startFrame, int duration, bool only_emulate = false);
+	void stop();
+	bool isPlaying() const;
+	void setVolume(byte volume);
+	void setBalance(int8 balance);
+	void update();
+	virtual Status getStatus() const; // Subclasses should override for better status results
 
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
-
-	virtual AudioCDManager *getAudioCDManager();
-
-	virtual void resetGraphicsScale();
+	virtual bool openCD(int drive) { return false; }
+	virtual void updateCD() {}
+	virtual bool pollCD() const { return false; }
+	virtual void playCD(int track, int num_loops, int start_frame, int duration) {}
+	virtual void stopCD() {}
 
 protected:
-	AudioCDManager *_audiocdManager;
-};
+	Audio::SoundHandle _handle;
+	bool _emulating;
 
+	Status _cd;
+	Audio::Mixer *_mixer;
+};
 
 #endif

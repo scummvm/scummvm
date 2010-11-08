@@ -186,18 +186,7 @@ public:
 
 	virtual Audio::Mixer *getMixer();
 
-	// Poll CD status
-	// Returns true if cd audio is playing
-	bool pollCD();
-
-	// Play CD audio track
-	void playCD(int track, int num_loops, int start_frame, int duration);
-
-	// Stop CD audio track
-	void stopCD();
-
-	// Update CD audio status
-	void updateCD();
+	virtual AudioCDManager *getAudioCDManager();
 
 	// Quit
 	virtual void quit(); // overloaded by CE backend
@@ -232,7 +221,6 @@ public:
 	virtual int getGraphicsMode() const;
 
 	virtual void setWindowCaption(const char *caption);
-	virtual bool openCD(int drive);
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);

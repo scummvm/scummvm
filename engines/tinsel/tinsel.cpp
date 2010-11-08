@@ -45,7 +45,6 @@
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
-#include "sound/audiocd.h"
 
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
@@ -853,7 +852,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
-		_system->openCD(cd_num);
+		_system->getAudioCDManager()->openCD(cd_num);
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
@@ -889,7 +888,7 @@ TinselEngine::~TinselEngine() {
 	if (_bmv->MoviePlaying())
 		_bmv->FinishBMV();
 
-	AudioCD.stop();
+	_system->getAudioCDManager()->stop();
 	delete _bmv;
 	delete _sound;
 	delete _midiMusic;
@@ -999,7 +998,7 @@ Common::Error TinselEngine::run() {
 		// Check for time to do next game cycle
 		if ((g_system->getMillis() > timerVal + GAME_FRAME_DELAY)) {
 			timerVal = g_system->getMillis();
-			AudioCD.updateCD();
+			_system->getAudioCDManager()->updateCD();
 			NextGameCycle();
 		}
 

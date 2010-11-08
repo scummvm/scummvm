@@ -45,6 +45,7 @@
 #else
   #include "backends/saves/default/default-saves.h"
 #endif
+#include "backends/audiocd/sdl/sdl-audiocd.h"
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer_intern.h"
 
@@ -814,88 +815,8 @@ Audio::Mixer *OSystem_SDL::getMixer() {
 #pragma mark --- CD Audio ---
 #pragma mark -
 
-bool OSystem_SDL::openCD(int drive) {
-	if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
-		_cdrom = NULL;
-	else {
-		_cdrom = SDL_CDOpen(drive);
-		// Did it open? Check if _cdrom is NULL
-		if (!_cdrom) {
-			warning("Couldn't open drive: %s", SDL_GetError());
-		} else {
-			_cdNumLoops = 0;
-			_cdStopTime = 0;
-			_cdEndTime = 0;
-		}
-	}
-
-	return (_cdrom != NULL);
-}
-
-void OSystem_SDL::stopCD() {	/* Stop CD Audio in 1/10th of a second */
-	_cdStopTime = SDL_GetTicks() + 100;
-	_cdNumLoops = 0;
-}
-
-void OSystem_SDL::playCD(int track, int num_loops, int start_frame, int duration) {
-	if (!num_loops && !start_frame)
-		return;
-
-	if (!_cdrom)
-		return;
-
-	if (duration > 0)
-		duration += 5;
-
-	_cdTrack = track;
-	_cdNumLoops = num_loops;
-	_cdStartFrame = start_frame;
-
-	SDL_CDStatus(_cdrom);
-	if (start_frame == 0 && duration == 0)
-		SDL_CDPlayTracks(_cdrom, track, 0, 1, 0);
-	else
-		SDL_CDPlayTracks(_cdrom, track, start_frame, 0, duration);
-	_cdDuration = duration;
-	_cdStopTime = 0;
-	_cdEndTime = SDL_GetTicks() + _cdrom->track[track].length * 1000 / CD_FPS;
-}
-
-bool OSystem_SDL::pollCD() {
-	if (!_cdrom)
-		return false;
-
-	return (_cdNumLoops != 0 && (SDL_GetTicks() < _cdEndTime || SDL_CDStatus(_cdrom) == CD_PLAYING));
-}
-
-void OSystem_SDL::updateCD() {
-	if (!_cdrom)
-		return;
-
-	if (_cdStopTime != 0 && SDL_GetTicks() >= _cdStopTime) {
-		SDL_CDStop(_cdrom);
-		_cdNumLoops = 0;
-		_cdStopTime = 0;
-		return;
-	}
-
-	if (_cdNumLoops == 0 || SDL_GetTicks() < _cdEndTime)
-		return;
-
-	if (_cdNumLoops != 1 && SDL_CDStatus(_cdrom) != CD_STOPPED) {
-		// Wait another second for it to be done
-		_cdEndTime += 1000;
-		return;
-	}
-
-	if (_cdNumLoops > 0)
-		_cdNumLoops--;
-
-	if (_cdNumLoops != 0) {
-		if (_cdStartFrame == 0 && _cdDuration == 0)
-			SDL_CDPlayTracks(_cdrom, _cdTrack, 0, 1, 0);
-		else
-			SDL_CDPlayTracks(_cdrom, _cdTrack, _cdStartFrame, 0, _cdDuration);
-		_cdEndTime = SDL_GetTicks() + _cdrom->track[_cdTrack].length * 1000 / CD_FPS;
-	}
+AudioCDManager *OSystem_SDL::getAudioCDManager() {
+	if (!_audiocdManager)
+		_audiocdManager = new SdlAudioCDManager();
+	return _audiocdManager;
 }

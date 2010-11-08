@@ -30,7 +30,6 @@
 #include "agos/agos.h"
 #include "agos/vga.h"
 
-#include "sound/audiocd.h"
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/mods/protracker.h"
@@ -226,9 +225,9 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 	stopMusic();
 
 	// Support for compressed music from the ScummVM Music Enhancement Project
-	AudioCD.stop();
-	AudioCD.play(music + 1, -1, 0, 0);
-	if (AudioCD.isPlaying())
+	_system->getAudioCDManager()->stop();
+	_system->getAudioCDManager()->play(music + 1, -1, 0, 0);
+	if (_system->getAudioCDManager()->isPlaying())
 		return;
 
 	if (getPlatform() == Common::kPlatformAmiga) {

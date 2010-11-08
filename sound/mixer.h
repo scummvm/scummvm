@@ -28,6 +28,7 @@
 
 #include "common/types.h"
 #include "common/mutex.h"
+#include "common/noncopyable.h"
 
 #include "sound/timestamp.h"
 
@@ -61,7 +62,7 @@ public:
  * The main audio mixer handles mixing of an arbitrary number of
  * audio streams (in the form of AudioStream instances).
  */
-class Mixer {
+class Mixer : Common::NonCopyable {
 public:
 	enum SoundType {
 		kPlainSoundType = 0,

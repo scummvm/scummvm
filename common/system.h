@@ -33,6 +33,8 @@
 
 #include "graphics/pixelformat.h"
 
+#include "backends/audiocd/audiocd.h"
+
 namespace Audio {
 	class Mixer;
 }
@@ -353,6 +355,13 @@ public:
 	 * @return the active graphics mode
 	 */
 	virtual int getGraphicsMode() const = 0;
+
+	/**
+	 * Sets the graphics scale factor to x1. Games with large screen sizes
+	 * reset the scale to x1 so the screen will not be too big when starting
+	 * the game.
+	 */
+	virtual void resetGraphicsScale() = 0;
 
 #ifdef USE_RGB_COLOR
 	/**
@@ -926,46 +935,14 @@ public:
 
 
 
-	/**
-	 * @name Audio CD
-	 * The methods in this group deal with Audio CD playback.
-	 * The default implementation simply does nothing.
-	 * This is the lower level implementation as provided by the
-	 * backends. The engines should use the Audio::AudioCDManager
-	 * class instead of using it directly.
-	 */
+	/** @name Audio CD */
 	//@{
 
 	/**
-	 * Initialise the specified CD drive for audio playback.
-	 * @return true if the CD drive was inited succesfully
+	 * Return the audio cd manager. For more information, refer to the
+	 * AudioCDManager documentation.
 	 */
-	virtual bool openCD(int drive);
-
-	/**
-	 * Poll CD status.
-	 * @return true if CD audio is playing
-	 */
-	virtual bool pollCD();
-
-	/**
-	 * Start audio CD playback.
-	 * @param track			the track to play.
-	 * @param num_loops		how often playback should be repeated (-1 = infinitely often).
-	 * @param start_frame	the frame at which playback should start (75 frames = 1 second).
-	 * @param duration		the number of frames to play.
-	 */
-	virtual void playCD(int track, int num_loops, int start_frame, int duration) {}
-
-	/**
-	 * Stop audio CD playback.
-	 */
-	virtual void stopCD() {}
-
-	/**
-	 * Update cdrom audio status.
-	 */
-	virtual void updateCD() {}
+	virtual AudioCDManager *getAudioCDManager() = 0;
 
 	//@}
 
