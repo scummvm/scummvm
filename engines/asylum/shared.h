@@ -93,6 +93,33 @@ enum ChapterIndex {
 // Resources
 //////////////////////////////////////////////////////////////////////////
 
+enum ResourcePackId {
+	kResourcePackInvalid               = -1,
+	kResourcePackText                  = 0,
+	kResourcePackShared                = 1,
+	// No resource pack 2
+	kResourcePackSpeech                = 3,
+	// No resource pack 4
+	kResourcePackTowerCells            = 5,
+	kResourcePackInnocentAbandoned     = 6,
+	kResourcePackCourtyardAndChapel    = 7,
+	kResourcePackCircusOfFools         = 8,
+	kResourcePackCave                  = 9,
+	kResourcePackMansion               = 10,
+	kResourcePackLaboratory            = 11,
+	kResourcePackHive                  = 12,
+	kResourcePackMorgueAndCementary    = 13,
+	kResourcePackLostVillage           = 14,
+	kResourcePackMaze                  = 15,
+	kResourcePackGauntlet              = 16,
+	kResourcePackMorgansLastGame       = 17,
+	kResourcePackSound                 = 18,
+	kResourcePack104                   = 104,
+	kResourcePack204                   = 204,
+	kResourcePack304                   = 304
+};
+
+
 typedef unsigned int ResourceId;
 
 enum ResourceIdEnum {

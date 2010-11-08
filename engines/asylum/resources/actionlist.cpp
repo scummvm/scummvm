@@ -206,7 +206,7 @@ void ActionList::reset() {
 	_currentLine       = 0;
 	_currentLoops      = 0;
 	_currentScript     = NULL;
-	_delayedSceneIndex = -1;
+	_delayedSceneIndex = kResourcePackInvalid;
 	_delayedVideoIndex = -1;
 	_done = false;
 	_exit = false;
@@ -772,7 +772,7 @@ IMPLEMENT_OPCODE(ChangeScene) {
 	_vm->sound()->stopAllSounds(true);
 
 	// Change the scene number
-	_delayedSceneIndex = cmd->param1 + 4;
+	_delayedSceneIndex = (ResourcePackId)(cmd->param1 + 4);
 
 	_exit = true;
 }

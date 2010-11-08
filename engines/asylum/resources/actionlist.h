@@ -113,8 +113,8 @@ public:
 	// Accessors
 	int32 getDelayedVideoIndex() const { return _delayedVideoIndex; }
 	void setDelayedVideoIndex(int32 val) { _delayedVideoIndex = val; }
-	int32 getDelayedSceneIndex() const { return _delayedSceneIndex; }
-	void setDelayedSceneIndex(int32 val) { _delayedSceneIndex = val; }
+	ResourcePackId getDelayedSceneIndex() const { return _delayedSceneIndex; }
+	void setDelayedSceneIndex(ResourcePackId id) { _delayedSceneIndex = id; }
 
 	bool isProcessingSkipped() { return _skipProcessing; }
 
@@ -181,7 +181,7 @@ private:
 	int32             _currentLoops;
 	Script           *_currentScript;
 	ScriptQueueEntry  _currentQueueEntry;
-	int32             _delayedSceneIndex;
+	ResourcePackId    _delayedSceneIndex;
 	int32             _delayedVideoIndex;
 	bool              _done;
 	bool              _exit;

@@ -56,7 +56,7 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	Config.gammaLevel  = 2;
 	Config.performance = 5;
 
-	_resPack     = new ResourcePack(1);
+	_resPack     = new ResourcePack(kResourcePackShared);
 	_bgResource  = new GraphicResource(_resPack, 0);
 	_eyeResource = new GraphicResource(_resPack, 1);
 

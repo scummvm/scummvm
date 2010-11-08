@@ -324,7 +324,7 @@ bool Console::cmdChangeScene(int32 argc, const char **argv) {
 		return true;
 	}
 
-	int index = atoi(argv[1]);
+	ResourcePackId index = (ResourcePackId)atoi(argv[1]);
 
 	// Check if the scene exists
 	char filename[20];
