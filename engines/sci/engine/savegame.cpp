@@ -156,9 +156,26 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		// Let the object sync custom data
 		mobj->saveLoadWithSerializer(s);
 
-		// If we are loading a script, hook it up in the script->segment map.
-		if (s.isLoading() && type == SEG_TYPE_SCRIPT)
-			_scriptSegMap[((Script *)mobj)->getScriptNumber()] = i;
+		// If we are saving a script, save its string heap space too
+		if (s.isSaving() && type == SEG_TYPE_SCRIPT)
+			((Script *)mobj)->syncStringHeap(s);
+	
+		// If we are loading a script, perform some extra steps
+		if (s.isLoading() && type == SEG_TYPE_SCRIPT) {
+			Script *scr = (Script *)mobj;
+			// Hook the script up in the script->segment map
+			_scriptSegMap[scr->getScriptNumber()] = i;
+
+			// Now, load the script itself
+			scr->load(g_sci->getResMan());
+
+			for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it)
+				it->_value.syncBaseObject(scr->getBuf(it->_value.getPos().offset));
+
+			// Load the script's string heap
+			if (s.getVersion() >= 28)
+				scr->syncStringHeap(s);
+		}
 	}
 
 	s.syncAsSint32LE(_clonesSegId);
@@ -166,6 +183,29 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_nodesSegId);
 
 	syncArray<Class>(s, _classTable);
+
+	// Now that all scripts are loaded, init their objects
+	for (uint i = 0; i < _heap.size(); i++) {
+		if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
+			continue;
+
+		Script *scr = (Script *)_heap[i];
+		scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(_heap[scr->_localsSegment]);
+
+		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it) {
+			reg_t addr = it->_value.getPos();
+			Object *obj = scr->scriptObjInit(addr, false);
+
+			if (getSciVersion() < SCI_VERSION_1_1) {
+				if (!obj->initBaseObject(this, addr, false)) {
+					// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
+					// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
+					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+					scr->scriptObjRemove(addr);
+				}
+			}
+		}
+	}
 }
 
 
@@ -358,6 +398,43 @@ void ListTable::saveLoadWithSerializer(Common::Serializer &s) {
 
 void HunkTable::saveLoadWithSerializer(Common::Serializer &s) {
 	// Do nothing, hunk tables are not actually saved nor loaded.
+}
+
+void Script::syncStringHeap(Common::Serializer &s) {
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		// Sync all if the SCI_OBJ_STRINGS blocks
+		byte *buf = _buf;
+		bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
+
+		if (oldScriptHeader)
+			buf += 2;
+
+		do {
+			int blockType = READ_LE_UINT16(buf);
+			int blockSize = READ_LE_UINT16(buf + 2);
+			assert(blockSize > 0);
+
+			if (blockType == 0)
+				break;
+			if (blockType == SCI_OBJ_STRINGS)
+				s.syncBytes(buf, blockSize);
+
+			buf += blockSize;
+			if (_buf - buf == 0)
+				break;
+		} while (1);
+
+ 	} else {
+		// Strings in SCI1.1 come after the object instances
+		byte *buf = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
+
+		// Skip all of the objects
+		while (READ_SCI11ENDIAN_UINT16(buf) == SCRIPT_OBJECT_MAGIC_NUMBER)
+			buf += READ_SCI11ENDIAN_UINT16(buf + 2) * 2;
+
+		// Now, sync everything till the end of the buffer
+		s.syncBytes(buf, _heapSize - (buf - _heapStart));
+	}
 }
 
 void Script::saveLoadWithSerializer(Common::Serializer &s) {
@@ -667,44 +744,6 @@ void SegManager::reconstructStack(EngineState *s) {
 	s->stack_top = s->stack_base + stack->_capacity;
 }
 
-// TODO: Move this function to a more appropriate place, such as vm.cpp or script.cpp
-void SegManager::reconstructScripts(EngineState *s) {
-	uint i;
-
-	for (i = 0; i < _heap.size(); i++) {
-		if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
-			continue;
-
-		Script *scr = (Script *)_heap[i];
-		scr->load(g_sci->getResMan());
-		scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(_heap[scr->_localsSegment]);
-
-		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it)
-			it->_value._baseObj = scr->getBuf(it->_value.getPos().offset);
-	}
-
-	for (i = 0; i < _heap.size(); i++) {
-		if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
-			continue;
-
-		Script *scr = (Script *)_heap[i];
-
-		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it) {
-			reg_t addr = it->_value.getPos();
-			Object *obj = scr->scriptObjInit(addr, false);
-
-			if (getSciVersion() < SCI_VERSION_1_1) {
-				if (!obj->initBaseObject(this, addr, false)) {
-					// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
-					// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
-					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-					scr->scriptObjRemove(addr);
-				}
-			}
-		}
-	}
-}
-
 void SegManager::reconstructClones() {
 	for (uint i = 0; i < _heap.size(); i++) {
 		SegmentObj *mobj = _heap[i];
@@ -823,7 +862,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Now copy all current state information
 
 	s->_segMan->reconstructStack(s);
-	s->_segMan->reconstructScripts(s);
 	s->_segMan->reconstructClones();
 	s->initGlobals();
 	s->gcCountDown = GC_INTERVAL - 1;

@@ -318,13 +318,10 @@ public:
 	void initSpecies(SegManager *segMan, reg_t addr);
 	void initSuperClass(SegManager *segMan, reg_t addr);
 	bool initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass = true);
-
-	// TODO: make private
-	// Only SegManager::reconstructScripts() is left needing direct access to these
-public:
-	const byte *_baseObj; /**< base + object offset within base */
+	void syncBaseObject(const byte *ptr) { _baseObj = ptr; }
 
 private:
+	const byte *_baseObj; /**< base + object offset within base */
 	const uint16 *_baseVars; /**< Pointer to the varselector area for this object */
 	const uint16 *_baseMethod; /**< Pointer to the method selector area for this object */
 

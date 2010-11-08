@@ -92,11 +92,6 @@ public:
 	void deallocateScript(int script_nr);
 
 	/**
-	 * Reconstructs scripts. Used when restoring saved games
-	 */
-	void reconstructScripts(EngineState *s);
-
-	/**
 	 * Reconstructs the stack. Used when restoring saved games
 	 */
 	void reconstructStack(EngineState *s);

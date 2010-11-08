@@ -243,6 +243,11 @@ public:
 	 */
 	byte *findBlockSCI0(int type, int startBlockIndex = -1);
 
+	/**
+	 * Syncs the string heap of a script. Used when saving/loading.
+	 */
+	void syncStringHeap(Common::Serializer &ser);
+
 private:
 	/**
 	 * Processes a relocation block witin a script
@@ -268,8 +273,6 @@ private:
 	 * @param segmentId	The script's segment id
 	 */
 	void initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId);
-
-	void syncHeap(Common::Serializer &ser);
 };
 
 } // End of namespace Sci
