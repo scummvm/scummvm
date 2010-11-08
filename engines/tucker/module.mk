@@ -1,6 +1,7 @@
 MODULE := engines/tucker
 
 MODULE_OBJS := \
+	console.o \
 	detection.o \
 	graphics.o \
 	locations.o \

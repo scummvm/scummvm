@@ -39,6 +39,8 @@
 
 #include "engines/engine.h"
 
+#include "tucker/console.h"
+
 /**
  * This is the namespace of the Tucker engine.
  *
@@ -275,6 +277,7 @@ public:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
+	GUI::Debugger *getDebugger() { return _console; }
 
 protected:
 
@@ -565,6 +568,8 @@ protected:
 	virtual Common::Error saveGameState(int num, const char *description);
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();
+
+	TuckerConsole *_console;
 
 	void handleIntroSequence();
 	void handleCreditsSequence();
