@@ -411,15 +411,19 @@ void Script::syncStringHeap(Common::Serializer &s) {
 
 		do {
 			int blockType = READ_LE_UINT16(buf);
-			int blockSize = READ_LE_UINT16(buf + 2);
-			assert(blockSize > 0);
-
+			int blockSize;
 			if (blockType == 0)
 				break;
+
+			blockSize = READ_LE_UINT16(buf + 2);
+			assert(blockSize > 0);
+
+
 			if (blockType == SCI_OBJ_STRINGS)
 				s.syncBytes(buf, blockSize);
 
 			buf += blockSize;
+
 			if (_buf - buf == 0)
 				break;
 		} while (1);
