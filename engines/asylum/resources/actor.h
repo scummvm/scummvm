@@ -215,6 +215,14 @@ public:
 	 */
 	void setRawResources(uint8* data);
 
+	/**
+	 * Get an entry from the graphicsResourceTable between indices 10 and 20 if
+	 * it matches the current resourceId value
+	 *
+	 * TODO This whole method probably isn't required
+	 */
+	ResourceId getResourceFromTable();
+
 	// Unknown methods
 	bool process(int32 actorX, int32 actorY);
 	void processStatus(int32 actorX, int32 actorY, bool doSpeech);
