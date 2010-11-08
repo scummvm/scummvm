@@ -117,7 +117,7 @@ void MainMenu::openMenu() {
 	                              bg->surface.h);
 
 	// Set mouse cursor
-	Cursor::create(_vm, _cursor, MAKE_RESOURCE(kResourcePackShared, 2));
+	_cursor->set(MAKE_RESOURCE(kResourcePackShared, 2));
 	_cursor->show();
 
 	// Stop all sounds
@@ -185,7 +185,7 @@ void MainMenu::update() {
 			_activeMenuScreen = (MenuScreen) _activeIcon;
 
 			// Set the cursor
-			Cursor::create(_vm, _cursor, MAKE_RESOURCE(kResourcePackShared, 3));
+			_cursor->set(MAKE_RESOURCE(kResourcePackShared, 3));
 		}
 
 		switch (_activeIcon) {
@@ -236,7 +236,7 @@ void MainMenu::update() {
 		case kReturnToGame:
 			if (_vm->scene()) { // FIXME: do this properly
 				closeMenu();
-				_vm->scene()->enterScene();
+				// FIXME _vm->scene()->enterScene();
 			}
 			break;
 		}
@@ -407,7 +407,7 @@ void MainMenu::updateSubMenuNewGame() {
 		if (_cursor->position().x >= 247 && _cursor->position().x <= 247 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 1322))) {
 			_leftClick = false;
             closeMenu();
-            _vm->startGame();
+            _vm->startGame(kResourcePackTowerCells, AsylumEngine::kStartGamePlayIntro);
 		}
 		// No
 		if (_cursor->position().x >= 369 && _cursor->position().x <= 369 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 1323)))
@@ -639,7 +639,7 @@ void MainMenu::exitSubMenu() {
 	_vm->screen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
 
 	// Set the cursor
-	Cursor::create(_vm, _cursor, MAKE_RESOURCE(kResourcePackShared, 2));
+	_cursor->set(MAKE_RESOURCE(kResourcePackShared, 2));
 }
 
 void MainMenu::updateSubMenuReturnToGame() {

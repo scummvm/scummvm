@@ -70,6 +70,7 @@ enum FlagType {
 	kFlagTypeSceneRectChanged
 };
 
+class Cursor;
 class Encounter;
 class MainMenu;
 class ResourceManager;
@@ -88,6 +89,12 @@ protected:
 	virtual GUI::Debugger *getDebugger() { return _console; }
 
 public:
+	enum StartGameType {
+		kStartGamePlayIntro,
+		kStartGameLoad,
+		kStartGameScene
+	};
+
 	typedef Common::Functor1<Common::Event &, void> MessageHandler;
 
 	AsylumEngine(OSystem *system, const ADGameDescription *gd);
@@ -96,7 +103,14 @@ public:
 	/**
 	 * Start a new the game
 	 */
-	void startGame();
+	void startGame(ResourcePackId sceneId, StartGameType type);
+
+	/**
+	 * Switch to a new scene
+	 *
+	 * @param sceneId ResourcePack for the scene
+	 */
+	void switchScene(ResourcePackId sceneId) { startGame(sceneId, kStartGameScene); }
 
 	/**
 	 * Wrapper function to the OSystem getMillis() method
@@ -110,6 +124,7 @@ public:
 	uint32 globalTickValue_2;
 
 	// Game
+	Cursor          *cursor()    { return _cursor; }
 	Encounter       *encounter() { return _encounter; }
 	MainMenu        *menu()      { return _mainMenu; }
 	ResourceManager *resource()  { return _resource; }
@@ -146,6 +161,7 @@ private:
 	Common::RandomSource  _rnd;
 
 	// Game
+	Cursor          *_cursor;
 	Encounter       *_encounter;
 	MainMenu        *_mainMenu;
 	ResourceManager *_resource;
@@ -156,7 +172,7 @@ private:
 	Video           *_video;
 
 	bool _introPlaying;
-	int _gameFlags[1512];
+	int  _gameFlags[1512];
 	bool _flags[4];
 
 	void handleEvents(bool doUpdate);

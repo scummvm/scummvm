@@ -69,17 +69,26 @@ enum HitType {
 
 class Scene {
 public:
-	Scene(ResourcePackId packId, AsylumEngine *engine);
+	Scene(AsylumEngine *engine);
 	~Scene();
 
-	/** .text:0040E460
-	 * Initialize the current scene
+	/**
+	 * Enter a scene
+	 *
+	 * @param packId Package id for the scene.
 	 */
-	void initialize();
+	void enter(ResourcePackId packId);
+
+	/**
+	 * Load the scene data
+	 * @param packId Package id for the scene.
+	 */
+	void load(ResourcePackId packId);
+
+
+
 
 	void handleEvent(Common::Event *event, bool doUpdate);
-
-	void enterScene();
 
 	void activate() { _isActive = true; }
 	void deactivate() { _isActive = false; }
@@ -94,7 +103,6 @@ public:
 	AsylumEngine* vm() { return _vm; }
 
 	ActionList  *actions()    { return _actions; }
-	Cursor      *cursor()     { return _cursor; }
 	Polygons    *polygons()   { return _polygons; }
 	Special     *special()    { return _special; }
 	Speech      *speech()     { return _speech; }
@@ -111,7 +119,7 @@ public:
 	ActorIndex getPlayerActorIndex() { return _playerActorIdx; }
 
 	void setPlayerActorIndex(ActorIndex index) { _playerActorIdx = index; }
-	void changePlayerActorIndex(ActorIndex index);
+	void changePlayer(ActorIndex index);
 
 	/**
 	 * Get a reference to an actor object from the
@@ -230,7 +238,6 @@ private:
 	ActionList   *_actions;
 	SceneTitle   *_title;
 	Speech       *_speech;
-	Cursor       *_cursor;
 	Special      *_special;
 	//BlowUpPuzzle *_blowUp;
 
@@ -255,7 +262,6 @@ private:
 	int32 _actorUpdateFlag2;
 
 	void update();
-	void startMusic();
 
 	/** .text:0040B5B0
 	 * Loop through the various update blocks (actors,
@@ -292,6 +298,10 @@ private:
 	void updateAdjustScreen();
 
 	void updateScreen();
+
+	void setWheelObjectIndices();
+
+	void playIntroSpeech();
 
 
 	//////////////////////////////////////////////////////////////////////////

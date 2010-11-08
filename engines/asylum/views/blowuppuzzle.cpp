@@ -140,7 +140,7 @@ void BlowUpPuzzleVCR::update() {
 		_rightClickDown = false;
 		closeBlowUp();
 		getSound()->stopSound();
-		getScene()->enterScene();
+		// FIXME getScene()->enterScene();
 	}
 
 	if (_leftClickDown) {
@@ -185,7 +185,7 @@ void BlowUpPuzzleVCR::update() {
 
 		_isAccomplished = false;
 		_active = false;
-		getScene()->enterScene();
+		// FIXME getScene()->enterScene();
 	} else {
 		getScreen()->drawGraphicsInQueue();
 	}

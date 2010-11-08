@@ -32,7 +32,7 @@
 
 namespace Asylum {
 
-class Scene;
+class AsylumEngine;
 
 enum EncounterFlag{
 	kEncounterFlag2 = 2,
@@ -60,7 +60,7 @@ typedef struct EncounterStruct {
 
 class Encounter {
 public:
-	Encounter(Scene *scene);
+	Encounter(AsylumEngine *engine);
 	virtual ~Encounter();
 
 	void setVariable(int32 idx, int32 value) {
@@ -72,12 +72,13 @@ public:
 	void setFlag(EncounterFlag flag, int32 val);
 
 private:
+	AsylumEngine *_vm;
+
 	int16 *_variables;
 	int16 _anvilStyleFlag;
 
 	EncounterItem *_currentEncounter;
 	Common::Array<EncounterItem> _items;
-	Scene *_scene;
 
 	int32 _flags[5];
 

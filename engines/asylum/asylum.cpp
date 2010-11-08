@@ -29,6 +29,7 @@
 #include "asylum/resources/encounters.h"
 
 #include "asylum/system/config.h"
+#include "asylum/system/cursor.h"
 #include "asylum/system/screen.h"
 #include "asylum/system/sound.h"
 #include "asylum/system/text.h"
@@ -52,6 +53,9 @@ namespace Asylum {
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
 	_console(NULL), _encounter(NULL), _resource(NULL), _mainMenu(NULL), _scene(NULL), _screen(NULL),
 	_sound(NULL), _text(NULL), _video(NULL) {
+
+	// Reset flags
+	memset(_gameFlags, 0, 1512);
 
 	// Add default search directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -97,39 +101,35 @@ Common::Error AsylumEngine::run() {
 	// Create debugger. It requires GFX to be initialized
 	_console   = new Console(this);
 
-	// Create all manager classes
+	// Create resource manager
 	_resource  = new ResourceManager();
+
+	// Create all game classes
+	_encounter = new Encounter(this);
+	_cursor    = new Cursor(this);
 	_screen    = new Screen(this);
 	_sound     = new Sound(this, _mixer);
-	_video     = new Video(this, _mixer);
 	_text      = new Text(this);
-	_scene     = NULL;
-	_encounter = NULL;
+	_video     = new Video(this, _mixer);
 
+	// Create main menu
+	_mainMenu  = new MainMenu(this);
+
+	// FIXME: remove
 	_introPlaying = false;
-
-	memset(_gameFlags, 0, 1512);
-
-	// Start the game
-    g_system->showMouse(true);
 
 	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing) (address 00411CD0)
     // load startup configurations (.text:0041A970)
     Config.read();
 	// TODO: init unknown game stuffs (.text:0040F430)
 
-	if (Config.showIntro)
-		_video->playVideo(0, Config.showMovieSubtitles);
-
-	// Set up main menu
-	_mainMenu = new MainMenu(this);
-
 	// TODO: if savegame not exists on folder, than start game()
 	//if(0) { //SearchMan.hasArchive
-		startGame();
+		startGame(kResourcePackTowerCells, kStartGamePlayIntro);
 	//} else {
 	//    _mainMenu->openMenu();
 	//}
+	// 
 
 	while (!shouldQuit()) {
 		handleEvents(true);
@@ -151,33 +151,39 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 	}
 }
 
-void AsylumEngine::startGame() {
-	// TODO: reset what need to be reset for a new game
-	if (_scene)
-		delete _scene;
+void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
+	// Load the default mouse cursor
+	_cursor->set(MAKE_RESOURCE(kResourcePackSound, 14));
+	_cursor->hide();
 
-	_scene = new Scene(kResourcePackTowerCells, this);
+	// Clear the graphic list
+	_screen->clearGraphicsInQueue();
 
-	if (Config.showIntro)
+	// Reset scene
+	delete _scene;
+	_scene = new Scene(this);
+
+	switch (type) {
+	default:
+		error("[AsylumEngine::startGame] Invalid start game type!");
+
+	case kStartGamePlayIntro:
+		_scene->enter(sceneId);
+
 		playIntro();
 
-	_scene->initialize();
+		_cursor->show();
+		break;
 
-	// FIXME This is just here for testing purposes. It is also defined
-	// in the processActionList() method when the necessary action is fired.
-	// Once the blowup puzzle testing is removed from checkForEvent(), this
-	// can be removed as well.
-	//_scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene));
+	case kStartGameLoad:
+		error("[AsylumEngine::startGame] kStartGameLoad not implemented!");
+		break;
 
-	// XXX Testing
-	_encounter = new Encounter(_scene);
+	case kStartGameScene:
+		_scene->enter(sceneId);
 
-	// Enter first scene
-	if(!_introPlaying)
-	{
-		setGameFlag(kGameFlag4);
-		setGameFlag(kGameFlag12);
-		_scene->enterScene();
+		_cursor->show();
+		break;
 	}
 }
 
@@ -185,8 +191,8 @@ void AsylumEngine::playIntro() {
 	_introPlaying = true;
 	g_system->showMouse(false);
 
-	_video->playVideo(1, Config.showMovieSubtitles);
-
+	if (Config.showIntro)
+		_video->playVideo(1, Config.showMovieSubtitles);
 	/*if (_scene->worldstats()->musicCurrentResourceId != kResourceMusic_FFFFFD66)
 		_sound->playMusic(_scene->getResourcePack(), _scene->worldstats()->musicCurrentResourceId);*/
 
@@ -229,7 +235,7 @@ void AsylumEngine::handleEvents(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 			// the scene's soundResourceId[] array (seems that's the way the original worked,
 			// especially when you examine isSoundinList() or isSoundPlaying())
 
-			_scene->enterScene();
+			//_scene->enterScene();
 		}
 	}
 
@@ -249,7 +255,7 @@ void AsylumEngine::handleEvents(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 				if (_mainMenu->isActive()) {
 					if (_scene) {
 						_mainMenu->closeMenu();
-						_scene->enterScene();
+						// FIXME _scene->enterScene();
 					}
 				} else if (_scene && _scene->isActive()) {
 					_mainMenu->openMenu();
@@ -307,8 +313,8 @@ void AsylumEngine::processDelayedEvents() {
 
 		if (_mainMenu->isActive())
 			_mainMenu->openMenu();
-		else if (_scene->isActive())
-			_scene->enterScene();
+		// FIXME else if (_scene->isActive())
+			// FIXME _scene->enterScene();
 	}
 
 	// check for a delayed scene change
@@ -326,9 +332,8 @@ void AsylumEngine::processDelayedEvents() {
 		if (_scene)
 			delete _scene;
 
-		_scene = new Scene(packId, this);
-		_scene->initialize();
-		_scene->enterScene();
+		_scene = new Scene(this);
+		_scene->enter(packId);
 	}
 }
 
