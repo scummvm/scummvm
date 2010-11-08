@@ -323,6 +323,7 @@ void AsylumEngine::processDelayedEvents() {
 			delete _scene;
 
 		_scene = new Scene(sceneIdx, this);
+		_scene->initialize();
 		_scene->enterScene();
 	}
 }
