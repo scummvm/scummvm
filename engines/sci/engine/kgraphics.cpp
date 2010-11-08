@@ -256,10 +256,11 @@ reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
 	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
 	int16 control = (argc > 6) ? argv[6].toSint16() : -1;
 
-	// TODO: Find out why we get > 15 for color in EGA
-	// FIXME: EGA? Which EGA? SCI0 or SCI1? Check the
-	// workarounds inside kGraphFillBoxAny and kNewWindow
-	if (!g_sci->getResMan()->isVGA() && !g_sci->getResMan()->isAmiga32color())
+	// WORKAROUND: SCI1 EGA games can set invalid colors (above 0 - 15).
+	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
+	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
+	// for the undithering algorithm in EGA games - bug #3048908.
+	if (g_sci->getResMan()->getViewType() == kViewEga && getSciVersion() >= SCI_VERSION_1_EARLY)
 		color &= 0x0F;
 
 	g_sci->_gfxPaint16->kernelGraphDrawLine(getGraphPoint(argv), getGraphPoint(argv + 2), color, priority, control);
@@ -297,7 +298,7 @@ reg_t kGraphFillBoxAny(EngineState *s, int argc, reg_t *argv) {
 	int16 priority = argv[6].toSint16(); // yes, we may read from stack sometimes here
 	int16 control = argv[7].toSint16(); // sierra did the same
 
-	// WORKAROUND: PQ3 EGA is setting invalid colors (above 0 - 15).
+	// WORKAROUND: SCI1 EGA games can set invalid colors (above 0 - 15).
 	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
 	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
 	// for the undithering algorithm in EGA games - bug #3048908.
@@ -1088,7 +1089,7 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 	int colorPen = (argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0;
 	int colorBack = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
 
-	// WORKAROUND: PQ3 EGA is setting invalid colors (above 0 - 15).
+	// WORKAROUND: SCI1 EGA games can set invalid colors (above 0 - 15).
 	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
 	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
 	// for the undithering algorithm in EGA games - bug #3048908.
@@ -1453,6 +1454,7 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
 	kStub(s, argc, argv);
 
+	// Can be called with 7, 8 or 9 parameters
 	// showStyle matches the style selector of the associated plane object
 	uint16 showStyle = argv[0].toUint16();	// 0 - 15
 	reg_t planeObj = argv[1];
@@ -1468,6 +1470,8 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
 		return s->r_acc;
 	}
+
+	// TODO: Check if the plane is in the list of planes to draw
 
 	return s->r_acc;
 }
