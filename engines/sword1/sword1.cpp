@@ -66,6 +66,8 @@ SwordEngine::SwordEngine(OSystem *syst)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "smackshi");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "english");//PSX Demo
 	SearchMan.addSubDirectoryMatching(gameDataDir, "italian");//PSX Demo
+
+	_console = new SwordConsole(this);
 }
 
 SwordEngine::~SwordEngine() {
@@ -78,6 +80,7 @@ SwordEngine::~SwordEngine() {
 	delete _mouse;
 	delete _objectMan;
 	delete _resMan;
+	delete _console;
 }
 
 Common::Error SwordEngine::init() {
@@ -678,6 +681,13 @@ uint8 SwordEngine::mainLoop() {
 				if (retCode == CONTROL_NOTHING_DONE)
 					_screen->fullRefresh();
 			}
+
+			// Check for Debugger Activation
+			if (_keyPressed.hasFlags(Common::KBD_CTRL) && _keyPressed.keycode == Common::KEYCODE_d) {
+				this->getDebugger()->attach();
+				this->getDebugger()->onFrame();
+			}
+
 			_mouseState = 0;
 			_keyPressed.reset();
 		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!shouldQuit()));

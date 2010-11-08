@@ -2,6 +2,7 @@ MODULE := engines/sword1
 
 MODULE_OBJS := \
 	animation.o \
+	console.o \
 	control.o \
 	debug.o \
 	detection.o \

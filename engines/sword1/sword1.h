@@ -30,6 +30,7 @@
 #include "common/events.h"
 #include "common/util.h"
 #include "sword1/sworddefs.h"
+#include "sword1/console.h"
 
 /**
  * This is the namespace of the Sword1 engine.
@@ -106,6 +107,8 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 
+	GUI::Debugger *getDebugger() { return _console; }
+
 	Common::Error loadGameState(int slot);
 	bool canLoadGameStateCurrently();
 	Common::Error saveGameState(int slot, const char *desc);
@@ -120,6 +123,8 @@ private:
 	void flagsToBool(bool *dest, uint8 flags);
 
 	void reinitRes(); //Reinits the resources after a GMM load
+
+	SwordConsole *_console;
 
 	uint8 mainLoop();
 
