@@ -188,6 +188,7 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 	} else {
 		oldDim = _screen->curDimIndex();
 		_screen->setScreenDim(dim);
+		_lineCount = 0;
 		_textDimData[dim].color1 = isPc98 ? 0x33 : 254;
 		_textDimData[dim].color2 = _screen->_curDim->unkA;
 	}
@@ -200,6 +201,7 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 	displayText(_dialogueBuffer);
 
 	_screen->setScreenDim(oldDim);
+	_lineCount = 0;
 	_screen->setCurPage(cp);
 	_screen->setFont(of);
 
@@ -246,6 +248,7 @@ void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
 	displayText(_buffer);
 
 	_screen->setScreenDim(od);
+	_lineCount = 0;
 
 	if (!(type & 0x8000)) {
 		if (soundEffect[type])
@@ -376,7 +379,6 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 	_tempString2 = 0;
 
 	_currentLine[0] = 0;
-
 	memset(_ctrl, 0, 3);
 
 	char c = parseCommand();
@@ -594,13 +596,13 @@ void TextDisplayer_LoL::printLine(char *str) {
 			int n2 = 0;
 			int n1 = (w / 4) - 1;
 
-			do {
+			while (n2 < n1 && n2 < s) {
 				c = str[n2];
 				uint8 cu = (uint8) c;
 				if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0))
 					n2++;
 				n2++;
-			} while (n2 < n1 && n2 < s);
+			}
 			s = n2;
 		}
 	} else {
