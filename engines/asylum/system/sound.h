@@ -100,8 +100,12 @@ public:
 	void stopSound();
 	void stopAllSounds(bool stopSpeechAndMusic = false);
 
+	/**
+	 * Play speech by resourceId
+	 *
+	 * @param resourceId Identifier for the sound resource.
+	 */
 	void playSpeech(ResourceId resourceId);
-	void setSpeech(ResourceId sound, ResourceId speechText);
 
 	void playMusic(ResourceId resourceId, int32 volume = Config.musicVolume);
 	void changeMusic(ResourceId resourceId, int32 musicStatusExt);
@@ -139,10 +143,6 @@ public:
 
 	// TODO Make sure this is needed
 	bool isCacheOk() { error("[Sound::isCacheOk] not implemented!"); }
-
-	// Global resources ids
-	ResourceId soundResourceId;
-	ResourceId speechTextResourceId;
 
 private:
 	AsylumEngine *_vm;

@@ -250,10 +250,6 @@ void Sound::playSpeech(ResourceId resourceId) {
 	playSoundData(Audio::Mixer::kSpeechSoundType, &_speechHandle, ent->data, ent->size, false, 0, 0);
 }
 
-void Sound::setSpeech(ResourceId sound, ResourceId speechText) {
-	error("[Sound::setSpeech] not implemented!");
-}
-
 void Sound::playMusic(ResourceId resourceId, int32 volume) {
 	if (resourceId == kResourceNone)
 		return;

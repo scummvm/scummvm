@@ -334,15 +334,9 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	// FIXME just updating because a left click event
 	// is caught causes animation speeds to change. This needs
 	// to be addressed
-	if (doUpdate) // || _leftClick)
-		update();
-}
+	if (!doUpdate)
+		return;
 
-// -------------------------------------------
-// ---------- PROCESS SCENE REGION -----------
-// -------------------------------------------
-
-void Scene::update() {
 	if (Config.showSceneLoading) {
 		if (!_titleLoaded) {
 			_title->update(_vm->getTick());
@@ -354,7 +348,7 @@ void Scene::update() {
 		}
 	}
 
-	if (updateScene())
+	if (update())
 		return;
 
 	// TODO: check game quality
@@ -362,18 +356,18 @@ void Scene::update() {
 
 	//TODO: other process stuffs from sub 0040AE30
 
-	if (_speech->_soundResourceId != 0) {
-		if (_vm->sound()->isPlaying(_speech->_soundResourceId)) {
+
+	if (_speech->getSoundResourceId() != 0) {
+		if (_vm->sound()->isPlaying(_speech->getSoundResourceId())) {
 			_speech->prepareSpeech();
 		} else {
-			_speech->_textResourceId = kResourceNone;
-			_speech->_soundResourceId = kResourceNone;
+			_speech->resetResourceIds();
 			_vm->clearGameFlag(kGameFlag219);
 		}
-}
+	}
 }
 
-int Scene::updateScene() {
+int Scene::update() {
 #ifdef DEBUG_SCENE_TIMES
 #define MESURE_TICKS(func) { \
 	int32 startTick =_vm->getTick(); \
@@ -1445,14 +1439,6 @@ void Scene::debugShowActors() {
 
 void Scene::updatePlayerChapter9(int32 param) {
 	error("[Scene::updatePlayerChapter9] not implemented!");
-}
-
-ResourceId Scene::playSpeech(int32 a1) {
-	error("[Scene::playSpeech] not implemented!");
-}
-
-ResourceId Scene::playSpeech(int32 a1, int32 a2) {
-	error("[Scene::playSpeech] not implemented!");
 }
 
 int Scene::processActor(int *x, int *param) {

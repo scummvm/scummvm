@@ -102,7 +102,7 @@ enum ResourcePackId {
 	kResourcePackShared                = 1,
 	kResourcePackMusic                 = 2,    // Special case: will load from mus* resources
 	kResourcePackSpeech                = 3,
-	// No resource pack 4
+	kResourcePackSpeechOther           = 4,
 	kResourcePackTowerCells            = 5,
 	kResourcePackInnocentAbandoned     = 6,
 	kResourcePackCourtyardAndChapel    = 7,

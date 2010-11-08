@@ -39,26 +39,59 @@ public:
 	Speech(AsylumEngine *engine);
 	virtual ~Speech();
 
-	ResourceId _soundResourceId;
-	ResourceId _textResourceId;
+	/**
+	 * Play speech
+	 *
+	 * @param soundResourceId The sound resource id.
+	 * @param textResourceId  The text resource id.
+	 */
+	ResourceId play(ResourceId soundResourceId, ResourceId textResourceId);
 
-	/** .text:00414810
-	 *  Play player speech
-	 *  @param speechIdx speech index (used for sound and text resources)
-	 *  @return correct resourceId
-	 */
-	int32 play(ResourceId speechResourceId);
-	/** .text:004146D0
-	 *  Set speech for different player type
-	 *  @param soundResourceId sound resource id
-	 *  @param textResourceId text resource id
-	 */
-	void setPlayerSpeech(ResourceId soundResourceId, ResourceId textResourceId);
-	/** .text:004144C0
+	/**
 	 *  Prepare speech to play
 	 *   - Process sound speech and draws dialogue in screen
 	 */
 	void prepareSpeech();
+
+	/**
+	 * Play speech by index offset.
+	 *
+	 * @param index The index offset.
+	 *
+	 * @return the ResourceId for the sound played
+	 */
+	ResourceId playIndexed(int32 index);
+
+	/**
+	 * Play scene speech.
+	 *
+	 * @param type   The type of speech to play.
+	 * @param index  The index offset.
+	 *
+	 * @return the ResourceId for the sound played
+	 */
+	ResourceId playScene(int32 type, int32 index);
+
+	/**
+	 * Play speech by index offset (based on player type)
+	 *
+	 * @param index The index offset.
+	 *
+	 * @return the ResourceId for the sound played
+	 */
+	ResourceId playPlayer(int32 index);
+
+	/**
+	 * Resets the resource identifiers.
+	 */
+	void resetResourceIds();
+
+	/**
+	 * Gets the sound resource identifier.
+	 *
+	 * @return The sound resource identifier.
+	 */
+	ResourceId getSoundResourceId() const { return _soundResourceId; }
 
 private:
 	AsylumEngine *_vm;
@@ -67,13 +100,13 @@ private:
 	char  *_textData;
 	char  *_textDataPos;
 
-	/** .text:00414580
-	 * TODO add description
-	 */
-	void processSpeech();
+	ResourceId _soundResourceId;
+	ResourceId _textResourceId;
 
-	// This function was cutoff since it doesn't make any sense using it. Its here for address information only
-	/** .text:00414630 void playSpeech(ResourceId textResourceId, ResourceId fontResourceId); */
+	/**
+	 * Process speech and prepare for display
+	 */
+	void process();
 
 }; // end of class Speech
 
