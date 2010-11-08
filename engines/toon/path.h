@@ -37,24 +37,27 @@ struct HeapDataGrid {
 };
 
 class PathFindingHeap {
-
-private:
-	HeapDataGrid *_data;
 public:
+	PathFindingHeap();
+	~PathFindingHeap();
+
 	int32 _alloc;
 	int32 _count;
+
 	int32 push(int32 x, int32 y, int32 weight);
 	int32 pop(int32 *x, int32 *y, int32 *weight);
 	int32 init(int32 size);
 	int32 clear();
 	int32 unload();
-};
 
+private:
+	HeapDataGrid *_data;
+};
 
 class PathFinding {
 public:
 	PathFinding(ToonEngine *vm);
-	~PathFinding(void);
+	~PathFinding();
 
 	int32 findPath(int32 x, int32 y, int32 destX, int32 destY);
 	int32 findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32 *fyy, int origX = -1, int origY = -1);

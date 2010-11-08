@@ -98,6 +98,7 @@ public:
 class EMCInterpreter {
 public:
 	EMCInterpreter(ToonEngine *vm);
+	~EMCInterpreter();
 
 	bool load(const char *filename, EMCData *data, const Common::Array<const OpcodeV2 *> *opcodes);
 	void unload(EMCData *data);
@@ -147,6 +148,7 @@ private:
 	void op_eval(EMCState *);
 	void op_setRetAndJmp(EMCState *);
 };
+
 } // End of namespace Toon
 
 #endif

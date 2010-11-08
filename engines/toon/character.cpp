@@ -32,8 +32,8 @@ namespace Toon {
 
 Character::Character(ToonEngine *vm) : _vm(vm) {
 	_animationInstance = 0;
-	_shadowAnimationInstance = 0;
-	_shadowAnim = 0;
+	_shadowAnimationInstance = NULL;
+	_shadowAnim = NULL;
 	_x = 0;
 	_y = 0;
 	_z = 0;
@@ -64,6 +64,8 @@ Character::Character(ToonEngine *vm) : _vm(vm) {
 }
 
 Character::~Character(void) {
+	delete _shadowAnimationInstance;
+	delete _shadowAnim;
 }
 
 void Character::init() {
@@ -918,10 +920,12 @@ const SpecialCharacterAnimation *Character::getSpecialAnimation(int32 characterI
 bool Character::loadShadowAnimation(Common::String animName) {
 	debugC(1, kDebugCharacter, "loadShadowAnimation(%s)", animName.c_str());
 
+	delete _shadowAnim;
 	_shadowAnim = new Animation(_vm);
 	if (!_shadowAnim->loadAnimation(animName))
 		return false;
 
+	delete _shadowAnimationInstance;
 	_shadowAnimationInstance = _vm->getAnimationManager()->createNewInstance(kAnimationCharacter);
 	_vm->getAnimationManager()->addInstance(_shadowAnimationInstance);
 	_shadowAnimationInstance->setAnimation(_shadowAnim);

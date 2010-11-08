@@ -482,16 +482,13 @@ void AudioStreamInstance::setVolume(int32 volume) {
 }
 
 AudioStreamPackage::AudioStreamPackage(ToonEngine *vm) : _vm(vm) {
-	_indexBuffer = 0;
-	_file = 0;
+	_indexBuffer = NULL;
+	_file = NULL;
 }
 
 AudioStreamPackage::~AudioStreamPackage() {
 	delete[] _indexBuffer;
-	if (_file) {
-		delete _file;
-		_file = 0;
-	}
+	delete _file;
 }
 
 bool AudioStreamPackage::loadAudioPackage(Common::String indexFile, Common::String streamFile) {
@@ -503,7 +500,6 @@ bool AudioStreamPackage::loadAudioPackage(Common::String indexFile, Common::Stri
 		return false;
 
 	delete[] _indexBuffer;
-
 	_indexBuffer = new uint32[size / 4];
 	memcpy(_indexBuffer, fileData, size);
 

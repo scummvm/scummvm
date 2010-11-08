@@ -66,6 +66,9 @@ EMCInterpreter::EMCInterpreter(ToonEngine *vm) : _vm(vm), _scriptData(0), _filen
 #undef OPCODE
 }
 
+EMCInterpreter::~EMCInterpreter() {
+}
+
 bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 	switch (chunk._type) {
 	case MKID_BE('TEXT'):

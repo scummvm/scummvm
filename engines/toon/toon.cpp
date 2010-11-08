@@ -131,7 +131,6 @@ void ToonEngine::init() {
 	memset(_sceneAnimations, 0, sizeof(_sceneAnimations));
 	memset(_sceneAnimationScripts, 0, sizeof(_sceneAnimationScripts));
 
-
 	_gameState->_currentChapter = 1;
 	initChapter();
 	loadCursor();
@@ -755,10 +754,16 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	DebugMan.addDebugChannel(kDebugTools, "Tools", "Tools debug level");
 	DebugMan.addDebugChannel(kDebugText, "Text", "Text debug level");
 
-	_hotspots = NULL;
+	_moviePlayer = NULL;
+	_mainSurface = NULL;
 	_fontRenderer = NULL;
 	_fontToon = NULL;
 	_fontEZ = NULL;
+	_hotspots = NULL;
+	_genericTexts = NULL;
+	_roomTexts = NULL;
+	_script_func = NULL;
+	_script = NULL;
 	_console = new ToonConsole(this);
 
 	switch (_language) {
@@ -787,10 +792,17 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 }
 
 ToonEngine::~ToonEngine() {
+	delete _moviePlayer;
+	delete _mainSurface;
+
 	delete _fontRenderer;
 	delete _fontToon;
 	delete _fontEZ;
 	delete _hotspots;
+	delete _genericTexts;
+	delete _roomTexts;
+	delete _script_func;
+	delete _script;
 
 	DebugMan.clearAllDebugChannels();
 	delete _console;
@@ -1171,6 +1183,7 @@ void ToonEngine::initChapter() {
 	memset(&data, 0, sizeof(data));
 	memset(&status, 0, sizeof(status));
 
+	delete _script;
 	_script = new EMCInterpreter(this);
 
 	_script->load("_START01.EMC", &data, &_script_func->_opcodes);

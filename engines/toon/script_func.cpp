@@ -223,7 +223,10 @@ ScriptFunc::ScriptFunc(ToonEngine *vm) {
 }
 
 ScriptFunc::~ScriptFunc(void) {
-
+	while(!_opcodes.empty()) {
+		//delete _opcodes.end();
+		_opcodes.pop_back();
+	}
 }
 
 char *GetText(int32 i, EMCState *state) {

@@ -27,9 +27,20 @@
 
 namespace Toon {
 
+PathFindingHeap::PathFindingHeap() {
+	_count = 0;
+	_alloc = 0;
+	_data = NULL;
+}
+
+PathFindingHeap::~PathFindingHeap() {
+	delete[] _data;
+}
+
 int32 PathFindingHeap::init(int32 size) {
 	debugC(1, kDebugPath, "init(%d)", size);
 
+	delete[] _data;
 	_data = new HeapDataGrid[size * 2];
 	memset(_data, 0, sizeof(HeapDataGrid) * size * 2);
 	_count = 0;
@@ -38,8 +49,8 @@ int32 PathFindingHeap::init(int32 size) {
 }
 
 int32 PathFindingHeap::unload() {
-	if (_data)
-		delete[] _data;
+	delete[] _data;
+	_data = NULL;
 	return 0;
 }
 
@@ -131,10 +142,9 @@ PathFinding::PathFinding(ToonEngine *vm) : _vm(vm) {
 }
 
 PathFinding::~PathFinding(void) {
-	if (_heap) {
+	if (_heap)
 		_heap->unload();
-		delete _heap;
-	}
+	delete _heap;
 	delete[] _gridTemp;
 }
 
