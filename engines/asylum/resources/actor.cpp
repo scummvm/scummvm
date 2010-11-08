@@ -760,6 +760,19 @@ void Actor::setRawResources(uint8 *data) {
 // Unknown methods
 //////////////////////////////////////////////////////////////////////////
 
+bool Actor::isResourcePresent() {
+	if (_status != kActorStatus9)
+		return false;
+
+	int index = 10;
+	for (index = 10; index < 20; index++) {
+		if (_graphicResourceIds[index] == _resourceId)
+			break;
+	}
+
+	return (index >= 15);
+}
+
 bool Actor::process(int32 actorX, int32 actorY) {
 	error("[Actor::process] not implemented!");
 }
@@ -924,63 +937,17 @@ void Actor::updateStatusEnabled() {
 	}
 }
 
-ResourceId Actor::getResourceFromTable() {
-	ResourceId id = kResourceNone;
-
-	if (_status == kActorStatus9) {
-		for (int i = 10; i <= 20; i++)
-			if (_resourceId == _graphicResourceIds[i])
-				return _graphicResourceIds[i];
-	}
-
-	return id;
-
-	/* TODO Here's the disassembly if someone could verify my implementation ;)
-	int __cdecl character_sub_4093D0(int characterIndex)
-	{
-	  int result; // eax@1
-	  int v2; // edx@1
-	  char *_grResTableEntry; // edx@2
-	  signed int v4; // ecx@2
-	  int _grResId; // esi@2
-
-	  result = 0;
-	  v2 = 2468 * characterIndex;
-	  if ( scene.characters[characterIndex].status == 9 )
-	  {
-	    _grResId = *(int *)((char *)&scene.characters[0].grResId + v2);
-	    v4 = 10;
-	    _grResTableEntry = (char *)&scene.characters[0].grResTable[10] + v2;
-	    while ( *(_DWORD *)_grResTableEntry != _grResId )
-	    {
-	      ++v4;
-	      _grResTableEntry += 4;
-	      if ( v4 >= 20 )
-	        return result;
-	    }
-	    result = v4 < 15;
-	    LOBYTE(result) = v4 >= 15;
-	  }
-	  return result;
-	}
-	*/
-}
-
 void Actor::updateStatus9() {
-	if (getWorld()->numChapter != 9 && getWorld()->actorType == 0 && _frameIndex == 0) {
-		// FIXME I don't really understand why this check would be necessary here
-		// since we're not really doing anything with the result, and it doesn't
-		// really matter whether it's missing or not ....
-		if (getResourceFromTable() != kResourceNone) {
-			Sound *snd = getSound();
-			if (!snd->soundResourceId || !snd->isPlaying(snd->soundResourceId)) {
-				snd->playSpeech(13);
-			}
-		}
+	if (_index == getScene()->getPlayerActorIndex()
+	 && getWorld()->chapter != kChapter9
+	 && getWorld()->actorType == 0
+	 && _frameIndex == 0
+	 && isResourcePresent()) {
+		if (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId()))
+			getSpeech()->playPlayer(13);
 	}
 
-	_frameIndex++;
-
+	++_frameIndex;
 	if (_frameIndex == _frameCount) {
 		updateStatus(kActorStatusEnabled);
 		_lastScreenUpdate = _vm->screenUpdatesCount;
