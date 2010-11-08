@@ -1,6 +1,7 @@
 MODULE := engines/touche
 
 MODULE_OBJS := \
+	console.o \
 	detection.o \
 	graphics.o \
 	menu.o \

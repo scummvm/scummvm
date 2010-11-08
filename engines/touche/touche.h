@@ -37,6 +37,8 @@
 
 #include "engines/engine.h"
 
+#include "touche/console.h"
+
 /**
  * This is the namespace of the Touche engine.
  *
@@ -382,6 +384,7 @@ public:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
+	GUI::Debugger *getDebugger() { return _console; }
 
 protected:
 
@@ -517,6 +520,8 @@ protected:
 	virtual Common::Error loadGameState(int num);
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();
+
+	ToucheConsole *_console;
 
 	void setupOpcodes();
 	void op_nop();
