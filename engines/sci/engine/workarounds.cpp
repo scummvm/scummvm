@@ -480,8 +480,9 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 						&& ((workaround->scriptNr == -1) || (workaround->scriptNr == curScriptNr))
 						&& ((workaround->roomNr == -1) || (workaround->roomNr == curRoomNumber))
 						&& ((workaround->inheritanceLevel == -1) || (workaround->inheritanceLevel == inheritanceLevel))
-						&& ((workaround->objectName == NULL) || (workaround->objectName == searchObjectName))
-						&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->debugLocalCallOffset
+						&& ((workaround->objectName == NULL) || (workaround->objectName == g_sci->getSciLanguageString(searchObjectName.c_str(), K_LANG_ENGLISH)))
+						&& workaround->methodName == g_sci->getSciLanguageString(curMethodName.c_str(), K_LANG_ENGLISH)
+						&& workaround->localCallOffset == lastCall->debugLocalCallOffset
 						&& ((workaround->index == -1) || (workaround->index == index))) {
 					// Workaround found
 					return workaround->newValue;
