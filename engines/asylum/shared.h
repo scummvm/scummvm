@@ -349,6 +349,7 @@ enum ObjectFlag {
 #define getScreen()    _vm->screen()
 #define getScript()    _vm->scene()->actions()
 #define getSpeech()    _vm->scene()->speech()
+#define getText()      _vm->text()
 #define getWorld()     _vm->scene()->worldstats()
 
 //////////////////////////////////////////////////////////////////////////
