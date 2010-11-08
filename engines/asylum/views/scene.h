@@ -41,12 +41,12 @@ namespace Asylum {
 class ActionList;
 class Actor;
 class AsylumEngine;
-//class BlowUpPuzzle;
+class BlowUpPuzzle;
 class Cursor;
 class GraphicResource;
 class Polygons;
 class ResourcePack;
-class Scene;
+class SceneTitle;
 class Screen;
 class Special;
 class Speech;
@@ -66,32 +66,6 @@ enum HitType {
 	kHitObject    = 3,
 	kHitActor      = 4
 };
-
-class SceneTitle {
-public:
-	SceneTitle(Scene *scene);
-	~SceneTitle();
-
-	void load();
-
-	void update(int32 tick);
-	bool loadingComplete() { return _done; }
-
-private:
-	Scene *_scene;
-
-	GraphicResource *_bg;
-	GraphicResource *_progress;
-
-	int32  _start;
-	int32  _ticks;
-	bool   _done;
-	uint32 _spinnerFrame;
-	int32  _spinnerProgress;
-	bool   _showMouseState;
-
-}; // end of class SceneTitle
-
 
 class Scene {
 public:

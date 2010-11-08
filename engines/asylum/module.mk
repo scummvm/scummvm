@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	views/blowuppuzzle.o \
 	views/menu.o \
 	views/scene.o \
+	views/scenetitle.o \
 	asylum.o \
 	console.o \
 	detection.o \

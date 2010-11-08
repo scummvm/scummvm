@@ -40,6 +40,8 @@
 #include "asylum/system/speech.h"
 #include "asylum/system/text.h"
 
+#include "asylum/views/scenetitle.h"
+
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 #include "asylum/staticres.h"
@@ -124,7 +126,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 
 	// TODO: init action list
 
-	_title = new SceneTitle(this);
+	_title = new SceneTitle(_vm);
 	_titleLoaded = false;
 
 	_special = new Special(_vm);
@@ -1464,84 +1466,6 @@ void Scene::makeGreyPalette() {
 
 void Scene::resetActor0() {
 	error("[Scene::resetActor0] not implemented!");
-}
-
-//////////////////////////////////////////////////////////////////////////
-// SceneTitle
-//////////////////////////////////////////////////////////////////////////
-SceneTitle::SceneTitle(Scene *scene): _scene(scene) {
-	_bg = NULL;
-	_progress = NULL;
-}
-
-SceneTitle::~SceneTitle() {
-	delete _bg;
-	delete _progress;
-}
-
-void SceneTitle::load() {
-	_start = _scene->vm()->getTick();
-
-	_bg = new GraphicResource(_scene->_resPack, _scene->_ws->sceneTitleGraphicResourceId);
-	_scene->vm()->screen()->setPalette(_scene->_resPack, _scene->_ws->sceneTitlePaletteResourceId);
-
-	ResourcePack *pack = new ResourcePack(0x12);
-	_progress = new GraphicResource(pack, 0x80120011);
-	_spinnerProgress = 0;
-	_spinnerFrame = 0;
-
-	_scene->vm()->text()->loadFont(pack, 0x80120012);
-
-	delete pack;
-
-	_done = false;
-	_showMouseState = g_system->showMouse(false);
-}
-
-void SceneTitle::update(int32 tick) {
-
-	// XXX This is not from the original. It's just some
-	// arbitrary math to throttle the progress indicator.
-	// In the game, the scene loading progress indicated
-	// how far the engine had progressed in terms of buffering
-	// the various scene resource.
-	// Since we don't actually buffer content like the original,
-	// but load on demand from offset/length within a ResourcePack,
-	// the progress indicator is effectively useless.
-	// It's just in here as "eye candy" :P
-	if ((tick - _start) % 500 > 100)
-		_spinnerProgress += 20;
-
-	GraphicFrame *bgFrame = _bg->getFrame(0);
-
-	_scene->vm()->screen()->copyToBackBuffer(
-		((byte *)bgFrame->surface.pixels),
-		bgFrame->surface.w,
-		0, 0, 640, 480);
-
-	ResourceId resourceId = _scene->getSceneIndex() - 4 + 1811;
-	int32 resWidth = _scene->vm()->text()->getResTextWidth(resourceId);
-	_scene->vm()->text()->drawResTextCentered(320 - resWidth * 24, 30, resWidth, resourceId);
-
-	GraphicFrame *frame = _progress->getFrame(_spinnerFrame);
-
-	_scene->vm()->screen()->copyRectToScreenWithTransparency(
-		((byte*)frame->surface.pixels),
-		frame->surface.w,
-		frame->x - 290 + _spinnerProgress,
-		frame->y,
-		frame->surface.w,
-		frame->surface.h);
-
-	_spinnerFrame++;
-
-	if (_spinnerFrame > _progress->getFrameCount() - 1)
-		_spinnerFrame = 0;
-
-    if (_spinnerProgress > 590) {
-		_done = true;
-        g_system->showMouse(_showMouseState);
-    }
 }
 
 } // end of namespace Asylum
