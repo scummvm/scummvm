@@ -47,6 +47,7 @@
 #include "engines/engine.h"
 
 #include "made/sound.h"
+#include "made/console.h"
 
 /**
  * This is the namespace of the Made engine.
@@ -101,6 +102,8 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 
+	GUI::Debugger *getDebugger() { return _console; }
+
 	int getGameId() {
 		return _gameId;
 	}
@@ -113,6 +116,7 @@ public:
 	Common::Platform getPlatform() const;
 
 private:
+	MadeConsole *_console;
 public:
 	PmvPlayer *_pmvPlayer;
 	ResourceReader *_res;

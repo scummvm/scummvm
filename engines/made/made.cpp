@@ -79,6 +79,8 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "made");
 
+	_console = new MadeConsole(this);
+
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
 		_system->openCD(cd_num);
@@ -133,6 +135,7 @@ MadeEngine::~MadeEngine() {
 	AudioCD.stop();
 
 	delete _rnd;
+	delete _console;
 	delete _pmvPlayer;
 	delete _res;
 	delete _screen;
@@ -234,6 +237,12 @@ void MadeEngine::handleEvents() {
 			if (_eventKey == Common::KEYCODE_BACKSPACE)
 				_eventKey = 9;
 			_eventNum = 5;
+
+			// Check for Debugger Activation
+			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) {
+				this->getDebugger()->attach();
+				this->getDebugger()->onFrame();
+			}
 			break;
 
 		default:

@@ -1,6 +1,7 @@
 MODULE := engines/made
 
 MODULE_OBJS := \
+	console.o \
 	database.o \
 	detection.o \
 	graphics.o \
