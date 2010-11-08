@@ -236,10 +236,10 @@ void Speech::prepareSpeech() {
 			int32 posY = (((point.y >= 240) - 1) & 280) + 40;
 
 			getText()->loadFont(getWorld()->font3);
-			getText()->drawText(20, posY, _textDataPos);
+			getText()->draw(20, posY, _textDataPos);
 
 			getText()->loadFont(getWorld()->font1);
-			getText()->drawText(20, posY, _textData);
+			getText()->draw(20, posY, _textData);
 		}
 	}
 }
