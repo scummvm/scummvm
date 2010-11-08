@@ -40,7 +40,7 @@ Text::Text(Screen *screen) : _screen(screen) {
 	_curFontFlags = 0;
 	_fontResource = 0;
 
-	_textPack = new ResourcePack(0);
+	_textPack = new ResourcePack(kResourcePackText);
 }
 
 Text::~Text() {

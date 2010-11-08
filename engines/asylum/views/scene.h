@@ -69,7 +69,7 @@ enum HitType {
 
 class Scene {
 public:
-	Scene(uint8 sceneIdx, AsylumEngine *engine);
+	Scene(ResourcePackId packId, AsylumEngine *engine);
 	~Scene();
 
 	/** .text:0040E460
@@ -84,7 +84,7 @@ public:
 	void activate() { _isActive = true; }
 	void deactivate() { _isActive = false; }
 	bool isActive() { return _isActive; }
-	int  getSceneIndex() { return _sceneIdx; }
+	ResourcePackId  getPackId() { return _packId; }
 
 	ResourcePack* getResourcePack() { return _resPack; }
 	ResourcePack* getMusicPack() { return _musPack; }
@@ -218,7 +218,7 @@ private:
 	AsylumEngine  *_vm;
 	Common::Event *_ev;
 
-	uint8 _sceneIdx;
+	ResourcePackId _packId;
 	int32 _playerActorIdx;
 	bool  _titleLoaded;
 	bool  _walking;

@@ -43,7 +43,7 @@ Video::Video(Audio::Mixer *mixer): _skipVideo(false) {
 	_smkDecoder = new Graphics::SmackerDecoder(mixer);
 
 	_text = new VideoText();
-	ResourcePack *resPack = new ResourcePack(1);
+	ResourcePack *resPack = new ResourcePack(kResourcePackShared);
 	_text->loadFont(resPack, 57);	// video font
 	delete resPack;
 }
@@ -189,7 +189,7 @@ VideoText::VideoText() {
 	_curFontFlags = 0;
 	_fontResource = 0;
 
-	_textPack = new ResourcePack(0);
+	_textPack = new ResourcePack(kResourcePackText);
 }
 
 VideoText::~VideoText() {

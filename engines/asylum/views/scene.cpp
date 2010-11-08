@@ -57,11 +57,11 @@ int g_debugPolygons;
 int g_debugObjects;
 int g_debugScrolling;
 
-Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
-	_sceneIdx = sceneIdx;
+Scene::Scene(ResourcePackId packId, AsylumEngine *engine): _vm(engine) {
+	_packId = packId;
 
 	char filename[10];
-	sprintf(filename, SCENE_FILE_MASK, sceneIdx);
+	sprintf(filename, SCENE_FILE_MASK, _packId);
 
 	char sceneTag[6];
 	Common::File* fd = new Common::File;
@@ -92,7 +92,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	delete fd;
 
 	_speech = new Speech(this);
-	_resPack = new ResourcePack(sceneIdx);
+	_resPack = new ResourcePack(_packId);
 
 	// TODO
 	// This will have to be re-initialized elsewhere due to
@@ -100,7 +100,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	_vm->text()->loadFont(_resPack, _ws->font1);
 
 	char musPackFileName[10];
-	sprintf(musPackFileName, MUSIC_FILE_MASK, sceneIdx);
+	sprintf(musPackFileName, MUSIC_FILE_MASK, packId);
 	_musPack = new ResourcePack(musPackFileName);
 
 	_bgResource    = new GraphicResource(_resPack, _ws->backgroundImage);
@@ -174,7 +174,7 @@ void Scene::initialize() {
 			Actor *act = _ws->actors[a];
 			act->flags |= 1;
 			act->setDirection(1);
-			getActor(a)->updateStatus(kActorStatusEnabled);
+			act->updateStatus(kActorStatusEnabled);
 			act->x1 -= act->x2;
 			act->y1 -= act->y2;
 			boundinRect->bottom = act->y2;
@@ -419,7 +419,7 @@ void Scene::updateMouse() {
 	pt.x = act->x1 -_ws->xLeft;
 	pt.y = act->y1 -_ws->yTop;
 
-	if (_sceneIdx != 2 || _playerActorIdx != 10) {
+	if (_packId != 2 || _playerActorIdx != 10) {
 		actorPos.left   = pt.x + 20;
 		actorPos.top    = pt.y;
 		actorPos.right  = pt.x + 2 * act->x2;

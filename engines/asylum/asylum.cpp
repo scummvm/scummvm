@@ -152,7 +152,7 @@ void AsylumEngine::startGame() {
 	if (_scene)
 		delete _scene;
 
-	_scene = new Scene(5, this);
+	_scene = new Scene(kResourcePackTowerCells, this);
 
 	if (Config.showIntro)
 		playIntro();
@@ -308,13 +308,13 @@ void AsylumEngine::processDelayedEvents() {
 	}
 
 	// check for a delayed scene change
-	int sceneIdx = _scene->actions()->getDelayedSceneIndex();
+	ResourcePackId packId = _scene->actions()->getDelayedSceneIndex();
 	// XXX Flag 183 indicates whether the actionlist is currently
 	// processing
-	if (sceneIdx >= 0 && isGameFlagNotSet(kGameFlagScriptProcessing)) {
+	if (packId >= 0 && isGameFlagNotSet(kGameFlagScriptProcessing)) {
 
 		// Reset delayed scene
-		_scene->actions()->setDelayedSceneIndex(-1);
+		_scene->actions()->setDelayedSceneIndex(kResourcePackInvalid);
 
 		_sound->stopMusic();
 		_sound->stopAllSounds();
@@ -322,7 +322,7 @@ void AsylumEngine::processDelayedEvents() {
 		if (_scene)
 			delete _scene;
 
-		_scene = new Scene(sceneIdx, this);
+		_scene = new Scene(packId, this);
 		_scene->initialize();
 		_scene->enterScene();
 	}

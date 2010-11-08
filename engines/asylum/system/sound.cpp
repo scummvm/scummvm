@@ -39,8 +39,8 @@
 namespace Asylum {
 
 Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
-	_speechPack = new ResourcePack(3);
-	_soundPack  = new ResourcePack(18);
+	_speechPack = new ResourcePack(kResourcePackSpeech);
+	_soundPack  = new ResourcePack(kResourcePackSound);
 	_currentMusicResIndex = -666;
 }
 
