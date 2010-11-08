@@ -215,14 +215,6 @@ public:
 	 */
 	void setRawResources(uint8* data);
 
-	/**
-	 * Get an entry from the graphicsResourceTable between indices 10 and 20 if
-	 * it matches the current resourceId value
-	 *
-	 * TODO This whole method probably isn't required
-	 */
-	ResourceId getResourceFromTable();
-
 	// Unknown methods
 	bool process(int32 actorX, int32 actorY);
 	void processStatus(int32 actorX, int32 actorY, bool doSpeech);
@@ -232,6 +224,13 @@ public:
 	void process_41BCC0(int32 reactionIndex, int32 numberValue01Substract);
 	bool process_41BDB0(int32 reactionIndex, bool testNumberValue01);
 	void update_40DE20();
+
+	/**
+	 * Query if the object resource is present in the resource table between indices 10 & 20
+	 *
+	 * @return true if resource present between 15 & 20, false if not.
+	 */
+	bool isResourcePresent();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Static update methods
