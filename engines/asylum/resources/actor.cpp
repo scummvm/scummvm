@@ -70,7 +70,7 @@ void Actor::load(Common::SeekableReadStream *stream) {
 
 	x                 = stream->readSint32LE();
 	y                 = stream->readSint32LE();
-	_resourceId       = stream->readSint32LE();
+	_resourceId       = (ResourceId)stream->readSint32LE();
 	_objectIndex     = stream->readSint32LE();
 	_frameIndex      = stream->readSint32LE();
 	_frameCount       = stream->readSint32LE();
@@ -112,7 +112,7 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	_field_650     = stream->readSint32LE();
 
 	for (int32 i = 0; i < 55; i++)
-		_graphicResourceIds[i] = stream->readSint32LE();
+		_graphicResourceIds[i] = (ResourceId)stream->readSint32LE();
 
 	stream->read(_name, sizeof(_name));
 
@@ -132,7 +132,7 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	actionType     = stream->readSint32LE();
 	_field_934  = stream->readSint32LE();
 	_field_938  = stream->readSint32LE();
-	_soundResourceId = stream->readSint32LE();
+	_soundResourceId = (ResourceId)stream->readSint32LE();
 	_numberValue01 = stream->readSint32LE();
 	_field_944  = stream->readSint32LE();
 	_field_948  = stream->readSint32LE();
@@ -214,15 +214,15 @@ void Actor::update() {
 		break;
 
 	case kActorStatus16:
-		if (getWorld()->numChapter == 2) {
+		if (getWorld()->chapter == 2) {
 			updateStatus16_Chapter2();
-		} else if (getWorld()->numChapter == 11 && _index == getScene()->getPlayerActorIndex()) {
+		} else if (getWorld()->chapter == 11 && _index == getScene()->getPlayerActorIndex()) {
 			updateStatus16_Chapter11();
 		}
 		break;
 
 	case kActorStatus17:
-		if (getWorld()->numChapter == 2) {
+		if (getWorld()->chapter == kChapter2) {
 			if (_index > 12) {
 				if (_frameIndex <= _frameCount - 1) {
 					++_frameIndex;
@@ -245,13 +245,13 @@ void Actor::update() {
 					if (_vm->isGameFlagSet(kGameFlag556)) {
 						Actor *player = getScene()->getActor();
 
-						getScene()->speech()->play(453);
+						getSpeech()->play(MAKE_RESOURCE(getScene()->getPackId(), 453));
 						hide();
 
 						player->updateStatus(kActorStatus3);
 						player->setResourceId(player->getResourcesId(35));
 						player->setDirection(4);
-						GraphicResource *resource = new GraphicResource(getScene()->getResourcePack(), player->getResourceId());
+						GraphicResource *resource = new GraphicResource(_vm, player->getResourceId());
 						player->setFrameCount(resource->getFrameCount());
 						delete resource;
 
@@ -269,9 +269,9 @@ void Actor::update() {
 
 						Sound *sound  = _vm->sound();
 						if (sound->isCacheOk())
-							sound->playMusic(getScene()->getResourcePack(), kResourceMusic_80020001);
+							sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, 1));
 
-						getWorld()->musicCurrentResourceId = 1;
+						getWorld()->musicCurrentResourceIndex = 1;
 
 						if (sound->isPlaying(getWorld()->soundResourceIds[7]))
 							sound->stopSound(getWorld()->soundResourceIds[7]);
@@ -304,7 +304,7 @@ void Actor::update() {
 				}
 			}
 
-		} else if (getWorld()->numChapter == 11) {
+		} else if (getWorld()->chapter == kChapter11) {
 			if (_index == getScene()->getPlayerActorIndex()) {
 				if (_frameIndex <= _frameCount - 1)
 					++_frameIndex;
@@ -318,7 +318,7 @@ void Actor::update() {
 		break;
 
 	case kActorStatus15:
-		if (getWorld()->numChapter == 2) {
+		if (getWorld()->chapter == kChapter2) {
 			if (_index > 12)
 				updateStatus15_Chapter2();
 
@@ -328,7 +328,7 @@ void Actor::update() {
 			if (_index == 11)
 				updateStatus15_Chapter2_Actor11();
 
-		} else if (getWorld()->numChapter == 11) {
+		} else if (getWorld()->chapter == kChapter11) {
 			if (_index >= 10 && _index < 16)
 				updateStatus15_Chapter11();
 
@@ -338,7 +338,7 @@ void Actor::update() {
 		break;
 
 	case kActorStatus18:
-		if (getWorld()->numChapter == 2) {
+		if (getWorld()->chapter == kChapter2) {
 			if (_index > 12)
 				updateStatus18_Chapter2();
 
@@ -362,7 +362,7 @@ void Actor::update() {
 		break;
 
 	case kActorStatus12:
-		if (getWorld()->numChapter == 2) {
+		if (getWorld()->chapter == kChapter2) {
 			if (_index > 12)
 				updateStatus12_Chapter2();
 
@@ -370,7 +370,7 @@ void Actor::update() {
 				updateStatus12_Chapter2_Actor11();
 
 			return;
-		} else if (getWorld()->numChapter == 11) {
+		} else if (getWorld()->chapter == kChapter11) {
 			switch (_index)	{
 			default:
 				break;
@@ -459,7 +459,7 @@ void Actor::update() {
 	if (_soundResourceId && getSound()->isPlaying(_soundResourceId))
 		setVolume();
 
-	if (_index != getScene()->getPlayerActorIndex() && getWorld()->numChapter != 9)
+	if (_index != getScene()->getPlayerActorIndex() && getWorld()->chapter != kChapter9)
 		error("[Actor::update] call to actor sound functions missing!");
 
 	updateDirection();
@@ -476,7 +476,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 
 	case kActorStatus1:
 	case kActorStatus12:
-		if ((getWorld()->numChapter == 2
+		if ((getWorld()->chapter == kChapter2
 		 && _index == getScene()->getPlayerActorIndex() && (_status == kActorStatus18 || _status == kActorStatus16 || kActorStatus17))
 		 || (_status != kActorStatusEnabled && _status != kActorStatus9 && _status != kActorStatus14 && _status != kActorStatus15 && _status != kActorStatus18))
 			return;
@@ -515,7 +515,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 		break;
 
 	case kActorStatus7:
-		if (getWorld()->numChapter == 2 && _index == 10 && _vm->isGameFlagSet(kGameFlag279)) {
+		if (getWorld()->chapter == kChapter2 && _index == 10 && _vm->isGameFlagSet(kGameFlag279)) {
 			Actor *actor = getScene()->getActor(0);
 			actor->x1 = x2 + x1 - actor->x2;
 			actor->y1 = y2 + y1 - actor->y2;
@@ -555,15 +555,15 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 		break;
 
 	case kActorStatus18:
-		if (getWorld()->numChapter == 2) {
-			GraphicResource *resource = new GraphicResource();
+		if (getWorld()->chapter == kChapter2) {
+			GraphicResource *resource = new GraphicResource(_vm);
 			_frameIndex = 0;
 
 			if (_index > 12)
 				_resourceId = _graphicResourceIds[_direction + 30];
 
 			if (getScene()->getPlayerActorIndex() == _index) {
-				resource->load(getScene()->getResourcePack(), _resourceId);
+				resource->load(_resourceId);
 				_frameIndex = resource->getFrameCount() - 1;
 			}
 
@@ -572,7 +572,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 
 			// Reload the graphic resource if the resource ID has changed
 			if (resource->getResourceId() != _resourceId)
-				resource->load(getScene()->getResourcePack(), _resourceId);
+				resource->load(_resourceId);
 
 			_frameCount = resource->getFrameCount();
 
@@ -614,14 +614,14 @@ void Actor::updateFromDirection(ActorDirection actorDirection) {
 		_resourceId = _graphicResourceIds[(actorDirection > 4 ? 8 - actorDirection : actorDirection) + 5];
 
 		// FIXME this seems kind of wasteful just to grab a frame count
-		GraphicResource *gra = new GraphicResource(getScene()->getResourcePack(), _resourceId);
+		GraphicResource *gra = new GraphicResource(_vm, _resourceId);
 		_frameCount = gra->getFrameCount();
 		delete gra;
 		}
 		break;
 
 	case kActorStatus18:
-		if (getWorld()->numChapter == 2) {
+		if (getWorld()->chapter == kChapter2) {
 			if (_index == 11) { // we are actor 11
 				if (actorDirection > 4)
 					_resourceId = _graphicResourceIds[8 - actorDirection];
@@ -662,7 +662,7 @@ void Actor::faceTarget(ObjectId id, DirectionFrom from) {
 
 
 
-		GraphicResource *resource = new GraphicResource(getScene()->getResourcePack(), object->getResourceId());
+		GraphicResource *resource = new GraphicResource(_vm, object->getResourceId());
 		GraphicFrame *frame = resource->getFrame(object->getFrameIndex());
 
 		newX = (frame->surface.w >> 1) + object->x;
@@ -876,10 +876,10 @@ void Actor::updateStatusEnabled() {
 			 && !_vm->encounter()->getFlag(kEncounterFlag2)
 			 && !getSound()->soundResourceId) {
 				if (_vm->getRandom(100) < 50) {
-					if (getWorld()->numChapter == 13)
-						getScene()->speech()->play(507);
+					if (getWorld()->chapter == kChapter13)
+						getSpeech()->play(MAKE_RESOURCE(getScene()->getPackId(), 507));
 					else
-						getScene()->playSpeech(4);
+						getSpeech()->play(MAKE_RESOURCE(getScene()->getPackId(), 4));
 				}
 			}
 			_lastScreenUpdate = _vm->screenUpdatesCount;
@@ -1066,13 +1066,13 @@ void Actor::updateFinish() {
 		getScene()->actions()->queueScript(area->scriptIndex, _index);
 	}
 
-	if (!area->paletteValue || area->paletteValue == actorArea->paletteValue || _index) {
-		if (area->paletteValue != actorArea->paletteValue && !_index)
-			_vm->screen()->startPaletteFade(area->paletteValue, 50, 3);
+	if (!area->paletteResourceId || area->paletteResourceId == actorArea->paletteResourceId || _index) {
+		if (area->paletteResourceId != actorArea->paletteResourceId && !_index)
+			_vm->screen()->startPaletteFade(area->paletteResourceId, 50, 3);
 
 		_actionIdx3 = areaIndex;
 	} else {
-		_vm->screen()->startPaletteFade(area->paletteValue, 50, 3);
+		_vm->screen()->startPaletteFade(area->paletteResourceId, 50, 3);
 		_actionIdx3 = areaIndex;
 	}
 }
@@ -1184,7 +1184,7 @@ ActorDirection Actor::getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
 void Actor::updateGraphicData(uint32 offset) {
 	_resourceId = _graphicResourceIds[(_direction > 4 ? 8 - _direction : _direction) + offset];
 
-	GraphicResource *resource = new GraphicResource(getScene()->getResourcePack(), _resourceId);
+	GraphicResource *resource = new GraphicResource(_vm, _resourceId);
 	_frameCount = resource->getFrameCount();
 	delete resource;
 
@@ -1196,7 +1196,7 @@ bool Actor::isDefaultDirection(int index) {
 }
 
 int32 Actor::getGraphicsFlags() {
-	if (getWorld()->numChapter == 11) {
+	if (getWorld()->chapter == kChapter11) {
 		int res = strcmp((char *)&_name, "Dead Sarah");
 
 		if (res == 0)

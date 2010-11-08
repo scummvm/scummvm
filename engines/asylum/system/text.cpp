@@ -28,34 +28,32 @@
 #include "asylum/system/graphics.h"
 #include "asylum/system/screen.h"
 
+#include "asylum/asylum.h"
 #include "asylum/respack.h"
 
 #include "common/endian.h"
 
 namespace Asylum {
 
-Text::Text(Screen *screen) : _screen(screen) {
+Text::Text(AsylumEngine *engine) : _vm(engine) {
 	_posX = 0;
 	_posY = 0;
 	_curFontFlags = 0;
 	_fontResource = 0;
-
-	_textPack = new ResourcePack(kResourcePackText);
 }
 
 Text::~Text() {
-	delete _textPack;
 	delete _fontResource;
 }
 
 // loadFont at address 00435640
-void Text::loadFont(ResourcePack *resPack, ResourceId resourceId) {
+void Text::loadFont(ResourceId resourceId) {
 	if (_fontResource && resourceId == _fontResource->getResourceId())
 		return;
 
 	delete _fontResource;
 
-	_fontResource = new GraphicResource(resPack, resourceId);
+	_fontResource = new GraphicResource(_vm, resourceId);
 
 	if (resourceId > 0) {
 		// load font flag data
@@ -85,12 +83,12 @@ int32 Text::getTextWidth(const char *text) {
 }
 
 int32 Text::getResTextWidth(ResourceId resourceId) {
-	ResourceEntry *textRes = _textPack->getResource(resourceId);
+	ResourceEntry *textRes = getResource()->get(resourceId);
 	return getTextWidth((char*)textRes->data);
 }
 
 char* Text::getResText(ResourceId resourceId) {
-	ResourceEntry *textRes = _textPack->getResource(resourceId);
+	ResourceEntry *textRes = getResource()->get(resourceId);
 	return (char*)textRes->data;
 }
 
@@ -98,7 +96,7 @@ void Text::drawChar(unsigned char character) {
 	assert(_fontResource);
 
 	GraphicFrame *fontLetter = _fontResource->getFrame(character);
-	_screen->copyRectToScreenWithTransparency((byte *)fontLetter->surface.pixels, fontLetter->surface.w, _posX, _posY + fontLetter->y, fontLetter->surface.w, fontLetter->surface.h);
+	getScreen()->copyRectToScreenWithTransparency((byte *)fontLetter->surface.pixels, fontLetter->surface.w, _posX, _posY + fontLetter->y, fontLetter->surface.w, fontLetter->surface.h);
 	_posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 
@@ -110,7 +108,7 @@ void Text::drawText(const char *text) {
 }
 
 void Text::drawResText(ResourceId resourceId) {
-	ResourceEntry *textRes = _textPack->getResource(resourceId);
+	ResourceEntry *textRes = getResource()->get(resourceId);
 	drawText((char*)textRes->data);
 }
 
@@ -121,7 +119,7 @@ void Text::drawTextCentered(int32 x, int32 y, int32 width, const char *text) {
 }
 
 void Text::drawResTextWithValueCentered(int32 x, int32 y, int32 width, ResourceId resourceId, int32 value) {
-	ResourceEntry *textRes = _textPack->getResource(resourceId);
+	ResourceEntry *textRes = getResource()->get(resourceId);
 	char *text = (char *)textRes->data;
 	char txt[100];
 	sprintf(txt, text, value);
@@ -129,7 +127,7 @@ void Text::drawResTextWithValueCentered(int32 x, int32 y, int32 width, ResourceI
 }
 
 void Text::drawResTextCentered(int32 x, int32 y, int32 width, ResourceId resourceId) {
-	ResourceEntry *textRes = _textPack->getResource(resourceId);
+	ResourceEntry *textRes = getResource()->get(resourceId);
 	drawTextCentered(x, y, width, (char *)textRes->data);
 }
 
@@ -142,7 +140,7 @@ void Text::drawText(int32 x, int32 y, const char *text) {
 }
 
 void Text::drawResText(int32 x, int32 y, ResourceId resourceId) {
-	ResourceEntry *textRes = _textPack->getResource(resourceId);
+	ResourceEntry *textRes = getResource()->get(resourceId);
 	drawText(x, y, (char *)textRes->data);
 }
 
@@ -153,7 +151,7 @@ void Text::drawTextAlignRight(int32 x, int32 y, const char *text) {
 }
 
 void Text::drawResTextAlignRight(int32 x, int32 y, ResourceId resourceId) {
-	ResourceEntry *textRes = _textPack->getResource(resourceId);
+	ResourceEntry *textRes = getResource()->get(resourceId);
 	drawTextAlignRight(x, y, (char *)textRes->data);
 }
 

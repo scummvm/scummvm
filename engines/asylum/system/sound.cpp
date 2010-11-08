@@ -38,16 +38,11 @@
 
 namespace Asylum {
 
-Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
-	_speechPack = new ResourcePack(kResourcePackSpeech);
-	_soundPack  = new ResourcePack(kResourcePackSound);
-	_currentMusicResIndex = -666;
+Sound::Sound(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine), _mixer(mixer) {
+	_currentMusicResIndex = kResourceMusicStopped;
 }
 
 Sound::~Sound() {
-	delete _speechPack;
-	delete _soundPack;
-
 	clearSoundBuffer();
 }
 
@@ -172,24 +167,24 @@ bool Sound::isPlaying(ResourceId resourceId) {
 	return false;
 }
 
-void Sound::playSound(ResourcePack *pack, ResourceId resourceId, int32 volume, bool looping, int32 panning, bool overwrite) {
-	ResourceEntry *resource = pack->getResource(resourceId);
-	if (_mixer->isSoundHandleActive(_soundHandle)) {
-		if (overwrite) {
-			_mixer->stopHandle(_soundHandle);
-			playSound(resource, looping, volume, panning);
-		}
-	} else {
-		// if the current handle isn't active, play the sound
-		playSound(resource, looping, volume, panning);
-	}
-}
+//void Sound::playSound(ResourceId resourceId, int32 volume, bool looping, int32 panning, bool overwrite) {
+//	ResourceEntry *resource = getResource()->get(resourceId);
+//	if (_mixer->isSoundHandleActive(_soundHandle)) {
+//		if (overwrite) {
+//			_mixer->stopHandle(_soundHandle);
+//			playSound(resource, looping, volume, panning);
+//		}
+//	} else {
+//		// if the current handle isn't active, play the sound
+//		playSound(resource, looping, volume, panning);
+//	}
+//}
+//
+//void Sound::playSound(ResourceEntry *resource, bool looping, int32 volume, int32 panning) {
+//	playSoundData(Audio::Mixer::kSFXSoundType, &_soundHandle, resource->data, resource->size, looping, volume, panning);
+//}
 
-void Sound::playSound(ResourceEntry *resource, bool looping, int32 volume, int32 panning) {
-	playSoundData(Audio::Mixer::kSFXSoundType, &_soundHandle, resource->data, resource->size, looping, volume, panning);
-}
-
-void Sound::playSound(ResourcePack *pack, ResourceId resourceId, bool looping, int32 volume, int32 panning) {
+void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 panning) {
 	int32 pos = getBufferPosition(resourceId);
 
 	if (pos < 0) {
@@ -199,7 +194,7 @@ void Sound::playSound(ResourcePack *pack, ResourceId resourceId, bool looping, i
 		if (_mixer->isSoundHandleActive(snd.handle)) {
 			debugC(kDebugLevelSound, "playSound: handle for resource %d already active", resourceId);
 		} else {
-			ResourceEntry *ent = _soundPack->getResource(resourceId);
+			ResourceEntry *ent = getResource()->get(resourceId);
 			playSoundData(Audio::Mixer::kSFXSoundType, &snd.handle, ent->data, ent->size, looping, volume, panning);
 			addToSoundBuffer(resourceId);
 		}
@@ -207,19 +202,19 @@ void Sound::playSound(ResourcePack *pack, ResourceId resourceId, bool looping, i
 
 }
 
-void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 panning, bool fromBuffer) {
-	if (fromBuffer) {
-		playSound(_soundPack, resourceId, looping, volume, panning);
-	} else {
-		if (_mixer->isSoundHandleActive(_soundHandle)) {
-			debugC(kDebugLevelSound, "playSound: temporary sound handle is active");
-		} else {
-			ResourceEntry *ent = _soundPack->getResource(resourceId);
-			playSound(ent, looping, volume, panning);
-			addToSoundBuffer(resourceId);
-		}
-	}
-}
+//void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 panning, bool fromBuffer) {
+//	if (fromBuffer) {
+//		playSound(resourceId, looping, volume, panning);
+//	} else {
+//		if (_mixer->isSoundHandleActive(_soundHandle)) {
+//			debugC(kDebugLevelSound, "playSound: temporary sound handle is active");
+//		} else {
+//			ResourceEntry *ent = getResource()->get(resourceId);
+//			playSound(resourceId, looping, volume, panning);
+//			addToSoundBuffer(resourceId);
+//		}
+//	}
+//}
 
 void Sound::stopSound() {
 	if (_mixer->isSoundHandleActive(_soundHandle))
@@ -249,7 +244,7 @@ void Sound::stopAllSounds(bool stopSpeechAndMusic) {
 }
 
 void Sound::playSpeech(ResourceId resourceId) {
-	ResourceEntry *ent = _speechPack->getResource(resourceId);
+	ResourceEntry *ent = getResource()->get(resourceId);
 
 	_mixer->stopHandle(_speechHandle);
 	playSoundData(Audio::Mixer::kSpeechSoundType, &_speechHandle, ent->data, ent->size, false, 0, 0);
@@ -259,17 +254,17 @@ void Sound::setSpeech(ResourceId sound, ResourceId speechText) {
 	error("[Sound::setSpeech] not implemented!");
 }
 
-void Sound::playMusic(ResourcePack *pack, ResourceId resourceId, int32 volume) {
+void Sound::playMusic(ResourceId resourceId, int32 volume) {
 	if (resourceId == kResourceNone)
 		return;
 
 	stopMusic();
 
-	ResourceEntry *resource = pack->getResource(resourceId);
+	ResourceEntry *resource = getResource()->get(resourceId);
 	playSoundData(Audio::Mixer::kMusicSoundType, &_musicHandle, resource->data, resource->size, true, volume, 0);
 }
 
-void Sound::changeMusic(ResourcePack *pack, ResourceId resourceId, int32 musicStatusExt) {
+void Sound::changeMusic(ResourceId resourceId, int32 musicStatusExt) {
 	error("[Sound::changeMusic] not implemented!");
 }
 

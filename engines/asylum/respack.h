@@ -30,8 +30,11 @@
 
 #include "common/array.h"
 #include "common/file.h"
+#include "common/hashmap.h"
 
 namespace Asylum {
+
+class ResourceManager;
 
 struct ResourceEntry {
 	byte   *data;
@@ -41,20 +44,47 @@ struct ResourceEntry {
 
 class ResourcePack {
 public:
-	ResourcePack(const char *resourceFile);
-	ResourcePack(ResourcePackId id);
+	ResourceEntry *get(uint16 index);
+	int count();
+
+protected:
+	ResourcePack(Common::String filename);
 	~ResourcePack();
 
-	ResourceEntry *getResource(ResourceId resourceId);
-	uint32 getResourceCount() {
-		return _resources.size();
-	}
-
 private:
-	Common::Array <ResourceEntry> _resources;
+	Common::Array<ResourceEntry> _resources;
 	Common::File _packFile;
 
-	void init(const char *resourceFile);
+	void init(Common::String filename);
+
+	friend ResourceManager;
+};
+
+class ResourceManager {
+public:
+	ResourceManager() {}
+	virtual ~ResourceManager() {}
+
+	//void load(ResourcePackId id);
+
+	ResourceEntry *get(ResourceId id);
+	//int count(ResourceId id);
+
+	//void unload(ResourcePackId id);
+
+private:
+	struct ResourcePackId_EqualTo {
+		bool operator()(const ResourcePackId &x, const ResourcePackId &y) const { return x == y; }
+	};
+
+	struct ResourcePackId_Hash {
+		uint operator()(const ResourcePackId &x) const { return x; }
+	};
+
+	typedef Common::HashMap<ResourcePackId, ResourcePack*, ResourcePackId_Hash, ResourcePackId_EqualTo> ResourceCache;
+
+	ResourceCache _resources;
+	ResourceCache _music;
 };
 
 } // end of namespace Asylum

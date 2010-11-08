@@ -72,6 +72,7 @@ enum FlagType {
 
 class Encounter;
 class MainMenu;
+class ResourceManager;
 class Scene;
 class Screen;
 class Sound;
@@ -109,13 +110,14 @@ public:
 	uint32 globalTickValue_2;
 
 	// Game
-	Encounter *encounter() { return _encounter; }
-	MainMenu  *menu()      { return _mainMenu; }
-	Scene     *scene()     { return _scene; }
-	Screen    *screen()    { return _screen; }
-	Sound     *sound()     { return _sound; }
-	Text      *text()      { return _text; }
-	Video     *video()     { return _video; }
+	Encounter       *encounter() { return _encounter; }
+	MainMenu        *menu()      { return _mainMenu; }
+	ResourceManager *resource()  { return _resource; }
+	Scene           *scene()     { return _scene; }
+	Screen          *screen()    { return _screen; }
+	Sound           *sound()     { return _sound; }
+	Text            *text()      { return _text; }
+	Video           *video()     { return _video; }
 
 	// Flags
 	void setGameFlag(GameFlag flag);
@@ -144,13 +146,14 @@ private:
 	Common::RandomSource  _rnd;
 
 	// Game
-	Encounter *_encounter;
-	MainMenu  *_mainMenu;
-	Scene     *_scene;
-	Screen    *_screen;
-	Sound     *_sound;
-	Text      *_text;
-	Video     *_video;
+	Encounter       *_encounter;
+	MainMenu        *_mainMenu;
+	ResourceManager *_resource;
+	Scene           *_scene;
+	Screen          *_screen;
+	Sound           *_sound;
+	Text            *_text;
+	Video           *_video;
 
 	bool _introPlaying;
 	int _gameFlags[1512];

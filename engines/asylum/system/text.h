@@ -32,16 +32,16 @@
 
 namespace Asylum {
 
+class AsylumEngine;
 class GraphicResource;
 class ResourcePack;
-class Screen;
 
 class Text {
 public:
-	Text(Screen *screen);
+	Text(AsylumEngine *engine);
 	~Text();
 
-	void loadFont(ResourcePack *resPack, ResourceId resourceId);
+	void loadFont(ResourceId resourceId);
 
 	void setTextPos(int32 x, int32 y);
 	int32 getTextWidth(const char *text);
@@ -62,9 +62,9 @@ public:
 	void drawResTextAlignRight(int32 x, int32 y, ResourceId resourceId);
 
 private:
-	Screen			*_screen;
+	AsylumEngine *_vm;
+
 	GraphicResource *_fontResource;
-	ResourcePack	*_textPack;
 
 	int32 _posX;
 	int32 _posY;

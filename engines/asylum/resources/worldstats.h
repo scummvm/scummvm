@@ -54,27 +54,27 @@ public:
 
 	int32 size;
 	int32 numEntries;
-	int32 numChapter;
+	ChapterIndex chapter;
 	int32 xLeft; // scene start x position
 	int32 yTop;  // scene start y position
 	Common::Rect boundingRect;
-	int32 backgroundImage;
-	int32 curScrollUp;
-	int32 curScrollUpLeft;
-	int32 curScrollLeft;
-	int32 curScrollDownLeft;
-	int32 curScrollDown;
-	int32 curScrollDownRight;
-	int32 curScrollRight;
-	int32 curScrollUpRight;
-	int32 curHand;
-	int32 curMagnifyingGlass;
+	ResourceId backgroundImage;
+	ResourceId curScrollUp;
+	ResourceId curScrollUpLeft;
+	ResourceId curScrollLeft;
+	ResourceId curScrollDownLeft;
+	ResourceId curScrollDown;
+	ResourceId curScrollDownRight;
+	ResourceId curScrollRight;
+	ResourceId curScrollUpRight;
+	ResourceId curHand;
+	ResourceId curMagnifyingGlass;
 	ResourceId curTalkNPC;
-	int32 curGrabPointer;
-	int32 curTalkNPC2;
-	int32 font1;
-	int32 font2;
-	int32 font3;
+	ResourceId curGrabPointer;
+	ResourceId curTalkNPC2;
+	ResourceId font1;
+	ResourceId font2;
+	ResourceId font3;
 	ResourceId currentPaletteId;
 	int32 cellShadeMask1;
 	int32 cellShadeMask2;
@@ -105,7 +105,7 @@ public:
 	AmbientSoundItem ambientSounds[15];
 	int32 numAmbientSound;
 	int32 musicStatus;
-	ResourceId musicCurrentResourceId;
+	int32 musicCurrentResourceIndex;
 	int32 musicFlag;
 	ResourceId musicResourceId;
 	int32 musicStatusExt;

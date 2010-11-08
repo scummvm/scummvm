@@ -49,7 +49,7 @@ Object::~Object() {
 /////////////////////////////////////////////////////////////////////////
 void Object::load(Common::SeekableReadStream *stream) {
 	_id   = (ObjectId)stream->readSint32LE();
-	_resourceId = stream->readSint32LE();
+	_resourceId = (ResourceId)stream->readSint32LE();
 	x	  = stream->readSint32LE();
 	y	  = stream->readSint32LE();
 
@@ -87,14 +87,14 @@ void Object::load(Common::SeekableReadStream *stream) {
 	_actionListIdx = stream->readSint32LE();
 
 	for (int i = 0; i < 16; i++) {
-		_soundItems[i].resourceId	  = stream->readSint32LE();
+		_soundItems[i].resourceId	  = (ResourceId)stream->readSint32LE();
 		_soundItems[i].field_4 = stream->readSint32LE();
 		_soundItems[i].field_8 = stream->readSint32LE();
 		_soundItems[i].field_C = stream->readSint32LE();
 	}
 
 	for (int i = 0; i < 50; i++) {
-		_frameSoundItems[i].resourceId	= stream->readSint32LE();
+		_frameSoundItems[i].resourceId	= (ResourceId)stream->readSint32LE();
 		_frameSoundItems[i].frameIndex = stream->readSint32LE();
 		_frameSoundItems[i].index	= stream->readSint32LE();
 		_frameSoundItems[i].field_C	= stream->readSint32LE();
@@ -108,9 +108,9 @@ void Object::load(Common::SeekableReadStream *stream) {
 	_field_688 = stream->readSint32LE();
 
 	for (int i = 0; i < 5; i++)
-		_randomResourceIds[i] = stream->readSint32LE();
+		_randomResourceIds[i] = (ResourceId)stream->readSint32LE();
 
-	_soundResourceId = stream->readSint32LE();
+	_soundResourceId = (ResourceId)stream->readSint32LE();
 	_field_6A4       = stream->readSint32LE();
 }
 
@@ -216,7 +216,7 @@ void Object::update() {
 				if (_vm->getRandom(_field_C0) == 1) {
 					if (_randomResourceIds[0]) {
 						_resourceId = getRandomResourceId();
-						GraphicResource *gra = new GraphicResource(getScene()->getResourcePack(), _resourceId);
+						GraphicResource *gra = new GraphicResource(_vm, _resourceId);
 						_frameCount  = gra->getFrameCount();
 						delete gra;
 					}
@@ -252,7 +252,7 @@ void Object::update() {
 
 			if (_frameIndex < _frameCount - 1) {
 				if (_field_688 == 1) {
-					GraphicResource *gra = new GraphicResource(getScene()->getResourcePack(), _resourceId);
+					GraphicResource *gra = new GraphicResource(_vm, _resourceId);
 					GraphicFrame *frame = gra->getFrame(_frameIndex);
 					getScene()->setGlobalX(x + frame->x + (frame->getWidth() >> 1));
 					getScene()->setGlobalY(y + frame->y + (frame->getHeight() >> 1));
@@ -281,7 +281,7 @@ void Object::update() {
 					getScene()->setGlobalY(-1);
 				}
 			} else if (_field_688 == 1) {
-				GraphicResource *gra = new GraphicResource(getScene()->getResourcePack(), _resourceId);
+				GraphicResource *gra = new GraphicResource(_vm, _resourceId);
 				GraphicFrame *frame = gra->getFrame(_frameIndex);
 				getScene()->setGlobalX(x + frame->x + (frame->getWidth() >> 1));
 				getScene()->setGlobalY(y + frame->y + (frame->getHeight() >> 1));
@@ -351,7 +351,7 @@ void Object::playSounds() {
 		soundX = _soundX;
 		soundY = _soundY;
 	} else {
-		GraphicResource *resource = new GraphicResource(getScene()->getResourcePack(), _resourceId);
+		GraphicResource *resource = new GraphicResource(_vm, _resourceId);
 
 		if (LOBYTE(flags) & kObjectFlag4) {
 			soundX = x + (resource->getFlags() >> 1);
@@ -432,7 +432,7 @@ void Object::setVolume() {
 	if (!_soundResourceId || !getSound()->isPlaying(_soundResourceId))
 		return;
 
-	GraphicResource *resource = new GraphicResource(getScene()->getResourcePack(), _resourceId);
+	GraphicResource *resource = new GraphicResource(_vm, _resourceId);
 	GraphicFrame *frame = resource->getFrame(_frameIndex);
 
 	// Compute volume
@@ -445,7 +445,7 @@ void Object::setVolume() {
 	getSound()->setVolume(_soundResourceId, volume);
 }
 
-int32 Object::getRandomResourceId() {
+ResourceId Object::getRandomResourceId() {
 	// Initialize random resource id array
 	ResourceId shuffle[5];
 	memset(&shuffle, 0, sizeof(shuffle));
@@ -459,9 +459,13 @@ int32 Object::getRandomResourceId() {
 	}
 
 	if (count == 0)
-		error("[Object::getRandomId] Could not get a random resource Id");
+		error("[Object::getRandomId] Could not get a random resource id!");
 
-	return shuffle[_vm->getRandom(count)];
+	ResourceId id = shuffle[_vm->getRandom(count - 1)];
+	if (id == kResourceNone)
+		error("[Object::getRandomId] Got an empty resource id!");
+
+	return id;
 }
 
 bool Object::checkFlags() {

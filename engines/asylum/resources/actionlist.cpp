@@ -386,7 +386,7 @@ IMPLEMENT_OPCODE(PlayAnimation) {
 			getScene()->setGlobalX(object->x);
 			getScene()->setGlobalY(object->y);
 		} else {
-			GraphicResource *res = new GraphicResource(getScene()->getResourcePack(), object->getResourceId());
+			GraphicResource *res = new GraphicResource(_vm, object->getResourceId());
 			GraphicFrame *frame = res->getFrame(object->getFrameIndex());
 
 			getScene()->setGlobalX(frame->x + (frame->getWidth() >> 1) + object->x);
@@ -490,8 +490,8 @@ IMPLEMENT_OPCODE(EnableActor) {
 IMPLEMENT_OPCODE(EnableObjects) {
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
-	if (!_currentScript->counter && getWorld()->numChapter != 13)
-		_vm->sound()->playSound(cmd->param3 ? kResourceSound_80120006 : kResourceSound_80120001);
+	if (!_currentScript->counter && getWorld()->chapter != 13)
+		_vm->sound()->playSound(cmd->param3 ? MAKE_RESOURCE(kResourcePackSound, 6) : MAKE_RESOURCE(kResourcePackSound, 1));
 
 	if (_currentScript->counter >= (3 * cmd->param2 - 1)) {
 		_currentScript->counter = 0;
@@ -610,13 +610,13 @@ IMPLEMENT_OPCODE(DisableObject) {
 // Opcode 0x18
 IMPLEMENT_OPCODE(JumpIfSoundPlayingAndPlaySound) {
 	if (cmd->param2 == 2) {
-		if (_vm->sound()->isPlaying(cmd->param1))
+		if (getSound()->isPlaying((ResourceId)cmd->param1))
 			_lineIncrement = 1;
 		else
 			cmd->param2 = 1;
-	} else if (!_vm->sound()->isPlaying(cmd->param1)) {
-		int32 vol = _vm->sound()->getAdjustedVolume(abs(Config.sfxVolume));
-		_vm->sound()->playSound(cmd->param1, cmd->param4, -((abs(cmd->param3) + vol) * (abs(cmd->param3) + vol)), 0);
+	} else if (!_vm->sound()->isPlaying((ResourceId)cmd->param1)) {
+		int32 vol = getSound()->getAdjustedVolume(abs(Config.sfxVolume));
+		getSound()->playSound((ResourceId)cmd->param1, cmd->param4, -((abs(cmd->param3) + vol) * (abs(cmd->param3) + vol)), 0);
 
 		if (cmd->param2 == 1) {
 			cmd->param2 = 2;
@@ -823,13 +823,13 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub) {
 		}
 
 	} else if (cmd->param1 != 2 || player->process_408B20(&playerPoint, (player->getDirection() + 4) % 8, 3, false)) {
-		ResourceId id = 0;
+		ResourceId id = kResourceNone;
 		if (direction >= 5)
 			id = actor->getResourcesId(5 * cmd->param1 - direction + 38);
 		else
 			id = actor->getResourcesId(5 * cmd->param1 + direction + 30);
 
-		GraphicResource *res = new GraphicResource(getScene()->getResourcePack(), id);
+		GraphicResource *res = new GraphicResource(_vm, id);
 		actor->setResourceId(id);
 		actor->setFrameCount(res->getFrameCount());
 		actor->setFrameIndex(0);
@@ -864,12 +864,12 @@ IMPLEMENT_OPCODE(PlayMovie) {
 
 	bool check = false;
 	ActionArea *area = getWorld()->actions[getScene()->getActor()->getActionIndex3()];
-	if (area->paletteValue) {
-		getScreen()->setPalette(getScene()->getResourcePack(), area->paletteValue);
-		getScreen()->setGammaLevel(getScene()->getResourcePack(), area->paletteValue, 0);
+	if (area->paletteResourceId) {
+		getScreen()->setPalette(area->paletteResourceId);
+		getScreen()->setGammaLevel(area->paletteResourceId, 0);
 	} else {
-		getScreen()->setPalette(getScene()->getResourcePack(), getWorld()->currentPaletteId);
-		getScreen()->setGammaLevel(getScene()->getResourcePack(), getWorld()->currentPaletteId, 0);
+		getScreen()->setPalette(getWorld()->currentPaletteId);
+		getScreen()->setGammaLevel(getWorld()->currentPaletteId, 0);
 	}
 
 	getScene()->matteBarHeight = 0;
@@ -893,11 +893,9 @@ IMPLEMENT_OPCODE(PlayMovie) {
 			check = true;
 	}
 
-	if (!check &&
-		getScene()->matteVar2 == 0 &&
-		getWorld()->musicCurrentResourceId != kResourceMusic_FFFFFD66)
+	if (!check && getScene()->matteVar2 == 0 && getWorld()->musicCurrentResourceIndex != kResourceMusicStopped)
 		if (_vm->sound()->isCacheOk())
-			_vm->sound()->playMusic(getScene()->getResourcePack(), getWorld()->musicCurrentResourceId + kResourceMusic_80020000);
+			_vm->sound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicCurrentResourceIndex));
 
 	getCursor()->show();
 	getScene()->matteVar2 = 0;
@@ -937,13 +935,13 @@ IMPLEMENT_OPCODE(ResetSceneRect) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x32
 IMPLEMENT_OPCODE(ChangeMusicById) {
-	_vm->sound()->changeMusic(getScene()->getResourcePack(), cmd->param1, cmd->param2 ? 2 : 1);
+	_vm->sound()->changeMusic((ResourceId)cmd->param1, cmd->param2 ? 2 : 1);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x33
 IMPLEMENT_OPCODE(StopMusic) {
-	_vm->sound()->changeMusic(getScene()->getResourcePack(), kResourceMusic_FFFFFD66, 0);
+	_vm->sound()->changeMusic(kResourceMusicStopped, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1155,7 +1153,7 @@ IMPLEMENT_OPCODE(PlaySpeech) {
 		return;
 
 	if (cmd->param4 != 2) {
-		cmd->param5 = getScene()->speech()->play(cmd->param1);
+		cmd->param5 = getSpeech()->play((ResourceId)cmd->param1);
 
 		if (cmd->param2) {
 			_vm->setGameFlag(kGameFlagScriptProcessing);
@@ -1207,7 +1205,7 @@ IMPLEMENT_OPCODE(PlaySpeechScene2) {
 		return;
 
 	if (cmd->param5 == 2) {
-		if (_vm->sound()->isPlaying(cmd->param6)) {
+		if (getSound()->isPlaying((ResourceId)cmd->param6)) {
 			_lineIncrement = 1;
 			return;
 		}
@@ -1315,12 +1313,12 @@ IMPLEMENT_OPCODE(_unk46) {
 
 			_vm->clearGameFlag(kGameFlagScriptProcessing);
 
-			_vm->sound()->soundResourceId = 0;
-			_vm->sound()->speechTextResourceId = 0;
+			_vm->sound()->soundResourceId = kResourceNone;
+			_vm->sound()->speechTextResourceId = kResourceNone;
 		}
 	} else {
 		_vm->setGameFlag(kGameFlagScriptProcessing);
-		_vm->sound()->setSpeech(cmd->param1 + kResourceSound_80030203, cmd->param1 + kResourceSpeech_8000050A);
+		getSpeech()->setPlayerSpeech(MAKE_RESOURCE(kResourcePackSpeech, 515 + cmd->param1), MAKE_RESOURCE(kResourcePackShared, 1290 + cmd->param1));
 
 		if (cmd->param2) {
 			getScene()->getActor(cmd->param5)->updateStatus(kActorStatus8);
@@ -1392,10 +1390,10 @@ IMPLEMENT_OPCODE(_unk49_MATTE_90) {
 // Opcode 0x4A
 IMPLEMENT_OPCODE(JumpIfSoundPlaying) {
 	if (cmd->param3 == 1) {
-		if (_vm->sound()->isPlaying(cmd->param1)) {
+		if (_vm->sound()->isPlaying((ResourceId)cmd->param1)) {
 			_currentLine = cmd->param2;
 		}
-	} else if (!_vm->sound()->isPlaying(cmd->param1)) {
+	} else if (!_vm->sound()->isPlaying((ResourceId)cmd->param1)) {
 		_currentLine = cmd->param2;
 	}
 }
@@ -1422,8 +1420,8 @@ IMPLEMENT_OPCODE(ChangeActorStatus) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4D
 IMPLEMENT_OPCODE(StopSound) {
-	if (_vm->sound()->isPlaying(cmd->param1))
-		_vm->sound()->stopSound(cmd->param1);
+	if (_vm->sound()->isPlaying((ResourceId)cmd->param1))
+		_vm->sound()->stopSound((ResourceId)cmd->param1);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1589,8 +1587,8 @@ IMPLEMENT_OPCODE(_unk56) {
 // Opcode 0x57
 IMPLEMENT_OPCODE(SetResourcePalette) {
 	getWorld()->currentPaletteId = getWorld()->graphicResourceIds[cmd->param1];
-	getScreen()->setPalette(getScene()->getResourcePack(), getWorld()->currentPaletteId);
-	getScreen()->setGammaLevel(getScene()->getResourcePack(), getWorld()->currentPaletteId, 0);
+	getScreen()->setPalette(getWorld()->currentPaletteId);
+	getScreen()->setGammaLevel(getWorld()->currentPaletteId, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -74,7 +74,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	size       = stream->readSint32LE();
 	numEntries = stream->readSint32LE();
 
-	numChapter = stream->readSint32LE();
+	chapter = (ChapterIndex)stream->readSint32LE();
 	xLeft      = stream->readSint32LE();
 	yTop       = stream->readSint32LE();
 
@@ -84,24 +84,24 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
 
 	// read common graphic resources
-	backgroundImage    = stream->readSint32LE();
-	curScrollUp        = stream->readSint32LE();
-	curScrollUpLeft    = stream->readSint32LE();
-	curScrollLeft      = stream->readSint32LE();
-	curScrollDownLeft  = stream->readSint32LE();
-	curScrollDown      = stream->readSint32LE();
-	curScrollDownRight = stream->readSint32LE();
-	curScrollRight     = stream->readSint32LE();
-	curScrollUpRight   = stream->readSint32LE();
-	curHand            = stream->readSint32LE();
-	curMagnifyingGlass = stream->readSint32LE();
-	curTalkNPC         = stream->readSint32LE();
-	curGrabPointer     = stream->readSint32LE();
-	curTalkNPC2        = stream->readSint32LE();
-	font1              = stream->readSint32LE();
-	font2              = stream->readSint32LE();
-	font3              = stream->readSint32LE();
-	currentPaletteId   = stream->readSint32LE();
+	backgroundImage    = (ResourceId)stream->readSint32LE();
+	curScrollUp        = (ResourceId)stream->readSint32LE();
+	curScrollUpLeft    = (ResourceId)stream->readSint32LE();
+	curScrollLeft      = (ResourceId)stream->readSint32LE();
+	curScrollDownLeft  = (ResourceId)stream->readSint32LE();
+	curScrollDown      = (ResourceId)stream->readSint32LE();
+	curScrollDownRight = (ResourceId)stream->readSint32LE();
+	curScrollRight     = (ResourceId)stream->readSint32LE();
+	curScrollUpRight   = (ResourceId)stream->readSint32LE();
+	curHand            = (ResourceId)stream->readSint32LE();
+	curMagnifyingGlass = (ResourceId)stream->readSint32LE();
+	curTalkNPC         = (ResourceId)stream->readSint32LE();
+	curGrabPointer     = (ResourceId)stream->readSint32LE();
+	curTalkNPC2        = (ResourceId)stream->readSint32LE();
+	font1              = (ResourceId)stream->readSint32LE();
+	font2              = (ResourceId)stream->readSint32LE();
+	font3              = (ResourceId)stream->readSint32LE();
+	currentPaletteId   = (ResourceId)stream->readSint32LE();
 	cellShadeMask1     = stream->readSint32LE();
 	cellShadeMask2     = stream->readSint32LE();
 	cellShadeMask3     = stream->readSint32LE();
@@ -139,19 +139,19 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	actionListIdx = stream->readSint32LE();
 
 	for (int32 gr = 0; gr < 100; gr++)
-		graphicResourceIds[gr] = stream->readSint32LE();
+		graphicResourceIds[gr] = (ResourceId)stream->readSint32LE();
 
-	sceneTitleGraphicResourceId  = stream->readSint32LE();
-	sceneTitlePaletteResourceId = stream->readSint32LE();
+	sceneTitleGraphicResourceId  = (ResourceId)stream->readSint32LE();
+	sceneTitlePaletteResourceId = (ResourceId)stream->readSint32LE();
 	actorType          = stream->readUint32LE();
 
 	for (int32 s = 0; s < 50; s++)
-		soundResourceIds[s] = stream->readSint32LE();
+		soundResourceIds[s] = (ResourceId)stream->readSint32LE();
 
 	for (int32 s = 0; s < 15; s++) {
 		ambientSounds[s].field_0  = stream->readSint32LE();
 		ambientSounds[s].flags    = stream->readSint32LE();
-		ambientSounds[s].resourceId    = stream->readSint32LE();
+		ambientSounds[s].resourceId    = (ResourceId)stream->readSint32LE();
 		ambientSounds[s].field_C  = stream->readSint32LE();
 		ambientSounds[s].field_10 = stream->readSint32LE();
 		ambientSounds[s].field_14 = stream->readSint32LE();
@@ -165,9 +165,9 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	numAmbientSound   = stream->readSint32LE();
 	musicStatus       = stream->readSint32LE();
-	musicCurrentResourceId = stream->readSint32LE();
+	musicCurrentResourceIndex = stream->readSint32LE();
 	musicFlag         = stream->readSint32LE();
-	musicResourceId        = stream->readSint32LE();
+	musicResourceId        = (ResourceId)stream->readSint32LE();
 	musicStatusExt    = stream->readSint32LE();
 
 	for (uint32 a = 0; a < numObjects; a++) {
@@ -222,9 +222,9 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		action->polyIdx      = stream->readSint32LE();
 		action->field_84     = stream->readSint32LE();
 		action->field_88     = stream->readSint32LE();
-		action->soundResourceId   = stream->readSint32LE();
+		action->soundResourceId   = (ResourceId)stream->readSint32LE();
 		action->field_90     = stream->readSint32LE();
-		action->paletteValue = stream->readSint32LE();
+		action->paletteResourceId = (ResourceId)stream->readSint32LE();
 
 		for (int32 aa2 = 0; aa2 < 5; aa2++)
 			action->array[aa2] = stream->readSint32LE();

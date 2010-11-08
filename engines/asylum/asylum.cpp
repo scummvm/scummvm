@@ -49,7 +49,9 @@
 
 namespace Asylum {
 
-AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd) {
+AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
+	_console(NULL), _encounter(NULL), _resource(NULL), _mainMenu(NULL), _scene(NULL), _screen(NULL),
+	_sound(NULL), _text(NULL), _video(NULL) {
 
 	// Add default search directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -58,16 +60,16 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 
 	// Initialize custom debug levels
-	DebugMan.addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
+	DebugMan.addDebugChannel(kDebugLevelMain,      "Main",      "Generic debug level");
 	DebugMan.addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
-	DebugMan.addDebugChannel(kDebugLevelSprites, "Sprites", "Sprites debugging");
-	DebugMan.addDebugChannel(kDebugLevelInput, "Input", "Input events debugging");
-	DebugMan.addDebugChannel(kDebugLevelMenu, "Menu", "Menu debugging");
-	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Scripts debugging");
-	DebugMan.addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
-	DebugMan.addDebugChannel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
-	DebugMan.addDebugChannel(kDebugLevelScene, "Scene", "Scene process and draw debugging");
-	DebugMan.addDebugChannel(kDebugLevelObjects, "Objects", "Debug Object Objects");
+	DebugMan.addDebugChannel(kDebugLevelSprites,   "Sprites",   "Sprites debugging");
+	DebugMan.addDebugChannel(kDebugLevelInput,     "Input",     "Input events debugging");
+	DebugMan.addDebugChannel(kDebugLevelMenu,      "Menu",      "Menu debugging");
+	DebugMan.addDebugChannel(kDebugLevelScripts,   "Scripts",   "Scripts debugging");
+	DebugMan.addDebugChannel(kDebugLevelSound,     "Sound",     "Sound debugging");
+	DebugMan.addDebugChannel(kDebugLevelSavegame,  "Savegame",  "Saving & restoring game debugging");
+	DebugMan.addDebugChannel(kDebugLevelScene,     "Scene",     "Scene process and draw debugging");
+	DebugMan.addDebugChannel(kDebugLevelObjects,   "Objects",   "Debug Object Objects");
 
 	// Initialize random number source
 	g_eventRec.registerRandomSource(_rnd, "asylum");
@@ -76,6 +78,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 AsylumEngine::~AsylumEngine() {
 	delete _console;
 	delete _encounter;
+	delete _resource;
 	delete _mainMenu;
 	delete _scene;
 	delete _screen;
@@ -95,10 +98,11 @@ Common::Error AsylumEngine::run() {
 	_console   = new Console(this);
 
 	// Create all manager classes
+	_resource  = new ResourceManager();
 	_screen    = new Screen(this);
-	_sound     = new Sound(_mixer);
-	_video     = new Video(_mixer);
-	_text      = new Text(_screen);
+	_sound     = new Sound(this, _mixer);
+	_video     = new Video(this, _mixer);
+	_text      = new Text(this);
 	_scene     = NULL;
 	_encounter = NULL;
 
@@ -193,7 +197,7 @@ void AsylumEngine::playIntro() {
 
 	// Play the intro sound sample (the screen is blacked out, you hear
 	// an alarm sounding and men talking about.
-	_sound->playSound(kResourceSoundIntro);
+	_sound->playSound(MAKE_RESOURCE(kResourcePackSound, 7));
 }
 
 void AsylumEngine::handleEvents(bool doUpdate) { // k_sub_40AE30 (0040AE30)
@@ -213,7 +217,7 @@ void AsylumEngine::handleEvents(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 	// by moving the logic to the event loop and checking whether a flag is
 	// set to determine if control should be returned to the engine.
 	if (_introPlaying) {
-		if (!_sound->isPlaying(0x80120007)) {
+		if (!_sound->isPlaying(MAKE_RESOURCE(kResourcePackSound, 7))) {
 			_introPlaying = false;
 
 			// TODO Since we've currently only got one sfx handle to play with in

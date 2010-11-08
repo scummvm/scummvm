@@ -52,17 +52,14 @@ SceneTitle::~SceneTitle() {
 void SceneTitle::load() {
 	_start = _vm->getTick();
 
-	_bg = new GraphicResource(getScene()->getResourcePack(), getWorld()->sceneTitleGraphicResourceId);
-	getScreen()->setPalette(getScene()->getResourcePack(), getWorld()->sceneTitlePaletteResourceId);
+	_bg = new GraphicResource(_vm, getWorld()->sceneTitleGraphicResourceId);
+	getScreen()->setPalette(getWorld()->sceneTitlePaletteResourceId);
 
-	ResourcePack *pack = new ResourcePack(kResourcePackSound);
-	_progress = new GraphicResource(pack, 0x80120011);
+	_progress = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackSound, 17));
 	_spinnerProgress = 0;
 	_spinnerFrame = 0;
 
-	getText()->loadFont(pack, 0x80120012);
-
-	delete pack;
+	getText()->loadFont(MAKE_RESOURCE(kResourcePackSound, 18));
 
 	_done = false;
 	_showMouseState = g_system->showMouse(false);
@@ -85,7 +82,7 @@ void SceneTitle::update(int32 tick) {
 	                              bgFrame->surface.w,
 	                              0, 0, 640, 480);
 
-	ResourceId resourceId = getScene()->getPackId() - 4 + 1811;
+	ResourceId resourceId = MAKE_RESOURCE(getScene()->getPackId(), 1797);
 	int32 resWidth = getText()->getResTextWidth(resourceId);
 	getText()->drawResTextCentered(320 - resWidth * 24, 30, resWidth, resourceId);
 

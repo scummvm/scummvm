@@ -32,8 +32,8 @@
 
 namespace Asylum {
 
+class AsylumEngine;
 class GraphicResource;
-class ResourcePack;
 
 /**
  * Asylum cursors are GraphicResources, and are stored in
@@ -41,16 +41,14 @@ class ResourcePack;
  */
 class Cursor {
 public:
-	Cursor();
-	Cursor(ResourcePack *pack);
-
+	Cursor(AsylumEngine *engine);
 	virtual ~Cursor();
 
 	/**
 	 * Generate a new cursor instance from the resource id
 	 * within the resource pack provided.
 	 */
-	static void create(Cursor *&cursor, ResourcePack *pack, ResourceId id);
+	static void create(AsylumEngine *engine, Cursor *&cursor, ResourceId id);
 
 	/**
 	 * Show the current cursor
@@ -114,7 +112,9 @@ public:
 	// } CursorInfo;
 
 private:
-	ResourcePack    *_pack;
+	AsylumEngine *_vm;
+
+	// Cursor resource
 	GraphicResource *_cursorRes;
 
 	/** the point on the screen the cursor is at */

@@ -86,7 +86,10 @@ enum ChapterIndex {
 	kChapter7,
 	kChapter8,
 	kChapter9,
-	kChapter10
+	kChapter10,
+	kChapter11,
+	kChapter12,
+	kChapter13
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -97,7 +100,7 @@ enum ResourcePackId {
 	kResourcePackInvalid               = -1,
 	kResourcePackText                  = 0,
 	kResourcePackShared                = 1,
-	// No resource pack 2
+	kResourcePackMusic                 = 2,    // Special case: will load from mus* resources
 	kResourcePackSpeech                = 3,
 	// No resource pack 4
 	kResourcePackTowerCells            = 5,
@@ -119,23 +122,11 @@ enum ResourcePackId {
 	kResourcePack304                   = 304
 };
 
+#define MAKE_RESOURCE(pack, index) (ResourceId)((0x80000000 + ((pack) << 16)) + (index))
 
-typedef unsigned int ResourceId;
-
-enum ResourceIdEnum {
-	kResourceNone              = 0,
-	kResourceSpeech_8000050A   = 0x8000050A,
-	kResourcePalette_8001003B  = 0x8001003B,
-	kResourceMusic_80020000    = 0x80020000,
-	kResourceMusic_80020001    = 0x80020001,
-	kResourceSound_80030203    = 0x80030203,
-	// Base resource 0x80120000
-	kResourceSound_80120001    = 0x80120001,
-	kResourceSound_80120002    = 0x80120002,
-	kResourceSound_80120005    = 0x80120005,
-	kResourceSound_80120006    = 0x80120006,
-	kResourceSoundIntro        = 0x80120007,
-	kResourceMusic_FFFFFD66    = 0xFFFFFD66
+enum ResourceId {
+	kResourceNone         = 0,
+	kResourceMusicStopped = 0xFFFFFD66 // -666
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -371,12 +362,14 @@ enum ObjectFlag {
 // Engine subclasses
 #define getEncounter() _vm->encounter()
 #define getCursor()    _vm->scene()->cursor()
+#define getResource()  _vm->resource()
 #define getSound()     _vm->sound()
 #define getScene()     _vm->scene()
 #define getScreen()    _vm->screen()
 #define getScript()    _vm->scene()->actions()
 #define getSpeech()    _vm->scene()->speech()
 #define getText()      _vm->text()
+#define getVideo()     _vm->video()
 #define getWorld()     _vm->scene()->worldstats()
 
 //////////////////////////////////////////////////////////////////////////

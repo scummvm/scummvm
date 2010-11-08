@@ -32,11 +32,11 @@
 
 namespace Asylum {
 
-class Scene;
+class AsylumEngine;
 
 class Speech {
 public:
-	Speech(Scene *scene);
+	Speech(AsylumEngine *engine);
 	virtual ~Speech();
 
 	ResourceId _soundResourceId;
@@ -61,7 +61,7 @@ public:
 	void prepareSpeech();
 
 private:
-	Scene *_scene;
+	AsylumEngine *_vm;
 
 	int32  _tick;
 	char  *_textData;
