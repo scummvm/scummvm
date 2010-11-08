@@ -91,19 +91,18 @@ Scene::Scene(ResourcePackId packId, AsylumEngine *engine): _vm(engine) {
 	fd->close();
 	delete fd;
 
-	_speech = new Speech(this);
-	_resPack = new ResourcePack(_packId);
+	_speech = new Speech(_vm);
 
 	// TODO
 	// This will have to be re-initialized elsewhere due to
 	// the title screen overwriting the font
-	_vm->text()->loadFont(_resPack, _ws->font1);
+	_vm->text()->loadFont(_ws->font1);
 
-	char musPackFileName[10];
-	sprintf(musPackFileName, MUSIC_FILE_MASK, packId);
-	_musPack = new ResourcePack(musPackFileName);
+	//char musPackFileName[10];
+	//sprintf(musPackFileName, MUSIC_FILE_MASK, packId);
+	////_musPack = new ResourcePack(musPackFileName);
 
-	_bgResource    = new GraphicResource(_resPack, _ws->backgroundImage);
+	_bgResource    = new GraphicResource(_vm, _ws->backgroundImage);
 	//_blowUp        = 0;
 	_cursor        = 0;
 	_background    = 0;
@@ -150,7 +149,7 @@ void Scene::initialize() {
 		}
 	}
 
-	Cursor::create(_cursor, _resPack, _ws->curMagnifyingGlass);
+	Cursor::create(_vm, _cursor, _ws->curMagnifyingGlass);
 
 	_ws->sceneRectIdx = 0;
 	_vm->screen()->clearScreen(); // XXX was clearGraphicsInQueue()
@@ -190,10 +189,10 @@ void Scene::initialize() {
 	_vm->screen()->clearScreen();
 	// TODO loadTransTables(3, field_64/68/7C)
 	// TODO setTransTable(1)
-	_vm->text()->loadFont(_resPack, _ws->font1);
+	_vm->text()->loadFont(_ws->font1);
 	// TODO preloadGraphics() .text:00410F10
 	// TODO sound_sub(sceneNumber) .text:0040E750
-	_ws->actorType = actorType[_ws->numChapter];
+	_ws->actorType = actorType[_ws->chapter];
 
 	startMusic();
 
@@ -206,23 +205,18 @@ void Scene::initialize() {
 	// so I'm not sure why we need to do it again. Investigate.
 	actor->updateDirection();
 
-	if (_ws->numChapter == 9) {
+	if (_ws->chapter == kChapter9) {
 		// TODO changeActorIndex(1); .text:00405140
 		_ws->field_E860C = -1;
 	}
 }
 
-GraphicResource* Scene::getGraphicResource(int32 entry) {
-	return new GraphicResource(_resPack, entry);
-}
-
 void Scene::startMusic() {
-	// TODO musicCacheOk check as part of if
-	int musicId = 0;
-	if (_ws->musicCurrentResourceId != -666 && _ws->numChapter != 1)
-		musicId = _ws->musicResourceId - 0x7FFE0000;
-	_vm->sound()->playMusic(_musPack, musicId);
+	ResourceId musicId = kResourceNone;
+	if (_ws->musicCurrentResourceIndex != kResourceMusicStopped && _ws->chapter != kChapter1 && getSound()->isCacheOk())
+		musicId = MAKE_RESOURCE(kResourcePackMusic, _ws->musicCurrentResourceIndex);
 
+	getSound()->playMusic(musicId);
 }
 
 Scene::~Scene() {
@@ -232,8 +226,6 @@ Scene::~Scene() {
 
 	delete _cursor;
 	delete _bgResource;
-	delete _musPack;
-	delete _resPack;
 	//delete _blowUp;
 
 	delete _title;
@@ -254,7 +246,7 @@ void Scene::enterScene() {
 		// disable input polling
 		//_actions->_allowInput = false;
 	} else {
-		_vm->screen()->setPalette(_resPack, _ws->currentPaletteId);
+		_vm->screen()->setPalette(_ws->currentPaletteId);
 		_background = _bgResource->getFrame(0);
 		_vm->screen()->copyToBackBuffer(
 			((byte *)_background->surface.pixels) + _ws->yTop * _background->surface.w + _ws->xLeft, _background->surface.w,
@@ -265,7 +257,7 @@ void Scene::enterScene() {
 		// when the scene is started. Check against the original to see
 		// when the cursor is initialized, and then how it reacts to the
 		// show_cursor opcode
-		Cursor::create(_cursor, _resPack, _ws->curMagnifyingGlass);
+		Cursor::create(_vm, _cursor, _ws->curMagnifyingGlass);
 		_cursor->show();
 
 		startMusic();
@@ -319,7 +311,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 			// TODO This isn't always going to be the magnifying glass
 			// Should check the current pointer region to identify the type
 			// of cursor to use
-			Cursor::create(_cursor, _resPack, _ws->curMagnifyingGlass);
+			Cursor::create(_vm, _cursor, _ws->curMagnifyingGlass);
 			_rightButton    = false;
 		//}
 		break;
@@ -369,8 +361,8 @@ void Scene::update() {
 		if (_vm->sound()->isPlaying(_speech->_soundResourceId)) {
 			_speech->prepareSpeech();
 		} else {
-			_speech->_textResourceId = 0;
-			_speech->_soundResourceId = 0;
+			_speech->_textResourceId = kResourceNone;
+			_speech->_soundResourceId = kResourceNone;
 			_vm->clearGameFlag(kGameFlag219);
 		}
 }
@@ -573,7 +565,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 	if (_cursor->field_11 & 2) {
 		if (act->getStatus() == 1 || act->getStatus() == 12) {
 			if (direction >= 0) {
-				newGraphicResourceId = _ws->curScrollUp + direction;
+				newGraphicResourceId = (ResourceId)(_ws->curScrollUp + direction);
 				_cursor->set(newGraphicResourceId, 0, 2);
 			}
 		}
@@ -622,7 +614,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 			}
 		}
 		if (targetIdx == -1) {
-			if (_ws->numChapter != 2 || _playerActorIdx != 10) {
+			if (_ws->chapter != kChapter2 || _playerActorIdx != 10) {
 				if (_cursor->flags)
 					_cursor->set(_ws->curMagnifyingGlass, 0, 2);
 			} else {
@@ -658,7 +650,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 						if (targetUpdateType & 0x10 && _cursor->flags != 2) {
 							_cursor->set(_ws->curTalkNPC2, 0, 2);
 						} else {
-							if (_ws->numChapter != 2 && _playerActorIdx != 10) {
+							if (_ws->chapter != kChapter2 && _playerActorIdx != 10) {
 								_cursor->set(_ws->curMagnifyingGlass, 0, 0);
 							} else {
 								if (_cursor->flags)
@@ -732,12 +724,12 @@ int32 Scene::findActionArea(const Common::Point pt) {
 	return targetIdx;
 }
 
-int32 Scene::hitTestScene(const Common::Point pt, HitType &type) {
+ResourceId Scene::hitTestScene(const Common::Point pt, HitType &type) {
 	int32 top  = pt.x + _ws->xLeft;
 	int32 left = pt.y + _ws->yTop;
 	type = kHitNone;
 
-	int32 result = findActionArea(Common::Point(top, left));
+	ResourceId result = (ResourceId)findActionArea(Common::Point(top, left));
 
 	if (result != -1) {
 		if (LOBYTE(_ws->actions[result]->actionType) & 8) {
@@ -770,7 +762,7 @@ bool Scene::hitTestActor(const Common::Point pt) {
 }
 
 bool Scene::hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped) {
-	GraphicResource *gra = new GraphicResource(_resPack, resourceId);
+	GraphicResource *gra = new GraphicResource(_vm, resourceId);
 	GraphicFrame    *fra = gra->getFrame(frame);
 
 	// TODO this gets a bit funky with the "flipped" calculations for x intersection
@@ -857,7 +849,7 @@ void Scene::updateAmbientSounds() {
 					int tmpVol = volume;
 					if (vm()->getRandom(10000) < 10) {
 						if (snd->field_0) {
-							_vm->sound()->playSound(snd->resourceId, false, volume, panning, false);
+							_vm->sound()->playSound(snd->resourceId, false, volume, panning);
 						} else {
 							// FIXME will this even work?
 							tmpVol += (vm()->getRandom(500)) * (((vm()->getRandom(100) >= 50) - 1) & 2) - 1;
@@ -868,7 +860,7 @@ void Scene::updateAmbientSounds() {
 							else
 								if (tmpVol <= -10000)
 									tmpVol = -10000;
-							_vm->sound()->playSound(snd->resourceId, 0, tmpVol, vm()->getRandom(20001) - 10000);
+							getSound()->playSound(snd->resourceId, 0, tmpVol, vm()->getRandom(20001) - 10000);
 						}
 					}
 				} else {
@@ -1073,7 +1065,7 @@ int Scene::drawScene() {
 		buildUpdateList();
 		processUpdateList();
 
-		if (_ws->numChapter == 11)
+		if (_ws->chapter == kChapter11)
 			checkVisibleActorsPriority();
 
 		// Queue updates
@@ -1144,7 +1136,7 @@ void Scene::processUpdateList() {
 
 			int32 bottomRight = actor->getBoundingRect()->bottom + actor->y1 + 4;
 
-			if (_ws->numChapter == 11 && _updateList[i].index != getPlayerActorIndex())
+			if (_ws->chapter == kChapter11 && _updateList[i].index != getPlayerActorIndex())
 				bottomRight += 20;
 
 			// Our actor rect

@@ -33,14 +33,7 @@ namespace Asylum {
 
 const uint32 CURSOR_UPDATE_TICKS = 100;
 
-Cursor::Cursor() {
-	_pos.x = 0;
-	_pos.y = 0;
-	_cursorRes = 0;
-}
-
-Cursor::Cursor(ResourcePack *pack) {
-	_pack = pack;
+Cursor::Cursor(AsylumEngine *engine) : _vm(engine) {
 	_pos.x = 0;
 	_pos.y = 0;
 	_cursorRes = 0;
@@ -56,14 +49,14 @@ void Cursor::load(int32 index) {
 	if (cursorLoaded)
 		delete _cursorResource;
 
-	_cursorResource = new GraphicResource(_resPack, index);
+	_cursorResource = new GraphicResource(_vm, index);
 	_cursorStep		= 1;
 	_curFrame	    = 0;
 	cursorLoaded    = true;
 }
 */
 
-void Cursor::create(Cursor *&cursor, ResourcePack *pack, ResourceId id) {
+void Cursor::create(AsylumEngine *engine, Cursor *&cursor, ResourceId id) {
 	// If the current cursor resource is already assigned
 	// to the id value we're sending, just return
 	// TODO this simplifies a lot of additional validation calls
@@ -76,7 +69,7 @@ void Cursor::create(Cursor *&cursor, ResourcePack *pack, ResourceId id) {
 		else
 			return;
 	}
-	cursor = new Cursor(pack);
+	cursor = new Cursor(engine);
 	cursor->set(id, 0, 0);
 }
 
@@ -92,7 +85,7 @@ void Cursor::set(ResourceId resourceId, int32 cntr, int32 flgs, int32 frames) {
 	if (_cursorRes)
 		delete _cursorRes;
 
-	_cursorRes = new GraphicResource(_pack, resourceId);
+	_cursorRes = new GraphicResource(_vm, resourceId);
 
 	if (frames >= 0)
 		frameCount = frames;

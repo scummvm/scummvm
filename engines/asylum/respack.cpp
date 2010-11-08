@@ -27,17 +27,41 @@
 
 namespace Asylum {
 
-ResourcePack::ResourcePack(const char *resourceFile) {
-	init(resourceFile);
+//////////////////////////////////////////////////////////////////////////
+// ResourceManager
+//////////////////////////////////////////////////////////////////////////
+ResourceEntry *ResourceManager::get(ResourceId id) {
+	ResourcePackId packId = (ResourcePackId)((id >> 16) & 0x7FFF);
+	uint16 index = (uint16)id;
+
+	// Check if we need to load a music pack
+	ResourceCache *cache = (packId == kResourcePackMusic) ? &_music : &_resources;
+
+	// Try getting the resource pack
+	if (!cache->contains(packId)) {
+		ResourcePack *pack = new ResourcePack(Common::String::format((packId == kResourcePackMusic) ? "mus.%03d" : "res.%03d", packId));
+
+		cache->setVal(packId, pack);
+	}
+
+	return cache->getVal(packId)->get(index);
 }
 
-ResourcePack::ResourcePack(ResourcePackId id) {
-	// We don't use the file number part of resource IDs
-	//uint32 fileNum = (resourceID >> 16) & 0x7FFF;
-	char filename[20];
-	sprintf(filename, "res.%03d", id);
+
+//////////////////////////////////////////////////////////////////////////
+// ResourcePack
+//////////////////////////////////////////////////////////////////////////
+ResourcePack::ResourcePack(Common::String filename) {
 	init(filename);
 }
+
+//ResourcePack::ResourcePack(ResourcePackId id) {
+//	// We don't use the file number part of resource IDs
+//	//uint32 fileNum = (resourceID >> 16) & 0x7FFF;
+//	char filename[20];
+//	sprintf(filename, "res.%03d", id);
+//	init(filename);
+//}
 
 ResourcePack::~ResourcePack() {
 	for (uint32 i = 0; i < _resources.size(); i++)
@@ -47,8 +71,8 @@ ResourcePack::~ResourcePack() {
 	_packFile.close();
 }
 
-void ResourcePack::init(const char *resourceFile) {
-	_packFile.open(resourceFile);
+void ResourcePack::init(Common::String filename) {
+	_packFile.open(filename);
 
 	uint32 entryCount = _packFile.readUint32LE();
 	_resources.resize(entryCount);
@@ -71,8 +95,7 @@ void ResourcePack::init(const char *resourceFile) {
 	}
 }
 
-ResourceEntry *ResourcePack::getResource(ResourceId resourceId) {
-	uint16 index = resourceId & 0xFFFF;
+ResourceEntry *ResourcePack::get(uint16 index) {
 	if (!_resources[index].data) {
 		// Load the requested resource if it's not loaded already
 		_packFile.seek(_resources[index].offset, SEEK_SET);

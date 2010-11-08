@@ -187,7 +187,7 @@ private:
 	int32		   _soundX;
 	int32		   _soundY;
 	int32		   _field_688;
-	int32		   _randomResourceIds[5];
+	ResourceId     _randomResourceIds[5];
 	ResourceId     _soundResourceId;
 	int32		   _field_6A4;
 
@@ -224,7 +224,7 @@ private:
 	 *
 	 * @return The random resource identifier.
 	 */
-	int32 getRandomResourceId();
+	ResourceId getRandomResourceId();
 
 }; // end of class Object
 

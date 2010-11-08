@@ -34,7 +34,7 @@
 
 namespace Asylum {
 
-class ResourcePack;
+class AsylumEngine;
 
 struct GraphicFrame {
 	int32 size;
@@ -52,11 +52,11 @@ struct GraphicFrame {
 class GraphicResource {
 public:
 
-	GraphicResource() {}
-	GraphicResource(ResourcePack *resPack, ResourceId id);
+	GraphicResource(AsylumEngine *engine) {}
+	GraphicResource(AsylumEngine *engine, ResourceId id);
 	~GraphicResource();
 
-	void load(ResourcePack *resPack, ResourceId id);
+	void load(ResourceId id);
 
 	/**
 	 * Copies an animation frame to the target buffer
@@ -75,6 +75,8 @@ public:
 	uint32        getFrameCount() { return _frames.size(); }
 
 private:
+	AsylumEngine *_vm;
+
 	Common::Array <GraphicFrame> _frames;
 	int32 _flags;
 	int32 _flags2;

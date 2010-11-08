@@ -33,7 +33,7 @@
 
 namespace Asylum {
 
-class Scene;
+class AsylumEngine;
 class Screen;
 class Sound;
 class Video;
@@ -43,20 +43,20 @@ struct GraphicQueueItem;
 
 class BlowUpPuzzle {
 public:
-	BlowUpPuzzle(Scene *scene);
+	BlowUpPuzzle(AsylumEngine *engine);
 	virtual ~BlowUpPuzzle();
 
 	virtual void handleEvent(Common::Event *event, bool doUpdate) {};
 	virtual void openBlowUp() {};
 	virtual void closeBlowUp() {};
 
-	bool isActive() {
-		return _active;
-	}
+	bool isActive() { return _active; }
+
 protected:
+	AsylumEngine *_vm;
+
 	Common::Event *_ev;
 
-	Scene  *_scene;
 	Cursor *_cursor;
 	bool    _leftClickUp;
 	bool    _leftClickDown;
@@ -74,7 +74,7 @@ protected:
 // ---- VCR -------------------
 
 typedef struct VCRDrawInfo {
-	ResourceId resourceId;
+	int32 resourceId;
 	int32 x;
 	int32 y;
 } VCRDrawInfo;
@@ -94,7 +94,7 @@ const Common::Rect BlowUpPuzzleVCRPolies[10] = {
 
 class BlowUpPuzzleVCR : public BlowUpPuzzle {
 public:
-	BlowUpPuzzleVCR(Scene *scene);
+	BlowUpPuzzleVCR(AsylumEngine *engine);
 	~BlowUpPuzzleVCR();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
@@ -154,9 +154,9 @@ private:
 
 	void updateCursorInPolyRegion();
 
-	GraphicQueueItem getGraphicJackItem(ResourceId resourceId);
+	GraphicQueueItem getGraphicJackItem(int32 index);
 	GraphicQueueItem getGraphicShadowItem();
-	void updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo pluggedOnRed, VCRDrawInfo pluggedOnYellow, VCRDrawInfo pluggedOnBlack, ResourceId resourceIdOnHand);
+	void updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo pluggedOnRed, VCRDrawInfo pluggedOnYellow, VCRDrawInfo pluggedOnBlack, int32 resourceOnHandIndex);
 	void updateBlackJack();
 	void updateRedJack();
 	void updateYellowJack();

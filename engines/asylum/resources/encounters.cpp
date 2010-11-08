@@ -55,7 +55,7 @@ Encounter::Encounter(Scene *scene) {
 
 		item.keywordIndex = file.readSint32LE();
 		item.field2       = file.readSint32LE();
-		item.scriptResourceId  = file.readSint32LE();
+		item.scriptResourceId  = (ResourceId)file.readSint32LE();
 		for (uint8 j = 0; j < 50; j++) {
 			item.array[j] = file.readSint32LE();
 		}

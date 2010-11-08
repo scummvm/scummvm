@@ -25,27 +25,31 @@
 
 #include "asylum/system/graphics.h"
 
+#include "asylum/asylum.h"
 #include "asylum/respack.h"
 
 #include "common/endian.h"
 
 namespace Asylum {
 
-GraphicResource::GraphicResource(ResourcePack *resPack, ResourceId id) {
-	load(resPack, id);
-}
-
-void GraphicResource::load(ResourcePack *resPack, ResourceId id) {
-	// Clear previously loaded data
-	clear();
-
-	ResourceEntry *resEntry = resPack->getResource(id);
-	_resourceId = id;
-	init(resEntry->data, resEntry->size);
+GraphicResource::GraphicResource(AsylumEngine *engine, ResourceId id) : _vm(engine) {
+	load(id);
 }
 
 GraphicResource::~GraphicResource() {
 	clear();
+
+	// Zero passed pointers
+	_vm = NULL;
+}
+
+void GraphicResource::load(ResourceId id) {
+	// Clear previously loaded data
+	clear();
+
+	ResourceEntry *resEntry = getResource()->get(id);
+	_resourceId = id;
+	init(resEntry->data, resEntry->size);
 }
 
 void GraphicResource::clear() {

@@ -36,7 +36,7 @@
 
 namespace Asylum {
 
-class ResourcePack;
+class AsylumEngine;
 
 struct ResourceEntry;
 
@@ -79,7 +79,7 @@ struct SoundBufferItem {
 
 class Sound {
 public:
-	Sound(Audio::Mixer *mixer);
+	Sound(AsylumEngine *engine, Audio::Mixer *mixer);
 	~Sound();
 
 	bool addToSoundBuffer(ResourceId resourceId);
@@ -91,10 +91,10 @@ public:
 	 *
 	 * @param overwrite determine if _soundHandle should be overwritten if still active
 	 */
-	void playSound(ResourcePack *pack, ResourceId resourceId, int32 volume, bool looping = false, int32 panning = 0, bool overwrite = false);
-	void playSound(ResourcePack *pack, ResourceId resourceId, bool looping, int32 volume, int32 panning);
-	void playSound(ResourceEntry *resource, bool looping, int32 volume, int32 panning);
-	void playSound(ResourceId resourceId, bool looping = false, int32 volume = Config.sfxVolume, int32 panning = 0, bool fromBuffer = false);
+	//void playSound(ResourceId resourceId, int32 volume, bool looping = false, int32 panning = 0, bool overwrite = false);
+	//void playSound(ResourceId resourceId, bool looping = false, int32 volume = Config.sfxVolume, int32 panning = 0, bool fromBuffer = false);
+	void playSound(ResourceId resourceId, bool looping = false, int32 volume = Config.sfxVolume, int32 panning = 0);
+	//void playSound(ResourceEntry *resource, bool looping, int32 volume, int32 panning);
 
 	void stopSound(ResourceId resourceId);
 	void stopSound();
@@ -103,8 +103,8 @@ public:
 	void playSpeech(ResourceId resourceId);
 	void setSpeech(ResourceId sound, ResourceId speechText);
 
-	void playMusic(ResourcePack *pack, ResourceId resourceId, int32 volume = Config.musicVolume);
-	void changeMusic(ResourcePack *pack, ResourceId resourceId, int32 musicStatusExt);
+	void playMusic(ResourceId resourceId, int32 volume = Config.musicVolume);
+	void changeMusic(ResourceId resourceId, int32 musicStatusExt);
 	void stopMusic();
 
 	void setVolume(ResourceId resourceId, double volume);
@@ -145,14 +145,13 @@ public:
 	ResourceId speechTextResourceId;
 
 private:
+	AsylumEngine *_vm;
+
 	Audio::Mixer       *_mixer;
 
 	Audio::SoundHandle _speechHandle;
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _soundHandle;
-
-	ResourcePack       *_speechPack;
-	ResourcePack       *_soundPack;
 
 	Common::Array<SoundBufferItem> _soundBuffer;
 
@@ -162,7 +161,7 @@ private:
 	 * to track it uniquely, as this doesn't involve initializing the
 	 * scene just to set a single variable
 	 */
-	int32 _currentMusicResIndex;
+	uint32 _currentMusicResIndex;
 
 	/**
 	 * Find the index within the _soundBuffer array of the

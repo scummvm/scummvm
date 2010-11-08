@@ -40,21 +40,20 @@
 
 namespace Asylum {
 
-struct GraphicFrame;
+class AsylumEngine;
 class GraphicResource;
-class ResourcePack;
+class VideoText;
+struct GraphicFrame;
 
 struct VideoSubtitle {
 	int frameStart;
 	int frameEnd;
-	int textRes;
+	ResourceId textResourceId;
 };
-
-class VideoText;
 
 class Video {
 public:
-	Video(Audio::Mixer *mixer);
+	Video(AsylumEngine *engine, Audio::Mixer *mixer);
 	virtual ~Video();
 
 	void playVideo(int32 videoNumber, bool showSubtitles);
@@ -77,20 +76,21 @@ private:
 // text directly to the screen
 class VideoText {
 public:
-	VideoText();
+	VideoText(AsylumEngine *engine);
 	~VideoText();
 
-	void loadFont(ResourcePack *resPack, ResourceId resourceId);
+	void loadFont(ResourceId resourceId);
 	void drawMovieSubtitle(byte *screenBuffer, ResourceId resourceId);
 
 private:
+	AsylumEngine *_vm;
+
 	int32 getTextWidth(const char *text);
 
 	void drawText(byte *screenBuffer, int16 x, int16 y, const char *text);
 	void copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int x, int y);
 
 	GraphicResource *_fontResource;
-	ResourcePack	*_textPack;
 	uint8           _curFontFlags;
 
 }; // end of class VideoText

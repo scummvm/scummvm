@@ -37,10 +37,10 @@
 
 namespace Asylum {
 
-Speech::Speech(Scene *scene): _scene(scene) {
-	_tick        = _scene->vm()->getTick();
-	_soundResourceId = 0;
-	_textResourceId  = 0;
+Speech::Speech(AsylumEngine *engine): _vm(engine) {
+	_tick            = _vm->getTick();
+	_soundResourceId = kResourceNone;
+	_textResourceId  = kResourceNone;
 }
 
 Speech::~Speech() {
@@ -48,9 +48,9 @@ Speech::~Speech() {
 }
 
 int32 Speech::play(ResourceId speechResourceId) {
-	int32 soundResourceId = 0;
+	ResourceId soundResourceId = kResourceNone;
 
-	switch (_scene->worldstats()->actorType) {
+	switch (getWorld()->actorType) {
 	case kActorMax: {
 		int32 soundResourceId2 = speechResourceId;
 		int32 textResourceId = speechResourceId;
@@ -60,29 +60,29 @@ int32 Speech::play(ResourceId speechResourceId) {
 			textResourceId -= 9;
 		}
 
-		soundResourceId = soundResourceId2 - 0x7FFD0000;
+		soundResourceId = (ResourceId)(soundResourceId2 - 0x7FFD0000);
 		// setup the right index for sound and text
-		setPlayerSpeech(soundResourceId, textResourceId - 0x7FFFFFAD);
+		setPlayerSpeech(soundResourceId, (ResourceId)(textResourceId - 0x7FFFFFAD));
 	}
 		break;
 	// TODO: check if actor type is right for the following cases
 	case kActorSarah: {
-		soundResourceId = speechResourceId - 0x7FFBF879;
-		setPlayerSpeech(soundResourceId, speechResourceId - 0x7FFFFDB6);
+		soundResourceId = (ResourceId)(speechResourceId - 0x7FFBF879);
+		setPlayerSpeech(soundResourceId, (ResourceId)(speechResourceId - 0x7FFFFDB6));
 	}
 		break;
 	case kActorCyclops: {
-		soundResourceId = speechResourceId - 0x7FFBF7DC;
-		setPlayerSpeech(soundResourceId, speechResourceId - 0x7FFFFD19);
+		soundResourceId = (ResourceId)(speechResourceId - 0x7FFBF7DC);
+		setPlayerSpeech(soundResourceId, (ResourceId)(speechResourceId - 0x7FFFFD19));
 	}
 		break;
 	case kActorAztec: {
-		soundResourceId = speechResourceId - 0x7FFBF746;
-		setPlayerSpeech(soundResourceId, speechResourceId - 0x7FFFFC83);
+		soundResourceId = (ResourceId)(speechResourceId - 0x7FFBF746);
+		setPlayerSpeech(soundResourceId, (ResourceId)(speechResourceId - 0x7FFFFC83));
 	}
 		break;
 	default:
-		soundResourceId = 0;
+		soundResourceId = kResourceNone;
 		break;
 	}
 
@@ -91,8 +91,8 @@ int32 Speech::play(ResourceId speechResourceId) {
 
 void Speech::setPlayerSpeech(ResourceId soundResourceId, ResourceId textResourceId) {
 	if (soundResourceId) {
-		if (_scene->vm()->sound()->isPlaying(soundResourceId)) {
-			_scene->vm()->sound()->stopSound(soundResourceId);
+		if (getSound()->isPlaying(soundResourceId)) {
+			getSound()->stopSound(soundResourceId);
 		}
 	}
 
@@ -106,7 +106,7 @@ void Speech::prepareSpeech() {
 	//int32 startTick = _scene->vm()->getTick();
 
 	if (_soundResourceId) {
-		if (!_scene->vm()->sound()->isPlaying(_soundResourceId)/* || _tick && startTick >= _tick*/) {
+		if (!getSound()->isPlaying(_soundResourceId)/* || _tick && startTick >= _tick*/) {
 			processSpeech();
 		}
 
@@ -119,11 +119,11 @@ void Speech::prepareSpeech() {
 			check = pt->y >= 240;*/
 			int32 posY = ((check - 1) & 0x118) + 40;
 
-			_scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->font3);
-			_scene->vm()->text()->drawText(20, posY, _textDataPos);
+			getText()->loadFont(getWorld()->font3);
+			getText()->drawText(20, posY, _textDataPos);
 
-			_scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->font1);
-			_scene->vm()->text()->drawText(20, posY, _textData);
+			getText()->loadFont(getWorld()->font1);
+			getText()->drawText(20, posY, _textData);
 		}
 	}
 }
@@ -133,10 +133,10 @@ void Speech::processSpeech() {
 
 	_tick = 0;
 
-	txt = _scene->vm()->text()->getResText(_textResourceId);
+	txt = getText()->getResText(_textResourceId);
 
 	if (*(txt + strlen((const char *)txt) - 2) == 1) {
-		_textResourceId = 0;
+		_textResourceId = kResourceNone;
 		_textData = 0;
 		_textDataPos = 0;
 	} else {
@@ -144,8 +144,8 @@ void Speech::processSpeech() {
 			_textData = txt + 3;
 			_textDataPos = 0;
 
-			_scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->font1);
-			_scene->vm()->sound()->playSpeech(_soundResourceId);
+			getText()->loadFont(getWorld()->font1);
+			getSound()->playSpeech(_soundResourceId);
 		} else {
 			_textData = 0;
 			_textDataPos = txt;
@@ -154,8 +154,8 @@ void Speech::processSpeech() {
 				_textDataPos = txt + 2;
 			}
 
-			_scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->font3);
-			_scene->vm()->sound()->playSpeech(_soundResourceId);
+			getText()->loadFont(getWorld()->font3);
+			getSound()->playSpeech(_soundResourceId);
 		}
 	}
 }

@@ -113,8 +113,8 @@ void Screen::copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x
 	_vm->_system->unlockScreen();
 }
 
-void Screen::setPalette(ResourcePack *resPack, ResourceId id) {
-	setPalette(resPack->getResource(id)->data + 32);
+void Screen::setPalette(ResourceId id) {
+	setPalette(getResource()->get(id)->data + 32);
 }
 
 void Screen::setPalette(byte *rgbPalette) {
@@ -135,7 +135,7 @@ void Screen::setPalette(byte *rgbPalette) {
 	_vm->_system->setPalette(palette, 0, 256);
 }
 
-void Screen::setGammaLevel(ResourcePack *resPack, ResourceId id, int32 val) {
+void Screen::setGammaLevel(ResourceId id, int32 val) {
 	error("[Screen::setGammaLevel] not implemented");
 }
 
@@ -183,18 +183,16 @@ void Screen::addGraphicToQueue(GraphicQueueItem item) {
 }
 
 void Screen::drawGraphicsInQueue() {
-	WorldStats *ws = _vm->scene()->worldstats();
-
 	// sort by priority first
 	graphicsSelectionSort();
 
 	for (uint32 i = 0; i < _queueItems.size(); i++) {
-		GraphicResource *grRes = _vm->scene()->getGraphicResource(_queueItems[i].resourceId);
+		GraphicResource *grRes = new GraphicResource(_vm, _queueItems[i].resourceId);
 		GraphicFrame    *fra   = grRes->getFrame(_queueItems[i].frameIdx);
 
 		copyToBackBufferWithTransparency((byte *)fra->surface.pixels,
 				fra->surface.w,
-				_queueItems[i].x - ws->xLeft, _queueItems[i].y - ws->yTop,
+				_queueItems[i].x - getWorld()->xLeft, _queueItems[i].y - getWorld()->yTop,
 				fra->surface.w,
 				fra->surface.h);
 

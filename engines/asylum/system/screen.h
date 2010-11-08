@@ -62,9 +62,9 @@ public:
 	void copyRectToScreen(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 	void copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 	void setPalette(byte *rgbPalette);
-	void setPalette(ResourcePack *resPack, ResourceId id);
+	void setPalette(ResourceId id);
 
-	void setGammaLevel(ResourcePack *resPack, ResourceId id, int32 val);
+	void setGammaLevel(ResourceId id, int32 val);
 
 	void drawWideScreen(int16 barSize);
 	void clearScreen();

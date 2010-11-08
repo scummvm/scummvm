@@ -52,7 +52,7 @@ Special::~Special() {}
 void Special::run(Object* object, ActorIndex index) {
 	//debugC(kDebugLevelSound, "[SPEC] Running special function for chapter %d",getWorld()->numChapter);
 
-	switch (getWorld()->numChapter) {
+	switch (getWorld()->chapter) {
 	default:
 		error("[Special::runSpecial] Invalid chapter");
 
@@ -117,12 +117,12 @@ void Special::chapter1(Object *object, ActorIndex actorIndex) {
 
 		case kObjectAngelFlares:
 			if (object->getFrameIndex() == 5)
-				getSpeech()->play(81);
+				getSpeech()->play(MAKE_RESOURCE(getScene()->getPackId(), 81));
 			break;
 
 		case kObjectGuyFalls:
 			if (object->getFrameIndex() == 23)
-				getSpeech()->play(82);
+				getSpeech()->play(MAKE_RESOURCE(getScene()->getPackId(), 82));
 			break;
 		}
 	}
@@ -263,7 +263,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 
 			if (actor->isVisible())
 				if (getScene()->getActorUpdateFlag2() < 7)
-					getSpeech()->play(452);
+					getSpeech()->play(MAKE_RESOURCE(getScene()->getPackId(), 452));
 
 			_vm->setGameFlag(kGameFlag219);
 
@@ -300,7 +300,7 @@ void Special::chapter4(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::chapter5(Object *object, ActorIndex actorIndex) {
-	setPaletteGamma(kResourcePalette_8001003B, getWorld()->currentPaletteId);
+	setPaletteGamma(MAKE_RESOURCE(kResourcePackShared, 19), getWorld()->currentPaletteId);
 
 	playChapterSound(object, actorIndex);
 
@@ -433,10 +433,10 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 				if (player->getReaction(0)) {
 
 					if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
-						getSound()->playSound(kResourceSound_80120002);
+						getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 2));
 						player->updateStatus(kActorStatusEnabled);
 					} else {
-						getSound()->playSound(kResourceSound_80120005);
+						getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
 						player->updateStatus(kActorStatus6);
 					}
 
@@ -586,7 +586,7 @@ void Special::playChapterSound(Object *object, ActorIndex actorIndex) {
 	if (Config.performance <= 2)
 		return;
 
-	switch (getWorld()->numChapter) {
+	switch (getWorld()->chapter) {
 	default:
 		error("[Special::playChapterSound] Invalid chapter");
 

@@ -86,9 +86,6 @@ public:
 	bool isActive() { return _isActive; }
 	ResourcePackId  getPackId() { return _packId; }
 
-	ResourcePack* getResourcePack() { return _resPack; }
-	ResourcePack* getMusicPack() { return _musPack; }
-	GraphicResource* getGraphicResource(int32 entry);
 	//BlowUpPuzzle* getBlowUpPuzzle() { return _blowUp;}
 	//void setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
 	void setScenePosition(int x, int y);
@@ -205,7 +202,7 @@ protected:
 	 * Checks if the supplied coordinates are inside an action area, object or
 	 * actor, and returns -1 if nothing was found, or the type of hit if found
 	 */
-	int32 hitTestScene(const Common::Point pt, HitType &type);
+	ResourceId hitTestScene(const Common::Point pt, HitType &type);
 
 	/** .text:0040EAA0
 	 * Check if a object exist at the supplied coordinates.
@@ -234,8 +231,6 @@ private:
 	SceneTitle   *_title;
 	Speech       *_speech;
 	Cursor       *_cursor;
-	ResourcePack *_resPack;
-	ResourcePack *_musPack;
 	Special      *_special;
 	//BlowUpPuzzle *_blowUp;
 
