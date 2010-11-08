@@ -83,7 +83,7 @@ void SceneTitle::update(int32 tick) {
 	                              0, 0, 640, 480);
 
 	ResourceId resourceId = MAKE_RESOURCE(getScene()->getPackId(), 1797);
-	int32 resWidth = getText()->getResTextWidth(resourceId);
+	int32 resWidth = getText()->getWidth(resourceId);
 	getText()->drawResTextCentered(320 - resWidth * 24, 30, resWidth, resourceId);
 
 	GraphicFrame *frame = _progress->getFrame(_spinnerFrame);

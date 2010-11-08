@@ -322,7 +322,7 @@ void MainMenu::updateMainMenu() {
 			// Show text
 			_vm->text()->drawResTextCentered(MenuIconFixedXpos[iconNum],
 					iconFrame->y + 50,
-					getText()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, iconNum + 1309)),
+					getText()->getWidth(MAKE_RESOURCE(kResourcePackText, iconNum + 1309)),
 					MAKE_RESOURCE(kResourcePackText, iconNum + 1309));
 
 			// Play creepy voice
@@ -392,25 +392,25 @@ void MainMenu::updateSubMenuNewGame() {
 	_vm->text()->drawResTextCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 529));
 
 	// Yes
-	switchFont(_cursor->position().x < 247 || _cursor->position().x > 247 + _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 1322)) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
-	_vm->text()->setTextPos(247, 273);
+	switchFont(_cursor->position().x < 247 || _cursor->position().x > 247 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1322)) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
+	_vm->text()->setPosition(247, 273);
 	_vm->text()->drawResText(MAKE_RESOURCE(kResourcePackText, 1322));
 
 	// No
-	switchFont(_cursor->position().x < 369 || _cursor->position().x > 369 + _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 1323)) || _cursor->position().y < 273 ||	_cursor->position().y > 273 + 24);
-	_vm->text()->setTextPos(369, 273);
+	switchFont(_cursor->position().x < 369 || _cursor->position().x > 369 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1323)) || _cursor->position().y < 273 ||	_cursor->position().y > 273 + 24);
+	_vm->text()->setPosition(369, 273);
 	_vm->text()->drawResText(MAKE_RESOURCE(kResourcePackText, 1323));
 
 	// action
 	if (_leftClick) {
 		// Yes
-		if (_cursor->position().x >= 247 && _cursor->position().x <= 247 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 1322))) {
+		if (_cursor->position().x >= 247 && _cursor->position().x <= 247 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1322))) {
 			_leftClick = false;
             closeMenu();
             _vm->startGame(kResourcePackTowerCells, AsylumEngine::kStartGamePlayIntro);
 		}
 		// No
-		if (_cursor->position().x >= 369 && _cursor->position().x <= 369 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 1323)))
+		if (_cursor->position().x >= 369 && _cursor->position().x <= 369 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1323)))
 			exitSubMenu();
 	}
 }
@@ -418,7 +418,7 @@ void MainMenu::updateSubMenuNewGame() {
 void MainMenu::updateSubMenuCinematics() {
 	int32 currentCD = 1;	// FIXME: dummy value
 	_vm->text()->drawResTextWithValueCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1352), currentCD);
-	_vm->text()->setTextPos(30, 340);
+	_vm->text()->setPosition(30, 340);
 	_vm->text()->drawResText(MAKE_RESOURCE(kResourcePackText, 1353));	// Prev Page
 
 	if (_cursor->position().x >= 280 && _cursor->position().x <= 400 && _cursor->position().y >= 340 && _cursor->position().y <= 360) {
@@ -429,19 +429,19 @@ void MainMenu::updateSubMenuCinematics() {
 		loadFont(kFontYellow);
 	}
 
-	_vm->text()->setTextPos(280, 340);
+	_vm->text()->setPosition(280, 340);
 	_vm->text()->drawResText(MAKE_RESOURCE(kResourcePackText, 1355));	// Main Menu
 
 	loadFont(kFontYellow);
 
-	_vm->text()->setTextPos(500, 340);
+	_vm->text()->setPosition(500, 340);
 	_vm->text()->drawResText(MAKE_RESOURCE(kResourcePackText, 1354));	// Next Page
 }
 
 void MainMenu::updateSubMenuSettings() {
-	int32 sizeMinus	= _vm->text()->getTextWidth("-");
-	int32 sizePlus		= _vm->text()->getTextWidth("+");
-	int32 sizeMainMenu = _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 1437));
+	int32 sizeMinus	= _vm->text()->getWidth("-");
+	int32 sizePlus		= _vm->text()->getWidth("+");
+	int32 sizeMainMenu = _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1437));
 
 	loadFont(kFontYellow);
 	// Settings
@@ -450,14 +450,14 @@ void MainMenu::updateSubMenuSettings() {
 	// gamma correction
 	_vm->text()->drawResTextAlignRight(320, 150, MAKE_RESOURCE(kResourcePackText, 1433));
 	switchFont(_cursor->position().x < 350 || _cursor->position().x > sizeMinus + 350 || _cursor->position().y < 150 || _cursor->position().y > 174);
-	_vm->text()->setTextPos(350, 150);
+	_vm->text()->setPosition(350, 150);
 	_vm->text()->drawText("-");
 
 	switchFont(_cursor->position().x < sizeMinus + 360 || _cursor->position().x > sizeMinus + sizePlus + 360 || _cursor->position().y < 150 || _cursor->position().y > 174);
-	_vm->text()->setTextPos(sizeMinus + 360, 150);
+	_vm->text()->setPosition(sizeMinus + 360, 150);
 	_vm->text()->drawText("+");
 
-	_vm->text()->setTextPos(sizeMinus + sizePlus + 365, 150);
+	_vm->text()->setPosition(sizeMinus + sizePlus + 365, 150);
 	loadFont(kFontYellow);
 	if (Config.gammaLevel) {
 		for (int32 i = 0; i < Config.gammaLevel; i++) {
@@ -472,14 +472,14 @@ void MainMenu::updateSubMenuSettings() {
 	loadFont(kFontYellow);
 	_vm->text()->drawResTextAlignRight(320, 179, MAKE_RESOURCE(kResourcePackText, 1434));
 	switchFont(_cursor->position().x < 350 || _cursor->position().x > sizeMinus + 350 || _cursor->position().y < 179 || _cursor->position().y > 203);
-	_vm->text()->setTextPos(350, 179);
+	_vm->text()->setPosition(350, 179);
 	_vm->text()->drawText("-");
 
 	switchFont(_cursor->position().x < sizeMinus + 360 || _cursor->position().x > sizeMinus + sizePlus + 360 || _cursor->position().y < 179 || _cursor->position().y > 203);
-	_vm->text()->setTextPos(sizeMinus + 360, 179);
+	_vm->text()->setPosition(sizeMinus + 360, 179);
 	_vm->text()->drawText("+");
 
-	_vm->text()->setTextPos(sizeMinus + sizePlus + 365, 179);
+	_vm->text()->setPosition(sizeMinus + sizePlus + 365, 179);
 	loadFont(kFontYellow);
 	if (Config.performance == 5) {
 		_vm->text()->drawResText(MAKE_RESOURCE(kResourcePackText, 1436));
@@ -493,7 +493,7 @@ void MainMenu::updateSubMenuSettings() {
 
 	// back to main menu
 	switchFont(_cursor->position().x < 300 || _cursor->position().x > 300 + sizeMainMenu || _cursor->position().y < 340 || _cursor->position().y > 340 + 24);
-	_vm->text()->setTextPos(300, 340);
+	_vm->text()->setPosition(300, 340);
 	_vm->text()->drawResText(MAKE_RESOURCE(kResourcePackText, 1437));
 
 	// action
@@ -543,19 +543,19 @@ void MainMenu::updateSubMenuQuitGame() {
 	_vm->text()->drawResTextCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1408));
 
 	// Yes
-	switchFont(_cursor->position().x < 247 || _cursor->position().x > 247 + _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 581)) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
-	_vm->text()->setTextPos(247, 273);
+	switchFont(_cursor->position().x < 247 || _cursor->position().x > 247 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 581)) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
+	_vm->text()->setPosition(247, 273);
 	_vm->text()->drawResText(MAKE_RESOURCE(kResourcePackText, 1409));
 
 	// No
-	switchFont(_cursor->position().x < 369 || _cursor->position().x > 369 + _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 582)) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
-	_vm->text()->setTextPos(369, 273);
+	switchFont(_cursor->position().x < 369 || _cursor->position().x > 369 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 582)) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
+	_vm->text()->setPosition(369, 273);
 	_vm->text()->drawResText(MAKE_RESOURCE(kResourcePackText, 1410));
 
 	// action
 	if (_leftClick) {
 		// Yes
-		if (_cursor->position().x >= 247 && _cursor->position().x <= 247 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 1409))) {
+		if (_cursor->position().x >= 247 && _cursor->position().x <= 247 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1409))) {
 			_leftClick = false;
 
 			// User clicked on quit, so push a quit event
@@ -564,7 +564,7 @@ void MainMenu::updateSubMenuQuitGame() {
 			g_system->getEventManager()->pushEvent(event);
 		}
 		// No
-		if (_cursor->position().x >= 369 && _cursor->position().x <= 369 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 1410)))
+		if (_cursor->position().x >= 369 && _cursor->position().x <= 369 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1410)))
 			exitSubMenu();
 	}
 }
@@ -605,7 +605,7 @@ void MainMenu::updateSubMenuShowCredits() {
 					posY = _creditsTextScroll;
 				}
 
-			_vm->text()->setTextPos(320, step + posY);
+			_vm->text()->setPosition(320, step + posY);
 			_vm->text()->drawResText((ResourceId)(resourceId - 2147482201));
 			posY = _creditsTextScroll;
 		}
@@ -649,14 +649,14 @@ void MainMenu::updateSubMenuReturnToGame() {
 	_vm->text()->drawResTextCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 712));
 
 	// Main menu
-	switchFont(_cursor->position().x < 285 || _cursor->position().x > 285 + _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 713)) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
-	_vm->text()->setTextPos(285, 273);
+	switchFont(_cursor->position().x < 285 || _cursor->position().x > 285 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 713)) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
+	_vm->text()->setPosition(285, 273);
 	_vm->text()->drawResText(MAKE_RESOURCE(kResourcePackText, 713));
 
 	// action
 	if (_leftClick) {
 		// Main menu
-		if (_cursor->position().x >= 285 && _cursor->position().x <= 285 + _vm->text()->getResTextWidth(MAKE_RESOURCE(kResourcePackText, 713)) && _cursor->position().y >= 273 && _cursor->position().y <= 273 + 24)
+		if (_cursor->position().x >= 285 && _cursor->position().x <= 285 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 713)) && _cursor->position().y >= 273 && _cursor->position().y <= 273 + 24)
 			exitSubMenu();
 	}
 }

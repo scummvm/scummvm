@@ -245,7 +245,7 @@ void Actor::update() {
 					if (_vm->isGameFlagSet(kGameFlag556)) {
 						Actor *player = getScene()->getActor();
 
-						getSpeech()->play(MAKE_RESOURCE(getScene()->getPackId(), 453));
+						getSpeech()->playPlayer(453);
 						hide();
 
 						player->updateStatus(kActorStatus3);
@@ -352,7 +352,7 @@ void Actor::update() {
 
 		if (_vm->screenUpdatesCount - _lastScreenUpdate > 300) {
 			if (_vm->getRandom(100) < 50) {
-				if (!getSound()->soundResourceId || !getSound()->isPlaying(getSound()->soundResourceId)) {
+				if (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
 					if (isDefaultDirection(10))
 						updateStatus(kActorStatus9);
 				}
@@ -784,7 +784,7 @@ void Actor::processStatus(int32 actorX, int32 actorY, bool doSpeech) {
 		else
 			updateStatus(kActorStatus13);
 	} else if (doSpeech) {
-		getScene()->playSpeech(1);
+		getSpeech()->playIndexed(1);
 	}
 }
 
@@ -872,7 +872,7 @@ void Actor::updateStatusEnabled() {
 	if (_vm->screenUpdatesCount - _lastScreenUpdate > 300) {
 		if (strcmp((char *)&_name, "Crow")) {
 			if (_vm->getRandom(100) < 50
-			 && (!getSound()->soundResourceId || !getSound()->isPlaying(getSound()->soundResourceId))
+			 && (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId()))
 			 && isDefaultDirection(10))
 				updateStatus(kActorStatus9);
 
@@ -887,12 +887,12 @@ void Actor::updateStatusEnabled() {
 			if (_vm->isGameFlagNotSet(kGameFlagScriptProcessing)
 			 && isVisible()
 			 && !_vm->encounter()->getFlag(kEncounterFlag2)
-			 && !getSound()->soundResourceId) {
+			 && !getSpeech()->getSoundResourceId()) {
 				if (_vm->getRandom(100) < 50) {
 					if (getWorld()->chapter == kChapter13)
-						getSpeech()->play(MAKE_RESOURCE(getScene()->getPackId(), 507));
+						getSpeech()->playPlayer(507);
 					else
-						getSpeech()->play(MAKE_RESOURCE(getScene()->getPackId(), 4));
+						getSpeech()->playIndexed(4);
 				}
 			}
 			_lastScreenUpdate = _vm->screenUpdatesCount;

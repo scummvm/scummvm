@@ -155,10 +155,6 @@ public:
 
 	void updatePlayerChapter9(int32 param);
 
-	// TODO: make sure it is the right place and make private
-	ResourceId playSpeech(int32 a1);
-	ResourceId playSpeech(int32 a1, int32 id);
-
 	int processActor(int *x, int *param);
 
 	void updatePalette(int32 param);
@@ -261,14 +257,12 @@ private:
 	int32 _actorUpdateFlag;
 	int32 _actorUpdateFlag2;
 
-	void update();
-
 	/** .text:0040B5B0
 	 * Loop through the various update blocks (actors,
 	 * objects, mouse, music, sfx, screenPosition), then
 	 * process the current action script
 	 */
-	int updateScene();
+	int update();
 	/** .text:0040D190
 	 * TODO add description
 	 */

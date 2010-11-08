@@ -43,10 +43,10 @@ public:
 
 	void loadFont(ResourceId resourceId);
 
-	void setTextPos(int32 x, int32 y);
-	int32 getTextWidth(const char *text);
-	int32 getResTextWidth(ResourceId resourceId);
-    char * getResText(ResourceId resourceId);
+	void  setPosition(int32 x, int32 y);
+	int32 getWidth(const char *text);
+	int32 getWidth(ResourceId resourceId);
+    char *get(ResourceId resourceId);
 
 	void drawChar(unsigned char character);
 	void drawText(const char *text);

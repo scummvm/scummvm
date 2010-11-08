@@ -536,7 +536,7 @@ IMPLEMENT_OPCODE(JumpActorSpeech) {
 	_currentLine = cmd->param4;
 
 	if (cmd->param5)
-		getScene()->playSpeech(1);
+		getSpeech()->playIndexed(1);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1101,7 +1101,7 @@ IMPLEMENT_OPCODE(PlaySpeechScene) {
 		return;
 
 	if (cmd->param4 != 2) {
-		cmd->param5 = getScene()->playSpeech(cmd->param1);
+		cmd->param5 = getSpeech()->playIndexed(cmd->param1);
 
 		if (cmd->param2) {
 			_vm->setGameFlag(kGameFlagScriptProcessing);
@@ -1153,7 +1153,7 @@ IMPLEMENT_OPCODE(PlaySpeech) {
 		return;
 
 	if (cmd->param4 != 2) {
-		cmd->param5 = getSpeech()->play((ResourceId)cmd->param1);
+		cmd->param5 = getSpeech()->playPlayer((ResourceId)cmd->param1);
 
 		if (cmd->param2) {
 			_vm->setGameFlag(kGameFlagScriptProcessing);
@@ -1230,7 +1230,7 @@ IMPLEMENT_OPCODE(PlaySpeechScene2) {
 		return;
 	}
 
-	cmd->param6 = getScene()->playSpeech(cmd->param1, cmd->param2);
+	cmd->param6 = getSpeech()->playScene(cmd->param1, cmd->param2);
 
 	if (cmd->param3) {
 		_vm->setGameFlag(kGameFlagScriptProcessing);
@@ -1298,7 +1298,7 @@ IMPLEMENT_OPCODE(StartPaletteFadeThread) {
 // Opcode 0x46
 IMPLEMENT_OPCODE(_unk46) {
 	if (cmd->param6) {
-		if (_vm->sound()->isPlaying(_vm->sound()->soundResourceId)) {
+		if (getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
 			_lineIncrement = 1;
 		} else {
 			cmd->param6 = 0;
@@ -1313,12 +1313,11 @@ IMPLEMENT_OPCODE(_unk46) {
 
 			_vm->clearGameFlag(kGameFlagScriptProcessing);
 
-			_vm->sound()->soundResourceId = kResourceNone;
-			_vm->sound()->speechTextResourceId = kResourceNone;
+			getSpeech()->resetResourceIds();
 		}
 	} else {
 		_vm->setGameFlag(kGameFlagScriptProcessing);
-		getSpeech()->setPlayerSpeech(MAKE_RESOURCE(kResourcePackSpeech, 515 + cmd->param1), MAKE_RESOURCE(kResourcePackShared, 1290 + cmd->param1));
+		getSpeech()->play(MAKE_RESOURCE(kResourcePackSpeech, 515 + cmd->param1), MAKE_RESOURCE(kResourcePackShared, 1290 + cmd->param1));
 
 		if (cmd->param2) {
 			getScene()->getActor(cmd->param5)->updateStatus(kActorStatus8);
@@ -1576,7 +1575,7 @@ IMPLEMENT_OPCODE(_unk56) {
 			}
 		} else {
 			if (cmd->param4)
-				getScene()->playSpeech(1);
+				getSpeech()->playIndexed(1);
 
 			_currentLine = cmd->param3;
 		}
@@ -1720,7 +1719,7 @@ IMPLEMENT_OPCODE(_unk63) {
 		_vm->setFlag(kFlagType2);
 	}
 
-	if (_vm->sound()->isPlaying(_vm->sound()->soundResourceId)) {
+	if (_vm->sound()->isPlaying(getSpeech()->getSoundResourceId())) {
 		_lineIncrement = 1;
 		return;
 	} else if (!cmd->param1) {

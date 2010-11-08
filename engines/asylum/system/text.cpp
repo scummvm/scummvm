@@ -61,13 +61,13 @@ void Text::loadFont(ResourceId resourceId) {
 	}
 }
 
-void Text::setTextPos(int32 x, int32 y) {
+void Text::setPosition(int32 x, int32 y) {
 	_posX = x;
 	_posY = y;
 }
 
 // getTextWidth at address 004357C0
-int32 Text::getTextWidth(const char *text) {
+int32 Text::getWidth(const char *text) {
 	assert(_fontResource);
 
 	int32 width = 0;
@@ -82,12 +82,12 @@ int32 Text::getTextWidth(const char *text) {
 	return width;
 }
 
-int32 Text::getResTextWidth(ResourceId resourceId) {
+int32 Text::getWidth(ResourceId resourceId) {
 	ResourceEntry *textRes = getResource()->get(resourceId);
-	return getTextWidth((char*)textRes->data);
+	return getWidth((char*)textRes->data);
 }
 
-char* Text::getResText(ResourceId resourceId) {
+char* Text::get(ResourceId resourceId) {
 	ResourceEntry *textRes = getResource()->get(resourceId);
 	return (char*)textRes->data;
 }
@@ -113,8 +113,8 @@ void Text::drawResText(ResourceId resourceId) {
 }
 
 void Text::drawTextCentered(int32 x, int32 y, int32 width, const char *text) {
-	int32 textWidth = getTextWidth(text);
-	setTextPos(x + (width - textWidth) / 2, y);
+	int32 textWidth = getWidth(text);
+	setPosition(x + (width - textWidth) / 2, y);
 	drawText(text);
 }
 
@@ -133,8 +133,8 @@ void Text::drawResTextCentered(int32 x, int32 y, int32 width, ResourceId resourc
 
 void Text::drawText(int32 x, int32 y, const char *text) {
     if (text) {
-	    int32 textWidth = getTextWidth(text);
-	    setTextPos(x - textWidth, y);
+	    int32 textWidth = getWidth(text);
+	    setPosition(x - textWidth, y);
 	    drawText(text);
     }
 }
@@ -145,8 +145,8 @@ void Text::drawResText(int32 x, int32 y, ResourceId resourceId) {
 }
 
 void Text::drawTextAlignRight(int32 x, int32 y, const char *text) {
-	int32 textWidth = getTextWidth(text);
-	setTextPos(x - textWidth, y);
+	int32 textWidth = getWidth(text);
+	setPosition(x - textWidth, y);
 	drawText(text);
 }
 

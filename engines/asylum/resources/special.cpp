@@ -117,12 +117,12 @@ void Special::chapter1(Object *object, ActorIndex actorIndex) {
 
 		case kObjectAngelFlares:
 			if (object->getFrameIndex() == 5)
-				getSpeech()->play(MAKE_RESOURCE(getScene()->getPackId(), 81));
+				getSpeech()->playPlayer(81);
 			break;
 
 		case kObjectGuyFalls:
 			if (object->getFrameIndex() == 23)
-				getSpeech()->play(MAKE_RESOURCE(getScene()->getPackId(), 82));
+				getSpeech()->playPlayer(82);
 			break;
 		}
 	}
@@ -141,7 +141,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 				Actor::enableActorsChapter2(_vm);
 			}
 
-			if (_vm->isGameFlagSet(kGameFlag1131) && !getSound()->isPlaying(getSound()->soundResourceId)) {
+			if (_vm->isGameFlagSet(kGameFlag1131) && !getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
 				_vm->clearGameFlag(kGameFlag219);
 				_vm->setGameFlag(kGameFlag1131);
 			}
@@ -263,7 +263,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 
 			if (actor->isVisible())
 				if (getScene()->getActorUpdateFlag2() < 7)
-					getSpeech()->play(MAKE_RESOURCE(getScene()->getPackId(), 452));
+					getSpeech()->playPlayer(452);
 
 			_vm->setGameFlag(kGameFlag219);
 
@@ -420,7 +420,7 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 			break;
 
 		case kObjectGlobe:
-			if (!getSound()->isPlaying(getSound()->soundResourceId)) {
+			if (!getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
 				_vm->clearGameFlag(kGameFlag1009);
 				getCursor()->show();
 			}
