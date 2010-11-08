@@ -43,23 +43,23 @@ public:
 
 	void loadFont(ResourceId resourceId);
 
-	void  setPosition(int32 x, int32 y);
-	int32 getWidth(const char *text);
-	int32 getWidth(ResourceId resourceId);
-    char *get(ResourceId resourceId);
+	void   setPosition(int32 x, int32 y);
+	int32  getWidth(const char *text);
+	int32  getWidth(ResourceId resourceId);
+    char  *get(ResourceId resourceId);
 
 	void drawChar(unsigned char character);
-	void drawText(const char *text);
-	void drawText(int32 x, int32 y, const char *text);
-	void drawResText(ResourceId resourceId);
-	void drawResText(int32 x, int32 y, ResourceId resourceId);
+	void draw(const char *text);
+	void draw(int32 x, int32 y, const char *text);
+	void draw(ResourceId resourceId);
+	void draw(int32 x, int32 y, ResourceId resourceId);
 
-	void drawTextCentered(int32 x, int32 y, int32 width, const char *text);
-	void drawResTextCentered(int32 x, int32 y, int32 width, ResourceId resourceId);
-	void drawResTextWithValueCentered(int32 x, int32 y, int32 width, ResourceId resourceId, int32 value);
+	void drawCentered(int32 x, int32 y, int32 width, const char *text);
+	void drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId);
+	void drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId, int32 value);
 
-	void drawTextAlignRight(int32 x, int32 y, const char *text);
-	void drawResTextAlignRight(int32 x, int32 y, ResourceId resourceId);
+	void drawAlignedRight(int32 x, int32 y, const char *text);
+	void drawAlignedRight(int32 x, int32 y, ResourceId resourceId);
 
 private:
 	AsylumEngine *_vm;
@@ -68,9 +68,9 @@ private:
 
 	int32 _posX;
 	int32 _posY;
-	uint8  _curFontFlags;
+	uint8 _curFontFlags;
 
-}; // end of class Text
+};
 
 } // end of namespace Asylum
 

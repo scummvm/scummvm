@@ -46,7 +46,6 @@ Text::~Text() {
 	delete _fontResource;
 }
 
-// loadFont at address 00435640
 void Text::loadFont(ResourceId resourceId) {
 	if (_fontResource && resourceId == _fontResource->getResourceId())
 		return;
@@ -66,7 +65,6 @@ void Text::setPosition(int32 x, int32 y) {
 	_posY = y;
 }
 
-// getTextWidth at address 004357C0
 int32 Text::getWidth(const char *text) {
 	assert(_fontResource);
 
@@ -100,59 +98,59 @@ void Text::drawChar(unsigned char character) {
 	_posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 
-void Text::drawText(const char *text) {
+void Text::draw(const char *text) {
 	while (*text) {
 		drawChar(*((unsigned char *)text));
 		text++;
 	}
 }
 
-void Text::drawResText(ResourceId resourceId) {
+void Text::draw(ResourceId resourceId) {
 	ResourceEntry *textRes = getResource()->get(resourceId);
-	drawText((char*)textRes->data);
+	draw((char*)textRes->data);
 }
 
-void Text::drawTextCentered(int32 x, int32 y, int32 width, const char *text) {
+void Text::drawCentered(int32 x, int32 y, int32 width, const char *text) {
 	int32 textWidth = getWidth(text);
 	setPosition(x + (width - textWidth) / 2, y);
-	drawText(text);
+	draw(text);
 }
 
-void Text::drawResTextWithValueCentered(int32 x, int32 y, int32 width, ResourceId resourceId, int32 value) {
+void Text::drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId, int32 value) {
 	ResourceEntry *textRes = getResource()->get(resourceId);
 	char *text = (char *)textRes->data;
 	char txt[100];
 	sprintf(txt, text, value);
-	drawTextCentered(x, y, width, txt);
+	drawCentered(x, y, width, txt);
 }
 
-void Text::drawResTextCentered(int32 x, int32 y, int32 width, ResourceId resourceId) {
+void Text::drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId) {
 	ResourceEntry *textRes = getResource()->get(resourceId);
-	drawTextCentered(x, y, width, (char *)textRes->data);
+	drawCentered(x, y, width, (char *)textRes->data);
 }
 
-void Text::drawText(int32 x, int32 y, const char *text) {
+void Text::draw(int32 x, int32 y, const char *text) {
     if (text) {
 	    int32 textWidth = getWidth(text);
 	    setPosition(x - textWidth, y);
-	    drawText(text);
+	    draw(text);
     }
 }
 
-void Text::drawResText(int32 x, int32 y, ResourceId resourceId) {
+void Text::draw(int32 x, int32 y, ResourceId resourceId) {
 	ResourceEntry *textRes = getResource()->get(resourceId);
-	drawText(x, y, (char *)textRes->data);
+	draw(x, y, (char *)textRes->data);
 }
 
-void Text::drawTextAlignRight(int32 x, int32 y, const char *text) {
+void Text::drawAlignedRight(int32 x, int32 y, const char *text) {
 	int32 textWidth = getWidth(text);
 	setPosition(x - textWidth, y);
-	drawText(text);
+	draw(text);
 }
 
-void Text::drawResTextAlignRight(int32 x, int32 y, ResourceId resourceId) {
+void Text::drawAlignedRight(int32 x, int32 y, ResourceId resourceId) {
 	ResourceEntry *textRes = getResource()->get(resourceId);
-	drawTextAlignRight(x, y, (char *)textRes->data);
+	drawAlignedRight(x, y, (char *)textRes->data);
 }
 
 } // end of namespace Asylum
