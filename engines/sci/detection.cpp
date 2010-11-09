@@ -513,7 +513,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	ResourceManager *resMan = new ResourceManager();
 	assert(resMan);
 	resMan->addAppropriateSources(fslist);
-	resMan->init();
+	resMan->init(true);
 	// TODO: Add error handling.
 
 #ifndef ENABLE_SCI32

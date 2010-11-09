@@ -813,7 +813,7 @@ void ResourceManager::freeResourceSources() {
 ResourceManager::ResourceManager() {
 }
 
-void ResourceManager::init() {
+void ResourceManager::init(bool initFromFallbackDetector) {
 	_memoryLocked = 0;
 	_memoryLRU = 0;
 	_LRU.clear();
@@ -845,12 +845,12 @@ void ResourceManager::init() {
 
 	scanNewSources();
 
-	if (!addInternalSources()) {
-		error("Somehow I can't seem to find the sound files I need (RESOURCE.AUD/RESOURCE.SFX), aborting");
-		return;
-	}
+	if (!initFromFallbackDetector) {
+		if (!addInternalSources())
+			error("Somehow I can't seem to find the sound files I need (RESOURCE.AUD/RESOURCE.SFX), aborting");
 
-	scanNewSources();
+		scanNewSources();
+	}
 
 	detectSciVersion();
 

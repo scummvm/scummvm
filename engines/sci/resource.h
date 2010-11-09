@@ -273,7 +273,7 @@ public:
 	/**
 	 * Initializes the resource manager.
 	 */
-	void init();
+	void init(bool initFromFallbackDetector = false);
 
 	int addAppropriateSources();
 	int addAppropriateSources(const Common::FSList &fslist);	// TODO: Switch from FSList to Common::Archive?
