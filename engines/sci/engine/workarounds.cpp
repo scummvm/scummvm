@@ -186,6 +186,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG4,           -1,    15, -1,     "charInitScreen", "dispatchEvent",  -1,    5, { WORKAROUND_FAKE,   0 } }, // floppy version, when viewing the character screen
 	{ GID_QFG4,           -1, 64917, -1,       "controlPlane", "setBitmap",      -1,    3, { WORKAROUND_FAKE,   0 } }, // floppy version, when entering the game menu
 	{ GID_QFG4,           -1, 64917, -1,              "Plane", "setBitmap",      -1,    3, { WORKAROUND_FAKE,   0 } }, // floppy version, happen sometimes in fights
+	{ GID_SHIVERS,        -1,   952,  0,       "SoundManager", "stop",           -1,    2, { WORKAROUND_FAKE,   0 } }, // Just after Sierra logo
 	{ GID_SQ1,           103,   103,  0,               "hand", "internalEvent",  -1,   -1, { WORKAROUND_FAKE,   0 } }, // Spanish (and maybe early versions?) only: when moving cursor over input pad, temps 1 and 2
 	{ GID_SQ1,            -1,   703,  0,                   "", "export 1",       -1,    0, { WORKAROUND_FAKE,   0 } }, // sub that's called from several objects while on sarien battle cruiser
 	{ GID_SQ1,            -1,   703,  0,         "firePulsar", "changeState", 0x18a,    0, { WORKAROUND_FAKE,   0 } }, // export 1, but called locally (when shooting at aliens)
