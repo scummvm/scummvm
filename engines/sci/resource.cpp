@@ -829,8 +829,7 @@ void ResourceManager::init() {
 
 	scanNewSources();
 
-	if (!addInternalSources())
-	{
+	if (!addInternalSources()) {
 		error("Somehow I can't seem to find the sound files I need (RESOURCE.AUD/RESOURCE.SFX), aborting");
 		return;
 	}
@@ -1033,9 +1032,9 @@ const char *ResourceManager::versionDescription(ResVersion version) const {
 	case kResVersionSci11Mac:
 		return "Mac SCI1.1+";
 	case kResVersionSci2:
-		return "SCI32 version 2/2.1";
+		return "SCI2/2.1";
 	case kResVersionSci3:
-		return "SCI32 version 3";
+		return "SCI3";
 	}
 
 	return "Version not valid";
@@ -1195,16 +1194,13 @@ ResVersion ResourceManager::detectVolVersion() {
 
 		int chk;
 
-		if (curVersion == kResVersionSci0Sci1Early) 
-		{
+		if (curVersion == kResVersionSci0Sci1Early)
 			chk = 4;
-		} else if (curVersion < kResVersionSci2)
-		{
+		else if (curVersion < kResVersionSci2)
 			chk = 20;
-		} else
-		{
+		else
 			chk = 32; // We don't need this, but include it for completeness
-		}
+
 		int offs = curVersion < kResVersionSci11 ? 4 : 0;
 		if ((curVersion < kResVersionSci2 && wCompression > chk)
 				|| (curVersion == kResVersionSci2 && wCompression != 0 && wCompression != 32)
@@ -2056,7 +2052,6 @@ void ResourceManager::detectSciVersion() {
 		// SCI2.1/3 and SCI1 Late resource maps are the same, except that
 		// SCI1 Late resource maps have the resource types or'd with
 		// 0x80. We differentiate between SCI2 and SCI2.1/3 based on that.
-		// TODO: Differentiate between SCI2.1 and SCI3
 		if (_mapVersion == kResVersionSci1Late) {
 			s_sciVersion = SCI_VERSION_2;
 			return;
@@ -2064,8 +2059,7 @@ void ResourceManager::detectSciVersion() {
 			s_sciVersion = SCI_VERSION_2_1;
 			return;
 // Enable SCI3 games by uncommenting the below lines
-//		} else
-//		{
+//		} else {
 //			s_sciVersion = SCI_VERSION_3;
 //			return;
 		}
