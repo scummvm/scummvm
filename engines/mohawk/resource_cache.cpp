@@ -43,16 +43,17 @@ void ResourceCache::clear() {
 
 	debugC(kDebugCache, "Clearing Cache...");
 
-	// TODO: Not sure if need to explicitly delete DataObject.data element ie.
-	//       returned by readStream method here.
-	store.clear();
+	for (uint32 i = 0; i < _store.size(); i++)
+		delete _store[i].data;
+
+	_store.clear();
 }
 
 void ResourceCache::add(uint32 tag, uint16 id, Common::SeekableReadStream *data) {
 	if (!enabled)
 		return;
 
-	debugC(kDebugCache, "Adding item %d - tag 0x%04X id %d", store.size(), tag, id);
+	debugC(kDebugCache, "Adding item %d - tag 0x%04X id %d", _store.size(), tag, id);
 
 	DataObject current;
 	current.tag = tag;
@@ -60,7 +61,7 @@ void ResourceCache::add(uint32 tag, uint16 id, Common::SeekableReadStream *data)
 	uint32 dataCurPos = data->pos();
 	current.data = data->readStream(data->size());
 	data->seek(dataCurPos);
-	store.push_back(current);
+	_store.push_back(current);
 }
 
 // Returns NULL if not found
@@ -70,12 +71,12 @@ Common::SeekableReadStream *ResourceCache::search(uint32 tag, uint16 id) {
 
 	debugC(kDebugCache, "Searching for tag 0x%04X id %d", tag, id);
 
-	for (uint32 i = 0; i < store.size(); i++) {
-		if (tag == store[i].tag && id == store[i].id) {
+	for (uint32 i = 0; i < _store.size(); i++) {
+		if (tag == _store[i].tag && id == _store[i].id) {
 			debugC(kDebugCache, "Found cached tag 0x%04X id %u", tag, id);
-			uint32 dataCurPos  = store[i].data->pos();
-			Common::SeekableReadStream *ret = store[i].data->readStream(store[i].data->size());
-			store[i].data->seek(dataCurPos);
+			uint32 dataCurPos  = _store[i].data->pos();
+			Common::SeekableReadStream *ret = _store[i].data->readStream(_store[i].data->size());
+			_store[i].data->seek(dataCurPos);
 			return ret;
 		}
 	}

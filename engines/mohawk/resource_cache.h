@@ -51,7 +51,7 @@ private:
 		Common::SeekableReadStream *data;
 	};
 
-	Common::Array<DataObject> store;
+	Common::Array<DataObject> _store;
 };
 
 } // End of namespace Mohawk
