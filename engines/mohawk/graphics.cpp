@@ -92,6 +92,7 @@ MystGraphics::~MystGraphics() {
 	delete _bmpDecoder;
 	delete _jpegDecoder;
 	delete _pictDecoder;
+	delete[] _pictureFile.entries;
 }
 
 static const char* picFileNames[] = {

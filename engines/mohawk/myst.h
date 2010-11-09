@@ -157,7 +157,7 @@ struct MystScriptEntry {
 class MystResource {
 public:
 	MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	virtual ~MystResource() {}
+	virtual ~MystResource();
 
 	MystResource *_parent;
 
@@ -188,6 +188,7 @@ protected:
 class MystResourceType5 : public MystResource {
 public:
 	MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
+	virtual ~MystResourceType5();
 	void handleMouseUp();
 
 protected:
@@ -218,7 +219,7 @@ private:
 struct MystResourceType7 : public MystResource {
 public:
 	MystResourceType7(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	virtual ~MystResourceType7() {}
+	virtual ~MystResourceType7();
 
 	virtual void drawDataToScreen();
 	virtual void handleAnimation();
@@ -237,6 +238,7 @@ protected:
 class MystResourceType8 : public MystResourceType7 {
 public:
 	MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
+	virtual ~MystResourceType8();
 	void drawDataToScreen();
 	uint16 getType8Var();
 
@@ -254,6 +256,7 @@ protected:
 class MystResourceType10 : public MystResourceType8 {
 public:
 	MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
+	virtual ~MystResourceType10();
 	void handleMouseUp();
 
 protected:
@@ -273,6 +276,7 @@ protected:
 class MystResourceType11 : public MystResourceType8 {
 public:
 	MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
+	virtual ~MystResourceType11();
 	void handleMouseUp();
 
 protected:
@@ -292,6 +296,7 @@ protected:
 class MystResourceType12 : public MystResourceType8 {
 public:
 	MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
+	virtual ~MystResourceType12();
 	void handleAnimation();
 	void handleMouseUp();
 

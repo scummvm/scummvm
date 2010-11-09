@@ -64,6 +64,14 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_needsUpdate = false;
 	_curResource = -1;
 
+	_gfx = NULL;
+	_console = NULL;
+	_scriptParser = NULL;
+	_varStore = NULL;
+	_saveLoad = NULL;
+	_loadDialog = NULL;
+	_optionsDialog = NULL;
+
 	_cursorHintCount = 0;
 	_cursorHints = NULL;
 
@@ -83,6 +91,8 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
+	DebugMan.clearAllDebugChannels();
+
 	delete _gfx;
 	delete _console;
 	delete _scriptParser;
@@ -90,10 +100,17 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete _saveLoad;
 	delete _loadDialog;
 	delete _optionsDialog;
+
+	delete[] _cursorHints;
+
 	delete[] _view.conditionalImages;
 	delete[] _view.scriptResources;
-	delete[] _cursorHints;
-	_resources.clear();
+
+	while(!_resources.empty()) {
+		MystResource *temp = _resources.back();
+		_resources.pop_back();
+		delete temp;
+	}
 }
 
 // Uses cached data objects in preference to disk access
@@ -949,7 +966,11 @@ static MystResource *loadResource(MohawkEngine_Myst *vm, Common::SeekableReadStr
 }
 
 void MohawkEngine_Myst::loadResources() {
-	_resources.clear();
+	while(!_resources.empty()) {
+		MystResource *temp = _resources.back();
+		_resources.pop_back();
+		delete temp;
+	}
 
 	if (!_view.rlst) {
 		debugC(kDebugResource, "No RLST present");
@@ -1011,6 +1032,9 @@ MystResource::MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rl
 		            (_flags & kMystSubimageEnableFlag) != 0);
 }
 
+MystResource::~MystResource() {
+}
+
 void MystResource::handleMouseUp() {
 	if (_dest != 0)
 		_vm->changeToCard(_dest);
@@ -1021,6 +1045,7 @@ void MystResource::handleMouseUp() {
 MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {
 	debugC(kDebugResource, "\tResource Type 5 Script:");
 
+	_scripts = NULL;
 	_scriptCount = rlstStream->readUint16LE();
 
 	debugC(kDebugResource, "\tOpcode Count: %d", _scriptCount);
@@ -1044,6 +1069,12 @@ MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableRead
 			debugC(kDebugResource, "\t\tArgument %d: %d", j, _scripts[i].values[j]);
 		}
 	}
+}
+
+MystResourceType5::~MystResourceType5() {
+	for (uint16 i = 0; i < _scriptCount; i++)
+		delete[] _scripts[i].values;
+	delete[] _scripts;
 }
 
 void MystResourceType5::handleMouseUp() {
@@ -1131,6 +1162,14 @@ MystResourceType7::MystResourceType7(MohawkEngine_Myst *vm, Common::SeekableRead
 
 	for (uint16 i = 0; i < _numSubResources; i++)
 		_subResources.push_back(loadResource(vm, rlstStream, this));
+}
+
+MystResourceType7::~MystResourceType7() {
+	while(!_subResources.empty()) {
+		MystResource *temp = _subResources.back();
+		_subResources.pop_back();
+		delete temp;
+	}
 }
 
 // TODO: All these functions to switch subresource are very similar.
@@ -1286,6 +1325,10 @@ MystResourceType8::MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableRead
 	}
 }
 
+MystResourceType8::~MystResourceType8() {
+	delete[] _subImages;
+}
+
 void MystResourceType8::drawDataToScreen() {
 	// Need to call overidden Type 7 function to ensure
 	// switch section is processed correctly.
@@ -1416,6 +1459,11 @@ MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableRe
 	warning("TODO: Card contains Type 10 Resource - Function not yet implemented");
 }
 
+MystResourceType10::~MystResourceType10() {
+	for (byte i = 0; i < 4; i++)
+		delete[] _lists[i].list;
+}
+
 void MystResourceType10::handleMouseUp() {
 	// TODO
 }
@@ -1470,6 +1518,11 @@ MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableRe
 	}
 
 	warning("TODO: Card contains Type 11 Resource - Function not yet implemented");
+}
+
+MystResourceType11::~MystResourceType11() {
+	for (byte i = 0; i < 3; i++)
+		delete[] _lists[i].list;
 }
 
 void MystResourceType11::handleMouseUp() {
@@ -1555,6 +1608,11 @@ MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableRe
 	debugC(kDebugResource, "\t_frameRect.bottom: %d", _frameRect.bottom);
 
 	_doAnimation = false;
+}
+
+MystResourceType12::~MystResourceType12() {
+	for (byte i = 0; i < 3; i++)
+		delete[] _lists[i].list;
 }
 
 void MystResourceType12::handleAnimation() {
