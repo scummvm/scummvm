@@ -208,10 +208,8 @@ void AudioManager::stopCurrentVoice() {
 
 
 void AudioManager::closeAudioPack(int32 id) {
-	if(_audioPacks[id]) {
-		delete _audioPacks[id];
-		_audioPacks[id] = 0;
-	}
+	delete _audioPacks[id];
+	_audioPacks[id] = NULL;
 }
 
 bool AudioManager::loadAudioPack(int32 id, Common::String indexFile, Common::String packFile) {
@@ -238,10 +236,6 @@ void AudioManager::stopMusic() {
 		_channels[0]->stop(true);
 	if (_channels[1])
 		_channels[1]->stop(true);
-}
-AudioStreamInstance::~AudioStreamInstance() {
-	if (_man)
-		_man->removeInstance(this);
 }
 
 AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream , bool looping) {
@@ -272,6 +266,11 @@ AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer,
 	} else {
 		stopNow();
 	}
+}
+
+AudioStreamInstance::~AudioStreamInstance() {
+	if (_man)
+		_man->removeInstance(this);
 }
 
 int AudioStreamInstance::readBuffer(int16 *buffer, const int numSamples) {

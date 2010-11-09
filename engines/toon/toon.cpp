@@ -656,8 +656,6 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 			musicPlaying = false;
 		}
 
-
-
 		switch (clickingOn) {
 		case MAINMENUHOTSPOT_START:
 			// Start game (actually exit main menu)
@@ -685,6 +683,11 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 			break;
 		}
 	}
+
+	//delete mainmenuMusic;
+	for (int entryNr = 0; entryNr < MAINMENU_ENTRYCOUNT; entryNr++)
+		delete entries[entryNr].animation;
+	delete mainmenuPicture;
 
 	return !exitGame;
 }
@@ -756,6 +759,17 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 
 	_moviePlayer = NULL;
 	_mainSurface = NULL;
+
+	_finalPalette = NULL;
+	_backupPalette = NULL;
+	_additionalPalette1 = NULL;
+	_additionalPalette2 = NULL;
+	_cutawayPalette = NULL;
+	_universalPalette = NULL;
+	_fluxPalette = NULL;
+
+	_conversationData = NULL;
+
 	_fontRenderer = NULL;
 	_fontToon = NULL;
 	_fontEZ = NULL;
@@ -764,6 +778,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_roomTexts = NULL;
 	_script_func = NULL;
 	_script = NULL;
+	_pathFinding = NULL;
 	_console = new ToonConsole(this);
 
 	switch (_language) {
@@ -795,6 +810,16 @@ ToonEngine::~ToonEngine() {
 	delete _moviePlayer;
 	delete _mainSurface;
 
+	delete[] _finalPalette;
+	delete[] _backupPalette;
+	delete[] _additionalPalette1;
+	delete[] _additionalPalette2;
+	delete[] _cutawayPalette;
+	delete[] _universalPalette;
+	delete[] _fluxPalette;
+
+	delete[] _conversationData;
+
 	delete _fontRenderer;
 	delete _fontToon;
 	delete _fontEZ;
@@ -803,6 +828,8 @@ ToonEngine::~ToonEngine() {
 	delete _roomTexts;
 	delete _script_func;
 	delete _script;
+
+	delete _pathFinding;
 
 	DebugMan.clearAllDebugChannels();
 	delete _console;

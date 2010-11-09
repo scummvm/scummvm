@@ -53,7 +53,7 @@ struct SpecialCharacterAnimation {
 class Character {
 public:
 	Character(ToonEngine *vm);
-	virtual ~Character(void);
+	virtual ~Character();
 	virtual void init();
 	virtual int32 getId();
 	virtual void setId(int32 id);

@@ -124,7 +124,7 @@ public:
 	void removeInstance(AudioStreamInstance *inst); // called by destructor
 
 	AudioManager(ToonEngine *vm, Audio::Mixer *mixer);
-	~AudioManager(void);
+	~AudioManager();
 
 	bool voiceStillPlaying();
 

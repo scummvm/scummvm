@@ -33,17 +33,19 @@ namespace Toon {
 Character::Character(ToonEngine *vm) : _vm(vm) {
 	_animationInstance = 0;
 	_shadowAnimationInstance = NULL;
-	_shadowAnim = NULL;
 	_x = 0;
 	_y = 0;
 	_z = 0;
 	_finalX = 0;
 	_finalY = 0;
-	_specialAnim = 0;
 	_sceneAnimationId = -1;
-	_idleAnim = 0;
-	_walkAnim = 0;
-	_talkAnim = 0;
+
+	_walkAnim = NULL;
+	_idleAnim = NULL;
+	_talkAnim = NULL;
+	_shadowAnim = NULL;
+	_specialAnim = NULL;
+
 	_facing = 0;
 	_flags = 0;
 	_animFlags = 0;
@@ -65,11 +67,15 @@ Character::Character(ToonEngine *vm) : _vm(vm) {
 
 Character::~Character(void) {
 	delete _shadowAnimationInstance;
+
+	delete _walkAnim;
+	delete _idleAnim;
+	delete _talkAnim;
 	delete _shadowAnim;
+	delete _specialAnim;
 }
 
 void Character::init() {
-
 }
 
 void Character::setFacing(int32 facing) {
@@ -204,27 +210,21 @@ int32 Character::getFacing() {
 
 bool Character::loadWalkAnimation(Common::String animName) {
 	debugC(1, kDebugCharacter, "loadWalkAnimation(%s)", animName.c_str());
-	if (_walkAnim)
-		delete _walkAnim;
-
+	delete _walkAnim;
 	_walkAnim = new Animation(_vm);
 	return _walkAnim->loadAnimation(animName);
 }
 
 bool Character::loadIdleAnimation(Common::String animName) {
 	debugC(1, kDebugCharacter, "loadIdleAnimation(%s)", animName.c_str());
-	if (_idleAnim)
-		delete _idleAnim;
-
+	delete _idleAnim;
 	_idleAnim = new Animation(_vm);
 	return _idleAnim->loadAnimation(animName);
 }
 
 bool Character::loadTalkAnimation(Common::String animName) {
 	debugC(1, kDebugCharacter, "loadTalkAnimation(%s)", animName.c_str());
-	if (_talkAnim)
-		delete _talkAnim;
-
+	delete _talkAnim;
 	_talkAnim = new Animation(_vm);
 	return _talkAnim->loadAnimation(animName);
 }
@@ -234,7 +234,6 @@ bool Character::setupPalette() {
 }
 
 void Character::playStandingAnim() {
-
 }
 
 void Character::updateTimers(int32 relativeAdd) {
@@ -247,7 +246,7 @@ void Character::stopSpecialAnim() {
 // Strangerke - Commented (not used)
 #if 0
 	if (_animSpecialId != _animSpecialDefaultId)
-		delete anim
+		delete anim;
 #endif
 	if (_animScriptId != -1)
 		_vm->getSceneAnimationScript(_animScriptId)->_frozenForConversation = false;
@@ -983,8 +982,7 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 
 	_animFlags |= flags;
 
-	if (_specialAnim)
-		delete _specialAnim;
+	delete _specialAnim;
 	_specialAnim = new Animation(_vm);
 	_specialAnim->loadAnimation(animName);
 
