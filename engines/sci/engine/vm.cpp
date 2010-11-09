@@ -1774,7 +1774,7 @@ void run_vm(EngineState *s) {
 			break;
 
 		case op_pushSelf: // 0x3e (62)
-			if (!(extOpcode & 1)) {
+			if (!(extOpcode & 1) || g_sci->getGameId() == GID_FANMADE) {
 				PUSH32(s->xs->objp);
 			} else {
 				// Debug opcode op_file, skip null-terminated string (file name)
