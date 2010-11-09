@@ -119,6 +119,9 @@ public:
 	// TODO add rest fields
 	int32 field_E860C;
 	// TODO add rest fields
+	Object *wheels[7];
+
+	void setWheelObjects();
 
 	int32 getActionAreaIndexById(int32 id);
 	ActionArea* getActionAreaById(int32 id);

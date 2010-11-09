@@ -263,7 +263,7 @@ private:
 	 * objects, mouse, music, sfx, screenPosition), then
 	 * process the current action script
 	 */
-	int update();
+	bool update();
 	/** .text:0040D190
 	 * TODO add description
 	 */
@@ -294,7 +294,7 @@ private:
 
 	void updateScreen();
 
-	void setWheelObjectIndices();
+
 
 	void playIntroSpeech();
 
