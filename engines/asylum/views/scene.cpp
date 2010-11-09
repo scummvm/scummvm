@@ -218,7 +218,9 @@ void Scene::enter(ResourcePackId packId) {
 }
 
 void Scene::load(ResourcePackId packId) {
+	// Setup resource manager
 	_packId = packId;
+	getResource()->setMusicPackId(packId);
 
 	char filename[10];
 	sprintf(filename, SCENE_FILE_MASK, _packId);

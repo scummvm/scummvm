@@ -30,16 +30,26 @@ namespace Asylum {
 //////////////////////////////////////////////////////////////////////////
 // ResourceManager
 //////////////////////////////////////////////////////////////////////////
+
+ResourceManager::ResourceManager() : _musicPackId(kResourcePackInvalid) {
+}
+
 ResourceEntry *ResourceManager::get(ResourceId id) {
 	ResourcePackId packId = (ResourcePackId)((id >> 16) & 0x7FFF);
 	uint16 index = (uint16)id;
 
 	// Check if we need to load a music pack
-	ResourceCache *cache = (packId == kResourcePackMusic) ? &_music : &_resources;
+	bool isMusicPack = (packId == kResourcePackMusic);
+
+	// Check that a music pack has been set
+	if (isMusicPack && _musicPackId == kResourcePackInvalid)
+		error("[ResourceManager::get] Current music pack Id has not been set!");
+
+	ResourceCache *cache = isMusicPack ? &_music : &_resources;
 
 	// Try getting the resource pack
 	if (!cache->contains(packId)) {
-		ResourcePack *pack = new ResourcePack(Common::String::format((packId == kResourcePackMusic) ? "mus.%03d" : "res.%03d", packId));
+		ResourcePack *pack = new ResourcePack(Common::String::format(isMusicPack ? "mus.%03d" : "res.%03d", isMusicPack ? _musicPackId : packId));
 
 		cache->setVal(packId, pack);
 	}
