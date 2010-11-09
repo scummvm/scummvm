@@ -117,7 +117,8 @@ enum ResVersion {
 	kResVersionSci1Late,
 	kResVersionSci11,
 	kResVersionSci11Mac,
-	kResVersionSci32
+	kResVersionSci2,
+	kResVersionSci3
 };
 
 class ResourceManager;

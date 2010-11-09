@@ -155,7 +155,7 @@ static const ResourceType s_resTypeMapSci21[] = {
 ResourceType ResourceManager::convertResType(byte type) {
 	type &= 0x7f;
 
-	if (_mapVersion != kResVersionSci32) {
+	if (_mapVersion < kResVersionSci2) {
 		// SCI0 - SCI2
 		if (type < ARRAYSIZE(s_resTypeMapSci0))
 			return s_resTypeMapSci0[type];
@@ -660,6 +660,8 @@ int ResourceManager::addInternalSources() {
 			addSource(new AudioVolumeResourceSource(this, "RESOURCE.SFX", src, 0));
 		else if (Common::File::exists("RESOURCE.AUD"))
 			addSource(new AudioVolumeResourceSource(this, "RESOURCE.AUD", src, 0));
+		else
+			return 0;
 
 		++itr;
 	}
@@ -826,7 +828,13 @@ void ResourceManager::init() {
 	}
 
 	scanNewSources();
-	addInternalSources();
+
+	if (!addInternalSources())
+	{
+		error("Somehow I can't seem to find the sound files I need (RESOURCE.AUD/RESOURCE.SFX), aborting");
+		return;
+	}
+
 	scanNewSources();
 
 	detectSciVersion();
@@ -1024,8 +1032,10 @@ const char *ResourceManager::versionDescription(ResVersion version) const {
 		return "SCI1.1";
 	case kResVersionSci11Mac:
 		return "Mac SCI1.1+";
-	case kResVersionSci32:
-		return "SCI32";
+	case kResVersionSci2:
+		return "SCI32 version 2/2.1";
+	case kResVersionSci3:
+		return "SCI32 version 3";
 	}
 
 	return "Version not valid";
@@ -1084,8 +1094,8 @@ ResVersion ResourceManager::detectMapVersion() {
 		directoryOffset = fileStream->readUint16LE();
 
 		// Only SCI32 has directory type < 0x80
-		if (directoryType < 0x80 && (mapDetected == kResVersionUnknown || mapDetected == kResVersionSci32))
-			mapDetected = kResVersionSci32;
+		if (directoryType < 0x80 && (mapDetected == kResVersionUnknown || mapDetected == kResVersionSci2))
+			mapDetected = kResVersionSci2;
 		else if (directoryType < 0x80 || ((directoryType & 0x7f) > 0x20 && directoryType != 0xFF))
 			break;
 
@@ -1163,23 +1173,41 @@ ResVersion ResourceManager::detectVolVersion() {
 	bool failed = false;
 	bool sci11Align = false;
 
-	// Check for SCI0, SCI1, SCI1.1 and SCI32 v2 (Gabriel Knight 1 CD) formats
+	// Check for SCI0, SCI1, SCI1.1, SCI32 v2 (Gabriel Knight 1 CD) and SCI32 v3 (LSL7) formats
 	while (!fileStream->eos() && fileStream->pos() < 0x100000) {
 		if (curVersion > kResVersionSci0Sci1Early)
 			fileStream->readByte();
 		resId = fileStream->readUint16LE();
-		dwPacked = (curVersion < kResVersionSci32) ? fileStream->readUint16LE() : fileStream->readUint32LE();
-		dwUnpacked = (curVersion < kResVersionSci32) ? fileStream->readUint16LE() : fileStream->readUint32LE();
+		dwPacked = (curVersion < kResVersionSci2) ? fileStream->readUint16LE() : fileStream->readUint32LE();
+		dwUnpacked = (curVersion < kResVersionSci2) ? fileStream->readUint16LE() : fileStream->readUint32LE();
+
+		// The compression field is present, but bogus when
+		// loading SCI3 volumes, the format is otherwise
+		// identical to SCI2. We therefore get the compression
+		// indicator here, but disregard it in the following
+		// code. 
 		wCompression = fileStream->readUint16LE();
+
 		if (fileStream->eos()) {
 			delete fileStream;
 			return curVersion;
 		}
 
-		int chk = (curVersion == kResVersionSci0Sci1Early) ? 4 : 20;
+		int chk;
+
+		if (curVersion == kResVersionSci0Sci1Early) 
+		{
+			chk = 4;
+		} else if (curVersion < kResVersionSci2)
+		{
+			chk = 20;
+		} else
+		{
+			chk = 32; // We don't need this, but include it for completeness
+		}
 		int offs = curVersion < kResVersionSci11 ? 4 : 0;
-		if ((curVersion < kResVersionSci32 && wCompression > chk)
-				|| (curVersion == kResVersionSci32 && wCompression != 0 && wCompression != 32)
+		if ((curVersion < kResVersionSci2 && wCompression > chk)
+				|| (curVersion == kResVersionSci2 && wCompression != 0 && wCompression != 32)
 				|| (wCompression == 0 && dwPacked != dwUnpacked + offs)
 		        || (dwUnpacked < dwPacked - offs)) {
 
@@ -1192,7 +1220,9 @@ ResVersion ResourceManager::detectVolVersion() {
 				// Later versions (e.g. QFG1VGA) have resources word-aligned
 				sci11Align = true;
 			} else if (curVersion == kResVersionSci11) {
-				curVersion = kResVersionSci32;
+				curVersion = kResVersionSci2;
+			} else if (curVersion == kResVersionSci2) {
+				curVersion = kResVersionSci3;
 			} else {
 				// All version checks failed, exit loop
 				failed = true;
@@ -1207,7 +1237,7 @@ ResVersion ResourceManager::detectVolVersion() {
 			fileStream->seek(dwPacked - 4, SEEK_CUR);
 		else if (curVersion == kResVersionSci11)
 			fileStream->seek(sci11Align && ((9 + dwPacked) % 2) ? dwPacked + 1 : dwPacked, SEEK_CUR);
-		else if (curVersion == kResVersionSci32)
+		else if (curVersion >= kResVersionSci2)
 			fileStream->seek(dwPacked, SEEK_CUR);
 	}
 
@@ -1733,12 +1763,22 @@ int Resource::readResourceInfo(ResVersion volVersion, Common::SeekableReadStream
 		wCompression = 0;
 		break;
 #ifdef ENABLE_SCI32
-	case kResVersionSci32:
+	case kResVersionSci2:
+	case kResVersionSci3:
 		type = _resMan->convertResType(file->readByte());
 		number = file->readUint16LE();
 		szPacked = file->readUint32LE();
 		szUnpacked = file->readUint32LE();
+
+		// The same comment applies here as in
+		// detectVolVersion regarding SCI3. We ignore the
+		// compression field for SCI3 games, but must presume
+		// it exists in the file.
 		wCompression = file->readUint16LE();
+
+		if (volVersion == kResVersionSci3)
+			wCompression = szPacked != szUnpacked ? 32 : 0;
+
 		break;
 #endif
 	default:
@@ -1955,7 +1995,7 @@ void ResourceManager::detectSciVersion() {
 #ifdef ENABLE_SCI32	
 	viewCompression = getViewCompression();
 #else
-	if (_volVersion == kResVersionSci32) {
+	if (_volVersion >= kResVersionSci2) {
 		// SCI32 support isn't built in, thus view detection will fail
 		viewCompression = kCompUnknown;
 	} else {
@@ -1977,7 +2017,7 @@ void ResourceManager::detectSciVersion() {
 		|| _volVersion == kResVersionSci11Mac
 #ifdef ENABLE_SCI32
 		|| viewCompression == kCompSTACpack
-		|| _volVersion == kResVersionSci32 // kq7
+		|| _volVersion == kResVersionSci2 // kq7
 #endif
 		) {
 		// SCI1.1 VGA views
@@ -1987,7 +2027,7 @@ void ResourceManager::detectSciVersion() {
 		// Otherwise we detect it from a view
 		_viewType = detectViewType();
 #else
-		if (_volVersion == kResVersionSci32 && viewCompression == kCompUnknown) {
+		if (_volVersion == kResVersionSci2 && viewCompression == kCompUnknown) {
 			// A SCI32 game, but SCI32 support is disabled. Force the view type
 			// to kViewVga11, as we can't read from the game's resource files
 			_viewType = kViewVga11;
@@ -2011,7 +2051,8 @@ void ResourceManager::detectSciVersion() {
 	}
 
 	// Handle SCI32 versions here
-	if (_volVersion == kResVersionSci32) {
+	if (_volVersion >= kResVersionSci2) {
+		Common::List<ResourceId> *heaps = listResources(kResourceTypeHeap);
 		// SCI2.1/3 and SCI1 Late resource maps are the same, except that
 		// SCI1 Late resource maps have the resource types or'd with
 		// 0x80. We differentiate between SCI2 and SCI2.1/3 based on that.
@@ -2019,9 +2060,14 @@ void ResourceManager::detectSciVersion() {
 		if (_mapVersion == kResVersionSci1Late) {
 			s_sciVersion = SCI_VERSION_2;
 			return;
-		} else {
+		} else if (!heaps->empty()) {
 			s_sciVersion = SCI_VERSION_2_1;
 			return;
+// Enable SCI3 games by uncommenting the below lines
+//		} else
+//		{
+//			s_sciVersion = SCI_VERSION_3;
+//			return;
 		}
 	}
 
@@ -2111,7 +2157,10 @@ void ResourceManager::detectSciVersion() {
 		return;
 	default:
 		s_sciVersion = SCI_VERSION_NONE;
-		error("detectSciVersion(): Unable to detect the game's SCI version");
+		if (_volVersion == kResVersionSci3)
+			error("detectSciVersion(): Detected an SCI3 game, currently unsupported");
+		else
+			error("detectSciVersion(): Unable to detect the game's SCI version");
 	}
 }
 
