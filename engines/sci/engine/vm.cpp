@@ -1774,6 +1774,12 @@ void run_vm(EngineState *s) {
 			break;
 
 		case op_pushSelf: // 0x3e (62)
+			// Compensate for a bug in non-Sierra compilers, which seem to generate
+			// pushSelf instructions with the low bit set. This makes the following
+			// heuristic fail and leads to endless loops and crashes. Our
+			// interpretation of this seems correct, as other SCI tools, like for
+			// example SCI Viewer, have issues with these scripts (e.g. script 999
+			// in Circus Quest). Fixes bug #3038686.
 			if (!(extOpcode & 1) || g_sci->getGameId() == GID_FANMADE) {
 				PUSH32(s->xs->objp);
 			} else {

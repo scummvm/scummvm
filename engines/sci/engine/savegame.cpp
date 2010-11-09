@@ -402,7 +402,7 @@ void HunkTable::saveLoadWithSerializer(Common::Serializer &s) {
 
 void Script::syncStringHeap(Common::Serializer &s) {
 	if (getSciVersion() < SCI_VERSION_1_1) {
-		// Sync all if the SCI_OBJ_STRINGS blocks
+		// Sync all of the SCI_OBJ_STRINGS blocks
 		byte *buf = _buf;
 		bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
@@ -417,7 +417,6 @@ void Script::syncStringHeap(Common::Serializer &s) {
 
 			blockSize = READ_LE_UINT16(buf + 2);
 			assert(blockSize > 0);
-
 
 			if (blockType == SCI_OBJ_STRINGS)
 				s.syncBytes(buf, blockSize);
