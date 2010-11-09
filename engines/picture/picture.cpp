@@ -41,6 +41,7 @@
 #include "engines/util.h"
 
 #include "sound/mixer.h"
+#include "backends/audiocd/audiocd.h"
 
 #include "picture/picture.h"
 #include "picture/animation.h"
@@ -76,7 +77,7 @@ PictureEngine::PictureEngine(OSystem *syst, const PictureGameDescription *gameDe
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
-		_system->openCD(cd_num);
+		_system->getAudioCDManager()->openCD(cd_num);
 
 }
 
