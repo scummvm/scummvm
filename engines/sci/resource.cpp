@@ -667,6 +667,22 @@ int ResourceManager::addInternalSources() {
 	}
 
 	delete resources;
+
+#ifdef ENABLE_SCI32
+	if (_mapVersion >= kResVersionSci2) {
+		// If we have no scripts, but chunk 0 is present, open up the chunk
+		// to try to get to any scripts in there. The Lighthouse SCI2.1 demo
+		// does exactly this.
+
+		resources = listResources(kResourceTypeScript);
+
+		if (resources->empty() && testResource(ResourceId(kResourceTypeChunk, 0)))
+			addResourcesFromChunk(0);
+
+		delete resources;
+	}
+#endif
+
 	return 1;
 }
 
@@ -865,21 +881,6 @@ void ResourceManager::init() {
 		}
 #endif
 	}
-
-#ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2_1) {
-		// If we have no scripts, but chunk 0 is present, open up the chunk
-		// to try to get to any scripts in there. The Lighthouse SCI2.1 demo
-		// does exactly this.
-
-		Common::List<ResourceId> *scriptList = listResources(kResourceTypeScript);
-
-		if (scriptList->empty() && testResource(ResourceId(kResourceTypeChunk, 0)))
-			addResourcesFromChunk(0);
-
-		delete scriptList;
-	}
-#endif
 }
 
 ResourceManager::~ResourceManager() {
