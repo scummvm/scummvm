@@ -26,7 +26,7 @@
 namespace Sci {
 
 // SCI3 games have a different script format (in CSC files) and are currently unsupported
-//#define ENABLE_SCI3_GAMES
+#define ENABLE_SCI3_GAMES
 
 #define FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, lang) \
 	{"sci-fanmade", name, { \

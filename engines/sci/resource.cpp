@@ -824,6 +824,13 @@ void ResourceManager::init(bool initFromFallbackDetector) {
 
 	_mapVersion = detectMapVersion();
 	_volVersion = detectVolVersion();
+
+	// TODO/FIXME: Remove once SCI3 resource detection is finished
+	if ((_mapVersion == kResVersionSci3 || _volVersion == kResVersionSci3) && (_mapVersion != _volVersion)) {
+		warning("FIXME: Incomplete SCI3 detection: setting map and volume version to SCI3");
+		_mapVersion = _volVersion = kResVersionSci3;
+	}
+
 	if ((_volVersion == kResVersionUnknown) && (_mapVersion != kResVersionUnknown)) {
 		warning("Volume version not detected, but map version has been detected. Setting volume version to map version");
 		_volVersion = _mapVersion;
@@ -1045,6 +1052,8 @@ ResVersion ResourceManager::detectMapVersion() {
 	Common::SeekableReadStream *fileStream = 0;
 	byte buff[6];
 	ResourceSource *rsrc= 0;
+
+	// TODO: Add SCI3 support
 
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		rsrc = *it;
@@ -2150,12 +2159,12 @@ void ResourceManager::detectSciVersion() {
 	case kResVersionSci11:
 		s_sciVersion = SCI_VERSION_1_1;
 		return;
+	case kResVersionSci3:
+		s_sciVersion = SCI_VERSION_3;
+		return;
 	default:
 		s_sciVersion = SCI_VERSION_NONE;
-		if (_volVersion == kResVersionSci3)
-			error("detectSciVersion(): Detected an SCI3 game, currently unsupported");
-		else
-			error("detectSciVersion(): Unable to detect the game's SCI version");
+		error("detectSciVersion(): Unable to detect the game's SCI version");
 	}
 }
 

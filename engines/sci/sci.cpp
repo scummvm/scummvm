@@ -224,6 +224,19 @@ Common::Error SciEngine::run() {
 	_audio = new AudioPlayer(_resMan);
 	_gamestate = new EngineState(segMan);
 	_eventMan = new EventManager(_resMan->detectFontExtended());
+	
+	// TODO/FIXME: Remove once SCI3 support is improved
+	if (getSciVersion() == SCI_VERSION_3) {
+		initGraphics();	// invoked to init the graphics subsystem
+		_gamestate->_msgState = NULL;	// for proper engine destruction
+		// Attach the console to use resource manager functionality
+		_console->attach();
+		_console->DebugPrintf("\nSCI3 game, stopping before actual game initialization.\n"
+							  "Resource-related functionality should be usable at this point\n\n");
+		_console->onFrame();
+
+		return Common::kNoError;
+	}
 
 	// The game needs to be initialized before the graphics system is initialized, as
 	// the graphics code checks parts of the seg manager upon initialization (e.g. for

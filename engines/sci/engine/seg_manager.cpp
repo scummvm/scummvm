@@ -946,8 +946,18 @@ void SegManager::freeString(reg_t addr) {
 void SegManager::createClassTable() {
 	Resource *vocab996 = _resMan->findResource(ResourceId(kResourceTypeVocab, 996), 1);
 
-	if (!vocab996)
-		error("SegManager: failed to open vocab 996");
+	if (!vocab996) {
+		if (getSciVersion() <= SCI_VERSION_2_1) {
+			error("SegManager: failed to open vocab 996");
+		} else {
+			// TODO/FIXME: The demo of Shivers 2 has no vocabularies or scripts!
+			// This is either a problem with the resource manager, or the game is
+			// simply not using SCI. Since we are not actually running game scripts
+			// in SCI3, stop here for now
+			warning("SegManager: failed to open vocab 996 in SCI3");
+			return;
+		}
+	}
 
 	int totalClasses = vocab996->size >> 2;
 	_classTable.resize(totalClasses);
