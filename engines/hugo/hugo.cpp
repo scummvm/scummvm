@@ -83,8 +83,8 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 }
 
 HugoEngine::~HugoEngine() {
-	free(_textData);
-	free(_stringtData);
+	freeTexts(_textData);
+	freeTexts(_stringtData);
 
 	if (_arrayNouns) {
 		for (int i = 0; _arrayNouns[i]; i++)
@@ -98,17 +98,23 @@ HugoEngine::~HugoEngine() {
 		free(_arrayVerbs);
 	}
 
-	free(_screenNames);
+	freeTexts(_screenNames);
 	_screen->freePalette();
-	free(_textEngine);
-	free(_textIntro);
+	freeTexts(_textEngine);
+	freeTexts(_textIntro);
 	free(_introX);
 	free(_introY);
-	free(_textMouse);
-	free(_textParser);
-	free(_textSchedule);
-	free(_textUtil);
-	free(_arrayReqs);
+	freeTexts(_textMouse);
+	freeTexts(_textParser);
+	freeTexts(_textSchedule);
+	freeTexts(_textUtil);
+
+	if (_arrayReqs) {
+		for (int i = 0; _arrayReqs[i] != 0; i++)
+			free(_arrayReqs[i]);
+		free(_arrayReqs);
+	}
+
 	free(_hotspots);
 	free(_invent);
 
@@ -751,6 +757,7 @@ char **HugoEngine::loadTextsVariante(Common::File &in, uint16 *arraySize) {
 	int  len;
 	char **res = 0;
 	char *pos = 0;
+	char *posBck = 0;
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numTexts = in.readUint16BE();
@@ -765,6 +772,7 @@ char **HugoEngine::loadTextsVariante(Common::File &in, uint16 *arraySize) {
 			res[0] += DATAALIGNMENT;
 		} else {
 			in.read(pos, entryLen);
+			posBck = pos;
 		}
 
 		pos += DATAALIGNMENT;
@@ -778,6 +786,9 @@ char **HugoEngine::loadTextsVariante(Common::File &in, uint16 *arraySize) {
 			if (varnt == _gameVariant)
 				res[i] = pos;
 		}
+
+		if (varnt != _gameVariant)
+			free(posBck);
 	}
 
 	return res;
@@ -822,6 +833,7 @@ char ***HugoEngine::loadTextsArray(Common::File &in) {
 			int numTexts = in.readUint16BE();
 			int entryLen = in.readUint16BE();
 			char *pos = (char *)malloc(entryLen);
+			char *posBck = 0;
 			char **res = 0;
 			if (varnt == _gameVariant) {
 				res = (char **)malloc(sizeof(char *) * numTexts);
@@ -830,6 +842,7 @@ char ***HugoEngine::loadTextsArray(Common::File &in) {
 				res[0] += DATAALIGNMENT;
 			} else {
 				in.read(pos, entryLen);
+				posBck = pos;
 			}
 
 			pos += DATAALIGNMENT;
@@ -845,6 +858,8 @@ char ***HugoEngine::loadTextsArray(Common::File &in) {
 
 			if (varnt == _gameVariant)
 				resArray[i] = res;
+			else
+				free(posBck);
 		}
 	}
 
@@ -876,7 +891,7 @@ void HugoEngine::freeTexts(char **ptr) {
 	if (!ptr)
 		return;
 
-	free(*ptr);
+	free(*ptr - DATAALIGNMENT);
 	free(ptr);
 }
 

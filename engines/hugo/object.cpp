@@ -218,6 +218,8 @@ void ObjectHandler::freeObjects() {
 		object_t *obj = &_objects[i];
 		for (int j = 0; j < obj->seqNumb; j++) {    // for each sequence
 			seq_t *seq = obj->seqList[j].seqPtr;    // Free image
+			if (obj->currImagePtr!= 0)
+				free(obj->currImagePtr);
 			if (seq == 0)                           // Failure during database load
 				break;
 			do {

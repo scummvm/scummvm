@@ -830,8 +830,13 @@ void Scheduler::freeActListArr() {
 	debugC(6, kDebugSchedule, "freeActListArr()");
 
 	if (_actListArr) {
-		for (int i = 0; i < _actListArrSize; i++)
+		for (int i = 0; i < _actListArrSize; i++) {
+			for (int j = 0; _actListArr[i][j].a0.actType != ANULL; j++) {
+				if (_actListArr[i][j].a0.actType == PROMPT)
+					free(_actListArr[i][j].a3.responsePtr);
+			}
 			free(_actListArr[i]);
+		}
 		free(_actListArr);
 	}
 }

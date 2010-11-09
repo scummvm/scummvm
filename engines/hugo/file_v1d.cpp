@@ -76,6 +76,7 @@ void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 
 	_sceneryArchive1.read(tmpImage, OVL_SIZE);
 	_sceneryArchive1.close();
+	free(buf);
 }
 
 /**
@@ -89,10 +90,11 @@ void FileManager_v1d::readBackground(int screenIndex) {
 	if (!_sceneryArchive1.open(buf))
 		Utils::Error(FILE_ERR, "%s", buf);
 	// Read the image into dummy seq and static dib_a
-	seq_t dummySeq;                                 // Image sequence structure for Read_pcx
-	readPCX(_sceneryArchive1, &dummySeq, _vm->_screen->getFrontBuffer(), true, _vm->_screenNames[screenIndex]);
-
+	seq_t *dummySeq;                                // Image sequence structure for Read_pcx
+	dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_screenNames[screenIndex]);
+	free(dummySeq);
 	_sceneryArchive1.close();
+	free(buf);
 }
 
 char *FileManager_v1d::fetchString(int index) {

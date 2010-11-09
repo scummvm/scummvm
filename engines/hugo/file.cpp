@@ -167,6 +167,7 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 			if (!_objectsArchive.open(buf))
 				Utils::Error(FILE_ERR, "%s", buf);
 		}
+		free(buf);
 	}
 
 	bool  firstFl = true;                           // Initializes pcx read function
@@ -612,10 +613,11 @@ void FileManager::readUIFItem(int16 id, byte *buf) {
 	ip.seek(UIFHeaderPtr->offset, SEEK_SET);
 
 	// We support pcx images and straight data
-	seq_t dummySeq;                                 // Dummy seq_t for image data
+	seq_t *dummySeq;                                // Dummy seq_t for image data
 	switch (id) {
 	case UIF_IMAGES:                                // Read uif images file
-		readPCX(ip, &dummySeq, buf, true, UIF_FILE);
+		dummySeq = readPCX(ip, 0, buf, true, UIF_FILE);
+		free(dummySeq);
 		break;
 	default:                                        // Read file data into supplied array
 		if (ip.read(buf, UIFHeaderPtr->size) != UIFHeaderPtr->size)
