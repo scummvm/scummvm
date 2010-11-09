@@ -344,6 +344,11 @@ void RivenScript::playScriptSLST(uint16 op, uint16 argc, uint16 *argv) {
 	// Play the requested sound list
 	_vm->_sound->playSLST(slstRecord);
 	_vm->_activatedSLST = true;
+
+	delete[] slstRecord.sound_ids;
+	delete[] slstRecord.volumes;
+	delete[] slstRecord.balances;
+	delete[] slstRecord.u2;
 }
 
 // Command 4: play local tWAV resource (twav_id, volume, block)
