@@ -43,31 +43,6 @@ WorldStats::~WorldStats() {
 	CLEAR_ARRAY(ActionArea, actions);
 }
 
-int32 WorldStats::getActionAreaIndexById(int32 id) {
-	for (uint32 i = 0; i < actions.size(); i++) {
-		if (actions[i]->id == id)
-			return i;
-	}
-
-	return -1;
-}
-
-ActionArea* WorldStats::getActionAreaById(int32 id) {
-	int index = getActionAreaIndexById(id);
-	if (index == -1)
-		error("[WorldStats::getActionAreaById] action id is invalid");
-
-	return actions[index];
-}
-
-Object* WorldStats::getObjectById(ObjectId id) {
-	for (uint32 i = 0; i < objects.size(); i++)
-		if (objects[i]->getId() == id)
-			return objects[i];
-
-	return NULL;
-}
-
 // FIXME: load necessary World Stats content
 void WorldStats::load(Common::SeekableReadStream *stream) {
 	size       = stream->readSint32LE();
@@ -235,6 +210,44 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	// Jump over unused actions
 	stream->seek((ACTIONS_MAX_COUNT - numActions) * ACTIONS_SIZE, SEEK_CUR);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Helper methods
+//////////////////////////////////////////////////////////////////////////
+int32 WorldStats::getActionAreaIndexById(int32 id) {
+	for (uint32 i = 0; i < actions.size(); i++) {
+		if (actions[i]->id == id)
+			return i;
+	}
+
+	return -1;
+}
+
+ActionArea* WorldStats::getActionAreaById(int32 id) {
+	int index = getActionAreaIndexById(id);
+	if (index == -1)
+		error("[WorldStats::getActionAreaById] action id is invalid");
+
+	return actions[index];
+}
+
+Object* WorldStats::getObjectById(ObjectId id) {
+	for (uint32 i = 0; i < objects.size(); i++)
+		if (objects[i]->getId() == id)
+			return objects[i];
+
+	return NULL;
+}
+
+void WorldStats::setWheelObjects() {
+	wheels[0] = getObjectById(kObjectWheel1);
+	wheels[1] = getObjectById(kObjectWheel2);
+	wheels[2] = getObjectById(kObjectWheel3);
+	wheels[3] = getObjectById(kObjectWheel4);
+	wheels[4] = getObjectById(kObjectWheel5);
+	wheels[6] = getObjectById(kObjectWheel6);
+	wheels[7] = getObjectById(kObjectWheel7);
 }
 
 } // end of namespace Asylum

@@ -108,7 +108,7 @@ void Scene::enter(ResourcePackId packId) {
 	load(packId);
 
 	// Set wheel indices
-	setWheelObjectIndices();
+	_ws->setWheelObjects();
 
 	// Adjust object priority
 	if (_ws->objects.size() > 0) {
@@ -249,6 +249,9 @@ void Scene::load(ResourcePackId packId) {
 	fd->seek(0xE868E + _polygons->size * _polygons->numEntries);
 	_actions = new ActionList(_vm);
 	_actions->load(fd);
+
+	// TODO load rest of data
+
 
 	fd->close();
 	delete fd;
@@ -394,7 +397,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	}
 }
 
-int Scene::update() {
+bool Scene::update() {
 #ifdef DEBUG_SCENE_TIMES
 #define MESURE_TICKS(func) { \
 	int32 startTick =_vm->getTick(); \
@@ -419,10 +422,7 @@ int Scene::update() {
 	if (g_debugObjects)
 		debugShowObjects();
 
-	if (_actions->process())
-		return 1;
-
-	return 0;
+	return _actions->process();
 }
 
 void Scene::updateMouse() {
@@ -806,7 +806,7 @@ bool Scene::hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, b
 }
 
 void Scene::changePlayer(ActorIndex index) {
-	error("[Scene::changePlayerActorIndex] not implemented");
+	error("[Scene::changePlayer] not implemented");
 }
 
 void Scene::updateActors() {
@@ -936,6 +936,7 @@ int32 Scene::calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act) {
 }
 
 void Scene::updateMusic() {
+	//warning("[Scene::playIntroSpeech] not implemented!");
 }
 
 void Scene::updateScreen() {
@@ -946,12 +947,31 @@ void Scene::updateScreen() {
 	}
 }
 
-void Scene::setWheelObjectIndices() {
-	warning("[Scene::setWheelObjectIndices] not implemented!");
-}
-
 void Scene::playIntroSpeech() {
-	warning("[Scene::playIntroSpeech] not implemented!");
+	ResourceId resourceId;
+
+	switch (_packId) {
+	default:
+		resourceId = (ResourceId)_packId;
+		break;
+
+	case kResourcePackCourtyardAndChapel:
+		resourceId = getSpeech()->playScene(4, 3);
+		break;
+
+	case kResourcePackCave:
+		resourceId = getSpeech()->playScene(4, 6);
+		break;
+
+	case kResourcePackLaboratory:
+		resourceId = getSpeech()->playScene(4, 7);
+		break;
+	}
+
+	getScreen()->clearScreen();
+
+	// TODO do palette fade and wait until sound is done
+	warning("[Scene::playIntroSpeech] Missing palette fade and wait!");
 }
 
 void Scene::updateAdjustScreen() {
