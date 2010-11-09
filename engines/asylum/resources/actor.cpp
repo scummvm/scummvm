@@ -47,7 +47,72 @@
 namespace Asylum {
 
 Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index) {
-	// TODO Init all variables
+ 	// Init all variables
+ 	_resourceId = kResourceNone;
+ 	_objectIndex = 0;
+ 	_frameIndex = 0;
+ 	_frameCount = 0;
+ 	x = y = 0;
+ 	x1 = y1 = x2 = y2 = 0;
+ 	_direction = 0;
+ 	_field_3C = 0;
+ 	_status = kActorStatusNone;
+ 	_field_44 = 0;
+ 	_priority = 0;
+ 	flags = 0;
+ 	_field_50 = 0;
+ 	_field_54 = 0;
+ 	_field_58 = 0;
+ 	_field_5C = 0;
+ 	_field_60 = 0;
+ 	_actionIdx3 = 0;
+ 	// TODO field_68 till field_617
+ 	_reaction[8] = 0;
+ 	_field_638 = 0;
+ 	_walkingSound1 = 0;
+ 	_walkingSound2 = 0;
+ 	_walkingSound3 = 0;
+ 	_walkingSound4 = 0;
+ 	_field_64C = 0;
+ 	_field_650 = 0;
+ 	memset(_graphicResourceIds, 0 , sizeof(_graphicResourceIds));
+ 	memset(&_name, 0, 256);
+ 	memset(&_field_830, 0, sizeof(_field_830));
+ 	memset(&_field_880, 0, sizeof(_field_880));
+ 	memset(&_field_8D0, 0, sizeof(_field_8D0));
+ 	_actionIdx2 = 0;
+ 	_field_924 = 0;
+ 	_lastScreenUpdate = 0;
+ 	_field_92C = 0;
+ 	actionType = 0;
+ 	_field_934 = 0;
+ 	_field_938 = 0;
+ 	_soundResourceId = kResourceNone;
+ 	_numberValue01 = 0;
+ 	_field_944 = 0;
+ 	_field_948 = 0;
+ 	_field_94C = 0;
+ 	_numberFlag01 = 0;
+ 	_numberStringWidth = 0;
+ 	_numberStringX = 0;
+ 	_numberStringY = 0;
+ 	memset(&_numberString01, 0, 8);
+ 	_field_964 = 0;
+ 	_field_968 = 0;
+ 	_field_96C = 0;
+ 	_field_970 = 0;
+ 	_field_974 = 0;
+ 	_field_978 = 0;
+ 	_actionIdx1 = 0;
+ 	_field_980 = 0;
+ 	_field_984 = 0;
+ 	_field_988 = 0;
+ 	_field_98C = 0;
+ 	_field_990 = 0;
+ 	_field_994 = 0;
+ 	_field_998 = 0;
+ 	_field_99C = 0;
+ 	_field_9A0 = 0;
 
 	// update-related variables
 	_actorUpdateCounter = 0;

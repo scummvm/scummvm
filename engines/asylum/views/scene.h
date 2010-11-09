@@ -88,6 +88,7 @@ public:
 
 
 
+
 	void handleEvent(Common::Event *event, bool doUpdate);
 
 	void activate() { _isActive = true; }
@@ -229,13 +230,13 @@ private:
 	bool  _skipDrawScene;
 	ActorDirection _globalDirection;
 
-	WorldStats   *_ws;
-	Polygons     *_polygons;
 	ActionList   *_actions;
-	SceneTitle   *_title;
-	Speech       *_speech;
-	Special      *_special;
 	//BlowUpPuzzle *_blowUp;
+	Special      *_special;
+	Speech       *_speech;
+	SceneTitle   *_title;
+	Polygons     *_polygons;
+	WorldStats   *_ws;
 
 	GraphicResource *_bgResource;
 	GraphicFrame    *_background;
@@ -328,7 +329,7 @@ private:
 
 	friend class SceneTitle;
 
-}; // end of class Scene
+};
 
 } // end of namespace Asylum
 

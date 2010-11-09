@@ -47,6 +47,15 @@ ResourceEntry *ResourceManager::get(ResourceId id) {
 	return cache->getVal(packId)->get(index);
 }
 
+void ResourceManager::unload(ResourcePackId id) {
+	ResourcePackId packId = (ResourcePackId)((id >> 16) & 0x7FFF);
+
+	if (_resources.contains(packId))
+		_resources.erase(packId);
+
+	if (_music.contains(packId))
+		_music.erase(packId);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // ResourcePack

@@ -57,11 +57,36 @@ int g_debugPolygons;
 int g_debugObjects;
 int g_debugScrolling;
 
-Scene::Scene(AsylumEngine *engine): _vm(engine) {
-	// TODO Initialize data
+Scene::Scene(AsylumEngine *engine): _vm(engine),
+	_actions(NULL), _special(NULL), _speech(NULL), _title(NULL), _polygons(NULL), _ws(NULL) {
+
+	// Initialize data
+	_packId = kResourcePackInvalid;
+	_playerActorIdx = 0;
+	_titleLoaded = false;
+	_walking = false;
+	_leftClick = false;
+	_rightButton = false;
+	_isActive = false;
+	_skipDrawScene = false;
+	_globalDirection = 0;
+
+	// Graphics
+	_bgResource = NULL;
+	_background = NULL;
+
+	// Initialize global data
+	_globalX = _globalY = 0;
+	_sceneOffset = 0;
+	_sceneXLeft = _sceneYTop = 0;
+	_actorUpdateFlag = false;
+	_actorUpdateFlag2 = false;
 }
 
 Scene::~Scene() {
+	// Unload the associated resources
+	getResource()->unload(_packId);
+
 	delete _ws;
 	delete _polygons;
 	delete _actions;

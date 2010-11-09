@@ -54,8 +54,11 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	_console(NULL), _encounter(NULL), _resource(NULL), _mainMenu(NULL), _scene(NULL), _screen(NULL),
 	_sound(NULL), _text(NULL), _video(NULL) {
 
-	// Reset flags
+	// Init data
 	memset(_gameFlags, 0, 1512);
+	memset(_gameFlags, 0, sizeof(_gameFlags));
+	screenUpdatesCount = 0;
+	globalTickValue_2 = 0;
 
 	// Add default search directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -129,7 +132,7 @@ Common::Error AsylumEngine::run() {
 	//} else {
 	//    _mainMenu->openMenu();
 	//}
-	// 
+	//
 
 	while (!shouldQuit()) {
 		handleEvents(true);
