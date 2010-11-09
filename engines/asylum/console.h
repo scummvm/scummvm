@@ -67,6 +67,7 @@ private:
 	bool cmdListFlags(int32 argc, const char **argv);
 	bool cmdShowObject(int32 argc, const char **argv);
 	bool cmdListObjects(int32 argc, const char **argv);
+	bool cmdShowWorldStats(int32 argc, const char **argv);
 
 	bool cmdPlayVideo(int32 argc, const char **argv);
 	bool cmdRunScript(int32 argc, const char **argv);
