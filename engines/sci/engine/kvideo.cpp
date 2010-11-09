@@ -165,7 +165,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			break;
 		}
 		default:
-			warning("Unhandled SCI kShowMovie subop %d", argv[1].toUint16());
+			warning("Unhandled SCI kShowMovie subop %d", argv[0].toUint16());
 		}
 	}
 
