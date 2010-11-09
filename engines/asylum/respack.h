@@ -62,8 +62,8 @@ private:
 
 class ResourceManager {
 public:
-	ResourceManager() {}
-	virtual ~ResourceManager() {}
+	ResourceManager();
+	virtual ~ResourceManager() {};
 
 	/**
 	 * Get a resource entry
@@ -83,6 +83,8 @@ public:
 
 	//int count(ResourceId id);
 
+	void setMusicPackId(ResourcePackId id) { _musicPackId = id; }
+
 private:
 	struct ResourcePackId_EqualTo {
 		bool operator()(const ResourcePackId &x, const ResourcePackId &y) const { return x == y; }
@@ -96,6 +98,8 @@ private:
 
 	ResourceCache _resources;
 	ResourceCache _music;
+
+	ResourcePackId _musicPackId;
 };
 
 } // end of namespace Asylum
