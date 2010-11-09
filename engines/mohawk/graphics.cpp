@@ -245,6 +245,7 @@ void MystGraphics::changeCursor(uint16 cursor) {
 		CursorMan.replaceCursor((byte *)data->_surface->pixels, data->_surface->w, data->_surface->h, hotspotX, hotspotY, _pixelFormat.RGBToColor(255, 255, 255), 1, &_pixelFormat);
 
 	_vm->_needsUpdate = true;
+	delete data;
 }
 
 void MystGraphics::drawRect(Common::Rect rect, bool active) {
