@@ -58,13 +58,11 @@ ResourceEntry *ResourceManager::get(ResourceId id) {
 }
 
 void ResourceManager::unload(ResourcePackId id) {
-	ResourcePackId packId = (ResourcePackId)((id >> 16) & 0x7FFF);
+	if (_resources.contains(id))
+		_resources.erase(id);
 
-	if (_resources.contains(packId))
-		_resources.erase(packId);
-
-	if (_music.contains(packId))
-		_music.erase(packId);
+	if (_music.contains(id))
+		_music.erase(id);
 }
 
 //////////////////////////////////////////////////////////////////////////
