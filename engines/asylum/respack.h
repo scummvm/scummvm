@@ -57,7 +57,7 @@ private:
 
 	void init(Common::String filename);
 
-	friend ResourceManager;
+	friend class ResourceManager;
 };
 
 class ResourceManager {
