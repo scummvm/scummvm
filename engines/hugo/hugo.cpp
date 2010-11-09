@@ -88,13 +88,13 @@ HugoEngine::~HugoEngine() {
 
 	if (_arrayNouns) {
 		for (int i = 0; _arrayNouns[i]; i++)
-			free(_arrayNouns[i]);
+			freeTexts(_arrayNouns[i]);
 		free(_arrayNouns);
 	}
 
 	if (_arrayVerbs) {
 		for (int i = 0; _arrayVerbs[i]; i++)
-			free(_arrayVerbs[i]);
+			freeTexts(_arrayVerbs[i]);
 		free(_arrayVerbs);
 	}
 
