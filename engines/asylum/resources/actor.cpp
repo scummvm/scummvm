@@ -207,7 +207,6 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	_numberStringX  = stream->readSint32LE();
 	_numberStringY  = stream->readSint32LE();
 	stream->read(_numberString01, sizeof(_numberString01));
-	_field_964  = stream->readSint32LE();
 	_field_968  = stream->readSint32LE();
 	_field_96C  = stream->readSint32LE();
 	_field_970  = stream->readSint32LE();
@@ -223,9 +222,6 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	_field_998  = stream->readSint32LE();
 	_field_99C  = stream->readSint32LE();
 	_field_9A0  = stream->readSint32LE();
-
-	// TODO skip field_980 till field_9A0
-	stream->skip(0x24);
 }
 
 /////////////////////////////////////////////////////////////////////////

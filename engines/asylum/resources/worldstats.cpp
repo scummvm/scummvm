@@ -33,8 +33,7 @@
 
 namespace Asylum {
 
-WorldStats::WorldStats(Common::SeekableReadStream *stream, Scene *scene)
-		: _scene(scene) {
+WorldStats::WorldStats(Common::SeekableReadStream *stream, Scene *scene) : _scene(scene) {
 	load(stream);
 }
 
