@@ -838,6 +838,7 @@ const Feature s_features[] = {
 	{     "mpeg2",      "USE_MPEG2", "libmpeg2.lib", false, "mpeg2 codec for cutscenes" },
 
 	// ScummVM feature flags
+	{  "sdlbackend",     "SDL_BACKEND", "", true, "SDL backend" },
 	{     "scalers",     "USE_SCALERS", "", true, "Scalers" },
 	{   "hqscalers",  "USE_HQ_SCALERS", "", true, "HQ scalers" },
 	{       "16bit",   "USE_RGB_COLOR", "", true, "16bit color support" },
