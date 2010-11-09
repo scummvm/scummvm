@@ -118,7 +118,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"lsl7",            "Leisure Suit Larry 7: Love for Sail!"},
 	{"lighthouse",      "Lighthouse: The Dark Being"},
 	{"phantasmagoria2", "Phantasmagoria II: A Puzzle of Flesh"},
-	{"shivers2",        "Shivers II: Harvest of Souls"},
+	//{"shivers2",        "Shivers II: Harvest of Souls"},	// Not SCI
 	{"rama",            "RAMA"},
 	{0, 0}
 };
@@ -190,7 +190,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "rama",            GID_RAMA },
 	{ "sci-fanmade",     GID_FANMADE },	// FIXME: Do we really need/want this?
 	{ "shivers",         GID_SHIVERS },
-	{ "shivers2",        GID_SHIVERS2 },
+	//{ "shivers2",        GID_SHIVERS2 },	// Not SCI
 	{ "slater",          GID_SLATER },
 	{ "sq1sci",          GID_SQ1 },
 	{ "sq3",             GID_SQ3 },

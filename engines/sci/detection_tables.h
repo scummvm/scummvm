@@ -2922,7 +2922,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NONE	},
 
-#ifdef ENABLE_SCI3_GAMES
+	// Shivers 2 doesn't contain SCI scripts. The whole game logic has
+	// been reimplemented from SCI in native code placed in DLL files.
+	// Each room has its own DLL file, and some SCI functions have been
+	// reimplemented/rewritten for this purpose in native code. The
+	// game and demo have all the resources of a SCI game, apart from
+	// the SCI scripts themselves. Thus, they cannot be directly
+	// supported, unless their whole room logic is rewritten from
+	// scratch, which classifies Shivers 2 as "not SCI"
+#if 0
 
 	// Shivers2 - English Windows Demo
 	// Executable scanning reports "3.000.000"
@@ -2940,7 +2948,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH	},
 
-#endif //ENABLE_SCI3_GAMES
+#endif
 
 #endif // ENABLE_SCI32
 
