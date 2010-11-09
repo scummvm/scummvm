@@ -158,6 +158,7 @@ enum ActorIndexes {
 };
 
 enum ActorStatus {
+	kActorStatusNone = 0,
 	kActorStatus1 = 1,
 	kActorStatus2,
 	kActorStatus3,

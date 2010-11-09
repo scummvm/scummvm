@@ -65,12 +65,23 @@ public:
 	ResourceManager() {}
 	virtual ~ResourceManager() {}
 
-	//void load(ResourcePackId id);
-
+	/**
+	 * Get a resource entry
+	 *
+	 * @param id The ResourceId to get.
+	 *
+	 * @return the resource entry
+	 */
 	ResourceEntry *get(ResourceId id);
-	//int count(ResourceId id);
 
-	//void unload(ResourcePackId id);
+	/**
+	 * Unloads the resources associated with the id
+	 *
+	 * @param id The identifier.
+	 */
+	void unload(ResourcePackId id);
+
+	//int count(ResourceId id);
 
 private:
 	struct ResourcePackId_EqualTo {
