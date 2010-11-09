@@ -128,6 +128,8 @@ public:
 
 	Object* getObjectById(ObjectId id);
 
+	Common::String toString();
+
 private:
 	Scene *_scene;
 

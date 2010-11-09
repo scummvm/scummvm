@@ -250,4 +250,27 @@ void WorldStats::setWheelObjects() {
 	wheels[7] = getObjectById(kObjectWheel7);
 }
 
+Common::String WorldStats::toString() {
+	Common::String output;
+
+	output += Common::String::format("xLeft:          %d\n", xLeft);
+	output += Common::String::format("yTop:           %d\n", yTop);
+	output += Common::String::format("boundingRect:   top[%d] left[%d] right[%d] bottom[%d]: \n", boundingRect.top, boundingRect.left, boundingRect.right, boundingRect.bottom);
+	output += Common::String::format("width:          %d\n", width);
+	output += Common::String::format("height:         %d\n", height);
+	output += Common::String::format("motionStatus:   %d\n", motionStatus);
+	output += "coordinates:    ";
+	for (int i = 0; i < 7; i++)
+		output += Common::String::format("%d[%d] ", i, coordinates[i]);
+	output += "\n";
+	output += Common::String::format("sceneRectIndex: %d\n", sceneRectIdx);
+	output += Common::String::format("sceneRects:     0: top[%d] left[%d] right[%d] bottom[%d]\n", sceneRects[0].top, sceneRects[0].left, sceneRects[0].right, sceneRects[0].bottom);
+	for (int i = 1; i < 6; i++)
+		output += Common::String::format("                %d: top[%d] left[%d] right[%d] bottom[%d]\n", i, sceneRects[i].top, sceneRects[i].left, sceneRects[i].right, sceneRects[i].bottom);
+	output += Common::String::format("scriptInex:     %d\n", scriptIndex);
+	output += Common::String::format("actorType:      %d\n", actorType);
+	output += Common::String::format("musicStatus:    %d\n", musicStatus);
+
+	return output;
+}
 } // end of namespace Asylum

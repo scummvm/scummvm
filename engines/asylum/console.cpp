@@ -55,6 +55,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 	DCmd_Register("flags",          WRAP_METHOD(Console, cmdListFlags));
 	DCmd_Register("object",         WRAP_METHOD(Console, cmdShowObject));
 	DCmd_Register("objects",        WRAP_METHOD(Console, cmdListObjects));
+	DCmd_Register("world",          WRAP_METHOD(Console, cmdShowWorldStats));
 
 	DCmd_Register("video",          WRAP_METHOD(Console, cmdPlayVideo));
 	DCmd_Register("script",         WRAP_METHOD(Console, cmdRunScript));
@@ -97,6 +98,7 @@ bool Console::cmdHelp(int, const char **) {
 	DebugPrintf(" flags   - show flags\n");
 	DebugPrintf(" object  - inspect a particular object\n");
 	DebugPrintf(" objects - show objects information\n");
+	DebugPrintf(" world   - show worldstats\n");
 	DebugPrintf("\n");
 	DebugPrintf(" video   - play a video\n");
 	DebugPrintf(" script  - run a script\n");
@@ -215,6 +217,14 @@ bool Console::cmdListFlags(int32 argc, const char **argv) {
 		}
 		DebugPrintf("\n\n%s flags: %d\n", (type ? "Set" : "Unset"), count);
 	}
+
+	return true;
+}
+
+bool Console::cmdShowWorldStats(int32 argc, const char **argv) {
+	DebugPrintf("WorldStats\n");
+	DebugPrintf("----------\n");
+	DebugPrintf("%s", getWorld()->toString().c_str());
 
 	return true;
 }
