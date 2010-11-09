@@ -83,15 +83,15 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 }
 
 AsylumEngine::~AsylumEngine() {
-	delete _console;
-	delete _encounter;
-	delete _resource;
-	delete _mainMenu;
 	delete _scene;
+	delete _encounter;
 	delete _screen;
 	delete _sound;
 	delete _text;
 	delete _video;
+	delete _mainMenu;
+	delete _resource;
+	delete _console;
 
 	// Zero passed pointers
 	_gameDescription = NULL;
