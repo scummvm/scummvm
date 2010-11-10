@@ -27,6 +27,10 @@
 #include "asylum/system/config.h"
 #include "asylum/system/sound.h"
 
+#include "asylum/resources/worldstats.h"
+
+#include "asylum/views/scene.h"
+
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 
@@ -39,7 +43,6 @@
 namespace Asylum {
 
 Sound::Sound(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine), _mixer(mixer) {
-	_currentMusicResIndex = kResourceMusicStopped;
 }
 
 Sound::~Sound() {
@@ -260,8 +263,12 @@ void Sound::playMusic(ResourceId resourceId, int32 volume) {
 	playSoundData(Audio::Mixer::kMusicSoundType, &_musicHandle, resource->data, resource->size, true, volume, 0);
 }
 
-void Sound::changeMusic(ResourceId resourceId, int32 musicStatusExt) {
-	error("[Sound::changeMusic] not implemented!");
+void Sound::changeMusic(uint32 index, int32 musicStatusExt) {
+	if (index != getWorld()->musicCurrentResourceIndex) {
+		getWorld()->musicCurrentResourceIndex = index;
+		getWorld()->musicStatusExt = musicStatusExt;
+		getWorld()->musicFlag = 1;
+	}
 }
 
 void Sound::stopMusic() {

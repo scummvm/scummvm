@@ -105,7 +105,7 @@ public:
 	AmbientSoundItem ambientSounds[15];
 	int32 numAmbientSound;
 	int32 musicStatus;
-	int32 musicCurrentResourceIndex;
+	uint32 musicCurrentResourceIndex;
 	int32 musicFlag;
 	ResourceId musicResourceId;
 	int32 musicStatusExt;
