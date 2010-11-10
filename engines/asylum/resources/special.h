@@ -79,6 +79,12 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	void setPaletteGamma(ResourceId palette1, ResourceId palette2);
 
+	void playSoundPanning(ResourceId resourceId, int32 attenuation, Object *object);
+	void playSoundPanning(ResourceId resourceId, int32 attenuation, ActorIndex actorIndex);
+
+	void updateObjectFlag(ObjectId id);
+	void checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, int *val1, int *val2, GameFlag flag5, int *val3);
+
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
