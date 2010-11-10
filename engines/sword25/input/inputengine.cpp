@@ -121,6 +121,12 @@ void InputEngine::update() {
 
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
+			// FIXME - Need to work out how to expose getDebugger() to this module
+			//if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d && event.type == Common::EVENT_KEYDOWN) {
+			//	_vm->getDebugger()->attach();
+			//	_vm->getDebugger()->onFrame();
+			//}
+
 			alterKeyboardState(event.kbd.keycode, (event.type == Common::EVENT_KEYDOWN) ? 0x80 : 0);
 			break;
 

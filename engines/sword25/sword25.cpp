@@ -61,9 +61,13 @@ Sword25Engine::Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc):
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Script debug level");
 	DebugMan.addDebugChannel(kDebugScript, "Scripts", "Script debug level");
 	DebugMan.addDebugChannel(kDebugSound, "Sound", "Sound debug level");
+
+	_console = new Sword25Console(this);
 }
 
 Sword25Engine::~Sword25Engine() {
+	DebugMan.clearAllDebugChannels();
+	delete _console;
 }
 
 Common::Error Sword25Engine::run() {

@@ -1,6 +1,7 @@
 MODULE := engines/sword25
 
 MODULE_OBJS := \
+	console.o \
 	detection.o \
 	sword25.o \
 	fmv/movieplayer.o \

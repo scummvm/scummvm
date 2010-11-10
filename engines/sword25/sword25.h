@@ -32,6 +32,7 @@
 #include "engines/engine.h"
 
 #include "sword25/kernel/log.h"
+#include "sword25/console.h"
 
 struct ADGameDescription;
 
@@ -70,6 +71,8 @@ private:
 
 	bool loadPackages();
 
+	Sword25Console *_console;
+
 protected:
 	virtual Common::Error run();
 	bool hasFeature(EngineFeature f) const;
@@ -79,6 +82,8 @@ protected:
 // 	Common::Error saveGameState(int slot, const char *desc);	// TODO: Implement this?
 // 	bool canLoadGameStateCurrently();	// TODO: Implement this?
 // 	bool canSaveGameStateCurrently();	// TODO: Implement this?
+
+	GUI::Debugger *getDebugger() { return _console; }
 
 	void shutdown();
 
