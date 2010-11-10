@@ -50,14 +50,10 @@ Special::~Special() {}
 
 
 void Special::run(Object* object, ActorIndex index) {
-	//debugC(kDebugLevelSound, "[SPEC] Running special function for chapter %d",getWorld()->numChapter);
-
 	switch (getWorld()->chapter) {
 	default:
-		error("[Special::runSpecial] Invalid chapter");
-
 	case kChapterNone:
-		// Nothing to do here
+		// Nothing to do
 		break;
 
 	case kChapter1:
@@ -588,8 +584,6 @@ void Special::playChapterSound(Object *object, ActorIndex actorIndex) {
 
 	switch (getWorld()->chapter) {
 	default:
-		error("[Special::playChapterSound] Invalid chapter");
-
 	case kChapterNone:
 	case kChapter5:
 	case kChapter9:
@@ -628,7 +622,37 @@ void Special::playChapterSound(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::playSoundChapter1(Object *object, ActorIndex actorIndex) {
-	//error("[Special::playSoundChapter1] Not implemented!");
+	if (actorIndex == kActorInvalid) {
+		switch(object->getId()) {
+		default:
+			break;
+
+		case kObjectRocker:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1847), 14, object);
+			break;
+
+		case kObjectGuyWobbles:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1887), 14, object);
+			break;
+
+		case kObjectPreAlphaNut:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1889 + rnd(3)), 14, object);
+			break;
+
+		case kObjectPreAlphaNut2:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1924 + rnd(3)), 14, object);
+			break;
+		}
+	} else {
+		// The original checks for actor indexes 1582 & 1584,
+		// but the scene data only has a maximum of 50 actors
+		if (actorIndex == 1582 || actorIndex == 1584)
+			error("[Special::playSoundChapter1] Called with invalid actor indexes!");
+	}
 }
 
 void Special::playSoundChapter2(Object *object, ActorIndex actorIndex) {
@@ -636,19 +660,292 @@ void Special::playSoundChapter2(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::playSoundChapter3(Object *object, ActorIndex actorIndex) {
-	error("[Special::playSoundChapter3] Not implemented!");
+	if (actorIndex == kActorInvalid) {
+		switch(object->getId()) {
+		default:
+			break;
+
+		case kObjectNPC024Church:
+		case kObjectNPC024Fountain:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1895), 17, object);
+			break;
+
+		case kObjectPreacherBob:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1896 + _vm->getRandomBit()), 14, object);
+			break;
+
+		case kObjectPreacherBobAssistant:
+		case kObjectNPC026OutOfWay:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1898), 18, object);
+			break;
+
+		case kObjectNPC027Sit:
+		case kObjectNPC027Dancing:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1899), 15, object);
+			break;
+
+		case kObjectNPC028Sit:
+		case kObjectNPC028Dancing:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1900), 15, object);
+			break;
+
+		case kObjectNPC029Sit:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1901), 8, object);
+			break;
+		}
+	} else {
+		Actor *actor = getScene()->getActor(actorIndex);
+
+		switch (actorIndex) {
+		default:
+			break;
+
+		case 1:
+			if (actor->getStatus() == kActorStatus9
+			 && actor->isResourcePresent()
+			 && actor->getFrameIndex() == 0)
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1861), 22, actorIndex);
+			break;
+
+		case 2:
+			if (actor->getStatus() == kActorStatus9
+			 && actor->isResourcePresent()
+			 && actor->getFrameIndex() == 1)
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1892), 16, actorIndex);
+			break;
+
+		case 3:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1893), 17, actorIndex);
+			break;
+
+		case 4:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1894), 17, actorIndex);
+			break;
+
+		case 5:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1902), 15, actorIndex);
+			break;
+		}
+	}
 }
 
 void Special::playSoundChapter4(Object *object, ActorIndex actorIndex) {
-	error("[Special::playSoundChapter4] Not implemented!");
+	if (actorIndex == kActorInvalid) {
+		switch(object->getId()) {
+		default:
+			break;
+
+		case kObjectNPC032Sleeping:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1903), 14, object);
+			break;
+
+		case kObjectNPC032SQOutside:
+		case kObjectNPC032SQBigTop:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1904), 14, object);
+			break;
+
+		case kObjectNPC033Reading:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1879), 16, object);
+			break;
+
+		case kObjectTattooManSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1884), 14, object);
+			break;
+
+		case kObjectStrongmanSQ:
+		case kObjectStrongmanLeft:
+		case kObjectStrongmanRight:
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1885), 16, object);
+			break;
+
+		case kObjectStrongmanSQ2:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1886), 16, object);
+			break;
+
+		case kObjectInfernoSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1905), 12, object);
+			break;
+
+		case kObjectJuggler:
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1906), 12, object);
+			break;
+
+		case kObjectClownSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1907), 10, object);
+			break;
+
+		case kObjectTrixieSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1908), 12, object);
+			break;
+
+		case kObjectSimonSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1909), 12, object);
+			break;
+
+		case kObjectFunTixSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1913), 10, object);
+			break;
+
+		case kObjectFreakTixSQUp:
+		case kObjectFreakTixSQDown:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1914), 9, object);
+			break;
+
+		case kObjectFortTellerSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1915), 15, object);
+			break;
+
+		case kObjectRingTossSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1916), 10, object);
+			break;
+
+		case kObjectPigShootSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1917), 10, object);
+			break;
+
+		case kObjectKnockDownSQ:
+			if (_vm->isGameFlagNotSet(kGameFlag358) && _vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1918), 10, object);
+			break;
+
+		case kObjectPretZoolSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1919), 14, object);
+			break;
+
+		case kObjectTimberSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1920), 14, object);
+			break;
+
+		case kObjectTwinsSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1921), 20, object);
+			break;
+
+		case kObjectSeanSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1923), 16, object);
+			break;
+
+		case kObjectMomAndPopSQ:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1852), 15, object);
+
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1862), 15, object);
+			break;
+		}
+	} else {
+		switch (actorIndex) {
+		default:
+			break;
+
+		case 1:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1910), 14, actorIndex);
+			break;
+
+		case 2:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1911), 14, actorIndex);
+			break;
+
+		case 3:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1912), 14, actorIndex);
+			break;
+		}
+	}
 }
 
 void Special::playSoundChapter6(Object *object, ActorIndex actorIndex) {
-	error("[Special::playSoundChapter6] Not implemented!");
+	if (actorIndex != kActorInvalid)
+		return;
+
+	switch(object->getId()) {
+	default:
+		break;
+
+	case kObjectGravinSQCyber:
+		if (_vm->getRandomBit())
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1880), 14, object);
+		break;
+
+	case kObjectGravinWorkMachine:
+		if (_vm->getRandomBit())
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1880), 14, object);
+		break;
+
+	case kObjectNPC062GritzaSQ:
+		if (_vm->getRandomBit())
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1881), 12, object);
+		break;
+
+	case kObjectNPC063GrundleSQ:
+		if (_vm->getRandomBit())
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1882), 12, object);
+		break;
+
+	case kObjectNPC064GrellaSQ:
+		if (_vm->getRandomBit())
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1883), 12, object);
+		break;
+
+	case kObjectNPC065SQ:
+		if (_vm->getRandomBit())
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1868), 12, object);
+		break;
+
+	case kObjectNPC066SQ:
+		if (_vm->getRandomBit())
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1867), 12, object);
+		break;
+	}
 }
 
 void Special::playSoundChapter7(Object *object, ActorIndex actorIndex) {
-	error("[Special::playSoundChapter7] Not implemented!");
+	if (actorIndex != kActorInvalid)
+		return;
+
+	switch(object->getId()) {
+	default:
+		break;
+
+	case kObjectDrawers3:
+		if (_vm->isGameFlagNotSet(kGameFlag405) && _vm->isGameFlagSet(kGameFlag423))
+			if (rnd(100) < 20)
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1865), 18, object);
+		break;
+
+	case kObjectOldMan3:
+		if (rnd(100) < 20)
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1866), 18, object);
+		break;
+	}
 }
 
 void Special::playSoundChapter8(Object *object, ActorIndex actorIndex) {
@@ -660,6 +957,22 @@ void Special::playSoundChapter8(Object *object, ActorIndex actorIndex) {
 //////////////////////////////////////////////////////////////////////////
 void Special::setPaletteGamma(ResourceId palette1, ResourceId palette2) {
 	error("[Special::setPaletteGamma] Not implemented!");
+}
+
+void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, Object *object) {
+	error("[Special::playSoundPanning] Not implemented!");
+}
+
+void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, ActorIndex actorIndex) {
+	error("[Special::playSoundPanning] Not implemented!");
+}
+
+void Special::updateObjectFlag(ObjectId id) {
+	error("[Special::updateObjectFlag] Not implemented!");
+}
+
+void Special::checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, int *val1, int *val2, GameFlag flag5, int *val3) {
+	error("[Special::checkFlags] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////
