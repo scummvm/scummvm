@@ -14,5 +14,5 @@ TOOL_EXECUTABLE := create_project
 # Include common rules
 include $(srcdir)/rules.mk
 
-# Silence variadic macros warning for C++
-CXXFLAGS := $(CXXFLAGS) -Wno-variadic-macros
+# Silence variadic macros warning for C++ (disabled as this is included globally)
+#CXXFLAGS := $(CXXFLAGS) -Wno-variadic-macros
