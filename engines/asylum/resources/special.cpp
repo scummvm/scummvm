@@ -630,22 +630,22 @@ void Special::playSoundChapter1(Object *object, ActorIndex actorIndex) {
 
 		case kObjectRocker:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1847), 14, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1847), 14, object);
 			break;
 
 		case kObjectGuyWobbles:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1887), 14, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1887), 14, object);
 			break;
 
 		case kObjectPreAlphaNut:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1889 + rnd(3)), 14, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1889 + rnd(3)), 14, object);
 			break;
 
 		case kObjectPreAlphaNut2:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1924 + rnd(3)), 14, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1924 + rnd(3)), 14, object);
 			break;
 		}
 	} else {
@@ -669,35 +669,35 @@ void Special::playSoundChapter3(Object *object, ActorIndex actorIndex) {
 		case kObjectNPC024Church:
 		case kObjectNPC024Fountain:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1895), 17, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1895), 17, object);
 			break;
 
 		case kObjectPreacherBob:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1896 + _vm->getRandomBit()), 14, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1896 + _vm->getRandomBit()), 14, object);
 			break;
 
 		case kObjectPreacherBobAssistant:
 		case kObjectNPC026OutOfWay:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1898), 18, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1898), 18, object);
 			break;
 
 		case kObjectNPC027Sit:
 		case kObjectNPC027Dancing:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1899), 15, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1899), 15, object);
 			break;
 
 		case kObjectNPC028Sit:
 		case kObjectNPC028Dancing:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1900), 15, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1900), 15, object);
 			break;
 
 		case kObjectNPC029Sit:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1901), 8, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1901), 8, object);
 			break;
 		}
 	} else {
@@ -711,29 +711,29 @@ void Special::playSoundChapter3(Object *object, ActorIndex actorIndex) {
 			if (actor->getStatus() == kActorStatus9
 			 && actor->isResourcePresent()
 			 && actor->getFrameIndex() == 0)
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1861), 22, actorIndex);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1861), 22, actorIndex);
 			break;
 
 		case 2:
 			if (actor->getStatus() == kActorStatus9
 			 && actor->isResourcePresent()
 			 && actor->getFrameIndex() == 1)
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1892), 16, actorIndex);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1892), 16, actorIndex);
 			break;
 
 		case 3:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1893), 17, actorIndex);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1893), 17, actorIndex);
 			break;
 
 		case 4:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1894), 17, actorIndex);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1894), 17, actorIndex);
 			break;
 
 		case 5:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1902), 15, actorIndex);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1902), 15, actorIndex);
 			break;
 		}
 	}
@@ -747,117 +747,117 @@ void Special::playSoundChapter4(Object *object, ActorIndex actorIndex) {
 
 		case kObjectNPC032Sleeping:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1903), 14, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1903), 14, object);
 			break;
 
 		case kObjectNPC032SQOutside:
 		case kObjectNPC032SQBigTop:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1904), 14, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1904), 14, object);
 			break;
 
 		case kObjectNPC033Reading:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1879), 16, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1879), 16, object);
 			break;
 
 		case kObjectTattooManSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1884), 14, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1884), 14, object);
 			break;
 
 		case kObjectStrongmanSQ:
 		case kObjectStrongmanLeft:
 		case kObjectStrongmanRight:
-			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1885), 16, object);
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1885), 16, object);
 			break;
 
 		case kObjectStrongmanSQ2:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1886), 16, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1886), 16, object);
 			break;
 
 		case kObjectInfernoSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1905), 12, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1905), 12, object);
 			break;
 
 		case kObjectJuggler:
-			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1906), 12, object);
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1906), 12, object);
 			break;
 
 		case kObjectClownSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1907), 10, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1907), 10, object);
 			break;
 
 		case kObjectTrixieSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1908), 12, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1908), 12, object);
 			break;
 
 		case kObjectSimonSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1909), 12, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1909), 12, object);
 			break;
 
 		case kObjectFunTixSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1913), 10, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1913), 10, object);
 			break;
 
 		case kObjectFreakTixSQUp:
 		case kObjectFreakTixSQDown:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1914), 9, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1914), 9, object);
 			break;
 
 		case kObjectFortTellerSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1915), 15, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1915), 15, object);
 			break;
 
 		case kObjectRingTossSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1916), 10, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1916), 10, object);
 			break;
 
 		case kObjectPigShootSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1917), 10, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1917), 10, object);
 			break;
 
 		case kObjectKnockDownSQ:
 			if (_vm->isGameFlagNotSet(kGameFlag358) && _vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1918), 10, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1918), 10, object);
 			break;
 
 		case kObjectPretZoolSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1919), 14, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1919), 14, object);
 			break;
 
 		case kObjectTimberSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1920), 14, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1920), 14, object);
 			break;
 
 		case kObjectTwinsSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1921), 20, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1921), 20, object);
 			break;
 
 		case kObjectSeanSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1923), 16, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1923), 16, object);
 			break;
 
 		case kObjectMomAndPopSQ:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1852), 15, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1852), 15, object);
 
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1862), 15, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1862), 15, object);
 			break;
 		}
 	} else {
@@ -867,17 +867,17 @@ void Special::playSoundChapter4(Object *object, ActorIndex actorIndex) {
 
 		case 1:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1910), 14, actorIndex);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1910), 14, actorIndex);
 			break;
 
 		case 2:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1911), 14, actorIndex);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1911), 14, actorIndex);
 			break;
 
 		case 3:
 			if (_vm->getRandomBit())
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1912), 14, actorIndex);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1912), 14, actorIndex);
 			break;
 		}
 	}
@@ -893,37 +893,37 @@ void Special::playSoundChapter6(Object *object, ActorIndex actorIndex) {
 
 	case kObjectGravinSQCyber:
 		if (_vm->getRandomBit())
-			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1880), 14, object);
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1880), 14, object);
 		break;
 
 	case kObjectGravinWorkMachine:
 		if (_vm->getRandomBit())
-			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1880), 14, object);
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1880), 14, object);
 		break;
 
 	case kObjectNPC062GritzaSQ:
 		if (_vm->getRandomBit())
-			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1881), 12, object);
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1881), 12, object);
 		break;
 
 	case kObjectNPC063GrundleSQ:
 		if (_vm->getRandomBit())
-			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1882), 12, object);
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1882), 12, object);
 		break;
 
 	case kObjectNPC064GrellaSQ:
 		if (_vm->getRandomBit())
-			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1883), 12, object);
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1883), 12, object);
 		break;
 
 	case kObjectNPC065SQ:
 		if (_vm->getRandomBit())
-			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1868), 12, object);
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1868), 12, object);
 		break;
 
 	case kObjectNPC066SQ:
 		if (_vm->getRandomBit())
-			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1867), 12, object);
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1867), 12, object);
 		break;
 	}
 }
@@ -939,12 +939,12 @@ void Special::playSoundChapter7(Object *object, ActorIndex actorIndex) {
 	case kObjectDrawers3:
 		if (_vm->isGameFlagNotSet(kGameFlag405) && _vm->isGameFlagSet(kGameFlag423))
 			if (rnd(100) < 20)
-				playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1865), 18, object);
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1865), 18, object);
 		break;
 
 	case kObjectOldMan3:
 		if (rnd(100) < 20)
-			playSoundPanning(MAKE_RESOURCE(kResourcePackSpeechOther, 1866), 18, object);
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1866), 18, object);
 		break;
 	}
 }

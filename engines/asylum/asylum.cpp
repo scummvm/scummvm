@@ -106,6 +106,7 @@ Common::Error AsylumEngine::run() {
 
 	// Create resource manager
 	_resource  = new ResourceManager();
+	_resource->setCdNumber(1);
 
 	// Create all game classes
 	_encounter = new Encounter(this);

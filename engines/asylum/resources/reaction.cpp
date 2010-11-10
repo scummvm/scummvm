@@ -489,15 +489,15 @@ void Reaction::play(int32 index) {
 		break;
 
 	case kActorSarah:
-		resourceId = MAKE_RESOURCE(kResourcePackSpeechOther, index + 1927);
+		resourceId = MAKE_RESOURCE(kResourcePackSharedSound, index + 1927);
 		break;
 
 	case kActorCyclops:
-		resourceId = MAKE_RESOURCE(kResourcePackSpeechOther, index + 2084);
+		resourceId = MAKE_RESOURCE(kResourcePackSharedSound, index + 2084);
 		break;
 
 	case kActorAztec:
-		resourceId = MAKE_RESOURCE(kResourcePackSpeechOther, index + 2234);
+		resourceId = MAKE_RESOURCE(kResourcePackSharedSound, index + 2234);
 		break;
 	}
 
