@@ -894,8 +894,7 @@ IMPLEMENT_OPCODE(PlayMovie) {
 	}
 
 	if (!check && getScene()->matteVar2 == 0 && getWorld()->musicCurrentResourceIndex != kResourceMusicStopped)
-		if (_vm->sound()->isCacheOk())
-			_vm->sound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicCurrentResourceIndex));
+		_vm->sound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicCurrentResourceIndex));
 
 	getCursor()->show();
 	getScene()->matteVar2 = 0;
