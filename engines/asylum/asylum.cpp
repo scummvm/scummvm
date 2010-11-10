@@ -172,9 +172,9 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 		error("[AsylumEngine::startGame] Invalid start game type!");
 
 	case kStartGamePlayIntro:
-		_scene->enter(sceneId);
-
 		playIntro();
+
+		_scene->enter(sceneId);
 
 		_cursor->show();
 		break;
@@ -259,7 +259,7 @@ void AsylumEngine::handleEvents(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 				if (_mainMenu->isActive()) {
 					if (_scene) {
 						_mainMenu->closeMenu();
-						// FIXME _scene->enterScene();
+						_scene->activate();
 					}
 				} else if (_scene && _scene->isActive()) {
 					_mainMenu->openMenu();
@@ -317,8 +317,8 @@ void AsylumEngine::processDelayedEvents() {
 
 		if (_mainMenu->isActive())
 			_mainMenu->openMenu();
-		// FIXME else if (_scene->isActive())
-			// FIXME _scene->enterScene();
+		else if (_scene->isActive())
+			_scene->activate();
 	}
 
 	// check for a delayed scene change

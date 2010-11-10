@@ -206,15 +206,7 @@ void Scene::enter(ResourcePackId packId) {
 		_ws->field_E860C = -1;
 	}
 
-
-	//////////////////////////////////////////////////////////////////////////
-	// FIXME: get rid of this
-	_isActive = true;
-	getScreen()->setPalette(_ws->currentPaletteId);
-	_background = _bgResource->getFrame(0);
-	_vm->screen()->copyToBackBuffer(
-		((byte *)_background->surface.pixels) + _ws->yTop * _background->surface.w + _ws->xLeft, _background->surface.w,
-		0, 0, 640, 480);
+	activate();
 }
 
 void Scene::load(ResourcePackId packId) {
@@ -372,7 +364,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 			_title->update(_vm->getTick());
 			if (_title->loadingComplete()) {
 				_titleLoaded = true;
-				// FIXME enterScene();
+                activate();
 			}
 			return;
 		}
@@ -395,6 +387,18 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 			_vm->clearGameFlag(kGameFlag219);
 		}
 	}
+}
+
+void Scene::activate() {
+	//////////////////////////////////////////////////////////////////////////
+	// FIXME: get rid of this?
+
+	_isActive = true;
+	getScreen()->setPalette(_ws->currentPaletteId);
+	_background = _bgResource->getFrame(0);
+	_vm->screen()->copyToBackBuffer(
+		((byte *)_background->surface.pixels) + _ws->yTop * _background->surface.w + _ws->xLeft, _background->surface.w,
+		0, 0, 640, 480);
 }
 
 bool Scene::update() {
@@ -886,7 +890,7 @@ void Scene::updateAmbientSounds() {
 							else
 								if (tmpVol <= -10000)
 									tmpVol = -10000;
-							getSound()->playSound(snd->resourceId, 0, tmpVol, vm()->getRandom(20001) - 10000);
+							getSound()->playSound(snd->resourceId, false, tmpVol, vm()->getRandom(20001) - 10000);
 						}
 					}
 				} else {

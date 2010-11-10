@@ -234,10 +234,8 @@ void MainMenu::update() {
 			getSound()->playMusic(MAKE_RESOURCE(kResourcePackShared, 38));
 			break;
 		case kReturnToGame:
-			if (_vm->scene()) { // FIXME: do this properly
+			if (_vm->scene()) // FIXME: do this properly
 				closeMenu();
-				// FIXME _vm->scene()->enterScene();
-			}
 			break;
 		}
 	}
@@ -327,7 +325,7 @@ void MainMenu::updateMainMenu() {
 
 			// Play creepy voice
 			if (_activeIcon != _previousActiveIcon) {
-				getSound()->playSound(MAKE_RESOURCE(kResourcePackShared, iconNum + 44), Config.sfxVolume);
+				getSound()->playSound(MAKE_RESOURCE(kResourcePackShared, iconNum + 44), false, Config.sfxVolume);
 				_previousActiveIcon = _activeIcon;
 			}
 
