@@ -63,13 +63,13 @@ create_lure (dreammaster)
     the lure.dat file.
 
 
-create_msvc (LordHoto, Littleboy (contributor))
------------
-    Creates project files for Visual Studio 2005, 2008 and 2010 (WIP)
-    out of the configure / Makefile based build system. It also offers
-    a way to enable or disable certain engines and the use of external
-    libraries similar to configure. Run the tool without any arguments
-    for further help.
+create_project (LordHoto, Littleboy)
+--------------
+    Creates project files for Visual Studio 2005, 2008, 2010 and
+    Code::Blocks out of the configure / Makefile based build system.
+    It also offers a way to enable or disable certain engines and the use
+    of external libraries similar to configure. Run the tool without
+    any arguments for further help.
 
 
 create_toon (Strangerke)
