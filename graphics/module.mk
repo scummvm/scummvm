@@ -31,14 +31,14 @@ MODULE_OBJS := \
 	video/smk_decoder.o \
 	video/video_decoder.o \
 	video/codecs/cinepak.o \
+	video/codecs/indeo3.o \
 	video/codecs/mjpeg.o \
 	video/codecs/msrle.o \
 	video/codecs/msvideo1.o \
 	video/codecs/qdm2.o \
 	video/codecs/qtrle.o \
 	video/codecs/rpza.o \
-	video/codecs/smc.o \
-	video/codecs/indeo3.o
+	video/codecs/smc.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \
