@@ -32,6 +32,7 @@
 #include "asylum/resources/worldstats.h"
 
 #include "asylum/system/cursor.h"
+#include "asylum/system/graphics.h"
 #include "asylum/system/speech.h"
 
 #include "asylum/views/scene.h"
@@ -960,11 +961,67 @@ void Special::setPaletteGamma(ResourceId palette1, ResourceId palette2) {
 }
 
 void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, Object *object) {
-	error("[Special::playSoundPanning] Not implemented!");
+	int32 adjustedVolume = Config.voiceVolume;
+	int32 x = 0;
+	int32 y = 0;
+
+	switch (object->getId()) {
+	default: {
+		GraphicResource *resource = new GraphicResource(_vm, object->getResourceId());
+		GraphicFrame *frame = resource->getFrame(object->getFrameIndex());
+
+		x = (frame->getWidth() >> 1)  + object->x;
+		y = (frame->getHeight() >> 1) + object->y;
+
+		delete resource;
+		}
+		break;
+
+	case kObjectDennisStatus:
+		x = 1382;
+		y = 1041;
+		break;
+
+	case kObjectSailorBoy:
+		x = 1646;
+		y = 1220;
+		break;
+
+	case kObjectSuckerSittingStatus:
+		x = 1376;
+		y = 1148;
+		break;
+
+	case kObjectDennisStatus2:
+		x = 175;
+		y = 617;
+		break;
+	}
+
+	// Calculate volume adjustment
+	adjustedVolume += getSound()->calculateVolumeAdjustement(x, y, attenuation, 0);
+
+	// Calculate panning
+	int32 panning = getSound()->calculatePanningAtPoint(x, y);
+
+	// Adjust object properties
+	object->setSoundResourceId(resourceId);
+	object->setField6A4(attenuation);
+
+	getSound()->playSound(resourceId, false, adjustedVolume, panning);
 }
 
 void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, ActorIndex actorIndex) {
-	error("[Special::playSoundPanning] Not implemented!");
+	Actor *actor = getScene()->getActor(actorIndex);
+
+	// Calculate volume adjustment
+	int32 adjustedVolume = Config.voiceVolume;
+	adjustedVolume += getSound()->calculateVolumeAdjustement(actor->x1, actor->y1, attenuation, 0);
+
+	// Calculate panning
+	int32 panning = getSound()->calculatePanningAtPoint(actor->x1 + actor->x2, actor->y1 + actor->y2);
+
+	getSound()->playSound(resourceId, false, adjustedVolume, panning);
 }
 
 void Special::updateObjectFlag(ObjectId id) {
