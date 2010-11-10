@@ -3,7 +3,7 @@ echo.
 echo Automatic creation of the MSVC9 project files
 echo.
 
-if not exist create_msvc.exe goto no_tool
+if not exist create_project.exe goto no_tool
 
 :question
 echo.
@@ -15,19 +15,19 @@ if "%batchanswer%"=="A" goto all
 goto question
 
 :no_tool
-echo create_msvc.exe not found in the current folder.
+echo create_project.exe not found in the current folder.
 echo You need to build it first and copy it in this
 echo folder
 goto done
 
 :all
 echo Creating project files with all engines enabled (stable and unstable)
-create_msvc ..\.. --enable-all-engines --msvc-version 9
+create_project ..\.. --enable-all-engines --msvc --msvc-version 9
 goto done
 
 :stable
 echo Creating normal project files, with only the stable engines enabled
-create_msvc ..\.. --msvc-version 9
+create_project ..\.. --msvc --msvc-version 9
 goto done
 
 :done

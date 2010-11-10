@@ -1,6 +1,6 @@
 @echo off
 echo.
-echo Automatic creation of the MSVC8 project files
+echo Automatic creation of the Code::Blocks project files
 echo.
 
 if not exist create_project.exe goto no_tool
@@ -22,12 +22,12 @@ goto done
 
 :all
 echo Creating project files with all engines enabled (stable and unstable)
-create_project ..\.. --enable-all-engines --msvc --msvc-version 8
+create_project ..\.. --enable-all-engines --codeblocks
 goto done
 
 :stable
 echo Creating normal project files, with only the stable engines enabled
-create_project ..\.. --msvc --msvc-version 8
+create_project ..\.. --codeblocks
 goto done
 
 :done
