@@ -27,14 +27,13 @@
 
 namespace Toon {
 
-
 TextResource::TextResource(ToonEngine *vm) : _vm(vm) {
 	_numTexts = 0;
-	_textData = 0;
+	_textData = NULL;
 }
 
 TextResource::~TextResource(void) {
-
+	delete[] _textData;
 }
 
 bool TextResource::loadTextResource(Common::String fileName) {
@@ -45,6 +44,7 @@ bool TextResource::loadTextResource(Common::String fileName) {
 	if (!data)
 		return false;
 
+	delete[] _textData;
 	_textData = new uint8[fileSize];
 	memcpy(_textData, data, fileSize);
 	_numTexts = READ_LE_UINT16(data);

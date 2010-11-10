@@ -34,7 +34,7 @@ CharacterFlux::CharacterFlux(ToonEngine *vm) : Character(vm) {
 	vm->getAnimationManager()->addInstance(_animationInstance);
 }
 
-CharacterFlux::~CharacterFlux(void) {
+CharacterFlux::~CharacterFlux() {
 }
 
 void CharacterFlux::playStandingAnim() {

@@ -29,11 +29,12 @@
 namespace Toon {
 
 Hotspots::Hotspots(ToonEngine *vm) : _vm(vm) {
-	_items = 0;
+	_items = NULL;
 	_numItems = 0;
 }
 
 Hotspots::~Hotspots() {
+	delete[] _items;
 }
 
 void Hotspots::load(Common::ReadStream *Stream) {
@@ -49,7 +50,6 @@ void Hotspots::load(Common::ReadStream *Stream) {
 }
 
 void Hotspots::save(Common::WriteStream *Stream) {
-
 	Stream->writeSint16BE(_numItems);
 
 	for (int32 i = 0; i < _numItems; i++) {
@@ -123,9 +123,7 @@ bool Hotspots::LoadRif(Common::String rifName, Common::String additionalRifName)
 
 	_numItems = (rifsize + rifsize2) / 512;
 
-	if (_items)
-		delete[] _items;
-
+	delete[] _items;
 	_items = new HotspotData[_numItems];
 
 	// RIFs are compressed in RNC1

@@ -108,6 +108,7 @@ bool Animation::loadAnimation(Common::String file) {
 		}
 	}
 
+	//delete[] fileData;
 	delete[] finalBuffer;
 	return true;
 }

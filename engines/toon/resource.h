@@ -58,8 +58,6 @@ protected:
 	uint32 _numFiles;
 	Common::Array<File> _files;
 	Common::File *_fileHandle;
-
-
 };
 
 class ToonEngine;
@@ -67,6 +65,7 @@ class ToonEngine;
 class Resources {
 public:
 	Resources(ToonEngine *vm);
+	~Resources();
 	void openPackage(Common::String file, bool preloadEntirePackage);
 	void closePackage(Common::String fileName);
 	Common::SeekableReadStream *openFile(Common::String file);
@@ -75,7 +74,6 @@ public:
 protected:
 	ToonEngine *_vm;
 	Common::Array<PakFile *> _pakFiles;
-
 };
 
 } // End of namespace Toon

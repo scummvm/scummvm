@@ -31,7 +31,7 @@
 namespace Toon {
 
 Character::Character(ToonEngine *vm) : _vm(vm) {
-	_animationInstance = 0;
+	_animationInstance = NULL;
 	_shadowAnimationInstance = NULL;
 	_x = 0;
 	_y = 0;
@@ -66,6 +66,7 @@ Character::Character(ToonEngine *vm) : _vm(vm) {
 }
 
 Character::~Character(void) {
+	delete _animationInstance;
 	delete _shadowAnimationInstance;
 
 	delete _walkAnim;

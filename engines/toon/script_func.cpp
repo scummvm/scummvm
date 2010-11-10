@@ -224,8 +224,9 @@ ScriptFunc::ScriptFunc(ToonEngine *vm) {
 
 ScriptFunc::~ScriptFunc(void) {
 	while(!_opcodes.empty()) {
-		//delete _opcodes.end();
+		const OpcodeV2 *temp = _opcodes.back();
 		_opcodes.pop_back();
+		delete temp;
 	}
 }
 

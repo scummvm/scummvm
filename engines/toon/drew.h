@@ -36,7 +36,7 @@ class ToonEngine;
 class CharacterDrew : public Character {
 public:
 	CharacterDrew(ToonEngine *vm);
-	virtual ~CharacterDrew(void);
+	virtual ~CharacterDrew();
 	bool setupPalette();
 	void setFacing(int32 facing);
 	void playStandingAnim();

@@ -105,7 +105,7 @@ void ToonEngine::init() {
 	resources()->openPackage("misc/drew.pak", true);
 
 	for (int32 i = 0; i < 32; i++)
-		_characters[i] = 0;
+		_characters[i] = NULL;
 
 	_characters[0] = new CharacterDrew(this);
 	_characters[1] = new CharacterFlux(this);
@@ -737,10 +737,8 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription), _language(gameDescription->language) {
 	_system = syst;
 	_tickLength = 16;
-	_currentMask = 0;
-	_currentPicture = 0;
-	_roomScaleData = 0;
-	_shadowLUT = 0;
+	_currentPicture = NULL;
+	_currentMask = NULL;
 	_showConversationText = true;
 	_isDemo = _gameDescription->flags & ADGF_DEMO;
 
@@ -757,6 +755,8 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	DebugMan.addDebugChannel(kDebugTools, "Tools", "Tools debug level");
 	DebugMan.addDebugChannel(kDebugText, "Text", "Text debug level");
 
+	_resources = NULL;
+	_animationManager = NULL;
 	_moviePlayer = NULL;
 	_mainSurface = NULL;
 
@@ -768,6 +768,9 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_universalPalette = NULL;
 	_fluxPalette = NULL;
 
+	_roomScaleData = NULL;
+	_shadowLUT = NULL;
+
 	_conversationData = NULL;
 
 	_fontRenderer = NULL;
@@ -778,8 +781,19 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_roomTexts = NULL;
 	_script_func = NULL;
 	_script = NULL;
+
+	_saveBufferStream = NULL;
+
 	_pathFinding = NULL;
 	_console = new ToonConsole(this);
+
+	_cursorAnimation = NULL;
+	_cursorAnimationInstance = NULL;
+	_dialogIcons = NULL;
+	_inventoryIcons = NULL;
+	_inventoryIconSlots = NULL;
+	_genericTexts = NULL;
+	_audioManager = NULL;
 
 	switch (_language) {
 	case Common::EN_GRB:
@@ -807,6 +821,11 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 }
 
 ToonEngine::~ToonEngine() {
+	delete _currentPicture;
+	delete _currentMask;
+
+	delete _resources;
+	delete _animationManager;
 	delete _moviePlayer;
 	delete _mainSurface;
 
@@ -817,6 +836,9 @@ ToonEngine::~ToonEngine() {
 	delete[] _cutawayPalette;
 	delete[] _universalPalette;
 	delete[] _fluxPalette;
+
+	delete[] _roomScaleData;
+	delete[] _shadowLUT;
 
 	delete[] _conversationData;
 
@@ -829,7 +851,20 @@ ToonEngine::~ToonEngine() {
 	delete _script_func;
 	delete _script;
 
+	delete _saveBufferStream;
+
 	delete _pathFinding;
+
+	for (int32 i = 0; i < 32; i++)
+		delete _characters[i];
+
+	delete _cursorAnimation;
+	delete _cursorAnimationInstance;
+	delete _dialogIcons;
+	delete _inventoryIcons;
+	delete _inventoryIconSlots;
+	//delete _genericTexts;
+	//delete _audioManager;
 
 	DebugMan.clearAllDebugChannels();
 	delete _console;
@@ -940,7 +975,6 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	char temp[256];
 	char temp2[256];
 
-
 	_firstFrame = true;
 
 	_gameState->_lastVisitedScene = _gameState->_currentScene;
@@ -1002,7 +1036,6 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	_mouseButton = 0;
 	_lastMouseButton = 0x3;
 
-
 	// load package
 	strcpy(temp, createRoomFilename(Common::String::format("%s.pak", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
 	resources()->openPackage(temp, true);
@@ -1022,27 +1055,30 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	// load artwork
 	strcpy(temp, state()->_locations[SceneId]._name);
 	strcat(temp, ".cps");
+	delete _currentPicture;
 	_currentPicture = new Picture(this);
 	_currentPicture->loadPicture(temp);
 	_currentPicture->setupPalette();
 
 	strcpy(temp, state()->_locations[SceneId]._name);
 	strcat(temp, ".msc");
+	delete _currentMask;
 	_currentMask = new Picture(this);
 	if (_currentMask->loadPicture(temp))
 		_pathFinding->init(_currentMask);
 
 	strcpy(temp, state()->_locations[SceneId]._name);
 	strcat(temp, ".tre");
+	delete _roomTexts;
 	_roomTexts = new TextResource(this);
 	_roomTexts->loadTextResource(temp);
-
 
 	strcpy(temp, state()->_locations[SceneId]._name);
 	strcat(temp, ".dat");
 	uint32 fileSize;
 	uint8 *sceneData = resources()->getFileData(temp, &fileSize);
 	if (sceneData) {
+		delete[] _roomScaleData;
 		_roomScaleData = new uint8[fileSize];
 		memcpy(_roomScaleData, sceneData, fileSize);
 	}
@@ -1068,7 +1104,6 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	_hotspots->LoadRif(temp, temp2);
 	restoreRifFlags(_gameState->_currentScene);
 
-
 	strcpy(temp, state()->_locations[SceneId]._name);
 	strcat(temp, ".cnv");
 	uint32 convfileSize;
@@ -1089,7 +1124,6 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	// fix the weird scaling issue during one frame when entering new scene
 	_drew->update(0);
 	_flux->update(0);
-
 
 	_script->load(temp, &_scriptData, &_script_func->_opcodes);
 	_script->init(&_scriptState[0], &_scriptData);
@@ -1123,7 +1157,6 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 
 	_lastProcessedSceneScript = 0;
 	_gameState->_locations[SceneId]._visited = true;
-
 
 	setupGeneralPalette();
 	createShadowLUT();
@@ -1224,8 +1257,10 @@ void ToonEngine::initChapter() {
 }
 
 void ToonEngine::loadCursor() {
+	delete _cursorAnimation;
 	_cursorAnimation = new Animation(this);
 	_cursorAnimation->loadAnimation("MOUSE.CAF");
+	delete _cursorAnimationInstance;
 	_cursorAnimationInstance = _animationManager->createNewInstance(kAnimationCursor);
 	_cursorAnimationInstance->setAnimation(_cursorAnimation);
 	_cursorAnimationInstance->setVisible(true);

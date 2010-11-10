@@ -44,10 +44,10 @@ static int ADPCM_table[89] = {
 
 AudioManager::AudioManager(ToonEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	for (int32 i = 0; i < 16; i++)
-		_channels[i] = 0;
+		_channels[i] = NULL;
 
 	for (int32 i = 0; i < 4; i++) 
-		_audioPacks[i] = 0;
+		_audioPacks[i] = NULL;
 
 	for (int32 i = 0; i < 4; i++) {
 		_ambientSFXs[i]._delay = 0;
@@ -90,7 +90,7 @@ void AudioManager::removeInstance(AudioStreamInstance *inst) {
 
 	for (int32 i = 0; i < 16; i++) {
 		if (inst == _channels[i])
-			_channels[i] = 0;
+			_channels[i] = NULL;
 	}
 }
 
@@ -130,9 +130,7 @@ void AudioManager::playMusic(Common::String dir, Common::String music) {
 		_currentMusicChannel = 0;
 	}
 
-	
-	//if (!_channels[_currentMusicChannel])
-	//	delete _channels[_currentMusicChannel];
+	delete _channels[_currentMusicChannel];
 	_channels[_currentMusicChannel] = new AudioStreamInstance(this, _mixer, srs, true);
 	_channels[_currentMusicChannel]->setVolume(_musicMuted ? 0 : 255);
 	_channels[_currentMusicChannel]->play(true, Audio::Mixer::kMusicSoundType);
@@ -159,6 +157,7 @@ void AudioManager::playVoice(int32 id, bool genericVoice) {
 	else
 		stream = _audioPacks[1]->getStream(id);
 
+	delete _channels[2];
 	_channels[2] = new AudioStreamInstance(this, _mixer, stream);
 	_channels[2]->play(false, Audio::Mixer::kSpeechSoundType);
 	_channels[2]->setVolume(_voiceMuted ? 0 : 255);
@@ -240,10 +239,10 @@ void AudioManager::stopMusic() {
 
 AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream , bool looping) {
 	_compBufferSize = 0;
-	_buffer = 0;
+	_buffer = NULL;
 	_bufferMaxSize = 0;
 	_mixer = mixer;
-	_compBuffer = 0;
+	_compBuffer = NULL;
 	_bufferOffset = 0;
 	_lastADPCMval1 = 0;
 	_lastADPCMval2 = 0;
@@ -269,6 +268,9 @@ AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer,
 }
 
 AudioStreamInstance::~AudioStreamInstance() {
+	delete[] _buffer;
+	delete[] _compBuffer;
+
 	if (_man)
 		_man->removeInstance(this);
 }
@@ -319,15 +321,13 @@ bool AudioStreamInstance::readPacket() {
 	_file->readSint32LE();
 
 	if (numCompressedBytes > _compBufferSize) {
-		if (_compBuffer)
-			delete[] _compBuffer;
+		delete[] _compBuffer;
 		_compBufferSize = numCompressedBytes;
 		_compBuffer = new uint8[_compBufferSize];
 	}
 
 	if (numDecompressedBytes > _bufferMaxSize) {
-		if (_buffer)
-			delete [] _buffer;
+		delete [] _buffer;
 		_bufferMaxSize = numDecompressedBytes;
 		_buffer = new int16[numDecompressedBytes];
 	}
@@ -450,9 +450,7 @@ void AudioStreamInstance::handleFade(int32 numSamples) {
 			_musicAttenuation = 1000;
 	}
 
-
 	_mixer->setChannelVolume(_handle, finalVolume * _musicAttenuation / 1000);
-
 }
 
 void AudioStreamInstance::stop(bool fade /*= false*/) {

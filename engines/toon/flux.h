@@ -36,7 +36,7 @@ namespace Toon {
 class CharacterFlux : public Character {
 public:
 	CharacterFlux(ToonEngine *vm);
-	virtual ~CharacterFlux(void);
+	virtual ~CharacterFlux();
 
 	void setPosition(int32 x, int32 y);
 	void playStandingAnim();

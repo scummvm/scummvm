@@ -30,6 +30,17 @@
 
 namespace Toon {
 
+Resources::Resources(ToonEngine *vm) : _vm(vm) {
+}
+
+Resources::~Resources() {
+	while(!_pakFiles.empty()) {
+		PakFile *temp = _pakFiles.back();
+		_pakFiles.pop_back();
+		delete temp;
+	}
+}
+
 void Resources::openPackage(Common::String fileName, bool preloadEntirePackage) {
 	debugC(1, kDebugResource, "openPackage(%s, %d)", fileName.c_str(), (preloadEntirePackage) ? 1 : 0);
 
@@ -38,7 +49,6 @@ void Resources::openPackage(Common::String fileName, bool preloadEntirePackage) 
 
 	if (!opened)
 		return;
-
 
 	PakFile *pakFile = new PakFile();
 	pakFile->open(&file, fileName, preloadEntirePackage);
@@ -57,10 +67,6 @@ void Resources::closePackage(Common::String fileName) {
 			return;
 		}
 	}
-}
-
-Resources::Resources(ToonEngine *vm) : _vm(vm) {
-
 }
 
 uint8 *Resources::getFileData(Common::String fileName, uint32 *fileSize) {
@@ -200,15 +206,15 @@ void PakFile::close() {
 	}
 }
 
-PakFile::~PakFile() {
-	close();
-}
-
 PakFile::PakFile() {
 	_bufferSize = 0;
 	_buffer = NULL;
 
 	_fileHandle = NULL;
+}
+
+PakFile::~PakFile() {
+	close();
 }
 
 } // End of namespace Toon

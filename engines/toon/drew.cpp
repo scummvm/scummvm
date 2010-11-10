@@ -35,7 +35,7 @@ CharacterDrew::CharacterDrew(ToonEngine *vm) : Character(vm) {
 	vm->getAnimationManager()->addInstance(_animationInstance);
 }
 
-CharacterDrew::~CharacterDrew(void) {
+CharacterDrew::~CharacterDrew() {
 }
 
 bool CharacterDrew::setupPalette() {

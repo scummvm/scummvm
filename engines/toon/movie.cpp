@@ -56,9 +56,9 @@ bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename, int forc
 }
 
 ToonstruckSmackerDecoder::ToonstruckSmackerDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : Graphics::SmackerDecoder(mixer, soundType) {
-
 }
 
+// decoder is deallocated with Movie destruction i.e. new ToonstruckSmackerDecoder is needed
 Movie::Movie(ToonEngine *vm , ToonstruckSmackerDecoder *decoder) {
 	_vm = vm;
 	_playing = false;
@@ -66,6 +66,7 @@ Movie::Movie(ToonEngine *vm , ToonstruckSmackerDecoder *decoder) {
 }
 
 Movie::~Movie() {
+	delete _decoder;
 }
 
 void Movie::init() const {
