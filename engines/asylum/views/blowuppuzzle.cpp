@@ -125,7 +125,7 @@ void BlowUpPuzzleVCR::handleEvent(Common::Event *event, bool doUpdate) {
 }
 
 void BlowUpPuzzle::playSound(ResourceId resourceId, bool loop) {
-	getSound()->playSound(resourceId, Config.sfxVolume, loop, 0/*, true*/);
+	getSound()->playSound(resourceId, loop, Config.sfxVolume, 0);
 }
 
 int BlowUpPuzzleVCR::inPolyRegion(int x, int y, int polyIdx) {
@@ -140,7 +140,6 @@ void BlowUpPuzzleVCR::update() {
 		_rightClickDown = false;
 		closeBlowUp();
 		getSound()->stopAll();
-		// FIXME getScene()->enterScene();
 	}
 
 	if (_leftClickDown) {
@@ -184,8 +183,7 @@ void BlowUpPuzzleVCR::update() {
 		getVideo()->playVideo(2, true);
 
 		_isAccomplished = false;
-		_active = false;
-		// FIXME getScene()->enterScene();
+		closeBlowUp();
 	} else {
 		getScreen()->drawGraphicsInQueue();
 	}

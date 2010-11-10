@@ -91,7 +91,7 @@ public:
 
 	void handleEvent(Common::Event *event, bool doUpdate);
 
-	void activate() { _isActive = true; }
+	void activate();
 	void deactivate() { _isActive = false; }
 	bool isActive() { return _isActive; }
 	ResourcePackId  getPackId() { return _packId; }
