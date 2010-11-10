@@ -101,7 +101,7 @@ int32 Sound::getAdjustedVolume(int32 volume) {
 }
 
 int32 Sound::calculateVolumeAdjustement(int32 x, int32 y, int32 a5, int32 a6) {
-	error("[Sound::calculateVolume] not implemented");
+	error("[Sound::calculateVolumeAdjustement] not implemented");
 }
 
 void Sound::setPanning(ResourceId resourceId, int32 panning) {

@@ -328,20 +328,18 @@ void Actor::update() {
 						player->setFrameIndex(0);
 						getScene()->getActor(0)->setLastScreenUpdate(_vm->getTick());
 
-						Sound *sound  = _vm->sound();
-						if (sound->isCacheOk())
-							sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, 1));
+						getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, 1));
 
 						getWorld()->musicCurrentResourceIndex = 1;
 
-						if (sound->isPlaying(getWorld()->soundResourceIds[7]))
-							sound->stopSound(getWorld()->soundResourceIds[7]);
+						if (getSound()->isPlaying(getWorld()->soundResourceIds[7]))
+							getSound()->stopSound(getWorld()->soundResourceIds[7]);
 
-						if (sound->isPlaying(getWorld()->soundResourceIds[6]))
-							sound->stopSound(getWorld()->soundResourceIds[6]);
+						if (getSound()->isPlaying(getWorld()->soundResourceIds[6]))
+							getSound()->stopSound(getWorld()->soundResourceIds[6]);
 
-						if (sound->isPlaying(getWorld()->soundResourceIds[5]))
-							sound->stopSound(getWorld()->soundResourceIds[5]);
+						if (getSound()->isPlaying(getWorld()->soundResourceIds[5]))
+							getSound()->stopSound(getWorld()->soundResourceIds[5]);
 
 						_vm->setGameFlag(kGameFlag1131);
 					} else {

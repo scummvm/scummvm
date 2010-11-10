@@ -141,9 +141,6 @@ public:
 	 */
 	bool isPlaying() { return _mixer->isSoundHandleActive(_soundHandle); }
 
-	// TODO Make sure this is needed
-	bool isCacheOk() { warning("[Sound::isCacheOk] not implemented!"); return true; }
-
 private:
 	AsylumEngine *_vm;
 
