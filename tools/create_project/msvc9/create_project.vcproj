@@ -15,7 +15,7 @@
 	<ToolFiles>
 	</ToolFiles>
 	<Configurations>
-		<Configuration7
+		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
