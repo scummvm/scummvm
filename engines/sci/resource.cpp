@@ -2079,10 +2079,9 @@ void ResourceManager::detectSciVersion() {
 		} else if (!heaps->empty()) {
 			s_sciVersion = SCI_VERSION_2_1;
 			return;
-// Enable SCI3 games by uncommenting the below lines
-//		} else {
-//			s_sciVersion = SCI_VERSION_3;
-//			return;
+		} else {
+			s_sciVersion = SCI_VERSION_3;
+			return;
 		}
 	}
 
@@ -2169,9 +2168,6 @@ void ResourceManager::detectSciVersion() {
 		return;
 	case kResVersionSci11:
 		s_sciVersion = SCI_VERSION_1_1;
-		return;
-	case kResVersionSci3:
-		s_sciVersion = SCI_VERSION_3;
 		return;
 	default:
 		s_sciVersion = SCI_VERSION_NONE;

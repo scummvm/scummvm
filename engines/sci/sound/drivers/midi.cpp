@@ -893,10 +893,16 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 			res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
 
 			if (res) {
-				if (!isMt32GmPatch(res->data, res->size))
+				if (!isMt32GmPatch(res->data, res->size)) {
 					mapMt32ToGm(res->data, res->size);
-				else
-					error("MT-32 patch has wrong type");
+				} else {
+					if (getSciVersion() <= SCI_VERSION_2_1) {
+						error("MT-32 patch has wrong type");
+					} else {
+						// Happens in the SCI3 interactive demo of Lighthouse
+						warning("TODO: Ignoring new SCI3 type of MT-32 patch for now (size = %d)", res->size);
+					}
+				}
 			} else {
 				// No MT-32 patch present, try to read from MT32.DRV
 				Common::File f;
