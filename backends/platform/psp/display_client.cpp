@@ -690,10 +690,15 @@ void GuRenderer::fillVertices(Vertex *vertices) {
 	// now the coordinates within it are 0 to the edge of the area of the texture we want to draw
 	float textureStartX = textureFix + _offsetInBuffer.x;
 	float textureStartY = textureFix + _offsetInBuffer.y;	
-	// even when we draw one of several textures, we use the whole drawsize of the image. The GU 
-	// will draw what it can with the texture it has and scale it properly for us.
-	float textureEndX = -textureFix +  _offsetInBuffer.x + _drawSize.width  - _textureLoadOffset.x;
-	float textureEndY = -textureFix +  _offsetInBuffer.y + _drawSize.height - _textureLoadOffset.y;
+
+	int textureLeftX = _drawSize.width - _textureLoadOffset.x;
+	if (textureLeftX > 512)
+		textureLeftX = 512;
+	int textureLeftY = _drawSize.height - _textureLoadOffset.y;
+	if (textureLeftY > 512)
+		textureLeftY = 512;
+	float textureEndX = -textureFix + _offsetInBuffer.x + textureLeftX;
+	float textureEndY = -textureFix + _offsetInBuffer.y + textureLeftY;
 	// For scaling to the final image size, calculate the gaps on both sides
 	uint32 gapX = _useGlobalScaler ? (PSP_SCREEN_WIDTH - outputWidth) >> 1 : 0;
 	uint32 gapY = _useGlobalScaler ? (PSP_SCREEN_HEIGHT - outputHeight) >> 1 : 0;
@@ -707,13 +712,8 @@ void GuRenderer::fillVertices(Vertex *vertices) {
 
 	float imageEndX, imageEndY;
 	
-	if (_fullScreen) { // shortcut
-		imageEndX = PSP_SCREEN_WIDTH - gapX + scaledOffsetOnScreenX;
-		imageEndY = PSP_SCREEN_HEIGHT - gapY + scaledOffsetOnScreenY; // needed for screen shake
-	} else { /* !fullScreen */
-		imageEndX = gapX + scaledOffsetOnScreenX + scaleSourceToOutput(true, stretch(true, _drawSize.width));
-		imageEndY = gapY + scaledOffsetOnScreenY + scaleSourceToOutput(false, stretch(false, _drawSize.height));
-	}
+	imageEndX = imageStartX + scaleSourceToOutput(true, stretch(true, textureLeftX));
+	imageEndY = imageStartY + scaleSourceToOutput(false, stretch(false, textureLeftY));
 
 	vertices[0].u = textureStartX;
 	vertices[0].v = textureStartY;
