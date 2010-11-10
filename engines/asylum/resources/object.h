@@ -53,8 +53,10 @@ public:
 
 	void setFrameIndex(int32 index) { _frameIndex = index; }
 	void setPriority(int32 priority) { _priority = priority; }
+	void setSoundResourceId(ResourceId id) { _soundResourceId = id; }
 
 	void setField67C(int32 val) { _field_67C = val; }
+	void setField6A4(int32 val) { _field_6A4 = val; }
 
 	Common::Rect   *getBoundingRect() { return &_boundingRect; }
 	uint32          getFrameIndex() { return _frameIndex; }
