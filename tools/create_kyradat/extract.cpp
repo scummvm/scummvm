@@ -881,7 +881,7 @@ bool extractRaw16to8(PAKFile &out, const ExtractInformation *info, const byte *d
 
 	for (int i = 0; i < outsize; i++) {
 		*dst++ = *src++;
-		*src++;
+		src++;
 	}
 
 	return out.addFile(filename, buffer, outsize);
