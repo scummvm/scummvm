@@ -82,31 +82,26 @@ public:
 	Sound(AsylumEngine *engine, Audio::Mixer *mixer);
 	~Sound();
 
-	bool addToSoundBuffer(ResourceId resourceId);
-    void removeFromSoundBuffer(ResourceId resourceId);
-	void clearSoundBuffer();
+	//////////////////////////////////////////////////////////////////////////
+	// Playing sounds & music
+	//////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Play a sound resource from the supplied resource pack.
+	 * Play sound
 	 *
-	 * @param overwrite determine if _soundHandle should be overwritten if still active
+	 * @param resourceId Identifier for the resource.
+	 * @param looping    true to looping.
+	 * @param volume 	 The volume.
+	 * @param panning    The panning.
 	 */
-	//void playSound(ResourceId resourceId, int32 volume, bool looping = false, int32 panning = 0, bool overwrite = false);
-	//void playSound(ResourceId resourceId, bool looping = false, int32 volume = Config.sfxVolume, int32 panning = 0, bool fromBuffer = false);
 	void playSound(ResourceId resourceId, bool looping = false, int32 volume = Config.sfxVolume, int32 panning = 0);
-	//void playSound(ResourceEntry *resource, bool looping, int32 volume, int32 panning);
-
-	void stopSound(ResourceId resourceId);
-	void stopSound();
-	void stopAllSounds(bool stopSpeechAndMusic = false);
 
 	/**
-	 * Play speech by resourceId
+	 * Play music
 	 *
-	 * @param resourceId Identifier for the sound resource.
+	 * @param resourceId Identifier for the resource.
+	 * @param volume 	 The volume.
 	 */
-	void playSpeech(ResourceId resourceId);
-
 	void playMusic(ResourceId resourceId, int32 volume = Config.musicVolume);
 
 	/**
@@ -117,57 +112,184 @@ public:
 	 */
 	void changeMusic(uint32 index, int32 musicStatusExt);
 
-
-
-	void stopMusic();
-
-	void setVolume(ResourceId resourceId, double volume);
-	int32 getAdjustedVolume(int32 volume);
-
-	void setPanning(ResourceId resourceId, int32 panning);
-	int32 calculatePanningAtPoint(int32 x, int32 y);
-
 	/**
-	 * Determine the amount to increase the supplied sound
-	 * sample's volume based on the position
-	 */
-	int32 calculateVolumeAdjustement(int32 x, int32 y, int32 a5, int32 a6);
-
-	/**
-	 * Check if the buffered sound sample that matches the provided id currently
-	 * has an active handle.
+	 * Query if a sound with the resource id is playing.
 	 *
-	 * isPlaying() only manages sound samples, and not
-	 * music or speech, as those resources aren't managed beyond simple
-	 * start/stop requests.
+	 * @param resourceId Identifier for the resource.
+	 *
+	 * @return true if playing, false if not.
 	 */
 	bool isPlaying(ResourceId resourceId);
 
+	//////////////////////////////////////////////////////////////////////////
+	// Volume & panning
+	//////////////////////////////////////////////////////////////////////////
+
 	/**
-	 * Check if the unmanaged sound handle is in use
+	 * Sets the volume for a buffered sound resource
 	 *
-	 * This is useful for checking the active state of a sound
-	 * in a blowuppuzzle
+	 * @param resourceId Identifier for the resource.
+	 * @param volume 	 The volume.
 	 */
-	bool isPlaying() { return _mixer->isSoundHandleActive(_soundHandle); }
+	void setVolume(ResourceId resourceId, int32 volume);
+
+	/**
+	 * Sets the music volume.
+	 *
+	 * @param volume The volume.
+	 */
+	void setMusicVolume(int32 volume);
+
+	/**
+	 * Sets the panning for a buffered sound resource
+	 *
+	 * @param resourceId Identifier for the resource.
+	 * @param panning    The panning.
+	 */
+	void setPanning(ResourceId resourceId, int32 panning);
+
+	/**
+	 * Determine the amount to increase the supplied sound sample's volume based on the position.
+	 *
+	 * @param x 		  The x coordinate.
+	 * @param y 		  The y coordinate.
+	 * @param attenuation The attenuation.
+	 * @param delta 	  The delta.
+	 *
+	 * @return The calculated volume adjustement.
+	 */
+	int32 calculateVolumeAdjustement(int32 x, int32 y, int32 attenuation, int32 delta);
+
+	/**
+	 * Gets an adjusted volume.
+	 *
+	 * @param volume The volume.
+	 *
+	 * @return The adjusted volume.
+	 */
+	int32 getAdjustedVolume(int32 volume);
+
+	/**
+	 * Calculates the panning at point.
+	 *
+	 * @param x The x coordinate.
+	 * @param y The y coordinate.
+	 *
+	 * @return The calculated panning at point.
+	 */
+	int32 calculatePanningAtPoint(int32 x, int32 y);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Stopping sounds
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Stop the first playing sound with the ResourceId
+	 *
+	 * @param resourceId Identifier for the resource.
+	 */
+	void stop(ResourceId resourceId);
+
+	/**
+	 * Stop all sounds with the ResourceId
+	 *
+	 * @param resourceId Identifier for the resource.
+	 */
+	void stopAll(ResourceId resourceId);
+
+	/**
+	 * Stop all buffered sounds
+	 */
+	void stopAll();
+
+	/**
+	 * Stop music.
+	 */
+	void stopMusic();
 
 private:
 	AsylumEngine *_vm;
 
 	Audio::Mixer       *_mixer;
 
-	Audio::SoundHandle _speechHandle;
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _soundHandle;
 
 	Common::Array<SoundBufferItem> _soundBuffer;
 
 	/**
-	 * Find the index within the _soundBuffer array of the
-	 * sound sample with provided id.
+	 * Play sound data.
+	 *
+	 * @param type 				 The type.
+	 * @param handle             The handle.
+	 * @param soundData          The sound data
+	 * @param soundDataLength    Length of the sound data.
+	 * @param loop 				 true to loop.
+	 * @param vol 				 The volume.
+	 * @param pan 				 The pan.
 	 */
-	int32  getBufferPosition(ResourceId resourceId);
 	void playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte *soundData, int32 soundDataLength, bool loop = false, int32 vol = 0, int32 pan = 0);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sound buffer
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Find the index within the _soundBuffer array of the first sound sample with provided id.
+	 *
+	 * @param resourceId Identifier for the resource.
+	 *
+	 * @return The item.
+	 */
+	SoundBufferItem *getItem(ResourceId resourceId);
+
+	/**
+	 * Find the index within the _soundBuffer array of the first playing sound sample with provided id.
+	 *
+	 * @param resourceId Identifier for the resource.
+	 *
+	 * @return The playing item.
+	 */
+	SoundBufferItem *getPlayingItem(ResourceId resourceId);
+
+	/**
+	 * Adds a sound to the sound buffer.
+	 *
+	 * @param resourceId Identifier for the resource.
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	bool addToSoundBuffer(ResourceId resourceId);
+
+	/**
+	 * Removes a sound from the sound buffer
+	 *
+	 * @param resourceId Identifier for the resource.
+	 */
+	void removeFromSoundBuffer(ResourceId resourceId);
+
+	/**
+	 * Clears the sound buffer.
+	 */
+	void clearSoundBuffer();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Conversion functions
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Convert volume.
+	 *
+	 * @param [in,out] vol The volume.
+	 */
+	static void convertVolume(int32 &vol);
+
+	/**
+	 * Convert pan.
+	 *
+	 * @param [in,out] pan The pan.
+	 */
+	static void convertPan(int32 &pan);
 };
 
 } // end of namespace Asylum

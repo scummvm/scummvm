@@ -769,7 +769,8 @@ IMPLEMENT_OPCODE(ChangeScene) {
 	getScreen()->clearScreen();
 
 	// Stop all sounds & music
-	_vm->sound()->stopAllSounds(true);
+	getSound()->stopAll();
+	getSound()->stopMusic();
 
 	// Change the scene number
 	_delayedSceneIndex = (ResourcePackId)(cmd->param1 + 4);
@@ -1419,7 +1420,7 @@ IMPLEMENT_OPCODE(ChangeActorStatus) {
 // Opcode 0x4D
 IMPLEMENT_OPCODE(StopSound) {
 	if (_vm->sound()->isPlaying((ResourceId)cmd->param1))
-		_vm->sound()->stopSound((ResourceId)cmd->param1);
+		_vm->sound()->stop((ResourceId)cmd->param1);
 }
 
 //////////////////////////////////////////////////////////////////////////

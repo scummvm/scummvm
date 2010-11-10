@@ -333,13 +333,13 @@ void Actor::update() {
 						getWorld()->musicCurrentResourceIndex = 1;
 
 						if (getSound()->isPlaying(getWorld()->soundResourceIds[7]))
-							getSound()->stopSound(getWorld()->soundResourceIds[7]);
+							getSound()->stop(getWorld()->soundResourceIds[7]);
 
 						if (getSound()->isPlaying(getWorld()->soundResourceIds[6]))
-							getSound()->stopSound(getWorld()->soundResourceIds[6]);
+							getSound()->stop(getWorld()->soundResourceIds[6]);
 
 						if (getSound()->isPlaying(getWorld()->soundResourceIds[5]))
-							getSound()->stopSound(getWorld()->soundResourceIds[5]);
+							getSound()->stop(getWorld()->soundResourceIds[5]);
 
 						_vm->setGameFlag(kGameFlag1131);
 					} else {
@@ -775,7 +775,7 @@ void Actor::setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame)
 //////////////////////////////////////////////////////////////////////////
 void Actor::stopSound() {
 	if (_soundResourceId && getSound()->isPlaying(_soundResourceId))
-		getSound()->stopSound(_soundResourceId);
+		getSound()->stop(_soundResourceId);
 }
 
 Common::String Actor::toString(bool shortString) {

@@ -49,7 +49,7 @@ Speech::~Speech() {
 ResourceId Speech::play(ResourceId soundResourceId, ResourceId textResourceId) {
 	if (soundResourceId)
 		if (getSound()->isPlaying(soundResourceId))
-			getSound()->stopSound(soundResourceId);
+			getSound()->stopAll(soundResourceId);
 
 	_soundResourceId = soundResourceId;
 	_textResourceId = textResourceId;
@@ -259,7 +259,7 @@ void Speech::process() {
 		_textDataPos = 0;
 
 		getText()->loadFont(getWorld()->font1);
-		getSound()->playSpeech(_soundResourceId);
+		getSound()->playSound(_soundResourceId, false, Config.voiceVolume, 0);
 	} else {
 		_textData = 0;
 		_textDataPos = txt;
@@ -269,7 +269,7 @@ void Speech::process() {
 		}
 
 		getText()->loadFont(getWorld()->font3);
-		getSound()->playSpeech(_soundResourceId);
+		getSound()->playSound(_soundResourceId, false, Config.voiceVolume, 0);
 	}
 }
 

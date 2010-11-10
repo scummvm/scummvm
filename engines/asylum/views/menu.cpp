@@ -122,7 +122,7 @@ void MainMenu::openMenu() {
 
 	// Stop all sounds
 	_vm->sound()->stopMusic();
-	_vm->sound()->stopSound();
+	_vm->sound()->stopAll();
 
 	// Start playing music
 	_vm->sound()->playMusic(MAKE_RESOURCE(kResourcePackShared, 39));
@@ -139,7 +139,7 @@ void MainMenu::closeMenu() {
     }
 
 	// Stop menu sounds and menu music
-	_vm->sound()->stopSound();
+	_vm->sound()->stopAll();
 	_vm->sound()->stopMusic();
 }
 
@@ -662,3 +662,4 @@ void MainMenu::updateSubMenuReturnToGame() {
 }
 
 } // end of namespace Asylum
+

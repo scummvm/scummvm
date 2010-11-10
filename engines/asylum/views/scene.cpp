@@ -897,7 +897,7 @@ void Scene::updateAmbientSounds() {
 			}
 		} else {
 			if (_vm->sound()->isPlaying(snd->resourceId))
-				_vm->sound()->stopSound(snd->resourceId);
+				_vm->sound()->stop(snd->resourceId);
 		}
 	}
 }
