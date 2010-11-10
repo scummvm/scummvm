@@ -102,7 +102,8 @@ ResourcePack::~ResourcePack() {
 }
 
 void ResourcePack::init(Common::String filename) {
-	_packFile.open(filename);
+	if (!_packFile.open(filename))
+		error("[ResourcePack::init] Could not open resource file: %s", filename.c_str());
 
 	uint32 entryCount = _packFile.readUint32LE();
 	_resources.resize(entryCount);
