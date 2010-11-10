@@ -2705,7 +2705,7 @@ bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {
 	int kernelFuncNum = _engine->getKernel()->findKernelFuncPos(argv[1]);
 
 	if (kernelFuncNum < 0) {
-		DebugPrintf("Invalid kernel function requested");
+		DebugPrintf("Invalid kernel function requested\n");
 		return true;
 	}
 
