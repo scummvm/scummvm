@@ -83,6 +83,7 @@ public:
 
 	//int count(ResourceId id);
 
+	void setCdNumber(int cdNumber) { _cdNumber = cdNumber; }
 	void setMusicPackId(ResourcePackId id) { _musicPackId = id; }
 
 private:
@@ -99,6 +100,7 @@ private:
 	ResourceCache _resources;
 	ResourceCache _music;
 
+	int            _cdNumber;
 	ResourcePackId _musicPackId;
 };
 

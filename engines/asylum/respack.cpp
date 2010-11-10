@@ -31,7 +31,7 @@ namespace Asylum {
 // ResourceManager
 //////////////////////////////////////////////////////////////////////////
 
-ResourceManager::ResourceManager() : _musicPackId(kResourcePackInvalid) {
+ResourceManager::ResourceManager() : _cdNumber(-1), _musicPackId(kResourcePackInvalid) {
 }
 
 ResourceEntry *ResourceManager::get(ResourceId id) {
@@ -49,7 +49,20 @@ ResourceEntry *ResourceManager::get(ResourceId id) {
 
 	// Try getting the resource pack
 	if (!cache->contains(packId)) {
-		ResourcePack *pack = new ResourcePack(Common::String::format(isMusicPack ? "mus.%03d" : "res.%03d", isMusicPack ? _musicPackId : packId));
+		ResourcePack *pack;
+
+		if (isMusicPack) {
+			pack = new ResourcePack(Common::String::format("mus.%03d", _musicPackId));
+		} else {
+			if (packId == kResourcePackSharedSound) {
+				if (_cdNumber == -1)
+					error("[ResourceManager::get] Cd number has not been set!");
+
+				pack = new ResourcePack(Common::String::format("res.%01d%02d", _cdNumber, packId));
+			} else {
+				pack = new ResourcePack(Common::String::format("res.%03d", packId));
+			}
+		}
 
 		cache->setVal(packId, pack);
 	}
