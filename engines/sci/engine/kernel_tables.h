@@ -981,7 +981,7 @@ static const char *sci21_default_knames[] = {
 	/*0x49*/ "Font",
 	/*0x4a*/ "EditText",
 	/*0x4b*/ "InputText",
-	/*0x4c*/ "ScrollWindow",
+	/*0x4c*/ "ScrollWindow",	// Dummy in SCI3
 	/*0x4d*/ "Dummy",
 	/*0x4e*/ "Dummy",
 	/*0x4f*/ "Dummy",
@@ -991,7 +991,7 @@ static const char *sci21_default_knames[] = {
 	/*0x53*/ "MapKeyToDir",
 	/*0x54*/ "HaveMouse",
 	/*0x55*/ "SetCursor",
-	/*0x56*/ "VibrateMouse",
+	/*0x56*/ "VibrateMouse",	// Dummy in SCI3
 	/*0x57*/ "Dummy",
 	/*0x58*/ "Dummy",
 	/*0x59*/ "Dummy",
@@ -1032,7 +1032,7 @@ static const char *sci21_default_knames[] = {
 	/*0x7c*/ "SetQuitStr",
 	/*0x7d*/ "GetConfig",
 	/*0x7e*/ "Table",
-	/*0x7f*/ "WinHelp",     // Windows only
+	/*0x7f*/ "WinHelp",		// Windows only
 	/*0x80*/ "Dummy",
 	/*0x81*/ "Dummy",
 	/*0x82*/ "Dummy",
@@ -1046,7 +1046,7 @@ static const char *sci21_default_knames[] = {
 	/*0x8a*/ "LoadChunk",
 	/*0x8b*/ "SetPalStyleRange",
 	/*0x8c*/ "AddPicAt",
-	/*0x8d*/ "Dummy",
+	/*0x8d*/ "MessageBox",	// SCI3, was Dummy in SCI2.1
 	/*0x8e*/ "NewRoom",
 	/*0x8f*/ "Dummy",
 	/*0x90*/ "Priority",
@@ -1060,8 +1060,13 @@ static const char *sci21_default_knames[] = {
 	/*0x98*/ "GetWindowsOption", // Windows only
 	/*0x99*/ "WinDLL", // Windows only
 	/*0x9a*/ "Dummy",
-	/*0x9b*/ "Dummy",
-	/*0x9c*/ "DeletePic"
+	/*0x9b*/ "Minimize",	// SCI3, was Dummy in SCI2.1
+	/*0x9c*/ "DeletePic",
+	// == SCI3 only ===============
+	/*0x9d*/ "Dummy",
+	/*0x9e*/ "WebConnect",
+	/*0x9f*/ "Dummy",
+	/*0xa0*/ "PlayDuck"
 };
 
 #endif
