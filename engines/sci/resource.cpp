@@ -587,6 +587,8 @@ int ResourceManager::addAppropriateSources() {
 
 int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 	ResourceSource *map = 0;
+	Common::Array<ResourceSource *> sci21Maps;
+
 #ifdef ENABLE_SCI32
 	ResourceSource *sci21PatchMap = 0;
 	const Common::FSNode *sci21PatchRes = 0;
@@ -605,8 +607,13 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 
 		if (filename.contains("resmap.0")) {
 			const char *dot = strrchr(file->getName().c_str(), '.');
-			int number = atoi(dot + 1);
-			map = addExternalMap(file, number);
+			uint number = atoi(dot + 1);
+
+			// We need to store each of these maps for use later on
+			if (number >= sci21Maps.size())
+				sci21Maps.resize(number + 1);
+
+			sci21Maps[number] = addExternalMap(file, number);
 		}
 
 #ifdef ENABLE_SCI32
@@ -619,7 +626,7 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 #endif
 	}
 
-	if (!map)
+	if (!map && sci21Maps.empty())
 		return 0;
 
 #ifdef ENABLE_SCI32
@@ -635,11 +642,17 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 		Common::String filename = file->getName();
 		filename.toLowercase();
 
-		if (filename.contains("resource.0")	|| filename.contains("ressci.0")) {
+		if (filename.contains("resource.0")) {
 			const char *dot = strrchr(filename.c_str(), '.');
 			int number = atoi(dot + 1);
 
 			addSource(new VolumeResourceSource(file->getName(), map, number, file));
+		} else if (filename.contains("ressci.0")) {
+			const char *dot = strrchr(filename.c_str(), '.');
+			int number = atoi(dot + 1);
+
+			// Match this volume to its own map
+			addSource(new VolumeResourceSource(file->getName(), sci21Maps[number], number, file));
 		}
 	}
 
@@ -1146,7 +1159,7 @@ ResVersion ResourceManager::detectVolVersion() {
 
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		rsrc = *it;
-
+	
 		if (rsrc->getSourceType() == kSourceVolume) {
 			if (rsrc->_resourceFile) {
 				fileStream = rsrc->_resourceFile->createReadStream();
@@ -1593,10 +1606,8 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			// the actual resource file.
 			int mapVolumeNr = volume_nr + map->_volumeNumber;
 			ResourceSource *source = findVolume(map, mapVolumeNr);
-			// FIXME: this code has serious issues with multiple RESMAP.* files (like in unmodified gk2)
-			//         adding a resource with source == NULL would crash later on
-			if (!source)
-				error("Unable to find volume for map %s volumeNr %d", map->getLocationName().c_str(), mapVolumeNr);
+
+			assert(source);
 
 			Resource *resource = _resMap.getVal(resId, NULL);
 			if (!resource) {
