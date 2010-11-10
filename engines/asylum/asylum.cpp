@@ -311,7 +311,7 @@ void AsylumEngine::processDelayedEvents() {
 	int videoIdx = _scene->actions()->getDelayedVideoIndex();
 	if (videoIdx >= 0) {
 		_sound->stopMusic();
-		_sound->stopAllSounds();
+		_sound->stopAll();
 		_video->playVideo(videoIdx, true);
 		_scene->actions()->setDelayedVideoIndex(-1);
 
@@ -331,7 +331,7 @@ void AsylumEngine::processDelayedEvents() {
 		_scene->actions()->setDelayedSceneIndex(kResourcePackInvalid);
 
 		_sound->stopMusic();
-		_sound->stopAllSounds();
+		_sound->stopAll();
 
 		if (_scene)
 			delete _scene;

@@ -77,7 +77,7 @@ void BlowUpPuzzleVCR::openBlowUp() {
 	_active = true;
 	getScene()->deactivate();
 
-	getSound()->stopAllSounds(true);
+	getSound()->stopAll();
 
 	// Load the graphics palette
 	getScreen()->setPalette(getWorld()->graphicResourceIds[29]);
@@ -139,7 +139,7 @@ void BlowUpPuzzleVCR::update() {
 	if (_rightClickDown) { // quits BlowUp Puzzle
 		_rightClickDown = false;
 		closeBlowUp();
-		getSound()->stopSound();
+		getSound()->stopAll();
 		// FIXME getScene()->enterScene();
 	}
 
@@ -590,7 +590,7 @@ void BlowUpPuzzleVCR::handleMouseUp() {
 		_buttonsState[kStop]   = kOFF;
 		_buttonsState[kPlay]   = kOFF;
 		_buttonsState[kRewind] = kOFF;
-		getSound()->stopSound();
+		getSound()->stopAll();
 	}
 
 	if (_buttonsState[kRewind] == kDownOFF) {

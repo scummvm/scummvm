@@ -27,6 +27,7 @@
 #include "asylum/system/config.h"
 #include "asylum/system/sound.h"
 
+#include "asylum/resources/actor.h"
 #include "asylum/resources/worldstats.h"
 
 #include "asylum/views/scene.h"
@@ -49,9 +50,258 @@ Sound::~Sound() {
 	clearSoundBuffer();
 }
 
-// from engines/agos/sound.cpp
-void convertVolume(int32 &vol) {
-	// DirectSound was orginally used, which specifies volume
+//////////////////////////////////////////////////////////////////////////
+// Playing sounds & music
+//////////////////////////////////////////////////////////////////////////
+
+void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 panning) {
+	SoundBufferItem *item = getItem(resourceId);
+
+	if (item) {
+		if (_mixer->isSoundHandleActive(item->handle)) {
+			debugC(kDebugLevelSound, "[Sound::playSound] handle for resource %d already active", resourceId);
+
+			return;
+		}
+
+		//warning("[Sound::playSound] resource %d already buffered", resourceId);
+
+		// TODO check what we should do here
+		return;
+	}
+
+	ResourceEntry *resource = getResource()->get(resourceId);
+	playSoundData(Audio::Mixer::kSFXSoundType, &_soundHandle, resource->data, resource->size, looping, volume, panning);
+	addToSoundBuffer(resourceId);
+}
+
+void Sound::playMusic(ResourceId resourceId, int32 volume) {
+	if (resourceId == kResourceNone) {
+		stopMusic();
+		return;
+	}
+
+	// Sets the music volume
+	setMusicVolume(volume);
+
+	// Check if music is already playing
+	if (_mixer->isSoundHandleActive(_musicHandle))
+		return;
+
+	ResourceEntry *resource = getResource()->get(resourceId);
+	playSoundData(Audio::Mixer::kMusicSoundType, &_musicHandle, resource->data, resource->size, true, volume, 0);
+}
+
+void Sound::changeMusic(uint32 index, int32 musicStatusExt) {
+	if (index != getWorld()->musicCurrentResourceIndex) {
+		getWorld()->musicCurrentResourceIndex = index;
+		getWorld()->musicStatusExt = musicStatusExt;
+		getWorld()->musicFlag = 1;
+	}
+}
+
+bool Sound::isPlaying(ResourceId resourceId) {
+	return (getPlayingItem(resourceId) != NULL);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Volume & panning
+//////////////////////////////////////////////////////////////////////////
+
+void Sound::setVolume(ResourceId resourceId, int32 volume) {
+	SoundBufferItem *item = getPlayingItem(resourceId);
+	if (!item)
+		return;
+
+	convertVolume(volume);
+
+	_mixer->setChannelVolume(item->handle, volume);
+}
+
+void Sound::setMusicVolume(int32 volume) {
+	if (volume < -10000)
+		return;
+
+	convertVolume(volume);
+
+	_mixer->setChannelVolume(_musicHandle, volume);
+}
+
+void Sound::setPanning(ResourceId resourceId, int32 panning) {
+	if (Config.performance == 1)
+		return;
+
+	SoundBufferItem *item = getPlayingItem(resourceId);
+	if (!item)
+		return;
+
+	convertPan(panning);
+
+	_mixer->setChannelBalance(item->handle, panning);
+}
+
+int32 Sound::calculateVolumeAdjustement(int32 x, int32 y, int32 attenuation, int32 delta) {
+	if (!attenuation)
+		return -(delta * delta);
+
+	Actor *player = getScene()->getActor();
+	if (getScene()->getGlobalX() == -1) {
+		x -= (player->x1 + player->x2);
+		y -= (player->y1 + player->y2);
+	} else {
+		x -= getScene()->getGlobalX();
+		y -= getScene()->getGlobalY();
+	}
+
+	int32 adjustedVolume = getAdjustedVolume(x * x + y * y);
+
+	Common::Rational invAtt(100, attenuation);
+	Common::Rational v;
+	if (invAtt.toInt())
+		v = Common::Rational(adjustedVolume, 1) / invAtt;
+	else
+		v = Common::Rational(delta, 1);
+
+	int32 volume = (v.toInt() - delta) * (v.toInt() - delta);
+
+	if (volume > 10000)
+		return -10000;
+
+	return -volume;
+}
+
+int32 Sound::getAdjustedVolume(int32 volume) {
+	if (volume < 2)
+		return volume;
+
+	//warning("[Sound::getAdjustedVolume] not implemented");
+
+	return volume;
+}
+
+int32 Sound::calculatePanningAtPoint(int32 x, int32 y) {
+	int delta = x - getWorld()->xLeft;
+
+	if (delta < 0)
+		return (getWorld()->stereoReversedFlag ? 10000 : -10000);
+
+	if (delta >= 640)
+		return (getWorld()->stereoReversedFlag ? -10000 : 10000);
+
+
+	int sign, absDelta;
+	if (delta > 320) {
+		absDelta = delta - 320;
+		sign = (getWorld()->stereoReversedFlag ? -1 : 1);
+	} else {
+		absDelta = 320 - delta;
+		sign = (getWorld()->stereoReversedFlag ? 1 : -1);
+	}
+
+	Common::Rational v(absDelta, 6);
+	int32 volume = v.toInt() * v.toInt();
+
+	if (volume > 10000)
+		volume = 10000;
+
+	return volume * sign;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Stopping sounds
+//////////////////////////////////////////////////////////////////////////
+void Sound::stop(ResourceId resourceId) {
+	SoundBufferItem *item = getPlayingItem(resourceId);
+
+	if (item != NULL)
+		_mixer->stopHandle(item->handle);
+}
+
+void Sound::stopAll(ResourceId resourceId) {
+	for (Common::Array<SoundBufferItem>::iterator it = _soundBuffer.begin(); it != _soundBuffer.end(); it++)
+		if (it->resourceId == resourceId)
+			_mixer->stopHandle(it->handle);
+}
+
+void Sound::stopAll() {
+	for (Common::Array<SoundBufferItem>::iterator it = _soundBuffer.begin(); it != _soundBuffer.end(); it++)
+		_mixer->stopHandle(it->handle);
+}
+
+void Sound::stopMusic() {
+	_mixer->stopHandle(_musicHandle);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Helper functions
+//////////////////////////////////////////////////////////////////////////
+
+void Sound::playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte *soundData, int32 soundDataLength, bool loop, int32 vol, int32 pan) {
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundData, soundDataLength);
+	Audio::RewindableAudioStream *sndStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+
+	// Convert volume and panning
+	convertVolume(vol);
+	convertPan(pan);
+
+	_mixer->playStream(type, handle, Audio::makeLoopingAudioStream(sndStream, loop ? 0 : 1), -1, vol, pan);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Sound buffer
+//////////////////////////////////////////////////////////////////////////
+
+SoundBufferItem *Sound::getItem(ResourceId resourceId) {
+	for (uint32 i = 0; i < _soundBuffer.size(); i++)
+		if (resourceId == _soundBuffer[i].resourceId)
+			return &_soundBuffer[i];
+
+	return NULL;
+}
+
+SoundBufferItem *Sound::getPlayingItem(ResourceId resourceId) {
+	for (uint32 i = 0; i < _soundBuffer.size(); i++)
+		if (resourceId == _soundBuffer[i].resourceId
+			&& _mixer->isSoundHandleActive(_soundBuffer[i].handle))
+			return &_soundBuffer[i];
+
+	return NULL;
+}
+
+bool Sound::addToSoundBuffer(ResourceId resourceId) {
+	SoundBufferItem *item = getItem(resourceId);
+
+	if (item == NULL) {
+		SoundBufferItem sound;
+		sound.resourceId = resourceId;
+		sound.handle = _soundHandle;
+		_soundBuffer.push_back(sound);
+	}
+
+	return (item == NULL) ? true : false;
+}
+
+void Sound::removeFromSoundBuffer(ResourceId resourceId) {
+	for (uint i = 0; i < _soundBuffer.size(); i++) {
+		if (_soundBuffer[i].resourceId == resourceId) {
+			_soundBuffer.remove_at(i);
+			break;
+		}
+	}
+}
+
+void Sound::clearSoundBuffer() {
+	_soundBuffer.clear();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Conversion functions
+//
+// Those are from engines/agos/sound.cpp (FIXME: Move to common code?)
+//////////////////////////////////////////////////////////////////////////
+
+void Sound::convertVolume(int32 &vol) {
+	// DirectSound was originally used, which specifies volume
 	// and panning differently than ScummVM does, using a logarithmic scale
 	// rather than a linear one.
 	//
@@ -71,8 +321,7 @@ void convertVolume(int32 &vol) {
 	}
 }
 
-// from engines/agos/sound.cpp
-void convertPan(int32 &pan) {
+void Sound::convertPan(int32 &pan) {
 	// DirectSound was originally used, which specifies volume
 	// and panning differently than ScummVM does, using a logarithmic scale
 	// rather than a linear one.
@@ -93,197 +342,6 @@ void convertPan(int32 &pan) {
 	} else {
 		pan = 0;
 	}
-}
-
-void Sound::setVolume(ResourceId resourceId, double volume) {
-	error("[Sound::setVolume] not implemented");
-}
-
-int32 Sound::getAdjustedVolume(int32 volume) {
-	error("[Sound::getAdjustedVolume] not implemented");
-}
-
-int32 Sound::calculateVolumeAdjustement(int32 x, int32 y, int32 a5, int32 a6) {
-	error("[Sound::calculateVolumeAdjustement] not implemented");
-}
-
-void Sound::setPanning(ResourceId resourceId, int32 panning) {
-	error("[Sound::setPanning] not implemented");
-}
-
-int32 Sound::calculatePanningAtPoint(int32 x, int32 y) {
-	error("[Sound::calculatePanningAtPoint] not implemented");
-}
-
-int32 Sound::getBufferPosition(ResourceId resourceId) {
-	int32 pos = -1;
-
-	for (uint32 i = 0; i < _soundBuffer.size(); i++) {
-		if (resourceId == _soundBuffer[i].resourceId) {
-			pos = i;
-			break;
-		}
-	}
-
-	return pos;
-}
-
-bool Sound::addToSoundBuffer(ResourceId resourceId) {
-	int32 exists = getBufferPosition(resourceId);
-
-	if (exists < 0) {
-		SoundBufferItem sound;
-		sound.resourceId = resourceId;
-		sound.handle = _soundHandle;
-		_soundBuffer.push_back(sound);
-	}
-
-	return (exists < 0) ? true : false;
-}
-
-void Sound::removeFromSoundBuffer(ResourceId resourceId) {
-	int32 pos = getBufferPosition(resourceId);
-
-	if (pos >= 0) {
-		_soundBuffer.remove_at(pos);
-	}
-}
-
-void Sound::clearSoundBuffer() {
-	_soundBuffer.clear();
-}
-
-bool Sound::isPlaying(ResourceId resourceId) {
-	int32 pos = getBufferPosition(resourceId);
-
-	if (pos < 0) {
-		//warning("isPlaying: resource %d not currently buffered", resourceId);
-	} else {
-		SoundBufferItem snd = _soundBuffer[pos];
-		if (_mixer->isSoundHandleActive(snd.handle)) {
-			return true;
-		} else {
-			removeFromSoundBuffer(resourceId);
-		}
-	}
-
-	return false;
-}
-
-//void Sound::playSound(ResourceId resourceId, int32 volume, bool looping, int32 panning, bool overwrite) {
-//	ResourceEntry *resource = getResource()->get(resourceId);
-//	if (_mixer->isSoundHandleActive(_soundHandle)) {
-//		if (overwrite) {
-//			_mixer->stopHandle(_soundHandle);
-//			playSound(resource, looping, volume, panning);
-//		}
-//	} else {
-//		// if the current handle isn't active, play the sound
-//		playSound(resource, looping, volume, panning);
-//	}
-//}
-//
-//void Sound::playSound(ResourceEntry *resource, bool looping, int32 volume, int32 panning) {
-//	playSoundData(Audio::Mixer::kSFXSoundType, &_soundHandle, resource->data, resource->size, looping, volume, panning);
-//}
-
-void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 panning) {
-	int32 pos = getBufferPosition(resourceId);
-
-	if (pos < 0) {
-		warning("playSound: resource %d not currently bufferred", resourceId);
-	} else {
-		SoundBufferItem snd = _soundBuffer[pos];
-		if (_mixer->isSoundHandleActive(snd.handle)) {
-			debugC(kDebugLevelSound, "playSound: handle for resource %d already active", resourceId);
-		} else {
-			ResourceEntry *ent = getResource()->get(resourceId);
-			playSoundData(Audio::Mixer::kSFXSoundType, &snd.handle, ent->data, ent->size, looping, volume, panning);
-			addToSoundBuffer(resourceId);
-		}
-	}
-
-}
-
-//void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 panning, bool fromBuffer) {
-//	if (fromBuffer) {
-//		playSound(resourceId, looping, volume, panning);
-//	} else {
-//		if (_mixer->isSoundHandleActive(_soundHandle)) {
-//			debugC(kDebugLevelSound, "playSound: temporary sound handle is active");
-//		} else {
-//			ResourceEntry *ent = getResource()->get(resourceId);
-//			playSound(resourceId, looping, volume, panning);
-//			addToSoundBuffer(resourceId);
-//		}
-//	}
-//}
-
-void Sound::stopSound() {
-	if (_mixer->isSoundHandleActive(_soundHandle))
-		_mixer->stopHandle(_soundHandle);
-}
-
-void Sound::stopSound(ResourceId resourceId) {
-	int32 pos = getBufferPosition(resourceId);
-
-	if (pos < 0) {
-		warning("stopSound: resource %d not currently bufferred", resourceId);
-	} else {
-		_mixer->stopHandle(_soundBuffer[pos].handle);
-	}
-}
-
-void Sound::stopAllSounds(bool stopSpeechAndMusic) {
-	_mixer->stopHandle(_soundHandle);
-
-	if (stopSpeechAndMusic) {
-		_mixer->stopHandle(_speechHandle);
-		_mixer->stopHandle(_musicHandle);
-	}
-
-	for (uint32 i = 0; i < _soundBuffer.size(); i++)
-		_mixer->stopHandle(_soundBuffer[i].handle);
-}
-
-void Sound::playSpeech(ResourceId resourceId) {
-	ResourceEntry *ent = getResource()->get(resourceId);
-
-	_mixer->stopHandle(_speechHandle);
-	playSoundData(Audio::Mixer::kSpeechSoundType, &_speechHandle, ent->data, ent->size, false, 0, 0);
-}
-
-void Sound::playMusic(ResourceId resourceId, int32 volume) {
-	if (resourceId == kResourceNone)
-		return;
-
-	stopMusic();
-
-	ResourceEntry *resource = getResource()->get(resourceId);
-	playSoundData(Audio::Mixer::kMusicSoundType, &_musicHandle, resource->data, resource->size, true, volume, 0);
-}
-
-void Sound::changeMusic(uint32 index, int32 musicStatusExt) {
-	if (index != getWorld()->musicCurrentResourceIndex) {
-		getWorld()->musicCurrentResourceIndex = index;
-		getWorld()->musicStatusExt = musicStatusExt;
-		getWorld()->musicFlag = 1;
-	}
-}
-
-void Sound::stopMusic() {
-	_mixer->stopHandle(_musicHandle);
-}
-
-// from engines/agos/sound.cpp
-void Sound::playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte *soundData, int32 soundDataLength, bool loop, int32 vol, int32 pan) {
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundData, soundDataLength);
-	Audio::RewindableAudioStream *sndStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
-
-	// FIXME need to convert the volume properly
-	vol = Audio::Mixer::kMaxChannelVolume;
-
-	_mixer->playStream(type, handle, Audio::makeLoopingAudioStream(sndStream, loop ? 0 : 1), -1, vol, pan);
 }
 
 } // end of namespace Asylum

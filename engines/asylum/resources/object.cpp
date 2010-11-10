@@ -390,7 +390,7 @@ void Object::playSounds() {
 				getSound()->setPanning(item->resourceId, getSound()->calculatePanningAtPoint(soundX, soundY));
 				getSound()->setVolume(item->resourceId, volume);
 			} else {
-				getSound()->stopSound(item->resourceId);
+				getSound()->stop(item->resourceId);
 			}
 		}
 	}
@@ -405,7 +405,7 @@ void Object::updateSoundItems() {
 
 		if (getSound()->isPlaying(item->resourceId)) {
 			if (item->field_4) {
-				getSound()->stopSound(item->resourceId);
+				getSound()->stop(item->resourceId);
 				item->resourceId = kResourceNone;
 				item->field_4 = 0;
 			}
@@ -417,13 +417,13 @@ void Object::updateSoundItems() {
 
 void Object::stopSound() {
 	if (getSound()->isPlaying(_soundResourceId))
-		getSound()->stopSound(_soundResourceId);
+		getSound()->stop(_soundResourceId);
 }
 
 void Object::stopAllSounds() {
 	for (int i = 0; i < ARRAYSIZE(_soundItems); i++)
 		if (_soundItems[i].resourceId) {
-			getSound()->stopSound(_soundItems[i].resourceId);
+			getSound()->stop(_soundItems[i].resourceId);
 			_soundItems[i].resourceId = kResourceNone;
 		}
 }
