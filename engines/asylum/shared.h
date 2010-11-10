@@ -129,8 +129,11 @@ enum ResourcePackId {
 #define MAKE_RESOURCE(pack, index) (ResourceId)((0x80000000 + ((pack) << 16)) + (index))
 
 enum ResourceId {
-	kResourceNone         = 0,
-	kResourceMusicStopped = 0xFFFFFD66 // -666
+	kResourceNone         = 0
+};
+
+enum MusicIndex {
+	kMusicStopped         = 0xFFFFFD66 // -666
 };
 
 //////////////////////////////////////////////////////////////////////////

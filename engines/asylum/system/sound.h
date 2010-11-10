@@ -108,7 +108,17 @@ public:
 	void playSpeech(ResourceId resourceId);
 
 	void playMusic(ResourceId resourceId, int32 volume = Config.musicVolume);
-	void changeMusic(ResourceId resourceId, int32 musicStatusExt);
+
+	/**
+	 * Change music
+	 *
+	 * @param index 		 Zero-based index of the music
+	 * @param musicStatusExt The music status.
+	 */
+	void changeMusic(uint32 index, int32 musicStatusExt);
+
+
+
 	void stopMusic();
 
 	void setVolume(ResourceId resourceId, double volume);
@@ -151,14 +161,6 @@ private:
 	Audio::SoundHandle _soundHandle;
 
 	Common::Array<SoundBufferItem> _soundBuffer;
-
-	/**
-	 * The resource pointer for the currently playing music file.
-	 * This was originally a scene variable, but it makes more sense
-	 * to track it uniquely, as this doesn't involve initializing the
-	 * scene just to set a single variable
-	 */
-	uint32 _currentMusicResIndex;
 
 	/**
 	 * Find the index within the _soundBuffer array of the

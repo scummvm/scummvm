@@ -189,7 +189,7 @@ void Scene::enter(ResourcePackId packId) {
 
 	// Play intro music
 	ResourceId musicId = kResourceNone;
-	if (_ws->musicCurrentResourceIndex != kResourceMusicStopped && _ws->chapter != kChapter1)
+	if (_ws->musicCurrentResourceIndex != kMusicStopped && _ws->chapter != kChapter1)
 		musicId = MAKE_RESOURCE(kResourcePackMusic, _ws->musicCurrentResourceIndex);
 
 	getSound()->playMusic(musicId);

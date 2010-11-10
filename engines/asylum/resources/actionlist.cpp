@@ -893,7 +893,7 @@ IMPLEMENT_OPCODE(PlayMovie) {
 			check = true;
 	}
 
-	if (!check && getScene()->matteVar2 == 0 && getWorld()->musicCurrentResourceIndex != kResourceMusicStopped)
+	if (!check && getScene()->matteVar2 == 0 && getWorld()->musicCurrentResourceIndex != kMusicStopped)
 		_vm->sound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicCurrentResourceIndex));
 
 	getCursor()->show();
@@ -940,7 +940,7 @@ IMPLEMENT_OPCODE(ChangeMusicById) {
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x33
 IMPLEMENT_OPCODE(StopMusic) {
-	_vm->sound()->changeMusic(kResourceMusicStopped, 0);
+	_vm->sound()->changeMusic(kMusicStopped, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
