@@ -118,8 +118,11 @@ public:
 	Common::Array<ActionArea*> actions;  // maxsize 400
 	// TODO add rest fields
 	int32 field_E860C;
-	// TODO add rest fields
+	int32 field_E8610[6];
+	int32 field_E8628[6];
 	Object *wheels[7];
+	int32 tickCount1;
+	int32 field_E8660[6];
 
 	void setWheelObjects();
 
