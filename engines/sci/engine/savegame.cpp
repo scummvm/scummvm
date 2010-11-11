@@ -620,6 +620,14 @@ void SoundCommandParser::reconstructPlayList() {
 			(*i)->soundRes = 0;
 		}
 		if ((*i)->status == kSoundPlaying) {
+			// Sync the sound object's selectors related to playing with the stored
+			// ones in the playlist, as they may have been invalidated when loading.
+			// Refer to bug #3104624.
+			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(loop), (*i)->loop);
+			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(priority), (*i)->priority);
+			if (_soundVersion >= SCI_VERSION_1_EARLY)
+				writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol), (*i)->volume);
+
 			processPlaySound((*i)->soundObj);
 		}
 	}
