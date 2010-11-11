@@ -464,7 +464,7 @@ bool HugoEngine::loadHugoDat() {
 	_textSchedule = loadTexts(in);
 
 	// Read textUtil
-	_textUtil = loadTexts(in);
+	_textUtil = loadTextsVariante(in, 0);
 
 	// Read _arrayReqs
 	_arrayReqs = loadLongArray(in);

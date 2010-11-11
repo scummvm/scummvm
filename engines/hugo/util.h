@@ -36,16 +36,7 @@
 namespace Hugo {
 
 enum seqTextUtil {
-	kTech     = 0,
-	kErr1     = 1,
-	kErr2     = 2,
-	kErr3     = 3,
-	kErr4     = 4,
-	kErr5     = 5,
-	kErr6     = 6,
-	kGameOver = 7
-//	kObsoleteErr1 = 8,
-//	kObsoleteErr2 = 9
+	kGameOver = 0
 };
 
 namespace Utils {

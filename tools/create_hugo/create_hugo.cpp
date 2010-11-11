@@ -369,7 +369,12 @@ int main(int argc, char *argv[]) {
 	writeTextArray(outFile, textSchedule, NUM_SCHEDULE_TEXT);
 
 	// Write textUtil
-	writeTextArray(outFile, textUtil, NUM_UTIL_TEXT);
+	writeTextArray(outFile, textUtil_v1w, NUM_UTIL_TEXT);
+	writeTextArray(outFile, textUtil_v1w, NUM_UTIL_TEXT);
+	writeTextArray(outFile, textUtil_v1w, NUM_UTIL_TEXT);
+	writeTextArray(outFile, textUtil_v1d, NUM_UTIL_TEXT);
+	writeTextArray(outFile, textUtil_v1d, NUM_UTIL_TEXT);
+	writeTextArray(outFile, textUtil_v1d, NUM_UTIL_TEXT);
 
 	// arrayReqs_1w
 	nbrElem = sizeof(arrayReqs_1w) / sizeof(uint16 *);
