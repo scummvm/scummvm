@@ -154,7 +154,7 @@ Entity::~Entity() {
 
 	_callbacks.clear();
 
-	delete _data;
+	SAFE_DELETE(_data);
 
 	// Zero-out passed pointers
 	_engine = NULL;

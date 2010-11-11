@@ -185,10 +185,12 @@ Entities::Entities(LastExpressEngine *engine) : _engine(engine) {
 }
 
 Entities::~Entities() {
-	delete _header;
+	SAFE_DELETE(_header);
 
 	for (int i = 0; i < (int)_entities.size(); i++)
-		delete _entities[i];
+		SAFE_DELETE(_entities[i]);
+
+	_entities.clear();
 
 	// Zero passed pointers
 	_engine = NULL;

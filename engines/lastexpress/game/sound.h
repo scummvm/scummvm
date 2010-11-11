@@ -71,6 +71,8 @@
 
 #include "lastexpress/shared.h"
 
+#include "lastexpress/helpers.h"
+
 #include "common/list.h"
 #include "common/system.h"
 #include "common/serializer.h"
@@ -286,7 +288,10 @@ private:
 		}
 
 		~SoundEntry() {
-			delete stream;
+			// Entries that have been queued would have their streamed disposed automatically
+			if (!isStreamed)
+				SAFE_DELETE(stream);
+
 			//delete subtitle;
 		}
 	};

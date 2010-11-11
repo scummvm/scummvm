@@ -28,6 +28,8 @@
 
 #include "lastexpress/data/sequence.h"
 
+#include "lastexpress/helpers.h"
+
 #include "common/array.h"
 #include "common/system.h"
 
@@ -98,8 +100,9 @@ private:
 
 		~BeetleData() {
 			for (int i = 0; i < (int)sequences.size(); i++)
-				if (sequences[i])
-					delete sequences[i];
+				SAFE_DELETE(sequences[i]);
+
+			sequences.clear();
 		}
 	};
 

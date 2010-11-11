@@ -42,11 +42,11 @@ State::State(LastExpressEngine *engine) : _engine(engine), _timer(0) {
 }
 
 State::~State() {
-	delete _inventory;
-	delete _objects;
-	delete _savepoints;
-	delete _state;
-	delete _flags;
+	SAFE_DELETE(_inventory);
+	SAFE_DELETE(_objects);
+	SAFE_DELETE(_savepoints);
+	SAFE_DELETE(_state);
+	SAFE_DELETE(_flags);
 
 	// Zero passed pointers
 	_engine = NULL;

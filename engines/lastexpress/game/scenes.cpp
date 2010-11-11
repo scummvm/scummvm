@@ -51,8 +51,6 @@ SceneManager::SceneManager(LastExpressEngine *engine) : _engine(engine),
 }
 
 SceneManager::~SceneManager() {
-	delete _sceneLoader;
-
 	// Clear frames
 	for (Common::List<SequenceFrame *>::iterator door = _doors.begin(); door != _doors.end(); ++door)
 		SAFE_DELETE(*door);
@@ -63,8 +61,9 @@ SceneManager::~SceneManager() {
 	SAFE_DELETE(_clockMinutes);
 
 	// Clear frame queue
-	for (Common::List<SequenceFrame *>::iterator i = _queue.begin(); i != _queue.end(); ++i)
-		SAFE_DELETE(*i);
+	_queue.clear();
+
+	SAFE_DELETE(_sceneLoader);
 
 	// Zero-out passed pointers
 	_engine = NULL;

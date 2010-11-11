@@ -30,6 +30,8 @@
 
 #include "lastexpress/game/sound.h"
 
+#include "lastexpress/helpers.h"
+
 #include "common/array.h"
 #include "common/func.h"
 #include "common/serializer.h"
@@ -493,11 +495,8 @@ public:
 		}
 
 		void clear() {
-			for (int i = 0; i < 4; i++) {
-				if (parameters[i])
-					delete parameters[i];
-				parameters[i] = NULL;
-			}
+			for (int i = 0; i < 4; i++)
+				SAFE_DELETE(parameters[i]);
 		}
 
 		// Serializable

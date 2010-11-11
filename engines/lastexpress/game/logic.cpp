@@ -72,12 +72,12 @@ Logic::Logic(LastExpressEngine *engine) : _engine(engine) {
 }
 
 Logic::~Logic() {
-	delete _action;
-	delete _beetle;
-	delete _fight;
-	delete _entities;
-	delete _saveload;
-	delete _state;
+	SAFE_DELETE(_action);
+	SAFE_DELETE(_beetle);
+	SAFE_DELETE(_fight);
+	SAFE_DELETE(_entities);
+	SAFE_DELETE(_saveload);
+	SAFE_DELETE(_state);
 
 	// Zero-out passed pointers
 	_engine = NULL;

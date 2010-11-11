@@ -30,6 +30,7 @@
 #include "lastexpress/data/font.h"
 
 #include "lastexpress/debug.h"
+#include "lastexpress/helpers.h"
 
 #include "common/debug.h"
 #include "common/file.h"
@@ -107,7 +108,7 @@ bool ResourceManager::loadArchive(ArchiveIndex type) {
 void ResourceManager::reset() {
 	// Free the loaded archives
 	for (Common::Array<HPFArchive *>::iterator it = _archives.begin(); it != _archives.end(); ++it)
-		delete (*it);
+		SAFE_DELETE(*it);
 
 	_archives.clear();
 }

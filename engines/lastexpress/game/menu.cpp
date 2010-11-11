@@ -204,10 +204,10 @@ Clock::Clock(LastExpressEngine *engine) : _engine(engine), _frameMinutes(NULL), 
 }
 
 Clock::~Clock() {
-	delete _frameMinutes;
-	delete _frameHour;
-	delete _frameSun;
-	delete _frameDate;
+	SAFE_DELETE(_frameMinutes);
+	SAFE_DELETE(_frameHour);
+	SAFE_DELETE(_frameSun);
+	SAFE_DELETE(_frameDate);
 
 	// Zero passed pointers
 	_engine = NULL;
@@ -291,8 +291,8 @@ TrainLine::TrainLine(LastExpressEngine *engine) : _engine(engine), _frameLine1(N
 }
 
 TrainLine::~TrainLine() {
-	delete _frameLine1;
-	delete _frameLine2;
+	SAFE_DELETE(_frameLine1);
+	SAFE_DELETE(_frameLine2);
 
 	// Zero passed pointers
 	_engine = NULL;
@@ -369,8 +369,8 @@ Menu::Menu(LastExpressEngine *engine) : _engine(engine),
 }
 
 Menu::~Menu() {
-	delete _clock;
-	delete _trainLine;
+	SAFE_DELETE(_clock);
+	SAFE_DELETE(_trainLine);
 
 	SAFE_DELETE(_seqTooltips);
 	SAFE_DELETE(_seqEggButtons);

@@ -31,6 +31,7 @@
 #include "lastexpress/data/snd.h"
 
 #include "lastexpress/debug.h"
+#include "lastexpress/helpers.h"
 
 #include "common/events.h"
 #include "engines/engine.h"
@@ -45,21 +46,17 @@ Animation::~Animation() {
 }
 
 void Animation::reset() {
-	delete _overlay;
-	_overlay = NULL;
-	delete _background1;
-	_background1 = NULL;
-	delete _background2;
-	_background2 = NULL;
-	delete _audio;
-	_audio = NULL;
+	SAFE_DELETE(_overlay);
+	SAFE_DELETE(_background1);
+	SAFE_DELETE(_background2);
+	SAFE_DELETE(_audio);
 
 	_backgroundCurrent = 0;
 	_chunks.clear();
 
 	_currentChunk = NULL;
 
-	delete _stream;
+	SAFE_DELETE(_stream);
 }
 
 bool Animation::load(Common::SeekableReadStream *stream, int flag) {

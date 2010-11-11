@@ -118,9 +118,12 @@ SoundManager::SoundManager(LastExpressEngine *engine) : _engine(engine), _state(
 }
 
 SoundManager::~SoundManager() {
+	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i)
+		SAFE_DELETE(*i);
+
 	_cache.clear();
 
-	delete _soundStream;
+	SAFE_DELETE(_soundStream);
 
 	// Zero passed pointers
 	_engine = NULL;
@@ -134,6 +137,7 @@ void SoundManager::handleTimer() {
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
 		SoundEntry *entry = (*i);
 		if (entry->stream == NULL) {
+			SAFE_DELETE(*i);
 			i = _cache.reverse_erase(i);
 			continue;
 		} else if (!entry->isStreamed) {
@@ -191,7 +195,7 @@ void SoundManager::clearQueue() {
 
 		// Delete entry
 		removeEntry(entry);
-		delete entry;
+		SAFE_DELETE(entry);
 
 		i = _cache.reverse_erase(i);
 	}

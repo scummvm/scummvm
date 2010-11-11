@@ -100,7 +100,7 @@ Debugger::Debugger(LastExpressEngine *engine) : _engine(engine), _command(NULL),
 Debugger::~Debugger() {
 	DebugMan.clearAllDebugChannels();
 
-	delete _soundStream;
+	SAFE_DELETE(_soundStream);
 	resetCommand();
 
 	_command = NULL;

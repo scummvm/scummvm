@@ -383,7 +383,9 @@ Action::Action(LastExpressEngine *engine) : _engine(engine) {
 
 Action::~Action() {
 	for (int i = 0; i < (int)_actions.size(); i++)
-		delete _actions[i];
+		SAFE_DELETE(_actions[i]);
+
+	_actions.clear();
 
 	// Zero-out passed pointers
 	_engine = NULL;

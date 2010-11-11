@@ -141,11 +141,11 @@ private:
 	SoundManager    *_soundMan;
 
 	// Event handlers
-	EventHandler::EventFunction *eventMouse;
-	EventHandler::EventFunction *eventTick;
+	EventHandler::EventFunction *_eventMouse;
+	EventHandler::EventFunction *_eventTick;
 
-	EventHandler::EventFunction *eventMouseBackup;
-	EventHandler::EventFunction *eventTickBackup;
+	EventHandler::EventFunction *_eventMouseBackup;
+	EventHandler::EventFunction *_eventTickBackup;
 };
 
 } // End of namespace LastExpress

@@ -55,7 +55,7 @@ LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd)
     Engine(syst), _gameDescription(gd), _debugger(NULL), _cursor(NULL),
     _font(NULL), _logic(NULL), _menu(NULL), _frameCounter(0), _lastFrameCount(0),
 	_graphicsMan(NULL), _resMan(NULL), _sceneMan(NULL), _soundMan(NULL),
-	eventMouse(NULL), eventTick(NULL), eventMouseBackup(NULL), eventTickBackup(NULL) {
+	_eventMouse(NULL), _eventTick(NULL), _eventMouseBackup(NULL), _eventTickBackup(NULL) {
 
 	// Adding the default directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -80,21 +80,21 @@ LastExpressEngine::~LastExpressEngine() {
 	_timer->removeTimerProc(&soundTimer);
 
 	// Delete the remaining objects
-	delete _cursor;
-	delete _font;
-	delete _logic;
-	delete _menu;
-	delete _graphicsMan;
-	delete _resMan;
-	delete _sceneMan;
-	delete _soundMan;
-	delete _debugger;
+	SAFE_DELETE(_cursor);
+	SAFE_DELETE(_font);
+	SAFE_DELETE(_logic);
+	SAFE_DELETE(_menu);
+	SAFE_DELETE(_graphicsMan);
+	SAFE_DELETE(_resMan);
+	SAFE_DELETE(_sceneMan);
+	SAFE_DELETE(_soundMan);
+	SAFE_DELETE(_debugger);
 
 	// Cleanup event handlers
-	SAFE_DELETE(eventMouse);
-	SAFE_DELETE(eventTick);
-	SAFE_DELETE(eventMouseBackup);
-	SAFE_DELETE(eventTickBackup);
+	SAFE_DELETE(_eventMouse);
+	SAFE_DELETE(_eventTick);
+	SAFE_DELETE(_eventMouseBackup);
+	SAFE_DELETE(_eventTickBackup);
 
 	// Zero passed pointers
 	_gameDescription = NULL;
@@ -218,19 +218,19 @@ bool LastExpressEngine::handleEvents() {
 				getGameLogic()->getGameState()->getGameFlags()->frameInterval = true;
 			_lastFrameCount = _frameCounter;
 
-			if (eventMouse && eventMouse->isValid())
-				(*eventMouse)(ev);
+			if (_eventMouse && _eventMouse->isValid())
+				(*_eventMouse)(ev);
 			break;
 
 		case Common::EVENT_RBUTTONUP:
 			getGameLogic()->getGameState()->getGameFlags()->mouseRightClick = true;
-			if (eventMouse && eventMouse->isValid())
-				(*eventMouse)(ev);
+			if (_eventMouse && _eventMouse->isValid())
+				(*_eventMouse)(ev);
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
-			if (eventMouse && eventMouse->isValid())
-				(*eventMouse)(ev);
+			if (_eventMouse && _eventMouse->isValid())
+				(*_eventMouse)(ev);
 			break;
 
 		case Common::EVENT_QUIT:
@@ -243,8 +243,8 @@ bool LastExpressEngine::handleEvents() {
 	}
 
 	// Game tick event
-	if (eventTick && eventTick->isValid())
-		(*eventTick)(ev);
+	if (_eventTick && _eventTick->isValid())
+		(*_eventTick)(ev);
 
 	// Update the screen
 	_graphicsMan->update();
@@ -279,25 +279,25 @@ void LastExpressEngine::handleSoundTimer() {
 /// Event Handling
 ///////////////////////////////////////////////////////////////////////////////////
 void LastExpressEngine::backupEventHandlers() {
-	eventMouseBackup = eventMouse;
-	eventTickBackup = eventTick;
+	_eventMouseBackup = _eventMouse;
+	_eventTickBackup = _eventTick;
 }
 
 void LastExpressEngine::restoreEventHandlers() {
-	if (eventMouseBackup == NULL || eventTickBackup == NULL)
+	if (_eventMouseBackup == NULL || _eventTickBackup == NULL)
 		error("LastExpressEngine::restoreEventHandlers: restore called before backing up the event handlers!");
 
-	eventMouse = eventMouseBackup;
-	eventTick = eventTickBackup;
+	_eventMouse = _eventMouseBackup;
+	_eventTick = _eventTickBackup;
 }
 
 void LastExpressEngine::setEventHandlers(EventHandler::EventFunction *mouse, EventHandler::EventFunction *tick) {
 	// Cleanup previous event handlers
-	delete eventMouse;
-	delete eventTick;
+	delete _eventMouse;
+	delete _eventTick;
 
-	eventMouse = mouse;
-	eventTick = tick;
+	_eventMouse = mouse;
+	_eventTick = tick;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
