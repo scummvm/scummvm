@@ -226,6 +226,8 @@ void Console::preEnter() {
 	_engine->pauseEngine(true);
 }
 
+extern void playVideo(Graphics::VideoDecoder *videoDecoder);
+
 void Console::postEnter() {
 	if (!_videoFile.empty()) {
 		Graphics::VideoDecoder *videoDecoder = 0;
@@ -270,36 +272,7 @@ void Console::postEnter() {
 			}
 #endif
 
-			uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
-			uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
-			bool skipVideo = false;
-
-			if (videoDecoder->hasDirtyPalette())
-				videoDecoder->setSystemPalette();
-
-			while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
-				if (videoDecoder->needsUpdate()) {
-					Graphics::Surface *frame = videoDecoder->decodeNextFrame();
-					if (frame) {
-						g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
-
-						if (videoDecoder->hasDirtyPalette())
-							videoDecoder->setSystemPalette();
-
-						g_system->updateScreen();
-					}
-				}
-
-				Common::Event event;
-				while (g_system->getEventManager()->pollEvent(event)) {
-					if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
-						skipVideo = true;
-				}
-
-				g_system->delayMillis(10);
-			}
-		
-			delete videoDecoder;
+			playVideo(videoDecoder);
 
 #ifdef ENABLE_SCI32
 			// Switch back to 8bpp if we played a duck video

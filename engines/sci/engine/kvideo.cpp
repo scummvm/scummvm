@@ -44,16 +44,18 @@ void playVideo(Graphics::VideoDecoder *videoDecoder) {
 		return;
 
 	byte *scaleBuffer = 0;
+	byte bytesPerPixel = videoDecoder->getPixelFormat().bytesPerPixel;
 	uint16 width = videoDecoder->getWidth();
 	uint16 height = videoDecoder->getHeight();
+	uint16 pitch = videoDecoder->getWidth() * bytesPerPixel;
 	uint16 screenWidth = g_system->getWidth();
 	uint16 screenHeight = g_system->getHeight();
 
 	if (screenWidth == 640 && width <= 320 && height <= 240) {
-		assert(videoDecoder->getPixelFormat().bytesPerPixel == 1);
 		width *= 2;
 		height *= 2;
-		scaleBuffer = new byte[width * height];
+		pitch *= 2;
+		scaleBuffer = new byte[width * height * bytesPerPixel];
 	}
 
 	uint16 x = (screenWidth - width) / 2;
@@ -69,8 +71,8 @@ void playVideo(Graphics::VideoDecoder *videoDecoder) {
 			if (frame) {
 				if (scaleBuffer) {
 					// TODO: Probably should do aspect ratio correction in e.g. GK1 Windows 
-					g_sci->_gfxScreen->scale2x((byte *)frame->pixels, scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight());
-					g_system->copyRectToScreen(scaleBuffer, width, x, y, width, height);
+					g_sci->_gfxScreen->scale2x((byte *)frame->pixels, scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
+					g_system->copyRectToScreen(scaleBuffer, pitch, x, y, width, height);
 				} else
 					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, width, height);
 

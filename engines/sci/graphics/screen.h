@@ -109,7 +109,7 @@ public:
 	void getPalette(Palette *pal);
 	void setPalette(Palette *pal);
 
-	void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight);
+	void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel = 1);
 
 	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
 	void adjustBackUpscaledCoordinates(int16 &y, int16 &x);
