@@ -340,7 +340,7 @@ event_t *Scheduler_v1w::doAction(event_t *curEvent) {
 			_vm->_object->_objects[action->a48.objNumb].currImagePtr = _vm->_object->_objects[action->a48.objNumb].currImagePtr->nextSeqPtr;
 		break;
 	default:
-		Utils::Error(EVNT_ERR, "%s", "doAction");
+		error("An error has occurred: %s", "doAction");
 		break;
 	}
 

@@ -70,7 +70,7 @@ void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 	}
 
 	if (!_sceneryArchive1.open(buf))
-		Utils::Error(FILE_ERR, "%s", buf);
+		error("File not found: %s", buf);
 
 	image_pt tmpImage = image;                      // temp ptr to overlay file
 
@@ -88,7 +88,7 @@ void FileManager_v1d::readBackground(int screenIndex) {
 	char *buf = (char *) malloc(2048 + 1);          // Buffer for file access
 	strcat(strcpy(buf, _vm->_screenNames[screenIndex]), ".ART");
 	if (!_sceneryArchive1.open(buf))
-		Utils::Error(FILE_ERR, "%s", buf);
+		error("File not found: %s", buf);
 	// Read the image into dummy seq and static dib_a
 	seq_t *dummySeq;                                // Image sequence structure for Read_pcx
 	dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_screenNames[screenIndex]);

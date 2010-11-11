@@ -77,7 +77,7 @@ void FileManager_v1w::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 		i = sceneBlock.ob_len;
 		break;
 	default:
-		Utils::Error(FILE_ERR, "%s", "Bad ovl_type");
+		error("Bad overlayType: %d", overlayType);
 		break;
 	}
 	if (i == 0) {

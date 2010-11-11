@@ -75,7 +75,7 @@ event_t *Scheduler::getQueue() {
 	debugC(4, kDebugSchedule, "getQueue");
 
 	if (!_freeEvent)                                // Error: no more events available
-		Utils::Error(EVNT_ERR, "%s", "getQueue");
+		error("An error has occurred: %s", "getQueue");
 	event_t *resEvent = _freeEvent;
 	_freeEvent = _freeEvent->nextEvent;
 	resEvent->nextEvent = 0;

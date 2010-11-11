@@ -54,7 +54,6 @@ int      lastBit(byte data);
 
 void     gameOverMsg();
 void     reverseByte(byte *data);
-void     Error(int code, const char *format, ...) GCC_PRINTF(2, 3);
 
 char    *Box(box_t, const char *, ...) GCC_PRINTF(2, 3);
 char    *strlwr(char *buffer);

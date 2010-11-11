@@ -313,7 +313,7 @@ event_t *Scheduler_v3d::doAction(event_t *curEvent) {
 		warning("STUB: doAction(act49)");
 		break;
 	default:
-		Utils::Error(EVNT_ERR, "%s", "doAction");
+		error("An error has occurred: %s", "doAction");
 		break;
 	}
 

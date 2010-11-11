@@ -83,13 +83,13 @@ void FileManager_v3d::openDatabaseFiles() {
 	debugC(1, kDebugFile, "openDatabaseFiles");
 
 	if (!_stringArchive.open(STRING_FILE))
-		Utils::Error(FILE_ERR, "%s", STRING_FILE);
+		error("File not found: %s", STRING_FILE);
 	if (!_sceneryArchive1.open("scenery1.dat"))
-		Utils::Error(FILE_ERR, "%s", "scenery1.dat");
+		error("File not found: scenery1.dat");
 	if (!_sceneryArchive2.open("scenery2.dat"))
-		Utils::Error(FILE_ERR, "%s", "scenery2.dat");
+		error("File not found: scenery2.dat");
 	if (!_objectsArchive.open(OBJECTS_FILE))
-		Utils::Error(FILE_ERR, "%s", OBJECTS_FILE);
+		error("File not found: %s", OBJECTS_FILE);
 }
 
 /**
@@ -140,7 +140,7 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 			i = sceneBlock.ob_len;
 			break;
 		default:
-			Utils::Error(FILE_ERR, "%s", "Bad ovl_type");
+			error("Bad overlayType: %d", overlayType);
 			break;
 		}
 		if (i == 0) {
@@ -180,7 +180,7 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 			i = sceneBlock.ob_len;
 			break;
 		default:
-			Utils::Error(FILE_ERR, "%s", "Bad ovl_type");
+			error("Bad overlayType: %d", overlayType);
 			break;
 		}
 		if (i == 0) {

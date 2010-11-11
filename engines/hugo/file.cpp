@@ -94,12 +94,12 @@ seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool
 	f.read(PCC_header.fill2, sizeof(PCC_header.fill2));
 
 	if (PCC_header.mfctr != 10)
-		Utils::Error(PCCH_ERR, "%s", name);
+		error("Bad data file format: %s", name);
 
 	// Allocate memory for seq_t if 0
 	if (seqPtr == 0) {
 		if ((seqPtr = (seq_t *)malloc(sizeof(seq_t))) == 0)
-			Utils::Error(HEAP_ERR, "%s", name);
+			error("Insufficient memory to run game.");
 	}
 
 	// Find size of image data in 8-bit DIB format
@@ -113,9 +113,9 @@ seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool
 
 	// Allocate memory for image data if NULL
 	if (imagePtr == 0) {
-		if ((imagePtr = (byte *)malloc((size_t) size)) == 0)
-			Utils::Error(HEAP_ERR, "%s", name);
+		imagePtr = (byte *)malloc((size_t) size);
 	}
+	assert(imagePtr);
 
 	seqPtr->imagePtr = imagePtr;
 
@@ -165,7 +165,7 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 			warning("File %s not found, trying again with %s%s", buf, _vm->_arrayNouns[objPtr->nounIndex][0], OBJEXT);
 			strcat(strcpy(buf, _vm->_arrayNouns[objPtr->nounIndex][0]), OBJEXT);
 			if (!_objectsArchive.open(buf))
-				Utils::Error(FILE_ERR, "%s", buf);
+				error("File not found: %s", buf);
 		}
 		free(buf);
 	}
@@ -258,25 +258,22 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 
 	if (!has_read_header) {
 		if (fp.read(s_hdr, sizeof(s_hdr)) != sizeof(s_hdr))
-			Utils::Error(FILE_ERR, "%s", SOUND_FILE);
+			error("Wrong sound file format: %s", SOUND_FILE);
 		has_read_header = true;
 	}
 
 	*size = s_hdr[sound].size;
 	if (*size == 0)
-		Utils::Error(SOUND_ERR, "%s", SOUND_FILE);
+		error("Wrong sound file format or missing sound %d: %s", sound, SOUND_FILE);
 
 	// Allocate memory for sound or music, if possible
 	sound_pt soundPtr = (byte *)malloc(s_hdr[sound].size); // Ptr to sound data
-	if (soundPtr == 0) {
-		warning("Low on memory");
-		return 0;
-	}
+	assert(soundPtr);
 
 	// Seek to data and read it
 	fp.seek(s_hdr[sound].offset, SEEK_SET);
 	if (fp.read(soundPtr, s_hdr[sound].size) != s_hdr[sound].size)
-		Utils::Error(FILE_ERR, "%s", SOUND_FILE);
+		error("File not found: %s", SOUND_FILE);
 
 	fp.close();
 
@@ -391,7 +388,7 @@ void FileManager::restoreGame(int16 slot) {
 	int saveVersion;
 	in->read(&saveVersion, sizeof(saveVersion));
 	if (saveVersion != kSavegameVersion) {
-		Utils::Error(GEN_ERR, "%s", "Savegame of incompatible version");
+		error("Savegame of incompatible version");
 		return;
 	}
 
@@ -473,7 +470,7 @@ void FileManager::initSavedGame() {
 		saveGame(-1, "");
 		in = _vm->getSaveFileManager()->openForLoading(_vm->_initFilename);
 		if (!in) {
-			Utils::Error(WRITE_ERR, "%s", _vm->_initFilename.c_str());
+			warning("Unable to write file: %s", _vm->_initFilename.c_str());
 			return;
 		}
 	}
@@ -483,8 +480,8 @@ void FileManager::initSavedGame() {
 	delete in;
 
 	// Check sanity - maybe disk full or path set to read-only drive?
-	if (_vm->getGameStatus().saveSize == -1)
-		Utils::Error(WRITE_ERR, "%s", _vm->_initFilename.c_str());
+	if (_vm->getGameStatus().saveSize <= 0)
+		warning("Unable to write file: %s", _vm->_initFilename.c_str());
 }
 
 /**
@@ -500,7 +497,7 @@ void FileManager::printBootText() {
 			warning("printBootText - Skipping as H1 Dos may be a freeware");
 			return;
 		} else {
-			Utils::Error(FILE_ERR, "%s", BOOTFILE);
+			error("Missing startup file");
 		}
 	}
 
@@ -510,7 +507,7 @@ void FileManager::printBootText() {
 		// Skip over the boot structure (already read) and read exit text
 		ofp.seek((long)sizeof(_boot), SEEK_SET);
 		if (ofp.read(buf, _boot.exit_len) != (size_t)_boot.exit_len)
-			Utils::Error(FILE_ERR, "%s", BOOTFILE);
+			error("Error while reading startup file");
 
 		// Decrypt the exit text, using CRYPT substring
 		int i;
@@ -518,9 +515,7 @@ void FileManager::printBootText() {
 			buf[i] ^= CRYPT[i % strlen(CRYPT)];
 
 		buf[i] = '\0';
-		//Box(BOX_OK, "%s", buf_p);
-		//MessageBox(hwnd, buf_p, "License", MB_ICONINFORMATION);
-		warning("printBootText(): License: %s", buf);
+		Utils::Box(BOX_OK, "%s", buf);
 	}
 
 	free(buf);
@@ -541,12 +536,12 @@ void FileManager::readBootFile() {
 			warning("readBootFile - Skipping as H1 Dos may be a freeware");
 			return;
 		} else {
-			Utils::Error(FILE_ERR, "%s", BOOTFILE);
+			error("Missing startup file");
 		}
 	}
 
 	if (ofp.size() < (int32)sizeof(_boot))
-		Utils::Error(FILE_ERR, "%s", BOOTFILE);
+		error("Corrupted startup file");
 
 	_boot.checksum = ofp.readByte();
 	_boot.registered = ofp.readByte();
@@ -564,7 +559,7 @@ void FileManager::readBootFile() {
 	ofp.close();
 
 	if (checksum)
-		Utils::Error(GEN_ERR, "%s", "Program startup file invalid");
+		error("Corrupted startup file");
 }
 
 /**
@@ -582,10 +577,10 @@ uif_hdr_t *FileManager::getUIFHeader(uif_t id) {
 		// Open unbuffered to do far read
 		Common::File ip;                            // Image data file
 		if (!ip.open(UIF_FILE))
-			Utils::Error(FILE_ERR, "%s", UIF_FILE);
+			error("File not found: %s", UIF_FILE);
 
 		if (ip.size() < (int32)sizeof(UIFHeader))
-			Utils::Error(FILE_ERR, "%s", UIF_FILE);
+			error("Wrong file format: %s", UIF_FILE);
 
 		for (int i = 0; i < MAX_UIFS; ++i) {
 			UIFHeader[i].size = ip.readUint16LE();
@@ -606,7 +601,7 @@ void FileManager::readUIFItem(int16 id, byte *buf) {
 	// Open uif file to read data
 	Common::File ip;                                // UIF_FILE handle
 	if (!ip.open(UIF_FILE))
-		Utils::Error(FILE_ERR, "%s", UIF_FILE);
+		error("File not found: %s", UIF_FILE);
 
 	// Seek to data
 	uif_hdr_t *UIFHeaderPtr = getUIFHeader((uif_t)id);
@@ -621,7 +616,7 @@ void FileManager::readUIFItem(int16 id, byte *buf) {
 		break;
 	default:                                        // Read file data into supplied array
 		if (ip.read(buf, UIFHeaderPtr->size) != UIFHeaderPtr->size)
-			Utils::Error(FILE_ERR, "%s", UIF_FILE);
+			error("Wrong file format: %s", UIF_FILE);
 		break;
 	}
 
