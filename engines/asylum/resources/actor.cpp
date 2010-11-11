@@ -460,6 +460,7 @@ void Actor::update() {
 		// Fallback to next case
 
 	case kActorStatus1:
+		// TODO: do actor direction
 		error("[Actor::update] kActorStatus1 / kActorStatus12 case not implemented");
 		break;
 
@@ -1231,6 +1232,32 @@ int32 Actor::getGraphicsFlags() {
 
 	// TODO replace by readable version
 	return ((_direction < 5) - 1) & 2;
+}
+
+int32 Actor::getFieldValue() {
+	int32 index = (_frameIndex >= _frameCount) ? (2 * _frameCount) - _frameIndex + 1 : _frameIndex;
+
+	switch (_direction) {
+	default:
+	case 0:
+	case 4:
+		return 0;
+
+	case 1:
+	case 3:
+		return -_field_8D0[index];
+
+	case 2:
+		return -_field_830[index];
+
+	case 5:
+	case 7:
+		return _field_8D0[index];
+
+	case 6:
+		return _field_830[index];;
+	}
+
 }
 
 } // end of namespace Asylum
