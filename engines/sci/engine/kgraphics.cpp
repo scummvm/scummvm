@@ -1260,6 +1260,7 @@ reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
 
 // SCI32 variant, can't work like sci16 variants
 reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
+	// TODO
 //	reg_t curObject = argv[0];
 //	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 	
@@ -1409,6 +1410,10 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 			break;
 		case 8: // sync
 			//warning("kRobot(sync), obj %04x:%04x", PRINT_REG(argv[1]));
+			// HACK: Make robots return immediately for now,
+			// otherwise they just hang for a while.
+			// TODO: Replace with proper robot functionality.
+			writeSelectorValue(s->_segMan, argv[1], SELECTOR(signal), -1);
 			break;
 		default:
 			warning("kRobot(%d)", subop);
