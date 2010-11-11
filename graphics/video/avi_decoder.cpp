@@ -30,11 +30,13 @@
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "sound/decoders/raw.h"
 
 #include "graphics/video/avi_decoder.h"
 
-// Codecs
+// Audio Codecs
+#include "sound/decoders/raw.h"
+
+// Video Codecs
 #include "graphics/video/codecs/cinepak.h"
 #include "graphics/video/codecs/indeo3.h"
 #include "graphics/video/codecs/msvideo1.h"
@@ -342,20 +344,7 @@ Surface *AviDecoder::decodeNextFrame() {
 	} else if (getStreamType(nextTag) == 'wb') {
 		// Audio Chunk
 		uint32 chunkSize = _fileStream->readUint32LE();
-		byte *data = (byte *)malloc(chunkSize);
-		_fileStream->read(data, chunkSize);
-
-		byte flags = 0;
-		if (_audsHeader.sampleSize == 2)
-			flags |= Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
-		else
-			flags |= Audio::FLAG_UNSIGNED;
-
-		if (_wvInfo.channels == 2)
-			flags |= Audio::FLAG_STEREO;
-
-		if (_audStream)
-			_audStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, flags);
+		queueAudioBuffer(chunkSize);
 		_fileStream->skip(chunkSize & 1); // Alignment
 	} else if (getStreamType(nextTag) == 'dc' || getStreamType(nextTag) == 'id' ||
 	           getStreamType(nextTag) == 'AM' || getStreamType(nextTag) == '32') {
@@ -433,14 +422,37 @@ PixelFormat AviDecoder::getPixelFormat() const {
 }
 
 Audio::QueuingAudioStream *AviDecoder::createAudioStream() {
-	if (_wvInfo.tag == AVI_WAVE_FORMAT_PCM)
+	if (_wvInfo.tag == kWaveFormatPCM)
 		return Audio::makeQueuingAudioStream(AUDIO_RATE, _wvInfo.channels == 2);
-	else if (_wvInfo.tag == 98)
+	else if (_wvInfo.tag == kWaveFormatDK3)
 		warning("Unsupported DK3 IMA ADPCM sound");
-	else if (_wvInfo.tag != 0) // No sound
+	else if (_wvInfo.tag != kWaveFormatNone) // No sound
 		warning("Unsupported AVI audio format %d", _wvInfo.tag);
 
 	return NULL;
+}
+
+void AviDecoder::queueAudioBuffer(uint32 chunkSize) {
+	// Return if we haven't created the queue (unsupported audio format)
+	if (!_audStream) {
+		_fileStream->skip(chunkSize);
+		return;
+	}
+
+	Common::SeekableReadStream *stream = _fileStream->readStream(chunkSize);
+
+	if (_wvInfo.tag == kWaveFormatPCM) {
+		byte flags = 0;
+		if (_audsHeader.sampleSize == 2)
+			flags |= Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+		else
+			flags |= Audio::FLAG_UNSIGNED;
+
+		if (_wvInfo.channels == 2)
+			flags |= Audio::FLAG_STEREO;
+
+		_audStream->queueAudioStream(Audio::makeRawStream(stream, AUDIO_RATE, flags, DisposeAfterUse::YES), DisposeAfterUse::YES);
+	}
 }
 
 } // End of namespace Graphics

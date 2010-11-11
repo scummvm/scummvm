@@ -114,21 +114,11 @@ enum IndexFlags {
 	AVIIF_INDEX = 0x10
 };
 
-enum WaveFormats {
-	AVI_WAVE_INVALIDFORMAT = 0,
-	AVI_WAVE_FORMAT_PCM = 1,
-	AVI_WAVE_FORMAT_1M08 = 1,
-	AVI_WAVE_FORMAT_1S08 = 2,
-	AVI_WAVE_FORMAT_1M16 = 4,
-	AVI_WAVE_FORMAT_1S16 = 8,
-	AVI_WAVE_FORMAT_2M08 = 16,
-	AVI_WAVE_FORMAT_2S08 = 32,
-	AVI_WAVE_FORMAT_2M16 = 64,
-	AVI_WAVE_FORMAT_2S16 = 128,
-	AVI_WAVE_FORMAT_4M08 = 256,
-	AVI_WAVE_FORMAT_4S08 = 512,
-	AVI_WAVE_FORMAT_4M16 = 1024,
-	AVI_WAVE_FORMAT_4S16 = 2048
+// Audio Codecs
+enum {
+	kWaveFormatNone = 0,
+	kWaveFormatPCM = 1,
+	kWaveFormatDK3 = 98
 };
 
 struct AVIHeader {
@@ -222,6 +212,7 @@ private:
 	Audio::SoundHandle *_audHandle;
 	Audio::QueuingAudioStream *_audStream;
 	Audio::QueuingAudioStream *createAudioStream();
+	void queueAudioBuffer(uint32 chunkSize);
 };
 
 } // End of namespace Graphics
