@@ -31,7 +31,7 @@
 
 #define TRANSLATIONS_DAT_VER 2
 
-#include "translation.h"
+#include "common/translation.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 
@@ -57,6 +57,7 @@ TranslationManager::TranslationManager() : _currentLang(-1) {
 	loadTranslationsInfoDat();
 
 #ifdef USE_DETECTLANG
+// FIXME: language detection should be done via an OSystem API.
 #ifdef WIN32
 	// We can not use "setlocale" (at least not for MSVC builds), since it
 	// will return locales like: "English_USA.1252", thus we need a special
@@ -124,7 +125,7 @@ TranslationManager::TranslationManager() : _currentLang(-1) {
 TranslationManager::~TranslationManager() {
 }
 
-void TranslationManager::setLanguage(const char *lang) {
+void TranslationManager::setLanguage(const String &lang) {
 	// Get lang index
 	int langIndex = -1;
 	String langStr(lang);
@@ -151,11 +152,11 @@ void TranslationManager::setLanguage(const char *lang) {
 	}
 }
 
-const char *TranslationManager::getTranslation(const char *message) {
+const char *TranslationManager::getTranslation(const char *message) const {
 	return getTranslation(message, NULL);
 }
 
-const char *TranslationManager::getTranslation(const char *message, const char *context) {
+const char *TranslationManager::getTranslation(const char *message, const char *context) const {
 	// if no language is set or message is empty, return msgid as is
 	if (_currentTranslationMessages.empty() || *message == '\0')
 		return message;
@@ -207,23 +208,23 @@ const char *TranslationManager::getTranslation(const char *message, const char *
 	return message;
 }
 
-const char *TranslationManager::getCurrentCharset() {
+String TranslationManager::getCurrentCharset() const {
 	if (_currentCharset.empty())
 		return "ASCII";
-	return _currentCharset.c_str();
+	return _currentCharset;
 }
 
-const char *TranslationManager::getCurrentLanguage() {
+String TranslationManager::getCurrentLanguage() const {
 	if (_currentLang == -1)
 		return "C";
-	return _langs[_currentLang].c_str();
+	return _langs[_currentLang];
 }
 
-String TranslationManager::getTranslation(const String &message) {
+String TranslationManager::getTranslation(const String &message) const {
 	return getTranslation(message.c_str());
 }
 
-String TranslationManager::getTranslation(const String &message, const String &context) {
+String TranslationManager::getTranslation(const String &message, const String &context) const {
 	return getTranslation(message.c_str(), context.c_str());
 }
 
@@ -240,7 +241,7 @@ const TLangArray TranslationManager::getSupportedLanguageNames() const {
 	return languages;
 }
 
-int TranslationManager::parseLanguage(const String lang) {
+int TranslationManager::parseLanguage(const String &lang) const {
 	for (unsigned int i = 0; i < _langs.size(); i++) {
 		if (lang == _langs[i])
 			return i + 1;
@@ -249,7 +250,7 @@ int TranslationManager::parseLanguage(const String lang) {
 	return kTranslationBuiltinId;
 }
 
-const char *TranslationManager::getLangById(int id) {
+String TranslationManager::getLangById(int id) const {
 	switch (id) {
 	case kTranslationAutodetectId:
 		return "";
@@ -444,29 +445,29 @@ TranslationManager::TranslationManager() {}
 
 TranslationManager::~TranslationManager() {}
 
-void TranslationManager::setLanguage(const char *lang) {}
+void TranslationManager::setLanguage(const String &lang) {}
 
-const char *TranslationManager::getLangById(int id) {
-	return "";
+String TranslationManager::getLangById(int id) const {
+	return String();
 }
 
-int TranslationManager::parseLanguage(const String lang) {
+int TranslationManager::parseLanguage(const String lang) const {
 	return kTranslationBuiltinId;
 }
 
-const char *TranslationManager::getTranslation(const char *message) {
+const char *TranslationManager::getTranslation(const char *message) const {
 	return message;
 }
 
-String TranslationManager::getTranslation(const String &message) {
+String TranslationManager::getTranslation(const String &message) const {
 	return message;
 }
 
-const char *TranslationManager::getTranslation(const char *message, const char *) {
+const char *TranslationManager::getTranslation(const char *message, const char *) const {
 	return message;
 }
 
-String TranslationManager::getTranslation(const String &message, const String &) {
+String TranslationManager::getTranslation(const String &message, const String &) const {
 	return message;
 }
 
@@ -474,11 +475,11 @@ const TLangArray TranslationManager::getSupportedLanguageNames() const {
 	return TLangArray();
 }
 
-const char *TranslationManager::getCurrentCharset() {
+String TranslationManager::getCurrentCharset() const {
 	return "ASCII";
 }
 
-const char *TranslationManager::getCurrentLanguage() {
+String *TranslationManager::getCurrentLanguage() const {
 	return "C";
 }
 

@@ -73,7 +73,7 @@ public:
 	 * @param id Id of the language
 	 * @return the matching string description of the language
 	 */
-	const char *getLangById(int id);
+	String getLangById(int id) const;
 
 	/**
 	 * Sets the current translation language to the one specified in the
@@ -82,7 +82,7 @@ public:
 	 *
 	 * @param lang Language to setup.
 	 */
-	void setLanguage(const char *lang);
+	void setLanguage(const String &lang);
 
 	/**
 	 * Sets the current translation language to the one specified by the
@@ -101,32 +101,21 @@ public:
 	 * @return id of the language or kTranslationBuiltinId in case the
 	 *         language could not be found.
 	 */
-	int parseLanguage(const String lang);
+	int parseLanguage(const String &lang) const;
 
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
 	 * it returns the original untranslated message.
 	 */
-	const char *getTranslation(const char *message);
+	const char *getTranslation(const char *message) const;
 
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
 	 * it returns the original untranslated message.
 	 */
-	String getTranslation(const String &message);
-
-	/**
-	 * Returns the translation into the current language of the parameter
-	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message.
-	 *
-	 * If a translation is found for the given context it will return that
-	 * translation, otherwise it will look for a translation for the same
-	 * massage without a context or with a different context.
-	 */
-	const char *getTranslation(const char *message, const char *context);
+	String getTranslation(const String &message) const;
 
 	/**
 	 * Returns the translation into the current language of the parameter
@@ -137,7 +126,18 @@ public:
 	 * translation, otherwise it will look for a translation for the same
 	 * massage without a context or with a different context.
 	 */
-	String getTranslation(const String &message, const String &context);
+	const char *getTranslation(const char *message, const char *context) const;
+
+	/**
+	 * Returns the translation into the current language of the parameter
+	 * message. In case the message isn't found in the translation catalog,
+	 * it returns the original untranslated message.
+	 *
+	 * If a translation is found for the given context it will return that
+	 * translation, otherwise it will look for a translation for the same
+	 * massage without a context or with a different context.
+	 */
+	String getTranslation(const String &message, const String &context) const;
 
 	/**
 	 * Returns a list of supported languages.
@@ -149,12 +149,12 @@ public:
 	/**
 	 * Returns charset specified by selected translation language
 	 */
-	const char *getCurrentCharset();
+	String getCurrentCharset() const;
 
 	/**
 	 * Returns currently selected translation language
 	 */
-	const char *getCurrentLanguage();
+	String getCurrentLanguage() const;
 
 private:
 #ifdef USE_TRANSLATION
