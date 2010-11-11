@@ -36,9 +36,10 @@
 
 // Codecs
 #include "graphics/video/codecs/cinepak.h"
+#include "graphics/video/codecs/indeo3.h"
 #include "graphics/video/codecs/msvideo1.h"
 #include "graphics/video/codecs/msrle.h"
-#include "graphics/video/codecs/indeo3.h"
+#include "graphics/video/codecs/truemotion1.h"
 
 namespace Graphics {
 
@@ -174,7 +175,8 @@ void AviDecoder::handleStreamHeader() {
 
 	if (_fileStream->readUint32BE() != ID_STRF)
 		error("Could not find STRF tag");
-	/* uint32 strfSize = */ _fileStream->readUint32LE();
+	uint32 strfSize = _fileStream->readUint32LE();
+	uint32 startPos = _fileStream->pos();
 
 	if (sHeader.streamType == ID_VIDS) {
 		_vidsHeader = sHeader;
@@ -224,6 +226,9 @@ void AviDecoder::handleStreamHeader() {
 		if (_wvInfo.channels == 2)
 			_audsHeader.sampleSize /= 2;
 	}
+
+	// Ensure that we're at the end of the chunk
+	_fileStream->seek(startPos + strfSize);
 }
 
 bool AviDecoder::load(Common::SeekableReadStream *stream) {
@@ -349,7 +354,8 @@ Surface *AviDecoder::decodeNextFrame() {
 		if (_wvInfo.channels == 2)
 			flags |= Audio::FLAG_STEREO;
 
-		_audStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, flags);
+		if (_audStream)
+			_audStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, flags);
 		_fileStream->skip(chunkSize & 1); // Alignment
 	} else if (getStreamType(nextTag) == 'dc' || getStreamType(nextTag) == 'id' ||
 	           getStreamType(nextTag) == 'AM' || getStreamType(nextTag) == '32') {
@@ -410,6 +416,10 @@ Codec *AviDecoder::createCodec() {
 		case ID_IV32:
 			return new Indeo3Decoder(_bmInfo.width, _bmInfo.height);
 #endif
+#ifdef GRAPHICS_TRUEMOTION1_H
+		case ID_DUCK:
+			return new TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);
+#endif
 		default:
 			warning ("Unknown/Unhandled compression format \'%s\'", tag2str(_vidsHeader.streamHandler));
 	}
@@ -425,9 +435,10 @@ PixelFormat AviDecoder::getPixelFormat() const {
 Audio::QueuingAudioStream *AviDecoder::createAudioStream() {
 	if (_wvInfo.tag == AVI_WAVE_FORMAT_PCM)
 		return Audio::makeQueuingAudioStream(AUDIO_RATE, _wvInfo.channels == 2);
-
-	if (_wvInfo.tag != 0) // No sound
-		warning ("Unsupported AVI audio format %d", _wvInfo.tag);
+	else if (_wvInfo.tag == 98)
+		warning("Unsupported DK3 IMA ADPCM sound");
+	else if (_wvInfo.tag != 0) // No sound
+		warning("Unsupported AVI audio format %d", _wvInfo.tag);
 
 	return NULL;
 }

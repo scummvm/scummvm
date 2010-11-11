@@ -66,6 +66,7 @@ namespace Graphics {
 #define ID_WHAM MKID_BE('WHAM')
 #define ID_CVID MKID_BE('cvid')
 #define ID_IV32 MKID_BE('iv32')
+#define ID_DUCK MKID_BE('DUCK')
 
 struct BITMAPINFOHEADER {
 	uint32 size;

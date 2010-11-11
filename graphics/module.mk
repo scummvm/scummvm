@@ -38,7 +38,8 @@ MODULE_OBJS := \
 	video/codecs/qdm2.o \
 	video/codecs/qtrle.o \
 	video/codecs/rpza.o \
-	video/codecs/smc.o
+	video/codecs/smc.o \
+	video/codecs/truemotion1.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \
