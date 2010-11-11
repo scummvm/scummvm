@@ -58,6 +58,8 @@
 #include "common/file.h"
 #include "common/savefile.h"
 
+#include "engines/util.h"
+
 namespace Sci {
 
 int g_debug_sleeptime_factor = 1;
@@ -226,9 +228,11 @@ void Console::preEnter() {
 
 void Console::postEnter() {
 	if (!_videoFile.empty()) {
-		_engine->_gfxCursor->kernelHide();
-
 		Graphics::VideoDecoder *videoDecoder = 0;
+
+#ifdef ENABLE_SCI32
+		bool duckMode = false;
+#endif
 
 		if (_videoFile.hasSuffix(".seq")) {
 			SeqDecoder *seqDecoder = new SeqDecoder();
@@ -238,11 +242,34 @@ void Console::postEnter() {
 		} else if (_videoFile.hasSuffix(".vmd")) {
 			videoDecoder = new Graphics::VMDDecoder(g_system->getMixer());
 #endif
+		} else if (_videoFile.hasSuffix(".duk")) {
+#ifdef ENABLE_SCI32
+			duckMode = true;
+			videoDecoder = new Graphics::AviDecoder(g_system->getMixer());
+#else
+			warning("Duck videos require SCI32 support compiled in");
+#endif
 		} else if (_videoFile.hasSuffix(".avi")) {
 			videoDecoder = new Graphics::AviDecoder(g_system->getMixer());
 		}
 
 		if (videoDecoder && videoDecoder->loadFile(_videoFile)) {
+			_engine->_gfxCursor->kernelHide();
+
+#ifdef ENABLE_SCI32
+			// Duck videos are 16bpp, so we need to change pixel formats
+			int oldWidth = g_system->getWidth();
+			int oldHeight = g_system->getHeight();
+			if (duckMode) {
+				Common::List<Graphics::PixelFormat> formats;
+				formats.push_back(videoDecoder->getPixelFormat());
+				initGraphics(640, 480, true, formats);
+
+				if (g_system->getScreenFormat().bytesPerPixel != videoDecoder->getPixelFormat().bytesPerPixel)
+					error("Could not switch screen format for the duck video");
+			}
+#endif
+
 			uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
 			uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
 			bool skipVideo = false;
@@ -273,10 +300,17 @@ void Console::postEnter() {
 			}
 		
 			delete videoDecoder;
+
+#ifdef ENABLE_SCI32
+			// Switch back to 8bpp if we played a duck video
+			if (duckMode)
+				initGraphics(oldWidth, oldHeight, oldWidth > 320);
+#endif
+
+			_engine->_gfxCursor->kernelShow();
 		} else
 			warning("Could not play video %s\n", _videoFile.c_str());
 
-		_engine->_gfxCursor->kernelShow();
 		_videoFile.clear();
 		_videoFrameDelay = 0;
 	}
@@ -1547,7 +1581,7 @@ bool Console::cmdPicVisualize(int argc, const char **argv) {
 
 bool Console::cmdPlayVideo(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Plays a SEQ, AVI or VMD video.\n");
+		DebugPrintf("Plays a SEQ, AVI, DUK or VMD video.\n");
 		DebugPrintf("Usage: %s <video file name> <delay>\n", argv[0]);
 		DebugPrintf("The video file name should include the extension\n");
 		DebugPrintf("Delay is only used in SEQ videos and is measured in ticks (default: 10)\n");
@@ -1557,7 +1591,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	Common::String filename = argv[1];
 	filename.toLowercase();
 
-	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi") || filename.hasSuffix(".vmd")) {
+	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi") || filename.hasSuffix(".vmd") || filename.hasSuffix(".duk")) {
 		_videoFile = filename;
 		_videoFrameDelay = (argc == 2) ? 10 : atoi(argv[2]);
 		return Cmd_Exit(0, 0);
