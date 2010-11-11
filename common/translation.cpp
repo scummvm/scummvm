@@ -451,7 +451,7 @@ String TranslationManager::getLangById(int id) const {
 	return String();
 }
 
-int TranslationManager::parseLanguage(const String lang) const {
+int TranslationManager::parseLanguage(const String &lang) const {
 	return kTranslationBuiltinId;
 }
 
@@ -479,7 +479,7 @@ String TranslationManager::getCurrentCharset() const {
 	return "ASCII";
 }
 
-String *TranslationManager::getCurrentLanguage() const {
+String TranslationManager::getCurrentLanguage() const {
 	return "C";
 }
 
