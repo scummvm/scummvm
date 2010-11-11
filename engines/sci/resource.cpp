@@ -117,6 +117,9 @@ static const char *s_resourceTypeNames[] = {
 	"chunk", "macibin", "macibis", "macpict"
 };
 
+// Resource type suffixes. Note that the
+// suffic of SCI3 scripts has been changed from
+// scr to csc
 static const char *s_resourceTypeSuffixes[] = {
 	"v56", "p56", "scr", "tex", "snd",
 	   "", "voc", "fon", "cur", "pat",
@@ -1438,8 +1441,10 @@ void ResourceManager::readResourcePatches() {
 	ResourceSource *psrcPatch;
 
 	for (int i = kResourceTypeView; i < kResourceTypeInvalid; ++i) {
+		const char *suffix = (getSciVersion() == SCI_VERSION_3 && i == kResourceTypeScript) ? "csc" : s_resourceTypeSuffixes[i];
+
 		// Ignore the types that can't be patched (and Robot/VMD is handled externally for now)
-		if (!s_resourceTypeSuffixes[i] || i == kResourceTypeRobot || i == kResourceTypeVMD)
+		if (!suffix || i == kResourceTypeRobot || i == kResourceTypeVMD)
 			continue;
 
 		files.clear();
@@ -1450,7 +1455,7 @@ void ResourceManager::readResourcePatches() {
 		SearchMan.listMatchingMembers(files, mask);
 		// SCI1 and later naming - nnn.typ
 		mask = "*.";
-		mask += s_resourceTypeSuffixes[i];
+		mask += suffix;
 		SearchMan.listMatchingMembers(files, mask);
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
