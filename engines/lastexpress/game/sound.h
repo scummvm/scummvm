@@ -284,6 +284,11 @@ private:
 
 			isStreamed = false;
 		}
+
+		~SoundEntry() {
+			delete stream;
+			//delete subtitle;
+		}
 	};
 
 	// Engine

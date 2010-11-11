@@ -62,6 +62,10 @@ SceneManager::~SceneManager() {
 	SAFE_DELETE(_clockHours);
 	SAFE_DELETE(_clockMinutes);
 
+	// Clear frame queue
+	for (Common::List<SequenceFrame *>::iterator i = _queue.begin(); i != _queue.end(); ++i)
+		SAFE_DELETE(*i);
+
 	// Zero-out passed pointers
 	_engine = NULL;
 }

@@ -150,7 +150,9 @@ Entity::Entity(LastExpressEngine *engine, EntityIndex index) : _engine(engine), 
 
 Entity::~Entity() {
 	for (uint i = 0; i < _callbacks.size(); i++)
-		delete _callbacks[i];
+		SAFE_DELETE(_callbacks[i]);
+
+	_callbacks.clear();
 
 	delete _data;
 

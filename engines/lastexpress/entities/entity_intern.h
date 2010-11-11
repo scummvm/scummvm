@@ -83,7 +83,7 @@ void class::setup_##name() { \
 }
 
 #define BEGIN_SETUP(class, name, index, type) \
-	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, new ENTITY_CALLBACK(class, name, this)); \
+	_engine->getGameLogic()->getGameState()->getGameSavePoints()->setCallback(_entityIndex, _callbacks[index]); \
 	_data->setCurrentCallback(index); \
 	_data->resetCurrentParameters<type>();
 
