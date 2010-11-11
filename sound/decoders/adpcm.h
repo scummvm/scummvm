@@ -58,7 +58,8 @@ enum typesADPCM {
 	kADPCMTinsel6,             // 6-bit ADPCM used by the Tinsel engine
 	kADPCMTinsel8,             // 8-bit ADPCM used by the Tinsel engine
 	kADPCMIma,                 // Standard IMA ADPCM
-	kADPCMApple                // Apple QuickTime IMA ADPCM
+	kADPCMApple,               // Apple QuickTime IMA ADPCM
+	kADPCMDK3                  // Duck DK3 IMA ADPCM
 };
 
 /**

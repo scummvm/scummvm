@@ -691,6 +691,96 @@ int Tinsel8_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 
 #pragma mark -
 
+// Duck DK3 IMA ADPCM Decoder
+// Based on FFmpeg's decoder and http://wiki.multimedia.cx/index.php?title=Duck_DK3_IMA_ADPCM
+
+class DK3_ADPCMStream : public Ima_ADPCMStream {
+protected:
+
+	void reset() {
+		Ima_ADPCMStream::reset();
+		_topNibble = false;
+	}
+
+public:
+	DK3_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
+		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+
+		// DK3 only works as a stereo stream
+		assert(channels == 2);
+		_topNibble = false;
+	}
+
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+
+private:
+	byte _nibble, _lastByte;
+	bool _topNibble;
+};
+
+#define DK3_READ_NIBBLE() \
+do { \
+	if (_topNibble) { \
+		_nibble = _lastByte >> 4; \
+		_topNibble = false; \
+	} else { \
+		if (_stream->pos() >= _endpos) \
+			break; \
+		if ((_stream->pos() % _blockAlign) == 0) \
+			continue; \
+		_lastByte = _stream->readByte(); \
+		_nibble = _lastByte & 0xf; \
+		_topNibble = true; \
+	} \
+} while (0)
+		
+
+int DK3_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samples = 0;
+
+	assert((numSamples % 4) == 0);
+
+	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {	
+		if ((_stream->pos() % _blockAlign) == 0) {
+			_stream->readUint16LE(); // Unknown
+			uint16 rate = _stream->readUint16LE(); // Copy of rate
+			_stream->skip(6); // Unknown
+			// Get predictor for both sum/diff channels
+			_status.ima_ch[0].last = _stream->readSint16LE();
+			_status.ima_ch[1].last = _stream->readSint16LE();
+			// Get index for both sum/diff channels
+			_status.ima_ch[0].stepIndex = _stream->readByte();
+			_status.ima_ch[1].stepIndex = _stream->readByte();
+
+			if (_stream->eos())
+				break;
+
+			// Sanity check
+			assert(rate == getRate());
+		}
+
+		DK3_READ_NIBBLE();
+		decodeIMA(_nibble, 0);
+
+		DK3_READ_NIBBLE();
+		decodeIMA(_nibble, 1);
+
+		buffer[samples++] = _status.ima_ch[0].last + _status.ima_ch[1].last;
+		buffer[samples++] = _status.ima_ch[0].last - _status.ima_ch[1].last;
+
+		DK3_READ_NIBBLE();
+		decodeIMA(_nibble, 0);
+
+		buffer[samples++] = _status.ima_ch[0].last + _status.ima_ch[1].last;
+		buffer[samples++] = _status.ima_ch[0].last - _status.ima_ch[1].last;
+	}
+
+	return samples;
+}
+
+
+#pragma mark -
+
 
 // adjust the step for use on the next sample.
 int16 ADPCMStream::stepAdjust(byte code) {
@@ -750,6 +840,8 @@ RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, Dispo
 		return new Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCMApple:
 		return new Apple_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
+	case kADPCMDK3:
+		return new DK3_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	default:
 		error("Unsupported ADPCM encoding");
 		break;
