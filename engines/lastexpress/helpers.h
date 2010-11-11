@@ -85,7 +85,7 @@
 #define redrawScreen() _engine->getGraphicsManager()->update(); _engine->_system->updateScreen();
 
 // Used to delete entity sequences
-#define SAFE_DELETE(_p) { if(_p) { delete (_p); (_p) = NULL; } }
+#define SAFE_DELETE(_p) { delete (_p); (_p) = NULL; }
 
 //////////////////////////////////////////////////////////////////////////
 // Output
