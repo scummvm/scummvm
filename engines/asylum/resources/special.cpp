@@ -663,7 +663,78 @@ void Special::playSoundChapter1(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::playSoundChapter2(Object *object, ActorIndex actorIndex) {
-	error("[Special::playSoundChapter2] Not implemented!");
+	if (actorIndex == kActorInvalid) {
+		switch(object->getId()) {
+		default:
+			break;
+
+		case kObjectJessieStatusQuo:
+		case kObjectTicaTac01:
+			if (_vm->getRandomBit()) {
+				if (!getSound()->isPlaying(MAKE_RESOURCE(kResourcePackSharedSound, 1848))
+				 && !getSound()->isPlaying(MAKE_RESOURCE(kResourcePackSharedSound, 1849))
+				 && !getSound()->isPlaying(MAKE_RESOURCE(kResourcePackSharedSound, 1850))
+				 && !getSound()->isPlaying(MAKE_RESOURCE(kResourcePackSharedSound, 1844))
+				 && !getSound()->isPlaying(MAKE_RESOURCE(kResourcePackSharedSound, 1845))
+				 && !getSound()->isPlaying(MAKE_RESOURCE(kResourcePackSharedSound, 1846))) {
+					if (object->getId() == kObjectJessieStatusQuo)
+						playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1848 + rnd(3)), 13, object);
+					else
+						playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1844 + rnd(3)), 19, object);
+				}
+			}
+			break;
+
+		case kObjectDennisStatusQuo:
+		case kObjectDennisStatus2:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1856), 16, object);
+			break;
+
+		case kObjectSuckerSittingStatusQuo:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1859), 15, object);
+			break;
+
+		case kObjectSailorBoy:
+		case kObjectSailorStatusQuo:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1858), 19, object);
+			break;
+
+		case kObjectFishingBoy:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1860), 19, object);
+			break;
+
+		case kObjectMarty02:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1854), 15, object);
+			break;
+
+		case kObjectEleenOnGround:
+		case kObjectEileenOnBench:
+		case kObject994:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1857), 28, object);
+			break;
+		}
+	} else {
+		switch (actorIndex) {
+		default:
+			break;
+
+		case 1:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1855), 18, actorIndex);
+			break;
+
+		case 5:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1859), 15, actorIndex);
+			break;
+		}
+	}
 }
 
 void Special::playSoundChapter3(Object *object, ActorIndex actorIndex) {
@@ -756,8 +827,8 @@ void Special::playSoundChapter4(Object *object, ActorIndex actorIndex) {
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1903), 14, object);
 			break;
 
-		case kObjectNPC032SQOutside:
-		case kObjectNPC032SQBigTop:
+		case kObjectNPC032StatusQuoOutside:
+		case kObjectNPC032StatusQuoBigTop:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1904), 14, object);
 			break;
@@ -767,23 +838,23 @@ void Special::playSoundChapter4(Object *object, ActorIndex actorIndex) {
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1879), 16, object);
 			break;
 
-		case kObjectTattooManSQ:
+		case kObjectTattooManStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1884), 14, object);
 			break;
 
-		case kObjectStrongmanSQ:
+		case kObjectStrongmanStatusQuo:
 		case kObjectStrongmanLeft:
 		case kObjectStrongmanRight:
 			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1885), 16, object);
 			break;
 
-		case kObjectStrongmanSQ2:
+		case kObjectStrongmanStatusQuo2:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1886), 16, object);
 			break;
 
-		case kObjectInfernoSQ:
+		case kObjectInfernoStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1905), 12, object);
 			break;
@@ -792,73 +863,73 @@ void Special::playSoundChapter4(Object *object, ActorIndex actorIndex) {
 			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1906), 12, object);
 			break;
 
-		case kObjectClownSQ:
+		case kObjectClownStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1907), 10, object);
 			break;
 
-		case kObjectTrixieSQ:
+		case kObjectTrixieStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1908), 12, object);
 			break;
 
-		case kObjectSimonSQ:
+		case kObjectSimonStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1909), 12, object);
 			break;
 
-		case kObjectFunTixSQ:
+		case kObjectFunTixStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1913), 10, object);
 			break;
 
-		case kObjectFreakTixSQUp:
-		case kObjectFreakTixSQDown:
+		case kObjectFreakTixStatusQuoUp:
+		case kObjectFreakTixStatusQuoDown:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1914), 9, object);
 			break;
 
-		case kObjectFortTellerSQ:
+		case kObjectFortTellerStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1915), 15, object);
 			break;
 
-		case kObjectRingTossSQ:
+		case kObjectRingTossStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1916), 10, object);
 			break;
 
-		case kObjectPigShootSQ:
+		case kObjectPigShootStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1917), 10, object);
 			break;
 
-		case kObjectKnockDownSQ:
+		case kObjectKnockDownStatusQuo:
 			if (_vm->isGameFlagNotSet(kGameFlag358) && _vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1918), 10, object);
 			break;
 
-		case kObjectPretZoolSQ:
+		case kObjectPretZoolStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1919), 14, object);
 			break;
 
-		case kObjectTimberSQ:
+		case kObjectTimberStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1920), 14, object);
 			break;
 
-		case kObjectTwinsSQ:
+		case kObjectTwinsStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1921), 20, object);
 			break;
 
-		case kObjectSeanSQ:
+		case kObjectSeanStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1923), 16, object);
 			break;
 
-		case kObjectMomAndPopSQ:
+		case kObjectMomAndPopStatusQuo:
 			if (_vm->getRandomBit())
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1852), 15, object);
 
@@ -897,7 +968,7 @@ void Special::playSoundChapter6(Object *object, ActorIndex actorIndex) {
 	default:
 		break;
 
-	case kObjectGravinSQCyber:
+	case kObjectGravinStatusQuoCyber:
 		if (_vm->getRandomBit())
 			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1880), 14, object);
 		break;
@@ -907,27 +978,27 @@ void Special::playSoundChapter6(Object *object, ActorIndex actorIndex) {
 			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1880), 14, object);
 		break;
 
-	case kObjectNPC062GritzaSQ:
+	case kObjectNPC062GritzaStatusQuo:
 		if (_vm->getRandomBit())
 			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1881), 12, object);
 		break;
 
-	case kObjectNPC063GrundleSQ:
+	case kObjectNPC063GrundleStatusQuo:
 		if (_vm->getRandomBit())
 			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1882), 12, object);
 		break;
 
-	case kObjectNPC064GrellaSQ:
+	case kObjectNPC064GrellaStatusQuo:
 		if (_vm->getRandomBit())
 			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1883), 12, object);
 		break;
 
-	case kObjectNPC065SQ:
+	case kObjectNPC065StatusQuo:
 		if (_vm->getRandomBit())
 			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1868), 12, object);
 		break;
 
-	case kObjectNPC066SQ:
+	case kObjectNPC066StatusQuo:
 		if (_vm->getRandomBit())
 			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1867), 12, object);
 		break;
@@ -956,7 +1027,114 @@ void Special::playSoundChapter7(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::playSoundChapter8(Object *object, ActorIndex actorIndex) {
-	error("[Special::playSoundChapter8] Not implemented!");
+	if (actorIndex == kActorInvalid) {
+		switch(object->getId()) {
+		default:
+			break;
+
+		case kObject703:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1874), 10, object);
+			break;
+
+		case kObjectTree8:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1875), 10, object);
+			break;
+
+		case kObjectSlab:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1922), 10, object);
+			break;
+
+		case kObjectWitchDoctor:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1863), 16, object);
+			break;
+
+		case kObjectStoneWifeStatuQuo:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1872), 15, object);
+			break;
+
+		case kObjectFishermanWidowStatusQuo:
+			if (_vm->isGameFlagNotSet(kGameFlag553) && !getSound()->isPlaying(getSpeech()->getSoundResourceId()))
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1870), 10, object);
+			break;
+
+		case kObjectStoneMasonStatusHitt:
+			if (rnd(100) < 30)
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1873), 15, object);
+			break;
+
+		case kObjectGirlStatusQuo:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1871), 15, object);
+			break;
+
+		case kObjectWitchWifeStirring:
+			if (rnd(100) < 30)
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1869), 17, object);
+			break;
+
+		case kObjectQuetzlcaotlStatusQuo:
+			playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1864), 3, object);
+			break;
+
+		case kObjectBlanklPixelForWarrior:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1876), 10, object);
+			break;
+
+		case kObjectPixelForHutWarrior:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1878), 10, object);
+			break;
+
+		case kObjectPixelForWaterfallGhost:
+			if (_vm->getRandomBit())
+				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1877), 10, object);
+			break;
+		}
+	} else {
+		if (!_vm->isGameFlagNotSet(kGameFlag528))
+			return;
+
+		switch (actorIndex) {
+		default:
+			break;
+
+		case 1:
+			if (!getSound()->isPlaying(getWorld()->soundResourceIds[8]))
+				playSoundPanning(getWorld()->soundResourceIds[8], 15, actorIndex);
+			break;
+
+		case 2:
+			if (!getSound()->isPlaying(getWorld()->soundResourceIds[7]))
+				playSoundPanning(getWorld()->soundResourceIds[7], 15, actorIndex);
+			break;
+
+		case 3:
+			if (!getSound()->isPlaying(getWorld()->soundResourceIds[11]))
+				playSoundPanning(getWorld()->soundResourceIds[11], 15, actorIndex);
+			break;
+
+		case 4:
+			if (!getSound()->isPlaying(getWorld()->soundResourceIds[12]))
+				playSoundPanning(getWorld()->soundResourceIds[12], 15, actorIndex);
+			break;
+
+		case 5:
+			if (!getSound()->isPlaying(getWorld()->soundResourceIds[13]))
+				playSoundPanning(getWorld()->soundResourceIds[13], 15, actorIndex);
+			break;
+
+		case 6:
+			if (!getSound()->isPlaying(getWorld()->soundResourceIds[14]))
+				playSoundPanning(getWorld()->soundResourceIds[7], 15, actorIndex); // BUG: Are we really supposed to use that sound (7 instead of 14)
+			break;
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1029,7 +1207,7 @@ void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, Object 
 		}
 		break;
 
-	case kObjectDennisStatus:
+	case kObjectDennisStatusQuo:
 		x = 1382;
 		y = 1041;
 		break;
@@ -1039,7 +1217,7 @@ void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, Object 
 		y = 1220;
 		break;
 
-	case kObjectSuckerSittingStatus:
+	case kObjectSuckerSittingStatusQuo:
 		x = 1376;
 		y = 1148;
 		break;
