@@ -151,6 +151,7 @@ public:
 	uint32 next;
 
 	SceneHotspot() {}
+	~SceneHotspot();
 	static SceneHotspot *load(Common::SeekableReadStream *stream);
 
 	bool isInside(const Common::Point &point);

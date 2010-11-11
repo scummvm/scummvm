@@ -292,6 +292,10 @@ void LastExpressEngine::restoreEventHandlers() {
 }
 
 void LastExpressEngine::setEventHandlers(EventHandler::EventFunction *mouse, EventHandler::EventFunction *tick) {
+	// Cleanup previous event handlers
+	delete eventMouse;
+	delete eventTick;
+
 	eventMouse = mouse;
 	eventTick = tick;
 }

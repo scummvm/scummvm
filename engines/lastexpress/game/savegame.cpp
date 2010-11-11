@@ -124,7 +124,7 @@ uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 
 	// Read the list of entry headers
 	if (_savegame->size() > 32) {
-		while (!_savegame->eos() && !_savegame->err()) {
+		while (_savegame->pos() < _savegame->size() && !_savegame->eos() && !_savegame->err()) {
 
 			// Update sound queue while we go through the savegame
 			getSound()->updateQueue();
@@ -485,7 +485,10 @@ bool SaveLoad::isSavegameValid(GameId id) {
 	SavegameMainHeader header;
 
 	Common::InSaveFile *save = openForLoading(id);
-	return loadMainHeader(save, &header);
+	bool isHeaderValid = loadMainHeader(save, &header);
+	delete save;
+
+	return isHeaderValid;
 }
 
 bool SaveLoad::isGameFinished(uint32 menuIndex, uint32 savegameIndex) {

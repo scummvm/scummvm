@@ -383,6 +383,12 @@ Menu::~Menu() {
 
 	_lastHotspot = NULL;
 
+	// Cleanup frames
+	for (MenuFrames::iterator it = _frames.begin(); it != _frames.end(); it++)
+		SAFE_DELETE(it->_value);
+
+	_frames.clear();
+
 	// Zero passed pointers
 	_engine = NULL;
 }

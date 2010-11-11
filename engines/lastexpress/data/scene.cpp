@@ -27,10 +27,18 @@
 
 #include "lastexpress/data/background.h"
 
+#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
 namespace LastExpress {
+
+SceneHotspot::~SceneHotspot() {
+	for (uint i = 0; i < _coords.size(); i++)
+		SAFE_DELETE(_coords[i]);
+
+	_coords.clear();
+}
 
 SceneHotspot *SceneHotspot::load(Common::SeekableReadStream *stream) {
 	SceneHotspot *hs = new SceneHotspot();

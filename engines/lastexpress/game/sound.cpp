@@ -118,6 +118,8 @@ SoundManager::SoundManager(LastExpressEngine *engine) : _engine(engine), _state(
 }
 
 SoundManager::~SoundManager() {
+	_cache.clear();
+
 	delete _soundStream;
 
 	// Zero passed pointers
