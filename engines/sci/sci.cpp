@@ -128,9 +128,10 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "seq");	// SEQ movie files for DOS versions
 	SearchMan.addSubDirectoryMatching(gameDataDir, "robot");	// robot movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "robots");	// robot movie files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "movie");	// vmd movie files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");	// vmd movie files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "vmd");	// vmd movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "movie");	// VMD movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");	// VMD movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "vmd");	// VMD movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "duk");	// Duck movie files in Phantasmagoria 2
 
 	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
 	// is for the demo of Phantasmagoria, included in the disk
