@@ -350,7 +350,7 @@ void Parser_v1d::lineHandler() {
 		do {
 			noun = findNextNoun(noun);              // Find a noun in the line
 			// Must try at least once for objects allowing verb-context
-			for (int i = 0; i < _vm->_numObj; i++) {
+			for (int i = 0; i < _vm->_object->_numObj; i++) {
 				obj = &_vm->_object->_objects[i];
 				if (isNear(verb, noun, obj, farComment)) {
 					if (isObjectVerb(verb, obj)     // Foreground object

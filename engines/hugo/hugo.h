@@ -158,7 +158,6 @@ public:
 	uint16    _look;
 	uint16    _take;
 	uint16    _drop;
-	uint16    _numObj;
 
 	GUI::Debugger *getDebugger() { return _console; }
 
@@ -200,7 +199,6 @@ public:
 	void clearBoundary(int x1, int x2, int y);
 	void endGame();
 	void initStatus();
-	void readObjectImages();
 	void readScreenFiles(int screen);
 	void screenActions(int screen);
 	void setNewScreen(int screen);

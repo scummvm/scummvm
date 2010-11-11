@@ -66,7 +66,7 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_textUtil(0), _arrayNouns(0), _arrayVerbs(0), _arrayReqs(0), _hotspots(0), _invent(0), _uses(0), _catchallList(0),
 	_backgroundObjects(0), _points(0), _cmdList(0), _screenActs(0), _heroImage(0), _defltTunes(0), _introX(0),
 	_introY(0), _maxInvent(0), _numBonuses(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0), _screenStates(0),
-	_numObj(0), _score(0), _maxscore(0), _backgroundObjectsSize(0), _screenActsSize(0), _usesSize(0)
+	_score(0), _maxscore(0), _backgroundObjectsSize(0), _screenActsSize(0), _usesSize(0)
 
 {
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
@@ -311,7 +311,7 @@ void HugoEngine::initMachine() {
 		readScreenFiles(0);
 	else
 		_file->readBackground(_numScreens - 1);     // Splash screen
-	readObjectImages();                             // Read all object images
+	_object->readObjectImages();                    // Read all object images
 	if (_platform == Common::kPlatformWindows)
 		_file->readUIFImages();                     // Read all uif images (only in Win versions)
 }
@@ -738,13 +738,7 @@ bool HugoEngine::loadHugoDat() {
 		}
 	}
 
-	//Read LASTOBJ
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numElem = in.readUint16BE();
-		if (varnt == _gameVariant)
-			_numObj = numElem;
-	}
-
+	_object->loadNumObj(in);
 	_scheduler->loadAlNewscrIndex(in);
 	_screen->loadFontArr(in);
 
@@ -1040,13 +1034,6 @@ void HugoEngine::shutdown() {
 	_object->freeObjects();
 }
 
-void HugoEngine::readObjectImages() {
-	debugC(1, kDebugEngine, "readObjectImages");
-
-	for (int i = 0; i < _numObj; i++)
-		_file->readImage(i, &_object->_objects[i]);
-}
-
 /**
 * Read scenery, overlay files for given screen number
 */
@@ -1213,10 +1200,7 @@ void HugoEngine::setNewScreen(int screenNum) {
 	debugC(1, kDebugEngine, "setNewScreen(%d)", screenNum);
 
 	*_screen_p = screenNum;                         // HERO object
-	for (int i = HERO + 1; i < _numObj; i++) {      // Any others
-		if (_object->isCarried(i))                  // being carried
-			_object->_objects[i].screenIndex = screenNum;
-	}
+	_object->setCarriedScreen(screenNum);           // Carried objects
 }
 
 /**
@@ -1261,8 +1245,7 @@ void HugoEngine::boundaryCollision(object_t *obj) {
 void HugoEngine::calcMaxScore() {
 	debugC(1, kDebugEngine, "calcMaxScore");
 
-	for (int i = 0; i < _numObj; i++)
-		_maxscore += _object->_objects[i].objValue;
+	_maxscore = _object->calcMaxScore();
 
 	for (int i = 0; i < _numBonuses; i++)
 		_maxscore += _points[i].score;

@@ -65,7 +65,7 @@ void ObjectHandler_v2d::updateImages() {
 	int  num_objs = 0;
 	byte objindex[MAXOBJECTS];                      // Array of indeces to objects
 
-	for (int i = 0; i < _vm->_numObj; i++) {
+	for (int i = 0; i < _numObj; i++) {
 		object_t *obj = &_objects[i];
 		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling >= ALMOST_INVISIBLE))
 			objindex[num_objs++] = i;
@@ -186,7 +186,7 @@ void ObjectHandler_v2d::moveObjects() {
 	// Perform any adjustments to velocity based on special path types
 	// and store all (visible) object baselines into the boundary file.
 	// Don't store foreground or background objects
-	for (int i = 0; i < _vm->_numObj; i++) {
+	for (int i = 0; i < _numObj; i++) {
 		object_t *obj = &_objects[i];               // Get pointer to object
 		seq_t *currImage = obj->currImagePtr;       // Get ptr to current image
 		if (obj->screenIndex == *_vm->_screen_p) {
@@ -287,7 +287,7 @@ void ObjectHandler_v2d::moveObjects() {
 	}
 
 	// Move objects, allowing for boundaries
-	for (int i = 0; i < _vm->_numObj; i++) {
+	for (int i = 0; i < _numObj; i++) {
 		object_t *obj = &_objects[i];                         // Get pointer to object
 		if ((obj->screenIndex == *_vm->_screen_p) && (obj->vx || obj->vy)) {
 			// Only process if it's moving
@@ -341,7 +341,7 @@ void ObjectHandler_v2d::moveObjects() {
 	}
 
 	// Clear all object baselines from the boundary file.
-	for (int i = 0; i < _vm->_numObj; i++) {
+	for (int i = 0; i < _numObj; i++) {
 		object_t *obj = &_objects[i];               // Get pointer to object
 		seq_t *currImage = obj->currImagePtr;       // Get ptr to current image
 		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))

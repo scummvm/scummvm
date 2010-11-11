@@ -334,7 +334,7 @@ void Parser_v1w::lineHandler() {
 
 		// Special code to allow me to get objects from anywhere
 		if (strstr(_line, "fetch all")) {
-			for (int i = 0; i < _vm->_numObj; i++) {
+			for (int i = 0; i < _vm->_object->_numObj; i++) {
 				if (_vm->_object->_objects[i].genericCmd & TAKE)
 					takeObject(&_vm->_object->_objects[i]);
 			}
@@ -342,7 +342,7 @@ void Parser_v1w::lineHandler() {
 		}
 
 		if (strstr(_line, "fetch")) {
-			for (int i = 0; i < _vm->_numObj; i++) {
+			for (int i = 0; i < _vm->_object->_numObj; i++) {
 				if (!strcmp(&_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
 					takeObject(&_vm->_object->_objects[i]);
 					return;
@@ -352,7 +352,7 @@ void Parser_v1w::lineHandler() {
 
 		// Special code to allow me to goto objects
 		if (strstr(_line, "find")) {
-			for (int i = 0; i < _vm->_numObj; i++) {
+			for (int i = 0; i < _vm->_object->_numObj; i++) {
 				if (!strcmp(&_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
 					_vm->_scheduler->newScreen(_vm->_object->_objects[i].screenIndex);
 					return;
@@ -396,7 +396,7 @@ void Parser_v1w::lineHandler() {
 	char farComment[XBYTES * 5] = "";               // hold 5 line comment if object not nearby
 
 	// Test for nearby objects referenced explicitly
-	for (int i = 0; i < _vm->_numObj; i++) {
+	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		object_t *obj = &_vm->_object->_objects[i];
 		if (isWordPresent(_vm->_arrayNouns[obj->nounIndex])) {
 			if (isObjectVerb(obj, farComment) || isGenericVerb(obj, farComment))
@@ -406,7 +406,7 @@ void Parser_v1w::lineHandler() {
 
 	// Test for nearby objects that only require a verb
 	// Note comment is unused if not near.
-	for (int i = 0; i < _vm->_numObj; i++) {
+	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		object_t *obj = &_vm->_object->_objects[i];
 		if (obj->verbOnlyFl) {
 			char contextComment[XBYTES * 5] = "";   // Unused comment for context objects

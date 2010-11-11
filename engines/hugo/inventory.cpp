@@ -153,7 +153,7 @@ int16 InventoryHandler::processInventory(invact_t action, ...) {
 			if (objId == -1 && i < displayNumb) {
 				// Find objid by counting # carried objects == i+1
 				int16 j;
-				for (j = 0, i++; i > 0 && j < _vm->_numObj; j++) {
+				for (j = 0, i++; i > 0 && j < _vm->_object->_numObj; j++) {
 					if (_vm->_object->isCarried(j)) {
 						if (--i == 0)
 							objId = j;

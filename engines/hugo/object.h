@@ -46,6 +46,7 @@ public:
 	virtual ~ObjectHandler();
 
 	object_t  *_objects;
+	uint16    _numObj;
 
 	virtual void moveObjects() = 0;
 	virtual void updateImages() = 0;
@@ -54,13 +55,19 @@ public:
 	bool isCarrying(uint16 wordIndex);
 	bool findObjectSpace(object_t *obj, int16 *destx, int16 *desty);
 
+	int   calcMaxScore();
 	int16 findObject(uint16 x, uint16 y);
 	void freeObjects();
 	void loadObjectArr(Common::File &in);
 	void freeObjectArr();
+	void loadNumObj(Common::File &in);
 	void lookObject(object_t *obj);
-	void restoreSeq(object_t *obj);
+	void readObjectImages();
+	void restoreAllSeq();
+	void restoreObjects(Common::SeekableReadStream *in);
+	void saveObjects(Common::WriteStream *out);
 	void saveSeq(object_t *obj);
+	void setCarriedScreen(int screenNum);
 	void showTakeables();
 	void useObject(int16 objId);
 
@@ -87,6 +94,8 @@ public:
 protected:
 	HugoEngine *_vm;
 	uint16     _objCount;
+
+	void restoreSeq(object_t *obj);
 };
 
 class ObjectHandler_v1d : public ObjectHandler {

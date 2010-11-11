@@ -256,7 +256,7 @@ void Parser::showDosInventory() {
 	static const char *blanks = "                                        ";
 	uint16 index = 0, len1 = 0, len2 = 0;
 
-	for (int i = 0; i < _vm->_numObj; i++) {        // Find widths of 2 columns
+	for (int i = 0; i < _vm->_object->_numObj; i++) { // Find widths of 2 columns
 		if (_vm->_object->isCarried(i)) {
 			uint16 len = strlen(_vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][1]);
 			if (index++ & 1)                        // Right hand column
@@ -274,7 +274,7 @@ void Parser::showDosInventory() {
 	strncat(buffer, blanks, (len1 + len2 - strlen(_vm->_textParser[kTBIntro])) / 2);
 	strcat(strcat(buffer, _vm->_textParser[kTBIntro]), "\n");
 	index = 0;
-	for (int i = 0; i < _vm->_numObj; i++) {        // Assign strings
+	for (int i = 0; i < _vm->_object->_numObj; i++) { // Assign strings
 		if (_vm->_object->isCarried(i)) {
 			if (index++ & 1)
 				strcat(strcat(buffer, _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][1]), "\n");

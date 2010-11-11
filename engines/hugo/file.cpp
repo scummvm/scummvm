@@ -318,12 +318,7 @@ void FileManager::saveGame(int16 slot, const char *descrip) {
 	// Save description of saved game
 	out->write(descrip, DESCRIPLEN);
 
-	// Save objects
-	for (int i = 0; i < _vm->_numObj; i++) {
-		// Save where curr_seq_p is pointing to
-		_vm->_object->saveSeq(&_vm->_object->_objects[i]);
-		out->write(&_vm->_object->_objects[i], sizeof(object_t));
-	}
+	_vm->_object->saveObjects(out);
 
 	const status_t &gameStatus = _vm->getGameStatus();
 
@@ -399,17 +394,7 @@ void FileManager::restoreGame(int16 slot) {
 	if (_vm->_heroImage != HERO)
 		_vm->_object->swapImages(HERO, _vm->_heroImage);
 
-	// Restore objects, retain current seqList which points to dynamic mem
-	// Also, retain cmnd_t pointers
-	for (int i = 0; i < _vm->_numObj; i++) {
-		object_t *p = &_vm->_object->_objects[i];
-		seqList_t seqList[MAX_SEQUENCES];
-		memcpy(seqList, p->seqList, sizeof(seqList_t));
-		uint16 cmdIndex = p->cmdIndex;
-		in->read(p, sizeof(object_t));
-		p->cmdIndex = cmdIndex;
-		memcpy(p->seqList, seqList, sizeof(seqList_t));
-	}
+	_vm->_object->restoreObjects(in);
 
 	in->read(&_vm->_heroImage, sizeof(_vm->_heroImage));
 
@@ -433,9 +418,7 @@ void FileManager::restoreGame(int16 slot) {
 	// Restore points table
 	in->read(_vm->_points, sizeof(point_t) * _vm->_numBonuses);
 
-	// Restore ptrs to currently loaded objects
-	for (int i = 0; i < _vm->_numObj; i++)
-		_vm->_object->restoreSeq(&_vm->_object->_objects[i]);
+	_vm->_object->restoreAllSeq();
 
 	// Now restore time of the save and the event queue
 	_vm->_scheduler->restoreEvents(in);

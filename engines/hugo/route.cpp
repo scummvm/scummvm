@@ -307,7 +307,7 @@ bool Route::findRoute(int16 cx, int16 cy) {
 	// Store all object baselines into objbound (except hero's = [0])
 	object_t  *obj;                                 // Ptr to object
 	int i;
-	for (i = 1, obj = &_vm->_object->_objects[i]; i < _vm->_numObj; i++, obj++) {
+	for (i = 1, obj = &_vm->_object->_objects[i]; i < _vm->_object->_numObj; i++, obj++) {
 		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling != INVISIBLE) && (obj->priority == FLOATING))
 			_vm->storeBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
 	}
@@ -321,7 +321,7 @@ bool Route::findRoute(int16 cx, int16 cy) {
 	}
 
 	// Clear all object baselines from objbound
-	for (i = 0, obj = _vm->_object->_objects; i < _vm->_numObj; i++, obj++) {
+	for (i = 0, obj = _vm->_object->_objects; i < _vm->_object->_numObj; i++, obj++) {
 		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling != INVISIBLE) && (obj->priority == FLOATING))
 			_vm->clearBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
 	}

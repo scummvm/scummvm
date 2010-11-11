@@ -47,6 +47,7 @@
 namespace Hugo {
 
 ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0) {
+	_numObj = 0; 
 }
 
 ObjectHandler::~ObjectHandler() {
@@ -116,7 +117,7 @@ void ObjectHandler::useObject(int16 objId) {
 			                       _vm->_arrayNouns[obj->nounIndex][0]);
 
 		// Check valid use of objects and override verb if necessary
-		for (uses_t *use = _vm->_uses; use->objId != _vm->_numObj; use++) {
+		for (uses_t *use = _vm->_uses; use->objId != _numObj; use++) {
 			if (_vm->getGameStatus().inventoryObjId == use->objId) {
 				// Look for secondary object, if found use matching verb
 				bool foundFl = false;
@@ -157,7 +158,7 @@ int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 	uint16    y2Max = 0;                            // Greatest y2
 	object_t *obj = _objects;
 	// Check objects on screen
-	for (int i = 0; i < _vm->_numObj; i++, obj++) {
+	for (int i = 0; i < _numObj; i++, obj++) {
 		// Object must be in current screen and "useful"
 		if (obj->screenIndex == *_vm->_screen_p && (obj->genericCmd || obj->objValue || obj->cmdIndex)) {
 			seq_t *curImage = obj->currImagePtr;
@@ -214,7 +215,7 @@ void ObjectHandler::freeObjects() {
 		return;
 
 	// Free all sequence lists and image data
-	for (int i = 0; i < _vm->_numObj; i++) {
+	for (int i = 0; i < _numObj; i++) {
 		object_t *obj = &_objects[i];
 		for (int j = 0; j < obj->seqNumb; j++) {    // for each sequence
 			seq_t *seq = obj->seqList[j].seqPtr;    // Free image
@@ -270,7 +271,7 @@ int ObjectHandler::y2comp(const void *a, const void *b) {
 bool ObjectHandler::isCarrying(uint16 wordIndex) {
 	debugC(1, kDebugObject, "isCarrying(%d)", wordIndex);
 
-	for (int i = 0; i < _vm->_numObj; i++) {
+	for (int i = 0; i < _numObj; i++) {
 		if ((wordIndex == _objects[i].nounIndex) && _objects[i].carriedFl)
 			return true;
 	}
@@ -283,7 +284,7 @@ bool ObjectHandler::isCarrying(uint16 wordIndex) {
 void ObjectHandler::showTakeables() {
 	debugC(1, kDebugObject, "showTakeables");
 
-	for (int j = 0; j < _vm->_numObj; j++) {
+	for (int j = 0; j < _numObj; j++) {
 		object_t *obj = &_objects[j];
 		if ((obj->cycling != INVISIBLE) &&
 		    (obj->screenIndex == *_vm->_screen_p) &&
@@ -451,6 +452,85 @@ void ObjectHandler::loadObjectArr(Common::File &in) {
 			}
 		}
 	}
+}
+
+/**
+* Set the screenindex property of the carried objets to the given screen
+* number
+*/
+void ObjectHandler::setCarriedScreen(int screenNum) {
+	for (int i = HERO + 1; i < _numObj; i++) {      // Any others
+		if (isCarried(i))                           // being carried
+			_objects[i].screenIndex = screenNum;
+	}
+}
+
+/**
+* Load _numObj from Hugo.dat
+*/
+void ObjectHandler::loadNumObj(Common::File &in) {
+	int numElem;
+
+	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
+		numElem = in.readUint16BE();
+		if (varnt == _vm->_gameVariant)
+			_numObj = numElem;
+	}
+}
+
+/**
+* Restore all sequences
+*/
+void ObjectHandler::restoreAllSeq() {
+	// Restore ptrs to currently loaded objects
+	for (int i = 0; i < _numObj; i++)
+		restoreSeq(&_objects[i]);
+}
+
+/**
+* Save objects
+*/
+void ObjectHandler::saveObjects(Common::WriteStream *out) {
+	for (int i = 0; i < _numObj; i++) {
+		// Save where curr_seq_p is pointing to
+		saveSeq(&_objects[i]);
+		out->write(&_objects[i], sizeof(object_t));
+	}
+}
+
+/**
+* Restore objects
+*/
+void ObjectHandler::restoreObjects(Common::SeekableReadStream *in) {
+	for (int i = 0; i < _numObj; i++) {
+		object_t *p = &_objects[i];
+		seqList_t seqList[MAX_SEQUENCES];
+		memcpy(seqList, p->seqList, sizeof(seqList_t));
+		uint16 cmdIndex = p->cmdIndex;
+		in->read(p, sizeof(object_t));
+		p->cmdIndex = cmdIndex;
+		memcpy(p->seqList, seqList, sizeof(seqList_t));
+	}
+}
+
+/**
+* Compute max object score
+*/
+int ObjectHandler::calcMaxScore() {
+	int score = 0;
+	for (int i = 0; i < _numObj; i++)
+		score += _objects[i].objValue;
+	return(score);
+}
+
+/**
+* Read Object images
+*/
+void ObjectHandler::readObjectImages() {
+	debugC(1, kDebugObject, "readObjectImages");
+
+	for (int i = 0; i < _numObj; i++)
+		_vm->_file->readImage(i, &_objects[i]);
 }
 
 } // End of namespace Hugo
