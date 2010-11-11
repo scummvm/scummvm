@@ -34,6 +34,7 @@
 #include "graphics/video/avi_decoder.h"
 
 // Audio Codecs
+#include "sound/decoders/adpcm.h"
 #include "sound/decoders/raw.h"
 
 // Video Codecs
@@ -269,8 +270,8 @@ bool AviDecoder::load(Common::SeekableReadStream *stream) {
 
 	debug (0, "Frames = %d, Dimensions = %d x %d", _header.totalFrames, _header.width, _header.height);
 	debug (0, "Frame Rate = %d", _vidsHeader.rate / _vidsHeader.scale);
-	if ((_audsHeader.scale != 0) && (_header.flags & AVIF_ISINTERLEAVED))
-		debug (0, "Sound Rate = %d", AUDIO_RATE);
+	if (_wvInfo.samplesPerSec != 0)
+		debug (0, "Sound Rate = %d", _wvInfo.samplesPerSec);
 	debug (0, "Video Codec = \'%s\'", tag2str(_vidsHeader.streamHandler));
 
 	if (!_videoCodec)
@@ -422,10 +423,8 @@ PixelFormat AviDecoder::getPixelFormat() const {
 }
 
 Audio::QueuingAudioStream *AviDecoder::createAudioStream() {
-	if (_wvInfo.tag == kWaveFormatPCM)
-		return Audio::makeQueuingAudioStream(AUDIO_RATE, _wvInfo.channels == 2);
-	else if (_wvInfo.tag == kWaveFormatDK3)
-		warning("Unsupported DK3 IMA ADPCM sound");
+	if (_wvInfo.tag == kWaveFormatPCM || _wvInfo.tag == kWaveFormatDK3)
+		return Audio::makeQueuingAudioStream(_wvInfo.samplesPerSec, _wvInfo.channels == 2);
 	else if (_wvInfo.tag != kWaveFormatNone) // No sound
 		warning("Unsupported AVI audio format %d", _wvInfo.tag);
 
@@ -451,7 +450,9 @@ void AviDecoder::queueAudioBuffer(uint32 chunkSize) {
 		if (_wvInfo.channels == 2)
 			flags |= Audio::FLAG_STEREO;
 
-		_audStream->queueAudioStream(Audio::makeRawStream(stream, AUDIO_RATE, flags, DisposeAfterUse::YES), DisposeAfterUse::YES);
+		_audStream->queueAudioStream(Audio::makeRawStream(stream, _wvInfo.samplesPerSec, flags, DisposeAfterUse::YES), DisposeAfterUse::YES);
+	} else if (_wvInfo.tag == kWaveFormatDK3) {
+		_audStream->queueAudioStream(Audio::makeADPCMStream(stream, DisposeAfterUse::YES, chunkSize, Audio::kADPCMDK3, _wvInfo.samplesPerSec, _wvInfo.channels, _wvInfo.blockAlign), DisposeAfterUse::YES);
 	}
 }
 

@@ -34,7 +34,6 @@
 namespace Graphics {
 
 #define UNKNOWN_HEADER(a) error("Unknown header found -- \'%s\'", tag2str(a))
-#define AUDIO_RATE (_audsHeader.rate / _audsHeader.scale)
 
 // IDs used throughout the AVI files
 // that will be handled by this player
