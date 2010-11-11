@@ -210,6 +210,27 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	// Jump over unused actions
 	stream->seek((ACTIONS_MAX_COUNT - numActions) * ACTIONS_SIZE, SEEK_CUR);
+
+	field_E860C = stream->readSint32LE();
+	for (int32 i = 0; i < 6; i++)
+		field_E8610[i] = stream->readSint32LE();
+
+	for (int32 i = 0; i < 6; i++)
+		field_E8628[i] = stream->readSint32LE();
+
+	for (int32 i = 0; i < 7; i++) {
+		ObjectId id = (ObjectId)stream->readSint32LE();
+
+		if (id == 0)
+			wheels[i] = NULL;
+		else
+			wheels[i] = getObjectById(id);
+	}
+
+	tickCount1 = stream->readSint32LE();
+
+	for (int32 i = 0; i < 6; i++)
+		field_E8660[i] = stream->readSint32LE();
 }
 
 //////////////////////////////////////////////////////////////////////////

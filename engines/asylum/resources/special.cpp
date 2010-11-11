@@ -511,7 +511,86 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::chapter8(Object *object, ActorIndex actorIndex) {
+	playChapterSound(object, actorIndex);
 
+	if (actorIndex == kActorInvalid) {
+		switch (object->getId()) {
+		default:
+			break;
+
+		case kObjectRitualLoop:
+			if (object->getFrameIndex() == object->getFrameCount() - 1) {
+				if (!getSound()->isPlaying(getSpeech()->getSoundResourceId()))
+					_vm->setGameFlag(kGameFlag897);
+			}
+			break;
+
+		case kObjectWadeThroughLava: {
+			Actor *actor0 = getScene()->getActor(0);
+
+			if (object->getFrameIndex() == 23) {
+				if (_vm->isGameFlagNotSet(kGameFlag815))
+					actor0->process_41BC00(1, 0);
+
+				_vm->setGameFlag(kGameFlag815);
+			}
+
+			if (object->getFrameIndex() == 50) {
+				object->disableAndRemoveFromQueue();
+				actor0->setDirection(4);
+
+				getCursor()->show();
+				getWorld()->motionStatus = 1;
+
+				_vm->clearFlag(kFlagType1);
+
+				actor0->show();
+			}
+			}
+			break;
+
+		case kObjectLavaBridge:
+			if (getWorld()->ambientSounds[4].field_C > -100)
+				getWorld()->ambientSounds[4].field_C -= 5;
+
+			if (_vm->isGameFlagSet(kGameFlag937)) {
+				if (getWorld()->ambientSounds[5].field_C > -100)
+					getWorld()->ambientSounds[5].field_C -= 5;
+			}
+			break;
+
+		case kObjectFlamingHeadLeftSide:
+			checkFlags(kObjectGhost1, kGameFlag543, kGameFlag544, kGameFlag545, kGameFlag875, &getWorld()->field_E8610[0], &getWorld()->field_E8628[0], kGameFlag1062, &getWorld()->field_E8660[0]);
+			checkFlags(_vm->isGameFlagSet(kGameFlag881) ? kObjectGhost2b : kObjectGhost2, kGameFlag816, kGameFlag817, kGameFlag818, kGameFlag876, &getWorld()->field_E8610[1], &getWorld()->field_E8628[1], kGameFlag1063, &getWorld()->field_E8660[1]);
+			checkFlags(kObjectGhost3, kGameFlag819, kGameFlag820, kGameFlag821, kGameFlag877, &getWorld()->field_E8610[2], &getWorld()->field_E8628[2], kGameFlag1064, &getWorld()->field_E8660[2]);
+			checkFlags(kObjectGhost4, kGameFlag822, kGameFlag823, kGameFlag824, kGameFlag878, &getWorld()->field_E8610[3], &getWorld()->field_E8628[3], kGameFlag1065, &getWorld()->field_E8660[3]);
+			checkFlags(kObjectGhost5, kGameFlag825, kGameFlag826, kGameFlag827, kGameFlag879, &getWorld()->field_E8610[4], &getWorld()->field_E8628[4], kGameFlag1066, &getWorld()->field_E8660[4]);
+			checkFlags(kObjectGhost6, kGameFlag828, kGameFlag829, kGameFlag830, kGameFlag880, &getWorld()->field_E8610[5], &getWorld()->field_E8628[5], kGameFlag1067, &getWorld()->field_E8660[5]);
+
+			updateObjectFlag(kObjectGong4);
+			updateObjectFlag(kObjectGong1);
+			updateObjectFlag(kObjectGong5);
+			updateObjectFlag(kObjectGong6);
+			updateObjectFlag(kObjectGong2);
+			updateObjectFlag(kObjectGong3);
+			break;
+		}
+	}
+
+	if (_vm->isGameFlagNotSet(kGameFlag866)) {
+		// Check wheel objects frame index
+		if (getWorld()->wheels[0]->getFrameIndex() == 0
+		 && getWorld()->wheels[1]->getFrameIndex() == 4
+		 && getWorld()->wheels[2]->getFrameIndex() == 8
+		 && getWorld()->wheels[3]->getFrameIndex() == 12
+		 && getWorld()->wheels[4]->getFrameIndex() == 16
+		 && getWorld()->wheels[5]->getFrameIndex() == 23
+		 && getWorld()->wheels[6]->getFrameIndex() == 27) {
+			_vm->setGameFlag(kGameFlag866);
+
+			getSound()->playSound(getWorld()->soundResourceIds[6], false, Config.sfxVolume - 10);
+		}
+	}
 }
 
 void Special::chapter9(Object *object, ActorIndex actorIndex) {
@@ -1255,11 +1334,76 @@ void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, ActorIn
 }
 
 void Special::updateObjectFlag(ObjectId id) {
-	error("[Special::updateObjectFlag] Not implemented!");
+	// Check if any of the scene sound resources are playing
+	for (int i = 0; i < 7; i++) {
+		if (getSound()->isPlaying(getWorld()->soundResourceIds[i]))
+			return;
+	}
+
+	getWorld()->getObjectById(id)->flags &= ~kObjectFlag10E38;
 }
 
 void Special::checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, int *val1, int *val2, GameFlag flag5, int *val3) {
-	error("[Special::checkFlags] Not implemented!");
+	if (_vm->isGameFlagSet(flag5)
+	 && _vm->isGameFlagNotSet(flag2)
+	 && _vm->isGameFlagNotSet(flag1)) {
+		_vm->clearGameFlag(flag5);
+
+		*val1 = 1;
+	}
+
+	if (!*val1) {
+		*val1 = _vm->getTick() - rnd(2000);
+		return;
+	}
+
+	if (!_vm->isGameFlagNotSet(flag3)) {
+		*val1 = _vm->getTick();
+		return;
+	}
+
+	if ((_vm->getTick() - *val1) > 10000) {
+		if (_vm->isGameFlagSet(flag2)) {
+
+			_vm->clearGameFlag(flag4);
+			_vm->clearGameFlag(flag5);
+
+			if (*val2 >= 8) {
+				*val1 = 0;
+				*val2 = 0;
+
+				_vm->clearGameFlag(flag1);
+				_vm->clearGameFlag(flag2);
+
+				getWorld()->getObjectById(id)->setField67C(0);
+
+			} else {
+				*val2++;
+
+				getWorld()->getObjectById(id)->setField67C(6 - Common::Rational(*val2, 4).toInt());
+			}
+		} else {
+
+			_vm->setGameFlag(flag1);
+
+			*val3 = 0;
+
+			if (*val2 >= 8) {
+				*val1 = 0;
+				*val2 = 0;
+
+				_vm->clearGameFlag(flag2);
+				_vm->clearGameFlag(flag4);
+
+				getWorld()->getObjectById(id)->setField67C(0);
+
+			} else {
+				*val2++;
+
+				getWorld()->getObjectById(id)->setField67C(Common::Rational(*val2, 4).toInt() + 4);
+			}
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

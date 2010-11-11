@@ -940,7 +940,7 @@ int32 Scene::calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act) {
 }
 
 void Scene::updateMusic() {
-	//warning("[Scene::playIntroSpeech] not implemented!");
+	//warning("[Scene::updateMusic] not implemented!");
 }
 
 void Scene::updateScreen() {
