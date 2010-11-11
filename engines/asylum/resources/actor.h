@@ -398,6 +398,8 @@ private:
 	 */
 	int32 getGraphicsFlags();
 
+	int32 getFieldValue();
+
 
 }; // end of class MainActor
 
