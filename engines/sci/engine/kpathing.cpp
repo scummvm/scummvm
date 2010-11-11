@@ -1330,15 +1330,21 @@ static void AStar(PathfindingState *s) {
 			if (closedSet.contains(vertex))
 				continue;
 
-			// Avoid plotting path along screen edge
-			if ((vertex_min != s->vertex_start) || (vertex != s->vertex_end))
-				if (s->pointOnScreenBorder(vertex_min->v) && s->pointOnScreenBorder(vertex->v))
-					continue;
-
 			if (!openSet.contains(vertex))
 				openSet.push_front(vertex);
 
 			new_dist = vertex_min->costG + (uint32)sqrt((float)vertex_min->v.sqrDist(vertex->v));
+
+			// When travelling to a vertex on the screen edge, we
+			// add a penalty score to make this path less appealing.
+			// NOTE: If an obstacle has only one vertex on a screen edge,
+			// later SSCI pathfinders will treat that vertex like any
+			// other, while we apply a penalty to paths traversing it.
+			// This difference might lead to problems, but none are
+			// known at the time of writing.
+			if (s->pointOnScreenBorder(vertex->v))
+				new_dist += 10000;
+
 			if (new_dist < vertex->costG) {
 				vertex->costG = new_dist;
 				vertex->costF = vertex->costG + (uint32)sqrt((float)vertex->v.sqrDist(s->vertex_end->v));
