@@ -48,6 +48,11 @@ private:
 
 	// Counters
 	int32 _chapter2Counter;
+	int32 _chapter5Counter;
+
+	bool _paletteFlag;
+	int32 _paletteTick1;
+	int32 _paletteTick2;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Spec functions

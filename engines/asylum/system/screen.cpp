@@ -136,7 +136,7 @@ void Screen::setPalette(byte *rgbPalette) {
 }
 
 void Screen::setGammaLevel(ResourceId id, int32 val) {
-	error("[Screen::setGammaLevel] not implemented");
+	warning("[Screen::setGammaLevel] not implemented");
 }
 
 void Screen::drawWideScreen(int16 barSize) {

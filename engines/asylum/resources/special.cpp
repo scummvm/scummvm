@@ -33,6 +33,7 @@
 
 #include "asylum/system/cursor.h"
 #include "asylum/system/graphics.h"
+#include "asylum/system/screen.h"
 #include "asylum/system/speech.h"
 
 #include "asylum/views/scene.h"
@@ -43,8 +44,13 @@ namespace Asylum {
 
 Special::Special(AsylumEngine *engine) : _vm(engine) {
 
-	// Counters
+	// Counters & flags
 	_chapter2Counter = 0;
+	_chapter5Counter = 0;
+
+	_paletteFlag = false;
+	_paletteTick1 = 0;
+	_paletteTick2 = 0;
 }
 
 Special::~Special() {}
@@ -957,7 +963,53 @@ void Special::playSoundChapter8(Object *object, ActorIndex actorIndex) {
 // Misc
 //////////////////////////////////////////////////////////////////////////
 void Special::setPaletteGamma(ResourceId palette1, ResourceId palette2) {
-	error("[Special::setPaletteGamma] Not implemented!");
+	if (_paletteFlag) {
+		if (_paletteTick2 < _vm->getTick()) {
+			_paletteFlag = false;
+
+			getSound()->playSound(getWorld()->ambientSounds[rnd(5) + 2].resourceId, false, Config.ambientVolume);
+
+			_paletteTick1 = _vm->getTick() + 5000;
+		}
+	} else {
+		switch (_chapter5Counter) {
+		default:
+			if (_chapter5Counter > 0) {
+				++_chapter5Counter;
+			} else {
+				if (_paletteTick1 < _vm->getTick()) {
+					if (rnd(100) >= 20) {
+						_paletteTick1 = _vm->getTick() + 5000;
+					} else {
+						getScreen()->setPalette(palette1);
+						getScreen()->setGammaLevel(palette1, 0);
+						_chapter5Counter = 1;
+					}
+				}
+			}
+			break;
+
+		case 500:
+			getScreen()->setPalette(palette2);
+			getScreen()->setGammaLevel(palette2, 0);
+			++_chapter5Counter;
+			break;
+
+		case 1000:
+			getScreen()->setPalette(palette1);
+			getScreen()->setGammaLevel(palette1, 0);
+			++_chapter5Counter;
+			break;
+
+		case 1500:
+			getScreen()->setPalette(palette2);
+			getScreen()->setGammaLevel(palette2, 0);
+			_chapter5Counter = 0;
+			_paletteFlag = true;
+			_paletteTick2 = _vm->getTick() + rnd(1000) + 1000;
+			break;
+		}
+	}
 }
 
 void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, Object *object) {
