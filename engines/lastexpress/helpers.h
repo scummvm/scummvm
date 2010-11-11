@@ -81,11 +81,11 @@
 #define clearBg(type) _engine->getGraphicsManager()->clear(type)
 #define showScene(index, type) _engine->getGraphicsManager()->draw(getScenes()->get(index), type);
 
-#define askForRedraw() _engine->getGraphicsManager()->change();
-#define redrawScreen() _engine->getGraphicsManager()->update(); _engine->_system->updateScreen();
+#define askForRedraw() _engine->getGraphicsManager()->change()
+#define redrawScreen() do { _engine->getGraphicsManager()->update(); _engine->_system->updateScreen(); } while (false)
 
 // Used to delete entity sequences
-#define SAFE_DELETE(_p) { delete (_p); (_p) = NULL; }
+#define SAFE_DELETE(_p) do { delete (_p); (_p) = NULL; } while (false)
 
 //////////////////////////////////////////////////////////////////////////
 // Output
