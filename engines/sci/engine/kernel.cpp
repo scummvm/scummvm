@@ -836,7 +836,7 @@ void Kernel::setKernelNamesSci21(GameFeatures *features) {
 	// version (2.100.002), yet they would not be compatible with other
 	// games of the same interpreter.
 
-	if (features->detectSci21KernelType() == SCI_VERSION_2) {
+	if (getSciVersion() != SCI_VERSION_3 && features->detectSci21KernelType() == SCI_VERSION_2) {
 		_kernelNames = Common::StringArray(sci2_default_knames, kKernelEntriesGk2Demo);
 		// OnMe is IsOnMe here, but they should be compatible
 		_kernelNames[0x23] = "Robot"; // Graph in SCI2
