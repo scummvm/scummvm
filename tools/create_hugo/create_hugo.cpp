@@ -50,7 +50,6 @@
 #include "staticintro.h"
 #include "staticmouse.h"
 #include "staticparser.h"
-#include "staticschedule.h"
 #include "staticutil.h"
 #include "staticfont.h"
 
@@ -364,9 +363,6 @@ int main(int argc, char *argv[]) {
 
 	// Write textParser
 	writeTextArray(outFile, textParser, NUM_PARSER_TEXT);
-
-	// Write textSchedule
-	writeTextArray(outFile, textSchedule, NUM_SCHEDULE_TEXT);
 
 	// Write textUtil
 	writeTextArray(outFile, textUtil_v1w, NUM_UTIL_TEXT);
@@ -816,7 +812,7 @@ int main(int argc, char *argv[]) {
 	writeUint16BE(outFile, LASTOBJ_1w);
 	writeUint16BE(outFile, LASTOBJ_2w);
 	writeUint16BE(outFile, LASTOBJ_3w);
-	writeUint16BE(outFile, NUM_PICS_1d);   //(not set in original, as Hugo1 DOS doesn't use a DAT file to pack the screens)
+	writeUint16BE(outFile, LASTOBJ_1d);   //(not set in original, as Hugo1 DOS doesn't use a DAT file to pack the screens)
 	writeUint16BE(outFile, LASTOBJ_2d);
 	writeUint16BE(outFile, LASTOBJ_3d);
 

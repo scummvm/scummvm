@@ -172,8 +172,8 @@ void Scheduler::newScreen(int screenIndex) {
 	if (!_vm->isPacked()) {
 		char line[32];
 		if (!_vm->_file->fileExists(strcat(strncat(strcpy(line, _vm->_picDir), _vm->_screenNames[screenIndex], NAME_LEN), BKGEXT)) &&
-		        !_vm->_file->fileExists(strcat(strcpy(line, _vm->_screenNames[screenIndex]), ".ART"))) {
-			Utils::Box(BOX_ANY, "%s", _vm->_textSchedule[kSsNoBackground]);
+		    !_vm->_file->fileExists(strcat(strcpy(line, _vm->_screenNames[screenIndex]), ".ART"))) {
+				error("Unable to find background file for %s", _vm->_screenNames[screenIndex]);
 			return;
 		}
 	}

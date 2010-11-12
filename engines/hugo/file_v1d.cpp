@@ -66,6 +66,7 @@ void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 	if (!fileExists(buf)) {
 		for (uint32 i = 0; i < OVL_SIZE; i++)
 			image[i] = 0;
+		warning("File not found: %s", buf);
 		return;
 	}
 

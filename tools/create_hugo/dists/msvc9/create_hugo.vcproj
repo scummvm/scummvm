@@ -210,10 +210,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\staticschedule.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\staticutil.h"
 			>
 		</File>

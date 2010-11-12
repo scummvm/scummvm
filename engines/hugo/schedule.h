@@ -72,11 +72,6 @@ public:
 protected:
 	HugoEngine *_vm;
 
-	enum seqTextSchedule {
-		kSsNoBackground = 0,
-		kSsBadSaveGame  = 1
-	};
-
 	uint16   _actListArrSize;
 	uint16   _alNewscrIndex;
 
