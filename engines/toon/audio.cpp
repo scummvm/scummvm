@@ -64,6 +64,7 @@ AudioManager::AudioManager(ToonEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixe
 }
 
 AudioManager::~AudioManager(void) {
+	_mixer->stopAll();
 	for (int32 i = 0; i < 4; i++) {
 		closeAudioPack(i);
 	}
@@ -130,7 +131,7 @@ void AudioManager::playMusic(Common::String dir, Common::String music) {
 		_currentMusicChannel = 0;
 	}
 
-	delete _channels[_currentMusicChannel];
+	// no need to delete instance here it will automatically deleted by the mixer is done with it
 	_channels[_currentMusicChannel] = new AudioStreamInstance(this, _mixer, srs, true);
 	_channels[_currentMusicChannel]->setVolume(_musicMuted ? 0 : 255);
 	_channels[_currentMusicChannel]->play(true, Audio::Mixer::kMusicSoundType);
@@ -157,7 +158,7 @@ void AudioManager::playVoice(int32 id, bool genericVoice) {
 	else
 		stream = _audioPacks[1]->getStream(id);
 
-	delete _channels[2];
+	// no need to delete channel 2, it will be deleted by the mixer when the stream is finished
 	_channels[2] = new AudioStreamInstance(this, _mixer, stream);
 	_channels[2]->play(false, Audio::Mixer::kSpeechSoundType);
 	_channels[2]->setVolume(_voiceMuted ? 0 : 255);
@@ -277,6 +278,9 @@ AudioStreamInstance::~AudioStreamInstance() {
 
 int AudioStreamInstance::readBuffer(int16 *buffer, const int numSamples) {
 	debugC(5, kDebugAudio, "readBuffer(buffer, %d)", numSamples);
+
+	if(_stopped) 
+		return 0;
 
 	handleFade(numSamples);
 	int32 leftSamples = numSamples;

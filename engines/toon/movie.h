@@ -34,6 +34,7 @@ namespace Toon {
 class ToonstruckSmackerDecoder : public Graphics::SmackerDecoder {
 public:
 	ToonstruckSmackerDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
+	virtual ~ToonstruckSmackerDecoder() {}
 	void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
 	bool loadFile(const Common::String &filename, int forcedflags) ;
 };
@@ -41,7 +42,7 @@ public:
 class Movie {
 public:
 	Movie(ToonEngine *vm, ToonstruckSmackerDecoder *decoder);
-	~Movie(void);
+	virtual ~Movie(void);
 
 	void init() const;
 	void play(Common::String video, int32 flags = 0);

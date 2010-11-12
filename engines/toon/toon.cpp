@@ -793,7 +793,9 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_inventoryIcons = NULL;
 	_inventoryIconSlots = NULL;
 	_genericTexts = NULL;
-	_audioManager = NULL;
+	_audioManager = NULL; 
+
+	memset(&_scriptData, 0, sizeof(EMCData));
 
 	switch (_language) {
 	case Common::EN_GRB:
@@ -849,6 +851,8 @@ ToonEngine::~ToonEngine() {
 	delete _genericTexts;
 	delete _roomTexts;
 	delete _script_func;
+
+	_script->unload(&_scriptData);
 	delete _script;
 
 	delete _saveBufferStream;
@@ -864,7 +868,9 @@ ToonEngine::~ToonEngine() {
 	delete _inventoryIcons;
 	delete _inventoryIconSlots;
 	//delete _genericTexts;
-	//delete _audioManager;
+	delete _audioManager;
+
+	unloadToonDat();
 
 	DebugMan.clearAllDebugChannels();
 	delete _console;
@@ -1125,6 +1131,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	_drew->update(0);
 	_flux->update(0);
 
+	_script->unload(&_scriptData);
 	_script->load(temp, &_scriptData, &_script_func->_opcodes);
 	_script->init(&_scriptState[0], &_scriptData);
 	_script->init(&_scriptState[1], &_scriptData);
@@ -1251,6 +1258,8 @@ void ToonEngine::initChapter() {
 	_script->start(&status, 0);
 	while (_script->run(&status))
 		waitForScriptStep();
+
+	_script->unload(&data);
 
 	setupGeneralPalette();
 
@@ -4517,14 +4526,20 @@ bool ToonEngine::loadToonDat() {
 
 	_numVariant = in.readUint16BE();
 
-	_locationDirNotVisited = loadTextsVariante(in);
-	_locationDirVisited = loadTextsVariante(in);
-	_specialInfoLine = loadTextsVariante(in);
+	_locationDirNotVisited = loadTextsVariants(in);
+	_locationDirVisited = loadTextsVariants(in);
+	_specialInfoLine = loadTextsVariants(in);
 
 	return true;
 }
 
-char **ToonEngine::loadTextsVariante(Common::File &in) {
+void ToonEngine::unloadToonDat() {
+	unloadTextsVariants(_locationDirNotVisited);
+	unloadTextsVariants(_locationDirVisited);
+	unloadTextsVariants(_specialInfoLine);
+}
+
+char **ToonEngine::loadTextsVariants(Common::File &in) {
 	int  numTexts;
 	int  entryLen;
 	int  len;
@@ -4558,6 +4573,14 @@ char **ToonEngine::loadTextsVariante(Common::File &in) {
 	}
 
 	return res;
+}
+
+void ToonEngine::unloadTextsVariants(char **texts) {
+	if (!texts)
+		return;
+
+	free(*texts - DATAALIGNMENT);
+	free(texts);
 }
 
 void ToonEngine::makeLineNonWalkable(int32 x, int32 y, int32 x2, int32 y2) {

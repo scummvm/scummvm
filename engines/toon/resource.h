@@ -69,10 +69,12 @@ public:
 	void openPackage(Common::String file, bool preloadEntirePackage);
 	void closePackage(Common::String fileName);
 	Common::SeekableReadStream *openFile(Common::String file);
-	uint8 *getFileData(Common::String fileName, uint32 *fileSize);
+	uint8 *getFileData(Common::String fileName, uint32 *fileSize); // this memory must be copied to your own structures!
+	void purgeFileData();
 
 protected:
 	ToonEngine *_vm;
+	Common::Array<uint8 *> _allocatedFileData;
 	Common::Array<PakFile *> _pakFiles;
 };
 

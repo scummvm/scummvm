@@ -39,6 +39,8 @@ Resources::~Resources() {
 		_pakFiles.pop_back();
 		delete temp;
 	}
+
+	purgeFileData();
 }
 
 void Resources::openPackage(Common::String fileName, bool preloadEntirePackage) {
@@ -84,6 +86,7 @@ uint8 *Resources::getFileData(Common::String fileName, uint32 *fileSize) {
 		uint8 *memory = (uint8 *)new uint8[*fileSize];
 		file.read(memory, *fileSize);
 		file.close();
+		_allocatedFileData.push_back(memory);
 		return memory;
 	} else {
 		for (uint32 i = 0; i < _pakFiles.size(); i++) {
@@ -123,6 +126,13 @@ Common::SeekableReadStream *Resources::openFile(Common::String fileName) {
 
 		return 0;
 	}
+}
+
+void Resources::purgeFileData() {
+	for (uint32 i = 0; i < _allocatedFileData.size(); i++) {
+		delete[] _allocatedFileData[i];
+	}
+	_allocatedFileData.clear();
 }
 Common::SeekableReadStream *PakFile::createReadStream(Common::String fileName) {
 	debugC(1, kDebugResource, "createReadStream(%s)", fileName.c_str());

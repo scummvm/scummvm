@@ -46,7 +46,10 @@ bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename, int forc
 		if (forcedflags & 0x10 || _surface->h == 200) {
 
 			_header.flags = 4;
-			delete this->_surface;
+			if (_surface) {
+				_surface->free();
+				delete _surface;
+			}
 			_surface = new Graphics::Surface();
 			_surface->create(640, 400, 1);
 		}

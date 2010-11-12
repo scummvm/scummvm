@@ -108,7 +108,7 @@ bool Animation::loadAnimation(Common::String file) {
 		}
 	}
 
-	//delete[] fileData;
+	_vm->resources()->purgeFileData();
 	delete[] finalBuffer;
 	return true;
 }

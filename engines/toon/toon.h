@@ -106,7 +106,9 @@ public:
 	bool showMainmenu(bool &loadedGame);
 	void init();
 	bool loadToonDat();
-	char **loadTextsVariante(Common::File &in);
+	char **loadTextsVariants(Common::File &in);
+	void unloadTextsVariants(char **texts);
+	void unloadToonDat();
 	void setPaletteEntries(uint8 *palette, int32 offset, int32 num);
 	void fixPaletteEntries(uint8 *palette, int num);
 	void flushPalette();
@@ -199,6 +201,8 @@ public:
 	void playRoomMusic();
 	void waitForScriptStep();
 	void doMagnifierEffect();
+
+
 
 	bool canSaveGameStateCurrently();
 	bool canLoadGameStateCurrently();
