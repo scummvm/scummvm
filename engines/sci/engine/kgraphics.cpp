@@ -1413,7 +1413,7 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 			// HACK: Make robots return immediately for now,
 			// otherwise they just hang for a while.
 			// TODO: Replace with proper robot functionality.
-			writeSelectorValue(s->_segMan, argv[1], SELECTOR(signal), -1);
+			writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
 			break;
 		default:
 			warning("kRobot(%d)", subop);
