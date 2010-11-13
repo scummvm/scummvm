@@ -222,7 +222,7 @@ bool EMCInterpreter::run(EMCState *script) {
 		static bool EMCDebug = false;
 		if (EMCDebug)
 			debugC(5, 0, "[0x%.08X] EMCInterpreter::%s([%d/%u])", instOffset * 2, _opcodes[opcode].desc, _parameter, (uint)_parameter);
-		//debug(0, "[0x%.08X] EMCInterpreter::%s([%d/%u])", instOffset, _opcodes[opcode].desc, _parameter, (uint)_parameter);
+		//printf( "[0x%.08X] EMCInterpreter::%s([%d/%u])\n", instOffset, _opcodes[opcode].desc, _parameter, (uint)_parameter);
 
 		(this->*(_opcodes[opcode].proc))(script);
 	}

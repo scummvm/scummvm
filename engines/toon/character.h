@@ -58,6 +58,7 @@ public:
 	virtual int32 getId();
 	virtual void setId(int32 id);
 	virtual void setFacing(int32 facing);
+	virtual void forceFacing(int32 facing);
 	virtual int32 getFacing();
 	virtual void setAnimScript(int32 animScriptId);
 	virtual void setSceneAnimationId(int32 sceneAnimationId);
@@ -69,6 +70,7 @@ public:
 	virtual int32 getAnimFlag();
 	virtual void setAnimFlag(int32 flag);
 	virtual void setPosition(int32 x, int32 y);
+	virtual void forcePosition(int32 x, int32 y);
 	virtual int32 getX();
 	virtual int32 getY();
 	virtual int32 getFinalX();

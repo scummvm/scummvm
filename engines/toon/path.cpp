@@ -204,6 +204,33 @@ int32 PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32
 	}
 }
 
+bool PathFinding::lineIsWalkable(int32 x, int32 y, int32 x2, int32 y2) {
+
+	uint32 bx = x << 16;
+	int32 dx = x2 - x;
+	uint32 by = y << 16;
+	int32 dy = y2 - y;
+	uint32 adx = abs(dx);
+	uint32 ady = abs(dy);
+	int32 t = 0;
+	if (adx <= ady)
+		t = ady;
+	else
+		t = adx;
+
+	int32 cdx = (dx << 16) / t;
+	int32 cdy = (dy << 16) / t;
+
+	int32 i = t;
+	while (i) {
+		if(!isWalkable(bx >> 16, by >> 16))
+			return false;
+		bx += cdx;
+		by += cdy;
+		i--;
+	}
+	return true;
+}
 int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	debugC(1, kDebugPath, "findPath(%d, %d, %d, %d)", x, y, destx, desty);
 
@@ -211,6 +238,9 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 		_gridPathCount = 0;
 		return true;
 	}
+
+	// first test direct line
+	//if(lineIsWalkable(x,y,destx,desty))
 
 	memset(_gridTemp , 0, _width * _height * sizeof(int32));
 	_heap->clear();
@@ -222,9 +252,6 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	sq[curX + curY *_width] = 1;
 	_heap->push(curX, curY, abs(destx - x) + abs(desty - y));
 	int wei = 0;
-
-// Strangerke - Commented (not used)
-//	byte *mask = _currentMask->getDataPtr();
 
 	while (_heap->_count) {
 		wei = 0;

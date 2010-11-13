@@ -48,11 +48,6 @@ bool CharacterDrew::setupPalette() {
 	return false;
 }
 
-void CharacterDrew::setFacing(int32 facing) {
-	debugC(4, kDebugCharacter, "setFacing(%d)", facing);
-	_facing = facing;
-}
-
 void CharacterDrew::setPosition(int32 x, int32 y) {
 	debugC(5, kDebugCharacter, "setPosition(%d, %d)", x, y);
 
@@ -88,7 +83,6 @@ void CharacterDrew::playStandingAnim() {
 	_animationInstance->stopAnimation();
 	_animationInstance->setLooping(true);
 	//setVisible(true);
-
 }
 
 void CharacterDrew::playWalkAnim(int32 start, int32 end) {

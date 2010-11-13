@@ -38,7 +38,6 @@ public:
 	CharacterDrew(ToonEngine *vm);
 	virtual ~CharacterDrew();
 	bool setupPalette();
-	void setFacing(int32 facing);
 	void playStandingAnim();
 	void setPosition(int32 x, int32 y);
 	void update(int32 timeIncrement);

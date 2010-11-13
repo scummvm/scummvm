@@ -242,7 +242,7 @@ int32 ScriptFunc::sys_Cmd_Dummy(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Change_Actor_X_And_Y(EMCState *state) {
-	_vm->getDrew()->setPosition(stackPos(0), stackPos(1));
+	_vm->getDrew()->forcePosition(stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -347,7 +347,7 @@ int32 ScriptFunc::sys_Cmd_Set_Sack_Visible(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Set_Actor_Facing(EMCState *state) {
-	_vm->getDrew()->setFacing(stackPos(0));
+	_vm->getDrew()->forceFacing(stackPos(0));
 	_vm->getDrew()->playStandingAnim();
 	return 0;
 }
@@ -649,14 +649,14 @@ int32 ScriptFunc::sys_Cmd_Set_Flux_Facing_Point(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Set_Flux_Facing(EMCState *state) {
-	_vm->getFlux()->setFacing(stackPos(0));
+	_vm->getFlux()->forceFacing(stackPos(0));
 	_vm->getFlux()->playStandingAnim();
 	return 0;
 }
 
 int32 ScriptFunc::sys_Cmd_Set_Flux_Coords(EMCState *state) {
 	_vm->getFlux()->stopWalk();
-	_vm->getFlux()->setPosition(stackPos(0), stackPos(1));
+	_vm->getFlux()->forcePosition(stackPos(0), stackPos(1));
 	return 0;
 }
 

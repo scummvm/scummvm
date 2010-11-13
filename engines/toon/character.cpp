@@ -79,9 +79,64 @@ Character::~Character(void) {
 void Character::init() {
 }
 
+void Character::forceFacing( int32 facing ) {
+	debugC(4, kDebugCharacter, "forceFacing(%d)", facing);
+	_facing = facing;
+}
+
 void Character::setFacing(int32 facing) {
 	debugC(4, kDebugCharacter, "setFacing(%d)", facing);
+
+	if (facing == _facing)
+		return;
+
+	if (_blockingWalk) {
+		_flags |= 2;
+
+		int32 dir = 0;
+
+		_lastWalkTime = _vm->getSystem()->getMillis();
+		if ((_facing - facing + 8) % 8 > (facing - _facing + 8) % 8)
+			dir = 1;
+		else 
+			dir = -1;
+
+		while (_facing != facing) {
+
+			int32 elapsedTime = _vm->getOldMilli() - _lastWalkTime;
+			while (elapsedTime > _vm->getTickLength() * 3 && _facing != facing) {
+				_facing += dir;
+
+				while (_facing >= 8)
+					_facing -= 8;
+				while (_facing < 0)
+					_facing += 8;
+
+				elapsedTime -= _vm->getTickLength() * 3;
+				_lastWalkTime = _vm->getOldMilli();
+			}
+
+			if	(_currentPathNode == 0)
+				playStandingAnim();
+			else
+				playWalkAnim(0,0);
+			_vm->doFrame();
+		};
+
+		_flags &= ~2;
+	}
+
+
 	_facing = facing;
+}
+
+void Character::forcePosition(int32 x, int32 y) {
+
+	debugC(5, kDebugCharacter, "forcePosition(%d, %d)", x, y);
+
+	setPosition(x,y);
+	_finalX = x;
+	_finalY = y;
 }
 
 void Character::setPosition(int32 x, int32 y) {
@@ -128,10 +183,12 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 		_currentPathNodeCount = _vm->getPathFinding()->getPathNodeCount();
 		_currentPathNode = 0;
 		stopSpecialAnim();
-		_flags |= 0x1;
+	
 		_lastWalkTime = _vm->getSystem()->getMillis();
 
 		_numPixelToWalk = 0;
+
+		_flags |= 0x1;
 
 		if (_blockingWalk) {
 			while ((_x != newPosX || _y != newPosY) && _currentPathNode < _currentPathNodeCount && !_vm->shouldQuitGame()) {
@@ -142,6 +199,8 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 					setFacing(getFacingFromDirection(dx, dy));
 					playWalkAnim(0, 0);
 				}
+
+				
 
 				// in 1/1000 pixels
 				_numPixelToWalk += _speed * (_vm->getSystem()->getMillis() - _lastWalkTime) * _scale / 1024;

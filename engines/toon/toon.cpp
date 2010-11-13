@@ -489,8 +489,6 @@ void ToonEngine::doFrame() {
 		render();
 
 		int32 currentTimer = _system->getMillis();
-// Strangerke - Commented (not used)
-//		int32 elapsedTime = currentTimer - _oldTimer;
 
 		update(currentTimer - _oldTimer);
 		_oldTimer = currentTimer;
@@ -1183,7 +1181,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 			waitForScriptStep();
 
 		if (_gameState->_nextSpecialEnterX != -1 && _gameState->_nextSpecialEnterY != -1) {
-			_drew->setPosition(_gameState->_nextSpecialEnterX, _gameState->_nextSpecialEnterY);
+			_drew->forcePosition(_gameState->_nextSpecialEnterX, _gameState->_nextSpecialEnterY);
 			_gameState->_nextSpecialEnterX = -1;
 			_gameState->_nextSpecialEnterY = -1;
 		}
