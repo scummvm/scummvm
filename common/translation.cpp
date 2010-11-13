@@ -258,7 +258,7 @@ String TranslationManager::getLangById(int id) const {
 		return "C";
 	default:
 		if (id >= 0 && id - 1 < (int)_langs.size())
-			return _langs[id - 1].c_str();
+			return _langs[id - 1];
 	}
 
 	// In case an invalid ID was specified, we will output a warning
@@ -336,10 +336,10 @@ void TranslationManager::loadTranslationsInfoDat() {
 	for (int i = 0; i < nbTranslations; ++i) {
 		len = in.readUint16BE();
 		in.read(buf, len);
-		_langs[i] = String(buf, len);
+		_langs[i] = String(buf, len-1);
 		len = in.readUint16BE();
 		in.read(buf, len);
-		_langNames[i] = String(buf, len);
+		_langNames[i] = String(buf, len-1);
 	}
 
 	// Read messages
@@ -348,7 +348,7 @@ void TranslationManager::loadTranslationsInfoDat() {
 	for (int i = 0; i < numMessages; ++i) {
 		len = in.readUint16BE();
 		in.read(buf, len);
-		_messageIds[i] = String(buf, len);
+		_messageIds[i] = String(buf, len-1);
 	}
 }
 
@@ -396,18 +396,18 @@ void TranslationManager::loadLanguageDat(int index) {
 	// Read charset
 	len = in.readUint16BE();
 	in.read(buf, len);
-	_currentCharset = String(buf, len);
+	_currentCharset = String(buf, len-1);
 
 	// Read messages
 	for (int i = 0; i < nbMessages; ++i) {
 		_currentTranslationMessages[i].msgid = in.readUint16BE();
 		len = in.readUint16BE();
 		in.read(buf, len);
-		_currentTranslationMessages[i].msgstr = String(buf, len);
+		_currentTranslationMessages[i].msgstr = String(buf, len-1);
 		len = in.readUint16BE();
 		if (len > 0) {
 			in.read(buf, len);
-			_currentTranslationMessages[i].msgctxt = String(buf, len);
+			_currentTranslationMessages[i].msgctxt = String(buf, len-1);
 		}
 	}
 }
