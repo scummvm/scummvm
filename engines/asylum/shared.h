@@ -235,7 +235,7 @@ enum ActorDirection {
 	kDirection4 = 4,
 	kDirection5 = 5,
 	kDirection6 = 6,
-	kDirection7 = 7,
+	kDirection7 = 7
 };
 
 enum ActorFlags {
