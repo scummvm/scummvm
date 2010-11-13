@@ -160,6 +160,7 @@ HugoEngine::~HugoEngine() {
 	delete _inventory;
 	delete _mouse;
 	delete _screen;
+	delete _intro;
 	delete _scheduler;
 	delete _file;
 

@@ -246,6 +246,10 @@ SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
 	_midiPlayer = new MidiPlayer(driver);
 }
 
+SoundHandler::~SoundHandler() {
+	delete _midiPlayer;
+}
+
 void SoundHandler::setMusicVolume() {
 	/* Set the FM music volume from config.mvolume (0..100%) */
 

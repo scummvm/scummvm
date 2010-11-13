@@ -42,6 +42,7 @@ class MidiPlayer;
 class SoundHandler {
 public:
 	SoundHandler(HugoEngine *vm);
+	~SoundHandler();
 
 	void toggleMusic();
 	void toggleSound();
