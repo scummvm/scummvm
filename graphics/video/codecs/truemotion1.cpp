@@ -123,42 +123,40 @@ void TrueMotion1Decoder::selectDeltaTables(int deltaTableIndex) {
 	}
 }
 
-int TrueMotion1Decoder::makeYdt15Entry(int p1, int p2) {
+int TrueMotion1Decoder::makeYdt16Entry(int p1, int p2) {
 #ifdef SCUMM_BIG_ENDIAN
 	// Swap the values on BE systems. FFmpeg does this too.
 	SWAP<int>(p1, p2);
 #endif
 
 	int lo = _ydt[p1];
-	lo += (lo << 5) + (lo << 10);
+	lo += (lo << 6) + (lo << 11);
 	int hi = _ydt[p2];
-	hi += (hi << 5) + (hi << 10);
-	return (lo + (hi << 16)) << 1;
+	hi += (hi << 6) + (hi << 11);
+	return lo + (hi << 16);
 }
 
-int TrueMotion1Decoder::makeCdt15Entry(int p1, int p2) {
-#ifdef SCUMM_BIG_ENDIAN
-	// Swap the values on BE systems. FFmpeg does this too.
-	SWAP<int>(p1, p2);
-#endif
-
+int TrueMotion1Decoder::makeCdt16Entry(int p1, int p2) {
 	int b = _cdt[p2];
-	int r = _cdt[p1] << 10;
+	int r = _cdt[p1] << 11;
 	int lo = b + r;
-	return (lo + (lo << 16)) << 1;
+	return lo + (lo << 16);
 }
 
-void TrueMotion1Decoder::genVectorTable15(const byte *selVectorTable) {
+void TrueMotion1Decoder::genVectorTable16(const byte *selVectorTable) {
+	memset(&_yPredictorTable, 0, sizeof(PredictorTableEntry) * 1024);
+	memset(&_cPredictorTable, 0, sizeof(PredictorTableEntry) * 1024);
+
 	for (int i = 0; i < 1024; i += 4) {
 		int len = *selVectorTable++ / 2;
 		for (int j = 0; j < len; j++) {
 			byte deltaPair = *selVectorTable++;
-			_yPredictorTable[i + j] = 0xfffffffe & makeYdt15Entry(deltaPair >> 4, deltaPair & 0xf);
-			_cPredictorTable[i + j] = 0xfffffffe & makeCdt15Entry(deltaPair >> 4, deltaPair & 0xf);
+			_yPredictorTable[i + j].color = makeYdt16Entry(deltaPair >> 4, deltaPair & 0xf);
+			_cPredictorTable[i + j].color = makeCdt16Entry(deltaPair >> 4, deltaPair & 0xf);
 		}
 
-		_yPredictorTable[i + (len - 1)] |= 1;
-		_cPredictorTable[i + (len - 1)] |= 1;
+		_yPredictorTable[i + (len - 1)].getNextIndex = true;
+		_cPredictorTable[i + (len - 1)].getNextIndex = true;
 	}
 }
 
@@ -229,7 +227,7 @@ void TrueMotion1Decoder::decodeHeader(Common::SeekableReadStream *stream) {
 		error("Invalid vector table id %d", _header.vectable);
 
 	if (_header.deltaset != _lastDeltaset || _header.vectable != _lastVectable)
-		genVectorTable15(selVectorTable);
+		genVectorTable16(selVectorTable);
 
 	// set up pointers to the other key data chunks
 	_mbChangeBits = _buf + _header.headerSize;
@@ -259,15 +257,15 @@ do { \
 } while (0) \
 
 #define APPLY_C_PREDICTOR() \
-	predictor_pair = _cPredictorTable[index]; \
-	horizPred += (predictor_pair >> 1); \
-	if (predictor_pair & 1) { \
+	predictor_pair = _cPredictorTable[index].color; \
+	horizPred += predictor_pair; \
+	if (_cPredictorTable[index].getNextIndex) { \
 		GET_NEXT_INDEX(); \
 		if (!index) { \
 			GET_NEXT_INDEX(); \
-			predictor_pair = _cPredictorTable[index]; \
-			horizPred += ((predictor_pair >> 1) * 5); \
-			if (predictor_pair & 1) \
+			predictor_pair = _cPredictorTable[index].color; \
+			horizPred += predictor_pair * 5; \
+			if (_cPredictorTable[index].getNextIndex) \
 				GET_NEXT_INDEX(); \
 			else \
 				index++; \
@@ -276,15 +274,15 @@ do { \
 		index++
 
 #define APPLY_Y_PREDICTOR() \
-	predictor_pair = _yPredictorTable[index]; \
-	horizPred += (predictor_pair >> 1); \
-	if (predictor_pair & 1) { \
+	predictor_pair = _yPredictorTable[index].color; \
+	horizPred += predictor_pair; \
+	if (_yPredictorTable[index].getNextIndex) { \
 		GET_NEXT_INDEX(); \
 		if (!index) { \
 			GET_NEXT_INDEX(); \
-			predictor_pair = _yPredictorTable[index]; \
-			horizPred += ((predictor_pair >> 1) * 5); \
-			if (predictor_pair & 1) \
+			predictor_pair = _yPredictorTable[index].color; \
+			horizPred += predictor_pair * 5; \
+			if (_yPredictorTable[index].getNextIndex) \
 				GET_NEXT_INDEX(); \
 			else \
 				index++; \

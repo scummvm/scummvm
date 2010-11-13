@@ -42,8 +42,8 @@ public:
 
 	Surface *decodeImage(Common::SeekableReadStream *stream);
 
-	// Always return RGB555
-	PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); }
+	// Always return RGB565
+	PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); }
 
 private:
 	Surface *_surface;
@@ -54,11 +54,14 @@ private:
 
 	uint16 _width, _height;
 	int _flags;
+	
+	struct PredictorTableEntry {
+		uint32 color;
+		bool getNextIndex;
+	};
 
-	uint32 _yPredictorTable[1024];
-	uint32 _cPredictorTable[1024];
-	uint32 _fatYPredictorTable[1024];
-	uint32 _fatCPredictorTable[1024];
+	PredictorTableEntry _yPredictorTable[1024];
+	PredictorTableEntry _cPredictorTable[1024];
 
 	int _blockType;
 	int _blockWidth;
@@ -92,9 +95,9 @@ private:
 	void selectDeltaTables(int deltaTableIndex);
 	void decodeHeader(Common::SeekableReadStream *stream);
 	void decode16();
-	int makeYdt15Entry(int p1, int p2);
-	int makeCdt15Entry(int p1, int p2);
-	void genVectorTable15(const byte *selVectorTable);
+	int makeYdt16Entry(int p1, int p2);
+	int makeCdt16Entry(int p1, int p2);
+	void genVectorTable16(const byte *selVectorTable);
 };
 
 } // End of namespace Graphics
