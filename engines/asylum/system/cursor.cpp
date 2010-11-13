@@ -73,7 +73,7 @@ void Cursor::set(ResourceId resourceId, int32 cntr, int32 flgs, int32 frames) {
 	if (frames >= 0)
 		frameCount = frames;
 	else
-		frameCount = _cursorRes->getFrameCount();
+		frameCount = _cursorRes->count();
 	this->flags   = flgs;
 	this->counter = cntr;
 	currentFrame = 0;

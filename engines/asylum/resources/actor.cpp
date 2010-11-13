@@ -245,10 +245,8 @@ void Actor::draw() {
 
 	// Draw the actor
 	Common::Point point;
-	GraphicResource *gra = new GraphicResource(_vm, _resourceId);
-	GraphicFrame *fra = gra->getFrame(_frameIndex);
-	getScene()->adjustCoordinates(fra->x + x + x1, fra->y + y + y1, &point);
-	delete gra;
+	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
+	getScene()->adjustCoordinates(frameRect.left + x + x1, frameRect.top + y + y1, &point);
 
 	// Compute frame index
 	int32 frameIndex = _frameIndex;
@@ -315,9 +313,7 @@ void Actor::update() {
 						player->updateStatus(kActorStatus3);
 						player->setResourceId(player->getResourcesId(35));
 						player->setDirection(kDirection4);
-						GraphicResource *resource = new GraphicResource(_vm, player->getResourceId());
-						player->setFrameCount(resource->getFrameCount());
-						delete resource;
+						player->setFrameCount(GraphicResource::getFrameCount(_vm, player->getResourceId()));
 
 						getCursor()->hide();
 						getScene()->getActor(0)->updateFromDirection(kDirection4);
@@ -627,7 +623,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 
 			if (getScene()->getPlayerActorIndex() == _index) {
 				resource->load(_resourceId);
-				_frameIndex = resource->getFrameCount() - 1;
+				_frameIndex = resource->count() - 1;
 			}
 
 			if (_index == 11)
@@ -637,7 +633,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			if (resource->getResourceId() != _resourceId)
 				resource->load(_resourceId);
 
-			_frameCount = resource->getFrameCount();
+			_frameCount = resource->count();
 
 			delete resource;
 		}
@@ -673,14 +669,9 @@ void Actor::updateFromDirection(ActorDirection actorDirection) {
 
 	case kActorStatusDisabled:
 	case kActorStatusEnabled:
-	case kActorStatus14: {
+	case kActorStatus14:
 		_resourceId = _graphicResourceIds[(actorDirection > 4 ? 8 - actorDirection : actorDirection) + 5];
-
-		// FIXME this seems kind of wasteful just to grab a frame count
-		GraphicResource *gra = new GraphicResource(_vm, _resourceId);
-		_frameCount = gra->getFrameCount();
-		delete gra;
-		}
+		_frameCount = GraphicResource::getFrameCount(_vm, _resourceId);
 		break;
 
 	case kActorStatus18:
@@ -723,15 +714,10 @@ void Actor::faceTarget(ObjectId id, DirectionFrom from) {
 			return;
 		}
 
+		Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-
-		GraphicResource *resource = new GraphicResource(_vm, object->getResourceId());
-		GraphicFrame *frame = resource->getFrame(object->getFrameIndex());
-
-		newX = (frame->surface.w >> 1) + object->x;
-		newY = (frame->surface.h >> 1) + object->y;
-
-		delete resource;
+		newX = (frameRect.width() >> 1) + object->x;
+		newY = (frameRect.height() >> 1) + object->y;
 		}
 		break;
 
@@ -1213,11 +1199,7 @@ ActorDirection Actor::getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
 
 void Actor::updateGraphicData(uint32 offset) {
 	_resourceId = _graphicResourceIds[(_direction > 4 ? 8 - _direction : _direction) + offset];
-
-	GraphicResource *resource = new GraphicResource(_vm, _resourceId);
-	_frameCount = resource->getFrameCount();
-	delete resource;
-
+	_frameCount = GraphicResource::getFrameCount(_vm, _resourceId);
 	_frameIndex = 0;
 }
 

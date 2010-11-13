@@ -178,10 +178,8 @@ void Object::draw() {
 
 	// Draw the object
 	Common::Point point;
-	GraphicResource *gra = new GraphicResource(_vm, _resourceId);
-	GraphicFrame *fra = gra->getFrame(_frameIndex);
-	getScene()->adjustCoordinates(x + fra->x, y + fra->y, &point);
-	delete gra;
+	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
+	getScene()->adjustCoordinates(x + frameRect.left, y + frameRect.top, &point);
 
 	if (_field_67C <= 0 || _field_67C >= 4 || Config.performance <= 1) {
 		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, point.x, point.y, (flags >> 11) & kObjectFlag2, _field_67C - 3, _priority);
@@ -219,9 +217,7 @@ void Object::update() {
 				if (_vm->getRandom(_field_C0) == 1) {
 					if (_randomResourceIds[0]) {
 						_resourceId = getRandomResourceId();
-						GraphicResource *gra = new GraphicResource(_vm, _resourceId);
-						_frameCount  = gra->getFrameCount();
-						delete gra;
+						_frameCount  = GraphicResource::getFrameCount(_vm, _resourceId);
 					}
 					_frameIndex++;
 				}
@@ -255,11 +251,9 @@ void Object::update() {
 
 			if (_frameIndex < _frameCount - 1) {
 				if (_field_688 == 1) {
-					GraphicResource *gra = new GraphicResource(_vm, _resourceId);
-					GraphicFrame *frame = gra->getFrame(_frameIndex);
-					getScene()->setGlobalX(x + frame->x + (frame->getWidth() >> 1));
-					getScene()->setGlobalY(y + frame->y + (frame->getHeight() >> 1));
-					delete gra;
+					Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
+					getScene()->setGlobalX(x + frameRect.left + (frameRect.width()  >> 1));
+					getScene()->setGlobalY(y + frameRect.top  + (frameRect.height() >> 1));
 				}
 			} else {
 				flags &= ~kObjectFlag8;
@@ -284,11 +278,9 @@ void Object::update() {
 					getScene()->setGlobalY(-1);
 				}
 			} else if (_field_688 == 1) {
-				GraphicResource *gra = new GraphicResource(_vm, _resourceId);
-				GraphicFrame *frame = gra->getFrame(_frameIndex);
-				getScene()->setGlobalX(x + frame->x + (frame->getWidth() >> 1));
-				getScene()->setGlobalY(y + frame->y + (frame->getHeight() >> 1));
-				delete gra;
+				Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
+				getScene()->setGlobalX(x + frameRect.left + (frameRect.width()  >> 1));
+				getScene()->setGlobalY(y + frameRect.top  + (frameRect.height() >> 1));
 			}
 
 			_tickCount = _vm->getTick();
@@ -435,15 +427,12 @@ void Object::setVolume() {
 	if (!_soundResourceId || !getSound()->isPlaying(_soundResourceId))
 		return;
 
-	GraphicResource *resource = new GraphicResource(_vm, _resourceId);
-	GraphicFrame *frame = resource->getFrame(_frameIndex);
+	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
 
 	// Compute volume
-	int32 volume = Config.voiceVolume + getSound()->calculateVolumeAdjustement((frame->getWidth() >> 1) + x, (frame->getHeight() >> 1) + y, _field_6A4, 0);
+	int32 volume = Config.voiceVolume + getSound()->calculateVolumeAdjustement((frameRect.width() >> 1) + x, (frameRect.height() >> 1) + y, _field_6A4, 0);
 	if (volume < -10000)
 		volume = -10000;
-
-	delete resource;
 
 	getSound()->setVolume(_soundResourceId, volume);
 }

@@ -97,7 +97,7 @@ void SceneTitle::update(int32 tick) {
 
 	_spinnerFrame++;
 
-	if (_spinnerFrame > _progress->getFrameCount() - 1)
+	if (_spinnerFrame > _progress->count() - 1)
 		_spinnerFrame = 0;
 
     if (_spinnerProgress > 590) {

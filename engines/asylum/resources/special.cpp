@@ -1276,13 +1276,10 @@ void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, Object 
 
 	switch (object->getId()) {
 	default: {
-		GraphicResource *resource = new GraphicResource(_vm, object->getResourceId());
-		GraphicFrame *frame = resource->getFrame(object->getFrameIndex());
+		Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-		x = (frame->getWidth() >> 1)  + object->x;
-		y = (frame->getHeight() >> 1) + object->y;
-
-		delete resource;
+		x = (frameRect.width()  >> 1) + object->x;
+		y = (frameRect.height() >> 1) + object->y;
 		}
 		break;
 

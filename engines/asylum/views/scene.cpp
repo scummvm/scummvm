@@ -792,21 +792,9 @@ bool Scene::hitTestActor(const Common::Point pt) {
 }
 
 bool Scene::hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped) {
-	GraphicResource *gra = new GraphicResource(_vm, resourceId);
-	GraphicFrame    *fra = gra->getFrame(frame);
-
 	// TODO this gets a bit funky with the "flipped" calculations for x intersection
 	// The below is a pretty basic intersection test for proof of concept
-
-	Common::Rect rect;
-	rect.top    = fra->x;
-	rect.left   = fra->y;
-	rect.right  = fra->x + fra->surface.w;
-	rect.bottom = fra->y + fra->surface.h;
-
-	delete gra;
-
-	return rect.contains(x, y);
+	return GraphicResource::getFrameRect(_vm, resourceId, frame).contains(x, y);
 }
 
 void Scene::changePlayer(ActorIndex index) {
