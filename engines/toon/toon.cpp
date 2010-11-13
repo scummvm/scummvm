@@ -573,6 +573,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 	bool exitGame = false;
 	int clickingOn, clickRelease;
 	int menuMask = MAINMENUMASK_BASE;
+	Common::SeekableReadStream *mainmenuMusicFile = NULL;
 	AudioStreamInstance *mainmenuMusic = NULL;
 	bool musicPlaying = false;
 
@@ -581,7 +582,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 		clickRelease = false;
 
 		if (!musicPlaying) {
-			Common::SeekableReadStream *mainmenuMusicFile = resources()->openFile("misc/BR091013.MUS");
+			mainmenuMusicFile = resources()->openFile("misc/BR091013.MUS");
 			mainmenuMusic = new AudioStreamInstance(_audioManager, _mixer, mainmenuMusicFile, true);
 			mainmenuMusic->play(false);
 			musicPlaying = true;
@@ -651,6 +652,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 		if (musicPlaying) {
 			//stop music
 			mainmenuMusic->stop(false);
+			delete mainmenuMusicFile;
 			musicPlaying = false;
 		}
 
