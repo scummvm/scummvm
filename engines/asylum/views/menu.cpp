@@ -309,12 +309,12 @@ void MainMenu::updateMainMenu() {
 				_iconResource = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, iconNum + 4));
 			}
 
-			GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->getFrameCount() - 1, _curIconFrame));
+			GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->count() - 1, _curIconFrame));
 			_vm->screen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
 
 			// Cycle icon frame
 			_curIconFrame++;
-			if (_curIconFrame >= _iconResource->getFrameCount())
+			if (_curIconFrame >= _iconResource->count())
 				_curIconFrame = 0;
 
 			// Show text
@@ -335,12 +335,12 @@ void MainMenu::updateMainMenu() {
 }
 
 void MainMenu::updateSubMenu() {
-	GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->getFrameCount() - 1, _curIconFrame));
+	GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->count() - 1, _curIconFrame));
 	_vm->screen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
 
 	// Cycle icon frame
 	_curIconFrame++;
-	if (_curIconFrame >= _iconResource->getFrameCount())
+	if (_curIconFrame >= _iconResource->count())
 		_curIconFrame = 0;
 
 	switch (_activeIcon) {
@@ -577,11 +577,11 @@ void MainMenu::updateSubMenuShowCredits() {
 	GraphicFrame *creditsFadeFrame = _creditsFadeResource->getFrame(0);
 	_vm->screen()->copyRectToScreenWithTransparency((byte *)creditsFadeFrame->surface.pixels, creditsFadeFrame->surface.w, creditsFadeFrame->x, creditsFadeFrame->y, creditsFadeFrame->surface.w, creditsFadeFrame->surface.h);
 
-	GraphicFrame *creditsFrame = _creditsResource->getFrame(MIN<int>(_creditsResource->getFrameCount() - 1, _creditsBgFrame));
+	GraphicFrame *creditsFrame = _creditsResource->getFrame(MIN<int>(_creditsResource->count() - 1, _creditsBgFrame));
 	_vm->screen()->copyRectToScreenWithTransparency((byte *)creditsFrame->surface.pixels, creditsFrame->surface.w, creditsFrame->x, creditsFrame->y, creditsFrame->surface.w, creditsFrame->surface.h);
 
 	_creditsBgFrame++;
-	if (_creditsBgFrame >= _creditsResource->getFrameCount())
+	if (_creditsBgFrame >= _creditsResource->count())
 		_creditsBgFrame = 0;
 
 	do {

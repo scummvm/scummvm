@@ -46,6 +46,10 @@ struct GraphicFrame {
 
 	uint16 getWidth() { return surface.w; }
 	uint16 getHeight() { return surface.h; }
+
+	Common::Rect getRect() {
+		return Common::Rect(x, y, x + getWidth(), y + getHeight());
+	}
 };
 
 // Graphic resources can be sprites or images, with multiple frames
@@ -72,7 +76,11 @@ public:
 	ResourceId    getResourceId() { return _resourceId; }
 	int32         getFlags()      { return _flags; }
 	int32         getFlags2()     { return _flags2; }
-	uint32        getFrameCount() { return _frames.size(); }
+	uint32        count()         { return _frames.size(); }
+
+	// Helper functions
+	static uint32 getFrameCount(AsylumEngine *engine, ResourceId id);
+	static Common::Rect getFrameRect(AsylumEngine *engine, ResourceId id, uint32 index);
 
 private:
 	AsylumEngine *_vm;

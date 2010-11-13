@@ -139,4 +139,27 @@ void GraphicResource::init(byte *data, int32 size) {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Helper functions
+//////////////////////////////////////////////////////////////////////////
+
+uint32 GraphicResource::getFrameCount(AsylumEngine *engine, ResourceId id) {
+	GraphicResource *resource = new GraphicResource(engine, id);
+	uint32 count = resource->count();
+	delete resource;
+
+	return count;
+}
+
+Common::Rect GraphicResource::getFrameRect(AsylumEngine *engine, ResourceId id, uint32 index) {
+	GraphicResource *resource = new GraphicResource(engine, id);
+	GraphicFrame *frame = resource->getFrame(index);
+
+	Common::Rect rect = frame->getRect();
+
+	delete resource;
+
+	return rect;
+}
+
 } // end of namespace Asylum

@@ -386,13 +386,10 @@ IMPLEMENT_OPCODE(PlayAnimation) {
 			getScene()->setGlobalX(object->x);
 			getScene()->setGlobalY(object->y);
 		} else {
-			GraphicResource *res = new GraphicResource(_vm, object->getResourceId());
-			GraphicFrame *frame = res->getFrame(object->getFrameIndex());
+			Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-			getScene()->setGlobalX(frame->x + (frame->getWidth() >> 1) + object->x);
-			getScene()->setGlobalY(frame->y + (frame->getHeight() >> 1) + object->y);
-
-			delete res;
+			getScene()->setGlobalX(frameRect.left + (frameRect.width() >> 1) + object->x);
+			getScene()->setGlobalY(frameRect.top + (frameRect.height() >> 1) + object->y);
 		}
 	}
 
@@ -830,13 +827,11 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub) {
 		else
 			id = actor->getResourcesId(5 * cmd->param1 + direction + 30);
 
-		GraphicResource *res = new GraphicResource(_vm, id);
 		actor->setResourceId(id);
-		actor->setFrameCount(res->getFrameCount());
+		actor->setFrameCount(GraphicResource::getFrameCount(_vm, id));
 		actor->setFrameIndex(0);
 		actor->setDirection(direction);
 		actor->updateStatus(actor->getStatus() <= kActorStatus11 ? kActorStatus3 : kActorStatus19);
-		delete res;
 
 		cmd->param3 = 2;
 		_lineIncrement = 1;
