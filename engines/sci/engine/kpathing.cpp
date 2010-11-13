@@ -938,7 +938,7 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 			// Fall through
 		case POLY_BARRED_ACCESS:
 		case POLY_NEAREST_ACCESS:
-			if (cont == CONT_INSIDE) {
+			if (cont != CONT_OUTSIDE) {
 				if (s->_prependPoint != NULL) {
 					// We shouldn't get here twice.
 					// We need to break in this case, otherwise we'll end in an infinite
@@ -958,7 +958,8 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 				// The original start position is in an invalid location, so we
 				// use the moved point and add the original one to the final path
 				// later on.
-				s->_prependPoint = new Common::Point(start);
+				if (start != *new_start)
+					s->_prependPoint = new Common::Point(start);
 			}
 		}
 
@@ -1014,7 +1015,7 @@ static Common::Point *fixup_end_point(PathfindingState *s, const Common::Point &
 
 				// For near-point access polygons we need to add the original end point
 				// to the path after pathfinding.
-				if (type == POLY_NEAREST_ACCESS)
+				if ((type == POLY_NEAREST_ACCESS) && (end != *new_end))
 					s->_appendPoint = new Common::Point(end);
 			}
 		}
