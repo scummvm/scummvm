@@ -716,9 +716,10 @@ int32 Scene::hitTest(const Common::Point pt, HitType &type) {
 	if (targetIdx == -1) {
 		targetIdx = hitTestActionArea(pt);
 		if (targetIdx == -1) {
-			targetIdx = hitTestActor(pt);
-			if (targetIdx != -1)
+			if (hitTestActor(pt)) {
+				targetIdx = _playerActorIdx;
 				type = kHitActor;
+			}
 		} else {
 			type = kHitActionArea;
 		}
