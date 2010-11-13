@@ -219,7 +219,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 
 			if (_chapter2Counter >= 5) {
 				_chapter2Counter = 0;
-				actor->updateFromDirection((actor->getDirection() + 1) % ~7); // TODO check
+				actor->updateFromDirection((ActorDirection)((actor->getDirection() + 1) % ~7)); // TODO check
 			}
 		} else if (actor->getStatus() == kActorStatusEnabled) {
 			actor->updateStatus(kActorStatus1);
@@ -537,7 +537,7 @@ void Special::chapter8(Object *object, ActorIndex actorIndex) {
 
 			if (object->getFrameIndex() == 50) {
 				object->disableAndRemoveFromQueue();
-				actor0->setDirection(4);
+				actor0->setDirection(kDirection4);
 
 				getCursor()->show();
 				getWorld()->motionStatus = 1;
@@ -1315,7 +1315,7 @@ void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, Object 
 
 	// Adjust object properties
 	object->setSoundResourceId(resourceId);
-	object->setField6A4(attenuation);
+	object->setField6A4((ActorDirection)attenuation);
 
 	getSound()->playSound(resourceId, false, adjustedVolume, panning);
 }

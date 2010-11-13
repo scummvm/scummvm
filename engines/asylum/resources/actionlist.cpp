@@ -459,7 +459,7 @@ IMPLEMENT_OPCODE(ShowActor) {
 IMPLEMENT_OPCODE(SetActorPosition) {
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	actor->setPosition(cmd->param2, cmd->param3, cmd->param4, cmd->param5);
+	actor->setPosition(cmd->param2, cmd->param3, (ActorDirection)cmd->param4, cmd->param5);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -548,9 +548,9 @@ IMPLEMENT_OPCODE(JumpAndSetDirection) {
 		if (cmd->param5 != 2) {
 
 			if (cmd->param2 == -1 || cmd->param3 == -1) {
-				actor->updateFromDirection(cmd->param4);
+				actor->updateFromDirection((ActorDirection)cmd->param4);
 			} else if ((actor->x1 + actor->x2) == cmd->param2 && (actor->y1 + actor->y2) == cmd->param3) {
-				actor->updateFromDirection(cmd->param4);
+				actor->updateFromDirection((ActorDirection)cmd->param4);
 			} else {
 				actor->processStatus(cmd->param2, cmd->param3, cmd->param4);
 
@@ -564,7 +564,7 @@ IMPLEMENT_OPCODE(JumpAndSetDirection) {
 			_lineIncrement = 0;
 
 			if ((actor->x1 + actor->x2) == cmd->param2 && (actor->y1 + actor->y2) == cmd->param3)
-				actor->updateFromDirection(cmd->param4);
+				actor->updateFromDirection((ActorDirection)cmd->param4);
 		}
 	} else {
 		if (cmd->param5 == 2)
@@ -784,7 +784,9 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub) {
 	Actor *player = getScene()->getActor();
 	Actor *actor = getScene()->getActor(_currentQueueEntry.actorIndex);
 	Common::Point playerPoint(player->x1 + player->x2, player->y1 + player->y2);
-	ActorDirection direction = (cmd->param2 == 8) ? player->getDirection() : cmd->param2;
+	ActorDirection direction = (cmd->param2 == 8) ? player->getDirection() : (ActorDirection)cmd->param2;
+
+	ActorDirection newDirection = (ActorDirection)((player->getDirection() + 4) % 8);
 
 	if (cmd->param2 == 8)
 		cmd->param2 = player->getDirection();
@@ -812,18 +814,16 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub) {
 		if (cmd->param1 == 2) {
 			Common::Point point(playerPoint);
 
-			int32 index = (player->getDirection() + 4) % 8;
+			if (player->process_408B20(&point, newDirection, 3, false)) {
 
-			if (player->process_408B20(&point, index, 3, false)) {
-
-				point.x += 3 * deltaPointsArray[index].x;
-				point.x += 3 * deltaPointsArray[index].y;
+				point.x += 3 * deltaPointsArray[newDirection].x;
+				point.x += 3 * deltaPointsArray[newDirection].y;
 
 				player->setPosition(point.x, point.y, actor->getDirection(), 0);
 			}
 		}
 
-	} else if (cmd->param1 != 2 || player->process_408B20(&playerPoint, (player->getDirection() + 4) % 8, 3, false)) {
+	} else if (cmd->param1 != 2 || player->process_408B20(&playerPoint, newDirection, 3, false)) {
 		ResourceId id = kResourceNone;
 		if (direction >= 5)
 			id = actor->getResourcesId(5 * cmd->param1 - direction + 38);
@@ -1556,7 +1556,7 @@ IMPLEMENT_OPCODE(_unk56) {
 
 		if ((actor->x1 + actor->x2 == cmd->param6) && (actor->y1 + actor->y2 == cmd->param7)) {
 			getScene()->getActor()->faceTarget((ObjectId)cmd->param1, kDirectionFromActor);
-			actor->updateFromDirection((actor->getDirection() + 4) & 7);
+			actor->updateFromDirection((ActorDirection)((actor->getDirection() + 4) & 7));
 		} else {
 			_currentLine = cmd->param3;
 		}

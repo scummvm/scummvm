@@ -54,7 +54,7 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_frameCount = 0;
  	x = y = 0;
  	x1 = y1 = x2 = y2 = 0;
- 	_direction = 0;
+ 	_direction = kDirection0;
  	_field_3C = 0;
  	_status = kActorStatusNone;
  	_field_44 = 0;
@@ -149,7 +149,7 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	_boundingRect.right  = stream->readSint32LE() & 0xFFFF;
 	_boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
 
-	_direction  = stream->readSint32LE();
+	_direction  = (ActorDirection)stream->readSint32LE();
 	_field_3C   = stream->readSint32LE();
 	_status     = (ActorStatus)stream->readSint32LE();
 	_field_44   = stream->readSint32LE();
@@ -314,13 +314,13 @@ void Actor::update() {
 
 						player->updateStatus(kActorStatus3);
 						player->setResourceId(player->getResourcesId(35));
-						player->setDirection(4);
+						player->setDirection(kDirection4);
 						GraphicResource *resource = new GraphicResource(_vm, player->getResourceId());
 						player->setFrameCount(resource->getFrameCount());
 						delete resource;
 
 						getCursor()->hide();
-						getScene()->getActor(0)->updateFromDirection(4);
+						getScene()->getActor(0)->updateFromDirection(kDirection4);
 
 						// Queue script
 						getScene()->actions()->queueScript(getWorld()->getActionAreaById(2696)->scriptIndex, getScene()->getPlayerActorIndex());
@@ -582,7 +582,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			Actor *actor = getScene()->getActor(0);
 			actor->x1 = x2 + x1 - actor->x2;
 			actor->y1 = y2 + y1 - actor->y2;
-			actor->setDirection(4);
+			actor->setDirection(kDirection4);
 
 			getScene()->setPlayerActorIndex(0);
 
@@ -762,7 +762,7 @@ void Actor::faceTarget(ObjectId id, DirectionFrom from) {
 	updateFromDirection(getDirection(x2 + x1, y2 + y1, newX, newY));
 }
 
-void Actor::setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame) {
+void Actor::setPosition(int32 newX, int32 newY, ActorDirection newDirection, int32 frame) {
 	x1 = newX - x2;
 	y1 = newY - y2;
 
@@ -978,22 +978,22 @@ void Actor::updateStatusEnabled() {
 			break;
 
 		case 0:
-			setPosition(10, 1350, 0, 0);
+			setPosition(10, 1350, kDirection0, 0);
 			processStatus(1460, -100, false);
 			break;
 
 		case 1:
-			setPosition(300, 0, 0, 0);
+			setPosition(300, 0, kDirection0, 0);
 			processStatus(1700, 1400, false);
 			break;
 
 		case 2:
-			setPosition(1560, -100, 0, 0);
+			setPosition(1560, -100, kDirection0, 0);
 			processStatus(-300, 1470, false);
 			break;
 
 		case 3:
-			setPosition(1150, 1400, 0, 0);
+			setPosition(1150, 1400, kDirection0, 0);
 			processStatus(-250, 0, false);
 			break;
 		}
@@ -1172,7 +1172,7 @@ ActorDirection Actor::getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
 	if (v8 >= 360)
 		v8 -= 360;
 
-	int32 result;
+	ActorDirection result;
 
 	if (v8 < 157 || v8 >= 202) {
 		if (v8 < 112 || v8 >= 157) {
@@ -1184,28 +1184,28 @@ ActorDirection Actor::getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
 								if (v8 < 202 || v8 >= 247) {
 									error("getAngle returned a bad angle: %d.", v8);
 								} else {
-									result = 3;
+									result = kDirection3;
 								}
 							} else {
-								result = 4;
+								result = kDirection4;
 							}
 						} else {
-							result = 5;
+							result = kDirection5;
 						}
 					} else {
-						result = 6;
+						result = kDirection6;
 					}
 				} else {
-					result = 7;
+					result = kDirection7;
 				}
 			} else {
-				result = 0;
+				result = kDirection0;
 			}
 		} else {
-			result = 1;
+			result = kDirection1;
 		}
 	} else {
-		result = 2;
+		result = kDirection2;
 	}
 
 	return result;
