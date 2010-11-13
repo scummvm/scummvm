@@ -530,7 +530,7 @@ Common::SeekableReadStream *AudioStreamPackage::getStream(int32 id, bool ownMemo
 	int32 size = 0;
 	getInfo(id, &offset, &size);
 	if (ownMemory) {
-		byte *memory = new byte[size];
+		byte *memory = (byte*)malloc(size);
 		_file->seek(offset);
 		_file->read(memory, size);
 		return new Common::MemoryReadStream(memory, size, DisposeAfterUse::YES);
