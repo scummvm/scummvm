@@ -96,9 +96,19 @@ enum ResourceType {
 	kResourceTypeAudio36,
 	kResourceTypeSync36,
 	kResourceTypeTranslation, // Currently unsupported
+
+	// SCI2.1+ Resources
 	kResourceTypeRobot,
 	kResourceTypeVMD,
 	kResourceTypeChunk,
+	kResourceTypeAnimation,
+
+	// SCI3 Resources
+	kResourceTypeEtc,
+	kResourceTypeDuck,
+	kResourceTypeClut,
+	kResourceTypeTGA,
+	kResourceTypeZZZ,
 
 	// Mac-only resources
 	kResourceTypeMacIconBarPictN, // IBIN resources (icon bar, not selected)
