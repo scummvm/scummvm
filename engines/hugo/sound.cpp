@@ -188,7 +188,8 @@ void MidiPlayer::close() {
 	_driver->close();
 	delete _driver;
 	_driver = 0;
-	_parser->setMidiDriver(0);
+	if (_parser)
+		_parser->setMidiDriver(0);
 	delete _parser;
 	_mutex.unlock();
 }
