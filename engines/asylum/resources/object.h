@@ -56,7 +56,7 @@ public:
 	void setSoundResourceId(ResourceId id) { _soundResourceId = id; }
 
 	void setField67C(int32 val) { _field_67C = val; }
-	void setField6A4(int32 val) { _field_6A4 = val; }
+	void setField6A4(ActorDirection val) { _field_6A4 = val; }
 
 	Common::Rect   *getBoundingRect() { return &_boundingRect; }
 	uint32          getFrameIndex() { return _frameIndex; }
@@ -72,7 +72,7 @@ public:
 	int32           getSoundY()   { return _soundY; }
 	int32           getField67C() { return _field_67C; }
 	int32           getField688() { return _field_688; }
-	int32           getField6A4() { return _field_6A4; }
+	ActorDirection  getField6A4() { return _field_6A4; }
 
 	/////////////////////////////////////////////////////////////////////////
 	// Loading & disabling
@@ -191,7 +191,7 @@ private:
 	int32		   _field_688;
 	ResourceId     _randomResourceIds[5];
 	ResourceId     _soundResourceId;
-	int32		   _field_6A4;
+	ActorDirection _field_6A4;
 
 	/**
 	 * Query if this object is visible.

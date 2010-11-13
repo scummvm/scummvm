@@ -111,7 +111,7 @@ void Object::load(Common::SeekableReadStream *stream) {
 		_randomResourceIds[i] = (ResourceId)stream->readSint32LE();
 
 	_soundResourceId = (ResourceId)stream->readSint32LE();
-	_field_6A4       = stream->readSint32LE();
+	_field_6A4       = (ActorDirection)stream->readSint32LE();
 }
 
 

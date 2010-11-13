@@ -181,7 +181,7 @@ public:
 	 * @param newDirection The new direction.
 	 * @param frame 	   The frame.
 	 */
-	void setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame);
+	void setPosition(int32 newX, int32 newY, ActorDirection newDirection, int32 frame);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Misc

@@ -226,7 +226,17 @@ enum ActorStatus {
 	kActorStatus21
 };
 
-typedef int ActorDirection;
+enum ActorDirection {
+	kDirectionInvalid = -1,
+	kDirection0 = 0,
+	kDirection1 = 1,
+	kDirection2 = 2,
+	kDirection3 = 3,
+	kDirection4 = 4,
+	kDirection5 = 5,
+	kDirection6 = 6,
+	kDirection7 = 7,
+};
 
 enum ActorFlags {
 	kActorFlagVisible = 1,
