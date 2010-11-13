@@ -829,8 +829,12 @@ ToonEngine::~ToonEngine() {
 	delete _resources;
 	delete _animationManager;
 	delete _moviePlayer;
-	delete _mainSurface;
 
+	if(_mainSurface) {
+		_mainSurface->free();
+		delete _mainSurface;
+	}
+	
 	delete[] _finalPalette;
 	delete[] _backupPalette;
 	delete[] _additionalPalette1;
@@ -859,6 +863,20 @@ ToonEngine::~ToonEngine() {
 
 	delete _pathFinding;
 
+
+	for (int32 i = 0; i < 64; i++) {
+		if (_sceneAnimations[i]._active) {
+			// see if one character shares this instance
+			for (int32 c = 0; c < 32; c++) {
+				if (_characters[c] && _characters[c]->getAnimationInstance() == _sceneAnimations[i]._animInstance) {
+					_characters[c]->setAnimationInstance(0);
+				}
+			}
+			delete _sceneAnimations[i]._originalAnimInstance;
+			delete _sceneAnimations[i]._animation;
+		}
+	}
+
 	for (int32 i = 0; i < 32; i++)
 		delete _characters[i];
 
@@ -869,6 +887,7 @@ ToonEngine::~ToonEngine() {
 	delete _inventoryIconSlots;
 	//delete _genericTexts;
 	delete _audioManager;
+	delete _gameState;
 
 	unloadToonDat();
 
@@ -1642,8 +1661,18 @@ void ToonEngine::exitScene() {
 			delete _sceneAnimations[i]._animation;
 			_sceneAnimations[i]._active = false;
 			_animationManager->removeInstance(_sceneAnimations[i]._animInstance);
-			_sceneAnimations[i]._animInstance = 0;
-			_sceneAnimations[i]._animation = 0;
+
+			// see if one character shares this instance
+			for (int32 c = 0; c < 32; c++) {
+				if (_characters[c] && _characters[c]->getAnimationInstance() == _sceneAnimations[i]._animInstance) {
+					_characters[c]->setAnimationInstance(NULL);
+				}
+			}
+
+			delete _sceneAnimations[i]._originalAnimInstance;
+			_sceneAnimations[i]._animInstance = NULL;
+			_sceneAnimations[i]._animation = NULL;
+			_sceneAnimations[i]._originalAnimInstance = NULL;
 		}
 	}
 	for (int32 i = 0; i < 64; i++) {
@@ -4557,6 +4586,8 @@ char **ToonEngine::loadTextsVariants(Common::File &in) {
 			res[0] += DATAALIGNMENT;
 		} else {
 			in.read(pos, entryLen);
+			free(pos);
+			continue;
 		}
 
 		pos += DATAALIGNMENT;
@@ -4637,6 +4668,7 @@ void SceneAnimation::load(ToonEngine *vm, Common::ReadStream *stream) {
 		_animInstance = vm->getAnimationManager()->createNewInstance(kAnimationScene);
 		_animInstance->load(stream);
 		vm->getAnimationManager()->addInstance(_animInstance);
+		_originalAnimInstance = _animInstance;
 	}
 
 	// load animation if any

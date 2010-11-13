@@ -916,9 +916,13 @@ int32 ScriptFunc::sys_Cmd_Init_Scene_Anim(EMCState *state) {
 	if (sceneAnim->_active)
 		return 0;
 
+	delete sceneAnim->_animation;
+	delete sceneAnim->_animInstance;
+
 	sceneAnim->_animation = new Animation(_vm);
 	sceneAnim->_animation->loadAnimation(GetText(12, state));
 	sceneAnim->_animInstance = _vm->getAnimationManager()->createNewInstance(kAnimationScene);
+	sceneAnim->_originalAnimInstance = sceneAnim->_animInstance;
 	sceneAnim->_animInstance->setAnimation(sceneAnim->_animation);
 	sceneAnim->_animInstance->setVisible((flags & 1) != 0);
 	sceneAnim->_animInstance->setAnimationRange(stackPos(11), stackPos(11));
@@ -1155,8 +1159,18 @@ int32 ScriptFunc::sys_Cmd_Remove_Scene_Anim(EMCState *state) {
 	SceneAnimation *sceneAnim = _vm->getSceneAnimation(sceneId);
 	sceneAnim->_active = false;
 	_vm->getAnimationManager()->removeInstance(sceneAnim->_animInstance);
-	sceneAnim->_animation = 0;
-	sceneAnim->_animInstance = 0;
+	delete sceneAnim->_animation;
+	sceneAnim->_animation = NULL;
+
+	// see if one character shares this instance
+	for (int32 c = 0; c < 32; c++) {
+		if (_vm->getCharacter(c) && _vm->getCharacter(c)->getAnimationInstance() == sceneAnim->_originalAnimInstance) {
+			_vm->getCharacter(c)->setAnimationInstance(NULL);
+		}
+	}
+	delete sceneAnim->_originalAnimInstance;
+	sceneAnim->_originalAnimInstance = NULL;
+	sceneAnim->_animInstance = NULL;
 	return 0;
 }
 

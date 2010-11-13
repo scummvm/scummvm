@@ -132,7 +132,7 @@ void AudioManager::playMusic(Common::String dir, Common::String music) {
 	}
 
 	// no need to delete instance here it will automatically deleted by the mixer is done with it
-	_channels[_currentMusicChannel] = new AudioStreamInstance(this, _mixer, srs, true);
+	_channels[_currentMusicChannel] = new AudioStreamInstance(this, _mixer, srs, true, true);
 	_channels[_currentMusicChannel]->setVolume(_musicMuted ? 0 : 255);
 	_channels[_currentMusicChannel]->play(true, Audio::Mixer::kMusicSoundType);
 }
@@ -159,7 +159,7 @@ void AudioManager::playVoice(int32 id, bool genericVoice) {
 		stream = _audioPacks[1]->getStream(id);
 
 	// no need to delete channel 2, it will be deleted by the mixer when the stream is finished
-	_channels[2] = new AudioStreamInstance(this, _mixer, stream);
+	_channels[2] = new AudioStreamInstance(this, _mixer, stream, false, true);
 	_channels[2]->play(false, Audio::Mixer::kSpeechSoundType);
 	_channels[2]->setVolume(_voiceMuted ? 0 : 255);
 
@@ -181,7 +181,7 @@ int32 AudioManager::playSFX(int32 id, int volume , bool genericSFX) {
 
 	for (int32 i = 3; i < 16; i++) {
 		if (!_channels[i]) {
-			_channels[i] = new AudioStreamInstance(this, _mixer, stream);
+			_channels[i] = new AudioStreamInstance(this, _mixer, stream, false, true);
 			_channels[i]->play(false, Audio::Mixer::kSFXSoundType);
 			_channels[i]->setVolume(_sfxMuted ? 0 : volume);
 			return i;
@@ -238,7 +238,7 @@ void AudioManager::stopMusic() {
 		_channels[1]->stop(true);
 }
 
-AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream , bool looping) {
+AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream , bool looping, bool deleteFileStreamAtEnd) {
 	_compBufferSize = 0;
 	_buffer = NULL;
 	_bufferMaxSize = 0;
@@ -258,6 +258,7 @@ AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer,
 	_man = man;
 	_looping = looping;
 	_musicAttenuation = 1000;
+	_deleteFileStream = deleteFileStreamAtEnd;
 
 	// preload one packet
 	if (_totalSize > 0) {
@@ -274,6 +275,10 @@ AudioStreamInstance::~AudioStreamInstance() {
 
 	if (_man)
 		_man->removeInstance(this);
+
+	if (_deleteFileStream) {
+		delete _file;
+	}
 }
 
 int AudioStreamInstance::readBuffer(int16 *buffer, const int numSamples) {

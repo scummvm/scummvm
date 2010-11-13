@@ -37,7 +37,7 @@ class AudioManager;
 class AudioStreamInstance : public Audio::AudioStream {
 
 public:
-	AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream, bool looping = false);
+	AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream, bool looping = false, bool deleteFileStreamAtEnd = false);
 	~AudioStreamInstance();
 	void play(bool fade = false, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	void stop(bool fade = false);
@@ -92,6 +92,7 @@ protected:
 	bool _looping;
 	int32 _volume;
 	int32 _musicAttenuation;
+	bool _deleteFileStream;
 };
 
 class AudioStreamPackage {

@@ -172,6 +172,7 @@ protected:
 
 class SceneAnimation {
 public:
+	AnimationInstance *_originalAnimInstance;
 	AnimationInstance *_animInstance;
 	Animation *_animation;
 	int32 _id;
