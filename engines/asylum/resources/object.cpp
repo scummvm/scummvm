@@ -181,6 +181,7 @@ void Object::draw() {
 	GraphicResource *gra = new GraphicResource(_vm, _resourceId);
 	GraphicFrame *fra = gra->getFrame(_frameIndex);
 	getScene()->adjustCoordinates(x + fra->x, y + fra->y, &point);
+	delete gra;
 
 	if (_field_67C <= 0 || _field_67C >= 4 || Config.performance <= 1) {
 		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, point.x, point.y, (flags >> 11) & kObjectFlag2, _field_67C - 3, _priority);

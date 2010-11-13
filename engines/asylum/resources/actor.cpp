@@ -248,6 +248,7 @@ void Actor::draw() {
 	GraphicResource *gra = new GraphicResource(_vm, _resourceId);
 	GraphicFrame *fra = gra->getFrame(_frameIndex);
 	getScene()->adjustCoordinates(fra->x + x + x1, fra->y + y + y1, &point);
+	delete gra;
 
 	// Compute frame index
 	int32 frameIndex = _frameIndex;
