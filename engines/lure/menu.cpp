@@ -629,6 +629,8 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	}
 
 bail_out:
+	delete s;
+
 #ifndef LURE_CLICKABLE_MENUS
 	mouse.setPosition(oldX, oldY);
 	mouse.cursorOn();
