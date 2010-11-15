@@ -133,6 +133,7 @@ SoundManager::~SoundManager() {
 // Timer
 //////////////////////////////////////////////////////////////////////////
 void SoundManager::handleTimer() {
+	_mutex.lock();
 
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
 		SoundEntry *entry = (*i);
@@ -142,17 +143,20 @@ void SoundManager::handleTimer() {
 			continue;
 		} else if (!entry->isStreamed) {
 			entry->isStreamed = true;
+
+			// TODO: stream any sound in the queue after filtering
 			_soundStream->load(entry->stream);
 		}
 	}
 
-	// TODO: stream any sound in the queue after filtering
+	_mutex.unlock();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Sound queue management
 //////////////////////////////////////////////////////////////////////////
 void SoundManager::updateQueue() {
+	// TODO add mutex lock!
 	//warning("Sound::unknownFunction1: not implemented!");
 }
 
@@ -160,35 +164,47 @@ void SoundManager::resetQueue(SoundType type1, SoundType type2) {
 	if (!type2)
 		type2 = type1;
 
+	_mutex.lock();
+
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
 		if ((*i)->type != type1 && (*i)->type != type2)
 			resetEntry(*i);
 	}
+
+	_mutex.unlock();
 }
 
 void SoundManager::removeFromQueue(EntityIndex entity) {
-	SoundEntry *entry = getEntry(entity);
+	_mutex.lock();
 
+	SoundEntry *entry = getEntry(entity);
 	if (entry)
 		resetEntry(entry);
+
+	_mutex.unlock();
 }
 
 void SoundManager::removeFromQueue(Common::String filename) {
-	SoundEntry *entry = getEntry(filename);
+	_mutex.lock();
 
+	SoundEntry *entry = getEntry(filename);
 	if (entry)
 		resetEntry(entry);
+
+	_mutex.unlock();
 }
 
 void SoundManager::clearQueue() {
 	_flag |= 4;
 
-	// Wait a while for a flag to be set
-	for (int i = 0; i < 3000000; i++)
-		if (_flag & 8)
-			break;
+	// FIXME: Wait a while for a flag to be set
+	//for (int i = 0; i < 3000000; i++)
+	//	if (_flag & 8)
+	//		break;
 
 	_flag |= 8;
+
+	_mutex.lock();
 
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
 		SoundEntry *entry = (*i);
@@ -200,26 +216,39 @@ void SoundManager::clearQueue() {
 		i = _cache.reverse_erase(i);
 	}
 
+	_mutex.unlock();
+
 	updateSubtitles();
 }
 
 bool SoundManager::isBuffered(EntityIndex entity) {
-	return (getEntry(entity) != NULL);
+	_mutex.lock();
+
+	bool buffered = (getEntry(entity) != NULL);	
+
+	_mutex.unlock();
+
+	return buffered;
 }
 
 bool SoundManager::isBuffered(Common::String filename, bool testForEntity) {
+	_mutex.lock();
+
 	SoundEntry *entry = getEntry(filename);
 
+	bool ret = (entry != NULL);
 	if (testForEntity)
-		return entry != NULL && !entry->entity;
+		ret = ret && !entry->entity;
 
-	return (entry != NULL);
+	_mutex.unlock();
+
+	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Entry
 //////////////////////////////////////////////////////////////////////////
-void SoundManager::setupEntry(SoundEntry *entry, Common::String name, FlagType flag, int a4) {
+void SoundManager::setupEntry(SoundEntry *entry, Common::String name, FlagType flag, int a4) {	
 	if (!entry)
 		error("SoundManager::setupEntry: Invalid entry!");
 
@@ -323,8 +352,12 @@ bool SoundManager::setupCache(SoundEntry *entry) {
 }
 
 void SoundManager::clearStatus() {
+	_mutex.lock();
+
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i)
 		(*i)->status.status |= kSoundStatusClear3;
+
+	_mutex.unlock();
 }
 
 void SoundManager::loadSoundData(SoundEntry *entry, Common::String name) {
@@ -343,7 +376,7 @@ void SoundManager::loadSoundData(SoundEntry *entry, Common::String name) {
 	}
 }
 
-void SoundManager::resetEntry(SoundEntry *entry) const {
+void SoundManager::resetEntry(SoundEntry *entry) {
 	entry->status.status |= kSoundStatusRemoved;
 	entry->entity = kEntityPlayer;
 
@@ -383,7 +416,6 @@ void SoundManager::removeEntry(SoundEntry *entry) {
 
 void SoundManager::updateEntry(SoundEntry *entry, uint value) const {
 	if (!(entry->status.status3 & 64)) {
-
 		int value2 = value;
 
 		entry->status.status |= kSoundStatus_100000;
@@ -418,26 +450,35 @@ void SoundManager::updateEntryState(SoundEntry *entry) const {
 }
 
 void SoundManager::processEntry(EntityIndex entity) {
-	SoundEntry *entry = getEntry(entity);
+	_mutex.lock();
 
+	SoundEntry *entry = getEntry(entity);
 	if (entry) {
 		updateEntry(entry, 0);
 		entry->entity = kEntityPlayer;
 	}
+
+	_mutex.unlock();
 }
 
 void SoundManager::processEntry(SoundType type) {
-	SoundEntry *entry = getEntry(type);
+	_mutex.lock();
 
+	SoundEntry *entry = getEntry(type);
 	if (entry)
 		updateEntry(entry, 0);
+
+	_mutex.unlock();
 }
 
 void SoundManager::setupEntry(SoundType type, EntityIndex index) {
-	SoundEntry *entry = getEntry(type);
+	_mutex.lock();
 
+	SoundEntry *entry = getEntry(type);
 	if (entry)
 		entry->entity = index;
+
+	_mutex.unlock();
 }
 
 void SoundManager::processEntry(Common::String filename) {
@@ -457,12 +498,16 @@ void SoundManager::processEntries() {
 }
 
 uint32 SoundManager::getEntryTime(EntityIndex index) {
+	_mutex.lock();
+
+	uint32 time = 0;
 	SoundEntry *entry = getEntry(index);
+	if (entry)
+		time = entry->time;
 
-	if (!entry)
-		return 0;
+	_mutex.unlock();
 
-	return entry->time;
+	return time;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -470,6 +515,7 @@ uint32 SoundManager::getEntryTime(EntityIndex index) {
 //////////////////////////////////////////////////////////////////////////
 
 void SoundManager::unknownFunction4() {
+	// TODO: Add mutex ?
 	warning("Sound::unknownFunction4: not implemented!");
 }
 
@@ -517,6 +563,8 @@ void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
 	uint32 numEntries = count();
 	s.syncAsUint32LE(numEntries);
 
+	_mutex.lock();
+
 	// Save or load each entry data
 	if (s.isSaving()) {
 		for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
@@ -550,13 +598,23 @@ void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
 		warning("Sound::saveLoadWithSerializer: not implemented!");
 		s.skip(numEntries * 64);
 	}
+
+	_mutex.unlock();
 }
 
+
+// FIXME: We probably need another mutex here to protect during the whole savegame process
+// as we could have removed an entry between the time we check the count and the time we
+// save the entries
 uint32 SoundManager::count() {
+	_mutex.lock();
+
 	uint32 numEntries = 0;
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i)
 		if ((*i)->name2.matchString("NISSND?"))
 			++numEntries;
+
+	_mutex.unlock();
 
 	return numEntries;
 }
@@ -579,8 +637,11 @@ void SoundManager::playSound(EntityIndex entity, Common::String filename, FlagTy
 			getSavePoints()->push(kEntityPlayer, entity, kActionEndSound);
 }
 
-SoundManager::SoundType SoundManager::playSoundWithSubtitles(Common::String filename, FlagType flag, EntityIndex entity, byte a4) {
+bool SoundManager::playSoundWithSubtitles(Common::String filename, FlagType flag, EntityIndex entity, byte a4) {
 	SoundEntry *entry = new SoundEntry();
+
+	_mutex.lock();
+
 	setupEntry(entry, filename, flag, 30);
 	entry->entity = entity;
 
@@ -596,7 +657,11 @@ SoundManager::SoundType SoundManager::playSoundWithSubtitles(Common::String file
 		updateEntryState(entry);
 	}
 
-	return entry->type;
+	bool isPlaying = (entry->type != NULL);
+
+	_mutex.unlock();
+
+	return isPlaying;
 }
 
 void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte a3) {
@@ -1715,6 +1780,7 @@ SoundManager::FlagType SoundManager::getSoundFlag(EntityIndex entity) const {
 // Subtitles
 //////////////////////////////////////////////////////////////////////////
 void SoundManager::updateSubtitles() {
+	// TODO: Add mutex ?
 	//warning("SoundManager::updateSubtitles: not implemented!");
 }
 
