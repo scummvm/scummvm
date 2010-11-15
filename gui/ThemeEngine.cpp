@@ -575,7 +575,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 			_texts[textId]->_fontPtr = loadFont(localized);
 
 			if (_texts[textId]->_fontPtr)
-				FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
+				FontMan.assignFontToName(localized, _texts[textId]->_fontPtr);
 
 			// Fallback to non-localized font and default translation
 			else {
