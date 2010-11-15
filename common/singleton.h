@@ -39,8 +39,6 @@ private:
 	Singleton<T>(const Singleton<T> &);
 	Singleton<T> &operator=(const Singleton<T> &);
 
-	static T *_singleton;
-
 	/**
 	 * The default object factory used by the template class Singleton.
 	 * By specialising this template function, one can make a singleton use a
@@ -89,6 +87,8 @@ protected:
 #endif
 
 	typedef T	SingletonBaseType;
+	
+	static T *_singleton;
 };
 
 /**

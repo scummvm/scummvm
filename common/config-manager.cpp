@@ -53,6 +53,27 @@ const char *ConfigManager::kKeymapperDomain = "keymapper";
 ConfigManager::ConfigManager() : _activeDomain(0) {
 }
 
+void ConfigManager::defragment() {
+	ConfigManager *newInstance = new ConfigManager();
+	newInstance->copyFrom(*_singleton);
+	delete _singleton;
+	_singleton = newInstance;
+}
+
+void ConfigManager::copyFrom(ConfigManager &source) {
+	_transientDomain = source._transientDomain;
+	_gameDomains = source._gameDomains;
+	_appDomain = source._appDomain;
+	_defaultsDomain = source._defaultsDomain;
+#ifdef ENABLE_KEYMAPPER
+	_keymapperDomain = source._keymapperDomain;
+#endif
+	_domainSaveOrder = source._domainSaveOrder;
+	_activeDomainName = source._activeDomainName;
+	_activeDomain = &_gameDomains[_activeDomainName];
+	_filename = source._filename;
+}
+
 
 void ConfigManager::loadDefaultConfigFile() {
 	// Open the default config file
@@ -595,7 +616,6 @@ bool ConfigManager::hasGameDomain(const String &domName) const {
 
 
 #pragma mark -
-
 
 void ConfigManager::Domain::setDomainComment(const String &comment) {
 	_domainComment = comment;

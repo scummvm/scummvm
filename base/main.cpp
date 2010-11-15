@@ -408,6 +408,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
 			// do our best to prevent fragmentation by unloading as soon as we can
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
+			// reallocate the config manager to get rid of any fragmentation
+			ConfMan.defragment();
 		#endif	
 			
 			// Did an error occur ?
