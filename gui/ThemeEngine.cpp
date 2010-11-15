@@ -566,7 +566,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 	if (file == "default") {
 		_texts[textId]->_fontPtr = _font;
 	} else {
-		Common::String localized = genLocalizedFontFilename(file.c_str());
+		Common::String localized = genLocalizedFontFilename(file);
 		// Try built-in fonts
 		_texts[textId]->_fontPtr = FontMan.getFontByName(localized);
 
@@ -1420,7 +1420,7 @@ const Graphics::Font *ThemeEngine::loadCachedFontFromArchive(const Common::Strin
 
 const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 	const Graphics::Font *font = 0;
-	Common::String cacheFilename = genCacheFilename(filename.c_str());
+	Common::String cacheFilename = genCacheFilename(filename);
 	Common::File fontFile;
 
 	if (!cacheFilename.empty()) {
@@ -1455,7 +1455,7 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 	return font;
 }
 
-Common::String ThemeEngine::genCacheFilename(const char *filename) {
+Common::String ThemeEngine::genCacheFilename(const Common::String &filename) const {
 	Common::String cacheName(filename);
 	for (int i = cacheName.size() - 1; i >= 0; --i) {
 		if (cacheName[i] == '.') {
@@ -1471,25 +1471,20 @@ Common::String ThemeEngine::genCacheFilename(const char *filename) {
 	return Common::String();
 }
 
-Common::String ThemeEngine::genLocalizedFontFilename(const char *filename) {
+Common::String ThemeEngine::genLocalizedFontFilename(const Common::String &filename) const {
 #ifndef USE_TRANSLATION
-	return Common::String(filename);
+	return filename;
 #else
-
 	Common::String result;
 	bool pointPassed = false;
 
-	for (const char *p = filename; *p != 0; p++) {
-		if (!pointPassed) {
-			if (*p != '.') {
-				result += *p;
-			} else {
-				result += "-";
-				result += TransMan.getCurrentCharset();
-				result += *p;
+	for (const char *p = filename.c_str(); *p != 0; p++) {
+		if (!pointPassed && *p == '.') {
+			result += "-";
+			result += TransMan.getCurrentCharset();
+			result += *p;
 
-				pointPassed = true;
-			}
+			pointPassed = true;
 		} else {
 			result += *p;
 		}
