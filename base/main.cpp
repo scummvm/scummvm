@@ -215,11 +215,6 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	// Run the engine
 	Common::Error result = engine->run();
 
-#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
-	// do our best to prevent fragmentation by unloading as soon as we can
-	PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
-#endif	
-	
 	// Inform backend that the engine finished
 	system.engineDone();
 
@@ -410,6 +405,11 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// Try to run the game
 			Common::Error result = runGame(plugin, system, specialDebug);
 
+		#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
+			// do our best to prevent fragmentation by unloading as soon as we can
+			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
+		#endif	
+			
 			// Did an error occur ?
 			if (result != Common::kNoError) {
 				// Shows an informative error dialog if starting the selected game failed.
