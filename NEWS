@@ -17,6 +17,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Improved support for FM-TOWNS versions of games.
 
 1.2.1 (2010-??-??)
+ General
+   - Add Hungarian translation.
+
  Groovie:
    - Fixed a regression that made the Russian version of T7G crash.
 
