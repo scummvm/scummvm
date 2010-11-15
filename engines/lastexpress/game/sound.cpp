@@ -657,7 +657,7 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, FlagType flag
 		updateEntryState(entry);
 	}
 
-	bool isPlaying = (entry->type != NULL);
+	bool isPlaying = (entry->type != kSoundTypeNone);
 
 	_mutex.unlock();
 
