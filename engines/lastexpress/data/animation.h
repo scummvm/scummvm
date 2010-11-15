@@ -69,6 +69,7 @@ private:
 
 	// despite their size field, info chunks don't have a payload
 	enum ChunkType {
+		kChunkTypeNone              = 0,
 		kChunkTypeUnknown1          = 1,
 		kChunkTypeUnknown2          = 2,
 		kChunkTypeAudioInfo         = 3,
@@ -91,6 +92,12 @@ private:
 		ChunkType type;
 		uint16 frame;
 		uint32 size;
+
+		Chunk() {
+			type = kChunkTypeNone;
+			frame = 0;
+			size = 0;
+		}
 	};
 
 	void reset();

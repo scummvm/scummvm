@@ -34,6 +34,8 @@
 #include "lastexpress/helpers.h"
 
 #include "common/events.h"
+#include "common/rational.h"
+
 #include "engines/engine.h"
 
 namespace LastExpress {
@@ -104,10 +106,10 @@ bool Animation::process() {
 		error("Trying to show an animation before loading data");
 
 	// TODO: substract the time paused by the GUI
-	uint32 currentFrame = (uint32)(((float)(g_engine->_system->getMillis() - _startTime)) / 33.33f);
+	int32 currentFrame = Common::Rational((g_engine->_system->getMillis() - _startTime) * 100, 3333).toInt();
 
 	// Process all chunks until the current frame
-	while (!_changed && currentFrame > _currentChunk->frame && !hasEnded()) {
+	while (!_changed && _currentChunk != NULL && currentFrame > _currentChunk->frame && !hasEnded()) {
 		switch(_currentChunk->type) {
 		//TODO: some info chunks are probably subtitle/sync related
 		case kChunkTypeUnknown1:
