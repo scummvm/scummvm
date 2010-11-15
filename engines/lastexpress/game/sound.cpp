@@ -133,7 +133,7 @@ SoundManager::~SoundManager() {
 // Timer
 //////////////////////////////////////////////////////////////////////////
 void SoundManager::handleTimer() {
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
 		SoundEntry *entry = (*i);
@@ -148,8 +148,6 @@ void SoundManager::handleTimer() {
 			_soundStream->load(entry->stream);
 		}
 	}
-
-	_mutex.unlock();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -164,34 +162,28 @@ void SoundManager::resetQueue(SoundType type1, SoundType type2) {
 	if (!type2)
 		type2 = type1;
 
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
 		if ((*i)->type != type1 && (*i)->type != type2)
 			resetEntry(*i);
 	}
-
-	_mutex.unlock();
 }
 
 void SoundManager::removeFromQueue(EntityIndex entity) {
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	SoundEntry *entry = getEntry(entity);
 	if (entry)
 		resetEntry(entry);
-
-	_mutex.unlock();
 }
 
 void SoundManager::removeFromQueue(Common::String filename) {
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	SoundEntry *entry = getEntry(filename);
 	if (entry)
 		resetEntry(entry);
-
-	_mutex.unlock();
 }
 
 void SoundManager::clearQueue() {
@@ -204,7 +196,7 @@ void SoundManager::clearQueue() {
 
 	_flag |= 8;
 
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i) {
 		SoundEntry *entry = (*i);
@@ -216,39 +208,30 @@ void SoundManager::clearQueue() {
 		i = _cache.reverse_erase(i);
 	}
 
-	_mutex.unlock();
-
 	updateSubtitles();
 }
 
 bool SoundManager::isBuffered(EntityIndex entity) {
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
-	bool buffered = (getEntry(entity) != NULL);	
-
-	_mutex.unlock();
-
-	return buffered;
+	return (getEntry(entity) != NULL);
 }
 
 bool SoundManager::isBuffered(Common::String filename, bool testForEntity) {
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	SoundEntry *entry = getEntry(filename);
 
-	bool ret = (entry != NULL);
 	if (testForEntity)
-		ret = ret && !entry->entity;
+		return entry != NULL && !entry->entity;
 
-	_mutex.unlock();
-
-	return ret;
+	return (entry != NULL);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Entry
 //////////////////////////////////////////////////////////////////////////
-void SoundManager::setupEntry(SoundEntry *entry, Common::String name, FlagType flag, int a4) {	
+void SoundManager::setupEntry(SoundEntry *entry, Common::String name, FlagType flag, int a4) {
 	if (!entry)
 		error("SoundManager::setupEntry: Invalid entry!");
 
@@ -352,12 +335,10 @@ bool SoundManager::setupCache(SoundEntry *entry) {
 }
 
 void SoundManager::clearStatus() {
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i)
 		(*i)->status.status |= kSoundStatusClear3;
-
-	_mutex.unlock();
 }
 
 void SoundManager::loadSoundData(SoundEntry *entry, Common::String name) {
@@ -450,40 +431,35 @@ void SoundManager::updateEntryState(SoundEntry *entry) const {
 }
 
 void SoundManager::processEntry(EntityIndex entity) {
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	SoundEntry *entry = getEntry(entity);
 	if (entry) {
 		updateEntry(entry, 0);
 		entry->entity = kEntityPlayer;
 	}
-
-	_mutex.unlock();
 }
 
 void SoundManager::processEntry(SoundType type) {
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	SoundEntry *entry = getEntry(type);
 	if (entry)
 		updateEntry(entry, 0);
-
-	_mutex.unlock();
 }
 
 void SoundManager::setupEntry(SoundType type, EntityIndex index) {
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	SoundEntry *entry = getEntry(type);
 	if (entry)
 		entry->entity = index;
-
-	_mutex.unlock();
 }
 
 void SoundManager::processEntry(Common::String filename) {
-	SoundEntry *entry = getEntry(filename);
+	Common::StackLock locker(_mutex);
 
+	SoundEntry *entry = getEntry(filename);
 	if (entry) {
 		updateEntry(entry, 0);
 		entry->entity = kEntityPlayer;
@@ -498,16 +474,13 @@ void SoundManager::processEntries() {
 }
 
 uint32 SoundManager::getEntryTime(EntityIndex index) {
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
-	uint32 time = 0;
 	SoundEntry *entry = getEntry(index);
 	if (entry)
-		time = entry->time;
+		return entry->time;
 
-	_mutex.unlock();
-
-	return time;
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -563,7 +536,7 @@ void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
 	uint32 numEntries = count();
 	s.syncAsUint32LE(numEntries);
 
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	// Save or load each entry data
 	if (s.isSaving()) {
@@ -598,8 +571,6 @@ void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
 		warning("Sound::saveLoadWithSerializer: not implemented!");
 		s.skip(numEntries * 64);
 	}
-
-	_mutex.unlock();
 }
 
 
@@ -607,14 +578,12 @@ void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
 // as we could have removed an entry between the time we check the count and the time we
 // save the entries
 uint32 SoundManager::count() {
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	uint32 numEntries = 0;
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i)
 		if ((*i)->name2.matchString("NISSND?"))
 			++numEntries;
-
-	_mutex.unlock();
 
 	return numEntries;
 }
@@ -640,7 +609,7 @@ void SoundManager::playSound(EntityIndex entity, Common::String filename, FlagTy
 bool SoundManager::playSoundWithSubtitles(Common::String filename, FlagType flag, EntityIndex entity, byte a4) {
 	SoundEntry *entry = new SoundEntry();
 
-	_mutex.lock();
+	Common::StackLock locker(_mutex);
 
 	setupEntry(entry, filename, flag, 30);
 	entry->entity = entity;
@@ -657,11 +626,7 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, FlagType flag
 		updateEntryState(entry);
 	}
 
-	bool isPlaying = (entry->type != kSoundTypeNone);
-
-	_mutex.unlock();
-
-	return isPlaying;
+	return (entry->type != kSoundTypeNone);
 }
 
 void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte a3) {
