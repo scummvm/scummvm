@@ -401,6 +401,7 @@ static const char *credits[] = {
 "",
 "C1""Hungarian",
 "C0""Alex Bevilacqua",
+"C0""George Kormendi",
 "",
 "C1""Italian",
 "C0""Matteo Angelino",

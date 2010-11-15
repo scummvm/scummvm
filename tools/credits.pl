@@ -897,6 +897,7 @@ begin_credits("Credits");
 		end_section();
 		begin_section("Hungarian");
 			add_person("Alex Bevilacqua", "", "");
+			add_person("George Kormendi", "GoodOldGeorg", "");
 		end_section();
 		begin_section("Italian");
 			add_person("Matteo Angelino", "Maff", "");
