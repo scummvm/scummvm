@@ -1174,8 +1174,12 @@ void Entities::processFrame(EntityIndex entityIndex, bool keepPreviousFrame, boo
 	getScenes()->addToQueue(frame);
 
 	// Keep previous frame if needed and store the new frame
-	if (keepPreviousFrame)
+	if (keepPreviousFrame) {
+		SAFE_DELETE(data->frame1);
 		data->frame1 = data->frame;
+	} else {
+		SAFE_DELETE(data->frame);
+	}
 
 	data->frame = frame;
 
