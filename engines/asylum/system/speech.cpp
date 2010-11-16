@@ -44,6 +44,8 @@ Speech::Speech(AsylumEngine *engine): _vm(engine) {
 }
 
 Speech::~Speech() {
+	// Zero-out passed pointers
+	_vm = NULL;
 }
 
 ResourceId Speech::play(ResourceId soundResourceId, ResourceId textResourceId) {
@@ -63,7 +65,7 @@ ResourceId Speech::playIndexed(int32 index) {
 	int processedIndex = 0;
 
 	if (getWorld()->actorType || index != -1) {
-
+		error("[Speech::playIndexed] Missing case using static data!");
 	} else {
 		switch(_vm->getRandom(3)) {
 		default:
@@ -93,16 +95,16 @@ ResourceId Speech::playIndexed(int32 index) {
 		break;
 
 	case kActorMax:
-		return play(MAKE_RESOURCE(kResourcePackSpeech, index), MAKE_RESOURCE(kResourcePackText, index + 83));
+		return play(MAKE_RESOURCE(kResourcePackSpeech, processedIndex), MAKE_RESOURCE(kResourcePackText, processedIndex + 83));
 
 	case kActorSarah:
-		return play(MAKE_RESOURCE(kResourcePackSharedSound, index + 1927), MAKE_RESOURCE(kResourcePackText, index + 586));
+		return play(MAKE_RESOURCE(kResourcePackSharedSound, processedIndex + 1927), MAKE_RESOURCE(kResourcePackText, processedIndex + 586));
 
 	case kActorCyclops:
-		return play(MAKE_RESOURCE(kResourcePackSharedSound, index + 2084), MAKE_RESOURCE(kResourcePackText, index + 743));
+		return play(MAKE_RESOURCE(kResourcePackSharedSound, processedIndex + 2084), MAKE_RESOURCE(kResourcePackText, processedIndex + 743));
 
 	case kActorAztec:
-		return play(MAKE_RESOURCE(kResourcePackSharedSound, index + 2234), MAKE_RESOURCE(kResourcePackText, index + 893));
+		return play(MAKE_RESOURCE(kResourcePackSharedSound, processedIndex + 2234), MAKE_RESOURCE(kResourcePackText, processedIndex + 893));
 	}
 
 	return kResourceNone;
@@ -196,7 +198,6 @@ ResourceId Speech::playPlayer(int32 index) {
 
 		return play(soundResourceId, MAKE_RESOURCE(kResourcePackText, textResourceIndex + 83));
 		}
-		break;
 
 	case kActorSarah:
 		return play(MAKE_RESOURCE(kResourcePackSharedSound, index + 1927), MAKE_RESOURCE(kResourcePackText, index + 586));

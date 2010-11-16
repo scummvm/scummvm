@@ -131,7 +131,7 @@ void Object::disableAndRemoveFromQueue() {
 // Visibility
 //////////////////////////////////////////////////////////////////////////
 bool Object::isOnScreen() {
-	Common::Rect screenRect  = Common::Rect(getWorld()->xLeft, getWorld()->yTop, getWorld()->xLeft + 640, getWorld()->yTop + 480);
+	Common::Rect screenRect = Common::Rect(getWorld()->xLeft, getWorld()->yTop, getWorld()->xLeft + 640, getWorld()->yTop + 480);
 	Common::Rect objectRect = Common::Rect(_boundingRect);
 
 	objectRect.translate(x, y);
@@ -203,7 +203,7 @@ void Object::update() {
 
 	// Examine flags
 	if (flags & kObjectFlag20) {
-		if (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt()) {
+		if (_vm->getTick() - _tickCount >= (uint32)Common::Rational(1000, _field_B4).toInt()) {
 			_frameIndex =((_frameIndex + 1) % _frameCount);
 			_tickCount = _vm->getTick();
 			doPlaySounds = true;
@@ -229,7 +229,7 @@ void Object::update() {
 		}
 
 		if (!isFirstFrame) {
-			if (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt()) {
+			if (_vm->getTick() - _tickCount >= (uint32)Common::Rational(1000, _field_B4).toInt()) {
 				_frameIndex =((_frameIndex + 1) % _frameCount);
 				_tickCount = _vm->getTick();
 				doPlaySounds = true;
@@ -245,7 +245,7 @@ void Object::update() {
 		}
 	} else if (flags & kObjectFlag8) {
 
-		if (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt()) {
+		if (_vm->getTick() - _tickCount >= (uint32)Common::Rational(1000, _field_B4).toInt()) {
 
 			++_frameIndex;
 
@@ -267,7 +267,7 @@ void Object::update() {
 		}
 	} else if (!(BYTE1(flags) & kObjectFlag6)) {
 
-		if ((flags & kObjectFlag10000) && (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt())) {
+		if ((flags & kObjectFlag10000) && (_vm->getTick() - _tickCount >= (uint32)Common::Rational(1000, _field_B4).toInt())) {
 
 			++_frameIndex;
 
@@ -286,7 +286,7 @@ void Object::update() {
 			_tickCount = _vm->getTick();
 			doPlaySounds = true;
 		}
-	} else if (_vm->getTick() - _tickCount >= Common::Rational(1000, _field_B4).toInt()) {
+	} else if (_vm->getTick() - _tickCount >= (uint32)Common::Rational(1000, _field_B4).toInt()) {
 		if (BYTE1(flags) & kObjectFlag2) {
 			if (_frameIndex == _frameCount - 1) {
 				_frameIndex--;

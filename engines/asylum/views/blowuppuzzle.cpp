@@ -46,6 +46,7 @@ BlowUpPuzzle::BlowUpPuzzle(AsylumEngine *engine): _vm(engine) {
 
 
 BlowUpPuzzle::~BlowUpPuzzle() {
+
 }
 
 // BlowUp Puzzle VCR ---------------------------------------------------------------------------------------------
@@ -233,6 +234,7 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo plu
 		item.y = onTable.y;
 		item.priority = 3;
 		break;
+
 	case kPluggedOnRed:
 		item.resourceId = getWorld()->graphicResourceIds[pluggedOnRed.resourceId];
 		item.frameIdx = 0;
@@ -240,6 +242,7 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo plu
 		item.y = 407;
 		item.priority = 3;
 		break;
+
 	case kPluggedOnYellow:
 		item.resourceId = getWorld()->graphicResourceIds[pluggedOnYellow.resourceId];
 		item.frameIdx = 0;
@@ -247,6 +250,7 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo plu
 		item.y = 413;
 		item.priority = 3;
 		break;
+
 	case kPluggedOnBlack:
 		item.resourceId = getWorld()->graphicResourceIds[pluggedOnBlack.resourceId];
 		item.frameIdx = 0;
@@ -254,13 +258,15 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo plu
 		item.y = 418;
 		item.priority = 3;
 		break;
+
 	case kOnHand: {
 		GraphicQueueItem jackItemOnHand = getGraphicJackItem(resourceOnHandIndex);
 		getScreen()->addGraphicToQueue(jackItemOnHand);
 
 		item = getGraphicShadowItem();
-	}
-	break;
+		}
+		break;
+
 	default:
 		item.resourceId = kResourceNone;
 		break;
@@ -450,9 +456,9 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
 		 || inPolyRegion(_cursor->position().x, _cursor->position().y, kYellowJack)) {
 			_cursor->animate();
 		} else {
-			if ((inPolyRegion(_cursor->position().x, _cursor->position().y, kRedHole) && _holesState[kPluggedOnRed-1])
-			 || (inPolyRegion(_cursor->position().x, _cursor->position().y, kYellowHole) && _holesState[kPluggedOnYellow-1])
-			 || (inPolyRegion(_cursor->position().x, _cursor->position().y, kBlackHole) && _holesState[kPluggedOnBlack-1])) {
+			if ((inPolyRegion(_cursor->position().x, _cursor->position().y, kRedHole) && _holesState[kOnTable])
+			 || (inPolyRegion(_cursor->position().x, _cursor->position().y, kYellowHole) && _holesState[kPluggedOnRed])
+			 || (inPolyRegion(_cursor->position().x, _cursor->position().y, kBlackHole) && _holesState[kPluggedOnYellow])) {
 				if (_cursor->currentFrame != 2) { // reset cursor
 					_cursor->show();
 					_cursor->set(MAKE_RESOURCE(kResourcePackShared, 2), 0, 2);

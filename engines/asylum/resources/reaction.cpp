@@ -41,6 +41,8 @@ namespace Asylum {
 Reaction::Reaction(AsylumEngine *engine) : _vm(engine) {}
 
 Reaction::~Reaction() {
+	// Zero-out passed pointers
+	_vm = NULL;
 }
 
 void Reaction::run(int32 reactionIndex) {
@@ -469,7 +471,7 @@ void Reaction::chapter11(int32 reactionIndex) {
 	}
 }
 
-void Reaction::chapter12(int32 reactionIndex) {
+void Reaction::chapter12(int32) {
 	play(0);
 }
 

@@ -27,33 +27,28 @@
 
 namespace Asylum {
 
-Polygons::Polygons(Common::SeekableReadStream *stream) {
+Polygons::Polygons(Common::SeekableReadStream *stream) : size(0), numEntries(0) {
 	load(stream);
 }
 
 Polygons::~Polygons() {
-	for (int32 i = 0; i < numEntries; i++)
-		delete[] entries[i].points;
-
 	entries.clear();
 }
 
 bool PolyDefinitions::contains(int16 x, int16 y) {
 	// Copied from backends/vkeybd/polygon.cpp
-	int32  yflag0;
-	int32  yflag1;
+	bool  yflag0;
+	bool  yflag1;
 	bool inside_flag = false;
-	int32 pt;
 
-	Common::Point *vtx0 = &points[numPoints - 1];
+	Common::Point *vtx0 = &points[count() - 1];
 	Common::Point *vtx1 = &points[0];
 
 	yflag0 = (vtx0->y >= y);
-	for (pt = 0; pt < numPoints; pt++, vtx1++) {
+	for (uint32 pt = 0; pt < count(); pt++, vtx1++) {
 		yflag1 = (vtx1->y >= y);
 		if (yflag0 != yflag1) {
-			if (((vtx1->y - y) * (vtx0->x - vtx1->x) >=
-			        (vtx1->x - x) * (vtx0->y - vtx1->y)) == yflag1) {
+			if (((vtx1->y - y) * (vtx0->x - vtx1->x) >= (vtx1->x - x) * (vtx0->y - vtx1->y)) == yflag1) {
 				inside_flag = !inside_flag;
 			}
 		}
@@ -70,23 +65,23 @@ void Polygons::load(Common::SeekableReadStream *stream) {
 
 	for (int32 g = 0; g < numEntries; g++) {
 		PolyDefinitions poly;
-		memset(&poly, 0, sizeof(PolyDefinitions));
 
-		poly.numPoints = stream->readSint32LE();
-		if (poly.numPoints > 0)
-			poly.points = new Common::Point[poly.numPoints];
+		uint32 numPoints = stream->readUint32LE();
 
-		for (int32 i = 0; i < poly.numPoints; i++) {
-			poly.points[i].x = stream->readSint32LE() & 0xFFFF;
-			poly.points[i].y = stream->readSint32LE() & 0xFFFF;
+		for (uint32 i = 0; i < numPoints; i++) {
+			Common::Point point;
+			point.x = (int16)(stream->readSint32LE() & 0xFFFF);
+			point.y = (int16)(stream->readSint32LE() & 0xFFFF);
+
+			poly.points.push_back(point);
 		}
 
-		stream->skip((MAX_POLYGONS - poly.numPoints) * 8);
+		stream->skip((MAX_POLYGONS - numPoints) * 8);
 
-		poly.boundingRect.left   = stream->readSint32LE() & 0xFFFF;
-		poly.boundingRect.top    = stream->readSint32LE() & 0xFFFF;
-		poly.boundingRect.right  = stream->readSint32LE() & 0xFFFF;
-		poly.boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
+		poly.boundingRect.left   = (int16)(stream->readSint32LE() & 0xFFFF);
+		poly.boundingRect.top    = (int16)(stream->readSint32LE() & 0xFFFF);
+		poly.boundingRect.right  = (int16)(stream->readSint32LE() & 0xFFFF);
+		poly.boundingRect.bottom = (int16)(stream->readSint32LE() & 0xFFFF);
 
 		entries.push_back(poly);
 	}

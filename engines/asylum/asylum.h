@@ -115,7 +115,7 @@ public:
 	/**
 	 * Wrapper function to the OSystem getMillis() method
 	 */
-	int32 getTick() { return (int32)_system->getMillis(); }
+	uint32 getTick() { return _system->getMillis(); }
 
 	/**
 	 * This is the global tick counter.
@@ -138,8 +138,8 @@ public:
 	void setGameFlag(GameFlag flag);
 	void clearGameFlag(GameFlag flag);
 	void toggleGameFlag(GameFlag flag);
-	bool isGameFlagSet(GameFlag flag);
-	bool isGameFlagNotSet(GameFlag flag);
+	bool isGameFlagSet(GameFlag flag) const;
+	bool isGameFlagNotSet(GameFlag flag) const;
 
 	// Misc
 	uint getRandom(uint max) { return _rnd.getRandomNumber(max); }
@@ -176,7 +176,7 @@ private:
 	bool _flags[4];
 
 	void handleEvents(bool doUpdate);
-	void waitForTimer(int msec_delay);
+	void waitForTimer(uint32 msec_delay);
 	void updateMouseCursor();
 	void processDelayedEvents();
 

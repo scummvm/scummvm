@@ -35,8 +35,7 @@
 namespace Asylum {
 
 typedef struct PolyDefinitions {
-	int32		  numPoints;
-	Common::Point *points;
+	Common::Array<Common::Point> points;
 	Common::Rect  boundingRect;
 
 	/**
@@ -51,6 +50,10 @@ typedef struct PolyDefinitions {
 		return contains(point.x, point.y);
 	}
 
+	uint32 count() {
+		return points.size();
+	}
+
 } PolyDefinitions;
 
 class Polygons {
@@ -59,7 +62,7 @@ public:
 	virtual ~Polygons();
 
 	int32 size;
-	int32 numEntries;
+	int32 numEntries; // TODO remove and use entries.size()
 
 	Common::Array<PolyDefinitions> entries;
 

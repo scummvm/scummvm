@@ -178,8 +178,8 @@ private:
 	// actionType
 	GameFlag	   _gameFlags[10];
 	int32		   _field_B4;
-	int32		   _tickCount;
-	int32		   _tickCount2;
+	uint32		   _tickCount;
+	uint32		   _tickCount2;
 	int32		   _field_C0;
 	int32		   _priority;
 	int32		   _actionListIdx;

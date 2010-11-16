@@ -53,7 +53,10 @@ Special::Special(AsylumEngine *engine) : _vm(engine) {
 	_paletteTick2 = 0;
 }
 
-Special::~Special() {}
+Special::~Special() {
+	// Zero-out passed pointers
+	_vm = NULL;
+}
 
 
 void Special::run(Object* object, ActorIndex index) {
@@ -161,6 +164,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 
 		case kObjectCrow2AmbientPecks:
 			checkObject(object, kGameFlag450, kGameFlag451);
+			break;
 
 		case kObjectCrow2FlysAway:
 			if (rnd(50) < 3)
@@ -238,7 +242,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 			Object *obj386 = getWorld()->objects[386];
 
 			actor->x1 = obj386->getSoundY();
-			actor->y1 = obj386->getField688() + getWorld()->coordinates[22 - actorIndex];
+			actor->y1 = obj386->getField688() + getWorld()->coordinates[actorIndex - 22]; // FIXME out of bound access for actorIndex == 29
 			actor->setFrameIndex(obj386->getField67C());
 			actor->setDirection(obj386->getField6A4());
 
@@ -1278,8 +1282,8 @@ void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, Object 
 	default: {
 		Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-		x = (frameRect.width()  >> 1) + object->x;
-		y = (frameRect.height() >> 1) + object->y;
+		x = Common::Rational(frameRect.width(), 2).toInt() + object->x;
+		y = Common::Rational(frameRect.height(), 2).toInt() + object->y;
 		}
 		break;
 
@@ -1340,7 +1344,7 @@ void Special::updateObjectFlag(ObjectId id) {
 	getWorld()->getObjectById(id)->flags &= ~kObjectFlag10E38;
 }
 
-void Special::checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, int *val1, int *val2, GameFlag flag5, int *val3) {
+void Special::checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, uint32 *val1, uint32 *val2, GameFlag flag5, uint32 *val3) {
 	if (_vm->isGameFlagSet(flag5)
 	 && _vm->isGameFlagNotSet(flag2)
 	 && _vm->isGameFlagNotSet(flag1)) {
@@ -1375,7 +1379,7 @@ void Special::checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag f
 				getWorld()->getObjectById(id)->setField67C(0);
 
 			} else {
-				*val2++;
+				(*val2)++;
 
 				getWorld()->getObjectById(id)->setField67C(6 - Common::Rational(*val2, 4).toInt());
 			}
@@ -1395,7 +1399,7 @@ void Special::checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag f
 				getWorld()->getObjectById(id)->setField67C(0);
 
 			} else {
-				*val2++;
+				(*val2)++;
 
 				getWorld()->getObjectById(id)->setField67C(Common::Rational(*val2, 4).toInt() + 4);
 			}

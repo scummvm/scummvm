@@ -159,6 +159,8 @@ ActionList::~ActionList() {
 	_scripts.clear();
 	_queue.clear();
 
+	_currentScript = NULL;
+
 	// Zero-out passed pointers
 	_vm = NULL;
 }
@@ -292,41 +294,41 @@ bool ActionList::process() {
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x00
-IMPLEMENT_OPCODE(Return) {
+IMPLEMENT_OPCODE(Return)
 	_done          = true;
 	_lineIncrement = 0;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x01
-IMPLEMENT_OPCODE(SetGameFlag) {
-	GameFlag flagNum = (GameFlag)cmd->param1;
+IMPLEMENT_OPCODE(SetGameFlag)
+	int32 flagNum = cmd->param1;
 
 	if (flagNum >= 0)
-		_vm->setGameFlag(flagNum);
-}
+		_vm->setGameFlag((GameFlag)flagNum);
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x02
-IMPLEMENT_OPCODE(ClearGameFlag) {
-	GameFlag flagNum = (GameFlag)cmd->param1;
+IMPLEMENT_OPCODE(ClearGameFlag)
+	int32 flagNum = cmd->param1;
 
 	if (flagNum >= 0)
-		_vm->clearGameFlag(flagNum);
-}
+		_vm->clearGameFlag((GameFlag)flagNum);
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x03
-IMPLEMENT_OPCODE(ToggleGameFlag) {
-	GameFlag flagNum = (GameFlag)cmd->param1;
+IMPLEMENT_OPCODE(ToggleGameFlag)
+	int32 flagNum = cmd->param1;
 
 	if (flagNum >= 0)
-		_vm->toggleGameFlag(flagNum);
-}
+		_vm->toggleGameFlag((GameFlag)flagNum);
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x04
-IMPLEMENT_OPCODE(JumpIfGameFlag) {
+IMPLEMENT_OPCODE(JumpIfGameFlag)
 	if (cmd->param1 < 0)
 		return;
 
@@ -335,25 +337,25 @@ IMPLEMENT_OPCODE(JumpIfGameFlag) {
 		return;
 
 	setNextLine(cmd->param3);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x05
-IMPLEMENT_OPCODE(HideCursor) {
+IMPLEMENT_OPCODE(HideCursor)
 	getCursor()->hide();
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x06
-IMPLEMENT_OPCODE(ShowCursor) {
+IMPLEMENT_OPCODE(ShowCursor)
 	getCursor()->show();
 
 	_vm->clearFlag(kFlagType1);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x07
-IMPLEMENT_OPCODE(PlayAnimation) {
+IMPLEMENT_OPCODE(PlayAnimation)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param2 == 2) {
@@ -388,8 +390,8 @@ IMPLEMENT_OPCODE(PlayAnimation) {
 		} else {
 			Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-			getScene()->setGlobalX(frameRect.left + (frameRect.width() >> 1) + object->x);
-			getScene()->setGlobalY(frameRect.top + (frameRect.height() >> 1) + object->y);
+			getScene()->setGlobalX(frameRect.left + Common::Rational(frameRect.width(), 2).toInt()  + object->x);
+			getScene()->setGlobalY(frameRect.top  + Common::Rational(frameRect.height(), 2).toInt() + object->y);
 		}
 	}
 
@@ -397,11 +399,11 @@ IMPLEMENT_OPCODE(PlayAnimation) {
 		cmd->param2 = 2;
 		_lineIncrement = 1;
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x08
-IMPLEMENT_OPCODE(MoveScenePosition) {
+IMPLEMENT_OPCODE(MoveScenePosition)
 	if (cmd->param3 < 1) {
 		getWorld()->xLeft = cmd->param1;
 		getWorld()->yTop  = cmd->param2;
@@ -430,61 +432,61 @@ IMPLEMENT_OPCODE(MoveScenePosition) {
 
 		_lineIncrement = 1;
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x09
-IMPLEMENT_OPCODE(HideActor) {
+IMPLEMENT_OPCODE(HideActor)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->hide();
 	actor->updateDirection();
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0A
-IMPLEMENT_OPCODE(ShowActor) {
+IMPLEMENT_OPCODE(ShowActor)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->show();
 	actor->updateDirection();
 	actor->setLastScreenUpdate(_vm->getTick());
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0B
-IMPLEMENT_OPCODE(SetActorPosition) {
+IMPLEMENT_OPCODE(SetActorPosition)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	actor->setPosition(cmd->param2, cmd->param3, (ActorDirection)cmd->param4, cmd->param5);
-}
+	actor->setPosition(cmd->param2, cmd->param3, (ActorDirection)cmd->param4, (uint32)cmd->param5);
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0C
-IMPLEMENT_OPCODE(SetSceneMotionStatus) {
+IMPLEMENT_OPCODE(SetSceneMotionStatus)
 	getWorld()->motionStatus = cmd->param1;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0D
-IMPLEMENT_OPCODE(DisableActor) {
+IMPLEMENT_OPCODE(DisableActor)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->updateStatus(kActorStatusDisabled);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0E
-IMPLEMENT_OPCODE(EnableActor) {
+IMPLEMENT_OPCODE(EnableActor)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (actor->getStatus() == kActorStatusDisabled)
 		actor->updateStatus(kActorStatusEnabled);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x0F
-IMPLEMENT_OPCODE(EnableObjects) {
+IMPLEMENT_OPCODE(EnableObjects)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (!_currentScript->counter && getWorld()->chapter != 13)
@@ -506,25 +508,25 @@ IMPLEMENT_OPCODE(EnableObjects) {
 
 		_lineIncrement = 1;
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x10 : Identical to opcode 0x00
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x11
-IMPLEMENT_OPCODE(RemoveObject) {
+IMPLEMENT_OPCODE(RemoveObject)
 	if (!cmd->param1)
 		return;
 
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	object->disableAndRemoveFromQueue();
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x12
-IMPLEMENT_OPCODE(JumpActorSpeech) {
+IMPLEMENT_OPCODE(JumpActorSpeech)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (actor->process(cmd->param2, cmd->param3))
@@ -534,11 +536,11 @@ IMPLEMENT_OPCODE(JumpActorSpeech) {
 
 	if (cmd->param5)
 		getSpeech()->playIndexed(1);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x13
-IMPLEMENT_OPCODE(JumpAndSetDirection) {
+IMPLEMENT_OPCODE(JumpAndSetDirection)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (actor->getStatus() != kActorStatus2 && actor->getStatus() != kActorStatus13) {
@@ -549,7 +551,7 @@ IMPLEMENT_OPCODE(JumpAndSetDirection) {
 			} else if ((actor->x1 + actor->x2) == cmd->param2 && (actor->y1 + actor->y2) == cmd->param3) {
 				actor->updateFromDirection((ActorDirection)cmd->param4);
 			} else {
-				actor->processStatus(cmd->param2, cmd->param3, cmd->param4);
+				actor->processStatus(cmd->param2, cmd->param3, (bool)cmd->param4);
 
 				if (cmd->param5 == 1) {
 					cmd->param5 = 2;
@@ -567,142 +569,144 @@ IMPLEMENT_OPCODE(JumpAndSetDirection) {
 		if (cmd->param5 == 2)
 			_lineIncrement = 1;
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x14
-IMPLEMENT_OPCODE(JumpIfActorCoordinates) {
+IMPLEMENT_OPCODE(JumpIfActorCoordinates)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if ((actor->x1 + actor->x2) != cmd->param2 || (actor->y1 + actor->y2) != cmd->param3)
 		_lineIncrement = cmd->param4;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x15
-IMPLEMENT_OPCODE(Nop) {
+IMPLEMENT_OPCODE(Nop)
 	// Nothing to do
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x16
-IMPLEMENT_OPCODE(ResetAnimation) {
+IMPLEMENT_OPCODE(ResetAnimation)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (object->flags & kObjectFlag10000)
 		object->setFrameIndex(object->getFrameCount() - 1);
 	else
 		object->setFrameIndex(0);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x17
-IMPLEMENT_OPCODE(DisableObject) {
+IMPLEMENT_OPCODE(DisableObject)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	object->disable();
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x18
-IMPLEMENT_OPCODE(JumpIfSoundPlayingAndPlaySound) {
+IMPLEMENT_OPCODE(JumpIfSoundPlayingAndPlaySound)
+	ResourceId resource = (ResourceId)cmd->param1;
+
 	if (cmd->param2 == 2) {
-		if (getSound()->isPlaying((ResourceId)cmd->param1))
+		if (getSound()->isPlaying(resource))
 			_lineIncrement = 1;
 		else
 			cmd->param2 = 1;
-	} else if (!_vm->sound()->isPlaying((ResourceId)cmd->param1)) {
+	} else if (!_vm->sound()->isPlaying(resource)) {
 		int32 vol = getSound()->getAdjustedVolume(abs(Config.sfxVolume));
-		getSound()->playSound((ResourceId)cmd->param1, cmd->param4, -((abs(cmd->param3) + vol) * (abs(cmd->param3) + vol)), 0);
+		getSound()->playSound(resource, (bool)cmd->param4, -((abs(cmd->param3) + vol) * (abs(cmd->param3) + vol)), 0);
 
 		if (cmd->param2 == 1) {
 			cmd->param2 = 2;
 			_lineIncrement= 1;
 		}
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x19
-IMPLEMENT_OPCODE(JumpIfActionFind) {
+IMPLEMENT_OPCODE(JumpIfActionFind)
 	jumpIfActionFlag(cmd, kActionTypeFind);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1A
-IMPLEMENT_OPCODE(SetActionFind) {
+IMPLEMENT_OPCODE(SetActionFind)
 	setActionFlag(cmd, kActionTypeFind);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1B
-IMPLEMENT_OPCODE(ClearActionFind) {
+IMPLEMENT_OPCODE(ClearActionFind)
 	clearActionFlag(cmd, kActionTypeFind);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1C
-IMPLEMENT_OPCODE(JumpIfActionGrab) {
+IMPLEMENT_OPCODE(JumpIfActionGrab)
 	jumpIfActionFlag(cmd, kActionTypeGrab);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1D
-IMPLEMENT_OPCODE(SetActionGrab) {
+IMPLEMENT_OPCODE(SetActionGrab)
 	setActionFlag(cmd, kActionTypeGrab);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1E
-IMPLEMENT_OPCODE(ClearActionGrab) {
+IMPLEMENT_OPCODE(ClearActionGrab)
 	clearActionFlag(cmd, kActionTypeGrab);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x1F
-IMPLEMENT_OPCODE(JumpIfActionTalk) {
+IMPLEMENT_OPCODE(JumpIfActionTalk)
 	jumpIfActionFlag(cmd, kActionTypeTalk);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x20
-IMPLEMENT_OPCODE(SetActionTalk) {
+IMPLEMENT_OPCODE(SetActionTalk)
 	setActionFlag(cmd, kActionTypeTalk);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x21
-IMPLEMENT_OPCODE(ClearActionTalk) {
+IMPLEMENT_OPCODE(ClearActionTalk)
 	clearActionFlag(cmd, kActionTypeTalk);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x22
-IMPLEMENT_OPCODE(_unk22) {
+IMPLEMENT_OPCODE(_unk22)
 	Actor *actor = getScene()->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry.actorIndex);
 
 	actor->process_41BC00(cmd->param1, cmd->param2);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x23
-IMPLEMENT_OPCODE(_unk23) {
+IMPLEMENT_OPCODE(_unk23)
 	Actor *actor = getScene()->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry.actorIndex);
 
 	actor->process_41BCC0(cmd->param1, cmd->param2);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x24
-IMPLEMENT_OPCODE(_unk24) {
+IMPLEMENT_OPCODE(_unk24)
 	Actor *actor = getScene()->getActor(cmd->param4 ? cmd->param4 : _currentQueueEntry.actorIndex);
 
-	actor->process_41BDB0(cmd->param1, cmd->param3);
-}
+	actor->process_41BDB0(cmd->param1, (bool)cmd->param3);
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x25
-IMPLEMENT_OPCODE(RunEncounter) {
+IMPLEMENT_OPCODE(RunEncounter)
 	Encounter *encounter = _vm->encounter();
 
 	encounter->setFlag(kEncounterFlag5, cmd->param5);
@@ -718,46 +722,46 @@ IMPLEMENT_OPCODE(RunEncounter) {
 		cmd->param6 = 2;
 		_lineIncrement = 1;
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x26
-IMPLEMENT_OPCODE(JumpIfAction16) {
+IMPLEMENT_OPCODE(JumpIfAction16)
 	jumpIfActionFlag(cmd, kActionType16);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x27
-IMPLEMENT_OPCODE(SetAction16) {
+IMPLEMENT_OPCODE(SetAction16)
 	setActionFlag(cmd, kActionType16);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x28
-IMPLEMENT_OPCODE(ClearAction16) {
+IMPLEMENT_OPCODE(ClearAction16)
 	clearActionFlag(cmd, kActionType16);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x29
-IMPLEMENT_OPCODE(SetActorField638) {
+IMPLEMENT_OPCODE(SetActorField638)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->setField638(cmd->param2);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2A
-IMPLEMENT_OPCODE(JumpIfActorField638) {
+IMPLEMENT_OPCODE(JumpIfActorField638)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (actor->getField638())
 		_currentLine = cmd->param3;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2B
-IMPLEMENT_OPCODE(ChangeScene) {
+IMPLEMENT_OPCODE(ChangeScene)
 	getScene()->getActor(0)->updateStatus(kActorStatusDisabled);
 	resetQueue();
 
@@ -773,14 +777,14 @@ IMPLEMENT_OPCODE(ChangeScene) {
 	_delayedSceneIndex = (ResourcePackId)(cmd->param1 + 4);
 
 	_exit = true;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2C
-IMPLEMENT_OPCODE(_unk2C_ActorSub) {
+IMPLEMENT_OPCODE(_unk2C_ActorSub)
 	Actor *player = getScene()->getActor();
 	Actor *actor = getScene()->getActor(_currentQueueEntry.actorIndex);
-	Common::Point playerPoint(player->x1 + player->x2, player->y1 + player->y2);
+	Common::Point playerPoint((int16)(player->x1 + player->x2), (int16)(player->y1 + player->y2));
 	ActorDirection direction = (cmd->param2 == 8) ? player->getDirection() : (ActorDirection)cmd->param2;
 
 	ActorDirection newDirection = (ActorDirection)((player->getDirection() + 4) % 8);
@@ -813,8 +817,8 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub) {
 
 			if (player->process_408B20(&point, newDirection, 3, false)) {
 
-				point.x += 3 * deltaPointsArray[newDirection].x;
-				point.x += 3 * deltaPointsArray[newDirection].y;
+				point.x += (int16)(3 * deltaPointsArray[newDirection].x);
+				point.y += (int16)(3 * deltaPointsArray[newDirection].y);
 
 				player->setPosition(point.x, point.y, actor->getDirection(), 0);
 			}
@@ -823,9 +827,9 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub) {
 	} else if (cmd->param1 != 2 || player->process_408B20(&playerPoint, newDirection, 3, false)) {
 		ResourceId id = kResourceNone;
 		if (direction >= 5)
-			id = actor->getResourcesId(5 * cmd->param1 - direction + 38);
+			id = actor->getResourcesId((uint32)(5 * cmd->param1 - (direction - 38)));
 		else
-			id = actor->getResourcesId(5 * cmd->param1 + direction + 30);
+			id = actor->getResourcesId((uint32)(5 * cmd->param1 + direction + 30));
 
 		actor->setResourceId(id);
 		actor->setFrameCount(GraphicResource::getFrameCount(_vm, id));
@@ -836,11 +840,11 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub) {
 		cmd->param3 = 2;
 		_lineIncrement = 1;
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2D
-IMPLEMENT_OPCODE(PlayMovie) {
+IMPLEMENT_OPCODE(PlayMovie)
 	if (getScene()->matteBarHeight < 170) {
 		_lineIncrement = 1;
 
@@ -894,69 +898,69 @@ IMPLEMENT_OPCODE(PlayMovie) {
 
 	getCursor()->show();
 	getScene()->matteVar2 = 0;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2E
-IMPLEMENT_OPCODE(StopAllObjectsSounds) {
+IMPLEMENT_OPCODE(StopAllObjectsSounds)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	object->stopAllSounds();
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2F
-IMPLEMENT_OPCODE(StopProcessing) {
+IMPLEMENT_OPCODE(StopProcessing)
 	_skipProcessing = true;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x30
-IMPLEMENT_OPCODE(ResumeProcessing) {
+IMPLEMENT_OPCODE(ResumeProcessing)
 	_skipProcessing = false;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x31
-IMPLEMENT_OPCODE(ResetSceneRect) {
-	getWorld()->sceneRectIdx = LOBYTE(cmd->param1);
+IMPLEMENT_OPCODE(ResetSceneRect)
+	getWorld()->sceneRectIdx = (uint8)LOBYTE(cmd->param1);
 	getScreen()->paletteFade(0, 25, 10);
 	_vm->setFlag(kFlagTypeSceneRectChanged);
 
 	getWorld()->xLeft = getWorld()->sceneRects[getWorld()->sceneRectIdx].left;
 	getWorld()->yTop  = getWorld()->sceneRects[getWorld()->sceneRectIdx].top;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x32
-IMPLEMENT_OPCODE(ChangeMusicById) {
+IMPLEMENT_OPCODE(ChangeMusicById)
 	_vm->sound()->changeMusic((ResourceId)cmd->param1, cmd->param2 ? 2 : 1);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x33
-IMPLEMENT_OPCODE(StopMusic) {
+IMPLEMENT_OPCODE(StopMusic)
 	_vm->sound()->changeMusic(kMusicStopped, 0);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x34
-IMPLEMENT_OPCODE(_unk34_Status) {
+IMPLEMENT_OPCODE(_unk34_Status)
 	if (cmd->param1 >= 2) {
 		cmd->param1 = 0;
 	} else {
 		cmd->param1++;
 		_lineIncrement = 1;
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x35
-IMPLEMENT_OPCODE(SetVolume) {
+IMPLEMENT_OPCODE(SetVolume)
 	AmbientSoundItem item = getWorld()->ambientSounds[cmd->param1];
 	int var = cmd->param2 + item.field_C;
 
-	double volume = -((Config.sfxVolume + var) * (Config.ambientVolume + var));
+	int32 volume = -((Config.sfxVolume + var) * (Config.ambientVolume + var));
 
 	if (volume < 0) {
 		if (volume < -10000)
@@ -966,48 +970,48 @@ IMPLEMENT_OPCODE(SetVolume) {
 	}
 
 	_vm->sound()->setVolume(item.resourceId, volume);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x36
-IMPLEMENT_OPCODE(Jump) {
+IMPLEMENT_OPCODE(Jump)
 	_currentLine = cmd->param1 - 1;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x37
-IMPLEMENT_OPCODE(RunBlowUpPuzzle) {
+IMPLEMENT_OPCODE(RunBlowUpPuzzle)
 	getScreen()->clearScreen();
 	getScreen()->clearGraphicsInQueue();
 
-	_vm->switchMessageHandler(_vm->getMessageHandler(cmd->param1));
+	_vm->switchMessageHandler(_vm->getMessageHandler((uint32)cmd->param1));
 
 	_currentLine++;
 
 	_exit = true;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x38
-IMPLEMENT_OPCODE(JumpIfAction8) {
+IMPLEMENT_OPCODE(JumpIfAction8)
 	jumpIfActionFlag(cmd, kActionType8);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x39
-IMPLEMENT_OPCODE(SetAction8) {
+IMPLEMENT_OPCODE(SetAction8)
 	setActionFlag(cmd, kActionType8);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3A
-IMPLEMENT_OPCODE(ClearAction8) {
+IMPLEMENT_OPCODE(ClearAction8)
 	clearActionFlag(cmd, kActionType8);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3B
-IMPLEMENT_OPCODE(_unk3B_PALETTE_MOD) {
+IMPLEMENT_OPCODE(_unk3B_PALETTE_MOD)
 	if (!cmd->param2) {
 		getScene()->makeGreyPalette();
 		cmd->param2 = 1;
@@ -1030,11 +1034,11 @@ IMPLEMENT_OPCODE(_unk3B_PALETTE_MOD) {
 
 	_lineIncrement = 1;
 	++cmd->param1;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3C
-IMPLEMENT_OPCODE(IncrementParam2) {
+IMPLEMENT_OPCODE(IncrementParam2)
 	if (cmd->param1) {
 		if (cmd->param2 >= cmd->param1) {
 			cmd->param2 = 0;
@@ -1043,11 +1047,11 @@ IMPLEMENT_OPCODE(IncrementParam2) {
 			_lineIncrement = 1;
 		}
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3D
-IMPLEMENT_OPCODE(WaitUntilFramePlayed) {
+IMPLEMENT_OPCODE(WaitUntilFramePlayed)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	int32 frameNum = cmd->param2;
@@ -1058,12 +1062,12 @@ IMPLEMENT_OPCODE(WaitUntilFramePlayed) {
 		_lineIncrement = 1;
 		_waitCycle     = true;
 	}
-}
+END_OPCODE
 
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3E
-IMPLEMENT_OPCODE(UpdateWideScreen) {
+IMPLEMENT_OPCODE(UpdateWideScreen)
 	int barSize = cmd->param1;
 
 	if (barSize >= 22) {
@@ -1072,26 +1076,26 @@ IMPLEMENT_OPCODE(UpdateWideScreen) {
 
 		getScene()->matteBarHeight = 0;
 	} else {
-		getScreen()->drawWideScreen(4 * barSize);
+		getScreen()->drawWideScreen((int16)(4 * barSize));
 
 		_lineIncrement = 1;
 		++cmd->param1;
 	}
-}
+END_OPCODE
 
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3F
-IMPLEMENT_OPCODE(JumpIfActor) {
+IMPLEMENT_OPCODE(JumpIfActor)
 	ActorIndex index = (cmd->param1 == kActorInvalid) ? getScene()->getPlayerActorIndex() : cmd->param1;
 
 	if (_currentQueueEntry.actorIndex != index)
 		_currentLine = cmd->param2 - 1;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x40
-IMPLEMENT_OPCODE(PlaySpeechScene) {
+IMPLEMENT_OPCODE(PlaySpeechScene)
 	if (cmd->param1 < 0 || cmd->param1 >= 5)
 		return;
 
@@ -1139,11 +1143,11 @@ IMPLEMENT_OPCODE(PlaySpeechScene) {
 		_vm->clearFlag(kFlagType1);
 		_vm->clearFlag(kFlagType2);
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x41
-IMPLEMENT_OPCODE(PlaySpeech) {
+IMPLEMENT_OPCODE(PlaySpeech)
 	if (cmd->param1 < 0)
 		return;
 
@@ -1191,11 +1195,11 @@ IMPLEMENT_OPCODE(PlaySpeech) {
 		_vm->clearFlag(kFlagType1);
 		_vm->clearFlag(kFlagType2);
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x42
-IMPLEMENT_OPCODE(PlaySpeechScene2) {
+IMPLEMENT_OPCODE(PlaySpeechScene2)
 	if (cmd->param1 < 0 || cmd->param1 >= 20 || cmd->param2 < 0)
 		return;
 
@@ -1242,11 +1246,11 @@ IMPLEMENT_OPCODE(PlaySpeechScene2) {
 
 	if (cmd->param4 && !cmd->param7)
 		_vm->setGameFlag(kGameFlag219);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x43
-IMPLEMENT_OPCODE(MoveScenePositionFromActor) {
+IMPLEMENT_OPCODE(MoveScenePositionFromActor)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (!cmd->param3) {
@@ -1275,23 +1279,23 @@ IMPLEMENT_OPCODE(MoveScenePositionFromActor) {
 		else
 			_lineIncrement = 1;
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x44
-IMPLEMENT_OPCODE(PaletteFade) {
+IMPLEMENT_OPCODE(PaletteFade)
 	getScreen()->paletteFade(0, cmd->param1, cmd->param2);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x45
-IMPLEMENT_OPCODE(StartPaletteFadeThread) {
+IMPLEMENT_OPCODE(StartPaletteFadeThread)
 	getScreen()->startPaletteFade(getWorld()->currentPaletteId, cmd->param1, cmd->param2);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x46
-IMPLEMENT_OPCODE(_unk46) {
+IMPLEMENT_OPCODE(_unk46)
 	if (cmd->param6) {
 		if (getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
 			_lineIncrement = 1;
@@ -1331,17 +1335,17 @@ IMPLEMENT_OPCODE(_unk46) {
 			_lineIncrement = 1;
 		}
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x47
-IMPLEMENT_OPCODE(ActorFaceObject) {
+IMPLEMENT_OPCODE(ActorFaceObject)
 	getScene()->getActor(cmd->param1)->faceTarget((ObjectId)cmd->param2, (DirectionFrom)cmd->param3);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x48
-IMPLEMENT_OPCODE(_unk48_MATTE_01) {
+IMPLEMENT_OPCODE(_unk48_MATTE_01)
 	getScene()->matteVar1 = 0;
 	getScene()->matteInitialized = true;
 
@@ -1357,11 +1361,11 @@ IMPLEMENT_OPCODE(_unk48_MATTE_01) {
 			getScene()->matteBarHeight = 1;
 		}
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x49
-IMPLEMENT_OPCODE(_unk49_MATTE_90) {
+IMPLEMENT_OPCODE(_unk49_MATTE_90)
 	getScene()->matteVar1 = 0;
 	getScene()->matteInitialized = true;
 	getScene()->mattePlaySound = true;
@@ -1378,11 +1382,11 @@ IMPLEMENT_OPCODE(_unk49_MATTE_90) {
 			getScene()->matteBarHeight = 90;
 		}
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4A
-IMPLEMENT_OPCODE(JumpIfSoundPlaying) {
+IMPLEMENT_OPCODE(JumpIfSoundPlaying)
 	if (cmd->param3 == 1) {
 		if (_vm->sound()->isPlaying((ResourceId)cmd->param1)) {
 			_currentLine = cmd->param2;
@@ -1390,17 +1394,17 @@ IMPLEMENT_OPCODE(JumpIfSoundPlaying) {
 	} else if (!_vm->sound()->isPlaying((ResourceId)cmd->param1)) {
 		_currentLine = cmd->param2;
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4B
-IMPLEMENT_OPCODE(ChangePlayerActorIndex) {
+IMPLEMENT_OPCODE(ChangePlayerActorIndex)
 	getScene()->changePlayer(cmd->param1);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4C
-IMPLEMENT_OPCODE(ChangeActorStatus) {
+IMPLEMENT_OPCODE(ChangeActorStatus)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (cmd->param2) {
@@ -1409,47 +1413,47 @@ IMPLEMENT_OPCODE(ChangeActorStatus) {
 	} else {
 		actor->setStatus(kActorStatusEnabled);
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4D
-IMPLEMENT_OPCODE(StopSound) {
+IMPLEMENT_OPCODE(StopSound)
 	if (_vm->sound()->isPlaying((ResourceId)cmd->param1))
 		_vm->sound()->stop((ResourceId)cmd->param1);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4E
-IMPLEMENT_OPCODE(JumpRandom) {
-	if (_vm->getRandom(cmd->param1) < (uint32)cmd->param2)
+IMPLEMENT_OPCODE(JumpRandom)
+	if (_vm->getRandom((uint32)cmd->param1) < (uint32)cmd->param2)
 		return;
 
 	setNextLine(cmd->param3);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4F
-IMPLEMENT_OPCODE(ClearScreen) {
-	getScene()->setSkipDrawScene(cmd->param1);
+IMPLEMENT_OPCODE(ClearScreen)
+	getScene()->setSkipDrawScene((bool)cmd->param1);
 
 	if (cmd->param1)
 		getScreen()->clearScreen();
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x50
-IMPLEMENT_OPCODE(Quit) {
+IMPLEMENT_OPCODE(Quit)
 	getScreen()->clearScreen();
-	_vm->quitGame();
+	Engine::quitGame();
 
 	// We need to exit the interpreter loop so we get back to the event loop
 	// and get the quit message
 	_exit = true;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x51
-IMPLEMENT_OPCODE(JumpObjectFrame) {
+IMPLEMENT_OPCODE(JumpObjectFrame)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param2 == -1)
@@ -1475,35 +1479,35 @@ IMPLEMENT_OPCODE(JumpObjectFrame) {
 	}
 
 	setNextLine(cmd->param9);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x52
-IMPLEMENT_OPCODE(DeleteGraphics) {
+IMPLEMENT_OPCODE(DeleteGraphics)
 	for (uint i = 0; i < 55; i++)
-		getScreen()->deleteGraphicFromQueue(getScene()->getActor(cmd->param1)->getResourcesId(cmd->param1));
-}
+		getScreen()->deleteGraphicFromQueue(getScene()->getActor((ActorIndex)(cmd->param1))->getResourcesId((uint32)cmd->param1));
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x53
-IMPLEMENT_OPCODE(SetActorField944) {
+IMPLEMENT_OPCODE(SetActorField944)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->setField944(cmd->param2);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x54
-IMPLEMENT_OPCODE(_unk54_SET_ACTIONLIST_6EC) {
+IMPLEMENT_OPCODE(_unk54_SET_ACTIONLIST_6EC)
 	if (cmd->param2)
-		_currentScript->field_1BB0 = _vm->getRandom(cmd->param1);
+		_currentScript->field_1BB0 = _vm->getRandom((uint32)cmd->param1);
 	else
 		_currentScript->field_1BB0 = cmd->param1;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x55
-IMPLEMENT_OPCODE(_unk55) {
+IMPLEMENT_OPCODE(_unk55)
 
 	if (cmd->param2) {
 		if (_currentScript->field_1BB0 == cmd->param1)
@@ -1531,11 +1535,11 @@ IMPLEMENT_OPCODE(_unk55) {
 	}
 
 	setNextLine(cmd->param8);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x56
-IMPLEMENT_OPCODE(_unk56) {
+IMPLEMENT_OPCODE(_unk56)
 	Actor *actor = getScene()->getActor(cmd->param2 == 2 ? kActorInvalid : cmd->param1);
 
 	if (actor->getStatus() == kActorStatus2 || actor->getStatus() == kActorStatus13) {
@@ -1560,7 +1564,7 @@ IMPLEMENT_OPCODE(_unk56) {
 		int32 y = 0; // FIXME: is is set somewhere else?
 
 		if (getScene()->processActor(&x, &cmd->param4) == 1) {
-			getScene()->getActor()->processStatus(x, y, cmd->param4);
+			getScene()->getActor()->processStatus(x, y, (bool)cmd->param4);
 			cmd->param6 = x;
 			cmd->param7 = y;
 
@@ -1575,19 +1579,19 @@ IMPLEMENT_OPCODE(_unk56) {
 			_currentLine = cmd->param3;
 		}
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x57
-IMPLEMENT_OPCODE(SetResourcePalette) {
+IMPLEMENT_OPCODE(SetResourcePalette)
 	getWorld()->currentPaletteId = getWorld()->graphicResourceIds[cmd->param1];
 	getScreen()->setPalette(getWorld()->currentPaletteId);
 	getScreen()->setGammaLevel(getWorld()->currentPaletteId, 0);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x58
-IMPLEMENT_OPCODE(SetObjectFrameIdxFlaged) {
+IMPLEMENT_OPCODE(SetObjectFrameIdxFlaged)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param3)
@@ -1596,11 +1600,11 @@ IMPLEMENT_OPCODE(SetObjectFrameIdxFlaged) {
 		object->flags &= ~kObjectFlagEnabled;
 
 	object->setFrameIndex(cmd->param2);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x59
-IMPLEMENT_OPCODE(_unk59) {
+IMPLEMENT_OPCODE(_unk59)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param2) {
@@ -1611,17 +1615,17 @@ IMPLEMENT_OPCODE(_unk59) {
 
 	if (cmd->param3 && (object->flags & kObjectFlag10E38))
 		_lineIncrement = 1;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5A
-IMPLEMENT_OPCODE(_unk5A) {
+IMPLEMENT_OPCODE(_unk5A)
 	getScene()->getActor(cmd->param1)->setActionIndex2(cmd->param2);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5B
-IMPLEMENT_OPCODE(_unk5B) {
+IMPLEMENT_OPCODE(_unk5B)
 	if (cmd->param2 >= 0 && cmd->param2 <= 3) {
 		if (cmd->param1) {
 			Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
@@ -1634,34 +1638,34 @@ IMPLEMENT_OPCODE(_unk5B) {
 			getScene()->getActor(cmd->param3)->setField96C(cmd->param2);
 		}
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5C
-IMPLEMENT_OPCODE(QueueScript) {
+IMPLEMENT_OPCODE(QueueScript)
 	queueScript(getWorld()->getActionAreaById(cmd->param1)->scriptIndex, cmd->param2);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5D
-IMPLEMENT_OPCODE(_unk5D) {
+IMPLEMENT_OPCODE(_unk5D)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	actor->process_401830(cmd->param2, cmd->param3, cmd->param4, cmd->param5, cmd->param6, cmd->param7, cmd->param8, cmd->param9);
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5E
-IMPLEMENT_OPCODE(ClearActorFields) {
+IMPLEMENT_OPCODE(ClearActorFields)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	// Clear fields starting from field_970
 	actor->clearFields();
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5F
-IMPLEMENT_OPCODE(SetObjectLastFrameIdx) {
+IMPLEMENT_OPCODE(SetObjectLastFrameIdx)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (object->getFrameIndex() == object->getFrameCount() - 1) {
@@ -1670,22 +1674,22 @@ IMPLEMENT_OPCODE(SetObjectLastFrameIdx) {
 	} else {
 		_lineIncrement = 1;
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x60
-IMPLEMENT_OPCODE(_unk60_SET_OR_CLR_ACTIONAREA_FLAG) {
+IMPLEMENT_OPCODE(_unk60_SET_OR_CLR_ACTIONAREA_FLAG)
 	ActionArea *area = getWorld()->getActionAreaById(cmd->param1);
 
 	if (cmd->param2)
 		area->flags |= 1;
 	else
 		area->flags &= ~1;
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x61
-IMPLEMENT_OPCODE(_unk61) {
+IMPLEMENT_OPCODE(_unk61)
 	if (cmd->param2) {
 		if (getWorld()->field_E860C == -1) {
 			_lineIncrement = 0;
@@ -1698,17 +1702,17 @@ IMPLEMENT_OPCODE(_unk61) {
 		cmd->param2 = 1;
 		_lineIncrement = 1;
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x62
-IMPLEMENT_OPCODE(ShowOptionsScreen) {
+IMPLEMENT_OPCODE(ShowOptionsScreen)
 	_vm->menu()->showOptions();
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x63
-IMPLEMENT_OPCODE(_unk63) {
+IMPLEMENT_OPCODE(_unk63)
 	if (cmd->param1) {
 		_vm->setFlag(kFlagType1);
 		_vm->setFlag(kFlagType2);
@@ -1720,7 +1724,7 @@ IMPLEMENT_OPCODE(_unk63) {
 	} else if (!cmd->param1) {
 		cmd->param1 = 1;
 	}
-}
+END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode Helper functions
@@ -1786,6 +1790,9 @@ void ActionList::jumpIfActionFlag(ScriptEntry *cmd, ActionType flag) {
 }
 
 void ActionList::setNextLine(int32 line) {
+	if (!_currentScript)
+		error("[ActionList::setNextLine] No current script set!");
+
 	int32 opcode = _currentScript->commands[line].opcode;
 	if (opcode == 0x10 || opcode == 0) { // Return
 		_currentLine = line;
