@@ -197,7 +197,7 @@ bool Console::cmdListFlags(int32 argc, const char **argv) {
 		}
 		DebugPrintf("\n");
 	} else {
-		bool type = atoi(argv[1]);
+		int32 type = atoi(argv[1]);
 
 		if (type != 0 && type != 1) {
 			DebugPrintf("Syntax: %s <type> (nothing: all  -  1: show set flags  -  0: show unset flags)\n", argv[0]);
@@ -207,7 +207,7 @@ bool Console::cmdListFlags(int32 argc, const char **argv) {
 		// Show only set/unset flags
 		int count = 0;
 		for (int32 i = 0; i < 1512; i++) {
-			if (_vm->isGameFlagSet((GameFlag)i) == type) {
+			if (_vm->isGameFlagSet((GameFlag)i) == (bool)type) {
 				DebugPrintf("%04d: %d    ", i, _vm->isGameFlagSet((GameFlag)i));
 				++count;
 			}
@@ -221,7 +221,7 @@ bool Console::cmdListFlags(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdShowWorldStats(int32 argc, const char **argv) {
+bool Console::cmdShowWorldStats(int32, const char **) {
 	DebugPrintf("WorldStats\n");
 	DebugPrintf("----------\n");
 	DebugPrintf("%s", getWorld()->toString().c_str());

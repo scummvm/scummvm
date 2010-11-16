@@ -103,7 +103,6 @@ private:
 	bool   _active;
 
 	MenuScreen      _activeMenuScreen;
-	ResourcePack    *_resPack;
 	GraphicResource *_bgResource;
 	GraphicResource *_eyeResource;
 	GraphicResource *_iconResource;

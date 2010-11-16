@@ -163,7 +163,7 @@ enum ResourcePackId {
 	kResourcePack304                   = 304
 };
 
-#define MAKE_RESOURCE(pack, index) (ResourceId)((0x80000000 + ((pack) << 16)) + (index))
+#define MAKE_RESOURCE(pack, index) (ResourceId)((0x80000000 + ((pack) << 16)) + (uint32)(index))
 
 enum ResourceId {
 	kResourceNone         = 0

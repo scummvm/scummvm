@@ -86,9 +86,10 @@ private:
 	AsylumEngine *_vm;
 
 	Common::Array <GraphicFrame> _frames;
+
+	ResourceId _resourceId;
 	int32 _flags;
 	int32 _flags2;
-	ResourceId _resourceId;
 
 	void init(byte *data, int32 size);
 	void clear();

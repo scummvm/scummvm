@@ -181,7 +181,7 @@ public:
 	 * @param newDirection The new direction.
 	 * @param frame 	   The frame.
 	 */
-	void setPosition(int32 newX, int32 newY, ActorDirection newDirection, int32 frame);
+	void setPosition(int32 newX, int32 newY, ActorDirection newDirection, uint32 frame);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Misc
@@ -230,7 +230,7 @@ public:
 	 *
 	 * @return true if resource present between 15 & 20, false if not.
 	 */
-	bool isResourcePresent();
+	bool isResourcePresent() const;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Static update methods
@@ -283,7 +283,7 @@ private:
 	int32  _field_8D0[20];
 	int32  _actionIdx2;
 	int32  _field_924;
-	int32 _lastScreenUpdate;
+	uint32 _lastScreenUpdate;
 	int32  _field_92C;
 	//actionType
 	int32  _field_934;
@@ -373,7 +373,7 @@ private:
 	 *
 	 * @return The angle.
 	 */
-	ActorDirection getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2);
+	ActorDirection getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) const;
 
 	/**
 	 * Updates the actor graphic information
@@ -389,7 +389,7 @@ private:
 	 *
 	 * @return true if default direction, false if not.
 	 */
-	bool isDefaultDirection(int index);
+	bool isDefaultDirection(int index) const;
 
 	/**
 	 * Gets the graphics flags for queuing the actor graphics
@@ -398,7 +398,7 @@ private:
 	 */
 	int32 getGraphicsFlags();
 
-	int32 getFieldValue();
+	int32 getFieldValue() const;
 
 
 }; // end of class MainActor

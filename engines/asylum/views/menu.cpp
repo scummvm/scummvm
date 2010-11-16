@@ -59,6 +59,8 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_bgResource  = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, 0));
 	_eyeResource = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, 1));
 
+	_ev = NULL;
+
 	_cursor = new Cursor(_vm);
 
 	_iconResource        = 0;
@@ -75,6 +77,10 @@ MainMenu::~MainMenu() {
 	delete _eyeResource;
 	delete _cursor;
 	delete _bgResource;
+
+	// Zero-out passed pointers
+	_ev = NULL;
+	_vm = NULL;
 }
 
 void MainMenu::loadFont(Fonts font) {
@@ -244,7 +250,7 @@ void MainMenu::update() {
 void MainMenu::updateEyesAnimation() {
 	// Eyes animation
 	// Get the appropriate eye resource depending on the mouse position
-	int32 eyeFrameNum = kEyesFront;
+	uint32 eyeFrameNum = kEyesFront;
 
 	if (_cursor->position().x <= 200) {
 		if (_cursor->position().y <= 160)

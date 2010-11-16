@@ -51,8 +51,8 @@ private:
 	int32 _chapter5Counter;
 
 	bool _paletteFlag;
-	int32 _paletteTick1;
-	int32 _paletteTick2;
+	uint32 _paletteTick1;
+	uint32 _paletteTick2;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Spec functions
@@ -88,7 +88,7 @@ private:
 	void playSoundPanning(ResourceId resourceId, int32 attenuation, ActorIndex actorIndex);
 
 	void updateObjectFlag(ObjectId id);
-	void checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, int *val1, int *val2, GameFlag flag5, int *val3);
+	void checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, uint32 *val1, uint32*val2, GameFlag flag5, uint32 *val3);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers

@@ -51,12 +51,12 @@
 namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
-	_console(NULL), _encounter(NULL), _resource(NULL), _mainMenu(NULL), _scene(NULL), _screen(NULL),
-	_sound(NULL), _text(NULL), _video(NULL) {
+	_console(NULL), _cursor(NULL), _encounter(NULL), _mainMenu(NULL), _resource(NULL), _scene(NULL), _screen(NULL),
+	_sound(NULL), _text(NULL), _video(NULL), _introPlaying(false) {
 
 	// Init data
-	memset(_gameFlags, 0, 1512);
-	memset(_gameFlags, 0, sizeof(_gameFlags));
+	memset(&_gameFlags, 0, sizeof(_gameFlags));
+	memset(&_flags, 0, sizeof(_flags));
 	screenUpdatesCount = 0;
 	globalTickValue_2 = 0;
 
@@ -83,6 +83,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 }
 
 AsylumEngine::~AsylumEngine() {
+	delete _cursor;
 	delete _scene;
 	delete _encounter;
 	delete _screen;
@@ -143,7 +144,7 @@ Common::Error AsylumEngine::run() {
 	return Common::kNoError;
 }
 
-void AsylumEngine::waitForTimer(int msec_delay) {
+void AsylumEngine::waitForTimer(uint32 msec_delay) {
 	uint32 start_time = _system->getMillis();
 
 	while (_system->getMillis() < start_time + msec_delay) {
@@ -156,6 +157,9 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 }
 
 void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
+	if (!_cursor || !_screen)
+		error("[AsylumEngine::startGame] Subsystems not initialized properly!");
+
 	// Load the default mouse cursor
 	_cursor->set(MAKE_RESOURCE(kResourcePackSound, 14));
 	_cursor->hide();
@@ -192,6 +196,9 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 }
 
 void AsylumEngine::playIntro() {
+	if (!_video || !_screen)
+		error("[AsylumEngine::playIntro] Subsystems not initialized properly!");
+
 	_introPlaying = true;
 	g_system->showMouse(false);
 
@@ -210,10 +217,9 @@ void AsylumEngine::playIntro() {
 	_sound->playSound(MAKE_RESOURCE(kResourcePackSound, 7));
 }
 
-void AsylumEngine::handleEvents(bool doUpdate) { // k_sub_40AE30 (0040AE30)
-	// Make sure the debugger is present
-	if (!_console)
-		error("AsylumEngine::handleEvents: called before the required subsystems have been initialized!");
+void AsylumEngine::handleEvents(bool doUpdate) {
+	if (!_console || !_video || !_screen || !_sound || !_mainMenu)
+		error("[AsylumEngine::handleEvents] Subsystems not initialized properly!");
 
 	// Show the debugger if required
 	_console->onFrame();
@@ -307,6 +313,9 @@ void AsylumEngine::handleEvents(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 }
 
 void AsylumEngine::processDelayedEvents() {
+	if (!_video || !_sound || !_scene || !_mainMenu)
+		error("[AsylumEngine::processDelayedEvents] Subsystems not initialized properly!");
+
 	// check for a delayed video
 	int videoIdx = _scene->actions()->getDelayedVideoIndex();
 	if (videoIdx >= 0) {
@@ -355,30 +364,29 @@ AsylumEngine::MessageHandler *AsylumEngine::getMessageHandler(uint32 index) {
 //////////////////////////////////////////////////////////////////////////
 // Game flags
 //////////////////////////////////////////////////////////////////////////
+#define FLAG_MASK 0xFFFFFFE0
+
 void AsylumEngine::setGameFlag(GameFlag flag) {
-	_gameFlags[flag / 32] |= 1 << flag % -32;
+	_gameFlags[flag / 32] |= 1 << (flag % FLAG_MASK);
 }
 
 void AsylumEngine::clearGameFlag(GameFlag flag) {
-	_gameFlags[flag / 32] &= ~(1 << flag % -32);
+	_gameFlags[flag / 32] &= ~(1 << (uint32)(flag % FLAG_MASK));
 }
 
 void AsylumEngine::toggleGameFlag(GameFlag flag) {
-	_gameFlags[flag / 32] ^= 1 << flag % -32;
+	_gameFlags[flag / 32] ^= 1 << (uint32)(flag % FLAG_MASK);
 }
 
-bool AsylumEngine::isGameFlagSet(GameFlag flag) {
-	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 != 0;
+bool AsylumEngine::isGameFlagSet(GameFlag flag) const {
+	return ((1 << (flag % FLAG_MASK)) & (unsigned int)_gameFlags[flag / 32]) >> (flag % FLAG_MASK) != 0;
 }
 
-bool AsylumEngine::isGameFlagNotSet(GameFlag flag) {
-	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 == 0;
+bool AsylumEngine::isGameFlagNotSet(GameFlag flag) const {
+	return ((1 << (flag % FLAG_MASK)) & (unsigned int)_gameFlags[flag / 32]) >> (flag % FLAG_MASK) == 0;
 }
 
 void AsylumEngine::setFlag(FlagType flag, bool isSet) {
-	if (flag > ARRAYSIZE(_flags))
-		error("[AsylumEngine::setFlag] Invalid flag type (was: %d, max: %d", flag, ARRAYSIZE(_flags));
-
 	_flags[flag] = isSet;
 }
 

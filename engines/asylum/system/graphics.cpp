@@ -32,7 +32,7 @@
 
 namespace Asylum {
 
-GraphicResource::GraphicResource(AsylumEngine *engine, ResourceId id) : _vm(engine) {
+GraphicResource::GraphicResource(AsylumEngine *engine, ResourceId id) : _vm(engine), _resourceId(kResourceNone), _flags(0), _flags2(0) {
 	load(id);
 }
 
@@ -69,10 +69,6 @@ GraphicFrame *GraphicResource::getFrame(uint32 frame) {
 
 void GraphicResource::init(byte *data, int32 size) {
 	byte   *dataPtr      = data;
-	int32 contentOffset = 0;
-	uint16 frameCount    = 0;
-
-	int32 i = 0;
 
 	dataPtr += 4; // tag value
 
@@ -80,14 +76,14 @@ void GraphicResource::init(byte *data, int32 size) {
 	dataPtr += 4;
 	//_flags2 = (int32)READ_LE_UINT32(dataPtr);
 
-	contentOffset = (int32)READ_LE_UINT32(dataPtr);
+	int32 contentOffset = (int32)READ_LE_UINT32(dataPtr);
 	dataPtr += 4;
 
 	dataPtr += 4; // unknown
 	dataPtr += 4; // unknown
 	dataPtr += 4; // unknown
 
-	frameCount = READ_LE_UINT16(dataPtr);
+	uint16 frameCount = READ_LE_UINT16(dataPtr);
 	dataPtr += 2;
 
 	dataPtr += 2; // max width
@@ -99,7 +95,7 @@ void GraphicResource::init(byte *data, int32 size) {
 	dataPtr += 4;
 	int32 nextOffset = 0;
 
-	for (i = 0; i < frameCount; i++) {
+	for (int32 i = 0; i < frameCount; i++) {
 		GraphicFrame frame;
 		frame.offset = prevOffset;
 
@@ -117,7 +113,7 @@ void GraphicResource::init(byte *data, int32 size) {
 	dataPtr = data;
 
 	// Read frame data
-	for (i = 0; i < frameCount; i++) {
+	for (uint32 i = 0; i < frameCount; i++) {
 		dataPtr = data + _frames[i].offset;
 
 		dataPtr += 4; // size
@@ -128,14 +124,14 @@ void GraphicResource::init(byte *data, int32 size) {
 		_frames[i].y  = (int16)READ_LE_UINT16(dataPtr);
 		dataPtr += 2;
 
-		int16 height = (int16)READ_LE_UINT16(dataPtr);
+		uint16 height = READ_LE_UINT16(dataPtr);
 		dataPtr += 2;
-		int16 width  = (int16)READ_LE_UINT16(dataPtr);
+		uint16 width  = READ_LE_UINT16(dataPtr);
 		dataPtr += 2;
 
 		_frames[i].surface.create(width, height, 1);
 
-		memcpy(_frames[i].surface.pixels, dataPtr, width * height);
+		memcpy(_frames[i].surface.pixels, dataPtr, (size_t)(width * height));
 	}
 }
 
@@ -145,10 +141,10 @@ void GraphicResource::init(byte *data, int32 size) {
 
 uint32 GraphicResource::getFrameCount(AsylumEngine *engine, ResourceId id) {
 	GraphicResource *resource = new GraphicResource(engine, id);
-	uint32 count = resource->count();
+	uint32 frameCount = resource->count();
 	delete resource;
 
-	return count;
+	return frameCount;
 }
 
 Common::Rect GraphicResource::getFrameRect(AsylumEngine *engine, ResourceId id, uint32 index) {

@@ -44,6 +44,9 @@ Text::Text(AsylumEngine *engine) : _vm(engine) {
 
 Text::~Text() {
 	delete _fontResource;
+
+	// Zero-out passed pointers
+	_vm = NULL;
 }
 
 void Text::loadFont(ResourceId resourceId) {
@@ -54,7 +57,7 @@ void Text::loadFont(ResourceId resourceId) {
 
 	_fontResource = new GraphicResource(_vm, resourceId);
 
-	if (resourceId > 0) {
+	if (resourceId != kResourceNone) {
 		// load font flag data
 		_curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F;
 	}

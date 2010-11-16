@@ -67,7 +67,7 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_field_60 = 0;
  	_actionIdx3 = 0;
  	// TODO field_68 till field_617
- 	_reaction[8] = 0;
+ 	memset(&_reaction, 0, sizeof(_reaction));
  	_field_638 = 0;
  	_walkingSound1 = 0;
  	_walkingSound2 = 0;
@@ -76,7 +76,7 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_field_64C = 0;
  	_field_650 = 0;
  	memset(_graphicResourceIds, 0 , sizeof(_graphicResourceIds));
- 	memset(&_name, 0, 256);
+ 	memset(&_name, 0, sizeof(_name));
  	memset(&_field_830, 0, sizeof(_field_830));
  	memset(&_field_880, 0, sizeof(_field_880));
  	memset(&_field_8D0, 0, sizeof(_field_8D0));
@@ -117,6 +117,9 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
 	// update-related variables
 	_actorUpdateCounter = 0;
 	_enableFromStatus7 = false;
+
+	// Temporary resources
+	memset(&_resources, 0, sizeof(_resources));
 }
 
 Actor::~Actor() {
@@ -137,17 +140,17 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	y                 = stream->readSint32LE();
 	_resourceId       = (ResourceId)stream->readSint32LE();
 	_objectIndex     = stream->readSint32LE();
-	_frameIndex      = stream->readSint32LE();
-	_frameCount       = stream->readSint32LE();
+	_frameIndex      = stream->readUint32LE();
+	_frameCount       = stream->readUint32LE();
 	x1                = stream->readSint32LE();
 	y1                = stream->readSint32LE();
 	x2                = stream->readSint32LE();
 	y2                = stream->readSint32LE();
 
-	_boundingRect.left   = stream->readSint32LE() & 0xFFFF;
-	_boundingRect.top    = stream->readSint32LE() & 0xFFFF;
-	_boundingRect.right  = stream->readSint32LE() & 0xFFFF;
-	_boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
+	_boundingRect.left   = (int16)(stream->readSint32LE() & 0xFFFF);
+	_boundingRect.top    = (int16)(stream->readSint32LE() & 0xFFFF);
+	_boundingRect.right  = (int16)(stream->readSint32LE() & 0xFFFF);
+	_boundingRect.bottom = (int16)(stream->readSint32LE() & 0xFFFF);
 
 	_direction  = (ActorDirection)stream->readSint32LE();
 	_field_3C   = stream->readSint32LE();
@@ -192,7 +195,7 @@ void Actor::load(Common::SeekableReadStream *stream) {
 
 	_actionIdx2 = stream->readSint32LE();
 	_field_924  = stream->readSint32LE();
-	_lastScreenUpdate = stream->readSint32LE();
+	_lastScreenUpdate = stream->readUint32LE();
 	_field_92C  = stream->readSint32LE();
 	actionType     = stream->readSint32LE();
 	_field_934  = stream->readSint32LE();
@@ -251,7 +254,7 @@ void Actor::draw() {
 	// Compute frame index
 	int32 frameIndex = _frameIndex;
 	if (_frameIndex >= _frameCount)
-		frameIndex = 2 * _frameCount - _frameIndex - 1;
+		frameIndex = 2 * _frameCount - (_frameIndex + 1);
 
 	if (LOBYTE(flags) & kActorFlagMasked) {
 		Object *object = getWorld()->objects[_objectIndex];
@@ -536,7 +539,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 	case kActorStatus1:
 	case kActorStatus12:
 		if ((getWorld()->chapter == kChapter2
-		 && _index == getScene()->getPlayerActorIndex() && (_status == kActorStatus18 || _status == kActorStatus16 || kActorStatus17))
+		 && _index == getScene()->getPlayerActorIndex() && (_status == kActorStatus18 || _status == kActorStatus16 || _status == kActorStatus17))
 		 || (_status != kActorStatusEnabled && _status != kActorStatus9 && _status != kActorStatus14 && _status != kActorStatus15 && _status != kActorStatus18))
 			return;
 
@@ -705,7 +708,6 @@ void Actor::faceTarget(ObjectId id, DirectionFrom from) {
 	switch (from) {
 	default:
 		error("[Actor::faceTarget] Invalid direction input: %d (should be 0-3)", from);
-		return;
 
 	case kDirectionFromObject: {
 		Object *object = getWorld()->getObjectById(id);
@@ -748,11 +750,11 @@ void Actor::faceTarget(ObjectId id, DirectionFrom from) {
 	updateFromDirection(getDirection(x2 + x1, y2 + y1, newX, newY));
 }
 
-void Actor::setPosition(int32 newX, int32 newY, ActorDirection newDirection, int32 frame) {
+void Actor::setPosition(int32 newX, int32 newY, ActorDirection newDirection, uint32 frame) {
 	x1 = newX - x2;
 	y1 = newY - y2;
 
-	if (_direction != 8)
+	if (_direction != kDirection8)
 		updateFromDirection(newDirection);
 
 	if (frame > 0)
@@ -809,11 +811,11 @@ void Actor::setRawResources(uint8 *data) {
 // Unknown methods
 //////////////////////////////////////////////////////////////////////////
 
-bool Actor::isResourcePresent() {
+bool Actor::isResourcePresent() const {
 	if (_status != kActorStatus9)
 		return false;
 
-	int index = 10;
+	int index;
 	for (index = 10; index < 20; index++) {
 		if (_graphicResourceIds[index] == _resourceId)
 			break;
@@ -864,44 +866,44 @@ void Actor::update_40DE20() {
 //////////////////////////////////////////////////////////////////////////
 // Static update methods
 //////////////////////////////////////////////////////////////////////////
-void Actor::enableActorsChapter2(AsylumEngine *_vm) {
-	_vm->clearGameFlag(kGameFlag438);
-	_vm->clearGameFlag(kGameFlag439);
-	_vm->clearGameFlag(kGameFlag440);
-	_vm->clearGameFlag(kGameFlag441);
-	_vm->clearGameFlag(kGameFlag442);
+void Actor::enableActorsChapter2(AsylumEngine *engine) {
+	engine->clearGameFlag(kGameFlag438);
+	engine->clearGameFlag(kGameFlag439);
+	engine->clearGameFlag(kGameFlag440);
+	engine->clearGameFlag(kGameFlag441);
+	engine->clearGameFlag(kGameFlag442);
 
 	// Update shared data
 	for (int i = 0; i < 9; i++) {
 		// TODO find out which data is updated
 	}
 
-	getScene()->getActor(13)->updateStatus(kActorStatusEnabled);
-	getScene()->getActor(13)->processStatus(2300, 71, false);
+	engine->scene()->getActor(13)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(13)->processStatus(2300, 71, false);
 
-	getScene()->getActor(14)->updateStatus(kActorStatusEnabled);
-	getScene()->getActor(14)->processStatus(2600, 1300, false);
+	engine->scene()->getActor(14)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(14)->processStatus(2600, 1300, false);
 
-	getScene()->getActor(15)->updateStatus(kActorStatusEnabled);
-	getScene()->getActor(15)->processStatus(2742, 615, false);
+	engine->scene()->getActor(15)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(15)->processStatus(2742, 615, false);
 
-	getScene()->getActor(16)->updateStatus(kActorStatusEnabled);
-	getScene()->getActor(16)->processStatus(2700, 1200, false);
+	engine->scene()->getActor(16)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(16)->processStatus(2700, 1200, false);
 
-	getScene()->getActor(17)->updateStatus(kActorStatusEnabled);
-	getScene()->getActor(17)->processStatus(2751, 347, false);
+	engine->scene()->getActor(17)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(17)->processStatus(2751, 347, false);
 
-	getScene()->getActor(18)->updateStatus(kActorStatusEnabled);
-	getScene()->getActor(18)->processStatus(2420, 284, false);
+	engine->scene()->getActor(18)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(18)->processStatus(2420, 284, false);
 
-	getScene()->getActor(19)->updateStatus(kActorStatusEnabled);
-	getScene()->getActor(19)->processStatus(2800, 370, false);
+	engine->scene()->getActor(19)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(19)->processStatus(2800, 370, false);
 
-	getScene()->getActor(20)->updateStatus(kActorStatusEnabled);
-	getScene()->getActor(20)->processStatus(1973, 1, false);
+	engine->scene()->getActor(20)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(20)->processStatus(1973, 1, false);
 
-	getScene()->getActor(21)->updateStatus(kActorStatusEnabled);
-	getScene()->getActor(21)->processStatus(2541, 40, false);
+	engine->scene()->getActor(21)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(21)->processStatus(2541, 40, false);
 
 	error("[Actor::enableActorsChapter2] Missing update shared data part!");
 }
@@ -1071,7 +1073,7 @@ void Actor::updateFinish() {
 	if (_field_944 == 4 || !isVisible())
 		return;
 
-	int32 areaIndex = getScene()->findActionArea(Common::Point(x2 + x1, y2 + y1));
+	int32 areaIndex = getScene()->findActionArea(Common::Point((int16)(x2 + x1), (int16)(y2 + y1)));
 	if (areaIndex == _actionIdx3 || areaIndex == -1)
 		return;
 
@@ -1112,7 +1114,7 @@ void Actor::setVolume() {
 // Helper methods
 //////////////////////////////////////////////////////////////////////////
 
-ActorDirection Actor::getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
+ActorDirection Actor::getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) const {
 	int32 v5 = (ax2 << 16) - (ax1 << 16);
 	int32 v6 = 0;
 	int32 v4 = (ay1 << 16) - (ay2 << 16);
@@ -1144,6 +1146,9 @@ ActorDirection Actor::getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
 	}
 
 	switch (v6) {
+	default:
+		break;
+
 	case 1:
 		v8 = 360 - v8;
 		break;
@@ -1203,7 +1208,7 @@ void Actor::updateGraphicData(uint32 offset) {
 	_frameIndex = 0;
 }
 
-bool Actor::isDefaultDirection(int index) {
+bool Actor::isDefaultDirection(int index) const {
 	return _graphicResourceIds[index] != _graphicResourceIds[5];
 }
 
@@ -1219,30 +1224,32 @@ int32 Actor::getGraphicsFlags() {
 	return ((_direction < 5) - 1) & 2;
 }
 
-int32 Actor::getFieldValue() {
-	int32 index = (_frameIndex >= _frameCount) ? (2 * _frameCount) - _frameIndex + 1 : _frameIndex;
+int32 Actor::getFieldValue() const {
+	int32 index = (_frameIndex >= _frameCount) ? (2 * _frameCount) - (_frameIndex + 1): _frameIndex;
+
+	if (index >= 20)
+		error("[Actor::getFieldValue] Invalid index calculation (was: %d, max: 20)", index);
 
 	switch (_direction) {
 	default:
-	case 0:
-	case 4:
+	case kDirection0:
+	case kDirection4:
 		return 0;
 
-	case 1:
-	case 3:
+	case kDirection1:
+	case kDirection3:
 		return -_field_8D0[index];
 
-	case 2:
+	case kDirection2:
 		return -_field_830[index];
 
-	case 5:
-	case 7:
+	case kDirection5:
+	case kDirection7:
 		return _field_8D0[index];
 
-	case 6:
-		return _field_830[index];;
+	case kDirection6:
+		return _field_830[index];
 	}
-
 }
 
 } // end of namespace Asylum

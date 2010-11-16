@@ -149,18 +149,16 @@ public:
 };
 
 bool AsylumMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave);
 }
 
 bool Asylum::AsylumEngine::hasFeature(EngineFeature f) const {
-	return
-	    (f == kSupportsRTL) ||
-	    (f == kSupportsLoadingDuringRuntime) ||
-	    (f == kSupportsSavingDuringRuntime) ||
-	    (f == kSupportsSubtitleOptions);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime) ||
+	       (f == kSupportsSubtitleOptions);
 }
 
 void Asylum::AsylumEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {

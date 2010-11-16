@@ -1213,7 +1213,7 @@ void Scene::processUpdateList() {
 				} else {
 					if (object->flags & kObjectFlag40) {
 						PolyDefinitions *poly = &_polygons->entries[object->getPolygonIndex()];
-						if (point.x > 0 && point.y > 0 && poly->numPoints > 0)
+						if (point.x > 0 && point.y > 0 && poly->count() > 0)
 							intersects = poly->contains(point);
 						else
 							warning ("[drawActorsAndObjects] trying to find intersection of uninitialized point");
@@ -1404,12 +1404,12 @@ void Scene::debugShowWalkRegion(PolyDefinitions *poly) {
 	               1);
 
 	// Draw all lines in Polygon
-	for (int32 i = 0; i < poly->numPoints; i++) {
+	for (uint32 i = 0; i < poly->count(); i++) {
 		surface.drawLine(
 		    poly->points[i].x - poly->boundingRect.left,
 		    poly->points[i].y - poly->boundingRect.top,
-		    poly->points[(i+1) % poly->numPoints].x - poly->boundingRect.left,
-		    poly->points[(i+1) % poly->numPoints].y - poly->boundingRect.top, 0x3A);
+		    poly->points[(i+1) % poly->count()].x - poly->boundingRect.left,
+		    poly->points[(i+1) % poly->count()].y - poly->boundingRect.top, 0x3A);
 	}
 
 	copyToBackBufferClipped(&surface, poly->boundingRect.left, poly->boundingRect.top);
@@ -1427,12 +1427,12 @@ void Scene::debugShowPolygons() {
 		               1);
 
 		// Draw all lines in Polygon
-		for (int32 i = 0; i < poly.numPoints; i++) {
+		for (uint32 i = 0; i < poly.count(); i++) {
 			surface.drawLine(
 			    poly.points[i].x - poly.boundingRect.left,
 			    poly.points[i].y - poly.boundingRect.top,
-			    poly.points[(i+1) % poly.numPoints].x - poly.boundingRect.left,
-			    poly.points[(i+1) % poly.numPoints].y - poly.boundingRect.top, 0xFF);
+			    poly.points[(i+1) % poly.count()].x - poly.boundingRect.left,
+			    poly.points[(i+1) % poly.count()].y - poly.boundingRect.top, 0xFF);
 		}
 
 		copyToBackBufferClipped(&surface, poly.boundingRect.left, poly.boundingRect.top);

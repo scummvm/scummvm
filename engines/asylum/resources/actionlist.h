@@ -41,7 +41,12 @@ namespace Asylum {
 	void k##name(ScriptEntry *cmd)
 
 #define IMPLEMENT_OPCODE(name) \
-	void ActionList::k##name(ScriptEntry *cmd)
+	void ActionList::k##name(ScriptEntry *cmd) { \
+	if (!_currentScript) error("[" #name "] No current script set!"); \
+	if (!cmd) error("[" #name "] Invalid command parameter!");
+
+#define END_OPCODE }
+
 
 #define ADD_OPCODE(name) { \
 	Opcode *func = new Opcode(#name, new Common::Functor1Mem<ScriptEntry *, void, ActionList>(this, &ActionList::k##name)); \
