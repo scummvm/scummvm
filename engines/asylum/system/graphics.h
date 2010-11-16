@@ -74,6 +74,7 @@ public:
 
 	GraphicFrame *getFrame(uint32 frame);
 	ResourceId    getResourceId() { return _resourceId; }
+	// FIXME: flags are coordinates for the sound origin!
 	int32         getFlags()      { return _flags; }
 	int32         getFlags2()     { return _flags2; }
 	uint32        count()         { return _frames.size(); }

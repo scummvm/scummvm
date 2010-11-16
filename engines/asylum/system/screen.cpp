@@ -127,9 +127,9 @@ void Screen::setPalette(byte *rgbPalette) const {
 	p += 3;
 
 	for (int32 i = 1; i < 256; i++) {
-		palette[i * 4 + 0] = *p++ << 2;
-		palette[i * 4 + 1] = *p++ << 2;
-		palette[i * 4 + 2] = *p++ << 2;
+		palette[i * 4 + 0] = (byte)(*p++ << 2);
+		palette[i * 4 + 1] = (byte)(*p++ << 2);
+		palette[i * 4 + 2] = (byte)(*p++ << 2);
 		palette[i * 4 + 3] = 0;
 	}
 

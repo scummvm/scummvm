@@ -166,7 +166,9 @@ enum ResourcePackId {
 
 #define MAKE_RESOURCE(pack, index) (ResourceId)((((pack) << 16) + 0x80000000) + (uint32)(index))
 
-enum ResourceId {
+typedef unsigned int ResourceId;
+
+enum ResourcesId {
 	kResourceNone         = 0
 };
 
@@ -539,7 +541,7 @@ enum ObjectFlag {
 // Resource ID macros
 //////////////////////////////////////////////////////////////////////////
 #define RESOURCE_PACK(id) (ResourcePackId)((((uint32)id) >> 16) & 0x7FFF)
-#define RESOURCE_INDEX(id) (int16)(id)
+#define RESOURCE_INDEX(id) (uint16)(id)
 
 } // End of namespace Asylum
 

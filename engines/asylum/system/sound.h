@@ -46,6 +46,12 @@ struct SoundItem {
 	int32 field_8;
 	int32 field_C;
 
+	SoundItem() {
+		resourceId = kResourceNone;
+		field_4 = 0;
+		field_8 = 0;
+		field_C = 0;
+	}
 };
 
 struct FrameSoundItem {
@@ -56,6 +62,14 @@ struct FrameSoundItem {
 	int32 field_10;
 	int32 field_14;
 
+	FrameSoundItem() {
+		resourceId = kResourceNone;
+		frameIndex = 0;
+		index = 0;
+		field_C = 0;
+		field_10 = 0;
+		field_14 = 0;
+	}
 };
 
 struct AmbientSoundItem {

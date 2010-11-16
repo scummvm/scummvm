@@ -38,7 +38,16 @@
 
 namespace Asylum {
 
-Object::Object(AsylumEngine *engine) : _vm(engine) {
+Object::Object(AsylumEngine *engine) : x(0), y(0), flags(0), actionType(0),
+	_vm(engine), _index(0),
+	_id(kObjectNone), _resourceId(kResourceNone), _field_20(0), _frameIndex(0), _frameCount(0),
+	_field_2C(0), _field_30(0), _field_34(0), _field_3C(0), _polygonIndex(0), _field_B4(0),
+	_tickCount(0), _tickCount2(0), _field_C0(0), _priority(0), _actionListIdx(0), _field_67C(0),
+	_soundX(0), _soundY(0), _field_688(0), _soundResourceId(kResourceNone), _field_6A4(kDirection0)
+{
+	memset(&_name, 0, sizeof(_name));
+	memset(&_gameFlags, 0, sizeof(_gameFlags));
+	memset(&_randomResourceIds, 0, sizeof(_randomResourceIds));
 }
 
 Object::~Object() {
@@ -55,36 +64,37 @@ void Object::load(Common::SeekableReadStream *stream) {
 	x	  = stream->readSint32LE();
 	y	  = stream->readSint32LE();
 
-	_boundingRect.left	= stream->readSint32LE() & 0xFFFF;
-	_boundingRect.top	= stream->readSint32LE() & 0xFFFF;
-	_boundingRect.right	= stream->readSint32LE() & 0xFFFF;
-	_boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
+	_boundingRect.left	 = (int16)(stream->readSint32LE() & 0xFFFF);
+	_boundingRect.top	 = (int16)(stream->readSint32LE() & 0xFFFF);
+	_boundingRect.right	 = (int16)(stream->readSint32LE() & 0xFFFF);
+	_boundingRect.bottom = (int16)(stream->readSint32LE() & 0xFFFF);
 
 	_field_20   = stream->readSint32LE();
-	_frameIndex = stream->readSint32LE();
-	_frameCount = stream->readSint32LE();
+	_frameIndex = stream->readUint32LE();
+	_frameCount = stream->readUint32LE();
 	_field_2C   = stream->readSint32LE();
 	_field_30   = stream->readSint32LE();
 	_field_34   = stream->readSint32LE();
-	flags       = stream->readSint32LE();
+	flags       = stream->readUint32LE();
 	_field_3C   = stream->readSint32LE();
 
 	stream->read(_name, sizeof(_name));
 
-	_rect.left    = stream->readSint32LE();
-	_rect.top     = stream->readSint32LE();
-	_rect.right   = stream->readSint32LE();
-	_rect.bottom  = stream->readSint32LE();
+	_rect.left    = (int16)(stream->readSint32LE());
+	_rect.top     = (int16)(stream->readSint32LE());
+	_rect.right   = (int16)(stream->readSint32LE());
+	_rect.bottom  = (int16)(stream->readSint32LE());
+
 	_polygonIndex = stream->readSint32LE();
 	actionType    = stream->readSint32LE();
 
 	for (int i = 0; i < 10; i++)
-		_gameFlags[i] = (GameFlag)stream->readSint32LE();
+		_gameFlags[i] = stream->readSint32LE();
 
 	_field_B4	  = stream->readSint32LE();
-	_tickCount	  = stream->readSint32LE();
-	_tickCount2	  = stream->readSint32LE();
-	_field_C0	  = stream->readSint32LE();
+	_tickCount	  = stream->readUint32LE();
+	_tickCount2	  = stream->readUint32LE();
+	_field_C0	  = stream->readUint32LE();
 	_priority	  = stream->readSint32LE();
 	_actionListIdx = stream->readSint32LE();
 
@@ -133,26 +143,26 @@ void Object::disableAndRemoveFromQueue() {
 // Visibility
 //////////////////////////////////////////////////////////////////////////
 bool Object::isOnScreen() {
-	Common::Rect screenRect = Common::Rect(getWorld()->xLeft, getWorld()->yTop, getWorld()->xLeft + 640, getWorld()->yTop + 480);
+	Common::Rect screenRect = Common::Rect((int16)getWorld()->xLeft, (int16)getWorld()->yTop, (int16)(getWorld()->xLeft + 640), (int16)(getWorld()->yTop + 480));
 	Common::Rect objectRect = Common::Rect(_boundingRect);
 
-	objectRect.translate(x, y);
+	objectRect.translate((int16)x, (int16)y);
 
 	return isVisible() && (flags & kObjectFlagEnabled) && screenRect.intersects(objectRect);
 }
 
-bool Object::isVisible() {
+bool Object::isVisible() const {
 	if (flags & kObjectFlagEnabled) {
 
 		// Check each game flag
 		for (int32 i = 0; i < 10; i++) {
-			GameFlag flag = _gameFlags[i];
+			int32 flag = _gameFlags[i];
 			bool ok = false;
 
 			if (flag <= 0)
 				ok = _vm->isGameFlagNotSet((GameFlag)-flag);
 			else
-				ok = _vm->isGameFlagSet(flag);
+				ok = _vm->isGameFlagSet((GameFlag)flag);
 
 			if (!ok)
 				return false;
@@ -193,6 +203,9 @@ void Object::draw() {
 }
 
 void Object::update() {
+	if (_frameCount == 0)
+		error("[Object::update] Object has no frame!");
+
 	bool doPlaySounds = false;
 
 	if (_field_3C != 4)
@@ -254,8 +267,8 @@ void Object::update() {
 			if (_frameIndex < _frameCount - 1) {
 				if (_field_688 == 1) {
 					Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
-					getScene()->setGlobalX(x + frameRect.left + (frameRect.width()  >> 1));
-					getScene()->setGlobalY(y + frameRect.top  + (frameRect.height() >> 1));
+					getScene()->setGlobalX(x + frameRect.left + Common::Rational(frameRect.width(), 2).toInt());
+					getScene()->setGlobalY(y + frameRect.top  + Common::Rational(frameRect.height(), 2).toInt());
 				}
 			} else {
 				flags &= ~kObjectFlag8;
@@ -273,7 +286,7 @@ void Object::update() {
 
 			++_frameIndex;
 
-			if (_frameIndex <= 0) {
+			if (_frameIndex == 0) {
 				flags &= ~kObjectFlag10000;
 				if (_field_688 == 1) {
 					getScene()->setGlobalX(-1);
@@ -281,8 +294,8 @@ void Object::update() {
 				}
 			} else if (_field_688 == 1) {
 				Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
-				getScene()->setGlobalX(x + frameRect.left + (frameRect.width()  >> 1));
-				getScene()->setGlobalY(y + frameRect.top  + (frameRect.height() >> 1));
+				getScene()->setGlobalX(x + frameRect.left + Common::Rational(frameRect.width(), 2).toInt());
+				getScene()->setGlobalY(y + frameRect.top  + Common::Rational(frameRect.height(), 2).toInt());
 			}
 
 			_tickCount = _vm->getTick();
@@ -351,8 +364,8 @@ void Object::playSounds() {
 		GraphicResource *resource = new GraphicResource(_vm, _resourceId);
 
 		if (LOBYTE(flags) & kObjectFlag4) {
-			soundX = x + (resource->getFlags() >> 1);
-			soundY = y + (resource->getFlags2() >> 1);
+			soundX = x + Common::Rational(resource->getFlags(), 2).toInt();
+			soundY = y + Common::Rational(resource->getFlags2(), 2).toInt();
 		} else {
 			// TODO _frameIndex here seems to be == _frameCount so something wrong somewhere!
 			/*GraphicFrame *frame = resource->getFrame(_frameIndex);
@@ -432,7 +445,7 @@ void Object::setVolume() {
 	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
 
 	// Compute volume
-	int32 volume = Config.voiceVolume + getSound()->calculateVolumeAdjustement((frameRect.width() >> 1) + x, (frameRect.height() >> 1) + y, _field_6A4, 0);
+	int32 volume = Config.voiceVolume + getSound()->calculateVolumeAdjustement(Common::Rational(frameRect.width(), 2).toInt() + x, Common::Rational(frameRect.height(), 2).toInt() + y, _field_6A4, 0);
 	if (volume < -10000)
 		volume = -10000;
 
@@ -443,7 +456,7 @@ ResourceId Object::getRandomResourceId() {
 	// Initialize random resource id array
 	ResourceId shuffle[5];
 	memset(&shuffle, 0, sizeof(shuffle));
-	int32 count = 0;
+	uint32 count = 0;
 
 	for (int32 i = 0; i < 5; i++) {
 		if (_randomResourceIds[i]) {
@@ -462,7 +475,7 @@ ResourceId Object::getRandomResourceId() {
 	return id;
 }
 
-bool Object::checkFlags() {
+bool Object::checkFlags() const {
 	return (flags & kObjectFlagEnabled) && (flags & kObjectFlag8 || flags & kObjectFlag10000);
 }
 
@@ -472,7 +485,7 @@ Common::String Object::toString(bool shortString) {
 	output += Common::String::format("Object %d: %s\n", _id, _name);
 
 	if (!shortString) {
-		output += Common::String::format("    resourceId:      %u (0x%X) - (pack %d - index %d)\n", _resourceId, _resourceId, (_resourceId >> 16) & 0x7FFF, (int16)_resourceId);
+		output += Common::String::format("    resourceId:      %u (0x%X) - (pack %d - index %d)\n", _resourceId, _resourceId, RESOURCE_PACK(_resourceId), RESOURCE_INDEX(_resourceId));
 		output += Common::String::format("    x:               %d\n", x);
 		output += Common::String::format("    y:               %d\n", y);
 		output += Common::String::format("    flags:           %d\n", flags);

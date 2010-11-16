@@ -58,12 +58,12 @@ protected:
 	Common::Event *_ev;
 
 	Cursor *_cursor;
+	GraphicResource *_bgResource;
+
 	bool    _leftClickUp;
 	bool    _leftClickDown;
 	bool    _rightClickDown;
 	bool    _active;
-
-	GraphicResource *_bgResource;
 
 	virtual void update() {};
 	void playSound(ResourceId resourceId, bool loop = false);
@@ -145,10 +145,10 @@ private:
 	int _jacksState[3];
 	int _holesState[3];
 	int _buttonsState[4];
-	int _tvScreenAnimIdx;
+	uint32 _tvScreenAnimIdx;
 	bool _isAccomplished;
 
-	int inPolyRegion(int x, int y, int polyIdx);
+	int inPolyRegion(int x, int y, int polyIdx) const;
 
 	void update();
 
@@ -156,13 +156,13 @@ private:
 
 	GraphicQueueItem getGraphicJackItem(int32 index);
 	GraphicQueueItem getGraphicShadowItem();
-	void updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo pluggedOnRed, VCRDrawInfo pluggedOnYellow, VCRDrawInfo pluggedOnBlack, int32 resourceOnHandIndex);
+	void updateJack(Jack jack, const VCRDrawInfo &onTable, const VCRDrawInfo &pluggedOnRed, const VCRDrawInfo &pluggedOnYellow, const VCRDrawInfo &pluggedOnBlack, int32 resourceOnHandIndex);
 	void updateBlackJack();
 	void updateRedJack();
 	void updateYellowJack();
 	int setJackOnHole(int jackType, JackState plugged);
 
-	void updateButton(Button button, VCRDrawInfo btON, VCRDrawInfo btDown);
+	void updateButton(Button button, const VCRDrawInfo &btON, const VCRDrawInfo &btDown);
 	void updatePowerButton();
 	void updateRewindButton();
 	void updatePlayButton();

@@ -252,7 +252,7 @@ void Actor::draw() {
 	getScene()->adjustCoordinates(frameRect.left + x + x1, frameRect.top + y + y1, &point);
 
 	// Compute frame index
-	int32 frameIndex = _frameIndex;
+	uint32 frameIndex = _frameIndex;
 	if (_frameIndex >= _frameCount)
 		frameIndex = 2 * _frameCount - (_frameIndex + 1);
 
@@ -718,8 +718,8 @@ void Actor::faceTarget(ObjectId id, DirectionFrom from) {
 
 		Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-		newX = (frameRect.width() >> 1) + object->x;
-		newY = (frameRect.height() >> 1) + object->y;
+		newX = Common::Rational(frameRect.width(), 2).toInt()  + object->x;
+		newY = Common::Rational(frameRect.height(), 2).toInt() + object->y;
 		}
 		break;
 
@@ -917,6 +917,9 @@ void Actor::updateStatus3_19() {
 }
 
 void Actor::updateStatusEnabled() {
+	if (_frameCount == 0)
+		error("[Actor::updateStatusEnabled] Actor has no frame!");
+
 	_frameIndex = (_frameIndex + 1) % _frameCount;
 
 	// Actor: Crow
@@ -1115,9 +1118,9 @@ void Actor::setVolume() {
 //////////////////////////////////////////////////////////////////////////
 
 ActorDirection Actor::getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) const {
-	int32 v5 = (ax2 << 16) - (ax1 << 16);
+	int32 v5 = (ax2 - ax1) * 2^16;
 	int32 v6 = 0;
-	int32 v4 = (ay1 << 16) - (ay2 << 16);
+	int32 v4 = (ay1 - ay2) * 2^16;
 
 	if (v5 < 0) {
 		v6 = 2;
@@ -1129,18 +1132,23 @@ ActorDirection Actor::getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) c
 		v4 = -v4;
 	}
 
-	int32 v7;
 	int32 v8 = -1;
 
 	if (v5) {
-		v7 = (v4 << 8) / v5;
+		Common::Rational v7(v4 * 256, v5);
 
 		if (v7 < 0x100)
-			v8 = angleTable01[v7];
-		if (v7 < 0x1000 && v8 < 0)
-			v8 = angleTable02[v7 >> 4];
-		if (v7 < 0x10000 && v8 < 0)
-			v8 = angleTable03[v7 >> 8];
+			v8 = angleTable01[v7.toInt()];
+
+		if (v7 < 0x1000 && v8 < 0) {
+			Common::Rational vtemp = v7 / 16;
+			v8 = angleTable02[vtemp.toInt()];
+		}
+
+		if (v7 < 0x10000 && v8 < 0) {
+			Common::Rational vtemp = v7 / 256;
+			v8 = angleTable03[vtemp.toInt()];
+		}
 	} else {
 		v8 = 90;
 	}
@@ -1203,7 +1211,8 @@ ActorDirection Actor::getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) c
 }
 
 void Actor::updateGraphicData(uint32 offset) {
-	_resourceId = _graphicResourceIds[(_direction > 4 ? 8 - _direction : _direction) + offset];
+	int32 index = ((_direction > 4) ? 8 - _direction : _direction) + (int32)offset;
+	_resourceId = _graphicResourceIds[index];
 	_frameCount = GraphicResource::getFrameCount(_vm, _resourceId);
 	_frameIndex = 0;
 }
