@@ -2588,7 +2588,7 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
 				PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 			} while (Loffset != _ctx->x || Toffset != _ctx->y);
 		} else if (TinselV2 && myEscape) {
-			static SCROLL_MONITOR sm;
+			SCROLL_MONITOR sm;
 
 			// Scroll is escapable even though we're not waiting for it
 			sm.x = _ctx->x;
