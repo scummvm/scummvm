@@ -55,6 +55,7 @@ class Text;
 class Video;
 class WorldStats;
 
+struct ActionArea;
 struct AmbientSoundItem;
 struct GraphicFrame;
 struct ObjectItem;
@@ -86,9 +87,6 @@ public:
 	void load(ResourcePackId packId);
 
 
-
-
-
 	void handleEvent(Common::Event *event, bool doUpdate);
 
 	void activate();
@@ -99,7 +97,6 @@ public:
 	//BlowUpPuzzle* getBlowUpPuzzle() { return _blowUp;}
 	//void setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
 	void setScenePosition(int x, int y);
-	void setSkipDrawScene(bool skip) { _skipDrawScene = skip; }
 
 	AsylumEngine* vm() { return _vm; }
 
@@ -117,7 +114,7 @@ public:
 	/**
 	 * Return the index of the current player actor
 	 */
-	ActorIndex getPlayerActorIndex() { return _playerActorIdx; }
+	ActorIndex getPlayerIndex() { return _playerActorIdx; }
 
 	void setPlayerActorIndex(ActorIndex index) { _playerActorIdx = index; }
 	void changePlayer(ActorIndex index);
@@ -142,46 +139,27 @@ public:
 	int32 calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act);
 
 
-	// Shared global Data
-	int32 getGlobalX() const   { return _globalX; }
-	void setGlobalX(int32 val) { _globalX = val; }
-	int32 getGlobalY() const   { return _globalY; }
-	void setGlobalY(int32 val) { _globalY = val; }
-
 	ActorDirection getGlobalDirection() { return _globalDirection; }
 
 	bool updateSceneCoordinates(int32 targetX, int32 targetY, int32 val, bool checkSceneCoords = false, int32 *param = NULL);
 
 	void adjustCoordinates(int32 x, int32 y, Common::Point *point);
 
-	void updatePlayerChapter9(int32 param);
-
 	int processActor(int *x, int *param);
 
 	void updatePalette(int32 param);
 	void makeGreyPalette();
-	int matteBarHeight;
-	int matteVar1;
-	int matteVar2;
-	bool mattePlaySound;
-	bool matteInitialized;
 
 	// Shared methods
 	void resetActor0();
-
-	int32 getActorUpdateFlag() { return _actorUpdateFlag; }
-	void setActorUpdateFlag(int32 val) { _actorUpdateFlag = val; }
-
-	int32 getActorUpdateFlag2() { return _actorUpdateFlag2; }
-	void setActorUpdateFlag2(int32 val) { _actorUpdateFlag2 = val; }
-
-	ResourceId savedResourceIds[11]; // TODO are those really resource ids?
 
 	/** .text:00408980
 	 * Determine if the supplied point intersects
 	 * an action area's active region
 	 */
 	int32 findActionArea(const Common::Point pt);
+
+	int32 isInActionArea(const Common::Point &pt, ActionArea *area);
 
 protected:
 	/** .text:0040EA50
@@ -227,7 +205,6 @@ private:
 	bool  _leftClick;
 	bool  _rightButton;
 	bool  _isActive;
-	bool  _skipDrawScene;
 	ActorDirection _globalDirection;
 
 	ActionList   *_actions;
@@ -241,22 +218,12 @@ private:
 	GraphicResource *_bgResource;
 	GraphicFrame    *_background;
 
-	int32 _globalX;
-	int32 _globalY;
-	int32 _sceneOffset;
-	int32 _sceneXLeft;
-	int32 _sceneYTop;
-	Common::Rational _sceneOffsetAdd;
-
 	struct UpdateItem {
 		ActorIndex index;
 		int32 priority;
 	};
 
 	Common::Array<UpdateItem> _updateList;
-
-	int32 _actorUpdateFlag;
-	int32 _actorUpdateFlag2;
 
 	/** .text:0040B5B0
 	 * Loop through the various update blocks (actors,

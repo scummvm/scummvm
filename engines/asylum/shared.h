@@ -47,6 +47,20 @@ enum GameFlag {
 	kGameFlag246                  = 246,
 	kGameFlag247                  = 247,
 	kGameFlag248                  = 248,
+	kGameFlag263                  = 263,
+	kGameFlag264                  = 264,
+	kGameFlag265                  = 265,
+	kGameFlag266                  = 266,
+	kGameFlag267                  = 267,
+	kGameFlag268                  = 268,
+	kGameFlag269                  = 269,
+	kGameFlag270                  = 270,
+	kGameFlag271                  = 271,
+	kGameFlag272                  = 272,
+	kGameFlag273                  = 273,
+	kGameFlag274                  = 274,
+	kGameFlag275                  = 275,
+	kGameFlag276                  = 276,
 	kGameFlag279                  = 279,
 	kGameFlag358                  = 358,
 	kGameFlag368                  = 368,
@@ -429,6 +443,20 @@ enum ObjectId {
 	kObjectCrow3Pecks              = 1503,
 	kObjectCrow4FlysAway           = 1506,
 	kObjectCrow4Pecks              = 1507,
+	kObjectPumpkin1Loop            = 1523,
+	kObjectPumpkin2Loop            = 1524,
+	kObjectPumpkin3Loop            = 1525,
+	kObjectPumpkin4Loop            = 1526,
+	kObjectPumpkin5Loop            = 1527,
+	kObjectPumpkin6Loop            = 1528,
+	kObjectPumpkin7Loop            = 1529,
+	kObjectPumpkin1Dies            = 1530,
+	kObjectPumpkin2Dies            = 1531,
+	kObjectPumpkin3Dies            = 1532,
+	kObjectPumpkin4Dies            = 1533,
+	kObjectPumpkin5Dies            = 1534,
+	kObjectPumpkin6Dies            = 1535,
+	kObjectPumpkin7Dies            = 1536,
 	kObjectDennisStatus2           = 1580,
 	kObjectPreAlphaNut             = 1582,
 	kObjectPreAlphaNut2            = 1584,
@@ -519,17 +547,18 @@ enum ObjectFlag {
 #define rnd(val) _vm->getRandom(val)
 
 // Engine subclasses
-#define getEncounter() _vm->encounter()
-#define getCursor()    _vm->cursor()
-#define getResource()  _vm->resource()
-#define getSound()     _vm->sound()
-#define getScene()     _vm->scene()
-#define getScreen()    _vm->screen()
-#define getScript()    _vm->scene()->actions()
-#define getSpeech()    _vm->scene()->speech()
-#define getText()      _vm->text()
-#define getVideo()     _vm->video()
-#define getWorld()     _vm->scene()->worldstats()
+#define getSharedData()  _vm->getData()
+#define getEncounter()   _vm->encounter()
+#define getCursor()      _vm->cursor()
+#define getResource()    _vm->resource()
+#define getSound()       _vm->sound()
+#define getScene()       _vm->scene()
+#define getScreen()      _vm->screen()
+#define getScript()      _vm->scene()->actions()
+#define getSpeech()      _vm->scene()->speech()
+#define getText()        _vm->text()
+#define getVideo()       _vm->video()
+#define getWorld()       _vm->scene()->worldstats()
 
 //////////////////////////////////////////////////////////////////////////
 // Sub-integer partial access macros

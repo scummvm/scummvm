@@ -27,6 +27,7 @@
 #define ASYLUM_ENGINE_H
 
 #include "asylum/console.h"
+#include "asylum/data.h"
 #include "asylum/shared.h"
 
 #include "common/random.h"
@@ -60,15 +61,6 @@ namespace Asylum {
 
 // If defined, will show the scene update times on the debugger output
 //#define DEBUG_SCENE_TIMES
-
-//////////////////////////////////////////////////////////////////////////
-// Flags
-enum FlagType {
-	kFlagType1 = 0,
-	kFlagType2,
-	kFlagTypeSkipDraw,
-	kFlagTypeSceneRectChanged
-};
 
 class Cursor;
 class Encounter;
@@ -112,16 +104,23 @@ public:
 	 */
 	void switchScene(ResourcePackId sceneId) { startGame(sceneId, kStartGameScene); }
 
-	/**
+ 	/**
 	 * Wrapper function to the OSystem getMillis() method
-	 */
+ 	 */
 	uint32 getTick() { return _system->getMillis(); }
+
+	/**
+	 * Gets the shared data.
+	 *
+	 * @return a pointer to the shared data.
+	 */
+	SharedData *getData() { return &_data; }
 
 	/**
 	 * This is the global tick counter.
 	 */
-	uint32 screenUpdatesCount;
-	uint32 globalTickValue_2;
+	uint32 screenUpdateCount;
+	uint32 lastScreenUpdate;
 
 	// Game
 	Cursor          *cursor()    { return _cursor; }
@@ -145,10 +144,6 @@ public:
 	uint getRandom(uint max) { return _rnd.getRandomNumber(max); }
 	uint getRandomBit()      { return _rnd.getRandomBit(); }
 
-	// Flags
-	void setFlag(FlagType flag)   { setFlag(flag, true); }
-	void clearFlag(FlagType flag) { setFlag(flag, false); }
-
 	// Message handler
 	void switchMessageHandler(MessageHandler *handler);
 	MessageHandler *getMessageHandler(uint32 index);
@@ -171,9 +166,11 @@ private:
 	Text            *_text;
 	Video           *_video;
 
+	// Shared game data
+	SharedData _data;
+
 	bool _introPlaying;
 	int  _gameFlags[1512];
-	bool _flags[4];
 
 	void handleEvents(bool doUpdate);
 	void waitForTimer(uint32 msec_delay);
@@ -184,8 +181,6 @@ private:
 	 * Play the intro
 	 */
 	void playIntro();
-
-	void setFlag(FlagType flag, bool isSet);
 
 	friend class Console;
 };

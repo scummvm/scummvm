@@ -31,6 +31,8 @@
 
 #include "asylum/views/scene.h"
 
+#include "asylum/asylum.h"
+
 namespace Asylum {
 
 WorldStats::WorldStats(Common::SeekableReadStream *stream, Scene *scene) : _scene(scene) {
@@ -308,6 +310,24 @@ int32 WorldStats::getActionAreaIndexById(int32 id) {
 	}
 
 	return -1;
+}
+
+int32 WorldStats::getRandomActionAreaIndexById(int32 id) {
+	int count = 0;
+	int32 indexes[5];
+	memset(&indexes, 0, sizeof(indexes));
+
+	for (uint32 i = 0; i < actions.size(); i++) {
+		if (actions[i]->id == id && count < 5) {
+			indexes[count] = i;
+			++count;
+		}
+	}
+
+	if (!count)
+		return -1;
+
+	return indexes[_scene->vm()->getRandom(count)];
 }
 
 ActionArea* WorldStats::getActionAreaById(int32 id) {

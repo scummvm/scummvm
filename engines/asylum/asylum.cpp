@@ -56,9 +56,6 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 
 	// Init data
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
-	memset(&_flags, 0, sizeof(_flags));
-	screenUpdatesCount = 0;
-	globalTickValue_2 = 0;
 
 	// Add default search directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -123,7 +120,7 @@ Common::Error AsylumEngine::run() {
 	// FIXME: remove
 	_introPlaying = false;
 
-	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing) (address 00411CD0)
+	// TODO: save dialog key codes into sntrm_k.txt (need to figure out why they use such thing) (address 00411CD0)
     // load startup configurations (.text:0041A970)
     Config.read();
 	// TODO: init unknown game stuffs (.text:0040F430)
@@ -384,10 +381,6 @@ bool AsylumEngine::isGameFlagSet(GameFlag flag) const {
 
 bool AsylumEngine::isGameFlagNotSet(GameFlag flag) const {
 	return ((1 << (flag % FLAG_MASK)) & (unsigned int)_gameFlags[flag / 32]) >> (flag % FLAG_MASK) == 0;
-}
-
-void AsylumEngine::setFlag(FlagType flag, bool isSet) {
-	_flags[flag] = isSet;
 }
 
 } // namespace Asylum
