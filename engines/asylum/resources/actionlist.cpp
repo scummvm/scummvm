@@ -46,6 +46,41 @@
 
 namespace Asylum {
 
+//////////////////////////////////////////////////////////////////////////
+// ActionArea
+//////////////////////////////////////////////////////////////////////////
+void ActionArea::load(Common::SeekableReadStream *stream) {
+	stream->read(&name, 52);
+	id             = stream->readSint32LE();
+	field01        = stream->readSint32LE();
+	field02        = stream->readSint32LE();
+	field_40       = stream->readSint32LE();
+	field_44       = stream->readSint32LE();
+	flags          = stream->readSint32LE();
+	scriptIndex    = stream->readSint32LE();
+	scriptIndex2   = stream->readSint32LE();
+	actionType     = stream->readSint32LE();
+
+	for (int32 i = 0; i < 10; i++)
+		flagNums[i] = stream->readSint32LE();
+
+	field_7C          = stream->readSint32LE();
+	polyIdx           = stream->readSint32LE();
+	field_84          = stream->readSint32LE();
+	field_88          = stream->readSint32LE();
+	soundResourceId   = (ResourceId)stream->readSint32LE();
+	field_90          = stream->readSint32LE();
+	paletteResourceId = (ResourceId)stream->readSint32LE();
+
+	for (int32 i = 0; i < 5; i++)
+		array[i] = stream->readSint32LE();
+
+	volume = stream->readSint32LE();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// ActionList
+//////////////////////////////////////////////////////////////////////////
 ActionList::ActionList(AsylumEngine *engine) : _vm(engine) {
 	// Build list of opcodes
 	ADD_OPCODE(Return);
@@ -548,7 +583,7 @@ IMPLEMENT_OPCODE(JumpAndSetDirection)
 
 			if (cmd->param2 == -1 || cmd->param3 == -1) {
 				actor->updateFromDirection((ActorDirection)cmd->param4);
-			} else if ((actor->x1 + actor->x2) == cmd->param2 && (actor->y1 + actor->y2) == cmd->param3) {
+			} else if ((actor->getPoint1()->x + actor->getPoint2()->x) == cmd->param2 && (actor->getPoint1()->y + actor->getPoint2()->y) == cmd->param3) {
 				actor->updateFromDirection((ActorDirection)cmd->param4);
 			} else {
 				actor->processStatus(cmd->param2, cmd->param3, (bool)cmd->param4);
@@ -562,7 +597,7 @@ IMPLEMENT_OPCODE(JumpAndSetDirection)
 			cmd->param5 = 1;
 			_lineIncrement = 0;
 
-			if ((actor->x1 + actor->x2) == cmd->param2 && (actor->y1 + actor->y2) == cmd->param3)
+			if ((actor->getPoint1()->x + actor->getPoint2()->x) == cmd->param2 && (actor->getPoint1()->y + actor->getPoint2()->y) == cmd->param3)
 				actor->updateFromDirection((ActorDirection)cmd->param4);
 		}
 	} else {
@@ -576,7 +611,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpIfActorCoordinates)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	if ((actor->x1 + actor->x2) != cmd->param2 || (actor->y1 + actor->y2) != cmd->param3)
+	if ((actor->getPoint1()->x + actor->getPoint2()->x) != cmd->param2 || (actor->getPoint1()->y + actor->getPoint2()->y) != cmd->param3)
 		_lineIncrement = cmd->param4;
 END_OPCODE
 
@@ -784,7 +819,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(_unk2C_ActorSub)
 	Actor *player = getScene()->getActor();
 	Actor *actor = getScene()->getActor(_currentQueueEntry.actorIndex);
-	Common::Point playerPoint((int16)(player->x1 + player->x2), (int16)(player->y1 + player->y2));
+	Common::Point playerPoint((int16)(player->getPoint1()->x + player->getPoint2()->x), (int16)(player->getPoint1()->y + player->getPoint2()->y));
 	ActorDirection direction = (cmd->param2 == 8) ? player->getDirection() : (ActorDirection)cmd->param2;
 
 	ActorDirection newDirection = (ActorDirection)((player->getDirection() + 4) % 8);
@@ -1256,8 +1291,8 @@ IMPLEMENT_OPCODE(MoveScenePositionFromActor)
 	if (!cmd->param3) {
 		getWorld()->motionStatus = 5;
 
-		getScene()->updateSceneCoordinates(actor->x1 + Common::Rational(actor->x2, 2).toInt() - 320,
-			                           actor->y1 + Common::Rational(actor->y2, 2).toInt() - 240,
+		getScene()->updateSceneCoordinates(actor->getPoint1()->x + Common::Rational(actor->getPoint2()->x, 2).toInt() - 320,
+			                           actor->getPoint1()->y + Common::Rational(actor->getPoint2()->y, 2).toInt() - 240,
 		                               cmd->param2);
 	} else if (cmd->param6) {
 		if (getWorld()->motionStatus == 2) {
@@ -1270,8 +1305,8 @@ IMPLEMENT_OPCODE(MoveScenePositionFromActor)
 		cmd->param6 = 1;
 		getWorld()->motionStatus = 2;
 
-		if (getScene()->updateSceneCoordinates(actor->x1 + Common::Rational(actor->x2, 2).toInt() - 320,
-										   actor->y1 + Common::Rational(actor->y2, 2).toInt() - 240,
+		if (getScene()->updateSceneCoordinates(actor->getPoint1()->x + Common::Rational(actor->getPoint2()->x, 2).toInt() - 320,
+										   actor->getPoint1()->y + Common::Rational(actor->getPoint2()->y, 2).toInt() - 240,
 										   cmd->param2,
 										   true,
 										   &cmd->param6))
@@ -1553,7 +1588,7 @@ IMPLEMENT_OPCODE(_unk56)
 		cmd->param2 = 1;
 		_lineIncrement = 0;
 
-		if ((actor->x1 + actor->x2 == cmd->param6) && (actor->y1 + actor->y2 == cmd->param7)) {
+		if ((actor->getPoint1()->x + actor->getPoint2()->x == cmd->param6) && (actor->getPoint1()->y + actor->getPoint2()->y == cmd->param7)) {
 			getScene()->getActor()->faceTarget((ObjectId)cmd->param1, kDirectionFromActor);
 			actor->updateFromDirection((ActorDirection)((actor->getDirection() + 4) & 7));
 		} else {

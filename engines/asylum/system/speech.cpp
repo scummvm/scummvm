@@ -236,7 +236,7 @@ void Speech::prepareSpeech() {
 			Common::Point point;
 			Actor *actor = getScene()->getActor();
 
-			getScene()->adjustCoordinates(actor->x1, actor->y1, &point);
+			getScene()->adjustCoordinates(actor->getPoint1()->x, actor->getPoint1()->y, &point);
 
 			int32 posY = (((point.y >= 240) - 1) & 280) + 40;
 

@@ -79,7 +79,30 @@ struct ActionArea {
 	int32 array[5];
 	int32 volume;
 
-	ActionArea() {}
+	ActionArea() {
+		memset(&name, 0, sizeof(name));
+		id = 0;
+		field01 = 0;
+		field02 = 0;
+		field_40 = 0;
+		field_44 = 0;
+		flags = 0;
+		scriptIndex = 0;
+		scriptIndex2 = 0;
+		actionType = 0;
+		memset(&flagNums, 0, sizeof(flagNums));
+		field_7C = 0;
+		polyIdx = 0;
+		field_84 = 0;
+		field_88 = 0;
+		soundResourceId = kResourceNone;
+		field_90 = 0;
+		paletteResourceId = kResourceNone;
+		memset(&array, 0, sizeof(array));
+		volume = 0;
+	}
+
+	void load(Common::SeekableReadStream *stream);
 
 	Common::String toString() {
 		Common::String output;

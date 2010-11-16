@@ -48,12 +48,6 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Public variables & accessors
 	//////////////////////////////////////////////////////////////////////////
-	int32  x;
-	int32  y;
-	int32  x1;
-	int32  y1;
-	int32  x2;
-	int32  y2;
 	int32 flags;
 	int32 actionType; // ActionType enum value
 
@@ -82,6 +76,9 @@ public:
 	uint32         getFrameIndex() { return _frameIndex; }
 	char          *getName() { return (char *)&_name; }
 	int32          getNumberValue01() { return _numberValue01; }
+	Common::Point *getPoint() { return &_point; }
+	Common::Point *getPoint1() { return &_point1; }
+	Common::Point *getPoint2() { return &_point2; }
 	int32          getReaction(uint32 index) { return _reaction[index]; }
 	ResourceId     getResourceId() { return _resourceId; }
 	ResourceId     getResourcesId(uint32 index) { return _graphicResourceIds[index]; }
@@ -255,11 +252,13 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 	//////////////////////////////////////////////////////////////////////////
+	Common::Point _point;
 	ResourceId _resourceId;
 	int32  _objectIndex;
 	uint32 _frameIndex;
 	uint32 _frameCount;
-	// x1, y1, x2, y2
+	Common::Point _point1;
+	Common::Point _point2;
 	Common::Rect _boundingRect;
 	ActorDirection _direction;
 	int32  _field_3C;
@@ -355,6 +354,8 @@ private:
 
 	void updateFinish();
 
+
+
 	//////////////////////////////////////////////////////////////////////////
 	// Misc
 	//////////////////////////////////////////////////////////////////////////
@@ -367,9 +368,20 @@ private:
 	void setVisible(bool value);
 
 	/**
+	 * Query if this actor is on screen.
+	 *
+	 * @return true if on screen, false if not.
+	 */
+	bool isOnScreen();
+
+	/**
 	 * Sets the volume.
 	 */
 	void setVolume();
+
+	void updateCoordinates(const Common::Rect &rect);
+
+	void resetActors();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helper methods
@@ -410,8 +422,40 @@ private:
 	 */
 	int32 getGraphicsFlags();
 
-	int32 getFieldValue() const;
+	/**
+	 * Gets a distance depending on actor direction
+	 *
+	 * @return The distance.
+	 */
+	int32 getDistance() const;
 
+	/**
+	 * Gets the distance for a frame.
+	 *
+	 * @param direction  The direction.
+	 * @param frameIndex Zero-based index of the frame.
+	 *
+	 * @return The distance for frame.
+	 */
+	uint32 getDistanceForFrame(ActorDirection direction, uint32 frameIndex);
+
+	/**
+	 * Get the distance from the rectangle
+	 *
+	 * @param rect The rectangle.
+	 *
+	 * @return the distance
+	 */
+	static uint32 distance(const Common::Rect &rect);
+
+	/**
+	 * Updates the coordinates depending on the direction.
+	 *
+	 * @param direction 	 The direction.
+	 * @param delta 		 The delta.
+	 * @param [in,out] point If non-null, the point.
+	 */
+	static void updateCoordinatesForDirection(ActorDirection direction, int32 delta, Common::Point *point);
 
 }; // end of class MainActor
 

@@ -243,8 +243,8 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 			// FIXME: This is wrong, the 386th object is used as an offset to the proper actor
 			//Object *obj386 = getWorld()->objects[386];
 
-			//actor->x1 = obj386->getSoundY();
-			//actor->y1 = obj386->getField688() + getWorld()->coordinates[actorIndex - 22]; // FIXME out of bound access for actorIndex == 29
+			//actor->getPoint1()->x = obj386->getSoundY();
+			//actor->getPoint1()->y = obj386->getField688() + getWorld()->coordinates[actorIndex - 22]; // FIXME out of bound access for actorIndex == 29
 			//actor->setFrameIndex(obj386->getField67C());
 			//actor->setDirection(obj386->getField6A4());
 
@@ -261,14 +261,14 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 	case 38:
 	case 39:
 		if (actor->getFrameIndex() == 9) {
-			actor->x1 = -1000;
+			actor->getPoint1()->x = -1000;
 			actor->setFrameIndex(0);
 		}
 		break;
 
 	case 40:
 		if (actor->getFrameIndex() == 9) {
-			actor->x1 = -1000;
+			actor->getPoint1()->x = -1000;
 			actor->setFrameIndex(0);
 
 			if (actor->isVisible())
@@ -416,8 +416,8 @@ void Special::chapter6(Object *object, ActorIndex actorIndex) {
 	if (actorIndex == 2  || actorIndex == 3) {
 		Actor *actor = getScene()->getActor(actorIndex);
 
-		getWorld()->ambientSounds[0].x = actor->x2 + actor->x1;
-		getWorld()->ambientSounds[0].y = actor->y2 + actor->y1;
+		getWorld()->ambientSounds[0].x = actor->getPoint2()->x + actor->getPoint1()->x;
+		getWorld()->ambientSounds[0].y = actor->getPoint2()->y + actor->getPoint1()->y;
 	}
 }
 
@@ -493,21 +493,21 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 				actor1->hide();
 				actor2->show();
 			} else if (actor0->getDirection() == 2 || actor0->getDirection() == 3) {
-				actor1->x1 = actor0->x1;
-				actor1->y1 = actor0->y1 - 15;
+				actor1->getPoint1()->x = actor0->getPoint1()->x;
+				actor1->getPoint1()->y = actor0->getPoint1()->y - 15;
 			} else if (actor0->getDirection() == 5 || actor0->getDirection() == 6) {
-				actor1->x1 = actor0->x1 + 20;
-				actor1->y1 = actor0->y1 - 15;
+				actor1->getPoint1()->x = actor0->getPoint1()->x + 20;
+				actor1->getPoint1()->y = actor0->getPoint1()->y - 15;
 			} else {
-				actor1->x1 = actor0->x1 + 5;
-				actor1->y1 = actor0->y1 - 10;
+				actor1->getPoint1()->x = actor0->getPoint1()->x + 5;
+				actor1->getPoint1()->y = actor0->getPoint1()->y - 10;
 			}
 			break;
 
 		case 2:
 			if (actor0->getDirection() <= 2 || actor0->getDirection() >= 7) {
-				actor2->x1 = actor0->x1 + 10;
-				actor2->y1 = actor0->y1 - 10;
+				actor2->getPoint1()->x = actor0->getPoint1()->x + 10;
+				actor2->getPoint1()->y = actor0->getPoint1()->y - 10;
 			} else {
 				actor2->hide();
 				actor1->show();
@@ -1329,10 +1329,10 @@ void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, ActorIn
 
 	// Calculate volume adjustment
 	int32 adjustedVolume = Config.voiceVolume;
-	adjustedVolume += getSound()->calculateVolumeAdjustement(actor->x1, actor->y1, attenuation, 0);
+	adjustedVolume += getSound()->calculateVolumeAdjustement(actor->getPoint1()->x, actor->getPoint1()->y, attenuation, 0);
 
 	// Calculate panning
-	int32 panning = getSound()->calculatePanningAtPoint(actor->x1 + actor->x2, actor->y1 + actor->y2);
+	int32 panning = getSound()->calculatePanningAtPoint(actor->getPoint1()->x + actor->getPoint2()->x, actor->getPoint1()->y + actor->getPoint2()->y);
 
 	getSound()->playSound(resourceId, false, adjustedVolume, panning);
 }

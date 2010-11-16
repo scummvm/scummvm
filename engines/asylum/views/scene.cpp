@@ -133,8 +133,8 @@ void Scene::enter(ResourcePackId packId) {
 	// Update current player bounding rectangle
 	Actor *player = getActor();
 	Common::Rect *boundingRect = player->getBoundingRect();
-	boundingRect->bottom = (int16)player->y2;
-	boundingRect->right  = (int16)(player->x2 * 2);
+	boundingRect->bottom = (int16)player->getPoint2()->y;
+	boundingRect->right  = (int16)(player->getPoint2()->x * 2);
 
 	// Adjust scene bounding rect
 	_ws->boundingRect = Common::Rect(195, 115, 445 - boundingRect->right, 345 - boundingRect->bottom);
@@ -144,8 +144,8 @@ void Scene::enter(ResourcePackId packId) {
 	player->enable();
 
 	// Update current player coordinates
-	player->x1 -= player->x2;
-	player->y1 -= player->y2;
+	player->getPoint1()->x -= player->getPoint2()->x;
+	player->getPoint1()->y -= player->getPoint2()->y;
 
 	// Update all other actors
 	if (_ws->actors.size() > 1) {
@@ -156,11 +156,11 @@ void Scene::enter(ResourcePackId packId) {
 			actor->setDirection(kDirection1);
 			actor->enable();
 
-			actor->x1 -= actor->x2;
-			actor->y1 -= actor->y2;
+			actor->getPoint1()->x -= actor->getPoint2()->x;
+			actor->getPoint1()->y -= actor->getPoint2()->y;
 
-			actor->getBoundingRect()->bottom = (int16)actor->y2;
-			actor->getBoundingRect()->right  = (int16)(2 * actor->x2);
+			actor->getBoundingRect()->bottom = (int16)actor->getPoint2()->y;
+			actor->getBoundingRect()->right  = (int16)(2 * actor->getPoint2()->x);
 		}
 	}
 
@@ -454,19 +454,19 @@ void Scene::updateMouse() {
 	// .text:0040A1B0 getCharacterScreenPosition()
 	// which was only ever called at this point, so
 	// inlining it for simplicity
-	pt.x = (int16)(act->x1 -_ws->xLeft);
-	pt.y = (int16)(act->y1 -_ws->yTop);
+	pt.x = (int16)(act->getPoint1()->x -_ws->xLeft);
+	pt.y = (int16)(act->getPoint1()->y -_ws->yTop);
 
 	if (_packId != 2 || _playerActorIdx != 10) {
 		actorPos.left   = pt.x + 20;
 		actorPos.top    = pt.y;
-		actorPos.right  = (int16)(pt.x + 2 * act->x2);
-		actorPos.bottom = (int16)(pt.y + act->y2);
+		actorPos.right  = (int16)(pt.x + 2 * act->getPoint2()->x);
+		actorPos.bottom = (int16)(pt.y + act->getPoint2()->y);
 	} else {
 		actorPos.left   = pt.x + 50;
 		actorPos.top    = pt.y + 60;
-		actorPos.right  = (int16)(pt.x + getActor(10)->x2 + 10);
-		actorPos.bottom = (int16)(pt.y + getActor(10)->y2 - 20);
+		actorPos.right  = (int16)(pt.x + getActor(10)->getPoint2()->x + 10);
+		actorPos.bottom = (int16)(pt.y + getActor(10)->getPoint2()->y - 20);
 	}
 
 	ActorDirection dir = kDirectionInvalid;
@@ -819,8 +819,8 @@ bool Scene::hitTestActor(const Common::Point pt) {
 
 	return hitTestPixel(act->getResourceId(),
 		hitFrame,
-		pt.x - act->x - actPos.x,
-		pt.y - act->y - actPos.y,
+		pt.x - act->getPoint()->x - actPos.x,
+		pt.y - act->getPoint()->y - actPos.y,
 		(act->getDirection() >= 0));
 }
 
@@ -941,8 +941,8 @@ int32 Scene::calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act) {
 	if (snd->field_10) {
 		/* FIXME properly handle global x/y
 		if (g_object_x == -1) {
-			x = snd->x - act->x1 - act->x2;
-			y = snd->y - act->y1 - act->y2;
+			x = snd->x - act->getPoint1()->x - act->getPoint2()->x;
+			y = snd->y - act->getPoint1()->y - act->getPoint2()->y;
 		} else {
 			x = snd->x - g_object_x;
 			y = snd->y - g_object_y;
@@ -1015,8 +1015,8 @@ void Scene::updateAdjustScreen() {
 	Common::Rect b = _ws->boundingRect;
 
 	if (_ws->motionStatus == 1) {
-		int32 posX = act->x1 - _ws->xLeft;
-		int32 posY = act->y1 - _ws->yTop;
+		int32 posX = act->getPoint1()->x - _ws->xLeft;
+		int32 posY = act->getPoint1()->y - _ws->yTop;
 
 		if (posX < b.left || posX > b.right) {
 			int32 newRBounds = posX - b.right;
@@ -1200,7 +1200,7 @@ void Scene::buildUpdateList() {
 		if (actor->isVisible()) {
 			UpdateItem item;
 			item.index = i;
-			item.priority = actor->y1 + actor->y2;
+			item.priority = actor->getPoint1()->y + actor->getPoint2()->y;
 
 			_updateList.push_back(item);
 		}
@@ -1232,16 +1232,16 @@ void Scene::processUpdateList() {
 		} else {
 			actor->setField938(1);
 			actor->setField934(0);
-			point.x = actor->x1 + actor->x2;
-			point.y = actor->y1 + actor->y2;
+			point.x = actor->getPoint1()->x + actor->getPoint2()->x;
+			point.y = actor->getPoint1()->y + actor->getPoint2()->y;
 
-			int32 bottomRight = actor->getBoundingRect()->bottom + actor->y1 + 4;
+			int32 bottomRight = actor->getBoundingRect()->bottom + actor->getPoint1()->y + 4;
 
 			if (_ws->chapter == kChapter11 && _updateList[i].index != getPlayerIndex())
 				bottomRight += 20;
 
 			// Our actor rect
-			Common::Rect actorRect(actor->x1, actor->y1, actor->x1 + actor->getBoundingRect()->right, bottomRight);
+			Common::Rect actorRect(actor->getPoint1()->x, actor->getPoint1()->y, actor->getPoint1()->x + actor->getBoundingRect()->right, bottomRight);
 
 			// Process objects
 			for (uint32 j = 0; j < _ws->objects.size(); j++) {
@@ -1323,12 +1323,12 @@ void Scene::processUpdateList() {
 
 				if (actor2->isVisible() && actor2->getField944() != 1 && actor2->getField944() != 4 && _updateList[k].index != _updateList[i].index) {
 
-					Common::Rect actor2Rect(actor2->x1, actor2->y1, actor2->x1 + actor2->getBoundingRect()->right, actor2->y1 + actor2->getBoundingRect()->bottom);
+					Common::Rect actor2Rect(actor2->getPoint1()->x, actor2->getPoint1()->y, actor2->getPoint1()->x + actor2->getBoundingRect()->right, actor2->getPoint1()->y + actor2->getBoundingRect()->bottom);
 
 					if (actor2Rect.contains(actorRect)) {
 
 						// Inferior
-						if ((actor2->y1 + actor2->y2) > (actor->y1 + actor->y2)) {
+						if ((actor2->getPoint1()->y + actor2->getPoint2()->y) > (actor->getPoint1()->y + actor->getPoint2()->y)) {
 							if (actor->getPriority() <= actor2->getPriority()) {
 								if (actor->getField934() || actor2->getNumberValue01()) {
 									if (!actor2->getNumberValue01())
@@ -1340,7 +1340,7 @@ void Scene::processUpdateList() {
 						}
 
 						// Superior
-						if ((actor2->y1 + actor2->y2) < (actor->y1 + actor->y2)) {
+						if ((actor2->getPoint1()->y + actor2->getPoint2()->y) < (actor->getPoint1()->y + actor->getPoint2()->y)) {
 							if (actor->getPriority() >= actor2->getPriority()) {
 								if (actor->getField934() || actor2->getNumberValue01()) {
 									if (!actor2->getNumberValue01())
@@ -1401,8 +1401,8 @@ void Scene::getActorPosition(Actor *actor, Common::Point *pt) {
 	if (!_ws)
 		error("[Scene::getActorPosition] WorldStats not initialized properly!");
 
-	pt->x = actor->x1 - _ws->xLeft;
-	pt->y = actor->y1 - _ws->yTop;
+	pt->x = actor->getPoint1()->x - _ws->xLeft;
+	pt->y = actor->getPoint1()->y - _ws->yTop;
 }
 // ----------------------------------
 // ---------- SCREEN REGION -----------
@@ -1541,7 +1541,7 @@ void Scene::debugShowActors() {
 			               a->getBoundingRect()->bottom - a->getBoundingRect()->top + 1,
 			               1);
 			surface.frameRect(*a->getBoundingRect(), 0x22);
-			copyToBackBufferClipped(&surface, a->x, a->y);
+			copyToBackBufferClipped(&surface, a->getPoint()->x, a->getPoint()->y);
 		}
 
 		surface.free();
