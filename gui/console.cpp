@@ -25,6 +25,7 @@
 #include "gui/console.h"
 #include "gui/widgets/scrollbar.h"
 #include "gui/ThemeEval.h"
+#include "gui/gui-manager.h"
 
 #include "engines/engine.h"
 #include "base/version.h"
