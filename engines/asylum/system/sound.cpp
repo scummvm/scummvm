@@ -48,6 +48,10 @@ Sound::Sound(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine), _mixer(mi
 
 Sound::~Sound() {
 	clearSoundBuffer();
+
+	// Zero-out passed pointers
+	_vm = NULL;
+	_mixer = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -115,7 +119,7 @@ void Sound::setVolume(ResourceId resourceId, int32 volume) {
 
 	convertVolume(volume);
 
-	_mixer->setChannelVolume(item->handle, volume);
+	_mixer->setChannelVolume(item->handle, (byte)volume);
 }
 
 void Sound::setMusicVolume(int32 volume) {
@@ -124,7 +128,7 @@ void Sound::setMusicVolume(int32 volume) {
 
 	convertVolume(volume);
 
-	_mixer->setChannelVolume(_musicHandle, volume);
+	_mixer->setChannelVolume(_musicHandle, (byte)volume);
 }
 
 void Sound::setPanning(ResourceId resourceId, int32 panning) {
@@ -137,7 +141,7 @@ void Sound::setPanning(ResourceId resourceId, int32 panning) {
 
 	convertPan(panning);
 
-	_mixer->setChannelBalance(item->handle, panning);
+	_mixer->setChannelBalance(item->handle, (int8)panning);
 }
 
 int32 Sound::calculateVolumeAdjustement(int32 x, int32 y, int32 attenuation, int32 delta) {
@@ -179,7 +183,9 @@ int32 Sound::getAdjustedVolume(int32 volume) {
 	return volume;
 }
 
-int32 Sound::calculatePanningAtPoint(int32 x, int32 y) {
+int32 Sound::calculatePanningAtPoint(int32 x, int32) {
+	// y does not seem to be used at all :S
+
 	int delta = x - getWorld()->xLeft;
 
 	if (delta < 0)
@@ -236,7 +242,7 @@ void Sound::stopMusic() {
 // Helper functions
 //////////////////////////////////////////////////////////////////////////
 
-void Sound::playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte *soundData, int32 soundDataLength, bool loop, int32 vol, int32 pan) {
+void Sound::playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte *soundData, uint32 soundDataLength, bool loop, int32 vol, int32 pan) {
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundData, soundDataLength);
 	Audio::RewindableAudioStream *sndStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
@@ -244,7 +250,7 @@ void Sound::playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *hand
 	convertVolume(vol);
 	convertPan(pan);
 
-	_mixer->playStream(type, handle, Audio::makeLoopingAudioStream(sndStream, loop ? 0 : 1), -1, vol, pan);
+	_mixer->playStream(type, handle, Audio::makeLoopingAudioStream(sndStream, loop ? 0 : 1), -1, (byte)vol, (int8)pan);
 }
 
 //////////////////////////////////////////////////////////////////////////

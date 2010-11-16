@@ -334,7 +334,7 @@ void AsylumEngine::processDelayedEvents() {
 	ResourcePackId packId = _scene->actions()->getDelayedSceneIndex();
 	// XXX Flag 183 indicates whether the actionlist is currently
 	// processing
-	if (packId >= 0 && isGameFlagNotSet(kGameFlagScriptProcessing)) {
+	if (packId != kResourcePackInvalid && isGameFlagNotSet(kGameFlagScriptProcessing)) {
 
 		// Reset delayed scene
 		_scene->actions()->setDelayedSceneIndex(kResourcePackInvalid);

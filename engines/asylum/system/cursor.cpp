@@ -33,15 +33,16 @@ namespace Asylum {
 
 const uint32 CURSOR_UPDATE_TICKS = 100;
 
-Cursor::Cursor(AsylumEngine *engine) : _vm(engine) {
-	_pos.x = 0;
-	_pos.y = 0;
-	_cursorRes = 0;
+Cursor::Cursor(AsylumEngine *engine) : graphicResourceId(kResourceNone), currentFrame(0), frameCount(0), counter(0), flags(0), field_11(0),
+	_vm(engine), _cursorRes(NULL), _cursorTicks(0), _cursor_byte_45756C(0) {
+
 }
 
 Cursor::~Cursor() {
-	if (_cursorRes)
-		delete _cursorRes;
+	delete _cursorRes;
+
+	// Zero-out passed pointers
+	_vm = NULL;
 }
 
 /*
@@ -56,15 +57,15 @@ void Cursor::load(int32 index) {
 }
 */
 
-void Cursor::hide() {
+void Cursor::hide() const {
 	CursorMan.showMouse(false);
 }
 
-void Cursor::show() {
+void Cursor::show() const {
 	CursorMan.showMouse(true);
 }
 
-void Cursor::set(ResourceId resourceId, int32 cntr, int32 flgs, int32 frames) {
+void Cursor::set(ResourceId resourceId, int32 cntr, byte flgs, int32 frames) {
 	if (_cursorRes)
 		delete _cursorRes;
 
@@ -83,6 +84,9 @@ void Cursor::set(ResourceId resourceId, int32 cntr, int32 flgs, int32 frames) {
 }
 
 void Cursor::update() {
+	if (!_cursorRes)
+		error("[Cursor::update] Cursor resources not initialized properly!");
+
 	GraphicFrame *fra = _cursorRes->getFrame(currentFrame);
 	CursorMan.replaceCursor((byte *)fra->surface.pixels,
 			fra->surface.w,

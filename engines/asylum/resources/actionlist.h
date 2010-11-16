@@ -79,6 +79,8 @@ struct ActionArea {
 	int32 array[5];
 	int32 volume;
 
+	ActionArea() {}
+
 	Common::String toString() {
 		Common::String output;
 

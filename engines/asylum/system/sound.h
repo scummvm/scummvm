@@ -69,6 +69,17 @@ struct AmbientSoundItem {
 	int32 x;
 	int32 y;
 
+	AmbientSoundItem() {
+		field_0 = 0;
+		flags = 0;
+		resourceId = kResourceNone;
+		field_C = 0;
+		field_10 = 0;
+		field_14 = 0;
+		memset(&flagNum, 0, sizeof(flagNum));
+		x = 0;
+		y = 0;
+	}
 };
 
 struct SoundBufferItem {
@@ -228,7 +239,7 @@ private:
 	 * @param vol 				 The volume.
 	 * @param pan 				 The pan.
 	 */
-	void playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte *soundData, int32 soundDataLength, bool loop = false, int32 vol = 0, int32 pan = 0);
+	void playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte *soundData, uint32 soundDataLength, bool loop = false, int32 vol = 0, int32 pan = 0);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Sound buffer

@@ -38,7 +38,8 @@
 
 namespace Asylum {
 
-SceneTitle::SceneTitle(AsylumEngine *engine): _vm(engine), _bg(NULL), _progress(NULL) {
+SceneTitle::SceneTitle(AsylumEngine *engine): _vm(engine), _bg(NULL), _progress(NULL),
+	_start(0), _ticks(0), _done(false), _spinnerFrame(0), _spinnerProgress(0), _showMouseState(false) {
 }
 
 SceneTitle::~SceneTitle() {
@@ -66,6 +67,8 @@ void SceneTitle::load() {
 }
 
 void SceneTitle::update(int32 tick) {
+	if (!_progress || !_bg)
+		error("[SceneTitle::update] SceneTitle resources not initialized properly!");
 
 	// This is not from the original. It's just some arbitrary math to throttle the progress indicator.
 	//
@@ -90,7 +93,7 @@ void SceneTitle::update(int32 tick) {
 
 	getScreen()->copyRectToScreenWithTransparency(((byte*)frame->surface.pixels),
 	                                              frame->surface.w,
-	                                              frame->x - 290 + _spinnerProgress,
+	                                              frame->x + (_spinnerProgress - 290),
 	                                              frame->y,
 	                                              frame->surface.w,
 	                                              frame->surface.h);

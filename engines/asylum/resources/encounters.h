@@ -68,7 +68,7 @@ public:
 	}
 	void run(int32 encounterIdx, int32 objectId1, int32 objectId2, int32 characterIdx);
 
-	int32 getFlag(EncounterFlag flag);
+	int32 getFlag(EncounterFlag flag) const;
 	void setFlag(EncounterFlag flag, int32 val);
 
 private:

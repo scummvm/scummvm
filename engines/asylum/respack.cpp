@@ -35,8 +35,8 @@ ResourceManager::ResourceManager() : _cdNumber(-1), _musicPackId(kResourcePackIn
 }
 
 ResourceEntry *ResourceManager::get(ResourceId id) {
-	ResourcePackId packId = (ResourcePackId)((id >> 16) & 0x7FFF);
-	uint16 index = (uint16)id;
+	ResourcePackId packId = RESOURCE_PACK(id);
+	uint16 index = RESOURCE_INDEX(id);
 
 	// Check if we need to load a music pack
 	bool isMusicPack = (packId == kResourcePackMusic);
@@ -116,8 +116,8 @@ void ResourcePack::init(Common::String filename) {
 		entry.offset = prevOffset;
 
 		// Read the offset of the next entry to determine the size of this one
-		nextOffset = (i < entryCount - 1) ? _packFile.readUint32LE() : _packFile.size();
-		entry.size = (nextOffset > 0) ? nextOffset - prevOffset : _packFile.size() - prevOffset;
+		nextOffset = (i < entryCount - 1) ? _packFile.readUint32LE() : (uint32)_packFile.size();
+		entry.size = (nextOffset > 0) ? nextOffset - prevOffset : (uint32)_packFile.size() - prevOffset;
 		entry.data = 0;
 
 		_resources[i] = entry;

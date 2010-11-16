@@ -32,6 +32,7 @@
 #include "asylum/respack.h"
 
 #include "common/endian.h"
+#include "common/rational.h"
 
 namespace Asylum {
 
@@ -59,7 +60,7 @@ void Text::loadFont(ResourceId resourceId) {
 
 	if (resourceId != kResourceNone) {
 		// load font flag data
-		_curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F;
+		_curFontFlags = Common::Rational(_fontResource->getFlags(), 16).toInt() & 0x0F;
 	}
 }
 
@@ -69,12 +70,13 @@ void Text::setPosition(int32 x, int32 y) {
 }
 
 int32 Text::getWidth(const char *text) {
-	assert(_fontResource);
+	if (!_fontResource)
+		error("[Text::getWidth] font resource hasn't been loaded yet!");
 
 	int32 width = 0;
-	uint8 character = *text;
+	char character = *text;
 	while (character) {
-		GraphicFrame *font = _fontResource->getFrame(character);
+		GraphicFrame *font = _fontResource->getFrame((uint8)character);
 		width += font->surface.w + font->x - _curFontFlags;
 
 		text++;
@@ -93,17 +95,18 @@ char* Text::get(ResourceId resourceId) {
 	return (char*)textRes->data;
 }
 
-void Text::drawChar(unsigned char character) {
-	assert(_fontResource);
+void Text::drawChar(char character) {
+	if (!_fontResource)
+		error("[Text::drawChar] font resource hasn't been loaded yet!");
 
-	GraphicFrame *fontLetter = _fontResource->getFrame(character);
+	GraphicFrame *fontLetter = _fontResource->getFrame((uint8)character);
 	getScreen()->copyRectToScreenWithTransparency((byte *)fontLetter->surface.pixels, fontLetter->surface.w, _posX, _posY + fontLetter->y, fontLetter->surface.w, fontLetter->surface.h);
 	_posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 
 void Text::draw(const char *text) {
 	while (*text) {
-		drawChar(*((unsigned char *)text));
+		drawChar(text[0]);
 		text++;
 	}
 }

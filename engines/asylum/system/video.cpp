@@ -68,8 +68,8 @@ void Video::playVideo(int32 videoNumber, bool showSubtitles) {
 	if (showSubtitles)
 		loadSubtitles(videoNumber);
 
-	uint16 x = (g_system->getWidth() - _smkDecoder->getWidth()) / 2;
-	uint16 y = (g_system->getHeight() - _smkDecoder->getHeight()) / 2;
+	int32 x = Common::Rational(g_system->getWidth()  - _smkDecoder->getWidth(),  2).toInt();
+	int32 y = Common::Rational(g_system->getHeight() - _smkDecoder->getHeight(), 2).toInt();
 
 	while (!_smkDecoder->endOfVideo() && !_skipVideo) {
 		processVideoEvents();
@@ -124,8 +124,8 @@ void Video::loadSubtitles(int32 videoNumber) {
 
 	Common::File subsFile;
 	subsFile.open("vids.cap");
-	char *buffer = new char[subsFile.size()];
-	subsFile.read(buffer, subsFile.size());
+	char *buffer = new char[(uint)subsFile.size()];
+	subsFile.read(buffer, (uint32)subsFile.size());
 	subsFile.close();
 
 	char *start = strstr(buffer, movieToken);
@@ -134,7 +134,7 @@ void Video::loadSubtitles(int32 videoNumber) {
 	if (start) {
 		start += 20; // skip token, newline and "CAPTION = "
 
-		int32 count = strcspn(start, "\r\n");
+		uint32 count = strcspn(start, "\r\n");
 		line = new char[count + 1];
 
 		strncpy(line, start, count);
@@ -145,10 +145,19 @@ void Video::loadSubtitles(int32 videoNumber) {
 		while (tok) {
 			VideoSubtitle newSubtitle;
 			newSubtitle.frameStart = atoi(tok);
+
 			tok = strtok(NULL, " ");
+			if (!tok)
+				error("[Video::loadSubtitles] Invalid subtitle (frame end missing)!");
+
 			newSubtitle.frameEnd = atoi(tok);
+
 			tok = strtok(NULL, " ");
+			if (!tok)
+				error("[Video::loadSubtitles] Invalid subtitle (resource id missing)!");
+
 			newSubtitle.textResourceId = (ResourceId)(atoi(tok) + video_subtitle_resourceIds[videoNumber]);
+
 			tok = strtok(NULL, " ");
 
 			_subtitles.push_back(newSubtitle);
@@ -191,6 +200,9 @@ VideoText::VideoText(AsylumEngine *engine) : _vm(engine) {
 
 VideoText::~VideoText() {
 	delete _fontResource;
+
+	// Zero-out passed pointers
+	_vm = NULL;
 }
 
 void VideoText::loadFont(ResourceId resourceId) {
@@ -198,9 +210,9 @@ void VideoText::loadFont(ResourceId resourceId) {
 
 	_fontResource = new GraphicResource(_vm, resourceId);
 
-	if (resourceId > 0) {
+	if (resourceId != kResourceNone) {
 		// load font flag data
-		_curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F;
+		_curFontFlags = Common::Rational(_fontResource->getFlags(), 16).toInt() & 0x0F;
 	}
 }
 
@@ -236,43 +248,41 @@ void VideoText::drawMovieSubtitle(byte *screenBuffer, ResourceId resourceId) {
 
 	for (int32 i = 0; i < curLine + 1; i++) {
 		int32 textWidth = getTextWidth(textLine[i].c_str());
-		drawText(screenBuffer, 0 + (640 - textWidth) / 2, startY + i * spacing, textLine[i].c_str());
+		drawText(screenBuffer, (int16)Common::Rational(640 - textWidth, 2).toInt(), (int16)(startY + i * spacing), textLine[i].c_str());
 	}
 
 	free(text);
 }
 
 int32 VideoText::getTextWidth(const char *text) {
-	assert(_fontResource);
+	if (!_fontResource)
+		error("[VideoText::getTextWidth] Video text resources not initialized properly!");
 
 	int32 width = 0;
-	uint8 character = *text;
-	const char *curChar = text;
 
-	while (character) {
-		GraphicFrame *font = _fontResource->getFrame(character);
+	while (*text) {
+		GraphicFrame *font = _fontResource->getFrame((uint8)*text);
 		width += font->surface.w + font->x - _curFontFlags;
 
-		curChar++;
-		character = *curChar;
+		text++;
 	}
+
 	return width;
 }
 
 void VideoText::drawText(byte *screenBuffer, int16 x, int16 y, const char *text) {
-	assert(_fontResource);
-	const byte *curChar = (byte *)text;
-	int16 curX = x;
+	if (!_fontResource)
+		error("[VideoText::drawText] Video text resources not initialized properly!");
 
-	while (*curChar) {
-		GraphicFrame *fontLetter = _fontResource->getFrame(*curChar);
-		copyToVideoFrame(screenBuffer, fontLetter, curX, y + fontLetter->y);
-		curX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
-		curChar++;
+	while (*text) {
+		GraphicFrame *fontLetter = _fontResource->getFrame((uint8)*text);
+		copyToVideoFrame(screenBuffer, fontLetter, x, y + fontLetter->y);
+		x += (int16)(fontLetter->surface.w + fontLetter->x - _curFontFlags);
+		text++;
 	}
 }
 
-void VideoText::copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int32 x, int32 y) {
+void VideoText::copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int32 x, int32 y) const {
 	uint16 h = frame->surface.h;
 	uint16 w = frame->surface.w;
 	int32 screenBufferPitch = 640;

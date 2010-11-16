@@ -195,6 +195,9 @@ void MainMenu::update() {
 		}
 
 		switch (_activeIcon) {
+		default:
+			break;
+
 		case kNewGame:
 			// Nothing here
 			break;
@@ -315,7 +318,7 @@ void MainMenu::updateMainMenu() {
 				_iconResource = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, iconNum + 4));
 			}
 
-			GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->count() - 1, _curIconFrame));
+			GraphicFrame *iconFrame = _iconResource->getFrame(MIN<uint>(_iconResource->count() - 1, _curIconFrame));
 			_vm->screen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
 
 			// Cycle icon frame
@@ -341,7 +344,7 @@ void MainMenu::updateMainMenu() {
 }
 
 void MainMenu::updateSubMenu() {
-	GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->count() - 1, _curIconFrame));
+	GraphicFrame *iconFrame = _iconResource->getFrame(MIN<uint>(_iconResource->count() - 1, _curIconFrame));
 	_vm->screen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
 
 	// Cycle icon frame
@@ -350,6 +353,9 @@ void MainMenu::updateSubMenu() {
 		_curIconFrame = 0;
 
 	switch (_activeIcon) {
+	default:
+		break;
+
 	case kNewGame:
 		updateSubMenuNewGame();
 		break;
@@ -583,7 +589,7 @@ void MainMenu::updateSubMenuShowCredits() {
 	GraphicFrame *creditsFadeFrame = _creditsFadeResource->getFrame(0);
 	_vm->screen()->copyRectToScreenWithTransparency((byte *)creditsFadeFrame->surface.pixels, creditsFadeFrame->surface.w, creditsFadeFrame->x, creditsFadeFrame->y, creditsFadeFrame->surface.w, creditsFadeFrame->surface.h);
 
-	GraphicFrame *creditsFrame = _creditsResource->getFrame(MIN<int>(_creditsResource->count() - 1, _creditsBgFrame));
+	GraphicFrame *creditsFrame = _creditsResource->getFrame(MIN<uint>(_creditsResource->count() - 1, _creditsBgFrame));
 	_vm->screen()->copyRectToScreenWithTransparency((byte *)creditsFrame->surface.pixels, creditsFrame->surface.w, creditsFrame->x, creditsFrame->y, creditsFrame->surface.w, creditsFrame->surface.h);
 
 	_creditsBgFrame++;
