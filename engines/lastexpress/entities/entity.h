@@ -570,6 +570,8 @@ public:
 			sequence3 = NULL;
 		}
 
+		~EntityCallData();
+
 		/**
 		 * Convert this object into a string representation.
 		 *

@@ -607,10 +607,8 @@ void Entities::resetSequences(EntityIndex entityIndex) const {
 		getData(entityIndex)->currentFrame = -1;
 	}
 
-	// FIXME: in the original engine, the sequence pointers might just be copies,
-	// make sure we free the associated memory at some point
-	getData(entityIndex)->frame = NULL;
-	getData(entityIndex)->frame1 = NULL;
+	SAFE_DELETE(getData(entityIndex)->frame);
+	SAFE_DELETE(getData(entityIndex)->frame1);
 
 	SAFE_DELETE(getData(entityIndex)->sequence);
 	SAFE_DELETE(getData(entityIndex)->sequence2);

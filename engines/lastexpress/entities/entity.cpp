@@ -27,6 +27,8 @@
 
 #include "lastexpress/entities/entity_intern.h"
 
+#include "lastexpress/data/sequence.h"
+
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
 #include "lastexpress/game/logic.h"
@@ -45,6 +47,15 @@ namespace LastExpress {
 //////////////////////////////////////////////////////////////////////////
 // EntityData
 //////////////////////////////////////////////////////////////////////////
+
+EntityData::EntityCallData::~EntityCallData() {
+	SAFE_DELETE(frame);
+	SAFE_DELETE(frame1);
+
+	SAFE_DELETE(sequence);
+	SAFE_DELETE(sequence2);
+	SAFE_DELETE(sequence3);
+}
 
 void EntityData::EntityCallData::saveLoadWithSerializer(Common::Serializer &s) {
 	for (uint i = 0; i < ARRAYSIZE(callbacks); i++)
