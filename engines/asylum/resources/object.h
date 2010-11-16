@@ -48,7 +48,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	int32 x;
 	int32 y;
-	int32 flags;
+	uint32 flags;
 	int32 actionType;
 
 	void setFrameIndex(int32 index) { _frameIndex = index; }
@@ -141,7 +141,7 @@ public:
 	 *
 	 * @return true if it succeeds, false if it fails.
 	 */
-	bool checkFlags();
+	bool checkFlags() const;
 
 	/**
 	 * Convert this object into a string representation.
@@ -176,11 +176,11 @@ private:
 	Common::Rect   _rect;
 	int32		   _polygonIndex;
 	// actionType
-	GameFlag	   _gameFlags[10];
+	int32          _gameFlags[10];
 	int32		   _field_B4;
 	uint32		   _tickCount;
 	uint32		   _tickCount2;
-	int32		   _field_C0;
+	uint32         _field_C0;
 	int32		   _priority;
 	int32		   _actionListIdx;
 	SoundItem	   _soundItems[16];
@@ -198,7 +198,7 @@ private:
 	 *
 	 * @return true if visible, false if not.
 	 */
-	bool isVisible();
+	bool isVisible() const;
 
 	/**
 	 * Play object sounds

@@ -1100,7 +1100,7 @@ IMPLEMENT_OPCODE(PlaySpeechScene)
 		return;
 
 	if (cmd->param4 != 2) {
-		cmd->param5 = getSpeech()->playIndexed(cmd->param1);
+		cmd->param5 = (int32)getSpeech()->playIndexed((ResourceId)cmd->param1);
 
 		if (cmd->param2) {
 			_vm->setGameFlag(kGameFlagScriptProcessing);
@@ -1152,7 +1152,7 @@ IMPLEMENT_OPCODE(PlaySpeech)
 		return;
 
 	if (cmd->param4 != 2) {
-		cmd->param5 = getSpeech()->playPlayer((ResourceId)cmd->param1);
+		cmd->param5 = (int32)getSpeech()->playPlayer((ResourceId)cmd->param1);
 
 		if (cmd->param2) {
 			_vm->setGameFlag(kGameFlagScriptProcessing);
@@ -1229,7 +1229,7 @@ IMPLEMENT_OPCODE(PlaySpeechScene2)
 		return;
 	}
 
-	cmd->param6 = getSpeech()->playScene(cmd->param1, cmd->param2);
+	cmd->param6 = (int32)getSpeech()->playScene(cmd->param1, cmd->param2);
 
 	if (cmd->param3) {
 		_vm->setGameFlag(kGameFlagScriptProcessing);

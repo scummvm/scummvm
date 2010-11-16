@@ -204,9 +204,9 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	numAmbientSound   = stream->readSint32LE();
 	musicStatus       = stream->readSint32LE();
-	musicCurrentResourceIndex = (ResourceId)stream->readSint32LE();
+	musicCurrentResourceIndex = stream->readUint32LE();
 	musicFlag         = stream->readSint32LE();
-	musicResourceId        = (ResourceId)stream->readSint32LE();
+	musicResourceId        = (ResourceId)stream->readUint32LE();
 	musicStatusExt    = stream->readSint32LE();
 
 	for (uint32 a = 0; a < numObjects; a++) {
