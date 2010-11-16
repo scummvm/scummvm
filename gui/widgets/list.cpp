@@ -30,7 +30,7 @@
 #include "gui/widgets/list.h"
 #include "gui/widgets/scrollbar.h"
 #include "gui/dialog.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 
 #include "gui/ThemeEval.h"
 

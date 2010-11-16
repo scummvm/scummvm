@@ -32,7 +32,7 @@
 
 #include "backends/keymapper/keymapper.h"
 
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/dialog.h"
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
