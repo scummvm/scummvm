@@ -63,7 +63,7 @@ const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
 
 // Class VramAllocator -----------------------------------
 
-DECLARE_SINGLETON(VramAllocator)
+DECLARE_SINGLETON(VramAllocator);
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
 //#define __PSP_DEBUG_PRINT__

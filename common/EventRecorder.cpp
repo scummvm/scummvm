@@ -28,7 +28,7 @@
 #include "common/config-manager.h"
 #include "common/random.h"
 
-DECLARE_SINGLETON(Common::EventRecorder)
+DECLARE_SINGLETON(Common::EventRecorder);
 
 namespace Common {
 

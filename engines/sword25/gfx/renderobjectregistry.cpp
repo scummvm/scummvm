@@ -34,7 +34,7 @@
 
 #include "sword25/gfx/renderobjectregistry.h"
 
-DECLARE_SINGLETON(Sword25::RenderObjectRegistry)
+DECLARE_SINGLETON(Sword25::RenderObjectRegistry);
 
 namespace Sword25 {
 

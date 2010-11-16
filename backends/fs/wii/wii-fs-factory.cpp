@@ -37,7 +37,7 @@
 #include <smb.h>
 #endif
 
-DECLARE_SINGLETON(WiiFilesystemFactory)
+DECLARE_SINGLETON(WiiFilesystemFactory);
 
 WiiFilesystemFactory::WiiFilesystemFactory() :
 	_dvdMounted(false),

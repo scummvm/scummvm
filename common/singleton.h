@@ -101,9 +101,7 @@ protected:
  * namespace Common is referenced.
  */
 #define DECLARE_SINGLETON(T) \
-	namespace Common { \
-	template<> T *Singleton<T>::_singleton = 0; \
-	} // End of namespace Common
+	template<> T *Common::Singleton<T>::_singleton = 0
 
 }	// End of namespace Common
 

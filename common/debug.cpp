@@ -51,7 +51,7 @@
 // TODO: Move gDebugLevel into namespace Common.
 int gDebugLevel = -1;
 
-DECLARE_SINGLETON(Common::DebugManager)
+DECLARE_SINGLETON(Common::DebugManager);
 
 namespace Common {
 

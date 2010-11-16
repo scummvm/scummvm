@@ -27,7 +27,7 @@
 
 #include "testbed/config-params.h"
 
-DECLARE_SINGLETON(Testbed::ConfigParams)
+DECLARE_SINGLETON(Testbed::ConfigParams);
 
 namespace Testbed {
 

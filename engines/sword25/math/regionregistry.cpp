@@ -39,7 +39,7 @@
 #include "sword25/math/regionregistry.h"
 #include "sword25/math/region.h"
 
-DECLARE_SINGLETON(Sword25::RegionRegistry)
+DECLARE_SINGLETON(Sword25::RegionRegistry);
 
 namespace Sword25 {
 

@@ -149,10 +149,10 @@ public:
 
 #define FORWARD_DECLARE_FONT(n) \
 		extern const NewFont *n; \
-		extern void create_##n();
+		extern void create_##n()
 
 #define INIT_FONT(n) \
-		create_##n();
+		create_##n()
 
 } // End of namespace Graphics
 

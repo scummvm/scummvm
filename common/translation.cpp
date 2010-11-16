@@ -35,7 +35,7 @@
 #include "common/archive.h"
 #include "common/config-manager.h"
 
-DECLARE_SINGLETON(Common::TranslationManager)
+DECLARE_SINGLETON(Common::TranslationManager);
 
 #ifdef USE_DETECTLANG
 #ifndef WIN32
