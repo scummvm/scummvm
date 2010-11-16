@@ -109,14 +109,20 @@ public:
 	int32 musicFlag;
 	ResourceId musicResourceId;
 	int32 musicStatusExt;
-
-	// FIXME: Investigate if we need to actually reserve maxsize for this arrays.
-	// It always have that size under scene file and they are always save in savegames.
-	Common::Array<Object*>    objects; // maxsize 400
+	Common::Array<Object*>    objects;   // maxsize 400
 	Common::Array<Actor*>      actors;   // maxsize 50
 	// TODO add rest fields
 	Common::Array<ActionArea*> actions;  // maxsize 400
-	// TODO add rest fields
+	int32 field_E848C;
+	int32 field_E8490;
+	int32 field_E8494;
+	int32 field_E8498;
+	int32 field_E849C;
+	int32 field_E84A0[10];
+	int32 field_E84C8[20];
+	int32 field_E8518;
+	int32 field_E851C[30];
+	int32 field_E8594[30];
 	int32 field_E860C;
 	uint32 field_E8610[6];
 	uint32 field_E8628[6];

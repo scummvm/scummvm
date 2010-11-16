@@ -150,8 +150,8 @@ int32 Sound::calculateVolumeAdjustement(int32 x, int32 y, int32 attenuation, int
 
 	Actor *player = getScene()->getActor();
 	if (getSharedData()->getGlobalX() == -1) {
-		x -= (player->x1 + player->x2);
-		y -= (player->y1 + player->y2);
+		x -= (player->getPoint1()->x + player->getPoint2()->x);
+		y -= (player->getPoint1()->y + player->getPoint2()->y);
 	} else {
 		x -= getSharedData()->getGlobalX();
 		y -= getSharedData()->getGlobalY();

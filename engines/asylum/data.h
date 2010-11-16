@@ -29,6 +29,7 @@
 #include "engines/asylum/shared.h"
 
 #include "common/rational.h"
+#include "common/rect.h"
 
 namespace Asylum {
 
@@ -193,6 +194,8 @@ public:
 	void setSceneOffset(int32 val) { _sceneOffset = val; }
 	void setSceneOffsetAdd(const Common::Rational &offset) { _sceneOffsetAdd = offset; }
 
+	Common::Rect *getActorRect() { return &_actorRect; }
+
 	//////////////////////////////////////////////////////////////////////////
 	// Flags
 	//////////////////////////////////////////////////////////////////////////
@@ -267,7 +270,7 @@ public:
 	}
 
 private:
-
+	Common::Rect _actorRect;
 
 	bool            _actorEnableForStatus7;
 
@@ -278,6 +281,12 @@ private:
 	uint32          _matteVar2;
 
 	// Lots of other data
+
+	//////////////////////////////////////////////////////////////////////////
+	// Shared data
+	// (Some functions access those by offset, so until we figure out what
+	//  exact data they need, we keep all of them here)
+	//////////////////////////////////////////////////////////////////////////
 
 	// TODO Add ambient sound panning array
 	uint32           _sceneCounter;
