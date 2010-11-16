@@ -47,6 +47,7 @@ class OptionsDialog : public Dialog {
 public:
 	OptionsDialog(const Common::String &domain, int x, int y, int w, int h);
 	OptionsDialog(const Common::String &domain, const Common::String &name);
+	~OptionsDialog();
 
 	void init();
 
@@ -115,8 +116,6 @@ private:
 	PopUpWidget *_mt32DevicePopUp;
 	StaticTextWidget *_gmDevicePopUpDesc;
 	PopUpWidget *_gmDevicePopUp;
-
-
 
 	//
 	// MIDI controls

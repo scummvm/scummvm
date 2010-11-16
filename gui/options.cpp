@@ -80,8 +80,6 @@ static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1
 static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11kHz"), _s("22 kHz"), _s("44 kHz"), _s("48 kHz"), 0 };
 static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 };
 
-
-
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
 	init();
@@ -92,23 +90,40 @@ OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String 
 	init();
 }
 
+OptionsDialog::~OptionsDialog() {
+	delete _subToggleGroup;
+}
+
 void OptionsDialog::init() {
 	_enableGraphicSettings = false;
 	_gfxPopUp = 0;
+	_gfxPopUpDesc = 0;
 	_renderModePopUp = 0;
+	_renderModePopUpDesc = 0;
 	_fullscreenCheckbox = 0;
 	_aspectCheckbox = 0;
 	_disableDitheringCheckbox = 0;
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
+	_midiPopUpDesc = 0;
 	_oplPopUp = 0;
+	_oplPopUpDesc = 0;
 	_outputRatePopUp = 0;
+	_outputRatePopUpDesc = 0;
 	_enableMIDISettings = false;
 	_gmDevicePopUp = 0;
+	_gmDevicePopUpDesc = 0;
+	_soundFont = 0;
+	_soundFontButton = 0;
+	_soundFontClearButton = 0;
 	_multiMidiCheckbox = 0;
+	_midiGainDesc = 0;
+	_midiGainSlider = 0;
+	_midiGainLabel = 0;
 	_enableMT32Settings = false;
 	_mt32Checkbox = 0;
 	_mt32DevicePopUp = 0;
+	_mt32DevicePopUpDesc = 0;
 	_enableGSCheckbox = 0;
 	_enableVolumeSettings = false;
 	_musicVolumeDesc = 0;
