@@ -81,7 +81,7 @@ namespace Tinsel {
 // In BG.CPP
 extern void SetDoFadeIn(bool tf);
 extern void DropBackground();
-extern BACKGND *pCurBgnd;
+extern const BACKGND *pCurBgnd;
 
 // In CURSOR.CPP
 extern void CursorProcess(CORO_PARAM, const void *);
