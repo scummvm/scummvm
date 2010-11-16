@@ -853,7 +853,7 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
  */
 void MoverProcessCreate(int X, int Y, int id, PMOVER pMover) {
 	if (TinselV2) {
-		static MAINIT iStruct;
+		MAINIT iStruct;
 		iStruct.X = X;
 		iStruct.Y = Y;
 		iStruct.pMover = pMover;
