@@ -150,7 +150,7 @@ void Screen::drawWideScreen(int16 barSize) const {
 	}
 }
 
-void Screen::clearScreen() const {
+void Screen::clear() const {
 	_vm->_system->fillScreen(0);
 }
 

@@ -1002,7 +1002,7 @@ void Scene::playIntroSpeech() {
 		break;
 	}
 
-	getScreen()->clearScreen();
+	getScreen()->clear();
 
 	// TODO do palette fade and wait until sound is done
 	warning("[Scene::playIntroSpeech] Missing palette fade and wait!");
@@ -1153,7 +1153,7 @@ int Scene::drawScene() {
 	_vm->screen()->clearGraphicsInQueue();
 
 	if (getSharedData()->getSkipDrawScene()) {
-		_vm->screen()->clearScreen();
+		_vm->screen()->clear();
 	} else {
 		// Draw scene background
 		_vm->screen()->draw(_bgResource, 0, -_ws->xLeft, -_ws->yTop, 0);

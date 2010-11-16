@@ -311,7 +311,7 @@ bool Console::cmdPlayVideo(int32 argc, const char **argv) {
 		return true;
 	}
 
-	getScreen()->clearScreen();
+	getScreen()->clear();
 	getScene()->actions()->setDelayedVideoIndex(index);
 
 	return false;
