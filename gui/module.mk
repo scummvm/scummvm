@@ -7,7 +7,7 @@ MODULE_OBJS := \
 	debugger.o \
 	dialog.o \
 	error.o \
-	GuiManager.o \
+	gui-manager.o \
 	launcher.o \
 	massadd.o \
 	message.o \

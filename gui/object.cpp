@@ -25,7 +25,7 @@
 #include "common/system.h"
 #include "gui/object.h"
 #include "gui/widget.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
 
 namespace GUI {

@@ -30,7 +30,7 @@
 #include "common/translation.h"
 #include "common/util.h"
 #include "gui/about.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/widget.h"
 
 #include "gui/ThemeEval.h"

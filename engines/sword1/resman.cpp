@@ -36,7 +36,7 @@
 #include "sword1/swordres.h"
 
 #include "gui/message.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 
 namespace Sword1 {
 	void guiFatalError(char *msg) {

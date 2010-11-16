@@ -36,7 +36,7 @@
 
 #include "gui/about.h"
 
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/widgets/list.h"
 #include "gui/ThemeEval.h"
 

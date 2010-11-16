@@ -28,7 +28,7 @@
 #include "dc.h"
 #include "icon.h"
 #include <common/savefile.h>
-#include <gui/GuiManager.h>
+#include <gui/gui-manager.h>
 #include <gui/message.h>
 #include <common/zlib.h>
 

@@ -26,7 +26,7 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "gui/message.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
 

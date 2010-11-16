@@ -29,7 +29,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 
 namespace Common {
 

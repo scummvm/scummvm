@@ -32,7 +32,7 @@
 
 #include "engines/metaengine.h"
 
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/widget.h"
 #include "gui/browser.h"
 #include "gui/message.h"

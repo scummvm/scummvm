@@ -38,7 +38,7 @@
 #include "gui/launcher.h"
 #include "gui/massadd.h"
 #include "gui/message.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/options.h"
 #include "gui/saveload.h"
 #include "gui/widgets/edittext.h"

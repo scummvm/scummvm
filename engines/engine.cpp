@@ -46,7 +46,7 @@
 
 #include "gui/debugger.h"
 #include "gui/message.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 
 #include "sound/mixer.h"
 

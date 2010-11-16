@@ -33,7 +33,7 @@
 #include "graphics/scaler.h"
 
 #include "gui/about.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/launcher.h"
 #include "gui/widgets/list.h"
 #include "gui/message.h"

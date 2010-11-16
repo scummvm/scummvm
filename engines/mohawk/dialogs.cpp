@@ -28,7 +28,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/dialogs.h"
 
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "common/savefile.h"
 #include "common/translation.h"
 

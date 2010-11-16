@@ -34,7 +34,7 @@
 #include "common/md5.h"
 #include "sound/mididrv.h"
 
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/dialog.h"
 #include "gui/widget.h"
 

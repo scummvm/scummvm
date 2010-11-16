@@ -49,7 +49,7 @@
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "gui/error.h"
 

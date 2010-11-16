@@ -31,7 +31,7 @@
 
 #include "gui/launcher.h"	// For addGameToConf()
 #include "gui/massadd.h"
-#include "gui/GuiManager.h"
+#include "gui/gui-manager.h"
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
 

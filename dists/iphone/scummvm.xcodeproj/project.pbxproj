@@ -917,7 +917,7 @@
 		DF09418B0F63CB26002D821E /* thumbnail_intern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAB0010F011392003E9390 /* thumbnail_intern.cpp */; };
 		DF09418C0F63CB26002D821E /* dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFB900F485D890006E566 /* dither.cpp */; };
 		DF0941920F63CB26002D821E /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD10F485DFB0006E566 /* debug.cpp */; };
-		DF0941930F63CB26002D821E /* GuiManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD50F485E360006E566 /* GuiManager.cpp */; };
+		DF0941930F63CB26002D821E /* gui-manager.hcpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD50F485E360006E566 /* gui-manager.hcpp */; };
 		DF0941940F63CB26002D821E /* posix-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBF80F4860A60006E566 /* posix-saves.cpp */; };
 		DF0941950F63CB26002D821E /* bmv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFC1F0F4862520006E566 /* bmv.cpp */; };
 		DF0941960F63CB26002D821E /* dialogs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFC200F4862520006E566 /* dialogs.cpp */; };
@@ -1061,7 +1061,7 @@
 		DF2EC51A10E64EE600765801 /* wave6581.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2EC51710E64EE600765801 /* wave6581.cpp */; };
 		DF2FFB930F485D890006E566 /* dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFB900F485D890006E566 /* dither.cpp */; };
 		DF2FFBD30F485DFB0006E566 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD10F485DFB0006E566 /* debug.cpp */; };
-		DF2FFBD90F485E360006E566 /* GuiManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD50F485E360006E566 /* GuiManager.cpp */; };
+		DF2FFBD90F485E360006E566 /* gui-manager.hcpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD50F485E360006E566 /* gui-manager.hcpp */; };
 		DF2FFBFC0F4860A60006E566 /* posix-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBF80F4860A60006E566 /* posix-saves.cpp */; };
 		DF2FFC290F4862520006E566 /* bmv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFC1F0F4862520006E566 /* bmv.cpp */; };
 		DF2FFC2A0F4862520006E566 /* dialogs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFC200F4862520006E566 /* dialogs.cpp */; };
@@ -3057,7 +3057,7 @@
 		DFF95C200FB22D5700A3EC78 /* thumbnail_intern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAB0010F011392003E9390 /* thumbnail_intern.cpp */; };
 		DFF95C210FB22D5700A3EC78 /* dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFB900F485D890006E566 /* dither.cpp */; };
 		DFF95C270FB22D5700A3EC78 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD10F485DFB0006E566 /* debug.cpp */; };
-		DFF95C280FB22D5700A3EC78 /* GuiManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD50F485E360006E566 /* GuiManager.cpp */; };
+		DFF95C280FB22D5700A3EC78 /* gui-manager.hcpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD50F485E360006E566 /* gui-manager.hcpp */; };
 		DFF95C290FB22D5700A3EC78 /* posix-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBF80F4860A60006E566 /* posix-saves.cpp */; };
 		DFF95C2A0FB22D5700A3EC78 /* bmv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFC1F0F4862520006E566 /* bmv.cpp */; };
 		DFF95C2B0FB22D5700A3EC78 /* dialogs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFC200F4862520006E566 /* dialogs.cpp */; };
@@ -3362,8 +3362,8 @@
 		DF2FFB920F485D890006E566 /* pixelformat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pixelformat.h; sourceTree = "<group>"; };
 		DF2FFBD10F485DFB0006E566 /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debug.cpp; sourceTree = "<group>"; };
 		DF2FFBD20F485DFB0006E566 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
-		DF2FFBD50F485E360006E566 /* GuiManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GuiManager.cpp; sourceTree = "<group>"; };
-		DF2FFBD60F485E360006E566 /* GuiManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuiManager.h; sourceTree = "<group>"; };
+		DF2FFBD50F485E360006E566 /* gui-manager.hcpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gui-manager.hcpp; sourceTree = "<group>"; };
+		DF2FFBD60F485E360006E566 /* gui-manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gui-manager.h; sourceTree = "<group>"; };
 		DF2FFBDB0F485E480006E566 /* scummclassic.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = scummclassic.zip; sourceTree = "<group>"; };
 		DF2FFBF80F4860A60006E566 /* posix-saves.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "posix-saves.cpp"; sourceTree = "<group>"; };
 		DF2FFBF90F4860A60006E566 /* posix-saves.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "posix-saves.h"; sourceTree = "<group>"; };
@@ -7446,8 +7446,8 @@
 				DFE4779B0D81F4E900B6D1FB /* EditTextWidget.h */,
 				DF9B9246118E46730069C19D /* error.cpp */,
 				DF9B9247118E46730069C19D /* error.h */,
-				DF2FFBD50F485E360006E566 /* GuiManager.cpp */,
-				DF2FFBD60F485E360006E566 /* GuiManager.h */,
+				DF2FFBD50F485E360006E566 /* gui-manager.hcpp */,
+				DF2FFBD60F485E360006E566 /* gui-manager.h */,
 				DFE4779E0D81F4E900B6D1FB /* Key.cpp */,
 				DFE4779F0D81F4E900B6D1FB /* Key.h */,
 				DFE477A20D81F4E900B6D1FB /* launcher.cpp */,
@@ -8470,7 +8470,7 @@
 				DFAAB0020F011392003E9390 /* thumbnail_intern.cpp in Sources */,
 				DF2FFB930F485D890006E566 /* dither.cpp in Sources */,
 				DF2FFBD30F485DFB0006E566 /* debug.cpp in Sources */,
-				DF2FFBD90F485E360006E566 /* GuiManager.cpp in Sources */,
+				DF2FFBD90F485E360006E566 /* gui-manager.hcpp in Sources */,
 				DF2FFBFC0F4860A60006E566 /* posix-saves.cpp in Sources */,
 				DF2FFC290F4862520006E566 /* bmv.cpp in Sources */,
 				DF2FFC2A0F4862520006E566 /* dialogs.cpp in Sources */,
@@ -9496,7 +9496,7 @@
 				DF09418B0F63CB26002D821E /* thumbnail_intern.cpp in Sources */,
 				DF09418C0F63CB26002D821E /* dither.cpp in Sources */,
 				DF0941920F63CB26002D821E /* debug.cpp in Sources */,
-				DF0941930F63CB26002D821E /* GuiManager.cpp in Sources */,
+				DF0941930F63CB26002D821E /* gui-manager.hcpp in Sources */,
 				DF0941940F63CB26002D821E /* posix-saves.cpp in Sources */,
 				DF0941950F63CB26002D821E /* bmv.cpp in Sources */,
 				DF0941960F63CB26002D821E /* dialogs.cpp in Sources */,
@@ -10531,7 +10531,7 @@
 				DFF95C200FB22D5700A3EC78 /* thumbnail_intern.cpp in Sources */,
 				DFF95C210FB22D5700A3EC78 /* dither.cpp in Sources */,
 				DFF95C270FB22D5700A3EC78 /* debug.cpp in Sources */,
-				DFF95C280FB22D5700A3EC78 /* GuiManager.cpp in Sources */,
+				DFF95C280FB22D5700A3EC78 /* gui-manager.hcpp in Sources */,
 				DFF95C290FB22D5700A3EC78 /* posix-saves.cpp in Sources */,
 				DFF95C2A0FB22D5700A3EC78 /* bmv.cpp in Sources */,
 				DFF95C2B0FB22D5700A3EC78 /* dialogs.cpp in Sources */,
