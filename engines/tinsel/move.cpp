@@ -77,6 +77,8 @@ HPOLYGON InitExtraBlock(PMOVER ca, PMOVER ta);
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 #if SLOW_RINCE_DOWN
 static int Interlude = 0;	// For slowing down walking, for testing
 static int BogusVar = 0;	// For slowing down walking, for testing

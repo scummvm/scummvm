@@ -106,6 +106,8 @@ struct ENTRANCE_STRUC {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 #ifdef DEBUG
 static bool ShowPosition = false;	// Set when showpos() has been called
 #endif
@@ -368,6 +370,10 @@ void EndScene() {
  */
 void PrimeBackground() {
 	// structure for playfields
+	// FIXME: Avoid non-const global vars
+	// TODO: We should simply merge this function with InitBackground
+	//   in order to avoid the static var and the problems associate
+	//   with it.
 	static PLAYFIELD playfield[] = {
 		{	// FIELD WORLD
 			NULL,		// display list
@@ -390,7 +396,7 @@ void PrimeBackground() {
 	};
 
 	// structure for background
-	static BACKGND backgnd = {
+	static const BACKGND backgnd = {
 		BLACK,			// sky colour
 		Common::Point(0, 0),	// initial world pos
 		Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// scroll limits

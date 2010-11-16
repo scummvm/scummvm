@@ -57,6 +57,8 @@ namespace Tinsel {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 static OBJECT *McurObj = NULL;		// Main cursor object
 static OBJECT *AcurObj = NULL;		// Auxiliary cursor object
 

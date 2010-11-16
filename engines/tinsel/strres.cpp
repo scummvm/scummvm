@@ -36,6 +36,8 @@
 
 namespace Tinsel {
 
+// FIXME: Avoid non-const global vars
+
 #ifdef DEBUG
 // Diagnostic number
 int newestString;

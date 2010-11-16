@@ -48,6 +48,7 @@ namespace Tinsel {
 
 #define MAX_BG	10
 
+// FIXME: Avoid non-const global vars
 static SCNHANDLE hBgPal = 0;	// Background's palette
 static POBJECT pBG[MAX_BG];
 static ANIM	thisAnim[MAX_BG];	// used by BGmainProcess()

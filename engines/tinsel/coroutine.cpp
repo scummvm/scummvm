@@ -29,7 +29,7 @@
 namespace Tinsel {
 
 
-CoroContext nullContext = NULL;
+CoroContext nullContext = NULL;	// FIXME: Avoid non-const global vars
 
 
 #if COROUTINE_DEBUG

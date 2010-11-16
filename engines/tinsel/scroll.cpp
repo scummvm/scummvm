@@ -49,6 +49,9 @@ namespace Tinsel {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
+
 static int LeftScroll = 0, DownScroll = 0;	// Number of iterations outstanding
 
 static int scrollActor = 0;

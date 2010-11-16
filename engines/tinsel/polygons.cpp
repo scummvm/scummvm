@@ -289,6 +289,8 @@ void Poly::nextPoly() {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 static int MaxPolys = MAX_POLY;
 
 static POLYGON *Polys[MAX_POLY+1];

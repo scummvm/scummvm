@@ -34,8 +34,10 @@
 
 namespace Tinsel {
 
+// FIXME: Avoid non-const global vars
+
 // current background
-BACKGND *pCurBgnd = NULL;
+const BACKGND *pCurBgnd = NULL;
 
 // FIXME: Not yet used
 static bool bEntireRedraw;
@@ -45,7 +47,7 @@ static bool bEntireRedraw;
  * @param pBgnd			Pointer to data struct for current background
  */
 
-void InitBackground(BACKGND *pBgnd) {
+void InitBackground(const BACKGND *pBgnd) {
 	int i;			// playfield counter
 	PLAYFIELD *pPlayfield;	// pointer to current playfield
 

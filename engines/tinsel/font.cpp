@@ -35,6 +35,8 @@ namespace Tinsel {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 static char tBuffer[TBUFSZ];
 
 static SCNHANDLE hTagFont = 0, hTalkFont = 0;
@@ -117,7 +119,7 @@ void FettleFontPal(SCNHANDLE fontPal) {
 		pImg->hImgPal = 0;
 
 	if (TinselV2 && SysVar(SV_TAGCOLOUR)) {
-		static COLORREF c = GetActorRGB(-1);
+		static COLORREF c = GetActorRGB(-1);	// FIXME: Avoid non-const global vars
 		SetTagColorRef(c);
 		UpdateDACqueue(SysVar(SV_TAGCOLOUR), 1, &c);
 	}

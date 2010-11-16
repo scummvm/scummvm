@@ -70,6 +70,8 @@ enum {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 // handle table gets loaded from index file at runtime
 static MEMHANDLE *handleTable = 0;
 

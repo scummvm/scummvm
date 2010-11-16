@@ -51,6 +51,8 @@ struct VIDEO_DAC_Q {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 /** background colour */
 static COLORREF bgndColour = BLACK;
 
@@ -619,7 +621,7 @@ int TranslucentColour() {
 }
 
 int HighlightColour() {
-	static COLORREF cRef;
+	static COLORREF cRef;	// FIXME: Avoid non-const global vars
 
 	cRef = (COLORREF)SysVar(SYS_HighlightRGB);
 	UpdateDACqueue(talkIndex, 1, &cRef);

@@ -120,6 +120,8 @@ struct SFILES {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 static int	numSfiles = 0;
 static SFILES	savedFiles[MAX_SAVED_FILES];
 
@@ -287,7 +289,7 @@ static void syncSavedData(Common::Serializer &s, SAVED_DATA &sd) {
  * Generates a new, unique, filename.
  */
 static char *NewName() {
-	static char result[FNAMELEN];
+	static char result[FNAMELEN];	// FIXME: Avoid non-const global vars
 	int	i;
 	int	ano = 1;	// Allocated number
 

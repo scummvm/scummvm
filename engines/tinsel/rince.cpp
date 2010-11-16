@@ -53,7 +53,7 @@ namespace Tinsel {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-static MOVER Movers[MAX_MOVERS];
+static MOVER Movers[MAX_MOVERS];	// FIXME: Avoid non-const global vars
 
 //----------------- FUNCTIONS ----------------------------
 

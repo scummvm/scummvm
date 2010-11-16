@@ -48,6 +48,8 @@ struct SCIdataStruct {
 	SCNHANDLE reels[4];
 };
 
+// FIXME: Avoid non-const global vars
+
 static SCIdataStruct SCIdata[MAX_SCRENTRIES];
 
 static int scrEntries = 0;

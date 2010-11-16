@@ -106,6 +106,8 @@ bool bNoPause = false;
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 static int32 *pGlobals = 0;		// global vars
 
 static int numGlobals = 0;		// How many global variables to save/restore

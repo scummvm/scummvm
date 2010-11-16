@@ -62,6 +62,8 @@ struct SOUND_BUFFER {
 	uint32 size;		// size of the buffer
 };
 
+// FIXME: Avoid non-const global vars
+
 // get set when music driver is installed
 //static MDI_DRIVER *mDriver;
 //static HSEQUENCE mSeqHandle;
@@ -168,7 +170,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	}
 
 	// the index and length of the last tune loaded
-	static uint32 dwLastMidiIndex = 0;
+	static uint32 dwLastMidiIndex = 0;	// FIXME: Avoid non-const global vars
 	//static uint32 dwLastSeqLen;
 
 	uint32 dwSeqLen = 0;	// length of the sequence
@@ -308,7 +310,7 @@ int GetMidiVolume() {
 void SetMidiVolume(int vol) {
 	assert(vol >= 0 && vol <= Audio::Mixer::kMaxChannelVolume);
 
-	static int priorVolMusic = 0;
+	static int priorVolMusic = 0;	// FIXME: Avoid non-const global vars
 
 	if (vol == 0 && priorVolMusic == 0)	{
 		// Nothing to do

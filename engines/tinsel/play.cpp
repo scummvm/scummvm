@@ -63,6 +63,8 @@ struct PPINIT {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 static SOUNDREELS soundReels[MAX_SOUNDREELS];
 static int soundReelNumbers[MAX_SOUNDREELS];
 
@@ -432,6 +434,7 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 		int tmpX, tmpY;
 	CORO_END_CONTEXT(_ctx);
 
+	// FIXME: Avoid non-const global vars
 	static int	firstColZ = 0;	// Z-position of column zero
 	static int32	fColZfactor = 0;	// Z-factor of column zero's actor
 
@@ -818,6 +821,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 		SoundReelWaitCheck();
 	} else {
+		// FIXME: Avoid non-const global vars
 		static int baseZposn;		// Z-position of column zero
 		static uint32 baseZfact;	// Z-factor of column zero's actor
 

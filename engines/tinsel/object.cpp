@@ -36,6 +36,8 @@
 
 namespace Tinsel {
 
+// FIXME: Avoid non-const global vars
+
 // list of all objects
 static OBJECT *objectList = 0;
 

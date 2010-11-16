@@ -61,6 +61,8 @@ extern bool bEnableMenu;
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 static uint32 lastUserEvent = 0;	// Time it hapenned
 static int leftEvents = 0;		// Single or double, left or right. Or escape key.
 static int escEvents = 1;		// Escape key
@@ -393,7 +395,7 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		"PLR_JUMP", "PLR_NOEVENT"};
 	debugC(DEBUG_BASIC, kTinselDebugActions, "%s - (%d,%d)",
 		actionList[pEvent], coOrds.x, coOrds.y);
-	static uint32 lastRealAction = 0;
+	static uint32 lastRealAction = 0;	// FIXME: Avoid non-const global vars
 
 	// This stuff to allow F1 key during startup.
 	if (bEnableMenu && pEvent == PLR_MENU)

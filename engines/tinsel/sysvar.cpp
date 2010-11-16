@@ -42,6 +42,8 @@ extern int NewestSavedGame();
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 static int systemVars[SV_TOPVALID] = {
 
 		INV_1,		// Default inventory
@@ -104,7 +106,7 @@ static int systemVars[SV_TOPVALID] = {
 		0		// ISV_GHOST_COLOUR
 };
 
-static SCNHANDLE systemStrings[SS_MAX_VALID];
+static SCNHANDLE systemStrings[SS_MAX_VALID];	// FIXME: Avoid non-const global vars
 
 //static bool bFlagNoBlocking = false;
 

@@ -47,6 +47,8 @@ struct PROCESS_STRUC {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 static uint32 numSceneProcess;
 static SCNHANDLE hSceneProcess;
 

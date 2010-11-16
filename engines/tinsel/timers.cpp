@@ -52,7 +52,7 @@ struct TIMER {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-static TIMER timers[MAX_TIMERS];
+static TIMER timers[MAX_TIMERS];	// FIXME: Avoid non-const global vars
 
 
 //--------------------------------------------------------

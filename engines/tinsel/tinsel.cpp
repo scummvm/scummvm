@@ -98,6 +98,8 @@ void SetNewScene(SCNHANDLE scene, int entrance, int transition);
 
 //----------------- GLOBAL GLOBAL DATA --------------------
 
+// FIXME: Avoid non-const global vars
+
 bool bRestart = false;
 bool bHasRestarted = false;
 bool loadingFromGMM = false;
@@ -634,6 +636,7 @@ void RestoreMasterProcess(INT_CONTEXT *pic) {
 }
 
 // FIXME: CountOut is used by ChangeScene
+// FIXME: Avoid non-const global vars
 static int CountOut = 1;	// == 1 for immediate start of first scene
 
 /**

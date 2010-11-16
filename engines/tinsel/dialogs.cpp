@@ -2245,7 +2245,7 @@ static int WhichMenuBox(int curX, int curY, bool bSlides) {
  * InvBoxes
  */
 static void InvBoxes(bool InBody, int curX, int curY) {
-	static int rotateIndex = -1;
+	static int rotateIndex = -1;	// FIXME: Avoid non-const global vars
 	int	index;			// Box pointed to on this call
 	const FILM *pfilm;
 
@@ -3409,7 +3409,7 @@ enum InvCursorFN {IC_AREA, IC_DROP};
  */
 static void InvCursor(InvCursorFN fn, int CurX, int CurY) {
 	static enum { IC_NORMAL, IC_DR, IC_UR, IC_TB, IC_LR,
-		IC_INV, IC_UP, IC_DN } ICursor = IC_NORMAL;	// FIXME: local static var
+		IC_INV, IC_UP, IC_DN } ICursor = IC_NORMAL;	// FIXME: Avoid non-const global vars
 
 	int	area;		// The part of the window the cursor is over
 	bool	restoreMain = false;
@@ -4278,7 +4278,7 @@ static int NearestSlideY(int fity) {
  * y-movement during such a drag.
  */
 static void SlideSlider(int y, SSFN fn) {
-	static int newY = 0, lasti = 0;	// FIXME: local static var
+	static int newY = 0, lasti = 0;	// FIXME: Avoid non-const global vars
 	int gotoY, ati;
 
 	// Only do this if there's a slider
@@ -4332,7 +4332,7 @@ static void SlideSlider(int y, SSFN fn) {
  * y-movement during such a drag.
  */
 static void SlideCSlider(int y, SSFN fn) {
-	static int newY = 0;	// FIXME: local static var
+	static int newY = 0;	// FIXME: Avoid non-const global vars
 	int	gotoY;
 	int	fc;
 
@@ -4399,7 +4399,7 @@ static void SlideCSlider(int y, SSFN fn) {
  * and upon x-movement during such a drag.
  */
 static void SlideMSlider(int x, SSFN fn) {
-	static int newX = 0;	// FIXME: local static var
+	static int newX = 0;	// FIXME: Avoid non-const global vars
 	int gotoX;
 	int index, i;
 

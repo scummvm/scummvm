@@ -79,6 +79,8 @@ struct T2_ACTOR_STRUC {
 
 #define MAX_REELS 6
 
+// FIXME: Avoid non-const global vars
+
 static int LeadActorId = 0;		// The lead actor
 
 static int NumActors = 0;	// The total number of actors in the game

@@ -33,11 +33,16 @@
 
 namespace Tinsel {
 
+// FIXME: Avoid non-const global vars
+
 char currentCD = '1';
 static uint32 cdFlags[] = { fCd1, fCd2, fCd3, fCd4, fCd5, fCd6, fCd7, fCd8 };
 
 static bool bChangingCD = false;
 static char nextCD = '\0';
+
+static uint32 lastTime = 0;
+extern LANGUAGE sampleLanguage;
 
 
 void CdCD(CORO_PARAM) {
@@ -93,9 +98,6 @@ int GetCD(int flags) {
 	nextCD = cd;
 	return cd;
 }
-
-static uint32 lastTime = 0;
-extern LANGUAGE sampleLanguage;
 
 void DoCdChange() {
 	if (bChangingCD && (g_system->getMillis() > (lastTime + 1000))) {

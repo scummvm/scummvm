@@ -37,7 +37,7 @@ struct Token {
 	PROCESS		*proc;
 };
 
-static Token tokens[NUMTOKENS];
+static Token tokens[NUMTOKENS];	// FIXME: Avoid non-const global vars
 
 
 /**
