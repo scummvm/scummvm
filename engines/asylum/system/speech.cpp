@@ -34,6 +34,7 @@
 #include "asylum/views/scene.h"
 
 #include "asylum/asylum.h"
+#include "asylum/staticres.h"
 
 namespace Asylum {
 
@@ -69,7 +70,7 @@ ResourceId Speech::playIndexed(int32 index) {
 	int processedIndex;
 
 	if (getWorld()->actorType || index != -1) {
-		error("[Speech::playIndexed] Missing case using static data!");
+		processedIndex = speechIndex[index + 5 * getWorld()->actorType] + rnd(speechIndexRandom[index + 5 * getWorld()->actorType]);
 	} else {
 		switch(_vm->getRandom(3)) {
 		default:

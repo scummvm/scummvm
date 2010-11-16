@@ -34,6 +34,10 @@ const int MenuIconFixedXpos[12] = { 28, 128, 225, 320, 410, 528, 16, 115, 237, 3
 /** Default Actor Indices by Scene */
 const int actorType[16] = {0, 0, 0, 0, 1, 0, 2, 0, 3, 0, 1, 1, 3, 0, 0, 0};
 
+/** Speech indexes */
+const int speechIndex[20]       = {17, 22, 27, 37, 45, 12, 16, 19, 25, 29, 14, 18, 23, 29, 35,  6,  9, 13, 19, 27};
+const int speechIndexRandom[20] = { 5,  5, 10,  8,  6,  4,  3,  6,  4,  4,  4,  5,  6,  6,  6,  3,  4,  6,  8,  4};
+
 // Delta array for points
 static const struct {
 	int x;
