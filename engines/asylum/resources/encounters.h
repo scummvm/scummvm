@@ -34,11 +34,6 @@ namespace Asylum {
 
 class AsylumEngine;
 
-enum EncounterFlag{
-	kEncounterFlag2 = 2,
-	kEncounterFlag5 = 5
-};
-
 typedef struct EncounterItem {
 	int32 keywordIndex;
 	int32 field2;
@@ -68,9 +63,6 @@ public:
 	}
 	void run(int32 encounterIdx, int32 objectId1, int32 objectId2, int32 characterIdx);
 
-	int32 getFlag(EncounterFlag flag) const;
-	void setFlag(EncounterFlag flag, int32 val);
-
 private:
 	AsylumEngine *_vm;
 
@@ -79,8 +71,6 @@ private:
 
 	EncounterItem *_currentEncounter;
 	Common::Array<EncounterItem> _items;
-
-	int32 _flags[5];
 
 }; // end of class Encounter
 

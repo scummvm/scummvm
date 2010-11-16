@@ -68,28 +68,11 @@ Scene::Scene(AsylumEngine *engine): _vm(engine), _ev(NULL),
 	_leftClick = false;
 	_rightButton = false;
 	_isActive = false;
-	_skipDrawScene = false;
 	_globalDirection = kDirection0;
 
 	// Graphics
 	_bgResource = NULL;
 	_background = NULL;
-
-	// Initialize global data
-	_globalX = _globalY = 0;
-	_sceneOffset = 0;
-	_sceneXLeft = _sceneYTop = 0;
-	_actorUpdateFlag = false;
-	_actorUpdateFlag2 = false;
-
-	//
-	matteBarHeight = 0;
-	matteVar1 = 0;
-	matteVar2 = 0;
-	mattePlaySound = false;
-	matteInitialized = false;
-
-	memset(&savedResourceIds, 0, sizeof(savedResourceIds));
 }
 
 Scene::~Scene() {
@@ -158,7 +141,7 @@ void Scene::enter(ResourcePackId packId) {
 
 	// Hide actor
 	player->hide();
-	player->updateStatus(kActorStatusEnabled);
+	player->enable();
 
 	// Update current player coordinates
 	player->x1 -= player->x2;
@@ -171,7 +154,7 @@ void Scene::enter(ResourcePackId packId) {
 
 			actor->hide();
 			actor->setDirection(kDirection1);
-			actor->updateStatus(kActorStatusEnabled);
+			actor->enable();
 
 			actor->x1 -= actor->x2;
 			actor->y1 -= actor->y2;
@@ -210,11 +193,11 @@ void Scene::enter(ResourcePackId packId) {
 	getSound()->playMusic(musicId);
 
 	// Update global values
-	_vm->globalTickValue_2 = 1;
-	_vm->screenUpdatesCount = 1;
+	_vm->lastScreenUpdate = 1;
+	getSharedData()->setFlag(kFlagScene1, true);
 
-	player->setLastScreenUpdate(_vm->getTick());
-	player->updateStatus(kActorStatusEnabled);
+	player->setLastScreenUpdate(_vm->screenUpdateCount);
+	player->enable();
 
 	if (_ws->chapter == kChapter9) {
 		changePlayer(1);
@@ -276,13 +259,13 @@ void Scene::load(ResourcePackId packId) {
 	_leftClick     = false;
 	_rightButton   = false;
 	_isActive      = false;
-	_skipDrawScene = false;
+	//_skipDrawScene = false;
 
 	g_debugPolygons  = 0;
 	g_debugObjects  = 0;
 	g_debugScrolling = 0;
 
-	_globalX = _globalY = 0;
+	//_globalX = _globalY = 0;
 
 	// TODO figure out what field_120 is used for
 	_ws->field_120 = -1;
@@ -296,9 +279,6 @@ void Scene::load(ResourcePackId packId) {
 	_titleLoaded = false;
 
 	_special = new Special(_vm);
-
-	_actorUpdateFlag = 0;
-	_actorUpdateFlag2 = 0;
 }
 
 Actor* Scene::getActor(ActorIndex index) {
@@ -800,6 +780,10 @@ int32 Scene::findActionArea(const Common::Point pt) {
 	return targetIdx;
 }
 
+int32 Scene::isInActionArea(const Common::Point &pt, ActionArea *area) {
+	error("[Scene::isInActionArea] Not implemented!");
+}
+
 ResourceId Scene::hitTestScene(const Common::Point pt, HitType &type) {
 	if (!_ws)
 		error("[Scene::hitTestScene] WorldStats not initialized properly!");
@@ -1115,9 +1099,9 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 			*targetY = _ws->height - 480;
 
 	// Adjust scene offsets & coordinates
-	_sceneOffset = 0;
-	_sceneXLeft = _ws->xLeft;
-	_sceneYTop  = _ws->yTop;
+	getSharedData()->setSceneOffset(0);
+	getSharedData()->setSceneXLeft(_ws->xLeft);
+	getSharedData()->setSceneYTop(_ws->yTop);
 
 	int32 diffX = *targetX - _ws->xLeft;
 	int32 diffY = *targetY - _ws->yTop;
@@ -1126,7 +1110,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 		if (_ws->yTop > *targetY)
 			*coord3 = -*coord3;
 
-		_sceneOffsetAdd = Common::Rational(*coord3, diffY) * diffX;
+		getSharedData()->setSceneOffsetAdd(Common::Rational(*coord3, diffY) * diffX);
 
 		if (param != NULL && abs(diffY) <= abs(*coord3)) {
 			*targetX = -1;
@@ -1137,7 +1121,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 		if (_ws->xLeft > *targetX)
 			*coord3 = -*coord3;
 
-		_sceneOffsetAdd = Common::Rational(*coord3, diffX) * diffY;
+		getSharedData()->setSceneOffsetAdd(Common::Rational(*coord3, diffX) * diffY);
 
 		if (param != NULL && abs(diffX) <= abs(*coord3)) {
 			*targetX = -1;
@@ -1168,7 +1152,7 @@ int Scene::drawScene() {
 
 	_vm->screen()->clearGraphicsInQueue();
 
-	if (_skipDrawScene) {
+	if (getSharedData()->getSkipDrawScene()) {
 		_vm->screen()->clearScreen();
 	} else {
 		// Draw scene background
@@ -1253,7 +1237,7 @@ void Scene::processUpdateList() {
 
 			int32 bottomRight = actor->getBoundingRect()->bottom + actor->y1 + 4;
 
-			if (_ws->chapter == kChapter11 && _updateList[i].index != getPlayerActorIndex())
+			if (_ws->chapter == kChapter11 && _updateList[i].index != getPlayerIndex())
 				bottomRight += 20;
 
 			// Our actor rect
@@ -1562,10 +1546,6 @@ void Scene::debugShowActors() {
 
 		surface.free();
 	}
-}
-
-void Scene::updatePlayerChapter9(int32 param) {
-	error("[Scene::updatePlayerChapter9] not implemented!");
 }
 
 int Scene::processActor(int *x, int *param) {

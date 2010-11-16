@@ -127,6 +127,7 @@ public:
 	void setWheelObjects();
 
 	int32 getActionAreaIndexById(int32 id);
+	int32 getRandomActionAreaIndexById(int32 id);
 	ActionArea* getActionAreaById(int32 id);
 
 	Object* getObjectById(ObjectId id);

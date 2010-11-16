@@ -114,10 +114,6 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_field_99C = 0;
  	_field_9A0 = 0;
 
-	// update-related variables
-	_actorUpdateCounter = 0;
-	_enableFromStatus7 = false;
-
 	// Temporary resources
 	memset(&_resources, 0, sizeof(_resources));
 }
@@ -281,7 +277,7 @@ void Actor::update() {
 	case kActorStatus16:
 		if (getWorld()->chapter == 2) {
 			updateStatus16_Chapter2();
-		} else if (getWorld()->chapter == 11 && _index == getScene()->getPlayerActorIndex()) {
+		} else if (getWorld()->chapter == 11 && _index == getScene()->getPlayerIndex()) {
 			updateStatus16_Chapter11();
 		}
 		break;
@@ -300,10 +296,10 @@ void Actor::update() {
 			if (_index == 11) {
 				if (_frameIndex <= _frameCount - 1) {
 					// Looks like a simple check using the counter, since it doesn't seem to be used anywhere else
-					if (_actorUpdateCounter <= 0) {
-						++_actorUpdateCounter;
+					if (getSharedData()->getUpdateCounter() <= 0) {
+						getSharedData()->setUpdateCounter(getSharedData()->getUpdateCounter() + 1);
 					} else {
-						_actorUpdateCounter = 0;
+						getSharedData()->setUpdateCounter(0);
 						++_frameIndex;
 					}
 				} else {
@@ -322,7 +318,7 @@ void Actor::update() {
 						getScene()->getActor(0)->updateFromDirection(kDirection4);
 
 						// Queue script
-						getScene()->actions()->queueScript(getWorld()->getActionAreaById(2696)->scriptIndex, getScene()->getPlayerActorIndex());
+						getScene()->actions()->queueScript(getWorld()->getActionAreaById(2696)->scriptIndex, getScene()->getPlayerIndex());
 
 						_vm->setGameFlag(kGameFlag279);
 						_vm->setGameFlag(kGameFlag368);
@@ -351,7 +347,7 @@ void Actor::update() {
 				}
 			}
 
-			if (_index == getScene()->getPlayerActorIndex()) {
+			if (_index == getScene()->getPlayerIndex()) {
 				if (_frameIndex <= _frameCount - 1) {
 					++_frameIndex;
 				} else {
@@ -361,12 +357,12 @@ void Actor::update() {
 					_vm->setGameFlag(kGameFlag238);
 
 					// Queue script
-					getScene()->actions()->queueScript(getWorld()->getActionAreaById(1000)->scriptIndex, getScene()->getPlayerActorIndex());
+					getScene()->actions()->queueScript(getWorld()->getActionAreaById(1000)->scriptIndex, getScene()->getPlayerIndex());
 				}
 			}
 
 		} else if (getWorld()->chapter == kChapter11) {
-			if (_index == getScene()->getPlayerActorIndex()) {
+			if (_index == getScene()->getPlayerIndex()) {
 				if (_frameIndex <= _frameCount - 1)
 					++_frameIndex;
 				else
@@ -383,7 +379,7 @@ void Actor::update() {
 			if (_index > 12)
 				updateStatus15_Chapter2();
 
-			if (_index == getScene()->getPlayerActorIndex())
+			if (_index == getScene()->getPlayerIndex())
 				updateStatus15_Chapter2_Player();
 
 			if (_index == 11)
@@ -393,7 +389,7 @@ void Actor::update() {
 			if (_index >= 10 && _index < 16)
 				updateStatus15_Chapter11();
 
-			if (_index == getScene()->getPlayerActorIndex())
+			if (_index == getScene()->getPlayerIndex())
 				updateStatus15_Chapter11_Player();
 		}
 		break;
@@ -411,14 +407,14 @@ void Actor::update() {
 	case kActorStatusDisabled:
 		_frameIndex = (_frameIndex + 1) % _frameCount;
 
-		if (_vm->screenUpdatesCount - _lastScreenUpdate > 300) {
+		if (_vm->screenUpdateCount - _lastScreenUpdate > 300) {
 			if (_vm->getRandom(100) < 50) {
 				if (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
 					if (isDefaultDirection(10))
 						updateStatus(kActorStatus9);
 				}
 			}
-			_lastScreenUpdate = _vm->screenUpdatesCount;
+			_lastScreenUpdate = _vm->screenUpdateCount;
 		}
 		break;
 
@@ -478,9 +474,9 @@ void Actor::update() {
 		break;
 
 	case kActorStatus7:
-		if (_enableFromStatus7) {
-			_enableFromStatus7 = false;
-			updateStatus(kActorStatusEnabled);
+		if (getSharedData()->getActorEnableForStatus7()) {
+			getSharedData()->setActorEnableForStatus7(false);
+			enable();
 		}
 		break;
 
@@ -507,12 +503,12 @@ void Actor::update() {
 		break;
 
 	case kActorStatus8:
-		if (_vm->encounter()->getFlag(kEncounterFlag2)
+		if (getSharedData()->getFlag(kFlagEncounter2)
 		 || !_soundResourceId
 		 || getSound()->isPlaying(_soundResourceId)) {
 			_frameIndex = (_frameIndex + 1) % _frameCount;
 		} else {
-			updateStatus(kActorStatusEnabled);
+			enable();
 			_soundResourceId = kResourceNone;
 		}
 		break;
@@ -521,7 +517,7 @@ void Actor::update() {
 	if (_soundResourceId && getSound()->isPlaying(_soundResourceId))
 		setVolume();
 
-	if (_index != getScene()->getPlayerActorIndex() && getWorld()->chapter != kChapter9)
+	if (_index != getScene()->getPlayerIndex() && getWorld()->chapter != kChapter9)
 		error("[Actor::update] call to actor sound functions missing!");
 
 	updateDirection();
@@ -539,7 +535,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 	case kActorStatus1:
 	case kActorStatus12:
 		if ((getWorld()->chapter == kChapter2
-		 && _index == getScene()->getPlayerActorIndex() && (_status == kActorStatus18 || _status == kActorStatus16 || _status == kActorStatus17))
+		 && _index == getScene()->getPlayerIndex() && (_status == kActorStatus18 || _status == kActorStatus16 || _status == kActorStatus17))
 		 || (_status != kActorStatusEnabled && _status != kActorStatus9 && _status != kActorStatus14 && _status != kActorStatus15 && _status != kActorStatus18))
 			return;
 
@@ -602,7 +598,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 		break;
 
 	case kActorStatus9:
-		if (_vm->encounter()->getFlag(kEncounterFlag2))
+		if (getSharedData()->getFlag(kFlagEncounter2))
 			return;
 
 		if (_vm->getRandomBit() == 1 && isDefaultDirection(15))
@@ -624,7 +620,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			if (_index > 12)
 				_resourceId = _graphicResourceIds[_direction + 30];
 
-			if (getScene()->getPlayerActorIndex() == _index) {
+			if (getScene()->getPlayerIndex() == _index) {
 				resource->load(_resourceId);
 				_frameIndex = resource->count() - 1;
 			}
@@ -878,34 +874,38 @@ void Actor::enableActorsChapter2(AsylumEngine *engine) {
 		// TODO find out which data is updated
 	}
 
-	engine->scene()->getActor(13)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(13)->enable();
 	engine->scene()->getActor(13)->processStatus(2300, 71, false);
 
-	engine->scene()->getActor(14)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(14)->enable();
 	engine->scene()->getActor(14)->processStatus(2600, 1300, false);
 
-	engine->scene()->getActor(15)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(15)->enable();
 	engine->scene()->getActor(15)->processStatus(2742, 615, false);
 
-	engine->scene()->getActor(16)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(16)->enable();
 	engine->scene()->getActor(16)->processStatus(2700, 1200, false);
 
-	engine->scene()->getActor(17)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(17)->enable();
 	engine->scene()->getActor(17)->processStatus(2751, 347, false);
 
-	engine->scene()->getActor(18)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(18)->enable();
 	engine->scene()->getActor(18)->processStatus(2420, 284, false);
 
-	engine->scene()->getActor(19)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(19)->enable();
 	engine->scene()->getActor(19)->processStatus(2800, 370, false);
 
-	engine->scene()->getActor(20)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(20)->enable();
 	engine->scene()->getActor(20)->processStatus(1973, 1, false);
 
-	engine->scene()->getActor(21)->updateStatus(kActorStatusEnabled);
+	engine->scene()->getActor(21)->enable();
 	engine->scene()->getActor(21)->processStatus(2541, 40, false);
 
 	error("[Actor::enableActorsChapter2] Missing update shared data part!");
+}
+
+void Actor::updatePlayerChapter9(AsylumEngine *engine, int type) {
+	error("[Actor::updatePlayerChapter9] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -913,7 +913,44 @@ void Actor::enableActorsChapter2(AsylumEngine *engine) {
 //////////////////////////////////////////////////////////////////////////
 
 void Actor::updateStatus3_19() {
-	error("[Actor::updateStatus3_19] not implemented!");
+	if (getWorld()->chapter != kChapter2 || _frameIndex != 6 || _status == kActorStatus3) { /* Original check: _status  <= kActorStatus11 */
+		if (_frameIndex < _frameCount - 1) {
+			++_frameIndex;
+		} else {
+			if (_status == kActorStatus3)
+				updateStatus(kActorStatus7);
+			else
+				updateStatus(kActorStatus20);
+		}
+	} else {
+		if (_index == getScene()->getPlayerIndex())
+			updateStatus19_Player();
+
+		++_frameIndex;
+	}
+}
+
+void Actor::updateStatus19_Player() {
+	updatePumpkin(kGameFlag263, kGameFlag270, kObjectPumpkin2Dies, kObjectPumpkin2Loop);
+	updatePumpkin(kGameFlag264, kGameFlag271, kObjectPumpkin3Dies, kObjectPumpkin3Loop);
+	updatePumpkin(kGameFlag265, kGameFlag272, kObjectPumpkin4Dies, kObjectPumpkin4Loop);
+	updatePumpkin(kGameFlag266, kGameFlag273, kObjectPumpkin5Dies, kObjectPumpkin5Loop);
+	updatePumpkin(kGameFlag267, kGameFlag274, kObjectPumpkin6Dies, kObjectPumpkin6Loop);
+	updatePumpkin(kGameFlag268, kGameFlag275, kObjectPumpkin7Dies, kObjectPumpkin7Loop);
+	updatePumpkin(kGameFlag269, kGameFlag276, kObjectPumpkin1Dies, kObjectPumpkin1Loop);
+}
+
+void Actor::updatePumpkin(GameFlag flagToCheck, GameFlag flagToSet, ObjectId objectToUpdate, ObjectId objectToDisable) {
+	if (_vm->isGameFlagSet(flagToCheck)) {
+		_vm->setGameFlag(flagToSet);
+		_vm->clearGameFlag(flagToCheck);
+
+		getSharedData()->setActorUpdateFlag2(getSharedData()->getActorUpdateFlag2() + 1);
+
+		getWorld()->getObjectById(objectToUpdate)->setNextFrame(8);
+		getSound()->playSound(getWorld()->soundResourceIds[17], false, Config.sfxVolume - 10);
+		getWorld()->getObjectById(objectToDisable)->disable();
+	}
 }
 
 void Actor::updateStatusEnabled() {
@@ -922,25 +959,25 @@ void Actor::updateStatusEnabled() {
 
 	_frameIndex = (_frameIndex + 1) % _frameCount;
 
-	// Actor: Crow
-	if (_vm->screenUpdatesCount - _lastScreenUpdate > 300) {
+	if (_vm->screenUpdateCount - _lastScreenUpdate > 300) {
+		// All actors except Crow
 		if (strcmp((char *)&_name, "Crow")) {
 			if (_vm->getRandom(100) < 50
 			 && (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId()))
 			 && isDefaultDirection(10))
 				updateStatus(kActorStatus9);
 
-			_lastScreenUpdate = _vm->screenUpdatesCount;
+			_lastScreenUpdate = _vm->screenUpdateCount;
 		}
 	}
 
 	// Actor: Player
-	if (_index == getScene()->getPlayerActorIndex()) {
-		if (_vm->globalTickValue_2 && (_vm->screenUpdatesCount - _vm->globalTickValue_2) > 500) {
+	if (_index == getScene()->getPlayerIndex()) {
+		if (_vm->lastScreenUpdate && (_vm->screenUpdateCount - _vm->lastScreenUpdate) > 500) {
 
 			if (_vm->isGameFlagNotSet(kGameFlagScriptProcessing)
 			 && isVisible()
-			 && !_vm->encounter()->getFlag(kEncounterFlag2)
+			 && !getSharedData()->getFlag(kFlagEncounter2)
 			 && !getSpeech()->getSoundResourceId()) {
 				if (_vm->getRandom(100) < 50) {
 					if (getWorld()->chapter == kChapter13)
@@ -949,50 +986,126 @@ void Actor::updateStatusEnabled() {
 						getSpeech()->playIndexed(4);
 				}
 			}
-			_lastScreenUpdate = _vm->screenUpdatesCount;
-			_vm->globalTickValue_2 = _vm->screenUpdatesCount;
+			_lastScreenUpdate = _vm->screenUpdateCount;
+			_vm->lastScreenUpdate = _vm->screenUpdateCount;
 		}
 
 		return;
 	}
 
 	// Actor:: BigCrow
-	if (strcmp(_name, "Big Crow")) {
-		error("[Actor::updateStatusEnabled] Big Crow logic not implemented!");
+	if (!strcmp(_name, "Big Crow")) {
+		if (_vm->getRandom(10) < 5) {
+			switch (_vm->getRandom(4)) {
+			default:
+				break;
+
+			case 0:
+				setPosition(10, 1350, kDirection0, 0);
+				processStatus(1460, -100, false);
+				break;
+
+			case 1:
+				setPosition(300, 0, kDirection0, 0);
+				processStatus(1700, 1400, false);
+				break;
+
+			case 2:
+				setPosition(1560, -100, kDirection0, 0);
+				processStatus(-300, 1470, false);
+				break;
+
+			case 3:
+				setPosition(1150, 1400, kDirection0, 0);
+				processStatus(-250, 0, false);
+				break;
+			}
+		}
+
 		return;
 	}
 
 	// All other actors
-	if (_vm->getRandom(10) < 5) {
-		switch (_vm->getRandom(4)) {
+	if (getWorld()->chapter != kChapter2 || _index != 8) {
+		if (_field_944 == 4) {
+			Common::Rect frameRect = GraphicResource::getFrameRect(_vm, getWorld()->backgroundImage, 0);
+			processStatus(rnd(frameRect.width() + 200) - 100, rnd(frameRect.height() + 200) - 100, false);
+		} else {
+			// Actor: Crow
+			if (rnd(1000) < 5 || !strcmp(_name, "Crow")) {
+				if (_actionIdx2 != -1) {
+
+					// Process action area
+					int32 areaIndex = getWorld()->getRandomActionAreaIndexById(_actionIdx2);
+					if (areaIndex != -1) {
+
+						ActionArea *area = getWorld()->actions[areaIndex];
+						PolyDefinitions *poly = &getScene()->polygons()->entries[area->polyIdx];
+
+						Common::Point pt(poly->boundingRect.left + rnd(poly->boundingRect.width()),
+						                 poly->boundingRect.top + rnd(poly->boundingRect.height()));
+
+						if (!getSharedData()->getActorUpdateEnabledCheck()) {
+							if (getScene()->isInActionArea(pt, area)) {
+								Common::Point *polyPoint = &poly->points[rnd(poly->count())];
+								processStatus(polyPoint->x, polyPoint->y, false);
+							} else {
+								processStatus(pt.x, pt.y, false);
+							}
+						}
+					}
+				}
+			}
+		}
+	} else {
+		switch (getSharedData()->getActorUpdateEnabledCounter()) {
 		default:
 			break;
 
 		case 0:
-			setPosition(10, 1350, kDirection0, 0);
-			processStatus(1460, -100, false);
+			updateStatusEnabledProcessStatus(1055, 989, 1, 1088, 956);
 			break;
 
 		case 1:
-			setPosition(300, 0, kDirection0, 0);
-			processStatus(1700, 1400, false);
+			updateStatusEnabledProcessStatus(1088, 956, 2, x1 + x2, 900);
 			break;
 
 		case 2:
-			setPosition(1560, -100, kDirection0, 0);
-			processStatus(-300, 1470, false);
+			updateStatusEnabledProcessStatus(1088, 900, 3, 1018, 830);
 			break;
 
 		case 3:
-			setPosition(1150, 1400, kDirection0, 0);
-			processStatus(-250, 0, false);
+			updateStatusEnabledProcessStatus(1018, 830, 4, 970, 830);
+			break;
+
+		case 4:
+			updateStatusEnabledProcessStatus(970, 830, 5, 912, 936);
+			break;
+
+		case 5:
+			updateStatusEnabledProcessStatus(912, 936, 0, 1055, 989);
 			break;
 		}
 	}
 }
 
+void Actor::updateStatusEnabledProcessStatus(int32 testX, int32 testY, uint32 counter, int32 setX, int32 setY) {
+	int32 xsum = x1 + x2;
+	int32 ysum = y1 + y2;
+
+	if (xsum != testX || ysum != testY) {
+		if (rnd(1000) < 5)
+			processStatus(testX, testY, false);
+	} else {
+		getSharedData()->setActorUpdateEnabledCounter(counter);
+
+		if (rnd(1000) < 5)
+			processStatus(setX, setY, false);
+	}
+}
+
 void Actor::updateStatus9() {
-	if (_index == getScene()->getPlayerActorIndex()
+	if (_index == getScene()->getPlayerIndex()
 	 && getWorld()->chapter != kChapter9
 	 && getWorld()->actorType == 0
 	 && _frameIndex == 0
@@ -1003,8 +1116,8 @@ void Actor::updateStatus9() {
 
 	++_frameIndex;
 	if (_frameIndex == _frameCount) {
-		updateStatus(kActorStatusEnabled);
-		_lastScreenUpdate = _vm->screenUpdatesCount;
+		enable();
+		_lastScreenUpdate = _vm->screenUpdateCount;
 	}
 }
 
@@ -1025,7 +1138,33 @@ void Actor::updateStatus12_Chapter11() {
 }
 
 void Actor::updateStatus14() {
-	error("[Actor::updateStatus14] not implemented!");
+	_frameIndex = (_frameIndex + 1) % _frameCount;
+	_lastScreenUpdate = _vm->screenUpdateCount;
+
+	switch (getWorld()->chapter) {
+	default:
+		break;
+
+	case kChapter2:
+		if (_index == 11)
+			updateStatus(kActorStatus12);
+		else if (_index > 12)
+			updateStatus14_Chapter2();
+		break;
+
+	case kChapter11:
+		if (_index >= 10 && _index < 16)
+			updateStatus14_Chapter11();
+		break;
+	}
+}
+
+void Actor::updateStatus14_Chapter2() {
+	error("[Actor::updateStatus14_Chapter2] not implemented!");
+}
+
+void Actor::updateStatus14_Chapter11() {
+	error("[Actor::updateStatus14_Chapter11] not implemented!");
 }
 
 void Actor::updateStatus15_Chapter2() {
@@ -1057,7 +1196,18 @@ void Actor::updateStatus16_Chapter11() {
 }
 
 void Actor::updateStatus17_Chapter2() {
-	error("[Actor::updateStatus17_Chapter2] not implemented!");
+	++_frameIndex;
+
+	if (_frameIndex >= _frameCount) {
+		_frameIndex = 0;
+		updateStatus(kActorStatus14);
+		hide();
+
+		if (_vm->getRandomBit() == 1) {
+			_vm->setGameFlag(kGameFlag219);
+			getSpeech()->playPlayer(133);
+		}
+	}
 }
 
 void Actor::updateStatus18_Chapter2() {

@@ -196,7 +196,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 
 		for (int i = 13; i < 22; i++) {
 			if (getScene()->getActor(i)->isVisible()) {
-				getScene()->setActorUpdateFlag(2);
+				getSharedData()->setActorUpdateFlag(2);
 				break;
 			}
 		}
@@ -272,7 +272,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 			actor->setFrameIndex(0);
 
 			if (actor->isVisible())
-				if (getScene()->getActorUpdateFlag2() < 7)
+				if (getSharedData()->getActorUpdateFlag2() < 7)
 					getSpeech()->playPlayer(452);
 
 			_vm->setGameFlag(kGameFlag219);
@@ -444,7 +444,7 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 
 					if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
 						getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 2));
-						player->updateStatus(kActorStatusEnabled);
+						player->enable();
 					} else {
 						getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
 						player->updateStatus(kActorStatus6);
@@ -461,7 +461,7 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 			if (_vm->isGameFlagSet(kGameFlag1023)) {
 				if (player->getField638()) {
 					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(player->getField638() == 3 ? 2447 : 2448)]->scriptIndex,
-					                         getScene()->getPlayerActorIndex());
+					                         getScene()->getPlayerIndex());
 					_vm->clearGameFlag(kGameFlag1023);
 				} else if (player->getStatus() != kActorStatus6) {
 					_vm->clearGameFlag(kGameFlag1023);
@@ -472,7 +472,7 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 			if (_vm->isGameFlagSet(kGameFlag1022)) {
 				_vm->clearGameFlag(kGameFlag1022);
 				getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2445)]->scriptIndex,
-				                         getScene()->getPlayerActorIndex());
+				                         getScene()->getPlayerIndex());
 			}
 			break;
 		}
@@ -549,7 +549,7 @@ void Special::chapter8(Object *object, ActorIndex actorIndex) {
 				getCursor()->show();
 				getWorld()->motionStatus = 1;
 
-				_vm->clearFlag(kFlagType1);
+				getSharedData()->setFlag(kFlag1, false);
 
 				actor0->show();
 			}
@@ -666,7 +666,7 @@ void Special::chapter9(Object *object, ActorIndex actorIndex) {
 void Special::playChapterSound(Object *object, ActorIndex actorIndex) {
 	ResourceId id = getResourceId(object, actorIndex);
 
-	if (getEncounter()->getFlag(kEncounterFlag2) != 0)
+	if (getSharedData()->getFlag(kFlagEncounter2))
 		return;
 
 	if (id != kResourceNone && getSound()->isPlaying(id))

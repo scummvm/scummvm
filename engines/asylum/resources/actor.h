@@ -143,6 +143,11 @@ public:
 	void update();
 
 	/**
+	 * Enables the actor
+	 */
+	void enable() { updateStatus(kActorStatusEnabled); }
+
+	/**
 	 * Updates the actor status.
 	 *
 	 * @param status The status.
@@ -236,6 +241,7 @@ public:
 	// Static update methods
 	//////////////////////////////////////////////////////////////////////////
 	static void enableActorsChapter2(AsylumEngine *engine);
+	static void updatePlayerChapter9(AsylumEngine *engine, int type);
 
 private:
 	AsylumEngine *_vm;
@@ -318,17 +324,23 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Update methods
 	//////////////////////////////////////////////////////////////////////////
-	int32 _actorUpdateCounter;
-	bool  _enableFromStatus7;
-
 	void updateStatus3_19();
+	void updateStatus19_Player();
+	void updatePumpkin(GameFlag flagToCheck, GameFlag flagToSet, ObjectId objectToUpdate, ObjectId objectToDisable);
+
 	void updateStatusEnabled();
+	void updateStatusEnabledProcessStatus(int32 testX, int32 testY, uint32 counter, int32 setX, int32 setY);
+
 	void updateStatus9();
 	void updateStatus12_Chapter2();
 	void updateStatus12_Chapter2_Actor11();
 	void updateStatus12_Chapter11_Actor1();
 	void updateStatus12_Chapter11();
+
 	void updateStatus14();
+	void updateStatus14_Chapter2();
+	void updateStatus14_Chapter11();
+
 	void updateStatus15_Chapter2();
 	void updateStatus15_Chapter2_Player();
 	void updateStatus15_Chapter2_Actor11();

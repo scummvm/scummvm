@@ -32,8 +32,6 @@
 namespace Asylum {
 
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine), _currentEncounter(NULL) {
-	memset(_flags, 0, sizeof(_flags));
-
 	Common::File file;
 
 	// TODO error checks
@@ -75,23 +73,6 @@ Encounter::~Encounter() {
 
 	// Zero-out passed pointers
 	_vm = NULL;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Flags
-
-int32 Encounter::getFlag(EncounterFlag flag) const {
-	if (flag >= ARRAYSIZE(_flags))
-		error("[Encounter::getFlag] Invalid flag index!");
-
-	return _flags[flag];
-}
-
-void Encounter::setFlag(EncounterFlag flag, int32 val) {
-	if (flag >= ARRAYSIZE(_flags))
-		error("[Encounter::getFlag] Invalid flag index!");
-
-	_flags[flag] = val;
 }
 
 void Encounter::run(int32 encounterIdx, int32 objectId1, int32 objectId2, int32 characterIdx) {

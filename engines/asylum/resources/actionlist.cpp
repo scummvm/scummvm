@@ -350,7 +350,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(ShowCursor)
 	getCursor()->show();
 
-	_vm->clearFlag(kFlagType1);
+	getSharedData()->setFlag(kFlag1, false);
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -385,13 +385,13 @@ IMPLEMENT_OPCODE(PlayAnimation)
 
 	if (object->getField688() == 1) {
 		if (object->flags & kObjectFlag4) {
-			getScene()->setGlobalX(object->x);
-			getScene()->setGlobalY(object->y);
+			getSharedData()->setGlobalX(object->x);
+			getSharedData()->setGlobalY(object->y);
 		} else {
 			Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-			getScene()->setGlobalX(frameRect.left + Common::Rational(frameRect.width(), 2).toInt()  + object->x);
-			getScene()->setGlobalY(frameRect.top  + Common::Rational(frameRect.height(), 2).toInt() + object->y);
+			getSharedData()->setGlobalX(frameRect.left + Common::Rational(frameRect.width(), 2).toInt()  + object->x);
+			getSharedData()->setGlobalY(frameRect.top  + Common::Rational(frameRect.height(), 2).toInt() + object->y);
 		}
 	}
 
@@ -481,7 +481,7 @@ IMPLEMENT_OPCODE(EnableActor)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (actor->getStatus() == kActorStatusDisabled)
-		actor->updateStatus(kActorStatusEnabled);
+		actor->enable();
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -709,10 +709,10 @@ END_OPCODE
 IMPLEMENT_OPCODE(RunEncounter)
 	Encounter *encounter = _vm->encounter();
 
-	encounter->setFlag(kEncounterFlag5, cmd->param5);
+	getSharedData()->setFlag(kFlagEncounter5, cmd->param5);
 
 	if (cmd->param6) {
-		if (encounter->getFlag(kEncounterFlag2))
+		if (getSharedData()->getFlag(kFlagEncounter2))
 			_lineIncrement = 1;
 		else
 			cmd->param6 = 0;
@@ -799,7 +799,7 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub)
 			return;
 
 		case kActorStatus7:
-			actor->updateStatus(kActorStatusEnabled);
+			actor->enable();
 			break;
 
 		case kActorStatus16:
@@ -845,17 +845,17 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2D
 IMPLEMENT_OPCODE(PlayMovie)
-	if (getScene()->matteBarHeight < 170) {
+	if (getSharedData()->getMatteBarHeight() < 170) {
 		_lineIncrement = 1;
 
-		if (!getScene()->matteBarHeight) {
+		if (!getSharedData()->getMatteBarHeight()) {
 			getCursor()->hide();
 			getScene()->makeGreyPalette();
-			getScene()->matteVar1 = 1;
-			getScene()->matteBarHeight = 1;
-			getScene()->matteVar2 = 0;
-			getScene()->mattePlaySound = (cmd->param3 == 0);
-			getScene()->matteInitialized = (cmd->param2 == 0);
+			getSharedData()->setMatteVar1(1);
+			getSharedData()->setMatteBarHeight(1);
+			getSharedData()->setMatteVar2(0);
+			getSharedData()->setMattePlaySound(cmd->param3 == 0);
+			getSharedData()->setMatteInitialized(cmd->param2 == 0);
 			_delayedVideoIndex = cmd->param1;
 		}
 
@@ -872,10 +872,10 @@ IMPLEMENT_OPCODE(PlayMovie)
 		getScreen()->setGammaLevel(getWorld()->currentPaletteId, 0);
 	}
 
-	getScene()->matteBarHeight = 0;
+	getSharedData()->setMatteBarHeight(0);
 	_lineIncrement = 0;
 
-	if (!getScene()->mattePlaySound && _currentScript->commands[0].numLines != 0) {
+	if (!getSharedData()->getMattePlaySound() && _currentScript->commands[0].numLines != 0) {
 		bool found = true;
 		int index = 0;
 
@@ -893,11 +893,11 @@ IMPLEMENT_OPCODE(PlayMovie)
 			check = true;
 	}
 
-	if (!check && getScene()->matteVar2 == 0 && getWorld()->musicCurrentResourceIndex != kMusicStopped)
+	if (!check && getSharedData()->getMatteVar2() == 0 && getWorld()->musicCurrentResourceIndex != kMusicStopped)
 		_vm->sound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicCurrentResourceIndex));
 
 	getCursor()->show();
-	getScene()->matteVar2 = 0;
+	getSharedData()->setMatteVar2(0);
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -925,7 +925,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(ResetSceneRect)
 	getWorld()->sceneRectIdx = (uint8)LOBYTE(cmd->param1);
 	getScreen()->paletteFade(0, 25, 10);
-	_vm->setFlag(kFlagTypeSceneRectChanged);
+	getSharedData()->setFlag(kFlagSceneRectChanged, true);
 
 	getWorld()->xLeft = getWorld()->sceneRects[getWorld()->sceneRectIdx].left;
 	getWorld()->yTop  = getWorld()->sceneRects[getWorld()->sceneRectIdx].top;
@@ -1074,7 +1074,7 @@ IMPLEMENT_OPCODE(UpdateWideScreen)
 		cmd->param1 = 0;
 		_lineIncrement = 0;
 
-		getScene()->matteBarHeight = 0;
+		getSharedData()->setMatteBarHeight(0);
 	} else {
 		getScreen()->drawWideScreen((int16)(4 * barSize));
 
@@ -1087,7 +1087,7 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3F
 IMPLEMENT_OPCODE(JumpIfActor)
-	ActorIndex index = (cmd->param1 == kActorInvalid) ? getScene()->getPlayerActorIndex() : cmd->param1;
+	ActorIndex index = (cmd->param1 == kActorInvalid) ? getScene()->getPlayerIndex() : cmd->param1;
 
 	if (_currentQueueEntry.actorIndex != index)
 		_currentLine = cmd->param2 - 1;
@@ -1106,8 +1106,8 @@ IMPLEMENT_OPCODE(PlaySpeechScene)
 			_vm->setGameFlag(kGameFlagScriptProcessing);
 			cmd->param4 = 2;
 			if (cmd->param6) {
-				_vm->setFlag(kFlagType1);
-				_vm->setFlag(kFlagType2);
+				getSharedData()->setFlag(kFlag1, true);
+				getSharedData()->setFlag(kFlag2, true);
 			}
 			_lineIncrement = 1;
 		}
@@ -1128,8 +1128,8 @@ IMPLEMENT_OPCODE(PlaySpeechScene)
 
 	if (cmd->param3) {
 		if (cmd->param6) {
-			_vm->clearFlag(kFlagType1);
-			_vm->clearFlag(kFlagType2);
+			getSharedData()->setFlag(kFlag1, false);
+			getSharedData()->setFlag(kFlag2, false);
 
 			return;
 		} else {
@@ -1140,8 +1140,8 @@ IMPLEMENT_OPCODE(PlaySpeechScene)
 	if (!cmd->param6) {
 		cmd->param6 = 1;
 	} else {
-		_vm->clearFlag(kFlagType1);
-		_vm->clearFlag(kFlagType2);
+		getSharedData()->setFlag(kFlag1, false);
+		getSharedData()->setFlag(kFlag2, false);
 	}
 END_OPCODE
 
@@ -1158,8 +1158,8 @@ IMPLEMENT_OPCODE(PlaySpeech)
 			_vm->setGameFlag(kGameFlagScriptProcessing);
 			cmd->param4 = 2;
 			if (cmd->param6) {
-				_vm->setFlag(kFlagType1);
-				_vm->setFlag(kFlagType2);
+				getSharedData()->setFlag(kFlag1, true);
+				getSharedData()->setFlag(kFlag2, true);
 			}
 			_lineIncrement = 1;
 		}
@@ -1180,8 +1180,8 @@ IMPLEMENT_OPCODE(PlaySpeech)
 
 	if (cmd->param3) {
 		if (cmd->param6) {
-			_vm->clearFlag(kFlagType1);
-			_vm->clearFlag(kFlagType2);
+			getSharedData()->setFlag(kFlag1, false);
+			getSharedData()->setFlag(kFlag2, false);
 
 			return;
 		} else {
@@ -1192,8 +1192,8 @@ IMPLEMENT_OPCODE(PlaySpeech)
 	if (!cmd->param6) {
 		cmd->param6 = 1;
 	} else {
-		_vm->clearFlag(kFlagType1);
-		_vm->clearFlag(kFlagType2);
+		getSharedData()->setFlag(kFlag1, false);
+		getSharedData()->setFlag(kFlag2, false);
 	}
 END_OPCODE
 
@@ -1224,8 +1224,8 @@ IMPLEMENT_OPCODE(PlaySpeechScene2)
 			return;
 		}
 
-		_vm->clearFlag(kFlagType1);
-		_vm->clearFlag(kFlagType2);
+		getSharedData()->setFlag(kFlag1, false);
+		getSharedData()->setFlag(kFlag2, false);
 		return;
 	}
 
@@ -1237,8 +1237,8 @@ IMPLEMENT_OPCODE(PlaySpeechScene2)
 		cmd->param5 = 2;
 
 		if (cmd->param7) {
-			_vm->clearFlag(kFlagType1);
-			_vm->clearFlag(kFlagType2);
+			getSharedData()->setFlag(kFlag1, false);
+			getSharedData()->setFlag(kFlag2, false);
 		}
 
 		_lineIncrement = 1;
@@ -1302,7 +1302,7 @@ IMPLEMENT_OPCODE(_unk46)
 		} else {
 			cmd->param6 = 0;
 			if (cmd->param5) {
-				getScene()->getActor(cmd->param5)->updateStatus(kActorStatusEnabled);
+				getScene()->getActor(cmd->param5)->enable();
 			} else if (cmd->param4 != cmd->param3 && cmd->param4) {
 				getWorld()->getObjectById((ObjectId)cmd->param3)->disable();
 
@@ -1346,19 +1346,19 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x48
 IMPLEMENT_OPCODE(_unk48_MATTE_01)
-	getScene()->matteVar1 = 0;
-	getScene()->matteInitialized = true;
+	getSharedData()->setMatteVar1(0);
+	getSharedData()->setMatteInitialized(true);
 
-	if (getScene()->matteBarHeight >= 170) {
-		getScene()->matteBarHeight = 0;
+	if (getSharedData()->getMatteBarHeight() >= 170) {
+		getSharedData()->setMatteBarHeight(0);
 		_lineIncrement = 0;
 		getCursor()->show();
 	} else {
 		_lineIncrement = 1;
 
-		if (!getScene()->matteBarHeight) {
+		if (!getSharedData()->getMatteBarHeight()) {
 			getCursor()->hide();
-			getScene()->matteBarHeight = 1;
+			getSharedData()->setMatteBarHeight(1);
 		}
 	}
 END_OPCODE
@@ -1366,20 +1366,20 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x49
 IMPLEMENT_OPCODE(_unk49_MATTE_90)
-	getScene()->matteVar1 = 0;
-	getScene()->matteInitialized = true;
-	getScene()->mattePlaySound = true;
+	getSharedData()->setMatteVar1(0);
+	getSharedData()->setMatteInitialized(true);
+	getSharedData()->setMattePlaySound(true);
 
-	if (getScene()->matteBarHeight >= 170) {
-		getScene()->matteBarHeight = 0;
+	if (getSharedData()->getMatteBarHeight() >= 170) {
+		getSharedData()->setMatteBarHeight(0);
 		_lineIncrement = 0;
 		getCursor()->show();
 	} else {
 		_lineIncrement = 1;
 
-		if (!getScene()->matteBarHeight) {
+		if (!getSharedData()->getMatteBarHeight()) {
 			getCursor()->hide();
-			getScene()->matteBarHeight = 90;
+			getSharedData()->setMatteBarHeight(90);
 		}
 	}
 END_OPCODE
@@ -1434,7 +1434,7 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4F
 IMPLEMENT_OPCODE(ClearScreen)
-	getScene()->setSkipDrawScene((bool)cmd->param1);
+	getSharedData()->setSkipDrawScene((bool)cmd->param1);
 
 	if (cmd->param1)
 		getScreen()->clearScreen();
@@ -1698,7 +1698,7 @@ IMPLEMENT_OPCODE(_unk61)
 			_lineIncrement = 1;
 		}
 	} else {
-		getScene()->updatePlayerChapter9(cmd->param1);
+		Actor::updatePlayerChapter9(_vm, cmd->param1);
 		cmd->param2 = 1;
 		_lineIncrement = 1;
 	}
@@ -1714,8 +1714,8 @@ END_OPCODE
 // Opcode 0x63
 IMPLEMENT_OPCODE(_unk63)
 	if (cmd->param1) {
-		_vm->setFlag(kFlagType1);
-		_vm->setFlag(kFlagType2);
+		getSharedData()->setFlag(kFlag1, true);
+		getSharedData()->setFlag(kFlag2, true);
 	}
 
 	if (_vm->sound()->isPlaying(getSpeech()->getSoundResourceId())) {
