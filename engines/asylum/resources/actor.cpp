@@ -827,15 +827,71 @@ bool Actor::process_408B20(Common::Point *point, ActorDirection direction, int c
 }
 
 void Actor::process_41BC00(int32 reactionIndex, int32 numberValue01Add) {
-	error("[Actor::process_41BC00] not implemented!");
+	if (reactionIndex > 16)
+		return;
+
+	uint32 count = 0;
+	for (int i = 0; i < 8; i++)
+		if (_reaction[i])
+			count++;
+
+	if (count == 8)
+		return;
+
+	if (!process_41BDB0(reactionIndex, false))
+		_reaction[count] = reactionIndex;
+
+	if (numberValue01Add)
+		_numberValue01 += numberValue01Add;
+
+	getSound()->playSound(MAKE_RESOURCE(kResourcePackHive, 0));
 }
 
 void Actor::process_41BCC0(int32 reactionIndex, int32 numberValue01Substract) {
-	error("[Actor::process_41BC00] not implemented!");
+	if (reactionIndex > 16)
+		return;
+
+	if (numberValue01Substract) {
+		_numberValue01 -= numberValue01Substract;
+		if (_numberValue01 < 0)
+			_numberValue01 = 0;
+	}
+
+	if (!numberValue01Substract || !_numberValue01) {
+
+		uint32 count = 0;
+		for (int i = 0; i < 8; i++)
+			if (_reaction[i])
+				count++;
+
+		if (count == 8)
+			return;
+
+		if (count == 7) {
+			_reaction[7] = 0;
+		} else {
+			memcpy(&_reaction[count], &_reaction[count + 1], 28 - 4 * count);
+			_reaction[7] = 0;
+		}
+	}
 }
 
-bool Actor::process_41BDB0(int32 reactionIndex, bool testNumberValue01) {
-	error("[Actor::process_41BC00] not implemented!");
+bool Actor::process_41BDB0(int32 reactionIndex, int32 testNumberValue01) {
+	if (reactionIndex > 16)
+		return false;
+
+	uint32 count = 0;
+	for (int i = 0; i < 8; i++)
+		if (_reaction[i])
+			count++;
+
+	if (count == 8)
+		return false;
+
+	if (testNumberValue01)
+		return _numberValue01 >= testNumberValue01;
+
+	return true;
 }
 
 void Actor::update_40DE20() {

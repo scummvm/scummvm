@@ -224,7 +224,7 @@ public:
 	bool process_408B20(Common::Point *point, ActorDirection direction, int count, bool hasDelta);
 	void process_41BC00(int32 reactionIndex, int32 numberValue01Add);
 	void process_41BCC0(int32 reactionIndex, int32 numberValue01Substract);
-	bool process_41BDB0(int32 reactionIndex, bool testNumberValue01);
+	bool process_41BDB0(int32 reactionIndex, int32 testNumberValue01);
 	void update_40DE20();
 
 	/**
