@@ -88,7 +88,6 @@ protected:
 
 	typedef T	SingletonBaseType;
 
-protected:
 	static T *_singleton;
 };
 
