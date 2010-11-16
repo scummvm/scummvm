@@ -40,7 +40,7 @@ class ResourcePack;
 
 typedef struct GraphicQueueItem {
 	ResourceId resourceId;
-	int32 frameIdx;
+	uint32 frameIdx;
 	int32 x;
 	int32 y;
 	int32 flags;
@@ -56,25 +56,25 @@ public:
 
 	void draw(GraphicResource *resource, uint32 frameIndex, int32 x, int32 y, int32 flags);
 
-	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
+	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height);
 	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 	void copyBackBufferToScreen();
-	void copyRectToScreen(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
-	void copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
-	void setPalette(byte *rgbPalette);
+	void copyRectToScreen(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) const;
+	void copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) const;
+	void setPalette(byte *rgbPalette) const;
 	void setPalette(ResourceId id);
 
 	void setGammaLevel(ResourceId id, int32 val);
 
-	void drawWideScreen(int16 barSize);
-	void clearScreen();
+	void drawWideScreen(int16 barSize) const;
+	void clearScreen() const;
 
 	void paletteFade(uint32 red, int32 milliseconds, int32 param);
 	void startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param);
 
-	void addGraphicToQueue(ResourceId resourceId, int32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority);
-	void addCrossFadeGraphicToQueue(ResourceId resourceId, int32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority);
-	void addGraphicToQueue(GraphicQueueItem item);
+	void addGraphicToQueue(ResourceId resourceId, uint32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority);
+	void addCrossFadeGraphicToQueue(ResourceId resourceId, uint32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority);
+	void addGraphicToQueue(GraphicQueueItem const &item);
 	void drawGraphicsInQueue();
 	void clearGraphicsInQueue();
 	void graphicsSelectionSort();

@@ -31,7 +31,7 @@
 
 namespace Asylum {
 
-Encounter::Encounter(AsylumEngine *engine) : _vm(engine) {
+Encounter::Encounter(AsylumEngine *engine) : _vm(engine), _currentEncounter(NULL) {
 	memset(_flags, 0, sizeof(_flags));
 
 	Common::File file;
@@ -39,7 +39,7 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine) {
 	// TODO error checks
 	file.open("sntrm.dat");
 
-	int16 _count = file.readSint16LE();
+	uint16 _count = file.readUint16LE();
 
 	_variables = (int16*)malloc(_count);
 	file.read(_variables, _count);
@@ -69,18 +69,26 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine) {
 	file.close();
 }
 
+Encounter::~Encounter() {
+	free(_variables);
+	_currentEncounter = NULL;
+
+	// Zero-out passed pointers
+	_vm = NULL;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Flags
 
-int32 Encounter::getFlag(EncounterFlag flag) {
-	if (flag > ARRAYSIZE(_flags))
+int32 Encounter::getFlag(EncounterFlag flag) const {
+	if (flag >= ARRAYSIZE(_flags))
 		error("[Encounter::getFlag] Invalid flag index!");
 
 	return _flags[flag];
 }
 
 void Encounter::setFlag(EncounterFlag flag, int32 val) {
-	if (flag > ARRAYSIZE(_flags))
+	if (flag >= ARRAYSIZE(_flags))
 		error("[Encounter::getFlag] Invalid flag index!");
 
 	_flags[flag] = val;
@@ -143,10 +151,6 @@ void Encounter::run(int32 encounterIdx, int32 objectId1, int32 objectId2, int32 
 	  return result;
 	}
 	 */
-}
-
-Encounter::~Encounter() {
-	free(_variables);
 }
 
 }

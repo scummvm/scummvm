@@ -42,6 +42,8 @@ Object::Object(AsylumEngine *engine) : _vm(engine) {
 }
 
 Object::~Object() {
+	// Zero passed pointers
+	_vm = NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////

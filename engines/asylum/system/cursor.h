@@ -47,12 +47,12 @@ public:
 	/**
 	 * Show the current cursor
 	 */
-	void show();
+	void show() const;
 
 	/**
 	 * Hide the current cursor
 	 */
-	void hide();
+	void hide() const;
 
 	/**
 	 * Set the current cursor instance to the graphic resource provide.
@@ -60,7 +60,7 @@ public:
 	 * frame count should be derived from the graphic resource as opposed to being
 	 * explicitly set.
 	 */
-	void set(ResourceId resourceId, int32 cntr = 0, int32 flgs = 0, int32 frames = -1);
+	void set(ResourceId resourceId, int32 cntr = 0, byte flgs = 0, int32 frames = -1);
 
 	/**
 	 * Set the x/y coordinates of the cursor
@@ -98,7 +98,7 @@ public:
 
 	// typedef struct CursorInfo {
 	ResourceId graphicResourceId;
-	int32 currentFrame; // assuming field_4c is the current frame pointer
+	uint32 currentFrame; // assuming field_4c is the current frame pointer
 	                    // since it's generally initialized to zero
 	int32 frameCount;
 	int32 counter; // cursor counter

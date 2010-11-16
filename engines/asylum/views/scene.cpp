@@ -57,7 +57,7 @@ int g_debugPolygons;
 int g_debugObjects;
 int g_debugScrolling;
 
-Scene::Scene(AsylumEngine *engine): _vm(engine),
+Scene::Scene(AsylumEngine *engine): _vm(engine), _ev(NULL),
 	_actions(NULL), _special(NULL), _speech(NULL), _title(NULL), _polygons(NULL), _ws(NULL) {
 
 	// Initialize data
@@ -81,20 +81,35 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 	_sceneXLeft = _sceneYTop = 0;
 	_actorUpdateFlag = false;
 	_actorUpdateFlag2 = false;
+
+	//
+	matteBarHeight = 0;
+	matteVar1 = 0;
+	matteVar2 = 0;
+	mattePlaySound = false;
+	matteInitialized = false;
+
+	memset(&savedResourceIds, 0, sizeof(savedResourceIds));
 }
 
 Scene::~Scene() {
 	// Unload the associated resources
 	getResource()->unload(_packId);
 
-	delete _ws;
-	delete _polygons;
 	delete _actions;
+	//delete _blowUp;
+	delete _special;
+	delete _speech;
+	delete _title;
+	delete _polygons;
+	delete _ws;
 
 	delete _bgResource;
-	//delete _blowUp;
+	_background = NULL;
 
-	delete _title;
+	// Zero passed pointers
+	_vm = NULL;
+	_ev = NULL;
 }
 
 void Scene::enter(ResourcePackId packId) {
@@ -135,8 +150,8 @@ void Scene::enter(ResourcePackId packId) {
 	// Update current player bounding rectangle
 	Actor *player = getActor();
 	Common::Rect *boundingRect = player->getBoundingRect();
-	boundingRect->bottom = player->y2;
-	boundingRect->right  = player->x2 * 2;
+	boundingRect->bottom = (int16)player->y2;
+	boundingRect->right  = (int16)(player->x2 * 2);
 
 	// Adjust scene bounding rect
 	_ws->boundingRect = Common::Rect(195, 115, 445 - boundingRect->right, 345 - boundingRect->bottom);
@@ -161,8 +176,8 @@ void Scene::enter(ResourcePackId packId) {
 			actor->x1 -= actor->x2;
 			actor->y1 -= actor->y2;
 
-			actor->getBoundingRect()->bottom = actor->y2;
-			actor->getBoundingRect()->right  = 2 * actor->x2;
+			actor->getBoundingRect()->bottom = (int16)actor->y2;
+			actor->getBoundingRect()->right  = (int16)(2 * actor->x2);
 		}
 	}
 
@@ -220,7 +235,7 @@ void Scene::load(ResourcePackId packId) {
 	char sceneTag[6];
 	Common::File* fd = new Common::File;
 
-	if (!fd->exists(filename))
+	if (!Common::File::exists(filename))
 		error("Scene file doesn't exist %s", filename);
 
 	fd->open(filename);
@@ -257,11 +272,11 @@ void Scene::load(ResourcePackId packId) {
 
 	_bgResource    = new GraphicResource(_vm, _ws->backgroundImage);
 	//_blowUp        = 0;
-	_background    = 0;
+	_background    = NULL;
 	_leftClick     = false;
 	_rightButton   = false;
 	_isActive      = false;
-	_skipDrawScene = 0;
+	_skipDrawScene = false;
 
 	g_debugPolygons  = 0;
 	g_debugObjects  = 0;
@@ -287,15 +302,24 @@ void Scene::load(ResourcePackId packId) {
 }
 
 Actor* Scene::getActor(ActorIndex index) {
+	if (!_ws)
+		error("[Scene::getActor] WorldStats not initialized properly!");
+
 	ActorIndex computedIndex =  (index != -1) ? index : _playerActorIdx;
 
-	if (computedIndex < 0 || computedIndex >= (int)_ws->actors.size())
+	if (computedIndex < 0 || computedIndex >= (int16)_ws->actors.size())
 		error("[Scene::getActor] Invalid actor index: %d ([0-%d] allowed)", computedIndex, _ws->actors.size() - 1);
 
 	return _ws->actors[computedIndex];
 }
 
 void Scene::setScenePosition(int x, int y) {
+	if (!_ws)
+		error("[Scene::setScenePosition] WorldStats not initialized properly!");
+
+	if (!_bgResource)
+		error("[Scene::setScenePosition] Scene resources not initialized properly!");
+
 	GraphicFrame *bg = _bgResource->getFrame(0);
 	//_startX = x;
 	//_startY = y;
@@ -319,6 +343,12 @@ void Scene::setScenePosition(int x, int y) {
 }
 
 void Scene::handleEvent(Common::Event *event, bool doUpdate) {
+	if (!_ws)
+		error("[Scene::handleEvent] WorldStats not initialized properly!");
+
+	if (!_title)
+		error("[Scene::handleEvent] Scene title not initialized properly!");
+
 	_ev = event;
 
 	switch (_ev->type) {
@@ -390,6 +420,12 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 }
 
 void Scene::activate() {
+	if (!_ws)
+		error("[Scene::activate] WorldStats not initialized properly!");
+
+	if (!_bgResource)
+		error("[Scene::activate] Scene resources not initialized properly!");
+
 	//////////////////////////////////////////////////////////////////////////
 	// FIXME: get rid of this?
 
@@ -438,19 +474,19 @@ void Scene::updateMouse() {
 	// .text:0040A1B0 getCharacterScreenPosition()
 	// which was only ever called at this point, so
 	// inlining it for simplicity
-	pt.x = act->x1 -_ws->xLeft;
-	pt.y = act->y1 -_ws->yTop;
+	pt.x = (int16)(act->x1 -_ws->xLeft);
+	pt.y = (int16)(act->y1 -_ws->yTop);
 
 	if (_packId != 2 || _playerActorIdx != 10) {
 		actorPos.left   = pt.x + 20;
 		actorPos.top    = pt.y;
-		actorPos.right  = pt.x + 2 * act->x2;
-		actorPos.bottom = pt.y + act->y2;
+		actorPos.right  = (int16)(pt.x + 2 * act->x2);
+		actorPos.bottom = (int16)(pt.y + act->y2);
 	} else {
 		actorPos.left   = pt.x + 50;
 		actorPos.top    = pt.y + 60;
-		actorPos.right  = pt.x + getActor(10)->x2 + 10;
-		actorPos.bottom = pt.y + getActor(10)->y2 - 20;
+		actorPos.right  = (int16)(pt.x + getActor(10)->x2 + 10);
+		actorPos.bottom = (int16)(pt.y + getActor(10)->y2 - 20);
 	}
 
 	ActorDirection dir = kDirectionInvalid;
@@ -697,6 +733,9 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 }
 
 int32 Scene::hitTestObject(const Common::Point pt) {
+	if (!_ws)
+		error("[Scene::hitTestObject] WorldStats not initialized properly!");
+
 	int32 targetIdx = -1;
 	for (uint32 i = 0; i < _ws->objects.size(); i++) {
 		Object *object = _ws->objects[i];
@@ -739,6 +778,12 @@ int32 Scene::hitTestActionArea(const Common::Point pt) {
 }
 
 int32 Scene::findActionArea(const Common::Point pt) {
+	if (!_ws)
+		error("[Scene::findActionArea] WorldStats not initialized properly!");
+
+	if (!_polygons)
+		error("[Scene::findActionArea] Polygons not initialized properly!");
+
 	// TODO
 	// This is a VERY loose implementation of the target
 	// function, as this doesn't do any of the flag checking
@@ -756,6 +801,9 @@ int32 Scene::findActionArea(const Common::Point pt) {
 }
 
 ResourceId Scene::hitTestScene(const Common::Point pt, HitType &type) {
+	if (!_ws)
+		error("[Scene::hitTestScene] WorldStats not initialized properly!");
+
 	int32 top  = pt.x + _ws->xLeft;
 	int32 left = pt.y + _ws->yTop;
 	type = kHitNone;
@@ -803,16 +851,25 @@ void Scene::changePlayer(ActorIndex index) {
 }
 
 void Scene::updateActors() {
+	if (!_ws)
+		error("[Scene::updateActors] WorldStats not initialized properly!");
+
 	for (uint32 i = 0; i < _ws->actors.size(); i++)
 		_ws->actors[i]->update();
 }
 
 void Scene::updateObjects() {
+	if (!_ws)
+		error("[Scene::updateObjects] WorldStats not initialized properly!");
+
 	for (uint32 i = 0; i < _ws->objects.size(); i++)
 		_ws->objects[i]->update();
 }
 
 void Scene::updateAmbientSounds() {
+	if (!_ws)
+		error("[Scene::updateAmbientSounds] WorldStats not initialized properly!");
+
 	if (Config.performance <= 3)
 		return;
 
@@ -1022,6 +1079,9 @@ void Scene::updateAdjustScreen() {
 }
 
 bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkSceneCoords, int32 *param) {
+	if (!_ws)
+		error("[Scene::updateSceneCoordinates] WorldStats not initialized properly!");
+
 	Common::Rect *sr = &_ws->sceneRects[_ws->sceneRectIdx];
 
 	int32 *targetX = &_ws->coordinates[0];
@@ -1092,6 +1152,9 @@ void Scene::adjustCoordinates(int32 x, int32 y, Common::Point *point) {
 	if (!point)
 		error("[Scene::adjustCoordinates] Invalid point parameter!");
 
+	if (!_ws)
+		error("[Scene::adjustCoordinates] WorldStats not initialized properly!");
+
 	point->x = x - _ws->xLeft;
 	point->y = y - _ws->yTop;
 }
@@ -1100,6 +1163,9 @@ void Scene::adjustCoordinates(int32 x, int32 y, Common::Point *point) {
 // Scene drawing
 //////////////////////////////////////////////////////////////////////////
 int Scene::drawScene() {
+	if (!_ws)
+		error("[Scene::drawScene] WorldStats not initialized properly!");
+
 	_vm->screen()->clearGraphicsInQueue();
 
 	if (_skipDrawScene) {
@@ -1139,6 +1205,9 @@ bool Scene::updateListCompare(const UpdateItem &item1, const UpdateItem &item2) 
 }
 
 void Scene::buildUpdateList() {
+	if (!_ws)
+		error("[Scene::buildUpdateList] WorldStats not initialized properly!");
+
 	_updateList.clear();
 
 	for (uint32 i = 0; i < _ws->actors.size(); i++) {
@@ -1158,6 +1227,9 @@ void Scene::buildUpdateList() {
 }
 
 void Scene::processUpdateList() {
+	if (!_ws)
+		error("[Scene::processUpdateList] WorldStats not initialized properly!");
+
 	for (uint32 i = 0; i < _updateList.size(); i++) {
 		Actor *actor = getActor(_updateList[i].index);
 		int32 priority = _updateList[i].priority;
@@ -1342,6 +1414,9 @@ bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {
 }
 
 void Scene::getActorPosition(Actor *actor, Common::Point *pt) {
+	if (!_ws)
+		error("[Scene::getActorPosition] WorldStats not initialized properly!");
+
 	pt->x = actor->x1 - _ws->xLeft;
 	pt->y = actor->y1 - _ws->yTop;
 }
@@ -1350,6 +1425,9 @@ void Scene::getActorPosition(Actor *actor, Common::Point *pt) {
 // ----------------------------------
 
 void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
+	if (!_ws)
+		error("[Scene::copyToBackBufferClipped] WorldStats not initialized properly!");
+
 	Common::Rect screenRect(_ws->xLeft, _ws->yTop, _ws->xLeft + 640, _ws->yTop + 480);
 	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
 	animRect.clip(screenRect);
@@ -1383,6 +1461,9 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 // ----------------------------------
 
 void Scene::debugScreenScrolling(GraphicFrame *bg) {
+	if (!_ws)
+		error("[Scene::debugScreenScrolling] WorldStats not initialized properly!");
+
 	// Horizontal scrolling
 	if (getCursor()->position().x < SCREEN_EDGES && _ws->xLeft >= SCROLL_STEP)
 		_ws->xLeft -= SCROLL_STEP;
@@ -1419,6 +1500,9 @@ void Scene::debugShowWalkRegion(PolyDefinitions *poly) {
 
 // POLYGONS DEBUG
 void Scene::debugShowPolygons() {
+	if (!_polygons)
+		error("[Scene::debugShowPolygons] Polygons not initialized properly!");
+
 	for (int32 p = 0; p < _polygons->numEntries; p++) {
 		Graphics::Surface surface;
 		PolyDefinitions poly = _polygons->entries[p];
@@ -1443,6 +1527,9 @@ void Scene::debugShowPolygons() {
 
 // OBJECT DEBUGGING
 void Scene::debugShowObjects() {
+	if (!_ws)
+		error("[Scene::debugShowObjects] WorldStats not initialized properly!");
+
 	for (uint32 p = 0; p < _ws->objects.size(); p++) {
 		Graphics::Surface surface;
 		Object *object = _ws->objects[p];

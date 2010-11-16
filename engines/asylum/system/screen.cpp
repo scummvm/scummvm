@@ -42,6 +42,9 @@ Screen::Screen(AsylumEngine *vm) : _vm(vm) {
 
 Screen::~Screen() {
 	_backBuffer.free();
+
+	// Zero-out passed pointers
+	_vm = NULL;
 }
 
 void Screen::draw(GraphicResource *resource, uint32 frameIndex, int32 x, int32 y, int32 flags) {
@@ -49,7 +52,7 @@ void Screen::draw(GraphicResource *resource, uint32 frameIndex, int32 x, int32 y
 	// Get the frame to draw
 	GraphicFrame *frame = resource->getFrame(frameIndex);
 
-	copyToBackBuffer(((byte *)frame->surface.pixels) - y * frame->surface.w - x,
+	copyToBackBuffer(((byte *)frame->surface.pixels) - (y * frame->surface.w + x),
 	                 frame->surface.w,
 	                 0,
 	                 0,
@@ -61,13 +64,11 @@ void Screen::copyBackBufferToScreen() {
 	_vm->_system->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
 }
 
-void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) {
-	int32 h = height;
-	int32 w = width;
+void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height) {
 	byte *dest = (byte *)_backBuffer.pixels;
 
-	while (h--) {
-		memcpy(dest + y * _backBuffer.pitch + x, buffer, w);
+	while (height--) {
+		memcpy(dest + y * _backBuffer.pitch + x, buffer, width);
 		dest += 640;
 		buffer += pitch;
 	}
@@ -90,11 +91,11 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x
 	}
 }
 
-void Screen::copyRectToScreen(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) {
+void Screen::copyRectToScreen(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) const{
 	_vm->_system->copyRectToScreen(buffer, pitch, x, y, width, height);
 }
 
-void Screen::copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) {
+void Screen::copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) const {
 	byte *screenBuffer = (byte *)_vm->_system->lockScreen()->pixels;
 
 	int32 left = (x < 0) ? -x : 0;
@@ -117,7 +118,7 @@ void Screen::setPalette(ResourceId id) {
 	setPalette(getResource()->get(id)->data + 32);
 }
 
-void Screen::setPalette(byte *rgbPalette) {
+void Screen::setPalette(byte *rgbPalette) const {
 	byte palette[256 * 4];
 	byte *p = rgbPalette;
 
@@ -139,7 +140,7 @@ void Screen::setGammaLevel(ResourceId id, int32 val) {
 	warning("[Screen::setGammaLevel] not implemented");
 }
 
-void Screen::drawWideScreen(int16 barSize) {
+void Screen::drawWideScreen(int16 barSize) const {
 	if (barSize > 0) {
 
 		_vm->_system->lockScreen()->fillRect(Common::Rect(0, 0, 640, barSize), 0);
@@ -149,7 +150,7 @@ void Screen::drawWideScreen(int16 barSize) {
 	}
 }
 
-void Screen::clearScreen() {
+void Screen::clearScreen() const {
 	_vm->_system->fillScreen(0);
 }
 
@@ -161,7 +162,7 @@ void Screen::startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 p
 	error("[Screen::startPaletteFade] not implemented");
 }
 
-void Screen::addGraphicToQueue(ResourceId resourceId, int32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority) {
+void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority) {
 	GraphicQueueItem item;
 	item.resourceId = resourceId;
 	item.x = x;
@@ -174,11 +175,11 @@ void Screen::addGraphicToQueue(ResourceId resourceId, int32 frameIdx, int32 x, i
 	_queueItems.push_back(item);
 }
 
-void Screen::addCrossFadeGraphicToQueue(ResourceId resourceId, int32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority) {
+void Screen::addCrossFadeGraphicToQueue(ResourceId resourceId, uint32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority) {
 	error("[Screen::addCrossFadeGraphicToQueue] not implemented");
 }
 
-void Screen::addGraphicToQueue(GraphicQueueItem item) {
+void Screen::addGraphicToQueue(GraphicQueueItem const &item) {
 	_queueItems.push_back(item);
 }
 

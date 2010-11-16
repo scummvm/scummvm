@@ -34,6 +34,68 @@
 namespace Asylum {
 
 WorldStats::WorldStats(Common::SeekableReadStream *stream, Scene *scene) : _scene(scene) {
+	// Init values
+	size = 0;
+	numEntries = 0;
+	chapter = kChapterNone;
+	xLeft = 0;
+	yTop = 0;
+	backgroundImage = kResourceNone;
+	curScrollUp = kResourceNone;
+	curScrollUpLeft = kResourceNone;
+	curScrollLeft = kResourceNone;
+	curScrollDownLeft = kResourceNone;
+	curScrollDown = kResourceNone;
+	curScrollDownRight = kResourceNone;
+	curScrollRight = kResourceNone;
+	curScrollUpRight = kResourceNone;
+	curHand = kResourceNone;
+	curMagnifyingGlass = kResourceNone;
+	curTalkNPC = kResourceNone;
+	curGrabPointer = kResourceNone;
+	curTalkNPC2 = kResourceNone;
+	font1 = kResourceNone;
+	font2 = kResourceNone;
+	font3 = kResourceNone;
+	currentPaletteId = kResourceNone;
+	cellShadeMask1 = 0;
+	cellShadeMask2 = 0;
+	cellShadeMask3 = 0;
+	unused = 0;
+	smallCurUp = 0;
+	smallCurDown = 0;
+	encounterFrameBg = 0;
+	width = 0;
+	height = 0;
+	motionStatus = 0;
+	field_8C = 0;
+	memset(&coordinates, 0, sizeof(coordinates));
+	stereoReversedFlag = 0;
+	sceneRectIdx = 0;
+	memset(&field_11D, 0, sizeof(field_11D));
+	field_120 = 0;
+	scriptIndex = 0;
+	memset(&graphicResourceIds, kResourceNone, sizeof(graphicResourceIds));
+	sceneTitleGraphicResourceId = kResourceNone;
+	sceneTitlePaletteResourceId = kResourceNone;
+	actorType = 0;
+	memset(&soundResourceIds, kResourceNone, sizeof(soundResourceIds));
+
+	numAmbientSound = 0;
+	musicStatus = 0;
+	musicCurrentResourceIndex = 0;
+	musicFlag = 0;
+	musicResourceId = kResourceNone;
+	musicStatusExt = 0;
+
+	field_E860C = 0;
+	memset(&field_E8610, 0, sizeof(field_E8610));
+	memset(&field_E8628, 0, sizeof(field_E8628));
+	memset(&wheels, 0, sizeof(wheels));
+	tickCount1 = 0;
+	memset(&field_E8660, 0, sizeof(field_E8660));
+
+	// Load data
 	load(stream);
 }
 
@@ -41,6 +103,9 @@ WorldStats::~WorldStats() {
 	CLEAR_ARRAY(Object, objects);
 	CLEAR_ARRAY(Actor, actors);
 	CLEAR_ARRAY(ActionArea, actions);
+
+	// Zero-out passed pointers
+	_scene = NULL;
 }
 
 // FIXME: load necessary World Stats content
@@ -52,10 +117,10 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	xLeft      = stream->readSint32LE();
 	yTop       = stream->readSint32LE();
 
-	boundingRect.left   = stream->readSint32LE() & 0xFFFF;
-	boundingRect.top    = stream->readSint32LE() & 0xFFFF;
-	boundingRect.right  = stream->readSint32LE() & 0xFFFF;
-	boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
+	boundingRect.left   = (int16)(stream->readSint32LE() & 0xFFFF);
+	boundingRect.top    = (int16)(stream->readSint32LE() & 0xFFFF);
+	boundingRect.right  = (int16)(stream->readSint32LE() & 0xFFFF);
+	boundingRect.bottom = (int16)(stream->readSint32LE() & 0xFFFF);
 
 	// read common graphic resources
 	backgroundImage    = (ResourceId)stream->readSint32LE();
@@ -99,10 +164,10 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	stereoReversedFlag = stream->readSint32LE();
 
 	for (int32 r = 0; r < 6; r++) {
-		sceneRects[r].left   = stream->readSint32LE() & 0xFFFF;
-		sceneRects[r].top    = stream->readSint32LE() & 0xFFFF;
-		sceneRects[r].right  = stream->readSint32LE() & 0xFFFF;
-		sceneRects[r].bottom = stream->readSint32LE() & 0xFFFF;
+		sceneRects[r].left   = (int16)(stream->readSint32LE() & 0xFFFF);
+		sceneRects[r].top    = (int16)(stream->readSint32LE() & 0xFFFF);
+		sceneRects[r].right  = (int16)(stream->readSint32LE() & 0xFFFF);
+		sceneRects[r].bottom = (int16)(stream->readSint32LE() & 0xFFFF);
 	}
 
 	sceneRectIdx  = stream->readByte();
@@ -213,13 +278,13 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	field_E860C = stream->readSint32LE();
 	for (int32 i = 0; i < 6; i++)
-		field_E8610[i] = stream->readSint32LE();
+		field_E8610[i] = stream->readUint32LE();
 
 	for (int32 i = 0; i < 6; i++)
-		field_E8628[i] = stream->readSint32LE();
+		field_E8628[i] = stream->readUint32LE();
 
 	for (int32 i = 0; i < 7; i++) {
-		ObjectId id = (ObjectId)stream->readSint32LE();
+		ObjectId id = (ObjectId)stream->readUint32LE();
 
 		if (id == 0)
 			wheels[i] = NULL;
@@ -230,7 +295,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	tickCount1 = stream->readSint32LE();
 
 	for (int32 i = 0; i < 6; i++)
-		field_E8660[i] = stream->readSint32LE();
+		field_E8660[i] = stream->readUint32LE();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -267,8 +332,8 @@ void WorldStats::setWheelObjects() {
 	wheels[2] = getObjectById(kObjectWheel3);
 	wheels[3] = getObjectById(kObjectWheel4);
 	wheels[4] = getObjectById(kObjectWheel5);
-	wheels[6] = getObjectById(kObjectWheel6);
-	wheels[7] = getObjectById(kObjectWheel7);
+	wheels[5] = getObjectById(kObjectWheel6);
+	wheels[6] = getObjectById(kObjectWheel7);
 }
 
 Common::String WorldStats::toString() {

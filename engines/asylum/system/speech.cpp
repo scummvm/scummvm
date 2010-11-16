@@ -37,13 +37,17 @@
 
 namespace Asylum {
 
-Speech::Speech(AsylumEngine *engine): _vm(engine) {
+Speech::Speech(AsylumEngine *engine): _vm(engine), _textData(0), _textDataPos(0) {
 	_tick            = _vm->getTick();
 	_soundResourceId = kResourceNone;
 	_textResourceId  = kResourceNone;
 }
 
 Speech::~Speech() {
+	// Text resource data is disposed as part of the resource manager
+	_textData = 0;
+	_textDataPos = 0;
+
 	// Zero-out passed pointers
 	_vm = NULL;
 }
@@ -62,7 +66,7 @@ ResourceId Speech::play(ResourceId soundResourceId, ResourceId textResourceId) {
 }
 
 ResourceId Speech::playIndexed(int32 index) {
-	int processedIndex = 0;
+	int processedIndex;
 
 	if (getWorld()->actorType || index != -1) {
 		error("[Speech::playIndexed] Missing case using static data!");

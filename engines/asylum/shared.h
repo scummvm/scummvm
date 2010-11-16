@@ -138,7 +138,6 @@ enum ChapterIndex {
 //////////////////////////////////////////////////////////////////////////
 
 enum ResourcePackId {
-	kResourcePackInvalid               = -1,
 	kResourcePackText                  = 0,
 	kResourcePackShared                = 1,
 	kResourcePackMusic                 = 2,    // Special case: will load from mus* resources
@@ -160,10 +159,12 @@ enum ResourcePackId {
 	kResourcePackSound                 = 18,
 	kResourcePack104                   = 104,
 	kResourcePack204                   = 204,
-	kResourcePack304                   = 304
+	kResourcePack304                   = 304,
+
+	kResourcePackInvalid               = 0xFFF
 };
 
-#define MAKE_RESOURCE(pack, index) (ResourceId)((0x80000000 + ((pack) << 16)) + (uint32)(index))
+#define MAKE_RESOURCE(pack, index) (ResourceId)((((pack) << 16) + 0x80000000) + (uint32)(index))
 
 enum ResourceId {
 	kResourceNone         = 0
@@ -235,7 +236,8 @@ enum ActorDirection {
 	kDirection4 = 4,
 	kDirection5 = 5,
 	kDirection6 = 6,
-	kDirection7 = 7
+	kDirection7 = 7,
+	kDirection8 = 8
 };
 
 enum ActorFlags {
@@ -533,7 +535,11 @@ enum ObjectFlag {
 #define LOBYTE(d)   (*((char*)&(d)))
 #define BYTE1(d)    (*((char*)&(d)+1))   // Same as HIBYTE()
 
-
+//////////////////////////////////////////////////////////////////////////
+// Resource ID macros
+//////////////////////////////////////////////////////////////////////////
+#define RESOURCE_PACK(id) (ResourcePackId)((((uint32)id) >> 16) & 0x7FFF)
+#define RESOURCE_INDEX(id) (int16)(id)
 
 } // End of namespace Asylum
 

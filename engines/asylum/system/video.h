@@ -88,7 +88,7 @@ private:
 	int32 getTextWidth(const char *text);
 
 	void drawText(byte *screenBuffer, int16 x, int16 y, const char *text);
-	void copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int x, int y);
+	void copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int x, int y) const;
 
 	GraphicResource *_fontResource;
 	uint8           _curFontFlags;

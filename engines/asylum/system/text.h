@@ -48,7 +48,7 @@ public:
 	int32  getWidth(ResourceId resourceId);
     char  *get(ResourceId resourceId);
 
-	void drawChar(unsigned char character);
+	void drawChar(char character);
 	void draw(const char *text);
 	void draw(int32 x, int32 y, const char *text);
 	void draw(ResourceId resourceId);
