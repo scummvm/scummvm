@@ -204,7 +204,7 @@ void AsylumEngine::playIntro() {
 	/*if (_scene->worldstats()->musicCurrentResourceId != kResourceMusic_FFFFFD66)
 		_sound->playMusic(_scene->getResourcePack(), _scene->worldstats()->musicCurrentResourceId);*/
 
-	_screen->clearScreen();
+	_screen->clear();
 
 	setGameFlag(kGameFlag4);
 	setGameFlag(kGameFlag12);

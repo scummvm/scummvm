@@ -767,7 +767,7 @@ IMPLEMENT_OPCODE(ChangeScene)
 
 	// Fade screen to black
 	getScreen()->paletteFade(0, 75, 8);
-	getScreen()->clearScreen();
+	getScreen()->clear();
 
 	// Stop all sounds & music
 	getSound()->stopAll();
@@ -981,7 +981,7 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x37
 IMPLEMENT_OPCODE(RunBlowUpPuzzle)
-	getScreen()->clearScreen();
+	getScreen()->clear();
 	getScreen()->clearGraphicsInQueue();
 
 	_vm->switchMessageHandler(_vm->getMessageHandler((uint32)cmd->param1));
@@ -1018,7 +1018,7 @@ IMPLEMENT_OPCODE(_unk3B_PALETTE_MOD)
 	}
 
 	if (cmd->param1 >= 22) {
-		getScreen()->clearScreen();
+		getScreen()->clear();
 
 		cmd->param1 = 0;
 		cmd->param2 = 0;
@@ -1437,13 +1437,13 @@ IMPLEMENT_OPCODE(ClearScreen)
 	getSharedData()->setSkipDrawScene((bool)cmd->param1);
 
 	if (cmd->param1)
-		getScreen()->clearScreen();
+		getScreen()->clear();
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x50
 IMPLEMENT_OPCODE(Quit)
-	getScreen()->clearScreen();
+	getScreen()->clear();
 	Engine::quitGame();
 
 	// We need to exit the interpreter loop so we get back to the event loop

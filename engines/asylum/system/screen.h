@@ -67,7 +67,7 @@ public:
 	void setGammaLevel(ResourceId id, int32 val);
 
 	void drawWideScreen(int16 barSize) const;
-	void clearScreen() const;
+	void clear() const;
 
 	void paletteFade(uint32 red, int32 milliseconds, int32 param);
 	void startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param);
