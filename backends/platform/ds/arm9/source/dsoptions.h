@@ -34,7 +34,7 @@
 #include "gui/object.h"
 #include "gui/widget.h"
 #include "gui/dialog.h"
-#include "gui/TabWidget.h"
+#include "gui/widgets/tab.h"
 #include "scumm/dialogs.h"
 
 namespace DS {

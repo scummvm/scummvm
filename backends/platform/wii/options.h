@@ -25,8 +25,8 @@
 
 #include "common/str.h"
 #include "gui/dialog.h"
-#include "gui/TabWidget.h"
-#include "gui/EditTextWidget.h"
+#include "gui/widgets/tab.h"
+#include "gui/widgets/edittext.h"
 
 using namespace GUI;
 

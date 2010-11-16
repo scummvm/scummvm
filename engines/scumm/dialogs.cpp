@@ -37,7 +37,7 @@
 #include "gui/about.h"
 
 #include "gui/GuiManager.h"
-#include "gui/ListWidget.h"
+#include "gui/widgets/list.h"
 #include "gui/ThemeEval.h"
 
 #include "scumm/dialogs.h"

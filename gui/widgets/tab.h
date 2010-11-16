@@ -22,10 +22,10 @@
  * $Id$
  */
 
-#ifndef TABWIDGET_H
-#define TABWIDGET_H
+#ifndef GUI_WIDGETS_TAB_H
+#define GUI_WIDGETS_TAB_H
 
-#include "widget.h"
+#include "gui/widget.h"
 #include "common/str.h"
 #include "common/array.h"
 

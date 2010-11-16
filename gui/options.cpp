@@ -29,8 +29,8 @@
 #include "gui/GuiManager.h"
 #include "gui/ThemeEval.h"
 #include "gui/options.h"
-#include "gui/PopUpWidget.h"
-#include "gui/TabWidget.h"
+#include "gui/widgets/popup.h"
+#include "gui/widgets/tab.h"
 
 #include "common/fs.h"
 #include "common/config-manager.h"

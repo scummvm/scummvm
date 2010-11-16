@@ -29,7 +29,7 @@
 #include "gui/dialog.h"
 #include "gui/saveload.h"
 #include "gui/widget.h"
-#include "gui/ListWidget.h"
+#include "gui/widgets/list.h"
 #include "gui/message.h"
 
 #include "parallaction/parallaction.h"

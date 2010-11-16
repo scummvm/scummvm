@@ -23,7 +23,7 @@
  */
 
 #include "gui/console.h"
-#include "gui/ScrollBarWidget.h"
+#include "gui/widgets/scrollbar.h"
 #include "gui/ThemeEval.h"
 
 #include "engines/engine.h"

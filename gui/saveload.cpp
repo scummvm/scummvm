@@ -25,7 +25,7 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 
-#include "gui/ListWidget.h"
+#include "gui/widgets/list.h"
 #include "gui/message.h"
 #include "gui/saveload.h"
 #include "gui/ThemeEval.h"

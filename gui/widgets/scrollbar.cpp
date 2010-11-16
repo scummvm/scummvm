@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "ScrollBarWidget.h"
+#include "gui/widgets/scrollbar.h"
 #include "gui/dialog.h"
 #include "gui/GuiManager.h"
 

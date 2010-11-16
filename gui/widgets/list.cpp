@@ -27,8 +27,8 @@
 #include "common/frac.h"
 #include "common/tokenizer.h"
 
-#include "gui/ListWidget.h"
-#include "gui/ScrollBarWidget.h"
+#include "gui/widgets/list.h"
+#include "gui/widgets/scrollbar.h"
 #include "gui/dialog.h"
 #include "gui/GuiManager.h"
 

@@ -33,7 +33,7 @@
 #include "gui/massadd.h"
 #include "gui/GuiManager.h"
 #include "gui/widget.h"
-#include "gui/ListWidget.h"
+#include "gui/widgets/list.h"
 
 
 namespace GUI {

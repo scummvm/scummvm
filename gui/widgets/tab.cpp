@@ -23,7 +23,7 @@
  */
 
 #include "common/util.h"
-#include "gui/TabWidget.h"
+#include "gui/widgets/tab.h"
 #include "gui/dialog.h"
 #include "gui/GuiManager.h"
 

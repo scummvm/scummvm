@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef SCROLLBARWIDGET_H
-#define SCROLLBARWIDGET_H
+#ifndef GUI_WIDGETS_SCROLLBAR_H
+#define GUI_WIDGETS_SCROLLBAR_H
 
 #include "gui/widget.h"
 

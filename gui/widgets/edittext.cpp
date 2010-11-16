@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "gui/EditTextWidget.h"
+#include "gui/widgets/edittext.h"
 #include "gui/dialog.h"
 #include "gui/GuiManager.h"
 

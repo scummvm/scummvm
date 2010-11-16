@@ -23,7 +23,7 @@
  */
 
 #include "common/events.h"
-#include "gui/editable.h"
+#include "gui/widgets/editable.h"
 #include "gui/GuiManager.h"
 
 namespace GUI {

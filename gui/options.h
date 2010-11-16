@@ -26,7 +26,6 @@
 #define OPTIONS_DIALOG_H
 
 #include "gui/dialog.h"
-#include "gui/TabWidget.h"
 #include "common/str.h"
 #include "sound/musicplugin.h"
 
@@ -42,6 +41,7 @@ class PopUpWidget;
 class SliderWidget;
 class StaticTextWidget;
 class ListWidget;
+class TabWidget;
 
 class OptionsDialog : public Dialog {
 public:

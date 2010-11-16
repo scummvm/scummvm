@@ -27,7 +27,7 @@
 #include "gui/GuiManager.h"
 #include "gui/dialog.h"
 #include "gui/widget.h"
-#include "gui/PopUpWidget.h"
+#include "gui/widgets/popup.h"
 
 #include "common/system.h"
 

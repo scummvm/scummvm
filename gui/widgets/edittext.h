@@ -22,10 +22,10 @@
  * $Id$
  */
 
-#ifndef GUI_EDITTEXTWIDGET_H
-#define GUI_EDITTEXTWIDGET_H
+#ifndef GUI_WIDGETS_EDITTEXT_H
+#define GUI_WIDGETS_EDITTEXT_H
 
-#include "gui/editable.h"
+#include "gui/widgets/editable.h"
 #include "common/str.h"
 
 namespace GUI {

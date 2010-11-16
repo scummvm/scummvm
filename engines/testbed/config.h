@@ -31,7 +31,7 @@
 #include "common/str-array.h"
 #include "common/tokenizer.h"
 
-#include "gui/ListWidget.h"
+#include "gui/widgets/list.h"
 #include "gui/options.h"
 #include "gui/ThemeEngine.h"
 

@@ -35,7 +35,7 @@
 #include "gui/about.h"
 #include "gui/GuiManager.h"
 #include "gui/launcher.h"
-#include "gui/ListWidget.h"
+#include "gui/widgets/list.h"
 #include "gui/message.h"
 #include "gui/options.h"
 #include "gui/saveload.h"

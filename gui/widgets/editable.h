@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef GUI_EDITABLE_H
-#define GUI_EDITABLE_H
+#ifndef GUI_WIDGETS_EDITABLE_H
+#define GUI_WIDGETS_EDITABLE_H
 
 #include "common/str.h"
 #include "common/rect.h"

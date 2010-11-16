@@ -28,7 +28,7 @@
 
 #include "gui/GuiManager.h"
 #include "gui/dialog.h"
-#include "gui/ListWidget.h"
+#include "gui/widgets/list.h"
 #include "common/str.h"
 #include "common/translation.h"
 

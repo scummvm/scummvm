@@ -22,10 +22,10 @@
  * $Id$
  */
 
-#ifndef GUI_LISTWIDGET_H
-#define GUI_LISTWIDGET_H
+#ifndef GUI_WIDGETS_LIST_H
+#define GUI_WIDGETS_LIST_H
 
-#include "gui/editable.h"
+#include "gui/widgets/editable.h"
 #include "common/str.h"
 
 #include "gui/ThemeEngine.h"

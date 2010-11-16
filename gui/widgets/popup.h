@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef POPUPWIDGET_H
-#define POPUPWIDGET_H
+#ifndef GUI_WIDGETS_POPUP_H
+#define GUI_WIDGETS_POPUP_H
 
 #include "gui/widget.h"
 #include "common/str.h"

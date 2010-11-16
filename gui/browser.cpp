@@ -24,7 +24,7 @@
 
 #include "gui/browser.h"
 #include "gui/GuiManager.h"
-#include "gui/ListWidget.h"
+#include "gui/widgets/list.h"
 
 #include "common/config-manager.h"
 #include "common/system.h"
