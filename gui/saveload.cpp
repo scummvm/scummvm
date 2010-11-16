@@ -29,6 +29,7 @@
 #include "gui/message.h"
 #include "gui/saveload.h"
 #include "gui/ThemeEval.h"
+#include "gui/gui-manager.h"
 
 #include "graphics/scaler.h"
 

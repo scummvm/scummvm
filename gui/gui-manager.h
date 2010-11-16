@@ -33,7 +33,6 @@
 #include "graphics/font.h"
 
 #include "gui/widget.h"
-#include "gui/Tooltip.h"
 #include "gui/ThemeEngine.h"
 
 class OSystem;
@@ -42,6 +41,7 @@ namespace GUI {
 
 class Dialog;
 class ThemeEval;
+class Tooltip;
 
 #define g_gui	(GUI::GuiManager::instance())
 

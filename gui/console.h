@@ -26,7 +26,6 @@
 #define CONSOLE_DIALOG_H
 
 #include "gui/dialog.h"
-#include "gui/gui-manager.h"
 
 namespace GUI {
 

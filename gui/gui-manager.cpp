@@ -36,6 +36,7 @@
 #include "gui/dialog.h"
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
+#include "gui/Tooltip.h"
 
 #include "graphics/cursorman.h"
 
