@@ -64,7 +64,7 @@ const char *opcodeNames[] = {
 };
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
+reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, bool printBytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.segment, SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
 	const byte *scr;
@@ -97,7 +97,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	debugN("%04x:%04x: ", PRINT_REG(pos));
 
-	if (print_bytecode) {
+	if (printBytecode) {
 		if (pos.offset + bytecount > scr_size) {
 			warning("Operation arguments extend beyond end of script");
 			return retval;
@@ -335,7 +335,7 @@ void SciEngine::scriptDebug() {
 	}
 
 	debugN("Step #%d\n", s->scriptStepCounter);
-	disassemble(s, s->xs->addr.pc, 0, 1);
+	disassemble(s, s->xs->addr.pc, 0, true);
 
 	if (_debugState.runningStep) {
 		_debugState.runningStep--;

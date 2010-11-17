@@ -1210,7 +1210,7 @@ bool Console::cmdClassTable(int argc, const char **argv) {
 						className,
 						PRINT_REG(temp.reg),
 						temp.script);
-			}
+			} else DebugPrintf(" Class 0x%x (not loaded; can't get name) (script %d)\n", i, temp.script);
 		}
 	}
 
@@ -2609,13 +2609,17 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 }
 
 bool Console::cmdDisassemble(int argc, const char **argv) {
-	if (argc != 3) {
+	if (argc < 3) {
 		DebugPrintf("Disassembles a method by name.\n");
-		DebugPrintf("Usage: %s <object> <method>\n", argv[0]);
+		DebugPrintf("Usage: %s <object> <method> <print bytecode>\n", argv[0]);
+		DebugPrintf("The last parameter, <print bytecode> is optional. If true\n");
+		DebugPrintf("or 1 is specified, the associated bytecode is shown next to\n");
+		DebugPrintf("each dissassembled command\n");
 		return true;
 	}
 
 	reg_t objAddr = NULL_REG;
+	bool printBytecode = false;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &objAddr, false)) {
 		DebugPrintf("Invalid address passed.\n");
@@ -2642,8 +2646,11 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 		return true;
 	}
 
+	if (argc == 4 && (!strcmp(argv[3], "1") || !strcmp(argv[3], "true")))
+		printBytecode = true;
+
 	do {
-		addr = disassemble(_engine->_gamestate, addr, 0, 0);
+		addr = disassemble(_engine->_gamestate, addr, 0, printBytecode);
 	} while (addr.offset > 0);
 
 	return true;
@@ -2663,7 +2670,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	reg_t vpc = NULL_REG;
 	int op_count = 1;
 	int do_bwc = 0;
-	int do_bytes = 0;
+	bool do_bytes = false;
 	int size;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &vpc, false)) {
@@ -2679,7 +2686,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 		if (!scumm_stricmp(argv[i], "bwt"))
 			do_bwc = 1;
 		else if (!scumm_stricmp(argv[i], "bc"))
-			do_bytes = 1;
+			do_bytes = true;
 		else if (toupper(argv[i][0]) == 'C')
 			op_count = atoi(argv[i] + 1);
 		else {
