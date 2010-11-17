@@ -155,6 +155,7 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelMemory, "Attempting to clone from %04x:%04x", PRINT_REG(parentAddr));
 
+	// TODO: SCI3 equivalent, SCI3 objects don't have an -info- selector
 	uint16 infoSelector = readSelectorValue(s->_segMan, parentAddr, SELECTOR(_info_));
 	cloneObj = s->_segMan->allocateClone(&cloneAddr);
 
@@ -179,7 +180,11 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 
 	// Mark as clone
 	infoSelector &= ~kInfoFlagClass; // remove class bit
-	writeSelectorValue(s->_segMan, cloneAddr, SELECTOR(_info_), infoSelector | kInfoFlagClone);
+	if (getSciVersion() == SCI_VERSION_3)
+		// TODO: SCI3 equivalent, SCI3 objects don't have an -info- selector
+		warning("TODO: not modifying -info- selector in kClone for SCI3");
+	else
+		writeSelectorValue(s->_segMan, cloneAddr, SELECTOR(_info_), infoSelector | kInfoFlagClone);
 
 	cloneObj->setSpeciesSelector(cloneObj->getPos());
 	if (parentObj->isClass())
@@ -206,6 +211,7 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 	//  At least kq4early relies on this behaviour. The scripts clone "Sound", then set bit 1 manually
 	//  and call kDisposeClone later. In that case we may not free it, otherwise we will run into issues
 	//  later, because kIsObject would then return false and Sound object wouldn't get checked.
+	// TODO: SCI3 equivalent, SCI3 objects don't have an -info- selector
 	uint16 infoSelector = readSelectorValue(s->_segMan, obj, SELECTOR(_info_));
 	if ((infoSelector & 3) == kInfoFlagClone)
 		object->markAsFreed();

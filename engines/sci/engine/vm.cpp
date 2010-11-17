@@ -1735,7 +1735,7 @@ void run_vm(EngineState *s) {
 
 			if (s->r_acc.offset >= scr->getBufSize()) {
 				error("VM: lofsa operation overflowed: %04x:%04x beyond end"
-				          " of script (at %04x)\n", PRINT_REG(s->r_acc), scr->getBufSize());
+				          " of script (at %04x)", PRINT_REG(s->r_acc), scr->getBufSize());
 			}
 			break;
 

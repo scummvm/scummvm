@@ -40,7 +40,7 @@ struct SelectorCache {
 	}
 
 	// Statically defined selectors, (almost the) same in all SCI versions
-	Selector _info_;
+	Selector _info_;	///< Removed in SCI3
 	Selector y;
 	Selector x;
 	Selector view, loop, cel; ///< Description of a specific image
@@ -58,8 +58,9 @@ struct SelectorCache {
 	// style
 	Selector state, font, type;///< Used by controls
 	// window
-	Selector cursor, max; ///< Used by EditControl
-	Selector mark; //< Used by list controls
+	Selector cursor; ///< Used by EditControl
+	Selector max; ///< Used by EditControl, removed in SCI3
+	Selector mark; //< Used by list controls (script internal, is needed by us for the QfG import rooms)
 	Selector sort; //< Used by list controls (script internal, is needed by us for QfG3 import room)
 	// who
 	Selector message; ///< Used by GetEvent
@@ -96,8 +97,8 @@ struct SelectorCache {
 	Selector subtitleLang;
 	Selector size;
 	Selector points; ///< Used by AvoidPath()
-	Selector palette;
-	Selector dataInc;
+	Selector palette;	///< Used by the SCI0-SCI1.1 animate code, unused in SCI2-SCI2.1, removed in SCI3
+	Selector dataInc;	///< Used to sync music with animations, removed in SCI3
 	// handle (in SCI1)
 	Selector min; ///< SMPTE time format
 	Selector sec;
@@ -109,7 +110,7 @@ struct SelectorCache {
 
 	// SCI1 selectors which have been moved a bit in SCI1.1, but otherwise static
 	Selector cantBeHere; ///< Checks for movement avoidance in SCI1+. Replaces canBeHere
-	Selector topString; ///< SCI1 scroll lists use this instead of lsTop
+	Selector topString; ///< SCI1 scroll lists use this instead of lsTop. Removed in SCI3
 	Selector flags;
 
 	// SCI1+ audio sync related selectors, not static. They're used for lip syncing in

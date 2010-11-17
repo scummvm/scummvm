@@ -307,9 +307,8 @@ Common::String SciEngine::strSplit(const char *str, const char *sep) {
 	kLanguage lang = getSciLanguage();
 	kLanguage subLang = K_LANG_NONE;
 
-	if (SELECTOR(subtitleLang) != -1) {
+	if (SELECTOR(subtitleLang) != -1)
 		subLang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(subtitleLang));
-	}
 
 	kLanguage secondLang;
 	Common::String retval = getSciLanguageString(str, lang, &secondLang);
