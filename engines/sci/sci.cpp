@@ -226,28 +226,22 @@ Common::Error SciEngine::run() {
 	_gamestate = new EngineState(segMan);
 	_eventMan = new EventManager(_resMan->detectFontExtended());
 
-	if (getSciVersion() == SCI_VERSION_3) {
-		// TODO: SCI3 equivalent
-		warning("SCI3 game - skipping VM initialization");
-		_gamestate->_msgState = NULL;	// for proper engine destruction
-	} else {
-		// The game needs to be initialized before the graphics system is initialized, as
-		// the graphics code checks parts of the seg manager upon initialization (e.g. for
-		// the presence of the fastCast object)
-		if (!initGame()) { /* Initialize */
-			warning("Game initialization failed: Aborting...");
-			// TODO: Add an "init failed" error?
-			return Common::kUnknownError;
-		}
-
-		// we try to find the super class address of the game object, we can't do that earlier
-		const Object *gameObject = segMan->getObject(_gameObjectAddress);
-		if (!gameObject) {
-			warning("Could not get game object, aborting...");
-			return Common::kUnknownError;
-		}
-		_gameSuperClassAddress = gameObject->getSuperClassSelector();
+	// The game needs to be initialized before the graphics system is initialized, as
+	// the graphics code checks parts of the seg manager upon initialization (e.g. for
+	// the presence of the fastCast object)
+	if (!initGame()) { /* Initialize */
+		warning("Game initialization failed: Aborting...");
+		// TODO: Add an "init failed" error?
+		return Common::kUnknownError;
 	}
+
+	// we try to find the super class address of the game object, we can't do that earlier
+	const Object *gameObject = segMan->getObject(_gameObjectAddress);
+	if (!gameObject) {
+		warning("Could not get game object, aborting...");
+		return Common::kUnknownError;
+	}
+	_gameSuperClassAddress = gameObject->getSuperClassSelector();
 
 	script_adjust_opcode_formats();
 
@@ -262,40 +256,38 @@ Common::Error SciEngine::run() {
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 
-	if (getSciVersion() <= SCI_VERSION_2_1) {		// TODO/FIXME: Enable for SCI3 once the VM is done
-		// Patch in our save/restore code, so that dialogs are replaced
-		patchGameSaveRestore(segMan);
+	// Patch in our save/restore code, so that dialogs are replaced
+	patchGameSaveRestore(segMan);
 
-		if (_gameDescription->flags & ADGF_ADDENGLISH) {
-			// if game is multilingual
-			Common::Language selectedLanguage = Common::parseLanguage(ConfMan.get("language"));
-			if (selectedLanguage == Common::EN_ANY) {
-				// and english was selected as language
-				if (SELECTOR(printLang) != -1) // set text language to english
-					writeSelectorValue(segMan, _gameObjectAddress, SELECTOR(printLang), 1);
-				if (SELECTOR(parseLang) != -1) // and set parser language to english as well
-					writeSelectorValue(segMan, _gameObjectAddress, SELECTOR(parseLang), 1);
-			}
+	if (_gameDescription->flags & ADGF_ADDENGLISH) {
+		// if game is multilingual
+		Common::Language selectedLanguage = Common::parseLanguage(ConfMan.get("language"));
+		if (selectedLanguage == Common::EN_ANY) {
+			// and english was selected as language
+			if (SELECTOR(printLang) != -1) // set text language to english
+				writeSelectorValue(segMan, _gameObjectAddress, SELECTOR(printLang), 1);
+			if (SELECTOR(parseLang) != -1) // and set parser language to english as well
+				writeSelectorValue(segMan, _gameObjectAddress, SELECTOR(parseLang), 1);
 		}
+	}
 
-		// Check whether loading a savestate was requested
-		int directSaveSlotLoading = ConfMan.getInt("save_slot");
-		if (directSaveSlotLoading >= 0) {
-			// call GameObject::play (like normally)
-			initStackBaseWithSelector(SELECTOR(play));
-			// We set this, so that the game automatically quit right after init
-			_gamestate->variables[VAR_GLOBAL][4] = TRUE_REG;
+	// Check whether loading a savestate was requested
+	int directSaveSlotLoading = ConfMan.getInt("save_slot");
+	if (directSaveSlotLoading >= 0) {
+		// call GameObject::play (like normally)
+		initStackBaseWithSelector(SELECTOR(play));
+		// We set this, so that the game automatically quit right after init
+		_gamestate->variables[VAR_GLOBAL][4] = TRUE_REG;
 
-			_gamestate->_executionStackPosChanged = false;
-			run_vm(_gamestate);
+		_gamestate->_executionStackPosChanged = false;
+		run_vm(_gamestate);
 
-			// As soon as we get control again, actually restore the game
-			reg_t restoreArgv[2] = { NULL_REG, make_reg(0, directSaveSlotLoading) };	// special call (argv[0] is NULL)
-			kRestoreGame(_gamestate, 2, restoreArgv);
+		// As soon as we get control again, actually restore the game
+		reg_t restoreArgv[2] = { NULL_REG, make_reg(0, directSaveSlotLoading) };	// special call (argv[0] is NULL)
+		kRestoreGame(_gamestate, 2, restoreArgv);
 
-			// this indirectly calls GameObject::init, which will setup menu, text font/color codes etc.
-			//  without this games would be pretty badly broken
-		}
+		// this indirectly calls GameObject::init, which will setup menu, text font/color codes etc.
+		//  without this games would be pretty badly broken
 	}
 
 	// Show any special warnings for buggy scripts with severe game bugs, 
@@ -358,17 +350,7 @@ Common::Error SciEngine::run() {
 		                  "having unexpected errors and/or issues later on.");
 	}
 
-	
-	// TODO/FIXME: Remove once SCI3 support is improved
-	if (getSciVersion() == SCI_VERSION_3) {
-		// Attach the console to use resource manager functionality
-		_console->attach();
-		_console->DebugPrintf("\nSCI3 game, stopping before actual game entry point.\n"
-							  "Resource-related functionality should be usable at this point\n\n");
-		_console->onFrame();
-	} else {
-		runGame();
-	}
+	runGame();
 
 	ConfMan.flushToDisk();
 
