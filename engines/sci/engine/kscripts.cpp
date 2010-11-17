@@ -175,6 +175,11 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	// extend the internal storage size.
 	if (infoSelector & kInfoFlagClone)
 		parentObj = s->_segMan->getObject(parentAddr);
+	
+	// HACK: Since the info selector can't be read correctly for SCI3 yet,
+	// always refresh the parent object pointer
+	if (getSciVersion() == SCI_VERSION_3)
+		parentObj = s->_segMan->getObject(parentAddr);
 
 	*cloneObj = *parentObj;
 
@@ -214,6 +219,11 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 	// TODO: SCI3 equivalent, SCI3 objects don't have an -info- selector
 	uint16 infoSelector = readSelectorValue(s->_segMan, obj, SELECTOR(_info_));
 	if ((infoSelector & 3) == kInfoFlagClone)
+		object->markAsFreed();
+
+	// HACK: Since the info selector can't be read correctly for SCI3 yet,
+	// always mark the object as freed
+	if (getSciVersion() == SCI_VERSION_3)
 		object->markAsFreed();
 
 	return s->r_acc;
