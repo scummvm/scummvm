@@ -1557,8 +1557,7 @@ void run_vm(EngineState *s) {
 
 		case 0x26: // (38)
 		case 0x27: // (39)
-			if (getSciVersion() == SCI_VERSION_3)
-			{
+			if (getSciVersion() == SCI_VERSION_3) {
 				if (extOpcode == 0x4d)
 					PUSH32(obj->getInfoSelector());
 				// TODO: There are also opcodes in
