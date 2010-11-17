@@ -537,14 +537,16 @@ void Script::initialiseClasses(SegManager *segMan) {
 
 		if (isClass) {
 			// WORKAROUNDs for off-by-one script errors
-			if (g_sci->getGameId() == GID_LSL2 && g_sci->isDemo() && species == (int)segMan->classTableSize())
-				segMan->resizeClassTable(segMan->classTableSize() + 1);
-			if (g_sci->getGameId() == GID_LSL3 && !g_sci->isDemo() && _nr == 500 && species == (int)segMan->classTableSize())
-				segMan->resizeClassTable(segMan->classTableSize() + 1);
-			if (g_sci->getGameId() == GID_SQ3 && !g_sci->isDemo() && _nr == 93 && species == (int)segMan->classTableSize())
-				segMan->resizeClassTable(segMan->classTableSize() + 1);
-			if (g_sci->getGameId() == GID_SQ3 && !g_sci->isDemo() && _nr == 99 && species == (int)segMan->classTableSize())
-				segMan->resizeClassTable(segMan->classTableSize() + 1);
+			if (species == (int)segMan->classTableSize()) {
+				if (g_sci->getGameId() == GID_LSL2 && g_sci->isDemo())
+					segMan->resizeClassTable(species + 1);
+				else if (g_sci->getGameId() == GID_LSL3 && !g_sci->isDemo() && _nr == 500)
+					segMan->resizeClassTable(species + 1);
+				else if (g_sci->getGameId() == GID_SQ3 && !g_sci->isDemo() && _nr == 93)
+					segMan->resizeClassTable(species + 1);
+				else if (g_sci->getGameId() == GID_SQ3 && !g_sci->isDemo() && _nr == 99)
+					segMan->resizeClassTable(species + 1);
+			}
 
 			if (species < 0 || species >= (int)segMan->classTableSize())
 				error("Invalid species %d(0x%x) unknown max %d(0x%x) while instantiating script %d\n",
