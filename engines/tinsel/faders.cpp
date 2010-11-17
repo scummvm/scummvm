@@ -236,8 +236,8 @@ void FadeInFast(SCNHANDLE noFadeTable[]) {
 
 void PokeInTagColour() {
 	if (SysVar(SV_TAGCOLOUR)) {
-		static COLORREF c = GetActorRGB(-1);	// FIXME: Avoid non-const global vars
-		UpdateDACqueue(SysVar(SV_TAGCOLOUR), 1, &c);
+		const COLORREF c = GetActorRGB(-1);
+		UpdateDACqueue(SysVar(SV_TAGCOLOUR), c);
 	}
 }
 

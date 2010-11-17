@@ -308,8 +308,6 @@ static int scrollNumber = 0;	// used by scroll()
 
 static bool bNotPointedRunning = false;	// Used in Printobj and PrintObjPointed
 
-static COLORREF s_talkfontColor = 0;
-
 //----------------- FORWARD REFERENCES --------------------
 
 static int HeldObject();
@@ -431,9 +429,8 @@ static void ScrollMonitorProcess(CORO_PARAM, const void *param) {
  * Poke supplied colour into the DAC queue.
  */
 void SetTextPal(COLORREF col) {
-	s_talkfontColor = col;
 	SetTalkColourRef(col);
-	UpdateDACqueue(TalkColour(), 1, &s_talkfontColor);
+	UpdateDACqueue(TalkColour(), col);
 }
 
 /**

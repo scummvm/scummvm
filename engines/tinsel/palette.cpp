@@ -42,6 +42,7 @@ struct VIDEO_DAC_Q {
 	union {
 		SCNHANDLE hRGBarray;	///< handle of palette or
 		COLORREF *pRGBarray;	///< list of palette colours
+		COLORREF  singleRGB;
 	} pal;
 	bool bHandle;		///< when set - use handle of palette
 	int destDACindex;	///< start index of palette in video DAC
@@ -52,9 +53,6 @@ struct VIDEO_DAC_Q {
 //----------------- LOCAL GLOBAL DATA --------------------
 
 // FIXME: Avoid non-const global vars
-
-/** background colour */
-static COLORREF bgndColour = BLACK;
 
 /** palette allocator data */
 static PALQ palAllocData[NUM_PALETTES];
@@ -138,8 +136,8 @@ void PalettesToVideoDAC() {
 
 	// while Q is not empty
 	while (pDAChead != pDACtail) {
-		PALETTE *pPalette;	// pointer to hardware palette
-		COLORREF *pColours;	// pointer to list of RGB triples
+		const PALETTE *pPalette;	// pointer to hardware palette
+		const COLORREF *pColours;	// pointer to list of RGB triples
 
 #ifdef	DEBUG
 		// make sure palette does not overlap
@@ -154,17 +152,20 @@ void PalettesToVideoDAC() {
 			// we are using a palette handle
 
 			// get hardware palette pointer
-			pPalette = (PALETTE *)LockMem(pDACtail->pal.hRGBarray);
+			pPalette = (const PALETTE *)LockMem(pDACtail->pal.hRGBarray);
 
 			// get RGB pointer
 			pColours = pPalette->palRGB;
+		} else if (pDACtail->numColours == 1) {
+			// we are using a single color palette
+			pColours = &pDACtail->pal.singleRGB;
 		} else {
 			// we are using a palette pointer
 			pColours = pDACtail->pal.pRGBarray;
 		}
 
 		// update the system palette
-		g_system->setPalette((byte *)pColours, pDACtail->destDACindex, pDACtail->numColours);
+		g_system->setPalette((const byte *)pColours, pDACtail->destDACindex, pDACtail->numColours);
 
 		// update tail pointer
 		pDACtail++;
@@ -232,7 +233,7 @@ void UpdateDACqueueHandle(int posInDAC, int numColours, SCNHANDLE hPalette) {
 /**
  * Places a palette in the video DAC queue.
  * @param posInDAC			Position in video DAC
- * @param numColours,		Number of colours in palette
+ * @param numColours		Number of colours in palette
  * @param pColours			List of RGB triples
  */
 void UpdateDACqueue(int posInDAC, int numColours, COLORREF *pColours) {
@@ -241,7 +242,34 @@ void UpdateDACqueue(int posInDAC, int numColours, COLORREF *pColours) {
 
 	pDAChead->destDACindex = posInDAC & ~PALETTE_MOVED;	// set index in video DAC
 	pDAChead->numColours = numColours;	// set number of colours
-	pDAChead->pal.pRGBarray = pColours;	// set addr of palette
+	if (numColours == 1)
+		pDAChead->pal.singleRGB = *pColours;	// set single color of which the "palette" consists
+	else
+		pDAChead->pal.pRGBarray = pColours;	// set addr of palette
+	pDAChead->bHandle = false;		// we are not using a palette handle
+
+	// update head pointer
+	++pDAChead;
+
+#ifdef DEBUG
+	if ((pDAChead-vidDACdata) > maxDACQ)
+		maxDACQ = pDAChead-vidDACdata;
+#endif
+}
+
+
+/**
+ * Places a "palette" consisting of a single color in the video DAC queue.
+ * @param posInDAC			Position in video DAC
+ * @param color				Single RGB triple
+ */
+void UpdateDACqueue(int posInDAC, COLORREF color) {
+	// check Q overflow
+	assert(pDAChead < vidDACdata + NUM_PALETTES);
+
+	pDAChead->destDACindex = posInDAC & ~PALETTE_MOVED;	// set index in video DAC
+	pDAChead->numColours = 1;	// set number of colours
+	pDAChead->pal.singleRGB = color;	// set single color of which the "palette" consists
 	pDAChead->bHandle = false;		// we are not using a palette handle
 
 	// update head pointer
@@ -470,11 +498,8 @@ PALQ *GetNextPalette(PALQ *pStrtPal) {
  * @param colour			Colour to set the background to
  */
 void SetBgndColour(COLORREF colour) {
-	// update background colour struct
-	bgndColour = colour;
-
-	// Q the change to the video DAC
-	UpdateDACqueue(BGND_DAC_INDEX, 1, &bgndColour);
+	// update background colour struct by queuing the change to the video DAC
+	UpdateDACqueue(BGND_DAC_INDEX, colour);
 }
 
 /**
@@ -482,7 +507,7 @@ void SetBgndColour(COLORREF colour) {
  * @param pPalQ			Palette queue position
  * @param bFading		Whether it is fading
  */
-void FadingPalette(PPALQ pPalQ, bool bFading) {
+void FadingPalette(PALQ *pPalQ, bool bFading) {
 	// validate palette Q pointer
 	assert(pPalQ >= palAllocData && pPalQ <= palAllocData + NUM_PALETTES - 1);
 
@@ -497,7 +522,7 @@ void FadingPalette(PPALQ pPalQ, bool bFading) {
  * palettes are fading.
  */
 void NoFadingPalettes() {
-	PPALQ pPalQ;
+	PALQ *pPalQ;
 
 	for (pPalQ = palAllocData; pPalQ <= palAllocData + NUM_PALETTES - 1; pPalQ++) {
 		pPalQ->bFading = false;
@@ -621,10 +646,7 @@ int TranslucentColour() {
 }
 
 int HighlightColour() {
-	static COLORREF cRef;	// FIXME: Avoid non-const global vars
-
-	cRef = (COLORREF)SysVar(SYS_HighlightRGB);
-	UpdateDACqueue(talkIndex, 1, &cRef);
+	UpdateDACqueue(talkIndex, (COLORREF)SysVar(SYS_HighlightRGB));
 
 	return talkIndex;
 }

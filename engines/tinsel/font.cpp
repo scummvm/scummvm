@@ -119,9 +119,9 @@ void FettleFontPal(SCNHANDLE fontPal) {
 		pImg->hImgPal = 0;
 
 	if (TinselV2 && SysVar(SV_TAGCOLOUR)) {
-		static COLORREF c = GetActorRGB(-1);	// FIXME: Avoid non-const global vars
+		const COLORREF c = GetActorRGB(-1);
 		SetTagColorRef(c);
-		UpdateDACqueue(SysVar(SV_TAGCOLOUR), 1, &c);
+		UpdateDACqueue(SysVar(SV_TAGCOLOUR), c);
 	}
 }
 
