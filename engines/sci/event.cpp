@@ -230,6 +230,8 @@ SciEvent EventManager::getScummVMEvent() {
 					input.character = input.data + 0x1900;
 				else
 					input.character = input.data;
+				// Remove modifier status (e.g. num lock) in this case
+				input.modifiers = 0;
 			} else {
 				// Special keys that need conversion
 				input.type = SCI_EVENT_KEYBOARD;
