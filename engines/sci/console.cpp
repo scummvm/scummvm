@@ -1100,7 +1100,7 @@ bool Console::cmdList(int argc, const char **argv) {
 
 		if ((res == kResourceTypeAudio36) || (res == kResourceTypeSync36)) {
 			if (argc != 3) {
-				DebugPrintf("Please specify map number\n");
+				DebugPrintf("Please specify map number (-1: all maps)\n");
 				return true;
 			}
 			number = atoi(argv[2]);
