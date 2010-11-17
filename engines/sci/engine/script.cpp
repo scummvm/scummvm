@@ -113,6 +113,15 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 			error("Script and heap sizes combined exceed 64K. This means a fundamental "
 					"design bug was made regarding SCI1.1 and newer games.\n"
 					"Please report this error to the ScummVM team");
+	} else if (getSciVersion() == SCI_VERSION_3) {
+		// Check for scripts over 64KB. These won't work with the current 16-bit address
+		// scheme. We need an overlaying mechanism, or a mechanism to split script parts
+		// in different segments to handle these. For now, simply stop when such a script
+		// is found.
+		// TODO: Remove this once such a mechanism is in place
+		if (script->size > 65535)
+			error("TODO: SCI script %d is over 64KB - it's %d bytes long. This can't "
+			      "be handled at the moment, thus stopping", script_nr, script->size);
 	}
 }
 

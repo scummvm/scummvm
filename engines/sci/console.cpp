@@ -834,8 +834,8 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 }
 
 bool Console::cmdVerifyScripts(int argc, const char **argv) {
-	if (getSciVersion() < SCI_VERSION_1_1 || getSciVersion() == SCI_VERSION_3) {
-		DebugPrintf("This script check is only meant for SCI1.1-SCI2.1 games\n");
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		DebugPrintf("This script check is only meant for SCI1.1-SCI3 games\n");
 		return true;
 	}
 
@@ -843,7 +843,7 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 	Common::sort(resources->begin(), resources->end());
 	Common::List<ResourceId>::iterator itr = resources->begin();
 
-	DebugPrintf("%d SCI1.1-SCI2.1 scripts found, performing sanity checks...\n", resources->size());
+	DebugPrintf("%d SCI1.1-SCI3 scripts found, performing sanity checks...\n", resources->size());
 
 	Resource *script, *heap;
 	while (itr != resources->end()) {
@@ -851,13 +851,19 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 		if (!script)
 			DebugPrintf("Error: script %d couldn't be loaded\n", itr->getNumber());
 
-		heap = _engine->getResMan()->findResource(ResourceId(kResourceTypeHeap, itr->getNumber()), false);
-		if (!heap)
-			DebugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->getNumber());
+		if (getSciVersion() <= SCI_VERSION_2_1) {
+			heap = _engine->getResMan()->findResource(ResourceId(kResourceTypeHeap, itr->getNumber()), false);
+			if (!heap)
+				DebugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->getNumber());
 
-		if (script && heap && (script->size + heap->size > 65535))
-			DebugPrintf("Error: script and heap %d together are larger than 64KB (%d bytes)\n",
-			itr->getNumber(), script->size + heap->size);
+			if (script && heap && (script->size + heap->size > 65535))
+				DebugPrintf("Error: script and heap %d together are larger than 64KB (%d bytes)\n",
+				itr->getNumber(), script->size + heap->size);
+		} else {	// SCI3
+			if (script && script->size > 65535)
+				DebugPrintf("Error: script %d is larger than 64KB (%d bytes)\n",
+				itr->getNumber(), script->size);
+		}
 
 		++itr;
 	}
