@@ -101,7 +101,6 @@ Common::Error CruiseEngine::run() {
 	Cruise::changeCursor(Cruise::CURSOR_NORMAL);
 	CursorMan.showMouse(true);
 
-
 	lastTick = 0;
 	lastTickDebug = 0;
 
@@ -130,6 +129,7 @@ void CruiseEngine::initialize() {
 	// another bit of video init
 
 	readVolCnf();
+	_vm->_polyStruct = NULL;
 }
 
 void CruiseEngine::deinitialise() {
