@@ -233,37 +233,101 @@ public:
 		_baseVars = 0;
 		_baseMethod = 0;
 		_methodCount = 0;
+		_propertyOffsetsSci3 = 0;
 	}
 
 	~Object() { }
 
-	reg_t getSpeciesSelector() const { return _variables[_offset]; }
-	void setSpeciesSelector(reg_t value) { _variables[_offset] = value; }
+	reg_t getSpeciesSelector() const {
+		if (getSciVersion() <= SCI_VERSION_2_1) 
+			return _variables[_offset];
+		else	// SCI3
+			return make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 4));
+	}
 
-	reg_t getSuperClassSelector() const { return _variables[_offset + 1]; }
-	void setSuperClassSelector(reg_t value) { _variables[_offset + 1] = value; }
+	void setSpeciesSelector(reg_t value) {
+		if (getSciVersion() <= SCI_VERSION_2_1)
+			_variables[_offset] = value;
+		else	// SCI3
+			warning("TODO: setSpeciesSelector called for SCI3");
+	}
 
-	reg_t getInfoSelector() const { return _variables[_offset + 2]; }
-	void setInfoSelector(reg_t value) { _variables[_offset + 2] = value; }
+	reg_t getSuperClassSelector() const {
+		if (getSciVersion() <= SCI_VERSION_2_1) 
+			return _variables[_offset + 1];
+		else	// SCI3
+			return _superClassPosSci3;
+	}
 
-	reg_t getNameSelector() const { return _offset + 3 < (uint16)_variables.size() ? _variables[_offset + 3] : NULL_REG; }
-	void setNameSelector(reg_t value) { _variables[_offset + 3] = value; }
+	void setSuperClassSelector(reg_t value) {
+		if (getSciVersion() <= SCI_VERSION_2_1)
+			_variables[_offset + 1] = value;
+		else	// SCI3
+			_superClassPosSci3 = value;
+	}
 
-	reg_t getPropDictSelector() const { return _variables[2]; }
-	void setPropDictSelector(reg_t value) { _variables[2] = value; }
+	reg_t getInfoSelector() const {
+		if (getSciVersion() <= SCI_VERSION_2_1)
+			return _variables[_offset + 2];
+		else	// SCI3
+			return make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 10));
+	}
 
-	reg_t getClassScriptSelector() const { return _variables[4]; }
-	void setClassScriptSelector(reg_t value) { _variables[4] = value; }
+	// No setter for the -info- selector
+
+	reg_t getNameSelector() const {
+		if (getSciVersion() <= SCI_VERSION_2_1)
+			return _offset + 3 < (uint16)_variables.size() ? _variables[_offset + 3] : NULL_REG;
+		else	// SCI3
+			return _variables.size() ? _variables[0] : NULL_REG;
+	}
+
+	// No setter for the name selector
+
+	reg_t getPropDictSelector() const {
+		if (getSciVersion() <= SCI_VERSION_2_1)
+			return _variables[2];
+		else
+			// This should never occur, this is called from a SCI1.1 - SCI2.1 only function
+			error("getPropDictSelector called for SCI3");
+	}
+
+	void setPropDictSelector(reg_t value) {
+		if (getSciVersion() <= SCI_VERSION_2_1)
+			_variables[2] = value;
+		else
+			// This should never occur, this is called from a SCI1.1 - SCI2.1 only function
+			error("setPropDictSelector called for SCI3");
+	}
+
+	reg_t getClassScriptSelector() const {
+		if (getSciVersion() <= SCI_VERSION_2_1)
+			return _variables[4];
+		else	// SCI3
+			return make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 6));
+	}
+
+	void setClassScriptSelector(reg_t value) {
+		if (getSciVersion() <= SCI_VERSION_2_1)
+			_variables[4] = value;
+		else	// SCI3
+			// This should never occur, this is called from a SCI1.1 - SCI2.1 only function
+			error("setClassScriptSelector called for SCI3");
+	}
 
 	Selector getVarSelector(uint16 i) const { return READ_SCI11ENDIAN_UINT16(_baseVars + i); }
 
 	reg_t getFunction(uint16 i) const {
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? _methodCount + 1 + i : i * 2 + 2;
+		if (getSciVersion() == SCI_VERSION_3)
+			offset--;
 		return make_reg(_pos.segment, READ_SCI11ENDIAN_UINT16(_baseMethod + offset));
 	}
 
 	Selector getFuncSelector(uint16 i) const {
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? i : i * 2 + 1;
+		if (getSciVersion() == SCI_VERSION_3)
+			offset--;
 		return READ_SCI11ENDIAN_UINT16(_baseMethod + offset);
 	}
 
@@ -311,7 +375,8 @@ public:
 		_baseVars = obj ? obj->_baseVars : NULL;
 	}
 
-	bool relocate(SegmentId segment, int location, size_t scriptSize);
+	bool relocateSci0Sci21(SegmentId segment, int location, size_t scriptSize);
+	bool relocateSci3(SegmentId segment, int location, int offset, size_t scriptSize);
 
 	int propertyOffsetToId(SegManager *segMan, int propertyOffset) const;
 
@@ -321,15 +386,19 @@ public:
 	void syncBaseObject(const byte *ptr) { _baseObj = ptr; }
 
 private:
+	void initSelectorsSci3(const byte *buf);
+
 	const byte *_baseObj; /**< base + object offset within base */
 	const uint16 *_baseVars; /**< Pointer to the varselector area for this object */
 	const uint16 *_baseMethod; /**< Pointer to the method selector area for this object */
+	const uint16 *_propertyOffsetsSci3;
 
 	Common::Array<reg_t> _variables;
 	uint16 _methodCount;
 	int _flags;
 	uint16 _offset;
 	reg_t _pos; /**< Object offset within its script; for clones, this is their base */
+	reg_t _superClassPosSci3; /**< reg_t pointing to superclass for SCI3 */
 };
 
 /** Data stack */

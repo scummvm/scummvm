@@ -26,6 +26,7 @@
 #include "common/endian.h"
 
 #include "sci/sci.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/features.h"
 #include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/engine/segment.h"
@@ -379,21 +380,25 @@ void Object::init(byte *buf, reg_t obj_pos, bool initVariables) {
 	_baseObj = data;
 	_pos = obj_pos;
 
-	if (getSciVersion() < SCI_VERSION_1_1) {
+	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		_variables.resize(READ_LE_UINT16(data + kOffsetSelectorCounter));
 		_baseVars = (const uint16 *)(_baseObj + _variables.size() * 2);
 		_baseMethod = (const uint16 *)(data + READ_LE_UINT16(data + kOffsetFunctionArea));
 		_methodCount = READ_LE_UINT16(_baseMethod - 1);
-	} else {
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
 		_variables.resize(READ_SCI11ENDIAN_UINT16(data + 2));
 		_baseVars = (const uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 4));
 		_baseMethod = (const uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 6));
 		_methodCount = READ_SCI11ENDIAN_UINT16(_baseMethod);
+	} else if (getSciVersion() == SCI_VERSION_3) {
+		initSelectorsSci3(buf);
 	}
 
 	if (initVariables) {
-		for (uint i = 0; i < _variables.size(); i++)
-			_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
+		if (getSciVersion() <= SCI_VERSION_2_1) {
+			for (uint i = 0; i < _variables.size(); i++)
+				_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
+		}
 	}
 }
 
@@ -402,17 +407,20 @@ const Object *Object::getClass(SegManager *segMan) const {
 }
 
 int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
-	const byte *buf;
-	uint varnum;
+	const byte *buf = 0;
+	uint varnum = 0;
 
-	if (getSciVersion() < SCI_VERSION_1_1) {
+	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		varnum = getVarCount();
 		int selector_name_offset = varnum * 2 + kOffsetSelectorSegment;
 		buf = _baseObj + selector_name_offset;
-	} else {
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
 		const Object *obj = getClass(segMan);
 		varnum = obj->getVariable(1).toUint16();
 		buf = (const byte *)obj->_baseVars;
+	} else if (getSciVersion() == SCI_VERSION_3) {
+		varnum = _variables.size();
+		buf = (const byte *)_baseVars;
 	}
 
 	for (uint i = 0; i < varnum; i++)
@@ -422,8 +430,22 @@ int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
 	return -1; // Failed
 }
 
-bool Object::relocate(SegmentId segment, int location, size_t scriptSize) {
+bool Object::relocateSci0Sci21(SegmentId segment, int location, size_t scriptSize) {
 	return relocateBlock(_variables, getPos().offset, segment, location, scriptSize);
+}
+
+bool Object::relocateSci3(SegmentId segment, int location, int offset, size_t scriptSize) {
+	assert(_propertyOffsetsSci3);
+
+	for (uint i = 0; i < _variables.size(); ++i) {
+		if (location == _propertyOffsetsSci3[i]) {
+			_variables[i].segment = segment;
+			_variables[i].offset += offset;
+			return 1;
+		}
+	}
+
+	return -1;
 }
 
 int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
@@ -478,6 +500,92 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 	}
 
 	return false;
+}
+
+const int EXTRA_GROUPS = 3;
+
+void Object::initSelectorsSci3(const byte *buf) {
+	const byte *groupInfo = _baseObj + 16;
+	const byte *selectorBase = groupInfo + EXTRA_GROUPS * 32 * 2;
+	int groups = g_sci->getKernel()->getSelectorNamesSize()/32;
+	int methods, properties;
+
+	if (g_sci->getKernel()->getSelectorNamesSize() % 32)
+		++groups;
+
+	methods = properties = 0;
+
+	// Selectors are divided into groups of 32, of which the first
+	// two selectors are always reserved (because their storage
+	// space is used by the typeMask).
+	// We don't know beforehand how many methods and properties
+	// there are, so we count them first. 
+	for (int groupNr = 0; groupNr < groups; ++groupNr) {
+		byte groupLocation = groupInfo[groupNr];
+		const byte *seeker = selectorBase + groupLocation * 32 * 2;
+
+		if (groupLocation != 0)	{
+			// This object actually has selectors belonging to this group 
+			int typeMask = READ_SCI11ENDIAN_UINT32(seeker);
+
+			for (int bit = 2; bit < 32; ++bit) {
+				int value = READ_SCI11ENDIAN_UINT16(seeker + bit * 2);
+				if (typeMask & (1 << bit)) { // Property
+					++properties;
+				} else if (value != 0xffff) { // Method
+					++methods;
+				} else {
+					// Undefined selector
+				}
+				       
+			}
+		}
+	}
+
+	_variables.resize(properties);
+	uint16 *methodIds = (uint16*) malloc(sizeof(uint16)*2*methods);
+	uint16 *propertyIds = (uint16*) malloc(sizeof(uint16)*properties);
+	uint16 *methodOffsets = (uint16*) malloc(sizeof(uint16)*2*methods);
+	uint16 *propertyOffsets = (uint16*) malloc(sizeof(uint16)*properties);
+	int propertyCounter = 0;
+	int methodCounter = 0;
+
+	// Go through the whole thing again to get the property values
+	// and method pointers
+	for (int groupNr = 0; groupNr < groups; ++groupNr) {
+		byte groupLocation = groupInfo[groupNr];
+		const byte *seeker = selectorBase + groupLocation * 32 * 2;
+
+		if (groupLocation != 0)	{
+			// This object actually has selectors belonging to this group 
+			int typeMask = READ_SCI11ENDIAN_UINT32(seeker);
+			int groupBaseId = groupNr * 32;
+
+			for (int bit = 2; bit < 32; ++bit) {
+				int value = READ_SCI11ENDIAN_UINT16(seeker + bit * 2);
+				if (typeMask & (1 << bit)) { // Property
+					propertyIds[propertyCounter] = groupBaseId + bit;
+					_variables[propertyCounter] = make_reg(0, value);
+					propertyOffsets[propertyCounter] = (seeker + bit * 2) - buf;
+					++propertyCounter;
+				} else if (value != 0xffff) { // Method
+					methodIds[methodCounter * 2] = groupBaseId + bit;
+					methodIds[methodCounter * 2 + 1] = value + READ_SCI11ENDIAN_UINT32(buf);
+					methodOffsets[methodCounter] = (seeker + bit * 2) - buf;
+					++methodCounter;
+				} else /* Undefined selector */ {};
+				       
+			}
+		}
+	}
+
+	_superClassPosSci3 = make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 8));
+
+	_baseVars = propertyIds;
+	_baseMethod = methodIds;
+	_methodCount = methods;
+	_propertyOffsetsSci3 = propertyOffsets;
+	//_methodOffsetsSci3 = methodOffsets;
 }
 
 //-------------------- dynamic memory --------------------

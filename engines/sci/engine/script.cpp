@@ -276,6 +276,22 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 	return true;
 }
 
+int Script::relocateOffsetSci3(uint32 offset) {
+	int relocStart = READ_LE_UINT32(_buf + 8);
+	int relocCount = READ_LE_UINT16(_buf + 18);
+	const byte *seeker = _buf + relocStart;
+
+	for (int i = 0; i < relocCount; ++i) {
+		if (READ_SCI11ENDIAN_UINT32(seeker) == offset) {
+			// TODO: Find out what UINT16 at (seeker + 8) means
+			return READ_SCI11ENDIAN_UINT16(_buf + offset) + READ_SCI11ENDIAN_UINT32(seeker + 4);
+		}
+		seeker += 10;
+	}
+
+	return -1;
+}
+
 bool Script::relocateLocal(SegmentId segment, int location) {
 	if (_localsBlock)
 		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, _scriptSize);
@@ -283,7 +299,7 @@ bool Script::relocateLocal(SegmentId segment, int location) {
 		return false;
 }
 
-void Script::relocate(reg_t block) {
+void Script::relocateSci0Sci21(reg_t block) {
 	const byte *heap = _buf;
 	uint16 heapSize = (uint16)_bufSize;
 	uint16 heapOffset = 0;
@@ -323,11 +339,35 @@ void Script::relocate(reg_t block) {
 			// object, relocate it.
 			const ObjMap::iterator end = _objects.end();
 			for (ObjMap::iterator it = _objects.begin(); it != end; ++it)
-				if (it->_value.relocate(block.segment, pos, _scriptSize))
+				if (it->_value.relocateSci0Sci21(block.segment, pos, _scriptSize))
 					break;
 		}
 
 		exportIndex++;
+	}
+}
+
+void Script::relocateSci3(reg_t block) {
+	const byte *relocStart = _buf + READ_SCI11ENDIAN_UINT32(_buf + 8);
+	//int count = _bufSize - READ_SCI11ENDIAN_UINT32(_buf + 8);
+
+	ObjMap::iterator it;
+	for (it = _objects.begin(); it != _objects.end(); ++it) {
+		unsigned int ofs = it->_value.getPos().offset;
+		unsigned int size = READ_SCI11ENDIAN_UINT16(_buf + ofs + 2);
+		const byte *seeker = relocStart;
+		while (READ_SCI11ENDIAN_UINT32(seeker) < ofs + size &&
+			    seeker < _buf + _bufSize) {
+			while (READ_SCI11ENDIAN_UINT32(seeker) < ofs)
+				seeker += 10;
+
+			// TODO: Find out what UINT16 at (seeker + 8) means
+			it->_value.relocateSci3(block.segment,
+						READ_SCI11ENDIAN_UINT32(seeker),
+						READ_SCI11ENDIAN_UINT32(seeker + 4),
+						_scriptSize);
+			seeker += 10;
+		}
 	}
 }
 
@@ -467,7 +507,7 @@ void Script::initialiseClasses(SegManager *segMan) {
 		return;
 
 	uint16 marker;
-	bool isClass;
+	bool isClass = false;
 	uint16 classpos;
 	int16 species = 0;
 
@@ -476,7 +516,10 @@ void Script::initialiseClasses(SegManager *segMan) {
 		marker = READ_SCI11ENDIAN_UINT16(seeker);
 		classpos = seeker - _buf;
 
-		if (!marker)
+		if (getSciVersion() <= SCI_VERSION_1_LATE && !marker)
+			break;
+
+		if (getSciVersion() >= SCI_VERSION_1_1 && marker != 0x1234)
 			break;
 
 		if (getSciVersion() <= SCI_VERSION_1_LATE) {
@@ -488,7 +531,8 @@ void Script::initialiseClasses(SegManager *segMan) {
 			isClass = (READ_SCI11ENDIAN_UINT16(seeker + 14) & kInfoFlagClass);	// -info- selector
 			species = READ_SCI11ENDIAN_UINT16(seeker + 10);
 		} else if (getSciVersion() == SCI_VERSION_3) {
-			// TODO: SCI3 equivalent
+			isClass = (READ_SCI11ENDIAN_UINT16(seeker + 10) & kInfoFlagClass);
+			species = READ_SCI11ENDIAN_UINT16(seeker + 4);
 		}
 
 		if (isClass) {
@@ -553,7 +597,7 @@ void Script::initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 
 	byte *relocationBlock = findBlockSCI0(SCI_OBJ_POINTERS);
 	if (relocationBlock)
-		relocate(make_reg(segmentId, relocationBlock - getBuf() + 4));
+		relocateSci0Sci21(make_reg(segmentId, relocationBlock - getBuf() + 4));
 }
 
 void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
@@ -588,7 +632,7 @@ void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2) * 2;
 	}
 
-	relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(_heapStart)));
+	relocateSci0Sci21(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(_heapStart)));
 }
 
 void Script::initialiseObjectsSci3(SegManager *segMan, SegmentId segmentId) {
@@ -602,7 +646,7 @@ void Script::initialiseObjectsSci3(SegManager *segMan, SegmentId segmentId) {
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
 	}
 
-	relocate(make_reg(segmentId, 0));
+	relocateSci3(make_reg(segmentId, 0));
 }
 
 void Script::initialiseObjects(SegManager *segMan, SegmentId segmentId) {

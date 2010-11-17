@@ -250,15 +250,28 @@ public:
 
 private:
 	/**
-	 * Processes a relocation block witin a script
+	 * Processes a relocation block within a SCI0-SCI2.1 script
 	 *  This function is idempotent, but it must only be called after all
 	 *  objects have been instantiated, or a run-time error will occur.
 	 * @param obj_pos	Location (segment, offset) of the block
-	 * @return			Location of the relocation block
 	 */
-	void relocate(reg_t block);
+	void relocateSci0Sci21(reg_t block);
+
+	/**
+	 * Processes a relocation block within a SCI3 script
+	 *  This function is idempotent, but it must only be called after all
+	 *  objects have been instantiated, or a run-time error will occur.
+	 * @param obj_pos	Location (segment, offset) of the block
+	 */
+	void relocateSci3(reg_t block);
 
 	bool relocateLocal(SegmentId segment, int location);
+
+	/**
+	 * Resolve a relocation in an SCI3 script
+	 * @param offset        The offset to relocate from
+	 */
+	int relocateOffsetSci3(uint32 offset);
 
 	/**
 	 * Gets a pointer to the beginning of the objects in a SCI3 script
