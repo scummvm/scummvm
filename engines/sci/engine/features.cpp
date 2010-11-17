@@ -270,8 +270,17 @@ SciVersion GameFeatures::detectLofsType() {
 			return _lofsType;
 		}
 
-		if (getSciVersion() >= SCI_VERSION_1_1) {
+		if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
+			// SCI1.1 type, i.e. we compensate for the fact that the heap is attached
+			// to the end of the script
 			_lofsType = SCI_VERSION_1_1;
+			return _lofsType;
+		}
+
+		if (getSciVersion() == SCI_VERSION_3) {
+			// SCI3 type, same as pre-SCI1.1, really, as there is no separate heap
+			// resource
+			_lofsType = SCI_VERSION_3;
 			return _lofsType;
 		}
 

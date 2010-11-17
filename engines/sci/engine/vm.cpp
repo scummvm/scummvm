@@ -1723,14 +1723,20 @@ void run_vm(EngineState *s) {
 			s->r_acc.segment = s->xs->addr.pc.segment;
 
 			switch (g_sci->_features->detectLofsType()) {
-			case SCI_VERSION_1_1:
-				s->r_acc.offset = opparams[0] + local_script->getScriptSize();
+			case SCI_VERSION_0_EARLY:
+				s->r_acc.offset = s->xs->addr.pc.offset + opparams[0];
 				break;
 			case SCI_VERSION_1_MIDDLE:
 				s->r_acc.offset = opparams[0];
 				break;
+			case SCI_VERSION_1_1:
+				s->r_acc.offset = opparams[0] + local_script->getScriptSize();
+				break;
+			case SCI_VERSION_3:
+				s->r_acc.offset = opparams[0];
+				break;
 			default:
-				s->r_acc.offset = s->xs->addr.pc.offset + opparams[0];
+				error("Unknown lofs type");
 			}
 
 			if (s->r_acc.offset >= scr->getBufSize()) {
@@ -1744,14 +1750,20 @@ void run_vm(EngineState *s) {
 			r_temp.segment = s->xs->addr.pc.segment;
 
 			switch (g_sci->_features->detectLofsType()) {
-			case SCI_VERSION_1_1:
-				r_temp.offset = opparams[0] + local_script->getScriptSize();
+			case SCI_VERSION_0_EARLY:
+				r_temp.offset = s->xs->addr.pc.offset + opparams[0];
 				break;
 			case SCI_VERSION_1_MIDDLE:
 				r_temp.offset = opparams[0];
 				break;
+			case SCI_VERSION_1_1:
+				r_temp.offset = opparams[0] + local_script->getScriptSize();
+				break;
+			case SCI_VERSION_3:
+				r_temp.offset = opparams[0];
+				break;
 			default:
-				r_temp.offset = s->xs->addr.pc.offset + opparams[0];
+				error("Unknown lofs type");
 			}
 
 			if (r_temp.offset >= scr->getBufSize()) {

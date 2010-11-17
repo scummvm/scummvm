@@ -57,7 +57,7 @@ public:
 
 	/**
 	 * Autodetects the Lofs type
-	 * @return Lofs type, SCI_VERSION_0_EARLY / SCI_VERSION_1_MIDDLE / SCI_VERSION_1_1
+	 * @return Lofs type, SCI_VERSION_0_EARLY / SCI_VERSION_1_MIDDLE / SCI_VERSION_1_1 / SCI_VERSION_3
 	 */
 	SciVersion detectLofsType();
 
