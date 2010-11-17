@@ -94,7 +94,7 @@ static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack,
 
 // validation functionality
 
-static reg_t &validate_property(Object *obj, int index) {
+static reg_t &validate_property(EngineState *s, Object *obj, int index) {
 	// A static dummy reg_t, which we return if obj or index turn out to be
 	// invalid. Note that we cannot just return NULL_REG, because client code
 	// may modify the value of the returned reg_t.
@@ -104,6 +104,11 @@ static reg_t &validate_property(Object *obj, int index) {
 	// collector, so don't hide it with fake return values
 	if (!obj)
 		error("validate_property: Sending to disposed object");
+
+	if (getSciVersion() == SCI_VERSION_3)
+		index = obj->locateVarSelector(s->_segMan, index);
+	else
+		index >>= 1;
 
 	if (index < 0 || (uint)index >= obj->getVarCount()) {
 		// This is same way sierra does it and there are some games, that contain such scripts like
@@ -1650,27 +1655,27 @@ void run_vm(EngineState *s) {
 
 		case op_pToa: // 0x31 (49)
 			// Property To Accumulator
-			s->r_acc = validate_property(obj, (opparams[0] >> 1));
+			s->r_acc = validate_property(s, obj, opparams[0]);
 			break;
 
 		case op_aTop: // 0x32 (50)
 			// Accumulator To Property
-			validate_property(obj, (opparams[0] >> 1)) = s->r_acc;
+			validate_property(s, obj, opparams[0]) = s->r_acc;
 			break;
 
 		case op_pTos: // 0x33 (51)
 			// Property To Stack
-			PUSH32(validate_property(obj, opparams[0] >> 1));
+			PUSH32(validate_property(s, obj, opparams[0]));
 			break;
 
 		case op_sTop: // 0x34 (52)
 			// Stack To Property
-			validate_property(obj, (opparams[0] >> 1)) = POP32();
+			validate_property(s, obj, opparams[0]) = POP32();
 			break;
 
 		case op_ipToa: { // 0x35 (53)
 			// Increment Property and copy To Accumulator
-			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			reg_t &opProperty = validate_property(s, obj, opparams[0]);
 			uint16 valueProperty;
 			if (validate_unsignedInteger(opProperty, valueProperty))
 				s->r_acc = make_reg(0, valueProperty + 1);
@@ -1682,7 +1687,7 @@ void run_vm(EngineState *s) {
 
 		case op_dpToa: { // 0x36 (54)
 			// Decrement Property and copy To Accumulator
-			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			reg_t &opProperty = validate_property(s, obj, opparams[0]);
 			uint16 valueProperty;
 			if (validate_unsignedInteger(opProperty, valueProperty))
 				s->r_acc = make_reg(0, valueProperty - 1);
@@ -1694,7 +1699,7 @@ void run_vm(EngineState *s) {
 
 		case op_ipTos: { // 0x37 (55)
 			// Increment Property and push to Stack
-			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			reg_t &opProperty = validate_property(s, obj, opparams[0]);
 			uint16 valueProperty;
 			if (validate_unsignedInteger(opProperty, valueProperty))
 				valueProperty++;
@@ -1707,7 +1712,7 @@ void run_vm(EngineState *s) {
 
 		case op_dpTos: { // 0x38 (56)
 			// Decrement Property and push to Stack
-			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			reg_t &opProperty = validate_property(s, obj, opparams[0]);
 			uint16 valueProperty;
 			if (validate_unsignedInteger(opProperty, valueProperty))
 				valueProperty--;
