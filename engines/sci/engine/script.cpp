@@ -566,13 +566,39 @@ void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 	relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(_heapStart)));
 }
 
+void Script::initialiseObjectsSci3(SegManager *segMan, SegmentId segmentId) {
+	const byte *seeker = _buf;
+
+	// SCI3 local variables always start dword-aligned
+	if (_numExports % 2)
+		seeker = _buf + 22 + _numExports * 2;
+	else
+		seeker = _buf + 24 + _numExports * 2;
+
+	// SCI3 object structures always start dword-aligned
+	if (_localsCount % 2)
+		seeker = seeker + 2 + _localsCount * 2;
+	else
+		seeker = seeker + _localsCount * 2;
+
+	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
+		reg_t reg = make_reg(segmentId, seeker - _buf);
+		Object *obj = scriptObjInit(reg);
+
+		obj->setSuperClassSelector(segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
+		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
+	}
+
+	relocate(make_reg(segmentId, 0));
+}
+
 void Script::initialiseObjects(SegManager *segMan, SegmentId segmentId) {
 	if (getSciVersion() <= SCI_VERSION_1_LATE)
 		initialiseObjectsSci0(segMan, segmentId);
 	else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1)
 		initialiseObjectsSci11(segMan, segmentId);
 	else if (getSciVersion() == SCI_VERSION_3)
-		warning("TODO: initialiseObjects(): SCI3 equivalent");
+		initialiseObjectsSci3(segMan, segmentId);
 }
 
 reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) const {

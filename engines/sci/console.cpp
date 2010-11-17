@@ -3670,7 +3670,7 @@ int Console::printObject(reg_t pos) {
 	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), s->_segMan->getObjectName(pos),
 				obj->getVarCount(), obj->getMethodCount());
 
-	if (!obj->isClass())
+	if (!obj->isClass() && getSciVersion() != SCI_VERSION_3)
 		var_container = s->_segMan->getObject(obj->getSuperClassSelector());
 	DebugPrintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->getVarCount(); i++) {

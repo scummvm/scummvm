@@ -268,11 +268,18 @@ private:
 	void initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId);
 
 	/**
-	 * Initializes the script's objects (SCI1.1+)
+	 * Initializes the script's objects (SCI1.1 - SCI2.1)
 	 * @param segMan	A reference to the segment manager
 	 * @param segmentId	The script's segment id
 	 */
 	void initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId);
+
+	/**
+	 * Initializes the script's objects (SCI3)
+	 * @param segMan	A reference to the segment manager
+	 * @param segmentId	The script's segment id
+	 */
+	void initialiseObjectsSci3(SegManager *segMan, SegmentId segmentId);
 };
 
 } // End of namespace Sci
