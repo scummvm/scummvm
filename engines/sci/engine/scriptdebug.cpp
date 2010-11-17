@@ -478,8 +478,8 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 			break;
 
-		case 3:
-			debugN("<unknown>\n");
+		case SCI_OBJ_SYNONYMS:
+			debugN("Synonyms\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 			break;
 
