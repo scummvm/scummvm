@@ -248,6 +248,12 @@ public:
 	 */
 	void syncStringHeap(Common::Serializer &ser);
 
+	/**
+	 * Resolve a relocation in an SCI3 script
+	 * @param offset        The offset to relocate from
+	 */
+	int relocateOffsetSci3(uint32 offset);
+
 private:
 	/**
 	 * Processes a relocation block within a SCI0-SCI2.1 script
@@ -266,12 +272,6 @@ private:
 	void relocateSci3(reg_t block);
 
 	bool relocateLocal(SegmentId segment, int location);
-
-	/**
-	 * Resolve a relocation in an SCI3 script
-	 * @param offset        The offset to relocate from
-	 */
-	int relocateOffsetSci3(uint32 offset);
 
 	/**
 	 * Gets a pointer to the beginning of the objects in a SCI3 script

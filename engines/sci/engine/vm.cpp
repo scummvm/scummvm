@@ -1738,7 +1738,9 @@ void run_vm(EngineState *s) {
 				s->r_acc.offset = opparams[0] + local_script->getScriptSize();
 				break;
 			case SCI_VERSION_3:
-				s->r_acc.offset = opparams[0];
+				// In theory this can break if the variant with a one-byte argument is
+				// used. For now, assume it doesn't happen.
+				s->r_acc.offset = local_script->relocateOffsetSci3(s->xs->addr.pc.offset-2);
 				break;
 			default:
 				error("Unknown lofs type");
