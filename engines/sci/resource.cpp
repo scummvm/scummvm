@@ -2384,6 +2384,24 @@ static byte *findSci0ExportsBlock(byte *buffer) {
 	return NULL;
 }
 
+// This code duplicates Script::relocateOffsetSci3, but we can't use
+// that here since we can't instantiate scripts at this point.
+static int relocateOffsetSci3(const byte *buf, uint32 offset) {
+	int relocStart = READ_LE_UINT32(buf + 8);
+	int relocCount = READ_LE_UINT16(buf + 18);
+	const byte *seeker = buf + relocStart;
+
+	for (int i = 0; i < relocCount; ++i) {
+		if (READ_SCI11ENDIAN_UINT32(seeker) == offset) {
+			// TODO: Find out what UINT16 at (seeker + 8) means
+			return READ_SCI11ENDIAN_UINT16(buf + offset) + READ_SCI11ENDIAN_UINT32(seeker + 4);
+		}
+		seeker += 10;
+	}
+
+	return -1;
+}
+
 reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 	Resource *script = findResource(ResourceId(kResourceTypeScript, 0), false);
 
@@ -2392,7 +2410,7 @@ reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 
 	byte *offsetPtr = 0;
 
-	if (getSciVersion() < SCI_VERSION_1_1) {
+	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		byte *buf = (getSciVersion() == SCI_VERSION_0_EARLY) ? script->data + 2 : script->data;
 
 		// Check if the first block is the exports block (in most cases, it is)
@@ -2405,23 +2423,27 @@ reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 				error("Unable to find exports block from script 0");
 			offsetPtr += 4 + 2;
 		}
-	} else {
+
+		int16 offset = !isSci11Mac() ? READ_LE_UINT16(offsetPtr) : READ_BE_UINT16(offsetPtr);
+		return make_reg(1, offset);
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
 		offsetPtr = script->data + 4 + 2 + 2;
+
+		// In SCI1.1 - SCI2.1, the heap is appended at the end of the script,
+		// so adjust the offset accordingly if requested
+		int16 offset = !isSci11Mac() ? READ_LE_UINT16(offsetPtr) : READ_BE_UINT16(offsetPtr);
+		if (addSci11ScriptOffset) {
+			offset += script->size;
+
+			// Ensure that the start of the heap is word-aligned - same as in Script::init()
+			if (script->size & 2)
+				offset++;
+		}
+
+		return make_reg(1, offset);
+	} else {
+		return make_reg(1, relocateOffsetSci3(script->data, 22));
 	}
-	
-	int16 offset = !isSci11Mac() ? READ_LE_UINT16(offsetPtr) : READ_BE_UINT16(offsetPtr);
-
-	// In SCI1.1 - SCI2.1, the heap is appended at the end of the script,
-	// so adjust the offset accordingly
-	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1 && addSci11ScriptOffset) {
-		offset += script->size;
-
-		// Ensure that the start of the heap is word-aligned - same as in Script::init()
-		if (script->size & 2)
-			offset++;
-	}
-
-	return make_reg(1, offset);
 }
 
 Common::String ResourceManager::findSierraGameId() {
