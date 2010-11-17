@@ -911,6 +911,12 @@ void script_adjust_opcode_formats() {
 		g_opcode_formats[op_call][1] = Script_Word;
 		g_opcode_formats[op_callb][1] = Script_Word;
 	}
+
+	if (getSciVersion() >= SCI_VERSION_3) {
+		// TODO: There are also opcodes in
+		// here to get the superclass, and possibly the species too.
+		g_opcode_formats[0x4d/2][0] = Script_None;
+	}
 #endif
 }
 

@@ -1557,7 +1557,16 @@ void run_vm(EngineState *s) {
 
 		case 0x26: // (38)
 		case 0x27: // (39)
-			error("Dummy opcode 0x%x called", opcode);	// should never happen
+			if (getSciVersion() == SCI_VERSION_3)
+			{
+				if (extOpcode == 0x4d)
+					PUSH32(obj->getInfoSelector());
+				// TODO: There are also opcodes in
+				// here to get the superclass, and possibly the species too.
+				else
+					error("Dummy opcode 0x%x called", opcode);	// should never happen
+			} else
+				error("Dummy opcode 0x%x called", opcode);	// should never happen
 			break;
 
 		case op_class: // 0x28 (40)
