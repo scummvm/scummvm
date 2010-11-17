@@ -258,6 +258,18 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1)
 		address += scr->getScriptSize();
 
+	// Bugfix for the intro speed in PQ2 version 1.002.011.
+	// This is taken from the patch by NewRisingSun(NRS) / Belzorash. Global 3
+	// is used for timing during the intro, and in the problematic version it's
+	// initialized to 0, whereas it's 6 in other versions. Thus, we assign it
+	// to 6 here, fixing the speed of the introduction. Refer to bug #3102071.
+	if (g_sci->getGameId() == GID_PQ2 && script == 200) {
+		if (s->variables[VAR_GLOBAL][3].isNull()) {
+			warning("Fixing speed in the intro of PQ2, version 1.002.011");
+			s->variables[VAR_GLOBAL][3] = make_reg(0, 6);
+		}
+	}
+
 	return make_reg(scriptSeg, address);
 }
 
