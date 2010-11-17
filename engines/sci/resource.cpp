@@ -2411,9 +2411,9 @@ reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 	
 	int16 offset = !isSci11Mac() ? READ_LE_UINT16(offsetPtr) : READ_BE_UINT16(offsetPtr);
 
-	// In SCI1.1 and newer, the heap is appended at the end of the script,
+	// In SCI1.1 - SCI2.1, the heap is appended at the end of the script,
 	// so adjust the offset accordingly
-	if (getSciVersion() >= SCI_VERSION_1_1 && addSci11ScriptOffset) {
+	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1 && addSci11ScriptOffset) {
 		offset += script->size;
 
 		// Ensure that the start of the heap is word-aligned - same as in Script::init()
@@ -2425,7 +2425,8 @@ reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 }
 
 Common::String ResourceManager::findSierraGameId() {
-	// In SCI0-SCI1, the heap is embedded in the script. In SCI1.1+, it's separated
+	// In SCI0-SCI1, the heap is embedded in the script. In SCI1.1 - SCI2.1,
+	// it's in a separate heap resource
 	Resource *heap = 0;
 	int nameSelector = 3;
 

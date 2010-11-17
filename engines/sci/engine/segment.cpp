@@ -148,7 +148,7 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 		return false;
 	}
 	block[idx].segment = segment; // Perform relocation
-	if (getSciVersion() >= SCI_VERSION_1_1)
+	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1)
 		block[idx].offset += scriptSize;
 
 	return true;

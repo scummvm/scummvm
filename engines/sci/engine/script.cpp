@@ -144,14 +144,7 @@ void Script::load(ResourceManager *resMan) {
 	_synonyms = 0;
 	_numSynonyms = 0;
 	
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		if (READ_LE_UINT16(_buf + 1 + 5) > 0) {	// does the script have an export table?
-			_exportTable = (const uint16 *)(_buf + 1 + 5 + 2);
-			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
-		}
-		_localsOffset = _scriptSize + 4;
-		_localsCount = READ_SCI11ENDIAN_UINT16(_buf + _localsOffset - 2);
-	} else {
+	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		_exportTable = (const uint16 *)findBlockSCI0(SCI_OBJ_EXPORTS);
 		if (_exportTable) {
 			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable + 1);
@@ -167,9 +160,26 @@ void Script::load(ResourceManager *resMan) {
 			_localsOffset = localsBlock - _buf + 4;
 			_localsCount = (READ_LE_UINT16(_buf + _localsOffset - 2) - 4) >> 1;	// half block size
 		}
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
+		if (READ_LE_UINT16(_buf + 1 + 5) > 0) {	// does the script have an export table?
+			_exportTable = (const uint16 *)(_buf + 1 + 5 + 2);
+			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
+		}
+		_localsOffset = _scriptSize + 4;
+		_localsCount = READ_SCI11ENDIAN_UINT16(_buf + _localsOffset - 2);
+	} else if (getSciVersion() == SCI_VERSION_3) {
+		warning("TODO: Script::load(): SCI3 equivalent");
 	}
 
-	if (getSciVersion() > SCI_VERSION_0_EARLY) {
+	if (getSciVersion() == SCI_VERSION_0_EARLY) {
+		// SCI0 early
+		// Old script block. There won't be a localvar block in this case.
+		// Instead, the script starts with a 16 bit int specifying the
+		// number of locals we need; these are then allocated and zeroed.
+		_localsCount = READ_LE_UINT16(_buf);
+		_localsOffset = -_localsCount * 2; // Make sure it's invalid
+	} else {
+		// SCI0 late and newer
 		// Does the script actually have locals? If not, set the locals offset to 0
 		if (!_localsCount)
 			_localsOffset = 0;
@@ -178,12 +188,6 @@ void Script::load(ResourceManager *resMan) {
 			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, _bufSize);
 			_localsCount = (_bufSize - _localsOffset) >> 1;
 		}
-	} else {
-		// Old script block. There won't be a localvar block in this case.
-		// Instead, the script starts with a 16 bit int specifying the
-		// number of locals we need; these are then allocated and zeroed.
-		_localsCount = READ_LE_UINT16(_buf);
-		_localsOffset = -_localsCount * 2; // Make sure it's invalid
 	}
 }
 
@@ -242,7 +246,7 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 		return false;
 	}
 	block[idx].segment = segment; // Perform relocation
-	if (getSciVersion() >= SCI_VERSION_1_1)
+	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1)
 		block[idx].offset += scriptSize;
 
 	return true;
@@ -260,7 +264,7 @@ void Script::relocate(reg_t block) {
 	uint16 heapSize = (uint16)_bufSize;
 	uint16 heapOffset = 0;
 
-	if (getSciVersion() >= SCI_VERSION_1_1) {
+	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
 		heap = _heapStart;
 		heapSize = (uint16)_heapSize;
 		heapOffset = _scriptSize;
@@ -423,13 +427,15 @@ void Script::initialiseLocals(SegManager *segMan) {
 void Script::initialiseClasses(SegManager *segMan) {
 	const byte *seeker = 0;
 	uint16 mult = 0;
-	
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		seeker = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
-		mult = 2;
-	} else {
+
+	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		seeker = findBlockSCI0(SCI_OBJ_CLASS);
 		mult = 1;
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
+		seeker = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
+		mult = 2;
+	} else if (getSciVersion() == SCI_VERSION_3) {
+		warning("TODO: initialiseClasses(): SCI3 equivalent");
 	}
 
 	if (!seeker)
@@ -448,14 +454,16 @@ void Script::initialiseClasses(SegManager *segMan) {
 		if (!marker)
 			break;
 
-		if (getSciVersion() >= SCI_VERSION_1_1) {
-			isClass = (READ_SCI11ENDIAN_UINT16(seeker + 14) & kInfoFlagClass);	// -info- selector
-			species = READ_SCI11ENDIAN_UINT16(seeker + 10);
-		} else {
+		if (getSciVersion() <= SCI_VERSION_1_LATE) {
 			isClass = (marker == SCI_OBJ_CLASS);
 			if (isClass)
 				species = READ_SCI11ENDIAN_UINT16(seeker + 12);
 			classpos += 12;
+		} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
+			isClass = (READ_SCI11ENDIAN_UINT16(seeker + 14) & kInfoFlagClass);	// -info- selector
+			species = READ_SCI11ENDIAN_UINT16(seeker + 10);
+		} else if (getSciVersion() == SCI_VERSION_3) {
+			// TODO: SCI3 equivalent
 		}
 
 		if (isClass) {
@@ -559,10 +567,12 @@ void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 }
 
 void Script::initialiseObjects(SegManager *segMan, SegmentId segmentId) {
-	if (getSciVersion() >= SCI_VERSION_1_1)
-		initialiseObjectsSci11(segMan, segmentId);
-	else
+	if (getSciVersion() <= SCI_VERSION_1_LATE)
 		initialiseObjectsSci0(segMan, segmentId);
+	else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1)
+		initialiseObjectsSci11(segMan, segmentId);
+	else if (getSciVersion() == SCI_VERSION_3)
+		warning("TODO: initialiseObjects(): SCI3 equivalent");
 }
 
 reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) const {
