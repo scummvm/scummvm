@@ -168,7 +168,13 @@ void Script::load(ResourceManager *resMan) {
 		_localsOffset = _scriptSize + 4;
 		_localsCount = READ_SCI11ENDIAN_UINT16(_buf + _localsOffset - 2);
 	} else if (getSciVersion() == SCI_VERSION_3) {
-		warning("TODO: Script::load(): SCI3 equivalent");
+		_localsCount = READ_LE_UINT16(_buf + 12);
+		_numExports = READ_LE_UINT16(_buf + 20);
+		// SCI3 local variables always start dword-aligned
+		if (_numExports % 2)
+			_localsOffset = 22 + _numExports * 2;
+		else
+			_localsOffset = 24 + _numExports * 2;
 	}
 
 	if (getSciVersion() == SCI_VERSION_0_EARLY) {
@@ -189,6 +195,24 @@ void Script::load(ResourceManager *resMan) {
 			_localsCount = (_bufSize - _localsOffset) >> 1;
 		}
 	}
+}
+
+const byte *Script::getSci3ObjectsPointer() {
+	const byte *ptr = 0;
+
+	// SCI3 local variables always start dword-aligned
+	if (_numExports % 2)
+		ptr = _buf + 22 + _numExports * 2;
+	else
+		ptr = _buf + 24 + _numExports * 2;
+
+	// SCI3 object structures always start dword-aligned
+	if (_localsCount % 2)
+		ptr += 2 + _localsCount * 2;
+	else
+		ptr += _localsCount * 2;
+
+	return ptr;
 }
 
 Object *Script::getObject(uint16 offset) {
@@ -435,7 +459,8 @@ void Script::initialiseClasses(SegManager *segMan) {
 		seeker = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
 		mult = 2;
 	} else if (getSciVersion() == SCI_VERSION_3) {
-		warning("TODO: initialiseClasses(): SCI3 equivalent");
+		seeker = getSci3ObjectsPointer();
+		mult = 1;
 	}
 
 	if (!seeker)
@@ -567,19 +592,7 @@ void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 }
 
 void Script::initialiseObjectsSci3(SegManager *segMan, SegmentId segmentId) {
-	const byte *seeker = _buf;
-
-	// SCI3 local variables always start dword-aligned
-	if (_numExports % 2)
-		seeker = _buf + 22 + _numExports * 2;
-	else
-		seeker = _buf + 24 + _numExports * 2;
-
-	// SCI3 object structures always start dword-aligned
-	if (_localsCount % 2)
-		seeker = seeker + 2 + _localsCount * 2;
-	else
-		seeker = seeker + _localsCount * 2;
+	const byte *seeker = getSci3ObjectsPointer();
 
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		reg_t reg = make_reg(segmentId, seeker - _buf);

@@ -261,6 +261,11 @@ private:
 	bool relocateLocal(SegmentId segment, int location);
 
 	/**
+	 * Gets a pointer to the beginning of the objects in a SCI3 script
+	 */
+	const byte *getSci3ObjectsPointer();
+
+	/**
 	 * Initializes the script's objects (SCI0)
 	 * @param segMan	A reference to the segment manager
 	 * @param segmentId	The script's segment id
