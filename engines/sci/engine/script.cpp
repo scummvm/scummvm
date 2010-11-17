@@ -169,6 +169,7 @@ void Script::load(ResourceManager *resMan) {
 		_localsCount = READ_SCI11ENDIAN_UINT16(_buf + _localsOffset - 2);
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		_localsCount = READ_LE_UINT16(_buf + 12);
+		_exportTable = (const uint16 *) _buf + 22;
 		_numExports = READ_LE_UINT16(_buf + 20);
 		// SCI3 local variables always start dword-aligned
 		if (_numExports % 2)
@@ -398,7 +399,8 @@ uint16 Script::validateExportFunc(int pubfunct) {
 
 	if (exportsAreWide)
 		pubfunct *= 2;
-	uint16 offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);
+	uint16 offset = getSciVersion() != SCI_VERSION_3 ? READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct) :
+		relocateOffsetSci3(pubfunct * 2 + 22);
 	VERIFY(offset < _bufSize, "invalid export function pointer");
 
 	// Check if the offset found points to a second export table (e.g. script 912
