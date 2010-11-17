@@ -1927,7 +1927,7 @@ public:
 	void off_setPathValues();
 	void off_stopClock();
 	void off_restartClock();
-	void off_setColour();
+	void off_setColor();
 	void off_b3Set();
 	void off_b3Clear();
 	void off_b3Zero();

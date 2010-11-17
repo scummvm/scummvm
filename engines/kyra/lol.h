@@ -1223,7 +1223,7 @@ private:
 
 	void assignItemToBlock(uint16 *assignedBlockObjects, int id);
 	int checkDrawObjectSpace(int itemX, int itemY, int partyX, int partyY);
-	int checkSceneForItems(uint16 *blockDrawObjects, int colour);
+	int checkSceneForItems(uint16 *blockDrawObjects, int color);
 
 	uint8 _moneyColumnHeight[5];
 	uint16 _credits;

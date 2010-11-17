@@ -521,10 +521,10 @@ int LoLEngine::checkDrawObjectSpace(int itemX, int itemY, int partyX, int partyY
 	return a + b;
 }
 
-int LoLEngine::checkSceneForItems(uint16 *blockDrawObjects, int colour) {
+int LoLEngine::checkSceneForItems(uint16 *blockDrawObjects, int color) {
 	while (*blockDrawObjects) {
 		if (!(*blockDrawObjects & 0x8000)) {
-			if (!--colour)
+			if (!--color)
 				return *blockDrawObjects;
 		}
 

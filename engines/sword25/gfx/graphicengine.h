@@ -79,24 +79,24 @@ public:
 	// Enums
 	// -----
 
-	// Colour formats
+	// Color formats
 	//
 	/**
-	 * The colour format used by the engine
+	 * The color format used by the engine
 	 */
 	enum COLOR_FORMATS {
-		/// Undefined/unknown colour format
+		/// Undefined/unknown color format
 		CF_UNKNOWN = 0,
 		/**
-		 * 24-bit colour format (R8G8B8)
+		 * 24-bit color format (R8G8B8)
 		 */
 		CF_RGB24,
 		/**
-		 * 32-bit colour format (A8R8G8B8) (little endian)
+		 * 32-bit color format (A8R8G8B8) (little endian)
 		*/
 		CF_ARGB32,
 		/**
-		    32-bit colour format (A8B8G8R8) (little endian)
+		    32-bit color format (A8B8G8R8) (little endian)
 		*/
 		CF_ABGR32
 	};
@@ -149,7 +149,7 @@ public:
 	 * called for every frame.
 	* @param Start      The starting point of the line
 	* @param End        The ending point of the line
-	* @param Color      The colour of the line. The default is BS_RGB (255,255,255) (White)
+	* @param Color      The color of the line. The default is BS_RGB (255,255,255) (White)
 	*/
 	void drawDebugLine(const Vertex &start, const Vertex &end, uint color = BS_RGB(255, 255, 255));
 
@@ -168,7 +168,7 @@ public:
 	 * after a call to EndFrame(), and before the next call to StartFrame().
 	 * @param Width     Returns the width of the frame buffer
 	 * @param Height    Returns the height of the frame buffer
-	 * @param Data      Returns the raw data of the frame buffer as an array of 32-bit colour values.
+	 * @param Data      Returns the raw data of the frame buffer as an array of 32-bit color values.
 	*/
 	Graphics::Surface *getScreenshot();
 
@@ -256,12 +256,12 @@ public:
 	}
 
 	/**
-	 * Fills a rectangular area of the frame buffer with a colour.
-	 * Notes: It is possible to create transparent rectangles by passing a colour with an Alpha value of 255.
+	 * Fills a rectangular area of the frame buffer with a color.
+	 * Notes: It is possible to create transparent rectangles by passing a color with an Alpha value of 255.
 	 * @param FillRectPtr   Pointer to a Common::Rect, which specifies the section of the frame buffer to be filled.
 	 * If the rectangle falls partly off-screen, then it is automatically trimmed.
 	 * If a NULL value is passed, then the entire image is to be filled.
-	 * @param Color         The 32-bit colour with which the area is to be filled. The default is BS_RGB(0, 0, 0) (black)
+	 * @param Color         The 32-bit color with which the area is to be filled. The default is BS_RGB(0, 0, 0) (black)
 	 * @note FIf the rectangle is not completely inside the screen, it is automatically clipped.
 	 */
 	bool fill(const Common::Rect *fillRectPtr = 0, uint color = BS_RGB(0, 0, 0));
@@ -287,9 +287,9 @@ public:
 	// Access methods
 
 	/**
-	 * Returns the size of a pixel entry in bytes for a particular colour format
-	 * @param ColorFormat   The desired colour format. The parameter must be of type COLOR_FORMATS
-	 * @return              Returns the size of a pixel in bytes. If the colour format is unknown, -1 is returned.
+	 * Returns the size of a pixel entry in bytes for a particular color format
+	 * @param ColorFormat   The desired color format. The parameter must be of type COLOR_FORMATS
+	 * @return              Returns the size of a pixel in bytes. If the color format is unknown, -1 is returned.
 	 */
 	static int getPixelSize(GraphicEngine::COLOR_FORMATS colorFormat) {
 		switch (colorFormat) {
@@ -301,10 +301,10 @@ public:
 	}
 
 	/**
-	 * Calculates the length of an image line in bytes, depending on a given colour format.
-	 * @param ColorFormat   The colour format
+	 * Calculates the length of an image line in bytes, depending on a given color format.
+	 * @param ColorFormat   The color format
 	 * @param Width         The width of the line in pixels
-	 * @return              Reflects the length of the line in bytes. If the colour format is
+	 * @return              Reflects the length of the line in bytes. If the color format is
 	 * unknown, -1 is returned
 	 */
 	static int calcPitch(GraphicEngine::COLOR_FORMATS colorFormat, int width) {

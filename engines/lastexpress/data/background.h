@@ -34,14 +34,14 @@
 	    uint32 {4}   - position Y on screen
 	    uint32 {4}   - image width
 	    uint32 {4}   - image height
-	    uint32 {4}   - red colour channel data size
-	    uint32 {4}   - blue colour channel data size
-	    uint32 {4}   - green colour channel data size
+	    uint32 {4}   - red color channel data size
+	    uint32 {4}   - blue color channel data size
+	    uint32 {4}   - green color channel data size
 
 	data:
-	    byte {x}     - red colour channel data
-	    byte {x}     - blue colour channel data
-	    byte {x}     - green colour channel data
+	    byte {x}     - red color channel data
+	    byte {x}     - blue color channel data
+	    byte {x}     - green color channel data
 */
 
 #include "lastexpress/drawable.h"

@@ -281,7 +281,7 @@ void AGOSEngine_DIMP::setupOpcodes() {
 		OPCODE(opp_setPathValues),
 		OPCODE(off_stopClock),
 		OPCODE(off_restartClock),
-		OPCODE(off_setColour),
+		OPCODE(off_setColor),
 	};
 
 	_opcodesDIMP = opcodes;

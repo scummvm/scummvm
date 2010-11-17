@@ -97,7 +97,7 @@ bool Screenshot::saveToFile(Graphics::Surface *data, Common::WriteStream *stream
 	             data->w,                        // Width
 	             data->h,                        // Height
 	             8,                              // Bits depth
-	             PNG_COLOR_TYPE_RGB,             // Colour type
+	             PNG_COLOR_TYPE_RGB,             // Color type
 	             PNG_INTERLACE_NONE,             // No interlacing
 	             PNG_COMPRESSION_TYPE_DEFAULT,   // Compression type
 	             PNG_FILTER_TYPE_DEFAULT);       // Filter Type

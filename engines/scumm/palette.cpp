@@ -1092,7 +1092,7 @@ void ScummEngine::updatePalette() {
 		else
 			data = _currentPalette + i * 3;
 
-		// Sam & Max film noir mode. Convert the colours to grayscale
+		// Sam & Max film noir mode. Convert the colors to grayscale
 		// before uploading them to the backend.
 
 		if (noir_mode) {

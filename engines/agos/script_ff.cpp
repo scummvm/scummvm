@@ -282,7 +282,7 @@ void AGOSEngine_Feeble::setupOpcodes() {
 		OPCODE(off_setPathValues),
 		OPCODE(off_stopClock),
 		OPCODE(off_restartClock),
-		OPCODE(off_setColour),
+		OPCODE(off_setColor),
 		/* 196 */
 		OPCODE(off_b3Set),
 		OPCODE(off_b3Clear),
@@ -638,8 +638,8 @@ void AGOSEngine_Feeble::off_restartClock() {
 	_clockStopped = 0;
 }
 
-void AGOSEngine_Feeble::off_setColour() {
-	// 195: set palette colour
+void AGOSEngine_Feeble::off_setColor() {
+	// 195: set palette color
 	uint16 c = getVarOrByte() * 4;
 	uint8 r = getVarOrByte();
 	uint8 g = getVarOrByte();

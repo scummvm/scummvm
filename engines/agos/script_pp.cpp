@@ -281,7 +281,7 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		OPCODE(opp_setPathValues),
 		OPCODE(off_restartClock),
 		OPCODE(opp_pauseClock),
-		OPCODE(off_setColour),
+		OPCODE(off_setColor),
 	};
 
 	_opcodesPuzzlePack = opcodes;
