@@ -702,9 +702,12 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		// Not implemented in SSCI
 		return s->r_acc;
 	case 8: { // Dup
-		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
 		reg_t arrayHandle;
 		SciArray<reg_t> *dupArray = s->_segMan->allocateArray(&arrayHandle);
+		// This must occur after allocateArray, as inserting a new object
+		// in the heap object list might invalidate this pointer. Also refer
+		// to the same issue in kClone()
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
 
 		dupArray->setType(array->getType());
 		dupArray->setSize(array->getSize());
