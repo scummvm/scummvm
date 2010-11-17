@@ -2431,9 +2431,11 @@ Common::String ResourceManager::findSierraGameId() {
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
 		heap = findResource(ResourceId(kResourceTypeScript, 0), false);
-	} else {
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
 		heap = findResource(ResourceId(kResourceTypeHeap, 0), false);
 		nameSelector += 5;
+	} else if (getSciVersion() == SCI_VERSION_3) {
+		warning("TODO: findSierraGameId(): SCI3 equivalent");
 	}
 
 	if (!heap)

@@ -90,8 +90,8 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 
 	if (getSciVersion() == SCI_VERSION_0_EARLY) {
 		_bufSize += READ_LE_UINT16(script->data) * 2;
-	} else if (getSciVersion() >= SCI_VERSION_1_1) {
-		// In SCI11, the heap was in a separate space from the script. We append
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
+		// In SCI1.1 - SCI2.1, the heap was in a separate space from the script. We append
 		// it to the end of the script, and adjust addressing accordingly.
 		// However, since we address the heap with a 16-bit pointer, the
 		// combined size of the stack and the heap must be 64KB. So far this has
@@ -129,7 +129,7 @@ void Script::load(ResourceManager *resMan) {
 	// Check scripts for matching signatures and patch those, if found
 	matchSignatureAndPatch(_nr, _buf, script->size);
 
-	if (getSciVersion() >= SCI_VERSION_1_1) {
+	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
 		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, _nr), 0);
 		assert(heap != 0);
 

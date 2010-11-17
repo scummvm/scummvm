@@ -834,7 +834,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 }
 
 bool Console::cmdVerifyScripts(int argc, const char **argv) {
-	if (getSciVersion() < SCI_VERSION_1_1) {
+	if (getSciVersion() < SCI_VERSION_1_1 || getSciVersion() == SCI_VERSION_3) {
 		DebugPrintf("This script check is only meant for SCI1.1-SCI2.1 games\n");
 		return true;
 	}
