@@ -64,7 +64,7 @@ const char *opcodeNames[] = {
 };
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, bool printBytecode) {
+reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.segment, SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
 	const byte *scr;
@@ -110,7 +110,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, bool printBytecod
 			debugN("   ");
 	}
 
-	if (print_bw_tag)
+	if (printBWTag)
 		debugN("[%c] ", opsize ? 'B' : 'W');
 
 	debugN("%s", opcodeNames[opcode]);
@@ -335,7 +335,7 @@ void SciEngine::scriptDebug() {
 	}
 
 	debugN("Step #%d\n", s->scriptStepCounter);
-	disassemble(s, s->xs->addr.pc, 0, true);
+	disassemble(s, s->xs->addr.pc, false, true);
 
 	if (_debugState.runningStep) {
 		_debugState.runningStep--;

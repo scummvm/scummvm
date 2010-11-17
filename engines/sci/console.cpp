@@ -2611,15 +2611,16 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 bool Console::cmdDisassemble(int argc, const char **argv) {
 	if (argc < 3) {
 		DebugPrintf("Disassembles a method by name.\n");
-		DebugPrintf("Usage: %s <object> <method> <print bytecode>\n", argv[0]);
-		DebugPrintf("The last parameter, <print bytecode> is optional. If true\n");
-		DebugPrintf("or 1 is specified, the associated bytecode is shown next to\n");
-		DebugPrintf("each dissassembled command\n");
+		DebugPrintf("Usage: %s <object> <method> <options>\n", argv[0]);
+		DebugPrintf("Valid options are:\n");
+		DebugPrintf(" bwt  : Print byte/word tag\n");
+		DebugPrintf(" bc   : Print bytecode\n");
 		return true;
 	}
 
 	reg_t objAddr = NULL_REG;
 	bool printBytecode = false;
+	bool printBWTag = false;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &objAddr, false)) {
 		DebugPrintf("Invalid address passed.\n");
@@ -2646,11 +2647,15 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 		return true;
 	}
 
-	if (argc == 4 && (!strcmp(argv[3], "1") || !strcmp(argv[3], "true")))
-		printBytecode = true;
+	for (int i = 3; i < argc; i++) {
+		if (!scumm_stricmp(argv[i], "bwt"))
+			printBytecode = true;
+		else if (!scumm_stricmp(argv[i], "bc"))
+			printBWTag = true;
+	}
 
 	do {
-		addr = disassemble(_engine->_gamestate, addr, 0, printBytecode);
+		addr = disassemble(_engine->_gamestate, addr, printBWTag, printBytecode);
 	} while (addr.offset > 0);
 
 	return true;
@@ -2668,9 +2673,9 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	}
 
 	reg_t vpc = NULL_REG;
-	int op_count = 1;
-	int do_bwc = 0;
-	bool do_bytes = false;
+	int opCount = 1;
+	bool printBWTag = false;
+	bool printBytes = false;
 	int size;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &vpc, false)) {
@@ -2684,25 +2689,25 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 
 	for (int i = 2; i < argc; i++) {
 		if (!scumm_stricmp(argv[i], "bwt"))
-			do_bwc = 1;
+			printBWTag = true;
 		else if (!scumm_stricmp(argv[i], "bc"))
-			do_bytes = true;
+			printBytes = true;
 		else if (toupper(argv[i][0]) == 'C')
-			op_count = atoi(argv[i] + 1);
+			opCount = atoi(argv[i] + 1);
 		else {
 			DebugPrintf("Invalid option '%s'\n", argv[i]);
 			return true;
 		}
 	}
 
-	if (op_count < 0) {
+	if (opCount < 0) {
 		DebugPrintf("Invalid op_count\n");
 		return true;
 	}
 
 	do {
-		vpc = disassemble(_engine->_gamestate, vpc, do_bwc, do_bytes);
-	} while ((vpc.offset > 0) && (vpc.offset + 6 < size) && (--op_count));
+		vpc = disassemble(_engine->_gamestate, vpc, printBWTag, printBytes);
+	} while ((vpc.offset > 0) && (vpc.offset + 6 < size) && (--opCount));
 
 	return true;
 }

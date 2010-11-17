@@ -36,7 +36,7 @@ namespace Sci {
 class SciEngine;
 struct List;
 
-reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, bool printBytecode);
+reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode);
 
 class Console : public GUI::Debugger {
 public:
