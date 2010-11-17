@@ -101,6 +101,7 @@ public:
 	void showCursor();
 	void hideCursor();
 	void changeCursor(uint16);
+	void updateScreen();
 
 	void drawRect(Common::Rect rect, bool active);
 private:
@@ -108,7 +109,6 @@ private:
 	MystBitmap *_bmpDecoder;
 	Graphics::PictDecoder *_pictDecoder;
 	Graphics::JPEGDecoder *_jpegDecoder;
-	Graphics::PixelFormat _pixelFormat;
 
 	struct PictureFile {
 		uint32 pictureCount;
@@ -123,6 +123,10 @@ private:
 
 		Common::File picFile;
 	} _pictureFile;
+
+	Graphics::Surface *_mainScreen;
+	bool _dirtyScreen;
+	Graphics::PixelFormat _pixelFormat;
 };
 
 struct SFXERecord {

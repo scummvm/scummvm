@@ -86,6 +86,11 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : _vm(vm) {
 	}
 
 	_pictureFile.entries = NULL;
+
+	// Initialize our buffer
+	_mainScreen = new Graphics::Surface();
+	_mainScreen->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat.bytesPerPixel);
+	_dirtyScreen = false;
 }
 
 MystGraphics::~MystGraphics() {
@@ -93,6 +98,9 @@ MystGraphics::~MystGraphics() {
 	delete _jpegDecoder;
 	delete _pictDecoder;
 	delete[] _pictureFile.entries;
+
+	_mainScreen->free();
+	delete _mainScreen;
 }
 
 static const char* picFileNames[] = {
@@ -143,7 +151,6 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	dest.bottom = CLIP<int>(dest.bottom, 0, _vm->_system->getHeight());
 
 	Graphics::Surface *surface = NULL;
-
 
 	// Myst ME uses JPEG/PICT images instead of compressed Windows Bitmaps for room images,
 	// though there are a few weird ones that use that format. For further nonsense with images,
@@ -210,17 +217,28 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 		// Convert from bitmap coordinates to surface coordinates
 		uint16 top = surface->h - src.top - height;
 
-		_vm->_system->copyRectToScreen((byte *)surface->getBasePtr(src.left, top), surface->pitch, dest.left, dest.top, width, height);
+		for (uint16 i = 0; i < height; i++)
+			memcpy(_mainScreen->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->bytesPerPixel);
+
 		surface->free();
 		delete surface;
-	}
 
-	// FIXME: Remove this and update only at certain points
-	_vm->_system->updateScreen();
+		// Mark the screen as dirty
+		_dirtyScreen = true;
+	}
 }
 
 void MystGraphics::copyImageToScreen(uint16 image, Common::Rect dest) {
 	copyImageSectionToScreen(image, Common::Rect(0, 0, 544, 333), dest);
+}
+
+void MystGraphics::updateScreen() {
+	if (_dirtyScreen) {
+		// Only copy the buffer to the screen if it's dirty
+		_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
+		_vm->_system->updateScreen();
+		_dirtyScreen = false;
+	}
 }
 
 void MystGraphics::showCursor(void) {

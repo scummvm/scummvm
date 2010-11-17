@@ -299,9 +299,7 @@ Common::Error MohawkEngine_Myst::run() {
 					_resources[_curResource]->handleMouseUp();
 				}
 
-				for (uint16 i = 0; i < _resources.size(); i++)
-					if (_resources[i]->isEnabled())
-						_resources[i]->drawDataToScreen();
+				drawResourceImages();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				if (_curResource >= 0) {
@@ -449,6 +447,9 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 	} else {
 		error("Unknown sound action %d", soundAction);
 	}
+
+	// Update the images of each area too
+	drawResourceImages();
 
 	// TODO: Handle Script Resources
 
@@ -739,6 +740,8 @@ void MohawkEngine_Myst::runInitScript() {
 	for (uint16 i = 0; i < scriptCount; i++)
 		delete[] scripts[i].values;
 	delete[] scripts;
+
+	_gfx->updateScreen();
 }
 
 void MohawkEngine_Myst::runExitScript() {
@@ -792,6 +795,8 @@ void MohawkEngine_Myst::runExitScript() {
 	for (uint16 i = 0; i < scriptCount; i++)
 		delete[] scripts[i].values;
 	delete[] scripts;
+
+	_gfx->updateScreen();
 }
 
 void MohawkEngine_Myst::loadHelp(uint16 id) {
@@ -928,6 +933,15 @@ void MohawkEngine_Myst::setResourceEnabled(uint16 resourceId, bool enable) {
 		_resources[resourceId]->setEnabled(enable);
 	} else
 		warning("Attempt to change unknown resource enable state");
+}
+
+void MohawkEngine_Myst::drawResourceImages() {
+	for (uint16 i = 0; i < _resources.size(); i++)
+		if (_resources[i]->isEnabled())
+			_resources[i]->drawDataToScreen();
+
+	// Make sure the screen is updated
+	_gfx->updateScreen();
 }
 
 static MystResource *loadResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) {
@@ -1605,6 +1619,7 @@ void MystResourceType12::handleAnimation() {
 	// TODO: Probably not final version. Variable/Type 11 Controlled?
 	if (_doAnimation) {
 		_vm->_gfx->copyImageToScreen(_currentFrame++, _frameRect);
+		_vm->_gfx->updateScreen();
 		if ((_currentFrame - _firstFrame) >= _numFrames)
 			_doAnimation = false;
 	}

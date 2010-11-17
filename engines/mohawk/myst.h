@@ -413,6 +413,7 @@ private:
 	void drawResourceRects();
 	void checkCurrentResource();
 	int16 _curResource;
+	void drawResourceImages();
 
 	uint16 _cursorHintCount;
 	MystCursorHint *_cursorHints;

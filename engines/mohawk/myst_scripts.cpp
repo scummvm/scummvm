@@ -381,9 +381,10 @@ void MystScriptParser::opcode_4(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		// the general case, rather than this image blit...
 		uint16 var_value = _vm->_varStore->getVar(var);
 		if (var_value < _vm->_view.scriptResCount) {
-			if (_vm->_view.scriptResources[var_value].type == 1) // TODO: Add Symbols for Types
+			if (_vm->_view.scriptResources[var_value].type == 1) { // TODO: Add Symbols for Types
 				_vm->_gfx->copyImageToScreen(_vm->_view.scriptResources[var_value].id, Common::Rect(0, 0, 544, 333));
-			else
+				_vm->_gfx->updateScreen();
+			} else
 				warning("Opcode %d: Script Resource %d Type Not Image", op, var_value);
 		} else
 			warning("Opcode %d: var %d value %d outside Script Resource Range %d", op, var, var_value, _vm->_view.scriptResCount);
@@ -952,7 +953,7 @@ void MystScriptParser::opcode_35(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		debugC(kDebugScript, "\tdelay: %d", delay);
 
 		_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
-		_vm->_system->updateScreen();
+		_vm->_gfx->updateScreen();
 		_vm->_system->delayMillis(delay * 100);
 		_vm->changeToCard(cardId);
 	} else
@@ -1685,6 +1686,7 @@ void MystScriptParser::opcode_104(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			// TODO: Need to load the image ids from Script Resources structure of VIEW
 			for (uint16 imageId = 3595; imageId <= 3601; imageId++) {
 				_vm->_gfx->copyImageToScreen(imageId, rect);
+				_vm->_gfx->updateScreen();
 				_vm->_system->delayMillis(50);
 			}
 
@@ -2515,6 +2517,7 @@ void MystScriptParser::opcode_122(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			// TODO: Need to load the image ids from Script Resources structure of VIEW
 			for (uint16 imageId = 3601; imageId >= 3595; imageId--) {
 				_vm->_gfx->copyImageToScreen(imageId, rect);
+				_vm->_gfx->updateScreen();
 				_vm->_system->delayMillis(50);
 			}
 
@@ -3142,8 +3145,10 @@ void MystScriptParser::opcode_200_run() {
 			else
 				rect = Common::Rect(0, 0, 544, 333);
 
-			if (curImageIndex != lastImageIndex)
+			if (curImageIndex != lastImageIndex) {
 				_vm->_gfx->copyImageToScreen(g_opcode200Parameters.imageBaseId + curImageIndex, rect);
+				_vm->_gfx->updateScreen();
+			}
 
 			// TODO: Comparison with original engine shows that this simple solution
 			//       may not be the correct one and the choice of which sound
@@ -3165,6 +3170,7 @@ void MystScriptParser::opcode_200_run() {
 
 				// Note: The modulus by 6 is because the 6th image is the one at imageBaseId
 				_vm->_gfx->copyImageToScreen(g_opcode200Parameters.imageBaseId + curImageIndex % 6, Common::Rect(0, 0, 544, 333));
+				_vm->_gfx->updateScreen();
 
 				_vm->_varStore->setVar(g_opcode200Parameters.var, curImageIndex + 1);
 				g_opcode200Parameters.lastCardTime = _vm->_system->getMillis();
@@ -3379,6 +3385,7 @@ void MystScriptParser::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	case kIntroStack:
 		_vm->_system->delayMillis(4 * 1000);
 		_vm->_gfx->copyImageToScreen(4, Common::Rect(0, 0, 544, 333));
+		_vm->_gfx->updateScreen();
 		// TODO : Wait until video ends, then change to card 5
 		break;
 	case kSeleniticStack:
@@ -4327,6 +4334,8 @@ void MystScriptParser::opcode_211_run(void) {
 			lastGridState[i] = gridState[i];
 		}
 
+		_vm->_gfx->updateScreen();
+
 		// Var 23 contains boolean for whether pattern matches correct book pattern i.e. Pattern 158
 		if (gridState[0] == 0xc3 && gridState[1] == 0x6b && gridState[2] == 0xa3 &&
 		    gridState[3] == 0x93 && gridState[4] == 0xcc && gridState[5] == 0xfa)
@@ -4656,6 +4665,7 @@ void MystScriptParser::opcode_298(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		_vm->_system->delayMillis(20 * 1000);
 		for (uint16 imageId = 3001; imageId <= 3012; imageId++) {
 			_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
+			_vm->_gfx->updateScreen();
 			_vm->_system->delayMillis(5 * 1000);
 		}
 		break;
