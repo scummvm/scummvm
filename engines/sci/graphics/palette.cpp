@@ -192,7 +192,7 @@ void GfxPalette::modifyAmigaPalette(byte *data) {
 	_screen->setPalette(&_sysPalette);
 }
 
-static byte blendColours(byte c1, byte c2) {
+static byte blendColors(byte c1, byte c2) {
 	// linear
 	// return (c1/2+c2/2)+((c1&1)+(c2&1))/2;
 
@@ -230,9 +230,9 @@ void GfxPalette::setEGA() {
 		_sysPalette.colors[curColor].used = 1;
 		color1 = curColor & 0x0F; color2 = curColor >> 4;
 
-		_sysPalette.colors[curColor].r = blendColours(_sysPalette.colors[color1].r, _sysPalette.colors[color2].r);
-		_sysPalette.colors[curColor].g = blendColours(_sysPalette.colors[color1].g, _sysPalette.colors[color2].g);
-		_sysPalette.colors[curColor].b = blendColours(_sysPalette.colors[color1].b, _sysPalette.colors[color2].b);
+		_sysPalette.colors[curColor].r = blendColors(_sysPalette.colors[color1].r, _sysPalette.colors[color2].r);
+		_sysPalette.colors[curColor].g = blendColors(_sysPalette.colors[color1].g, _sysPalette.colors[color2].g);
+		_sysPalette.colors[curColor].b = blendColors(_sysPalette.colors[color1].b, _sysPalette.colors[color2].b);
 	}
 	_sysPalette.timestamp = 1;
 	setOnScreen();
