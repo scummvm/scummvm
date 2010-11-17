@@ -441,11 +441,11 @@ bool Object::relocateSci3(SegmentId segment, int location, int offset, size_t sc
 		if (location == _propertyOffsetsSci3[i]) {
 			_variables[i].segment = segment;
 			_variables[i].offset += offset;
-			return 1;
+			return true;
 		}
 	}
 
-	return -1;
+	return false;
 }
 
 int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
