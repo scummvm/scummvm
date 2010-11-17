@@ -573,6 +573,9 @@ MoveCountType GameFeatures::detectMoveCountType() {
 		// SCI0/SCI01 games always increment move count
 		if (getSciVersion() <= SCI_VERSION_01) {
 			_moveCountType = kIncrementMoveCount;
+		} else if (getSciVersion() >= SCI_VERSION_1_1) {
+			// SCI1.1 and newer games always ignore move count
+			_moveCountType = kIgnoreMoveCount;
 		} else {
 			if (!autoDetectMoveCountType()) {
 				error("Move count autodetection failed");
