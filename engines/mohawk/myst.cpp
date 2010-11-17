@@ -1312,9 +1312,12 @@ MystResourceType8::MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableRead
 			_subImages[i].rect.right = rlstStream->readSint16LE();
 			_subImages[i].rect.bottom = rlstStream->readSint16LE();
 		} else {
-			_subImages[i].rect.top = 0;
-			_subImages[i].rect.right = 0;
-			_subImages[i].rect.bottom = 0;
+			// Use the hotspot rect as the source rect since the subimage is fullscreen
+			// Convert to bitmap coordinates (upside down)
+			_subImages[i].rect.left = _rect.left;
+			_subImages[i].rect.top = 333 - _rect.bottom;
+			_subImages[i].rect.right = _rect.right;
+			_subImages[i].rect.bottom = 333 - _rect.top;
 		}
 
 		debugC(kDebugResource, "\twdib: %d", _subImages[i].wdib);
@@ -1379,24 +1382,7 @@ void MystResourceType8::drawDataToScreen() {
 		} else
 			imageToDraw = _subImages[subImageId].wdib;
 
-		if (_subImages[subImageId].rect.left == -1)
-			_vm->_gfx->copyImageSectionToScreen(imageToDraw, _rect, _rect);
-			//vm->_gfx->copyImageToScreen(imageToDraw, Common::Rect(0, 0, 544, 333));
-		// TODO: Think this is the case when the image is full screen.. need to modify graphics to add functions for returning size of image.
-		// This is not right either...
-		//else if (_rect.width() != _subImages[draw_subimage_id].rect.width() || _rect.height() != _subImages[draw_subimage_id].rect.height())
-		// HACK: Hardcode cases of this until general rule can be ascertained
-		//       These cases seem to have the source rect in the wdib with an vertical i.e. top+X, bottom+X where X is a constant, but could
-		//       be negative, translations, when in fact both the source and dest should be equal...
-		//else if ((vm->getCurStack() == kSeleniticStack   && vm->getCurCard() == 1155 && tmp == 1) || // X=
-		//        (vm->getCurStack() == kSeleniticStack   && vm->getCurCard() == 1225 && tmp == 1) || // X=
-		//        (vm->getCurStack() == kMystStack        && vm->getCurCard() == 4247 && tmp == 0) || // X=
-		//        (vm->getCurStack() == kChannelwoodStack && vm->getCurCard() == 3161 && tmp == 0))   // X=
-		//	vm->_gfx->copyImageSectionToScreen(imageToDraw, _rect, _rect);
-		//    // TODO: Small vertical movement remains on change. Suspect off by one error from these to real
-		//	//        solution.
-		else
-			_vm->_gfx->copyImageSectionToScreen(imageToDraw, _subImages[subImageId].rect, _rect);
+		_vm->_gfx->copyImageSectionToScreen(imageToDraw, _subImages[subImageId].rect, _rect);
 	}
 }
 

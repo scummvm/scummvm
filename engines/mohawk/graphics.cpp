@@ -206,7 +206,11 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	if (surface) {
 		uint16 width = MIN<int>(surface->w, dest.width());
 		uint16 height = MIN<int>(surface->h, dest.height());
-		_vm->_system->copyRectToScreen((byte *)surface->getBasePtr(src.left, src.top), surface->pitch, dest.left, dest.top, width, height);
+
+		// Convert from bitmap coordinates to surface coordinates
+		uint16 top = surface->h - src.top - height;
+
+		_vm->_system->copyRectToScreen((byte *)surface->getBasePtr(src.left, top), surface->pitch, dest.left, dest.top, width, height);
 		surface->free();
 		delete surface;
 	}
