@@ -1565,7 +1565,7 @@ void run_vm(EngineState *s) {
 				if (extOpcode == 0x4d)
 					PUSH32(obj->getInfoSelector());
 				else if (extOpcode == 0x4e)
-					PUSH32(obj->getNameSelector());	// TODO: is this correct?
+					s->r_acc = obj->getSuperClassSelector();	// TODO: is this correct?
 				// TODO: There are also opcodes in
 				// here to get the superclass, and possibly the species too.
 				else
