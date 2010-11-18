@@ -205,6 +205,14 @@ public:
 };
 
 
+// FIXME/TODO: Get rid of the following hacks. Top priority: Get rid of
+// the 'FILE' (re)definition. Simply calling it STD_FILE or so wold already
+// suffice (need to adjust affected code, of course).
+// Once the OSystem::logMessage() patch is in SVN, we should also be
+// able to get rid of stderr, stdout, stdin.
+// Moreover, the std_FOO() functions could then be moved to a private
+// header, or even completely merged into DSFileStream, and all other
+// DS code switch to use that.
 #undef stderr
 #undef stdout
 #undef stdin

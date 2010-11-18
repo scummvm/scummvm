@@ -700,6 +700,10 @@ void OSystem_DS::unlockMutex(MutexRef mutex) {
 void OSystem_DS::deleteMutex(MutexRef mutex) {
 }
 
+// FIXME/TODO: The CD API as follows is *obsolete*
+// and should be replaced by an AudioCDManager subclass,
+// see backends/audiocd/ and common/system.h
+
 bool OSystem_DS::openCD(int drive) {
 	return DS::CD::checkCD();
 }
