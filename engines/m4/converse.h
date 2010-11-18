@@ -191,7 +191,7 @@ private:
 
 	void loadConversation(const char *convName);
 	void loadConversationMads(const char *convName);
-	void readConvEntryActions(Common::SubReadStream *convS, ConvEntry *curEntry);
+	void readConvEntryActions(Common::ReadStream *convS, ConvEntry *curEntry);
 	void setEntryInfo(int32 offset, EntryType type, int32 nodeIndex, int32 entryIndex);
 };
 
