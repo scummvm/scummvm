@@ -398,6 +398,8 @@ void Object::init(byte *buf, reg_t obj_pos, bool initVariables) {
 		if (getSciVersion() <= SCI_VERSION_2_1) {
 			for (uint i = 0; i < _variables.size(); i++)
 				_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
+		} else {
+			infoSelectorSci3 = make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 10));
 		}
 	}
 }

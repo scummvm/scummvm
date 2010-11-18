@@ -270,14 +270,14 @@ public:
 		if (getSciVersion() <= SCI_VERSION_2_1)
 			return _variables[_offset + 2];
 		else	// SCI3
-			return make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 10));
+			return infoSelectorSci3;
 	}
 
 	void setInfoSelector(reg_t info) {
 		if (getSciVersion() <= SCI_VERSION_2_1)
 			_variables[_offset + 2] = info;
 		else	// SCI3
-			WRITE_SCI11ENDIAN_UINT16(const_cast<byte*>(_baseObj + 10), info.offset);
+			infoSelectorSci3 = info;
 	}
 
 	// No setter for the -info- selector
@@ -406,6 +406,7 @@ private:
 	uint16 _offset;
 	reg_t _pos; /**< Object offset within its script; for clones, this is their base */
 	reg_t _superClassPosSci3; /**< reg_t pointing to superclass for SCI3 */
+	reg_t infoSelectorSci3; /**< reg_t containing info "selector" for SCI3 */
 };
 
 /** Data stack */
