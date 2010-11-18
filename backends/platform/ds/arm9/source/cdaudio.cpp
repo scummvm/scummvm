@@ -254,7 +254,12 @@ void update() {
 }
 
 #ifdef ARM_ADPCM
-extern "C" void ARM_adcpm(int *block, int len, int stepTableIndex,
+// FIXME: This code, as well as the source file adpcm_arm.s, are
+// apparently unused. Maybe that is a mistake? Or maybe there is a bug
+// in ARM_adpcm (then this should be reported and fixed). Or maybe there
+// are other good reasons to prefer the C code, but then this as well as
+// the assembler source file should be removed.
+extern "C" void ARM_adpcm(int *block, int len, int stepTableIndex,
                           int firstSample, s16 *decompressionBuffer);
 #endif
 
