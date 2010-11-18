@@ -399,7 +399,7 @@ void Object::init(byte *buf, reg_t obj_pos, bool initVariables) {
 			for (uint i = 0; i < _variables.size(); i++)
 				_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
 		} else {
-			infoSelectorSci3 = make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 10));
+			_infoSelectorSci3 = make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 10));
 		}
 	}
 }
@@ -581,6 +581,7 @@ void Object::initSelectorsSci3(const byte *buf) {
 		}
 	}
 
+	_speciesSelectorSci3 = make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 4));
 	_superClassPosSci3 = make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 8));
 
 	_baseVars = propertyIds;

@@ -242,14 +242,14 @@ public:
 		if (getSciVersion() <= SCI_VERSION_2_1) 
 			return _variables[_offset];
 		else	// SCI3
-			return make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 4));
+			return _speciesSelectorSci3;
 	}
 
 	void setSpeciesSelector(reg_t value) {
 		if (getSciVersion() <= SCI_VERSION_2_1)
 			_variables[_offset] = value;
 		else	// SCI3
-			warning("TODO: setSpeciesSelector called for SCI3");
+			_speciesSelectorSci3 = value;
 	}
 
 	reg_t getSuperClassSelector() const {
@@ -270,14 +270,14 @@ public:
 		if (getSciVersion() <= SCI_VERSION_2_1)
 			return _variables[_offset + 2];
 		else	// SCI3
-			return infoSelectorSci3;
+			return _infoSelectorSci3;
 	}
 
 	void setInfoSelector(reg_t info) {
 		if (getSciVersion() <= SCI_VERSION_2_1)
 			_variables[_offset + 2] = info;
 		else	// SCI3
-			infoSelectorSci3 = info;
+			_infoSelectorSci3 = info;
 	}
 
 	// No setter for the -info- selector
@@ -406,7 +406,8 @@ private:
 	uint16 _offset;
 	reg_t _pos; /**< Object offset within its script; for clones, this is their base */
 	reg_t _superClassPosSci3; /**< reg_t pointing to superclass for SCI3 */
-	reg_t infoSelectorSci3; /**< reg_t containing info "selector" for SCI3 */
+	reg_t _speciesSelectorSci3;	/**< reg_t containing species "selector" for SCI3 */
+	reg_t _infoSelectorSci3; /**< reg_t containing info "selector" for SCI3 */
 };
 
 /** Data stack */
