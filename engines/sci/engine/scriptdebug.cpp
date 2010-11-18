@@ -192,14 +192,13 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 		if ((opcode == op_pTos) || (opcode == op_sTop) || (opcode == op_pToa) || (opcode == op_aTop) ||
 		        (opcode == op_dpToa) || (opcode == op_ipToa) || (opcode == op_dpTos) || (opcode == op_ipTos)) {
 			const Object *obj = s->_segMan->getObject(s->xs->objp);
-			if (!obj)
+			if (!obj) {
 				warning("Attempted to reference on non-object at %04x:%04x", PRINT_REG(s->xs->objp));
-			else
-			{
+			} else {
 				if (getSciVersion() == SCI_VERSION_3)
-					debugN("	(%s)", g_sci->getKernel()->getSelectorName(param_value).c_str());
+					debugN("\t(%s)", g_sci->getKernel()->getSelectorName(param_value).c_str());
 				else
-					debugN("	(%s)", g_sci->getKernel()->getSelectorName(obj->propertyOffsetToId(s->_segMan, param_value)).c_str());
+					debugN("\t(%s)", g_sci->getKernel()->getSelectorName(obj->propertyOffsetToId(s->_segMan, param_value)).c_str());
 			}
 		}
 	}
