@@ -687,19 +687,54 @@ ImageData* MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 ImageData *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	Common::SeekableSubReadStreamEndian *endianStream = (Common::SeekableSubReadStreamEndian *)stream;
 
-	// The format part is just a guess at this point. Note that the width and height roles have been reversed!
-
-	_header.height = endianStream->readUint16() & 0x3FF;
-	_header.width = endianStream->readUint16() & 0x3FF;
-	_header.bytesPerRow = endianStream->readUint16() & 0x3FE;
+	// 12 bytes header for the image
 	_header.format = endianStream->readUint16();
+	_header.bytesPerRow = endianStream->readUint16();
+	_header.width = endianStream->readUint16();
+	_header.height = endianStream->readUint16();
+	uint16 unknown0 = endianStream->readUint16(); // TODO
+	uint16 unknown1 = endianStream->readUint16(); // TODO
 
-	debug(2, "Decoding Old Mohawk Bitmap (%dx%d, %04x Format)", _header.width, _header.height, _header.format);
+	debug(2, "Decoding Old Mohawk Bitmap (%dx%d, %d bytesPerRow, %04x Format)", _header.width, _header.height, _header.bytesPerRow, _header.format);
+	debug(2, "Unknowns %04x, %04x", unknown0, unknown1); // TODO
 
-	warning("Unhandled old Mohawk Bitmap decoding");
+	if ((_header.format & 0xf0) != kOldPackLZ)
+		error("tried to decode non-LZ encoded OldMohawkBitmap");
 
+	// 12 bytes header for the compressed data
+	uint32 uncompressedSize = endianStream->readUint32();
+	uint32 compressedSize = endianStream->readUint32();
+	uint16 posBits = endianStream->readUint16();
+	uint16 lengthBits = endianStream->readUint16();
+
+	if (compressedSize != (uint32)endianStream->size() - 24)
+		error("More bytes (%d) remaining in stream than header says there should be (%d)", endianStream->size() - 24, compressedSize);
+
+	// These two errors are really just sanity checks and should never go off
+	if (posBits != POS_BITS)
+		error("Position bits modified to %d", posBits);
+	if (lengthBits != LEN_BITS)
+		error("Length bits modified to %d", lengthBits);
+
+	_data = decompressLZ(stream, uncompressedSize);
+
+	if (endianStream->pos() != endianStream->size())
+		error("OldMohawkBitmap decompression failed");
+
+	_surface = new Graphics::Surface();
+	if ((_header.format & 0xf00) == kOldDrawRLE8) {
+		_surface->create(_header.width, _header.height, 1);
+		drawRLE8();
+	} else {
+		assert(uncompressedSize >= (uint32)_header.bytesPerRow * _header.height);
+		_surface->create(_header.bytesPerRow, _header.height, 1);
+		_surface->w = _header.width;
+		_data->read(_surface->pixels, _header.bytesPerRow * _header.height);
+	}
+
+	delete _data;
 	delete stream;
-	return new ImageData(NULL, NULL);
+	return new ImageData(_surface);
 }
 
 } // End of namespace Mohawk

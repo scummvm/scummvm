@@ -759,26 +759,26 @@ LBGraphics::~LBGraphics() {
 }
 
 void LBGraphics::copyImageToScreen(uint16 image, uint16 left, uint16 right) {
-	if (_vm->getGameType() == GType_LIVINGBOOKSV1) {
-		// Drawing images in the old format isn't supported (yet)
-		ImageData *imageData = _bmpDecoder->decodeImage(_vm->wrapStreamEndian(ID_BMAP, image));
-		delete imageData;
-	} else {
-		ImageData *imageData = _bmpDecoder->decodeImage(_vm->getRawData(ID_TBMP, image));
-		imageData->_palette = _palette;
-		Graphics::Surface *surface = imageData->getSurface();
-		imageData->_palette = NULL; // Unset the palette so it doesn't get deleted
-		delete imageData;
+	ImageData *imageData;
 
-		uint16 width = MIN<int>(surface->w, 640);
-		uint16 height = MIN<int>(surface->h, 480);
-		_vm->_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, left, right, width, height);
-		surface->free();
-		delete surface;
+	if (_vm->getGameType() == GType_LIVINGBOOKSV1)
+		imageData = _bmpDecoder->decodeImage(_vm->wrapStreamEndian(ID_BMAP, image));
+	else
+		imageData = _bmpDecoder->decodeImage(_vm->getRawData(ID_TBMP, image));
 
-		// FIXME: Remove this and update only at certain points
-		_vm->_system->updateScreen();
-	}
+	imageData->_palette = _palette;
+	Graphics::Surface *surface = imageData->getSurface();
+	imageData->_palette = NULL; // Unset the palette so it doesn't get deleted
+	delete imageData;
+
+	uint16 width = MIN<int>(surface->w, _vm->_system->getWidth());
+	uint16 height = MIN<int>(surface->h, _vm->_system->getHeight());
+	_vm->_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, left, right, width, height);
+	surface->free();
+	delete surface;
+
+	// FIXME: Remove this and update only at certain points
+	_vm->_system->updateScreen();
 }
 
 void LBGraphics::setPalette(uint16 id) {

@@ -60,6 +60,11 @@ enum BitmapFormat {
 	kFlag24_MAC = 0x1000 // 24 bit pixel data has been converted to MAC 32 bit format
 };
 
+enum OldBitmapFormat {
+	kOldPackLZ = 0x0020,
+	kOldDrawRLE8 = 0x0100
+};
+
 struct BitmapHeader {
 	uint16 width;
 	uint16 height;
@@ -99,10 +104,10 @@ protected:
 	// The actual LZ decoder
 	static Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream *stream, uint32 uncompressedSize);
 
-private:
 	Common::SeekableReadStream *_data;
 	Graphics::Surface *_surface;
 
+private:
 	const char *getPackName();
 	void unpackImage();
 	const char *getDrawName();
