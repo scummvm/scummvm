@@ -86,16 +86,6 @@ public:
 
 	virtual ImageData *decodeImage(Common::SeekableReadStream *stream);
 
-	// Unpack Functions
-	void unpackRaw();
-	void unpackLZ();
-	void unpackLZ1();
-	void unpackRiven();
-
-	// Draw Functions
-	void drawRaw();
-	void drawRLE8();
-
 protected:
 	BitmapHeader _header;
 	byte getBitsPerPixel();
@@ -103,14 +93,44 @@ protected:
 	// The actual LZ decoder
 	static Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream *stream, uint32 uncompressedSize);
 
+	// The current data stream
 	Common::SeekableReadStream *_data;
-	Graphics::Surface *_surface;
+
+	// Draw Functions
+	void drawRaw(Graphics::Surface *surface);
+	void drawRLE8(Graphics::Surface *surface);
 
 private:
+	// Unpack Functions
+	void unpackRaw();
+	void unpackLZ();
+	void unpackRiven();
+
+	// An unpacker
+	struct PackFunction {
+		uint16 flag;
+		const char *name;
+		void (MohawkBitmap::*func)();
+	};
+
+	// A drawer
+	struct DrawFunction {
+		uint16 flag;
+		const char *name;
+		void (MohawkBitmap::*func)(Graphics::Surface *surface);
+	};
+
+	// Unpack/Draw maps
+	const PackFunction *_packTable;
+	int _packTableSize;
+	const DrawFunction *_drawTable;
+	int _drawTableSize;
+
+	// Unpack/Draw helpers
 	const char *getPackName();
 	void unpackImage();
 	const char *getDrawName();
-	void drawImage();
+	void drawImage(Graphics::Surface *surface);
 
 	// Riven Decoding
 	void handleRivenSubcommandStream(byte count, byte *&dst);

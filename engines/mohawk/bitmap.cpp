@@ -36,6 +36,22 @@ namespace Mohawk {
 #define DRAW_COMPRESSION (_header.format & kDrawMASK)
 
 MohawkBitmap::MohawkBitmap() {
+	static const PackFunction packTable[] = {
+		{ kPackNone, "Raw", &MohawkBitmap::unpackRaw },
+		{ kPackLZ, "LZ", &MohawkBitmap::unpackLZ },
+		{ kPackRiven, "Riven", &MohawkBitmap::unpackRiven }
+	};
+
+	_packTable = packTable;
+	_packTableSize = ARRAYSIZE(packTable);
+
+	static const DrawFunction drawTable[] = {
+		{ kDrawRaw, "Raw", &MohawkBitmap::drawRaw },
+		{ kDrawRLE8, "RLE8", &MohawkBitmap::drawRLE8 }
+	};
+
+	_drawTable = drawTable;
+	_drawTableSize = ARRAYSIZE(drawTable);
 }
 
 MohawkBitmap::~MohawkBitmap() {
@@ -72,14 +88,14 @@ ImageData *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 		}
 	}
 
-	_surface = new Graphics::Surface();
-	_surface->create(_header.width, _header.height, getBitsPerPixel() >> 3);
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_header.width, _header.height, getBitsPerPixel() >> 3);
 
 	unpackImage();
-	drawImage();
+	drawImage(surface);
 	delete _data;
 
-	return new ImageData(_surface, _header.colorTable.palette);
+	return new ImageData(surface, _header.colorTable.palette);
 }
 
 byte MohawkBitmap::getBitsPerPixel() {
@@ -101,54 +117,36 @@ byte MohawkBitmap::getBitsPerPixel() {
 	return 0;
 }
 
-struct CompressionInfo {
-	uint16 flag;
-	const char *name;
-	void (MohawkBitmap::*func)();
-};
-
-static const CompressionInfo packTable[] = {
-	{ kPackNone, "Raw", &MohawkBitmap::unpackRaw },
-	{ kPackLZ, "LZ", &MohawkBitmap::unpackLZ },
-	{ kPackLZ1, "LZ1", &MohawkBitmap::unpackLZ1 },
-	{ kPackRiven, "Riven", &MohawkBitmap::unpackRiven }
-};
-
 const char *MohawkBitmap::getPackName() {
-	for (uint32 i = 0; i < ARRAYSIZE(packTable); i++)
-		if (PACK_COMPRESSION == packTable[i].flag)
-			return packTable[i].name;
+	for (int i = 0; i < _packTableSize; i++)
+		if (PACK_COMPRESSION == _packTable[i].flag)
+			return _packTable[i].name;
 
 	return "Unknown";
 }
 
 void MohawkBitmap::unpackImage() {
-	for (uint32 i = 0; i < ARRAYSIZE(packTable); i++)
-		if (PACK_COMPRESSION == packTable[i].flag) {
-			(this->*packTable[i].func)();
+	for (int i = 0; i < _packTableSize; i++)
+		if (PACK_COMPRESSION == _packTable[i].flag) {
+			(this->*_packTable[i].func)();
 			return;
 		}
 
 	warning("Unknown Pack Compression");
 }
 
-static const CompressionInfo drawTable[] = {
-	{ kDrawRaw, "Raw", &MohawkBitmap::drawRaw },
-	{ kDrawRLE8, "RLE8", &MohawkBitmap::drawRLE8 }
-};
-
 const char *MohawkBitmap::getDrawName() {
-	for (uint32 i = 0; i < ARRAYSIZE(drawTable); i++)
-		if (DRAW_COMPRESSION == drawTable[i].flag)
-			return drawTable[i].name;
+	for (int i = 0; i < _drawTableSize; i++)
+		if (DRAW_COMPRESSION == _drawTable[i].flag)
+			return _drawTable[i].name;
 
 	return "Unknown";
 }
 
-void MohawkBitmap::drawImage() {
-	for (uint32 i = 0; i < ARRAYSIZE(drawTable); i++)
-		if (DRAW_COMPRESSION == drawTable[i].flag) {
-			(this->*drawTable[i].func)();
+void MohawkBitmap::drawImage(Graphics::Surface *surface) {
+	for (int i = 0; i < _drawTableSize; i++)
+		if (DRAW_COMPRESSION == _drawTable[i].flag) {
+			(this->*_drawTable[i].func)(surface);
 			return;
 		}
 
@@ -262,14 +260,6 @@ void MohawkBitmap::unpackLZ() {
 	Common::SeekableReadStream *decompressedData = decompressLZ(_data, uncompressedSize);
 	delete _data;
 	_data = decompressedData;
-}
-
-//////////////////////////////////////////
-// LZ Unpacker
-//////////////////////////////////////////
-
-void MohawkBitmap::unpackLZ1() {
-	error("STUB: unpackLZ1()");
 }
 
 //////////////////////////////////////////
@@ -526,9 +516,11 @@ void MohawkBitmap::handleRivenSubcommandStream(byte count, byte *&dst) {
 // Raw Drawer
 //////////////////////////////////////////
 
-void MohawkBitmap::drawRaw() {
+void MohawkBitmap::drawRaw(Graphics::Surface *surface) {
+	assert(surface);
+
 	for (uint16 y = 0; y < _header.height; y++) {
-		_data->read((byte *)_surface->pixels + y * _header.width, _header.width);
+		_data->read((byte *)surface->pixels + y * _header.width, _header.width);
 		_data->skip(_header.bytesPerRow - _header.width);
 	}
 }
@@ -537,14 +529,16 @@ void MohawkBitmap::drawRaw() {
 // RLE8 Drawer
 //////////////////////////////////////////
 
-void MohawkBitmap::drawRLE8() {
+void MohawkBitmap::drawRLE8(Graphics::Surface *surface) {
 	// A very simple RLE8 scheme is used as a secondary compression on
 	// most images in non-Riven tBMP's.
+
+	assert(surface);
 
 	for (uint16 i = 0; i < _header.height; i++) {
 		uint16 rowByteCount = _data->readUint16BE();
 		int32 startPos = _data->pos();
-		byte *dst = (byte *)_surface->pixels + i * _header.width;
+		byte *dst = (byte *)surface->pixels + i * _header.width;
 		int16 remaining = _header.width;
 
 		// HACK: It seems only the bottom 9 bits are valid for images
@@ -712,20 +706,17 @@ ImageData *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	if (endianStream->pos() != endianStream->size())
 		error("OldMohawkBitmap decompression failed");
 
-	_surface = new Graphics::Surface();
-	if ((_header.format & 0xf00) == kOldDrawRLE8) {
-		_surface->create(_header.width, _header.height, 1);
-		drawRLE8();
-	} else {
-		assert(uncompressedSize >= (uint32)_header.bytesPerRow * _header.height);
-		_surface->create(_header.bytesPerRow, _header.height, 1);
-		_surface->w = _header.width;
-		_data->read(_surface->pixels, _header.bytesPerRow * _header.height);
-	}
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_header.width, _header.height, 1);
+
+	if ((_header.format & 0xf00) == kOldDrawRLE8)
+		drawRLE8(surface);
+	else
+		drawRaw(surface);
 
 	delete _data;
 	delete stream;
-	return new ImageData(_surface);
+	return new ImageData(surface);
 }
 
 } // End of namespace Mohawk
