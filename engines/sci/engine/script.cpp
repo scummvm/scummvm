@@ -178,7 +178,7 @@ void Script::load(ResourceManager *resMan) {
 		_localsCount = READ_SCI11ENDIAN_UINT16(_buf + _localsOffset - 2);
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		_localsCount = READ_LE_UINT16(_buf + 12);
-		_exportTable = (const uint16 *) (_buf + 22);
+		_exportTable = (const uint16 *)(_buf + 22);
 		_numExports = READ_LE_UINT16(_buf + 20);
 		// SCI3 local variables always start dword-aligned
 		if (_numExports % 2)
