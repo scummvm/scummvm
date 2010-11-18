@@ -413,7 +413,9 @@ uint32 Ps2File::read(void *dest, uint32 len) {
 		}
 	}
 	cacheReadAhead();
+#ifdef __PS2_FILE_SEMA__
 	SignalSema(_sema);
+#endif
 	return destBuf - (uint8*)dest;
 }
 
