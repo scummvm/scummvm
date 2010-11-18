@@ -916,6 +916,7 @@ void script_adjust_opcode_formats() {
 		// TODO: There are also opcodes in
 		// here to get the superclass, and possibly the species too.
 		g_opcode_formats[0x4d/2][0] = Script_None;
+		g_opcode_formats[0x4e/2][0] = Script_None;
 	}
 #endif
 }
