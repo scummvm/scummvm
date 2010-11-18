@@ -58,7 +58,7 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 		return false;
 	}
 
-	MemoryReadStreamEndian readS(tableInfo, RSC_TABLEINFO_SIZE, _isBigEndian);
+	Common::MemoryReadStreamEndian readS(tableInfo, RSC_TABLEINFO_SIZE, _isBigEndian);
 
 	resourceTableOffset = readS.readUint32();
 	count = readS.readUint32();
@@ -77,7 +77,7 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 	if (result) {
 		_table.resize(count);
 
-		MemoryReadStreamEndian readS1(tableBuffer.getBuffer(), tableBuffer.size(), _isBigEndian);
+		Common::MemoryReadStreamEndian readS1(tableBuffer.getBuffer(), tableBuffer.size(), _isBigEndian);
 
 		for (i = 0; i < count; i++) {
 			resourceData = &_table[i];

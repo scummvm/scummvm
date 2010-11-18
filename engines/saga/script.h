@@ -270,7 +270,7 @@ public:
 
 typedef Common::List<ScriptThread> ScriptThreadList;
 
-#define SCRIPTOP_PARAMS ScriptThread *thread, MemoryReadStream *scriptS, bool &stopParsing, bool &breakOut
+#define SCRIPTOP_PARAMS ScriptThread *thread, Common::SeekableReadStream *scriptS, bool &stopParsing, bool &breakOut
 #define SCRIPTFUNC_PARAMS ScriptThread *thread, int nArgs, bool &disContinue
 #define OPCODE(x) {&Script::x, #x}
 

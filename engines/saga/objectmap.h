@@ -36,7 +36,7 @@ private:
 	typedef Common::Array<Point> ClickArea;
 	typedef Common::Array<ClickArea> ClickAreas;
 public:
-	void load(SagaEngine *vm, MemoryReadStreamEndian *readStream, int index, int sceneNumber);
+	void load(SagaEngine *vm, Common::MemoryReadStreamEndian *readStream, int index, int sceneNumber);
 
 	int getIndex() const {
 		return _index;

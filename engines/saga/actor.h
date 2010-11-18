@@ -267,7 +267,7 @@ struct Location {
 		screenPoint.x = x / ACTOR_LMULT;
 		screenPoint.y = y / ACTOR_LMULT - z;
 	}
-	void fromStream(MemoryReadStream &stream) {
+	void fromStream(Common::ReadStream &stream) {
 		x = stream.readUint16LE();
 		y = stream.readUint16LE();
 		z = stream.readUint16LE();

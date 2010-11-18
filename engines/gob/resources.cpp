@@ -71,7 +71,7 @@ int16 Resource::getHeight() const {
 	return _height;
 }
 
-Common::MemoryReadStream *Resource::stream() const {
+Common::SeekableReadStream *Resource::stream() const {
 	return _stream;
 }
 
@@ -95,7 +95,7 @@ int32 TextItem::getSize() const {
 	return _size;
 }
 
-Common::MemoryReadStream *TextItem::stream() const {
+Common::SeekableReadStream *TextItem::stream() const {
 	return _stream;
 }
 

@@ -900,7 +900,7 @@ void Script::popNewRoom(const Common::Array<int> &params) {
  * @brief Evaluates mathematical expressions
  * @param reader Stream reader set to the beginning of the expression
  */
-int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
+int Script::handleMathExpression(Common::ReadStream *reader) const {
 	Common::Stack<int> stk;
 	mathExpressionObject obj;
 	GPL2Operator oper;

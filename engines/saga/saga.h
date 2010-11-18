@@ -83,9 +83,6 @@ class Resource;
 
 class ResourceContext;
 
-using Common::MemoryReadStream;
-using Common::MemoryReadStreamEndian;
-
 // #define SAGA_DEBUG 1		// define for test functions
 #define SAGA_IMAGE_DATA_OFFSET 776
 #define SAGA_IMAGE_HEADER_LEN  8
@@ -480,9 +477,10 @@ public:
 	}
 };
 
-class ByteArrayReadStreamEndian : public MemoryReadStreamEndian {
+class ByteArrayReadStreamEndian : public Common::MemoryReadStreamEndian {
 public:
-	ByteArrayReadStreamEndian(const ByteArray & byteArray, bool bigEndian = false) : MemoryReadStreamEndian(byteArray.getBuffer(), byteArray.size(), bigEndian) {
+	ByteArrayReadStreamEndian(const ByteArray & byteArray, bool bigEndian = false)
+		: Common::MemoryReadStreamEndian(byteArray.getBuffer(), byteArray.size(), bigEndian) {
 	}
 };
 

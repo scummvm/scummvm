@@ -45,7 +45,7 @@
 
 namespace Saga {
 
-void HitZone::load(SagaEngine *vm, MemoryReadStreamEndian *readStream, int index, int sceneNumber) {
+void HitZone::load(SagaEngine *vm, Common::MemoryReadStreamEndian *readStream, int index, int sceneNumber) {
 	_index = index;
 	_flags = readStream->readByte();
 	_clickAreas.resize(readStream->readByte());

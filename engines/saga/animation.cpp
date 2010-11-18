@@ -680,7 +680,7 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 		error("decodeFrame() Buffer size inadequate");
 	}
 
-	MemoryReadStream readS(&anim->resourceData[frameOffset], anim->resourceData.size() - frameOffset);
+	Common::MemoryReadStream readS(&anim->resourceData[frameOffset], anim->resourceData.size() - frameOffset);
 
 // FIXME: This is thrown when the first video of the IHNM end sequence is shown (the "turn off screen"
 // video), however the video is played correctly and the rest of the end sequence continues normally
@@ -817,7 +817,7 @@ int Anim::fillFrameOffsets(AnimationData *anim, bool reallyFill) {
 	int i;
 	bool longData = isLongData();
 
-	MemoryReadStreamEndian readS(&anim->resourceData.front(), anim->resourceData.size(), !_vm->isBigEndian()); // RLE has inversion BE<>LE
+	Common::MemoryReadStreamEndian readS(&anim->resourceData.front(), anim->resourceData.size(), !_vm->isBigEndian()); // RLE has inversion BE<>LE
 
 	while (readS.pos() != readS.size()) {
 		if (reallyFill) {

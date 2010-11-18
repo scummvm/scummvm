@@ -30,7 +30,7 @@
 #include "common/stream.h"
 
 namespace Common {
-	class MemoryReadStream;
+	class ReadStream;
 }
 
 namespace Draci {
@@ -193,7 +193,7 @@ private:
 
 	void setupCommandList();
 	const GPL2Command *findCommand(byte num, byte subnum) const;
-	int handleMathExpression(Common::MemoryReadStream *reader) const;
+	int handleMathExpression(Common::ReadStream *reader) const;
 
 	DraciEngine *_vm;
 };

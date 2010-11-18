@@ -198,7 +198,7 @@ bool Script::runThread(ScriptThread &thread) {
 	bool breakOut = false;
 	int operandChar;
 
-	MemoryReadStream scriptS(thread._moduleBase, thread._moduleBaseSize);
+	Common::MemoryReadStream scriptS(thread._moduleBase, thread._moduleBaseSize);
 
 	scriptS.seek(thread._instructionOffset);
 
