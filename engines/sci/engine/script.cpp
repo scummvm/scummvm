@@ -398,7 +398,7 @@ void Script::setLockers(int lockers) {
 	_lockers = lockers;
 }
 
-uint16 Script::validateExportFunc(int pubfunct) {
+uint16 Script::validateExportFunc(int pubfunct, bool relocate) {
 	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
 
 	if (_numExports <= pubfunct) {
@@ -408,8 +408,15 @@ uint16 Script::validateExportFunc(int pubfunct) {
 
 	if (exportsAreWide)
 		pubfunct *= 2;
-	uint16 offset = getSciVersion() != SCI_VERSION_3 ? READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct) :
-		relocateOffsetSci3(pubfunct * 2 + 22);
+
+	uint16 offset;
+
+	if (getSciVersion() != SCI_VERSION_3 || !relocate) {
+		offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);
+	} else {
+		offset = relocateOffsetSci3(pubfunct * 2 + 22);
+	}
+
 	VERIFY(offset < _bufSize, "invalid export function pointer");
 
 	// Check if the offset found points to a second export table (e.g. script 912

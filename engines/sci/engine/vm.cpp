@@ -328,7 +328,11 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		scr = s->_segMan->getScript(seg);
 	}
 
-	const int temp = scr->validateExportFunc(pubfunct);
+	int temp = scr->validateExportFunc(pubfunct, false);
+
+	if (getSciVersion() == SCI_VERSION_3)
+		temp += scr->getCodeBlockOffset();
+
 	if (!temp) {
 #ifdef ENABLE_SCI32
 		// HACK: Temporarily switch to a warning in SCI32 games until we can figure out why Torin has
