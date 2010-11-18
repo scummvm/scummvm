@@ -283,13 +283,17 @@ void DisplayManager::init() {
 	_masterGuRenderer.setupCallbackThread();
 #endif
 
+	// Init overlay since we never change the size
+	_overlay->deallocate();	
+	_overlay->setBytesPerPixel(sizeof(OverlayColor));
+	_overlay->setSize(PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT);
+	_overlay->allocate();
 }
 
 void DisplayManager::setSizeAndPixelFormat(uint width, uint height, const Graphics::PixelFormat *format) {
 	DEBUG_ENTER_FUNC();
 	PSP_DEBUG_PRINT("w[%u], h[%u], pformat[%p]\n", width, height, format);
 
-	_overlay->deallocate();
 	_screen->deallocate();
 
 	_screen->setScummvmPixelFormat(format);
@@ -297,10 +301,6 @@ void DisplayManager::setSizeAndPixelFormat(uint width, uint height, const Graphi
 	_screen->allocate();
 
 	_cursor->setScreenPaletteScummvmPixelFormat(format);
-
-	_overlay->setBytesPerPixel(sizeof(OverlayColor));
-	_overlay->setSize(PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT);
-	_overlay->allocate();
 
 	_displayParams.screenSource.width = width;
 	_displayParams.screenSource.height = height;
