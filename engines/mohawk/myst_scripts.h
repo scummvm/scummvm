@@ -26,6 +26,7 @@
 #ifndef MYST_SCRIPTS_H
 #define MYST_SCRIPTS_H
 
+#include "common/ptr.h"
 #include "common/scummsys.h"
 #include "common/util.h"
 
@@ -34,16 +35,39 @@ namespace Mohawk {
 #define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
 class MohawkEngine_Myst;
-struct MystScriptEntry;
+class MystResource;
+
+enum MystScriptType {
+	kMystScriptNone,
+	kMystScriptNormal,
+	kMystScriptInit,
+	kMystScriptExit
+};
+
+struct MystScriptEntry {
+	MystScriptEntry();
+	~MystScriptEntry();
+
+	MystScriptType type;
+	uint16 u0;
+	uint16 opcode;
+	uint16 var;
+	uint16 argc;
+	uint16 *argv;
+	uint16 u1;
+};
+
+typedef Common::SharedPtr<Common::Array<MystScriptEntry> > MystScript;
 
 class MystScriptParser {
 public:
 	MystScriptParser(MohawkEngine_Myst *vm);
 	~MystScriptParser();
 
-	void runScript(uint16 scriptCount, MystScriptEntry *scripts, MystResource* invokingResource = NULL);
+	void runScript(MystScript script, MystResource *invokingResource = NULL);
 	void runOpcode(uint16 op, uint16 var = 0, uint16 argc = 0, uint16 *argv = NULL);
 	const char *getOpcodeDesc(uint16 op);
+	MystScript readScript(Common::SeekableReadStream *stream, MystScriptType type);
 
 	void disableInitOpcodes();
 	void runPersistentOpcodes();

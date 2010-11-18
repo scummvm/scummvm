@@ -29,7 +29,6 @@
 
 #include "mohawk/graphics.h"
 #include "mohawk/myst.h"
-#include "mohawk/myst_scripts.h"
 #include "mohawk/myst_saveload.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/resource.h"
@@ -703,44 +702,10 @@ void MohawkEngine_Myst::runInitScript() {
 	debugC(kDebugINIT, "Running INIT script");
 
 	Common::SeekableReadStream *initStream = getRawData(ID_INIT, _view.init);
-
-	uint16 scriptCount = initStream->readUint16LE();
-
-	debugC(kDebugINIT, "\tOpcode Count: %d", scriptCount);
-
-	MystScriptEntry *scripts = new MystScriptEntry[scriptCount];
-
-	for (uint16 i = 0; i < scriptCount; i++) {
-		// TODO: u0 is likely variable reference for boolean to
-		// determine whether or not to execute opcode
-		uint16 u0 = initStream->readUint16LE();
-		scripts[i].opcode = initStream->readUint16LE();
-		// If variable indicates not to execute opcode, rewrite to NOP
-		//if (!_varStore->getVar(u0))
-		//	scripts[i].opcode = 0xFFFF;
-		scripts[i].var = initStream->readUint16LE();
-		scripts[i].numValues = initStream->readUint16LE();
-		scripts[i].values = new uint16[scripts[i].numValues];
-
-		debugC(kDebugINIT, "\tu0: %d", u0);
-		debugC(kDebugINIT, "\tOpcode %d: %s", i, _scriptParser->getOpcodeDesc(scripts[i].opcode));
-		debugC(kDebugINIT, "\t\tUses Variable %d", scripts[i].var);
-		debugC(kDebugINIT, "\t\tHas %d Arguments:", scripts[i].numValues);
-
-		for (uint16 j = 0; j < scripts[i].numValues; j++) {
-			scripts[i].values[j] = initStream->readUint16LE();
-			debugC(kDebugINIT, "\t\tArgument %d: %d", j, scripts[i].values[j]);
-		}
-	}
-
+	MystScript script = _scriptParser->readScript(initStream, kMystScriptInit);
 	delete initStream;
 
-	_scriptParser->runScript(scriptCount, scripts);
-
-	for (uint16 i = 0; i < scriptCount; i++)
-		delete[] scripts[i].values;
-	delete[] scripts;
-
+	_scriptParser->runScript(script);
 	_gfx->updateScreen();
 }
 
@@ -753,49 +718,10 @@ void MohawkEngine_Myst::runExitScript() {
 	debugC(kDebugEXIT, "Running EXIT script");
 
 	Common::SeekableReadStream *exitStream = getRawData(ID_EXIT, _view.exit);
-
-	uint16 scriptCount = exitStream->readUint16LE();
-
-	debugC(kDebugEXIT, "\tOpcode Count: %d", scriptCount);
-
-	MystScriptEntry *scripts = new MystScriptEntry[scriptCount];
-
-	for (uint16 i = 0; i < scriptCount; i++) {
-		// TODO: u0 is likely variable reference for boolean to
-		// to determine whether or not to execute opcode (i.e. door
-		// close noises only when door is open).
-		uint16 u0 = exitStream->readUint16LE();
-		scripts[i].opcode = exitStream->readUint16LE();
-		// If variable indicates not to execute opcode, rewrite to NOP
-		//if (!_varStore->getVar(u0))
-		//	scripts[i].opcode = 0xFFFF;
-		scripts[i].var = exitStream->readUint16LE();
-		scripts[i].numValues = exitStream->readUint16LE();
-		scripts[i].values = new uint16[scripts[i].numValues];
-
-		debugC(kDebugEXIT, "\tu0: %d", u0);
-		debugC(kDebugEXIT, "\tOpcode %d: %s", i, _scriptParser->getOpcodeDesc(scripts[i].opcode));
-		debugC(kDebugEXIT, "\t\tUses Variable %d", scripts[i].var);
-		debugC(kDebugEXIT, "\t\tHas %d Arguments:", scripts[i].numValues);
-
-		for (uint16 j = 0; j < scripts[i].numValues; j++) {
-			scripts[i].values[j] = exitStream->readUint16LE();
-			debugC(kDebugEXIT, "\t\tArgument %d: %d", j, scripts[i].values[j]);
-		}
-
-		uint16 u1 = exitStream->readUint16LE();
-		if (u1 != 1)
-			warning("Myst EXIT u1 not 1");
-	}
-
+	MystScript script = _scriptParser->readScript(exitStream, kMystScriptExit);
 	delete exitStream;
 
-	_scriptParser->runScript(scriptCount, scripts);
-
-	for (uint16 i = 0; i < scriptCount; i++)
-		delete[] scripts[i].values;
-	delete[] scripts;
-
+	_scriptParser->runScript(script);
 	_gfx->updateScreen();
 }
 
@@ -1059,40 +985,11 @@ void MystResource::handleMouseUp() {
 MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {
 	debugC(kDebugResource, "\tResource Type 5 Script:");
 
-	_scripts = NULL;
-	_scriptCount = rlstStream->readUint16LE();
-
-	debugC(kDebugResource, "\tOpcode Count: %d", _scriptCount);
-
-	if (_scriptCount == 0)
-		return;
-
-	_scripts = new MystScriptEntry[_scriptCount];
-	for (uint16 i = 0; i < _scriptCount; i++) {
-		_scripts[i].opcode = rlstStream->readUint16LE();
-		_scripts[i].var = rlstStream->readUint16LE();
-		_scripts[i].numValues = rlstStream->readUint16LE();
-		_scripts[i].values = new uint16[_scripts[i].numValues];
-
-		debugC(kDebugResource, "\tOpcode %d: %s", i, _vm->_scriptParser->getOpcodeDesc(_scripts[i].opcode));
-		debugC(kDebugResource, "\t\tUses Variable %d", _scripts[i].var);
-		debugC(kDebugResource, "\t\tHas %d Arguments:", _scripts[i].numValues);
-
-		for (uint16 j = 0; j < _scripts[i].numValues; j++) {
-			_scripts[i].values[j] = rlstStream->readUint16LE();
-			debugC(kDebugResource, "\t\tArgument %d: %d", j, _scripts[i].values[j]);
-		}
-	}
-}
-
-MystResourceType5::~MystResourceType5() {
-	for (uint16 i = 0; i < _scriptCount; i++)
-		delete[] _scripts[i].values;
-	delete[] _scripts;
+	_script = vm->_scriptParser->readScript(rlstStream, kMystScriptNormal);
 }
 
 void MystResourceType5::handleMouseUp() {
-	_vm->_scriptParser->runScript(_scriptCount, _scripts, this);
+	_vm->_scriptParser->runScript(_script, this);
 }
 
 // In Myst/Making of Myst, the paths are hardcoded ala Windows style without extension. Convert them.

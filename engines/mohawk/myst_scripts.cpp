@@ -33,6 +33,19 @@
 
 namespace Mohawk {
 
+MystScriptEntry::MystScriptEntry() {
+	type = kMystScriptNone;
+	var = 0;
+	argc = 0;
+	argv = 0;
+	u0 = 0;
+	u1 = 0;
+}
+
+MystScriptEntry::~MystScriptEntry() {
+	delete[] argv;
+}
+
 const uint8 stack_map[8] = {
 	kSeleniticStack,
 	kStoneshipStack,
@@ -78,12 +91,12 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(2, altDest),
 		OPCODE(3, takePage),
 		OPCODE(4, opcode_4),
-		// TODO: Opcode 5 Not Present
+		// Opcode 5 Not Present
 		OPCODE(6, opcode_6),
 		OPCODE(7, opcode_7),
 		OPCODE(8, opcode_8),
 		OPCODE(9, opcode_9),
-		// TODO: Opcode 10 to 11 Not Present
+		// Opcode 10 to 11 Not Present
 		OPCODE(12, altDest),
 		OPCODE(13, altDest),
 		OPCODE(14, opcode_14),
@@ -97,7 +110,7 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(22, opcode_22),
 		OPCODE(23, opcode_23),
 		OPCODE(24, playSound),
-		// TODO: Opcode 25 Not Present
+		// Opcode 25 Not Present
 		OPCODE(26, opcode_26),
 		OPCODE(27, playSoundBlocking),
 		OPCODE(28, opcode_28),
@@ -117,9 +130,9 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(42, opcode_42),
 		OPCODE(43, opcode_43),
 		OPCODE(44, opcode_44),
-		// TODO: Opcode 45 Not Present
+		// Opcode 45 Not Present
 		OPCODE(46, opcode_46),
-		// TODO: Opcodes 47 to 99 Not Present
+		// Opcodes 47 to 99 Not Present
 
 		// "Stack-Specific" Opcodes
 		OPCODE(100, opcode_100),
@@ -156,18 +169,18 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(131, opcode_131),
 		OPCODE(132, opcode_132),
 		OPCODE(133, opcode_133),
-		// TODO: Opcodes 134 to 146 Not Present
+		// Opcodes 134 to 146 Not Present
 		OPCODE(147, opcode_147),
-		// TODO: Opcodes 148 to 163 Not Present
+		// Opcodes 148 to 163 Not Present
 		OPCODE(164, opcode_164),
-		// TODO: Opcodes 165 to 168 Not Present
+		// Opcodes 165 to 168 Not Present
 		OPCODE(169, opcode_169),
-		// TODO: Opcodes 170 to 181 Not Present
+		// Opcodes 170 to 181 Not Present
 		OPCODE(182, opcode_182),
 		OPCODE(183, opcode_183),
 		OPCODE(184, opcode_184),
 		OPCODE(185, opcode_185),
-		// TODO: Opcodes 186 to 195 Not Present
+		// Opcodes 186 to 195 Not Present
 		OPCODE(196, opcode_196), // Demo only
 		OPCODE(197, opcode_197), // Demo only
 		OPCODE(198, opcode_198),
@@ -197,7 +210,7 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(220, opcode_220),
 		OPCODE(221, opcode_221),
 		OPCODE(222, opcode_222),
-		// TODO: Opcodes 223 to 297 Not Present
+		// Opcodes 223 to 297 Not Present
 		OPCODE(298, opcode_298), // Demo only
 		OPCODE(299, opcode_299), // Demo only
 
@@ -212,9 +225,9 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(307, opcode_307),
 		OPCODE(308, opcode_308),
 		OPCODE(309, opcode_309),
-		// TODO: Opcodes 310 to 311 Not Present
+		// Opcodes 310 to 311 Not Present
 		OPCODE(312, opcode_312),
-		// TODO: Opcodes 313 and greater Not Present
+		// Opcodes 313 and greater Not Present
 
 		OPCODE(0xFFFF, NOP)
 	};
@@ -251,13 +264,14 @@ void MystScriptParser::runPersistentOpcodes() {
 	opcode_212_run();
 }
 
-void MystScriptParser::runScript(uint16 scriptCount, MystScriptEntry *scripts, MystResource *invokingResource) {
+void MystScriptParser::runScript(MystScript script, MystResource *invokingResource) {
 	_invokingResource = invokingResource;
 
-	debugC(kDebugScript, "Script Count: %d", scriptCount);
-	for (uint16 i = 0; i < scriptCount; i++) {
-		debugC(kDebugScript, "\tOpcode %d: %d", i, scripts[i].opcode);
-		runOpcode(scripts[i].opcode, scripts[i].var, scripts[i].numValues, scripts[i].values);
+	debugC(kDebugScript, "Script Size: %d", script->size());
+	for (uint16 i = 0; i < script->size(); i++) {
+		MystScriptEntry &entry = script->operator[](i);
+		debugC(kDebugScript, "\tOpcode %d: %d", i, entry.opcode);
+		runOpcode(entry.opcode, entry.var, entry.argc, entry.argv);
 	}
 }
 
@@ -282,6 +296,41 @@ const char *MystScriptParser::getOpcodeDesc(uint16 op) {
 
 	error("Unknown opcode %d", op);
 	return "";
+}
+
+MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, MystScriptType type) {
+	assert(stream);
+	assert(type != kMystScriptNone);
+
+	MystScript script = MystScript(new Common::Array<MystScriptEntry>());
+
+	uint16 opcodeCount = stream->readUint16LE();
+	script->resize(opcodeCount);
+
+	for (uint16 i = 0; i < opcodeCount; i++) {
+		MystScriptEntry &entry = script->operator[](i);
+		entry.type = type;
+
+		// u0 only exists in INIT and EXIT scripts
+		if (type != kMystScriptNormal)
+			entry.u0 = stream->readUint16LE();
+
+		entry.opcode = stream->readUint16LE();
+		entry.var = stream->readUint16LE();
+		entry.argc = stream->readUint16LE();
+
+		if (entry.argc > 0) {
+			entry.argv = new uint16[entry.argc];
+			for (uint16 j = 0; j < entry.argc; j++)
+				entry.argv[j] = stream->readUint16LE();
+		}
+
+		// u1 exists only in EXIT scripts
+		if (type == kMystScriptExit)
+			entry.u1 = stream->readUint16LE();
+	}
+
+	return script;
 }
 
 // NOTE: Check to be used on Opcodes where var is thought

@@ -30,6 +30,7 @@
 #include "mohawk/mohawk.h"
 #include "mohawk/resource_cache.h"
 #include "mohawk/myst_vars.h"
+#include "mohawk/myst_scripts.h"
 
 #include "gui/saveload.h"
 
@@ -147,13 +148,6 @@ struct MystView {
 	uint16 exit;
 };
 
-struct MystScriptEntry {
-	uint16 opcode;
-	uint16 var;
-	uint16 numValues;
-	uint16 *values;
-};
-
 class MystResource {
 public:
 	MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
@@ -188,12 +182,10 @@ protected:
 class MystResourceType5 : public MystResource {
 public:
 	MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	virtual ~MystResourceType5();
 	void handleMouseUp();
 
 protected:
-	uint16 _scriptCount;
-	MystScriptEntry *_scripts;
+	MystScript _script;
 };
 
 class MystResourceType6 : public MystResourceType5 {
