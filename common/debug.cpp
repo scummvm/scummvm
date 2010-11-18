@@ -22,31 +22,12 @@
  * $Id$
  */
 
-// Disable symbol overrides so that we can use system headers.
-// FIXME: Necessary for the PS2 port, should get rid of this eventually.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/util.h"
+#include "common/system.h"
 
 #include <stdarg.h>	// For va_list etc.
-
-
-#ifdef __PLAYSTATION2__
-	// for those replaced fopen/fread/etc functions
-	#include "backends/platform/ps2/fileio.h"
-
-	#define fputs(str, file)	ps2_fputs(str, file)
-	#define fflush(a)			ps2_fflush(a)
-#endif
-
-#ifdef __DS__
-	#include "backends/fs/ds/ds-fs.h"
-
-	#define fputs(str, file)	DS::std_fwrite(str, strlen(str), 1, file)
-	#define fflush(file)		DS::std_fflush(file)
-#endif
 
 // TODO: Move gDebugLevel into namespace Common.
 int gDebugLevel = -1;
@@ -139,19 +120,10 @@ static void debugHelper(const char *s, va_list va, bool caret = true) {
 		strcat(buf, "\n");
 	}
 
-	fputs(buf, stdout);
-
-#if defined( USE_WINDBG )
-#if defined( _WIN32_WCE )
-	TCHAR buf_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
-	OutputDebugString(buf_unicode);
-#else
-	OutputDebugString(buf);
-#endif
-#endif
-
-	fflush(stdout);
+	if (g_system)
+		g_system->logMessage(LogMessageType::kDebug, buf);
+	// TODO: Think of a good fallback in case we do not have
+	// any OSystem yet.
 }
 
 void debug(const char *s, ...) {

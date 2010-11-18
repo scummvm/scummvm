@@ -22,33 +22,8 @@
  * $Id$
  */
 
-// Disable symbol overrides so that we can use system headers.
-// FIXME: Necessary for the PS2 port, should get rid of this eventually.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/textconsole.h"
 #include "common/system.h"
-
-#ifdef __PLAYSTATION2__
-	// for those replaced fopen/fread/etc functions
-	#include "backends/platform/ps2/fileio.h"
-
-	#define fputs(str, file)	ps2_fputs(str, file)
-#endif
-
-#ifdef __DS__
-	#include "backends/fs/ds/ds-fs.h"
-
-	#define fputs(str, file)	DS::std_fwrite(str, strlen(str), 1, file)
-#endif
-
-#ifdef ANDROID
-	#include <android/log.h>
-#endif
-
-#ifdef __PSP__
-	#include "backends/platform/psp/trace.h"
-#endif
 
 namespace Common {
 
@@ -78,24 +53,12 @@ void warning(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if defined( ANDROID )
-	__android_log_write(ANDROID_LOG_WARN, "ScummVM", buf);
-#elif !defined (__SYMBIAN32__)
-	fputs("WARNING: ", stderr);
-	fputs(buf, stderr);
-	fputs("!\n", stderr);
-#endif
+	Common::String output = Common::String::format("WARNING: %s!\n", buf);
 
-#if defined( USE_WINDBG )
-	strcat(buf, "\n");
-#if defined( _WIN32_WCE )
-	TCHAR buf_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
-	OutputDebugString(buf_unicode);
-#else
-	OutputDebugString(buf);
-#endif
-#endif
+	if (g_system)
+		g_system->logMessage(LogMessageType::kWarning, output.c_str());
+	// TODO: Think of a good fallback in case we do not have
+	// any OSystem yet.
 }
 
 #endif
@@ -123,48 +86,21 @@ void NORETURN_PRE error(const char *s, ...) {
 	buf_output[STRINGBUFLEN-1] = '\0';
 	strcat(buf_output, "!\n");
 
-
-	// Print the error message to stderr
-	fputs(buf_output, stderr);
+	if (g_system)
+		g_system->logMessage(LogMessageType::kError, buf_output);
+	// TODO: Think of a good fallback in case we do not have
+	// any OSystem yet.
 
 	// If there is an error handler, invoke it now
 	if (Common::s_errorHandler)
 		(*Common::s_errorHandler)(buf_output);
 
-	// TODO: Add a OSystem::fatalError() method and invoke it here.
-	// The default implementation would just call OSystem::quit().
-
-#if defined( USE_WINDBG )
-#if defined( _WIN32_WCE )
-	TCHAR buf_output_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, buf_output, strlen(buf_output) + 1, buf_output_unicode, sizeof(buf_output_unicode));
-	OutputDebugString(buf_output_unicode);
-#ifndef DEBUG
-	drawError(buf_output);
-#else
-	int cmon_break_into_the_debugger_if_you_please = *(int *)(buf_output + 1);	// bus error
-	printf("%d", cmon_break_into_the_debugger_if_you_please);			// don't optimize the int out
-#endif
-#else
-	OutputDebugString(buf_output);
-#endif
-#endif
-
-#ifdef ANDROID
-	__android_log_assert("Fatal error", "ScummVM", "%s", buf_output);
-#endif
-
 #ifdef __SYMBIAN32__
 	Symbian::FatalError(buf_output);
 #endif
 
-#ifdef __PSP__
-	PspDebugTrace(false, "%s", buf_output);	// write to file
-#endif
-
-	// Finally exit. quit() will terminate the program if g_system is present
 	if (g_system)
-		g_system->quit();
+		g_system->fatalError();
 
 #if defined(SAMSUNGTV)
 	// FIXME

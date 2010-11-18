@@ -191,6 +191,9 @@ public:
 	// Quit
 	virtual void quit(); // overloaded by CE backend
 
+	// Logging
+	virtual void logMessage(LogMessageType::Type type, const char *message);
+
 	void deinit();
 
 	virtual void getTimeAndDate(TimeDate &t) const;

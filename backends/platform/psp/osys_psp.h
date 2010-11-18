@@ -153,6 +153,8 @@ public:
 
 	void quit();
 
+	void logMessage(LogMessageType::Type type, const char *message);
+
 	Common::SeekableReadStream *createConfigReadStream();
 	Common::WriteStream *createConfigWriteStream();
 

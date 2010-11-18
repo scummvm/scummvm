@@ -408,6 +408,13 @@ void OSystem_PSP::quit() {
 	sceKernelExitGame();
 }
 
+void OSystem_PSP::logMessage(LogMessageType::Type type, const char *message) {
+	BaseBackend::logMessage(type, message);
+
+	if (type == LogMessageType::kError)
+		PspDebugTrace(false, "%s", message);	// write to file
+}
+
 void OSystem_PSP::getTimeAndDate(TimeDate &td) const {
 	time_t curTime = time(0);
 	struct tm t = *localtime(&curTime);

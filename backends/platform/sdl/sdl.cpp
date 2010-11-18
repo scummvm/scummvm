@@ -562,6 +562,30 @@ void OSystem_SDL::quit() {
 #endif
 }
 
+void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
+	BaseBackend::logMessage(type, message);
+
+#if defined( USE_WINDBG )
+#if defined( _WIN32_WCE )
+	TCHAR buf_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, message, strlen(message) + 1, buf_unicode, sizeof(buf_unicode));
+	OutputDebugString(buf_unicode);
+
+	if (type == LogMessageType::kError) {
+#ifndef DEBUG
+		drawError(message);
+#else
+		int cmon_break_into_the_debugger_if_you_please = *(int *)(message + 1);	// bus error
+		printf("%d", cmon_break_into_the_debugger_if_you_please);			// don't optimize the int out
+#endif
+	}
+
+#else
+	OutputDebugString(message);
+#endif
+#endif
+}
+
 void OSystem_SDL::setupIcon() {
 	int x, y, w, h, ncols, nbytes, i;
 	unsigned int rgba[256];

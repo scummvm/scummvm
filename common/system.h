@@ -73,6 +73,16 @@ struct TimeDate {
 	int tm_year;    ///< year - 1900
 };
 
+namespace LogMessageType {
+
+enum Type {
+	kError,
+	kWarning,
+	kDebug
+};
+
+} // End of namespace LogMessageType
+
 /**
  * Interface for ScummVM backends. If you want to port ScummVM to a system
  * which is not currently covered by any of our backends, this is the place
@@ -953,6 +963,13 @@ public:
 	virtual void quit() = 0;
 
 	/**
+	 * Signals that a fatal error inside the client code has happened.
+	 *
+	 * This should quit the application.
+	 */
+	virtual void fatalError();
+
+	/**
 	 * Set a window caption or any other comparable status display to the
 	 * given value. The caption must be a pure ISO LATIN 1 string. Passing a
 	 * string with a different encoding may lead to unexpected behavior,
@@ -1018,6 +1035,20 @@ public:
 	 * May return 0 to indicate that writing to config file is not possible.
 	 */
 	virtual Common::WriteStream *createConfigWriteStream() = 0;
+
+	/**
+	 * Logs a given message.
+	 *
+	 * It is up to the backend where to log the different messages.
+	 * The backend should aim at using a non-buffered output for it
+	 * so that no log data is lost in case of a crash.
+	 *
+	 * The default implementation outputs them on stdout/stderr.
+	 *
+	 * @param type    the type of the message
+	 * @param message the message itself
+	 */
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 	//@}
 };
