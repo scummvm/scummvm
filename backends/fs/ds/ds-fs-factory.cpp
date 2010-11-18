@@ -22,6 +22,9 @@
  * $Id$
  */
 
+// Disable symbol overrides for FILE as that is used in FLAC headers
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 #if defined(__DS__)
 #include "backends/fs/ds/ds-fs-factory.h"
 #include "backends/fs/ds/ds-fs.h"

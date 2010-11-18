@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides for FILE as that is used in FLAC headers
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 #include "common/str.h"
 #include "common/util.h"
 //#include <NDS/ARM9/console.h> //basic print funcionality
@@ -30,8 +33,6 @@
 #include "backends/fs/stdiostream.h"
 #include "dsmain.h"
 #include "fat/gba_nds_fat.h"
-
-
 
 namespace DS {
 
