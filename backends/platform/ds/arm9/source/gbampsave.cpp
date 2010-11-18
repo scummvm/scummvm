@@ -23,6 +23,9 @@
  *
  */
 
+// Disable symbol overrides for FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 #include "gbampsave.h"
 #include "fat/gba_nds_fat.h"
 #include "backends/fs/ds/ds-fs.h"
@@ -43,47 +46,48 @@ GBAMPSaveFile::GBAMPSaveFile(char *name, bool saveOrLoad) {
 
 GBAMPSaveFile::~GBAMPSaveFile() {
 	flushSaveBuffer();
-	if (handle) DS::std_fclose(handle);
+	if (handle)
+		DS::std_fclose((FILE *)handle);
 //	consolePrintf("Closed file\n");
 }
 
 uint32 GBAMPSaveFile::read(void *buf, uint32 length) {
 	saveSize += length;
 //	consolePrintf("Read %d %d ", length, saveSize);
-	return DS::std_fread(buf, 1, length, handle);
+	return DS::std_fread(buf, 1, length, (FILE *)handle);
 }
 
 bool GBAMPSaveFile::eos() const {
-	return DS::std_feof(handle);
+	return DS::std_feof((FILE *)handle);
 }
 
 bool GBAMPSaveFile::skip(uint32 bytes) {
-	return DS::std_fseek(handle, bytes, SEEK_CUR) == 0;
+	return DS::std_fseek((FILE *)handle, bytes, SEEK_CUR) == 0;
 }
 
 void GBAMPSaveFile::flushSaveBuffer() {
 	if (bufferPos != 0) {
 //		consolePrintf("Flushing %d bytes from %x\n", bufferPos, buffer);
 		flushed += bufferPos;
-		DS::std_fwrite(buffer, 1, bufferPos, handle);
+		DS::std_fwrite(buffer, 1, bufferPos, (FILE *)handle);
 		bufferPos = 0;
 	}
 }
 
 int32 GBAMPSaveFile::pos() const {
-	return DS::std_ftell(handle);
+	return DS::std_ftell((FILE *)handle);
 }
 
 int32 GBAMPSaveFile::size() const {
 	int position = pos();
-	DS::std_fseek(handle, 0, SEEK_END);
-	int length = DS::std_ftell(handle);
-	DS::std_fseek(handle, position, SEEK_SET);
+	DS::std_fseek((FILE *)handle, 0, SEEK_END);
+	int length = DS::std_ftell((FILE *)handle);
+	DS::std_fseek((FILE *)handle, position, SEEK_SET);
 	return length;
 }
 
 bool GBAMPSaveFile::seek(int32 newPos, int whence) {
-	return DS::std_fseek(handle, newPos, whence) == 0;
+	return DS::std_fseek((FILE *)handle, newPos, whence) == 0;
 }
 
 

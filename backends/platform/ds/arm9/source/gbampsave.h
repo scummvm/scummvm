@@ -28,12 +28,11 @@
 
 #include "common/system.h"
 #include "common/savefile.h"
-#include "backends/fs/ds/ds-fs.h"
 
 #define SAVE_BUFFER_SIZE 100000
 
 class GBAMPSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
-	DS::fileHandle *handle;
+	void *handle;
 	char buffer[SAVE_BUFFER_SIZE];
 	int bufferPos;
 	int saveSize;

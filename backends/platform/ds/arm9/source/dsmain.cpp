@@ -71,6 +71,9 @@
 // - Try discworld?
 
 
+// Disable symbol overrides for FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 
 
 #include <nds.h>
