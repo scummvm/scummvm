@@ -421,10 +421,10 @@ namespace {
 /**
  * Wrapper class which adds buffering to any WriteStream.
  */
+template <DisposeAfterUse::Flag _disposeParentStream>
 class BufferedWriteStream : public WriteStream {
 protected:
 	WriteStream *_parentStream;
-	DisposeAfterUse::Flag _disposeParentStream;
 	byte *_buf;
 	uint32 _pos;
 	const uint32 _bufSize;
@@ -436,71 +436,71 @@ protected:
 	 * implemented by calling this method), except that it is not
 	 * virtual, hence there is less overhead calling it.
 	 */
-	bool flushBuffer();
+	bool flushBuffer() {
+		const uint32 bytesToWrite = _pos;
+
+		if (bytesToWrite) {
+			_pos = 0;
+			if (_parentStream->write(_buf, bytesToWrite) != bytesToWrite)
+				return false;
+		}
+		return true;
+	}
 
 public:
-	BufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
-	virtual ~BufferedWriteStream();
+	BufferedWriteStream(WriteStream *parentStream, uint32 bufSize)
+		: _parentStream(parentStream),
+		_pos(0),
+		_bufSize(bufSize) {
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+		assert(parentStream);
+		_buf = new byte[bufSize];
+		assert(_buf);
+	}
+
+	virtual ~BufferedWriteStream() {
+		const bool flushResult = flushBuffer();
+		assert(flushResult);
+
+		if (_disposeParentStream)
+			delete _parentStream;
+
+		delete[] _buf;
+	}
+
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) {
+		// check if we have enough space for writing to the buffer
+		if (_bufSize - _pos >= dataSize) {
+			memcpy(_buf + _pos, dataPtr, dataSize);
+			_pos += dataSize;
+		} else if (_bufSize >= dataSize) {	// check if we can flush the buffer and load the data
+			const bool flushResult = flushBuffer();
+			assert(flushResult);
+			memcpy(_buf, dataPtr, dataSize);
+			_pos += dataSize;
+		} else	{	// too big for our buffer
+			const bool flushResult = flushBuffer();
+			assert(flushResult);
+			return _parentStream->write(dataPtr, dataSize);
+		}
+		return dataSize;
+	}
+
 	virtual bool flush() { return flushBuffer(); }
+
 };
-
-BufferedWriteStream::BufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
-	: _parentStream(parentStream),
-	_disposeParentStream(disposeParentStream),
-	_pos(0),
-	_bufSize(bufSize) {
-
-	assert(parentStream);
-	_buf = new byte[bufSize];
-	assert(_buf);
-}
-
-BufferedWriteStream::~BufferedWriteStream() {
-	const bool flushResult = flushBuffer();
-	assert(flushResult);
-
-	if (_disposeParentStream)
-		delete _parentStream;
-
-	delete[] _buf;
-}
-
-uint32 BufferedWriteStream::write(const void *dataPtr, uint32 dataSize) {
-	// check if we have enough space for writing to the buffer
-	if (_bufSize - _pos >= dataSize) {
-		memcpy(_buf + _pos, dataPtr, dataSize);
-		_pos += dataSize;
-	} else if (_bufSize >= dataSize) {	// check if we can flush the buffer and load the data
-		const bool flushResult = flushBuffer();
-		assert(flushResult);
-		memcpy(_buf, dataPtr, dataSize);
-		_pos += dataSize;
-	} else	{	// too big for our buffer
-		const bool flushResult = flushBuffer();
-		assert(flushResult);
-		return _parentStream->write(dataPtr, dataSize);
-	}
-	return dataSize;
-}
-
-bool BufferedWriteStream::flushBuffer() {
-	const uint32 bytesToWrite = _pos;
-
-	if (bytesToWrite) {
-		_pos = 0;
-		if (_parentStream->write(_buf, bytesToWrite) != bytesToWrite)
-			return false;
-	}
-	return true;
-}
 
 }	// End of nameless namespace
 
 WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream) {
-	if (parentStream)
-		return new BufferedWriteStream(parentStream, bufSize, disposeParentStream);
+	if (parentStream) {
+		switch (disposeParentStream) {
+		case DisposeAfterUse::YES:
+			return new BufferedWriteStream<DisposeAfterUse::YES>(parentStream, bufSize);
+		case DisposeAfterUse::NO:
+			return new BufferedWriteStream<DisposeAfterUse::NO>(parentStream, bufSize);
+		}
+	}
 	return 0;
 }
 
