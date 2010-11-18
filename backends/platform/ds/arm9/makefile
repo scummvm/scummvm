@@ -104,6 +104,10 @@ vpath %.s $(srcdir)
 # I actually had to use
 # ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork' LDFLAGS='C:/Progra~1/devkitpro/libnds/lib/libnds9.a' --disable-shared --disable-debugging
 
+
+# handy command to find where the big symbols are in the ELF:
+# arm-eabi-nm -S --radix=d --demangle scummvm.elf |sort -n -r --key=2 |less
+
 ARM = 1
 USE_ARM_SOUND_ASM = 1
 USE_ARM_COSTUME_ASM = 1
@@ -241,7 +245,7 @@ ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
 
-DEFINES += -DREDUCE_MEMORY_USAGE
+DEFINES += -DREDUCE_MEMORY_USAGE -DDISABLE_DEBUGGER -DUSE_TEXT_CONSOLE -DDISABLE_MASS_ADD -DDISABLE_NES_APU
 
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
 
@@ -345,7 +349,7 @@ MODULE_DIRS += .
 
 ndsall:
 	@[ -d $(BUILD) ] || mkdir -p $(BUILD)
-	make -C ./$(BUILD) -f ../makefile scummvm.nds scummvm.ds.gba
+	$(MAKE) -C ./$(BUILD) -f ../makefile scummvm.nds scummvm.ds.gba
 
 include $(srcdir)/Makefile.common
 

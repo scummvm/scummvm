@@ -194,7 +194,8 @@ const char lfn_offset_table[13]={0x01,0x03,0x05,0x07,0x09,0x0E,0x10,0x12,0x14,0x
 // available: IWRAM on NDS ARM7, EWRAM on NDS ARM9 and GBA
 
 // Files
-_VARS_IN_RAM FAT_FILE openFiles[MAX_FILES_OPEN];
+FAT_FILE openFiles[MAX_FILES_OPEN] __attribute__((section(".itcm")));
+//_VARS_IN_RAM
 
 // Long File names
 _VARS_IN_RAM char lfnName[MAX_FILENAME_LENGTH];

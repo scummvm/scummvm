@@ -2788,7 +2788,7 @@ bool getIndyFightState() {
 // Fast Ram
 ///////////////////
 
-#define FAST_RAM_SIZE (24000)
+#define FAST_RAM_SIZE (22500)
 #define ITCM_DATA	__attribute__((section(".itcm")))
 
 u8 *fastRamPointer;
