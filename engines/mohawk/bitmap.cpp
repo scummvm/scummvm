@@ -70,7 +70,7 @@ ImageData *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 
 	debug (2, "Decoding Mohawk Bitmap (%dx%d, %dbpp, %s Packing + %s Drawing)", _header.width, _header.height, getBitsPerPixel(), getPackName(), getDrawName());
 
-	if (getBitsPerPixel() != 8)
+	if (getBitsPerPixel() != 8 && getBitsPerPixel() != 24)
 		error ("Unhandled bpp %d", getBitsPerPixel());
 
 	// Read in the palette if it's here.
@@ -88,14 +88,20 @@ ImageData *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 		}
 	}
 
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_header.width, _header.height, getBitsPerPixel() >> 3);
+	Graphics::Surface *surface = createSurface(_header.width, _header.height);
 
 	unpackImage();
 	drawImage(surface);
 	delete _data;
 
 	return new ImageData(surface, _header.colorTable.palette);
+}
+
+Graphics::Surface *MohawkBitmap::createSurface(uint16 width, uint16 height) {
+	Graphics::Surface *surface = new Graphics::Surface();
+	byte bytesPerPixel = (getBitsPerPixel() <= 8) ? 1 : g_system->getScreenFormat().bytesPerPixel;
+	surface->create(width, height, bytesPerPixel);
+	return surface;
 }
 
 byte MohawkBitmap::getBitsPerPixel() {
@@ -111,7 +117,7 @@ byte MohawkBitmap::getBitsPerPixel() {
 	case kBitsPerPixel24:
 		return 24;
 	default:
-		error ("Unknown bits per pixel");
+		error("Unknown bits per pixel");
 	}
 
 	return 0;
@@ -132,7 +138,7 @@ void MohawkBitmap::unpackImage() {
 			return;
 		}
 
-	warning("Unknown Pack Compression");
+	error("Unknown Pack Compression");
 }
 
 const char *MohawkBitmap::getDrawName() {
@@ -150,7 +156,7 @@ void MohawkBitmap::drawImage(Graphics::Surface *surface) {
 			return;
 		}
 
-	warning("Unknown Draw Compression");
+	error("Unknown Draw Compression");
 }
 
 //////////////////////////////////////////
@@ -520,8 +526,24 @@ void MohawkBitmap::drawRaw(Graphics::Surface *surface) {
 	assert(surface);
 
 	for (uint16 y = 0; y < _header.height; y++) {
-		_data->read((byte *)surface->pixels + y * _header.width, _header.width);
-		_data->skip(_header.bytesPerRow - _header.width);
+		if (getBitsPerPixel() == 24) {
+			Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
+
+			for (uint16 x = 0; x < _header.width; x++) {
+				byte b = _data->readByte();
+				byte g = _data->readByte();
+				byte r = _data->readByte();
+				if (surface->bytesPerPixel == 2)
+					*((uint16 *)surface->getBasePtr(x, y)) = pixelFormat.RGBToColor(r, g, b);
+				else
+					*((uint32 *)surface->getBasePtr(x, y)) = pixelFormat.RGBToColor(r, g, b);
+			}
+
+			_data->skip(_header.bytesPerRow - _header.width * 3);
+		} else {
+			_data->read((byte *)surface->pixels + y * _header.width, _header.width);
+			_data->skip(_header.bytesPerRow - _header.width);
+		}
 	}
 }
 
@@ -627,12 +649,11 @@ ImageData* MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 
 	bmpStream->seek(_header.imageOffset);
 
-	Graphics::Surface *surface = new Graphics::Surface();
+	Graphics::Surface *surface = createSurface(_info.width, _info.height);
 	int srcPitch = _info.width * (_info.bitsPerPixel >> 3);
 	const int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
 
 	if (_info.bitsPerPixel == 8) {
-		surface->create(_info.width, _info.height, 1);
 		byte *dst = (byte *)surface->pixels;
 
 		for (uint32 i = 0; i < _info.height; i++) {
@@ -641,7 +662,6 @@ ImageData* MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 		}
 	} else {
 		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-		surface->create(_info.width, _info.height, pixelFormat.bytesPerPixel);
 
 		byte *dst = (byte *)surface->pixels + (surface->h - 1) * surface->pitch;
 
@@ -706,8 +726,7 @@ ImageData *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	if (endianStream->pos() != endianStream->size())
 		error("OldMohawkBitmap decompression failed");
 
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_header.width, _header.height, 1);
+	Graphics::Surface *surface = createSurface(_header.width, _header.height);
 
 	if ((_header.format & 0xf00) == kOldDrawRLE8)
 		drawRLE8(surface);

@@ -88,13 +88,16 @@ public:
 
 protected:
 	BitmapHeader _header;
-	byte getBitsPerPixel();
+	virtual byte getBitsPerPixel();
 
 	// The actual LZ decoder
 	static Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream *stream, uint32 uncompressedSize);
 
 	// The current data stream
 	Common::SeekableReadStream *_data;
+
+	// Create the output surface
+	Graphics::Surface *createSurface(uint16 width, uint16 height);
 
 	// Draw Functions
 	void drawRaw(Graphics::Surface *surface);
@@ -146,6 +149,9 @@ public:
 
 	ImageData *decodeImage(Common::SeekableReadStream *stream);
 
+protected:
+	byte getBitsPerPixel() { return _info.bitsPerPixel; }
+
 private:
 	struct BitmapHeader {
 		uint16 type;
@@ -176,6 +182,9 @@ public:
 	~OldMohawkBitmap() {}
 
 	ImageData *decodeImage(Common::SeekableReadStream *stream);
+
+protected:
+	byte getBitsPerPixel() { return 8; }
 };
 
 } // End of namespace Mohawk
