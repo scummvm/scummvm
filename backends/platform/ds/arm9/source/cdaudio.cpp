@@ -77,6 +77,7 @@ struct decoderFormat {
 	unsigned char	sample[1024];
 } __attribute__ ((packed));
 
+static bool s_started = false;
 static bool s_active = false;
 static WaveHeader waveHeader;
 static Header blockHeader;
@@ -143,9 +144,8 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 
 	char str[100];
 
-	if (path[strlen(path.c_str()) - 1] != '/') {
-		path = path + "/";
-	}
+	if (path.lastChar() != '/')
+		path += '/';
 
 	Common::String fname;
 
@@ -199,7 +199,6 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 	dataChunkStart = DS::std_ftell(s_file);
 
 
-	static bool started = false;
 	sampleNum = 0;
 	blockCount = 0;
 
@@ -207,11 +206,11 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 	IPC->streamFillNeeded[1] = true;
 	IPC->streamFillNeeded[2] = true;
 	IPC->streamFillNeeded[3] = true;
-	if (!started) {
+	if (!s_started) {
 		fillPos = 0;
 		audioBuffer = (s16 *) malloc(BUFFER_SIZE * 2);
 		decompressionBuffer = (s16 *) malloc(waveHeader.fmtExtra * 2);
-		started = true;
+		s_started = true;
 //		consolePrintf("****Starting buffer*****\n");
 		memset(audioBuffer, 0, BUFFER_SIZE * 2);
 		memset(decompressionBuffer, 0, waveHeader.fmtExtra * 2);
@@ -472,20 +471,20 @@ void stopTrack() {
 }
 
 bool trackExists(int num) {
-	Common::String path = ConfMan.get("path");
-
+	Common::String path;
 	char fname[128];
+	FILE *file;
 
 	sprintf(fname, "track%d.wav", num);
 
-	if (path[strlen(path.c_str()) - 1] == '/') {
-		path = path + fname;
-	} else {
-		path = path + "/" + fname;
-	}
+	path = ConfMan.get("path");
+	if (path.lastChar() != '/')
+		path += '/';
+	path += fname;
+
 	consolePrintf("Looking for %s...", path.c_str());
 
-	FILE *file = DS::std_fopen(path.c_str(), "r");
+	file = DS::std_fopen(path.c_str(), "r");
 	if (file) {
 		consolePrintf("Success!\n");
 		setActive(true);
@@ -495,27 +494,24 @@ bool trackExists(int num) {
 
 	sprintf(fname, "track%02d.wav", num);
 
-	 path = ConfMan.get("path");
-
-	if (path[strlen(path.c_str()) - 1] == '/') {
-		path = path + fname;
-	} else {
-		path = path + "/" + fname;
-	}
+	path = ConfMan.get("path");
+	if (path.lastChar() != '/')
+		path += '/';
+	path += fname;
 
 	consolePrintf("Looking for %s...", path.c_str());
 
-
-	if ((file = DS::std_fopen(path.c_str(), "r"))) {
+	file = DS::std_fopen(path.c_str(), "r");
+	if (file) {
 		consolePrintf("Success!\n");
 		setActive(true);
 		DS::std_fclose(file);
 		return true;
-	} else {
-		setActive(false);
-		consolePrintf("Failed!\n");
-		return false;
 	}
+
+	setActive(false);
+	consolePrintf("Failed!\n");
+	return false;
 }
 
 bool checkCD() {

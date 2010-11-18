@@ -460,8 +460,8 @@ enum {
 	MAX_FILE_HANDLES = 32
 };
 
-static bool inited = false;
-static DS::fileHandle s_handle[MAX_FILE_HANDLES];
+static bool inited = false;	// FIXME: Avoid non-const global vars
+static DS::fileHandle s_handle[MAX_FILE_HANDLES];	// FIXME: Avoid non-const global vars
 
 FILE *std_fopen(const char *name, const char *mode) {
 	if (!inited) {
@@ -671,18 +671,18 @@ int std_fseek(FILE *handle, long int offset, int whence) {
 	}
 
 	switch (whence) {
-		case SEEK_CUR:
-			handle->pos += offset;
-			break;
-		case SEEK_SET:
-			handle->pos = offset;
-			break;
-		case SEEK_END:
-			handle->pos = handle->size + offset;
-			break;
-		default:
-			handle->pos = offset;
-			break;
+	case SEEK_CUR:
+		handle->pos += offset;
+		break;
+	case SEEK_SET:
+		handle->pos = offset;
+		break;
+	case SEEK_END:
+		handle->pos = handle->size + offset;
+		break;
+	default:
+		handle->pos = offset;
+		break;
 	}
 
 	return 0;
