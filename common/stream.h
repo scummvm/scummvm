@@ -484,74 +484,37 @@ public:
 };
 
 /**
- * Wrapper class which adds buffering to any given ReadStream.
- * Users can specify how big the buffer should be, and whether the
- * wrapped stream should be disposed when the wrapper is disposed.
+ * Take an arbitrary ReadStream and wrap it in a custom stream which
+ * transparently provides buffering.
+ * Users can specify how big the buffer should be, and whether the wrapped
+ * stream should be disposed when the wrapper is disposed.
+ *
+ * It is safe to call this with a NULL parameter (in this case, NULL is
+ * returned).
  */
-class BufferedReadStream : virtual public ReadStream {
-protected:
-	ReadStream *_parentStream;
-	DisposeAfterUse::Flag _disposeParentStream;
-	byte *_buf;
-	uint32 _pos;
-	bool _eos; // end of stream
-	uint32 _bufSize;
-	uint32 _realBufSize;
-
-public:
-	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
-	virtual ~BufferedReadStream();
-
-	virtual bool eos() const { return _eos; }
-	virtual bool err() const { return _parentStream->err(); }
-	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
-
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
-};
+ReadStream *wrapBufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream);
 
 /**
- * Wrapper class which adds buffering to any given SeekableReadStream.
- * @see BufferedReadStream
+ * Take an arbitrary SeekableReadStream and wrap it in a custom stream which
+ * transparently provides buffering.
+ * Users can specify how big the buffer should be, and whether the wrapped
+ * stream should be disposed when the wrapper is disposed.
+ *
+ * It is safe to call this with a NULL parameter (in this case, NULL is
+ * returned).
  */
-class BufferedSeekableReadStream : public BufferedReadStream, public SeekableReadStream {
-protected:
-	SeekableReadStream *_parentStream;
-public:
-	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
-
-	virtual int32 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
-	virtual int32 size() const { return _parentStream->size(); }
-
-	virtual bool seek(int32 offset, int whence = SEEK_SET);
-};
+SeekableReadStream *wrapBufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream);
 
 /**
- * Wrapper class which adds buffering to any WriteStream.
+ * Take an arbitrary WriteStream and wrap it in a custom stream which
+ * transparently provides buffering.
+ * Users can specify how big the buffer should be, and whether the wrapped
+ * stream should be disposed when the wrapper is disposed.
+ *
+ * It is safe to call this with a NULL parameter (in this case, NULL is
+ * returned).
  */
-class BufferedWriteStream : public WriteStream {
-protected:
-	WriteStream *_parentStream;
-	DisposeAfterUse::Flag _disposeParentStream;
-	byte *_buf;
-	uint32 _pos;
-	const uint32 _bufSize;
-
-	/**
-	 * Write out the data in the buffer.
-	 *
-	 * @note This method is identical to flush() (which actually is
-	 * implemented by calling this method), except that it is not
-	 * virtual, hence there is less overhead calling it.
-	 */
-	bool flushBuffer();
-
-public:
-	BufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
-	virtual ~BufferedWriteStream();
-
-	virtual uint32 write(const void *dataPtr, uint32 dataSize);
-	virtual bool flush() { return flushBuffer(); }
-};
+WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream);
 
 /**
  * Simple memory based 'stream', which implements the ReadStream interface for
@@ -606,7 +569,7 @@ public:
  * This is a wrapper around MemoryReadStream, but it adds non-endian
  * read methods whose endianness is set on the stream creation.
  */
-class MemoryReadStreamEndian : public Common::MemoryReadStream {
+class MemoryReadStreamEndian : public MemoryReadStream {
 private:
 	const bool _bigEndian;
 
@@ -664,7 +627,7 @@ public:
  * A sort of hybrid between MemoryWriteStream and Array classes. A stream
  * that grows as it's written to.
  */
-class MemoryWriteStreamDynamic : public Common::WriteStream {
+class MemoryWriteStreamDynamic : public WriteStream {
 private:
 	uint32 _capacity;
 	uint32 _size;

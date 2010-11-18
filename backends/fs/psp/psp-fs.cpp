@@ -251,7 +251,7 @@ Common::SeekableReadStream *PSPFilesystemNode::createReadStream() {
 
 	Common::SeekableReadStream *stream = PspIoStream::makeFromPath(getPath(), false);
 
-	return new Common::BufferedSeekableReadStream(stream, READ_BUFFER_SIZE, DisposeAfterUse::YES);
+	return Common::wrapBufferedSeekableReadStream(stream, READ_BUFFER_SIZE, DisposeAfterUse::YES);
 }
 
 Common::WriteStream *PSPFilesystemNode::createWriteStream() {
@@ -259,7 +259,7 @@ Common::WriteStream *PSPFilesystemNode::createWriteStream() {
 
 	Common::WriteStream *stream = PspIoStream::makeFromPath(getPath(), true);
 
-	return new Common::BufferedWriteStream(stream, WRITE_BUFFER_SIZE, DisposeAfterUse::YES);
+	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE, DisposeAfterUse::YES);
 }
 
 #endif //#ifdef __PSP__

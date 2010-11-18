@@ -8,7 +8,8 @@ class BufferedSeekableReadStreamTestSuite : public CxxTest::TestSuite {
 		byte contents[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		Common::MemoryReadStream ms(contents, 10);
 
-		Common::BufferedSeekableReadStream ssrs(&ms, 4);
+		Common::SeekableReadStream &ssrs
+			= *Common::wrapBufferedSeekableReadStream(&ms, 4, DisposeAfterUse::NO);
 
 		byte i, b;
 		for (i = 0; i < 10; ++i) {
@@ -24,13 +25,16 @@ class BufferedSeekableReadStreamTestSuite : public CxxTest::TestSuite {
 
 		TS_ASSERT_EQUALS((uint)0, ssrs.read(&b, 1));
 		TS_ASSERT(ssrs.eos());
+
+		delete &ssrs;
 	}
 
 	void test_seek() {
 		byte contents[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		Common::MemoryReadStream ms(contents, 10);
 
-		Common::BufferedSeekableReadStream ssrs(&ms, 4);
+		Common::SeekableReadStream &ssrs
+			= *Common::wrapBufferedSeekableReadStream(&ms, 4, DisposeAfterUse::NO);
 		byte b;
 
 		TS_ASSERT_EQUALS(ssrs.pos(), 0);
@@ -66,5 +70,7 @@ class BufferedSeekableReadStreamTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(ssrs.pos(), 2);
 		b = ssrs.readByte();
 		TS_ASSERT_EQUALS(b, 2);
+
+		delete &ssrs;
 	}
 };

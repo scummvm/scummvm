@@ -108,7 +108,7 @@ public:
 	void decode(int32 origsize);
 	void decode_f(int32 origsize);
 
-	BufferedReadStream *_compressed;
+	ReadStream *_compressed;
 	MemoryWriteStream *_outstream;
 
 //protected:
@@ -817,7 +817,7 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) co
 		// If reading from archiveFile directly is too slow to be usable,
 		// maybe the filesystem code should instead wrap its files
 		// in a BufferedReadStream.
-		decoder->_compressed = new Common::BufferedReadStream(&archiveFile, 4096, DisposeAfterUse::NO);
+		decoder->_compressed = Common::wrapBufferedReadStream(&archiveFile, 4096, DisposeAfterUse::NO);
 		decoder->_outstream = new Common::MemoryWriteStream(uncompressedData, hdr->origSize);
 
 		if (hdr->method == 1 || hdr->method == 2 || hdr->method == 3)
