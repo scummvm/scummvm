@@ -103,7 +103,7 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 				g_sci->getResMan()->unlockResource(which);
 			else {
 				if (id.getType() == kResourceTypeInvalid)
-					warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.getNumber(), type);
+				  warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.getNumber(), argv[0].toUint16());
 				else
 					// Happens in CD games (e.g. LSL6CD) with the message
 					// resource. It isn't fatal, and it's usually caused
@@ -156,7 +156,7 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelMemory, "Attempting to clone from %04x:%04x", PRINT_REG(parentAddr));
 
 	// TODO: SCI3 equivalent, SCI3 objects don't have an -info- selector
-	uint16 infoSelector = readSelectorValue(s->_segMan, parentAddr, SELECTOR(_info_));
+	uint16 infoSelector = parentObj->getInfoSelector().offset;
 	cloneObj = s->_segMan->allocateClone(&cloneAddr);
 
 	if (!cloneObj) {
@@ -185,11 +185,7 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 
 	// Mark as clone
 	infoSelector &= ~kInfoFlagClass; // remove class bit
-	if (getSciVersion() == SCI_VERSION_3)
-		// TODO: SCI3 equivalent, SCI3 objects don't have an -info- selector
-		warning("TODO: not modifying -info- selector in kClone for SCI3");
-	else
-		writeSelectorValue(s->_segMan, cloneAddr, SELECTOR(_info_), infoSelector | kInfoFlagClone);
+	cloneObj->setInfoSelector(make_reg(0, infoSelector | kInfoFlagClone));
 
 	cloneObj->setSpeciesSelector(cloneObj->getPos());
 	if (parentObj->isClass())

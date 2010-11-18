@@ -273,6 +273,13 @@ public:
 			return make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 10));
 	}
 
+	void setInfoSelector(reg_t info) {
+		if (getSciVersion() <= SCI_VERSION_2_1)
+			_variables[_offset + 2] = info;
+		else	// SCI3
+			WRITE_SCI11ENDIAN_UINT16(const_cast<byte*>(_baseObj + 10), info.offset);
+	}
+
 	// No setter for the -info- selector
 
 	reg_t getNameSelector() const {
