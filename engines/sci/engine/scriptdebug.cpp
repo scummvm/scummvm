@@ -124,11 +124,13 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 
 		case Script_SByte:
 		case Script_Byte:
+			param_value = scr[retval.offset++];
 			debugN(" %02x", scr[retval.offset++]);
 			break;
 
 		case Script_Word:
 		case Script_SWord:
+			param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.offset]);
 			debugN(" %04x", READ_SCI11ENDIAN_UINT16(&scr[retval.offset]));
 			retval.offset += 2;
 			break;
@@ -193,7 +195,12 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 			if (!obj)
 				warning("Attempted to reference on non-object at %04x:%04x", PRINT_REG(s->xs->objp));
 			else
-				debugN("	(%s)", g_sci->getKernel()->getSelectorName(obj->propertyOffsetToId(s->_segMan, scr[pos.offset + 1])).c_str());
+			{
+				if (getSciVersion() == SCI_VERSION_3)
+					debugN("	(%s)", g_sci->getKernel()->getSelectorName(param_value).c_str());
+				else
+					debugN("	(%s)", g_sci->getKernel()->getSelectorName(obj->propertyOffsetToId(s->_segMan, param_value)).c_str());
+			}
 		}
 	}
 
