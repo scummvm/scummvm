@@ -31,161 +31,53 @@
 #include "backends/fs/ds/ds-fs.h"
 #include "common/config-manager.h"
 
-/////////////////////////
-// GBAMP Save File
-/////////////////////////
 
-GBAMPSaveFile::GBAMPSaveFile(char *name, bool saveOrLoad) {
-	handle = DS::std_fopen(name, saveOrLoad? "w": "r");
-//	consolePrintf("%s handle is %d\n", name, handle);
-//	consolePrintf("Created %s\n", name);
-	bufferPos = 0;
-	saveSize = 0;
-	flushed = 0;
-}
-
-GBAMPSaveFile::~GBAMPSaveFile() {
-	flushSaveBuffer();
-	if (handle)
-		DS::std_fclose((FILE *)handle);
-//	consolePrintf("Closed file\n");
-}
-
-uint32 GBAMPSaveFile::read(void *buf, uint32 length) {
-	saveSize += length;
-//	consolePrintf("Read %d %d ", length, saveSize);
-	return DS::std_fread(buf, 1, length, (FILE *)handle);
-}
-
-bool GBAMPSaveFile::eos() const {
-	return DS::std_feof((FILE *)handle);
-}
-
-bool GBAMPSaveFile::skip(uint32 bytes) {
-	return DS::std_fseek((FILE *)handle, bytes, SEEK_CUR) == 0;
-}
-
-void GBAMPSaveFile::flushSaveBuffer() {
-	if (bufferPos != 0) {
-//		consolePrintf("Flushing %d bytes from %x\n", bufferPos, buffer);
-		flushed += bufferPos;
-		DS::std_fwrite(buffer, 1, bufferPos, (FILE *)handle);
-		bufferPos = 0;
-	}
-}
-
-int32 GBAMPSaveFile::pos() const {
-	return DS::std_ftell((FILE *)handle);
-}
-
-int32 GBAMPSaveFile::size() const {
-	int position = pos();
-	DS::std_fseek((FILE *)handle, 0, SEEK_END);
-	int length = DS::std_ftell((FILE *)handle);
-	DS::std_fseek((FILE *)handle, position, SEEK_SET);
-	return length;
-}
-
-bool GBAMPSaveFile::seek(int32 newPos, int whence) {
-	return DS::std_fseek((FILE *)handle, newPos, whence) == 0;
-}
-
-
-uint32 GBAMPSaveFile::write(const void *buf, uint32 length) {
-	if (bufferPos + length > SAVE_BUFFER_SIZE) {
-		flushSaveBuffer();
-		saveSize += length;
-//		consolePrintf("Writing %d bytes from %x", length, buf);
-//		DS::std_fwrite(buf, 1, length, handle);
-
-		memcpy(buffer + bufferPos, buf, length);
-		bufferPos += length;
-
-		saveSize += length;
-
-
-/*		int pos = 0;
-
-		int rest = SAVE_BUFFER_SIZE - bufferPos;
-		memcpy(buffer + bufferPos, buf, rest);
-		bufferPos = 512;
-		pos += rest;
-		flushSaveBuffer();
-		length -= rest;
-//		consolePrintf("First section: %d\n", rest);
-
-		while (length >= 512) {
-			DS::std_fwrite(((char *) (buf)) + pos, 1, 512, handle);
-			length -= 512;
-			pos += 512;
-//			consolePrintf("Full chunk, %d left ", length);
-		}
-
-		bufferPos = 0;
-		memcpy(buffer + bufferPos, ((char *) (buf)) + pos, length);
-		bufferPos += length;
-//		consolePrintf("%d left in buffer ", bufferPos);*/
-
-	} else {
-
-		memcpy(buffer + bufferPos, buf, length);
-		bufferPos += length;
-
-		saveSize += length;
-	}
-
-//	if ((length > 100) || (length <= 0)) consolePrintf("Write %d bytes\n", length);
-	return length;
-}
-
-
-//////////////////////////
-// GBAMP Save File Manager
-//////////////////////////
-
-GBAMPSaveFileManager::GBAMPSaveFileManager() {
-
-}
-
-GBAMPSaveFileManager::~GBAMPSaveFileManager() {
-
-}
-
-GBAMPSaveFile *GBAMPSaveFileManager::openSavefile(const char *name, bool saveOrLoad) {
-	char fileSpec[128];
-
-	strcpy(fileSpec, getSavePath());
-
-	if (fileSpec[strlen(fileSpec) - 1] == '/') {
-		sprintf(fileSpec, "%s%s", getSavePath(), name);
-	} else {
-		sprintf(fileSpec, "%s/%s", getSavePath(), name);
-	}
-
-//	consolePrintf("Opening the file: %s\n", fileSpec);
-	GBAMPSaveFile *sf = new GBAMPSaveFile(fileSpec, saveOrLoad);
-	if (sf->isOpen()) {
-//		consolePrintf("Ok");
-		return sf;
-	} else {
-//		consolePrintf("Fail");
-		delete sf;
-		return NULL;
-	}
-}
+#define SAVE_BUFFER_SIZE 100000
 
 // This method copied from an old version of the savefile.cpp, since it's been removed from there and
 // placed in default-saves.cpp, where I cannot call it.
 // FIXME: Does it even make sense to change the "savepath" on the NDS? Considering
 // that nothing sets a default value for the "savepath" either, wouldn't it better
 // to return a fixed path here?
-const char *GBAMPSaveFileManager::getSavePath() const {
+static Common::String getSavePath() {
 	// Try to use game specific savepath from config
-	const char *dir = ConfMan.get("savepath").c_str();
-	assert(dir);
-
-	return dir;
+	return ConfMan.get("savepath");
 }
+
+//////////////////////////
+// GBAMP Save File Manager
+//////////////////////////
+
+Common::OutSaveFile *GBAMPSaveFileManager::openForSaving(const Common::String &filename) {
+	Common::String fileSpec = getSavePath();
+	if (fileSpec.lastChar() != '/')
+		fileSpec += '/';
+	fileSpec += filename;
+
+//	consolePrintf("Opening the file: %s\n", fileSpec.c_str());
+	
+	Common::WriteStream *stream = DS::DSFileStream::makeFromPath(fileSpec, true);
+	// Use a write buffer
+	stream = Common::wrapBufferedWriteStream(stream, SAVE_BUFFER_SIZE, DisposeAfterUse::YES);
+	return stream;
+}
+
+Common::InSaveFile *GBAMPSaveFileManager::openForLoading(const Common::String &filename) {
+	Common::String fileSpec = getSavePath();
+	if (fileSpec.lastChar() != '/')
+		fileSpec += '/';
+	fileSpec += filename;
+
+//	consolePrintf("Opening the file: %s\n", fileSpec.c_str());
+	
+	return DS::DSFileStream::makeFromPath(fileSpec, false);
+}
+
+
+bool GBAMPSaveFileManager::removeSavefile(const Common::String &filename) {
+	return false; // TODO: Implement this
+}
+
 
 Common::StringArray GBAMPSaveFileManager::listSavefiles(const Common::String &pattern) {
 
@@ -194,7 +86,7 @@ Common::StringArray GBAMPSaveFileManager::listSavefiles(const Common::String &pa
 
 	{
 		char dir[128];
-		strcpy(dir, getSavePath());
+		strcpy(dir, getSavePath().c_str());
 		char *realName = dir;
 
 		if ((strlen(dir) >= 4) && (dir[0] == 'm') && (dir[1] == 'p') && (dir[2] == ':') && (dir[3] == '/')) {
