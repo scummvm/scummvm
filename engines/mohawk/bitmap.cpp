@@ -134,8 +134,7 @@ void MohawkBitmap::unpackImage() {
 
 static const CompressionInfo drawTable[] = {
 	{ kDrawRaw, "Raw", &MohawkBitmap::drawRaw },
-	{ kDrawRLE8, "RLE8", &MohawkBitmap::drawRLE8 },
-	{ kDrawRLE, "RLE", &MohawkBitmap::drawRLE }
+	{ kDrawRLE8, "RLE8", &MohawkBitmap::drawRLE8 }
 };
 
 const char *MohawkBitmap::getDrawName() {
@@ -573,14 +572,6 @@ void MohawkBitmap::drawRLE8() {
 
 		_data->seek(startPos + rowByteCount);
 	}
-}
-
-//////////////////////////////////////////
-// RLE Drawer
-//////////////////////////////////////////
-
-void MohawkBitmap::drawRLE() {
-	warning("STUB: drawRLE()");
 }
 
 //////////////////////////////////////////

@@ -95,7 +95,6 @@ public:
 	// Draw Functions
 	void drawRaw();
 	void drawRLE8();
-	void drawRLE();
 
 protected:
 	BitmapHeader _header;
