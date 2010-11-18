@@ -40,9 +40,13 @@ namespace DS {
 // DSFileSystemNode - Flash ROM file system using Zip files //
 //////////////////////////////////////////////////////////////
 
-ZipFile*	DSFileSystemNode::_zipFile = NULL;
-char		currentDir[128];
-bool		readPastEndOfFile = false;
+ZipFile*	DSFileSystemNode::_zipFile = NULL;	// FIXME: Avoid non-const global vars
+char		currentDir[128];	// FIXME: Avoid non-const global vars
+bool		readPastEndOfFile = false;	// FIXME: Avoid non-const global vars
+
+enum {
+	WRITE_BUFFER_SIZE = 512
+};
 
 DSFileSystemNode::DSFileSystemNode() {
 	_displayName = "ds:/";
@@ -205,7 +209,8 @@ Common::SeekableReadStream *DSFileSystemNode::createReadStream() {
 }
 
 Common::WriteStream *DSFileSystemNode::createWriteStream() {
-	return DSFileStream::makeFromPath(getPath(), true);
+	Common::WriteStream *stream = DSFileStream::makeFromPath(getPath(), true);
+	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE, DisposeAfterUse::YES);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -386,21 +391,17 @@ Common::SeekableReadStream *GBAMPFileSystemNode::createReadStream() {
 }
 
 Common::WriteStream *GBAMPFileSystemNode::createWriteStream() {
-	return DSFileStream::makeFromPath(getPath(), true);
+	Common::WriteStream *stream = DSFileStream::makeFromPath(getPath(), true);
+	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE, DisposeAfterUse::YES);
 }
-
 
 
 
 DSFileStream::DSFileStream(void *handle) : _handle(handle) {
 	assert(handle);
-	_writeBufferPos = 0;
 }
 
 DSFileStream::~DSFileStream() {
-	if (_writeBufferPos > 0) {
-		flush();
-	}
 	std_fclose((FILE *)_handle);
 }
 
@@ -417,12 +418,10 @@ bool DSFileStream::eos() const {
 }
 
 int32 DSFileStream::pos() const {
-	assert(_writeBufferPos == 0);	// This method may only be called when reading!
 	return std_ftell((FILE *)_handle);
 }
 
 int32 DSFileStream::size() const {
-	assert(_writeBufferPos == 0);	// This method may only be called when reading!
 	int32 oldPos = std_ftell((FILE *)_handle);
 	std_fseek((FILE *)_handle, 0, SEEK_END);
 	int32 length = std_ftell((FILE *)_handle);
@@ -432,39 +431,18 @@ int32 DSFileStream::size() const {
 }
 
 bool DSFileStream::seek(int32 offs, int whence) {
-	if (_writeBufferPos > 0) {
-		flush();
-	}
 	return std_fseek((FILE *)_handle, offs, whence) == 0;
 }
 
 uint32 DSFileStream::read(void *ptr, uint32 len) {
-	if (_writeBufferPos > 0) {
-		flush();
-	}
 	return std_fread(ptr, 1, len, (FILE *)_handle);
 }
 
 uint32 DSFileStream::write(const void *ptr, uint32 len) {
-	if (_writeBufferPos + len < WRITE_BUFFER_SIZE) {
-		memcpy(_writeBuffer + _writeBufferPos, ptr, len);
-		_writeBufferPos += len;
-		return len;
-	} else {
-		if (_writeBufferPos > 0) {
-			flush();
-		}
-		return std_fwrite(ptr, 1, len, (FILE *)_handle);
-	}
+	return std_fwrite(ptr, 1, len, (FILE *)_handle);
 }
 
 bool DSFileStream::flush() {
-
-	if (_writeBufferPos > 0) {
-		std_fwrite(_writeBuffer, 1, _writeBufferPos, (FILE *) _handle);
-		_writeBufferPos = 0;
-	}
-
 	return std_fflush((FILE *)_handle) == 0;
 }
 
