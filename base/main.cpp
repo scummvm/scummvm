@@ -48,12 +48,14 @@
 #include "common/system.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
+#include "common/debug-channels.h" /* for debug manager */
 
 #include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "gui/error.h"
 
 #include "sound/mididrv.h"
+#include "sound/musicplugin.h"  /* for music manager */
 
 #include "backends/keymapper/keymapper.h"
 
@@ -372,9 +374,11 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	setupGraphics(system);
 
-	// Init the audio cd manager. It won't be released, so to prevent fragmentation,
-	// we'll create it early on.
+	// Init the different managers that are used by the engines.
+	// Do it here to prevent fragmentation later
 	system.getAudioCDManager();
+	MusicManager::instance();
+	Common::DebugManager::instance();
 	
 	// Init the event manager. As the virtual keyboard is loaded here, it must
 	// take place after the backend is initiated and the screen has been setup
