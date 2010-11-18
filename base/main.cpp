@@ -372,6 +372,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	setupGraphics(system);
 
+	// Init the audio cd manager. It won't be released, so to prevent fragmentation,
+	// we'll create it early on.
+	system.getAudioCDManager();
+	
 	// Init the event manager. As the virtual keyboard is loaded here, it must
 	// take place after the backend is initiated and the screen has been setup
 	system.getEventManager()->init();
