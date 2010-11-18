@@ -331,7 +331,8 @@ BufferedWriteStream::BufferedWriteStream(WriteStream *parentStream, uint32 bufSi
 }
 
 BufferedWriteStream::~BufferedWriteStream() {
-	assert(flush());
+	const bool flushResult = flushBuffer();
+	assert(flushResult);
 
 	if (_disposeParentStream)
 		delete _parentStream;
@@ -345,20 +346,20 @@ uint32 BufferedWriteStream::write(const void *dataPtr, uint32 dataSize) {
 		memcpy(_buf + _pos, dataPtr, dataSize);
 		_pos += dataSize;
 	} else if (_bufSize >= dataSize) {	// check if we can flush the buffer and load the data
-		// flush the buffer
-		assert(flushBuffer());
+		const bool flushResult = flushBuffer();
+		assert(flushResult);
 		memcpy(_buf, dataPtr, dataSize);
 		_pos += dataSize;
 	} else	{	// too big for our buffer
-		// flush the buffer
-		assert(flushBuffer());
+		const bool flushResult = flushBuffer();
+		assert(flushResult);
 		return _parentStream->write(dataPtr, dataSize);
 	}
 	return dataSize;
 }
 
 bool BufferedWriteStream::flushBuffer() {
-	uint32 bytesToWrite = _pos;
+	const uint32 bytesToWrite = _pos;
 
 	if (bytesToWrite) {
 		_pos = 0;
@@ -366,10 +367,6 @@ bool BufferedWriteStream::flushBuffer() {
 			return false;
 	}
 	return true;
-}
-
-bool BufferedWriteStream::flush() {
-	return flushBuffer();
 }
 
 bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {

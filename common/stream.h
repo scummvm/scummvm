@@ -534,15 +534,23 @@ protected:
 	DisposeAfterUse::Flag _disposeParentStream;
 	byte *_buf;
 	uint32 _pos;
-	uint32 _bufSize;
-	bool flushBuffer();						// write out the data in the buffer
+	const uint32 _bufSize;
+
+	/**
+	 * Write out the data in the buffer.
+	 *
+	 * @note This method is identical to flush() (which actually is
+	 * implemented by calling this method), except that it is not
+	 * virtual, hence there is less overhead calling it.
+	 */
+	bool flushBuffer();
 
 public:
 	BufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 	virtual ~BufferedWriteStream();
 
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);
-	virtual bool flush();
+	virtual bool flush() { return flushBuffer(); }
 };
 
 /**
