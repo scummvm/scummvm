@@ -227,7 +227,7 @@ Dialog *GuiManager::getTopDialog() const {
 }
 
 void GuiManager::runLoop() {
-	Dialog *activeDialog = getTopDialog();
+	Dialog * const activeDialog = getTopDialog();
 	bool didSaveState = false;
 	int button;
 	uint32 time;
