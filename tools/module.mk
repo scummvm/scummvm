@@ -63,7 +63,6 @@ credits:
 
 md5scumm: tools/md5table$(EXEEXT)
 	tools/md5table$(EXEEXT) --c++ < $(srcdir)/tools/scumm-md5.txt > $(srcdir)/engines/scumm/scumm-md5.h
-	cp $(srcdir)/tools/scumm-md5.txt $(srcdir)/../../web/trunk/data/scumm-md5.txt
 
 #
 # Rules which automatically and implicitly rebuild the credits and
