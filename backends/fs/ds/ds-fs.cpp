@@ -201,11 +201,11 @@ AbstractFSNode *DSFileSystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *DSFileSystemNode::createReadStream() {
-	return DSFileStream::makeFromPath(getPath().c_str(), false);
+	return DSFileStream::makeFromPath(getPath(), false);
 }
 
 Common::WriteStream *DSFileSystemNode::createWriteStream() {
-	return DSFileStream::makeFromPath(getPath().c_str(), true);
+	return DSFileStream::makeFromPath(getPath(), true);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -381,12 +381,12 @@ Common::SeekableReadStream *GBAMPFileSystemNode::createReadStream() {
 	if (!strncmp(getPath().c_str(), "mp:/", 4)) {
 		return DSFileStream::makeFromPath(getPath().c_str() + 3, false);
 	} else {
-		return DSFileStream::makeFromPath(getPath().c_str(), false);
+		return DSFileStream::makeFromPath(getPath(), false);
 	}
 }
 
 Common::WriteStream *GBAMPFileSystemNode::createWriteStream() {
-	return DSFileStream::makeFromPath(getPath().c_str(), true);
+	return DSFileStream::makeFromPath(getPath(), true);
 }
 
 
@@ -475,8 +475,6 @@ DSFileStream *DSFileStream::makeFromPath(const Common::String &path, bool writeM
 		return new DSFileStream(handle);
 	return 0;
 }
-
-
 
 
 // Stdio replacements
