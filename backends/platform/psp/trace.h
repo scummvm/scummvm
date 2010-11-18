@@ -55,6 +55,7 @@
 												__PSP_PRINT__(format, ## __VA_ARGS__); }
 
 void PspDebugTrace(bool alsoToScreen, const char *format, ...);
+void mipsBacktrace(uint32 levels, void **addresses);
 
 extern int psp_debug_indent;
 

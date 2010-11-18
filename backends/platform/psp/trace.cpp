@@ -28,6 +28,8 @@
 #include <pspdebug.h>
 #include <stdarg.h>
 #include <stdio.h>
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/scummsys.h"
 
 int psp_debug_indent = 0;
 bool firstWriteToFile = true;
@@ -58,3 +60,82 @@ void PspDebugTrace(bool alsoToScreen, const char *format, ...) {
 	if (alsoToScreen)
 		fprintf(stderr, buffer);
 }
+
+// Assembly functions to get the Return Address register and the Stack pointer register
+#define GET_RET(retAddr) \
+	asm volatile ("move %0,$ra\n\t"	\
+		 : "=&r" (retAddr) : )
+		 
+#define GET_SP(stackPtr) \
+	asm volatile ("move %0,$sp\n\t"	\
+		 : "=&r" (stackPtr) : )
+
+// Function to retrieve a backtrace for the MIPS processor
+// This is not trivial since the MIPS doesn't use a frame pointer. 
+// Takes the number of levels wanted above the calling function (included) and an array of void *
+//		 
+void mipsBacktrace(uint32 levels, void **addresses) {
+	// get the current return address	
+	register byte *retAddr;
+	register byte *stackPointer;
+	GET_RET(retAddr);	
+	GET_SP(stackPointer);
+	char string[100];
+	
+	if (!levels)
+		return;
+	
+	memset(addresses, 0, sizeof(void *) * levels);
+	
+	uint32 curLevel = 0;
+	
+	const uint32 SP_SUBTRACT = 0x27bd8000;		// The instruction to subtract from the SP looks like this
+	const uint32 SP_SUB_HIGH_MASK = 0xffff8000;	// The mask to check for the subtract SP instruction
+	const uint32 SP_SUB_LOW_MASK = 0x0000ffff;	// The mask that gives us how much was subtracted
+	
+	// make sure we go out of the stack of this current level
+	// we already have the return address for this level from the register
+	if (curLevel < levels) {
+		void *thisFunc = (void *)mipsBacktrace;		
+		for (uint32 *seekPtr = (uint32 *)thisFunc; ; seekPtr++) {
+			if ((*seekPtr & SP_SUB_HIGH_MASK) == SP_SUBTRACT) {
+				// we found the $sp subtraction at the beginning of the function
+				int16 subAmount = (int16)((*seekPtr) & SP_SUB_LOW_MASK);
+				//sprintf(string, "found local $sp sub at %p. Data[%x]. Sub amount %d\n", seekPtr, *seekPtr, subAmount);
+				//fputs(string, stderr);
+				stackPointer -= subAmount;
+				byte *testRetAddr = (byte *)*((uint32 *)(stackPointer - 4));
+				if (testRetAddr != retAddr) {
+					sprintf(string, "mismatch in testretAddr.\n");
+					fputs(string, stderr);
+				}
+				break;
+			}	
+		}		
+	}
+	
+	// keep scanning while more levels are requested
+	while (curLevel < levels) {
+		// now scan backwards from the return address to find the size of the stack
+		for(uint32 *seekPtr = (uint32 *)retAddr; ; seekPtr--) {
+			if (((*seekPtr) & SP_SUB_HIGH_MASK) == SP_SUBTRACT) {
+				// we found the $sp subtraction at the beginning of the function
+				int16 subAmount = (int16)((*seekPtr) & SP_SUB_LOW_MASK);
+				//sprintf(string, "found $sp sub at %p. Data[%x]. Sub amount %d\n", seekPtr, *seekPtr, subAmount);
+				//fputs(string, stderr);
+				stackPointer -= subAmount;
+				retAddr = (byte *)*((uint32 *)(stackPointer - 4));
+				if (retAddr < (byte *)0x8900000 || retAddr > (byte *)0xC900000) {
+					sprintf(string, "invalid retAddr %p\n", retAddr);
+					fputs(string, stderr);
+					return;
+				}	
+				//sprintf(string, "retAddr[%p]\n", retAddr);
+				//fputs(string, stderr);
+				addresses[curLevel++] = retAddr;
+				break;
+			}	
+		}	
+	}
+}		 
+
