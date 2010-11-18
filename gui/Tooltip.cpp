@@ -72,7 +72,6 @@ bool Tooltip::tooltipModal(int x, int y) {
 	_y = MIN<int16>(g_gui.getTopDialog()->_y + y + _ydelta, g_gui.getHeight() - _h - 3);
 
 	open();
-	g_gui.runLoop();
 
 	return true;
 }

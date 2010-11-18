@@ -381,10 +381,14 @@ void GuiManager::runLoop() {
 
 			_tooltipCheck = false;
 			_tooltip->tooltipModal(_lastMousePosition.x, _lastMousePosition.y);
+			activeDialog = getTopDialog();
 		}
 
 		if (eventTookplace && _tooltip) {
 			_tooltip->mustClose();
+			delete _tooltip;
+			_tooltip = 0;
+			activeDialog = getTopDialog();
 		}
 
 		// Delay for a moment
@@ -399,7 +403,7 @@ void GuiManager::runLoop() {
 		_theme->disable();
 		restoreState();
 		_useStdCursor = false;
-	}
+	}	
 }
 
 #pragma mark -
