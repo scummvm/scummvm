@@ -259,7 +259,7 @@ Common::WriteStream *PSPFilesystemNode::createWriteStream() {
 
 	Common::WriteStream *stream = PspIoStream::makeFromPath(getPath(), true);
 
-	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE, DisposeAfterUse::YES);
+	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE);
 }
 
 #endif //#ifdef __PSP__

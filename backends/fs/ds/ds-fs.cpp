@@ -210,7 +210,7 @@ Common::SeekableReadStream *DSFileSystemNode::createReadStream() {
 
 Common::WriteStream *DSFileSystemNode::createWriteStream() {
 	Common::WriteStream *stream = DSFileStream::makeFromPath(getPath(), true);
-	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE, DisposeAfterUse::YES);
+	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -392,7 +392,7 @@ Common::SeekableReadStream *GBAMPFileSystemNode::createReadStream() {
 
 Common::WriteStream *GBAMPFileSystemNode::createWriteStream() {
 	Common::WriteStream *stream = DSFileStream::makeFromPath(getPath(), true);
-	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE, DisposeAfterUse::YES);
+	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE);
 }
 
 

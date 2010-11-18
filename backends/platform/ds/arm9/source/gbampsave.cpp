@@ -58,7 +58,7 @@ Common::OutSaveFile *GBAMPSaveFileManager::openForSaving(const Common::String &f
 	
 	Common::WriteStream *stream = DS::DSFileStream::makeFromPath(fileSpec, true);
 	// Use a write buffer
-	stream = Common::wrapBufferedWriteStream(stream, SAVE_BUFFER_SIZE, DisposeAfterUse::YES);
+	stream = Common::wrapBufferedWriteStream(stream, SAVE_BUFFER_SIZE);
 	return stream;
 }
 

@@ -421,7 +421,6 @@ namespace {
 /**
  * Wrapper class which adds buffering to any WriteStream.
  */
-template <DisposeAfterUse::Flag _disposeParentStream>
 class BufferedWriteStream : public WriteStream {
 protected:
 	WriteStream *_parentStream;
@@ -462,8 +461,7 @@ public:
 		const bool flushResult = flushBuffer();
 		assert(flushResult);
 
-		if (_disposeParentStream)
-			delete _parentStream;
+		delete _parentStream;
 
 		delete[] _buf;
 	}
@@ -492,15 +490,9 @@ public:
 
 }	// End of nameless namespace
 
-WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream) {
-	if (parentStream) {
-		switch (disposeParentStream) {
-		case DisposeAfterUse::YES:
-			return new BufferedWriteStream<DisposeAfterUse::YES>(parentStream, bufSize);
-		case DisposeAfterUse::NO:
-			return new BufferedWriteStream<DisposeAfterUse::NO>(parentStream, bufSize);
-		}
-	}
+WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize) {
+	if (parentStream)
+		return new BufferedWriteStream(parentStream, bufSize);
 	return 0;
 }
 

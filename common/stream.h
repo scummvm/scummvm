@@ -508,13 +508,13 @@ SeekableReadStream *wrapBufferedSeekableReadStream(SeekableReadStream *parentStr
 /**
  * Take an arbitrary WriteStream and wrap it in a custom stream which
  * transparently provides buffering.
- * Users can specify how big the buffer should be, and whether the wrapped
- * stream should be disposed when the wrapper is disposed.
+ * Users can specify how big the buffer should be. Currently, the
+ * parent stream is \em always disposed when the wrapper is disposed.
  *
  * It is safe to call this with a NULL parameter (in this case, NULL is
  * returned).
  */
-WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream);
+WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize);
 
 /**
  * Simple memory based 'stream', which implements the ReadStream interface for
