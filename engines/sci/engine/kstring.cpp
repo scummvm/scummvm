@@ -780,6 +780,9 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		Common::String string = s->_segMan->getString(argv[1]);
 		return make_reg(0, (uint16)atoi(string.c_str()));
 	}
+	case 14: // Unknown (SCI3)
+		warning("Unknown kString subop %d", argv[0].toUint16());
+		return NULL_REG;
 	default:
 		error("Unknown kString subop %d", argv[0].toUint16());
 	}

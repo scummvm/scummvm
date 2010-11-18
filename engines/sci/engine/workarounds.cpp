@@ -437,6 +437,15 @@ const SciWorkaroundEntry kUnLoad_workarounds[] = {
 };
 
 SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin) {
+	// HACK for SCI3: Temporarily ignore this
+	if (getSciVersion() == SCI_VERSION_3) {
+		warning("SCI3 HACK: trackOriginAndFindWorkaround() called, ignoring");
+		SciWorkaroundSolution sci3IgnoreForNow;
+		sci3IgnoreForNow.type = WORKAROUND_FAKE;
+		sci3IgnoreForNow.value = 0;
+		return sci3IgnoreForNow;
+	}
+
 	EngineState *state = g_sci->getEngineState();
 	ExecStack *lastCall = state->xs;
 	Script *local_script = state->_segMan->getScriptIfLoaded(lastCall->local_segment);
