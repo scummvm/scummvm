@@ -26,20 +26,25 @@
 #define GUI_TOOLTIP_H
 
 #include "gui/dialog.h"
+#include "gui/widget.h"
 
 namespace GUI {
 
 class Tooltip : public Dialog {
 public:
 	Tooltip();
-	~Tooltip() {}
+
+	void setup(Dialog *parent, Widget *widget, int x, int y);
 
 	void drawDialog();
-	bool tooltipModal(int x, int y);
-	void mustClose();
-
 protected:
-	Common::String _text;
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) { close(); }
+	virtual void handleMouseUp(int x, int y, int button, int clickCount) { close(); }
+	virtual void handleMouseWheel(int x, int y, int direction) { close(); }
+	virtual void handleKeyDown(Common::KeyState state) { close(); }
+	virtual void handleKeyUp(Common::KeyState state) { close(); }
+	virtual void handleMouseMoved(int x, int y, int button) { close(); }
+
 	int _maxWidth;
 	int _xdelta, _ydelta;
 

@@ -41,7 +41,6 @@ namespace GUI {
 
 class Dialog;
 class ThemeEval;
-class Tooltip;
 
 #define g_gui	(GUI::GuiManager::instance())
 
@@ -61,7 +60,6 @@ typedef Common::FixedStack<Dialog *> DialogStack;
  */
 class GuiManager : public Common::Singleton<GuiManager> {
 	friend class Dialog;
-	friend class Tooltip;
 	friend class Common::Singleton<SingletonBaseType>;
 	GuiManager();
 	~GuiManager();
@@ -116,9 +114,6 @@ protected:
 	bool		_stateIsSaved;
 
 	bool		_useStdCursor;
-
-	Tooltip *_tooltip;
-	bool _tooltipCheck;
 
 	// position and time of last mouse click (used to detect double clicks)
 	struct {

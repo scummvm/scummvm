@@ -40,40 +40,21 @@ Tooltip::Tooltip() :
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundTooltip;
 }
 
-void Tooltip::mustClose() {
-	if (isVisible())
-		Dialog::close();
-}
+void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
+	assert(widget->getTooltip());
 
-bool Tooltip::tooltipModal(int x, int y) {
-	Widget *wdg;
-
-	if (!g_gui.getTopDialog())
-		return false;
-
-	wdg = g_gui.getTopDialog()->findWidget(x, y);
-
-	if (!wdg || !wdg->getTooltip())
-		return false;
-
-	if (_maxWidth == -1) {
-		_maxWidth = g_gui.xmlEval()->getVar("Globals.Tooltip.MaxWidth", 100);
-		_xdelta = g_gui.xmlEval()->getVar("Globals.Tooltip.XDelta", 0);
-		_ydelta = g_gui.xmlEval()->getVar("Globals.Tooltip.YDelta", 0);
-	}
+	_maxWidth = g_gui.xmlEval()->getVar("Globals.Tooltip.MaxWidth", 100);
+	_xdelta = g_gui.xmlEval()->getVar("Globals.Tooltip.XDelta", 0);
+	_ydelta = g_gui.xmlEval()->getVar("Globals.Tooltip.YDelta", 0);
 
 	const Graphics::Font *tooltipFont = g_gui.theme()->getFont(ThemeEngine::kFontStyleTooltip);
 
 	_wrappedLines.clear();
-	_w = tooltipFont->wordWrapText(wdg->getTooltip(), _maxWidth - 4, _wrappedLines);
+	_w = tooltipFont->wordWrapText(widget->getTooltip(), _maxWidth - 4, _wrappedLines);
 	_h = (tooltipFont->getFontHeight() + 2) * _wrappedLines.size();
 
-	_x = MIN<int16>(g_gui.getTopDialog()->_x + x + _xdelta, g_gui.getWidth() - _w - 3);
-	_y = MIN<int16>(g_gui.getTopDialog()->_y + y + _ydelta, g_gui.getHeight() - _h - 3);
-
-	open();
-
-	return true;
+	_x = MIN<int16>(parent->_x + x + _xdelta, g_gui.getWidth() - _w - 3);
+	_y = MIN<int16>(parent->_y + y + _ydelta, g_gui.getHeight() - _h - 3);
 }
 
 void Tooltip::drawDialog() {
