@@ -247,4 +247,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_ENGINE_SEGMENT_H
+#endif // SCI_ENGINE_OBJECT_H
