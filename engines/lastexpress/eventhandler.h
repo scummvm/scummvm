@@ -26,8 +26,8 @@
 #ifndef LASTEXPRESS_EVENTHANDLER_H
 #define LASTEXPRESS_EVENTHANDLER_H
 
-#include "common/EventRecorder.h"
 #include "common/func.h"
+#include "common/events.h"
 
 namespace LastExpress {
 
