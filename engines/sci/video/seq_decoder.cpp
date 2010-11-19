@@ -26,6 +26,7 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/archive.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "common/util.h"
 

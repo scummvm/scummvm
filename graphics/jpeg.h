@@ -26,8 +26,11 @@
 #ifndef GRAPHICS_JPEG_H
 #define GRAPHICS_JPEG_H
 
-#include "common/stream.h"
 #include "graphics/surface.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Graphics {
 

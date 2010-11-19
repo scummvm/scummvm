@@ -31,6 +31,8 @@
 
 #include "lastexpress/debug.h"
 
+#include "common/stream.h"
+
 namespace LastExpress {
 
 Background::Background() : _data(NULL) {

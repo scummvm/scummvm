@@ -121,7 +121,7 @@ public:
 	const Common::List<Common::Rect> *getDirtyRects(int slot = 0) const;
 
 	bool                      hasEmbeddedFile(const Common::String &fileName, int slot = 0) const;
-	Common::MemoryReadStream *getEmbeddedFile(const Common::String &fileName, int slot = 0);
+	Common::SeekableReadStream *getEmbeddedFile(const Common::String &fileName, int slot = 0);
 
 	int32 getSubtitleIndex(int slot = 0) const;
 

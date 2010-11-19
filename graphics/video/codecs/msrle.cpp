@@ -26,6 +26,7 @@
 // Based off ffmpeg's msrledec.c
 
 #include "graphics/video/codecs/msrle.h"
+#include "common/stream.h"
 
 namespace Graphics {
 

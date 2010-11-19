@@ -26,9 +26,12 @@
 #ifndef GRAPHICS_CODEC_H
 #define GRAPHICS_CODEC_H
 
-#include "common/stream.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
+
+namespace Common{
+class SeekableReadStream;
+}
 
 namespace Graphics {
 

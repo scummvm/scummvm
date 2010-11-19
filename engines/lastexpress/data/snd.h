@@ -39,12 +39,15 @@
 	    byte {x}     - IMA ADPCM sample codes
 */
 
-#include "common/stream.h"
 #include "sound/mixer.h"
 
 namespace Audio {
 	class AudioStream;
 	class QueuingAudioStream;
+}
+
+namespace Common {
+class SeekableReadStream;
 }
 
 namespace LastExpress {

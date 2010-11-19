@@ -22,8 +22,10 @@
  * $Id$
  */
 
-#include "common/endian.h"
 #include "graphics/dither.h"
+
+#include "common/endian.h"
+#include "common/stream.h"
 
 namespace Graphics {
 

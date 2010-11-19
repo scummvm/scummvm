@@ -28,6 +28,7 @@
 #include "graphics/video/codecs/rpza.h"
 
 #include "common/system.h"
+#include "common/stream.h"
 #include "graphics/colormasks.h"
 
 namespace Graphics {

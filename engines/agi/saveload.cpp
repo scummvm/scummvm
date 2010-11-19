@@ -29,9 +29,10 @@
 //
 
 #include "common/file.h"
-#include "graphics/thumbnail.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
+#include "graphics/thumbnail.h"
+#include "graphics/surface.h"
 
 #include "agi/agi.h"
 #include "agi/graphics.h"

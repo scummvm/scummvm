@@ -46,12 +46,11 @@
 #endif
 
 #include "common/scummsys.h"
-#include "common/stream.h"
 #include "common/util.h"
 
-#include "graphics/surface.h"
-
 namespace Graphics {
+
+struct Surface;
 
 /**
  * A font that is able to draw SJIS encoded characters.
@@ -116,9 +115,7 @@ public:
 	/**
 	 * Draws a SJIS encoded character on the given surface.
 	 */
-	void drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 c1, uint32 c2) const {
-		drawChar(dst.getBasePtr(x, y), ch, dst.pitch, dst.bytesPerPixel, c1, c2, dst.w - x, dst.h - y);
-	}
+	void drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 c1, uint32 c2) const;
 
 	/**
 	 * Draws a SJIS char on the given raw buffer.

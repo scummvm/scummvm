@@ -27,7 +27,6 @@
 #define GRAPHICS_MJPEG_H
 
 #include "common/scummsys.h"
-#include "common/stream.h"
 
 #include "graphics/video/codecs/codec.h"
 #include "graphics/jpeg.h"

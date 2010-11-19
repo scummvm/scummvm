@@ -29,7 +29,6 @@
 #include "common/events.h"
 #include "common/list.h"
 #include "common/rational.h"
-#include "common/stream.h"
 
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"

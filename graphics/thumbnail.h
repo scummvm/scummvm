@@ -25,10 +25,16 @@
 #ifndef GRAPHICS_THUMBNAIL_H
 #define GRAPHICS_THUMBNAIL_H
 
-#include "common/stream.h"
-#include "graphics/surface.h"
+#include "common/scummsys.h"
+
+namespace Common{
+class SeekableReadStream;
+class WriteStream;
+}
 
 namespace Graphics {
+
+struct Surface;
 
 /**
  * Checks for presence of the thumbnail save header.

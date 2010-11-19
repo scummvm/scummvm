@@ -29,6 +29,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "graphics/thumbnail.h"
+#include "graphics/surface.h"
 
 #include "sci/sci.h"
 #include "sci/engine/kernel.h"

@@ -30,6 +30,7 @@
 #ifdef GRAPHICS_TRUEMOTION1_H
 
 #include "graphics/video/codecs/truemotion1data.h"
+#include "common/stream.h"
 
 namespace Graphics {
 

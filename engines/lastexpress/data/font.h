@@ -39,8 +39,11 @@
 	byte {x}      - Unknown data (probably just garbage)
 */
 
-#include "common/stream.h"
 #include "graphics/surface.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace LastExpress {
 

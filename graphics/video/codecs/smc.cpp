@@ -26,6 +26,7 @@
 // Based off ffmpeg's SMC decoder
 
 #include "graphics/video/codecs/smc.h"
+#include "common/stream.h"
 
 namespace Graphics {
 

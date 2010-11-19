@@ -35,6 +35,7 @@
 
 #include "common/events.h"
 #include "common/rational.h"
+#include "common/stream.h"
 
 #include "engines/engine.h"
 

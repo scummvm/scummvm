@@ -108,7 +108,7 @@ public:
 	virtual bool hasEmbeddedFile(const Common::String &fileName) const;
 
 	/** Return that embedded file. */
-	virtual Common::MemoryReadStream *getEmbeddedFile(const Common::String &fileName) const;
+	virtual Common::SeekableReadStream *getEmbeddedFile(const Common::String &fileName) const;
 
 	/** Return the current subtitle index. */
 	virtual int32 getSubtitleIndex() const;
@@ -352,7 +352,7 @@ public:
 
 	bool hasEmbeddedFiles() const;
 	bool hasEmbeddedFile(const Common::String &fileName) const;
-	Common::MemoryReadStream *getEmbeddedFile(const Common::String &fileName) const;
+	Common::SeekableReadStream *getEmbeddedFile(const Common::String &fileName) const;
 
 	int32 getSubtitleIndex() const;
 

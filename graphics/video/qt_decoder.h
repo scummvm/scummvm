@@ -155,16 +155,8 @@ protected:
 	};
 
 	struct MOVStreamContext {
-		MOVStreamContext() { memset(this, 0, sizeof(MOVStreamContext)); }
-		~MOVStreamContext() {
-			delete[] chunk_offsets;
-			delete[] stts_data;
-			delete[] ctts_data;
-			delete[] sample_to_chunk;
-			delete[] sample_sizes;
-			delete[] keyframes;
-			delete extradata;
-		}
+		MOVStreamContext();
+		~MOVStreamContext();
 
 		int ffindex; /* the ffmpeg stream id */
 		int is_ff_stream; /* Is this stream presented to ffmpeg ? i.e. is this an audio or video stream ? */

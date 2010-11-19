@@ -72,7 +72,10 @@
 #include "lastexpress/shared.h"
 
 #include "common/array.h"
-#include "common/stream.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace LastExpress {
 

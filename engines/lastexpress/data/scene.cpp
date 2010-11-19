@@ -31,6 +31,8 @@
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
+#include "common/stream.h"
+
 namespace LastExpress {
 
 SceneHotspot::~SceneHotspot() {

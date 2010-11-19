@@ -27,12 +27,16 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/stream.h"
 
-#include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 
+namespace Common{
+class SeekableReadStream;
+}
+
 namespace Graphics {
+
+struct Surface;
 
 class ImageDecoder {
 public:

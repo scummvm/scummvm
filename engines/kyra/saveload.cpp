@@ -27,6 +27,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "graphics/thumbnail.h"
+#include "graphics/surface.h"
 
 #include "kyra/kyra_v1.h"
 #include "kyra/util.h"

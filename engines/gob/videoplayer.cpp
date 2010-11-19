@@ -500,7 +500,7 @@ bool VideoPlayer::hasEmbeddedFile(const Common::String &fileName, int slot) cons
 	return video->decoder->hasEmbeddedFile(fileName);
 }
 
-Common::MemoryReadStream *VideoPlayer::getEmbeddedFile(const Common::String &fileName, int slot) {
+Common::SeekableReadStream *VideoPlayer::getEmbeddedFile(const Common::String &fileName, int slot) {
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
 		return 0;

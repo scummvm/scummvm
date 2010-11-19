@@ -43,7 +43,9 @@
 
 #include "lastexpress/shared.h"
 
-#include "common/stream.h"
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace LastExpress {
 

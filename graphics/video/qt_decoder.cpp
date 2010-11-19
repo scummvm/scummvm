@@ -1331,4 +1331,23 @@ void QuickTimeDecoder::updateAudioBuffer() {
 	}
 }
 
+QuickTimeDecoder::MOVStreamContext::MOVStreamContext() {
+	// FIXME: Setting all members to 0 via memset is a hack -- it works
+	// because the only non-POD member of MOVStreamContext is of type
+	// Common::Rational, and that luckily has no virtual methods nor
+	// does it keep internal pointers or anything like that. But watch
+	// out if you ever extend MOVStreamContext!
+	memset(this, 0, sizeof(MOVStreamContext));
+}
+
+QuickTimeDecoder::MOVStreamContext::~MOVStreamContext() {
+	delete[] chunk_offsets;
+	delete[] stts_data;
+	delete[] ctts_data;
+	delete[] sample_to_chunk;
+	delete[] sample_sizes;
+	delete[] keyframes;
+	delete extradata;
+}
+
 } // End of namespace Graphics

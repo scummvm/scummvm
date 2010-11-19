@@ -46,7 +46,9 @@
 
 #include "lastexpress/drawable.h"
 
-#include "common/stream.h"
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace LastExpress {
 

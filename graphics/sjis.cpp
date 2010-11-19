@@ -29,6 +29,9 @@
 #include "common/debug.h"
 #include "common/archive.h"
 #include "common/endian.h"
+#include "common/stream.h"
+
+#include "graphics/surface.h"
 
 namespace Graphics {
 
@@ -50,6 +53,10 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 	delete ret;
 
 	return 0;
+}
+
+void FontSJIS::drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 c1, uint32 c2) const {
+	drawChar(dst.getBasePtr(x, y), ch, dst.pitch, dst.bytesPerPixel, c1, c2, dst.w - x, dst.h - y);
 }
 
 template<typename Color>

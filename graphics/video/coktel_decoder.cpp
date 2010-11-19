@@ -31,6 +31,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/decoders/raw.h"
+#include "common/stream.h"
 
 static const uint32 kVideoCodecIndeo3 = MKID_BE('iv32');
 
@@ -219,7 +220,7 @@ bool CoktelDecoder::hasEmbeddedFile(const Common::String &fileName) const {
 	return false;
 }
 
-Common::MemoryReadStream *CoktelDecoder::getEmbeddedFile(const Common::String &fileName) const {
+Common::SeekableReadStream *CoktelDecoder::getEmbeddedFile(const Common::String &fileName) const {
 	return 0;
 }
 
@@ -2440,7 +2441,7 @@ bool VMDDecoder::hasEmbeddedFile(const Common::String &fileName) const {
 	return false;
 }
 
-Common::MemoryReadStream *VMDDecoder::getEmbeddedFile(const Common::String &fileName) const {
+Common::SeekableReadStream *VMDDecoder::getEmbeddedFile(const Common::String &fileName) const {
 	const File *file = 0;
 
 	for (Common::Array<File>::const_iterator it = _files.begin(); it != _files.end(); ++it)

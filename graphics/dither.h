@@ -26,7 +26,11 @@
 #define GRAPHICS_DITHER_H
 
 #include "common/util.h"
-#include "common/stream.h"
+
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
 
 namespace Graphics {
 

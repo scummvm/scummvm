@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "graphics/thumbnail.h"
+#include "graphics/surface.h"
 
 #include "agi/agi.h"
 #include "agi/preagi.h"

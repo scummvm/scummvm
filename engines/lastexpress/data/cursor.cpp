@@ -27,6 +27,7 @@
 
 #include "lastexpress/lastexpress.h"
 
+#include "common/stream.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
 

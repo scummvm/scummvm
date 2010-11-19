@@ -33,6 +33,7 @@
 #include "lastexpress/debug.h"
 
 #include "common/debug.h"
+#include "common/stream.h"
 
 namespace LastExpress {
 

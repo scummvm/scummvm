@@ -29,6 +29,8 @@
 
 #include "lastexpress/debug.h"
 
+#include "common/stream.h"
+
 namespace LastExpress {
 
 void FrameInfo::read(Common::SeekableReadStream *in, bool isSequence) {
