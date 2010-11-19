@@ -44,17 +44,6 @@
 // hack in some tricks to work around not having these fcns for Symbian
 // and we _really_ don't wanna link with any other windows LIBC library!
 #if defined(__GCC32__)
-
-	FIXME: If the following macros are ever used, then this will lead
-	to serious errors, e.g. an almost guaranteed buffer overflow
-	in Common::String::format(). Do *NOT* re-#define vsnprintf to
-	vsprintf, it will lead to disaster!
-	This shouldn't be necessary anyway, since we have
-	backends/platform/symbian/src/vsnprintf.h
-
-	#define snprintf(buf,len,args...)	sprintf(buf,args)
-	#define vsnprintf(buf,len,format,valist)	vsprintf(buf,format,valist)
-
 	// taken from public domain http://www.opensource.apple.com/darwinsource/WWDC2004/gcc_legacy-939/gcc/floatlib.c
 	#define SIGNBIT		0x80000000
 	#define HIDDEN		(1 << 23)
@@ -144,7 +133,6 @@ void *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size
 
 // we cannot include SymbianOS.h everywhere, but this works too (functions code is in SymbianOS.cpp)
 namespace Symbian {
-extern void FatalError(const char *msg);
 extern char* GetExecutablePath();
 }
 #endif

@@ -95,10 +95,6 @@ void NORETURN_PRE error(const char *s, ...) {
 	if (Common::s_errorHandler)
 		(*Common::s_errorHandler)(buf_output);
 
-#ifdef __SYMBIAN32__
-	Symbian::FatalError(buf_output);
-#endif
-
 	if (g_system)
 		g_system->fatalError();
 
