@@ -1057,6 +1057,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// King's Quest 4 - English Atari ST (double-sided diskettes)
+	// Game version 1.003.006 (January 12, 1989)
+	// SCI interpreter version 1.001.008
+	// Provided by fischersfritz in bug report #3110941
+	{"kq4sci", "", {
+		{"resource.map", 0, "8800cd62b1eee93752099986dc704a16", 7416},
+		{"resource.001", 0, "a3cdb4848fb859fdd302976fff56490f", 450790},
+		{"resource.002", 0, "a3cdb4848fb859fdd302976fff56490f", 535276},
+		{"resource.003", 0, "a3cdb4848fb859fdd302976fff56490f", 705074},
+		{"resource.004", 0, "a3cdb4848fb859fdd302976fff56490f", 478366},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO_NOSPEECH	},
+
 	// King's Quest 5 - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.004.018"
 	// SCI interpreter version 1.000.060
