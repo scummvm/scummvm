@@ -34,6 +34,8 @@
 #include "common/translation.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/file.h"
+#include "common/fs.h"
 
 DECLARE_SINGLETON(Common::TranslationManager);
 

@@ -27,10 +27,11 @@
 
 #include "common/singleton.h"
 #include "common/str-array.h"
-#include "common/file.h"
-#include "common/fs.h"
 
 namespace Common {
+
+class File;
+class FSNode;
 
 enum TranslationIDs {
 	kTranslationAutodetectId = 0,
