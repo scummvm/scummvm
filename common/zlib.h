@@ -27,9 +27,11 @@
 #define COMMON_ZLIB_H
 
 #include "common/scummsys.h"
-#include "common/stream.h"
 
 namespace Common {
+
+class SeekableReadStream;
+class WriteStream;
 
 #if defined(USE_ZLIB)
 
@@ -54,7 +56,7 @@ bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long
  * It is safe to call this with a NULL parameter (in this case, NULL is
  * returned).
  */
-Common::SeekableReadStream *wrapCompressedReadStream(Common::SeekableReadStream *toBeWrapped);
+SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped);
 
 /**
  * Take an arbitrary WriteStream and wrap it in a custom stream which provides
@@ -65,7 +67,7 @@ Common::SeekableReadStream *wrapCompressedReadStream(Common::SeekableReadStream 
  * It is safe to call this with a NULL parameter (in this case, NULL is
  * returned).
  */
-Common::WriteStream *wrapCompressedWriteStream(Common::WriteStream *toBeWrapped);
+WriteStream *wrapCompressedWriteStream(WriteStream *toBeWrapped);
 
 }	// End of namespace Common
 
