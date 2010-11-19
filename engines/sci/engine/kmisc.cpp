@@ -329,17 +329,17 @@ reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+#ifdef ENABLE_SCI32
 reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	Common::String setting = s->_segMan->getString(argv[0]);
-	reg_t data;
-#ifdef ENABLE_SCI32
-	data = readSelector(s->_segMan, argv[1], SELECTOR(data));
-#endif
+	reg_t data = readSelector(s->_segMan, argv[1], SELECTOR(data));
 
 	warning("Get config setting %s", setting.c_str());
 	s->_segMan->strcpy(data, "");
 	return argv[1];
 }
+#endif
+
 enum kSciPlatforms {
 	kSciPlatformDOS = 1,
 	kSciPlatformWindows = 2
