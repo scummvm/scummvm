@@ -29,7 +29,6 @@
 #include "common/scummsys.h"
 #include "common/events.h"
 #include "common/singleton.h"
-#include "common/savefile.h"
 #include "common/mutex.h"
 #include "common/array.h"
 
@@ -38,6 +37,8 @@
 namespace Common {
 
 class RandomSource;
+class SeekableReadStream;
+class WriteStream;
 
 /**
  * Our generic event recorder.
@@ -45,7 +46,7 @@ class RandomSource;
  * TODO: Add more documentation.
  */
 class EventRecorder : private EventSource, private EventObserver, public Singleton<EventRecorder> {
-	friend class Common::Singleton<SingletonBaseType>;
+	friend class Singleton<SingletonBaseType>;
 	EventRecorder();
 	~EventRecorder();
 public:
@@ -53,40 +54,40 @@ public:
 	void deinit();
 
 	/** Register random source so it can be serialized in game test purposes */
-	void registerRandomSource(Common::RandomSource &rnd, const char *name);
+	void registerRandomSource(RandomSource &rnd, const char *name);
 
 	/** TODO: Add documentation, this is only used by the backend */
 	void processMillis(uint32 &millis);
 
 private:
-	bool notifyEvent(const Common::Event &ev);
-	bool pollEvent(Common::Event &ev);
+	bool notifyEvent(const Event &ev);
+	bool pollEvent(Event &ev);
 	bool allowMapping() const { return false; }
 
 	class RandomSourceRecord {
 	public:
-		Common::String name;
+		String name;
 		uint32 seed;
 	};
-	Common::Array<RandomSourceRecord> _randomSourceRecords;
+	Array<RandomSourceRecord> _randomSourceRecords;
 
 	bool _recordSubtitles;
 	volatile uint32 _recordCount;
 	volatile uint32 _lastRecordEvent;
 	volatile uint32 _recordTimeCount;
-	Common::OutSaveFile *_recordFile;
-	Common::OutSaveFile *_recordTimeFile;
-	Common::MutexRef _timeMutex;
-	Common::MutexRef _recorderMutex;
+	WriteStream *_recordFile;
+	WriteStream *_recordTimeFile;
+	MutexRef _timeMutex;
+	MutexRef _recorderMutex;
 	volatile uint32 _lastMillis;
 
 	volatile uint32 _playbackCount;
 	volatile uint32 _playbackDiff;
 	volatile bool _hasPlaybackEvent;
 	volatile uint32 _playbackTimeCount;
-	Common::Event _playbackEvent;
-	Common::InSaveFile *_playbackFile;
-	Common::InSaveFile *_playbackTimeFile;
+	Event _playbackEvent;
+	SeekableReadStream *_playbackFile;
+	SeekableReadStream *_playbackTimeFile;
 
 	volatile uint32 _eventCount;
 	volatile uint32 _lastEventCount;
@@ -97,9 +98,9 @@ private:
 		kRecorderPlayback = 2
 	};
 	volatile RecordMode _recordMode;
-	Common::String _recordFileName;
-	Common::String _recordTempFileName;
-	Common::String _recordTimeFileName;
+	String _recordFileName;
+	String _recordTempFileName;
+	String _recordTimeFileName;
 };
 
 } // End of namespace Common

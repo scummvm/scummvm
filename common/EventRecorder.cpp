@@ -27,6 +27,7 @@
 
 #include "common/config-manager.h"
 #include "common/random.h"
+#include "common/savefile.h"
 
 DECLARE_SINGLETON(Common::EventRecorder);
 
@@ -35,25 +36,25 @@ namespace Common {
 #define RECORD_SIGNATURE 0x54455354
 #define RECORD_VERSION 1
 
-void readRecord(Common::InSaveFile *inFile, uint32 &diff, Common::Event &event) {
+void readRecord(SeekableReadStream *inFile, uint32 &diff, Event &event) {
 	diff = inFile->readUint32LE();
 
-	event.type = (Common::EventType)inFile->readUint32LE();
+	event.type = (EventType)inFile->readUint32LE();
 
 	switch (event.type) {
-	case Common::EVENT_KEYDOWN:
-	case Common::EVENT_KEYUP:
-		event.kbd.keycode = (Common::KeyCode)inFile->readSint32LE();
+	case EVENT_KEYDOWN:
+	case EVENT_KEYUP:
+		event.kbd.keycode = (KeyCode)inFile->readSint32LE();
 		event.kbd.ascii = inFile->readUint16LE();
 		event.kbd.flags = inFile->readByte();
 		break;
-	case Common::EVENT_MOUSEMOVE:
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP:
-	case Common::EVENT_WHEELUP:
-	case Common::EVENT_WHEELDOWN:
+	case EVENT_MOUSEMOVE:
+	case EVENT_LBUTTONDOWN:
+	case EVENT_LBUTTONUP:
+	case EVENT_RBUTTONDOWN:
+	case EVENT_RBUTTONUP:
+	case EVENT_WHEELUP:
+	case EVENT_WHEELDOWN:
 		event.mouse.x = inFile->readSint16LE();
 		event.mouse.y = inFile->readSint16LE();
 		break;
@@ -62,25 +63,25 @@ void readRecord(Common::InSaveFile *inFile, uint32 &diff, Common::Event &event) 
 	}
 }
 
-void writeRecord(Common::OutSaveFile *outFile, uint32 diff, const Common::Event &event) {
+void writeRecord(WriteStream *outFile, uint32 diff, const Event &event) {
 	outFile->writeUint32LE(diff);
 
 	outFile->writeUint32LE((uint32)event.type);
 
 	switch (event.type) {
-	case Common::EVENT_KEYDOWN:
-	case Common::EVENT_KEYUP:
+	case EVENT_KEYDOWN:
+	case EVENT_KEYUP:
 		outFile->writeSint32LE(event.kbd.keycode);
 		outFile->writeUint16LE(event.kbd.ascii);
 		outFile->writeByte(event.kbd.flags);
 		break;
-	case Common::EVENT_MOUSEMOVE:
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP:
-	case Common::EVENT_WHEELUP:
-	case Common::EVENT_WHEELDOWN:
+	case EVENT_MOUSEMOVE:
+	case EVENT_LBUTTONDOWN:
+	case EVENT_LBUTTONUP:
+	case EVENT_RBUTTONDOWN:
+	case EVENT_RBUTTONUP:
+	case EVENT_WHEELUP:
+	case EVENT_WHEELDOWN:
 		outFile->writeSint16LE(event.mouse.x);
 		outFile->writeSint16LE(event.mouse.y);
 		break;
@@ -109,7 +110,7 @@ EventRecorder::~EventRecorder() {
 }
 
 void EventRecorder::init() {
-	Common::String recordModeString = ConfMan.get("record_mode");
+	String recordModeString = ConfMan.get("record_mode");
 	if (recordModeString.compareToIgnoreCase("record") == 0) {
 		_recordMode = kRecorderRecord;
 	} else {
@@ -236,7 +237,7 @@ void EventRecorder::deinit() {
 
 		for (uint i = 0; i < _recordCount; ++i) {
 			uint32 tempDiff;
-			Common::Event tempEvent;
+			Event tempEvent;
 			readRecord(_playbackFile, tempDiff, tempEvent);
 			writeRecord(_recordFile, tempDiff, tempEvent);
 		}
@@ -252,7 +253,7 @@ void EventRecorder::deinit() {
 	g_system->deleteMutex(_recorderMutex);
 }
 
-void EventRecorder::registerRandomSource(Common::RandomSource &rnd, const char *name) {
+void EventRecorder::registerRandomSource(RandomSource &rnd, const char *name) {
 	if (_recordMode == kRecorderRecord) {
 		RandomSourceRecord rec;
 		rec.name = name;
@@ -305,11 +306,11 @@ void EventRecorder::processMillis(uint32 &millis) {
 	g_system->unlockMutex(_timeMutex);
 }
 
-bool EventRecorder::notifyEvent(const Common::Event &ev) {
+bool EventRecorder::notifyEvent(const Event &ev) {
 	if (_recordMode != kRecorderRecord)
 		return false;
 
-	Common::StackLock lock(_recorderMutex);
+	StackLock lock(_recorderMutex);
 	++_eventCount;
 
 	writeRecord(_recordFile, _eventCount - _lastEventCount, ev);
@@ -320,11 +321,11 @@ bool EventRecorder::notifyEvent(const Common::Event &ev) {
 	return false;
 }
 
-bool EventRecorder::pollEvent(Common::Event &ev) {
+bool EventRecorder::pollEvent(Event &ev) {
 	if (_recordMode != kRecorderPlayback)
 		return false;
 
-	Common::StackLock lock(_recorderMutex);
+	StackLock lock(_recorderMutex);
 	++_eventCount;
 
 	if (!_hasPlaybackEvent) {
@@ -338,13 +339,13 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 	if (_hasPlaybackEvent) {
 		if (_playbackDiff <= (_eventCount - _lastEventCount)) {
 			switch (_playbackEvent.type) {
-			case Common::EVENT_MOUSEMOVE:
-			case Common::EVENT_LBUTTONDOWN:
-			case Common::EVENT_LBUTTONUP:
-			case Common::EVENT_RBUTTONDOWN:
-			case Common::EVENT_RBUTTONUP:
-			case Common::EVENT_WHEELUP:
-			case Common::EVENT_WHEELDOWN:
+			case EVENT_MOUSEMOVE:
+			case EVENT_LBUTTONDOWN:
+			case EVENT_LBUTTONUP:
+			case EVENT_RBUTTONDOWN:
+			case EVENT_RBUTTONUP:
+			case EVENT_WHEELUP:
+			case EVENT_WHEELDOWN:
 				g_system->warpMouse(_playbackEvent.mouse.x, _playbackEvent.mouse.y);
 				break;
 			default:

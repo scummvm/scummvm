@@ -29,6 +29,7 @@
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/EventRecorder.h"
+#include "common/savefile.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
