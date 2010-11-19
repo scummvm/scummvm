@@ -331,7 +331,10 @@ reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	Common::String setting = s->_segMan->getString(argv[0]);
-	reg_t data = readSelector(s->_segMan, argv[1], SELECTOR(data));
+	reg_t data;
+#ifdef ENABLE_SCI32
+	data = readSelector(s->_segMan, argv[1], SELECTOR(data));
+#endif
 
 	warning("Get config setting %s", setting.c_str());
 	s->_segMan->strcpy(data, "");
