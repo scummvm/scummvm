@@ -232,16 +232,9 @@ void Scene::load(ResourcePackId packId) {
 		error("The file isn't recognized as scene %s", filename);
 
 	_ws = new WorldStats(fd, this);
-	// jump to game polygons data
-	fd->seek(0xE8686);
 	_polygons = new Polygons(fd);
-	// jump to action list data
-	fd->seek(0xE868E + _polygons->size * _polygons->numEntries);
 	_actions = new ActionList(_vm);
 	_actions->load(fd);
-
-	// TODO load rest of data
-
 
 	fd->close();
 	delete fd;

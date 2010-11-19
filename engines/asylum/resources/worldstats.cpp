@@ -211,6 +211,8 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	musicResourceId        = (ResourceId)stream->readUint32LE();
 	musicStatusExt    = stream->readSint32LE();
 
+	//////////////////////////////////////////////////////////////////////////
+	// Read Objects
 	for (uint32 a = 0; a < numObjects; a++) {
 		Object *object = new Object(_scene->vm());
 		object->load(stream);
@@ -218,9 +220,10 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		objects.push_back(object);
 	}
 
-	// Jump over unused objects
 	stream->seek((OBJECTS_MAX_COUNT - numObjects) * OBJECTS_SIZE, SEEK_CUR);
 
+	//////////////////////////////////////////////////////////////////////////
+	// Read Actors
 	for (ActorIndex index = 0; index < (int)numActors; index++) {
 		Actor *actor = new Actor(_scene->vm(), index);
 		actor->load(stream);
@@ -228,27 +231,31 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		actors.push_back(actor);
 	}
 
-	// Jump over unused actors
 	stream->seek((ACTORS_MAX_COUNT - numActors) * ACTORS_SIZE, SEEK_CUR);
 
-	uint8 mainActorData[500];
-	stream->read(mainActorData, 500);
+	//////////////////////////////////////////////////////////////////////////
+	// Read actor data
+	for (ActorIndex index = 0; index < (int)numActors; index++)
+		actors[index]->loadData(stream);
 
-	// FIXME
-	// This is ONLY ever going to work for scenes where there's only
-	// one actor in the worldStats->actors[] collection
-	actors[0]->setRawResources(mainActorData);
+	stream->seek((ACTORS_MAX_COUNT - numActors) * ACTORDATA_SIZE, SEEK_CUR);
 
-	stream->seek(0xD6B5A); // where action items start
+	//////////////////////////////////////////////////////////////////////////
+	// Read number of actionlists and polygons
+	numActionLists = stream->readUint32LE();
+	numPolygons    = stream->readUint32LE();
 
+	// FIXME: Read missing data (64 int32)
+	for (int i = 0; i < 64; i++)
+		stream->readUint32LE();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Read actions
 	for (uint32 a = 0; a < numActions; a++) {
 		ActionArea *action = new ActionArea();
 		action->load(stream);
-
-		actions.push_back(action);
 	}
 
-	// Jump over unused actions
 	stream->seek((ACTIONS_MAX_COUNT - numActions) * ACTIONS_SIZE, SEEK_CUR);
 
 	field_E848C = stream->readSint32LE();
@@ -271,8 +278,8 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	for (int32 i = 0; i < 30; i++)
 		field_E8594[i] = stream->readSint32LE();
 
-	// FIXME missing data!
 	field_E860C = stream->readSint32LE();
+
 	for (int32 i = 0; i < 6; i++)
 		field_E8610[i] = stream->readUint32LE();
 

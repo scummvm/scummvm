@@ -221,6 +221,11 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	_field_9A0  = stream->readSint32LE();
 }
 
+void Actor::loadData(Common::SeekableReadStream *stream) {
+	// TODO load actor data
+	stream->seek(ACTORDATA_SIZE, SEEK_CUR);
+}
+
 /////////////////////////////////////////////////////////////////////////
 // Update & status
 //////////////////////////////////////////////////////////////////////////
