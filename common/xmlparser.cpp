@@ -27,10 +27,25 @@
 #include "common/util.h"
 #include "common/archive.h"
 #include "common/fs.h"
+#include "common/stream.h"
 
 namespace Common {
 
-bool XMLParser::loadFile(const Common::String &filename) {
+XMLParser::~XMLParser() {
+	while (!_activeKey.empty())
+		freeNode(_activeKey.pop());
+
+	delete _XMLkeys;
+	delete _stream;
+
+	for (List<XMLKeyLayout*>::iterator i = _layoutList.begin();
+		i != _layoutList.end(); ++i)
+		delete *i;
+
+	_layoutList.clear();
+}
+
+bool XMLParser::loadFile(const String &filename) {
 	_stream = SearchMan.createReadStreamForMember(filename);
 	if (!_stream)
 		return false;
@@ -54,7 +69,7 @@ bool XMLParser::loadBuffer(const byte *buffer, uint32 size, DisposeAfterUse::Fla
 	return true;
 }
 
-bool XMLParser::loadStream(Common::SeekableReadStream *stream) {
+bool XMLParser::loadStream(SeekableReadStream *stream) {
 	_stream = stream;
 	_fileName = "File Stream";
 	return true;
@@ -158,10 +173,10 @@ bool XMLParser::parseActiveKey(bool closed) {
 	if (layout->children.contains(key->name)) {
 		key->layout = layout->children[key->name];
 
-		Common::StringMap localMap = key->values;
+		StringMap localMap = key->values;
 		int keyCount = localMap.size();
 
-		for (Common::List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
+		for (List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
 			if (i->required && !localMap.contains(i->name))
 				return parserError("Missing required property '%s' inside key '%s'", i->name.c_str(), key->name.c_str());
 			else if (localMap.contains(i->name))
@@ -198,7 +213,7 @@ bool XMLParser::parseActiveKey(bool closed) {
 	return true;
 }
 
-bool XMLParser::parseKeyValue(Common::String keyName) {
+bool XMLParser::parseKeyValue(String keyName) {
 	assert(_activeKey.empty() == false);
 
 	if (_activeKey.top()->values.contains(keyName))
@@ -238,7 +253,7 @@ bool XMLParser::parseIntegerKey(const char *key, int count, ...) {
 	return result;
 }
 
-bool XMLParser::parseIntegerKey(const Common::String &key, int count, ...) {
+bool XMLParser::parseIntegerKey(const String &key, int count, ...) {
 	bool result;
 	va_list args;
 	va_start(args, count);

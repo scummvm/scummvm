@@ -27,7 +27,7 @@
 #define XML_PARSER_H
 
 #include "common/scummsys.h"
-#include "common/stream.h"
+#include "common/types.h"
 
 #include "common/list.h"
 #include "common/hashmap.h"
@@ -38,14 +38,7 @@
 namespace Common {
 
 class FSNode;
-
-/*
-	XMLParser.cpp/h -- Generic XML Parser
-	=====================================
-
-	External documentation available at:
-		http://www.smartlikearoboc.com/scummvm_doc/xmlparser_doc.html
-*/
+class SeekableReadStream;
 
 #define MAX_XML_DEPTH 8
 
@@ -103,19 +96,7 @@ public:
 	 */
 	XMLParser() : _XMLkeys(0), _stream(0) {}
 
-	virtual ~XMLParser() {
-		while (!_activeKey.empty())
-			freeNode(_activeKey.pop());
-
-		delete _XMLkeys;
-		delete _stream;
-
-		for (Common::List<XMLKeyLayout*>::iterator i = _layoutList.begin();
-			i != _layoutList.end(); ++i)
-			delete *i;
-
-		_layoutList.clear();
-	}
+	virtual ~XMLParser();
 
 	/** Active state for the parser */
 	enum ParserState {
@@ -133,16 +114,16 @@ public:
 	struct XMLKeyLayout;
 	struct ParserNode;
 
-	typedef Common::HashMap<Common::String, XMLParser::XMLKeyLayout*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ChildMap;
+	typedef HashMap<String, XMLParser::XMLKeyLayout*, IgnoreCase_Hash, IgnoreCase_EqualTo> ChildMap;
 
 	/** nested struct representing the layout of the XML file */
 	struct XMLKeyLayout {
 		struct XMLKeyProperty {
-			Common::String name;
+			String name;
 			bool required;
 		};
 
-		Common::List<XMLKeyProperty> properties;
+		List<XMLKeyProperty> properties;
 		ChildMap children;
 
 		virtual bool doCallback(XMLParser *parent, ParserNode *node) = 0;
@@ -156,8 +137,8 @@ public:
 
 	/** Struct representing a parsed node */
 	struct ParserNode {
-		Common::String name;
-		Common::StringMap values;
+		String name;
+		StringMap values;
 		bool ignore;
 		bool header;
 		int depth;
@@ -181,7 +162,7 @@ public:
 	 *
 	 * @param filename Name of the file to load.
 	 */
-	bool loadFile(const Common::String &filename);
+	bool loadFile(const String &filename);
 
 	bool loadFile(const FSNode &node);
 
@@ -198,7 +179,7 @@ public:
 	 */
 	bool loadBuffer(const byte *buffer, uint32 size, DisposeAfterUse::Flag disposable = DisposeAfterUse::NO);
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(SeekableReadStream *stream);
 
 	void close();
 
@@ -283,7 +264,7 @@ protected:
 	/**
 	 * Parses the value of a given key. There's no reason to overload this.
 	 */
-	bool parseKeyValue(Common::String keyName);
+	bool parseKeyValue(String keyName);
 
 	/**
 	 * Called once a key has been parsed. It handles the closing/cleanup of the
@@ -343,7 +324,7 @@ protected:
 	 * @returns True if the parsing succeeded.
 	 */
 	bool parseIntegerKey(const char *key, int count, ...);
-	bool parseIntegerKey(const Common::String &keyStr, int count, ...);
+	bool parseIntegerKey(const String &keyStr, int count, ...);
 	bool vparseIntegerKey(const char *key, int count, va_list args);
 
 	bool parseXMLHeader(ParserNode *node);
@@ -355,19 +336,19 @@ protected:
 	 */
 	virtual void cleanup() {}
 
-	Common::List<XMLKeyLayout*> _layoutList;
+	List<XMLKeyLayout*> _layoutList;
 
 private:
 	char _char;
 	SeekableReadStream *_stream;
-	Common::String _fileName;
+	String _fileName;
 
 	ParserState _state; /** Internal state of the parser */
 
-	Common::String _error; /** Current error message */
-	Common::String _token; /** Current text token */
+	String _error; /** Current error message */
+	String _token; /** Current text token */
 
-	Common::Stack<ParserNode*> _activeKey; /** Node stack of the parsed keys */
+	Stack<ParserNode*> _activeKey; /** Node stack of the parsed keys */
 };
 
 } // End of namespace Common
