@@ -470,6 +470,7 @@ reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv);
 reg_t kWinHelp(EngineState *s, int argc, reg_t *argv);
 reg_t kWinDLL(EngineState *s, int argc, reg_t *argv);
 reg_t kPrintDebug(EngineState *s, int argc, reg_t *argv);
+reg_t kGetConfig(EngineState *s, int argc, reg_t *argv);
 #endif
 
 reg_t kDoSoundInit(EngineState *s, int argc, reg_t *argv);

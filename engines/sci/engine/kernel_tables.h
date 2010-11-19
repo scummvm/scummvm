@@ -542,6 +542,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(WinDLL),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(GetConfig),         SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
 // Commented out because it needs to be implemented in full generality in Shivers/Full.
 // Since it is not essential to game play, removing it also works.
 //
