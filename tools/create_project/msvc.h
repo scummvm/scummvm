@@ -85,14 +85,14 @@ protected:
 	/**
 	 * Get the command line for the revision tool (shared between all Visual Studio based providers)
 	 */
-	std::string getRevisionToolCommandLine() const;
+	std::string getPreBuildEvent() const;
 
 	/**
 	 * Get the command line for copying data files to the build directory
 	 *
 	 * @param isWin32 Bitness of property file
 	 */
-	std::string getCopyDataCommandLine(bool isWin32) const;
+	std::string getPostBuildEvent(bool isWin32) const;
 };
 
 class VisualStudioProvider : public MSVCProvider {

@@ -142,40 +142,30 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	outputGlobalPropFile(properties, 64, x64Defines, convertPathToWin(setup.filePrefix));
 }
 
-std::string MSVCProvider::getRevisionToolCommandLine() const {
+std::string MSVCProvider::getPreBuildEvent() const {
 	std::string cmdLine = "";
 
 	cmdLine = "@echo off\n"
-	          "ECHO Generating revision number\n"
-	          "IF NOT EXIST &quot;$(SolutionDir)../../.svn/&quot; GOTO working_copy\n"
-	          "SubWCRev.exe &quot;$(SolutionDir)../..&quot; &quot;$(SolutionDir)../../base/internal_version.h.tpl&quot; &quot;$(SolutionDir)../../base/internal_version.h&quot;\n"
-	          "IF NOT %errorlevel%==0 GOTO error\n"
-	          ":working_copy\n"
-	          "ECHO Not a working copy, skipping...\n"
-	          "EXIT /B0\n"
-	          ":error\n"
-	          "ECHO SubWCRev not found, skipping...\n"
+	          "echo Executing Pre-Build script...\n"
+			  "echo.\n"
+			  "@call &quot;$(SolutionDir)../../tools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;\n"
 	          "EXIT /B0";
 
 	return cmdLine;
 }
 
-std::string MSVCProvider::getCopyDataCommandLine(bool isWin32) const {
+std::string MSVCProvider::getPostBuildEvent(bool isWin32) const {
 	std::string cmdLine = "";
 
-	// Copy data files and themes
 	cmdLine = "@echo off\n"
-	          "ECHO Copying data files\n"
-	          "xcopy /F /Y &quot;$(SolutionDir)../engine-data/*.dat&quot; $(OutDir)\n"
-	          "xcopy /F /Y &quot;$(SolutionDir)../engine-data/*.tbl&quot; $(OutDir)\n"
-	          "xcopy /F /Y &quot;$(SolutionDir)../engine-data/*.cpt&quot; $(OutDir)\n"
-	          "xcopy /F /Y &quot;$(SolutionDir)../engine-data/README&quot; $(OutDir)\n"
-	          "xcopy /F /Y &quot;$(SolutionDir)../../gui/themes/*.zip&quot; $(OutDir)\n"
-	          "xcopy /F /Y &quot;$(SolutionDir)../../gui/themes/translations.dat&quot; $(OutDir)\n";
+	          "echo Executing Post-Build script...\n"
+	          "echo.\n"
+	          "@call &quot;$(SolutionDir)../../tools/create_project/scripts/postbuild.cmd&quot; &quot;$(SolutionDir)/../..&quot; &quot;$(OutDir)&quot; ";
 
-	cmdLine += "xcopy /F /Y &quot;$(SCUMMVM_LIBS)/lib/";
-	cmdLine += (isWin32 ? "x86" : "x64");
-	cmdLine += "/SDL.dll&quot; $(OutDir)";
+	cmdLine += (isWin32) ? "x86" : "x64";
+
+	cmdLine += "\n"
+	           "EXIT /B0";
 
 	return cmdLine;
 }
@@ -222,10 +212,10 @@ int VisualStudioProvider::getVisualStudioVersion() {
 	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n" \
 	           "\t\t\t/>\n" \
 	           "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n" \
-	           "\t\t\t\tCommandLine=\"" << getRevisionToolCommandLine() << "\"\n" \
+	           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n" \
 	           "\t\t\t/>\n" \
 	           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n" \
-	           "\t\t\t\tCommandLine=\"" << getCopyDataCommandLine(isWin32) << "\"\n" \
+	           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32) << "\"\n" \
 	           "\t\t\t/>\n" \
 	           "\t\t</Configuration>\n"; \
 }
@@ -760,14 +750,14 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		if (!isRelease) {
 			project << "\t\t<PreBuildEvent>\n"
 			           "\t\t\t<Message>Generate internal_version.h</Message>\n"
-			           "\t\t\t<Command>" << getRevisionToolCommandLine() << "</Command>\n"
+			           "\t\t\t<Command>" << getPreBuildEvent() << "</Command>\n"
 			           "\t\t</PreBuildEvent>\n";
 		}
 
 		// Copy data files to the build folder
 		project << "\t\t<PostBuildEvent>\n"
 		           "\t\t\t<Message>Copy data files to the build folder</Message>\n"
-	               "\t\t\t<Command>" << getCopyDataCommandLine(isWin32) << "</Command>\n"
+	               "\t\t\t<Command>" << getPostBuildEvent(isWin32) << "</Command>\n"
 		           "\t\t</PostBuildEvent>\n";
 	}
 
