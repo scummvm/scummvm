@@ -10,34 +10,34 @@ Installation
 
 Controls
 ========
-Right trigger			- Modifier key (see below for uses)
-Left trigger			- ESC (Usually skips cutscenes. Depends on game)
-Analog					- Mouse movement
-Right trigger + Analog	- Fine mouse movement
-D-Pad					- Arrow keys (useful mostly in SCI and AGI games)
-D-Pad + Right Trigger 	- Diagonal arrow keys (it's hard to input diagonals on some PSPs)
-Triangle				- Enter (useful for some dialogs)
-Cross					- Left Mouse Button (usually the main button)
-Circle					- Right Mouse Button (secondary button in some games)
-Square					- '.' (skip dialogue in some games e.g. Scumm)
-Right trigger + Square	- Spacebar (useful in Gobli*ns and SCI games)
-Right trigger + Start	- F5 (Main Menu in some games)
-Select					- Show/Hide Virtual Keyboard. Hold down to move keyboard onscreen (with D-Pad).
+Right trigger           - Modifier key (see below for uses)
+Left trigger            - ESC (Usually skips cutscenes. Depends on game)
+Analog                  - Mouse movement
+Right trigger + Analog  - Fine mouse movement
+D-Pad                   - Arrow keys (useful mostly in SCI and AGI games)
+D-Pad + Right Trigger   - Diagonal arrow keys (it's hard to input diagonals on some PSPs)
+Triangle                - Enter (useful for some dialogs)
+Cross                   - Left Mouse Button (usually the main button)
+Circle                  - Right Mouse Button (secondary button in some games)
+Square                  - '.' (skip dialogue in some games e.g. Scumm)
+Right trigger + Square  - Spacebar (useful in Gobli*ns and SCI games)
+Right trigger + Start   - F5 (Main Menu in some games)
+Select                  - Show/Hide Virtual Keyboard. Hold down to move keyboard onscreen (with D-Pad).
 Right trigger + Select  - Show Image Viewer (see below)
-Start					- Global Menu. Allows you to 'Return To Launcher' to play another game
+Start                   - Global Menu. Allows you to 'Return To Launcher' to play another game
 
 Virtual Keyboard Mode
 =====================
-Start					- Enter key. Also exits virtual keyboard mode
-Select					- Exit the virtual keyboard mode
-Right trigger			- Input letters: lowercase/uppercase (press to toggle)
-Left trigger			- Input numbers/symbols (press to toggle)
-D-Pad					- Select square of characters (up, down, left or right)
-Buttons/Triggers		- Choose a specific character in the square. The four center characters are chosen
-						  by the button in the corresponding position. The 2 top characters are chosen by the
-						  triggers.
-Analog					- Moves in a direction (left/right/up/down) (Useful to keep moving
-						  while typing in AGI games among other things)
+Start                   - Enter key. Also exits virtual keyboard mode
+Select                  - Exit the virtual keyboard mode
+Right trigger           - Input letters: lowercase/uppercase (press to toggle)
+Left trigger            - Input numbers/symbols (press to toggle)
+D-Pad                   - Select square of characters (up, down, left or right)
+Buttons/Triggers        - Choose a specific character in the square. The four center characters are chosen
+                          by the button in the corresponding position. The 2 top characters are chosen by the
+                          triggers.
+Analog                  - Moves in a direction (left/right/up/down) (Useful to keep moving
+                          while typing in AGI games among other things)
 
 
 Image Viewer
@@ -61,12 +61,12 @@ There are a few simple rules to follow:
 
 Image Viewer Controls:
 =====================
-Left/Right				- previous/next image (e.g. go from psp_image1.png to psp_image2.png)
-Up/down					- zoom in/out
-Analog					- move around the image
-Triggers, Start: 		- exit image viewer
+Left/Right              - previous/next image (e.g. go from psp_image1.png to psp_image2.png)
+Up/down                 - zoom in/out
+Analog                  - move around the image
+Triggers, Start:        - exit image viewer
 
-						  
+
 1st Person Game Mode (Can be ignored by most users)
 ====================
 This is a special mode built for 1st person games like Lands of Lore. If you don't have these games you can
@@ -75,16 +75,14 @@ safely ignore this mode. To enter or leave this mode, use the combo:
 Right Trigger + Left Trigger + Square
 
 Some buttons have been switched around to make these games more playable:
-Square					- Is the modifier key instead of Right Trigger.
-Left/Right Trigger		- Strafe left/right
-D-Pad Left/Right		- Turn left/right
-Square + D-Pad			- F1/F2/F3/F4
-Square + Select			- Image Viewer
-Square + Start			- Esc (shows game menu)
+Square                  - Is the modifier key instead of Right Trigger.
+Left/Right Trigger      - Strafe left/right
+D-Pad Left/Right        - Turn left/right
+Square + D-Pad          - F1/F2/F3/F4
+Square + Select         - Image Viewer
+Square + Start          - Esc (shows game menu)
 
 
-
-						  
 Notes
 =====
 - Notice that you can switch between games! This is much faster than quitting
@@ -119,12 +117,12 @@ Q:  Can I run game X with this?
 A:  You can find the list of supported games on the compatibility page
     at http://www.scummvm.org
     Note that ScummVM is NOT an emulator. The supported games engines have been painstakingly rewritten.
-	It's not easy to add support for a game you want that currently isn't supported.
+    It's not easy to add support for a game you want that currently isn't supported.
 
 Q:  My Monkey Island 1 doesn't have any music, what gives?
 A:  If your version of Monkey Island came on a CD then it has the music
     as CD Audio tracks. You need to rip those to MP3/Ogg (MP3 is preferred), naming them track1.mp3 track2.mp3
-	etc. and copy them to the same directory as the game datafiles for music to work.
+    etc. and copy them to the same directory as the game datafiles for music to work.
 
 Q:  Game X crashes, or feature Y doesn't work. Can you fix this?
 A:  Possibly.
@@ -144,19 +142,19 @@ To build ScummVM for PSP you need:
 
 - ScummVM source code (svn co https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk)
 
-- PSP toolchain	(svn co svn://svn.pspdev.org/psp/trunk/psptoolchain)
+- PSP toolchain (svn co svn://svn.pspdev.org/psp/trunk/psptoolchain)
 
-- PSPSDK	(svn co svn://svn.pspdev.org/psp/trunk/pspsdk)
-			Note: This usually gets installed by the PSP toolchain,
-			so you don't have to do it manually.
+- PSPSDK    (svn co svn://svn.pspdev.org/psp/trunk/pspsdk)
+            Note: This usually gets installed by the PSP toolchain,
+            so you don't have to do it manually.
 
-- zlib		(svn co svn://svn.pspdev.org/psp/trunk/zlib)
+- zlib      (svn co svn://svn.pspdev.org/psp/trunk/zlib)
 
-- libPNG	(svn co svn://svn.pspdev.org/psp/trunk/libpng)
+- libPNG    (svn co svn://svn.pspdev.org/psp/trunk/libpng)
 
-- libmad(*)	(svn co svn://svn.pspdev.org/psp/trunk/libmad)
+- libmad(*) (svn co svn://svn.pspdev.org/psp/trunk/libmad)
 
-- libTremor(*)	(svn co svn://svn.pspdev.org/psp/trunk/libTremor)
+- libTremor(*) (svn co svn://svn.pspdev.org/psp/trunk/libTremor)
 
 (*) = optional
 
