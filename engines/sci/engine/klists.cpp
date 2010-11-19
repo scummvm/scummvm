@@ -631,7 +631,8 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		if (argv[2].toUint16() == 3)
 			return kString(s, argc, argv);
 	} else {
-		if (s->_segMan->getSegmentType(argv[1].segment) == SEG_TYPE_STRING)
+		if (s->_segMan->getSegmentType(argv[1].segment) == SEG_TYPE_STRING ||
+			s->_segMan->getSegmentType(argv[1].segment) == SEG_TYPE_SYS_STRINGS)
 			return kString(s, argc, argv);
 	}
 
