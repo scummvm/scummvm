@@ -95,7 +95,6 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_numberStringX = 0;
  	_numberStringY = 0;
  	memset(&_numberString01, 0, 8);
- 	_field_964 = 0;
  	_field_968 = 0;
  	_field_96C = 0;
  	_field_970 = 0;
