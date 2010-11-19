@@ -35,7 +35,7 @@
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 
-#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "sound/audiostream.h"
 #include "sound/decoders/adpcm.h"
