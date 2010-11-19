@@ -24,6 +24,9 @@
 
 #include <sdlapp.h> // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
 #include <bautils.h>
+#include <eikenv.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
+#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
 
 #include "backends/fs/symbian/symbian-fs-factory.h"
 #include "backends/platform/symbian/src/SymbianOS.h"
