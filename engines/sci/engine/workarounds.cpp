@@ -24,6 +24,7 @@
  */
 
 #include "sci/engine/kernel.h"
+#include "sci/engine/object.h"
 #include "sci/engine/state.h"
 #include "sci/engine/vm.h"
 #include "sci/engine/workarounds.h"

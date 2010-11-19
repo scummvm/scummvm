@@ -27,6 +27,7 @@ MODULE_OBJS := \
 	engine/kstring.o \
 	engine/kvideo.o \
 	engine/message.o \
+	engine/object.o \
 	engine/savegame.o \
 	engine/script.o \
 	engine/scriptdebug.o \

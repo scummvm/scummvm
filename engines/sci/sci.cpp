@@ -39,6 +39,7 @@
 
 #include "sci/engine/features.h"
 #include "sci/engine/message.h"
+#include "sci/engine/object.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/script.h"	// for script_adjust_opcode_formats

@@ -29,6 +29,7 @@
 #include "sci/sound/soundcmd.h"
 
 #include "sci/engine/kernel.h"
+#include "sci/engine/object.h"
 #include "sci/engine/selector.h"
 
 namespace Sci {
