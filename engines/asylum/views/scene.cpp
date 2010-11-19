@@ -629,7 +629,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 				// TODO pass a reference to hitType so it can be populated by
 				// hitTestScene
 				newGraphicResourceId = hitTestScene(getCursor()->position(), type);
-				if (newGraphicResourceId != -1) {
+				if (newGraphicResourceId != (ResourceId)-1) {
 					warning ("Can't set mouse cursor, field_D6AC8 not handled ... yet");
 					// TODO
 					// check if _ws->field_D6AC8[act->field_638] != newGraphicResourceId
@@ -787,7 +787,7 @@ ResourceId Scene::hitTestScene(const Common::Point pt, HitType &type) {
 
 	ResourceId result = (ResourceId)findActionArea(Common::Point(top, left));
 
-	if (result != -1) {
+	if (result != (ResourceId)-1) {
 		if (LOBYTE(_ws->actions[result]->actionType) & 8) {
 			type = kHitActionArea;
 			return result;

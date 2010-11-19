@@ -118,7 +118,7 @@ public:
 		_sceneXLeft = 0;
 		_sceneYTop = 0;
 		_sceneOffset = 0;
-		_sceneOffsetAdd;
+		_sceneOffsetAdd = 0;
 		memset(&_cursorResources[13], kResourceNone, sizeof(_cursorResources));
 		memset(&_sceneFonts[3], kResourceNone, sizeof(_sceneFonts));
 		_currentPaletteId = kResourceNone;
