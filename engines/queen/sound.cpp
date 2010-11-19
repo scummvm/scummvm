@@ -26,7 +26,7 @@
 
 #include "common/config-manager.h"
 #include "common/endian.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "queen/sound.h"
 #include "queen/input.h"
@@ -119,7 +119,7 @@ public:
 	MP3Sound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-		Common::MemoryReadStream *tmp = f->readStream(size);
+		Common::SeekableReadStream *tmp = f->readStream(size);
 		assert(tmp);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeMP3Stream(tmp, DisposeAfterUse::YES)));
 	}
@@ -132,7 +132,7 @@ public:
 	OGGSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-		Common::MemoryReadStream *tmp = f->readStream(size);
+		Common::SeekableReadStream *tmp = f->readStream(size);
 		assert(tmp);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeVorbisStream(tmp, DisposeAfterUse::YES)));
 	}
@@ -145,7 +145,7 @@ public:
 	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-		Common::MemoryReadStream *tmp = f->readStream(size);
+		Common::SeekableReadStream *tmp = f->readStream(size);
 		assert(tmp);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeFLACStream(tmp, DisposeAfterUse::YES)));
 	}

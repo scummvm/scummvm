@@ -28,7 +28,7 @@
 
 #include "m4/m4.h"
 #include "m4/midi.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 
 namespace M4 {
 

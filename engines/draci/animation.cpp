@@ -31,6 +31,8 @@
 #include "draci/sound.h"
 #include "draci/surface.h"
 
+#include "common/memstream.h"
+
 namespace Draci {
 
 Animation::Animation(DraciEngine *vm, int id, uint z, bool playing) : _vm(vm) {

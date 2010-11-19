@@ -34,6 +34,8 @@
 #include "common/unarj.h"
 #include "common/file.h"
 #include "common/hash-str.h"
+#include "common/memstream.h"
+#include "common/bufferedstream.h"
 
 namespace Common {
 

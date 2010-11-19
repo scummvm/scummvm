@@ -25,6 +25,7 @@
 
 #include "common/archive.h"
 #include "common/macresman.h"
+#include "common/substream.h"
 
 #include "groovie/resource.h"
 #include "groovie/groovie.h"

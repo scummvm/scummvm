@@ -740,7 +740,7 @@ void M4Surface::madsLoadBackground(int roomNumber, RGBList **palData) {
 
 void M4Surface::rexLoadBackground(Common::SeekableReadStream *source, RGBList **palData) {
 	MadsPack packData(source);
-	Common::MemoryReadStream *sourceUnc = packData.getItemStream(0);
+	Common::SeekableReadStream *sourceUnc = packData.getItemStream(0);
 
 	int sceneWidth = sourceUnc->readUint16LE();
 	int sceneHeight = sourceUnc->readUint16LE();

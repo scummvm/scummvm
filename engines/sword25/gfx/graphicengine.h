@@ -281,8 +281,8 @@ public:
 	Graphics::Surface _frameBuffer;
 	Graphics::Surface *getFrameBuffer() { return &_frameBuffer; }
 
-	Common::MemoryReadStream *_thumbnail;
-	Common::MemoryReadStream *getThumbnail() { return _thumbnail; }
+	Common::SeekableReadStream *_thumbnail;
+	Common::SeekableReadStream *getThumbnail() { return _thumbnail; }
 
 	// Access methods
 

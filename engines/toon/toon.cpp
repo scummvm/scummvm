@@ -30,6 +30,8 @@
 #include "common/config-manager.h"
 #include "common/EventRecorder.h"
 #include "common/savefile.h"
+#include "common/memstream.h"
+
 #include "engines/util.h"
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
@@ -1797,6 +1799,10 @@ void ToonEngine::drawInfoLine() {
 			_fontRenderer->renderText(320 + _gameState->_currentScrollValue, 398, infoTool, 5);
 		}
 	}
+}
+
+Common::WriteStream *ToonEngine::getSaveBufferStream() {
+	return _saveBufferStream;
 }
 
 const char *ToonEngine::getLocationString(int32 locationId, bool alreadyVisited) {

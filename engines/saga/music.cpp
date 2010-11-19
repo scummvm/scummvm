@@ -36,6 +36,7 @@
 #include "sound/decoders/raw.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/substream.h"
 
 namespace Saga {
 

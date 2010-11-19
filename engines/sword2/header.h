@@ -28,7 +28,6 @@
 #ifndef	SWORD2_HEADER_H
 #define	SWORD2_HEADER_H
 
-#include "common/stream.h"
 #include "common/endian.h"
 
 namespace Sword2 {
@@ -60,25 +59,8 @@ struct ResHeader {
 		return 44;
 	}
 
-	void read(byte *addr) {
-		Common::MemoryReadStream readS(addr, size());
-
-		fileType = readS.readByte();
-		compType = readS.readByte();
-		compSize = readS.readUint32LE();
-		decompSize = readS.readUint32LE();
-		readS.read(name, NAME_LEN);
-	}
-
-	void write(byte *addr) {
-		Common::MemoryWriteStream writeS(addr, size());
-
-		writeS.writeByte(fileType);
-		writeS.writeByte(compType);
-		writeS.writeUint32LE(compSize);
-		writeS.writeUint32LE(decompSize);
-		writeS.write(name, NAME_LEN);
-	}
+	void read(byte *addr);
+	void write(byte *addr);
 };
 
 // fileType
@@ -156,45 +138,8 @@ struct AnimHeader {
 		return 15;
 	}
 
-	void read(byte *addr) {
-		Common::MemoryReadStream readS(addr, size());
-
-		if (Sword2Engine::isPsx()) {
-			noAnimFrames = readS.readUint16LE();
-			feetStartX = readS.readUint16LE();
-			feetStartY = readS.readUint16LE();
-			feetEndX = readS.readUint16LE();
-			feetEndY = readS.readUint16LE();
-			blend = readS.readUint16LE();
-			runTimeComp = readS.readByte();
-			feetStartDir = readS.readByte();
-			feetEndDir = readS.readByte();
-		} else {
-			runTimeComp = readS.readByte();
-			noAnimFrames = readS.readUint16LE();
-			feetStartX = readS.readUint16LE();
-			feetStartY = readS.readUint16LE();
-			feetStartDir = readS.readByte();
-			feetEndX = readS.readUint16LE();
-			feetEndY = readS.readUint16LE();
-			feetEndDir = readS.readByte();
-			blend = readS.readUint16LE();
-		}
-	}
-
-	void write(byte *addr) {
-		Common::MemoryWriteStream writeS(addr, size());
-
-		writeS.writeByte(runTimeComp);
-		writeS.writeUint16LE(noAnimFrames);
-		writeS.writeUint16LE(feetStartX);
-		writeS.writeUint16LE(feetStartY);
-		writeS.writeByte(feetStartDir);
-		writeS.writeUint16LE(feetEndX);
-		writeS.writeUint16LE(feetEndY);
-		writeS.writeByte(feetEndDir);
-		writeS.writeUint16LE(blend);
-	}
+	void read(byte *addr);
+	void write(byte *addr);
 
 };
 
@@ -221,38 +166,10 @@ struct CdtEntry {
 	uint8 frameType;	// 0 = print sprite normally with top-left
 				// corner at (x,y), otherwise see below...
 
-	static int size() {
-		if (Sword2Engine::isPsx())
-			return 12;
-		else
-			return 9;
-	}
+	static int size();
 
-	void read(byte *addr) {
-		Common::MemoryReadStream readS(addr, size());
-
-		if (Sword2Engine::isPsx()) {
-			readS.readByte(); // Skip a byte in psx version
-			x = readS.readUint16LE();
-			y = readS.readUint16LE();
-			frameOffset = readS.readUint32LE();
-			frameType = readS.readByte();
-		} else {
-			x = readS.readUint16LE();
-			y = readS.readUint16LE();
-			frameOffset = readS.readUint32LE();
-			frameType = readS.readByte();
-		}
-	}
-
-	void write(byte *addr) {
-		Common::MemoryWriteStream writeS(addr, size());
-
-		writeS.writeUint16LE(x);
-		writeS.writeUint16LE(y);
-		writeS.writeUint32LE(frameOffset);
-		writeS.writeByte(frameType);
-	}
+	void read(byte *addr);
+	void write(byte *addr);
 };
 
 // 'frameType' bit values
@@ -277,26 +194,8 @@ struct FrameHeader {
 		return 8;
 	}
 
-	void read(byte *addr) {
-		Common::MemoryReadStream readS(addr, size());
-
-		compSize = readS.readUint32LE();
-		width = readS.readUint16LE();
-		height = readS.readUint16LE();
-
-		if (Sword2Engine::isPsx()) { // In PSX version, frames are half height
-			height *= 2;
-			width = (width % 2) ? width + 1 : width;
-		}
-	}
-
-	void write(byte *addr) {
-		Common::MemoryWriteStream writeS(addr, size());
-
-		writeS.writeUint32LE(compSize);
-		writeS.writeUint16LE(width);
-		writeS.writeUint16LE(height);
-	}
+	void read(byte *addr);
+	void write(byte *addr);
 };
 
 //----------------------------------------------------------
@@ -331,33 +230,8 @@ struct MultiScreenHeader {
 		return 36;
 	}
 
-	void read(byte *addr) {
-		Common::MemoryReadStream readS(addr, size());
-
-		palette = readS.readUint32LE();
-		bg_parallax[0] = readS.readUint32LE();
-		bg_parallax[1] = readS.readUint32LE();
-		screen = readS.readUint32LE();
-		fg_parallax[0] = readS.readUint32LE();
-		fg_parallax[1] = readS.readUint32LE();
-		layers = readS.readUint32LE();
-		paletteTable = readS.readUint32LE();
-		maskOffset = readS.readUint32LE();
-	}
-
-	void write(byte *addr) {
-		Common::MemoryWriteStream writeS(addr, size());
-
-		writeS.writeUint32LE(palette);
-		writeS.writeUint32LE(bg_parallax[0]);
-		writeS.writeUint32LE(bg_parallax[1]);
-		writeS.writeUint32LE(screen);
-		writeS.writeUint32LE(fg_parallax[0]);
-		writeS.writeUint32LE(fg_parallax[1]);
-		writeS.writeUint32LE(layers);
-		writeS.writeUint32LE(paletteTable);
-		writeS.writeUint32LE(maskOffset);
-	}
+	void read(byte *addr);
+	void write(byte *addr);
 };
 
 // Screen Header
@@ -371,21 +245,8 @@ struct ScreenHeader {
 		return 6;
 	}
 
-	void read(byte *addr) {
-		Common::MemoryReadStream readS(addr, size());
-
-		width = readS.readUint16LE();
-		height = readS.readUint16LE();
-		noLayers = readS.readUint16LE();
-	}
-
-	void write(byte *addr) {
-		Common::MemoryWriteStream writeS(addr, size());
-
-		writeS.writeUint16LE(width);
-		writeS.writeUint16LE(height);
-		writeS.writeUint16LE(noLayers);
-	}
+	void read(byte *addr);
+	void write(byte *addr);
 };
 
 // Layer Header
@@ -406,27 +267,8 @@ struct LayerHeader {
 		return 16;
 	}
 
-	void read(byte *addr) {
-		Common::MemoryReadStream readS(addr, size());
-
-		x = readS.readUint16LE();
-		y = readS.readUint16LE();
-		width = readS.readUint16LE();
-		height = readS.readUint16LE();
-		maskSize = readS.readUint32LE();
-		offset = readS.readUint32LE();
-	}
-
-	void write(byte *addr) {
-		Common::MemoryWriteStream writeS(addr, size());
-
-		writeS.writeUint16LE(x);
-		writeS.writeUint16LE(y);
-		writeS.writeUint16LE(width);
-		writeS.writeUint16LE(height);
-		writeS.writeUint32LE(maskSize);
-		writeS.writeUint32LE(offset);
-	}
+	void read(byte *addr);
+	void write(byte *addr);
 };
 
 //----------------------------------------------------------
@@ -511,17 +353,8 @@ struct TextHeader {
 		return 4;
 	}
 
-	void read(byte *addr) {
-		Common::MemoryReadStream readS(addr, size());
-
-		noOfLines = readS.readUint32LE();
-	}
-
-	void write(byte *addr) {
-		Common::MemoryWriteStream writeS(addr, size());
-
-		writeS.writeUint32LE(noOfLines);
-	}
+	void read(byte *addr);
+	void write(byte *addr);
 };
 
 // a text file has:
@@ -567,39 +400,8 @@ struct PSXScreensEntry {
 		return 36;
 	}
 
-	void read(byte *addr) {
-		Common::MemoryReadStream readS(addr, size());
-
-		bgPlxXres = readS.readUint16LE();
-		bgPlxYres = readS.readUint16LE();
-		bgPlxOffset = readS.readUint32LE();
-		bgPlxSize = readS.readUint32LE();
-		bgXres = readS.readUint16LE();
-		bgYres = readS.readUint16LE();
-		bgOffset = readS.readUint32LE();
-		bgSize = readS.readUint32LE();
-		fgPlxXres = readS.readUint16LE();
-		fgPlxYres = readS.readUint16LE();
-		fgPlxOffset = readS.readUint32LE();
-		fgPlxSize = readS.readUint32LE();
-	}
-
-	void write(byte *addr) {
-		Common::MemoryWriteStream writeS(addr, size());
-
-		writeS.writeUint16LE(bgPlxXres);
-		writeS.writeUint16LE(bgPlxYres);
-		writeS.writeUint32LE(bgPlxOffset);
-		writeS.writeUint32LE(bgPlxSize);
-		writeS.writeUint16LE(bgXres);
-		writeS.writeUint16LE(bgYres);
-		writeS.writeUint32LE(bgOffset);
-		writeS.writeUint32LE(bgSize);
-		writeS.writeUint16LE(fgPlxXres);
-		writeS.writeUint16LE(fgPlxYres);
-		writeS.writeUint32LE(fgPlxOffset);
-		writeS.writeUint32LE(fgPlxSize);
-	}
+	void read(byte *addr);
+	void write(byte *addr);
 };
 
 // PSXFontEntry is present in font resource file, it is used
@@ -615,23 +417,8 @@ struct PSXFontEntry {
 		return 8;
 	}
 
-	void read(byte *addr) {
-		Common::MemoryReadStream readS(addr, size());
-
-		offset = readS.readUint16LE() / 2;
-		skipLines = readS.readUint16LE();
-		charWidth = readS.readUint16LE() / 2;
-		charHeight = readS.readUint16LE();
-	}
-
-	void write(byte *addr) {
-		Common::MemoryWriteStream writeS(addr, size());
-
-		writeS.writeUint16LE(offset);
-		writeS.writeUint16LE(skipLines);
-		writeS.writeUint16LE(charWidth);
-		writeS.writeUint16LE(charHeight);
-	}
+	void read(byte *addr);
+	void write(byte *addr);
 };
 
 } // End of namespace Sword2

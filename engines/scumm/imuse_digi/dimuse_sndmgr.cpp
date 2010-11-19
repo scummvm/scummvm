@@ -700,7 +700,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 			assert(len);
 
 			if (!soundDesc->compressedStream) {
-				Common::MemoryReadStream *tmp = cmpFile->readStream(len);
+				Common::SeekableReadStream *tmp = cmpFile->readStream(len);
 				assert(tmp);
 #ifdef USE_FLAC
 				if (soundMode == 3)

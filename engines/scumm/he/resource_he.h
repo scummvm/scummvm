@@ -147,9 +147,6 @@ public:
 	bool _arg_raw;
 	Common::String _fileName;
 	CachedCursor _cursorCache[MAX_CACHED_CURSORS];
-
-	typedef Common::MemoryReadStream MemoryReadStream;
-
 };
 
 class Win32ResExtractor : public ResExtractor {

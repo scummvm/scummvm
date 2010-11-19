@@ -24,7 +24,7 @@
  */
 
 #include "common/endian.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"

@@ -25,6 +25,7 @@
 
 
 #include "common/endian.h"
+#include "common/memstream.h"
 #include "common/system.h"
 
 #include "engines/util.h"

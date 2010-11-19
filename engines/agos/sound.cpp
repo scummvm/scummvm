@@ -24,6 +24,7 @@
  */
 
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/util.h"
 
 #include "agos/agos.h"
@@ -305,7 +306,7 @@ class CompressedSound : public BaseSound {
 public:
 	CompressedSound(Audio::Mixer *mixer, Common::File *file, uint32 base) : BaseSound(mixer, file, base, false) {}
 
-	Common::MemoryReadStream *loadStream(uint sound) const {
+	Common::SeekableReadStream *loadStream(uint sound) const {
 		if (_offsets == NULL)
 			return NULL;
 
@@ -334,7 +335,7 @@ class MP3Sound : public CompressedSound {
 public:
 	MP3Sound(Audio::Mixer *mixer, Common::File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
 	Audio::AudioStream *makeAudioStream(uint sound) {
-		Common::MemoryReadStream *tmp = loadStream(sound);
+		Common::SeekableReadStream *tmp = loadStream(sound);
 		if (!tmp)
 			return NULL;
 		return Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
@@ -350,7 +351,7 @@ class VorbisSound : public CompressedSound {
 public:
 	VorbisSound(Audio::Mixer *mixer, Common::File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
 	Audio::AudioStream *makeAudioStream(uint sound) {
-		Common::MemoryReadStream *tmp = loadStream(sound);
+		Common::SeekableReadStream *tmp = loadStream(sound);
 		if (!tmp)
 			return NULL;
 		return Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
@@ -366,7 +367,7 @@ class FLACSound : public CompressedSound {
 public:
 	FLACSound(Audio::Mixer *mixer, Common::File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
 	Audio::AudioStream *makeAudioStream(uint sound) {
-		Common::MemoryReadStream *tmp = loadStream(sound);
+		Common::SeekableReadStream *tmp = loadStream(sound);
 		if (!tmp)
 			return NULL;
 		return Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
@@ -775,7 +776,7 @@ void Sound::playVoiceData(byte *soundData, uint sound) {
 
 void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, int pan, int vol, bool loop) {
 	int size = READ_LE_UINT32(soundData + 4) + 8;
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundData, size);
+	Common::SeekableReadStream *stream = new Common::MemoryReadStream(soundData, size);
 	Audio::RewindableAudioStream *sndStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	convertVolume(vol);

@@ -106,6 +106,7 @@ typedef struct {
 #include "common/fs.h"
 #include "common/unzip.h"
 #include "common/file.h"
+#include "common/memstream.h"
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"

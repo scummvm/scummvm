@@ -24,7 +24,7 @@
  */
 
 #include "common/endian.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "parallaction/parallaction.h"
 
@@ -670,7 +670,6 @@ GfxObj* DosDisk_br::createInventoryObjects(Common::SeekableReadStream &stream) {
 
 
 void Parallaction_ns::initFonts() {
-
 	if (getPlatform() == Common::kPlatformPC) {
 		_dialogueFont = _disk->loadFont("comic");
 		_labelFont = _disk->loadFont("topaz");
@@ -683,7 +682,6 @@ void Parallaction_ns::initFonts() {
 		_menuFont = _disk->loadFont("slide");
 		_introFont = _disk->loadFont("intro");
 	}
-
 }
 
 void Parallaction_br::initFonts() {
@@ -701,4 +699,4 @@ void Parallaction_br::initFonts() {
 	}
 }
 
-}
+} // End of namespace Parallaction

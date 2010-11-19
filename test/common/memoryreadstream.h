@@ -1,6 +1,6 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/stream.h"
+#include "common/memstream.h"
 
 class MemoryReadStreamTestSuite : public CxxTest::TestSuite {
 	public:

@@ -30,7 +30,7 @@
 #include "sci/graphics/maciconbar.h"
 #include "sci/graphics/palette.h"
 
-#include "common/stream.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "graphics/pict.h"
 #include "graphics/surface.h"
@@ -54,7 +54,7 @@ void GfxMacIconBar::drawIcons() {
 		if (!res)
 			continue;
 
-		Common::MemoryReadStream *stream = new Common::MemoryReadStream(res->data, res->size);
+		Common::SeekableReadStream *stream = new Common::MemoryReadStream(res->data, res->size);
 		Graphics::Surface *surf = pict->decodeImage(stream, pal);
 		remapColors(surf, pal);
 

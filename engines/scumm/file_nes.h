@@ -27,6 +27,7 @@
 #define SCUMM_FILE_NES_H
 
 #include "common/file.h"
+#include "common/memstream.h"
 
 #include "scumm/file.h"
 

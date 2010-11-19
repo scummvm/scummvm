@@ -77,7 +77,7 @@ protected:
 	Common::String _fileName;
 
 	byte *_data;
-	Common::MemoryReadStream *_stream;
+	Common::SeekableReadStream *_stream;
 
 	Common::InSaveFile *openSave() const;
 

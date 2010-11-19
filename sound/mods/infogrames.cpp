@@ -26,6 +26,7 @@
 #include "sound/mods/infogrames.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/memstream.h"
 
 namespace Audio {
 

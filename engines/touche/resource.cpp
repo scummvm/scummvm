@@ -666,7 +666,7 @@ void ToucheEngine::res_loadSpeechSegment(int num) {
 				return;
 			}
 			_fSpeech[0].seek(offs);
-			Common::MemoryReadStream *tmp = _fSpeech[0].readStream(size);
+			Common::SeekableReadStream *tmp = _fSpeech[0].readStream(size);
 			if (tmp)
 				stream = (compressedSpeechFilesTable[_compressedSpeechData].makeStream)(tmp, DisposeAfterUse::YES);
 		}

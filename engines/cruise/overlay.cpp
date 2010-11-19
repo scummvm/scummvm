@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "cruise/cruise.h"
 #include "cruise/cruise_main.h"

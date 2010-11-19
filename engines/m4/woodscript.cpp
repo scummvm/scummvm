@@ -25,6 +25,8 @@
 
 #include "m4/woodscript.h"
 
+#include "common/memstream.h"
+
 namespace M4 {
 
 // FIXME: Put in Engine/WoodScript class

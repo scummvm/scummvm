@@ -28,6 +28,8 @@
 #include "m4/compression.h"
 #include "m4/graphics.h"
 
+#include "common/memstream.h"
+
 namespace M4 {
 
 BaseAsset::BaseAsset(MadsM4Engine *vm) : _vm(vm) {
@@ -382,7 +384,7 @@ void SpriteAsset::loadStreamingFrame(M4Sprite *frame, int frameIndex, int destX,
 	loadFrameHeader(frameHeader);
 
 	if (frameHeader.w > 0 && frameHeader.h > 0) {
-		Common::MemoryReadStream *frameData = _stream->readStream(getFrameSize(frameIndex));
+		Common::SeekableReadStream *frameData = _stream->readStream(getFrameSize(frameIndex));
 		if (frameHeader.stream) {
 			frame->loadDeltaRle(frameData, destX - frameHeader.x, destY - frameHeader.y);
 		} else {

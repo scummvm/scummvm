@@ -32,6 +32,7 @@
 
 #include "sound/decoders/adpcm.h"
 #include "sound/audiostream.h"
+#include "common/memstream.h"
 
 namespace LastExpress {
 

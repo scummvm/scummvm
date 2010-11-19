@@ -832,7 +832,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 	uint32 c, d;
 	int completed;
 	int matched = 0;
-	MemoryReadStream *in = new MemoryReadStream(data, datasize);
+	Common::MemoryReadStream *in = new Common::MemoryReadStream(data, datasize);
 
 	if (!in->read(&dir, sizeof(Win32CursorIconFileDir)- sizeof(Win32CursorIconFileDirEntry)))
 		goto cleanup;

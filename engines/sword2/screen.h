@@ -192,19 +192,8 @@ struct Parallax {
 		return 4;
 	}
 
-	void read(byte *addr) {
-		Common::MemoryReadStream readS(addr, size());
-
-		w = readS.readUint16LE();
-		h = readS.readUint16LE();
-	}
-
-	void write(byte *addr) {
-		Common::MemoryWriteStream writeS(addr, size());
-
-		writeS.writeUint16LE(w);
-		writeS.writeUint16LE(h);
-	}
+	void read(byte *addr);
+	void write(byte *addr);
 };
 
 class Screen {

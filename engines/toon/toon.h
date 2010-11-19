@@ -43,6 +43,10 @@
 #include "toon/audio.h"
 #include "toon/console.h"
 
+namespace Common {
+class MemoryWriteStreamDynamic;
+}
+
 #define TOON_DAT_VER_MAJ 0  // 1 byte
 #define TOON_DAT_VER_MIN 3  // 1 byte
 #define TOON_SAVEGAME_VERSION 4
@@ -308,9 +312,7 @@ public:
 		return _pathFinding;
 	}
 
-	Common::WriteStream *getSaveBufferStream() {
-		return _saveBufferStream;
-	}
+	Common::WriteStream *getSaveBufferStream();
 
 	bool shouldQuitGame() const {
 		return _shouldQuit;

@@ -25,7 +25,7 @@
 
 #include "common/endian.h"
 #include "common/file.h"
-#include "common/system.h"
+#include "common/memstream.h"
 
 #include "cine/cine.h"
 #include "cine/sound.h"

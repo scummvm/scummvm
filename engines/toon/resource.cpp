@@ -25,6 +25,8 @@
 
 #include "toon/resource.h"
 #include "common/file.h"
+#include "common/memstream.h"
+#include "common/substream.h"
 #include "toon/toon.h"
 
 

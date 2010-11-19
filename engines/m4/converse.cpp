@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "common/substream.h"
 
 #include "m4/converse.h"
 #include "m4/resource.h"

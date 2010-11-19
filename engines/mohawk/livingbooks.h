@@ -31,6 +31,7 @@
 #include "mohawk/graphics.h"
 
 #include "common/config-file.h"
+#include "common/substream.h"
 
 namespace Mohawk {
 

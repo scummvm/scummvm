@@ -26,6 +26,7 @@
 #include "groovie/saveload.h"
 
 #include "common/system.h"
+#include "common/substream.h"
 
 #define SUPPORTED_SAVEFILE_VERSION 1
 // 0 - Just script variables, compatible with the original

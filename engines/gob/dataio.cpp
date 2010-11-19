@@ -25,7 +25,7 @@
 
 #include "common/endian.h"
 #include "common/types.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "gob/gob.h"
 #include "gob/dataio.h"

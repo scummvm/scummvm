@@ -36,6 +36,7 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/memstream.h"
 
 #include "tinsel/config.h"
 #include "tinsel/sound.h"
@@ -835,7 +836,7 @@ bool PCMMusicPlayer::getNextChunk() {
 	uint32 sampleOffset, sampleLength, sampleCLength;
 	Common::File file;
 	byte *buffer;
-	Common::MemoryReadStream *sampleStream;
+	Common::SeekableReadStream *sampleStream;
 
 	switch (_state) {
 	case S_NEW:

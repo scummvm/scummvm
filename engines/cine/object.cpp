@@ -25,7 +25,7 @@
 
 
 #include "common/endian.h"
-#include "common/scummsys.h"
+#include "common/memstream.h"
 #include "common/util.h"
 
 #include "cine/cine.h"

@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/stream.h"
+#include "common/memstream.h"
 #include "common/ptr.h"
 
 #include "teenagent/inventory.h"

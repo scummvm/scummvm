@@ -24,6 +24,9 @@
  */
 
 #include "common/stream.h"
+#include "common/memstream.h"
+#include "common/substream.h"
+#include "common/bufferedstream.h"
 #include "common/str.h"
 #include "common/util.h"
 
@@ -33,7 +36,7 @@ void WriteStream::writeString(const String &str) {
 	write(str.c_str(), str.size());
 }
 
-MemoryReadStream *ReadStream::readStream(uint32 dataSize) {
+SeekableReadStream *ReadStream::readStream(uint32 dataSize) {
 	void *buf = malloc(dataSize);
 	dataSize = read(buf, dataSize);
 	assert(dataSize > 0);

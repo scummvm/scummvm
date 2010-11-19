@@ -32,6 +32,7 @@
 #include "backends/audiocd/audiocd.h"
 
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/system.h"
 
 #include "sound/audiostream.h"
@@ -281,7 +282,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		// additional buffer here. MP3/OGG/FLAC decompression works on-the-fly
 		// instead.
 		memcpy(compressedData, audioRes->data, audioRes->size);
-		Common::MemoryReadStream *compressedStream = new Common::MemoryReadStream(compressedData, audioRes->size, DisposeAfterUse::YES);
+		Common::SeekableReadStream *compressedStream = new Common::MemoryReadStream(compressedData, audioRes->size, DisposeAfterUse::YES);
 		
 		switch (audioCompressionType) {
 		case MKID_BE('MP3 '):
@@ -315,7 +316,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 			}
 		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKID_BE('RIFF')) {
 			// WAVE detected
-			Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+			Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 
 			// Calculate samplelen from WAVE header
 			int waveSize = 0, waveRate = 0;
@@ -327,7 +328,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 			audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
 		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKID_BE('FORM')) {
 			// AIFF detected
-			Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+			Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 
 			// Calculate samplelen from AIFF header
 			int waveSize = 0, waveRate = 0;
@@ -340,7 +341,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		} else if (audioRes->size > 14 && READ_BE_UINT16(audioRes->data) == 1 && READ_BE_UINT16(audioRes->data + 2) == 1
 				&& READ_BE_UINT16(audioRes->data + 4) == 5 && READ_BE_UINT32(audioRes->data + 10) == 0x00018051) {
 			// Mac snd detected
-			Common::MemoryReadStream *sndStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+			Common::SeekableReadStream *sndStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 
 			audioSeekStream = Audio::makeMacSndStream(sndStream, DisposeAfterUse::YES);
 		} else {

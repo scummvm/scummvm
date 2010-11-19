@@ -27,6 +27,8 @@
 #include "m4/resource.h"
 #include "m4/events.h"
 
+#include "common/substream.h"
+
 namespace M4 {
 
 FileSystem::FileSystem(const char *hashFilename) {

@@ -25,7 +25,7 @@
 
 #include "common/keyboard.h"
 #include "common/serializer.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "common/util.h"
 

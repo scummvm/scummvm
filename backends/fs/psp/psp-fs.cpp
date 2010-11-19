@@ -27,6 +27,7 @@
 #include "engines/engine.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/psp/psp-stream.h"
+#include "common/bufferedstream.h"
 
 #include <sys/stat.h>
 #include <unistd.h>

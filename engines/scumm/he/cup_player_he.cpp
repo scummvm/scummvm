@@ -26,6 +26,7 @@
 #ifdef ENABLE_HE
 
 #include "common/system.h"
+#include "common/memstream.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/decoders/raw.h"

@@ -28,7 +28,8 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/str.h"
-#include "common/stream.h"
+#include "common/substream.h"
+#include "common/memstream.h"
 #include "common/unzip.h"
 
 #include "draci/sound.h"
@@ -301,7 +302,7 @@ uint Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 	// only used for dubbing, which is only played from one place in
 	// script.cpp, which blocks until the dubbed sentence has finished
 	// playing.
-	Common::SeekableReadStream* stream;
+	Common::SeekableReadStream *stream;
 	const int skip = buffer._format == RAW80 ? 80 : 0;
 	if (buffer._stream) {
 		stream = new Common::SeekableSubReadStream(

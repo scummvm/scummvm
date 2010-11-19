@@ -29,6 +29,7 @@
 
 #include "common/file.h"
 #include "common/frac.h"
+#include "common/memstream.h"
 #include "common/util.h"
 
 namespace Sci {

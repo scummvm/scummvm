@@ -27,7 +27,7 @@
 #include "common/util.h"
 #include "common/archive.h"
 #include "common/fs.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 
 namespace Common {
 

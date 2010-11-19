@@ -31,7 +31,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/decoders/raw.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 
 static const uint32 kVideoCodecIndeo3 = MKID_BE('iv32');
 

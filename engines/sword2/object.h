@@ -28,7 +28,7 @@
 #ifndef	SWORD2_OBJECT_H
 #define	SWORD2_OBJECT_H
 
-#include "common/stream.h"
+#include "common/memstream.h"
 #include "common/endian.h"
 
 namespace Sword2 {

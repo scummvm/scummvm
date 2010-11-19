@@ -26,6 +26,8 @@
 #include "m4/compression.h"
 #include "m4/m4.h"
 
+#include "common/memstream.h"
+
 namespace M4 {
 
 const char *madsPackString = "MADSPACK";
@@ -88,6 +90,10 @@ void MadsPack::initialise(Common::SeekableReadStream *stream) {
 
 	delete[] headerData;
 	_dataOffset = stream->pos();
+}
+
+Common::SeekableReadStream *MadsPack::getItemStream(int index) {
+	return new Common::MemoryReadStream(_items[index].data, _items[index].size, DisposeAfterUse::NO);
 }
 
 MadsPack::~MadsPack() {

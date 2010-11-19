@@ -27,6 +27,8 @@
 
 #include "scumm/scumm.h"
 
+#include "common/substream.h"
+
 namespace Scumm {
 
 #pragma mark -

@@ -36,6 +36,7 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/macresman.h"
+#include "common/memstream.h"
 #include "common/util.h"
 #include "common/zlib.h"
 

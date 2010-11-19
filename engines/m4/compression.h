@@ -58,9 +58,7 @@ public:
 	int getCount() const { return _count; }
 	MadsPackEntry &getItem(int index) const { return _items[index]; }
 	MadsPackEntry &operator[](int index) const { return _items[index]; }
-	Common::MemoryReadStream *getItemStream(int index) {
-		return new Common::MemoryReadStream(_items[index].data, _items[index].size, DisposeAfterUse::NO);
-	}
+	Common::SeekableReadStream *getItemStream(int index);
 	int getDataOffset() const { return _dataOffset; }
 };
 

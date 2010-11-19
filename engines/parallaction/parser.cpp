@@ -257,5 +257,4 @@ void Parser::parseStatement() {
 	(*(*_currentOpcodes)[_lookup])();
 }
 
-
-} // namespace Parallaction
+} // End of namespace Parallaction

@@ -24,6 +24,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/zlib.h"

@@ -223,7 +223,7 @@ public:
 	uint32 readUint32();
 protected:
 	ScriptInterpreter *_inter;
-	Common::MemoryReadStream *_code;
+	Common::SeekableReadStream *_code;
 };
 
 struct ScriptFunctionEntry {

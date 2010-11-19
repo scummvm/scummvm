@@ -34,8 +34,8 @@ namespace Made {
 
 class RedReader {
 public:
-	Common::MemoryReadStream *load(const char *redFilename, const char *filename);
-	static Common::MemoryReadStream *loadFromRed(const char *redFilename, const char *filename);
+	Common::SeekableReadStream *load(const char *redFilename, const char *filename);
+	static Common::SeekableReadStream *loadFromRed(const char *redFilename, const char *filename);
 private:
 	struct FileEntry {
 		uint32 compSize, origSize;

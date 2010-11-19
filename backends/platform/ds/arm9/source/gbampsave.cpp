@@ -30,7 +30,7 @@
 #include "fat/gba_nds_fat.h"
 #include "backends/fs/ds/ds-fs.h"
 #include "common/config-manager.h"
-
+#include "common/bufferedstream.h"
 
 #define SAVE_BUFFER_SIZE 100000
 

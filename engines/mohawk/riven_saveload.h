@@ -28,6 +28,7 @@
 
 #include "common/savefile.h"
 #include "common/str.h"
+#include "common/memstream.h"
 
 namespace Mohawk {
 

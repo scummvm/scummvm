@@ -43,7 +43,7 @@ namespace Sword25 {
 class Screenshot {
 public:
 	static bool saveToFile(Graphics::Surface *data, Common::WriteStream *stream);
-	static Common::MemoryReadStream *createThumbnail(Graphics::Surface *data);
+	static Common::SeekableReadStream *createThumbnail(Graphics::Surface *data);
 };
 
 } // End of namespace Sword25

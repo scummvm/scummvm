@@ -225,7 +225,7 @@ AnimFrame *Animation::processChunkFrame(Common::SeekableReadStream *in, const Ch
 	assert (c.frame == 0);
 
 	// Create a temporary chunk buffer
-	Common::MemoryReadStream *str = in->readStream(c.size);
+	Common::SeekableReadStream *str = in->readStream(c.size);
 
 	// Read the frame information
 	FrameInfo i;

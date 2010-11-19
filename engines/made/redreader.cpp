@@ -24,11 +24,11 @@
  */
 
 #include "made/redreader.h"
+#include "common/memstream.h"
 
 namespace Made {
 
-
-Common::MemoryReadStream *RedReader::load(const char *redFilename, const char *filename) {
+Common::SeekableReadStream *RedReader::load(const char *redFilename, const char *filename) {
 
 	Common::File fd;
 	FileEntry fileEntry;
@@ -49,9 +49,9 @@ Common::MemoryReadStream *RedReader::load(const char *redFilename, const char *f
 
 }
 
-Common::MemoryReadStream *RedReader::loadFromRed(const char *redFilename, const char *filename) {
+Common::SeekableReadStream *RedReader::loadFromRed(const char *redFilename, const char *filename) {
 	RedReader* red = new RedReader();
-	Common::MemoryReadStream* stream = red->load(redFilename, filename);
+	Common::SeekableReadStream *stream = red->load(redFilename, filename);
 	delete red;
 	return stream;
 }

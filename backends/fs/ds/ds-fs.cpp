@@ -33,6 +33,7 @@
 #include "backends/fs/stdiostream.h"
 #include "dsmain.h"
 #include "fat/gba_nds_fat.h"
+#include "common/bufferedstream.h"
 
 namespace DS {
 

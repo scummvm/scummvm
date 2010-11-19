@@ -33,6 +33,8 @@
 
 
 #include "common/file.h"
+#include "common/memstream.h"
+#include "common/substream.h"
 #include "common/system.h"
 
 #include "sound/decoders/mp3.h"

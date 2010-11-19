@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"

@@ -36,7 +36,7 @@ namespace Testbed {
 namespace MidiTests {
 
 // Helper functions for MIDI tests
-bool loadMusicInMemory(Common::MemoryWriteStreamDynamic *ws);
+bool loadMusicInMemory(Common::WriteStream *ws);
 void waitForMusicToPlay(MidiParser *parser);
 
 // will contain function declarations for MIDI tests

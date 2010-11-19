@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/memstream.h"
 
 #include "gob/gob.h"
 #include "gob/demos/demoplayer.h"

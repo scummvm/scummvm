@@ -25,6 +25,8 @@
 
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "common/memstream.h"
+#include "common/substream.h"
 #include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
 
@@ -1087,4 +1089,4 @@ Common::SeekableReadStream* AmigaDisk_ns::loadSound(const char* name) {
 	return tryOpenFile(path);
 }
 
-} // namespace Parallaction
+} // End of namespace Parallaction

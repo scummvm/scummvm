@@ -409,13 +409,6 @@ public:
 	virtual void parse(Script *script, ProgramPtr program);
 };
 
-
-} // namespace Parallaction
+} // End of namespace Parallaction
 
 #endif
-
-
-
-
-
-

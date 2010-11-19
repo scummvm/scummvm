@@ -24,7 +24,7 @@
  */
 
 #include "common/util.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 #include "sound/mixer.h"
 #include "sound/decoders/raw.h"
 #include "sound/decoders/wave.h"

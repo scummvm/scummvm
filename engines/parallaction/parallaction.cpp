@@ -1004,4 +1004,4 @@ void Parallaction::scheduleLocationSwitch(const char *location) {
 }
 
 
-} // namespace Parallaction
+} // End of namespace Parallaction

@@ -606,7 +606,7 @@ private:
 extern Parallaction *_vm;
 
 
-} // namespace Parallaction
+} // End of namespace Parallaction
 
 
 #endif

@@ -268,7 +268,7 @@ Audio::RewindableAudioStream *CompressedSound::load(CompressedSoundType type, in
 		int soundSize = _fCompressedSound.readUint32LE();
 		if (soundSize != 0) {
 			_fCompressedSound.seek(dirOffset + dirSize * 8 + soundOffset);
-			Common::MemoryReadStream *tmp = _fCompressedSound.readStream(soundSize);
+			Common::SeekableReadStream *tmp = _fCompressedSound.readStream(soundSize);
 			if (tmp) {
 				stream = (compressedSoundFilesTable[_compressedSoundType].makeStream)(tmp, DisposeAfterUse::YES);
 			}

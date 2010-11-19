@@ -77,7 +77,7 @@ public:
 	uint32 pos() const { return _code->pos() / 4; }
 protected:
 	WoodScript *_ws;
-	Common::MemoryReadStream *_code;
+	Common::SeekableReadStream *_code;
 	Sequence *_sequence;
 	static int32 _dataFormats[];
 	bool decodeArgument(int32 format, int32 data, long *&arg, long &value);

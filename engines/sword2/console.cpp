@@ -26,6 +26,7 @@
  */
 
 
+#include "common/memstream.h"
 #include "common/rect.h"
 #include "common/system.h"
 

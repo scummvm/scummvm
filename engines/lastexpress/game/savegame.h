@@ -78,6 +78,7 @@
 
 #include "common/savefile.h"
 #include "common/serializer.h"
+#include "common/memstream.h"
 
 namespace LastExpress {
 

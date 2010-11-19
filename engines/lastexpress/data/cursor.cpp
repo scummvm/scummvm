@@ -42,7 +42,7 @@ bool Cursor::load(Common::SeekableReadStream *stream) {
 		return false;
 
 	// Load the whole file to memory
-	Common::MemoryReadStream *data = stream->readStream((uint32) stream->size());
+	Common::SeekableReadStream *data = stream->readStream((uint32) stream->size());
 	delete stream;
 	if (!data)
 		return false;

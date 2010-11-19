@@ -30,6 +30,7 @@
 #include "graphics/cursorman.h"
 
 #include "common/events.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 
 namespace Agi {

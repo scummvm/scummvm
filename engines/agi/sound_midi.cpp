@@ -47,6 +47,7 @@
 #include "sound/midiparser.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 
 #include "agi/agi.h"

@@ -288,7 +288,7 @@ void MadsM4Engine::dumpFile(const char* filename, bool uncompress) {
 		}
 	} else {
 		MadsPack packData(fileS);
-		Common::MemoryReadStream *sourceUnc;
+		Common::SeekableReadStream *sourceUnc;
 		for (int i = 0; i < packData.getCount(); i++) {
 			sourceUnc = packData.getItemStream(i);
 			debugCN(kDebugCore, "Dumping compressed chunk %i of %i, size is %i\n", i + 1, packData.getCount(), sourceUnc->size());

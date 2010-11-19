@@ -316,7 +316,7 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 	}
 
 	// Get the screenshot
-	Common::MemoryReadStream *thumbnail = Kernel::getInstance()->getGfx()->getThumbnail();
+	Common::SeekableReadStream *thumbnail = Kernel::getInstance()->getGfx()->getThumbnail();
 
 	if (thumbnail) {
 		byte *buffer = new Byte[FILE_COPY_BUFFER_SIZE];

@@ -27,6 +27,7 @@
 #define SCUMM_FILE_H
 
 #include "common/file.h"
+#include "common/memstream.h"
 
 #include "scumm/detection.h"
 

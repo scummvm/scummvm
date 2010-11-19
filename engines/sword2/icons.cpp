@@ -26,7 +26,7 @@
  */
 
 
-#include "common/stream.h"
+#include "common/memstream.h"
 #include "common/rect.h"
 
 #include "sword2/sword2.h"

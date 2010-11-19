@@ -598,7 +598,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 #ifdef USE_MAD
 			{
 			assert(size > 0);
-			Common::MemoryReadStream *tmp = _sfxFile->readStream(size);
+			Common::SeekableReadStream *tmp = _sfxFile->readStream(size);
 			assert(tmp);
 			input = Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
 			}
@@ -608,7 +608,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 #ifdef USE_VORBIS
 			{
 			assert(size > 0);
-			Common::MemoryReadStream *tmp = _sfxFile->readStream(size);
+			Common::SeekableReadStream *tmp = _sfxFile->readStream(size);
 			assert(tmp);
 			input = Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
 			}
@@ -618,7 +618,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 #ifdef USE_FLAC
 			{
 			assert(size > 0);
-			Common::MemoryReadStream *tmp = _sfxFile->readStream(size);
+			Common::SeekableReadStream *tmp = _sfxFile->readStream(size);
 			assert(tmp);
 			input = Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
 			}

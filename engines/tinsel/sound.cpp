@@ -37,6 +37,7 @@
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/system.h"
 
 #include "sound/mixer.h"

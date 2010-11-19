@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"
+#include "common/memstream.h"
 #include "common/system.h"
 
 #include "sword1/sound.h"
@@ -366,7 +367,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			}
 		} else if (_cowMode == CowPSX && sampleSize != 0xffffffff) {
 			_cowFile.seek(index * 2048);
-			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
+			Common::SeekableReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
 			stream = Audio::makeVagStream(tmp);
 			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
@@ -379,7 +380,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 #ifdef USE_FLAC
 		else if (_cowMode == CowFLAC) {
 			_cowFile.seek(index);
-			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
+			Common::SeekableReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
 			stream = Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
 			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
@@ -393,7 +394,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 #ifdef USE_VORBIS
 		else if (_cowMode == CowVorbis) {
 			_cowFile.seek(index);
-			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
+			Common::SeekableReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
 			stream = Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
 			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
@@ -407,7 +408,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 #ifdef USE_MAD
 		else if (_cowMode == CowMP3) {
 			_cowFile.seek(index);
-			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
+			Common::SeekableReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
 			stream = Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
 			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);

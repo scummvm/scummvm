@@ -31,7 +31,7 @@
 #include "icon.h"
 #include "DCLauncherDialog.h"
 #include <common/config-manager.h>
-#include <common/stream.h>
+#include <common/memstream.h>
 
 #include "backends/plugins/dc/dc-provider.h"
 #include "sound/mixer_intern.h"

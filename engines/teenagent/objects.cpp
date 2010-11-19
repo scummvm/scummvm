@@ -23,7 +23,7 @@
  */
 
 #include "common/debug.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 #include "teenagent/objects.h"
 #include "teenagent/resources.h"
 

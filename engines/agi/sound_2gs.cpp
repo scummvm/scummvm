@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/md5.h"
+#include "common/memstream.h"
 #include "common/str-array.h"
 
 #include "agi/agi.h"
@@ -839,7 +840,7 @@ bool SoundGen2GS::loadInstrumentHeaders(const Common::FSNode &exePath, const IIg
 	}
 
 	// Read the whole executable file into memory
-	Common::SharedPtr<Common::MemoryReadStream> data(file.readStream(file.size()));
+	Common::SharedPtr<Common::SeekableReadStream> data(file.readStream(file.size()));
 	file.close();
 
 	// Check that we got enough data to be able to parse the instruments
@@ -891,7 +892,7 @@ bool SoundGen2GS::loadWaveFile(const Common::FSNode &wavePath, const IIgsExeInfo
 
 	// Open the wave file and read it into memory
 	file.open(wavePath);
-	Common::SharedPtr<Common::MemoryReadStream> uint8Wave(file.readStream(file.size()));
+	Common::SharedPtr<Common::SeekableReadStream> uint8Wave(file.readStream(file.size()));
 	file.close();
 
 	// Check that we got the whole wave file

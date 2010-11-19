@@ -26,8 +26,9 @@
 #include "kyra/resource_intern.h"
 #include "kyra/resource.h"
 
-#include "common/stream.h"
 #include "common/endian.h"
+#include "common/memstream.h"
+#include "common/substream.h"
 
 namespace Kyra {
 

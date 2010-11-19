@@ -28,7 +28,7 @@
  */
 
 #include "common/endian.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "cine/cine.h"
 #include "cine/anim.h"
@@ -485,7 +485,7 @@ void convert4BBP(byte *dest, const byte *source, int16 width, int16 height) {
  * @param[out] animHeader Image header reference
  * @param readS Input stream open for reading
  */
-void loadAnimHeader(AnimHeaderStruct &animHeader, Common::MemoryReadStream readS) {
+void loadAnimHeader(AnimHeaderStruct &animHeader, Common::SeekableReadStream &readS) {
 	animHeader.field_0 = readS.readByte();
 	animHeader.field_1 = readS.readByte();
 	animHeader.field_2 = readS.readByte();

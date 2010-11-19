@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 #include "common/savefile.h"
+#include "common/substream.h"
 #include "common/system.h"
 
 #include "kyra/kyra_v2.h"

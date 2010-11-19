@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stream.h"
+#include "common/substream.h"
 
 #include "graphics/conversion.h"
 #include "graphics/jpeg.h"

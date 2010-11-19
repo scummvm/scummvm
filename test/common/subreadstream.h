@@ -1,6 +1,7 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/stream.h"
+#include "common/memstream.h"
+#include "common/substream.h"
 
 class SubReadStreamTestSuite : public CxxTest::TestSuite {
 	public:

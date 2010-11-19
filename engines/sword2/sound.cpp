@@ -37,6 +37,7 @@
 
 
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/system.h"
 
 #include "sword2/sword2.h"

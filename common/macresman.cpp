@@ -30,6 +30,8 @@
 #include "common/fs.h"
 #include "common/macresman.h"
 #include "common/md5.h"
+#include "common/substream.h"
+#include "common/memstream.h"
 
 #ifdef MACOSX
 #include "common/config-manager.h"

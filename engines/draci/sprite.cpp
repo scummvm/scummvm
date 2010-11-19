@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "draci/draci.h"
 #include "draci/font.h"

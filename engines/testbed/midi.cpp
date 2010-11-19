@@ -24,6 +24,7 @@
 
 #include "common/archive.h"
 #include "common/events.h"
+#include "common/memstream.h"
 
 #include "graphics/cursorman.h"
 
@@ -34,7 +35,7 @@
 
 namespace Testbed {
 
-bool MidiTests::loadMusicInMemory(Common::MemoryWriteStreamDynamic *ws) {
+bool MidiTests::loadMusicInMemory(Common::WriteStream *ws) {
 	Common::SeekableReadStream *midiFile = SearchMan.createReadStreamForMember("music.mid");
 	if (!midiFile) {
 		Testsuite::logPrintf("Error! Can't open Midi music file, check game data directory for file music.mid\n");

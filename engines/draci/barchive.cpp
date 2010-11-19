@@ -25,7 +25,7 @@
 
 #include "common/debug.h"
 #include "common/str.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "draci/barchive.h"
 #include "draci/draci.h"
