@@ -621,7 +621,7 @@ void Entities::resetSequences(EntityIndex entityIndex) const {
 	strcpy((char*)&getData(entityIndex)->sequenceName, "");
 	strcpy((char*)&getData(entityIndex)->sequenceName2, "");
 
-	// Original engine resets flag to decompress data on the fly (we don't need to do that)
+	getScenes()->resetQueue();
 }
 
 //////////////////////////////////////////////////////////////////////////
