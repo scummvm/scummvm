@@ -1587,7 +1587,9 @@ void run_vm(EngineState *s) {
 		case 0x26: // (38)
 		case 0x27: // (39)
 			if (getSciVersion() == SCI_VERSION_3) {
-				if (extOpcode == 0x4d)
+				if (extOpcode == 0x4c)
+					s->r_acc = obj->getInfoSelector();
+				else if (extOpcode == 0x4d)
 					PUSH32(obj->getInfoSelector());
 				else if (extOpcode == 0x4e)
 					s->r_acc = obj->getSuperClassSelector();	// TODO: is this correct?
