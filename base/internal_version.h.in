@@ -2,12 +2,11 @@
 #error This file may only be included by base/version.cpp
 #endif
 
-#ifndef SCUMMVM_SVN_REVISION
-#define SCUMMVM_SVN_REVISION "@SVN_REVISION@"
-#endif
-
 #ifdef RELEASE_BUILD
 #undef SCUMMVM_SVN_REVISION
+#endif
+
+#ifndef SCUMMVM_SVN_REVISION
 #define SCUMMVM_SVN_REVISION
 #endif
 
