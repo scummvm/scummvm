@@ -37,6 +37,34 @@
 
 namespace Mohawk {
 
+GraphicsManager::GraphicsManager() {
+}
+
+GraphicsManager::~GraphicsManager() {
+	clearCache();
+}
+
+void GraphicsManager::clearCache() {
+	for (Common::HashMap<uint16, Graphics::Surface *>::iterator it = _cache.begin(); it != _cache.end(); it++) {
+		it->_value->free();
+		delete it->_value;
+	}
+
+	_cache.clear();
+}
+
+Graphics::Surface *GraphicsManager::findImage(uint16 id) {
+	if (!_cache.contains(id))
+		_cache[id] = decodeImage(id);
+
+	// TODO: Probably would be nice to limit the size of the cache
+	// Currently, this can't get large because it is freed on every
+	// card/stack change in Myst/Riven so I'm not worried about it.
+	// Doesn't mean this shouldn't be done in the future.
+
+	return _cache[id];
+}
+
 Graphics::Surface *ImageData::getSurface() {
 	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 	Graphics::Surface *surface = new Graphics::Surface();
@@ -63,7 +91,7 @@ Graphics::Surface *ImageData::getSurface() {
 	return surface;
 }
 
-MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : _vm(vm) {
+MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = new MystBitmap();
 
 	// The original version of Myst could run in 8bpp color too.
@@ -142,15 +170,8 @@ void MystGraphics::loadExternalPictureFile(uint16 stack) {
 	}
 }
 
-void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest) {
-	// Clip the destination rect to the screen
-	if (dest.right > _vm->_system->getWidth() || dest.bottom > _vm->_system->getHeight())
-		dest.debugPrint(4, "Clipping destination rect to the screen:");
-
-	dest.right = CLIP<int>(dest.right, 0, _vm->_system->getWidth());
-	dest.bottom = CLIP<int>(dest.bottom, 0, _vm->_system->getHeight());
-
-	Graphics::Surface *surface = NULL;
+Graphics::Surface *MystGraphics::decodeImage(uint16 id) {
+	Graphics::Surface *surface = 0;
 
 	// Myst ME uses JPEG/PICT images instead of compressed Windows Bitmaps for room images,
 	// though there are a few weird ones that use that format. For further nonsense with images,
@@ -158,7 +179,7 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	// going to check for a PICT resource.
 	if (_vm->getFeatures() & GF_ME && _vm->getPlatform() == Common::kPlatformMacintosh && _pictureFile.picFile.isOpen()) {
 		for (uint32 i = 0; i < _pictureFile.pictureCount; i++)
-			if (_pictureFile.entries[i].id == image) {
+			if (_pictureFile.entries[i].id == id) {
 				if (_pictureFile.entries[i].type == 0) {
 					Graphics::Surface *jpegSurface = _jpegDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size));
 					surface->copyFrom(*jpegSurface);
@@ -179,10 +200,10 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 		bool isPict = false;
 		Common::SeekableReadStream *dataStream = NULL;
 
-		if (_vm->getFeatures() & GF_ME && _vm->hasResource(ID_PICT, image)) {
+		if (_vm->getFeatures() & GF_ME && _vm->hasResource(ID_PICT, id)) {
 			// The PICT resource exists. However, it could still contain a MystBitmap
 			// instead of a PICT image...
-			dataStream = _vm->getRawData(ID_PICT, image);
+			dataStream = _vm->getRawData(ID_PICT, id);
 
 			// Here we detect whether it's really a PICT or a WDIB. Since a MystBitmap
 			// would be compressed, there's no way to detect for the BM without a hack.
@@ -191,7 +212,7 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 			isPict = (dataStream->readUint32BE() == 0x001102FF);
 			dataStream->seek(0);
 		} else // No PICT, so the WDIB must exist. Let's go grab it.
-			dataStream = _vm->getRawData(ID_WDIB, image);
+			dataStream = _vm->getRawData(ID_WDIB, id);
 
 		if (isPict)
 			surface = _pictDecoder->decodeImage(dataStream);
@@ -202,6 +223,20 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 		}
 	}
 
+	assert(surface);
+	return surface;
+}
+
+void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest) {
+	// Clip the destination rect to the screen
+	if (dest.right > _vm->_system->getWidth() || dest.bottom > _vm->_system->getHeight())
+		dest.debugPrint(4, "Clipping destination rect to the screen:");
+
+	dest.right = CLIP<int>(dest.right, 0, _vm->_system->getWidth());
+	dest.bottom = CLIP<int>(dest.bottom, 0, _vm->_system->getHeight());
+
+	Graphics::Surface *surface = findImage(image);
+
 	debug(3, "Image Blit:");
 	debug(3, "src.x: %d", src.left);
 	debug(3, "src.y: %d", src.top);
@@ -210,22 +245,17 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	debug(3, "width: %d", src.width());
 	debug(3, "height: %d", src.height());
 
-	if (surface) {
-		uint16 width = MIN<int>(surface->w, dest.width());
-		uint16 height = MIN<int>(surface->h, dest.height());
+	uint16 width = MIN<int>(surface->w, dest.width());
+	uint16 height = MIN<int>(surface->h, dest.height());
 
-		// Convert from bitmap coordinates to surface coordinates
-		uint16 top = surface->h - src.top - height;
+	// Convert from bitmap coordinates to surface coordinates
+	uint16 top = surface->h - src.top - height;
 
-		for (uint16 i = 0; i < height; i++)
-			memcpy(_mainScreen->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->bytesPerPixel);
+	for (uint16 i = 0; i < height; i++)
+		memcpy(_mainScreen->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->bytesPerPixel);
 
-		surface->free();
-		delete surface;
-
-		// Mark the screen as dirty
-		_dirtyScreen = true;
-	}
+	// Mark the screen as dirty
+	_dirtyScreen = true;
 }
 
 void MystGraphics::copyImageToScreen(uint16 image, Common::Rect dest) {
@@ -285,7 +315,7 @@ void MystGraphics::drawRect(Common::Rect rect, bool active) {
 	_vm->_system->unlockScreen();
 }
 
-RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : _vm(vm) {
+RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm) {
 	_bitmapDecoder = new MohawkBitmap();
 
 	// Give me the best you've got!
@@ -312,11 +342,15 @@ RivenGraphics::~RivenGraphics() {
 	delete _bitmapDecoder;
 }
 
-void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uint32 right, uint32 bottom) {
-	// First, decode the image and get the high color surface
-	ImageData *imageData = _bitmapDecoder->decodeImage(_vm->getRawData(ID_TBMP, image));
+Graphics::Surface *RivenGraphics::decodeImage(uint16 id) {
+	ImageData *imageData = _bitmapDecoder->decodeImage(_vm->getRawData(ID_TBMP, id));
 	Graphics::Surface *surface = imageData->getSurface();
 	delete imageData;
+	return surface;
+}
+
+void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uint32 right, uint32 bottom) {
+	Graphics::Surface *surface = findImage(image);
 
 	// Clip the width to fit on the screen. Fixes some images.
 	if (left + surface->w > 608)
@@ -324,9 +358,6 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 
 	for (uint16 i = 0; i < surface->h; i++)
 		memcpy(_mainScreen->getBasePtr(left, i + top), surface->getBasePtr(0, i), surface->w * surface->bytesPerPixel);
-
-	surface->free();
-	delete surface;
 
 	_dirtyScreen = true;
 }
@@ -716,17 +747,12 @@ void RivenGraphics::drawRect(Common::Rect rect, bool active) {
 
 void RivenGraphics::drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect) {
 	// Draw tBMP id from srcRect to dstRect
-	ImageData *imageData = _bitmapDecoder->decodeImage(_vm->getRawData(ID_TBMP, id));
-	Graphics::Surface *surface = imageData->getSurface();
-	delete imageData;
+	Graphics::Surface *surface = findImage(id);
 
 	assert(srcRect.width() == dstRect.width() && srcRect.height() == dstRect.height());
 
 	for (uint16 i = 0; i < srcRect.height(); i++)
 		memcpy(_mainScreen->getBasePtr(dstRect.left, i + dstRect.top), surface->getBasePtr(srcRect.left, i + srcRect.top), srcRect.width() * surface->bytesPerPixel);
-
-	surface->free();
-	delete surface;
 
 	_dirtyScreen = true;
 }
@@ -747,7 +773,7 @@ void RivenGraphics::drawExtrasImage(uint16 id, Common::Rect dstRect) {
 	_dirtyScreen = true;
 }
 
-LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm) : _vm(vm) {
+LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = (_vm->getGameType() == GType_LIVINGBOOKSV1) ? new OldMohawkBitmap() : new MohawkBitmap();
 	_palette = new byte[256 * 4];
 	memset(_palette, 0, 256 * 4);
@@ -758,26 +784,30 @@ LBGraphics::~LBGraphics() {
 	delete[] _palette;
 }
 
-void LBGraphics::copyImageToScreen(uint16 image, uint16 left, uint16 right) {
+Graphics::Surface *LBGraphics::decodeImage(uint16 id) {
 	ImageData *imageData;
 
 	if (_vm->getGameType() == GType_LIVINGBOOKSV1)
-		imageData = _bmpDecoder->decodeImage(_vm->wrapStreamEndian(ID_BMAP, image));
+		imageData = _bmpDecoder->decodeImage(_vm->wrapStreamEndian(ID_BMAP, id));
 	else
-		imageData = _bmpDecoder->decodeImage(_vm->getRawData(ID_TBMP, image));
+		imageData = _bmpDecoder->decodeImage(_vm->getRawData(ID_TBMP, id));
 
 	imageData->_palette = _palette;
 	Graphics::Surface *surface = imageData->getSurface();
 	imageData->_palette = NULL; // Unset the palette so it doesn't get deleted
 	delete imageData;
 
+	return surface;
+}
+
+void LBGraphics::copyImageToScreen(uint16 image, uint16 left, uint16 right) {
+	Graphics::Surface *surface = findImage(image);
+
 	uint16 width = MIN<int>(surface->w, _vm->_system->getWidth());
 	uint16 height = MIN<int>(surface->h, _vm->_system->getHeight());
 	_vm->_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, left, right, width, height);
-	surface->free();
-	delete surface;
 
-	// FIXME: Remove this and update only at certain points
+	// FIXME: Remove this and update only when necessary
 	_vm->_system->updateScreen();
 }
 

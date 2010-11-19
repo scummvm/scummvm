@@ -30,6 +30,7 @@
 #include "mohawk/livingbooks.h"
 
 #include "common/file.h"
+#include "common/hashmap.h"
 #include "graphics/pict.h"
 #include "graphics/video/codecs/mjpeg.h"
 
@@ -90,7 +91,28 @@ public:
 	byte *_palette;
 };
 
-class MystGraphics {
+class GraphicsManager {
+public:
+	GraphicsManager();
+	virtual ~GraphicsManager();
+
+	// Free all surfaces in the cache
+	void clearCache();
+
+protected:
+	// findImage will search the cache to find the image.
+	// If not found, it will call decodeImage to get a new one.
+	Graphics::Surface *findImage(uint16 id);
+
+	// decodeImage will always return a new image.
+	virtual Graphics::Surface *decodeImage(uint16 id) = 0;
+
+private:
+	// An image cache that stores images until clearCache() is called
+	Common::HashMap<uint16, Graphics::Surface *> _cache;
+};
+
+class MystGraphics : public GraphicsManager {
 public:
 	MystGraphics(MohawkEngine_Myst*);
 	~MystGraphics();
@@ -104,6 +126,10 @@ public:
 	void updateScreen();
 
 	void drawRect(Common::Rect rect, bool active);
+
+protected:
+	Graphics::Surface *decodeImage(uint16 id);
+
 private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
@@ -141,7 +167,7 @@ struct SFXERecord {
 	uint32 lastFrameTime;
 };
 
-class RivenGraphics {
+class RivenGraphics : public GraphicsManager {
 public:
 	RivenGraphics(MohawkEngine_Riven *vm);
 	~RivenGraphics();
@@ -169,6 +195,9 @@ public:
 	void showInventory();
 	void hideInventory();
 
+protected:
+	Graphics::Surface *decodeImage(uint16 id);
+
 private:
 	MohawkEngine_Riven *_vm;
 	MohawkBitmap *_bitmapDecoder;
@@ -191,13 +220,16 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 };
 
-class LBGraphics {
+class LBGraphics : public GraphicsManager {
 public:
 	LBGraphics(MohawkEngine_LivingBooks *vm);
 	~LBGraphics();
 
 	void copyImageToScreen(uint16 image, uint16 left = 0, uint16 top = 0);
 	void setPalette(uint16 id);
+
+protected:
+	Graphics::Surface *decodeImage(uint16 id);
 
 private:
 	MohawkBitmap *_bmpDecoder;

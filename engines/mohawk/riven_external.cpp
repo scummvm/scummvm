@@ -281,7 +281,7 @@ void RivenExternal::resetDomeSliders(uint16 bitmapId, uint16 soundId, uint16 sta
 			if (slidersFound) {
 				_vm->_sound->playSound(soundId);
 				drawDomeSliders(bitmapId, startHotspot);
-				_vm->_system->delayMillis(10);
+				_vm->_system->delayMillis(100);
 			}
 		}
 	}

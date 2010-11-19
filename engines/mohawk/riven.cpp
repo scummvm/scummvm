@@ -264,6 +264,9 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	_video->stopVideos();
 	_video->clearMLST();
 
+	// Clear the graphics cache; images aren't used across stack boundaries
+	_gfx->clearCache();
+
 	// Clear the old stack files out
 	for (uint32 i = 0; i < _mhk.size(); i++)
 		delete _mhk[i];
@@ -316,6 +319,10 @@ struct RivenSpecialChange {
 void MohawkEngine_Riven::changeToCard(uint16 dest) {
 	_curCard = dest;
 	debug (1, "Changing to card %d", _curCard);
+
+	// Clear the graphics cache (images typically aren't used
+	// on different cards).
+	_gfx->clearCache();
 
 	if (!(getFeatures() & GF_DEMO)) {
 		for (byte i = 0; i < 13; i++)

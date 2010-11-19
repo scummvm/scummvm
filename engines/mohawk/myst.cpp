@@ -367,7 +367,9 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 
 	_runExitScript = false;
 
+	// Clear the resource cache and the image cache
 	_cache.clear();
+	_gfx->clearCache();
 }
 
 void MohawkEngine_Myst::changeToCard(uint16 card) {
@@ -385,7 +387,9 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 
 	unloadCard();
 
+	// Clear the resource cache and image cache
 	_cache.clear();
+	_gfx->clearCache();
 
 	_curCard = card;
 
