@@ -688,6 +688,11 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		return argv[1];
 	}
 	case 6: { // Cpy
+		if (argv[1].isNull() || argv[3].isNull()) {
+			warning("kArray(Cpy): Request to copy from or to a null pointer");
+			return NULL_REG;
+		}
+	  
 #if 0
 		if (s->_segMan->getSegmentObj(argv[1].segment)->getType() != SEG_TYPE_ARRAY ||
 			s->_segMan->getSegmentObj(argv[3].segment)->getType() != SEG_TYPE_ARRAY) {
@@ -722,6 +727,11 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		warning("kArray(Cmp) called");
 		return s->r_acc;
 	case 8: { // Dup
+		if (argv[1].isNull()) {
+			warning("kArray(Dup): Request to duplicate a null pointer");
+			return NULL_REG;
+		}
+
 		SegmentType sourceType = s->_segMan->getSegmentObj(argv[1].segment)->getType();
 		if (sourceType == SEG_TYPE_SCRIPT) {
 			// A technique used in later SCI2.1 and SCI3 games: the contents of a script
