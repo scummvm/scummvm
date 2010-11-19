@@ -100,6 +100,8 @@ private:
 	void xalaunchbrowser(uint16 argc, uint16 *argv);
 	void xadisablemenuintro(uint16 argc, uint16 *argv);
 	void xaenablemenuintro(uint16 argc, uint16 *argv);
+	void xademoquit(uint16 argc, uint16 *argv);
+	void xaexittomain(uint16 argc, uint16 *argv);
 
 	// -----------------------------------------------------
 	// bspit (Boiler Island) external commands

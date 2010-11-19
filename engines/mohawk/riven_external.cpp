@@ -70,6 +70,8 @@ void RivenExternal::setupCommands() {
 	COMMAND(xalaunchbrowser);
 	COMMAND(xadisablemenuintro);
 	COMMAND(xaenablemenuintro);
+	COMMAND(xademoquit);
+	COMMAND(xaexittomain);
 
 	// bspit (Bookmaking Island) external commands
 	COMMAND(xblabopenbook);
@@ -650,6 +652,26 @@ void RivenExternal::xaenablemenuintro(uint16 argc, uint16 *argv) {
 
 	// Show the "exit" button here
 	_vm->_gfx->showInventory();
+}
+
+void RivenExternal::xademoquit(uint16 argc, uint16 *argv) {
+	// Exactly as it says on the tin. In the demo, this function quits.
+	_vm->setGameOver();
+}
+
+void RivenExternal::xaexittomain(uint16 argc, uint16 *argv) {
+	// One could potentially implement this function, but there would be no
+	// point. This function is only used in the demo's aspit card 9 update
+	// screen script. However, card 9 is not accessible from the game without
+	// jumping to the card and there's nothing going on in the card so it
+	// never gets called. There's also no card 9 in the full game, so the
+	// functionality of this card was likely removed before release. The
+	// demo executable references some other external commands relating to
+	// setting and getting the volume, as well as drawing the volume. I'd
+	// venture to guess that this would have been some sort of options card
+	// replaced with the Windows/Mac API in the final product.
+	//
+	// Yeah, this function is just dummied and holds a big comment ;)
 }
 
 // ------------------------------------------------------------------------------------
