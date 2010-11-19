@@ -616,6 +616,15 @@ reg_t kText(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kString(EngineState *s, int argc, reg_t *argv) {
+
+	// TODO: Find out how exactly subfunctions work in SCI3
+	if (getSciVersion() == SCI_VERSION_3 &&
+	    argv[0].toUint16() == 8)
+		argv[0].offset = 10;
+	if (getSciVersion() == SCI_VERSION_3 &&
+	    argv[0].toUint16() == 11)
+		argv[0].offset = 13;
+
 	switch (argv[0].toUint16()) {
 	case 0: { // New
 		reg_t stringHandle;
@@ -780,9 +789,13 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		Common::String string = s->_segMan->getString(argv[1]);
 		return make_reg(0, (uint16)atoi(string.c_str()));
 	}
-	case 14: // Unknown (SCI3)
-		warning("Unknown kString subop %d", argv[0].toUint16());
+	case 14: { // lower (SCI3)
+		Common::String string = s->_segMan->getString(argv[1]);
+		
+		string.toLowercase();
+		s->_segMan->strcpy(argv[1], string.c_str());
 		return NULL_REG;
+	}
 	default:
 		error("Unknown kString subop %d", argv[0].toUint16());
 	}
