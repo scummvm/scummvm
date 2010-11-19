@@ -719,11 +719,23 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 	}
 	case 7: // Cmp
 		// Not implemented in SSCI
+		warning("kArray(Cmp) called");
 		return s->r_acc;
 	case 8: { // Dup
-		if (s->_segMan->getSegmentObj(argv[1].segment)->getType() != SEG_TYPE_ARRAY) {
-			// Happens in the RAMA demo and LSL7
-			warning("kArray(Dup): Request to duplicate a segment which isn't an array, ignoring");
+		SegmentType sourceType = s->_segMan->getSegmentObj(argv[1].segment)->getType();
+		if (sourceType == SEG_TYPE_SCRIPT) {
+			// A technique used in later SCI2.1 and SCI3 games: the contents of a script
+			// are loaded in an array (well, actually a string).
+			Script *scr = s->_segMan->getScript(argv[1].segment);
+			reg_t stringHandle;
+
+			SciString *dupString = s->_segMan->allocateString(&stringHandle);
+			dupString->setSize(scr->getBufSize());
+			dupString->fromString(Common::String((const char *)scr->getBuf()));
+
+			return stringHandle;
+		} else if (sourceType != SEG_TYPE_ARRAY && sourceType != SEG_TYPE_SCRIPT) {
+			warning("kArray(Dup): Request to duplicate a segment which isn't an array or a script, ignoring");
 			return NULL_REG;
 		}
 
