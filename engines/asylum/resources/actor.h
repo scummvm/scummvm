@@ -40,6 +40,11 @@ class Screen;
 struct ActionArea;
 struct GraphicFrame;
 
+struct ActorData {
+	int32 count;
+	// TODO add actor data fields
+};
+
 class Actor {
 public:
 	Actor(AsylumEngine *engine, ActorIndex index);
@@ -98,11 +103,18 @@ public:
 	/////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Loads the actor data
+	 * Loads the actor
 	 *
 	 * @param stream If non-null, the Common::SeekableReadStream to load from
 	 */
 	void load(Common::SeekableReadStream *stream);
+
+	/**
+	 * Loads the actor data.
+	 *
+	 * @param stream If non-null, the Common::SeekableReadStream to load from
+	 */
+	void loadData(Common::SeekableReadStream *stream);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Visibility

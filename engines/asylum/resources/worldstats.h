@@ -37,9 +37,10 @@ namespace Asylum {
 #define OBJECTS_MAX_COUNT 400
 #define ACTIONS_MAX_COUNT 400
 
-#define ACTORS_SIZE   2468
-#define OBJECTS_SIZE  1704
-#define ACTIONS_SIZE  180
+#define ACTORS_SIZE       2468
+#define ACTORDATA_SIZE    1448
+#define OBJECTS_SIZE      1704
+#define ACTIONS_SIZE      180
 
 class Actor;
 class Object;
@@ -109,10 +110,13 @@ public:
 	int32 musicFlag;
 	ResourceId musicResourceId;
 	int32 musicStatusExt;
-	Common::Array<Object*>    objects;   // maxsize 400
+	Common::Array<Object*>     objects;   // maxsize 400
 	Common::Array<Actor*>      actors;   // maxsize 50
-	// TODO add rest fields
+	// ActorData is stored in each actor instance
+	int32 numActionLists;
+	int32 numPolygons;
 	Common::Array<ActionArea*> actions;  // maxsize 400
+	// TODO Add missing fields
 	int32 field_E848C;
 	int32 field_E8490;
 	int32 field_E8494;
