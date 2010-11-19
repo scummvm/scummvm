@@ -640,7 +640,7 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	case SEG_TYPE_DYNMEM:
 		base.offset += offset;
 		return base;
-
+#ifdef ENABLE_SCI32
 	case SEG_TYPE_STRING: {
 		// We need to copy over the string into a new one
 		// Make sure that the offset is positive
@@ -664,7 +664,7 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 
 		return newStringAddr;
 	}
-
+#endif
 	default:
 		// FIXME: Changed this to warning, because iceman does this during dancing with girl.
 		// Investigate why that is so and either fix the underlying issue or implement a more
