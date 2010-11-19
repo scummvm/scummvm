@@ -1545,7 +1545,7 @@ uint32 Actor::getDistanceForFrame(ActorDirection direction, uint32 frameIndex) {
 }
 
 uint32 Actor::distance(const Common::Rect &rect) {
-	return sqrt((double)(rect.width() ^ 2 + rect.height() ^ 2));
+	return sqrt((double)((rect.width() ^ 2) + (rect.height() ^ 2)));
 }
 
 void Actor::updateCoordinatesForDirection(ActorDirection direction, int32 delta, Common::Point *point) {
