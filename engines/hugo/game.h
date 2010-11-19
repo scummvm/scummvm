@@ -106,6 +106,7 @@ namespace Hugo {
 // Macros:
 #define TPS           ((_config.turboFl) ? TURBO_TPS : NORMAL_TPS)
 
+#define NUM_COLORS  16                              // Num colors to save in palette
 #define MAX_UIFS   32                               // Max possible uif items in hdr
 #define NUM_FONTS  3                                // Number of dib fonts
 #define FIRST_FONT U_FONT5

@@ -40,7 +40,6 @@
 
 namespace Hugo {
 
-#define NUM_COLORS  16              // Num colors to save in palette
 #define DMAX            16              // Size of add/restore rect lists
 #define BMAX                (DMAX * 2)  // Size of dirty rect blit list
 
@@ -126,15 +125,15 @@ void Screen::remapPal(uint16 oldIndex, uint16 newIndex) {
 void Screen::savePal(Common::WriteStream *f) {
 	debugC(1, kDebugDisplay, "savePal");
 
-	warning("STUB: savePal()");
-	//fwrite(bminfo.bmiColors, sizeof(bminfo.bmiColors), 1, f);
+	for (int i = 0; i < _paletteSize; i++)
+		f->writeByte(_palette[i]);
 }
 
 void Screen::restorePal(Common::SeekableReadStream *f) {
 	debugC(1, kDebugDisplay, "restorePal");
 
-	warning("STUB: restorePal()");
-	//fread(bminfo.bmiColors, sizeof(bminfo.bmiColors), 1, f);
+	for (int i = 0; i < _paletteSize; i++)
+		_palette[i] = f->readByte();
 }
 
 

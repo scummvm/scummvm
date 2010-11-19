@@ -285,11 +285,7 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 */
 bool FileManager::fileExists(char *filename) {
 	Common::File f;
-	if (f.open(filename)) {
-		f.close();
-		return true;
-	}
-	return false;
+	return(f.exists(filename));
 }
 
 /**
@@ -313,7 +309,7 @@ void FileManager::saveGame(int16 slot, const char *descrip) {
 	}
 
 	// Write version.  We can't restore from obsolete versions
-	out->write(&kSavegameVersion, sizeof(kSavegameVersion));
+	out->writeByte(kSavegameVersion);
 
 	// Save description of saved game
 	out->write(descrip, DESCRIPLEN);
@@ -323,26 +319,29 @@ void FileManager::saveGame(int16 slot, const char *descrip) {
 	const status_t &gameStatus = _vm->getGameStatus();
 
 	// Save whether hero image is swapped
-	out->write(&_vm->_heroImage, sizeof(_vm->_heroImage));
+	out->writeByte(_vm->_heroImage);
 
 	// Save score
-	int score = _vm->getScore();
-	out->write(&score, sizeof(score));
+	out->writeSint16BE(_vm->getScore());
 
 	// Save story mode
-	out->write(&gameStatus.storyModeFl, sizeof(gameStatus.storyModeFl));
+	out->writeByte((gameStatus.storyModeFl) ? 1 : 0);
 
 	// Save jumpexit mode
-	out->write(&gameStatus.jumpExitFl, sizeof(gameStatus.jumpExitFl));
+	out->writeByte((gameStatus.jumpExitFl) ? 1 : 0);
 
 	// Save gameover status
-	out->write(&gameStatus.gameOverFl, sizeof(gameStatus.gameOverFl));
+	out->writeByte((gameStatus.gameOverFl) ? 1 : 0);
 
 	// Save screen states
-	out->write(_vm->_screenStates, sizeof(*_vm->_screenStates) * _vm->_numScreens);
+	for (int i = 0; i < _vm->_numScreens; i++)
+		out->writeByte(_vm->_screenStates[i]);
 
 	// Save points table
-	out->write(_vm->_points, sizeof(point_t) * _vm->_numBonuses);
+	for (int i = 0; i < _vm->_numBonuses; i++) {
+		out->writeByte(_vm->_points[i].score);
+		out->writeByte((_vm->_points[i].scoredFl) ? 1 : 0);
+	}
 
 	// Now save current time and all current events in event queue
 	_vm->_scheduler->saveEvents(out);
@@ -351,7 +350,15 @@ void FileManager::saveGame(int16 slot, const char *descrip) {
 	_vm->_screen->savePal(out);
 
 	// Save maze status
-	out->write(&_maze, sizeof(maze_t));
+	out->writeByte((_maze.enabledFl) ? 1 : 0);
+	out->writeByte(_maze.size);
+	out->writeSint16BE(_maze.x1);
+	out->writeSint16BE(_maze.y1);
+	out->writeSint16BE(_maze.x2);
+	out->writeSint16BE(_maze.y2);
+	out->writeSint16BE(_maze.x3);
+	out->writeSint16BE(_maze.x4);
+	out->writeByte(_maze.firstScreenIndex);
 
 	out->finalize();
 
@@ -380,8 +387,7 @@ void FileManager::restoreGame(int16 slot) {
 		return;
 
 	// Check version, can't restore from different versions
-	int saveVersion;
-	in->read(&saveVersion, sizeof(saveVersion));
+	int saveVersion = in->readByte();
 	if (saveVersion != kSavegameVersion) {
 		error("Savegame of incompatible version");
 		return;
@@ -396,27 +402,30 @@ void FileManager::restoreGame(int16 slot) {
 
 	_vm->_object->restoreObjects(in);
 
-	in->read(&_vm->_heroImage, sizeof(_vm->_heroImage));
+	_vm->_heroImage = in->readByte();
 
 	// If hero swapped in saved game, swap it
-	int heroImg = _vm->_heroImage;
+	byte heroImg = _vm->_heroImage;
 	if (heroImg != HERO)
 		_vm->_object->swapImages(HERO, _vm->_heroImage);
 	_vm->_heroImage = heroImg;
 
 	status_t &gameStatus = _vm->getGameStatus();
 
-	int score;
-	in->read(&score, sizeof(score));
+	int score = in->readSint16LE();
 	_vm->setScore(score);
 
-	in->read(&gameStatus.storyModeFl, sizeof(gameStatus.storyModeFl));
-	in->read(&gameStatus.jumpExitFl, sizeof(gameStatus.jumpExitFl));
-	in->read(&gameStatus.gameOverFl, sizeof(gameStatus.gameOverFl));
-	in->read(_vm->_screenStates, sizeof(*_vm->_screenStates) * _vm->_numScreens);
+	gameStatus.storyModeFl = (in->readByte() == 1);
+	gameStatus.jumpExitFl = (in->readByte() == 1);
+	gameStatus.gameOverFl = (in->readByte() == 1);
+	for (int i = 0; i < _vm->_numScreens; i++)
+		_vm->_screenStates[i] = in->readByte();
 
 	// Restore points table
-	in->read(_vm->_points, sizeof(point_t) * _vm->_numBonuses);
+	for (int i = 0; i < _vm->_numBonuses; i++) {
+		_vm->_points[i].score = in->readByte();
+		_vm->_points[i].scoredFl = (in->readByte() == 1);
+	}
 
 	_vm->_object->restoreAllSeq();
 
@@ -427,7 +436,15 @@ void FileManager::restoreGame(int16 slot) {
 	_vm->_screen->restorePal(in);
 
 	// Restore maze status
-	in->read(&_maze, sizeof(maze_t));
+	_maze.enabledFl = (in->readByte() == 1);
+	_maze.size = in->readByte();
+	_maze.x1 = in->readSint16BE();
+	_maze.y1 = in->readSint16BE();
+	_maze.x2 = in->readSint16BE();
+	_maze.y2 = in->readSint16BE();
+	_maze.x3 = in->readSint16BE();
+	_maze.x4 = in->readSint16BE();
+	_maze.firstScreenIndex = in->readByte();
 
 	delete in;
 }

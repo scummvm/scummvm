@@ -377,11 +377,12 @@ void Scheduler_v1w::saveEvents(Common::WriteStream *f) {
 	int16 headIndex = (_headEvent == 0) ? -1 : _headEvent - _events;
 	int16 tailIndex = (_tailEvent == 0) ? -1 : _tailEvent - _events;
 
-	f->write(&curTime,   sizeof(curTime));
-	f->write(&freeIndex, sizeof(freeIndex));
-	f->write(&headIndex, sizeof(headIndex));
-	f->write(&tailIndex, sizeof(tailIndex));
+	f->writeUint32BE(curTime);
+	f->writeSint16BE(freeIndex);
+	f->writeSint16BE(headIndex);
+	f->writeSint16BE(tailIndex);
 	f->write(saveEventArr, sizeof(saveEventArr));
+	warning("TODO: serialize saveEventArr");
 }
 
 /**
@@ -396,10 +397,11 @@ void Scheduler_v1w::restoreEvents(Common::SeekableReadStream *f) {
 	int16    tailIndex;                             // Tail of list index
 	event_t  savedEvents[kMaxEvents];               // Convert event ptrs to indexes
 
-	f->read(&saveTime,  sizeof(saveTime));          // time of save
-	f->read(&freeIndex, sizeof(freeIndex));
-	f->read(&headIndex, sizeof(headIndex));
-	f->read(&tailIndex, sizeof(tailIndex));
+	saveTime = f->readUint32BE();                   // time of save
+	freeIndex = f->readSint16BE();
+	headIndex = f->readSint16BE();
+	tailIndex = f->readSint16BE();
+
 	f->read(savedEvents, sizeof(savedEvents));
 
 	event_t *wrkEvent;

@@ -41,7 +41,7 @@ struct PCC_header_t {                               // Structure of PCX file hea
 	byte   mfctr, vers, enc, bpx;
 	uint16  x1, y1, x2, y2;                         // bounding box
 	uint16  xres, yres;
-	byte   palette[48];                             // EGA color palette
+	byte   palette[3 * NUM_COLORS];                 // EGA color palette
 	byte   vmode, planes;
 	uint16 bytesPerLine;                            // Bytes per line
 	byte   fill2[60];
