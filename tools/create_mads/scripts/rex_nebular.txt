@@ -1,0 +1,2243 @@
+// MADS Script Engine auto-generated script file
+
+// Special #defines
+#define INDEX_BLOCK_SIZE 8192
+#define GAME_ID REX
+#define LANGUAGE ENGLISH
+
+// List of data variables
+#define Scene_abortTimersMode2 1
+#define Scene_abortTimers 2
+#define Player_stepEnabled 3
+#define Scene_nextScene 4
+#define Scene_priorSceneId 5
+#define Player_playerPos_x 6
+#define Player_playerPos_y 7
+#define Player_direction 8
+#define Player_visible 9
+#define Scene_activeAnimation 10
+#define Animation_currentFrame 11
+
+// Library function list
+#define dialog_show 1
+#define SequenceList_remove 2
+#define start_reversible_sprite_sequence 3
+#define SequenceList_setAnimRange 4
+#define SequenceList_addSubEntry 5
+#define start_cycled_sprite_sequence 6
+#define quotes_get_pointer 7
+#define KernelMessageList_add 8
+#define SequenceList_unk3 9
+#define start_sound 10
+#define SceneLogic_formAnimName 11
+#define SpriteList_addSprites 12
+#define hotspot_activate 13
+#define DynamicHotspots_add 14
+#define SequenceList_setDepth 15
+#define quotes_load 16
+#define form_resource_name 17
+#define MadsScene_loadAnimation 18
+#define Action_isAction 19
+#define start_sprite_sequence3 20
+#define DynamicHotspots_remove 21
+#define object_is_present 22
+#define inventory_add 23
+#define dialog_picture_show 24
+#define object_is_in_inventory 25
+
+// Script functions start here
+
+sub scene101_sub1
+	ONE
+	DSTORE     Scene_abortTimersMode2 // 2ecf2h
+	ZERO
+	DSTORE     Player_stepEnabled // 2ecf8h
+	DLOAD      Scene_abortTimers  // 2ecfeh
+	STORE      0
+	JUMP       @2edc0             // 2ed01h
+@2ed04:
+	DLOAD      $546E              // 2ed04h
+	STORE      0
+	LOAD       0
+	LIBCALL    SequenceList_remove
+	ZERO
+	ZERO
+	IMM        6                  // 2ed10h
+	DLOAD      $5450              // 2ed12h
+	STORE      0
+	IMM        3
+	ZERO
+	LOAD       0
+	LIBCALL    start_reversible_sprite_sequence
+	STORE      0                  // 2ed1ah
+	LOAD       0                  // 2ed1fh
+	DSTORE     $546E
+	IMM        21
+	IMM        17
+	LOAD       0
+	LIBCALL    SequenceList_setAnimRange
+	IMM        72                 // 2ed2dh
+	DLOAD      $546E              // 2ed2fh
+	STORE      0
+	ZERO
+	ZERO
+	LOAD       0
+	LIBCALL    SequenceList_addSubEntry
+	STORE      0                  // 2ed36h
+	IMM        17                 // 2ed3bh
+	LIBCALL    start_sound
+	ZERO
+	ZERO
+	IMM        2                  // 2ed49h
+	DLOAD      $544A              // 2ed4bh
+	STORE      0
+	IMM        3
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2ed53h
+	LOAD       0                  // 2ed58h
+	DSTORE     $5468
+	RET
+@2ed5c:
+	ZERO
+	ZERO
+	ZERO
+	DLOAD      $5450              // 2ed62h
+	STORE      0
+	IMM        6
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2ed6ah
+	LOAD       0                  // 2ed6fh
+	DSTORE     $546E
+	IMM        17                 // 2ed75h
+	IMM        17
+	IMM        17
+	LOAD       0
+	LIBCALL    SequenceList_setAnimRange
+	IMM        57
+	LIBCALL    quotes_get_pointer
+	ZERO
+	IMM        60                 // 2ed90h
+	ZERO
+	ZERO
+	IMM        $1110
+	IMM        61
+	IMM        143
+	LIBCALL    KernelMessageList_add
+	STORE      0                  // 2ed9fh
+	IMM        120
+	LIBCALL    SequenceList_unk3
+	STORE      0                  // 2edaah
+	RET
+@2edb0:
+	IMM        $2785
+	ZERO
+	LIBCALL    dialog_show
+	MINUSONE
+	DSTORE     Player_stepEnabled // 2edb9h
+	RET
+@2edc0:
+	LOAD       0                  // 2edc0h
+	DUP
+	STORE      4
+	IMM        73
+	DUP
+	STORE      5
+	EQUAL
+	JMPTRUE    @2edb0             // 2edc3h
+	LOAD       4                  // 2edc5h
+	LOAD       5
+	GREAT
+	JMPTRUE    @2edd2
+	LOAD       0                  // 2edc7h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2edce             // 2edc9h
+	JUMP       @2ed04             // 2edcbh
+@2edce:
+	LOAD       0                  // 2edceh
+	IMM        72
+	MINUS
+	STORE      0
+	LOAD       0                  // 2edd0h
+	STORE      4
+	LOAD       4
+	ZERO
+	EQUAL
+	JMPTRUE    @2ed5c
+@2edd2:
+	RET
+end
+
+
+sub low_rooms_entry_sound
+	DLOAD      $5A00              // 2b48ch
+	ZERO
+	NEQUAL
+	JMPTRUE    @2b49e             // 2b491h
+	IMM        2                  // 2b493h
+@2b495:
+	LIBCALL    start_sound
+	RET
+@2b49e:
+	DLOAD      Scene_nextScene    // 2b49eh
+	STORE      0
+	JUMP       @2b4d8             // 2b4a1h
+@2b4a4:
+	IMM        11                 // 2b4a4h
+	JUMP       @2b495             // 2b4a6h
+@2b4a8:
+	IMM        12                 // 2b4a8h
+	JUMP       @2b495             // 2b4aah
+@2b4ac:
+	IMM        3                  // 2b4ach
+	LIBCALL    start_sound
+	IMM        25                 // 2b4b6h
+	JUMP       @2b495             // 2b4b8h
+@2b4ba:
+	DLOAD      Scene_priorSceneId // 2b4bah
+	IMM        104
+	LESS
+	JMPTRUE    @2b4c8             // 2b4bfh
+	DLOAD      Scene_priorSceneId // 2b4c1h
+	IMM        108
+	LEQUAL
+	JMPTRUE    @2b500             // 2b4c6h
+@2b4c8:
+	IMM        10                 // 2b4c8h
+	JUMP       @2b495             // 2b4cah
+@2b4cc:
+	IMM        13                 // 2b4cch
+	JUMP       @2b495             // 2b4ceh
+@2b4d0:
+	IMM        3                  // 2b4d0h
+	JUMP       @2b495             // 2b4d2h
+@2b4d4:
+	IMM        15                 // 2b4d4h
+	JUMP       @2b495             // 2b4d6h
+@2b4d8:
+	LOAD       0                  // 2b4d8h
+	IMM        101
+	MINUS
+	STORE      0
+	LOAD       0                  // 2b4dbh
+	IMM        11
+	GREAT
+	JMPTRUE    @2b500             // 2b4deh
+	LOAD       0                  // 2b4e0h
+	IMM        2
+	MULT
+	LOAD       0                  // 2b4e2h
+	LOAD       1
+	STORE      0
+//--- Begin Jump Table ---
+	LOAD       1
+	ZERO
+	EQUAL
+	JMPTRUE    @2b4a4
+	LOAD       1
+	ONE
+	EQUAL
+	JMPTRUE    @2b4a8
+	LOAD       1
+	IMM        2
+	EQUAL
+	JMPTRUE    @2b4ac
+	LOAD       1
+	IMM        3
+	EQUAL
+	JMPTRUE    @2b4ba
+	LOAD       1
+	IMM        4
+	EQUAL
+	JMPTRUE    @2b4ba
+	LOAD       1
+	IMM        5
+	EQUAL
+	JMPTRUE    @2b4ba
+	LOAD       1
+	IMM        6
+	EQUAL
+	JMPTRUE    @2b4ba
+	LOAD       1
+	IMM        7
+	EQUAL
+	JMPTRUE    @2b4ba
+	LOAD       1
+	IMM        8
+	EQUAL
+	JMPTRUE    @2b4cc
+	LOAD       1
+	IMM        9
+	EQUAL
+	JMPTRUE    @2b4c8
+	LOAD       1
+	IMM        10
+	EQUAL
+	JMPTRUE    @2b4d0
+	LOAD       1
+	IMM        11
+	EQUAL
+	JMPTRUE    @2b4d4
+//---  End  Jump Table ---
+@2b500:
+	RET
+end
+
+
+sub scene101_enter
+	ONE
+	IMM        120
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2c985h
+	LOAD       0                  // 2c98ah
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2c98eh
+	LOAD       0                  // 2c993h
+	DSTORE     $543C
+	IMM        2
+	IMM        120
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2c99bh
+	LOAD       0                  // 2c9a0h
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2c9a4h
+	LOAD       0                  // 2c9a9h
+	DSTORE     $543E
+	IMM        3
+	IMM        120
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2c9b1h
+	LOAD       0                  // 2c9b6h
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2c9bah
+	LOAD       0                  // 2c9bfh
+	DSTORE     $5440
+	IMM        4
+	IMM        120
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2c9c7h
+	LOAD       0                  // 2c9cch
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2c9d0h
+	LOAD       0                  // 2c9d5h
+	DSTORE     $5442
+	IMM        5
+	IMM        120
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2c9ddh
+	LOAD       0                  // 2c9e2h
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2c9e6h
+	LOAD       0                  // 2c9ebh
+	DSTORE     $5444
+	IMM        6
+	IMM        120
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2c9f3h
+	LOAD       0                  // 2c9f8h
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2c9fch
+	LOAD       0                  // 2ca01h
+	DSTORE     $5446
+	IMM        7
+	IMM        120
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2ca09h
+	LOAD       0                  // 2ca0eh
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2ca12h
+	LOAD       0                  // 2ca17h
+	DSTORE     $5448
+	MINUSONE
+	IMM        109
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2ca1fh
+	LOAD       0                  // 2ca24h
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2ca28h
+	LOAD       0                  // 2ca2dh
+	DSTORE     $544A
+	ONE
+	IMM        98
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2ca35h
+	LOAD       0                  // 2ca3ah
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2ca3eh
+	LOAD       0                  // 2ca43h
+	DSTORE     $544C
+	IMM        2
+	IMM        98
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2ca4bh
+	LOAD       0                  // 2ca50h
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2ca54h
+	LOAD       0                  // 2ca59h
+	DSTORE     $544E
+	ZERO
+	IMM        97
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2ca60h
+	LOAD       0                  // 2ca65h
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2ca69h
+	LOAD       0                  // 2ca6eh
+	DSTORE     $5450
+	ONE
+	IMM        97
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2ca76h
+	LOAD       0                  // 2ca7bh
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2ca7fh
+	LOAD       0                  // 2ca84h
+	DSTORE     $5452
+	IMM        8
+	IMM        120
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2ca8ch
+	LOAD       0                  // 2ca91h
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2ca95h
+	LOAD       0                  // 2ca9ah
+	DSTORE     $5454
+	ZERO
+	IMM        120
+	LIBCALL    SceneLogic_formAnimName
+	STORE      0                  // 2caa1h
+	LOAD       0                  // 2caa6h
+	STORE      1
+	ZERO
+	LOAD       1
+	LIBCALL    SpriteList_addSprites
+	STORE      0                  // 2caaah
+	LOAD       0                  // 2caafh
+	DSTORE     $5456
+	IMM        25                 // 2cab2h
+	ZERO
+	ZERO
+	DLOAD      $543C              // 2cab8h
+	STORE      0
+	IMM        5
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2cac0h
+	LOAD       0                  // 2cac5h
+	DSTORE     $545A
+	ZERO
+	ONE
+	ZERO
+	DLOAD      $543E              // 2caceh
+	STORE      0
+	IMM        4
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2cad6h
+	LOAD       0                  // 2cadbh
+	DSTORE     $545C
+	ZERO
+	IMM        2                  // 2cae0h
+	ZERO
+	DLOAD      $5440              // 2cae4h
+	STORE      0
+	IMM        6
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2caech
+	LOAD       0                  // 2caf1h
+	DSTORE     $545E
+	IMM        70                 // 2caf4h
+	IMM        7
+	IMM        2
+	LOAD       0
+	LIBCALL    SequenceList_addSubEntry
+	STORE      0                  // 2cafch
+	IMM        60                 // 2cb01h
+	ZERO
+	ZERO
+	DLOAD      $5442              // 2cb07h
+	STORE      0
+	IMM        10
+	ZERO
+	LOAD       0
+	LIBCALL    start_reversible_sprite_sequence
+	STORE      0                  // 2cb0fh
+	LOAD       0                  // 2cb14h
+	DSTORE     $5460
+	ZERO
+	ONE
+	ZERO
+	DLOAD      $5444              // 2cb1dh
+	STORE      0
+	IMM        5
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2cb25h
+	LOAD       0                  // 2cb2ah
+	DSTORE     $5462
+	ZERO
+	IMM        2                  // 2cb2fh
+	ZERO
+	DLOAD      $5446              // 2cb33h
+	STORE      0
+	IMM        10
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2cb3bh
+	LOAD       0                  // 2cb40h
+	DSTORE     $5464
+	ZERO
+	ZERO
+	ZERO
+	DLOAD      $5448              // 2cb49h
+	STORE      0
+	IMM        6
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2cb51h
+	LOAD       0                  // 2cb56h
+	DSTORE     $5466
+	IMM        4                  // 2cb59h
+	IMM        10                 // 2cb5bh
+	ZERO
+	DLOAD      $544C              // 2cb5fh
+	STORE      0
+	IMM        6
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2cb67h
+	LOAD       0                  // 2cb6ch
+	DSTORE     $546A
+	IMM        47                 // 2cb6fh
+	IMM        32                 // 2cb71h
+	ZERO
+	DLOAD      $544E              // 2cb75h
+	STORE      0
+	IMM        6
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2cb7dh
+	LOAD       0                  // 2cb82h
+	DSTORE     $546C
+	ZERO
+	IMM        311
+	LIBCALL    hotspot_activate
+	ZERO
+	DSTORE     $547E              // 2cb8eh
+	DLOAD      Scene_priorSceneId // 2cb94h
+	MINUSONE
+	EQUAL
+	JMPTRUE    @2cba1             // 2cb99h
+	ZERO
+	GSTORE     10                 // 2cb9bh
+@2cba1:
+	DLOAD      Scene_priorSceneId // 2cba1h
+	IMM        $FFFE
+	EQUAL
+	JMPTRUE    @2cbb4             // 2cba6h
+	IMM        100                // 2cba8h
+	DSTORE     Player_playerPos_x
+	IMM        152                // 2cbaeh
+	DSTORE     Player_playerPos_y
+@2cbb4:
+	DLOAD      Scene_priorSceneId // 2cbb4h
+	IMM        112
+	EQUAL
+	JMPTRUE    @2cbc9             // 2cbb9h
+	DLOAD      Scene_priorSceneId // 2cbbbh
+	IMM        $FFFE
+	NEQUAL
+	JMPTRUE    @2cc36             // 2cbc0h
+	DLOAD      $5476              // 2cbc2h
+	ZERO
+	EQUAL
+	JMPTRUE    @2cc36             // 2cbc7h
+@2cbc9:
+	IMM        161                // 2cbcfh
+	DSTORE     Player_playerPos_x
+	IMM        123                // 2cbd5h
+	DSTORE     Player_playerPos_y
+	IMM        9                  // 2cbdbh
+	DSTORE     Player_direction
+	ZERO
+	ZERO
+	ZERO
+	DLOAD      $5450              // 2cbe7h
+	STORE      0
+	ZERO
+	DSTORE     Player_visible     // 2cbech
+	IMM        3
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2cbf3h
+	LOAD       0                  // 2cbf8h
+	DSTORE     $546E
+	IMM        17                 // 2cbfeh
+	IMM        17
+	IMM        17
+	LOAD       0
+	LIBCALL    SequenceList_setAnimRange
+	ZERO
+	IMM        71
+	LIBCALL    hotspot_activate
+	IMM        159                // 2cc0eh
+	IMM        84                 // 2cc11h
+	IMM        33                 // 2cc13h
+	IMM        36                 // 2cc15h
+	MINUSONE
+	IMM        319
+	IMM        71
+	LIBCALL    DynamicHotspots_add
+	STORE      0                  // 2cc20h
+	LOAD       0                  // 2cc25h
+	DSTORE     $5478
+	DLOAD      Scene_priorSceneId // 2cc28h
+	IMM        112
+	NEQUAL
+	JMPTRUE    @2cc54             // 2cc2dh
+	CALL       scene101_sub1
+	JUMP       @2cc54             // 2cc34h
+@2cc36:
+	ZERO
+	ZERO
+	ZERO
+	DLOAD      $5452              // 2cc3ch
+	STORE      0
+	IMM        6
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2cc44h
+	LOAD       0                  // 2cc49h
+	DSTORE     $5470
+	IMM        4
+	LOAD       0
+	LIBCALL    SequenceList_setDepth
+@2cc54:
+	ZERO
+	IMM        56                 // 2cc56h
+	IMM        55                 // 2cc58h
+	IMM        54                 // 2cc5ah
+	IMM        57                 // 2cc5ch
+	IMM        50                 // 2cc5eh
+	IMM        49                 // 2cc60h
+	LIBCALL    quotes_load
+	STORE      0                  // 2cc62h
+	LOAD       0                  // 2cc6ah
+	DSTORE     $5674
+	GLOAD      10                 // 2cc71h
+	ZERO
+	EQUAL
+	JMPTRUE    @2ccb8             // 2cc76h
+	ZERO
+	ZERO
+	IMM        2                  // 2cc7ch
+	MINUSONE
+	IMM        83
+	IMM        101
+	LIBCALL    form_resource_name
+	STORE      0                  // 2cc86h
+	LOAD       0                  // 2cc8bh
+	STORE      1
+	LOAD       1
+	IMM        71
+	LIBCALL    MadsScene_loadAnimation
+	IMM        68                 // 2cc95h
+	DSTORE     Player_playerPos_x
+	IMM        140                // 2cc9bh
+	DSTORE     Player_playerPos_y
+	IMM        4                  // 2cca1h
+	DSTORE     Player_direction
+	ZERO
+	DSTORE     Player_visible     // 2cca9h
+	ZERO
+	DSTORE     Player_stepEnabled // 2ccach
+	ZERO
+	DSTORE     $5482              // 2ccafh
+	IMM        30                 // 2ccb2h
+	DSTORE     $5484
+@2ccb8:
+	ZERO
+	DSTORE     $5486              // 2ccb8h
+	CALL       low_rooms_entry_sound
+	RET
+end
+
+
+sub scene101_step
+	DLOAD      $56E4              // 2eb30h
+	STORE      0
+	DLOAD      $5486              // 2eb33h
+	LOAD       0
+	EQUAL
+	JMPTRUE    @2eb4e             // 2eb37h
+	LOAD       0                  // 2eb39h
+	DSTORE     $5486
+	LOAD       0                  // 2eb3ch
+	ZERO
+	EQUAL
+	JMPTRUE    @2eb44             // 2eb3eh
+	IMM        39                 // 2eb40h
+	JUMP       @2eb46             // 2eb42h
+@2eb44:
+	IMM        11                 // 2eb44h
+@2eb46:
+	LIBCALL    start_sound
+@2eb4e:
+	DLOAD      Scene_abortTimers  // 2eb4eh
+	STORE      0
+	JUMP       @2eb92             // 2eb51h
+@2eb54:
+	IMM        9                  // 2eb54h
+	LIBCALL    start_sound
+	JUMP       @2eba0             // 2eb5eh
+@2eb60:
+	ZERO
+	GSTORE     10                 // 2eb60h
+	MINUSONE
+	DSTORE     Player_visible     // 2eb69h
+	MINUSONE
+	DSTORE     Player_stepEnabled // 2eb6ch
+	DLOAD      $56E8              // 2eb6fh
+	STORE      0
+	DLOAD      $542A              // 2eb73h
+	STORE      2
+	ZERO
+	STORE      1                  // 2eb77h
+	LOAD       2                  // 2eb7bh
+	LOAD       0
+	MINUS
+	STORE      2
+	LOAD       2                  // 2eb7fh
+	DSTORE     $57D0
+	JUMP       @2eba0             // 2eb87h
+@2eb8a:
+	CALL       scene101_sub1
+	JUMP       @2eba0             // 2eb8fh
+@2eb92:
+	LOAD       0                  // 2eb92h
+	IMM        70
+	MINUS
+	STORE      0
+	LOAD       0                  // 2eb95h
+	STORE      4
+	LOAD       4
+	ZERO
+	EQUAL
+	JMPTRUE    @2eb54
+	LOAD       0                  // 2eb97h
+	ONE
+	MINUS
+	STORE      0
+	LOAD       0                  // 2eb98h
+	STORE      4
+	LOAD       4
+	ZERO
+	EQUAL
+	JMPTRUE    @2eb60
+	LOAD       0                  // 2eb9ah
+	ONE
+	MINUS
+	STORE      0
+	LOAD       0                  // 2eb9bh
+	STORE      4
+	LOAD       4
+	ZERO
+	EQUAL
+	JMPTRUE    @2eb8a
+	LOAD       0                  // 2eb9dh
+	ONE
+	MINUS
+	STORE      0
+	LOAD       0                  // 2eb9eh
+	STORE      4
+	LOAD       4
+	ZERO
+	EQUAL
+	JMPTRUE    @2eb8a
+@2eba0:
+	ZERO
+	STORE      0                  // 2eba0h
+	LOAD       0                  // 2eba3h
+	DLOAD      Scene_activeAnimation
+	OR
+	ZERO
+	NEQUAL
+	JMPTRUE    @2ebac             // 2eba7h
+	JUMP       @2ecf1             // 2eba9h
+@2ebac:
+	DLOAD      Animation_currentFrame // 2ebach
+	IMM        6
+	LESS
+	JMPTRUE    @2ebed             // 2ebb1h
+	DLOAD      $5482              // 2ebb3h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2ebed             // 2ebb8h
+	DLOAD      $5482              // 2ebbah
+	ONE
+	PLUS
+	DSTORE     $5482
+	IMM        49
+	LIBCALL    quotes_get_pointer
+	ZERO
+	IMM        240                // 2ebd2h
+	ZERO
+	ZERO
+	DLOAD      $5484              // 2ebd9h
+	STORE      3
+	IMM        $1110
+	LOAD       3
+	IMM        63
+	LIBCALL    KernelMessageList_add
+	STORE      0                  // 2ebe3h
+	DLOAD      $5484              // 2ebe8h
+	IMM        14
+	PLUS
+	DSTORE     $5484
+@2ebed:
+	DLOAD      Animation_currentFrame // 2ebedh
+	IMM        7
+	LESS
+	JMPTRUE    @2ec2e             // 2ebf2h
+	DLOAD      $5482              // 2ebf4h
+	ONE
+	NEQUAL
+	JMPTRUE    @2ec2e             // 2ebf9h
+	DLOAD      $5482              // 2ebfbh
+	ONE
+	PLUS
+	DSTORE     $5482
+	IMM        54
+	LIBCALL    quotes_get_pointer
+	ZERO
+	IMM        240                // 2ec13h
+	ZERO
+	ZERO
+	DLOAD      $5484              // 2ec1ah
+	STORE      3
+	IMM        $1110
+	LOAD       3
+	IMM        63
+	LIBCALL    KernelMessageList_add
+	STORE      0                  // 2ec24h
+	DLOAD      $5484              // 2ec29h
+	IMM        14
+	PLUS
+	DSTORE     $5484
+@2ec2e:
+	DLOAD      Animation_currentFrame // 2ec2eh
+	IMM        10
+	LESS
+	JMPTRUE    @2ec6f             // 2ec33h
+	DLOAD      $5482              // 2ec35h
+	IMM        2
+	NEQUAL
+	JMPTRUE    @2ec6f             // 2ec3ah
+	DLOAD      $5482              // 2ec3ch
+	ONE
+	PLUS
+	DSTORE     $5482
+	IMM        55
+	LIBCALL    quotes_get_pointer
+	ZERO
+	IMM        240                // 2ec54h
+	ZERO
+	ZERO
+	DLOAD      $5484              // 2ec5bh
+	STORE      3
+	IMM        $1110
+	LOAD       3
+	IMM        63
+	LIBCALL    KernelMessageList_add
+	STORE      0                  // 2ec65h
+	DLOAD      $5484              // 2ec6ah
+	IMM        14
+	PLUS
+	DSTORE     $5484
+@2ec6f:
+	DLOAD      Animation_currentFrame // 2ec6fh
+	IMM        17
+	LESS
+	JMPTRUE    @2ecb0             // 2ec74h
+	DLOAD      $5482              // 2ec76h
+	IMM        3
+	NEQUAL
+	JMPTRUE    @2ecb0             // 2ec7bh
+	DLOAD      $5482              // 2ec7dh
+	ONE
+	PLUS
+	DSTORE     $5482
+	IMM        56
+	LIBCALL    quotes_get_pointer
+	ZERO
+	IMM        240                // 2ec95h
+	ZERO
+	ZERO
+	DLOAD      $5484              // 2ec9ch
+	STORE      3
+	IMM        $1110
+	LOAD       3
+	IMM        63
+	LIBCALL    KernelMessageList_add
+	STORE      0                  // 2eca6h
+	DLOAD      $5484              // 2ecabh
+	IMM        14
+	PLUS
+	DSTORE     $5484
+@2ecb0:
+	DLOAD      Animation_currentFrame // 2ecb0h
+	IMM        20
+	LESS
+	JMPTRUE    @2ecf1             // 2ecb5h
+	DLOAD      $5482              // 2ecb7h
+	IMM        4
+	NEQUAL
+	JMPTRUE    @2ecf1             // 2ecbch
+	DLOAD      $5482              // 2ecbeh
+	ONE
+	PLUS
+	DSTORE     $5482
+	IMM        50
+	LIBCALL    quotes_get_pointer
+	ZERO
+	IMM        240                // 2ecd6h
+	ZERO
+	ZERO
+	DLOAD      $5484              // 2ecddh
+	STORE      3
+	IMM        $1110
+	LOAD       3
+	IMM        63
+	LIBCALL    KernelMessageList_add
+	STORE      0                  // 2ece7h
+	DLOAD      $5484              // 2ecech
+	IMM        14
+	PLUS
+	DSTORE     $5484
+@2ecf1:
+	RET
+end
+
+
+sub scene101_preaction
+	ZERO
+	IMM        384                // 2edd6h
+	IMM        3                  // 2edd9h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2eddbh
+	LOAD       0                  // 2ede3h
+	ZERO
+	EQUAL
+	JMPTRUE    @2eded             // 2ede5h
+	MINUSONE
+	DSTORE     $56F2              // 2ede7h
+@2eded:
+	DLOAD      $5476              // 2ededh
+	ZERO
+	NEQUAL
+	JMPTRUE    @2edf7             // 2edf2h
+	JUMP       @2eea9             // 2edf4h
+@2edf7:
+	ZERO
+	IMM        3                  // 2edf9h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2edfbh
+	LOAD       0                  // 2ee03h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2ee44             // 2ee05h
+	LOAD       0                  // 2ee07h
+	IMM        71                 // 2ee08h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2ee0ah
+	LOAD       0                  // 2ee12h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2ee44             // 2ee14h
+	LOAD       0                  // 2ee16h
+	IMM        8                  // 2ee17h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2ee19h
+	LOAD       0                  // 2ee21h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2ee44             // 2ee23h
+	LOAD       0                  // 2ee25h
+	IMM        259                // 2ee26h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2ee29h
+	LOAD       0                  // 2ee31h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2ee44             // 2ee33h
+	LOAD       0                  // 2ee35h
+	IMM        125                // 2ee36h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2ee38h
+	LOAD       0                  // 2ee40h
+	ZERO
+	EQUAL
+	JMPTRUE    @2ee4a             // 2ee42h
+@2ee44:
+	ZERO
+	DSTORE     $56F2              // 2ee44h
+@2ee4a:
+	DLOAD      $56F2              // 2ee4ah
+	ZERO
+	EQUAL
+	JMPTRUE    @2eea9             // 2ee4fh
+	DLOAD      Scene_abortTimers  // 2ee51h
+	STORE      0
+	LOAD       0                  // 2ee54h
+	ZERO
+	EQUAL
+	JMPTRUE    @2ee60             // 2ee56h
+	LOAD       0                  // 2ee58h
+	ONE
+	MINUS
+	STORE      0
+	LOAD       0                  // 2ee59h
+	STORE      4
+	LOAD       4
+	ZERO
+	NEQUAL
+	JMPTRUE    @2ee5e
+	JUMP       @2eee0             // 2ee5bh
+@2ee5e:
+	JUMP       @2eea9             // 2ee5eh
+@2ee60:
+	ZERO
+	DSTORE     $56F4              // 2ee62h
+	ZERO
+	DSTORE     Player_stepEnabled // 2ee65h
+	DLOAD      $546E              // 2ee68h
+	STORE      0
+	LOAD       0
+	LIBCALL    SequenceList_remove
+	ZERO
+	ZERO
+	ONE
+	DLOAD      $5450              // 2ee76h
+	STORE      0
+	IMM        3
+	ZERO
+	LOAD       0
+	LIBCALL    start_sprite_sequence3
+	STORE      0                  // 2ee7eh
+	LOAD       0                  // 2ee83h
+	DSTORE     $546E
+	ONE
+	ZERO
+	ZERO
+	LOAD       0
+	LIBCALL    SequenceList_addSubEntry
+	STORE      0                  // 2ee8ch
+	DLOAD      $546E              // 2ee91h
+	STORE      0
+	IMM        17
+	ONE
+	LOAD       0
+	LIBCALL    SequenceList_setAnimRange
+	IMM        16                 // 2ee9fh
+	LIBCALL    start_sound
+@2eea9:
+	DLOAD      $547E              // 2eea9h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2eeb3             // 2eeaeh
+	JUMP       @2ef9f             // 2eeb0h
+@2eeb3:
+	ZERO
+	IMM        309                // 2eeb5h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2eeb8h
+	LOAD       0                  // 2eec0h
+	ZERO
+	EQUAL
+	JMPTRUE    @2eec7             // 2eec2h
+	JUMP       @2ef9f             // 2eec4h
+@2eec7:
+	LOAD       0                  // 2eec7h
+	IMM        311                // 2eec8h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2eecbh
+	LOAD       0                  // 2eed3h
+	ZERO
+	EQUAL
+	JMPTRUE    @2eeda             // 2eed5h
+	JUMP       @2ef9f             // 2eed7h
+@2eeda:
+	DLOAD      Scene_abortTimers  // 2eedah
+	STORE      0
+	JUMP       @2ef98             // 2eeddh
+@2eee0:
+	MINUSONE
+	DSTORE     Player_visible     // 2eee9h
+	MINUSONE
+	DSTORE     Player_stepEnabled // 2eeedh
+	MINUSONE
+	DSTORE     $56F4              // 2eef1h
+	MINUSONE
+	IMM        71
+	LIBCALL    hotspot_activate
+	DLOAD      $5478              // 2eefdh
+	STORE      0
+	LOAD       0
+	LIBCALL    DynamicHotspots_remove
+	ZERO
+	ZERO
+	ZERO
+	DLOAD      $5452              // 2ef0bh
+	STORE      0
+	IMM        6
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2ef13h
+	LOAD       0                  // 2ef18h
+	DSTORE     $5470
+	IMM        4
+	LOAD       0
+	LIBCALL    SequenceList_setDepth
+	JUMP       @2eea9             // 2ef23h
+@2ef26:
+	DLOAD      $56F2              // 2ef26h
+	ZERO
+	EQUAL
+	JMPTRUE    @2ef9f             // 2ef2bh
+	DLOAD      $5472              // 2ef2dh
+	STORE      0
+	LOAD       0
+	LIBCALL    SequenceList_remove
+	IMM        24
+	LIBCALL    object_is_present
+	STORE      0                  // 2ef38h
+	ONE
+	STORE      4                  // 2ef3dh
+	LOAD       0
+	ONE
+	EQUAL
+	JMPFALSE   @2ef42
+	ZERO
+	STORE      4
+@2ef42:
+	LOAD       4
+	STORE      0
+	LOAD       0                  // 2ef45h
+	IMM        13
+	PLUS
+	STORE      0
+	LOAD       0                  // 2ef48h
+	DSTORE     $5480
+	ZERO
+	ZERO
+	ONE
+	LOAD       0                  // 2ef51h
+	STORE      1
+	LOAD       1                  // 2ef53h
+	IMM        2
+	MULT
+	IMM        6
+	ZERO
+	ONE
+	LIBCALL    start_sprite_sequence3
+	STORE      0                  // 2ef5eh
+	LOAD       0                  // 2ef63h
+	DSTORE     $5472
+	ONE
+	ZERO
+	ZERO
+	LOAD       0
+	LIBCALL    SequenceList_addSubEntry
+	STORE      0                  // 2ef6ch
+	ZERO
+	DSTORE     Player_stepEnabled // 2ef71h
+	IMM        20                 // 2ef77h
+	LIBCALL    start_sound
+	RET
+@2ef82:
+	MINUSONE
+	DSTORE     Player_stepEnabled // 2ef82h
+	ZERO
+	DSTORE     $547E              // 2ef8ah
+	ZERO
+	IMM        311
+	LIBCALL    hotspot_activate
+	RET
+@2ef98:
+	LOAD       0                  // 2ef98h
+	ZERO
+	EQUAL
+	JMPTRUE    @2ef26             // 2ef9ah
+	LOAD       0                  // 2ef9ch
+	ONE
+	MINUS
+	STORE      0
+	LOAD       0                  // 2ef9dh
+	STORE      4
+	LOAD       4
+	ZERO
+	EQUAL
+	JMPTRUE    @2ef82
+@2ef9f:
+	RET
+end
+
+
+sub scene101_actions
+	DLOAD      $577A              // 2efa0h
+	ZERO
+	EQUAL
+	JMPTRUE    @2efae             // 2efa5h
+	DLOAD      0                  // 2efaah
+	STORE      0
+	JUMP       @2f28f
+@2efae:
+	ZERO
+	IMM        204                // 2efb0h
+	IMM        13                 // 2efb3h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2efb5h
+	LOAD       0                  // 2efbdh
+	ZERO
+	EQUAL
+	JMPTRUE    @2efca             // 2efbfh
+	IMM        102                // 2efc1h
+	DSTORE     Scene_nextScene
+	JUMP       @2f6b4             // 2efc7h
+@2efca:
+	ZERO
+	IMM        71                 // 2efcch
+	IMM        319                // 2efceh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2efd1h
+	LOAD       0                  // 2efd9h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2eff9             // 2efdbh
+	LOAD       0                  // 2efddh
+	IMM        384                // 2efdeh
+	IMM        3                  // 2efe1h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2efe3h
+	LOAD       0                  // 2efebh
+	ZERO
+	NEQUAL
+	JMPTRUE    @2eff2             // 2efedh
+	JUMP       @2f072             // 2efefh
+@2eff2:
+	DLOAD      $5476              // 2eff2h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f072             // 2eff7h
+@2eff9:
+	DLOAD      $5476              // 2eff9h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f003             // 2effeh
+	JUMP       @2f120             // 2f000h
+@2f003:
+	DLOAD      Scene_abortTimers  // 2f003h
+	STORE      0
+	LOAD       0                  // 2f006h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f016             // 2f008h
+	LOAD       0                  // 2f00ah
+	ONE
+	MINUS
+	STORE      0
+	LOAD       0                  // 2f00bh
+	STORE      4
+	LOAD       4
+	ZERO
+	EQUAL
+	JMPTRUE    @2f068
+	LOAD       0                  // 2f00dh
+	ONE
+	MINUS
+	STORE      0
+	LOAD       0                  // 2f00eh
+	STORE      4
+	LOAD       4
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f013
+	JUMP       @2f0b4             // 2f010h
+@2f013:
+	JUMP       @2f072             // 2f013h
+@2f016:
+	DLOAD      $5470              // 2f016h
+	STORE      0
+	LOAD       0
+	LIBCALL    SequenceList_remove
+	ZERO
+	ZERO
+	ONE
+	DLOAD      $5450              // 2f024h
+	STORE      0
+	IMM        3
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2f02ch
+	LOAD       0                  // 2f031h
+	DSTORE     $546E
+	IMM        17
+	ONE
+	LOAD       0
+	LIBCALL    SequenceList_setAnimRange
+	ONE
+	DLOAD      $546E              // 2f041h
+	STORE      0
+	IMM        10
+	IMM        2
+	LOAD       0
+	LIBCALL    SequenceList_addSubEntry
+	STORE      0                  // 2f04ah
+	IMM        2                  // 2f04fh
+	DLOAD      $546E              // 2f051h
+	STORE      0
+	ZERO
+	ZERO
+	LOAD       0
+	LIBCALL    SequenceList_addSubEntry
+	STORE      0                  // 2f058h
+	ZERO
+	DSTORE     Player_stepEnabled // 2f05fh
+	ZERO
+	DSTORE     Player_visible     // 2f062h
+	DLOAD      0                  // 2f065h
+	STORE      0
+	JUMP       @2f6b4
+@2f068:
+	IMM        16                 // 2f068h
+	LIBCALL    start_sound
+@2f072:
+	ZERO
+	IMM        309                // 2f074h
+	IMM        13                 // 2f077h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f079h
+	LOAD       0                  // 2f081h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f09a             // 2f083h
+	LOAD       0                  // 2f085h
+	IMM        309                // 2f086h
+	IMM        6                  // 2f089h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f08bh
+	LOAD       0                  // 2f093h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f09a             // 2f095h
+	JUMP       @2f1cc             // 2f097h
+@2f09a:
+	DLOAD      $547E              // 2f09ah
+	ZERO
+	EQUAL
+	JMPTRUE    @2f0a4             // 2f09fh
+	JUMP       @2f1cc             // 2f0a1h
+@2f0a4:
+	DLOAD      Scene_abortTimers  // 2f0a4h
+	STORE      0
+	LOAD       0                  // 2f0a7h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f126             // 2f0a9h
+	LOAD       0                  // 2f0abh
+	ONE
+	MINUS
+	STORE      0
+	LOAD       0                  // 2f0ach
+	STORE      4
+	LOAD       4
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f0b1
+	JUMP       @2f176             // 2f0aeh
+@2f0b1:
+	JUMP       @2f6b4             // 2f0b1h
+@2f0b4:
+	ZERO
+	ZERO
+	ZERO
+	DLOAD      $5450              // 2f0bah
+	STORE      0
+	IMM        3
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2f0c2h
+	LOAD       0                  // 2f0c7h
+	DSTORE     $546E
+	IMM        17                 // 2f0cdh
+	IMM        17
+	IMM        17
+	LOAD       0
+	LIBCALL    SequenceList_setAnimRange
+	MINUSONE
+	DSTORE     Player_stepEnabled // 2f0d7h
+	ZERO
+	IMM        71
+	LIBCALL    hotspot_activate
+	IMM        159                // 2f0e6h
+	IMM        84                 // 2f0e9h
+	IMM        33                 // 2f0ebh
+	IMM        36                 // 2f0edh
+	MINUSONE
+	IMM        319
+	IMM        71
+	LIBCALL    DynamicHotspots_add
+	STORE      0                  // 2f0f8h
+	LOAD       0                  // 2f0fdh
+	DSTORE     $5478
+	ZERO
+	IMM        384                // 2f102h
+	IMM        3                  // 2f105h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f107h
+	LOAD       0                  // 2f10fh
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f116             // 2f111h
+	JUMP       @2f6b4             // 2f113h
+@2f116:
+	ZERO
+	DSTORE     Scene_abortTimers  // 2f116h
+	JUMP       @2f072             // 2f11ch
+@2f120:
+	DLOAD      0                  // 2f123h
+	STORE      0
+	JUMP       @2f28f
+@2f126:
+	IMM        24
+	LIBCALL    object_is_present
+	STORE      0                  // 2f129h
+	ONE
+	STORE      4                  // 2f12eh
+	LOAD       0
+	ONE
+	EQUAL
+	JMPFALSE   @2f133
+	ZERO
+	STORE      4
+@2f133:
+	LOAD       4
+	STORE      0
+	LOAD       0                  // 2f136h
+	IMM        13
+	PLUS
+	STORE      0
+	LOAD       0                  // 2f139h
+	DSTORE     $5480
+	ZERO
+	ZERO
+	ONE
+	LOAD       0                  // 2f142h
+	STORE      1
+	LOAD       1                  // 2f144h
+	IMM        2
+	MULT
+	IMM        6
+	ZERO
+	ONE
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2f14fh
+	LOAD       0                  // 2f154h
+	DSTORE     $5472
+	ONE
+	ZERO
+	ZERO
+	LOAD       0
+	LIBCALL    SequenceList_addSubEntry
+	STORE      0                  // 2f15dh
+	ZERO
+	DSTORE     Player_stepEnabled // 2f162h
+	IMM        20                 // 2f168h
+@2f16a:
+	LIBCALL    start_sound
+	JUMP       @2f6b4             // 2f172h
+@2f176:
+	DLOAD      $5472              // 2f176h
+	STORE      0
+	LOAD       0
+	LIBCALL    SequenceList_remove
+	ZERO
+	ZERO
+	ZERO
+	DLOAD      $5480              // 2f184h
+	STORE      1
+	LOAD       1                  // 2f188h
+	IMM        2
+	MULT
+	IMM        6
+	ZERO
+	ONE
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2f193h
+	LOAD       0                  // 2f198h
+	DSTORE     $5472
+	IMM        $FFFE              // 2f19eh
+	IMM        $FFFE
+	IMM        $FFFE
+	LOAD       0
+	LIBCALL    SequenceList_setAnimRange
+	MINUSONE
+	DSTORE     Player_stepEnabled // 2f1a8h
+	MINUSONE
+	DSTORE     $547E              // 2f1abh
+	IMM        24
+	LIBCALL    object_is_present
+	STORE      0                  // 2f1b1h
+	LOAD       0                  // 2f1b6h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f1bd             // 2f1b8h
+	JUMP       @2f6b4             // 2f1bah
+@2f1bd:
+	MINUSONE
+	IMM        311
+	LIBCALL    hotspot_activate
+	JUMP       @2f6b4             // 2f1c8h
+@2f1cc:
+	ZERO
+	IMM        311                // 2f1ceh
+	IMM        4                  // 2f1d1h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f1d3h
+	LOAD       0                  // 2f1dbh
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f1f1             // 2f1ddh
+	LOAD       0                  // 2f1dfh
+	IMM        311                // 2f1e0h
+	IMM        10                 // 2f1e3h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f1e5h
+	LOAD       0                  // 2f1edh
+	ZERO
+	EQUAL
+	JMPTRUE    @2f248             // 2f1efh
+@2f1f1:
+	IMM        24
+	LIBCALL    object_is_present
+	STORE      0                  // 2f1f4h
+	LOAD       0                  // 2f1f9h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f248             // 2f1fbh
+	IMM        24
+	LIBCALL    inventory_add
+	DLOAD      $5472              // 2f205h
+	STORE      0
+	LOAD       0
+	LIBCALL    SequenceList_remove
+	ZERO
+	ZERO
+	ZERO
+	DLOAD      $5456              // 2f213h
+	STORE      0
+	IMM        6
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2f21bh
+	LOAD       0                  // 2f220h
+	DSTORE     $5472
+	IMM        $FFFE              // 2f226h
+	IMM        $FFFE
+	IMM        $FFFE
+	LOAD       0
+	LIBCALL    SequenceList_setAnimRange
+	ZERO
+	IMM        311
+	LIBCALL    hotspot_activate
+	ZERO
+	IMM        $2788              // 2f238h
+	LIBCALL    dialog_picture_show
+	IMM        22                 // 2f243h
+	JUMP       @2f16a             // 2f245h
+@2f248:
+	ZERO
+	IMM        309                // 2f24ah
+	IMM        3                  // 2f24dh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f24fh
+	LOAD       0                  // 2f257h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f279             // 2f259h
+	LOAD       0                  // 2f25bh
+	IMM        311                // 2f25ch
+	IMM        3                  // 2f25fh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f261h
+	LOAD       0                  // 2f269h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f2a6             // 2f26bh
+	LIBCALL    object_is_in_inventory
+	STORE      0                  // 2f270h
+	LOAD       0                  // 2f275h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f2a6             // 2f277h
+@2f279:
+	DLOAD      $547E              // 2f279h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f2a0             // 2f27eh
+	IMM        24
+	LIBCALL    object_is_present
+	STORE      0                  // 2f283h
+	LOAD       0                  // 2f288h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f29a             // 2f28ah
+@2f28f:
+@2f291:
+	IMM        $2790
+	ZERO
+	LIBCALL    dialog_show
+	JUMP       @2f6b4             // 2f296h
+@2f29a:
+@2f29d:
+	DLOAD      0                  // 2f29eh
+	STORE      0
+	JUMP       @2f291
+@2f2a0:
+	DLOAD      0                  // 2f2a3h
+	STORE      0
+	JUMP       @2f29d
+@2f2a6:
+	ZERO
+	IMM        309                // 2f2a8h
+	IMM        6                  // 2f2abh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f2adh
+	LOAD       0                  // 2f2b5h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f2c6             // 2f2b7h
+	DLOAD      $547E              // 2f2b9h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f2c6             // 2f2beh
+	DLOAD      0                  // 2f2c3h
+	STORE      0
+	JUMP       @2f28f
+@2f2c6:
+	ZERO
+	IMM        384                // 2f2c8h
+	IMM        3                  // 2f2cbh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f2cdh
+	LOAD       0                  // 2f2d5h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f2dc             // 2f2d7h
+	JUMP       @2f3d8             // 2f2d9h
+@2f2dc:
+	DLOAD      $5476              // 2f2dch
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f2e6             // 2f2e1h
+	JUMP       @2f3d8             // 2f2e3h
+@2f2e6:
+	GLOAD      14                 // 2f2e6h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f2f4             // 2f2ebh
+	CALL       scene101_sub1
+	JUMP       @2f6b4             // 2f2f1h
+@2f2f4:
+	DLOAD      Scene_abortTimers  // 2f2f4h
+	STORE      0
+	LOAD       0                  // 2f2f7h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f30a             // 2f2f9h
+	LOAD       0                  // 2f2fbh
+	ONE
+	MINUS
+	STORE      0
+	LOAD       0                  // 2f2fch
+	STORE      4
+	LOAD       4
+	ZERO
+	EQUAL
+	JMPTRUE    @2f34c
+	LOAD       0                  // 2f2feh
+	ONE
+	MINUS
+	STORE      0
+	LOAD       0                  // 2f2ffh
+	STORE      4
+	LOAD       4
+	ZERO
+	EQUAL
+	JMPTRUE    @2f37e
+	LOAD       0                  // 2f301h
+	ONE
+	MINUS
+	STORE      0
+	LOAD       0                  // 2f302h
+	STORE      4
+	LOAD       4
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f307
+	JUMP       @2f3c2             // 2f304h
+@2f307:
+	JUMP       @2f6b4             // 2f307h
+@2f30a:
+	ZERO
+	DSTORE     Player_stepEnabled // 2f30ah
+	DLOAD      $546E              // 2f310h
+	STORE      0
+	LOAD       0
+	LIBCALL    SequenceList_remove
+	ZERO
+	ZERO
+	ONE
+	DLOAD      $5450              // 2f31eh
+	STORE      0
+	IMM        3
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2f326h
+	LOAD       0                  // 2f32bh
+	DSTORE     $546E
+	IMM        21
+	IMM        17
+	LOAD       0
+	LIBCALL    SequenceList_setAnimRange
+	ONE
+	DLOAD      $546E              // 2f33bh
+	STORE      0
+	ZERO
+	ZERO
+	LOAD       0
+	LIBCALL    SequenceList_addSubEntry
+	STORE      0                  // 2f342h
+	IMM        17                 // 2f347h
+	JUMP       @2f16a             // 2f349h
+@2f34c:
+	ZERO
+	ZERO
+	ONE
+	DLOAD      $5450              // 2f352h
+	STORE      0
+	IMM        3
+	ZERO
+	LOAD       0
+	LIBCALL    start_sprite_sequence3
+	STORE      0                  // 2f35ah
+	LOAD       0                  // 2f35fh
+	DSTORE     $546E
+	IMM        2                  // 2f362h
+	ZERO
+	ZERO
+	LOAD       0
+	LIBCALL    SequenceList_addSubEntry
+	STORE      0                  // 2f368h
+	DLOAD      $546E              // 2f36dh
+	STORE      0
+	IMM        21
+	IMM        17
+	LOAD       0
+	LIBCALL    SequenceList_setAnimRange
+	JUMP       @2f6b4             // 2f37bh
+@2f37e:
+	ZERO
+	ZERO
+	ZERO
+	DLOAD      $5450              // 2f384h
+	STORE      0
+	IMM        3
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2f38ch
+	LOAD       0                  // 2f391h
+	DSTORE     $546E
+	IMM        17                 // 2f397h
+	IMM        17
+	IMM        17
+	LOAD       0
+	LIBCALL    SequenceList_setAnimRange
+	ZERO
+	ZERO
+	ONE
+	DLOAD      $544A              // 2f3a4h
+	STORE      0
+	IMM        3
+	ZERO
+	LOAD       0
+	LIBCALL    start_cycled_sprite_sequence
+	STORE      0                  // 2f3ach
+	LOAD       0                  // 2f3b1h
+	DSTORE     $5468
+	IMM        3                  // 2f3b4h
+	ZERO
+	ZERO
+	LOAD       0
+	LIBCALL    SequenceList_addSubEntry
+	STORE      0                  // 2f3bah
+	JUMP       @2f6b4             // 2f3bfh
+@2f3c2:
+	MINUSONE
+	DSTORE     Player_stepEnabled // 2f3c5h
+	MINUSONE
+	GSTORE     14                 // 2f3c8h
+	IMM        112                // 2f3ceh
+	DSTORE     Scene_nextScene
+	DLOAD      0                  // 2f3d4h
+	STORE      0
+	JUMP       @2f6b4
+@2f3d8:
+	ZERO
+	IMM        71                 // 2f3dah
+	IMM        3                  // 2f3dch
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f3deh
+	LOAD       0                  // 2f3e6h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f3f0             // 2f3e8h
+	DLOAD      0                  // 2f3edh
+	STORE      0
+	JUMP       @2f28f
+@2f3f0:
+	ZERO
+	IMM        3                  // 2f3f2h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f3f4h
+	LOAD       0                  // 2f3fch
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f410             // 2f3feh
+	LOAD       0                  // 2f400h
+	IMM        259                // 2f401h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f404h
+	LOAD       0                  // 2f40ch
+	ZERO
+	EQUAL
+	JMPTRUE    @2f438             // 2f40eh
+@2f410:
+	ZERO
+	IMM        142                // 2f412h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f415h
+	LOAD       0                  // 2f41dh
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f431             // 2f41fh
+	LOAD       0                  // 2f421h
+	IMM        249                // 2f422h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f425h
+	LOAD       0                  // 2f42dh
+	ZERO
+	EQUAL
+	JMPTRUE    @2f438             // 2f42fh
+@2f431:
+	DLOAD      0                  // 2f434h
+	STORE      0
+	JUMP       @2f28f
+@2f438:
+	ZERO
+	IMM        168                // 2f43ah
+	IMM        3                  // 2f43dh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f43fh
+	LOAD       0                  // 2f447h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f481             // 2f449h
+	LOAD       0                  // 2f44bh
+	IMM        248                // 2f44ch
+	IMM        3                  // 2f44fh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f451h
+	LOAD       0                  // 2f459h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f481             // 2f45bh
+	LOAD       0                  // 2f45dh
+	IMM        168                // 2f45eh
+	IMM        125                // 2f461h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f463h
+	LOAD       0                  // 2f46bh
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f481             // 2f46dh
+	LOAD       0                  // 2f46fh
+	IMM        248                // 2f470h
+	IMM        125                // 2f473h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f475h
+	LOAD       0                  // 2f47dh
+	ZERO
+	EQUAL
+	JMPTRUE    @2f488             // 2f47fh
+@2f481:
+	DLOAD      0                  // 2f484h
+	STORE      0
+	JUMP       @2f28f
+@2f488:
+	ZERO
+	IMM        145                // 2f48ah
+	IMM        3                  // 2f48dh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f48fh
+	LOAD       0                  // 2f497h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f4a2             // 2f499h
+	DLOAD      0                  // 2f49eh
+	STORE      0
+	JUMP       @2f28f
+@2f4a2:
+	ZERO
+	IMM        225                // 2f4a4h
+	IMM        3                  // 2f4a7h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f4a9h
+	LOAD       0                  // 2f4b1h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f4c8             // 2f4b3h
+	LOAD       0                  // 2f4b5h
+	IMM        225                // 2f4b6h
+	IMM        210                // 2f4b9h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f4bch
+	LOAD       0                  // 2f4c4h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f4ce             // 2f4c6h
+@2f4c8:
+	DLOAD      0                  // 2f4cbh
+	STORE      0
+	JUMP       @2f28f
+@2f4ce:
+	ZERO
+	IMM        96                 // 2f4d0h
+	IMM        3                  // 2f4d2h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f4d4h
+	LOAD       0                  // 2f4dch
+	ZERO
+	EQUAL
+	JMPTRUE    @2f4e6             // 2f4deh
+	DLOAD      0                  // 2f4e3h
+	STORE      0
+	JUMP       @2f28f
+@2f4e6:
+	ZERO
+	IMM        273                // 2f4e8h
+	IMM        3                  // 2f4ebh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f4edh
+	LOAD       0                  // 2f4f5h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f500             // 2f4f7h
+	DLOAD      0                  // 2f4fch
+	STORE      0
+	JUMP       @2f28f
+@2f500:
+	ZERO
+	IMM        123                // 2f502h
+	IMM        3                  // 2f504h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f506h
+	LOAD       0                  // 2f50eh
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f52f             // 2f510h
+	LOAD       0                  // 2f512h
+	IMM        123                // 2f513h
+	IMM        6                  // 2f515h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f517h
+	LOAD       0                  // 2f51fh
+	ZERO
+	EQUAL
+	JMPTRUE    @2f536             // 2f521h
+	LIBCALL    object_is_in_inventory
+	STORE      0                  // 2f526h
+	LOAD       0                  // 2f52bh
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f536             // 2f52dh
+@2f52f:
+	DLOAD      0                  // 2f532h
+	STORE      0
+	JUMP       @2f28f
+@2f536:
+	ZERO
+	IMM        123                // 2f538h
+	IMM        6                  // 2f53ah
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f53ch
+	LOAD       0                  // 2f544h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f54e             // 2f546h
+	DLOAD      0                  // 2f54bh
+	STORE      0
+	JUMP       @2f28f
+@2f54e:
+	ZERO
+	IMM        358                // 2f550h
+	IMM        3                  // 2f553h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f555h
+	LOAD       0                  // 2f55dh
+	ZERO
+	EQUAL
+	JMPTRUE    @2f568             // 2f55fh
+	DLOAD      0                  // 2f564h
+	STORE      0
+	JUMP       @2f28f
+@2f568:
+	ZERO
+	IMM        202                // 2f56ah
+	IMM        3                  // 2f56dh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f56fh
+	LOAD       0                  // 2f577h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f582             // 2f579h
+	DLOAD      0                  // 2f57eh
+	STORE      0
+	JUMP       @2f28f
+@2f582:
+	ZERO
+	IMM        99                 // 2f584h
+	IMM        3                  // 2f586h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f588h
+	LOAD       0                  // 2f590h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f59a             // 2f592h
+	DLOAD      0                  // 2f597h
+	STORE      0
+	JUMP       @2f28f
+@2f59a:
+	ZERO
+	IMM        235                // 2f59ch
+	IMM        3                  // 2f59fh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f5a1h
+	LOAD       0                  // 2f5a9h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f5b4             // 2f5abh
+	DLOAD      0                  // 2f5b0h
+	STORE      0
+	JUMP       @2f28f
+@2f5b4:
+	ZERO
+	IMM        120                // 2f5b6h
+	IMM        3                  // 2f5b8h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f5bah
+	LOAD       0                  // 2f5c2h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f5cc             // 2f5c4h
+	DLOAD      0                  // 2f5c9h
+	STORE      0
+	JUMP       @2f28f
+@2f5cc:
+	ZERO
+	IMM        400                // 2f5ceh
+	IMM        3                  // 2f5d1h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f5d3h
+	LOAD       0                  // 2f5dbh
+	ZERO
+	EQUAL
+	JMPTRUE    @2f5e6             // 2f5ddh
+	DLOAD      0                  // 2f5e2h
+	STORE      0
+	JUMP       @2f28f
+@2f5e6:
+	ZERO
+	IMM        312                // 2f5e8h
+	IMM        3                  // 2f5ebh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f5edh
+	LOAD       0                  // 2f5f5h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f600             // 2f5f7h
+	DLOAD      0                  // 2f5fch
+	STORE      0
+	JUMP       @2f28f
+@2f600:
+	ZERO
+	IMM        273                // 2f602h
+	IMM        4                  // 2f605h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f607h
+	LOAD       0                  // 2f60fh
+	ZERO
+	EQUAL
+	JMPTRUE    @2f61a             // 2f611h
+	DLOAD      0                  // 2f616h
+	STORE      0
+	JUMP       @2f28f
+@2f61a:
+	ZERO
+	IMM        145                // 2f61ch
+	IMM        4                  // 2f61fh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f621h
+	LOAD       0                  // 2f629h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f634             // 2f62bh
+	DLOAD      0                  // 2f630h
+	STORE      0
+	JUMP       @2f28f
+@2f634:
+	ZERO
+	IMM        99                 // 2f636h
+	IMM        6                  // 2f638h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f63ah
+	LOAD       0                  // 2f642h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f64c             // 2f644h
+	DLOAD      0                  // 2f649h
+	STORE      0
+	JUMP       @2f28f
+@2f64c:
+	ZERO
+	IMM        96                 // 2f64eh
+	IMM        6                  // 2f650h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f652h
+	LOAD       0                  // 2f65ah
+	ZERO
+	EQUAL
+	JMPTRUE    @2f664             // 2f65ch
+	DLOAD      0                  // 2f661h
+	STORE      0
+	JUMP       @2f28f
+@2f664:
+	ZERO
+	IMM        96                 // 2f666h
+	IMM        11                 // 2f668h
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f66ah
+	LOAD       0                  // 2f672h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f67c             // 2f674h
+	DLOAD      0                  // 2f679h
+	STORE      0
+	JUMP       @2f28f
+@2f67c:
+	ZERO
+	IMM        3                  // 2f67eh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f680h
+	LOAD       0                  // 2f688h
+	ZERO
+	NEQUAL
+	JMPTRUE    @2f69c             // 2f68ah
+	LOAD       0                  // 2f68ch
+	IMM        274                // 2f68dh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f690h
+	LOAD       0                  // 2f698h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f6ba             // 2f69ah
+@2f69c:
+	ZERO
+	IMM        382                // 2f69eh
+	LIBCALL    Action_isAction
+	STORE      0                  // 2f6a1h
+	LOAD       0                  // 2f6a9h
+	ZERO
+	EQUAL
+	JMPTRUE    @2f6ba             // 2f6abh
+	DLOAD      0                  // 2f6b0h
+	STORE      0
+	JUMP       @2f28f
+@2f6b4:
+	ZERO
+	DSTORE     $5768              // 2f6b4h
+@2f6ba:
+	RET
+end
+
+
