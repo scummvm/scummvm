@@ -106,8 +106,11 @@ bool Animation::process() {
 	if (_stream == NULL || _chunks.size() == 0)
 		error("Trying to show an animation before loading data");
 
-	// TODO: substract the time paused by the GUI
-	int32 currentFrame = Common::Rational((g_engine->_system->getMillis() - _startTime) * 100, 3333).toInt();
+	// TODO: - subtract the time paused by the GUI
+	//       - Re-implement to be closer to the original engine
+	//       - Add support for subtitles
+	//       - Use engine sound queue instead of our own appendable sound instance
+	int32 currentFrame = (g_engine->_system->getMillis() - _startTime) * 3 / 100;
 
 	// Process all chunks until the current frame
 	while (!_changed && _currentChunk != NULL && currentFrame > _currentChunk->frame && !hasEnded()) {
