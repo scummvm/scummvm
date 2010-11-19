@@ -315,7 +315,6 @@ private:
 	int32  _numberStringX;
 	int32  _numberStringY;
 	char   _numberString01[8];
-	int32  _field_964;
 	int32  _field_968;
 	int32  _field_96C;
 	int32  _field_970;
