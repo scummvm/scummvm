@@ -1222,22 +1222,26 @@ void Actor::updateStatus15_Chapter2_Actor11() {
 }
 
 void Actor::updateStatus15_Chapter11() {
-	Common::Rect *rect = getSharedData()->getActorRect();
+	Common::Point *vector1 = getSharedData()->getVector1();
+	Common::Point *vector2 = getSharedData()->getVector2();
 	Actor *actor0 = getScene()->getActor(0);
 
-	rect->left = actor0->getPoint1()->x + actor0->getPoint2()->x;
-	rect->top = actor0->getPoint1()->y + actor0->getPoint2()->y - 5;
-	rect->right = _point1.x + _point2.x;
-	rect->bottom = _point1.y + _point2.y;
+	// Update vectors
+	vector1->x = actor0->getPoint1()->x + actor0->getPoint2()->x;
+	vector1->y = actor0->getPoint1()->y + actor0->getPoint2()->y - 5;
 
-	updateCoordinates(*rect);
+	vector2->x = actor0->getPoint1()->x + actor0->getPoint2()->x;
+	vector2->y = actor0->getPoint1()->y + actor0->getPoint2()->y;
+
+	updateCoordinates(*vector1, *vector2);
 
 	++_frameIndex;
 	if (_frameIndex >= _frameCount)
 		updateStatus(kActorStatus14);
 
 	if (_frameIndex == 14) {
-		if (Actor::distance(*rect) < 75) {
+		if (Actor::distance(*vector1, *vector2) < 75) {
+
 			actor0->updateStatus(kActorStatus16);
 			++getWorld()->field_E848C;
 
@@ -1315,24 +1319,23 @@ void Actor::updateFinish() {
 	}
 }
 
-void Actor::updateCoordinates(const Common::Rect &rect) {
+void Actor::updateCoordinates(Common::Point vec1, Common::Point vec2) {
 	if (getScene()->getActor(1)->isVisible())
 		return;
 
 	// FIXME: there is a check for valid rectangles in Common::Rect, so make sure we can get improper ones
 
-	uint32 width = abs(rect.bottom - rect.top);
-	if (width > 5)
-		width = 5;
+	uint32 diffY = abs(vec2.y - vec1.y);
+	if (diffY > 5)
+		diffY = 5;
 
-	if (rect.bottom - rect.top == 0)
+	if (diffY == 0)
 		return;
 
-	Common::Point pt(rect.right, rect.bottom);
-	ActorDirection direction = (rect.top - rect.bottom > 0) ? kDirection4 : kDirection0;
+	ActorDirection direction = (diffY > 0) ? kDirection4 : kDirection0;
 
-	if (process_408B20(&pt, direction, width + 3, false))
-		updateCoordinatesForDirection(direction, width - 1, &_point);
+	if (process_408B20(&vec2, direction, diffY + 3, false))
+		updateCoordinatesForDirection(direction, diffY - 1, &_point);
 }
 
 void Actor::resetActors() {
@@ -1543,10 +1546,6 @@ uint32 Actor::getDistanceForFrame(ActorDirection direction, uint32 frameIndex) {
 	}
 }
 
-uint32 Actor::distance(const Common::Rect &rect) {
-	return sqrt(pow((double)rect.width(), 2) + pow((double)rect.height(), 2));
-}
-
 void Actor::updateCoordinatesForDirection(ActorDirection direction, int32 delta, Common::Point *point) {
 	if (!point)
 		error("[Actor::updateCoordinatesForDirection] Invalid point (NULL)!");
@@ -1592,5 +1591,19 @@ void Actor::updateCoordinatesForDirection(ActorDirection direction, int32 delta,
 		break;
 	}
 }
+
+uint32 Actor::distance(Common::Point vec1, Common::Point vec2) {
+	return sqrt(pow((double)(vec2.y - vec1.y), 2) + pow((double)(vec2.x - vec1.x), 2));
+}
+
+uint32 Actor::angle(Common::Point vec1, Common::Point vec2) {
+	int32 result = ((long)(180 - acos((double)(vec2.y - vec1.y) / distance(vec1, vec2)) * 180 / PI)) % 360;
+
+	if (vec1.x < vec2.x)
+		return 360 - result;
+
+	return result;
+}
+
 
 } // end of namespace Asylum

@@ -194,7 +194,8 @@ public:
 	void setSceneOffset(int32 val) { _sceneOffset = val; }
 	void setSceneOffsetAdd(const Common::Rational &offset) { _sceneOffsetAdd = offset; }
 
-	Common::Rect *getActorRect() { return &_actorRect; }
+	Common::Point *getVector1() { return &_vector1; }
+	Common::Point *getVector2() { return &_vector2; }
 
 	// Used by Actor::enableActorsChapter2 (and maybe others)
 	void resetActorData() {
@@ -279,7 +280,8 @@ public:
 	}
 
 private:
-	Common::Rect _actorRect;
+	Common::Point   _vector1;
+	Common::Point   _vector2;
 
 	bool            _actorEnableForStatus7;
 

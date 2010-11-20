@@ -390,7 +390,7 @@ private:
 	 */
 	void setVolume();
 
-	void updateCoordinates(const Common::Rect &rect);
+	void updateCoordinates(Common::Point vec1, Common::Point vec2);
 
 	void resetActors();
 
@@ -451,15 +451,6 @@ private:
 	uint32 getDistanceForFrame(ActorDirection direction, uint32 frameIndex);
 
 	/**
-	 * Get the distance from the rectangle
-	 *
-	 * @param rect The rectangle.
-	 *
-	 * @return the distance
-	 */
-	static uint32 distance(const Common::Rect &rect);
-
-	/**
 	 * Updates the coordinates depending on the direction.
 	 *
 	 * @param direction 	 The direction.
@@ -467,6 +458,26 @@ private:
 	 * @param [in,out] point If non-null, the point.
 	 */
 	static void updateCoordinatesForDirection(ActorDirection direction, int32 delta, Common::Point *point);
+
+	/**
+	 * Get the euclidean distance between the two vectors
+	 *
+	 * @param vec1 The first vector.
+	 * @param vec2 The second vector.
+	 *
+	 * @return the distance.
+	 */
+	static uint32 distance(Common::Point vec1, Common::Point vec2);
+
+	/**
+	 * Get the angle between the two vectors
+	 *
+	 * @param p1 The first vector.
+	 * @param p2 The second vector.
+	 *
+	 * @return the angle
+	 */
+	static uint32 angle(Common::Point vec1, Common::Point vec2);
 
 }; // end of class MainActor
 
