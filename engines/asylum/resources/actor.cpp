@@ -1327,8 +1327,6 @@ void Actor::updateCoordinates(Common::Point vec1, Common::Point vec2) {
 	if (getScene()->getActor(1)->isVisible())
 		return;
 
-	// FIXME: there is a check for valid rectangles in Common::Rect, so make sure we can get improper ones
-
 	uint32 diffY = abs(vec2.y - vec1.y);
 	if (diffY > 5)
 		diffY = 5;
@@ -1348,6 +1346,19 @@ void Actor::resetActors() {
 	getScene()->getActor(1)->setFrameIndex(0);
 
 	getWorld()->tickCount1 = _vm->getTick() + 3000;
+}
+
+void Actor::updateNumbers(int32 reaction, int32 x, int32 y) {
+	if (reaction != 1)
+		return;
+
+	_numberStringX = x;
+	_numberStringY = y + 8;
+	_numberStringWidth = 40;
+
+	itoa(_numberValue01, _numberString01, 10);
+
+	_numberFlag01 = 1;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1607,6 +1618,101 @@ uint32 Actor::angle(Common::Point vec1, Common::Point vec2) {
 		return 360 - result;
 
 	return result;
+}
+
+void Actor::rect(Common::Rect *rect, ActorDirection direction, Common::Point point) {
+	if (!rect)
+		error("[Actor::rect] Invalid rect (NULL)!");
+
+	switch (direction) {
+	default:
+		rect->top = 0;
+		rect->left = 0;
+		rect->bottom = 0;
+		rect->right = 0;
+		return;
+
+	case kDirection0:
+		rect->top = point.x - 9;
+		rect->left = point.y - 84;
+		break;
+
+	case kDirection1:
+		rect->top = point.x - 55;
+		rect->left = point.y - 84;
+		break;
+
+	case kDirection2:
+		rect->top = point.x - 34;
+		rect->left = point.y - 93;
+		break;
+
+	case kDirection3:
+		rect->top = point.x + 27;
+		rect->left = point.y - 94;
+		break;
+
+	case kDirection4:
+		rect->top = point.x + 41;
+		rect->left = point.y - 9;
+		break;
+
+	case kDirection5:
+		rect->top = point.x + 27;
+		rect->left = point.y + 54;
+		break;
+
+	case kDirection6:
+		rect->top = point.x - 34;
+		rect->left = point.y + 53;
+		break;
+
+	case kDirection7:
+		rect->top = point.x - 55;
+		rect->left = point.y + 44;
+		break;
+	}
+
+	rect->setWidth(40);
+	rect->setHeight(40);
+}
+
+bool Actor::compareAngles(Common::Point vec1, Common::Point vec2) {
+	Common::Point vec3(2289, 171);
+
+	int32 diff = angle(vec1, vec3) - angle(vec1, vec2);
+
+	if (diff < 0)
+		diff += 359;
+
+	return (diff != 180);
+}
+
+bool Actor::compare(Common::Point vec1, Common::Point vec2, Common::Point vec) {
+	if (vec.y >= vec1.y && vec.y <= vec2.y && vec.x >= vec1.x && vec.x <= vec2.x)
+		return true;
+
+	return false;
+}
+
+int32 Actor::compareX(Common::Point vec1, Common::Point vec2, Common::Point vec) {
+	if (vec.y > vec2.y)
+		return 3;
+
+	if (vec.y < vec1.y)
+		return 2;
+
+	return 0;
+}
+
+int32 Actor::compareY(Common::Point vec1, Common::Point vec2, Common::Point vec) {
+	if (vec.y > vec2.y)
+		return 3;
+
+	if (vec.y < vec1.y)
+		return 2;
+
+	return 0;
 }
 
 

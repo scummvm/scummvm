@@ -389,7 +389,19 @@ private:
 
 	void updateCoordinates(Common::Point vec1, Common::Point vec2);
 
+	/**
+	 * Hide Actor 0 and reset Actor 1 frame index
+	 */
 	void resetActors();
+
+	/**
+	 * Updates the actor "number" data if the reaction is "1".
+	 *
+	 * @param reaction The reaction.
+	 * @param x 	   The second int32.
+	 * @param y 	   The third int32.
+	 */
+	void updateNumbers(int32 reaction, int32 x, int32 y);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helper methods
@@ -475,6 +487,58 @@ private:
 	 * @return the angle
 	 */
 	static uint32 angle(Common::Point vec1, Common::Point vec2);
+
+	/**
+	 * Create a new rect using the point, depending on the actor direction
+	 *
+	 * @param rect          The rectangle.
+	 * @param direction 	The direction.
+	 * @param point 		The point.
+	 */
+	static void rect(Common::Rect *rect, ActorDirection direction, Common::Point point);
+
+	/**
+	 * Compares the angle between two vectors
+	 *
+	 * @param vec1 The first vector.
+	 * @param vec2 The second vector.
+	 *
+	 * @return true if ...
+	 */
+	static bool compareAngles(Common::Point vec1, Common::Point vec2);
+
+	/**
+	 * Compares vector vec to two other vectors.
+	 *
+	 * @param vec1 The first vector.
+	 * @param vec2 The second vector.
+	 * @param vec  The vector to check
+	 *
+	 * @return true if vec is between vec1 and vec2.
+	 */
+	static bool compare(Common::Point vec1, Common::Point vec2, Common::Point vec);
+
+	/**
+	 * Compare vectors
+	 *
+	 * @param vec1 The first vector.
+	 * @param vec2 The second vector.
+	 * @param vec  The vector.
+	 *
+	 * @return value depending on whether vec.x is superior or inferior to each vector x coordinate
+	 */
+	static int32 compareX(Common::Point vec1, Common::Point vec2, Common::Point vec);
+
+	/**
+	 * Compare vectors
+	 *
+	 * @param vec1 The first vector.
+	 * @param vec2 The second vector.
+	 * @param vec  The vector.
+	 *
+	 * @return value depending on whether vec.y is superior or inferior to each vector y coordinate
+	 */
+	static int32 compareY(Common::Point vec1, Common::Point vec2, Common::Point vec);
 
 }; // end of class MainActor
 
