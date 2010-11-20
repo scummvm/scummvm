@@ -111,7 +111,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 	// Check whether the file is compressed or not -  for compressed files the
 	// first long is the filelength and for uncompressed files it is the chunk
 	// identifier
-	textLen = f.readUint32LE();
+	textLen = f.readUint32();
 	if (f.eos() || f.err())
 		error(FILE_IS_CORRUPT, _vm->getTextFile(newLang));
 

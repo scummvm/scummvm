@@ -722,15 +722,15 @@ void LoadBasicChunks() {
 	// CHUNK_TOTAL_ACTORS seems to be missing in the released version, hard coding a value
 	// TODO: Would be nice to just change 511 to MAX_SAVED_ALIVES
 	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_ACTORS);
-	RegisterActors((cptr != NULL) ? READ_LE_UINT32(cptr) : 511);
+	RegisterActors((cptr != NULL) ? READ_32(cptr) : 511);
 
 	// CHUNK_TOTAL_GLOBALS seems to be missing in some versions.
 	// So if it is missing, set a reasonably high value for the number of globals.
 	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_GLOBALS);
-	RegisterGlobals((cptr != NULL) ? READ_LE_UINT32(cptr) : 512);
+	RegisterGlobals((cptr != NULL) ? READ_32(cptr) : 512);
 
 	cptr = FindChunk(INV_OBJ_SCNHANDLE, CHUNK_TOTAL_OBJECTS);
-	numObjects = (cptr != NULL) ? READ_LE_UINT32(cptr) : 0;
+	numObjects = (cptr != NULL) ? READ_32(cptr) : 0;
 
 	cptr = FindChunk(INV_OBJ_SCNHANDLE, CHUNK_OBJECTS);
 
@@ -763,7 +763,7 @@ void LoadBasicChunks() {
 		// CdPlay() stuff
 		cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_CDPLAY_HANDLE);
 		assert(cptr);
-		uint32 playHandle = READ_LE_UINT32(cptr);
+		uint32 playHandle = READ_32(cptr);
 		assert(playHandle < 512);
 		SetCdPlayHandle(playHandle);
 	}

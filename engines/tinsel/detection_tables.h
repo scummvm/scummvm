@@ -77,7 +77,26 @@ static const TinselGameDescription gameDescriptions[] = {
 		GF_CD,
 		TINSEL_V1,
 	},
-
+#if 0
+	{	// Macintosh CD Demo V1 version, with *.scn files
+		{
+			"dw",
+			"CD Demo",
+			{
+				{"dw.scn", 0, "ae291aa4ed7f7caacbfb711b6ff2c8bd", 1286264},
+				{"english.smp", 0, NULL, -1},
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO_NONE
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_BIG_ENDIAN,
+		TINSEL_V1,
+	},
+#endif
 	{	// Multilingual Floppy V1 with *.gra files.
 		// Note: It contains no english subtitles.
 		{
@@ -444,7 +463,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT | GF_BIG_ENDIAN,
 		TINSEL_V1,
 	},
 

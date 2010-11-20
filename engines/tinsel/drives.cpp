@@ -24,6 +24,7 @@
  * CD/drive handling functions
  */
 
+#include "common/config-manager.h"
 #include "gui/message.h"
 #include "tinsel/drives.h"
 #include "tinsel/scene.h"
@@ -151,13 +152,29 @@ bool GotoCD() {
 
 bool TinselFile::_warningShown = false;
 
+TinselFile::TinselFile() {
+	_stream = NULL;
+}
+
+TinselFile::~TinselFile() {
+	delete _stream;
+}
+
+bool TinselFile::openInternal(const Common::String &filename) {
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode fsNode = gameDataDir.getChild(filename);
+	Common::SeekableReadStream *stream = fsNode.createReadStream(); 
+	if (!stream)
+		return false;
+
+	_stream = new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), 
+		(_vm->getFeatures() & GF_BIG_ENDIAN) != 0, DisposeAfterUse::YES);
+	return true;
+}
+
 bool TinselFile::open(const Common::String &filename) {
-	if (Common::File::open(filename)) {
-		// If it's the sample file, strip off the CD number from the filename
-
-
+	if (openInternal(filename))
 		return true;
-	}
 
 	if (!TinselV2)
 		return false;
@@ -175,7 +192,12 @@ bool TinselFile::open(const Common::String &filename) {
 	strncpy(newFilename, fname, p - fname);
 	strcpy(newFilename + (p - fname), p + 1);
 
-	return Common::File::open(newFilename);
+	return openInternal(newFilename);
+}
+
+void TinselFile::close() {
+	delete _stream;
+	_stream = NULL;
 }
 
 } // End of namespace Tinsel
