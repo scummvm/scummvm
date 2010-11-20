@@ -41,7 +41,10 @@ struct ActionArea;
 struct GraphicFrame;
 
 struct ActorData {
-	int32 count;
+	uint32 count;
+	int32 field_4;
+	int32 field_8[240];
+	int32 field_3C8[120];
 	// TODO add actor data fields
 };
 
@@ -220,15 +223,6 @@ public:
 	 */
 	void clearFields() { memset(&_field_970, 0, 52); }
 
-
-	/**
-	 * TEMPORARY: Initialize the 500 byte resource index from the scene
-	 * file (at offset 0xA73B6).
-	 *
-	 * TODO remove this or add it in the right place
-	 */
-	void setRawResources(uint8* data);
-
 	// Unknown methods
 	bool process(int32 actorX, int32 actorY);
 	void processStatus(int32 actorX, int32 actorY, bool doSpeech);
@@ -237,7 +231,8 @@ public:
 	void process_41BC00(int32 reactionIndex, int32 numberValue01Add);
 	void process_41BCC0(int32 reactionIndex, int32 numberValue01Substract);
 	bool process_41BDB0(int32 reactionIndex, int32 testNumberValue01);
-	void update_40DE20();
+	void updateAndDraw();
+	void update_409230();
 
 	/**
 	 * Query if the object resource is present in the resource table between indices 10 & 20
@@ -257,9 +252,6 @@ private:
 
 	// Our current index
 	ActorIndex _index;
-
-	// Temporary raw resources
-	int32 _resources[61];
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
@@ -332,6 +324,11 @@ private:
 	int32  _field_9A0;
 
 	//////////////////////////////////////////////////////////////////////////
+	// Actor data
+	//////////////////////////////////////////////////////////////////////////
+	ActorData _data;
+
+	//////////////////////////////////////////////////////////////////////////
 	// Update methods
 	//////////////////////////////////////////////////////////////////////////
 	void updateStatus3_19();
@@ -353,6 +350,8 @@ private:
 
 	void updateStatus15_Chapter2();
 	void updateStatus15_Chapter2_Player();
+	bool updateStatus15_isNoVisibleOrStatus17();
+
 	void updateStatus15_Chapter2_Actor11();
 	void updateStatus15_Chapter11();
 	void updateStatus15_Chapter11_Player();
@@ -364,8 +363,6 @@ private:
 	void updateStatus21();
 
 	void updateFinish();
-
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc

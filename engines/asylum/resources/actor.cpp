@@ -111,9 +111,6 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_field_998 = 0;
  	_field_99C = 0;
  	_field_9A0 = 0;
-
-	// Temporary resources
-	memset(&_resources, 0, sizeof(_resources));
 }
 
 Actor::~Actor() {
@@ -222,8 +219,15 @@ void Actor::load(Common::SeekableReadStream *stream) {
 }
 
 void Actor::loadData(Common::SeekableReadStream *stream) {
-	// TODO load actor data
-	stream->seek(ACTORDATA_SIZE, SEEK_CUR);
+	_data.count = stream->readUint32LE();
+
+	_data.field_4 = stream->readUint32LE();
+
+	for (int32 i = 0; i < 240; i++)
+		_data.field_8[i] = stream->readSint32LE();
+
+	for (int32 i = 0; i < 120; i++)
+		_data.field_3C8[i] = stream->readSint32LE();
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -782,15 +786,6 @@ Common::String Actor::toString(bool shortString) {
 	return output;
 }
 
-void Actor::setRawResources(uint8 *data) {
-	byte *dataPtr = data;
-
-	for (int32 i = 0; i < 60; i++) {
-		_resources[i] = (int32)READ_LE_UINT32(dataPtr);
-		dataPtr += 4;
-	}
-}
-
 //////////////////////////////////////////////////////////////////////////
 // Unknown methods
 //////////////////////////////////////////////////////////////////////////
@@ -899,8 +894,13 @@ bool Actor::process_41BDB0(int32 reactionIndex, int32 testNumberValue01) {
 	return true;
 }
 
-void Actor::update_40DE20() {
+void Actor::updateAndDraw() {
 	error("[Actor::update_40DE20] not implemented!");
+}
+
+void Actor::update_409230() {
+	updateStatus(_status <= 11 ? kActorStatusEnabled : kActorStatus14);
+	_data.field_4 = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1215,6 +1215,10 @@ void Actor::updateStatus15_Chapter2() {
 
 void Actor::updateStatus15_Chapter2_Player() {
 	error("[Actor::updateStatus15_Chapter2_Player] not implemented!");
+}
+
+bool Actor::updateStatus15_isNoVisibleOrStatus17() {
+	return (!isVisible() || _status == kActorStatus17);
 }
 
 void Actor::updateStatus15_Chapter2_Actor11() {

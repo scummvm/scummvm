@@ -1167,7 +1167,7 @@ int Scene::drawScene() {
 
 		Actor *player = getActor();
 		if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10)
-			player->update_40DE20();
+			player->updateAndDraw();
 		else
 			player->setNumberFlag01(0);
 
