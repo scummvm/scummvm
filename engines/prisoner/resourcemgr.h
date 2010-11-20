@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "common/debug.h"
+#include "common/memstream.h"
 
 #include "prisoner/kroarchive.h"
 

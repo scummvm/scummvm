@@ -26,7 +26,7 @@
 #include "common/events.h"
 #include "common/file.h"
 
-#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "base/plugins.h"
 #include "base/version.h"
