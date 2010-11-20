@@ -219,7 +219,7 @@ bool VideoManager::updateBackgroundMovies() {
 }
 
 void VideoManager::activateMLST(uint16 mlstId, uint16 card) {
-	Common::SeekableReadStream *mlstStream = _vm->getRawData(ID_MLST, card);
+	Common::SeekableReadStream *mlstStream = _vm->getResource(ID_MLST, card);
 	uint16 recordCount = mlstStream->readUint16BE();
 
 	for (uint16 i = 0; i < recordCount; i++) {
@@ -342,7 +342,7 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	entry.loop = loop;
 	entry.enabled = true;
 	entry->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
-	entry->load(_vm->getRawData(ID_TMOV, id));
+	entry->load(_vm->getResource(ID_TMOV, id));
 
 	// Search for any deleted videos so we can take a formerly used slot
 	for (uint32 i = 0; i < _videoStreams.size(); i++)

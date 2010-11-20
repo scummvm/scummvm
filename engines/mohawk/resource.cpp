@@ -173,6 +173,39 @@ void MohawkArchive::open(Common::SeekableReadStream *stream) {
 	}
 }
 
+int MohawkArchive::getTypeIndex(uint32 tag) {
+	for (uint16 i = 0; i < _typeTable.resource_types; i++)
+		if (_types[i].tag == tag)
+			return i;
+	return -1;	// not found
+}
+
+int MohawkArchive::getIDIndex(int typeIndex, uint16 id) {
+	for (uint16 i = 0; i < _types[typeIndex].resTable.resources; i++)
+		if (_types[typeIndex].resTable.entries[i].id == id)
+			return i;
+	return -1;	// not found
+}
+
+int MohawkArchive::getIDIndex(int typeIndex, const Common::String &resName) {
+	int index = -1;
+
+	for (uint16 i = 0; i < _types[typeIndex].nameTable.num; i++)
+		if (_types[typeIndex].nameTable.entries[i].name.matchString(resName)) {
+			index = i;
+			break;
+		}
+
+	if (index < 0)
+		return -1; // Not found
+
+	for (uint16 i = 0; i < _types[typeIndex].resTable.resources; i++)
+		if (_types[typeIndex].resTable.entries[i].index == index)
+			return i;
+
+	return -1; // Not found
+}
+
 bool MohawkArchive::hasResource(uint32 tag, uint16 id) {
 	if (!_mhk)
 		return false;
@@ -182,7 +215,19 @@ bool MohawkArchive::hasResource(uint32 tag, uint16 id) {
 	if (typeIndex < 0)
 		return false;
 
-	return (getIdIndex(typeIndex, id) >= 0);
+	return getIDIndex(typeIndex, id) >= 0;
+}
+
+bool MohawkArchive::hasResource(uint32 tag, const Common::String &resName) {
+	if (!_mhk)
+		return false;
+
+	int16 typeIndex = getTypeIndex(tag);
+
+	if (typeIndex < 0)
+		return false;
+
+	return getIDIndex(typeIndex, resName) >= 0;
 }
 
 uint32 MohawkArchive::getOffset(uint32 tag, uint16 id) {
@@ -191,25 +236,56 @@ uint32 MohawkArchive::getOffset(uint32 tag, uint16 id) {
 	int16 typeIndex = getTypeIndex(tag);
 	assert(typeIndex >= 0);
 
-	int16 idIndex = getIdIndex(typeIndex, id);
+	int16 idIndex = getIDIndex(typeIndex, id);
 	assert(idIndex >= 0);
 
 	return _fileTable[_types[typeIndex].resTable.entries[idIndex].index - 1].offset;
 }
 
-Common::SeekableReadStream *MohawkArchive::getRawData(uint32 tag, uint16 id) {
+Common::SeekableReadStream *MohawkArchive::getResource(uint32 tag, uint16 id) {
 	if (!_mhk)
-		error ("MohawkArchive::getRawData - No File in Use");
+		error("MohawkArchive::getResource(): No File in Use");
 
 	int16 typeIndex = getTypeIndex(tag);
 
 	if (typeIndex < 0)
-		error ("Could not find a tag of \'%s\' in file \'%s\'", tag2str(tag), _curFile.c_str());
+		error("Could not find a tag of '%s' in file '%s'", tag2str(tag), _curFile.c_str());
 
-	int16 idIndex = getIdIndex(typeIndex, id);
+	int16 idIndex = getIDIndex(typeIndex, id);
 
 	if (idIndex < 0)
-		error ("Could not find \'%s\' %04x in file \'%s\'", tag2str(tag), id, _curFile.c_str());
+		error("Could not find '%s' %04x in file '%s'", tag2str(tag), id, _curFile.c_str());
+
+	// Note: the fileTableIndex is based off 1, not 0. So, subtract 1
+	uint16 fileTableIndex = _types[typeIndex].resTable.entries[idIndex].index - 1;
+
+	// WORKAROUND: tMOV resources pretty much ignore the size part of the file table,
+	// as the original just passed the full Mohawk file to QuickTime and the offset.
+	// We need to do this because of the way Mohawk is set up (this is much more "proper"
+	// than passing _mhk at the right offset). We may want to do that in the future, though.
+	if (_types[typeIndex].tag == ID_TMOV) {
+		if (fileTableIndex == _fileTableAmount)
+			return new Common::SeekableSubReadStream(_mhk, _fileTable[fileTableIndex].offset, _mhk->size());
+		else
+			return new Common::SeekableSubReadStream(_mhk, _fileTable[fileTableIndex].offset, _fileTable[fileTableIndex + 1].offset);
+	}
+
+	return new Common::SeekableSubReadStream(_mhk, _fileTable[fileTableIndex].offset, _fileTable[fileTableIndex].offset + _fileTable[fileTableIndex].dataSize);
+}
+
+Common::SeekableReadStream *MohawkArchive::getResource(uint32 tag, const Common::String &resName) {
+	if (!_mhk)
+		error("MohawkArchive::getResource(): No File in Use");
+
+	int16 typeIndex = getTypeIndex(tag);
+
+	if (typeIndex < 0)
+		error("Could not find a tag of '%s' in file '%s'", tag2str(tag), _curFile.c_str());
+
+	int16 idIndex = getIDIndex(typeIndex, resName);
+
+	if (idIndex < 0)
+		error("Could not find '%s' '%s' in file '%s'", tag2str(tag), resName.c_str(), _curFile.c_str());
 
 	// Note: the fileTableIndex is based off 1, not 0. So, subtract 1
 	uint16 fileTableIndex = _types[typeIndex].resTable.entries[idIndex].index - 1;
@@ -320,27 +396,53 @@ uint32 LivingBooksArchive_v1::getOffset(uint32 tag, uint16 id) {
 	int16 typeIndex = getTypeIndex(tag);
 	assert(typeIndex >= 0);
 
-	int16 idIndex = getIdIndex(typeIndex, id);
+	int16 idIndex = getIDIndex(typeIndex, id);
 	assert(idIndex >= 0);
 
 	return _types[typeIndex].resTable.entries[idIndex].offset;
 }
 
-Common::SeekableReadStream *LivingBooksArchive_v1::getRawData(uint32 tag, uint16 id) {
+Common::SeekableReadStream *LivingBooksArchive_v1::getResource(uint32 tag, uint16 id) {
 	if (!_mhk)
-		error ("LivingBooksArchive_v1::getRawData - No File in Use");
+		error("LivingBooksArchive_v1::getResource(): No File in Use");
 
 	int16 typeIndex = getTypeIndex(tag);
 
 	if (typeIndex < 0)
-		error ("Could not find a tag of \'%s\' in file \'%s\'", tag2str(tag), _curFile.c_str());
+		error("Could not find a tag of \'%s\' in file \'%s\'", tag2str(tag), _curFile.c_str());
 
-	int16 idIndex = getIdIndex(typeIndex, id);
+	int16 idIndex = getIDIndex(typeIndex, id);
 
 	if (idIndex < 0)
-		error ("Could not find \'%s\' %04x in file \'%s\'", tag2str(tag), id, _curFile.c_str());
+		error("Could not find \'%s\' %04x in file \'%s\'", tag2str(tag), id, _curFile.c_str());
 
 	return new Common::SeekableSubReadStream(_mhk, _types[typeIndex].resTable.entries[idIndex].offset, _types[typeIndex].resTable.entries[idIndex].offset + _types[typeIndex].resTable.entries[idIndex].size);
+}
+
+bool LivingBooksArchive_v1::hasResource(uint32 tag, uint16 id) {
+	if (!_mhk)
+		return false;
+
+	int16 typeIndex = getTypeIndex(tag);
+
+	if (typeIndex < 0)
+		return false;
+
+	return getIDIndex(typeIndex, id) >= 0;
+}
+
+int LivingBooksArchive_v1::getTypeIndex(uint32 tag) {
+	for (uint16 i = 0; i < _typeTable.resource_types; i++)
+		if (_types[i].tag == tag)
+			return i;
+	return -1;	// not found
+}
+
+int LivingBooksArchive_v1::getIDIndex(int typeIndex, uint16 id) {
+	for (uint16 i = 0; i < _types[typeIndex].resTable.resources; i++)
+		if (_types[typeIndex].resTable.entries[i].id == id)
+			return i;
+	return -1;	// not found
 }
 
 }	// End of namespace Mohawk

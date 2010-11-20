@@ -105,7 +105,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 	mhk->open(loadFile);
 
 	// First, let's make sure we're using a saved game file from this version of Riven by checking the VERS resource
-	Common::SeekableReadStream *vers = mhk->getRawData(ID_VERS, 1);
+	Common::SeekableReadStream *vers = mhk->getResource(ID_VERS, 1);
 	uint32 saveGameVersion = vers->readUint32BE();
 	delete vers;
 	if ((saveGameVersion == kCDSaveGameVersion && (_vm->getFeatures() & GF_DVD))
@@ -116,7 +116,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 	}
 
 	// Now, we'll read in the variable values.
-	Common::SeekableReadStream *vars = mhk->getRawData(ID_VARS, 1);
+	Common::SeekableReadStream *vars = mhk->getResource(ID_VARS, 1);
 	Common::Array<uint32> rawVariables;
 
 	while (!vars->eos()) {
@@ -129,7 +129,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 
 	// Next, we set the variables based on the name found by the index in the VARS resource.
 	// TODO: Merge with code in mohawk.cpp for loading names?
-	Common::SeekableReadStream *names = mhk->getRawData(ID_NAME, 1);
+	Common::SeekableReadStream *names = mhk->getResource(ID_NAME, 1);
 
 	uint16 namesCount = names->readUint16BE();
 	uint16 *stringOffsets = new uint16[namesCount];
@@ -183,7 +183,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 	_vm->_zipModeData.clear();
 
 	// Finally, we load in zip mode data.
-	Common::SeekableReadStream *zips = mhk->getRawData(ID_ZIPS, 1);
+	Common::SeekableReadStream *zips = mhk->getResource(ID_ZIPS, 1);
 	uint16 zipsRecordCount = zips->readUint16BE();
 	for (uint16 i = 0; i < zipsRecordCount; i++) {
 		ZipMode zip;

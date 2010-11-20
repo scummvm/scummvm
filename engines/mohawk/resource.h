@@ -183,8 +183,10 @@ public:
 	virtual void open(Common::SeekableReadStream *stream);
 	void close();
 
-	bool hasResource(uint32 tag, uint16 id);
-	virtual Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);
+	virtual bool hasResource(uint32 tag, uint16 id);
+	virtual bool hasResource(uint32 tag, const Common::String &resName);
+	virtual Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
+	virtual Common::SeekableReadStream *getResource(uint32 tag, const Common::String &resName);
 	virtual uint32 getOffset(uint32 tag, uint16 id);
 
 protected:
@@ -202,19 +204,9 @@ private:
 	uint16 _resourceTableAmount;
 	uint16 _fileTableAmount;
 
-	virtual int16 getTypeIndex(uint32 tag) {
-		for (uint16 i = 0; i < _typeTable.resource_types; i++)
-			if (_types[i].tag == tag)
-				return i;
-		return -1;	// not found
-	}
-
-	virtual int16 getIdIndex(int16 typeIndex, uint16 id) {
-		for (uint16 i = 0; i < _types[typeIndex].resTable.resources; i++)
-			if (_types[typeIndex].resTable.entries[i].id == id)
-				return i;
-		return -1;	// not found
-	}
+	int getTypeIndex(uint32 tag);
+	int getIDIndex(int typeIndex, uint16 id);
+	int getIDIndex(int typeIndex, const Common::String &resName);
 };
 
 class LivingBooksArchive_v1 : public MohawkArchive {
@@ -222,8 +214,11 @@ public:
 	LivingBooksArchive_v1() : MohawkArchive() {}
 	~LivingBooksArchive_v1() {}
 
+	bool hasResource(uint32 tag, uint16 id);
+	bool hasResource(uint32 tag, const Common::String &resName) { return false; }
 	void open(Common::SeekableReadStream *stream);
-	Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);
+	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
+	Common::SeekableReadStream *getResource(uint32 tag, const Common::String &resName) { return 0; }
 	uint32 getOffset(uint32 tag, uint16 id);
 
 private:
@@ -240,19 +235,8 @@ private:
 		} resTable;
 	} *_types;
 
-	int16 getTypeIndex(uint32 tag) {
-		for (uint16 i = 0; i < _typeTable.resource_types; i++)
-			if (_types[i].tag == tag)
-				return i;
-		return -1;	// not found
-	}
-
-	int16 getIdIndex(int16 typeIndex, uint16 id) {
-		for (uint16 i = 0; i < _types[typeIndex].resTable.resources; i++)
-			if (_types[typeIndex].resTable.entries[i].id == id)
-				return i;
-		return -1;	// not found
-	}
+	int getTypeIndex(uint32 tag);
+	int getIDIndex(int typeIndex, uint16 id);
 };
 
 } // End of namespace Mohawk

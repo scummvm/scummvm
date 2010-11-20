@@ -557,7 +557,7 @@ void RivenScript::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 43: activate BLST record (card hotspot enabling lists)
 void RivenScript::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
-	Common::SeekableReadStream* blst = _vm->getRawData(ID_BLST, _vm->getCurCard());
+	Common::SeekableReadStream* blst = _vm->getResource(ID_BLST, _vm->getCurCard());
 	uint16 recordCount = blst->readUint16BE();
 
 	for (uint16 i = 0; i < recordCount; i++) {
@@ -576,7 +576,7 @@ void RivenScript::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 44: activate FLST record (information on which SFXE resource this card should use)
 void RivenScript::activateFLST(uint16 op, uint16 argc, uint16 *argv) {
-	Common::SeekableReadStream* flst = _vm->getRawData(ID_FLST, _vm->getCurCard());
+	Common::SeekableReadStream* flst = _vm->getResource(ID_FLST, _vm->getCurCard());
 	uint16 recordCount = flst->readUint16BE();
 
 	for (uint16 i = 0; i < recordCount; i++) {

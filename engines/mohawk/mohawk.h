@@ -99,8 +99,10 @@ public:
 	Sound *_sound;
 	VideoManager *_video;
 
-	virtual Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);
+	virtual Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
+	Common::SeekableReadStream *getResource(uint32 tag, const Common::String &resName);
 	bool hasResource(uint32 tag, uint16 id);
+	bool hasResource(uint32 tag, const Common::String &resName);
 	uint32 getResourceOffset(uint32 tag, uint16 id);
 
 	void pauseGame();

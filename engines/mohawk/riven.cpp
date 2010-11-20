@@ -370,7 +370,7 @@ void MohawkEngine_Riven::refreshCard() {
 void MohawkEngine_Riven::loadCard(uint16 id) {
 	// NOTE: The card scripts are cleared by the RivenScriptManager automatically.
 
-	Common::SeekableReadStream* inStream = getRawData(ID_CARD, id);
+	Common::SeekableReadStream* inStream = getResource(ID_CARD, id);
 
 	_cardData.name = inStream->readSint16BE();
 	_cardData.zipModePlace = inStream->readUint16BE();
@@ -397,7 +397,7 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 	
 	// NOTE: The hotspot scripts are cleared by the RivenScriptManager automatically.
 
-	Common::SeekableReadStream *inStream = getRawData(ID_HSPT, id);
+	Common::SeekableReadStream *inStream = getResource(ID_HSPT, id);
 
 	_hotspotCount = inStream->readUint16BE();
 	_hotspots = new RivenHotspot[_hotspotCount];
@@ -566,11 +566,11 @@ void MohawkEngine_Riven::checkInventoryClick() {
 }
 
 Common::SeekableReadStream *MohawkEngine_Riven::getExtrasResource(uint32 tag, uint16 id) {
-	return _extrasFile->getRawData(tag, id);
+	return _extrasFile->getResource(tag, id);
 }
 
 Common::String MohawkEngine_Riven::getName(uint16 nameResource, uint16 nameID) {
-	Common::SeekableReadStream* nameStream = getRawData(ID_NAME, nameResource);
+	Common::SeekableReadStream* nameStream = getResource(ID_NAME, nameResource);
 	uint16 fieldCount = nameStream->readUint16BE();
 	uint16* stringOffsets = new uint16[fieldCount];
 	Common::String name;
@@ -598,7 +598,7 @@ Common::String MohawkEngine_Riven::getName(uint16 nameResource, uint16 nameID) {
 
 uint16 MohawkEngine_Riven::matchRMAPToCard(uint32 rmapCode) {
 	uint16 index = 0;
-	Common::SeekableReadStream *rmapStream = getRawData(ID_RMAP, 1);
+	Common::SeekableReadStream *rmapStream = getResource(ID_RMAP, 1);
 
 	for (uint16 i = 1; rmapStream->pos() < rmapStream->size(); i++) {
 		uint32 code = rmapStream->readUint32BE();
@@ -615,7 +615,7 @@ uint16 MohawkEngine_Riven::matchRMAPToCard(uint32 rmapCode) {
 }
 
 uint32 MohawkEngine_Riven::getCurCardRMAP() {
-	Common::SeekableReadStream *rmapStream = getRawData(ID_RMAP, 1);
+	Common::SeekableReadStream *rmapStream = getResource(ID_RMAP, 1);
 	rmapStream->seek(_curCard * 4);
 	uint32 rmapCode = rmapStream->readUint32BE();
 	delete rmapStream;

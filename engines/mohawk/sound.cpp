@@ -93,23 +93,23 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop) {
 			// resource we're looking for. This saves a lot of space from
 			// repeated data.
 			if (_vm->hasResource(ID_MJMP, id)) {
-				Common::SeekableReadStream *mjmpStream = _vm->getRawData(ID_MJMP, id);
+				Common::SeekableReadStream *mjmpStream = _vm->getResource(ID_MJMP, id);
 				id = mjmpStream->readUint16LE();
 				delete mjmpStream;
 			}
 
-			audStream = Audio::makeWAVStream(_vm->getRawData(ID_MSND, id), DisposeAfterUse::YES);
+			audStream = Audio::makeWAVStream(_vm->getResource(ID_MSND, id), DisposeAfterUse::YES);
 		} else
-			audStream = makeMohawkWaveStream(_vm->getRawData(ID_MSND, id));
+			audStream = makeMohawkWaveStream(_vm->getResource(ID_MSND, id));
 		break;
 	case GType_ZOOMBINI:
-		audStream = makeMohawkWaveStream(_vm->getRawData(ID_SND, id));
+		audStream = makeMohawkWaveStream(_vm->getResource(ID_SND, id));
 		break;
 	case GType_LIVINGBOOKSV1:
-		audStream = makeOldMohawkWaveStream(_vm->getRawData(ID_WAV, id));
+		audStream = makeOldMohawkWaveStream(_vm->getResource(ID_WAV, id));
 		break;
 	default:
-		audStream = makeMohawkWaveStream(_vm->getRawData(ID_TWAV, id));
+		audStream = makeMohawkWaveStream(_vm->getResource(ID_TWAV, id));
 	}
 
 	if (audStream) {
@@ -141,7 +141,7 @@ void Sound::playMidi(uint16 id) {
 	assert(_midiDriver && _midiParser);
 
 	_midiParser->unloadMusic();
-	Common::SeekableReadStream *midi = _vm->getRawData(ID_TMID, id);
+	Common::SeekableReadStream *midi = _vm->getResource(ID_TMID, id);
 
 	idTag = midi->readUint32BE();
 	assert(idTag == ID_MHWK);
@@ -177,7 +177,7 @@ byte Sound::convertRivenVolume(uint16 volume) {
 }
 
 void Sound::playSLST(uint16 index, uint16 card) {
-	Common::SeekableReadStream *slstStream = _vm->getRawData(ID_SLST, card);
+	Common::SeekableReadStream *slstStream = _vm->getResource(ID_SLST, card);
 	SLSTRecord slstRecord;
 	uint16 recordCount = slstStream->readUint16BE();
 
@@ -292,7 +292,7 @@ void Sound::playSLSTSound(uint16 id, bool fade, bool loop, uint16 volume, int16 
 	sndHandle.id = id;
 	_currentSLSTSounds.push_back(sndHandle);
 
-	Audio::AudioStream *audStream = makeMohawkWaveStream(_vm->getRawData(ID_TWAV, id));
+	Audio::AudioStream *audStream = makeMohawkWaveStream(_vm->getResource(ID_TWAV, id));
 
 	// Loop here if necessary
 	if (loop)

@@ -84,12 +84,21 @@ void MohawkEngine::pauseGame() {
 	runDialog(*_pauseDialog);
 }
 
-Common::SeekableReadStream *MohawkEngine::getRawData(uint32 tag, uint16 id) {
+Common::SeekableReadStream *MohawkEngine::getResource(uint32 tag, uint16 id) {
 	for (uint32 i = 0; i < _mhk.size(); i++)
 		if (_mhk[i]->hasResource(tag, id))
-			return _mhk[i]->getRawData(tag, id);
+			return _mhk[i]->getResource(tag, id);
 
-	error ("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
+	error("Could not find a '%s' resource with ID %04x", tag2str(tag), id);
+	return NULL;
+}
+
+Common::SeekableReadStream *MohawkEngine::getResource(uint32 tag, const Common::String &resName) {
+	for (uint32 i = 0; i < _mhk.size(); i++)
+		if (_mhk[i]->hasResource(tag, resName))
+			return _mhk[i]->getResource(tag, resName);
+
+	error("Could not find a '%s' resource matching name '%s'", tag2str(tag), resName.c_str());
 	return NULL;
 }
 
@@ -101,12 +110,20 @@ bool MohawkEngine::hasResource(uint32 tag, uint16 id) {
 	return false;
 }
 
+bool MohawkEngine::hasResource(uint32 tag, const Common::String &resName) {
+	for (uint32 i = 0; i < _mhk.size(); i++)
+		if (_mhk[i]->hasResource(tag, resName))
+			return true;
+
+	return false;
+}
+
 uint32 MohawkEngine::getResourceOffset(uint32 tag, uint16 id) {
 	for (uint32 i = 0; i < _mhk.size(); i++)
 		if (_mhk[i]->hasResource(tag, id))
 			return _mhk[i]->getOffset(tag, id);
 
-	error ("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
+	error("Could not find a '%s' resource with ID %04x", tag2str(tag), id);
 	return 0;
 }
 

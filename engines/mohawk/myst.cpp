@@ -121,7 +121,7 @@ Common::SeekableReadStream *MohawkEngine_Myst::getRawData(uint32 tag, uint16 id)
 
 	for (uint32 i = 0; i < _mhk.size(); i++)
 		if (_mhk[i]->hasResource(tag, id)) {
-			ret = _mhk[i]->getRawData(tag, id);
+			ret = _mhk[i]->getResource(tag, id);
 			_cache.add(tag, id, ret);
 			return ret;
 		}
@@ -137,19 +137,19 @@ void MohawkEngine_Myst::cachePreload(uint32 tag, uint16 id) {
 	for (uint32 i = 0; i < _mhk.size(); i++) {
 		// Check for MJMP in Myst ME
 		if ((getFeatures() & GF_ME) && tag == ID_MSND && _mhk[i]->hasResource(ID_MJMP, id)) {
-			Common::SeekableReadStream *tempData = _mhk[i]->getRawData(ID_MJMP, id);
+			Common::SeekableReadStream *tempData = _mhk[i]->getResource(ID_MJMP, id);
 			uint16 msndId = tempData->readUint16LE();
 			delete tempData;
 
 			// We've found where the real MSND data is, so go get that
-			tempData = _mhk[i]->getRawData(tag, msndId);
+			tempData = _mhk[i]->getResource(tag, msndId);
 			_cache.add(tag, id, tempData);
 			delete tempData;
 			return;
 		}
 
 		if (_mhk[i]->hasResource(tag, id)) {
-			Common::SeekableReadStream *tempData = _mhk[i]->getRawData(tag, id);
+			Common::SeekableReadStream *tempData = _mhk[i]->getResource(tag, id);
 			_cache.add(tag, id, tempData);
 			delete tempData;
 			return;

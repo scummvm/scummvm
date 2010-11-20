@@ -502,7 +502,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 	_vm->changeToStack(newStack);
 
 	// Load in Variable Names
-	Common::SeekableReadStream *nameStream = _vm->getRawData(ID_NAME, VariableNames);
+	Common::SeekableReadStream *nameStream = _vm->getResource(ID_NAME, VariableNames);
 	Common::StringArray varNames;
 
 	uint16 namesCount = nameStream->readUint16BE();
@@ -523,7 +523,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 	delete nameStream;
 
 	// Load in External Command Names
-	nameStream = _vm->getRawData(ID_NAME, ExternalCommandNames);
+	nameStream = _vm->getResource(ID_NAME, ExternalCommandNames);
 	Common::StringArray xNames;
 
 	namesCount = nameStream->readUint16BE();
@@ -553,7 +553,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		// deriven.
 		debugN("\n\nDumping scripts for %s\'s card %d!\n", argv[1], (uint16)atoi(argv[3]));
 		debugN("==================================\n\n");
-		Common::SeekableReadStream *cardStream = _vm->getRawData(MKID_BE('CARD'), (uint16)atoi(argv[3]));
+		Common::SeekableReadStream *cardStream = _vm->getResource(MKID_BE('CARD'), (uint16)atoi(argv[3]));
 		cardStream->seek(4);
 		RivenScriptList scriptList = _vm->_scriptMan->readScripts(cardStream, false);
 		for (uint32 i = 0; i < scriptList.size(); i++) {
@@ -566,7 +566,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		debugN("\n\nDumping scripts for %s\'s card %d hotspots!\n", argv[1], (uint16)atoi(argv[3]));
 		debugN("===========================================\n\n");
 
-		Common::SeekableReadStream *hsptStream = _vm->getRawData(MKID_BE('HSPT'), (uint16)atoi(argv[3]));
+		Common::SeekableReadStream *hsptStream = _vm->getResource(MKID_BE('HSPT'), (uint16)atoi(argv[3]));
 
 		uint16 hotspotCount = hsptStream->readUint16BE();
 

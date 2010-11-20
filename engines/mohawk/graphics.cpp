@@ -203,7 +203,7 @@ Graphics::Surface *MystGraphics::decodeImage(uint16 id) {
 		if (_vm->getFeatures() & GF_ME && _vm->hasResource(ID_PICT, id)) {
 			// The PICT resource exists. However, it could still contain a MystBitmap
 			// instead of a PICT image...
-			dataStream = _vm->getRawData(ID_PICT, id);
+			dataStream = _vm->getResource(ID_PICT, id);
 
 			// Here we detect whether it's really a PICT or a WDIB. Since a MystBitmap
 			// would be compressed, there's no way to detect for the BM without a hack.
@@ -212,7 +212,7 @@ Graphics::Surface *MystGraphics::decodeImage(uint16 id) {
 			isPict = (dataStream->readUint32BE() == 0x001102FF);
 			dataStream->seek(0);
 		} else // No PICT, so the WDIB must exist. Let's go grab it.
-			dataStream = _vm->getRawData(ID_WDIB, id);
+			dataStream = _vm->getResource(ID_WDIB, id);
 
 		if (isPict)
 			surface = _pictDecoder->decodeImage(dataStream);
@@ -283,8 +283,8 @@ void MystGraphics::hideCursor(void) {
 
 void MystGraphics::changeCursor(uint16 cursor) {
 	// Both Myst and Myst ME use the "MystBitmap" format for cursor images.
-	ImageData *data = _bmpDecoder->decodeImage(_vm->getRawData(ID_WDIB, cursor));
-	Common::SeekableReadStream *clrcStream = _vm->getRawData(ID_CLRC, cursor);
+	ImageData *data = _bmpDecoder->decodeImage(_vm->getResource(ID_WDIB, cursor));
+	Common::SeekableReadStream *clrcStream = _vm->getResource(ID_CLRC, cursor);
 	uint16 hotspotX = clrcStream->readUint16LE();
 	uint16 hotspotY = clrcStream->readUint16LE();
 	delete clrcStream;
@@ -343,7 +343,7 @@ RivenGraphics::~RivenGraphics() {
 }
 
 Graphics::Surface *RivenGraphics::decodeImage(uint16 id) {
-	ImageData *imageData = _bitmapDecoder->decodeImage(_vm->getRawData(ID_TBMP, id));
+	ImageData *imageData = _bitmapDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
 	Graphics::Surface *surface = imageData->getSurface();
 	delete imageData;
 	return surface;
@@ -363,7 +363,7 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 }
 
 void RivenGraphics::drawPLST(uint16 x) {
-	Common::SeekableReadStream* plst = _vm->getRawData(ID_PLST, _vm->getCurCard());
+	Common::SeekableReadStream* plst = _vm->getResource(ID_PLST, _vm->getCurCard());
 	uint16 index, id, left, top, right, bottom;
 	uint16 recordCount = plst->readUint16BE();
 
@@ -412,7 +412,7 @@ void RivenGraphics::updateScreen() {
 }
 
 void RivenGraphics::scheduleWaterEffect(uint16 sfxeID) {
-	Common::SeekableReadStream *sfxeStream = _vm->getRawData(ID_SFXE, sfxeID);
+	Common::SeekableReadStream *sfxeStream = _vm->getResource(ID_SFXE, sfxeID);
 
 	if (sfxeStream->readUint16BE() != 'SL')
 		error ("Unknown sfxe tag");
@@ -790,7 +790,7 @@ Graphics::Surface *LBGraphics::decodeImage(uint16 id) {
 	if (_vm->getGameType() == GType_LIVINGBOOKSV1)
 		imageData = _bmpDecoder->decodeImage(_vm->wrapStreamEndian(ID_BMAP, id));
 	else
-		imageData = _bmpDecoder->decodeImage(_vm->getRawData(ID_TBMP, id));
+		imageData = _bmpDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
 
 	imageData->_palette = _palette;
 	Graphics::Surface *surface = imageData->getSurface();
@@ -828,7 +828,7 @@ void LBGraphics::setPalette(uint16 id) {
 
 		delete ctblStream;
 	} else {
-		Common::SeekableReadStream *tpalStream = _vm->getRawData(ID_TPAL, id);
+		Common::SeekableReadStream *tpalStream = _vm->getResource(ID_TPAL, id);
 		uint16 colorStart = tpalStream->readUint16BE();
 		uint16 colorCount = tpalStream->readUint16BE();
 

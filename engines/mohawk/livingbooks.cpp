@@ -169,7 +169,7 @@ void MohawkEngine_LivingBooks::loadIntro() {
 
 // Only 1 VSRN resource per stack, Id 1000
 uint16 MohawkEngine_LivingBooks::getResourceVersion() {
-	Common::SeekableReadStream *versionStream = getRawData(ID_VRSN, 1000);
+	Common::SeekableReadStream *versionStream = getResource(ID_VRSN, 1000);
 
 	if (versionStream->size() != 2)
 		warning("Version Record size mismatch");
@@ -264,7 +264,7 @@ void MohawkEngine_LivingBooks::loadANI(uint16 resourceId) {
 }
 
 Common::SeekableSubReadStreamEndian *MohawkEngine_LivingBooks::wrapStreamEndian(uint32 tag, uint16 id) {
-	Common::SeekableReadStream *dataStream = getRawData(tag, id);
+	Common::SeekableReadStream *dataStream = getResource(tag, id);
 	return new Common::SeekableSubReadStreamEndian(dataStream, 0, dataStream->size(), isBigEndian(), DisposeAfterUse::YES);
 }
 
