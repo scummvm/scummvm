@@ -197,6 +197,40 @@ public:
 	Common::Point *getVector1() { return &_vector1; }
 	Common::Point *getVector2() { return &_vector2; }
 
+	void setData(ActorIndex index, int32 val) {
+		if (index < 50)
+			_data1[index] = val;
+
+		if (index < 60)
+			_data2[index - 50] = val;
+
+		error("[SharedData::setData] index is outside valid values (was: %d, valid: [0:60]", index);
+	}
+
+	int32 getData(ActorIndex index) {
+		if (index < 50)
+			return _data1[index];
+
+		if (index < 60)
+			return _data2[index - 50];
+
+		error("[SharedData::getData] index is outside valid values (was: %d, valid: [0:60]", index);
+	}
+
+	void setData2(ActorIndex index, bool val) {
+		if (index <= 12 || index > 20)
+			error("[SharedData::setData2] index is outside valid values (was: %d, valid: [13:20]", index);
+
+		_data3[index - 12] = val;
+	}
+
+	bool getData2(ActorIndex index) {
+		if (index <= 12 || index > 20)
+			error("[SharedData::getData2] index is outside valid values (was: %d, valid: [13:20]", index);
+
+		return _data3[index - 12];
+	}
+
 	// Used by Actor::enableActorsChapter2 (and maybe others)
 	void resetActorData() {
 		for (int i = 0; i < 9; i++) {
@@ -329,7 +363,7 @@ private:
 	int32           _data1[50];
 	int32           _data2[11];
 	bool            _actorUpdateStatusEnabledCounter;
-	int32           _data3[9];
+	bool            _data3[9];
 	bool            _flagEncouter5;
 	bool            _flagScene1;
 	int32           _nextScreenUpdate;

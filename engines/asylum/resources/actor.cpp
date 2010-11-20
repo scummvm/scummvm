@@ -111,6 +111,9 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_field_998 = 0;
  	_field_99C = 0;
  	_field_9A0 = 0;
+
+	// Instance data
+	_tickCount = -1;
 }
 
 Actor::~Actor() {
@@ -1202,6 +1205,10 @@ void Actor::updateStatus14() {
 }
 
 void Actor::updateStatus14_Chapter2() {
+	if (!getSharedData()->getData2(_index))
+		updateStatus(kActorStatus12);
+
+
 	error("[Actor::updateStatus14_Chapter2] not implemented!");
 }
 
@@ -1215,6 +1222,33 @@ void Actor::updateStatus15_Chapter2() {
 
 void Actor::updateStatus15_Chapter2_Player() {
 	error("[Actor::updateStatus15_Chapter2_Player] not implemented!");
+}
+
+void Actor::updateStatus15_Chapter2_Helper() {
+	// we are the current player
+	Actor *actor11 = getScene()->getActor(11);
+	Actor *actor40 = getScene()->getActor(40);
+
+	Common::Point point(_point1.x + _point2.x, _point1.y + _point2.y);
+	Common::Point point11(actor11->getPoint1()->x + actor11->getPoint2()->x, actor11->getPoint1()->y + actor11->getPoint2()->y);
+
+	if (actor11->getStatus() == kActorStatus15 && distance(point, point11) < 100) {
+		Actor *actor = getScene()->getActor(getSharedData()->getData(38));
+
+		actor40->show();
+		actor40->setFrameIndex(0);
+		actor40->getPoint1()->x = actor->getPoint1()->x;
+		actor40->getPoint1()->y = actor->getPoint1()->y;
+
+		if (actor11->getFrameIndex() <= 7) {
+			getSound()->playSound(getWorld()->soundResourceIds[9], false, Config.sfxVolume - 10);
+		} else if (getSharedData()->getData(36) <= 6) {
+			getSound()->playSound(getWorld()->soundResourceIds[9], false, Config.sfxVolume - 10);
+		} else {
+			getScene()->getActor(10)->updateStatus(kActorStatus17);
+			getSound()->playSound(getWorld()->soundResourceIds[10], false, Config.sfxVolume - 10);
+		}
+	}
 }
 
 bool Actor::updateStatus15_isNoVisibleOrStatus17() {
@@ -1267,7 +1301,24 @@ void Actor::updateStatus16_Chapter2() {
 }
 
 void Actor::updateStatus16_Chapter11() {
-	error("[Actor::updateStatus16_Chapter11] not implemented!");
+	// We are sure to be the current player
+	getCursor()->show();
+	getSharedData()->setFlag(kFlag1, false);
+
+	if (_frameIndex != -5 || _vm->isGameFlagNotSet(kGameFlag570))
+		++_frameIndex;
+
+	if (_frameIndex > _frameCount - 1) {
+		if (getWorld()->field_E848C >= 3) {
+			_frameIndex = 0;
+
+			getScene()->getActor(0)->updateStatus(kActorStatus17);
+
+			_tickCount = _vm->getTick() + 2000;
+		} else {
+			getScene()->getActor(0)->updateStatus(kActorStatus14);
+		}
+	}
 }
 
 void Actor::updateStatus17_Chapter2() {
@@ -1286,7 +1337,22 @@ void Actor::updateStatus17_Chapter2() {
 }
 
 void Actor::updateStatus18_Chapter2() {
-	error("[Actor::updateStatus18_Chapter2] not implemented!");
+	Actor *player = getScene()->getActor();
+
+	_point1.x = player->getPoint1()->x - getSharedData()->getData(2 * _index + 19);
+	_point1.y = player->getPoint1()->y - getSharedData()->getData(2 * _index + 20);
+
+	_frameIndex++;
+
+	if (_frameIndex > _frameCount - 1) {
+		getSharedData()->setData2(_index, true);
+		updateStatus(kActorStatus14);
+
+		_point1.y += 54;
+		getSound()->playSound(getWorld()->soundResourceIds[1], false, Config.sfxVolume - 10);
+
+		getSharedData()->setData(_index, getSharedData()->getData(_index) - 54);
+	}
 }
 
 void Actor::updateStatus18_Chapter2_Actor11() {
