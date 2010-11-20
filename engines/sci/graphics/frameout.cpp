@@ -63,8 +63,15 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 	if (_planes.empty()) {
 		// There has to be another way for sierra sci to do this or maybe script resolution is compiled into
 		//  interpreter (TODO)
-		scriptsRunningHeight = readSelectorValue(_segMan, object, SELECTOR(resY));
-		scriptsRunningWidth = readSelectorValue(_segMan, object, SELECTOR(resX));
+		uint16 tmpRunningWidth = readSelectorValue(_segMan, object, SELECTOR(resX));
+		uint16 tmpRunningHeight = readSelectorValue(_segMan, object, SELECTOR(resY));
+
+		// The above can be 0 in SCI3 (e.g. Phantasmagoria 2)
+		if (tmpRunningWidth > 0 && tmpRunningHeight > 0) {
+			scriptsRunningWidth = tmpRunningWidth;
+			scriptsRunningHeight = tmpRunningHeight;
+		}
+
 		_coordAdjuster->setScriptsResolution(scriptsRunningWidth, scriptsRunningHeight);
 	}
 

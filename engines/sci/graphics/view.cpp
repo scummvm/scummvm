@@ -217,7 +217,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		case 0:
 			break; // don't do anything, we already have _isScaleable set
 		default:
-			error("unsupported flags byte inside sci1.1 view");
+			error("unsupported flags byte (%d) inside sci1.1 view", _resourceData[3]);
 			break;
 		}
 
