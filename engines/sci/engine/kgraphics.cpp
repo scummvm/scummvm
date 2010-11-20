@@ -33,6 +33,7 @@
 
 #include "sci/sci.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
+#include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
@@ -1117,6 +1118,14 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	bool cycle = (argc > 1) ? ((argv[1].toUint16()) ? true : false) : false;
 
 	g_sci->_gfxAnimate->kernelAnimate(castListReference, cycle, argc, argv);
+
+	// WORKAROUND: At the end of Ecoquest 1, during the credits, the game
+	// doesn't call kGetEvent(), so no events are processed (e.g. window
+	// focusing, window moving etc). We poll events for that scene, to
+	// keep ScummVM responsive. Fixes ScummVM "freezing" during the credits,
+	// bug #3101846
+	if (g_sci->getGameId() == GID_ECOQUEST && s->currentRoomNumber() == 680)
+		g_sci->getEventManager()->getSciEvent(SCI_EVENT_PEEK);
 
 	return s->r_acc;
 }
