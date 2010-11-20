@@ -143,7 +143,7 @@ int				line_number = 0;	// current line number
 
 char source_buffer[MAX_SOURCE_LINE_LENGTH];		// Source file buffer
 char token_string[MAX_TOKEN_STRING_LENGTH];		// Token string
-char *bufferp = source_buffer;					// Source buffer ptr
+const char *bufferp = source_buffer;					// Source buffer ptr
 char *tokenp = token_string;					// Token string ptr
 
 int		digit_count;				// Total no. of digits in number
@@ -244,11 +244,10 @@ void close_source_file() {
  */
 void init_scanner(const char *name) {
 	// Initialise character table
-	int ch;
-	for (ch = 0;   ch < 256;  ++ch) char_table[ch] = SPECIAL;
-	for (ch = '0'; ch <= '9'; ++ch) char_table[ch] = DIGIT;
-	for (ch = 'A'; ch <= 'Z'; ++ch) char_table[ch] = LETTER;
-	for (ch = 'a'; ch <= 'z'; ++ch) char_table[ch] = LETTER;
+	for (int i = 0;   i < 256;  ++i) char_table[i] = SPECIAL;
+	for (int i = '0'; i <= '9'; ++i) char_table[i] = DIGIT;
+	for (int i = 'A'; i <= 'Z'; ++i) char_table[i] = LETTER;
+	for (int i = 'a'; i <= 'z'; ++i) char_table[i] = LETTER;
 	char_table[EOF_CHAR] = EOF_CODE;
 	char_table[EOL_CHAR] = EOL_CODE;
 	char_table[(int)'$'] = DIGIT;	// Needed for hexadecimal number handling
@@ -810,9 +809,8 @@ void get_word() {
  * Extract a number token and set literal to it's value. Set token to NUMBER
  */
 void get_number() {
-	int  nvalue		= 0;	// Value of number
-	int  digit_count	= 0;	// Total no. of digits in number */
-	bool count_error	= false;// Too many digits in number?
+	digit_count	= 0;		// Total no. of digits in number */
+	count_error	= false;	// Too many digits in number?
 
 	do {
 		*tokenp++ = ch;
