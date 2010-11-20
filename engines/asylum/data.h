@@ -196,6 +196,15 @@ public:
 
 	Common::Rect *getActorRect() { return &_actorRect; }
 
+	// Used by Actor::enableActorsChapter2 (and maybe others)
+	void resetActorData() {
+		for (int i = 0; i < 9; i++) {
+			_data1[i] = 160;
+			_data1[i + 18] = 0;
+			_data3[i] = 0;
+		}
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Flags
 	//////////////////////////////////////////////////////////////////////////

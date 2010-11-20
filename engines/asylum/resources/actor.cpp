@@ -40,6 +40,7 @@
 #include "asylum/views/scene.h"
 
 #include "asylum/asylum.h"
+#include "asylum/data.h"
 #include "asylum/staticres.h"
 
 #include "common/endian.h"
@@ -912,10 +913,8 @@ void Actor::enableActorsChapter2(AsylumEngine *engine) {
 	engine->clearGameFlag(kGameFlag441);
 	engine->clearGameFlag(kGameFlag442);
 
-	// Update shared data
-	for (int i = 0; i < 9; i++) {
-		// TODO find out which data is updated
-	}
+	// Reset shared data
+	engine->getData()->resetActorData();
 
 	engine->scene()->getActor(13)->enable();
 	engine->scene()->getActor(13)->processStatus(2300, 71, false);
