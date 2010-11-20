@@ -328,6 +328,8 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	ActorData _data;
 
+	int32 _tickCount;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Update methods
 	//////////////////////////////////////////////////////////////////////////
@@ -350,6 +352,7 @@ private:
 
 	void updateStatus15_Chapter2();
 	void updateStatus15_Chapter2_Player();
+	void updateStatus15_Chapter2_Helper();
 	bool updateStatus15_isNoVisibleOrStatus17();
 
 	void updateStatus15_Chapter2_Actor11();
