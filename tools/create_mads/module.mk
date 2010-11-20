@@ -1,7 +1,7 @@
 # $URL$
 # $Id$
 
-MODULE := tools/create_mads/create_mads
+MODULE := tools/create_mads
 
 MODULE_OBJS := \
 	main.o \
