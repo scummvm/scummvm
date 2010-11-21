@@ -641,11 +641,6 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		}
 	}
 
-	if (g_sci->_features->detectSci2StringFunctionType() == kSci2StringFunctionNew) {
-		if (op >= 6)	// Cpy, Cmp have been removed
-			op += 2;
-	}
-
 	switch (op) {
 	case 0: { // New
 		reg_t arrayHandle;
@@ -776,13 +771,6 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 			return argv[1];
 
 		return readSelector(s->_segMan, argv[1], SELECTOR(data));
-	// New subops in SCI2.1 late / SCI3
-	case 10:	// unknown
-		warning("kArray, subop %d", op);
-		return NULL_REG;
-	case 11:	// unknown
-		warning("kArray, subop %d", op);
-		return NULL_REG;
 	default:
 		error("Unknown kArray subop %d", op);
 	}

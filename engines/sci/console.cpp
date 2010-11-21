@@ -453,7 +453,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	DebugPrintf("Move count type: %s\n", (_engine->_features->handleMoveCount()) ? "increment" : "ignore");
 	DebugPrintf("SetCursor type: %s\n", getSciVersionDesc(_engine->_features->detectSetCursorType()));
 #ifdef ENABLE_SCI32
-	DebugPrintf("kString/kArray type: %s\n", (_engine->_features->detectSci2StringFunctionType() == kSci2StringFunctionOld) ? "SCI2 (old)" : "SCI2.1 (new)");
+	DebugPrintf("kString type: %s\n", (_engine->_features->detectSci2StringFunctionType() == kSci2StringFunctionOld) ? "SCI2 (old)" : "SCI2.1 (new)");
 #endif
 	DebugPrintf("View type: %s\n", viewTypeDesc[g_sci->getResMan()->getViewType()]);
 	DebugPrintf("Uses palette merging: %s\n", g_sci->_gfxPalette->isMerging() ? "yes" : "no");
