@@ -640,31 +640,6 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	case SEG_TYPE_DYNMEM:
 		base.offset += offset;
 		return base;
-#ifdef ENABLE_SCI32
-	case SEG_TYPE_STRING: {
-		// We need to copy over the string into a new one
-		// Make sure that the offset is positive
-		if (offset < 0)
-			error("pointer_add: Attempt to reference a previous offset of a SCI string");
-
-		// Get the source string...
-		SciString *str = s->_segMan->lookupString(base);
-		Common::String rawStr = str->toString();
-
-		// ...and copy it to a new one
-		reg_t newStringAddr;
-		SciString *newStr = s->_segMan->allocateString(&newStringAddr);
-		newStr->setSize(str->getSize() - offset);
-
-		// Cut off characters till we reach the desired location
-		for (int i = 0; i < offset; i++)
-			rawStr.deleteChar(0);
-
-		newStr->fromString(rawStr);
-
-		return newStringAddr;
-	}
-#endif
 	default:
 		// FIXME: Changed this to warning, because iceman does this during dancing with girl.
 		// Investigate why that is so and either fix the underlying issue or implement a more
