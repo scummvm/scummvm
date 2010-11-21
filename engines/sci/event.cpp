@@ -346,6 +346,20 @@ SciEvent EventManager::getScummVMEvent() {
 			break;
 		}
 	}
+	
+	// WORKAROUND: In the QFG2 character screen, if the user right clicks and
+	// then left clicks on something, an invalid reference is passed to kStrAt.
+	// This is a script bug, as only left mouse clicks should be processed by
+	// the game in that screen. Therefore, we work around it here by filtering
+	// out all right and middle mouse button clicks. Fixes bug #3037996.
+	if (g_sci->getGameId() == GID_QFG2 && g_sci->getEngineState()->currentRoomNumber() == 805) {
+		if ((input.type == SCI_EVENT_MOUSE_PRESS || input.type == SCI_EVENT_MOUSE_RELEASE) && input.data > 1) {
+			input.type = SCI_EVENT_NONE;
+			input.character = 0;
+			input.data = 0;
+			input.modifiers = 0;
+		}
+	}
 
 	return input;
 }
