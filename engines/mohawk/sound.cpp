@@ -462,11 +462,12 @@ Audio::AudioStream *Sound::makeOldMohawkWaveStream(Common::SeekableReadStream *s
 
 	if (header == 'Wv') { // Big Endian
 		rate = stream->readUint16BE();
-		stream->skip(10); // Loop chunk, like the newer format?
+		stream->skip(10); // Unknown
 		size = stream->readUint32BE();
 	} else if (header == 'vW') { // Little Endian
+		stream->readUint16LE(); // Unknown
 		rate = stream->readUint16LE();
-		stream->skip(10); // Loop chunk, like the newer format?
+		stream->skip(8); // Unknown
 		size = stream->readUint32LE();
 	} else
 		error("Could not find Old Mohawk Sound header");
