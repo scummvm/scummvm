@@ -35,7 +35,7 @@ class AdLibMidiChannel;
 class AdLibMidiDriver : public MidiDriver_Emulated {
 public:
 
-	AdLibMidiDriver(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) {}
+	AdLibMidiDriver(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) { _adlibWaveformSelect = 0; }
 	~AdLibMidiDriver() {}
 
 	// MidiDriver
