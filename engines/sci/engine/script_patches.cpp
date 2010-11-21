@@ -713,6 +713,45 @@ const SciScriptSignature qfg1vgaSignatures[] = {
 };
 
 // ===========================================================================
+// Script 944 in QFG2 contains the FileSelector system class, used in the
+// character import screen. This gets incorrectly called constantly, whenever
+// the user clicks on a button in order to refresh the file list. This was
+// probably done because it would be easier to refresh the list whenever the
+// user inserted a new floppy disk, or changed directory. The problem is that
+// the script has a bug, and it invalidates the text of the entries in the
+// list. This has a high probability of breaking, as the user could change the
+// list very quickly, or the garbage collector could kick in and remove the
+// deleted entries. We don't allow the user to change the directory, thus the
+// contents of the file list are constant, so we can avoid the constant file
+// and text entry refreshes whenever a button is pressed, and prevent possible
+// crashes because of these constant quick object reallocations. Fixes bug
+// #3037996.
+const byte qfg2SignatureImportDialog[] = {
+	16,
+	0x63, 0x20,       // pToa text
+	0x30, 0x0b, 0x00, // bnt [next state]
+	0x7a,             // push2
+	0x39, 0x03,       // pushi 03
+	0x36,             // push
+	0x43, 0x72, 0x04, // callk Memory 4
+	0x35, 0x00,       // ldi 00
+	0x65, 0x20,       // aTop text
+	0
+};
+
+const uint16 qfg2PatchImportDialog[] = {
+	PATCH_ADDTOOFFSET | +5,
+	0x48,             // ret
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                  adjust
+const SciScriptSignature qfg2Signatures[] = {
+	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x20, 0x30, 0x0b, 0x00),    -1, qfg2SignatureImportDialog, qfg2PatchImportDialog },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 //  script 298 of sq4/floppy has an issue. object "nest" uses another property
 //   which isn't included in property count. We return 0 in that case, the game
 //   adds it to nest::x. The problem is that the script also checks if x exceeds
@@ -932,6 +971,9 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		break;
 	case GID_QFG1VGA:
 		signatureTable = qfg1vgaSignatures;
+		break;
+	case GID_QFG2:
+		signatureTable = qfg2Signatures;
 		break;
 	case GID_SQ4:
 		signatureTable = sq4Signatures;
