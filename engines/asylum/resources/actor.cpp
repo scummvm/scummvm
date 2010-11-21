@@ -1422,7 +1422,9 @@ void Actor::updateNumbers(int32 reaction, int32 x, int32 y) {
 	_numberStringY = y + 8;
 	_numberStringWidth = 40;
 
-	itoa(_numberValue01, _numberString01, 10);
+	// XXX use sprintf instead of itoa as itoa isn't part of standard
+	// C++ and therefore isn't available in GCC
+	sprintf(_numberString01, "%d", _numberValue01);
 
 	_numberFlag01 = 1;
 }
