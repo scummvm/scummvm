@@ -37,6 +37,12 @@ enum MoveCountType {
 	kIncrementMoveCount
 };
 
+enum Sci2StringFunctionType {
+	kSci2StringFunctionUninitialized,
+	kSci2StringFunctionOld,
+	kSci2StringFunctionNew
+};
+
 class GameFeatures {
 public:
 	GameFeatures(SegManager *segMan, Kernel *kernel);
@@ -79,6 +85,13 @@ public:
 	 * @return Graphics functions type, SCI_VERSION_2 / SCI_VERSION_2_1
 	 */
 	SciVersion detectSci21KernelType();
+
+	/**
+	 * Autodetects the string subfunctions used in SCI2 - SCI3
+	 * @return string subfunctions type, kSci2StringFunctionOld / kSci2StringFunctionNew
+	 */
+	Sci2StringFunctionType detectSci2StringFunctionType();
+
 #endif
 
 	/**
@@ -109,11 +122,13 @@ private:
 	bool autoDetectMoveCountType();
 #ifdef ENABLE_SCI32
 	bool autoDetectSci21KernelType();
+	bool autoDetectSci21StringFunctionType();
 #endif
 
 	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType, _messageFunctionType;
 #ifdef ENABLE_SCI32
 	SciVersion _sci21KernelType;
+	Sci2StringFunctionType _sci2StringFunctionType;
 #endif
 
 	MoveCountType _moveCountType;
