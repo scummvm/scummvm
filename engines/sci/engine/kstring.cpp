@@ -26,6 +26,7 @@
 /* String and parser handling */
 
 #include "sci/resource.h"
+#include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/message.h"
 #include "sci/engine/selector.h"
@@ -616,16 +617,14 @@ reg_t kText(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kString(EngineState *s, int argc, reg_t *argv) {
+	uint16 op = argv[0].toUint16();
 
-	// TODO: Find out how exactly subfunctions work in SCI3
-	if (getSciVersion() == SCI_VERSION_3 &&
-	    argv[0].toUint16() == 8)
-		argv[0].offset = 10;
-	if (getSciVersion() == SCI_VERSION_3 &&
-	    argv[0].toUint16() == 11)
-		argv[0].offset = 13;
+	if (g_sci->_features->detectSci2StringFunctionType() == kSci2StringFunctionNew) {
+		if (op >= 7)	// Cpy, Cmp have been removed
+			op += 2;
+	}
 
-	switch (argv[0].toUint16()) {
+	switch (op) {
 	case 0: { // New
 		reg_t stringHandle;
 		SciString *string = s->_segMan->allocateString(&stringHandle);
@@ -789,7 +788,18 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		Common::String string = s->_segMan->getString(argv[1]);
 		return make_reg(0, (uint16)atoi(string.c_str()));
 	}
-	case 14: { // lower (SCI3)
+	// New subops in SCI2.1 late / SCI3
+	case 14:	// unknown
+		warning("kString, subop %d", op);
+		return NULL_REG;
+	case 15: { // upper
+		Common::String string = s->_segMan->getString(argv[1]);
+		
+		string.toUppercase();
+		s->_segMan->strcpy(argv[1], string.c_str());
+		return NULL_REG;
+	}
+	case 16: { // lower
 		Common::String string = s->_segMan->getString(argv[1]);
 		
 		string.toLowercase();

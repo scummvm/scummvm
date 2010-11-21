@@ -23,6 +23,7 @@
  *
  */
 
+#include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
@@ -618,6 +619,8 @@ reg_t kMoveToEnd(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kArray(EngineState *s, int argc, reg_t *argv) {
+	uint16 op = argv[0].toUint16();
+
 	// Use kString when accessing strings
 	// This is possible, as strings inherit from arrays
 	// and in this case (type 3) arrays are of type char *.
@@ -626,17 +629,24 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 	// TODO: we need to either merge SCI2 strings and
 	// arrays together, and in the future merge them with
 	// the SCI1 strings and arrays in the segment manager
-	if (argv[0].toUint16() == 0) {
+	if (op == 0) {
 		// New, check if the target type is 3 (string)
 		if (argv[2].toUint16() == 3)
 			return kString(s, argc, argv);
 	} else {
 		if (s->_segMan->getSegmentType(argv[1].segment) == SEG_TYPE_STRING ||
-			s->_segMan->getSegmentType(argv[1].segment) == SEG_TYPE_SYS_STRINGS)
+			s->_segMan->getSegmentType(argv[1].segment) == SEG_TYPE_SYS_STRINGS ||
+			s->_segMan->getSegmentType(argv[1].segment) == SEG_TYPE_SCRIPT) {
 			return kString(s, argc, argv);
+		}
 	}
 
-	switch (argv[0].toUint16()) {
+	if (g_sci->_features->detectSci2StringFunctionType() == kSci2StringFunctionNew) {
+		if (op >= 6)	// Cpy, Cmp have been removed
+			op += 2;
+	}
+
+	switch (op) {
 	case 0: { // New
 		reg_t arrayHandle;
 		SciArray<reg_t> *array = s->_segMan->allocateArray(&arrayHandle);
@@ -693,16 +703,6 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 			warning("kArray(Cpy): Request to copy from or to a null pointer");
 			return NULL_REG;
 		}
-	  
-#if 0
-		if (s->_segMan->getSegmentObj(argv[1].segment)->getType() != SEG_TYPE_ARRAY ||
-			s->_segMan->getSegmentObj(argv[3].segment)->getType() != SEG_TYPE_ARRAY) {
-			// Happens in the RAMA demo
-			warning("kArray(Cpy): Request to copy a segment which isn't an array, ignoring");
-			return NULL_REG;
-		}
-#endif
-
 		SciArray<reg_t> *array1 = s->_segMan->lookupArray(argv[1]);
 		SciArray<reg_t> *array2 = s->_segMan->lookupArray(argv[3]);
 		uint32 index1 = argv[2].toUint16();
@@ -730,9 +730,16 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 	case 8: { // Dup
 		if (argv[1].isNull()) {
 			warning("kArray(Dup): Request to duplicate a null pointer");
+#if 0
+			// Allocate an array anyway
+			reg_t arrayHandle;
+			SciArray<reg_t> *dupArray = s->_segMan->allocateArray(&arrayHandle);
+			dupArray->setType(3);
+			dupArray->setSize(0);
+			return arrayHandle;
+#endif
 			return NULL_REG;
 		}
-
 		SegmentType sourceType = s->_segMan->getSegmentObj(argv[1].segment)->getType();
 		if (sourceType == SEG_TYPE_SCRIPT) {
 			// A technique used in later SCI2.1 and SCI3 games: the contents of a script
@@ -746,8 +753,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 
 			return stringHandle;
 		} else if (sourceType != SEG_TYPE_ARRAY && sourceType != SEG_TYPE_SCRIPT) {
-			warning("kArray(Dup): Request to duplicate a segment which isn't an array or a script, ignoring");
-			return NULL_REG;
+			error("kArray(Dup): Request to duplicate a segment which isn't an array or a script");
 		}
 
 		reg_t arrayHandle;
@@ -770,8 +776,15 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 			return argv[1];
 
 		return readSelector(s->_segMan, argv[1], SELECTOR(data));
+	// New subops in SCI2.1 late / SCI3
+	case 10:	// unknown
+		warning("kArray, subop %d", op);
+		return NULL_REG;
+	case 11:	// unknown
+		warning("kArray, subop %d", op);
+		return NULL_REG;
 	default:
-		error("Unknown kArray subop %d", argv[0].toUint16());
+		error("Unknown kArray subop %d", op);
 	}
 
 	return NULL_REG;
