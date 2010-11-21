@@ -620,7 +620,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	uint16 op = argv[0].toUint16();
 
 	if (g_sci->_features->detectSci2StringFunctionType() == kSci2StringFunctionNew) {
-		if (op >= 7)	// Cpy, Cmp have been removed
+		if (op >= 8)	// Dup, GetData have been removed
 			op += 2;
 	}
 
