@@ -79,6 +79,12 @@ int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuer
 		state = globalVars[overlayTable[overlayIdx].state + ptr->_stateTableIdx];
 
 		ptr2 = &ovlData->arrayStates[ptr->_firstStateIdx + state];
+
+		if (ptr->_firstStateIdx + state < 0) {
+			debug(0, "Invalid Negative arrayState index in getMultipleObjectParam(overlayIdx: %d, objectIdx: %d)... Forcing to 0", overlayIdx, objectIdx);
+			ptr2 = &ovlData->arrayStates[0];
+		}
+
 		state2 = ptr2->state;
 		break;
 	}
@@ -242,6 +248,11 @@ int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 *
 		state = globalVars[overlayTable[overlayIdx].state + ptr->_stateTableIdx];
 
 		ptr2 = &ovlData->arrayStates[ptr->_firstStateIdx + state];
+
+		if (ptr->_firstStateIdx + state < 0) {
+			debug(0, "Invalid Negative arrayState index in getSingleObjectParam(overlayIdx: %d, param2: %d, param3: %d)... Forcing to 0", overlayIdx, param2, param3);
+			ptr2 = &ovlData->arrayStates[0];
+		}
 		break;
 	}
 	case VARIABLE: {

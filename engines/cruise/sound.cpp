@@ -40,6 +40,7 @@ class PCSoundDriver {
 public:
 	typedef void (*UpdateCallback)(void *);
 
+	PCSoundDriver() { _upCb = NULL, _upRef = NULL, _musicVolume = 0, _sfxVolume = 0; }
 	virtual ~PCSoundDriver() {}
 
 	virtual void setupChannel(int channel, const byte *data, int instrument, int volume) = 0;

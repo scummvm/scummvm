@@ -65,9 +65,7 @@ cellStruct *addCell(cellStruct *pHead, int16 overlayIdx, int16 objIdx, int16 typ
 		if (currentHead2->type != 5) {
 			int16 lvar2;
 
-			getSingleObjectParam(currentHead2->overlay, currentHead2->idx, 2, &lvar2);
-
-			if (lvar2 >= var)
+			if(getSingleObjectParam(currentHead2->overlay, currentHead2->idx, 2, &lvar2) >= 0 && lvar2 >= var)
 				break;
 		}
 
