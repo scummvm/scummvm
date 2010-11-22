@@ -800,12 +800,12 @@ Graphics::Surface *LBGraphics::decodeImage(uint16 id) {
 	return surface;
 }
 
-void LBGraphics::copyImageToScreen(uint16 image, uint16 left, uint16 right) {
+void LBGraphics::copyImageToScreen(uint16 image, uint16 left, uint16 top) {
 	Graphics::Surface *surface = findImage(image);
 
 	uint16 width = MIN<int>(surface->w, _vm->_system->getWidth());
 	uint16 height = MIN<int>(surface->h, _vm->_system->getHeight());
-	_vm->_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, left, right, width, height);
+	_vm->_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, left, top, width, height);
 
 	// FIXME: Remove this and update only when necessary
 	_vm->_system->updateScreen();
