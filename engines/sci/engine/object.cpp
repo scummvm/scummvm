@@ -91,13 +91,9 @@ int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
 	const byte *buf = 0;
 	uint varnum = 0;
 
-	if (getSciVersion() <= SCI_VERSION_1_LATE) {
-		varnum = getVarCount();
-		int selector_name_offset = varnum * 2 + kOffsetSelectorSegment;
-		buf = _baseObj + selector_name_offset;
-	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
+	if (getSciVersion() <= SCI_VERSION_2_1) {
 		const Object *obj = getClass(segMan);
-		varnum = obj->getVariable(1).toUint16();
+		varnum = getSciVersion() <= SCI_VERSION_1_LATE ? getVarCount() : obj->getVariable(1).toUint16();
 		buf = (const byte *)obj->_baseVars;
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		varnum = _variables.size();
