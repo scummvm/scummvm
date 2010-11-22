@@ -303,6 +303,12 @@ SciEvent EventManager::getScummVMEvent() {
 					if (!(_modifierStates & SCI_KEYMOD_NUMLOCK))
 						input.data = SCI_KEY_PGDOWN;
 					break;
+				case Common::KEYCODE_KP_PLUS:	// +
+					input.data = '+';
+					break;
+				case Common::KEYCODE_KP_MINUS:	// -
+					input.data = '-';
+					break;
 				default:
 					input.type = SCI_EVENT_NONE;
 					break;
