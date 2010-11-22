@@ -36,7 +36,7 @@
 #include "common/file.h"
 
 #define MAXOBJECTS      128                         // Used in Update_images()
-#define BOUND(X, Y)      ((_vm->getBoundaryOverlay()[Y * XBYTES + X / 8] & (0x80 >> X % 8)) != 0)  // Boundary bit set
+#define BOUND(X, Y)     ((_vm->getBoundaryOverlay()[Y * XBYTES + X / 8] & (0x80 >> X % 8)) != 0)  // Boundary bit set
 
 namespace Hugo {
 

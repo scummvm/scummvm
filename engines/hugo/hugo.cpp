@@ -928,7 +928,7 @@ void HugoEngine::initStatus() {
 
 	// Initialize every start of new game
 	_status.tick            = 0;                    // Tick count
-	_status.saveTick        = 0;                    // Time of last save
+//	_status.saveTick        = 0;                    // Time of last save
 	_status.viewState       = V_IDLE;               // View state
 	_status.inventoryState  = I_OFF;                // Inventory icon bar state
 	_status.inventoryHeight = 0;                    // Inventory icon bar pos

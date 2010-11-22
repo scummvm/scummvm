@@ -130,14 +130,6 @@ enum uif_t {U_FONT5, U_FONT6, U_FONT8, UIF_IMAGES, NUM_UIF_ITEMS};
 enum ovl_t {BOUNDARY, OVERLAY, OVLBASE};
 
 /**
-* Enumerate error types
-*/
-enum {
-	GEN_ERR,   FILE_ERR, WRITE_ERR, PCCH_ERR, HEAP_ERR, EVNT_ERR,  SOUND_ERR
-	//MOUSE_ERR, VID_ERR,  FONT_ERR,  ARG_ERR,  CHK_ERR,  TIMER_ERR, VBX_ERR
-};
-
-/**
 * Enumerate ways of cycling a sequence of frames
 */
 enum cycle_t {INVISIBLE, ALMOST_INVISIBLE, NOT_CYCLING, CYCLE_FORWARD, CYCLE_BACKWARD};
@@ -192,11 +184,6 @@ enum font_t {LARGE_ROMAN, MED_ROMAN, NUM_GDI_FONTS, INIT_FONTS, DEL_FONTS};
 * Ways to dismiss a text/prompt box
 */
 enum box_t {BOX_ANY, BOX_OK, BOX_PROMPT, BOX_YESNO};
-
-/**
-* Standard viewport sizes
-*/
-enum wsize_t {SIZE_DEF, SIZE_1, SIZE_2, SIZE_3};
 
 /**
 * Display list functions
@@ -834,14 +821,9 @@ struct status_t {                                   // Game status (not saved)
 	bool     initSaveFl;                            // Force save of initial game
 	bool     storyModeFl;                           // Game is telling story - no commands
 	bool     gameOverFl;                            // Game is over - hero knobbled
-// Strangerke - Suppress as related to playback
-//	bool     playbackFl;                            // Game is in playback mode
-//	bool     recordFl;                              // Game is in record mode
 	bool     demoFl;                                // Game is in demo mode
 	bool     debugFl;                               // Game is in debug mode
 	bool     textBoxFl;                             // Game is (halted) in text box
-// Strangerke - Not used ?
-//	bool     mmtimeFl;                               // Multimedia timer supported
 	bool     lookFl;                                // Toolbar "look" button pressed
 	bool     recallFl;                              // Toolbar "recall" button pressed
 	bool     leftButtonFl;                          // Left mouse button pressed
@@ -852,7 +834,6 @@ struct status_t {                                   // Game status (not saved)
 	bool     helpFl;                                // Calling WinHelp (don't disable music)
 	bool     doQuitFl;
 	uint32   tick;                                  // Current time in ticks
-	uint32   saveTick;                              // Time of last save in ticks
 	vstate_t viewState;                             // View state machine
 	istate_t inventoryState;                        // Inventory icon bar state
 	int16    inventoryHeight;                       // Inventory icon bar height
@@ -866,6 +847,12 @@ struct status_t {                                   // Game status (not saved)
 	int16    screenWidth;                           // Desktop screen width
 	int16    song;                                  // Current song
 	int16    cx, cy;                                // Cursor position (dib coords)
+// Strangerke - Suppress as related to playback
+//	bool     playbackFl;                            // Game is in playback mode
+//	bool     recordFl;                              // Game is in record mode
+// Strangerke - Not used ?
+//	bool     mmtimeFl;                              // Multimedia timer supported
+//	uint32   saveTick;                              // Time of last save in ticks
 };
 
 struct config_t {                                   // User's config (saved)
@@ -908,14 +895,6 @@ struct sceneBlock_t {
 	uint32 o_len;
 	uint32 ob_off;
 	uint32 ob_len;
-};
-
-/**
-* Structure of object file lookup entry
-*/
-struct objBlock_t {
-	uint32 objOffset;
-	uint32 objLength;
 };
 
 #include "common/pack-start.h"                      // START STRUCT PACKING

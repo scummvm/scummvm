@@ -147,6 +147,14 @@ seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool
 void FileManager::readImage(int objNum, object_t *objPtr) {
 	debugC(1, kDebugFile, "readImage(%d, object_t *objPtr)", objNum);
 
+	/**
+	* Structure of object file lookup entry
+	*/
+	struct objBlock_t {
+		uint32 objOffset;
+		uint32 objLength;
+	};
+
 	if (!objPtr->seqNumb)                           // This object has no images
 		return;
 
