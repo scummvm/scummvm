@@ -192,7 +192,7 @@ int MohawkArchive::getIDIndex(int typeIndex, const Common::String &resName) {
 
 	for (uint16 i = 0; i < _types[typeIndex].nameTable.num; i++)
 		if (_types[typeIndex].nameTable.entries[i].name.matchString(resName)) {
-			index = i;
+			index = _types[typeIndex].nameTable.entries[i].index;
 			break;
 		}
 
@@ -204,6 +204,20 @@ int MohawkArchive::getIDIndex(int typeIndex, const Common::String &resName) {
 			return i;
 
 	return -1; // Not found
+}
+
+uint16 MohawkArchive::findResourceID(uint32 type, const Common::String &resName) {
+	int typeIndex = getTypeIndex(type);
+
+	if (typeIndex < 0)
+		return 0xFFFF;
+
+	int idIndex = getIDIndex(typeIndex, resName);
+
+	if (idIndex < 0)
+		return 0xFFFF;
+
+	return _types[typeIndex].resTable.entries[idIndex].id;
 }
 
 bool MohawkArchive::hasResource(uint32 tag, uint16 id) {
@@ -255,37 +269,6 @@ Common::SeekableReadStream *MohawkArchive::getResource(uint32 tag, uint16 id) {
 
 	if (idIndex < 0)
 		error("Could not find '%s' %04x in file '%s'", tag2str(tag), id, _curFile.c_str());
-
-	// Note: the fileTableIndex is based off 1, not 0. So, subtract 1
-	uint16 fileTableIndex = _types[typeIndex].resTable.entries[idIndex].index - 1;
-
-	// WORKAROUND: tMOV resources pretty much ignore the size part of the file table,
-	// as the original just passed the full Mohawk file to QuickTime and the offset.
-	// We need to do this because of the way Mohawk is set up (this is much more "proper"
-	// than passing _mhk at the right offset). We may want to do that in the future, though.
-	if (_types[typeIndex].tag == ID_TMOV) {
-		if (fileTableIndex == _fileTableAmount)
-			return new Common::SeekableSubReadStream(_mhk, _fileTable[fileTableIndex].offset, _mhk->size());
-		else
-			return new Common::SeekableSubReadStream(_mhk, _fileTable[fileTableIndex].offset, _fileTable[fileTableIndex + 1].offset);
-	}
-
-	return new Common::SeekableSubReadStream(_mhk, _fileTable[fileTableIndex].offset, _fileTable[fileTableIndex].offset + _fileTable[fileTableIndex].dataSize);
-}
-
-Common::SeekableReadStream *MohawkArchive::getResource(uint32 tag, const Common::String &resName) {
-	if (!_mhk)
-		error("MohawkArchive::getResource(): No File in Use");
-
-	int16 typeIndex = getTypeIndex(tag);
-
-	if (typeIndex < 0)
-		error("Could not find a tag of '%s' in file '%s'", tag2str(tag), _curFile.c_str());
-
-	int16 idIndex = getIDIndex(typeIndex, resName);
-
-	if (idIndex < 0)
-		error("Could not find '%s' '%s' in file '%s'", tag2str(tag), resName.c_str(), _curFile.c_str());
 
 	// Note: the fileTableIndex is based off 1, not 0. So, subtract 1
 	uint16 fileTableIndex = _types[typeIndex].resTable.entries[idIndex].index - 1;

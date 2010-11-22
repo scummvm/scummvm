@@ -186,8 +186,8 @@ public:
 	virtual bool hasResource(uint32 tag, uint16 id);
 	virtual bool hasResource(uint32 tag, const Common::String &resName);
 	virtual Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
-	virtual Common::SeekableReadStream *getResource(uint32 tag, const Common::String &resName);
 	virtual uint32 getOffset(uint32 tag, uint16 id);
+	virtual uint16 findResourceID(uint32 type, const Common::String &resName);
 
 protected:
 	Common::SeekableReadStream *_mhk;
@@ -220,6 +220,7 @@ public:
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
 	Common::SeekableReadStream *getResource(uint32 tag, const Common::String &resName) { return 0; }
 	uint32 getOffset(uint32 tag, uint16 id);
+	uint16 findResourceID(uint32 type, const Common::String &resName) { return 0xFFFF; }
 
 private:
 	struct OldType {

@@ -100,10 +100,10 @@ public:
 	VideoManager *_video;
 
 	virtual Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
-	Common::SeekableReadStream *getResource(uint32 tag, const Common::String &resName);
 	bool hasResource(uint32 tag, uint16 id);
 	bool hasResource(uint32 tag, const Common::String &resName);
 	uint32 getResourceOffset(uint32 tag, uint16 id);
+	uint16 findResourceID(uint32 type, const Common::String &resName);
 
 	void pauseGame();
 

@@ -93,15 +93,6 @@ Common::SeekableReadStream *MohawkEngine::getResource(uint32 tag, uint16 id) {
 	return NULL;
 }
 
-Common::SeekableReadStream *MohawkEngine::getResource(uint32 tag, const Common::String &resName) {
-	for (uint32 i = 0; i < _mhk.size(); i++)
-		if (_mhk[i]->hasResource(tag, resName))
-			return _mhk[i]->getResource(tag, resName);
-
-	error("Could not find a '%s' resource matching name '%s'", tag2str(tag), resName.c_str());
-	return NULL;
-}
-
 bool MohawkEngine::hasResource(uint32 tag, uint16 id) {
 	for (uint32 i = 0; i < _mhk.size(); i++)
 		if (_mhk[i]->hasResource(tag, id))
@@ -125,6 +116,15 @@ uint32 MohawkEngine::getResourceOffset(uint32 tag, uint16 id) {
 
 	error("Could not find a '%s' resource with ID %04x", tag2str(tag), id);
 	return 0;
+}
+
+uint16 MohawkEngine::findResourceID(uint32 tag, const Common::String &resName) {
+	for (uint32 i = 0; i < _mhk.size(); i++)
+		if (_mhk[i]->hasResource(tag, resName))
+			return _mhk[i]->findResourceID(tag, resName);
+
+	error("Could not find a '%s' resource matching name '%s'", tag2str(tag), resName.c_str());
+	return 0xFFFF;
 }
 
 } // End of namespace Mohawk
