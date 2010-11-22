@@ -420,7 +420,7 @@ void FileManager::restoreGame(int16 slot) {
 
 	status_t &gameStatus = _vm->getGameStatus();
 
-	int score = in->readSint16LE();
+	int score = in->readSint16BE();
 	_vm->setScore(score);
 
 	gameStatus.storyModeFl = (in->readByte() == 1);
