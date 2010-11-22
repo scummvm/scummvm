@@ -1056,7 +1056,7 @@ void RivenExternal::xgpincontrols(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xgisland25_opencard(uint16 argc, uint16 *argv) {
-	checkDomeSliders(29, 30);
+	checkDomeSliders(28, 29);
 }
 
 void RivenExternal::xgisland25_resetsliders(uint16 argc, uint16 *argv) {
@@ -1064,7 +1064,7 @@ void RivenExternal::xgisland25_resetsliders(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xgisland25_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(16, 29, 30, 2);
+	dragDomeSlider(16, 28, 29, 2);
 }
 
 void RivenExternal::xgisland25_slidermw(uint16 argc, uint16 *argv) {
