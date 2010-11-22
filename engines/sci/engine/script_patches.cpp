@@ -747,7 +747,34 @@ const uint16 qfg2PatchImportDialog[] = {
 
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg2Signatures[] = {
-	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x20, 0x30, 0x0b, 0x00),    -1, qfg2SignatureImportDialog, qfg2PatchImportDialog },
+	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x20, 0x30, 0x0b, 0x00),  -1, qfg2SignatureImportDialog, qfg2PatchImportDialog },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+// Patch for the import screen in QFG3, same as the one for QFG2 above
+const byte qfg3SignatureImportDialog[] = {
+	15,
+	0x63, 0x2a,       // pToa text
+	0x31, 0x0b,       // bnt [next state]
+	0x7a,             // push2
+	0x39, 0x03,       // pushi 03
+	0x36,             // push
+	0x43, 0x72, 0x04, // callk Memory 4
+	0x35, 0x00,       // ldi 00
+	0x65, 0x2a,       // aTop text
+	0
+};
+
+const uint16 qfg3PatchImportDialog[] = {
+	PATCH_ADDTOOFFSET | +4,
+	0x48,             // ret
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                  adjust
+const SciScriptSignature qfg3Signatures[] = {
+	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x2a, 0x31, 0x0b, 0x7a),  -1, qfg3SignatureImportDialog, qfg3PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -974,6 +1001,9 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		break;
 	case GID_QFG2:
 		signatureTable = qfg2Signatures;
+		break;
+	case GID_QFG3:
+		signatureTable = qfg3Signatures;
 		break;
 	case GID_SQ4:
 		signatureTable = sq4Signatures;
