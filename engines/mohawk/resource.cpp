@@ -36,14 +36,22 @@ MohawkArchive::MohawkArchive() {
 	_fileTable = NULL;
 }
 
-void MohawkArchive::open(Common::String filename) {
+bool MohawkArchive::open(Common::String filename) {
 	Common::File *file = new Common::File();
-	if (!file->open(filename.c_str()))
-		error ("Could not open file \'%s\'", filename.c_str());
+
+	if (!file->open(filename)) {
+		delete file;
+		return false;
+	}
 
 	_curFile = filename;
 
-	open(file);
+	if (!open(file)) {
+		close();
+		return false;
+	}
+
+	return true;
 }
 
 void MohawkArchive::close() {
@@ -54,23 +62,29 @@ void MohawkArchive::close() {
 	_curFile.clear();
 }
 
-void MohawkArchive::open(Common::SeekableReadStream *stream) {
+bool MohawkArchive::open(Common::SeekableReadStream *stream) {
 	// Make sure no other file is open...
 	close();
 	_mhk = stream;
 
-	if (_mhk->readUint32BE() != ID_MHWK)
-		error ("Could not find tag \'MHWK\'");
+	if (_mhk->readUint32BE() != ID_MHWK) {
+		warning("Could not find tag 'MHWK'");
+		return false;
+	}
 
-	_fileSize = _mhk->readUint32BE();
+	/* uint32 fileSize = */ _mhk->readUint32BE();
 
-	if (_mhk->readUint32BE() != ID_RSRC)
-		error ("Could not find tag \'RSRC\'");
+	if (_mhk->readUint32BE() != ID_RSRC) {
+		warning("Could not find tag \'RSRC\'");
+		return false;
+	}
 
 	_rsrc.version = _mhk->readUint16BE();
 	
-	if (_rsrc.version != 0x100)
-		error("Unsupported Mohawk resource version %d.%d", (_rsrc.version >> 8) & 0xff, _rsrc.version & 0xff);
+	if (_rsrc.version != 0x100) {
+		warning("Unsupported Mohawk resource version %d.%d", (_rsrc.version >> 8) & 0xff, _rsrc.version & 0xff);
+		return false;
+	}
 	
 	_rsrc.compaction = _mhk->readUint16BE(); // Only used in creation, not in reading
 	_rsrc.filesize = _mhk->readUint32BE();
@@ -171,6 +185,8 @@ void MohawkArchive::open(Common::SeekableReadStream *stream) {
 
 		debug (4, "File[%02x]: Offset = %08x  DataSize = %07x  Flags = %02x  Unk = %04x", i, _fileTable[i].offset, _fileTable[i].dataSize, _fileTable[i].flags, _fileTable[i].unk);
 	}
+
+	return true;
 }
 
 int MohawkArchive::getTypeIndex(uint32 tag) {
@@ -287,7 +303,7 @@ Common::SeekableReadStream *MohawkArchive::getResource(uint32 tag, uint16 id) {
 	return new Common::SeekableSubReadStream(_mhk, _fileTable[fileTableIndex].offset, _fileTable[fileTableIndex].offset + _fileTable[fileTableIndex].dataSize);
 }
 
-void LivingBooksArchive_v1::open(Common::SeekableReadStream *stream) {
+bool LivingBooksArchive_v1::open(Common::SeekableReadStream *stream) {
 	close();
 	_mhk = stream;
 
@@ -368,9 +384,12 @@ void LivingBooksArchive_v1::open(Common::SeekableReadStream *stream) {
 			_mhk->seek(oldPos);
 			debug (3, "\n");
 		}
-	} else
-		error("Could not determine type of Old Mohawk resource");
+	} else {
+		warning("Could not determine type of Old Mohawk resource");
+		return false;
+	}
 
+	return true;
 }
 
 uint32 LivingBooksArchive_v1::getOffset(uint32 tag, uint16 id) {

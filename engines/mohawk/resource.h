@@ -179,8 +179,8 @@ public:
 	MohawkArchive();
 	virtual ~MohawkArchive() { close(); }
 
-	void open(Common::String filename);
-	virtual void open(Common::SeekableReadStream *stream);
+	bool open(Common::String filename);
+	virtual bool open(Common::SeekableReadStream *stream);
 	void close();
 
 	virtual bool hasResource(uint32 tag, uint16 id);
@@ -195,8 +195,6 @@ protected:
 	Common::String _curFile;
 
 private:
-	bool _hasData;
-	uint32 _fileSize;
 	RSRC_Header _rsrc;
 	Type *_types;
 	FileTable *_fileTable;
@@ -216,7 +214,7 @@ public:
 
 	bool hasResource(uint32 tag, uint16 id);
 	bool hasResource(uint32 tag, const Common::String &resName) { return false; }
-	void open(Common::SeekableReadStream *stream);
+	bool open(Common::SeekableReadStream *stream);
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
 	Common::SeekableReadStream *getResource(uint32 tag, const Common::String &resName) { return 0; }
 	uint32 getOffset(uint32 tag, uint16 id);

@@ -119,7 +119,9 @@ Common::Error MohawkEngine_Riven::run() {
 
 	// Open extras.mhk for common images
 	_extrasFile = new MohawkArchive();
-	_extrasFile->open("extras.mhk");
+
+	if (!_extrasFile->open("extras.mhk"))
+		error("Could not open extras.mhk");
 
 	// Start at main cursor
 	_gfx->changeCursor(kRivenMainCursor);
@@ -278,11 +280,12 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	// Load any file that fits the patterns
 	for (int i = 0; i < ARRAYSIZE(endings); i++) {
 		Common::String filename = Common::String(prefix) + endings[i];
-		if (Common::File::exists(filename)) {
-			MohawkArchive *mhk = new MohawkArchive();
-			mhk->open(filename);
+
+		MohawkArchive *mhk = new MohawkArchive();
+		if (mhk->open(filename))
 			_mhk.push_back(mhk);
-		}
+		else
+			delete mhk;
 	}
 
 	// Make sure we have loaded files

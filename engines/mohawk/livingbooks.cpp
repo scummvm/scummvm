@@ -149,10 +149,12 @@ void MohawkEngine_LivingBooks::loadIntro() {
 	if (filename.empty())
 		filename = getFileNameFromConfig("Intro", "Page1.r");
 
-	if (!filename.empty() && Common::File::exists(filename)) {
+	if (!filename.empty()) {
 		MohawkArchive *introArchive = createMohawkArchive();
-		introArchive->open(filename);
-		_mhk.push_back(introArchive);
+		if (introArchive->open(filename))
+			_mhk.push_back(introArchive);
+		else
+			delete introArchive;
 	}
 
 	filename = getFileNameFromConfig("Intro", "Page2");
@@ -160,10 +162,12 @@ void MohawkEngine_LivingBooks::loadIntro() {
 	if (filename.empty())
 		filename = getFileNameFromConfig("Intro", "Page2.r");
 
-	if (!filename.empty() && Common::File::exists(filename)) {
+	if (!filename.empty()) {
 		MohawkArchive *coverArchive = createMohawkArchive();
-		coverArchive->open(filename);
-		_mhk.push_back(coverArchive);
+		if (coverArchive->open(filename))
+			_mhk.push_back(coverArchive);
+		else
+			delete coverArchive;
 	}
 }
 

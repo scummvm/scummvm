@@ -102,7 +102,12 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 	debug(0, "Loading game from \'%s\'", filename.c_str());
 
 	MohawkArchive *mhk = new MohawkArchive();
-	mhk->open(loadFile);
+
+	if (!mhk->open(loadFile)) {
+		warning("Save file is not a Mohawk archive");
+		delete mhk;
+		return false;
+	}
 
 	// First, let's make sure we're using a saved game file from this version of Riven by checking the VERS resource
 	Common::SeekableReadStream *vers = mhk->getResource(ID_VERS, 1);
