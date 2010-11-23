@@ -27,6 +27,7 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/md5.h"
+#include "common/memstream.h"
 
 namespace Scumm {
 
@@ -45,10 +46,6 @@ struct ScummNESFile::ResourceGroup {
 };
 
 ScummNESFile::ScummNESFile() : _stream(0), _buf(0), _ROMset(kROMsetNum) {
-}
-
-void ScummNESFile::setEnc(byte enc) {
-	_stream->setEnc(enc);
 }
 
 static const ScummNESFile::Resource res_roomgfx_usa[40] = {
@@ -1450,5 +1447,17 @@ bool ScummNESFile::openSubFile(const Common::String &filename) {
 	}
 }
 
+uint32 ScummNESFile::read(void *dataPtr, uint32 dataSize) {
+	uint32 realLen = _stream->read(dataPtr, dataSize);
+
+	if (_encbyte) {
+		byte *p = (byte *)dataPtr;
+		byte *end = p + realLen;
+		while (p < end)
+			*p++ ^= _encbyte;
+	}
+
+	return realLen;
+}
 
 } // End of namespace Scumm

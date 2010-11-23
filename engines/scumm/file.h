@@ -27,15 +27,19 @@
 #define SCUMM_FILE_H
 
 #include "common/file.h"
-#include "common/memstream.h"
+#include "common/stream.h"
 
 #include "scumm/detection.h"
 
 namespace Scumm {
 
 class BaseScummFile : public Common::File {
+protected:
+	byte _encbyte;
+
 public:
-	virtual void setEnc(byte value) = 0;
+	BaseScummFile() : _encbyte(0) {}
+	void setEnc(byte value) { _encbyte = value; }
 
 	virtual bool open(const Common::String &filename) = 0;
 	virtual bool openSubFile(const Common::String &filename) = 0;
@@ -53,7 +57,6 @@ public:
 
 class ScummFile : public BaseScummFile {
 private:
-	byte _encbyte;
 	int32	_subFileStart;
 	int32	_subFileLen;
 	bool	_myEos; // Have we read past the end of the subfile?
@@ -63,7 +66,6 @@ private:
 
 public:
 	ScummFile();
-	void setEnc(byte value);
 
 	bool open(const Common::String &filename);
 	bool openSubFile(const Common::String &filename);
@@ -79,7 +81,7 @@ public:
 
 class ScummDiskImage : public BaseScummFile {
 private:
-	Common::MemoryReadStream *_stream;
+	Common::SeekableReadStream *_stream;
 	byte _roomDisks[59], _roomTracks[59], _roomSectors[59];
 
 	byte *_buf;
@@ -109,7 +111,6 @@ private:
 
 public:
 	ScummDiskImage(const char *disk1, const char *disk2, GameSettings game);
-	void setEnc(byte value);
 
 	bool open(const Common::String &filename);
 	bool openSubFile(const Common::String &filename);
@@ -119,7 +120,7 @@ public:
 	int32 pos() const { return _stream->pos(); }
 	int32 size() const { return _stream->size(); }
 	bool seek(int32 offs, int whence = SEEK_SET) { return _stream->seek(offs, whence); }
-	uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
+	uint32 read(void *dataPtr, uint32 dataSize);
 };
 
 } // End of namespace Scumm

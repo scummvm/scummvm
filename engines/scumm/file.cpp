@@ -27,6 +27,7 @@
 
 #include "scumm/scumm.h"
 
+#include "common/memstream.h"
 #include "common/substream.h"
 
 namespace Scumm {
@@ -35,11 +36,7 @@ namespace Scumm {
 #pragma mark --- ScummFile ---
 #pragma mark -
 
-ScummFile::ScummFile() : _encbyte(0), _subFileStart(0), _subFileLen(0) {
-}
-
-void ScummFile::setEnc(byte value) {
-	_encbyte = value;
+ScummFile::ScummFile() : _subFileStart(0), _subFileLen(0) {
 }
 
 void ScummFile::setSubfileRange(int32 start, int32 len) {
@@ -246,10 +243,6 @@ ScummDiskImage::ScummDiskImage(const char *disk1, const char *disk2, GameSetting
 		_numSounds = 127;
 		_resourcesPerFile = zakResourcesPerFile;
 	}
-}
-
-void ScummDiskImage::setEnc(byte enc) {
-	_stream->setEnc(enc);
 }
 
 byte ScummDiskImage::fileReadByte() {
@@ -497,6 +490,19 @@ bool ScummDiskImage::openSubFile(const Common::String &filename) {
 	}
 
 	return true;
+}
+
+uint32 ScummDiskImage::read(void *dataPtr, uint32 dataSize) {
+	uint32 realLen = _stream->read(dataPtr, dataSize);
+
+	if (_encbyte) {
+		byte *p = (byte *)dataPtr;
+		byte *end = p + realLen;
+		while (p < end)
+			*p++ ^= _encbyte;
+	}
+
+	return realLen;
 }
 
 } // End of namespace Scumm

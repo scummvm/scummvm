@@ -26,9 +26,6 @@
 #ifndef SCUMM_FILE_NES_H
 #define SCUMM_FILE_NES_H
 
-#include "common/file.h"
-#include "common/memstream.h"
-
 #include "scumm/file.h"
 
 namespace Scumm {
@@ -71,7 +68,7 @@ public:
 
 
 private:
-	Common::MemoryReadStream *_stream;
+	Common::SeekableReadStream *_stream;
 	ROMset _ROMset;
 	byte *_buf;
 
@@ -84,7 +81,6 @@ private:
 
 public:
 	ScummNESFile();
-	void setEnc(byte value);
 
 	bool open(const Common::String &filename);
 	bool openSubFile(const Common::String &filename);
@@ -94,7 +90,7 @@ public:
 	int32 pos() const { return _stream->pos(); }
 	int32 size() const { return _stream->size(); }
 	bool seek(int32 offs, int whence = SEEK_SET) { return _stream->seek(offs, whence); }
-	uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
+	uint32 read(void *dataPtr, uint32 dataSize);
 };
 
 } // End of namespace Scumm

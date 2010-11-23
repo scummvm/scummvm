@@ -32,6 +32,7 @@
 #include "scumm/util.h"
 
 #include "common/config-manager.h"
+#include "common/memstream.h"
 #include "common/timer.h"
 #include "common/util.h"
 

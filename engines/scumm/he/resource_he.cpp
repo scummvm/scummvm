@@ -34,7 +34,7 @@
 #include "graphics/cursorman.h"
 
 #include "common/archive.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 #include "common/system.h"
 
 namespace Scumm {
