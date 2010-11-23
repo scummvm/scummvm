@@ -21,6 +21,7 @@ common/util.cpp
 
 engines/dialogs.cpp
 engines/scumm/dialogs.cpp
+engines/scumm/help.cpp
 engines/scumm/scumm.cpp
 engines/mohawk/dialogs.cpp
 engines/mohawk/myst.cpp
