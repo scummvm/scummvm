@@ -157,7 +157,7 @@ BundleMgr::~BundleMgr() {
 	delete _file;
 }
 
-Common::File *BundleMgr::getFile(const char *filename, int32 &offset, int32 &size) {
+Common::SeekableReadStream *BundleMgr::getFile(const char *filename, int32 &offset, int32 &size) {
 	BundleDirCache::IndexNode target;
 	strcpy(target.filename, filename);
 	BundleDirCache::IndexNode *found = (BundleDirCache::IndexNode *)bsearch(&target, _indexTable, _numFiles,

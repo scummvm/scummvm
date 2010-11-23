@@ -25,6 +25,7 @@
 
 #ifdef ENABLE_HE
 
+#include "common/archive.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/primitives.h"
@@ -2374,12 +2375,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 			if (!_vm->_saveFileMan->listSavefiles(filename).empty()) {
 				f = _vm->_saveFileMan->openForLoading(filename);
 			} else {
-				Common::File *nf = new Common::File();
-				nf->open(filename);
-				if (!nf->isOpen())
-					delete nf;
-				else
-					f = nf;
+				f = SearchMan.createReadStreamForMember(filename);
 			}
 
 			if (f) {

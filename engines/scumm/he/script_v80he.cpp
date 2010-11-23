@@ -25,6 +25,7 @@
 
 #ifdef ENABLE_HE
 
+#include "common/archive.h"
 #include "common/config-file.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -94,14 +95,9 @@ void ScummEngine_v80he::o80_getFileSize() {
 
 	Common::SeekableReadStream *f = 0;
 	if (!_saveFileMan->listSavefiles(filename).empty()) {
-		f = _saveFileMan->openForLoading((const char *)filename);
+		f = _saveFileMan->openForLoading(filename);
 	} else {
-		Common::File *file = new Common::File();
-		file->open((const char *)filename);
-		if (!file->isOpen())
-			delete file;
-		else
-			f = file;
+		f = SearchMan.createReadStreamForMember(filename);
 	}
 
 	if (!f) {

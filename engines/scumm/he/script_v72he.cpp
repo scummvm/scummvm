@@ -1412,12 +1412,7 @@ void ScummEngine_v72he::o72_openFile() {
 			if (!_saveFileMan->listSavefiles(filename).empty()) {
 				_hInFileTable[slot] = _saveFileMan->openForLoading(filename);
 			} else {
-				Common::File *f = new Common::File();
-				f->open(filename);
-				if (!f->isOpen())
-					delete f;
-				else
-					_hInFileTable[slot] = f;
+				_hInFileTable[slot] = SearchMan.createReadStreamForMember(filename);
 			}
 			break;
 		case 2:

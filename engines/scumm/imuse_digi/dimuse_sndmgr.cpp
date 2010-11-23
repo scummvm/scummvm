@@ -93,7 +93,7 @@ void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, i
 	} while (tag != MKID_BE('DATA'));
 }
 
-void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, SoundDesc *sound, int32 offset, int32 size) {
+void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::SeekableReadStream *file, SoundDesc *sound, int32 offset, int32 size) {
 	int l;
 
 	file->seek(offset, SEEK_SET);
@@ -428,7 +428,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 			char fileName[24];
 			int32 offset = 0, size = 0;
 			sprintf(fileName, "%s.map", soundName);
-			Common::File *rmapFile = sound->bundle->getFile(fileName, offset, size);
+			Common::SeekableReadStream *rmapFile = sound->bundle->getFile(fileName, offset, size);
 			if (!rmapFile) {
 				closeSound(sound);
 				return NULL;
@@ -666,7 +666,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 		sprintf(fileName, "%s_reg%03d", soundDesc->name, region);
 		if (scumm_stricmp(fileName, soundDesc->lastFileName) != 0) {
 			int32 offs = 0, len = 0;
-			Common::File *cmpFile;
+			Common::SeekableReadStream *cmpFile;
 			uint8 soundMode = 0;
 
 			sprintf(fileName, "%s_reg%03d.fla", soundDesc->name, region);

@@ -113,7 +113,7 @@ private:
 	bool checkForProperHandle(SoundDesc *soundDesc);
 	SoundDesc *allocSlot();
 	void prepareSound(byte *ptr, SoundDesc *sound);
-	void prepareSoundFromRMAP(Common::File *file, SoundDesc *sound, int32 offset, int32 size);
+	void prepareSoundFromRMAP(Common::SeekableReadStream *file, SoundDesc *sound, int32 offset, int32 size);
 
 	ScummEngine *_vm;
 	byte _disk;
