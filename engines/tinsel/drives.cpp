@@ -153,7 +153,7 @@ bool GotoCD() {
 
 bool TinselFile::_warningShown = false;
 
-TinselFile::TinselFile() {
+TinselFile::TinselFile() : ReadStreamEndian((_vm->getFeatures() & GF_BIG_ENDIAN) != 0) {
 	_stream = NULL;
 }
 
@@ -168,8 +168,7 @@ bool TinselFile::openInternal(const Common::String &filename) {
 	if (!stream)
 		return false;
 
-	_stream = new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), 
-		(_vm->getFeatures() & GF_BIG_ENDIAN) != 0, DisposeAfterUse::YES);
+	_stream = new Common::SeekableSubReadStream(stream, 0, stream->size(), DisposeAfterUse::YES);
 	return true;
 }
 
@@ -226,24 +225,9 @@ bool TinselFile::err() const {
 	return _stream->err();
 }
 
-uint32 TinselFile::readUint32() {
+void TinselFile::clearErr() {
 	assert(_stream);
-	return _stream->readUint32();
-}
-
-int16 TinselFile::readSint16() {
-	assert(_stream);
-	return _stream->readUint16();
-}
-
-int32 TinselFile::readSint32() {
-	assert(_stream);
-	return _stream->readUint32();
-}
-
-Common::SeekableReadStream *TinselFile::readStream(uint32 dataSize) {
-	assert(_stream);
-	return _stream->readStream(dataSize);
+	_stream->clearErr();
 }
 
 uint32 TinselFile::read(void *dataPtr, uint32 dataSize) {
@@ -251,9 +235,6 @@ uint32 TinselFile::read(void *dataPtr, uint32 dataSize) {
 	return _stream->read(dataPtr, dataSize);
 }
 
-bool TinselFile::skip(uint32 offset) {
-	return seek(offset, SEEK_CUR);
-}
 
 
 

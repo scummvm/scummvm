@@ -27,13 +27,9 @@
 #ifndef TINSEL_DRIVES_H
 #define TINSEL_DRIVES_H
 
-#include "common/file.h"
+#include "common/stream.h"
 #include "tinsel/dw.h"
 #include "tinsel/coroutine.h"
-
-namespace Common {
-class SeekableSubReadStreamEndian;
-}
 
 namespace Tinsel {
 
@@ -63,11 +59,10 @@ void SetNextCD(int cdNumber);
 
 bool GotoCD();
 
-// TODO: Make TinselFile a SeekableReadStream subclass??
-class TinselFile {
+class TinselFile : public Common::SeekableReadStream, public Common::ReadStreamEndian {
 private:
 	static bool _warningShown;
-	Common::SeekableSubReadStreamEndian *_stream;
+	Common::SeekableReadStream *_stream;
 	bool openInternal(const Common::String &filename);
 public:
 	TinselFile();
@@ -76,17 +71,15 @@ public:
 	void close();
 	char getCdNumber();
 
+	bool err() const;
+	void clearErr();
+
+	bool eos() const;
+	uint32 read(void *dataPtr, uint32 dataSize);
+
 	int32 pos() const;
 	int32 size() const;
 	bool seek(int32 offset, int whence = SEEK_SET);
-	bool eos() const;
-	bool err() const;
-	uint32 readUint32();
-	int16 readSint16();
-	int32 readSint32();
-	Common::SeekableReadStream *readStream(uint32 dataSize);
-	uint32 read(void *dataPtr, uint32 dataSize);
-	bool skip(uint32 offset);
 };
 
 
