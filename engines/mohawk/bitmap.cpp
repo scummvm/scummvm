@@ -564,10 +564,6 @@ void MohawkBitmap::drawRLE8(Graphics::Surface *surface) {
 		byte *dst = (byte *)surface->pixels + i * _header.width;
 		int16 remaining = _header.width;
 
-		// HACK: It seems only the bottom 9 bits are valid for images
-		// TODO: Verify if this is still needed after the buffer clearing fix.
-		rowByteCount &= 0x1ff;
-
 		while (remaining > 0) {
 			byte code = _data->readByte();
 			uint16 runLen = (code & 0x7F) + 1;
