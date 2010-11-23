@@ -6,7 +6,9 @@ MODULE := tools/create_project
 MODULE_OBJS := \
 	create_project.o \
 	codeblocks.o \
-	msvc.o
+	msvc.o \
+	visualstudio.o \
+	msbuild.o
 
 # Set the name of the executable
 TOOL_EXECUTABLE := create_project
