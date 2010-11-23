@@ -653,8 +653,10 @@ void MidiParser_SCI::allNotesOff() {
 	// support this...).
 
 	for (i = 0; i < 16; ++i) {
-		if (_channelRemap[i] != -1)
+		if (_channelRemap[i] != -1) {
 			sendToDriver(0xB0 | i, 0x7b, 0); // All notes off
+			sendToDriver(0xB0 | i, 0x40, 0); // Also send a sustain off event (bug #3116608)
+		}
 	}
 
 	memset(_active_notes, 0, sizeof(_active_notes));
