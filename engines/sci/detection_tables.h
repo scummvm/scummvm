@@ -2284,6 +2284,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
+	// Phantasmagoria - English DOS/Windows (GOG version) - ressci.* merged in ressci.000
+	// Windows executable scanning reports "2.100.002" - "Sep 19 1995 15:09:43"
+	// DOS executable scanning reports "2.100.002" - "Sep 19 1995 09:15:40"
+	// VERSION file reports "1.100.001UK"
+	// Supplied by littleboy in patch #3112884
+	{"phantasmagoria", "", {
+		{"ressci.000", 0, "cd5967f9b9586e3380645961c0765be3", 116822037},
+		{"resmap.000", 0, "3cafc1c6a53945c1f3babbfd6380c64c", 16468},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 #ifdef ENABLE_SCI3_GAMES
 	// Phantasmagoria 2 - English Windows (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "001.0.06"
@@ -2298,6 +2309,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.004", 0, "53f457cddb0dffc056593905c4cbb989", 42447131},
 		{"resmap.005", 0, "8bd5ceeedcbe16dfe55d1b90dcd4be84", 1942},
 		{"ressci.005", 0, "05f9fe2bee749659acb3cd2c90252fc5", 67905112},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH	},
+
+	// Phantasmagoria 2 - English DOS (GOG version) - ressci.* merged in ressci.000
+	// Executable scanning reports "3.000.000" - "Dec 07 1996 09:29:03"
+	// VERSION file reports "001.0.06"
+	// Supplied by littleboy in patch #3112884
+	{"phantasmagoria2", "", {
+		{"ressci.000", 0, "c54f26d9f43f908151263254b6d97053", 108134481},
+		{"resmap.000", 0, "de154a223a9ef4ea7358b76adc38ef5b", 2956},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH	},
 #endif	// ENABLE_SCI3_GAMES
