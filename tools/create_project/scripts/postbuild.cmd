@@ -30,15 +30,15 @@ xcopy /F /Y "%SCUMMVM_LIBS%/lib/%~3/SDL.dll" %~2 > NUL 2>&1
 goto done
 
 :error_output
-@echo Invalid root folder (%~1)!
+echo Invalid root folder (%~1)!
 goto done
 
 :error_output
-@echo Invalid output folder (%~2)!
+echo Invalid output folder (%~2)!
 goto done
 
 :error_arch
-@echo Invalid arch parameter (was: %~3, allowed: x86, x64)!
+echo Invalid arch parameter (was: %~3, allowed: x86, x64)!
 goto done
 
 :done

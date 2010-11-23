@@ -87,6 +87,10 @@ xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\msvc9\
 xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\msvc8\
 xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\codeblocks\</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\codeblocks.cpp" />
@@ -97,6 +101,11 @@ xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\codeblocks\</Command>
     <ClInclude Include="..\codeblocks.h" />
     <ClInclude Include="..\create_project.h" />
     <ClInclude Include="..\msvc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\scripts\postbuild.cmd" />
+    <None Include="..\scripts\prebuild.cmd" />
+    <None Include="..\scripts\revision.vbs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

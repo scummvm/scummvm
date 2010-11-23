@@ -7,6 +7,9 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{31aaf58c-d3cb-4ed6-8eca-163b4a9b31a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="scripts">
+      <UniqueIdentifier>{f980f6fb-41b6-4161-b035-58b200c85cad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\codeblocks.h">
@@ -29,5 +32,16 @@
     <ClCompile Include="..\msvc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\scripts\prebuild.cmd">
+      <Filter>scripts</Filter>
+    </None>
+    <None Include="..\scripts\revision.vbs">
+      <Filter>scripts</Filter>
+    </None>
+    <None Include="..\scripts\postbuild.cmd">
+      <Filter>scripts</Filter>
+    </None>
   </ItemGroup>
 </Project>

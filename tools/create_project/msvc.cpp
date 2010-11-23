@@ -873,10 +873,6 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	projectFile << "\t\t\t<Command Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">nasm.exe -f win32 -g -o \"$(IntDir)" << (isDuplicate ? (*entry).prefix : "") << "%(Filename).obj\" \"%(FullPath)\"</Command>\n" \
 	               "\t\t\t<Outputs Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">$(IntDir)" << (isDuplicate ? (*entry).prefix : "") << "%(Filename).obj;%(Outputs)</Outputs>\n";
 
-#define OUPUT_OBJECT_FILENAME_MSBUILD(config, platform, prefix) \
-	projectFile << "\t\t<ObjectFileName Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << platform << "'\">$(IntDir)" << prefix << "%(Filename).obj</ObjectFileName>\n" \
-	               "\t\t<XMLDocumentationFileName Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << platform << "'\">$(IntDir)" << prefix << "%(Filename).xdc</XMLDocumentationFileName>\n";
-
 #define OUPUT_FILES_MSBUILD(files, action) \
 	if (!files.empty()) { \
 		projectFile << "\t<ItemGroup>\n"; \
@@ -885,6 +881,15 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		} \
 		projectFile << "\t</ItemGroup>\n"; \
 	}
+
+bool hasEnding(std::string const &fullString, std::string const &ending) {
+	if (fullString.length() > ending.length()) {
+		return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+	} else {
+		return false;
+	}
+}
+
 
 void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int, const StringList &duplicate,
                                              const std::string &objPrefix, const std::string &filePrefix) {
@@ -909,13 +914,12 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 
 			// Deal with duplicated file names
 			if (isDuplicate) {
-				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\">\n";
-				OUPUT_OBJECT_FILENAME_MSBUILD("Debug", "Win32", (*entry).prefix)
-				OUPUT_OBJECT_FILENAME_MSBUILD("Debug", "x64", (*entry).prefix)
-				OUPUT_OBJECT_FILENAME_MSBUILD("Analysis", "Win32", (*entry).prefix)
-				OUPUT_OBJECT_FILENAME_MSBUILD("Analysis", "x64", (*entry).prefix)
-				OUPUT_OBJECT_FILENAME_MSBUILD("Release", "Win32", (*entry).prefix)
-				OUPUT_OBJECT_FILENAME_MSBUILD("Release", "x64", (*entry).prefix)
+				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\">\n"
+				               "\t\t\t<ObjectFileName>$(IntDir)" << (*entry).prefix << "%(Filename).obj</ObjectFileName>\n";
+
+				if (hasEnding((*entry).path, "base\\version.cpp"))
+					projectFile <<  "\t\t\t<PreprocessorDefinitions Condition=\"'$(Configuration)'=='Debug'\">SCUMMVM_SVN_REVISION#&quot; $(SCUMMVM_REVISION_STRING)&quot;;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n";
+
 				projectFile << "\t\t</ClCompile>\n";
 			} else {
 				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\" />\n";

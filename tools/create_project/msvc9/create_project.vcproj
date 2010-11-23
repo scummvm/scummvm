@@ -196,6 +196,24 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Scripts"
+			Filter="vbs;cmd"
+			UniqueIdentifier="{45B110C8-4C64-4677-8ED6-F9A93C6D55A0}"
+			>
+			<File
+				RelativePath="..\scripts\prebuild.cmd"
+				>
+			</File>
+			<File
+				RelativePath="..\scripts\postbuild.cmd"
+				>
+			</File>
+			<File
+				RelativePath="..\scripts\revision.vbs"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
