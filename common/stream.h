@@ -389,6 +389,39 @@ public:
 	virtual String readLine();
 };
 
+/**
+ * This is a ReadStream mixin subclass which adds non-endian read
+ * methods whose endianness is set du the stream creation.
+ */
+class ReadStreamEndian : virtual public ReadStream {
+private:
+	const bool _bigEndian;
+
+public:
+	ReadStreamEndian(bool bigEndian = false) : _bigEndian(bigEndian) {}
+
+	uint16 readUint16() {
+		uint16 val;
+		read(&val, 2);
+		return (_bigEndian) ? TO_BE_16(val) : TO_LE_16(val);
+	}
+
+	uint32 readUint32() {
+		uint32 val;
+		read(&val, 4);
+		return (_bigEndian) ? TO_BE_32(val) : TO_LE_32(val);
+	}
+
+	FORCEINLINE int16 readSint16() {
+		return (int16)readUint16();
+	}
+
+	FORCEINLINE int32 readSint32() {
+		return (int32)readUint32();
+	}
+};
+
+
 }	// End of namespace Common
 
 #endif

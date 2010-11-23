@@ -87,39 +87,17 @@ public:
 };
 
 /**
- * This is a wrapper around SeekableSubReadStream, but it adds non-endian
+ * This is a SeekableSubReadStream subclass which adds non-endian
  * read methods whose endianness is set on the stream creation.
  *
  * Manipulating the parent stream directly /will/ mess up a substream.
  * @see SubReadStream
  */
-class SeekableSubReadStreamEndian : public SeekableSubReadStream {
-private:
-	const bool _bigEndian;
-
+class SeekableSubReadStreamEndian : public SeekableSubReadStream, public ReadStreamEndian {
 public:
 	SeekableSubReadStreamEndian(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool bigEndian = false, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
-		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream), _bigEndian(bigEndian) {
-	}
-
-	uint16 readUint16() {
-		uint16 val;
-		read(&val, 2);
-		return (_bigEndian) ? TO_BE_16(val) : TO_LE_16(val);
-	}
-
-	uint32 readUint32() {
-		uint32 val;
-		read(&val, 4);
-		return (_bigEndian) ? TO_BE_32(val) : TO_LE_32(val);
-	}
-
-	FORCEINLINE int16 readSint16() {
-		return (int16)readUint16();
-	}
-
-	FORCEINLINE int32 readSint32() {
-		return (int32)readUint32();
+		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream),
+		  ReadStreamEndian(bigEndian) {
 	}
 };
 
