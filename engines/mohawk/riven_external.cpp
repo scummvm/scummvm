@@ -2013,7 +2013,7 @@ void RivenExternal::xt7500_checkmarbles(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xt7600_setupmarbles(uint16 argc, uint16 *argv) {
 	// Draw the small marbles when we're a step away from the waffle
-	uint16 baseBitmapId = (_vm->getFeatures() & GF_DVD) ? 539 : 526;
+	uint16 baseBitmapId = _vm->findResourceID(ID_TBMP, "*tsmallred");
 	bool waffleDown = *_vm->getVar("twaffle") != 0;
 
 	// Note that each of the small marble images is exactly 4x2
