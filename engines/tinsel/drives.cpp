@@ -25,6 +25,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/substream.h"
 #include "gui/message.h"
 #include "tinsel/drives.h"
 #include "tinsel/scene.h"
@@ -199,5 +200,61 @@ void TinselFile::close() {
 	delete _stream;
 	_stream = NULL;
 }
+
+int32 TinselFile::pos() const {
+	assert(_stream);
+	return _stream->pos();
+}
+
+int32 TinselFile::size() const {
+	assert(_stream);
+	return _stream->size();
+}
+
+bool TinselFile::seek(int32 offset, int whence) {
+	assert(_stream);
+	return _stream->seek(offset, whence);
+}
+
+bool TinselFile::eos() const {
+	assert(_stream);
+	return _stream->eos();
+}
+
+bool TinselFile::err() const {
+	assert(_stream);
+	return _stream->err();
+}
+
+uint32 TinselFile::readUint32() {
+	assert(_stream);
+	return _stream->readUint32();
+}
+
+int16 TinselFile::readSint16() {
+	assert(_stream);
+	return _stream->readUint16();
+}
+
+int32 TinselFile::readSint32() {
+	assert(_stream);
+	return _stream->readUint32();
+}
+
+Common::SeekableReadStream *TinselFile::readStream(uint32 dataSize) {
+	assert(_stream);
+	return _stream->readStream(dataSize);
+}
+
+uint32 TinselFile::read(void *dataPtr, uint32 dataSize) {
+	assert(_stream);
+	return _stream->read(dataPtr, dataSize);
+}
+
+bool TinselFile::skip(uint32 offset) {
+	return seek(offset, SEEK_CUR);
+}
+
+
 
 } // End of namespace Tinsel

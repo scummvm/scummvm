@@ -27,11 +27,13 @@
 #ifndef TINSEL_DRIVES_H
 #define TINSEL_DRIVES_H
 
-#include "common/memstream.h"
-#include "common/substream.h"
 #include "common/file.h"
 #include "tinsel/dw.h"
 #include "tinsel/coroutine.h"
+
+namespace Common {
+class SeekableSubReadStreamEndian;
+}
 
 namespace Tinsel {
 
@@ -61,6 +63,7 @@ void SetNextCD(int cdNumber);
 
 bool GotoCD();
 
+// TODO: Make TinselFile a SeekableReadStream subclass??
 class TinselFile {
 private:
 	static bool _warningShown;
@@ -73,17 +76,17 @@ public:
 	void close();
 	char getCdNumber();
 
-	FORCEINLINE int32 pos() const { assert(_stream); return _stream->pos(); }
-	FORCEINLINE int32 size() const { assert(_stream); return _stream->size(); }
-	FORCEINLINE bool seek(int32 offset, int whence = SEEK_SET) { assert(_stream); return _stream->seek(offset, whence); }
-	FORCEINLINE bool eos() const { assert(_stream); return _stream->eos(); }
-	FORCEINLINE bool err() const { return _stream->err(); }
-	FORCEINLINE uint32 readUint32() { assert(_stream); return _stream->readUint32(); }
-	FORCEINLINE int16 readSint16() { assert(_stream); return _stream->readUint16(); }
-	FORCEINLINE int32 readSint32() { assert(_stream); return _stream->readUint32();	}
-	FORCEINLINE Common::SeekableReadStream *readStream(uint32 dataSize) { assert(_stream); return _stream->readStream(dataSize); }
-	FORCEINLINE uint32 read(void *dataPtr, uint32 dataSize) { assert(_stream); return _stream->read(dataPtr, dataSize); }
-	FORCEINLINE bool skip(uint32 offset) { return seek(offset, SEEK_CUR); }
+	int32 pos() const;
+	int32 size() const;
+	bool seek(int32 offset, int whence = SEEK_SET);
+	bool eos() const;
+	bool err() const;
+	uint32 readUint32();
+	int16 readSint16();
+	int32 readSint32();
+	Common::SeekableReadStream *readStream(uint32 dataSize);
+	uint32 read(void *dataPtr, uint32 dataSize);
+	bool skip(uint32 offset);
 };
 
 
