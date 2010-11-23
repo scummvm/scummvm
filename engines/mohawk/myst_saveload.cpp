@@ -47,8 +47,8 @@ bool MystSaveLoad::loadGame(const Common::String &filename) {
 	if (_vm->getFeatures() & GF_DEMO) // Don't load games in the demo
 		return false;
 
-	Common::InSaveFile *loadFile;
-	if (!(loadFile = _saveFileMan->openForLoading(filename.c_str())))
+	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(filename);
+	if (!loadFile)
 		return false;
 	debugC(kDebugSaveLoad, "Loading game from \'%s\'", filename.c_str());
 
@@ -330,8 +330,8 @@ bool MystSaveLoad::saveGame(const Common::String &fname) {
 	if (!filename.hasSuffix(".mys") && !filename.hasSuffix(".MYS"))
 		filename += ".mys";
 
-	Common::OutSaveFile *saveFile;
-	if (!(saveFile = _saveFileMan->openForSaving(filename.c_str())))
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);
+	if (!saveFile)
 		return false;
 	debugC(kDebugSaveLoad, "Saving game to \'%s\'", filename.c_str());
 
