@@ -162,14 +162,10 @@ TinselFile::~TinselFile() {
 }
 
 bool TinselFile::openInternal(const Common::String &filename) {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	const Common::FSNode fsNode = gameDataDir.getChild(filename);
-	Common::SeekableReadStream *stream = fsNode.createReadStream(); 
-	if (!stream)
-		return false;
-
-	_stream = new Common::SeekableSubReadStream(stream, 0, stream->size(), DisposeAfterUse::YES);
-	return true;
+	_stream = SearchMan.createReadStreamForMember(filename);
+	if (!_stream)
+		_stream = SearchMan.createReadStreamForMember(filename + ".");
+	return _stream != 0;
 }
 
 bool TinselFile::open(const Common::String &filename) {
