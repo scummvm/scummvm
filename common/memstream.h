@@ -40,7 +40,6 @@ private:
 	const byte *_ptr;
 	const uint32 _size;
 	uint32 _pos;
-	byte _encbyte;
 	DisposeAfterUse::Flag _disposeMemory;
 	bool _eos;
 
@@ -56,7 +55,6 @@ public:
 		_ptr(dataPtr),
 		_size(dataSize),
 		_pos(0),
-		_encbyte(0),
 		_disposeMemory(disposeMemory),
 		_eos(false) {}
 
@@ -64,8 +62,6 @@ public:
 		if (_disposeMemory)
 			free(const_cast<byte *>(_ptrOrig));
 	}
-
-	void setEnc(byte value) { _encbyte = value; }
 
 	uint32 read(void *dataPtr, uint32 dataSize);
 

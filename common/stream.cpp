@@ -52,13 +52,6 @@ uint32 MemoryReadStream::read(void *dataPtr, uint32 dataSize) {
 	}
 	memcpy(dataPtr, _ptr, dataSize);
 
-	if (_encbyte) {
-		byte *p = (byte *)dataPtr;
-		byte *end = p + dataSize;
-		while (p < end)
-			*p++ ^= _encbyte;
-	}
-
 	_ptr += dataSize;
 	_pos += dataSize;
 
