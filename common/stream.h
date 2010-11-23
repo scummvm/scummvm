@@ -398,7 +398,7 @@ private:
 	const bool _bigEndian;
 
 public:
-	ReadStreamEndian(bool bigEndian = false) : _bigEndian(bigEndian) {}
+	ReadStreamEndian(bool bigEndian) : _bigEndian(bigEndian) {}
 
 	uint16 readUint16() {
 		uint16 val;

@@ -95,7 +95,7 @@ public:
  */
 class SeekableSubReadStreamEndian : public SeekableSubReadStream, public ReadStreamEndian {
 public:
-	SeekableSubReadStreamEndian(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool bigEndian = false, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
+	SeekableSubReadStreamEndian(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool bigEndian, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
 		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream),
 		  ReadStreamEndian(bigEndian) {
 	}

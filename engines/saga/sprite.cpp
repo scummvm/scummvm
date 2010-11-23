@@ -132,7 +132,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 			spriteDataPointer = spritePointer + readS2.pos();
 		} else {
-			Common::MemoryReadStreamEndian readS2(spritePointer, 4);
+			Common::MemoryReadStreamEndian readS2(spritePointer, 4, false);
 
 			spriteInfo->xAlign = readS2.readSByte();
 			spriteInfo->yAlign = readS2.readSByte();

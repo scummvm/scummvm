@@ -81,7 +81,7 @@ public:
  */
 class MemoryReadStreamEndian : public MemoryReadStream, public ReadStreamEndian {
 public:
-	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian = false)
+	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian)
 		: MemoryReadStream(buf, len), ReadStreamEndian(bigEndian) {}
 };
 
