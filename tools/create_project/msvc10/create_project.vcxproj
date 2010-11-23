@@ -95,12 +95,16 @@ xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\codeblocks\</Command>
   <ItemGroup>
     <ClCompile Include="..\codeblocks.cpp" />
     <ClCompile Include="..\create_project.cpp" />
+    <ClCompile Include="..\msbuild.cpp" />
     <ClCompile Include="..\msvc.cpp" />
+    <ClCompile Include="..\visualstudio.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\codeblocks.h" />
     <ClInclude Include="..\create_project.h" />
+    <ClInclude Include="..\msbuild.h" />
     <ClInclude Include="..\msvc.h" />
+    <ClInclude Include="..\visualstudio.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\scripts\postbuild.cmd" />

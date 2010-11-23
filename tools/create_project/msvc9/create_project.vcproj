@@ -177,6 +177,14 @@
 				RelativePath="..\msvc.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\msbuild.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\visualstudio.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -193,6 +201,14 @@
 			</File>
 			<File
 				RelativePath="..\msvc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\msbuild.h"
+				>
+			</File>
+			<File
+				RelativePath="..\visualstudio.h"
 				>
 			</File>
 		</Filter>

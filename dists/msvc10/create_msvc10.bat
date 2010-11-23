@@ -50,7 +50,7 @@ goto done
 echo.
 echo Creating project files with all engines enabled (stable and unstable)
 echo.
-create_project ..\.. --enable-all-engines --msvc --msvc-version 10
+create_project ..\.. --enable-all-engines --msvc --msvc-version 10 --build-events
 goto done
 
 :stable

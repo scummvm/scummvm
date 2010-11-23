@@ -25,7 +25,10 @@
 
 #include "create_project.h"
 #include "codeblocks.h"
+
 #include "msvc.h"
+#include "visualstudio.h"
+#include "msbuild.h"
 
 #include <fstream>
 #include <iostream>
@@ -228,6 +231,9 @@ int main(int argc, char *argv[]) {
 			setup.outputDir = unifyPath(argv[++i]);
 			if (setup.outputDir.at(setup.outputDir.size() - 1) == '/')
 				setup.outputDir.erase(setup.outputDir.size() - 1);
+
+		} else if (!std::strcmp(argv[i], "--build-events")) {
+			setup.runBuildEvents = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -462,6 +468,8 @@ void displayHelp(const char *exe) {
 	        "                           9 stands for \"Visual Studio 2008\"\n"
 	        "                           10 stands for \"Visual Studio 2010\"\n"
 	        "                           The default is \"9\", thus \"Visual Studio 2008\"\n"
+	        " --build-events           Run custom build events as part of the build\n"
+	        "                          (default: false)\n"
 	        "\n"
 	        "ScummVM engine settings:\n"
 	        " --list-engines           list all available engines and their default state\n"

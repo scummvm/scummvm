@@ -203,7 +203,7 @@ StringList getFeatureLibraries(const FeatureList &features);
 bool setFeatureBuildState(const std::string &name, FeatureList &features, bool enable);
 
 /**
- * Structure to describe a MSVC build setup.
+ * Structure to describe a build setup.
  *
  * This includes various information about which engines to
  * enable, which features should be built into ScummVM.
@@ -219,6 +219,12 @@ struct BuildSetup {
 
 	StringList defines;   ///< List of all defines for the build.
 	StringList libraries; ///< List of all external libraries required for the build.
+
+	bool runBuildEvents;
+
+	BuildSetup() {
+		runBuildEvents = false;
+	}
 };
 
 /**
