@@ -28,6 +28,7 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "common/memstream.h"
 
 #include "graphics/cursorman.h"
 

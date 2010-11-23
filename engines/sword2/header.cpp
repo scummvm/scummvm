@@ -24,6 +24,7 @@
  */
 
 #include "sword2/header.h"
+#include "sword2/object.h"
 #include "sword2/screen.h"
 #include "sword2/sword2.h"
 
@@ -288,6 +289,76 @@ void Parallax::write(byte *addr) {
 
 	writeS.writeUint16LE(w);
 	writeS.writeUint16LE(h);
+}
+
+void ObjectMouse::read(byte *addr) {
+	Common::MemoryReadStream readS(addr, size());
+
+	x1 = readS.readSint32LE();
+	y1 = readS.readSint32LE();
+	x2 = readS.readSint32LE();
+	y2 = readS.readSint32LE();
+	priority = readS.readSint32LE();
+	pointer = readS.readSint32LE();
+}
+
+void ObjectMouse::write(byte *addr) {
+	Common::MemoryWriteStream writeS(addr, size());
+
+	writeS.writeSint32LE(x1);
+	writeS.writeSint32LE(y1);
+	writeS.writeSint32LE(x2);
+	writeS.writeSint32LE(y2);
+	writeS.writeSint32LE(priority);
+	writeS.writeSint32LE(pointer);
+}
+
+void ObjectWalkdata::read(byte *addr) {
+	Common::MemoryReadStream readS(addr, size());
+
+	nWalkFrames = readS.readUint32LE();
+	usingStandingTurnFrames = readS.readUint32LE();
+	usingWalkingTurnFrames = readS.readUint32LE();
+	usingSlowInFrames = readS.readUint32LE();
+	usingSlowOutFrames = readS.readUint32LE();
+
+	int i;
+
+	for (i = 0; i < ARRAYSIZE(nSlowInFrames); i++)
+		nSlowInFrames[i] = readS.readUint32LE();
+
+	for (i = 0; i < ARRAYSIZE(leadingLeg); i++)
+		leadingLeg[i] = readS.readUint32LE();
+
+	for (i = 0; i < ARRAYSIZE(dx); i++)
+		dx[i] = readS.readUint32LE();
+
+	for (i = 0; i < ARRAYSIZE(dy); i++)
+		dy[i] = readS.readUint32LE();
+}
+
+void ObjectWalkdata::write(byte *addr) {
+	Common::MemoryWriteStream writeS(addr, size());
+
+	writeS.writeUint32LE(nWalkFrames);
+	writeS.writeUint32LE(usingStandingTurnFrames);
+	writeS.writeUint32LE(usingWalkingTurnFrames);
+	writeS.writeUint32LE(usingSlowInFrames);
+	writeS.writeUint32LE(usingSlowOutFrames);
+
+	int i;
+
+	for (i = 0; i < ARRAYSIZE(nSlowInFrames); i++)
+		writeS.writeUint32LE(nSlowInFrames[i]);
+
+	for (i = 0; i < ARRAYSIZE(leadingLeg); i++)
+		writeS.writeUint32LE(leadingLeg[i]);
+
+	for (i = 0; i < ARRAYSIZE(dx); i++)
+		writeS.writeUint32LE(dx[i]);
+
+	for (i = 0; i < ARRAYSIZE(dy); i++)
+		writeS.writeUint32LE(dy[i]);
 }
 
 } // End of namespace Sword2
