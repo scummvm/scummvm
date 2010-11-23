@@ -335,6 +335,10 @@ void MidiPlayer_Midi::send(uint32 b) {
 	case 0xc0:
 		setPatch(channel, op1);
 		break;
+	// The original MIDI driver from sierra ignores aftertouch completely, so should we
+	case 0xa0: // Polyphonic key pressure (aftertouch)
+	case 0xd0: // Channel pressure (aftertouch)
+		break;
 	case 0xe0:
 		_driver->send(b);
 		break;
