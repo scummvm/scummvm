@@ -194,7 +194,7 @@ public:
 	void handleAnimation();
 
 protected:
-	static Common::String convertMystVideoName(Common::String name);
+	static Common::String convertMystVideoName(const Common::String &name);
 	Common::String _videoFile;
 	uint16 _left;
 	uint16 _top;
@@ -343,7 +343,7 @@ public:
 
 	Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);
 
-	Common::String wrapMovieFilename(Common::String movieName, uint16 stack);
+	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
 
 	void reloadSaveList();
 	void runLoadDialog();

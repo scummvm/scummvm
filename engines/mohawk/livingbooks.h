@@ -61,7 +61,7 @@ private:
 
 	uint16 _curPage;
 	Common::String getBookInfoFileName() const;
-	void loadBookInfo(Common::String filename);
+	void loadBookInfo(const Common::String &filename);
 	void loadIntro();
 
 	uint16 getResourceVersion();
@@ -76,14 +76,14 @@ private:
 	Common::String _copyright;
 
 	// String Manipulation Functions
-	Common::String removeQuotesFromString(Common::String string);
-	Common::String convertMacFileName(Common::String string);
-	Common::String convertWinFileName(Common::String string);
+	Common::String removeQuotesFromString(const Common::String &string);
+	Common::String convertMacFileName(const Common::String &string);
+	Common::String convertWinFileName(const Common::String &string);
 
 	// Configuration File Functions
-	Common::String getStringFromConfig(Common::String section, Common::String key);
-	int getIntFromConfig(Common::String section, Common::String key);
-	Common::String getFileNameFromConfig(Common::String section, Common::String key);
+	Common::String getStringFromConfig(const Common::String &section, const Common::String &key);
+	int getIntFromConfig(const Common::String &section, const Common::String &key);
+	Common::String getFileNameFromConfig(const Common::String &section, const Common::String &key);
 
 	// Platform/Version functions
 	bool isBigEndian() const { return getGameType() == GType_LIVINGBOOKSV3 || getPlatform() == Common::kPlatformMacintosh; }

@@ -195,9 +195,9 @@ public:
 	~MystSaveLoad();
 
 	Common::StringArray generateSaveGameList();
-	bool loadGame(Common::String);
-	bool saveGame(Common::String);
-	void deleteSave(Common::String);
+	bool loadGame(const Common::String &);
+	bool saveGame(const Common::String &);
+	void deleteSave(const Common::String &);
 
 	void initMystVariables(MystVariables *_tv);
 	void debug_printMystVariables(MystVariables *_tv);

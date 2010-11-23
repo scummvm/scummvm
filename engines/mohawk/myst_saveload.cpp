@@ -43,7 +43,7 @@ Common::StringArray MystSaveLoad::generateSaveGameList() {
 	return _saveFileMan->listSavefiles("*.mys");
 }
 
-bool MystSaveLoad::loadGame(Common::String filename) {
+bool MystSaveLoad::loadGame(const Common::String &filename) {
 	if (_vm->getFeatures() & GF_DEMO) // Don't load games in the demo
 		return false;
 
@@ -324,7 +324,8 @@ bool MystSaveLoad::loadGame(Common::String filename) {
 	return true;
 }
 
-bool MystSaveLoad::saveGame(Common::String filename) {
+bool MystSaveLoad::saveGame(const Common::String &fname) {
+	Common::String filename(fname);
 	// Make sure we have the right extension
 	if (!filename.hasSuffix(".mys") && !filename.hasSuffix(".MYS"))
 		filename += ".mys";
@@ -431,7 +432,7 @@ bool MystSaveLoad::saveGame(Common::String filename) {
 	return true;
 }
 
-void MystSaveLoad::deleteSave(Common::String saveName) {
+void MystSaveLoad::deleteSave(const Common::String &saveName) {
 	debugC(kDebugSaveLoad, "Deleting save file \'%s\'", saveName.c_str());
 	_saveFileMan->removeSavefile(saveName.c_str());
 }

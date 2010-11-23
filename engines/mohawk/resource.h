@@ -179,7 +179,7 @@ public:
 	MohawkArchive();
 	virtual ~MohawkArchive() { close(); }
 
-	bool open(Common::String filename);
+	bool open(const Common::String &filename);
 	virtual bool open(Common::SeekableReadStream *stream);
 	void close();
 

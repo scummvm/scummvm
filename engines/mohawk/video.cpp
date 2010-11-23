@@ -56,7 +56,7 @@ void VideoManager::stopVideos() {
 	_videoStreams.clear();
 }
 
-void VideoManager::playMovie(Common::String filename, uint16 x, uint16 y, bool clearScreen) {
+void VideoManager::playMovie(const Common::String &filename, uint16 x, uint16 y, bool clearScreen) {
 	VideoHandle videoHandle = createVideoHandle(filename, x, y, false);
 	if (videoHandle == NULL_VID_HANDLE)
 		return;
@@ -70,7 +70,7 @@ void VideoManager::playMovie(Common::String filename, uint16 x, uint16 y, bool c
 	waitUntilMovieEnds(videoHandle);
 }
 
-void VideoManager::playMovieCentered(Common::String filename, bool clearScreen) {
+void VideoManager::playMovieCentered(const Common::String &filename, bool clearScreen) {
 	VideoHandle videoHandle = createVideoHandle(filename, 0, 0, false);
 	if (videoHandle == NULL_VID_HANDLE)
 		return;
@@ -127,7 +127,7 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	_videoStreams[videoHandle].filename.clear();
 }
 
-void VideoManager::playBackgroundMovie(Common::String filename, int16 x, int16 y, bool loop) {
+void VideoManager::playBackgroundMovie(const Common::String &filename, int16 x, int16 y, bool loop) {
 	VideoHandle videoHandle = createVideoHandle(filename, x, y, loop);
 	if (videoHandle == NULL_VID_HANDLE)
 		return;
@@ -356,7 +356,7 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	return _videoStreams.size() - 1;
 }
 
-VideoHandle VideoManager::createVideoHandle(Common::String filename, uint16 x, uint16 y, bool loop) {
+VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint16 x, uint16 y, bool loop) {
 	// First, check to see if that video is already playing
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
 		if (_videoStreams[i].filename == filename)

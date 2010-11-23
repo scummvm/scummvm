@@ -48,9 +48,9 @@ protected:
 	GUI::StaticTextWidget *_text;
 
 public:
-	InfoDialog(MohawkEngine *vm, Common::String message);
+	InfoDialog(MohawkEngine *vm, const Common::String &message);
 
-	void setInfoText(Common::String message);
+	void setInfoText(const Common::String &message);
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		setResult(0);
@@ -67,7 +67,7 @@ public:
 
 class PauseDialog : public InfoDialog {
 public:
-	PauseDialog(MohawkEngine* vm, Common::String message);
+	PauseDialog(MohawkEngine* vm, const Common::String &message);
 	virtual void handleKeyDown(Common::KeyState state);
 };
 

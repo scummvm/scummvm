@@ -35,13 +35,13 @@
 namespace Mohawk {
 
 // This used to have GUI::Dialog("MohawkDummyDialog"), but that doesn't work with the gui branch merge :P (Sorry, Tanoku!)
-InfoDialog::InfoDialog(MohawkEngine *vm, Common::String message) : _vm(vm), GUI::Dialog(0, 0, 1, 1), _message(message) {
+InfoDialog::InfoDialog(MohawkEngine *vm, const Common::String &message) : _vm(vm), GUI::Dialog(0, 0, 1, 1), _message(message) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 
 	_text = new GUI::StaticTextWidget(this, 4, 4, 10, 10, _message, Graphics::kTextAlignCenter);
 }
 
-void InfoDialog::setInfoText(Common::String message) {
+void InfoDialog::setInfoText(const Common::String &message) {
 	_message = message;
 	_text->setLabel(_message);
 }
@@ -61,7 +61,7 @@ void InfoDialog::reflowLayout() {
 	_text->setSize(_w - 8, _h);
 }
 
-PauseDialog::PauseDialog(MohawkEngine *vm, Common::String message) : InfoDialog(vm, message) {
+PauseDialog::PauseDialog(MohawkEngine *vm, const Common::String &message) : InfoDialog(vm, message) {
 }
 
 void PauseDialog::handleKeyDown(Common::KeyState state) {

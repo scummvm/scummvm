@@ -72,9 +72,9 @@ public:
 	~VideoManager();
 
 	// Generic movie functions
-	void playMovie(Common::String filename, uint16 x = 0, uint16 y = 0, bool clearScreen = false);
-	void playMovieCentered(Common::String filename, bool clearScreen = true);
-	void playBackgroundMovie(Common::String filename, int16 x = -1, int16 y = -1, bool loop = false);
+	void playMovie(const Common::String &filename, uint16 x = 0, uint16 y = 0, bool clearScreen = false);
+	void playMovieCentered(const Common::String &filename, bool clearScreen = true);
+	void playBackgroundMovie(const Common::String &filename, int16 x = -1, int16 y = -1, bool loop = false);
 	bool updateBackgroundMovies();
 	void pauseVideos();
 	void resumeVideos();
@@ -107,7 +107,7 @@ private:
 	Common::Array<VideoEntry> _videoStreams;
 
 	VideoHandle createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop);
-	VideoHandle createVideoHandle(Common::String filename, uint16 x, uint16 y, bool loop);
+	VideoHandle createVideoHandle(const Common::String &filename, uint16 x, uint16 y, bool loop);
 	void waitUntilMovieEnds(VideoHandle videoHandle);
 };
 

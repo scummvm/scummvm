@@ -57,7 +57,7 @@ public:
 	~RivenScript();
 
 	void runScript();
-	void dumpScript(Common::StringArray varNames, Common::StringArray xNames, byte tabs);
+	void dumpScript(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs);
 	uint16 getScriptType() { return _scriptType; }
 	uint16 getParentStack() { return _parentStack; }
 	uint16 getParentCard() { return _parentCard; }
@@ -80,7 +80,7 @@ private:
 	uint16 _scriptType, _parentStack, _parentCard;
 	bool _isRunning, _continueRunning;
 
-	void dumpCommands(Common::StringArray varNames, Common::StringArray xNames, byte tabs);
+	void dumpCommands(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs);
 	void processCommands(bool runCommands);
 
 	static uint32 calculateCommandSize(Common::SeekableReadStream *script);

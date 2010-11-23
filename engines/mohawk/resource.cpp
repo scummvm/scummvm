@@ -36,7 +36,7 @@ MohawkArchive::MohawkArchive() {
 	_fileTable = NULL;
 }
 
-bool MohawkArchive::open(Common::String filename) {
+bool MohawkArchive::open(const Common::String &filename) {
 	Common::File *file = new Common::File();
 
 	if (!file->open(filename)) {

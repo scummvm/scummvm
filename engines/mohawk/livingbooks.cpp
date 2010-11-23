@@ -119,7 +119,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 	return Common::kNoError;
 }
 
-void MohawkEngine_LivingBooks::loadBookInfo(Common::String filename) {
+void MohawkEngine_LivingBooks::loadBookInfo(const Common::String &filename) {
 	if (!_bookInfoFile.loadFromFile(filename))
 		error("Could not open %s as a config file", filename.c_str());
 
@@ -272,38 +272,39 @@ Common::SeekableSubReadStreamEndian *MohawkEngine_LivingBooks::wrapStreamEndian(
 	return new Common::SeekableSubReadStreamEndian(dataStream, 0, dataStream->size(), isBigEndian(), DisposeAfterUse::YES);
 }
 
-Common::String MohawkEngine_LivingBooks::getStringFromConfig(Common::String section, Common::String key) {
+Common::String MohawkEngine_LivingBooks::getStringFromConfig(const Common::String &section, const Common::String &key) {
 	Common::String x;
 	_bookInfoFile.getKey(key, section, x);
 	return removeQuotesFromString(x);
 }
 
-int MohawkEngine_LivingBooks::getIntFromConfig(Common::String section, Common::String key) {
+int MohawkEngine_LivingBooks::getIntFromConfig(const Common::String &section, const Common::String &key) {
 	return atoi(getStringFromConfig(section, key).c_str());
 }
 
-Common::String MohawkEngine_LivingBooks::getFileNameFromConfig(Common::String section, Common::String key) {
+Common::String MohawkEngine_LivingBooks::getFileNameFromConfig(const Common::String &section, const Common::String &key) {
 	Common::String x = getStringFromConfig(section, key);
 	return (getPlatform() == Common::kPlatformMacintosh) ? convertMacFileName(x) : convertWinFileName(x);
 }
 
-Common::String MohawkEngine_LivingBooks::removeQuotesFromString(Common::String string) {
+Common::String MohawkEngine_LivingBooks::removeQuotesFromString(const Common::String &string) {
 	// The last char isn't necessarily a quote, the line could have "fade" in it,
 	// most likely representing to fade to that page. Hopefully it really is that
 	// obvious :P
 
 	// Some versions wrap in quotations, some don't...
-	for (uint32 i = 0; i < string.size(); i++) {
-		if (string[i] == '\"') {
-			string.deleteChar(i);
+	Common::String tmp = string;
+	for (uint32 i = 0; i < tmp.size(); i++) {
+		if (tmp[i] == '\"') {
+			tmp.deleteChar(i);
 			i--;
 		}
 	}
 
-	return string;
+	return tmp;
 }
 
-Common::String MohawkEngine_LivingBooks::convertMacFileName(Common::String string) {
+Common::String MohawkEngine_LivingBooks::convertMacFileName(const Common::String &string) {
 	Common::String filename;
 
 	for (uint32 i = 1; i < string.size(); i++) { // First character should be ignored (another colon)
@@ -316,7 +317,7 @@ Common::String MohawkEngine_LivingBooks::convertMacFileName(Common::String strin
 	return filename;
 }
 
-Common::String MohawkEngine_LivingBooks::convertWinFileName(Common::String string) {
+Common::String MohawkEngine_LivingBooks::convertWinFileName(const Common::String &string) {
 	Common::String filename;
 
 	for (uint32 i = 0; i < string.size(); i++) {

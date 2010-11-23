@@ -186,7 +186,7 @@ static const char *mystFiles[] = {
 // qtw/myst/gar4wbf1.mov:	gar4wbf2.mov has two butterflies instead of one
 // qtw/myst/libelev.mov:	libup.mov is basically the same with sound
 
-Common::String MohawkEngine_Myst::wrapMovieFilename(Common::String movieName, uint16 stack) {
+Common::String MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieName, uint16 stack) {
 	// The Macintosh release of Myst ME stores its videos in a different folder
 	if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh)
 		return Common::String("CD Data/m/") + movieName + ".mov";
@@ -999,7 +999,7 @@ void MystResourceType5::handleMouseUp() {
 }
 
 // In Myst/Making of Myst, the paths are hardcoded ala Windows style without extension. Convert them.
-Common::String MystResourceType6::convertMystVideoName(Common::String name) {
+Common::String MystResourceType6::convertMystVideoName(const Common::String &name) {
 	Common::String temp;
 
 	for (uint32 i = 1; i < name.size(); i++) {
