@@ -391,7 +391,7 @@ public:
 
 /**
  * This is a ReadStream mixin subclass which adds non-endian read
- * methods whose endianness is set du the stream creation.
+ * methods whose endianness is set during the stream creation.
  */
 class ReadStreamEndian : virtual public ReadStream {
 private:
@@ -419,6 +419,15 @@ public:
 	FORCEINLINE int32 readSint32() {
 		return (int32)readUint32();
 	}
+};
+
+/**
+ * This is a SeekableReadStream subclass which adds non-endian read
+ * methods whose endianness is set during the stream creation.
+ */
+class SeekableReadStreamEndian : public SeekableReadStream, public ReadStreamEndian {
+public:
+	SeekableReadStreamEndian(bool bigEndian) : ReadStreamEndian(bigEndian) {}
 };
 
 
