@@ -85,7 +85,7 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 
 	if (pos.offset >= scr_size) {
 		warning("Trying to disassemble beyond end of script");
-		return pos;
+		return NULL_REG;
 	}
 
 	int16 opparams[4];
@@ -124,8 +124,9 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 
 		case Script_SByte:
 		case Script_Byte:
-			param_value = scr[retval.offset++];
-			debugN(" %02x", scr[retval.offset++]);
+			param_value = scr[retval.offset];
+			debugN(" %02x", scr[retval.offset]);
+			retval.offset++;
 			break;
 
 		case Script_Word:
