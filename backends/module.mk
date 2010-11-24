@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \
 	keymapper/remap-dialog.o \
+	log/log.o \
 	midi/alsa.o \
 	midi/camd.o \
 	midi/coreaudio.o \
