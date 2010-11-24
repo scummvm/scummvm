@@ -475,11 +475,11 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 	// Skip reverb SysEx message
 	str->seek(11, SEEK_CUR);
 
-	// Read reverb data
-	for (int i = 0; i < kReverbConfigNr; i++) {
-		_reverbConfig[i][0] = str->readByte();
-		_reverbConfig[i][1] = str->readByte();
-		_reverbConfig[i][2] = str->readByte();
+	// Read reverb data (stored vertically - patch #3117434)
+	for (int j = 0; j < 3; ++j) {
+		for (int i = 0; i < kReverbConfigNr; i++) {
+			_reverbConfig[i][j] = str->readByte();
+		}
 	}
 
 	// Patches 1-48
