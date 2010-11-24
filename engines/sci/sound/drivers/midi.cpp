@@ -469,6 +469,8 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 	setMt32Volume(volume);
 
 	// Reverb default only used in (roughly) SCI0/SCI01
+	// TODO: we need to send this to the MT-32, if it's available.
+	// Check patch #3117434
 	_reverb = str->readByte();
 	_hasReverb = true;
 
