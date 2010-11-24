@@ -383,7 +383,7 @@ public:
 	void stopPlaying();
 
 	bool setTrack(int track);
-	bool jumpToTick(uint32 tick, bool fireEvents = false, bool stopNotes = true);
+	bool jumpToTick(uint32 tick, bool fireEvents = false, bool stopNotes = true, bool dontSendNoteOn = false);
 
 	uint32 getPPQN() { return _ppqn; }
 	virtual uint32 getTick() { return _position._play_tick; }

@@ -361,7 +361,7 @@ void MidiParser::hangAllActiveNotes() {
 	}
 }
 
-bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes) {
+bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool dontSendNoteOn) {
 	if (_active_track >= _num_tracks)
 		return false;
 
@@ -402,8 +402,17 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes) {
 						_driver->sysEx(info.ext.data, (uint16)info.length-1);
 					else
 						_driver->sysEx(info.ext.data, (uint16)info.length);
-				} else
-					sendToDriver(info.event, info.basic.param1, info.basic.param2);
+				} else {
+					if (info.command() == 0x9 && dontSendNoteOn) {
+						// Don't send note on; doing so creates a "warble" with some instruments on the MT-32.
+						// Refer to patch #3117577
+
+						// TODO: this is currently done by SCI only, but it seems sensible enough to do this
+						// for all engines
+					} else {
+						sendToDriver(info.event, info.basic.param1, info.basic.param2);
+					}
+				}
 			}
 
 			parseNextEvent(_next_event);
