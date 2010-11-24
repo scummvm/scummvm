@@ -230,6 +230,11 @@ void SciMusic::setReverb(byte reverb) {
 	_pMidiDrv->setReverb(reverb);
 }
 
+byte SciMusic::getReverb() {
+	Common::StackLock lock(_mutex);
+	return _pMidiDrv->getReverb();
+}
+
 static bool musicEntryCompare(const MusicEntry *l, const MusicEntry *r) {
 	return (l->priority > r->priority);
 }

@@ -111,7 +111,7 @@ public:
 		return _driver ? _driver->property(MIDI_PROP_MASTER_VOLUME, 0xffff) : 0;
 	}
 
-	virtual byte getReverb() const { return _reverb; }
+	byte getReverb() const { return _reverb; }
 	virtual void setReverb(byte reverb) { _reverb = reverb; }
 
 	virtual void playSwitch(bool play) {

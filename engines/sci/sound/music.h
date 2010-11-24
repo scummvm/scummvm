@@ -188,6 +188,7 @@ public:
 	void sendMidiCommand(MusicEntry *pSnd, uint32 cmd);
 
 	void setReverb(byte reverb);
+	byte getReverb();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
