@@ -378,8 +378,10 @@ int MidiPlayer_Midi::getVolume() {
 }
 
 void MidiPlayer_Midi::setReverb(byte reverb) {
-	_reverb = CLIP<byte>(reverb, 0, kReverbConfigNr - 1);
-	if (_hasReverb)
+	assert(reverb < kReverbConfigNr || reverb == 127);
+	_reverb = reverb;
+
+	if (_hasReverb && _reverb != 127)	// 127: SCI invalid, don't send to sound card
 		sendMt32SysEx(0x100001, _reverbConfig[_reverb], 3, true);
 }
 
@@ -469,8 +471,6 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 	setMt32Volume(volume);
 
 	// Reverb default only used in (roughly) SCI0/SCI01
-	// TODO: we need to send this to the MT-32, if it's available.
-	// Check patch #3117434
 	_reverb = str->readByte();
 	_hasReverb = true;
 
@@ -478,6 +478,8 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 	str->seek(11, SEEK_CUR);
 
 	// Read reverb data (stored vertically - patch #3117434)
+	// TODO: we need to send this to the MT-32, if it's available,
+	// depending on the SCI version
 	for (int j = 0; j < 3; ++j) {
 		for (int i = 0; i < kReverbConfigNr; i++) {
 			_reverbConfig[i][j] = str->readByte();

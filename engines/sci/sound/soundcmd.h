@@ -94,7 +94,7 @@ public:
 	reg_t kDoSoundUpdate(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundUpdateCues(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc);
-	reg_t kDoSoundReverb(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundGlobalReverb(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundSetHold(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundDummy(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundGetAudioCapability(int argc, reg_t *argv, reg_t acc);

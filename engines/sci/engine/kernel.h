@@ -488,7 +488,7 @@ reg_t kDoSoundFade(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundGetPolyphony(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundUpdateCues(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSendMidi(EngineState *s, int argc, reg_t *argv);
-reg_t kDoSoundReverb(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundGlobalReverb(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSetHold(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundDummy(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundGetAudioCapability(EngineState *s, int argc, reg_t *argv);

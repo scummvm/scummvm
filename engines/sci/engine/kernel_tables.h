@@ -117,7 +117,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI1EARLY, 10, MAP_CALL(DoSoundFade),               "oiiii",                kDoSoundFade_workarounds },
 	{ SIG_SOUNDSCI1EARLY, 11, MAP_CALL(DoSoundUpdateCues),         "o",                    NULL },
 	{ SIG_SOUNDSCI1EARLY, 12, MAP_CALL(DoSoundSendMidi),           "oiii",                 NULL },
-	{ SIG_SOUNDSCI1EARLY, 13, MAP_CALL(DoSoundReverb),             "i",                    NULL },
+	{ SIG_SOUNDSCI1EARLY, 13, MAP_CALL(DoSoundGlobalReverb),       "(i)",                  NULL },
 	{ SIG_SOUNDSCI1EARLY, 14, MAP_CALL(DoSoundSetHold),            "oi",                   NULL },
 	{ SIG_SOUNDSCI1EARLY, 15, MAP_CALL(DoSoundDummy),              "",                     NULL },
 	//  ^^ Longbow demo
@@ -140,12 +140,12 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI1LATE,  16, MAP_CALL(DoSoundSetLoop),            "oi",                   NULL },
 	{ SIG_SOUNDSCI1LATE,  17, MAP_CALL(DoSoundUpdateCues),         NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,  18, MAP_CALL(DoSoundSendMidi),           "oiii(i)",              NULL },
-	{ SIG_SOUNDSCI1LATE,  19, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
+	{ SIG_SOUNDSCI1LATE,  19, MAP_CALL(DoSoundGlobalReverb),       NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,  20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
 #ifdef ENABLE_SCI32
 	{ SIG_SOUNDSCI21,      0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
 	{ SIG_SOUNDSCI21,      1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      2, MAP_CALL(DoSoundRestore),           NULL,                   NULL },
+	{ SIG_SOUNDSCI21,      2, MAP_CALL(DoSoundRestore),            NULL,                   NULL },
 	{ SIG_SOUNDSCI21,      3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
 	{ SIG_SOUNDSCI21,      4, MAP_CALL(DoSoundGetAudioCapability), NULL,                   NULL },
 	{ SIG_SOUNDSCI21,      5, MAP_CALL(DoSoundSuspend),            NULL,                   NULL },
@@ -167,7 +167,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI21,     16, MAP_CALL(DoSoundSetLoop),            NULL,                   NULL },
 	{ SIG_SOUNDSCI21,     17, MAP_CALL(DoSoundUpdateCues),         NULL,                   NULL },
 	{ SIG_SOUNDSCI21,     18, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     19, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
+	{ SIG_SOUNDSCI21,     19, MAP_CALL(DoSoundGlobalReverb),       NULL,                   NULL },
 	{ SIG_SOUNDSCI21,     20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
