@@ -2749,6 +2749,13 @@ bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {
 	SegManager *segMan = _engine->getEngineState()->_segMan;
 
 	while (itr != resources->end()) {
+		if (_engine->getGameId() == GID_KQ5 && itr->getNumber() == 980) {
+			// Ignore script 980 in KQ5. Seems to be a leftover, as it
+			// uses a superclass from script 988, which doesn't exist
+			itr++;
+			continue;
+		}
+
 		// Load script
 		scriptSegment = segMan->instantiateScript(itr->getNumber());
 		script = segMan->getScript(scriptSegment);

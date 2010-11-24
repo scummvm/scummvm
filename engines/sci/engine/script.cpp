@@ -596,10 +596,11 @@ void Script::initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 				obj->initSpecies(segMan, addr);
 
 				if (!obj->initBaseObject(segMan, addr)) {
-					if (_nr == 202 && g_sci->getGameId() == GID_KQ5) {
+					if ((_nr == 202 || _nr == 764) && g_sci->getGameId() == GID_KQ5) {
 						// WORKAROUND: Script 202 of KQ5 French and German 
 						// (perhaps Spanish too?) has an invalid object.
 						// This is non-fatal. Refer to bug #3035396.
+						// Same happens with script 764, it seems to contain junk towards its end
 					} else {
 						error("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
 					}
