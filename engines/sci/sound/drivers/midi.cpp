@@ -378,10 +378,10 @@ int MidiPlayer_Midi::getVolume() {
 }
 
 void MidiPlayer_Midi::setReverb(byte reverb) {
-	assert(reverb < kReverbConfigNr || reverb == 127);
+	assert(reverb < kReverbConfigNr);
 	_reverb = reverb;
 
-	if (_hasReverb && _reverb != 127)	// 127: SCI invalid, don't send to sound card
+	if (_hasReverb)
 		sendMt32SysEx(0x100001, _reverbConfig[_reverb], 3, true);
 }
 

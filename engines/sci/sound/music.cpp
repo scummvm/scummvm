@@ -227,7 +227,12 @@ MusicEntry *SciMusic::getActiveSci0MusicSlot() {
 
 void SciMusic::setReverb(byte reverb) {
 	Common::StackLock lock(_mutex);
-	_pMidiDrv->setReverb(reverb);
+	if (reverb != 127)	// 127: SCI invalid, ignore
+		_pMidiDrv->setReverb(reverb);
+
+	// SSCI stored a separate reverb value per song
+	// We don't, currently, as the current functionality
+	// works without an additional variable
 }
 
 byte SciMusic::getReverb() {

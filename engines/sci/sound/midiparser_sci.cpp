@@ -501,7 +501,8 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			// Also, sci/sound/iterator/iterator.cpp, function BaseSongIterator::parseMidiCommand()
 			switch (info.basic.param1) {
 			case kSetReverb:
-				((MidiPlayer *)_driver)->setReverb(info.basic.param2);
+				if (info.basic.param2 != 127)	// 127: SCI invalid, ignore
+					((MidiPlayer *)_driver)->setReverb(info.basic.param2);
 				break;
 			case kMidiHold:
 				// Check if the hold ID marker is the same as the hold ID
