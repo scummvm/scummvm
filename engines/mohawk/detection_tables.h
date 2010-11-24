@@ -490,7 +490,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_JAMESMATH,
 		GF_HASMIDI,
-		1
+		0
 	},
 
 	{
@@ -520,7 +520,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV3,
 		0,
-		0
+		"GREEN.EXE"
 	},
 
 	// 32-bit version of the previous entry
@@ -536,7 +536,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV3,
 		0,
-		0
+		"GREEN32.EXE"
+	},
+
+	{
+		{
+			"greeneggs",
+			"",
+			AD_ENTRY1("BookOutline", "5500fa72a6d112b4b3d3573b26a31820"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		"Green Eggs and Ham"
 	},
 
 	{
@@ -599,7 +614,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"TORTOISE.EXE"
 	},
 
 	{
@@ -614,7 +629,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"TORTOISE.EXE"
 	},
 
 	{
@@ -629,7 +644,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"Living Books Player"
 	},
 
 	{
@@ -644,7 +659,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		0,
-		0
+		"ARTHUR.EXE" // FIXME: Check this (ST?) 
 	},
 
 	{
@@ -659,7 +674,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"ARTHUR.EXE"
 	},
 
 	{
@@ -674,7 +689,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"ARTHUR.EXE"
 	},
 
 	{
@@ -689,7 +704,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"Arthur's Teacher Trouble"
 	},
 
 	{
@@ -704,7 +719,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"Living Books Player"
 	},
 
 	{
@@ -719,7 +734,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"GRANDMA.EXE"
 	},
 
 	{
@@ -734,7 +749,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"GRANDMA.EXE"
 	},
 
 	{
@@ -749,7 +764,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"Just Grandma and Me"
 	},
 
 	{
@@ -764,7 +779,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"Living Books Player"
 	},
 
 	{
@@ -779,7 +794,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"RUFF.EXE"
 	},
 
 	{
@@ -794,7 +809,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"Living Books Player"
 	},
 
 	{
@@ -809,7 +824,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"NEWKID.EXE"
 	},
 
 	{
@@ -824,7 +839,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"NEWKID.EXE"
 	},
 
 	{
@@ -839,7 +854,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"Living Books Player"
 	},
 
 	{
@@ -854,7 +869,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV3,
 		0,
-		0
+		0 // FIXME: ST?
 	},
 
 	// 32-bit version of the previous entry
@@ -870,7 +885,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV3,
 		0,
-		0
+		0 // FIXME: ST?
 	},
 
 	{
@@ -885,7 +900,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"BIRTHDAY.EXE"
 	},
 
 	{
@@ -900,7 +915,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
-		0
+		"Living Books Player"
 	},
 
 	{
@@ -915,7 +930,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		0,
-		0
+		"MONSTER.EXE"
 	},
 
 	{
@@ -930,7 +945,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		0,
-		0
+		"Little Monster at School"
 	},
 #endif
 

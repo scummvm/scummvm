@@ -44,7 +44,7 @@ struct MohawkGameDescription {
 
 	uint8 gameType;
 	uint32 features;
-	uint16 version;
+	const char *appName;
 };
 
 const char* MohawkEngine::getGameId() const {
@@ -59,8 +59,8 @@ Common::Platform MohawkEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-uint16 MohawkEngine::getVersion() const {
-	return _gameDescription->version;
+const char *MohawkEngine::getAppName() const {
+	return _gameDescription->appName;
 }
 
 uint8 MohawkEngine::getGameType() const {

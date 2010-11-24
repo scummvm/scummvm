@@ -87,8 +87,9 @@ public:
 
 	// Detection related functions
 	const MohawkGameDescription *_gameDescription;
-	const char* getGameId() const;
+	const char *getGameId() const;
 	uint32 getFeatures() const;
+	const char *getAppName() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 	uint8 getGameType() const;
