@@ -64,6 +64,12 @@ static const char * const sci1Selectors[] = {
 	      "frame",        "vol",          "pri",    "perform",  "moveDone"  // 93 - 97
 };
 
+static const char * const sci11Selectors[] = {
+	  "topString",      "flags",    "quitGame",     "restart",      "hide", // 98 - 102
+	"scaleSignal",     "scaleX",      "scaleY",    "maxScale","vanishingX", // 103 - 107
+	 "vanishingY"                                                           // 108
+};
+
 #ifdef ENABLE_SCI32
 static const char * const sci2Selectors[] = {
 	    "plane",           "x",           "y",            "z",     "scaleX", //  0 -  4
@@ -108,17 +114,6 @@ static const SelectorRemap sciSelectorRemap[] = {
 	// SCI1.1
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,    "nodePtr",  41 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "cantBeHere",  54 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,  "topString",  98 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,      "flags",  99 },
-	// quitGame
-	// restart
-	// hide
-	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,"scaleSignal", 103 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleX", 104 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleY", 105 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,   "maxScale", 106 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "vanishingX", 107 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "vanishingY", 108 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,     "-info-",4103 },
 	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,   0 }
 };
@@ -132,10 +127,12 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 #else
 	const int count = ARRAYSIZE(sci0Selectors) + offset;
 #endif
+	int countSci1 = ARRAYSIZE(sci1Selectors);
+	int countSci11 = ARRAYSIZE(sci11Selectors);
 
 	// Resize the list of selector names and fill in the SCI 0 names.
 	names.resize(count);
-	if (getSciVersion() < SCI_VERSION_1_1) {
+	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		// Fill selectors 0 - 2 for SCI0 - SCI1 late
 		names[0] = "species";
 		names[1] = "superClass";
@@ -149,10 +146,16 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 
 		if (getSciVersion() > SCI_VERSION_01) {
 			// Several new selectors were added in SCI 1 and later.
-			int count2 = ARRAYSIZE(sci1Selectors);
-			names.resize(count + count2);
-			for (int i = count; i < count + count2; i++)
+			names.resize(count + countSci1);
+			for (int i = count; i < count + countSci1; i++)
 				names[i] = sci1Selectors[i - count];
+		}
+
+		if (getSciVersion() >= SCI_VERSION_1_1) {
+			// Several new selectors were added in SCI 1.1
+			names.resize(count + countSci1 + countSci11);
+			for (int i = count + countSci1; i < count + countSci1 + countSci11; i++)
+				names[i] = sci11Selectors[i - count - countSci1];
 		}
 
 		// Now, we need to find out selectors which keep changing place...
