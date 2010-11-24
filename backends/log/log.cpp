@@ -52,6 +52,7 @@ void Log::open(Common::WriteStream *stream) {
 	print(gScummVMFeatures);
 	print("\n");
 	print("--- Log opened.\n");
+	_startOfLine = true;
 }
 
 void Log::close() {
