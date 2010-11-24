@@ -557,7 +557,7 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 
 		soundSetSoundOn(_soundOn);
 		soundSetMasterVolume(masterVolume);
-		setReverb(reverb);
+		setGlobalReverb(reverb);
 	}
 
 	if (s.isSaving())

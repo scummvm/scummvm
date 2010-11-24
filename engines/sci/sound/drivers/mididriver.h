@@ -111,7 +111,9 @@ public:
 		return _driver ? _driver->property(MIDI_PROP_MASTER_VOLUME, 0xffff) : 0;
 	}
 
+	// Returns the current reverb
 	byte getReverb() const { return _reverb; }
+	// Sets the current reverb, used mainly in MT-32
 	virtual void setReverb(byte reverb) { _reverb = reverb; }
 
 	virtual void playSwitch(bool play) {

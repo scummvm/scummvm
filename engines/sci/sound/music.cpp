@@ -225,17 +225,19 @@ MusicEntry *SciMusic::getActiveSci0MusicSlot() {
 	return highestPrioritySlot;
 }
 
-void SciMusic::setReverb(byte reverb) {
+void SciMusic::setGlobalReverb(byte reverb) {
 	Common::StackLock lock(_mutex);
-	if (reverb != 127)	// 127: SCI invalid, ignore
+	if (reverb != 127) {
+		// Set global reverb normally
+		// TODO: Set global music reverb
+		// TODO: Only set reverb when the reverb of the active song is 127
 		_pMidiDrv->setReverb(reverb);
-
-	// SSCI stored a separate reverb value per song
-	// We don't, currently, as the current functionality
-	// works without an additional variable
+	} else {
+		// TODO: Set reverb of the active song
+	}
 }
 
-byte SciMusic::getReverb() {
+byte SciMusic::getCurrentReverb() {
 	Common::StackLock lock(_mutex);
 	return _pMidiDrv->getReverb();
 }
@@ -666,6 +668,7 @@ MusicEntry::MusicEntry() {
 	loop = 0;
 	volume = MUSIC_VOLUME_DEFAULT;
 	hold = -1;
+	reverb = -1;
 
 	pauseCounter = 0;
 	sampleLoopCounter = 0;

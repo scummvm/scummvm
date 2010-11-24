@@ -76,6 +76,7 @@ public:
 	uint16 loop;
 	int16 volume;
 	int16 hold;
+	int16 reverb;
 
 	int16 pauseCounter;
 	uint sampleLoopCounter;
@@ -187,8 +188,8 @@ public:
 	void sendMidiCommand(uint32 cmd);
 	void sendMidiCommand(MusicEntry *pSnd, uint32 cmd);
 
-	void setReverb(byte reverb);
-	byte getReverb();
+	void setGlobalReverb(byte reverb);
+	byte getCurrentReverb();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 

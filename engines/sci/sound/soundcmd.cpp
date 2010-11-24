@@ -492,21 +492,16 @@ reg_t SoundCommandParser::kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc) {
 }
 
 reg_t SoundCommandParser::kDoSoundGlobalReverb(int argc, reg_t *argv, reg_t acc) {
-	if (argc == 0)
-		return make_reg(0, _music->getReverb());
+	byte prevReverb = _music->getCurrentReverb();
+	byte reverb = argv[0].toUint16() & 0xF;
 
-	debugC(2, kDebugLevelSound, "doSoundGlobalReverb: %d", argv[0].toUint16() & 0xF);
+	if (argc == 1) {
+		debugC(2, kDebugLevelSound, "doSoundGlobalReverb: %d", argv[0].toUint16() & 0xF);
+		if (reverb <= 10)
+			_music->setGlobalReverb(reverb);
+	}
 
-	// This is a bit different than SSCI, but the end result should be the same.
-	// SSCI checks the first entry in the playlist for its current reverb value.
-	// If it's 127 (invalid), it sets the reverb parameter of this call to the
-	// driver, otherwise it doesn't, to preserve the song's reverb. When we modify
-	// the global reverb, we send its value to the soundcard, if it isn't 127 (invalid).
-	// This assumes that the currently set reverb in the driver will be the reverb
-	// value sent from the last song, which should be the one at the top of the list.
-	_music->setReverb(argv[0].toUint16() & 0xF);
-
-	return acc;
+	return make_reg(0, prevReverb);
 }
 
 reg_t SoundCommandParser::kDoSoundSetHold(int argc, reg_t *argv, reg_t acc) {
