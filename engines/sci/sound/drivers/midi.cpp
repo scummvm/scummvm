@@ -69,7 +69,7 @@ public:
 	int getLastChannel() const;
 	void setVolume(byte volume);
 	int getVolume();
-	void setReverb(byte reverb);
+	void setReverb(int8 reverb);
 	void playSwitch(bool play);
 
 private:
@@ -383,7 +383,7 @@ int MidiPlayer_Midi::getVolume() {
 	return _masterVolume;
 }
 
-void MidiPlayer_Midi::setReverb(byte reverb) {
+void MidiPlayer_Midi::setReverb(int8 reverb) {
 	assert(reverb < kReverbConfigNr);
 	_reverb = reverb;
 
