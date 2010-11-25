@@ -33,6 +33,7 @@
 #include "base/version.h"
 
 #include "mohawk/mohawk.h"
+#include "mohawk/cursors.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
