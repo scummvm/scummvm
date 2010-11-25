@@ -39,6 +39,7 @@ namespace Sci {
 
 using Common::GUIO_NONE;
 using Common::GUIO_NOSPEECH;
+using Common::GUIO_MIDIGM;
 
 // Game descriptions
 static const struct ADGameDescription SciGameDescriptions[] = {
@@ -693,7 +694,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "a7d3e55114c65647310373cb390815ba", 11392},
 		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13400497},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, AGFD_CD, GUIO_NONE	},
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_CD, GUIO_NONE	},
 
 	// Gabriel Knight - Spanish Windows CD (from jvprat)
 	// Executable scanning reports "2.000.000", VERSION file reports "1.000.000, April 13, 1995"
@@ -701,7 +702,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "7cb6e9bba15b544ec7a635c45bde9953", 11404},
 		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13381599},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformWindows, AGFD_CD, GUIO_NONE	},
+		Common::ES_ESP, Common::kPlatformWindows, ADGF_CD, GUIO_NONE	},
 
 	// Gabriel Knight - English Macintosh
 	{"gk1", "", {
@@ -1170,7 +1171,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "449471bfd77be52f18a3773c7f7d843d", 571368},
 		{"resource.001", 0, "b45a581ff8751e052c7e364f58d3617f", 16800210},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, AGFD_CD, GUIO_NONE	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
 	// King's Quest 5 - English DOS CD (from the King's Quest Collection)
 	// Executable scanning reports "x.yyy.zzz", VERSION file reports "1.000.052"
@@ -1182,7 +1183,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "449471bfd77be52f18a3773c7f7d843d", 571368},
 		{"resource.001", 0, "b45a581ff8751e052c7e364f58d3617f", 16800210},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, AGFD_CD, GUIO_MIDIGM	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_MIDIGM	},
 
 	// King's Quest 5 - English DOS Floppy
 	// SCI interpreter version 1.000.060
@@ -1400,7 +1401,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "7a550ebfeae2575ca00d47703a6a774c", 9215},
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, AGFD_CD, GUIO_NONE	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
 	// King's Quest 6 - English Windows CD (from the King's Quest Collection)
 	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
@@ -1409,7 +1410,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "7a550ebfeae2575ca00d47703a6a774c", 9215},
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, AGFD_CD, GUIO_NONE	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_NONE	},
 
 	// King's Quest 6 - Spanish DOS CD (from jvprat)
 	// Executable scanning reports "1.cfs.158", VERSION file reports "1.000.000, July 5, 1994"
@@ -1419,7 +1420,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "4da3ad5868a775549a7cc4f72770a58e", 8537260},
 		{"resource.msg", 0, "41eed2d3893e1ca6c3695deba4e9d2e8", 267102},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformPC, AGFD_CD, GUIO_NONE	},
+		Common::ES_ESP, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
 	// King's Quest 6 - English Macintosh Floppy
 	// VERSION file reports "1.0"
@@ -1574,7 +1575,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "a70945e61ba7ac7bfea6b7bd72c6aec5", 7274},
 		{"resource.000", 0, "82578b8d5a7e09c4c58891ca49fae35b", 5598672},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, AGFD_CD, GUIO_NONE	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
 	// Laura Bow 2 v1.1 - French DOS Floppy (from Hkz)
 	{"laurabow2", "", {
@@ -1600,7 +1601,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5028766},
 		{"resource.msg", 0, "71f1f0cd9f082da2e750c793a8ed9d84", 286141},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformPC, AGFD_CD, GUIO_NONE	},
+		Common::ES_ESP, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
 	// Larry 1 EGA Remake - English DOS (from spookypeanut)
 	// SCI interpreter version 0.000.510 (or 0.000.577?)
@@ -2268,7 +2269,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "1c7f311b0a2c927b2fbe81ae341fb2f6", 5790},
 		{"resource.001", 0, "5a0ed1d745855148364de1b3be099bac", 4369438},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, AGFD_CD, GUIO_NONE	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
 	// Mixed-Up Mother Goose - English Windows Interactive Demo
 	// Executable scanning reports "x.yyy.zzz"
@@ -3367,7 +3368,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "ed90a8e3ccc53af6633ff6ab58392bae", 7054},
 		{"resource.000", 0, "63247e3901ab8963d4eece73747832e0", 5157378},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, AGFD_CD, GUIO_NONE	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
 	// Space Quest 4 - English Windows CD (from the Space Quest Collection)
 	// Executable scanning reports "1.001.064", VERSION file reports "1.0"
@@ -3377,7 +3378,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "ed90a8e3ccc53af6633ff6ab58392bae", 7054},
 		{"resource.000", 0, "63247e3901ab8963d4eece73747832e0", 5157378},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, AGFD_CD, GUIO_MIDIGM	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_MIDIGM	},
 
 	// Space Quest 4 - Spanish DOS CD (from jvprat, is still text only, not talkie, also includes english language)
 	// Executable scanning reports "1.SQ4.057", VERSION file reports "1.000"
