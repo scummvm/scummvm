@@ -76,7 +76,7 @@ public:
 	uint16 loop;
 	int16 volume;
 	int16 hold;
-	int16 reverb;
+	int8 reverb;
 
 	int16 pauseCounter;
 	uint sampleLoopCounter;
@@ -188,7 +188,9 @@ public:
 	void sendMidiCommand(uint32 cmd);
 	void sendMidiCommand(MusicEntry *pSnd, uint32 cmd);
 
-	void setGlobalReverb(byte reverb);
+	void setGlobalReverb(int8 reverb);
+	int8 getGlobalReverb() { return _globalReverb; }
+
 	byte getCurrentReverb();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -220,6 +222,7 @@ private:
 	bool _soundOn;
 	byte _masterVolume;
 	MusicEntry *_usedChannel[16];
+	int8 _globalReverb;
 
 	MidiCommandQueue _queuedCommands;
 	MusicType _musicType;

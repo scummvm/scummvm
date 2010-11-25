@@ -500,11 +500,16 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			// http://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
 			// Also, sci/sound/iterator/iterator.cpp, function BaseSongIterator::parseMidiCommand()
 			switch (info.basic.param1) {
-			case kSetReverb:
-				// TODO: This should be the song's reverb, and we need to check it against
-				// the global one
-				if (info.basic.param2 != 127)	// 127: SCI invalid, ignore
-					((MidiPlayer *)_driver)->setReverb(info.basic.param2);
+			case kSetReverb: {
+					MidiPlayer *driver = ((MidiPlayer *)_driver);
+					if (info.basic.param2 == 127) {		// Set global reverb instead
+						byte globalReverb = _music->getGlobalReverb();
+						if (globalReverb != 127)
+							driver->setReverb(globalReverb);
+					} else {
+						driver->setReverb(info.basic.param2);
+					}
+				}
 				break;
 			case kMidiHold:
 				// Check if the hold ID marker is the same as the hold ID
@@ -625,6 +630,74 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					info.event);
 		} // // System Common, Meta or SysEx event
 	}// switch (info.command())
+}
+
+byte MidiParser_SCI::getSongReverb() {
+	byte curEvent = 0, prevEvent = 0, command = 0;
+	bool endOfTrack = false;
+	const byte *channelData = _mixedData;
+
+	do {
+		while (*channelData == 0xF8)
+			channelData++;
+
+		channelData++;	// delta
+
+		if ((*channelData & 0xF0) >= 0x80)
+			curEvent = *(channelData++);
+		else
+			curEvent = prevEvent;
+		if (curEvent < 0x80)
+			continue;
+
+		prevEvent = curEvent;
+		command = curEvent >> 4;
+
+		byte channel;
+
+		switch (command) {
+		case 0xC:	// program change
+		case 0xD:
+			channelData++;	// param1
+			break;
+		case 0xB: {
+				byte param1 = *channelData++;
+				byte param2 = *channelData++;
+				channel = curEvent & 0x0F;
+				if (channel == 0xF) {	// SCI special
+					if (param1 == kSetReverb)
+						return param2;
+				}
+			}
+			break;
+		case 0x8:
+		case 0x9:
+		case 0xA:
+		case 0xE:
+			channelData++;	// param1
+			channelData++;	// param2
+			break;
+		case 0xF:
+			if ((curEvent & 0x0F) == 0x2) {
+				channelData++;	// param1
+				channelData++;	// param2
+			} else if ((curEvent & 0x0F) == 0x3) {
+				channelData++;	// param1
+			} else if ((curEvent & 0x0F) == 0xF) {	// META
+				byte type = *channelData++;
+				if (type == 0x2F) {// end of track reached
+					endOfTrack = true;
+				} else {
+					// no further processing necessary
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	} while (!endOfTrack);
+
+	return 127;	// no reverb found, return invalid
 }
 
 void MidiParser_SCI::allNotesOff() {

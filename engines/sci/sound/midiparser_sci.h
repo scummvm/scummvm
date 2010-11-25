@@ -80,6 +80,7 @@ public:
 	void allNotesOff();
 
 	const byte *getMixedData() const { return _mixedData; }
+	byte getSongReverb();
 
 	void tryToOwnChannels();
 	void lostChannels();

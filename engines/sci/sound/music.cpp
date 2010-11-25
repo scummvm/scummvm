@@ -39,7 +39,7 @@
 namespace Sci {
 
 SciMusic::SciMusic(SciVersion soundVersion)
-	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0) {
+	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0), _globalReverb(-1) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
@@ -225,15 +225,30 @@ MusicEntry *SciMusic::getActiveSci0MusicSlot() {
 	return highestPrioritySlot;
 }
 
-void SciMusic::setGlobalReverb(byte reverb) {
+void SciMusic::setGlobalReverb(int8 reverb) {
 	Common::StackLock lock(_mutex);
 	if (reverb != 127) {
 		// Set global reverb normally
-		// TODO: Set global music reverb
-		// TODO: Only set reverb when the reverb of the active song is 127
-		_pMidiDrv->setReverb(reverb);
+		_globalReverb = reverb;
+
+		// Check the reverb of the active song...
+		const MusicList::iterator end = _playList.end();
+		for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+			if ((*i)->status == kSoundPlaying) {
+				if ((*i)->reverb == 127)			// Active song has no reverb
+					_pMidiDrv->setReverb(reverb);	// Set the global reverb
+				break;
+			}
+		}
 	} else {
-		// TODO: Set reverb of the active song
+		// Set reverb of the active song
+		const MusicList::iterator end = _playList.end();
+		for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+			if ((*i)->status == kSoundPlaying) {
+				_pMidiDrv->setReverb((*i)->reverb);	// Set the song's reverb
+				break;
+			}
+		}
 	}
 }
 
@@ -300,6 +315,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 
 			pSnd->pMidiParser->mainThreadBegin();
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
+			pSnd->reverb = pSnd->pMidiParser->getSongReverb();
 			pSnd->pMidiParser->mainThreadEnd();
 			_mutex.unlock();
 		}

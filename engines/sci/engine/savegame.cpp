@@ -601,6 +601,7 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		soundRes = 0;
 		pMidiParser = 0;
 		pStreamAud = 0;
+		reverb = -1;	// invalid reverb, will be initialized in processInitSound()
 	}
 }
 
