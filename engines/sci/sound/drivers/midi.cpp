@@ -385,10 +385,11 @@ int MidiPlayer_Midi::getVolume() {
 
 void MidiPlayer_Midi::setReverb(int8 reverb) {
 	assert(reverb < kReverbConfigNr);
-	_reverb = reverb;
+	
+	if (_hasReverb && (_reverb != reverb))
+		sendMt32SysEx(0x100001, _reverbConfig[reverb], 3, true);
 
-	if (_hasReverb)
-		sendMt32SysEx(0x100001, _reverbConfig[_reverb], 3, true);
+	_reverb = reverb;
 }
 
 void MidiPlayer_Midi::playSwitch(bool play) {
@@ -477,7 +478,10 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 	setMt32Volume(volume);
 
 	// Reverb default only used in (roughly) SCI0/SCI01
-	_reverb = str->readByte();
+	byte reverb = str->readByte();
+	if (_version <= SCI_VERSION_0_LATE)
+		setReverb(reverb);
+
 	_hasReverb = true;
 
 	// Skip reverb SysEx message
