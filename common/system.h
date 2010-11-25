@@ -30,6 +30,7 @@
 #include "common/noncopyable.h"
 #include "common/rect.h"
 #include "common/list.h" // For OSystem::getSupportedFormats()
+#include "common/util.h" // For Common::Language
 
 #include "graphics/pixelformat.h"
 
@@ -1049,6 +1050,25 @@ public:
 	 * @param message the message itself
 	 */
 	virtual void logMessage(LogMessageType::Type type, const char *message);
+
+	/**
+	 * Returns the locale of the system.
+	 *
+	 * This returns the currently set up locale of the system, on which
+	 * ScummVM is run.
+	 *
+	 * In case the locale can not be prepresented by Common::Language the
+	 * backend should return Common::UNK_LANG.
+	 *
+	 * @see Common::Language
+	 * @see Common::UNK_LANG
+	 *
+	 * The default implementation returns Common::UNK_LANG.
+	 *
+	 *
+	 * @return locale of the system
+	 */
+	virtual Common::Language getSystemLanguage() const;
 
 	//@}
 };

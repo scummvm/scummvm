@@ -90,3 +90,7 @@ void OSystem::logMessage(LogMessageType::Type type, const char *message) {
 	fflush(output);
 }
 
+Common::Language OSystem::getSystemLanguage() const {
+	return Common::UNK_LANG;
+}
+

@@ -194,6 +194,8 @@ public:
 	// Logging
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
+	virtual Common::Language getSystemLanguage() const;
+
 	void deinit();
 
 	virtual void getTimeAndDate(TimeDate &t) const;

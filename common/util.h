@@ -133,6 +133,7 @@ enum Language {
 
 struct LanguageDescription {
 	const char *code;
+	const char *unixLocale;
 	const char *description;
 	Common::Language id;
 };
@@ -142,7 +143,9 @@ extern const LanguageDescription g_languages[];
 
 /** Convert a string containing a language name into a Language enum value. */
 extern Language parseLanguage(const String &str);
+extern Language parseLanguageFromLocale(const char *locale);
 extern const char *getLanguageCode(Language id);
+extern const char *getLanguageLocale(Language id);
 extern const char *getLanguageDescription(Language id);
 
 /**

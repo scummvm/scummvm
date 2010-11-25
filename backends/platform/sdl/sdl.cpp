@@ -53,6 +53,12 @@
 
 #include <time.h>	// for getTimeAndDate()
 
+#ifdef USE_DETECTLANG
+#ifndef WIN32
+#include <locale.h>
+#endif // !WIN32
+#endif
+
 //#define SAMPLES_PER_SEC 11025
 #define SAMPLES_PER_SEC 22050
 //#define SAMPLES_PER_SEC 44100
@@ -584,6 +590,67 @@ void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 	OutputDebugString(message);
 #endif
 #endif
+}
+
+Common::Language OSystem_SDL::getSystemLanguage() const {
+#ifdef USE_DETECTLANG
+#ifdef WIN32
+	// We can not use "setlocale" (at least not for MSVC builds), since it
+	// will return locales like: "English_USA.1252", thus we need a special
+	// way to determine the locale string for Win32.
+	char langName[9];
+	char ctryName[9];
+
+	const LCID languageIdentifier = GetThreadLocale();
+
+	// GetLocalInfo is only supported starting from Windows 2000, according to this:
+	// http://msdn.microsoft.com/en-us/library/dd318101%28VS.85%29.aspx
+	// On the other hand the locale constants used, seem to exist on Windows 98 too,
+	// check this for that: http://msdn.microsoft.com/en-us/library/dd464799%28v=VS.85%29.aspx
+	//
+	// I am not exactly sure what is the truth now, it might be very well that this breaks
+	// support for systems older than Windows 2000....
+	//
+	// TODO: Check whether this (or ScummVM at all ;-) works on a system with Windows 98 for
+	// example and if it does not and we still want Windows 9x support, we should definitly
+	// think of another solution.
+	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
+		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
+		Common::String localeName = langName;
+		localeName += "_";
+		localeName += ctryName;
+
+		return Common::parseLanguageFromLocale(localeName.c_str());
+	} else {
+		return Common::UNK_LANG;
+	}
+#else // WIN32
+	// Activating current locale settings
+	const char *locale = "de_DE.utf8";//setlocale(LC_ALL, "");
+
+	// Detect the language from the locale
+	if (!locale) {
+		return Common::UNK_LANG;
+	} else {
+		int length = 0;
+
+		// Strip out additional information, like
+		// ".UTF-8" or the like. We do this, since
+		// our translation languages are usually
+		// specified without any charset information.
+		for (int i = 0; locale[i]; ++i, ++length) {
+			// TODO: Check whether "@" should really be checked
+			// here.
+			if (locale[i] == '.' || locale[i] == ' ' || locale[i] == '@')
+				break;
+		}
+
+		return Common::parseLanguageFromLocale(Common::String(locale, length).c_str());
+	}
+#endif // WIN32
+#else // USE_DETECTLANG
+	return Common::UNK_LANG;
+#endif // USE_DETECTLANG
 }
 
 void OSystem_SDL::setupIcon() {
