@@ -974,15 +974,14 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 					DebugPrintf(" %d", instrument);
 					instruments[instrument]++;
 					instrumentsSongs[instrument][itr->getNumber()] = true;
+				} else {
+					channelData++;
 				}
 				break;
 			case 0xD:
 				channelData++;	// param1
 				break;
 			case 0xB:
-				channelData++;	// param1
-				channelData++;	// param2
-				break;
 			case 0x8:
 			case 0x9:
 			case 0xA:
