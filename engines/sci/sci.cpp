@@ -739,6 +739,10 @@ bool SciEngine::isDemo() const {
 	return _gameDescription->flags & ADGF_DEMO;
 }
 
+bool SciEngine::isCD() const {
+	return _gameDescription->flags & ADGF_CD;
+}
+
 bool SciEngine::hasMacIconBar() const {
 	return _resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1 && getGameId() != GID_HOYLE4;
 }

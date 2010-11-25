@@ -231,6 +231,7 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
+	bool isCD() const;
 	bool hasMacIconBar() const;
 
 	inline ResourceManager *getResMan() const { return _resMan; }
