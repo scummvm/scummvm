@@ -500,16 +500,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			// http://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
 			// Also, sci/sound/iterator/iterator.cpp, function BaseSongIterator::parseMidiCommand()
 			switch (info.basic.param1) {
-			case kSetReverb: {
-					MidiPlayer *driver = ((MidiPlayer *)_driver);
-					if (info.basic.param2 == 127) {		// Set global reverb instead
-						byte globalReverb = _music->getGlobalReverb();
-						if (globalReverb != 127)
-							driver->setReverb(globalReverb);
-					} else {
-						driver->setReverb(info.basic.param2);
-					}
-				}
+			case kSetReverb:
+				if (info.basic.param2 == 127)		// Set global reverb instead
+					((MidiPlayer *)_driver)->setReverb(_music->getGlobalReverb());
+				else
+					((MidiPlayer *)_driver)->setReverb(info.basic.param2);
 				break;
 			case kMidiHold:
 				// Check if the hold ID marker is the same as the hold ID
