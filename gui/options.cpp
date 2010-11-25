@@ -665,7 +665,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	// Aspect ratio checkbox
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for 320x200 games"));
-	_disableDitheringCheckbox = new CheckboxWidget(boss, prefix + "grDisableDitheringCheckbox", _("Disable EGA dithering"), _("Disable dithering in EGA games"));
+	_disableDitheringCheckbox = new CheckboxWidget(boss, prefix + "grDisableDitheringCheckbox", _("EGA undithering"), _("Enable undithering in EGA games that support it"));
 
 	_enableGraphicSettings = true;
 }
