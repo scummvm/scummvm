@@ -34,7 +34,7 @@
 
 namespace Mohawk {
 
-class ImageData;
+class MohawkSurface;
 
 enum BitmapFormat {
 	kBitsPerPixel1 = 0x0000,
@@ -84,7 +84,7 @@ public:
 	MohawkBitmap();
 	virtual ~MohawkBitmap();
 
-	virtual ImageData *decodeImage(Common::SeekableReadStream *stream);
+	virtual MohawkSurface *decodeImage(Common::SeekableReadStream *stream);
 
 protected:
 	BitmapHeader _header;
@@ -147,7 +147,7 @@ public:
 	MystBitmap() : MohawkBitmap() {}
 	~MystBitmap() {}
 
-	ImageData *decodeImage(Common::SeekableReadStream *stream);
+	MohawkSurface *decodeImage(Common::SeekableReadStream *stream);
 
 protected:
 	byte getBitsPerPixel() { return _info.bitsPerPixel; }
@@ -181,7 +181,7 @@ public:
 	OldMohawkBitmap() : MohawkBitmap() {}
 	~OldMohawkBitmap() {}
 
-	ImageData *decodeImage(Common::SeekableReadStream *stream);
+	MohawkSurface *decodeImage(Common::SeekableReadStream *stream);
 
 protected:
 	byte getBitsPerPixel() { return 8; }

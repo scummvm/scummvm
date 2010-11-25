@@ -58,7 +58,7 @@ MohawkBitmap::MohawkBitmap() {
 MohawkBitmap::~MohawkBitmap() {
 }
 
-ImageData *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
+MohawkSurface *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	_data = stream;
 	_header.colorTable.palette = NULL;
 
@@ -95,7 +95,7 @@ ImageData *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	drawImage(surface);
 	delete _data;
 
-	return new ImageData(surface, _header.colorTable.palette);
+	return new MohawkSurface(surface, _header.colorTable.palette);
 }
 
 Graphics::Surface *MohawkBitmap::createSurface(uint16 width, uint16 height) {
@@ -591,7 +591,7 @@ void MohawkBitmap::drawRLE8(Graphics::Surface *surface) {
 // Myst Bitmap Decoder
 //////////////////////////////////////////
 
-ImageData* MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
+MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 	uint32 uncompressedSize = stream->readUint32LE();
 	Common::SeekableReadStream* bmpStream = decompressLZ(stream, uncompressedSize);
 	delete stream;
@@ -683,10 +683,10 @@ ImageData* MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 
 	delete bmpStream;
 
-	return new ImageData(surface, palData);
+	return new MohawkSurface(surface, palData);
 }
 
-ImageData *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
+MohawkSurface *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	Common::SeekableSubReadStreamEndian *endianStream = (Common::SeekableSubReadStreamEndian *)stream;
 
 	// 12 bytes header for the image
@@ -694,11 +694,11 @@ ImageData *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	_header.bytesPerRow = endianStream->readUint16();
 	_header.width = endianStream->readUint16();
 	_header.height = endianStream->readUint16();
-	uint16 unknown0 = endianStream->readUint16(); // TODO
-	uint16 unknown1 = endianStream->readUint16(); // TODO
+	int offsetX = endianStream->readSint16();
+	int offsetY = endianStream->readSint16();
 
 	debug(2, "Decoding Old Mohawk Bitmap (%dx%d, %d bytesPerRow, %04x Format)", _header.width, _header.height, _header.bytesPerRow, _header.format);
-	debug(2, "Unknowns %04x, %04x", unknown0, unknown1); // TODO
+	debug(2, "Offset X = %d, Y = %d", offsetX, offsetY);
 
 	if ((_header.format & 0xf0) != kOldPackLZ)
 		error("tried to decode non-LZ encoded OldMohawkBitmap");
@@ -732,7 +732,12 @@ ImageData *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 
 	delete _data;
 	delete stream;
-	return new ImageData(surface);
+
+	MohawkSurface *mhkSurface = new MohawkSurface(surface);
+	mhkSurface->setOffsetX(offsetX);
+	mhkSurface->setOffsetY(offsetY);
+
+	return mhkSurface;
 }
 
 } // End of namespace Mohawk

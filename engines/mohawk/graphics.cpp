@@ -37,6 +37,59 @@
 
 namespace Mohawk {
 
+MohawkSurface::MohawkSurface() : _surface(0), _palette(0) {
+	_offsetX = 0;
+	_offsetY = 0;
+}
+
+MohawkSurface::MohawkSurface(Graphics::Surface *surface, byte *palette, int offsetX, int offsetY) : _palette(palette), _offsetX(offsetX), _offsetY(offsetY) {
+	assert(surface);
+
+	_surface = surface;
+}
+
+MohawkSurface::~MohawkSurface() {
+	free(_palette);
+
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
+}
+
+void MohawkSurface::convertToTrueColor() {
+	assert(_surface);
+
+	if (_surface->bytesPerPixel > 1)
+		return;
+
+	assert(_palette);
+
+	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_surface->w, _surface->h, pixelFormat.bytesPerPixel);
+
+	for (uint16 i = 0; i < _surface->h; i++) {
+		for (uint16 j = 0; j < _surface->w; j++) {
+			byte palIndex = *((byte *)_surface->pixels + i * _surface->pitch + j);
+			byte r = _palette[palIndex * 4];
+			byte g = _palette[palIndex * 4 + 1];
+			byte b = _palette[palIndex * 4 + 2];
+			if (pixelFormat.bytesPerPixel == 2)
+				*((uint16 *)surface->getBasePtr(j, i)) = pixelFormat.RGBToColor(r, g, b);
+			else
+				*((uint32 *)surface->getBasePtr(j, i)) = pixelFormat.RGBToColor(r, g, b);
+		}
+	}
+
+	// Free everything and set the new surface as the converted surface
+	_surface->free();
+	delete _surface;
+	free(_palette);
+	_palette = 0;
+	_surface = surface;
+}
+
 GraphicsManager::GraphicsManager() {
 }
 
@@ -45,15 +98,13 @@ GraphicsManager::~GraphicsManager() {
 }
 
 void GraphicsManager::clearCache() {
-	for (Common::HashMap<uint16, Graphics::Surface *>::iterator it = _cache.begin(); it != _cache.end(); it++) {
-		it->_value->free();
+	for (Common::HashMap<uint16, MohawkSurface*>::iterator it = _cache.begin(); it != _cache.end(); it++)
 		delete it->_value;
-	}
 
 	_cache.clear();
 }
 
-Graphics::Surface *GraphicsManager::findImage(uint16 id) {
+MohawkSurface *GraphicsManager::findImage(uint16 id) {
 	if (!_cache.contains(id))
 		_cache[id] = decodeImage(id);
 
@@ -63,32 +114,6 @@ Graphics::Surface *GraphicsManager::findImage(uint16 id) {
 	// Doesn't mean this shouldn't be done in the future.
 
 	return _cache[id];
-}
-
-Graphics::Surface *ImageData::getSurface() {
-	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_surface->w, _surface->h, pixelFormat.bytesPerPixel);
-
-	if (_surface->bytesPerPixel == 1) {
-		assert(_palette);
-
-		for (uint16 i = 0; i < _surface->h; i++) {
-			for (uint16 j = 0; j < _surface->w; j++) {
-				byte palIndex = *((byte *)_surface->pixels + i * _surface->pitch + j);
-				byte r = _palette[palIndex * 4];
-				byte g = _palette[palIndex * 4 + 1];
-				byte b = _palette[palIndex * 4 + 2];
-				if (pixelFormat.bytesPerPixel == 2)
-					*((uint16 *)surface->getBasePtr(j, i)) = pixelFormat.RGBToColor(r, g, b);
-				else
-					*((uint32 *)surface->getBasePtr(j, i)) = pixelFormat.RGBToColor(r, g, b);
-			}
-		}
-	} else
-		memcpy(surface->pixels, _surface->pixels, _surface->w * _surface->h * _surface->bytesPerPixel);
-
-	return surface;
 }
 
 MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
@@ -170,8 +195,8 @@ void MystGraphics::loadExternalPictureFile(uint16 stack) {
 	}
 }
 
-Graphics::Surface *MystGraphics::decodeImage(uint16 id) {
-	Graphics::Surface *surface = 0;
+MohawkSurface *MystGraphics::decodeImage(uint16 id) {
+	MohawkSurface *mhkSurface = 0;
 
 	// Myst ME uses JPEG/PICT images instead of compressed Windows Bitmaps for room images,
 	// though there are a few weird ones that use that format. For further nonsense with images,
@@ -181,11 +206,12 @@ Graphics::Surface *MystGraphics::decodeImage(uint16 id) {
 		for (uint32 i = 0; i < _pictureFile.pictureCount; i++)
 			if (_pictureFile.entries[i].id == id) {
 				if (_pictureFile.entries[i].type == 0) {
-					Graphics::Surface *jpegSurface = _jpegDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size));
-					surface->copyFrom(*jpegSurface);
-				} else if (_pictureFile.entries[i].type == 1)
-					surface = _pictDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size));
-				else
+					Graphics::Surface *surface = new Graphics::Surface();
+					surface->copyFrom(*_jpegDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size)));
+					mhkSurface = new MohawkSurface(surface);
+				} else if (_pictureFile.entries[i].type == 1) {
+					mhkSurface = new MohawkSurface(_pictDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size)));
+				} else
 					error ("Unknown Picture File type %d", _pictureFile.entries[i].type);
 				break;
 			}
@@ -196,7 +222,7 @@ Graphics::Surface *MystGraphics::decodeImage(uint16 id) {
 	// ME it's most likely a PICT, and if it's original it's definitely a WDIB. However,
 	// Myst ME throws us another curve ball in that PICT resources can contain WDIB's instead
 	// of PICT's.
-	if (!surface) {
+	if (!mhkSurface) {
 		bool isPict = false;
 		Common::SeekableReadStream *dataStream = NULL;
 
@@ -215,16 +241,15 @@ Graphics::Surface *MystGraphics::decodeImage(uint16 id) {
 			dataStream = _vm->getResource(ID_WDIB, id);
 
 		if (isPict)
-			surface = _pictDecoder->decodeImage(dataStream);
+			mhkSurface = new MohawkSurface(_pictDecoder->decodeImage(dataStream));
 		else {
-			ImageData *imageData = _bmpDecoder->decodeImage(dataStream);
-			surface = imageData->getSurface();
-			delete imageData;
+			mhkSurface = _bmpDecoder->decodeImage(dataStream);
+			mhkSurface->convertToTrueColor();
 		}
 	}
 
-	assert(surface);
-	return surface;
+	assert(mhkSurface);
+	return mhkSurface;
 }
 
 void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest) {
@@ -235,7 +260,7 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	dest.right = CLIP<int>(dest.right, 0, _vm->_system->getWidth());
 	dest.bottom = CLIP<int>(dest.bottom, 0, _vm->_system->getHeight());
 
-	Graphics::Surface *surface = findImage(image);
+	Graphics::Surface *surface = findImage(image)->getSurface();
 
 	debug(3, "Image Blit:");
 	debug(3, "src.x: %d", src.left);
@@ -283,21 +308,22 @@ void MystGraphics::hideCursor(void) {
 
 void MystGraphics::changeCursor(uint16 cursor) {
 	// Both Myst and Myst ME use the "MystBitmap" format for cursor images.
-	ImageData *data = _bmpDecoder->decodeImage(_vm->getResource(ID_WDIB, cursor));
+	MohawkSurface *mhkSurface = _bmpDecoder->decodeImage(_vm->getResource(ID_WDIB, cursor));
+	Graphics::Surface *surface = mhkSurface->getSurface();
 	Common::SeekableReadStream *clrcStream = _vm->getResource(ID_CLRC, cursor);
 	uint16 hotspotX = clrcStream->readUint16LE();
 	uint16 hotspotY = clrcStream->readUint16LE();
 	delete clrcStream;
 
 	// Myst ME stores some cursors as 24bpp images instead of 8bpp
-	if (data->_surface->bytesPerPixel == 1) {
-		CursorMan.replaceCursor((byte *)data->_surface->pixels, data->_surface->w, data->_surface->h, hotspotX, hotspotY, 0);
-		CursorMan.replaceCursorPalette(data->_palette, 0, 256);
+	if (surface->bytesPerPixel == 1) {
+		CursorMan.replaceCursor((byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, 0);
+		CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
 	} else
-		CursorMan.replaceCursor((byte *)data->_surface->pixels, data->_surface->w, data->_surface->h, hotspotX, hotspotY, _pixelFormat.RGBToColor(255, 255, 255), 1, &_pixelFormat);
+		CursorMan.replaceCursor((byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, _pixelFormat.RGBToColor(255, 255, 255), 1, &_pixelFormat);
 
 	_vm->_needsUpdate = true;
-	delete data;
+	delete mhkSurface;
 }
 
 void MystGraphics::drawRect(Common::Rect rect, bool active) {
@@ -342,15 +368,14 @@ RivenGraphics::~RivenGraphics() {
 	delete _bitmapDecoder;
 }
 
-Graphics::Surface *RivenGraphics::decodeImage(uint16 id) {
-	ImageData *imageData = _bitmapDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
-	Graphics::Surface *surface = imageData->getSurface();
-	delete imageData;
+MohawkSurface *RivenGraphics::decodeImage(uint16 id) {
+	MohawkSurface *surface = _bitmapDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
+	surface->convertToTrueColor();
 	return surface;
 }
 
 void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uint32 right, uint32 bottom) {
-	Graphics::Surface *surface = findImage(image);
+	Graphics::Surface *surface = findImage(image)->getSurface();
 
 	// Clip the width to fit on the screen. Fixes some images.
 	if (left + surface->w > 608)
@@ -723,14 +748,13 @@ void RivenGraphics::clearInventoryArea() {
 }
 
 void RivenGraphics::drawInventoryImage(uint16 id, const Common::Rect *rect) {
-	ImageData *imageData = _bitmapDecoder->decodeImage(_vm->getExtrasResource(ID_TBMP, id));
-	Graphics::Surface *surface = imageData->getSurface();
-	delete imageData;
+	MohawkSurface *mhkSurface = _bitmapDecoder->decodeImage(_vm->getExtrasResource(ID_TBMP, id));
+	mhkSurface->convertToTrueColor();
+	Graphics::Surface *surface = mhkSurface->getSurface();
 
 	_vm->_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, rect->left, rect->top, surface->w, surface->h);
 
-	surface->free();
-	delete surface;
+	delete mhkSurface;
 }
 
 void RivenGraphics::drawRect(Common::Rect rect, bool active) {
@@ -747,7 +771,7 @@ void RivenGraphics::drawRect(Common::Rect rect, bool active) {
 
 void RivenGraphics::drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect) {
 	// Draw tBMP id from srcRect to dstRect
-	Graphics::Surface *surface = findImage(id);
+	Graphics::Surface *surface = findImage(id)->getSurface();
 
 	assert(srcRect.width() == dstRect.width() && srcRect.height() == dstRect.height());
 
@@ -758,50 +782,36 @@ void RivenGraphics::drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect 
 }
 
 void RivenGraphics::drawExtrasImage(uint16 id, Common::Rect dstRect) {
-	ImageData *imageData = _bitmapDecoder->decodeImage(_vm->getExtrasResource(ID_TBMP, id));
-	Graphics::Surface *surface = imageData->getSurface();
-	delete imageData;
+	MohawkSurface *mhkSurface = _bitmapDecoder->decodeImage(_vm->getExtrasResource(ID_TBMP, id));
+	mhkSurface->convertToTrueColor();
+	Graphics::Surface *surface = mhkSurface->getSurface();
 
 	assert(dstRect.width() == surface->w);
 
 	for (uint16 i = 0; i < surface->h; i++)
 		memcpy(_mainScreen->getBasePtr(dstRect.left, i + dstRect.top), surface->getBasePtr(0, i), surface->pitch);
 
-	surface->free();
-	delete surface;
-
+	delete mhkSurface;
 	_dirtyScreen = true;
 }
 
 LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = (_vm->getGameType() == GType_LIVINGBOOKSV1) ? new OldMohawkBitmap() : new MohawkBitmap();
-	_palette = new byte[256 * 4];
-	memset(_palette, 0, 256 * 4);
 }
 
 LBGraphics::~LBGraphics() {
 	delete _bmpDecoder;
-	delete[] _palette;
 }
 
-Graphics::Surface *LBGraphics::decodeImage(uint16 id) {
-	ImageData *imageData;
-
+MohawkSurface *LBGraphics::decodeImage(uint16 id) {
 	if (_vm->getGameType() == GType_LIVINGBOOKSV1)
-		imageData = _bmpDecoder->decodeImage(_vm->wrapStreamEndian(ID_BMAP, id));
-	else
-		imageData = _bmpDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
+		return _bmpDecoder->decodeImage(_vm->wrapStreamEndian(ID_BMAP, id));
 
-	imageData->_palette = _palette;
-	Graphics::Surface *surface = imageData->getSurface();
-	imageData->_palette = NULL; // Unset the palette so it doesn't get deleted
-	delete imageData;
-
-	return surface;
+	return _bmpDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
 }
 
 void LBGraphics::copyImageToScreen(uint16 image, uint16 left, uint16 top) {
-	Graphics::Surface *surface = findImage(image);
+	Graphics::Surface *surface = findImage(image)->getSurface();
 
 	uint16 width = MIN<int>(surface->w, _vm->_system->getWidth());
 	uint16 height = MIN<int>(surface->h, _vm->_system->getHeight());
@@ -814,32 +824,39 @@ void LBGraphics::copyImageToScreen(uint16 image, uint16 left, uint16 top) {
 void LBGraphics::setPalette(uint16 id) {
 	// Old Living Books games use the old CTBL-style palette format while newer
 	// games use the better tPAL format which can store partial palettes.
-
 	if (_vm->getGameType() == GType_LIVINGBOOKSV1) {
 		Common::SeekableSubReadStreamEndian *ctblStream = _vm->wrapStreamEndian(ID_CTBL, id);
 		uint16 colorCount = ctblStream->readUint16();
+		byte *palette = new byte[colorCount * 4];
 
 		for (uint16 i = 0; i < colorCount; i++) {
-			_palette[i * 4] = ctblStream->readByte();
-			_palette[i * 4 + 1] = ctblStream->readByte();
-			_palette[i * 4 + 2] = ctblStream->readByte();
-			_palette[i * 4 + 3] = ctblStream->readByte();
+			palette[i * 4] = ctblStream->readByte();
+			palette[i * 4 + 1] = ctblStream->readByte();
+			palette[i * 4 + 2] = ctblStream->readByte();
+			palette[i * 4 + 3] = ctblStream->readByte();
 		}
 
 		delete ctblStream;
+
+		_vm->_system->setPalette(palette, 0, colorCount);
+		delete[] palette;
 	} else {
 		Common::SeekableReadStream *tpalStream = _vm->getResource(ID_TPAL, id);
 		uint16 colorStart = tpalStream->readUint16BE();
 		uint16 colorCount = tpalStream->readUint16BE();
+		byte *palette = new byte[colorCount * 4];
 
-		for (uint16 i = colorStart; i < colorStart + colorCount; i++) {
-			_palette[i * 4] = tpalStream->readByte();
-			_palette[i * 4 + 1] = tpalStream->readByte();
-			_palette[i * 4 + 2] = tpalStream->readByte();
-			_palette[i * 4 + 3] = tpalStream->readByte();
+		for (uint16 i = 0; i < colorCount; i++) {
+			palette[i * 4] = tpalStream->readByte();
+			palette[i * 4 + 1] = tpalStream->readByte();
+			palette[i * 4 + 2] = tpalStream->readByte();
+			palette[i * 4 + 3] = tpalStream->readByte();
 		}
 
 		delete tpalStream;
+
+		_vm->_system->setPalette(palette, colorStart, colorCount);
+		delete[] palette;
 	}
 }
 

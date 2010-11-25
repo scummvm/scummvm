@@ -68,27 +68,32 @@ enum {
 	kMystZipModeCursor = 999				// Zip Mode cursor
 };
 
-// A simple struct to hold necessary image info
-class ImageData {
+class MohawkSurface {
 public:
-	ImageData() : _surface(0), _palette(0) {}
-	ImageData(Graphics::Surface *surface, byte *palette = NULL) : _surface(surface), _palette(palette) {}
-	~ImageData() {
-		if (_palette)
-			free(_palette);
-		if (_surface) {
-			_surface->free();
-			delete _surface;
-		}
-	}
+	MohawkSurface();
+	MohawkSurface(Graphics::Surface *surface, byte *palette = NULL, int offsetX = 0, int offsetY = 0);
+	~MohawkSurface();
 
-	// getSurface() will convert to the current screen format, if it's not already
-	// in that format. Makes it easy to support both 8bpp and 24bpp images.
-	Graphics::Surface *getSurface();
+	// getSurface() returns the surface in the current format
+	// This will be the initial format unless convertToTrueColor() is called
+	Graphics::Surface *getSurface() const { return _surface; }
+	byte *getPalette() const { return _palette; }
 
-	// These are still public in case the 8bpp surface needs to be accessed
+	// Convert the 8bpp image to the current screen format
+	// Does nothing if _surface is already >8bpp
+	void convertToTrueColor();
+
+	// Functions for OldMohawkBitmap offsets
+	// They both default to 0
+	int getOffsetX() const { return _offsetX; }
+	int getOffsetY() const { return _offsetY; }
+	void setOffsetX(int x) { _offsetX = x; }
+	void setOffsetY(int y) { _offsetY = y; }
+
+private:
 	Graphics::Surface *_surface;
 	byte *_palette;
+	int _offsetX, _offsetY;
 };
 
 class GraphicsManager {
@@ -102,14 +107,14 @@ public:
 protected:
 	// findImage will search the cache to find the image.
 	// If not found, it will call decodeImage to get a new one.
-	Graphics::Surface *findImage(uint16 id);
+	MohawkSurface *findImage(uint16 id);
 
 	// decodeImage will always return a new image.
-	virtual Graphics::Surface *decodeImage(uint16 id) = 0;
+	virtual MohawkSurface *decodeImage(uint16 id) = 0;
 
 private:
 	// An image cache that stores images until clearCache() is called
-	Common::HashMap<uint16, Graphics::Surface *> _cache;
+	Common::HashMap<uint16, MohawkSurface*> _cache;
 };
 
 class MystGraphics : public GraphicsManager {
@@ -128,7 +133,7 @@ public:
 	void drawRect(Common::Rect rect, bool active);
 
 protected:
-	Graphics::Surface *decodeImage(uint16 id);
+	MohawkSurface *decodeImage(uint16 id);
 
 private:
 	MohawkEngine_Myst *_vm;
@@ -196,7 +201,7 @@ public:
 	void hideInventory();
 
 protected:
-	Graphics::Surface *decodeImage(uint16 id);
+	MohawkSurface *decodeImage(uint16 id);
 
 private:
 	MohawkEngine_Riven *_vm;
@@ -229,12 +234,11 @@ public:
 	void setPalette(uint16 id);
 
 protected:
-	Graphics::Surface *decodeImage(uint16 id);
+	MohawkSurface *decodeImage(uint16 id);
 
 private:
 	MohawkBitmap *_bmpDecoder;
 	MohawkEngine_LivingBooks *_vm;
-	byte *_palette;
 };
 
 } // End of namespace Mohawk

@@ -63,7 +63,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 	debug("Setting screen size to %dx%d", _screenWidth, _screenHeight);
 
 	// TODO: Eventually move this to a LivingBooksGraphics class or similar
-	initGraphics(_screenWidth, _screenHeight, true, NULL);
+	initGraphics(_screenWidth, _screenHeight, true);
 
 	loadIntro();
 
