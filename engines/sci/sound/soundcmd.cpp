@@ -28,6 +28,7 @@
 #include "sci/sound/music.h"
 #include "sci/sound/soundcmd.h"
 
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/object.h"
 #include "sci/engine/selector.h"
@@ -53,6 +54,9 @@ reg_t SoundCommandParser::kDoSoundInit(int argc, reg_t *argv, reg_t acc) {
 
 void SoundCommandParser::processInitSound(reg_t obj) {
 	int resourceId = readSelectorValue(_segMan, obj, SELECTOR(number));
+	// Modify the resourceId for the Windows versions that have an alternate MIDI soundtrack, like SSCI did.
+	if (g_sci && g_sci->_features->useAltWinGMSound())
+		resourceId += 1000;
 
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
@@ -122,6 +126,9 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 	}
 
 	int resourceId = obj.segment ? readSelectorValue(_segMan, obj, SELECTOR(number)) : -1;
+	// Modify the resourceId for the Windows versions that have an alternate MIDI soundtrack, like SSCI did.
+	if (g_sci && g_sci->_features->useAltWinGMSound())
+		resourceId += 1000;
 
 	if (musicSlot->resourceId != resourceId) { // another sound loaded into struct
 		processDisposeSound(obj);
@@ -349,12 +356,6 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 }
 
 reg_t SoundCommandParser::kDoSoundGetPolyphony(int argc, reg_t *argv, reg_t acc) {
-	// KQ5CD uses this to determine if it should play digital audio or not.
-	// For Adlib cards, digital audio is played, whereas MIDI is played for GM cards.
-	// Thus, tell it that we're using an Adlib in room 119 (Sierra logo screen),
-	// so that the digital audio is always preferred.
-	if (g_sci->getGameId() == GID_KQ5 && g_sci->getEngineState()->currentRoomNumber() == 119)
-		return make_reg(0, 9);	// Adlib, i.e. digital music
 	return make_reg(0, _music->soundGetVoices());	// Get the number of voices
 }
 
@@ -593,8 +594,13 @@ reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) 
 	}
 
 	if (value == -1) {
+		uint16 resourceNr = musicSlot->resourceId;
+		// Modify the resourceId for the Windows versions that have an alternate MIDI soundtrack, like SSCI did.
+		if (g_sci && g_sci->_features->useAltWinGMSound())
+			resourceNr += 1000;
+
 		// Set priority from the song data
-		Resource *song = _resMan->findResource(ResourceId(kResourceTypeSound, musicSlot->resourceId), 0);
+		Resource *song = _resMan->findResource(ResourceId(kResourceTypeSound, resourceNr), 0);
 		if (song->data[0] == 0xf0)
 			_music->soundSetPriority(musicSlot, song->data[1]);
 		else

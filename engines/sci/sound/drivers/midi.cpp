@@ -33,6 +33,7 @@
 #include "sound/softsynth/emumidi.h"
 
 #include "sci/resource.h"
+#include "sci/engine/features.h"
 #include "sci/sound/drivers/gm_names.h"
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/sound/drivers/map-mt32-to-gm.h"
@@ -58,7 +59,12 @@ public:
 	void sysEx(const byte *msg, uint16 length);
 	bool hasRhythmChannel() const { return true; }
 	byte getPlayId() const;
-	int getPolyphony() const { return kVoices; }
+	int getPolyphony() const {
+		if (g_sci && g_sci->_features->useAltWinGMSound())
+			return 16;
+		else
+			return kVoices;
+	}
 	int getFirstChannel() const;
 	int getLastChannel() const;
 	void setVolume(byte volume);
@@ -840,13 +846,17 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		_percussionVelocityScale[i] = 127;
 	}
 
-	// Don't do any mapping for the Windows version of KQ5CD
-	if (g_sci && g_sci->getGameId() == GID_KQ5 && g_sci->getPlatform() == Common::kPlatformWindows) {
-		_useMT32Track = false;
-		return 0;
-	}
-
 	Resource *res = NULL;
+
+	if (g_sci && g_sci->_features->useAltWinGMSound()) {
+		res = resMan->findResource(ResourceId(kResourceTypePatch, 4), 0);
+		if (!(res && isMt32GmPatch(res->data, res->size))) {
+			// Don't do any mapping when a Windows alternative track is selected
+			// and no MIDI patch is available
+			_useMT32Track = false;
+			return 0;
+		}
+	}
 
 	if (_isMt32) {
 		// MT-32
@@ -872,17 +882,22 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 			// There is a GM patch
 			readMt32GmPatch(res->data, res->size);
 
-			// Detect the format of patch 1, so that we know what play mask to use
-			res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
-			if (!res)
+			if (g_sci && g_sci->_features->useAltWinGMSound()) {
+				// Always use the GM track if an alternative GM Windows soundtrack is selected
 				_useMT32Track = false;
-			else
-				_useMT32Track = !isMt32GmPatch(res->data, res->size);
+			} else {
+				// Detect the format of patch 1, so that we know what play mask to use
+				res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
+				if (!res)
+					_useMT32Track = false;
+				else
+					_useMT32Track = !isMt32GmPatch(res->data, res->size);
 
-			// Check if the songs themselves have a GM track
-			if (!_useMT32Track) {
-				if (!resMan->isGMTrackIncluded())
-					_useMT32Track = true;
+				// Check if the songs themselves have a GM track
+				if (!_useMT32Track) {
+					if (!resMan->isGMTrackIncluded())
+						_useMT32Track = true;
+				}
 			}
 		} else {
 			// No GM patch found, map instruments using MT-32 patch

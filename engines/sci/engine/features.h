@@ -113,6 +113,13 @@ public:
 
 	bool usesCdTrack() { return _usesCdTrack; }
 
+	/**
+	 * Checks if the alternative Windows GM MIDI soundtrack should be used. Such
+	 * soundtracks are available for the Windows CD versions of EcoQuest, Jones,
+	 * KQ5 and SQ4.
+	 */
+	bool useAltWinGMSound();
+
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
 

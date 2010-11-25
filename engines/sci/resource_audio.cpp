@@ -562,10 +562,6 @@ bool ResourceManager::isGMTrackIncluded() {
 }
 
 SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVersion soundVersion) : _resMan(resMan), _soundVersion(soundVersion) {
-	// Modify the resourceId for the Windows version of KQ5, like SSCI did.
-	if (g_sci->getGameId() == GID_KQ5 && g_sci->getPlatform() == Common::kPlatformWindows)
-		resourceNr += 1000;
-
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeSound, resourceNr), true);
 	int trackNr, channelNr;
 	if (!resource)

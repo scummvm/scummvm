@@ -648,4 +648,17 @@ MoveCountType GameFeatures::detectMoveCountType() {
 	return _moveCountType;
 }
 
+bool GameFeatures::useAltWinGMSound() {
+	if (g_sci && g_sci->getPlatform() == Common::kPlatformWindows && g_sci->isCD()) {
+		SciGameId id = g_sci->getGameId();
+		return (id == GID_ECOQUEST ||
+				id == GID_JONES ||
+				id == GID_KQ5 ||
+				//id == GID_FREDDYPHARKAS ||	// Has alternate tracks, but handles them differently
+				id == GID_SQ4);
+	} else {
+		return false;
+	}
+}
+
 } // End of namespace Sci
