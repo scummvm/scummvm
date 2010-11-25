@@ -522,16 +522,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
-	// Freddy Pharkas - English CD Windows (from FRG)
-	// SCI interpreter version 1.001.132
-	// Same entry as the DOS version above. This one is used for the alternate
-	// General MIDI music tracks in the Windows version
-	{"freddypharkas", "CD", {
-		{"resource.map", 0, "d46b282f228a67ba13bd4b4009e95f8f", 6058},
-		{"resource.000", 0, "ee3c64ffff0ba9fb08bea2624631c598", 5490246},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_MIDIGM	},
-
 	// Freddy Pharkas - English DOS Floppy (updated information from markcoolio in bug reports #2723773 and #2724720)
 	// Executable scanning reports "1.cfs.081"
 	// SCI interpreter version 1.001.132 (just a guess)
@@ -573,21 +563,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.msg", 0, "45b5bf74933ac3727e4cc844446dc052", 796156},
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
-
-	// Freddy Pharkas - Spanish Windows (from jvprat)
-	// Executable scanning reports "1.cfs.081", VERSION file reports "1.000, March 30, 1995"
-	// SCI interpreter version 1.001.132 (just a guess)
-	// Same entry as the DOS version above. This one is used for the alternate
-	// General MIDI music tracks in the Windows version
-	{"freddypharkas", "CD", {
-		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
-		{"resource.000", 0, "fed4808fdb72486908ac7ad0044b14d8", 1456640},
-		{"resource.001", 0, "15298fac241b5360763bfb68add1db07", 1456640},
-		{"resource.002", 0, "419dbd5366f702b4123dedbbb0cffaae", 1456640},
-		{"resource.003", 0, "05acdc256c742e79c50b9fe7ec2cc898", 863310},
-		{"resource.msg", 0, "45b5bf74933ac3727e4cc844446dc052", 796156},
-		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformWindows, ADGF_CD, GUIO_MIDIGM	},
 
 	// Freddy Pharkas - Spanish DOS (from jvprat)
 	// Executable scanning reports "1.cfs.081", VERSION file reports "1.000, March 30, 1995"
