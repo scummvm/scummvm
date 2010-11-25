@@ -36,14 +36,9 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/system.h"
 
 DECLARE_SINGLETON(Common::TranslationManager);
-
-#ifdef USE_DETECTLANG
-#ifndef WIN32
-#include <locale.h>
-#endif // !WIN32
-#endif
 
 namespace Common {
 
@@ -58,67 +53,11 @@ bool operator<(const TLanguage &l, const TLanguage &r) {
 TranslationManager::TranslationManager() : _currentLang(-1) {
 	loadTranslationsInfoDat();
 
-#ifdef USE_DETECTLANG
-// FIXME: language detection should be done via an OSystem API.
-#ifdef WIN32
-	// We can not use "setlocale" (at least not for MSVC builds), since it
-	// will return locales like: "English_USA.1252", thus we need a special
-	// way to determine the locale string for Win32.
-	char langName[9];
-	char ctryName[9];
-
-	const LCID languageIdentifier = GetThreadLocale();
-
-	// GetLocalInfo is only supported starting from Windows 2000, according to this:
-	// http://msdn.microsoft.com/en-us/library/dd318101%28VS.85%29.aspx
-	// On the other hand the locale constants used, seem to exist on Windows 98 too,
-	// check this for that: http://msdn.microsoft.com/en-us/library/dd464799%28v=VS.85%29.aspx
-	//
-	// I am not exactly sure what is the truth now, it might be very well that this breaks
-	// support for systems older than Windows 2000....
-	//
-	// TODO: Check whether this (or ScummVM at all ;-) works on a system with Windows 98 for
-	// example and if it does not and we still want Windows 9x support, we should definitly
-	// think of another solution.
-	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
-		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
-		_syslang = langName;
-		_syslang += "_";
-		_syslang += ctryName;
-	} else {
+	const char *locale = getLanguageLocale(g_system->getSystemLanguage());
+	if (!locale)
 		_syslang = "C";
-	}
-#else // WIN32
-	// Activating current locale settings
-	const char *locale = setlocale(LC_ALL, "");
-
-	// Detect the language from the locale
-	if (!locale) {
-		_syslang = "C";
-	} else {
-		int length = 0;
-
-		// Strip out additional information, like
-		// ".UTF-8" or the like. We do this, since
-		// our translation languages are usually
-		// specified without any charset information.
-		for (int i = 0; locale[i]; ++i) {
-			// TODO: Check whether "@" should really be checked
-			// here.
-			if (locale[i] == '.' || locale[i] == ' ' || locale[i] == '@') {
-				length = i;
-				break;
-			}
-
-			length = i;
-		}
-
-		_syslang = String(locale, length);
-	}
-#endif // WIN32
-#else // USE_DETECTLANG
-	_syslang = "C";
-#endif // USE_DETECTLANG
+	else
+		_syslang = locale;
 
 	// Set the default language
 	setLanguage("");
