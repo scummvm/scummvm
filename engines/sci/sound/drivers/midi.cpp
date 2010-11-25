@@ -441,9 +441,9 @@ void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, Common::SeekableReadStrea
 		_sysExBuf[7 + i] = str->readByte();
 
 	for (int i = 4; i < 7 + len; i++)
-		chk += _sysExBuf[i];
+		chk -= _sysExBuf[i];
 
-	_sysExBuf[7 + len] = 128 - chk % 128;
+	_sysExBuf[7 + len] = chk & 0x7f;
 
 	if (noDelay)
 		_driver->sysEx(_sysExBuf, len + 8);
