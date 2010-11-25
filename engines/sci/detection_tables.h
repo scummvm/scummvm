@@ -1128,6 +1128,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE	},
 
+	// King's Quest 5 - English DOS CD (from the King's Quest Collection)
+	// Executable scanning reports "x.yyy.zzz", VERSION file reports "1.000.052"
+	// SCI interpreter version 1.000.784
+	// Same entry as the DOS version above. This one is used for the alternate
+	// MIDI music tracks in the Windows version
+	{"kq5", "CD", {
+		{"resource.map", 0, "f68ba690e5920725dcf9328001b90e33", 13122},
+		{"resource.000", 0, "449471bfd77be52f18a3773c7f7d843d", 571368},
+		{"resource.001", 0, "b45a581ff8751e052c7e364f58d3617f", 16800210},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NONE	},
+
 	// King's Quest 5 - English DOS Floppy
 	// SCI interpreter version 1.000.060
 	{"kq5", "", {
