@@ -841,8 +841,10 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 	}
 
 	// Don't do any mapping for the Windows version of KQ5CD
-	if (g_sci && g_sci->getGameId() == GID_KQ5 && g_sci->getPlatform() == Common::kPlatformWindows)
+	if (g_sci && g_sci->getGameId() == GID_KQ5 && g_sci->getPlatform() == Common::kPlatformWindows) {
+		_useMT32Track = false;
 		return 0;
+	}
 
 	Resource *res = NULL;
 
@@ -967,15 +969,10 @@ byte MidiPlayer_Midi::getPlayId() const {
 	case SCI_VERSION_0_LATE:
 		return 0x01;
 	default:
-		if (_isMt32) {
+		if (_isMt32)
 			return 0x0c;
-		} else {
-			// Use the GM play mask for the Windows version of KQ5CD.
-			if (g_sci && g_sci->getGameId() == GID_KQ5 && g_sci->getPlatform() == Common::kPlatformWindows)
-				return 0x07;
-
+		else
 			return _useMT32Track ? 0x0c : 0x07;
-		}
 	}
 }
 
