@@ -23,6 +23,7 @@
  *
  */
 
+#include "mohawk/cursors.h"
 #include "mohawk/graphics.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
@@ -310,9 +311,9 @@ void RivenExternal::checkSliderCursorChange(uint16 startHotspot) {
 	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
 		if (_vm->_hotspots[i + startHotspot].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
 			if (_sliderState & (1 << (24 - i)))
-				_vm->_gfx->changeCursor(kRivenOpenHandCursor);
+				_vm->_cursor->setCursor(kRivenOpenHandCursor);
 			else
-				_vm->_gfx->changeCursor(kRivenMainCursor);
+				_vm->_cursor->setCursor(kRivenMainCursor);
 			break;
 		}
 	}
@@ -337,7 +338,7 @@ void RivenExternal::dragDomeSlider(uint16 soundId, uint16 resetSlidersHotspot, u
 		return;
 
 	// We've clicked down, so show the closed hand cursor
-	_vm->_gfx->changeCursor(kRivenClosedHandCursor);
+	_vm->_cursor->setCursor(kRivenClosedHandCursor);
 
 	bool done = false;
 	while (!done) {
@@ -826,7 +827,7 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 	else if (argv[0] == 2)
 		_vm->_sound->playSLST(1, _vm->getCurCard());
 
-	_vm->_gfx->changeCursor(kRivenHideCursor);
+	_vm->_cursor->setCursor(kRivenHideCursor);
 	_vm->_video->playMovieBlocking(11);
 }
 
@@ -858,7 +859,7 @@ void RivenExternal::xbcheckcatch(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xbait(uint16 argc, uint16 *argv) {
 	// Set the cursor to the pellet
-	_vm->_gfx->changeCursor(kRivenPelletCursor);
+	_vm->_cursor->setCursor(kRivenPelletCursor);
 
 	// Loop until the player lets go (or quits)
 	Common::Event event;
@@ -877,7 +878,7 @@ void RivenExternal::xbait(uint16 argc, uint16 *argv) {
 	}
 
 	// Set back the cursor
-	_vm->_gfx->changeCursor(kRivenMainCursor);
+	_vm->_cursor->setCursor(kRivenMainCursor);
 
 	// Set the bait if we put it on the plate
 	if (_vm->_hotspots[9].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
@@ -897,7 +898,7 @@ void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 	// Remove the pellet from the plate and put it in your hand
 	_vm->_gfx->drawPLST(3);
 	_vm->_gfx->updateScreen();
-	_vm->_gfx->changeCursor(kRivenPelletCursor);
+	_vm->_cursor->setCursor(kRivenPelletCursor);
 
 	// Loop until the player lets go (or quits)
 	Common::Event event;
@@ -916,7 +917,7 @@ void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 	}
 
 	// Set back the cursor
-	_vm->_gfx->changeCursor(kRivenMainCursor);
+	_vm->_cursor->setCursor(kRivenMainCursor);
 
 	// Set the bait if we put it on the plate, remove otherwise
 	if (_vm->_hotspots[9].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
@@ -967,7 +968,7 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 	bool done = false;
 
 	// Set the cursor to the closed position
-	_vm->_gfx->changeCursor(kRivenClosedHandCursor);
+	_vm->_cursor->setCursor(kRivenClosedHandCursor);
 	_vm->_system->updateScreen();
 
 	while (!done) {
@@ -984,24 +985,24 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 				// FIXME: These values for changes in x/y could be tweaked.
 				if (*valve == 0 && changeY <= -10) {
 					*valve = 1;
-					_vm->_gfx->changeCursor(kRivenHideCursor);
+					_vm->_cursor->setCursor(kRivenHideCursor);
 					_vm->_video->playMovieBlocking(2);
 					_vm->refreshCard();
 				} else if (*valve == 1) {
 					if (changeX >= 0 && changeY >= 10) {
 						*valve = 0;
-						_vm->_gfx->changeCursor(kRivenHideCursor);
+						_vm->_cursor->setCursor(kRivenHideCursor);
 						_vm->_video->playMovieBlocking(3);
 						_vm->refreshCard();
 					} else if (changeX <= -10 && changeY <= 10) {
 						*valve = 2;
-						_vm->_gfx->changeCursor(kRivenHideCursor);
+						_vm->_cursor->setCursor(kRivenHideCursor);
 						_vm->_video->playMovieBlocking(1);
 						_vm->refreshCard();
 					}
 				} else if (*valve == 2 && changeX >= 10) {
 					*valve = 1;
-					_vm->_gfx->changeCursor(kRivenHideCursor);
+					_vm->_cursor->setCursor(kRivenHideCursor);
 					_vm->_video->playMovieBlocking(4);
 					_vm->refreshCard();
 				}
@@ -1081,7 +1082,7 @@ void RivenExternal::xgisland1490_domecheck(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xgplateau3160_dopools(uint16 argc, uint16 *argv) {
 	// Play the deactivation of a pool if one is active and a different one is activated
-	_vm->_gfx->changeCursor(kRivenHideCursor);
+	_vm->_cursor->setCursor(kRivenHideCursor);
 	_vm->_video->playMovieBlocking(*_vm->getVar("glkbtns") * 2);
 }
 
@@ -1289,11 +1290,11 @@ void RivenExternal::xjtunnel106_pictfix(uint16 argc, uint16 *argv) {
 void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 	// Run the gallows's carriage
 
-	_vm->_gfx->changeCursor(kRivenHideCursor);         // Hide the cursor
+	_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor
 	_vm->_video->playMovieBlocking(1);                 // Play handle movie
 	_vm->_gfx->scheduleTransition(15);                 // Set pan down transition
 	_vm->changeToCard(_vm->matchRMAPToCard(0x18e77));  // Change to card facing up
-	_vm->_gfx->changeCursor(kRivenHideCursor);         // Hide the cursor (again)
+	_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor (again)
 	_vm->_video->playMovieBlocking(4);                 // Play carriage beginning to drop
 	_vm->_gfx->scheduleTransition(14);                 // Set pan up transition
 	_vm->changeToCard(_vm->matchRMAPToCard(0x183a9));  // Change to card looking straight again
@@ -1327,16 +1328,16 @@ void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 		_vm->_system->delayMillis(10);
 	}
 
-	_vm->_gfx->changeCursor(kRivenHideCursor);             // Hide the cursor
+	_vm->_cursor->setCursor(kRivenHideCursor);             // Hide the cursor
 
 	if (gotClick) {
 		_vm->_gfx->scheduleTransition(16);                 // Schedule dissolve transition
 		_vm->changeToCard(_vm->matchRMAPToCard(0x18d4d));  // Move forward
-		_vm->_gfx->changeCursor(kRivenHideCursor);         // Hide the cursor
+		_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor
 		_vm->_system->delayMillis(500);                    // Delay a half second before changing again
 		_vm->_gfx->scheduleTransition(12);                 // Schedule pan left transition
 		_vm->changeToCard(_vm->matchRMAPToCard(0x18ab5));  // Turn right
-		_vm->_gfx->changeCursor(kRivenHideCursor);         // Hide the cursor
+		_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor
 		_vm->_video->playMovieBlocking(1);                 // Play carriage ride movie
 		_vm->changeToCard(_vm->matchRMAPToCard(0x17167));  // We have arrived at the top
 	} else
@@ -1369,7 +1370,7 @@ int RivenExternal::jspitElevatorLoop() {
 	Common::Event event;
 	int changeLevel = 0;
 
-	_vm->_gfx->changeCursor(kRivenClosedHandCursor);
+	_vm->_cursor->setCursor(kRivenClosedHandCursor);
 	_vm->_system->updateScreen();
 	for (;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
@@ -1385,7 +1386,7 @@ int RivenExternal::jspitElevatorLoop() {
 				_vm->_system->updateScreen();
 				break;
 			case Common::EVENT_LBUTTONUP:
-				_vm->_gfx->changeCursor(kRivenMainCursor);
+				_vm->_cursor->setCursor(kRivenMainCursor);
 				_vm->_system->updateScreen();
 				return changeLevel;
 			default:
@@ -1527,7 +1528,7 @@ void RivenExternal::xorollcredittime(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 	// Hide the cursor
-	_vm->_gfx->changeCursor(kRivenHideCursor);
+	_vm->_cursor->setCursor(kRivenHideCursor);
 
 	// Let's hook onto our video
 	VideoHandle video = _vm->_video->findVideoHandle(argv[0]);
@@ -1567,9 +1568,9 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 
 	// Update our hotspot stuff
 	if (hotspotRect.contains(_vm->_system->getEventManager()->getMousePos()))
-		_vm->_gfx->changeCursor(kRivenOpenHandCursor);
+		_vm->_cursor->setCursor(kRivenOpenHandCursor);
 	else
-		_vm->_gfx->changeCursor(kRivenMainCursor);
+		_vm->_cursor->setCursor(kRivenMainCursor);
 	
 	// OK, Gehn has opened the trap book and has asked us to go in. Let's watch
 	// and see what the player will do...
@@ -1581,9 +1582,9 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
 				if (hotspotRect.contains(_vm->_system->getEventManager()->getMousePos()))
-					_vm->_gfx->changeCursor(kRivenOpenHandCursor);
+					_vm->_cursor->setCursor(kRivenOpenHandCursor);
 				else
-					_vm->_gfx->changeCursor(kRivenMainCursor);
+					_vm->_cursor->setCursor(kRivenMainCursor);
 				updateScreen = false; // Don't update twice, changing the cursor already updates the screen
 				break;
 			case Common::EVENT_LBUTTONUP:
@@ -1591,7 +1592,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 					// OK, we've used the trap book! We go for ride lady!
 					_vm->_scriptMan->stopAllScripts();                  // Stop all running scripts (so we don't remain in the cage)
 					_vm->_video->stopVideos();                          // Stop all videos
-					_vm->_gfx->changeCursor(kRivenHideCursor);          // Hide the cursor
+					_vm->_cursor->setCursor(kRivenHideCursor);          // Hide the cursor
 					_vm->_gfx->drawPLST(3);                             // Black out the screen
 					_vm->_gfx->updateScreen();                          // Update the screen
 					_vm->_sound->playSound(0);                          // Play the link sound
@@ -1620,7 +1621,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 		return;
 
 	// Hide the cursor again
-	_vm->_gfx->changeCursor(kRivenHideCursor);
+	_vm->_cursor->setCursor(kRivenHideCursor);
 
 	// If there was no click and this is the third time Gehn asks us to
 	// use the trap book, he will shoot the player. Dead on arrival.
@@ -1717,7 +1718,7 @@ uint16 RivenExternal::getComboDigit(uint32 correctCombo, uint32 digit) {
 
 void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 	// Hide the cursor
-	_vm->_gfx->changeCursor(kRivenHideCursor);
+	_vm->_cursor->setCursor(kRivenHideCursor);
 
 	uint32 *prisonCombo = _vm->getVar("pcorrectorder");
 	uint32 soundTime = _vm->_system->getMillis() - 500; // Start the first sound instantly
@@ -1878,7 +1879,7 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 		} else {
 			// ...the telescope can't move down anymore.
 			// Play the sound of not being able to move
-			_vm->_gfx->changeCursor(kRivenHideCursor);
+			_vm->_cursor->setCursor(kRivenHideCursor);
 			_vm->_sound->playSoundBlocking(13);
 		}
 	} else {
@@ -1905,7 +1906,7 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 	// Check if we can't move up anymore
 	if (*telescopePos == 5) {
 		// Play the sound of not being able to move
-		_vm->_gfx->changeCursor(kRivenHideCursor);
+		_vm->_cursor->setCursor(kRivenHideCursor);
 		_vm->_sound->playSoundBlocking(13);
 		return;
 	}

@@ -23,6 +23,7 @@
  *
  */
 
+#include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_scripts.h"
@@ -1017,7 +1018,7 @@ void MystScriptParser::changeCursor(uint16 op, uint16 var, uint16 argc, uint16 *
 		debugC(kDebugScript, "Cursor: %d", argv[0]);
 
 		// TODO: Not sure if this needs to change mainCursor or similar...
-		_vm->_gfx->changeCursor(argv[0]);
+		_vm->_cursor->setCursor(argv[0]);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -1027,7 +1028,7 @@ void MystScriptParser::hideCursor(uint16 op, uint16 var, uint16 argc, uint16 *ar
 
 	if (argc == 0) {
 		debugC(kDebugScript, "Opcode %d: Hide Cursor", op);
-		_vm->_gfx->hideCursor();
+		_vm->_cursor->hideCursor();
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -1037,7 +1038,7 @@ void MystScriptParser::showCursor(uint16 op, uint16 var, uint16 argc, uint16 *ar
 
 	if (argc == 0) {
 		debugC(kDebugScript, "Opcode %d: Show Cursor", op);
-		_vm->_gfx->showCursor();
+		_vm->_cursor->showCursor();
 	} else
 		unknown(op, var, argc, argv);
 }

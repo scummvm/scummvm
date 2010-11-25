@@ -47,12 +47,18 @@ MohawkEngine::MohawkEngine(OSystem *syst, const MohawkGameDescription *gamedesc)
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+
+	_sound = 0;
+	_video = 0;
+	_pauseDialog = 0;
+	_cursor = 0;
 }
 
 MohawkEngine::~MohawkEngine() {
 	delete _sound;
 	delete _video;
 	delete _pauseDialog;
+	delete _cursor;
 
 	for (uint32 i = 0; i < _mhk.size(); i++)
 		delete _mhk[i];

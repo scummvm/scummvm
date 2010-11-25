@@ -23,6 +23,7 @@
  *
  */
 
+#include "mohawk/cursors.h"
 #include "mohawk/graphics.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
@@ -401,7 +402,7 @@ void RivenScript::clearSLST(uint16 op, uint16 argc, uint16 *argv) {
 // Command 13: set mouse cursor (cursor_id)
 void RivenScript::changeCursor(uint16 op, uint16 argc, uint16 *argv) {
 	debug(2, "Change to cursor %d", argv[0]);
-	_vm->_gfx->changeCursor(argv[0]);
+	_vm->_cursor->setCursor(argv[0]);
 }
 
 // Command 14: pause script execution (delay in ms, u1)

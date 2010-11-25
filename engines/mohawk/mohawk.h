@@ -76,6 +76,7 @@ class Sound;
 class PauseDialog;
 class MohawkArchive;
 class VideoManager;
+class CursorManager;
 
 class MohawkEngine : public ::Engine {
 protected:
@@ -99,6 +100,7 @@ public:
 
 	Sound *_sound;
 	VideoManager *_video;
+	CursorManager *_cursor;
 
 	virtual Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
 	bool hasResource(uint32 tag, uint16 id);

@@ -27,6 +27,7 @@
 #include "common/debug-channels.h"
 #include "common/translation.h"
 
+#include "mohawk/cursors.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_saveload.h"
@@ -238,6 +239,7 @@ Common::Error MohawkEngine_Myst::run() {
 	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
 	_loadDialog->setSaveMode(false);
 	_optionsDialog = new MystOptionsDialog(this);
+	_cursor = new MystCursorManager(this);
 
 	// Start us on the first stack.
 	if (getGameType() == GType_MAKINGOF)
@@ -273,8 +275,8 @@ Common::Error MohawkEngine_Myst::run() {
 	loadHelp(10000);
 
 	// Set the cursor
-	_gfx->changeCursor(_currentCursor);
-	_gfx->showCursor();
+	_cursor->setCursor(_currentCursor);
+	_cursor->showCursor();
 
 	Common::Event event;
 	while (!shouldQuit()) {
@@ -822,7 +824,7 @@ void MohawkEngine_Myst::loadCursorHints() {
 
 void MohawkEngine_Myst::setMainCursor(uint16 cursor) {
 	_currentCursor = _mainCursor = cursor;
-	_gfx->changeCursor(_currentCursor);
+	_cursor->setCursor(_currentCursor);
 }
 
 void MohawkEngine_Myst::checkCursorHints() {
@@ -841,7 +843,7 @@ void MohawkEngine_Myst::checkCursorHints() {
 					_currentCursor = _cursorHints[i].variableHint.values[var_value];
 					if (_currentCursor == 0)
 						_currentCursor = _mainCursor;
-					_gfx->changeCursor(_currentCursor);
+					_cursor->setCursor(_currentCursor);
 				}
 			} else if (_currentCursor != _cursorHints[i].cursor) {
 				if (_cursorHints[i].cursor == 0)
@@ -849,14 +851,14 @@ void MohawkEngine_Myst::checkCursorHints() {
 				else
 					_currentCursor = _cursorHints[i].cursor;
 
-				_gfx->changeCursor(_currentCursor);
+				_cursor->setCursor(_currentCursor);
 			}
 			return;
 		}
 
 	if (_currentCursor != _mainCursor) {
 		_currentCursor = _mainCursor;
-		_gfx->changeCursor(_currentCursor);
+		_cursor->setCursor(_currentCursor);
 	}
 }
 

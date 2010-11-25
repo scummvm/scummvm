@@ -41,33 +41,6 @@ class MohawkEngine_Riven;
 class MohawkBitmap;
 class MystBitmap;
 
-enum {
-	kRivenOpenHandCursor = 2003,
-	kRivenClosedHandCursor = 2004,
-	kRivenMainCursor = 3000,
-	kRivenPelletCursor = 5000,
-	kRivenHideCursor = 9000
-};
-
-// 803-805 are animated, one large bmp which is in chunks
-// Other cursors (200, 300, 400, 500, 600, 700) are not the same in each stack
-enum {
-	kDefaultMystCursor = 100,				// The default hand
-	kWhitePageCursor = 800,					// Holding a white page
-	kRedPageCursor = 801,					// Holding a red page
-	kBluePageCursor = 802,					// Holding a blue page
-	// kDroppingWhitePageAnimCursor = 803,
-	// kDroppingRedPageAnimCursor = 804,
-	// kDroppingBluePageAnimCursor = 805,
-	kNewMatchCursor = 900,					// Match that has not yet been lit
-	kLitMatchCursor = 901,					// Match that's burning
-	kDeadMatchCursor = 902,					// Match that's been extinguished
-	kKeyCursor = 903, 						// Key in Lighthouse in Stoneship
-	kRotateClockwiseCursor = 904, 			// Rotate gear clockwise (boiler on Myst)
-	kRotateCounterClockwiseCursor = 905,	// Rotate gear counter clockwise (boiler on Myst)
-	kMystZipModeCursor = 999				// Zip Mode cursor
-};
-
 class MohawkSurface {
 public:
 	MohawkSurface();
@@ -125,9 +98,6 @@ public:
 	void loadExternalPictureFile(uint16 stack);
 	void copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
 	void copyImageToScreen(uint16 image, Common::Rect dest);
-	void showCursor();
-	void hideCursor();
-	void changeCursor(uint16);
 	void updateScreen();
 
 	void drawRect(Common::Rect rect, bool active);
@@ -180,7 +150,6 @@ public:
 	void copyImageToScreen(uint16, uint32, uint32, uint32, uint32);
 	void updateScreen();
 	bool _updatesEnabled;
-	void changeCursor(uint16);
 	Common::Array<uint16> _activatedPLSTs;
 	void drawPLST(uint16 x);
 	void drawRect(Common::Rect rect, bool active);

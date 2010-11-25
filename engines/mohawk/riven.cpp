@@ -29,6 +29,7 @@
 #include "common/keyboard.h"
 #include "common/translation.h"
 
+#include "mohawk/cursors.h"
 #include "mohawk/graphics.h"
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
@@ -111,6 +112,7 @@ Common::Error MohawkEngine_Riven::run() {
 	_externalScriptHandler = new RivenExternal(this);
 	_optionsDialog = new RivenOptionsDialog(this);
 	_scriptMan = new RivenScriptManager(this);
+	_cursor = new RivenCursorManager();
 
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "riven");
@@ -124,7 +126,7 @@ Common::Error MohawkEngine_Riven::run() {
 		error("Could not open extras.mhk");
 
 	// Start at main cursor
-	_gfx->changeCursor(kRivenMainCursor);
+	_cursor->setCursor(kRivenMainCursor);
 
 	// Let's begin, shall we?
 	if (getFeatures() & GF_DEMO) {
@@ -478,11 +480,11 @@ void MohawkEngine_Riven::checkHotspotChange() {
 	if (foundHotspot) {
 		if (_curHotspot != hotspotIndex) {
 			_curHotspot = hotspotIndex;
-			_gfx->changeCursor(_hotspots[_curHotspot].mouse_cursor);
+			_cursor->setCursor(_hotspots[_curHotspot].mouse_cursor);
 		}
 	} else {
 		_curHotspot = -1;
-		_gfx->changeCursor(kRivenMainCursor);
+		_cursor->setCursor(kRivenMainCursor);
 	}
 }
 

@@ -3,6 +3,7 @@ MODULE := engines/mohawk
 MODULE_OBJS = \
 	bitmap.o \
 	console.o \
+	cursors.o \
 	detection.o \
 	dialogs.o \
 	graphics.o \
