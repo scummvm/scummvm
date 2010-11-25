@@ -39,7 +39,7 @@
 namespace Sci {
 
 SciMusic::SciMusic(SciVersion soundVersion)
-	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0), _globalReverb(-1) {
+	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0), _globalReverb(0) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
@@ -116,6 +116,8 @@ void SciMusic::init() {
 	// remapping).
 	_driverFirstChannel = _pMidiDrv->getFirstChannel();
 	_driverLastChannel = _pMidiDrv->getLastChannel();
+	if (getSciVersion() <= SCI_VERSION_0_LATE)
+		_globalReverb = _pMidiDrv->getReverb();	// Init global reverb for SCI0
 }
 
 void SciMusic::miditimerCallback(void *p) {
