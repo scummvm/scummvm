@@ -349,6 +349,12 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 }
 
 reg_t SoundCommandParser::kDoSoundGetPolyphony(int argc, reg_t *argv, reg_t acc) {
+	// KQ5CD uses this to determine if it should play digital audio or not.
+	// For Adlib cards, digital audio is played, whereas MIDI is played for GM cards.
+	// Thus, tell it that we're using an Adlib in room 119 (Sierra logo screen),
+	// so that the digital audio is always preferred.
+	if (g_sci->getGameId() == GID_KQ5 && g_sci->getEngineState()->currentRoomNumber() == 119)
+		return make_reg(0, 9);	// Adlib, i.e. digital music
 	return make_reg(0, _music->soundGetVoices());	// Get the number of voices
 }
 

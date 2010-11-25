@@ -563,10 +563,7 @@ bool ResourceManager::isGMTrackIncluded() {
 
 SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVersion soundVersion) : _resMan(resMan), _soundVersion(soundVersion) {
 	// Modify the resourceId for the Windows version of KQ5, like SSCI did.
-	// FIXME: For some reason, song 1500 (the Sierra theme) doesn't work
-	// correctly, and the game hangs. A relevant hack because of this exists
-	// in getTrackByType()
-	if (g_sci->getGameId() == GID_KQ5 && g_sci->getPlatform() == Common::kPlatformWindows && resourceNr != 500)
+	if (g_sci->getGameId() == GID_KQ5 && g_sci->getPlatform() == Common::kPlatformWindows)
 		resourceNr += 1000;
 
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeSound, resourceNr), true);
@@ -741,16 +738,6 @@ SoundResource::Track *SoundResource::getTrackByType(byte type) {
 		if (_tracks[trackNr].type == type)
 			return &_tracks[trackNr];
 	}
-
-	// HACK for the Sierra theme (song 500) in KQ5CD Windows. Because the
-	// associated GM track (1500) hangs, we fall back to the MT-32 track
-	// for that one inside SoundResource(). Thus, use the appropriate
-	// MT-32 play mask for that song, too.
-	if (g_sci->getGameId() == GID_KQ5 && g_sci->getPlatform() == Common::kPlatformWindows && _innerResource->getNumber() == 500) {
-		warning("KQ5CD Windows: falling back to the MT-32 track for the Sierra logo screen");	// because this will sound awful without mapping...
-		return getTrackByType(0x0c);
-	}
-
 	return NULL;
 }
 
