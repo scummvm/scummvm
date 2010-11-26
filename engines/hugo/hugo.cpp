@@ -254,8 +254,6 @@ Common::Error HugoEngine::run() {
 	initialize();
 	initConfig(RESET);                              // Reset user's config
 
-	_file->restoreGame(-1);
-
 	initMachine();
 
 	// Start the state machine
@@ -903,16 +901,10 @@ void HugoEngine::initPlaylist(bool playlist[MAX_TUNES]) {
 */
 void HugoEngine::initStatus() {
 	debugC(1, kDebugEngine, "initStatus");
-	_status.initSaveFl    = true;                   // Force initial save
 	_status.storyModeFl   = false;                  // Not in story mode
 	_status.gameOverFl    = false;                  // Hero not knobbled yet
-// Strangerke - Suppress as related to playback
-//	_status.recordFl      = false;                  // Not record mode
-//	_status.playbackFl    = false;                  // Not playback mode
 	_status.demoFl        = false;                  // Not demo mode
 	_status.textBoxFl     = false;                  // Not processing a text box
-// Strangerke - Not used ?
-//	_status.mmtime        = false;                   // Multimedia timer support
 	_status.lookFl        = false;                  // Toolbar "look" button
 	_status.recallFl      = false;                  // Toolbar "recall" button
 	_status.leftButtonFl  = false;                  // Left mouse button pressed
@@ -924,11 +916,9 @@ void HugoEngine::initStatus() {
 	_status.doQuitFl      = false;
 	_status.path[0]       = 0;                      // Path to write files
 	_status.saveSlot      = 0;                      // Slot to save/restore game
-	_status.screenWidth   = 0;                      // Desktop screen width
 
 	// Initialize every start of new game
 	_status.tick            = 0;                    // Tick count
-//	_status.saveTick        = 0;                    // Time of last save
 	_status.viewState       = V_IDLE;               // View state
 	_status.inventoryState  = I_OFF;                // Inventory icon bar state
 	_status.inventoryHeight = 0;                    // Inventory icon bar pos
@@ -936,6 +926,14 @@ void HugoEngine::initStatus() {
 	_status.routeIndex      = -1;                   // Hero not following a route
 	_status.go_for          = GO_SPACE;             // Hero walking to space
 	_status.go_id           = -1;                   // Hero not walking to anything
+
+// Strangerke - Suppress as related to playback
+//	_status.recordFl      = false;                  // Not record mode
+//	_status.playbackFl    = false;                  // Not playback mode
+// Strangerke - Not used ?
+//	_status.mmtime        = false;                  // Multimedia timer support
+//	_status.screenWidth   = 0;                      // Desktop screen width
+//	_status.saveTick      = 0;                      // Time of last save
 }
 
 /**
@@ -965,8 +963,6 @@ void HugoEngine::initConfig(inst_t action) {
 				break;
 			}
 		}
-
-		_file->initSavedGame();   // Initialize saved game
 		break;
 	case RESTORE:
 		warning("Unhandled action RESTORE");

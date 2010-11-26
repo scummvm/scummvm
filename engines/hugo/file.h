@@ -58,7 +58,6 @@ public:
 	bool     fileExists(char *filename);
 	sound_pt getSound(short sound, uint16 *size);
 
-	void     initSavedGame();
 	void     instructions();
 	void     readBootFile();
 	void     readImage(int objNum, object_t *objPtr);

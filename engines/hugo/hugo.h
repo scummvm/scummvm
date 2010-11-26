@@ -165,7 +165,7 @@ public:
 	const char *_episode;
 	const char *_picDir;
 
-	Common::String _initFilename, _saveFilename;
+	Common::String _saveFilename;
 
 	command_t _statusLine;
 	command_t _scoreLine;

@@ -818,11 +818,9 @@ struct hotspot_t {
 };
 
 struct status_t {                                   // Game status (not saved)
-	bool     initSaveFl;                            // Force save of initial game
 	bool     storyModeFl;                           // Game is telling story - no commands
 	bool     gameOverFl;                            // Game is over - hero knobbled
 	bool     demoFl;                                // Game is in demo mode
-	bool     debugFl;                               // Game is in debug mode
 	bool     textBoxFl;                             // Game is (halted) in text box
 	bool     lookFl;                                // Toolbar "look" button pressed
 	bool     recallFl;                              // Toolbar "recall" button pressed
@@ -842,16 +840,16 @@ struct status_t {                                   // Game status (not saved)
 	go_t     go_for;                                // Purpose of an automatic route
 	int16    go_id;                                 // Index of exit of object walking to
 	fpath_t  path;                                  // Alternate path for saved files
-	long     saveSize;                              // Size of a saved game
 	int16    saveSlot;                              // Current slot to save/restore game
-	int16    screenWidth;                           // Desktop screen width
 	int16    song;                                  // Current song
 	int16    cx, cy;                                // Cursor position (dib coords)
+
 // Strangerke - Suppress as related to playback
 //	bool     playbackFl;                            // Game is in playback mode
 //	bool     recordFl;                              // Game is in record mode
 // Strangerke - Not used ?
 //	bool     mmtimeFl;                              // Multimedia timer supported
+//	int16    screenWidth;                           // Desktop screen width
 //	uint32   saveTick;                              // Time of last save in ticks
 };
 

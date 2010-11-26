@@ -297,19 +297,13 @@ bool FileManager::fileExists(char *filename) {
 }
 
 /**
-* Save game to supplied slot (-1 is INITFILE)
+* Save game to supplied slot
 */
 void FileManager::saveGame(int16 slot, const char *descrip) {
 	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip);
 
 	// Get full path of saved game file - note test for INITFILE
-	Common::String path; // Full path of saved game
-
-	if (slot == -1)
-		path = _vm->_initFilename;
-	else
-		path = Common::String::format(_vm->_saveFilename.c_str(), slot);
-
+	Common::String path = Common::String::format(_vm->_saveFilename.c_str(), slot);
 	Common::WriteStream *out = _vm->getSaveFileManager()->openForSaving(path);
 	if (!out) {
 		warning("Can't create file '%s', game not saved", path.c_str());
@@ -374,7 +368,7 @@ void FileManager::saveGame(int16 slot, const char *descrip) {
 }
 
 /**
-* Restore game from supplied slot number (-1 is INITFILE)
+* Restore game from supplied slot number
 */
 void FileManager::restoreGame(int16 slot) {
 	debugC(1, kDebugFile, "restoreGame(%d)", slot);
@@ -385,10 +379,7 @@ void FileManager::restoreGame(int16 slot) {
 	// Get full path of saved game file - note test for INITFILE
 	Common::String path; // Full path of saved game
 
-	if (slot == -1)
-		path = _vm->_initFilename;
-	else
-		path = Common::String::format(_vm->_saveFilename.c_str(), slot);
+	path = Common::String::format(_vm->_saveFilename.c_str(), slot);
 
 	Common::SeekableReadStream *in = _vm->getSaveFileManager()->openForLoading(path);
 	if (!in)
@@ -455,41 +446,6 @@ void FileManager::restoreGame(int16 slot) {
 	_maze.firstScreenIndex = in->readByte();
 
 	delete in;
-}
-
-/**
-* Initialize the size of a saved game (from the fixed initial game).
-* If status.initsave is TRUE, or the initial saved game is not found,
-* force a save to create one.  Normally the game will be shipped with
-* the initial game file but useful to force a write during development
-* when the size is changeable.
-* The net result is a valid INITFILE, with status.savesize initialized.
-*/
-void FileManager::initSavedGame() {
-	debugC(1, kDebugFile, "initSavedGame");
-
-	// Force save of initial game
-	if (_vm->getGameStatus().initSaveFl)
-		saveGame(-1, "");
-
-	// If initial game doesn't exist, create it
-	Common::SeekableReadStream *in = _vm->getSaveFileManager()->openForLoading(_vm->_initFilename);
-	if (!in) {
-		saveGame(-1, "");
-		in = _vm->getSaveFileManager()->openForLoading(_vm->_initFilename);
-		if (!in) {
-			warning("Unable to write file: %s", _vm->_initFilename.c_str());
-			return;
-		}
-	}
-
-	// Must have an open saved game now
-	_vm->getGameStatus().saveSize = in->size();
-	delete in;
-
-	// Check sanity - maybe disk full or path set to read-only drive?
-	if (_vm->getGameStatus().saveSize <= 0)
-		warning("Unable to write file: %s", _vm->_initFilename.c_str());
 }
 
 /**

@@ -194,8 +194,7 @@ void HugoEngine::initGame(const HugoGameDescription *gd) {
 	_packedFl = (getFeatures() & GF_PACKED);
 	_gameVariant = _gameType - 1 + ((_platform == Common::kPlatformWindows) ? 0 : 3);
 
-	// Generate filenames
-	_initFilename = _targetName + "-00.SAV";
+	// Generate filename
 	_saveFilename = _targetName + "-%d.SAV";
 }
 
