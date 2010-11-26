@@ -92,6 +92,10 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+#if defined(UNIX)
+#include <errno.h>
+#include <sys/stat.h>
+#endif
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();
@@ -186,6 +190,16 @@ void OSystem_SDL::initBackend() {
 
 	if (SDL_Init(sdlFlags) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
+	}
+
+
+	if (!_logger)
+		_logger = new Backends::Log::Log(this);
+
+	if (_logger) {
+		Common::WriteStream *logFile = createLogFile();
+		if (logFile)
+			_logger->open(logFile);
 	}
 
 	_graphicsMutex = createMutex();
@@ -295,6 +309,7 @@ OSystem_SDL::OSystem_SDL()
 	_fsFactory(0),
 	_savefile(0),
 	_mixer(0),
+	_logger(0),
 	_timer(0),
 	_screenIsLocked(false),
 	_graphicsMutex(0), _transactionMode(kTransactionNone) {
@@ -476,6 +491,64 @@ Common::WriteStream *OSystem_SDL::createConfigWriteStream() {
 	return file.createWriteStream();
 }
 
+#define DEFAULT_LOG_FILE "scummvm.log"
+
+Common::WriteStream *OSystem_SDL::createLogFile() {
+#if defined(MACOSX)
+	return 0;
+#elif defined(UNIX)
+	const char *home = getenv("HOME");
+	if (home == NULL)
+		return 0;
+
+	Common::String logFile(home);
+	logFile += "/.scummvm";
+
+	struct stat sb;
+
+	// Check whether the dir exists
+	if (stat(logFile.c_str(), &sb) == -1) {
+		// The dir does not exist, or stat failed for some other reason.
+		if (errno != ENOENT)
+			return 0;
+
+		// If the problem was that the path pointed to nothing, try
+		// to create the dir.
+		if (mkdir(logFile.c_str(), 0755) != 0)
+			return 0;
+	} else if (!S_ISDIR(sb.st_mode)) {
+		// Path is no directory. Oops
+		return 0;
+	}
+
+	logFile += "/logs";
+
+	// Check whether the dir exists
+	if (stat(logFile.c_str(), &sb) == -1) {
+		// The dir does not exist, or stat failed for some other reason.
+		if (errno != ENOENT)
+			return 0;
+
+		// If the problem was that the path pointed to nothing, try
+		// to create the dir.
+		if (mkdir(logFile.c_str(), 0755) != 0)
+			return 0;
+	} else if (!S_ISDIR(sb.st_mode)) {
+		// Path is no directory. Oops
+		return 0;
+	}
+
+	logFile += "/" DEFAULT_LOG_FILE;
+
+	Common::FSNode file(logFile);
+	return file.createWriteStream();
+#elif defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+	return 0;
+#else
+	return 0;
+#endif
+}
+
 void OSystem_SDL::setWindowCaption(const char *caption) {
 	Common::String cap;
 	byte c;
@@ -551,6 +624,8 @@ void OSystem_SDL::deinit() {
 	free(_mouseData);
 
 	delete _timer;
+	delete _logger;
+	_logger = 0;
 
 	SDL_Quit();
 
@@ -570,6 +645,8 @@ void OSystem_SDL::quit() {
 
 void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 	BaseBackend::logMessage(type, message);
+	if (_logger)
+		_logger->print(message);
 
 #if defined( USE_WINDBG )
 #if defined( _WIN32_WCE )

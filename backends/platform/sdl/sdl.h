@@ -33,6 +33,7 @@
 #endif
 
 #include "backends/base-backend.h"
+#include "backends/log/log.h"
 #include "graphics/scaler.h"
 
 
@@ -446,6 +447,10 @@ protected:
 	FilesystemFactory *_fsFactory;
 	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
+
+	// Logging
+	virtual Common::WriteStream *createLogFile();
+	Backends::Log::Log *_logger;
 
 	SDL_TimerID _timerID;
 	Common::TimerManager *_timer;
