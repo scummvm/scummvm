@@ -322,12 +322,18 @@ void Parser_v1d::lineHandler() {
 		else
 //			_vm->_file->saveOrRestore(true);
 			warning("STUB: saveOrRestore()");
+			// HACK: Currently use Win code
+			_vm->_file->saveGame(gameStatus.saveSlot, "Current game");
 		return;
 	}
 
 	if (!strcmp("restore", _line)) {
 //		_vm->_file->saveOrRestore(false);
 		warning("STUB: saveOrRestore()");
+		// HACK: Currently use Win code
+		_vm->_file->restoreGame(gameStatus.saveSlot);
+		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
+		gameStatus.viewState = V_PLAY;
 		return;
 	}
 

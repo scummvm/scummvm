@@ -36,6 +36,7 @@
 
 #include "hugo/hugo.h"
 #include "hugo/parser.h"
+#include "hugo/file.h"
 #include "hugo/schedule.h"
 #include "hugo/util.h"
 #include "hugo/sound.h"
@@ -128,6 +129,8 @@ void Parser_v3d::lineHandler() {
 		else
 //			_vm->_file->saveOrRestore(true);
 			warning("STUB: saveOrRestore()");
+			// HACK: Currently use Win code
+			_vm->_file->saveGame(gameStatus.saveSlot, "Current game");
 		return;
 	}
 
@@ -135,6 +138,10 @@ void Parser_v3d::lineHandler() {
 		_config.soundFl = false;
 //		_vm->_file->saveOrRestore(false);
 		warning("STUB: saveOrRestore()");
+		// HACK: Currently use Win code
+		_vm->_file->restoreGame(gameStatus.saveSlot);
+		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
+		gameStatus.viewState = V_PLAY;
 		return;
 	}
 
