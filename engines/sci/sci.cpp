@@ -184,6 +184,7 @@ Common::Error SciEngine::run() {
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("sci_originalsaveload", "false");
 	ConfMan.registerDefault("native_fb01", "false");
+	ConfMan.registerDefault("windows_cursors", "false");	// Windows cursors for KQ6 Windows
 
 	_resMan = new ResourceManager();
 	assert(_resMan);

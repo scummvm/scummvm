@@ -2004,6 +2004,14 @@ Flight of the Amazon Queen adds the following non-standard keywords:
     music_mute         bool     If true, music is muted
     sfx_mute           bool     If true, sound effects are muted
 
+King's Quest VI Windows adds the following non-standard keywords:
+
+    windows_cursors    bool     If true, the original unscaled black and white
+                                Windows cursors are used instead of the DOS
+                                ones. If false, the DOS cursors are used in the
+                                Windows version, upscaled to match the rest of
+                                the upscaled graphics
+    
 Simon the Sorcerer 1 and 2 add the following non-standard keywords:
 
     music_mute         bool     If true, music is muted

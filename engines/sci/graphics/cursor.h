@@ -112,6 +112,13 @@ private:
 	CursorCache _cachedCursors;
 
 	bool _isVisible;
+
+	// KQ6 Windows has different black and white cursors. If this is
+	// true (set from the sci_originalkq6wincursors ini setting), then
+	// we use these, and don't scale them by 2x like the rest of the
+	// graphics, like SSCI did. These look very ugly, which is why
+	// they aren't enabled by default.
+	bool _useOriginalKQ6WinCursors;
 };
 
 } // End of namespace Sci

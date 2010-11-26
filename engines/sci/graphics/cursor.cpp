@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/macresman.h"
 #include "common/system.h"
@@ -59,6 +60,10 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 	_zoomColor = 0;
 	_zoomMultiplier = 0;
 	_cursorSurface = 0;
+	if (g_sci && g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformWindows)
+		_useOriginalKQ6WinCursors = ConfMan.getBool("windows_cursors");
+	else
+		_useOriginalKQ6WinCursors = false;
 }
 
 GfxCursor::~GfxCursor() {
@@ -171,6 +176,10 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 	if (_cachedCursors.size() >= MAX_CACHED_CURSORS)
 		purgeCache();
 
+	// Use the original Windows cursors in KQ6, if requested
+	if (_useOriginalKQ6WinCursors)
+		viewNum += 2000;		// Windows cursors
+
 	if (!_cachedCursors.contains(viewNum))
 		_cachedCursors[viewNum] = new GfxView(_resMan, _screen, _palette, viewNum);
 
@@ -195,7 +204,7 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 	}
 
 	const byte *rawBitmap = cursorView->getBitmap(loopNum, celNum);
-	if (_upscaledHires) {
+	if (_upscaledHires && !_useOriginalKQ6WinCursors) {
 		// Scale cursor by 2x - note: sierra didn't do this, but it looks much better
 		width *= 2;
 		height *= 2;
@@ -226,6 +235,7 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	}
 
 	// TODO: What about the 2000 resources? Inventory items? How to handle?
+	// Update: Perhaps these are handled like the Windows cursors in KQ6?
 	// TODO: 1000 + celNum won't work for GK1
 
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeCursor, 1000 + celNum), false);
