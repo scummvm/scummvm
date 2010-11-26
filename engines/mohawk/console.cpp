@@ -668,13 +668,11 @@ void LivingBooksConsole::postEnter() {
 bool LivingBooksConsole::Cmd_PlaySound(int argc, const char **argv) {
 	if (argc == 1) {
 		DebugPrintf("Usage: playSound <value>\n");
-
 		return true;
 	}
 
 	_vm->_sound->stopSound();
 	_vm->_sound->playSound((uint16)atoi(argv[1]));
-
 	return false;
 }
 
@@ -682,7 +680,6 @@ bool LivingBooksConsole::Cmd_StopSound(int argc, const char **argv) {
 	DebugPrintf("Stopping Sound\n");
 
 	_vm->_sound->stopSound();
-
 	return true;
 }
 
@@ -692,11 +689,8 @@ bool LivingBooksConsole::Cmd_DrawImage(int argc, const char **argv) {
 		return true;
 	}
 
-	if (_vm->getGameType() == GType_LIVINGBOOKSV1)
-		DebugPrintf("This isn't supported in the old Living Books games (yet)!\n");
-
 	_vm->_gfx->copyImageToScreen((uint16)atoi(argv[1]));
-	return _vm->getGameType() != GType_LIVINGBOOKSV1;
+	return false;
 }
 
 } // End of namespace Mohawk
