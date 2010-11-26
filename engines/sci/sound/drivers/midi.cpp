@@ -325,8 +325,10 @@ void MidiPlayer_Midi::send(uint32 b) {
 	// In early SCI0, we may also get events for AdLib rhythm channels.
 	// While an MT-32 would ignore those with the default channel mapping,
 	// we filter these out for the benefit of other MIDI devices.
-	if (channel < 1 || channel > 9)
-		return;
+	if (_version == SCI_VERSION_0_EARLY) {
+		if (channel < 1 || channel > 9)
+			return;
+	}
 
 	switch (command) {
 	case 0x80:
