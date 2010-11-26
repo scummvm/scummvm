@@ -552,14 +552,14 @@ void MohawkBitmap::drawRaw(Graphics::Surface *surface) {
 // RLE8 Drawer
 //////////////////////////////////////////
 
-void MohawkBitmap::drawRLE8(Graphics::Surface *surface) {
+void MohawkBitmap::drawRLE8(Graphics::Surface *surface, bool isLE) {
 	// A very simple RLE8 scheme is used as a secondary compression on
 	// most images in non-Riven tBMP's.
 
 	assert(surface);
 
 	for (uint16 i = 0; i < _header.height; i++) {
-		uint16 rowByteCount = _data->readUint16BE();
+		uint16 rowByteCount = isLE ? _data->readUint16LE() : _data->readUint16BE();
 		int32 startPos = _data->pos();
 		byte *dst = (byte *)surface->pixels + i * _header.width;
 		int16 remaining = _header.width;
@@ -697,36 +697,54 @@ MohawkSurface *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) 
 	int offsetX = endianStream->readSint16();
 	int offsetY = endianStream->readSint16();
 
-	debug(2, "Decoding Old Mohawk Bitmap (%dx%d, %d bytesPerRow, %04x Format)", _header.width, _header.height, _header.bytesPerRow, _header.format);
-	debug(2, "Offset X = %d, Y = %d", offsetX, offsetY);
+	debug(7, "Decoding Old Mohawk Bitmap (%dx%d, %d bytesPerRow, %04x Format)", _header.width, _header.height, _header.bytesPerRow, _header.format);
+	debug(7, "Offset X = %d, Y = %d", offsetX, offsetY);
 
-	if ((_header.format & 0xf0) != kOldPackLZ)
-		error("tried to decode non-LZ encoded OldMohawkBitmap");
+	bool leRLE8 = false;
 
-	// 12 bytes header for the compressed data
-	uint32 uncompressedSize = endianStream->readUint32();
-	uint32 compressedSize = endianStream->readUint32();
-	uint16 posBits = endianStream->readUint16();
-	uint16 lengthBits = endianStream->readUint16();
+	if ((_header.format & 0xf0) == kOldPackLZ) {
+		// 12 bytes header for the compressed data
+		uint32 uncompressedSize = endianStream->readUint32();
+		uint32 compressedSize = endianStream->readUint32();
+		uint16 posBits = endianStream->readUint16();
+		uint16 lengthBits = endianStream->readUint16();
 
-	if (compressedSize != (uint32)endianStream->size() - 24)
-		error("More bytes (%d) remaining in stream than header says there should be (%d)", endianStream->size() - 24, compressedSize);
+		if (compressedSize != (uint32)endianStream->size() - 24)
+			error("More bytes (%d) remaining in stream than header says there should be (%d)", endianStream->size() - 24, compressedSize);
 
-	// These two errors are really just sanity checks and should never go off
-	if (posBits != POS_BITS)
-		error("Position bits modified to %d", posBits);
-	if (lengthBits != LEN_BITS)
-		error("Length bits modified to %d", lengthBits);
+		// These two errors are really just sanity checks and should never go off
+		if (posBits != POS_BITS)
+			error("Position bits modified to %d", posBits);
+		if (lengthBits != LEN_BITS)
+			error("Length bits modified to %d", lengthBits);
 
-	_data = decompressLZ(stream, uncompressedSize);
+		_data = decompressLZ(stream, uncompressedSize);
 
-	if (endianStream->pos() != endianStream->size())
-		error("OldMohawkBitmap decompression failed");
+		if (endianStream->pos() != endianStream->size())
+			error("OldMohawkBitmap decompression failed");
+	} else {
+		if ((_header.format & 0xf0) != 0)
+			error("Tried to use unknown OldMohawkBitmap compression (format %02x)", _header.format & 0xf0);
+
+		// This is so nasty on so many levels. The original Windows LZ decompressor for the
+		// Living Books v1 games had knowledge of the underlying RLE8 data. While going
+		// through the LZ data, it would byte swap the RLE8 length fields to make them LE.
+		// This is an extremely vile thing and there's no way in hell that I'm doing
+		// anything similar. When no LZ compression is used, the underlying RLE8 fields
+		// are LE, so we need to set a swap in this condition for LE vs. BE in the RLE8
+		// decoder. *sigh*
+
+		if (!endianStream->isBE())
+			leRLE8 = true;
+
+		_data = stream;
+		stream = NULL;
+	}
 
 	Graphics::Surface *surface = createSurface(_header.width, _header.height);
 
 	if ((_header.format & 0xf00) == kOldDrawRLE8)
-		drawRLE8(surface);
+		drawRLE8(surface, leRLE8);
 	else
 		drawRaw(surface);
 

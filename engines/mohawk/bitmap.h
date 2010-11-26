@@ -100,8 +100,9 @@ protected:
 	Graphics::Surface *createSurface(uint16 width, uint16 height);
 
 	// Draw Functions
+	void drawRLE8(Graphics::Surface *surface, bool isLE);
 	void drawRaw(Graphics::Surface *surface);
-	void drawRLE8(Graphics::Surface *surface);
+	void drawRLE8(Graphics::Surface *surface) { return drawRLE8(surface, false); }
 
 private:
 	// Unpack Functions
