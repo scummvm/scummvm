@@ -400,6 +400,8 @@ private:
 public:
 	ReadStreamEndian(bool bigEndian) : _bigEndian(bigEndian) {}
 
+	bool isBE() const { return _bigEndian; }
+
 	uint16 readUint16() {
 		uint16 val;
 		read(&val, 2);
