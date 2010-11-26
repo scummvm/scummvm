@@ -91,58 +91,6 @@ void Scheduler_v2d::delQueue(event_t *curEvent) {
 }
 
 /**
-* Insert the action pointed to by p into the timer event queue
-* The queue goes from head (earliest) to tail (latest) timewise
-*/
-void Scheduler_v2d::insertAction(act *action) {
-	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
-
-	// First, get and initialise the event structure
-	event_t *curEvent = getQueue();
-	curEvent->action = action;
-	switch (action->a0.actType) {                   // Assign whether local or global
-	case AGSCHEDULE:
-		curEvent->localActionFl = false;            // Lasts over a new screen
-		break;
-	default:
-		curEvent->localActionFl = true;             // Rest are for current screen only
-		break;
-	}
-
-	curEvent->time = action->a0.timer + getDosTicks(false); // Convert rel to abs time
-
-	// Now find the place to insert the event
-	if (!_tailEvent) {                              // Empty queue
-		_tailEvent = _headEvent = curEvent;
-		curEvent->nextEvent = curEvent->prevEvent = 0;
-	} else {
-		event_t *wrkEvent = _tailEvent;             // Search from latest time back
-		bool found = false;
-
-		while (wrkEvent && !found) {
-			if (wrkEvent->time <= curEvent->time) { // Found if new event later
-				found = true;
-				if (wrkEvent == _tailEvent)         // New latest in list
-					_tailEvent = curEvent;
-				else
-					wrkEvent->nextEvent->prevEvent = curEvent;
-				curEvent->nextEvent = wrkEvent->nextEvent;
-				wrkEvent->nextEvent = curEvent;
-				curEvent->prevEvent = wrkEvent;
-			}
-			wrkEvent = wrkEvent->prevEvent;
-		}
-
-		if (!found) {                               // Must be earliest in list
-			_headEvent->prevEvent = curEvent;       // So insert as new head
-			curEvent->nextEvent = _headEvent;
-			curEvent->prevEvent = 0;
-			_headEvent = curEvent;
-		}
-	}
-}
-
-/**
 * This function performs the action in the event structure pointed to by p
 * It dequeues the event and returns it to the free list.  It returns a ptr
 * to the next action in the list, except special case of NEW_SCREEN
@@ -314,12 +262,12 @@ event_t *Scheduler_v2d::doAction(event_t *curEvent) {
 		else
 			insertActionList(action->a25.actFailIndex);
 		break;
-//	case SOUND:                                     // act26: Play a sound (or tune)
-//		if (action->a26.soundIndex < _vm->_tunesNbr)
-//			_vm->_sound->playMusic(action->a26.soundIndex);
-//		else
-//			_vm->_sound->playSound(action->a26.soundIndex, BOTH_CHANNELS, MED_PRI);
-//		break;
+	case SOUND:                                     // act26: Play a sound (or tune)
+		if (action->a26.soundIndex < _vm->_tunesNbr)
+			_vm->_sound->playMusic(action->a26.soundIndex);
+		else
+			_vm->_sound->playSound(action->a26.soundIndex, BOTH_CHANNELS, MED_PRI);
+		break;
 	case ADD_SCORE:                                 // act27: Add object's value to score
 		_vm->adjustScore(_vm->_object->_objects[action->a27.objNumb].objValue);
 		break;
@@ -373,6 +321,61 @@ event_t *Scheduler_v2d::doAction(event_t *curEvent) {
 		_vm->_object->_objects[action->a38.lipsObjNumb].screenIndex = *_vm->_screen_p; // Don't forget screen!
 		_vm->_object->_objects[action->a38.lipsObjNumb].cycling = CYCLE_FORWARD;
 		break;
+	case INIT_STORY_MODE:                           // act39: Init story_mode flag
+		// This is similar to the QUIET path mode, except that it is
+		// independant of it and it additionally disables the ">" prompt
+		gameStatus.storyModeFl = action->a39.storyModeFl;
+
+		// End the game after story if this is special vendor demo mode
+		if (gameStatus.demoFl && action->a39.storyModeFl == false)
+			_vm->endGame();
+		break;
+	case WARN:                                      // act40: Text box (CF TEXT)
+		Utils::Box(BOX_OK, "%s", _vm->_file->fetchString(action->a40.stringIndex));
+		break;
+	case COND_BONUS:                                // act41: Perform action if got bonus
+		if (_vm->_points[action->a41.BonusIndex].scoredFl)
+			insertActionList(action->a41.actPassIndex);
+		else
+			insertActionList(action->a41.actFailIndex);
+		break;
+	case TEXT_TAKE:                                 // act42: Text box with "take" message
+		Utils::Box(BOX_ANY, TAKE_TEXT, _vm->_arrayNouns[_vm->_object->_objects[action->a42.objNumb].nounIndex][TAKE_NAME]);
+		break;
+	case YESNO:                                     // act43: Prompt user for Yes or No
+		warning("doAction(act43) - Yes/No Box");
+		if (Utils::Box(BOX_YESNO, "%s", _vm->_file->fetchString(action->a43.promptIndex)) != 0)
+			insertActionList(action->a43.actYesIndex);
+		else
+			insertActionList(action->a43.actNoIndex);
+		break;
+	case STOP_ROUTE:                                // act44: Stop any route in progress
+		gameStatus.routeIndex = -1;
+		break;
+	case COND_ROUTE:                                // act45: Conditional on route in progress
+		if (gameStatus.routeIndex >= action->a45.routeIndex)
+			insertActionList(action->a45.actPassIndex);
+		else
+			insertActionList(action->a45.actFailIndex);
+		break;
+	case INIT_JUMPEXIT:                             // act46: Init status.jumpexit flag
+		// This is to allow left click on exit to get there immediately
+		// For example the plane crash in Hugo2 where hero is invisible
+		// Couldn't use INVISIBLE flag since conflicts with boat in Hugo1
+		gameStatus.jumpExitFl = action->a46.jumpExitFl;
+		break;
+	case INIT_VIEW:                                 // act47: Init object.viewx, viewy, dir
+		_vm->_object->_objects[action->a47.objNumb].viewx = action->a47.viewx;
+		_vm->_object->_objects[action->a47.objNumb].viewy = action->a47.viewy;
+		_vm->_object->_objects[action->a47.objNumb].direction = action->a47.direction;
+		break;
+	case INIT_OBJ_FRAME:                            // act48: Set seq,frame number to use
+		// Note: Don't set a sequence at time 0 of a new screen, it causes
+		// problems clearing the boundary bits of the object!  t>0 is safe
+		_vm->_object->_objects[action->a48.objNumb].currImagePtr = _vm->_object->_objects[action->a48.objNumb].seqList[action->a48.seqIndex].seqPtr;
+		for (dx = 0; dx < action->a48.frameIndex; dx++)
+			_vm->_object->_objects[action->a48.objNumb].currImagePtr = _vm->_object->_objects[action->a48.objNumb].currImagePtr->nextSeqPtr;
+		break;
 	case OLD_SONG:
 		//TODO For Hugo 1 and Hugo2 DOS: The songs were not stored in a DAT file, but directly as
 		//strings. the current play_music should be modified to use a strings instead of reading
@@ -390,6 +393,58 @@ event_t *Scheduler_v2d::doAction(event_t *curEvent) {
 		wrkEvent = curEvent->nextEvent;
 		delQueue(curEvent);                         // Return event to free list
 		return wrkEvent;                            // Return next event ptr
+	}
+}
+
+/**
+* Insert the action pointed to by p into the timer event queue
+* The queue goes from head (earliest) to tail (latest) timewise
+*/
+void Scheduler_v2d::insertAction(act *action) {
+	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
+
+	// First, get and initialise the event structure
+	event_t *curEvent = getQueue();
+	curEvent->action = action;
+	switch (action->a0.actType) {                   // Assign whether local or global
+	case AGSCHEDULE:
+		curEvent->localActionFl = false;            // Lasts over a new screen
+		break;
+	default:
+		curEvent->localActionFl = true;             // Rest are for current screen only
+		break;
+	}
+
+	curEvent->time = action->a0.timer + getTicks(); // Convert rel to abs time
+
+	// Now find the place to insert the event
+	if (!_tailEvent) {                              // Empty queue
+		_tailEvent = _headEvent = curEvent;
+		curEvent->nextEvent = curEvent->prevEvent = 0;
+	} else {
+		event_t *wrkEvent = _tailEvent;             // Search from latest time back
+		bool found = false;
+
+		while (wrkEvent && !found) {
+			if (wrkEvent->time <= curEvent->time) { // Found if new event later
+				found = true;
+				if (wrkEvent == _tailEvent)         // New latest in list
+					_tailEvent = curEvent;
+				else
+					wrkEvent->nextEvent->prevEvent = curEvent;
+				curEvent->nextEvent = wrkEvent->nextEvent;
+				wrkEvent->nextEvent = curEvent;
+				curEvent->prevEvent = wrkEvent;
+			}
+			wrkEvent = wrkEvent->prevEvent;
+		}
+
+		if (!found) {                               // Must be earliest in list
+			_headEvent->prevEvent = curEvent;       // So insert as new head
+			curEvent->nextEvent = _headEvent;
+			curEvent->prevEvent = 0;
+			_headEvent = curEvent;
+		}
 	}
 }
 } // End of namespace Hugo

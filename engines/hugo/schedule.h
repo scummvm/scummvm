@@ -53,21 +53,23 @@ public:
 	Scheduler(HugoEngine *vm);
 	virtual ~Scheduler();
 
-	virtual void restoreEvents(Common::SeekableReadStream *f) = 0;
-	virtual void runScheduler() = 0;
-	virtual void saveEvents(Common::WriteStream *f) = 0;
+	virtual uint32 getTicks() = 0;
 
-	void   decodeString(char *line);
-	void   freeActListArr();
-	void   initEventQueue();
-	void   insertActionList(uint16 actIndex);
-	void   loadActListArr(Common::File &in);
-	void   loadAlNewscrIndex(Common::File &in);
-	void   newScreen(int screenIndex);
-	void   processBonus(int bonusIndex);
-	void   processMaze(int x1, int x2, int y1, int y2);
-	void   restoreScreen(int screenIndex);
-	void   waitForRefresh(void);
+	virtual void runScheduler() = 0;
+
+	void decodeString(char *line);
+	void freeActListArr();
+	void initEventQueue();
+	void insertActionList(uint16 actIndex);
+	void loadActListArr(Common::File &in);
+	void loadAlNewscrIndex(Common::File &in);
+	void newScreen(int screenIndex);
+	void processBonus(int bonusIndex);
+	void processMaze(int x1, int x2, int y1, int y2);
+	void restoreScreen(int screenIndex);
+	void restoreEvents(Common::SeekableReadStream *f);
+	void saveEvents(Common::WriteStream *f);
+	void waitForRefresh(void);
 
 protected:
 	HugoEngine *_vm;
@@ -100,9 +102,10 @@ public:
 	~Scheduler_v1d();
 
 	virtual const char *getCypher();
+
+	virtual uint32 getTicks();
+
 	virtual void insertAction(act *action);
-	virtual void restoreEvents(Common::SeekableReadStream *f);
-	virtual void saveEvents(Common::WriteStream *f);
 	virtual void runScheduler();
 protected:
 	virtual void delQueue(event_t *curEvent);
@@ -115,10 +118,10 @@ public:
 	virtual ~Scheduler_v2d();
 
 	virtual const char *getCypher();
-	virtual void insertAction(act *action);
+	void insertAction(act *action);
 protected:
-	virtual void delQueue(event_t *curEvent);
-	virtual event_t *doAction(event_t *curEvent);
+	void delQueue(event_t *curEvent);
+	event_t *doAction(event_t *curEvent);
 };
 
 class Scheduler_v3d : public Scheduler_v2d {
@@ -127,9 +130,6 @@ public:
 	~Scheduler_v3d();
 
 	const char *getCypher();
-protected:
-	virtual event_t *doAction(event_t *curEvent);
-
 };
 
 class Scheduler_v1w : public Scheduler_v3d {
@@ -137,11 +137,9 @@ public:
 	Scheduler_v1w(HugoEngine *vm);
 	~Scheduler_v1w();
 
-	virtual event_t *doAction(event_t *curEvent);
-	void insertAction(act *action);
-	void restoreEvents(Common::SeekableReadStream *f);
+	uint32 getTicks();
+
 	void runScheduler();
-	void saveEvents(Common::WriteStream *f);
 };
 } // End of namespace Hugo
 #endif //HUGO_SCHEDULE_H

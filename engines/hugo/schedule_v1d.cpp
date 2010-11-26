@@ -56,6 +56,10 @@ const char *Scheduler_v1d::getCypher() {
 	return "Copyright (c) 1990, Gray Design Associates";
 }
 
+uint32 Scheduler_v1d::getTicks() {
+	return getDosTicks(false);
+}
+
 /**
 * Delete an event structure (i.e. return it to the free list)
 * Note that event is assumed at head of queue (i.e. earliest).  To delete
@@ -77,52 +81,6 @@ void Scheduler_v1d::delQueue(event_t *curEvent) {
 	if (_freeEvent)                                 // Special case, if free list was empty
 		_freeEvent->prevEvent = curEvent;
 	_freeEvent = curEvent;
-}
-
-/**
-* Insert the action pointed to by p into the timer event queue
-* The queue goes from head (earliest) to tail (latest) timewise
-*/
-void Scheduler_v1d::insertAction(act *action) {
-	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
-
-	// First, get and initialise the event structure
-	event_t *curEvent = getQueue();
-	curEvent->action = action;
-
-	curEvent->localActionFl = true;             // Rest are for current screen only
-
-	curEvent->time = action->a0.timer + getDosTicks(false); // Convert rel to abs time
-
-	// Now find the place to insert the event
-	if (!_tailEvent) {                              // Empty queue
-		_tailEvent = _headEvent = curEvent;
-		curEvent->nextEvent = curEvent->prevEvent = 0;
-	} else {
-		event_t *wrkEvent = _tailEvent;             // Search from latest time back
-		bool found = false;
-
-		while (wrkEvent && !found) {
-			if (wrkEvent->time <= curEvent->time) { // Found if new event later
-				found = true;
-				if (wrkEvent == _tailEvent)         // New latest in list
-					_tailEvent = curEvent;
-				else
-					wrkEvent->nextEvent->prevEvent = curEvent;
-				curEvent->nextEvent = wrkEvent->nextEvent;
-				wrkEvent->nextEvent = curEvent;
-				curEvent->prevEvent = wrkEvent;
-			}
-			wrkEvent = wrkEvent->prevEvent;
-		}
-
-		if (!found) {                               // Must be earliest in list
-			_headEvent->prevEvent = curEvent;       // So insert as new head
-			curEvent->nextEvent = _headEvent;
-			curEvent->prevEvent = 0;
-			_headEvent = curEvent;
-		}
-	}
 }
 
 /**
@@ -328,73 +286,48 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 }
 
 /**
-* Write the event queue to the file with handle f
-* Note that we convert all the event structure ptrs to indexes
-* using -1 for NULL.  We can't convert the action ptrs to indexes
-* so we save address of first dummy action ptr to compare on restore.
+* Insert the action pointed to by p into the timer event queue
+* The queue goes from head (earliest) to tail (latest) timewise
 */
-void Scheduler_v1d::saveEvents(Common::WriteStream *f) {
-	debugC(1, kDebugSchedule, "saveEvents()");
+void Scheduler_v1d::insertAction(act *action) {
+	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
 
-	uint32 curTime = getDosTicks(false);
-	event_t  saveEventArr[kMaxEvents];              // Convert event ptrs to indexes
+	// First, get and initialise the event structure
+	event_t *curEvent = getQueue();
+	curEvent->action = action;
 
-	// Convert event ptrs to indexes
-	for (int16 i = 0; i < kMaxEvents; i++) {
-		event_t *wrkEvent = &_events[i];
-		saveEventArr[i] = *wrkEvent;
-		saveEventArr[i].prevEvent = (wrkEvent->prevEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->prevEvent - _events);
-		saveEventArr[i].nextEvent = (wrkEvent->nextEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->nextEvent - _events);
-	}
+	curEvent->localActionFl = true;                 // Rest are for current screen only
 
-	int16 freeIndex = (_freeEvent == 0) ? -1 : _freeEvent - _events;
-	int16 headIndex = (_headEvent == 0) ? -1 : _headEvent - _events;
-	int16 tailIndex = (_tailEvent == 0) ? -1 : _tailEvent - _events;
+	curEvent->time = action->a0.timer + getTicks(); // Convert rel to abs time
 
-	f->writeUint32BE(curTime);
-	f->writeSint16BE(freeIndex);
-	f->writeSint16BE(headIndex);
-	f->writeSint16BE(tailIndex);
-	f->write(saveEventArr, sizeof(saveEventArr));
-	warning("TODO: serialize saveEventArr");
-}
+	// Now find the place to insert the event
+	if (!_tailEvent) {                              // Empty queue
+		_tailEvent = _headEvent = curEvent;
+		curEvent->nextEvent = curEvent->prevEvent = 0;
+	} else {
+		event_t *wrkEvent = _tailEvent;             // Search from latest time back
+		bool found = false;
 
-/**
-* Restore the event list from file with handle f
-*/
-void Scheduler_v1d::restoreEvents(Common::SeekableReadStream *f) {
-	debugC(1, kDebugSchedule, "restoreEvents");
+		while (wrkEvent && !found) {
+			if (wrkEvent->time <= curEvent->time) { // Found if new event later
+				found = true;
+				if (wrkEvent == _tailEvent)         // New latest in list
+					_tailEvent = curEvent;
+				else
+					wrkEvent->nextEvent->prevEvent = curEvent;
+				curEvent->nextEvent = wrkEvent->nextEvent;
+				wrkEvent->nextEvent = curEvent;
+				curEvent->prevEvent = wrkEvent;
+			}
+			wrkEvent = wrkEvent->prevEvent;
+		}
 
-	uint32   saveTime;
-	int16    freeIndex;                             // Free list index
-	int16    headIndex;                             // Head of list index
-	int16    tailIndex;                             // Tail of list index
-	event_t  savedEvents[kMaxEvents];               // Convert event ptrs to indexes
-
-	saveTime = f->readUint32BE();                   // time of save
-	freeIndex = f->readSint16BE();
-	headIndex = f->readSint16BE();
-	tailIndex = f->readSint16BE();
-	f->read(savedEvents, sizeof(savedEvents));
-
-	event_t *wrkEvent;
-	// Restore events indexes to pointers
-	for (int i = 0; i < kMaxEvents; i++) {
-		wrkEvent = &savedEvents[i];
-		_events[i] = *wrkEvent;
-		_events[i].prevEvent = (wrkEvent->prevEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->prevEvent ];
-		_events[i].nextEvent = (wrkEvent->nextEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->nextEvent ];
-	}
-	_freeEvent = (freeIndex == -1) ? 0 : &_events[freeIndex];
-	_headEvent = (headIndex == -1) ? 0 : &_events[headIndex];
-	_tailEvent = (tailIndex == -1) ? 0 : &_events[tailIndex];
-
-	// Adjust times to fit our time
-	uint32 curTime = getDosTicks(false);
-	wrkEvent = _headEvent;                              // The earliest event
-	while (wrkEvent) {                              // While mature events found
-		wrkEvent->time = wrkEvent->time - saveTime + curTime;
-		wrkEvent = wrkEvent->nextEvent;
+		if (!found) {                               // Must be earliest in list
+			_headEvent->prevEvent = curEvent;       // So insert as new head
+			curEvent->nextEvent = _headEvent;
+			curEvent->prevEvent = 0;
+			_headEvent = curEvent;
+		}
 	}
 }
 
@@ -406,13 +339,10 @@ void Scheduler_v1d::restoreEvents(Common::SeekableReadStream *f) {
 void Scheduler_v1d::runScheduler() {
 	debugC(6, kDebugSchedule, "runScheduler");
 
-	uint32 ticker;                                  // The time now, in ticks
-	event_t *curEvent;                              // Event ptr
+	uint32 ticker = getTicks();                     // The time now, in ticks
+	event_t *curEvent = _headEvent;                 // The earliest event
 
-	ticker = getDosTicks(false);
-
-	curEvent = _headEvent;                          // The earliest event
-	while (curEvent && curEvent->time <= ticker)    // While mature events found
+	while (curEvent && (curEvent->time <= ticker))  // While mature events found
 		curEvent = doAction(curEvent);              // Perform the action (returns next_p)
 }
 

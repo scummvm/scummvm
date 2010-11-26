@@ -111,7 +111,7 @@ void Scheduler::decodeString(char *line) {
 * Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
 */
 uint32 Scheduler::getWinTicks() {
-	debugC(3, kDebugSchedule, "getTicks");
+	debugC(3, kDebugSchedule, "getWinTicks");
 
 	return _vm->getGameStatus().tick;
 }
@@ -123,7 +123,7 @@ uint32 Scheduler::getWinTicks() {
 * a real tick, in which case the system tick is simply incremented
 */
 uint32 Scheduler::getDosTicks(bool updateFl) {
-	debugC(5, kDebugSchedule, "getTicks");
+	debugC(5, kDebugSchedule, "getDosTicks(%s)", (updateFl) ? 1 : 0);
 
 	static  uint32 tick = 0;                        // Current system time in ticks
 	static  uint32 t_old = 0;                       // The previous wall time in ticks
@@ -878,6 +878,73 @@ void Scheduler::processMaze(int x1, int x2, int y1, int y2) {
 		_actListArr[_alNewscrIndex][0].a2.y = _maze.y1 + SHIFT;
 		gameStatus.routeIndex = -1;
 		insertActionList(_alNewscrIndex);
+	}
+}
+
+/**
+* Write the event queue to the file with handle f
+* Note that we convert all the event structure ptrs to indexes
+* using -1 for NULL.  We can't convert the action ptrs to indexes
+* so we save address of first dummy action ptr to compare on restore.
+*/
+void Scheduler::saveEvents(Common::WriteStream *f) {
+	debugC(1, kDebugSchedule, "saveEvents()");
+
+	f->writeUint32BE(getTicks());
+
+	int16 freeIndex = (_freeEvent == 0) ? -1 : _freeEvent - _events;
+	int16 headIndex = (_headEvent == 0) ? -1 : _headEvent - _events;
+	int16 tailIndex = (_tailEvent == 0) ? -1 : _tailEvent - _events;
+
+	f->writeSint16BE(freeIndex);
+	f->writeSint16BE(headIndex);
+	f->writeSint16BE(tailIndex);
+
+	// Convert event ptrs to indexes
+	event_t  saveEventArr[kMaxEvents];              // Convert event ptrs to indexes
+	for (int16 i = 0; i < kMaxEvents; i++) {
+		event_t *wrkEvent = &_events[i];
+		saveEventArr[i] = *wrkEvent;
+		saveEventArr[i].prevEvent = (wrkEvent->prevEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->prevEvent - _events);
+		saveEventArr[i].nextEvent = (wrkEvent->nextEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->nextEvent - _events);
+	}
+
+	f->write(saveEventArr, sizeof(saveEventArr));
+	warning("TODO: serialize saveEventArr");
+}
+
+/**
+* Restore the event list from file with handle f
+*/
+void Scheduler::restoreEvents(Common::SeekableReadStream *f) {
+	debugC(1, kDebugSchedule, "restoreEvents");
+
+	event_t  savedEvents[kMaxEvents];               // Convert event ptrs to indexes
+
+	uint32 saveTime = f->readUint32BE();            // time of save
+	int16 freeIndex = f->readSint16BE();            // Free list index
+	int16 headIndex = f->readSint16BE();            // Head of list index
+	int16 tailIndex = f->readSint16BE();            // Tail of list index
+	f->read(savedEvents, sizeof(savedEvents));
+
+	event_t *wrkEvent;
+	// Restore events indexes to pointers
+	for (int i = 0; i < kMaxEvents; i++) {
+		wrkEvent = &savedEvents[i];
+		_events[i] = *wrkEvent;
+		_events[i].prevEvent = (wrkEvent->prevEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->prevEvent ];
+		_events[i].nextEvent = (wrkEvent->nextEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->nextEvent ];
+	}
+	_freeEvent = (freeIndex == -1) ? 0 : &_events[freeIndex];
+	_headEvent = (headIndex == -1) ? 0 : &_events[headIndex];
+	_tailEvent = (tailIndex == -1) ? 0 : &_events[tailIndex];
+
+	// Adjust times to fit our time
+	uint32 curTime = getTicks();
+	wrkEvent = _headEvent;                              // The earliest event
+	while (wrkEvent) {                              // While mature events found
+		wrkEvent->time = wrkEvent->time - saveTime + curTime;
+		wrkEvent = wrkEvent->nextEvent;
 	}
 }
 
