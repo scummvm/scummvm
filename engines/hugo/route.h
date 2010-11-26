@@ -56,7 +56,7 @@ public:
 	Route(HugoEngine *vm);
 
 	void processRoute();
-	bool startRoute(go_t go_for, short id, short cx, short cy);
+	bool startRoute(go_t go_for, int16 id, int16 cx, int16 cy);
 	void setDirection(uint16 keyCode);
 	void setWalk(uint16 direction);
 

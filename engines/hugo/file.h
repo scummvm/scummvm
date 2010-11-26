@@ -56,15 +56,15 @@ public:
 
 
 	bool     fileExists(char *filename);
-	sound_pt getSound(short sound, uint16 *size);
+	sound_pt getSound(int16 sound, uint16 *size);
 
 	void     instructions();
 	void     readBootFile();
 	void     readImage(int objNum, object_t *objPtr);
 	void     readUIFImages();
-	void     readUIFItem(short id, byte *buf);
-	void     restoreGame(short slot);
-	void     saveGame(short slot, const char *descrip);
+	void     readUIFItem(int16 id, byte *buf);
+	void     restoreGame(int16 slot);
+	void     saveGame(int16 slot, const char *descrip);
 
 	virtual void openDatabaseFiles() = 0;
 	virtual void closeDatabaseFiles() = 0;

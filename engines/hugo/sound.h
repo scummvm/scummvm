@@ -47,8 +47,8 @@ public:
 	void toggleMusic();
 	void toggleSound();
 	void setMusicVolume();
-	void playMusic(short tune);
-	void playSound(short sound, stereo_t channel, byte priority);
+	void playMusic(int16 tune);
+	void playSound(int16 sound, stereo_t channel, byte priority);
 	void initSound();
 
 private:
