@@ -504,7 +504,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				if (info.basic.param2 == 127)		// Set global reverb instead
 					_pSnd->reverb = _music->getGlobalReverb();
 				else
-					_pSnd->reverb = _music->getGlobalReverb();
+					_pSnd->reverb = info.basic.param2;
 
 				((MidiPlayer *)_driver)->setReverb(_pSnd->reverb);
 				break;
