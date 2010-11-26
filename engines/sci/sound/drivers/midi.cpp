@@ -479,8 +479,6 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 
 	// Reverb default only used in (roughly) SCI0/SCI01
 	byte reverb = str->readByte();
-	if (_version <= SCI_VERSION_0_LATE)
-		setReverb(reverb);
 
 	_hasReverb = true;
 
@@ -488,8 +486,6 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 	str->seek(11, SEEK_CUR);
 
 	// Read reverb data (stored vertically - patch #3117434)
-	// TODO: we need to send this to the MT-32, if it's available,
-	// depending on the SCI version
 	for (int j = 0; j < 3; ++j) {
 		for (int i = 0; i < kReverbConfigNr; i++) {
 			_reverbConfig[i][j] = str->readByte();
@@ -520,6 +516,10 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 		// Partial reserve
 		sendMt32SysEx(0x100004, str, 9);
 	}
+
+	// Reverb for SCI0
+	if (_version <= SCI_VERSION_0_LATE)
+		setReverb(reverb);
 
 	// Send after-SysEx text
 	str->seek(0);
