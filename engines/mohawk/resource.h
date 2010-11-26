@@ -42,7 +42,7 @@ namespace Mohawk {
 // Myst Resource FourCC's
 #define ID_CLRC MKID_BE('CLRC') // Cursor Hotspots
 #define ID_EXIT MKID_BE('EXIT') // Card Exit Scripts
-#define ID_HINT MKID_BE('HINT') // Specifies Cursors in What Area
+#define ID_HINT MKID_BE('HINT') // Cursor Hints
 #define ID_INIT MKID_BE('INIT') // Card Entrance Scripts
 #define ID_MSND MKID_BE('MSND') // Standard Mohawk Sound
 #define ID_RLST MKID_BE('RLST') // Resource List, Specifies HotSpots
@@ -53,7 +53,7 @@ namespace Mohawk {
 // Myst Masterpiece Edition Resource FourCC's (In addition to Myst FourCC's)
 #define ID_HELP MKID_BE('HELP') // Help Chunk
 #define ID_MJMP MKID_BE('MJMP') // MSND Jumps (To reduce MSND duplication)
-#define ID_PICT MKID_BE('PICT') // JPEG/PICT Image
+#define ID_PICT MKID_BE('PICT') // JPEG/PICT/WDIB Image
 
 // Riven Resource FourCC's
 #define ID_BLST MKID_BE('BLST') // Card Hotspot Enabling Lists
@@ -63,34 +63,36 @@ namespace Mohawk {
 #define ID_MLST MKID_BE('MLST') // Card Movie Lists
 #define ID_NAME MKID_BE('NAME') // Object Names
 #define ID_PLST MKID_BE('PLST') // Card Picture Lists
-#define ID_RMAP MKID_BE('RMAP') // Card Code
+#define ID_RMAP MKID_BE('RMAP') // Card Codes
 #define ID_SFXE MKID_BE('SFXE') // Water Effect Animations
 #define ID_SLST MKID_BE('SLST') // Card Ambient Sound Lists
-#define ID_TMOV MKID_BE('tMOV') // Game Movie
+#define ID_TMOV MKID_BE('tMOV') // QuickTime Movie
 
 // Riven Saved Game FourCC's
-#define ID_VARS MKID_BE('VARS') // Saved Game Variable Values
+#define ID_VARS MKID_BE('VARS') // Variable Values
 #define ID_VERS MKID_BE('VERS') // Version Info
 #define ID_ZIPS MKID_BE('ZIPS') // Zip Mode Status
 
 // Zoombini Resource FourCC's
 #define ID_SND  MKID_BE('\0SND') // Standard Mohawk Sound
 #define ID_CURS MKID_BE('CURS') // Cursor?
-#define ID_SCRB MKID_BE('SCRB') // ???
-#define ID_SCRS MKID_BE('SCRS') // ???
-#define ID_NODE MKID_BE('NODE') // ???
-#define ID_PATH MKID_BE('PATH') // ???
-#define ID_SHPL MKID_BE('SHPL') // ???
+#define ID_SCRB MKID_BE('SCRB') // Script?
+#define ID_SCRS MKID_BE('SCRS') // Script?
+#define ID_NODE MKID_BE('NODE') // Walk Node?
+#define ID_PATH MKID_BE('PATH') // Walk Path?
+#define ID_SHPL MKID_BE('SHPL') // Shape List?
 
 // Living Books Resource FourCC's
 #define ID_TCUR MKID_BE('tCUR') // Cursor
-#define ID_BITL MKID_BE('BITL') // ???
-#define ID_CTBL MKID_BE('CTBL') // Color Table?
-#define ID_SCRP MKID_BE('SCRP') // Script?
-#define ID_SPR  MKID_BE('SPR#') // Sprites?
+#define ID_BITL MKID_BE('BITL') // Book Item List
+#define ID_CTBL MKID_BE('CTBL') // Color Table
+#define ID_SCRP MKID_BE('SCRP') // Script
+#define ID_SPR  MKID_BE('SPR#') // Sprite?
 #define ID_VRSN MKID_BE('VRSN') // Version
-#define ID_ANI  MKID_BE('ANI ') // Animation?
-#define ID_SHP  MKID_BE('SHP#') // ???
+#define ID_ANI  MKID_BE('ANI ') // Animation
+#define ID_SHP  MKID_BE('SHP#') // Shape
+#define ID_WAV  MKID_BE('WAV ') // Old Sound Resource
+#define ID_BMAP MKID_BE('BMAP') // Old Mohawk Bitmap
 
 // JamesMath Resource FourCC's
 #define ID_TANM MKID_BE('tANM') // Animation?
@@ -104,11 +106,7 @@ namespace Mohawk {
 
 // Mohawk MIDI Tags
 #define ID_MIDI MKID_BE('MIDI') // Game Sound (Third Tag), instead of WAVE
-#define ID_PRG  MKID_BE('Prg#') // Midi Program?
-
-// Old Mohawk Resource FourCC's
-#define ID_WAV  MKID_BE('WAV ') // Old Sound Resource
-#define ID_BMAP MKID_BE('BMAP') // Standard Mohawk Bitmap
+#define ID_PRG  MKID_BE('Prg#') // MIDI Patch
 
 // Common Resource FourCC's
 #define ID_TBMP MKID_BE('tBMP') // Standard Mohawk Bitmap
@@ -120,8 +118,8 @@ namespace Mohawk {
 #define ID_TBMH MKID_BE('tBMH') // Standard Mohawk Bitmap
 #define ID_TMID MKID_BE('tMID') // Standard Mohawk MIDI
 #define ID_REGS MKID_BE('REGS') // ??? (Zoombini, Treehouse)
-#define ID_BYTS MKID_BE('BYTS') // Database Entry (CSWorld, CSAmtrak)
-#define ID_INTS MKID_BE('INTS') // ??? (CSWorld, CSAmtrak)
+#define ID_BYTS MKID_BE('BYTS') // Byte Array? (Used as Database Entry in CSWorld, CSAmtrak)
+#define ID_INTS MKID_BE('INTS') // uint16 Array? (CSWorld, CSAmtrak)
 #define ID_BBOX MKID_BE('BBOX') // Boxes? (CSWorld, CSAmtrak)
 #define ID_SYSX MKID_BE('SYSX') // MIDI Sysex
 
