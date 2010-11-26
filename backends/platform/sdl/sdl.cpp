@@ -733,7 +733,7 @@ Common::Language OSystem_SDL::getSystemLanguage() const {
 	}
 #else // WIN32
 	// Activating current locale settings
-	const char *locale = "de_DE.utf8";//setlocale(LC_ALL, "");
+	const char *locale = setlocale(LC_ALL, "");
 
 	// Detect the language from the locale
 	if (!locale) {
