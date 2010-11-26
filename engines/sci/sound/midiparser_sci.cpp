@@ -502,9 +502,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			switch (info.basic.param1) {
 			case kSetReverb:
 				if (info.basic.param2 == 127)		// Set global reverb instead
-					((MidiPlayer *)_driver)->setReverb(_music->getGlobalReverb());
+					_pSnd->reverb = _music->getGlobalReverb();
 				else
-					((MidiPlayer *)_driver)->setReverb(info.basic.param2);
+					_pSnd->reverb = _music->getGlobalReverb();
+
+				((MidiPlayer *)_driver)->setReverb(_pSnd->reverb);
 				break;
 			case kMidiHold:
 				// Check if the hold ID marker is the same as the hold ID
