@@ -36,6 +36,8 @@
 #include "sci/sound/midiparser_sci.h"
 #include "sci/sound/music.h"
 
+//#define DISABLE_REMAPPING
+
 namespace Sci {
 
 SciMusic::SciMusic(SciVersion soundVersion)
@@ -327,6 +329,10 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 // This one checks, if requested channel is available -> in that case give
 // caller that channel. Otherwise look for an unused one
 int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
+#ifdef DISABLE_REMAPPING
+	return bestChannel;
+#endif
+
 	// Don't even try this for SCI0
 	if (_soundVersion <= SCI_VERSION_0_LATE)
 		return bestChannel;
