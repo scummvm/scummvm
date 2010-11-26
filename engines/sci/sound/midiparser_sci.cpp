@@ -630,71 +630,18 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 }
 
 byte MidiParser_SCI::getSongReverb() {
-	byte curEvent = 0, prevEvent = 0, command = 0;
-	bool endOfTrack = false;
-	const byte *channelData = _mixedData;
+	assert(_track);
 
-	do {
-		while (*channelData == 0xF8)
-			channelData++;
-
-		channelData++;	// delta
-
-		if ((*channelData & 0xF0) >= 0x80)
-			curEvent = *(channelData++);
-		else
-			curEvent = prevEvent;
-		if (curEvent < 0x80)
-			continue;
-
-		prevEvent = curEvent;
-		command = curEvent >> 4;
-
-		byte channel;
-
-		switch (command) {
-		case 0xC:	// program change
-		case 0xD:
-			channelData++;	// param1
-			break;
-		case 0xB: {
-				byte param1 = *channelData++;
-				byte param2 = *channelData++;
-				channel = curEvent & 0x0F;
-				if (channel == 0xF) {	// SCI special
-					if (param1 == kSetReverb)
-						return param2;
-				}
-			}
-			break;
-		case 0x8:
-		case 0x9:
-		case 0xA:
-		case 0xE:
-			channelData++;	// param1
-			channelData++;	// param2
-			break;
-		case 0xF:
-			if ((curEvent & 0x0F) == 0x2) {
-				channelData++;	// param1
-				channelData++;	// param2
-			} else if ((curEvent & 0x0F) == 0x3) {
-				channelData++;	// param1
-			} else if ((curEvent & 0x0F) == 0xF) {	// META
-				byte type = *channelData++;
-				if (type == 0x2F) {// end of track reached
-					endOfTrack = true;
-				} else {
-					// no further processing necessary
-				}
-			}
-			break;
-		default:
-			break;
+	if (_soundVersion >= SCI_VERSION_1_EARLY) {
+		for (int i = 0; i < _track->channelCount; i++) {
+			SoundResource::Channel &channel = _track->channels[i];
+			// Peek ahead in the control channel to get the default reverb setting
+			if (channel.number == 15 && channel.size >= 7)
+				return channel.data[6];
 		}
-	} while (!endOfTrack);
+	}
 
-	return 127;	// no reverb found, return invalid
+	return 127;
 }
 
 void MidiParser_SCI::allNotesOff() {
