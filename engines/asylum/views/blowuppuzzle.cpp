@@ -167,8 +167,8 @@ void BlowUpPuzzleVCR::update() {
 	updateStopButton();
 
 	if (_buttonsState[kPower] == kON) {
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[22], _tvScreenAnimIdx, 0, 37, 0, 0, 1);
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[23], _tvScreenAnimIdx++, 238, 22, 0, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[22], _tvScreenAnimIdx, Common::Point(0, 37), 0, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[23], _tvScreenAnimIdx++, Common::Point(238, 22), 0, 0, 1);
 		_tvScreenAnimIdx %= 6;
 	}
 
@@ -181,7 +181,7 @@ void BlowUpPuzzleVCR::update() {
 			barSize += 4;
 		} while (barSize < 84);
 
-		// TODO: fade palette to grey
+		// TODO: fade palette to gray
 
 		getVideo()->playVideo(2, true);
 
@@ -201,9 +201,8 @@ GraphicQueueItem BlowUpPuzzleVCR::getGraphicJackItem(int32 index) {
 	}
 
 	jackItemOnHand.resourceId = getWorld()->graphicResourceIds[index];
-	jackItemOnHand.frameIdx = 0;
-	jackItemOnHand.x = _cursor->position().x - 114;
-	jackItemOnHand.y = jackY - 14;
+	jackItemOnHand.frameIndex = 0;
+	jackItemOnHand.point = Common::Point(_cursor->position().x - 114, jackY - 14);
 	jackItemOnHand.priority = 1;
 
 	return jackItemOnHand;
@@ -217,9 +216,8 @@ GraphicQueueItem BlowUpPuzzleVCR::getGraphicShadowItem() {
 		shadowY = 0;
 	}
 	shadowItem.resourceId = getWorld()->graphicResourceIds[30];
-	shadowItem.frameIdx = 0;
-	shadowItem.x = _cursor->position().x - shadowY;
-	shadowItem.y = 450;
+	shadowItem.frameIndex = 0;
+	shadowItem.point = Common::Point(_cursor->position().x - shadowY, 450);
 	shadowItem.priority = 2;
 
 	return shadowItem;
@@ -231,33 +229,29 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, const VCRDrawInfo &onTable, const VC
 	switch (_jacksState[jack]) {
 	case kOnTable:
 		item.resourceId = getWorld()->graphicResourceIds[onTable.resourceId];
-		item.frameIdx = 0;
-		item.x = onTable.x;
-		item.y = onTable.y;
+		item.frameIndex = 0;
+		item.point = onTable.point;
 		item.priority = 3;
 		break;
 
 	case kPluggedOnRed:
 		item.resourceId = getWorld()->graphicResourceIds[pluggedOnRed.resourceId];
-		item.frameIdx = 0;
-		item.x = 329;
-		item.y = 407;
+		item.frameIndex = 0;
+		item.point = Common::Point(329, 407);
 		item.priority = 3;
 		break;
 
 	case kPluggedOnYellow:
 		item.resourceId = getWorld()->graphicResourceIds[pluggedOnYellow.resourceId];
-		item.frameIdx = 0;
-		item.x = 402;
-		item.y = 413;
+		item.frameIndex = 0;
+		item.point = Common::Point(402, 413);
 		item.priority = 3;
 		break;
 
 	case kPluggedOnBlack:
 		item.resourceId = getWorld()->graphicResourceIds[pluggedOnBlack.resourceId];
-		item.frameIdx = 0;
-		item.x = 477;
-		item.y = 418;
+		item.frameIndex = 0;
+		item.point = Common::Point(477, 418);
 		item.priority = 3;
 		break;
 
@@ -281,8 +275,7 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, const VCRDrawInfo &onTable, const VC
 void BlowUpPuzzleVCR::updateBlackJack() {
 	VCRDrawInfo onTable;
 	onTable.resourceId = 1;
-	onTable.x = 0;
-	onTable.y = 411;
+	onTable.point = Common::Point(0, 411);
 
 	VCRDrawInfo pluggedOnRed;
 	pluggedOnRed.resourceId = 5;
@@ -299,8 +292,7 @@ void BlowUpPuzzleVCR::updateBlackJack() {
 void BlowUpPuzzleVCR::updateRedJack() {
 	VCRDrawInfo onTable;
 	onTable.resourceId = 2;
-	onTable.x = 76;
-	onTable.y = 428;
+	onTable.point = Common::Point(76, 428);
 
 	VCRDrawInfo pluggedOnRed;
 	pluggedOnRed.resourceId = 4;
@@ -317,8 +309,7 @@ void BlowUpPuzzleVCR::updateRedJack() {
 void BlowUpPuzzleVCR::updateYellowJack() {
 	VCRDrawInfo onTable;
 	onTable.resourceId = 3;
-	onTable.x = 187;
-	onTable.y = 439;
+	onTable.point = Common::Point(187, 439);
 
 	VCRDrawInfo pluggedOnRed;
 	pluggedOnRed.resourceId = 6;
@@ -357,17 +348,15 @@ void BlowUpPuzzleVCR::updateButton(Button button, const VCRDrawInfo &btON, const
 	switch (_buttonsState[button]) {
 	case kON:
 		item.resourceId = getWorld()->graphicResourceIds[btON.resourceId];
-		item.frameIdx = 0;
-		item.x = btON.x;
-		item.y = btON.y;
+		item.frameIndex = 0;
+		item.point = btON.point;
 		item.priority = 3;
 		break;
 	case kDownON:
 	case kDownOFF:
 		item.resourceId = getWorld()->graphicResourceIds[btDown.resourceId];
-		item.frameIdx = 0;
-		item.x = btDown.x;
-		item.y = btDown.y;
+		item.frameIndex = 0;
+		item.point = btDown.point;
 		item.priority = 3;
 		break;
 	default:
@@ -383,13 +372,11 @@ void BlowUpPuzzleVCR::updateButton(Button button, const VCRDrawInfo &btON, const
 void BlowUpPuzzleVCR::updatePowerButton() {
 	VCRDrawInfo btON;
 	btON.resourceId = 17;
-	btON.x = 512;
-	btON.y = 347;
+	btON.point = Common::Point(512, 347);
 
 	VCRDrawInfo btDown;
 	btDown.resourceId = 21;
-	btDown.x = 506;
-	btDown.y = 343;
+	btDown.point = Common::Point(506, 343);
 
 	updateButton(kPower, btON, btDown);
 }
@@ -397,13 +384,11 @@ void BlowUpPuzzleVCR::updatePowerButton() {
 void BlowUpPuzzleVCR::updateRewindButton() {
 	VCRDrawInfo btON;
 	btON.resourceId = 14;
-	btON.x = 248;
-	btON.y = 347;
+	btON.point = Common::Point(248, 347);
 
 	VCRDrawInfo btDown;
 	btDown.resourceId = 18;
-	btDown.x = 245;
-	btDown.y = 344;
+	btDown.point = Common::Point(245, 344);
 
 	updateButton(kRewind, btON, btDown);
 }
@@ -411,13 +396,11 @@ void BlowUpPuzzleVCR::updateRewindButton() {
 void BlowUpPuzzleVCR::updatePlayButton() {
 	VCRDrawInfo btON;
 	btON.resourceId = 16;
-	btON.x = 401;
-	btON.y = 359;
+	btON.point = Common::Point(401, 359);
 
 	VCRDrawInfo btDown;
 	btDown.resourceId = 20;
-	btDown.x = 391;
-	btDown.y = 355;
+	btDown.point = Common::Point(391, 355);
 
 	updateButton(kPlay, btON, btDown);
 }
@@ -425,13 +408,11 @@ void BlowUpPuzzleVCR::updatePlayButton() {
 void BlowUpPuzzleVCR::updateStopButton() {
 	VCRDrawInfo btON;
 	btON.resourceId = 15;
-	btON.x = 330;
-	btON.y = 354;
+	btON.point = Common::Point(330, 354);
 
 	VCRDrawInfo btDown;
 	btDown.resourceId = 19;
-	btDown.x = 326;
-	btDown.y = 350;
+	btDown.point = Common::Point(326, 350);
 
 	updateButton(kStop, btON, btDown);
 }

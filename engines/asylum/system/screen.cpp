@@ -162,12 +162,11 @@ void Screen::startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 p
 	error("[Screen::startPaletteFade] not implemented");
 }
 
-void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority) {
+void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 flags, int32 transTableNum, int32 priority) {
 	GraphicQueueItem item;
 	item.resourceId = resourceId;
-	item.x = x;
-	item.y = y;
-	item.frameIdx = frameIdx;
+	item.point = point;
+	item.frameIndex = frameIndex;
 	item.flags = flags;
 	item.transTableNum = transTableNum;
 	item.priority = priority;
@@ -175,8 +174,12 @@ void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIdx, int32 x, 
 	_queueItems.push_back(item);
 }
 
-void Screen::addCrossFadeGraphicToQueue(ResourceId resourceId, uint32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority) {
-	error("[Screen::addCrossFadeGraphicToQueue] not implemented");
+void Screen::addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 flags, int32 priority) {
+	error("[Screen::addGraphicToQueueMasked] not implemented");
+}
+
+void Screen::addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 transTableNum) {
+	error("[Screen::addGraphicToQueueCrossfade] not implemented");
 }
 
 void Screen::addGraphicToQueue(GraphicQueueItem const &item) {
@@ -189,11 +192,11 @@ void Screen::drawGraphicsInQueue() {
 
 	for (uint32 i = 0; i < _queueItems.size(); i++) {
 		GraphicResource *grRes = new GraphicResource(_vm, _queueItems[i].resourceId);
-		GraphicFrame    *fra   = grRes->getFrame(_queueItems[i].frameIdx);
+		GraphicFrame    *fra   = grRes->getFrame(_queueItems[i].frameIndex);
 
 		copyToBackBufferWithTransparency((byte *)fra->surface.pixels,
 				fra->surface.w,
-				_queueItems[i].x - getWorld()->xLeft, _queueItems[i].y - getWorld()->yTop,
+				_queueItems[i].point.x - getWorld()->xLeft, _queueItems[i].point.y - getWorld()->yTop,
 				fra->surface.w,
 				fra->surface.h);
 

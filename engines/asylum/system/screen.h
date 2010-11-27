@@ -40,13 +40,19 @@ class ResourcePack;
 
 typedef struct GraphicQueueItem {
 	ResourceId resourceId;
-	uint32 frameIdx;
-	int32 x;
-	int32 y;
+	uint32 frameIndex;
+	Common::Point point;
 	int32 flags;
 	int32 transTableNum;
 	int32 priority;
 
+	GraphicQueueItem() {
+		resourceId = kResourceNone;
+		frameIndex = 0;
+		flags = 0;
+		transTableNum = 0;
+		priority = 0;
+	}
 } GraphicQueueItem;
 
 class Screen {
@@ -72,8 +78,9 @@ public:
 	void paletteFade(uint32 red, int32 milliseconds, int32 param);
 	void startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param);
 
-	void addGraphicToQueue(ResourceId resourceId, uint32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority);
-	void addCrossFadeGraphicToQueue(ResourceId resourceId, uint32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority);
+	void addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 flags, int32 transTableNum, int32 priority);
+	void addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 transTableNum);
+	void addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 flags, int32 priority);
 	void addGraphicToQueue(GraphicQueueItem const &item);
 	void drawGraphicsInQueue();
 	void clearGraphicsInQueue();
