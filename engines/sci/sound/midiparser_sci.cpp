@@ -495,19 +495,26 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	case 0xB:
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = *(_position._play_pos++);
-		if (info.channel() == 0xF) {// SCI special
-			// Reference for some events:
-			// http://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
-			// Also, sci/sound/iterator/iterator.cpp, function BaseSongIterator::parseMidiCommand()
-			switch (info.basic.param1) {
-			case kSetReverb:
-				if (info.basic.param2 == 127)		// Set global reverb instead
-					_pSnd->reverb = _music->getGlobalReverb();
-				else
-					_pSnd->reverb = info.basic.param2;
 
-				((MidiPlayer *)_driver)->setReverb(_pSnd->reverb);
-				break;
+		// Reference for some events:
+		// http://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
+		// Handle common special events
+		switch (info.basic.param1) {
+		case kSetReverb:
+			if (info.basic.param2 == 127)		// Set global reverb instead
+				_pSnd->reverb = _music->getGlobalReverb();
+			else
+				_pSnd->reverb = info.basic.param2;
+
+			((MidiPlayer *)_driver)->setReverb(_pSnd->reverb);
+			break;
+		default:
+			break;
+		}
+
+		// Handle events sent to the SCI special channel (15)
+		if (info.channel() == 0xF) {
+			switch (info.basic.param1) {
 			case kMidiHold:
 				// Check if the hold ID marker is the same as the hold ID
 				// marker set for that song by cmdSetSoundHold.
