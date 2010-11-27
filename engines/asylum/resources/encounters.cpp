@@ -100,7 +100,12 @@ void Encounter::load() {
 }
 
 uint32 Encounter::findKeyword(EncounterItem *item, int16 keyword) {
-	error("[Encounter::findKeyword] Not implemented!");
+	for (uint i = 0; i < ARRAYSIZE(item->keywords); i++) {
+		if ((item->keywords[i] & 0xFFF) == keyword)
+			return i;
+	}
+
+	error("[Encounter::findKeyword] Could not find a valid keyword!");
 }
 
 //////////////////////////////////////////////////////////////////////////
