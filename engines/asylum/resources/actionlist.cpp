@@ -1019,7 +1019,7 @@ IMPLEMENT_OPCODE(RunBlowUpPuzzle)
 	getScreen()->clear();
 	getScreen()->clearGraphicsInQueue();
 
-	_vm->switchMessageHandler(_vm->getMessageHandler((uint32)cmd->param1));
+	_vm->switchEventHandler(_vm->getPuzzle((uint32)cmd->param1));
 
 	_currentLine++;
 

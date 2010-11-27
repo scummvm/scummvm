@@ -28,6 +28,8 @@
 #include "asylum/resources/actionlist.h"
 #include "asylum/resources/encounters.h"
 
+#include "asylum/puzzles/vcr.h"
+
 #include "asylum/system/config.h"
 #include "asylum/system/cursor.h"
 #include "asylum/system/screen.h"
@@ -56,6 +58,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 
 	// Init data
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
+	memset(&_puzzles, 0, sizeof(_puzzles));
 
 	// Add default search directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -91,6 +94,10 @@ AsylumEngine::~AsylumEngine() {
 	delete _resource;
 	delete _console;
 
+	// Cleanup puzzles
+	for (uint i = 0; i < ARRAYSIZE(_puzzles); i++)
+		delete _puzzles[i];
+
 	// Zero passed pointers
 	_gameDescription = NULL;
 }
@@ -113,6 +120,7 @@ Common::Error AsylumEngine::run() {
 	_sound     = new Sound(this, _mixer);
 	_text      = new Text(this);
 	_video     = new Video(this, _mixer);
+	initPuzzles();
 
 	// Create main menu
 	_mainMenu  = new MainMenu(this);
@@ -350,14 +358,14 @@ void AsylumEngine::processDelayedEvents() {
 //////////////////////////////////////////////////////////////////////////
 // Message handlers
 //////////////////////////////////////////////////////////////////////////
-void AsylumEngine::switchMessageHandler(MessageHandler *handler) {
+void AsylumEngine::switchEventHandler(EventHandler *handler) {
 	if (handler == NULL)
 		error("[AsylumEngine::switchMessageHandler] Invalid handler parameter (cannot be NULL)!");
 
 	// De-init previous handler
 	if (_handler != NULL) {
 		AsylumEvent deinit(EVENT_ASYLUM_DEINIT);
-		(*_handler)(deinit);
+		_handler->handleEvent(deinit);
 	}
 
 	// replace message handler
@@ -365,11 +373,39 @@ void AsylumEngine::switchMessageHandler(MessageHandler *handler) {
 
 	// Init new handler
 	AsylumEvent init(EVENT_ASYLUM_INIT);
-	(*_handler)(init);
+	_handler->handleEvent(init);
 }
 
-MessageHandler *AsylumEngine::getMessageHandler(uint32 index) {
-	error("[AsylumEngine::getMessageHandler] not implemented");
+EventHandler *AsylumEngine::getPuzzle(uint32 index) {
+	if (index >= ARRAYSIZE(_puzzles))
+		error("[AsylumEngine::getPuzzleEventHandler] Invalid index (was: %d - max: %d)", index, ARRAYSIZE(_puzzles));
+
+	if (_puzzles[index] == NULL)
+		error("[AsylumEngine::getPuzzleEventHandler] This puzzle doesn't have an event handler! (index: %d)", index);
+
+	return _puzzles[index];
+}
+
+void AsylumEngine::initPuzzles() {
+	_puzzles[0] = new BlowUpPuzzleVCR(this);
+	_puzzles[1] = NULL;
+	_puzzles[2] = NULL;
+	_puzzles[3] = NULL;
+	_puzzles[4] = NULL;
+	_puzzles[5] = NULL;
+	_puzzles[6] = NULL;
+	_puzzles[7] = NULL;
+	_puzzles[8] = NULL;
+	_puzzles[9] = NULL;
+	_puzzles[10] = NULL;
+	_puzzles[11] = NULL;
+	_puzzles[12] = NULL;
+	_puzzles[13] = NULL;
+	_puzzles[14] = NULL;
+	_puzzles[15] = NULL;
+	_puzzles[16] = NULL;
+
+	warning("[AsylumEngine::initPuzzles] Add missing puzzles");
 }
 
 //////////////////////////////////////////////////////////////////////////

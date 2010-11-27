@@ -41,12 +41,11 @@ class Cursor;
 class GraphicResource;
 struct GraphicQueueItem;
 
-class BlowUpPuzzle {
+class BlowUpPuzzle : public EventHandler {
 public:
 	BlowUpPuzzle(AsylumEngine *engine);
 	virtual ~BlowUpPuzzle();
 
-	virtual void handleEvent(const AsylumEvent &event, bool doUpdate) = 0;
 	virtual void open() = 0;
 	virtual void close() = 0;
 
