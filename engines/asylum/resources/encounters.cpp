@@ -31,6 +31,7 @@
 #include "asylum/resources/worldstats.h"
 
 #include "asylum/system/cursor.h"
+#include "asylum/system/speech.h"
 
 #include "asylum/views/scene.h"
 
@@ -227,10 +228,27 @@ int32 Encounter::getVariableInv(int32 index) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Logic
+// Speech
 //////////////////////////////////////////////////////////////////////////
 void Encounter::resetSpeech(uint32 a1, uint32 a2) {
 	error("[Encounter::resetSpeech] Not implemented!");
+}
+
+bool Encounter::isSpeaking() {
+	if (!_flag4)
+		return false;
+
+	if (getSpeech()->getSoundResourceId() != kResourceNone && getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
+		getSound()->stopAll(getSpeech()->getSoundResourceId());
+		return true;
+	}
+
+	if (getSpeech()->getTick()) {
+		getSpeech()->setTick(_vm->getTick());
+		return true;
+	}
+
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -93,6 +93,20 @@ public:
 	 */
 	ResourceId getSoundResourceId() const { return _soundResourceId; }
 
+	/**
+	 * Sets the tick.
+	 *
+	 * @param val The value.
+	 */
+	void setTick(int32 val) { _tick = val;}
+
+	/**
+	 * Gets the tick.
+	 *
+	 * @return The tick.
+	 */
+	int32 getTick() { return _tick; }
+
 private:
 	AsylumEngine *_vm;
 
