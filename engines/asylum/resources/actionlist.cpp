@@ -1766,7 +1766,114 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 
 void ActionList::enableObject(ScriptEntry *cmd, ObjectEnableType type) {
-	error("[ActionList::enableObject] not implemented!");
+	int32 field67C = 0;
+
+	// Setup field67C
+	switch (type) {
+	default:
+		break;
+
+	case kObjectEnableType0:
+		field67C = 4 + _currentScript->counter / cmd->param2;
+		break;
+
+	case kObjectEnableType1:
+		field67C = 6 - _currentScript->counter / cmd->param2;
+		break;
+
+	case kObjectEnableType2:
+		field67C = 0;
+		break;
+	}
+
+	// Update first set of objects
+	for (int i = 0; i < 7; i++) {
+		Object *object = getWorld()->getObjectById((ObjectId)cmd->param4);
+		if (object != NULL)
+			object->setField67C(field67C);
+
+		++cmd->param4;
+	}
+
+	// Update per-chapter objects
+	switch (getWorld()->chapter) {
+	default:
+		break;
+
+	case kChapter3:
+		if (cmd->param1 != 810)
+			break;
+
+		getWorld()->getObjectById(kObjectTableRecordRoom)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectOrangeRecord)->setField67C(field67C);
+		break;
+
+	case kChapter4:
+		if (cmd->param1 != 1232)
+			break;
+
+		getWorld()->getObjectById(kObjectInfernoStatusQuo)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectJugglerWithPin)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectJuggler)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectClownStatusQuo)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectTrixieStatusQuo)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectSimonStatusQuo)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectBigTopBarrel)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectStandBehindJuggler)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectStrongmanLeft)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectStrongmanRight)->setField67C(field67C);
+		break;
+
+	case kChapter6:
+		if (cmd->param1 == 1998) {
+			getWorld()->getObjectById(kObjectGlow4)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectBugOnTable)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectInsidePipeCyberPod)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectDiscardedBugPincer)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectLitLimbScanner)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectCyberTable)->setField67C(field67C);
+		}
+
+		if (cmd->param1 == 2003) {
+			getWorld()->getObjectById(kObjectNPC066StatusQuo)->setField67C(field67C);
+			getWorld()->getObjectById(kObject2507)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectBrokenPipe)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectEmberPopsOut)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectBugCarriesEmber)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectFurnaceHole)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectTopOfFurnace)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectElderBugLimb)->setField67C(field67C);
+		}
+		break;
+
+	case kChapter7:
+		if (cmd->param1 != 1273)
+			break;
+
+		getWorld()->getObjectById(kObjectHeadOnTable)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectOfficeWallNew)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectChalice)->setField67C(field67C);
+		break;
+
+	case kChapter8:
+		if (cmd->param1 != 1795)
+			break;
+
+		getWorld()->getObjectById(kObjectHook1B)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHook2B)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHook3B)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHook4B)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHook5B)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHook6B)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHook0Down)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHook2Down)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHook3Down)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHook4Down)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHook5Down)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHook6Down)->setField67C(field67C);
+		getWorld()->getObjectById(kObject2230)->setField67C(field67C);
+		break;
+	}
 }
 
 void ActionList::setActionFlag(ScriptEntry *cmd, ActionType flag) {

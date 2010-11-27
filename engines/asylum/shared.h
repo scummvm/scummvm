@@ -378,6 +378,7 @@ enum ObjectId {
 	kObjectGuyWobbles              = 405,
 	kObjectRocker                  = 441,
 	kObjectOpeningGate             = 485,
+	kObjectTableRecordRoom         = 659,
 	kObject703                     = 703,
 	kObjectTree8                   = 726,
 	kObjectSlab                    = 743,
@@ -391,6 +392,7 @@ enum ObjectId {
 	kObjectNPC027Dancing           = 844,
 	kObjectNPC028Dancing           = 845,
 	kObjectNPC026OutOfWay          = 861,
+	kObjectOrangeRecord            = 920,
 	kObjectJessieStatusQuo         = 984,
 	kObjectMarty02                 = 991,
 	kObjectEileenOnBench           = 993,
@@ -413,6 +415,7 @@ enum ObjectId {
 	kObjectNPC032StatusQuoBigTop   = 1256,
 	kObjectGlobe                   = 1261,
 	kObjectDrawers3                = 1276,
+	kObjectChalice                 = 1286,
 	kObjectFreezerHallInterior     = 1337,
 	kObjectNPC033StartEnc          = 1338,
 	kObjectNPC033GetBook           = 1343,
@@ -422,11 +425,14 @@ enum ObjectId {
 	kObjectStrongmanStatusQuo      = 1402,   // NPC 35
 	kObjectStrongmanStatusQuo2     = 1405,   // NPC 35
 	kObjectInfernoStatusQuo        = 1408,   // NPC 36
+	kObjectJugglerWithPin          = 1423,   // NPC 37
 	kObjectJuggler                 = 1424,   // NPC 37
 	kObjectClownStatusQuo          = 1428,   // NPC 38
 	kObjectTrixieStatusQuo         = 1432,   // NPC 39
 	kObjectSimonStatusQuo          = 1434,   // NPC 40
+	kObjectBigTopBarrel            = 1436,
 	kObjectFunTixStatusQuo         = 1437,   // NPC 44
+	kObjectStandBehindJuggler      = 1438,
 	kObjectFreakTixStatusQuoUp     = 1439,   // NPC 45
 	kObjectFreakTixStatusQuoDown   = 1440,   // NPC 45
 	kObjectFortTellerStatusQuo     = 1444,   // NPC 45
@@ -465,6 +471,7 @@ enum ObjectId {
 	kObjectDennisStatus2           = 1580,
 	kObjectPreAlphaNut             = 1582,
 	kObjectPreAlphaNut2            = 1584,
+	kObjectHeadOnTable             = 1595,
 	kObjectWitchDoctor             = 1778,
 	kObjectStoneWifeStatuQuo       = 1782,
 	kObjectFishermanWidowStatusQuo = 1786,
@@ -477,6 +484,19 @@ enum ObjectId {
 	kObjectWheel7                  = 2119,
 	kObjectStoneMasonStatusHitt    = 2123,
 	kObjectFlamingHeadLeftSide     = 2129,
+	kObjectHook1B                  = 2131,
+	kObjectHook2B                  = 2132,
+	kObjectHook3B                  = 2133,
+	kObjectHook4B                  = 2134,
+	kObjectHook5B                  = 2135,
+	kObjectHook6B                  = 2136,
+	kObjectHook0Down               = 2152,
+	kObjectHook2Down               = 2154,
+	kObjectHook3Down               = 2155,
+	kObjectHook4Down               = 2156,
+	kObjectHook5Down               = 2157,
+	kObjectHook6Down               = 2158,
+	kObject2230                    = 2230,
 	kObjectGravinStatusQuoCyber    = 2324,
 	kObjectGravinWorkMachine       = 2337,
 	kObjectNPC062GritzaStatusQuo   = 2399,
@@ -484,16 +504,26 @@ enum ObjectId {
 	kObjectNPC064GrellaStatusQuo   = 2418,
 	kObjectLavaBridge              = 2445,
 	kObjectNPC065StatusQuo         = 2469,
+	kObjectGlow4                   = 2478,
+	kObjectBugOnTable              = 2480,
 	kObjectWadeThroughLava         = 2500,
 	kObjectNPC066StatusQuo         = 2504,
+	kObject2507                    = 2507,
+	kObjectBrokenPipe              = 2508,
 	kObjectBodySlides1             = 2514,
 	kObjectBodySlides2             = 2515,
 	kObjectBodySlides3             = 2516,
 	kObjectBodySlides4             = 2517,
 	kObjectBodySlides5             = 2518,
 	kObjectBodySlides6             = 2519,
+	kObjectEmberPopsOut            = 2526,
+	kObjectBugCarriesEmber         = 2527,
 	kObjectGirlStatusQuo           = 2541,
 	kObjectWitchWifeStirring       = 2543,
+	kObjectFurnaceHole             = 2554,
+	kObjectInsidePipeCyberPod      = 2555,
+	kObjectTopOfFurnace            = 2566,
+	kObjectElderBugLimb            = 2572,
 	kObjectQuetzlcaotlStatusQuo    = 2578,
 	kObjectGhost1                  = 2579,
 	kObjectGhost2                  = 2580,
@@ -501,6 +531,7 @@ enum ObjectId {
 	kObjectGhost4                  = 2582,
 	kObjectGhost5                  = 2583,
 	kObjectGhost6                  = 2584,
+	kObjectDiscardedBugPincer      = 2587,
 	kObjectGong1                   = 2590,
 	kObjectGong2                   = 2591,
 	kObjectGong3                   = 2592,
@@ -512,6 +543,9 @@ enum ObjectId {
 	kObjectBlanklPixelForWarrior   = 2884,
 	kObjectPixelForHutWarrior      = 2885,
 	kObjectPixelForWaterfallGhost  = 2886,
+	kObjectLitLimbScanner          = 3061,
+	kObjectOfficeWallNew           = 3062,
+	kObjectCyberTable              = 3065,
 
 	kObjectEnd
 };
