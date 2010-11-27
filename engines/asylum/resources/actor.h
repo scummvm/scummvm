@@ -415,16 +415,14 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Gets a direction using the angle between the two points
+	 * Gets a direction using the angle between the two points.
 	 *
-	 * @param ax1 The first ax.
-	 * @param ay1 The first ay.
-	 * @param ax2 The second ax.
-	 * @param ay2 The second ay.
+	 * @param vec1 The first vector.
+	 * @param vec2 The second vector.
 	 *
-	 * @return The angle.
+	 * @return The direction
 	 */
-	ActorDirection getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) const;
+	ActorDirection direction(Common::Point vec1, Common::Point vec2) const;
 
 	/**
 	 * Updates the actor graphic information

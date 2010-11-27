@@ -53,7 +53,7 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_objectIndex = 0;
  	_frameIndex = 0;
  	_frameCount = 0;
- 	_direction = kDirection0;
+ 	_direction = kDirectionN;
  	_field_3C = 0;
  	_status = kActorStatusNone;
  	_field_44 = 0;
@@ -312,11 +312,11 @@ void Actor::update() {
 
 						player->updateStatus(kActorStatus3);
 						player->setResourceId(player->getResourcesId(35));
-						player->setDirection(kDirection4);
+						player->setDirection(kDirectionS);
 						player->setFrameCount(GraphicResource::getFrameCount(_vm, player->getResourceId()));
 
 						getCursor()->hide();
-						getScene()->getActor(0)->updateFromDirection(kDirection4);
+						getScene()->getActor(0)->updateFromDirection(kDirectionS);
 
 						// Queue script
 						getScene()->actions()->queueScript(getWorld()->getActionAreaById(2696)->scriptIndex, getScene()->getPlayerIndex());
@@ -568,7 +568,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 
 	case kActorStatusDisabled:
 		updateGraphicData(15);
-		_resourceId = _graphicResourceIds[(_direction > 4 ? 8 - _direction : _direction) + 15];
+		_resourceId = _graphicResourceIds[(_direction > kDirectionS ? kDirection8 - _direction : _direction) + 15];
 
 		// TODO set word_446EE4 to -1. This global seems to be used with screen blitting
 		break;
@@ -578,7 +578,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			Actor *actor = getScene()->getActor(0);
 			actor->getPoint1()->x = _point2.x + _point1.x - actor->getPoint2()->x;
 			actor->getPoint1()->y = _point2.y + _point1.y - actor->getPoint2()->y;
-			actor->setDirection(kDirection4);
+			actor->setDirection(kDirectionS);
 
 			getScene()->setPlayerActorIndex(0);
 
@@ -670,29 +670,24 @@ void Actor::updateFromDirection(ActorDirection actorDirection) {
 	case kActorStatusDisabled:
 	case kActorStatusEnabled:
 	case kActorStatus14:
-		_resourceId = _graphicResourceIds[(actorDirection > 4 ? 8 - actorDirection : actorDirection) + 5];
+		_resourceId = _graphicResourceIds[(actorDirection > kDirectionS ? kDirection8 - actorDirection : actorDirection) + 5];
 		_frameCount = GraphicResource::getFrameCount(_vm, _resourceId);
 		break;
 
 	case kActorStatus18:
-		if (getWorld()->chapter == kChapter2) {
-			if (_index == 11) { // we are actor 11
-				if (actorDirection > 4)
-					_resourceId = _graphicResourceIds[8 - actorDirection];
-				else
-					_resourceId = _graphicResourceIds[actorDirection];
-			}
-		}
+		if (getWorld()->chapter == kChapter2)
+			if (_index == 11) // we are actor 11
+				_resourceId = _graphicResourceIds[(actorDirection > kDirectionS) ? kDirection8 - actorDirection : actorDirection];
 		break;
 
 	case kActorStatus1:
 	case kActorStatus2:
 	case kActorStatus12:
-		_resourceId = _graphicResourceIds[(actorDirection > 4 ? 8 - actorDirection : actorDirection)];
+		_resourceId = _graphicResourceIds[(actorDirection > kDirectionS ? kDirection8 - actorDirection : actorDirection)];
 		break;
 
 	case kActorStatus8:
-		_resourceId = _graphicResourceIds[(actorDirection > 4 ? 8 - actorDirection : actorDirection) + 20];
+		_resourceId = _graphicResourceIds[(actorDirection > kDirectionS ? kDirection8 - actorDirection : actorDirection) + 20];
 		break;
 	}
 }
@@ -700,7 +695,7 @@ void Actor::updateFromDirection(ActorDirection actorDirection) {
 void Actor::faceTarget(uint32 target, DirectionFrom from) {
 	debugC(kDebugLevelActor, "[Actor::faceTarget] Facing target %d using direction from %d", target, from);
 
-	int32 newX, newY;
+	Common::Point point;
 
 	switch (from) {
 	default:
@@ -715,8 +710,8 @@ void Actor::faceTarget(uint32 target, DirectionFrom from) {
 
 		Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-		newX = Common::Rational(frameRect.width(), 2).toInt()  + object->x;
-		newY = Common::Rational(frameRect.height(), 2).toInt() + object->y;
+		point.x = Common::Rational(frameRect.width(), 2).toInt()  + object->x;
+		point.y = Common::Rational(frameRect.height(), 2).toInt() + object->y;
 		}
 		break;
 
@@ -729,22 +724,23 @@ void Actor::faceTarget(uint32 target, DirectionFrom from) {
 
 		PolyDefinitions *polygon = &getScene()->polygons()->entries[getWorld()->actions[actionIndex]->polyIdx];
 
-		newX = polygon->boundingRect.left + (polygon->boundingRect.right  - polygon->boundingRect.left) / 2;
-		newY = polygon->boundingRect.top  + (polygon->boundingRect.bottom - polygon->boundingRect.top)  / 2;
+		point.x = polygon->boundingRect.left + (polygon->boundingRect.right  - polygon->boundingRect.left) / 2;
+		point.y = polygon->boundingRect.top  + (polygon->boundingRect.bottom - polygon->boundingRect.top)  / 2;
 		}
 		break;
 
 	case kDirectionFromActor:
-		newX = _point1.x + _point2.x;
-		newY = _point1.y + _point2.y;
+		point.x = _point1.x + _point2.x;
+		point.y = _point1.y + _point2.y;
 		break;
 
 	case kDirectionFromParameters:
-		newX = newY = target;
+		point.x = point.y = target;
 		break;
 	}
 
-	updateFromDirection(getDirection(_point1.x + _point2.x, _point1.y + _point2.y, newX, newY));
+	Common::Point mid(_point1.x + _point2.x, _point1.y + _point2.y);
+	updateFromDirection(direction(mid, point));
 }
 
 void Actor::setPosition(int32 newX, int32 newY, ActorDirection newDirection, uint32 frame) {
@@ -757,7 +753,6 @@ void Actor::setPosition(int32 newX, int32 newY, ActorDirection newDirection, uin
 	if (frame > 0)
 		_frameIndex = frame;
 }
-
 
 /////////////////////////////////////////////////////////////////////////
 // Misc
@@ -1049,22 +1044,22 @@ void Actor::updateStatusEnabled() {
 				break;
 
 			case 0:
-				setPosition(10, 1350, kDirection0, 0);
+				setPosition(10, 1350, kDirectionN, 0);
 				processStatus(1460, -100, false);
 				break;
 
 			case 1:
-				setPosition(300, 0, kDirection0, 0);
+				setPosition(300, 0, kDirectionN, 0);
 				processStatus(1700, 1400, false);
 				break;
 
 			case 2:
-				setPosition(1560, -100, kDirection0, 0);
+				setPosition(1560, -100, kDirectionN, 0);
 				processStatus(-300, 1470, false);
 				break;
 
 			case 3:
-				setPosition(1150, 1400, kDirection0, 0);
+				setPosition(1150, 1400, kDirectionN, 0);
 				processStatus(-250, 0, false);
 				break;
 			}
@@ -1535,7 +1530,7 @@ void Actor::updateCoordinates(Common::Point vec1, Common::Point vec2) {
 	if (diffY == 0)
 		return;
 
-	ActorDirection direction = (diffY > 0) ? kDirection4 : kDirection0;
+	ActorDirection direction = (diffY > 0) ? kDirectionS : kDirectionN;
 
 	if (process_408B20(&vec2, direction, diffY + 3, false))
 		updateCoordinatesForDirection(direction, diffY - 1, &_point);
@@ -1601,101 +1596,97 @@ void Actor::setVolume() {
 // Helper methods
 //////////////////////////////////////////////////////////////////////////
 
-ActorDirection Actor::getDirection(int32 ax1, int32 ay1, int32 ax2, int32 ay2) const {
-	int32 v5 = (ax2 - ax1) * 2^16;
-	int32 v6 = 0;
-	int32 v4 = (ay1 - ay2) * 2^16;
+ActorDirection Actor::direction(Common::Point vec1, Common::Point vec2) const {
+	int32 diffX = (vec2.x - vec1.x) * 2^16;
+	int32 diffY = (vec1.y - vec2.y) * 2^16;
+	int32 adjust = 0;
 
-	if (v5 < 0) {
-		v6 = 2;
-		v5 = -v5;
+	if (diffX < 0) {
+		adjust = 2;
+		diffX = -diffX;
 	}
 
-	if (v4 < 0) {
-		v6 |= 1;
-		v4 = -v4;
+	if (diffY < 0) {
+		adjust |= 1;
+		diffY = -diffY;
 	}
 
-	int32 v8 = -1;
+	int32 angle = -1;
 
-	if (v5) {
-		Common::Rational v7(v4 * 256, v5);
+	if (diffX) {
+		uint32 index = (diffY * 256) / diffX;
 
-		if (v7 < 0x100)
-			v8 = angleTable01[v7.toInt()];
-
-		if (v7 < 0x1000 && v8 < 0) {
-			Common::Rational vtemp = v7 / 16;
-			v8 = angleTable02[vtemp.toInt()];
-		}
-
-		if (v7 < 0x10000 && v8 < 0) {
-			Common::Rational vtemp = v7 / 256;
-			v8 = angleTable03[vtemp.toInt()];
-		}
+		if (index < 256)
+			angle = angleTable01[index];
+		else if (index < 4096)
+			angle = angleTable02[index / 16];
+		else if (index < 65536)
+			angle = angleTable03[index / 256];
 	} else {
-		v8 = 90;
+		angle = 90;
 	}
 
-	switch (v6) {
+	switch (adjust) {
 	default:
 		break;
 
 	case 1:
-		v8 = 360 - v8;
+		angle = 360 - angle;
 		break;
+
 	case 2:
-		v8 = 180 - v8;
+		angle = 180 - angle;
 		break;
+
 	case 3:
-		v8 += 180;
+		angle += 180;
 		break;
 	}
 
-	if (v8 >= 360)
-		v8 -= 360;
+	if (angle >= 360)
+		angle -= 360;
 
-	ActorDirection result;
+	ActorDirection direction;
 
-	if (v8 < 157 || v8 >= 202) {
-		if (v8 < 112 || v8 >= 157) {
-			if (v8 < 67 || v8 >= 112) {
-				if (v8 < 22 || v8 >= 67) {
-					if ((v8 < 0 || v8 >= 22) && (v8 < 337 || v8 > 359)) {
-						if (v8 < 292 || v8 >= 337) {
-							if (v8 < 247 || v8 >= 292) {
-								if (v8 < 202 || v8 >= 247) {
-									error("getAngle returned a bad angle: %d.", v8);
+	if (angle < 157 || angle >= 202) {
+		if (angle < 112 || angle >= 157) {
+			if (angle < 67 || angle >= 112) {
+				if (angle < 22 || angle >= 67) {
+					if ((angle < 0 || angle >= 22) && (angle < 337 || angle > 359)) {
+						if (angle < 292 || angle >= 337) {
+							if (angle < 247 || angle >= 292) {
+								if (angle < 202 || angle >= 247) {
+									error("[Actor::angle] returned a bad angle: %d!", angle);
 								} else {
-									result = kDirection3;
+									direction = kDirectionSO;
 								}
 							} else {
-								result = kDirection4;
+								direction = kDirectionS;
 							}
 						} else {
-							result = kDirection5;
+							direction = kDirectionSE;
 						}
 					} else {
-						result = kDirection6;
+						direction = kDirectionE;
 					}
 				} else {
-					result = kDirection7;
+					direction = kDirectionNE;
 				}
 			} else {
-				result = kDirection0;
+				direction = kDirectionN;
 			}
 		} else {
-			result = kDirection1;
+			direction = kDirectionNO;
 		}
 	} else {
-		result = kDirection2;
+		direction = kDirectionO;
 	}
 
-	return result;
+	return direction;
 }
 
 void Actor::updateGraphicData(uint32 offset) {
-	int32 index = ((_direction > 4) ? 8 - _direction : _direction) + (int32)offset;
+	int32 index = ((_direction > kDirectionS) ? kDirection8 - _direction : _direction) + (int32)offset;
 	_resourceId = _graphicResourceIds[index];
 	_frameCount = GraphicResource::getFrameCount(_vm, _resourceId);
 	_frameIndex = 0;
@@ -1714,7 +1705,7 @@ int32 Actor::getGraphicsFlags() {
 	}
 
 	// TODO replace by readable version
-	return ((_direction < 5) - 1) & 2;
+	return ((_direction < kDirectionSE) - 1) & 2;
 }
 
 int32 Actor::getDistance() const {
@@ -1725,22 +1716,22 @@ int32 Actor::getDistance() const {
 
 	switch (_direction) {
 	default:
-	case kDirection0:
-	case kDirection4:
+	case kDirectionN:
+	case kDirectionS:
 		return 0;
 
-	case kDirection1:
-	case kDirection3:
+	case kDirectionNO:
+	case kDirectionSO:
 		return -_field_8D0[index];
 
-	case kDirection2:
+	case kDirectionO:
 		return -_field_830[index];
 
-	case kDirection5:
-	case kDirection7:
+	case kDirectionSE:
+	case kDirectionNE:
 		return _field_8D0[index];
 
-	case kDirection6:
+	case kDirectionE:
 		return _field_830[index];
 	}
 }
@@ -1748,18 +1739,18 @@ int32 Actor::getDistance() const {
 uint32 Actor::getDistanceForFrame(ActorDirection direction, uint32 frameIndex) {
 	switch (_direction) {
 	default:
-	case kDirection0:
-	case kDirection4:
+	case kDirectionN:
+	case kDirectionS:
 		return _field_880[frameIndex];
 
-	case kDirection1:
-	case kDirection3:
-	case kDirection5:
-	case kDirection7:
+	case kDirectionNO:
+	case kDirectionSO:
+	case kDirectionSE:
+	case kDirectionNE:
 		return _field_8D0[frameIndex];
 
-	case kDirection2:
-	case kDirection6:
+	case kDirectionO:
+	case kDirectionE:
 		return _field_830[frameIndex];
 	}
 }
@@ -1772,38 +1763,38 @@ void Actor::updateCoordinatesForDirection(ActorDirection direction, int32 delta,
 	default:
 		break;
 
-	case kDirection0:
+	case kDirectionN:
 		point->y -= delta;
 		break;
 
-	case kDirection1:
+	case kDirectionNO:
 		point->x -= delta;
 		point->y -= delta;
 		break;
 
-	case kDirection2:
+	case kDirectionO:
 		point->x -= delta;
 		break;
 
-	case kDirection3:
+	case kDirectionSO:
 		point->x -= delta;
 		point->y += delta;
 		break;
 
-	case kDirection4:
+	case kDirectionS:
 		point->y += delta;
 		break;
 
-	case kDirection5:
+	case kDirectionSE:
 		point->x += delta;
 		point->y += delta;
 		break;
 
-	case kDirection6:
+	case kDirectionE:
 		point->x += delta;
 		break;
 
-	case kDirection7:
+	case kDirectionNE:
 		point->y += delta;
 		point->y -= delta;
 		break;
@@ -1835,42 +1826,42 @@ void Actor::rect(Common::Rect *rect, ActorDirection direction, Common::Point poi
 		rect->right = 0;
 		return;
 
-	case kDirection0:
+	case kDirectionN:
 		rect->top = point.x - 9;
 		rect->left = point.y - 84;
 		break;
 
-	case kDirection1:
+	case kDirectionNO:
 		rect->top = point.x - 55;
 		rect->left = point.y - 84;
 		break;
 
-	case kDirection2:
+	case kDirectionO:
 		rect->top = point.x - 34;
 		rect->left = point.y - 93;
 		break;
 
-	case kDirection3:
+	case kDirectionSO:
 		rect->top = point.x + 27;
 		rect->left = point.y - 94;
 		break;
 
-	case kDirection4:
+	case kDirectionS:
 		rect->top = point.x + 41;
 		rect->left = point.y - 9;
 		break;
 
-	case kDirection5:
+	case kDirectionSE:
 		rect->top = point.x + 27;
 		rect->left = point.y + 54;
 		break;
 
-	case kDirection6:
+	case kDirectionE:
 		rect->top = point.x - 34;
 		rect->left = point.y + 53;
 		break;
 
-	case kDirection7:
+	case kDirectionNE:
 		rect->top = point.x - 55;
 		rect->left = point.y + 44;
 		break;
