@@ -666,7 +666,7 @@ void Special::chapter9(Object *object, ActorIndex actorIndex) {
 void Special::playChapterSound(Object *object, ActorIndex actorIndex) {
 	ResourceId id = getResourceId(object, actorIndex);
 
-	if (getSharedData()->getFlag(kFlagEncounter2))
+	if (_vm->encounter()->getFlag6())
 		return;
 
 	if (id != kResourceNone && getSound()->isPlaying(id))

@@ -42,6 +42,9 @@ public:
 
 	void run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2, ActorIndex actorIndex);
 
+	void setFlag5(bool state) { _flag5 = state; }
+	bool getFlag6() { return _flag6; }
+
 private:
 	AsylumEngine *_vm;
 
@@ -97,6 +100,8 @@ private:
 	bool _flag2;
 	bool _flag3;
 	bool _flag4;
+	bool _flag5;
+	bool _flag6;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
