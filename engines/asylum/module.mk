@@ -2,6 +2,7 @@ MODULE := engines/asylum
 
 MODULE_OBJS := \
 	puzzles/puzzle.o \
+	puzzles/vcr.o \
 	resources/actionlist.o \
 	resources/actor.o \
 	resources/object.o \
