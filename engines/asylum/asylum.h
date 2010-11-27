@@ -26,8 +26,9 @@
 #ifndef ASYLUM_ENGINE_H
 #define ASYLUM_ENGINE_H
 
+#include "asylum/resources/data.h"
+
 #include "asylum/console.h"
-#include "asylum/data.h"
 #include "asylum/eventhandler.h"
 #include "asylum/shared.h"
 
