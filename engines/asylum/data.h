@@ -40,9 +40,7 @@ enum GlobalFlag {
 	kFlag2,
 	kFlagSkipDraw,
 	kFlagSceneRectChanged,
-	kFlagScene1,
-	kFlagEncounter2,
-	kFlagEncounter5
+	kFlagScene1
 };
 
 /**
@@ -113,7 +111,6 @@ public:
 		_sceneCounter = 0;
 		_globalX = 0;
 		_globalY = 0;
-		_flagEncouter2 = false;
 		_sceneXLeft = 0;
 		_sceneYTop = 0;
 		_sceneOffset = 0;
@@ -135,7 +132,6 @@ public:
 		memset(&_data2[11], 0, sizeof(_data2));
 		_actorUpdateStatusEnabledCounter = 0;
 		memset(&_data3[9], 0, sizeof(_data3));
-		_flagEncouter5 = false;
 		_flagScene1 = false;
 		_nextScreenUpdate = 0;
 		memset(&_movies[49], 0, sizeof(_movies));
@@ -260,12 +256,6 @@ public:
 
 		case kFlagScene1:
 			return _flagScene1;
-
-		case kFlagEncounter2:
-			return _flagEncouter2;
-
-		case kFlagEncounter5:
-			return _flagEncouter5;
 		}
 	}
 
@@ -292,14 +282,6 @@ public:
 
 		case kFlagScene1:
 			_flagScene1 = state;
-			break;
-
-		case kFlagEncounter2:
-			_flagEncouter2 = state;
-			break;
-
-		case kFlagEncounter5:
-			_flagEncouter5 = state;
 			break;
 		}
 	}
@@ -328,7 +310,7 @@ private:
 	uint32           _sceneCounter;
 	int32            _globalX;
 	int32            _globalY;
-	bool             _flagEncouter2;
+	//bool             _flagEncouter2;
 	int32            _sceneXLeft;
 	int32            _sceneYTop;
 	int32            _sceneOffset;
@@ -355,7 +337,7 @@ private:
 	int32           _data2[11];
 	bool            _actorUpdateStatusEnabledCounter;
 	bool            _data3[9];
-	bool            _flagEncouter5;
+	//bool            _flagEncouter5;
 	bool            _flagScene1;
 	int32           _nextScreenUpdate;
 	int32           _movies[49];

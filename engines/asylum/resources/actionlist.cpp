@@ -744,10 +744,10 @@ END_OPCODE
 IMPLEMENT_OPCODE(RunEncounter)
 	Encounter *encounter = _vm->encounter();
 
-	getSharedData()->setFlag(kFlagEncounter5, cmd->param5);
+	encounter->setFlag5(cmd->param5);
 
 	if (cmd->param6) {
-		if (getSharedData()->getFlag(kFlagEncounter2))
+		if (encounter->getFlag6())
 			_lineIncrement = 1;
 		else
 			cmd->param6 = 0;
