@@ -40,7 +40,6 @@
 #include "asylum/views/scene.h"
 
 #include "asylum/asylum.h"
-#include "asylum/data.h"
 #include "asylum/staticres.h"
 
 #include "common/endian.h"
