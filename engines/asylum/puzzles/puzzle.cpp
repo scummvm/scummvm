@@ -23,7 +23,7 @@
  *
  */
 
-#include "asylum/views/blowuppuzzle.h"
+#include "asylum/puzzles/puzzle.h"
 
 #include "asylum/resources/worldstats.h"
 
