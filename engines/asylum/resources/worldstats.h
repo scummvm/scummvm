@@ -76,7 +76,7 @@ public:
 	ResourceId font1;
 	ResourceId font2;
 	ResourceId font3;
-	ResourceId currentPaletteId;
+	int32 currentPaletteId;
 	int32 cellShadeMask1;
 	int32 cellShadeMask2;
 	int32 cellShadeMask3;
@@ -122,12 +122,11 @@ public:
 	int32 field_E8494;
 	int32 field_E8498;
 	int32 field_E849C;
-	int32 field_E84A0[10];
-	int32 field_E84C8[20];
+	int32 tickValueArray[30];
 	int32 field_E8518;
 	int32 field_E851C[30];
 	int32 field_E8594[30];
-	int32 field_E860C;
+	ActorIndex nextPlayer;
 	uint32 field_E8610[6];
 	uint32 field_E8628[6];
 	Object *wheels[7];

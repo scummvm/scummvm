@@ -273,9 +273,12 @@ void Actor::update() {
 		break;
 
 	case kActorStatus16:
+		if (_index != getScene()->getPlayerIndex())
+			break;
+
 		if (getWorld()->chapter == 2) {
 			updateStatus16_Chapter2();
-		} else if (getWorld()->chapter == 11 && _index == getScene()->getPlayerIndex()) {
+		} else if (getWorld()->chapter == 11) {
 			updateStatus16_Chapter11();
 		}
 		break;
@@ -694,8 +697,8 @@ void Actor::updateFromDirection(ActorDirection actorDirection) {
 	}
 }
 
-void Actor::faceTarget(ObjectId id, DirectionFrom from) {
-	debugC(kDebugLevelActor, "[Actor::faceTarget] Facing target %d using direction from %d", id, from);
+void Actor::faceTarget(uint32 target, DirectionFrom from) {
+	debugC(kDebugLevelActor, "[Actor::faceTarget] Facing target %d using direction from %d", target, from);
 
 	int32 newX, newY;
 
@@ -704,9 +707,9 @@ void Actor::faceTarget(ObjectId id, DirectionFrom from) {
 		error("[Actor::faceTarget] Invalid direction input: %d (should be 0-3)", from);
 
 	case kDirectionFromObject: {
-		Object *object = getWorld()->getObjectById(id);
+		Object *object = getWorld()->getObjectById((ObjectId)target);
 		if (!object) {
-			warning("[Actor::faceTarget] No Object found for id %d", id);
+			warning("[Actor::faceTarget] No Object found for id %d", target);
 			return;
 		}
 
@@ -718,9 +721,9 @@ void Actor::faceTarget(ObjectId id, DirectionFrom from) {
 		break;
 
 	case kDirectionFromPolygons: {
-		int32 actionIndex = getWorld()->getActionAreaIndexById(id);
+		int32 actionIndex = getWorld()->getActionAreaIndexById(target);
 		if (actionIndex == -1) {
-			warning("[Actor::faceTarget] No ActionArea found for id %d", id);
+			warning("[Actor::faceTarget] No ActionArea found for id %d", target);
 			return;
 		}
 
@@ -737,7 +740,7 @@ void Actor::faceTarget(ObjectId id, DirectionFrom from) {
 		break;
 
 	case kDirectionFromParameters:
-		newX = newY = id;
+		newX = newY = target;
 		break;
 	}
 
@@ -1175,11 +1178,50 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 }
 
 void Actor::updateStatus12_Chapter11_Actor1() {
-	error("[Actor::updateStatus12_Chapter11_Actor1] not implemented!");
+	// Original seems to have lots of dead code here
+	Actor *actor0 = getScene()->getActor(0);
+	if (actor0->isVisible())
+		return;
+
+	if (_vm->isGameFlagNotSet(kGameFlag560))
+		_frameIndex = (_frameIndex + 1) & _frameCount;
+
+	if (getWorld()->tickCount1 < (int32)_vm->getTick()
+	 && !_frameIndex
+	 && _vm->isGameFlagNotSet(kGameFlag560)) {
+		_vm->setGameFlag(kGameFlag560);
+		hide();
+		updateStatus(kActorStatusEnabled);
+		actor0->updateStatus(kActorStatusEnabled);
+
+		getWorld()->field_E848C = 0;
+		getScene()->actions()->queueScript(getWorld()->getActionAreaById(1574)->scriptIndex, 1);
+	}
 }
 
 void Actor::updateStatus12_Chapter11() {
-	error("[Actor::updateStatus12_Chapter11] not implemented!");
+	if (!_frameIndex)
+		getSound()->playSound(getWorld()->soundResourceIds[6]);
+
+	++_frameIndex;
+
+	if (_frameIndex >= _frameCount) {
+		_frameIndex = 0;
+		updateStatus(kActorStatus14);
+		getWorld()->tickValueArray[_index] = rnd(4000) + _vm->getTick();
+	}
+
+	Common::Point *vector1 = getSharedData()->getVector1();
+	Common::Point *vector2 = getSharedData()->getVector2();
+	Actor *actor0 = getScene()->getActor(0);
+
+	vector1->x = actor0->getPoint1()->x + actor0->getPoint2()->x;
+	vector1->y = actor0->getPoint1()->y + actor0->getPoint2()->y - 5;
+
+	vector2->x = _point1.x + _point2.x;
+	vector2->y = _point1.y + _point2.y;
+
+	updateCoordinates(*vector1, *vector2);
 }
 
 void Actor::updateStatus14() {
@@ -1205,15 +1247,42 @@ void Actor::updateStatus14() {
 }
 
 void Actor::updateStatus14_Chapter2() {
-	if (!getSharedData()->getData2(_index))
+	if (!getSharedData()->getData2(_index)) {
 		updateStatus(kActorStatus12);
+		return;
+	}
 
 
 	error("[Actor::updateStatus14_Chapter2] not implemented!");
 }
 
 void Actor::updateStatus14_Chapter11() {
-	error("[Actor::updateStatus14_Chapter11] not implemented!");
+	Common::Point *vector1 = getSharedData()->getVector1();
+	Common::Point *vector2 = getSharedData()->getVector2();
+	Actor *actor0 = getScene()->getActor(0);
+
+	vector1->x = actor0->getPoint1()->x + actor0->getPoint2()->x;
+	vector1->y = actor0->getPoint1()->y + actor0->getPoint2()->y - 5;
+
+	vector2->x = _point1.x + _point2.x;
+	vector2->y = _point1.y + _point2.y;
+
+	if (getWorld()->tickValueArray[_index] == -666)
+		getWorld()->tickValueArray[_index] = rnd(4000) + _vm->getTick();
+
+	faceTarget(kActorMax, kDirectionFromActor);
+	updateCoordinates(*vector1, *vector2);
+
+	if (getWorld()->tickValueArray[_index] < (int)_vm->getTick()) {
+		if (distance(*vector1, *vector2) >= 75) {
+			getWorld()->tickValueArray[_index] = rnd(1000) + 2000 + _vm->getTick();
+		} else {
+			if (actor0->getStatus() == kActorStatus12 || actor0->getStatus() == kActorStatus14 || actor0->getStatus() == kActorStatus15)
+				updateStatus(kActorStatus15);
+
+			getWorld()->tickValueArray[_index] = -666;
+		}
+	}
 }
 
 void Actor::updateStatus15_Chapter2() {
@@ -1297,7 +1366,46 @@ void Actor::updateStatus15_Chapter11_Player() {
 }
 
 void Actor::updateStatus16_Chapter2() {
-	error("[Actor::updateStatus16_Chapter2] not implemented!");
+	// We are sure to be the current player
+
+	++_frameIndex;
+
+	if (_frameIndex > _frameCount - 1) {
+		if (getSharedData()->getData(40) <= 2) {
+			_frameIndex = 0;
+			updateStatus(kActorStatus14);
+		} else {
+			_vm->clearGameFlag(kGameFlag438);
+			_vm->clearGameFlag(kGameFlag439);
+			_vm->clearGameFlag(kGameFlag440);
+			_vm->clearGameFlag(kGameFlag441);
+			_vm->clearGameFlag(kGameFlag442);
+
+			getSpeech()->playPlayer(53);
+
+			_vm->setGameFlag(kGameFlag219);
+
+			_frameIndex = 0;
+			updateStatus(kActorStatus17);
+
+			_vm->clearGameFlag(kGameFlag369);
+			_vm->clearGameFlag(kGameFlag370);
+
+			if (getSound()->isPlaying(getWorld()->soundResourceIds[5]))
+				getSound()->stop(getWorld()->soundResourceIds[5]);
+
+			if (getSound()->isPlaying(getWorld()->soundResourceIds[6]))
+				getSound()->stop(getWorld()->soundResourceIds[6]);
+
+			if (getSound()->isPlaying(getWorld()->soundResourceIds[7]))
+				getSound()->stop(getWorld()->soundResourceIds[7]);
+
+			if (_vm->isGameFlagSet(kGameFlag235)) {
+				Actor::enableActorsChapter2(_vm);
+				_vm->clearGameFlag(kGameFlag235);
+			}
+		}
+	}
 }
 
 void Actor::updateStatus16_Chapter11() {
@@ -1360,7 +1468,34 @@ void Actor::updateStatus18_Chapter2_Actor11() {
 }
 
 void Actor::updateStatus21() {
-	error("[Actor::updateStatus21] not implemented!");
+	if (_resourceId == getWorld()->graphicResourceIds[3] || _resourceId == getWorld()->graphicResourceIds[4] || _resourceId == getWorld()->graphicResourceIds[5]) {
+		if (_frameIndex < _frameCount - 1) {
+			++_frameIndex;
+
+			if (_frameIndex == _frameCount / 2) {
+				getWorld()->currentPaletteId = getWorld()->graphicResourceIds[getWorld()->nextPlayer - 1];
+				getScreen()->setPalette(getWorld()->currentPaletteId);
+				getScreen()->setGammaLevel(getWorld()->currentPaletteId, 0);
+			}
+
+			return;
+		}
+	} else {
+		if (_frameIndex > 0) {
+			--_frameIndex;
+
+			if (_frameIndex == _frameCount / 2)
+				getScreen()->setPalette(getWorld()->graphicResourceIds[getWorld()->nextPlayer - 1]);
+
+			getWorld()->currentPaletteId = getWorld()->graphicResourceIds[getWorld()->nextPlayer - 1];
+			getScreen()->setGammaLevel(getWorld()->currentPaletteId, 0);
+			return;
+		}
+	}
+
+	getScene()->changePlayer(getWorld()->nextPlayer);
+	updateStatus(kActorStatusEnabled);
+	getWorld()->nextPlayer = kActorInvalid;
 }
 
 void Actor::updateFinish() {

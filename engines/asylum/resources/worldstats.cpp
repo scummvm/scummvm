@@ -90,7 +90,7 @@ WorldStats::WorldStats(Common::SeekableReadStream *stream, Scene *scene) : _scen
 	musicResourceId = kResourceNone;
 	musicStatusExt = 0;
 
-	field_E860C = 0;
+	nextPlayer = kActorMax;
 	memset(&field_E8610, 0, sizeof(field_E8610));
 	memset(&field_E8628, 0, sizeof(field_E8628));
 	memset(&wheels, 0, sizeof(wheels));
@@ -264,11 +264,8 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	field_E8498 = stream->readSint32LE();
 	field_E849C = stream->readSint32LE();
 
-	for (int32 i = 0; i < 10; i++)
-		field_E84A0[i] = stream->readSint32LE();
-
-	for (int32 i = 0; i < 20; i++)
-		field_E84C8[i] = stream->readSint32LE();
+	for (int32 i = 0; i < ARRAYSIZE(tickValueArray); i++)
+		tickValueArray[i] = stream->readSint32LE();
 
 	field_E8518 = stream->readSint32LE();
 
@@ -278,7 +275,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	for (int32 i = 0; i < 30; i++)
 		field_E8594[i] = stream->readSint32LE();
 
-	field_E860C = stream->readSint32LE();
+	nextPlayer = (ActorIndex)stream->readSint32LE();
 
 	for (int32 i = 0; i < 6; i++)
 		field_E8610[i] = stream->readUint32LE();

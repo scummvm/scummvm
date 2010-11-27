@@ -188,7 +188,7 @@ public:
 	 * @param target Identifier for the target.
 	 * @param from   direction to face from.
 	 */
-	void faceTarget(ObjectId target, DirectionFrom from);
+	void faceTarget(uint32 target, DirectionFrom from);
 
 	/**
 	 * Initialize the x1/y1 values of the actor, update the active animation frame and, if the current direction isn't 8, update the actor's direction.
@@ -341,6 +341,7 @@ private:
 	void updateStatusEnabledProcessStatus(int32 testX, int32 testY, uint32 counter, int32 setX, int32 setY);
 
 	void updateStatus9();
+
 	void updateStatus12_Chapter2();
 	void updateStatus12_Chapter2_Actor11();
 	void updateStatus12_Chapter11_Actor1();
@@ -354,15 +355,18 @@ private:
 	void updateStatus15_Chapter2_Player();
 	void updateStatus15_Chapter2_Helper();
 	bool updateStatus15_isNoVisibleOrStatus17();
-
 	void updateStatus15_Chapter2_Actor11();
 	void updateStatus15_Chapter11();
 	void updateStatus15_Chapter11_Player();
+
 	void updateStatus16_Chapter2();
 	void updateStatus16_Chapter11();
+
 	void updateStatus17_Chapter2();
+
 	void updateStatus18_Chapter2();
 	void updateStatus18_Chapter2_Actor11();
+
 	void updateStatus21();
 
 	void updateFinish();
