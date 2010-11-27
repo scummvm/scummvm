@@ -38,12 +38,6 @@ namespace Mohawk {
 Sound::Sound(MohawkEngine* vm) : _vm(vm) {
 	_midiDriver = NULL;
 	_midiParser = NULL;
-
-	for (uint32 i = 0; i < _handles.size(); i++) {
-		_handles[i].handle = Audio::SoundHandle();
-		_handles[i].type = kFreeHandle;
-	}
-
 	initMidi();
 }
 
@@ -81,6 +75,7 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop) {
 
 	SndHandle *handle = getHandle();
 	handle->type = kUsedHandle;
+	handle->id = id;
 
 	Audio::AudioStream *audStream = NULL;
 
@@ -485,6 +480,7 @@ SndHandle *Sound::getHandle() {
 
 		if (!_vm->_mixer->isSoundHandleActive(_handles[i].handle)) {
 			_handles[i].type = kFreeHandle;
+			_handles[i].id = 0;
 			return &_handles[i];
 		}
 	}
@@ -493,6 +489,7 @@ SndHandle *Sound::getHandle() {
 	SndHandle handle;
 	handle.handle = Audio::SoundHandle();
 	handle.type = kFreeHandle;
+	handle.id = 0;
 	_handles.push_back(handle);
 
 	return &_handles[_handles.size() - 1];
@@ -503,6 +500,16 @@ void Sound::stopSound() {
 		if (_handles[i].type == kUsedHandle) {
 			_vm->_mixer->stopHandle(_handles[i].handle);
 			_handles[i].type = kFreeHandle;
+			_handles[i].id = 0;
+		}
+}
+
+void Sound::stopSound(uint16 id) {
+	for (uint32 i = 0; i < _handles.size(); i++)
+		if (_handles[i].type == kUsedHandle && _handles[i].id == id) {
+			_vm->_mixer->stopHandle(_handles[i].handle);
+			_handles[i].type = kFreeHandle;
+			_handles[i].id = 0;
 		}
 }
 
@@ -516,6 +523,14 @@ void Sound::resumeSound() {
 	for (uint32 i = 0; i < _handles.size(); i++)
 		if (_handles[i].type == kUsedHandle)
 			_vm->_mixer->pauseHandle(_handles[i].handle, false);
+}
+
+bool Sound::isPlaying(uint16 id) {
+	for (uint32 i = 0; i < _handles.size(); i++)
+		if (_handles[i].type == kUsedHandle && _handles[i].id == id)
+			return _vm->_mixer->isSoundHandleActive(_handles[i].handle);
+
+	return false;
 }
 
 } // End of namespace Mohawk

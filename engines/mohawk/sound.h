@@ -65,6 +65,7 @@ enum SndHandleType {
 struct SndHandle {
 	Audio::SoundHandle handle;
 	SndHandleType type;
+	uint16 id;
 };
 
 struct SLSTSndHandle {
@@ -122,8 +123,10 @@ public:
 	void playSoundBlocking(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void playMidi(uint16 id);
 	void stopSound();
+	void stopSound(uint16 id);
 	void pauseSound();
 	void resumeSound();
+	bool isPlaying(uint16 id);
 
 	// Riven-specific
 	void playSLST(uint16 index, uint16 card);
