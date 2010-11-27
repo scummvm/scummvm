@@ -43,7 +43,7 @@ Object::Object(AsylumEngine *engine) : x(0), y(0), flags(0), actionType(0),
 	_id(kObjectNone), _resourceId(kResourceNone), _field_20(0), _frameIndex(0), _frameCount(0),
 	_field_2C(0), _field_30(0), _field_34(0), _field_3C(0), _polygonIndex(0), _field_B4(0),
 	_tickCount(0), _tickCount2(0), _field_C0(0), _priority(0), _actionListIdx(0), _field_67C(0),
-	_soundX(0), _soundY(0), _field_688(0), _soundResourceId(kResourceNone), _field_6A4(kDirection0)
+	_soundX(0), _soundY(0), _field_688(0), _soundResourceId(kResourceNone), _field_6A4(kDirectionN)
 {
 	memset(&_name, 0, sizeof(_name));
 	memset(&_gameFlags, 0, sizeof(_gameFlags));

@@ -68,7 +68,7 @@ Scene::Scene(AsylumEngine *engine): _vm(engine), _ev(NULL),
 	_leftClick = false;
 	_rightButton = false;
 	_isActive = false;
-	_globalDirection = kDirection0;
+	_globalDirection = kDirectionN;
 
 	// Graphics
 	_bgResource = NULL;
@@ -153,7 +153,7 @@ void Scene::enter(ResourcePackId packId) {
 			Actor *actor = _ws->actors[i];
 
 			actor->hide();
-			actor->setDirection(kDirection1);
+			actor->setDirection(kDirectionNO);
 			actor->enable();
 
 			actor->getPoint1()->x -= actor->getPoint2()->x;
@@ -470,39 +470,39 @@ void Scene::updateMouse() {
 			if (getCursor()->position().y > actorPos.bottom) {
 				if (act->getDirection() == 2) {
 					if (getCursor()->position().y - actorPos.bottom > 10)
-						dir = kDirection3;
+						dir = kDirectionSO;
 				} else {
-					if (act->getDirection() == kDirection4) {
+					if (act->getDirection() == kDirectionS) {
 						if (actorPos.left - getCursor()->position().x > 10)
-							dir = kDirection3;
+							dir = kDirectionSO;
 					} else {
-						dir = kDirection3;
+						dir = kDirectionSO;
 					}
 				}
 			} else {
 				if (act->getDirection() == 1) {
 					if (getCursor()->position().y - actorPos.top > 10)
-						dir = kDirection2;
+						dir = kDirectionO;
 				} else {
-					if (act->getDirection() == kDirection3) {
+					if (act->getDirection() == kDirectionSO) {
 						if (actorPos.bottom - getCursor()->position().y > 10)
-							dir = kDirection2;
+							dir = kDirectionO;
 					} else {
-						dir = kDirection2;
+						dir = kDirectionO;
 					}
 				}
 			}
 		} else {
 			if (act->getDirection()) {
-				if (act->getDirection() == kDirection2) {
+				if (act->getDirection() == kDirectionO) {
 					if (actorPos.top - getCursor()->position().y > 10)
-						dir = kDirection1;
+						dir = kDirectionNO;
 				} else {
-					dir = kDirection1;
+					dir = kDirectionNO;
 				}
 			} else {
 				if (actorPos.left - getCursor()->position().x > 10)
-					dir = kDirection1;
+					dir = kDirectionNO;
 			}
 		}
 		done = true;
@@ -511,28 +511,28 @@ void Scene::updateMouse() {
 	if (!done && getCursor()->position().x <= actorPos.right) {
 		if (getCursor()->position().y >= actorPos.top) {
 			if (getCursor()->position().y > actorPos.bottom) {
-				if (act->getDirection() == kDirection3) {
+				if (act->getDirection() == kDirectionSO) {
 					if (getCursor()->position().x - actorPos.left > 10)
-						dir = kDirection4;
+						dir = kDirectionS;
 				} else {
-					if (act->getDirection() == kDirection5) {
+					if (act->getDirection() == kDirectionSE) {
 						if (actorPos.right - getCursor()->position().x > 10)
-							dir = kDirection4;
+							dir = kDirectionS;
 					} else {
-						dir = kDirection4;
+						dir = kDirectionS;
 					}
 				}
 			}
 		} else {
-			if (act->getDirection() == kDirection1) {
+			if (act->getDirection() == kDirectionNO) {
 				if (getCursor()->position().x - actorPos.left > 10)
-					dir = kDirection0;
+					dir = kDirectionN;
 			} else {
-				if (act->getDirection() == kDirection7) {
+				if (act->getDirection() == kDirectionNE) {
 					if (actorPos.right - getCursor()->position().x > 10)
-						dir = kDirection0;
+						dir = kDirectionN;
 				} else {
-					dir = kDirection0;
+					dir = kDirectionN;
 				}
 			}
 		}
@@ -541,43 +541,43 @@ void Scene::updateMouse() {
 
 	if (!done && getCursor()->position().y < actorPos.top) {
 		if (act->getDirection()) {
-			if (act->getDirection() == kDirection6) {
+			if (act->getDirection() == kDirectionE) {
 				if (actorPos.top - getCursor()->position().y > 10)
-					dir = kDirection7;
+					dir = kDirectionNE;
 			} else {
-				dir = kDirection7;
+				dir = kDirectionNE;
 			}
 		} else {
 			if (getCursor()->position().x - actorPos.right > 10)
-				dir = kDirection7;
+				dir = kDirectionNE;
 		}
 		done = true;
 	}
 
 	if (!done && getCursor()->position().y <= actorPos.bottom) {
-		if (act->getDirection() == kDirection5) {
+		if (act->getDirection() == kDirectionSE) {
 			if (actorPos.bottom - getCursor()->position().y > 10)
-				dir = kDirection6;
+				dir = kDirectionE;
 		} else {
-			if (act->getDirection() == kDirection7) {
+			if (act->getDirection() == kDirectionNE) {
 				if (getCursor()->position().y - actorPos.top > 10)
-					dir = kDirection6;
+					dir = kDirectionE;
 			} else {
-				dir = kDirection6;
+				dir = kDirectionE;
 			}
 		}
 		done = true;
 	}
 
-	if (!done && act->getDirection() == kDirection4) {
+	if (!done && act->getDirection() == kDirectionS) {
 		if (getCursor()->position().x - actorPos.right <= 10)
 			done = true;
 		if (!done)
-			dir = kDirection5;
+			dir = kDirectionSE;
 	}
 
-	if (!done && (act->getDirection() != kDirection6 || getCursor()->position().y - actorPos.bottom > 10))
-		dir = kDirection5;
+	if (!done && (act->getDirection() != kDirectionE || getCursor()->position().y - actorPos.bottom > 10))
+		dir = kDirectionSE;
 
 	handleMouseUpdate(dir, actorPos);
 

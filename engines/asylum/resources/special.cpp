@@ -544,7 +544,7 @@ void Special::chapter8(Object *object, ActorIndex actorIndex) {
 
 			if (object->getFrameIndex() == 50) {
 				object->disableAndRemoveFromQueue();
-				actor0->setDirection(kDirection4);
+				actor0->setDirection(kDirectionS);
 
 				getCursor()->show();
 				getWorld()->motionStatus = 1;
