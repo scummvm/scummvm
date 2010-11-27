@@ -144,6 +144,7 @@ public:
 	uint getRandomBit()      { return _rnd.getRandomBit(); }
 
 	// Message handler
+	MessageHandler *_handler;
 	void switchMessageHandler(MessageHandler *handler);
 	MessageHandler *getMessageHandler(uint32 index);
 
