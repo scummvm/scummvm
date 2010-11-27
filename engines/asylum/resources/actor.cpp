@@ -252,15 +252,15 @@ void Actor::draw() {
 
 	if (LOBYTE(flags) & kActorFlagMasked) {
 		Object *object = getWorld()->objects[_objectIndex];
-		getScene()->adjustCoordinates(object->x, object->y, &point);
+		Common::Point objPoint;
+		getScene()->adjustCoordinates(object->x, object->y, &objPoint);
 
-		error("[Actor::draw] Cross fade not implemented!");
-		//getScreen()->addGraphicToQueue(_resourceId, frameIndex, point.x, point.y, object->_resourceId, point.x, point.y, getGraphicsFlags(), _priority);
+		getScreen()->addGraphicToQueueMasked(_resourceId, frameIndex, point, object->getResourceId(), objPoint, getGraphicsFlags(), _priority);
 
 		// Update flags
 		flags &= ~kActorFlagMasked;
 	} else {
-		getScreen()->addGraphicToQueue(_resourceId, frameIndex, point.x, point.y, getGraphicsFlags(), _field_96C, _priority);
+		getScreen()->addGraphicToQueue(_resourceId, frameIndex, point, getGraphicsFlags(), _field_96C, _priority);
 	}
 }
 

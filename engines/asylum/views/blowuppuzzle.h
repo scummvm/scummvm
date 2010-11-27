@@ -75,8 +75,7 @@ protected:
 
 typedef struct VCRDrawInfo {
 	int32 resourceId;
-	int32 x;
-	int32 y;
+	Common::Point point;
 } VCRDrawInfo;
 
 const Common::Rect BlowUpPuzzleVCRPolies[10] = {
