@@ -132,6 +132,11 @@ public:
 	////////////////////////////////////////////////////////////////////////
 
 	/**
+	 * Stop the object related sounds
+	 */
+	void stopSound();
+
+	/**
 	 * Stop all object sounds (called from scripts)
 	 */
 	void stopAllSounds();
@@ -210,11 +215,6 @@ private:
 	 * and based on their flag values, stop them accordingly
 	 */
 	void updateSoundItems();
-
-	/**
-	 * Stop the object related sounds
-	 */
-	void stopSound();
 
 	/**
 	 * Sets the volume.

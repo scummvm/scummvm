@@ -471,6 +471,7 @@ enum ObjectId {
 	kObjectDennisStatus2           = 1580,
 	kObjectPreAlphaNut             = 1582,
 	kObjectPreAlphaNut2            = 1584,
+	kObjectDeadMomFromOutside      = 1589,
 	kObjectHeadOnTable             = 1595,
 	kObjectWitchDoctor             = 1778,
 	kObjectStoneWifeStatuQuo       = 1782,

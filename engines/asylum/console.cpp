@@ -379,7 +379,8 @@ bool Console::cmdRunEncounter(int32 argc, const char **argv) {
 		return true;
 	}
 
-	_vm->encounter()->run(index, kObjectNone, kObjectNone, kActorInvalid);
+	// TODO update with array of valid objects
+	_vm->encounter()->run(index, kObjectNone, kObjectNone, kActorMax);
 
 	return false;
 }

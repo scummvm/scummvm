@@ -25,13 +25,37 @@
 
 #include "asylum/resources/encounters.h"
 
+#include "asylum/resources/actor.h"
+#include "asylum/resources/object.h"
+#include "asylum/resources/worldstats.h"
+
+#include "asylum/views/scene.h"
+
 #include "asylum/asylum.h"
 
 #include "common/file.h"
 
 namespace Asylum {
 
-Encounter::Encounter(AsylumEngine *engine) : _vm(engine), _currentEncounter(NULL) {
+Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
+	_index(NULL), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _actorIndex(kActorInvalid),
+	_flag1(false), _flag2(false) {
+
+	_messageHandler = new MESSAGE_HANDLER(Encounter, messageHandler, this);
+
+	load();
+}
+
+Encounter::~Encounter() {
+	delete _messageHandler;
+
+	_item = NULL;
+
+	// Zero-out passed pointers
+	_vm = NULL;
+}
+
+void Encounter::load() {
 	Common::File file;
 
 	// TODO error checks
@@ -39,8 +63,8 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine), _currentEncounter(NULL
 
 	uint16 _count = file.readUint16LE();
 
-	_variables = (int16*)malloc(_count);
-	file.read(_variables, _count);
+	for (uint i = 0; i < _count; i++)
+		_variables.push_back(file.readSint16LE());
 
 	file.seek(2 + _count * 2, SEEK_SET);
 
@@ -67,71 +91,64 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine), _currentEncounter(NULL
 	file.close();
 }
 
-Encounter::~Encounter() {
-	free(_variables);
-	_currentEncounter = NULL;
+void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2, ActorIndex actorIndex) {
+	// Line: 12/15 :: 0x25 (1, 1584, 1584, 0, 0, 0, 0, 0, 0) // First Encounter
+	debugC(kDebugLevelEncounter, "Running Encounter %d", encounterIndex);
 
-	// Zero-out passed pointers
-	_vm = NULL;
+	if (!_keywordIndex) {
+		_item = &_items[0];
+		_keywordIndex = _item->keywordIndex;
+	}
+
+	if (encounterIndex < 0)
+		return;
+
+	// Original engine saves the main event handler (to be restored later)
+	_index = encounterIndex;
+	_item = &_items[encounterIndex];
+	_objectId1 = objectId1;
+	_objectId2 = objectId2;
+	_actorIndex = actorIndex;
+
+	if (getWorld()->getObjectById(objectId2))
+		getWorld()->getObjectById(objectId2)->stopSound();
+
+	getWorld()->actors[actorIndex]->stopSound();
+
+	setVariable(1, 0);
+	setVariable(2, _item->value);
+
+	Actor *player = getScene()->getActor();
+	if (player->getStatus() == kActorStatusDisabled) {
+		_flag2 = true;
+	} else {
+		_flag2 = false;
+		player->updateStatus(kActorStatusDisabled);
+	}
+
+	_flag1 = false;
+
+	// Setup encounter event handler
+	_vm->switchMessageHandler(_messageHandler);
 }
 
-void Encounter::run(int32 encounterIdx, int32 objectId1, int32 objectId2, int32 characterIdx) {
-	// Line: 12/15 :: 0x25 (1, 1584, 1584, 0, 0, 0, 0, 0, 0) // First Encounter
 
-	//debugC(kDebugLevelEncounter, "Running Encounter %d", encounterIdx);
 
-	_currentEncounter = &_items[encounterIdx];
-	setVariable(1, 0);
-	setVariable(2, _currentEncounter->value);
+//////////////////////////////////////////////////////////////////////////
+// Message handler
+//////////////////////////////////////////////////////////////////////////
+void Encounter::messageHandler(const AsylumEvent &evt) {
 
-	//Object *b1 = _scene->worldstats()->getObjectById(objectId1);
-	/*
-	 int32 __cdecl runEncounter(int32 newMessageHandler, int32 encounterIndex, int32 objectId1, int32 objectId2, int32 characterIndex)
-	{
-	  int32 result; // eax@7
-	  EncounterItem *v6; // eax@2
-	  int32 v7; // ST04_4@4
-	  int32 v8; // eax@4
+}
 
-	  if ( !encounterKeywordIndex )
-	  {
-	    v6 = getEncounterItem(0);
-	    encounterItem = v6;
-	    encounterKeywordIndex = *(_DWORD *)&v6->keywordIndex;
-	  }
-	  if ( encounterIndex < 0 )
-	  {
-	    result = 0;
-	  }
-	  else
-	  {
-	    encounter_newMessageHandler = newMessageHandler;
-	    encounterIndex = encounterIndex;
-	    encounterItem = getEncounterItem(encounterIndex);
-	    encounter_objectId01 = objectId1;
-	    v7 = characterIndex;
-	    encounter_objectId02 = objectId2;
-	    characterIndex2 = characterIndex;
-	    v8 = getObjectIndexById(objectId2);
-	    object_sound_sub_414C30(v8, v7);
-	    setEncounterVariable(1, 0);
-	    setEncounterVariable(2, encounterItem->value);
-	    if ( scene.characters[playerCharacterIndex].field_40 == 5 )
-	    {
-	      encounter_flag02 = 1;
-	    }
-	    else
-	    {
-	      encounter_flag02 = 0;
-	      character_sub_4072A0(playerCharacterIndex, 5);
-	    }
-	    flag04 = 0;
-	    switchMessageHandler((int32 (__cdecl *)(_DWORD, _DWORD, _DWORD))handleMessageEncounter);
-	    result = 1;
-	  }
-	  return result;
-	}
-	 */
+//////////////////////////////////////////////////////////////////////////
+// Helpers functions
+//////////////////////////////////////////////////////////////////////////
+void Encounter::setVariable(uint32 index, int32 val) {
+	if (index >= _variables.size())
+		error("[Encounter::setVariable] Invalid index (was: %d, max: %d)", index, _variables.size() - 1);
+
+	_variables[index] = val;
 }
 
 }
