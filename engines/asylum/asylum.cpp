@@ -52,7 +52,7 @@ namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
 	_console(NULL), _cursor(NULL), _encounter(NULL), _mainMenu(NULL), _resource(NULL), _scene(NULL), _screen(NULL),
-	_sound(NULL), _text(NULL), _video(NULL), _introPlaying(false) {
+	_sound(NULL), _text(NULL), _video(NULL), _introPlaying(false), _handler(NULL) {
 
 	// Init data
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
@@ -351,7 +351,21 @@ void AsylumEngine::processDelayedEvents() {
 // Message handlers
 //////////////////////////////////////////////////////////////////////////
 void AsylumEngine::switchMessageHandler(MessageHandler *handler) {
-	error("[AsylumEngine::switchMessageHandler] not implemented");
+	if (handler == NULL)
+		error("[AsylumEngine::switchMessageHandler] Invalid handler parameter (cannot be NULL)!");
+
+	// De-init previous handler
+	if (_handler != NULL) {
+		AsylumEvent deinit(EVENT_ASYLUM, AsylumMessageDeInit);
+		(*_handler)(deinit);
+	}
+
+	// replace message handler
+	_handler = handler;
+
+	// Init new handler
+	AsylumEvent init(EVENT_ASYLUM, AsylumMessageInit);
+	(*_handler)(init);
 }
 
 MessageHandler *AsylumEngine::getMessageHandler(uint32 index) {
