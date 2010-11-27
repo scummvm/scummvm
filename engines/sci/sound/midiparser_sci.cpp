@@ -515,6 +515,9 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		// Handle events sent to the SCI special channel (15)
 		if (info.channel() == 0xF) {
 			switch (info.basic.param1) {
+			case kSetReverb:
+				// Already handled above
+				break;
 			case kMidiHold:
 				// Check if the hold ID marker is the same as the hold ID
 				// marker set for that song by cmdSetSoundHold.
