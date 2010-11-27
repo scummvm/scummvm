@@ -356,7 +356,7 @@ void AsylumEngine::switchMessageHandler(MessageHandler *handler) {
 
 	// De-init previous handler
 	if (_handler != NULL) {
-		AsylumEvent deinit(EVENT_ASYLUM, AsylumMessageDeInit);
+		AsylumEvent deinit(EVENT_ASYLUM_DEINIT);
 		(*_handler)(deinit);
 	}
 
@@ -364,7 +364,7 @@ void AsylumEngine::switchMessageHandler(MessageHandler *handler) {
 	_handler = handler;
 
 	// Init new handler
-	AsylumEvent init(EVENT_ASYLUM, AsylumMessageInit);
+	AsylumEvent init(EVENT_ASYLUM_INIT);
 	(*_handler)(init);
 }
 
