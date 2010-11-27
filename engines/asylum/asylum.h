@@ -144,10 +144,21 @@ public:
 	uint getRandom(uint max) { return _rnd.getRandomNumber(max); }
 	uint getRandomBit()      { return _rnd.getRandomBit(); }
 
-	// Message handler
-	MessageHandler *_handler;
-	void switchMessageHandler(MessageHandler *handler);
-	MessageHandler *getMessageHandler(uint32 index);
+	/**
+	 * Switch message handler.
+	 *
+	 * @param handler If non-null, a pointer to an EventHandler class.
+	 */
+	void switchEventHandler(EventHandler *handler);
+
+	/**
+	 * Gets a message handler.
+	 *
+	 * @param index Zero-based index of the message handler
+	 *
+	 * @return The message handler.
+	 */
+	EventHandler* getPuzzle(uint32 index);
 
 private:
 	const ADGameDescription *_gameDescription;
@@ -167,6 +178,10 @@ private:
 	Text            *_text;
 	Video           *_video;
 
+	// Current EventHandler class instance
+	EventHandler *_handler;
+	EventHandler *_puzzles[16];
+
 	// Shared game data
 	SharedData _data;
 
@@ -182,6 +197,11 @@ private:
 	 * Play the intro
 	 */
 	void playIntro();
+
+	/**
+	 * Initializes the puzzles
+	 */
+	void initPuzzles();
 
 	friend class Console;
 };

@@ -27,6 +27,7 @@
 #define ASYLUM_ENCOUNTERS_H
 
 #include "asylum/asylum.h"
+#include "asylum/eventhandler.h"
 #include "asylum/shared.h"
 
 #include "common/array.h"
@@ -35,12 +36,14 @@ namespace Asylum {
 
 class AsylumEngine;
 
-class Encounter {
+class Encounter : public EventHandler {
 public:
 	Encounter(AsylumEngine *engine);
 	virtual ~Encounter();
 
 	void run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2, ActorIndex actorIndex);
+
+	bool handleEvent(const AsylumEvent &evt);
 
 	void setFlag5(bool state) { _flag5 = state; }
 	bool getFlag6() { return _flag6; }
@@ -122,11 +125,9 @@ private:
 	void initDrawStructs();
 
 	uint32 findKeyword(EncounterItem *item, int16 keyword);
-	
+
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling
-	Common::Functor1Mem<const AsylumEvent &, bool, Encounter> *_messageHandler;
-	bool messageHandler(const AsylumEvent &evt);
 	bool init();
 	bool update();
 	bool key(const AsylumEvent &evt);

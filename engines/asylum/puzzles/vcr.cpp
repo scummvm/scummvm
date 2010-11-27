@@ -83,7 +83,7 @@ void BlowUpPuzzleVCR::close() {
 	getScene()->activate();
 }
 
-void BlowUpPuzzleVCR::handleEvent(const AsylumEvent &ev, bool doUpdate) {
+bool BlowUpPuzzleVCR::handleEvent(const AsylumEvent &ev) {
 	switch (ev.type) {
 	case Common::EVENT_MOUSEMOVE:
 		_cursor->move(ev.mouse.x, ev.mouse.y);
@@ -101,8 +101,10 @@ void BlowUpPuzzleVCR::handleEvent(const AsylumEvent &ev, bool doUpdate) {
 		break;
 	}
 
-	if (doUpdate || _leftClickUp || _leftClickDown)
+	if (_leftClickUp || _leftClickDown)
 		update();
+
+	return true;
 }
 
 void BlowUpPuzzle::playSound(ResourceId resourceId, bool loop) {

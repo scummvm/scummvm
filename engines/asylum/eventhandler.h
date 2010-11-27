@@ -45,10 +45,12 @@ struct AsylumEvent : public Common::Event {
 	}
 };
 
-typedef Common::Functor1<const AsylumEvent &, bool> MessageHandler;
+class EventHandler {
+public:
+	virtual ~EventHandler() {}
 
-#define MESSAGE_HANDLER(class, name, inst) \
-	Common::Functor1Mem<const AsylumEvent&, bool, class>(inst, &class::name)
+	virtual bool handleEvent(const AsylumEvent &ev) = 0;
+};
 
 } // End of namespace Asylum
 

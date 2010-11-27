@@ -49,14 +49,10 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 
 	// TODO init rest of members
 
-	_messageHandler = new MESSAGE_HANDLER(Encounter, messageHandler, this);
-
 	load();
 }
 
 Encounter::~Encounter() {
-	delete _messageHandler;
-
 	// Pointing to existing data
 	_item = NULL;
 
@@ -170,13 +166,13 @@ void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2
 	_flag1 = false;
 
 	// Setup encounter event handler
-	_vm->switchMessageHandler(_messageHandler);
+	_vm->switchEventHandler(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Message handler
 //////////////////////////////////////////////////////////////////////////
-bool Encounter::messageHandler(const AsylumEvent &evt) {
+bool Encounter::handleEvent(const AsylumEvent &evt) {
 	switch ((uint32)evt.type) {
 	default:
 		break;

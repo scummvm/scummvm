@@ -63,7 +63,7 @@ public:
 	BlowUpPuzzleVCR(AsylumEngine *engine);
 	~BlowUpPuzzleVCR();
 
-	void handleEvent(const AsylumEvent &event, bool doUpdate);
+	bool handleEvent(const AsylumEvent &event);
 	void open();
 	void close();
 private:
