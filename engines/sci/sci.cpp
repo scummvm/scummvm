@@ -435,6 +435,8 @@ void SciEngine::patchGameSaveRestore(SegManager *segMan) {
 	const Object *gameObject = segMan->getObject(_gameObjectAddress);
 	const uint16 gameMethodCount = gameObject->getMethodCount();
 	const Object *gameSuperObject = segMan->getObject(_gameSuperClassAddress);
+	if (!gameSuperObject)
+		gameSuperObject = gameObject;	// happens in KQ5CD, when loading saved games before r54510
 	const uint16 gameSuperMethodCount = gameSuperObject->getMethodCount();
 	reg_t methodAddress;
 	const uint16 kernelCount = _kernel->getKernelNamesSize();
