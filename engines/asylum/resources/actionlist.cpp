@@ -1726,7 +1726,7 @@ END_OPCODE
 // Opcode 0x61
 IMPLEMENT_OPCODE(_unk61)
 	if (cmd->param2) {
-		if (getWorld()->field_E860C == -1) {
+		if (getWorld()->nextPlayer == kActorInvalid) {
 			_lineIncrement = 0;
 			cmd->param2 = 0;
 		} else {

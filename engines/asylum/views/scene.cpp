@@ -201,7 +201,7 @@ void Scene::enter(ResourcePackId packId) {
 
 	if (_ws->chapter == kChapter9) {
 		changePlayer(1);
-		_ws->field_E860C = -1;
+		_ws->nextPlayer = kActorInvalid;
 	}
 
 	activate();
