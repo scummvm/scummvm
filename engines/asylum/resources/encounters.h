@@ -89,11 +89,21 @@ private:
 	ActorIndex _actorIndex;
 
 	uint32 _value1;
+	int32 _rectIndex;
 
 	// Internal data
+	int32 _data_455B14;
+	bool _data_455B3C;
+	bool _data_455BCC;
+	bool _data_455BD0;
+	bool _data_455BD4;
+	bool _data_455BD8;
+	bool _data_455BDC;
+	bool _data_455BE0;
+	bool _data_455BE4;
 	bool _data_455BE8;
 	uint32 _data_455BF4;
-	bool _data_455BD4;
+	bool _data_455BF8;
 
 	// Internal flags
 	bool _flag1;
@@ -106,16 +116,21 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 	void load();
-	uint32 findKeyword(EncounterItem *item, int16 keyword);
+	void initData();
+	void initCoordinates();
+	void initPortrait();
+	void initDrawStructs();
 
+	uint32 findKeyword(EncounterItem *item, int16 keyword);
+	
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling
-	Common::Functor1Mem<const AsylumEvent &, void, Encounter> *_messageHandler;
-	void messageHandler(const AsylumEvent &evt);
-	void init();
-	void update();
-	void key(const AsylumEvent &evt);
-	void mouse(const AsylumEvent &evt);
+	Common::Functor1Mem<const AsylumEvent &, bool, Encounter> *_messageHandler;
+	bool messageHandler(const AsylumEvent &evt);
+	bool init();
+	bool update();
+	bool key(const AsylumEvent &evt);
+	bool mouse(const AsylumEvent &evt);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Variables
@@ -151,23 +166,23 @@ private:
 		int32 vars[10];
 		uint32 offset;
 		int32 counter;
-		uint32 resourceId;
+		ResourceId resourceId;
 
 		ScriptData() {
-			reset();
+			reset(kResourceNone);
 		}
 
-		void reset() {
+		void reset(ResourceId resourceId) {
 			memset(&vars, 0, sizeof(vars));
 			offset = 0;
 			counter = 0;
-			resourceId = kResourceNone;
+			resourceId = resourceId;
 		}
 	};
 
 	ScriptData _scriptData;
 
-	void initScript();
+	void initScript(ResourceId resourceId);
 	ScriptEntry getScriptEntry(ResourceId resourceId, uint32 offset);
 	void runScript();
 
