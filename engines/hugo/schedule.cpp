@@ -123,7 +123,7 @@ uint32 Scheduler::getWinTicks() {
 * a real tick, in which case the system tick is simply incremented
 */
 uint32 Scheduler::getDosTicks(bool updateFl) {
-	debugC(5, kDebugSchedule, "getDosTicks(%s)", (updateFl) ? 1 : 0);
+	debugC(5, kDebugSchedule, "getDosTicks(%s)", (updateFl) ? "TRUE" : "FALSE");
 
 	static  uint32 tick = 0;                        // Current system time in ticks
 	static  uint32 t_old = 0;                       // The previous wall time in ticks
