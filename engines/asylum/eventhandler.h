@@ -31,9 +31,19 @@
 
 namespace Asylum {
 
+#define EVENT_ASYLUM FFF0
+
+enum AsylumMessages {
+	AsylumMessageUpdate,
+	AsylumMessageInit,
+	AsylumMessageDeInit,
+};
+
 struct AsylumEvent : public Common::Event {
-	// For events of type INVALID, we check our custom event value
-	uint32 id;
+	// For events of type EVENT_ASYLUM, we check our custom event value
+	// Since we don't feed any custom message into the event manager,
+	// we can safely use our own custom event type.
+	uint32 extra;
 };
 
 typedef Common::Functor1<const AsylumEvent &, void> MessageHandler;
