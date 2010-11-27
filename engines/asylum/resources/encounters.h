@@ -72,6 +72,7 @@ private:
 	EncounterItem *_currentEncounter;
 	Common::Array<EncounterItem> _items;
 
+	friend class Console;
 }; // end of class Encounter
 
 } // end of namespace Asylum

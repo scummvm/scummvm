@@ -27,6 +27,7 @@
 
 #include "asylum/resources/actionlist.h"
 #include "asylum/resources/actor.h"
+#include "asylum/resources/encounters.h"
 #include "asylum/resources/object.h"
 #include "asylum/resources/worldstats.h"
 
@@ -60,6 +61,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 	DCmd_Register("video",          WRAP_METHOD(Console, cmdPlayVideo));
 	DCmd_Register("script",         WRAP_METHOD(Console, cmdRunScript));
 	DCmd_Register("scene",          WRAP_METHOD(Console, cmdChangeScene));
+	DCmd_Register("encounter",      WRAP_METHOD(Console, cmdRunEncounter));
 
 	DCmd_Register("toggle_flag",    WRAP_METHOD(Console, cmdToggleFlag));
 
@@ -91,18 +93,19 @@ bool Console::cmdHelp(int, const char **) {
 	DebugPrintf("\n");
 	DebugPrintf("Commands\n");
 	DebugPrintf("--------\n");
-	DebugPrintf(" ls      - list engine files\n");
+	DebugPrintf(" ls          - list engine files\n");
 	DebugPrintf("\n");
-	DebugPrintf(" actors  - show actors information\n");
-	DebugPrintf(" action  - show action information\n");
-	DebugPrintf(" flags   - show flags\n");
-	DebugPrintf(" object  - inspect a particular object\n");
-	DebugPrintf(" objects - show objects information\n");
-	DebugPrintf(" world   - show worldstats\n");
+	DebugPrintf(" actors      - show actors information\n");
+	DebugPrintf(" action      - show action information\n");
+	DebugPrintf(" flags       - show flags\n");
+	DebugPrintf(" object      - inspect a particular object\n");
+	DebugPrintf(" objects     - show objects information\n");
+	DebugPrintf(" world       - show worldstats\n");
 	DebugPrintf("\n");
-	DebugPrintf(" video   - play a video\n");
-	DebugPrintf(" script  - run a script\n");
-	DebugPrintf(" scene   - change the scene\n");
+	DebugPrintf(" video       - play a video\n");
+	DebugPrintf(" script      - run a script\n");
+	DebugPrintf(" scene       - change the scene\n");
+	DebugPrintf(" encounter   - run an encounter\n");
 	DebugPrintf("\n");
 	DebugPrintf(" toggle_flag - toggle a flag\n");
 	DebugPrintf("\n");
@@ -345,9 +348,25 @@ bool Console::cmdChangeScene(int32 argc, const char **argv) {
 	}
 
 	_vm->scene()->actions()->setDelayedSceneIndex(index);
-	// FIXME push the script index into the script queue
-	// XXX is this right or should it be ws->actionListIdx???
-	//_vm->scene()->actions()->setScriptByIndex(0);
+
+	return false;
+}
+
+bool Console::cmdRunEncounter(int32 argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Syntax: %s <encounter index>\n", argv[0]);
+		return true;
+	}
+
+	uint32 index = atoi(argv[1]);
+
+	// Check index is valid
+	if (index < 0 || index >= _vm->encounter()->_items.size()) {
+		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, _vm->encounter()->_items.size() - 1);
+		return true;
+	}
+
+	_vm->encounter()->run(index, kObjectNone, kObjectNone, kActorInvalid);
 
 	return false;
 }

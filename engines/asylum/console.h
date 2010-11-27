@@ -72,6 +72,7 @@ private:
 	bool cmdPlayVideo(int32 argc, const char **argv);
 	bool cmdRunScript(int32 argc, const char **argv);
 	bool cmdChangeScene(int32 argc, const char **argv);
+	bool cmdRunEncounter(int32 argc, const char **argv);
 
 	bool cmdToggleFlag(int32 argc, const char **argv);
 };
