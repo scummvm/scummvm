@@ -96,7 +96,7 @@ bool Console::cmdHelp(int, const char **) {
 	DebugPrintf(" ls          - list engine files\n");
 	DebugPrintf("\n");
 	DebugPrintf(" actors      - show actors information\n");
-	DebugPrintf(" action      - show action information\n");
+	DebugPrintf(" actions     - show action information\n");
 	DebugPrintf(" flags       - show flags\n");
 	DebugPrintf(" object      - inspect a particular object\n");
 	DebugPrintf(" objects     - show objects information\n");
@@ -147,6 +147,11 @@ bool Console::cmdListActions(int32 argc, const char **argv) {
 	} else {
 		int index = atoi(argv[1]);
 		int maxIndex = getWorld()->actions.size() - 1;
+
+		if (maxIndex == -1) {
+			DebugPrintf("[error] No actions are present!\n");
+			return true;
+		}
 
 		if (index < 0 || index > maxIndex) {
 			DebugPrintf("[error] index should be between 0 and %d\n", maxIndex);
