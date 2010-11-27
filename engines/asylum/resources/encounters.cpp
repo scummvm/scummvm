@@ -32,6 +32,7 @@
 
 #include "asylum/system/cursor.h"
 #include "asylum/system/speech.h"
+#include "asylum/system/text.h"
 
 #include "asylum/views/scene.h"
 
@@ -46,6 +47,8 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_index(NULL), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _actorIndex(kActorInvalid),
 	_flag1(false), _flag2(false) {
 
+	// TODO init rest of members
+
 	_messageHandler = new MESSAGE_HANDLER(Encounter, messageHandler, this);
 
 	load();
@@ -54,6 +57,7 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 Encounter::~Encounter() {
 	delete _messageHandler;
 
+	// Pointing to existing data
 	_item = NULL;
 
 	// Zero-out passed pointers
@@ -98,6 +102,22 @@ void Encounter::load() {
 	}
 
 	file.close();
+}
+
+void Encounter::initData() {
+	error("[Encounter::initData] Not implemented!");
+}
+
+void Encounter::initCoordinates(){
+	error("[Encounter::initData] Not implemented!");
+}
+
+void Encounter::initPortrait(){
+	error("[Encounter::initData] Not implemented!");
+}
+
+void Encounter::initDrawStructs(){
+	error("[Encounter::initData] Not implemented!");
 }
 
 uint32 Encounter::findKeyword(EncounterItem *item, int16 keyword) {
@@ -156,51 +176,85 @@ void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2
 //////////////////////////////////////////////////////////////////////////
 // Message handler
 //////////////////////////////////////////////////////////////////////////
-void Encounter::messageHandler(const AsylumEvent &evt) {
+bool Encounter::messageHandler(const AsylumEvent &evt) {
 	switch ((uint32)evt.type) {
 	default:
 		break;
 
 	case EVENT_ASYLUM_INIT:
-		init();
+		return init();
 		break;
 
 	case EVENT_ASYLUM_UPDATE:
-		update();
+		return update();
 		break;
 
 	case Common::EVENT_KEYDOWN:
-		key(evt);
+		return key(evt);
 		break;
 
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
-		mouse(evt);
+		return mouse(evt);
 		break;
 	}
+
+	return false;
 }
 
-void Encounter::init() {
+bool Encounter::init() {
 	if (getSound()->getMusicVolume() != Config.musicVolume - 500)
 		getSound()->setMusicVolume(Config.musicVolume - 500);
 
-	error("[Encounter::init] Not implemented!");
+	if (!getSharedData()->getMatteBarHeight()) {
+		_flag6 = true;
+		_data_455BD4 = 0;
+		_data_455BD8 = 0;
+		_data_455BDC = 0;
+		_data_455BE0 = 0;
+		_data_455BE4 = 0;
+		_data_455BCC = 0;
+		_data_455B3C = 1;
+		_rectIndex = -1;
+		_value1 = 0;
+		_data_455BF4 = 0;
+		_data_455BF8 = 0;
+		_data_455B14 = -1;
+
+		getSpeech()->resetTextData();
+
+		initData();
+
+		getText()->loadFont(getWorld()->font1);
+
+		initCoordinates();
+		initPortrait();
+		initDrawStructs();
+	}
+
+	_data_455BD0 = 0;
+	getCursor()->set(getWorld()->curTalkNPC, -1, 2);
+
+	if (!getSharedData()->getMatteBarHeight())
+		initScript(_item->scriptResourceId);
+
+	return true;
 }
 
-void Encounter::update() {
+bool Encounter::update() {
 	if (getSound()->getMusicVolume() != Config.musicVolume - 500)
 		getSound()->setMusicVolume(Config.musicVolume - 500);
 
 	error("[Encounter::update] Not implemented!");
 }
 
-void Encounter::key(const AsylumEvent &evt) {
+bool Encounter::key(const AsylumEvent &evt) {
 	error("[Encounter::key] Not implemented!");
 }
 
-void Encounter::mouse(const AsylumEvent &evt) {
+bool Encounter::mouse(const AsylumEvent &evt) {
 	error("[Encounter::mouse] Not implemented!");
 }
 
@@ -254,8 +308,8 @@ bool Encounter::isSpeaking() {
 //////////////////////////////////////////////////////////////////////////
 // Scripts
 //////////////////////////////////////////////////////////////////////////
-void Encounter::initScript() {
-	_scriptData.reset();
+void Encounter::initScript(ResourceId resourceId) {
+	_scriptData.reset(resourceId);
 	_flag3 = false;
 }
 

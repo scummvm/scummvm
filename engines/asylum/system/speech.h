@@ -87,6 +87,11 @@ public:
 	void resetResourceIds();
 
 	/**
+	 * Resets text data
+	 */
+	void resetTextData();
+
+	/**
 	 * Gets the sound resource identifier.
 	 *
 	 * @return The sound resource identifier.
