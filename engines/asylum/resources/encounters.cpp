@@ -31,6 +31,7 @@
 #include "asylum/resources/worldstats.h"
 
 #include "asylum/system/cursor.h"
+#include "asylum/system/graphics.h"
 #include "asylum/system/speech.h"
 #include "asylum/system/text.h"
 
@@ -38,10 +39,13 @@
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
+#include "asylum/staticres.h"
 
 #include "common/file.h"
 
 namespace Asylum {
+
+#define KEYWORD_MASK 0xFFF
 
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_index(NULL), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _actorIndex(kActorInvalid),
@@ -101,24 +105,96 @@ void Encounter::load() {
 }
 
 void Encounter::initData() {
-	error("[Encounter::initData] Not implemented!");
+	memset(&_keywordIndexes, -1, sizeof(_keywordIndexes));
+
+	uint32 currentIndex = 0;
+
+	for (uint i = 0; i < 50; i++)
+		if (_item->keywords[i] & KEYWORD_MASK)
+			if (!(BYTE1(_item->keywords[i]) & 0x20))
+				_keywordIndexes[currentIndex++] = i;
+
+	for (uint i = 0; i < 50; i++)
+		if (_item->keywords[i] & KEYWORD_MASK)
+			if (!(BYTE1(_item->keywords[i]) & 0x20))
+				_keywordIndexes[currentIndex++] = i;
 }
 
-void Encounter::initCoordinates(){
-	error("[Encounter::initData] Not implemented!");
+void Encounter::initBackground() {
+	_background.resourceId = getWorld()->encounterFrameBg;
+	_background.frameIndex = 0;
+	_background.frameCount = GraphicResource::getFrameCount(_vm, _background.resourceId);
+	_background.rect = GraphicResource::getFrameRect(_vm, _background.resourceId, _background.frameCount - 1);
+
+	Common::Point point;
+	Actor *player = getScene()->getActor();
+	getScene()->adjustCoordinates(player->getPoint1()->x, player->getPoint1()->y, &point);
+	_point = Common::Point(15, (point.y < 240) ? 464 - _background.rect.height() : 15);
+
+	_background.transTableNum = 1;
 }
 
-void Encounter::initPortrait(){
-	error("[Encounter::initData] Not implemented!");
+void Encounter::initPortraits() {
+	// Portrait 1
+	if (_index == 18)
+		_portrait1.resourceId = getWorld()->graphicResourceIds[51];
+	else
+		_portrait1.resourceId = getWorld()->graphicResourceIds[encounterPortrait1Index[getWorld()->chapter == kChapter9 ? getWorld()->actorType + 9 : getWorld()->chapter]];
+
+	if (_portrait1.resourceId == -1 && getWorld()->chapter == kChapter1)
+		_portrait1.resourceId = getWorld()->graphicResourceIds[36];
+
+	if (_portrait1.resourceId == -1)
+		error("[Encounter::initPortraits] No portrait 1 for this encounter!");
+
+	_portrait1.frameIndex = 0;
+	_portrait1.frameCount = GraphicResource::getFrameCount(_vm, _portrait1.resourceId);
+	_portrait1.rect = GraphicResource::getFrameRect(_vm, _portrait1.resourceId, 0);
+	_portrait1.transTableNum = 0;
+	_portrait1.transTableMax = 3;
+	_portrait1.speech0 = 0;
+
+	// Portrait 2
+	if (_index != 59)
+		_portrait2.resourceId = getWorld()->graphicResourceIds[encounterPortrait2Index[_index]];
+	else if (_vm->isGameFlagSet(kGameFlag353))
+		_portrait2.resourceId = getWorld()->graphicResourceIds[16];
+	else if (_vm->isGameFlagSet(kGameFlag354))
+		_portrait2.resourceId = getWorld()->graphicResourceIds[23];
+	else if (_vm->isGameFlagSet(kGameFlag355))
+		_portrait2.resourceId = getWorld()->graphicResourceIds[24];
+
+	if (_portrait2.resourceId == -1 && getWorld()->chapter == kChapter1)
+		_portrait2.resourceId = getWorld()->graphicResourceIds[36];
+
+	if (_portrait2.resourceId == -1)
+		error("[Encounter::initPortraits] No portrait 2 for this encounter!");
+
+	_portrait2.frameIndex = 0;
+	_portrait2.frameCount = GraphicResource::getFrameCount(_vm, _portrait1.resourceId);
+	_portrait2.rect = GraphicResource::getFrameRect(_vm, _portrait1.resourceId, 0);
+	_portrait2.transTableNum = 0;
+	_portrait2.transTableMax = 0;
+	_portrait2.speech0 = 0;
 }
 
-void Encounter::initDrawStructs(){
-	error("[Encounter::initData] Not implemented!");
+void Encounter::initDrawStructs() {
+	for (uint i = 0; i < ARRAYSIZE(_drawingStructs); i++) {
+		_drawingStructs[i].resourceId = (i == 0) ? getWorld()->smallCurUp : getWorld()->smallCurDown;
+		_drawingStructs[i].frameIndex = 0;
+		_drawingStructs[i].status = 0;
+		_drawingStructs[i].transTableNum = -1;
+
+		Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _drawingStructs[i].resourceId, 0);
+		_drawingStructs[i].point1 = Common::Point(frameRect.height(), frameRect.width());
+		_drawingStructs[i].point2 = Common::Point(_point.x + _background.rect.width() + 10,
+		                                          _point.y + (i == 0 ? 5 : _point.x + _background.rect.height() - 6));
+	}
 }
 
 uint32 Encounter::findKeyword(EncounterItem *item, int16 keyword) {
 	for (uint i = 0; i < ARRAYSIZE(item->keywords); i++) {
-		if ((item->keywords[i] & 0xFFF) == keyword)
+		if ((item->keywords[i] & KEYWORD_MASK) == keyword)
 			return i;
 	}
 
@@ -225,8 +301,8 @@ bool Encounter::init() {
 
 		getText()->loadFont(getWorld()->font1);
 
-		initCoordinates();
-		initPortrait();
+		initBackground();
+		initPortraits();
 		initDrawStructs();
 	}
 
