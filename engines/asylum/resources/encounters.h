@@ -67,20 +67,59 @@ private:
 		byte value;
 	} EncounterItem;
 
-	typedef struct EncounterStruct {
-		int32 x1;
-		int32 y1;
-		int32 x2;
-		int32 y2;
-		int32 frameNum;
+	typedef struct EncounterGraphic {
+		int32 frameIndex;
+		int32 frameCount;
+		Common::Rect rect;
+		ResourceId resourceId;
+		int32 transTableNum;
+		int32 transTableMax;
+		int32 speech0;
+		int32 speech1;
+		int32 speech2;
+		int32 speech3;
+
+		EncounterGraphic() {
+			frameIndex = 0;
+			frameCount = 0;
+			resourceId = kResourceNone;
+			transTableNum = 0;
+			transTableMax = 0;
+			speech0 = 0;
+			speech1 = 0;
+			speech2 = 0;
+			speech3 = 0;
+		}
+	};
+
+	typedef struct EncounterDrawingStruct {
+		Common::Point point1;
+		Common::Point point2;
+		int32 frameIndex;
 		int32 transTableNum;
 		int32 status;
-		ResourceId graphicResourceId;
-	} EncounterStruct;
+		ResourceId resourceId;
+
+		EncounterDrawingStruct() {
+			frameIndex = 0;
+			transTableNum = -1;
+			status = 0;
+			resourceId = kResourceNone;
+		}
+	} EncounterDrawingStruct;
 
 	Common::Array<int16> _variables;
-	int16 _anvilStyleFlag;
 	Common::Array<EncounterItem> _items;
+	EncounterDrawingStruct _drawingStructs[2];
+	int32 _keywordIndexes[50];
+
+	// Background & portrait
+	EncounterGraphic _background;
+	EncounterGraphic _portrait1;
+	EncounterGraphic _portrait2;
+	Common::Point _point;
+
+	int32 _rectIndex;
 
 	// Running encounter data
 	int32 _index;
@@ -92,7 +131,6 @@ private:
 	ActorIndex _actorIndex;
 
 	uint32 _value1;
-	int32 _rectIndex;
 
 	// Internal data
 	int32 _data_455B14;
@@ -120,8 +158,8 @@ private:
 	// Data
 	void load();
 	void initData();
-	void initCoordinates();
-	void initPortrait();
+	void initBackground();
+	void initPortraits();
 	void initDrawStructs();
 
 	uint32 findKeyword(EncounterItem *item, int16 keyword);
