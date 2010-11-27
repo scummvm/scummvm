@@ -35,25 +35,6 @@ namespace Asylum {
 
 class AsylumEngine;
 
-typedef struct EncounterItem {
-	int32 keywordIndex;
-	int32 field2;
-	ResourceId scriptResourceId;
-	int32 array[50];
-	int16 value;
-} EncounterItem;
-
-typedef struct EncounterStruct {
-	int32 x1;
-	int32 y1;
-	int32 x2;
-	int32 y2;
-	int32 frameNum;
-	int32 transTableNum;
-	int32 status;
-	ResourceId graphicResourceId;
-} EncounterStruct;
-
 class Encounter {
 public:
 	Encounter(AsylumEngine *engine);
@@ -61,14 +42,30 @@ public:
 
 	void run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2, ActorIndex actorIndex);
 
-	void setVariable(uint32 index, int32 val);
-
 private:
 	AsylumEngine *_vm;
 
-	Common::Functor1Mem<const AsylumEvent &, void, Encounter> *_messageHandler;
-
+	//////////////////////////////////////////////////////////////////////////
 	// Data
+	typedef struct EncounterItem {
+		int16 keywordIndex;
+		int16 field2;
+		ResourceId scriptResourceId;
+		int16 array[50];
+		byte value;
+	} EncounterItem;
+
+	typedef struct EncounterStruct {
+		int32 x1;
+		int32 y1;
+		int32 x2;
+		int32 y2;
+		int32 frameNum;
+		int32 transTableNum;
+		int32 status;
+		ResourceId graphicResourceId;
+	} EncounterStruct;
+
 	Common::Array<int16> _variables;
 	int16 _anvilStyleFlag;
 	Common::Array<EncounterItem> _items;
@@ -84,10 +81,61 @@ private:
 	// Internal flags
 	bool _flag1;
 	bool _flag2;
+	bool _flag3;
 
+	//////////////////////////////////////////////////////////////////////////
+	// Data
 	void load();
 
+	//////////////////////////////////////////////////////////////////////////
+	// Message handling
+	Common::Functor1Mem<const AsylumEvent &, void, Encounter> *_messageHandler;
 	void messageHandler(const AsylumEvent &evt);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Variables
+	void setVariable(uint32 index, int32 val);\
+	int32 getVariable(uint32 index);
+	int32 getVariableInv(int32 index);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Scripts
+	struct ScriptEntry {
+		union {
+			byte opcode;
+			byte param1;
+			byte param2;
+			byte param3;
+			uint32 data;
+		};
+
+		ScriptEntry(uint32 val) {
+			data = val;
+		}
+	};
+
+	struct ScriptData {
+		int32 vars[10];
+		uint32 offset;
+		uint32 counter;
+		uint32 resourceId;
+
+		ScriptData() {
+			reset();
+		}
+
+		void reset() {
+			memset(&vars, 0, sizeof(vars));
+			offset = 0;
+			counter = 0;
+			resourceId = kResourceNone;
+		}
+	};
+
+	ScriptData _scriptData;
+
+	void initScript();
+	ScriptEntry getScriptEntry(ResourceId resourceId, uint32 offset);
 
 	friend class Console;
 }; // end of class Encounter

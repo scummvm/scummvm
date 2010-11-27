@@ -42,7 +42,6 @@ enum GlobalFlag {
 	kFlagSceneRectChanged,
 	kFlagScene1,
 	kFlagEncounter2,
-	kFlagEncounter3,
 	kFlagEncounter5
 };
 
@@ -141,7 +140,6 @@ public:
 		_nextScreenUpdate = 0;
 		memset(&_movies[49], 0, sizeof(_movies));
 		_actorUpdateStatus15Check = false;
-		_flagEncouter3 = false;
 		_flag2 = false;
 		_flag5 = false;
 	}
@@ -266,9 +264,6 @@ public:
 		case kFlagEncounter2:
 			return _flagEncouter2;
 
-		case kFlagEncounter3:
-			return _flagEncouter3;
-
 		case kFlagEncounter5:
 			return _flagEncouter5;
 		}
@@ -301,10 +296,6 @@ public:
 
 		case kFlagEncounter2:
 			_flagEncouter2 = state;
-			break;
-
-		case kFlagEncounter3:
-			_flagEncouter3 = state;
 			break;
 
 		case kFlagEncounter5:
@@ -370,7 +361,6 @@ private:
 	int32           _movies[49];
 	bool            _actorUpdateStatus15Check;
 	// Skip opening flag (not used)
-	bool            _flagEncouter3;
 	bool            _flag2;
 	bool            _flag5;
 };

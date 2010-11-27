@@ -32,6 +32,7 @@
 #include "asylum/views/scene.h"
 
 #include "asylum/asylum.h"
+#include "asylum/respack.h"
 
 #include "common/file.h"
 
@@ -58,32 +59,33 @@ Encounter::~Encounter() {
 void Encounter::load() {
 	Common::File file;
 
-	// TODO error checks
-	file.open("sntrm.dat");
+	if (!file.open("sntrm.dat"))
+		error("[Encounter::load] Could not open encounter data!");
 
-	uint16 _count = file.readUint16LE();
-
-	for (uint i = 0; i < _count; i++)
+	// Load the variables
+	uint16 count = file.readUint16LE();
+	for (uint i = 0; i < count; i++)
 		_variables.push_back(file.readSint16LE());
 
-	file.seek(2 + _count * 2, SEEK_SET);
+	// Read anvil flag
+	if (file.readSint16LE())
+		error("[Encounter::load] Data file not supported!");
 
-	// TODO assert if true
-	_anvilStyleFlag = file.readSint16LE();
-
-	int16 _dataCount = file.readSint16LE();
-
-	for (uint8 i = 0; i < _dataCount; i++) {
+	// Read encounter data
+	int16 dataCount = file.readSint16LE();
+	for (uint8 i = 0; i < dataCount; i++) {
 		EncounterItem item;
 		memset(&item, 0, sizeof(EncounterItem));
 
-		item.keywordIndex = file.readSint32LE();
-		item.field2       = file.readSint32LE();
+		item.keywordIndex = file.readSint16LE();
+		item.field2       = file.readSint16LE();
 		item.scriptResourceId  = (ResourceId)file.readSint32LE();
-		for (uint8 j = 0; j < 50; j++) {
-			item.array[j] = file.readSint32LE();
+
+		for (uint j = 0; j < 50; j++) {
+			item.array[j] = file.readSint16LE();
 		}
-		item.value = file.readSint16LE();
+
+		item.value = file.readByte();
 
 		_items.push_back(item);
 	}
@@ -132,23 +134,48 @@ void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2
 	_vm->switchMessageHandler(_messageHandler);
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////
 // Message handler
 //////////////////////////////////////////////////////////////////////////
 void Encounter::messageHandler(const AsylumEvent &evt) {
-
+	error("[Encounter::messageHandler] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Helpers functions
+// Variables
 //////////////////////////////////////////////////////////////////////////
 void Encounter::setVariable(uint32 index, int32 val) {
 	if (index >= _variables.size())
 		error("[Encounter::setVariable] Invalid index (was: %d, max: %d)", index, _variables.size() - 1);
 
 	_variables[index] = val;
+}
+
+int32 Encounter::getVariable(uint32 index) {
+	if (index >= _variables.size())
+		error("[Encounter::getVariable] Invalid index (was: %d, max: %d)", index, _variables.size() - 1);
+
+	return _variables[index];
+}
+int32 Encounter::getVariableInv(int32 index) {
+	if (index >= 0)
+		return index;
+
+	return getVariable(-index);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Scripts
+//////////////////////////////////////////////////////////////////////////
+void Encounter::initScript() {
+	_scriptData.reset();
+	_flag3 = false;
+}
+
+Encounter::ScriptEntry Encounter::getScriptEntry(ResourceId resourceId, uint32 offset) {
+	ResourceEntry *entry = getResource()->get(resourceId);
+
+	return (ScriptEntry)entry->getData(offset);
 }
 
 }

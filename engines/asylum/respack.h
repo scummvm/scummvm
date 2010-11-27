@@ -40,6 +40,16 @@ struct ResourceEntry {
 	byte   *data;
 	uint32  size;
 	uint32  offset;
+
+	ResourceEntry() {
+		data = NULL;
+		size = 0;
+		offset = 0;
+	}
+
+	uint32 getData(uint32 offset) {
+		return READ_UINT32((byte *)this + offset);
+	}
 };
 
 class ResourcePack {
