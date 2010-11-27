@@ -1,6 +1,7 @@
 MODULE := engines/asylum
 
 MODULE_OBJS := \
+	puzzles/puzzle.o \
 	resources/actionlist.o \
 	resources/actor.o \
 	resources/object.o \
@@ -17,7 +18,6 @@ MODULE_OBJS := \
 	system/speech.o \
 	system/text.o \
 	system/video.o \
-	views/blowuppuzzle.o \
 	views/menu.o \
 	views/scene.o \
 	views/scenetitle.o \
