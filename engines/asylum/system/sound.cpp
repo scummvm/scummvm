@@ -43,7 +43,7 @@
 
 namespace Asylum {
 
-Sound::Sound(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine), _mixer(mixer) {
+Sound::Sound(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine), _mixer(mixer), _musicVolume(-10000) {
 }
 
 Sound::~Sound() {
@@ -125,6 +125,9 @@ void Sound::setVolume(ResourceId resourceId, int32 volume) {
 void Sound::setMusicVolume(int32 volume) {
 	if (volume < -10000)
 		return;
+
+	// Save music volume (we need to be able to return it to the logic code
+	_musicVolume = volume;
 
 	convertVolume(volume);
 

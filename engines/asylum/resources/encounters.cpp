@@ -156,7 +156,51 @@ void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2
 // Message handler
 //////////////////////////////////////////////////////////////////////////
 void Encounter::messageHandler(const AsylumEvent &evt) {
-	error("[Encounter::messageHandler] Not implemented!");
+	switch ((uint32)evt.type) {
+	default:
+		break;
+
+	case EVENT_ASYLUM_INIT:
+		init();
+		break;
+
+	case EVENT_ASYLUM_UPDATE:
+		update();
+		break;
+
+	case Common::EVENT_KEYDOWN:
+		key(evt);
+		break;
+
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_RBUTTONUP:
+		mouse(evt);
+		break;
+	}
+}
+
+void Encounter::init() {
+	if (getSound()->getMusicVolume() != Config.musicVolume - 500)
+		getSound()->setMusicVolume(Config.musicVolume - 500);
+
+	error("[Encounter::init] Not implemented!");
+}
+
+void Encounter::update() {
+	if (getSound()->getMusicVolume() != Config.musicVolume - 500)
+		getSound()->setMusicVolume(Config.musicVolume - 500);
+
+	error("[Encounter::update] Not implemented!");
+}
+
+void Encounter::key(const AsylumEvent &evt) {
+	error("[Encounter::key] Not implemented!");
+}
+
+void Encounter::mouse(const AsylumEvent &evt) {
+	error("[Encounter::mouse] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////

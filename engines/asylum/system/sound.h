@@ -166,6 +166,13 @@ public:
 	void setMusicVolume(int32 volume);
 
 	/**
+	 * Gets the music volume.
+	 *
+	 * @return The music volume.
+	 */
+	int32 getMusicVolume() { return _musicVolume; }
+
+	/**
 	 * Sets the panning for a buffered sound resource
 	 *
 	 * @param resourceId Identifier for the resource.
@@ -239,6 +246,8 @@ private:
 
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _soundHandle;
+
+	int32 _musicVolume;
 
 	Common::Array<SoundBufferItem> _soundBuffer;
 

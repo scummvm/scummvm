@@ -107,6 +107,10 @@ private:
 	// Message handling
 	Common::Functor1Mem<const AsylumEvent &, void, Encounter> *_messageHandler;
 	void messageHandler(const AsylumEvent &evt);
+	void init();
+	void update();
+	void key(const AsylumEvent &evt);
+	void mouse(const AsylumEvent &evt);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Variables
