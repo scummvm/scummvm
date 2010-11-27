@@ -137,12 +137,6 @@ public:
 	Object *scriptObjInit(reg_t obj_pos, bool fullObjectInit = true);
 
 	/**
-	 * Removes a script object
-	 * @param obj_pos	Location (segment, offset) of the object.
-	 */
-	void scriptObjRemove(reg_t obj_pos);
-
-	/**
 	 * Initializes the script's local variables
 	 * @param segMan	A reference to the segment manager
 	 */

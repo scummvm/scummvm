@@ -255,13 +255,6 @@ Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
 	return obj;
 }
 
-void Script::scriptObjRemove(reg_t obj_pos) {
-	if (getSciVersion() < SCI_VERSION_1_1)
-		obj_pos.offset += 8;
-
-	_objects.erase(obj_pos.toUint16());
-}
-
 // This helper function is used by Script::relocateLocal and Object::relocate
 // Duplicate in segment.cpp and script.cpp
 static bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, size_t scriptSize) {
@@ -580,41 +573,41 @@ void Script::initialiseClasses(SegManager *segMan) {
 
 void Script::initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-	const byte *seeker = _buf + (oldScriptHeader ? 2 : 0);
 
-	do {
-		uint16 objType = READ_SCI11ENDIAN_UINT16(seeker);
-		if (!objType)
-			break;
+	// We need to make two passes, as the objects in the script might be in the
+	// wrong order (e.g. in the demo of Iceman) - refer to bug #3034713
+	for (int pass = 1; pass <= 2; pass++) {
+		const byte *seeker = _buf + (oldScriptHeader ? 2 : 0);
 
-		switch (objType) {
-		case SCI_OBJ_OBJECT:
-		case SCI_OBJ_CLASS:
-			{
-				reg_t addr = make_reg(segmentId, seeker - _buf + 4);
-				Object *obj = scriptObjInit(addr);
-				obj->initSpecies(segMan, addr);
+		do {
+			uint16 objType = READ_SCI11ENDIAN_UINT16(seeker);
+			if (!objType)
+				break;
 
-				if (!obj->initBaseObject(segMan, addr)) {
-					if ((_nr == 202 || _nr == 764) && g_sci->getGameId() == GID_KQ5) {
-						// WORKAROUND: Script 202 of KQ5 French and German 
-						// (perhaps Spanish too?) has an invalid object.
-						// This is non-fatal. Refer to bug #3035396.
-						// Same happens with script 764, it seems to contain junk towards its end
-					} else {
-						error("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+			switch (objType) {
+			case SCI_OBJ_OBJECT:
+			case SCI_OBJ_CLASS:
+				{
+					reg_t addr = make_reg(segmentId, seeker - _buf + 4);
+					Object *obj = scriptObjInit(addr);
+					obj->initSpecies(segMan, addr);
+
+					if (pass == 2) {
+						if (!obj->initBaseObject(segMan, addr)) {
+							error("Failed to locate base object for object at %04X:%04X", PRINT_REG(addr));
+							//scriptObjRemove(addr);
+						}
 					}
-					scriptObjRemove(addr);
 				}
+				break;
+
+			default:
+				break;
 			}
-			break;
 
-		default:
-			break;
-		}
-
-		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
-	} while ((uint32)(seeker - _buf) < getScriptSize() - 2);
+			seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
+		} while ((uint32)(seeker - _buf) < getScriptSize() - 2);
+	}
 
 	byte *relocationBlock = findBlockSCI0(SCI_OBJ_POINTERS);
 	if (relocationBlock)

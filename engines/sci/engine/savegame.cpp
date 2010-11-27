@@ -194,17 +194,23 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it) {
 			reg_t addr = it->_value.getPos();
-			Object *obj = scr->scriptObjInit(addr, false);
+			scr->scriptObjInit(addr, false);
+		}
 
-			if (getSciVersion() < SCI_VERSION_1_1) {
+		// In SCI0-SCI1, we need to make two passes, as the objects in the
+		// script might be in the wrong order (e.g. in the demo of Iceman).
+		// Refer to bug #3034713
+		if (getSciVersion() < SCI_VERSION_1_1) {
+			for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it) {
+				reg_t addr = it->_value.getPos();
+				Object *obj = scr->scriptObjInit(addr, false);
 				if (!obj->initBaseObject(this, addr, false)) {
-					// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
-					// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
-					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-					scr->scriptObjRemove(addr);
+					error("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+					//scr->scriptObjRemove(addr);
 				}
 			}
 		}
+
 	}
 }
 
