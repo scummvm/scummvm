@@ -47,11 +47,17 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
+	enum EncounterArray {
+		kEncounterArray2000 = 0x2000,
+		kEncounterArray4000 = 0x4000,
+		kEncounterArray8000 = 0x8000,
+	};
+
 	typedef struct EncounterItem {
 		int16 keywordIndex;
 		int16 field2;
 		ResourceId scriptResourceId;
-		int16 array[50];
+		int16 keywords[50];
 		byte value;
 	} EncounterItem;
 
@@ -76,16 +82,26 @@ private:
 	EncounterItem *_item;
 	ObjectId _objectId1;
 	ObjectId _objectId2;
+	ObjectId _objectId3;
 	ActorIndex _actorIndex;
+
+	uint32 _value1;
+
+	// Internal data
+	bool _data_455BE8;
+	uint32 _data_455BF4;
+	bool _data_455BD4;
 
 	// Internal flags
 	bool _flag1;
 	bool _flag2;
 	bool _flag3;
+	bool _flag4;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 	void load();
+	uint32 findKeyword(EncounterItem *item, int16 keyword);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling
@@ -99,25 +115,32 @@ private:
 	int32 getVariableInv(int32 index);
 
 	//////////////////////////////////////////////////////////////////////////
+	// Logic
+	void resetSpeech(uint32 a1, uint32 a2);
+
+	//////////////////////////////////////////////////////////////////////////
 	// Scripts
 	struct ScriptEntry {
 		union {
 			byte opcode;
 			byte param1;
-			byte param2;
-			byte param3;
+			uint16 param2;
 			uint32 data;
 		};
 
 		ScriptEntry(uint32 val) {
 			data = val;
 		}
+
+		Common::String toString() {
+			return Common::String::format("[0x%02X] %d %d", opcode, param1, param2);
+		}
 	};
 
 	struct ScriptData {
 		int32 vars[10];
 		uint32 offset;
-		uint32 counter;
+		int32 counter;
 		uint32 resourceId;
 
 		ScriptData() {
@@ -136,6 +159,7 @@ private:
 
 	void initScript();
 	ScriptEntry getScriptEntry(ResourceId resourceId, uint32 offset);
+	void runScript();
 
 	friend class Console;
 }; // end of class Encounter
