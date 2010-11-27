@@ -403,12 +403,12 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool d
 					else
 						_driver->sysEx(info.ext.data, (uint16)info.length);
 				} else {
+					// The note on sending code is used by the SCUMM engine. Other engine using this code
+					// (such as SCI) have issues with this, as all the notes sent can be heard when a song
+					// is fast-forwarded.	Thus, if the engine requests it, don't send note on events.
 					if (info.command() == 0x9 && dontSendNoteOn) {
 						// Don't send note on; doing so creates a "warble" with some instruments on the MT-32.
 						// Refer to patch #3117577
-
-						// TODO: this is currently done by SCI only, but it seems sensible enough to do this
-						// for all engines
 					} else {
 						sendToDriver(info.event, info.basic.param1, info.basic.param2);
 					}
