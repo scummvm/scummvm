@@ -321,12 +321,25 @@ bool Console::cmdPlayVideo(int32 argc, const char **argv) {
 }
 
 bool Console::cmdRunScript(int32 argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Syntax: %s <script number>\n", argv[0]);
+	if (argc != 3) {
+		DebugPrintf("Syntax: %s <script index> <actor index>\n", argv[0]);
 		return true;
 	}
-	// FIXME push the script index into the script queue
-	//_vm->scene()->actions()->setScriptByIndex(atoi(argv[1]));
+
+	uint32 index = atoi(argv[1]);
+	uint32 actor = atoi(argv[2]);
+
+	// Check parameters
+	if (index < 0 || index >= getScene()->actions()->_scripts.size()) {
+		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, _vm->encounter()->_items.size() - 1);
+		return true;
+	}
+
+	if (actor < 0 || actor > getWorld()->actors.size()) {
+		DebugPrintf("[Error] Invalid actor index (was: %d - valid: [0-%d])\n", getWorld()->actors.size() - 1);
+	}
+
+	getScene()->actions()->queueScript(index, actor);
 
 	return false;
 }
