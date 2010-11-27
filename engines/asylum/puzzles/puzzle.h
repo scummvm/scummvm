@@ -46,6 +46,8 @@ public:
 	BlowUpPuzzle(AsylumEngine *engine);
 	virtual ~BlowUpPuzzle();
 
+	void init();
+
 	virtual void open() = 0;
 	virtual void close() = 0;
 
