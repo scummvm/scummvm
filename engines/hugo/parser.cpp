@@ -36,6 +36,7 @@
 #include "hugo/parser.h"
 #include "hugo/file.h"
 #include "hugo/display.h"
+#include "hugo/schedule.h"
 #include "hugo/route.h"
 #include "hugo/util.h"
 #include "hugo/sound.h"
@@ -99,7 +100,16 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 		gameStatus.recallFl = true;
 		break;
 	case Common::KEYCODE_F4:                        // Save game
+		// TODO: Add a proper screen to select saveslot
+		if (gameStatus.viewState == V_PLAY)
+			_vm->_file->saveGame(gameStatus.saveSlot, "Current game");
+		break;
 	case Common::KEYCODE_F5:                        // Restore game
+		// TODO: Add a proper screen to specify saveslot and description
+		_vm->_file->restoreGame(gameStatus.saveSlot);
+		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
+		gameStatus.viewState = V_PLAY;
+		break;
 	case Common::KEYCODE_F9:                        // Boss button
 		warning("STUB: KeyHandler() - F4-F5-F9 (DOS)");
 		break;
