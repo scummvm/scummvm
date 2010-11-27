@@ -354,7 +354,7 @@ void AsylumEngine::switchMessageHandler(MessageHandler *handler) {
 	error("[AsylumEngine::switchMessageHandler] not implemented");
 }
 
-AsylumEngine::MessageHandler *AsylumEngine::getMessageHandler(uint32 index) {
+MessageHandler *AsylumEngine::getMessageHandler(uint32 index) {
 	error("[AsylumEngine::getMessageHandler] not implemented");
 }
 

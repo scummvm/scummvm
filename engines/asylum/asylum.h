@@ -28,6 +28,7 @@
 
 #include "asylum/console.h"
 #include "asylum/data.h"
+#include "asylum/eventhandler.h"
 #include "asylum/shared.h"
 
 #include "common/random.h"
@@ -86,8 +87,6 @@ public:
 		kStartGameLoad,
 		kStartGameScene
 	};
-
-	typedef Common::Functor1<Common::Event &, void> MessageHandler;
 
 	AsylumEngine(OSystem *system, const ADGameDescription *gd);
 	virtual ~AsylumEngine();

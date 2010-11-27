@@ -752,7 +752,7 @@ IMPLEMENT_OPCODE(RunEncounter)
 		else
 			cmd->param6 = 0;
 	} else {
-		encounter->run(cmd->param1, cmd->param2, cmd->param3, cmd->param4);
+		encounter->run(cmd->param1, (ObjectId)cmd->param2, (ObjectId)cmd->param3, cmd->param4);
 
 		cmd->param6 = 2;
 		_lineIncrement = 1;

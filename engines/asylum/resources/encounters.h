@@ -26,6 +26,7 @@
 #ifndef ASYLUM_ENCOUNTERS_H
 #define ASYLUM_ENCOUNTERS_H
 
+#include "asylum/asylum.h"
 #include "asylum/shared.h"
 
 #include "common/array.h"
@@ -58,19 +59,35 @@ public:
 	Encounter(AsylumEngine *engine);
 	virtual ~Encounter();
 
-	void setVariable(int32 idx, int32 value) {
-		_variables[idx] = value;
-	}
-	void run(int32 encounterIdx, int32 objectId1, int32 objectId2, int32 characterIdx);
+	void run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2, ActorIndex actorIndex);
+
+	void setVariable(uint32 index, int32 val);
 
 private:
 	AsylumEngine *_vm;
 
-	int16 *_variables;
-	int16 _anvilStyleFlag;
+	Common::Functor1Mem<const AsylumEvent &, void, Encounter> *_messageHandler;
 
-	EncounterItem *_currentEncounter;
+	// Data
+	Common::Array<int16> _variables;
+	int16 _anvilStyleFlag;
 	Common::Array<EncounterItem> _items;
+
+	// Running encounter data
+	int32 _index;
+	int32 _keywordIndex;
+	EncounterItem *_item;
+	ObjectId _objectId1;
+	ObjectId _objectId2;
+	ActorIndex _actorIndex;
+
+	// Internal flags
+	bool _flag1;
+	bool _flag2;
+
+	void load();
+
+	void messageHandler(const AsylumEvent &evt);
 
 	friend class Console;
 }; // end of class Encounter
