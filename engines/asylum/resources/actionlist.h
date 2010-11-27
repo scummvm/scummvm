@@ -336,6 +336,8 @@ private:
 	DECLARE_OPCODE(_unk61);
 	DECLARE_OPCODE(ShowOptionsScreen);
 	DECLARE_OPCODE(_unk63);
+
+	friend class Console;
 }; // end of class ActionList
 
 } // end of namespace Asylum
