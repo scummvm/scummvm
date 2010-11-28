@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	memorypool.o \
 	md5.o \
 	mutex.o \
+	ne_exe.o \
 	random.o \
 	rational.o \
 	str.o \
