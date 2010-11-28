@@ -44,7 +44,9 @@ public:
 	void loadFont(ResourceId resourceId);
 
 	void   setPosition(int32 x, int32 y);
+	int32  getWidth(char c);
 	int32  getWidth(const char *text);
+	int32  getWidth(const char *text, uint32 length);
 	int32  getWidth(ResourceId resourceId);
     char  *get(ResourceId resourceId);
 
@@ -53,11 +55,17 @@ public:
 	void draw(int32 x, int32 y, const char *text);
 	void draw(ResourceId resourceId);
 	void draw(int32 x, int32 y, ResourceId resourceId);
+	void draw(const char *text, ResourceId fontResourceId, int32 y);
+	void draw(const char *text, uint32 length);
+	void draw(bool isCentered, int32 x, int32 y, int32 spacing, int32 width, const char *text);
+	void draw(int32 a1, int32 a2, bool isCentered, int32 x, int32 y, int32 spacing, int32 width, const char *text);
 
 	void drawCentered(int32 x, int32 y, int32 width, const char *text);
 	void drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId);
-	void drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId, int32 value);
+	void drawCentered(int32 x, int32 y, int32 width, uint32 length, const char *text);
 
+	// TODO remove and use other methods
+	void drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId, int32 value);
 	void drawAlignedRight(int32 x, int32 y, const char *text);
 	void drawAlignedRight(int32 x, int32 y, ResourceId resourceId);
 
