@@ -1,11 +1,15 @@
 MODULE := backends/platform/sdl
 
 MODULE_OBJS := \
-	posix/posix-main.o \
-	posix/posix.o \
 	hardwarekeys.o \
 	main.o \
 	sdl.o
+
+ifdef UNIX
+MODULE_OBJS += \
+	posix/posix-main.o \
+	posix/posix.o
+endif
 
 ifdef MACOSX
 MODULE_OBJS += \
