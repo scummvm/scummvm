@@ -180,7 +180,15 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Speech
 	void resetSpeech(uint32 a1, uint32 a2);
+	void setupPortraits();
+	void setupSpeechText();
+	void setupSpeechData(char val, EncounterGraphic *encounterGraphic);
+	void setupSpeech(ResourceId textResourceId, ResourceId fontResourceId);
 	bool isSpeaking();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Actor & Object
+	void setupEntities(bool type4);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scripts

@@ -356,8 +356,101 @@ int32 Encounter::getVariableInv(int32 index) {
 //////////////////////////////////////////////////////////////////////////
 // Speech
 //////////////////////////////////////////////////////////////////////////
-void Encounter::resetSpeech(uint32 a1, uint32 a2) {
-	error("[Encounter::resetSpeech] Not implemented!");
+void Encounter::resetSpeech(uint32 keywordIndex, uint32 a2) {
+	getSpeech()->resetTextData();
+	setupPortraits();
+
+	_data_455BCC = 0;
+	_data_455B3C = 0;
+
+	if (keywordIndex) {
+		getSpeech()->setTextResourceId(keywordIndex + a2);
+		setupSpeechText();
+	}
+}
+
+void Encounter::setupPortraits() {
+	_portrait1.transTableMax = 3;
+	_portrait2.transTableMax = 0;
+	setupSpeechData('N', &_portrait1);
+	setupSpeechData('N', &_portrait2);
+}
+
+void Encounter::setupSpeechData(char val, EncounterGraphic *encounterGraphic) {
+	switch (val) {
+	default:
+		break;
+
+	case 'N':
+		encounterGraphic->speech3 = 0;
+		break;
+
+	case 'H':
+		encounterGraphic->speech3 = 1;
+		break;
+
+	case 'E':
+		encounterGraphic->speech3 = 2;
+		break;
+
+	case 'S':
+		encounterGraphic->speech3 = 3;
+		break;
+	}
+}
+
+void Encounter::setupSpeechText() {
+	setupSpeechData('N', &_portrait1);
+	setupSpeechData('N', &_portrait2);
+
+	char *text = getText()->get(getSpeech()->getTextResourceId());
+
+	if (*text == '{') {
+		_portrait1.transTableMax = 3;
+		_portrait2.transTableMax = 0;
+
+		getSpeech()->setTextData(text + 3);
+		getSpeech()->setTextDataPos(NULL);
+
+		setupSpeech(getSpeech()->getTextResourceId(), getWorld()->font1);
+	} else {
+		_portrait1.transTableMax = 0;
+		_portrait2.transTableMax = 3;
+
+		getSpeech()->setTextData(NULL);
+		if (*text == '/')
+			getSpeech()->setTextDataPos(text + 2);
+
+		setupSpeech(getSpeech()->getTextResourceId(), getWorld()->font3);
+	}
+
+	_data_455BCC = 0;
+	_data_455B3C = 1;
+}
+
+void Encounter::setupSpeech(ResourceId textResourceId, ResourceId fontResourceId) {
+	getText()->loadFont(fontResourceId);
+
+	char *text = getText()->get(textResourceId);
+
+	if (*text == '{') {
+		_data_455BDC = 1;
+		setupEntities(true);
+		setupSpeechData(text[1], &_portrait1);
+	} else {
+		_data_455BDC = 0;
+		setupEntities(false);
+		if (*text == '/') {
+			char *c = text + 1;
+			while (*c != ' ') {
+				setupSpeechData(*(c + 1), &_portrait2);
+				c++;
+			}
+		}
+	}
+
+	_data_455BE0 = 1;
+	getSpeech()->setSoundResourceId(MAKE_RESOURCE(kResourcePackSharedSound, textResourceId - _keywordIndex));
 }
 
 bool Encounter::isSpeaking() {
@@ -375,6 +468,61 @@ bool Encounter::isSpeaking() {
 	}
 
 	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Actor & Object
+//////////////////////////////////////////////////////////////////////////
+void Encounter::setupEntities(bool type4) {
+	// Actor
+	if (_actorIndex) {
+		Actor *actor = getScene()->getActor(_actorIndex);
+
+		if (actor->isDefaultDirection(20))
+			actor->updateStatus(type4 ? kActorStatusDisabled : kActorStatus8);
+
+		return;
+	}
+
+	// Objects
+	if (_objectId1 == _objectId2)
+		return;
+
+	if (_index == 37) {
+		if (getVariable(3)) {
+			if (getVariable(3) == 1 && _vm->isGameFlagNotSet(kGameFlag470)) {
+				getWorld()->getObjectById(type4 ? kObjectNPC026Talking : kObjectNPC026TalkStatusQuo)->disable();
+				getWorld()->getObjectById(type4 ? kObjectNPC026TalkStatusQuo : kObjectNPC026Talking)->setNextFrame(getWorld()->getObjectById(type4 ? kObjectNPC026TalkStatusQuo : kObjectNPC026Talking)->flags);
+			}
+		} else {
+			getWorld()->getObjectById(type4 ? _objectId1 : _objectId2)->disable();
+			getWorld()->getObjectById(type4 ? _objectId2 : _objectId1)->setNextFrame(getWorld()->getObjectById(type4 ? _objectId2 : _objectId1)->flags);
+		}
+	} else {
+		if (type4) {
+			getWorld()->getObjectById(_objectId1)->disable();
+			getWorld()->getObjectById(_objectId2)->setNextFrame(getWorld()->getObjectById(_objectId2)->flags);
+		} else {
+			if (_index == 5) {
+				if (!_vm->isGameFlagSet(kGameFlag262)) {
+					getWorld()->getObjectById(kObjectMariaPointsLeft)->disable();
+					getWorld()->getObjectById(_objectId2)->disable();
+
+					_objectId1 = kObjectMariaPointsRight;
+					getWorld()->getObjectById(_objectId1)->setNextFrame(getWorld()->getObjectById(_objectId1)->flags);
+				} else {
+					getWorld()->getObjectById(_objectId1)->disable();
+					getWorld()->getObjectById(_objectId2)->disable();
+
+					_objectId1 = kObjectMariaPointsLeft;
+					getWorld()->getObjectById(_objectId1)->setNextFrame(getWorld()->getObjectById(_objectId1)->flags);
+				}
+			} else {
+				getWorld()->getObjectById(_objectId2)->disable();
+				getWorld()->getObjectById(_objectId1)->setNextFrame(getWorld()->getObjectById(_objectId1)->flags);
+			}
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
