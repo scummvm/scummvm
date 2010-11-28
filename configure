@@ -2092,6 +2092,7 @@ define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
 
 if test "$_unix" = yes ; then
 	DEFINES="$DEFINES -DUNIX"
+	add_line_to_config_mk 'UNIX = 1'
 fi
 
 #
