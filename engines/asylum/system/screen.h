@@ -60,24 +60,32 @@ public:
 	Screen(AsylumEngine *_vm);
 	~Screen();
 
-	void draw(GraphicResource *resource, uint32 frameIndex, int32 x, int32 y, int32 flags);
+	// Drawing
+	void draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, bool colorKey = true);
+	void draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, int32 transTableNum);
+	void draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, ResourceId resourceId2, int32 destX, int32 destY, bool colorKey = true);
 
-	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height);
-	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
-	void copyBackBufferToScreen();
-	void copyRectToScreen(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) const;
-	void copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) const;
-	void setPalette(byte *rgbPalette) const;
-	void setPalette(ResourceId id);
-
-	void setGammaLevel(ResourceId id, int32 val);
-
-	void drawWideScreen(int16 barSize) const;
 	void clear() const;
 
+	// Palette
+	void setPalette(byte *rgbPalette) const;
+	void setPalette(ResourceId id);
 	void paletteFade(uint32 red, int32 milliseconds, int32 param);
 	void startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param);
 
+	// Gamma
+	void setGammaLevel(ResourceId id, int32 val);
+
+	// Misc
+	void drawWideScreenBars(int16 barSize) const;
+
+	// Transparency tables
+	void setupTransTable(ResourceId resourceId);
+	void setupTransTables(uint32 count, ...);
+	void selectTransTable(uint32 index);
+	byte *getTransTableIndex() { return _transTableIndex; }
+
+	// Graphic queue
 	void addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 flags, int32 transTableNum, int32 priority);
 	void addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 transTableNum);
 	void addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 flags, int32 priority);
@@ -88,11 +96,10 @@ public:
 	void swapGraphicItem(int32 item1, int32 item2);
 	void deleteGraphicFromQueue(ResourceId resourceId);
 
-	// Transparency tables
-	void setupTransTable(ResourceId resourceId);
-	void setupTransTables(uint32 count, ...);
-	void selectTransTable(uint32 index);
-	byte *getTransTableIndex() { return _transTableIndex; }
+	// TODO Make those private
+	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
+	void copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) const;
+	void copyBackBufferToScreen();
 
 private:
 	Graphics::Surface _backBuffer;
@@ -106,6 +113,9 @@ private:
 	byte *_transTableData;
 	byte *_transTableBuffer;
 	void clearTransTables();
+
+	// Screen copying
+	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height);
 };
 
 } // end of namespace Asylum

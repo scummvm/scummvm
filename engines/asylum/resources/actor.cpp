@@ -929,7 +929,7 @@ void Actor::process_401830(int32 field980, int32 actionAreaId, int32 field978, i
 	updateDirection();
 }
 
-bool Actor::process_408B20(Common::Point *point, ActorDirection dir, int count, bool hasDelta) {
+bool Actor::process_408B20(Common::Point *point, ActorDirection dir, uint32 count, bool hasDelta) {
 	if (_field_944 == 1 || _field_944 == 4)
 		return true;
 

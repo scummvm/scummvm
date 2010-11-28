@@ -66,8 +66,7 @@ void BlowUpPuzzleVCR::open() {
 	getScreen()->setPalette(getWorld()->graphicResourceIds[29]);
 
 	// show blow up puzzle BG
-	GraphicFrame *bg = _bgResource->getFrame(0);
-	getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
+	getScreen()->draw(getWorld()->graphicResourceIds[0], 0, 0, 0, 0);
 
 	// Set mouse cursor
 	_cursor->set(getWorld()->graphicResourceIds[28], 0, 2);
@@ -157,7 +156,7 @@ void BlowUpPuzzleVCR::update() {
 
 		int16 barSize = 0;
 		do {
-			getScreen()->drawWideScreen(barSize);
+			getScreen()->drawWideScreenBars(barSize);
 			barSize += 4;
 		} while (barSize < 84);
 

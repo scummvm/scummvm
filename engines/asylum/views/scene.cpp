@@ -403,10 +403,7 @@ void Scene::activate() {
 
 	_isActive = true;
 	getScreen()->setPalette(_ws->currentPaletteId);
-	_background = _bgResource->getFrame(0);
-	_vm->screen()->copyToBackBuffer(
-		((byte *)_background->surface.pixels) + _ws->yTop * _background->surface.w + _ws->xLeft, _background->surface.w,
-		0, 0, 640, 480);
+	getScreen()->draw(_ws->backgroundImage, 0, _ws->xLeft, _ws->yTop, 0);
 }
 
 bool Scene::update() {
@@ -1148,7 +1145,7 @@ int Scene::drawScene() {
 		_vm->screen()->clear();
 	} else {
 		// Draw scene background
-		_vm->screen()->draw(_bgResource, 0, -_ws->xLeft, -_ws->yTop, 0);
+		_vm->screen()->draw(_ws->backgroundImage, 0, -_ws->xLeft, -_ws->yTop, 0);
 
 		// Draw actors on the update list
 		buildUpdateList();

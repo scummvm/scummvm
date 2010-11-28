@@ -113,14 +113,7 @@ void MainMenu::openMenu() {
 
 	// Load the graphics palette
 	getScreen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 17));
-	// Copy the bright background to the back buffer
-	GraphicFrame *bg = _bgResource->getFrame(1);
-	getScreen()->copyToBackBuffer((byte *)bg->surface.pixels,
-	                              bg->surface.w,
-	                              0,
-	                              0,
-	                              bg->surface.w,
-	                              bg->surface.h);
+	getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 0), 1, 0, 0, 0);
 
 	// Set mouse cursor
 	_cursor->set(MAKE_RESOURCE(kResourcePackShared, 2));
@@ -186,8 +179,8 @@ void MainMenu::update() {
 
 		if (_activeIcon != -1) {
 			// Copy the dark background to the back buffer
-			GraphicFrame *bg = _bgResource->getFrame(0);
-			getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
+			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 0), 0, 0, 0, 0);
+
 			_activeMenuScreen = (MenuScreen) _activeIcon;
 
 			// Set the cursor
@@ -645,8 +638,7 @@ void MainMenu::exitSubMenu() {
 	_activeMenuScreen = kMainMenu;
 
 	// Copy the bright background to the back buffer
-	GraphicFrame *bg = _bgResource->getFrame(1);
-	_vm->screen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
+	getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 0), 1, 0, 0, 0);
 
 	// Set the cursor
 	_cursor->set(MAKE_RESOURCE(kResourcePackShared, 2));

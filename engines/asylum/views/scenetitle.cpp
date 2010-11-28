@@ -79,11 +79,7 @@ void SceneTitle::update(int32 tick) {
 	if ((tick - _start) % 500 > 100)
 		_spinnerProgress += 20;
 
-	GraphicFrame *bgFrame = _bg->getFrame(0);
-
-	getScreen()->copyToBackBuffer(((byte *)bgFrame->surface.pixels),
-	                              bgFrame->surface.w,
-	                              0, 0, 640, 480);
+	getScreen()->draw(getWorld()->sceneTitleGraphicResourceId, 0, 0, 0, 0);
 
 	ResourceId resourceId = MAKE_RESOURCE(getScene()->getPackId(), 1797);
 	int32 resWidth = getText()->getWidth(resourceId);

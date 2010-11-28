@@ -1111,7 +1111,7 @@ IMPLEMENT_OPCODE(UpdateWideScreen)
 
 		getSharedData()->setMatteBarHeight(0);
 	} else {
-		getScreen()->drawWideScreen((int16)(4 * barSize));
+		getScreen()->drawWideScreenBars((int16)(4 * barSize));
 
 		_lineIncrement = 1;
 		++cmd->param1;
