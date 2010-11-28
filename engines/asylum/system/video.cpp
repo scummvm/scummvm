@@ -25,6 +25,7 @@
 
 #include "asylum/system/video.h"
 
+#include "asylum/system/config.h"
 #include "asylum/system/graphics.h"
 #include "asylum/system/text.h"
 
@@ -52,7 +53,7 @@ Video::~Video() {
 	delete _text;
 }
 
-void Video::playVideo(int32 videoNumber, bool showSubtitles) {
+void Video::playVideo(int32 videoNumber) {
 	char filename[20];
 	sprintf(filename, "mov%03d.smk", videoNumber);
 
@@ -65,7 +66,7 @@ void Video::playVideo(int32 videoNumber, bool showSubtitles) {
 	bool lastMouseState = g_system->showMouse(false);
 	_skipVideo = false;
 
-	if (showSubtitles)
+	if (Config.showMovieSubtitles)
 		loadSubtitles(videoNumber);
 
 	int32 x = Common::Rational(g_system->getWidth()  - _smkDecoder->getWidth(),  2).toInt();
@@ -79,7 +80,7 @@ void Video::playVideo(int32 videoNumber, bool showSubtitles) {
 			if (frame) {
 				g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 
-				if(showSubtitles) {
+				if(Config.showMovieSubtitles) {
 					Graphics::Surface *screen = g_system->lockScreen();
 					performPostProcessing((byte *)screen->pixels);
 					g_system->unlockScreen();

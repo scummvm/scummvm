@@ -208,7 +208,7 @@ void AsylumEngine::playIntro() {
 	g_system->showMouse(false);
 
 	if (Config.showIntro)
-		_video->playVideo(1, Config.showMovieSubtitles);
+		_video->playVideo(1);
 	/*if (_scene->worldstats()->musicCurrentResourceId != kResourceMusic_FFFFFD66)
 		_sound->playMusic(_scene->getResourcePack(), _scene->worldstats()->musicCurrentResourceId);*/
 
@@ -326,7 +326,7 @@ void AsylumEngine::processDelayedEvents() {
 	if (videoIdx >= 0) {
 		_sound->stopMusic();
 		_sound->stopAll();
-		_video->playVideo(videoIdx, true);
+		_video->playVideo(videoIdx);
 		_scene->actions()->setDelayedVideoIndex(-1);
 
 		if (_mainMenu->isActive())
