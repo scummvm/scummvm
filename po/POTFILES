@@ -46,11 +46,14 @@ backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp
 backends/platform/ds/arm9/source/dsoptions.cpp
 backends/platform/iphone/osys_events.cpp
-backends/platform/sdl/graphics.cpp
+backends/graphics/sdl/sdl-graphics.cpp
+backends/graphics/opengl/opengl-graphics.cpp
 backends/platform/symbian/src/SymbianActions.cpp
 backends/platform/symbian/src/SymbianOS.cpp
+backends/events/symbiansdl/symbiansdl-events.cpp
 backends/platform/wii/options.cpp
 backends/platform/wince/CEActionsPocket.cpp
 backends/platform/wince/CEActionsSmartphone.cpp
 backends/platform/wince/CELauncherDialog.cpp
 backends/platform/wince/wince-sdl.cpp
+backends/platform/openpandora/op-graphics.cpp
