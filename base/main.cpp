@@ -372,6 +372,25 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// the command line params) was read.
 	system.initBackend();
 
+	// If we received an invalid graphics mode parameter via command line
+	// we check this here. We can't do it until after the backend is inited,
+	// or there won't be a graphics manager to ask for the supported modes.
+
+	if (settings.contains("gfx-mode")) {
+		const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
+		Common::String option = settings["gfx-mode"];
+		bool isValid = false;
+
+		while (gm->name && !isValid) {
+			isValid = !scumm_stricmp(gm->name, option.c_str());
+			gm++;
+		}
+		if (!isValid) {
+			warning("Unrecognized graphics mode '%s'. Switching to default mode", option.c_str());
+			settings["gfx-mode"] = "default";
+		}
+	}
+
 	setupGraphics(system);
 
 	// Init the different managers that are used by the engines.

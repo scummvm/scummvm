@@ -383,19 +383,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION('g', "gfx-mode")
-				// Check whether 'option' specifies a valid graphics mode.
-				bool isValid = false;
-				if (!scumm_stricmp(option, "normal") || !scumm_stricmp(option, "default"))
-					isValid = true;
-				if (!isValid) {
-					const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
-					while (gm->name && !isValid) {
-						isValid = !scumm_stricmp(gm->name, option);
-						gm++;
-					}
-				}
-				if (!isValid)
-					usage("Unrecognized graphics mode '%s'", option);
 			END_OPTION
 
 			DO_OPTION_INT('m', "music-volume")
