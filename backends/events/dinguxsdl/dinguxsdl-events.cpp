@@ -27,6 +27,9 @@
 
 #include "backends/events/dinguxsdl/dinguxsdl-events.h"
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 #define PAD_UP    SDLK_UP
 #define PAD_DOWN  SDLK_DOWN
 #define PAD_LEFT  SDLK_LEFT

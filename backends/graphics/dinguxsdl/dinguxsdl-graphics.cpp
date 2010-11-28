@@ -29,6 +29,9 @@
 #include "backends/events/dinguxsdl/dinguxsdl-events.h"
 #include "graphics/scaler/aspect.h"
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Standard", GFX_NORMAL},
 	{0, 0, 0}
