@@ -405,11 +405,9 @@ void OpenGLGraphicsManager::setShakePos(int shakeOffset) {
 }
 
 void OpenGLGraphicsManager::setFocusRectangle(const Common::Rect& rect) {
-
 }
 
 void OpenGLGraphicsManager::clearFocusRectangle() {
-
 }
 
 //

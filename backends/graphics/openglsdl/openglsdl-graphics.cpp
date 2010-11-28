@@ -65,9 +65,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
-
 }
-
 
 bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return

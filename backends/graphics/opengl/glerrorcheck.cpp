@@ -55,6 +55,7 @@ static const char *getGlErrStr(GLenum error) {
 	case GL_OUT_OF_MEMORY:		return "GL_OUT_OF_MEMORY";
 	}
 
+	// FIXME: Convert to use Common::String::format()
 	static char buf[40];
 	snprintf(buf, sizeof(buf), "(Unknown GL error code 0x%x)", error);
 	return buf;

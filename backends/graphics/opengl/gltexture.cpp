@@ -35,6 +35,7 @@
 
 // Supported GL extensions
 static bool npot_supported = false;
+static bool glext_inited = false;
 
 /*static inline GLint xdiv(int numerator, int denominator) {
 	assert(numerator < (1 << 16));
@@ -54,10 +55,9 @@ static GLuint nextHigher2(GLuint v) {
 }
 
 void GLTexture::initGLExtensions() {
-	static bool inited = false;
 
 	// Return if extensions were already checked
-	if (inited)
+	if (glext_inited)
 		return;
 
 	// Get a string with all extensions
@@ -72,7 +72,7 @@ void GLTexture::initGLExtensions() {
 			npot_supported = true;
 	}
 
-	inited = true;
+	glext_inited = true;
 }
 
 GLTexture::GLTexture(byte bpp, GLenum internalFormat, GLenum format, GLenum type)
