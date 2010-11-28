@@ -48,7 +48,7 @@ namespace Asylum {
 #define KEYWORD_MASK 0xFFF
 
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
-	_index(NULL), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _actorIndex(kActorInvalid),
+	_index(0), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _actorIndex(kActorInvalid),
 	_flag1(false), _flag2(false) {
 
 	// TODO init rest of members
@@ -141,10 +141,10 @@ void Encounter::initPortraits() {
 	else
 		_portrait1.resourceId = getWorld()->graphicResourceIds[encounterPortrait1Index[getWorld()->chapter == kChapter9 ? getWorld()->actorType + 9 : getWorld()->chapter]];
 
-	if (_portrait1.resourceId == -1 && getWorld()->chapter == kChapter1)
+	if (_portrait1.resourceId == kResourceInvalid && getWorld()->chapter == kChapter1)
 		_portrait1.resourceId = getWorld()->graphicResourceIds[36];
 
-	if (_portrait1.resourceId == -1)
+	if (_portrait1.resourceId == kResourceInvalid)
 		error("[Encounter::initPortraits] No portrait 1 for this encounter!");
 
 	_portrait1.frameIndex = 0;
@@ -164,10 +164,10 @@ void Encounter::initPortraits() {
 	else if (_vm->isGameFlagSet(kGameFlag355))
 		_portrait2.resourceId = getWorld()->graphicResourceIds[24];
 
-	if (_portrait2.resourceId == -1 && getWorld()->chapter == kChapter1)
+	if (_portrait2.resourceId == kResourceInvalid && getWorld()->chapter == kChapter1)
 		_portrait2.resourceId = getWorld()->graphicResourceIds[36];
 
-	if (_portrait2.resourceId == -1)
+	if (_portrait2.resourceId == kResourceInvalid)
 		error("[Encounter::initPortraits] No portrait 2 for this encounter!");
 
 	_portrait2.frameIndex = 0;

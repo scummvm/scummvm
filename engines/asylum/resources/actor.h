@@ -62,7 +62,7 @@ public:
 
 	void setActionIndex2(int32 index) { _actionIdx2 = index; }
 	void setObjectIndex(int32 index) { _objectIndex = index; }
-	void setDirection(ActorDirection direction) { _direction = direction; }
+	void setDirection(ActorDirection dir) { _direction = dir; }
 	void setFrameCount(int32 count) { _frameCount = count; }
 	void setFrameIndex(int32 number) { _frameIndex = number; }
 	void setLastScreenUpdate(int32 tick) { _lastScreenUpdate = tick; }

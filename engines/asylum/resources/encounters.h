@@ -56,18 +56,18 @@ private:
 	enum EncounterArray {
 		kEncounterArray2000 = 0x2000,
 		kEncounterArray4000 = 0x4000,
-		kEncounterArray8000 = 0x8000,
+		kEncounterArray8000 = 0x8000
 	};
 
-	typedef struct EncounterItem {
+	struct EncounterItem {
 		int16 keywordIndex;
 		int16 field2;
 		ResourceId scriptResourceId;
 		int16 keywords[50];
 		byte value;
-	} EncounterItem;
+	};
 
-	typedef struct EncounterGraphic {
+	struct EncounterGraphic {
 		int32 frameIndex;
 		int32 frameCount;
 		Common::Rect rect;
@@ -92,7 +92,7 @@ private:
 		}
 	};
 
-	typedef struct EncounterDrawingStruct {
+	struct EncounterDrawingStruct {
 		Common::Point point1;
 		Common::Point point2;
 		int32 frameIndex;
@@ -106,7 +106,7 @@ private:
 			status = 0;
 			resourceId = kResourceNone;
 		}
-	} EncounterDrawingStruct;
+	};
 
 	Common::Array<int16> _variables;
 	Common::Array<EncounterItem> _items;
@@ -219,11 +219,11 @@ private:
 			reset(kResourceNone);
 		}
 
-		void reset(ResourceId resourceId) {
+		void reset(ResourceId id) {
 			memset(&vars, 0, sizeof(vars));
 			offset = 0;
 			counter = 0;
-			resourceId = resourceId;
+			resourceId = id;
 		}
 	};
 

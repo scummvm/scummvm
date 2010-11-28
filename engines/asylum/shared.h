@@ -193,7 +193,8 @@ enum ResourcePackId {
 typedef unsigned int ResourceId;
 
 enum ResourcesId {
-	kResourceNone         = 0
+	kResourceNone         = 0,
+	kResourceInvalid       = 0xFFFFFFFF
 };
 
 enum MusicIndex {

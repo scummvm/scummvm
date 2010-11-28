@@ -47,8 +47,8 @@ struct ResourceEntry {
 		offset = 0;
 	}
 
-	uint32 getData(uint32 offset) {
-		return READ_UINT32((byte *)this + offset);
+	uint32 getData(uint32 off) {
+		return READ_UINT32((byte *)this + off);
 	}
 };
 
