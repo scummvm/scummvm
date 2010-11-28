@@ -27,7 +27,6 @@
 #define COMMON_NE_EXE_H
 
 #include "common/array.h"
-#include "common/file.h"
 #include "common/list.h"
 
 namespace Common {
@@ -107,7 +106,7 @@ private:
 /** A New Executable cursor group. */
 struct NECursorGroup {
 	NEResourceID id;
-	Array<NECursor*> cursors; ///< The cursors.
+	Array<NECursor *> cursors; ///< The cursors.
 };
 
 /** The default Windows resources. */
