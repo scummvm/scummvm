@@ -30,9 +30,12 @@
 #include "common/array.h"
 #include "common/hashmap.h"
 #include "common/rect.h"
-#include "common/file.h"
 #include "common/list.h"
 #include "common/ptr.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace M4 {
 
