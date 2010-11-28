@@ -28,6 +28,15 @@
 
 #include "common/scummsys.h"
 
+#if defined(__amigaos4__)
+// KEYCODE_LESS and KEYCODE_GREATER are already defined in AmigaOS, inside
+// include/include_h/intuition/intuition.h (bug #3121350)
+#if defined(KEYCODE_LESS) && defined(KEYCODE_GREATER)
+#undef KEYCODE_LESS
+#undef KEYCODE_GREATER
+#endif
+#endif
+
 namespace Common {
 
 enum KeyCode {
