@@ -690,6 +690,7 @@ bool LivingBooksConsole::Cmd_DrawImage(int argc, const char **argv) {
 	}
 
 	_vm->_gfx->copyImageToScreen((uint16)atoi(argv[1]));
+	_vm->_system->updateScreen();
 	return false;
 }
 

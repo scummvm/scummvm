@@ -605,6 +605,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"tortoise",
+			"",
+			AD_ENTRY1("TORTOISE.512", "dfcf7bff3d0f187832c9897497efde0e"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"TORTOISE.EXE"
+	},
+
+	{
+		{
+			"tortoise",
 			"Demo v1.0",
 			AD_ENTRY1("TORTOISE.512", "75d9a2f8339e423604a0c6e8177600a6"),
 			Common::EN_ANY,
@@ -658,7 +673,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV1,
-		0,
+		GF_NO_READONLY,
 		"ARTHUR.EXE" // FIXME: Check this (ST?) 
 	},
 
@@ -673,7 +688,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV1,
-		GF_DEMO,
+		GF_DEMO | GF_NO_READONLY,
 		"ARTHUR.EXE"
 	},
 
@@ -733,7 +748,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV1,
-		GF_DEMO,
+		GF_DEMO | GF_NO_READONLY,
 		"GRANDMA.EXE"
 	},
 
@@ -763,7 +778,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV1,
-		GF_DEMO,
+		GF_DEMO | GF_NO_READONLY,
 		"Just Grandma and Me"
 	},
 

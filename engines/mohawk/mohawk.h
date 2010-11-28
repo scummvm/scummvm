@@ -68,7 +68,8 @@ enum MohawkGameFeatures {
 	GF_ME =      (1 << 0),	// Myst Masterpiece Edition
 	GF_DVD =     (1 << 1),
 	GF_DEMO =    (1 << 2),
-	GF_HASMIDI = (1 << 3)
+	GF_HASMIDI = (1 << 3),
+	GF_NO_READONLY = (1 << 4) // very early Living Books games
 };
 
 struct MohawkGameDescription;

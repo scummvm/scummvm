@@ -196,11 +196,13 @@ private:
 
 class LBGraphics : public GraphicsManager {
 public:
-	LBGraphics(MohawkEngine_LivingBooks *vm);
+	LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height);
 	~LBGraphics();
 
-	void copyImageToScreen(uint16 image, uint16 left = 0, uint16 top = 0);
+	void preloadImage(uint16 image);
+	void copyImageToScreen(uint16 image, bool useOffsets = false, int left = 0, int top = 0);
 	void setPalette(uint16 id);
+	bool imageIsTransparentAt(uint16 image, bool useOffsets, int x, int y);
 
 protected:
 	MohawkSurface *decodeImage(uint16 id);

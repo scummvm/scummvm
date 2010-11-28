@@ -30,10 +30,17 @@
 #include "mohawk/myst.h"
 #include "mohawk/riven_cursors.h"
 
+#include "common/macresman.h"
+#include "common/ne_exe.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
 
 namespace Mohawk {
+
+static const byte s_bwPalette[] = {
+	0x00, 0x00, 0x00,	0x00,	// Black
+	0xFF, 0xFF, 0xFF,	0x00	// White
+};
 
 void CursorManager::showCursor() {
 	CursorMan.showMouse(true);
@@ -41,6 +48,76 @@ void CursorManager::showCursor() {
 
 void CursorManager::hideCursor() {
 	CursorMan.showMouse(false);
+}
+
+void CursorManager::setDefaultCursor() {
+	static const byte defaultCursor[] = {
+		1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
+		1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
+		1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
+		1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
+		1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
+		1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
+		1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+		1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+		1, 2, 2, 2, 1, 2, 2, 1, 0, 0, 0, 0,
+		1, 2, 2, 1, 1, 2, 2, 1, 0, 0, 0, 0,
+		1, 2, 1, 0, 1, 1, 2, 2, 1, 0, 0, 0,
+		1, 1, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0,
+		1, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+		0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+		0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0
+	};
+
+	CursorMan.replaceCursor(defaultCursor, 12, 20, 0, 0, 0);
+	CursorMan.replaceCursorPalette(s_bwPalette, 1, 2);
+}
+
+void CursorManager::setCursor(uint16 id) {
+	// For the base class, just use the default cursor always
+	setDefaultCursor();
+}
+
+void CursorManager::decodeMacXorCursor(Common::SeekableReadStream *stream, byte *cursor) {
+	assert(stream);
+	assert(cursor);
+
+	// Get black and white data
+	for (int i = 0; i < 32; i++) {
+		byte imageByte = stream->readByte();
+		for (int b = 0; b < 8; b++)
+			cursor[i * 8 + b] = (imageByte & (0x80 >> b)) ? 1 : 2;
+	}
+
+	// Apply mask data
+	for (int i = 0; i < 32; i++) {
+		byte imageByte = stream->readByte();
+		for (int b = 0; b < 8; b++)
+			if ((imageByte & (0x80 >> b)) == 0)
+				cursor[i * 8 + b] = 0;
+	}
+}
+
+void DefaultCursorManager::setCursor(uint16 id) {
+	// The Broderbund devs decided to rip off the Mac format, it seems.
+	// However, they reversed the x/y hotspot. That makes it totally different!!!!
+
+	Common::SeekableReadStream *stream = _vm->getResource(ID_TCUR, id);
+
+	byte cursorBitmap[16 * 16];
+	decodeMacXorCursor(stream, cursorBitmap);
+	uint16 hotspotY = stream->readUint16BE();
+	uint16 hotspotX = stream->readUint16BE();
+
+	CursorMan.replaceCursor(cursorBitmap, 16, 16, hotspotX, hotspotY, 0);
+	CursorMan.replaceCursorPalette(s_bwPalette, 1, 2);
+
+	delete stream;
 }
 
 MystCursorManager::MystCursorManager(MohawkEngine_Myst *vm) : _vm(vm) {
@@ -81,6 +158,10 @@ void MystCursorManager::setCursor(uint16 id) {
 
 	_vm->_needsUpdate = true;
 	delete mhkSurface;
+}
+
+void MystCursorManager::setDefaultCursor() {
+	setCursor(kDefaultMystCursor);
 }
 
 void RivenCursorManager::setCursor(uint16 id) {
@@ -190,6 +271,80 @@ void RivenCursorManager::setCursor(uint16 id) {
 
 	// Should help in cases where we need to hide the cursor immediately.
 	g_system->updateScreen();
+}
+
+void RivenCursorManager::setDefaultCursor() {
+	setCursor(kRivenMainCursor);
+}
+
+NECursorManager::NECursorManager(const Common::String &appName) {
+	_exe = new Common::NEResources();
+
+	if (!_exe->loadFromEXE(appName)) {
+		// Not all have cursors anyway, so this is not a problem
+		delete _exe;
+		_exe = 0;
+	}
+}
+
+NECursorManager::~NECursorManager() {
+	delete _exe;
+}
+
+void NECursorManager::setCursor(uint16 id) {
+	if (!_exe) {
+		Common::Array<Common::NECursorGroup> cursors = _exe->getCursors();
+
+		for (uint32 i = 0; i < cursors.size(); i++) {
+			if (cursors[i].id == id) {
+				Common::NECursor *cursor = cursors[i].cursors[0];
+				CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), 0);
+				CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
+				return;
+			}
+		}
+	}
+
+	// Last resort (not all have cursors)
+	setDefaultCursor();
+}
+
+MacCursorManager::MacCursorManager(const Common::String &appName) {
+	_resFork = new Common::MacResManager();
+
+	if (!_resFork->open(appName)) {
+		// Not all have cursors anyway, so this is not a problem
+		delete _resFork;
+		_resFork = 0;
+	}
+}
+
+MacCursorManager::~MacCursorManager() {
+	delete _resFork;
+}
+
+void MacCursorManager::setCursor(uint16 id) {
+	if (!_resFork) {
+		setDefaultCursor();
+		return;
+	}
+
+	Common::SeekableReadStream *stream = _resFork->getResource(MKID_BE('CURS'), id);
+
+	if (!stream) {
+		setDefaultCursor();
+		return;
+	}
+
+	byte cursorBitmap[16 * 16];
+	decodeMacXorCursor(stream, cursorBitmap);
+	uint16 hotspotX = stream->readUint16BE();
+	uint16 hotspotY = stream->readUint16BE();
+
+	CursorMan.replaceCursor(cursorBitmap, 16, 16, hotspotX, hotspotY, 0);
+	CursorMan.replaceCursorPalette(s_bwPalette, 1, 2);
+
+	delete stream;
 }
 
 } // End of namespace Mohawk

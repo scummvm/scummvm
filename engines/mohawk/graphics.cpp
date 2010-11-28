@@ -654,8 +654,10 @@ void RivenGraphics::drawExtrasImage(uint16 id, Common::Rect dstRect) {
 	_dirtyScreen = true;
 }
 
-LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm) : GraphicsManager(), _vm(vm) {
+LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = (_vm->getGameType() == GType_LIVINGBOOKSV1) ? new OldMohawkBitmap() : new MohawkBitmap();
+
+	initGraphics(width, height, true);
 }
 
 LBGraphics::~LBGraphics() {
@@ -669,15 +671,82 @@ MohawkSurface *LBGraphics::decodeImage(uint16 id) {
 	return _bmpDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
 }
 
-void LBGraphics::copyImageToScreen(uint16 image, uint16 left, uint16 top) {
-	Graphics::Surface *surface = findImage(image)->getSurface();
+void LBGraphics::preloadImage(uint16 image) {
+	findImage(image);
+}
 
-	uint16 width = MIN<int>(surface->w, _vm->_system->getWidth());
-	uint16 height = MIN<int>(surface->h, _vm->_system->getHeight());
-	_vm->_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, left, top, width, height);
+void LBGraphics::copyImageToScreen(uint16 image, bool useOffsets, int left, int top) {
+	MohawkSurface *mhkSurface = findImage(image);
 
-	// FIXME: Remove this and update only when necessary
-	_vm->_system->updateScreen();
+	if (useOffsets) {
+		left -= mhkSurface->getOffsetX();
+		top -= mhkSurface->getOffsetY();
+	}
+
+	uint16 startX = 0;
+	uint16 startY = 0;
+
+	// TODO: clip rect
+	if (left < 0) {
+		startX -= left;
+		left = 0;
+	}
+
+	if (top < 0) {
+		startY -= top;
+		top = 0;
+	}
+
+	if (left >= _vm->_system->getWidth())
+		return;
+	if (top >= _vm->_system->getHeight())
+		return;
+
+	Graphics::Surface *surface = mhkSurface->getSurface();
+	if (startX >= surface->w)
+		return;
+	if (startY >= surface->h)
+		return;
+
+	uint16 width = MIN<int>(surface->w - startX, _vm->_system->getWidth() - left);
+	uint16 height = MIN<int>(surface->h - startY, _vm->_system->getHeight() - top);
+
+	byte *surf = (byte *)surface->getBasePtr(0, startY);
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+
+	// image and screen are always 8bpp for LB
+	for (uint16 y = 0; y < height; y++) {
+		byte *dest = (byte *)screen->getBasePtr(left, top + y);
+		byte *src = surf + startX;
+		// blit, with 0 being transparent
+		for (uint16 x = 0; x < width; x++) {
+			if (*src)
+				*dest = *src;
+			src++;
+			dest++;
+		}
+		surf += surface->pitch;
+	}
+
+	_vm->_system->unlockScreen();
+}
+
+bool LBGraphics::imageIsTransparentAt(uint16 image, bool useOffsets, int x, int y) {
+	MohawkSurface *mhkSurface = findImage(image);
+
+	if (useOffsets) {
+		x += mhkSurface->getOffsetX();
+		y += mhkSurface->getOffsetY();
+	}
+
+	if (x < 0 || y < 0)
+		return true;
+
+	Graphics::Surface *surface = mhkSurface->getSurface();
+	if (x >= surface->w || y >= surface->h)
+		return true;
+
+	return *(byte *)surface->getBasePtr(x, y) == 0;
 }
 
 void LBGraphics::setPalette(uint16 id) {
