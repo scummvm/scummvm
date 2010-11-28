@@ -23,7 +23,7 @@
  *
  */
 
-#ifdef LINUXMOTO 
+#if defined(LINUXMOTO)
 
 #include "backends/graphics/linuxmotosdl/linuxmotosdl-graphics.h"
 #include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
@@ -134,7 +134,7 @@ void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h) {
 	if	(w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		((LinuxmotoSdlEventManager *)g_system->getEventManager())->toggleMouseGrab();
+		_sdlEventSource->toggleMouseGrab();
 	}
 
 	_transactionDetails.sizeChanged = true;
@@ -484,8 +484,8 @@ void LinuxmotoSdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
 		newEvent.synthetic = true;
 		if (!_overlayVisible) {
 			if (_videoMode.mode == GFX_HALF) {
-				event.mouse.x *= 2;
-				event.mouse.y *= 2;
+				newEvent.mouse.x *= 2;
+				newEvent.mouse.y *= 2;
 			}
 			newEvent.mouse.x /= _videoMode.scaleFactor;
 			newEvent.mouse.y /= _videoMode.scaleFactor;

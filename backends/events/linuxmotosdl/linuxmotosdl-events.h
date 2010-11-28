@@ -31,10 +31,7 @@
 /**
  * SDL events manager for LINUXMOTO
  */
-class LinuxmotoSdlEventManager : public SdlEventManager {
-public:
-	LinuxmotoSdlEventManager(Common::EventSource *boss);
-
+class LinuxmotoSdlEventSource : public SdlEventSource {
 protected:
 	virtual void preprocessEvents(SDL_Event *event);
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);

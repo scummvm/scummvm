@@ -25,6 +25,9 @@
 
 #if defined(LINUXMOTO)
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 #include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
 #include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 
@@ -32,13 +35,7 @@ enum {
 	GFX_HALF = 12
 };
 
-LinuxmotoSdlEventManager::LinuxmotoSdlEventManager(Common::EventSource *boss)
-	:
-	SdlEventManager(boss) {
-
-}
-
-void LinuxmotoSdlEventManager::preprocessEvents(SDL_Event *event) {
+void LinuxmotoSdlEventSource::preprocessEvents(SDL_Event *event) {
 	if (event->type == SDL_ACTIVEEVENT) {
 		if (event->active.state == SDL_APPINPUTFOCUS && !event->active.gain) {
 			((OSystem_SDL* )g_system)->getMixerManager()->suspendAudio();
@@ -60,7 +57,7 @@ void LinuxmotoSdlEventManager::preprocessEvents(SDL_Event *event) {
 	}
 }
 
-bool LinuxmotoSdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
+bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	if (false) {}
 
 	//  Motorol A1200/E6/A1600 remapkey by Lubomyr
