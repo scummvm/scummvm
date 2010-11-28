@@ -200,6 +200,15 @@ public:
 	 */
 	void setPosition(int32 newX, int32 newY, ActorDirection newDirection, uint32 frame);
 
+	/**
+	 * Query if the passed direction is default direction.
+	 *
+	 * @param index Zero-based index of the graphic resource.
+	 *
+	 * @return true if default direction, false if not.
+	 */
+	bool isDefaultDirection(int index) const;
+
 	/////////////////////////////////////////////////////////////////////////
 	// Misc
 	/////////////////////////////////////////////////////////////////////////
@@ -430,15 +439,6 @@ private:
 	 * @param offset The offset used to get the id from the _graphicResourceIds table
 	 */
 	void updateGraphicData(uint32 offset);
-
-	/**
-	 * Query if the passed direction is default direction.
-	 *
-	 * @param index Zero-based index of the graphic resource.
-	 *
-	 * @return true if default direction, false if not.
-	 */
-	bool isDefaultDirection(int index) const;
 
 	/**
 	 * Gets the graphics flags for queuing the actor graphics

@@ -49,7 +49,7 @@ public:
 
 	/**
 	 *  Prepare speech to play
-	 *   - Process sound speech and draws dialogue in screen
+	 *   - Process sound speech and draws dialog in screen
 	 */
 	void prepareSpeech();
 
@@ -111,6 +111,41 @@ public:
 	 * @return The tick.
 	 */
 	int32 getTick() { return _tick; }
+
+	/**
+	 * Sets the sound resource identifier
+	 *
+	 * @param id The sound resource identifier.
+	 */
+	void setSoundResourceId(ResourceId id) { _soundResourceId = id; }
+
+	/**
+	 * Sets the text resource identifier
+	 *
+	 * @param id The text resource identifier.
+	 */
+	void setTextResourceId(ResourceId id) { _textResourceId = id; }
+
+	/**
+	 * Gets the text resource identifier.
+	 *
+	 * @return The text resource identifier.
+	 */
+	ResourceId getTextResourceId() { return _textResourceId; }
+
+	/**
+	 * Sets text data.
+	 *
+	 * @param text The text.
+	 */
+	void setTextData(char *text) { _textData = text; }
+
+	/**
+	 * Sets text data position.
+	 *
+	 * @param text The text.
+	 */
+	void setTextDataPos(char *text) { _textDataPos = text; }
 
 private:
 	AsylumEngine *_vm;
