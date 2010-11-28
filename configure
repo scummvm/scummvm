@@ -132,6 +132,7 @@ _png=auto
 _theoradec=auto
 _fluidsynth=auto
 _16bit=auto
+_opengl=auto
 _readline=auto
 # Default option behaviour yes/no
 _debug_build=auto
@@ -710,6 +711,7 @@ Optional Features:
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
   --disable-16bit          don't enable 16bit color support
+  --disable-opengl         don't enable OpenGL (ES)
   --disable-scalers        exclude scalers
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
@@ -739,6 +741,9 @@ Optional Libraries:
 
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [no]
+
+  --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
+  --disable-opengl         disable OpenGL (ES) support [autodetect]
 
   --disable-indeo3         disable Indeo3 decoder [autodetect]
 
@@ -809,6 +814,8 @@ for ac_option in $@; do
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
+	--enable-opengl)          _opengl=yes     ;;
+	--disable-opengl)         _opengl=no      ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
@@ -881,6 +888,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		READLINE_CFLAGS="-I$arg/include"
 		READLINE_LIBS="-L$arg/lib"
+		;;
+	--with-opengl-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		OPENGL_CFLAGS="-I$arg/include"
+		OPENGL_LIBS="-L$arg/lib"
 		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
@@ -2626,6 +2638,51 @@ fi
 define_in_config_h_if_yes "$_readline" 'USE_READLINE'
 
 define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE'
+
+#
+# Check for OpenGL (ES)
+#
+
+echocheck "OpenGL (ES)"
+if test "$_opengl" = auto ; then
+	_opengl=no
+	if test "$_backend" = "sdl" ; then
+		case $_host_os in
+			*darwin*)
+				_opengl=yes
+				;;
+			*mingw*)
+				_opengl=yes
+				;;
+			*)
+				cat > $TMPC << EOF
+#include <GL/gl.h>
+int main(void) { return GL_VERSION_1_1; }
+EOF
+				cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS -lGL && _opengl=yes
+		esac
+	fi
+fi
+if test "$_opengl" = yes ; then
+	LIBS="$LIBS $OPENGL_LIBS"
+	INCLUDES="$INCLUDES $OPENGL_CFLAGS"
+	DEFINES="$DEFINES -DUSE_OPENGL"
+	case $_host_os in
+		*darwin*)
+			INCLUDES="$INCLUDES -I/System/Library/Frameworks/OpenGL.framework/Headers"
+			LIBS="$LIBS -framework OpenGL"
+			;;
+		*mingw*)
+			LIBS="$LIBS -lopengl32"
+			;;
+		*)
+			LIBS="$LIBS -lGL"
+	esac
+fi
+
+echo "$_opengl"
+
+add_to_config_mk_if_yes "$_opengl" 'USE_OPENGL=1'
 
 #
 # Check for nasm
