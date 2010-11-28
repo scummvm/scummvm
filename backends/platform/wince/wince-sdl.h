@@ -71,8 +71,8 @@ public:
 	// Overloaded from OSystem
 	void engineInit();
 	void getTimeAndDate(TimeDate &t) const;
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
+
+	virtual Common::String getDefaultConfigFileName();
 
 
 	// Overloaded from SDL_Common (FIXME)

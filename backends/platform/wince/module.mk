@@ -20,10 +20,6 @@ MODULE_OBJS := \
 	../../../gui/Actions.o \
 	../../../gui/Key.o \
 	../../../gui/KeysDialog.o \
-	../sdl/sdl.o \
-	../sdl/graphics.o \
-	../sdl/events.o \
-	../sdl/hardwarekeys.o \
 	missing/missing.o \
 	PocketSCUMM.o \
 	smartLandScale.o
@@ -32,3 +28,6 @@ MODULE_OBJS := \
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
 OBJS := $(MODULE_OBJS) $(OBJS)
 MODULE_DIRS += $(sort $(dir $(MODULE_OBJS)))
+
+# HACK: The wince backend is based on the SDL one, so we load that, too.
+include $(srcdir)/backends/platform/sdl/module.mk

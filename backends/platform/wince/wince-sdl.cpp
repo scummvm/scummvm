@@ -164,10 +164,6 @@ int handleException(EXCEPTION_POINTERS *exceptionPointers) {
 }
 #endif
 
-OSystem *OSystem_WINCE3_create() {
-	return new OSystem_WINCE3();
-}
-
 extern "C" char *getcwd(char *buf, int size);
 int SDL_main(int argc, char **argv) {
 	FILE *newfp = NULL;
@@ -232,12 +228,17 @@ int SDL_main(int argc, char **argv) {
 #if !defined(DEBUG) && !defined(__GNUC__)
 	__try {
 #endif
-		g_system = OSystem_WINCE3_create();
+		g_system = new OSystem_WINCE3();
 		assert(g_system);
+
+		// Pre initialize the backend
+		((OSystem_WINCE3 *)g_system)->init();
 
 		// Invoke the actual ScummVM main entry point:
 		res = scummvm_main(argc, argv);
-		g_system->quit();	// TODO: Consider removing / replacing this!
+
+		// Free OSystem
+		delete (OSystem_WINCE3 *)g_system;
 #if !defined(DEBUG) && !defined(__GNUC__)
 	}
 	__except (handleException(GetExceptionInformation())) {
@@ -460,22 +461,12 @@ bool OSystem_WINCE3::isOzone() {
 	return _isOzone;
 }
 
-static Common::String getDefaultConfigFileName() {
+Common::String OSystem_WINCE3::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 	strcpy(configFile, getcwd(NULL, MAX_PATH));
 	strcat(configFile, "\\");
 	strcat(configFile, DEFAULT_CONFIG_FILE);
 	return configFile;
-}
-
-Common::SeekableReadStream *OSystem_WINCE3::createConfigReadStream() {
-	Common::FSNode file(getDefaultConfigFileName());
-	return file.createReadStream();
-}
-
-Common::WriteStream *OSystem_WINCE3::createConfigWriteStream() {
-	Common::FSNode file(getDefaultConfigFileName());
-	return file.createWriteStream();
 }
 
 // ********************************************************************************************
