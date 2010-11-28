@@ -79,12 +79,12 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND(".", _("Skip line of text"));
 		ADD_BIND(_("Esc"), _("Skip cutscene"));
 		ADD_BIND(_("Space"), _("Pause game"));
-		ADD_BIND("Ctrl 0-9", _("Load game state 1-10"));
-		ADD_BIND("Alt 0-9", _("Save game state 1-10"));
+		ADD_BIND(_("Ctrl 0-9"), _("Load game state 1-10"));
+		ADD_BIND(_("Alt 0-9"), _("Save game state 1-10"));
 #ifdef MACOSX
 		ADD_BIND("Cmd q", _("Quit"));
 #else
-		ADD_BIND("Alt x, Ctrl z", _("Quit"));
+		ADD_BIND(_("Alt x, Ctrl z"), _("Quit"));
 #endif
 		ADD_BIND(_("Alt Enter"), _("Toggle fullscreen"));
 		ADD_BIND("[, ]", _("Music volume up / down"));
@@ -95,14 +95,14 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 	case 2:
 		title = _("Special keyboard commands:");
 		ADD_BIND("~, #", _("Show / Hide console"));
-		ADD_BIND("Ctrl d", _("Start the debugger"));
-		ADD_BIND("Ctrl s", _("Show memory consumption"));
-		ADD_BIND("Ctrl f", _("Run in fast mode (*)"));
-		ADD_BIND("Ctrl g", _("Run in really fast mode (*)"));
-		ADD_BIND("Ctrl m", _("Toggle mouse capture"));
-		ADD_BIND("Ctrl Alt 1-8", _("Switch between graphics filters"));
-		ADD_BIND("Ctrl Alt +, -", _("Increase / Decrease scale factor"));
-		ADD_BIND("Ctrl Alt a", _("Toggle aspect-ratio correction"));
+		ADD_BIND(_("Ctrl d"), _("Start the debugger"));
+		ADD_BIND(_("Ctrl s"), _("Show memory consumption"));
+		ADD_BIND(_("Ctrl f"), _("Run in fast mode (*)"));
+		ADD_BIND(_("Ctrl g"), _("Run in really fast mode (*)"));
+		ADD_BIND(_("Ctrl m"), _("Toggle mouse capture"));
+		ADD_BIND(_("Ctrl Alt 1-8"), _("Switch between graphics filters"));
+		ADD_BIND(_("Ctrl Alt +, -"), _("Increase / Decrease scale factor"));
+		ADD_BIND(_("Ctrl Alt a"), _("Toggle aspect-ratio correction"));
 		ADD_LINE;
 		ADD_LINE;
 		// FIXME: This should use word-wrapping, and should not assume
