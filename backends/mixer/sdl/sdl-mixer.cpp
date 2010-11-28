@@ -58,7 +58,7 @@ void SdlMixerManager::init() {
 	}
 
 	// Get the desired audio specs
-	SDL_AudioSpec desired = getAudioSpec();
+	SDL_AudioSpec desired = getAudioSpec(SAMPLES_PER_SEC);
 
 	// Start SDL audio with the desired specs
 	if (SDL_OpenAudio(&desired, &_obtainedRate) != 0) {
@@ -78,7 +78,7 @@ void SdlMixerManager::init() {
 	}
 }
 
-SDL_AudioSpec SdlMixerManager::getAudioSpec() {
+SDL_AudioSpec SdlMixerManager::getAudioSpec(uint32 outputRate) {
 	SDL_AudioSpec desired;
 
 	// Determine the desired output sampling frequency.
@@ -86,7 +86,7 @@ SDL_AudioSpec SdlMixerManager::getAudioSpec() {
 	if (ConfMan.hasKey("output_rate"))
 		samplesPerSec = ConfMan.getInt("output_rate");
 	if (samplesPerSec <= 0)
-		samplesPerSec = SAMPLES_PER_SEC;
+		samplesPerSec = outputRate;
 
 	// Determine the sample buffer size. We want it to store enough data for
 	// at least 1/16th of a second (though at most 8192 samples). Note

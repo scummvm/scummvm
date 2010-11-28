@@ -36,56 +36,32 @@
 
 SymbianSdlMixerManager::SymbianSdlMixerManager()
 	:
-	_stereo_mix_buffer(0) {
+	_stereoMixBuffer(0) {
 
 }
 
 SymbianSdlMixerManager::~SymbianSdlMixerManager() {
-	delete[] _stereo_mix_buffer;
+	delete[] _stereoMixBuffer;
 }
 
-void SymbianSdlMixerManager::init() {
-	// Start SDL Audio subsystem
-	if (SDL_InitSubSystem(SDL_INIT_AUDIO) == -1) {
-		error("Could not initialize SDL: %s", SDL_GetError());
+void SymbianSdlMixerManager::startAudio() {
+	// Need to create mixbuffer for stereo mix to downmix
+	if (_obtainedRate.channels != 2) {
+		_stereoMixBuffer = new byte [_obtainedRate.size * 2]; // * 2 for stereo values
 	}
 
-	// Get the desired audio specs
-	SDL_AudioSpec desired = getAudioSpec();
-
-	// Start SDL audio with the desired specs
-	if (SDL_OpenAudio(&desired, &_obtainedRate) != 0) {
-		warning("Could not open audio device: %s", SDL_GetError());
-
-		_mixer = new Audio::MixerImpl(g_system, desired.freq);
-		assert(_mixer); 
-		_mixer->setReady(false);
-	} else {
-		debug(1, "Output sample rate: %d Hz", _obtainedRate.freq);
-
-		_channels = _obtainedRate.channels;
-
-		// Need to create mixbuffer for stereo mix to downmix
-		if (_channels != 2) {
-			_stereo_mix_buffer = new byte [_obtainedRate.size * 2]; // * 2 for stereo values
-		}
-
-		_mixer = new Audio::MixerImpl(g_system, _obtainedRate.freq);
-		assert(_mixer); 
-		_mixer->setReady(true);
-
-		startAudio();
-	}
+	SdlMixerManager::startAudio();
 }
 
 void SymbianSdlMixerManager::callbackHandler(byte *samples, int len) {
+	assert(_mixer);
 #if defined (S60) && !defined(S60V3)
 	// If not stereo then we need to downmix
-	if (_mixer->_channels != 2) {
-		_mixer->mixCallback(_stereo_mix_buffer, len * 2);
+	if (_obtainedRate.channels != 2) {
+		_mixer->mixCallback(_stereoMixBuffer, len * 2);
 
 		int16 *bitmixDst = (int16 *)samples;
-		int16 *bitmixSrc = (int16 *)_stereo_mix_buffer;
+		int16 *bitmixSrc = (int16 *)_stereoMixBuffer;
 
 		for (int loop = len / 2; loop >= 0; loop --) {
 			*bitmixDst = (*bitmixSrc + *(bitmixSrc + 1)) >> 1;

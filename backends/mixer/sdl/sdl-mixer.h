@@ -83,7 +83,7 @@ protected:
 	/**
 	 * Returns the desired audio specification 
 	 */
-	virtual SDL_AudioSpec getAudioSpec();
+	virtual SDL_AudioSpec getAudioSpec(uint32 rate);
 
 	/**
 	 * Starts SDL audio

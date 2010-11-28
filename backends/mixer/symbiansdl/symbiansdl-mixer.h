@@ -36,12 +36,10 @@ public:
 	SymbianSdlMixerManager();
 	virtual ~SymbianSdlMixerManager();
 
-	virtual void init();
-
 protected:
-	int _channels;
-	byte *_stereo_mix_buffer;
+	byte *_stereoMixBuffer;
 
+	virtual void startAudio();
 	virtual void callbackHandler(byte *samples, int len);
 };
 
