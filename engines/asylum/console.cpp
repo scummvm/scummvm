@@ -335,13 +335,13 @@ bool Console::cmdRunScript(int32 argc, const char **argv) {
 	uint32 actor = atoi(argv[2]);
 
 	// Check parameters
-	if (index < 0 || index >= getScene()->actions()->_scripts.size()) {
+	if (index >= getScene()->actions()->_scripts.size()) {
 		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, _vm->encounter()->_items.size() - 1);
 		return true;
 	}
 
-	if (actor < 0 || actor > getWorld()->actors.size()) {
-		DebugPrintf("[Error] Invalid actor index (was: %d - valid: [0-%d])\n", getWorld()->actors.size() - 1);
+	if (actor > getWorld()->actors.size()) {
+		DebugPrintf("[Error] Invalid actor index (was: %d - valid: [0-%d])\n", actor, getWorld()->actors.size() - 1);
 	}
 
 	getScene()->actions()->queueScript(index, actor);
@@ -379,7 +379,7 @@ bool Console::cmdRunEncounter(int32 argc, const char **argv) {
 	uint32 index = atoi(argv[1]);
 
 	// Check index is valid
-	if (index < 0 || index >= _vm->encounter()->_items.size()) {
+	if (index >= _vm->encounter()->_items.size()) {
 		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, _vm->encounter()->_items.size() - 1);
 		return true;
 	}

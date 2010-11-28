@@ -271,7 +271,7 @@ void Screen::setupTransTables(uint32 count, ...) {
 
 	if (!_transTableData) {
 		_transTableData = (byte *)malloc((count + 1) * 65536);
-		_transTableBuffer = (byte *)((uint32)_transTableData & 0xFFFF000) + 65536;
+		_transTableBuffer = _transTableData + 65536;
 		_transTableIndex = _transTableBuffer;
 	}
 
@@ -285,7 +285,7 @@ void Screen::setupTransTables(uint32 count, ...) {
 }
 
 void Screen::clearTransTables() {
-	delete _transTableData;
+	free(_transTableData);
 	_transTableData = NULL;
 	_transTableBuffer = NULL;
 	_transTableIndex = NULL;

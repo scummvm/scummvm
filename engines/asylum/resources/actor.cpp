@@ -929,30 +929,30 @@ void Actor::process_401830(int32 field980, int32 actionAreaId, int32 field978, i
 	updateDirection();
 }
 
-bool Actor::process_408B20(Common::Point *point, ActorDirection direction, int count, bool hasDelta) {
+bool Actor::process_408B20(Common::Point *point, ActorDirection dir, int count, bool hasDelta) {
 	if (_field_944 == 1 || _field_944 == 4)
 		return true;
 
-	int16 x = (hasDelta ? point->x : point->x + deltaPointsArray[direction].x);
-	int16 y = (hasDelta ? point->y : point->y + deltaPointsArray[direction].y);
+	int16 x = (hasDelta ? point->x : point->x + deltaPointsArray[dir].x);
+	int16 y = (hasDelta ? point->y : point->y + deltaPointsArray[dir].y);
 
 	// Check scene rect
 	if (!_field_944) {
-		Common::Rect rect = getWorld()->sceneRects[getWorld()->sceneRectIdx];
+		Common::Rect rct = getWorld()->sceneRects[getWorld()->sceneRectIdx];
 
-		if (x > rect.right)
+		if (x > rct.right)
 			return false;
 
-		if (x < rect.left)
+		if (x < rct.left)
 			return false;
 
-		if (y < rect.top)
+		if (y < rct.top)
 			return false;
 
-		if (y > rect.bottom)
+		if (y > rct.bottom)
 			return false;
 
-		if (!process_4103B0(point, direction))
+		if (!process_4103B0(point, dir))
 			return false;
 	}
 
@@ -960,8 +960,8 @@ bool Actor::process_408B20(Common::Point *point, ActorDirection direction, int c
 		int32 index = 0;
 
 		while (getScene()->findActionArea(/* 1*/Common::Point(x, y)) != -1) {
-			x += deltaPointsArray[direction].x;
-			y += deltaPointsArray[direction].y;
+			x += deltaPointsArray[dir].x;
+			y += deltaPointsArray[dir].y;
 
 			++index;
 
@@ -1043,7 +1043,7 @@ bool Actor::process_41BDB0(int32 reactionIndex, int32 testNumberValue01) {
 	return true;
 }
 
-bool Actor::process_4103B0(Common::Point *point, ActorDirection direction) {
+bool Actor::process_4103B0(Common::Point *point, ActorDirection dir) {
 	error("[Actor::update_40DE20] not implemented!");
 }
 
@@ -1560,7 +1560,7 @@ void Actor::updateStatus16_Chapter11() {
 	getCursor()->show();
 	getSharedData()->setFlag(kFlag1, false);
 
-	if (_frameIndex != -5 || _vm->isGameFlagNotSet(kGameFlag570))
+	if (_frameIndex != 5 || _vm->isGameFlagNotSet(kGameFlag570))
 		++_frameIndex;
 
 	if (_frameIndex > _frameCount - 1) {
@@ -1682,10 +1682,10 @@ void Actor::updateCoordinates(Common::Point vec1, Common::Point vec2) {
 	if (diffY == 0)
 		return;
 
-	ActorDirection direction = (diffY > 0) ? kDirectionS : kDirectionN;
+	ActorDirection dir = (diffY > 0) ? kDirectionS : kDirectionN;
 
-	if (process_408B20(&vec2, direction, diffY + 3, false))
-		updateCoordinatesForDirection(direction, diffY - 1, &_point);
+	if (process_408B20(&vec2, dir, diffY + 3, false))
+		updateCoordinatesForDirection(dir, diffY - 1, &_point);
 }
 
 void Actor::resetActors() {
@@ -1763,19 +1763,19 @@ ActorDirection Actor::direction(Common::Point vec1, Common::Point vec2) const {
 		diffY = -diffY;
 	}
 
-	int32 angle = -1;
+	int32 dirAngle = -1;
 
 	if (diffX) {
 		uint32 index = (diffY * 256) / diffX;
 
 		if (index < 256)
-			angle = angleTable01[index];
+			dirAngle = angleTable01[index];
 		else if (index < 4096)
-			angle = angleTable02[index / 16];
+			dirAngle = angleTable02[index / 16];
 		else if (index < 65536)
-			angle = angleTable03[index / 256];
+			dirAngle = angleTable03[index / 256];
 	} else {
-		angle = 90;
+		dirAngle = 90;
 	}
 
 	switch (adjust) {
@@ -1783,58 +1783,58 @@ ActorDirection Actor::direction(Common::Point vec1, Common::Point vec2) const {
 		break;
 
 	case 1:
-		angle = 360 - angle;
+		dirAngle = 360 - dirAngle;
 		break;
 
 	case 2:
-		angle = 180 - angle;
+		dirAngle = 180 - dirAngle;
 		break;
 
 	case 3:
-		angle += 180;
+		dirAngle += 180;
 		break;
 	}
 
-	if (angle >= 360)
-		angle -= 360;
+	if (dirAngle >= 360)
+		dirAngle -= 360;
 
-	ActorDirection direction;
+	ActorDirection dir;
 
-	if (angle < 157 || angle >= 202) {
-		if (angle < 112 || angle >= 157) {
-			if (angle < 67 || angle >= 112) {
-				if (angle < 22 || angle >= 67) {
-					if ((angle < 0 || angle >= 22) && (angle < 337 || angle > 359)) {
-						if (angle < 292 || angle >= 337) {
-							if (angle < 247 || angle >= 292) {
-								if (angle < 202 || angle >= 247) {
-									error("[Actor::angle] returned a bad angle: %d!", angle);
+	if (dirAngle < 157 || dirAngle >= 202) {
+		if (dirAngle < 112 || dirAngle >= 157) {
+			if (dirAngle < 67 || dirAngle >= 112) {
+				if (dirAngle < 22 || dirAngle >= 67) {
+					if ((dirAngle < 0 || dirAngle >= 22) && (dirAngle < 337 || dirAngle > 359)) {
+						if (dirAngle < 292 || dirAngle >= 337) {
+							if (dirAngle < 247 || dirAngle >= 292) {
+								if (dirAngle < 202 || dirAngle >= 247) {
+									error("[Actor::direction] got a bad direction angle: %d!", dirAngle);
 								} else {
-									direction = kDirectionSO;
+									dir = kDirectionSO;
 								}
 							} else {
-								direction = kDirectionS;
+								dir = kDirectionS;
 							}
 						} else {
-							direction = kDirectionSE;
+							dir = kDirectionSE;
 						}
 					} else {
-						direction = kDirectionE;
+						dir = kDirectionE;
 					}
 				} else {
-					direction = kDirectionNE;
+					dir = kDirectionNE;
 				}
 			} else {
-				direction = kDirectionN;
+				dir = kDirectionN;
 			}
 		} else {
-			direction = kDirectionNO;
+			dir = kDirectionNO;
 		}
 	} else {
-		direction = kDirectionO;
+		dir = kDirectionO;
 	}
 
-	return direction;
+	return dir;
 }
 
 void Actor::updateGraphicData(uint32 offset) {
@@ -1888,8 +1888,8 @@ int32 Actor::getDistance() const {
 	}
 }
 
-uint32 Actor::getDistanceForFrame(ActorDirection direction, uint32 frameIndex) {
-	switch (_direction) {
+uint32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) {
+	switch (dir) {
 	default:
 	case kDirectionN:
 	case kDirectionS:
