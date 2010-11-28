@@ -242,7 +242,7 @@ void Actor::draw() {
 	// Draw the actor
 	Common::Point point;
 	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
-	getScene()->adjustCoordinates(frameRect.left + _point.x + _point1.x, frameRect.top + _point.y + _point1.y, &point);
+	getScene()->adjustCoordinates(frameRect.left + _point.x + _point1.x + getWorld()->xLeft, frameRect.top + _point.y + _point1.y + getWorld()->yTop, &point);
 
 	// Compute frame index
 	uint32 frameIndex = _frameIndex;
@@ -957,7 +957,7 @@ bool Actor::process_408B20(Common::Point *point, ActorDirection direction, int c
 	}
 
 	if (count > 0) {
-		uint32 index = 0;
+		int32 index = 0;
 
 		while (getScene()->findActionArea(/* 1*/Common::Point(x, y)) != -1) {
 			x += deltaPointsArray[direction].x;
