@@ -44,6 +44,12 @@
 
 #include <time.h>	// for getTimeAndDate()
 
+// For logging
+#ifdef UNIX
+#include <errno.h>
+#include <sys/stat.h>
+#endif
+
 #ifdef USE_DETECTLANG
 #ifndef WIN32
 #include <locale.h>
@@ -412,7 +418,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 
 		return localeName;
 	} else {
-		return BaseBackend::getSystemLanguage();
+		return ModularBackend::getSystemLanguage();
 	}
 #else // WIN32
 	// Activating current locale settings
@@ -420,7 +426,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 
 	// Detect the language from the locale
 	if (!locale) {
-		return BaseBackend::getSystemLanguage();
+		return ModularBackend::getSystemLanguage();
 	} else {
 		int length = 0;
 
@@ -439,7 +445,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 	}
 #endif // WIN32
 #else // USE_DETECTLANG
-	return BaseBackend::getSystemLanguage();
+	return ModularBackend::getSystemLanguage();
 #endif // USE_DETECTLANG
 }
 
