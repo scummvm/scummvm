@@ -463,9 +463,14 @@ void Actor::update() {
 		break;
 
 	case kActorStatus2:
-	case kActorStatus13:
-		// TODO: do actor direction
+	case kActorStatus13: {
+		/*int32 dist = getDistance();
+		if (!dist)
+		dist = _direction;
+
+		Common::Point point(_point1.x + _point2.x, */
 		error("[Actor::update] kActorStatus2 / kActorStatus13 case not implemented");
+		}
 		break;
 
 	case kActorStatus3:
@@ -818,12 +823,156 @@ void Actor::processStatus(int32 actorX, int32 actorY, bool doSpeech) {
 	}
 }
 
-void Actor::process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 param8, int32 param9) {
-	error("[Actor::process_401830] not implemented!");
+void Actor::process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 field984, int32 field988) {
+	_field_980 = field980;
+	_actionIdx1 = (actionAreaId != -1) ? getWorld()->getActionAreaIndexById(actionAreaId) : -1;
+	_field_978 = field978;
+	_field_98C = field98C;
+	_field_990 = field990;
+	_field_974 = field974;
+
+	int field_984 = 0;
+	int field_988 = 0;
+	if (actionAreaId != -1) {
+		if (field984) {
+			field_984 = field984;
+			field_988 = field988;
+		} else {
+			PolyDefinitions *polygon = &getScene()->polygons()->entries[_actionIdx1];
+
+			field_984 = polygon->points[0].x;
+			field_988 = polygon->points[0].y;
+
+			// Iterate through points
+			if (polygon->count() > 1) {
+				for (uint i = 1; i < polygon->count() - 1; i++) {
+					Common::Point point = polygon->points[i];
+
+					switch (field978) {
+					default:
+						break;
+
+					case 0:
+						if (field_988 > point.y)
+							field_988 = point.y;
+						break;
+
+					case 1:
+						if (field_988 > point.y)
+							field_988 = point.y;
+
+						if (field_984 > point.x)
+							field_984 = point.x;
+						break;
+
+					case 2:
+						if (field_984 > point.x)
+							field_984 = point.x;
+						break;
+
+					case 3:
+						if (field_988 < point.y)
+							field_988 = point.y;
+
+						if (field_984 > point.x)
+							field_984 = point.x;
+						break;
+
+					case 4:
+						if (field_988 < point.y)
+							field_988 = point.y;
+						break;
+
+					case 5:
+						if (field_988 < point.y)
+							field_988 = point.y;
+
+						if (field_984 < point.x)
+							field_984 = point.x;
+						break;
+
+					case 6:
+						if (field_984 < point.x)
+							field_984 = point.x;
+						break;
+
+					case 7:
+						if (field_988 > point.y)
+							field_988 = point.y;
+
+						if (field_984 < point.x)
+							field_984 = point.x;
+						break;
+
+					case 8:
+						field_984 = 0;
+						field_988 = 0;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	_field_984 = field_984;
+	_field_988 = field_988;
+
+	double cosValue = cos(0.523598775) * 1000.0;
+	double sinValue = sin(0.523598775) * 1000.0;
+
+	_field_994 = field_984 - cosValue;
+	_field_998 = sinValue + field_988;
+	_field_99C = field_984 + cosValue;
+	_field_9A0 = field_988 - sinValue;
+	_field_970 = 1;
+
+	updateDirection();
 }
 
 bool Actor::process_408B20(Common::Point *point, ActorDirection direction, int count, bool hasDelta) {
-	error("[Actor::process_408B20] not implemented!");
+	if (_field_944 == 1 || _field_944 == 4)
+		return true;
+
+	int16 x = (hasDelta ? point->x : point->x + deltaPointsArray[direction].x);
+	int16 y = (hasDelta ? point->y : point->y + deltaPointsArray[direction].y);
+
+	// Check scene rect
+	if (!_field_944) {
+		Common::Rect rect = getWorld()->sceneRects[getWorld()->sceneRectIdx];
+
+		if (x > rect.right)
+			return false;
+
+		if (x < rect.left)
+			return false;
+
+		if (y < rect.top)
+			return false;
+
+		if (y > rect.bottom)
+			return false;
+
+		if (!process_4103B0(point, direction))
+			return false;
+	}
+
+	if (count > 0) {
+		uint32 index = 0;
+
+		while (getScene()->findActionArea(/* 1*/Common::Point(x, y)) != -1) {
+			x += deltaPointsArray[direction].x;
+			y += deltaPointsArray[direction].y;
+
+			++index;
+
+			if (index >= count)
+				return true;
+		}
+
+		return false;
+	}
+
+	return true;
 }
 
 void Actor::process_41BC00(int32 reactionIndex, int32 numberValue01Add) {
@@ -892,6 +1041,10 @@ bool Actor::process_41BDB0(int32 reactionIndex, int32 testNumberValue01) {
 		return _numberValue01 >= testNumberValue01;
 
 	return true;
+}
+
+bool Actor::process_4103B0(Common::Point *point, ActorDirection direction) {
+	error("[Actor::update_40DE20] not implemented!");
 }
 
 void Actor::updateAndDraw() {
@@ -1708,10 +1861,10 @@ int32 Actor::getGraphicsFlags() {
 }
 
 int32 Actor::getDistance() const {
-	int32 index = (_frameIndex >= _frameCount) ? (2 * _frameCount) - (_frameIndex + 1): _frameIndex;
+	int32 index = (_frameIndex >= _frameCount) ? (2 * _frameCount) - (_frameIndex + 1) : _frameIndex;
 
 	if (index >= 20)
-		error("[Actor::getFieldValue] Invalid index calculation (was: %d, max: 20)", index);
+		error("[Actor::getDistance] Invalid index calculation (was: %d, max: 20)", index);
 
 	switch (_direction) {
 	default:
