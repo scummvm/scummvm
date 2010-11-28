@@ -45,6 +45,10 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
+LinuxmotoSdlGraphicsManager::LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource)
+ : SdlGraphicsManager(sdlEventSource) {
+}
+
 const OSystem::GraphicsMode *LinuxmotoSdlGraphicsManager::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
