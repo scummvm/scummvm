@@ -72,12 +72,9 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 	free(_gamePalette);
 	free(_cursorPalette);
 
-	if (_gameTexture != NULL)
-		delete _gameTexture;
-	if (_overlayTexture != NULL)
-		delete _overlayTexture;
-	if (_cursorTexture != NULL)
-		delete _cursorTexture;
+	delete _gameTexture;
+	delete _overlayTexture;
+	delete _cursorTexture;
 }
 
 void OpenGLGraphicsManager::initEventObserver() {
