@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-11-23 22:22+0000\n"
+"POT-Creation-Date: 2010-11-28 19:10+0000\n"
 "PO-Revision-Date: 2010-06-13 20:55+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -420,13 +420,13 @@ msgstr "Поиск:"
 msgid "Clear value"
 msgstr "Очистить значение"
 
-#: gui/launcher.cpp:620 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:238
-#: engines/mohawk/riven.cpp:665 engines/cruise/menu.cpp:218
+#: gui/launcher.cpp:620 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:239
+#: engines/mohawk/riven.cpp:667 engines/cruise/menu.cpp:218
 msgid "Load game:"
 msgstr "Загрузить игру:"
 
-#: gui/launcher.cpp:620 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:238
-#: engines/mohawk/riven.cpp:665 engines/cruise/menu.cpp:218
+#: gui/launcher.cpp:620 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:239
+#: engines/mohawk/riven.cpp:667 engines/cruise/menu.cpp:218
 #: backends/platform/wince/CEActionsPocket.cpp:266
 #: backends/platform/wince/CEActionsSmartphone.cpp:229
 msgid "Load"
@@ -441,7 +441,7 @@ msgstr ""
 "добавить большое количество игр."
 
 #: gui/launcher.cpp:730 gui/launcher.cpp:879
-#: backends/platform/symbian/src/SymbianOS.cpp:439
+#: backends/events/symbiansdl/symbiansdl-events.cpp:185
 #: backends/platform/wince/CEActionsPocket.cpp:316
 #: backends/platform/wince/CEActionsSmartphone.cpp:276
 #: backends/platform/wince/CELauncherDialog.cpp:106
@@ -449,7 +449,7 @@ msgid "Yes"
 msgstr "Да"
 
 #: gui/launcher.cpp:730 gui/launcher.cpp:879
-#: backends/platform/symbian/src/SymbianOS.cpp:439
+#: backends/events/symbiansdl/symbiansdl-events.cpp:185
 #: backends/platform/wince/CEActionsPocket.cpp:316
 #: backends/platform/wince/CEActionsSmartphone.cpp:276
 #: backends/platform/wince/CELauncherDialog.cpp:106
@@ -592,11 +592,11 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Корректировать соотношение сторон для игр с разрешением 320x200"
 
 #: gui/options.cpp:668
-msgid "Disable EGA dithering"
+msgid "EGA undithering"
 msgstr ""
 
 #: gui/options.cpp:668
-msgid "Disable dithering in EGA games"
+msgid "Enable undithering in EGA games that support it"
 msgstr ""
 
 #: gui/options.cpp:676
@@ -995,11 +995,11 @@ msgstr "Пауза"
 msgid "Skip line"
 msgstr "Пропустить строку"
 
-#: base/main.cpp:426
+#: base/main.cpp:445
 msgid "Error running game:"
 msgstr "Ошибка запуска игры:"
 
-#: base/main.cpp:453
+#: base/main.cpp:472
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Не могу найти движок для запуска выбранной игры"
 
@@ -1055,20 +1055,20 @@ msgstr "Ошибка записи данных"
 msgid "Unknown Error"
 msgstr "Неизвестная ошибка"
 
-#: common/util.cpp:254
+#: common/util.cpp:276
 msgid "Hercules Green"
 msgstr "Hercules Зеленый"
 
-#: common/util.cpp:255
+#: common/util.cpp:277
 msgid "Hercules Amber"
 msgstr "Hercules Янтарный"
 
-#: common/util.cpp:262
+#: common/util.cpp:284
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules Зеленый"
 
-#: common/util.cpp:263
+#: common/util.cpp:285
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Янтарный"
@@ -1181,9 +1181,17 @@ msgid "Pause game"
 msgstr "Сохранить игру: "
 
 #: engines/scumm/help.cpp:82
+msgid "Ctrl 0-9"
+msgstr ""
+
+#: engines/scumm/help.cpp:82
 #, fuzzy
 msgid "Load game state 1-10"
 msgstr "Загрузить игру:"
+
+#: engines/scumm/help.cpp:83
+msgid "Alt 0-9"
+msgstr ""
 
 #: engines/scumm/help.cpp:83
 #, fuzzy
@@ -1196,6 +1204,10 @@ msgstr "Сохранить игру: "
 #: backends/platform/wince/CEActionsSmartphone.cpp:55
 msgid "Quit"
 msgstr "Выход"
+
+#: engines/scumm/help.cpp:87
+msgid "Alt x, Ctrl z"
+msgstr ""
 
 #: engines/scumm/help.cpp:89
 msgid "Alt Enter"
@@ -1240,7 +1252,15 @@ msgid "Show / Hide console"
 msgstr "Показать/Убрать курсор"
 
 #: engines/scumm/help.cpp:98
+msgid "Ctrl d"
+msgstr ""
+
+#: engines/scumm/help.cpp:98
 msgid "Start the debugger"
+msgstr ""
+
+#: engines/scumm/help.cpp:99
+msgid "Ctrl s"
 msgstr ""
 
 #: engines/scumm/help.cpp:99
@@ -1248,7 +1268,15 @@ msgid "Show memory consumption"
 msgstr ""
 
 #: engines/scumm/help.cpp:100
+msgid "Ctrl f"
+msgstr ""
+
+#: engines/scumm/help.cpp:100
 msgid "Run in fast mode (*)"
+msgstr ""
+
+#: engines/scumm/help.cpp:101
+msgid "Ctrl g"
 msgstr ""
 
 #: engines/scumm/help.cpp:101
@@ -1256,7 +1284,15 @@ msgid "Run in really fast mode (*)"
 msgstr ""
 
 #: engines/scumm/help.cpp:102
+msgid "Ctrl m"
+msgstr ""
+
+#: engines/scumm/help.cpp:102
 msgid "Toggle mouse capture"
+msgstr ""
+
+#: engines/scumm/help.cpp:103
+msgid "Ctrl Alt 1-8"
 msgstr ""
 
 #: engines/scumm/help.cpp:103
@@ -1264,7 +1300,15 @@ msgid "Switch between graphics filters"
 msgstr ""
 
 #: engines/scumm/help.cpp:104
+msgid "Ctrl Alt +, -"
+msgstr ""
+
+#: engines/scumm/help.cpp:104
 msgid "Increase / Decrease scale factor"
+msgstr ""
+
+#: engines/scumm/help.cpp:105
+msgid "Ctrl Alt a"
 msgstr ""
 
 #: engines/scumm/help.cpp:105
@@ -1877,16 +1921,32 @@ msgstr "Режим тачпада включен."
 msgid "Touchpad mode disabled."
 msgstr "Режим тачпада выключен."
 
-#: backends/platform/sdl/graphics.cpp:40
+#: backends/graphics/sdl/sdl-graphics.cpp:48
 #: backends/platform/wince/wince-sdl.cpp:114
 #: backends/platform/wince/wince-sdl.cpp:121
 msgid "Normal (no scaling)"
 msgstr "Без увеличения"
 
-#: backends/platform/sdl/graphics.cpp:59
+#: backends/graphics/sdl/sdl-graphics.cpp:67
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Без увеличения"
+
+#: backends/graphics/opengl/opengl-graphics.cpp:115
+msgid "OpenGL Normal"
+msgstr ""
+
+#: backends/graphics/opengl/opengl-graphics.cpp:116
+msgid "OpenGL Conserve"
+msgstr ""
+
+#: backends/graphics/opengl/opengl-graphics.cpp:117
+msgid "OpenGL 4/3"
+msgstr ""
+
+#: backends/graphics/opengl/opengl-graphics.cpp:118
+msgid "OpenGL Original"
+msgstr ""
 
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: backends/platform/wince/CEActionsSmartphone.cpp:42
@@ -1958,7 +2018,7 @@ msgstr "Виртуальная клавиатура"
 msgid "Key mapper"
 msgstr "Назначение клавиш"
 
-#: backends/platform/symbian/src/SymbianOS.cpp:439
+#: backends/events/symbiansdl/symbiansdl-events.cpp:185
 msgid "Do you want to quit ?"
 msgstr "Вы хотите выйти?"
 
@@ -2174,31 +2234,31 @@ msgstr "Показать "
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Вы хотите произвести автоматический поиск?"
 
-#: backends/platform/wince/wince-sdl.cpp:994
+#: backends/platform/wince/wince-sdl.cpp:981
 msgid "Map right click action"
 msgstr "Назначить действие по правому щелчку"
 
-#: backends/platform/wince/wince-sdl.cpp:998
+#: backends/platform/wince/wince-sdl.cpp:985
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr "Вы должны назначить клавишу на действие 'Right Click' для этой игры"
 
-#: backends/platform/wince/wince-sdl.cpp:1007
+#: backends/platform/wince/wince-sdl.cpp:994
 msgid "Map hide toolbar action"
 msgstr "Назначить действие 'спрятать панель инструментов'"
 
-#: backends/platform/wince/wince-sdl.cpp:1011
+#: backends/platform/wince/wince-sdl.cpp:998
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr "Вы должны назначить клавишу на дейтствие 'Hide toolbar' для этой игры"
 
-#: backends/platform/wince/wince-sdl.cpp:1020
+#: backends/platform/wince/wince-sdl.cpp:1007
 msgid "Map Zoom Up action (optional)"
 msgstr "Назначить действие Увеличить Масштаб (необязательно)"
 
-#: backends/platform/wince/wince-sdl.cpp:1023
+#: backends/platform/wince/wince-sdl.cpp:1010
 msgid "Map Zoom Down action (optional)"
 msgstr "Назначить действие Уменьшить Масштаб (необязательно)"
 
-#: backends/platform/wince/wince-sdl.cpp:1031
+#: backends/platform/wince/wince-sdl.cpp:1018
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
