@@ -242,7 +242,7 @@ void Actor::draw() {
 	// Draw the actor
 	Common::Point point;
 	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
-	getScene()->adjustCoordinates(frameRect.left + _point.x + _point1.x + getWorld()->xLeft, frameRect.top + _point.y + _point1.y + getWorld()->yTop, &point);
+	getScene()->adjustCoordinates(frameRect.left + _point.x + _point1.x, frameRect.top + _point.y + _point1.y, &point);
 
 	// Compute frame index
 	uint32 frameIndex = _frameIndex;

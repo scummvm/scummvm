@@ -191,7 +191,7 @@ void Object::draw() {
 	// Draw the object
 	Common::Point point;
 	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
-	getScene()->adjustCoordinates(x + frameRect.left + getWorld()->xLeft, y + frameRect.top + getWorld()->yTop, &point);
+	getScene()->adjustCoordinates(x + frameRect.left, y + frameRect.top, &point);
 
 	if (_field_67C <= 0 || _field_67C >= 4 || Config.performance <= 1) {
 		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, point, (flags >> 11) & kObjectFlag2, _field_67C - 3, _priority);

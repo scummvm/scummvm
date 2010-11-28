@@ -1131,8 +1131,8 @@ void Scene::adjustCoordinates(int32 x, int32 y, Common::Point *point) {
 	if (!_ws)
 		error("[Scene::adjustCoordinates] WorldStats not initialized properly!");
 
-	point->x = x - _ws->xLeft;
-	point->y = y - _ws->yTop;
+	point->x = x;// - _ws->xLeft;
+	point->y = y;// - _ws->yTop;
 }
 
 //////////////////////////////////////////////////////////////////////////
