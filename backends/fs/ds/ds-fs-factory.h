@@ -39,9 +39,6 @@ public:
 	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 
-protected:
-	DSFilesystemFactory() {};
-
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 };
