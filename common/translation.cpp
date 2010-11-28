@@ -53,11 +53,7 @@ bool operator<(const TLanguage &l, const TLanguage &r) {
 TranslationManager::TranslationManager() : _currentLang(-1) {
 	loadTranslationsInfoDat();
 
-	const char *locale = getLanguageLocale(g_system->getSystemLanguage());
-	if (!locale)
-		_syslang = "C";
-	else
-		_syslang = locale;
+	_syslang = g_system->getSystemLanguage();
 
 	// Set the default language
 	setLanguage("");

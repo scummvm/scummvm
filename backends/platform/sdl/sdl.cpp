@@ -699,7 +699,7 @@ void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 #endif
 }
 
-Common::Language OSystem_SDL::getSystemLanguage() const {
+Common::String OSystem_SDL::getSystemLanguage() const {
 #ifdef USE_DETECTLANG
 #ifdef WIN32
 	// We can not use "setlocale" (at least not for MSVC builds), since it
@@ -727,9 +727,9 @@ Common::Language OSystem_SDL::getSystemLanguage() const {
 		localeName += "_";
 		localeName += ctryName;
 
-		return Common::parseLanguageFromLocale(localeName.c_str());
+		return localeName;
 	} else {
-		return Common::UNK_LANG;
+		return BaseBackend::getSystemLanguage();
 	}
 #else // WIN32
 	// Activating current locale settings
@@ -737,7 +737,7 @@ Common::Language OSystem_SDL::getSystemLanguage() const {
 
 	// Detect the language from the locale
 	if (!locale) {
-		return Common::UNK_LANG;
+		return BaseBackend::getSystemLanguage();
 	} else {
 		int length = 0;
 
@@ -752,11 +752,11 @@ Common::Language OSystem_SDL::getSystemLanguage() const {
 				break;
 		}
 
-		return Common::parseLanguageFromLocale(Common::String(locale, length).c_str());
+		return Common::String(locale, length);
 	}
 #endif // WIN32
 #else // USE_DETECTLANG
-	return Common::UNK_LANG;
+	return BaseBackend::getSystemLanguage();
 #endif // USE_DETECTLANG
 }
 

@@ -30,7 +30,6 @@
 #include "common/noncopyable.h"
 #include "common/rect.h"
 #include "common/list.h" // For OSystem::getSupportedFormats()
-#include "common/util.h" // For Common::Language
 
 #include "graphics/pixelformat.h"
 
@@ -1057,18 +1056,17 @@ public:
 	 * This returns the currently set up locale of the system, on which
 	 * ScummVM is run.
 	 *
-	 * In case the locale can not be prepresented by Common::Language the
-	 * backend should return Common::UNK_LANG.
+	 * The format of the locale is language_country. These should match
+	 * the POSIX locale values.
 	 *
-	 * @see Common::Language
-	 * @see Common::UNK_LANG
-	 *
-	 * The default implementation returns Common::UNK_LANG.
-	 *
+	 * For information about POSIX locales read here:
+	 * http://en.wikipedia.org/wiki/Locale#POSIX-type_platforms
+	 * 
+	 * The default implementation returns "en_US".
 	 *
 	 * @return locale of the system
 	 */
-	virtual Common::Language getSystemLanguage() const;
+	virtual Common::String getSystemLanguage() const;
 
 	//@}
 };
