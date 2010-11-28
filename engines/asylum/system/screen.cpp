@@ -52,17 +52,36 @@ Screen::~Screen() {
 	_vm = NULL;
 }
 
-void Screen::draw(GraphicResource *resource, uint32 frameIndex, int32 x, int32 y, int32 flags) {
+//////////////////////////////////////////////////////////////////////////
+// Drawing
+//////////////////////////////////////////////////////////////////////////
+void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, bool colorKey) {
+	draw(resourceId, frameIndex, x, y, flags, kResourceNone, 0, 0, colorKey);
+}
+
+void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, int32 transTableNum) {
+	byte *index = _transTableIndex;
+	selectTransTable(transTableNum);
+
+	draw(resourceId, frameIndex, x, y, flags | 0x90000000);
+
+	_transTableIndex = index;
+}
+
+void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, ResourceId resourceId2, int32 destX, int32 destY, bool colorKey) {
 
 	// Get the frame to draw
+	GraphicResource *resource = new GraphicResource(_vm, resourceId);
 	GraphicFrame *frame = resource->getFrame(frameIndex);
 
 	copyToBackBuffer(((byte *)frame->surface.pixels) - (y * frame->surface.w + x),
-	                 frame->surface.w,
-	                 0,
-	                 0,
-	                 640,
-	                 480);
+		frame->surface.w,
+		0,
+		0,
+		640,
+		480);
+
+	delete resource;
 }
 
 void Screen::copyBackBufferToScreen() {
@@ -94,10 +113,6 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x
 			}
 		}
 	}
-}
-
-void Screen::copyRectToScreen(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) const{
-	_vm->_system->copyRectToScreen(buffer, pitch, x, y, width, height);
 }
 
 void Screen::copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) const {
@@ -145,9 +160,8 @@ void Screen::setGammaLevel(ResourceId id, int32 val) {
 	warning("[Screen::setGammaLevel] not implemented");
 }
 
-void Screen::drawWideScreen(int16 barSize) const {
+void Screen::drawWideScreenBars(int16 barSize) const {
 	if (barSize > 0) {
-
 		_vm->_system->lockScreen()->fillRect(Common::Rect(0, 0, 640, barSize), 0);
 		_vm->_system->unlockScreen();
 		_vm->_system->lockScreen()->fillRect(Common::Rect(0, 480 - barSize, 640, 480), 0);

@@ -236,7 +236,7 @@ public:
 	bool process(int32 actorX, int32 actorY);
 	void processStatus(int32 actorX, int32 actorY, bool doSpeech);
 	void process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 field984, int32 field988);
-	bool process_408B20(Common::Point *point, ActorDirection direction, int count, bool hasDelta);
+	bool process_408B20(Common::Point *point, ActorDirection direction, uint32 count, bool hasDelta);
 	void process_41BC00(int32 reactionIndex, int32 numberValue01Add);
 	void process_41BCC0(int32 reactionIndex, int32 numberValue01Substract);
 	bool process_41BDB0(int32 reactionIndex, int32 testNumberValue01);
