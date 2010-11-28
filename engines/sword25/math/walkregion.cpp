@@ -95,7 +95,7 @@ struct DijkstraNode {
 	typedef Container::iterator Iter;
 	typedef Container::const_iterator ConstIter;
 
-	DijkstraNode() : cost(Infinity), chosen(false) {}
+	DijkstraNode() : parentIter(), cost(Infinity), chosen(false) {}
 	ConstIter   parentIter;
 	int         cost;
 	bool        chosen;
