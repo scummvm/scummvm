@@ -128,7 +128,7 @@ void Encounter::initBackground() {
 
 	Common::Point point;
 	Actor *player = getScene()->getActor();
-	getScene()->adjustCoordinates(player->getPoint1()->x, player->getPoint1()->y, &point);
+	player->adjustCoordinates(&point);
 	_point = Common::Point(15, (point.y < 240) ? 464 - _background.rect.height() : 15);
 
 	_background.transTableNum = 1;

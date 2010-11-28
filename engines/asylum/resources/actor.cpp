@@ -242,7 +242,10 @@ void Actor::draw() {
 	// Draw the actor
 	Common::Point point;
 	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
-	getScene()->adjustCoordinates(frameRect.left + _point.x + _point1.x, frameRect.top + _point.y + _point1.y, &point);
+	adjustCoordinates(&point);
+	// FIXME the original doesn't add the frame coordinates!
+	point.x += _point.x + frameRect.left;
+	point.y += _point.y + frameRect.top;
 
 	// Compute frame index
 	uint32 frameIndex = _frameIndex;
@@ -252,7 +255,7 @@ void Actor::draw() {
 	if (LOBYTE(flags) & kActorFlagMasked) {
 		Object *object = getWorld()->objects[_objectIndex];
 		Common::Point objPoint;
-		getScene()->adjustCoordinates(object->x, object->y, &objPoint);
+		object->adjustCoordinates(&objPoint);
 
 		getScreen()->addGraphicToQueueMasked(_resourceId, frameIndex, point, object->getResourceId(), objPoint, getGraphicsFlags(), _priority);
 
@@ -957,7 +960,7 @@ bool Actor::process_408B20(Common::Point *point, ActorDirection dir, uint32 coun
 	}
 
 	if (count > 0) {
-		int32 index = 0;
+		uint32 index = 0;
 
 		while (getScene()->findActionArea(/* 1*/Common::Point(x, y)) != -1) {
 			x += deltaPointsArray[dir].x;
@@ -1846,6 +1849,14 @@ void Actor::updateGraphicData(uint32 offset) {
 
 bool Actor::isDefaultDirection(int index) const {
 	return _graphicResourceIds[index] != _graphicResourceIds[5];
+}
+
+void Actor::adjustCoordinates(Common::Point *point) {
+	if (!point)
+		error("[Actor::adjustCoordinates] Invalid point parameter!");
+
+	point->x += _point1.x - getWorld()->xLeft;
+	point->y += _point1.y - getWorld()->yTop;
 }
 
 int32 Actor::getGraphicsFlags() {
