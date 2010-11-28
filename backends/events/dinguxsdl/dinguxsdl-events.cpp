@@ -25,10 +25,10 @@
 
 #if defined(DINGUX)
 
-#include "backends/events/dinguxsdl/dinguxsdl-events.h"
-
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
+#include "backends/events/dinguxsdl/dinguxsdl-events.h"
 
 #define PAD_UP    SDLK_UP
 #define PAD_DOWN  SDLK_DOWN
@@ -42,23 +42,6 @@
 #define BUT_START    SDLK_RETURN
 #define TRIG_L    SDLK_TAB
 #define TRIG_R    SDLK_BACKSPACE
-
-static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
-	if (key >= SDLK_F1 && key <= SDLK_F9) {
-		return key - SDLK_F1 + Common::ASCII_F1;
-	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
-		return key - SDLK_KP0 + '0';
-	} else if (key >= SDLK_UP && key <= SDLK_PAGEDOWN) {
-		return key;
-	} else if (unicode) {
-		return unicode;
-	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
-		return key & ~0x20;
-	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
-		return 0;
-	}
-	return key;
-}
 
 bool DINGUXSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	if (ev.key.keysym.sym == PAD_UP) {
