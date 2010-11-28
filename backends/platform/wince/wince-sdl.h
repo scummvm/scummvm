@@ -131,8 +131,6 @@ protected:
 	//int getGraphicsMode() const;
 	int getDefaultGraphicsMode() const;
 
-	bool openCD(int drive);
-
 	bool hasFeature(Feature f);
 	void setFeatureState(Feature f, bool enable);
 	bool getFeatureState(Feature f);

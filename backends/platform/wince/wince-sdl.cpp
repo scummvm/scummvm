@@ -909,10 +909,6 @@ void OSystem_WINCE3::engineInit() {
 	setupMixer();
 }
 
-bool OSystem_WINCE3::openCD(int drive) {
-	return false;
-}
-
 const OSystem::GraphicsMode *OSystem_WINCE3::getSupportedGraphicsModes() const {
 	if (CEDevice::hasWideResolution())
 		return s_supportedGraphicsModesHigh;
