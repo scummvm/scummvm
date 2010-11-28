@@ -79,7 +79,33 @@ OSystem_SDL::OSystem_SDL()
 }
 
 OSystem_SDL::~OSystem_SDL() {
-	deinit();
+	SDL_ShowCursor(SDL_ENABLE);
+
+	delete _savefileManager;
+	_savefileManager = 0;
+	delete _graphicsManager;
+	_graphicsManager = 0;
+	delete _eventManager;
+	_eventManager = 0;
+	delete _eventSource;
+	_eventSource = 0;
+	delete _audiocdManager;
+	_audiocdManager = 0;
+	delete _mixerManager;
+	_mixerManager = 0;
+	delete _timerManager;
+	_timerManager = 0;
+	delete _mutexManager;
+	_mutexManager = 0;
+
+#ifdef USE_OPENGL
+	delete[] _graphicsModes;
+#endif
+
+	delete _logger;
+	_logger = 0;
+
+	SDL_Quit();
 }
 
 void OSystem_SDL::init() {
@@ -198,36 +224,6 @@ void OSystem_SDL::initSDL() {
 
 		_initedSDL = true;
 	}
-}
-
-void OSystem_SDL::deinit() {
-	SDL_ShowCursor(SDL_ENABLE);
-
-	delete _savefileManager;
-	_savefileManager = 0;
-	delete _graphicsManager;
-	_graphicsManager = 0;
-	delete _eventManager;
-	_eventManager = 0;
-	delete _eventSource;
-	_eventSource = 0;
-	delete _audiocdManager;
-	_audiocdManager = 0;
-	delete _mixerManager;
-	_mixerManager = 0;
-	delete _timerManager;
-	_timerManager = 0;
-	delete _mutexManager;
-	_mutexManager = 0;
-
-#ifdef USE_OPENGL
-	delete[] _graphicsModes;
-#endif
-
-	delete _logger;
-	_logger = 0;
-
-	SDL_Quit();
 }
 
 void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -364,9 +360,15 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 }
 
 void OSystem_SDL::quit() {
-	deinit();
+	delete this;
 	exit(0);
 }
+
+void OSystem_SDL::fatalError() {
+	delete this;
+	exit(1);
+}
+
 
 void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 	ModularBackend::logMessage(type, message);

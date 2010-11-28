@@ -37,9 +37,6 @@ public:
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
-
-	virtual void fatalError();
-	virtual void quit();
 };
 
 #endif

@@ -67,14 +67,4 @@ bool OSystem_SDL_SamsungTV::getFeatureState(Feature f) {
 	}
 }
 
-void OSystem_SDL_SamsungTV::fatalError() {
-	// FIXME
-	for (;;) {}
-}
-
-void OSystem_SDL_SamsungTV::quit() {
-	// FIXME
-	deinit();
-}
-
 #endif

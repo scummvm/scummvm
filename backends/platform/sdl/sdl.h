@@ -63,7 +63,7 @@ public:
 	virtual void initBackend();
 	virtual Common::HardwareKeySet *getHardwareKeySet();
 	virtual void quit();
-	virtual void deinit();
+	virtual void fatalError();
 
 	// Logging
 	virtual void logMessage(LogMessageType::Type type, const char *message);
