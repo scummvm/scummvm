@@ -29,6 +29,9 @@
 #define WIN32_LEAN_AND_MEAN
 #undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/fs/windows/windows-fs-factory.h"
 
