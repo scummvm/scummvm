@@ -111,7 +111,12 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 			offset++;
 
 		reg_t &tmp = dest_r.reg[offset / 2];
-		if (!(offset & 1)) {
+
+		bool oddOffset = offset & 1;
+		if (g_sci->getPlatform() == Common::kPlatformAmiga)
+			oddOffset = !oddOffset;
+
+		if (!oddOffset) {
 			value = tmp.offset & 0x00ff;
 			if (argc > 2) { /* Request to modify this char */
 				tmp.offset &= 0xff00;
@@ -128,9 +133,7 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 		}
 	}
 
-	s->r_acc = make_reg(0, value);
-
-	return s->r_acc;
+	return make_reg(0, value);
 }
 
 
