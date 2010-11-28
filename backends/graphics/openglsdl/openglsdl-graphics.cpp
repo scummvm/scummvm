@@ -44,6 +44,10 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
+	// This is also called in initSDL(), but initializing graphics
+	// may reset it.
+	SDL_EnableUNICODE(1);
+
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
 

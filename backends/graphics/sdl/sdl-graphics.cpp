@@ -148,6 +148,10 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *sdlEventSource)
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
+	// This is also called in initSDL(), but initializing graphics
+	// may reset it.
+	SDL_EnableUNICODE(1);
+
 	// allocate palette storage
 	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
 	_cursorPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
