@@ -1464,6 +1464,7 @@ case $_host_os in
 		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
 		type_4_byte='long'
+		add_line_to_config_mk 'AMIGAOS = 1'
 		;;
 	android)
 		CXXFLAGS="$CXXFLAGS -Os -msoft-float -mtune=xscale -march=armv5te -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5TE__"
@@ -1556,6 +1557,7 @@ case $_host_os in
 		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
 		LIBS="$LIBS -lmingw32 -lwinmm"
 		OBJS="$OBJS scummvmico.o"
+		add_line_to_config_mk 'WIN32 = 1'
 		;;
 	mint*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
