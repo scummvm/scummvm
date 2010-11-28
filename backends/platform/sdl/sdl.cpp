@@ -26,6 +26,12 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
+#endif
+
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/EventRecorder.h"
