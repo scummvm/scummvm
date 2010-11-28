@@ -23,7 +23,7 @@
  *
  */
 
-#include "backends/platform/gp2x/gp2x-common.h.h"
+#include "backends/platform/gp2x/gp2x-common.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "base/main.h"
 
