@@ -23,14 +23,15 @@
  *
  */
 
-#if defined (DINGUX)
+#if defined(DINGUX)
+
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
 #include "backends/events/dinguxsdl/dinguxsdl-events.h"
 #include "graphics/scaler/aspect.h"
-
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#include "common/mutex.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Standard", GFX_NORMAL},
@@ -502,10 +503,6 @@ SdlGraphicsManager::VideoState* DINGUXSdlGraphicsManager::getVideoMode() {
 	return &_videoMode;
 }
 
-bool DINGUXSdlGraphicsManager::isOverlayVisible() {
-	return _overlayVisible;
-}
-
 void DINGUXSdlGraphicsManager::warpMouse(int x, int y) {
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
@@ -522,8 +519,8 @@ void DINGUXSdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
 		newEvent.synthetic = true;
 		if (!_overlayVisible) {
 			if (_videoMode.mode == GFX_HALF) {
-				event.mouse.x *= 2;
-				event.mouse.y *= 2;
+				newEvent.mouse.x *= 2;
+				newEvent.mouse.y *= 2;
 			}
 			newEvent.mouse.x /= _videoMode.scaleFactor;
 			newEvent.mouse.y /= _videoMode.scaleFactor;

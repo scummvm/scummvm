@@ -25,7 +25,6 @@
 
 #ifndef BACKENDS_GRAPHICS_SDL_DINGUX_H
 #define BACKENDS_GRAPHICS_SDL_DINGUX_H
-#if defined (DINGUX)
 
 #include "backends/graphics/sdl/sdl-graphics.h"
 
@@ -67,5 +66,4 @@ protected:
 	SdlEventSource *_evSrc;
 };
 
-#endif /* DINGUX */
 #endif /* BACKENDS_GRAPHICS_SDL_DINGUX_H */

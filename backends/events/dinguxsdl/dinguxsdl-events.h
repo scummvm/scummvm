@@ -25,7 +25,6 @@
 
 #ifndef BACKENDS_EVENTS_SDL_DINGUX_H
 #define BACKENDS_EVENTS_SDL_DINGUX_H
-#if defined(DINGUX)
 
 #include "backends/events/sdl/sdl-events.h"
 
@@ -34,5 +33,4 @@ protected:
 	bool remapKey(SDL_Event &ev, Common::Event &event);
 };
 
-#endif /* DINGUX */
 #endif /* BACKENDS_EVENTS_SDL_DINGUX_H */
