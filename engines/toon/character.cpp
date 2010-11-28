@@ -1030,7 +1030,7 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 		_flags |= 1;
 
 		// wait for the character to be ready
-		while (_animScriptId != -1 && _animationInstance->getFrame() > 0 && (_specialAnim && _animationInstance->getAnimation() != _specialAnim)) {
+		while (_animScriptId != -1 && _animationInstance && _animationInstance->getFrame() > 0 && (_specialAnim && _animationInstance->getAnimation() != _specialAnim)) {
 			_vm->simpleUpdate(false);
 		}
 	}
