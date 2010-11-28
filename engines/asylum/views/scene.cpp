@@ -171,10 +171,9 @@ void Scene::enter(ResourcePackId packId) {
 	// Clear the graphic queue (FIXME: not sure why we need to do this again)
 	getScreen()->clearGraphicsInQueue();
 
-	// Load trans tables
-	// TODO loadTransTables(3, field_64/68/7C)
-	// TODO setTransTable(1)
-	warning("[Scene::enter] missing transtable init!");
+	// Load transparency tables
+	getScreen()->setupTransTables(3, _ws->cellShadeMask1, _ws->cellShadeMask2, _ws->cellShadeMask3);
+	getScreen()->selectTransTable(1);
 
 	// Setup font
 	getText()->loadFont(_ws->font1);

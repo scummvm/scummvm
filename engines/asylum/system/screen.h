@@ -88,11 +88,24 @@ public:
 	void swapGraphicItem(int32 item1, int32 item2);
 	void deleteGraphicFromQueue(ResourceId resourceId);
 
+	// Transparency tables
+	void setupTransTable(ResourceId resourceId);
+	void setupTransTables(uint32 count, ...);
+	void selectTransTable(uint32 index);
+	byte *getTransTableIndex() { return _transTableIndex; }
+
 private:
 	Graphics::Surface _backBuffer;
 	AsylumEngine *_vm;
 
 	Common::Array<GraphicQueueItem> _queueItems;
+
+	// Transparency tables
+	uint32 _transTableCount;
+	byte *_transTableIndex;
+	byte *_transTableData;
+	byte *_transTableBuffer;
+	void clearTransTables();
 };
 
 } // end of namespace Asylum

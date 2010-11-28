@@ -34,14 +34,19 @@
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 
+#include <stdarg.h>	// For va_list etc.
+
 namespace Asylum {
 
-Screen::Screen(AsylumEngine *vm) : _vm(vm) {
+Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
+	_transTableCount(0), _transTableIndex(NULL), _transTableData(NULL), _transTableBuffer(NULL) {
 	_backBuffer.create(640, 480, 1);
 }
 
 Screen::~Screen() {
 	_backBuffer.free();
+
+	clearTransTables();
 
 	// Zero-out passed pointers
 	_vm = NULL;
@@ -238,5 +243,61 @@ void Screen::deleteGraphicFromQueue(ResourceId resourceId) {
 		}
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Transparency tables
+//////////////////////////////////////////////////////////////////////////
+void Screen::setupTransTable(ResourceId resourceId) {
+	if (resourceId)
+		setupTransTables(1, resourceId);
+	else
+		setupTransTables(0);
+}
+
+void Screen::setupTransTables(uint32 count, ...) {
+	if (!count) {
+		clearTransTables();
+		return;
+	}
+
+	// Load tables
+	va_list va;
+	va_start(va, count);
+
+	if (_transTableCount != count)
+		clearTransTables();
+
+	_transTableCount = count;
+
+	if (!_transTableData) {
+		_transTableData = (byte *)malloc((count + 1) * 65536);
+		_transTableBuffer = (byte *)((uint32)_transTableData & 0xFFFF000) + 65536;
+		_transTableIndex = _transTableBuffer;
+	}
+
+	uint32 index = 0;
+	for (uint32 i = 0; i < _transTableCount; i++) {
+		ResourceId id = va_arg(va, ResourceId);
+
+		memcpy(&_transTableBuffer[index], getResource()->get(id)->data, 65536);
+		index += 65536;
+	}
+}
+
+void Screen::clearTransTables() {
+	delete _transTableData;
+	_transTableData = NULL;
+	_transTableBuffer = NULL;
+	_transTableIndex = NULL;
+	_transTableCount = 0;
+}
+
+void Screen::selectTransTable(uint32 index) {
+	if (index >= _transTableCount)
+		return;
+
+	_transTableIndex = &_transTableBuffer[65536 * index];
+}
+
 
 } // end of namespace Asylum
