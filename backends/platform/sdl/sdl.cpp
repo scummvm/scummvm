@@ -26,28 +26,19 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#if defined(WIN32)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
-#undef ARRAYSIZE
-#endif
-
 #include "backends/platform/sdl/sdl.h"
-#include "common/archive.h"
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/EventRecorder.h"
-#include "common/util.h"
 
-#ifdef UNIX
-  #include "backends/saves/posix/posix-saves.h"
-#else
-  #include "backends/saves/default/default-saves.h"
-#endif
+#include "backends/saves/default/default-saves.h"
 #include "backends/audiocd/sdl/sdl-audiocd.h"
-#include "backends/timer/default/default-timer.h"
-#include "sound/mixer_intern.h"
+#include "backends/events/sdl/sdl-events.h"
+#include "backends/mutex/sdl/sdl-mutex.h"
+#include "backends/timer/sdl/sdl-timer.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
+#ifdef USE_OPENGL
+#include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#endif
 
 #include "icons/scummvm.xpm"
 
@@ -59,139 +50,29 @@
 #endif // !WIN32
 #endif
 
-//#define SAMPLES_PER_SEC 11025
-#define SAMPLES_PER_SEC 22050
-//#define SAMPLES_PER_SEC 44100
-
-
-/*
- * Include header files needed for the getFilesystemFactory() method.
- */
-#if defined(__amigaos4__)
-	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
-#elif defined(UNIX)
-	#include "backends/fs/posix/posix-fs-factory.h"
-#elif defined(WIN32)
-	#include "backends/fs/windows/windows-fs-factory.h"
+OSystem_SDL::OSystem_SDL()
+	:
+#ifdef USE_OPENGL
+	_graphicsModes(0),
+	_graphicsMode(0),
+	_sdlModesCount(0),
+	_glModesCount(0),
 #endif
+	_inited(false),
+	_initedSDL(false),
+	_logger(0),
+	_mixerManager(0),
+	_eventSource(0) {
 
-
-#if defined(UNIX)
-#ifdef MACOSX
-#define DEFAULT_CONFIG_FILE "Library/Preferences/ScummVM Preferences"
-#elif defined(SAMSUNGTV)
-#define DEFAULT_CONFIG_FILE "/dtv/usb/sda1/.scummvmrc"
-#else
-#define DEFAULT_CONFIG_FILE ".scummvmrc"
-#endif
-#else
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
-#endif
-
-#if defined(MACOSX) || defined(IPHONE)
-#include <CoreFoundation/CoreFoundation.h>
-#endif
-
-#if defined(UNIX)
-#include <errno.h>
-#include <sys/stat.h>
-#endif
-
-static Uint32 timer_handler(Uint32 interval, void *param) {
-	((DefaultTimerManager *)param)->handler();
-	return interval;
 }
 
-AspectRatio::AspectRatio(int w, int h) {
-	// TODO : Validation and so on...
-	// Currently, we just ensure the program don't instantiate non-supported aspect ratios
-	_kw = w;
-	_kh = h;
+OSystem_SDL::~OSystem_SDL() {
+	deinit();
 }
 
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
-static AspectRatio getDesiredAspectRatio() {
-	const size_t AR_COUNT = 4;
-	const char*       desiredAspectRatioAsStrings[AR_COUNT] = {            "auto",            "4/3",            "16/9",            "16/10" };
-	const AspectRatio desiredAspectRatios[AR_COUNT]         = { AspectRatio(0, 0), AspectRatio(4,3), AspectRatio(16,9), AspectRatio(16,10) };
-
-	//TODO : We could parse an arbitrary string, if we code enough proper validation
-	Common::String desiredAspectRatio = ConfMan.get("desired_screen_aspect_ratio");
-
-	for (size_t i = 0; i < AR_COUNT; i++) {
-		assert(desiredAspectRatioAsStrings[i] != NULL);
-
-		if (!scumm_stricmp(desiredAspectRatio.c_str(), desiredAspectRatioAsStrings[i])) {
-			return desiredAspectRatios[i];
-		}
-	}
-	// TODO : Report a warning
-	return AspectRatio(0, 0);
-}
-#endif
-
-#if defined(WIN32)
-	struct SdlConsoleHidingWin32 {
-		DWORD myPid;
-		DWORD myTid;
-		HWND consoleHandle;
-	};
-
-	// console hiding for win32
-	static BOOL CALLBACK initBackendFindConsoleWin32Proc(HWND hWnd, LPARAM lParam) {
-		DWORD pid, tid;
-		SdlConsoleHidingWin32 *variables = (SdlConsoleHidingWin32 *)lParam;
-		tid = GetWindowThreadProcessId(hWnd, &pid);
-		if ((tid == variables->myTid) && (pid == variables->myPid)) {
-			variables->consoleHandle = hWnd;
-			return FALSE;
-		}
-		return TRUE;
-	}
-#endif
-
-void OSystem_SDL::initBackend() {
-	assert(!_inited);
-
-	int joystick_num = ConfMan.getInt("joystick_num");
-	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
-
-	if (ConfMan.hasKey("disable_sdl_parachute"))
-		sdlFlags |= SDL_INIT_NOPARACHUTE;
-
-#ifdef _WIN32_WCE
-	if (ConfMan.hasKey("use_GDI") && ConfMan.getBool("use_GDI")) {
-		SDL_VideoInit("windib", 0);
-		sdlFlags ^= SDL_INIT_VIDEO;
-	}
-#endif
-
-	if (joystick_num > -1)
-		sdlFlags |= SDL_INIT_JOYSTICK;
-
-#if 0
-	// NEW CODE TO HIDE CONSOLE FOR WIN32
-#if defined(WIN32)
-	// console hiding for win32
-	SdlConsoleHidingWin32 consoleHidingWin32;
-	consoleHidingWin32.consoleHandle = 0;
-	consoleHidingWin32.myPid = GetCurrentProcessId();
-	consoleHidingWin32.myTid = GetCurrentThreadId();
-	EnumWindows (initBackendFindConsoleWin32Proc, (LPARAM)&consoleHidingWin32);
-
-	if (!ConfMan.getBool("show_console")) {
-		if (consoleHidingWin32.consoleHandle) {
-			// We won't find a window with our TID/PID in case we were started from command-line
-			ShowWindow(consoleHidingWin32.consoleHandle, SW_HIDE);
-		}
-	}
-#endif
-#endif
-
-	if (SDL_Init(sdlFlags) == -1) {
-		error("Could not initialize SDL: %s", SDL_GetError());
-	}
-
+void OSystem_SDL::init() {
+	// Initialize SDL
+	initSDL();
 
 	if (!_logger)
 		_logger = new Backends::Log::Log(this);
@@ -202,188 +83,139 @@ void OSystem_SDL::initBackend() {
 			_logger->open(logFile);
 	}
 
-	_graphicsMutex = createMutex();
 
-	SDL_ShowCursor(SDL_DISABLE);
+	// Creates the early needed managers, if they don't exist yet
+	// (we check for this to allow subclasses to provide their own).
+	if (_mutexManager == 0)
+		_mutexManager = new SdlMutexManager();
 
-	// Enable unicode support if possible
-	SDL_EnableUNICODE(1);
+	if (_timerManager == 0)
+		_timerManager = new SdlTimerManager();
 
-	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
-	memset(&_videoMode, 0, sizeof(_videoMode));
-	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
+	#ifdef USE_OPENGL
+		// Setup a list with both SDL and OpenGL graphics modes
+		setupGraphicsModes();
+	#endif
+}
 
-#if !defined(_WIN32_WCE) && !defined(DINGUX) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
-	_videoMode.mode = GFX_DOUBLESIZE;
-	_videoMode.scaleFactor = 2;
-	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
-	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
-	_scalerProc = Normal2x;
-#else // for small screen platforms
-	_videoMode.mode = GFX_NORMAL;
-	_videoMode.scaleFactor = 1;
-	_videoMode.aspectRatioCorrection = false;
-	_scalerProc = Normal1x;
+void OSystem_SDL::initBackend() {
+	// Check if backend has not been initialized
+	assert(!_inited);
+
+	// Create the default event source, in case a custom backend
+	// manager didn't provide one yet.
+	if (_eventSource == 0)
+		_eventSource = new SdlEventSource();
+
+	int graphicsManagerType = 0;
+
+	if (_graphicsManager == 0) {
+#ifdef USE_OPENGL
+		if (ConfMan.hasKey("gfx_mode")) {
+			Common::String gfxMode(ConfMan.get("gfx_mode"));
+			bool use_opengl = false;
+			const OSystem::GraphicsMode *mode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
+			while (mode->name) {
+				if (scumm_stricmp(mode->name, gfxMode.c_str()) == 0)
+					use_opengl = true;
+
+				mode++;
+			}
+
+			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
+			if (use_opengl) {
+				_graphicsManager = new OpenGLSdlGraphicsManager();
+				graphicsManagerType = 1;
+			}
+		}
 #endif
-	_scalerType = 0;
+		if (_graphicsManager == 0) {
+			_graphicsManager = new SdlGraphicsManager(_eventSource);
+			graphicsManagerType = 0;
+		}
+	}
 
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
-#else
-	_videoMode.fullscreen = true;
+	// Creates the backend managers, if they don't exist yet (we check
+	// for this to allow subclasses to provide their own).
+	if (_eventManager == 0)
+		_eventManager = new DefaultEventManager(_eventSource);
+
+	// We have to initialize the graphics manager before the event manager
+	// so the virtual keyboard can be initialized, but we have to add the
+	// graphics manager as an event observer after initializing the event
+	// manager.
+	if (graphicsManagerType == 0)
+		((SdlGraphicsManager *)_graphicsManager)->initEventObserver();
+#ifdef USE_OPENGL
+	else if (graphicsManagerType == 1)
+		((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
 #endif
 
-#if !defined(MACOSX) && !defined(__SYMBIAN32__)
+	if (_savefileManager == 0)
+		_savefileManager = new DefaultSaveFileManager();
+
+	if (_mixerManager == 0) {
+		_mixerManager = new SdlMixerManager();
+
+		// Setup and start mixer
+		_mixerManager->init();
+	}
+
+	if (_audiocdManager == 0)
+		_audiocdManager = new SdlAudioCDManager();
+
 	// Setup a custom program icon.
-	// Don't set icon on OS X, as we use a nicer external icon there.
-	// Don't for Symbian: it uses the EScummVM.aif file for the icon.
 	setupIcon();
-#endif
-
-	// enable joystick
-	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
-		printf("Using joystick: %s\n", SDL_JoystickName(0));
-		_joystick = SDL_JoystickOpen(joystick_num);
-	}
-
-
-	// Create the savefile manager, if none exists yet (we check for this to
-	// allow subclasses to provide their own).
-	if (_savefile == 0) {
-#ifdef UNIX
-	_savefile = new POSIXSaveFileManager();
-#else
-	_savefile = new DefaultSaveFileManager();
-#endif
-	}
-
-	// Create and hook up the mixer, if none exists yet (we check for this to
-	// allow subclasses to provide their own).
-	if (_mixer == 0) {
-		setupMixer();
-	}
-
-	// Create and hook up the timer manager, if none exists yet (we check for
-	// this to allow subclasses to provide their own).
-	if (_timer == 0) {
-		// Note: We could implement a custom SDLTimerManager by using
-		// SDL_AddTimer. That might yield better timer resolution, but it would
-		// also change the semantics of a timer: Right now, ScummVM timers
-		// *never* run in parallel, due to the way they are implemented. If we
-		// switched to SDL_AddTimer, each timer might run in a separate thread.
-		// However, not all our code is prepared for that, so we can't just
-		// switch. Still, it's a potential future change to keep in mind.
-		_timer = new DefaultTimerManager();
-		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
-	}
-
-	// Invoke parent implementation of this method
-	OSystem::initBackend();
 
 	_inited = true;
 }
 
-OSystem_SDL::OSystem_SDL()
-	:
-#ifdef USE_OSD
-	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
+void OSystem_SDL::initSDL() {
+	// Check if SDL has not been initialized
+	if (!_initedSDL) {
+		uint32 sdlFlags = 0;
+		if (ConfMan.hasKey("disable_sdl_parachute"))
+			sdlFlags |= SDL_INIT_NOPARACHUTE;
+
+		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
+		if (SDL_Init(sdlFlags) == -1)
+			error("Could not initialize SDL: %s", SDL_GetError());
+
+		// Enable unicode support if possible
+		SDL_EnableUNICODE(1);
+
+		_initedSDL = true;
+	}
+}
+
+void OSystem_SDL::deinit() {
+	SDL_ShowCursor(SDL_ENABLE);
+
+	delete _savefileManager;
+	_savefileManager = 0;
+	delete _graphicsManager;
+	_graphicsManager = 0;
+	delete _eventManager;
+	_eventManager = 0;
+	delete _eventSource;
+	_eventSource = 0;
+	delete _audiocdManager;
+	_audiocdManager = 0;
+	delete _mixerManager;
+	_mixerManager = 0;
+	delete _timerManager;
+	_timerManager = 0;
+	delete _mutexManager;
+	_mutexManager = 0;
+
+#ifdef USE_OPENGL
+	delete[] _graphicsModes;
 #endif
-	_hwscreen(0), _screen(0), _tmpscreen(0),
-#ifdef USE_RGB_COLOR
-	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
-	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
-#endif
-	_overlayVisible(false),
-	_overlayscreen(0), _tmpscreen2(0),
-	_cdrom(0), _scalerProc(0), _modeChanged(false), _screenChangeCount(0),
-	_scrollLock(false),
-	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
-	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
-	_joystick(0),
-	_currentShakePos(0), _newShakePos(0),
-	_paletteDirtyStart(0), _paletteDirtyEnd(0),
-#if MIXER_DOUBLE_BUFFERING
-	_soundMutex(0), _soundCond(0), _soundThread(0),
-	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
-#endif
-	_fsFactory(0),
-	_savefile(0),
-	_mixer(0),
-	_logger(0),
-	_timer(0),
-	_screenIsLocked(false),
-	_graphicsMutex(0), _transactionMode(kTransactionNone) {
 
-	// clear palette storage
-	memset(_currentPalette, 0, sizeof(_currentPalette));
-	memset(_cursorPalette, 0, sizeof(_cursorPalette));
+	delete _logger;
+	_logger = 0;
 
-	_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
-
-	// reset mouse state
-	memset(&_km, 0, sizeof(_km));
-	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
-
-	_inited = false;
-
-
-	#if defined(__amigaos4__)
-		_fsFactory = new AmigaOSFilesystemFactory();
-	#elif defined(UNIX)
-		_fsFactory = new POSIXFilesystemFactory();
-	#elif defined(WIN32)
-		_fsFactory = new WindowsFilesystemFactory();
-	#elif defined(__SYMBIAN32__)
-		// Do nothing since its handled by the Symbian SDL inheritance
-	#else
-		#error Unknown and unsupported FS backend
-	#endif
-}
-
-OSystem_SDL::~OSystem_SDL() {
-	SDL_RemoveTimer(_timerID);
-	closeMixer();
-
-	free(_mouseData);
-
-	delete _savefile;
-	delete _timer;
-}
-
-uint32 OSystem_SDL::getMillis() {
-	uint32 millis = SDL_GetTicks();
-	g_eventRec.processMillis(millis);
-	return millis;
-}
-
-void OSystem_SDL::delayMillis(uint msecs) {
-	SDL_Delay(msecs);
-}
-
-void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
-	time_t curTime = time(0);
-	struct tm t = *localtime(&curTime);
-	td.tm_sec = t.tm_sec;
-	td.tm_min = t.tm_min;
-	td.tm_hour = t.tm_hour;
-	td.tm_mday = t.tm_mday;
-	td.tm_mon = t.tm_mon;
-	td.tm_year = t.tm_year;
-}
-
-Common::TimerManager *OSystem_SDL::getTimerManager() {
-	assert(_timer);
-	return _timer;
-}
-
-Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
-	assert(_savefile);
-	return _savefile;
-}
-
-FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
-	assert(_fsFactory);
-	return _fsFactory;
+	SDL_Quit();
 }
 
 void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -397,88 +229,10 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 	}
 #endif
 
-#ifdef MACOSX
-	// Get URL of the Resource directory of the .app bundle
-	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-	if (fileUrl) {
-		// Try to convert the URL to an absolute path
-		UInt8 buf[MAXPATHLEN];
-		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
-			// Success: Add it to the search path
-			Common::String bundlePath((const char *)buf);
-			s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath), priority);
-		}
-		CFRelease(fileUrl);
-	}
-
-#endif
-
 }
 
-
-static Common::String getDefaultConfigFileName() {
-	char configFile[MAXPATHLEN];
-#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	OSVERSIONINFO win32OsVersion;
-	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&win32OsVersion);
-	// Check for non-9X version of Windows.
-	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-		// Use the Application Data directory of the user profile.
-		if (win32OsVersion.dwMajorVersion >= 5) {
-			if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
-				error("Unable to access application data directory");
-		} else {
-			if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
-				error("Unable to access user profile directory");
-
-			strcat(configFile, "\\Application Data");
-			CreateDirectory(configFile, NULL);
-		}
-
-		strcat(configFile, "\\ScummVM");
-		CreateDirectory(configFile, NULL);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-
-		FILE *tmp = NULL;
-		if ((tmp = fopen(configFile, "r")) == NULL) {
-			// Check windows directory
-			char oldConfigFile[MAXPATHLEN];
-			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
-			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
-			if ((tmp = fopen(oldConfigFile, "r"))) {
-				strcpy(configFile, oldConfigFile);
-
-				fclose(tmp);
-			}
-		} else {
-			fclose(tmp);
-		}
-	} else {
-		// Check windows directory
-		GetWindowsDirectory(configFile, MAXPATHLEN);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-	}
-#elif defined(UNIX)
-	// On UNIX type systems, by default we store the config file inside
-	// to the HOME directory of the user.
-	//
-	// GP2X is Linux based but Home dir can be read only so do not use
-	// it and put the config in the executable dir.
-	//
-	// On the iPhone, the home dir of the user when you launch the app
-	// from the Springboard, is /. Which we don't want.
-	const char *home = getenv("HOME");
-	if (home != NULL && strlen(home) < MAXPATHLEN)
-		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
-	else
-		strcpy(configFile, DEFAULT_CONFIG_FILE);
-#else
-	strcpy(configFile, DEFAULT_CONFIG_FILE);
-#endif
-
-	return configFile;
+Common::String OSystem_SDL::getDefaultConfigFileName() {
+	return "scummvm.ini";
 }
 
 Common::SeekableReadStream *OSystem_SDL::createConfigReadStream() {
@@ -597,84 +351,13 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
 }
 
-bool OSystem_SDL::hasFeature(Feature f) {
-	return
-		(f == kFeatureFullscreenMode) ||
-		(f == kFeatureAspectRatioCorrection) ||
-		(f == kFeatureCursorHasPalette) ||
-		(f == kFeatureIconifyWindow);
-}
-
-void OSystem_SDL::setFeatureState(Feature f, bool enable) {
-	switch (f) {
-	case kFeatureFullscreenMode:
-		setFullscreenMode(enable);
-		break;
-	case kFeatureAspectRatioCorrection:
-		setAspectRatioCorrection(enable);
-		break;
-	case kFeatureIconifyWindow:
-		if (enable)
-			SDL_WM_IconifyWindow();
-		break;
-	default:
-		break;
-	}
-}
-
-bool OSystem_SDL::getFeatureState(Feature f) {
-	assert (_transactionMode == kTransactionNone);
-
-	switch (f) {
-	case kFeatureFullscreenMode:
-		return _videoMode.fullscreen;
-	case kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatioCorrection;
-	default:
-		return false;
-	}
-}
-
-void OSystem_SDL::deinit() {
-	if (_cdrom) {
-		SDL_CDStop(_cdrom);
-		SDL_CDClose(_cdrom);
-	}
-	unloadGFXMode();
-	deleteMutex(_graphicsMutex);
-
-	if (_joystick)
-		SDL_JoystickClose(_joystick);
-
-	SDL_ShowCursor(SDL_ENABLE);
-
-	SDL_RemoveTimer(_timerID);
-	closeMixer();
-
-	free(_mouseData);
-
-	delete _timer;
-	delete _logger;
-	_logger = 0;
-
-	SDL_Quit();
-
-	// Event Manager requires save manager for storing
-	// recorded events
-	delete getEventManager();
-	delete _savefile;
-}
-
 void OSystem_SDL::quit() {
 	deinit();
-
-#if !defined(SAMSUNGTV)
 	exit(0);
-#endif
 }
 
 void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
-	BaseBackend::logMessage(type, message);
+	ModularBackend::logMessage(type, message);
 	if (_logger)
 		_logger->print(message);
 
@@ -812,209 +495,128 @@ void OSystem_SDL::setupIcon() {
 	free(icon);
 }
 
-OSystem::MutexRef OSystem_SDL::createMutex() {
-	return (MutexRef) SDL_CreateMutex();
+uint32 OSystem_SDL::getMillis() {
+	uint32 millis = SDL_GetTicks();
+	g_eventRec.processMillis(millis);
+	return millis;
 }
 
-void OSystem_SDL::lockMutex(MutexRef mutex) {
-	SDL_mutexP((SDL_mutex *) mutex);
+void OSystem_SDL::delayMillis(uint msecs) {
+	SDL_Delay(msecs);
 }
 
-void OSystem_SDL::unlockMutex(MutexRef mutex) {
-	SDL_mutexV((SDL_mutex *) mutex);
-}
-
-void OSystem_SDL::deleteMutex(MutexRef mutex) {
-	SDL_DestroyMutex((SDL_mutex *) mutex);
-}
-
-#pragma mark -
-#pragma mark --- Audio ---
-#pragma mark -
-
-#if MIXER_DOUBLE_BUFFERING
-
-void OSystem_SDL::mixerProducerThread() {
-	byte nextSoundBuffer;
-
-	SDL_LockMutex(_soundMutex);
-	while (true) {
-		// Wait till we are allowed to produce data
-		SDL_CondWait(_soundCond, _soundMutex);
-
-		if (_soundThreadShouldQuit)
-			break;
-
-		// Generate samples and put them into the next buffer
-		nextSoundBuffer = _activeSoundBuf ^ 1;
-		_mixer->mixCallback(_soundBuffers[nextSoundBuffer], _soundBufSize);
-
-		// Swap buffers
-		_activeSoundBuf = nextSoundBuffer;
-	}
-	SDL_UnlockMutex(_soundMutex);
-}
-
-int SDLCALL OSystem_SDL::mixerProducerThreadEntry(void *arg) {
-	OSystem_SDL *this_ = (OSystem_SDL *)arg;
-	assert(this_);
-	this_->mixerProducerThread();
-	return 0;
-}
-
-
-void OSystem_SDL::initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize) {
-	_soundThreadIsRunning = false;
-	_soundThreadShouldQuit = false;
-
-	// Create mutex and condition variable
-	_soundMutex = SDL_CreateMutex();
-	_soundCond = SDL_CreateCond();
-
-	// Create two sound buffers
-	_activeSoundBuf = 0;
-	_soundBufSize = bufSize;
-	_soundBuffers[0] = (byte *)calloc(1, bufSize);
-	_soundBuffers[1] = (byte *)calloc(1, bufSize);
-
-	_soundThreadIsRunning = true;
-
-	// Finally start the thread
-	_soundThread = SDL_CreateThread(mixerProducerThreadEntry, this);
-}
-
-void OSystem_SDL::deinitThreadedMixer() {
-	// Kill thread?? _soundThread
-
-	if (_soundThreadIsRunning) {
-		// Signal the producer thread to end, and wait for it to actually finish.
-		_soundThreadShouldQuit = true;
-		SDL_CondBroadcast(_soundCond);
-		SDL_WaitThread(_soundThread, NULL);
-
-		// Kill the mutex & cond variables.
-		// Attention: AT this point, the mixer callback must not be running
-		// anymore, else we will crash!
-		SDL_DestroyMutex(_soundMutex);
-		SDL_DestroyCond(_soundCond);
-
-		_soundThreadIsRunning = false;
-
-		free(_soundBuffers[0]);
-		free(_soundBuffers[1]);
-	}
-}
-
-
-void OSystem_SDL::mixCallback(void *arg, byte *samples, int len) {
-	OSystem_SDL *this_ = (OSystem_SDL *)arg;
-	assert(this_);
-	assert(this_->_mixer);
-
-	assert((int)this_->_soundBufSize == len);
-
-	// Lock mutex, to ensure our data is not overwritten by the producer thread
-	SDL_LockMutex(this_->_soundMutex);
-
-	// Copy data from the current sound buffer
-	memcpy(samples, this_->_soundBuffers[this_->_activeSoundBuf], len);
-
-	// Unlock mutex and wake up the produced thread
-	SDL_UnlockMutex(this_->_soundMutex);
-	SDL_CondSignal(this_->_soundCond);
-}
-
-#else
-
-void OSystem_SDL::mixCallback(void *sys, byte *samples, int len) {
-	OSystem_SDL *this_ = (OSystem_SDL *)sys;
-	assert(this_);
-	assert(this_->_mixer);
-
-	this_->_mixer->mixCallback(samples, len);
-}
-
-#endif
-
-void OSystem_SDL::setupMixer() {
-	SDL_AudioSpec desired;
-
-	// Determine the desired output sampling frequency.
-	uint32 samplesPerSec = 0;
-	if (ConfMan.hasKey("output_rate"))
-		samplesPerSec = ConfMan.getInt("output_rate");
-	if (samplesPerSec <= 0)
-		samplesPerSec = SAMPLES_PER_SEC;
-
-	// Determine the sample buffer size. We want it to store enough data for
-	// at least 1/16th of a second (though at most 8192 samples). Note
-	// that it must be a power of two. So e.g. at 22050 Hz, we request a
-	// sample buffer size of 2048.
-	uint32 samples = 8192;
-	while (samples * 16 > samplesPerSec * 2)
-		samples >>= 1;
-
-	memset(&desired, 0, sizeof(desired));
-	desired.freq = samplesPerSec;
-	desired.format = AUDIO_S16SYS;
-	desired.channels = 2;
-	desired.samples = (uint16)samples;
-	desired.callback = mixCallback;
-	desired.userdata = this;
-
-	assert(!_mixer);
-	if (SDL_OpenAudio(&desired, &_obtainedRate) != 0) {
-		warning("Could not open audio device: %s", SDL_GetError());
-		_mixer = new Audio::MixerImpl(this, samplesPerSec);
-		assert(_mixer);
-		_mixer->setReady(false);
-	} else {
-		// Note: This should be the obtained output rate, but it seems that at
-		// least on some platforms SDL will lie and claim it did get the rate
-		// even if it didn't. Probably only happens for "weird" rates, though.
-		samplesPerSec = _obtainedRate.freq;
-		debug(1, "Output sample rate: %d Hz", samplesPerSec);
-
-		// Create the mixer instance and start the sound processing
-		_mixer = new Audio::MixerImpl(this, samplesPerSec);
-		assert(_mixer);
-		_mixer->setReady(true);
-
-#if MIXER_DOUBLE_BUFFERING
-		initThreadedMixer(_mixer, _obtainedRate.samples * 4);
-#endif
-
-		// start the sound system
-		SDL_PauseAudio(0);
-	}
-}
-
-void OSystem_SDL::closeMixer() {
-	if (_mixer)
-		_mixer->setReady(false);
-
-	SDL_CloseAudio();
-
-	delete _mixer;
-	_mixer = 0;
-
-#if MIXER_DOUBLE_BUFFERING
-	deinitThreadedMixer();
-#endif
-
+void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
+	time_t curTime = time(0);
+	struct tm t = *localtime(&curTime);
+	td.tm_sec = t.tm_sec;
+	td.tm_min = t.tm_min;
+	td.tm_hour = t.tm_hour;
+	td.tm_mday = t.tm_mday;
+	td.tm_mon = t.tm_mon;
+	td.tm_year = t.tm_year;
 }
 
 Audio::Mixer *OSystem_SDL::getMixer() {
-	assert(_mixer);
-	return _mixer;
+	assert(_mixerManager);
+	return _mixerManager->getMixer();
 }
 
-#pragma mark -
-#pragma mark --- CD Audio ---
-#pragma mark -
-
-AudioCDManager *OSystem_SDL::getAudioCDManager() {
-	if (!_audiocdManager)
-		_audiocdManager = new SdlAudioCDManager();
-	return _audiocdManager;
+SdlMixerManager *OSystem_SDL::getMixerManager() {
+	assert(_mixerManager);
+	return _mixerManager;
 }
+
+#ifdef USE_OPENGL
+
+const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
+	return _graphicsModes;
+}
+
+int OSystem_SDL::getDefaultGraphicsMode() const {
+	// Return the default graphics mode from the current graphics manager
+	if (_graphicsMode < _sdlModesCount)
+		return _graphicsManager->getDefaultGraphicsMode();
+	else
+		return _graphicsManager->getDefaultGraphicsMode() + _sdlModesCount;
+}
+
+bool OSystem_SDL::setGraphicsMode(int mode) {
+	const OSystem::GraphicsMode *srcMode;
+	int i;
+	// Check if mode is from SDL or OpenGL
+	if (mode < _sdlModesCount) {
+		srcMode = SdlGraphicsManager::supportedGraphicsModes();
+		i = 0;
+	} else {
+		srcMode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
+		i = _sdlModesCount;
+	}
+	// Loop through modes
+	while (srcMode->name) {
+		if (i == mode) {
+			// If the new mode and the current mode are not from the same graphics
+			// manager, delete and create the new mode graphics manager
+			if (_graphicsMode >= _sdlModesCount && mode < _sdlModesCount) {
+				delete _graphicsManager;
+				_graphicsManager = new SdlGraphicsManager(_eventSource);
+				((SdlGraphicsManager *)_graphicsManager)->initEventObserver();
+				_graphicsManager->beginGFXTransaction();
+			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
+				delete _graphicsManager;
+				_graphicsManager = new OpenGLSdlGraphicsManager();
+				((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
+				_graphicsManager->beginGFXTransaction();
+			}
+			_graphicsMode = mode;
+			return _graphicsManager->setGraphicsMode(srcMode->id);
+		}
+		i++;
+		srcMode++;
+	}
+	return false;
+}
+
+int OSystem_SDL::getGraphicsMode() const {
+	return _graphicsMode;
+}
+
+void OSystem_SDL::setupGraphicsModes() {
+	const OSystem::GraphicsMode *sdlGraphicsModes = SdlGraphicsManager::supportedGraphicsModes();
+	const OSystem::GraphicsMode *openglGraphicsModes = OpenGLSdlGraphicsManager::supportedGraphicsModes();
+	_sdlModesCount = 0;
+	_glModesCount = 0;
+
+	// Count the number of graphics modes
+	const OSystem::GraphicsMode *srcMode = sdlGraphicsModes;
+	while (srcMode->name) {
+		_sdlModesCount++;
+		srcMode++;
+	}
+	srcMode = openglGraphicsModes;
+	while (srcMode->name) {
+		_glModesCount++;
+		srcMode++;
+	}
+
+	// Allocate enough space for merged array of modes
+	_graphicsModes = new OSystem::GraphicsMode[_glModesCount  + _sdlModesCount + 1];
+
+	// Copy SDL graphics modes
+	memcpy((void *)_graphicsModes, sdlGraphicsModes, _sdlModesCount * sizeof(OSystem::GraphicsMode));
+
+	// Copy OpenGL graphics modes
+	memcpy((void *)(_graphicsModes + _sdlModesCount), openglGraphicsModes, _glModesCount  * sizeof(OSystem::GraphicsMode));
+
+	// Set a null mode at the end
+	memset((void *)(_graphicsModes + _sdlModesCount + _glModesCount), 0, sizeof(OSystem::GraphicsMode));
+
+	// Set new internal ids for all modes
+	int i = 0;
+	OSystem::GraphicsMode *mode = _graphicsModes;
+	while (mode->name) {
+		mode->id = i++;
+		mode++;
+	}
+}
+
+#endif

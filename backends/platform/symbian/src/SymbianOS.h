@@ -22,73 +22,52 @@
  * $Id$
  */
 
-#ifndef SDLSYMBIAN_H
-#define SDLSYMBIAN_H
+#ifndef PLATFORM_SDL_SYMBIAN_H
+#define PLATFORM_SDL_SYMBIAN_H
 
 #include "backends/platform/sdl/sdl.h"
 
-#define TOTAL_ZONES 3
 class RFs;
 
 class OSystem_SDL_Symbian : public OSystem_SDL {
 public:
 	OSystem_SDL_Symbian();
-	virtual ~OSystem_SDL_Symbian();
 
-public:
-	/**
-	 * The following method is called once, from main.cpp, after all
-	 * config data (including command line params etc.) are fully loaded.
-	 */
+	// Override from OSystem_SDL
+	virtual void init();
 	virtual void initBackend();
+	virtual void quit();
+	virtual void engineInit();
+	virtual void engineDone();
+	virtual bool setGraphicsMode(const char *name);
+	virtual Common::String getDefaultConfigFileName();
+	virtual void setupIcon();
 
-	int getDefaultGraphicsMode() const;
-	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	bool setGraphicsMode(const char *name);
-	void quitWithErrorMsg(const char *msg);
-	virtual bool hasFeature(Feature f);
-	void setFeatureState(Feature f, bool enable);
-
-	// Set function that generates samples
-	//
-	// This function is overridden by the symbian port in order to provide MONO audio
-	// downmix is done by supplying our own audiocallback
-	//
-	virtual void setupMixer(); // overloaded by CE backend
-
-	// Overloaded from SDL_Commmon
-	void quit();
-
-	// Returns reference to File session
+	/**
+	 * Returns reference to File session
+	 */
 	RFs& FsSession();
 
+	void quitWithErrorMsg(const char *msg);
+
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-protected:
-	//
-	// The mixer callback function.
-	//
-	static void symbianMixCallback(void *s, byte *samples, int len);
 
-
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
-public:
-	// vibration support
+	// Vibration support
 #ifdef USE_VIBRA_SE_PXXX
-	//
-	// Intialize the vibration api used if present and supported
-	//
+	/**
+	 * Intialize the vibration api used if present and supported
+	 */
 	void initializeVibration();
 
-	//
-	// Turn vibration on, repeat no time
-	// @param vibraLength number of repetitions
-	//
+	/**
+	 * Turn vibration on, repeat no time
+	 * @param vibraLength number of repetitions
+	 */
 	void vibrationOn(int vibraLength);
 
-	//
-	// Turns the vibration off
-	//
+	/**
+	 * Turns the vibration off
+	 */
 	void vibrationOff();
 
 protected:
@@ -96,54 +75,11 @@ protected:
 #endif // USE_VIBRA_SE_PXXX
 
 protected:
-
-	//
-	// This is an implementation by the remapKey function
-	// @param SDL_Event to remap
-	// @param ScumVM event to modify if special result is requested
-	// @return true if Common::Event has a valid return status
-	//
-	bool remapKey(SDL_Event &ev, Common::Event &event);
-
-	void setWindowCaption(const char *caption);
-
 	/**
-	 * Allows the backend to perform engine specific init.
-	 * Called just before the engine is run.
+	 * Used to intialized special game mappings
 	 */
-	virtual void engineInit();
+	void checkMappings();
 
-	/**
-	 * Allows the backend to perform engine specific de-init.
-	 * Called after the engine finishes.
-	 */
-	virtual void engineDone();
-
-	//
-	// Used to intialized special game mappings
-	//
-	void check_mappings();
-
-	void initZones();
-
-	// Audio
-	int _channels;
-
-	byte *_stereo_mix_buffer;
-
-	// Used to handle joystick navi zones
-	int _mouseXZone[TOTAL_ZONES];
-	int _mouseYZone[TOTAL_ZONES];
-	int _currentZone;
-
-	struct zoneDesc {
-		int x;
-		int y;
-		int width;
-		int height;
-	};
-
-	static zoneDesc _zones[TOTAL_ZONES];
 	RFs* _RFs;
 };
 

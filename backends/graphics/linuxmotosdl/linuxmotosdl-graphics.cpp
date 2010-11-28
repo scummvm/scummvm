@@ -23,30 +23,37 @@
  *
  */
 
-#include "backends/platform/dingux/dingux.h"
+#ifdef LINUXMOTO 
 
+#include "backends/graphics/linuxmotosdl/linuxmotosdl-graphics.h"
+#include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
 #include "common/mutex.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
 #include "graphics/scaler.h"
 #include "graphics/scaler/aspect.h"
 #include "graphics/scaler/downscaler.h"
 #include "graphics/surface.h"
 
-#if defined (DINGUX)
+enum {
+	GFX_HALF = 12
+};
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"1x", "Standard", GFX_NORMAL},
+	{"1x", "Fullscreen", GFX_NORMAL},
+	{"½x", "Downscale", GFX_HALF},
 	{0, 0, 0}
 };
 
-int OSystem_SDL_Dingux::getDefaultGraphicsMode() const {
-	return GFX_NORMAL;
-}
-
-const OSystem::GraphicsMode *OSystem_SDL_Dingux::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *LinuxmotoSdlGraphicsManager::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
-bool OSystem_SDL_Dingux::setGraphicsMode(int mode) {
+int LinuxmotoSdlGraphicsManager::getDefaultGraphicsMode() const {
+	return GFX_NORMAL;
+}
+
+bool LinuxmotoSdlGraphicsManager::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex);
 
 	assert(_transactionMode == kTransactionActive);
@@ -80,7 +87,7 @@ bool OSystem_SDL_Dingux::setGraphicsMode(int mode) {
 	return true;
 }
 
-void OSystem_SDL_Dingux::setGraphicsModeIntern() {
+void LinuxmotoSdlGraphicsManager::setGraphicsModeIntern() {
 	Common::StackLock lock(_graphicsMutex);
 	ScalerProc *newScalerProc = 0;
 
@@ -109,7 +116,8 @@ void OSystem_SDL_Dingux::setGraphicsModeIntern() {
 	blitCursor();
 }
 
-void OSystem_SDL_Dingux::initSize(uint w, uint h) {
+
+void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h) {
 	assert(_transactionMode == kTransactionActive);
 
 	// Avoid redundant res changes
@@ -118,16 +126,46 @@ void OSystem_SDL_Dingux::initSize(uint w, uint h) {
 
 	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;
-	if (w > 320 || h > 240) {
+
+	if	(w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		toggleMouseGrab();
+		((LinuxmotoSdlEventManager *)g_system->getEventManager())->toggleMouseGrab();
 	}
 
 	_transactionDetails.sizeChanged = true;
 }
 
-void OSystem_SDL_Dingux::drawMouse() {
+bool LinuxmotoSdlGraphicsManager::loadGFXMode() {
+	printf("Game ScreenMode = %d*%d\n",_videoMode.screenWidth, _videoMode.screenHeight);
+	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
+		_videoMode.aspectRatioCorrection = false;
+		setGraphicsMode(GFX_HALF);
+		printf("GraphicsMode set to HALF\n");
+	} else {
+		setGraphicsMode(GFX_NORMAL);
+		printf("GraphicsMode set to NORMAL\n");
+	}
+	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
+		_videoMode.overlayWidth = 320;
+		_videoMode.overlayHeight = 240;
+		_videoMode.fullscreen = true;
+	} else {
+
+		_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+		_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
+
+		if (_videoMode.aspectRatioCorrection)
+			_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
+
+		_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+		_videoMode.hardwareHeight = effectiveScreenHeight();
+	}
+
+	return SdlGraphicsManager::loadGFXMode();
+}
+
+void LinuxmotoSdlGraphicsManager::drawMouse() {
 	if (!_mouseVisible || !_mouseSurface) {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 		return;
@@ -138,8 +176,8 @@ void OSystem_SDL_Dingux::drawMouse() {
 	int hotX, hotY;
 
 	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-		dst.x = _mouseCurState.x / 2;
-		dst.y = _mouseCurState.y / 2;
+		dst.x = _mouseCurState.x/2;
+		dst.y = _mouseCurState.y/2;
 	} else {
 		dst.x = _mouseCurState.x;
 		dst.y = _mouseCurState.y;
@@ -193,7 +231,7 @@ void OSystem_SDL_Dingux::drawMouse() {
 	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
-void OSystem_SDL_Dingux::undrawMouse() {
+void LinuxmotoSdlGraphicsManager::undrawMouse() {
 	const int x = _mouseBackup.x;
 	const int y = _mouseBackup.y;
 
@@ -211,13 +249,13 @@ void OSystem_SDL_Dingux::undrawMouse() {
 	}
 }
 
-void OSystem_SDL_Dingux::internUpdateScreen() {
+void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	int height, width;
 	ScalerProc *scalerProc;
 	int scale1;
 
-#if defined (DEBUG) && ! defined(_WIN32_WCE) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
+#if defined (DEBUG) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
 	assert(_hwscreen != NULL);
 	assert(_hwscreen->map->sw_data != NULL);
 #endif
@@ -240,8 +278,8 @@ void OSystem_SDL_Dingux::internUpdateScreen() {
 	// screen surface accordingly.
 	if (_screen && _paletteDirtyEnd != 0) {
 		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart,
-		              _paletteDirtyStart,
-		              _paletteDirtyEnd - _paletteDirtyStart);
+			_paletteDirtyStart,
+			_paletteDirtyEnd - _paletteDirtyStart);
 
 		_paletteDirtyEnd = 0;
 
@@ -343,27 +381,29 @@ void OSystem_SDL_Dingux::internUpdateScreen() {
 
 				assert(scalerProc != NULL);
 
-				if ((_videoMode.mode == GFX_HALF) && (scalerProc == DownscaleAllByHalf)) {
-					if (dst_x % 2 == 1) {
+				if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf) {
+
+					if (dst_x%2==1) {
 						dst_x--;
 						dst_w++;
 					}
-					if (dst_y % 2 == 1) {
+					if (dst_y%2==1) {
 						dst_y--;
 						dst_h++;
 					}
+
+					if (dst_w&1)
+						dst_w++;
+					if (dst_h&1)
+						dst_h++;
+
 					src_x = dst_x;
 					src_y = dst_y;
 					dst_x = dst_x / 2;
 					dst_y = dst_y / 2;
-
-					scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
-					           (byte *)_hwscreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
-
-				} else {
-					scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-					           (byte *)_hwscreen->pixels + r->x * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
 				}
+				scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
+						   (byte *)_hwscreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
 			}
 
 			if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf) {
@@ -377,7 +417,6 @@ void OSystem_SDL_Dingux::internUpdateScreen() {
 			r->x = dst_x;
 			r->y = dst_y;
 
-
 #ifdef USE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
 				r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
@@ -390,7 +429,7 @@ void OSystem_SDL_Dingux::internUpdateScreen() {
 		// This is necessary if shaking is active.
 		if (_forceFull) {
 			_dirtyRectList[0].y = 0;
-			_dirtyRectList[0].h = (_videoMode.mode == GFX_HALF) ? effectiveScreenHeight() / 2 : effectiveScreenHeight();
+			_dirtyRectList[0].h = (_videoMode.mode == GFX_HALF) ? effectiveScreenHeight()/2 : effectiveScreenHeight();
 		}
 
 		drawMouse();
@@ -409,60 +448,48 @@ void OSystem_SDL_Dingux::internUpdateScreen() {
 	_mouseNeedsRedraw = false;
 }
 
-void OSystem_SDL_Dingux::showOverlay() {
+void LinuxmotoSdlGraphicsManager::showOverlay() {
 	if (_videoMode.mode == GFX_HALF) {
 		_mouseCurState.x = _mouseCurState.x / 2;
 		_mouseCurState.y = _mouseCurState.y / 2;
 	}
-	OSystem_SDL::showOverlay();
+	SdlGraphicsManager::showOverlay();
 }
 
-void OSystem_SDL_Dingux::hideOverlay() {
+void LinuxmotoSdlGraphicsManager::hideOverlay() {
 	if (_videoMode.mode == GFX_HALF) {
 		_mouseCurState.x = _mouseCurState.x * 2;
 		_mouseCurState.y = _mouseCurState.y * 2;
 	}
-	OSystem_SDL::hideOverlay();
+	SdlGraphicsManager::hideOverlay();
 }
 
-bool OSystem_SDL_Dingux::loadGFXMode() {
-
-	// Forcefully disable aspect ratio correction for games
-	// which starts with a native 240px height resolution.
-	// This fixes games with weird resolutions, like MM Nes (256x240)
-	if(_videoMode.screenHeight == 240) {
-		_videoMode.aspectRatioCorrection = false;
+void LinuxmotoSdlGraphicsManager::warpMouse(int x, int y) {
+	if (_mouseCurState.x != x || _mouseCurState.y != y) {
+		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
+			x = x / 2;
+			y = y / 2;
+		}
 	}
+	SdlGraphicsManager::warpMouse(x, y);
+}
 
-	fprintf(stdout, "Game ScreenMode = %d*%d\n", _videoMode.screenWidth, _videoMode.screenHeight);
-	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
-		_videoMode.aspectRatioCorrection = false;
-		setGraphicsMode(GFX_HALF);
-		fprintf(stdout, "GraphicsMode set to HALF\n");
-	} else {
-		setGraphicsMode(GFX_NORMAL);
-		fprintf(stdout, "GraphicsMode set to NORMAL\n");
+void LinuxmotoSdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
+	if (!event.synthetic) {
+		Common::Event newEvent(event);
+		newEvent.synthetic = true;
+		if (!_overlayVisible) {
+			if (_videoMode.mode == GFX_HALF) {
+				event.mouse.x *= 2;
+				event.mouse.y *= 2;
+			}
+			newEvent.mouse.x /= _videoMode.scaleFactor;
+			newEvent.mouse.y /= _videoMode.scaleFactor;
+			if (_videoMode.aspectRatioCorrection)
+				newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
+		}
+		g_system->getEventManager()->pushEvent(newEvent);
 	}
-
-	if ((_videoMode.mode == GFX_HALF) && !_overlayVisible) {
-		_videoMode.overlayWidth = _videoMode.screenWidth / 2;
-		_videoMode.overlayHeight = _videoMode.screenHeight / 2;
-		_videoMode.fullscreen = true;
-	} else {
-
-		_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-		_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
-
-		if (_videoMode.aspectRatioCorrection)
-			_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
-
-		_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-		_videoMode.hardwareHeight = effectiveScreenHeight();
-	}
-
-
-	return OSystem_SDL::loadGFXMode();
 }
 
 #endif
-

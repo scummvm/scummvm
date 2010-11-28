@@ -23,36 +23,25 @@
  *
  */
 
-#include "backends/platform/dingux/dingux.h"
-
 #if defined(DINGUX)
 
-bool OSystem_SDL_Dingux::hasFeature(Feature f) {
-	return
-	    (f == kFeatureAspectRatioCorrection) ||
-	    (f == kFeatureCursorHasPalette);
-}
+#include "backends/platform/dingux/dingux.h"
+#include "backends/events/dinguxsdl/dinguxsdl-events.h"
+#include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
 
-void OSystem_SDL_Dingux::setFeatureState(Feature f, bool enable) {
-	switch (f) {
-	case kFeatureAspectRatioCorrection:
-		setAspectRatioCorrection(enable);
-		break;
-	default:
-		break;
+void OSystem_SDL_Dingux::initBackend() {
+	// Create the events manager
+	if (_eventSource == 0)
+		_eventSource = new DINGUXSdlEventSource();
+
+	// Create the graphics manager
+	if (_graphicsManager == 0) {
+		_graphicsManager = new DINGUXSdlGraphicsManager(_eventSource); 
+		((DINGUXSdlEventSource*)_eventSource)->setCurrentGraphMan((DINGUXSdlGraphicsManager*)_graphicsManager);
 	}
-}
 
-bool OSystem_SDL_Dingux::getFeatureState(Feature f) {
-	assert(_transactionMode == kTransactionNone);
-
-	switch (f) {
-	case kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatioCorrection;
-	default:
-		return false;
-	}
+	// Call parent implementation of this method
+	OSystem_POSIX::initBackend();
 }
 
 #endif
-

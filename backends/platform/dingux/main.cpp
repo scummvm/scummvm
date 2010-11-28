@@ -37,6 +37,8 @@ int main(int argc, char* argv[]) {
 	g_system = new OSystem_SDL_Dingux();
 	assert(g_system);
 
+	((OSystem_SDL_Dingux *)g_system)->init();
+
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 //	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
@@ -44,10 +46,9 @@ int main(int argc, char* argv[]) {
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
-	((OSystem_SDL *)g_system)->deinit();
-	return res;
+	((OSystem_SDL_Dingux *)g_system)->deinit();
 
+	return res;
 }
 
 #endif
-

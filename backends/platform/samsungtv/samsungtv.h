@@ -23,32 +23,23 @@
  *
  */
 
-#ifndef SDL_SAMSUNGTV_COMMON_H
-#define SDL_SAMSUNGTV_COMMON_H
+#ifndef PLATFORM_SDL_SAMSUNGTV_H
+#define PLATFORM_SDL_SAMSUNGTV_H
 
-#include <SDL.h>
+#include "backends/platform/sdl/posix/posix.h"
 
-#include "backends/base-backend.h"
-#include "backends/platform/sdl/sdl.h"
-
-#if defined(SAMSUNGTV)
-
-namespace Audio {
-	class MixerImpl;
-}
-
-class OSystem_SDL_SamsungTV : public OSystem_SDL {
+class OSystem_SDL_SamsungTV : public OSystem_POSIX {
 public:
+	OSystem_SDL_SamsungTV();
+
+	virtual void initBackend();
+
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
 
 	virtual void fatalError();
-protected:
-
-	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
+	virtual void quit();
 };
-
-#endif
 
 #endif

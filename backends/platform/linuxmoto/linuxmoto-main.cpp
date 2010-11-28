@@ -23,24 +23,23 @@
  *
  */
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-#include "common/scummsys.h"
-#include "common/system.h"
-
-#include <SDL/SDL.h>
-#include <SDL/SDL_syswm.h>
-
 #include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
+
+	// Create our OSystem instance
 	g_system = new OSystem_LINUXMOTO();
 	assert(g_system);
+
+	// Pre initialize the backend
+	((OSystem_POSIX *)g_system)->init();
+
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
-	g_system->quit();	// TODO: Consider removing / replacing this!
+
+	// Free OSystem
+	delete (OSystem_LINUXMOTO *)g_system;
 
 	return res;
 }

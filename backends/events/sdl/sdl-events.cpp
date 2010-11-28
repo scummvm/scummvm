@@ -23,10 +23,14 @@
  *
  */
 
+#if defined(SDL_BACKEND)
+
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
+#include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
-#include "common/util.h"
-#include "common/events.h"
-#include "graphics/scaler/aspect.h"	// for aspect2Real
+#include "common/config-manager.h"
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
@@ -47,10 +51,32 @@
 #define JOY_BUT_SPACE 4
 #define JOY_BUT_F5 5
 
+SdlEventSource::SdlEventSource()
+    : _scrollLock(false), _joystick(0), _lastScreenID(0), EventSource() {
+	// Reset mouse state
+	memset(&_km, 0, sizeof(_km));
 
+	int joystick_num = ConfMan.getInt("joystick_num");
+	if (joystick_num > -1) {
+		// Initialize SDL joystick subsystem
+		if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {
+			error("Could not initialize SDL: %s", SDL_GetError());
+		}
 
+		// Enable joystick
+		if (SDL_NumJoysticks() > 0) {
+			printf("Using joystick: %s\n", SDL_JoystickName(0));
+			_joystick = SDL_JoystickOpen(joystick_num);
+		}
+	}
+}
 
-static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
+SdlEventSource::~SdlEventSource() {
+	if (_joystick)
+		SDL_JoystickClose(_joystick);
+}
+
+int SdlEventSource::mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
 		return key - SDLK_F1 + Common::ASCII_F1;
 	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
@@ -67,25 +93,17 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	return key;
 }
 
-void OSystem_SDL::fillMouseEvent(Common::Event &event, int x, int y) {
+void SdlEventSource::fillMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
 
 	// Update the "keyboard mouse" coords
 	_km.x = x;
 	_km.y = y;
-
-	// Adjust for the screen scaling
-	if (!_overlayVisible) {
-		event.mouse.x /= _videoMode.scaleFactor;
-		event.mouse.y /= _videoMode.scaleFactor;
-		if (_videoMode.aspectRatioCorrection)
-			event.mouse.y = aspect2Real(event.mouse.y);
-	}
 }
 
-void OSystem_SDL::handleKbdMouse() {
-	uint32 curTime = getMillis();
+void SdlEventSource::handleKbdMouse() {
+	uint32 curTime = g_system->getMillis();
 	if (curTime >= _km.last_time + _km.delay_time) {
 		_km.last_time = curTime;
 		if (_km.x_down_count == 1) {
@@ -153,7 +171,7 @@ void OSystem_SDL::handleKbdMouse() {
 	}
 }
 
-static void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
+void SdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 
 	event.kbd.flags = 0;
 
@@ -178,19 +196,19 @@ static void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 		event.kbd.flags |= Common::KBD_CAPS;
 }
 
-bool OSystem_SDL::pollEvent(Common::Event &event) {
-	SDL_Event ev;
-	ev.type = SDL_NOEVENT;
-
+bool SdlEventSource::pollEvent(Common::Event &event) {
 	handleKbdMouse();
 
-	// If the screen mode changed, send an Common::EVENT_SCREEN_CHANGED
-	if (_modeChanged) {
-		_modeChanged = false;
+	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
+	int screenID = ((OSystem_SDL *)g_system)->getGraphicsManager()->getScreenChangeID();
+	if (screenID != _lastScreenID) {
+		_lastScreenID = screenID;
 		event.type = Common::EVENT_SCREEN_CHANGED;
 		return true;
 	}
 
+	SDL_Event ev;
+	ev.type = SDL_NOEVENT;
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
 		if (dispatchSDLEvent(ev, event))
@@ -199,7 +217,7 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 	return false;
 }
 
-bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 	switch (ev.type) {
 	case SDL_KEYDOWN:
 		return handleKeyDown(ev, event);
@@ -219,8 +237,16 @@ bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleJoyAxisMotion(ev, event);
 
 	case SDL_VIDEOEXPOSE:
-		_forceFull = true;
-		break;
+		// HACK: Send a fake event, handled by SdlGraphicsManager
+		event.type = (Common::EventType)OSystem_SDL::kSdlEventExpose;
+		return true;
+
+	case SDL_VIDEORESIZE:
+		// HACK: Send a fake event, handled by OpenGLSdlGraphicsManager
+		event.type = (Common::EventType)OSystem_SDL::kSdlEventResize;
+		event.mouse.x = ev.resize.w;
+		event.mouse.y = ev.resize.h;
+		return true;
 
 	case SDL_QUIT:
 		event.type = Common::EVENT_QUIT;
@@ -232,7 +258,7 @@ bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 }
 
 
-bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
 
@@ -242,41 +268,6 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
-
-	// Alt-Return and Alt-Enter toggle full screen mode
-	if (event.kbd.hasFlags(Common::KBD_ALT) && (ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_KP_ENTER)) {
-		beginGFXTransaction();
-			setFullscreenMode(!_videoMode.fullscreen);
-		endGFXTransaction();
-#ifdef USE_OSD
-		if (_videoMode.fullscreen)
-			displayMessageOnOSD("Fullscreen mode");
-		else
-			displayMessageOnOSD("Windowed mode");
-#endif
-
-		return false;
-	}
-
-	// Alt-S: Create a screenshot
-	if (event.kbd.hasFlags(Common::KBD_ALT) && ev.key.keysym.sym == 's') {
-		char filename[20];
-
-		for (int n = 0;; n++) {
-			SDL_RWops *file;
-
-			sprintf(filename, "scummvm%05d.bmp", n);
-			file = SDL_RWFromFile(filename, "r");
-			if (!file)
-				break;
-			SDL_RWclose(file);
-		}
-		if (saveScreenshot(filename))
-			printf("Saved '%s'\n", filename);
-		else
-			printf("Could not save screenshot!\n");
-		return false;
-	}
 
 	// Ctrl-m toggles mouse capture
 	if (event.kbd.hasFlags(Common::KBD_CTRL) && ev.key.keysym.sym == 'm') {
@@ -309,12 +300,6 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		return true;
 	}
 
-	// Ctrl-Alt-<key> will change the GFX mode
-	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-		if (handleScalerHotkeys(ev.key))
-			return false;
-	}
-
 	if (remapKey(ev, event))
 		return true;
 
@@ -325,7 +310,7 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleKeyUp(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (remapKey(ev, event))
 		return true;
 
@@ -340,22 +325,17 @@ bool OSystem_SDL::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
 
-	if (isScalerHotkey(event))
-		// Swallow these key up events
-		return false;
-
 	return true;
 }
 
-bool OSystem_SDL::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
 	fillMouseEvent(event, ev.motion.x, ev.motion.y);
 
-	setMousePos(event.mouse.x, event.mouse.y);
 	return true;
 }
 
-bool OSystem_SDL::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT)
 		event.type = Common::EVENT_LBUTTONDOWN;
 	else if (ev.button.button == SDL_BUTTON_RIGHT)
@@ -378,7 +358,7 @@ bool OSystem_SDL::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT)
 		event.type = Common::EVENT_LBUTTONUP;
 	else if (ev.button.button == SDL_BUTTON_RIGHT)
@@ -394,7 +374,7 @@ bool OSystem_SDL::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
 		fillMouseEvent(event, _km.x, _km.y);
@@ -425,7 +405,7 @@ bool OSystem_SDL::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONUP;
 		fillMouseEvent(event, _km.x, _km.y);
@@ -456,7 +436,7 @@ bool OSystem_SDL::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	int axis = ev.jaxis.value;
 	if ( axis > JOY_DEADZONE) {
 		axis -= JOY_DEADZONE;
@@ -469,7 +449,7 @@ bool OSystem_SDL::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 
 	if ( ev.jaxis.axis == JOY_XAXIS) {
 #ifdef JOY_ANALOG
-		_km.x_vel = axis/2000;
+		_km.x_vel = axis / 2000;
 		_km.x_down_count = 0;
 #else
 		if (axis != 0) {
@@ -504,7 +484,7 @@ bool OSystem_SDL::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
+bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 #ifdef LINUPY
 	// On Yopy map the End button to quit
 	if ((ev.key.keysym.sym == 293)) {
@@ -571,3 +551,19 @@ bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
 #endif
 	return false;
 }
+
+void SdlEventSource::toggleMouseGrab() {
+	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF)
+		SDL_WM_GrabInput(SDL_GRAB_ON);
+	else
+		SDL_WM_GrabInput(SDL_GRAB_OFF);
+}
+
+void SdlEventSource::resetKeyboadEmulation(int16 x_max, int16 y_max) {
+	_km.x_max = x_max;
+	_km.y_max = y_max;
+	_km.delay_time = 25;
+	_km.last_time = 0;
+}
+
+#endif
