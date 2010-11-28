@@ -30,6 +30,9 @@
 
 class SymbianSdlGraphicsManager : public SdlGraphicsManager {
 public:
+	SymbianSdlGraphicsManager(SdlEventSource *sdlEventSource);
+
+public:
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 

@@ -61,9 +61,6 @@ public:
 	SdlGraphicsManager::VideoState *getVideoMode();
 
 	virtual void adjustMouseEvent(const Common::Event &event);
-
-protected:
-	SdlEventSource *_evSrc;
 };
 
 #endif /* BACKENDS_GRAPHICS_SDL_DINGUX_H */

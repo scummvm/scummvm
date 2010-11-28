@@ -34,10 +34,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
-GP2XSdlGraphicsManager::GP2XSdlGraphicsManager()
-	:
-	_adjustZoomOnMouse(false) {
-
+GP2XSdlGraphicsManager::GP2XSdlGraphicsManager(SdlEventSource *sdlEventSource)
+	: SdlGraphicsManager(sdlEventSource), _adjustZoomOnMouse(false) {
 }
 
 const OSystem::GraphicsMode *GP2XSdlGraphicsManager::getSupportedGraphicsModes() const {

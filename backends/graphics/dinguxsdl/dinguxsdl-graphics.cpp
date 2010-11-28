@@ -38,8 +38,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
-DINGUXSdlGraphicsManager::DINGUXSdlGraphicsManager(SdlEventSource *boss) : SdlGraphicsManager(boss) {
-	_evSrc = boss;
+DINGUXSdlGraphicsManager::DINGUXSdlGraphicsManager(SdlEventSource *boss)
+	: SdlGraphicsManager(boss) {
 }
 
 const OSystem::GraphicsMode *DINGUXSdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -125,7 +125,7 @@ void DINGUXSdlGraphicsManager::initSize(uint w, uint h) {
 	if (w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		_evSrc->toggleMouseGrab();
+		_sdlEventSource->toggleMouseGrab();
 	}
 
 	_transactionDetails.sizeChanged = true;

@@ -136,12 +136,12 @@ void OSystem_GP2X::initBackend() {
 	GP2X_HW::mixerMoveVolume(0);
 
 	// Create the events manager
-	if (_eventManager == 0)
-		_eventManager = new GP2XSdlEventSource(this);
+	if (_eventSource == 0)
+		_eventSource = new GP2XSdlEventSource();
 
 	// Create the graphics manager
 	if (_graphicsManager == 0)
-		_graphicsManager = new GP2XSdlGraphicsManager();
+		_graphicsManager = new GP2XSdlGraphicsManager(_eventSource);
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();

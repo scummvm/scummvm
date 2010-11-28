@@ -30,7 +30,8 @@
 
 class GP2XSdlGraphicsManager : public SdlGraphicsManager {
 public:
-	
+	GP2XSdlGraphicsManager(SdlEventSource *sdlEventSource);
+
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	virtual void drawMouse();

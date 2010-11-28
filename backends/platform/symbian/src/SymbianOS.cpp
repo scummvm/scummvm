@@ -101,8 +101,8 @@ void OSystem_SDL_Symbian::initBackend() {
 	GUI::Actions::init();
 
 	// Creates the backend managers
-	if (_eventManager == 0)
-		_eventManager = new SymbianSdlEventSource(this);
+	if (_eventSource == 0)
+		_eventSource = new SymbianSdlEventSource();
 	if (_mixerManager == 0) {
 		_mixerManager = new SymbianSdlMixerManager();
 
@@ -110,7 +110,7 @@ void OSystem_SDL_Symbian::initBackend() {
 		_mixerManager->init();
 	}
 	if (_graphicsManager == 0)
-		_graphicsManager = new SymbianSdlGraphicsManager();
+		_graphicsManager = new SymbianSdlGraphicsManager(_eventSource);
 
 	// Call parent implementation of this method
 	OSystem_SDL::initBackend();

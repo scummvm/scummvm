@@ -38,7 +38,7 @@ SymbianSdlEventSource::zoneDesc SymbianSdlEventSource::_zones[TOTAL_ZONES] = {
         { 150, 145, 170, 55 }
 };
 
-SymbianSdlEventSource::SymbianSdlEventSource(Common::EventSource *boss)
+SymbianSdlEventSource::SymbianSdlEventSource()
 	: _currentZone(0) {
 	for (int i = 0; i < TOTAL_ZONES; i++) {
 		_mouseXZone[i] = (_zones[i].x + (_zones[i].width / 2));
