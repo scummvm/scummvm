@@ -503,4 +503,32 @@ bool DINGUXSdlGraphicsManager::isOverlayVisible() {
 	return _overlayVisible;
 }
 
+void DINGUXSdlGraphicsManager::warpMouse(int x, int y) {
+	if (_mouseCurState.x != x || _mouseCurState.y != y) {
+		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
+			x = x / 2;
+			y = y / 2;
+		}
+	}
+	SdlGraphicsManager::warpMouse(x, y);
+}
+
+void DINGUXSdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
+	if (!event.synthetic) {
+		Common::Event newEvent(event);
+		newEvent.synthetic = true;
+		if (!_overlayVisible) {
+			if (_videoMode.mode == GFX_HALF) {
+				event.mouse.x *= 2;
+				event.mouse.y *= 2;
+			}
+			newEvent.mouse.x /= _videoMode.scaleFactor;
+			newEvent.mouse.y /= _videoMode.scaleFactor;
+			if (_videoMode.aspectRatioCorrection)
+				newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
+		}
+		g_system->getEventManager()->pushEvent(newEvent);
+	}
+}
+
 #endif

@@ -56,10 +56,12 @@ public:
 	bool loadGFXMode();
 	void drawMouse();
 	void undrawMouse();
+	virtual void warpMouse(int x, int y);
 
 	SdlGraphicsManager::MousePos *getMouseCurState();
 	SdlGraphicsManager::VideoState *getVideoMode();
-	bool isOverlayVisible();
+
+	virtual void adjustMouseEvent(const Common::Event &event);
 
 protected:
 	SdlEventSource *_evSrc;

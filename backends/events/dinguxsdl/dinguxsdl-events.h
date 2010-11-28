@@ -27,20 +27,11 @@
 #define BACKENDS_EVENTS_SDL_DINGUX_H
 #if defined(DINGUX)
 
-#include "backends/platform/dingux/dingux.h"
-#include "backends/events/dinguxsdl/dinguxsdl-events.h"
+#include "backends/events/sdl/sdl-events.h"
 
 class DINGUXSdlEventSource : public SdlEventSource {
-public:
-	DINGUXSdlEventSource();
-	void setCurrentGraphMan(DINGUXSdlGraphicsManager *_graphicManager);
-
 protected:
-	DINGUXSdlGraphicsManager *_grpMan;
-
 	bool remapKey(SDL_Event &ev, Common::Event &event);
-	void fillMouseEvent(Common::Event &event, int x, int y);
-	void warpMouse(int x, int y);
 };
 
 #endif /* DINGUX */

@@ -26,7 +26,6 @@
 #if defined(DINGUX)
 
 #include "backends/events/dinguxsdl/dinguxsdl-events.h"
-#include "graphics/scaler/aspect.h"	// for aspect2Real 
 
 #define PAD_UP    SDLK_UP
 #define PAD_DOWN  SDLK_DOWN
@@ -56,10 +55,6 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 		return 0;
 	}
 	return key;
-}
-
-DINGUXSdlEventSource::DINGUXSdlEventSource() : SdlEventSource() {
-	;
 }
 
 bool DINGUXSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
@@ -180,47 +175,6 @@ bool DINGUXSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	}
 
 	return false;
-}
-
-void DINGUXSdlEventSource::fillMouseEvent(Common::Event &event, int x, int y) {
-	if (_grpMan->getVideoMode()->mode == GFX_HALF && !(_grpMan->isOverlayVisible())) {
-		event.mouse.x = x * 2;
-		event.mouse.y = y * 2;
-	} else {
-		event.mouse.x = x;
-		event.mouse.y = y;
-	}
-
-	// Update the "keyboard mouse" coords
-	_km.x = x;
-	_km.y = y;
-
-	// Adjust for the screen scaling
-	if (!(_grpMan->isOverlayVisible())) {
-		event.mouse.x /= (_grpMan->getVideoMode())->scaleFactor;
-		event.mouse.y /= (_grpMan->getVideoMode())->scaleFactor;
-#if 0
-		if (_grpMan->getVideoMode()->aspectRatioCorrection)
-			event.mouse.y = aspect2Real(event.mouse.y);
-#endif
-	}
-}
-
-void DINGUXSdlEventSource::warpMouse(int x, int y) {
-	int mouse_cur_x = _grpMan->getMouseCurState()->x;
-	int mouse_cur_y = _grpMan->getMouseCurState()->y;
-
-	if ((mouse_cur_x != x) || (mouse_cur_y != y)) {
-		if (_grpMan->getVideoMode()->mode == GFX_HALF && !(_grpMan->isOverlayVisible())) {
-			x = x / 2;
-			y = y / 2;
-		}
-	}
-	SDL_WarpMouse(x, y);
-}
-
-void DINGUXSdlEventSource::setCurrentGraphMan(DINGUXSdlGraphicsManager *_graphicManager) {
-	_grpMan = _graphicManager;
 }
 
 #endif /* DINGUX */
