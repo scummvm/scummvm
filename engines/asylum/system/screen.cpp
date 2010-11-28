@@ -215,7 +215,7 @@ void Screen::drawGraphicsInQueue() {
 
 		copyToBackBufferWithTransparency((byte *)fra->surface.pixels,
 				fra->surface.w,
-				_queueItems[i].point.x - getWorld()->xLeft, _queueItems[i].point.y - getWorld()->yTop,
+				_queueItems[i].point.x - getWorld()->xLeft + fra->x, _queueItems[i].point.y - getWorld()->yTop + fra->y,
 				fra->surface.w,
 				fra->surface.h);
 
