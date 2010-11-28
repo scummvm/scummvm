@@ -2670,7 +2670,6 @@ if test "$_opengl" = yes ; then
 	DEFINES="$DEFINES -DUSE_OPENGL"
 	case $_host_os in
 		*darwin*)
-			INCLUDES="$INCLUDES -I/System/Library/Frameworks/OpenGL.framework/Headers"
 			LIBS="$LIBS -framework OpenGL"
 			;;
 		*mingw*)

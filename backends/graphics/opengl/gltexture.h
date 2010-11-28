@@ -36,8 +36,8 @@
 #include <GLES/gl.h>
 #include <GLES/glext.h>
 #elif defined(MACOSX)
-#include <gl.h>
-#include <glext.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>

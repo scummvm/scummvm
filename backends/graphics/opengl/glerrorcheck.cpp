@@ -38,7 +38,7 @@
 #endif
 
 #ifdef MACOSX
-#include <gl.h>
+#include <OpenGL/gl.h>
 #elif defined(USE_GLES)
 #include <GLES/gl.h>
 #else
