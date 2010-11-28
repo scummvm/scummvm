@@ -42,15 +42,11 @@ class SeekableReadStream;
 
 namespace Hugo {
 
-// WARNING!!  Run the program at least once before release to
-// generate the initial save file!  (Using the -i cmd switch)
-// Set EPISODE_NUM & build.  Build pictures.mak and run "Tools/Hugo N".
-// Copy helpedit\hugow_?.hlp to .\hugowin?.hlp
+// WARNING!!  
 // Type "PPG" in the game to enter cheat mode.
 
 #define COPYRIGHT   "Copyright 1989-1997 David P Gray, All Rights Reserved."
 // Started code on 04/01/95
-// Don't forget to update Hugowin.rc2 with version info
 //#define VER "1.0" // 10/01/95 Initial Release
 //#define VER "1.1" // 10/06/95 Restore system volume levels on exit
 //#define VER "v1.2"// 10/12/95 Added "background music" checkbox in volume dlg
@@ -97,7 +93,7 @@ namespace Hugo {
 #define NAME_LEN       12                           // Max length of a DOS file name
 
 // Definitions of 'generic' commands: Max # depends on size of gencmd in
-//   the object_t record since each requires 1 bit.  Currently up to 16
+// the object_t record since each requires 1 bit.  Currently up to 16
 #define LOOK           1
 #define TAKE           2
 #define DROP           4

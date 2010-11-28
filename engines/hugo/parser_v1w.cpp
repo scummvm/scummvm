@@ -120,7 +120,6 @@ bool Parser_v1w::isGenericVerb(object_t *obj, char *comment) {
 		// Test state-dependent look before general look
 		if ((obj->genericCmd & LOOK_S) == LOOK_S) {
 			Utils::Box(BOX_ANY, "%s", _vm->_textData[obj->stateDataIndex[obj->state]]);
-			warning("isGenericVerb: use of state dependant look - To be validated");
 		} else {
 			if ((LOOK & obj->genericCmd) == LOOK) {
 				if (_vm->_textData[obj->dataIndex])

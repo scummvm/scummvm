@@ -98,7 +98,7 @@ char *Utils::Box(box_t dismiss, const char *s, ...) {
 		return 0;
 
 	if (strlen(s) > MAX_STRLEN - 100) {             // Test length
-		warning("String too big: '%s'", s);
+		warning("String too long: '%s'", s);
 		return 0;
 	}
 
@@ -139,8 +139,7 @@ char *Utils::Box(box_t dismiss, const char *s, ...) {
  * Print options for user when dead
  */
 void Utils::gameOverMsg(void) {
-	//MessageBox(hwnd, gameoverstring, "Be more careful next time!", MB_OK | MB_ICONINFORMATION);
-	warning("STUB: Gameover_msg(): %s", HugoEngine::get()._textUtil[kGameOver]);
+	Utils::Box(BOX_OK, "%s", HugoEngine::get()._textUtil[kGameOver]);
 }
 
 char *Utils::strlwr(char *buffer) {

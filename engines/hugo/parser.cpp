@@ -111,7 +111,7 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 		gameStatus.viewState = V_PLAY;
 		break;
 	case Common::KEYCODE_F9:                        // Boss button
-		warning("STUB: KeyHandler() - F4-F5-F9 (DOS)");
+		warning("STUB: F9 (DOS) - BossKey");
 		break;
 	default:                                        // Any other key
 		if (!gameStatus.storyModeFl) {              // Keyboard disabled
@@ -167,7 +167,7 @@ void Parser::charHandler() {
 		default:                                    // Normal text key, add to line
 			if (lineIndex >= MAX_CHARS) {
 				//MessageBeep(MB_ICONASTERISK);
-				warning("STUB: MessageBeep(MB_ICONASTERISK);");
+				warning("STUB: MessageBeep() - Command line too long");
 			} else if (isprint(c)) {
 				cmdLine[lineIndex++] = c;
 				cmdLine[lineIndex] = '\0';

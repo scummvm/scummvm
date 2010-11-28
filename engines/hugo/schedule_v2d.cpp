@@ -343,7 +343,6 @@ event_t *Scheduler_v2d::doAction(event_t *curEvent) {
 		Utils::Box(BOX_ANY, TAKE_TEXT, _vm->_arrayNouns[_vm->_object->_objects[action->a42.objNumb].nounIndex][TAKE_NAME]);
 		break;
 	case YESNO:                                     // act43: Prompt user for Yes or No
-		warning("doAction(act43) - Yes/No Box");
 		if (Utils::Box(BOX_YESNO, "%s", _vm->_file->fetchString(action->a43.promptIndex)) != 0)
 			insertActionList(action->a43.actYesIndex);
 		else
