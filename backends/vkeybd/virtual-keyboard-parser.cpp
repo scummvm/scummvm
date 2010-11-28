@@ -34,6 +34,7 @@
 #include "common/system.h"
 #include "common/archive.h"
 #include "common/tokenizer.h"
+#include "common/stream.h"
 
 #include "graphics/imagedec.h"
 
