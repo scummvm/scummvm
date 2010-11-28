@@ -200,11 +200,6 @@ void Object::draw() {
 	Common::Point point;
 	adjustCoordinates(&point);
 
-	// FIXME the original doesn't add the frame coordinates!
-	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
-	point.x += frameRect.left;
-	point.y += frameRect.top;
-
 	if (_field_67C <= 0 || _field_67C >= 4 || Config.performance <= 1) {
 		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, point, (flags >> 11) & kObjectFlag2, _field_67C - 3, _priority);
 	} else {
