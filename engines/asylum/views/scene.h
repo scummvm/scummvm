@@ -143,8 +143,6 @@ public:
 
 	bool updateSceneCoordinates(int32 targetX, int32 targetY, int32 val, bool checkSceneCoords = false, int32 *param = NULL);
 
-	void adjustCoordinates(int32 x, int32 y, Common::Point *point);
-
 	int processActor(int *x, int *param);
 
 	void updatePalette(int32 param);

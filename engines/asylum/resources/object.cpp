@@ -175,6 +175,14 @@ bool Object::isVisible() const {
 	return false;
 }
 
+void Object::adjustCoordinates(Common::Point *point) {
+	if (!point)
+		error("[Actor::adjustCoordinates] Invalid point parameter!");
+
+	point->x += x - getWorld()->xLeft;
+	point->y += y - getWorld()->yTop;
+}
+
 /////////////////////////////////////////////////////////////////////////
 // Update
 //////////////////////////////////////////////////////////////////////////
@@ -190,8 +198,12 @@ void Object::draw() {
 
 	// Draw the object
 	Common::Point point;
+	adjustCoordinates(&point);
+
+	// FIXME the original doesn't add the frame coordinates!
 	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
-	getScene()->adjustCoordinates(x + frameRect.left, y + frameRect.top, &point);
+	point.x += frameRect.left;
+	point.y += frameRect.top;
 
 	if (_field_67C <= 0 || _field_67C >= 4 || Config.performance <= 1) {
 		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, point, (flags >> 11) & kObjectFlag2, _field_67C - 3, _priority);

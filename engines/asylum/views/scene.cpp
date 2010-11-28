@@ -1121,17 +1121,6 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 	return false;
 }
 
-void Scene::adjustCoordinates(int32 x, int32 y, Common::Point *point) {
-	if (!point)
-		error("[Scene::adjustCoordinates] Invalid point parameter!");
-
-	if (!_ws)
-		error("[Scene::adjustCoordinates] WorldStats not initialized properly!");
-
-	point->x = x;// - _ws->xLeft;
-	point->y = y;// - _ws->yTop;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // Scene drawing
 //////////////////////////////////////////////////////////////////////////
@@ -1279,7 +1268,7 @@ void Scene::processUpdateList() {
 					if (intersects && LOBYTE(actor->flags) & kActorFlagMasked) {
 						error("[Scene::processUpdateList] Assigning mask to masked character [%s]", actor->getName());
 					} else {
-						adjustCoordinates(object->x, object->y, &point);
+						object->adjustCoordinates(&point);
 						actor->setObjectIndex(j);
 						actor->flags |= kActorFlagMasked;
 					}

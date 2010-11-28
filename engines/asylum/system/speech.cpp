@@ -241,8 +241,7 @@ void Speech::prepareSpeech() {
 		if (Config.showEncounterSubtitles) {
 			Common::Point point;
 			Actor *actor = getScene()->getActor();
-
-			getScene()->adjustCoordinates(actor->getPoint1()->x, actor->getPoint1()->y, &point);
+			actor->adjustCoordinates(&point);
 
 			int32 posY = (((point.y >= 240) - 1) & 280) + 40;
 
