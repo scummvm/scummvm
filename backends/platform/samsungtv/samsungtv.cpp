@@ -42,7 +42,7 @@ bool OSystem_SDL_SamsungTV::hasFeature(Feature f) {
 void OSystem_SDL_SamsungTV::initBackend() {
 	// Create the events manager
 	if (_eventManager == 0)
-		_eventManager = new SamsungTVSdlEventManager(this);
+		_eventManager = new SamsungTVSdlEventSource(this);
 
 	// Call parent implementation of this method
 	OSystem_SDL::initBackend();

@@ -31,10 +31,7 @@
 /**
  * SDL events manager for Samsung TV
  */
-class SamsungTVSdlEventManager : public SdlEventManager {
-public:
-	SamsungTVSdlEventManager(Common::EventSource *boss);
-
+class SamsungTVSdlEventSource : public SdlEventSource {
 protected:
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 };

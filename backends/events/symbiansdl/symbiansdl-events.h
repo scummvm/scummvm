@@ -33,9 +33,9 @@
 /**
  * SDL events manager for Symbian
  */
-class SymbianSdlEventManager : public SdlEventManager {
+class SymbianSdlEventSource : public SdlEventSource {
 public:
-	SymbianSdlEventManager(Common::EventSource *boss);
+	SymbianSdlEventSource();
 
 protected:
 	// Used to handle joystick navi zones

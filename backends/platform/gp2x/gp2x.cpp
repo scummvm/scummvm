@@ -137,7 +137,7 @@ void OSystem_GP2X::initBackend() {
 
 	// Create the events manager
 	if (_eventManager == 0)
-		_eventManager = new GP2XSdlEventManager(this);
+		_eventManager = new GP2XSdlEventSource(this);
 
 	// Create the graphics manager
 	if (_graphicsManager == 0)

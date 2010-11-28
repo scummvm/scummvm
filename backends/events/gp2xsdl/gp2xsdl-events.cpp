@@ -84,14 +84,12 @@ enum {
 	TAPMODE_HOVER		= 2
 };
 
-GP2XSdlEventManager::GP2XSdlEventManager(Common::EventSource *boss)
-	:
-	_buttonStateL(false),
-	SdlEventManager(boss) {
+GP2XSdlEventSource::GP2XSdlEventSource()
+	: _buttonStateL(false){
 
 }
 
-void GP2XSdlEventManager::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
+void GP2XSdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 	event.kbd.flags = 0;
 
 	if (mod & KMOD_SHIFT)
@@ -108,7 +106,7 @@ void GP2XSdlEventManager::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &eve
 		event.kbd.flags |= Common::KBD_CAPS;
 }
 
-void GP2XSdlEventManager::moveStick() {
+void GP2XSdlEventSource::moveStick() {
 	bool stickBtn[32];
 
 	memcpy(stickBtn, _stickBtn, sizeof(stickBtn));
@@ -189,7 +187,7 @@ GP2X_BUTTON_L &	GP2X_BUTTON_A				Common::EVENT_PREDICTIVE_DIALOG for predictive 
 GP2X_BUTTON_L &	GP2X_BUTTON_Y				Toggles setZoomOnMouse() for larger then 320*240 games to scale to the point + raduis. (GP2X only)
 */
 
-bool GP2XSdlEventManager::handleKeyDown(SDL_Event &ev, Common::Event &event) {
+bool GP2XSdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
 
 	if (remapKey(ev, event))
@@ -202,7 +200,7 @@ bool GP2XSdlEventManager::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool GP2XSdlEventManager::handleKeyUp(SDL_Event &ev, Common::Event &event) {
+bool GP2XSdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (remapKey(ev, event))
 		return true;
 
@@ -224,7 +222,7 @@ bool GP2XSdlEventManager::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool GP2XSdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
+bool GP2XSdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 
 	_stickBtn[ev.jbutton.button] = 1;
 	event.kbd.flags = 0;
@@ -353,7 +351,7 @@ bool GP2XSdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &even
 	return true;
 }
 
-bool GP2XSdlEventManager::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
+bool GP2XSdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	_stickBtn[ev.jbutton.button] = 0;
 	event.kbd.flags = 0;
 
@@ -439,7 +437,7 @@ bool GP2XSdlEventManager::handleJoyButtonUp(SDL_Event &ev, Common::Event &event)
 	return true;
 }
 
-bool GP2XSdlEventManager::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
+bool GP2XSdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	int axis = ev.jaxis.value;
 	if ( axis > JOY_DEADZONE) {
 		axis -= JOY_DEADZONE;
@@ -486,7 +484,7 @@ bool GP2XSdlEventManager::handleJoyAxisMotion(SDL_Event &ev, Common::Event &even
 	return true;
 }
 
-bool GP2XSdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
+bool GP2XSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 

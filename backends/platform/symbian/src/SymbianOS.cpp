@@ -102,7 +102,7 @@ void OSystem_SDL_Symbian::initBackend() {
 
 	// Creates the backend managers
 	if (_eventManager == 0)
-		_eventManager = new SymbianSdlEventManager(this);
+		_eventManager = new SymbianSdlEventSource(this);
 	if (_mixerManager == 0) {
 		_mixerManager = new SymbianSdlMixerManager();
 

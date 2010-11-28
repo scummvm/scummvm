@@ -31,7 +31,7 @@
 void OSystem_LINUXMOTO::initBackend() {
 	// Create the backend custom managers
 	if (_eventManager == 0)
-		_eventManager = new LinuxmotoSdlEventManager(this);
+		_eventManager = new LinuxmotoSdlEventSource(this);
 
 	if (_graphicsManager == 0)
 		_graphicsManager = new LinuxmotoSdlGraphicsManager();

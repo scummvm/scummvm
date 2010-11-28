@@ -27,13 +27,7 @@
 
 #include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
 
-SamsungTVSdlEventManager::SamsungTVSdlEventManager(Common::EventSource *boss)
-	:
-	SdlEventManager(boss) {
-
-}
-
-bool SamsungTVSdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
+bool SamsungTVSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	switch (ev.type) {
 		case SDL_KEYDOWN:{
 			if (ev.key.keysym.sym == SDLK_POWER) {
@@ -72,7 +66,7 @@ bool SamsungTVSdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
 	}
 
 	// Invoke parent implementation of this method
-	return SdlEventManager::remapKey(ev, event);
+	return SdlEventSource::remapKey(ev, event);
 }
 
 #endif

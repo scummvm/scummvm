@@ -94,10 +94,10 @@ protected:
 
 
 	/** @name Event Handlers
-	 * Handlers for specific SDL events, called by SdlEventManager::dispatchSDLEvent().
+	 * Handlers for specific SDL events, called by SdlEventSource::dispatchSDLEvent().
 	 * This way, if a managers inherits fromt this SDL events manager, it can
 	 * change the behavior of only a single event, without having to override all
-	 * of SdlEventManager::dispatchSDLEvent().
+	 * of SdlEventSource::dispatchSDLEvent().
 	 */
 	//@{
 

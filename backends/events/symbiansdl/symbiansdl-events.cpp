@@ -32,23 +32,21 @@
 
 #include <bautils.h>
 
-SymbianSdlEventManager::zoneDesc SymbianSdlEventManager::_zones[TOTAL_ZONES] = {
+SymbianSdlEventSource::zoneDesc SymbianSdlEventSource::_zones[TOTAL_ZONES] = {
         { 0, 0, 320, 145 },
         { 0, 145, 150, 55 },
         { 150, 145, 170, 55 }
 };
 
-SymbianSdlEventManager::SymbianSdlEventManager(Common::EventSource *boss)
-	:
-	_currentZone(0),
-	SdlEventManager(boss) {
+SymbianSdlEventSource::SymbianSdlEventSource(Common::EventSource *boss)
+	: _currentZone(0) {
 	for (int i = 0; i < TOTAL_ZONES; i++) {
 		_mouseXZone[i] = (_zones[i].x + (_zones[i].width / 2));
 		_mouseYZone[i] = (_zones[i].y + (_zones[i].height / 2));
 	}
 }
 
-bool SymbianSdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
+bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	if (GUI::Actions::Instance()->mappingActive() || ev.key.keysym.sym <= SDLK_UNKNOWN)
 		return false;
 

@@ -31,9 +31,9 @@
 /**
  * SDL events manager for GP2X and GP2XWIZ
  */
-class GP2XSdlEventManager : public SdlEventManager {
+class GP2XSdlEventSource : public SdlEventSource {
 public:
-	GP2XSdlEventManager(Common::EventSource *boss);
+	GP2XSdlEventSource();
 
 protected:
 	bool _stickBtn[32];
@@ -50,11 +50,11 @@ protected:
 	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
-	virtual bool GP2XSdlEventManager::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
 
 	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
 
-	virtual bool GP2XSdlEventManager::remapKey(SDL_Event &ev, Common::Event &event);
+	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 };
 
 #endif
