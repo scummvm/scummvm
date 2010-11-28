@@ -56,7 +56,7 @@ public:
 	Video(AsylumEngine *engine, Audio::Mixer *mixer);
 	virtual ~Video();
 
-	void playVideo(int32 videoNumber, bool showSubtitles);
+	void playVideo(int32 videoNumber);
 
 private:
 	void performPostProcessing(byte *screen);

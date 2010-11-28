@@ -162,7 +162,7 @@ void BlowUpPuzzleVCR::update() {
 
 		// TODO: fade palette to gray
 
-		getVideo()->playVideo(2, true);
+		getVideo()->playVideo(2);
 
 		_isAccomplished = false;
 		close();
