@@ -1011,8 +1011,8 @@ uint16 MystScriptParser_Selenitic::soundReceiverCurrentSound(uint16 source, uint
 	bool sourceEnabled;
 	soundReceiverSolution(source, solution, sourceEnabled);
 
-	uint16 soundIdGood;
-	uint16 soundIdNear;
+	uint16 soundIdGood = 0;
+	uint16 soundIdNear = 0;
 	uint16 soundId = 1245;
 
 	switch (source) {
@@ -1036,6 +1036,8 @@ uint16 MystScriptParser_Selenitic::soundReceiverCurrentSound(uint16 source, uint
 		soundIdNear = 4245;
 		soundIdGood = 4093;
 		break;
+	default:
+		error("MystScriptParser_Selenitic::soundReceiverCurrentSound(): Unknown source (%d)", source);
 	}
 
 	if (sourceEnabled) {
