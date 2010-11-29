@@ -75,6 +75,10 @@ void MystResource::handleMouseUp(Common::Point *mouse) {
 		warning("Movement type resource with null destination at position (%d, %d), (%d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
 }
 
+bool MystResource::canBecomeActive() {
+	return !unreachableZipDest() && (isEnabled() || (_flags & kMystUnknownFlag));
+}
+
 bool MystResource::unreachableZipDest() {
 	return (_flags & kMystZipModeEnableFlag) && !_vm->_zipMode;
 }

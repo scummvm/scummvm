@@ -501,7 +501,7 @@ void MohawkEngine_Myst::drawResourceRects() {
 	for (uint16 i = 0; i < _resources.size(); i++) {
 		_resources[i]->getRect().debugPrint(0);
 		if (_resources[i]->getRect().isValidRect()) {
-			if (_resources[i]->unreachableZipDest())
+			if (!_resources[i]->canBecomeActive())
 				_gfx->drawRect(_resources[i]->getRect(), kRectUnreachable);
 			else if (_resources[i]->isEnabled())
 				_gfx->drawRect(_resources[i]->getRect(), kRectEnabled);
@@ -518,7 +518,7 @@ void MohawkEngine_Myst::checkCurrentResource() {
 	bool foundResource = false;
 
 	for (uint16 i = 0; i < _resources.size(); i++)
-		if (!_resources[i]->unreachableZipDest() &&
+		if (_resources[i]->canBecomeActive() &&
 				_resources[i]->contains(_system->getEventManager()->getMousePos())) {
 			if (_curResource != i) {
 				if (_curResource != -1 && _resources[_curResource]->isEnabled())

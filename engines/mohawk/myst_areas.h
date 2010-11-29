@@ -49,6 +49,7 @@ public:
 	uint16 getDest() { return _dest; }
 	virtual uint16 getType8Var() { return 0xFFFF; }
 	bool unreachableZipDest();
+	bool canBecomeActive();
 
 	// Mouse interface
 	virtual void handleMouseUp(Common::Point *mouse);
