@@ -456,6 +456,7 @@ private:
 	bool _poetryMode;
 
 	uint16 _curLanguage;
+	uint16 _curSelectedPage;
 	bool _alreadyShowedIntro;
 
 	// String Manipulation Functions

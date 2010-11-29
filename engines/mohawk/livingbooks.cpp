@@ -72,6 +72,7 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 	_screenWidth = _screenHeight = 0;
 
 	_curLanguage = 1;
+	_curSelectedPage = 1;
 
 	_alreadyShowedIntro = false;
 
@@ -342,7 +343,7 @@ void MohawkEngine_LivingBooks::updatePage() {
 
 			switch (_curPage) {
 			case 1:
-				debug(2, "updatePage() for control page 1");
+				debug(2, "updatePage() for control page 1 (menu)");
 
 				for (uint16 i = 0; i < _numLanguages; i++) {
 					item = getItemById(100 + i);
@@ -372,7 +373,7 @@ void MohawkEngine_LivingBooks::updatePage() {
 				break;
 
 			case 2:
-				debug(2, "updatePage() for control page 2");
+				debug(2, "updatePage() for control page 2 (quit)");
 
 				item = getItemById(12);
 				if (item)
@@ -383,7 +384,24 @@ void MohawkEngine_LivingBooks::updatePage() {
 				break;
 
 			case 3:
-				// TODO: hard-coded handling
+				debug(2, "updatePage() for control page 3 (options)");
+
+				for (uint i = 0; i < _numLanguages; i++) {
+					item = getItemById(100 + i);
+					if (item)
+						item->setVisible(_curLanguage == i + 1);
+				}
+				for (uint i = 0; i < _numPages; i++) {
+					item = getItemById(1000 + i);
+					if (item)
+						item->setVisible(_curSelectedPage == i + 1);
+					item = getItemById(1100 + i);
+					if (item)
+						item->setVisible(_curSelectedPage == i + 1);
+				}
+				item = getItemById(202);
+				if (item)
+					item->setVisible(false);
 				break;
 			}
 		}
@@ -699,8 +717,13 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 
 			default:
 				if (event.param >= 100 && event.param < 100 + (uint)_numLanguages) {
-					// TODO: language selection?
-					warning("no language selection yet");
+					uint newLanguage = event.param - 99;
+					if (newLanguage == _curLanguage)
+						break;
+					item = getItemById(99 + _curLanguage);
+					if (item)
+						item->seek(1);
+					_curLanguage = newLanguage;
 				} else if (event.param >= 200 && event.param < 200 + (uint)_numLanguages) {
 					// start game, in read mode
 					loadPage(kLBReadMode, 1, 0);
@@ -764,17 +787,43 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 				break;
 
 			case 2:
+				// back
 				item = getItemById(2);
 				if (item)
 					item->seek(1);
-				// TODO: book seeking
+				if (_curSelectedPage == 1) {
+					_curSelectedPage = _numPages;
+				} else {
+					_curSelectedPage--;
+				}
+				for (uint i = 0; i < _numPages; i++) {
+					item = getItemById(1000 + i);
+					if (item)
+						item->setVisible(_curSelectedPage == i + 1);
+					item = getItemById(1100 + i);
+					if (item)
+						item->setVisible(_curSelectedPage == i + 1);
+				}
 				break;
 
 			case 3:
+				// forward
 				item = getItemById(3);
 				if (item)
 					item->seek(1);
-				// TODO: book seeking
+				if (_curSelectedPage == _numPages) {
+					_curSelectedPage = 1;
+				} else {
+					_curSelectedPage++;
+				}
+				for (uint i = 0; i < _numPages; i++) {
+					item = getItemById(1000 + i);
+					if (item)
+						item->setVisible(_curSelectedPage == i + 1);
+					item = getItemById(1100 + i);
+					if (item)
+						item->setVisible(_curSelectedPage == i + 1);
+				}
 				break;
 
 			case 4:
@@ -786,7 +835,9 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 				break;
 
 			case 202:
-				// TODO: loadPage(kLBPlayMode, book);
+				if (!loadPage(kLBPlayMode, _curSelectedPage, 0))
+					if (!loadPage(kLBPlayMode, _curSelectedPage, 1))
+						error("failed to load page %d", _curSelectedPage);
 				break;
 			}
 			break;
