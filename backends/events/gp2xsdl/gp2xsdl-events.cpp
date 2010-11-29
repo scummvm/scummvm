@@ -27,9 +27,6 @@
 
 #if defined(GP2X) || defined(GP2XWIZ)
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "backends/events/gp2xsdl/gp2xsdl-events.h"
 #if defined(GP2X)
 #include "backends/platform/gp2x/gp2x-hw.h"

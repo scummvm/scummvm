@@ -26,9 +26,6 @@
 #ifndef BACKENDS_GRAPHICS_SDL_LINUXMOTO_H
 #define BACKENDS_GRAPHICS_SDL_LINUXMOTO_H
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "backends/graphics/sdl/sdl-graphics.h"
 
 class LinuxmotoSdlGraphicsManager : public SdlGraphicsManager {

@@ -27,9 +27,6 @@
 
 #if defined(DINGUX)
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
 #include "backends/events/dinguxsdl/dinguxsdl-events.h"
 #include "graphics/scaler/aspect.h"

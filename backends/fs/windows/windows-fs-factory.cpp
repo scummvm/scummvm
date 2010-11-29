@@ -22,10 +22,10 @@
  * $Id$
  */
 
-#if defined(WIN32)
-
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#if defined(WIN32)
 
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/fs/windows/windows-fs.cpp"

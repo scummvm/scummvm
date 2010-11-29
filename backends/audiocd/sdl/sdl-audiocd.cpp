@@ -27,9 +27,6 @@
 
 #if defined(SDL_BACKEND)
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "backends/audiocd/sdl/sdl-audiocd.h"
 
 SdlAudioCDManager::SdlAudioCDManager()

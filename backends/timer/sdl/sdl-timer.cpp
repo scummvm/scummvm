@@ -28,9 +28,6 @@
 
 #if defined(SDL_BACKEND)
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "backends/timer/sdl/sdl-timer.h"
 
 static Uint32 timer_handler(Uint32 interval, void *param) {

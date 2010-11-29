@@ -27,9 +27,6 @@
 
 #if defined(LINUXMOTO)
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
 #include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 

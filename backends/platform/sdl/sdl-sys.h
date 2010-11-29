@@ -26,16 +26,21 @@
 #ifndef BACKEND_SDL_SYS_H
 #define BACKEND_SDL_SYS_H
 
-// Include the SDL headers, working around the fact that SDL_rwops.h
-// uses a FILE pointer in one place, which conflicts with common/forbidden.h
+// The purpose of this header is to include the SDL headers in a uniform
+// fashion, even on the Symbian port.
+// Moreover, it contains a workaround for the fact that SDL_rwops.h uses
+// a FILE pointer in one place, which conflicts with common/forbidden.h.
+
 
 #include "common/scummsys.h"
 
 // Remove FILE override from common/forbidden.h, and replace
 // it with an alternate slightly less unfriendly override.
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_FILE)
 #undef FILE
 typedef struct { int FAKE; } FAKE_FILE;
 #define FILE FAKE_FILE
+#endif
 
 #if defined(__SYMBIAN32__)
 #include <esdl\SDL.h>
@@ -43,8 +48,10 @@ typedef struct { int FAKE; } FAKE_FILE;
 #include <SDL.h>
 #endif
 
-// Finally forbid FILE again
+// Finally forbid FILE again (if it was forbidden to start with)
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_FILE)
 #undef FILE 
 #define FILE	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
 #endif

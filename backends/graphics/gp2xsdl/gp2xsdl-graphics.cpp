@@ -27,9 +27,6 @@
 
 #ifdef GP2X
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "backends/graphics/gp2xsdl/gp2xsdl-graphics.h"
 #include "graphics/scaler/aspect.h"
 #include <SDL_gp2x.h>
