@@ -66,13 +66,13 @@ private:
 	DECLARE_OPCODE(o_115_soundLockButton);
 	DECLARE_OPCODE(o_117_soundReceiverEndMove);
 
-	DECLARE_OPCODE(opcode_200);
-	DECLARE_OPCODE(opcode_201);
-	DECLARE_OPCODE(opcode_202);
+	DECLARE_OPCODE(o_200_mazeRunnerCompass_init);
+	DECLARE_OPCODE(o_201_mazeRunnerWindow_init);
+	DECLARE_OPCODE(o_202_mazeRunnerLight_init);
 	DECLARE_OPCODE(o_203_soundReceiver_init);
 	DECLARE_OPCODE(o_204_soundLock_init);
-	DECLARE_OPCODE(opcode_205);
-	DECLARE_OPCODE(opcode_206);
+	DECLARE_OPCODE(o_205_mazeRunnerRight_init);
+	DECLARE_OPCODE(o_206_mazeRunnerLeft_init);
 
 	void o_203_soundReceiver_run();
 
@@ -93,8 +93,13 @@ private:
 	MystResourceType8 *_sound_receiver_angle_4; // 152
 	MystResourceType8 *_sound_receiver_sigma_button; // 156
 
-	bool _maze_runner_door_opened; // 160
 	uint16 _maze_runner_position; // 56
+	MystResourceType8 *_maze_runner_window; // 68
+	MystResourceType8 *_maze_runner_compass; // 72
+	MystResourceType8 *_maze_runner_light; // 76
+	MystResourceType8 *_maze_runner_right_button; // 80
+	MystResourceType8 *_maze_runner_left_button; // 84
+	bool _maze_runner_door_opened; // 160
 
 	uint16 _sound_lock_sound_id;
 	MystResourceType10 *_sound_lock_slider_1; // 164

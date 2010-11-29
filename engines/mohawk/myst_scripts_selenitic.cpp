@@ -124,13 +124,13 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 		SPECIFIC_OPCODE(117, o_117_soundReceiverEndMove),
 
 		// "Init" Opcodes
-		SPECIFIC_OPCODE(200, opcode_200),
-		SPECIFIC_OPCODE(201, opcode_201),
-		SPECIFIC_OPCODE(202, opcode_202),
+		SPECIFIC_OPCODE(200, o_200_mazeRunnerCompass_init),
+		SPECIFIC_OPCODE(201, o_201_mazeRunnerWindow_init),
+		SPECIFIC_OPCODE(202, o_202_mazeRunnerLight_init),
 		SPECIFIC_OPCODE(203, o_203_soundReceiver_init),
 		SPECIFIC_OPCODE(204, o_204_soundLock_init),
-		SPECIFIC_OPCODE(205, opcode_205),
-		SPECIFIC_OPCODE(206, opcode_206),
+		SPECIFIC_OPCODE(205, o_205_mazeRunnerRight_init),
+		SPECIFIC_OPCODE(206, o_206_mazeRunnerLeft_init),
 
 		OPCODE(0xFFFF, NOP)
 	};
@@ -761,35 +761,16 @@ void MystScriptParser_Selenitic::o_117_soundReceiverEndMove(uint16 op, uint16 va
 //	"right11"
 //};
 
-void MystScriptParser_Selenitic::opcode_200(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 1191 (Maze Runner)
-	if (argc == 0) {
-
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Selenitic::o_200_mazeRunnerCompass_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_maze_runner_compass = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
-void MystScriptParser_Selenitic::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 1191 (Maze Runner)
-
-	if (argc == 0) {
-
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Selenitic::o_201_mazeRunnerWindow_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_maze_runner_window = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
-void MystScriptParser_Selenitic::opcode_202(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 1191 (Maze Runner)
-	if (argc == 0) {
-
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Selenitic::o_202_mazeRunnerLight_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_maze_runner_light = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
 void MystScriptParser_Selenitic::o_203_soundReceiver_run(void) {
@@ -982,24 +963,12 @@ void MystScriptParser_Selenitic::o_204_soundLock_init(uint16 op, uint16 var, uin
 	_sound_lock_sound_id = 0;
 }
 
-void MystScriptParser_Selenitic::opcode_205(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 1191 (Maze Runner)
-	if (argc == 0) {
-
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Selenitic::o_205_mazeRunnerRight_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_maze_runner_right_button = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
-void MystScriptParser_Selenitic::opcode_206(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 1191 (Maze Runner)
-	if (argc == 0) {
-
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Selenitic::o_206_mazeRunnerLeft_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_maze_runner_left_button = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
 } // End of namespace Mohawk
