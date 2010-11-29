@@ -76,6 +76,8 @@ public:
 	virtual void toggleVar(uint16 var);
 	virtual bool setVarValue(uint16 var, uint16 value);
 
+	void animatedUpdate(uint16 argc, uint16 *argv, uint16 delay);
+
 	DECLARE_OPCODE(unknown);
 
 	DECLARE_OPCODE(o_0_toggleVar);
@@ -100,17 +102,17 @@ public:
 	DECLARE_OPCODE(o_27_playSoundBlocking);
 	DECLARE_OPCODE(o_28_restoreDefaultRect);
 	DECLARE_OPCODE(o_29_33_blitRect);
-	DECLARE_OPCODE(opcode_30);
+	DECLARE_OPCODE(o_30_changeSound);
 	DECLARE_OPCODE(o_31_soundPlaySwitch);
 	DECLARE_OPCODE(o_32_soundResumeBackground);
 	DECLARE_OPCODE(o_34_changeCard);
-	DECLARE_OPCODE(opcode_35);
+	DECLARE_OPCODE(o_35_drawImageChangeCard);
 	DECLARE_OPCODE(o_36_changeMainCursor);
 	DECLARE_OPCODE(o_37_hideCursor);
 	DECLARE_OPCODE(o_38_showCursor);
 	DECLARE_OPCODE(o_39_delay);
 	DECLARE_OPCODE(o_40_changeStack);
-	DECLARE_OPCODE(opcode_41);
+	DECLARE_OPCODE(o_41_changeCardPlaySoundDirectional);
 	DECLARE_OPCODE(o_42_directionalUpdatePlaySound);
 	DECLARE_OPCODE(o_43_saveMainCursor);
 	DECLARE_OPCODE(o_44_restoreMainCursor);

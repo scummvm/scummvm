@@ -121,18 +121,18 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(27, o_27_playSoundBlocking),
 		OPCODE(28, o_28_restoreDefaultRect),
 		OPCODE(29, o_29_33_blitRect),
-		OPCODE(30, opcode_30),
+		OPCODE(30, o_30_changeSound),
 		OPCODE(31, o_31_soundPlaySwitch),
 		OPCODE(32, o_32_soundResumeBackground),
 		OPCODE(33, o_29_33_blitRect),
 		OPCODE(34, o_34_changeCard),
-		OPCODE(35, opcode_35),
+		OPCODE(35, o_35_drawImageChangeCard),
 		OPCODE(36, o_36_changeMainCursor),
 		OPCODE(37, o_37_hideCursor),
 		OPCODE(38, o_38_showCursor),
 		OPCODE(39, o_39_delay),
 		OPCODE(40, o_40_changeStack),
-		OPCODE(41, opcode_41),
+		OPCODE(41, o_41_changeCardPlaySoundDirectional),
 		OPCODE(42, o_42_directionalUpdatePlaySound),
 		OPCODE(43, o_43_saveMainCursor),
 		OPCODE(44, o_44_restoreMainCursor),
@@ -239,6 +239,28 @@ bool MystScriptParser::setVarValue(uint16 var, uint16 value) {
 void MystScriptParser::varUnusedCheck(uint16 op, uint16 var) {
 	if (var != 0)
 		warning("Opcode %d: Unused Var %d", op, var);
+}
+
+void MystScriptParser::animatedUpdate(uint16 argc, uint16 *argv, uint16 delay) {
+	uint16 argsRead = 0;
+
+	while (argsRead < argc) {
+		Common::Rect rect = Common::Rect(argv[argsRead], argv[argsRead + 1], argv[argsRead + 2], argv[argsRead + 3]);
+		uint16 kind = argv[argsRead + 4];
+		uint16 steps = argv[argsRead + 5];
+
+		debugC(kDebugScript, "\trect.left: %d", rect.left);
+		debugC(kDebugScript, "\trect.top: %d", rect.top);
+		debugC(kDebugScript, "\trect.right: %d", rect.right);
+		debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
+
+		debugC(kDebugScript, "\tkind / direction: %d", kind);
+		debugC(kDebugScript, "\tsteps: %d", steps);
+
+		_vm->_gfx->animatedUpdate(kind, rect, steps, delay);
+
+		argsRead += 6;
+	}
 }
 
 void MystScriptParser::unknown(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -373,10 +395,10 @@ void MystScriptParser::o_16_changeCardDirectional(uint16 op, uint16 var, uint16 
 	debugC(kDebugScript, "\tcardId: %d", cardId);
 	debugC(kDebugScript, "\tdirectonal update data size: %d", directionalUpdateDataSize);
 
-	// TODO: Finish Implementation...
-	// Can use opcode 21 to do the directional update
+	// TODO: Change to card should not update the screen
 	_vm->changeToCard(cardId);
 
+	animatedUpdate(directionalUpdateDataSize, &argv[2], 0);
 }
 
 // NOTE: Opcode 17 and 18 form a pair, where Opcode 17 jumps to a card,
@@ -471,25 +493,7 @@ void MystScriptParser::o_20_disableAreas(uint16 op, uint16 var, uint16 argc, uin
 void MystScriptParser::o_21_directionalUpdate(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Transition / Directional update", op);
 
-	uint16 argsRead = 0;
-
-	while (argsRead < argc) {
-		Common::Rect rect = Common::Rect(argv[0], argv[1], argv[2], argv[3]);
-		uint16 kind = argv[4];
-		uint16 steps = argv[5];
-
-		debugC(kDebugScript, "\trect.left: %d", rect.left);
-		debugC(kDebugScript, "\trect.top: %d", rect.top);
-		debugC(kDebugScript, "\trect.right: %d", rect.right);
-		debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
-
-		debugC(kDebugScript, "\tkind / direction: %d", kind);
-		debugC(kDebugScript, "\tsteps: %d", steps);
-
-		_vm->_gfx->animatedUpdate(kind, rect, steps, 0);
-
-		argsRead += 6;
-	}
+	animatedUpdate(argc, argv, 0);
 }
 
 void MystScriptParser::o_23_toggleAreasActivation(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -624,7 +628,7 @@ void MystScriptParser::o_29_33_blitRect(uint16 op, uint16 var, uint16 argc, uint
 //       Current behaviour here and with VIEW sound block is not right as demonstrated
 //       by Channelwood Card 3280 (Tank Valve) and water flow sound behaviour in pipe
 //       on cards leading from shed...
-void MystScriptParser::opcode_30(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_30_changeSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	int16 *soundList = NULL;
@@ -737,7 +741,7 @@ void MystScriptParser::o_34_changeCard(uint16 op, uint16 var, uint16 argc, uint1
 	_vm->changeToCard(cardId);
 }
 
-void MystScriptParser::opcode_35(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_35_drawImageChangeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 3) {
@@ -850,103 +854,26 @@ void MystScriptParser::o_40_changeStack(uint16 op, uint16 var, uint16 argc, uint
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::opcode_41(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser::o_41_changeCardPlaySoundDirectional(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Play Sound, Change Card and Directional Update Screen Region", op);
 
-	// TODO: Will need to stop immediate screen update on
-	//       Opcode 29 etc. for this to work correctly..
-	//       Also, script processing will have to block U/I
-	//       events etc. for correct sequencing.
+	uint16 cardId = argv[0];
+	uint16 soundId = argv[1];
+	uint16 delayBetweenSteps = argv[2];
+	uint16 dataSize = argv[3];
 
-	if (argc == 10 || argc == 16) {
-		uint16 cardId = argv[0];
-		uint16 soundId = argv[1];
-		uint16 u0 = argv[2];
-		uint16 u1 = argv[3];
-		Common::Rect region = Common::Rect(argv[4], argv[5], argv[6], argv[7]);
-		uint16 updateDirection = argv[8];
-		uint16 u2 = argv[9];
+	debugC(kDebugScript, "\tcard: %d", cardId);
+	debugC(kDebugScript, "\tsound: %d", soundId);
+	debugC(kDebugScript, "\tdelay between steps: %d", delayBetweenSteps);
+	debugC(kDebugScript, "\tanimated update data size: %d", dataSize);
 
-		Common::Rect region2;
-		uint16 updateDirection2 = 0;
-		uint16 u3 = 0;
-		if (argc == 16) {
-			region2 = Common::Rect(argv[10], argv[11], argv[12], argv[13]);
-			updateDirection2 = argv[14];
-			u3 = argv[15];
-		}
-
-		debugC(kDebugScript, "Opcode %d: Change Card, Play Sound and Directional Update Screen Region", op);
-		debugC(kDebugScript, "\tCard Id: %d", cardId);
-		debugC(kDebugScript, "\tSound Id: %d", soundId);
-		debugC(kDebugScript, "\tu0: %d", u0);
-		debugC(kDebugScript, "\tu1: %d", u1);
-		debugC(kDebugScript, "\tregion.left: %d", region.left);
-		debugC(kDebugScript, "\tregion.top: %d", region.top);
-		debugC(kDebugScript, "\tregion.right: %d", region.right);
-		debugC(kDebugScript, "\tregion.bottom: %d", region.bottom);
-		debugCN(kDebugScript, "\tupdateDirection: %d = ", updateDirection);
-
-		switch (updateDirection) {
-		case 0:
-			debugC(kDebugScript, "Left to Right");
-			break;
-		case 1:
-			debugC(kDebugScript, "Right to Left");
-			break;
-		case 5:
-			debugC(kDebugScript, "Top to Bottom");
-			break;
-		case 6:
-			debugC(kDebugScript, "Bottom to Top");
-			break;
-		default:
-			warning("Unknown Update Direction");
-			break;
-		}
-
-		debugC(kDebugScript, "\tu2: %d", u2); // TODO: Speed / Delay of Update?
-
-		// 10 Argument version Used in:
-		// Selenitic Card 1243 (Sound Receiver Door)
-		// Myst Card 4317 (Generator Room Door)
-
-		if (argc == 16) {
-			// 16 Argument version Used in:
-			// Selenitic Card 1008 and 1010 (Mazerunner Door)
-
-			debugC(kDebugScript, "\tregion2.left: %d", region2.left);
-			debugC(kDebugScript, "\tregion2.top: %d", region2.top);
-			debugC(kDebugScript, "\tregion2.right: %d", region2.right);
-			debugC(kDebugScript, "\tregion2.bottom: %d", region2.bottom);
-			debugCN(kDebugScript, "\tupdateDirection2: %d = ", updateDirection2);
-
-			switch (updateDirection2) {
-			case 0:
-				debugC(kDebugScript, "Left to Right");
-				break;
-			case 1:
-				debugC(kDebugScript, "Right to Left");
-				break;
-			case 5:
-				debugC(kDebugScript, "Top to Bottom");
-				break;
-			case 6:
-				debugC(kDebugScript, "Bottom to Top");
-				break;
-			default:
-				warning("Unknown Update Direction");
-				break;
-			}
-
-			debugC(kDebugScript, "\tu3: %d", u3); // TODO: Speed / Delay of Update?
-		}
-
-		_vm->changeToCard(cardId);
+	if (soundId)
 		_vm->_sound->playSound(soundId);
-		// TODO: Complete Implementation
-	} else
-		unknown(op, var, argc, argv);
+
+	// TODO: Change to card should not update the screen
+	_vm->changeToCard(cardId);
+
+	animatedUpdate(dataSize, &argv[4], delayBetweenSteps);
 }
 
 void MystScriptParser::o_42_directionalUpdatePlaySound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -957,32 +884,13 @@ void MystScriptParser::o_42_directionalUpdatePlaySound(uint16 op, uint16 var, ui
 	uint16 dataSize = argv[2];
 
 	debugC(kDebugScript, "\tsound: %d", soundId);
-	debugC(kDebugScript, "\tu0: %d", delayBetweenSteps);
-	debugC(kDebugScript, "\tu1: %d", dataSize);
+	debugC(kDebugScript, "\tdelay between steps: %d", delayBetweenSteps);
+	debugC(kDebugScript, "\tanimated update data size: %d", dataSize);
 
 	if (soundId)
 		_vm->_sound->playSound(soundId);
 
-	uint16 read = 0;
-	uint16 *data = &argv[3];
-
-	while (read < dataSize) {
-		Common::Rect rect = Common::Rect(data[read], data[read + 1], data[read + 2], data[read + 3]);
-		uint16 kind = data[read + 4];
-		uint16 steps = data[read + 5];
-
-		debugC(kDebugScript, "\trect.left: %d", rect.left);
-		debugC(kDebugScript, "\trect.top: %d", rect.top);
-		debugC(kDebugScript, "\trect.right: %d", rect.right);
-		debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
-
-		debugC(kDebugScript, "\tkind / direction: %d", kind);
-		debugC(kDebugScript, "\tsteps: %d", steps);
-
-		_vm->_gfx->animatedUpdate(kind, rect, steps, delayBetweenSteps);
-
-		read += 6;
-	}
+	animatedUpdate(dataSize, &argv[3], delayBetweenSteps);
 }
 
 void MystScriptParser::o_43_saveMainCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
