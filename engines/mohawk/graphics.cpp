@@ -364,7 +364,7 @@ void MystGraphics::animatedUpdate(uint16 type, Common::Rect rect, uint16 steps, 
 				_dirtyRects.push_back(area);
 				updateScreen();
 			}
-			if (area.top < rect.bottom) {
+			if (area.bottom < rect.bottom) {
 				area.top = area.bottom;
 				area.bottom = rect.bottom;
 
@@ -387,7 +387,7 @@ void MystGraphics::animatedUpdate(uint16 type, Common::Rect rect, uint16 steps, 
 				_dirtyRects.push_back(area);
 				updateScreen();
 			}
-			if (area.bottom > rect.top) {
+			if (area.top > rect.top) {
 				area.bottom = area.top;
 				area.top = rect.top;
 
