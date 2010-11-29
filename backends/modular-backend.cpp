@@ -40,13 +40,22 @@ ModularBackend::ModularBackend()
 }
 
 ModularBackend::~ModularBackend() {
+	delete _fsFactory;
+	_fsFactory = 0;
 	delete _graphicsManager;
+	_graphicsManager = 0;
 	delete _eventManager;
+	_eventManager = 0;
 	delete _mixer;
+	_mixer = 0;
 	delete _audiocdManager;
+	_audiocdManager = 0;
 	delete _savefileManager;
+	_savefileManager = 0;
 	delete _timerManager;
+	_timerManager = 0;
 	delete _mutexManager;
+	_mutexManager = 0;
 }
 
 bool ModularBackend::hasFeature(Feature f) {
