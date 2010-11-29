@@ -55,7 +55,6 @@ enum MohawkGameType {
 	GType_ZOOMBINI,
 	GType_CSWORLD,
 	GType_CSAMTRAK,
-	GType_MAGGIESS,
 	GType_JAMESMATH,
 	GType_TREEHOUSE,
 	GType_1STDEGREE,

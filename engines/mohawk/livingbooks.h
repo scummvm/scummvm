@@ -80,7 +80,8 @@ enum {
 	kLBAnimOpWaitForSound = 0xb,
 	kLBAnimOpReleaseSound = 0xc,
 	kLBAnimOpResetSound = 0xd,
-	kLBAnimOpUnknownE = 0xe
+	kLBAnimOpUnknownE = 0xe,
+	kLBAnimOpUnknownF = 0xf
 };
 
 enum {

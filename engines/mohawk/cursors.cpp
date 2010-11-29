@@ -310,12 +310,14 @@ void NECursorManager::setCursor(uint16 id) {
 }
 
 MacCursorManager::MacCursorManager(const Common::String &appName) {
-	_resFork = new Common::MacResManager();
+	if (!appName.empty()) {
+		_resFork = new Common::MacResManager();
 
-	if (!_resFork->open(appName)) {
-		// Not all have cursors anyway, so this is not a problem
-		delete _resFork;
-		_resFork = 0;
+		if (!_resFork->open(appName)) {
+			// Not all have cursors anyway, so this is not a problem
+			delete _resFork;
+			_resFork = 0;
+		}
 	}
 }
 

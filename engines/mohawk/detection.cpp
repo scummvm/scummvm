@@ -105,7 +105,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"zoombini", "Logical Journey of the Zoombinis Deluxe"},
 	{"csworld", "Where in the World is Carmen Sandiego?"},
 	{"csamtrak", "Where in America is Carmen Sandiego? (The Great Amtrak Train Adventure)"},
-	{"maggiess", "Maggie's Farmyard Adventure"},
+	{"maggiesfa", "Maggie's Farmyard Adventure"},
 	{"jamesmath", "James Discovers/Explores Math"},
 	{"treehouse", "The Treehouse"},
 	{"greeneggs", "Green Eggs and Ham"},
@@ -234,7 +234,6 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		case Mohawk::GType_ZOOMBINI:
 		case Mohawk::GType_CSWORLD:
 		case Mohawk::GType_CSAMTRAK:
-		case Mohawk::GType_MAGGIESS:
 		case Mohawk::GType_JAMESMATH:
 		case Mohawk::GType_TREEHOUSE:
 		case Mohawk::GType_1STDEGREE:

@@ -1076,6 +1076,13 @@ NodeState LBAnimationNode::update(bool seeking) {
 			}
 			break;
 
+		case kLBAnimOpUnknownF:
+			// TODO: Found in maggiesfa
+			// Seems to always be a uint32 as the data
+			assert(entry.size == 4);
+			warning("f: UnknownF(%d)", READ_BE_UINT32(entry.data));
+			break;
+
 		default:
 			error("Unknown opcode id %02x (size %d)", entry.opcode, entry.size);
 			break;

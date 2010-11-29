@@ -449,15 +449,30 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
-			"maggiess",
+			"maggiesfa",
 			"",
-			AD_ENTRY1("MAGGIESS.MHK", "08f75fc8c0390e68fdada5ddb35d0355"),
+			AD_ENTRY1("Outline", "b7dc6e65fa9e80784a5bb8b557aa37c4"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_MAGGIESS,
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	{
+		{
+			"maggiesfa",
+			"",
+			AD_ENTRY1("BookOutline", "1ce006d7daaa26cf61040203856b88f1"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
 		0,
 		0
 	},
