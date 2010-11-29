@@ -276,18 +276,6 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 		_readOnly = true;
 	}
 
-	if (getFeatures() & GF_NO_READONLY) {
-		if (_readOnly) {
-			// TODO: make this a warning, after some testing?
-			error("game detection table is bad (remove GF_NO_READONLY)");
-		} else {
-			// some very early versions of the LB engine don't have
-			// .r entries in their book info; instead, it is just hardcoded
-			// like this (which would unfortunately break later games)
-			_readOnly = (mode != kLBControlMode && mode != kLBPlayMode);
-		}
-	}
-
 	// TODO: fading between pages
 	bool fade = false;
 	if (filename.hasSuffix(" fade")) {
@@ -302,6 +290,18 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 		delete pageArchive;
 		debug(2, "Could not find page %d.%d for '%s'", page, subpage, name.c_str());
 		return false;
+	}
+
+	if (getFeatures() & GF_NO_READONLY) {
+		if (_readOnly) {
+			// TODO: make this a warning, after some testing?
+			error("game detection table is bad (remove GF_NO_READONLY)");
+		} else {
+			// some very early versions of the LB engine don't have
+			// .r entries in their book info; instead, it is just hardcoded
+			// like this (which would unfortunately break later games)
+			_readOnly = (mode != kLBControlMode && mode != kLBPlayMode);
+		}
 	}
 
 	debug(1, "Stack Version: %d", getResourceVersion());
