@@ -44,12 +44,12 @@ public:
 	int getGraphicsMode() const { return 0; }
 	inline Graphics::PixelFormat getScreenFormat() const {
 		return Graphics::PixelFormat::createFormatCLUT8();
-	};
+	}
 	inline Common::List<Graphics::PixelFormat> getSupportedFormats() {
 		Common::List<Graphics::PixelFormat> list;
 		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 		return list;
-	};
+	}
 	void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) {}
 	virtual int getScreenChangeID() const { return 0; }
 
