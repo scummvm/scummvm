@@ -25,6 +25,9 @@
 
 #if defined(GP2X) || defined(GP2XWIZ)
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+
 #include "backends/events/gp2xsdl/gp2xsdl-events.h"
 #if defined(GP2X)
 #include "backends/platform/gp2x/gp2x-hw.h"
@@ -196,28 +199,6 @@ bool GP2XSdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_KEYDOWN;
 	event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 	event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-
-	return true;
-}
-
-bool GP2XSdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
-	if (remapKey(ev, event))
-		return true;
-
-	event.type = Common::EVENT_KEYUP;
-	event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
-	event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-
-	// Ctrl-Alt-<key> will change the GFX mode
-	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
-
-	// Set the scroll lock sticky flag
-	if (_scrollLock)
-		event.kbd.flags |= Common::KBD_SCRL;
-
-	if (isScalerHotkey(event))
-		// Swallow these key up events
-		return false;
 
 	return true;
 }

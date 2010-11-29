@@ -47,7 +47,6 @@ protected:
 	void moveStick();
 
 	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
