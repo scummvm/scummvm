@@ -77,6 +77,8 @@ const uint16 MystScriptParser::start_card[8] = {
 MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm) : _vm(vm) {
 	setupOpcodes();
 	_invokingResource = NULL;
+	_savedCardId = 0;
+	_savedCursorId = 0;
 }
 
 MystScriptParser::~MystScriptParser() {
@@ -94,9 +96,9 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(3, takePage),
 		OPCODE(4, opcode_4),
 		// Opcode 5 Not Present
-		OPCODE(6, o_6_changeCard),
-		OPCODE(7, o_6_changeCard),
-		OPCODE(8, o_6_changeCard),
+		OPCODE(6, o_6_goToDest),
+		OPCODE(7, o_6_goToDest),
+		OPCODE(8, o_6_goToDest),
 		OPCODE(9, o_9_triggerMovie),
 		OPCODE(10, o_10_toggleVarNoRedraw),
 		// Opcode 11 Not Present
@@ -110,7 +112,7 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(19, o_19_enableAreas),
 		OPCODE(20, o_20_disableAreas),
 		OPCODE(21, o_21_directionalUpdate),
-		OPCODE(22, o_6_changeCard),
+		OPCODE(22, o_6_goToDest),
 		OPCODE(23, o_23_toggleAreasActivation),
 		OPCODE(24, o_24_playSound),
 		// Opcode 25 Not Present, original calls replaceSound
@@ -119,22 +121,22 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(28, o_28_restoreDefaultRect),
 		OPCODE(29, o_29_33_blitRect),
 		OPCODE(30, opcode_30),
-		OPCODE(31, opcode_31),
-		OPCODE(32, opcode_32),
+		OPCODE(31, o_31_soundPlaySwitch),
+		OPCODE(32, o_32_soundResumeBackground),
 		OPCODE(33, o_29_33_blitRect),
 		OPCODE(34, opcode_34),
 		OPCODE(35, opcode_35),
-		OPCODE(36, changeCursor),
-		OPCODE(37, hideCursor),
-		OPCODE(38, showCursor),
-		OPCODE(39, opcode_39),
-		OPCODE(40, changeStack),
+		OPCODE(36, o_36_changeMainCursor),
+		OPCODE(37, o_37_hideCursor),
+		OPCODE(38, o_38_showCursor),
+		OPCODE(39, o_39_delay),
+		OPCODE(40, o_40_changeStack),
 		OPCODE(41, opcode_41),
 		OPCODE(42, opcode_42),
-		OPCODE(43, opcode_43),
-		OPCODE(44, opcode_44),
+		OPCODE(43, o_43_saveMainCursor),
+		OPCODE(44, o_44_restoreMainCursor),
 		// Opcode 45 Not Present
-		OPCODE(46, opcode_46),
+		OPCODE(46, o_46_soundWaitStop),
 		// Opcodes 47 to 99 Not Present
 
 		OPCODE(0xFFFF, NOP)
@@ -325,7 +327,7 @@ void MystScriptParser::opcode_4(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::o_6_changeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_6_goToDest(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 0) {
@@ -400,8 +402,6 @@ void MystScriptParser::o_16_changeCardDirectional(uint16 op, uint16 var, uint16 
 // TODO: The purpose of the optional argv[1] on Opcode 17 and argv[0]
 // on Opcode 18 which are always 4, 5 or 6 is unknown.
 
-static uint16 opcode_17_18_cardId = 0;
-
 void MystScriptParser::o_17_changeCardPush(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
@@ -414,9 +414,9 @@ void MystScriptParser::o_17_changeCardPush(uint16 op, uint16 var, uint16 argc, u
 		uint16 u0 = argv[1]; // TODO
 		debugC(kDebugScript, "\tu0: %d", u0);
 
-		opcode_17_18_cardId = _vm->getCurCard();
+		_savedCardId = _vm->getCurCard();
 
-		debugC(kDebugScript, "\tCurrent CardId: %d", opcode_17_18_cardId);
+		debugC(kDebugScript, "\tCurrent CardId: %d", _savedCardId);
 
 		_vm->changeToCard(cardId);
 	} else
@@ -428,12 +428,12 @@ void MystScriptParser::o_18_changeCardPop(uint16 op, uint16 var, uint16 argc, ui
 
 	if (argc == 1) {
 		debugC(kDebugScript, "Opcode %d: Return To Stored Card Id", op);
-		debugC(kDebugScript, "\tCardId: %d", opcode_17_18_cardId);
+		debugC(kDebugScript, "\tCardId: %d", _savedCardId);
 
 		uint16 u0 = argv[0];
 		debugC(kDebugScript, "\tu0: %d", u0);
 
-		_vm->changeToCard(opcode_17_18_cardId);
+		_vm->changeToCard(_savedCardId);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -730,7 +730,7 @@ void MystScriptParser::opcode_30(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	soundListVolume = NULL;
 }
 
-void MystScriptParser::opcode_31(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_31_soundPlaySwitch(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Switch Choice of Play Sound", op);
 
 	uint16 value = getVar(var);
@@ -744,21 +744,9 @@ void MystScriptParser::opcode_31(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	}
 }
 
-void MystScriptParser::opcode_32(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used on Channelwood Card 3503 (Door to Sirrus' Room)
-	// Used on Myst Card 4188 (Door to Cabin)
-	// Used on Myst Card 4363 (Red Book Open)
-	// Used on Myst Card 4371 (Blue Book Open)
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Unknown...", op);
-		// TODO: Implement function...
-		// Set Resource 0 Enabled?
-		// or Trigger Movie?
-		// Set resource flag to Enabled?
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser::o_32_soundResumeBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: soundResumeBackground", op);
+	//_vm->_sound->resumeBackground();
 }
 
 void MystScriptParser::opcode_34(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -800,57 +788,39 @@ void MystScriptParser::opcode_35(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::changeCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser::o_36_changeMainCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Change main cursor", op);
 
-	if (argc == 1) {
-		debugC(kDebugScript, "Opcode %d: Change Cursor", op);
-		debugC(kDebugScript, "Cursor: %d", argv[0]);
+	uint16 cursorId = argv[0];
 
-		// TODO: Not sure if this needs to change mainCursor or similar...
-		_vm->_cursor->setCursor(argv[0]);
-	} else
-		unknown(op, var, argc, argv);
+	debugC(kDebugScript, "Cursor: %d", cursorId);
+
+	_vm->setMainCursor(cursorId);
+	_vm->_cursor->setCursor(cursorId);
 }
 
-void MystScriptParser::hideCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Hide Cursor", op);
-		_vm->_cursor->hideCursor();
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser::o_37_hideCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Hide Cursor", op);
+	_vm->_cursor->hideCursor();
 }
 
-void MystScriptParser::showCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Show Cursor", op);
-		_vm->_cursor->showCursor();
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser::o_38_showCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Show Cursor", op);
+	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser::opcode_39(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser::o_39_delay(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Mechanical Card 6327 (Elevator)
+	debugC(kDebugScript, "Opcode %d: Delay", op);
 
-	if (argc == 1) {
-		// Used on Mechanical Card 6327 (Elevator)
-		debugC(kDebugScript, "Opcode %d: Delay?", op);
+	uint16 time = argv[0];
 
-		uint16 time = argv[0];
+	debugC(kDebugScript, "\tTime: %d", time);
 
-		debugC(kDebugScript, "\tTime: %d", time);
-
-		// TODO: Fill in Function...
-		// May actually be related to movie control.. not sure.
-	} else
-		unknown(op, var, argc, argv);
+	_vm->_system->delayMillis(time);
 }
 
-void MystScriptParser::changeStack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_40_changeStack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	Audio::SoundHandle *handle;
 	varUnusedCheck(op, var);
 
@@ -1104,51 +1074,25 @@ void MystScriptParser::opcode_42(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		unknown(op, var, argc, argv);
 }
 
-// TODO: Are Opcode 43 and 44 enable / disable paired commands?
+void MystScriptParser::o_43_saveMainCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Save main cursor", op);
 
-void MystScriptParser::opcode_43(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Unknown Function", op);
-
-		// TODO: Function Unknown
-		// Used on Stoneship Card 2154 (Bottom of Lighthouse)
-		// Used on Stoneship Card 2138 (Lighthouse Floating Chest Closeup)
-	} else
-		unknown(op, var, argc, argv);
+	_savedCursorId = _vm->getMainCursor();
 }
 
-void MystScriptParser::opcode_44(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser::o_44_restoreMainCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Restore main cursor", op);
 
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Unknown Function", op);
-
-		// TODO: Function Unknown
-		// Used on Stoneship Card 2154 (Bottom of Lighthouse)
-		// Used on Stoneship Card 2138 (Lighthouse Floating Chest Closeup)
-	} else
-		unknown(op, var, argc, argv);
+	_vm->setMainCursor(_savedCursorId);
 }
 
-void MystScriptParser::opcode_46(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser::o_46_soundWaitStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Selenitic Card 1191 (Maze Runner)
+	// Used on Mechanical Card 6267 (Code Lock)
+	// Used when Button is pushed...
+	debugC(kDebugScript, "Opcode %d: Wait for foreground sound to finish", op);
 
-	if (argc == 0) {
-		// Used on Selenitic Card 1191 (Maze Runner)
-		// Used on Mechanical Card 6267 (Code Lock)
-		// Used when Button is pushed...
-		debugC(kDebugScript, "Opcode %d: Conditional Code Jump?", op);
-		// TODO: Function Unknown - Fill in...
-		// Logic looks like this is some kind of Conditional Code
-		// Jump Point.
-		// The Logic for the Mechanical Code Lock Seems to be in this
-		// opcode with it being present twice delimiting the start
-		// of the incorrect code and correct code action blocks...
-		// Not sure how a general case can be made for this..
-	} else
-		unknown(op, var, argc, argv);
+	//TODO: Implement
 }
 
 } // End of namespace Mohawk

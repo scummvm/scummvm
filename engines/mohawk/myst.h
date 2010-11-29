@@ -178,6 +178,7 @@ public:
 	uint16 getCurCard() { return _curCard; }
 	uint16 getCurStack() { return _curStack; }
 	void setMainCursor(uint16 cursor);
+	uint16 getMainCursor() { return _mainCursor; }
 
 	MystVar *_varStore;
 

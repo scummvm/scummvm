@@ -83,7 +83,7 @@ public:
 	DECLARE_OPCODE(o_2_changeCardSwitch);
 	DECLARE_OPCODE(takePage);
 	DECLARE_OPCODE(opcode_4);
-	DECLARE_OPCODE(o_6_changeCard);
+	DECLARE_OPCODE(o_6_goToDest);
 	DECLARE_OPCODE(o_9_triggerMovie);
 	DECLARE_OPCODE(o_10_toggleVarNoRedraw);
 	DECLARE_OPCODE(o_14_drawAreaState);
@@ -101,20 +101,20 @@ public:
 	DECLARE_OPCODE(o_28_restoreDefaultRect);
 	DECLARE_OPCODE(o_29_33_blitRect);
 	DECLARE_OPCODE(opcode_30);
-	DECLARE_OPCODE(opcode_31);
-	DECLARE_OPCODE(opcode_32);
+	DECLARE_OPCODE(o_31_soundPlaySwitch);
+	DECLARE_OPCODE(o_32_soundResumeBackground);
 	DECLARE_OPCODE(opcode_34);
 	DECLARE_OPCODE(opcode_35);
-	DECLARE_OPCODE(changeCursor);
-	DECLARE_OPCODE(hideCursor);
-	DECLARE_OPCODE(showCursor);
-	DECLARE_OPCODE(opcode_39);
-	DECLARE_OPCODE(changeStack);
+	DECLARE_OPCODE(o_36_changeMainCursor);
+	DECLARE_OPCODE(o_37_hideCursor);
+	DECLARE_OPCODE(o_38_showCursor);
+	DECLARE_OPCODE(o_39_delay);
+	DECLARE_OPCODE(o_40_changeStack);
 	DECLARE_OPCODE(opcode_41);
 	DECLARE_OPCODE(opcode_42);
-	DECLARE_OPCODE(opcode_43);
-	DECLARE_OPCODE(opcode_44);
-	DECLARE_OPCODE(opcode_46);
+	DECLARE_OPCODE(o_43_saveMainCursor);
+	DECLARE_OPCODE(o_44_restoreMainCursor);
+	DECLARE_OPCODE(o_46_soundWaitStop);
 
 	DECLARE_OPCODE(NOP);
 
@@ -136,6 +136,9 @@ protected:
 
 	static const uint8 stack_map[];
 	static const uint16 start_card[];
+
+	uint16 _savedCardId;
+	uint16 _savedCursorId;
 
 	void varUnusedCheck(uint16 op, uint16 var);
 
