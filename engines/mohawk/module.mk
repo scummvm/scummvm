@@ -14,8 +14,6 @@ MODULE_OBJS = \
 	myst_vars.o \
 	myst_saveload.o \
 	myst_scripts.o \
-	myst_scripts_myst.o \
-	myst_scripts_selenitic.o \
 	resource.o \
 	resource_cache.o \
 	riven.o \
@@ -24,7 +22,9 @@ MODULE_OBJS = \
 	riven_scripts.o \
 	riven_vars.o \
 	sound.o \
-	video.o
+	video.o \
+	myst_stacks/myst.o \
+	myst_stacks/selenitic.o
 
 
 # This module can be built as a plugin

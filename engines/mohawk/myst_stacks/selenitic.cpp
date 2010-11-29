@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/mohawk/myst_scripts.cpp $
- * $Id: myst_scripts.cpp 54107 2010-11-07 01:03:29Z fingolfin $
+ * $URL$
+ * $Id$
  *
  */
 
@@ -27,10 +27,10 @@
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
-#include "mohawk/myst_scripts_selenitic.h"
 #include "mohawk/myst_saveload.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
+#include "mohawk/myst_stacks/selenitic.h"
 
 #include "gui/message.h"
 

@@ -32,13 +32,15 @@
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_scripts.h"
-#include "mohawk/myst_scripts_myst.h"
-#include "mohawk/myst_scripts_selenitic.h"
 #include "mohawk/myst_saveload.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/resource.h"
 #include "mohawk/resource_cache.h"
 #include "mohawk/video.h"
+
+// The stacks
+#include "mohawk/myst_stacks/myst.h"
+#include "mohawk/myst_stacks/selenitic.h"
 
 namespace Mohawk {
 
