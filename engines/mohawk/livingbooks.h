@@ -100,7 +100,8 @@ enum {
 	kLBMsgListScript = 0x66,
 	kLBNotifyScript = 0x67,
 	kLBSetPlayInfo = 0x68,
-	kLBSetPlayPhase = 0x6e
+	kLBSetPlayPhase = 0x6e,
+	kLBCommand = 0x70
 };
 
 enum {

@@ -1491,15 +1491,19 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		_phase = stream->readUint16();
 		break;
 
-	case 0x70:
-		debug(2, "LBItem: 0x70");
-		// TODO
-		break;
-
 	case 0x7b:
 		assert(size == 0);
 		debug(2, "LBItem: 0x7b");
 		// TODO
+		break;
+
+	case kLBCommand:
+		{
+			Common::String command = readString(stream);
+			if (size != command.size() + 1)
+				error("failed to read command string");
+			warning("ignoring command '%s'", command.c_str());
+		}
 		break;
 
 	case 0x69:
