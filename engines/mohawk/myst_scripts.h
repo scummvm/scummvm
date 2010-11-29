@@ -103,7 +103,7 @@ public:
 	DECLARE_OPCODE(opcode_30);
 	DECLARE_OPCODE(o_31_soundPlaySwitch);
 	DECLARE_OPCODE(o_32_soundResumeBackground);
-	DECLARE_OPCODE(opcode_34);
+	DECLARE_OPCODE(o_34_changeCard);
 	DECLARE_OPCODE(opcode_35);
 	DECLARE_OPCODE(o_36_changeMainCursor);
 	DECLARE_OPCODE(o_37_hideCursor);
@@ -111,7 +111,7 @@ public:
 	DECLARE_OPCODE(o_39_delay);
 	DECLARE_OPCODE(o_40_changeStack);
 	DECLARE_OPCODE(opcode_41);
-	DECLARE_OPCODE(opcode_42);
+	DECLARE_OPCODE(o_42_directionalUpdatePlaySound);
 	DECLARE_OPCODE(o_43_saveMainCursor);
 	DECLARE_OPCODE(o_44_restoreMainCursor);
 	DECLARE_OPCODE(o_46_soundWaitStop);

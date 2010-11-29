@@ -87,7 +87,7 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 		OPCODE(31, o_31_soundPlaySwitch),
 		OPCODE(32, o_32_soundResumeBackground),
 		OPCODE(33, o_29_33_blitRect),
-		OPCODE(34, opcode_34),
+		OPCODE(34, o_34_changeCard),
 		OPCODE(35, opcode_35),
 		OPCODE(36, o_36_changeMainCursor),
 		OPCODE(37, o_37_hideCursor),
@@ -95,7 +95,7 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 		OPCODE(39, o_39_delay),
 		OPCODE(40, o_40_changeStack),
 		OPCODE(41, opcode_41),
-		OPCODE(42, opcode_42),
+		OPCODE(42, o_42_directionalUpdatePlaySound),
 		OPCODE(43, o_43_saveMainCursor),
 		OPCODE(44, o_44_restoreMainCursor),
 		// TODO: Opcode 45 Not Present

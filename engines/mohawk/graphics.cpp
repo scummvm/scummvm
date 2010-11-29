@@ -299,6 +299,33 @@ void MystGraphics::updateScreen() {
 	}
 }
 
+void MystGraphics::animatedUpdate(uint16 type, Common::Rect rect, uint16 steps, uint16 delay) {
+	// Bypass dirty rects for animated updates
+	_dirtyRects.clear();
+
+	switch (type) {
+	case 0:
+		debugC(kDebugScript, "Left to Right");
+		break;
+	case 1:
+		debugC(kDebugScript, "Right to Left");
+		break;
+	case 5:
+		debugC(kDebugScript, "Top to Bottom");
+		break;
+	case 6:
+		debugC(kDebugScript, "Bottom to Top");
+		break;
+	default:
+		warning("Unknown Update Direction");
+		break;
+	}
+
+	//TODO: Replace minimal implementation
+	_dirtyRects.push_back(rect);
+	updateScreen();
+}
+
 void MystGraphics::drawRect(Common::Rect rect, RectState state) {
 	// Useful with debugging. Shows where hotspots are on the screen and whether or not they're active.
 	if (rect.left < 0 || rect.top < 0 || rect.right > 544 || rect.bottom > 333 || !rect.isValidRect() || rect.width() == 0 || rect.height() == 0)
