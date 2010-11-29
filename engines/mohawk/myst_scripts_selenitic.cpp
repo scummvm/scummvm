@@ -57,7 +57,7 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 		OPCODE(1, o_1_setVar),
 		OPCODE(2, o_2_changeCardSwitch),
 		OPCODE(3, takePage),
-		OPCODE(4, opcode_4),
+		OPCODE(4, o_4_redrawCard),
 		// TODO: Opcode 5 Not Present
 		OPCODE(6, o_6_goToDest),
 		OPCODE(7, o_6_goToDest),

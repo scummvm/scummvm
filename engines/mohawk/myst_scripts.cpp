@@ -94,7 +94,7 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(1, o_1_setVar),
 		OPCODE(2, o_2_changeCardSwitch),
 		OPCODE(3, takePage),
-		OPCODE(4, opcode_4),
+		OPCODE(4, o_4_redrawCard),
 		// Opcode 5 Not Present
 		OPCODE(6, o_6_goToDest),
 		OPCODE(7, o_6_goToDest),
@@ -306,41 +306,21 @@ void MystScriptParser::takePage(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::opcode_4(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Exit Script of Mechanical Card 6044 (Fortress Rotation Simulator)
+void MystScriptParser::o_4_redrawCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Redraw card", op);
 
-	if (argc == 0 && _vm->getCurStack() == kSeleniticStack && _vm->getCurCard() == 1275) {
-		// TODO: Fixes Selenitic Card 1275, but not sure if this is correct for general case..
-		// as it breaks Selenitic Card 1257, though this may be due to screen update. Also,
-		// this may actually be a "Force Card Reload" or "VIEW conditional re-evaluation".. in
-		// the general case, rather than this image blit...
-		uint16 var_value = getVar(var);
-		if (var_value < _vm->_view.scriptResCount) {
-			if (_vm->_view.scriptResources[var_value].type == 1) { // TODO: Add Symbols for Types
-				_vm->_gfx->copyImageToScreen(_vm->_view.scriptResources[var_value].id, Common::Rect(0, 0, 544, 333));
-				_vm->_gfx->updateScreen();
-			} else
-				warning("Opcode %d: Script Resource %d Type Not Image", op, var_value);
-		} else
-			warning("Opcode %d: var %d value %d outside Script Resource Range %d", op, var, var_value, _vm->_view.scriptResCount);
-	} else
-		unknown(op, var, argc, argv);
+	// TODO: Is redrawing the background correct ?
+	_vm->drawCardBackground();
+	_vm->drawResourceImages();
 }
 
 void MystScriptParser::o_6_goToDest(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
 
-	if (argc == 0) {
-		// Used for Selenitic Card 1286 Resource #0
-		// Used for Myst Card 4143 Resource #0 & #5
-		debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
-
-		if (_invokingResource != NULL)
-			_vm->changeToCard(_invokingResource->getDest());
-		else
-			warning("Opcode %d: Missing invokingResource", op);
-	} else
-		unknown(op, var, argc, argv);
+	if (_invokingResource != NULL)
+		_vm->changeToCard(_invokingResource->getDest());
+	else
+		warning("Opcode %d: Missing invokingResource", op);
 }
 void MystScriptParser::o_9_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Trigger Type 6 Resource Movie..", op);
