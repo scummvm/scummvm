@@ -30,6 +30,9 @@
 #include "mohawk/cursors.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst.h"
+#include "mohawk/myst_scripts.h"
+#include "mohawk/myst_scripts_myst.h"
+#include "mohawk/myst_scripts_selenitic.h"
 #include "mohawk/myst_saveload.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/resource.h"
@@ -81,8 +84,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_view.soundListVolume = NULL;
 	_view.scriptResCount = 0;
 	_view.scriptResources = NULL;
-
-	_scriptParser->disableInitOpcodes();
 
 	if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh) {
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -235,7 +236,6 @@ Common::Error MohawkEngine_Myst::run() {
 	_console = new MystConsole(this);
 	_varStore = new MystVar(this);
 	_saveLoad = new MystSaveLoad(this, _saveFileMan);
-	_scriptParser = new MystScriptParser(this);
 	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
 	_loadDialog->setSaveMode(false);
 	_optionsDialog = new MystOptionsDialog(this);
@@ -353,6 +353,17 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 	debug(2, "changeToStack(%d)", stack);
 
 	_curStack = stack;
+
+	delete _scriptParser;
+
+	switch (_curStack) {
+	case kSeleniticStack:
+		_scriptParser = new MystScriptParser_Selenitic(this);
+		break;
+	default:
+		_scriptParser = new MystScriptParser_Myst(this);
+		break;
+	}
 
 	// If the array is empty, add a new one. Otherwise, delete the first
 	// entry which is the stack file (the second, if there, is the help file).

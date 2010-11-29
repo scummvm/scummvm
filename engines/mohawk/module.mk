@@ -13,6 +13,8 @@ MODULE_OBJS = \
 	myst_vars.o \
 	myst_saveload.o \
 	myst_scripts.o \
+	myst_scripts_myst.o \
+	myst_scripts_selenitic.o \
 	resource.o \
 	resource_cache.o \
 	riven.o \
