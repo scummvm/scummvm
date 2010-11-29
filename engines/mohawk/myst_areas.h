@@ -52,7 +52,7 @@ public:
 	// Mouse interface
 	virtual void handleMouseUp();
 	virtual void handleMouseDown() {}
-	virtual void handleMouseMove() {}
+	virtual void handleMouseDrag() {}
 	virtual void handleMouseEnter() {}
 	virtual void handleMouseLeave() {}
 
@@ -94,7 +94,7 @@ private:
 	bool _videoRunning;
 };
 
-struct MystResourceType7 : public MystResource {
+class MystResourceType7 : public MystResource {
 public:
 	MystResourceType7(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType7();
@@ -139,13 +139,16 @@ public:
 	virtual ~MystResourceType11();
 	void handleMouseDown();
 	void handleMouseUp();
-	void handleMouseMove();
+	void handleMouseDrag();
 
 protected:
-	uint16 _kind;
-	Common::Rect _rect11;
-	uint16 _u0;
-	uint16 _u1;
+	uint16 _flagHV;
+	uint16 _minH;
+	uint16 _maxH;
+	uint16 _minV;
+	uint16 _maxV;
+	uint16 _posH;
+	uint16 _posV;
 	uint16 _mouseDownOpcode;
 	uint16 _mouseDragOpcode;
 	uint16 _mouseUpOpcode;
@@ -153,8 +156,6 @@ protected:
 		uint16 listCount;
 		uint16 *list;
 	} _lists[3];
-
-	bool _mouseDown;
 };
 
 class MystResourceType10 : public MystResourceType11 {

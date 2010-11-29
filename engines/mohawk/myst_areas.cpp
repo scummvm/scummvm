@@ -460,6 +460,7 @@ uint16 MystResourceType8::getType8Var() {
 MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType11(vm, rlstStream, parent) {
 
 	_unk10 = rlstStream->readUint16LE();
+	debugC(kDebugResource, "\tunk10: %d", _unk10);
 	warning("TODO: Card contains Type 10 Resource - Function not yet implemented");
 }
 
@@ -468,37 +469,28 @@ MystResourceType10::~MystResourceType10() {
 }
 
 MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType8(vm, rlstStream, parent) {
-	_kind = rlstStream->readUint16LE();
-	// NOTE: l,r,t,b differs from standard l,t,r,b order
-	_rect11.left = rlstStream->readUint16LE();
-	_rect11.right = rlstStream->readUint16LE();
-	_rect11.top = rlstStream->readUint16LE();
-	_rect11.bottom = rlstStream->readUint16LE();
-	_u0 = rlstStream->readUint16LE();
-	_u1 = rlstStream->readUint16LE();
+	_flagHV = rlstStream->readUint16LE();
+	_minH = rlstStream->readUint16LE();
+	_maxH = rlstStream->readUint16LE();
+	_minV = rlstStream->readUint16LE();
+	_maxV = rlstStream->readUint16LE();
+	_posH = rlstStream->readUint16LE();
+	_posV = rlstStream->readUint16LE();
 	_mouseDownOpcode = rlstStream->readUint16LE();
 	_mouseDragOpcode = rlstStream->readUint16LE();
 	_mouseUpOpcode = rlstStream->readUint16LE();
 
-	debugC(kDebugResource, "\tkind: %d", _kind);
-	debugC(kDebugResource, "\trect11.left: %d", _rect11.left);
-	debugC(kDebugResource, "\trect11.right: %d", _rect11.right);
-	debugC(kDebugResource, "\trect11.top: %d", _rect11.top);
-	debugC(kDebugResource, "\trect11.bottom: %d", _rect11.bottom);
-	debugC(kDebugResource, "\tu0: %d", _u0);
-	debugC(kDebugResource, "\tu1: %d", _u1);
+	debugC(kDebugResource, "\tdirection: %d", _flagHV);
+	debugC(kDebugResource, "\thorizontal min: %d", _minH);
+	debugC(kDebugResource, "\thorizontal max: %d", _maxH);
+	debugC(kDebugResource, "\tvertical min: %d", _minV);
+	debugC(kDebugResource, "\tvertical max: %d", _maxV);
+	debugC(kDebugResource, "\thorizontal position: %d", _posH);
+	debugC(kDebugResource, "\tvertical position: %d", _posV);
 	debugC(kDebugResource, "\t_mouseDownOpcode: %d", _mouseDownOpcode);
 	debugC(kDebugResource, "\t_mouseDragOpcode: %d", _mouseDragOpcode);
 	debugC(kDebugResource, "\t_mouseUpOpcode: %d", _mouseUpOpcode);
 
-	// TODO: Think that u0 and u1 are unused in Type 11
-	if (_u0)
-		warning("Type 11 u0 non-zero");
-	if (_u1)
-		warning("Type 11 u1 non-zero");
-
-	// TODO: Not sure about order of Mouse Down, Mouse Drag and Mouse Up
-	//       Or whether this is slightly different...
 	debugCN(kDebugResource, "Type 11 _mouseDownOpcode: %d\n", _mouseDownOpcode);
 	debugCN(kDebugResource, "Type 11 _mouseDragOpcode: %d\n", _mouseDragOpcode);
 	debugCN(kDebugResource, "Type 11 _mouseUpOpcode: %d\n", _mouseUpOpcode);
@@ -515,8 +507,6 @@ MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableRe
 			debugC(kDebugResource, "\tValue %d: %d", j, _lists[i].list[j]);
 		}
 	}
-
-	_mouseDown = false;
 }
 
 MystResourceType11::~MystResourceType11() {
@@ -525,21 +515,15 @@ MystResourceType11::~MystResourceType11() {
 }
 
 void MystResourceType11::handleMouseDown() {
-	_mouseDown = true;
-
 	_vm->_scriptParser->runOpcode(_mouseDownOpcode);
 }
 
 void MystResourceType11::handleMouseUp() {
-	_mouseDown = false;
-
 	_vm->_scriptParser->runOpcode(_mouseUpOpcode);
 }
 
-void MystResourceType11::handleMouseMove() {
-	if (_mouseDown) {
-		_vm->_scriptParser->runOpcode(_mouseDragOpcode);
-	}
+void MystResourceType11::handleMouseDrag() {
+	_vm->_scriptParser->runOpcode(_mouseDragOpcode);
 }
 
 MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType11(vm, rlstStream, parent) {

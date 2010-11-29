@@ -241,6 +241,7 @@ Common::Error MohawkEngine_Myst::run() {
 	_loadDialog->setSaveMode(false);
 	_optionsDialog = new MystOptionsDialog(this);
 	_cursor = new MystCursorManager(this);
+	_mouseClicked = false;
 
 	// Start us on the first stack.
 	if (getGameType() == GType_MAKINGOF)
@@ -295,12 +296,13 @@ Common::Error MohawkEngine_Myst::run() {
 				_mousePos = event.mouse;
 				_needsUpdate = true;
 				checkCurrentResource();
-				if (_curResource >= 0) {
+				if (_curResource >= 0 && _mouseClicked) {
 					debug(2, "Sending mouse move event to resource %d\n", _curResource);
-					_resources[_curResource]->handleMouseMove();
+					_resources[_curResource]->handleMouseDrag();
 				}
 				break;
 			case Common::EVENT_LBUTTONUP:
+				_mouseClicked = false;
 				if (_curResource >= 0) {
 					debug(2, "Sending mouse up event to resource %d\n", _curResource);
 					_resources[_curResource]->handleMouseUp();
@@ -309,6 +311,7 @@ Common::Error MohawkEngine_Myst::run() {
 				drawResourceImages();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
+				_mouseClicked = true;
 				if (_curResource >= 0) {
 					debug(2, "Sending mouse up event to resource %d\n", _curResource);
 					_resources[_curResource]->handleMouseDown();

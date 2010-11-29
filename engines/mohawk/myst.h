@@ -236,6 +236,7 @@ private:
 	void loadCursorHints();
 	void checkCursorHints();
 	Common::Point _mousePos;
+	bool _mouseClicked;
 	uint16 _currentCursor;
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
 };
