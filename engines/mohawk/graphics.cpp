@@ -141,7 +141,6 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	// Initialize our buffer
 	_mainScreen = new Graphics::Surface();
 	_mainScreen->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat.bytesPerPixel);
-	_dirtyScreen = false;
 }
 
 MystGraphics::~MystGraphics() {
@@ -277,8 +276,8 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	for (uint16 i = 0; i < height; i++)
 		memcpy(_mainScreen->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->bytesPerPixel);
 
-	// Mark the screen as dirty
-	_dirtyScreen = true;
+	// Add to the list of dirty rects
+	_dirtyRects.push_back(dest);
 }
 
 void MystGraphics::copyImageToScreen(uint16 image, Common::Rect dest) {
@@ -286,11 +285,17 @@ void MystGraphics::copyImageToScreen(uint16 image, Common::Rect dest) {
 }
 
 void MystGraphics::updateScreen() {
-	if (_dirtyScreen) {
-		// Only copy the buffer to the screen if it's dirty
-		_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
+	// Only update the screen if there have been changes since last frame
+	if (!_dirtyRects.empty()) {
+
+		// Copy any modified area
+		for (uint i = 0; i < _dirtyRects.size(); i++) {
+			Common::Rect &r = _dirtyRects[i];
+			_vm->_system->copyRectToScreen((byte *)_mainScreen->getBasePtr(r.left, r.top), _mainScreen->pitch, r.left, r.top, r.width(), r.height());
+		}
+
 		_vm->_system->updateScreen();
-		_dirtyScreen = false;
+		_dirtyRects.clear();
 	}
 }
 

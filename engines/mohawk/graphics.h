@@ -131,7 +131,7 @@ private:
 	} _pictureFile;
 
 	Graphics::Surface *_mainScreen;
-	bool _dirtyScreen;
+	Common::Array<Common::Rect> _dirtyRects;
 	Graphics::PixelFormat _pixelFormat;
 };
 
