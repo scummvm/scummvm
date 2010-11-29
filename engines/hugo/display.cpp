@@ -103,7 +103,7 @@ void Screen::displayBackground() {
 void Screen::displayRect(int16 x, int16 y, int16 dx, int16 dy) {
 	debugC(3, kDebugDisplay, "displayRect(%d, %d, %d, %d)", x, y, dx, dy);
 
-	g_system->copyRectToScreen(&_frontBuffer[x + y * 320], 320, x, y, dx, dy);
+	g_system->copyRectToScreen(&_frontBuffer[x + y * 320], 320, x, y, CLIP<int16>(dx, 0, 320 - x), CLIP<int16>(dy, 0, 200 - y));
 }
 
 /**
