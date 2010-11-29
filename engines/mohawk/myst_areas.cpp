@@ -135,12 +135,12 @@ MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableRead
 	_left = rlstStream->readUint16LE() % 10000;
 	_top = rlstStream->readUint16LE() % 10000;
 	_loop = rlstStream->readUint16LE();
-	_u0 = rlstStream->readUint16LE();
+	_direction = rlstStream->readUint16LE();
 	_playBlocking = rlstStream->readUint16LE();
 	_playOnCardChange = rlstStream->readUint16LE();
 	_u3 = rlstStream->readUint16LE();
 
-	if (_u0 != 1)
+	if (_direction != 1)
 		warning("Type 6 _u0 != 1");
 	if (_u3 != 0)
 		warning("Type 6 _u3 != 0");
@@ -149,7 +149,7 @@ MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableRead
 	debugC(kDebugResource, "\tleft: %d", _left);
 	debugC(kDebugResource, "\ttop: %d", _top);
 	debugC(kDebugResource, "\tloop: %d", _loop);
-	debugC(kDebugResource, "\tu0: %d", _u0);
+	debugC(kDebugResource, "\tdirection: %d", _direction);
 	debugC(kDebugResource, "\tplayBlocking: %d", _playBlocking);
 	debugC(kDebugResource, "\tplayOnCardChange: %d", _playOnCardChange);
 	debugC(kDebugResource, "\tu3: %d", _u3);

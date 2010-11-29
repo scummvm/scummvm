@@ -84,7 +84,7 @@ public:
 	DECLARE_OPCODE(takePage);
 	DECLARE_OPCODE(opcode_4);
 	DECLARE_OPCODE(o_6_changeCard);
-	DECLARE_OPCODE(opcode_9);
+	DECLARE_OPCODE(o_9_triggerMovie);
 	DECLARE_OPCODE(o_10_toggleVarNoRedraw);
 	DECLARE_OPCODE(o_14_drawAreaState);
 	DECLARE_OPCODE(o_15_redrawAreaForVar);

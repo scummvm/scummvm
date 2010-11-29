@@ -62,7 +62,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 		OPCODE(6, o_6_changeCard),
 		OPCODE(7, o_6_changeCard),
 		OPCODE(8, o_6_changeCard),
-		OPCODE(9, opcode_9),
+		OPCODE(9, o_9_triggerMovie),
 		OPCODE(10, o_10_toggleVarNoRedraw),
 		// TODO: Opcode 10 to 11 Not Present
 		OPCODE(12, o_2_changeCardSwitch),

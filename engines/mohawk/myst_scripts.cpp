@@ -97,7 +97,7 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(6, o_6_changeCard),
 		OPCODE(7, o_6_changeCard),
 		OPCODE(8, o_6_changeCard),
-		OPCODE(9, opcode_9),
+		OPCODE(9, o_9_triggerMovie),
 		OPCODE(10, o_10_toggleVarNoRedraw),
 		// Opcode 11 Not Present
 		OPCODE(12, o_2_changeCardSwitch),
@@ -340,27 +340,19 @@ void MystScriptParser::o_6_changeCard(uint16 op, uint16 var, uint16 argc, uint16
 	} else
 		unknown(op, var, argc, argv);
 }
-void MystScriptParser::opcode_9(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_9_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Trigger Type 6 Resource Movie..", op);
 	// If movie has sound, pause background music
 
-	varUnusedCheck(op, var);
+	int16 direction = 1;
+	if (argc == 1) {
+		direction = argv[0];
+	}
+	debugC(kDebugScript, "\tDirection: %d", direction);
 
-	if (argc == 0 || argc == 1) {
-		debugC(kDebugScript, "Opcode %d: Trigger Type 6 Resource Movie..", op);
-		// TODO: Add Logic to do this...
+	// Trigger resource 6 movie overriding play direction
 
-		// Used on Stoneship Card 2138 with 1 argument of 66535 as well as with
-		// no arguments. Seems logically consistent with play movie with optional
-		// start point or time direction control?
-
-		// This understanding of this opcode is based upon Stoneship Card 2197
-		// i.e. Sirrus' Desk, but since this is a single case, we should find
-		// more...
-		if (!((_vm->getCurStack() == kStoneshipStack && _vm->getCurCard() == 2197) ||
-		      (_vm->getCurStack() == kStoneshipStack && _vm->getCurCard() == 2138)))
-			warning("TODO: Opcode 9 on this card - Check function is consistent");
-	} else
-		unknown(op, var, argc, argv);
+	// If movie has sound, resume background music
 }
 
 void MystScriptParser::o_10_toggleVarNoRedraw(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

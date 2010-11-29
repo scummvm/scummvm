@@ -84,7 +84,7 @@ protected:
 	uint16 _left;
 	uint16 _top;
 	uint16 _loop;
-	uint16 _u0;
+	uint16 _direction; // 1 => forward, -1 => backwards
 	uint16 _playBlocking;
 	uint16 _playOnCardChange;
 	uint16 _u3;
