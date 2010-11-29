@@ -60,6 +60,7 @@ enum MohawkGameType {
 	GType_1STDEGREE,
 	GType_CSUSA,
 	GType_LIVINGBOOKSV1,
+	GType_LIVINGBOOKSV2,
 	GType_LIVINGBOOKSV3
 };
 

@@ -2039,7 +2039,7 @@ void LBLiveTextItem::readData(uint16 type, uint16 size, Common::SeekableSubReadS
 void LBLiveTextItem::notify(uint16 data, uint16 from) {
 	if (!_paletteIndex) {
 		// TODO
-		warning("Zero palette-index for LiveText; V3 game?");
+		warning("Zero palette-index for LiveText; V2 game?");
 		return;
 	}
 

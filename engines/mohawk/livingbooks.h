@@ -409,7 +409,7 @@ public:
 	void notifyAll(uint16 data, uint16 from);
 	void queueDelayedEvent(DelayedEvent event);
 
-	bool isBigEndian() const { return getGameType() == GType_LIVINGBOOKSV3 || getPlatform() == Common::kPlatformMacintosh; }
+	bool isBigEndian() const { return getGameType() != GType_LIVINGBOOKSV1 || getPlatform() == Common::kPlatformMacintosh; }
 
 private:
 	LivingBooksConsole *_console;

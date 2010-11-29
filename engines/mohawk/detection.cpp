@@ -228,6 +228,7 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 			*engine = new Mohawk::MohawkEngine_Riven(syst, gd);
 			break;
 		case Mohawk::GType_LIVINGBOOKSV1:
+		case Mohawk::GType_LIVINGBOOKSV2:
 		case Mohawk::GType_LIVINGBOOKSV3:
 			*engine = new Mohawk::MohawkEngine_LivingBooks(syst, gd);
 			break;

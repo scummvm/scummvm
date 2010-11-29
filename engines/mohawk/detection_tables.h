@@ -533,7 +533,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV3,
+		GType_LIVINGBOOKSV2,
 		0,
 		"GREEN.EXE"
 	},
@@ -549,7 +549,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV3,
+		GType_LIVINGBOOKSV2,
 		0,
 		"GREEN32.EXE"
 	},
@@ -564,7 +564,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV3,
+		GType_LIVINGBOOKSV2,
 		0,
 		"Green Eggs and Ham"
 	},
@@ -579,7 +579,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV3,
+		GType_LIVINGBOOKSV2,
 		0,
 		"ABC.EXE"
 	},
@@ -595,7 +595,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV3,
+		GType_LIVINGBOOKSV2,
 		0,
 		"ABC32.EXE"
 	},
@@ -928,7 +928,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV3,
+		GType_LIVINGBOOKSV2,
 		0,
 		0 // FIXME: ST?
 	},
@@ -944,7 +944,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV3,
+		GType_LIVINGBOOKSV2,
 		0,
 		0 // FIXME: ST?
 	},
