@@ -92,12 +92,12 @@ MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableRead
 
 void MystResourceType5::handleMouseUp(Common::Point *mouse) {
 
-//	MystResource *invoking = this;
-//	while (invoking->_parent) {
-//		invoking = invoking->_parent;
-//	}
+	MystResource *invoking = this;
+	while (invoking->_parent) {
+		invoking = invoking->_parent;
+	}
 
-	_vm->_scriptParser->runScript(_script, this);
+	_vm->_scriptParser->runScript(_script, invoking);
 }
 
 // In Myst/Making of Myst, the paths are hardcoded ala Windows style without extension. Convert them.
@@ -448,6 +448,7 @@ void MystResourceType8::drawConditionalDataToScreen(uint16 state) {
 			imageToDraw = _subImages[subImageId].wdib;
 
 		_vm->_gfx->copyImageSectionToScreen(imageToDraw, _subImages[subImageId].rect, _rect);
+		_vm->_gfx->updateScreen();
 	}
 }
 

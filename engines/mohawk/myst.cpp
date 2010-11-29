@@ -473,13 +473,13 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 		error("Unknown sound action %d", soundAction);
 	}
 
+	// Run the entrance script (if present)
+	runInitScript();
+
 	// Update the images of each area too
 	drawResourceImages();
 
 	// TODO: Handle Script Resources
-
-	// Run the entrance script (if present)
-	runInitScript();
 
 	// Make sure we have the right cursor showing
 	_curResource = -1;
