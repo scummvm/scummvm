@@ -93,6 +93,7 @@ private:
 	MystResource *_sound_receiver_angle_4; // 152
 	MystResource *_sound_receiver_sigma_button; // 156
 
+	uint16 _sound_lock_sound_id;
 	MystResourceType10 *_sound_lock_slider_1; // 164
 	MystResourceType10 *_sound_lock_slider_2; // 168
 	MystResourceType10 *_sound_lock_slider_3; // 172
@@ -108,6 +109,9 @@ private:
 	void sound_receiver_update_sound();
 	uint16 sound_receiver_current_sound(uint16 source, uint16 position);
 	void sound_receiver_solution(uint16 source, uint16 &solution, bool &enabled);
+
+	uint16 soundLockCurrentSound(uint16 position, bool pixels);
+	MystResourceType10 *soundLockSliderFromVar(uint16 var);
 
 	void draw_digit(MystResource *_resource);
 };

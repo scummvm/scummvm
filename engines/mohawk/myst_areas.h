@@ -141,6 +141,11 @@ public:
 	void handleMouseUp(Common::Point *mouse);
 	void handleMouseDrag(Common::Point *mouse);
 
+	uint16 getList1(uint16 index);
+	uint16 getList2(uint16 index);
+	uint16 getList3(uint16 index);
+
+	Common::Point _pos;
 protected:
 	void setPositionClipping(Common::Point *mouse, Common::Point *dest);
 
@@ -160,7 +165,6 @@ protected:
 		uint16 listCount;
 		uint16 *list;
 	} _lists[3];
-	Common::Point _pos;
 
 };
 

@@ -467,8 +467,6 @@ MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableRe
 	_background = 0;
 	_sliderWidth = _rect.right - _rect.left;
 	_sliderHeigth = _rect.bottom - _rect.top;
-
-	warning("TODO: Card contains Type 10 Resource - Function not yet implemented");
 }
 
 MystResourceType10::~MystResourceType10() {
@@ -520,6 +518,10 @@ void MystResourceType10::drawDataToScreen() {
 			memcpy(_background->getBasePtr(0, i), screen->getBasePtr(bb.left, bb.top + i), bb.width() * _background->bytesPerPixel);
 
 		_vm->_system->unlockScreen();
+	} else {
+		// Restore background
+		Common::Rect bb = boundingBox();
+		_vm->_system->copyRectToScreen((byte *)_background->getBasePtr(0, 0), _background->pitch, bb.left, bb.top, bb.width(), bb.height());
 	}
 
 
@@ -532,7 +534,7 @@ void MystResourceType10::handleMouseDown(Common::Point *mouse) {
 
 	updatePosition(mouse);
 
-	MystResourceType8::handleMouseDown(mouse);
+	MystResourceType11::handleMouseDown(mouse);
 
 	// Restore background
 	Common::Rect bb = boundingBox();
@@ -544,8 +546,6 @@ void MystResourceType10::handleMouseDown(Common::Point *mouse) {
 
 void MystResourceType10::handleMouseUp(Common::Point *mouse) {
 	updatePosition(mouse);
-
-	MystResourceType8::handleMouseUp(mouse);
 
 	// Restore background
 	Common::Rect bb = boundingBox();
@@ -571,6 +571,8 @@ void MystResourceType10::handleMouseUp(Common::Point *mouse) {
 	}
 	_vm->_scriptParser->setVarValue(_var8, value);
 
+	MystResourceType11::handleMouseUp(mouse);
+
 	// No longer in drag mode
 	_vm->_dragResource = 0;
 }
@@ -578,7 +580,7 @@ void MystResourceType10::handleMouseUp(Common::Point *mouse) {
 void MystResourceType10::handleMouseDrag(Common::Point *mouse) {
 	updatePosition(mouse);
 
-	MystResourceType8::handleMouseDrag(mouse);
+	MystResourceType11::handleMouseDrag(mouse);
 
 	// Restore background
 	Common::Rect bb = boundingBox();
@@ -695,19 +697,19 @@ MystResourceType11::~MystResourceType11() {
 void MystResourceType11::handleMouseDown(Common::Point *mouse) {
 	setPositionClipping(mouse, &_pos);
 
-	_vm->_scriptParser->runOpcode(_mouseDownOpcode);
+	_vm->_scriptParser->runOpcode(_mouseDownOpcode, _var8);
 }
 
 void MystResourceType11::handleMouseUp(Common::Point *mouse) {
 	setPositionClipping(mouse, &_pos);
 
-	_vm->_scriptParser->runOpcode(_mouseUpOpcode);
+	_vm->_scriptParser->runOpcode(_mouseUpOpcode, _var8);
 }
 
 void MystResourceType11::handleMouseDrag(Common::Point *mouse) {
 	setPositionClipping(mouse, &_pos);
 
-	_vm->_scriptParser->runOpcode(_mouseDragOpcode);
+	_vm->_scriptParser->runOpcode(_mouseDragOpcode, _var8);
 }
 
 void MystResourceType11::setPositionClipping(Common::Point *mouse, Common::Point *dest) {
@@ -716,6 +718,24 @@ void MystResourceType11::setPositionClipping(Common::Point *mouse, Common::Point
 	}
 	if (_flagHV & 1) {
 		dest->x = CLIP<uint16>(mouse->x, _minH, _maxH);
+	}
+}
+
+uint16 MystResourceType11::getList1(uint16 index) {
+	if (index < _lists[1].listCount) {
+		return _lists[1].list[index];
+	}
+}
+
+uint16 MystResourceType11::getList2(uint16 index) {
+	if (index < _lists[2].listCount) {
+		return _lists[2].list[index];
+	}
+}
+
+uint16 MystResourceType11::getList3(uint16 index) {
+	if (index < _lists[3].listCount) {
+		return _lists[3].list[index];
 	}
 }
 

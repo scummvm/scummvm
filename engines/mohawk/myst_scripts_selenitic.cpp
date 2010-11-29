@@ -278,16 +278,16 @@ bool MystScriptParser_Selenitic::setVarValue(uint16 var, uint16 value) {
 	case 20: // Sound lock sliders
 		selenitic_vars[13] = value;
 		break;
-	case 21: // Sound lock sliders
+	case 21:
 		selenitic_vars[14] = value;
 		break;
-	case 22: // Sound lock sliders
+	case 22:
 		selenitic_vars[15] = value;
 		break;
-	case 23: // Sound lock sliders
+	case 23:
 		selenitic_vars[16] = value;
 		break;
-	case 24: // Sound lock sliders
+	case 24:
 		selenitic_vars[17] = value;
 		break;
 	default:
@@ -528,19 +528,110 @@ void MystScriptParser_Selenitic::o_111_soundReceiverUpdateSound(uint16 op, uint1
 	sound_receiver_update_sound();
 }
 
+uint16 MystScriptParser_Selenitic::soundLockCurrentSound(uint16 position, bool pixels) {
+	if ((pixels && position < 96) || (!pixels && position == 0)) {
+		return 289;
+	} else if ((pixels && position < 108) || (!pixels && position == 1)) {
+		return 1289;
+	} else if ((pixels && position < 120) || (!pixels && position == 2)) {
+		return 2289;
+	} else if ((pixels && position < 132) || (!pixels && position == 3)) {
+		return 3289;
+	} else if ((pixels && position < 144) || (!pixels && position == 4)) {
+		return 4289;
+	} else if ((pixels && position < 156) || (!pixels && position == 5)) {
+		return 5289;
+	} else if ((pixels && position < 168) || (!pixels && position == 6)) {
+		return 6289;
+	} else if ((pixels && position < 180) || (!pixels && position == 7)) {
+		return 7289;
+	} else if ((pixels && position < 192) || (!pixels && position == 8)) {
+		return 8289;
+	} else if (pixels || (!pixels && position == 8)) {
+		return 9289;
+	} else {
+		return 0;
+	}
+}
+
+MystResourceType10 *MystScriptParser_Selenitic::soundLockSliderFromVar(uint16 var) {
+	switch (var) {
+	case 20:
+		return _sound_lock_slider_1;
+	case 21:
+		return _sound_lock_slider_2;
+	case 22:
+		return _sound_lock_slider_3;
+	case 23:
+		return _sound_lock_slider_4;
+	case 24:
+		return _sound_lock_slider_5;
+	}
+
+	return 0;
+}
+
 void MystScriptParser_Selenitic::o_112_soundLockMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	//varUnusedCheck(op, var);
-	unknown(op, var, argc, argv);
+	MystResourceType10 *slider = soundLockSliderFromVar(var);
+
+	uint16 soundId = soundLockCurrentSound(slider->_pos.y, true);
+	if (_sound_lock_sound_id != soundId) {
+		_sound_lock_sound_id = soundId;
+		_vm->_sound->replaceSound(soundId, Audio::Mixer::kMaxChannelVolume, true);
+	}
 }
 
 void MystScriptParser_Selenitic::o_113_soundLockStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-	unknown(op, var, argc, argv);
+	MystResourceType10 *slider = soundLockSliderFromVar(var);
+
+	_vm->_gfx->changeCursor(700);
+	_vm->_sound->pauseBackground();
+
+	_sound_lock_sound_id = soundLockCurrentSound(slider->_pos.y, true);
+	_vm->_sound->replaceSound(_sound_lock_sound_id, Audio::Mixer::kMaxChannelVolume, true);
 }
 
 void MystScriptParser_Selenitic::o_114_soundLockEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-	unknown(op, var, argc, argv);
+	uint16 *selenitic_vars = _vm->_saveLoad->_v->selenitic_vars;
+	MystResourceType10 *slider = soundLockSliderFromVar(var);
+	uint16 *value = 0;
+
+	switch (var) {
+	case 20: // Sound lock sliders
+		value = &selenitic_vars[13];
+		break;
+	case 21:
+		value = &selenitic_vars[14];
+		break;
+	case 22:
+		value = &selenitic_vars[15];
+		break;
+	case 23:
+		value = &selenitic_vars[16];
+		break;
+	case 24:
+		value = &selenitic_vars[17];
+		break;
+	}
+
+	uint16 stepped = 12 * (*value / 12) + 6;
+
+	if ( stepped == 6 )
+		stepped = 0;
+	if ( stepped == 114 )
+		stepped = 119;
+
+	*value = stepped;
+
+	slider->setStep(stepped);
+	slider->drawDataToScreen();
+
+	uint16 soundId = slider->getList3(0);
+	if (soundId)
+		_vm->_sound->playSoundBlocking(soundId);
+
+	_vm->_sound->stopSound();
+	_vm->_sound->resumeBackground();
 }
 
 void MystScriptParser_Selenitic::o_115_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -865,6 +956,8 @@ void MystScriptParser_Selenitic::o_204_soundLock_init(uint16 op, uint16 var, uin
 			}
 		}
 	}
+
+	_sound_lock_sound_id = 0;
 }
 
 void MystScriptParser_Selenitic::opcode_205(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

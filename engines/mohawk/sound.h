@@ -130,6 +130,9 @@ public:
 	void resumeSound();
 	bool isPlaying(uint16 id);
 
+	void pauseBackground() {}; //TODO: implement
+	void resumeBackground() {};
+
 	// Riven-specific
 	void playSLST(uint16 index, uint16 card);
 	void playSLST(SLSTRecord slstRecord);
