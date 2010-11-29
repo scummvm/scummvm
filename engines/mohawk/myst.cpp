@@ -250,12 +250,12 @@ Common::Error MohawkEngine_Myst::run() {
 	else if (getFeatures() & GF_DEMO)
 		changeToStack(kDemoStack);
 	else
-		changeToStack(kSeleniticStack);
+		changeToStack(kIntroStack);
 
 	if (getFeatures() & GF_DEMO)
 		changeToCard(2000);
 	else
-		changeToCard(1282);
+		changeToCard(1);
 
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && !(getFeatures() & GF_DEMO)) {
@@ -310,8 +310,6 @@ Common::Error MohawkEngine_Myst::run() {
 					debug(2, "Sending mouse up event to resource %d\n", _curResource);
 					_resources[_curResource]->handleMouseUp(&event.mouse);
 				}
-
-				drawResourceImages();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_mouseClicked = true;
@@ -899,6 +897,16 @@ void MohawkEngine_Myst::drawResourceImages() {
 
 	// Make sure the screen is updated
 	_gfx->updateScreen();
+}
+
+void MohawkEngine_Myst::redrawResource(MystResource *_resource) {
+	_resource->drawConditionalDataToScreen(_scriptParser->getVar(_resource->getType8Var()));
+}
+
+void MohawkEngine_Myst::redrawArea(uint16 var) {
+	for (uint16 i = 0; i < _resources.size(); i++)
+		if (_resources[i]->type == 8 && _resources[i]->getType8Var() == var)
+			redrawResource(_resources[i]);
 }
 
 MystResource *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream, MystResource *parent) {
