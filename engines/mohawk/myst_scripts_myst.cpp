@@ -2680,10 +2680,8 @@ void MystScriptParser_Myst::opcode_203(uint16 op, uint16 var, uint16 argc, uint1
 		break;
 	case kMystStack:
 		// Used for Card 4138 (Dock Forechamber Door)
-		if (argc == 0) {
-			g_opcode203Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
+		// Set forechamber door to closed
+		setVarValue(105, 0);
 		break;
 	case kMechanicalStack:
 		// Used for Card 6043 (Weapons Rack with Snake Box)

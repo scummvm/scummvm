@@ -217,8 +217,13 @@ MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, Myst
 }
 
 uint16 MystScriptParser::getVar(uint16 var) {
-	warning("Unimplemented var getter 0x%02x (%d)", var, var);
-	return _vm->_varStore->getVar(var);
+	switch(var) {
+	case 105:
+		return _tempVar;
+	default:
+		warning("Unimplemented var getter 0x%02x (%d)", var, var);
+		return _vm->_varStore->getVar(var);
+	}
 }
 
 void MystScriptParser::toggleVar(uint16 var) {
@@ -227,8 +232,14 @@ void MystScriptParser::toggleVar(uint16 var) {
 }
 
 bool MystScriptParser::setVarValue(uint16 var, uint16 value) {
-	warning("Unimplemented var setter 0x%02x (%d)", var, var);
-	_vm->_varStore->setVar(var, value);
+	if (var == 105) {
+		if (_tempVar != value)
+			_tempVar = value;
+	} else {
+		warning("Unimplemented var setter 0x%02x (%d)", var, var);
+		_vm->_varStore->setVar(var, value);
+	}
+
 	return false;
 }
 

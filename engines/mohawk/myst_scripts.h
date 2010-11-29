@@ -131,20 +131,20 @@ protected:
 		const char *desc;
 	};
 
-	const MystOpcode *_opcodes;
-	void setupOpcodes();
-	MystResource *_invokingResource;
 	uint16 _opcodeCount;
+	const MystOpcode *_opcodes;
+
+	MystResource *_invokingResource;
+
+	uint16 _savedCardId;
+	uint16 _savedCursorId;
+	uint16 _tempVar; // Generic temp var used by the scripts
 
 	static const uint8 stack_map[];
 	static const uint16 start_card[];
 
-	uint16 _savedCardId;
-	uint16 _savedCursorId;
-
+	void setupOpcodes();
 	void varUnusedCheck(uint16 op, uint16 var);
-
-
 };
 
 }
