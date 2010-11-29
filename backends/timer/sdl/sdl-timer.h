@@ -28,11 +28,7 @@
 
 #include "backends/timer/default/default-timer.h"
 
-#if defined(__SYMBIAN32__)
-#include <esdl\SDL.h>
-#else
-#include <SDL.h>
-#endif
+#include "backends/platform/sdl/sdl-sys.h"
 
 /**
  * SDL timer manager. Setups the timer callback for

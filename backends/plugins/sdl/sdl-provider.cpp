@@ -32,9 +32,7 @@
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
-#include "SDL.h"
-#include "SDL_loadso.h"
-
+#include "backends/platform/sdl/sdl-sys.h"
 
 class SDLPlugin : public DynamicPlugin {
 protected:

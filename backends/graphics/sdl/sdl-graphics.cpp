@@ -25,9 +25,6 @@
 
 #if defined(SDL_BACKEND)
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl.h"

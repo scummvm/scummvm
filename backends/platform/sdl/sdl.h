@@ -26,11 +26,7 @@
 #ifndef PLATFORM_SDL_H
 #define PLATFORM_SDL_H
 
-#if defined(__SYMBIAN32__)
-#include <esdl\SDL.h>
-#else
-#include <SDL.h>
-#endif
+#include "backends/platform/sdl/sdl-sys.h"
 
 #include "backends/modular-backend.h"
 #include "backends/mixer/sdl/sdl-mixer.h"

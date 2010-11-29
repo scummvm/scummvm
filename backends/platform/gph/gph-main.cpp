@@ -23,11 +23,7 @@
  *
  */
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-#include "common/scummsys.h"
-#include <SDL/SDL.h>
+#include "backends/platform/sdl/sdl-sys.h"
 
 // #include "backends/platform/gph/gph-options.h"
 #include "backends/platform/gph/gph-sdl.h"

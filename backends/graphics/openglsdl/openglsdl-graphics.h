@@ -26,7 +26,7 @@
 #ifndef BACKENDS_GRAPHICS_OPENGLSDL_H
 #define BACKENDS_GRAPHICS_OPENGLSDL_H
 
-#include <SDL.h>
+#include "backends/platform/sdl/sdl-sys.h"
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
 #undef ARRAYSIZE
 #endif

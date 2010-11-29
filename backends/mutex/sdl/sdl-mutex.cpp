@@ -25,16 +25,9 @@
 
 #if defined(SDL_BACKEND)
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "backends/mutex/sdl/sdl-mutex.h"
+#include "backends/platform/sdl/sdl-sys.h"
 
-#if defined(__SYMBIAN32__)
-#include <esdl\SDL.h>
-#else
-#include <SDL.h>
-#endif
 
 OSystem::MutexRef SdlMutexManager::createMutex() {
 	return (OSystem::MutexRef) SDL_CreateMutex();

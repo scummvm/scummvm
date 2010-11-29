@@ -23,10 +23,7 @@
  *
  */
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-#include <SDL.h>
+#include "backends/platform/sdl/sdl-sys.h"
 
 #include "Toolbar.h"
 

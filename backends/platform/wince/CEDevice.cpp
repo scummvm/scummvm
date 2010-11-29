@@ -23,12 +23,9 @@
  *
  */
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "CEDevice.h"
 
-#include <SDL.h>
+#include "backends/platform/sdl/sdl-sys.h"
 
 #include "backends/platform/wince/wince-sdl.h"
 

@@ -33,11 +33,8 @@
 
 #include "backends/events/sdl/sdl-events.h"
 
-#if defined(__SYMBIAN32__)
-#include <esdl\SDL.h>
-#else
-#include <SDL.h>
-#endif
+#include "backends/platform/sdl/sdl-sys.h"
+
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 // Uncomment this to enable the 'on screen display' code.

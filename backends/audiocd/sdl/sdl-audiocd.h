@@ -28,11 +28,7 @@
 
 #include "backends/audiocd/default/default-audiocd.h"
 
-#if defined(__SYMBIAN32__)
-#include <esdl\SDL.h>
-#else
-#include <SDL.h>
-#endif
+#include "backends/platform/sdl/sdl-sys.h"
 
 /**
  * The SDL audio cd manager. Implements real audio cd playback.

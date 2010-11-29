@@ -26,12 +26,7 @@
 #ifndef BACKENDS_MIXER_SDL_H
 #define BACKENDS_MIXER_SDL_H
 
-#if defined(__SYMBIAN32__)
-#include <esdl\SDL.h>
-#else
-#include <SDL.h>
-#endif
-
+#include "backends/platform/sdl/sdl-sys.h"
 #include "sound/mixer_intern.h"
 
 /**

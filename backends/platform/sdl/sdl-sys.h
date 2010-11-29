@@ -23,22 +23,28 @@
  *
  */
 
-#ifndef SDL_DINGUX_COMMON_H
-#define SDL_DINGUX_COMMON_H
+#ifndef BACKEND_SDL_SYS_H
+#define BACKEND_SDL_SYS_H
 
-#if defined(DINGUX)
+// Include the SDL headers, working around the fact that SDL_rwops.h
+// uses a FILE pointer in one place, which conflicts with common/forbidden.h
 
-#include "backends/base-backend.h"
-#include "backends/platform/sdl/sdl.h"
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
-#include "backends/events/dinguxsdl/dinguxsdl-events.h"
+#include "common/scummsys.h"
 
-class OSystem_SDL_Dingux : public OSystem_POSIX {
-public:
-	void initBackend();
-};
+// Remove FILE override from common/forbidden.h, and replace
+// it with an alternate slightly less unfriendly override.
+#undef FILE
+typedef struct { int FAKE; } FAKE_FILE;
+#define FILE FAKE_FILE
 
+#if defined(__SYMBIAN32__)
+#include <esdl\SDL.h>
+#else
+#include <SDL.h>
+#endif
 
-#endif /* DINGUX */
-#endif /* SDL_DINGUX_COMMON_H */
+// Finally forbid FILE again
+#undef FILE 
+#define FILE	FORBIDDEN_SYMBOL_REPLACEMENT
+
+#endif
