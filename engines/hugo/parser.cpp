@@ -100,13 +100,11 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 		gameStatus.recallFl = true;
 		break;
 	case Common::KEYCODE_F4:                        // Save game
-		// TODO: Add a proper screen to select saveslot
 		if (gameStatus.viewState == V_PLAY)
-			_vm->_file->saveGame(gameStatus.saveSlot, "Current game");
+			_vm->_file->saveGame(-1, Common::String());
 		break;
 	case Common::KEYCODE_F5:                        // Restore game
-		// TODO: Add a proper screen to specify saveslot and description
-		_vm->_file->restoreGame(gameStatus.saveSlot);
+		_vm->_file->restoreGame(-1);
 		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
 		gameStatus.viewState = V_PLAY;
 		break;

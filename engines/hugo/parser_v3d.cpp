@@ -127,19 +127,13 @@ void Parser_v3d::lineHandler() {
 		if (gameStatus.gameOverFl)
 			Utils::gameOverMsg();
 		else
-//			_vm->_file->saveOrRestore(true);
-			warning("STUB: saveOrRestore()");
-			// HACK: Currently use Win code
-			_vm->_file->saveGame(gameStatus.saveSlot, "Current game");
+			_vm->_file->saveGame(-1, Common::String());
 		return;
 	}
 
 	if (!strcmp("restore", _line)) {
 		_config.soundFl = false;
-//		_vm->_file->saveOrRestore(false);
-		warning("STUB: saveOrRestore()");
-		// HACK: Currently use Win code
-		_vm->_file->restoreGame(gameStatus.saveSlot);
+		_vm->_file->restoreGame(-1);
 		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
 		gameStatus.viewState = V_PLAY;
 		return;

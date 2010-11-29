@@ -24,6 +24,10 @@
  */
 
 #include "engines/advancedDetector.h"
+#include "common/system.h"
+#include "common/savefile.h"
+#include "graphics/thumbnail.h"
+#include "graphics/surface.h"
 
 #include "hugo/hugo.h"
 
@@ -37,6 +41,11 @@ struct HugoGameDescription {
 uint32 HugoEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
+
+const char *HugoEngine::getGameId() const {
+	return _gameDescription->desc.gameid;
+}
+
 
 static const PlainGameDescriptor hugoGames[] = {
 	// Games
@@ -162,8 +171,12 @@ public:
 	}
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
-
 	bool hasFeature(MetaEngineFeature f) const;
+
+	int getMaximumSaveSlot() const;
+	SaveStateList listSaves(const char *target) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	void removeSaveState(const char *target, int slot) const;
 };
 
 bool HugoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -175,9 +188,117 @@ bool HugoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 }
 
 bool HugoMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	return
+	    (f == kSupportsListSaves) ||
+	    (f == kSupportsLoadingDuringStartup) ||
+	    (f == kSupportsDeleteSave) ||
+	    (f == kSavesSupportMetaInfo) ||
+	    (f == kSavesSupportThumbnail) ||
+	    (f == kSavesSupportCreationDate);
 }
 
+int HugoMetaEngine::getMaximumSaveSlot() const { return 99; }
+
+SaveStateList HugoMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String pattern = target;
+	pattern += "-??.SAV";
+
+	filenames = saveFileMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	int slotNum = 0;
+	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		slotNum = atoi(filename->c_str() + filename->size() - 3);
+
+		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
+			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
+			if (file) {
+				int saveVersion = file->readByte();
+
+				if (saveVersion != kSavegameVersion) {
+					warning("Savegame of incompatible version");
+					delete file;
+					continue;
+				}
+
+				// read name
+				uint16 nameSize = file->readUint16BE();
+				if (nameSize >= 255) {
+					delete file;
+					continue;
+				}
+				char name[256];
+				file->read(name, nameSize);
+				name[nameSize] = 0;
+
+				saveList.push_back(SaveStateDescriptor(slotNum, name));
+				delete file;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+SaveStateDescriptor HugoMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
+	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
+
+	if (file) {
+		int saveVersion = file->readByte();
+
+		if (saveVersion != kSavegameVersion) {
+			warning("Savegame of incompatible version");
+			delete file;
+			return SaveStateDescriptor();
+		}
+
+		uint32 saveNameLength = file->readUint16BE();
+		char saveName[256];
+		file->read(saveName, saveNameLength);
+		saveName[saveNameLength] = 0;
+
+		SaveStateDescriptor desc(slot, saveName);
+
+		Graphics::Surface *thumbnail = new Graphics::Surface();
+		assert(thumbnail);
+		if (!Graphics::loadThumbnail(*file, *thumbnail)) {
+			delete thumbnail;
+			thumbnail = 0;
+		}
+		desc.setThumbnail(thumbnail);
+
+		desc.setDeletableFlag(true);
+		desc.setWriteProtectedFlag(false);
+
+		uint32 saveDate = file->readUint32BE();
+		uint16 saveTime = file->readUint16BE();
+
+		int day = (saveDate >> 24) & 0xFF;
+		int month = (saveDate >> 16) & 0xFF;
+		int year = saveDate & 0xFFFF;
+
+		desc.setSaveDate(year, month, day);
+
+		int hour = (saveTime >> 8) & 0xFF;
+		int minutes = saveTime & 0xFF;
+
+		desc.setSaveTime(hour, minutes);
+
+		delete file;
+		return desc;
+	}
+	return SaveStateDescriptor();
+}
+
+void HugoMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
+	g_system->getSavefileManager()->removeSavefile(fileName);
+}
 } // End of namespace Hugo
 
 #if PLUGIN_ENABLED_DYNAMIC(HUGO)
@@ -195,7 +316,7 @@ void HugoEngine::initGame(const HugoGameDescription *gd) {
 	_gameVariant = _gameType - 1 + ((_platform == Common::kPlatformWindows) ? 0 : 3);
 
 	// Generate filename
-	_saveFilename = _targetName + "-%d.SAV";
+	_saveFilename = _targetName + "-%02d.SAV";
 }
 
 } // End of namespace Hugo

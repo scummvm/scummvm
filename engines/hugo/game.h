@@ -836,7 +836,6 @@ struct status_t {                                   // Game status (not saved)
 	go_t     go_for;                                // Purpose of an automatic route
 	int16    go_id;                                 // Index of exit of object walking to
 	fpath_t  path;                                  // Alternate path for saved files
-	int16    saveSlot;                              // Current slot to save/restore game
 	int16    song;                                  // Current song
 	int16    cx, cy;                                // Cursor position (dib coords)
 
@@ -847,6 +846,7 @@ struct status_t {                                   // Game status (not saved)
 //	bool     mmtimeFl;                              // Multimedia timer supported
 //	int16    screenWidth;                           // Desktop screen width
 //	uint32   saveTick;                              // Time of last save in ticks
+//	int16    saveSlot;                              // Current slot to save/restore game
 };
 
 struct config_t {                                   // User's config (saved)

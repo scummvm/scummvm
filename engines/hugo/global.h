@@ -47,7 +47,4 @@ namespace Hugo {
 // User interface database (Windows Only)
 // This file contains, between others, the bitmaps of the fonts used in the application
 #define UIF_FILE   "uif.dat"
-
-static const int kSavegameVersion = 1;
-
 } // End of namespace Hugo

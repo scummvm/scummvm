@@ -63,8 +63,8 @@ public:
 	void     readImage(int objNum, object_t *objPtr);
 	void     readUIFImages();
 	void     readUIFItem(int16 id, byte *buf);
-	void     restoreGame(int16 slot);
-	void     saveGame(int16 slot, const char *descrip);
+	bool     restoreGame(int16 slot);
+	bool     saveGame(int16 slot, Common::String descrip);
 
 	virtual void openDatabaseFiles() = 0;
 	virtual void closeDatabaseFiles() = 0;

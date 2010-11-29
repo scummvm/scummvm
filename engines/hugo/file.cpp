@@ -32,6 +32,9 @@
 
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/config-manager.h"
+#include "graphics/thumbnail.h"
+#include "gui/saveload.h"
 
 #include "hugo/hugo.h"
 #include "hugo/file.h"
@@ -299,22 +302,61 @@ bool FileManager::fileExists(char *filename) {
 /**
 * Save game to supplied slot
 */
-void FileManager::saveGame(int16 slot, const char *descrip) {
+bool FileManager::saveGame(int16 slot, Common::String descrip) {
 	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip);
 
-	// Get full path of saved game file - note test for INITFILE
-	Common::String path = Common::String::format(_vm->_saveFilename.c_str(), slot);
-	Common::WriteStream *out = _vm->getSaveFileManager()->openForSaving(path);
+	const EnginePlugin *plugin = NULL;
+	int16 savegameId;
+	Common::String savegameDescription;
+	EngineMan.findGame(_vm->getGameId(), &plugin);
+
+	if (slot == -1) {
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save");
+		dialog->setSaveMode(true);
+		savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
+		savegameDescription = dialog->getResultString();
+		delete dialog;
+	} else {
+		savegameId = slot;
+		if (!descrip.empty()) {
+			savegameDescription = descrip;
+		} else {
+			savegameDescription = Common::String::format("Quick save #%d", slot);
+		}
+	}
+
+	if (savegameId < 0)                             // dialog aborted
+		return false;
+
+	Common::String savegameFile = Common::String::format(_vm->_saveFilename.c_str(), savegameId);
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::OutSaveFile *out = saveMan->openForSaving(savegameFile);
+
 	if (!out) {
-		warning("Can't create file '%s', game not saved", path.c_str());
-		return;
+		warning("Can't create file '%s', game not saved", savegameFile.c_str());
+		return false;
 	}
 
 	// Write version.  We can't restore from obsolete versions
 	out->writeByte(kSavegameVersion);
 
-	// Save description of saved game
-	out->write(descrip, DESCRIPLEN);
+	if (savegameDescription == "") {
+		savegameDescription = "Untitled savegame";
+	}
+
+	out->writeSint16BE(savegameDescription.size() + 1);
+	out->write(savegameDescription.c_str(), savegameDescription.size() + 1);
+
+	Graphics::saveThumbnail(*out);
+
+	TimeDate curTime;
+	_vm->_system->getTimeAndDate(curTime);
+
+	uint32 saveDate = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | ((curTime.tm_year + 1900) & 0xFFFF);
+	uint16 saveTime = (curTime.tm_hour & 0xFF) << 8 | ((curTime.tm_min) & 0xFF);
+
+	out->writeUint32BE(saveDate);
+	out->writeUint16BE(saveTime);
 
 	_vm->_object->saveObjects(out);
 
@@ -365,35 +407,57 @@ void FileManager::saveGame(int16 slot, const char *descrip) {
 	out->finalize();
 
 	delete out;
+
+	return true;
 }
 
 /**
 * Restore game from supplied slot number
 */
-void FileManager::restoreGame(int16 slot) {
+bool FileManager::restoreGame(int16 slot) {
 	debugC(1, kDebugFile, "restoreGame(%d)", slot);
+
+	const EnginePlugin *plugin = NULL;
+	int16 savegameId;
+	EngineMan.findGame(_vm->getGameId(), &plugin);
+
+	if (slot == -1) {
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
+		dialog->setSaveMode(false);
+		savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
+		delete dialog;
+	} else {
+		savegameId = slot;
+	}
+
+	if (savegameId < 0)                             // dialog aborted
+		return false;
+
+	Common::String savegameFile = Common::String::format(_vm->_saveFilename.c_str(), savegameId);
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::InSaveFile *in = saveMan->openForLoading(savegameFile);
+
+	if (!in)
+		return false;
 
 	// Initialize new-game status
 	_vm->initStatus();
 
-	// Get full path of saved game file - note test for INITFILE
-	Common::String path; // Full path of saved game
-
-	path = Common::String::format(_vm->_saveFilename.c_str(), slot);
-
-	Common::SeekableReadStream *in = _vm->getSaveFileManager()->openForLoading(path);
-	if (!in)
-		return;
-
 	// Check version, can't restore from different versions
 	int saveVersion = in->readByte();
 	if (saveVersion != kSavegameVersion) {
-		error("Savegame of incompatible version");
-		return;
+		warning("Savegame of incompatible version");
+		delete in;
+		return false;
 	}
 
 	// Skip over description
-	in->seek(DESCRIPLEN, SEEK_CUR);
+	int32 saveGameNameSize = in->readSint16BE();
+	in->skip(saveGameNameSize);
+
+	Graphics::skipThumbnail(*in);
+
+	in->skip(6);                                    // Skip date & time
 
 	// If hero image is currently swapped, swap it back before restore
 	if (_vm->_heroImage != HERO)
@@ -446,6 +510,7 @@ void FileManager::restoreGame(int16 slot) {
 	_maze.firstScreenIndex = in->readByte();
 
 	delete in;
+	return true;
 }
 
 /**

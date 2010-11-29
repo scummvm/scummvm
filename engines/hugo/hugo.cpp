@@ -69,6 +69,7 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_backgroundObjectsSize(0), _screenActsSize(0), _usesSize(0)
 
 {
+	_system = syst;
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
 	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
 	DebugMan.addDebugChannel(kDebugDisplay, "Display", "Display debug level");
@@ -915,7 +916,6 @@ void HugoEngine::initStatus() {
 	_status.helpFl        = false;                  // Not calling WinHelp()
 	_status.doQuitFl      = false;
 	_status.path[0]       = 0;                      // Path to write files
-	_status.saveSlot      = 0;                      // Slot to save/restore game
 
 	// Initialize every start of new game
 	_status.tick            = 0;                    // Tick count
@@ -934,6 +934,7 @@ void HugoEngine::initStatus() {
 //	_status.mmtime        = false;                  // Multimedia timer support
 //	_status.screenWidth   = 0;                      // Desktop screen width
 //	_status.saveTick      = 0;                      // Time of last save
+//	_status.saveSlot      = 0;                      // Slot to save/restore game
 }
 
 /**
@@ -1254,6 +1255,14 @@ void HugoEngine::endGame() {
 		Utils::Box(BOX_ANY, "%s", _textEngine[kEsAdvertise]);
 	Utils::Box(BOX_ANY, "%s\n%s", _episode, COPYRIGHT);
 	_status.viewState = V_EXIT;
+}
+
+bool HugoEngine::canLoadGameStateCurrently() {
+	return true;
+}
+
+bool HugoEngine::canSaveGameStateCurrently() {
+	return (_status.viewState == V_PLAY);
 }
 
 } // End of namespace Hugo

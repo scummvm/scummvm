@@ -32,6 +32,7 @@
 
 // This include is here temporarily while the engine is being refactored.
 #include "hugo/game.h"
+#include "hugo/file.h"
 
 #define HUGO_DAT_VER_MAJ 0                          // 1 byte
 #define HUGO_DAT_VER_MIN 30                         // 1 byte
@@ -58,6 +59,8 @@ class RandomSource;
  * - Hugo's Amazon Adventure
  */
 namespace Hugo {
+
+static const int kSavegameVersion = 2;
 
 enum GameType {
 	kGameTypeNone  = 0,
@@ -113,6 +116,8 @@ class HugoEngine : public Engine {
 public:
 	HugoEngine(OSystem *syst, const HugoGameDescription *gd);
 	~HugoEngine();
+
+	OSystem *_system;
 
 	byte   _numVariant;
 	byte   _gameVariant;
@@ -172,6 +177,7 @@ public:
 
 	const HugoGameDescription *_gameDescription;
 	uint32 getFeatures() const;
+	const char *HugoEngine::getGameId() const;
 
 	GameType getGameType() const;
 	Common::Platform getPlatform() const;
@@ -183,17 +189,17 @@ public:
 		return *s_Engine;
 	}
 
-	void initGame(const HugoGameDescription *gd);
-	void initGamePart(const HugoGameDescription *gd);
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
 	bool loadHugoDat();
 
-	int getMouseX() const {
-		return _mouseX;
-	}
-	int getMouseY() const {
-		return _mouseY;
-	}
+	char *useBG(char *name);
 
+	int  deltaX(int x1, int x2, int vx, int y);
+	int  deltaY(int x1, int x2, int vy, int y);
+
+	void initGame(const HugoGameDescription *gd);
+	void initGamePart(const HugoGameDescription *gd);
 	void boundaryCollision(object_t *obj);
 	void clearBoundary(int x1, int x2, int y);
 	void endGame();
@@ -204,10 +210,12 @@ public:
 	void shutdown();
 	void storeBoundary(int x1, int x2, int y);
 
-	char *useBG(char *name);
-
-	int deltaX(int x1, int x2, int vx, int y);
-	int deltaY(int x1, int x2, int vy, int y);
+	int getMouseX() const {
+		return _mouseX;
+	}
+	int getMouseY() const {
+		return _mouseY;
+	}
 
 	overlay_t &getBoundaryOverlay() {
 		return _boundary;
@@ -241,6 +249,18 @@ public:
 	}
 	byte getIntroSize() {
 		return _introXSize;
+	}
+	Common::Error saveGameState(int slot, const char *desc) {
+		
+		return (_file->saveGame(slot, desc) ? Common::kWritingFailed : Common::kNoError);
+	}
+
+	Common::Error loadGameState(int slot) {
+		return (_file->restoreGame(slot) ? Common::kReadingFailed : Common::kNoError);
+	}
+
+	bool hasFeature(EngineFeature f) const {
+		return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 	}
 
 	FileManager *_file;

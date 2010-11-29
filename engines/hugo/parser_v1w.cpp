@@ -369,12 +369,12 @@ void Parser_v1w::lineHandler() {
 
 	// SAVE/RESTORE
 	if (!strcmp("save", _line) && gameStatus.viewState == V_PLAY) {
-		_vm->_file->saveGame(gameStatus.saveSlot, "Current game");
+		_vm->_file->saveGame(-1, Common::String());
 		return;
 	}
 
 	if (!strcmp("restore", _line) && (gameStatus.viewState == V_PLAY || gameStatus.viewState == V_IDLE)) {
-		_vm->_file->restoreGame(gameStatus.saveSlot);
+		_vm->_file->restoreGame(-1);
 		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
 		gameStatus.viewState = V_PLAY;
 		return;
