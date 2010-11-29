@@ -78,28 +78,6 @@ enum {
 
 const uint16 kMasterpieceOnly = 0xFFFF;
 
-// Myst Resource Types
-// TODO: Other types and such
-enum {
-	kMystForwardResource = 0,
-	kMystLeftResource = 1,
-	kMystRightResource = 2,
-	kMystDownResource = 3,
-	kMystUpResource = 4,
-	kMystActionResource = 5,
-	kMystVideoResource = 6,
-	kMystSwitchResource = 7
-};
-
-// Myst Resource Flags
-// TODO: Figure out other flags
-enum {
-	kMystSubimageEnableFlag = (1 << 0),
-	kMystHotspotEnableFlag  = (1 << 1),
-	kMystUnknownFlag        = (1 << 2),
-	kMystZipModeEnableFlag  = (1 << 3)
-};
-
 struct MystCondition {
 	uint16 var;
 	uint16 numStates;

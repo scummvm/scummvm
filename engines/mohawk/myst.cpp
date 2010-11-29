@@ -926,52 +926,45 @@ void MohawkEngine_Myst::redrawResource(MystResourceType8 *_resource) {
 
 void MohawkEngine_Myst::redrawArea(uint16 var) {
 	for (uint16 i = 0; i < _resources.size(); i++)
-		if (_resources[i]->type == 8 && _resources[i]->getType8Var() == var)
+		if (_resources[i]->type == kMystConditionalImage && _resources[i]->getType8Var() == var)
 			redrawResource(static_cast<MystResourceType8 *>(_resources[i]));
 }
 
 MystResource *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream, MystResource *parent) {
 	MystResource *resource = 0;
-	uint16 type = rlstStream->readUint16LE();
+	ResourceType type = static_cast<ResourceType>(rlstStream->readUint16LE());
 
 	debugC(kDebugResource, "\tType: %d", type);
 	debugC(kDebugResource, "\tSub_Record: %d", (parent == NULL) ? 0 : 1);
 
 	switch (type) {
-	case kMystForwardResource:
-	case kMystLeftResource:
-	case kMystRightResource:
-	case kMystDownResource:
-	case kMystUpResource:
-	case 14: // TODO: kMystBackwardResource?
-		resource = new MystResource(this, rlstStream, parent);
-		break;
-	case kMystActionResource:
+	case kMystAction:
 		resource =  new MystResourceType5(this, rlstStream, parent);
 		break;
-	case kMystVideoResource:
+	case kMystVideo:
 		resource =  new MystResourceType6(this, rlstStream, parent);
 		break;
-	case kMystSwitchResource:
+	case kMystSwitch:
 		resource =  new MystResourceType7(this, rlstStream, parent);
 		break;
-	case 8:
+	case kMystConditionalImage:
 		resource =  new MystResourceType8(this, rlstStream, parent);
 		break;
-	case 10:
+	case kMystSlider:
 		resource =  new MystResourceType10(this, rlstStream, parent);
 		break;
-	case 11:
+	case kMystDragArea:
 		resource =  new MystResourceType11(this, rlstStream, parent);
 		break;
-	case 12:
+	case kMystVideoInfos:
 		resource =  new MystResourceType12(this, rlstStream, parent);
 		break;
-	case 13:
+	case kMystHoverArea:
 		resource =  new MystResourceType13(this, rlstStream, parent);
 		break;
 	default:
-		error ("Unknown/Unhandled MystResource type %d", type);
+		resource = new MystResource(this, rlstStream, parent);
+		break;
 	}
 
 	resource->type = type;

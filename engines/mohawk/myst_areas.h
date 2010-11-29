@@ -30,6 +30,31 @@
 
 namespace Mohawk {
 
+// Myst Resource Types
+enum ResourceType {
+	kMystForwardArea = 0,
+	kMystLeftArea = 1,
+	kMystRightArea = 2,
+	kMystDownArea = 3,
+	kMystUpArea = 4,
+	kMystAction = 5,
+	kMystVideo = 6,
+	kMystSwitch = 7,
+	kMystConditionalImage = 8,
+	kMystSlider = 10,
+	kMystDragArea = 11,
+	kMystVideoInfos = 12,
+	kMystHoverArea = 13
+};
+
+// Myst Resource Flags
+// TODO: Figure out other flags
+enum {
+	kMystSubimageEnableFlag = (1 << 0),
+	kMystHotspotEnableFlag  = (1 << 1),
+	kMystUnknownFlag        = (1 << 2),
+	kMystZipModeEnableFlag  = (1 << 3)
+};
 
 class MystResource {
 public:
@@ -37,7 +62,7 @@ public:
 	virtual ~MystResource();
 
 	MystResource *_parent;
-	uint16 type;
+	ResourceType type;
 
 	bool contains(Common::Point point) { return _rect.contains(point); }
 	virtual void drawDataToScreen() {}

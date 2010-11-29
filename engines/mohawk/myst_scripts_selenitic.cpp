@@ -973,7 +973,7 @@ void MystScriptParser_Selenitic::o_204_soundLock_init(uint16 op, uint16 var, uin
 	debugC(kDebugScript, "Opcode %d: Sound lock init", op);
 
 	for (uint i = 0; i < _vm->_resources.size(); i++) {
-		if (_vm->_resources[i]->type == 10) {
+		if (_vm->_resources[i]->type == kMystSlider) {
 			switch (_vm->_resources[i]->getType8Var()) {
 			case 20:
 				_sound_lock_slider_1 = static_cast<MystResourceType10 *>(_vm->_resources[i]);
@@ -996,7 +996,7 @@ void MystScriptParser_Selenitic::o_204_soundLock_init(uint16 op, uint16 var, uin
 				_sound_lock_slider_5->setStep(selenitic_vars[17]);
 				break;
 			}
-		} else if (_vm->_resources[i]->type == 8) {
+		} else if (_vm->_resources[i]->type == kMystConditionalImage) {
 			if (_vm->_resources[i]->getType8Var() == 28) {
 				_sound_lock_button = static_cast<MystResourceType8 *>(_vm->_resources[i]);
 			}
