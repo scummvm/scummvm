@@ -134,7 +134,12 @@ enum NEResourceType {
 	kNEManifest = 0x8018
 };
 
-/** A class able to load resources from a New Executable. */
+/**
+ * A class able to load resources from a Windows New Executable, such
+ * as cursors, bitmaps, and sounds.
+ *
+ * See http://en.wikipedia.org/wiki/New_Executable for more info.
+ */
 class NEResources {
 public:
 	NEResources();
