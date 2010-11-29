@@ -267,7 +267,7 @@ bool MystConsole::Cmd_DisableInitOpcodes(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_scriptParser->disableInitOpcodes();
+	_vm->_scriptParser->disablePersistentScripts();
 
 	return true;
 }

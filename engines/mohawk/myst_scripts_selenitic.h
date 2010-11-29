@@ -43,17 +43,14 @@ public:
 	MystScriptParser_Selenitic(MohawkEngine_Myst *vm);
 	~MystScriptParser_Selenitic();
 
-	void disableInitOpcodes();
-	void runPersistentOpcodes();
+	void disablePersistentScripts();
+	void runPersistentScripts();
 
 private:
 	void setupOpcodes();
 	uint16 getVar(uint16 var);
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
-
-	void o_203_soundReceiver_run();
-	void o_203_soundReceiver_disable();
 
 	DECLARE_OPCODE(opcode_100);
 	DECLARE_OPCODE(opcode_101);
@@ -77,6 +74,9 @@ private:
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
 
+	void o_203_soundReceiver_run();
+
+	bool _sound_receiver_running;
 	bool _sound_receiver_sigma_pressed; // 6
 	MystResourceType8 *_sound_receiver_sources[5]; // 92 -> 108
 	MystResourceType8 *_sound_receiver_current_source; // 112

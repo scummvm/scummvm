@@ -138,12 +138,13 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 	_opcodeCount = ARRAYSIZE(myst_opcodes);
 }
 
-void MystScriptParser_Selenitic::disableInitOpcodes() {
-	o_203_soundReceiver_disable();
+void MystScriptParser_Selenitic::disablePersistentScripts() {
+	_sound_receiver_running = false;
 }
 
-void MystScriptParser_Selenitic::runPersistentOpcodes() {
-	o_203_soundReceiver_run();
+void MystScriptParser_Selenitic::runPersistentScripts() {
+	if (_sound_receiver_running)
+		o_203_soundReceiver_run();
 }
 
 uint16 MystScriptParser_Selenitic::getVar(uint16 var) {
@@ -815,33 +816,27 @@ void MystScriptParser_Selenitic::opcode_202(uint16 op, uint16 var, uint16 argc, 
 		unknown(op, var, argc, argv);
 }
 
-static struct {
-	bool enabled;
-} g_opcode203Parameters;
-
 void MystScriptParser_Selenitic::o_203_soundReceiver_run(void) {
-	if (g_opcode203Parameters.enabled) {
-		if (_sound_receiver_start_time) {
-			if (_sound_receiver_direction) {
-				uint32 current_time = _vm->_system->getMillis();
+	if (_sound_receiver_start_time) {
+		if (_sound_receiver_direction) {
+			uint32 current_time = _vm->_system->getMillis();
 
-				if (_sound_receiver_speed == 50) {
-					if (current_time > _sound_receiver_start_time + 500) {
-						sound_receiver_increase_speed();
-					}
-				} else {
-					if (current_time > _sound_receiver_start_time + 1000) {
-						sound_receiver_increase_speed();
-					}
+			if (_sound_receiver_speed == 50) {
+				if (current_time > _sound_receiver_start_time + 500) {
+					sound_receiver_increase_speed();
 				}
-
-				if (current_time > _sound_receiver_start_time + 100) {
-					sound_receiver_update();
+			} else {
+				if (current_time > _sound_receiver_start_time + 1000) {
+					sound_receiver_increase_speed();
 				}
-
-			} else if (!_sound_receiver_sigma_pressed) {
-				sound_receiver_update_sound();
 			}
+
+			if (current_time > _sound_receiver_start_time + 100) {
+				sound_receiver_update();
+			}
+
+		} else if (!_sound_receiver_sigma_pressed) {
+			sound_receiver_update_sound();
 		}
 	}
 }
@@ -943,16 +938,13 @@ void MystScriptParser_Selenitic::sound_receiver_solution(uint16 source, uint16 &
 	}
 }
 
-void MystScriptParser_Selenitic::o_203_soundReceiver_disable(void) {
-	g_opcode203Parameters.enabled = false;
-}
-
 void MystScriptParser_Selenitic::o_203_soundReceiver_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	uint16 *selenitic_vars = _vm->_saveLoad->_v->selenitic_vars;
+
 	debugC(kDebugScript, "Opcode %d: Sound receiver init", op);
 
 	// Used for Card 1245 (Sound Receiver)
-	g_opcode203Parameters.enabled = true;
-	uint16 *selenitic_vars = _vm->_saveLoad->_v->selenitic_vars;
+	_sound_receiver_running = true;
 
 	_sound_receiver_right_button = static_cast<MystResourceType8 *>(_vm->_resources[0]);
 	_sound_receiver_left_button = static_cast<MystResourceType8 *>(_vm->_resources[1]);

@@ -69,8 +69,8 @@ public:
 	const char *getOpcodeDesc(uint16 op);
 	MystScript readScript(Common::SeekableReadStream *stream, MystScriptType type);
 
-	virtual void disableInitOpcodes() = 0;
-	virtual void runPersistentOpcodes() = 0;
+	virtual void disablePersistentScripts() = 0;
+	virtual void runPersistentScripts() = 0;
 
 	virtual uint16 getVar(uint16 var);
 	virtual void toggleVar(uint16 var);

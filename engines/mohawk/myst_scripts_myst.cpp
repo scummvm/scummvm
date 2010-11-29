@@ -204,7 +204,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	_opcodeCount = ARRAYSIZE(myst_opcodes);
 }
 
-void MystScriptParser_Myst::disableInitOpcodes() {
+void MystScriptParser_Myst::disablePersistentScripts() {
 	opcode_200_disable();
 	opcode_201_disable();
 	opcode_202_disable();
@@ -218,7 +218,7 @@ void MystScriptParser_Myst::disableInitOpcodes() {
 	opcode_212_disable();
 }
 
-void MystScriptParser_Myst::runPersistentOpcodes() {
+void MystScriptParser_Myst::runPersistentScripts() {
 	opcode_200_run();
 	opcode_201_run();
 	opcode_202_run();

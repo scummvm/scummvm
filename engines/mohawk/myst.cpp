@@ -285,7 +285,7 @@ Common::Error MohawkEngine_Myst::run() {
 	while (!shouldQuit()) {
 		// Update any background videos
 		_needsUpdate = _video->updateBackgroundMovies();
-		_scriptParser->runPersistentOpcodes();
+		_scriptParser->runPersistentScripts();
 
 		// Run animations...
 		for (uint16 i = 0; i < _resources.size(); i++)
@@ -419,7 +419,7 @@ void MohawkEngine_Myst::drawCardBackground() {
 void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 	debug(2, "changeToCard(%d)", card);
 
-	_scriptParser->disableInitOpcodes();
+	_scriptParser->disablePersistentScripts();
 
 	_video->stopVideos();
 

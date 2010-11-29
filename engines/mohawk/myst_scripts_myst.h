@@ -42,8 +42,8 @@ public:
 	MystScriptParser_Myst(MohawkEngine_Myst *vm);
 	~MystScriptParser_Myst();
 
-	void disableInitOpcodes();
-	void runPersistentOpcodes();
+	void disablePersistentScripts();
+	void runPersistentScripts();
 
 private:
 	void setupOpcodes();
