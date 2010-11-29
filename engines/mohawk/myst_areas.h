@@ -43,7 +43,7 @@ enum ResourceType {
 	kMystConditionalImage = 8,
 	kMystSlider = 10,
 	kMystDragArea = 11,
-	kMystVideoInfos = 12,
+	kMystVideoInfo = 12,
 	kMystHoverArea = 13
 };
 
@@ -77,9 +77,9 @@ public:
 	bool canBecomeActive();
 
 	// Mouse interface
-	virtual void handleMouseUp(Common::Point *mouse);
-	virtual void handleMouseDown(Common::Point *mouse) {}
-	virtual void handleMouseDrag(Common::Point *mouse) {}
+	virtual void handleMouseUp(const Common::Point &mouse);
+	virtual void handleMouseDown(const Common::Point &mouse) {}
+	virtual void handleMouseDrag(const Common::Point &mouse) {}
 	virtual void handleMouseEnter() {}
 	virtual void handleMouseLeave() {}
 
@@ -94,7 +94,7 @@ protected:
 class MystResourceType5 : public MystResource {
 public:
 	MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	void handleMouseUp(Common::Point *mouse);
+	void handleMouseUp(const Common::Point &mouse);
 
 protected:
 	MystScript _script;
@@ -128,8 +128,8 @@ public:
 	virtual void drawDataToScreen();
 	virtual void handleAnimation();
 
-	virtual void handleMouseUp(Common::Point *mouse);
-	virtual void handleMouseDown(Common::Point *mouse);
+	virtual void handleMouseUp(const Common::Point &mouse);
+	virtual void handleMouseDown(const Common::Point &mouse);
 	virtual void handleMouseEnter();
 	virtual void handleMouseLeave();
 
@@ -163,9 +163,9 @@ class MystResourceType11 : public MystResourceType8 {
 public:
 	MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType11();
-	void handleMouseDown(Common::Point *mouse);
-	void handleMouseUp(Common::Point *mouse);
-	void handleMouseDrag(Common::Point *mouse);
+	void handleMouseDown(const Common::Point &mouse);
+	void handleMouseUp(const Common::Point &mouse);
+	void handleMouseDrag(const Common::Point &mouse);
 
 	uint16 getList1(uint16 index);
 	uint16 getList2(uint16 index);
@@ -173,7 +173,7 @@ public:
 
 	Common::Point _pos;
 protected:
-	void setPositionClipping(Common::Point *mouse, Common::Point *dest);
+	void setPositionClipping(const Common::Point &mouse, Common::Point &dest);
 
 	uint16 _flagHV;
 	uint16 _minH;
@@ -200,14 +200,14 @@ public:
 	virtual ~MystResourceType10();
 
 	void drawDataToScreen();
-	void handleMouseDown(Common::Point *mouse);
-	void handleMouseUp(Common::Point *mouse);
-	void handleMouseDrag(Common::Point *mouse);
+	void handleMouseDown(const Common::Point &mousee);
+	void handleMouseUp(const Common::Point &mouse);
+	void handleMouseDrag(const Common::Point &mouse);
 	void setStep(uint16 step);
 
 protected:
 	Common::Rect boundingBox();
-	void updatePosition(Common::Point *mouse);
+	void updatePosition(const Common::Point &mouse);
     void restoreBackground();
 
 	uint16 _dragSound;
@@ -220,7 +220,7 @@ public:
 	MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType12();
 	void handleAnimation();
-	void handleMouseUp(Common::Point *mouse);
+	void handleMouseUp(const Common::Point &mouse);
 
 protected:
 	uint16 _numFrames;
@@ -235,7 +235,7 @@ private:
 class MystResourceType13 : public MystResource {
 public:
 	MystResourceType13(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	void handleMouseUp(Common::Point *mouse);
+	void handleMouseUp(const Common::Point &mouse);
 	void handleMouseEnter();
 	void handleMouseLeave();
 

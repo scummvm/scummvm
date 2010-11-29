@@ -52,75 +52,75 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
-	DECLARE_OPCODE(o_100_mazeRunnerMove);
-	DECLARE_OPCODE(o_101_mazeRunnerSoundRepeat);
-	DECLARE_OPCODE(o_102_soundReceiverSigma);
-	DECLARE_OPCODE(o_103_soundReceiverRight);
-	DECLARE_OPCODE(o_104_soundReceiverLeft);
-	DECLARE_OPCODE(o_105_109_soundReceiverSource);
-	DECLARE_OPCODE(o_110_mazeRunnerDoorButton);
-	DECLARE_OPCODE(o_111_soundReceiverUpdateSound);
-	DECLARE_OPCODE(o_112_soundLockMove);
-	DECLARE_OPCODE(o_113_soundLockStartMove);
-	DECLARE_OPCODE(o_114_soundLockEndMove);
-	DECLARE_OPCODE(o_115_soundLockButton);
-	DECLARE_OPCODE(o_117_soundReceiverEndMove);
+	DECLARE_OPCODE(o_mazeRunnerMove);
+	DECLARE_OPCODE(o_mazeRunnerSoundRepeat);
+	DECLARE_OPCODE(o_soundReceiverSigma);
+	DECLARE_OPCODE(o_soundReceiverRight);
+	DECLARE_OPCODE(o_soundReceiverLeft);
+	DECLARE_OPCODE(o_soundReceiverSource);
+	DECLARE_OPCODE(o_mazeRunnerDoorButton);
+	DECLARE_OPCODE(o_soundReceiverUpdateSound);
+	DECLARE_OPCODE(o_soundLockMove);
+	DECLARE_OPCODE(o_soundLockStartMove);
+	DECLARE_OPCODE(o_soundLockEndMove);
+	DECLARE_OPCODE(o_soundLockButton);
+	DECLARE_OPCODE(o_soundReceiverEndMove);
 
-	DECLARE_OPCODE(o_200_mazeRunnerCompass_init);
-	DECLARE_OPCODE(o_201_mazeRunnerWindow_init);
-	DECLARE_OPCODE(o_202_mazeRunnerLight_init);
-	DECLARE_OPCODE(o_203_soundReceiver_init);
-	DECLARE_OPCODE(o_204_soundLock_init);
-	DECLARE_OPCODE(o_205_mazeRunnerRight_init);
-	DECLARE_OPCODE(o_206_mazeRunnerLeft_init);
+	DECLARE_OPCODE(o_mazeRunnerCompass_init);
+	DECLARE_OPCODE(o_mazeRunnerWindow_init);
+	DECLARE_OPCODE(o_mazeRunnerLight_init);
+	DECLARE_OPCODE(o_soundReceiver_init);
+	DECLARE_OPCODE(o_soundLock_init);
+	DECLARE_OPCODE(o_mazeRunnerRight_init);
+	DECLARE_OPCODE(o_mazeRunnerLeft_init);
 
-	void o_203_soundReceiver_run();
+	void soundReceiver_run();
 
-	bool _sound_receiver_running;
-	bool _sound_receiver_sigma_pressed; // 6
-	MystResourceType8 *_sound_receiver_sources[5]; // 92 -> 108
-	MystResourceType8 *_sound_receiver_current_source; // 112
-	uint16 *_sound_receiver_position; // 116
-	uint16 _sound_receiver_direction; // 120
-	uint16 _sound_receiver_speed; // 122
-	uint32 _sound_receiver_start_time; //124
-	MystResourceType8 *_sound_receiver_viewer; // 128
-	MystResourceType8 *_sound_receiver_right_button; // 132
-	MystResourceType8 *_sound_receiver_left_button; // 136
-	MystResourceType8 *_sound_receiver_angle_1; // 140
-	MystResourceType8 *_sound_receiver_angle_2; // 144
-	MystResourceType8 *_sound_receiver_angle_3; // 148
-	MystResourceType8 *_sound_receiver_angle_4; // 152
-	MystResourceType8 *_sound_receiver_sigma_button; // 156
+	bool _soundReceiverRunning;
+	bool _soundReceiverSigmaPressed; // 6
+	MystResourceType8 *_soundReceiverSources[5]; // 92 -> 108
+	MystResourceType8 *_soundReceiverCurrentSource; // 112
+	uint16 *_soundReceiverPosition; // 116
+	uint16 _soundReceiverDirection; // 120
+	uint16 _soundReceiverSpeed; // 122
+	uint32 _soundReceiverStartTime; //124
+	MystResourceType8 *_soundReceiverViewer; // 128
+	MystResourceType8 *_soundReceiverRightButton; // 132
+	MystResourceType8 *_soundReceiverLeftButton; // 136
+	MystResourceType8 *_soundReceiverAngle1; // 140
+	MystResourceType8 *_soundReceiverAngle2; // 144
+	MystResourceType8 *_soundReceiverAngle3; // 148
+	MystResourceType8 *_soundReceiverAngle4; // 152
+	MystResourceType8 *_soundReceiverSigmaButton; // 156
 
 	static const uint16 _mazeRunnerMap[300][4];
 	static const uint8 _mazeRunnerVideos[300][4];
 
-	uint16 _maze_runner_position; // 56
-	uint16 _maze_runner_direction; // 58
-	MystResourceType8 *_maze_runner_window; // 68
-	MystResourceType8 *_maze_runner_compass; // 72
-	MystResourceType8 *_maze_runner_light; // 76
-	MystResourceType8 *_maze_runner_right_button; // 80
-	MystResourceType8 *_maze_runner_left_button; // 84
-	bool _maze_runner_door_opened; // 160
+	uint16 _mazeRunnerPosition; // 56
+	uint16 _mazeRunnerDirection; // 58
+	MystResourceType8 *_mazeRunnerWindow; // 68
+	MystResourceType8 *_mazeRunnerCompass; // 72
+	MystResourceType8 *_mazeRunnerLight; // 76
+	MystResourceType8 *_mazeRunnerRightButton; // 80
+	MystResourceType8 *_mazeRunnerLeftButton; // 84
+	bool _mazeRunnerDoorOpened; // 160
 
-	uint16 _sound_lock_sound_id;
-	MystResourceType10 *_sound_lock_slider_1; // 164
-	MystResourceType10 *_sound_lock_slider_2; // 168
-	MystResourceType10 *_sound_lock_slider_3; // 172
-	MystResourceType10 *_sound_lock_slider_4; // 176
-	MystResourceType10 *_sound_lock_slider_5; // 180
-	MystResourceType8 *_sound_lock_button; // 184
+	uint16 _soundLockSoundId;
+	MystResourceType10 *_soundLockSlider1; // 164
+	MystResourceType10 *_soundLockSlider2; // 168
+	MystResourceType10 *_soundLockSlider3; // 172
+	MystResourceType10 *_soundLockSlider4; // 176
+	MystResourceType10 *_soundLockSlider5; // 180
+	MystResourceType8 *_soundLockButton; // 184
 
-	void sound_receiver_left_right(uint direction);
-	void sound_receiver_update();
-	void sound_receiver_draw_view();
-	void sound_receiver_draw_angle();
-	void sound_receiver_increase_speed();
-	void sound_receiver_update_sound();
-	uint16 sound_receiver_current_sound(uint16 source, uint16 position);
-	void sound_receiver_solution(uint16 source, uint16 &solution, bool &enabled);
+	void soundReceiverLeftRight(uint direction);
+	void soundReceiverUpdate();
+	void soundReceiverDrawView();
+	void soundReceiverDrawAngle();
+	void soundReceiverIncreaseSpeed();
+	void soundReceiverUpdateSound();
+	uint16 soundReceiverCurrentSound(uint16 source, uint16 position);
+	void soundReceiverSolution(uint16 source, uint16 &solution, bool &enabled);
 
 	uint16 soundLockCurrentSound(uint16 position, bool pixels);
 	MystResourceType10 *soundLockSliderFromVar(uint16 var);

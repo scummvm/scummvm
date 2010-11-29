@@ -105,7 +105,7 @@ public:
 	void copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
 	void copyImageToScreen(uint16 image, Common::Rect dest);
 	void updateScreen();
-	void animatedUpdate(uint16 type, Common::Rect rect, uint16 steps, uint16 delay);
+	void runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay);
 	void drawRect(Common::Rect rect, RectState state);
 
 protected:

@@ -97,53 +97,53 @@ void MystScriptParser::setupOpcodes() {
 
 	static const MystOpcode myst_opcodes[] = {
 		// "Standard" Opcodes
-		OPCODE(0, o_0_toggleVar),
-		OPCODE(1, o_1_setVar),
-		OPCODE(2, o_2_changeCardSwitch),
-		OPCODE(3, o_3_takePage),
-		OPCODE(4, o_4_redrawCard),
+		OPCODE(0, o_toggleVar),
+		OPCODE(1, o_setVar),
+		OPCODE(2, o_changeCardSwitch),
+		OPCODE(3, o_takePage),
+		OPCODE(4, o_redrawCard),
 		// Opcode 5 Not Present
-		OPCODE(6, o_6_goToDest),
-		OPCODE(7, o_6_goToDest),
-		OPCODE(8, o_6_goToDest),
-		OPCODE(9, o_9_triggerMovie),
-		OPCODE(10, o_10_toggleVarNoRedraw),
+		OPCODE(6, o_goToDest),
+		OPCODE(7, o_goToDest),
+		OPCODE(8, o_goToDest),
+		OPCODE(9, o_triggerMovie),
+		OPCODE(10, o_toggleVarNoRedraw),
 		// Opcode 11 Not Present
-		OPCODE(12, o_2_changeCardSwitch),
-		OPCODE(13, o_2_changeCardSwitch),
-		OPCODE(14, o_14_drawAreaState),
-		OPCODE(15, o_15_redrawAreaForVar),
-		OPCODE(16, o_16_changeCardDirectional),
-		OPCODE(17, o_17_changeCardPush),
-		OPCODE(18, o_18_changeCardPop),
-		OPCODE(19, o_19_enableAreas),
-		OPCODE(20, o_20_disableAreas),
-		OPCODE(21, o_21_directionalUpdate),
-		OPCODE(22, o_6_goToDest),
-		OPCODE(23, o_23_toggleAreasActivation),
-		OPCODE(24, o_24_playSound),
+		OPCODE(12, o_changeCardSwitch),
+		OPCODE(13, o_changeCardSwitch),
+		OPCODE(14, o_drawAreaState),
+		OPCODE(15, o_redrawAreaForVar),
+		OPCODE(16, o_changeCardDirectional),
+		OPCODE(17, o_changeCardPush),
+		OPCODE(18, o_changeCardPop),
+		OPCODE(19, o_enableAreas),
+		OPCODE(20, o_disableAreas),
+		OPCODE(21, o_directionalUpdate),
+		OPCODE(22, o_goToDest),
+		OPCODE(23, o_toggleAreasActivation),
+		OPCODE(24, o_playSound),
 		// Opcode 25 Not Present, original calls replaceSound
-		OPCODE(26, o_26_stopSoundBackground),
-		OPCODE(27, o_27_playSoundBlocking),
-		OPCODE(28, o_28_restoreDefaultRect),
-		OPCODE(29, o_29_33_blitRect),
-		OPCODE(30, o_30_changeSound),
-		OPCODE(31, o_31_soundPlaySwitch),
-		OPCODE(32, o_32_soundResumeBackground),
-		OPCODE(33, o_29_33_blitRect),
-		OPCODE(34, o_34_changeCard),
-		OPCODE(35, o_35_drawImageChangeCard),
-		OPCODE(36, o_36_changeMainCursor),
-		OPCODE(37, o_37_hideCursor),
-		OPCODE(38, o_38_showCursor),
-		OPCODE(39, o_39_delay),
-		OPCODE(40, o_40_changeStack),
-		OPCODE(41, o_41_changeCardPlaySoundDirectional),
-		OPCODE(42, o_42_directionalUpdatePlaySound),
-		OPCODE(43, o_43_saveMainCursor),
-		OPCODE(44, o_44_restoreMainCursor),
+		OPCODE(26, o_stopSoundBackground),
+		OPCODE(27, o_playSoundBlocking),
+		OPCODE(28, o_restoreDefaultRect),
+		OPCODE(29, o_blitRect),
+		OPCODE(30, o_changeSound),
+		OPCODE(31, o_soundPlaySwitch),
+		OPCODE(32, o_soundResumeBackground),
+		OPCODE(33, o_blitRect),
+		OPCODE(34, o_changeCard),
+		OPCODE(35, o_drawImageChangeCard),
+		OPCODE(36, o_changeMainCursor),
+		OPCODE(37, o_hideCursor),
+		OPCODE(38, o_showCursor),
+		OPCODE(39, o_delay),
+		OPCODE(40, o_changeStack),
+		OPCODE(41, o_changeCardPlaySoundDirectional),
+		OPCODE(42, o_directionalUpdatePlaySound),
+		OPCODE(43, o_saveMainCursor),
+		OPCODE(44, o_restoreMainCursor),
 		// Opcode 45 Not Present
-		OPCODE(46, o_46_soundWaitStop),
+		OPCODE(46, o_soundWaitStop),
 		// Opcodes 47 to 99 Not Present
 
 		OPCODE(0xFFFF, NOP)
@@ -279,7 +279,7 @@ void MystScriptParser::animatedUpdate(uint16 argc, uint16 *argv, uint16 delay) {
 		debugC(kDebugScript, "\tkind / direction: %d", kind);
 		debugC(kDebugScript, "\tsteps: %d", steps);
 
-		_vm->_gfx->animatedUpdate(kind, rect, steps, delay);
+		_vm->_gfx->runTransition(kind, rect, steps, delay);
 
 		argsRead += 6;
 	}
@@ -304,18 +304,18 @@ void MystScriptParser::NOP(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "NOP");
 }
 
-void MystScriptParser::o_0_toggleVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_toggleVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	toggleVar(var);
 	_vm->redrawArea(var);
 }
 
-void MystScriptParser::o_1_setVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_setVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (setVarValue(var, argv[0])) {
 		_vm->redrawArea(var);
 	}
 }
 
-void MystScriptParser::o_2_changeCardSwitch(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_changeCardSwitch(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Opcodes 2, 12, and 13 are the same
 	uint16 value = getVar(var);
 
@@ -329,7 +329,7 @@ void MystScriptParser::o_2_changeCardSwitch(uint16 op, uint16 var, uint16 argc, 
 		warning("Missing invokingResource in altDest call");
 }
 
-void MystScriptParser::o_3_takePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_takePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	uint16 *game_globals = _vm->_saveLoad->_v->game_globals;
 
 	uint16 cursorId = argv[0];
@@ -341,7 +341,7 @@ void MystScriptParser::o_3_takePage(uint16 op, uint16 var, uint16 argc, uint16 *
 	toggleVar(var);
 
 	if (oldPage != game_globals[2]) {
-		_vm->_gfx->hideCursor();
+		_vm->_cursor->hideCursor();
 		_vm->redrawArea(var);
 
 		// Set new cursor
@@ -350,11 +350,11 @@ void MystScriptParser::o_3_takePage(uint16 op, uint16 var, uint16 argc, uint16 *
 		else
 			_vm->setMainCursor(kDefaultMystCursor);
 
-		_vm->_gfx->showCursor();
+		_vm->_cursor->showCursor();
 	}
 }
 
-void MystScriptParser::o_4_redrawCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_redrawCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Redraw card", op);
 
 	// TODO: Is redrawing the background correct ?
@@ -363,7 +363,7 @@ void MystScriptParser::o_4_redrawCard(uint16 op, uint16 var, uint16 argc, uint16
 	_vm->_gfx->updateScreen();
 }
 
-void MystScriptParser::o_6_goToDest(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_goToDest(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
 
 	if (_invokingResource != NULL)
@@ -371,7 +371,7 @@ void MystScriptParser::o_6_goToDest(uint16 op, uint16 var, uint16 argc, uint16 *
 	else
 		warning("Opcode %d: Missing invokingResource", op);
 }
-void MystScriptParser::o_9_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Trigger Type 6 Resource Movie..", op);
 	// If movie has sound, pause background music
 
@@ -386,13 +386,13 @@ void MystScriptParser::o_9_triggerMovie(uint16 op, uint16 var, uint16 argc, uint
 	// If movie has sound, resume background music
 }
 
-void MystScriptParser::o_10_toggleVarNoRedraw(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_toggleVarNoRedraw(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: toggleVarNoRedraw", op);
 
 	toggleVar(var);
 }
 
-void MystScriptParser::o_14_drawAreaState(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_drawAreaState(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: drawAreaState, state: %d", op, argv[0]);
 	debugC(kDebugScript, "\tVar: %d", var);
 
@@ -400,14 +400,14 @@ void MystScriptParser::o_14_drawAreaState(uint16 op, uint16 var, uint16 argc, ui
 	parent->drawConditionalDataToScreen(argv[0]);
 }
 
-void MystScriptParser::o_15_redrawAreaForVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_redrawAreaForVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: dropPage", op);
 	debugC(kDebugScript, "\tvar: %d", var);
 
 	_vm->redrawArea(var);
 }
 
-void MystScriptParser::o_16_changeCardDirectional(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_changeCardDirectional(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 	// Used by Channelwood Card 3262 (In Elevator)
 	debugC(kDebugScript, "Opcode %d: Change Card with optional directional update", op);
@@ -430,7 +430,7 @@ void MystScriptParser::o_16_changeCardDirectional(uint16 op, uint16 var, uint16 
 // TODO: The purpose of the optional argv[1] on Opcode 17 and argv[0]
 // on Opcode 18 which are always 4, 5 or 6 is unknown.
 
-void MystScriptParser::o_17_changeCardPush(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_changeCardPush(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 2) {
@@ -451,7 +451,7 @@ void MystScriptParser::o_17_changeCardPush(uint16 op, uint16 var, uint16 argc, u
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::o_18_changeCardPop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_changeCardPop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 1) {
@@ -466,7 +466,7 @@ void MystScriptParser::o_18_changeCardPop(uint16 op, uint16 var, uint16 argc, ui
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::o_19_enableAreas(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_enableAreas(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc > 0) {
@@ -486,7 +486,7 @@ void MystScriptParser::o_19_enableAreas(uint16 op, uint16 var, uint16 argc, uint
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::o_20_disableAreas(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_disableAreas(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc > 0) {
@@ -512,13 +512,13 @@ void MystScriptParser::o_20_disableAreas(uint16 op, uint16 var, uint16 argc, uin
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::o_21_directionalUpdate(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_directionalUpdate(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Transition / Directional update", op);
 
 	animatedUpdate(argc, argv, 0);
 }
 
-void MystScriptParser::o_23_toggleAreasActivation(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_toggleAreasActivation(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (argc > 0) {
 		debugC(kDebugScript, "Opcode %d: Toggle areas activation", op);
 
@@ -544,7 +544,7 @@ void MystScriptParser::o_23_toggleAreasActivation(uint16 op, uint16 var, uint16 
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::o_24_playSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_playSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 1) {
@@ -558,12 +558,12 @@ void MystScriptParser::o_24_playSound(uint16 op, uint16 var, uint16 argc, uint16
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::o_26_stopSoundBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_stopSoundBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: stopSoundBackground", op);
 	//_vm->_sound->stopBackground();
 }
 
-void MystScriptParser::o_27_playSoundBlocking(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_playSoundBlocking(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	uint16 soundId = argv[0];
 
 	debugC(kDebugScript, "Opcode %d: playSoundBlocking", op);
@@ -572,7 +572,7 @@ void MystScriptParser::o_27_playSoundBlocking(uint16 op, uint16 var, uint16 argc
 	_vm->_sound->playSoundBlocking(soundId);
 }
 
-void MystScriptParser::o_28_restoreDefaultRect(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_restoreDefaultRect(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	Common::Rect rect;
@@ -603,7 +603,7 @@ void MystScriptParser::o_28_restoreDefaultRect(uint16 op, uint16 var, uint16 arg
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::o_29_33_blitRect(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_blitRect(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// TODO: Opcode 29 called on Mechanical Card 6178 causes a engine
@@ -650,7 +650,7 @@ void MystScriptParser::o_29_33_blitRect(uint16 op, uint16 var, uint16 argc, uint
 //       Current behaviour here and with VIEW sound block is not right as demonstrated
 //       by Channelwood Card 3280 (Tank Valve) and water flow sound behaviour in pipe
 //       on cards leading from shed...
-void MystScriptParser::o_30_changeSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_changeSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	int16 *soundList = NULL;
@@ -730,7 +730,7 @@ void MystScriptParser::o_30_changeSound(uint16 op, uint16 var, uint16 argc, uint
 	soundListVolume = NULL;
 }
 
-void MystScriptParser::o_31_soundPlaySwitch(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_soundPlaySwitch(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Switch Choice of Play Sound", op);
 
 	uint16 value = getVar(var);
@@ -744,12 +744,12 @@ void MystScriptParser::o_31_soundPlaySwitch(uint16 op, uint16 var, uint16 argc, 
 	}
 }
 
-void MystScriptParser::o_32_soundResumeBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_soundResumeBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: soundResumeBackground", op);
 	//_vm->_sound->resumeBackground();
 }
 
-void MystScriptParser::o_34_changeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_changeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Change Card", op);
 
 	uint16 cardId = argv[0];
@@ -763,7 +763,7 @@ void MystScriptParser::o_34_changeCard(uint16 op, uint16 var, uint16 argc, uint1
 	_vm->changeToCard(cardId, true);
 }
 
-void MystScriptParser::o_35_drawImageChangeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_drawImageChangeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 3) {
@@ -785,7 +785,7 @@ void MystScriptParser::o_35_drawImageChangeCard(uint16 op, uint16 var, uint16 ar
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::o_36_changeMainCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_changeMainCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Change main cursor", op);
 
 	uint16 cursorId = argv[0];
@@ -796,17 +796,17 @@ void MystScriptParser::o_36_changeMainCursor(uint16 op, uint16 var, uint16 argc,
 	_vm->_cursor->setCursor(cursorId);
 }
 
-void MystScriptParser::o_37_hideCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_hideCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hide Cursor", op);
 	_vm->_cursor->hideCursor();
 }
 
-void MystScriptParser::o_38_showCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_showCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Show Cursor", op);
 	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser::o_39_delay(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_delay(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Mechanical Card 6327 (Elevator)
 	debugC(kDebugScript, "Opcode %d: Delay", op);
 
@@ -817,7 +817,7 @@ void MystScriptParser::o_39_delay(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	_vm->_system->delayMillis(time);
 }
 
-void MystScriptParser::o_40_changeStack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_changeStack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	Audio::SoundHandle *handle;
 	varUnusedCheck(op, var);
 
@@ -880,7 +880,7 @@ void MystScriptParser::o_40_changeStack(uint16 op, uint16 var, uint16 argc, uint
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::o_41_changeCardPlaySoundDirectional(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_changeCardPlaySoundDirectional(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Play Sound, Change Card and Directional Update Screen Region", op);
 
 	uint16 cardId = argv[0];
@@ -901,7 +901,7 @@ void MystScriptParser::o_41_changeCardPlaySoundDirectional(uint16 op, uint16 var
 	animatedUpdate(dataSize, &argv[4], delayBetweenSteps);
 }
 
-void MystScriptParser::o_42_directionalUpdatePlaySound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_directionalUpdatePlaySound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Play Sound and Directional Update Screen Region", op);
 
 	uint16 soundId = argv[0];
@@ -918,25 +918,25 @@ void MystScriptParser::o_42_directionalUpdatePlaySound(uint16 op, uint16 var, ui
 	animatedUpdate(dataSize, &argv[3], delayBetweenSteps);
 }
 
-void MystScriptParser::o_43_saveMainCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_saveMainCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Save main cursor", op);
 
 	_savedCursorId = _vm->getMainCursor();
 }
 
-void MystScriptParser::o_44_restoreMainCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_restoreMainCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Restore main cursor", op);
 
 	_vm->setMainCursor(_savedCursorId);
 }
 
-void MystScriptParser::o_46_soundWaitStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_soundWaitStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Selenitic Card 1191 (Maze Runner)
 	// Used on Mechanical Card 6267 (Code Lock)
 	// Used when Button is pushed...
 	debugC(kDebugScript, "Opcode %d: Wait for foreground sound to finish", op);
 
-	//TODO: Implement
+	// TODO: Implement
 }
 
 } // End of namespace Mohawk

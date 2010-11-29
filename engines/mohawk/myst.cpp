@@ -300,22 +300,22 @@ Common::Error MohawkEngine_Myst::run() {
 					checkCurrentResource();
 				}
 				if (_curResource >= 0 && _resources[_curResource]->isEnabled() && _mouseClicked) {
-					debug(2, "Sending mouse move event to resource %d\n", _curResource);
-					_resources[_curResource]->handleMouseDrag(&event.mouse);
+					debug(2, "Sending mouse move event to resource %d", _curResource);
+					_resources[_curResource]->handleMouseDrag(event.mouse);
 				}
 				break;
 			case Common::EVENT_LBUTTONUP:
 				_mouseClicked = false;
 				if (_curResource >= 0 && _resources[_curResource]->isEnabled()) {
-					debug(2, "Sending mouse up event to resource %d\n", _curResource);
-					_resources[_curResource]->handleMouseUp(&event.mouse);
+					debug(2, "Sending mouse up event to resource %d", _curResource);
+					_resources[_curResource]->handleMouseUp(event.mouse);
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_mouseClicked = true;
 				if (_curResource >= 0 && _resources[_curResource]->isEnabled()) {
-					debug(2, "Sending mouse up event to resource %d\n", _curResource);
-					_resources[_curResource]->handleMouseDown(&event.mouse);
+					debug(2, "Sending mouse up event to resource %d", _curResource);
+					_resources[_curResource]->handleMouseDown(event.mouse);
 				}
 				break;
 			case Common::EVENT_KEYDOWN:
@@ -956,7 +956,7 @@ MystResource *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstSt
 	case kMystDragArea:
 		resource =  new MystResourceType11(this, rlstStream, parent);
 		break;
-	case kMystVideoInfos:
+	case kMystVideoInfo:
 		resource =  new MystResourceType12(this, rlstStream, parent);
 		break;
 	case kMystHoverArea:

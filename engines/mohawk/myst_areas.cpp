@@ -68,7 +68,7 @@ MystResource::MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rl
 MystResource::~MystResource() {
 }
 
-void MystResource::handleMouseUp(Common::Point *mouse) {
+void MystResource::handleMouseUp(const Common::Point &mouse) {
 	if (_dest != 0)
 		_vm->changeToCard(_dest, true);
 	else
@@ -101,7 +101,7 @@ MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableRead
 	_script = vm->_scriptParser->readScript(rlstStream, kMystScriptNormal);
 }
 
-void MystResourceType5::handleMouseUp(Common::Point *mouse) {
+void MystResourceType5::handleMouseUp(const Common::Point &mouse) {
 	_vm->_scriptParser->runScript(_script, this);
 }
 
@@ -238,7 +238,7 @@ void MystResourceType7::handleAnimation() {
 	}
 }
 
-void MystResourceType7::handleMouseUp(Common::Point *mouse) {
+void MystResourceType7::handleMouseUp(const Common::Point &mouse) {
 	if (_var7 == 0xFFFF) {
 		if (_numSubResources == 1)
 			_subResources[0]->handleMouseUp(mouse);
@@ -258,7 +258,7 @@ void MystResourceType7::handleMouseUp(Common::Point *mouse) {
 	}
 }
 
-void MystResourceType7::handleMouseDown(Common::Point *mouse) {
+void MystResourceType7::handleMouseDown(const Common::Point &mouse) {
 	if (_var7 == 0xFFFF) {
 		if (_numSubResources == 1)
 			_subResources[0]->handleMouseDown(mouse);
@@ -520,7 +520,7 @@ void MystResourceType10::drawDataToScreen()
 	MystResourceType8::drawDataToScreen();
 }
 
-void MystResourceType10::handleMouseDown(Common::Point *mouse) {
+void MystResourceType10::handleMouseDown(const Common::Point &mouse) {
 	// Tell the engine we are dragging a resource
 	_vm->_dragResource = this;
 
@@ -535,7 +535,7 @@ void MystResourceType10::handleMouseDown(Common::Point *mouse) {
 	drawConditionalDataToScreen(2);
 }
 
-void MystResourceType10::handleMouseUp(Common::Point *mouse) {
+void MystResourceType10::handleMouseUp(const Common::Point &mouse) {
 	updatePosition(mouse);
 
 	// Restore background
@@ -567,7 +567,7 @@ void MystResourceType10::handleMouseUp(Common::Point *mouse) {
 	_vm->_dragResource = 0;
 }
 
-void MystResourceType10::handleMouseDrag(Common::Point *mouse) {
+void MystResourceType10::handleMouseDrag(const Common::Point &mouse) {
 	updatePosition(mouse);
 
 	MystResourceType11::handleMouseDrag(mouse);
@@ -579,14 +579,15 @@ void MystResourceType10::handleMouseDrag(Common::Point *mouse) {
 	drawConditionalDataToScreen(2);
 }
 
-void MystResourceType10::updatePosition(Common::Point *mouse) {
+void MystResourceType10::updatePosition(const Common::Point &mouse) {
 	bool positionChanged = false;
 
-	setPositionClipping(mouse, mouse);
+	Common::Point mouseClipped;
+	setPositionClipping(mouse, mouseClipped);
 
 	if (_flagHV & 2) {
 		if (_stepV) {
-			uint16 center = _minV + _stepV * (mouse->y - _minV) / _stepV;
+			uint16 center = _minV + _stepV * (mouseClipped.y - _minV) / _stepV;
 			uint16 top = center - _sliderHeigth / 2;
 			if (_rect.top != top) {
 				positionChanged = true;
@@ -595,8 +596,8 @@ void MystResourceType10::updatePosition(Common::Point *mouse) {
 			}
 		} else {
 			positionChanged = true;
-			_pos.y = mouse->y;
-			_rect.top = mouse->y - _sliderHeigth / 2;
+			_pos.y = mouseClipped.y;
+			_rect.top = mouseClipped.y - _sliderHeigth / 2;
 		}
 		if (positionChanged) {
 			_rect.bottom = _rect.top + _sliderHeigth;
@@ -607,7 +608,7 @@ void MystResourceType10::updatePosition(Common::Point *mouse) {
 
 	if (_flagHV & 1) {
 		if (_stepH) {
-			uint16 center = _minH + _stepH * (mouse->x - _minH) / _stepH;
+			uint16 center = _minH + _stepH * (mouseClipped.x - _minH) / _stepH;
 			uint16 left = center - _sliderWidth / 2;
 			if (_rect.left != left) {
 				positionChanged = true;
@@ -616,8 +617,8 @@ void MystResourceType10::updatePosition(Common::Point *mouse) {
 			}
 		} else {
 			positionChanged = true;
-			_pos.x = mouse->x;
-			_rect.left = mouse->x - _sliderWidth / 2;
+			_pos.x = mouseClipped.x;
+			_rect.left = mouseClipped.x - _sliderWidth / 2;
 		}
 		if (positionChanged) {
 			_rect.right = _rect.left + _sliderWidth;
@@ -683,30 +684,30 @@ MystResourceType11::~MystResourceType11() {
 		delete[] _lists[i].list;
 }
 
-void MystResourceType11::handleMouseDown(Common::Point *mouse) {
-	setPositionClipping(mouse, &_pos);
+void MystResourceType11::handleMouseDown(const Common::Point &mouse) {
+	setPositionClipping(mouse, _pos);
 
 	_vm->_scriptParser->runOpcode(_mouseDownOpcode, _var8);
 }
 
-void MystResourceType11::handleMouseUp(Common::Point *mouse) {
-	setPositionClipping(mouse, &_pos);
+void MystResourceType11::handleMouseUp(const Common::Point &mouse) {
+	setPositionClipping(mouse, _pos);
 
 	_vm->_scriptParser->runOpcode(_mouseUpOpcode, _var8);
 }
 
-void MystResourceType11::handleMouseDrag(Common::Point *mouse) {
-	setPositionClipping(mouse, &_pos);
+void MystResourceType11::handleMouseDrag(const Common::Point &mouse) {
+	setPositionClipping(mouse, _pos);
 
 	_vm->_scriptParser->runOpcode(_mouseDragOpcode, _var8);
 }
 
-void MystResourceType11::setPositionClipping(Common::Point *mouse, Common::Point *dest) {
+void MystResourceType11::setPositionClipping(const Common::Point &mouse, Common::Point &dest) {
 	if (_flagHV & 2) {
-		dest->y = CLIP<uint16>(mouse->y, _minV, _maxV);
+		dest.y = CLIP<uint16>(mouse.y, _minV, _maxV);
 	}
 	if (_flagHV & 1) {
-		dest->x = CLIP<uint16>(mouse->x, _minH, _maxH);
+		dest.x = CLIP<uint16>(mouse.x, _minH, _maxH);
 	}
 }
 
@@ -770,7 +771,7 @@ void MystResourceType12::handleAnimation() {
 	}
 }
 
-void MystResourceType12::handleMouseUp(Common::Point *mouse) {
+void MystResourceType12::handleMouseUp(const Common::Point &mouse) {
 	// HACK/TODO: Trigger Animation on Mouse Click. Probably not final version. Variable/Type 11 Controlled?
 	_currentFrame = _firstFrame;
 	_doAnimation = true;
@@ -794,7 +795,7 @@ void MystResourceType13::handleMouseLeave() {
 	_vm->_scriptParser->runOpcode(_leaveOpcode);
 }
 
-void MystResourceType13::handleMouseUp(Common::Point *mouse) {
+void MystResourceType13::handleMouseUp(const Common::Point &mouse) {
 	// Type 13 Resources do nothing on Mouse Clicks.
 	// This is required to override the inherited default
 	// i.e. MystResource::handleMouseUp

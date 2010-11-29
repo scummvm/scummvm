@@ -299,7 +299,7 @@ void MystGraphics::updateScreen() {
 	}
 }
 
-void MystGraphics::animatedUpdate(uint16 type, Common::Rect rect, uint16 steps, uint16 delay) {
+void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay) {
 	// Bypass dirty rects for animated updates
 	_dirtyRects.clear();
 
