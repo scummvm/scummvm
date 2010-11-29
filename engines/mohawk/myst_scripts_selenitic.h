@@ -129,6 +129,7 @@ private:
 	bool mazeRunnerForwardAllowed(uint16 position);
 	void mazeRunnerUpdateCompass();
 	void mazeRunnerPlaySoundHelp();
+	void mazeRunnerPlayVideo(uint16 video, uint16 pos);
 };
 
 }
