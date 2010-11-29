@@ -42,6 +42,11 @@ namespace Mohawk {
 MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
 	_invokingResource = NULL;
+
+	// Card ID preinitialized by the engine for use by opcode 18
+	// when linking back to Myst in the library
+	if (_vm->getCurStack() == kMystStack)
+		_savedCardId = 4329;
 }
 
 MystScriptParser_Myst::~MystScriptParser_Myst() {
