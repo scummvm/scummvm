@@ -260,6 +260,32 @@ bool MohawkArchive::hasResource(uint32 tag, const Common::String &resName) {
 	return getIDIndex(typeIndex, resName) >= 0;
 }
 
+Common::String MohawkArchive::getName(uint32 tag, uint16 id) {
+	if (!_mhk)
+		return 0;
+
+	int16 typeIndex = getTypeIndex(tag);
+
+	if (typeIndex < 0)
+		return 0;
+
+	int16 idIndex = -1;
+
+	for (uint16 i = 0; i < _types[typeIndex].resTable.resources; i++)
+		if (_types[typeIndex].resTable.entries[i].id == id) {
+			idIndex = _types[typeIndex].resTable.entries[i].index;
+			break;
+		}
+
+	assert(idIndex >= 0);
+
+	for (uint16 i = 0; i < _types[typeIndex].nameTable.num; i++)
+		if (_types[typeIndex].nameTable.entries[i].index == idIndex)
+			return _types[typeIndex].nameTable.entries[i].name;
+
+	return 0;	// not found
+}
+
 uint32 MohawkArchive::getOffset(uint32 tag, uint16 id) {
 	assert(_mhk);
 

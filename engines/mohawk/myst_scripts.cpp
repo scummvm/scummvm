@@ -97,7 +97,8 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(7, opcode_7),
 		OPCODE(8, opcode_8),
 		OPCODE(9, opcode_9),
-		// Opcode 10 to 11 Not Present
+		OPCODE(10, opcode_10),
+		// Opcode 11 Not Present
 		OPCODE(12, altDest),
 		OPCODE(13, altDest),
 		OPCODE(14, opcode_14),
@@ -111,7 +112,7 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(22, opcode_22),
 		OPCODE(23, opcode_23),
 		OPCODE(24, playSound),
-		// Opcode 25 Not Present
+		// Opcode 25 Not Present, original calls replaceSound
 		OPCODE(26, opcode_26),
 		OPCODE(27, playSoundBlocking),
 		OPCODE(28, opcode_28),
@@ -211,6 +212,22 @@ MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, Myst
 	return script;
 }
 
+uint16 MystScriptParser::getVar(uint16 var) {
+	warning("Unimplemented var getter 0x%02x (%d)", var, var);
+	return _vm->_varStore->getVar(var);
+}
+
+void MystScriptParser::toggleVar(uint16 var) {
+	warning("Unimplemented var toggle 0x%02x (%d)", var, var);
+	_vm->_varStore->setVar(var, (_vm->_varStore->getVar(var) + 1) % 2);
+}
+
+bool MystScriptParser::setVarValue(uint16 var, uint16 value) {
+	warning("Unimplemented var setter 0x%02x (%d)", var, var);
+	_vm->_varStore->setVar(var, value);
+	return false;
+}
+
 // NOTE: Check to be used on Opcodes where var is thought
 // not to be used. This emits a warning if var is nonzero.
 // It is possible that the opcode does use var 0 in this case,
@@ -240,33 +257,19 @@ void MystScriptParser::NOP(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 }
 
 void MystScriptParser::toggleBoolean(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: toggleBoolean() var %d", op, var);
-		// HACK: This Mech Card seems to be a special case... Are there others,
-		// or a more general definition of this opcode?
-		if (_vm->getCurStack() == kMechanicalStack && _vm->getCurCard() == 6267)
-			_vm->_varStore->setVar(var, (_vm->_varStore->getVar(var) + 1) % 10);
-		else
-			_vm->_varStore->setVar(var, !_vm->_varStore->getVar(var));
-	} else
-		unknown(op, var, argc, argv);
+	toggleVar(var);
 }
 
 void MystScriptParser::setVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 1) {
-		debugC(kDebugScript, "Opcode %d: setVar var %d = %d", op, var, argv[0]);
-
-		_vm->_varStore->setVar(var, argv[0]);
-	} else
-		unknown(op, var, argc, argv);
+	setVarValue(var, argv[0]);
 }
 
 void MystScriptParser::altDest(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (argc == 1) {
 		// TODO: Work out any differences between opcode 2, 12 and 13..
-		debugC(kDebugScript, "Opcode %d: altDest var %d: %d", op, var, _vm->_varStore->getVar(var));
+		debugC(kDebugScript, "Opcode %d: altDest var %d: %d", op, var, getVar(var));
 
-		if (_vm->_varStore->getVar(var))
+		if (getVar(var))
 			_vm->changeToCard(argv[0]);
 		else if (_invokingResource != NULL)
 			_vm->changeToCard(_invokingResource->getDest());
@@ -282,17 +285,17 @@ void MystScriptParser::takePage(uint16 op, uint16 var, uint16 argc, uint16 *argv
 
 		debugC(kDebugScript, "Opcode %d: takePage Var %d CursorId %d", op, var, cursorId);
 
-		if (_vm->_varStore->getVar(var)) {
+		if (getVar(var)) {
 			_vm->setMainCursor(cursorId);
 
-			_vm->_varStore->setVar(var, 0);
+			setVarValue(var, 0);
 
 			// Return pages that are already held
 			if (var == 102)
-				_vm->_varStore->setVar(103, 1);
+				setVarValue(103, 1);
 
 			if (var == 103)
-				_vm->_varStore->setVar(102, 1);
+				setVarValue(102, 1);
 		}
 	} else
 		unknown(op, var, argc, argv);
@@ -306,7 +309,7 @@ void MystScriptParser::opcode_4(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		// as it breaks Selenitic Card 1257, though this may be due to screen update. Also,
 		// this may actually be a "Force Card Reload" or "VIEW conditional re-evaluation".. in
 		// the general case, rather than this image blit...
-		uint16 var_value = _vm->_varStore->getVar(var);
+		uint16 var_value = getVar(var);
 		if (var_value < _vm->_view.scriptResCount) {
 			if (_vm->_view.scriptResources[var_value].type == 1) { // TODO: Add Symbols for Types
 				_vm->_gfx->copyImageToScreen(_vm->_view.scriptResources[var_value].id, Common::Rect(0, 0, 544, 333));
@@ -389,15 +392,18 @@ void MystScriptParser::opcode_9(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		unknown(op, var, argc, argv);
 }
 
+void MystScriptParser::opcode_10(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	varUnusedCheck(op, var);
+
+	unknown(op, var, argc, argv);
+}
+
 void MystScriptParser::opcode_14(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (argc == 1) {
 		debugC(kDebugScript, "Opcode %d: Unknown, 1 Argument: %d", op, argv[0]);
 		debugC(kDebugScript, "\tVar: %d", var);
 
-		// TODO: Function Unknown...
-		// Function looks like it changes the Var8 of the invoking resource to argument value..
-		// Most calls seem to have var = 0, but used in Myst Card 4500 (Execute Button)
-		// with Var 105..
+		_invokingResource->drawConditionalDataToScreen(argv[0]);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -408,7 +414,7 @@ void MystScriptParser::dropPage(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		debugC(kDebugScript, "\tvar: %d", var);
 
 		// TODO: Need to check where this is used
-		_vm->_varStore->setVar(var, 1);
+		setVarValue(var, 1);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -674,8 +680,8 @@ void MystScriptParser::opcode_28(uint16 op, uint16 var, uint16 argc, uint16 *arg
 			imageToDraw = _vm->_view.mainImage;
 		else {
 			for (uint16 i = 0; i < _vm->_view.conditionalImageCount; i++)
-				if (_vm->_varStore->getVar(_vm->_view.conditionalImages[i].var) < _vm->_view.conditionalImages[i].numStates)
-					imageToDraw = _vm->_view.conditionalImages[i].values[_vm->_varStore->getVar(_vm->_view.conditionalImages[i].var)];
+				if (getVar(_vm->_view.conditionalImages[i].var) < _vm->_view.conditionalImages[i].numStates)
+					imageToDraw = _vm->_view.conditionalImages[i].values[getVar(_vm->_view.conditionalImages[i].var)];
 		}
 		_vm->_gfx->copyImageSectionToScreen(imageToDraw, rect, rect);
 	} else
@@ -747,7 +753,7 @@ void MystScriptParser::opcode_30(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		} else if (soundAction == kMystSoundActionConditional) {
 			debugC(kDebugScript, "Conditional sound list");
 			uint16 condVar = argv[decodeIdx++];
-			uint16 condVarValue = _vm->_varStore->getVar(condVar);
+			uint16 condVarValue = getVar(condVar);
 			uint16 condCount = argv[decodeIdx++];
 
 			debugC(kDebugScript, "\tcondVar: %d = %d", condVar, condVarValue);
@@ -820,7 +826,7 @@ void MystScriptParser::opcode_31(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		debugC(kDebugScript, "\tsoundId0: %d", soundId0);
 		debugC(kDebugScript, "\tsoundId1: %d", soundId1);
 
-		if (_vm->_varStore->getVar(var)) {
+		if (getVar(var)) {
 			if (soundId1)
 				_vm->_sound->playSound(soundId1);
 		} else {

@@ -157,6 +157,7 @@ public:
 
 	bool contains(Common::Point point) { return _rect.contains(point); }
 	virtual void drawDataToScreen() {}
+	virtual void drawConditionalDataToScreen(uint16 state) {}
 	virtual void handleAnimation() {}
 	virtual Common::Rect getRect() { return _rect; }
 	bool isEnabled() { return _enabled; }
@@ -232,15 +233,17 @@ public:
 	MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType8();
 	void drawDataToScreen();
+	void drawConditionalDataToScreen(uint16 state);
 	uint16 getType8Var();
 
-protected:
-	uint16 _var8;
-	uint16 _numSubImages;
 	struct SubImage {
 		uint16 wdib;
 		Common::Rect rect;
 	} *_subImages;
+
+protected:
+	uint16 _var8;
+	uint16 _numSubImages;
 };
 
 // No MystResourceType9!
@@ -249,6 +252,8 @@ class MystResourceType10 : public MystResourceType8 {
 public:
 	MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType10();
+	void handleAnimation();
+	void handleMouseDown();
 	void handleMouseUp();
 
 protected:
@@ -263,12 +268,16 @@ protected:
 		uint16 listCount;
 		uint16 *list;
 	} _lists[4];
+
+	bool _mouseDown;
 };
 
 class MystResourceType11 : public MystResourceType8 {
 public:
 	MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType11();
+	void handleAnimation();
+	void handleMouseDown();
 	void handleMouseUp();
 
 protected:
@@ -283,6 +292,8 @@ protected:
 		uint16 listCount;
 		uint16 *list;
 	} _lists[3];
+
+	bool _mouseDown;
 };
 
 class MystResourceType12 : public MystResourceType8 {
@@ -366,6 +377,7 @@ public:
 	MystGraphics *_gfx;
 	MystSaveLoad *_saveLoad;
 	MystScriptParser *_scriptParser;
+	Common::Array<MystResource*> _resources;
 
 	bool _showResourceRects;
 	void setResourceEnabled(uint16 resourceId, bool enable);
@@ -400,7 +412,6 @@ private:
 
 	void loadHelp(uint16 id);
 
-	Common::Array<MystResource*> _resources;
 	void loadResources();
 	void drawResourceRects();
 	void checkCurrentResource();

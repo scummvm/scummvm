@@ -63,6 +63,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 		OPCODE(7, opcode_7),
 		OPCODE(8, opcode_8),
 		OPCODE(9, opcode_9),
+		OPCODE(10, opcode_10),
 		// TODO: Opcode 10 to 11 Not Present
 		OPCODE(12, altDest),
 		OPCODE(13, altDest),
@@ -2130,21 +2131,21 @@ void MystScriptParser_Myst::opcode_200(uint16 op, uint16 var, uint16 argc, uint1
 		//        change is performed.
 
 		// Play Intro Movies..
-		if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh) {
-			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("mattel", kIntroStack));
-			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("presto", kIntroStack));
-		} else
-			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("broder", kIntroStack));
-
-		_vm->_video->playMovieCentered(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
-
-		if (!(_vm->getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
-			if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh)
-				// intro.mov uses Sorenson, introc uses Cinepak. Otherwise, they're the same.
-				_vm->_video->playMovieCentered(_vm->wrapMovieFilename("introc", kIntroStack));
-			else
-				_vm->_video->playMovieCentered(_vm->wrapMovieFilename("intro", kIntroStack));
-		}
+//		if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh) {
+//			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("mattel", kIntroStack));
+//			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("presto", kIntroStack));
+//		} else
+//			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("broder", kIntroStack));
+//
+//		_vm->_video->playMovieCentered(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
+//
+//		if (!(_vm->getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
+//			if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh)
+//				// intro.mov uses Sorenson, introc uses Cinepak. Otherwise, they're the same.
+//				_vm->_video->playMovieCentered(_vm->wrapMovieFilename("introc", kIntroStack));
+//			else
+//				_vm->_video->playMovieCentered(_vm->wrapMovieFilename("intro", kIntroStack));
+//		}
 
 		_vm->changeToCard(_vm->getCurCard()+1);
 		break;

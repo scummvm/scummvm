@@ -186,6 +186,7 @@ public:
 	virtual Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
 	virtual uint32 getOffset(uint32 tag, uint16 id);
 	virtual uint16 findResourceID(uint32 type, const Common::String &resName);
+	Common::String getName(uint32 tag, uint16 id);
 
 protected:
 	Common::SeekableReadStream *_mhk;

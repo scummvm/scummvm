@@ -134,4 +134,14 @@ uint16 MohawkEngine::findResourceID(uint32 tag, const Common::String &resName) {
 	return 0xFFFF;
 }
 
+Common::String MohawkEngine::getResourceName(uint32 tag, uint16 id) {
+	for (uint32 i = 0; i < _mhk.size(); i++)
+		if (_mhk[i]->hasResource(tag, id)) {
+			return _mhk[i]->getName(tag, id);
+		}
+
+	error("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
+	return 0;
+}
+
 } // End of namespace Mohawk

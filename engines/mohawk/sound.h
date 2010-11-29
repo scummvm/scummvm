@@ -66,6 +66,7 @@ struct SndHandle {
 	Audio::SoundHandle handle;
 	SndHandleType type;
 	uint16 id;
+	Common::String name;
 };
 
 struct SLSTSndHandle {
@@ -120,6 +121,7 @@ public:
 	~Sound();
 
 	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
+	Audio::SoundHandle *replaceSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
 	void playSoundBlocking(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void playMidi(uint16 id);
 	void stopSound();

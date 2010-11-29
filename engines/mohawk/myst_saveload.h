@@ -201,10 +201,11 @@ public:
 
 	void initMystVariables(MystVariables *_tv);
 	void debug_printMystVariables(MystVariables *_tv);
+
+	MystVariables *_v;
 private:
 	MohawkEngine_Myst *_vm;
 	Common::SaveFileManager *_saveFileMan;
-	MystVariables *_v;
 };
 
 } // End of namespace Mohawk

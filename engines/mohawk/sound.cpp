@@ -96,6 +96,8 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop) {
 			audStream = Audio::makeWAVStream(_vm->getResource(ID_MSND, id), DisposeAfterUse::YES);
 		} else
 			audStream = makeMohawkWaveStream(_vm->getResource(ID_MSND, id));
+
+		handle->name = _vm->getResourceName(ID_MSND, id);
 		break;
 	case GType_ZOOMBINI:
 		audStream = makeMohawkWaveStream(_vm->getResource(ID_SND, id));
@@ -117,6 +119,25 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop) {
 	}
 
 	return NULL;
+}
+
+Audio::SoundHandle *Sound::replaceSound(uint16 id, byte volume, bool loop) {
+	debug (0, "Replacing sound %d", id);
+
+	//TODO: The original engine does fading
+
+	Common::String name = _vm->getResourceName(ID_MSND, id);
+
+	// Check if sound is already playing
+	for (uint32 i = 0; i < _handles.size(); i++) {
+		if (_vm->_mixer->isSoundHandleActive(_handles[i].handle)
+				&& name.equals(_handles[i].name)) {
+			return &_handles[i].handle;
+		}
+	}
+
+	stopSound();
+	return playSound(id, volume, loop);
 }
 
 void Sound::playSoundBlocking(uint16 id, byte volume) {

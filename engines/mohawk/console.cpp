@@ -86,9 +86,9 @@ bool MystConsole::Cmd_Var(int argc, const char **argv) {
 	}
 
 	if (argc > 2)
-		_vm->_varStore->setVar((uint16)atoi(argv[1]), (uint32)atoi(argv[2]));
+		_vm->_scriptParser->setVarValue((uint16)atoi(argv[1]), (uint16)atoi(argv[2]));
 
-	DebugPrintf("%d = %d\n", (uint16)atoi(argv[1]), _vm->_varStore->getVar((uint16)atoi(argv[1])));
+	DebugPrintf("%d = %d\n", (uint16)atoi(argv[1]), _vm->_scriptParser->getVar((uint16)atoi(argv[1])));
 
 	return true;
 }

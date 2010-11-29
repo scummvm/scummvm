@@ -72,6 +72,10 @@ public:
 	virtual void disableInitOpcodes() = 0;
 	virtual void runPersistentOpcodes() = 0;
 
+	virtual uint16 getVar(uint16 var);
+	virtual void toggleVar(uint16 var);
+	virtual bool setVarValue(uint16 var, uint16 value);
+
 	DECLARE_OPCODE(unknown);
 
 	DECLARE_OPCODE(toggleBoolean);
@@ -83,6 +87,7 @@ public:
 	DECLARE_OPCODE(opcode_7);
 	DECLARE_OPCODE(opcode_8);
 	DECLARE_OPCODE(opcode_9);
+	DECLARE_OPCODE(opcode_10);
 	DECLARE_OPCODE(opcode_14);
 	DECLARE_OPCODE(dropPage);
 	DECLARE_OPCODE(opcode_16);

@@ -108,6 +108,7 @@ public:
 	bool hasResource(uint32 tag, const Common::String &resName);
 	uint32 getResourceOffset(uint32 tag, uint16 id);
 	uint16 findResourceID(uint32 type, const Common::String &resName);
+	Common::String getResourceName(uint32 tag, uint16 id);
 
 	void pauseGame();
 

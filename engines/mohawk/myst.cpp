@@ -247,12 +247,12 @@ Common::Error MohawkEngine_Myst::run() {
 	else if (getFeatures() & GF_DEMO)
 		changeToStack(kDemoStack);
 	else
-		changeToStack(kIntroStack);
+		changeToStack(kSeleniticStack);
 
 	if (getFeatures() & GF_DEMO)
 		changeToCard(2000);
 	else
-		changeToCard(1);
+		changeToCard(1282);
 
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && !(getFeatures() & GF_DEMO)) {
@@ -416,10 +416,10 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 	// Handle images
 	if (_view.conditionalImageCount != 0) {
 		for (uint16 i = 0; i < _view.conditionalImageCount; i++) {
-			if (_varStore->getVar(_view.conditionalImages[i].var) < _view.conditionalImages[i].numStates)
-				_gfx->copyImageToScreen(_view.conditionalImages[i].values[_varStore->getVar(_view.conditionalImages[i].var)], Common::Rect(0, 0, 544, 333));
+			if (_scriptParser->getVar(_view.conditionalImages[i].var) < _view.conditionalImages[i].numStates)
+				_gfx->copyImageToScreen(_view.conditionalImages[i].values[_scriptParser->getVar(_view.conditionalImages[i].var)], Common::Rect(0, 0, 544, 333));
 			else
-				warning("Conditional image %d variable %d: %d exceeds maximum state of %d", i, _view.conditionalImages[i].var, _varStore->getVar(_view.conditionalImages[i].var), _view.conditionalImages[i].numStates-1);
+				warning("Conditional image %d variable %d: %d exceeds maximum state of %d", i, _view.conditionalImages[i].var, _scriptParser->getVar(_view.conditionalImages[i].var), _view.conditionalImages[i].numStates-1);
 		}
 	} else if (_view.mainImage != 0)
 		_gfx->copyImageToScreen(_view.mainImage, Common::Rect(0, 0, 544, 333));
@@ -429,7 +429,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 	uint16 soundActionVolume = 0;
 
 	if (_view.sound == kMystSoundActionConditional) {
-		uint16 soundVarValue = _varStore->getVar(_view.soundVar);
+		uint16 soundVarValue = _scriptParser->getVar(_view.soundVar);
 		if (soundVarValue >= _view.soundCount)
 			warning("Conditional sound variable outside range");
 		else {
@@ -846,7 +846,7 @@ void MohawkEngine_Myst::checkCursorHints() {
 	for (uint16 i = 0; i < _cursorHintCount; i++)
 		if (_cursorHints[i].id == _curResource && _resources[_cursorHints[i].id]->isEnabled()) {
 			if (_cursorHints[i].cursor == -1) {
-				uint16 var_value = _varStore->getVar(_cursorHints[i].variableHint.var);
+				uint16 var_value = _scriptParser->getVar(_cursorHints[i].variableHint.var);
 
 				if (var_value >= _cursorHints[i].variableHint.numStates)
 					warning("Variable %d Out of Range in variable HINT Resource %d", _cursorHints[i].variableHint.var, i);
@@ -1111,7 +1111,7 @@ void MystResourceType7::drawDataToScreen() {
 		else if (_numSubResources != 0)
 			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
 	} else {
-		uint16 varValue = _vm->_varStore->getVar(_var7);
+		uint16 varValue = _vm->_scriptParser->getVar(_var7);
 
 		if (_numSubResources == 1 && varValue != 0)
 			_subResources[0]->drawDataToScreen();
@@ -1131,7 +1131,7 @@ void MystResourceType7::handleAnimation() {
 		else if (_numSubResources != 0)
 			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
 	} else {
-		uint16 varValue = _vm->_varStore->getVar(_var7);
+		uint16 varValue = _vm->_scriptParser->getVar(_var7);
 
 		if (_numSubResources == 1 && varValue != 0)
 			_subResources[0]->handleAnimation();
@@ -1151,7 +1151,7 @@ void MystResourceType7::handleMouseUp() {
 		else if (_numSubResources != 0)
 			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
 	} else {
-		uint16 varValue = _vm->_varStore->getVar(_var7);
+		uint16 varValue = _vm->_scriptParser->getVar(_var7);
 
 		if (_numSubResources == 1 && varValue != 0)
 			_subResources[0]->handleMouseUp();
@@ -1171,7 +1171,7 @@ void MystResourceType7::handleMouseDown() {
 		else if (_numSubResources != 0)
 			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
 	} else {
-		uint16 varValue = _vm->_varStore->getVar(_var7);
+		uint16 varValue = _vm->_scriptParser->getVar(_var7);
 
 		if (_numSubResources == 1 && varValue != 0)
 			_subResources[0]->handleMouseDown();
@@ -1191,7 +1191,7 @@ void MystResourceType7::handleMouseEnter() {
 		else if (_numSubResources != 0)
 			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
 	} else {
-		uint16 varValue = _vm->_varStore->getVar(_var7);
+		uint16 varValue = _vm->_scriptParser->getVar(_var7);
 
 		if (_numSubResources == 1 && varValue != 0)
 			_subResources[0]->handleMouseEnter();
@@ -1211,7 +1211,7 @@ void MystResourceType7::handleMouseLeave() {
 		else if (_numSubResources != 0)
 			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
 	} else {
-		uint16 varValue = _vm->_varStore->getVar(_var7);
+		uint16 varValue = _vm->_scriptParser->getVar(_var7);
 
 		if (_numSubResources == 1 && varValue != 0)
 			_subResources[0]->handleMouseLeave();
@@ -1277,7 +1277,7 @@ void MystResourceType8::drawDataToScreen() {
 		} else if (_numSubImages != 0)
 			warning("Type 8 Resource with _numSubImages of %d, but no control variable", _numSubImages);
 	} else {
-		uint16 varValue = _vm->_varStore->getVar(_var8);
+		uint16 varValue = _vm->_scriptParser->getVar(_var8);
 
 		if (_numSubImages == 1 && varValue != 0) {
 			subImageId = 0;
@@ -1306,8 +1306,54 @@ void MystResourceType8::drawDataToScreen() {
 				imageToDraw = _vm->_view.mainImage;
 			else {
 				for (uint16 i = 0; i < _vm->_view.conditionalImageCount; i++)
-					if (_vm->_varStore->getVar(_vm->_view.conditionalImages[i].var) < _vm->_view.conditionalImages[i].numStates)
-						imageToDraw = _vm->_view.conditionalImages[i].values[_vm->_varStore->getVar(_vm->_view.conditionalImages[i].var)];
+					if (_vm->_scriptParser->getVar(_vm->_view.conditionalImages[i].var) < _vm->_view.conditionalImages[i].numStates)
+						imageToDraw = _vm->_view.conditionalImages[i].values[_vm->_scriptParser->getVar(_vm->_view.conditionalImages[i].var)];
+			}
+		} else
+			imageToDraw = _subImages[subImageId].wdib;
+
+		_vm->_gfx->copyImageSectionToScreen(imageToDraw, _subImages[subImageId].rect, _rect);
+	}
+}
+
+void MystResourceType8::drawConditionalDataToScreen(uint16 state) {
+	// Need to call overidden Type 7 function to ensure
+	// switch section is processed correctly.
+	MystResourceType7::drawDataToScreen();
+
+	bool drawSubImage = false;
+	int16 subImageId = 0;
+
+
+	if (_numSubImages == 1 && state != 0) {
+		subImageId = 0;
+		drawSubImage = true;
+	} else if (_numSubImages != 0) {
+		if (state < _numSubImages) {
+			subImageId = state;
+			drawSubImage = true;
+		} else
+			warning("Type 8 Image Var %d: %d exceeds number of subImages %d", _var8, state, _numSubImages);
+	}
+
+
+	if (drawSubImage) {
+		uint16 imageToDraw = 0;
+
+		if (_subImages[subImageId].wdib == 0xFFFF) {
+			// TODO: Think the reason for problematic screen updates in some rects is that they
+			//       are these -1 cases.
+			// They need to be redrawn i.e. if the Myst marker switches are changed, but I don't think
+			// the rects are valid. This does not matter in the original engine as the screen update redraws
+			// the VIEW images, followed by the RLST resource images, and -1 for the WDIB is interpreted as
+			// "Do Not Draw Image" i.e so the VIEW image is shown through.. We need to fix screen update
+			// to do this same behaviour.
+			if (_vm->_view.conditionalImageCount == 0)
+				imageToDraw = _vm->_view.mainImage;
+			else {
+				for (uint16 i = 0; i < _vm->_view.conditionalImageCount; i++)
+					if (_vm->_scriptParser->getVar(_vm->_view.conditionalImages[i].var) < _vm->_view.conditionalImages[i].numStates)
+						imageToDraw = _vm->_view.conditionalImages[i].values[_vm->_scriptParser->getVar(_vm->_view.conditionalImages[i].var)];
 			}
 		} else
 			imageToDraw = _subImages[subImageId].wdib;
@@ -1380,8 +1426,22 @@ MystResourceType10::~MystResourceType10() {
 		delete[] _lists[i].list;
 }
 
+void MystResourceType10::handleMouseDown() {
+	_mouseDown = true;
+
+	_vm->_scriptParser->runOpcode(_mouseDownOpcode);
+}
+
 void MystResourceType10::handleMouseUp() {
-	// TODO
+	_mouseDown = false;
+
+	_vm->_scriptParser->runOpcode(_mouseUpOpcode);
+}
+
+void MystResourceType10::handleAnimation() {
+	if (_mouseDown) {
+		_vm->_scriptParser->runOpcode(_mouseDragOpcode);
+	}
 }
 
 MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType8(vm, rlstStream, parent) {
@@ -1433,7 +1493,7 @@ MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableRe
 		}
 	}
 
-	warning("TODO: Card contains Type 11 Resource - Function not yet implemented");
+	_mouseDown = false;
 }
 
 MystResourceType11::~MystResourceType11() {
@@ -1441,16 +1501,21 @@ MystResourceType11::~MystResourceType11() {
 		delete[] _lists[i].list;
 }
 
-void MystResourceType11::handleMouseUp() {
-	// TODO
+void MystResourceType11::handleMouseDown() {
+	_mouseDown = true;
 
-	// HACK: Myst Card 4059 (Fireplace Code Book) to usuable state
-	if (_mouseDownOpcode == 191) {
-		uint16 tmp = _vm->_varStore->getVar(0);
-		if (tmp > 0)
-			_vm->_varStore->setVar(0, tmp - 1);
-	} else if (_mouseDownOpcode == 190) {
-		_vm->_varStore->setVar(0, _vm->_varStore->getVar(0) + 1);
+	_vm->_scriptParser->runOpcode(_mouseDownOpcode);
+}
+
+void MystResourceType11::handleMouseUp() {
+	_mouseDown = false;
+
+	_vm->_scriptParser->runOpcode(_mouseUpOpcode);
+}
+
+void MystResourceType11::handleAnimation() {
+	if (_mouseDown) {
+		_vm->_scriptParser->runOpcode(_mouseDragOpcode);
 	}
 }
 
