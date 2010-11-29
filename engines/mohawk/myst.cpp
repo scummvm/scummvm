@@ -250,12 +250,12 @@ Common::Error MohawkEngine_Myst::run() {
 	else if (getFeatures() & GF_DEMO)
 		changeToStack(kDemoStack);
 	else
-		changeToStack(kSeleniticStack);
+		changeToStack(kIntroStack);
 
 	if (getFeatures() & GF_DEMO)
 		changeToCard(2000, true);
 	else
-		changeToCard(1285, true);
+		changeToCard(1, true);
 
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && !(getFeatures() & GF_DEMO)) {
