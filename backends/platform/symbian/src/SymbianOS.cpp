@@ -66,6 +66,7 @@ OSystem_SDL_Symbian::OSystem_SDL_Symbian()
 void OSystem_SDL_Symbian::init() {
 	_RFs = &CEikonEnv::Static()->FsSession();
 	_fsFactory = new SymbianFilesystemFactory();
+	OSystem_SDL::init();
 }
 
 void OSystem_SDL_Symbian::initBackend() {
