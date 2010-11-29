@@ -468,16 +468,11 @@ MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableRe
 
 	debugC(kDebugResource, "\tdrag sound : %d", _dragSound);
 
-	_background = 0;
 	_sliderWidth = _rect.right - _rect.left;
 	_sliderHeigth = _rect.bottom - _rect.top;
 }
 
 MystResourceType10::~MystResourceType10() {
-	if (_background) {
-		_background->free();
-		delete _background;
-	}
 }
 
 void MystResourceType10::setStep(uint16 step) {
@@ -508,26 +503,19 @@ Common::Rect MystResourceType10::boundingBox() {
 	return bb;
 }
 
-void MystResourceType10::drawDataToScreen() {
-	// Save the background to be able to restore it
-	if (!_background) {
-		Common::Rect bb = boundingBox();
-		Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
+void MystResourceType10::restoreBackground() {
+	// Restore background
+	Common::Rect src = boundingBox();
+	Common::Rect dest = boundingBox();
+	src.top = 333 - dest.bottom;
+	src.bottom = 333 - dest.top;
+	_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), src, dest);
+}
 
-		_background = new Graphics::Surface();
-		_background->create(bb.width(), bb.height(), pixelFormat.bytesPerPixel);
-		Graphics::Surface *screen = _vm->_system->lockScreen();
-
-		for (uint16 i = 0; i < bb.height(); i++)
-			memcpy(_background->getBasePtr(0, i), screen->getBasePtr(bb.left, bb.top + i), bb.width() * _background->bytesPerPixel);
-
-		_vm->_system->unlockScreen();
-	} else {
-		// Restore background
-		Common::Rect bb = boundingBox();
-		_vm->_system->copyRectToScreen((byte *)_background->getBasePtr(0, 0), _background->pitch, bb.left, bb.top, bb.width(), bb.height());
-	}
-
+void MystResourceType10::drawDataToScreen()
+{
+	// Restore background
+	restoreBackground();
 
 	MystResourceType8::drawDataToScreen();
 }
@@ -541,8 +529,7 @@ void MystResourceType10::handleMouseDown(Common::Point *mouse) {
 	MystResourceType11::handleMouseDown(mouse);
 
 	// Restore background
-	Common::Rect bb = boundingBox();
-	_vm->_system->copyRectToScreen((byte *)_background->getBasePtr(0, 0), _background->pitch, bb.left, bb.top, bb.width(), bb.height());
+	restoreBackground();
 
 	// Draw slider
 	drawConditionalDataToScreen(2);
@@ -552,8 +539,7 @@ void MystResourceType10::handleMouseUp(Common::Point *mouse) {
 	updatePosition(mouse);
 
 	// Restore background
-	Common::Rect bb = boundingBox();
-	_vm->_system->copyRectToScreen((byte *)_background->getBasePtr(0, 0), _background->pitch, bb.left, bb.top, bb.width(), bb.height());
+	restoreBackground();
 
 	// Draw slider
 	drawConditionalDataToScreen(1);
@@ -587,8 +573,7 @@ void MystResourceType10::handleMouseDrag(Common::Point *mouse) {
 	MystResourceType11::handleMouseDrag(mouse);
 
 	// Restore background
-	Common::Rect bb = boundingBox();
-	_vm->_system->copyRectToScreen((byte *)_background->getBasePtr(0, 0), _background->pitch, bb.left, bb.top, bb.width(), bb.height());
+	restoreBackground();
 
 	// Draw slider
 	drawConditionalDataToScreen(2);

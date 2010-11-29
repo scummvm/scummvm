@@ -183,12 +183,11 @@ public:
 protected:
 	Common::Rect boundingBox();
 	void updatePosition(Common::Point *mouse);
+    void restoreBackground();
 
 	uint16 _dragSound;
 	uint16 _sliderWidth;
 	uint16 _sliderHeigth;
-
-	Graphics::Surface *_background;
 };
 
 class MystResourceType12 : public MystResourceType11 {

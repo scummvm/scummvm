@@ -396,16 +396,24 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 	_gfx->clearCache();
 }
 
-void MohawkEngine_Myst::drawCardBackground() {
-if (_view.conditionalImageCount != 0) {
-	for (uint16 i = 0; i < _view.conditionalImageCount; i++) {
-		if (_scriptParser->getVar(_view.conditionalImages[i].var) < _view.conditionalImages[i].numStates)
-			_gfx->copyImageToScreen(_view.conditionalImages[i].values[_scriptParser->getVar(_view.conditionalImages[i].var)], Common::Rect(0, 0, 544, 333));
-		else
-			warning("Conditional image %d variable %d: %d exceeds maximum state of %d", i, _view.conditionalImages[i].var, _scriptParser->getVar(_view.conditionalImages[i].var), _view.conditionalImages[i].numStates-1);
+uint16 MohawkEngine_Myst::getCardBackgroundId() {
+	uint16 imageToDraw = 0;
+
+	if (_view.conditionalImageCount == 0)
+		imageToDraw = _view.mainImage;
+	else {
+		for (uint16 i = 0; i < _view.conditionalImageCount; i++) {
+			uint16 varValue = _scriptParser->getVar(_view.conditionalImages[i].var);
+			if (varValue < _view.conditionalImages[i].numStates)
+				imageToDraw = _view.conditionalImages[i].values[varValue];
+		}
 	}
-} else if (_view.mainImage != 0)
-	_gfx->copyImageToScreen(_view.mainImage, Common::Rect(0, 0, 544, 333));
+
+	return imageToDraw;
+}
+
+void MohawkEngine_Myst::drawCardBackground() {
+	_gfx->copyImageToScreen(getCardBackgroundId(), Common::Rect(0, 0, 544, 333));
 }
 
 void MohawkEngine_Myst::changeToCard(uint16 card) {

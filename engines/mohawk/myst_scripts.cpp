@@ -572,17 +572,7 @@ void MystScriptParser::o_28_restoreDefaultRect(uint16 op, uint16 var, uint16 arg
 		debugC(kDebugScript, "\trect.right: %d", rect.right);
 		debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
 
-		// TODO: Need to fix VIEW logic so this doesn't need
-		//       calculation at this level.
-		uint16 imageToDraw = 0;
-		if (_vm->_view.conditionalImageCount == 0)
-			imageToDraw = _vm->_view.mainImage;
-		else {
-			for (uint16 i = 0; i < _vm->_view.conditionalImageCount; i++)
-				if (getVar(_vm->_view.conditionalImages[i].var) < _vm->_view.conditionalImages[i].numStates)
-					imageToDraw = _vm->_view.conditionalImages[i].values[getVar(_vm->_view.conditionalImages[i].var)];
-		}
-		_vm->_gfx->copyImageSectionToScreen(imageToDraw, rect, rect);
+		_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), rect, rect);
 	} else
 		unknown(op, var, argc, argv);
 }

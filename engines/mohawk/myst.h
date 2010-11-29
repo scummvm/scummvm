@@ -201,6 +201,7 @@ public:
 	void redrawResource(MystResourceType8 *_resource);
 	void drawResourceImages();
 	void drawCardBackground();
+	uint16 getCardBackgroundId();
 
 	void setCacheState(bool state) { _cache.enabled = state; }
 	bool getCacheState(void) { return _cache.enabled; }

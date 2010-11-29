@@ -663,6 +663,7 @@ void MystScriptParser_Selenitic::o_114_soundLockEndMove(uint16 op, uint16 var, u
 
 	slider->setStep(stepped);
 	slider->drawDataToScreen();
+	_vm->_gfx->updateScreen();
 
 	uint16 soundId = slider->getList3(0);
 	if (soundId)
