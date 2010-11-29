@@ -554,6 +554,23 @@ void MystResourceType10::handleMouseUp(Common::Point *mouse) {
 	// Draw slider
 	drawConditionalDataToScreen(1);
 
+	// Save slider value
+	uint16 value = 0;
+	if (_flagHV & 2) {
+		if (_stepsV) {
+			value = (_pos.y - _minV) / _stepV;
+		} else {
+			value = _pos.y;
+		}
+	} else if (_flagHV & 1) {
+		if (_stepsH) {
+			value = (_pos.x - _minH) / _stepH;
+		} else {
+			value = _pos.x;
+		}
+	}
+	_vm->_scriptParser->setVarValue(_var8, value);
+
 	// No longer in drag mode
 	_vm->_dragResource = 0;
 }
