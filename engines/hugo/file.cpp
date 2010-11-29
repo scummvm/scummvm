@@ -303,7 +303,7 @@ bool FileManager::fileExists(char *filename) {
 * Save game to supplied slot
 */
 bool FileManager::saveGame(int16 slot, Common::String descrip) {
-	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip);
+	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip.c_str());
 
 	const EnginePlugin *plugin = NULL;
 	int16 savegameId;
