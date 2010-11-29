@@ -70,7 +70,7 @@ public:
 	virtual Common::Rect getRect() { return _rect; }
 	bool isEnabled();
 	void setEnabled(bool enabled);
-	bool isDrawSubimages() { return _flags & kMystSubimageEnableFlag; };
+	bool isDrawSubimages() { return _flags & kMystSubimageEnableFlag; }
 	uint16 getDest() { return _dest; }
 	virtual uint16 getType8Var() { return 0xFFFF; }
 	bool unreachableZipDest();
