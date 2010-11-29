@@ -112,6 +112,7 @@ private:
 
 	uint16 soundLockCurrentSound(uint16 position, bool pixels);
 	MystResourceType10 *soundLockSliderFromVar(uint16 var);
+	void soundLockCheckSolution(MystResourceType10 *slider, uint16 value, uint16 solution, bool &solved);
 
 	void draw_digit(MystResource *_resource);
 };

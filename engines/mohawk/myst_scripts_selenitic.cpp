@@ -547,7 +547,7 @@ uint16 MystScriptParser_Selenitic::soundLockCurrentSound(uint16 position, bool p
 		return 7289;
 	} else if ((pixels && position < 192) || (!pixels && position == 8)) {
 		return 8289;
-	} else if (pixels || (!pixels && position == 8)) {
+	} else if (pixels || (!pixels && position == 9)) {
 		return 9289;
 	} else {
 		return 0;
@@ -634,41 +634,49 @@ void MystScriptParser_Selenitic::o_114_soundLockEndMove(uint16 op, uint16 var, u
 	_vm->_sound->resumeBackground();
 }
 
+void MystScriptParser_Selenitic::soundLockCheckSolution(MystResourceType10 *slider, uint16 value, uint16 solution, bool &solved) {
+	slider->drawConditionalDataToScreen(2);
+	_vm->_sound->playSound(soundLockCurrentSound(value / 12, false));
+	_vm->_system->delayMillis(1500);
+
+	if (value / 12 != solution) {
+		solved = false;
+	}
+
+	slider->drawConditionalDataToScreen(1);
+	_vm->_sound->stopSound();
+}
+
 void MystScriptParser_Selenitic::o_115_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 11) {
-		// Used for Selenitic Card 1147 (Musical Door Lock Button)
-		uint16 imageIdClose = argv[0]; // TODO: Sound Id?
-		uint16 imageIdOpen = argv[1]; // TODO: Sound Id?
+	uint16 *selenitic_vars = _vm->_saveLoad->_v->selenitic_vars;
+	bool solved = true;
+
+	_vm->_sound->pauseBackground();
+	_vm->_sound->playSound(1147);
+	_sound_lock_button->drawConditionalDataToScreen(1);
+	_vm->_gfx->hideCursor();
+
+	soundLockCheckSolution(_sound_lock_slider_1, selenitic_vars[13], 5, solved);
+	soundLockCheckSolution(_sound_lock_slider_2, selenitic_vars[14], 9, solved);
+	soundLockCheckSolution(_sound_lock_slider_3, selenitic_vars[15], 0, solved);
+	soundLockCheckSolution(_sound_lock_slider_4, selenitic_vars[16], 6, solved);
+	soundLockCheckSolution(_sound_lock_slider_5, selenitic_vars[17], 7, solved);
+
+	_vm->_sound->playSound(1148);
+	_vm->_sound->resumeBackground();
+
+	if (solved) {
+		_sound_lock_button->drawConditionalDataToScreen(2);
 
 		uint16 cardIdOpen = argv[2];
 
-		uint16 u0 = argv[3];
-		uint16 u1 = argv[4];
-
-		Common::Rect rect = Common::Rect(argv[5], argv[6], argv[7], argv[8]);
-
-		uint16 updateDirection = argv[9];
-		uint16 u2 = argv[10];
-
-		debugC(kDebugScript, "Music Door Lock Logic...");
-		debugC(kDebugScript, "\timageId (Close): %d", imageIdClose);
-		debugC(kDebugScript, "\timageId (Open): %d", imageIdOpen);
-		debugC(kDebugScript, "\tcardId (Open): %d", cardIdOpen);
-		debugC(kDebugScript, "\tu0: %d", u0);
-		debugC(kDebugScript, "\tu1: %d", u1);
-
-		debugC(kDebugScript, "\trect.left: %d", rect.left);
-		debugC(kDebugScript, "\trect.top: %d", rect.top);
-		debugC(kDebugScript, "\trect.right: %d", rect.right);
-		debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
-		debugC(kDebugScript, "\trect updateDirection: %d", updateDirection);
-		debugC(kDebugScript, "\tu2: %d", u2);
-
-		// TODO: Fix Logic...
-		// HACK: Bypass Door Lock For Now
+		//TODO: Change card with directional update playing sound
 		_vm->changeToCard(cardIdOpen);
-	} else
-		unknown(op, var, argc, argv);
+	} else {
+		_sound_lock_button->drawConditionalDataToScreen(0);
+	}
+
+	_vm->_gfx->showCursor();
 }
 
 void MystScriptParser_Selenitic::o_117_soundReceiverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
