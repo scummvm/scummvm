@@ -73,10 +73,6 @@ void Sound::initMidi() {
 Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop) {
 	debug (0, "Playing sound %d", id);
 
-	SndHandle *handle = getHandle();
-	handle->type = kUsedHandle;
-	handle->id = id;
-
 	Audio::AudioStream *audStream = NULL;
 
 	switch (_vm->getGameType()) {
@@ -96,8 +92,6 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop) {
 			audStream = Audio::makeWAVStream(_vm->getResource(ID_MSND, id), DisposeAfterUse::YES);
 		} else
 			audStream = makeMohawkWaveStream(_vm->getResource(ID_MSND, id));
-
-		handle->name = _vm->getResourceName(ID_MSND, id);
 		break;
 	case GType_ZOOMBINI:
 		audStream = makeMohawkWaveStream(_vm->getResource(ID_SND, id));
@@ -110,6 +104,10 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop) {
 	}
 
 	if (audStream) {
+		SndHandle *handle = getHandle();
+		handle->type = kUsedHandle;
+		handle->id = id;
+
 		// Set the stream to loop here if it's requested
 		if (loop)
 			audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
@@ -131,7 +129,7 @@ Audio::SoundHandle *Sound::replaceSound(uint16 id, byte volume, bool loop) {
 	// Check if sound is already playing
 	for (uint32 i = 0; i < _handles.size(); i++) {
 		if (_vm->_mixer->isSoundHandleActive(_handles[i].handle)
-				&& name.equals(_handles[i].name)) {
+				&& name.equals(_vm->getResourceName(ID_MSND, _handles[i].id))) {
 			return &_handles[i].handle;
 		}
 	}

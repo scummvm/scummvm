@@ -66,7 +66,6 @@ struct SndHandle {
 	Audio::SoundHandle handle;
 	SndHandleType type;
 	uint16 id;
-	Common::String name;
 };
 
 struct SLSTSndHandle {
