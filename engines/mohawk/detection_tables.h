@@ -719,7 +719,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV1,
-		GF_NO_READONLY,
+		GF_LB_10,
 		"ARTHUR.EXE" // FIXME: Check this (ST?) 
 	},
 
@@ -734,7 +734,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV1,
-		GF_DEMO | GF_NO_READONLY,
+		GF_DEMO | GF_LB_10,
 		"ARTHUR.EXE"
 	},
 
@@ -764,7 +764,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV1,
-		GF_DEMO,
+		GF_DEMO | GF_LB_10,
 		"Arthur's Teacher Trouble"
 	},
 
@@ -794,7 +794,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV1,
-		GF_DEMO | GF_NO_READONLY,
+		GF_DEMO | GF_LB_10,
 		"GRANDMA.EXE"
 	},
 
@@ -824,7 +824,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV1,
-		GF_DEMO | GF_NO_READONLY,
+		GF_DEMO | GF_LB_10,
 		"Just Grandma and Me"
 	},
 

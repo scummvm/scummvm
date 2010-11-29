@@ -293,10 +293,9 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 		return false;
 	}
 
-	if (getFeatures() & GF_NO_READONLY) {
+	if (getFeatures() & GF_LB_10) {
 		if (_readOnly) {
-			// TODO: make this a warning, after some testing?
-			error("game detection table is bad (remove GF_NO_READONLY)");
+			error("found .r entry in Living Books 1.0 game");
 		} else {
 			// some very early versions of the LB engine don't have
 			// .r entries in their book info; instead, it is just hardcoded
@@ -341,7 +340,16 @@ void MohawkEngine_LivingBooks::updatePage() {
 			if (item)
 				item->togglePlaying(false);
 
-			switch (_curPage) {
+			uint16 page = _curPage;
+			if (getFeatures() & GF_LB_10) {
+				// Living Books 1.0 had the meanings of these pages reversed
+				if (page == 2)
+					page = 3;
+				else if (page == 3)
+					page = 2;
+			}
+
+			switch (page) {
 			case 1:
 				debug(2, "updatePage() for control page 1 (menu)");
 
@@ -648,16 +656,29 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 		// The scripting passes us the control ID as param, so we work
 		// out which control was clicked, then run the relevant code.
 
+		uint16 page;
+		page = _curPage;
+		if (getFeatures() & GF_LB_10) {
+			// Living Books 1.0 had the meanings of these pages reversed
+			if (page == 2)
+				page = 3;
+			else if (page == 3)
+				page = 2;
+		}
+
 		LBItem *item;
-		switch (_curPage) {
+		switch (page) {
 		case 1:
 			// main menu
 			// TODO: poetry mode
 
 			switch (event.param) {
 			case 1:
-				// TODO: page 2 in some versions?
-				loadPage(kLBControlMode, 3, 0);
+				if (getFeatures() & GF_LB_10) {
+					loadPage(kLBControlMode, 2, 0);
+				} else {
+					loadPage(kLBControlMode, 3, 0);
+				}
 				break;
 
 			case 2:
@@ -689,8 +710,11 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 				break;
 
 			case 4:
-				// TODO: page 3 in some versions?
-				loadPage(kLBControlMode, 2, 0);
+				if (getFeatures() & GF_LB_10) {
+					loadPage(kLBControlMode, 3, 0);
+				} else {
+					loadPage(kLBControlMode, 2, 0);
+				}
 				break;
 
 			case 10:
