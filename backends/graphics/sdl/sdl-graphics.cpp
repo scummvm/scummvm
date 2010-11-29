@@ -201,11 +201,11 @@ SdlGraphicsManager::~SdlGraphicsManager() {
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 
 	unloadGFXMode();
-		if (_mouseSurface)
-			SDL_FreeSurface(_mouseSurface);
+	if (_mouseSurface)
+		SDL_FreeSurface(_mouseSurface);
 	_mouseSurface = 0;
-		if (_mouseOrigSurface)
-			SDL_FreeSurface(_mouseOrigSurface);
+	if (_mouseOrigSurface)
+		SDL_FreeSurface(_mouseOrigSurface);
 	_mouseOrigSurface = 0;
 	g_system->deleteMutex(_graphicsMutex);
 
