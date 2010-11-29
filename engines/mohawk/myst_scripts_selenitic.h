@@ -53,7 +53,7 @@ private:
 	bool setVarValue(uint16 var, uint16 value);
 
 	DECLARE_OPCODE(o_100_mazeRunnerMove);
-	DECLARE_OPCODE(opcode_101);
+	DECLARE_OPCODE(o_101_mazeRunnerSoundRepeat);
 	DECLARE_OPCODE(o_102_soundReceiverSigma);
 	DECLARE_OPCODE(o_103_soundReceiverRight);
 	DECLARE_OPCODE(o_104_soundReceiverLeft);
@@ -128,6 +128,7 @@ private:
 
 	bool mazeRunnerForwardAllowed(uint16 position);
 	void mazeRunnerUpdateCompass();
+	void mazeRunnerPlaySoundHelp();
 };
 
 }

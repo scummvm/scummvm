@@ -105,7 +105,7 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 
 		// "Stack-Specific" Opcodes
 		SPECIFIC_OPCODE(100, o_100_mazeRunnerMove),
-		SPECIFIC_OPCODE(101, opcode_101),
+		SPECIFIC_OPCODE(101, o_101_mazeRunnerSoundRepeat),
 		SPECIFIC_OPCODE(102, o_102_soundReceiverSigma),
 		SPECIFIC_OPCODE(103, o_103_soundReceiverRight),
 		SPECIFIC_OPCODE(104, o_104_soundReceiverLeft),
@@ -362,6 +362,9 @@ void MystScriptParser_Selenitic::o_100_mazeRunnerMove(uint16 op, uint16 var, uin
 	if (videoToNext) {
 		_maze_runner_compass->drawConditionalDataToScreen(8);
 		mazeRunnerUpdateCompass();
+
+		if (move == 0 || move == 3)
+			mazeRunnerPlaySoundHelp();
 	}
 }
 
@@ -379,19 +382,72 @@ bool MystScriptParser_Selenitic::mazeRunnerForwardAllowed(uint16 position) {
 	return move == 6 || move == 7;
 }
 
-void MystScriptParser_Selenitic::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Selenitic::mazeRunnerPlaySoundHelp() {
+	uint16 soundId = 0;
 
-	if (argc == 0) {
-		// Used on Card 1191 (Maze Runner)
-		// Called when Red Warning Button is pushed
+	_maze_runner_light->drawConditionalDataToScreen(1);
 
-		debugC(kDebugScript, "Opcode %d: Repeat Buzzer Sound?", op);
+	if (_maze_runner_position >= 272)
+		soundId = 0;
+	else if (_maze_runner_position >= 264)
+		soundId =  8191;
+	else if (_maze_runner_position >= 256)
+		soundId = 0;
+	else if (_maze_runner_position >= 248)
+		soundId =  5191;
+	else if (_maze_runner_position >= 232)
+		soundId = 0;
+	else if (_maze_runner_position >= 224)
+		soundId =  5191;
+	else if (_maze_runner_position >= 216)
+		soundId = 0;
+	else if (_maze_runner_position >= 208)
+		soundId =  5191;
+	else if (_maze_runner_position >= 176)
+		soundId = 0;
+	else if (_maze_runner_position >= 168)
+		soundId =  7191;
+	else if (_maze_runner_position >= 152)
+		soundId = 0;
+	else if (_maze_runner_position >= 144)
+		soundId =  7191;
+	else if (_maze_runner_position >= 136)
+		soundId =  2191;
+	else if (_maze_runner_position >= 112)
+		soundId = 0;
+	else if (_maze_runner_position >= 104)
+		soundId =  6191;
+	else if (_maze_runner_position >= 96)
+		soundId =  2191;
+	else if (_maze_runner_position >= 88)
+		soundId =  3191;
+	else if (_maze_runner_position >= 80)
+		soundId =  4191;
+	else if (_maze_runner_position >= 72)
+		soundId =  8191;
+	else if (_maze_runner_position >= 64)
+		soundId =  7191;
+	else if (_maze_runner_position >= 56)
+		soundId =  8191;
+	else if (_maze_runner_position >= 40)
+		soundId =  5191;
+	else if (_maze_runner_position >= 24)
+		soundId =  1191;
+	else if (_maze_runner_position >= 16)
+		soundId =  2191;
+	else if (_maze_runner_position >= 8)
+		soundId =  8191;
+	else
+		soundId =  2191;
 
-		// TODO: Fill in logic...
-		// Repeat buzzer sound
-	} else
-		unknown(op, var, argc, argv);
+	if (soundId)
+		_vm->_sound->playSound(soundId);
+
+	_maze_runner_light->drawConditionalDataToScreen(0);
+}
+
+void MystScriptParser_Selenitic::o_101_mazeRunnerSoundRepeat(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	mazeRunnerPlaySoundHelp();
 }
 
 /**
