@@ -23,9 +23,9 @@
  *
  */
 
+#include "backends/platform/symbian/src/portdefs.h"
 #include "base/main.h"
 #include "backends/platform/symbian/src/SymbianOS.h"
-#include "backends/platform/symbian/src/portdefs.h"
 
 extern "C"
 {

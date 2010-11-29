@@ -142,6 +142,7 @@ SOURCE     backends\mixer\sdl\sdl-mixer.cpp
 SOURCE     backends\mixer\symbiansdl\symbiansdl-mixer.cpp
 SOURCE     backends\mutex\sdl\sdl-mutex.cpp
 SOURCE     backends\timer\sdl\sdl-timer.cpp
+SOURCE     backends\log\log.cpp
 
 // Source files for virtual keyboard
 SOURCE     backends\vkeybd\image-map.cpp
@@ -152,3 +153,4 @@ SOURCE     backends\vkeybd\virtual-keyboard.cpp
 
 // Downscaler
 SOURCE	   graphics\scaler\downscaler.cpp
+MACRO SDL_BACKEND
