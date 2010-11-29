@@ -58,7 +58,7 @@ private:
 	DECLARE_OPCODE(o_103_soundReceiverRight);
 	DECLARE_OPCODE(o_104_soundReceiverLeft);
 	DECLARE_OPCODE(o_105_109_soundReceiverSource);
-	DECLARE_OPCODE(opcode_110);
+	DECLARE_OPCODE(o_110_mazeRunnerDoorButton);
 	DECLARE_OPCODE(o_111_soundReceiverUpdateSound);
 	DECLARE_OPCODE(o_112_soundLockMove);
 	DECLARE_OPCODE(o_113_soundLockStartMove);
@@ -93,7 +93,8 @@ private:
 	MystResourceType8 *_sound_receiver_angle_4; // 152
 	MystResourceType8 *_sound_receiver_sigma_button; // 156
 
-	bool _maze_runner_door_opened; //160
+	bool _maze_runner_door_opened; // 160
+	uint16 _maze_runner_position; // 56
 
 	uint16 _sound_lock_sound_id;
 	MystResourceType10 *_sound_lock_slider_1; // 164

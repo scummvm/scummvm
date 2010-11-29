@@ -42,6 +42,7 @@ namespace Mohawk {
 MystScriptParser_Selenitic::MystScriptParser_Selenitic(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
 	_invokingResource = NULL;
+	_maze_runner_position = 288;
 }
 
 MystScriptParser_Selenitic::~MystScriptParser_Selenitic() {
@@ -113,7 +114,7 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 		SPECIFIC_OPCODE(107, o_105_109_soundReceiverSource),
 		SPECIFIC_OPCODE(108, o_105_109_soundReceiverSource),
 		SPECIFIC_OPCODE(109, o_105_109_soundReceiverSource),
-		SPECIFIC_OPCODE(110, opcode_110),
+		SPECIFIC_OPCODE(110, o_110_mazeRunnerDoorButton),
 		SPECIFIC_OPCODE(111, o_111_soundReceiverUpdateSound),
 		SPECIFIC_OPCODE(112, o_112_soundLockMove),
 		SPECIFIC_OPCODE(113, o_113_soundLockStartMove),
@@ -514,45 +515,20 @@ void MystScriptParser_Selenitic::o_105_109_soundReceiverSource(uint16 op, uint16
 	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser_Selenitic::opcode_110(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Selenitic::o_110_mazeRunnerDoorButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used for Selenitic Maze Runner Exit Logic
+	uint16 cardIdExit = argv[0];
+	uint16 cardIdEntry = argv[1];
 
-	if (argc == 15) {
-		// Used for Selenitic Maze Runner Exit Logic
-		uint16 CardIdEntry = argv[0];
-		uint16 CardIdExit = argv[1];
-		uint16 u0 = argv[2];
-		Common::Rect rect1 = Common::Rect(argv[3], argv[4], argv[5], argv[6]);
-		uint16 rect1UpdateDirection = argv[7];
-		uint16 u1 = argv[8];
-		Common::Rect rect2 = Common::Rect(argv[9], argv[10], argv[11], argv[12]);
-		uint16 rect2UpdateDirection = argv[13];
-		uint16 u2 = argv[14];
-
-		debugC(kDebugScript, "Opcode %d: Maze Runner Exit Logic and Door Open Animation", op);
-		debugC(kDebugScript, "\tExit Card: %d", CardIdEntry);
-		debugC(kDebugScript, "\tEntry Card: %d", CardIdExit);
-		debugC(kDebugScript, "\tu0 (Exit Var?): %d", u0);
-
-		debugC(kDebugScript, "\trect1.left: %d", rect1.left);
-		debugC(kDebugScript, "\trect1.top: %d", rect1.top);
-		debugC(kDebugScript, "\trect1.right: %d", rect1.right);
-		debugC(kDebugScript, "\trect1.bottom: %d", rect1.bottom);
-		debugC(kDebugScript, "\trect1 updateDirection: %d", rect1UpdateDirection);
-		debugC(kDebugScript, "\tu1: %d", u1);
-
-		debugC(kDebugScript, "\trect2.left: %d", rect2.left);
-		debugC(kDebugScript, "\trect2.top: %d", rect2.top);
-		debugC(kDebugScript, "\trect2.right: %d", rect2.right);
-		debugC(kDebugScript, "\trect2.bottom: %d", rect2.bottom);
-		debugC(kDebugScript, "\trect2 updateDirection: %d", rect2UpdateDirection);
-		debugC(kDebugScript, "\tu2: %d", u2);
-
-		// TODO: Finish Implementing Logic...
-		// HACK: Bypass Higher Logic for now...
-		_vm->changeToCard(argv[1], true);
-	} else
-		unknown(op, var, argc, argv);
+	if (_maze_runner_position == 288) {
+		_vm->changeToCard(cardIdEntry, false);
+		_vm->_sound->playSound(cardIdEntry);
+		animatedUpdate(argv[2], &argv[3], 10);
+	} else if (_maze_runner_position == 289) {
+		_vm->changeToCard(cardIdExit, false);
+		_vm->_sound->playSound(cardIdExit);
+		animatedUpdate(argv[2], &argv[3], 10);
+	}
 }
 
 void MystScriptParser_Selenitic::o_111_soundReceiverUpdateSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
