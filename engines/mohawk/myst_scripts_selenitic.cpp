@@ -402,7 +402,7 @@ void MystScriptParser_Selenitic::sound_receiver_update() {
 	if (_sound_receiver_direction == 1) {
 		*_sound_receiver_position = ((*_sound_receiver_position) + _sound_receiver_speed) % 3600;
 	} else if (_sound_receiver_direction == 2) {
-		*_sound_receiver_position = ((*_sound_receiver_position) - _sound_receiver_speed) % 3600;
+		*_sound_receiver_position = ((*_sound_receiver_position) + 3600 - _sound_receiver_speed) % 3600;
 	}
 
 	sound_receiver_draw_view();
