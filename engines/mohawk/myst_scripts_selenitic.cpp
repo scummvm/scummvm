@@ -53,30 +53,30 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 
 	static const MystOpcode myst_opcodes[] = {
 		// "Standard" Opcodes
-		OPCODE(0, toggleBoolean),
-		OPCODE(1, setVar),
-		OPCODE(2, altDest),
+		OPCODE(0, o_0_toggleVar),
+		OPCODE(1, o_1_setVar),
+		OPCODE(2, o_2_changeCardSwitch),
 		OPCODE(3, takePage),
 		OPCODE(4, opcode_4),
 		// TODO: Opcode 5 Not Present
-		OPCODE(6, opcode_6),
-		OPCODE(7, opcode_7),
-		OPCODE(8, opcode_8),
+		OPCODE(6, o_6_changeCard),
+		OPCODE(7, o_6_changeCard),
+		OPCODE(8, o_6_changeCard),
 		OPCODE(9, opcode_9),
-		OPCODE(10, opcode_10),
+		OPCODE(10, o_10_toggleVarNoRedraw),
 		// TODO: Opcode 10 to 11 Not Present
-		OPCODE(12, altDest),
-		OPCODE(13, altDest),
-		OPCODE(14, opcode_14),
-		OPCODE(15, dropPage),
+		OPCODE(12, o_2_changeCardSwitch),
+		OPCODE(13, o_2_changeCardSwitch),
+		OPCODE(14, o_14_drawAreaState),
+		OPCODE(15, o_15_redrawAreaForVar),
 		OPCODE(16, opcode_16),
-		OPCODE(17, opcode_17),
-		OPCODE(18, opcode_18),
-		OPCODE(19, enableHotspots),
-		OPCODE(20, disableHotspots),
+		OPCODE(17, o_17_changeCardPush),
+		OPCODE(18, o_18_changeCardPop),
+		OPCODE(19, o_19_enableAreas),
+		OPCODE(20, o_20_disableAreas),
 		OPCODE(21, opcode_21),
-		OPCODE(22, opcode_22),
-		OPCODE(23, opcode_23),
+		OPCODE(22, o_6_changeCard),
+		OPCODE(23, o_23_toggleAreasActivation),
 		OPCODE(24, playSound),
 		// TODO: Opcode 25 Not Present
 		OPCODE(26, opcode_26),
@@ -192,6 +192,11 @@ uint16 MystScriptParser_Selenitic::getVar(uint16 var) {
     	return 1;
 	case 26:
 		return _sound_receiver_sigma_pressed;
+	case 27:
+	case 29: // Maze runner door
+		return 0;
+	case 30:
+		return _maze_runner_door_opened;
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -289,6 +294,9 @@ bool MystScriptParser_Selenitic::setVarValue(uint16 var, uint16 value) {
 		break;
 	case 24:
 		selenitic_vars[17] = value;
+		break;
+	case 30:
+		_maze_runner_door_opened = value;
 		break;
 	default:
 		refresh = MystScriptParser::setVarValue(var, value);
@@ -435,14 +443,10 @@ void MystScriptParser_Selenitic::sound_receiver_draw_view() {
 }
 
 void MystScriptParser_Selenitic::sound_receiver_draw_angle() {
-	draw_digit(_sound_receiver_angle_1);
-	draw_digit(_sound_receiver_angle_2);
-	draw_digit(_sound_receiver_angle_3);
-	draw_digit(_sound_receiver_angle_4);
-}
-
-void MystScriptParser_Selenitic::draw_digit(MystResource *_resource) {
-	_resource->drawConditionalDataToScreen(getVar(_resource->getType8Var()));
+	_vm->redrawResource(_sound_receiver_angle_1);
+	_vm->redrawResource(_sound_receiver_angle_2);
+	_vm->redrawResource(_sound_receiver_angle_3);
+	_vm->redrawResource(_sound_receiver_angle_4);
 }
 
 /**
@@ -464,6 +468,8 @@ void MystScriptParser_Selenitic::o_105_109_soundReceiverSource(uint16 op, uint16
 
 	if (selenitic_vars[7] != pressed_button) {
 		selenitic_vars[7] = pressed_button;
+
+		_sound_receiver_current_source->drawConditionalDataToScreen(0);
 
 		_sound_receiver_position = &selenitic_vars[8 + pressed_button];
 		_sound_receiver_current_source = _sound_receiver_sources[pressed_button];
@@ -572,6 +578,8 @@ MystResourceType10 *MystScriptParser_Selenitic::soundLockSliderFromVar(uint16 va
 }
 
 void MystScriptParser_Selenitic::o_112_soundLockMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Sound lock move", op);
+
 	MystResourceType10 *slider = soundLockSliderFromVar(var);
 
 	uint16 soundId = soundLockCurrentSound(slider->_pos.y, true);
@@ -582,6 +590,8 @@ void MystScriptParser_Selenitic::o_112_soundLockMove(uint16 op, uint16 var, uint
 }
 
 void MystScriptParser_Selenitic::o_113_soundLockStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Sound lock start move", op);
+
 	MystResourceType10 *slider = soundLockSliderFromVar(var);
 
 	_vm->_gfx->changeCursor(700);
@@ -592,6 +602,8 @@ void MystScriptParser_Selenitic::o_113_soundLockStartMove(uint16 op, uint16 var,
 }
 
 void MystScriptParser_Selenitic::o_114_soundLockEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Sound lock end move", op);
+
 	uint16 *selenitic_vars = _vm->_saveLoad->_v->selenitic_vars;
 	MystResourceType10 *slider = soundLockSliderFromVar(var);
 	uint16 *value = 0;
@@ -648,6 +660,8 @@ void MystScriptParser_Selenitic::soundLockCheckSolution(MystResourceType10 *slid
 }
 
 void MystScriptParser_Selenitic::o_115_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Sound lock button", op);
+
 	uint16 *selenitic_vars = _vm->_saveLoad->_v->selenitic_vars;
 	bool solved = true;
 

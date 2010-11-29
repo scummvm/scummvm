@@ -93,6 +93,8 @@ private:
 	MystResource *_sound_receiver_angle_4; // 152
 	MystResource *_sound_receiver_sigma_button; // 156
 
+	bool _maze_runner_door_opened; //160
+
 	uint16 _sound_lock_sound_id;
 	MystResourceType10 *_sound_lock_slider_1; // 164
 	MystResourceType10 *_sound_lock_slider_2; // 168
@@ -114,7 +116,7 @@ private:
 	MystResourceType10 *soundLockSliderFromVar(uint16 var);
 	void soundLockCheckSolution(MystResourceType10 *slider, uint16 value, uint16 solution, bool &solved);
 
-	void draw_digit(MystResource *_resource);
+	void redrawResource(MystResource *_resource);
 };
 
 }

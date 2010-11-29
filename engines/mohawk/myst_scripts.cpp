@@ -88,30 +88,30 @@ void MystScriptParser::setupOpcodes() {
 
 	static const MystOpcode myst_opcodes[] = {
 		// "Standard" Opcodes
-		OPCODE(0, toggleBoolean),
-		OPCODE(1, setVar),
-		OPCODE(2, altDest),
+		OPCODE(0, o_0_toggleVar),
+		OPCODE(1, o_1_setVar),
+		OPCODE(2, o_2_changeCardSwitch),
 		OPCODE(3, takePage),
 		OPCODE(4, opcode_4),
 		// Opcode 5 Not Present
-		OPCODE(6, opcode_6),
-		OPCODE(7, opcode_7),
-		OPCODE(8, opcode_8),
+		OPCODE(6, o_6_changeCard),
+		OPCODE(7, o_6_changeCard),
+		OPCODE(8, o_6_changeCard),
 		OPCODE(9, opcode_9),
-		OPCODE(10, opcode_10),
+		OPCODE(10, o_10_toggleVarNoRedraw),
 		// Opcode 11 Not Present
-		OPCODE(12, altDest),
-		OPCODE(13, altDest),
-		OPCODE(14, opcode_14),
-		OPCODE(15, dropPage),
+		OPCODE(12, o_2_changeCardSwitch),
+		OPCODE(13, o_2_changeCardSwitch),
+		OPCODE(14, o_14_drawAreaState),
+		OPCODE(15, o_15_redrawAreaForVar),
 		OPCODE(16, opcode_16),
-		OPCODE(17, opcode_17),
-		OPCODE(18, opcode_18),
-		OPCODE(19, enableHotspots),
-		OPCODE(20, disableHotspots),
+		OPCODE(17, o_17_changeCardPush),
+		OPCODE(18, o_18_changeCardPop),
+		OPCODE(19, o_19_enableAreas),
+		OPCODE(20, o_20_disableAreas),
 		OPCODE(21, opcode_21),
-		OPCODE(22, opcode_22),
-		OPCODE(23, opcode_23),
+		OPCODE(22, o_6_changeCard),
+		OPCODE(23, o_23_toggleAreasActivation),
 		OPCODE(24, playSound),
 		// Opcode 25 Not Present, original calls replaceSound
 		OPCODE(26, opcode_26),
@@ -257,27 +257,29 @@ void MystScriptParser::NOP(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "NOP");
 }
 
-void MystScriptParser::toggleBoolean(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_0_toggleVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	toggleVar(var);
+	_vm->redrawArea(var);
 }
 
-void MystScriptParser::setVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	setVarValue(var, argv[0]);
+void MystScriptParser::o_1_setVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	if (setVarValue(var, argv[0])) {
+		_vm->redrawArea(var);
+	}
 }
 
-void MystScriptParser::altDest(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 1) {
-		// TODO: Work out any differences between opcode 2, 12 and 13..
-		debugC(kDebugScript, "Opcode %d: altDest var %d: %d", op, var, getVar(var));
+void MystScriptParser::o_2_changeCardSwitch(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Opcodes 2, 12, and 13 are the same
+	uint16 value = getVar(var);
 
-		if (getVar(var))
-			_vm->changeToCard(argv[0]);
-		else if (_invokingResource != NULL)
-			_vm->changeToCard(_invokingResource->getDest());
-		else
-			warning("Missing invokingResource in altDest call");
-	} else
-		unknown(op, var, argc, argv);
+	debugC(kDebugScript, "Opcode %d: changeCardSwitch var %d: %d", op, var, value);
+
+	if (value)
+		_vm->changeToCard(argv[value -1 ]);
+	else if (_invokingResource != NULL)
+		_vm->changeToCard(_invokingResource->getDest());
+	else
+		warning("Missing invokingResource in altDest call");
 }
 
 void MystScriptParser::takePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -325,7 +327,7 @@ void MystScriptParser::opcode_4(uint16 op, uint16 var, uint16 argc, uint16 *argv
 
 // TODO: Work out difference between Opcode 6, 7 & 8...
 
-void MystScriptParser::opcode_6(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_6_changeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 0) {
@@ -340,38 +342,6 @@ void MystScriptParser::opcode_6(uint16 op, uint16 var, uint16 argc, uint16 *argv
 	} else
 		unknown(op, var, argc, argv);
 }
-
-void MystScriptParser::opcode_7(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 0) {
-		// Used for Selenitic Card 1244 Resource #3 Var = 5 (Sound Receiver Doors)
-		// Used for Myst Card 4143 Resource #1 & #6
-		debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
-		debugC(kDebugScript, "\tVar: %d", var);
-		// TODO: Var used (if non-zero?) in some way to control function...
-
-		if (_invokingResource != NULL)
-			_vm->changeToCard(_invokingResource->getDest());
-		else
-			warning("Opcode %d: Missing invokingResource", op);
-	} else
-		unknown(op, var, argc, argv);
-}
-
-void MystScriptParser::opcode_8(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 0) {
-		// Used for Selenitic Card 1244 Resource #2 Var = 5 (Sound Receiver Doors)
-		debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
-		debugC(kDebugScript, "\tVar: %d", var);
-		// TODO: Var used (if non-zero?) in some way to control function...
-
-		if (_invokingResource != NULL)
-			_vm->changeToCard(_invokingResource->getDest());
-		else
-			warning("Opcode %d: Missing invokingResource", op);
-	} else
-		unknown(op, var, argc, argv);
-}
-
 void MystScriptParser::opcode_9(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
@@ -393,31 +363,24 @@ void MystScriptParser::opcode_9(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::opcode_10(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser::o_10_toggleVarNoRedraw(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: toggleVarNoRedraw", op);
 
-	unknown(op, var, argc, argv);
+	toggleVar(var);
 }
 
-void MystScriptParser::opcode_14(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 1) {
-		debugC(kDebugScript, "Opcode %d: Unknown, 1 Argument: %d", op, argv[0]);
-		debugC(kDebugScript, "\tVar: %d", var);
+void MystScriptParser::o_14_drawAreaState(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: drawAreaState, state: %d", op, argv[0]);
+	debugC(kDebugScript, "\tVar: %d", var);
 
-		_invokingResource->drawConditionalDataToScreen(argv[0]);
-	} else
-		unknown(op, var, argc, argv);
+	_invokingResource->drawConditionalDataToScreen(argv[0]);
 }
 
-void MystScriptParser::dropPage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: dropPage", op);
-		debugC(kDebugScript, "\tvar: %d", var);
+void MystScriptParser::o_15_redrawAreaForVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: dropPage", op);
+	debugC(kDebugScript, "\tvar: %d", var);
 
-		// TODO: Need to check where this is used
-		setVarValue(var, 1);
-	} else
-		unknown(op, var, argc, argv);
+	_vm->redrawArea(var);
 }
 
 void MystScriptParser::opcode_16(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -448,7 +411,7 @@ void MystScriptParser::opcode_16(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 static uint16 opcode_17_18_cardId = 0;
 
-void MystScriptParser::opcode_17(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_17_changeCardPush(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 2) {
@@ -469,7 +432,7 @@ void MystScriptParser::opcode_17(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::opcode_18(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_18_changeCardPop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 1) {
@@ -484,7 +447,7 @@ void MystScriptParser::opcode_18(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::enableHotspots(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_19_enableAreas(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc > 0) {
@@ -504,7 +467,7 @@ void MystScriptParser::enableHotspots(uint16 op, uint16 var, uint16 argc, uint16
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::disableHotspots(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_20_disableAreas(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc > 0) {
@@ -554,43 +517,26 @@ void MystScriptParser::opcode_21(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::opcode_22(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser::o_23_toggleAreasActivation(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	if (argc > 0) {
+		debugC(kDebugScript, "Opcode %d: Toggle areas activation", op);
 
-	if (argc == 0) {
-		if (_invokingResource != NULL)
-			_vm->changeToCard(_invokingResource->getDest());
-		else
-			warning("Missing invokingResource in opcode_22 call");
-	} else
-		unknown(op, var, argc, argv);
-}
+		uint16 count = argv[0];
 
-void MystScriptParser::opcode_23(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+		if (argc != count + 1)
+			unknown(op, var, argc, argv);
+		else {
+			for (uint16 i = 0; i < count; i++) {
+				debugC(kDebugScript, "Enable/Disable hotspot index %d", argv[i + 1]);
 
-	if (argc == 2 || argc == 4) {
-		debugC(kDebugScript, "Opcode %d: Change Resource Enable States", op);
+				MystResource *resource = 0;
+				if (argv[i + 1] == 0xFFFF)
+					resource = _invokingResource;
+				else
+					resource = _vm->_resources[argv[i + 1]];
 
-		// Used on Stoneship Card 2080 (Lit Ship Cabin Facing Myst Book Table)
-		// Called when Table is clicked to extrude book.
-
-		// Used on Mechanical Card 6159 (In Front of Staircase to Elevator Control)
-		// Called when Button Pressed.
-
-		for (byte i = 0; i < argc; i++) {
-			debugC(kDebugScript, "\tResource %d Enable set to %d", i, argv[i]);
-			switch (argv[i]) {
-			case 0:
-				_vm->setResourceEnabled(i, false);
-				break;
-			case 1:
-				_vm->setResourceEnabled(i, true);
-				break;
-			default:
-				warning("Opcode %d u%d non-boolean", op, i);
-				_vm->setResourceEnabled(i, true);
-				break;
+				if (resource)
+					resource->setEnabled(!resource->isEnabled());
 			}
 		}
 	} else

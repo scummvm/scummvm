@@ -78,26 +78,23 @@ public:
 
 	DECLARE_OPCODE(unknown);
 
-	DECLARE_OPCODE(toggleBoolean);
-	DECLARE_OPCODE(setVar);
-	DECLARE_OPCODE(altDest);
+	DECLARE_OPCODE(o_0_toggleVar);
+	DECLARE_OPCODE(o_1_setVar);
+	DECLARE_OPCODE(o_2_changeCardSwitch);
 	DECLARE_OPCODE(takePage);
 	DECLARE_OPCODE(opcode_4);
-	DECLARE_OPCODE(opcode_6);
-	DECLARE_OPCODE(opcode_7);
-	DECLARE_OPCODE(opcode_8);
+	DECLARE_OPCODE(o_6_changeCard);
 	DECLARE_OPCODE(opcode_9);
-	DECLARE_OPCODE(opcode_10);
-	DECLARE_OPCODE(opcode_14);
-	DECLARE_OPCODE(dropPage);
+	DECLARE_OPCODE(o_10_toggleVarNoRedraw);
+	DECLARE_OPCODE(o_14_drawAreaState);
+	DECLARE_OPCODE(o_15_redrawAreaForVar);
 	DECLARE_OPCODE(opcode_16);
-	DECLARE_OPCODE(opcode_17);
-	DECLARE_OPCODE(opcode_18);
-	DECLARE_OPCODE(enableHotspots);
-	DECLARE_OPCODE(disableHotspots);
+	DECLARE_OPCODE(o_17_changeCardPush);
+	DECLARE_OPCODE(o_18_changeCardPop);
+	DECLARE_OPCODE(o_19_enableAreas);
+	DECLARE_OPCODE(o_20_disableAreas);
 	DECLARE_OPCODE(opcode_21);
-	DECLARE_OPCODE(opcode_22);
-	DECLARE_OPCODE(opcode_23);
+	DECLARE_OPCODE(o_23_toggleAreasActivation);
 	DECLARE_OPCODE(playSound);
 	DECLARE_OPCODE(opcode_26);
 	DECLARE_OPCODE(playSoundBlocking);
