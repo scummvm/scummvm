@@ -527,6 +527,9 @@ void MystResourceType10::drawDataToScreen() {
 }
 
 void MystResourceType10::handleMouseDown(Common::Point *mouse) {
+	// Tell the engine we are dragging a resource
+	_vm->_dragResource = this;
+
 	updatePosition(mouse);
 
 	MystResourceType8::handleMouseDown(mouse);
@@ -550,6 +553,9 @@ void MystResourceType10::handleMouseUp(Common::Point *mouse) {
 
 	// Draw slider
 	drawConditionalDataToScreen(1);
+
+	// No longer in drag mode
+	_vm->_dragResource = 0;
 }
 
 void MystResourceType10::handleMouseDrag(Common::Point *mouse) {

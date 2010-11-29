@@ -190,6 +190,7 @@ public:
 	MystSaveLoad *_saveLoad;
 	MystScriptParser *_scriptParser;
 	Common::Array<MystResource*> _resources;
+	MystResource *_dragResource;
 
 	bool _showResourceRects;
 	MystResource *loadResource(Common::SeekableReadStream *rlstStream, MystResource *parent);

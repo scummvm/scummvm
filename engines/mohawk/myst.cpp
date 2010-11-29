@@ -67,6 +67,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_curCard = 0;
 	_needsUpdate = false;
 	_curResource = -1;
+	_dragResource = 0;
 
 	_gfx = NULL;
 	_console = NULL;
@@ -294,7 +295,10 @@ Common::Error MohawkEngine_Myst::run() {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
 				_needsUpdate = true;
-				checkCurrentResource();
+				// Keep the same resource when dragging
+				if (!_dragResource) {
+					checkCurrentResource();
+				}
 				if (_curResource >= 0 && _mouseClicked) {
 					debug(2, "Sending mouse move event to resource %d\n", _curResource);
 					_resources[_curResource]->handleMouseDrag(&event.mouse);
@@ -482,6 +486,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 	// TODO: Handle Script Resources
 
 	// Make sure we have the right cursor showing
+	_dragResource = 0;
 	_curResource = -1;
 	checkCurrentResource();
 
