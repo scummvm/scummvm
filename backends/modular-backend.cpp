@@ -40,8 +40,8 @@ ModularBackend::ModularBackend()
 }
 
 ModularBackend::~ModularBackend() {
-	delete _eventManager;
 	delete _graphicsManager;
+	delete _eventManager;
 	delete _mixer;
 	delete _audiocdManager;
 	delete _savefileManager;

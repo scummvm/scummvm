@@ -81,10 +81,26 @@ OSystem_SDL::OSystem_SDL()
 OSystem_SDL::~OSystem_SDL() {
 	SDL_ShowCursor(SDL_ENABLE);
 
+	// Delete the various managers here. Note that the ModularBackend
+	// destructor would also take care of this for us. However, various
+	// of our managers must be deleted *before* we call SDL_Quit().
+	// Hence, we perform the destruction on our own.
+	delete _savefileManager;
+	_savefileManager = 0;
+	delete _graphicsManager;
+	_graphicsManager = 0;
+	delete _eventManager;
+	_eventManager = 0;
 	delete _eventSource;
 	_eventSource = 0;
+	delete _audiocdManager;
+	_audiocdManager = 0;
 	delete _mixerManager;
 	_mixerManager = 0;
+	delete _timerManager;
+	_timerManager = 0;
+	delete _mutexManager;
+	_mutexManager = 0;
 
 #ifdef USE_OPENGL
 	delete[] _graphicsModes;
