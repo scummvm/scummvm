@@ -24,6 +24,7 @@
  */
 
 #include "backends/modular-backend.h"
+#include "backends/fs/fs-factory.h"
 #include "gui/message.h"
 
 ModularBackend::ModularBackend()
