@@ -908,14 +908,14 @@ void MohawkEngine_Myst::drawResourceImages() {
 	_gfx->updateScreen();
 }
 
-void MohawkEngine_Myst::redrawResource(MystResource *_resource) {
+void MohawkEngine_Myst::redrawResource(MystResourceType8 *_resource) {
 	_resource->drawConditionalDataToScreen(_scriptParser->getVar(_resource->getType8Var()));
 }
 
 void MohawkEngine_Myst::redrawArea(uint16 var) {
 	for (uint16 i = 0; i < _resources.size(); i++)
 		if (_resources[i]->type == 8 && _resources[i]->getType8Var() == var)
-			redrawResource(_resources[i]);
+			redrawResource(static_cast<MystResourceType8 *>(_resources[i]));
 }
 
 MystResource *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream, MystResource *parent) {

@@ -78,20 +78,20 @@ private:
 	DECLARE_OPCODE(opcode_206);
 
 	bool _sound_receiver_sigma_pressed; // 6
-	MystResource *_sound_receiver_sources[5]; // 92 -> 108
-	MystResource *_sound_receiver_current_source; // 112
+	MystResourceType8 *_sound_receiver_sources[5]; // 92 -> 108
+	MystResourceType8 *_sound_receiver_current_source; // 112
 	uint16 *_sound_receiver_position; // 116
 	uint16 _sound_receiver_direction; // 120
 	uint16 _sound_receiver_speed; // 122
 	uint32 _sound_receiver_start_time; //124
 	MystResourceType8 *_sound_receiver_viewer; // 128
-	MystResource *_sound_receiver_right_button; // 132
-	MystResource *_sound_receiver_left_button; // 136
-	MystResource *_sound_receiver_angle_1; // 140
-	MystResource *_sound_receiver_angle_2; // 144
-	MystResource *_sound_receiver_angle_3; // 148
-	MystResource *_sound_receiver_angle_4; // 152
-	MystResource *_sound_receiver_sigma_button; // 156
+	MystResourceType8 *_sound_receiver_right_button; // 132
+	MystResourceType8 *_sound_receiver_left_button; // 136
+	MystResourceType8 *_sound_receiver_angle_1; // 140
+	MystResourceType8 *_sound_receiver_angle_2; // 144
+	MystResourceType8 *_sound_receiver_angle_3; // 148
+	MystResourceType8 *_sound_receiver_angle_4; // 152
+	MystResourceType8 *_sound_receiver_sigma_button; // 156
 
 	bool _maze_runner_door_opened; //160
 
@@ -101,7 +101,7 @@ private:
 	MystResourceType10 *_sound_lock_slider_3; // 172
 	MystResourceType10 *_sound_lock_slider_4; // 176
 	MystResourceType10 *_sound_lock_slider_5; // 180
-	MystResource *_sound_lock_button; // 184
+	MystResourceType8 *_sound_lock_button; // 184
 
 	void sound_receiver_left_right(uint direction);
 	void sound_receiver_update();

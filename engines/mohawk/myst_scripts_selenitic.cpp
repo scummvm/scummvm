@@ -922,19 +922,19 @@ void MystScriptParser_Selenitic::o_203_soundReceiver_init(uint16 op, uint16 var,
 	g_opcode203Parameters.enabled = true;
 	uint16 *selenitic_vars = _vm->_saveLoad->_v->selenitic_vars;
 
-	_sound_receiver_right_button = _vm->_resources[0];
-	_sound_receiver_left_button = _vm->_resources[1];
-	_sound_receiver_sigma_button = _vm->_resources[2];
-	_sound_receiver_sources[4] = _vm->_resources[3];
-	_sound_receiver_sources[3] = _vm->_resources[4];
-	_sound_receiver_sources[2] = _vm->_resources[5];
-	_sound_receiver_sources[1] = _vm->_resources[6];
-	_sound_receiver_sources[0] = _vm->_resources[7];
+	_sound_receiver_right_button = static_cast<MystResourceType8 *>(_vm->_resources[0]);
+	_sound_receiver_left_button = static_cast<MystResourceType8 *>(_vm->_resources[1]);
+	_sound_receiver_sigma_button = static_cast<MystResourceType8 *>(_vm->_resources[2]);
+	_sound_receiver_sources[4] = static_cast<MystResourceType8 *>(_vm->_resources[3]);
+	_sound_receiver_sources[3] = static_cast<MystResourceType8 *>(_vm->_resources[4]);
+	_sound_receiver_sources[2] = static_cast<MystResourceType8 *>(_vm->_resources[5]);
+	_sound_receiver_sources[1] = static_cast<MystResourceType8 *>(_vm->_resources[6]);
+	_sound_receiver_sources[0] = static_cast<MystResourceType8 *>(_vm->_resources[7]);
 	_sound_receiver_viewer = static_cast<MystResourceType8 *>(_vm->_resources[8]);
-	_sound_receiver_angle_1 = _vm->_resources[10];
-	_sound_receiver_angle_2 = _vm->_resources[11];
-	_sound_receiver_angle_3 = _vm->_resources[12];
-	_sound_receiver_angle_4 = _vm->_resources[13];
+	_sound_receiver_angle_1 = static_cast<MystResourceType8 *>(_vm->_resources[10]);
+	_sound_receiver_angle_2 = static_cast<MystResourceType8 *>(_vm->_resources[11]);
+	_sound_receiver_angle_3 = static_cast<MystResourceType8 *>(_vm->_resources[12]);
+	_sound_receiver_angle_4 = static_cast<MystResourceType8 *>(_vm->_resources[13]);
 
     uint16 current_source = selenitic_vars[7];
     _sound_receiver_position = &selenitic_vars[8 + current_source];
@@ -974,7 +974,7 @@ void MystScriptParser_Selenitic::o_204_soundLock_init(uint16 op, uint16 var, uin
 			}
 		} else if (_vm->_resources[i]->type == 8) {
 			if (_vm->_resources[i]->getType8Var() == 28) {
-				_sound_lock_button = _vm->_resources[i];
+				_sound_lock_button = static_cast<MystResourceType8 *>(_vm->_resources[i]);
 			}
 		}
 	}

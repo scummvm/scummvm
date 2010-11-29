@@ -325,8 +325,6 @@ void MystScriptParser::opcode_4(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		unknown(op, var, argc, argv);
 }
 
-// TODO: Work out difference between Opcode 6, 7 & 8...
-
 void MystScriptParser::o_6_changeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
@@ -343,6 +341,8 @@ void MystScriptParser::o_6_changeCard(uint16 op, uint16 var, uint16 argc, uint16
 		unknown(op, var, argc, argv);
 }
 void MystScriptParser::opcode_9(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// If movie has sound, pause background music
+
 	varUnusedCheck(op, var);
 
 	if (argc == 0 || argc == 1) {
@@ -373,7 +373,8 @@ void MystScriptParser::o_14_drawAreaState(uint16 op, uint16 var, uint16 argc, ui
 	debugC(kDebugScript, "Opcode %d: drawAreaState, state: %d", op, argv[0]);
 	debugC(kDebugScript, "\tVar: %d", var);
 
-	_invokingResource->drawConditionalDataToScreen(argv[0]);
+	MystResourceType8 *parent = static_cast<MystResourceType8 *>(_invokingResource->_parent);
+	parent->drawConditionalDataToScreen(argv[0]);
 }
 
 void MystScriptParser::o_15_redrawAreaForVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

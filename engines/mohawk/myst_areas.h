@@ -41,7 +41,6 @@ public:
 
 	bool contains(Common::Point point) { return _rect.contains(point); }
 	virtual void drawDataToScreen() {}
-	virtual void drawConditionalDataToScreen(uint16 state) {}
 	virtual void handleAnimation() {}
 	virtual Common::Rect getRect() { return _rect; }
 	bool isEnabled();

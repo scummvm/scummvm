@@ -44,6 +44,7 @@ class MystConsole;
 class MystSaveLoad;
 class MystOptionsDialog;
 class MystResource;
+class MystResourceType8;
 
 // Engine Debug Flags
 enum {
@@ -196,7 +197,7 @@ public:
 	MystResource *loadResource(Common::SeekableReadStream *rlstStream, MystResource *parent);
 	void setResourceEnabled(uint16 resourceId, bool enable);
 	void redrawArea(uint16 var);
-	void redrawResource(MystResource *_resource);
+	void redrawResource(MystResourceType8 *_resource);
 
 	void setCacheState(bool state) { _cache.enabled = state; }
 	bool getCacheState(void) { return _cache.enabled; }

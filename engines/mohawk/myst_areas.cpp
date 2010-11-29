@@ -98,13 +98,7 @@ MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableRead
 }
 
 void MystResourceType5::handleMouseUp(Common::Point *mouse) {
-
-	MystResource *invoking = this;
-	while (invoking->_parent) {
-		invoking = invoking->_parent;
-	}
-
-	_vm->_scriptParser->runScript(_script, invoking);
+	_vm->_scriptParser->runScript(_script, this);
 }
 
 // In Myst/Making of Myst, the paths are hardcoded ala Windows style without extension. Convert them.
