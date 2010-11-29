@@ -275,6 +275,21 @@ bool MystScriptParser_Selenitic::setVarValue(uint16 var, uint16 value) {
     		refresh = true;
     	}
     	break;
+	case 20: // Sound lock sliders
+		selenitic_vars[13] = value;
+		break;
+	case 21: // Sound lock sliders
+		selenitic_vars[14] = value;
+		break;
+	case 22: // Sound lock sliders
+		selenitic_vars[15] = value;
+		break;
+	case 23: // Sound lock sliders
+		selenitic_vars[16] = value;
+		break;
+	case 24: // Sound lock sliders
+		selenitic_vars[17] = value;
+		break;
 	default:
 		refresh = MystScriptParser::setVarValue(var, value);
 		break;
