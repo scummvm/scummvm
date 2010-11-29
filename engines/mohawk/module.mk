@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	livingbooks.o \
 	mohawk.o \
 	myst.o \
+	myst_areas.o \
 	myst_vars.o \
 	myst_saveload.o \
 	myst_scripts.o \

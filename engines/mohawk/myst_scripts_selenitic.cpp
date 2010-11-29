@@ -26,6 +26,7 @@
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
+#include "mohawk/myst_areas.h"
 #include "mohawk/myst_scripts_selenitic.h"
 #include "mohawk/myst_saveload.h"
 #include "mohawk/sound.h"
