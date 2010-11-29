@@ -304,26 +304,78 @@ void MystGraphics::animatedUpdate(uint16 type, Common::Rect rect, uint16 steps, 
 	_dirtyRects.clear();
 
 	switch (type) {
-	case 0:
-		debugC(kDebugScript, "Left to Right");
+	case 0:	{
+			debugC(kDebugScript, "Left to Right");
+
+			uint16 step = (rect.right - rect.left) / steps;
+			Common::Rect area = rect;
+			for (uint i = 0; i < steps; i++) {
+				area.left = rect.left + step * i;
+				area.right = area.left + step;
+
+				_vm->_system->delayMillis(delay);
+
+				_dirtyRects.push_back(area);
+				updateScreen();
+			}
+		}
 		break;
-	case 1:
-		debugC(kDebugScript, "Right to Left");
+	case 1:	{
+			debugC(kDebugScript, "Right to Left");
+
+			uint16 step = (rect.right - rect.left) / steps;
+			Common::Rect area = rect;
+			for (uint i = 0; i < steps; i++) {
+				area.right = rect.right - step * i;
+				area.left = area.right - step;
+
+				_vm->_system->delayMillis(delay);
+
+				_dirtyRects.push_back(area);
+				updateScreen();
+			}
+		}
 		break;
-	case 5:
-		debugC(kDebugScript, "Top to Bottom");
+	case 5:	{
+			debugC(kDebugScript, "Top to Bottom");
+
+			uint16 step = (rect.bottom - rect.top) / steps;
+			Common::Rect area = rect;
+			for (uint i = 0; i < steps; i++) {
+				area.top = rect.top + step * i;
+				area.bottom = area.top + step;
+
+				_vm->_system->delayMillis(delay);
+
+				_dirtyRects.push_back(area);
+				updateScreen();
+			}
+		}
 		break;
-	case 6:
-		debugC(kDebugScript, "Bottom to Top");
+	case 6:	{
+			debugC(kDebugScript, "Bottom to Top");
+
+			uint16 step = (rect.bottom - rect.top) / steps;
+			Common::Rect area = rect;
+			for (uint i = 0; i < steps; i++) {
+				area.bottom = rect.bottom - step * i;
+				area.top = area.bottom - step;
+
+				_vm->_system->delayMillis(delay);
+
+				_dirtyRects.push_back(area);
+				updateScreen();
+			}
+		}
 		break;
 	default:
 		warning("Unknown Update Direction");
+
+		//TODO: Replace minimal implementation
+		_dirtyRects.push_back(rect);
+		updateScreen();
 		break;
 	}
-
-	//TODO: Replace minimal implementation
-	_dirtyRects.push_back(rect);
-	updateScreen();
 }
 
 void MystGraphics::drawRect(Common::Rect rect, RectState state) {
