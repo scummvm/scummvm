@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/branches/gsoc2010-opengl/backends/platform/symbian/src/Symbianmain.cpp $
- * $Id: Symbianmain.cpp 51588 2010-08-01 19:51:23Z anotherguest $
+ * $URL$
+ * $Id$
  *
  */
 

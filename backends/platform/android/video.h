@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/backends/platform/null/null.cpp $
- * $Id: null.cpp 34912 2008-11-06 15:02:50Z fingolfin $
+ * $URL$
+ * $Id$
  *
  */
 
