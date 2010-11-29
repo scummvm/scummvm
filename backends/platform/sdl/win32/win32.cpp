@@ -25,8 +25,8 @@
 
 #ifdef WIN32
 
-#include <windows.h>
 #define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 
 // Disable symbol overrides so that we can use system headers.
