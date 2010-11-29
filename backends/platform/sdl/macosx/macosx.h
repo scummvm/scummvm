@@ -31,15 +31,10 @@
 class OSystem_MacOSX : public OSystem_POSIX {
 public:
 	OSystem_MacOSX();
-	virtual ~OSystem_MacOSX() {}
 
 	virtual void initBackend();
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 	virtual void setupIcon();
-
-private:
-	// TODO: Implement log file support for Mac OS X
-	virtual Common::WriteStream *createLogFile() { return 0; }
 };
 
 #endif

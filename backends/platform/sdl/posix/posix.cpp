@@ -76,7 +76,11 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 		return 0;
 
 	Common::String logFile(home);
+#ifdef MACOSX
+	logFile += "/Library";
+#else
 	logFile += "/.scummvm";
+#endif
 
 	struct stat sb;
 
@@ -95,7 +99,11 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 		return 0;
 	}
 
+#ifdef MACOSX
+	logFile += "/Logs";
+#else
 	logFile += "/logs";
+#endif
 
 	// Check whether the dir exists
 	if (stat(logFile.c_str(), &sb) == -1) {
