@@ -26,6 +26,7 @@
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_scripts.h"
+#include "mohawk/sound.h"
 #include "mohawk/video.h"
 
 namespace Mohawk {
@@ -463,6 +464,7 @@ MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableRe
 
 	debugC(kDebugResource, "\tdrag sound : %d", _dragSound);
 
+	_background = 0;
 	_sliderWidth = _rect.right - _rect.left;
 	_sliderHeigth = _rect.bottom - _rect.top;
 
@@ -470,7 +472,10 @@ MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableRe
 }
 
 MystResourceType10::~MystResourceType10() {
-
+	if (_background) {
+		_background->free();
+		delete _background;
+	}
 }
 
 void MystResourceType10::setStep(uint16 step) {
@@ -478,6 +483,136 @@ void MystResourceType10::setStep(uint16 step) {
 	_rect.bottom = _rect.top + _sliderHeigth;
 	_subImages[0].rect.top = 333 - _rect.bottom - 1;
 	_subImages[0].rect.bottom = 333 - _rect.top - 1;
+}
+
+Common::Rect MystResourceType10::boundingBox() {
+	Common::Rect bb;
+
+	bb.top = _rect.top;
+	bb.bottom = _rect.bottom;
+	bb.left = _rect.left;
+	bb.right = _rect.right;
+
+	if (_flagHV & 1) {
+		bb.left = _minH - _sliderWidth / 2;
+		bb.right = _maxH + _sliderWidth / 2;
+	}
+
+	if (_flagHV & 2) {
+		bb.top = _minV - _sliderHeigth / 2;
+		bb.bottom = _maxV + _sliderHeigth / 2;
+	}
+
+	return bb;
+}
+
+void MystResourceType10::drawDataToScreen() {
+	// Save the background to be able to restore it
+	if (!_background) {
+		Common::Rect bb = boundingBox();
+		Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
+
+		_background = new Graphics::Surface();
+		_background->create(bb.width(), bb.height(), pixelFormat.bytesPerPixel);
+		Graphics::Surface *screen = _vm->_system->lockScreen();
+
+		for (uint16 i = 0; i < bb.height(); i++)
+			memcpy(_background->getBasePtr(0, i), screen->getBasePtr(bb.left, bb.top + i), bb.width() * _background->bytesPerPixel);
+
+		_vm->_system->unlockScreen();
+	}
+
+
+	MystResourceType8::drawDataToScreen();
+}
+
+void MystResourceType10::handleMouseDown(Common::Point *mouse) {
+	updatePosition(mouse);
+
+	MystResourceType8::handleMouseDown(mouse);
+
+	// Restore background
+	Common::Rect bb = boundingBox();
+	_vm->_system->copyRectToScreen((byte *)_background->getBasePtr(0, 0), _background->pitch, bb.left, bb.top, bb.width(), bb.height());
+
+	// Draw slider
+	drawConditionalDataToScreen(2);
+}
+
+void MystResourceType10::handleMouseUp(Common::Point *mouse) {
+	updatePosition(mouse);
+
+	MystResourceType8::handleMouseUp(mouse);
+
+	// Restore background
+	Common::Rect bb = boundingBox();
+	_vm->_system->copyRectToScreen((byte *)_background->getBasePtr(0, 0), _background->pitch, bb.left, bb.top, bb.width(), bb.height());
+
+	// Draw slider
+	drawConditionalDataToScreen(1);
+}
+
+void MystResourceType10::handleMouseDrag(Common::Point *mouse) {
+	updatePosition(mouse);
+
+	MystResourceType8::handleMouseDrag(mouse);
+
+	// Restore background
+	Common::Rect bb = boundingBox();
+	_vm->_system->copyRectToScreen((byte *)_background->getBasePtr(0, 0), _background->pitch, bb.left, bb.top, bb.width(), bb.height());
+
+	// Draw slider
+	drawConditionalDataToScreen(2);
+}
+
+void MystResourceType10::updatePosition(Common::Point *mouse) {
+	bool positionChanged = false;
+
+	setPositionClipping(mouse, mouse);
+
+	if (_flagHV & 2) {
+		if (_stepV) {
+			uint16 center = _minV + _stepV * (mouse->y - _minV) / _stepV;
+			uint16 top = center - _sliderHeigth / 2;
+			if (_rect.top != top) {
+				positionChanged = true;
+				_pos.y = center;
+				_rect.top = top;
+			}
+		} else {
+			positionChanged = true;
+			_pos.y = mouse->y;
+			_rect.top = mouse->y - _sliderHeigth / 2;
+		}
+		if (positionChanged) {
+			_rect.bottom = _rect.top + _sliderHeigth;
+			_subImages[0].rect.top = 333 - _rect.bottom - 1;
+			_subImages[0].rect.bottom = 333 - _rect.top - 1;
+		}
+	}
+
+	if (_flagHV & 1) {
+		if (_stepH) {
+			uint16 center = _minH + _stepH * (mouse->x - _minH) / _stepH;
+			uint16 left = center - _sliderWidth / 2;
+			if (_rect.left != left) {
+				positionChanged = true;
+				_pos.x = center;
+				_rect.left = left;
+			}
+		} else {
+			positionChanged = true;
+			_pos.x = mouse->x;
+			_rect.left = mouse->x - _sliderWidth / 2;
+		}
+		if (positionChanged) {
+			_rect.right = _rect.left + _sliderWidth;
+		}
+	}
+
+	if (positionChanged && _dragSound) {
+		_vm->_sound->playSound(_dragSound);
+	}
 }
 
 MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType8(vm, rlstStream, parent) {

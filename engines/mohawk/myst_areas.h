@@ -117,7 +117,7 @@ class MystResourceType8 : public MystResourceType7 {
 public:
 	MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType8();
-	void drawDataToScreen();
+	virtual void drawDataToScreen();
 	void drawConditionalDataToScreen(uint16 state);
 	uint16 getType8Var();
 
@@ -169,12 +169,21 @@ public:
 	MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType10();
 
+	void drawDataToScreen();
+	void handleMouseDown(Common::Point *mouse);
+	void handleMouseUp(Common::Point *mouse);
+	void handleMouseDrag(Common::Point *mouse);
 	void setStep(uint16 step);
 
 protected:
+	Common::Rect boundingBox();
+	void updatePosition(Common::Point *mouse);
+
 	uint16 _dragSound;
 	uint16 _sliderWidth;
 	uint16 _sliderHeigth;
+
+	Graphics::Surface *_background;
 };
 
 class MystResourceType12 : public MystResourceType11 {
