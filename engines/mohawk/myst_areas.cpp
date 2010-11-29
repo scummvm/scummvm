@@ -725,18 +725,24 @@ uint16 MystResourceType11::getList1(uint16 index) {
 	if (index < _lists[1].listCount) {
 		return _lists[1].list[index];
 	}
+
+	return 0;
 }
 
 uint16 MystResourceType11::getList2(uint16 index) {
 	if (index < _lists[2].listCount) {
 		return _lists[2].list[index];
 	}
+
+	return 0;
 }
 
 uint16 MystResourceType11::getList3(uint16 index) {
 	if (index < _lists[3].listCount) {
 		return _lists[3].list[index];
 	}
+
+	return 0;
 }
 
 MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType11(vm, rlstStream, parent) {
