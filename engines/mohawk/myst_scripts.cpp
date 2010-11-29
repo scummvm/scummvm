@@ -49,26 +49,32 @@ MystScriptEntry::~MystScriptEntry() {
 	delete[] argv;
 }
 
-const uint8 MystScriptParser::stack_map[8] = {
+const uint8 MystScriptParser::stack_map[11] = {
 	kSeleniticStack,
 	kStoneshipStack,
 	kMystStack,
 	kMechanicalStack,
 	kChannelwoodStack,
-	0x0f,
+	kIntroStack,
 	kDniStack,
+	kMystStack,
+	kCreditsStack,
+	kMystStack,
 	kMystStack
 };
 
-const uint16 MystScriptParser::start_card[8] = {
+const uint16 MystScriptParser::start_card[11] = {
 	1282,
 	2029,
 	4396,
 	6122,
 	3137,
-	0,
+	1,
 	5038,
-	4134
+	4134,
+	10000,
+	4739,
+	4741
 };
 
 // NOTE: Credits Start Card is 10000
@@ -854,12 +860,16 @@ void MystScriptParser::o_40_changeStack(uint16 op, uint16 var, uint16 argc, uint
 				_vm->_system->delayMillis(10);
 
 			// TODO: Play Flyby Entry Movie on Masterpiece Edition..? Only on Myst to Age Link?
-			_vm->changeToStack(stack_map[targetStack]);
-			_vm->changeToCard(start_card[targetStack], true);
 
-			handle = _vm->_sound->playSound(soundIdLinkDst);
-			while (_vm->_mixer->isSoundHandleActive(*handle))
-				_vm->_system->delayMillis(10);
+			// TODO: Fix properly. Past this point the class may have been destroyed
+			// and thus class instance data is not available anymore
+			MohawkEngine_Myst *vm = _vm;
+			vm->changeToStack(stack_map[targetStack]);
+			vm->changeToCard(start_card[targetStack], true);
+
+			handle = vm->_sound->playSound(soundIdLinkDst);
+			while (vm->_mixer->isSoundHandleActive(*handle))
+				vm->_system->delayMillis(10);
 		}
 	} else
 		unknown(op, var, argc, argv);
