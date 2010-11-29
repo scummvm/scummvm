@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 
 #include "backends/plugins/ps2/ps2-provider.h"

@@ -23,10 +23,9 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(SDL_BACKEND)
+#include "common/scummsys.h"
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#if defined(DYNAMIC_MODULES) && defined(SDL_BACKEND)
 
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "backends/plugins/dynamic-plugin.h"

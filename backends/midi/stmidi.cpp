@@ -34,10 +34,12 @@
  * cycles.  I might change so sysex messages are sent the other way later.
  */
 
-#if defined __MINT__
-
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "common/scummsys.h"
+
+#if defined __MINT__
 
 #include <osbind.h>
 #include "sound/mpu401.h"

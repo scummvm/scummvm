@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(LINUXMOTO)
 
 #include "backends/graphics/linuxmotosdl/linuxmotosdl-graphics.h"

@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(USE_OPENGL)
 
 #include "backends/graphics/opengl/gltexture.h"

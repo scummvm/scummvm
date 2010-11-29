@@ -23,6 +23,8 @@
 *
 */
 
+#include "common/scummsys.h"
+
 #ifdef ENABLE_VKEYBD
 
 #include "backends/vkeybd/virtual-keyboard-gui.h"

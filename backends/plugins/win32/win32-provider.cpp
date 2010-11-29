@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(DYNAMIC_MODULES) && defined(_WIN32)
 
 #include "backends/plugins/win32/win32-provider.h"

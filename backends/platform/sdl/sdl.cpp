@@ -24,7 +24,7 @@
  */
 
 // Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN

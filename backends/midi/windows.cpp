@@ -22,6 +22,8 @@
  * $Id$
  */
 
+#include "common/scummsys.h"
+
 #if defined(WIN32) && !defined(_WIN32_WCE)
 
 // Disable symbol overrides so that we can use system headers.

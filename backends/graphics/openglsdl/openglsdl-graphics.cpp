@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(SDL_BACKEND) && defined(USE_OPENGL)
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"

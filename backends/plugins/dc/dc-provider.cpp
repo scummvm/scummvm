@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(DYNAMIC_MODULES) && defined(__DC__)
 
 #include "backends/plugins/dc/dc-provider.h"

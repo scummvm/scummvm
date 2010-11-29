@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
 #include "backends/saves/default/default-saves.h"

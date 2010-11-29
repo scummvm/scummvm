@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(LINUXMOTO)
 
 // Disable symbol overrides so that we can use system headers.

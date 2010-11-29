@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #ifdef MACOSX
 
 #include "backends/platform/sdl/macosx/macosx.h"

@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(DINGUX)
 
 // Disable symbol overrides so that we can use system headers.

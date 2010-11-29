@@ -23,10 +23,12 @@
  *
  */
 
-#ifdef MACOSX
-
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "common/scummsys.h"
+
+#ifdef MACOSX
 
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"

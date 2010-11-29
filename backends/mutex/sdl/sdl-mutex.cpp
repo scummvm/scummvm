@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(SDL_BACKEND)
 
 #include "backends/mutex/sdl/sdl-mutex.h"

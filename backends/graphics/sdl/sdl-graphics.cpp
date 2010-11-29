@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(SDL_BACKEND)
 
 #include "backends/graphics/sdl/sdl-graphics.h"

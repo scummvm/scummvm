@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(DYNAMIC_MODULES) && defined(UNIX)
 
 #include "backends/plugins/posix/posix-provider.h"

@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #ifdef GP2X
 
 // Disable symbol overrides so that we can use system headers.

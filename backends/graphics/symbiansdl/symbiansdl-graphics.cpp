@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #ifdef __SYMBIAN32__
 
 #include "backends/graphics/symbiansdl/symbiansdl-graphics.h"

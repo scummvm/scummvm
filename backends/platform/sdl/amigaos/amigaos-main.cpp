@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(__amigaos4__)
 
 #include "backends/platform/sdl/amigaos/amigaos.h"

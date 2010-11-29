@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(DEBUG) && defined(USE_OPENGL)
 
 #include "backends/graphics/opengl/glerrorcheck.h"

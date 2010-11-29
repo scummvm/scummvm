@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #ifdef WIN32
 
 // Fix for bug #2895217 "MSVC compilation broken with r47595":

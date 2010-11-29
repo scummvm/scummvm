@@ -27,10 +27,12 @@
  *    some code liberated from seq.cpp and coremidi.cpp
  */
 
-#if defined(IRIX)
-
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "common/scummsys.h"
+
+#if defined(IRIX)
 
 #include "common/scummsys.h"
 #include "common/util.h"

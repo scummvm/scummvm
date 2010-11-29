@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
 
 #include "common/system.h"

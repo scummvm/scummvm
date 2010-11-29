@@ -24,6 +24,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(SDL_BACKEND)
 
 // Disable symbol overrides so that we can use system headers.

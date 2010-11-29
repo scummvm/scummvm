@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #ifdef SAMSUNGTV
 
 #include "backends/events/samsungtvsdl/samsungtvsdl-events.h"

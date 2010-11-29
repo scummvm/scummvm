@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #ifdef UNIX
 
 #include "backends/platform/sdl/posix/posix.h"

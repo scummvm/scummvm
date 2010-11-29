@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined (__PSP__)
 #include <pspthreadman.h>
 

@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #ifdef __PSP__
 
 #include "backends/saves/psp/psp-saves.h"

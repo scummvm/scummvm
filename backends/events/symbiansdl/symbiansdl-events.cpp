@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #ifdef __SYMBIAN32__
 
 #include "backends/events/symbiansdl/symbiansdl-events.h"

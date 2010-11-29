@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(GP2X) || defined(GP2XWIZ)
 
 // Disable symbol overrides so that we can use system headers.
