@@ -318,6 +318,13 @@ void MystGraphics::animatedUpdate(uint16 type, Common::Rect rect, uint16 steps, 
 				_dirtyRects.push_back(area);
 				updateScreen();
 			}
+			if (area.right < rect.right) {
+				area.left = area.right;
+				area.right = rect.right;
+
+				_dirtyRects.push_back(area);
+				updateScreen();
+			}
 		}
 		break;
 	case 1:	{
@@ -330,6 +337,13 @@ void MystGraphics::animatedUpdate(uint16 type, Common::Rect rect, uint16 steps, 
 				area.left = area.right - step;
 
 				_vm->_system->delayMillis(delay);
+
+				_dirtyRects.push_back(area);
+				updateScreen();
+			}
+			if (area.left > rect.left) {
+				area.right = area.left;
+				area.left = rect.left;
 
 				_dirtyRects.push_back(area);
 				updateScreen();
@@ -350,6 +364,13 @@ void MystGraphics::animatedUpdate(uint16 type, Common::Rect rect, uint16 steps, 
 				_dirtyRects.push_back(area);
 				updateScreen();
 			}
+			if (area.top < rect.bottom) {
+				area.top = area.bottom;
+				area.bottom = rect.bottom;
+
+				_dirtyRects.push_back(area);
+				updateScreen();
+			}
 		}
 		break;
 	case 6:	{
@@ -362,6 +383,13 @@ void MystGraphics::animatedUpdate(uint16 type, Common::Rect rect, uint16 steps, 
 				area.top = area.bottom - step;
 
 				_vm->_system->delayMillis(delay);
+
+				_dirtyRects.push_back(area);
+				updateScreen();
+			}
+			if (area.bottom > rect.top) {
+				area.bottom = area.top;
+				area.top = rect.top;
 
 				_dirtyRects.push_back(area);
 				updateScreen();
@@ -383,16 +411,12 @@ void MystGraphics::drawRect(Common::Rect rect, RectState state) {
 	if (rect.left < 0 || rect.top < 0 || rect.right > 544 || rect.bottom > 333 || !rect.isValidRect() || rect.width() == 0 || rect.height() == 0)
 		return;
 
-	Graphics::Surface *screen = _vm->_system->lockScreen();
-
 	if (state == kRectEnabled)
-		screen->frameRect(rect, _pixelFormat.RGBToColor(0, 255, 0));
+		_mainScreen->frameRect(rect, _pixelFormat.RGBToColor(0, 255, 0));
 	else if (state == kRectUnreachable)
-		screen->frameRect(rect, _pixelFormat.RGBToColor(0, 0, 255));
+		_mainScreen->frameRect(rect, _pixelFormat.RGBToColor(0, 0, 255));
 	else
-		screen->frameRect(rect, _pixelFormat.RGBToColor(255, 0, 0));
-
-	_vm->_system->unlockScreen();
+		_mainScreen->frameRect(rect, _pixelFormat.RGBToColor(255, 0, 0));
 }
 
 RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm) {
