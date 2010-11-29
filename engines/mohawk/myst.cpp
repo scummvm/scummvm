@@ -294,6 +294,10 @@ Common::Error MohawkEngine_Myst::run() {
 				_mousePos = event.mouse;
 				_needsUpdate = true;
 				checkCurrentResource();
+				if (_curResource >= 0) {
+					debug(2, "Sending mouse move event to resource %d\n", _curResource);
+					_resources[_curResource]->handleMouseMove();
+				}
 				break;
 			case Common::EVENT_LBUTTONUP:
 				if (_curResource >= 0) {
@@ -1432,6 +1436,7 @@ MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableRe
 		}
 	}
 
+	_mouseDown = false;
 	warning("TODO: Card contains Type 10 Resource - Function not yet implemented");
 }
 
@@ -1452,7 +1457,7 @@ void MystResourceType10::handleMouseUp() {
 	_vm->_scriptParser->runOpcode(_mouseUpOpcode);
 }
 
-void MystResourceType10::handleAnimation() {
+void MystResourceType10::handleMouseMove() {
 	if (_mouseDown) {
 		_vm->_scriptParser->runOpcode(_mouseDragOpcode);
 	}
@@ -1527,7 +1532,7 @@ void MystResourceType11::handleMouseUp() {
 	_vm->_scriptParser->runOpcode(_mouseUpOpcode);
 }
 
-void MystResourceType11::handleAnimation() {
+void MystResourceType11::handleMouseMove() {
 	if (_mouseDown) {
 		_vm->_scriptParser->runOpcode(_mouseDragOpcode);
 	}

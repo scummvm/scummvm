@@ -514,7 +514,7 @@ void MystScriptParser_Selenitic::o_111_soundReceiverUpdateSound(uint16 op, uint1
 
 void MystScriptParser_Selenitic::o_112_soundLockMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	//varUnusedCheck(op, var);
-	//unknown(op, var, argc, argv);
+	unknown(op, var, argc, argv);
 }
 
 void MystScriptParser_Selenitic::o_113_soundLockStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

@@ -169,6 +169,7 @@ public:
 	// Mouse interface
 	virtual void handleMouseUp();
 	virtual void handleMouseDown() {}
+	virtual void handleMouseMove() {}
 	virtual void handleMouseEnter() {}
 	virtual void handleMouseLeave() {}
 
@@ -253,9 +254,9 @@ class MystResourceType10 : public MystResourceType8 {
 public:
 	MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType10();
-	void handleAnimation();
 	void handleMouseDown();
 	void handleMouseUp();
+	void handleMouseMove();
 
 protected:
 	uint16 _kind;
@@ -277,9 +278,9 @@ class MystResourceType11 : public MystResourceType8 {
 public:
 	MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType11();
-	void handleAnimation();
 	void handleMouseDown();
 	void handleMouseUp();
+	void handleMouseMove();
 
 protected:
 	uint16 _kind;
