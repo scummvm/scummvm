@@ -41,7 +41,7 @@ MystScriptEntry::MystScriptEntry() {
 	var = 0;
 	argc = 0;
 	argv = 0;
-	u0 = 0;
+	resourceId = 0;
 	u1 = 0;
 }
 
@@ -154,12 +154,17 @@ void MystScriptParser::setupOpcodes() {
 }
 
 void MystScriptParser::runScript(MystScript script, MystResource *invokingResource) {
-	_invokingResource = invokingResource;
-
 	debugC(kDebugScript, "Script Size: %d", script->size());
 	for (uint16 i = 0; i < script->size(); i++) {
 		MystScriptEntry &entry = script->operator[](i);
 		debugC(kDebugScript, "\tOpcode %d: %d", i, entry.opcode);
+
+		if (entry.type == kMystScriptNormal) {
+			_invokingResource = invokingResource;
+		} else {
+			_invokingResource = _vm->_resources[entry.resourceId];
+		}
+
 		runOpcode(entry.opcode, entry.var, entry.argc, entry.argv);
 	}
 }
@@ -202,7 +207,7 @@ MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, Myst
 
 		// u0 only exists in INIT and EXIT scripts
 		if (type != kMystScriptNormal)
-			entry.u0 = stream->readUint16LE();
+			entry.resourceId = stream->readUint16LE();
 
 		entry.opcode = stream->readUint16LE();
 		entry.var = stream->readUint16LE();

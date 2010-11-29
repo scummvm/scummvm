@@ -49,7 +49,7 @@ struct MystScriptEntry {
 	~MystScriptEntry();
 
 	MystScriptType type;
-	uint16 u0;
+	uint16 resourceId;
 	uint16 opcode;
 	uint16 var;
 	uint16 argc;
