@@ -41,6 +41,12 @@ class MohawkEngine_Riven;
 class MohawkBitmap;
 class MystBitmap;
 
+enum RectState{
+	kRectEnabled,
+	kRectDisabled,
+	kRectUnreachable
+};
+
 class MohawkSurface {
 public:
 	MohawkSurface();
@@ -99,8 +105,7 @@ public:
 	void copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
 	void copyImageToScreen(uint16 image, Common::Rect dest);
 	void updateScreen();
-
-	void drawRect(Common::Rect rect, bool active);
+	void drawRect(Common::Rect rect, RectState state);
 
 protected:
 	MohawkSurface *decodeImage(uint16 id);

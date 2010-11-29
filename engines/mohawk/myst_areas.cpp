@@ -63,16 +63,6 @@ MystResource::MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rl
 	debugC(kDebugResource, "\tright: %d", _rect.right);
 	debugC(kDebugResource, "\tbottom: %d", _rect.bottom);
 	debugC(kDebugResource, "\tdest: %d", _dest);
-
-	// Default Enable based on flags...
-	if (_vm->_zipMode)
-		_enabled = (_flags & kMystZipModeEnableFlag) != 0 ||
-		           (_flags & kMystHotspotEnableFlag) != 0 ||
-		           (_flags & kMystSubimageEnableFlag) != 0;
-	else
-		_enabled = (_flags & kMystZipModeEnableFlag) == 0 &&
-		           ((_flags & kMystHotspotEnableFlag) != 0 ||
-		            (_flags & kMystSubimageEnableFlag) != 0);
 }
 
 MystResource::~MystResource() {
@@ -83,6 +73,22 @@ void MystResource::handleMouseUp(Common::Point *mouse) {
 		_vm->changeToCard(_dest);
 	else
 		warning("Movement type resource with null destination at position (%d, %d), (%d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
+}
+
+bool MystResource::unreachableZipDest() {
+	return (_flags & kMystZipModeEnableFlag) && !_vm->_zipMode;
+}
+
+bool MystResource::isEnabled() {
+	return _flags & kMystHotspotEnableFlag;
+}
+
+void MystResource::setEnabled(bool enabled) {
+	if (enabled) {
+		_flags |= kMystHotspotEnableFlag;
+	} else {
+		_flags &= ~kMystHotspotEnableFlag;
+	}
 }
 
 MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {

@@ -191,7 +191,7 @@ bool MystConsole::Cmd_DrawRect(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_gfx->drawRect(Common::Rect((uint16)atoi(argv[1]), (uint16)atoi(argv[2]), (uint16)atoi(argv[3]), (uint16)atoi(argv[4])), true);
+	_vm->_gfx->drawRect(Common::Rect((uint16)atoi(argv[1]), (uint16)atoi(argv[2]), (uint16)atoi(argv[3]), (uint16)atoi(argv[4])), kRectEnabled);
 	return false;
 }
 

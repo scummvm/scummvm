@@ -287,15 +287,17 @@ void MystGraphics::updateScreen() {
 	}
 }
 
-void MystGraphics::drawRect(Common::Rect rect, bool active) {
+void MystGraphics::drawRect(Common::Rect rect, RectState state) {
 	// Useful with debugging. Shows where hotspots are on the screen and whether or not they're active.
 	if (rect.left < 0 || rect.top < 0 || rect.right > 544 || rect.bottom > 333 || !rect.isValidRect() || rect.width() == 0 || rect.height() == 0)
 		return;
 
 	Graphics::Surface *screen = _vm->_system->lockScreen();
 
-	if (active)
+	if (state == kRectEnabled)
 		screen->frameRect(rect, _pixelFormat.RGBToColor(0, 255, 0));
+	else if (state == kRectUnreachable)
+		screen->frameRect(rect, _pixelFormat.RGBToColor(0, 0, 255));
 	else
 		screen->frameRect(rect, _pixelFormat.RGBToColor(255, 0, 0));
 

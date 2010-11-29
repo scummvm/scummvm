@@ -44,10 +44,11 @@ public:
 	virtual void drawConditionalDataToScreen(uint16 state) {}
 	virtual void handleAnimation() {}
 	virtual Common::Rect getRect() { return _rect; }
-	bool isEnabled() { return _enabled; }
-	void setEnabled(bool enabled) { _enabled = enabled; }
+	bool isEnabled();
+	void setEnabled(bool enabled);
 	uint16 getDest() { return _dest; }
 	virtual uint16 getType8Var() { return 0xFFFF; }
+	bool unreachableZipDest();
 
 	// Mouse interface
 	virtual void handleMouseUp(Common::Point *mouse);
@@ -62,7 +63,6 @@ protected:
 	uint16 _flags;
 	Common::Rect _rect;
 	uint16 _dest;
-	bool _enabled;
 };
 
 class MystResourceType5 : public MystResource {

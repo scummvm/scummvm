@@ -594,7 +594,7 @@ void MystScriptParser_Selenitic::o_113_soundLockStartMove(uint16 op, uint16 var,
 
 	MystResourceType10 *slider = soundLockSliderFromVar(var);
 
-	_vm->_gfx->changeCursor(700);
+	_vm->_cursor->setCursor(700);
 	_vm->_sound->pauseBackground();
 
 	_sound_lock_sound_id = soundLockCurrentSound(slider->_pos.y, true);
@@ -668,7 +668,7 @@ void MystScriptParser_Selenitic::o_115_soundLockButton(uint16 op, uint16 var, ui
 	_vm->_sound->pauseBackground();
 	_vm->_sound->playSound(1147);
 	_sound_lock_button->drawConditionalDataToScreen(1);
-	_vm->_gfx->hideCursor();
+	_vm->_cursor->hideCursor();
 
 	soundLockCheckSolution(_sound_lock_slider_1, selenitic_vars[13], 5, solved);
 	soundLockCheckSolution(_sound_lock_slider_2, selenitic_vars[14], 9, solved);
@@ -690,7 +690,7 @@ void MystScriptParser_Selenitic::o_115_soundLockButton(uint16 op, uint16 var, ui
 		_sound_lock_button->drawConditionalDataToScreen(0);
 	}
 
-	_vm->_gfx->showCursor();
+	_vm->_cursor->showCursor();
 }
 
 void MystScriptParser_Selenitic::o_117_soundReceiverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

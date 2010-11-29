@@ -250,12 +250,12 @@ Common::Error MohawkEngine_Myst::run() {
 	else if (getFeatures() & GF_DEMO)
 		changeToStack(kDemoStack);
 	else
-		changeToStack(kIntroStack);
+		changeToStack(kSeleniticStack);
 
 	if (getFeatures() & GF_DEMO)
 		changeToCard(2000);
 	else
-		changeToCard(1);
+		changeToCard(1285);
 
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && !(getFeatures() & GF_DEMO)) {
@@ -299,21 +299,21 @@ Common::Error MohawkEngine_Myst::run() {
 				if (!_dragResource) {
 					checkCurrentResource();
 				}
-				if (_curResource >= 0 && _mouseClicked) {
+				if (_curResource >= 0 && _resources[_curResource]->isEnabled() && _mouseClicked) {
 					debug(2, "Sending mouse move event to resource %d\n", _curResource);
 					_resources[_curResource]->handleMouseDrag(&event.mouse);
 				}
 				break;
 			case Common::EVENT_LBUTTONUP:
 				_mouseClicked = false;
-				if (_curResource >= 0) {
+				if (_curResource >= 0 && _resources[_curResource]->isEnabled()) {
 					debug(2, "Sending mouse up event to resource %d\n", _curResource);
 					_resources[_curResource]->handleMouseUp(&event.mouse);
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_mouseClicked = true;
-				if (_curResource >= 0) {
+				if (_curResource >= 0 && _resources[_curResource]->isEnabled()) {
 					debug(2, "Sending mouse up event to resource %d\n", _curResource);
 					_resources[_curResource]->handleMouseDown(&event.mouse);
 				}
@@ -496,8 +496,14 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 void MohawkEngine_Myst::drawResourceRects() {
 	for (uint16 i = 0; i < _resources.size(); i++) {
 		_resources[i]->getRect().debugPrint(0);
-		if (_resources[i]->getRect().isValidRect())
-			_gfx->drawRect(_resources[i]->getRect(), _resources[i]->isEnabled());
+		if (_resources[i]->getRect().isValidRect()) {
+			if (_resources[i]->unreachableZipDest())
+				_gfx->drawRect(_resources[i]->getRect(), kRectUnreachable);
+			else if (_resources[i]->isEnabled())
+				_gfx->drawRect(_resources[i]->getRect(), kRectEnabled);
+			else
+				_gfx->drawRect(_resources[i]->getRect(), kRectDisabled);
+		}
 	}
 
 	_system->updateScreen();
@@ -508,11 +514,14 @@ void MohawkEngine_Myst::checkCurrentResource() {
 	bool foundResource = false;
 
 	for (uint16 i = 0; i < _resources.size(); i++)
-		if (_resources[i]->isEnabled() && _resources[i]->contains(_system->getEventManager()->getMousePos())) {
+		if (!_resources[i]->unreachableZipDest() &&
+				_resources[i]->contains(_system->getEventManager()->getMousePos())) {
 			if (_curResource != i) {
-				if (_curResource != -1)
+				if (_curResource != -1 && _resources[_curResource]->isEnabled())
 					_resources[_curResource]->handleMouseLeave();
-				_resources[i]->handleMouseEnter();
+
+				if (_resources[i]->isEnabled())
+					_resources[i]->handleMouseEnter();
 			}
 
 			_curResource = i;
