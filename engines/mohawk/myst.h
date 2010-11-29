@@ -199,6 +199,8 @@ public:
 	void setResourceEnabled(uint16 resourceId, bool enable);
 	void redrawArea(uint16 var);
 	void redrawResource(MystResourceType8 *_resource);
+	void drawResourceImages();
+	void drawCardBackground();
 
 	void setCacheState(bool state) { _cache.enabled = state; }
 	bool getCacheState(void) { return _cache.enabled; }
@@ -234,7 +236,6 @@ private:
 	void drawResourceRects();
 	void checkCurrentResource();
 	int16 _curResource;
-	void drawResourceImages();
 
 	uint16 _cursorHintCount;
 	MystCursorHint *_cursorHints;

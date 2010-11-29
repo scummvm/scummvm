@@ -396,6 +396,18 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 	_gfx->clearCache();
 }
 
+void MohawkEngine_Myst::drawCardBackground() {
+if (_view.conditionalImageCount != 0) {
+	for (uint16 i = 0; i < _view.conditionalImageCount; i++) {
+		if (_scriptParser->getVar(_view.conditionalImages[i].var) < _view.conditionalImages[i].numStates)
+			_gfx->copyImageToScreen(_view.conditionalImages[i].values[_scriptParser->getVar(_view.conditionalImages[i].var)], Common::Rect(0, 0, 544, 333));
+		else
+			warning("Conditional image %d variable %d: %d exceeds maximum state of %d", i, _view.conditionalImages[i].var, _scriptParser->getVar(_view.conditionalImages[i].var), _view.conditionalImages[i].numStates-1);
+	}
+} else if (_view.mainImage != 0)
+	_gfx->copyImageToScreen(_view.mainImage, Common::Rect(0, 0, 544, 333));
+}
+
 void MohawkEngine_Myst::changeToCard(uint16 card) {
 	debug(2, "changeToCard(%d)", card);
 
@@ -423,15 +435,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 	loadCursorHints();
 
 	// Handle images
-	if (_view.conditionalImageCount != 0) {
-		for (uint16 i = 0; i < _view.conditionalImageCount; i++) {
-			if (_scriptParser->getVar(_view.conditionalImages[i].var) < _view.conditionalImages[i].numStates)
-				_gfx->copyImageToScreen(_view.conditionalImages[i].values[_scriptParser->getVar(_view.conditionalImages[i].var)], Common::Rect(0, 0, 544, 333));
-			else
-				warning("Conditional image %d variable %d: %d exceeds maximum state of %d", i, _view.conditionalImages[i].var, _scriptParser->getVar(_view.conditionalImages[i].var), _view.conditionalImages[i].numStates-1);
-		}
-	} else if (_view.mainImage != 0)
-		_gfx->copyImageToScreen(_view.mainImage, Common::Rect(0, 0, 544, 333));
+	drawCardBackground();
 
 	// Handle sound
 	int16 soundAction = 0;
@@ -901,7 +905,7 @@ void MohawkEngine_Myst::setResourceEnabled(uint16 resourceId, bool enable) {
 
 void MohawkEngine_Myst::drawResourceImages() {
 	for (uint16 i = 0; i < _resources.size(); i++)
-		if (_resources[i]->isEnabled())
+		if (_resources[i]->isDrawSubimages())
 			_resources[i]->drawDataToScreen();
 
 	// Make sure the screen is updated
