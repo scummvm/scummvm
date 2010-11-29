@@ -457,81 +457,14 @@ uint16 MystResourceType8::getType8Var() {
 
 // No MystResourceType9!
 
-MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType8(vm, rlstStream, parent) {
-	_kind = rlstStream->readUint16LE();
-	// NOTE: l,r,t,b differs from standard l,t,r,b order
-	_rect10.left = rlstStream->readUint16LE();
-	_rect10.right = rlstStream->readUint16LE();
-	_rect10.top = rlstStream->readUint16LE();
-	_rect10.bottom = rlstStream->readUint16LE();
-	_u0 = rlstStream->readUint16LE();
-	_u1 = rlstStream->readUint16LE();
-	_mouseDownOpcode = rlstStream->readUint16LE();
-	_mouseDragOpcode = rlstStream->readUint16LE();
-	_mouseUpOpcode = rlstStream->readUint16LE();
+MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType11(vm, rlstStream, parent) {
 
-	// TODO: Need to work out meaning of kind...
-	debugC(kDebugResource, "\tkind: %d", _kind);
-	debugC(kDebugResource, "\trect10.left: %d", _rect10.left);
-	debugC(kDebugResource, "\trect10.right: %d", _rect10.right);
-	debugC(kDebugResource, "\trect10.top: %d", _rect10.top);
-	debugC(kDebugResource, "\trect10.bottom: %d", _rect10.bottom);
-	debugC(kDebugResource, "\tu0: %d", _u0);
-	debugC(kDebugResource, "\tu1: %d", _u1);
-	debugC(kDebugResource, "\t_mouseDownOpcode: %d", _mouseDownOpcode);
-	debugC(kDebugResource, "\t_mouseDragOpcode: %d", _mouseDragOpcode);
-	debugC(kDebugResource, "\t_mouseUpOpcode: %d", _mouseUpOpcode);
-
-	// TODO: Think that u0 and u1 are unused in Type 10
-	if (_u0)
-		warning("Type 10 u0 non-zero");
-	if (_u1)
-		warning("Type 10 u1 non-zero");
-
-	// TODO: Not sure about order of Mouse Down, Mouse Drag and Mouse Up
-	//       Or whether this is slightly different...
-	debugCN(kDebugResource, "Type 10 _mouseDownOpcode: %d\n", _mouseDownOpcode);
-	debugCN(kDebugResource, "Type 10 _mouseDragOpcode: %d\n", _mouseDragOpcode);
-	debugCN(kDebugResource, "Type 10 _mouseUpOpcode: %d\n", _mouseUpOpcode);
-
-	for (byte i = 0; i < 4; i++) {
-		debugC(kDebugResource, "\tList %d:", i);
-
-		_lists[i].listCount = rlstStream->readUint16LE();
-		debugC(kDebugResource, "\t%d values", _lists[i].listCount);
-
-		_lists[i].list = new uint16[_lists[i].listCount];
-		for (uint16 j = 0; j < _lists[i].listCount; j++) {
-			_lists[i].list[j] = rlstStream->readUint16LE();
-			debugC(kDebugResource, "\tValue %d: %d", j, _lists[i].list[j]);
-		}
-	}
-
-	_mouseDown = false;
+	_unk10 = rlstStream->readUint16LE();
 	warning("TODO: Card contains Type 10 Resource - Function not yet implemented");
 }
 
 MystResourceType10::~MystResourceType10() {
-	for (byte i = 0; i < 4; i++)
-		delete[] _lists[i].list;
-}
 
-void MystResourceType10::handleMouseDown() {
-	_mouseDown = true;
-
-	_vm->_scriptParser->runOpcode(_mouseDownOpcode);
-}
-
-void MystResourceType10::handleMouseUp() {
-	_mouseDown = false;
-
-	_vm->_scriptParser->runOpcode(_mouseUpOpcode);
-}
-
-void MystResourceType10::handleMouseMove() {
-	if (_mouseDown) {
-		_vm->_scriptParser->runOpcode(_mouseDragOpcode);
-	}
 }
 
 MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType8(vm, rlstStream, parent) {
@@ -609,56 +542,7 @@ void MystResourceType11::handleMouseMove() {
 	}
 }
 
-MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType8(vm, rlstStream, parent) {
-	_kind = rlstStream->readUint16LE();
-	// NOTE: l,r,t,b differs from standard l,t,r,b order
-	_rect11.left = rlstStream->readUint16LE();
-	_rect11.right = rlstStream->readUint16LE();
-	_rect11.top = rlstStream->readUint16LE();
-	_rect11.bottom = rlstStream->readUint16LE();
-	_state0Frame = rlstStream->readUint16LE();
-	_state1Frame = rlstStream->readUint16LE();
-	_mouseDownOpcode = rlstStream->readUint16LE();
-	_mouseDragOpcode = rlstStream->readUint16LE();
-	_mouseUpOpcode = rlstStream->readUint16LE();
-
-	debugC(kDebugResource, "\tkind: %d", _kind);
-	debugC(kDebugResource, "\trect11.left: %d", _rect11.left);
-	debugC(kDebugResource, "\trect11.right: %d", _rect11.right);
-	debugC(kDebugResource, "\trect11.top: %d", _rect11.top);
-	debugC(kDebugResource, "\trect11.bottom: %d", _rect11.bottom);
-	debugC(kDebugResource, "\t_state0Frame: %d", _state0Frame);
-	debugC(kDebugResource, "\t_state1Frame: %d", _state1Frame);
-	debugC(kDebugResource, "\t_mouseDownOpcode: %d", _mouseDownOpcode);
-	debugC(kDebugResource, "\t_mouseDragOpcode: %d", _mouseDragOpcode);
-	debugC(kDebugResource, "\t_mouseUpOpcode: %d", _mouseUpOpcode);
-
-	// TODO: Think that u0 and u1 are animation frames to be
-	//       drawn for var == 0 and var == 1
-	debugCN(kDebugResource, "Type 12 _state0Frame: %d\n", _state0Frame);
-	debugCN(kDebugResource, "Type 12 _state1Frame: %d\n", _state1Frame);
-
-	// TODO: Not sure about order of Mouse Down, Mouse Drag and Mouse Up
-	//       Or whether this is slightly different...
-	debugCN(kDebugResource, "Type 12 _mouseDownOpcode: %d\n", _mouseDownOpcode);
-	debugCN(kDebugResource, "Type 12 _mouseDragOpcode: %d\n", _mouseDragOpcode);
-	debugCN(kDebugResource, "Type 12 _mouseUpOpcode: %d\n", _mouseUpOpcode);
-
-	for (byte i = 0; i < 3; i++) {
-		debugC(kDebugResource, "\tList %d:", i);
-
-		_lists[i].listCount = rlstStream->readUint16LE();
-		debugC(kDebugResource, "\t%d values", _lists[i].listCount);
-
-		_lists[i].list = new uint16[_lists[i].listCount];
-		for (uint16 j = 0; j < _lists[i].listCount; j++) {
-			_lists[i].list[j] = rlstStream->readUint16LE();
-			debugC(kDebugResource, "\tValue %d: %d", j, _lists[i].list[j]);
-		}
-	}
-
-	warning("TODO: Card contains Type 12, Type 11 section Resource - Function not yet implemented");
-
+MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType11(vm, rlstStream, parent) {
 	_numFrames = rlstStream->readUint16LE();
 	_firstFrame = rlstStream->readUint16LE();
 	uint16 frameWidth = rlstStream->readUint16LE();
@@ -682,8 +566,7 @@ MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableRe
 }
 
 MystResourceType12::~MystResourceType12() {
-	for (byte i = 0; i < 3; i++)
-		delete[] _lists[i].list;
+
 }
 
 void MystResourceType12::handleAnimation() {

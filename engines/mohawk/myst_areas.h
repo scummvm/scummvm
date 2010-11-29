@@ -133,30 +133,6 @@ protected:
 
 // No MystResourceType9!
 
-class MystResourceType10 : public MystResourceType8 {
-public:
-	MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	virtual ~MystResourceType10();
-	void handleMouseDown();
-	void handleMouseUp();
-	void handleMouseMove();
-
-protected:
-	uint16 _kind;
-	Common::Rect _rect10;
-	uint16 _u0;
-	uint16 _u1;
-	uint16 _mouseDownOpcode;
-	uint16 _mouseDragOpcode;
-	uint16 _mouseUpOpcode;
-	struct {
-		uint16 listCount;
-		uint16 *list;
-	} _lists[4];
-
-	bool _mouseDown;
-};
-
 class MystResourceType11 : public MystResourceType8 {
 public:
 	MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
@@ -181,7 +157,16 @@ protected:
 	bool _mouseDown;
 };
 
-class MystResourceType12 : public MystResourceType8 {
+class MystResourceType10 : public MystResourceType11 {
+public:
+	MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
+	virtual ~MystResourceType10();
+
+protected:
+	uint16 _unk10;
+};
+
+class MystResourceType12 : public MystResourceType11 {
 public:
 	MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType12();
@@ -189,18 +174,6 @@ public:
 	void handleMouseUp();
 
 protected:
-	uint16 _kind;
-	Common::Rect _rect11;
-	uint16 _state0Frame;
-	uint16 _state1Frame;
-	uint16 _mouseDownOpcode;
-	uint16 _mouseDragOpcode;
-	uint16 _mouseUpOpcode;
-	struct {
-		uint16 listCount;
-		uint16 *list;
-	} _lists[3];
-
 	uint16 _numFrames;
 	uint16 _firstFrame;
 	Common::Rect _frameRect;
