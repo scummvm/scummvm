@@ -31,6 +31,9 @@
 #include "backends/saves/posix/posix-saves.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 
+#include <errno.h>
+#include <sys/stat.h>
+
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
 	:
 	_baseConfigName(baseConfigName) {
@@ -65,6 +68,54 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 		strcpy(configFile, _baseConfigName.c_str());
 
 	return configFile;
+}
+
+Common::WriteStream *OSystem_POSIX::createLogFile() {
+	const char *home = getenv("HOME");
+	if (home == NULL)
+		return 0;
+
+	Common::String logFile(home);
+	logFile += "/.scummvm";
+
+	struct stat sb;
+
+	// Check whether the dir exists
+	if (stat(logFile.c_str(), &sb) == -1) {
+		// The dir does not exist, or stat failed for some other reason.
+		if (errno != ENOENT)
+			return 0;
+
+		// If the problem was that the path pointed to nothing, try
+		// to create the dir.
+		if (mkdir(logFile.c_str(), 0755) != 0)
+			return 0;
+	} else if (!S_ISDIR(sb.st_mode)) {
+		// Path is no directory. Oops
+		return 0;
+	}
+
+	logFile += "/logs";
+
+	// Check whether the dir exists
+	if (stat(logFile.c_str(), &sb) == -1) {
+		// The dir does not exist, or stat failed for some other reason.
+		if (errno != ENOENT)
+			return 0;
+
+		// If the problem was that the path pointed to nothing, try
+		// to create the dir.
+		if (mkdir(logFile.c_str(), 0755) != 0)
+			return 0;
+	} else if (!S_ISDIR(sb.st_mode)) {
+		// Path is no directory. Oops
+		return 0;
+	}
+
+	logFile += "/scummvm.log";
+
+	Common::FSNode file(logFile);
+	return file.createWriteStream();
 }
 
 #endif

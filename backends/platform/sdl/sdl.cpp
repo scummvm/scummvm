@@ -47,12 +47,6 @@
 
 #include <time.h>	// for getTimeAndDate()
 
-// For logging
-#ifdef UNIX
-#include <errno.h>
-#include <sys/stat.h>
-#endif
-
 #ifdef USE_DETECTLANG
 #ifndef WIN32
 #include <locale.h>
@@ -252,94 +246,6 @@ Common::SeekableReadStream *OSystem_SDL::createConfigReadStream() {
 Common::WriteStream *OSystem_SDL::createConfigWriteStream() {
 	Common::FSNode file(getDefaultConfigFileName());
 	return file.createWriteStream();
-}
-
-#define DEFAULT_LOG_FILE "scummvm.log"
-
-Common::WriteStream *OSystem_SDL::createLogFile() {
-#if defined(MACOSX)
-	return 0;
-#elif defined(UNIX)
-	const char *home = getenv("HOME");
-	if (home == NULL)
-		return 0;
-
-	Common::String logFile(home);
-	logFile += "/.scummvm";
-
-	struct stat sb;
-
-	// Check whether the dir exists
-	if (stat(logFile.c_str(), &sb) == -1) {
-		// The dir does not exist, or stat failed for some other reason.
-		if (errno != ENOENT)
-			return 0;
-
-		// If the problem was that the path pointed to nothing, try
-		// to create the dir.
-		if (mkdir(logFile.c_str(), 0755) != 0)
-			return 0;
-	} else if (!S_ISDIR(sb.st_mode)) {
-		// Path is no directory. Oops
-		return 0;
-	}
-
-	logFile += "/logs";
-
-	// Check whether the dir exists
-	if (stat(logFile.c_str(), &sb) == -1) {
-		// The dir does not exist, or stat failed for some other reason.
-		if (errno != ENOENT)
-			return 0;
-
-		// If the problem was that the path pointed to nothing, try
-		// to create the dir.
-		if (mkdir(logFile.c_str(), 0755) != 0)
-			return 0;
-	} else if (!S_ISDIR(sb.st_mode)) {
-		// Path is no directory. Oops
-		return 0;
-	}
-
-	logFile += "/" DEFAULT_LOG_FILE;
-
-	Common::FSNode file(logFile);
-	return file.createWriteStream();
-#elif defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	char logFile[MAXPATHLEN];
-
-	OSVERSIONINFO win32OsVersion;
-	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&win32OsVersion);
-	// Check for non-9X version of Windows.
-	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-		// Use the Application Data directory of the user profile.
-		if (win32OsVersion.dwMajorVersion >= 5) {
-			if (!GetEnvironmentVariable("APPDATA", logFile, sizeof(logFile)))
-				error("Unable to access application data directory");
-		} else {
-			if (!GetEnvironmentVariable("USERPROFILE", logFile, sizeof(logFile)))
-				error("Unable to access user profile directory");
-
-			strcat(logFile, "\\Application Data");
-			CreateDirectory(logFile, NULL);
-		}
-
-		strcat(logFile, "\\ScummVM");
-		CreateDirectory(logFile, NULL);
-		strcat(logFile, "\\Logs");
-		CreateDirectory(logFile, NULL);
-		strcat(logFile, "\\" DEFAULT_LOG_FILE);
-
-		Common::FSNode file(logFile);
-		return file.createWriteStream();
-	} else {
-		return 0;
-	}
-#else
-	return 0;
-#endif
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {

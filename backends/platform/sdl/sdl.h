@@ -113,7 +113,7 @@ protected:
 	virtual Common::String getDefaultConfigFileName();
 
 	// Logging
-	virtual Common::WriteStream *createLogFile();
+	virtual Common::WriteStream *createLogFile() { return 0; }
 	Backends::Log::Log *_logger;
 
 #ifdef USE_OPENGL

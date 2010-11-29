@@ -134,4 +134,38 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 	return configFile;
 }
 
+Common::WriteStream *OSystem_Win32::createLogFile() {
+	char logFile[MAXPATHLEN];
+
+	OSVERSIONINFO win32OsVersion;
+	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
+	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&win32OsVersion);
+	// Check for non-9X version of Windows.
+	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
+		// Use the Application Data directory of the user profile.
+		if (win32OsVersion.dwMajorVersion >= 5) {
+			if (!GetEnvironmentVariable("APPDATA", logFile, sizeof(logFile)))
+				error("Unable to access application data directory");
+		} else {
+			if (!GetEnvironmentVariable("USERPROFILE", logFile, sizeof(logFile)))
+				error("Unable to access user profile directory");
+
+			strcat(logFile, "\\Application Data");
+			CreateDirectory(logFile, NULL);
+		}
+
+		strcat(logFile, "\\ScummVM");
+		CreateDirectory(logFile, NULL);
+		strcat(logFile, "\\Logs");
+		CreateDirectory(logFile, NULL);
+		strcat(logFile, "\\scummvm.log");
+
+		Common::FSNode file(logFile);
+		return file.createWriteStream();
+	} else {
+		return 0;
+	}
+}
+
 #endif
