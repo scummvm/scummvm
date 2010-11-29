@@ -293,19 +293,18 @@ Common::Error MohawkEngine_Myst::run() {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
-				_mousePos = event.mouse;
 				_needsUpdate = true;
 				checkCurrentResource();
 				if (_curResource >= 0 && _mouseClicked) {
 					debug(2, "Sending mouse move event to resource %d\n", _curResource);
-					_resources[_curResource]->handleMouseDrag();
+					_resources[_curResource]->handleMouseDrag(&event.mouse);
 				}
 				break;
 			case Common::EVENT_LBUTTONUP:
 				_mouseClicked = false;
 				if (_curResource >= 0) {
 					debug(2, "Sending mouse up event to resource %d\n", _curResource);
-					_resources[_curResource]->handleMouseUp();
+					_resources[_curResource]->handleMouseUp(&event.mouse);
 				}
 
 				drawResourceImages();
@@ -314,7 +313,7 @@ Common::Error MohawkEngine_Myst::run() {
 				_mouseClicked = true;
 				if (_curResource >= 0) {
 					debug(2, "Sending mouse up event to resource %d\n", _curResource);
-					_resources[_curResource]->handleMouseDown();
+					_resources[_curResource]->handleMouseDown(&event.mouse);
 				}
 				break;
 			case Common::EVENT_KEYDOWN:

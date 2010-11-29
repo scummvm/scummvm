@@ -77,7 +77,7 @@ MystResource::MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rl
 MystResource::~MystResource() {
 }
 
-void MystResource::handleMouseUp() {
+void MystResource::handleMouseUp(Common::Point *mouse) {
 	if (_dest != 0)
 		_vm->changeToCard(_dest);
 	else
@@ -90,7 +90,7 @@ MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableRead
 	_script = vm->_scriptParser->readScript(rlstStream, kMystScriptNormal);
 }
 
-void MystResourceType5::handleMouseUp() {
+void MystResourceType5::handleMouseUp(Common::Point *mouse) {
 
 //	MystResource *invoking = this;
 //	while (invoking->_parent) {
@@ -233,40 +233,40 @@ void MystResourceType7::handleAnimation() {
 	}
 }
 
-void MystResourceType7::handleMouseUp() {
+void MystResourceType7::handleMouseUp(Common::Point *mouse) {
 	if (_var7 == 0xFFFF) {
 		if (_numSubResources == 1)
-			_subResources[0]->handleMouseUp();
+			_subResources[0]->handleMouseUp(mouse);
 		else if (_numSubResources != 0)
 			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
 	} else {
 		uint16 varValue = _vm->_scriptParser->getVar(_var7);
 
 		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleMouseUp();
+			_subResources[0]->handleMouseUp(mouse);
 		else if (_numSubResources != 0) {
 			if (varValue < _numSubResources)
-				_subResources[varValue]->handleMouseUp();
+				_subResources[varValue]->handleMouseUp(mouse);
 			else
 				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
 		}
 	}
 }
 
-void MystResourceType7::handleMouseDown() {
+void MystResourceType7::handleMouseDown(Common::Point *mouse) {
 	if (_var7 == 0xFFFF) {
 		if (_numSubResources == 1)
-			_subResources[0]->handleMouseDown();
+			_subResources[0]->handleMouseDown(mouse);
 		else if (_numSubResources != 0)
 			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
 	} else {
 		uint16 varValue = _vm->_scriptParser->getVar(_var7);
 
 		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleMouseDown();
+			_subResources[0]->handleMouseDown(mouse);
 		else if (_numSubResources != 0) {
 			if (varValue < _numSubResources)
-				_subResources[varValue]->handleMouseDown();
+				_subResources[varValue]->handleMouseDown(mouse);
 			else
 				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
 		}
@@ -474,8 +474,8 @@ MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableRe
 	_maxH = rlstStream->readUint16LE();
 	_minV = rlstStream->readUint16LE();
 	_maxV = rlstStream->readUint16LE();
-	_posH = rlstStream->readUint16LE();
-	_posV = rlstStream->readUint16LE();
+	_stepsH = rlstStream->readUint16LE();
+	_stepsV = rlstStream->readUint16LE();
 	_mouseDownOpcode = rlstStream->readUint16LE();
 	_mouseDragOpcode = rlstStream->readUint16LE();
 	_mouseUpOpcode = rlstStream->readUint16LE();
@@ -485,8 +485,8 @@ MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableRe
 	debugC(kDebugResource, "\thorizontal max: %d", _maxH);
 	debugC(kDebugResource, "\tvertical min: %d", _minV);
 	debugC(kDebugResource, "\tvertical max: %d", _maxV);
-	debugC(kDebugResource, "\thorizontal position: %d", _posH);
-	debugC(kDebugResource, "\tvertical position: %d", _posV);
+	debugC(kDebugResource, "\thorizontal steps: %d", _stepsH);
+	debugC(kDebugResource, "\tvertical steps: %d", _stepsV);
 	debugC(kDebugResource, "\t_mouseDownOpcode: %d", _mouseDownOpcode);
 	debugC(kDebugResource, "\t_mouseDragOpcode: %d", _mouseDragOpcode);
 	debugC(kDebugResource, "\t_mouseUpOpcode: %d", _mouseUpOpcode);
@@ -507,6 +507,14 @@ MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableRe
 			debugC(kDebugResource, "\tValue %d: %d", j, _lists[i].list[j]);
 		}
 	}
+
+	if (_stepsH) {
+		_stepH = (_maxH - _minH) / (_stepsH - 1);
+	}
+
+	if (_stepsV) {
+		_stepV = (_maxV - _minV) / (_stepsV - 1);
+	}
 }
 
 MystResourceType11::~MystResourceType11() {
@@ -514,16 +522,31 @@ MystResourceType11::~MystResourceType11() {
 		delete[] _lists[i].list;
 }
 
-void MystResourceType11::handleMouseDown() {
+void MystResourceType11::handleMouseDown(Common::Point *mouse) {
+	setPositionClipping(mouse, &_pos);
+
 	_vm->_scriptParser->runOpcode(_mouseDownOpcode);
 }
 
-void MystResourceType11::handleMouseUp() {
+void MystResourceType11::handleMouseUp(Common::Point *mouse) {
+	setPositionClipping(mouse, &_pos);
+
 	_vm->_scriptParser->runOpcode(_mouseUpOpcode);
 }
 
-void MystResourceType11::handleMouseDrag() {
+void MystResourceType11::handleMouseDrag(Common::Point *mouse) {
+	setPositionClipping(mouse, &_pos);
+
 	_vm->_scriptParser->runOpcode(_mouseDragOpcode);
+}
+
+void MystResourceType11::setPositionClipping(Common::Point *mouse, Common::Point *dest) {
+	if (_flagHV & 2) {
+		dest->y = CLIP<uint16>(mouse->y, _minV, _maxV);
+	}
+	if (_flagHV & 1) {
+		dest->x = CLIP<uint16>(mouse->x, _minH, _maxH);
+	}
 }
 
 MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType11(vm, rlstStream, parent) {
@@ -562,7 +585,7 @@ void MystResourceType12::handleAnimation() {
 	}
 }
 
-void MystResourceType12::handleMouseUp() {
+void MystResourceType12::handleMouseUp(Common::Point *mouse) {
 	// HACK/TODO: Trigger Animation on Mouse Click. Probably not final version. Variable/Type 11 Controlled?
 	_currentFrame = _firstFrame;
 	_doAnimation = true;
@@ -586,7 +609,7 @@ void MystResourceType13::handleMouseLeave() {
 	_vm->_scriptParser->runOpcode(_leaveOpcode);
 }
 
-void MystResourceType13::handleMouseUp() {
+void MystResourceType13::handleMouseUp(Common::Point *mouse) {
 	// Type 13 Resources do nothing on Mouse Clicks.
 	// This is required to override the inherited default
 	// i.e. MystResource::handleMouseUp

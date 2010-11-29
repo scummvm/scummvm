@@ -50,9 +50,9 @@ public:
 	virtual uint16 getType8Var() { return 0xFFFF; }
 
 	// Mouse interface
-	virtual void handleMouseUp();
-	virtual void handleMouseDown() {}
-	virtual void handleMouseDrag() {}
+	virtual void handleMouseUp(Common::Point *mouse);
+	virtual void handleMouseDown(Common::Point *mouse) {}
+	virtual void handleMouseDrag(Common::Point *mouse) {}
 	virtual void handleMouseEnter() {}
 	virtual void handleMouseLeave() {}
 
@@ -68,7 +68,7 @@ protected:
 class MystResourceType5 : public MystResource {
 public:
 	MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	void handleMouseUp();
+	void handleMouseUp(Common::Point *mouse);
 
 protected:
 	MystScript _script;
@@ -102,8 +102,8 @@ public:
 	virtual void drawDataToScreen();
 	virtual void handleAnimation();
 
-	virtual void handleMouseUp();
-	virtual void handleMouseDown();
+	virtual void handleMouseUp(Common::Point *mouse);
+	virtual void handleMouseDown(Common::Point *mouse);
 	virtual void handleMouseEnter();
 	virtual void handleMouseLeave();
 
@@ -137,18 +137,22 @@ class MystResourceType11 : public MystResourceType8 {
 public:
 	MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType11();
-	void handleMouseDown();
-	void handleMouseUp();
-	void handleMouseDrag();
+	void handleMouseDown(Common::Point *mouse);
+	void handleMouseUp(Common::Point *mouse);
+	void handleMouseDrag(Common::Point *mouse);
 
 protected:
+	void setPositionClipping(Common::Point *mouse, Common::Point *dest);
+
 	uint16 _flagHV;
 	uint16 _minH;
 	uint16 _maxH;
 	uint16 _minV;
 	uint16 _maxV;
-	uint16 _posH;
-	uint16 _posV;
+	uint16 _stepsH;
+	uint16 _stepsV;
+	uint16 _stepH;
+	uint16 _stepV;
 	uint16 _mouseDownOpcode;
 	uint16 _mouseDragOpcode;
 	uint16 _mouseUpOpcode;
@@ -156,6 +160,8 @@ protected:
 		uint16 listCount;
 		uint16 *list;
 	} _lists[3];
+	Common::Point _pos;
+
 };
 
 class MystResourceType10 : public MystResourceType11 {
@@ -172,7 +178,7 @@ public:
 	MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType12();
 	void handleAnimation();
-	void handleMouseUp();
+	void handleMouseUp(Common::Point *mouse);
 
 protected:
 	uint16 _numFrames;
@@ -187,7 +193,7 @@ private:
 class MystResourceType13 : public MystResource {
 public:
 	MystResourceType13(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	void handleMouseUp();
+	void handleMouseUp(Common::Point *mouse);
 	void handleMouseEnter();
 	void handleMouseLeave();
 
