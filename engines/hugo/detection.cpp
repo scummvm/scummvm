@@ -209,11 +209,14 @@ SaveStateList HugoMetaEngine::listSaves(const char *target) const {
 	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
+	char slot[3];
 	int slotNum = 0;
 	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		slotNum = atoi(filename->c_str() + filename->size() - 3);
-
+		slot[0] = filename->c_str()[filename->size() - 6];
+		slot[1] = filename->c_str()[filename->size() - 5];
+		slot[2] = '\0';
+		// Obtain the last 2 digits of the filename (without extension), since they correspond to the save slot
+		slotNum = atoi(slot);
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
 			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
 			if (file) {
