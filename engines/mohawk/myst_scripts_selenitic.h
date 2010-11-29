@@ -51,24 +51,24 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
-	void opcode_203_run();
-	void opcode_203_disable();
+	void o_203_soundReceiver_run();
+	void o_203_soundReceiver_disable();
 
 	DECLARE_OPCODE(opcode_100);
 	DECLARE_OPCODE(opcode_101);
-	DECLARE_OPCODE(opcode_102);
-	DECLARE_OPCODE(opcode_103);
-	DECLARE_OPCODE(opcode_104);
-	DECLARE_OPCODE(opcode_105_109);
+	DECLARE_OPCODE(o_102_soundReceiverSigma);
+	DECLARE_OPCODE(o_103_soundReceiverRight);
+	DECLARE_OPCODE(o_104_soundReceiverLeft);
+	DECLARE_OPCODE(o_105_109_soundReceiverSource);
 	DECLARE_OPCODE(opcode_110);
-	DECLARE_OPCODE(opcode_111);
+	DECLARE_OPCODE(o_111_soundReceiverUpdateSound);
 	DECLARE_OPCODE(opcode_115);
-	DECLARE_OPCODE(opcode_117);
+	DECLARE_OPCODE(o_117_soundReceiverEndMove);
 
 	DECLARE_OPCODE(opcode_200);
 	DECLARE_OPCODE(opcode_201);
 	DECLARE_OPCODE(opcode_202);
-	DECLARE_OPCODE(opcode_203);
+	DECLARE_OPCODE(o_203_soundReceiver_init);
 	DECLARE_OPCODE(opcode_204);
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);

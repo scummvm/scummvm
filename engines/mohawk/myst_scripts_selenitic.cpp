@@ -104,25 +104,25 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 		// "Stack-Specific" Opcodes
 		SPECIFIC_OPCODE(100, opcode_100),
 		SPECIFIC_OPCODE(101, opcode_101),
-		SPECIFIC_OPCODE(102, opcode_102),
-		SPECIFIC_OPCODE(103, opcode_103),
-		SPECIFIC_OPCODE(104, opcode_104),
-		SPECIFIC_OPCODE(105, opcode_105_109),
-		SPECIFIC_OPCODE(106, opcode_105_109),
-		SPECIFIC_OPCODE(107, opcode_105_109),
-		SPECIFIC_OPCODE(108, opcode_105_109),
-		SPECIFIC_OPCODE(109, opcode_105_109),
+		SPECIFIC_OPCODE(102, o_102_soundReceiverSigma),
+		SPECIFIC_OPCODE(103, o_103_soundReceiverRight),
+		SPECIFIC_OPCODE(104, o_104_soundReceiverLeft),
+		SPECIFIC_OPCODE(105, o_105_109_soundReceiverSource),
+		SPECIFIC_OPCODE(106, o_105_109_soundReceiverSource),
+		SPECIFIC_OPCODE(107, o_105_109_soundReceiverSource),
+		SPECIFIC_OPCODE(108, o_105_109_soundReceiverSource),
+		SPECIFIC_OPCODE(109, o_105_109_soundReceiverSource),
 		SPECIFIC_OPCODE(110, opcode_110),
-		SPECIFIC_OPCODE(111, opcode_111),
+		SPECIFIC_OPCODE(111, o_111_soundReceiverUpdateSound),
 		SPECIFIC_OPCODE(115, opcode_115),
 		SPECIFIC_OPCODE(116, NOP),
-		SPECIFIC_OPCODE(117, opcode_117),
+		SPECIFIC_OPCODE(117, o_117_soundReceiverEndMove),
 
 		// "Init" Opcodes
 		SPECIFIC_OPCODE(200, opcode_200),
 		SPECIFIC_OPCODE(201, opcode_201),
 		SPECIFIC_OPCODE(202, opcode_202),
-		SPECIFIC_OPCODE(203, opcode_203),
+		SPECIFIC_OPCODE(203, o_203_soundReceiver_init),
 		SPECIFIC_OPCODE(204, opcode_204),
 		SPECIFIC_OPCODE(205, opcode_205),
 		SPECIFIC_OPCODE(206, opcode_206),
@@ -135,11 +135,11 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 }
 
 void MystScriptParser_Selenitic::disableInitOpcodes() {
-	opcode_203_disable();
+	o_203_soundReceiver_disable();
 }
 
 void MystScriptParser_Selenitic::runPersistentOpcodes() {
-	opcode_203_run();
+	o_203_soundReceiver_run();
 }
 
 uint16 MystScriptParser_Selenitic::getVar(uint16 var) {
@@ -297,8 +297,10 @@ void MystScriptParser_Selenitic::opcode_101(uint16 op, uint16 var, uint16 argc, 
 /**
  * Sound receiver sigma button
  */
-void MystScriptParser_Selenitic::opcode_102(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Selenitic::o_102_soundReceiverSigma(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	uint16 *selenitic_vars = _vm->_saveLoad->_v->selenitic_vars;
+
+	debugC(kDebugScript, "Opcode %d: Sound receiver sigma button", op);
 
 	_vm->_cursor->hideCursor();
 
@@ -349,8 +351,8 @@ void MystScriptParser_Selenitic::opcode_102(uint16 op, uint16 var, uint16 argc, 
 /**
  * Sound receiver right button
  */
-void MystScriptParser_Selenitic::opcode_103(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Selenitic::o_103_soundReceiverRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Sound receiver right", op);
 
 	sound_receiver_left_right(1);
 }
@@ -358,8 +360,8 @@ void MystScriptParser_Selenitic::opcode_103(uint16 op, uint16 var, uint16 argc, 
 /**
  * Sound receiver left button
  */
-void MystScriptParser_Selenitic::opcode_104(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Selenitic::o_104_soundReceiverLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Sound receiver left", op);
 
 	sound_receiver_left_right(2);
 }
@@ -421,8 +423,10 @@ void MystScriptParser_Selenitic::draw_digit(MystResource *_resource) {
 /**
  * Sound receiver source selection buttons
  */
-void MystScriptParser_Selenitic::opcode_105_109(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Selenitic::o_105_109_soundReceiverSource(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
     uint16 *selenitic_vars = _vm->_saveLoad->_v->selenitic_vars;
+
+	debugC(kDebugScript, "Opcode %d: Sound receiver source", op);
 
 	if (_sound_receiver_sigma_pressed) {
 		_sound_receiver_sigma_button->drawConditionalDataToScreen(0);
@@ -493,7 +497,9 @@ void MystScriptParser_Selenitic::opcode_110(uint16 op, uint16 var, uint16 argc, 
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Selenitic::opcode_111(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Selenitic::o_111_soundReceiverUpdateSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Sound receiver update sound", op);
+
 	sound_receiver_update_sound();
 }
 
@@ -534,8 +540,8 @@ void MystScriptParser_Selenitic::opcode_115(uint16 op, uint16 var, uint16 argc, 
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Selenitic::opcode_117(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Selenitic::o_117_soundReceiverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Sound receiver end move", op);
 
 	uint16 old_direction = _sound_receiver_direction;
 
@@ -628,7 +634,7 @@ static struct {
 	bool enabled;
 } g_opcode203Parameters;
 
-void MystScriptParser_Selenitic::opcode_203_run(void) {
+void MystScriptParser_Selenitic::o_203_soundReceiver_run(void) {
 	if (g_opcode203Parameters.enabled) {
 		if (_sound_receiver_start_time) {
 			if (_sound_receiver_direction) {
@@ -752,12 +758,12 @@ void MystScriptParser_Selenitic::sound_receiver_solution(uint16 source, uint16 &
 	}
 }
 
-void MystScriptParser_Selenitic::opcode_203_disable(void) {
+void MystScriptParser_Selenitic::o_203_soundReceiver_disable(void) {
 	g_opcode203Parameters.enabled = false;
 }
 
-void MystScriptParser_Selenitic::opcode_203(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Selenitic::o_203_soundReceiver_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Sound receiver init", op);
 
 	// Used for Card 1245 (Sound Receiver)
 	g_opcode203Parameters.enabled = true;
