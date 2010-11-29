@@ -52,7 +52,7 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
-	DECLARE_OPCODE(opcode_100);
+	DECLARE_OPCODE(o_100_mazeRunnerMove);
 	DECLARE_OPCODE(opcode_101);
 	DECLARE_OPCODE(o_102_soundReceiverSigma);
 	DECLARE_OPCODE(o_103_soundReceiverRight);
@@ -93,7 +93,11 @@ private:
 	MystResourceType8 *_sound_receiver_angle_4; // 152
 	MystResourceType8 *_sound_receiver_sigma_button; // 156
 
+	static const uint16 _mazeRunnerMap[300][4];
+	static const uint8 _mazeRunnerVideos[300][4];
+
 	uint16 _maze_runner_position; // 56
+	uint16 _maze_runner_direction; // 58
 	MystResourceType8 *_maze_runner_window; // 68
 	MystResourceType8 *_maze_runner_compass; // 72
 	MystResourceType8 *_maze_runner_light; // 76
@@ -122,7 +126,8 @@ private:
 	MystResourceType10 *soundLockSliderFromVar(uint16 var);
 	void soundLockCheckSolution(MystResourceType10 *slider, uint16 value, uint16 solution, bool &solved);
 
-	void redrawResource(MystResource *_resource);
+	bool mazeRunnerForwardAllowed(uint16 position);
+	void mazeRunnerUpdateCompass();
 };
 
 }
