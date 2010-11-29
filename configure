@@ -2648,41 +2648,48 @@ echocheck "OpenGL (ES)"
 if test "$_opengl" = auto ; then
 	_opengl=no
 	if test "$_backend" = "sdl" ; then
-		case $_host_os in
-			*darwin*)
-				_opengl=yes
-				;;
-			*mingw*)
-				_opengl=yes
-				;;
-			*)
-				cat > $TMPC << EOF
-#include <GL/gl.h>
+		# Try different header filenames
+		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
+		# 2) OpenGL/gl.h     This is used on Mac OS X
+		for i in "GL/gl.h" "OpenGL/gl.h"; do
+			cat > $TMPC << EOF
+#include <$i>
 int main(void) { return GL_VERSION_1_1; }
 EOF
-				cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS -lGL && _opengl=yes
-		esac
+			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && break
+		done
 	fi
 fi
 if test "$_opengl" = yes ; then
-	LIBS="$LIBS $OPENGL_LIBS"
-	INCLUDES="$INCLUDES $OPENGL_CFLAGS"
-	DEFINES="$DEFINES -DUSE_OPENGL"
-	case $_host_os in
-		*darwin*)
-			LIBS="$LIBS -framework OpenGL"
-			;;
-		*mingw*)
-			LIBS="$LIBS -lopengl32"
-			;;
-		*)
-			LIBS="$LIBS -lGL"
-	esac
+	# Our simple test case
+	cat > $TMPC << EOF
+int main(void) { return 0; }
+EOF
+
+	_opengl=no
+	# Try different library names
+	# 1) GL                 This is usually used on POSIX systems
+	# 2) opengl32           This is used on Windows
+	# 3) -framework OpenGL  This is used on Mac OS X
+	for lib in "-lGL" "-lopengl32" "-framework OpenGL"; do
+		if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
+			then
+			_opengl=yes
+			OPENGL_LIBS="$OPENGL_LIBS $lib"
+			break
+		fi
+	done
+	cc_check_clean
+
+	if test "$_opengl" = yes ; then
+		LIBS="$LIBS $OPENGL_LIBS"
+		INCLUDES="$INCLUDES $OPENGL_CFLAGS"
+	fi
 fi
 
 echo "$_opengl"
 
-add_to_config_mk_if_yes "$_opengl" 'USE_OPENGL=1'
+define_in_config_if_yes "$_opengl" "USE_OPENGL"
 
 #
 # Check for nasm
