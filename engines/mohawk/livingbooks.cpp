@@ -1240,7 +1240,6 @@ void LBAnimation::loadShape(uint16 resourceId) {
 	delete shapeStream;
 }
 
-
 void LBAnimation::draw() {
 	for (uint32 i = 0; i < _nodes.size(); i++)
 		_nodes[i]->draw(_bounds);
@@ -1291,7 +1290,9 @@ void LBAnimation::start() {
 }
 
 void LBAnimation::seek(uint16 pos) {
-	start();
+	_lastTime = 0;
+	_currentFrame = 0;
+	_done = false;
 
 	for (uint32 i = 0; i < _nodes.size(); i++)
 		_nodes[i]->reset();
