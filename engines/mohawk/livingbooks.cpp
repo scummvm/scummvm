@@ -1969,6 +1969,7 @@ void LBPaletteItem::startPhase(uint phase) {
 
 LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
 	_running = false;
+	_currentWord = 0xFFFF;
 	debug(3, "new LBLiveTextItem");
 }
 
@@ -2040,11 +2041,94 @@ void LBLiveTextItem::readData(uint16 type, uint16 size, Common::SeekableSubReadS
 	}
 }
 
+bool LBLiveTextItem::contains(Common::Point point) {
+	if (!LBItem::contains(point))
+		return false;
+
+	point.x -= _rect.left;
+	point.y -= _rect.top;
+
+	for (uint i = 0; i < _words.size(); i++) {
+		if (_words[i].bounds.contains(point))
+			return true;
+	}
+
+	return false;
+}
+
+void LBLiveTextItem::update() {
+	if (_currentWord != 0xFFFF) {
+		uint16 soundId = _words[_currentWord].soundId;
+		if (soundId && !_vm->_sound->isPlaying(soundId)) {
+			_vm->_sound->stopSound();
+			_currentWord = 0xFFFF;
+			// TODO: fix for v2/v3
+			if (_vm->getGameType() == GType_LIVINGBOOKSV1) {
+				_vm->_system->setPalette(_foregroundColor, _paletteIndex + _currentWord, 1);
+			}
+		}
+	}
+
+	LBItem::update();
+}
+
+void LBLiveTextItem::handleMouseDown(Common::Point pos) {
+	if (_neverEnabled || !_enabled || _running)
+		return LBItem::handleMouseDown(pos);
+
+	pos.x -= _rect.left;
+	pos.y -= _rect.top;
+
+	for (uint i = 0; i < _words.size(); i++) {
+		if (_words[i].bounds.contains(pos)) {
+			uint16 soundId = _words[i].soundId;
+			if (!soundId) {
+				// TODO: can we be smarter here, using timing?
+				warning("ignoring click due to no soundId");
+				return;
+			}
+			_currentWord = i;
+			_vm->_sound->playSound(soundId);
+			if (_vm->getGameType() != GType_LIVINGBOOKSV1) {
+				warning("LiveText palettes aren't supported for V2/V3 yet");
+				return;
+			}
+			_vm->_system->setPalette(_highlightColor, _paletteIndex + _currentWord, 1);
+			return;
+		}
+	}
+
+	return LBItem::handleMouseDown(pos);
+}
+
+bool LBLiveTextItem::togglePlaying(bool playing) {
+	if (!playing)
+		return LBItem::togglePlaying(playing);
+	if (_neverEnabled || !_enabled)
+		return _running;
+
+	// TODO: handle this properly
+	_vm->_sound->stopSound();
+
+	_currentWord = 0xFFFF;
+	_running = true;
+
+	return _running;
+}
+
+void LBLiveTextItem::stop() {
+	// TODO: stop sound, refresh palette
+
+	LBItem::stop();
+}
+
 void LBLiveTextItem::notify(uint16 data, uint16 from) {
-	if (!_paletteIndex) {
-		// TODO
-		warning("Zero palette-index for LiveText; V2 game?");
-		return;
+	if (_neverEnabled || !_enabled || !_running)
+		return LBItem::notify(data, from);
+
+	if (_vm->getGameType() != GType_LIVINGBOOKSV1) {
+		warning("LiveText palettes aren't supported for V2/V3 yet");
+		return LBItem::notify(data, from);
 	}
 
 	for (uint i = 0; i < _phrases.size(); i++) {

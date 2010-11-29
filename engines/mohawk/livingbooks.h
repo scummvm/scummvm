@@ -320,10 +320,16 @@ public:
 
 	void readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream);
 
+	bool contains(Common::Point point);
+	void update();
+	void handleMouseDown(Common::Point pos);
+	bool togglePlaying(bool playing);
+	void stop();
 	void notify(uint16 data, uint16 from);
 
 protected:
 	bool _running;
+	uint16 _currentWord;
 
 	byte _backgroundColor[4];
 	byte _foregroundColor[4];
