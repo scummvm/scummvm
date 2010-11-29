@@ -125,7 +125,6 @@ private:
 		Common::File picFile;
 	} _pictureFile;
 
-	Graphics::Surface *_mainScreen;
 	bool _dirtyScreen;
 	Graphics::PixelFormat _pixelFormat;
 };
