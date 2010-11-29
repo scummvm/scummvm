@@ -232,12 +232,52 @@ void MadeEngine::handleEvents() {
 			break;
 
 		case Common::EVENT_KEYDOWN:
-			_eventKey = event.kbd.ascii;
-			// For unknown reasons, the game accepts ASCII code
-			// 9 as backspace
-			if (_eventKey == Common::KEYCODE_BACKSPACE)
+			// Handle any special keys here
+			// Supported keys taken from http://www.allgame.com/game.php?id=13542&tab=controls
+
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_KP_PLUS:	// action (same as left mouse click)
+				_eventNum = 1;		// left mouse button up
+				break;
+			case Common::KEYCODE_KP_MINUS:	// inventory (same as right mouse click)
+				_eventNum = 3;		// right mouse button up
+				break;
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_KP8:
+				_eventMouseY = MAX<int16>(0, _eventMouseY - 1);
+				g_system->warpMouse(_eventMouseX, _eventMouseY);
+				break;
+			case Common::KEYCODE_DOWN:
+			case Common::KEYCODE_KP2:
+				_eventMouseY = MIN<int16>(199, _eventMouseY + 1);
+				g_system->warpMouse(_eventMouseX, _eventMouseY);
+				break;
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_KP4:
+				_eventMouseX = MAX<int16>(0, _eventMouseX - 1);
+				g_system->warpMouse(_eventMouseX, _eventMouseY);
+				break;
+			case Common::KEYCODE_RIGHT:
+			case Common::KEYCODE_KP6:
+				_eventMouseX = MIN<int16>(319, _eventMouseX + 1);
+				g_system->warpMouse(_eventMouseX, _eventMouseY);
+				break;
+			case Common::KEYCODE_F1:		// menu
+			case Common::KEYCODE_F2:		// save game
+			case Common::KEYCODE_F3:		// load game
+			case Common::KEYCODE_F4:		// repeat last message
+				_eventNum = 5;
+				_eventKey = (event.kbd.keycode - Common::KEYCODE_F1) + 21;
+				break;
+			case Common::KEYCODE_BACKSPACE:
+				_eventNum = 5;
 				_eventKey = 9;
-			_eventNum = 5;
+				break;
+			default:
+				_eventNum = 5;
+				_eventKey = event.kbd.ascii;
+				break;
+			}
 
 			// Check for Debugger Activation
 			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) {
