@@ -177,7 +177,7 @@ public:
 
 	const HugoGameDescription *_gameDescription;
 	uint32 getFeatures() const;
-	const char *HugoEngine::getGameId() const;
+	const char *getGameId() const;
 
 	GameType getGameType() const;
 	Common::Platform getPlatform() const;
