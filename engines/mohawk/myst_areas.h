@@ -169,8 +169,12 @@ public:
 	MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType10();
 
+	void setStep(uint16 step);
+
 protected:
-	uint16 _unk10;
+	uint16 _dragSound;
+	uint16 _sliderWidth;
+	uint16 _sliderHeigth;
 };
 
 class MystResourceType12 : public MystResourceType11 {

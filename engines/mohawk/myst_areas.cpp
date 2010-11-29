@@ -458,14 +458,25 @@ uint16 MystResourceType8::getType8Var() {
 // No MystResourceType9!
 
 MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType11(vm, rlstStream, parent) {
+	_dragSound = rlstStream->readUint16LE();
 
-	_unk10 = rlstStream->readUint16LE();
-	debugC(kDebugResource, "\tunk10: %d", _unk10);
+	debugC(kDebugResource, "\tdrag sound : %d", _dragSound);
+
+	_sliderWidth = _rect.right - _rect.left;
+	_sliderHeigth = _rect.bottom - _rect.top;
+
 	warning("TODO: Card contains Type 10 Resource - Function not yet implemented");
 }
 
 MystResourceType10::~MystResourceType10() {
 
+}
+
+void MystResourceType10::setStep(uint16 step) {
+	_rect.top = _minV + _stepV * step - _sliderHeigth / 2;
+	_rect.bottom = _rect.top + _sliderHeigth;
+	_subImages[0].rect.top = 333 - _rect.bottom - 1;
+	_subImages[0].rect.bottom = 333 - _rect.top - 1;
 }
 
 MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType8(vm, rlstStream, parent) {

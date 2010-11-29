@@ -824,24 +824,24 @@ void MystScriptParser_Selenitic::o_204_soundLock_init(uint16 op, uint16 var, uin
 		if (_vm->_resources[i]->type == 10) {
 			switch (_vm->_resources[i]->getType8Var()) {
 			case 20:
-				_sound_lock_slider_1 = _vm->_resources[i];
-				soundLockSliderSetPosition(_sound_lock_slider_1, selenitic_vars[13]);
+				_sound_lock_slider_1 = static_cast<MystResourceType10 *>(_vm->_resources[i]);
+				_sound_lock_slider_1->setStep(selenitic_vars[13]);
 				break;
 			case 21:
-				_sound_lock_slider_2 = _vm->_resources[i];
-				soundLockSliderSetPosition(_sound_lock_slider_2, selenitic_vars[14]);
+				_sound_lock_slider_2 = static_cast<MystResourceType10 *>(_vm->_resources[i]);
+				_sound_lock_slider_2->setStep(selenitic_vars[14]);
 				break;
 			case 22:
-				_sound_lock_slider_3 = _vm->_resources[i];
-				soundLockSliderSetPosition(_sound_lock_slider_3, selenitic_vars[15]);
+				_sound_lock_slider_3 = static_cast<MystResourceType10 *>(_vm->_resources[i]);
+				_sound_lock_slider_3->setStep(selenitic_vars[15]);
 				break;
 			case 23:
-				_sound_lock_slider_4 = _vm->_resources[i];
-				soundLockSliderSetPosition(_sound_lock_slider_4, selenitic_vars[16]);
+				_sound_lock_slider_4 = static_cast<MystResourceType10 *>(_vm->_resources[i]);
+				_sound_lock_slider_4->setStep(selenitic_vars[16]);
 				break;
 			case 24:
-				_sound_lock_slider_5 = _vm->_resources[i];
-				soundLockSliderSetPosition(_sound_lock_slider_5, selenitic_vars[17]);
+				_sound_lock_slider_5 = static_cast<MystResourceType10 *>(_vm->_resources[i]);
+				_sound_lock_slider_5->setStep(selenitic_vars[17]);
 				break;
 			}
 		} else if (_vm->_resources[i]->type == 8) {
@@ -850,10 +850,6 @@ void MystScriptParser_Selenitic::o_204_soundLock_init(uint16 op, uint16 var, uin
 			}
 		}
 	}
-}
-
-void MystScriptParser_Selenitic::soundLockSliderSetPosition(MystResource* slider, uint16 value) {
-// TODO: implement
 }
 
 void MystScriptParser_Selenitic::opcode_205(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
