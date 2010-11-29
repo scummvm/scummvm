@@ -224,7 +224,7 @@ bool GP2XSdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event
 	case BUTTON_B:
 	case BUTTON_CLICK:
 		if (BUTTON_STATE_L == true) {
-			((GP2XSdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->toogleZoomOnMouse();
+			((GP2XSdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->toggleZoomOnMouse();
 			fillMouseEvent(event, _km.x, _km.y);
 		} else {
 			event.type = Common::EVENT_LBUTTONDOWN;
