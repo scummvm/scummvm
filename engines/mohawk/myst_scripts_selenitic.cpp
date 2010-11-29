@@ -114,7 +114,10 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 		SPECIFIC_OPCODE(109, o_105_109_soundReceiverSource),
 		SPECIFIC_OPCODE(110, opcode_110),
 		SPECIFIC_OPCODE(111, o_111_soundReceiverUpdateSound),
-		SPECIFIC_OPCODE(115, opcode_115),
+		SPECIFIC_OPCODE(112, o_112_soundLockMove),
+		SPECIFIC_OPCODE(113, o_113_soundLockStartMove),
+		SPECIFIC_OPCODE(114, o_114_soundLockEndMove),
+		SPECIFIC_OPCODE(115, o_115_soundLockButton),
 		SPECIFIC_OPCODE(116, NOP),
 		SPECIFIC_OPCODE(117, o_117_soundReceiverEndMove),
 
@@ -123,7 +126,7 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 		SPECIFIC_OPCODE(201, opcode_201),
 		SPECIFIC_OPCODE(202, opcode_202),
 		SPECIFIC_OPCODE(203, o_203_soundReceiver_init),
-		SPECIFIC_OPCODE(204, opcode_204),
+		SPECIFIC_OPCODE(204, o_204_soundLock_init),
 		SPECIFIC_OPCODE(205, opcode_205),
 		SPECIFIC_OPCODE(206, opcode_206),
 
@@ -180,6 +183,12 @@ uint16 MystScriptParser_Selenitic::getVar(uint16 var) {
 		return ((*_sound_receiver_position) / 10) % 10;
 	case 17:
 		return (*_sound_receiver_position) % 10;
+    case 20: // Sound lock sliders state
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+    	return 1;
 	case 26:
 		return _sound_receiver_sigma_pressed;
 	default:
@@ -503,7 +512,22 @@ void MystScriptParser_Selenitic::o_111_soundReceiverUpdateSound(uint16 op, uint1
 	sound_receiver_update_sound();
 }
 
-void MystScriptParser_Selenitic::opcode_115(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Selenitic::o_112_soundLockMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	//varUnusedCheck(op, var);
+	//unknown(op, var, argc, argv);
+}
+
+void MystScriptParser_Selenitic::o_113_soundLockStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	varUnusedCheck(op, var);
+	unknown(op, var, argc, argv);
+}
+
+void MystScriptParser_Selenitic::o_114_soundLockEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	varUnusedCheck(op, var);
+	unknown(op, var, argc, argv);
+}
+
+void MystScriptParser_Selenitic::o_115_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (argc == 11) {
 		// Used for Selenitic Card 1147 (Musical Door Lock Button)
 		uint16 imageIdClose = argv[0]; // TODO: Sound Id?
@@ -790,14 +814,45 @@ void MystScriptParser_Selenitic::o_203_soundReceiver_init(uint16 op, uint16 var,
 	_sound_receiver_sigma_pressed = false;
 }
 
-void MystScriptParser_Selenitic::opcode_204(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Selenitic::o_204_soundLock_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	uint16 *selenitic_vars = _vm->_saveLoad->_v->selenitic_vars;
 
-	// Used for Card 1147 (Sound Code Lock)
-	if (argc == 0) {
+	debugC(kDebugScript, "Opcode %d: Sound lock init", op);
 
-	} else
-		unknown(op, var, argc, argv);
+	for (uint i = 0; i < _vm->_resources.size(); i++) {
+		if (_vm->_resources[i]->type == 10) {
+			switch (_vm->_resources[i]->getType8Var()) {
+			case 20:
+				_sound_lock_slider_1 = _vm->_resources[i];
+				soundLockSliderSetPosition(_sound_lock_slider_1, selenitic_vars[13]);
+				break;
+			case 21:
+				_sound_lock_slider_2 = _vm->_resources[i];
+				soundLockSliderSetPosition(_sound_lock_slider_2, selenitic_vars[14]);
+				break;
+			case 22:
+				_sound_lock_slider_3 = _vm->_resources[i];
+				soundLockSliderSetPosition(_sound_lock_slider_3, selenitic_vars[15]);
+				break;
+			case 23:
+				_sound_lock_slider_4 = _vm->_resources[i];
+				soundLockSliderSetPosition(_sound_lock_slider_4, selenitic_vars[16]);
+				break;
+			case 24:
+				_sound_lock_slider_5 = _vm->_resources[i];
+				soundLockSliderSetPosition(_sound_lock_slider_5, selenitic_vars[17]);
+				break;
+			}
+		} else if (_vm->_resources[i]->type == 8) {
+			if (_vm->_resources[i]->getType8Var() == 28) {
+				_sound_lock_button = _vm->_resources[i];
+			}
+		}
+	}
+}
+
+void MystScriptParser_Selenitic::soundLockSliderSetPosition(MystResource* slider, uint16 value) {
+// TODO: implement
 }
 
 void MystScriptParser_Selenitic::opcode_205(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

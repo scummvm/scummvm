@@ -62,14 +62,17 @@ private:
 	DECLARE_OPCODE(o_105_109_soundReceiverSource);
 	DECLARE_OPCODE(opcode_110);
 	DECLARE_OPCODE(o_111_soundReceiverUpdateSound);
-	DECLARE_OPCODE(opcode_115);
+	DECLARE_OPCODE(o_112_soundLockMove);
+	DECLARE_OPCODE(o_113_soundLockStartMove);
+	DECLARE_OPCODE(o_114_soundLockEndMove);
+	DECLARE_OPCODE(o_115_soundLockButton);
 	DECLARE_OPCODE(o_117_soundReceiverEndMove);
 
 	DECLARE_OPCODE(opcode_200);
 	DECLARE_OPCODE(opcode_201);
 	DECLARE_OPCODE(opcode_202);
 	DECLARE_OPCODE(o_203_soundReceiver_init);
-	DECLARE_OPCODE(opcode_204);
+	DECLARE_OPCODE(o_204_soundLock_init);
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
 
@@ -89,6 +92,13 @@ private:
 	MystResource *_sound_receiver_angle_4; // 152
 	MystResource *_sound_receiver_sigma_button; // 156
 
+	MystResource *_sound_lock_slider_1; // 164
+	MystResource *_sound_lock_slider_2; // 168
+	MystResource *_sound_lock_slider_3; // 172
+	MystResource *_sound_lock_slider_4; // 176
+	MystResource *_sound_lock_slider_5; // 180
+	MystResource *_sound_lock_button; // 184
+
 	void sound_receiver_left_right(uint direction);
 	void sound_receiver_update();
 	void sound_receiver_draw_view();
@@ -97,6 +107,8 @@ private:
 	void sound_receiver_update_sound();
 	uint16 sound_receiver_current_sound(uint16 source, uint16 position);
 	void sound_receiver_solution(uint16 source, uint16 &solution, bool &enabled);
+
+	void soundLockSliderSetPosition(MystResource* slider, uint16 value);
 
 	void draw_digit(MystResource *_resource);
 };
