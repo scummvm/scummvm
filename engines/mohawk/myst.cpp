@@ -890,6 +890,7 @@ void MohawkEngine_Myst::drawResourceImages() {
 }
 
 static MystResource *loadResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) {
+	MystResource *resource = 0;
 	uint16 type = rlstStream->readUint16LE();
 
 	debugC(kDebugResource, "\tType: %d", type);
@@ -902,26 +903,39 @@ static MystResource *loadResource(MohawkEngine_Myst *vm, Common::SeekableReadStr
 	case kMystDownResource:
 	case kMystUpResource:
 	case 14: // TODO: kMystBackwardResource?
-		return new MystResource(vm, rlstStream, parent);
+		resource = new MystResource(vm, rlstStream, parent);
+		break;
 	case kMystActionResource:
-		return new MystResourceType5(vm, rlstStream, parent);
+		resource =  new MystResourceType5(vm, rlstStream, parent);
+		break;
 	case kMystVideoResource:
-		return new MystResourceType6(vm, rlstStream, parent);
+		resource =  new MystResourceType6(vm, rlstStream, parent);
+		break;
 	case kMystSwitchResource:
-		return new MystResourceType7(vm, rlstStream, parent);
+		resource =  new MystResourceType7(vm, rlstStream, parent);
+		break;
 	case 8:
-		return new MystResourceType8(vm, rlstStream, parent);
+		resource =  new MystResourceType8(vm, rlstStream, parent);
+		break;
 	case 10:
-		return new MystResourceType10(vm, rlstStream, parent);
+		resource =  new MystResourceType10(vm, rlstStream, parent);
+		break;
 	case 11:
-		return new MystResourceType11(vm, rlstStream, parent);
+		resource =  new MystResourceType11(vm, rlstStream, parent);
+		break;
 	case 12:
-		return new MystResourceType12(vm, rlstStream, parent);
+		resource =  new MystResourceType12(vm, rlstStream, parent);
+		break;
 	case 13:
-		return new MystResourceType13(vm, rlstStream, parent);
+		resource =  new MystResourceType13(vm, rlstStream, parent);
+		break;
 	default:
 		error ("Unknown/Unhandled MystResource type %d", type);
 	}
+
+	resource->type = type;
+
+	return resource;
 }
 
 void MohawkEngine_Myst::loadResources() {

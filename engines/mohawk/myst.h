@@ -154,6 +154,7 @@ public:
 	virtual ~MystResource();
 
 	MystResource *_parent;
+	uint16 type;
 
 	bool contains(Common::Point point) { return _rect.contains(point); }
 	virtual void drawDataToScreen() {}
