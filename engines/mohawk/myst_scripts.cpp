@@ -27,6 +27,7 @@
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_saveload.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
@@ -93,7 +94,7 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(0, o_0_toggleVar),
 		OPCODE(1, o_1_setVar),
 		OPCODE(2, o_2_changeCardSwitch),
-		OPCODE(3, takePage),
+		OPCODE(3, o_3_takePage),
 		OPCODE(4, o_4_redrawCard),
 		// Opcode 5 Not Present
 		OPCODE(6, o_6_goToDest),
@@ -284,26 +285,29 @@ void MystScriptParser::o_2_changeCardSwitch(uint16 op, uint16 var, uint16 argc, 
 		warning("Missing invokingResource in altDest call");
 }
 
-void MystScriptParser::takePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 1) {
-		uint16 cursorId = argv[0];
+void MystScriptParser::o_3_takePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	uint16 *game_globals = _vm->_saveLoad->_v->game_globals;
 
-		debugC(kDebugScript, "Opcode %d: takePage Var %d CursorId %d", op, var, cursorId);
+	uint16 cursorId = argv[0];
+	uint16 oldPage = game_globals[2];
 
-		if (getVar(var)) {
+	debugC(kDebugScript, "Opcode %d: takePage Var %d CursorId %d", op, var, cursorId);
+
+	// Take / drop page
+	toggleVar(var);
+
+	if (oldPage != game_globals[2]) {
+		_vm->_gfx->hideCursor();
+		_vm->redrawArea(var);
+
+		// Set new cursor
+		if (game_globals[2])
 			_vm->setMainCursor(cursorId);
+		else
+			_vm->setMainCursor(kDefaultMystCursor);
 
-			setVarValue(var, 0);
-
-			// Return pages that are already held
-			if (var == 102)
-				setVarValue(103, 1);
-
-			if (var == 103)
-				setVarValue(102, 1);
-		}
-	} else
-		unknown(op, var, argc, argv);
+		_vm->_gfx->showCursor();
+	}
 }
 
 void MystScriptParser::o_4_redrawCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

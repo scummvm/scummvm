@@ -56,7 +56,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 		OPCODE(0, o_0_toggleVar),
 		OPCODE(1, o_1_setVar),
 		OPCODE(2, o_2_changeCardSwitch),
-		OPCODE(3, takePage),
+		OPCODE(3, o_3_takePage),
 		OPCODE(4, o_4_redrawCard),
 		// TODO: Opcode 5 Not Present
 		OPCODE(6, o_6_goToDest),

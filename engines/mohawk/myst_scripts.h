@@ -81,7 +81,7 @@ public:
 	DECLARE_OPCODE(o_0_toggleVar);
 	DECLARE_OPCODE(o_1_setVar);
 	DECLARE_OPCODE(o_2_changeCardSwitch);
-	DECLARE_OPCODE(takePage);
+	DECLARE_OPCODE(o_3_takePage);
 	DECLARE_OPCODE(o_4_redrawCard);
 	DECLARE_OPCODE(o_6_goToDest);
 	DECLARE_OPCODE(o_9_triggerMovie);

@@ -56,7 +56,7 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 		OPCODE(0, o_0_toggleVar),
 		OPCODE(1, o_1_setVar),
 		OPCODE(2, o_2_changeCardSwitch),
-		OPCODE(3, takePage),
+		OPCODE(3, o_3_takePage),
 		OPCODE(4, o_4_redrawCard),
 		// TODO: Opcode 5 Not Present
 		OPCODE(6, o_6_goToDest),
@@ -147,6 +147,7 @@ void MystScriptParser_Selenitic::runPersistentOpcodes() {
 }
 
 uint16 MystScriptParser_Selenitic::getVar(uint16 var) {
+	uint16 *game_globals = _vm->_saveLoad->_v->game_globals;
 	uint16 *selenitic_vars = _vm->_saveLoad->_v->selenitic_vars;
 
 	switch(var) {
@@ -197,12 +198,17 @@ uint16 MystScriptParser_Selenitic::getVar(uint16 var) {
 		return 0;
 	case 30:
 		return _maze_runner_door_opened;
+	case 102: // Red page
+		return !(game_globals[6] & 2) && (game_globals[2] != 8);
+	case 103: // Blue page
+		return !(game_globals[7] & 2) && (game_globals[2] != 2);
 	default:
 		return MystScriptParser::getVar(var);
 	}
 }
 
 void MystScriptParser_Selenitic::toggleVar(uint16 var) {
+	uint16 *game_globals = _vm->_saveLoad->_v->game_globals;
 	uint16 *selenitic_vars = _vm->_saveLoad->_v->selenitic_vars;
 
 	switch(var) {
@@ -227,6 +233,26 @@ void MystScriptParser_Selenitic::toggleVar(uint16 var) {
 	case 6: // Tunnel lights
 		selenitic_vars[6] = (selenitic_vars[6] + 1) % 2;
     	break;
+	case 102: // Red page
+        if (!(game_globals[6] & 2)) {
+			if (game_globals[2] == 8)
+				game_globals[2] = 0;
+			else {
+				//TODO: Cursor animation
+				game_globals[2] = 8;
+			}
+		}
+		break;
+	case 103: // Blue page
+        if (!(game_globals[7] & 2)) {
+			if (game_globals[2] == 2)
+				game_globals[2] = 0;
+			else {
+				//TODO: Cursor animation
+				game_globals[2] = 2;
+			}
+		}
+		break;
 	default:
 		MystScriptParser::toggleVar(var);
 		break;
