@@ -104,24 +104,24 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(13, o_2_changeCardSwitch),
 		OPCODE(14, o_14_drawAreaState),
 		OPCODE(15, o_15_redrawAreaForVar),
-		OPCODE(16, opcode_16),
+		OPCODE(16, o_16_changeCardDirectional),
 		OPCODE(17, o_17_changeCardPush),
 		OPCODE(18, o_18_changeCardPop),
 		OPCODE(19, o_19_enableAreas),
 		OPCODE(20, o_20_disableAreas),
-		OPCODE(21, opcode_21),
+		OPCODE(21, o_21_directionalUpdate),
 		OPCODE(22, o_6_changeCard),
 		OPCODE(23, o_23_toggleAreasActivation),
-		OPCODE(24, playSound),
+		OPCODE(24, o_24_playSound),
 		// Opcode 25 Not Present, original calls replaceSound
-		OPCODE(26, opcode_26),
-		OPCODE(27, playSoundBlocking),
-		OPCODE(28, opcode_28),
-		OPCODE(29, opcode_29_33),
+		OPCODE(26, o_26_stopSoundBackground),
+		OPCODE(27, o_27_playSoundBlocking),
+		OPCODE(28, o_28_restoreDefaultRect),
+		OPCODE(29, o_29_33_blitRect),
 		OPCODE(30, opcode_30),
 		OPCODE(31, opcode_31),
 		OPCODE(32, opcode_32),
-		OPCODE(33, opcode_29_33),
+		OPCODE(33, o_29_33_blitRect),
 		OPCODE(34, opcode_34),
 		OPCODE(35, opcode_35),
 		OPCODE(36, changeCursor),
@@ -376,23 +376,21 @@ void MystScriptParser::o_15_redrawAreaForVar(uint16 op, uint16 var, uint16 argc,
 	_vm->redrawArea(var);
 }
 
-void MystScriptParser::opcode_16(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser::o_16_changeCardDirectional(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 	// Used by Channelwood Card 3262 (In Elevator)
-	if (argc == 2) {
-		debugC(kDebugScript, "Opcode %d: Change Card? Conditional?", op);
+	debugC(kDebugScript, "Opcode %d: Change Card with optional directional update", op);
 
-		uint16 cardId = argv[0];
-		uint16 u0 = argv[1];
+	uint16 cardId = argv[0];
+	uint16 directionalUpdateDataSize = argv[1];
 
-		debugC(kDebugScript, "\tcardId: %d", cardId);
-		debugC(kDebugScript, "\tu0: %d", u0);
+	debugC(kDebugScript, "\tcardId: %d", cardId);
+	debugC(kDebugScript, "\tdirectonal update data size: %d", directionalUpdateDataSize);
 
-		// TODO: Finish Implementation...
-		_vm->changeToCard(cardId);
-	} else
-		unknown(op, var, argc, argv);
+	// TODO: Finish Implementation...
+	// Can use opcode 21 to do the directional update
+	_vm->changeToCard(cardId);
+
 }
 
 // NOTE: Opcode 17 and 18 form a pair, where Opcode 17 jumps to a card,
@@ -486,24 +484,24 @@ void MystScriptParser::o_20_disableAreas(uint16 op, uint16 var, uint16 argc, uin
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::opcode_21(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_21_directionalUpdate(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 6) {
 		// Used in Channelwood Card 3318 (Sirrus' Room Drawer)
-		debugC(kDebugScript, "Opcode %d: Vertical Slide?", op);
+		debugC(kDebugScript, "Opcode %d: Transition / Directional update", op);
 
 		Common::Rect rect1 = Common::Rect(argv[0], argv[1], argv[2], argv[3]);
-		uint16 u0 = argv[4];
-		uint16 u1 = argv[5];
+		uint16 kind = argv[4];
+		uint16 steps = argv[5];
 
 		debugC(kDebugScript, "\trect1.left: %d", rect1.left);
 		debugC(kDebugScript, "\trect1.top: %d", rect1.top);
 		debugC(kDebugScript, "\trect1.right: %d", rect1.right);
 		debugC(kDebugScript, "\trect1.bottom: %d", rect1.bottom);
 
-		debugC(kDebugScript, "\tu0: %d", u0);
-		debugC(kDebugScript, "\tu1: %d", u1);
+		debugC(kDebugScript, "\tkind / direction: %d", kind);
+		debugC(kDebugScript, "\tsteps: %d", steps);
 
 		// TODO: Complete Implementation...
 	} else
@@ -536,7 +534,7 @@ void MystScriptParser::o_23_toggleAreasActivation(uint16 op, uint16 var, uint16 
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::playSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_24_playSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 1) {
@@ -550,44 +548,21 @@ void MystScriptParser::playSound(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::opcode_26(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Unknown...", op);
-
-		// TODO: Work out function...
-		if (_vm->getCurStack() == kSeleniticStack && _vm->getCurCard() == 1245) {
-			debugC(kDebugScript, "TODO: Function Not Known... Used by Exit Hotspot Resource");
-		} else if (_vm->getCurStack() == kStoneshipStack && _vm->getCurCard() == 2226) {
-			debugC(kDebugScript, "TODO: Function Not Known... Used by Ship Cabin Door");
-		} else if (_vm->getCurStack() == kStoneshipStack && _vm->getCurCard() == 2294) {
-			debugC(kDebugScript, "TODO: Function Not Known... Used by Sirrus' Room Door");
-		} else if (_vm->getCurStack() == kMechanicalStack && _vm->getCurCard() == 6327) {
-			debugC(kDebugScript, "TODO: Function Not Known... Used by Elevator");
-		} else if (_vm->getCurStack() == kDniStack && _vm->getCurCard() == 5014) {
-			debugC(kDebugScript, "TODO: Function Not Known... Used by Atrus");
-		} else
-			unknown(op, var, argc, argv);
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser::o_26_stopSoundBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: stopSoundBackground", op);
+	//_vm->_sound->stopBackground();
 }
 
-void MystScriptParser::playSoundBlocking(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser::o_27_playSoundBlocking(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	uint16 soundId = argv[0];
 
-	if (argc == 1) {
-		uint16 soundId = argv[0];
+	debugC(kDebugScript, "Opcode %d: playSoundBlocking", op);
+	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-		debugC(kDebugScript, "Opcode %d: playSoundBlocking", op);
-		debugC(kDebugScript, "\tsoundId: %d", soundId);
-
-		_vm->_sound->playSoundBlocking(soundId);
-	} else
-		unknown(op, var, argc, argv);
+	_vm->_sound->playSoundBlocking(soundId);
 }
 
-void MystScriptParser::opcode_28(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_28_restoreDefaultRect(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	Common::Rect rect;
@@ -628,12 +603,13 @@ void MystScriptParser::opcode_28(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser::opcode_29_33(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_29_33_blitRect(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// TODO: Opcode 29 called on Mechanical Card 6178 causes a engine
 	//       abort this is because imageId is 7158 (not valid), but the
 	//       script resource gives this as 7178 (valid)...
+	// FIXME: opcode 33 also hides the cursor when drawing if it is in the way
 
 	if (argc == 7) {
 		uint16 imageId = argv[0];
@@ -755,26 +731,17 @@ void MystScriptParser::opcode_30(uint16 op, uint16 var, uint16 argc, uint16 *arg
 }
 
 void MystScriptParser::opcode_31(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Channelwood Card 3505 (Walkway from Sirrus' Room)
-	if (argc == 2) {
-		debugC(kDebugScript, "Opcode %d: Boolean Choice of Play Sound", op);
+	debugC(kDebugScript, "Opcode %d: Switch Choice of Play Sound", op);
 
-		uint16 soundId0 = argv[0];
-		uint16 soundId1 = argv[1];
-
+	uint16 value = getVar(var);
+	if (value < argc) {
+		uint16 soundId = argv[value];
 		debugC(kDebugScript, "\tvar: %d", var);
-		debugC(kDebugScript, "\tsoundId0: %d", soundId0);
-		debugC(kDebugScript, "\tsoundId1: %d", soundId1);
+		debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-		if (getVar(var)) {
-			if (soundId1)
-				_vm->_sound->playSound(soundId1);
-		} else {
-			if (soundId0)
-				_vm->_sound->playSound(soundId0);
-		}
-	} else
-		unknown(op, var, argc, argv);
+		if (soundId)
+			_vm->_sound->playSound(soundId);
+	}
 }
 
 void MystScriptParser::opcode_32(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
