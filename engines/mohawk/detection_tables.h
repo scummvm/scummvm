@@ -556,6 +556,37 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"seussabc",
+			"",
+			AD_ENTRY1("ABC.LB", "1d56a9351974a7a70ace5274a4570b72"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		"ABC.EXE"
+	},
+
+	// 32-bit version of the previous entry
+	{
+		{
+			"seussabc",
+			"",
+			AD_ENTRY1("ABC32.LB", "1d56a9351974a7a70ace5274a4570b72"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		"ABC32.EXE"
+	},
+
+	{
+		{
 			"1stdegree",
 			"",
 			AD_ENTRY1("AL236_1.MHK", "3ba145492a7b8b4dee0ef4222c5639c3"),
