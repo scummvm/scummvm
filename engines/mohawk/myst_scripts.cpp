@@ -300,9 +300,9 @@ void MystScriptParser::o_2_changeCardSwitch(uint16 op, uint16 var, uint16 argc, 
 	debugC(kDebugScript, "Opcode %d: changeCardSwitch var %d: %d", op, var, value);
 
 	if (value)
-		_vm->changeToCard(argv[value -1 ]);
+		_vm->changeToCard(argv[value -1 ], true);
 	else if (_invokingResource != NULL)
-		_vm->changeToCard(_invokingResource->getDest());
+		_vm->changeToCard(_invokingResource->getDest(), true);
 	else
 		warning("Missing invokingResource in altDest call");
 }
@@ -338,13 +338,14 @@ void MystScriptParser::o_4_redrawCard(uint16 op, uint16 var, uint16 argc, uint16
 	// TODO: Is redrawing the background correct ?
 	_vm->drawCardBackground();
 	_vm->drawResourceImages();
+	_vm->_gfx->updateScreen();
 }
 
 void MystScriptParser::o_6_goToDest(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
 
 	if (_invokingResource != NULL)
-		_vm->changeToCard(_invokingResource->getDest());
+		_vm->changeToCard(_invokingResource->getDest(), true);
 	else
 		warning("Opcode %d: Missing invokingResource", op);
 }
@@ -395,8 +396,7 @@ void MystScriptParser::o_16_changeCardDirectional(uint16 op, uint16 var, uint16 
 	debugC(kDebugScript, "\tcardId: %d", cardId);
 	debugC(kDebugScript, "\tdirectonal update data size: %d", directionalUpdateDataSize);
 
-	// TODO: Change to card should not update the screen
-	_vm->changeToCard(cardId);
+	_vm->changeToCard(cardId, false);
 
 	animatedUpdate(directionalUpdateDataSize, &argv[2], 0);
 }
@@ -424,7 +424,7 @@ void MystScriptParser::o_17_changeCardPush(uint16 op, uint16 var, uint16 argc, u
 
 		debugC(kDebugScript, "\tCurrent CardId: %d", _savedCardId);
 
-		_vm->changeToCard(cardId);
+		_vm->changeToCard(cardId, true);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -439,7 +439,7 @@ void MystScriptParser::o_18_changeCardPop(uint16 op, uint16 var, uint16 argc, ui
 		uint16 u0 = argv[0];
 		debugC(kDebugScript, "\tu0: %d", u0);
 
-		_vm->changeToCard(_savedCardId);
+		_vm->changeToCard(_savedCardId, true);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -738,7 +738,7 @@ void MystScriptParser::o_34_changeCard(uint16 op, uint16 var, uint16 argc, uint1
 	debugC(kDebugScript, "\tTarget Card: %d", cardId);
 	//debugC(kDebugScript, "\tu0: %d", u0); // Unused data
 
-	_vm->changeToCard(cardId);
+	_vm->changeToCard(cardId, true);
 }
 
 void MystScriptParser::o_35_drawImageChangeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -758,7 +758,7 @@ void MystScriptParser::o_35_drawImageChangeCard(uint16 op, uint16 var, uint16 ar
 		_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
 		_vm->_gfx->updateScreen();
 		_vm->_system->delayMillis(delay * 100);
-		_vm->changeToCard(cardId);
+		_vm->changeToCard(cardId, true);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -826,10 +826,10 @@ void MystScriptParser::o_40_changeStack(uint16 op, uint16 var, uint16 argc, uint
 			// No need to have a table for just this data...
 			if (targetStack == 1) {
 				_vm->changeToStack(kDemoSlidesStack);
-				_vm->changeToCard(1000);
+				_vm->changeToCard(1000, true);
 			} else if (targetStack == 2) {
 				_vm->changeToStack(kDemoPreviewStack);
-				_vm->changeToCard(3000);
+				_vm->changeToCard(3000, true);
 			}
 
 			if (!_vm->_tweaksEnabled) {
@@ -844,7 +844,7 @@ void MystScriptParser::o_40_changeStack(uint16 op, uint16 var, uint16 argc, uint
 
 			// TODO: Play Flyby Entry Movie on Masterpiece Edition..? Only on Myst to Age Link?
 			_vm->changeToStack(stack_map[targetStack]);
-			_vm->changeToCard(start_card[targetStack]);
+			_vm->changeToCard(start_card[targetStack], true);
 
 			handle = _vm->_sound->playSound(soundIdLinkDst);
 			while (_vm->_mixer->isSoundHandleActive(*handle))
@@ -870,8 +870,7 @@ void MystScriptParser::o_41_changeCardPlaySoundDirectional(uint16 op, uint16 var
 	if (soundId)
 		_vm->_sound->playSound(soundId);
 
-	// TODO: Change to card should not update the screen
-	_vm->changeToCard(cardId);
+	_vm->changeToCard(cardId, false);
 
 	animatedUpdate(dataSize, &argv[4], delayBetweenSteps);
 }

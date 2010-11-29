@@ -253,9 +253,9 @@ Common::Error MohawkEngine_Myst::run() {
 		changeToStack(kSeleniticStack);
 
 	if (getFeatures() & GF_DEMO)
-		changeToCard(2000);
+		changeToCard(2000, true);
 	else
-		changeToCard(1285);
+		changeToCard(1285, true);
 
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && !(getFeatures() & GF_DEMO)) {
@@ -416,7 +416,7 @@ void MohawkEngine_Myst::drawCardBackground() {
 	_gfx->copyImageToScreen(getCardBackgroundId(), Common::Rect(0, 0, 544, 333));
 }
 
-void MohawkEngine_Myst::changeToCard(uint16 card) {
+void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 	debug(2, "changeToCard(%d)", card);
 
 	_scriptParser->disableInitOpcodes();
@@ -503,6 +503,11 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 	// Debug: Show resource rects
 	if (_showResourceRects)
 		drawResourceRects();
+
+	// Make sure the screen is updated
+	if (updateScreen) {
+		_gfx->updateScreen();
+	}
 }
 
 void MohawkEngine_Myst::drawResourceRects() {
@@ -756,7 +761,6 @@ void MohawkEngine_Myst::runInitScript() {
 	delete initStream;
 
 	_scriptParser->runScript(script);
-	_gfx->updateScreen();
 }
 
 void MohawkEngine_Myst::runExitScript() {
@@ -772,7 +776,6 @@ void MohawkEngine_Myst::runExitScript() {
 	delete exitStream;
 
 	_scriptParser->runScript(script);
-	_gfx->updateScreen();
 }
 
 void MohawkEngine_Myst::loadHelp(uint16 id) {
@@ -915,9 +918,6 @@ void MohawkEngine_Myst::drawResourceImages() {
 	for (uint16 i = 0; i < _resources.size(); i++)
 		if (_resources[i]->isDrawSubimages())
 			_resources[i]->drawDataToScreen();
-
-	// Make sure the screen is updated
-	_gfx->updateScreen();
 }
 
 void MohawkEngine_Myst::redrawResource(MystResourceType8 *_resource) {
@@ -1009,7 +1009,7 @@ void MohawkEngine_Myst::runLoadDialog() {
 Common::Error MohawkEngine_Myst::loadGameState(int slot) {
 	if (_saveLoad->loadGame(_saveLoad->generateSaveGameList()[slot])) {
 		changeToStack(kIntroStack);
-		changeToCard(5);
+		changeToCard(5, true);
 		return Common::kNoError;
 	} else
 		return Common::kUnknownError;

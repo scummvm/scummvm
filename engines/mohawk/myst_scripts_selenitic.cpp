@@ -549,7 +549,7 @@ void MystScriptParser_Selenitic::opcode_110(uint16 op, uint16 var, uint16 argc, 
 
 		// TODO: Finish Implementing Logic...
 		// HACK: Bypass Higher Logic for now...
-		_vm->changeToCard(argv[1]);
+		_vm->changeToCard(argv[1], true);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -709,10 +709,15 @@ void MystScriptParser_Selenitic::o_115_soundLockButton(uint16 op, uint16 var, ui
 	if (solved) {
 		_sound_lock_button->drawConditionalDataToScreen(2);
 
-		uint16 cardIdOpen = argv[2];
+		uint16 cardIdClosed = argv[0];
+		uint16 cardIdOpen = argv[1];
 
-		//TODO: Change card with directional update playing sound
-		_vm->changeToCard(cardIdOpen);
+		_vm->changeToCard(cardIdClosed, true);
+
+		_vm->changeToCard(cardIdOpen, false);
+		_vm->_sound->playSound(argv[2]);
+
+		animatedUpdate(argv[4], &argv[5], argv[3]);
 	} else {
 		_sound_lock_button->drawConditionalDataToScreen(0);
 	}

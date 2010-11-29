@@ -69,7 +69,7 @@ bool MystConsole::Cmd_ChangeCard(int argc, const char **argv) {
 	}
 
 	_vm->_sound->stopSound();
-	_vm->changeToCard((uint16)atoi(argv[1]));
+	_vm->changeToCard((uint16)atoi(argv[1]), true);
 
 	return false;
 }
@@ -161,9 +161,9 @@ bool MystConsole::Cmd_ChangeStack(int argc, const char **argv) {
 	_vm->changeToStack(stackNum - 1);
 
 	if (argc == 3)
-		_vm->changeToCard((uint16)atoi(argv[2]));
+		_vm->changeToCard((uint16)atoi(argv[2]), true);
 	else
-		_vm->changeToCard(default_start_card[stackNum - 1]);
+		_vm->changeToCard(default_start_card[stackNum - 1], true);
 
 	return false;
 }

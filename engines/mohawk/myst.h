@@ -174,7 +174,7 @@ public:
 	void runSaveDialog();
 
 	void changeToStack(uint16 stack);
-	void changeToCard(uint16 card);
+	void changeToCard(uint16 card, bool updateScreen);
 	uint16 getCurCard() { return _curCard; }
 	uint16 getCurStack() { return _curStack; }
 	void setMainCursor(uint16 cursor);

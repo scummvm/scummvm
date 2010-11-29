@@ -296,7 +296,7 @@ void MystScriptParser_Myst::opcode_100(uint16 op, uint16 var, uint16 argc, uint1
 
 			uint16 varValue = _vm->_varStore->getVar(var);
 			_vm->changeToStack(stack_map[varValue]);
-			_vm->changeToCard(start_card[varValue]);
+			_vm->changeToCard(start_card[varValue], true);
 
 			// TODO: No soundIdLinkDst for Opcode 100 link? Check Original.
 		}
@@ -330,7 +330,7 @@ void MystScriptParser_Myst::opcode_100(uint16 op, uint16 var, uint16 argc, uint1
 	case kDemoSlidesStack:
 		// TODO: Change to changeStack call?
 		_vm->changeToStack(kDemoStack);
-		_vm->changeToCard(2001);
+		_vm->changeToCard(2001, true);
 		break;
 	default:
 		unknown(op, var, argc, argv);
@@ -487,7 +487,7 @@ void MystScriptParser_Myst::opcode_102(uint16 op, uint16 var, uint16 argc, uint1
 
 			_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
 			_vm->_system->delayMillis(delay / 100);
-			_vm->changeToCard(cardId);
+			_vm->changeToCard(cardId, true);
 		} else
 			unknown(op, var, argc, argv);
 		break;
@@ -822,7 +822,7 @@ void MystScriptParser_Myst::opcode_110(uint16 op, uint16 var, uint16 argc, uint1
 
 			// TODO: Finish Implementing Logic...
 			// HACK: Bypass Higher Logic for now...
-			_vm->changeToCard(argv[1]);
+			_vm->changeToCard(argv[1], true);
 		} else
 			unknown(op, var, argc, argv);
 		break;
@@ -1037,7 +1037,7 @@ void MystScriptParser_Myst::opcode_115(uint16 op, uint16 var, uint16 argc, uint1
 
 			// TODO: Fix Logic...
 			// HACK: Bypass Door Lock For Now
-			_vm->changeToCard(cardIdOpen);
+			_vm->changeToCard(cardIdOpen, true);
 		} else
 			unknown(op, var, argc, argv);
 		break;
@@ -1069,9 +1069,9 @@ void MystScriptParser_Myst::opcode_115(uint16 op, uint16 var, uint16 argc, uint1
 			if ((var == 100 && !_vm->_varStore->getVar(25)) ||
 			   (var == 101 && !_vm->_varStore->getVar(24))) {
 				// TODO: Clear mainCursor back to nominal..
-				_vm->changeToCard(cardIdLose);
+				_vm->changeToCard(cardIdLose, true);
 			} else
-				_vm->changeToCard(cardIdBookCover);
+				_vm->changeToCard(cardIdBookCover, true);
 
 			// TODO: Is this logic here?
 			//       i.e. If was holding page, wait then auto open and play book...
@@ -1617,7 +1617,7 @@ void MystScriptParser_Myst::opcode_129(uint16 op, uint16 var, uint16 argc, uint1
 			debugC(kDebugScript, "\tcardId: %d", cardId);
 
 			// TODO: Fill in Code...
-			_vm->changeToCard(cardId);
+			_vm->changeToCard(cardId, true);
 		} else
 			unknown(op, var, argc, argv);
 		break;
@@ -2103,7 +2103,7 @@ void MystScriptParser_Myst::opcode_200_run() {
 		case kDemoSlidesStack:
 			// Used on Cards...
 			if (_vm->_system->getMillis() - g_opcode200Parameters.lastCardTime >= 2 * 1000)
-				_vm->changeToCard(g_opcode200Parameters.cardId);
+				_vm->changeToCard(g_opcode200Parameters.cardId, true);
 			break;
 		}
 	}
@@ -2147,7 +2147,7 @@ void MystScriptParser_Myst::opcode_200(uint16 op, uint16 var, uint16 argc, uint1
 //				_vm->_video->playMovieCentered(_vm->wrapMovieFilename("intro", kIntroStack));
 //		}
 
-		_vm->changeToCard(_vm->getCurCard()+1);
+		_vm->changeToCard(_vm->getCurCard()+1, true);
 		break;
 	case kSeleniticStack:
 		varUnusedCheck(op, var);

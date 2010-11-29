@@ -70,7 +70,7 @@ MystResource::~MystResource() {
 
 void MystResource::handleMouseUp(Common::Point *mouse) {
 	if (_dest != 0)
-		_vm->changeToCard(_dest);
+		_vm->changeToCard(_dest, true);
 	else
 		warning("Movement type resource with null destination at position (%d, %d), (%d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
 }
