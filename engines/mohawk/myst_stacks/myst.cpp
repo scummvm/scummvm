@@ -2016,9 +2016,10 @@ void MystScriptParser_Myst::opcode_201(uint16 op, uint16 var, uint16 argc, uint1
 
 	switch (_vm->getCurStack()) {
 	case kIntroStack:
+		_vm->_gfx->updateScreen();
 		_vm->_system->delayMillis(4 * 1000);
 		_vm->_gfx->copyImageToScreen(4, Common::Rect(0, 0, 544, 333));
-		// TODO : Wait until video ends, then change to card 5
+		// TODO: Wait until video ends, then change to card 5
 		break;
 	case kStoneshipStack:
 		varUnusedCheck(op, var);
