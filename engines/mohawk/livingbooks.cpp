@@ -539,6 +539,7 @@ void MohawkEngine_LivingBooks::loadBITL(uint16 resourceId) {
 			break;
 		default:
 			warning("Unknown item type %04x", type);
+		case 3: // often used for buttons
 			res = new LBItem(this, rect);
 			break;
 		}
