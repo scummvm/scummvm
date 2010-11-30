@@ -2120,16 +2120,27 @@ bool LBLiveTextItem::contains(Common::Point point) {
 	return false;
 }
 
+void LBLiveTextItem::paletteUpdate(uint16 word, bool on) {
+	// TODO: fix for v2/v3
+	if (_vm->getGameType() != GType_LIVINGBOOKSV1) {
+		warning("LiveText palettes aren't supported for V2/V3 yet");
+		return;
+	}
+
+	if (on) {
+		_vm->_system->setPalette(_highlightColor, _paletteIndex + word, 1);
+	} else {
+		_vm->_system->setPalette(_foregroundColor, _paletteIndex + word, 1);
+	}
+}
+
 void LBLiveTextItem::update() {
 	if (_currentWord != 0xFFFF) {
 		uint16 soundId = _words[_currentWord].soundId;
 		if (soundId && !_vm->_sound->isPlaying(soundId)) {
 			_vm->_sound->stopSound();
+			paletteUpdate(_currentWord, false);
 			_currentWord = 0xFFFF;
-			// TODO: fix for v2/v3
-			if (_vm->getGameType() == GType_LIVINGBOOKSV1) {
-				_vm->_system->setPalette(_foregroundColor, _paletteIndex + _currentWord, 1);
-			}
 		}
 	}
 
@@ -2145,6 +2156,10 @@ void LBLiveTextItem::handleMouseDown(Common::Point pos) {
 
 	for (uint i = 0; i < _words.size(); i++) {
 		if (_words[i].bounds.contains(pos)) {
+			if (_currentWord != 0xFFFF) {
+				paletteUpdate(_currentWord, false);
+				_currentWord = 0xFFFF;
+			}
 			uint16 soundId = _words[i].soundId;
 			if (!soundId) {
 				// TODO: can we be smarter here, using timing?
@@ -2153,11 +2168,7 @@ void LBLiveTextItem::handleMouseDown(Common::Point pos) {
 			}
 			_currentWord = i;
 			_vm->_sound->playSound(soundId);
-			if (_vm->getGameType() != GType_LIVINGBOOKSV1) {
-				warning("LiveText palettes aren't supported for V2/V3 yet");
-				return;
-			}
-			_vm->_system->setPalette(_highlightColor, _paletteIndex + _currentWord, 1);
+			paletteUpdate(_currentWord, true);
 			return;
 		}
 	}
@@ -2190,9 +2201,9 @@ void LBLiveTextItem::notify(uint16 data, uint16 from) {
 	if (_neverEnabled || !_enabled || !_running)
 		return LBItem::notify(data, from);
 
-	if (_vm->getGameType() != GType_LIVINGBOOKSV1) {
-		warning("LiveText palettes aren't supported for V2/V3 yet");
-		return LBItem::notify(data, from);
+	if (_currentWord != 0xFFFF) {
+		paletteUpdate(_currentWord, false);
+		_currentWord = 0xFFFF;
 	}
 
 	for (uint i = 0; i < _phrases.size(); i++) {
@@ -2200,14 +2211,12 @@ void LBLiveTextItem::notify(uint16 data, uint16 from) {
 		if (_phrases[i].highlightStart == data && _phrases[i].startId == from) {
 			debug(2, "Enabling phrase %d", i);
 			for (uint j = 0; j < _phrases[i].wordCount; j++) {
-				uint n = _phrases[i].wordStart + j;
-				_vm->_system->setPalette(_highlightColor, _paletteIndex + n, 1);
+				paletteUpdate(_phrases[i].wordStart + j, true);
 			}
 		} else if (_phrases[i].highlightEnd == data && _phrases[i].endId == from) {
 			debug(2, "Disabling phrase %d", i);
 			for (uint j = 0; j < _phrases[i].wordCount; j++) {
-				uint n = _phrases[i].wordStart + j;
-				_vm->_system->setPalette(_foregroundColor, _paletteIndex + n, 1);
+				paletteUpdate(_phrases[i].wordStart + j, false);
 			}
 		}
 	}

@@ -327,6 +327,8 @@ public:
 	void notify(uint16 data, uint16 from);
 
 protected:
+	void paletteUpdate(uint16 word, bool on);
+
 	bool _running;
 	uint16 _currentWord;
 
