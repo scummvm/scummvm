@@ -196,6 +196,7 @@ private:
 	MystConsole *_console;
 	GUI::SaveLoadChooser *_loadDialog;
 	MystOptionsDialog *_optionsDialog;
+	MystScriptParser *_prevStack;
 	ResourceCache _cache;
 	void cachePreload(uint32 tag, uint16 id);
 

@@ -82,6 +82,8 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_cursorHintCount = 0;
 	_cursorHints = NULL;
 
+	_prevStack = NULL;
+
 	_view.conditionalImageCount = 0;
 	_view.conditionalImages = NULL;
 	_view.soundList = NULL;
@@ -105,6 +107,7 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete _saveLoad;
 	delete _loadDialog;
 	delete _optionsDialog;
+	delete _prevStack;
 
 	delete[] _cursorHints;
 
@@ -365,7 +368,11 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 
 	_curStack = stack;
 
-	delete _scriptParser;
+	// Delete the previous stack and move the current stack to the previous one
+	// There's probably a better way to do this, but the script classes shouldn't
+	// take up much memory.
+	delete _prevStack;
+	_prevStack = _scriptParser;
 
 	switch (_curStack) {
 	case kSeleniticStack:
