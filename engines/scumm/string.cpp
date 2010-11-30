@@ -224,10 +224,7 @@ void ScummEngine_v6::removeBlastTexts() {
 void ScummEngine_v7::processSubtitleQueue() {
 	for (int i = 0; i < _subtitleQueuePos; ++i) {
 		SubtitleText *st = &_subtitleQueue[i];
-		if (!ConfMan.getBool("subtitles") || VAR(VAR_VOICE_MODE) == 0)
-			// subtitles are disabled, don't display the text
-			continue;
-		if (!ConfMan.getBool("subtitles") && (!st->actorSpeechMsg || _mixer->isSoundHandleActive(_sound->_talkChannelHandle)))
+		if ((!ConfMan.getBool("subtitles") || VAR(VAR_VOICE_MODE) == 0) && (!st->actorSpeechMsg || _mixer->isSoundHandleActive(_sound->_talkChannelHandle)))
 			// no subtitles and there's a speech variant of the message, don't display the text
 			continue;
 		enqueueText(st->text, st->xpos, st->ypos, st->color, st->charset, false);
