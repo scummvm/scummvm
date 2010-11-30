@@ -27,6 +27,9 @@
 #include "mohawk/graphics.h"
 #include "mohawk/myst.h"
 #include "mohawk/riven.h"
+#include "mohawk/livingbooks.h"
+
+#include "common/substream.h"
 
 #include "engines/util.h"
 

@@ -27,7 +27,6 @@
 #define MOHAWK_GRAPHICS_H
 
 #include "mohawk/bitmap.h"
-#include "mohawk/livingbooks.h"
 
 #include "common/file.h"
 #include "common/hashmap.h"
@@ -38,6 +37,7 @@ namespace Mohawk {
 
 class MohawkEngine_Myst;
 class MohawkEngine_Riven;
+class MohawkEngine_LivingBooks;
 class MohawkBitmap;
 class MystBitmap;
 

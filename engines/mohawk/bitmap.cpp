@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "common/substream.h"
 #include "common/system.h"
 
 namespace Mohawk {
