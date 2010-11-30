@@ -43,6 +43,7 @@ MystScriptParser_Selenitic::MystScriptParser_Selenitic(MohawkEngine_Myst *vm) : 
 	setupOpcodes();
 	_invokingResource = NULL;
 	_mazeRunnerPosition = 288;
+	_mazeRunnerDirection = 8;
 }
 
 MystScriptParser_Selenitic::~MystScriptParser_Selenitic() {

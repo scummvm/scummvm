@@ -867,15 +867,12 @@ void MystScriptParser::o_changeStack(uint16 op, uint16 var, uint16 argc, uint16 
 
 			// TODO: Play Flyby Entry Movie on Masterpiece Edition..? Only on Myst to Age Link?
 
-			// TODO: Fix properly. Past this point the class may have been destroyed
-			// and thus class instance data is not available anymore
-			MohawkEngine_Myst *vm = _vm;
-			vm->changeToStack(stack_map[targetStack]);
-			vm->changeToCard(start_card[targetStack], true);
+			_vm->changeToStack(stack_map[targetStack]);
+			_vm->changeToCard(start_card[targetStack], true);
 
-			handle = vm->_sound->playSound(soundIdLinkDst);
-			while (vm->_mixer->isSoundHandleActive(*handle))
-				vm->_system->delayMillis(10);
+			handle = _vm->_sound->playSound(soundIdLinkDst);
+			while (_vm->_mixer->isSoundHandleActive(*handle))
+				_vm->_system->delayMillis(10);
 		}
 	} else
 		unknown(op, var, argc, argv);
