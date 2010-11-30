@@ -720,7 +720,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_LB_10,
-		"ARTHUR.EXE" // FIXME: Check this (ST?) 
+		"ARTHUR.EXE"
 	},
 
 	{
@@ -930,7 +930,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV2,
 		0,
-		0 // FIXME: ST?
+		"RACE.EXE"
 	},
 
 	// 32-bit version of the previous entry
@@ -946,7 +946,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV2,
 		0,
-		0 // FIXME: ST?
+		"RACE32.EXE"
 	},
 
 	{
