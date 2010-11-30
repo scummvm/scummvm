@@ -591,7 +591,9 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 
 					FontMan.assignFontToName(file, _texts[textId]->_fontPtr);
 				}
+#ifdef USE_TRANSLATION
 				TransMan.setLanguage("C");
+#endif
 				warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", file.c_str());
 			}
 		}

@@ -28,6 +28,8 @@
 #include "common/singleton.h"
 #include "common/str-array.h"
 
+#ifdef USE_TRANSLATION
+
 namespace Common {
 
 class File;
@@ -158,7 +160,6 @@ public:
 	String getCurrentLanguage() const;
 
 private:
-#ifdef USE_TRANSLATION
 	/**
 	 * Find the translations.dat file. It looks first using the SearchMan and
 	 * then if needed using the Themepath. If found it opens the given File
@@ -197,23 +198,24 @@ private:
 	Array<PoMessageEntry> _currentTranslationMessages;
 	String _currentCharset;
 	int _currentLang;
-#endif
 };
 
 } // End of namespace Common
 
 #define TransMan Common::TranslationManager::instance()
 
-#ifdef USE_TRANSLATION
 #define _(str) TransMan.getTranslation(str)
 #define _c(str, context) TransMan.getTranslation(str, context)
-#else
+
+#else // !USE_TRANSLATION
+
 #define _(str) str
 #define _c(str, context) str
-#endif
+
+#endif // USE_TRANSLATION
 
 #define _s(str) str
 #define _sc(str, ctxt) str
 #define DECLARE_TRANSLATION_ADDITIONAL_CONTEXT(str, ctxt)
 
-#endif
+#endif // COMMON_TRANSLATION_H

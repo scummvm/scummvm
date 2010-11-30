@@ -1313,9 +1313,12 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			Common::String theme = browser.getSelected();
 			// FIXME: Actually, any changes (including the theme change) should
 			// only become active *after* the options dialog has closed.
+#ifdef USE_TRANSLATION
 			Common::String lang = TransMan.getCurrentLanguage();
+#endif
 			Common::String oldTheme = g_gui.theme()->getThemeId();
 			if (g_gui.loadNewTheme(theme)) {
+#ifdef USE_TRANSLATION
 				// If the charset has changed, it means the font were not found for the
 				// new theme. Since for the moment we do not support change of translation
 				// language without restarting, we let the user know about this.
@@ -1325,9 +1328,12 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 					MessageDialog error(_("The theme you selected does not support your current language. If you want to use this theme you need to switch to another language first."));
 					error.runModal();
 				} else {
+#endif
 					_curTheme->setLabel(g_gui.theme()->getThemeName());
 					ConfMan.set("gui_theme", theme);
+#ifdef USE_TRANSLATION
 				}
+#endif
 			}
 			draw();
 		}

@@ -64,8 +64,10 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
 
+#ifdef USE_TRANSLATION
 	// Enable translation
 	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
+#endif // USE_TRANSLATION
 
 	ConfMan.registerDefault("gui_theme", "scummmodern");
 	Common::String themefile(ConfMan.get("gui_theme"));

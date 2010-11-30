@@ -38,6 +38,8 @@
 #include "common/fs.h"
 #include "common/system.h"
 
+#ifdef USE_TRANSLATION
+
 DECLARE_SINGLETON(Common::TranslationManager);
 
 namespace Common {
@@ -45,10 +47,6 @@ namespace Common {
 bool operator<(const TLanguage &l, const TLanguage &r) {
 	return strcmp(l.name, r.name) < 0;
 }
-
-#ifdef USE_TRANSLATION
-
-// Translation enabled
 
 TranslationManager::TranslationManager() : _currentLang(-1) {
 	loadTranslationsInfoDat();
@@ -373,53 +371,6 @@ bool TranslationManager::checkHeader(File &in) {
 	return true;
 }
 
-#else // USE_TRANSLATION
-
-// Translation disabled
-
-
-TranslationManager::TranslationManager() {}
-
-TranslationManager::~TranslationManager() {}
-
-void TranslationManager::setLanguage(const String &lang) {}
-
-String TranslationManager::getLangById(int id) const {
-	return String();
-}
-
-int TranslationManager::parseLanguage(const String &lang) const {
-	return kTranslationBuiltinId;
-}
-
-const char *TranslationManager::getTranslation(const char *message) const {
-	return message;
-}
-
-String TranslationManager::getTranslation(const String &message) const {
-	return message;
-}
-
-const char *TranslationManager::getTranslation(const char *message, const char *) const {
-	return message;
-}
-
-String TranslationManager::getTranslation(const String &message, const String &) const {
-	return message;
-}
-
-const TLangArray TranslationManager::getSupportedLanguageNames() const {
-	return TLangArray();
-}
-
-String TranslationManager::getCurrentCharset() const {
-	return "ASCII";
-}
-
-String TranslationManager::getCurrentLanguage() const {
-	return "C";
-}
+} // End of namespace Common
 
 #endif // USE_TRANSLATION
-
-} // End of namespace Common
