@@ -652,6 +652,7 @@ LivingBooksConsole::LivingBooksConsole(MohawkEngine_LivingBooks *vm) : GUI::Debu
 	DCmd_Register("playSound",			WRAP_METHOD(LivingBooksConsole, Cmd_PlaySound));
 	DCmd_Register("stopSound",			WRAP_METHOD(LivingBooksConsole, Cmd_StopSound));
 	DCmd_Register("drawImage",			WRAP_METHOD(LivingBooksConsole, Cmd_DrawImage));
+	DCmd_Register("changePage",			WRAP_METHOD(LivingBooksConsole, Cmd_ChangePage));
 }
 
 LivingBooksConsole::~LivingBooksConsole() {
@@ -692,6 +693,18 @@ bool LivingBooksConsole::Cmd_DrawImage(int argc, const char **argv) {
 	_vm->_gfx->copyImageToScreen((uint16)atoi(argv[1]));
 	_vm->_system->updateScreen();
 	return false;
+}
+
+bool LivingBooksConsole::Cmd_ChangePage(int argc, const char **argv) {
+	if (argc == 1) {
+		DebugPrintf("Usage: changePage <page>\n");
+		return true;
+	}
+
+	if (_vm->tryLoadPageStart(_vm->getCurMode(), atoi(argv[1])))
+		return false;
+	DebugPrintf("no such page %d\n", atoi(argv[1]));
+	return true;
 }
 
 } // End of namespace Mohawk
