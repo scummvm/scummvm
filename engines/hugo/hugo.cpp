@@ -81,6 +81,7 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	DebugMan.addDebugChannel(kDebugObject, "Object", "Object debug level");
 
 	_console = new HugoConsole(this);
+	_rnd = 0;
 }
 
 HugoEngine::~HugoEngine() {
@@ -167,6 +168,7 @@ HugoEngine::~HugoEngine() {
 
 	DebugMan.clearAllDebugChannels();
 	delete _console;
+	delete _rnd;
 }
 
 GameType HugoEngine::getGameType() const {

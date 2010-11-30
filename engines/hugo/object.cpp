@@ -343,7 +343,12 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 * Free ObjectArr (before exiting)
 */
 void ObjectHandler::freeObjectArr() {
+	for(int16 i = 0; i < _objCount; i++) {
+		free(_objects[i].stateDataIndex);
+		_objects[i].stateDataIndex = 0;
+	}
 	free(_objects);
+	_objects = 0;
 }
 
 /**
