@@ -293,6 +293,7 @@ void SoundHandler::playMusic(int16 tune) {
 		_vm->getGameStatus().song = tune;
 		seqPtr = _vm->_file->getSound(tune, &size);
 		playMIDI(seqPtr, size);
+		free(seqPtr);
 	}
 }
 
