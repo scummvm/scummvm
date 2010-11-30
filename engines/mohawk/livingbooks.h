@@ -423,6 +423,12 @@ public:
 
 	bool isBigEndian() const { return getGameType() != GType_LIVINGBOOKSV1 || getPlatform() == Common::kPlatformMacintosh; }
 
+	LBMode getCurMode() { return _curMode; }
+
+	bool tryLoadPageStart(LBMode mode, uint page);
+	void prevPage();
+	void nextPage();
+
 private:
 	LivingBooksConsole *_console;
 	Common::ConfigFile _bookInfoFile;
@@ -447,7 +453,7 @@ private:
 	void loadBITL(uint16 resourceId);
 	void loadSHP(uint16 resourceId);
 
-	void nextPage();
+	bool tryDefaultPage();
 
 	Common::Queue<NotifyEvent> _notifyEvents;
 	void handleNotify(NotifyEvent &event);

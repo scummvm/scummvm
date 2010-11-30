@@ -159,6 +159,10 @@ Common::Error MohawkEngine_LivingBooks::run() {
 						loadPage(kLBControlMode, 1, 0);
 					break;
 
+				case Common::KEYCODE_LEFT:
+					prevPage();
+					break;
+
 				case Common::KEYCODE_RIGHT:
 					nextPage();
 					break;
@@ -624,21 +628,56 @@ void MohawkEngine_LivingBooks::addNotifyEvent(NotifyEvent event) {
 	_notifyEvents.push(event);
 }
 
+bool MohawkEngine_LivingBooks::tryLoadPageStart(LBMode mode, uint page) {
+	// try first subpage of the page
+	if (loadPage(mode, page, 1))
+		return true;
+
+	// then just the plain page
+	if (loadPage(mode, page, 0))
+		return true;
+
+	return false;
+}
+
+bool MohawkEngine_LivingBooks::tryDefaultPage() {
+	if (_curMode == kLBCreditsMode || _curMode == kLBPreviewMode) {
+		// go to options page
+		if (getFeatures() & GF_LB_10) {
+			if (loadPage(kLBControlMode, 2, 0))
+				return true;
+		} else {
+			if (loadPage(kLBControlMode, 3, 0))
+				return true;
+		}
+	} else {
+		// go to menu page
+		if (loadPage(kLBControlMode, 1, 0))
+			return true;
+	}
+
+	return false;
+}
+
+void MohawkEngine_LivingBooks::prevPage() {
+	if (_curPage > 1 && (tryLoadPageStart(_curMode, _curPage - 1)))
+		return;
+
+	if (tryDefaultPage())
+		return;
+
+	error("Could not find page before %d.%d for mode %d", _curPage, _curSubPage, (int)_curMode);
+}
+
 void MohawkEngine_LivingBooks::nextPage() {
 	// we try the next subpage first
 	if (loadPage(_curMode, _curPage, _curSubPage + 1))
 		return;
 
-	// then the first subpage of the next page
-	if (loadPage(_curMode, _curPage + 1, 1))
+	if (tryLoadPageStart(_curMode, _curPage + 1))
 		return;
 
-	// then just the next page
-	if (loadPage(_curMode, _curPage + 1, 0))
-		return;
-
-	// then we go back to the control page..
-	if (loadPage(kLBControlMode, 1, 0))
+	if (tryDefaultPage())
 		return;
 
 	error("Could not find page after %d.%d for mode %d", _curPage, _curSubPage, (int)_curMode);
@@ -860,9 +899,8 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 				break;
 
 			case 202:
-				if (!loadPage(kLBPlayMode, _curSelectedPage, 0))
-					if (!loadPage(kLBPlayMode, _curSelectedPage, 1))
-						error("failed to load page %d", _curSelectedPage);
+				if (!tryLoadPageStart(kLBPlayMode, _curSelectedPage))
+					error("failed to load page %d", _curSelectedPage);
 				break;
 			}
 			break;
@@ -877,28 +915,25 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 		break;
 
 	case kLBNotifyChangePage:
-		{
-		debug("kLBNotifyChangePage: %d", event.param);
-
 		switch (event.param) {
 		case 0xfffe:
+			debug(2, "kLBNotifyChangePage: next page");
 			nextPage();
 			return;
 
 		case 0xffff:
-			warning("ChangePage unimplemented");
-			// TODO: move backwards one page
+			debug(2, "kLBNotifyChangePage: previous page");
+			prevPage();
 			break;
 
 		default:
-			warning("ChangePage unimplemented");
-			// TODO: set page as specified
+			debug(2, "kLBNotifyChangePage: trying %d", event.param);
+			if (!tryLoadPageStart(_curMode, event.param)) {
+				if (!tryDefaultPage()) {
+					error("failed to load default page after change to page %d (mode %d) failed", event.param, _curMode);
+				}
+			}
 			break;
-		}
-
-		// TODO: on bad page:
-		//   if mode < 3 (intro/controls) or mode > 4, move to 2/2 (controls/options?)
-		//   else, move to 2/1 (kLBControlsMode, page 1)
 		}
 		break;
 
