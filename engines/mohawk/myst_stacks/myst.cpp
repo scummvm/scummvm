@@ -324,7 +324,6 @@ void MystScriptParser_Myst::opcode_100(uint16 op, uint16 var, uint16 argc, uint1
 		} else
 			unknown(op, var, argc, argv);
 		break;
-	case kCreditsStack:
 	case kMakingOfStack:
 		_vm->_system->quit();
 		break;
@@ -1836,21 +1835,6 @@ void MystScriptParser_Myst::opcode_200_run() {
 
 			lastImageIndex = curImageIndex;
 			break;
-		case kCreditsStack:
-			curImageIndex = _vm->_varStore->getVar(g_opcode200Parameters.var);
-
-			if (_vm->_system->getMillis() - g_opcode200Parameters.lastCardTime >= 7 * 1000) {
-				// After the 6th image has shown, it's time to quit
-				if (curImageIndex == 7)
-					_vm->_system->quit();
-
-				// Note: The modulus by 6 is because the 6th image is the one at imageBaseId
-				_vm->_gfx->copyImageToScreen(g_opcode200Parameters.imageBaseId + curImageIndex % 6, Common::Rect(0, 0, 544, 333));
-
-				_vm->_varStore->setVar(g_opcode200Parameters.var, curImageIndex + 1);
-				g_opcode200Parameters.lastCardTime = _vm->_system->getMillis();
-			}
-			break;
 		case kMechanicalStack:
 			// Used on Card 6238 (Sirrus' Throne) and Card 6027 (Achenar's Throne)
 			// g_opcode200Parameters.var == 0 for Achenar
@@ -1960,18 +1944,6 @@ void MystScriptParser_Myst::opcode_200(uint16 op, uint16 var, uint16 argc, uint1
 			_vm->_video->playMovie(_vm->wrapMovieFilename("atrus2", kDniStack), 215, 77);
 			_vm->_video->playMovie(_vm->wrapMovieFilename("atrwrite", kDniStack), 215, 77);
 		}
-		break;
-	case kCreditsStack:
-		if (argc == 0) {
-			g_opcode200Parameters.var = var;
-			// TODO: Pass ImageCount, rather than hardcoded in run process?
-			g_opcode200Parameters.imageBaseId = _vm->getCurCard();
-			g_opcode200Parameters.lastCardTime = _vm->_system->getMillis();
-			g_opcode200Parameters.enabled = true;
-
-			_vm->_varStore->setVar(var, 1);
-		} else
-			unknown(op, var, argc, argv);
 		break;
 	case kDemoSlidesStack:
 		// Used on Cards...

@@ -23,6 +23,7 @@ MODULE_OBJS = \
 	riven_vars.o \
 	sound.o \
 	video.o \
+	myst_stacks/credits.o \
 	myst_stacks/myst.o \
 	myst_stacks/selenitic.o
 
