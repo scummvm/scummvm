@@ -259,8 +259,12 @@ public:
 	LBSoundItem(MohawkEngine_LivingBooks *_vm, Common::Rect rect);
 	~LBSoundItem();
 
+	void update();
 	bool togglePlaying(bool playing, bool restart);
 	void stop();
+
+protected:
+	bool _running;
 };
 
 struct GroupEntry {

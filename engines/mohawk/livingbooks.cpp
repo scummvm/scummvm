@@ -1869,27 +1869,45 @@ void LBItem::setNextTime(uint16 min, uint16 max, uint32 start) {
 
 LBSoundItem::LBSoundItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
 	debug(3, "new LBSoundItem");
+	_running = false;
 }
 
 LBSoundItem::~LBSoundItem() {
-	_vm->_sound->stopSound(_resourceId);
+	if (_running)
+		_vm->_sound->stopSound(_resourceId);
+}
+
+void LBSoundItem::update() {
+	if (_running && !_vm->_sound->isPlaying(_resourceId)) {
+		_running = false;
+		done(true);
+	}
+
+	LBItem::update();
 }
 
 bool LBSoundItem::togglePlaying(bool playing, bool restart) {
 	if (!playing)
 		return LBItem::togglePlaying(playing, restart);
 
-	_vm->_sound->stopSound(_resourceId);
+	if (_running) {
+		_running = false;
+		_vm->_sound->stopSound(_resourceId);
+	}
 
 	if (_neverEnabled || !_enabled)
 		return false;
 
+	_running = true;
 	_vm->_sound->playSound(_resourceId, Audio::Mixer::kMaxChannelVolume, false);
 	return true;
 }
 
 void LBSoundItem::stop() {
-	_vm->_sound->stopSound(_resourceId);
+	if (_running) {
+		_running = false;
+		_vm->_sound->stopSound(_resourceId);
+	}
 
 	LBItem::stop();
 }
