@@ -86,6 +86,7 @@ MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm) : _vm(vm) {
 	_invokingResource = NULL;
 	_savedCardId = 0;
 	_savedCursorId = 0;
+	_tempVar = 0;
 }
 
 MystScriptParser::~MystScriptParser() {
