@@ -114,11 +114,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 		SPECIFIC_OPCODE(103, opcode_103),
 		SPECIFIC_OPCODE(104, opcode_104),
 		SPECIFIC_OPCODE(105, opcode_105),
-		SPECIFIC_OPCODE(106, opcode_106),
-		SPECIFIC_OPCODE(107, opcode_107),
-		SPECIFIC_OPCODE(108, opcode_108),
 		SPECIFIC_OPCODE(109, opcode_109),
-		SPECIFIC_OPCODE(110, opcode_110),
 		SPECIFIC_OPCODE(111, opcode_111),
 		SPECIFIC_OPCODE(112, opcode_112),
 		SPECIFIC_OPCODE(113, opcode_113),
@@ -345,20 +341,6 @@ void MystScriptParser_Myst::opcode_100(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		varUnusedCheck(op, var);
-
-		if (argc == 0) {
-			// Used on Card 1191 (Maze Runner)
-			// Called when Red Warning Button is pushed
-
-			debugC(kDebugScript, "Opcode %d: Repeat Buzzer Sound?", op);
-
-			// TODO: Fill in logic...
-			// Repeat buzzer sound
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kStoneshipStack:
 		varUnusedCheck(op, var);
 
@@ -629,18 +611,6 @@ void MystScriptParser_Myst::opcode_104(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::opcode_105(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		if (argc == 1) {
-			uint16 soundId = argv[0];
-
-			debugC(kDebugScript, "Opcode %d: Sound Receiver Water Button", op);
-			debugC(kDebugScript, "\tvar: %d", var);
-
-			// TODO: Complete Function including Var Change?
-			_vm->_sound->playSound(soundId);
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		if (argc == 1) {
 			varUnusedCheck(op, var);
@@ -697,80 +667,8 @@ void MystScriptParser_Myst::opcode_105(uint16 op, uint16 var, uint16 argc, uint1
 	}
 }
 
-void MystScriptParser_Myst::opcode_106(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		if (argc == 1) {
-			uint16 soundId = argv[0];
-
-			debugC(kDebugScript, "Opcode %d: Sound Receiver Volcanic Crack Button", op);
-			debugC(kDebugScript, "\tvar: %d", var);
-
-			// TODO: Complete Function including Var Change?
-			_vm->_sound->playSound(soundId);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_107(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		if (argc == 1) {
-			uint16 soundId = argv[0];
-
-			debugC(kDebugScript, "Opcode %d: Sound Receiver Clock Button", op);
-			debugC(kDebugScript, "\tvar: %d", var);
-
-			// TODO: Complete Function including Var Change?
-			_vm->_sound->playSound(soundId);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_108(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		if (argc == 1) {
-			uint16 soundId = argv[0];
-
-			debugC(kDebugScript, "Opcode %d: Sound Receiver Crystal Rocks Button", op);
-			debugC(kDebugScript, "\tvar: %d", var);
-
-			// TODO: Complete Function including Var Change?
-			_vm->_sound->playSound(soundId);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
 void MystScriptParser_Myst::opcode_109(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		if (argc == 1) {
-			uint16 soundId = argv[0];
-
-			debugC(kDebugScript, "Opcode %d: Sound Receiver Wind Button", op);
-			debugC(kDebugScript, "\tvar: %d", var);
-
-			// TODO: Complete Function including Var Change?
-			_vm->_sound->playSound(soundId);
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		if (argc == 1) {
 			int16 signedValue = argv[0];
@@ -789,68 +687,10 @@ void MystScriptParser_Myst::opcode_109(uint16 op, uint16 var, uint16 argc, uint1
 	}
 }
 
-void MystScriptParser_Myst::opcode_110(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		if (argc == 15) {
-			// Used for Selenitic Maze Runner Exit Logic
-			uint16 CardIdEntry = argv[0];
-			uint16 CardIdExit = argv[1];
-			uint16 u0 = argv[2];
-			Common::Rect rect1 = Common::Rect(argv[3], argv[4], argv[5], argv[6]);
-			uint16 rect1UpdateDirection = argv[7];
-			uint16 u1 = argv[8];
-			Common::Rect rect2 = Common::Rect(argv[9], argv[10], argv[11], argv[12]);
-			uint16 rect2UpdateDirection = argv[13];
-			uint16 u2 = argv[14];
-
-			debugC(kDebugScript, "Opcode %d: Maze Runner Exit Logic and Door Open Animation", op);
-			debugC(kDebugScript, "\tExit Card: %d", CardIdEntry);
-			debugC(kDebugScript, "\tEntry Card: %d", CardIdExit);
-			debugC(kDebugScript, "\tu0 (Exit Var?): %d", u0);
-
-			debugC(kDebugScript, "\trect1.left: %d", rect1.left);
-			debugC(kDebugScript, "\trect1.top: %d", rect1.top);
-			debugC(kDebugScript, "\trect1.right: %d", rect1.right);
-			debugC(kDebugScript, "\trect1.bottom: %d", rect1.bottom);
-			debugC(kDebugScript, "\trect1 updateDirection: %d", rect1UpdateDirection);
-			debugC(kDebugScript, "\tu1: %d", u1);
-
-			debugC(kDebugScript, "\trect2.left: %d", rect2.left);
-			debugC(kDebugScript, "\trect2.top: %d", rect2.top);
-			debugC(kDebugScript, "\trect2.right: %d", rect2.right);
-			debugC(kDebugScript, "\trect2.bottom: %d", rect2.bottom);
-			debugC(kDebugScript, "\trect2 updateDirection: %d", rect2UpdateDirection);
-			debugC(kDebugScript, "\tu2: %d", u2);
-
-			// TODO: Finish Implementing Logic...
-			// HACK: Bypass Higher Logic for now...
-			_vm->changeToCard(argv[1], true);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
 void MystScriptParser_Myst::opcode_111(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		if (argc == 0) {
-			// Used on Card 1245 (Sound Receiver)
-			// Used by Source Selection Buttons...
-
-			debugC(kDebugScript, "Opcode %d: Unknown", op);
-			// TODO: Fill in Function...
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kStoneshipStack:
 		if (argc == 1) {
 			// Used for Card 2004 (Achenar's Room Drawers)
@@ -1008,44 +848,6 @@ void MystScriptParser_Myst::opcode_114(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::opcode_115(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		varUnusedCheck(op, var);
-
-		if (argc == 11) {
-			// Used for Selenitic Card 1147 (Musical Door Lock Button)
-			uint16 imageIdClose = argv[0]; // TODO: Sound Id?
-			uint16 imageIdOpen = argv[1]; // TODO: Sound Id?
-
-			uint16 cardIdOpen = argv[2];
-
-			uint16 u0 = argv[3];
-			uint16 u1 = argv[4];
-
-			Common::Rect rect = Common::Rect(argv[5], argv[6], argv[7], argv[8]);
-
-			uint16 updateDirection = argv[9];
-			uint16 u2 = argv[10];
-
-			debugC(kDebugScript, "Music Door Lock Logic...");
-			debugC(kDebugScript, "\timageId (Close): %d", imageIdClose);
-			debugC(kDebugScript, "\timageId (Open): %d", imageIdOpen);
-			debugC(kDebugScript, "\tcardId (Open): %d", cardIdOpen);
-			debugC(kDebugScript, "\tu0: %d", u0);
-			debugC(kDebugScript, "\tu1: %d", u1);
-
-			debugC(kDebugScript, "\trect.left: %d", rect.left);
-			debugC(kDebugScript, "\trect.top: %d", rect.top);
-			debugC(kDebugScript, "\trect.right: %d", rect.right);
-			debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
-			debugC(kDebugScript, "\trect updateDirection: %d", updateDirection);
-			debugC(kDebugScript, "\tu2: %d", u2);
-
-			// TODO: Fix Logic...
-			// HACK: Bypass Door Lock For Now
-			_vm->changeToCard(cardIdOpen, true);
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kDemoPreviewStack:
 	case kMystStack:
 		if (argc == 3) {
@@ -1975,46 +1777,6 @@ void MystScriptParser_Myst::opcode_199(uint16 op, uint16 var, uint16 argc, uint1
 	}
 }
 
-// Selenitic Stack Movies For Maze Runner (Card 1191)
-static const char* kHCMovPathSelenitic[36] = {
-	"backa1",
-	"backe1",
-	"backf0",
-	"backf1",
-	"backl0",
-	"backl1",
-	"backo0",
-	"backo1",
-	"backp0",
-	"backp1",
-	"backr0",
-	"backr1",
-	"backs0",
-	"backs1",
-	"forwa1",
-	"forwe0",
-	"forwf0",
-	"forwf1",
-	"forwl0",
-	"forwl1",
-	"forwo0",
-	"forwo1",
-	"forwp0",
-	"forwp1",
-	"forwr0",
-	"forwr1",
-	"forws0",
-	"forws1",
-	"left00",
-	"left01",
-	"left10",
-	"left11",
-	"right00",
-	"right01",
-	"right10",
-	"right11"
-};
-
 static struct {
 	bool enabled;
 
@@ -2039,14 +1801,6 @@ void MystScriptParser_Myst::opcode_200_run() {
 		case kIntroStack: // Used on Card 1
 		case kDemoStack: // Used on Card 2000
 			// TODO : Implement function here to play though intro movies and change card?
-			break;
-		case kSeleniticStack:
-			// Used on Card 1191 (Maze Runner)
-
-			// TODO: Implementation Movie Function..
-			if (false) {
-				_vm->_video->playMovie(_vm->wrapMovieFilename(kHCMovPathSelenitic[0], kSeleniticStack), 201, 26);
-			}
 			break;
 		case kStoneshipStack:
 			// Used for Card 2013 (Achenar's Rose-Skull Hologram)
@@ -2154,15 +1908,6 @@ void MystScriptParser_Myst::opcode_200(uint16 op, uint16 var, uint16 argc, uint1
 
 		_vm->changeToCard(_vm->getCurCard()+1, true);
 		break;
-	case kSeleniticStack:
-		varUnusedCheck(op, var);
-
-		// Used for Card 1191 (Maze Runner)
-		if (argc == 0) {
-			g_opcode200Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kStoneshipStack:
 		varUnusedCheck(op, var);
 
@@ -2259,11 +2004,6 @@ void MystScriptParser_Myst::opcode_201_run() {
 
 	if (g_opcode201Parameters.enabled) {
 		switch (_vm->getCurStack()) {
-		case kSeleniticStack:
-			// Used for Card 1191 (Maze Runner)
-
-			// TODO: Fill in Function...
-			break;
 		case kStoneshipStack:
 			// Used for Card 2013 (Achenar's Rose-Skull Hologram)
 
@@ -2307,14 +2047,6 @@ void MystScriptParser_Myst::opcode_201(uint16 op, uint16 var, uint16 argc, uint1
 		_vm->_system->delayMillis(4 * 1000);
 		_vm->_gfx->copyImageToScreen(4, Common::Rect(0, 0, 544, 333));
 		// TODO : Wait until video ends, then change to card 5
-		break;
-	case kSeleniticStack:
-		// Used for Card 1191 (Maze Runner)
-
-		if (argc == 0) {
-			g_opcode201Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
 		break;
 	case kStoneshipStack:
 		varUnusedCheck(op, var);
@@ -2389,11 +2121,6 @@ static struct {
 void MystScriptParser_Myst::opcode_202_run(void) {
 	if (g_opcode202Parameters.enabled) {
 		switch (_vm->getCurStack()) {
-		case kSeleniticStack:
-			// Used for Card 1191 (Maze Runner)
-
-			// TODO: Fill in function...
-			break;
 		case kDemoPreviewStack:
 		case kMystStack:
 			// Used for Card 4378 (Library Tower Rotation Map)
@@ -2556,15 +2283,6 @@ void MystScriptParser_Myst::opcode_202_disable(void) {
 
 void MystScriptParser_Myst::opcode_202(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		varUnusedCheck(op, var);
-
-		// Used for Card 1191 (Maze Runner)
-		if (argc == 0) {
-			g_opcode202Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kStoneshipStack:
 		varUnusedCheck(op, var);
 
@@ -2614,10 +2332,6 @@ static struct {
 void MystScriptParser_Myst::opcode_203_run(void) {
 	if (g_opcode203Parameters.enabled) {
 		switch (_vm->getCurStack()) {
-		case kSeleniticStack:
-			// Used for Card 1245 (Sound Receiver)
-			// TODO: Fill in Logic to Change Viewer Display etc.?
-			break;
 		case kMystStack:
 			// Used for Card 4138 (Dock Forechamber Door)
 			// TODO: Fill in Logic. Slide for Dock Forechamber Door?
@@ -2651,13 +2365,6 @@ void MystScriptParser_Myst::opcode_203(uint16 op, uint16 var, uint16 argc, uint1
 	uint16 imageIdDarkDoorClosed = 0;
 
 	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		// Used for Card 1245 (Sound Receiver)
-		if (argc == 0) {
-			g_opcode203Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kStoneshipStack:
 		// Used for all/most Cards in Tunnels Down To Brothers Rooms
 
@@ -2718,10 +2425,6 @@ static struct {
 void MystScriptParser_Myst::opcode_204_run(void) {
 	if (g_opcode204Parameters.enabled) {
 		switch (_vm->getCurStack()) {
-		case kSeleniticStack:
-			// Used for Card 1147 (Sound Code Lock)
-			// TODO: Fill in code for Sound Lock...
-			break;
 		case kMystStack:
 			// Used for Card 4134 and 4149 (Dock)
 			// TODO: Not sure of function. Not Gulls (at least directly). Fill in Logic.
@@ -2747,13 +2450,6 @@ void MystScriptParser_Myst::opcode_204(uint16 op, uint16 var, uint16 argc, uint1
 	varUnusedCheck(op, var);
 
 	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		// Used for Card 1147 (Sound Code Lock)
-		if (argc == 0) {
-			g_opcode204Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kStoneshipStack:
 		// Used for Card 2160 (Lighthouse Battery Pack Closeup)
 		if (argc == 0) {
@@ -2789,10 +2485,6 @@ static struct {
 void MystScriptParser_Myst::opcode_205_run(void) {
 	if (g_opcode205Parameters.enabled) {
 		switch (_vm->getCurStack()) {
-		case kSeleniticStack:
-			// Used for Card 1191 (Maze Runner)
-			// TODO: Fill in function...
-			break;
 		case kMystStack:
 			// Used for Card 4532 (Rocketship Piano)
 			// TODO: Fill in function...
@@ -2817,14 +2509,6 @@ void MystScriptParser_Myst::opcode_205(uint16 op, uint16 var, uint16 argc, uint1
 	uint16 imageIdDoorClosed = 0;
 
 	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		// Used for Card 1191 (Maze Runner)
-
-		if (argc == 0) {
-			g_opcode205Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kStoneshipStack:
 		// Used on Cards 2322, 2285 (Tunnels Down To Brothers Rooms)
 
@@ -2887,10 +2571,6 @@ static struct {
 void MystScriptParser_Myst::opcode_206_run(void) {
 	if (g_opcode206Parameters.enabled) {
 		switch (_vm->getCurStack()) {
-		case kSeleniticStack:
-			// Used for Card 1191 (Maze Runner)
-			// TODO: Fill in function...
-			break;
 		case kMechanicalStack:
 			// Used for Card 6044 (Fortress Rotation Simulator)
 
@@ -2911,14 +2591,6 @@ void MystScriptParser_Myst::opcode_206(uint16 op, uint16 var, uint16 argc, uint1
 	varUnusedCheck(op, var);
 
 	switch (_vm->getCurStack()) {
-	case kSeleniticStack:
-		// Used for Card 1191 (Maze Runner)
-
-		if (argc == 0) {
-			g_opcode206Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kStoneshipStack:
 		// Used for Cards 2272 and 2234 (Facing Out of Door)
 		if (argc == 0) {
