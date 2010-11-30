@@ -78,9 +78,9 @@ int VisualStudioProvider::getVisualStudioVersion() {
 				   "\t\t\t/>\n" \
 				   "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n" \
 				   "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32) << "\"\n" \
-				   "\t\t\t/>\n" \
-				   "\t\t</Configuration>\n"; \
+				   "\t\t\t/>\n"; \
 	} \
+	project << "\t\t</Configuration>\n"; \
 }
 
 #define OUTPUT_CONFIGURATION(config, platform, props) { \
