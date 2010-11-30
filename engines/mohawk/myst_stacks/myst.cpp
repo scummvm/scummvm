@@ -2902,6 +2902,8 @@ void MystScriptParser_Myst::opcode_211_run(void) {
 			_vm->_varStore->setVar(23, 1);
 		else
 			_vm->_varStore->setVar(23, 0);
+
+		_vm->_gfx->updateScreen();
 	}
 }
 
