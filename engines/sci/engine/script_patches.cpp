@@ -705,10 +705,44 @@ const uint16 qfg1vgaPatchFightEvents[] = {
 	PATCH_END
 };
 
+// When QFG1VGA and QFG3 dispose of a child window. For example, when choosing
+// a spell (parent window), if the spell can't be casted, a subsequent window
+// opens, notifying that it can't be casted. When showing the child window, the
+// scripts restore the area below the parent window, draw the child window, and
+// then attempt to redraw the parent window, which leads to the background
+// picture (which has just been restored) overwriting the child window. It
+// appers that kGraph(redrawBox) is different in QFG1VGA and QFG3. However, we
+// can just remove the window redraw and update calls when the window is
+// supposed to be disposed, and the window is disposed of correctly. Fixes bug
+// #3053093.
+const byte qfg1vgaWindowDispose[] = {
+	17,
+	0x39, 0x05,       // pushi 05
+	0x39, 0x0d,       // pushi 0d
+	0x67, 0x2e,       // pTos 2e
+	0x67, 0x30,       // pTos 30
+	0x67, 0x32,       // pTos 32
+	0x67, 0x34,       // pTos 34
+	0x43, 0x6c, 0x0a, // callk kGraph 10
+	0x39, 0x06,       // pushi 06
+	0
+};
+
+const uint16 qfg1vgaPatchWindowDispose[] = {
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	0x33, 0x3e,       // jmp 0x3e (skip 62 bytes - this skips the subsequent 2 kGraph(update) calls, before kDisposeWindow is invoked)
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg1vgaSignatures[] = {
-	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents, qfg1vgaPatchFightEvents },
-	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents, qfg1vgaPatchFightEvents },
+	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
+	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
+	{    559, "window dispose",                              1, PATCH_MAGICDWORD(0x39, 0x05, 0x39, 0x0d),     0,        qfg1vgaWindowDispose,     qfg1vgaPatchWindowDispose },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -772,9 +806,41 @@ const uint16 qfg3PatchImportDialog[] = {
 	PATCH_END
 };
 
+// When QFG1VGA and QFG3 dispose of a child window. For example, when choosing
+// a spell (parent window), if the spell can't be casted, a subsequent window
+// opens, notifying that it can't be casted. When showing the child window, the
+// scripts restore the area below the parent window, draw the child window, and
+// then attempt to redraw the parent window, which leads to the background
+// picture (which has just been restored) overwriting the child window. It
+// appers that kGraph(redrawBox) is different in QFG1VGA and QFG3. However, we
+// can just remove the window redraw and update calls when the window is
+// supposed to be disposed, and the window is disposed of correctly. Fixes bug
+// #3053093.
+const byte qfg3WindowDispose[] = {
+	15,
+	0x39, 0x05,       // pushi 05
+	0x39, 0x0d,       // pushi 0d
+	0x67, 0x2e,       // pTos 2e
+	0x67, 0x30,       // pTos 30
+	0x67, 0x32,       // pTos 32
+	0x67, 0x34,       // pTos 34
+	0x43, 0x6c, 0x0a, // callk kGraph 10
+	0
+};
+
+const uint16 qfg3PatchWindowDispose[] = {
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	0x34, 0x00, 0x00, // ldi 0000 (dummy)
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg3Signatures[] = {
-	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x2a, 0x31, 0x0b, 0x7a),  -1, qfg3SignatureImportDialog, qfg3PatchImportDialog },
+	{     22, "window dispose",                                 1, PATCH_MAGICDWORD(0x39, 0x05, 0x39, 0x0d),   0,         qfg3WindowDispose,        qfg3PatchWindowDispose },
+	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x2a, 0x31, 0x0b, 0x7a),  -1, qfg3SignatureImportDialog,         qfg3PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
