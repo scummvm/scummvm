@@ -1622,7 +1622,7 @@ void LBItem::update() {
 	if (_nextTime == 0 || _nextTime > (uint32)(_vm->_system->getMillis() / 16))
 		return;
 
-	if (togglePlaying(_playing)) {
+	if (togglePlaying(_playing, true)) {
 		_nextTime = 0;
 	} else if (_loops == 0 && _timingMode == 2) {
 		debug(9, "Looping in update()");
@@ -1647,15 +1647,14 @@ void LBItem::handleMouseUp(Common::Point pos) {
 	runScript(kLBActionMouseUp);
 }
 
-bool LBItem::togglePlaying(bool playing) {
+bool LBItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
 		_vm->queueDelayedEvent(DelayedEvent(this, kLBDone));
 		return true;
 	}
 	if (!_neverEnabled && _enabled && !_playing) {
-		_playing = togglePlaying(true);
+		_playing = togglePlaying(true, restart);
 		if (_playing) {
-			seek(1); // TODO: this is not good in many situations
 			_nextTime = 0;
 			_startTime = _vm->_system->getMillis() / 16;
 
@@ -1689,7 +1688,7 @@ void LBItem::done(bool onlyNotify) {
 			// TODO: does drag box need adjusting?
 		}
 
-		if (_loops && _loops--) {
+		if (_loops && --_loops) {
 			debug(9, "Real looping (now 0x%04x left)", _loops);
 			setNextTime(_delayMin, _delayMax, _startTime);
 		} else
@@ -1876,9 +1875,9 @@ LBSoundItem::~LBSoundItem() {
 	_vm->_sound->stopSound(_resourceId);
 }
 
-bool LBSoundItem::togglePlaying(bool playing) {
+bool LBSoundItem::togglePlaying(bool playing, bool restart) {
 	if (!playing)
-		return LBItem::togglePlaying(playing);
+		return LBItem::togglePlaying(playing, restart);
 
 	_vm->_sound->stopSound(_resourceId);
 
@@ -1944,11 +1943,11 @@ bool LBGroupItem::contains(Common::Point point) {
 	return false;
 }
 
-bool LBGroupItem::togglePlaying(bool playing) {
+bool LBGroupItem::togglePlaying(bool playing, bool restart) {
 	for (uint i = 0; i < _groupEntries.size(); i++) {
 		LBItem *item = _vm->getItemById(_groupEntries[i].entryId);
 		if (item)
-			item->togglePlaying(playing);
+			item->togglePlaying(playing, restart);
 	}
 
 	return false;
@@ -2176,9 +2175,9 @@ void LBLiveTextItem::handleMouseDown(Common::Point pos) {
 	return LBItem::handleMouseDown(pos);
 }
 
-bool LBLiveTextItem::togglePlaying(bool playing) {
+bool LBLiveTextItem::togglePlaying(bool playing, bool restart) {
 	if (!playing)
-		return LBItem::togglePlaying(playing);
+		return LBItem::togglePlaying(playing, restart);
 	if (_neverEnabled || !_enabled)
 		return _running;
 
@@ -2308,9 +2307,11 @@ void LBAnimationItem::update() {
 	LBItem::update();
 }
 
-bool LBAnimationItem::togglePlaying(bool playing) {
+bool LBAnimationItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
 		if (!_neverEnabled && _enabled) {
+			if (restart)
+				seek(1);
 			_running = true;
 			_anim->start();
 		}
@@ -2318,7 +2319,7 @@ bool LBAnimationItem::togglePlaying(bool playing) {
 		return _running;
 	}
 
-	return LBItem::togglePlaying(playing);
+	return LBItem::togglePlaying(playing, restart);
 }
 
 void LBAnimationItem::done(bool onlyNotify) {

@@ -217,7 +217,7 @@ public:
 	virtual void handleMouseDown(Common::Point pos); // 0xB
 	virtual void handleMouseMove(Common::Point pos); // 0xC
 	virtual void handleMouseUp(Common::Point pos); // 0xD
-	virtual bool togglePlaying(bool playing); // 0xF
+	virtual bool togglePlaying(bool playing, bool restart = false); // 0xF
 	virtual void done(bool onlyNotify); // 0x10
 	virtual void init() { } // 0x11
 	virtual void seek(uint16 pos) { } // 0x13
@@ -259,7 +259,7 @@ public:
 	LBSoundItem(MohawkEngine_LivingBooks *_vm, Common::Rect rect);
 	~LBSoundItem();
 
-	bool togglePlaying(bool playing);
+	bool togglePlaying(bool playing, bool restart);
 	void stop();
 };
 
@@ -276,7 +276,7 @@ public:
 
 	void setEnabled(bool enabled);
 	bool contains(Common::Point point);
-	bool togglePlaying(bool playing);
+	bool togglePlaying(bool playing, bool restart);
 	// 0x12
 	void seek(uint16 pos);
 	void setVisible(bool visible);
@@ -322,7 +322,7 @@ public:
 	bool contains(Common::Point point);
 	void update();
 	void handleMouseDown(Common::Point pos);
-	bool togglePlaying(bool playing);
+	bool togglePlaying(bool playing, bool restart);
 	void stop();
 	void notify(uint16 data, uint16 from);
 
@@ -361,7 +361,7 @@ public:
 	bool contains(Common::Point point);
 	void update();
 	void draw();
-	bool togglePlaying(bool playing);
+	bool togglePlaying(bool playing, bool restart);
 	void done(bool onlyNotify);
 	void init();
 	void seek(uint16 pos);
