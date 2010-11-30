@@ -123,7 +123,7 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 }
 
 // Uses cached data objects in preference to disk access
-Common::SeekableReadStream *MohawkEngine_Myst::getRawData(uint32 tag, uint16 id) {
+Common::SeekableReadStream *MohawkEngine_Myst::getResource(uint32 tag, uint16 id) {
 	Common::SeekableReadStream *ret = _cache.search(tag, id);
 
 	if (ret)
@@ -569,7 +569,7 @@ void MohawkEngine_Myst::checkCurrentResource() {
 void MohawkEngine_Myst::loadCard() {
 	debugC(kDebugView, "Loading Card View:");
 
-	Common::SeekableReadStream *viewStream = getRawData(ID_VIEW, _curCard);
+	Common::SeekableReadStream *viewStream = getResource(ID_VIEW, _curCard);
 
 	// Card Flags
 	_view.flags = viewStream->readUint16LE();
@@ -769,7 +769,7 @@ void MohawkEngine_Myst::runInitScript() {
 
 	debugC(kDebugINIT, "Running INIT script");
 
-	Common::SeekableReadStream *initStream = getRawData(ID_INIT, _view.init);
+	Common::SeekableReadStream *initStream = getResource(ID_INIT, _view.init);
 	MystScript script = _scriptParser->readScript(initStream, kMystScriptInit);
 	delete initStream;
 
@@ -784,7 +784,7 @@ void MohawkEngine_Myst::runExitScript() {
 
 	debugC(kDebugEXIT, "Running EXIT script");
 
-	Common::SeekableReadStream *exitStream = getRawData(ID_EXIT, _view.exit);
+	Common::SeekableReadStream *exitStream = getResource(ID_EXIT, _view.exit);
 	MystScript script = _scriptParser->readScript(exitStream, kMystScriptExit);
 	delete exitStream;
 
@@ -805,7 +805,7 @@ void MohawkEngine_Myst::loadHelp(uint16 id) {
 
 	debugC(kDebugHelp, "Loading Help System Data");
 
-	Common::SeekableReadStream *helpStream = getRawData(ID_HELP, id);
+	Common::SeekableReadStream *helpStream = getResource(ID_HELP, id);
 
 	uint16 count = helpStream->readUint16LE();
 	uint16 *u0 = new uint16[count];
@@ -847,7 +847,7 @@ void MohawkEngine_Myst::loadCursorHints() {
 
 	debugC(kDebugHint, "Loading Cursor Hints:");
 
-	Common::SeekableReadStream *hintStream = getRawData(ID_HINT, _curCard);
+	Common::SeekableReadStream *hintStream = getResource(ID_HINT, _curCard);
 	_cursorHintCount = hintStream->readUint16LE();
 	debugC(kDebugHint, "Cursor Hint Count: %d", _cursorHintCount);
 	_cursorHints = new MystCursorHint[_cursorHintCount];
@@ -997,7 +997,7 @@ void MohawkEngine_Myst::loadResources() {
 		return;
 	}
 
-	Common::SeekableReadStream *rlstStream = getRawData(ID_RLST, _view.rlst);
+	Common::SeekableReadStream *rlstStream = getResource(ID_RLST, _view.rlst);
 	uint16 resourceCount = rlstStream->readUint16LE();
 	debugC(kDebugResource, "RLST Resource Count: %d", resourceCount);
 

@@ -143,7 +143,7 @@ public:
 	MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc);
 	virtual ~MohawkEngine_Myst();
 
-	Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);
+	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
 
 	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
 
