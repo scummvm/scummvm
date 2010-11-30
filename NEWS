@@ -21,8 +21,14 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Add Hungarian translation.
    - Add Brazilian Portuguese translation.
 
+ Cruise:
+   - Fixed a problem with Raoul appearing when examining the Book
+
  Groovie:
    - Fixed a regression that made the Russian version of T7G crash.
+
+ Lure:
+   - Fixed several NPC movement bugs
 
 1.2.0 (2010-10-15)
  New Games:
