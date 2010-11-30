@@ -1470,14 +1470,14 @@ void LBItem::readFrom(Common::SeekableSubReadStreamEndian *stream) {
 		error("Item is larger (should end at %d) than stream (size %d)", endPos, stream->size());
 
 	while (true) {
+		if (stream->pos() == endPos)
+			break;
+
 		uint16 dataType = stream->readUint16();
 		uint16 dataSize = stream->readUint16();
 
 		debug(4, "Data type %04x, size %d", dataType, dataSize);
 		readData(dataType, dataSize, stream);
-
-		if (stream->pos() == endPos)
-			break;
 
 		if (stream->pos() > endPos)
 			error("Read off the end (at %d) of data (ends at %d)", stream->pos(), endPos);
