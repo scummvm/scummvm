@@ -33,8 +33,6 @@
 
 namespace Lure {
 
-using namespace Common;
-
 static Resources *int_resources = NULL;
 
 Resources &Resources::getReference() {

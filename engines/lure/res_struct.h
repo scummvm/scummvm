@@ -445,6 +445,10 @@ public:
 	void setRoomNumber(uint16 roomNum) { _roomNumber = roomNum; }
 	void setSupportData(CharacterScheduleEntry *newRec) {
 		assert((newRec == NULL) || (newRec->parent() != NULL));
+		if (_dynamicSupportData) {
+			delete _supportData;
+			_dynamicSupportData = false;
+		}
 		_supportData = newRec;
 	}
 	void setSupportData(uint16 entryId);
