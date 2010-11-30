@@ -115,8 +115,6 @@ void MystScriptParser_Myst::setupOpcodes() {
 		SPECIFIC_OPCODE(104, opcode_104),
 		SPECIFIC_OPCODE(105, opcode_105),
 		SPECIFIC_OPCODE(109, opcode_109),
-		SPECIFIC_OPCODE(111, opcode_111),
-		SPECIFIC_OPCODE(112, opcode_112),
 		SPECIFIC_OPCODE(113, opcode_113),
 		SPECIFIC_OPCODE(114, opcode_114),
 		SPECIFIC_OPCODE(115, opcode_115),
@@ -163,7 +161,6 @@ void MystScriptParser_Myst::setupOpcodes() {
 		SPECIFIC_OPCODE(204, opcode_204),
 		SPECIFIC_OPCODE(205, opcode_205),
 		SPECIFIC_OPCODE(206, opcode_206),
-		SPECIFIC_OPCODE(207, opcode_207),
 		SPECIFIC_OPCODE(208, opcode_208),
 		SPECIFIC_OPCODE(209, opcode_209),
 		SPECIFIC_OPCODE(210, opcode_210),
@@ -302,17 +299,6 @@ void MystScriptParser_Myst::opcode_100(uint16 op, uint16 var, uint16 argc, uint1
 			// TODO: No soundIdLinkDst for Opcode 100 link? Check Original.
 		}
 		break;
-	case kStoneshipStack:
-		// Used for Cards 2185 (Water Pump)
-		varUnusedCheck(op, var);
-
-		if (argc == 0) {
-			debugC(kDebugScript, "Opcode %d: Unknown Function", op);
-
-			// TODO: Called when Water Pump Button is pressed? Animation?
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kDniStack:
 		// Used in Card 5022 (Rocks)
 		varUnusedCheck(op, var);
@@ -340,28 +326,6 @@ void MystScriptParser_Myst::opcode_100(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		varUnusedCheck(op, var);
-
-		if (argc == 6) {
-			// Used by Door Buttons to Brothers' Rooms
-			// Cards 2294, 2255
-			Common::Rect u0_rect = Common::Rect(argv[0], argv[1], argv[2], argv[3]);
-			uint16 u1 = argv[3];
-			uint16 u2 = argv[2];
-
-			debugC(kDebugScript, "Opcode %d: Unknown", op);
-			debugC(kDebugScript, "u0_rect.left: %d", u0_rect.left);
-			debugC(kDebugScript, "u0_rect.top: %d", u0_rect.top);
-			debugC(kDebugScript, "u0_rect.right: %d", u0_rect.right);
-			debugC(kDebugScript, "u0_rect.bottom: %d", u0_rect.bottom);
-			debugC(kDebugScript, "u1: %d", u1);
-			debugC(kDebugScript, "u2: %d", u2);
-
-			// TODO: Fill in logic...
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kDemoPreviewStack:
 	case kMystStack:
 		debugC(kDebugScript, "Opcode %d: Decrement Variable", op);
@@ -424,25 +388,6 @@ void MystScriptParser_Myst::opcode_101(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::opcode_102(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		varUnusedCheck(op, var);
-
-		if (argc == 2) {
-			debugC(kDebugScript, "Opcode %d: Play Book Room Movie", op);
-
-			uint16 startTime = argv[0];
-			uint16 endTime = argv[1];
-
-			debugC(kDebugScript, "\tstartTime: %d", startTime);
-			debugC(kDebugScript, "\tendTime: %d", endTime);
-
-			warning("TODO: Opcode %d Movie Time Index %d to %d", op, startTime, endTime);
-			// TODO: Need version of playMovie blocking which allows selection
-			//       of start and finish points.
-			_vm->_video->playMovie(_vm->wrapMovieFilename("bkroom", kStoneshipStack), 159, 99);
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kDemoPreviewStack:
 	case kMystStack:
 		if (argc == 0) {
@@ -495,20 +440,6 @@ void MystScriptParser_Myst::opcode_102(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::opcode_103(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		varUnusedCheck(op, var);
-
-		if (argc == 1) {
-			// Used on Card 2197 (Sirrus' Room Drawers)
-			debugC(kDebugScript, "Opcode %d: Unknown", op);
-
-			uint16 u0 = argv[0];
-
-			debugC(kDebugScript, "\tu0: %d", u0);
-			// TODO: Fill in Logic...
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kDemoPreviewStack:
 	case kMystStack:
 		// Used on Myst Card 4162 (Fireplace Grid)
@@ -536,24 +467,6 @@ void MystScriptParser_Myst::opcode_103(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::opcode_104(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		varUnusedCheck(op, var);
-
-		// Used for Card 2004 (Achenar's Room Drawers)
-		// Used for Closeup of Torn Note?
-		if (argc == 1) {
-			debugC(kDebugScript, "Opcode %d: Unknown Function", op);
-
-			uint16 u0 = argv[0];
-			debugC(kDebugScript, "\tu0: %d", u0);
-
-			// TODO: Fill in Function...
-			// Does u0 correspond to a resource Id? Enable? Disable?
-			// Similar to Opcode 111 (Stoneship Version).. But does this also
-			// draw closeup image of note / change to closeup card?
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		varUnusedCheck(op, var);
 
@@ -677,60 +590,6 @@ void MystScriptParser_Myst::opcode_109(uint16 op, uint16 var, uint16 argc, uint1
 			debugC(kDebugScript, "\tsignedValue: %d", signedValue);
 
 			_vm->_varStore->setVar(var, _vm->_varStore->getVar(var) + signedValue);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_111(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		if (argc == 1) {
-			// Used for Card 2004 (Achenar's Room Drawers)
-			// Used by Drawers Hotspots...
-
-			debugC(kDebugScript, "Opcode %d: Unknown Function", op);
-
-			uint16 u0 = argv[0];
-			debugC(kDebugScript, "\tu0: %d", u0);
-
-			// TODO: Fill in Function...
-			// Does u0 correspond to a resource Id? Enable? Disable?
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_112(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		// Used for Card 2013 (Achenar's Rose-Skull Hologram)
-		if (argc == 3) {
-			debugC(kDebugScript, "Opcode %d: Rose-Skull Hologram Playback", op);
-
-			uint16 varValue = _vm->_varStore->getVar(var);
-
-			debugC(kDebugScript, "\tVar: %d = %d", var, varValue);
-
-			uint16 startPoint = argv[0];
-			uint16 endPoint = argv[1];
-			uint16 u0 = argv[2];
-
-			debugC(kDebugScript, "\tstartPoint: %d", startPoint);
-			debugC(kDebugScript, "\tendPoint: %d", endPoint);
-			debugC(kDebugScript, "\tu0: %d", u0);
-
-			// TODO: Fill in Function...
 		} else
 			unknown(op, var, argc, argv);
 		break;
@@ -895,29 +754,6 @@ void MystScriptParser_Myst::opcode_116(uint16 op, uint16 var, uint16 argc, uint1
 	varUnusedCheck(op, var);
 
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		varUnusedCheck(op, var);
-
-		if (argc == 1) {
-			// Used on Card 2111 (Compass Rose)
-			// Called when Button Clicked.
-			uint16 correctButton = argv[0];
-
-			if (correctButton) {
-				// Correct Button -> Light On Logic
-				// TODO: Deal with if main power on?
-				_vm->_varStore->setVar(16, 1);
-				_vm->_varStore->setVar(30, 0);
-			} else {
-				// Wrong Button -> Power Failure Logic
-				// TODO: Fill in Alarm
-				_vm->_varStore->setVar(16, 0);
-				_vm->_varStore->setVar(30, 2);
-				_vm->_varStore->setVar(33, 0);
-			}
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		if (argc == 1) {
 			// Used on Card 4006 (Clock Tower Time Controls)
@@ -958,18 +794,6 @@ void MystScriptParser_Myst::opcode_116(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::opcode_117(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		varUnusedCheck(op, var);
-
-		if (argc == 0) {
-			// Used on Card 2132 (Chest at Bottom of Lighthouse)
-			// Called when Valve Hotspot Clicked.
-			// TODO: Fill in Function to play right section of movie
-			//       based on valve state and water in chest..
-			_vm->_video->playMovie(_vm->wrapMovieFilename("ligspig", kStoneshipStack), 97, 267);
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		if (argc == 2) {
 			// Used by Myst Imager Control Button
@@ -1020,17 +844,6 @@ void MystScriptParser_Myst::opcode_117(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::opcode_118(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		if (argc == 0) {
-			// Used on Card 2126 (Lighthouse Looking Along Plank)
-			// Called when Exit Resource is clicked
-
-			// TODO: Implement Function...
-			// If holding Key to Lamp Room Trapdoor, drop to bottom of
-			// Lighthouse...
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		varUnusedCheck(op, var);
 
@@ -1077,14 +890,6 @@ void MystScriptParser_Myst::opcode_119(uint16 op, uint16 var, uint16 argc, uint1
 	varUnusedCheck(op, var);
 
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		if (argc == 0) {
-			// Used on Card 2143 (Lighthouse Trapdoor)
-			// Called when Lock Hotspot Clicked while holding key.
-			_vm->_video->playMovie(_vm->wrapMovieFilename("openloc", kStoneshipStack), 187, 72);
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		if (argc == 1) {
 			// Used on Card 4383 and 4451 (Tower Elevator)
@@ -1137,38 +942,6 @@ void MystScriptParser_Myst::opcode_120(uint16 op, uint16 var, uint16 argc, uint1
 	MystResource *_top;
 
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		if (argc == 1) {
-			// Used for Cards 2285, 2289, 2247, 2251 (Side Doors in Tunnels Down To Brothers Rooms)
-			uint16 movieId = argv[0];
-
-			debugC(kDebugScript, "Opcode %d: Play Side Door Movies", op);
-			debugC(kDebugScript, "\tmovieId: %d", movieId);
-
-			switch (movieId) {
-			case 0:
-				// Card 2251
-				_vm->_video->playMovie(_vm->wrapMovieFilename("tunaup", kStoneshipStack), 149, 161);
-				break;
-			case 1:
-				// Card 2247
-				_vm->_video->playMovie(_vm->wrapMovieFilename("tunadown", kStoneshipStack), 218, 150);
-				break;
-			case 2:
-				// Card 2289
-				_vm->_video->playMovie(_vm->wrapMovieFilename("tuncup", kStoneshipStack), 259, 161);
-				break;
-			case 3:
-				// Card 2285
-				_vm->_video->playMovie(_vm->wrapMovieFilename("tuncdown", kStoneshipStack), 166, 150);
-				break;
-			default:
-				warning("Opcode 120 MovieId Out Of Range");
-				break;
-			}
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		// Used for Card 4297 (Generator Puzzle Buttons)
 		debugC(kDebugScript, "Opcode %d: Toggle Var8 of Invoking Resource", op);
@@ -1312,18 +1085,6 @@ void MystScriptParser_Myst::opcode_124(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::opcode_125(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		if (argc == 1) {
-			// Used on Card 2197 (Sirrus' Room Drawers)
-			debugC(kDebugScript, "Opcode %d: Unknown uses Var %d", op, var);
-
-			uint16 u0 = argv[0];
-
-			debugC(kDebugScript, "\tu0: %d", u0);
-			// TODO: Fill in Logic...
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMechanicalStack:
 		if (argc == 0) {
 			// Used on Card 6267 (Code Lock)
@@ -1801,11 +1562,6 @@ void MystScriptParser_Myst::opcode_200_run() {
 		case kDemoStack: // Used on Card 2000
 			// TODO : Implement function here to play though intro movies and change card?
 			break;
-		case kStoneshipStack:
-			// Used for Card 2013 (Achenar's Rose-Skull Hologram)
-
-			// TODO: Implement Function...
-			break;
 		case kDemoPreviewStack:
 		case kMystStack:
 			curImageIndex = _vm->_varStore->getVar(g_opcode200Parameters.var);
@@ -1892,15 +1648,6 @@ void MystScriptParser_Myst::opcode_200(uint16 op, uint16 var, uint16 argc, uint1
 
 		_vm->changeToCard(_vm->getCurCard()+1, true);
 		break;
-	case kStoneshipStack:
-		varUnusedCheck(op, var);
-
-		// Used for Card 2013 (Achenar's Rose-Skull Hologram)
-		if (argc == 0) {
-			g_opcode200Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kDemoPreviewStack:
 	case kMystStack:
 		if (argc == 4) {
@@ -1976,11 +1723,6 @@ void MystScriptParser_Myst::opcode_201_run() {
 
 	if (g_opcode201Parameters.enabled) {
 		switch (_vm->getCurStack()) {
-		case kStoneshipStack:
-			// Used for Card 2013 (Achenar's Rose-Skull Hologram)
-
-			// TODO: Fill in Function...
-			break;
 		case kMystStack:
 			var105 = _vm->_varStore->getVar(105);
 			if (var105 && !g_opcode201Parameters.lastVar105)
@@ -2020,15 +1762,6 @@ void MystScriptParser_Myst::opcode_201(uint16 op, uint16 var, uint16 argc, uint1
 		_vm->_system->delayMillis(4 * 1000);
 		_vm->_gfx->copyImageToScreen(4, Common::Rect(0, 0, 544, 333));
 		// TODO: Wait until video ends, then change to card 5
-		break;
-	case kStoneshipStack:
-		varUnusedCheck(op, var);
-
-		// Used for Card 2013 (Achenar's Rose-Skull Hologram)
-		if (argc == 0) {
-			g_opcode201Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
 		break;
 	case kMystStack:
 		// Used for Cards 4257, 4260, 4263, 4266, 4269, 4272, 4275 and 4278 (Ship Puzzle Boxes)
@@ -2256,14 +1989,6 @@ void MystScriptParser_Myst::opcode_202_disable(void) {
 
 void MystScriptParser_Myst::opcode_202(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		varUnusedCheck(op, var);
-
-		// Used for Card 2160 (Lighthouse Battery Pack Closeup)
-		// TODO: Implement Code...
-		// Not Sure of Purpose - Update of Light / Discharge?
-		unknown(op, var, argc, argv);
-		break;
 	case kDemoPreviewStack:
 	case kMystStack:
 		varUnusedCheck(op, var);
@@ -2334,35 +2059,7 @@ void MystScriptParser_Myst::opcode_203_disable(void) {
 void MystScriptParser_Myst::opcode_203(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
-	uint16 imageIdDarkDoorOpen = 0;
-	uint16 imageIdDarkDoorClosed = 0;
-
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		// Used for all/most Cards in Tunnels Down To Brothers Rooms
-
-		// TODO: Duplicate or similar function to Opcode 203?
-		if (argc == 2 || argc == 4) {
-			debugC(kDebugScript, "Opcode %d: %d Arguments", op, argc);
-
-			uint16 u0 = argv[0];
-			if (argc == 4) {
-				imageIdDarkDoorOpen = argv[1];
-				imageIdDarkDoorClosed = argv[2];
-			}
-			uint16 soundIdAlarm = argv[argc - 1];
-
-			debugC(kDebugScript, "\tu0: %d", u0);
-			if (argc == 4) {
-				debugC(kDebugScript, "\timageIdDarkDoorOpen: %d", imageIdDarkDoorOpen);
-				debugC(kDebugScript, "\tsoundIdDarkDoorClosed: %d", imageIdDarkDoorClosed);
-			}
-			debugC(kDebugScript, "\tsoundIdAlarm: %d", soundIdAlarm);
-
-			// TODO: Fill in Correct Function for Lights
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		// Used for Card 4138 (Dock Forechamber Door)
 		// Set forechamber door to closed
@@ -2423,15 +2120,6 @@ void MystScriptParser_Myst::opcode_204(uint16 op, uint16 var, uint16 argc, uint1
 	varUnusedCheck(op, var);
 
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		// Used for Card 2160 (Lighthouse Battery Pack Closeup)
-		if (argc == 0) {
-			// TODO: Implement Code For Battery Meter Level
-			// Overwrite _vm->_resources[1]->_subImages[0].rect.bottom 1 to 80
-			// Add accessor functions for this...
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		// Used for Card 4134 and 4149 (Dock)
 		break;
@@ -2478,35 +2166,7 @@ void MystScriptParser_Myst::opcode_205_disable(void) {
 void MystScriptParser_Myst::opcode_205(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
-	uint16 imageIdDoorOpen = 0;
-	uint16 imageIdDoorClosed = 0;
-
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		// Used on Cards 2322, 2285 (Tunnels Down To Brothers Rooms)
-
-		// TODO: Duplicate or similar function to Opcode 203?
-		if (argc == 2 || argc == 4) {
-			debugC(kDebugScript, "Opcode %d: %d Arguments", op, argc);
-
-			uint16 u0 = argv[0];
-			if (argc == 4) {
-				imageIdDoorOpen = argv[1];
-				imageIdDoorClosed = argv[2];
-			}
-			uint16 soundIdAlarm = argv[argc - 1];
-
-			debugC(kDebugScript, "\tu0: %d", u0);
-			if (argc == 4) {
-				debugC(kDebugScript, "\timageIdDoorOpen: %d", imageIdDoorOpen);
-				debugC(kDebugScript, "\tsoundIdDoorClosed: %d", imageIdDoorClosed);
-			}
-			debugC(kDebugScript, "\tsoundIdAlarm: %d", soundIdAlarm);
-
-			// TODO: Fill in Correct Function for Lights
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		// Used for Card 4532 (Rocketship Piano)
 
@@ -2564,14 +2224,6 @@ void MystScriptParser_Myst::opcode_206(uint16 op, uint16 var, uint16 argc, uint1
 	varUnusedCheck(op, var);
 
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		// Used for Cards 2272 and 2234 (Facing Out of Door)
-		if (argc == 0) {
-			debugC(kDebugScript, "Opcode %d: Unknown, %d Arguments", op, argc);
-			// TODO: Function Unknown...
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		// Used for Card 4256 (Butterfly Movie Activation)
 		// TODO: Implement Logic...
@@ -2596,41 +2248,8 @@ void MystScriptParser_Myst::opcode_206(uint16 op, uint16 var, uint16 argc, uint1
 	}
 }
 
-void MystScriptParser_Myst::opcode_207(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		// Used for Card 2138 (Lighthouse Key/Chest Animation Logic)
-		// TODO: Fill in function
-		warning("TODO: Opcode 207 Lighthouse Key/Chest Animation Logic");
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
 void MystScriptParser_Myst::opcode_208(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		varUnusedCheck(op, var);
-
-		// Used in Card 2218 (Telescope view)
-		if (argc == 3) {
-			debugC(kDebugScript, "Opcode %d: Telescope View", op);
-			uint16 imagePanorama = argv[0];
-			uint16 imageLighthouseOff = argv[1];
-			uint16 imageLighthouseOn = argv[2];
-
-			debugC(kDebugScript, "Image (Panorama): %d", imagePanorama);
-			debugC(kDebugScript, "Image (Lighthouse Off): %d", imageLighthouseOff);
-			debugC(kDebugScript, "Image (Lighthouse On): %d", imageLighthouseOn);
-
-			// TODO: Fill in Logic.
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		if (argc == 0) {
 			debugC(kDebugScript, "Opcode %d: Imager Function", op);
@@ -2664,12 +2283,6 @@ void MystScriptParser_Myst::opcode_209_run(void) {
 
 	if (g_opcode209Parameters.enabled) {
 		switch (_vm->getCurStack()) {
-		case kStoneshipStack:
-			// Used for Card 2004 (Achenar's Room Drawers)
-
-			// TODO: Implement Function...
-			// Swap Open Drawers?
-			break;
 		case kDemoPreviewStack:
 		case kMystStack:
 			// Used for Card 4334 and 4348 (Myst Library Bookcase Door)
@@ -2701,27 +2314,6 @@ void MystScriptParser_Myst::opcode_209(uint16 op, uint16 var, uint16 argc, uint1
 	varUnusedCheck(op, var);
 
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		// Used for Card 2004 (Achenar's Room Drawers)
-		if (argc == 11) {
-			g_opcode209Parameters.u0[0] = argv[0];
-			g_opcode209Parameters.u0[1] = argv[1];
-			g_opcode209Parameters.u0[2] = argv[2];
-			g_opcode209Parameters.u0[3] = argv[3];
-			g_opcode209Parameters.u0[4] = argv[4];
-
-			g_opcode209Parameters.u1[0] = argv[5];
-			g_opcode209Parameters.u1[1] = argv[6];
-			g_opcode209Parameters.u1[2] = argv[7];
-			g_opcode209Parameters.u1[3] = argv[8];
-			g_opcode209Parameters.u1[4] = argv[9];
-
-			g_opcode209Parameters.stateVar = argv[10];
-
-			g_opcode209Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kDemoPreviewStack:
 	case kMystStack:
 		// Used for Card 4334 and 4348 (Myst Library Bookcase Door)
@@ -2833,22 +2425,6 @@ void MystScriptParser_Myst::opcode_210(uint16 op, uint16 var, uint16 argc, uint1
 	varUnusedCheck(op, var);
 
 	switch (_vm->getCurStack()) {
-	case kStoneshipStack:
-		varUnusedCheck(op, var);
-
-		// Used in Cards 2205 and 2207 (Cloud Orbs in Sirrus' Room)
-		if (argc == 2) {
-			uint16 soundId = argv[0];
-			uint16 soundIdStopping = argv[1];
-
-			// TODO: Work Out Function i.e. control Var etc.
-			if (false) {
-				_vm->_sound->playSound(soundId);
-				_vm->_sound->playSound(soundIdStopping);
-			}
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMystStack:
 		// Used for Card 4297 (Generator Puzzle)
 		if (argc == 2) {
@@ -3268,11 +2844,6 @@ void MystScriptParser_Myst::opcode_300(uint16 op, uint16 var, uint16 argc, uint1
 		debugC(kDebugScript, "Opcode %d: Book Exit Function...", op);
 		debugC(kDebugScript, "Var: %d", var);
 		// TODO: Fill in Logic
-		break;
-	case kStoneshipStack:
-		// Used in Card 2218 (Telescope view)
-		varUnusedCheck(op, var);
-		// TODO: Fill in Logic. Clearing Variable for View?
 		break;
 	case kMechanicalStack:
 		// Used in Card 6156 (Fortress Elevator View)

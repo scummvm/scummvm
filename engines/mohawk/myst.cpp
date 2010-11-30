@@ -42,6 +42,7 @@
 #include "mohawk/myst_stacks/credits.h"
 #include "mohawk/myst_stacks/myst.h"
 #include "mohawk/myst_stacks/selenitic.h"
+#include "mohawk/myst_stacks/stoneship.h"
 
 namespace Mohawk {
 
@@ -381,6 +382,9 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 		break;
 	case kSeleniticStack:
 		_scriptParser = new MystScriptParser_Selenitic(this);
+		break;
+	case kStoneshipStack:
+		_scriptParser = new MystScriptParser_Stoneship(this);
 		break;
 	default:
 		_scriptParser = new MystScriptParser_Myst(this);
