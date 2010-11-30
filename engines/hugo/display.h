@@ -107,7 +107,8 @@ protected:
 	byte  _fnt;                                     // Current font number
 	byte  _fontdata[NUM_FONTS][FONTSIZE];           // Font data
 	byte *_font[NUM_FONTS][FONT_LEN];               // Ptrs to each char
-	byte *_palette;
+	byte *_mainPalette;
+	byte *_curPalette;
 	byte  _paletteSize;
 
 	int16 _arrayFontSize[NUM_FONTS];

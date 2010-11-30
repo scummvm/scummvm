@@ -47,20 +47,23 @@ namespace Hugo {
 #define INY(Y, B) (Y >= B->y && Y <= B->y + B->dy)
 #define OVERLAP(A, B) ((INX(A->x, B) || INX(A->x + A->dx, B) || INX(B->x, A) || INX(B->x + B->dx, A)) && (INY(A->y, B) || INY(A->y + A->dy, B) || INY(B->y, A) || INY(B->y + B->dy, A)))
 
-Screen::Screen(HugoEngine *vm) : _vm(vm), _palette(0) {
-	for (int j = 0; j < NUM_FONTS; j++) {
-		_arrayFont[j] = 0;
-		fontLoadedFl[j] = false;
+Screen::Screen(HugoEngine *vm) : _vm(vm), _mainPalette(0), _curPalette(0) {
+	for (int i = 0; i < NUM_FONTS; i++) {
+		_arrayFont[i] = 0;
+		fontLoadedFl[i] = false;
 	}
 }
 
 Screen::~Screen() {
 }
 
+/**
+* Replace the palette by the main palette
+*/
 void Screen::createPal() {
 	debugC(1, kDebugDisplay, "createPal");
 
-	g_system->setPalette(_palette, 0, NUM_COLORS);
+	g_system->setPalette(_mainPalette, 0, NUM_COLORS);
 }
 
 /**
@@ -107,33 +110,50 @@ void Screen::displayRect(int16 x, int16 y, int16 dx, int16 dy) {
 }
 
 /**
-* Change a color by remapping supplied palette index with new index
+* Change a color by remapping supplied palette index with new index in main palette.
+* Alse save the new color in the current palette.
 */
 void Screen::remapPal(uint16 oldIndex, uint16 newIndex) {
 	debugC(1, kDebugDisplay, "Remap_pal(%d, %d)", oldIndex, newIndex);
 
 	byte pal[4];
 
-	pal[0] = _palette[newIndex * 4 + 0];
-	pal[1] = _palette[newIndex * 4 + 1];
-	pal[2] = _palette[newIndex * 4 + 2];
-	pal[3] = _palette[newIndex * 4 + 3];
+	pal[0] = _curPalette[4 * oldIndex + 0] = _mainPalette[newIndex * 4 + 0];
+	pal[1] = _curPalette[4 * oldIndex + 1] = _mainPalette[newIndex * 4 + 1];
+	pal[2] = _curPalette[4 * oldIndex + 2] = _mainPalette[newIndex * 4 + 2];
+	pal[3] = _curPalette[4 * oldIndex + 3] = _mainPalette[newIndex * 4 + 3];
 
 	g_system->setPalette(pal, oldIndex, 1);
 }
 
+/**
+* Saves the current palette in a savegame
+*/
 void Screen::savePal(Common::WriteStream *f) {
 	debugC(1, kDebugDisplay, "savePal");
 
 	for (int i = 0; i < _paletteSize; i++)
-		f->writeByte(_palette[i]);
+		f->writeByte(_curPalette[i]);
 }
 
+/**
+* Restore the current palette from a savegame
+*/
 void Screen::restorePal(Common::SeekableReadStream *f) {
 	debugC(1, kDebugDisplay, "restorePal");
 
+	byte pal[4];
+
 	for (int i = 0; i < _paletteSize; i++)
-		_palette[i] = f->readByte();
+		_curPalette[i] = f->readByte();
+
+	for (int i = 0; i < _paletteSize / 4; i++) {
+		pal[0] = _curPalette[i * 4 + 0];
+		pal[1] = _curPalette[i * 4 + 1];
+		pal[2] = _curPalette[i * 4 + 2];
+		pal[3] = _curPalette[i * 4 + 3];
+		g_system->setPalette(pal, i, 1);
+	}
 }
 
 
@@ -412,8 +432,9 @@ void Screen::shadowStr(int16 sx, int16 sy, const char *s, byte color) {
 	writeStr(sx, sy, s, color);
 }
 
-/** Introduce user to the game
-* DOS versions Only
+/**
+* Introduce user to the game. In the original games, it was only 
+* present in the DOS versions
 */
 void Screen::userHelp() {
 	Utils::Box(BOX_ANY , "%s",
@@ -434,7 +455,7 @@ void Screen::drawStatusText() {
 
 	loadFont(U_FONT8);
 	uint16 sdx = stringLength(_vm->_statusLine);
-	uint16 sdy = fontHeight() + 1;                 // + 1 for shadow
+	uint16 sdy = fontHeight() + 1;                  // + 1 for shadow
 	uint16 posX = 0;
 	uint16 posY = YPIX - sdy;
 
@@ -497,16 +518,18 @@ void Screen::initNewScreenDisplay() {
 void Screen::loadPalette(Common::File &in) {
 	// Read palette
 	_paletteSize = in.readUint16BE();
-	_palette = (byte *)malloc(sizeof(byte) * _paletteSize);
+	_mainPalette = (byte *)malloc(sizeof(byte) * _paletteSize);
+	_curPalette = (byte *)malloc(sizeof(byte) * _paletteSize);
 	for (int i = 0; i < _paletteSize; i++)
-		_palette[i] = in.readByte();
+		_curPalette[i] = _mainPalette[i] = in.readByte();
 }
 
 /**
-* Free palette
+* Free main and current palettes
 */
 void Screen::freePalette() {
-	free(_palette);
+	free(_curPalette);
+	free(_mainPalette);
 }
 
 /**
