@@ -1256,8 +1256,8 @@ LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, 
 	for (uint16 i = 0; i < scriptIDs.size(); i++)
 		_nodes.push_back(new LBAnimationNode(_vm, this, scriptIDs[i]));
 
+	_currentFrame = 0;
 	_running = false;
-	_done = false;
 	_tempo = 1;
 }
 
@@ -1321,12 +1321,12 @@ void LBAnimation::draw() {
 		_nodes[i]->draw(_bounds);
 }
 
-void LBAnimation::update() {
+bool LBAnimation::update() {
 	if (!_running)
-		return;
+		return false;
 
 	if (_vm->_system->getMillis() / 16 <= _lastTime + (uint32)_tempo)
-		return;
+		return false;
 
 	// the second check is to try 'catching up' with lagged animations, might be crazy
 	if (_lastTime == 0 || (_vm->_system->getMillis() / 16) > _lastTime + (uint32)(_tempo * 2))
@@ -1351,24 +1351,20 @@ void LBAnimation::update() {
 		_currentFrame++;
 	} else if (state == kLBNodeDone) {
 		_running = false;
-		_done = true;
+		return true;
 	}
+
+	return false;
 }
 
 void LBAnimation::start() {
 	_lastTime = 0;
-	_currentFrame = 0;
 	_running = true;
-	_done = false;
-
-	for (uint32 i = 0; i < _nodes.size(); i++)
-		_nodes[i]->reset();	
 }
 
 void LBAnimation::seek(uint16 pos) {
 	_lastTime = 0;
 	_currentFrame = 0;
-	_done = false;
 
 	for (uint32 i = 0; i < _nodes.size(); i++)
 		_nodes[i]->reset();
@@ -1390,15 +1386,6 @@ void LBAnimation::seek(uint16 pos) {
 
 void LBAnimation::stop() {
 	_running = false;
-	_done = false;
-}
-
-bool LBAnimation::wasDone() {
-	if (!_done)
-		return false;
-
-	_done = false;
-	return true;
 }
 
 bool LBAnimation::transparentAt(int x, int y) {
@@ -2304,16 +2291,12 @@ bool LBAnimationItem::contains(Common::Point point) {
 
 void LBAnimationItem::update() {
 	if (!_neverEnabled && _enabled && _running) {
-		_anim->update();
+		bool wasDone = _anim->update();
+		if (wasDone)
+			done(true);
 	}
 
 	LBItem::update();
-
-	// TODO: where exactly does this go?
-	// TODO: what checks should we have around this?
-	if (!_neverEnabled && _enabled && _running && _anim->wasDone()) {
-		done(true);
-	}
 }
 
 bool LBAnimationItem::togglePlaying(bool playing) {

@@ -166,13 +166,12 @@ public:
 	~LBAnimation();
 
 	void draw();
-	void update();
+	bool update();
 
 	void start();
 	void seek(uint16 pos);
 	void stop();
 
-	bool wasDone();
 	bool transparentAt(int x, int y);
 
 	void setTempo(uint16 tempo);
@@ -194,7 +193,7 @@ protected:
 
 	uint16 _tempo;
 	uint32 _lastTime, _currentFrame;
-	bool _running, _done;
+	bool _running;
 
 	void loadShape(uint16 resourceId);
 	Common::Array<uint16> _shapeResources;
