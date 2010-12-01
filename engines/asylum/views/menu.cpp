@@ -279,7 +279,7 @@ void MainMenu::adjustTestVolume() {
 void MainMenu::setupMusic() {
 	getSound()->stopAll();
 
-	int32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
+	uint32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
 
 	if (index == kMusicStopped) {
 		_soundResourceId = kResourceNone;
@@ -297,7 +297,7 @@ void MainMenu::adjustPerformance() {
 
 	setupMusic();
 
-	int32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
+	uint32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
 	if (index != kMusicStopped)
 		getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, index));
 }
@@ -938,7 +938,7 @@ void MainMenu::updateKeyboardConfig() {
 	getText()->loadFont(kFontYellow);
 	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1438));
 
-	char key = 0;
+	char keyCode = 0;
 	int32 keyIndex = 0;
 
 	do {
@@ -954,27 +954,27 @@ void MainMenu::updateKeyboardConfig() {
 			break;
 
 		case 0:
-			key = Config.keyShowVersion;
+			keyCode = Config.keyShowVersion;
 			break;
 
 		case 1:
-			key = Config.keyQuickLoad;
+			keyCode = Config.keyQuickLoad;
 			break;
 
 		case 2:
-			key = Config.keyQuickSave;
+			keyCode = Config.keyQuickSave;
 			break;
 
 		case 3:
-			key = Config.keySwitchToSara;
+			keyCode = Config.keySwitchToSara;
 			break;
 
 		case 4:
-			key = Config.keySwitchToGrimwall;
+			keyCode = Config.keySwitchToGrimwall;
 			break;
 
 		case 5:
-			key = Config.keySwitchToOlmec;
+			keyCode = Config.keySwitchToOlmec;
 			break;
 		}
 
@@ -988,8 +988,8 @@ void MainMenu::updateKeyboardConfig() {
 
 			_dword_4562C0 = (_dword_4562C0 + 1) % 12;
 		} else {
-			switchFont(getCursor()->isHidden() || cursor.x < 350 || cursor.x > (350 + getText()->getWidth(key)) || cursor.y < (29 * keyIndex + 150) || cursor.y > (29 * (keyIndex + 6)));
-			getText()->drawChar(key);
+			switchFont(getCursor()->isHidden() || cursor.x < 350 || cursor.x > (350 + getText()->getWidth(keyCode)) || cursor.y < (29 * keyIndex + 150) || cursor.y > (29 * (keyIndex + 6)));
+			getText()->drawChar(keyCode);
 		}
 
 		++keyIndex;
@@ -1336,7 +1336,7 @@ void MainMenu::clickKeyboardConfig() {
 
 	if (cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1446))) || cursor.y < 340 || cursor.y > (340 + 24)) {
 		int32 keyIndex = 0;
-		char key = 0;
+		char keyCode = 0;
 
 		do {
 			switch (keyIndex) {
@@ -1344,31 +1344,31 @@ void MainMenu::clickKeyboardConfig() {
 				break;
 
 			case 0:
-				key = Config.keyShowVersion;
+				keyCode = Config.keyShowVersion;
 				break;
 
 			case 1:
-				key = Config.keyQuickLoad;
+				keyCode = Config.keyQuickLoad;
 				break;
 
 			case 2:
-				key = Config.keyQuickSave;
+				keyCode = Config.keyQuickSave;
 				break;
 
 			case 3:
-				key = Config.keySwitchToSara;
+				keyCode = Config.keySwitchToSara;
 				break;
 
 			case 4:
-				key = Config.keySwitchToGrimwall;
+				keyCode = Config.keySwitchToGrimwall;
 				break;
 
 			case 5:
-				key = Config.keySwitchToOlmec;
+				keyCode = Config.keySwitchToOlmec;
 				break;
 			}
 
-			if (cursor.x >= 350 && cursor.x <= (350 + getText()->getWidth(key)) && cursor.y >= (29 * keyIndex + 150) && cursor.y <= (29 * (keyIndex + 6))) {
+			if (cursor.x >= 350 && cursor.x <= (350 + getText()->getWidth(keyCode)) && cursor.y >= (29 * keyIndex + 150) && cursor.y <= (29 * (keyIndex + 6))) {
 				_selectedShortcutIndex = keyIndex;
 				getCursor()->hide();
 			}
@@ -1421,33 +1421,33 @@ void MainMenu::keyKeyboardConfig(const AsylumEvent &evt) {
 		return;
 	}
 
-	char *key = NULL;
+	char *keyCode = NULL;
 	switch(_selectedShortcutIndex) {
 	default:
 		break;
 
 	case 0:
-		key = &Config.keyShowVersion;
+		keyCode = &Config.keyShowVersion;
 		break;
 
 	case 1:
-		key = &Config.keyQuickLoad;
+		keyCode = &Config.keyQuickLoad;
 		break;
 
 	case 2:
-		key = &Config.keyQuickSave;
+		keyCode = &Config.keyQuickSave;
 		break;
 
 	case 3:
-		key = &Config.keySwitchToSara;
+		keyCode = &Config.keySwitchToSara;
 		break;
 
 	case 4:
-		key = &Config.keySwitchToGrimwall;
+		keyCode = &Config.keySwitchToGrimwall;
 		break;
 
 	case 5:
-		key = &Config.keySwitchToOlmec;
+		keyCode = &Config.keySwitchToOlmec;
 		break;
 	}
 
@@ -1455,8 +1455,8 @@ void MainMenu::keyKeyboardConfig(const AsylumEvent &evt) {
 	if (evt.kbd.ascii > 255 || !isalnum(evt.kbd.ascii))
 		return;
 
-	if (!Config.isKeyAssigned(evt.kbd.ascii) || *key == evt.kbd.ascii) {
-		*key = evt.kbd.ascii;
+	if (!Config.isKeyAssigned(evt.kbd.ascii) || *keyCode == evt.kbd.ascii) {
+		*keyCode = evt.kbd.ascii;
 		_selectedShortcutIndex = -1;
 		getCursor()->show();
 	}
