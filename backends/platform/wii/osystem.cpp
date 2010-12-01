@@ -361,7 +361,7 @@ Common::String OSystem_Wii::getSystemLanguage() const {
 	} else {
 		// This will only happen when new languages are added to the API.
 		warning("WII: Unknown system language: %d", langID);
-		return "";
+		return BaseBackend::getSystemLanguage();
 	}
 }
 #endif // !GAMECUBE
