@@ -36,12 +36,8 @@ namespace Mohawk {
 
 // NOTE: Credits Start Card is 10000
 
-#define OPCODE(op, x) { op, &MystScriptParser::x, #x }
-#define SPECIFIC_OPCODE(op, x) { op, (OpcodeProcMyst) &MystScriptParser_Myst::x, #x }
-
 MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
-	_invokingResource = NULL;
 
 	// Card ID preinitialized by the engine for use by opcode 18
 	// when linking back to Myst in the library
@@ -52,144 +48,88 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScript
 MystScriptParser_Myst::~MystScriptParser_Myst() {
 }
 
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Myst::x, #x))
+
 void MystScriptParser_Myst::setupOpcodes() {
-	// "invalid" opcodes do not exist or have not been observed
-	// "unknown" opcodes exist, but their meaning is unknown
+	// "Stack-Specific" Opcodes
+	OPCODE(100, opcode_100);
+	OPCODE(101, opcode_101);
+	OPCODE(102, opcode_102);
+	OPCODE(103, opcode_103);
+	OPCODE(104, opcode_104);
+	OPCODE(105, opcode_105);
+	OPCODE(109, opcode_109);
+	OPCODE(113, opcode_113);
+	OPCODE(114, opcode_114);
+	OPCODE(115, opcode_115);
+	OPCODE(116, opcode_116);
+	OPCODE(117, opcode_117);
+	OPCODE(118, opcode_118);
+	OPCODE(119, opcode_119);
+	OPCODE(120, opcode_120);
+	OPCODE(121, opcode_121);
+	OPCODE(133, opcode_133);
+	// TODO: Opcodes 134 to 146 Not Present
+	OPCODE(147, opcode_147);
+	// TODO: Opcodes 148 to 163 Not Present
+	OPCODE(164, opcode_164);
+	// TODO: Opcodes 165 to 168 Not Present
+	OPCODE(169, opcode_169);
+	// TODO: Opcodes 170 to 181 Not Present
+	OPCODE(182, opcode_182);
+	OPCODE(183, opcode_183);
+	OPCODE(184, opcode_184);
+	OPCODE(185, opcode_185);
+	// TODO: Opcodes 186 to 195 Not Present
+	OPCODE(196, opcode_196); // Demo only
+	OPCODE(197, opcode_197); // Demo only
+	OPCODE(198, opcode_198);
+	OPCODE(199, opcode_199);
 
-	static const MystOpcode myst_opcodes[] = {
-		// "Standard" Opcodes
-		OPCODE(0, o_toggleVar),
-		OPCODE(1, o_setVar),
-		OPCODE(2, o_changeCardSwitch),
-		OPCODE(3, o_takePage),
-		OPCODE(4, o_redrawCard),
-		// TODO: Opcode 5 Not Present
-		OPCODE(6, o_goToDest),
-		OPCODE(7, o_goToDest),
-		OPCODE(8, o_goToDest),
-		OPCODE(9, o_triggerMovie),
-		OPCODE(10, o_toggleVarNoRedraw),
-		// TODO: Opcode 10 to 11 Not Present
-		OPCODE(12, o_changeCardSwitch),
-		OPCODE(13, o_changeCardSwitch),
-		OPCODE(14, o_drawAreaState),
-		OPCODE(15, o_redrawAreaForVar),
-		OPCODE(16, o_changeCardDirectional),
-		OPCODE(17, o_changeCardPush),
-		OPCODE(18, o_changeCardPop),
-		OPCODE(19, o_enableAreas),
-		OPCODE(20, o_disableAreas),
-		OPCODE(21, o_directionalUpdate),
-		OPCODE(22, o_goToDest),
-		OPCODE(23, o_toggleAreasActivation),
-		OPCODE(24, o_playSound),
-		// TODO: Opcode 25 Not Present
-		OPCODE(26, o_stopSoundBackground),
-		OPCODE(27, o_playSoundBlocking),
-		OPCODE(28, o_restoreDefaultRect),
-		OPCODE(29, o_blitRect),
-		OPCODE(30, o_changeSound),
-		OPCODE(31, o_soundPlaySwitch),
-		OPCODE(32, o_soundResumeBackground),
-		OPCODE(33, o_blitRect),
-		OPCODE(34, o_changeCard),
-		OPCODE(35, o_drawImageChangeCard),
-		OPCODE(36, o_changeMainCursor),
-		OPCODE(37, o_hideCursor),
-		OPCODE(38, o_showCursor),
-		OPCODE(39, o_delay),
-		OPCODE(40, o_changeStack),
-		OPCODE(41, o_changeCardPlaySoundDirectional),
-		OPCODE(42, o_directionalUpdatePlaySound),
-		OPCODE(43, o_saveMainCursor),
-		OPCODE(44, o_restoreMainCursor),
-		// TODO: Opcode 45 Not Present
-		OPCODE(46, o_soundWaitStop),
-		// TODO: Opcodes 47 to 99 Not Present
+	// "Init" Opcodes
+	OPCODE(200, opcode_200);
+	OPCODE(201, opcode_201);
+	OPCODE(202, opcode_202);
+	OPCODE(203, opcode_203);
+	OPCODE(204, opcode_204);
+	OPCODE(205, opcode_205);
+	OPCODE(206, opcode_206);
+	OPCODE(208, opcode_208);
+	OPCODE(209, opcode_209);
+	OPCODE(210, opcode_210);
+	OPCODE(211, opcode_211);
+	OPCODE(212, opcode_212);
+	OPCODE(213, opcode_213);
+	OPCODE(214, opcode_214);
+	OPCODE(215, opcode_215);
+	OPCODE(216, opcode_216);
+	OPCODE(217, opcode_217);
+	OPCODE(218, opcode_218);
+	OPCODE(219, opcode_219);
+	OPCODE(220, opcode_220);
+	OPCODE(221, opcode_221);
+	OPCODE(222, opcode_222);
+	// TODO: Opcodes 223 to 297 Not Present
+	OPCODE(298, opcode_298); // Demo only
+	OPCODE(299, opcode_299); // Demo only
 
-		// "Stack-Specific" Opcodes
-		SPECIFIC_OPCODE(100, opcode_100),
-		SPECIFIC_OPCODE(101, opcode_101),
-		SPECIFIC_OPCODE(102, opcode_102),
-		SPECIFIC_OPCODE(103, opcode_103),
-		SPECIFIC_OPCODE(104, opcode_104),
-		SPECIFIC_OPCODE(105, opcode_105),
-		SPECIFIC_OPCODE(109, opcode_109),
-		SPECIFIC_OPCODE(113, opcode_113),
-		SPECIFIC_OPCODE(114, opcode_114),
-		SPECIFIC_OPCODE(115, opcode_115),
-		SPECIFIC_OPCODE(116, opcode_116),
-		SPECIFIC_OPCODE(117, opcode_117),
-		SPECIFIC_OPCODE(118, opcode_118),
-		SPECIFIC_OPCODE(119, opcode_119),
-		SPECIFIC_OPCODE(120, opcode_120),
-		SPECIFIC_OPCODE(121, opcode_121),
-		SPECIFIC_OPCODE(133, opcode_133),
-		// TODO: Opcodes 134 to 146 Not Present
-		SPECIFIC_OPCODE(147, opcode_147),
-		// TODO: Opcodes 148 to 163 Not Present
-		SPECIFIC_OPCODE(164, opcode_164),
-		// TODO: Opcodes 165 to 168 Not Present
-		SPECIFIC_OPCODE(169, opcode_169),
-		// TODO: Opcodes 170 to 181 Not Present
-		SPECIFIC_OPCODE(182, opcode_182),
-		SPECIFIC_OPCODE(183, opcode_183),
-		SPECIFIC_OPCODE(184, opcode_184),
-		SPECIFIC_OPCODE(185, opcode_185),
-		// TODO: Opcodes 186 to 195 Not Present
-		SPECIFIC_OPCODE(196, opcode_196), // Demo only
-		SPECIFIC_OPCODE(197, opcode_197), // Demo only
-		SPECIFIC_OPCODE(198, opcode_198),
-		SPECIFIC_OPCODE(199, opcode_199),
-
-		// "Init" Opcodes
-		SPECIFIC_OPCODE(200, opcode_200),
-		SPECIFIC_OPCODE(201, opcode_201),
-		SPECIFIC_OPCODE(202, opcode_202),
-		SPECIFIC_OPCODE(203, opcode_203),
-		SPECIFIC_OPCODE(204, opcode_204),
-		SPECIFIC_OPCODE(205, opcode_205),
-		SPECIFIC_OPCODE(206, opcode_206),
-		SPECIFIC_OPCODE(208, opcode_208),
-		SPECIFIC_OPCODE(209, opcode_209),
-		SPECIFIC_OPCODE(210, opcode_210),
-		SPECIFIC_OPCODE(211, opcode_211),
-		SPECIFIC_OPCODE(212, opcode_212),
-		SPECIFIC_OPCODE(213, opcode_213),
-		SPECIFIC_OPCODE(214, opcode_214),
-		SPECIFIC_OPCODE(215, opcode_215),
-		SPECIFIC_OPCODE(216, opcode_216),
-		SPECIFIC_OPCODE(217, opcode_217),
-		SPECIFIC_OPCODE(218, opcode_218),
-		SPECIFIC_OPCODE(219, opcode_219),
-		SPECIFIC_OPCODE(220, opcode_220),
-		SPECIFIC_OPCODE(221, opcode_221),
-		SPECIFIC_OPCODE(222, opcode_222),
-		// TODO: Opcodes 223 to 297 Not Present
-		SPECIFIC_OPCODE(298, opcode_298), // Demo only
-		SPECIFIC_OPCODE(299, opcode_299), // Demo only
-
-		// "Exit" Opcodes
-		SPECIFIC_OPCODE(300, opcode_300),
-		SPECIFIC_OPCODE(301, opcode_301),
-		SPECIFIC_OPCODE(302, opcode_302),
-		SPECIFIC_OPCODE(303, opcode_303),
-		SPECIFIC_OPCODE(304, opcode_304),
-		SPECIFIC_OPCODE(305, opcode_305),
-		SPECIFIC_OPCODE(306, opcode_306),
-		SPECIFIC_OPCODE(307, opcode_307),
-		SPECIFIC_OPCODE(308, opcode_308),
-		SPECIFIC_OPCODE(309, opcode_309),
-		// TODO: Opcodes 310 to 311 Not Present
-		SPECIFIC_OPCODE(312, opcode_312),
-		// TODO: Opcodes 313 and greater Not Present
-
-		OPCODE(0xFFFF, NOP)
-	};
-
-	_opcodes = myst_opcodes;
-	_opcodeCount = ARRAYSIZE(myst_opcodes);
+	// "Exit" Opcodes
+	OPCODE(300, opcode_300);
+	OPCODE(301, opcode_301);
+	OPCODE(302, opcode_302);
+	OPCODE(303, opcode_303);
+	OPCODE(304, opcode_304);
+	OPCODE(305, opcode_305);
+	OPCODE(306, opcode_306);
+	OPCODE(307, opcode_307);
+	OPCODE(308, opcode_308);
+	OPCODE(309, opcode_309);
+	// TODO: Opcodes 310 to 311 Not Present
+	OPCODE(312, opcode_312);
+	// TODO: Opcodes 313 and greater Not Present
 }
+
+#undef OPCODE
 
 void MystScriptParser_Myst::disablePersistentScripts() {
 	opcode_200_disable();

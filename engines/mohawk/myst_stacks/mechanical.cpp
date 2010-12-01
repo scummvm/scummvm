@@ -34,9 +34,6 @@
 
 namespace Mohawk {
 
-#define OPCODE(op, x) { op, &MystScriptParser::x, #x }
-#define SPECIFIC_OPCODE(op, x) { op, (OpcodeProcMyst) &MystScriptParser_Mechanical::x, #x }
-
 MystScriptParser_Mechanical::MystScriptParser_Mechanical(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
 }
@@ -44,96 +41,40 @@ MystScriptParser_Mechanical::MystScriptParser_Mechanical(MohawkEngine_Myst *vm) 
 MystScriptParser_Mechanical::~MystScriptParser_Mechanical() {
 }
 
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Mechanical::x, #x))
+
 void MystScriptParser_Mechanical::setupOpcodes() {
-	// "invalid" opcodes do not exist or have not been observed
-	// "unknown" opcodes exist, but their meaning is unknown
+	// "Stack-Specific" Opcodes
+	OPCODE(104, opcode_104);
+	OPCODE(105, opcode_105);
+	OPCODE(121, opcode_121);
+	OPCODE(122, opcode_122);
+	OPCODE(123, opcode_123);
+	OPCODE(124, opcode_124);
+	OPCODE(125, opcode_125);
+	OPCODE(126, opcode_126);
+	OPCODE(127, opcode_127);
+	OPCODE(128, opcode_128);
+	OPCODE(129, opcode_129);
+	OPCODE(130, opcode_130);
+	OPCODE(131, opcode_131);
+	OPCODE(132, opcode_132);
 
-	static const MystOpcode myst_opcodes[] = {
-		// "Standard" Opcodes
-		OPCODE(0, o_toggleVar),
-		OPCODE(1, o_setVar),
-		OPCODE(2, o_changeCardSwitch),
-		OPCODE(3, o_takePage),
-		OPCODE(4, o_redrawCard),
-		// TODO: Opcode 5 Not Present
-		OPCODE(6, o_goToDest),
-		OPCODE(7, o_goToDest),
-		OPCODE(8, o_goToDest),
-		OPCODE(9, o_triggerMovie),
-		OPCODE(10, o_toggleVarNoRedraw),
-		// TODO: Opcode 10 to 11 Not Present
-		OPCODE(12, o_changeCardSwitch),
-		OPCODE(13, o_changeCardSwitch),
-		OPCODE(14, o_drawAreaState),
-		OPCODE(15, o_redrawAreaForVar),
-		OPCODE(16, o_changeCardDirectional),
-		OPCODE(17, o_changeCardPush),
-		OPCODE(18, o_changeCardPop),
-		OPCODE(19, o_enableAreas),
-		OPCODE(20, o_disableAreas),
-		OPCODE(21, o_directionalUpdate),
-		OPCODE(22, o_goToDest),
-		OPCODE(23, o_toggleAreasActivation),
-		OPCODE(24, o_playSound),
-		// TODO: Opcode 25 Not Present
-		OPCODE(26, o_stopSoundBackground),
-		OPCODE(27, o_playSoundBlocking),
-		OPCODE(28, o_restoreDefaultRect),
-		OPCODE(29, o_blitRect),
-		OPCODE(30, o_changeSound),
-		OPCODE(31, o_soundPlaySwitch),
-		OPCODE(32, o_soundResumeBackground),
-		OPCODE(33, o_blitRect),
-		OPCODE(34, o_changeCard),
-		OPCODE(35, o_drawImageChangeCard),
-		OPCODE(36, o_changeMainCursor),
-		OPCODE(37, o_hideCursor),
-		OPCODE(38, o_showCursor),
-		OPCODE(39, o_delay),
-		OPCODE(40, o_changeStack),
-		OPCODE(41, o_changeCardPlaySoundDirectional),
-		OPCODE(42, o_directionalUpdatePlaySound),
-		OPCODE(43, o_saveMainCursor),
-		OPCODE(44, o_restoreMainCursor),
-		// TODO: Opcode 45 Not Present
-		OPCODE(46, o_soundWaitStop),
-		// TODO: Opcodes 47 to 99 Not Present
+	// "Init" Opcodes
+	OPCODE(200, opcode_200);
+	OPCODE(201, opcode_201);
+	OPCODE(202, opcode_202);
+	OPCODE(203, opcode_203);
+	OPCODE(204, opcode_204);
+	OPCODE(205, opcode_205);
+	OPCODE(206, opcode_206);
+	OPCODE(209, opcode_209);
 
-		// "Stack-Specific" Opcodes
-		SPECIFIC_OPCODE(104, opcode_104),
-		SPECIFIC_OPCODE(105, opcode_105),
-		SPECIFIC_OPCODE(121, opcode_121),
-		SPECIFIC_OPCODE(122, opcode_122),
-		SPECIFIC_OPCODE(123, opcode_123),
-		SPECIFIC_OPCODE(124, opcode_124),
-		SPECIFIC_OPCODE(125, opcode_125),
-		SPECIFIC_OPCODE(126, opcode_126),
-		SPECIFIC_OPCODE(127, opcode_127),
-		SPECIFIC_OPCODE(128, opcode_128),
-		SPECIFIC_OPCODE(129, opcode_129),
-		SPECIFIC_OPCODE(130, opcode_130),
-		SPECIFIC_OPCODE(131, opcode_131),
-		SPECIFIC_OPCODE(132, opcode_132),
-
-		// "Init" Opcodes
-		SPECIFIC_OPCODE(200, opcode_200),
-		SPECIFIC_OPCODE(201, opcode_201),
-		SPECIFIC_OPCODE(202, opcode_202),
-		SPECIFIC_OPCODE(203, opcode_203),
-		SPECIFIC_OPCODE(204, opcode_204),
-		SPECIFIC_OPCODE(205, opcode_205),
-		SPECIFIC_OPCODE(206, opcode_206),
-		SPECIFIC_OPCODE(209, opcode_209),
-
-		// "Exit" Opcodes
-		SPECIFIC_OPCODE(300, opcode_300),
-
-		OPCODE(0xFFFF, NOP)
-	};
-
-	_opcodes = myst_opcodes;
-	_opcodeCount = ARRAYSIZE(myst_opcodes);
+	// "Exit" Opcodes
+	OPCODE(300, opcode_300);
 }
+
+#undef OPCODE
 
 void MystScriptParser_Mechanical::disablePersistentScripts() {
 	opcode_200_disable();

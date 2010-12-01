@@ -126,13 +126,14 @@ protected:
 	typedef void (MystScriptParser::*OpcodeProcMyst)(uint16 op, uint16 var, uint16 argc, uint16* argv);
 
 	struct MystOpcode {
+		MystOpcode(uint16 o, OpcodeProcMyst p, const char *d) : op(o), proc(p), desc(d) {}
+
 		uint16 op;
 		OpcodeProcMyst proc;
 		const char *desc;
 	};
 
-	uint16 _opcodeCount;
-	const MystOpcode *_opcodes;
+	Common::Array<MystOpcode*> _opcodes;
 
 	MystResource *_invokingResource;
 
@@ -143,11 +144,11 @@ protected:
 	static const uint8 stack_map[];
 	static const uint16 start_card[];
 
-	void setupOpcodes();
+	void setupCommonOpcodes();
 	void varUnusedCheck(uint16 op, uint16 var);
 };
 
-}
+} // End of namespace Mohawk
 
 #undef DECLARE_OPCODE
 

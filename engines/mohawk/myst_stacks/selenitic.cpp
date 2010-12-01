@@ -36,9 +36,6 @@
 
 namespace Mohawk {
 
-#define OPCODE(op, x) { op, &MystScriptParser::x, #x }
-#define SPECIFIC_OPCODE(op, x) { op, (OpcodeProcMyst) &MystScriptParser_Selenitic::x, #x }
-
 MystScriptParser_Selenitic::MystScriptParser_Selenitic(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
 	_invokingResource = NULL;
@@ -49,96 +46,40 @@ MystScriptParser_Selenitic::MystScriptParser_Selenitic(MohawkEngine_Myst *vm) : 
 MystScriptParser_Selenitic::~MystScriptParser_Selenitic() {
 }
 
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Selenitic::x, #x))
+
 void MystScriptParser_Selenitic::setupOpcodes() {
-	// "invalid" opcodes do not exist or have not been observed
-	// "unknown" opcodes exist, but their meaning is unknown
+	// "Stack-Specific" Opcodes
+	OPCODE(100, o_mazeRunnerMove);
+	OPCODE(101, o_mazeRunnerSoundRepeat);
+	OPCODE(102, o_soundReceiverSigma);
+	OPCODE(103, o_soundReceiverRight);
+	OPCODE(104, o_soundReceiverLeft);
+	OPCODE(105, o_soundReceiverSource);
+	OPCODE(106, o_soundReceiverSource);
+	OPCODE(107, o_soundReceiverSource);
+	OPCODE(108, o_soundReceiverSource);
+	OPCODE(109, o_soundReceiverSource);
+	OPCODE(110, o_mazeRunnerDoorButton);
+	OPCODE(111, o_soundReceiverUpdateSound);
+	OPCODE(112, o_soundLockMove);
+	OPCODE(113, o_soundLockStartMove);
+	OPCODE(114, o_soundLockEndMove);
+	OPCODE(115, o_soundLockButton);
+	OPCODE(116, NOP);
+	OPCODE(117, o_soundReceiverEndMove);
 
-	static const MystOpcode myst_opcodes[] = {
-		// "Standard" Opcodes
-		OPCODE(0, o_toggleVar),
-		OPCODE(1, o_setVar),
-		OPCODE(2, o_changeCardSwitch),
-		OPCODE(3, o_takePage),
-		OPCODE(4, o_redrawCard),
-		// TODO: Opcode 5 Not Present
-		OPCODE(6, o_goToDest),
-		OPCODE(7, o_goToDest),
-		OPCODE(8, o_goToDest),
-		OPCODE(9, o_triggerMovie),
-		OPCODE(10, o_toggleVarNoRedraw),
-		// TODO: Opcode 10 to 11 Not Present
-		OPCODE(12, o_changeCardSwitch),
-		OPCODE(13, o_changeCardSwitch),
-		OPCODE(14, o_drawAreaState),
-		OPCODE(15, o_redrawAreaForVar),
-		OPCODE(16, o_changeCardDirectional),
-		OPCODE(17, o_changeCardPush),
-		OPCODE(18, o_changeCardPop),
-		OPCODE(19, o_enableAreas),
-		OPCODE(20, o_disableAreas),
-		OPCODE(21, o_directionalUpdate),
-		OPCODE(22, o_goToDest),
-		OPCODE(23, o_toggleAreasActivation),
-		OPCODE(24, o_playSound),
-		// TODO: Opcode 25 Not Present
-		OPCODE(26, o_stopSoundBackground),
-		OPCODE(27, o_playSoundBlocking),
-		OPCODE(28, o_restoreDefaultRect),
-		OPCODE(29, o_blitRect),
-		OPCODE(30, o_changeSound),
-		OPCODE(31, o_soundPlaySwitch),
-		OPCODE(32, o_soundResumeBackground),
-		OPCODE(33, o_blitRect),
-		OPCODE(34, o_changeCard),
-		OPCODE(35, o_drawImageChangeCard),
-		OPCODE(36, o_changeMainCursor),
-		OPCODE(37, o_hideCursor),
-		OPCODE(38, o_showCursor),
-		OPCODE(39, o_delay),
-		OPCODE(40, o_changeStack),
-		OPCODE(41, o_changeCardPlaySoundDirectional),
-		OPCODE(42, o_directionalUpdatePlaySound),
-		OPCODE(43, o_saveMainCursor),
-		OPCODE(44, o_restoreMainCursor),
-		// TODO: Opcode 45 Not Present
-		OPCODE(46, o_soundWaitStop),
-		// TODO: Opcodes 47 to 99 Not Present
-
-		// "Stack-Specific" Opcodes
-		SPECIFIC_OPCODE(100, o_mazeRunnerMove),
-		SPECIFIC_OPCODE(101, o_mazeRunnerSoundRepeat),
-		SPECIFIC_OPCODE(102, o_soundReceiverSigma),
-		SPECIFIC_OPCODE(103, o_soundReceiverRight),
-		SPECIFIC_OPCODE(104, o_soundReceiverLeft),
-		SPECIFIC_OPCODE(105, o_soundReceiverSource),
-		SPECIFIC_OPCODE(106, o_soundReceiverSource),
-		SPECIFIC_OPCODE(107, o_soundReceiverSource),
-		SPECIFIC_OPCODE(108, o_soundReceiverSource),
-		SPECIFIC_OPCODE(109, o_soundReceiverSource),
-		SPECIFIC_OPCODE(110, o_mazeRunnerDoorButton),
-		SPECIFIC_OPCODE(111, o_soundReceiverUpdateSound),
-		SPECIFIC_OPCODE(112, o_soundLockMove),
-		SPECIFIC_OPCODE(113, o_soundLockStartMove),
-		SPECIFIC_OPCODE(114, o_soundLockEndMove),
-		SPECIFIC_OPCODE(115, o_soundLockButton),
-		SPECIFIC_OPCODE(116, NOP),
-		SPECIFIC_OPCODE(117, o_soundReceiverEndMove),
-
-		// "Init" Opcodes
-		SPECIFIC_OPCODE(200, o_mazeRunnerCompass_init),
-		SPECIFIC_OPCODE(201, o_mazeRunnerWindow_init),
-		SPECIFIC_OPCODE(202, o_mazeRunnerLight_init),
-		SPECIFIC_OPCODE(203, o_soundReceiver_init),
-		SPECIFIC_OPCODE(204, o_soundLock_init),
-		SPECIFIC_OPCODE(205, o_mazeRunnerRight_init),
-		SPECIFIC_OPCODE(206, o_mazeRunnerLeft_init),
-
-		OPCODE(0xFFFF, NOP)
-	};
-
-	_opcodes = myst_opcodes;
-	_opcodeCount = ARRAYSIZE(myst_opcodes);
+	// "Init" Opcodes
+	OPCODE(200, o_mazeRunnerCompass_init);
+	OPCODE(201, o_mazeRunnerWindow_init);
+	OPCODE(202, o_mazeRunnerLight_init);
+	OPCODE(203, o_soundReceiver_init);
+	OPCODE(204, o_soundLock_init);
+	OPCODE(205, o_mazeRunnerRight_init);
+	OPCODE(206, o_mazeRunnerLeft_init);
 }
+
+#undef OPCODE
 
 void MystScriptParser_Selenitic::disablePersistentScripts() {
 	_soundReceiverRunning = false;

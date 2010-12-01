@@ -79,10 +79,8 @@ const uint16 MystScriptParser::start_card[11] = {
 
 // NOTE: Credits Start Card is 10000
 
-#define OPCODE(op, x) { op, &MystScriptParser::x, #x }
-
 MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm) : _vm(vm) {
-	setupOpcodes();
+	setupCommonOpcodes();
 	_invokingResource = NULL;
 	_savedCardId = 0;
 	_savedCursorId = 0;
@@ -90,69 +88,69 @@ MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm) : _vm(vm) {
 }
 
 MystScriptParser::~MystScriptParser() {
+	for (uint32 i = 0; i < _opcodes.size(); i++)
+		delete _opcodes[i];
 }
 
-void MystScriptParser::setupOpcodes() {
-	// "invalid" opcodes do not exist or have not been observed
-	// "unknown" opcodes exist, but their meaning is unknown
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, &MystScriptParser::x, #x))
 
-	static const MystOpcode myst_opcodes[] = {
-		// "Standard" Opcodes
-		OPCODE(0, o_toggleVar),
-		OPCODE(1, o_setVar),
-		OPCODE(2, o_changeCardSwitch),
-		OPCODE(3, o_takePage),
-		OPCODE(4, o_redrawCard),
-		// Opcode 5 Not Present
-		OPCODE(6, o_goToDest),
-		OPCODE(7, o_goToDest),
-		OPCODE(8, o_goToDest),
-		OPCODE(9, o_triggerMovie),
-		OPCODE(10, o_toggleVarNoRedraw),
-		// Opcode 11 Not Present
-		OPCODE(12, o_changeCardSwitch),
-		OPCODE(13, o_changeCardSwitch),
-		OPCODE(14, o_drawAreaState),
-		OPCODE(15, o_redrawAreaForVar),
-		OPCODE(16, o_changeCardDirectional),
-		OPCODE(17, o_changeCardPush),
-		OPCODE(18, o_changeCardPop),
-		OPCODE(19, o_enableAreas),
-		OPCODE(20, o_disableAreas),
-		OPCODE(21, o_directionalUpdate),
-		OPCODE(22, o_goToDest),
-		OPCODE(23, o_toggleAreasActivation),
-		OPCODE(24, o_playSound),
-		// Opcode 25 Not Present, original calls replaceSound
-		OPCODE(26, o_stopSoundBackground),
-		OPCODE(27, o_playSoundBlocking),
-		OPCODE(28, o_restoreDefaultRect),
-		OPCODE(29, o_blitRect),
-		OPCODE(30, o_changeSound),
-		OPCODE(31, o_soundPlaySwitch),
-		OPCODE(32, o_soundResumeBackground),
-		OPCODE(33, o_blitRect),
-		OPCODE(34, o_changeCard),
-		OPCODE(35, o_drawImageChangeCard),
-		OPCODE(36, o_changeMainCursor),
-		OPCODE(37, o_hideCursor),
-		OPCODE(38, o_showCursor),
-		OPCODE(39, o_delay),
-		OPCODE(40, o_changeStack),
-		OPCODE(41, o_changeCardPlaySoundDirectional),
-		OPCODE(42, o_directionalUpdatePlaySound),
-		OPCODE(43, o_saveMainCursor),
-		OPCODE(44, o_restoreMainCursor),
-		// Opcode 45 Not Present
-		OPCODE(46, o_soundWaitStop),
-		// Opcodes 47 to 99 Not Present
+void MystScriptParser::setupCommonOpcodes() {
+	// These opcodes are common to each stack
 
-		OPCODE(0xFFFF, NOP)
-	};
+	// "Standard" Opcodes
+	OPCODE(0, o_toggleVar);
+	OPCODE(1, o_setVar);
+	OPCODE(2, o_changeCardSwitch);
+	OPCODE(3, o_takePage);
+	OPCODE(4, o_redrawCard);
+	// Opcode 5 Not Present
+	OPCODE(6, o_goToDest);
+	OPCODE(7, o_goToDest);
+	OPCODE(8, o_goToDest);
+	OPCODE(9, o_triggerMovie);
+	OPCODE(10, o_toggleVarNoRedraw);
+	// Opcode 11 Not Present
+	OPCODE(12, o_changeCardSwitch);
+	OPCODE(13, o_changeCardSwitch);
+	OPCODE(14, o_drawAreaState);
+	OPCODE(15, o_redrawAreaForVar);
+	OPCODE(16, o_changeCardDirectional);
+	OPCODE(17, o_changeCardPush);
+	OPCODE(18, o_changeCardPop);
+	OPCODE(19, o_enableAreas);
+	OPCODE(20, o_disableAreas);
+	OPCODE(21, o_directionalUpdate);
+	OPCODE(22, o_goToDest);
+	OPCODE(23, o_toggleAreasActivation);
+	OPCODE(24, o_playSound);
+	// Opcode 25 is unused; original calls replaceSound
+	OPCODE(26, o_stopSoundBackground);
+	OPCODE(27, o_playSoundBlocking);
+	OPCODE(28, o_restoreDefaultRect);
+	OPCODE(29, o_blitRect);
+	OPCODE(30, o_changeSound);
+	OPCODE(31, o_soundPlaySwitch);
+	OPCODE(32, o_soundResumeBackground);
+	OPCODE(33, o_blitRect);
+	OPCODE(34, o_changeCard);
+	OPCODE(35, o_drawImageChangeCard);
+	OPCODE(36, o_changeMainCursor);
+	OPCODE(37, o_hideCursor);
+	OPCODE(38, o_showCursor);
+	OPCODE(39, o_delay);
+	OPCODE(40, o_changeStack);
+	OPCODE(41, o_changeCardPlaySoundDirectional);
+	OPCODE(42, o_directionalUpdatePlaySound);
+	OPCODE(43, o_saveMainCursor);
+	OPCODE(44, o_restoreMainCursor);
+	// Opcode 45 Not Present
+	OPCODE(46, o_soundWaitStop);
+	// Opcodes 47 to 99 Not Present
 
-	_opcodes = myst_opcodes;
-	_opcodeCount = ARRAYSIZE(myst_opcodes);
+	OPCODE(0xFFFF, NOP);
 }
+
+#undef OPCODE
 
 void MystScriptParser::runScript(MystScript script, MystResource *invokingResource) {
 	debugC(kDebugScript, "Script Size: %d", script->size());
@@ -160,11 +158,10 @@ void MystScriptParser::runScript(MystScript script, MystResource *invokingResour
 		MystScriptEntry &entry = script->operator[](i);
 		debugC(kDebugScript, "\tOpcode %d: %d", i, entry.opcode);
 
-		if (entry.type == kMystScriptNormal) {
+		if (entry.type == kMystScriptNormal)
 			_invokingResource = invokingResource;
-		} else {
+		else
 			_invokingResource = _vm->_resources[entry.resourceId];
-		}
 
 		runOpcode(entry.opcode, entry.var, entry.argc, entry.argv);
 	}
@@ -173,21 +170,21 @@ void MystScriptParser::runScript(MystScript script, MystResource *invokingResour
 void MystScriptParser::runOpcode(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	bool ranOpcode = false;
 
-	for (uint16 i = 0; i < _opcodeCount; i++)
-		if (_opcodes[i].op == op) {
-			(this->*(_opcodes[i].proc)) (op, var, argc, argv);
+	for (uint16 i = 0; i < _opcodes.size(); i++)
+		if (_opcodes[i]->op == op) {
+			(this->*(_opcodes[i]->proc)) (op, var, argc, argv);
 			ranOpcode = true;
 			break;
 		}
 
 	if (!ranOpcode)
-		error ("Trying to run invalid opcode %d", op);
+		error("Trying to run invalid opcode %d", op);
 }
 
 const char *MystScriptParser::getOpcodeDesc(uint16 op) {
-	for (uint16 i = 0; i < _opcodeCount; i++)
-		if (_opcodes[i].op == op)
-			return _opcodes[i].desc;
+	for (uint16 i = 0; i < _opcodes.size(); i++)
+		if (_opcodes[i]->op == op)
+			return _opcodes[i]->desc;
 
 	error("Unknown opcode %d", op);
 	return "";
