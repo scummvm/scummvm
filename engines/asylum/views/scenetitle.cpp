@@ -71,7 +71,7 @@ void SceneTitle::update(int32 tick) {
 		return;
 
 	getScreen()->draw(getWorld()->sceneTitleGraphicResourceId, 0, 0, 0, 0, false);
-	getScreen()->draw(MAKE_RESOURCE(kResourcePackSound, 17), _spinnerFrameIndex, (_spinnerProgress/590 * 580) - 290 , 0, 0, false);
+	getScreen()->draw(MAKE_RESOURCE(kResourcePackSound, 17), _spinnerFrameIndex, (_spinnerProgress / 590.0 * 580) - 290 , 0, 0, false);
 	getText()->drawCentered(320, 30, 24, MAKE_RESOURCE(kResourcePackText, 1811 + getWorld()->chapter));
 
 	// This is not from the original. It's just some arbitrary math to throttle the progress indicator.
@@ -81,7 +81,7 @@ void SceneTitle::update(int32 tick) {
 	// but load on demand from offset/length within a ResourcePack, the progress indicator is effectively
 	// useless. It's just in here as "eye candy" :P
 	if ((tick - _start) % 500 > 100)
-		_spinnerProgress += 20;
+		_spinnerProgress += 5;
 
 	_spinnerFrameIndex++;
 
