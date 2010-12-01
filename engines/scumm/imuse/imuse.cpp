@@ -1483,12 +1483,11 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 	// General MIDI System On message
 	// Resets all GM devices to default settings
 	memcpy(&buffer[0], "\x7E\x7F\x09\x01", 4);
-	midi->sysEx(buffer, 6);
+	midi->sysEx(buffer, 4);
 	debug(2, "GM SysEx: GM System On");
 	_system->delayMillis(200);
 
 	if (_enable_gs) {
-
 		// All GS devices recognize the GS Reset command,
 		// even with Roland's ID. It is impractical to
 		// support other manufacturers' devices for
