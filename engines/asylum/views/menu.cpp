@@ -30,6 +30,7 @@
 #include "asylum/system/config.h"
 #include "asylum/system/cursor.h"
 #include "asylum/system/graphics.h"
+#include "asylum/system/savegame.h"
 #include "asylum/system/screen.h"
 #include "asylum/system/sound.h"
 #include "asylum/system/text.h"
@@ -197,10 +198,10 @@ bool MainMenu::init() {
 			// Play start video
 			getVideo()->playVideo(0);
 
-			/*if (!getSaveLoad()->setupSavegames()) {
+			if (!getSaveLoad()->setup()) {
 				_vm->restart();
 				return true;
-			}*/
+			}
 
 			// The original preloads graphics
 
