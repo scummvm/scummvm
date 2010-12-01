@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef MYST_SCRIPTS_MYST_H
-#define MYST_SCRIPTS_MYST_H
+#ifndef MYST_SCRIPTS_MECHANICAL_H
+#define MYST_SCRIPTS_MECHANICAL_H
 
 #include "common/scummsys.h"
 #include "common/util.h"
@@ -37,10 +37,10 @@ namespace Mohawk {
 class MohawkEngine_Myst;
 struct MystScriptEntry;
 
-class MystScriptParser_Myst : public MystScriptParser {
+class MystScriptParser_Mechanical : public MystScriptParser {
 public:
-	MystScriptParser_Myst(MohawkEngine_Myst *vm);
-	~MystScriptParser_Myst();
+	MystScriptParser_Mechanical(MohawkEngine_Myst *vm);
+	~MystScriptParser_Mechanical();
 
 	void disablePersistentScripts();
 	void runPersistentScripts();
@@ -56,46 +56,29 @@ private:
 	void opcode_202_disable();
 	void opcode_203_run();
 	void opcode_203_disable();
+	void opcode_204_run();
+	void opcode_204_disable();
 	void opcode_205_run();
 	void opcode_205_disable();
+	void opcode_206_run();
+	void opcode_206_disable();
 	void opcode_209_run();
 	void opcode_209_disable();
-	void opcode_210_run();
-	void opcode_210_disable();
-	void opcode_211_run();
-	void opcode_211_disable();
-	void opcode_212_run();
-	void opcode_212_disable();
 
-	DECLARE_OPCODE(opcode_100);
-	DECLARE_OPCODE(opcode_101);
-	DECLARE_OPCODE(opcode_102);
-	DECLARE_OPCODE(opcode_103);
 	DECLARE_OPCODE(opcode_104);
 	DECLARE_OPCODE(opcode_105);
-	DECLARE_OPCODE(opcode_109);
-	DECLARE_OPCODE(opcode_113);
-	DECLARE_OPCODE(opcode_114);
-	DECLARE_OPCODE(opcode_115);
-	DECLARE_OPCODE(opcode_116);
-	DECLARE_OPCODE(opcode_117);
-	DECLARE_OPCODE(opcode_118);
-	DECLARE_OPCODE(opcode_119);
-	DECLARE_OPCODE(opcode_120);
 	DECLARE_OPCODE(opcode_121);
-	DECLARE_OPCODE(opcode_133);
-	DECLARE_OPCODE(opcode_147);
-	DECLARE_OPCODE(opcode_164);
-	DECLARE_OPCODE(opcode_169);
-	DECLARE_OPCODE(opcode_181);
-	DECLARE_OPCODE(opcode_182);
-	DECLARE_OPCODE(opcode_183);
-	DECLARE_OPCODE(opcode_184);
-	DECLARE_OPCODE(opcode_185);
-	DECLARE_OPCODE(opcode_196);
-	DECLARE_OPCODE(opcode_197);
-	DECLARE_OPCODE(opcode_198);
-	DECLARE_OPCODE(opcode_199);
+	DECLARE_OPCODE(opcode_122);
+	DECLARE_OPCODE(opcode_123);
+	DECLARE_OPCODE(opcode_124);
+	DECLARE_OPCODE(opcode_125);
+	DECLARE_OPCODE(opcode_126);
+	DECLARE_OPCODE(opcode_127);
+	DECLARE_OPCODE(opcode_128);
+	DECLARE_OPCODE(opcode_129);
+	DECLARE_OPCODE(opcode_130);
+	DECLARE_OPCODE(opcode_131);
+	DECLARE_OPCODE(opcode_132);
 
 	DECLARE_OPCODE(opcode_200);
 	DECLARE_OPCODE(opcode_201);
@@ -104,35 +87,9 @@ private:
 	DECLARE_OPCODE(opcode_204);
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
-	DECLARE_OPCODE(opcode_208);
 	DECLARE_OPCODE(opcode_209);
-	DECLARE_OPCODE(opcode_210);
-	DECLARE_OPCODE(opcode_211);
-	DECLARE_OPCODE(opcode_212);
-	DECLARE_OPCODE(opcode_213);
-	DECLARE_OPCODE(opcode_214);
-	DECLARE_OPCODE(opcode_215);
-	DECLARE_OPCODE(opcode_216);
-	DECLARE_OPCODE(opcode_217);
-	DECLARE_OPCODE(opcode_218);
-	DECLARE_OPCODE(opcode_219);
-	DECLARE_OPCODE(opcode_220);
-	DECLARE_OPCODE(opcode_221);
-	DECLARE_OPCODE(opcode_222);
-	DECLARE_OPCODE(opcode_298);
-	DECLARE_OPCODE(opcode_299);
 
 	DECLARE_OPCODE(opcode_300);
-	DECLARE_OPCODE(opcode_301);
-	DECLARE_OPCODE(opcode_302);
-	DECLARE_OPCODE(opcode_303);
-	DECLARE_OPCODE(opcode_304);
-	DECLARE_OPCODE(opcode_305);
-	DECLARE_OPCODE(opcode_306);
-	DECLARE_OPCODE(opcode_307);
-	DECLARE_OPCODE(opcode_308);
-	DECLARE_OPCODE(opcode_309);
-	DECLARE_OPCODE(opcode_312);
 };
 
 } // End of namespace Mohawk

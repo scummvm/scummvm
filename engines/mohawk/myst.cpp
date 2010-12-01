@@ -41,6 +41,7 @@
 // The stacks
 #include "mohawk/myst_stacks/channelwood.h"
 #include "mohawk/myst_stacks/credits.h"
+#include "mohawk/myst_stacks/mechanical.h"
 #include "mohawk/myst_stacks/myst.h"
 #include "mohawk/myst_stacks/selenitic.h"
 #include "mohawk/myst_stacks/stoneship.h"
@@ -383,6 +384,9 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 		break;
 	case kCreditsStack:
 		_scriptParser = new MystScriptParser_Credits(this);
+		break;
+	case kMechanicalStack:
+		_scriptParser = new MystScriptParser_Mechanical(this);
 		break;
 	case kSeleniticStack:
 		_scriptParser = new MystScriptParser_Selenitic(this);

@@ -124,17 +124,6 @@ void MystScriptParser_Myst::setupOpcodes() {
 		SPECIFIC_OPCODE(119, opcode_119),
 		SPECIFIC_OPCODE(120, opcode_120),
 		SPECIFIC_OPCODE(121, opcode_121),
-		SPECIFIC_OPCODE(122, opcode_122),
-		SPECIFIC_OPCODE(123, opcode_123),
-		SPECIFIC_OPCODE(124, opcode_124),
-		SPECIFIC_OPCODE(125, opcode_125),
-		SPECIFIC_OPCODE(126, opcode_126),
-		SPECIFIC_OPCODE(127, opcode_127),
-		SPECIFIC_OPCODE(128, opcode_128),
-		SPECIFIC_OPCODE(129, opcode_129),
-		SPECIFIC_OPCODE(130, opcode_130),
-		SPECIFIC_OPCODE(131, opcode_131),
-		SPECIFIC_OPCODE(132, opcode_132),
 		SPECIFIC_OPCODE(133, opcode_133),
 		// TODO: Opcodes 134 to 146 Not Present
 		SPECIFIC_OPCODE(147, opcode_147),
@@ -207,9 +196,7 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 	opcode_201_disable();
 	opcode_202_disable();
 	opcode_203_disable();
-	opcode_204_disable();
 	opcode_205_disable();
-	opcode_206_disable();
 	opcode_209_disable();
 	opcode_210_disable();
 	opcode_211_disable();
@@ -221,9 +208,7 @@ void MystScriptParser_Myst::runPersistentScripts() {
 	opcode_201_run();
 	opcode_202_run();
 	opcode_203_run();
-	opcode_204_run();
 	opcode_205_run();
-	opcode_206_run();
 	opcode_209_run();
 	opcode_210_run();
 	opcode_211_run();
@@ -435,17 +420,6 @@ void MystScriptParser_Myst::opcode_104(uint16 op, uint16 var, uint16 argc, uint1
 		} else
 			unknown(op, var, argc, argv);
 		break;
-	case kMechanicalStack:
-		varUnusedCheck(op, var);
-
-		// Used on Mechanical Card 6043 (Weapons Rack with Snake Box)
-		if (argc == 0) {
-			debugC(kDebugScript, "Opcode %d: Trigger Playing Of Snake Movie", op);
-
-			// TODO: Trigger Type 6 To Play Snake Movie.. Resource #3 on card.
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	default:
 		unknown(op, var, argc, argv);
 		break;
@@ -488,21 +462,6 @@ void MystScriptParser_Myst::opcode_105(uint16 op, uint16 var, uint16 argc, uint1
 			}
 		} else
 			unknown(op, var, argc, argv);
-		break;
-	case kMechanicalStack:
-		varUnusedCheck(op, var);
-
-		if (argc == 0) {
-			debugC(kDebugScript, "Opcode %d: Play Stairs Movement Movie", op);
-
-			if (_vm->_varStore->getVar(10)) {
-				// TODO: Play Movie from 0 to 1/2 way...
-				_vm->_video->playMovie(_vm->wrapMovieFilename("hhstairs", kMechanicalStack), 174, 222);
-			} else {
-				// TODO: Play Movie from 1/2 way to end...
-				_vm->_video->playMovie(_vm->wrapMovieFilename("hhstairs", kMechanicalStack), 174, 222);
-			}
-		}
 		break;
 	default:
 		unknown(op, var, argc, argv);
@@ -851,225 +810,9 @@ void MystScriptParser_Myst::opcode_121(uint16 op, uint16 var, uint16 argc, uint1
 		} else
 			unknown(op, var, argc, argv);
 		break;
-	case kMechanicalStack:
-		varUnusedCheck(op, var);
-
-		if (argc == 2) {
-			uint16 startTime = argv[0];
-			uint16 endTime = argv[1];
-
-			warning("TODO: Opcode %d Movie Time Index %d to %d\n", op, startTime, endTime);
-			// TODO: Need version of playMovie blocking which allows selection
-			//       of start and finish points.
-			_vm->_video->playMovie(_vm->wrapMovieFilename("ewindow", kMechanicalStack), 253, 0);
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	default:
 		varUnusedCheck(op, var);
 
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_122(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kMechanicalStack:
-		if (argc == 0) {
-			// Used on Card 6120 (Elevator)
-			// Called when Exit Midde Button Pressed
-
-			// TODO: hcelev? Movie of Elevator?
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_123(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kMechanicalStack:
-		if (argc == 2) {
-			// Used on Card 6154
-			uint16 start_time = argv[0];
-			uint16 end_time = argv[1];
-
-			warning("TODO: Opcode %d Movie Time Index %d to %d\n", op, start_time, end_time);
-			// TODO: Need version of playMovie blocking which allows selection
-			//       of start and finish points.
-			// TODO: Not 100% sure about movie position
-			_vm->_video->playMovie(_vm->wrapMovieFilename("hcelev", kMechanicalStack), 205, 40);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_124(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kMechanicalStack:
-		if (argc == 0) {
-			// Used by Card 6156 (Fortress Rotation Controls)
-			// Called when Red Exit Button Pressed to raise Elevator
-
-			// TODO: Fill in Code...
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_125(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	switch (_vm->getCurStack()) {
-	case kMechanicalStack:
-		if (argc == 0) {
-			// Used on Card 6267 (Code Lock)
-			// Called by Red Execute Button...
-			debugC(kDebugScript, "Opcode %d: Code Lock Execute...", op);
-
-			// TODO: Fill in Logic For Code Lock...
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_126(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kMechanicalStack:
-		if (argc == 0) {
-			// Used by Card 6120 (Fortress Elevator)
-			// Called when Red Exit Button Pressed to raise Elevator and
-			// exit is clicked...
-
-			// TODO: Fill in Code...
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_127(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kMechanicalStack:
-		if (argc == 0) {
-			// Used for Mech Card 6226 (3 Crystals)
-			_vm->_varStore->setVar(20, 1);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_128(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kMechanicalStack:
-		if (argc == 0) {
-			// Used for Mech Card 6226 (3 Crystals)
-			_vm->_varStore->setVar(20, 0);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_129(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kMechanicalStack:
-		if (argc == 0) {
-			// Used for Mech Card 6226 (3 Crystals)
-			_vm->_varStore->setVar(21, 1);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_130(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kMechanicalStack:
-		if (argc == 0) {
-			// Used for Mech Card 6226 (3 Crystals)
-			_vm->_varStore->setVar(21, 0);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_131(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kMechanicalStack:
-		if (argc == 0) {
-			// Used for Mech Card 6226 (3 Crystals)
-			_vm->_varStore->setVar(22, 1);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
-		unknown(op, var, argc, argv);
-		break;
-	}
-}
-
-void MystScriptParser_Myst::opcode_132(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	switch (_vm->getCurStack()) {
-	case kMechanicalStack:
-		if (argc == 0) {
-			// Used for Mech Card 6226 (3 Crystals)
-			_vm->_varStore->setVar(22, 0);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	default:
 		unknown(op, var, argc, argv);
 		break;
 	}
@@ -1414,14 +1157,6 @@ void MystScriptParser_Myst::opcode_200_run() {
 
 			lastImageIndex = curImageIndex;
 			break;
-		case kMechanicalStack:
-			// Used on Card 6238 (Sirrus' Throne) and Card 6027 (Achenar's Throne)
-			// g_opcode200Parameters.var == 0 for Achenar
-			// g_opcode200Parameters.var == 1 for Sirrus
-
-			// TODO: Fill in Function...
-			// Variable indicates that this is related to Secret Panel State
-			break;
 		case kDemoSlidesStack:
 			// Used on Cards...
 			if (_vm->_system->getMillis() - g_opcode200Parameters.lastCardTime >= 2 * 1000)
@@ -1485,14 +1220,6 @@ void MystScriptParser_Myst::opcode_200(uint16 op, uint16 var, uint16 argc, uint1
 		} else
 			unknown(op, var, argc, argv);
 		break;
-	case kMechanicalStack:
-		// Used on Card 6238 (Sirrus' Throne) and Card 6027 (Achenar's Throne)
-		if (argc == 0) {
-			g_opcode200Parameters.var = var;
-			g_opcode200Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kDniStack:
 		varUnusedCheck(op, var);
 		// Used on Card 5014
@@ -1531,10 +1258,6 @@ void MystScriptParser_Myst::opcode_200(uint16 op, uint16 var, uint16 argc, uint1
 }
 
 static struct {
-	uint16 u0;
-	uint16 u1;
-	uint16 u2;
-
 	uint16 lastVar105;
 	uint16 soundId;
 
@@ -1551,15 +1274,6 @@ void MystScriptParser_Myst::opcode_201_run() {
 			if (var105 && !g_opcode201Parameters.lastVar105)
 				_vm->_sound->playSound(g_opcode201Parameters.soundId);
 			g_opcode201Parameters.lastVar105 = var105;
-			break;
-		case kMechanicalStack:
-			// Used for Card 6159 (Facing Corridor to Fortress Elevator)
-
-			// g_opcode201Parameters.u0
-			// g_opcode201Parameters.u1
-			// g_opcode201Parameters.u2
-
-			// TODO: Fill in Function...
 			break;
 		case kDemoStack:
 			// Used on Card 2001, 2002 and 2003
@@ -1595,17 +1309,6 @@ void MystScriptParser_Myst::opcode_201(uint16 op, uint16 var, uint16 argc, uint1
 		} else
 			unknown(op, var, argc, argv);
 		break;
-	case kMechanicalStack:
-		// Used for Card 6159 (Facing Corridor to Fortress Elevator)
-		if (argc == 3) {
-			g_opcode201Parameters.u0 = argv[0];
-			g_opcode201Parameters.u1 = argv[1];
-			g_opcode201Parameters.u2 = argv[2];
-
-			g_opcode201Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kDemoStack:
 		// Used on Card 2001, 2002 and 2003
 		if (argc == 0) {
@@ -1635,10 +1338,6 @@ void MystScriptParser_Myst::opcode_202_run(void) {
 			// Type 11 Hotspot for control..
 			// Var 304 controls presence of Myst Library Image
 			break;
-		case kMechanicalStack:
-			// Used for Card 6220 (Sirrus' Mechanical Bird)
-			// TODO: Fill in Function
-			break;
 		default:
 			break;
 		}
@@ -1658,13 +1357,6 @@ void MystScriptParser_Myst::opcode_202(uint16 op, uint16 var, uint16 argc, uint1
 		// Used for Card 4378 (Library Tower Rotation Map)
 		if (argc == 1) {
 			// TODO: Figure Out argv[0] purpose.. number of image resources?
-			g_opcode202Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	case kMechanicalStack:
-		// Used for Card 6220 (Sirrus' Mechanical Bird)
-		if (argc == 0) {
 			g_opcode202Parameters.enabled = true;
 		} else
 			unknown(op, var, argc, argv);
@@ -1692,10 +1384,6 @@ void MystScriptParser_Myst::opcode_203_run(void) {
 			//debugC(kDebugScript, "Opcode %d: Clear Dock Forechamber Door Variable", op);
 			//_vm->_varStore->setVar(105, 0);
 			break;
-		case kMechanicalStack:
-			// Used for Card 6043 (Weapons Rack with Snake Box)
-			// TODO: Fill in Logic for Snake Box...
-			break;
 		}
 	}
 }
@@ -1713,46 +1401,10 @@ void MystScriptParser_Myst::opcode_203(uint16 op, uint16 var, uint16 argc, uint1
 		// Set forechamber door to closed
 		setVarValue(105, 0);
 		break;
-	case kMechanicalStack:
-		// Used for Card 6043 (Weapons Rack with Snake Box)
-		if (argc == 0) {
-			g_opcode203Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	default:
 		unknown(op, var, argc, argv);
 		break;
 	}
-}
-
-static struct {
-	bool enabled;
-	uint16 soundId;
-} g_opcode204Parameters;
-
-void MystScriptParser_Myst::opcode_204_run(void) {
-	if (g_opcode204Parameters.enabled) {
-		switch (_vm->getCurStack()) {
-		case kMystStack:
-			// Used for Card 4134 and 4149 (Dock)
-			// TODO: Not sure of function. Not Gulls (at least directly). Fill in Logic.
-			break;
-		case kMechanicalStack:
-			// TODO: Fill in Logic.
-			// Var 12 holds Large Cog Position in range 0 to 5
-			// - For animation
-			// Var 11 holds C position in range 0 to 9
-			// - 4 for Correct Answer
-			// C Movement Sound
-			//_vm->_sound->playSound(g_opcode204Parameters.soundId);
-			break;
-		}
-	}
-}
-
-void MystScriptParser_Myst::opcode_204_disable(void) {
-	g_opcode204Parameters.enabled = false;
 }
 
 void MystScriptParser_Myst::opcode_204(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1762,14 +1414,6 @@ void MystScriptParser_Myst::opcode_204(uint16 op, uint16 var, uint16 argc, uint1
 	case kMystStack:
 		// Used for Card 4134 and 4149 (Dock)
 		break;
-	case kMechanicalStack:
-		// Used for Card 6180 (Lower Elevator Puzzle)
-		if (argc == 1) {
-			g_opcode204Parameters.soundId = argv[0];
-			g_opcode204Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	default:
 		unknown(op, var, argc, argv);
 		break;
@@ -1777,8 +1421,6 @@ void MystScriptParser_Myst::opcode_204(uint16 op, uint16 var, uint16 argc, uint1
 }
 
 static struct {
-	uint16 soundIdPosition[4];
-
 	bool enabled;
 } g_opcode205Parameters;
 
@@ -1788,11 +1430,6 @@ void MystScriptParser_Myst::opcode_205_run(void) {
 		case kMystStack:
 			// Used for Card 4532 (Rocketship Piano)
 			// TODO: Fill in function...
-			break;
-		case kMechanicalStack:
-			// Used for Card 6156 (Fortress Rotation Controls)
-			// TODO: Fill in function...
-			// g_opcode205Parameters.soundIdPosition[4]
 			break;
 		}
 	}
@@ -1814,49 +1451,10 @@ void MystScriptParser_Myst::opcode_205(uint16 op, uint16 var, uint16 argc, uint1
 		} else
 			unknown(op, var, argc, argv);
 		break;
-	case kMechanicalStack:
-		// Used for Card 6156 (Fortress Rotation Controls)
-
-		if (argc == 4) {
-			g_opcode205Parameters.soundIdPosition[0] = argv[0];
-			g_opcode205Parameters.soundIdPosition[1] = argv[1];
-			g_opcode205Parameters.soundIdPosition[2] = argv[2];
-			g_opcode205Parameters.soundIdPosition[3] = argv[3];
-
-			g_opcode205Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	default:
 		unknown(op, var, argc, argv);
 		break;
 	}
-}
-
-static struct {
-	uint16 soundIdStart[2];
-	uint16 soundIdPosition[4];
-
-	bool enabled;
-} g_opcode206Parameters;
-
-void MystScriptParser_Myst::opcode_206_run(void) {
-	if (g_opcode206Parameters.enabled) {
-		switch (_vm->getCurStack()) {
-		case kMechanicalStack:
-			// Used for Card 6044 (Fortress Rotation Simulator)
-
-			// g_opcode206Parameters.soundIdStart[2]
-			// g_opcode206Parameters.soundIdPosition[4]
-
-			// TODO: Fill in function...
-			break;
-		}
-	}
-}
-
-void MystScriptParser_Myst::opcode_206_disable(void) {
-	g_opcode206Parameters.enabled = false;
 }
 
 void MystScriptParser_Myst::opcode_206(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1866,20 +1464,6 @@ void MystScriptParser_Myst::opcode_206(uint16 op, uint16 var, uint16 argc, uint1
 	case kMystStack:
 		// Used for Card 4256 (Butterfly Movie Activation)
 		// TODO: Implement Logic...
-		break;
-	case kMechanicalStack:
-		// Used for Card 6044 (Fortress Rotation Simulator)
-		if (argc == 6) {
-			g_opcode206Parameters.soundIdStart[0] = argv[0];
-			g_opcode206Parameters.soundIdStart[1] = argv[1];
-			g_opcode206Parameters.soundIdPosition[0] = argv[2];
-			g_opcode206Parameters.soundIdPosition[1] = argv[3];
-			g_opcode206Parameters.soundIdPosition[2] = argv[4];
-			g_opcode206Parameters.soundIdPosition[3] = argv[5];
-
-			g_opcode206Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
 		break;
 	default:
 		unknown(op, var, argc, argv);
@@ -1931,12 +1515,6 @@ void MystScriptParser_Myst::opcode_209_run(void) {
 
 				// TODO: Code to trigger Type 6 to play movie...
 			break;
-		case kMechanicalStack:
-			// Used for Card 6044 (Fortress Rotation Simulator)
-
-			// TODO: Implement Function For Secret Panel State as
-			//       per Opcode 200 function (Mechanical)
-			break;
 		default:
 			break;
 		}
@@ -1958,13 +1536,6 @@ void MystScriptParser_Myst::opcode_209(uint16 op, uint16 var, uint16 argc, uint1
 		// Used for Card 4334 and 4348 (Myst Library Bookcase Door)
 		if (argc == 1) {
 			g_opcode209Parameters.soundId = argv[0];
-			g_opcode209Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	case kMechanicalStack:
-		// Used for Card 6044 (Fortress Rotation Simulator)
-		if (argc == 0) {
 			g_opcode209Parameters.enabled = true;
 		} else
 			unknown(op, var, argc, argv);
@@ -2483,11 +2054,6 @@ void MystScriptParser_Myst::opcode_300(uint16 op, uint16 var, uint16 argc, uint1
 		debugC(kDebugScript, "Opcode %d: Book Exit Function...", op);
 		debugC(kDebugScript, "Var: %d", var);
 		// TODO: Fill in Logic
-		break;
-	case kMechanicalStack:
-		// Used in Card 6156 (Fortress Elevator View)
-		varUnusedCheck(op, var);
-		// TODO: Fill in Logic. Clearing Variable for View?
 		break;
 	case kDniStack:
 		// Used in Card 5014 (Atrus Writing)
