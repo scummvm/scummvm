@@ -213,7 +213,10 @@ public:
 	virtual Common::TimerManager *getTimerManager();
 	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void getTimeAndDate(TimeDate &t) const;
+
+#ifndef GAMECUBE
+	virtual Common::String getSystemLanguage() const;
+#endif // GAMECUBE
 };
 
 #endif
-
