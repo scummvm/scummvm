@@ -156,74 +156,7 @@ void MystScriptParser_Myst::runPersistentScripts() {
 }
 
 void MystScriptParser_Myst::opcode_100(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Hard coded SoundId valid only for Intro Stack.
-	// Other stacks use Opcode 40, which takes SoundId values as arguments.
-	const uint16 soundIdLinkSrc = 5;
-
 	switch (_vm->getCurStack()) {
-	case kIntroStack:
-		debugC(kDebugScript, "Opcode %d: ChangeStack", op);
-		debugC(kDebugScript, "\tvar: %d", var);
-
-		// TODO: Merge with changeStack (Opcode 40) Implementation?
-		if (_vm->_varStore->getVar(var) == 5 || _vm->_varStore->getVar(var) > 7) {
-			// TODO: Dead Book i.e. Released Sirrus/Achenar
-		} else {
-			// Play Linking Sound, blocking...
-			_vm->_sound->stopSound();
-			Audio::SoundHandle *handle = _vm->_sound->playSound(soundIdLinkSrc);
-			while (_vm->_mixer->isSoundHandleActive(*handle))
-				_vm->_system->delayMillis(10);
-
-			// Play Flyby Entry Movie on Masterpiece Edition. The Macintosh version is currently hooked
-			// up to the Cinepak versions of the video (the 'c' suffix) until the SVQ1 decoder is completed.
-			if ((_vm->getFeatures() & GF_ME)) {
-				switch (_stackMap[_vm->_varStore->getVar(var)]) {
-				case kSeleniticStack:
-					if (_vm->getPlatform() == Common::kPlatformMacintosh)
-						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_SEc", kMasterpieceOnly));
-					else
-						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("selenitic flyby", kMasterpieceOnly));
-					break;
-				case kStoneshipStack:
-					if (_vm->getPlatform() == Common::kPlatformMacintosh)
-						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_STc", kMasterpieceOnly));
-					else
-						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("stoneship flyby", kMasterpieceOnly));
-					break;
-				// Myst Flyby Movie not used in Original Masterpiece Edition Engine
-				case kMystStack:
-					if (_vm->_tweaksEnabled) {
-						if (_vm->getPlatform() == Common::kPlatformMacintosh)
-							_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_MYc", kMasterpieceOnly));
-						else
-							_vm->_video->playMovieCentered(_vm->wrapMovieFilename("myst flyby", kMasterpieceOnly));
-					}
-					break;
-				case kMechanicalStack:
-					if (_vm->getPlatform() == Common::kPlatformMacintosh)
-						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_MEc", kMasterpieceOnly));
-					else
-						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("mech age flyby", kMasterpieceOnly));
-					break;
-				case kChannelwoodStack:
-					if (_vm->getPlatform() == Common::kPlatformMacintosh)
-						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_CHc", kMasterpieceOnly));
-					else
-						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("channelwood flyby", kMasterpieceOnly));
-					break;
-				default:
-					break;
-				}
-			}
-
-			uint16 varValue = _vm->_varStore->getVar(var);
-			_vm->changeToStack(_stackMap[varValue]);
-			_vm->changeToCard(_startCard[varValue], true);
-
-			// TODO: No soundIdLinkDst for Opcode 100 link? Check Original.
-		}
-		break;
 	case kMakingOfStack:
 		_vm->_system->quit();
 		break;
@@ -247,16 +180,6 @@ void MystScriptParser_Myst::opcode_101(uint16 op, uint16 var, uint16 argc, uint1
 		} else
 			unknown(op, var, argc, argv);
 		break;
-	case kDemoStack:
-		varUnusedCheck(op, var);
-
-		// Used on Card 2000, 2002 and 2003
-		// Triggered by Click
-		if (argc == 0) {
-			// TODO: Fill in Logic.. Fade in?
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	default:
 		unknown(op, var, argc, argv);
 		break;
@@ -273,16 +196,6 @@ void MystScriptParser_Myst::opcode_102(uint16 op, uint16 var, uint16 argc, uint1
 
 			// AFAIK no logic to put ceiling on increment at least in this opcode
 			_vm->_varStore->setVar(var, _vm->_varStore->getVar(var) + 1);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	case kDemoStack:
-		varUnusedCheck(op, var);
-
-		// Used on Card 2002 and 2003
-		// Triggered by Click
-		if (argc == 0) {
-			// TODO: Fill in Logic.. Fade out?
 		} else
 			unknown(op, var, argc, argv);
 		break;
@@ -1038,10 +951,6 @@ void MystScriptParser_Myst::opcode_200_run() {
 
 	if (g_opcode200Parameters.enabled) {
 		switch (_vm->getCurStack()) {
-		case kIntroStack: // Used on Card 1
-		case kDemoStack: // Used on Card 2000
-			// TODO : Implement function here to play though intro movies and change card?
-			break;
 		case kDemoPreviewStack:
 		case kMystStack:
 			curImageIndex = _vm->_varStore->getVar(g_opcode200Parameters.var);
@@ -1086,35 +995,6 @@ void MystScriptParser_Myst::opcode_200_disable() {
 
 void MystScriptParser_Myst::opcode_200(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kIntroStack: // Used on Card 1
-	case kDemoStack: // Used on Card 2000
-		varUnusedCheck(op, var);
-
-		// TODO : Clicking during the intro movies does not stop them and change to Card 5.
-		//        This is due to the movies playing blocking, but making them non-blocking causes
-		//        the card change here to prevent them playing. Need to move the following to the
-		//        opcode_200_run process and wait for all movies to finish playing before the card
-		//        change is performed.
-
-		// Play Intro Movies..
-		if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh) {
-			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("mattel", kIntroStack));
-			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("presto", kIntroStack));
-		} else
-			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("broder", kIntroStack));
-
-		_vm->_video->playMovieCentered(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
-
-		if (!(_vm->getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
-			if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh)
-				// intro.mov uses Sorenson, introc uses Cinepak. Otherwise, they're the same.
-				_vm->_video->playMovieCentered(_vm->wrapMovieFilename("introc", kIntroStack));
-			else
-				_vm->_video->playMovieCentered(_vm->wrapMovieFilename("intro", kIntroStack));
-		}
-
-		_vm->changeToCard(_vm->getCurCard()+1, true);
-		break;
 	case kDemoPreviewStack:
 	case kMystStack:
 		if (argc == 4) {
@@ -1153,11 +1033,6 @@ void MystScriptParser_Myst::opcode_201_run() {
 				_vm->_sound->playSound(g_opcode201Parameters.soundId);
 			g_opcode201Parameters.lastVar105 = var105;
 			break;
-		case kDemoStack:
-			// Used on Card 2001, 2002 and 2003
-
-			// TODO: Fill in Function...
-			break;
 		}
 	}
 }
@@ -1172,24 +1047,11 @@ void MystScriptParser_Myst::opcode_201(uint16 op, uint16 var, uint16 argc, uint1
 	varUnusedCheck(op, var);
 
 	switch (_vm->getCurStack()) {
-	case kIntroStack:
-		_vm->_gfx->updateScreen();
-		_vm->_system->delayMillis(4 * 1000);
-		_vm->_gfx->copyImageToScreen(4, Common::Rect(0, 0, 544, 333));
-		// TODO: Wait until video ends, then change to card 5
-		break;
 	case kMystStack:
 		// Used for Cards 4257, 4260, 4263, 4266, 4269, 4272, 4275 and 4278 (Ship Puzzle Boxes)
 		if (argc == 1) {
 			g_opcode201Parameters.soundId = argv[0];
 			g_opcode201Parameters.lastVar105 = 0;
-			g_opcode201Parameters.enabled = true;
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	case kDemoStack:
-		// Used on Card 2001, 2002 and 2003
-		if (argc == 0) {
 			g_opcode201Parameters.enabled = true;
 		} else
 			unknown(op, var, argc, argv);
@@ -1920,11 +1782,6 @@ void MystScriptParser_Myst::opcode_299(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kIntroStack:
-		varUnusedCheck(op, var);
-		// In the original engine, this opcode stopped Intro Movies if playing,
-		// upon card change, but this behaviour is now default in this engine.
-		break;
 	case kDemoPreviewStack:
 	case kMystStack:
 		// Used in Card 4371 (Blue Book) Var = 101
@@ -1932,12 +1789,6 @@ void MystScriptParser_Myst::opcode_300(uint16 op, uint16 var, uint16 argc, uint1
 		debugC(kDebugScript, "Opcode %d: Book Exit Function...", op);
 		debugC(kDebugScript, "Var: %d", var);
 		// TODO: Fill in Logic
-		break;
-	case kDemoStack:
-		// Used on Card 2000
-		varUnusedCheck(op, var);
-
-		// TODO: Fill in Function...
 		break;
 	default:
 		varUnusedCheck(op, var);
