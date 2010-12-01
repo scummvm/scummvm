@@ -167,6 +167,20 @@ private:
 		int32 param7;
 		int32 param8;
 		int32 param9;
+
+		ScriptEntry() {
+			numLines = 0;
+			opcode = 0;
+			param1 = 0;
+			param2 = 0;
+			param3 = 0;
+			param4 = 0;
+			param5 = 0;
+			param6 = 0;
+			param7 = 0;
+			param8 = 0;
+			param9 = 0;
+		}
 	} ScriptEntry;
 
 	typedef struct Script {
@@ -174,6 +188,12 @@ private:
 		int32       field_1BAC;
 		int32       field_1BB0;
 		int32       counter;
+
+		Script() {
+			field_1BAC = 0;
+			field_1BB0 = 0;
+			counter = 0;
+		}
 	} Script;
 
 	typedef struct ScriptQueueEntry {

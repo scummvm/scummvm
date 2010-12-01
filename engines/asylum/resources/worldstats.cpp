@@ -85,7 +85,7 @@ WorldStats::WorldStats(Common::SeekableReadStream *stream, Scene *scene) : _scen
 
 	numAmbientSound = 0;
 	musicStatus = 0;
-	musicCurrentResourceIndex = 0;
+	musicCurrentResourceIndex = kResourceNone;
 	musicFlag = 0;
 	musicResourceId = kResourceNone;
 	musicStatusExt = 0;

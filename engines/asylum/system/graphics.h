@@ -86,7 +86,7 @@ public:
 private:
 	AsylumEngine *_vm;
 
-	Common::Array <GraphicFrame> _frames;
+	Common::Array<GraphicFrame> _frames;
 
 	ResourceId _resourceId;
 	int32 _flags;

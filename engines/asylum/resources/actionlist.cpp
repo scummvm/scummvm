@@ -420,13 +420,13 @@ IMPLEMENT_OPCODE(PlayAnimation)
 
 	if (object->getField688() == 1) {
 		if (object->flags & kObjectFlag4) {
-			getSharedData()->setGlobalX(object->x);
-			getSharedData()->setGlobalY(object->y);
+			getSharedData()->getPoint()->x = object->x;
+			getSharedData()->getPoint()->y = object->y;
 		} else {
 			Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-			getSharedData()->setGlobalX(frameRect.left + Common::Rational(frameRect.width(), 2).toInt()  + object->x);
-			getSharedData()->setGlobalY(frameRect.top  + Common::Rational(frameRect.height(), 2).toInt() + object->y);
+			getSharedData()->getPoint()->x = frameRect.left + Common::Rational(frameRect.width(), 2).toInt()  + object->x;
+			getSharedData()->getPoint()->y = frameRect.top  + Common::Rational(frameRect.height(), 2).toInt() + object->y;
 		}
 	}
 

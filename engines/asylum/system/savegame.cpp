@@ -41,6 +41,12 @@ bool Savegame::setup() {
 	return true;
 }
 
+bool Savegame::load() {
+	warning("[Savegame::load] Not implemented!");
+
+	return false;
+}
+
 void Savegame::loadViewedMovies() {
 	warning("[Savegame::loadViewedMovies] Not implemented!");
 }

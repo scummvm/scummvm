@@ -258,7 +258,7 @@ void MainMenu::adjustMasterVolume(int32 delta) {
 void MainMenu::adjustTestVolume() {
 	getSound()->setMusicVolume(Config.musicVolume);
 	if ((Config.movieVolume / 250 + 20) <= 0)
-		getSound()->playMusic(_musicResourceId, Config.musicVolume);
+		getSound()->playMusic(_musicResourceId);
 
 	if (getSound()->isPlaying(kAmbiantSound))
 		getSound()->setVolume(kAmbiantSound, Config.ambientVolume);
@@ -285,7 +285,7 @@ void MainMenu::setupMusic() {
 		_soundResourceId = kResourceNone;
 		_musicResourceId = MAKE_RESOURCE(kResourcePackShared, 39);
 
-		getSound()->playMusic(_musicResourceId, Config.musicVolume);
+		getSound()->playMusic(_musicResourceId);
 	} else {
 		_soundResourceId = kResourceNone;
 		_musicResourceId = MAKE_RESOURCE(kResourcePackMusic, index);
@@ -299,7 +299,7 @@ void MainMenu::adjustPerformance() {
 
 	int32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
 	if (index != kMusicStopped)
-		getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, index), Config.musicVolume);
+		getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, index));
 }
 
 //////////////////////////////////////////////////////////////////////////

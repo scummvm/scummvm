@@ -80,7 +80,6 @@ Scene::~Scene() {
 	getResource()->unload(_packId);
 
 	delete _actions;
-	//delete _blowUp;
 	delete _special;
 	delete _speech;
 	delete _title;
@@ -410,7 +409,8 @@ void Scene::activate() {
 
 	_isActive = true;
 	getScreen()->setPalette(_ws->currentPaletteId);
-	getScreen()->draw(_ws->backgroundImage, 0, _ws->xLeft, _ws->yTop, 0);
+	// FIXME this corrupts memory (the copyToBackBuffer function is broken)
+	//getScreen()->draw(_ws->backgroundImage, 0, _ws->xLeft, _ws->yTop, 0);
 }
 
 bool Scene::update() {
