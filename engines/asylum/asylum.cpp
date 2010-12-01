@@ -61,6 +61,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	// Init data
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
 	memset(&_puzzles, 0, sizeof(_puzzles));
+	_introPlayed = false;
 
 	// Add default search directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -126,6 +127,9 @@ Common::Error AsylumEngine::run() {
 	_video     = new Video(this, _mixer);
 	initPuzzles();
 
+	// Init tables
+	initSinCosTables();
+
 	// Create main menu
 	_mainMenu  = new MainMenu(this);
 	_handler = _mainMenu;
@@ -161,9 +165,11 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 	// Clear the graphic list
 	_screen->clearGraphicsInQueue();
 
-	// Reset scene
+	// Reset scene (this ensures the current resource pack is closed as in the original)
 	delete _scene;
 	_scene = new Scene(this);
+
+	// Original checks for the current cd (we have all data files on disc, so this is not needed)
 
 	switch (type) {
 	default:
@@ -171,47 +177,82 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 
 	case kStartGamePlayIntro:
 		playIntro();
-
 		_scene->enter(sceneId);
-
-		_cursor->show();
 		break;
 
 	case kStartGameLoad:
-		error("[AsylumEngine::startGame] kStartGameLoad not implemented!");
+		if (_savegame->load()) {
+			setupLoadedGame();
+			updateReverseStereo();
+			switchEventHandler(_scene);
+		}
 		break;
 
 	case kStartGameScene:
 		_scene->enter(sceneId);
-
-		_cursor->show();
 		break;
 	}
+
+	_cursor->show();
 }
 
 void AsylumEngine::restart() {
-	error("[AsylumEngine::restart] Not implemented!");
+	_cursor->hide();
+
+	// Cleanup
+	memset(&_gameFlags, 0, sizeof(_gameFlags));
+	delete _scene;
+	_scene = NULL;
+
+	_data.getPoint()->x = -1;
+	_data.getPoint()->y = -1;
+
+	// FIXME the original runs a list of "reset" functions (some can be moved to constructors, others need to be part of the global data)
+
+	_introPlayed = false;
+
+	_screen->clear();
+	_sound->playMusic(kResourceNone, 0);
+
+	startGame(kResourcePackTowerCells, kStartGamePlayIntro);
 }
 
 void AsylumEngine::playIntro() {
 	if (!_video || !_screen)
 		error("[AsylumEngine::playIntro] Subsystems not initialized properly!");
 
-	_cursor->hide();
+	updateReverseStereo();
 
-	if (Config.showIntro)
-		_video->playVideo(1);
-	/*if (_scene->worldstats()->musicCurrentResourceId != kResourceMusic_FFFFFD66)
-		_sound->playMusic(_scene->getResourcePack(), _scene->worldstats()->musicCurrentResourceId);*/
+	if (!_introPlayed) {
+		_cursor->hide();
 
-	_screen->clear();
+		if (Config.showIntro) {
+			_sound->playMusic(kResourceNone, 0);
 
-	setGameFlag(kGameFlag4);
-	setGameFlag(kGameFlag12);
+			// TODO convert to new event handling
+			_video->playVideo(1);
 
-	// Play the intro sound sample (the screen is blacked out, you hear
-	// an alarm sounding and men talking about.
-	_sound->playSound(MAKE_RESOURCE(kResourcePackSound, 7));
+			if (_scene && _scene->worldstats()->musicCurrentResourceIndex != kMusicStopped)
+				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
+
+			_screen->clear();
+
+			setGameFlag(kGameFlag4);
+			setGameFlag(kGameFlag12);
+
+			// Play the intro sound sample (the screen is blacked out, you hear an alarm sounding and men talking about.
+			_sound->playSound(MAKE_RESOURCE(kResourcePackSound, 7));
+		}
+
+		_introPlayed = true;
+	}
+
+	_cursor->show();
+
+	_savegame->loadViewedMovies();
+
+	// Switch to scene event handling
+	switchEventHandler(_scene);
 }
 
 void AsylumEngine::handleEvents() {
@@ -349,7 +390,15 @@ void AsylumEngine::initPuzzles() {
 	_puzzles[15] = NULL;
 	_puzzles[16] = NULL;
 
-	warning("[AsylumEngine::initPuzzles] Add missing puzzles");
+	warning("[AsylumEngine::initPuzzles] Add missing puzzles!");
+}
+
+void AsylumEngine::initSinCosTables() {
+	warning("[AsylumEngine::initSinCosTables] Not implemented!");
+}
+
+void AsylumEngine::setupLoadedGame() {
+	warning("[AsylumEngine::initSinCosTables] Not implemented!");
 }
 
 void AsylumEngine::updateReverseStereo() {

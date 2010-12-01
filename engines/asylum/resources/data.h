@@ -110,8 +110,8 @@ public:
 		_matteBarHeight = 0;
 		_matteVar2 = 0;
 		_sceneCounter = 0;
-		_globalX = 0;
-		_globalY = 0;
+		_point.x = -1;
+		_point.y = -1;
 		_sceneXLeft = 0;
 		_sceneYTop = 0;
 		_sceneOffset = 0;
@@ -161,10 +161,7 @@ public:
 	void setActorUpdateFlag2(int32 val) { _data1[36] = val; }
 
 	// Shared global Data
-	int32 getGlobalX() const   { return _globalX; }
-	void setGlobalX(int32 val) { _globalX = val; }
-	int32 getGlobalY() const   { return _globalY; }
-	void setGlobalY(int32 val) { _globalY = val; }
+	Common::Point *getPoint() { return &_point; }
 
 	int32 getMatteBarHeight() { return _matteBarHeight;}
 	void setMatteBarHeight(int32 val) { _matteBarHeight = val; }
@@ -318,8 +315,7 @@ private:
 
 	// TODO Add ambient sound panning array
 	uint32           _sceneCounter;
-	int32            _globalX;
-	int32            _globalY;
+	Common::Point    _point; // global point
 	//bool             _flagEncouter2;
 	int32            _sceneXLeft;
 	int32            _sceneYTop;

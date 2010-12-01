@@ -199,6 +199,7 @@ private:
 	// Game data
 	SharedData _data;
 	int  _gameFlags[1512];
+	bool _introPlayed;
 
 	void handleEvents();
 	void updateMouseCursor();
@@ -213,6 +214,16 @@ private:
 	 * Initializes the puzzles
 	 */
 	void initPuzzles();
+
+	/**
+	 * Initializes the sine/cosine tables.
+	 */
+	void initSinCosTables();
+
+	/**
+	 * Sets up the loaded game.
+	 */
+	void setupLoadedGame();
 
 	friend class Console;
 };

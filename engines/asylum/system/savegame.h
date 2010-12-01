@@ -37,6 +37,8 @@ public:
 
 	bool setup();
 
+	bool load();
+
 	void loadViewedMovies();
 
 	void loadList();
