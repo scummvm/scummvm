@@ -55,8 +55,7 @@ namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
 	_console(NULL), _cursor(NULL), _encounter(NULL), _mainMenu(NULL), _resource(NULL), _savegame(NULL),
-	_scene(NULL), _screen(NULL), _sound(NULL), _text(NULL), _video(NULL),
-	_introPlaying(false), _handler(NULL) {
+	_scene(NULL), _screen(NULL), _sound(NULL), _text(NULL), _video(NULL), _handler(NULL) {
 
 	// Init data
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
@@ -130,44 +129,21 @@ Common::Error AsylumEngine::run() {
 	_mainMenu  = new MainMenu(this);
 	_handler = _mainMenu;
 
-	// FIXME: remove
-	_introPlaying = false;
-
-	// TODO: save dialog key codes into sntrm_k.txt (need to figure out why they use such thing) (address 00411CD0)
-    // load startup configurations (.text:0041A970)
+    // Load config
     Config.read();
-	// TODO: init unknown game stuffs (.text:0040F430)
 
-	// TODO: if savegame not exists on folder, than start game()
-	//if(0) { //SearchMan.hasArchive
-		startGame(kResourcePackTowerCells, kStartGamePlayIntro);
-	//} else {
-	//    _mainMenu->openMenu();
-	//}
-	//
+	// Send init event to our default event handler
+	AsylumEvent initEvt(EVENT_ASYLUM_INIT);
+	_handler->handleEvent(initEvt);
 
+	// Start running event loop
 	while (!shouldQuit()) {
-		handleEvents(true);
-		waitForTimer(55);
+		handleEvents();
+
+		_system->updateScreen();
 	}
 
 	return Common::kNoError;
-}
-
-void AsylumEngine::waitForTimer(uint32 msec_delay) {
-	uint32 start_time = _system->getMillis();
-
-	while (_system->getMillis() < start_time + msec_delay) {
-		handleEvents(false);
-		if (_scene) {
-			processDelayedEvents();
-		}
-		_system->updateScreen();
-	}
-}
-
-void AsylumEngine::init() {
-	error("[AsylumEngine::init] Not implemented!");
 }
 
 void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
@@ -217,8 +193,7 @@ void AsylumEngine::playIntro() {
 	if (!_video || !_screen)
 		error("[AsylumEngine::playIntro] Subsystems not initialized properly!");
 
-	_introPlaying = true;
-	g_system->showMouse(false);
+	_cursor->hide();
 
 	if (Config.showIntro)
 		_video->playVideo(1);
@@ -235,102 +210,49 @@ void AsylumEngine::playIntro() {
 	_sound->playSound(MAKE_RESOURCE(kResourcePackSound, 7));
 }
 
-void AsylumEngine::handleEvents(bool doUpdate) {
+void AsylumEngine::handleEvents() {
 	if (!_console || !_video || !_screen || !_sound || !_mainMenu)
 		error("[AsylumEngine::handleEvents] Subsystems not initialized properly!");
 
 	// Show the debugger if required
 	_console->onFrame();
 
-	// NOTE
-	// In the original version of Sanitarium, the control loop for the sound
-	// effect that played after the intro video involved a while loop that
-	// executed until the sound handle was released.
-	// This caused the application to be locked until the while loop's execution
-	// completed successfully. Our implementation circumvents this issue
-	// by moving the logic to the event loop and checking whether a flag is
-	// set to determine if control should be returned to the engine.
-	if (_introPlaying) {
-		if (!_sound->isPlaying(MAKE_RESOURCE(kResourcePackSound, 7))) {
-			_introPlaying = false;
-
-			// TODO Since we've currently only got one sfx handle to play with in
-			// the sound class, entering the scene overwrites the "alarm" loop.
-			// This sound is technically supposed to play until the actor disables
-			// the alarm by flipping the switch. The sound class needs to be extended
-			// to be able to handle multiple handles.
-			// The currently active sound resources can probably also be buffered into
-			// the scene's soundResourceId[] array (seems that's the way the original worked,
-			// especially when you examine isSoundinList() or isSoundPlaying())
-
-			//_scene->enterScene();
-		}
-	}
-
 	AsylumEvent ev;
-
 	if (_eventMan->pollEvent(ev)) {
 		switch (ev.type) {
 		default:
 			break;
 
 		case Common::EVENT_KEYDOWN:
-			if ((ev.kbd.flags & Common::KBD_CTRL) && ev.kbd.keycode == Common::KEYCODE_d)
+			if ((ev.kbd.flags & Common::KBD_CTRL) && ev.kbd.keycode == Common::KEYCODE_d) {
 				_console->attach();
-
-			if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				// Toggle menu
-				/*if (_mainMenu->isActive()) {*/
-					if (_scene) {
-						//_mainMenu->closeMenu();
-						_scene->activate();
-					//}
-				} else if (_scene && _scene->isActive()) {
-					//_mainMenu->openMenu();
-				}
-				/* FIXME
-				} else if (_scene && _scene->getBlowUpPuzzle()->isActive()) {
-					_scene->getBlowUpPuzzle()->closeBlowUp();
-					_scene->enterScene();
-				}
-				*/
-				return;
+				break;
 			}
 
-			// XXX: TEST ONLY
-			/*
-			if (ev.kbd.keycode == Common::KEYCODE_b) {
-				if (_scene) {
-					_scene->getBlowUpPuzzle()->openBlowUp();
-				}
-			}
-			*/
+			// Handle key events
+			_handler->handleEvent(ev);
 			break;
+
+		case Common::EVENT_MOUSEMOVE:
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONUP:
+			// Handle mouse events
+			_handler->handleEvent(ev);
+			break;
+
+		case Common::EVENT_QUIT:
+			quitGame();
+			break;
+
+		// TODO handle cases where we receive a midi or music event
 		}
 	}
 
-	if (doUpdate) {
-		//if (_mainMenu->isActive() || (_scene && _scene->isActive())) { //|| (_scene && _scene->getBlowUpPuzzle()->isActive()))
-			//AsylumEvent updateEvt = AsylumEvent(EVENT_ASYLUM_UPDATE);
-			//_mainMenu->handleEvent(updateEvt);
-		//}
-
-		// Copy background image
-		_screen->copyBackBufferToScreen();
-	}
-
-
-	//if (_mainMenu->isActive())
-		// Main menu active, pass events to it
-	//	_mainMenu->handleEvent(ev);
-	if (_scene && _scene->isActive())
-		// Pass events to the game
-		_scene->handleEvent(&ev, doUpdate);
-	/* FIXME reimplement
-	else if (_scene && _scene->getBlowUpPuzzle()->isActive())
-		// Pass events to BlowUp Puzzles
-		_scene->getBlowUpPuzzle()->handleEvent(&ev, doUpdate);
-	*/
+	// Send update event to our event handler
+	AsylumEvent updateEvt = AsylumEvent(EVENT_ASYLUM_UPDATE);
+	_handler->handleEvent(updateEvt);
 }
 
 void AsylumEngine::processDelayedEvents() {

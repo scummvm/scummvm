@@ -38,7 +38,8 @@ namespace Asylum {
 enum GlobalFlag {
 	kFlag1,
 	kFlag2,
-	kFlagSkipDraw,
+	kFlagRedraw,
+	kFlagSkipDrawScene,
 	kFlagSceneRectChanged,
 	kFlagScene1
 };
@@ -133,17 +134,18 @@ public:
 		_actorUpdateStatusEnabledCounter = 0;
 		memset(&_data3[9], 0, sizeof(_data3));
 		_flagScene1 = false;
-		_nextScreenUpdate = 0;
 		memset(&_movies[49], 0, sizeof(_movies));
 		_actorUpdateStatus15Check = false;
 		_flag2 = false;
-		_flag5 = false;
+
+		// Screen updates
+		_flagRedraw = false;
+		_nextScreenUpdate = 0;
 	}
+
 	// Accessors
 	int32 getActorUpdateEnabledCounter() { return _actorUpdateStatusEnabledCounter; }
 	void  setActorUpdateEnabledCounter(int32 val) { _actorUpdateStatusEnabledCounter = val; }
-
-	int32 *nextScreenUpdate() { return &_nextScreenUpdate; }
 
 	bool getActorEnableForStatus7() { return _actorEnableForStatus7; }
 	void setActorEnableForStatus7(bool state) { _actorEnableForStatus7 = state; }
@@ -157,9 +159,6 @@ public:
 
 	int32 getActorUpdateFlag2() { return _data1[36]; }
 	void setActorUpdateFlag2(int32 val) { _data1[36] = val; }
-
-	bool getSkipDrawScene() { return _flagSkipDrawScene; }
-	void setSkipDrawScene(bool skip) { _flagSkipDrawScene = skip; }
 
 	// Shared global Data
 	int32 getGlobalX() const   { return _globalX; }
@@ -190,6 +189,9 @@ public:
 
 	Common::Point *getVector1() { return &_vector1; }
 	Common::Point *getVector2() { return &_vector2; }
+
+	void setNextScreenUpdate(uint32 ticks) { _nextScreenUpdate = ticks; }
+	uint32 getNextScreenUpdate() { return _nextScreenUpdate; }
 
 	void setData(ActorIndex index, int32 val) {
 		if (index < 50)
@@ -248,7 +250,11 @@ public:
 		case kFlag2:
 			return _flag2;
 
-		case kFlagSkipDraw:
+		case kFlagRedraw:
+			return _flagRedraw;
+			break;
+
+		case kFlagSkipDrawScene:
 			return _flagSkipDrawScene;
 
 		case kFlagSceneRectChanged:
@@ -272,7 +278,11 @@ public:
 			_flag2 = state;
 			break;
 
-		case kFlagSkipDraw:
+		case kFlagRedraw:
+			_flagRedraw = state;
+			break;
+
+		case kFlagSkipDrawScene:
 			_flagSkipDrawScene = state;
 			break;
 
@@ -339,12 +349,15 @@ private:
 	bool            _data3[9];
 	//bool            _flagEncouter5;
 	bool            _flagScene1;
-	int32           _nextScreenUpdate;
 	int32           _movies[49];
 	bool            _actorUpdateStatus15Check;
 	// Skip opening flag (not used)
 	bool            _flag2;
-	bool            _flag5;
+
+
+	// Screen updates
+	bool            _flagRedraw;
+	uint32          _nextScreenUpdate;
 };
 
 } // End of namespace Asylum

@@ -46,37 +46,36 @@
 namespace Asylum {
 
 MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
-	_leftClick          = false;
-	_activeIcon         = -1;
-	_previousActiveIcon = -1;
-	_curIconFrame       = 0;
-	_curMouseCursor     = 0;
-	_cursorStep         = 1;
-	_creditsBgFrame     = 0;
-	_creditsTextScroll  = 0x1E0 - 30;
-	_activeScreen   = kMenuMain;
-	_active             = false;
+	_initGame = false;
+
+	_activeScreen   = kMenuNone;
+	_soundResourceId = kResourceNone;
+	_allowInteraction = false;
+	_dword_4464BC = -1;
+	_dword_455C74 = 0;
+	_dword_455D4C = 0;
+	_dword_455D5C = 0;
+	_dword_4562C0 = 0;
+	_dword_4562C4 = 0;
+	_dword_45628C = 0;
+	_needEyeCursorInit = false;
+
+	memset(&_iconFrames, 0, sizeof(_iconFrames));
+
+	//_leftClick          = false;
+	//_previousActiveIcon = -1;
+	//_curIconFrame       = 0;
+	//_curMouseCursor     = 0;
+	//_cursorStep         = 1;
+	//_creditsBgFrame     = 0;
+	//_creditsTextScroll  = 0x1E0 - 30;
 
 	Config.gammaLevel  = 2;
 	Config.performance = 5;
 
-	_bgResource  = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, 0));
-	_eyeResource = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, 1));
-
-	_iconResource        = 0;
-	_creditsResource     = 0;
-	_creditsFadeResource = 0;
-
-	getText()->loadFont(kFontYellow);
 }
 
 MainMenu::~MainMenu() {
-	delete _creditsResource;
-	delete _creditsFadeResource;
-	delete _iconResource;
-	delete _eyeResource;
-	delete _bgResource;
-
 	// Zero-out passed pointers
 	_vm = NULL;
 }
@@ -85,7 +84,7 @@ MainMenu::~MainMenu() {
 // Loading and setup
 //////////////////////////////////////////////////////////////////////////
 void MainMenu::show() {
-	getSharedData()->setSkipDrawScene(true);
+	getSharedData()->setFlag(kFlagSkipDrawScene, true);
 	getScreen()->clear();
 
 	// Set ourselves as the current event handler
@@ -172,7 +171,7 @@ bool MainMenu::handleEvent(const AsylumEvent &evt) {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
-		return mouse(evt);
+		return click(evt);
 		break;
 	}
 
@@ -180,7 +179,7 @@ bool MainMenu::handleEvent(const AsylumEvent &evt) {
 }
 
 bool MainMenu::init() {
-	// Original writes sntrm_k.txt
+	// TODO: save dialog key codes into sntrm_k.txt (need to figure out why they use such thing) (address 00411CD0)
 
 	if (_needEyeCursorInit) {
 		getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 3), 0, 2);
@@ -189,9 +188,11 @@ bool MainMenu::init() {
 		if (!_initGame) {
 			_initGame = true;
 
-			// The original load the config here (this is done when constructing the config object)
-			// TODO initialize viewed cinematics
-			_vm->init();
+			// The original load the config (this is done when constructing the config object)
+
+			getSaveLoad()->loadViewedMovies();
+
+			// The original initialize game structures (this is done in classes constructors)
 
 			_needEyeCursorInit = true;
 
@@ -238,80 +239,109 @@ bool MainMenu::init() {
 }
 
 bool MainMenu::update() {
-	updateEyesAnimation();
-	//getCursor()->animate();
+	uint32 ticks = _vm->getTick();
 
-	if (_activeScreen == kMenuMain) {
-		updateMainMenu();
-	} else {
-		updateSubMenu();
-	}
+	if (!getSharedData()->getFlag(kFlagRedraw)) {
+		// TODO original fills a rectangle with black
 
-	if (_leftClick) {
-		_leftClick = false;
+		// Draw background
+		getScreen()->draw(kBackground, (_activeScreen == kMenuNone) ? 1 : 0, 0, 0, 0);
 
-		if (_activeIcon != -1) {
-			// Copy the dark background to the back buffer
-			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 0), 0, 0, 0, 0);
+		uint32 frameIndex = 0;
 
-			_activeScreen = (MenuScreen) _activeIcon;
+		// Get the eye frame index
+		if (!getCursor()->isHidden()) {
+			Common::Point cursor = getCursor()->position();
 
-			// Set the cursor
-			getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 3));
+			if (cursor.x < 230 || cursor.x > 399 || cursor.y < 199 || cursor.y > 259)
+				frameIndex = eyeFrameIndex[Actor::direction(Common::Point(320, 240), cursor)];
+			else if (cursor.x >= 743 && cursor.x <= 743 && cursor.y >= 587 && cursor.y <= 602)
+				frameIndex = 9;
 		}
 
-		switch (_activeIcon) {
+		if (_activeScreen == kMenuNone) {
+			// Draw eye
+			getScreen()->draw(kEye, frameIndex, 0, 0, 0);
+
+			// Find mouse position
+			MenuScreen button = findMousePosition();
+			if (button != kMenuNone) {
+				warning("[MainMenu::update] Not implemented!");
+			} else {
+				_dword_455C74 = 0;
+			}
+		} else {
+			getScreen()->draw(kEye, frameIndex, 0, 0, 0, 3);
+			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, _activeScreen + 4), _iconFrames[_activeScreen], 0, 0, 0);
+
+			// Update current menu frame index
+			_iconFrames[_activeScreen] = (_iconFrames[_activeScreen] + 1) % GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, _activeScreen + 4));
+		}
+
+		// Update current screen
+		switch (_activeScreen) {
 		default:
 			break;
 
 		case kMenuNewGame:
-			// Nothing here
+			updateNewGame();
 			break;
+
 		case kMenuLoadGame:
-			// TODO
+			updateLoadGame();
 			break;
+
 		case kMenuSaveGame:
-			// TODO
+			updateSaveGame();
 			break;
+
 		case kMenuDeleteGame:
-			// TODO
+			updateDeleteGame();
 			break;
-		case kMenuViewCinematics:
-			// TODO
+
+		case kMenuViewMovies:
+			updateViewMovies();
 			break;
+
 		case kMenuQuitGame:
-			// Nothing here
+			updateQuitGame();
 			break;
+
 		case kMenuTextOptions:
-			// TODO
+			updateTextOptions();
 			break;
+
 		case kMenuAudioOptions:
-			// TODO
+			updateAudioOptions();
 			break;
+
 		case kMenuSettings:
-			// TODO
+			updateSettings();
 			break;
+
 		case kMenuKeyboardConfig:
-			// TODO
+			updateKeyboardConfig();
 			break;
+
 		case kMenuShowCredits:
-			// TODO if game finished (gameFlag=901) then show resource image 33 and music 56 and than music 40
-			if (!_creditsResource)
-				_creditsResource = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, 24));
-			if (!_creditsFadeResource)
-				_creditsFadeResource = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, 23));
-			_creditsTextScroll = 0x1E0 - 30;
-			// Set credits palette
-			getScreen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 26));
-			// Stop all sounds
-			getSound()->stopMusic();
-			// Start playing music
-			getSound()->playMusic(MAKE_RESOURCE(kResourcePackShared, 38));
+			updateShowCredits();
 			break;
+
 		case kMenuReturnToGame:
-			if (_vm->scene()) // FIXME: do this properly
-				// TODO closeMenu();
+			updateReturnToGame();
 			break;
+		}
+
+		// Ask for redraw
+		getSharedData()->setFlag(kFlagRedraw, true);
+	}
+
+	if (ticks > getSharedData()->getNextScreenUpdate()) {
+		if (getSharedData()->getFlag(kFlagRedraw)) {
+			getScreen()->copyBackBufferToScreen();
+
+			getSharedData()->setFlag(kFlagRedraw, false);
+			getSharedData()->setNextScreenUpdate(ticks + 55);
 		}
 	}
 
@@ -339,116 +369,211 @@ bool MainMenu::key(const AsylumEvent &evt) {
 	return true;
 }
 
-bool MainMenu::mouse(const AsylumEvent &evt) {
+bool MainMenu::click(const AsylumEvent &evt) {
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Update / key / mouse event handlers
+// Helpers
 //////////////////////////////////////////////////////////////////////////
-void MainMenu::updateEyesAnimation() {
-	// Eyes animation
-	// Get the appropriate eye resource depending on the mouse position
-	uint32 eyeFrameNum = kEyesFront;
+MainMenu::MenuScreen MainMenu::findMousePosition() {
+	for (uint i = 0; i < ARRAYSIZE(menuRects); i++)
+		if (menuRects[i].contains(getCursor()->position()))
+			return (MenuScreen)i;
 
-	if (getCursor()->position().x <= 200) {
-		if (getCursor()->position().y <= 160)
-			eyeFrameNum = kEyesTopLeft;
-		else if (getCursor()->position().y > 160 && getCursor()->position().y <= 320)
-			eyeFrameNum = kEyesLeft;
-		else
-			eyeFrameNum = kEyesBottomLeft;
-	} else if (getCursor()->position().x > 200 && getCursor()->position().x <= 400) {
-		if (getCursor()->position().y <= 160)
-			eyeFrameNum = kEyesTop;
-		else if (getCursor()->position().y > 160 && getCursor()->position().y <= 320)
-			eyeFrameNum = kEyesFront;
-		else
-			eyeFrameNum = kEyesBottom;
-	} else if (getCursor()->position().x > 400) {
-		if (getCursor()->position().y <= 160)
-			eyeFrameNum = kEyesTopRight;
-		else if (getCursor()->position().y > 160 && getCursor()->position().y <= 320)
-			eyeFrameNum = kEyesRight;
-		else
-			eyeFrameNum = kEyesBottomRight;
-	}
-	// TODO: kEyesCrossed state
-
-	GraphicFrame *eyeFrame = _eyeResource->getFrame(eyeFrameNum);
-	_vm->screen()->copyRectToScreenWithTransparency((byte *)eyeFrame->surface.pixels, eyeFrame->surface.w, eyeFrame->x, eyeFrame->y, eyeFrame->surface.w, eyeFrame->surface.h);
+	return kMenuNone;
 }
 
-void MainMenu::updateMainMenu() {
-	int32 rowId = 0;
+//////////////////////////////////////////////////////////////////////////
+// Update handlers
+//////////////////////////////////////////////////////////////////////////
+void MainMenu::updateNewGame() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
 
-	if (getCursor()->position().y >= 20 && getCursor()->position().y <= 20 + 48) {
-		rowId = 0; // Top row
-	} else if (getCursor()->position().y >= 400 && getCursor()->position().y <= 400 + 48) {
-		rowId = 1; // Bottom row
-	} else {
-		// No row selected
-		_previousActiveIcon = _activeIcon = -1;
-		_leftClick = false;
-		return;
-	}
+void MainMenu::updateLoadGame() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::updateSaveGame() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::updateDeleteGame() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::updateViewMovies() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::updateQuitGame() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::updateTextOptions() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::updateAudioOptions() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::updateSettings() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::updateKeyboardConfig() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::updateShowCredits() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::updateReturnToGame() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Click handlers
+//////////////////////////////////////////////////////////////////////////
+void MainMenu::clickNewGame() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::clickLoadGame() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::clickSaveGame() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::clickDeleteGame() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::clickViewMovies() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::clickQuitGame() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::clickTextOptions() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::clickAudioOptions() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::clickSettings() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::clickKeyboardConfig() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::clickShowCredits() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+void MainMenu::clickReturnToGame() {
+	error("[MainMenu::updateNewGame] Not implemented!");
+}
+
+//////////////////////////////////////////////////////////////////////////
+// TODO REMOVE
+//////////////////////////////////////////////////////////////////////////
+
+// UpdateShowCredits
+//// TODO if game finished (gameFlag=901) then show resource image 33 and music 56 and than music 40
+////if (!_creditsResource)
+////	_creditsResource = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, 24));
+////if (!_creditsFadeResource)
+////	_creditsFadeResource = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, 23));
+////_creditsTextScroll = 0x1E0 - 30;
+//// Set credits palette
+//getScreen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 26));
+//// Stop all sounds
+//getSound()->stopMusic();
+//// Start playing music
+//getSound()->playMusic(MAKE_RESOURCE(kResourcePackShared, 38));
+
+void MainMenu::updateMainMenu() {
+	//int32 rowId = 0;
+
+	//if (getCursor()->position().y >= 20 && getCursor()->position().y <= 20 + 48) {
+	//	rowId = 0; // Top row
+	//} else if (getCursor()->position().y >= 400 && getCursor()->position().y <= 400 + 48) {
+	//	rowId = 1; // Bottom row
+	//} else {
+	//	// No row selected
+	//	_previousActiveIcon = _activeScreen = -1;
+	//	_leftClick = false;
+	//	return;
+	//}
 
 	getText()->loadFont(kFontYellow);
 
 	// Icon animation
-	for (int32 i = 0; i <= 5; i++) {
-		int32 curX = 40 + i * 100;
-		if (getCursor()->position().x >= curX && getCursor()->position().x <= curX + 55) {
-			int32 iconNum = i + 6 * rowId;
-			_activeIcon = iconNum;
-
-			// The last 2 icons are swapped
-			if (iconNum == 11)
-				iconNum = 10;
-			else if (iconNum == 10)
-				iconNum = 11;
-
-			// Get the current icon animation
-			if (!_iconResource || _activeIcon != _previousActiveIcon) {
-				delete _iconResource;
-				_iconResource = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, iconNum + 4));
-			}
-
-			GraphicFrame *iconFrame = _iconResource->getFrame(MIN<uint>(_iconResource->count() - 1, _curIconFrame));
-			_vm->screen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
-
-			// Cycle icon frame
-			_curIconFrame++;
-			if (_curIconFrame >= _iconResource->count())
-				_curIconFrame = 0;
-
-			// Show text
-			getText()->drawCentered(MenuIconFixedXpos[iconNum],
-					iconFrame->y + 50,
-					getText()->getWidth(MAKE_RESOURCE(kResourcePackText, iconNum + 1309)),
-					MAKE_RESOURCE(kResourcePackText, iconNum + 1309));
-
-			// Play creepy voice
-			if (_activeIcon != _previousActiveIcon) {
-				getSound()->playSound(MAKE_RESOURCE(kResourcePackShared, iconNum + 44), false, Config.sfxVolume);
-				_previousActiveIcon = _activeIcon;
-			}
-
-			break;
-		}
-	}
+//	for (int32 i = 0; i <= 5; i++) {
+//		int32 curX = 40 + i * 100;
+//		if (getCursor()->position().x >= curX && getCursor()->position().x <= curX + 55) {
+//			int32 iconNum = i + 6 * rowId;
+//			_activeScreen = iconNum;
+//
+//			// The last 2 icons are swapped
+//			if (iconNum == 11)
+//				iconNum = 10;
+//			else if (iconNum == 10)
+//				iconNum = 11;
+//
+//			// Get the current icon animation
+//	/*		if (!_iconResource || _activeScreen != _previousActiveIcon) {
+//				delete _iconResource;
+//				_iconResource = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, iconNum + 4));
+//			}*/
+//
+//	/*		GraphicFrame *iconFrame = _iconResource->getFrame(MIN<uint>(_iconResource->count() - 1, _curIconFrame));
+//			_vm->screen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
+//*/
+//			//// Cycle icon frame
+//			//_curIconFrame++;
+//			//if (_curIconFrame >= _iconResource->count())
+//			//	_curIconFrame = 0;
+//
+//			//// Show text
+//			//getText()->drawCentered(MenuIconFixedXpos[iconNum],
+//			//		iconFrame->y + 50,
+//			//		getText()->getWidth(MAKE_RESOURCE(kResourcePackText, iconNum + 1309)),
+//			//		MAKE_RESOURCE(kResourcePackText, iconNum + 1309));
+//
+//			// Play creepy voice
+//			if (_activeScreen != _previousActiveIcon) {
+//				getSound()->playSound(MAKE_RESOURCE(kResourcePackShared, iconNum + 44), false, Config.sfxVolume);
+//				_previousActiveIcon = _activeScreen;
+//			}
+//
+//			break;
+//		}
+//	}
 }
 
 void MainMenu::updateSubMenu() {
-	GraphicFrame *iconFrame = _iconResource->getFrame(MIN<uint>(_iconResource->count() - 1, _curIconFrame));
-	_vm->screen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
+	//GraphicFrame *iconFrame = _iconResource->getFrame(MIN<uint>(_iconResource->count() - 1, _curIconFrame));
+	//_vm->screen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
 
 	// Cycle icon frame
-	_curIconFrame++;
-	if (_curIconFrame >= _iconResource->count())
-		_curIconFrame = 0;
+	//_curIconFrame++;
+	//if (_curIconFrame >= _iconResource->count())
+	//	_curIconFrame = 0;
 
-	switch (_activeIcon) {
+	switch (_activeScreen) {
 	default:
 		break;
 
@@ -464,7 +589,7 @@ void MainMenu::updateSubMenu() {
 	case kMenuDeleteGame:
 		// TODO
 		break;
-	case kMenuViewCinematics:
+	case kMenuViewMovies:
 		updateSubMenuCinematics();
 		break;
 	case kMenuQuitGame:
@@ -508,17 +633,17 @@ void MainMenu::updateSubMenuNewGame() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1323));
 
 	// action
-	if (_leftClick) {
-		// Yes
-		if (getCursor()->position().x >= 247 && getCursor()->position().x <= 247 + 24 && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1322))) {
-			_leftClick = false;
-            // TODO closeMenu();
-            _vm->startGame(kResourcePackTowerCells, AsylumEngine::kStartGamePlayIntro);
-		}
-		// No
-		if (getCursor()->position().x >= 369 && getCursor()->position().x <= 369 + 24 && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1323)))
-			exitSubMenu();
-	}
+	//if (_leftClick) {
+	//	// Yes
+	//	if (getCursor()->position().x >= 247 && getCursor()->position().x <= 247 + 24 && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1322))) {
+	//		_leftClick = false;
+ //           // TODO closeMenu();
+ //           _vm->startGame(kResourcePackTowerCells, AsylumEngine::kStartGamePlayIntro);
+	//	}
+	//	// No
+	//	if (getCursor()->position().x >= 369 && getCursor()->position().x <= 369 + 24 && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1323)))
+	//		exitSubMenu();
+	//}
 }
 
 void MainMenu::updateSubMenuCinematics() {
@@ -527,13 +652,13 @@ void MainMenu::updateSubMenuCinematics() {
 	getText()->setPosition(30, 340);
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1353));	// Prev Page
 
-	if (getCursor()->position().x >= 280 && getCursor()->position().x <= 400 && getCursor()->position().y >= 340 && getCursor()->position().y <= 360) {
-		getText()->loadFont(kFontBlue);
-		if (_leftClick)
-			exitSubMenu();
-	} else {
-		getText()->loadFont(kFontYellow);
-	}
+	//if (getCursor()->position().x >= 280 && getCursor()->position().x <= 400 && getCursor()->position().y >= 340 && getCursor()->position().y <= 360) {
+	//	getText()->loadFont(kFontBlue);
+	//	if (_leftClick)
+	//		exitSubMenu();
+	//} else {
+	//	getText()->loadFont(kFontYellow);
+	//}
 
 	getText()->setPosition(280, 340);
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1355));	// Main Menu
@@ -603,43 +728,43 @@ void MainMenu::updateSubMenuSettings() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1437));
 
 	// action
-	if (_leftClick) {
-		// back to main menu
-		if (getCursor()->position().x >= 300 && getCursor()->position().x <= 300 + sizeMainMenu && getCursor()->position().y >= 340 && getCursor()->position().y <= 340 + 24) {
-			// TODO: save new configurations
-			exitSubMenu();
-		}
+	//if (_leftClick) {
+	//	// back to main menu
+	//	if (getCursor()->position().x >= 300 && getCursor()->position().x <= 300 + sizeMainMenu && getCursor()->position().y >= 340 && getCursor()->position().y <= 340 + 24) {
+	//		// TODO: save new configurations
+	//		exitSubMenu();
+	//	}
 
-		// gamma level minus
-		if (getCursor()->position().x >= 350 && getCursor()->position().x <= sizeMinus + 350 && getCursor()->position().y >= 150 && getCursor()->position().y <= 174) {
-			if (Config.gammaLevel) {
-				Config.gammaLevel -= 1;
-				// TODO: setResGammaLevel(0x80010011, 0);
-			}
-		}
-		// gamma level plus
-		if (getCursor()->position().x >= sizeMinus + 360 && getCursor()->position().x <= sizeMinus + sizePlus + 360 && getCursor()->position().y >= 150 && getCursor()->position().y <= 174) {
-			if (Config.gammaLevel < 8) {
-				Config.gammaLevel += 1;
-				// TODO: setResGammaLevel(0x80010011, 0);
-			}
-		}
+	//	// gamma level minus
+	//	if (getCursor()->position().x >= 350 && getCursor()->position().x <= sizeMinus + 350 && getCursor()->position().y >= 150 && getCursor()->position().y <= 174) {
+	//		if (Config.gammaLevel) {
+	//			Config.gammaLevel -= 1;
+	//			// TODO: setResGammaLevel(0x80010011, 0);
+	//		}
+	//	}
+	//	// gamma level plus
+	//	if (getCursor()->position().x >= sizeMinus + 360 && getCursor()->position().x <= sizeMinus + sizePlus + 360 && getCursor()->position().y >= 150 && getCursor()->position().y <= 174) {
+	//		if (Config.gammaLevel < 8) {
+	//			Config.gammaLevel += 1;
+	//			// TODO: setResGammaLevel(0x80010011, 0);
+	//		}
+	//	}
 
-		// performance minus
-		if (getCursor()->position().x >= 350 && getCursor()->position().x <= sizeMinus + 350 && getCursor()->position().y >= 179 && getCursor()->position().y <= 203) {
-			if (Config.performance) {
-				Config.performance -= 1;
-				// TODO: change quality settings
-			}
-		}
-		// performance plus
-		if (getCursor()->position().x >= sizeMinus + 360 && getCursor()->position().x <= sizeMinus + sizePlus + 360 && getCursor()->position().y >= 179 && getCursor()->position().y <= 203) {
-			if (Config.performance < 5) {
-				Config.performance += 1;
-				// TODO: change quality settings
-			}
-		}
-	}
+	//	// performance minus
+	//	if (getCursor()->position().x >= 350 && getCursor()->position().x <= sizeMinus + 350 && getCursor()->position().y >= 179 && getCursor()->position().y <= 203) {
+	//		if (Config.performance) {
+	//			Config.performance -= 1;
+	//			// TODO: change quality settings
+	//		}
+	//	}
+	//	// performance plus
+	//	if (getCursor()->position().x >= sizeMinus + 360 && getCursor()->position().x <= sizeMinus + sizePlus + 360 && getCursor()->position().y >= 179 && getCursor()->position().y <= 203) {
+	//		if (Config.performance < 5) {
+	//			Config.performance += 1;
+	//			// TODO: change quality settings
+	//		}
+	//	}
+	//}
 }
 
 void MainMenu::updateSubMenuQuitGame() {
@@ -658,93 +783,93 @@ void MainMenu::updateSubMenuQuitGame() {
 	getText()->setPosition(369, 273);
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1410));
 
-	// action
-	if (_leftClick) {
-		// Yes
-		if (getCursor()->position().x >= 247 && getCursor()->position().x <= 247 + 24 && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1409))) {
-			_leftClick = false;
+	//// action
+	//if (_leftClick) {
+	//	// Yes
+	//	if (getCursor()->position().x >= 247 && getCursor()->position().x <= 247 + 24 && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1409))) {
+	//		_leftClick = false;
 
-			// User clicked on quit, so push a quit event
-			Common::Event event;
-			event.type = Common::EVENT_QUIT;
-			g_system->getEventManager()->pushEvent(event);
-		}
-		// No
-		if (getCursor()->position().x >= 369 && getCursor()->position().x <= 369 + 24 && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1410)))
-			exitSubMenu();
-	}
+	//		// User clicked on quit, so push a quit event
+	//		Common::Event event;
+	//		event.type = Common::EVENT_QUIT;
+	//		g_system->getEventManager()->pushEvent(event);
+	//	}
+	//	// No
+	//	if (getCursor()->position().x >= 369 && getCursor()->position().x <= 369 + 24 && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1410)))
+	//		exitSubMenu();
+	//}
 }
 
 void MainMenu::updateSubMenuShowCredits() {
-	int32 posY	 = _creditsTextScroll;
-	ResourceId resourceId = kResourceNone;
-	int32 step	 = 0;
-	int32 minBound = 0;
-	int32 maxBound = 0;
+	//int32 posY	 = _creditsTextScroll;
+	//ResourceId resourceId = kResourceNone;
+	//int32 step	 = 0;
+	//int32 minBound = 0;
+	//int32 maxBound = 0;
 
-	GraphicFrame *creditsFadeFrame = _creditsFadeResource->getFrame(0);
-	_vm->screen()->copyRectToScreenWithTransparency((byte *)creditsFadeFrame->surface.pixels, creditsFadeFrame->surface.w, creditsFadeFrame->x, creditsFadeFrame->y, creditsFadeFrame->surface.w, creditsFadeFrame->surface.h);
+	////GraphicFrame *creditsFadeFrame = _creditsFadeResource->getFrame(0);
+	////_vm->screen()->copyRectToScreenWithTransparency((byte *)creditsFadeFrame->surface.pixels, creditsFadeFrame->surface.w, creditsFadeFrame->x, creditsFadeFrame->y, creditsFadeFrame->surface.w, creditsFadeFrame->surface.h);
 
-	GraphicFrame *creditsFrame = _creditsResource->getFrame(MIN<uint>(_creditsResource->count() - 1, _creditsBgFrame));
-	_vm->screen()->copyRectToScreenWithTransparency((byte *)creditsFrame->surface.pixels, creditsFrame->surface.w, creditsFrame->x, creditsFrame->y, creditsFrame->surface.w, creditsFrame->surface.h);
+	////GraphicFrame *creditsFrame = _creditsResource->getFrame(MIN<uint>(_creditsResource->count() - 1, _creditsBgFrame));
+	////_vm->screen()->copyRectToScreenWithTransparency((byte *)creditsFrame->surface.pixels, creditsFrame->surface.w, creditsFrame->x, creditsFrame->y, creditsFrame->surface.w, creditsFrame->surface.h);
 
-	_creditsBgFrame++;
-	if (_creditsBgFrame >= _creditsResource->count())
-		_creditsBgFrame = 0;
+	////_creditsBgFrame++;
+	////if (_creditsBgFrame >= _creditsResource->count())
+	////	_creditsBgFrame = 0;
 
-	do {
-		if (posY + step >= 0) {
-			if (posY + step > 450)
-				break;
+	//do {
+	//	if (posY + step >= 0) {
+	//		if (posY + step > 450)
+	//			break;
 
-			minBound = posY + step + 24;
-			if (minBound >= 0)
-				if (minBound < 32) {
-					// TODO fade side text
-					posY = _creditsTextScroll;
-				}
+	//		minBound = posY + step + 24;
+	//		if (minBound >= 0)
+	//			if (minBound < 32) {
+	//				// TODO fade side text
+	//				posY = _creditsTextScroll;
+	//			}
 
-			maxBound = posY + step;
-			if (posY + step < 480)
-				if (maxBound > 448) {
-					// TODO fade side text
-					posY = _creditsTextScroll;
-				}
+	//		maxBound = posY + step;
+	//		if (posY + step < 480)
+	//			if (maxBound > 448) {
+	//				// TODO fade side text
+	//				posY = _creditsTextScroll;
+	//			}
 
-			getText()->setPosition(320, step + posY);
-			getText()->draw((ResourceId)(resourceId - 2147482201));
-			posY = _creditsTextScroll;
-		}
-		step += 24;
-		resourceId = (ResourceId)(resourceId + 1);
-	} while (step < 0x21F0);
+	//		getText()->setPosition(320, step + posY);
+	//		getText()->draw((ResourceId)(resourceId - 2147482201));
+	//		posY = _creditsTextScroll;
+	//	}
+	//	step += 24;
+	//	resourceId = (ResourceId)(resourceId + 1);
+	//} while (step < 0x21F0);
 
-	_creditsTextScroll -= 2;
+	//_creditsTextScroll -= 2;
 
-	// TODO: some palette stuffs
+	//// TODO: some palette stuffs
 
-	// TODO: if gameFlag=901 (finished game) and already play music 56, start music 40
+	//// TODO: if gameFlag=901 (finished game) and already play music 56, start music 40
 
-	if (_leftClick) {
-		// Restore palette
-		_vm->screen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 17));
-		// Stop all sounds
-		_vm->sound()->stopMusic();
-		// Start playing music
-		_vm->sound()->playMusic(MAKE_RESOURCE(kResourcePackShared, 39));
-		exitSubMenu();
-	}
+	//if (_leftClick) {
+	//	// Restore palette
+	//	_vm->screen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 17));
+	//	// Stop all sounds
+	//	_vm->sound()->stopMusic();
+	//	// Start playing music
+	//	_vm->sound()->playMusic(MAKE_RESOURCE(kResourcePackShared, 39));
+	//	exitSubMenu();
+	//}
 }
 
 void MainMenu::exitSubMenu() {
-	_leftClick = false;
-	_activeScreen = kMenuMain;
+	//_leftClick = false;
+	//_activeScreen = kMenuMain;
 
-	// Copy the bright background to the back buffer
-	getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 0), 1, 0, 0, 0);
+	//// Copy the bright background to the back buffer
+	//getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 0), 1, 0, 0, 0);
 
-	// Set the cursor
-	getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 2));
+	//// Set the cursor
+	//getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 2));
 }
 
 void MainMenu::updateSubMenuReturnToGame() {
@@ -759,11 +884,11 @@ void MainMenu::updateSubMenuReturnToGame() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 713));
 
 	// action
-	if (_leftClick) {
-		// Main menu
-		if (getCursor()->position().x >= 285 && getCursor()->position().x <= 285 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 713)) && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + 24)
-			exitSubMenu();
-	}
+	//if (_leftClick) {
+	//	// Main menu
+	//	if (getCursor()->position().x >= 285 && getCursor()->position().x <= 285 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 713)) && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + 24)
+	//		exitSubMenu();
+	//}
 }
 
 } // end of namespace Asylum

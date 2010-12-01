@@ -27,6 +27,8 @@
 
 #include "asylum/system/graphics.h"
 
+#include "common/events.h"
+#include "common/system.h"
 #include "graphics/cursorman.h"
 
 namespace Asylum {
@@ -110,11 +112,6 @@ void Cursor::set(int32 frame) {
 }
 */
 
-void Cursor::move(int16 x, int16 y) {
-	_pos.x = x;
-	_pos.y = y;
-}
-
 
 void Cursor::animate() {
 	/*
@@ -166,5 +163,13 @@ void Cursor::update(WorldStats *ws, int32 currentAction) {
 		load(newCursor);
 }
 */
+
+bool Cursor::isHidden() const {
+	return !CursorMan.isVisible();
+}
+
+Common::Point Cursor::position() const {
+	return g_system->getEventManager()->getMousePos();
+}
 
 } // end of namespace Asylum

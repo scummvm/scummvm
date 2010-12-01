@@ -76,10 +76,10 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, in
 
 	copyToBackBuffer(((byte *)frame->surface.pixels) - (y * frame->surface.w + x),
 		frame->surface.w,
-		0,
-		0,
-		640,
-		480);
+		x,
+		y,
+		frame->getWidth(),
+		frame->getHeight());
 
 	delete resource;
 }

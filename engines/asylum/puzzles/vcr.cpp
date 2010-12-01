@@ -85,7 +85,7 @@ void BlowUpPuzzleVCR::close() {
 bool BlowUpPuzzleVCR::handleEvent(const AsylumEvent &ev) {
 	switch (ev.type) {
 	case Common::EVENT_MOUSEMOVE:
-		_cursor->move(ev.mouse.x, ev.mouse.y);
+		//_cursor->move(ev.mouse.x, ev.mouse.y);
 		break;
 	case Common::EVENT_LBUTTONUP:
 		_leftClickUp = true;

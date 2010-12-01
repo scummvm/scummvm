@@ -29,7 +29,20 @@
 namespace Asylum {
 
 /** This fixes the menu icons text x position on screen */
-const int MenuIconFixedXpos[12] = { 28, 128, 225, 320, 410, 528, 16, 115, 237, 310, 508, 419 };
+const Common::Rect menuRects[12] = {Common::Rect(  19,  40,  68,  93),
+                                    Common::Rect(  19, 140,  68, 193),
+                                    Common::Rect(  19, 239,  68, 292),
+                                    Common::Rect(  19, 340,  68, 393),
+                                    Common::Rect(  19, 439,  68, 492),
+                                    Common::Rect(  19, 538,  68, 591),
+                                    Common::Rect( 400,  40, 449,  93),
+                                    Common::Rect( 400, 140, 449, 193),
+                                    Common::Rect( 400, 239, 449, 292),
+                                    Common::Rect( 400, 340, 449, 393),
+                                    Common::Rect( 400, 439, 449, 492),
+                                    Common::Rect( 400, 538, 449, 591)};
+
+const int eyeFrameIndex[8] = {3, 5, 1, 7, 4, 8, 2, 6};
 
 /** Default Actor Indices by Scene */
 const int actorType[16] = {0, 0, 0, 0, 1, 0, 2, 0, 3, 0, 1, 1, 3, 0, 0, 0};

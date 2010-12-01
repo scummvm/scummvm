@@ -54,6 +54,8 @@ public:
 	 */
 	void hide() const;
 
+	bool isHidden() const;
+
 	/**
 	 * Set the current cursor instance to the graphic resource provide.
 	 * The frames parameter defaults to -1, which in this case means that the
@@ -61,11 +63,6 @@ public:
 	 * explicitly set.
 	 */
 	void set(ResourceId resourceId, int32 cntr = 0, byte flgs = 0, int32 frames = -1);
-
-	/**
-	 * Set the x/y coordinates of the cursor
-	 */
-	void move(int16 x, int16 y);
 
 	/**
 	 * Scene-based update to the current cursor. This
@@ -88,7 +85,7 @@ public:
 	/**
 	 * Return the cursor's position on the screen
 	 */
-	Common::Point position() const { return _pos; }
+	Common::Point position() const;
 
 	// NOTE
 	// .text:00435060 contains a function that assigns global variables to a

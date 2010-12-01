@@ -1749,7 +1749,7 @@ void Actor::setVolume() {
 // Helper methods
 //////////////////////////////////////////////////////////////////////////
 
-ActorDirection Actor::direction(Common::Point vec1, Common::Point vec2) const {
+ActorDirection Actor::direction(Common::Point vec1, Common::Point vec2) {
 	int32 diffX = (vec2.x - vec1.x) * 2^16;
 	int32 diffY = (vec1.y - vec2.y) * 2^16;
 	int32 adjust = 0;

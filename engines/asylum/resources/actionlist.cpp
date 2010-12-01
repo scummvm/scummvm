@@ -1469,7 +1469,7 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x4F
 IMPLEMENT_OPCODE(ClearScreen)
-	getSharedData()->setSkipDrawScene((bool)cmd->param1);
+	getSharedData()->setFlag(kFlagSkipDrawScene, (bool)cmd->param1);
 
 	if (cmd->param1)
 		getScreen()->clear();

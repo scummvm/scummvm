@@ -95,11 +95,6 @@ public:
 	virtual ~AsylumEngine();
 
 	/**
-	 * Initializes the game
-	 */
-	void init();
-
-	/**
 	 * Start a new the game
 	 */
 	void startGame(ResourcePackId sceneId, StartGameType type);
@@ -196,14 +191,11 @@ private:
 	EventHandler *_handler;
 	BlowUpPuzzle *_puzzles[16];
 
-	// Shared game data
+	// Game data
 	SharedData _data;
-
-	bool _introPlaying;
 	int  _gameFlags[1512];
 
-	void handleEvents(bool doUpdate);
-	void waitForTimer(uint32 msec_delay);
+	void handleEvents();
 	void updateMouseCursor();
 	void processDelayedEvents();
 

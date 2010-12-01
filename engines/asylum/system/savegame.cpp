@@ -41,4 +41,8 @@ bool Savegame::setup() {
 	return true;
 }
 
+void Savegame::loadViewedMovies() {
+	warning("[Savegame::loadViewedMovies] Not implemented!");
+}
+
 } // End of namespace Asylum

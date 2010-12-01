@@ -36,6 +36,7 @@ public:
 	~Savegame();
 
 	bool setup();
+	void loadViewedMovies();
 
 private:
 	AsylumEngine* _vm;

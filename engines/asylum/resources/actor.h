@@ -264,6 +264,16 @@ public:
 	static void enableActorsChapter2(AsylumEngine *engine);
 	static void updatePlayerChapter9(AsylumEngine *engine, int type);
 
+	/**
+	 * Gets a direction using the angle between the two points.
+	 *
+	 * @param vec1 The first vector.
+	 * @param vec2 The second vector.
+	 *
+	 * @return The direction
+	 */
+	static ActorDirection direction(Common::Point vec1, Common::Point vec2);
+
 private:
 	AsylumEngine *_vm;
 
@@ -430,16 +440,6 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Helper methods
 	//////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Gets a direction using the angle between the two points.
-	 *
-	 * @param vec1 The first vector.
-	 * @param vec2 The second vector.
-	 *
-	 * @return The direction
-	 */
-	ActorDirection direction(Common::Point vec1, Common::Point vec2) const;
 
 	/**
 	 * Updates the actor graphic information
