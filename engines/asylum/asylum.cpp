@@ -311,11 +311,6 @@ void AsylumEngine::processDelayedEvents() {
 		_sound->stopAll();
 		_video->playVideo(videoIdx);
 		_scene->actions()->setDelayedVideoIndex(-1);
-
-		//if (_mainMenu->isActive())
-		//	_mainMenu->openMenu();
-		if (_scene->isActive())
-			_scene->activate();
 	}
 
 	// check for a delayed scene change

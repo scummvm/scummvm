@@ -100,6 +100,9 @@ public:
 	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 	void copyBackBufferToScreen();
 
+	// Debug
+	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
+
 private:
 	Graphics::Surface _backBuffer;
 	AsylumEngine *_vm;

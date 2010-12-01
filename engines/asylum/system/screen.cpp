@@ -115,6 +115,35 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x
 	}
 }
 
+void Screen::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
+	Common::Rect screenRect(getWorld()->xLeft, getWorld()->yTop, getWorld()->xLeft + 640, getWorld()->yTop + 480);
+	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
+	animRect.clip(screenRect);
+
+	if (!animRect.isEmpty()) {
+		// Translate anim rectangle
+		animRect.translate(-(int16)getWorld()->xLeft, -(int16)getWorld()->yTop);
+
+		int startX = animRect.right  == 640 ? 0 : surface->w - animRect.width();
+		int startY = animRect.bottom == 480 ? 0 : surface->h - animRect.height();
+
+		if (surface->w > 640)
+			startX = getWorld()->xLeft;
+		if (surface->h > 480)
+			startY = getWorld()->yTop;
+
+		_vm->screen()->copyToBackBufferWithTransparency(
+			((byte*)surface->pixels) +
+			startY * surface->pitch +
+			startX * surface->bytesPerPixel,
+			surface->pitch,
+			animRect.left,
+			animRect.top,
+			animRect.width(),
+			animRect.height());
+	}
+}
+
 
 void Screen::setPalette(ResourceId id) {
 	setPalette(getResource()->get(id)->data + 32);

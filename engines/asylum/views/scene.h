@@ -75,6 +75,13 @@ public:
 	~Scene();
 
 	/**
+	 * Load the scene data
+	 *
+	 * @param packId Package id for the scene.
+	 */
+	void load(ResourcePackId packId);
+
+	/**
 	 * Enter a scene
 	 *
 	 * @param packId Package id for the scene.
@@ -82,22 +89,13 @@ public:
 	void enter(ResourcePackId packId);
 
 	/**
-	 * Load the scene data
-	 * @param packId Package id for the scene.
+	 * Handle events
+	 *
+	 * @param ev The event
+	 *
+	 * @return true if it succeeds, false if it fails.
 	 */
-	void load(ResourcePackId packId);
-
 	bool handleEvent(const AsylumEvent &ev);
-	void handleEvent(Common::Event *event, bool doUpdate);
-
-	void activate();
-	void deactivate() { _isActive = false; }
-	bool isActive() { return _isActive; }
-	ResourcePackId  getPackId() { return _packId; }
-
-	//BlowUpPuzzle* getBlowUpPuzzle() { return _blowUp;}
-	//void setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
-	void setScenePosition(int x, int y);
 
 	AsylumEngine* vm() { return _vm; }
 
@@ -119,6 +117,13 @@ public:
 
 	void setPlayerActorIndex(ActorIndex index) { _playerActorIdx = index; }
 	void changePlayer(ActorIndex index);
+
+	/**
+	 * Gets the current scene pack identifier.
+	 *
+	 * @return The pack identifier.
+	 */
+	ResourcePackId  getPackId() { return _packId; }
 
 	/**
 	 * Get a reference to an actor object from the
@@ -195,7 +200,6 @@ protected:
 
 private:
 	AsylumEngine  *_vm;
-	Common::Event *_ev;
 
 	ResourcePackId _packId;
 	int32 _playerActorIdx;
@@ -214,9 +218,6 @@ private:
 	Polygons     *_polygons;
 	WorldStats   *_ws;
 
-	GraphicResource *_bgResource;
-	GraphicFrame    *_background;
-
 	struct UpdateItem {
 		ActorIndex index;
 		int32 priority;
@@ -224,46 +225,72 @@ private:
 
 	Common::Array<UpdateItem> _updateList;
 
-	/** .text:0040B5B0
-	 * Loop through the various update blocks (actors,
-	 * objects, mouse, music, sfx, screenPosition), then
-	 * process the current action script
-	 */
-	bool update();
-	/** .text:0040D190
-	 * TODO add description
-	 */
-	void updateMouse();
-	/** .text:0040D580
-	 * TODO
-	 */
-	void handleMouseUpdate(int direction, Common::Rect rect);
-
-	void updateActors();
-
-	/** .text:0040CBD0
-	 * TODO add description
-	 */
-	void updateObjects();
-	/** .text:00409BA0
-	 * TODO add description
-	 */
-	void updateAmbientSounds();
-	/** .text:00409EF0
-	 * TODO add description
-	 */
-	void updateMusic();
-	/** .text:0040DAE0
-	 * TODO add description
-	 */
-	void updateAdjustScreen();
+	//////////////////////////////////////////////////////////////////////////
+	// Message handling
+	void activate();
+	bool init();
+	void update();
+	bool music();
+	bool key(const AsylumEvent &evt);
+	bool click(const AsylumEvent &evt);
 
 	void updateScreen();
 
+	//////////////////////////////////////////////////////////////////////////
+	// Scene update
+	//////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * Loop through the various update blocks (actors, objects, mouse, music, sfx, coordinates), then process the current action script.
+	 *
+	 * @return true if the script is done executing, false otherwise
+	 */
+	bool updateScene();
 
-	void playIntroSpeech();
+	/**
+	 * Updates the mouse.
+	 */
+	void updateMouse();
 
+	/**
+	 * Updates the actors.
+	 */
+	void updateActors();
+
+	/**
+	 * Updates the objects.
+	 */
+	void updateObjects();
+
+	/**
+	 * Updates the ambient sounds.
+	 */
+	void updateAmbientSounds();
+
+	/**
+	 * Updates the music.
+	 */
+	void updateMusic();
+
+	/**
+	 * Updates the screen
+	 *
+	 *  - update coordinates or allow scrolling if the proper debug option is set
+	 */
+	void updateAdjustScreen();
+
+	/**
+	 * Updates the screen coordinates.
+	 */
+	void updateCoordinates();
+
+	/**
+	 * Update cursor
+	 *
+	 * @param direction The direction.
+	 * @param rect 		The rectangle.
+	 */
+	void updateCursor(int direction, Common::Rect rect);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scene drawing
@@ -280,21 +307,20 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
+	void playIntroSpeech();
+
 	bool pointIntersectsRect(Common::Point point, Common::Rect rect);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scene debugging
 	//////////////////////////////////////////////////////////////////////////
-	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
-
-	void debugScreenScrolling(GraphicFrame *bg);
+	void debugScreenScrolling();
 	void debugShowPolygons();
 	void debugShowObjects();
 	void debugShowActors();
 	void debugShowWalkRegion(PolyDefinitions *poly);
 
 	friend class SceneTitle;
-
 };
 
 } // end of namespace Asylum

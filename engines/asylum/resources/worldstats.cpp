@@ -29,13 +29,11 @@
 #include "asylum/resources/actor.h"
 #include "asylum/resources/object.h"
 
-#include "asylum/views/scene.h"
-
 #include "asylum/asylum.h"
 
 namespace Asylum {
 
-WorldStats::WorldStats(Common::SeekableReadStream *stream, Scene *scene) : _scene(scene) {
+WorldStats::WorldStats(AsylumEngine *engine) : _vm(engine) {
 	// Init values
 	size = 0;
 	numEntries = 0;
@@ -96,9 +94,6 @@ WorldStats::WorldStats(Common::SeekableReadStream *stream, Scene *scene) : _scen
 	memset(&wheels, 0, sizeof(wheels));
 	tickCount1 = 0;
 	memset(&field_E8660, 0, sizeof(field_E8660));
-
-	// Load data
-	load(stream);
 }
 
 WorldStats::~WorldStats() {
@@ -107,7 +102,7 @@ WorldStats::~WorldStats() {
 	CLEAR_ARRAY(ActionArea, actions);
 
 	// Zero-out passed pointers
-	_scene = NULL;
+	_vm = NULL;
 }
 
 // FIXME: load necessary World Stats content
@@ -214,7 +209,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	//////////////////////////////////////////////////////////////////////////
 	// Read Objects
 	for (uint32 a = 0; a < numObjects; a++) {
-		Object *object = new Object(_scene->vm());
+		Object *object = new Object(_vm);
 		object->load(stream);
 
 		objects.push_back(object);
@@ -225,7 +220,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	//////////////////////////////////////////////////////////////////////////
 	// Read Actors
 	for (ActorIndex index = 0; index < (int)numActors; index++) {
-		Actor *actor = new Actor(_scene->vm(), index);
+		Actor *actor = new Actor(_vm, index);
 		actor->load(stream);
 
 		actors.push_back(actor);
@@ -325,7 +320,7 @@ int32 WorldStats::getRandomActionAreaIndexById(int32 id) {
 	if (!count)
 		return -1;
 
-	return indexes[_scene->vm()->getRandom(count)];
+	return indexes[_vm->getRandom(count)];
 }
 
 ActionArea* WorldStats::getActionAreaById(int32 id) {
