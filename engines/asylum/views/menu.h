@@ -99,9 +99,10 @@ private:
 	bool             _dword_455D4C;
 	bool             _dword_455D5C;
 	bool             _dword_455DD8;
+	bool             _dword_455DE0;
 	int32            _dword_456288;
 	int32            _dword_4562C0;
-	int32            _creditsTextScroll;
+	int32            _textScroll;
 	int32            _creditsFrameIndex;
 	bool             _needEyeCursorInit;
 	uint32           _iconFrames[12];
