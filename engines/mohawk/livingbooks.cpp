@@ -2085,7 +2085,7 @@ void LBPaletteItem::startPhase(uint phase) {
 }
 
 LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
-	_running = false;
+	_currentPhrase = 0xFFFF;
 	_currentWord = 0xFFFF;
 	debug(3, "new LBLiveTextItem");
 }
@@ -2174,9 +2174,9 @@ bool LBLiveTextItem::contains(Common::Point point) {
 }
 
 void LBLiveTextItem::paletteUpdate(uint16 word, bool on) {
-	// TODO: fix for v2/v3
-	if (_vm->getGameType() != GType_LIVINGBOOKSV1) {
-		warning("LiveText palettes aren't supported for V2/V3 yet");
+	if (_resourceId) {
+		// with a resource, we draw a bitmap in draw() rather than changing the palette
+		_vm->_needsRedraw = true;
 		return;
 	}
 
@@ -2191,7 +2191,6 @@ void LBLiveTextItem::update() {
 	if (_currentWord != 0xFFFF) {
 		uint16 soundId = _words[_currentWord].soundId;
 		if (soundId && !_vm->_sound->isPlaying(soundId)) {
-			_vm->_sound->stopSound();
 			paletteUpdate(_currentWord, false);
 			_currentWord = 0xFFFF;
 		}
@@ -2200,8 +2199,49 @@ void LBLiveTextItem::update() {
 	LBItem::update();
 }
 
+void LBLiveTextItem::draw() {
+	// this is only necessary when we are drawing using a bitmap
+	if (!_resourceId)
+		return;
+
+	if (_currentWord != 0xFFFF) {
+		uint yPos = 0;
+		if (_currentWord > 0) {
+			for (uint i = 0; i < _currentWord; i++) {
+				yPos += (_words[i].bounds.bottom - _words[i].bounds.top);
+			}
+		}
+		drawWord(_currentWord, yPos);
+		return;
+	}
+
+	if (_currentPhrase == 0xFFFF)
+		return;
+
+	uint wordStart = _phrases[_currentPhrase].wordStart;
+	uint wordCount = _phrases[_currentPhrase].wordCount;
+	if (wordStart + wordCount > _words.size())
+		error("phrase %d was invalid (%d words, from %d, out of only %d total)",
+			_currentPhrase, wordCount, wordStart, _words.size());
+
+	uint yPos = 0;
+	for (uint i = 0; i < wordStart + wordCount; i++) {
+		if (i >= wordStart)
+			drawWord(i, yPos);
+		yPos += (_words[i].bounds.bottom - _words[i].bounds.top);
+	}
+}
+
+void LBLiveTextItem::drawWord(uint word, uint yPos) {
+	Common::Rect srcRect(0, yPos, _words[word].bounds.right - _words[word].bounds.left,
+		yPos + _words[word].bounds.bottom - _words[word].bounds.top);
+	Common::Rect dstRect = _words[word].bounds;
+	dstRect.translate(_rect.left, _rect.top);
+	_vm->_gfx->copyImageSectionToScreen(_resourceId, srcRect, dstRect);
+}
+
 void LBLiveTextItem::handleMouseDown(Common::Point pos) {
-	if (_neverEnabled || !_enabled || _running)
+	if (_neverEnabled || !_enabled || _currentPhrase != 0xFFFF)
 		return LBItem::handleMouseDown(pos);
 
 	pos.x -= _rect.left;
@@ -2233,15 +2273,15 @@ bool LBLiveTextItem::togglePlaying(bool playing, bool restart) {
 	if (!playing)
 		return LBItem::togglePlaying(playing, restart);
 	if (_neverEnabled || !_enabled)
-		return _running;
+		return (_currentPhrase != 0xFFFF);
 
 	// TODO: handle this properly
 	_vm->_sound->stopSound();
 
 	_currentWord = 0xFFFF;
-	_running = true;
+	_currentPhrase = 0;
 
-	return _running;
+	return true;
 }
 
 void LBLiveTextItem::stop() {
@@ -2251,26 +2291,32 @@ void LBLiveTextItem::stop() {
 }
 
 void LBLiveTextItem::notify(uint16 data, uint16 from) {
-	if (_neverEnabled || !_enabled || !_running)
+	if (_neverEnabled || !_enabled || _currentPhrase == 0xFFFF)
 		return LBItem::notify(data, from);
 
 	if (_currentWord != 0xFFFF) {
+		// TODO: handle this properly
+		_vm->_sound->stopSound();
 		paletteUpdate(_currentWord, false);
 		_currentWord = 0xFFFF;
 	}
 
 	for (uint i = 0; i < _phrases.size(); i++) {
-		// TODO
 		if (_phrases[i].highlightStart == data && _phrases[i].startId == from) {
 			debug(2, "Enabling phrase %d", i);
 			for (uint j = 0; j < _phrases[i].wordCount; j++) {
 				paletteUpdate(_phrases[i].wordStart + j, true);
 			}
+			_currentPhrase = i;
+			// TODO: not sure this is the correct logic
+			if (i == _phrases.size() - 1)
+				_currentPhrase = 0xFFFF;
 		} else if (_phrases[i].highlightEnd == data && _phrases[i].endId == from) {
 			debug(2, "Disabling phrase %d", i);
 			for (uint j = 0; j < _phrases[i].wordCount; j++) {
 				paletteUpdate(_phrases[i].wordStart + j, false);
 			}
+			_currentPhrase = 0xFFFF;
 		}
 	}
 

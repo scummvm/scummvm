@@ -325,6 +325,7 @@ public:
 
 	bool contains(Common::Point point);
 	void update();
+	void draw();
 	void handleMouseDown(Common::Point pos);
 	bool togglePlaying(bool playing, bool restart);
 	void stop();
@@ -332,9 +333,9 @@ public:
 
 protected:
 	void paletteUpdate(uint16 word, bool on);
+	void drawWord(uint word, uint yPos);
 
-	bool _running;
-	uint16 _currentWord;
+	uint16 _currentPhrase, _currentWord;
 
 	byte _backgroundColor[4];
 	byte _foregroundColor[4];
