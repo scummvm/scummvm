@@ -711,7 +711,6 @@ Optional Features:
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
   --disable-16bit          don't enable 16bit color support
-  --disable-opengl         don't enable OpenGL (ES)
   --disable-scalers        exclude scalers
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
@@ -2643,7 +2642,6 @@ define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE'
 #
 # Check for OpenGL (ES)
 #
-
 echocheck "OpenGL (ES)"
 if test "$_opengl" = auto ; then
 	_opengl=no
