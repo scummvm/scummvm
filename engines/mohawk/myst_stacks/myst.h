@@ -67,7 +67,6 @@ private:
 	void opcode_212_run();
 	void opcode_212_disable();
 
-	DECLARE_OPCODE(opcode_100);
 	DECLARE_OPCODE(opcode_101);
 	DECLARE_OPCODE(opcode_102);
 	DECLARE_OPCODE(opcode_103);
@@ -92,8 +91,6 @@ private:
 	DECLARE_OPCODE(opcode_183);
 	DECLARE_OPCODE(opcode_184);
 	DECLARE_OPCODE(opcode_185);
-	DECLARE_OPCODE(opcode_196);
-	DECLARE_OPCODE(opcode_197);
 	DECLARE_OPCODE(opcode_198);
 	DECLARE_OPCODE(opcode_199);
 
@@ -119,8 +116,6 @@ private:
 	DECLARE_OPCODE(opcode_220);
 	DECLARE_OPCODE(opcode_221);
 	DECLARE_OPCODE(opcode_222);
-	DECLARE_OPCODE(opcode_298);
-	DECLARE_OPCODE(opcode_299);
 
 	DECLARE_OPCODE(opcode_300);
 	DECLARE_OPCODE(opcode_301);

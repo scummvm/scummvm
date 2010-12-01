@@ -28,8 +28,10 @@ MODULE_OBJS = \
 	myst_stacks/demo.o \
 	myst_stacks/dni.o \
 	myst_stacks/intro.o \
+	myst_stacks/makingof.o \
 	myst_stacks/mechanical.o \
 	myst_stacks/myst.o \
+	myst_stacks/preview.o \
 	myst_stacks/selenitic.o \
 	myst_stacks/slides.o \
 	myst_stacks/stoneship.o

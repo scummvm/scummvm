@@ -44,8 +44,10 @@
 #include "mohawk/myst_stacks/demo.h"
 #include "mohawk/myst_stacks/dni.h"
 #include "mohawk/myst_stacks/intro.h"
+#include "mohawk/myst_stacks/makingof.h"
 #include "mohawk/myst_stacks/mechanical.h"
 #include "mohawk/myst_stacks/myst.h"
+#include "mohawk/myst_stacks/preview.h"
 #include "mohawk/myst_stacks/selenitic.h"
 #include "mohawk/myst_stacks/slides.h"
 #include "mohawk/myst_stacks/stoneship.h"
@@ -398,8 +400,17 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 	case kIntroStack:
 		_scriptParser = new MystScriptParser_Intro(this);
 		break;
+	case kMakingOfStack:
+		_scriptParser = new MystScriptParser_MakingOf(this);
+		break;
 	case kMechanicalStack:
 		_scriptParser = new MystScriptParser_Mechanical(this);
+		break;
+	case kMystStack:
+		_scriptParser = new MystScriptParser_Myst(this);
+		break;
+	case kDemoPreviewStack:
+		_scriptParser = new MystScriptParser_Preview(this);
 		break;
 	case kSeleniticStack:
 		_scriptParser = new MystScriptParser_Selenitic(this);
@@ -411,8 +422,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 		_scriptParser = new MystScriptParser_Stoneship(this);
 		break;
 	default:
-		_scriptParser = new MystScriptParser_Myst(this);
-		break;
+		error("Unknown Myst stack");
 	}
 
 	// If the array is empty, add a new one. Otherwise, delete the first
