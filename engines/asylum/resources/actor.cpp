@@ -632,7 +632,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			}
 
 			if (_index == 11)
-				_resourceId = _graphicResourceIds[getScene()->getGlobalDirection() > 4 ? 8 - getScene()->getGlobalDirection() : getScene()->getGlobalDirection()];
+				_resourceId = _graphicResourceIds[getSharedData()->getGlobalDirection() > 4 ? 8 - getSharedData()->getGlobalDirection() : getSharedData()->getGlobalDirection()];
 
 			// Reload the graphic resource if the resource ID has changed
 			if (resource->getResourceId() != _resourceId)

@@ -76,8 +76,8 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, in
 
 	copyToBackBuffer(((byte *)frame->surface.pixels) - (y * frame->surface.w + x),
 		frame->surface.w,
-		x,
-		y,
+		frame->x + x,
+		frame->y + y,
 		frame->getWidth(),
 		frame->getHeight());
 
@@ -185,11 +185,11 @@ void Screen::clear() const {
 }
 
 void Screen::paletteFade(uint32 red, int32 milliseconds, int32 param) {
-	error("[Screen::palFade] not implemented");
+	warning("[Screen::paletteFade] not implemented");
 }
 
 void Screen::startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param) {
-	error("[Screen::startPaletteFade] not implemented");
+	warning("[Screen::startPaletteFade] not implemented");
 }
 
 void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 flags, int32 transTableNum, int32 priority) {

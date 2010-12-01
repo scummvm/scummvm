@@ -176,8 +176,8 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 		error("[AsylumEngine::startGame] Invalid start game type!");
 
 	case kStartGamePlayIntro:
-		playIntro();
 		_scene->enter(sceneId);
+		playIntro();
 		break;
 
 	case kStartGameLoad:
@@ -226,13 +226,16 @@ void AsylumEngine::playIntro() {
 	if (!_introPlayed) {
 		_cursor->hide();
 
-		if (Config.showIntro) {
+		if (!Config.showIntro) {
+			if (_scene->worldstats()->chapter == kChapter1)
+				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
+		} else {
 			_sound->playMusic(kResourceNone, 0);
 
 			// TODO convert to new event handling
 			_video->playVideo(1);
 
-			if (_scene && _scene->worldstats()->musicCurrentResourceIndex != kMusicStopped)
+			if (_scene->worldstats()->musicCurrentResourceIndex != kMusicStopped)
 				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
 
 			_screen->clear();

@@ -145,8 +145,6 @@ public:
 	int32 calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act);
 
 
-	ActorDirection getGlobalDirection() { return _globalDirection; }
-
 	bool updateSceneCoordinates(int32 targetX, int32 targetY, int32 val, bool checkSceneCoords = false, int32 *param = NULL);
 
 	int processActor(int *x, int *param);
@@ -203,18 +201,14 @@ private:
 
 	ResourcePackId _packId;
 	int32 _playerActorIdx;
-	bool  _titleLoaded;
 	bool  _walking;
-	bool  _leftClick;
-	bool  _rightButton;
-	bool  _isActive;
+
+
 	ActorDirection _globalDirection;
 
 	ActionList   *_actions;
-	//BlowUpPuzzle *_blowUp;
 	Special      *_special;
 	Speech       *_speech;
-	SceneTitle   *_title;
 	Polygons     *_polygons;
 	WorldStats   *_ws;
 
@@ -229,10 +223,10 @@ private:
 	// Message handling
 	void activate();
 	bool init();
-	void update();
-	bool music();
+	bool update();
 	bool key(const AsylumEvent &evt);
-	bool click(const AsylumEvent &evt);
+	bool clickDown(const AsylumEvent &evt);
+	bool clickUp(const AsylumEvent &evt);
 
 	void updateScreen();
 
@@ -295,6 +289,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Scene drawing
 	//////////////////////////////////////////////////////////////////////////
+	void preload(); // Draw the loading screen
 	int drawScene();
 
 	void buildUpdateList();

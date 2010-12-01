@@ -241,6 +241,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	numPolygons    = stream->readUint32LE();
 
 	// FIXME: Read missing data (64 int32)
+	warning("[WorldStats::load] Missing some data reading!");
 	for (int i = 0; i < 64; i++)
 		stream->readUint32LE();
 
@@ -249,6 +250,8 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	for (uint32 a = 0; a < numActions; a++) {
 		ActionArea *action = new ActionArea();
 		action->load(stream);
+
+		actions.push_back(action);
 	}
 
 	stream->seek((ACTIONS_MAX_COUNT - numActions) * ACTIONS_SIZE, SEEK_CUR);

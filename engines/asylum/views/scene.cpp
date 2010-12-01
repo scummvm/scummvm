@@ -58,17 +58,19 @@ int g_debugObjects;
 int g_debugScrolling;
 
 Scene::Scene(AsylumEngine *engine): _vm(engine),
-	_actions(NULL), _special(NULL), _speech(NULL), _title(NULL), _polygons(NULL), _ws(NULL) {
+	_actions(NULL), _special(NULL), _speech(NULL), _polygons(NULL), _ws(NULL) {
 
 	// Initialize data
 	_packId = kResourcePackInvalid;
 	_playerActorIdx = 0;
-	_titleLoaded = false;
 	_walking = false;
-	_leftClick = false;
-	_rightButton = false;
-	_isActive = false;
-	_globalDirection = kDirectionN;
+
+	g_debugPolygons  = 0;
+	g_debugObjects  = 0;
+	g_debugScrolling = 0;
+
+	_special = new Special(_vm);
+	_speech = new Speech(_vm);
 }
 
 Scene::~Scene() {
@@ -78,7 +80,6 @@ Scene::~Scene() {
 	delete _actions;
 	delete _special;
 	delete _speech;
-	delete _title;
 	delete _polygons;
 	delete _ws;
 
@@ -169,6 +170,9 @@ void Scene::enter(ResourcePackId packId) {
 	// Setup font
 	getText()->loadFont(_ws->font1);
 
+	// Preload graphics (we are just showing the loading screen
+	preload();
+
 	// Play scene intro dialog
 	playIntroSpeech();
 
@@ -229,36 +233,13 @@ void Scene::load(ResourcePackId packId) {
 	fd->close();
 	delete fd;
 
-	_speech = new Speech(_vm);
-
-	// TODO
-	// This will have to be re-initialized elsewhere due to
-	// the title screen overwriting the font
-	_vm->text()->loadFont(_ws->font1);
-
-	_leftClick     = false;
-	_rightButton   = false;
-	_isActive      = false;
-	//_skipDrawScene = false;
-
-	g_debugPolygons  = 0;
-	g_debugObjects  = 0;
-	g_debugScrolling = 0;
-
-	//_globalX = _globalY = 0;
-
 	// TODO figure out what field_120 is used for
 	_ws->field_120 = -1;
 
 	for (uint32 a = 0; a < _ws->actors.size(); a++)
 		_ws->actors[a]->setLastScreenUpdate(_vm->getTick());
 
-	// TODO: init action list
-
-	_title = new SceneTitle(_vm);
-	_titleLoaded = false;
-
-	_special = new Special(_vm);
+	getCursor()->show();
 }
 
 Actor* Scene::getActor(ActorIndex index) {
@@ -302,106 +283,124 @@ Actor* Scene::getActor(ActorIndex index) {
 //		*targetY = bg->surface.h - 480;
 //}
 
-
+//////////////////////////////////////////////////////////////////////////
+// Event handling
+//////////////////////////////////////////////////////////////////////////
 bool Scene::handleEvent(const AsylumEvent &evt) {
-	// TODO replace previous handleEvent method
-
-	if (!_ws)
-		error("[Scene::handleEvent] WorldStats not initialized properly!");
-
-	if (!_title)
-		error("[Scene::handleEvent] Scene title not initialized properly!");
-
-	switch (evt.type) {
-
-	case Common::EVENT_MOUSEMOVE:
-		//if (getCursor())
-			//getCursor()->move(_ev->mouse.x, _ev->mouse.y);
-		break;
-
-	case Common::EVENT_LBUTTONUP:
-		//if (_actions->doesAllowInput())
-			_leftClick = true;
-		break;
-
-	case Common::EVENT_RBUTTONUP:
-		//if (_actions->doesAllowInput()) {
-			// TODO This isn't always going to be the magnifying glass
-			// Should check the current pointer region to identify the type
-			// of cursor to use
-			getCursor()->set(_ws->curMagnifyingGlass);
-			_rightButton    = false;
-		//}
-		break;
-
-	case Common::EVENT_RBUTTONDOWN:
-		//if (_actions->doesAllowInput())
-			_rightButton = true;
-		break;
-
+	switch ((uint32)evt.type) {
 	default:
 		break;
 
+	case EVENT_ASYLUM_INIT:
+		return init();
+
+	case EVENT_ASYLUM_ACTIVATE:
+		activate();
+		break;
+
+	case EVENT_ASYLUM_UPDATE:
+		return update();
+
+	case Common::EVENT_KEYDOWN:
+		return key(evt);
+
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN:
+		return clickDown(evt);
+
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONUP:
+		return clickUp(evt);
 	}
 
-	// FIXME just updating because a left click event
-	// is caught causes animation speeds to change. This needs
-	// to be addressed
-	/*if (!doUpdate)
-		return;*/
+	return false;
+}
 
-	if (Config.showSceneLoading) {
-		if (!_titleLoaded) {
-			_title->update(_vm->getTick());
-			if (_title->loadingComplete()) {
-				_titleLoaded = true;
-                activate();
-			}
-			return true;
-		}
-	}
+	//if (_speech->getSoundResourceId() != 0) {
+	//	if (_vm->sound()->isPlaying(_speech->getSoundResourceId())) {
+	//		_speech->prepareSpeech();
+	//	} else {
+	//		_speech->resetResourceIds();
+	//		_vm->clearGameFlag(kGameFlag219);
+	//	}
+	//}
 
-	if (updateScene())
+void Scene::activate() {
+	Actor *player = getActor();
+
+	if (player->getStatus() == kActorStatus1)
+		player->updateStatus(kActorStatusEnabled);
+
+	if (player->getStatus() == kActorStatus12)
+		player->updateStatus(kActorStatus14);
+}
+
+bool Scene::init() {
+	if (getSharedData()->getFlag((kFlag3))) { // this flag is set during an encounter
+		getSharedData()->setFlag(kFlag3, false);
+
+		// The original test for flag 1001 but doesn't use the result
 		return true;
-
-	// TODO: check game quality
-	drawScene();
-
-	//TODO: other process stuffs from sub 0040AE30
-
-
-	if (_speech->getSoundResourceId() != 0) {
-		if (_vm->sound()->isPlaying(_speech->getSoundResourceId())) {
-			_speech->prepareSpeech();
-		} else {
-			_speech->resetResourceIds();
-			_vm->clearGameFlag(kGameFlag219);
-		}
 	}
+
+	getCursor()->set(_ws->curScrollUp);
+	_ws->coordinates[0] = -1;
+	getScreen()->clear();
+	getText()->loadFont(_ws->font1);
+
+	ResourceId paletteResource = _ws->actions[getActor()->getActionIndex3()]->paletteResourceId;
+	if (!paletteResource)
+		paletteResource = _ws->currentPaletteId;
+
+	getScreen()->setPalette(paletteResource);
+	getScreen()->setGammaLevel(paletteResource, 0);
+	makeGreyPalette();
+	getScreen()->setupTransTables(3, _ws->cellShadeMask1, _ws->cellShadeMask2, _ws->cellShadeMask3);
+	getScreen()->selectTransTable(1);
+
+	getCursor()->show();
 
 	return true;
 }
 
-void Scene::update() {
+bool Scene::update() {
+	if (getEncounter()->getFlag1()) {
+		getEncounter()->setFlag1(false);
 
+		// Enable player
+		getActor()->updateStatus(kActorStatusEnabled);
+	}
+
+	error("[Scene::update] Not implemented!");
+
+	return true;
 }
 
-void Scene::activate() {
-	//if (!_ws)
-	//	error("[Scene::activate] WorldStats not initialized properly!");
-
-	//if (!_bgResource)
-	//	error("[Scene::activate] Scene resources not initialized properly!");
-
-	////////////////////////////////////////////////////////////////////////////
-	//// FIXME: get rid of this?
-
-	//_isActive = true;
-	//getScreen()->setPalette(_ws->currentPaletteId);
-	// FIXME this corrupts memory (the copyToBackBuffer function is broken)
-	//getScreen()->draw(_ws->backgroundImage, 0, _ws->xLeft, _ws->yTop, 0);
+bool Scene::key(const AsylumEvent &evt) {
+	error("[Scene::key] Not implemented!");
 }
 
+bool Scene::clickDown(const AsylumEvent &evt) {
+	_vm->lastScreenUpdate = 0;
+
+	if (getSharedData()->getFlag(kFlag2)) {
+		error("[Scene::clickDown] Not implemented!");
+
+		return true;
+	}
+
+	error("[Scene::clickDown] Not implemented!");
+}
+
+bool Scene::clickUp(const AsylumEvent &evt) {
+	_vm->lastScreenUpdate = _vm->screenUpdateCount;
+
+	error("[Scene::clickRightUp] Not implemented!");
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Scene update
+//////////////////////////////////////////////////////////////////////////
 bool Scene::updateScene() {
 #ifdef DEBUG_SCENE_TIMES
 #define MESURE_TICKS(func) { \
@@ -1122,6 +1121,30 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 //////////////////////////////////////////////////////////////////////////
 // Scene drawing
 //////////////////////////////////////////////////////////////////////////
+void Scene::preload() {
+	if (!Config.showSceneLoading)
+		return;
+
+	SceneTitle *title = new SceneTitle(_vm);
+	title->load();
+
+	do {
+		title->update(_vm->getTick());
+
+		getScreen()->copyBackBufferToScreen();
+		g_system->updateScreen();
+
+		g_system->delayMillis(10);
+
+		// Poll events (this ensure we don't freeze the screen)
+		Common::Event ev;
+		_vm->getEventManager()->pollEvent(ev);
+
+	} while (!title->loadingComplete());
+
+	delete title;
+}
+
 int Scene::drawScene() {
 	if (!_ws)
 		error("[Scene::drawScene] WorldStats not initialized properly!");
@@ -1496,11 +1519,13 @@ int Scene::processActor(int *x, int *param) {
 }
 
 void  Scene::updatePalette(int32 param) {
+	// TODO write small helper macro to get the resource id and move rest to screen class
 	error("[Scene::updatePalette] not implemented!");
 }
 
 void Scene::makeGreyPalette() {
-	error("[Scene::makeGreyPalette] not implemented!");
+	// TODO write small helper macro to get the resource id and move rest to screen class
+	warning("[Scene::makeGreyPalette] not implemented!");
 }
 
 void Scene::resetActor0() {

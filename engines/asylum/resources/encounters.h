@@ -45,6 +45,10 @@ public:
 
 	bool handleEvent(const AsylumEvent &evt);
 
+	void setFlag1(bool state) { _flag1 = state; }
+	bool getFlag1() { return _flag1; }
+	void setFlag3(bool state) { _flag3 = state; }
+	bool getFlag3() { return _flag3; }
 	void setFlag5(bool state) { _flag5 = state; }
 	bool getFlag6() { return _flag6; }
 

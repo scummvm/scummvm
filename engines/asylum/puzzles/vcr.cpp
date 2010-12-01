@@ -58,7 +58,6 @@ BlowUpPuzzleVCR::~BlowUpPuzzleVCR() {
 
 void BlowUpPuzzleVCR::open() {
 	_active = true;
-	//getScene()->deactivate();
 
 	getSound()->stopAll();
 
@@ -79,7 +78,7 @@ void BlowUpPuzzleVCR::open() {
 
 void BlowUpPuzzleVCR::close() {
 	_active = false;
-	//getScene()->activate();
+	// TODO Switch back to scene event handler
 }
 
 bool BlowUpPuzzleVCR::handleEvent(const AsylumEvent &ev) {
