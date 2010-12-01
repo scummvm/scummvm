@@ -130,6 +130,7 @@ private:
 	void mazeRunnerUpdateCompass();
 	void mazeRunnerPlaySoundHelp();
 	void mazeRunnerPlayVideo(uint16 video, uint16 pos);
+	void mazeRunnerBacktrack(uint16 &oldPosition);
 };
 
 }

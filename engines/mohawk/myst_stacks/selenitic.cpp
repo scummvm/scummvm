@@ -302,12 +302,77 @@ void MystScriptParser_Selenitic::o_mazeRunnerMove(uint16 op, uint16 var, uint16 
 	if (videoToNext) {
 		_mazeRunnerCompass->drawConditionalDataToScreen(8);
 
+		if (move == 3)
+			mazeRunnerBacktrack(oldPosition);
+
 		mazeRunnerPlayVideo(videoToNext, oldPosition);
 		mazeRunnerUpdateCompass();
 
 		if (move == 0 || move == 3)
 			mazeRunnerPlaySoundHelp();
 	}
+}
+
+void MystScriptParser_Selenitic::mazeRunnerBacktrack(uint16 &oldPosition) {
+	if (oldPosition == 289)
+		_mazeRunnerDirection = 3;
+
+	uint16 targetDirection = _mazeRunnerPosition % 8;
+
+	if (_mazeRunnerPosition == 289) {
+		targetDirection = 3;
+	} else if (_mazeRunnerPosition == 288) {
+		targetDirection = 0;
+	} else if (_mazeRunnerPosition == 252) {
+		targetDirection = 6;
+	} else if (_mazeRunnerPosition == 212) {
+		targetDirection = 2;
+	} else if (_mazeRunnerPosition == 171) {
+		targetDirection = 7;
+	} else if (_mazeRunnerPosition == 150) {
+		targetDirection = 4;
+	} else if (_mazeRunnerPosition == 116) {
+		targetDirection = 2;
+	}
+
+	uint16 moves = 0;
+	if (targetDirection >= _mazeRunnerDirection) {
+		moves = targetDirection - _mazeRunnerDirection;
+	} else {
+		moves = targetDirection + 8 - _mazeRunnerDirection;
+	}
+
+	bool goLeft = false;
+	if (moves > 4)
+		goLeft = true;
+
+	while (targetDirection != _mazeRunnerDirection) {
+		_mazeRunnerCompass->drawConditionalDataToScreen(8);
+		if (goLeft) {
+			_mazeRunnerLeftButton->drawConditionalDataToScreen(2);
+
+			uint16 video = _mazeRunnerVideos[oldPosition][1];
+			oldPosition = _mazeRunnerMap[oldPosition][1];
+			_mazeRunnerDirection = (_mazeRunnerDirection + 7) % 8;
+
+			mazeRunnerPlayVideo(video, oldPosition);
+
+			_mazeRunnerLeftButton->drawConditionalDataToScreen(1);
+		} else {
+			_mazeRunnerRightButton->drawConditionalDataToScreen(2);
+
+			uint16 video = _mazeRunnerVideos[oldPosition][2];
+			oldPosition = _mazeRunnerMap[oldPosition][2];
+			_mazeRunnerDirection = (_mazeRunnerDirection + 1) % 8;
+
+			mazeRunnerPlayVideo(video, oldPosition);
+
+			_mazeRunnerRightButton->drawConditionalDataToScreen(1);
+		}
+		_mazeRunnerCompass->drawConditionalDataToScreen(_mazeRunnerDirection);
+		_vm->_system->delayMillis(150);
+	}
+
 }
 
 void MystScriptParser_Selenitic::mazeRunnerPlayVideo(uint16 video, uint16 pos) {
