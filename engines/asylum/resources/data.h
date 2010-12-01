@@ -38,6 +38,7 @@ namespace Asylum {
 enum GlobalFlag {
 	kFlag1,
 	kFlag2,
+	kFlag3,
 	kFlagRedraw,
 	kFlagSkipDrawScene,
 	kFlagSceneRectChanged,
@@ -137,6 +138,7 @@ public:
 		memset(&_movies[49], 0, sizeof(_movies));
 		_actorUpdateStatus15Check = false;
 		_flag2 = false;
+		_globalDirection = kDirectionN;
 
 		// Screen updates
 		_flagRedraw = false;
@@ -151,6 +153,8 @@ public:
 	void setActorEnableForStatus7(bool state) { _actorEnableForStatus7 = state; }
 
 	bool getActorUpdateEnabledCheck() { return _actorUpdateEnabledCheck; }
+
+	ActorDirection getGlobalDirection() { return _globalDirection; }
 
 	void setActorUpdateFlag(int32 val) { _data1[40] = 2; }
 
@@ -247,6 +251,9 @@ public:
 		case kFlag2:
 			return _flag2;
 
+		case kFlag3:
+			return _flag3;
+
 		case kFlagRedraw:
 			return _flagRedraw;
 			break;
@@ -273,6 +280,10 @@ public:
 
 		case kFlag2:
 			_flag2 = state;
+			break;
+
+		case kFlag3:
+			_flag3 = state;
 			break;
 
 		case kFlagRedraw:
@@ -348,7 +359,10 @@ private:
 	int32           _movies[49];
 	bool            _actorUpdateStatus15Check;
 	// Skip opening flag (not used)
+	bool            _flag3;
 	bool            _flag2;
+
+	ActorDirection  _globalDirection;
 
 
 	// Screen updates

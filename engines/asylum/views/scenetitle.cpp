@@ -38,14 +38,11 @@
 
 namespace Asylum {
 
-SceneTitle::SceneTitle(AsylumEngine *engine): _vm(engine), _bg(NULL), _progress(NULL),
-	_start(0), _ticks(0), _done(false), _spinnerFrame(0), _spinnerProgress(0), _showMouseState(false) {
+SceneTitle::SceneTitle(AsylumEngine *engine): _vm(engine),
+	_start(0), _ticks(0), _done(false), _spinnerFrameIndex(0), _spinnerProgress(0), _showMouseState(false) {
 }
 
 SceneTitle::~SceneTitle() {
-	delete _bg;
-	delete _progress;
-
 	// Zero passed pointers
 	_vm = NULL;
 }
@@ -53,22 +50,29 @@ SceneTitle::~SceneTitle() {
 void SceneTitle::load() {
 	_start = _vm->getTick();
 
-	_bg = new GraphicResource(_vm, getWorld()->sceneTitleGraphicResourceId);
+	getScreen()->clear();
 	getScreen()->setPalette(getWorld()->sceneTitlePaletteResourceId);
-
-	_progress = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackSound, 17));
-	_spinnerProgress = 0;
-	_spinnerFrame = 0;
+	getScreen()->paletteFade(0, 1, 1);
+	getScreen()->setGammaLevel(getWorld()->sceneTitlePaletteResourceId, 0);
 
 	getText()->loadFont(MAKE_RESOURCE(kResourcePackSound, 18));
 
+	_spinnerProgress = 0;
+	_spinnerFrameIndex = 0;
+	_spinnerFrameCount = GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackSound, 17));
+
 	_done = false;
-	_showMouseState = g_system->showMouse(false);
+
+	update(_start);
 }
 
 void SceneTitle::update(int32 tick) {
-	if (!_progress || !_bg)
-		error("[SceneTitle::update] SceneTitle resources not initialized properly!");
+	if (_done)
+		return;
+
+	getScreen()->draw(getWorld()->sceneTitleGraphicResourceId, 0, 0, 0, 0, false);
+	getScreen()->draw(MAKE_RESOURCE(kResourcePackSound, 17), _spinnerFrameIndex, (_spinnerProgress/590 * 580) - 290 , 0, 0, false);
+	getText()->drawCentered(320, 30, 24, MAKE_RESOURCE(kResourcePackText, 1811 + getWorld()->chapter));
 
 	// This is not from the original. It's just some arbitrary math to throttle the progress indicator.
 	//
@@ -79,29 +83,15 @@ void SceneTitle::update(int32 tick) {
 	if ((tick - _start) % 500 > 100)
 		_spinnerProgress += 20;
 
-	getScreen()->draw(getWorld()->sceneTitleGraphicResourceId, 0, 0, 0, 0);
+	_spinnerFrameIndex++;
 
-	ResourceId resourceId = MAKE_RESOURCE(getScene()->getPackId(), 1797);
-	int32 resWidth = getText()->getWidth(resourceId);
-	getText()->drawCentered(320 - resWidth * 24, 30, resWidth, resourceId);
-
-	GraphicFrame *frame = _progress->getFrame(_spinnerFrame);
-
-	getScreen()->copyToBackBufferWithTransparency(((byte*)frame->surface.pixels),
-	                                              frame->surface.w,
-	                                              frame->x + (_spinnerProgress - 290),
-	                                              frame->y,
-	                                              frame->surface.w,
-	                                              frame->surface.h);
-
-	_spinnerFrame++;
-
-	if (_spinnerFrame > _progress->count() - 1)
-		_spinnerFrame = 0;
+	if (_spinnerFrameIndex > _spinnerFrameCount - 1)
+		_spinnerFrameIndex = 0;
 
     if (_spinnerProgress > 590) {
 		_done = true;
-        g_system->showMouse(_showMouseState);
+
+		getScreen()->paletteFade(0, 5, 80);
     }
 }
 
