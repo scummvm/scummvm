@@ -54,14 +54,14 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_musicResourceId = kResourceNone;
 	_gameStarted = false;
 	_currentIcon = kMenuNone;
-	_dword_4464B8 = -1;
+	_selectedShortcutIndex = -1;
 	_dword_455C74 = 0;
 	_dword_455C78 = false;
 	_dword_455C80 = false;
 	_dword_455D4C = false;
 	_dword_455D5C = false;
 	_dword_455DD8 = false;
-	_dword_455DE0 = false;
+	_testSoundsPlaying = false;
 	_dword_456288 = 0;
 	_dword_4562C0 = 0;
 	_textScroll = 0;
@@ -187,6 +187,78 @@ MainMenu::MenuScreen MainMenu::findMousePosition() {
 	return kMenuNone;
 }
 
+void MainMenu::playTestSounds() {
+	_testSoundsPlaying = true;
+	getSound()->playSound(MAKE_RESOURCE(kResourcePackShared, 42), true, Config.ambientVolume);
+	getSound()->playSound(MAKE_RESOURCE(kResourcePackShared, 41), true, Config.sfxVolume);
+	getSound()->playSound(MAKE_RESOURCE(kResourcePackShared, 43), true, Config.voiceVolume);
+}
+
+void MainMenu::stopTestSounds() {
+	_testSoundsPlaying = false;
+	getSound()->stop(MAKE_RESOURCE(kResourcePackShared, 42));
+	getSound()->stop(MAKE_RESOURCE(kResourcePackShared, 41));
+	getSound()->stop(MAKE_RESOURCE(kResourcePackShared, 43));
+}
+
+void MainMenu::adjustMasterVolume(int32 delta) {
+	int32 *volume = NULL;
+	int32 volumeIndex = 1;
+
+	do {
+		switch (volumeIndex) {
+		default:
+			break;
+
+		case 1:
+			volume = &Config.musicVolume;
+			break;
+
+		case 2:
+			volume = &Config.ambientVolume;
+			break;
+
+		case 3:
+			volume = &Config.sfxVolume;
+			break;
+
+		case 4:
+			volume = &Config.voiceVolume;
+			break;
+
+		case 5:
+			volume = &Config.movieVolume;
+			break;
+		}
+
+		// Adjust and normalize volume
+		if (delta >= 0) {
+			if (*volume < 0) {
+				if (*volume == -9999)
+					*volume = -5000;
+
+				*volume += 250;
+
+				if (*volume > 0)
+					*volume = 0;
+			}
+		} else {
+			if (*volume > -5000) {
+				*volume -= 250;
+
+				if (*volume <= -5000)
+					*volume = -9999;
+			}
+		}
+
+		++volumeIndex;
+	} while (volumeIndex < 6);
+}
+
+void MainMenu::adjustTestVolume() {
+
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handler
 //////////////////////////////////////////////////////////////////////////
@@ -231,7 +303,7 @@ bool MainMenu::init() {
 			_initGame = true;
 
 			// The original also
-			//  - load the config (this is done when constructing the config object).
+			//  - load the config (this is done when constructing the config singleton).
 			//  - initialize game structures (this is done in classes constructors)
 
 			getSaveLoad()->loadViewedMovies();
@@ -553,7 +625,7 @@ bool MainMenu::click(const AsylumEvent &evt) {
 		break;
 
 	case kMenuKeyboardConfig:
-		_dword_4464B8 = -1;
+		_selectedShortcutIndex = -1;
 		break;
 
 	case kMenuReturnToGame:
@@ -645,16 +717,16 @@ void MainMenu::updateTextOptions() {
 
 	getText()->draw(320, 150, MAKE_RESOURCE(kResourcePackText, 1412));
 
-	switchFont(cursor.x < 350 || cursor.x > (350 + getText()->getWidth(Config.showMovieSubtitles ? MAKE_RESOURCE(kResourcePackText, 1414) : MAKE_RESOURCE(kResourcePackText, 1415))) || cursor.y < 150 || cursor.y > 174);
+	switchFont(cursor.x < 350 || cursor.x > (350 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, Config.showMovieSubtitles ? 1414 : 1415))) || cursor.y < 150 || cursor.y > 174);
 	getText()->setPosition(350, 150);
-	getText()->draw(Config.showMovieSubtitles ? MAKE_RESOURCE(kResourcePackText, 1414) : MAKE_RESOURCE(kResourcePackText, 1415));
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, Config.showMovieSubtitles ? 1414 : 1415));
 
 	getText()->loadFont(kFontYellow);
 	getText()->draw(320, 179, MAKE_RESOURCE(kResourcePackText, 1413));
 
-	switchFont(cursor.x < 350 || cursor.x > (350 + getText()->getWidth(Config.showEncounterSubtitles ? MAKE_RESOURCE(kResourcePackText, 1414) : MAKE_RESOURCE(kResourcePackText, 1415))) || cursor.y < 179 || cursor.y > 203);
+	switchFont(cursor.x < 350 || cursor.x > (350 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, Config.showEncounterSubtitles ? 1414 : 1415))) || cursor.y < 179 || cursor.y > 203);
 	getText()->setPosition(350, 179);
-	getText()->draw(Config.showEncounterSubtitles ? MAKE_RESOURCE(kResourcePackText, 1414) : MAKE_RESOURCE(kResourcePackText, 1415));
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, Config.showEncounterSubtitles ? 1414 : 1415));
 
 	switchFont(cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1416))) || cursor.y < 340 || cursor.y > (340 + 24));
 	getText()->setPosition(300, 340);
@@ -742,7 +814,7 @@ void MainMenu::updateAudioOptions() {
 	getText()->setPosition(220, 360);
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1430));
 
-	switchFont((cursor.x < 360 || cursor.x > (360 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1431))) || cursor.y < 360 || cursor.y > (360 + 24)) && !_dword_455DE0);
+	switchFont((cursor.x < 360 || cursor.x > (360 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1431))) || cursor.y < 360 || cursor.y > (360 + 24)) && !_testSoundsPlaying);
 	getText()->setPosition(360, 360);
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1431));
 }
@@ -863,7 +935,7 @@ void MainMenu::updateKeyboardConfig() {
 
 		getText()->setPosition(350, 29 * keyIndex + 150);
 
-		if (keyIndex == _dword_4464B8) {
+		if (keyIndex == _selectedShortcutIndex) {
 			getText()->loadFont(kFontBlue);
 
 			if (_dword_4562C0 < 6)
@@ -1013,13 +1085,140 @@ void MainMenu::clickQuitGame() {
 void MainMenu::clickTextOptions() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::clickTextOptions] Not implemented!");
+	if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, Config.showMovieSubtitles ? 1414 : 1415))) || cursor.y < 150 || cursor.y > 174) {
+		if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, Config.showEncounterSubtitles ? 1414 : 1415))) || cursor.y < 179 || cursor.y > 203) {
+			if (cursor.x >= 300 && cursor.x <= (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1416))) && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+				Config.write();
+				leave();
+			}
+		} else {
+			Config.showEncounterSubtitles = !Config.showEncounterSubtitles;
+		}
+	} else {
+		Config.showMovieSubtitles = !Config.showMovieSubtitles;
+	}
 }
 
 void MainMenu::clickAudioOptions() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::clickAudioOptions] Not implemented!");
+	// Size of - and +
+	int32 sizeMinus	= getText()->getWidth("-");
+	int32 sizePlus  = getText()->getWidth("+");
+
+	if (cursor.x >= 220 && cursor.x <= (220 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1430))) && cursor.y >= 360 && cursor.y <= (360 + 24)) {
+		stopTestSounds();
+		Config.write();
+		_vm->syncSoundSettings();
+		leave();
+		return;
+	}
+
+	if (cursor.x < 360 || cursor.x > (360 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1431))) || cursor.y < 360 || cursor.y > (360 + 24)) {
+		int32 volumeIndex = 0;
+		int32 *volume = NULL;
+		bool found = false;
+
+		for (;;) {
+			if (found)
+				return;
+
+			switch (volumeIndex) {
+			default:
+				break;
+
+			case 0:
+				if (cursor.x >= 350 && cursor.x <= (350 + sizeMinus) && cursor.y >= 150 && cursor.y <= 174) {
+					adjustMasterVolume(-1);
+					adjustTestVolume();
+					found = true;
+					break;
+				}
+
+				if (cursor.x >= (360 + sizeMinus) && cursor.x <= (360 + sizeMinus + sizePlus) && cursor.y >= 150 && cursor.y <= 174) {
+					adjustMasterVolume(1);
+					adjustTestVolume();
+					found = true;
+					break;
+				}
+				break;
+
+			case 1:
+				volume = &Config.musicVolume;
+				break;
+
+			case 2:
+				volume = &Config.ambientVolume;
+				break;
+
+			case 3:
+				volume = &Config.sfxVolume;
+				break;
+
+			case 4:
+				volume = &Config.voiceVolume;
+				break;
+
+			case 5:
+				volume = &Config.movieVolume;
+				break;
+			}
+
+			if (!found) {
+				if (cursor.x < 350 || cursor.x > (350 + sizeMinus) || cursor.y < (29 * volumeIndex + 150) || cursor.y > (29 * (volumeIndex + 6))) {
+					if (cursor.x >= (sizeMinus + 360)) {
+						if (cursor.x <= (sizeMinus + sizePlus + 360)) {
+
+							if (cursor.y >= (29 * volumeIndex + 150) && cursor.y <= (29 * (volumeIndex + 6))) {
+								// Normalize volume
+								if (*volume < 0) {
+									if (*volume == -9999)
+										*volume = -5000;
+
+									*volume += 250;
+
+									if (*volume > 0)
+										*volume = 0;
+
+									adjustTestVolume();
+								}
+								found = true;
+							}
+						}
+					}
+				} else {
+					if (*volume > -5000) {
+						*volume -= 250;
+
+						if (*volume <= -5000)
+							*volume = -9999;
+
+						adjustTestVolume();
+					}
+					found = true;
+				}
+			}
+
+			++volumeIndex;
+
+			if (volumeIndex >= 6) {
+				if (!found) {
+					if (cursor.x >= 350 && cursor.x <= (350 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, Config.reverseStereo ? 1428 : 1429)))
+					 && cursor.y >= (29 * volumeIndex + 150) && cursor.y <= (29 * (volumeIndex + 6))) {
+						Config.reverseStereo = !Config.reverseStereo;
+						_vm->updateReverseStereo();
+					}
+				}
+
+				return;
+			}
+		}
+	}
+
+	if (_testSoundsPlaying)
+		stopTestSounds();
+	else
+		playTestSounds();
 }
 
 void MainMenu::clickSettings() {
@@ -1028,76 +1227,7 @@ void MainMenu::clickSettings() {
 	error("[MainMenu::clickSettings] Not implemented!");
 }
 
-void MainMenu::clickKeyboardConfig() {
-	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::clickKeyboardConfig] Not implemented!");
-}
-
-void MainMenu::clickReturnToGame() {
-	if (_gameStarted) {
-		if (_musicResourceId != MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicCurrentResourceIndex))
-			getSound()->playMusic(kResourceNone, 0);
-
-		getScreen()->clear();
-
-		_vm->switchEventHandler(_vm->scene());
-	} else {
-		Common::Point cursor = getCursor()->position();
-
-		if (cursor.x >= 285
-		 && cursor.x <= (285 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1811)))
-		 && cursor.y >= 273
-		 && cursor.y <= (273 + 24))
-			leave();
-	}
-}
-
-void MainMenu::clickShowCredits() {
-	closeCredits();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Key handlers
-//////////////////////////////////////////////////////////////////////////
-void MainMenu::keySaveGame() {
-	error("[MainMenu::keySaveGame] Not implemented!");
-}
-
-void MainMenu::keyKeyboardConfig() {
-	error("[MainMenu::keyKeyboardConfig] Not implemented!");
-}
-
-void MainMenu::keyShowCredits() {
-	closeCredits();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// TODO REMOVE
-//////////////////////////////////////////////////////////////////////////
-
-//void MainMenu::updateSubMenuCinematics() {
-//	int32 currentCD = 1;	// FIXME: dummy value
-//	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1352), currentCD);
-//	getText()->setPosition(30, 340);
-//	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1353));	// Prev Page
-//
-//	//if (cursor.x >= 280 && cursor.x <= 400 && cursor.y >= 340 && cursor.y <= 360) {
-//	//	getText()->loadFont(kFontBlue);
-//	//	if (_leftClick)
-//	//		exitSubMenu();
-//	//} else {
-//	//	getText()->loadFont(kFontYellow);
-//	//}
-//
-//	getText()->setPosition(280, 340);
-//	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1355));	// Main Menu
-//
-//	getText()->loadFont(kFontYellow);
-//
-//	getText()->setPosition(500, 340);
-//	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1354));	// Next Page
-//}
 //
 //void MainMenu::updateSubMenuSettings() {
 //	// action
@@ -1140,6 +1270,93 @@ void MainMenu::keyShowCredits() {
 //	//}
 //}
 
+void MainMenu::clickKeyboardConfig() {
+	Common::Point cursor = getCursor()->position();
+
+	if (cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1446))) || cursor.y < 340 || cursor.y > (340 + 24)) {
+		int32 keyIndex = 0;
+		char key = 0;
+
+		do {
+			switch (keyIndex) {
+			default:
+				break;
+
+			case 0:
+				key = Config.keyShowVersion;
+				break;
+
+			case 1:
+				key = Config.keyQuickLoad;
+				break;
+
+			case 2:
+				key = Config.keyQuickSave;
+				break;
+
+			case 3:
+				key = Config.keySwitchToSara;
+				break;
+
+			case 4:
+				key = Config.keySwitchToGrimwall;
+				break;
+
+			case 5:
+				key = Config.keySwitchToOlmec;
+				break;
+			}
+
+			if (cursor.x >= 350 && cursor.x <= (350 + getText()->getWidth(key)) && cursor.y >= (29 * keyIndex + 150) && cursor.y <= (29 * (keyIndex + 6))) {
+				_selectedShortcutIndex = keyIndex;
+				getCursor()->hide();
+			}
+
+			++keyIndex;
+		} while (keyIndex < 6);
+	} else {
+		Config.write();
+		leave();
+	}
+}
+
+void MainMenu::clickReturnToGame() {
+	if (_gameStarted) {
+		if (_musicResourceId != MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicCurrentResourceIndex))
+			getSound()->playMusic(kResourceNone, 0);
+
+		getScreen()->clear();
+
+		_vm->switchEventHandler(_vm->scene());
+	} else {
+		Common::Point cursor = getCursor()->position();
+
+		if (cursor.x >= 285
+		 && cursor.x <= (285 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1811)))
+		 && cursor.y >= 273
+		 && cursor.y <= (273 + 24))
+			leave();
+	}
+}
+
+void MainMenu::clickShowCredits() {
+	closeCredits();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Key handlers
+//////////////////////////////////////////////////////////////////////////
+void MainMenu::keySaveGame() {
+	error("[MainMenu::keySaveGame] Not implemented!");
+}
+
+void MainMenu::keyKeyboardConfig() {
+	error("[MainMenu::keyKeyboardConfig] Not implemented!");
+}
+
+void MainMenu::keyShowCredits() {
+	closeCredits();
+}
 
 } // end of namespace Asylum
 

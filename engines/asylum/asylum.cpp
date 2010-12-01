@@ -27,6 +27,7 @@
 
 #include "asylum/resources/actionlist.h"
 #include "asylum/resources/encounters.h"
+#include "asylum/resources/worldstats.h"
 
 #include "asylum/puzzles/vcr.h"
 
@@ -131,6 +132,9 @@ Common::Error AsylumEngine::run() {
 
     // Load config
     Config.read();
+
+	// Setup mixer
+	syncSoundSettings();
 
 	// Send init event to our default event handler
 	AsylumEvent initEvt(EVENT_ASYLUM_INIT);
@@ -346,6 +350,11 @@ void AsylumEngine::initPuzzles() {
 	_puzzles[16] = NULL;
 
 	warning("[AsylumEngine::initPuzzles] Add missing puzzles");
+}
+
+void AsylumEngine::updateReverseStereo() {
+	if (_scene && _scene->worldstats())
+		_scene->worldstats()->reverseStereo = Config.reverseStereo;
 }
 
 //////////////////////////////////////////////////////////////////////////

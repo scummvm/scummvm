@@ -92,7 +92,7 @@ public:
 	//uint32 numObjects;
 	int32 coordinates[7];
 	//uint32 numActors;
-	int32 stereoReversedFlag;
+	int32 reverseStereo;
 	Common::Rect sceneRects[6]; // including scene size rect
 	uint8 sceneRectIdx;
 	uint8 field_11D[3];

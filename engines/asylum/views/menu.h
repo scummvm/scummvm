@@ -92,14 +92,14 @@ private:
 	ResourceId       _musicResourceId;
 	bool             _gameStarted;
 	MenuScreen       _currentIcon;
-	int32            _dword_4464B8;
+	int32            _selectedShortcutIndex;
 	int32            _dword_455C74;
 	bool             _dword_455C78;
 	bool             _dword_455C80;
 	bool             _dword_455D4C;
 	bool             _dword_455D5C;
 	bool             _dword_455DD8;
-	bool             _dword_455DE0;
+	bool             _testSoundsPlaying;
 	int32            _dword_456288;
 	int32            _dword_4562C0;
 	int32            _textScroll;
@@ -140,6 +140,28 @@ private:
 	 * @return The icon identifier
 	 */
 	MenuScreen findMousePosition();
+
+	/**
+	 * Play test sounds
+	 */
+	void playTestSounds();
+
+	/**
+	 * Stop test sounds.
+	 */
+	void stopTestSounds();
+
+	/**
+	 * Adjust volume. 
+	 *
+	 * @param delta The delta. 
+	 */
+	void adjustMasterVolume(int32 delta);
+
+	/**
+	 * Adjust test sounds volume.
+	 */
+	void adjustTestVolume();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling

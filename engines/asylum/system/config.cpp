@@ -25,6 +25,8 @@
 
 #include "asylum/system/config.h"
 
+#include "asylum/system/sound.h"
+
 DECLARE_SINGLETON(Asylum::ConfigurationManager);
 
 namespace Asylum {
@@ -39,8 +41,8 @@ ConfigurationManager::ConfigurationManager() {
 	// Register engine-specific options
 	ConfMan.registerDefault("show_encounter_subtitles", true);
 	ConfMan.registerDefault("gamma_level", 0);
-	ConfMan.registerDefault("ambient_volume", 0);
-	ConfMan.registerDefault("movie_volume", 0);
+	ConfMan.registerDefault("ambient_volume", -2000);
+	ConfMan.registerDefault("movie_volume", -1500);
 	ConfMan.registerDefault("music_status", true);
 	ConfMan.registerDefault("reverse_stereo", false);
 	ConfMan.registerDefault("performance", 4);
@@ -51,22 +53,25 @@ ConfigurationManager::ConfigurationManager() {
 	ConfMan.registerDefault("key_switchToGrimwall", 'g');
 	ConfMan.registerDefault("key_switchToOlmec", 'o');
 
-	ConfMan.registerDefault("show_scene_loading", false);
+	// Special debug options
+	ConfMan.registerDefault("show_scene_loading", true);
 	ConfMan.registerDefault("show_intro", true);
 
 	// Init values
 	musicVolume   = 0;
+	ambientVolume = 0;
 	sfxVolume     = 0;
 	voiceVolume   = 0;
-	showMovieSubtitles = false;
-
-	showEncounterSubtitles = true;
-	gammaLevel = 0;
-	ambientVolume = 0;
 	movieVolume   = 0;
+
 	musicStatus = true;
 	reverseStereo = false;
-	performance = 4;
+
+	showMovieSubtitles = false;
+	showEncounterSubtitles = true;
+
+	gammaLevel = 0;
+	performance = 0;
 
 	keyShowVersion = 'v';
 	keyQuickLoad = 'L';
@@ -85,6 +90,11 @@ void ConfigurationManager::read() {
     sfxVolume   = ConfMan.getInt("sfx_volume");
     voiceVolume = ConfMan.getInt("speech_volume");
     showMovieSubtitles = ConfMan.getBool("subtitles");
+
+	// Convert volumes to engine-values
+	Sound::convertVolumeTo(musicVolume);
+	Sound::convertVolumeTo(sfxVolume);
+	Sound::convertVolumeTo(voiceVolume);
 
 	// Engine options
 	showEncounterSubtitles = ConfMan.getBool("show_encounter_subtitles");
@@ -109,10 +119,19 @@ void ConfigurationManager::read() {
 }
 
 void ConfigurationManager::write() {
+	int32 mixerMusicVolume = musicVolume;
+	int32 mixerSfxVolume   = sfxVolume;
+	int32 mixerVoiceVolume = voiceVolume;
+
+	// Convert volumes to mixer-values
+	Sound::convertVolumeFrom(mixerMusicVolume);
+	Sound::convertVolumeFrom(mixerSfxVolume);
+	Sound::convertVolumeFrom(mixerVoiceVolume);
+
     // Default options
-    ConfMan.setInt("music_volume", musicVolume);
-    ConfMan.setInt("sfx_volume", sfxVolume);
-    ConfMan.setInt("speech_volume", voiceVolume);
+    ConfMan.setInt("music_volume", mixerMusicVolume);
+    ConfMan.setInt("sfx_volume", mixerSfxVolume);
+    ConfMan.setInt("speech_volume", mixerVoiceVolume);
     ConfMan.setBool("subtitles", showMovieSubtitles);
 
 	// Engine options
@@ -135,6 +154,10 @@ void ConfigurationManager::write() {
 	ConfMan.setInt("key_switchToSara",     (int)keySwitchToSara);
 	ConfMan.setInt("key_switchToGrimwall", (int)keySwitchToGrimwall);
 	ConfMan.setInt("key_switchToOlmec",    (int)keySwitchToOlmec);
+}
+
+bool ConfigurationManager::isKeyAssigned(char key) {
+	return (keyShowVersion == key || keyQuickLoad == key || keyQuickSave == key || keySwitchToSara == key || keySwitchToGrimwall == key || keySwitchToOlmec == key);
 }
 
 } // end of namespace Asylum
