@@ -52,9 +52,14 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_soundResourceId = kResourceNone;
 	_allowInteraction = false;
 	_currentIcon = kMenuNone;
+	_dword_4464B8 = -1;
 	_dword_455C74 = 0;
-	_dword_455D4C = 0;
-	_dword_455D5C = 0;
+	_dword_455C78 = false;
+	_dword_455C80 = false;
+	_dword_455D4C = false;
+	_dword_455D5C = false;
+	_dword_455DD8 = false;
+	_dword_456288 = 0;
 	_dword_4562C0 = 0;
 	_dword_4562C4 = 0;
 	_dword_45628C = 0;
@@ -167,6 +172,9 @@ void MainMenu::showCredits() {
 	leave();
 }
 
+void MainMenu::listMovies() {
+	warning("[MainMenu::listMovies] Not implemented!");
+}
 
 MainMenu::MenuScreen MainMenu::findMousePosition() {
 	for (uint i = 0; i < ARRAYSIZE(menuRects); i++)
@@ -201,9 +209,7 @@ bool MainMenu::handleEvent(const AsylumEvent &evt) {
 		break;
 
 	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP:
 		return click(evt);
 		break;
 	}
@@ -221,11 +227,11 @@ bool MainMenu::init() {
 		if (!_initGame) {
 			_initGame = true;
 
-			// The original load the config (this is done when constructing the config object)
+			// The original also
+			//  - load the config (this is done when constructing the config object).
+			//  - initialize game structures (this is done in classes constructors)
 
 			getSaveLoad()->loadViewedMovies();
-
-			// The original initialize game structures (this is done in classes constructors)
 
 			_needEyeCursorInit = true;
 
@@ -439,6 +445,128 @@ bool MainMenu::key(const AsylumEvent &evt) {
 }
 
 bool MainMenu::click(const AsylumEvent &evt) {
+	if (evt.type == Common::EVENT_RBUTTONDOWN
+	 && _activeScreen == kMenuShowCredits) {
+		 clickShowCredits();
+		 return true;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Handle clicks on sub-screens
+	if (_activeScreen != kMenuNone) {
+		switch (_activeScreen) {
+		default:
+			break;
+
+		case kMenuNewGame:
+			updateNewGame();
+			break;
+
+		case kMenuLoadGame:
+			updateLoadGame();
+			break;
+
+		case kMenuSaveGame:
+			updateSaveGame();
+			break;
+
+		case kMenuDeleteGame:
+			updateDeleteGame();
+			break;
+
+		case kMenuViewMovies:
+			updateViewMovies();
+			break;
+
+		case kMenuQuitGame:
+			updateQuitGame();
+			break;
+
+		case kMenuTextOptions:
+			updateTextOptions();
+			break;
+
+		case kMenuAudioOptions:
+			updateAudioOptions();
+			break;
+
+		case kMenuSettings:
+			updateSettings();
+			break;
+
+		case kMenuKeyboardConfig:
+			updateKeyboardConfig();
+			break;
+
+		case kMenuShowCredits:
+			updateShowCredits();
+			break;
+
+		case kMenuReturnToGame:
+			updateReturnToGame();
+			break;
+		}
+
+		return true;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Handle clicks on the main menu
+	_activeScreen = findMousePosition();
+	if (_activeScreen == kMenuNone)
+		return true;
+
+	getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 3), 0, 2);
+	getText()->loadFont(kFontYellow);
+
+	switch (_activeScreen) {
+	default:
+		break;
+
+	case kMenuSaveGame:
+		_dword_455DD8 = false;
+		// Fallback to next case
+
+	case kMenuLoadGame:
+		_dword_455C80 = false;
+		_dword_455C78 = false;
+		_dword_456288 = 0;
+		_dword_4562C4 = 0;
+		getSaveLoad()->loadList();
+		break;
+
+	case kMenuDeleteGame:
+		_dword_455C80 = false;
+		_dword_4562C4 = 0;
+		getSaveLoad()->loadList();
+		break;
+
+	case kMenuViewMovies:
+		_needEyeCursorInit = false;
+		_dword_455C78 = false;
+		_dword_456288 = 0;
+		_dword_4562C4 = 0;
+		listMovies();
+		break;
+
+	case kMenuKeyboardConfig:
+		_dword_4464B8 = -1;
+		break;
+
+	case kMenuReturnToGame:
+		if (!_allowInteraction)
+			break;
+
+		clickReturnToGame();
+		break;
+
+	case kMenuShowCredits:
+		_dword_4562C4 = 480;
+		_dword_45628C = 0;
+		setup();
+		break;
+	}
+
 	return true;
 }
 

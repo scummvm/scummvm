@@ -92,9 +92,14 @@ private:
 	ResourceId       _musicResourceId;
 	bool             _allowInteraction;
 	MenuScreen       _currentIcon;
+	int32            _dword_4464B8;
 	int32            _dword_455C74;
+	bool             _dword_455C78;
+	bool             _dword_455C80;
 	bool             _dword_455D4C;
 	bool             _dword_455D5C;
+	bool             _dword_455DD8;
+	int32            _dword_456288;
 	int32            _dword_4562C0;
 	int32            _dword_4562C4;
 	int32            _dword_45628C;
@@ -122,6 +127,11 @@ private:
 	 * Shows the credits.
 	 */
 	void showCredits();
+
+	/**
+	 * List viewed movies
+	 */
+	void listMovies();
 
 	/**
 	 * Find if the mouse if on an icon
