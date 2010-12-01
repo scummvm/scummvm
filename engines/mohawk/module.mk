@@ -29,6 +29,7 @@ MODULE_OBJS = \
 	myst_stacks/mechanical.o \
 	myst_stacks/myst.o \
 	myst_stacks/selenitic.o \
+	myst_stacks/slides.o \
 	myst_stacks/stoneship.o
 
 # This module can be built as a plugin

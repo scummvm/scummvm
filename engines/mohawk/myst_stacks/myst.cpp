@@ -227,11 +227,6 @@ void MystScriptParser_Myst::opcode_100(uint16 op, uint16 var, uint16 argc, uint1
 	case kMakingOfStack:
 		_vm->_system->quit();
 		break;
-	case kDemoSlidesStack:
-		// TODO: Change to changeStack call?
-		_vm->changeToStack(kDemoStack);
-		_vm->changeToCard(2001, true);
-		break;
 	default:
 		unknown(op, var, argc, argv);
 		break;
@@ -1034,10 +1029,6 @@ static struct {
 	uint16 imageBaseId;
 	uint16 soundDecrement;
 	uint16 soundIncrement;
-
-	// Myst Demo slideshow variables
-	uint16 cardId;
-	uint32 lastCardTime;
 } g_opcode200Parameters;
 
 void MystScriptParser_Myst::opcode_200_run() {
@@ -1079,11 +1070,6 @@ void MystScriptParser_Myst::opcode_200_run() {
 				_vm->_sound->playSound(g_opcode200Parameters.soundIncrement);
 
 			lastImageIndex = curImageIndex;
-			break;
-		case kDemoSlidesStack:
-			// Used on Cards...
-			if (_vm->_system->getMillis() - g_opcode200Parameters.lastCardTime >= 2 * 1000)
-				_vm->changeToCard(g_opcode200Parameters.cardId, true);
 			break;
 		}
 	}
@@ -1140,15 +1126,6 @@ void MystScriptParser_Myst::opcode_200(uint16 op, uint16 var, uint16 argc, uint1
 			g_opcode200Parameters.enabled = true;
 
 			_vm->_varStore->setVar(var, 0);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	case kDemoSlidesStack:
-		// Used on Cards...
-		if (argc == 1) {
-			g_opcode200Parameters.cardId = argv[0];
-			g_opcode200Parameters.lastCardTime = _vm->_system->getMillis();
-			g_opcode200Parameters.enabled = true;
 		} else
 			unknown(op, var, argc, argv);
 		break;
