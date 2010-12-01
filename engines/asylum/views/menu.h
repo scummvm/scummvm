@@ -213,8 +213,8 @@ private:
 	void clickShowCredits();
 
 	// Key handlers
-	void keySaveGame();
-	void keyKeyboardConfig();
+	void keySaveGame(const AsylumEvent &evt);
+	void keyKeyboardConfig(const AsylumEvent &evt);
 	void keyShowCredits();
 
 }; // end of class MainMenu
