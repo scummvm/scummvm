@@ -90,7 +90,7 @@ private:
 	MenuScreen       _activeScreen;
 	ResourceId       _soundResourceId;
 	ResourceId       _musicResourceId;
-	bool             _allowInteraction;
+	bool             _gameStarted;
 	MenuScreen       _currentIcon;
 	int32            _dword_4464B8;
 	int32            _dword_455C74;
@@ -101,8 +101,8 @@ private:
 	bool             _dword_455DD8;
 	int32            _dword_456288;
 	int32            _dword_4562C0;
-	int32            _dword_4562C4;
-	int32            _dword_45628C;
+	int32            _creditsTextScroll;
+	int32            _creditsFrameIndex;
 	bool             _needEyeCursorInit;
 	uint32           _iconFrames[12];
 
@@ -124,9 +124,9 @@ private:
 	void switchFont(bool condition);
 
 	/**
-	 * Shows the credits.
+	 * Close the credits.
 	 */
-	void showCredits();
+	void closeCredits();
 
 	/**
 	 * List viewed movies

@@ -64,15 +64,14 @@ public:
 	void drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId);
 	void drawCentered(int32 x, int32 y, int32 width, uint32 length, const char *text);
 
-	// TODO remove and use other methods
-	void drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId, int32 value);
-	void drawAlignedRight(int32 x, int32 y, const char *text);
-	void drawAlignedRight(int32 x, int32 y, ResourceId resourceId);
+	void setTransTableNum(int32 val) { _transTableNum = val; }
 
 private:
 	AsylumEngine *_vm;
 
 	GraphicResource *_fontResource;
+
+	int32 _transTableNum;
 
 	int32 _posX;
 	int32 _posY;
