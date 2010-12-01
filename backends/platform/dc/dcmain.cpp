@@ -61,6 +61,8 @@ void OSystem_Dreamcast::initBackend()
   uint sampleRate = initSound();
   _mixer = new Audio::MixerImpl(this, sampleRate);
   _mixer->setReady(true);
+
+  _cdManager = new DCCDManager();
 }
 
 
@@ -86,7 +88,7 @@ static bool find_track(int track, int &first_sec, int &last_sec)
   return false;
 }
 
-void OSystem_Dreamcast::playCD(int track, int num_loops, int start_frame, int duration)
+void DCCDManager::playCD(int track, int num_loops, int start_frame, int duration)
 {
   int first_sec, last_sec;
 #if 1
@@ -103,23 +105,23 @@ void OSystem_Dreamcast::playCD(int track, int num_loops, int start_frame, int du
   play_cdda_sectors(first_sec, last_sec, num_loops);
 }
 
-void OSystem_Dreamcast::stopCD()
+void DCCDManager::stopCD()
 {
   stop_cdda();
 }
 
-bool OSystem_Dreamcast::pollCD()
+bool DCCDManager::pollCD()
 {
   extern int getCdState();
   return getCdState() == 3;
 }
 
-void OSystem_Dreamcast::updateCD()
+void DCCDManager::updateCD()
 {
   // Dummy.  The CD drive takes care of itself.
 }
 
-bool OSystem_Dreamcast::openCD(int drive)
+bool DCCDManager::openCD(int drive)
 {
   // Dummy.
   return true;

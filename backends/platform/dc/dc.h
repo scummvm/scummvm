@@ -28,6 +28,7 @@
 #include <graphics/colormasks.h>
 #include <ronin/soundcommon.h>
 #include "backends/timer/default/default-timer.h"
+#include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
 #include "sound/mixer_intern.h"
 
@@ -48,6 +49,24 @@ class DCHardware {
   static void dc_init_hardware();
  protected:
   DCHardware() { dc_init_hardware(); }
+};
+
+class DCCDManager : public DefaultAudioCDManager {
+  // Initialise the specified CD drive for audio playback.
+  bool openCD(int drive);
+
+  // Poll cdrom status
+  // Returns true if cd audio is playing
+  bool pollCD();
+
+  // Play cdrom audio track
+  void playCD(int track, int num_loops, int start_frame, int duration);
+
+  // Stop cdrom audio track
+  void stopCD();
+
+  // Update cdrom audio status
+  void updateCD();
 };
 
 class OSystem_Dreamcast : private DCHardware, public BaseBackend, public FilesystemFactory {
@@ -135,21 +154,7 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   // Returns true if an event was retrieved.
   bool pollEvent(Common::Event &event);
 
-  // Initialise the specified CD drive for audio playback.
-  bool openCD(int drive);
-
-  // Poll cdrom status
-  // Returns true if cd audio is playing
-  bool pollCD();
-
-  // Play cdrom audio track
-  void playCD(int track, int num_loops, int start_frame, int duration);
-
-  // Stop cdrom audio track
-  void stopCD();
-
-  // Update cdrom audio status
-  void updateCD();
+  AudioCDManager *getAudioCDManager() { return _cdManager; }
 
   // Quit
   void quit();
@@ -194,6 +199,7 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   Audio::MixerImpl *_mixer;
   DefaultTimerManager *_timer;
   SoftKeyboard _softkbd;
+  DCCDManager *_cdManager;
 
   int _ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_old_x, _ms_old_y;
   int _ms_hotspot_x, _ms_hotspot_y, _ms_visible, _devpoll, _last_screen_refresh;
