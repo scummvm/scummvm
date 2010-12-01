@@ -384,9 +384,9 @@ struct NotifyEvent {
 };
 
 enum DelayedEventType {
-	kLBDestroy = 0,
-	kLBSetNotVisible = 1,
-	kLBDone = 2
+	kLBEventDestroy = 0,
+	kLBEventSetNotVisible = 1,
+	kLBEventDone = 2
 };
 
 struct DelayedEvent {

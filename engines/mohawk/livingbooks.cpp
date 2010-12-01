@@ -445,16 +445,16 @@ void MohawkEngine_LivingBooks::updatePage() {
 				continue;
 
 			switch (delayedEvent.type) {
-			case kLBDestroy:
+			case kLBEventDestroy:
 				_items.remove_at(i);
 				delete delayedEvent.item;
 				if (_focus == delayedEvent.item)
 					_focus = NULL;
 				break;
-			case kLBSetNotVisible:
+			case kLBEventSetNotVisible:
 				_items[i]->setVisible(false);
 				break;
-			case kLBDone:
+			case kLBEventDone:
 				_items[i]->done(true);
 				break;
 			}
@@ -1623,7 +1623,7 @@ void LBItem::destroySelf() {
 	if (!this->_itemId)
 		error("destroySelf() on an item which was already dead");
 
-	_vm->queueDelayedEvent(DelayedEvent(this, kLBDestroy));
+	_vm->queueDelayedEvent(DelayedEvent(this, kLBEventDestroy));
 
 	_itemId = 0;
 }
@@ -1684,7 +1684,7 @@ void LBItem::handleMouseUp(Common::Point pos) {
 
 bool LBItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
-		_vm->queueDelayedEvent(DelayedEvent(this, kLBDone));
+		_vm->queueDelayedEvent(DelayedEvent(this, kLBEventDone));
 		return true;
 	}
 	if (!_neverEnabled && _enabled && !_playing) {
@@ -1847,7 +1847,8 @@ void LBItem::runScript(uint id) {
 				case 1:
 					// TODO: should be setVisible(true) - not a delayed event -
 					// when we're doing the param 1/2/3 stuff above?
-					_vm->queueDelayedEvent(DelayedEvent(this, kLBSetNotVisible));
+					// and in modern LB this is perhaps just a direct target->setVisible(true)..
+					_vm->queueDelayedEvent(DelayedEvent(this, kLBEventSetNotVisible));
 					break;
 
 				case 2:
