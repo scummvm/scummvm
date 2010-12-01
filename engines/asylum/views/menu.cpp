@@ -25,12 +25,15 @@
 
 #include "asylum/views/menu.h"
 
+#include "asylum/resources/actor.h"
+
 #include "asylum/system/config.h"
 #include "asylum/system/cursor.h"
 #include "asylum/system/graphics.h"
 #include "asylum/system/screen.h"
 #include "asylum/system/sound.h"
 #include "asylum/system/text.h"
+#include "asylum/system/video.h"
 
 #include "asylum/views/scene.h"
 
@@ -50,7 +53,7 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_cursorStep         = 1;
 	_creditsBgFrame     = 0;
 	_creditsTextScroll  = 0x1E0 - 30;
-	_activeMenuScreen   = kMainMenu;
+	_activeScreen   = kMenuMain;
 	_active             = false;
 
 	Config.gammaLevel  = 2;
@@ -59,15 +62,11 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_bgResource  = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, 0));
 	_eyeResource = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, 1));
 
-	_ev = NULL;
-
-	_cursor = new Cursor(_vm);
-
 	_iconResource        = 0;
 	_creditsResource     = 0;
 	_creditsFadeResource = 0;
 
-	loadFont(kFontYellow);
+	getText()->loadFont(kFontYellow);
 }
 
 MainMenu::~MainMenu() {
@@ -75,100 +74,173 @@ MainMenu::~MainMenu() {
 	delete _creditsFadeResource;
 	delete _iconResource;
 	delete _eyeResource;
-	delete _cursor;
 	delete _bgResource;
 
 	// Zero-out passed pointers
-	_ev = NULL;
 	_vm = NULL;
 }
 
-void MainMenu::loadFont(Fonts font) {
-	switch (font) {
-	default:
-		error("[MainMenu::loadFont] Unknown font color specified!");
+//////////////////////////////////////////////////////////////////////////
+// Loading and setup
+//////////////////////////////////////////////////////////////////////////
+void MainMenu::show() {
+	getSharedData()->setSkipDrawScene(true);
+	getScreen()->clear();
 
-	case kFontBlue:
-		getText()->loadFont(MAKE_RESOURCE(kResourcePackShared, 22));
-		break;
+	// Set ourselves as the current event handler
+	_vm->switchEventHandler(this);
 
-	case kFontYellow:
-		getText()->loadFont(MAKE_RESOURCE(kResourcePackShared, 16));
-		break;
+	getSound()->stopAll();
+
+	_activeScreen = kMenuReturnToGame;
+	_soundResourceId = kResourceNone;
+	_allowInteraction = false;
+
+	_dword_4562C4 = 480;
+	_dword_45628C = 0;
+
+	setup();
+}
+
+void MainMenu::setup() {
+	getScreen()->clear();
+	// Original fills the screen with black
+
+	getCursor()->hide();
+
+	getSharedData()->setFlag(kFlag1, true);
+
+	if (_vm->isGameFlagSet(kGameFlagFinishGame)) {
+		getText()->loadFont(MAKE_RESOURCE(kResourcePackShared, 32));
+		getScreen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 31));
+		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 31), 0);
+		getScreen()->setupTransTables(4, MAKE_RESOURCE(kResourcePackShared, 34),
+		                                 MAKE_RESOURCE(kResourcePackShared, 35),
+		                                 MAKE_RESOURCE(kResourcePackShared, 36),
+		                                 MAKE_RESOURCE(kResourcePackShared, 37));
+		getScreen()->selectTransTable(1);
+
+		_dword_455D4C = false;
+		_dword_455D5C = false;
+
+		getSound()->playSound(MAKE_RESOURCE(kResourcePackShared, 56), false, Config.voiceVolume);
+	} else {
+		getText()->loadFont(MAKE_RESOURCE(kResourcePackShared, 25));
+		getScreen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 26));
+		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 26), 0);
+		getScreen()->setupTransTables(4, MAKE_RESOURCE(kResourcePackShared, 27),
+		                                 MAKE_RESOURCE(kResourcePackShared, 28),
+		                                 MAKE_RESOURCE(kResourcePackShared, 29),
+		                                 MAKE_RESOURCE(kResourcePackShared, 30));
+		getScreen()->selectTransTable(1);
+
+		getSound()->playMusic(kResourceNone, 0);
+		getSound()->playMusic(MAKE_RESOURCE(kResourcePackShared, 38));
 	}
 }
 
 void MainMenu::switchFont(bool condition) {
-	loadFont((condition) ? kFontYellow : kFontBlue);
+	getText()->loadFont((condition) ? kFontYellow : kFontBlue);
 }
 
-void MainMenu::openMenu() {
-	_active = true;
-
-	if (_vm->scene()) {
-		_vm->scene()->deactivate();
-	}
-
-	loadFont(kFontYellow);
-
-	// Load the graphics palette
-	getScreen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 17));
-	getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 0), 1, 0, 0, 0);
-
-	// Set mouse cursor
-	_cursor->set(MAKE_RESOURCE(kResourcePackShared, 2));
-	_cursor->show();
-
-	// Stop all sounds
-	_vm->sound()->stopMusic();
-	_vm->sound()->stopAll();
-
-	// Start playing music
-	_vm->sound()->playMusic(MAKE_RESOURCE(kResourcePackShared, 39));
-
-	_previousActiveIcon = _activeIcon = -1;
-	_leftClick = false;
-	_activeMenuScreen = kMainMenu;
-}
-
-void MainMenu::closeMenu() {
-	_active = false;
-    if (_vm->scene()) {
-	    _vm->scene()->activate();
-    }
-
-	// Stop menu sounds and menu music
-	_vm->sound()->stopAll();
-	_vm->sound()->stopMusic();
-}
-
-void MainMenu::showOptions() {
-	error("[MainMenu::showOptions] : not implemented!");
-}
-
-void MainMenu::handleEvent(Common::Event *event, bool doUpdate) {
-	_ev = event;
-
-	switch (_ev->type) {
-	case Common::EVENT_MOUSEMOVE:
-		_cursor->move(_ev->mouse.x, _ev->mouse.y);
-		break;
-	case Common::EVENT_LBUTTONUP:
-		_leftClick = true;
-		break;
+//////////////////////////////////////////////////////////////////////////
+// Event Handler
+//////////////////////////////////////////////////////////////////////////
+bool MainMenu::handleEvent(const AsylumEvent &evt) {
+	switch ((uint32)evt.type) {
 	default:
 		break;
+
+	case EVENT_ASYLUM_INIT:
+		return init();
+		break;
+
+	case EVENT_ASYLUM_UPDATE:
+		return update();
+		break;
+
+	case EVENT_ASYLUM_MUSIC:
+		return music();
+		break;
+
+	case Common::EVENT_KEYDOWN:
+		return key(evt);
+		break;
+
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_RBUTTONUP:
+		return mouse(evt);
+		break;
 	}
 
-	if (doUpdate || _leftClick)
-		update();
+	return false;
 }
 
-void MainMenu::update() {
-	updateEyesAnimation();
-	_cursor->animate();
+bool MainMenu::init() {
+	// Original writes sntrm_k.txt
 
-	if (_activeMenuScreen == kMainMenu) {
+	if (_needEyeCursorInit) {
+		getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 3), 0, 2);
+	} else {
+		// Init the game if not already done
+		if (!_initGame) {
+			_initGame = true;
+
+			// The original load the config here (this is done when constructing the config object)
+			// TODO initialize viewed cinematics
+			_vm->init();
+
+			_needEyeCursorInit = true;
+
+			// Play start video
+			getVideo()->playVideo(0);
+
+			/*if (!getSaveLoad()->setupSavegames()) {
+				_vm->restart();
+				return true;
+			}*/
+
+			// The original preloads graphics
+
+			getCursor()->show();
+		}
+
+		_dword_4562C0 = 0;
+		_activeScreen = kMenuNone;
+		_dword_4464BC = -1;
+		_dword_455C74 = 0;
+
+		getCursor()->hide();
+		getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 2), 0, 2);
+	}
+
+	if (_allowInteraction)
+		getScene()->getActor()->update_409230();
+
+	getScreen()->clear();
+	getText()->loadFont(kFontYellow);
+	getScreen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 17));
+	getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 17), 0);
+	getScreen()->setupTransTables(4, MAKE_RESOURCE(kResourcePackShared, 18),
+	                                 MAKE_RESOURCE(kResourcePackShared, 19),
+	                                 MAKE_RESOURCE(kResourcePackShared, 20),
+	                                 MAKE_RESOURCE(kResourcePackShared, 21));
+	getScreen()->selectTransTable(1);
+
+	// Update the screen
+	g_system->updateScreen();
+
+	getCursor()->show();
+	return true;
+}
+
+bool MainMenu::update() {
+	updateEyesAnimation();
+	//getCursor()->animate();
+
+	if (_activeScreen == kMenuMain) {
 		updateMainMenu();
 	} else {
 		updateSubMenu();
@@ -181,47 +253,47 @@ void MainMenu::update() {
 			// Copy the dark background to the back buffer
 			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 0), 0, 0, 0, 0);
 
-			_activeMenuScreen = (MenuScreen) _activeIcon;
+			_activeScreen = (MenuScreen) _activeIcon;
 
 			// Set the cursor
-			_cursor->set(MAKE_RESOURCE(kResourcePackShared, 3));
+			getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 3));
 		}
 
 		switch (_activeIcon) {
 		default:
 			break;
 
-		case kNewGame:
+		case kMenuNewGame:
 			// Nothing here
 			break;
-		case kLoadGame:
+		case kMenuLoadGame:
 			// TODO
 			break;
-		case kSaveGame:
+		case kMenuSaveGame:
 			// TODO
 			break;
-		case kDeleteGame:
+		case kMenuDeleteGame:
 			// TODO
 			break;
-		case kViewCinematics:
+		case kMenuViewCinematics:
 			// TODO
 			break;
-		case kQuitGame:
+		case kMenuQuitGame:
 			// Nothing here
 			break;
-		case kTextOptions:
+		case kMenuTextOptions:
 			// TODO
 			break;
-		case kAudioOptions:
+		case kMenuAudioOptions:
 			// TODO
 			break;
-		case kSettings:
+		case kMenuSettings:
 			// TODO
 			break;
-		case kKeyboardConfig:
+		case kMenuKeyboardConfig:
 			// TODO
 			break;
-		case kShowCredits:
+		case kMenuShowCredits:
 			// TODO if game finished (gameFlag=901) then show resource image 33 and music 56 and than music 40
 			if (!_creditsResource)
 				_creditsResource = new GraphicResource(_vm, MAKE_RESOURCE(kResourcePackShared, 24));
@@ -235,37 +307,67 @@ void MainMenu::update() {
 			// Start playing music
 			getSound()->playMusic(MAKE_RESOURCE(kResourcePackShared, 38));
 			break;
-		case kReturnToGame:
+		case kMenuReturnToGame:
 			if (_vm->scene()) // FIXME: do this properly
-				closeMenu();
+				// TODO closeMenu();
 			break;
 		}
 	}
+
+	return true;
 }
 
+bool MainMenu::music() {
+	if (_activeScreen == kMenuReturnToGame
+	 && _vm->isGameFlagSet(kGameFlagFinishGame)
+	 && !_dword_455D5C
+	 && !_dword_455D4C) {
+		_dword_455D5C = true;
+
+		getSound()->playMusic(kResourceNone, 0);
+		getSound()->playMusic(MAKE_RESOURCE(kResourcePackShared, 38));
+
+		return true;
+	}
+
+	return false;
+}
+
+bool MainMenu::key(const AsylumEvent &evt) {
+	// TODO handle per-screen keyboard shortcuts
+	return true;
+}
+
+bool MainMenu::mouse(const AsylumEvent &evt) {
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Update / key / mouse event handlers
+//////////////////////////////////////////////////////////////////////////
 void MainMenu::updateEyesAnimation() {
 	// Eyes animation
 	// Get the appropriate eye resource depending on the mouse position
 	uint32 eyeFrameNum = kEyesFront;
 
-	if (_cursor->position().x <= 200) {
-		if (_cursor->position().y <= 160)
+	if (getCursor()->position().x <= 200) {
+		if (getCursor()->position().y <= 160)
 			eyeFrameNum = kEyesTopLeft;
-		else if (_cursor->position().y > 160 && _cursor->position().y <= 320)
+		else if (getCursor()->position().y > 160 && getCursor()->position().y <= 320)
 			eyeFrameNum = kEyesLeft;
 		else
 			eyeFrameNum = kEyesBottomLeft;
-	} else if (_cursor->position().x > 200 && _cursor->position().x <= 400) {
-		if (_cursor->position().y <= 160)
+	} else if (getCursor()->position().x > 200 && getCursor()->position().x <= 400) {
+		if (getCursor()->position().y <= 160)
 			eyeFrameNum = kEyesTop;
-		else if (_cursor->position().y > 160 && _cursor->position().y <= 320)
+		else if (getCursor()->position().y > 160 && getCursor()->position().y <= 320)
 			eyeFrameNum = kEyesFront;
 		else
 			eyeFrameNum = kEyesBottom;
-	} else if (_cursor->position().x > 400) {
-		if (_cursor->position().y <= 160)
+	} else if (getCursor()->position().x > 400) {
+		if (getCursor()->position().y <= 160)
 			eyeFrameNum = kEyesTopRight;
-		else if (_cursor->position().y > 160 && _cursor->position().y <= 320)
+		else if (getCursor()->position().y > 160 && getCursor()->position().y <= 320)
 			eyeFrameNum = kEyesRight;
 		else
 			eyeFrameNum = kEyesBottomRight;
@@ -279,9 +381,9 @@ void MainMenu::updateEyesAnimation() {
 void MainMenu::updateMainMenu() {
 	int32 rowId = 0;
 
-	if (_cursor->position().y >= 20 && _cursor->position().y <= 20 + 48) {
+	if (getCursor()->position().y >= 20 && getCursor()->position().y <= 20 + 48) {
 		rowId = 0; // Top row
-	} else if (_cursor->position().y >= 400 && _cursor->position().y <= 400 + 48) {
+	} else if (getCursor()->position().y >= 400 && getCursor()->position().y <= 400 + 48) {
 		rowId = 1; // Bottom row
 	} else {
 		// No row selected
@@ -290,12 +392,12 @@ void MainMenu::updateMainMenu() {
 		return;
 	}
 
-	loadFont(kFontYellow);
+	getText()->loadFont(kFontYellow);
 
 	// Icon animation
 	for (int32 i = 0; i <= 5; i++) {
 		int32 curX = 40 + i * 100;
-		if (_cursor->position().x >= curX && _cursor->position().x <= curX + 55) {
+		if (getCursor()->position().x >= curX && getCursor()->position().x <= curX + 55) {
 			int32 iconNum = i + 6 * rowId;
 			_activeIcon = iconNum;
 
@@ -320,7 +422,7 @@ void MainMenu::updateMainMenu() {
 				_curIconFrame = 0;
 
 			// Show text
-			_vm->text()->drawCentered(MenuIconFixedXpos[iconNum],
+			getText()->drawCentered(MenuIconFixedXpos[iconNum],
 					iconFrame->y + 50,
 					getText()->getWidth(MAKE_RESOURCE(kResourcePackText, iconNum + 1309)),
 					MAKE_RESOURCE(kResourcePackText, iconNum + 1309));
@@ -349,173 +451,173 @@ void MainMenu::updateSubMenu() {
 	default:
 		break;
 
-	case kNewGame:
+	case kMenuNewGame:
 		updateSubMenuNewGame();
 		break;
-	case kLoadGame:
+	case kMenuLoadGame:
 		// TODO
 		break;
-	case kSaveGame:
+	case kMenuSaveGame:
 		// TODO
 		break;
-	case kDeleteGame:
+	case kMenuDeleteGame:
 		// TODO
 		break;
-	case kViewCinematics:
+	case kMenuViewCinematics:
 		updateSubMenuCinematics();
 		break;
-	case kQuitGame:
+	case kMenuQuitGame:
 		updateSubMenuQuitGame();
 		break;
-	case kTextOptions:
+	case kMenuTextOptions:
 		// TODO
 		break;
-	case kAudioOptions:
+	case kMenuAudioOptions:
 		// TODO
 		break;
-	case kSettings:
+	case kMenuSettings:
 		updateSubMenuSettings();
 		break;
-	case kKeyboardConfig:
+	case kMenuKeyboardConfig:
 		// TODO
 		break;
-	case kShowCredits:
+	case kMenuShowCredits:
 		updateSubMenuShowCredits();
 		break;
-	case kReturnToGame:
+	case kMenuReturnToGame:
 		updateSubMenuReturnToGame();
 		break;
 	}
 }
 
 void MainMenu::updateSubMenuNewGame() {
-	loadFont(kFontYellow);
+	getText()->loadFont(kFontYellow);
 
 	// begin new game
-	_vm->text()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 529));
+	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 529));
 
 	// Yes
-	switchFont(_cursor->position().x < 247 || _cursor->position().x > 247 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1322)) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
-	_vm->text()->setPosition(247, 273);
-	_vm->text()->draw(MAKE_RESOURCE(kResourcePackText, 1322));
+	switchFont(getCursor()->position().x < 247 || getCursor()->position().x > 247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1322)) || getCursor()->position().y < 273 || getCursor()->position().y > 273 + 24);
+	getText()->setPosition(247, 273);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1322));
 
 	// No
-	switchFont(_cursor->position().x < 369 || _cursor->position().x > 369 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1323)) || _cursor->position().y < 273 ||	_cursor->position().y > 273 + 24);
-	_vm->text()->setPosition(369, 273);
-	_vm->text()->draw(MAKE_RESOURCE(kResourcePackText, 1323));
+	switchFont(getCursor()->position().x < 369 || getCursor()->position().x > 369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1323)) || getCursor()->position().y < 273 ||	getCursor()->position().y > 273 + 24);
+	getText()->setPosition(369, 273);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1323));
 
 	// action
 	if (_leftClick) {
 		// Yes
-		if (_cursor->position().x >= 247 && _cursor->position().x <= 247 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1322))) {
+		if (getCursor()->position().x >= 247 && getCursor()->position().x <= 247 + 24 && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1322))) {
 			_leftClick = false;
-            closeMenu();
+            // TODO closeMenu();
             _vm->startGame(kResourcePackTowerCells, AsylumEngine::kStartGamePlayIntro);
 		}
 		// No
-		if (_cursor->position().x >= 369 && _cursor->position().x <= 369 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1323)))
+		if (getCursor()->position().x >= 369 && getCursor()->position().x <= 369 + 24 && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1323)))
 			exitSubMenu();
 	}
 }
 
 void MainMenu::updateSubMenuCinematics() {
 	int32 currentCD = 1;	// FIXME: dummy value
-	_vm->text()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1352), currentCD);
-	_vm->text()->setPosition(30, 340);
-	_vm->text()->draw(MAKE_RESOURCE(kResourcePackText, 1353));	// Prev Page
+	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1352), currentCD);
+	getText()->setPosition(30, 340);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1353));	// Prev Page
 
-	if (_cursor->position().x >= 280 && _cursor->position().x <= 400 && _cursor->position().y >= 340 && _cursor->position().y <= 360) {
-		loadFont(kFontBlue);
+	if (getCursor()->position().x >= 280 && getCursor()->position().x <= 400 && getCursor()->position().y >= 340 && getCursor()->position().y <= 360) {
+		getText()->loadFont(kFontBlue);
 		if (_leftClick)
 			exitSubMenu();
 	} else {
-		loadFont(kFontYellow);
+		getText()->loadFont(kFontYellow);
 	}
 
-	_vm->text()->setPosition(280, 340);
-	_vm->text()->draw(MAKE_RESOURCE(kResourcePackText, 1355));	// Main Menu
+	getText()->setPosition(280, 340);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1355));	// Main Menu
 
-	loadFont(kFontYellow);
+	getText()->loadFont(kFontYellow);
 
-	_vm->text()->setPosition(500, 340);
-	_vm->text()->draw(MAKE_RESOURCE(kResourcePackText, 1354));	// Next Page
+	getText()->setPosition(500, 340);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1354));	// Next Page
 }
 
 void MainMenu::updateSubMenuSettings() {
-	int32 sizeMinus	= _vm->text()->getWidth("-");
-	int32 sizePlus		= _vm->text()->getWidth("+");
-	int32 sizeMainMenu = _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1437));
+	int32 sizeMinus	= getText()->getWidth("-");
+	int32 sizePlus		= getText()->getWidth("+");
+	int32 sizeMainMenu = getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1437));
 
-	loadFont(kFontYellow);
+	getText()->loadFont(kFontYellow);
 	// Settings
-	_vm->text()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1432));
+	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1432));
 
 	// gamma correction
-	_vm->text()->drawAlignedRight(320, 150, MAKE_RESOURCE(kResourcePackText, 1433));
-	switchFont(_cursor->position().x < 350 || _cursor->position().x > sizeMinus + 350 || _cursor->position().y < 150 || _cursor->position().y > 174);
-	_vm->text()->setPosition(350, 150);
-	_vm->text()->draw("-");
+	getText()->drawAlignedRight(320, 150, MAKE_RESOURCE(kResourcePackText, 1433));
+	switchFont(getCursor()->position().x < 350 || getCursor()->position().x > sizeMinus + 350 || getCursor()->position().y < 150 || getCursor()->position().y > 174);
+	getText()->setPosition(350, 150);
+	getText()->draw("-");
 
-	switchFont(_cursor->position().x < sizeMinus + 360 || _cursor->position().x > sizeMinus + sizePlus + 360 || _cursor->position().y < 150 || _cursor->position().y > 174);
-	_vm->text()->setPosition(sizeMinus + 360, 150);
-	_vm->text()->draw("+");
+	switchFont(getCursor()->position().x < sizeMinus + 360 || getCursor()->position().x > sizeMinus + sizePlus + 360 || getCursor()->position().y < 150 || getCursor()->position().y > 174);
+	getText()->setPosition(sizeMinus + 360, 150);
+	getText()->draw("+");
 
-	_vm->text()->setPosition(sizeMinus + sizePlus + 365, 150);
-	loadFont(kFontYellow);
+	getText()->setPosition(sizeMinus + sizePlus + 365, 150);
+	getText()->loadFont(kFontYellow);
 	if (Config.gammaLevel) {
 		for (int32 i = 0; i < Config.gammaLevel; i++) {
-			_vm->text()->draw("]");
+			getText()->draw("]");
 		}
 		if (Config.gammaLevel == 8)
-			_vm->text()->draw("*");
+			getText()->draw("*");
 	} else
-		_vm->text()->draw(MAKE_RESOURCE(kResourcePackText, 1435));
+		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1435));
 
 	// performance
-	loadFont(kFontYellow);
-	_vm->text()->drawAlignedRight(320, 179, MAKE_RESOURCE(kResourcePackText, 1434));
-	switchFont(_cursor->position().x < 350 || _cursor->position().x > sizeMinus + 350 || _cursor->position().y < 179 || _cursor->position().y > 203);
-	_vm->text()->setPosition(350, 179);
-	_vm->text()->draw("-");
+	getText()->loadFont(kFontYellow);
+	getText()->drawAlignedRight(320, 179, MAKE_RESOURCE(kResourcePackText, 1434));
+	switchFont(getCursor()->position().x < 350 || getCursor()->position().x > sizeMinus + 350 || getCursor()->position().y < 179 || getCursor()->position().y > 203);
+	getText()->setPosition(350, 179);
+	getText()->draw("-");
 
-	switchFont(_cursor->position().x < sizeMinus + 360 || _cursor->position().x > sizeMinus + sizePlus + 360 || _cursor->position().y < 179 || _cursor->position().y > 203);
-	_vm->text()->setPosition(sizeMinus + 360, 179);
-	_vm->text()->draw("+");
+	switchFont(getCursor()->position().x < sizeMinus + 360 || getCursor()->position().x > sizeMinus + sizePlus + 360 || getCursor()->position().y < 179 || getCursor()->position().y > 203);
+	getText()->setPosition(sizeMinus + 360, 179);
+	getText()->draw("+");
 
-	_vm->text()->setPosition(sizeMinus + sizePlus + 365, 179);
-	loadFont(kFontYellow);
+	getText()->setPosition(sizeMinus + sizePlus + 365, 179);
+	getText()->loadFont(kFontYellow);
 	if (Config.performance == 5) {
-		_vm->text()->draw(MAKE_RESOURCE(kResourcePackText, 1436));
+		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1436));
 	} else {
 		for (int32 i = 5; i > Config.performance; --i) {
-			_vm->text()->draw("]");
+			getText()->draw("]");
 		}
 		if (!Config.performance)
-			_vm->text()->draw("*");
+			getText()->draw("*");
 	}
 
 	// back to main menu
-	switchFont(_cursor->position().x < 300 || _cursor->position().x > 300 + sizeMainMenu || _cursor->position().y < 340 || _cursor->position().y > 340 + 24);
-	_vm->text()->setPosition(300, 340);
-	_vm->text()->draw(MAKE_RESOURCE(kResourcePackText, 1437));
+	switchFont(getCursor()->position().x < 300 || getCursor()->position().x > 300 + sizeMainMenu || getCursor()->position().y < 340 || getCursor()->position().y > 340 + 24);
+	getText()->setPosition(300, 340);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1437));
 
 	// action
 	if (_leftClick) {
 		// back to main menu
-		if (_cursor->position().x >= 300 && _cursor->position().x <= 300 + sizeMainMenu && _cursor->position().y >= 340 && _cursor->position().y <= 340 + 24) {
+		if (getCursor()->position().x >= 300 && getCursor()->position().x <= 300 + sizeMainMenu && getCursor()->position().y >= 340 && getCursor()->position().y <= 340 + 24) {
 			// TODO: save new configurations
 			exitSubMenu();
 		}
 
 		// gamma level minus
-		if (_cursor->position().x >= 350 && _cursor->position().x <= sizeMinus + 350 && _cursor->position().y >= 150 && _cursor->position().y <= 174) {
+		if (getCursor()->position().x >= 350 && getCursor()->position().x <= sizeMinus + 350 && getCursor()->position().y >= 150 && getCursor()->position().y <= 174) {
 			if (Config.gammaLevel) {
 				Config.gammaLevel -= 1;
 				// TODO: setResGammaLevel(0x80010011, 0);
 			}
 		}
 		// gamma level plus
-		if (_cursor->position().x >= sizeMinus + 360 && _cursor->position().x <= sizeMinus + sizePlus + 360 && _cursor->position().y >= 150 && _cursor->position().y <= 174) {
+		if (getCursor()->position().x >= sizeMinus + 360 && getCursor()->position().x <= sizeMinus + sizePlus + 360 && getCursor()->position().y >= 150 && getCursor()->position().y <= 174) {
 			if (Config.gammaLevel < 8) {
 				Config.gammaLevel += 1;
 				// TODO: setResGammaLevel(0x80010011, 0);
@@ -523,14 +625,14 @@ void MainMenu::updateSubMenuSettings() {
 		}
 
 		// performance minus
-		if (_cursor->position().x >= 350 && _cursor->position().x <= sizeMinus + 350 && _cursor->position().y >= 179 && _cursor->position().y <= 203) {
+		if (getCursor()->position().x >= 350 && getCursor()->position().x <= sizeMinus + 350 && getCursor()->position().y >= 179 && getCursor()->position().y <= 203) {
 			if (Config.performance) {
 				Config.performance -= 1;
 				// TODO: change quality settings
 			}
 		}
 		// performance plus
-		if (_cursor->position().x >= sizeMinus + 360 && _cursor->position().x <= sizeMinus + sizePlus + 360 && _cursor->position().y >= 179 && _cursor->position().y <= 203) {
+		if (getCursor()->position().x >= sizeMinus + 360 && getCursor()->position().x <= sizeMinus + sizePlus + 360 && getCursor()->position().y >= 179 && getCursor()->position().y <= 203) {
 			if (Config.performance < 5) {
 				Config.performance += 1;
 				// TODO: change quality settings
@@ -540,25 +642,25 @@ void MainMenu::updateSubMenuSettings() {
 }
 
 void MainMenu::updateSubMenuQuitGame() {
-	loadFont(kFontYellow);
+	getText()->loadFont(kFontYellow);
 
 	// begin new game
-	_vm->text()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1408));
+	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1408));
 
 	// Yes
-	switchFont(_cursor->position().x < 247 || _cursor->position().x > 247 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 581)) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
-	_vm->text()->setPosition(247, 273);
-	_vm->text()->draw(MAKE_RESOURCE(kResourcePackText, 1409));
+	switchFont(getCursor()->position().x < 247 || getCursor()->position().x > 247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 581)) || getCursor()->position().y < 273 || getCursor()->position().y > 273 + 24);
+	getText()->setPosition(247, 273);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1409));
 
 	// No
-	switchFont(_cursor->position().x < 369 || _cursor->position().x > 369 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 582)) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
-	_vm->text()->setPosition(369, 273);
-	_vm->text()->draw(MAKE_RESOURCE(kResourcePackText, 1410));
+	switchFont(getCursor()->position().x < 369 || getCursor()->position().x > 369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 582)) || getCursor()->position().y < 273 || getCursor()->position().y > 273 + 24);
+	getText()->setPosition(369, 273);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1410));
 
 	// action
 	if (_leftClick) {
 		// Yes
-		if (_cursor->position().x >= 247 && _cursor->position().x <= 247 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1409))) {
+		if (getCursor()->position().x >= 247 && getCursor()->position().x <= 247 + 24 && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1409))) {
 			_leftClick = false;
 
 			// User clicked on quit, so push a quit event
@@ -567,7 +669,7 @@ void MainMenu::updateSubMenuQuitGame() {
 			g_system->getEventManager()->pushEvent(event);
 		}
 		// No
-		if (_cursor->position().x >= 369 && _cursor->position().x <= 369 + 24 && _cursor->position().y >= 273 && _cursor->position().y <= 273 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 1410)))
+		if (getCursor()->position().x >= 369 && getCursor()->position().x <= 369 + 24 && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1410)))
 			exitSubMenu();
 	}
 }
@@ -608,8 +710,8 @@ void MainMenu::updateSubMenuShowCredits() {
 					posY = _creditsTextScroll;
 				}
 
-			_vm->text()->setPosition(320, step + posY);
-			_vm->text()->draw((ResourceId)(resourceId - 2147482201));
+			getText()->setPosition(320, step + posY);
+			getText()->draw((ResourceId)(resourceId - 2147482201));
 			posY = _creditsTextScroll;
 		}
 		step += 24;
@@ -635,30 +737,30 @@ void MainMenu::updateSubMenuShowCredits() {
 
 void MainMenu::exitSubMenu() {
 	_leftClick = false;
-	_activeMenuScreen = kMainMenu;
+	_activeScreen = kMenuMain;
 
 	// Copy the bright background to the back buffer
 	getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 0), 1, 0, 0, 0);
 
 	// Set the cursor
-	_cursor->set(MAKE_RESOURCE(kResourcePackShared, 2));
+	getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 2));
 }
 
 void MainMenu::updateSubMenuReturnToGame() {
-	loadFont(kFontYellow);
+	getText()->loadFont(kFontYellow);
 
 	// no game loaded
-	_vm->text()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 712));
+	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 712));
 
 	// Main menu
-	switchFont(_cursor->position().x < 285 || _cursor->position().x > 285 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 713)) || _cursor->position().y < 273 || _cursor->position().y > 273 + 24);
-	_vm->text()->setPosition(285, 273);
-	_vm->text()->draw(MAKE_RESOURCE(kResourcePackText, 713));
+	switchFont(getCursor()->position().x < 285 || getCursor()->position().x > 285 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 713)) || getCursor()->position().y < 273 || getCursor()->position().y > 273 + 24);
+	getText()->setPosition(285, 273);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 713));
 
 	// action
 	if (_leftClick) {
 		// Main menu
-		if (_cursor->position().x >= 285 && _cursor->position().x <= 285 + _vm->text()->getWidth(MAKE_RESOURCE(kResourcePackText, 713)) && _cursor->position().y >= 273 && _cursor->position().y <= 273 + 24)
+		if (getCursor()->position().x >= 285 && getCursor()->position().x <= 285 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 713)) && getCursor()->position().y >= 273 && getCursor()->position().y <= 273 + 24)
 			exitSubMenu();
 	}
 }

@@ -161,6 +161,10 @@ void AsylumEngine::waitForTimer(uint32 msec_delay) {
 	}
 }
 
+void AsylumEngine::init() {
+	error("[AsylumEngine::init] Not implemented!");
+}
+
 void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 	if (!_cursor || !_screen)
 		error("[AsylumEngine::startGame] Subsystems not initialized properly!");
@@ -198,6 +202,10 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 		_cursor->show();
 		break;
 	}
+}
+
+void AsylumEngine::restart() {
+	error("[AsylumEngine::restart] Not implemented!");
 }
 
 void AsylumEngine::playIntro() {
@@ -254,7 +262,7 @@ void AsylumEngine::handleEvents(bool doUpdate) {
 		}
 	}
 
-	Common::Event ev;
+	AsylumEvent ev;
 
 	if (_eventMan->pollEvent(ev)) {
 		switch (ev.type) {
@@ -267,13 +275,13 @@ void AsylumEngine::handleEvents(bool doUpdate) {
 
 			if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				// Toggle menu
-				if (_mainMenu->isActive()) {
+				/*if (_mainMenu->isActive()) {*/
 					if (_scene) {
-						_mainMenu->closeMenu();
+						//_mainMenu->closeMenu();
 						_scene->activate();
-					}
+					//}
 				} else if (_scene && _scene->isActive()) {
-					_mainMenu->openMenu();
+					//_mainMenu->openMenu();
 				}
 				/* FIXME
 				} else if (_scene && _scene->getBlowUpPuzzle()->isActive()) {
@@ -297,17 +305,20 @@ void AsylumEngine::handleEvents(bool doUpdate) {
 	}
 
 	if (doUpdate) {
-		if (_mainMenu->isActive() ||
-			(_scene && _scene->isActive())) //|| (_scene && _scene->getBlowUpPuzzle()->isActive()))
-			// Copy background image
-			_screen->copyBackBufferToScreen();
+		//if (_mainMenu->isActive() || (_scene && _scene->isActive())) { //|| (_scene && _scene->getBlowUpPuzzle()->isActive()))
+			//AsylumEvent updateEvt = AsylumEvent(EVENT_ASYLUM_UPDATE);
+			//_mainMenu->handleEvent(updateEvt);
+		//}
+
+		// Copy background image
+		_screen->copyBackBufferToScreen();
 	}
 
 
-	if (_mainMenu->isActive())
+	//if (_mainMenu->isActive())
 		// Main menu active, pass events to it
-		_mainMenu->handleEvent(&ev, doUpdate);
-	else if (_scene && _scene->isActive())
+	//	_mainMenu->handleEvent(ev);
+	if (_scene && _scene->isActive())
 		// Pass events to the game
 		_scene->handleEvent(&ev, doUpdate);
 	/* FIXME reimplement
@@ -329,9 +340,9 @@ void AsylumEngine::processDelayedEvents() {
 		_video->playVideo(videoIdx);
 		_scene->actions()->setDelayedVideoIndex(-1);
 
-		if (_mainMenu->isActive())
-			_mainMenu->openMenu();
-		else if (_scene->isActive())
+		//if (_mainMenu->isActive())
+		//	_mainMenu->openMenu();
+		if (_scene->isActive())
 			_scene->activate();
 	}
 

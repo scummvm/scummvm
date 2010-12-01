@@ -26,7 +26,8 @@
 #ifndef ASYLUM_MENU_H
 #define ASYLUM_MENU_H
 
-#include "common/events.h"
+#include "asylum/eventhandler.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -37,20 +38,24 @@ class ResourcePack;
 class Scene;
 class Text;
 
-class MainMenu {
+class MainMenu : public EventHandler {
 public:
 	MainMenu(AsylumEngine *vm);
 	~MainMenu();
 
-	void handleEvent(Common::Event *event, bool doUpdate);
-	bool isActive() {
-		return _active;
-	}
+	/**
+	 * Shows the menu
+	 */
+	void show();
 
-	void openMenu();
-	void closeMenu();
-
-	void showOptions();
+	/**
+	 * Handle event.
+	 *
+	 * @param evt The event.
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	bool handleEvent(const AsylumEvent &evt);
 
 private:
 	AsylumEngine *_vm;
@@ -69,29 +74,27 @@ private:
 	};
 
 	enum MenuScreen {
-		kNewGame         = 0,
-		kLoadGame        = 1,
-		kSaveGame        = 2,
-		kDeleteGame      = 3,
-		kViewCinematics  = 4,
-		kQuitGame        = 5,
-		kTextOptions     = 6,
-		kAudioOptions    = 7,
-		kSettings        = 8,
-		kKeyboardConfig  = 9,
-		kShowCredits     = 10,
-		kReturnToGame    = 11,
-		kMainMenu        = 12
+		kMenuNone            = -1,
+		kMenuNewGame         = 0,
+		kMenuLoadGame        = 1,
+		kMenuSaveGame        = 2,
+		kMenuDeleteGame      = 3,
+		kMenuViewCinematics  = 4,
+		kMenuQuitGame        = 5,
+		kMenuTextOptions     = 6,
+		kMenuAudioOptions    = 7,
+		kMenuSettings        = 8,
+		kMenuKeyboardConfig  = 9,
+		kMenuShowCredits     = 10,
+		kMenuReturnToGame    = 11,
+		kMenuMain            = 12
 	};
 
 	enum Fonts {
-		kFontBlue,
-		kFontYellow
+		kFontBlue = MAKE_RESOURCE(kResourcePackShared, 22),
+		kFontYellow = MAKE_RESOURCE(kResourcePackShared, 16)
 	};
 
-	Common::Event *_ev;
-
-	Cursor *_cursor;
 	int32  _activeIcon;
 	int32  _previousActiveIcon;
 	uint32 _curIconFrame;
@@ -102,19 +105,47 @@ private:
 	bool   _leftClick;
 	bool   _active;
 
-	MenuScreen      _activeMenuScreen;
+	// Game initialization
+	bool _initGame;
+
+	// Data
+	MenuScreen       _activeScreen;
+	ResourceId       _soundResourceId;
+	bool             _allowInteraction;
+	int32            _dword_4464BC;
+	int32            _dword_455C74;
+	bool             _dword_455D4C;
+	bool             _dword_455D5C;
+	int32            _dword_4562C0;
+	int32            _dword_4562C4;
+	int32            _dword_45628C;
+	bool             _needEyeCursorInit;
+
 	GraphicResource *_bgResource;
 	GraphicResource *_eyeResource;
 	GraphicResource *_iconResource;
 	GraphicResource *_creditsResource;
 	GraphicResource *_creditsFadeResource;
 
-	void loadFont(Fonts font);
 	/**
-	 * Determine which font colour to use. If the condition is true,
-	 * load kFontYellow, if false, load kFontBlue
+	 * Setups menu screen
+	 */
+	void setup();
+
+	/**
+	 * Switch between fonts.
+	 *
+	 * @param condition if true, load kFontYellow, if false, load kFontBlue.
 	 */
 	void switchFont(bool condition);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Message handling
+	bool init();
+	bool update();
+	bool music();
+	bool key(const AsylumEvent &evt);
+	bool mouse(const AsylumEvent &evt);
 
 	void updateEyesAnimation();
 	void updateMainMenu();
@@ -127,9 +158,6 @@ private:
 	void updateSubMenuQuitGame();
 	void updateSubMenuShowCredits();
 	void updateSubMenuReturnToGame();
-
-	void update();
-
 }; // end of class MainMenu
 
 } // end of namespace Asylum

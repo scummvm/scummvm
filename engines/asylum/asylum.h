@@ -94,9 +94,19 @@ public:
 	virtual ~AsylumEngine();
 
 	/**
+	 * Initializes the game
+	 */
+	void init();
+
+	/**
 	 * Start a new the game
 	 */
 	void startGame(ResourcePackId sceneId, StartGameType type);
+
+	/**
+	 * Restarts the game
+	 */
+	void restart();
 
 	/**
 	 * Switch to a new scene
@@ -185,6 +195,7 @@ private:
 
 	// Shared game data
 	SharedData _data;
+
 
 	bool _introPlaying;
 	int  _gameFlags[1512];
