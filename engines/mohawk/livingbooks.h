@@ -100,8 +100,31 @@ enum {
 	kLBMsgListScript = 0x66,
 	kLBNotifyScript = 0x67,
 	kLBSetPlayInfo = 0x68,
+	kLBSetRandomLoc = 0x69,  // unused?
+	kLBSetDrag = 0x6a,       // unused?
+	kLBSetDrawMode = 0x6b,
+	kLBSetFont = 0x6c,       // unused?
+	kLBSetOneShot = 0x6d,    // unused?
 	kLBSetPlayPhase = 0x6e,
-	kLBCommand = 0x70
+	// from here, 2.x+
+	kLBUnknown6F = 0x6f,
+	kLBCommand = 0x70,
+	kLBPaletteAData = 0x71,  // unused?
+	kLBPaletteXData = 0x72,
+	kLBDisable = 0x73,       // unused?
+	kLBEnable = 0x74,        // unused?
+	kLBSetNotVisible = 0x75,
+	kLBSetVisible = 0x76,    // unused?
+	kLBGlobalDisable = 0x77, // unused?
+	kLBGlobalEnable = 0x78,  // unused?
+	kLBGlobalSetNotVisible = 0x79,
+	kLBGlobalSetVisible = 0x7a, // unused?
+	kLBSetAmbient = 0x7b,
+	kLBUnknown7C = 0x7c,     // unused?
+	kLBUnknown7D = 0x7d,
+	kLBUnknown7E = 0x7e,     // unused?
+	kLBSetParent = 0x7f,     // unused?
+	kLBUnknown80 = 0x80      // unused?
 };
 
 enum {
@@ -249,6 +272,8 @@ protected:
 	uint16 _loopMode, _loopCount, _periodMin, _periodMax;
 	uint16 _controlMode;
 	Common::Point _relocPoint;
+
+	bool _isAmbient;
 
 	Common::Array<LBScriptEntry *> _scriptEntries;
 	void runScript(uint id);

@@ -1467,6 +1467,8 @@ LBItem::LBItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : _vm(vm), _rect
 	_nextTime = 0;
 	_startTime = 0;
 	_loops = 0;
+
+	_isAmbient = false;
 }
 
 LBItem::~LBItem() {
@@ -1590,10 +1592,23 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		_phase = stream->readUint16();
 		break;
 
-	case 0x7b:
-		assert(size == 0);
-		debug(2, "LBItem: 0x7b");
-		// TODO
+	case kLBUnknown6F:
+		{
+		if (size != 18)
+			error("0x6f had wrong size (%d)", size);
+		uint u1 = stream->readUint16();
+		uint u2 = stream->readUint16();
+		uint u3 = stream->readUint16();
+		uint u4 = stream->readUint16();
+		uint u5 = stream->readUint16();
+		uint u6 = stream->readUint16();
+		uint u7 = stream->readUint16();
+		uint u8 = stream->readUint16();
+		uint u9 = stream->readUint16();
+		// FIXME: this is scripting stuff
+		debug(2, "0x6f: item %s, unknowns: %04x, %04x, %04x, %04x, %04x, %04x, %04x, %04x, %04x\n",
+			_desc.c_str(), u1, u2, u3, u4, u5, u6, u7, u8, u9);
+		}
 		break;
 
 	case kLBCommand:
@@ -1601,20 +1616,47 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 			Common::String command = readString(stream);
 			if (size != command.size() + 1)
 				error("failed to read command string");
+			// FIXME
 			warning("ignoring command '%s'", command.c_str());
 		}
 		break;
 
-	case 0x69:
-		// TODO: ??
-	case 0x6a:
-		// TODO: ??
-	case 0x6d:
-		// TODO: one-shot?
+	case kLBSetNotVisible:
+		assert(size == 0);
+		_visible = false;
+		break;
+
+	case kLBGlobalSetNotVisible:
+		assert(size == 0);
+		// FIXME
+		_visible = false;
+		break;
+
+	case kLBSetAmbient:
+		assert(size == 0);
+		_isAmbient = true;
+		break;
+
+	case kLBUnknown7D:
+		{
+		if (size != 10)
+			error("0x7d had wrong size (%d)", size);
+		uint u1 = stream->readUint16();
+		uint u2 = stream->readUint16();
+		uint u3 = stream->readUint16();
+		uint u4 = stream->readUint16();
+		uint u5 = stream->readUint16();
+		// FIXME: this is scripting stuff
+		debug(2, "0x7d: item %s, unknowns: %04x, %04x, %04x, %04x, %04x\n",
+			_desc.c_str(), u1, u2, u3, u4, u5);
+		}
+		break;
+
 	default:
-		for (uint i = 0; i < size; i++)
-			debugN("%02x ", stream->readByte());
-		warning("Unknown message %04x (size 0x%04x)", type, size);
+		error("Unknown message %04x (size 0x%04x)", type, size);
+		//for (uint i = 0; i < size; i++)
+		//	debugN("%02x ", stream->readByte());
+		//debugN("\n");
 		break;
 	}
 }
@@ -2329,13 +2371,13 @@ LBPictureItem::LBPictureItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : 
 
 void LBPictureItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
 	switch (type) {
-	case 0x6b:
+	case kLBSetDrawMode:
 		{
 		assert(size == 2);
 		// TODO: this probably sets whether points are always contained (0x10)
 		// or whether the bitmap contents are checked (00, or anything else?)
 		uint16 val = stream->readUint16();
-		debug(2, "LBPictureItem: 0x6b: %04x", val);
+		debug(2, "LBPictureItem: kLBSetDrawMode: %04x", val);
 		}
 		break;
 
