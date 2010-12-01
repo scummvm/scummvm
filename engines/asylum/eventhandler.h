@@ -32,15 +32,20 @@
 namespace Asylum {
 
 enum AsylumEventType {
-	EVENT_ASYLUM_INIT   = 0xFFF0,
-	EVENT_ASYLUM_DEINIT = 0xFFF1,
-	EVENT_ASYLUM_UPDATE = 0xFFF2
+	EVENT_ASYLUM_INIT     = 0xFFF0,
+	EVENT_ASYLUM_DEINIT   = 0xFFF1,
+	EVENT_ASYLUM_UPDATE   = 0xFFF2,
+	EVENT_ASYLUM_MUSIC    = 0xFFF3,
+
+	EVENT_ASYLUM_CHANGECD = 0xFFFE
 };
 
 struct AsylumEvent : public Common::Event {
+	AsylumEvent() : Event() {}
+
 	// Since we don't feed any custom message into the event manager,
 	// we can safely use our own custom event type.
-	AsylumEvent(AsylumEventType msgType) {
+	AsylumEvent(AsylumEventType msgType) : Event() {
 		type = (Common::EventType)msgType;
 	}
 };
