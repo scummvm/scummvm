@@ -1925,7 +1925,30 @@ void LBItem::runScript(uint id) {
 					target->setEnabled(true);
 					break;
 
-				case 0xf: // apply palette? seen in greeneggs
+				case 0xb:
+					// FIXME: 'showGlobal'
+					target->setVisible(false);
+					break;
+
+				case 0xc:
+					// FIXME: 'showGlobal'
+					target->setVisible(true);
+					break;
+
+				case 0xd:
+					// FIXME: 'enableGlobal'
+					target->setEnabled(false);
+					break;
+
+				case 0xe:
+					// FIXME: 'enableGlobal'
+					target->setEnabled(true);
+					break;
+
+				case 0xf:
+					target->seek(0xFFFF);
+					break;
+
 				default:
 					// TODO
 					warning("Ignoring script entry (type 0x%04x, action 0x%04x, opcode 0x%04x, param 0x%04x) for %d (param %04x)",
