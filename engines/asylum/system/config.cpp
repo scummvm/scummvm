@@ -43,13 +43,13 @@ ConfigurationManager::ConfigurationManager() {
 	ConfMan.registerDefault("movie_volume", 0);
 	ConfMan.registerDefault("music_status", true);
 	ConfMan.registerDefault("reverse_stereo", false);
-	ConfMan.registerDefault("performance", 5);
-	//ConfMan.registerDefault("versionKey", );
-	//ConfMan.registerDefault("quicksave_key", );
-	//ConfMan.registerDefault("quickload_key", );
-	//ConfMan.registerDefault("switch_to_sara_key", );
-	//ConfMan.registerDefault("switch_to_grimwall_key", );
-	//ConfMan.registerDefault("switch_to_olmec_key", );
+	ConfMan.registerDefault("performance", 4);
+	ConfMan.registerDefault("key_showVersion", 'v');
+	ConfMan.registerDefault("key_quickLoad", 'L');
+	ConfMan.registerDefault("key_quickSave", 'S');
+	ConfMan.registerDefault("key_switchToSara", 's');
+	ConfMan.registerDefault("key_switchToGrimwall", 'g');
+	ConfMan.registerDefault("key_switchToOlmec", 'o');
 
 	ConfMan.registerDefault("show_scene_loading", false);
 	ConfMan.registerDefault("show_intro", true);
@@ -66,7 +66,14 @@ ConfigurationManager::ConfigurationManager() {
 	movieVolume   = 0;
 	musicStatus = true;
 	reverseStereo = false;
-	performance = 5;
+	performance = 4;
+
+	keyShowVersion = 'v';
+	keyQuickLoad = 'L';
+	keyQuickSave = 'S';
+	keySwitchToSara = 's';
+	keySwitchToGrimwall = 'g';
+	keySwitchToOlmec = 'o';
 }
 
 ConfigurationManager::~ConfigurationManager() {
@@ -91,6 +98,14 @@ void ConfigurationManager::read() {
 	// Misc options
 	showSceneLoading = ConfMan.getBool("show_scene_loading");
 	showIntro        = ConfMan.getBool("show_intro");
+
+	// Keyboard shortcuts
+	keyShowVersion      = (char)ConfMan.getInt("key_showVersion");
+	keyQuickLoad        = (char)ConfMan.getInt("key_quickLoad");
+	keyQuickSave        = (char)ConfMan.getInt("key_quickSave");
+	keySwitchToSara     = (char)ConfMan.getInt("key_switchToSara");
+	keySwitchToGrimwall = (char)ConfMan.getInt("key_switchToGrimwall");
+	keySwitchToOlmec    = (char)ConfMan.getInt("key_switchToOlmec");
 }
 
 void ConfigurationManager::write() {
@@ -112,6 +127,14 @@ void ConfigurationManager::write() {
 	// Misc Options
 	ConfMan.setBool("show_scene_loading", showSceneLoading);
 	ConfMan.setBool("show_intro", showIntro);
+
+	// Keyboard shortcuts
+	ConfMan.setInt("key_showVersion",      (int)keyShowVersion);
+	ConfMan.setInt("key_quickLoad",        (int)keyQuickLoad);
+	ConfMan.setInt("key_quickSave",        (int)keyQuickSave);
+	ConfMan.setInt("key_switchToSara",     (int)keySwitchToSara);
+	ConfMan.setInt("key_switchToGrimwall", (int)keySwitchToGrimwall);
+	ConfMan.setInt("key_switchToOlmec",    (int)keySwitchToOlmec);
 }
 
 } // end of namespace Asylum

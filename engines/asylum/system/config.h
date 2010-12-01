@@ -59,12 +59,12 @@ public:
 	bool musicStatus; // On or Off
 	bool reverseStereo;
 	int  performance;    ///< performance only affects sound: perf > 0 ? 22050hz/16bit : 11025hz/8bit
-	int  versionKey;
-	int  quickSaveKey;
-	int  quickLoadKey;
-	int  switchToSaraKey;
-	int  switchToGrimwallKey;
-	int  switchToOlmecKey;
+	char keyShowVersion;
+	char keyQuickSave;
+	char keyQuickLoad;
+	char keySwitchToSara;
+	char keySwitchToGrimwall;
+	char keySwitchToOlmec;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc configuration options (not shown in GUI)

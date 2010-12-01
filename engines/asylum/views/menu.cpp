@@ -61,9 +61,10 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_dword_455D4C = false;
 	_dword_455D5C = false;
 	_dword_455DD8 = false;
+	_dword_455DE0 = false;
 	_dword_456288 = 0;
 	_dword_4562C0 = 0;
-	_creditsTextScroll = 0;
+	_textScroll = 0;
 	_creditsFrameIndex = 0;
 	_needEyeCursorInit = false;
 
@@ -92,7 +93,7 @@ void MainMenu::show() {
 	_musicResourceId = kResourceNone;
 	_gameStarted = false;
 
-	_creditsTextScroll = 480;
+	_textScroll = 480;
 	_creditsFrameIndex = 0;
 
 	setup();
@@ -533,13 +534,13 @@ bool MainMenu::click(const AsylumEvent &evt) {
 		_dword_455C80 = false;
 		_dword_455C78 = false;
 		_dword_456288 = 0;
-		_creditsTextScroll = 0;
+		_textScroll = 0;
 		getSaveLoad()->loadList();
 		break;
 
 	case kMenuDeleteGame:
 		_dword_455C80 = false;
-		_creditsTextScroll = 0;
+		_textScroll = 0;
 		getSaveLoad()->loadList();
 		break;
 
@@ -547,7 +548,7 @@ bool MainMenu::click(const AsylumEvent &evt) {
 		_needEyeCursorInit = false;
 		_dword_455C78 = false;
 		_dword_456288 = 0;
-		_creditsTextScroll = 0;
+		_textScroll = 0;
 		listMovies();
 		break;
 
@@ -563,7 +564,7 @@ bool MainMenu::click(const AsylumEvent &evt) {
 		break;
 
 	case kMenuShowCredits:
-		_creditsTextScroll = 480;
+		_textScroll = 480;
 		_creditsFrameIndex = 0;
 		setup();
 		break;
@@ -639,25 +640,247 @@ void MainMenu::updateQuitGame() {
 void MainMenu::updateTextOptions() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::updateTextOptions] Not implemented!");
+	getText()->loadFont(kFontYellow);
+	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1411));
+
+	getText()->draw(320, 150, MAKE_RESOURCE(kResourcePackText, 1412));
+
+	switchFont(cursor.x < 350 || cursor.x > (350 + getText()->getWidth(Config.showMovieSubtitles ? MAKE_RESOURCE(kResourcePackText, 1414) : MAKE_RESOURCE(kResourcePackText, 1415))) || cursor.y < 150 || cursor.y > 174);
+	getText()->setPosition(350, 150);
+	getText()->draw(Config.showMovieSubtitles ? MAKE_RESOURCE(kResourcePackText, 1414) : MAKE_RESOURCE(kResourcePackText, 1415));
+
+	getText()->loadFont(kFontYellow);
+	getText()->draw(320, 179, MAKE_RESOURCE(kResourcePackText, 1413));
+
+	switchFont(cursor.x < 350 || cursor.x > (350 + getText()->getWidth(Config.showEncounterSubtitles ? MAKE_RESOURCE(kResourcePackText, 1414) : MAKE_RESOURCE(kResourcePackText, 1415))) || cursor.y < 179 || cursor.y > 203);
+	getText()->setPosition(350, 179);
+	getText()->draw(Config.showEncounterSubtitles ? MAKE_RESOURCE(kResourcePackText, 1414) : MAKE_RESOURCE(kResourcePackText, 1415));
+
+	switchFont(cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1416))) || cursor.y < 340 || cursor.y > (340 + 24));
+	getText()->setPosition(300, 340);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1416));
 }
 
 void MainMenu::updateAudioOptions() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::updateAudioOptions] Not implemented!");
+	// Size of - and +
+	int32 sizeMinus	= getText()->getWidth("-");
+	int32 sizePlus  = getText()->getWidth("+");
+
+	getText()->loadFont(kFontYellow);
+	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1420));
+
+	int32 volumeIndex = 0;
+	int32 volumeValue = cursor.x;
+	do {
+		getText()->loadFont(kFontYellow);
+		getText()->draw(320, 29 * volumeIndex + 150, MAKE_RESOURCE(kResourcePackText, 1421 + volumeIndex));
+
+		switchFont(cursor.x < 350 || cursor.x > (sizeMinus + 350) || cursor.y < (29 * volumeIndex + 150) || cursor.y > (29 * (volumeIndex + 6)));
+		getText()->setPosition(350, 29 * volumeIndex + 150);
+		getText()->draw("-");
+
+		switchFont(cursor.x < (sizeMinus + 360) || cursor.x > (sizeMinus + sizePlus + 360) || cursor.y < (29 * volumeIndex + 150) || cursor.y > (29 * (volumeIndex + 6)));
+		getText()->setPosition(sizeMinus + 360, 29 * volumeIndex + 150);
+		getText()->draw("+");
+
+		switch(volumeIndex) {
+		default:
+			break;
+
+		case 0:
+			volumeValue = 0;
+			break;
+
+		case 1:
+			volumeValue = Config.musicVolume / 250 + 20;
+			break;
+
+		case 2:
+			volumeValue = Config.ambientVolume / 250 + 20;
+			break;
+
+		case 3:
+			volumeValue = Config.sfxVolume / 250 + 20;
+			break;
+
+		case 4:
+			volumeValue = Config.voiceVolume / 250 + 20;
+			break;
+
+		case 5:
+			volumeValue = Config.movieVolume / 250 + 20;
+			break;
+		}
+
+		getText()->loadFont(kFontYellow);
+		getText()->setPosition(sizePlus + sizeMinus + 365, 29 * volumeIndex + 150);
+		if (volumeValue > 0) {
+			for (int32 i = 0; i < volumeValue; i++)
+				getText()->drawChar(']');
+
+			if (volumeValue == 20)
+				getText()->drawChar('*');
+		} else if (volumeIndex) {
+			getText()->draw(MAKE_RESOURCE(kResourcePackText, 1429));
+		}
+
+		++volumeIndex;
+	} while (volumeIndex < 6);
+
+	//////////////////////////////////////////////////////////////////////////
+	//
+	getText()->loadFont(kFontYellow);
+	getText()->draw(320, 29 *volumeIndex + 150, MAKE_RESOURCE(kResourcePackText, 1427));
+
+	switchFont(cursor.x < 350 || cursor.x > (350 + getText()->getWidth(Config.reverseStereo ? MAKE_RESOURCE(kResourcePackText, 1428) : MAKE_RESOURCE(kResourcePackText, 1429))) || cursor.y < (29 * volumeIndex + 150) || cursor.y > (29 * (volumeIndex + 6)));
+	getText()->setPosition(350, 29 * volumeIndex + 150);
+	getText()->draw(Config.reverseStereo ? MAKE_RESOURCE(kResourcePackText, 1428) : MAKE_RESOURCE(kResourcePackText, 1429));
+
+	switchFont(cursor.x < 220 || cursor.x > (220 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1430))) || cursor.y < 360 || cursor.y > (360 + 24));
+	getText()->setPosition(220, 360);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1430));
+
+	switchFont((cursor.x < 360 || cursor.x > (360 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1431))) || cursor.y < 360 || cursor.y > (360 + 24)) && !_dword_455DE0);
+	getText()->setPosition(360, 360);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1431));
 }
 
 void MainMenu::updateSettings() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::updateSettings] Not implemented!");
+	// Size of - and +
+	int32 sizeMinus	= getText()->getWidth("-");
+	int32 sizePlus  = getText()->getWidth("+");
+
+	getText()->loadFont(kFontYellow);
+
+	// Settings
+	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1432));
+
+	//////////////////////////////////////////////////////////////////////////
+	// Gamma correction
+	getText()->draw(320, 150, MAKE_RESOURCE(kResourcePackText, 1433));
+
+	switchFont(cursor.x < 350 || cursor.x > (sizeMinus + 350) || cursor.y < 150 || cursor.y > 174);
+	getText()->setPosition(350, 150);
+	getText()->draw("-");
+
+	switchFont(cursor.x < (sizeMinus + 360) || cursor.x > (sizeMinus + sizePlus + 360) || cursor.y < 150 || cursor.y > 174);
+	getText()->setPosition(sizeMinus + 360, 150);
+	getText()->draw("+");
+
+	getText()->setPosition(sizeMinus + sizePlus + 365, 150);
+	getText()->loadFont(kFontYellow);
+	if (Config.gammaLevel) {
+		for (int32 i = 0; i < Config.gammaLevel; i++)
+			getText()->drawChar(']');
+
+		if (Config.gammaLevel == 8)
+			getText()->drawChar('*');
+	} else {
+		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1435));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Performance
+	getText()->loadFont(kFontYellow);
+	getText()->draw(320, 179, MAKE_RESOURCE(kResourcePackText, 1434));
+
+	switchFont(cursor.x < 350 || cursor.x > (sizeMinus + 350) || cursor.y < 179 || cursor.y > 203);
+	getText()->setPosition(350, 179);
+	getText()->draw("-");
+
+	switchFont(cursor.x < (sizeMinus + 360) || cursor.x > (sizeMinus + sizePlus + 360) || cursor.y < 179 || cursor.y > 203);
+	getText()->setPosition(sizeMinus + 360, 179);
+	getText()->draw("+");
+
+	getText()->setPosition(sizeMinus + sizePlus + 365, 179);
+	getText()->loadFont(kFontYellow);
+	if (Config.performance == 5) {
+		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1436));
+	} else {
+		for (int32 i = 5; i > Config.performance; --i)
+			getText()->drawChar(']');
+
+		if (!Config.performance)
+			getText()->draw('*');
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Back to main menu
+	switchFont(cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1437))) || cursor.y < 340 || cursor.y > (340 + 24));
+	getText()->setPosition(300, 340);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1437));
 }
 
 void MainMenu::updateKeyboardConfig() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::updateKeyboardConfig] Not implemented!");
+	getText()->loadFont(kFontYellow);
+	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1438));
+
+	char key = 0;
+	int32 keyIndex = 0;
+
+	do {
+		getText()->loadFont(kFontYellow);
+		if ((getScene() && getWorld()->chapter == 9) || keyIndex < 3) {
+			getText()->draw(320, 29 * keyIndex + 150, MAKE_RESOURCE(kResourcePackText, 1439 + keyIndex));
+		} else {
+			getText()->draw(320, 29 * keyIndex + 150, MAKE_RESOURCE(kResourcePackText, 1445));
+		}
+
+		switch (keyIndex) {
+		default:
+			break;
+
+		case 0:
+			key = Config.keyShowVersion;
+			break;
+
+		case 1:
+			key = Config.keyQuickLoad;
+			break;
+
+		case 2:
+			key = Config.keyQuickSave;
+			break;
+
+		case 3:
+			key = Config.keySwitchToSara;
+			break;
+
+		case 4:
+			key = Config.keySwitchToGrimwall;
+			break;
+
+		case 5:
+			key = Config.keySwitchToOlmec;
+			break;
+		}
+
+		getText()->setPosition(350, 29 * keyIndex + 150);
+
+		if (keyIndex == _dword_4464B8) {
+			getText()->loadFont(kFontBlue);
+
+			if (_dword_4562C0 < 6)
+				getText()->drawChar('_');
+
+			_dword_4562C0 = (_dword_4562C0 + 1) % 12;
+		} else {
+			switchFont(getCursor()->isHidden() || cursor.x < 350 || cursor.x > (350 + getText()->getWidth(key)) || cursor.y < (29 * keyIndex + 150) || cursor.y > (29 * (keyIndex + 6)));
+			getText()->drawChar(key);
+		}
+
+		++keyIndex;
+	} while (keyIndex < 6);
+
+	switchFont(getCursor()->isHidden() || cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1446))) || cursor.y < 340 || cursor.y > (340 + 24));
+	getText()->setPosition(340, 340);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1446));
 }
 
 void MainMenu::updateReturnToGame() {
@@ -688,21 +911,21 @@ void MainMenu::updateShowCredits() {
 	int32 step = 0;
 	uint32 index = 0;
 	do {
-		if ((_creditsTextScroll + step - 24) >= 0) {
-			if ((_creditsTextScroll + step) > 480)
+		if ((_textScroll + step - 24) >= 0) {
+			if ((_textScroll + step) > 480)
 				break;
 
-			int32 minBound = _creditsTextScroll + step + 24;
+			int32 minBound = _textScroll + step + 24;
 			if (minBound >= 0)
 				if (minBound < 32)
 					getText()->setTransTableNum(3 - minBound / 8);
 
-			int32 maxBound = _creditsTextScroll + step;
-			if ((_creditsTextScroll + step) < 480)
+			int32 maxBound = _textScroll + step;
+			if ((_textScroll + step) < 480)
 				if (maxBound > 448)
 					getText()->setTransTableNum(3 - (479 - maxBound) / 8);
 
-			getText()->setPosition(320, step + _creditsTextScroll);
+			getText()->setPosition(320, step + _textScroll);
 			getText()->draw(MAKE_RESOURCE(kResourcePackText, 1447 + index));
 		}
 
@@ -718,8 +941,8 @@ void MainMenu::updateShowCredits() {
 		}
 	}
 
-	_creditsTextScroll -= 2;
-	if (_creditsTextScroll < -(8688 + 24))
+	_textScroll -= 2;
+	if (_textScroll < -(8688 + 24))
 		closeCredits();
 }
 
@@ -877,63 +1100,6 @@ void MainMenu::keyShowCredits() {
 //}
 //
 //void MainMenu::updateSubMenuSettings() {
-//	int32 sizeMinus	= getText()->getWidth("-");
-//	int32 sizePlus		= getText()->getWidth("+");
-//	int32 sizeMainMenu = getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1437));
-//
-//	getText()->loadFont(kFontYellow);
-//	// Settings
-//	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1432));
-//
-//	// gamma correction
-//	getText()->drawAlignedRight(320, 150, MAKE_RESOURCE(kResourcePackText, 1433));
-//	switchFont(cursor.x < 350 || cursor.x > sizeMinus + 350 || cursor.y < 150 || cursor.y > 174);
-//	getText()->setPosition(350, 150);
-//	getText()->draw("-");
-//
-//	switchFont(cursor.x < sizeMinus + 360 || cursor.x > sizeMinus + sizePlus + 360 || cursor.y < 150 || cursor.y > 174);
-//	getText()->setPosition(sizeMinus + 360, 150);
-//	getText()->draw("+");
-//
-//	getText()->setPosition(sizeMinus + sizePlus + 365, 150);
-//	getText()->loadFont(kFontYellow);
-//	if (Config.gammaLevel) {
-//		for (int32 i = 0; i < Config.gammaLevel; i++) {
-//			getText()->draw("]");
-//		}
-//		if (Config.gammaLevel == 8)
-//			getText()->draw("*");
-//	} else
-//		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1435));
-//
-//	// performance
-//	getText()->loadFont(kFontYellow);
-//	getText()->drawAlignedRight(320, 179, MAKE_RESOURCE(kResourcePackText, 1434));
-//	switchFont(cursor.x < 350 || cursor.x > sizeMinus + 350 || cursor.y < 179 || cursor.y > 203);
-//	getText()->setPosition(350, 179);
-//	getText()->draw("-");
-//
-//	switchFont(cursor.x < sizeMinus + 360 || cursor.x > sizeMinus + sizePlus + 360 || cursor.y < 179 || cursor.y > 203);
-//	getText()->setPosition(sizeMinus + 360, 179);
-//	getText()->draw("+");
-//
-//	getText()->setPosition(sizeMinus + sizePlus + 365, 179);
-//	getText()->loadFont(kFontYellow);
-//	if (Config.performance == 5) {
-//		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1436));
-//	} else {
-//		for (int32 i = 5; i > Config.performance; --i) {
-//			getText()->draw("]");
-//		}
-//		if (!Config.performance)
-//			getText()->draw("*");
-//	}
-//
-//	// back to main menu
-//	switchFont(cursor.x < 300 || cursor.x > 300 + sizeMainMenu || cursor.y < 340 || cursor.y > 340 + 24);
-//	getText()->setPosition(300, 340);
-//	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1437));
-//
 //	// action
 //	//if (_leftClick) {
 //	//	// back to main menu
