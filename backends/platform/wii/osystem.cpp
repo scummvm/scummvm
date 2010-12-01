@@ -314,7 +314,7 @@ Common::String OSystem_Wii::getSystemLanguage() const {
 	Common::String country;
 	// TODO: Can we get more fine-grained country setting?
 	int32 areaID = CONF_GetArea();
-	if ((areaID >= CONF_AREA_JPN) && (areaID <= CONF_AREA_CHN) {
+	if ((areaID >= CONF_AREA_JPN) && (areaID <= CONF_AREA_CHN)) {
 		// It's a known area.
 		if (areaID == CONF_AREA_BRA) {
 			// Portuguese isn't available on the Wii, but we know it's the
