@@ -36,11 +36,16 @@
 #include <GLES/gl.h>
 #elif defined(MACOSX)
 #include <OpenGL/gl.h>
-#elif defined(WIN32)
-#include <GL/gl.h>
-#include <GL/glext.h>
 #else
+
 #include <GL/gl.h>
+#if defined(SDL_BACKEND) && !defined(GL_VERSION_1_2)
+// The OpenGL libraries included in Windows are for OpenGL 1.1. Use the SDL
+// OpenGL header file to enable the additional needed defines for OpenGL 1.2
+// here.
+#include <SDL_opengl.h>
+#endif
+
 #endif
 
 #include "graphics/surface.h"
