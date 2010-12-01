@@ -117,7 +117,7 @@ void Sound::setVolume(ResourceId resourceId, int32 volume) {
 	if (!item)
 		return;
 
-	convertVolume(volume);
+	convertVolumeFrom(volume);
 
 	_mixer->setChannelVolume(item->handle, (byte)volume);
 }
@@ -129,7 +129,7 @@ void Sound::setMusicVolume(int32 volume) {
 	// Save music volume (we need to be able to return it to the logic code
 	_musicVolume = volume;
 
-	convertVolume(volume);
+	convertVolumeFrom(volume);
 
 	_mixer->setChannelVolume(_musicHandle, (byte)volume);
 }
@@ -192,19 +192,19 @@ int32 Sound::calculatePanningAtPoint(int32 x, int32) {
 	int delta = x - getWorld()->xLeft;
 
 	if (delta < 0)
-		return (getWorld()->stereoReversedFlag ? 10000 : -10000);
+		return (getWorld()->reverseStereo ? 10000 : -10000);
 
 	if (delta >= 640)
-		return (getWorld()->stereoReversedFlag ? -10000 : 10000);
+		return (getWorld()->reverseStereo ? -10000 : 10000);
 
 
 	int sign, absDelta;
 	if (delta > 320) {
 		absDelta = delta - 320;
-		sign = (getWorld()->stereoReversedFlag ? -1 : 1);
+		sign = (getWorld()->reverseStereo ? -1 : 1);
 	} else {
 		absDelta = 320 - delta;
-		sign = (getWorld()->stereoReversedFlag ? 1 : -1);
+		sign = (getWorld()->reverseStereo ? 1 : -1);
 	}
 
 	Common::Rational v(absDelta, 6);
@@ -250,7 +250,7 @@ void Sound::playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *hand
 	Audio::RewindableAudioStream *sndStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	// Convert volume and panning
-	convertVolume(vol);
+	convertVolumeFrom(vol);
 	convertPan(pan);
 
 	_mixer->playStream(type, handle, Audio::makeLoopingAudioStream(sndStream, loop ? 0 : 1), -1, (byte)vol, (int8)pan);
@@ -309,7 +309,7 @@ void Sound::clearSoundBuffer() {
 // Those are from engines/agos/sound.cpp (FIXME: Move to common code?)
 //////////////////////////////////////////////////////////////////////////
 
-void Sound::convertVolume(int32 &vol) {
+void Sound::convertVolumeFrom(int32 &vol) {
 	// DirectSound was originally used, which specifies volume
 	// and panning differently than ScummVM does, using a logarithmic scale
 	// rather than a linear one.
@@ -328,6 +328,10 @@ void Sound::convertVolume(int32 &vol) {
 	} else {
 		vol = Audio::Mixer::kMaxChannelVolume;
 	}
+}
+
+void Sound::convertVolumeTo(int32 &vol) {
+	vol = (log10(vol / (double)Audio::Mixer::kMaxChannelVolume) - 0.5) * 2000;
 }
 
 void Sound::convertPan(int32 &pan) {

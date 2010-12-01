@@ -168,6 +168,11 @@ public:
 	 */
 	EventHandler* getPuzzle(uint32 index);
 
+	/**
+	 * Updates the reverse stereo scene status from the config
+	 */
+	void updateReverseStereo();
+
 private:
 	const ADGameDescription *_gameDescription;
 

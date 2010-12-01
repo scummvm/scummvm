@@ -239,6 +239,24 @@ public:
 	 */
 	void stopMusic();
 
+	//////////////////////////////////////////////////////////////////////////
+	// Conversion functions
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Convert volume to a ScummVM mixer value
+	 *
+	 * @param [in,out] vol The volume.
+	 */
+	static void convertVolumeFrom(int32 &vol);
+
+	/**
+	 * Convert ScummVM mixer value to a volume
+	 *
+	 * @param [in,out] vol The volume.
+	 */
+	static void convertVolumeTo(int32 &vol);
+
 private:
 	AsylumEngine *_vm;
 
@@ -310,13 +328,6 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Conversion functions
 	//////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Convert volume.
-	 *
-	 * @param [in,out] vol The volume.
-	 */
-	static void convertVolume(int32 &vol);
 
 	/**
 	 * Convert pan.

@@ -72,7 +72,7 @@ WorldStats::WorldStats(Common::SeekableReadStream *stream, Scene *scene) : _scen
 	motionStatus = 0;
 	field_8C = 0;
 	memset(&coordinates, 0, sizeof(coordinates));
-	stereoReversedFlag = 0;
+	reverseStereo = 0;
 	sceneRectIdx = 0;
 	memset(&field_11D, 0, sizeof(field_11D));
 	field_120 = 0;
@@ -163,7 +163,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	uint32 numActors = stream->readUint32LE();
 
-	stereoReversedFlag = stream->readSint32LE();
+	reverseStereo = stream->readSint32LE();
 
 	for (int32 r = 0; r < 6; r++) {
 		sceneRects[r].left      = (int16)(stream->readSint32LE() & 0xFFFF);

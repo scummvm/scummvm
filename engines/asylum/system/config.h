@@ -88,6 +88,15 @@ public:
 	 */
 	void write();
 
+	/**
+	 * Query if 'key' is assigned.
+	 *
+	 * @param key The key.
+	 *
+	 * @return true if key assigned, false if not.
+	 */
+	bool isKeyAssigned(char key);
+
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 
