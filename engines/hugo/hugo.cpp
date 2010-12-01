@@ -28,6 +28,7 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/debug-channels.h"
+#include "graphics/cursorman.h"
 
 #include "hugo/hugo.h"
 #include "hugo/global.h"
@@ -246,11 +247,10 @@ Common::Error HugoEngine::run() {
 	if (!loadHugoDat())
 		return Common::kUnknownError;
 
-	// Interesting situation: We have no cursor to show, since
-	// the DOS version had none, and the Windows version just used
-	// the windows default one. Meaning this call will just use whatever
-	// was used last, i.e. the launcher GUI cursor. What to do?
-	g_system->showMouse(true);
+	/* Use Windows-looking mouse cursor */
+	CursorMan.replaceCursorPalette(stdMouseCursorPalette, 1, ARRAYSIZE(stdMouseCursorPalette) / 4);
+	CursorMan.replaceCursor(stdMouseCursor, stdMousrCursorWidth, stdMousrCursorHeight, 1, 1, 0);
+	CursorMan.showMouse(true);
 
 	initStatus();                                   // Initialize game status
 	initConfig(INSTALL);                            // Initialize user's config
@@ -343,7 +343,7 @@ void HugoEngine::runMachine() {
 		break;
 	case V_INTROINIT:                               // Initialization before intro begins
 		_intro->introInit();
-		g_system->showMouse(false);
+		CursorMan.showMouse(false);
 		gameStatus.viewState = V_INTRO;
 		break;
 	case V_INTRO:                                   // Do any game-dependant preamble
@@ -353,7 +353,7 @@ void HugoEngine::runMachine() {
 		}
 		break;
 	case V_PLAY:                                    // Playing game
-		g_system->showMouse(true);
+		CursorMan.showMouse(true);
 		_parser->charHandler();                     // Process user cmd input
 		_object->moveObjects();                     // Process object movement
 		_scheduler->runScheduler();                 // Process any actions
@@ -987,7 +987,6 @@ void HugoEngine::initialize() {
 
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "hugo");
-
 	_rnd->setSeed(42);                              // Kick random number generator
 
 	switch (_gameVariant) {

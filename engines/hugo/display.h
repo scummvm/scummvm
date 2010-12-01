@@ -44,6 +44,48 @@ struct rect_t {                                     // Rectangle used in Display
 	int16 dy;                                       // height
 };
 
+/**
+ * A black and white Windows-style arrow cursor (12x20).
+ * 0 = Transparent.
+ * 1 = Black (#000000 in 24-bit RGB).
+ * 2 = White (#FFFFFF in 24-bit RGB).
+ * This cursor comes from Mohawk engine.
+ */
+static const byte stdMouseCursor[] = {
+	1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+	1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+	1, 2, 2, 2, 1, 2, 2, 1, 0, 0, 0, 0,
+	1, 2, 2, 1, 1, 2, 2, 1, 0, 0, 0, 0,
+	1, 2, 1, 0, 1, 1, 2, 2, 1, 0, 0, 0,
+	1, 1, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0,
+	1, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+	0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0
+};
+
+static const byte stdMousrCursorHeight = 20;
+static const byte stdMousrCursorWidth = 12;
+
+/**
+ * RGBA-palette for the black and white arrow cursor.
+ * This palette comes from AGI engine.
+ */
+static const byte stdMouseCursorPalette[] = {
+	0x00, 0x00, 0x00,	0x00, // Black
+	0xFF, 0xFF, 0xFF,	0x00  // White
+};
+
 class Screen {
 public:
 	Screen(HugoEngine *vm);
