@@ -150,6 +150,11 @@ public:
 	void draw();
 
 	/**
+	 * Draw number text (called on scene drawing)
+	 */
+	void drawNumber();
+
+	/**
 	 * Updates the actor.
 	 */
 	void update();

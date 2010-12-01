@@ -36,6 +36,7 @@
 #include "asylum/system/graphics.h"
 #include "asylum/system/screen.h"
 #include "asylum/system/speech.h"
+#include "asylum/system/text.h"
 
 #include "asylum/views/scene.h"
 
@@ -262,6 +263,14 @@ void Actor::draw() {
 	} else {
 		getScreen()->addGraphicToQueue(_resourceId, frameIndex, point, getGraphicsFlags(), _field_96C, _priority);
 	}
+}
+
+void Actor::drawNumber() {
+	if (!_numberFlag01)
+		return;
+
+	getText()->loadFont(getWorld()->font1);
+	getText()->drawCentered(_numberStringX, _numberStringY, _numberStringWidth, (char *)&_numberString01);
 }
 
 void Actor::update() {
