@@ -141,8 +141,8 @@ protected:
 	uint16 _savedCursorId;
 	uint16 _tempVar; // Generic temp var used by the scripts
 
-	static const uint8 stack_map[];
-	static const uint16 start_card[];
+	static const uint8 _stackMap[];
+	static const uint16 _startCard[];
 
 	void setupCommonOpcodes();
 	void varUnusedCheck(uint16 op, uint16 var);

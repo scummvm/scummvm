@@ -49,7 +49,7 @@ MystScriptEntry::~MystScriptEntry() {
 	delete[] argv;
 }
 
-const uint8 MystScriptParser::stack_map[11] = {
+const uint8 MystScriptParser::_stackMap[11] = {
 	kSeleniticStack,
 	kStoneshipStack,
 	kMystStack,
@@ -63,7 +63,7 @@ const uint8 MystScriptParser::stack_map[11] = {
 	kMystStack
 };
 
-const uint16 MystScriptParser::start_card[11] = {
+const uint16 MystScriptParser::_startCard[11] = {
 	1282,
 	2029,
 	4396,
@@ -863,8 +863,8 @@ void MystScriptParser::o_changeStack(uint16 op, uint16 var, uint16 argc, uint16 
 
 			// TODO: Play Flyby Entry Movie on Masterpiece Edition..? Only on Myst to Age Link?
 
-			_vm->changeToStack(stack_map[targetStack]);
-			_vm->changeToCard(start_card[targetStack], true);
+			_vm->changeToStack(_stackMap[targetStack]);
+			_vm->changeToCard(_startCard[targetStack], true);
 
 			handle = _vm->_sound->playSound(soundIdLinkDst);
 			while (_vm->_mixer->isSoundHandleActive(*handle))

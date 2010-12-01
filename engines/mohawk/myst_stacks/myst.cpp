@@ -178,7 +178,7 @@ void MystScriptParser_Myst::opcode_100(uint16 op, uint16 var, uint16 argc, uint1
 			// Play Flyby Entry Movie on Masterpiece Edition. The Macintosh version is currently hooked
 			// up to the Cinepak versions of the video (the 'c' suffix) until the SVQ1 decoder is completed.
 			if ((_vm->getFeatures() & GF_ME)) {
-				switch (stack_map[_vm->_varStore->getVar(var)]) {
+				switch (_stackMap[_vm->_varStore->getVar(var)]) {
 				case kSeleniticStack:
 					if (_vm->getPlatform() == Common::kPlatformMacintosh)
 						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_SEc", kMasterpieceOnly));
@@ -218,8 +218,8 @@ void MystScriptParser_Myst::opcode_100(uint16 op, uint16 var, uint16 argc, uint1
 			}
 
 			uint16 varValue = _vm->_varStore->getVar(var);
-			_vm->changeToStack(stack_map[varValue]);
-			_vm->changeToCard(start_card[varValue], true);
+			_vm->changeToStack(_stackMap[varValue]);
+			_vm->changeToCard(_startCard[varValue], true);
 
 			// TODO: No soundIdLinkDst for Opcode 100 link? Check Original.
 		}
