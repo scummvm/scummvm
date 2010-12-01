@@ -314,6 +314,13 @@ void Scene::setScenePosition(int x, int y) {
 		*targetY = bg->surface.h - 480;
 }
 
+
+bool Scene::handleEvent(const AsylumEvent &ev) {
+	// TODO replace previous handleEvent method
+
+	return true;
+}
+
 void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	if (!_ws)
 		error("[Scene::handleEvent] WorldStats not initialized properly!");

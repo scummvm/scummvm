@@ -87,7 +87,7 @@ void SceneTitle::update(int32 tick) {
 
 	GraphicFrame *frame = _progress->getFrame(_spinnerFrame);
 
-	getScreen()->copyRectToScreenWithTransparency(((byte*)frame->surface.pixels),
+	getScreen()->copyToBackBufferWithTransparency(((byte*)frame->surface.pixels),
 	                                              frame->surface.w,
 	                                              frame->x + (_spinnerProgress - 290),
 	                                              frame->y,

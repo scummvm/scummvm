@@ -98,7 +98,6 @@ public:
 
 	// TODO Make those private
 	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
-	void copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) const;
 	void copyBackBufferToScreen();
 
 private:

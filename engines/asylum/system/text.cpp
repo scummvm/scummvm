@@ -41,6 +41,7 @@ Text::Text(AsylumEngine *engine) : _vm(engine) {
 	_posY = 0;
 	_curFontFlags = 0;
 	_fontResource = 0;
+	_transTableNum = 0;
 }
 
 Text::~Text() {
@@ -122,15 +123,17 @@ void Text::drawChar(char character) {
 	if (!_fontResource)
 		error("[Text::drawChar] font resource hasn't been loaded yet!");
 
-	// TODO Add proper methods to screen class (also used by all other drawing calls)
-	/*if (getScreen()->getCurrentTransTableNum()) {
-		getScreen()->drawTransparent(_fontResource->getResourceId(), (uint8)character, _posX, _posY, 0, getScreen()->getCurrentTransTableNum());
-	} else {
-		getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _posX, _posY, 0);
-	}
-	*/
+	//if (_transTableNum) {
+	//	getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _posX, _posY, 0, _transTableNum);
+	//} else {
+	//	getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _posX, _posY, 0);
+	//}
+
 	GraphicFrame *fontLetter = _fontResource->getFrame((uint8)character);
-	getScreen()->copyRectToScreenWithTransparency((byte *)fontLetter->surface.pixels, fontLetter->surface.w, _posX, _posY + fontLetter->y, fontLetter->surface.w, fontLetter->surface.h);
+	getScreen()->copyToBackBufferWithTransparency((byte *)fontLetter->surface.pixels, fontLetter->surface.w, _posX, _posY + fontLetter->y, fontLetter->surface.w, fontLetter->surface.h);
+
+	// TODO remove
+
 
 	_posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
@@ -285,25 +288,8 @@ void Text::drawCentered(int32 x, int32 y, int32 width, uint32 length, const char
 	draw(text, length);
 }
 
-void Text::drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId, int32 value) {
-	ResourceEntry *textRes = getResource()->get(resourceId);
-	char *text = (char *)textRes->data;
-	char txt[100];
-	sprintf(txt, text, value);
-	drawCentered(x, y, width, txt);
-}
-
 void Text::drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId) {
 	drawCentered(x, y, width, get(resourceId));
-}
-
-void Text::drawAlignedRight(int32 x, int32 y, const char *text) {
-	setPosition(x - getWidth(text), y);
-	draw(text);
-}
-
-void Text::drawAlignedRight(int32 x, int32 y, ResourceId resourceId) {
-	drawAlignedRight(x, y, get(resourceId));
 }
 
 } // end of namespace Asylum

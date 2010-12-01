@@ -26,6 +26,7 @@
 #ifndef ASYLUM_SCENE_H
 #define ASYLUM_SCENE_H
 
+#include "asylum/eventhandler.h"
 #include "asylum/shared.h"
 
 #include "common/array.h"
@@ -68,7 +69,7 @@ enum HitType {
 	kHitActor      = 4
 };
 
-class Scene {
+class Scene : public EventHandler {
 public:
 	Scene(AsylumEngine *engine);
 	~Scene();
@@ -86,7 +87,7 @@ public:
 	 */
 	void load(ResourcePackId packId);
 
-
+	bool handleEvent(const AsylumEvent &ev);
 	void handleEvent(Common::Event *event, bool doUpdate);
 
 	void activate();

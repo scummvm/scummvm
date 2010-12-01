@@ -115,24 +115,6 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x
 	}
 }
 
-void Screen::copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) const {
-	byte *screenBuffer = (byte *)_vm->_system->lockScreen()->pixels;
-
-	int32 left = (x < 0) ? -x : 0;
-	int32 top = (y < 0) ? -y : 0;
-	int32 right = (x + width > 640) ? 640 - abs(x) : width;
-	int32 bottom = (y + height > 480) ? 480 - abs(y) : height;
-
-	for (int32 curY = top; curY < bottom; curY++) {
-		for (int32 curX = left; curX < right; curX++) {
-			if (buffer[curX + curY * pitch] != 0) {
-				screenBuffer[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
-			}
-		}
-	}
-
-	_vm->_system->unlockScreen();
-}
 
 void Screen::setPalette(ResourceId id) {
 	setPalette(getResource()->get(id)->data + 32);
