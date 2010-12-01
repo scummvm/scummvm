@@ -51,8 +51,6 @@ bool operator<(const TLanguage &l, const TLanguage &r) {
 TranslationManager::TranslationManager() : _currentLang(-1) {
 	loadTranslationsInfoDat();
 
-	_syslang = g_system->getSystemLanguage();
-
 	// Set the default language
 	setLanguage("");
 }
@@ -60,27 +58,52 @@ TranslationManager::TranslationManager() : _currentLang(-1) {
 TranslationManager::~TranslationManager() {
 }
 
+int32 TranslationManager::findMatchingLanguage(const String &lang) {
+	uint langLength = lang.size();
+	uint numLangs = _langs.size();
+
+	// Try to match languages of the same length or longer ones
+	// that can be cut at the length of the given one.
+	for (uint i = 0; i < numLangs; ++i) {
+		uint iLength = _langs[i].size();
+		if (iLength >= langLength) {
+			// Found a candidate; compare the full string by default.
+			String cmpLang = _langs[i];
+
+			if ((iLength > langLength) && (_langs[i][langLength] == '_')) {
+				// It has a separation mark at the length of the
+				// requested language, so we can cut it.
+				cmpLang = String(_langs[i].c_str(), langLength);
+			}
+			if (lang.equalsIgnoreCase(cmpLang))
+				return i;
+		}
+	}
+
+	// Couldn't find a matching language.
+	return -1;
+}
+
 void TranslationManager::setLanguage(const String &lang) {
-	// Get lang index
+	// Get lang index.
 	int langIndex = -1;
 	String langStr(lang);
 	if (langStr.empty())
-		langStr = _syslang;
+		langStr = g_system->getSystemLanguage();
 
-	// Searching for a valid language
-	for (unsigned int i = 0; i < _langs.size() && langIndex == -1; ++i) {
-		if (langStr == _langs[i])
-			langIndex = i;
+	// Search for the given language or a variant of it.
+	langIndex = findMatchingLanguage(langStr);
+
+	// Try to find a partial match taking away parts of the original language.
+	const char *lastSep;
+	String langCut(langStr);
+	while ((langIndex == -1) && (lastSep = strrchr(langCut.c_str(), '_'))) {
+		langCut = String(langCut.c_str(), lastSep);
+		langIndex = findMatchingLanguage(langCut);
 	}
 
-	// Try partial match
-	for (unsigned int i = 0; i < _langs.size() && langIndex == -1; ++i) {
-		if (strncmp(langStr.c_str(), _langs[i].c_str(), 2) == 0)
-			langIndex = i;
-	}
-
-	// Load messages for that lang
-	// Call it even if the index is -1 to unload previously loaded translations
+	// Load messages for that language.
+	// Call it even if the index is -1 to unload previously loaded translations.
 	if (langIndex != _currentLang) {
 		loadLanguageDat(langIndex);
 		_currentLang = langIndex;
@@ -92,11 +115,11 @@ const char *TranslationManager::getTranslation(const char *message) const {
 }
 
 const char *TranslationManager::getTranslation(const char *message, const char *context) const {
-	// if no language is set or message is empty, return msgid as is
+	// If no language is set or message is empty, return msgid as is
 	if (_currentTranslationMessages.empty() || *message == '\0')
 		return message;
 
-	// binary-search for the msgid
+	// Binary-search for the msgid
 	int leftIndex = 0;
 	int rightIndex = _currentTranslationMessages.size() - 1;
 
@@ -271,10 +294,10 @@ void TranslationManager::loadTranslationsInfoDat() {
 	for (int i = 0; i < nbTranslations; ++i) {
 		len = in.readUint16BE();
 		in.read(buf, len);
-		_langs[i] = String(buf, len-1);
+		_langs[i] = String(buf, len - 1);
 		len = in.readUint16BE();
 		in.read(buf, len);
-		_langNames[i] = String(buf, len-1);
+		_langNames[i] = String(buf, len - 1);
 	}
 
 	// Read messages
@@ -283,7 +306,7 @@ void TranslationManager::loadTranslationsInfoDat() {
 	for (int i = 0; i < numMessages; ++i) {
 		len = in.readUint16BE();
 		in.read(buf, len);
-		_messageIds[i] = String(buf, len-1);
+		_messageIds[i] = String(buf, len - 1);
 	}
 }
 
@@ -331,18 +354,18 @@ void TranslationManager::loadLanguageDat(int index) {
 	// Read charset
 	len = in.readUint16BE();
 	in.read(buf, len);
-	_currentCharset = String(buf, len-1);
+	_currentCharset = String(buf, len - 1);
 
 	// Read messages
 	for (int i = 0; i < nbMessages; ++i) {
 		_currentTranslationMessages[i].msgid = in.readUint16BE();
 		len = in.readUint16BE();
 		in.read(buf, len);
-		_currentTranslationMessages[i].msgstr = String(buf, len-1);
+		_currentTranslationMessages[i].msgstr = String(buf, len - 1);
 		len = in.readUint16BE();
 		if (len > 0) {
 			in.read(buf, len);
-			_currentTranslationMessages[i].msgctxt = String(buf, len-1);
+			_currentTranslationMessages[i].msgctxt = String(buf, len - 1);
 		}
 	}
 }

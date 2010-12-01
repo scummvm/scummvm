@@ -161,6 +161,15 @@ public:
 
 private:
 	/**
+	 * Tries to find the given language or a derivate of it.
+	 *
+	 * @param lang Language string
+	 * @return id of the language or -1 in case no matching language could
+	 *         be found.
+	 */
+	int32 findMatchingLanguage(const String &lang);
+
+	/**
 	 * Find the translations.dat file. It looks first using the SearchMan and
 	 * then if needed using the Themepath. If found it opens the given File
 	 * to read the translations.dat file.
@@ -190,7 +199,6 @@ private:
 	 */
 	bool checkHeader(File &in);
 
-	String _syslang;
 	StringArray _langs;
 	StringArray _langNames;
 
