@@ -2085,20 +2085,15 @@ LBPaletteItem::LBPaletteItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : 
 
 void LBPaletteItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
 	switch (type) {
-	case 0x72:
+	case kLBPaletteXData:
 		{
-		assert(size == 4 + 256 * 4);
-		// TODO
+		assert(size == 8 + 255 * 4);
 		_start = stream->readUint16();
 		_count = stream->readUint16();
-		stream->read(_palette, 256 * 4);
+		_drawStart = stream->readUint16();
+		_drawCount = stream->readUint16();
+		stream->read(_palette, 255 * 4);
 		}
-		break;
-
-	case 0x75:
-		assert(size == 0);
-		debug(2, "LBPaletteItem: 0x75");
-		// TODO
 		break;
 
 	default:
@@ -2106,24 +2101,11 @@ void LBPaletteItem::readData(uint16 type, uint16 size, Common::SeekableSubReadSt
 	}
 }
 
-void LBPaletteItem::startPhase(uint phase) {
-	//if (_phase != phase)
-	//	return;
-
-	/*printf("palette: start %d, count %d\n", _start, _count);
-	byte *localpal = _palette;
-	for (unsigned int i = 0; i < 256 * 4; i++) {
-		printf("%02x ", *localpal++);
-	}
-	printf("\n");*/
-
-	// TODO: huh?
-	if (_start != 1)
+void LBPaletteItem::draw() {
+	if (!_visible)
 		return;
 
-	// TODO
-	//_vm->_system->setPalette(_start - 1, _count - (_start - 1), _palette + (_start * 4));
-	_vm->_system->setPalette(_palette + _start * 4, 0, 256 - _start);
+	_vm->_system->setPalette(_palette + _drawStart * 4, _drawStart, _drawCount);
 }
 
 LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {

@@ -324,11 +324,11 @@ public:
 
 	void readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream);
 
-	void startPhase(uint phase);
+	void draw();
 
 protected:
-	uint16 _start, _count;
-	byte _palette[256 * 4];
+	uint16 _start, _count, _drawStart, _drawCount;
+	byte _palette[255 * 4];
 };
 
 struct LiveTextWord {
