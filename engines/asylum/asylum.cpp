@@ -32,6 +32,7 @@
 
 #include "asylum/system/config.h"
 #include "asylum/system/cursor.h"
+#include "asylum/system/savegame.h"
 #include "asylum/system/screen.h"
 #include "asylum/system/sound.h"
 #include "asylum/system/text.h"
@@ -53,8 +54,9 @@
 namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
-	_console(NULL), _cursor(NULL), _encounter(NULL), _mainMenu(NULL), _resource(NULL), _scene(NULL), _screen(NULL),
-	_sound(NULL), _text(NULL), _video(NULL), _introPlaying(false), _handler(NULL) {
+	_console(NULL), _cursor(NULL), _encounter(NULL), _mainMenu(NULL), _resource(NULL), _savegame(NULL),
+	_scene(NULL), _screen(NULL), _sound(NULL), _text(NULL), _video(NULL),
+	_introPlaying(false), _handler(NULL) {
 
 	// Init data
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
@@ -86,6 +88,7 @@ AsylumEngine::~AsylumEngine() {
 	delete _cursor;
 	delete _scene;
 	delete _encounter;
+	delete _savegame;
 	delete _screen;
 	delete _sound;
 	delete _text;
@@ -116,6 +119,7 @@ Common::Error AsylumEngine::run() {
 	// Create all game classes
 	_encounter = new Encounter(this);
 	_cursor    = new Cursor(this);
+	_savegame  = new Savegame(this);
 	_screen    = new Screen(this);
 	_sound     = new Sound(this, _mixer);
 	_text      = new Text(this);
@@ -124,6 +128,7 @@ Common::Error AsylumEngine::run() {
 
 	// Create main menu
 	_mainMenu  = new MainMenu(this);
+	_handler = _mainMenu;
 
 	// FIXME: remove
 	_introPlaying = false;

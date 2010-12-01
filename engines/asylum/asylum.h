@@ -69,6 +69,7 @@ class Cursor;
 class Encounter;
 class MainMenu;
 class ResourceManager;
+class Savegame;
 class Scene;
 class Screen;
 class Sound;
@@ -138,6 +139,7 @@ public:
 	Encounter       *encounter() { return _encounter; }
 	MainMenu        *menu()      { return _mainMenu; }
 	ResourceManager *resource()  { return _resource; }
+	Savegame        *savegame()  { return _savegame; }
 	Scene           *scene()     { return _scene; }
 	Screen          *screen()    { return _screen; }
 	Sound           *sound()     { return _sound; }
@@ -183,6 +185,7 @@ private:
 	Encounter       *_encounter;
 	MainMenu        *_mainMenu;
 	ResourceManager *_resource;
+	Savegame        *_savegame;
 	Scene           *_scene;
 	Screen          *_screen;
 	Sound           *_sound;
@@ -195,7 +198,6 @@ private:
 
 	// Shared game data
 	SharedData _data;
-
 
 	bool _introPlaying;
 	int  _gameFlags[1512];

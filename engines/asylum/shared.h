@@ -597,14 +597,15 @@ enum ObjectFlag {
 #define rnd(val) _vm->getRandom(val)
 
 // Engine subclasses
-#define getSharedData()  _vm->getData()
 #define getEncounter()   _vm->encounter()
 #define getCursor()      _vm->cursor()
 #define getResource()    _vm->resource()
 #define getSound()       _vm->sound()
+#define getSaveLoad()    _vm->savegame()
 #define getScene()       _vm->scene()
 #define getScreen()      _vm->screen()
 #define getScript()      _vm->scene()->actions()
+#define getSharedData()  _vm->getData()
 #define getSpeech()      _vm->scene()->speech()
 #define getText()        _vm->text()
 #define getVideo()       _vm->video()
