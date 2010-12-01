@@ -86,6 +86,10 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 }
 
 HugoEngine::~HugoEngine() {
+	// FIXME - Need to call this to remove memory leaks,
+	//         but this currently causes double free issues.
+	//shutdown();
+
 	freeTexts(_textData);
 	freeTexts(_stringtData);
 
