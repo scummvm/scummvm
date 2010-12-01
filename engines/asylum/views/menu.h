@@ -77,10 +77,13 @@ private:
 	};
 
 	enum MenuResource {
-		kBackground = MAKE_RESOURCE(kResourcePackShared, 0),
-		kEye        = MAKE_RESOURCE(kResourcePackShared, 1),
-		kFontBlue   = MAKE_RESOURCE(kResourcePackShared, 22),
-		kFontYellow = MAKE_RESOURCE(kResourcePackShared, 16)
+		kBackground   = MAKE_RESOURCE(kResourcePackShared, 0),
+		kEye          = MAKE_RESOURCE(kResourcePackShared, 1),
+		kFontBlue     = MAKE_RESOURCE(kResourcePackShared, 22),
+		kFontYellow   = MAKE_RESOURCE(kResourcePackShared, 16),
+		kSfxSound     = MAKE_RESOURCE(kResourcePackShared, 41),
+		kAmbiantSound = MAKE_RESOURCE(kResourcePackShared, 42),
+		kVoiceSound   = MAKE_RESOURCE(kResourcePackShared, 43)
 	};
 
 	// Game initialization
@@ -152,9 +155,9 @@ private:
 	void stopTestSounds();
 
 	/**
-	 * Adjust volume. 
+	 * Adjust volume.
 	 *
-	 * @param delta The delta. 
+	 * @param delta The delta.
 	 */
 	void adjustMasterVolume(int32 delta);
 

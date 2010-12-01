@@ -189,16 +189,16 @@ MainMenu::MenuScreen MainMenu::findMousePosition() {
 
 void MainMenu::playTestSounds() {
 	_testSoundsPlaying = true;
-	getSound()->playSound(MAKE_RESOURCE(kResourcePackShared, 42), true, Config.ambientVolume);
-	getSound()->playSound(MAKE_RESOURCE(kResourcePackShared, 41), true, Config.sfxVolume);
-	getSound()->playSound(MAKE_RESOURCE(kResourcePackShared, 43), true, Config.voiceVolume);
+	getSound()->playSound(kAmbiantSound, true, Config.ambientVolume);
+	getSound()->playSound(kSfxSound, true, Config.sfxVolume);
+	getSound()->playSound(kVoiceSound, true, Config.voiceVolume);
 }
 
 void MainMenu::stopTestSounds() {
 	_testSoundsPlaying = false;
-	getSound()->stop(MAKE_RESOURCE(kResourcePackShared, 42));
-	getSound()->stop(MAKE_RESOURCE(kResourcePackShared, 41));
-	getSound()->stop(MAKE_RESOURCE(kResourcePackShared, 43));
+	getSound()->stop(kAmbiantSound);
+	getSound()->stop(kSfxSound);
+	getSound()->stop(kVoiceSound);
 }
 
 void MainMenu::adjustMasterVolume(int32 delta) {
@@ -256,7 +256,24 @@ void MainMenu::adjustMasterVolume(int32 delta) {
 }
 
 void MainMenu::adjustTestVolume() {
+	getSound()->setMusicVolume(Config.musicVolume);
+	if ((Config.movieVolume / 250 + 20) <= 0)
+		getSound()->playMusic(_musicResourceId, Config.musicVolume);
 
+	if (getSound()->isPlaying(kAmbiantSound))
+		getSound()->setVolume(kAmbiantSound, Config.ambientVolume);
+	else if (_testSoundsPlaying)
+		getSound()->playSound(kAmbiantSound, true, Config.ambientVolume);
+
+	if (getSound()->isPlaying(kSfxSound))
+		getSound()->setVolume(kSfxSound, Config.sfxVolume);
+	else if (_testSoundsPlaying)
+		getSound()->playSound(kSfxSound, true, Config.sfxVolume);
+
+	if (getSound()->isPlaying(kVoiceSound))
+		getSound()->setVolume(kVoiceSound, Config.voiceVolume);
+	else if (_testSoundsPlaying)
+		getSound()->playSound(kVoiceSound, true, Config.voiceVolume);
 }
 
 //////////////////////////////////////////////////////////////////////////
