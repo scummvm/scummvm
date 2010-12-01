@@ -326,8 +326,8 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	switch (_ev->type) {
 
 	case Common::EVENT_MOUSEMOVE:
-		if (getCursor())
-			getCursor()->move(_ev->mouse.x, _ev->mouse.y);
+		//if (getCursor())
+			//getCursor()->move(_ev->mouse.x, _ev->mouse.y);
 		break;
 
 	case Common::EVENT_LBUTTONUP:
@@ -1130,7 +1130,7 @@ int Scene::drawScene() {
 
 	_vm->screen()->clearGraphicsInQueue();
 
-	if (getSharedData()->getSkipDrawScene()) {
+	if (getSharedData()->getFlag(kFlagRedraw)) {
 		_vm->screen()->clear();
 	} else {
 		// Draw scene background

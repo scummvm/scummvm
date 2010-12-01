@@ -79,34 +79,35 @@ private:
 		kMenuLoadGame        = 1,
 		kMenuSaveGame        = 2,
 		kMenuDeleteGame      = 3,
-		kMenuViewCinematics  = 4,
+		kMenuViewMovies  = 4,
 		kMenuQuitGame        = 5,
 		kMenuTextOptions     = 6,
 		kMenuAudioOptions    = 7,
 		kMenuSettings        = 8,
 		kMenuKeyboardConfig  = 9,
 		kMenuShowCredits     = 10,
-		kMenuReturnToGame    = 11,
-		kMenuMain            = 12
+		kMenuReturnToGame    = 11
 	};
 
-	enum Fonts {
-		kFontBlue = MAKE_RESOURCE(kResourcePackShared, 22),
+	enum MenuResource {
+		kBackground = MAKE_RESOURCE(kResourcePackShared, 0),
+		kEye        = MAKE_RESOURCE(kResourcePackShared, 1),
+		kFontBlue   = MAKE_RESOURCE(kResourcePackShared, 22),
 		kFontYellow = MAKE_RESOURCE(kResourcePackShared, 16)
 	};
 
-	int32  _activeIcon;
-	int32  _previousActiveIcon;
-	uint32 _curIconFrame;
-	int32 _curMouseCursor;
-	int32  _cursorStep;
-	uint32 _creditsBgFrame;
-	int32 _creditsTextScroll;
-	bool   _leftClick;
-	bool   _active;
+	//int32  _activeIcon;
+	//int32  _previousActiveIcon;
+	//uint32 _curIconFrame;
+	//int32 _curMouseCursor;
+	//int32  _cursorStep;
+	//uint32 _creditsBgFrame;
+	//int32 _creditsTextScroll;
+	//bool   _leftClick;
+	//bool   _active;
 
 	// Game initialization
-	bool _initGame;
+	bool             _initGame;
 
 	// Data
 	MenuScreen       _activeScreen;
@@ -120,12 +121,7 @@ private:
 	int32            _dword_4562C4;
 	int32            _dword_45628C;
 	bool             _needEyeCursorInit;
-
-	GraphicResource *_bgResource;
-	GraphicResource *_eyeResource;
-	GraphicResource *_iconResource;
-	GraphicResource *_creditsResource;
-	GraphicResource *_creditsFadeResource;
+	uint32           _iconFrames[12];
 
 	/**
 	 * Setups menu screen
@@ -145,9 +141,41 @@ private:
 	bool update();
 	bool music();
 	bool key(const AsylumEvent &evt);
-	bool mouse(const AsylumEvent &evt);
+	bool click(const AsylumEvent &evt);
 
-	void updateEyesAnimation();
+	// Helpers
+	MenuScreen findMousePosition();
+
+	// Update handlers
+	void updateNewGame();
+	void updateLoadGame();
+	void updateSaveGame();
+	void updateDeleteGame();
+	void updateViewMovies();
+	void updateQuitGame();
+	void updateTextOptions();
+	void updateAudioOptions();
+	void updateSettings();
+	void updateKeyboardConfig();
+	void updateShowCredits();
+	void updateReturnToGame();
+
+	// Click handlers
+	void clickNewGame();
+	void clickLoadGame();
+	void clickSaveGame();
+	void clickDeleteGame();
+	void clickViewMovies();
+	void clickQuitGame();
+	void clickTextOptions();
+	void clickAudioOptions();
+	void clickSettings();
+	void clickKeyboardConfig();
+	void clickShowCredits();
+	void clickReturnToGame();
+
+
+	// TODO remove
 	void updateMainMenu();
 
 	void updateSubMenu();
