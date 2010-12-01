@@ -276,6 +276,32 @@ void MainMenu::adjustTestVolume() {
 		getSound()->playSound(kVoiceSound, true, Config.voiceVolume);
 }
 
+void MainMenu::setupMusic() {
+	getSound()->stopAll();
+
+	int32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
+
+	if (index == kMusicStopped) {
+		_soundResourceId = kResourceNone;
+		_musicResourceId = MAKE_RESOURCE(kResourcePackShared, 39);
+
+		getSound()->playMusic(_musicResourceId, Config.musicVolume);
+	} else {
+		_soundResourceId = kResourceNone;
+		_musicResourceId = MAKE_RESOURCE(kResourcePackMusic, index);
+	}
+}
+
+void MainMenu::adjustPerformance() {
+	// Original reinitialize sound to 11kHz for performance == 0, 22kHz otherwise
+
+	setupMusic();
+
+	int32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
+	if (index != kMusicStopped)
+		getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, index), Config.musicVolume);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handler
 //////////////////////////////////////////////////////////////////////////
@@ -344,6 +370,8 @@ bool MainMenu::init() {
 		_activeScreen = kMenuNone;
 		_currentIcon = kMenuNone;
 		_dword_455C74 = 0;
+
+		setupMusic();
 
 		getCursor()->hide();
 		getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 2), 0, 2);
@@ -890,7 +918,7 @@ void MainMenu::updateSettings() {
 	if (Config.performance == 5) {
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1436));
 	} else {
-		for (int32 i = 5; i > Config.performance; --i)
+		for (int32 i = 5; i > Config.performance; --i) // This has ] augmenting when pressing - which is a bit convoluted (perf == speed == more ])
 			getText()->drawChar(']');
 
 		if (!Config.performance)
@@ -1241,51 +1269,67 @@ void MainMenu::clickAudioOptions() {
 void MainMenu::clickSettings() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::clickSettings] Not implemented!");
+	// Size of - and +
+	int32 sizeMinus	= getText()->getWidth("-");
+	int32 sizePlus  = getText()->getWidth("+");
+
+	//////////////////////////////////////////////////////////////////////////
+	// Back to main menu
+	if (cursor.x >= 300 && cursor.x <= (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1437))) && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		Config.write();
+		leave();
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Performance minus
+	if (cursor.x >= 350 && cursor.x <= (sizeMinus + 350) && cursor.y >= 179 && cursor.y <= 203) {
+		if (!Config.performance)
+			return;
+
+		Config.performance -= 1;
+		adjustPerformance();
+
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Performance plus
+	if (cursor.x >= sizeMinus + 360 && cursor.x <= (sizeMinus + sizePlus + 360) && cursor.y >= 179 && cursor.y <= 203) {
+		if (Config.performance >= 5)
+			return;
+
+		Config.performance += 1;
+		adjustPerformance();
+
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Gamma level minus
+	if (cursor.x >= 350 && cursor.x <= (sizeMinus + 350) && cursor.y >= 150 && cursor.y <= 174) {
+		if (!Config.gammaLevel)
+			return;
+
+		Config.gammaLevel -= 1;
+		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 17), 0);
+
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Gamma level plus
+	if (cursor.x >= (sizeMinus + 360) && cursor.x <= (sizeMinus + sizePlus + 360) && cursor.y >= 150 && cursor.y <= 174) {
+		if (Config.gammaLevel >= 8)
+			return;
+
+
+		Config.gammaLevel += 1;
+		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 17), 0);
+
+		return;
+	}
 }
-
-
-//
-//void MainMenu::updateSubMenuSettings() {
-//	// action
-//	//if (_leftClick) {
-//	//	// back to main menu
-//	//	if (cursor.x >= 300 && cursor.x <= 300 + sizeMainMenu && cursor.y >= 340 && cursor.y <= 340 + 24) {
-//	//		// TODO: save new configurations
-//	//		exitSubMenu();
-//	//	}
-//
-//	//	// gamma level minus
-//	//	if (cursor.x >= 350 && cursor.x <= sizeMinus + 350 && cursor.y >= 150 && cursor.y <= 174) {
-//	//		if (Config.gammaLevel) {
-//	//			Config.gammaLevel -= 1;
-//	//			// TODO: setResGammaLevel(0x80010011, 0);
-//	//		}
-//	//	}
-//	//	// gamma level plus
-//	//	if (cursor.x >= sizeMinus + 360 && cursor.x <= sizeMinus + sizePlus + 360 && cursor.y >= 150 && cursor.y <= 174) {
-//	//		if (Config.gammaLevel < 8) {
-//	//			Config.gammaLevel += 1;
-//	//			// TODO: setResGammaLevel(0x80010011, 0);
-//	//		}
-//	//	}
-//
-//	//	// performance minus
-//	//	if (cursor.x >= 350 && cursor.x <= sizeMinus + 350 && cursor.y >= 179 && cursor.y <= 203) {
-//	//		if (Config.performance) {
-//	//			Config.performance -= 1;
-//	//			// TODO: change quality settings
-//	//		}
-//	//	}
-//	//	// performance plus
-//	//	if (cursor.x >= sizeMinus + 360 && cursor.x <= sizeMinus + sizePlus + 360 && cursor.y >= 179 && cursor.y <= 203) {
-//	//		if (Config.performance < 5) {
-//	//			Config.performance += 1;
-//	//			// TODO: change quality settings
-//	//		}
-//	//	}
-//	//}
-//}
 
 void MainMenu::clickKeyboardConfig() {
 	Common::Point cursor = getCursor()->position();

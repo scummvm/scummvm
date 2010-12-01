@@ -138,6 +138,11 @@ private:
 	void listMovies();
 
 	/**
+	 * Sets up the music.
+	 */
+	void setupMusic();
+
+	/**
 	 * Find if the mouse if on an icon
 	 *
 	 * @return The icon identifier
@@ -165,6 +170,11 @@ private:
 	 * Adjust test sounds volume.
 	 */
 	void adjustTestVolume();
+
+	/**
+	 * Adjust performance. 
+	 */
+	void adjustPerformance();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling
