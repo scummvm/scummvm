@@ -178,7 +178,7 @@ void MystScriptParser::runOpcode(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		}
 
 	if (!ranOpcode)
-		error("Trying to run invalid opcode %d", op);
+		warning("Trying to run invalid opcode %d", op);
 }
 
 const char *MystScriptParser::getOpcodeDesc(uint16 op) {
@@ -186,8 +186,7 @@ const char *MystScriptParser::getOpcodeDesc(uint16 op) {
 		if (_opcodes[i]->op == op)
 			return _opcodes[i]->desc;
 
-	error("Unknown opcode %d", op);
-	return "";
+	return "unknown";
 }
 
 MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, MystScriptType type) {
