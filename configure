@@ -2666,10 +2666,14 @@ EOF
 
 	_opengl=no
 	# Try different library names
-	# 1) GL                 This is usually used on POSIX systems
-	# 2) opengl32           This is used on Windows
-	# 3) -framework OpenGL  This is used on Mac OS X
-	for lib in "-lGL" "-lopengl32" "-framework OpenGL"; do
+	# 1) -framework OpenGL  This is used on Mac OS X
+	# 2) GL                 This is usually used on POSIX systems
+	# 3) opengl32           This is used on Windows
+	#
+	# We try "-framework OpenGL" first here to assure it will always be
+	# picked up by the configure script on Mac OS X, even when a libGL
+	# exists.
+	for lib in "-framework OpenGL" "-lGL" "-lopengl32"; do
 		if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
 			then
 			_opengl=yes
