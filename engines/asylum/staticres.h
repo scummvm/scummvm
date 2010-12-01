@@ -29,18 +29,18 @@
 namespace Asylum {
 
 /** This fixes the menu icons text x position on screen */
-const Common::Rect menuRects[12] = {Common::Rect(  19,  40,  68,  93),
-                                    Common::Rect(  19, 140,  68, 193),
-                                    Common::Rect(  19, 239,  68, 292),
-                                    Common::Rect(  19, 340,  68, 393),
-                                    Common::Rect(  19, 439,  68, 492),
-                                    Common::Rect(  19, 538,  68, 591),
-                                    Common::Rect( 400,  40, 449,  93),
-                                    Common::Rect( 400, 140, 449, 193),
-                                    Common::Rect( 400, 239, 449, 292),
-                                    Common::Rect( 400, 340, 449, 393),
-                                    Common::Rect( 400, 439, 449, 492),
-                                    Common::Rect( 400, 538, 449, 591)};
+const Common::Rect menuRects[12] = {Common::Rect(  40,  19,   93,  68),
+                                    Common::Rect( 140,  19,  193,  68),
+                                    Common::Rect( 239,  19,  292,  68),
+                                    Common::Rect( 340,  19,  393,  68),
+                                    Common::Rect( 439,  19,  492,  68),
+                                    Common::Rect( 538,  19,  591,  68),
+                                    Common::Rect(  40, 400,   93, 449),
+                                    Common::Rect( 140, 400,  193, 449),
+                                    Common::Rect( 239, 400,  292, 449),
+                                    Common::Rect( 340, 400,  393, 449),
+                                    Common::Rect( 538, 400,  591, 449), // The last two icons are swapped
+                                    Common::Rect( 439, 400,  492, 449)};
 
 const int eyeFrameIndex[8] = {3, 5, 1, 7, 4, 8, 2, 6};
 

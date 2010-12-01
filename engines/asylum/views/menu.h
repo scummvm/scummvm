@@ -60,19 +60,6 @@ public:
 private:
 	AsylumEngine *_vm;
 
-	enum EyesAnimation {
-		kEyesFront       = 0,
-		kEyesLeft        = 1,
-		kEyesRight       = 2,
-		kEyesTop         = 3,
-		kEyesBottom      = 4,
-		kEyesTopLeft     = 5,
-		kEyesTopRight    = 6,
-		kEyesBottomLeft  = 7,
-		kEyesBottomRight = 8,
-		kEyesCrossed     = 9
-	};
-
 	enum MenuScreen {
 		kMenuNone            = -1,
 		kMenuNewGame         = 0,
@@ -85,8 +72,8 @@ private:
 		kMenuAudioOptions    = 7,
 		kMenuSettings        = 8,
 		kMenuKeyboardConfig  = 9,
-		kMenuShowCredits     = 10,
-		kMenuReturnToGame    = 11
+		kMenuReturnToGame    = 10,
+		kMenuShowCredits     = 11
 	};
 
 	enum MenuResource {
@@ -96,24 +83,15 @@ private:
 		kFontYellow = MAKE_RESOURCE(kResourcePackShared, 16)
 	};
 
-	//int32  _activeIcon;
-	//int32  _previousActiveIcon;
-	//uint32 _curIconFrame;
-	//int32 _curMouseCursor;
-	//int32  _cursorStep;
-	//uint32 _creditsBgFrame;
-	//int32 _creditsTextScroll;
-	//bool   _leftClick;
-	//bool   _active;
-
 	// Game initialization
 	bool             _initGame;
 
 	// Data
 	MenuScreen       _activeScreen;
 	ResourceId       _soundResourceId;
+	ResourceId       _musicResourceId;
 	bool             _allowInteraction;
-	int32            _dword_4464BC;
+	MenuScreen       _currentIcon;
 	int32            _dword_455C74;
 	bool             _dword_455D4C;
 	bool             _dword_455D5C;
@@ -129,11 +107,28 @@ private:
 	void setup();
 
 	/**
+	 * Leaves an opened menu
+	 */
+	void leave();
+
+	/**
 	 * Switch between fonts.
 	 *
 	 * @param condition if true, load kFontYellow, if false, load kFontBlue.
 	 */
 	void switchFont(bool condition);
+
+	/**
+	 * Shows the credits.
+	 */
+	void showCredits();
+
+	/**
+	 * Find if the mouse if on an icon
+	 *
+	 * @return The icon identifier
+	 */
+	MenuScreen findMousePosition();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling
@@ -142,9 +137,6 @@ private:
 	bool music();
 	bool key(const AsylumEvent &evt);
 	bool click(const AsylumEvent &evt);
-
-	// Helpers
-	MenuScreen findMousePosition();
 
 	// Update handlers
 	void updateNewGame();
@@ -157,8 +149,8 @@ private:
 	void updateAudioOptions();
 	void updateSettings();
 	void updateKeyboardConfig();
-	void updateShowCredits();
 	void updateReturnToGame();
+	void updateShowCredits();
 
 	// Click handlers
 	void clickNewGame();
@@ -171,21 +163,14 @@ private:
 	void clickAudioOptions();
 	void clickSettings();
 	void clickKeyboardConfig();
-	void clickShowCredits();
 	void clickReturnToGame();
+	void clickShowCredits();
 
+	// Key handlers
+	void keySaveGame();
+	void keyKeyboardConfig();
+	void keyShowCredits();
 
-	// TODO remove
-	void updateMainMenu();
-
-	void updateSubMenu();
-	void exitSubMenu();
-	void updateSubMenuNewGame();
-	void updateSubMenuCinematics();
-	void updateSubMenuSettings();
-	void updateSubMenuQuitGame();
-	void updateSubMenuShowCredits();
-	void updateSubMenuReturnToGame();
 }; // end of class MainMenu
 
 } // end of namespace Asylum
