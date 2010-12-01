@@ -34,13 +34,10 @@
 
 #if defined(USE_GLES)
 #include <GLES/gl.h>
-#include <GLES/glext.h>
 #elif defined(MACOSX)
 #include <OpenGL/gl.h>
-#include <OpenGL/glext.h>
 #else
 #include <GL/gl.h>
-#include <GL/glext.h>
 #endif
 
 #include "graphics/surface.h"
