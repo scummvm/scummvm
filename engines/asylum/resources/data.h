@@ -197,21 +197,19 @@ public:
 	void setData(ActorIndex index, int32 val) {
 		if (index < 50)
 			_data1[index] = val;
-
-		if (index < 60)
+		else if (index < 60)
 			_data2[index - 50] = val;
-
+		else
 		error("[SharedData::setData] index is outside valid values (was: %d, valid: [0:60]", index);
 	}
 
 	int32 getData(ActorIndex index) {
 		if (index < 50)
 			return _data1[index];
-
-		if (index < 60)
+		else if (index < 60)
 			return _data2[index - 50];
-
-		error("[SharedData::getData] index is outside valid values (was: %d, valid: [0:60]", index);
+		else
+			error("[SharedData::getData] index is outside valid values (was: %d, valid: [0:60]", index);
 	}
 
 	void setData2(ActorIndex index, bool val) {

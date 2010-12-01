@@ -316,15 +316,6 @@ bool Scene::handleEvent(const AsylumEvent &evt) {
 	return false;
 }
 
-	//if (_speech->getSoundResourceId() != 0) {
-	//	if (_vm->sound()->isPlaying(_speech->getSoundResourceId())) {
-	//		_speech->prepareSpeech();
-	//	} else {
-	//		_speech->resetResourceIds();
-	//		_vm->clearGameFlag(kGameFlag219);
-	//	}
-	//}
-
 void Scene::activate() {
 	Actor *player = getActor();
 
@@ -371,7 +362,30 @@ bool Scene::update() {
 		getActor()->updateStatus(kActorStatusEnabled);
 	}
 
-	error("[Scene::update] Not implemented!");
+	uint32 ticks = _vm->getTick();
+
+	if (!getSharedData()->getFlag(kFlagRedraw)) {
+		if (updateScreen())
+			return true;
+
+		getSharedData()->setFlag(kFlagRedraw, true);
+	}
+
+	if (ticks > getSharedData()->getNextScreenUpdate()) {
+		if (getSharedData()->getFlag(kFlagRedraw)) {
+			if (getSharedData()->getMatteBarHeight() <= 0)
+				getScreen()->copyBackBufferToScreen();
+			else
+				error("[Scene::update] Not implemented!");
+
+			// Original also sets an unused value to 0
+			getSharedData()->setData(39, getSharedData()->getData(39) ^ 1);
+
+			getSharedData()->setFlag(kFlagRedraw, false);
+			getSharedData()->setNextScreenUpdate(ticks + 55);
+			++_vm->screenUpdateCount;
+		}
+	}
 
 	return true;
 }
@@ -401,6 +415,63 @@ bool Scene::clickUp(const AsylumEvent &evt) {
 //////////////////////////////////////////////////////////////////////////
 // Scene update
 //////////////////////////////////////////////////////////////////////////
+bool Scene::updateScreen() {
+	// Original has a frame counter (for showing fps)
+
+	if (updateScene())
+		return true;
+
+	if (Config.performance <= 4) {
+		// TODO when Config.performance <= 4, we need to skip drawing frames to screen
+
+		if (drawScene())
+			return true;
+
+	} else {
+		if (drawScene())
+			return true;
+	}
+
+	getActor()->drawNumber();
+
+	// Original handle all debug commands here (we do it as part of each update command)
+
+	if (getSharedData()->getFlag(kFlagScene1)) {
+		getScreen()->clear();
+
+		//getScreen()->paletteSetupAndStartFade(0, 0, 0);
+		//updateScene();
+		//drawScene();
+		// refresh screen
+		//getScreen->paletteStopAndFade(getWorld()->currentPaletteId, 100, 10);
+		//drawScene();
+		// refresh screen
+
+		warning("[Scene::updateScreen] Not implemented!");
+
+
+		getSharedData()->setFlag(kFlagScene1, false);
+	}
+
+	if (getSpeech()->getSoundResourceId() != 0) {
+		if (getSound()->isPlaying(_speech->getSoundResourceId())) {
+			getSpeech()->prepareSpeech();
+		} else {
+			getSpeech()->resetResourceIds();
+			_vm->clearGameFlag(kGameFlag219);
+		}
+	}
+
+	if (getWorld()->chapter == kChapter5) {
+		if (_vm->isGameFlagSet(kGameFlag249))
+			error("[Scene::updateScreen] Not implemented!");
+			//drawSceneData;
+	}
+
+	return false;
+}
+
+
 bool Scene::updateScene() {
 #ifdef DEBUG_SCENE_TIMES
 #define MESURE_TICKS(func) { \
@@ -1145,7 +1216,7 @@ void Scene::preload() {
 	delete title;
 }
 
-int Scene::drawScene() {
+bool Scene::drawScene() {
 	if (!_ws)
 		error("[Scene::drawScene] WorldStats not initialized properly!");
 
@@ -1153,34 +1224,35 @@ int Scene::drawScene() {
 
 	if (getSharedData()->getFlag(kFlagRedraw)) {
 		_vm->screen()->clear();
-	} else {
-		// Draw scene background
-		_vm->screen()->draw(_ws->backgroundImage, 0, -_ws->xLeft, -_ws->yTop, 0);
-
-		// Draw actors on the update list
-		buildUpdateList();
-		processUpdateList();
-
-		if (_ws->chapter == kChapter11)
-			checkVisibleActorsPriority();
-
-		// Queue updates
-		for (uint32 i = 0; i < _ws->actors.size(); i++)
-			_ws->actors[i]->draw();
-
-		for (uint32 i = 0; i < _ws->objects.size(); i++)
-			_ws->objects[i]->draw();
-
-		Actor *player = getActor();
-		if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10)
-			player->updateAndDraw();
-		else
-			player->setNumberFlag01(0);
-
-		_vm->screen()->drawGraphicsInQueue();
+		return false;
 	}
 
-	return 1;
+	// Draw scene background
+	getScreen()->draw(_ws->backgroundImage, 0, -_ws->xLeft, -_ws->yTop, 0, false);
+
+	// Draw actors on the update list
+	buildUpdateList();
+	processUpdateList();
+
+	if (_ws->chapter == kChapter11)
+		checkVisibleActorsPriority();
+
+	// Queue updates
+	for (uint32 i = 0; i < _ws->actors.size(); i++)
+		_ws->actors[i]->draw();
+
+	for (uint32 i = 0; i < _ws->objects.size(); i++)
+		_ws->objects[i]->draw();
+
+	Actor *player = getActor();
+	if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10)
+		player->updateAndDraw();
+	else
+		player->setNumberFlag01(0);
+
+	_vm->screen()->drawGraphicsInQueue();
+
+	return false;
 }
 
 bool Scene::updateListCompare(const UpdateItem &item1, const UpdateItem &item2) {

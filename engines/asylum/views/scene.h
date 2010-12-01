@@ -228,11 +228,16 @@ private:
 	bool clickDown(const AsylumEvent &evt);
 	bool clickUp(const AsylumEvent &evt);
 
-	void updateScreen();
-
 	//////////////////////////////////////////////////////////////////////////
 	// Scene update
 	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Updates the screen
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	bool updateScreen();
 
 	/**
 	 * Loop through the various update blocks (actors, objects, mouse, music, sfx, coordinates), then process the current action script.
@@ -290,7 +295,7 @@ private:
 	// Scene drawing
 	//////////////////////////////////////////////////////////////////////////
 	void preload(); // Draw the loading screen
-	int drawScene();
+	bool drawScene();
 
 	void buildUpdateList();
 	void processUpdateList();
