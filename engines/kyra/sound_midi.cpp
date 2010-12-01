@@ -605,7 +605,7 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	if (!_vm->resource()->exists(file.c_str()))
 		return;
 
-	// When loading a new file we stopp all notes
+	// When loading a new file we stop all notes
 	// still running on our own, just to prevent
 	// glitches
 	for (int i = 0; i < 16; ++i)
