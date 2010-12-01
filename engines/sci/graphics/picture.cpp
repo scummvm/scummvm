@@ -498,6 +498,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 	Palette palette;
 	int16 pattern_Code = 0, pattern_Texture = 0;
 	bool icemanDrawFix = false;
+	bool ignoreBrokenPriority = false;
 
 	memset(&palette, 0, sizeof(palette));
 
@@ -518,6 +519,22 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 			if ((_screen->getUnditherState()) && ((_resourceId >= 53 && _resourceId <= 58) || (_resourceId == 61)))
 				icemanDrawFix = true;
 		}
+		if (g_sci->getGameId() == GID_KQ5) {
+			// WORKAROUND: ignore the seemingly broken priority of picture 48 
+			// (island overview). Fixes bug #3041044.
+			if (_resourceId == 48)
+				ignoreBrokenPriority = true;
+		}
+		if (g_sci->getGameId() == GID_SQ4) {
+			// WORKAROUND: ignore the seemingly broken priority of pictures 546
+			// and 547 (Vohaul's head and Roger Jr trapped). Fixes bug #3046543.
+			if (_resourceId == 546 || _resourceId == 547)
+				ignoreBrokenPriority = true;
+			// WORKAROUND: ignore the seemingly broken priority of picture 631
+			// (SQ1 view from the cockpit). Fixes bug #3046513.
+			if (_resourceId == 631)
+				ignoreBrokenPriority = true;
+		}
 	}
 
 	// Drawing
@@ -537,9 +554,10 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 
 		case PIC_OP_SET_PRIORITY:
 			pic_priority = data[curPos++] & 0x0F;
-			if (isEGA) {
+			if (isEGA) 
 				pic_priority = EGApriority[pic_priority];
-			}
+			if (ignoreBrokenPriority)
+				pic_priority = 255;
 			break;
 		case PIC_OP_DISABLE_PRIORITY:
 			pic_priority = 255;
