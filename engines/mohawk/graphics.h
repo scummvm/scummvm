@@ -207,6 +207,7 @@ public:
 
 	void preloadImage(uint16 image);
 	void copyImageToScreen(uint16 image, bool useOffsets = false, int left = 0, int top = 0);
+	void copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
 	void setPalette(uint16 id);
 	bool imageIsTransparentAt(uint16 image, bool useOffsets, int x, int y);
 
