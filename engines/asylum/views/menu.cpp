@@ -549,11 +549,11 @@ bool MainMenu::key(const AsylumEvent &evt) {
 		break;
 
 	case kMenuSaveGame:
-		keySaveGame();
+		keySaveGame(evt);
 		break;
 
 	case kMenuKeyboardConfig:
-		keyKeyboardConfig();
+		keyKeyboardConfig(evt);
 		break;
 
 	case kMenuShowCredits:
@@ -1407,12 +1407,59 @@ void MainMenu::clickShowCredits() {
 //////////////////////////////////////////////////////////////////////////
 // Key handlers
 //////////////////////////////////////////////////////////////////////////
-void MainMenu::keySaveGame() {
+void MainMenu::keySaveGame(const AsylumEvent &evt) {
 	error("[MainMenu::keySaveGame] Not implemented!");
 }
 
-void MainMenu::keyKeyboardConfig() {
-	error("[MainMenu::keyKeyboardConfig] Not implemented!");
+void MainMenu::keyKeyboardConfig(const AsylumEvent &evt) {
+	if (_selectedShortcutIndex == -1)
+		return;
+
+	if (evt.kbd.keycode == Common::KEYCODE_ESCAPE || evt.kbd.keycode == Common::KEYCODE_RETURN || evt.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+		_selectedShortcutIndex = -1;
+		getCursor()->show();
+		return;
+	}
+
+	char *key = NULL;
+	switch(_selectedShortcutIndex) {
+	default:
+		break;
+
+	case 0:
+		key = &Config.keyShowVersion;
+		break;
+
+	case 1:
+		key = &Config.keyQuickLoad;
+		break;
+
+	case 2:
+		key = &Config.keyQuickSave;
+		break;
+
+	case 3:
+		key = &Config.keySwitchToSara;
+		break;
+
+	case 4:
+		key = &Config.keySwitchToGrimwall;
+		break;
+
+	case 5:
+		key = &Config.keySwitchToOlmec;
+		break;
+	}
+
+	// Check for alphanumeric character
+	if (evt.kbd.ascii > 255 || !isalnum(evt.kbd.ascii))
+		return;
+
+	if (!Config.isKeyAssigned(evt.kbd.ascii) || *key == evt.kbd.ascii) {
+		*key = evt.kbd.ascii;
+		_selectedShortcutIndex = -1;
+		getCursor()->show();
+	}
 }
 
 void MainMenu::keyShowCredits() {
