@@ -44,14 +44,21 @@ namespace Asylum {
 
 class Actor;
 class Object;
-class Scene;
+class AsylumEngine;
 
 struct ActionArea;
 
 class WorldStats {
 public:
-	WorldStats(Common::SeekableReadStream *stream, Scene *scene);
+	WorldStats(AsylumEngine *engine);
 	virtual ~WorldStats();
+
+	/**
+	 * Loads the data
+	 *
+	 * @param stream If non-null, the Common::SeekableReadStream * to load from
+	 */
+	void load(Common::SeekableReadStream *stream);
 
 	int32 size;
 	int32 numEntries;
@@ -144,9 +151,7 @@ public:
 	Common::String toString();
 
 private:
-	Scene *_scene;
-
-	void load(Common::SeekableReadStream *stream);
+	AsylumEngine *_vm;
 };
 
 } // end of namespace Asylum

@@ -57,7 +57,7 @@ int g_debugPolygons;
 int g_debugObjects;
 int g_debugScrolling;
 
-Scene::Scene(AsylumEngine *engine): _vm(engine), _ev(NULL),
+Scene::Scene(AsylumEngine *engine): _vm(engine),
 	_actions(NULL), _special(NULL), _speech(NULL), _title(NULL), _polygons(NULL), _ws(NULL) {
 
 	// Initialize data
@@ -69,10 +69,6 @@ Scene::Scene(AsylumEngine *engine): _vm(engine), _ev(NULL),
 	_rightButton = false;
 	_isActive = false;
 	_globalDirection = kDirectionN;
-
-	// Graphics
-	_bgResource = NULL;
-	_background = NULL;
 }
 
 Scene::~Scene() {
@@ -86,12 +82,8 @@ Scene::~Scene() {
 	delete _polygons;
 	delete _ws;
 
-	delete _bgResource;
-	_background = NULL;
-
 	// Zero passed pointers
 	_vm = NULL;
-	_ev = NULL;
 }
 
 void Scene::enter(ResourcePackId packId) {
@@ -184,11 +176,10 @@ void Scene::enter(ResourcePackId packId) {
 	_ws->actorType = actorType[_ws->chapter];
 
 	// Play intro music
-	ResourceId musicId = kResourceNone;
 	if (_ws->musicCurrentResourceIndex != kMusicStopped && _ws->chapter != kChapter1)
-		musicId = MAKE_RESOURCE(kResourcePackMusic, _ws->musicCurrentResourceIndex);
-
-	getSound()->playMusic(musicId);
+		getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, _ws->musicCurrentResourceIndex));
+	else
+		getSound()->playMusic(kResourceNone, 0);
 
 	// Update global values
 	_vm->lastScreenUpdate = 1;
@@ -201,8 +192,6 @@ void Scene::enter(ResourcePackId packId) {
 		changePlayer(1);
 		_ws->nextPlayer = kActorInvalid;
 	}
-
-	activate();
 }
 
 void Scene::load(ResourcePackId packId) {
@@ -229,8 +218,11 @@ void Scene::load(ResourcePackId packId) {
 	if (Common::String(sceneTag, 6) != "DFISCN")
 		error("The file isn't recognized as scene %s", filename);
 
-	_ws = new WorldStats(fd, this);
+	_ws = new WorldStats(_vm);
+	_ws->load(fd);
+
 	_polygons = new Polygons(fd);
+
 	_actions = new ActionList(_vm);
 	_actions->load(fd);
 
@@ -244,9 +236,6 @@ void Scene::load(ResourcePackId packId) {
 	// the title screen overwriting the font
 	_vm->text()->loadFont(_ws->font1);
 
-	_bgResource    = new GraphicResource(_vm, _ws->backgroundImage);
-	//_blowUp        = 0;
-	_background    = NULL;
 	_leftClick     = false;
 	_rightButton   = false;
 	_isActive      = false;
@@ -284,52 +273,46 @@ Actor* Scene::getActor(ActorIndex index) {
 	return _ws->actors[computedIndex];
 }
 
-void Scene::setScenePosition(int x, int y) {
-	if (!_ws)
-		error("[Scene::setScenePosition] WorldStats not initialized properly!");
+//void Scene::setScenePosition(int x, int y) {
+//	if (!_ws)
+//		error("[Scene::setScenePosition] WorldStats not initialized properly!");
+//
+//	if (!_bgResource)
+//		error("[Scene::setScenePosition] Scene resources not initialized properly!");
+//
+//	GraphicFrame *bg = _bgResource->getFrame(0);
+//	//_startX = x;
+//	//_startY = y;
+//
+//	int32 *targetX = &_ws->coordinates[0];
+//	int32 *targetY = &_ws->coordinates[1];
+//
+//	*targetX = x;
+//	*targetY = y;
+//
+//	if (*targetX < 0)
+//		*targetX = 0;
+//	if (*targetX > (bg->surface.w - 640))
+//		*targetX = bg->surface.w - 640;
+//
+//
+//	if (*targetY < 0)
+//		*targetY = 0;
+//	if (*targetY > (bg->surface.h - 480))
+//		*targetY = bg->surface.h - 480;
+//}
 
-	if (!_bgResource)
-		error("[Scene::setScenePosition] Scene resources not initialized properly!");
 
-	GraphicFrame *bg = _bgResource->getFrame(0);
-	//_startX = x;
-	//_startY = y;
-
-	int32 *targetX = &_ws->coordinates[0];
-	int32 *targetY = &_ws->coordinates[1];
-
-	*targetX = x;
-	*targetY = y;
-
-	if (*targetX < 0)
-		*targetX = 0;
-	if (*targetX > (bg->surface.w - 640))
-		*targetX = bg->surface.w - 640;
-
-
-	if (*targetY < 0)
-		*targetY = 0;
-	if (*targetY > (bg->surface.h - 480))
-		*targetY = bg->surface.h - 480;
-}
-
-
-bool Scene::handleEvent(const AsylumEvent &ev) {
+bool Scene::handleEvent(const AsylumEvent &evt) {
 	// TODO replace previous handleEvent method
 
-	return true;
-}
-
-void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	if (!_ws)
 		error("[Scene::handleEvent] WorldStats not initialized properly!");
 
 	if (!_title)
 		error("[Scene::handleEvent] Scene title not initialized properly!");
 
-	_ev = event;
-
-	switch (_ev->type) {
+	switch (evt.type) {
 
 	case Common::EVENT_MOUSEMOVE:
 		//if (getCursor())
@@ -364,8 +347,8 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	// FIXME just updating because a left click event
 	// is caught causes animation speeds to change. This needs
 	// to be addressed
-	if (!doUpdate)
-		return;
+	/*if (!doUpdate)
+		return;*/
 
 	if (Config.showSceneLoading) {
 		if (!_titleLoaded) {
@@ -374,12 +357,12 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 				_titleLoaded = true;
                 activate();
 			}
-			return;
+			return true;
 		}
 	}
 
-	if (update())
-		return;
+	if (updateScene())
+		return true;
 
 	// TODO: check game quality
 	drawScene();
@@ -395,25 +378,31 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 			_vm->clearGameFlag(kGameFlag219);
 		}
 	}
+
+	return true;
+}
+
+void Scene::update() {
+
 }
 
 void Scene::activate() {
-	if (!_ws)
-		error("[Scene::activate] WorldStats not initialized properly!");
+	//if (!_ws)
+	//	error("[Scene::activate] WorldStats not initialized properly!");
 
-	if (!_bgResource)
-		error("[Scene::activate] Scene resources not initialized properly!");
+	//if (!_bgResource)
+	//	error("[Scene::activate] Scene resources not initialized properly!");
 
-	//////////////////////////////////////////////////////////////////////////
-	// FIXME: get rid of this?
+	////////////////////////////////////////////////////////////////////////////
+	//// FIXME: get rid of this?
 
-	_isActive = true;
-	getScreen()->setPalette(_ws->currentPaletteId);
+	//_isActive = true;
+	//getScreen()->setPalette(_ws->currentPaletteId);
 	// FIXME this corrupts memory (the copyToBackBuffer function is broken)
 	//getScreen()->draw(_ws->backgroundImage, 0, _ws->xLeft, _ws->yTop, 0);
 }
 
-bool Scene::update() {
+bool Scene::updateScene() {
 #ifdef DEBUG_SCENE_TIMES
 #define MESURE_TICKS(func) { \
 	int32 startTick =_vm->getTick(); \
@@ -425,18 +414,20 @@ bool Scene::update() {
 #endif
 
 	// Update each part of the scene
-	MESURE_TICKS(updateMouse);
-	MESURE_TICKS(updateActors);
-	MESURE_TICKS(updateObjects);
-	MESURE_TICKS(updateAmbientSounds);
-	MESURE_TICKS(updateMusic);
-	MESURE_TICKS(updateScreen);
+	if (getSharedData()->getMatteBarHeight() != 170 || getSharedData()->getMattePlaySound()) {
+		MESURE_TICKS(updateMouse);
+		MESURE_TICKS(updateActors);
+		MESURE_TICKS(updateObjects);
+		MESURE_TICKS(updateAmbientSounds);
+		MESURE_TICKS(updateMusic);
+		MESURE_TICKS(updateAdjustScreen);
 
-	// Update Debug
-	if (g_debugPolygons)
-		debugShowPolygons();
-	if (g_debugObjects)
-		debugShowObjects();
+		// Update Debug
+		if (g_debugPolygons)
+			debugShowPolygons();
+		if (g_debugObjects)
+			debugShowObjects();
+	}
 
 	return _actions->process();
 }
@@ -582,7 +573,7 @@ void Scene::updateMouse() {
 	if (!done && (act->getDirection() != kDirectionE || getCursor()->position().y - actorPos.bottom > 10))
 		dir = kDirectionSE;
 
-	handleMouseUpdate(dir, actorPos);
+	updateCursor(dir, actorPos);
 
 	if (dir >= 0) {
 		if (act->getStatus() == 1 || act->getStatus() == 12)
@@ -590,7 +581,7 @@ void Scene::updateMouse() {
 	}
 }
 
-void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
+void Scene::updateCursor(int direction, Common::Rect rect) {
 	int16 rlimit = rect.right - 10;
 	ResourceId newGraphicResourceId;
 	HitType type = kHitNone;
@@ -969,11 +960,11 @@ void Scene::updateMusic() {
 	//warning("[Scene::updateMusic] not implemented!");
 }
 
-void Scene::updateScreen() {
-	if (g_debugScrolling) { // DEBUG ScreenScrolling
-		debugScreenScrolling(_bgResource->getFrame(0));
+void Scene::updateAdjustScreen() {
+	if (g_debugScrolling) {
+		debugScreenScrolling();
 	} else {
-		updateAdjustScreen();
+		updateCoordinates();
 	}
 }
 
@@ -1004,7 +995,7 @@ void Scene::playIntroSpeech() {
 	warning("[Scene::playIntroSpeech] Missing palette fade and wait!");
 }
 
-void Scene::updateAdjustScreen() {
+void Scene::updateCoordinates() {
 	Actor *act = getActor();
 	int32 newXLeft = -1;
 	int32 newYTop  = -1;
@@ -1389,60 +1380,27 @@ void Scene::getActorPosition(Actor *actor, Common::Point *pt) {
 	pt->x = actor->getPoint1()->x - _ws->xLeft;
 	pt->y = actor->getPoint1()->y - _ws->yTop;
 }
-// ----------------------------------
-// ---------- SCREEN REGION -----------
-// ----------------------------------
-
-void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
-	if (!_ws)
-		error("[Scene::copyToBackBufferClipped] WorldStats not initialized properly!");
-
-	Common::Rect screenRect(_ws->xLeft, _ws->yTop, _ws->xLeft + 640, _ws->yTop + 480);
-	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
-	animRect.clip(screenRect);
-
-	if (!animRect.isEmpty()) {
-		// Translate anim rectangle
-		animRect.translate(-(int16)_ws->xLeft, -(int16)_ws->yTop);
-
-		int startX = animRect.right  == 640 ? 0 : surface->w - animRect.width();
-		int startY = animRect.bottom == 480 ? 0 : surface->h - animRect.height();
-
-		if (surface->w > 640)
-			startX = _ws->xLeft;
-		if (surface->h > 480)
-			startY = _ws->yTop;
-
-		_vm->screen()->copyToBackBufferWithTransparency(
-		    ((byte*)surface->pixels) +
-		    startY * surface->pitch +
-		    startX * surface->bytesPerPixel,
-		    surface->pitch,
-		    animRect.left,
-		    animRect.top,
-		    animRect.width(),
-		    animRect.height());
-	}
-}
 
 // ----------------------------------
 // ---------- DEBUG REGION -----------
 // ----------------------------------
 
-void Scene::debugScreenScrolling(GraphicFrame *bg) {
+void Scene::debugScreenScrolling() {
 	if (!_ws)
 		error("[Scene::debugScreenScrolling] WorldStats not initialized properly!");
+
+	Common::Rect rect = GraphicResource::getFrameRect(_vm, _ws->backgroundImage, 0);
 
 	// Horizontal scrolling
 	if (getCursor()->position().x < SCREEN_EDGES && _ws->xLeft >= SCROLL_STEP)
 		_ws->xLeft -= SCROLL_STEP;
-	else if (getCursor()->position().x > 640 - SCREEN_EDGES && _ws->xLeft <= bg->surface.w - 640 - SCROLL_STEP)
+	else if (getCursor()->position().x > 640 - SCREEN_EDGES && _ws->xLeft <= rect.width() - 640 - SCROLL_STEP)
 		_ws->xLeft += SCROLL_STEP;
 
 	// Vertical scrolling
 	if (getCursor()->position().y < SCREEN_EDGES && _ws->yTop >= SCROLL_STEP)
 		_ws->yTop -= SCROLL_STEP;
-	else if (getCursor()->position().y > 480 - SCREEN_EDGES && _ws->yTop <= bg->surface.h - 480 - SCROLL_STEP)
+	else if (getCursor()->position().y > 480 - SCREEN_EDGES && _ws->yTop <= rect.height() - 480 - SCROLL_STEP)
 		_ws->yTop += SCROLL_STEP;
 }
 
@@ -1462,7 +1420,7 @@ void Scene::debugShowWalkRegion(PolyDefinitions *poly) {
 		    poly->points[(i+1) % poly->count()].y - poly->boundingRect.top, 0x3A);
 	}
 
-	copyToBackBufferClipped(&surface, poly->boundingRect.left, poly->boundingRect.top);
+	getScreen()->copyToBackBufferClipped(&surface, poly->boundingRect.left, poly->boundingRect.top);
 
 	surface.free();
 }
@@ -1488,7 +1446,7 @@ void Scene::debugShowPolygons() {
 			    poly.points[(i+1) % poly.count()].y - poly.boundingRect.top, 0xFF);
 		}
 
-		copyToBackBufferClipped(&surface, poly.boundingRect.left, poly.boundingRect.top);
+		getScreen()->copyToBackBufferClipped(&surface, poly.boundingRect.left, poly.boundingRect.top);
 
 		surface.free();
 	}
@@ -1508,7 +1466,7 @@ void Scene::debugShowObjects() {
 			               object->getBoundingRect()->bottom - object->getBoundingRect()->top + 1,
 			               1);
 			surface.frameRect(*object->getBoundingRect(), 0x22);
-			copyToBackBufferClipped(&surface, object->x, object->y);
+			getScreen()->copyToBackBufferClipped(&surface, object->x, object->y);
 		}
 
 		surface.free();
@@ -1526,7 +1484,7 @@ void Scene::debugShowActors() {
 			               a->getBoundingRect()->bottom - a->getBoundingRect()->top + 1,
 			               1);
 			surface.frameRect(*a->getBoundingRect(), 0x22);
-			copyToBackBufferClipped(&surface, a->getPoint()->x, a->getPoint()->y);
+			getScreen()->copyToBackBufferClipped(&surface, a->getPoint()->x, a->getPoint()->y);
 		}
 
 		surface.free();
