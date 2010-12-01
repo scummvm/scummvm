@@ -36,6 +36,9 @@
 #include <GLES/gl.h>
 #elif defined(MACOSX)
 #include <OpenGL/gl.h>
+#elif defined(WIN32)
+#include <GL/gl.h>
+#include <GL/glext.h>
 #else
 #include <GL/gl.h>
 #endif
