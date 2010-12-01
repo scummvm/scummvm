@@ -23,9 +23,6 @@
  *
  */
 
-//#include "common/endian.h"
-//#include "graphics/cursorman.h"
-
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/global.h"
@@ -78,7 +75,6 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 		}
 	}
 
-
 	int16 spriteLeft = _spriteLeft;
 	int16 spriteTop = _spriteTop;
 	int16 spriteRight = _spriteRight;
@@ -103,7 +99,6 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 			if (_destSurface < 24)
 				_destSurface += 4;
 		}
-
 	}
 
 	adjustCoords(0, &_destSpriteX, &_destSpriteY);
@@ -239,7 +234,6 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 					_destSpriteX += font->getCharWidth(_textToPrint[i]);
 				}
 			}
-
 		} else {
 			sourceSurf = _spritesArray[_fontToSprite[_fontIndex].sprite];
 			ratio = ((sourceSurf == _frontSurface) || (sourceSurf == _backSurface)) ?
@@ -411,7 +405,6 @@ void Draw_Fascination::drawWin(int16 fct) {
 		break;
 
 	case DRAW_LOADSPRITE:  // 5 - Uncompress and load a sprite
-		// TODO: check the implementation, currently dirty cut and paste of DRAW_SPRITE code
 		resource = _vm->_game->_resources->getResource((_spriteLeft & 0x3FFF),
 				&_spriteRight, &_spriteBottom);
 

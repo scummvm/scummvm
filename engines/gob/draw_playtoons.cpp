@@ -24,7 +24,6 @@
  */
 
 #include "common/endian.h"
-#include "graphics/cursorman.h"
 
 #include "gob/draw.h"
 #include "gob/game.h"
