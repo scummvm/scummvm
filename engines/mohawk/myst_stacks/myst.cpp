@@ -224,17 +224,6 @@ void MystScriptParser_Myst::opcode_100(uint16 op, uint16 var, uint16 argc, uint1
 			// TODO: No soundIdLinkDst for Opcode 100 link? Check Original.
 		}
 		break;
-	case kDniStack:
-		// Used in Card 5022 (Rocks)
-		varUnusedCheck(op, var);
-
-		if (argc == 0) {
-			debugC(kDebugScript, "Opcode %d: Unknown Function", op);
-
-			// TODO: Fill in Logic.
-		} else
-			unknown(op, var, argc, argv);
-		break;
 	case kMakingOfStack:
 		_vm->_system->quit();
 		break;
@@ -262,12 +251,6 @@ void MystScriptParser_Myst::opcode_101(uint16 op, uint16 var, uint16 argc, uint1
 				_vm->_varStore->setVar(var, varValue - 1);
 		} else
 			unknown(op, var, argc, argv);
-		break;
-	case kDniStack:
-		// Used in Card 5014 (Atrus)
-		// Hotspot Resource Used to hand Page to Atrus...
-		varUnusedCheck(op, var);
-		// TODO: Fill in Logic.
 		break;
 	case kDemoStack:
 		varUnusedCheck(op, var);
@@ -1160,28 +1143,6 @@ void MystScriptParser_Myst::opcode_200(uint16 op, uint16 var, uint16 argc, uint1
 		} else
 			unknown(op, var, argc, argv);
 		break;
-	case kDniStack:
-		varUnusedCheck(op, var);
-		// Used on Card 5014
-
-		// TODO: Logic for Atrus Reactions and Movies
-		if (false) {
-			// Var 0 used for Atrus Gone (from across room) 0 = Present, 1 = Not Present
-			// Var 1 used for Myst Book Status 0 = Not Usuable
-			//                                 1 = Openable, but not linkable (Atrus Gone?)
-			//                                 2 = Linkable
-			// Var 2 used for Music Type 0 to 2..
-			// Var 106 used for Atrus Static Image State 0 = Initial State
-			//                                           1 = Holding Out Hand for Page
-			//                                           2 = Gone, Book Open
-			//                                           3 = Back #1
-			//                                           4 = Back #2
-			_vm->_video->playMovie(_vm->wrapMovieFilename("atr1nopg", kDniStack), 215, 77);
-			_vm->_video->playMovie(_vm->wrapMovieFilename("atr1page", kDniStack), 215, 77);
-			_vm->_video->playMovie(_vm->wrapMovieFilename("atrus2", kDniStack), 215, 77);
-			_vm->_video->playMovie(_vm->wrapMovieFilename("atrwrite", kDniStack), 215, 77);
-		}
-		break;
 	case kDemoSlidesStack:
 		// Used on Cards...
 		if (argc == 1) {
@@ -1994,11 +1955,6 @@ void MystScriptParser_Myst::opcode_300(uint16 op, uint16 var, uint16 argc, uint1
 		debugC(kDebugScript, "Opcode %d: Book Exit Function...", op);
 		debugC(kDebugScript, "Var: %d", var);
 		// TODO: Fill in Logic
-		break;
-	case kDniStack:
-		// Used in Card 5014 (Atrus Writing)
-		varUnusedCheck(op, var);
-		// TODO: Fill in Logic.
 		break;
 	case kDemoStack:
 		// Used on Card 2000

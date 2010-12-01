@@ -25,6 +25,7 @@ MODULE_OBJS = \
 	video.o \
 	myst_stacks/channelwood.o \
 	myst_stacks/credits.o \
+	myst_stacks/dni.o \
 	myst_stacks/mechanical.o \
 	myst_stacks/myst.o \
 	myst_stacks/selenitic.o \
