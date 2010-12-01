@@ -150,7 +150,7 @@ private:
 	DECLARE_OPCODE(opcode_312);
 };
 
-}
+} // End of namespace Mohawk
 
 #undef DECLARE_OPCODE
 
