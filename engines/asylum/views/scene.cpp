@@ -112,7 +112,7 @@ void Scene::enter(ResourcePackId packId) {
 	}
 
 	// Set the cursor to magnifying glass
-	getCursor()->set(_ws->curMagnifyingGlass);
+	getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass]);
 	getCursor()->show();
 
 	// Clear the graphic queue
@@ -298,7 +298,7 @@ bool Scene::init() {
 		return true;
 	}
 
-	getCursor()->set(_ws->curScrollUp);
+	getCursor()->set(_ws->cursorResources[kCursorResourceScrollUp]);
 	_ws->coordinates[0] = -1;
 	getScreen()->clear();
 	getText()->loadFont(_ws->font1);
@@ -396,7 +396,7 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 		break;
 
 	case Common::EVENT_LBUTTONDOWN:
-		if (getCursor()->getState() & kCursorRight)
+		if (getCursor()->getState() & kCursorStateRight)
 			break;
 
 		if (getSpeech()->getSoundResourceId())
@@ -847,122 +847,121 @@ void Scene::updateCoordinates() {
 		newYTop = _ws->yTop = b.bottom - 479;
 }
 
-void Scene::updateCursor(int direction, Common::Rect rect) {
-	int16 rlimit = rect.right - 10;
-	ResourceId newGraphicResourceId;
+void Scene::updateCursor(ActorDirection direction, Common::Rect rect) {
 	HitType type = kHitNone;
+	Actor *player = getActor();
+	int16 rightLimit = rect.right - 10;
+	Common::Point mouse = getCursor()->position();
 
-	// TODO if encounter_flag03
-	if (0 && getCursor()->graphicResourceId != _ws->curTalkNPC)
-		getCursor()->set(_ws->curTalkNPC, 0, 2);
+	if (getEncounter()->getFlag6()) {
+		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC])
+			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC], 0, 2);
 
-	Actor *act = getActor(); // get the player actor reference
-
-	// XXX field_11 seems to have something to do with
-	// whether the event manager is handling a right mouse down
-	// event
-	if (getCursor()->field_11 & 2) {
-		if (act->getStatus() == 1 || act->getStatus() == 12) {
-			if (direction >= 0) {
-				newGraphicResourceId = (ResourceId)(_ws->curScrollUp + direction);
-				getCursor()->set(newGraphicResourceId, 0, 2);
-			}
-		}
+		return;
 	}
 
-	if (act->getStatus() == 6 || act->getStatus() == 10) {
-		newGraphicResourceId = _ws->curHand;
-		getCursor()->set(newGraphicResourceId, 0, 2);
-	} else {
-		if (act->getField638()) {
-			if (getCursor()->position().x >= rect.left && getCursor()->position().x <= rlimit &&
-				getCursor()->position().y >= rect.top  && getCursor()->position().y <= rect.bottom &&
-				hitTestActor()) {
-				// TODO LOTS of work here, because apparently we need to use
-				// field_638 as an index into _ws->field_D6AC8, which is not
-				// yet defined as part of worldstats, but according to IDA, is:
-				// 000D6A88 field_D6A88     dd 16 dup(?)
-				// so this is an array that is initialized as part of the scene
-				// loading process. Need to investigate further ...
-				warning("Something...");
-			} else {
-				// TODO pass a reference to hitType so it can be populated by
-				// hitTestScene
-				newGraphicResourceId = hitTestScene(type);
-				if (newGraphicResourceId != (ResourceId)-1) {
-					warning ("Can't set mouse cursor, field_D6AC8 not handled ... yet");
-					// TODO
-					// check if _ws->field_D6AC8[act->field_638] != newGraphicResourceId
-					// if false, set mouse cursor
-				} else {
-					// TODO _ws->field_D6B08 stuff, then set cursor
-					warning ("Can't set mouse cursor, field_D6B08 not handled ... yet");
-				}
-			}
-			return; // return result;
-		}
-		int32 targetIdx = hitTest(type);
+	if (getCursor()->getState() & kCursorStateRight) {
+		if (player->getStatus() == kActorStatus1 || player->getStatus() == kActorStatus12) {
 
-		//printf ("Mouse X(%d)/Y(%d) = %d\n", getCursor()->position().x, getCursor()->position().y, type);
-		if (getCursor()->position().x >= rect.left && getCursor()->position().x <= rlimit &&
-			getCursor()->position().y >= rect.top  && getCursor()->position().y <= rect.bottom &&
-			hitTestActor()) {
-			if (act->getReaction(0)) {
-				getCursor()->set(_ws->curGrabPointer, 0, 2);
-				return;
-			}
+			ResourceId resourceId =_ws->cursorResources[direction];
+
+			if (direction >= kDirectionN && getCursor()->graphicResourceId != resourceId)
+				getCursor()->set(resourceId, 0, 2);
 		}
-		if (targetIdx == -1) {
-			if (_ws->chapter != kChapter2 || _playerIndex != 10) {
-				if (getCursor()->flags)
-					getCursor()->set(_ws->curMagnifyingGlass, 0, 2);
-			} else {
-				if (getCursor()->flags)
-					getCursor()->set(_ws->curTalkNPC2, 0, 2);
-			}
+
+		return;
+	}
+
+	if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
+		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceHand])
+			getCursor()->set(_ws->cursorResources[kCursorResourceHand], 0, 2);
+
+		return;
+	}
+
+	if (player->getField638()) {
+		if (mouse.x >= rect.left && mouse.x <= rightLimit && mouse.y >= rect.top  && mouse.y <= rect.bottom && hitTestPlayer()) {
+
+			ResourceId id = _ws->cursorResourcesAlternate[player->getField638() + 31];
+			if (getCursor()->graphicResourceId != id)
+				getCursor()->set(id, 0, 0);
+
 		} else {
-			int32 targetUpdateType = 0;
-			switch (type) {
-			case kHitActionArea:
-				targetUpdateType = _ws->actions[targetIdx]->actionType;
-				break;
-			case kHitObject:
-				targetUpdateType = _ws->objects[targetIdx]->actionType;
-				break;
-			case kHitActor:
-				targetUpdateType = getActor(targetIdx)->getStatus();
-				break;
-			default:
-				// TODO LOBYTE(hitType)
-				break;
-			}
-
-			if (targetUpdateType & 1 && getCursor()->flags != 2) {
-				getCursor()->set(_ws->curMagnifyingGlass, 0, 2);
+			if (hitTestScene(type) == -1) {
+				ResourceId id = _ws->cursorResourcesAlternate[player->getField638() + 31];
+				if (getCursor()->graphicResourceId != id)
+					getCursor()->set(id, 0, 0);
 			} else {
-				if (targetUpdateType & 4) {
-					getCursor()->set(_ws->curHand, 0, 2);
-				} else {
-					if (targetUpdateType & 2) {
-						getCursor()->set(_ws->curTalkNPC, 0, 2);
-					} else {
-						if (targetUpdateType & 0x10 && getCursor()->flags != 2) {
-							getCursor()->set(_ws->curTalkNPC2, 0, 2);
-						} else {
-							if (_ws->chapter != kChapter2 && _playerIndex != 10) {
-								getCursor()->set(_ws->curMagnifyingGlass, 0, 0);
-							} else {
-								if (getCursor()->flags)
-									getCursor()->set(_ws->curTalkNPC2, 0, 2);
-							}
-						}
-					}
-				}
+				ResourceId id = _ws->cursorResourcesAlternate[player->getField638() + 47];
+				uint32 frameCount = GraphicResource::getFrameCount(_vm, id);
+				if (getCursor()->graphicResourceId != id)
+					getCursor()->set(id, 0, ((frameCount <= 1) - 1) & 2);
 			}
+		}
+
+		return;
+	}
+
+	if (mouse.x >= rect.left && mouse.x <= rightLimit && mouse.y >= rect.top  && mouse.y <= rect.bottom && hitTestPlayer()) {
+		if (player->getReaction(0)) {
+			if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceGrabPointer])
+				getCursor()->set(_ws->cursorResources[kCursorResourceGrabPointer], 0, 2);
+
+			return;
 		}
 	}
 
+	int32 index = hitTest(type);
+	if (index == -1) {
+		if (_ws->chapter != kChapter2 || _playerIndex != 10) {
+			if (getCursor()->flags || getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceMagnifyingGlass])
+				getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass], 0, 2);
+		} else {
+			if (getCursor()->flags || getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC2])
+				getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2], 0, 2);
+		}
 
+		return;
+	}
+
+	int32 actionType = 0;
+	switch (type) {
+	default:
+		error("[Scene::updateCursor] Invalid hit type!");
+		break;
+
+	case kHitActionArea:
+		actionType = _ws->actions[index]->actionType;
+		break;
+
+	case kHitObject:
+		actionType = _ws->objects[index]->actionType;
+		break;
+
+	case kHitActor:
+		actionType = getActor(index)->actionType;
+		break;
+	}
+
+	if (actionType & kActionTypeFind) {
+		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceMagnifyingGlass] || getCursor()->flags != 2)
+			getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass], 0, 2);
+	} else if (actionType & kActionTypeTalk) {
+		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC])
+			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC], 0, 2);
+	} else if (actionType & kActionTypeGrab) {
+		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceHand])
+			getCursor()->set(_ws->cursorResources[kCursorResourceHand], 0, 2);
+	} else if (actionType & kActionType16) {
+		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC2] || getCursor()->flags != 2)
+			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2], 0, 2);
+	} else if (_ws->chapter != kChapter2 && _playerIndex != 10) {
+		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceMagnifyingGlass] || getCursor()->flags)
+			getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass], 0, 2);
+	} else {
+		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC2] || getCursor()->flags)
+			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2], 0, 2);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

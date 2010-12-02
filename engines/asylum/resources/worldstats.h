@@ -48,6 +48,22 @@ class AsylumEngine;
 
 struct ActionArea;
 
+enum CursorResourceType {
+	kCursorResourceScrollUp = 0,
+	kCursorResourceScrollUpLeft,
+	kCursorResourceScrollLeft,
+	kCursorResourceScrollDownLeft,
+	kCursorResourceScrollDown,
+	kCursorResourceScrollDownRight,
+	kCursorResourceScrollRight,
+	kCursorResourceScrollUpRight,
+	kCursorResourceHand,
+	kCursorResourceMagnifyingGlass,
+	kCursorResourceTalkNPC,
+	kCursorResourceGrabPointer,
+	kCursorResourceTalkNPC2
+};
+
 class WorldStats {
 public:
 	WorldStats(AsylumEngine *engine);
@@ -67,19 +83,7 @@ public:
 	int32 yTop;  // scene start y position
 	Common::Rect boundingRect;
 	ResourceId backgroundImage;
-	ResourceId curScrollUp;
-	ResourceId curScrollUpLeft;
-	ResourceId curScrollLeft;
-	ResourceId curScrollDownLeft;
-	ResourceId curScrollDown;
-	ResourceId curScrollDownRight;
-	ResourceId curScrollRight;
-	ResourceId curScrollUpRight;
-	ResourceId curHand;
-	ResourceId curMagnifyingGlass;
-	ResourceId curTalkNPC;
-	ResourceId curGrabPointer;
-	ResourceId curTalkNPC2;
+	ResourceId cursorResources[13];
 	ResourceId font1;
 	ResourceId font2;
 	ResourceId font3;
@@ -122,8 +126,8 @@ public:
 	// ActorData is stored in each actor instance
 	int32 numActionLists;
 	int32 numPolygons;
+	ResourceId cursorResourcesAlternate[64];
 	Common::Array<ActionArea*> actions;  // maxsize 400
-	// TODO Add missing fields
 	int32 field_E848C;
 	int32 field_E8490;
 	int32 field_E8494;

@@ -50,7 +50,7 @@ namespace Asylum {
 
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_index(0), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _actorIndex(kActorInvalid),
-	_flag1(false), _flag2(false) {
+	_flag1(false), _flag2(false), _flag3(false), _flag4(false), _flag5(false), _flag6(false) {
 
 	// TODO init rest of members
 
@@ -308,7 +308,7 @@ bool Encounter::init() {
 	}
 
 	_data_455BD0 = 0;
-	getCursor()->set(getWorld()->curTalkNPC, -1, 2);
+	getCursor()->set(getWorld()->cursorResources[kCursorResourceTalkNPC], -1, 2);
 
 	if (!getSharedData()->getMatteBarHeight())
 		initScript(_item->scriptResourceId);
