@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-11-28 19:10+0000\n"
-"PO-Revision-Date: 2010-11-22 10:11+0100\n"
+"PO-Revision-Date: 2010-12-01 09:23+0100\n"
 "Last-Translator: Gruby <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -31,7 +31,7 @@ msgstr "Lefordított összetevõk:"
 
 #: gui/about.cpp:112
 msgid "Available engines:"
-msgstr "Támogatott motorok:"
+msgstr "Támogatott játékmotorok:"
 
 #: gui/browser.cpp:70
 msgid "Go up"
@@ -66,7 +66,7 @@ msgstr "Bezár"
 
 #: gui/gui-manager.cpp:107
 msgid "Mouse click"
-msgstr "Egérkatt"
+msgstr "Egérkattintás"
 
 #: gui/gui-manager.cpp:110 base/main.cpp:291
 msgid "Display keyboard"
@@ -78,7 +78,7 @@ msgstr "Billentyûk átállítása"
 
 #: gui/KeysDialog.h:39 gui/KeysDialog.cpp:148
 msgid "Choose an action to map"
-msgstr "Válaszz mûveletet a kiosztáshoz"
+msgstr "Válassz mûveletet a kiosztáshoz"
 
 #: gui/KeysDialog.cpp:44
 msgid "Map"
@@ -93,17 +93,17 @@ msgstr "OK"
 
 #: gui/KeysDialog.cpp:52
 msgid "Select an action and click 'Map'"
-msgstr "Válassz mûveletet és katt 'Kiosztás'-ra"
+msgstr "Válassz mûveletet és katt a 'Kiosztás'-ra"
 
 #: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:144
 #, c-format
 msgid "Associated key : %s"
-msgstr "Társított billentyü: %s"
+msgstr "Társított billentyû: %s"
 
 #: gui/KeysDialog.cpp:85 gui/KeysDialog.cpp:107 gui/KeysDialog.cpp:146
 #, c-format
 msgid "Associated key : none"
-msgstr "Társított billentyü: nincs"
+msgstr "Társított billentyû: nincs"
 
 #: gui/KeysDialog.cpp:93
 msgid "Please select an action"
@@ -111,7 +111,7 @@ msgstr "Válassz egy mûveletet"
 
 #: gui/KeysDialog.cpp:109
 msgid "Press the key to associate"
-msgstr "Nyomj billentyüt a társításhoz"
+msgstr "Nyomj egy billentyût a társításhoz"
 
 #: gui/launcher.cpp:172
 msgid "Game"
@@ -593,14 +593,12 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Helyes oldalarány a 320x200 játékokhoz"
 
 #: gui/options.cpp:668
-#, fuzzy
 msgid "EGA undithering"
-msgstr "EGA szürkeárnyalás tiltás"
+msgstr "EGA szinjavítás"
 
 #: gui/options.cpp:668
-#, fuzzy
 msgid "Enable undithering in EGA games that support it"
-msgstr "EGA játékok szürkeárnyalásának tiltása"
+msgstr "EGA színjavítás támogatott EGA játékokban"
 
 #: gui/options.cpp:676
 msgid "Preferred Device:"
@@ -1144,53 +1142,47 @@ msgstr "Bezár"
 
 #: engines/scumm/help.cpp:76
 msgid "Common keyboard commands:"
-msgstr ""
+msgstr "Általános billentyûparancsok:"
 
 #: engines/scumm/help.cpp:77
 msgid "Save / Load dialog"
-msgstr ""
+msgstr "Ment / Tölt dialógus"
 
 #: engines/scumm/help.cpp:79
-#, fuzzy
 msgid "Skip line of text"
-msgstr "Sor átlépése"
+msgstr "Szövegsor átugrása"
 
 #: engines/scumm/help.cpp:80
 msgid "Esc"
-msgstr ""
+msgstr "Esc"
 
 #: engines/scumm/help.cpp:80
-#, fuzzy
 msgid "Skip cutscene"
-msgstr "Sor átlépése"
+msgstr "Bevezetõ átugrása"
 
 #: engines/scumm/help.cpp:81
-#, fuzzy
 msgid "Space"
-msgstr "Besz"
+msgstr "Szóköz"
 
 #: engines/scumm/help.cpp:81
-#, fuzzy
 msgid "Pause game"
-msgstr "Játék mentése:"
+msgstr "Szünet a játékban"
 
 #: engines/scumm/help.cpp:82
 msgid "Ctrl 0-9"
-msgstr ""
+msgstr "Ctrl 0-9"
 
 #: engines/scumm/help.cpp:82
-#, fuzzy
 msgid "Load game state 1-10"
-msgstr "Játék betöltése:"
+msgstr "1-10 Játékállás betöltése"
 
 #: engines/scumm/help.cpp:83
 msgid "Alt 0-9"
-msgstr ""
+msgstr "Alt 0-9"
 
 #: engines/scumm/help.cpp:83
-#, fuzzy
 msgid "Save game state 1-10"
-msgstr "Játék mentése:"
+msgstr "1-10 Játékállás mentése"
 
 #: engines/scumm/help.cpp:85 engines/scumm/help.cpp:87
 #: backends/platform/symbian/src/SymbianActions.cpp:55
@@ -1201,518 +1193,504 @@ msgstr "Kilépés"
 
 #: engines/scumm/help.cpp:87
 msgid "Alt x, Ctrl z"
-msgstr ""
+msgstr "Alt x, Ctrl z"
 
 #: engines/scumm/help.cpp:89
 msgid "Alt Enter"
-msgstr ""
+msgstr "Alt Enter"
 
 #: engines/scumm/help.cpp:89
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "Teljesképernyõ kapcsoló"
 
 #: engines/scumm/help.cpp:90
-#, fuzzy
 msgid "Music volume up / down"
-msgstr "Zene hangerõ:"
+msgstr "Zene hangerõ fel / le"
 
 #: engines/scumm/help.cpp:91
 msgid "Text speed slower / faster"
-msgstr ""
+msgstr "Szövegsebesség gyors / lassú"
 
 #: engines/scumm/help.cpp:92
 msgid "Enter"
-msgstr ""
+msgstr "Enter"
 
 #: engines/scumm/help.cpp:92
 msgid "Simulate left mouse button"
-msgstr ""
+msgstr "Bal egérgomb szimuláció"
 
 #: engines/scumm/help.cpp:93
 msgid "Tab"
-msgstr ""
+msgstr "Tab"
 
 #: engines/scumm/help.cpp:93
 msgid "Simulate right mouse button"
-msgstr ""
+msgstr "Jobb egérgomb szimuláció"
 
 #: engines/scumm/help.cpp:96
 msgid "Special keyboard commands:"
-msgstr ""
+msgstr "Speciális billentyûparancsok:"
 
 #: engines/scumm/help.cpp:97
-#, fuzzy
 msgid "Show / Hide console"
-msgstr "Kurzor be/ki"
+msgstr "Konzol be / ki kapcsolás"
 
 #: engines/scumm/help.cpp:98
 msgid "Ctrl d"
-msgstr ""
+msgstr "Ctrl d"
 
 #: engines/scumm/help.cpp:98
 msgid "Start the debugger"
-msgstr ""
+msgstr "Hibakeresõ indítása"
 
 #: engines/scumm/help.cpp:99
 msgid "Ctrl s"
-msgstr ""
+msgstr "Ctrl s"
 
 #: engines/scumm/help.cpp:99
 msgid "Show memory consumption"
-msgstr ""
+msgstr "Memóriakihasználtság látszik"
 
 #: engines/scumm/help.cpp:100
 msgid "Ctrl f"
-msgstr ""
+msgstr "Ctrl f"
 
 #: engines/scumm/help.cpp:100
 msgid "Run in fast mode (*)"
-msgstr ""
+msgstr "Futtatás gyors módban (*)"
 
 #: engines/scumm/help.cpp:101
 msgid "Ctrl g"
-msgstr ""
+msgstr "Ctrl g"
 
 #: engines/scumm/help.cpp:101
 msgid "Run in really fast mode (*)"
-msgstr ""
+msgstr "Futtatás túlgyors módban (*)"
 
 #: engines/scumm/help.cpp:102
 msgid "Ctrl m"
-msgstr ""
+msgstr "Ctrl m"
 
 #: engines/scumm/help.cpp:102
 msgid "Toggle mouse capture"
-msgstr ""
+msgstr "Egér rögzítés kapcsoló"
 
 #: engines/scumm/help.cpp:103
 msgid "Ctrl Alt 1-8"
-msgstr ""
+msgstr "Ctrl Alt 1-8"
 
 #: engines/scumm/help.cpp:103
 msgid "Switch between graphics filters"
-msgstr ""
+msgstr "Kapcsolás grafikus szûrõk között"
 
 #: engines/scumm/help.cpp:104
 msgid "Ctrl Alt +, -"
-msgstr ""
+msgstr "Ctrl Alt +, -"
 
 #: engines/scumm/help.cpp:104
 msgid "Increase / Decrease scale factor"
-msgstr ""
+msgstr "Lépték növelés / csökkentés"
 
 #: engines/scumm/help.cpp:105
 msgid "Ctrl Alt a"
-msgstr ""
+msgstr "Ctrl Alt a"
 
 #: engines/scumm/help.cpp:105
-#, fuzzy
 msgid "Toggle aspect-ratio correction"
-msgstr "Képméretarány korrekció"
+msgstr "Méretarány korrekció kapcsoló"
 
 #: engines/scumm/help.cpp:110
 msgid "* Note that using ctrl-f and"
-msgstr ""
+msgstr "* Megjegyzés, ctrl-f és"
 
 #: engines/scumm/help.cpp:111
 msgid "  ctrl-g are not recommended"
-msgstr ""
+msgstr "  ctrl-g használata nem javasolt"
 
 #: engines/scumm/help.cpp:112
 msgid "  since they may cause crashes"
-msgstr ""
+msgstr "  mert rendszerösszeomlást vagy"
 
 #: engines/scumm/help.cpp:113
 msgid "  or incorrect game behaviour."
-msgstr ""
+msgstr "  hibás mûködést eredményezhet."
 
 #: engines/scumm/help.cpp:117
 msgid "Spinning drafts on the keyboard:"
-msgstr ""
+msgstr "Forgó draftok a billentyûzeten:"
 
 #: engines/scumm/help.cpp:119
-#, fuzzy
 msgid "Main game controls:"
-msgstr "Játék beállítások megváltoztatása"
+msgstr "Fõ játékvezérlõk:"
 
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
 #: engines/scumm/help.cpp:164
-#, fuzzy
 msgid "Push"
-msgstr "Szünet"
+msgstr "Tol"
 
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165
 msgid "Pull"
-msgstr ""
+msgstr "Húz"
 
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:199
 #: engines/scumm/help.cpp:209
 msgid "Give"
-msgstr ""
+msgstr "Ad"
 
 #: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:192
 #: engines/scumm/help.cpp:210
 msgid "Open"
-msgstr ""
+msgstr "Nyit"
 
 #: engines/scumm/help.cpp:129
-#, fuzzy
 msgid "Go to"
-msgstr "Feljebb"
+msgstr "Menj"
 
 #: engines/scumm/help.cpp:130
 msgid "Get"
-msgstr ""
+msgstr "Vesz"
 
 #: engines/scumm/help.cpp:131 engines/scumm/help.cpp:155
 #: engines/scumm/help.cpp:173 engines/scumm/help.cpp:200
 #: engines/scumm/help.cpp:215 engines/scumm/help.cpp:226
 #: engines/scumm/help.cpp:251
 msgid "Use"
-msgstr ""
+msgstr "Használ"
 
 #: engines/scumm/help.cpp:132 engines/scumm/help.cpp:144
 msgid "Read"
-msgstr ""
+msgstr "Olvas"
 
 #: engines/scumm/help.cpp:133 engines/scumm/help.cpp:150
 msgid "New kid"
-msgstr ""
+msgstr "Új gyerek"
 
 #: engines/scumm/help.cpp:134 engines/scumm/help.cpp:156
 #: engines/scumm/help.cpp:174
 msgid "Turn on"
-msgstr ""
+msgstr "Bekapcsol"
 
 #: engines/scumm/help.cpp:135 engines/scumm/help.cpp:157
 #: engines/scumm/help.cpp:175
-#, fuzzy
 msgid "Turn off"
-msgstr "Hang be/ki"
+msgstr "Kikapcsol"
 
 #: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
 #: engines/scumm/help.cpp:196
 msgid "Walk to"
-msgstr ""
+msgstr "Odamegy"
 
 #: engines/scumm/help.cpp:146 engines/scumm/help.cpp:171
 #: engines/scumm/help.cpp:197 engines/scumm/help.cpp:212
 #: engines/scumm/help.cpp:229
 msgid "Pick up"
-msgstr ""
+msgstr "Felvesz"
 
 #: engines/scumm/help.cpp:147 engines/scumm/help.cpp:172
 msgid "What is"
-msgstr ""
+msgstr "Mi ez"
 
 #: engines/scumm/help.cpp:149
 msgid "Unlock"
-msgstr ""
+msgstr "Felold"
 
 #: engines/scumm/help.cpp:152
 msgid "Put on"
-msgstr ""
+msgstr "Felvesz"
 
 #: engines/scumm/help.cpp:153
 msgid "Take off"
-msgstr ""
+msgstr "Letesz"
 
 #: engines/scumm/help.cpp:159
 msgid "Fix"
-msgstr ""
+msgstr "Javít"
 
 #: engines/scumm/help.cpp:161
-#, fuzzy
 msgid "Switch"
-msgstr "Besz"
+msgstr "Kapcsol"
 
 #: engines/scumm/help.cpp:169 engines/scumm/help.cpp:230
 msgid "Look"
-msgstr ""
+msgstr "Megnéz"
 
 #: engines/scumm/help.cpp:176 engines/scumm/help.cpp:225
 msgid "Talk"
-msgstr ""
+msgstr "Beszél"
 
 #: engines/scumm/help.cpp:177
-#, fuzzy
 msgid "Travel"
-msgstr "Mentés"
+msgstr "Utazás"
 
 #: engines/scumm/help.cpp:178
 msgid "To Henry / To Indy"
-msgstr ""
+msgstr "Henrytõl / Indytõl"
 
 #: engines/scumm/help.cpp:181
 msgid "play C minor on distaff"
-msgstr ""
+msgstr "C moll játék a bottal"
 
 #: engines/scumm/help.cpp:182
 msgid "play D on distaff"
-msgstr ""
+msgstr "Játék D-ben a bottal"
 
 #: engines/scumm/help.cpp:183
 msgid "play E on distaff"
-msgstr ""
+msgstr "Játék E-ben a bottal"
 
 #: engines/scumm/help.cpp:184
 msgid "play F on distaff"
-msgstr ""
+msgstr "Játék F-ben a bottal"
 
 #: engines/scumm/help.cpp:185
 msgid "play G on distaff"
-msgstr ""
+msgstr "Játék G-ben a bottal"
 
 #: engines/scumm/help.cpp:186
 msgid "play A on distaff"
-msgstr ""
+msgstr "Játék A-ban a bottal"
 
 #: engines/scumm/help.cpp:187
 msgid "play B on distaff"
-msgstr ""
+msgstr "Játék B-ben a bottal"
 
 #: engines/scumm/help.cpp:188
 msgid "play C major on distaff"
-msgstr ""
+msgstr "C dúr játék a bottal"
 
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:216
 msgid "puSh"
-msgstr ""
+msgstr "Megtol"
 
 #: engines/scumm/help.cpp:195 engines/scumm/help.cpp:217
 msgid "pull (Yank)"
-msgstr ""
+msgstr "húz (Ránt)"
 
 #: engines/scumm/help.cpp:198 engines/scumm/help.cpp:214
 #: engines/scumm/help.cpp:249
 msgid "Talk to"
-msgstr ""
+msgstr "Beszél"
 
 #: engines/scumm/help.cpp:201 engines/scumm/help.cpp:213
 msgid "Look at"
-msgstr ""
+msgstr "Megnézi"
 
 #: engines/scumm/help.cpp:202
 msgid "turn oN"
-msgstr ""
+msgstr "Bekapcsol"
 
 #: engines/scumm/help.cpp:203
 msgid "turn oFf"
-msgstr ""
+msgstr "Kikapcsol"
 
 #: engines/scumm/help.cpp:219
-#, fuzzy
 msgid "KeyUp"
-msgstr "Billentyûk"
+msgstr "FelGomb"
 
 #: engines/scumm/help.cpp:219
 msgid "Highlight prev dialogue"
-msgstr ""
+msgstr "Elõzõ dialógus kiemelése"
 
 #: engines/scumm/help.cpp:220
-#, fuzzy
 msgid "KeyDown"
-msgstr "Le"
+msgstr "LeGomb"
 
 #: engines/scumm/help.cpp:220
 msgid "Highlight next dialogue"
-msgstr ""
+msgstr "Következõ dialógus kiemelése"
 
 #: engines/scumm/help.cpp:224
 msgid "Walk"
-msgstr ""
+msgstr "Megy"
 
 #: engines/scumm/help.cpp:227 engines/scumm/help.cpp:236
 #: engines/scumm/help.cpp:243 engines/scumm/help.cpp:250
 msgid "Inventory"
-msgstr ""
+msgstr "Tárgylista"
 
 #: engines/scumm/help.cpp:228
 msgid "Object"
-msgstr ""
+msgstr "Tárgy"
 
 #: engines/scumm/help.cpp:231
 msgid "Black and White / Color"
-msgstr ""
+msgstr "Fekete fehér / Színes"
 
 #: engines/scumm/help.cpp:234
 msgid "Eyes"
-msgstr ""
+msgstr "Szemek"
 
 #: engines/scumm/help.cpp:235
-#, fuzzy
 msgid "Tongue"
-msgstr "Zóna"
+msgstr "Nyelv"
 
 #: engines/scumm/help.cpp:237
 msgid "Punch"
-msgstr ""
+msgstr "Megüt"
 
 #: engines/scumm/help.cpp:238
 msgid "Kick"
-msgstr ""
+msgstr "Megüt"
 
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:248
 msgid "Examine"
-msgstr ""
+msgstr "Vizsgál"
 
 #: engines/scumm/help.cpp:242
 msgid "Regular cursor"
-msgstr ""
+msgstr "Szabvány kurzor"
 
 #: engines/scumm/help.cpp:244
 msgid "Comm"
-msgstr ""
+msgstr "Comm"
 
 #: engines/scumm/help.cpp:247
 msgid "Save / Load / Options"
-msgstr ""
+msgstr "Ment / Tölt / Opciók"
 
 #: engines/scumm/help.cpp:256
-#, fuzzy
 msgid "Other game controls:"
-msgstr "Játék beállítások megváltoztatása"
+msgstr "Egyébb játékvezérlõk:"
 
 #: engines/scumm/help.cpp:258 engines/scumm/help.cpp:268
 msgid "Inventory:"
-msgstr ""
+msgstr "Tárgylista:"
 
 #: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
 msgid "Scroll list up"
-msgstr ""
+msgstr "Listagörgetés fel"
 
 #: engines/scumm/help.cpp:260 engines/scumm/help.cpp:276
 msgid "Scroll list down"
-msgstr ""
+msgstr "Listagörgetés le"
 
 #: engines/scumm/help.cpp:261 engines/scumm/help.cpp:269
 msgid "Upper left item"
-msgstr ""
+msgstr "Bal felsõ tárgy"
 
 #: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
 msgid "Lower left item"
-msgstr ""
+msgstr "Bal alsó tárgy"
 
 #: engines/scumm/help.cpp:263 engines/scumm/help.cpp:272
 msgid "Upper right item"
-msgstr ""
+msgstr "Jobb felsõ tárgy"
 
 #: engines/scumm/help.cpp:264 engines/scumm/help.cpp:274
 msgid "Lower right item"
-msgstr ""
+msgstr "Jobb alsó tárgy"
 
 #: engines/scumm/help.cpp:270
 msgid "Middle left item"
-msgstr ""
+msgstr "Bal középsõ tárgy"
 
 #: engines/scumm/help.cpp:273
 msgid "Middle right item"
-msgstr ""
+msgstr "Jobb középsõ tárgy"
 
 #: engines/scumm/help.cpp:280 engines/scumm/help.cpp:285
-#, fuzzy
 msgid "Switching characters:"
-msgstr "Karakter csere"
+msgstr "Karakterek cseréje:"
 
 #: engines/scumm/help.cpp:282
 msgid "Second kid"
-msgstr ""
+msgstr "Második gyerek"
 
 #: engines/scumm/help.cpp:283
 msgid "Third kid"
-msgstr ""
+msgstr "Harmadik gyerek"
 
 #: engines/scumm/help.cpp:295
 msgid "Fighting controls (numpad):"
-msgstr ""
+msgstr "Verekedés irányítók (numpad):"
 
 #: engines/scumm/help.cpp:296 engines/scumm/help.cpp:297
 #: engines/scumm/help.cpp:298
 msgid "Step back"
-msgstr ""
+msgstr "Hátralép"
 
 #: engines/scumm/help.cpp:299
 msgid "Block high"
-msgstr ""
+msgstr "Felsõ védés"
 
 #: engines/scumm/help.cpp:300
 msgid "Block middle"
-msgstr ""
+msgstr "Védés középen"
 
 #: engines/scumm/help.cpp:301
 msgid "Block low"
-msgstr ""
+msgstr "Alsó védés"
 
 #: engines/scumm/help.cpp:302
 msgid "Punch high"
-msgstr ""
+msgstr "Felsõ ütés"
 
 #: engines/scumm/help.cpp:303
 msgid "Punch middle"
-msgstr ""
+msgstr "Ütés középen"
 
 #: engines/scumm/help.cpp:304
 msgid "Punch low"
-msgstr ""
+msgstr "Alsó ütés"
 
 #: engines/scumm/help.cpp:307
 msgid "These are for Indy on left."
-msgstr ""
+msgstr "Indytõl balra levõ."
 
 #: engines/scumm/help.cpp:308
 msgid "When Indy is on the right,"
-msgstr ""
+msgstr "Indytõl jobbra levõ,"
 
 #: engines/scumm/help.cpp:309
 msgid "7, 4, and 1 are switched with"
-msgstr ""
+msgstr "7, 4, és 1 átkapcsolva"
 
 #: engines/scumm/help.cpp:310
 msgid "9, 6, and 3, respectively."
-msgstr ""
+msgstr "9, 6, és 3-ra, egyenként."
 
 #: engines/scumm/help.cpp:317
 msgid "Biplane controls (numpad):"
-msgstr ""
+msgstr "Repülõ vezérlõk (numpad):"
 
 #: engines/scumm/help.cpp:318
 msgid "Fly to upper left"
-msgstr ""
+msgstr "Balra fel repülés"
 
 #: engines/scumm/help.cpp:319
 msgid "Fly to left"
-msgstr ""
+msgstr "Balra repülés"
 
 #: engines/scumm/help.cpp:320
 msgid "Fly to lower left"
-msgstr ""
+msgstr "Balra le repülés"
 
 #: engines/scumm/help.cpp:321
 msgid "Fly upwards"
-msgstr ""
+msgstr "Repülés fel"
 
 #: engines/scumm/help.cpp:322
 msgid "Fly straight"
-msgstr ""
+msgstr "Repülés elõre"
 
 #: engines/scumm/help.cpp:323
 msgid "Fly down"
-msgstr ""
+msgstr "Repülés le"
 
 #: engines/scumm/help.cpp:324
 msgid "Fly to upper right"
-msgstr ""
+msgstr "Jobbra fel repülés"
 
 #: engines/scumm/help.cpp:325
 msgid "Fly to right"
-msgstr ""
+msgstr "Jobbra repülés"
 
 #: engines/scumm/help.cpp:326
 msgid "Fly to lower right"
-msgstr ""
+msgstr "Jobbra le repülés"
 
 #: engines/scumm/scumm.cpp:2260 engines/agos/saveload.cpp:192
 #, c-format
@@ -1928,19 +1906,19 @@ msgstr "Normál (nincs átméretezés)"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:115
 msgid "OpenGL Normal"
-msgstr ""
+msgstr "OpenGL Normál"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:116
 msgid "OpenGL Conserve"
-msgstr ""
+msgstr "OpenGL Megtartott"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:117
 msgid "OpenGL 4/3"
-msgstr ""
+msgstr "OpenGL 4/3"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:118
 msgid "OpenGL Original"
-msgstr ""
+msgstr "OpenGL Eredeti"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: backends/platform/wince/CEActionsSmartphone.cpp:42
@@ -1998,7 +1976,7 @@ msgstr "Gyors mód"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:56
 msgid "Debugger"
-msgstr "Debugger"
+msgstr "Hibakeresõ"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:57
 msgid "Global menu"
