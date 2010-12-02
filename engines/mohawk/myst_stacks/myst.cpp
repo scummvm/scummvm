@@ -67,14 +67,48 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(119, opcode_119);
 	OPCODE(120, opcode_120);
 	OPCODE(121, opcode_121);
+	OPCODE(122, opcode_122);
+	OPCODE(123, opcode_123);
+	OPCODE(129, opcode_129);
+	OPCODE(130, opcode_130);
+	OPCODE(131, opcode_131);
+	OPCODE(132, opcode_132);
 	OPCODE(133, opcode_133);
+	OPCODE(134, opcode_134);
+	OPCODE(135, opcode_135);
+	OPCODE(136, opcode_136);
+	OPCODE(137, opcode_137);
+	OPCODE(146, opcode_146);
 	OPCODE(147, opcode_147);
+	OPCODE(149, opcode_149);
+	OPCODE(150, opcode_150);
+	OPCODE(151, opcode_151);
 	OPCODE(164, opcode_164);
 	OPCODE(169, opcode_169);
+	OPCODE(170, opcode_170);
+	OPCODE(171, opcode_171);
+	OPCODE(172, opcode_172);
+	OPCODE(173, opcode_173);
+	OPCODE(174, opcode_174);
+	OPCODE(175, opcode_175);
+	OPCODE(176, opcode_176);
+	OPCODE(177, opcode_177);
+	OPCODE(180, opcode_180);
+	OPCODE(181, opcode_181);
 	OPCODE(182, opcode_182);
 	OPCODE(183, opcode_183);
 	OPCODE(184, opcode_184);
 	OPCODE(185, opcode_185);
+	OPCODE(186, opcode_186);
+	OPCODE(188, opcode_188);
+	OPCODE(189, opcode_189);
+	OPCODE(190, opcode_190);
+	OPCODE(191, opcode_191);
+	OPCODE(192, opcode_192);
+	OPCODE(194, opcode_194);
+	OPCODE(195, opcode_195);
+	OPCODE(196, opcode_196);
+	OPCODE(197, opcode_197);
 	OPCODE(198, opcode_198);
 	OPCODE(199, opcode_199);
 
@@ -511,6 +545,36 @@ void MystScriptParser_Myst::opcode_121(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
+void MystScriptParser_Myst::opcode_122(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4100
+	// TODO: Mouse down on handle
+}
+
+void MystScriptParser_Myst::opcode_123(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4100
+	// TODO: Mouse drag on handle
+}
+
+void MystScriptParser_Myst::opcode_129(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Month increase
+}
+
+void MystScriptParser_Myst::opcode_130(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Month decrease
+}
+
+void MystScriptParser_Myst::opcode_131(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Day increase
+}
+
+void MystScriptParser_Myst::opcode_132(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Day decrease
+}
+
 void MystScriptParser_Myst::opcode_133(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
@@ -528,6 +592,31 @@ void MystScriptParser_Myst::opcode_133(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
+void MystScriptParser_Myst::opcode_134(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Month slider movement
+}
+
+void MystScriptParser_Myst::opcode_135(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Day slider movement
+}
+
+void MystScriptParser_Myst::opcode_136(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Year slider movement
+}
+
+void MystScriptParser_Myst::opcode_137(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Time slider movement
+}
+
+void MystScriptParser_Myst::opcode_146(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4098
+	// TODO: Boiler wheel clockwise mouse down
+}
+
 void MystScriptParser_Myst::opcode_147(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
@@ -536,6 +625,21 @@ void MystScriptParser_Myst::opcode_147(uint16 op, uint16 var, uint16 argc, uint1
 		_vm->_varStore->setVar(98, 0);
 	} else
 		unknown(op, var, argc, argv);
+}
+
+void MystScriptParser_Myst::opcode_149(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4098
+	// TODO: Boiler wheel clockwise mouse up
+}
+
+void MystScriptParser_Myst::opcode_150(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4098
+	// TODO: Boiler wheel counter-clockwise mouse down
+}
+
+void MystScriptParser_Myst::opcode_151(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4098
+	// TODO: Boiler wheel counter-clockwise mouse up
 }
 
 void MystScriptParser_Myst::opcode_164(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -552,6 +656,51 @@ void MystScriptParser_Myst::opcode_169(uint16 op, uint16 var, uint16 argc, uint1
 
 	// Used on Card 4099 (In Cabin, Looking Out Door)
 	// TODO: Finish Implementation...
+}
+
+void MystScriptParser_Myst::opcode_170(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Month slider mouse down
+}
+
+void MystScriptParser_Myst::opcode_171(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Month slider mouse up
+}
+
+void MystScriptParser_Myst::opcode_172(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Day slider mouse down
+}
+
+void MystScriptParser_Myst::opcode_173(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Day slider mouse up
+}
+
+void MystScriptParser_Myst::opcode_174(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Year slider mouse down
+}
+
+void MystScriptParser_Myst::opcode_175(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Year slider mouse up
+}
+
+void MystScriptParser_Myst::opcode_176(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Time slider mouse down
+}
+
+void MystScriptParser_Myst::opcode_177(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Time slider mouse up
+}
+
+void MystScriptParser_Myst::opcode_180(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4059
+	// TODO: Draw fireplace combination book page
 }
 
 void MystScriptParser_Myst::opcode_181(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -601,6 +750,56 @@ void MystScriptParser_Myst::opcode_185(uint16 op, uint16 var, uint16 argc, uint1
 		_vm->_varStore->setVar(98, 1);
 	} else
 		unknown(op, var, argc, argv);
+}
+
+void MystScriptParser_Myst::opcode_186(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4006
+	// TODO: Minute wheel turn
+}
+
+void MystScriptParser_Myst::opcode_188(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4006
+	// TODO: Redraw time wheels?
+}
+
+void MystScriptParser_Myst::opcode_189(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4006
+	// TODO: Hour wheel turn
+}
+
+void MystScriptParser_Myst::opcode_190(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4059
+	// TODO: Increase fireplace combination book page
+}
+
+void MystScriptParser_Myst::opcode_191(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4059
+	// TODO: Decrease fireplace combination book page
+}
+
+void MystScriptParser_Myst::opcode_192(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Time increase
+}
+
+void MystScriptParser_Myst::opcode_194(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Constellation drawing
+}
+
+void MystScriptParser_Myst::opcode_195(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Time decrease
+}
+
+void MystScriptParser_Myst::opcode_196(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Year increase
+}
+
+void MystScriptParser_Myst::opcode_197(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4500
+	// TODO: Year decrease
 }
 
 // TODO: Merge with Opcode 42?

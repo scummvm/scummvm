@@ -53,8 +53,8 @@ MystScriptParser_Preview::~MystScriptParser_Preview() {
 
 void MystScriptParser_Preview::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(196, opcode_196);
-	OPCODE(197, opcode_197);
+	OVERRIDE_OPCODE(196, opcode_196);
+	OVERRIDE_OPCODE(197, opcode_197);
 	OVERRIDE_OPCODE(198, opcode_198);
 	OVERRIDE_OPCODE(199, opcode_199);
 
