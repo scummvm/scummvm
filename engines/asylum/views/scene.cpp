@@ -36,10 +36,12 @@
 #include "asylum/system/config.h"
 #include "asylum/system/cursor.h"
 #include "asylum/system/graphics.h"
+#include "asylum/system/savegame.h"
 #include "asylum/system/screen.h"
 #include "asylum/system/speech.h"
 #include "asylum/system/text.h"
 
+#include "asylum/views/menu.h"
 #include "asylum/views/scenetitle.h"
 
 #include "asylum/asylum.h"
@@ -355,7 +357,108 @@ bool Scene::update() {
 }
 
 bool Scene::key(const AsylumEvent &evt) {
-	warning("[Scene::key] Not implemented!");
+	// TODO add support for debug commands
+
+	//////////////////////////////////////////////////////////////////////////
+	// Check for keyboard shortcuts
+	if (evt.kbd.ascii == Config.keyShowVersion) {
+		// TODO show version!
+
+		return true;
+	}
+
+	if (evt.kbd.ascii == Config.keyQuickLoad) {
+		getSaveLoad()->quickLoad();
+
+		return true;
+	}
+
+	if (evt.kbd.ascii == Config.keyQuickSave) {
+		getSaveLoad()->quickSave();
+
+		return true;
+	}
+
+	if (evt.kbd.ascii == Config.keySwitchToSara) {
+		if (getCursor()->isHidden() || _ws->chapter != kChapter9)
+			return true;
+
+		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2206)]->scriptIndex, _playerIndex);
+
+		return true;
+	}
+
+	if (evt.kbd.ascii == Config.keySwitchToGrimwall) {
+		if (getCursor()->isHidden() || _ws->chapter != kChapter9)
+			return true;
+
+		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2207)]->scriptIndex, _playerIndex);
+
+		return true;
+	}
+
+	if (evt.kbd.ascii == Config.keySwitchToOlmec) {
+		if (getCursor()->isHidden() || _ws->chapter != kChapter9)
+			return true;
+
+		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2208)]->scriptIndex, _playerIndex);
+
+		return true;
+	}
+
+	switch (evt.kbd.keycode) {
+	default:
+		break;
+
+	case Common::KEYCODE_BACKSPACE:
+		// TODO add support for debug commands
+		warning("[Scene::key] debug command handling not implemented!");
+		break;
+
+	case Common::KEYCODE_RETURN:
+		// TODO add support for debug commands
+		warning("[Scene::key] debug command handling not implemented!");
+		break;
+
+	case Common::KEYCODE_ESCAPE:
+		// TODO add support for debug commands
+
+		if (getSpeech()->getSoundResourceId()) {
+			getScene()->stopSpeech();
+		} else {
+			if (getCursor()->isHidden())
+				break;
+
+			_vm->switchEventHandler(_vm->menu());
+		}
+		break;
+
+	case Common::KEYCODE_LEFTBRACKET:
+		if (evt.kbd.ascii != 123)
+			break;
+		// Fallback to next case (we got a left brace)
+
+	case Common::KEYCODE_p:
+	case Common::KEYCODE_q:
+	case Common::KEYCODE_r:
+	case Common::KEYCODE_s:
+	case Common::KEYCODE_t:
+	case Common::KEYCODE_u:
+	case Common::KEYCODE_v:
+	case Common::KEYCODE_w:
+	case Common::KEYCODE_x:
+	case Common::KEYCODE_y:
+	case Common::KEYCODE_z:
+		if (speak(evt.kbd.keycode)) {
+			_vm->lastScreenUpdate = _vm->screenUpdateCount;
+			getActor()->setLastScreenUpdate(_vm->screenUpdateCount);
+		}
+		break;
+
+	case Common::KEYCODE_TAB:
+		warning("[Scene::key] Screenshot function not implemented!");
+		break;
+	}
 
 	return true;
 }
@@ -1374,6 +1477,225 @@ void Scene::stopSpeech() {
 		else if (getSpeech()->getTick())
 			getSpeech()->setTick(_vm->getTick());
 	}
+}
+
+bool Scene::speak(Common::KeyCode code) {
+#define GET_INDEX(val) ((((long long)val >> 32) ^ abs((int)val) & 1) == ((long long)val >> 32))
+
+	int32 index = -1;
+
+	switch (code) {
+	default:
+		break;
+
+	case Common::KEYCODE_p:
+		switch (_ws->actorType) {
+		default:
+			break;
+
+		case 0:
+			index = GET_INDEX(_vm->getRandom(RAND_MAX));
+			break;
+
+		case 1:
+		case 2:
+		case 3:
+			index = 1;
+			break;
+		}
+		break;
+
+	case Common::KEYCODE_q:
+		switch (_ws->actorType) {
+		default:
+			break;
+
+		case 0:
+			index = 3 - GET_INDEX(_vm->getRandom(RAND_MAX));
+			break;
+
+		case 1:
+		case 2:
+		case 3:
+			index = 2;
+			break;
+		}
+		break;
+
+	case Common::KEYCODE_r:
+		switch (_ws->actorType) {
+		default:
+			break;
+
+		case 0:
+			index = 2;
+			break;
+
+		case 1:
+		case 2:
+		case 3:
+			index = 4;
+			break;
+		}
+		break;
+
+	case Common::KEYCODE_s:
+		switch (_ws->actorType) {
+		default:
+			break;
+
+		case 0:
+			index = 5;
+			break;
+
+		case 1:
+		case 2:
+		case 3:
+			index = 3;
+			break;
+		}
+		break;
+
+	case Common::KEYCODE_t:
+		switch (_ws->actorType) {
+		default:
+			break;
+
+		case 0:
+			index = 6;
+			break;
+
+		case 1:
+		case 2:
+		case 3:
+			index = 4;
+			break;
+		}
+		break;
+
+	case Common::KEYCODE_u:
+		switch (_ws->actorType) {
+		default:
+			break;
+
+		case 0:
+			index = 7;
+			break;
+
+		case 1:
+		case 2:
+			index = 5;
+			break;
+		}
+		break;
+
+	case Common::KEYCODE_v:
+		switch (_ws->actorType) {
+		default:
+			break;
+
+		case 0:
+			index = 8;
+			break;
+
+		case 1:
+		case 2:
+			index = 6;
+			break;
+		}
+		break;
+
+	case Common::KEYCODE_w:
+		switch (_ws->actorType) {
+		default:
+			break;
+
+		case 0:
+			index = 9;
+			break;
+
+		case 1:
+		case 2:
+			index = 7;
+			break;
+		}
+		break;
+
+	case Common::KEYCODE_x:
+		switch (_ws->actorType) {
+		default:
+			break;
+
+		case 0:
+			index = 10;
+			break;
+
+		case 1:
+		case 2:
+			index = 8;
+			break;
+		}
+		break;
+
+	case Common::KEYCODE_y:
+		switch (_ws->actorType) {
+		default:
+			break;
+
+		case 0:
+			index = 11;
+			break;
+
+		case 1:
+		case 2:
+			index = 9;
+			break;
+		}
+		break;
+
+	case Common::KEYCODE_z:
+		switch (_ws->actorType) {
+		default:
+			break;
+
+		case 0:
+			index = 13 - GET_INDEX(_vm->getRandom(65536));
+			break;
+
+		case 1:
+		case 2:
+			index = 10;
+			break;
+		}
+		break;
+
+	case Common::KEYCODE_LEFTBRACKET:
+		switch (_ws->actorType) {
+		default:
+			break;
+
+		case 0:
+			index = 15 - GET_INDEX(_vm->getRandom(RAND_MAX));
+			break;
+
+		case 2:
+			index = 12 - GET_INDEX(_vm->getRandom(RAND_MAX));
+			break;
+		}
+		break;
+	}
+
+	if (getSpeech()->getSoundResourceId() && getSound()->isPlaying(getSpeech()->getSoundResourceId()))
+		return false;
+
+	if (index == -1)
+		return false;
+
+	getSpeech()->playPlayer(index);
+
+	return true;
+
+#undef GET_INDEX
 }
 
 bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {

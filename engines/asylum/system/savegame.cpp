@@ -41,8 +41,31 @@ bool Savegame::setup() {
 	return true;
 }
 
+void Savegame::loadList() {
+	warning("[Savegame::loadList] Not implemented!");
+}
+
+
 bool Savegame::load() {
 	warning("[Savegame::load] Not implemented!");
+
+	return false;
+}
+
+bool Savegame::quickLoad() {
+	warning("[Savegame::quickLoad] Not implemented!");
+
+	return false;
+}
+
+bool Savegame::save() {
+	warning("[Savegame::save] Not implemented!");
+
+	return false;
+}
+
+bool Savegame::quickSave() {
+	warning("[Savegame::quickSave] Not implemented!");
 
 	return false;
 }
@@ -51,8 +74,5 @@ void Savegame::loadViewedMovies() {
 	warning("[Savegame::loadViewedMovies] Not implemented!");
 }
 
-void Savegame::loadList() {
-	warning("[Savegame::loadList] Not implemented!");
-}
 
 } // End of namespace Asylum

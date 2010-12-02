@@ -37,11 +37,18 @@ public:
 
 	bool setup();
 
+	/**
+	 * Loads the list of saved games
+	 */
+	void loadList();
+
 	bool load();
+	bool quickLoad();
+
+	bool save();
+	bool quickSave();
 
 	void loadViewedMovies();
-
-	void loadList();
 
 private:
 	AsylumEngine* _vm;
