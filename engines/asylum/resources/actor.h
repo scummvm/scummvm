@@ -282,6 +282,16 @@ public:
 	 */
 	static ActorDirection direction(Common::Point vec1, Common::Point vec2);
 
+		/**
+	 * Get the euclidean distance between the two vectors
+	 *
+	 * @param vec1 The first vector.
+	 * @param vec2 The second vector.
+	 *
+	 * @return the distance.
+	 */
+	static uint32 distance(Common::Point vec1, Common::Point vec2);
+
 private:
 	AsylumEngine *_vm;
 
@@ -488,16 +498,6 @@ private:
 	 * @param [in,out] point If non-null, the point.
 	 */
 	static void updateCoordinatesForDirection(ActorDirection direction, int32 delta, Common::Point *point);
-
-	/**
-	 * Get the euclidean distance between the two vectors
-	 *
-	 * @param vec1 The first vector.
-	 * @param vec2 The second vector.
-	 *
-	 * @return the distance.
-	 */
-	static uint32 distance(Common::Point vec1, Common::Point vec2);
 
 	/**
 	 * Get the angle between the two vectors

@@ -64,6 +64,8 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 	_packId = kResourcePackInvalid;
 	_playerIndex = 0;
 
+	_hitAreaChapter7Counter = 0;
+
 	g_debugPolygons  = 0;
 	g_debugObjects  = 0;
 	g_debugScrolling = 0;
@@ -257,7 +259,15 @@ bool Scene::handleEvent(const AsylumEvent &evt) {
 		return update();
 
 	case Common::EVENT_KEYDOWN:
+		if (evt.kbd.flags & Common::KBD_CTRL)
+			_isCTRLPressed = true;
+
 		return key(evt);
+
+	case Common::EVENT_KEYUP:
+		if (!(evt.kbd.flags & Common::KBD_CTRL))
+			_isCTRLPressed = false;
+		break;
 
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
@@ -343,7 +353,9 @@ bool Scene::update() {
 }
 
 bool Scene::key(const AsylumEvent &evt) {
-	error("[Scene::key] Not implemented!");
+	warning("[Scene::key] Not implemented!");
+
+	return true;
 }
 
 bool Scene::clickDown(const AsylumEvent &evt) {
@@ -1207,24 +1219,71 @@ void Scene::playerReaction() {
 }
 
 void Scene::hitAreaChapter2(int32 id) {
-	error("[Scene::hitAreaChapter2] Not implemented!");
+	if (id == 783)
+		getActor()->setField638(6);
 }
 
 void Scene::hitAreaChapter7(int32 id) {
-	error("[Scene::hitAreaChapter7] Not implemented!");
+	switch (id) {
+	default:
+		break;
+
+	case 1088:
+		if (_isCTRLPressed)
+			_vm->setGameFlag(kGameFlag1144);
+		break;
+
+	case 2504:
+		if (++_hitAreaChapter7Counter > 20) {
+			_vm->setGameFlag(kGameFlag1108);
+			getActor(1)->setPosition(570, 225, kDirectionN, 0);
+			getActor(1)->show();
+		}
+		break;
+	}
 }
 
 void Scene::hitAreaChapter11(int32 id) {
-	error("[Scene::hitAreaChapter11] Not implemented!");
+	if (id == 1670)
+		_ws->field_E849C = 666;
 }
 
 
 void Scene::hitActorChapter2(ActorIndex index) {
-	error("[Scene::hitActorChapter2] Not implemented!");
+	Actor *player = getActor();
+
+	if (player->getStatus() != kActorStatus14 && player->getStatus() != kActorStatus12)
+		return;
+
+	if (index == 11) {
+		player->faceTarget(index + 9, kDirectionFromActor);
+		player->updateStatus(kActorStatus15);
+
+		Actor *actor11 = getActor(index);
+
+		Common::Point pointPlayer(player->getPoint1()->x + player->getPoint2()->x, player->getPoint1()->y + player->getPoint2()->y);
+		Common::Point pointActor11(actor11->getPoint1()->x + actor11->getPoint2()->x, actor11->getPoint1()->y + actor11->getPoint2()->y);
+
+		if (Actor::distance(pointPlayer, pointActor11) < 150) {
+			if (actor11->getStatus() == kActorStatus12)
+				actor11->updateStatus(kActorStatus18);
+
+			if (actor11->getStatus() == kActorStatusEnabled)
+				actor11->updateStatus(kActorStatus14);
+		}
+
+		getSharedData()->setData(38, index);
+
+	} else if (index > 12) {
+		player->faceTarget(index + 9, kDirectionFromActor);
+		player->updateStatus(kActorStatus15);
+		getSharedData()->setData(38, index);
+	}
 }
 
 void Scene::hitActorChapter11(ActorIndex index) {
-	error("[Scene::hitActorChapter11] Not implemented!");
+	if (_ws->field_E848C < 3)
+		_ws->field_E849C = index;
 }
 
 

@@ -289,6 +289,11 @@ void AsylumEngine::handleEvents() {
 			_handler->handleEvent(ev);
 			break;
 
+		case Common::EVENT_KEYUP:
+			// Handle key events
+			_handler->handleEvent(ev);
+			break;
+
 		case Common::EVENT_MOUSEMOVE:
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_LBUTTONUP:
