@@ -189,6 +189,16 @@ public:
 	 */
 	void updateReverseStereo();
 
+	/**
+	 * Gets a sine cosine pair.
+	 *
+	 * @param index1 The first index.
+	 * @param index2 The second index.
+	 *
+	 * @return The sine cosine values.
+	 */
+	Common::Point getSinCosValues(int32 index1, int32 index2);
+
 private:
 	const ADGameDescription *_gameDescription;
 
