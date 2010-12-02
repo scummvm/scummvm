@@ -133,6 +133,13 @@ public:
 	bool isVisible() { return flags & kActorFlagVisible; }
 
 	/**
+	 * Query if this actor is on screen.
+	 *
+	 * @return true if on screen, false if not.
+	 */
+	bool isOnScreen();
+
+	/**
 	 * Shows this actor.
 	 */
 	void show() { setVisible(true); }
@@ -426,13 +433,6 @@ private:
 	 * @param value true to set to visible, false to set to hidden.
 	 */
 	void setVisible(bool value);
-
-	/**
-	 * Query if this actor is on screen.
-	 *
-	 * @return true if on screen, false if not.
-	 */
-	bool isOnScreen();
 
 	/**
 	 * Sets the volume.

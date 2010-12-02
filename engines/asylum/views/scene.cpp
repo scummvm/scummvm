@@ -1057,24 +1057,75 @@ int32 Scene::hitTestActionArea() {
 	return targetIdx;
 }
 
-bool Scene::hitTestActor() {
-	const Common::Point pt = getCursor()->position();
+ActorIndex Scene::hitTestActor() {
+	const Common::Point mouse = getCursor()->position();
 
-	Actor *act = getActor();
-	Common::Point actPos;
-	act->adjustCoordinates(&actPos);
+	if (_ws->actors.size() == 0)
+		return -1;
 
-	int32 hitFrame;
-	if (act->getFrameIndex() >= act->getFrameCount())
-		hitFrame = 2 * act->getFrameIndex() - act->getFrameCount() - 1;
-	else
-		hitFrame = act->getFrameIndex();
+	// Check actors 13 to 20
+	if (_ws->actors.size() >= 20) {
+		for (uint i = 13; i < 21; i++) {
+			Actor *actor = getActor(i);
 
-	return hitTestPixel(act->getResourceId(),
-		hitFrame,
-		pt.x - act->getPoint()->x - actPos.x,
-		pt.y - act->getPoint()->y - actPos.y,
-		(act->getDirection() >= 0));
+			if (!actor->isOnScreen() || !actor->actionType)
+				continue;
+
+			Common::Rect rect = GraphicResource::getFrameRect(_vm, getActor(12)->getResourceId(), 0);
+
+			int32 x = _ws->xLeft + mouse.x - (actor->getPoint1()->x + actor->getPoint()->x);
+			int32 y = _ws->yTop  + mouse.y - (actor->getPoint1()->y + actor->getPoint()->y);
+
+			if (x > (rect.left - 20)
+				&& x < (rect.width() + rect.left + 20)
+				&& y > (rect.top - 20)
+				&& y < (rect.height() + rect.top + 20))
+				return i;
+		}
+	}
+
+	// Check Actor 11
+	if (_ws->actors.size() >= 11) {
+		Actor *actor11 = getActor(11);
+		if (actor11->isOnScreen() && actor11->actionType) {
+			int x = mouse.x + _ws->xLeft - actor11->getPoint1()->x;
+			int y = mouse.y + _ws->yTop  - actor11->getPoint1()->y;
+
+			if (actor11->getBoundingRect()->contains(x, y))
+				return 11;
+		}
+	}
+
+	switch (_ws->chapter) {
+	default:
+		for (int i = _ws->actors.size() - 1; i >= 0 ; i--) {
+			Actor *actor = getActor(i);
+
+			int32 hitFrame;
+			if (actor->getFrameIndex() >= actor->getFrameCount())
+				hitFrame = 2 * actor->getFrameIndex() - actor->getFrameCount() - 1;
+			else
+				hitFrame = actor->getFrameIndex();
+
+			if (hitTestPixel(actor->getResourceId(),
+			                 hitFrame,
+			                 _ws->xLeft - actor->getPoint()->x - actor->getPoint1()->x,
+			                 _ws->yTop  - actor->getPoint()->y - actor->getPoint1()->y,
+			                 actor->getDirection() >= kDirectionSE))
+				return i;
+		}
+		break;
+
+	case kChapter8:
+		error("[Scene::hitTestActor] Not implemented (chapter 8)!");
+		break;
+
+	case kChapter11:
+		error("[Scene::hitTestActor] Not implemented (chapter 11)!");
+		break;
+	}
+
+	return -1;
 }
 
 bool Scene::hitTestPlayer() {
