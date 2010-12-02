@@ -973,7 +973,7 @@ bool Actor::process_408B20(Common::Point *point, ActorDirection dir, uint32 coun
 	if (count > 0) {
 		uint32 index = 0;
 
-		while (getScene()->findActionArea(/* 1*/Common::Point(x, y)) != -1) {
+		while (getScene()->findActionArea(kActionAreaType1, Common::Point(x, y)) != -1) {
 			x += deltaPointsArray[dir].x;
 			y += deltaPointsArray[dir].y;
 
@@ -1663,7 +1663,7 @@ void Actor::updateFinish() {
 	if (_field_944 == 4 || !isVisible())
 		return;
 
-	int32 areaIndex = getScene()->findActionArea(Common::Point((int16)(_point1.x + _point2.x), (int16)(_point1.y + _point2.y)));
+	int32 areaIndex = getScene()->findActionArea(kActionAreaType1, Common::Point((int16)(_point1.x + _point2.x), (int16)(_point1.y + _point2.y)));
 	if (areaIndex == _actionIdx3 || areaIndex == -1)
 		return;
 
