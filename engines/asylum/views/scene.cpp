@@ -1319,7 +1319,7 @@ void Scene::handleHit(int32 index, HitType type) {
 		if (!getScript()->isInQueue(object->getScriptIndex()))
 			getScript()->queueScript(object->getScriptIndex(), _playerIndex);
 
-		// Original executes special script hit functions, but since there is none, we can skip this part
+		// Original executes special script hit functions, but since there is none defined, we can skip this part
 		}
 		break;
 
@@ -1363,7 +1363,60 @@ void Scene::handleHit(int32 index, HitType type) {
 }
 
 void Scene::playerReaction() {
-	error("[Scene::playerReaction] Not implemented!");
+	const Common::Point mouse = getCursor()->position();
+	Common::Point point;
+	Actor *player = getActor();
+
+	player->adjustCoordinates(&point);
+
+	uint32 maxIndex = 0;
+	for (maxIndex = 0; maxIndex < 8; maxIndex++) {
+		if (!player->getReaction(maxIndex))
+			break;
+	}
+
+	maxIndex -= 1;
+
+	player->setField638(0);
+
+	if (maxIndex > 0) {
+		for (uint32 i = 0; i < maxIndex; i++) {
+			Common::Point ret = _vm->getSinCosValues(maxIndex, i);
+			int32 x = point.x + player->getPoint2()->x + ret.x;
+			int32 y = point.y + player->getPoint2()->y / 2 - ret.y;
+
+			if (mouse.x >= x && mouse.x <= (x + 40) && mouse.y >= y && mouse.y <= (y + 40)) {
+				// Handle reaction
+				getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 4));
+
+				if (_ws->chapter == kChapter9) {
+					switch (i) {
+					default:
+						player->setField638(player->getReaction(i));
+						break;
+
+					case 0:
+						getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2206)]->scriptIndex, _playerIndex);
+						break;
+
+					case 1:
+						getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2207)]->scriptIndex, _playerIndex);
+						break;
+
+					case 2:
+						getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2208)]->scriptIndex, _playerIndex);
+						break;
+					}
+				} else {
+					player->setField638(player->getReaction(i));
+				}
+				break;
+			}
+		}
+	}
+
+	player->updateStatus(kActorStatusEnabled);
+	getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
 }
 
 void Scene::hitAreaChapter2(int32 id) {

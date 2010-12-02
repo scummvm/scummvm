@@ -422,6 +422,10 @@ void AsylumEngine::initSinCosTables() {
 	warning("[AsylumEngine::initSinCosTables] Not implemented!");
 }
 
+Common::Point AsylumEngine::getSinCosValues(int32 index1, int32 index2) {
+	error("[AsylumEngine::getSinCosValues] Not implemented!");
+}
+
 void AsylumEngine::setupLoadedGame() {
 	warning("[AsylumEngine::initSinCosTables] Not implemented!");
 }
