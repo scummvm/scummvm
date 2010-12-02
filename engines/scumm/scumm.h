@@ -1246,6 +1246,7 @@ protected:
 
 	virtual bool handleNextCharsetCode(Actor *a, int *c);
 	virtual void CHARSET_1();
+	bool newLine();
 	void drawString(int a, const byte *msg);
 	void debugMessage(const byte *msg);
 	void showMessageDialog(const byte *msg);

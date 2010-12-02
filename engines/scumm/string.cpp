@@ -426,6 +426,33 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 }
 #endif
 
+bool ScummEngine::newLine() {
+	_nextLeft = _string[0].xpos;
+	if (_charset->_center) {
+		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
+		if (_nextLeft < 0)
+			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
+	}
+
+	if (_game.version == 0) {
+		return false;
+	} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
+		_nextTop += _string[0].height;
+	} else {
+		bool useCJK = _useCJKMode;
+		// SCUMM5 FM-Towns doesn't use the height of the ROM font here.
+		if (_game.platform == Common::kPlatformFMTowns && _game.version == 5)
+			_useCJKMode = false;
+		_nextTop += _charset->getFontHeight();
+		_useCJKMode = useCJK;
+	}
+	if (_game.version > 3) {
+		// FIXME: is this really needed?
+		_charset->_disableOffsX = true;
+	}
+	return true;
+}
+
 void ScummEngine::CHARSET_1() {
 	Actor *a;
 #ifdef ENABLE_SCUMM_7_8
@@ -579,36 +606,14 @@ void ScummEngine::CHARSET_1() {
 		}
 
 		if (c == 13) {
-		newLine:;
-			_nextLeft = _string[0].xpos;
 #ifdef ENABLE_SCUMM_7_8
 			if (_game.version >= 7 && subtitleLine != subtitleBuffer) {
 				((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
 				subtitleLine = subtitleBuffer;
 			}
 #endif
-			if (_charset->_center) {
-				_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
-				if (_nextLeft < 0)
-					_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
-			}
-
-			if (_game.version == 0) {
+			if (!newLine())
 				break;
-			} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
-				_nextTop += _string[0].height;
-			} else {
-				bool useCJK = _useCJKMode;
-				// SCUMM5 FM-Towns doesn't use the height of the ROM font here.
-				if (_game.platform == Common::kPlatformFMTowns && _game.version == 5)
-					_useCJKMode = false;
-				_nextTop += _charset->getFontHeight();
-				_useCJKMode = useCJK;
-			}
-			if (_game.version > 3) {
-				// FIXME: is this really needed?
-				_charset->_disableOffsX = true;
-			}
 			continue;
 		}
 
@@ -618,7 +623,8 @@ void ScummEngine::CHARSET_1() {
 		}
 		// Handle line breaks for V1-V2
 		if (_game.version <= 2 && _nextLeft >= _screenWidth) {
-			goto newLine;
+			if (!newLine())
+				break;	// FIXME: Is this necessary? Only would be relevant for v0 games
 		}
 
 		_charset->_left = _nextLeft;
