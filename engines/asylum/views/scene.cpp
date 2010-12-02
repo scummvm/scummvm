@@ -345,7 +345,7 @@ bool Scene::init() {
 
 	getScreen()->setPalette(paletteResource);
 	getScreen()->setGammaLevel(paletteResource, 0);
-	makeGreyPalette();
+	getScreen()->makeGreyPalette();
 	getScreen()->setupTransTables(3, _ws->cellShadeMask1, _ws->cellShadeMask2, _ws->cellShadeMask3);
 	getScreen()->selectTransTable(1);
 
@@ -837,7 +837,7 @@ int32 Scene::findActionArea(const Common::Point pt) {
 	return targetIdx;
 }
 
-int32 Scene::isInActionArea(const Common::Point &pt, ActionArea *area) {
+bool Scene::isInActionArea(const Common::Point &pt, ActionArea *area) {
 	error("[Scene::isInActionArea] Not implemented!");
 }
 
@@ -866,7 +866,7 @@ ResourceId Scene::hitTestScene(const Common::Point pt, HitType &type) {
 bool Scene::hitTestActor(const Common::Point pt) {
 	Actor *act = getActor();
 	Common::Point actPos;
-	getActorPosition(act, &actPos);
+	act->adjustCoordinates(&actPos);
 
 	int32 hitFrame;
 	if (act->getFrameIndex() >= act->getFrameCount())
@@ -941,7 +941,7 @@ void Scene::updateAmbientSounds() {
 					// This adjustment only uses the actor at
 					// index zero, but it's supposed to loop through
 					// all available actors as well (I think)
-					volume = calculateVolumeAdjustment(snd, getActor(0));
+					volume = getSound()->calculateVolumeAdjustement(snd->x, snd->y, snd->attenuation, snd->delta);
 					if (volume <= 0) {
 						if (volume < -10000)
 							volume = -10000;
@@ -957,19 +957,19 @@ void Scene::updateAmbientSounds() {
 					panning = 0;
 				}
 				if (snd->field_0 == 0) {
-					volume = -(snd->field_C ^ 2);
+					volume = -(snd->delta ^ 2);
 				} else {
-					volume = calculateVolumeAdjustment(snd, getActor(0));
+					volume = getSound()->calculateVolumeAdjustement(snd->x, snd->y, snd->attenuation, snd->delta);
 					volume += Config.ambientVolume;
 				}
 				if (loflag & 2) {
 					int tmpVol = volume;
-					if (vm()->getRandom(10000) < 10) {
+					if (_vm->getRandom(10000) < 10) {
 						if (snd->field_0) {
-							_vm->sound()->playSound(snd->resourceId, false, volume, panning);
+							getSound()->playSound(snd->resourceId, false, volume, panning);
 						} else {
 							// FIXME will this even work?
-							tmpVol += (vm()->getRandom(500)) * (((vm()->getRandom(100) >= 50) - 1) & 2) - 1;
+							tmpVol += (_vm->getRandom(500)) * (((_vm->getRandom(100) >= 50) - 1) & 2) - 1;
 							if (tmpVol <= -10000)
 								volume = -10000;
 							if (volume >= 0)
@@ -977,7 +977,7 @@ void Scene::updateAmbientSounds() {
 							else
 								if (tmpVol <= -10000)
 									tmpVol = -10000;
-							getSound()->playSound(snd->resourceId, false, tmpVol, vm()->getRandom(20001) - 10000);
+							getSound()->playSound(snd->resourceId, false, tmpVol, _vm->getRandom(20001) - 10000);
 						}
 					}
 				} else {
@@ -990,39 +990,6 @@ void Scene::updateAmbientSounds() {
 			if (_vm->sound()->isPlaying(snd->resourceId))
 				_vm->sound()->stop(snd->resourceId);
 		}
-	}
-}
-
-int32 Scene::calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act) {
-	//int32 x, y;
-	if (snd->field_10) {
-		/* FIXME properly handle global x/y
-		if (g_object_x == -1) {
-			x = snd->x - act->getPoint1()->x - act->getPoint2()->x;
-			y = snd->y - act->getPoint1()->y - act->getPoint2()->y;
-		} else {
-			x = snd->x - g_object_x;
-			y = snd->y - g_object_y;
-		}
-		*/
-
-		// FIXME vol = sub_432CA0(x ^ 2 + y ^ 2);
-		// Just assigning an arbitrary value for the
-		// time being
-		int vol = 5000;
-		if (100 / snd->field_C)
-			vol = vol / (100 / snd->field_C);
-		else
-			vol = snd->field_C;
-		vol = (vol - snd->field_C) ^ 2;
-		if (vol <= 10000)
-			vol = -vol;
-		else
-			vol = -10000;
-
-		return vol;
-	} else {
-		return -(snd->field_C ^ 2);
 	}
 }
 
@@ -1468,18 +1435,9 @@ bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {
 	return true;
 }
 
-void Scene::getActorPosition(Actor *actor, Common::Point *pt) {
-	if (!_ws)
-		error("[Scene::getActorPosition] WorldStats not initialized properly!");
-
-	pt->x = actor->getPoint1()->x - _ws->xLeft;
-	pt->y = actor->getPoint1()->y - _ws->yTop;
-}
-
-// ----------------------------------
-// ---------- DEBUG REGION -----------
-// ----------------------------------
-
+//////////////////////////////////////////////////////////////////////////
+// Debug
+//////////////////////////////////////////////////////////////////////////
 void Scene::debugScreenScrolling() {
 	if (!_ws)
 		error("[Scene::debugScreenScrolling] WorldStats not initialized properly!");
@@ -1584,24 +1542,6 @@ void Scene::debugShowActors() {
 
 		surface.free();
 	}
-}
-
-int Scene::processActor(int *x, int *param) {
-	error("[Scene::processActor] not implemented!");
-}
-
-void  Scene::updatePalette(int32 param) {
-	// TODO write small helper macro to get the resource id and move rest to screen class
-	error("[Scene::updatePalette] not implemented!");
-}
-
-void Scene::makeGreyPalette() {
-	// TODO write small helper macro to get the resource id and move rest to screen class
-	warning("[Scene::makeGreyPalette] not implemented!");
-}
-
-void Scene::resetActor0() {
-	error("[Scene::resetActor0] not implemented!");
 }
 
 } // end of namespace Asylum

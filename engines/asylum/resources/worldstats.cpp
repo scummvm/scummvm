@@ -188,8 +188,8 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		ambientSounds[s].field_0  = stream->readSint32LE();
 		ambientSounds[s].flags    = stream->readSint32LE();
 		ambientSounds[s].resourceId    = (ResourceId)stream->readSint32LE();
-		ambientSounds[s].field_C  = stream->readSint32LE();
-		ambientSounds[s].field_10 = stream->readSint32LE();
+		ambientSounds[s].delta  = stream->readSint32LE();
+		ambientSounds[s].attenuation = stream->readSint32LE();
 		ambientSounds[s].field_14 = stream->readSint32LE();
 
 		for (int32 i = 0; i < 6; i++)

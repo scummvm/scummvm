@@ -216,6 +216,14 @@ void Screen::startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 p
 	warning("[Screen::startPaletteFade] not implemented");
 }
 
+void Screen::updatePalette(int32 param) {
+	error("[Screen::updatePalette] not implemented!");
+}
+
+void Screen::makeGreyPalette() {
+	warning("[Screen::makeGreyPalette] not implemented!");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Gamma
 //////////////////////////////////////////////////////////////////////////

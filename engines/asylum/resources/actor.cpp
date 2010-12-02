@@ -376,7 +376,7 @@ void Actor::update() {
 				if (_frameIndex <= _frameCount - 1)
 					++_frameIndex;
 				else
-					getScene()->resetActor0();
+					resetActors();
 			}
 
 			if (_index >= 10)
@@ -937,6 +937,10 @@ void Actor::process_401830(int32 field980, int32 actionAreaId, int32 field978, i
 	_field_970 = 1;
 
 	updateDirection();
+}
+
+bool Actor::process_4069B0(int32 *x, int32 *y) {
+	error("[Actor::process_4069B0] Not implemented!");
 }
 
 bool Actor::process_408B20(Common::Point *point, ActorDirection dir, uint32 count, bool hasDelta) {
@@ -1862,8 +1866,8 @@ void Actor::adjustCoordinates(Common::Point *point) {
 	if (!point)
 		error("[Actor::adjustCoordinates] Invalid point parameter!");
 
-	point->x += _point1.x - getWorld()->xLeft;
-	point->y += _point1.y - getWorld()->yTop;
+	point->x = _point1.x - getWorld()->xLeft;
+	point->y = _point1.y - getWorld()->yTop;
 }
 
 int32 Actor::getGraphicsFlags() {

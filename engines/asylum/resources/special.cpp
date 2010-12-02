@@ -557,12 +557,12 @@ void Special::chapter8(Object *object, ActorIndex actorIndex) {
 			break;
 
 		case kObjectLavaBridge:
-			if (getWorld()->ambientSounds[4].field_C > -100)
-				getWorld()->ambientSounds[4].field_C -= 5;
+			if (getWorld()->ambientSounds[4].delta > -100)
+				getWorld()->ambientSounds[4].delta -= 5;
 
 			if (_vm->isGameFlagSet(kGameFlag937)) {
-				if (getWorld()->ambientSounds[5].field_C > -100)
-					getWorld()->ambientSounds[5].field_C -= 5;
+				if (getWorld()->ambientSounds[5].delta > -100)
+					getWorld()->ambientSounds[5].delta -= 5;
 			}
 			break;
 
