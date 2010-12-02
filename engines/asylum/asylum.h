@@ -169,6 +169,13 @@ public:
 	void switchEventHandler(EventHandler *handler);
 
 	/**
+	 * Notifies the current event handler of an event
+	 *
+	 * @param type The event type.
+	 */
+	void notify(AsylumEventType type);
+
+	/**
 	 * Gets a message handler.
 	 *
 	 * @param index Zero-based index of the message handler

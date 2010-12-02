@@ -167,7 +167,7 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 		error("[AsylumEngine::startGame] Subsystems not initialized properly!");
 
 	// Load the default mouse cursor
-	_cursor->set(MAKE_RESOURCE(kResourcePackSound, 14));
+	_cursor->set(MAKE_RESOURCE(kResourcePackSound, 14), 0, kCursorAnimationNone);
 	_cursor->hide();
 
 	// Clear the graphic list
@@ -314,6 +314,9 @@ void AsylumEngine::handleEvents() {
 		}
 	}
 
+	// Animate cursor
+	_cursor->animate();
+
 	// Send update event to our event handler
 	AsylumEvent updateEvt = AsylumEvent(EVENT_ASYLUM_UPDATE);
 	_handler->handleEvent(updateEvt);
@@ -371,6 +374,14 @@ void AsylumEngine::switchEventHandler(EventHandler *handler) {
 	// Init new handler
 	AsylumEvent init(EVENT_ASYLUM_INIT);
 	_handler->handleEvent(init);
+}
+
+void AsylumEngine::notify(AsylumEventType type) {
+	if (_handler == NULL)
+		error("[AsylumEngine::notify] Invalid handler parameter (cannot be NULL)!");
+
+	AsylumEvent evt(type);
+	_handler->handleEvent(evt);
 }
 
 EventHandler *AsylumEngine::getPuzzle(uint32 index) {

@@ -114,7 +114,7 @@ void Scene::enter(ResourcePackId packId) {
 	}
 
 	// Set the cursor to magnifying glass
-	getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass]);
+	getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass], 0, kCursorAnimationNone);
 	getCursor()->show();
 
 	// Clear the graphic queue
@@ -300,7 +300,7 @@ bool Scene::init() {
 		return true;
 	}
 
-	getCursor()->set(_ws->cursorResources[kCursorResourceScrollUp]);
+	getCursor()->set(_ws->cursorResources[kCursorResourceScrollUp], 0, kCursorAnimationNone);
 	_ws->coordinates[0] = -1;
 	getScreen()->clear();
 	getText()->loadFont(_ws->font1);
@@ -958,7 +958,7 @@ void Scene::updateCursor(ActorDirection direction, Common::Rect rect) {
 
 	if (getEncounter()->getFlag6()) {
 		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC])
-			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC], 0, 2);
+			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC]);
 
 		return;
 	}
@@ -969,7 +969,7 @@ void Scene::updateCursor(ActorDirection direction, Common::Rect rect) {
 			ResourceId resourceId =_ws->cursorResources[direction];
 
 			if (direction >= kDirectionN && getCursor()->graphicResourceId != resourceId)
-				getCursor()->set(resourceId, 0, 2);
+				getCursor()->set(resourceId);
 		}
 
 		return;
@@ -977,7 +977,7 @@ void Scene::updateCursor(ActorDirection direction, Common::Rect rect) {
 
 	if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
 		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceHand])
-			getCursor()->set(_ws->cursorResources[kCursorResourceHand], 0, 2);
+			getCursor()->set(_ws->cursorResources[kCursorResourceHand]);
 
 		return;
 	}
@@ -987,18 +987,18 @@ void Scene::updateCursor(ActorDirection direction, Common::Rect rect) {
 
 			ResourceId id = _ws->cursorResourcesAlternate[player->getField638() + 31];
 			if (getCursor()->graphicResourceId != id)
-				getCursor()->set(id, 0, 0);
+				getCursor()->set(id, 0, kCursorAnimationNone);
 
 		} else {
 			if (hitTestScene(type) == -1) {
 				ResourceId id = _ws->cursorResourcesAlternate[player->getField638() + 31];
 				if (getCursor()->graphicResourceId != id)
-					getCursor()->set(id, 0, 0);
+					getCursor()->set(id, 0, kCursorAnimationNone);
 			} else {
 				ResourceId id = _ws->cursorResourcesAlternate[player->getField638() + 47];
 				uint32 frameCount = GraphicResource::getFrameCount(_vm, id);
 				if (getCursor()->graphicResourceId != id)
-					getCursor()->set(id, 0, ((frameCount <= 1) - 1) & 2);
+					getCursor()->set(id, 0, (CursorAnimation)(((frameCount <= 1) - 1) & 2));
 			}
 		}
 
@@ -1008,7 +1008,7 @@ void Scene::updateCursor(ActorDirection direction, Common::Rect rect) {
 	if (mouse.x >= rect.left && mouse.x <= rightLimit && mouse.y >= rect.top  && mouse.y <= rect.bottom && hitTestPlayer()) {
 		if (player->getReaction(0)) {
 			if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceGrabPointer])
-				getCursor()->set(_ws->cursorResources[kCursorResourceGrabPointer], 0, 2);
+				getCursor()->set(_ws->cursorResources[kCursorResourceGrabPointer]);
 
 			return;
 		}
@@ -1017,11 +1017,11 @@ void Scene::updateCursor(ActorDirection direction, Common::Rect rect) {
 	int32 index = hitTest(type);
 	if (index == -1) {
 		if (_ws->chapter != kChapter2 || _playerIndex != 10) {
-			if (getCursor()->flags || getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceMagnifyingGlass])
-				getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass], 0, 2);
+			if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceMagnifyingGlass] || getCursor()->animation)
+				getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass]);
 		} else {
-			if (getCursor()->flags || getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC2])
-				getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2], 0, 2);
+			if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC2] || getCursor()->animation)
+				getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2]);
 		}
 
 		return;
@@ -1047,23 +1047,23 @@ void Scene::updateCursor(ActorDirection direction, Common::Rect rect) {
 	}
 
 	if (actionType & kActionTypeFind) {
-		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceMagnifyingGlass] || getCursor()->flags != 2)
-			getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass], 0, 2);
+		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceMagnifyingGlass] || getCursor()->animation != kCursorAnimationMirror)
+			getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass]);
 	} else if (actionType & kActionTypeTalk) {
 		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC])
-			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC], 0, 2);
+			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC]);
 	} else if (actionType & kActionTypeGrab) {
 		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceHand])
-			getCursor()->set(_ws->cursorResources[kCursorResourceHand], 0, 2);
+			getCursor()->set(_ws->cursorResources[kCursorResourceHand]);
 	} else if (actionType & kActionType16) {
-		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC2] || getCursor()->flags != 2)
-			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2], 0, 2);
+		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC2] || getCursor()->animation != kCursorAnimationMirror)
+			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2]);
 	} else if (_ws->chapter != kChapter2 && _playerIndex != 10) {
-		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceMagnifyingGlass] || getCursor()->flags)
-			getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass], 0, 2);
+		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceMagnifyingGlass] || getCursor()->animation)
+			getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass]);
 	} else {
-		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC2] || getCursor()->flags)
-			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2], 0, 2);
+		if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceTalkNPC2] || getCursor()->animation)
+			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2]);
 	}
 }
 

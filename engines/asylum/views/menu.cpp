@@ -138,7 +138,7 @@ void MainMenu::setup() {
 
 void MainMenu::leave() {
 	_activeScreen = kMenuNone;
-	getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 2), 0, 2);
+	getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 2));
 	getText()->loadFont(kFontYellow);
 }
 
@@ -339,7 +339,7 @@ bool MainMenu::init() {
 	// TODO: save dialog key codes into sntrm_k.txt (need to figure out why they use such thing) (address 00411CD0)
 
 	if (_needEyeCursorInit) {
-		getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 3), 0, 2);
+		getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 3));
 	} else {
 		// Init the game if not already done
 		if (!_initGame) {
@@ -374,7 +374,7 @@ bool MainMenu::init() {
 		setupMusic();
 
 		getCursor()->hide();
-		getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 2), 0, 2);
+		getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 2));
 	}
 
 	if (_gameStarted)
@@ -637,7 +637,7 @@ bool MainMenu::click(const AsylumEvent &evt) {
 	if (_activeScreen == kMenuNone)
 		return true;
 
-	getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 3), 0, 2);
+	getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 3));
 	getText()->loadFont(kFontYellow);
 
 	switch (_activeScreen) {

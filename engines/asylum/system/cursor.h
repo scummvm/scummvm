@@ -42,6 +42,12 @@ enum CursorState {
 	kCursorMiddle = 3
 };
 
+enum CursorAnimation {
+	kCursorAnimationNone   = 0,
+	kCursorAnimationLinear = 1,
+	kCursorAnimationMirror = 2
+};
+
 /**
  * Asylum cursors are GraphicResources, and are stored in
  * ResourcePacks, as are all game assets.
@@ -61,33 +67,29 @@ public:
 	 */
 	void hide() const;
 
+	/**
+	 * Query if the cursor is hidden.
+	 *
+	 * @return true if hidden, false if not.
+	 */
 	bool isHidden() const;
 
 	/**
-	 * Set the current cursor instance to the graphic resource provide.
-	 * The frames parameter defaults to -1, which in this case means that the
-	 * frame count should be derived from the graphic resource as opposed to being
-	 * explicitly set.
-	 */
-	void set(ResourceId resourceId, int32 cntr = 0, byte flgs = 0, int32 frames = -1);
-
-	/**
-	 * Scene-based update to the current cursor. This
-	 * checks whether the cursor should be updated depending
-	 * on the MainActor's current action.
+	 * Set the current cursor instance to the graphic resource provide. The frames parameter defaults to -1, which in this case means that the frame count
+	 * should be derived from the graphic resource as opposed to being explicitly set.
 	 *
-	 * TODO this probably doesn't belong here, but on the
-	 * scene, where it originally was
+	 * @param resourceId Identifier for the resource.
+	 * @param counter    The counter.
+	 * @param animation  The animation type
+	 * @param frames 	 The frames.
 	 */
-	//void update(WorldStats *ws, int32 currentAction);
+	void set(ResourceId resourceId, int32 counter = 0, CursorAnimation animation = kCursorAnimationMirror, int32 frames = -1);
 
 	/**
 	 * Get the next logical frame from the currently loaded
 	 * cursorResource and draw it
 	 */
 	void animate();
-
-	void update();
 
 	void setState(const Common::Event &evt);
 	byte getState() { return _state; }
@@ -97,18 +99,16 @@ public:
 	 */
 	const Common::Point position() const;
 
-	// NOTE
-	// .text:00435060 contains a function that assigns global variables to a
+	// NOTE: The original engine contains a function that assigns global variables to a
 	// struct associated with cursor graphics info. Since this functionality only
 	// ever seems to be used to reference cursor info, the struct members
 	// may as well be class members in order to simplify the logic a bit
 
 	ResourceId graphicResourceId;
-	uint32 currentFrame; // assuming field_4c is the current frame pointer
-	                    // since it's generally initialized to zero
-	int32 frameCount;
-	int32 counter; // cursor counter
-	byte  flags;
+	uint32 currentFrame;
+	uint32 lastFrameIndex;
+	int32 counter;
+	CursorAnimation animation;
 
 private:
 	AsylumEngine *_vm;
@@ -124,12 +124,30 @@ private:
 	/** the point of the cursor that triggers click hits */
 	Common::Point _hotspot;
 
-	// The number of millis between
-	// cursor gfx updates
-	uint32 _cursorTicks;
+	// The number of milliseconds between cursor gfx updates
+	uint32 _nextTick;
 
-	byte _cursor_byte_45756C;
-}; // end of class Cursor
+	int32 _frameStep;
+
+	/**
+	 * Updates the cursor
+	 */
+	void update();
+
+	/**
+	 * Updates the cursor current frame.
+	 */
+	void updateFrame();
+
+	/**
+	 * Gets the hotspot for a specific frame.
+	 *
+	 * @param frameIndex Zero-based index of the frame.
+	 *
+	 * @return The hotspot.
+	 */
+	Common::Point getHotspot(uint32 frameIndex);
+};
 
 } // end of namespace Asylum
 
