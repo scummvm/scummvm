@@ -97,26 +97,17 @@ public:
 	 */
 	bool handleEvent(const AsylumEvent &ev);
 
-	AsylumEngine* vm() { return _vm; }
-
-	ActionList  *actions()    { return _actions; }
-	Polygons    *polygons()   { return _polygons; }
-	Special     *special()    { return _special; }
-	Speech      *speech()     { return _speech; }
-	WorldStats  *worldstats() { return _ws; }
-
-	/** .text:0040A1B0
-	 * Get the supplied actor's position relative to the
-	 * current scene's xLeft and yTop
-	 */
-	void getActorPosition(Actor *actor, Common::Point *pt);
 	/**
-	 * Return the index of the current player actor
+	 * Return the index of the player actor
 	 */
 	ActorIndex getPlayerIndex() { return _playerActorIdx; }
 
+	/**
+	 * Sets the player actor index.
+	 *
+	 * @param index index of the player actor
+	 */
 	void setPlayerActorIndex(ActorIndex index) { _playerActorIdx = index; }
-	void changePlayer(ActorIndex index);
 
 	/**
 	 * Gets the current scene pack identifier.
@@ -132,36 +123,50 @@ public:
 	 */
 	Actor* getActor(ActorIndex index = kActorInvalid);
 
-	/** .text:00407260
-	 * Check the actor at actorIndex to see if the currently loaded
-	 * graphic resource matches the resource at grResTable[5]
+	/**
+	 * Change player actor
+	 *
+	 * @param index new index for the player actor
 	 */
-	bool defaultActorDirectionLoaded(int actorIndex, int grResTableIdx);
+	void changePlayer(ActorIndex index);
 
-	/** .text:004094c0
-	 * Determine the amount to increase the supplied sound
-	 * sample's volume based on the actor's position
+	/**
+	 * Updates the scene coordinates.
+	 *
+	 * @param targetX 		   Target x coordinate.
+	 * @param targetY 		   Target y coordinate.
+	 * @param val 			   The value.
+	 * @param checkSceneCoords true to check scene coordinates.
+	 * @param [in,out] param   If non-null, the parameter.
+	 *
+	 * @return true if it succeeds, false if it fails.
 	 */
-	int32 calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act);
-
-
 	bool updateSceneCoordinates(int32 targetX, int32 targetY, int32 val, bool checkSceneCoords = false, int32 *param = NULL);
 
-	int processActor(int *x, int *param);
-
-	void updatePalette(int32 param);
-	void makeGreyPalette();
-
-	// Shared methods
-	void resetActor0();
-
-	/** .text:00408980
-	 * Determine if the supplied point intersects
-	 * an action area's active region
+	/**
+	 * Determine if the supplied point intersects an action area's active region.
+	 *
+	 * @param pt The point.
+	 *
+	 * @return The found action area.
 	 */
 	int32 findActionArea(const Common::Point pt);
 
-	int32 isInActionArea(const Common::Point &pt, ActionArea *area);
+	/**
+	 * Determine if the supplied point is in the action area
+	 *
+	 * @param pt 			The point.
+	 * @param [in,out] area If non-null, the area.
+	 *
+	 * @return
+	 */
+	bool isInActionArea(const Common::Point &pt, ActionArea *area);
+
+	ActionList  *actions()    { return _actions; }
+	Polygons    *polygons()   { return _polygons; }
+	Special     *special()    { return _special; }
+	Speech      *speech()     { return _speech; }
+	WorldStats  *worldstats() { return _ws; }
 
 protected:
 	/** .text:0040EA50

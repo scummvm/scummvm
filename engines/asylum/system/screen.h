@@ -90,6 +90,8 @@ public:
 	void setPalette(ResourceId id);
 	void paletteFade(uint32 red, int32 milliseconds, int32 param);
 	void startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param);
+	void updatePalette(int32 param);
+	void makeGreyPalette();
 
 	// Gamma
 	void setGammaLevel(ResourceId id, int32 val);

@@ -885,7 +885,7 @@ IMPLEMENT_OPCODE(PlayMovie)
 
 		if (!getSharedData()->getMatteBarHeight()) {
 			getCursor()->hide();
-			getScene()->makeGreyPalette();
+			getScreen()->makeGreyPalette();
 			getSharedData()->setMatteVar1(1);
 			getSharedData()->setMatteBarHeight(1);
 			getSharedData()->setMatteVar2(0);
@@ -993,7 +993,7 @@ END_OPCODE
 // Opcode 0x35
 IMPLEMENT_OPCODE(SetVolume)
 	AmbientSoundItem item = getWorld()->ambientSounds[cmd->param1];
-	int var = cmd->param2 + item.field_C;
+	int var = cmd->param2 + item.delta;
 
 	int32 volume = -((Config.sfxVolume + var) * (Config.ambientVolume + var));
 
@@ -1048,7 +1048,7 @@ END_OPCODE
 // Opcode 0x3B
 IMPLEMENT_OPCODE(_unk3B_PALETTE_MOD)
 	if (!cmd->param2) {
-		getScene()->makeGreyPalette();
+		getScreen()->makeGreyPalette();
 		cmd->param2 = 1;
 	}
 
@@ -1065,7 +1065,7 @@ IMPLEMENT_OPCODE(_unk3B_PALETTE_MOD)
 		return;
 	}
 
-	getScene()->updatePalette(cmd->param1);
+	getScreen()->updatePalette(cmd->param1);
 
 	_lineIncrement = 1;
 	++cmd->param1;
@@ -1598,7 +1598,7 @@ IMPLEMENT_OPCODE(_unk56)
 		int32 x = 0;
 		int32 y = 0; // FIXME: is is set somewhere else?
 
-		if (getScene()->processActor(&x, &cmd->param4) == 1) {
+		if (actor->process_4069B0(&x, &cmd->param4) == 1) {
 			getScene()->getActor()->processStatus(x, y, (bool)cmd->param4);
 			cmd->param6 = x;
 			cmd->param7 = y;

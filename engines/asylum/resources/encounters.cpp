@@ -32,6 +32,7 @@
 
 #include "asylum/system/cursor.h"
 #include "asylum/system/graphics.h"
+#include "asylum/system/screen.h"
 #include "asylum/system/speech.h"
 #include "asylum/system/text.h"
 
@@ -716,7 +717,7 @@ void Encounter::runScript() {
 
 		case 23:
 			if (!getSharedData()->getMatteBarHeight()) {
-				getScene()->makeGreyPalette();
+				getScreen()->makeGreyPalette();
 				getSharedData()->setMatteBarHeight(1);
 				getScene()->actions()->setDelayedVideoIndex(getVariableInv(entry.param2));
 				getSharedData()->setMatteVar1(1);
