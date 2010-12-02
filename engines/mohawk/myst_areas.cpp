@@ -687,18 +687,21 @@ MystResourceType11::~MystResourceType11() {
 void MystResourceType11::handleMouseDown(const Common::Point &mouse) {
 	setPositionClipping(mouse, _pos);
 
+	_vm->_scriptParser->setInvokingResource(this);
 	_vm->_scriptParser->runOpcode(_mouseDownOpcode, _var8);
 }
 
 void MystResourceType11::handleMouseUp(const Common::Point &mouse) {
 	setPositionClipping(mouse, _pos);
 
+	_vm->_scriptParser->setInvokingResource(this);
 	_vm->_scriptParser->runOpcode(_mouseUpOpcode, _var8);
 }
 
 void MystResourceType11::handleMouseDrag(const Common::Point &mouse) {
 	setPositionClipping(mouse, _pos);
 
+	_vm->_scriptParser->setInvokingResource(this);
 	_vm->_scriptParser->runOpcode(_mouseDragOpcode, _var8);
 }
 
@@ -754,27 +757,16 @@ MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableRe
 	debugC(kDebugResource, "\t_frameRect.top: %d", _frameRect.top);
 	debugC(kDebugResource, "\t_frameRect.right: %d", _frameRect.right);
 	debugC(kDebugResource, "\t_frameRect.bottom: %d", _frameRect.bottom);
-
-	_doAnimation = false;
 }
 
 MystResourceType12::~MystResourceType12() {
 
 }
 
-void MystResourceType12::handleAnimation() {
-	// TODO: Probably not final version. Variable/Type 11 Controlled?
-	if (_doAnimation) {
-		_vm->_gfx->copyImageToScreen(_currentFrame++, _frameRect);
-		if ((_currentFrame - _firstFrame) >= _numFrames)
-			_doAnimation = false;
-	}
-}
-
-void MystResourceType12::handleMouseUp(const Common::Point &mouse) {
-	// HACK/TODO: Trigger Animation on Mouse Click. Probably not final version. Variable/Type 11 Controlled?
-	_currentFrame = _firstFrame;
-	_doAnimation = true;
+void MystResourceType12::drawFrame(uint16 frame) {
+	_currentFrame = _firstFrame + frame;
+	_vm->_gfx->copyImageToScreen(_currentFrame, _frameRect);
+	_vm->_gfx->updateScreen();
 }
 
 MystResourceType13::MystResourceType13(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {

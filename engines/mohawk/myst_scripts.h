@@ -68,6 +68,7 @@ public:
 	void runOpcode(uint16 op, uint16 var = 0, uint16 argc = 0, uint16 *argv = NULL);
 	const char *getOpcodeDesc(uint16 op);
 	MystScript readScript(Common::SeekableReadStream *stream, MystScriptType type);
+	void setInvokingResource(MystResource *resource) { _invokingResource = resource; }
 
 	virtual void disablePersistentScripts() = 0;
 	virtual void runPersistentScripts() = 0;

@@ -157,6 +157,7 @@ public:
 	uint16 getCurStack() { return _curStack; }
 	void setMainCursor(uint16 cursor);
 	uint16 getMainCursor() { return _mainCursor; }
+	void checkCursorHints();
 
 	MystVar *_varStore;
 
@@ -171,6 +172,7 @@ public:
 	MystScriptParser *_scriptParser;
 	Common::Array<MystResource*> _resources;
 	MystResource *_dragResource;
+	Common::Point _mouse;
 
 	bool _showResourceRects;
 	MystResource *loadResource(Common::SeekableReadStream *rlstStream, MystResource *parent);
@@ -220,7 +222,6 @@ private:
 	uint16 _cursorHintCount;
 	MystCursorHint *_cursorHints;
 	void loadCursorHints();
-	void checkCursorHints();
 	bool _mouseClicked;
 	uint16 _currentCursor;
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)

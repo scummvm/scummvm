@@ -171,6 +171,8 @@ public:
 	uint16 getList2(uint16 index);
 	uint16 getList3(uint16 index);
 
+	uint16 getStepsV() { return _stepsV; }
+
 	Common::Point _pos;
 protected:
 	void setPositionClipping(const Common::Point &mouse, Common::Point &dest);
@@ -219,8 +221,7 @@ class MystResourceType12 : public MystResourceType11 {
 public:
 	MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType12();
-	void handleAnimation();
-	void handleMouseUp(const Common::Point &mouse);
+	void drawFrame(uint16 frame);
 
 protected:
 	uint16 _numFrames;
@@ -228,7 +229,6 @@ protected:
 	Common::Rect _frameRect;
 
 private:
-	bool _doAnimation;
 	uint16 _currentFrame;
 };
 
