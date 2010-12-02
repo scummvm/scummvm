@@ -873,8 +873,13 @@ void ResourceManager::init(bool initFromFallbackDetector) {
 
 	if (!initFromFallbackDetector) {
 		if (!addInternalSources())
-			error("Somehow I can't seem to find the sound files I need (RESOURCE.AUD/RESOURCE.SFX), aborting");
-
+		{
+		//	FIXME: This error message is not always correct.
+		//	OTOH, it is nice to be able to detect missing files/sources
+		//	So we should definitely fix addInternalSources so this error
+		//	only pops up when necessary. Disabling for now.
+		//	error("Somehow I can't seem to find the sound files I need (RESOURCE.AUD/RESOURCE.SFX), aborting");
+		}
 		scanNewSources();
 	}
 
