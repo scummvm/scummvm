@@ -117,10 +117,10 @@ public:
 		_sceneYTop = 0;
 		_sceneOffset = 0;
 		_sceneOffsetAdd = 0;
-		memset(&_cursorResources[13], kResourceNone, sizeof(_cursorResources));
-		memset(&_sceneFonts[3], kResourceNone, sizeof(_sceneFonts));
+		memset(&_cursorResources, kResourceNone, sizeof(_cursorResources));
+		memset(&_sceneFonts, kResourceNone, sizeof(_sceneFonts));
 		_currentPaletteId = kResourceNone;
-		memset(&_cellShadeMasks[3], 0, sizeof(_cellShadeMasks));
+		memset(&_cellShadeMasks, 0, sizeof(_cellShadeMasks));
 		_smallCurUp = 0;
 		_smallCurDown = 0;
 		_encounterFrameBg = 0;
@@ -130,15 +130,16 @@ public:
 		_matteInitialized = false;
 		_mattePlaySound = false;
 		_currentScreenUpdatesCount = 0;
-		memset(&_data1[50], 0, sizeof(_data1));
-		memset(&_data2[11], 0, sizeof(_data2));
+		memset(&_data1, 0, sizeof(_data1));
+		memset(&_data2, 0, sizeof(_data2));
 		_actorUpdateStatusEnabledCounter = 0;
-		memset(&_data3[9], 0, sizeof(_data3));
+		memset(&_data3, 0, sizeof(_data3));
 		_flagScene1 = false;
-		memset(&_movies[49], 0, sizeof(_movies));
+		memset(&_movies, 0, sizeof(_movies));
 		_actorUpdateStatus15Check = false;
 		_flag2 = false;
 		_globalDirection = kDirectionN;
+		memset(&_ambientTick, 0, sizeof(_ambientTick));
 
 		// Screen updates
 		_flagRedraw = false;
@@ -234,6 +235,13 @@ public:
 			_data3[i] = 0;
 		}
 	}
+
+	uint32 *getAmbientTick(uint32 index) {
+		if (index >= ARRAYSIZE(_ambientTick))
+			error("[SharedData::getAmbientTick] index is outside valid values (was: %d, valid: [0:15]", index);
+
+		return &_ambientTick[index];
+	};
 
 	//////////////////////////////////////////////////////////////////////////
 	// Flags
@@ -361,6 +369,8 @@ private:
 	bool            _flag2;
 
 	ActorDirection  _globalDirection;
+
+	uint32 _ambientTick[16];
 
 
 	// Screen updates

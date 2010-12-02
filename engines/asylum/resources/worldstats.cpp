@@ -81,7 +81,7 @@ WorldStats::WorldStats(AsylumEngine *engine) : _vm(engine) {
 	actorType = 0;
 	memset(&soundResourceIds, kResourceNone, sizeof(soundResourceIds));
 
-	numAmbientSound = 0;
+	numAmbientSounds = 0;
 	musicStatus = 0;
 	musicCurrentResourceIndex = kResourceNone;
 	musicFlag = 0;
@@ -190,7 +190,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		ambientSounds[s].resourceId    = (ResourceId)stream->readSint32LE();
 		ambientSounds[s].delta  = stream->readSint32LE();
 		ambientSounds[s].attenuation = stream->readSint32LE();
-		ambientSounds[s].field_14 = stream->readSint32LE();
+		ambientSounds[s].nextTick = stream->readSint32LE();
 
 		for (int32 i = 0; i < 6; i++)
 			ambientSounds[s].flagNum[i] = (GameFlag)stream->readSint32LE();
@@ -199,7 +199,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		ambientSounds[s].y = stream->readSint32LE();
 	}
 
-	numAmbientSound   = stream->readSint32LE();
+	numAmbientSounds   = stream->readSint32LE();
 	musicStatus       = stream->readSint32LE();
 	musicCurrentResourceIndex = stream->readUint32LE();
 	musicFlag         = stream->readSint32LE();

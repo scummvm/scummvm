@@ -82,7 +82,7 @@ private:
 		kFontBlue     = MAKE_RESOURCE(kResourcePackShared, 22),
 		kFontYellow   = MAKE_RESOURCE(kResourcePackShared, 16),
 		kSfxSound     = MAKE_RESOURCE(kResourcePackShared, 41),
-		kAmbiantSound = MAKE_RESOURCE(kResourcePackShared, 42),
+		kAmbientSound = MAKE_RESOURCE(kResourcePackShared, 42),
 		kVoiceSound   = MAKE_RESOURCE(kResourcePackShared, 43)
 	};
 

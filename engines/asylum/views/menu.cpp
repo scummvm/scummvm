@@ -189,14 +189,14 @@ MainMenu::MenuScreen MainMenu::findMousePosition() {
 
 void MainMenu::playTestSounds() {
 	_testSoundsPlaying = true;
-	getSound()->playSound(kAmbiantSound, true, Config.ambientVolume);
+	getSound()->playSound(kAmbientSound, true, Config.ambientVolume);
 	getSound()->playSound(kSfxSound, true, Config.sfxVolume);
 	getSound()->playSound(kVoiceSound, true, Config.voiceVolume);
 }
 
 void MainMenu::stopTestSounds() {
 	_testSoundsPlaying = false;
-	getSound()->stop(kAmbiantSound);
+	getSound()->stop(kAmbientSound);
 	getSound()->stop(kSfxSound);
 	getSound()->stop(kVoiceSound);
 }
@@ -260,10 +260,10 @@ void MainMenu::adjustTestVolume() {
 	if ((Config.movieVolume / 250 + 20) <= 0)
 		getSound()->playMusic(_musicResourceId);
 
-	if (getSound()->isPlaying(kAmbiantSound))
-		getSound()->setVolume(kAmbiantSound, Config.ambientVolume);
+	if (getSound()->isPlaying(kAmbientSound))
+		getSound()->setVolume(kAmbientSound, Config.ambientVolume);
 	else if (_testSoundsPlaying)
-		getSound()->playSound(kAmbiantSound, true, Config.ambientVolume);
+		getSound()->playSound(kAmbientSound, true, Config.ambientVolume);
 
 	if (getSound()->isPlaying(kSfxSound))
 		getSound()->setVolume(kSfxSound, Config.sfxVolume);
