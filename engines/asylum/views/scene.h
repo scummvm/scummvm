@@ -416,6 +416,8 @@ private:
 	 */
 	bool pointIntersectsRect(Common::Point point, Common::Rect rect);
 
+	bool rectIntersect(int32 x, int32 y, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3);
+
 	//////////////////////////////////////////////////////////////////////////
 	// Scene debugging
 	//////////////////////////////////////////////////////////////////////////
