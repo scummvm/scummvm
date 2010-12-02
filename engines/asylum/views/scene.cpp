@@ -1176,6 +1176,10 @@ bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {
 	return true;
 }
 
+bool Scene::rectIntersect(int32 x, int32 y, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3) {
+	return (x >= x3 && y >= y3 && x1 >= x2 && y1 >= y2);
+}
+
 Actor* Scene::getActor(ActorIndex index) {
 	if (!_ws)
 		error("[Scene::getActor] WorldStats not initialized properly!");
@@ -1550,11 +1554,30 @@ void Scene::processUpdateList() {
 }
 
 void Scene::checkVisibleActorsPriority() {
-	error("[Scene::checkVisibleActorsPriority] not implemented");
+	for (uint i = 2; i < 9; i++)
+		if (getActor(i)->isVisible())
+			adjustActorPriority(i);
+
+	for (uint i = 16; i < 18; i++)
+		if (getActor(i)->isVisible())
+			adjustActorPriority(i);
 }
 
 void Scene::adjustActorPriority(ActorIndex index) {
-	error("[Scene::adjustActorPriority] not implemented");
+	Actor* actor0 = getActor(0);
+	Actor* actor = getActor(index);
+
+	if (rectIntersect(actor0->getPoint1()->x,
+	                  actor0->getPoint1()->y,
+	                  actor0->getPoint1()->x + actor0->getBoundingRect()->right,
+	                  actor0->getPoint1()->y + actor0->getBoundingRect()->bottom + 4,
+					  actor->getPoint1()->x,
+					  actor->getPoint1()->y,
+					  actor->getPoint1()->x + actor0->getBoundingRect()->right,
+					  actor->getPoint1()->y + actor0->getBoundingRect()->bottom)) {
+		if (actor->getPriority() < actor0->getPriority())
+			actor0->setPriority(actor->getPriority());
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
