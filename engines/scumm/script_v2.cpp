@@ -1141,6 +1141,44 @@ void ScummEngine_v2::o2_startScript() {
 			return;
 	}
 
+	// WORKAROUND bug #1447058: In Maniac Mansion, when the door bell
+	// rings, then this normally causes Ted Edison to leave his room.
+	// This is controlled by script 87. On the other hand, when the
+	// player enters Ted's room while Ted is in it, then Ted captures
+	// the player and puts his active ego into the cellar prison.
+	//
+	// Unfortunately, the two events can collide: If the cutscene is
+	// playing in which Ted captures the player (controlled by script
+	// 88) and simultaneously the door bell rings (due to package
+	// delivery...) then this leads to an assertion (in ScummVM, due to
+	// its stricter validity checking), or to unexpected / strange
+	// behavior (in the original engine). The script writers apparently
+	// anticipated the possibility of the door bell ringing: Before
+	// script 91 starts script 88, it explicitly stops script 87.
+	// Unfortunately, this is not quite enough, as script 87 can be
+	// started while script 88 is already running -- specifically, by
+	// the package delivery sequence.
+	//
+	// Now, one can easily suppress this particular assertion, but then
+	// one still gets odd behavior: Ted is in the process of
+	// incarcerating the player, when the door bell rings; Ted promptly
+	// leaves to get the package, leaving the player alone (!), but then
+	// moments later we cut to the cellar, where Ted just put the
+	// player. That seems weird and irrational (the Edisons may be mad,
+	// but they are not stupid when it comes to putting people into
+	// their dungeon ;)
+	//
+	// To avoid this, we use a somewhat more elaborate workaround: If
+	// script 88 or 89 are running (which control the capture resp.
+	// imprisonment of the player), then any attempt to start script 87
+	// (which makes Ted go answer the door bell) is simply ignored. This
+	// way, the door bell still chimes, but Ted ignores it.
+	if (_game.id == GID_MANIAC && script == 87) {
+		if (isScriptRunning(88) || isScriptRunning(89)) {
+			return;
+		}
+	}
+
 	runScript(script, 0, 0, 0);
 }
 
@@ -1478,10 +1516,10 @@ void ScummEngine_v2::o2_beginOverride() {
 }
 
 void ScummEngine_v2::o2_chainScript() {
-	int data = getVarOrDirectByte(PARAM_1);
+	int script = getVarOrDirectByte(PARAM_1);
 	stopScript(vm.slot[_currentScript].number);
 	_currentScript = 0xFF;
-	runScript(data, 0, 0, 0);
+	runScript(script, 0, 0, 0);
 }
 
 void ScummEngine_v2::o2_pickupObject() {
