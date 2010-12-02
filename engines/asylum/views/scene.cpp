@@ -65,6 +65,7 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 	_playerIndex = 0;
 
 	_hitAreaChapter7Counter = 0;
+	_chapter5FrameIndex = 0;
 
 	g_debugPolygons  = 0;
 	g_debugObjects  = 0;
@@ -497,8 +498,7 @@ bool Scene::updateScreen() {
 
 	if (getWorld()->chapter == kChapter5) {
 		if (_vm->isGameFlagSet(kGameFlag249))
-			error("[Scene::updateScreen] Not implemented!");
-			//drawSceneData;
+			drawChapter5();
 	}
 
 	return false;
@@ -1312,9 +1312,14 @@ void Scene::playIntroSpeech() {
 	}
 
 	getScreen()->clear();
+	getScreen()->setupPaletteAndStartFade(0, 0, 0);
 
-	// TODO do palette fade and wait until sound is done
-	warning("[Scene::playIntroSpeech] Missing palette fade and wait!");
+	do {
+		// Poll events (this ensure we don't freeze the screen)
+		Common::Event ev;
+		_vm->getEventManager()->pollEvent(ev);
+
+	} while (getSound()->isPlaying(resourceId));
 }
 
 void Scene::stopSpeech() {
@@ -1338,6 +1343,11 @@ bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {
 
 bool Scene::rectIntersect(int32 x, int32 y, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3) {
 	return (x >= x3 && y >= y3 && x1 >= x2 && y1 >= y2);
+}
+
+void Scene::adjustCoordinates(Common::Point *point) {
+	point->x = _ws->xLeft + getCursor()->position().x;
+	point->y = _ws->yTop  + getCursor()->position().y;
 }
 
 Actor* Scene::getActor(ActorIndex index) {
@@ -1738,6 +1748,19 @@ void Scene::adjustActorPriority(ActorIndex index) {
 		if (actor->getPriority() < actor0->getPriority())
 			actor0->setPriority(actor->getPriority());
 	}
+}
+
+void Scene::drawChapter5() {
+	if (getSharedData()->getFlag(kFlagSkipDrawScene))
+		return;
+
+	for (uint y = 0; y < 512; y = y + 64) {
+		for (uint x = 0; x < 704; x = x + 64) {
+			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 58), _chapter5FrameIndex, x + (_ws->xLeft % 64) / 8, y + (_ws->yTop % 64) / 8, 0);
+		}
+	}
+
+	_chapter5FrameIndex = (_chapter5FrameIndex + 1) % GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, 58));
 }
 
 //////////////////////////////////////////////////////////////////////////

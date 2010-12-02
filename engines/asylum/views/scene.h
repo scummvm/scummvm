@@ -304,6 +304,12 @@ private:
 	 */
 	void adjustActorPriority(ActorIndex index);
 
+	/**
+	 * Special drawing function for chapter 5.
+	 */
+	void drawChapter5();
+	uint32 _chapter5FrameIndex;
+
 	//////////////////////////////////////////////////////////////////////////
 	// HitTest
 	//////////////////////////////////////////////////////////////////////////
@@ -433,6 +439,13 @@ private:
 	 * @return true if it succeeds, false if it fails.
 	 */
 	bool rectIntersect(int32 x, int32 y, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3);
+
+	/**
+	 * Adjust coordinates.
+	 *
+	 * @param point The point.
+	 */
+	void adjustCoordinates(Common::Point *point);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scene debugging
