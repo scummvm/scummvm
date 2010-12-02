@@ -180,7 +180,7 @@ GraphicQueueItem BlowUpPuzzleVCR::getGraphicJackItem(int32 index) {
 
 	jackItemOnHand.resourceId = getWorld()->graphicResourceIds[index];
 	jackItemOnHand.frameIndex = 0;
-	jackItemOnHand.point = Common::Point(_cursor->position().x - 114, jackY - 14);
+	jackItemOnHand.source = Common::Point(_cursor->position().x - 114, jackY - 14);
 	jackItemOnHand.priority = 1;
 
 	return jackItemOnHand;
@@ -195,7 +195,7 @@ GraphicQueueItem BlowUpPuzzleVCR::getGraphicShadowItem() {
 	}
 	shadowItem.resourceId = getWorld()->graphicResourceIds[30];
 	shadowItem.frameIndex = 0;
-	shadowItem.point = Common::Point(_cursor->position().x - shadowY, 450);
+	shadowItem.source = Common::Point(_cursor->position().x - shadowY, 450);
 	shadowItem.priority = 2;
 
 	return shadowItem;
@@ -208,28 +208,28 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, const VCRDrawInfo &onTable, const VC
 	case kOnTable:
 		item.resourceId = getWorld()->graphicResourceIds[onTable.resourceId];
 		item.frameIndex = 0;
-		item.point = onTable.point;
+		item.source = onTable.point;
 		item.priority = 3;
 		break;
 
 	case kPluggedOnRed:
 		item.resourceId = getWorld()->graphicResourceIds[pluggedOnRed.resourceId];
 		item.frameIndex = 0;
-		item.point = Common::Point(329, 407);
+		item.source = Common::Point(329, 407);
 		item.priority = 3;
 		break;
 
 	case kPluggedOnYellow:
 		item.resourceId = getWorld()->graphicResourceIds[pluggedOnYellow.resourceId];
 		item.frameIndex = 0;
-		item.point = Common::Point(402, 413);
+		item.source = Common::Point(402, 413);
 		item.priority = 3;
 		break;
 
 	case kPluggedOnBlack:
 		item.resourceId = getWorld()->graphicResourceIds[pluggedOnBlack.resourceId];
 		item.frameIndex = 0;
-		item.point = Common::Point(477, 418);
+		item.source = Common::Point(477, 418);
 		item.priority = 3;
 		break;
 
@@ -327,14 +327,14 @@ void BlowUpPuzzleVCR::updateButton(Button button, const VCRDrawInfo &btON, const
 	case kON:
 		item.resourceId = getWorld()->graphicResourceIds[btON.resourceId];
 		item.frameIndex = 0;
-		item.point = btON.point;
+		item.source = btON.point;
 		item.priority = 3;
 		break;
 	case kDownON:
 	case kDownOFF:
 		item.resourceId = getWorld()->graphicResourceIds[btDown.resourceId];
 		item.frameIndex = 0;
-		item.point = btDown.point;
+		item.source = btDown.point;
 		item.priority = 3;
 		break;
 	default:

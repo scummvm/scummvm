@@ -60,7 +60,7 @@ void Text::loadFont(ResourceId resourceId) {
 
 	if (resourceId != kResourceNone) {
 		// load font flag data
-		_curFontFlags = Common::Rational(_fontResource->getFlags(), 16).toInt() & 0x0F;
+		_curFontFlags = Common::Rational(_fontResource->getData().flags, 16).toInt() & 0x0F;
 	}
 }
 
@@ -123,18 +123,13 @@ void Text::drawChar(char character) {
 	if (!_fontResource)
 		error("[Text::drawChar] font resource hasn't been loaded yet!");
 
-	//if (_transTableNum) {
-	//	getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _posX, _posY, 0, _transTableNum);
-	//} else {
-	//	getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _posX, _posY, 0);
-	//}
+	if (_transTableNum) {
+		getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _posX, _posY, 0, _transTableNum);
+	} else {
+		getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _posX, _posY, 0);
+	}
 
 	GraphicFrame *fontLetter = _fontResource->getFrame((uint8)character);
-	getScreen()->copyToBackBufferWithTransparency((byte *)fontLetter->surface.pixels, fontLetter->surface.w, _posX, _posY + fontLetter->y, fontLetter->surface.w, fontLetter->surface.h);
-
-	// TODO remove
-
-
 	_posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 

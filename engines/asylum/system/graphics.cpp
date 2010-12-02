@@ -32,7 +32,7 @@
 
 namespace Asylum {
 
-GraphicResource::GraphicResource(AsylumEngine *engine, ResourceId id) : _vm(engine), _resourceId(kResourceNone), _flags(0), _flags2(0) {
+GraphicResource::GraphicResource(AsylumEngine *engine, ResourceId id) : _vm(engine), _resourceId(kResourceNone) {
 	load(id);
 }
 
@@ -70,23 +70,32 @@ GraphicFrame *GraphicResource::getFrame(uint32 frame) {
 void GraphicResource::init(byte *data, int32 size) {
 	byte   *dataPtr      = data;
 
-	dataPtr += 4; // tag value
+	// Read tag
+	for (uint i = 0; i < sizeof(_data.tag); i++) {
+		_data.tag[i] = *dataPtr;
+		++dataPtr;
+	}
 
-	_flags  = (int32)READ_LE_UINT32(dataPtr);
+	_data.flags  = READ_LE_UINT32(dataPtr);
 	dataPtr += 4;
-	//_flags2 = (int32)READ_LE_UINT32(dataPtr);
 
 	int32 contentOffset = (int32)READ_LE_UINT32(dataPtr);
 	dataPtr += 4;
 
-	dataPtr += 4; // unknown
-	dataPtr += 4; // unknown
-	dataPtr += 4; // unknown
+	_data.field_C  = READ_LE_UINT32(dataPtr);
+	dataPtr += 4;
+
+	_data.field_10  = READ_LE_UINT32(dataPtr);
+	dataPtr += 4;
+
+	_data.field_14  = READ_LE_UINT32(dataPtr);
+	dataPtr += 4;
 
 	uint16 frameCount = READ_LE_UINT16(dataPtr);
 	dataPtr += 2;
 
-	dataPtr += 2; // max width
+	_data.maxWidth = READ_LE_UINT16(dataPtr);
+	dataPtr += 2;
 
 	_frames.resize(frameCount);
 

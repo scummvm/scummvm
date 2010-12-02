@@ -55,6 +55,26 @@ struct GraphicFrame {
 // Graphic resources can be sprites or images, with multiple frames
 class GraphicResource {
 public:
+	struct ResourceData {
+		char tag[4];
+		uint32 flags;
+		// contentOffset
+		uint32 field_C;
+		uint32 field_10;
+		uint32 field_14;
+		// frameCount
+		uint16 maxWidth;
+		// Offsets
+
+		ResourceData() {
+			memset(&tag, 0, sizeof(tag));
+			flags = 0;
+			field_C = 0;
+			field_10 = 0;
+			field_14 = 0;
+			maxWidth = 0;
+		}
+	};
 
 	GraphicResource(AsylumEngine *engine) {}
 	GraphicResource(AsylumEngine *engine, ResourceId id);
@@ -74,10 +94,10 @@ public:
 
 	GraphicFrame *getFrame(uint32 frame);
 	ResourceId    getResourceId() { return _resourceId; }
-	// FIXME: flags are coordinates for the sound origin!
-	int32         getFlags()      { return _flags; }
-	int32         getFlags2()     { return _flags2; }
 	uint32        count()         { return _frames.size(); }
+
+	// FIXME: flags are coordinates for the sound origin!
+	ResourceData  getData()       { return _data; }
 
 	// Helper functions
 	static uint32 getFrameCount(AsylumEngine *engine, ResourceId id);
@@ -86,11 +106,9 @@ public:
 private:
 	AsylumEngine *_vm;
 
-	Common::Array<GraphicFrame> _frames;
-
 	ResourceId _resourceId;
-	int32 _flags;
-	int32 _flags2;
+	ResourceData _data;
+	Common::Array<GraphicFrame> _frames;
 
 	void init(byte *data, int32 size);
 	void clear();
