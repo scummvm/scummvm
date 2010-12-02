@@ -133,6 +133,7 @@ _theoradec=auto
 _fluidsynth=auto
 _16bit=auto
 _opengl=auto
+_opengles=auto
 _readline=auto
 # Default option behaviour yes/no
 _debug_build=auto
@@ -2642,19 +2643,28 @@ define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE'
 #
 # Check for OpenGL (ES)
 #
-echocheck "OpenGL (ES)"
+echocheck "OpenGL"
 if test "$_opengl" = auto ; then
 	_opengl=no
 	if test "$_backend" = "sdl" ; then
 		# Try different header filenames
 		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
 		# 2) OpenGL/gl.h     This is used on Mac OS X
-		for i in "GL/gl.h" "OpenGL/gl.h"; do
+		# 3) GLES/gl.h       This is used for OpenGL ES 1.x
+		for i in "GL/gl.h" "OpenGL/gl.h" "GLES/gl.h"; do
+			# Test the current header for OpenGL
 			cat > $TMPC << EOF
 #include <$i>
 int main(void) { return GL_VERSION_1_1; }
 EOF
 			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && break
+
+			# Test the current header for OpenGL ES
+			cat > $TMPC << EOF
+#include <$i>
+int main(void) { return GL_OES_VERSION_1_1; }
+EOF
+			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
 		done
 	fi
 fi
@@ -2666,21 +2676,37 @@ EOF
 
 	_opengl=no
 	# Try different library names
-	# 1) -framework OpenGL  This is used on Mac OS X
-	# 2) GL                 This is usually used on POSIX systems
-	# 3) opengl32           This is used on Windows
-	#
-	# We try "-framework OpenGL" first here to assure it will always be
-	# picked up by the configure script on Mac OS X, even when a libGL
-	# exists.
-	for lib in "-framework OpenGL" "-lGL" "-lopengl32"; do
-		if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
-			then
-			_opengl=yes
-			OPENGL_LIBS="$OPENGL_LIBS $lib"
-			break
-		fi
-	done
+	if test "$_opengles" = "yes" ; then
+		# 1) GLES_CM    This is usually used for OpenGL ES 1.1 (Common profile)
+		# 2) GLESv1_CM  This is used by the Windows Mali OpenGL ES 1.1 Emulator
+		# 3) glesv1     This is used by the Linux Mali OpenGL ES 1.1 Emulator
+		_opengles=no
+		for lib in "-lGLES_CM" "-lGLESv1_CM" "-lglesv1"; do
+			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
+				then
+				_opengl=yes
+				_opengles=yes
+				OPENGL_LIBS="$OPENGL_LIBS $lib"
+				break
+			fi
+		done
+	else
+		# 1) -framework OpenGL  This is used on Mac OS X
+		# 2) GL                 This is usually used on POSIX systems
+		# 3) opengl32           This is used on Windows
+		#
+		# We try "-framework OpenGL" first here to assure it will always be
+		# picked up by the configure script on Mac OS X, even when a libGL
+		# exists.
+		for lib in "-framework OpenGL" "-lGL" "-lopengl32"; do
+			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
+				then
+				_opengl=yes
+				OPENGL_LIBS="$OPENGL_LIBS $lib"
+				break
+			fi
+		done
+	fi
 	cc_check_clean
 
 	if test "$_opengl" = yes ; then
@@ -2689,9 +2715,14 @@ EOF
 	fi
 fi
 
-echo "$_opengl"
+if test "$_opengles" = "yes" ; then
+	echo "yes (OpenGL ES)"
+else
+	echo "$_opengl"
+fi
 
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
+define_in_config_if_yes "$_opengles" "USE_GLES"
 
 #
 # Check for nasm
