@@ -69,6 +69,11 @@ enum HitType {
 	kHitActor      = 4
 };
 
+enum ActionAreaType {
+	kActionAreaType1 = 1,
+	kActionAreaType2 = 2
+};
+
 class Scene : public EventHandler {
 public:
 	Scene(AsylumEngine *engine);
@@ -150,7 +155,7 @@ public:
 	 *
 	 * @return The found action area.
 	 */
-	int32 findActionArea(const Common::Point pt);
+	int32 findActionArea(ActionAreaType type, const Common::Point pt);
 
 	/**
 	 * Determine if the supplied point is in the action area
@@ -329,9 +334,9 @@ private:
 	 *
 	 * @param [in,out] type The type.
 	 *
-	 * @return
+	 * @return The Index
 	 */
-	ResourceId hitTestScene(HitType &type);
+	int32 hitTestScene(HitType &type);
 
 	/**
 	 * Check if the mouse cursor is currently intersecting an action area

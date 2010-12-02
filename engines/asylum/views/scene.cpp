@@ -968,24 +968,27 @@ void Scene::updateCursor(int direction, Common::Rect rect) {
 //////////////////////////////////////////////////////////////////////////
 int32 Scene::hitTest(HitType &type) {
 	type = kHitNone;
+
 	int32 targetIdx = hitTestObject();
 	if (targetIdx == -1) {
+
 		targetIdx = hitTestActionArea();
 		if (targetIdx == -1) {
-			if (hitTestActor()) {
-				targetIdx = _playerActorIndex;
-				type = kHitActor;
-			}
+
+			targetIdx = hitTestActor();
+			type = kHitActor;
+
 		} else {
 			type = kHitActionArea;
 		}
 	} else {
 		type = kHitObject;
 	}
+
 	return targetIdx;
 }
 
-ResourceId Scene::hitTestScene(HitType &type) {
+int32 Scene::hitTestScene(HitType &type) {
 	if (!_ws)
 		error("[Scene::hitTestScene] WorldStats not initialized properly!");
 
@@ -995,27 +998,60 @@ ResourceId Scene::hitTestScene(HitType &type) {
 	int32 left = pt.y + _ws->yTop;
 	type = kHitNone;
 
-	ResourceId result = (ResourceId)findActionArea(Common::Point(top, left));
-
-	if (result != (ResourceId)-1) {
-		if (LOBYTE(_ws->actions[result]->actionType) & 8) {
+	int32 index = findActionArea(kActionAreaType2, Common::Point(top, left));
+	if (index != -1) {
+		if (_ws->actions[index]->actionType & kActionType8) {
 			type = kHitActionArea;
-			return result;
+			return index;
+		}
+
+		index = -1;
+	}
+
+	// Check objects
+	for (uint i = 0; i < _ws->objects.size(); i++) {
+		Object *object = _ws->objects[i];
+
+		if (object->isOnScreen() && object->actionType & kActionType8) {
+			if (hitTestPixel(object->getResourceId(),
+			                 object->getFrameIndex(),
+							 top - object->x,
+							 left - object->y,
+			                 object->flags & kObjectFlag1000)) {
+				type = kHitObject;
+				return i;
+			}
 		}
 	}
 
-	// TODO object and actor checks
+	// Check actors
+	for (uint i = 0; i < _ws->actors.size(); i++) {
+		Actor *actor = _ws->actors[i];
 
-	return result;
+		if (actor->actionType & kActionType8) {
+			uint32 frameIndex = (actor->getFrameIndex() >= actor->getFrameCount() ? 2 * actor->getFrameCount() - (actor->getFrameIndex() + 1) : actor->getFrameIndex());
+
+			if (hitTestPixel(actor->getResourceId(),
+				             frameIndex,
+				             top - actor->getPoint()->x - actor->getPoint1()->x,
+							 left - actor->getPoint()->y - actor->getPoint1()->y,
+				             actor->getDirection() >= kDirectionSE)) {
+				type = kHitActor;
+				return i;
+			}
+		}
+	}
+
+	return -1;
 }
 
 int32 Scene::hitTestActionArea() {
 	const Common::Point pt = getCursor()->position();
 
-	int32 targetIdx = findActionArea(Common::Point(_ws->xLeft + pt.x, _ws->yTop + pt.y));
+	int32 targetIdx = findActionArea(kActionAreaType2, Common::Point(_ws->xLeft + pt.x, _ws->yTop + pt.y));
 
-	if ( targetIdx == -1 || !(_ws->actions[targetIdx]->actionType & 0x17))
-		targetIdx = -1;
+	if ( targetIdx == -1 || !(_ws->actions[targetIdx]->actionType & (kActionTypeFind | kActionTypeTalk | kActionTypeGrab | kActionType16)))
+		return -1;
 
 	return targetIdx;
 }
@@ -1043,7 +1079,18 @@ bool Scene::hitTestActor() {
 bool Scene::hitTestPlayer() {
 	const Common::Point pt = getCursor()->position();
 
-	error("[Scene::hitTestPlayer] Not implemented!");
+	Actor *player = getActor();
+	Common::Point point;
+
+	player->adjustCoordinates(&point);
+
+	uint32 frameIndex = (player->getFrameIndex() >= player->getFrameCount() ? 2 * player->getFrameCount() - (player->getFrameIndex() + 1) : player->getFrameIndex());
+
+	return hitTestPixel(player->getResourceId(),
+	                    frameIndex,
+	                    pt.x - player->getPoint()->x - point.x,
+	                    pt.y - player->getPoint()->y - point.y,
+	                    player->getDirection() >= kDirectionSE);
 }
 
 int32 Scene::hitTestObject() {
@@ -1052,17 +1099,18 @@ int32 Scene::hitTestObject() {
 
 	const Common::Point pt = getCursor()->position();
 
-	int32 targetIdx = -1;
 	for (uint32 i = 0; i < _ws->objects.size(); i++) {
 		Object *object = _ws->objects[i];
-		if (object->isOnScreen())
-			if (object->getPolygonIndex())
-				if (hitTestPixel(object->getResourceId(), object->getFrameIndex(), pt.x, pt.y, object->flags & 0x1000)) {
-					targetIdx = i;
-					break;
-				}
+		if (object->isOnScreen() && object->actionType)
+			if (hitTestPixel(object->getResourceId(),
+			                 object->getFrameIndex(),
+			                 _ws->xLeft + pt.x - object->x,
+			                 _ws->yTop + pt.y - object->y,
+			                 object->flags & kObjectFlag1000))
+				return i;
 	}
-	return targetIdx;
+
+	return -1;
 }
 
 bool Scene::hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped) {
@@ -1211,7 +1259,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 }
 
 
-int32 Scene::findActionArea(const Common::Point pt) {
+int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt) {
 	if (!_ws)
 		error("[Scene::findActionArea] WorldStats not initialized properly!");
 

@@ -572,6 +572,7 @@ enum ObjectFlag {
 	kObjectFlag20        = 0x20,
 	kObjectFlag40        = 0x40,
 	kObjectFlag80        = 0x80,
+	kObjectFlag1000      = 0x1000,
 	kObjectFlagC000      = 0xC000,
 	kObjectFlag10000     = 0x10000,
 	kObjectFlag10E38     = 0x10E38,
