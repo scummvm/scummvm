@@ -35,8 +35,9 @@ namespace Asylum {
 
 const uint32 CURSOR_UPDATE_TICKS = 100;
 
-Cursor::Cursor(AsylumEngine *engine) : graphicResourceId(kResourceNone), currentFrame(0), frameCount(0), counter(0), flags(0), field_11(0),
-	_vm(engine), _cursorRes(NULL), _cursorTicks(0), _cursor_byte_45756C(0), _state(0) {
+Cursor::Cursor(AsylumEngine *engine) : _vm(engine),
+	graphicResourceId(kResourceNone), currentFrame(0), frameCount(0), counter(0), flags(0),
+	_cursorRes(NULL), _cursorTicks(0), _cursor_byte_45756C(0), _state(0) {
 
 }
 
@@ -102,11 +103,11 @@ void Cursor::setState(const Common::Event &evt) {
 		break;
 
 	case Common::EVENT_LBUTTONDOWN:
-		_state |= kCursorLeft;
+		_state |= kCursorStateLeft;
 		break;
 
 	case Common::EVENT_RBUTTONDOWN:
-		_state |= kCursorRight;
+		_state |= kCursorStateRight;
 		break;
 
 	case Common::EVENT_MBUTTONDOWN:
@@ -114,11 +115,11 @@ void Cursor::setState(const Common::Event &evt) {
 		break;
 
 	case Common::EVENT_LBUTTONUP:
-		_state &= ~kCursorLeft;
+		_state &= ~kCursorStateLeft;
 		break;
 
 	case Common::EVENT_RBUTTONUP:
-		_state &= ~kCursorRight;
+		_state &= ~kCursorStateRight;
 		break;
 
 	case Common::EVENT_MBUTTONUP:

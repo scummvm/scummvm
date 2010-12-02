@@ -37,8 +37,8 @@ class AsylumEngine;
 class GraphicResource;
 
 enum CursorState {
-	kCursorLeft = 1,
-	kCursorRight = 2,
+	kCursorStateLeft = 1,
+	kCursorStateRight = 2,
 	kCursorMiddle = 3
 };
 
@@ -103,15 +103,12 @@ public:
 	// ever seems to be used to reference cursor info, the struct members
 	// may as well be class members in order to simplify the logic a bit
 
-	// typedef struct CursorInfo {
 	ResourceId graphicResourceId;
 	uint32 currentFrame; // assuming field_4c is the current frame pointer
 	                    // since it's generally initialized to zero
 	int32 frameCount;
 	int32 counter; // cursor counter
 	byte  flags;
-	byte  field_11;
-	// } CursorInfo;
 
 private:
 	AsylumEngine *_vm;

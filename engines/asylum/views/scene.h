@@ -254,7 +254,7 @@ private:
 	 * @param direction The direction.
 	 * @param rect 		The rectangle.
 	 */
-	void updateCursor(int direction, Common::Rect rect);
+	void updateCursor(ActorDirection direction, Common::Rect rect);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scene drawing

@@ -41,19 +41,8 @@ WorldStats::WorldStats(AsylumEngine *engine) : _vm(engine) {
 	xLeft = 0;
 	yTop = 0;
 	backgroundImage = kResourceNone;
-	curScrollUp = kResourceNone;
-	curScrollUpLeft = kResourceNone;
-	curScrollLeft = kResourceNone;
-	curScrollDownLeft = kResourceNone;
-	curScrollDown = kResourceNone;
-	curScrollDownRight = kResourceNone;
-	curScrollRight = kResourceNone;
-	curScrollUpRight = kResourceNone;
-	curHand = kResourceNone;
-	curMagnifyingGlass = kResourceNone;
-	curTalkNPC = kResourceNone;
-	curGrabPointer = kResourceNone;
-	curTalkNPC2 = kResourceNone;
+	memset(&cursorResources, kResourceNone, sizeof(cursorResources));
+
 	font1 = kResourceNone;
 	font2 = kResourceNone;
 	font3 = kResourceNone;
@@ -87,6 +76,9 @@ WorldStats::WorldStats(AsylumEngine *engine) : _vm(engine) {
 	musicFlag = 0;
 	musicResourceId = kResourceNone;
 	musicStatusExt = 0;
+	numActionLists = 0;
+	numPolygons = 0;
+	memset(&cursorResourcesAlternate, kResourceNone, sizeof(cursorResourcesAlternate));
 
 	nextPlayer = kActorMax;
 	memset(&field_E8610, 0, sizeof(field_E8610));
@@ -121,19 +113,10 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	// read common graphic resources
 	backgroundImage     = (ResourceId)stream->readSint32LE();
-	curScrollUp         = (ResourceId)stream->readSint32LE();
-	curScrollUpLeft     = (ResourceId)stream->readSint32LE();
-	curScrollLeft       = (ResourceId)stream->readSint32LE();
-	curScrollDownLeft   = (ResourceId)stream->readSint32LE();
-	curScrollDown       = (ResourceId)stream->readSint32LE();
-	curScrollDownRight  = (ResourceId)stream->readSint32LE();
-	curScrollRight      = (ResourceId)stream->readSint32LE();
-	curScrollUpRight    = (ResourceId)stream->readSint32LE();
-	curHand             = (ResourceId)stream->readSint32LE();
-	curMagnifyingGlass  = (ResourceId)stream->readSint32LE();
-	curTalkNPC          = (ResourceId)stream->readSint32LE();
-	curGrabPointer      = (ResourceId)stream->readSint32LE();
-	curTalkNPC2         = (ResourceId)stream->readSint32LE();
+
+	for (uint i = 0; i < ARRAYSIZE(cursorResources); i++)
+		cursorResources[i] = (ResourceId)stream->readSint32LE();
+
 	font1               = (ResourceId)stream->readSint32LE();
 	font2               = (ResourceId)stream->readSint32LE();
 	font3               = (ResourceId)stream->readSint32LE();
@@ -236,14 +219,13 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	stream->seek((ACTORS_MAX_COUNT - numActors) * ACTORDATA_SIZE, SEEK_CUR);
 
 	//////////////////////////////////////////////////////////////////////////
-	// Read number of actionlists and polygons
+	// Read number of scripts and polygons
 	numActionLists = stream->readUint32LE();
 	numPolygons    = stream->readUint32LE();
 
-	// FIXME: Read missing data (64 int32)
-	warning("[WorldStats::load] Missing some data reading!");
-	for (int i = 0; i < 64; i++)
-		stream->readUint32LE();
+	// Load the alternate cursor resources
+	for (uint32 i = 0; i < ARRAYSIZE(cursorResourcesAlternate); i++)
+		cursorResourcesAlternate[i] = (ResourceId)stream->readSint32LE();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Read actions
