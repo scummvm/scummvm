@@ -401,7 +401,8 @@ bool MainMenu::update() {
 	uint32 ticks = _vm->getTick();
 
 	if (!getSharedData()->getFlag(kFlagRedraw)) {
-		// TODO original fills a rectangle with black
+		// The original clears the area where the eyes are
+		//getScreen()->fillRect(260, 229, 119, 16, 0);
 
 		// Draw background
 		getScreen()->draw(kBackground, (_activeScreen == kMenuNone) ? 1 : 0, 0, 0, 0);

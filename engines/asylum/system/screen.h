@@ -38,20 +38,33 @@ class AsylumEngine;
 class GraphicResource;
 class ResourcePack;
 
+struct GraphicFrame;
+
+enum GraphicItemType {
+	kGraphicItemNormal = 1,
+	kGraphicItemMasked = 5
+};
+
 typedef struct GraphicQueueItem {
-	ResourceId resourceId;
-	uint32 frameIndex;
-	Common::Point point;
-	int32 flags;
-	int32 transTableNum;
 	int32 priority;
 
+	GraphicItemType type;
+	ResourceId resourceId;
+	uint32 frameIndex;
+	Common::Point source;
+	ResourceId resourceIdDestination;
+	Common::Point destination;
+	int32 flags;
+	int32 transTableNum;
+
 	GraphicQueueItem() {
+		priority = 0;
+
 		resourceId = kResourceNone;
 		frameIndex = 0;
+		resourceIdDestination = kResourceNone;
 		flags = 0;
 		transTableNum = 0;
-		priority = 0;
 	}
 } GraphicQueueItem;
 
@@ -65,7 +78,12 @@ public:
 	void draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, int32 transTableNum);
 	void draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, ResourceId resourceId2, int32 destX, int32 destY, bool colorKey = true);
 
+	// Misc
 	void clear() const;
+	void drawWideScreenBars(int16 barSize) const;
+	void fillRect(int32 x, int32 y, int32 x2, int32 y2, int32 color);
+	void copyBackBufferToScreen();
+	void setFlag(int32 val) { _flag = (val < -1) ? -1 : val; }
 
 	// Palette
 	void setPalette(byte *rgbPalette) const;
@@ -76,9 +94,6 @@ public:
 	// Gamma
 	void setGammaLevel(ResourceId id, int32 val);
 
-	// Misc
-	void drawWideScreenBars(int16 barSize) const;
-
 	// Transparency tables
 	void setupTransTable(ResourceId resourceId);
 	void setupTransTables(uint32 count, ...);
@@ -87,27 +102,25 @@ public:
 
 	// Graphic queue
 	void addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 flags, int32 transTableNum, int32 priority);
-	void addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 transTableNum);
-	void addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 flags, int32 priority);
+	void addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point source, int32 objectResourceId, Common::Point destination, int32 transTableNum);
+	void addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point destination, int32 flags, int32 priority);
 	void addGraphicToQueue(GraphicQueueItem const &item);
 	void drawGraphicsInQueue();
 	void clearGraphicsInQueue();
-	void graphicsSelectionSort();
-	void swapGraphicItem(int32 item1, int32 item2);
 	void deleteGraphicFromQueue(ResourceId resourceId);
-
-	// TODO Make those private
-	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
-	void copyBackBufferToScreen();
 
 	// Debug
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
 private:
-	Graphics::Surface _backBuffer;
 	AsylumEngine *_vm;
 
+	Graphics::Surface _backBuffer;
+	Common::Rect _clipRect;
 	Common::Array<GraphicQueueItem> _queueItems;
+
+	uint16 _flag;
+	bool _useColorKey;
 
 	// Transparency tables
 	uint32 _transTableCount;
@@ -116,8 +129,21 @@ private:
 	byte *_transTableBuffer;
 	void clearTransTables();
 
-	// Screen copying
+	// Graphic queue
+	void graphicsSelectionSort();
+	void swapGraphicItem(int32 item1, int32 item2);
+
+	// Misc
+	void clip(Common::Rect *source, Common::Rect *destination, int32 flags);
+
+	// Screen blitting
+	void blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags, bool useColorKey);
+	void blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey);
+	void bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, bool useColorKey);
+
+
 	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height);
+	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 };
 
 } // end of namespace Asylum

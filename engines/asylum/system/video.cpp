@@ -213,7 +213,7 @@ void VideoText::loadFont(ResourceId resourceId) {
 
 	if (resourceId != kResourceNone) {
 		// load font flag data
-		_curFontFlags = Common::Rational(_fontResource->getFlags(), 16).toInt() & 0x0F;
+		_curFontFlags = Common::Rational(_fontResource->getData().flags, 16).toInt() & 0x0F;
 	}
 }
 

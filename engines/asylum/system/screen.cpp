@@ -39,8 +39,11 @@
 namespace Asylum {
 
 Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
-	_transTableCount(0), _transTableIndex(NULL), _transTableData(NULL), _transTableBuffer(NULL) {
+	_useColorKey(false), _transTableCount(0), _transTableIndex(NULL), _transTableData(NULL), _transTableBuffer(NULL) {
 	_backBuffer.create(640, 480, 1);
+
+	_flag = 0xFF;
+	//_clipRect = Common::Rect(0, 0, 639, 479);
 }
 
 Screen::~Screen() {
@@ -68,83 +71,121 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, in
 	_transTableIndex = index;
 }
 
-void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, ResourceId resourceId2, int32 destX, int32 destY, bool colorKey) {
-
+void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 sourceX, int32 sourceY, int32 flags, ResourceId resourceIdDestination, int32 destX, int32 destY, bool colorKey) {
 	// Get the frame to draw
 	GraphicResource *resource = new GraphicResource(_vm, resourceId);
 	GraphicFrame *frame = resource->getFrame(frameIndex);
 
-	copyToBackBuffer(((byte *)frame->surface.pixels) - (y * frame->surface.w + x),
-		frame->surface.w,
-		frame->x + x,
-		frame->y + y,
-		frame->getWidth(),
-		frame->getHeight());
+	// Compute coordinates
+	Common::Rect source;
+	Common::Rect destination;
+	destination.left = sourceX + frame->x;
+
+	if (flags & 2) {
+		if (_flag == -1) {
+			if ((resource->getData().flags & 15) >= 2) {
+				destination.left = sourceX + resource->getData().maxWidth - frame->getWidth() - frame->x;
+			}
+		} else {
+			destination.left += 2 * _flag - (frame->getHeight() * 2 - frame->x);
+		}
+	}
+
+	destination.top = sourceY + frame->y;
+	destination.right = destination.left + frame->getWidth();
+	destination.bottom = destination.top + frame->getHeight();
+
+	source.left = 0;
+	source.top = 0;
+	source.right = frame->getWidth();
+	source.bottom = frame->getHeight();
+
+	//clip(&source, &destination, flags);
+
+	bool masked = false;
+	if (resourceIdDestination) {
+		masked = true;
+
+		error("[Screen::draw] Not implemented (masked)!");
+	}
+
+	if (masked) {
+		error("[Screen::draw] Not implemented!");
+
+		return;
+	}
+
+	// Set the color key (always 0 if set)
+	_useColorKey = colorKey;
+
+	blit(frame, &source, &destination, flags, colorKey);
 
 	delete resource;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Misc
+//////////////////////////////////////////////////////////////////////////
+void Screen::clear() const {
+	_vm->_system->fillScreen(0);
+}
+
+void Screen::drawWideScreenBars(int16 barSize) const {
+	if (barSize > 0) {
+		_vm->_system->lockScreen()->fillRect(Common::Rect(0, 0, 640, barSize), 0);
+		_vm->_system->unlockScreen();
+		_vm->_system->lockScreen()->fillRect(Common::Rect(0, 480 - barSize, 640, 480), 0);
+		_vm->_system->unlockScreen();
+	}
+}
+
+void Screen::fillRect(int32 x, int32 y, int32 width, int32 height, int32 color) {
+	_vm->_system->lockScreen()->fillRect(Common::Rect(x, y, x + width, y + height), color);
+	_vm->_system->unlockScreen();
 }
 
 void Screen::copyBackBufferToScreen() {
 	_vm->_system->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
 }
 
-void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height) {
-	byte *dest = (byte *)_backBuffer.pixels;
+void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) {
+	int32 diffLeft = _clipRect.left - destination->left;
 
-	while (height--) {
-		memcpy(dest + y * _backBuffer.pitch + x, buffer, width);
-		dest += 640;
-		buffer += pitch;
+	if (diffLeft > 0) {
+		destination->left = _clipRect.left;
+
+		if (flags & 2)
+			source->right -= diffLeft;
+		else
+			source->left += diffLeft;
+	}
+
+	int32 diffRightTop = destination->right - _clipRect.top - 1;
+	if (diffRightTop > 0) {
+		destination->right -= diffRightTop;
+
+		if (flags & 2)
+			source->left += diffRightTop;
+		else
+			source->right -= diffRightTop;
+	}
+
+	int32 diffRightTop2 = _clipRect.right - destination->top;
+	if (diffRightTop2 > 0) {
+		destination->top = _clipRect.right;
+		source->top += diffRightTop2;
+	}
+
+	int32 diffBottom = destination->bottom - _clipRect.bottom - 1;
+	if (diffBottom > 0) {
+		source->bottom -= diffBottom;
+		destination->bottom -= diffBottom;
 	}
 }
 
-void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) {
-	byte *dest = (byte *)_backBuffer.pixels;
-
-	int32 left = (x < 0) ? -x : 0;
-	int32 top = (y < 0) ? -y : 0;
-	int32 right = (x + width > 640) ? 640 - abs(x) : width;
-	int32 bottom = (y + height > 480) ? 480 - abs(y) : height;
-
-	for (int32 curY = top; curY < bottom; curY++) {
-		for (int32 curX = left; curX < right; curX++) {
-			if (buffer[curX + curY * pitch] != 0 ) {
-				dest[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
-			}
-		}
-	}
-}
-
-void Screen::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
-	Common::Rect screenRect(getWorld()->xLeft, getWorld()->yTop, getWorld()->xLeft + 640, getWorld()->yTop + 480);
-	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
-	animRect.clip(screenRect);
-
-	if (!animRect.isEmpty()) {
-		// Translate anim rectangle
-		animRect.translate(-(int16)getWorld()->xLeft, -(int16)getWorld()->yTop);
-
-		int startX = animRect.right  == 640 ? 0 : surface->w - animRect.width();
-		int startY = animRect.bottom == 480 ? 0 : surface->h - animRect.height();
-
-		if (surface->w > 640)
-			startX = getWorld()->xLeft;
-		if (surface->h > 480)
-			startY = getWorld()->yTop;
-
-		_vm->screen()->copyToBackBufferWithTransparency(
-			((byte*)surface->pixels) +
-			startY * surface->pitch +
-			startX * surface->bytesPerPixel,
-			surface->pitch,
-			animRect.left,
-			animRect.top,
-			animRect.width(),
-			animRect.height());
-	}
-}
-
-
+//////////////////////////////////////////////////////////////////////////
+// Palette
+//////////////////////////////////////////////////////////////////////////
 void Screen::setPalette(ResourceId id) {
 	setPalette(getResource()->get(id)->data + 32);
 }
@@ -167,23 +208,6 @@ void Screen::setPalette(byte *rgbPalette) const {
 	_vm->_system->setPalette(palette, 0, 256);
 }
 
-void Screen::setGammaLevel(ResourceId id, int32 val) {
-	warning("[Screen::setGammaLevel] not implemented");
-}
-
-void Screen::drawWideScreenBars(int16 barSize) const {
-	if (barSize > 0) {
-		_vm->_system->lockScreen()->fillRect(Common::Rect(0, 0, 640, barSize), 0);
-		_vm->_system->unlockScreen();
-		_vm->_system->lockScreen()->fillRect(Common::Rect(0, 480 - barSize, 640, 480), 0);
-		_vm->_system->unlockScreen();
-	}
-}
-
-void Screen::clear() const {
-	_vm->_system->fillScreen(0);
-}
-
 void Screen::paletteFade(uint32 red, int32 milliseconds, int32 param) {
 	warning("[Screen::paletteFade] not implemented");
 }
@@ -192,81 +216,11 @@ void Screen::startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 p
 	warning("[Screen::startPaletteFade] not implemented");
 }
 
-void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 flags, int32 transTableNum, int32 priority) {
-	GraphicQueueItem item;
-	item.resourceId = resourceId;
-	item.point = point;
-	item.frameIndex = frameIndex;
-	item.flags = flags;
-	item.transTableNum = transTableNum;
-	item.priority = priority;
-
-	_queueItems.push_back(item);
-}
-
-void Screen::addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 flags, int32 priority) {
-	error("[Screen::addGraphicToQueueMasked] not implemented");
-}
-
-void Screen::addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 transTableNum) {
-	error("[Screen::addGraphicToQueueCrossfade] not implemented");
-}
-
-void Screen::addGraphicToQueue(GraphicQueueItem const &item) {
-	_queueItems.push_back(item);
-}
-
-void Screen::drawGraphicsInQueue() {
-	// sort by priority first
-	graphicsSelectionSort();
-
-	for (uint32 i = 0; i < _queueItems.size(); i++) {
-		GraphicResource *grRes = new GraphicResource(_vm, _queueItems[i].resourceId);
-		GraphicFrame    *fra   = grRes->getFrame(_queueItems[i].frameIndex);
-
-		copyToBackBufferWithTransparency((byte *)fra->surface.pixels,
-				fra->surface.w,
-				_queueItems[i].point.x - getWorld()->xLeft + fra->x, _queueItems[i].point.y - getWorld()->yTop + fra->y,
-				fra->surface.w,
-				fra->surface.h);
-
-		delete grRes;
-	}
-}
-
-void Screen::clearGraphicsInQueue() {
-	_queueItems.clear();
-}
-
-void Screen::graphicsSelectionSort() {
-	uint32 minIdx;
-
-	for (uint32 i = 0; i < _queueItems.size(); i++) {
-		minIdx = i;
-
-		for (uint32 j = i + 1; j < _queueItems.size(); j++)
-			if (_queueItems[j].priority > _queueItems[i].priority)
-				minIdx = j;
-
-		if (i != minIdx)
-			swapGraphicItem(i, minIdx);
-	}
-}
-
-void Screen::swapGraphicItem(int32 item1, int32 item2) {
-	GraphicQueueItem temp;
-	temp = _queueItems[item1];
-	_queueItems[item1] = _queueItems[item2];
-	_queueItems[item2] = temp;
-}
-
-void Screen::deleteGraphicFromQueue(ResourceId resourceId) {
-	for (uint32 i = 0; i < _queueItems.size(); i++) {
-		if (_queueItems[i].resourceId == resourceId) {
-			_queueItems.remove_at(i);
-			break;
-		}
-	}
+//////////////////////////////////////////////////////////////////////////
+// Gamma
+//////////////////////////////////////////////////////////////////////////
+void Screen::setGammaLevel(ResourceId id, int32 val) {
+	warning("[Screen::setGammaLevel] not implemented");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -324,5 +278,183 @@ void Screen::selectTransTable(uint32 index) {
 	_transTableIndex = &_transTableBuffer[65536 * index];
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Graphic queue
+//////////////////////////////////////////////////////////////////////////
+void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 flags, int32 destX, int32 priority) {
+	GraphicQueueItem item;
+	item.priority = priority;
+
+	item.type = kGraphicItemNormal;
+	item.source = point;
+	item.resourceId = resourceId;
+	item.frameIndex = frameIndex;
+	item.flags = flags;
+	item.destination.x = destX;
+
+	_queueItems.push_back(item);
+}
+
+void Screen::addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point source, int32 resourceIdDestination, Common::Point destination, int32 flags, int32 priority) {
+	GraphicQueueItem item;
+	item.priority = priority;
+
+	item.type = kGraphicItemMasked;
+	item.source = source;
+	item.resourceId = resourceId;
+	item.frameIndex = frameIndex;
+	item.flags = flags;
+	item.resourceIdDestination = resourceIdDestination;
+	item.destination = destination;
+
+	_queueItems.push_back(item);
+}
+
+void Screen::addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 transTableNum) {
+	error("[Screen::addGraphicToQueueCrossfade] not implemented");
+}
+
+void Screen::addGraphicToQueue(GraphicQueueItem const &item) {
+	_queueItems.push_back(item);
+}
+
+void Screen::drawGraphicsInQueue() {
+	// sort by priority first
+	graphicsSelectionSort();
+
+	for (Common::Array<GraphicQueueItem>::const_iterator i = _queueItems.begin(); i != _queueItems.end(); i++) {
+		const GraphicQueueItem *item = i;
+
+		if (item->type == kGraphicItemNormal) {
+			if (item->transTableNum <= 0 || Config.performance <= 1)
+				draw(item->resourceId, item->frameIndex, item->source.x, item->source.y, item->flags);
+			else
+				draw(item->resourceId, item->frameIndex, item->source.x, item->source.y, item->flags, item->transTableNum - 1);
+		} else if (item->type == kGraphicItemMasked) {
+			draw(item->resourceId, item->frameIndex, item->source.x, item->source.y,  item->flags, item->resourceIdDestination, item->destination.x, item->destination.y);
+		}
+	}
+}
+
+void Screen::clearGraphicsInQueue() {
+	_queueItems.clear();
+}
+
+void Screen::graphicsSelectionSort() {
+	uint32 minIdx;
+
+	for (uint32 i = 0; i < _queueItems.size(); i++) {
+		minIdx = i;
+
+		for (uint32 j = i + 1; j < _queueItems.size(); j++)
+			if (_queueItems[j].priority > _queueItems[i].priority)
+				minIdx = j;
+
+		if (i != minIdx)
+			swapGraphicItem(i, minIdx);
+	}
+}
+
+void Screen::swapGraphicItem(int32 item1, int32 item2) {
+	GraphicQueueItem temp;
+	temp = _queueItems[item1];
+	_queueItems[item1] = _queueItems[item2];
+	_queueItems[item2] = temp;
+}
+
+void Screen::deleteGraphicFromQueue(ResourceId resourceId) {
+	for (uint32 i = 0; i < _queueItems.size(); i++) {
+		if (_queueItems[i].resourceId == resourceId) {
+			_queueItems.remove_at(i);
+			break;
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Graphic Data
+//////////////////////////////////////////////////////////////////////////
+void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags, bool useColorKey) {
+
+	if (flags & 0x8000000) {
+		error("[Screen::blit] not implemented");
+	} else if (flags) {
+		blt(destination, frame, source, flags, useColorKey);
+	} else {
+		bltFast(destination->left, destination->top, frame, source, useColorKey);
+	}
+}
+
+void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey) {
+	if (useColorKey) {
+		copyToBackBufferWithTransparency((byte *)frame->surface.pixels, frame->surface.pitch, dest->left, dest->top, frame->surface.w, frame->surface.h);
+	} else {
+		copyToBackBuffer((byte *)frame->surface.pixels, frame->surface.pitch, dest->left, dest->top, frame->surface.w, frame->surface.h);
+	}
+}
+
+void Screen::bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, bool useColorKey) {
+	if (useColorKey) {
+		copyToBackBufferWithTransparency((byte *)frame->surface.pixels, frame->surface.pitch, dX, dY, frame->surface.w, frame->surface.h);
+	} else {
+		copyToBackBuffer((byte *)frame->surface.pixels, frame->surface.pitch, dX, dY, frame->surface.w, frame->surface.h);
+	}
+}
+
+void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height) {
+	byte *dest = (byte *)_backBuffer.pixels;
+
+	while (height--) {
+		memcpy(dest + y * _backBuffer.pitch + x, buffer, width);
+		dest += 640;
+		buffer += pitch;
+	}
+}
+
+void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) {
+	byte *dest = (byte *)_backBuffer.pixels;
+
+	int32 left = (x < 0) ? -x : 0;
+	int32 top = (y < 0) ? -y : 0;
+	int32 right = (x + width > 640) ? 640 - abs(x) : width;
+	int32 bottom = (y + height > 480) ? 480 - abs(y) : height;
+
+	for (int32 curY = top; curY < bottom; curY++) {
+		for (int32 curX = left; curX < right; curX++) {
+			if (buffer[curX + curY * pitch] != 0 ) {
+				dest[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
+			}
+		}
+	}
+}
+
+void Screen::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
+	Common::Rect screenRect(getWorld()->xLeft, getWorld()->yTop, getWorld()->xLeft + 640, getWorld()->yTop + 480);
+	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
+	animRect.clip(screenRect);
+
+	if (!animRect.isEmpty()) {
+		// Translate anim rectangle
+		animRect.translate(-(int16)getWorld()->xLeft, -(int16)getWorld()->yTop);
+
+		int startX = animRect.right  == 640 ? 0 : surface->w - animRect.width();
+		int startY = animRect.bottom == 480 ? 0 : surface->h - animRect.height();
+
+		if (surface->w > 640)
+			startX = getWorld()->xLeft;
+		if (surface->h > 480)
+			startY = getWorld()->yTop;
+
+		_vm->screen()->copyToBackBufferWithTransparency(
+			((byte*)surface->pixels) +
+			startY * surface->pitch +
+			startX * surface->bytesPerPixel,
+			surface->pitch,
+			animRect.left,
+			animRect.top,
+			animRect.width(),
+			animRect.height());
+	}
+}
 
 } // end of namespace Asylum
