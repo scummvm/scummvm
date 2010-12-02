@@ -62,7 +62,7 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 
 	// Initialize data
 	_packId = kResourcePackInvalid;
-	_playerActorIdx = 0;
+	_playerActorIndex = 0;
 	_walking = false;
 
 	g_debugPolygons  = 0;
@@ -92,7 +92,7 @@ void Scene::enter(ResourcePackId packId) {
 
 	getCursor()->hide();
 
-	_playerActorIdx = 0;
+	_playerActorIndex = 0;
 
 	// Load the scene data
 	load(packId);
@@ -246,7 +246,7 @@ Actor* Scene::getActor(ActorIndex index) {
 	if (!_ws)
 		error("[Scene::getActor] WorldStats not initialized properly!");
 
-	ActorIndex computedIndex =  (index != -1) ? index : _playerActorIdx;
+	ActorIndex computedIndex =  (index != -1) ? index : _playerActorIndex;
 
 	if (computedIndex < 0 || computedIndex >= (int16)_ws->actors.size())
 		error("[Scene::getActor] Invalid actor index: %d ([0-%d] allowed)", computedIndex, _ws->actors.size() - 1);
@@ -295,6 +295,7 @@ bool Scene::handleEvent(const AsylumEvent &evt) {
 		return init();
 
 	case EVENT_ASYLUM_ACTIVATE:
+	case Common::EVENT_RBUTTONUP:
 		activate();
 		break;
 
@@ -306,11 +307,8 @@ bool Scene::handleEvent(const AsylumEvent &evt) {
 
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_MBUTTONDOWN:
 		return clickDown(evt);
-
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONUP:
-		return clickUp(evt);
 	}
 
 	return false;
@@ -398,18 +396,87 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 	_vm->lastScreenUpdate = 0;
 
 	if (getSharedData()->getFlag(kFlag2)) {
-		error("[Scene::clickDown] Not implemented!");
+		stopSpeech();
 
 		return true;
 	}
 
-	error("[Scene::clickDown] Not implemented!");
-}
+	Actor *player = getActor();
+	switch (evt.type) {
+	default:
+		break;
 
-bool Scene::clickUp(const AsylumEvent &evt) {
-	_vm->lastScreenUpdate = _vm->screenUpdateCount;
+	case Common::EVENT_RBUTTONDOWN:
+		if (getSpeech()->getSoundResourceId())
+			stopSpeech();
 
-	error("[Scene::clickRightUp] Not implemented!");
+		if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
+			player->updateStatus(kActorStatusEnabled);
+			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
+		} else if (player->getStatus() != kActorStatusDisabled) {
+			player->updateStatus(kActorStatus1);
+		}
+		break;
+
+	case Common::EVENT_MBUTTONDOWN:
+		if (player->getStatus() != kActorStatusDisabled) {
+			if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10)
+				player->updateStatus(kActorStatusEnabled);
+			else
+				player->updateStatus(kActorStatus6);
+		}
+		break;
+
+	case Common::EVENT_LBUTTONDOWN:
+		if (getCursor()->getState() & kCursorRight)
+			break;
+
+		if (getSpeech()->getSoundResourceId())
+			stopSpeech();
+
+		if (player->getStatus() == kActorStatusDisabled)
+			break;
+
+		if (player->getField638()) {
+			if (hitTestPlayer()) {
+				player->setField638(0);
+				return true;
+			}
+
+			HitType type = kHitNone;
+			int32 res = hitTestScene(type);
+
+			if (res == -1)
+				getSpeech()->playIndexed(2);
+			else
+				handleHit(res, type);
+
+			return true;
+		}
+
+		if (!hitTestPlayer() || player->getStatus() >= kActorStatus11 || !player->getReaction(0)) {
+			if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
+				playerReaction();
+			} else {
+				HitType type = kHitNone;
+				int32 res = hitTest(type);
+				if (res != -1)
+					handleHit(res, type);
+			}
+			return true;
+		}
+
+		if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
+			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
+			player->updateStatus(kActorStatusEnabled);
+		} else {
+			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 2));
+			player->updateStatus(kActorStatus6);
+		}
+		break;
+	}
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -514,7 +581,7 @@ void Scene::updateMouse() {
 	pt.x = (int16)(act->getPoint1()->x -_ws->xLeft);
 	pt.y = (int16)(act->getPoint1()->y -_ws->yTop);
 
-	if (_packId != 2 || _playerActorIdx != 10) {
+	if (_packId != 2 || _playerActorIndex != 10) {
 		actorPos.left   = pt.x + 20;
 		actorPos.top    = pt.y;
 		actorPos.right  = (int16)(pt.x + 2 * act->getPoint2()->x);
@@ -681,7 +748,7 @@ void Scene::updateCursor(int direction, Common::Rect rect) {
 		if (act->getField638()) {
 			if (getCursor()->position().x >= rect.left && getCursor()->position().x <= rlimit &&
 				getCursor()->position().y >= rect.top  && getCursor()->position().y <= rect.bottom &&
-				hitTestActor(getCursor()->position())) {
+				hitTestActor()) {
 				// TODO LOTS of work here, because apparently we need to use
 				// field_638 as an index into _ws->field_D6AC8, which is not
 				// yet defined as part of worldstats, but according to IDA, is:
@@ -692,7 +759,7 @@ void Scene::updateCursor(int direction, Common::Rect rect) {
 			} else {
 				// TODO pass a reference to hitType so it can be populated by
 				// hitTestScene
-				newGraphicResourceId = hitTestScene(getCursor()->position(), type);
+				newGraphicResourceId = hitTestScene(type);
 				if (newGraphicResourceId != (ResourceId)-1) {
 					warning ("Can't set mouse cursor, field_D6AC8 not handled ... yet");
 					// TODO
@@ -705,19 +772,19 @@ void Scene::updateCursor(int direction, Common::Rect rect) {
 			}
 			return; // return result;
 		}
-		int32 targetIdx = hitTest(getCursor()->position(), type);
+		int32 targetIdx = hitTest(type);
 
 		//printf ("Mouse X(%d)/Y(%d) = %d\n", getCursor()->position().x, getCursor()->position().y, type);
 		if (getCursor()->position().x >= rect.left && getCursor()->position().x <= rlimit &&
 			getCursor()->position().y >= rect.top  && getCursor()->position().y <= rect.bottom &&
-			hitTestActor(getCursor()->position())) {
+			hitTestActor()) {
 			if (act->getReaction(0)) {
 				getCursor()->set(_ws->curGrabPointer, 0, 2);
 				return;
 			}
 		}
 		if (targetIdx == -1) {
-			if (_ws->chapter != kChapter2 || _playerActorIdx != 10) {
+			if (_ws->chapter != kChapter2 || _playerActorIndex != 10) {
 				if (getCursor()->flags)
 					getCursor()->set(_ws->curMagnifyingGlass, 0, 2);
 			} else {
@@ -753,7 +820,7 @@ void Scene::updateCursor(int direction, Common::Rect rect) {
 						if (targetUpdateType & 0x10 && getCursor()->flags != 2) {
 							getCursor()->set(_ws->curTalkNPC2, 0, 2);
 						} else {
-							if (_ws->chapter != kChapter2 && _playerActorIdx != 10) {
+							if (_ws->chapter != kChapter2 && _playerActorIndex != 10) {
 								getCursor()->set(_ws->curMagnifyingGlass, 0, 0);
 							} else {
 								if (getCursor()->flags)
@@ -769,9 +836,11 @@ void Scene::updateCursor(int direction, Common::Rect rect) {
 
 }
 
-int32 Scene::hitTestObject(const Common::Point pt) {
+int32 Scene::hitTestObject() {
 	if (!_ws)
 		error("[Scene::hitTestObject] WorldStats not initialized properly!");
+
+	const Common::Point pt = getCursor()->position();
 
 	int32 targetIdx = -1;
 	for (uint32 i = 0; i < _ws->objects.size(); i++) {
@@ -786,14 +855,14 @@ int32 Scene::hitTestObject(const Common::Point pt) {
 	return targetIdx;
 }
 
-int32 Scene::hitTest(const Common::Point pt, HitType &type) {
+int32 Scene::hitTest(HitType &type) {
 	type = kHitNone;
-	int32 targetIdx = hitTestObject(pt);
+	int32 targetIdx = hitTestObject();
 	if (targetIdx == -1) {
-		targetIdx = hitTestActionArea(pt);
+		targetIdx = hitTestActionArea();
 		if (targetIdx == -1) {
-			if (hitTestActor(pt)) {
-				targetIdx = _playerActorIdx;
+			if (hitTestActor()) {
+				targetIdx = _playerActorIndex;
 				type = kHitActor;
 			}
 		} else {
@@ -805,7 +874,17 @@ int32 Scene::hitTest(const Common::Point pt, HitType &type) {
 	return targetIdx;
 }
 
-int32 Scene::hitTestActionArea(const Common::Point pt) {
+void Scene::handleHit(int32 index, HitType type) {
+	error("[Scene::handleHit] Not implemented!");
+}
+
+void Scene::playerReaction() {
+	error("[Scene::playerReaction] Not implemented!");
+}
+
+int32 Scene::hitTestActionArea() {
+	const Common::Point pt = getCursor()->position();
+
 	int32 targetIdx = findActionArea(Common::Point(_ws->xLeft + pt.x, _ws->yTop + pt.y));
 
 	if ( targetIdx == -1 || !(_ws->actions[targetIdx]->actionType & 0x17))
@@ -841,9 +920,11 @@ bool Scene::isInActionArea(const Common::Point &pt, ActionArea *area) {
 	error("[Scene::isInActionArea] Not implemented!");
 }
 
-ResourceId Scene::hitTestScene(const Common::Point pt, HitType &type) {
+ResourceId Scene::hitTestScene(HitType &type) {
 	if (!_ws)
 		error("[Scene::hitTestScene] WorldStats not initialized properly!");
+
+	const Common::Point pt = getCursor()->position();
 
 	int32 top  = pt.x + _ws->xLeft;
 	int32 left = pt.y + _ws->yTop;
@@ -863,7 +944,9 @@ ResourceId Scene::hitTestScene(const Common::Point pt, HitType &type) {
 	return result;
 }
 
-bool Scene::hitTestActor(const Common::Point pt) {
+bool Scene::hitTestActor() {
+	const Common::Point pt = getCursor()->position();
+
 	Actor *act = getActor();
 	Common::Point actPos;
 	act->adjustCoordinates(&actPos);
@@ -879,6 +962,12 @@ bool Scene::hitTestActor(const Common::Point pt) {
 		pt.x - act->getPoint()->x - actPos.x,
 		pt.y - act->getPoint()->y - actPos.y,
 		(act->getDirection() >= 0));
+}
+
+bool Scene::hitTestPlayer() {
+	const Common::Point pt = getCursor()->position();
+
+	error("[Scene::hitTestPlayer] Not implemented!");
 }
 
 bool Scene::hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped) {
@@ -1030,6 +1119,15 @@ void Scene::playIntroSpeech() {
 
 	// TODO do palette fade and wait until sound is done
 	warning("[Scene::playIntroSpeech] Missing palette fade and wait!");
+}
+
+void Scene::stopSpeech() {
+	if (_vm->isGameFlagSet(kGameFlag219)) {
+		if (getSpeech()->getSoundResourceId() != kResourceNone && getSound()->isPlaying(getSpeech()->getSoundResourceId()))
+			getSound()->stopAll(getSpeech()->getSoundResourceId());
+		else if (getSpeech()->getTick())
+			getSpeech()->setTick(_vm->getTick());
+	}
 }
 
 void Scene::updateCoordinates() {

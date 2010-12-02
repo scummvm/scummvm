@@ -100,14 +100,14 @@ public:
 	/**
 	 * Return the index of the player actor
 	 */
-	ActorIndex getPlayerIndex() { return _playerActorIdx; }
+	ActorIndex getPlayerIndex() { return _playerActorIndex; }
 
 	/**
 	 * Sets the player actor index.
 	 *
 	 * @param index index of the player actor
 	 */
-	void setPlayerActorIndex(ActorIndex index) { _playerActorIdx = index; }
+	void setPlayerActorIndex(ActorIndex index) { _playerActorIndex = index; }
 
 	/**
 	 * Gets the current scene pack identifier.
@@ -168,44 +168,11 @@ public:
 	Speech      *speech()     { return _speech; }
 	WorldStats  *worldstats() { return _ws; }
 
-protected:
-	/** .text:0040EA50
-	 * Run various hit tests and return the index,
-	 * and a reference to the located type
-	 */
-	int32 hitTest(const Common::Point pt, HitType &type);
-	/** .text:0040F010
-	 * TODO
-	 */
-	int32 hitTestActionArea(const Common::Point pt);
-	/** .text:0040E7F0
-	 * Check if the mouse cursor is currently intersecting
-	 * the currently active actor
-	 */
-	bool hitTestActor(const Common::Point pt);
-	/** .text:004341E0
-	 * Check if the mouse cursor is currently intersecting
-	 * a graphic resource at the supplied coordinates
-	 */
-	bool hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped);
-	/** .text:0040E8A0
-	 * Checks if the supplied coordinates are inside an action area, object or
-	 * actor, and returns -1 if nothing was found, or the type of hit if found
-	 */
-	ResourceId hitTestScene(const Common::Point pt, HitType &type);
-
-	/** .text:0040EAA0
-	 * Check if a object exist at the supplied coordinates.
-	 * If so, return it's index within the objects array, if not,
-	 * return -1
-	 */
-	int32 hitTestObject(const Common::Point pt);
-
 private:
 	AsylumEngine  *_vm;
 
 	ResourcePackId _packId;
-	int32 _playerActorIdx;
+	int32 _playerActorIndex;
 	bool  _walking;
 
 
@@ -231,7 +198,6 @@ private:
 	bool update();
 	bool key(const AsylumEvent &evt);
 	bool clickDown(const AsylumEvent &evt);
-	bool clickUp(const AsylumEvent &evt);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scene update
@@ -310,10 +276,59 @@ private:
 	void adjustActorPriority(ActorIndex index);
 
 	//////////////////////////////////////////////////////////////////////////
+	// HitTest
+	//////////////////////////////////////////////////////////////////////////
+
+	/** .text:0040EA50
+	 * Run various hit tests and return the index,
+	 * and a reference to the located type
+	 */
+	int32 hitTest(HitType &type);
+
+	/** .text:0040F010
+	 * TODO
+	 */
+	int32 hitTestActionArea();
+
+	/** .text:0040E7F0
+	 * Check if the mouse cursor is currently intersecting
+	 * the currently active actor
+	 */
+	bool hitTestActor();
+
+	/**
+	 * Check if the mouse cursor is currently intersecting the player
+	 */
+	bool hitTestPlayer();
+
+	/** .text:004341E0
+	 * Check if the mouse cursor is currently intersecting
+	 * a graphic resource at the supplied coordinates
+	 */
+	bool hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped);
+
+	/** .text:0040E8A0
+	 * Checks if the supplied coordinates are inside an action area, object or
+	 * actor, and returns -1 if nothing was found, or the type of hit if found
+	 */
+	ResourceId hitTestScene(HitType &type);
+
+	/** .text:0040EAA0
+	 * Check if a object exist at the supplied coordinates.
+	 * If so, return it's index within the objects array, if not,
+	 * return -1
+	 */
+	int32 hitTestObject();
+
+	void handleHit(int32 index, HitType type);
+
+	void playerReaction();
+
+	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
 	void playIntroSpeech();
-
+	void stopSpeech();
 	bool pointIntersectsRect(Common::Point point, Common::Rect rect);
 
 	//////////////////////////////////////////////////////////////////////////
