@@ -35,6 +35,7 @@
 #include "asylum/views/scene.h"
 
 #include "asylum/asylum.h"
+#include "asylum/respack.h"
 
 namespace Asylum {
 
@@ -366,20 +367,18 @@ void Object::playSounds() {
 		soundX = _soundX;
 		soundY = _soundY;
 	} else {
-		GraphicResource *resource = new GraphicResource(_vm, _resourceId);
-
 		if (LOBYTE(flags) & kObjectFlag4) {
-			soundX = x + Common::Rational(resource->getFlags(), 2).toInt();
-			soundY = y + Common::Rational(resource->getFlags2(), 2).toInt();
+			// Get object resource
+			ResourceEntry *resource = getResource()->get(_resourceId);
+
+			soundX = x + Common::Rational(resource->getData(1), 2).toInt();
+			soundY = y + Common::Rational(resource->getData(0), 2).toInt();
 		} else {
-			// TODO _frameIndex here seems to be == _frameCount so something wrong somewhere!
-			/*GraphicFrame *frame = resource->getFrame(_frameIndex);
+			Common::Rect rect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
 
-			soundX = x + (frame->getWidth() >> 1);
-			soundY = x + (frame->getHeight() >> 1);*/
+			soundX = x + (rect.width() * 2);
+			soundY = x + (rect.height() * 2);
 		}
-
-		delete resource;
 	}
 
 	for (int i = 0; i < ARRAYSIZE(_soundItems); i++) {
