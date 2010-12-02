@@ -308,7 +308,7 @@ bool Encounter::init() {
 	}
 
 	_data_455BD0 = 0;
-	getCursor()->set(getWorld()->cursorResources[kCursorResourceTalkNPC], -1, 2);
+	getCursor()->set(getWorld()->cursorResources[kCursorResourceTalkNPC], -1, kCursorAnimationMirror);
 
 	if (!getSharedData()->getMatteBarHeight())
 		initScript(_item->scriptResourceId);

@@ -68,7 +68,7 @@ void BlowUpPuzzleVCR::open() {
 	getScreen()->draw(getWorld()->graphicResourceIds[0], 0, 0, 0, 0);
 
 	// Set mouse cursor
-	_cursor->set(getWorld()->graphicResourceIds[28], 0, 2);
+	_cursor->set(getWorld()->graphicResourceIds[28]);
 	_cursor->show();
 
 	_leftClickUp    = false;
@@ -422,13 +422,13 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
 			 || (inPolyRegion(_cursor->position().x, _cursor->position().y, kBlackHole) && _holesState[kPluggedOnYellow])) {
 				if (_cursor->currentFrame != 2) { // reset cursor
 					_cursor->show();
-					_cursor->set(MAKE_RESOURCE(kResourcePackShared, 2), 0, 2);
+					_cursor->set(MAKE_RESOURCE(kResourcePackShared, 2));
 					_cursor->animate();
 				}
 			} else {
 				if (_cursor->currentFrame != 0) { // reset cursor
 					_cursor->show();
-					_cursor->set(MAKE_RESOURCE(kResourcePackShared, 0), 0, 2);
+					_cursor->set(MAKE_RESOURCE(kResourcePackShared, 0));
 					_cursor->animate();
 				}
 			}
