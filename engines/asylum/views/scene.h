@@ -343,9 +343,9 @@ private:
 	/**
 	 * Check if the mouse cursor is currently intersecting the currently active actor.
 	 *
-	 * @return true if it succeeds, false if it fails.
+	 * @return The actor index
 	 */
-	bool hitTestActor();
+	ActorIndex hitTestActor();
 
 	/**
 	 * Check if the mouse cursor is currently intersecting the player.
