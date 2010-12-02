@@ -32,12 +32,10 @@
 #undef ARRAYSIZE
 #endif
 
-#if defined(USE_GLES)
-#include <GLES/gl.h>
-#endif
-
 #if defined(SDL_BACKEND)
 #include <SDL_opengl.h>
+#elif defined(USE_GLES)
+#include <GLES/gl.h>
 #else
 #include <GL/gl.h>
 #endif
