@@ -43,7 +43,7 @@ Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
 	_backBuffer.create(640, 480, 1);
 
 	_flag = 0xFF;
-	//_clipRect = Common::Rect(0, 0, 639, 479);
+	_clipRect = Common::Rect(0, 0, 639, 479);
 }
 
 Screen::~Screen() {
@@ -100,7 +100,7 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 sourceX, int32
 	source.right = frame->getWidth();
 	source.bottom = frame->getHeight();
 
-	//clip(&source, &destination, flags);
+	clip(&source, &destination, flags);
 
 	bool masked = false;
 	if (resourceIdDestination) {
@@ -160,20 +160,20 @@ void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) 
 			source->left += diffLeft;
 	}
 
-	int32 diffRightTop = destination->right - _clipRect.top - 1;
-	if (diffRightTop > 0) {
-		destination->right -= diffRightTop;
+	int32 diffRight = destination->right - _clipRect.right - 1;
+	if (diffRight > 0) {
+		destination->right -= diffRight;
 
 		if (flags & 2)
-			source->left += diffRightTop;
+			source->left += diffRight;
 		else
-			source->right -= diffRightTop;
+			source->right -= diffRight;
 	}
 
-	int32 diffRightTop2 = _clipRect.right - destination->top;
-	if (diffRightTop2 > 0) {
-		destination->top = _clipRect.right;
-		source->top += diffRightTop2;
+	int32 diffTop = _clipRect.top - destination->top;
+	if (diffTop > 0) {
+		destination->top = _clipRect.top;
+		source->top += diffTop;
 	}
 
 	int32 diffBottom = destination->bottom - _clipRect.bottom - 1;
@@ -281,7 +281,7 @@ void Screen::selectTransTable(uint32 index) {
 //////////////////////////////////////////////////////////////////////////
 // Graphic queue
 //////////////////////////////////////////////////////////////////////////
-void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 flags, int32 destX, int32 priority) {
+void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 flags, int32 transTableNum, int32 priority) {
 	GraphicQueueItem item;
 	item.priority = priority;
 
@@ -290,7 +290,7 @@ void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common:
 	item.resourceId = resourceId;
 	item.frameIndex = frameIndex;
 	item.flags = flags;
-	item.destination.x = destX;
+	item.transTableNum = transTableNum;
 
 	_queueItems.push_back(item);
 }
@@ -386,18 +386,39 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 }
 
 void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey) {
+	// TODO adjust destination rect
 	if (useColorKey) {
-		copyToBackBufferWithTransparency((byte *)frame->surface.pixels, frame->surface.pitch, dest->left, dest->top, frame->surface.w, frame->surface.h);
+		copyToBackBufferWithTransparency((byte *)frame->surface.pixels - (source->top * frame->surface.w + source->left),
+		                                 frame->surface.w,
+		                                 dest->left,
+		                                 dest->top,
+		                                 source->width(),
+		                                 source->height());
 	} else {
-		copyToBackBuffer((byte *)frame->surface.pixels, frame->surface.pitch, dest->left, dest->top, frame->surface.w, frame->surface.h);
+		copyToBackBuffer((byte *)frame->surface.pixels - (source->top * frame->surface.w + source->left),
+		                 frame->surface.w,
+		                 dest->left,
+		                 dest->top,
+						 source->width(),
+						 source->height());
 	}
 }
 
 void Screen::bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, bool useColorKey) {
 	if (useColorKey) {
-		copyToBackBufferWithTransparency((byte *)frame->surface.pixels, frame->surface.pitch, dX, dY, frame->surface.w, frame->surface.h);
+		copyToBackBufferWithTransparency((byte *)frame->surface.pixels - (source->top * frame->surface.w + source->left),
+		                                 frame->surface.w,
+		                                 dX,
+		                                 dY,
+		                                 source->width(),
+		                                 source->height());
 	} else {
-		copyToBackBuffer((byte *)frame->surface.pixels, frame->surface.pitch, dX, dY, frame->surface.w, frame->surface.h);
+		copyToBackBuffer((byte *)frame->surface.pixels - (source->top * frame->surface.w + source->left),
+		                 frame->surface.w,
+		                 dX,
+		                 dY,
+		                 source->width(),
+		                 source->height());
 	}
 }
 
