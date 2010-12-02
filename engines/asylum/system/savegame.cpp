@@ -30,6 +30,7 @@
 namespace Asylum {
 
 Savegame::Savegame(AsylumEngine *engine) : _vm(engine) {
+	memset(&_moviesViewed, 0, sizeof(_moviesViewed));
 }
 
 Savegame::~Savegame() {
@@ -68,6 +69,33 @@ bool Savegame::quickSave() {
 	warning("[Savegame::quickSave] Not implemented!");
 
 	return false;
+}
+
+void Savegame::setMovieViewed(uint32 index) {
+	if (index >= ARRAYSIZE(_moviesViewed))
+		error("[Savegame::setMovieViewed] Invalid movie index!");
+
+	if (!_moviesViewed[index]) {
+		_moviesViewed[index] = 1;
+
+		// TODO Save to disk
+		warning("[Savegame::setMovieViewed] Not implemented!");
+	}
+}
+
+uint32 Savegame::getMoviesViewed(byte *movieList) {
+	memset(movieList, -1, 196);
+
+	uint32 count = 0;
+
+	for (uint32 i = 0; i < ARRAYSIZE(_moviesViewed); i++) {
+		if (_moviesViewed[i]) {
+			movieList[i] = i;
+			++count;
+		}
+	}
+
+	return count;
 }
 
 void Savegame::loadViewedMovies() {

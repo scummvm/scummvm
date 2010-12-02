@@ -68,6 +68,10 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_creditsFrameIndex = 0;
 	_needEyeCursorInit = false;
 
+	// Movies
+	_movieCount = 0;
+	memset(&_movieList, 0 , sizeof(_movieList));
+
 	memset(&_iconFrames, 0, sizeof(_iconFrames));
 }
 
@@ -173,10 +177,6 @@ void MainMenu::closeCredits() {
 	}
 
 	leave();
-}
-
-void MainMenu::listMovies() {
-	warning("[MainMenu::listMovies] Not implemented!");
 }
 
 MainMenu::MenuScreen MainMenu::findMousePosition() {
@@ -667,7 +667,7 @@ bool MainMenu::click(const AsylumEvent &evt) {
 		_dword_455C78 = false;
 		_dword_456288 = 0;
 		_textScroll = 0;
-		listMovies();
+		_movieCount = getSaveLoad()->getMoviesViewed((byte *)&_movieList);
 		break;
 
 	case kMenuKeyboardConfig:

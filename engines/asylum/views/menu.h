@@ -110,6 +110,10 @@ private:
 	bool             _needEyeCursorInit;
 	uint32           _iconFrames[12];
 
+	// Movies
+	byte _movieList[196];
+	uint32 _movieCount;
+
 	/**
 	 * Setups menu screen
 	 */
@@ -131,11 +135,6 @@ private:
 	 * Close the credits.
 	 */
 	void closeCredits();
-
-	/**
-	 * List viewed movies
-	 */
-	void listMovies();
 
 	/**
 	 * Sets up the music.
@@ -172,7 +171,7 @@ private:
 	void adjustTestVolume();
 
 	/**
-	 * Adjust performance. 
+	 * Adjust performance.
 	 */
 	void adjustPerformance();
 
