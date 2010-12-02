@@ -27,6 +27,7 @@
 
 #include "asylum/system/config.h"
 #include "asylum/system/graphics.h"
+#include "asylum/system/savegame.h"
 #include "asylum/system/text.h"
 
 #include "asylum/asylum.h"
@@ -35,7 +36,7 @@
 
 namespace Asylum {
 
-Video::Video(AsylumEngine *engine, Audio::Mixer *mixer): _skipVideo(false) {
+Video::Video(AsylumEngine *engine, Audio::Mixer *mixer): _vm(engine), _skipVideo(false) {
 	Common::Event stopEvent;
 	_stopEvents.clear();
 	stopEvent.type = Common::EVENT_KEYDOWN;
@@ -51,11 +52,16 @@ Video::Video(AsylumEngine *engine, Audio::Mixer *mixer): _skipVideo(false) {
 Video::~Video() {
 	delete _smkDecoder;
 	delete _text;
+
+	// Zero-out passed pointers
+	_vm = NULL;
 }
 
 void Video::playVideo(int32 videoNumber) {
 	char filename[20];
 	sprintf(filename, "mov%03d.smk", videoNumber);
+
+	getSaveLoad()->setMovieViewed(videoNumber);
 
 	if (!_smkDecoder->loadFile(filename)) {
 		_smkDecoder->close();

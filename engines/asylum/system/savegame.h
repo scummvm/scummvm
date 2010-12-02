@@ -26,6 +26,9 @@
 #ifndef ASYLUM_SAVEGAME_H
 #define ASYLUM_SAVEGAME_H
 
+#include "common/scummsys.h"
+#include "common/util.h"
+
 namespace Asylum {
 
 class AsylumEngine;
@@ -48,10 +51,14 @@ public:
 	bool save();
 	bool quickSave();
 
+	void setMovieViewed(uint32 index);
+	uint32 getMoviesViewed(byte *movieList);
 	void loadViewedMovies();
 
 private:
 	AsylumEngine* _vm;
+
+	byte _moviesViewed[196];
 };
 
 } // End of namespace Asylum

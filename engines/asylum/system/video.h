@@ -59,6 +59,8 @@ public:
 	void playVideo(int32 videoNumber);
 
 private:
+	AsylumEngine *_vm;
+
 	void performPostProcessing(byte *screen);
 	void loadSubtitles(int32 videoNumber);
 	void processVideoEvents();
