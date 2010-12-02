@@ -140,6 +140,8 @@ public:
 	 */
 	void queueScript(int32 scriptIndex, ActorIndex actorIndex);
 
+	bool isInQueue(int32 scriptIndex);
+
 	// Accessors
 	int32 getDelayedVideoIndex() const { return _delayedVideoIndex; }
 	void setDelayedVideoIndex(int32 val) { _delayedVideoIndex = val; }

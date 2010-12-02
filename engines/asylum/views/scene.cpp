@@ -62,7 +62,7 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 
 	// Initialize data
 	_packId = kResourcePackInvalid;
-	_playerActorIndex = 0;
+	_playerIndex = 0;
 	_walking = false;
 
 	g_debugPolygons  = 0;
@@ -92,7 +92,7 @@ void Scene::enter(ResourcePackId packId) {
 
 	getCursor()->hide();
 
-	_playerActorIndex = 0;
+	_playerIndex = 0;
 
 	// Load the scene data
 	load(packId);
@@ -540,7 +540,7 @@ void Scene::updateMouse() {
 	pt.x = (int16)(act->getPoint1()->x -_ws->xLeft);
 	pt.y = (int16)(act->getPoint1()->y -_ws->yTop);
 
-	if (_packId != 2 || _playerActorIndex != 10) {
+	if (_packId != 2 || _playerIndex != 10) {
 		actorPos.left   = pt.x + 20;
 		actorPos.top    = pt.y;
 		actorPos.right  = (int16)(pt.x + 2 * act->getPoint2()->x);
@@ -911,7 +911,7 @@ void Scene::updateCursor(int direction, Common::Rect rect) {
 			}
 		}
 		if (targetIdx == -1) {
-			if (_ws->chapter != kChapter2 || _playerActorIndex != 10) {
+			if (_ws->chapter != kChapter2 || _playerIndex != 10) {
 				if (getCursor()->flags)
 					getCursor()->set(_ws->curMagnifyingGlass, 0, 2);
 			} else {
@@ -947,7 +947,7 @@ void Scene::updateCursor(int direction, Common::Rect rect) {
 						if (targetUpdateType & 0x10 && getCursor()->flags != 2) {
 							getCursor()->set(_ws->curTalkNPC2, 0, 2);
 						} else {
-							if (_ws->chapter != kChapter2 && _playerActorIndex != 10) {
+							if (_ws->chapter != kChapter2 && _playerIndex != 10) {
 								getCursor()->set(_ws->curMagnifyingGlass, 0, 0);
 							} else {
 								if (getCursor()->flags)
@@ -1114,18 +1114,124 @@ int32 Scene::hitTestObject() {
 }
 
 bool Scene::hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped) {
-	// TODO this gets a bit funky with the "flipped" calculations for x intersection
-	// The below is a pretty basic intersection test for proof of concept
-	return GraphicResource::getFrameRect(_vm, resourceId, frame).contains(x, y);
+	Common::Rect rect = GraphicResource::getFrameRect(_vm, resourceId, frame);
+
+	// TODO we need to test each pixel of the surface!
+
+	return rect.contains(x, y);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Hit actions
+//////////////////////////////////////////////////////////////////////////
 void Scene::handleHit(int32 index, HitType type) {
-	error("[Scene::handleHit] Not implemented!");
+	switch (type) {
+	default:
+		break;
+
+	case kHitActionArea:
+		if (!_actions->isInQueue(_ws->actions[index]->scriptIndex))
+			_actions->queueScript(_ws->actions[index]->scriptIndex, _playerIndex);
+
+		switch (_ws->chapter) {
+		default:
+			break;
+
+		case kChapter2:
+			hitAreaChapter2(_ws->actions[index]->id);
+			break;
+
+		case kChapter7:
+			hitAreaChapter7(_ws->actions[index]->id);
+			break;
+
+		case kChapter11:
+			hitAreaChapter11(_ws->actions[index]->id);
+			break;
+		}
+		break;
+
+	case kHitObject: {
+		Object *object = _ws->objects[index];
+
+		if (object->getSoundResourceId()) {
+			if (getSound()->isPlaying(object->getSoundResourceId())) {
+				getSound()->stop(object->getSoundResourceId());
+				object->setSoundResourceId(kResourceNone);
+			}
+		}
+
+		if (!_actions->isInQueue(object->getScriptIndex()))
+			_actions->queueScript(object->getScriptIndex(), _playerIndex);
+
+		// Original executes special script hit functions, but since there is none, we can skip this part
+		}
+		break;
+
+	case kHitActor: {
+		Actor *actor = _ws->actors[index];
+
+		if (actor->actionType & (kActionTypeFind | kActionType16)) {
+
+			if (_actions->isInQueue(actor->getScriptIndex()))
+				_actions->queueScript(actor->getScriptIndex(), _playerIndex);
+
+		} else if (actor->actionType & kActionTypeTalk) {
+
+			if (getSound()->isPlaying(actor->getSoundResourceId())) {
+				if (actor->getStatus() != kActorStatusEnabled)
+					actor->updateStatus(kActorStatusEnabled);
+
+				getSound()->stop(actor->getSoundResourceId());
+				actor->setSoundResourceId(kResourceNone);
+			}
+
+			if (_actions->isInQueue(actor->getScriptIndex()))
+				_actions->queueScript(actor->getScriptIndex(), _playerIndex);
+		}
+
+		switch (_ws->chapter) {
+		default:
+			break;
+
+		case kChapter2:
+			hitActorChapter2(index);
+			break;
+
+		case kChapter11:
+			hitActorChapter11(index);
+			break;
+		}
+		}
+		break;
+	}
 }
 
 void Scene::playerReaction() {
 	error("[Scene::playerReaction] Not implemented!");
 }
+
+void Scene::hitAreaChapter2(int32 id) {
+	error("[Scene::hitAreaChapter2] Not implemented!");
+}
+
+void Scene::hitAreaChapter7(int32 id) {
+	error("[Scene::hitAreaChapter7] Not implemented!");
+}
+
+void Scene::hitAreaChapter11(int32 id) {
+	error("[Scene::hitAreaChapter11] Not implemented!");
+}
+
+
+void Scene::hitActorChapter2(ActorIndex index) {
+	error("[Scene::hitActorChapter2] Not implemented!");
+}
+
+void Scene::hitActorChapter11(ActorIndex index) {
+	error("[Scene::hitActorChapter11] Not implemented!");
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // Helpers
@@ -1184,7 +1290,7 @@ Actor* Scene::getActor(ActorIndex index) {
 	if (!_ws)
 		error("[Scene::getActor] WorldStats not initialized properly!");
 
-	ActorIndex computedIndex =  (index != -1) ? index : _playerActorIndex;
+	ActorIndex computedIndex =  (index != -1) ? index : _playerIndex;
 
 	if (computedIndex < 0 || computedIndex >= (int16)_ws->actors.size())
 		error("[Scene::getActor] Invalid actor index: %d ([0-%d] allowed)", computedIndex, _ws->actors.size() - 1);

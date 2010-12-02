@@ -275,6 +275,15 @@ void ActionList::queueScript(int scriptIndex, ActorIndex actorIndex) {
 	}
 }
 
+bool ActionList::isInQueue(int32 scriptIndex) {
+	for (int32 i = 0; i < _queue.size(); i++) {
+		if (_queue[i].scriptIndex == scriptIndex)
+			return true;
+	}
+
+	return false;
+}
+
 bool ActionList::process() {
 	_done          = false;
 	_exit          = false;

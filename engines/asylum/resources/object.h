@@ -68,11 +68,12 @@ public:
 	ResourceId      getResourceId() { return _resourceId; }
 	ResourceId      getSoundResourceId() { return _soundResourceId; }
 
-	Common::Rect   *getRect()     { return &_rect; }
-	int32           getSoundY()   { return _soundY; }
-	int32           getField67C() { return _field_67C; }
-	int32           getField688() { return _field_688; }
-	ActorDirection  getField6A4() { return _field_6A4; }
+	Common::Rect   *getRect()        { return &_rect; }
+	int32           getScriptIndex() { return _scriptIndex; }
+	int32           getSoundY()      { return _soundY; }
+	int32           getField67C()    { return _field_67C; }
+	int32           getField688()    { return _field_688; }
+	ActorDirection  getField6A4()    { return _field_6A4; }
 
 	/////////////////////////////////////////////////////////////////////////
 	// Loading & disabling
@@ -194,7 +195,7 @@ private:
 	uint32		   _tickCount2;
 	uint32         _field_C0;
 	int32		   _priority;
-	int32		   _actionListIdx;
+	int32		   _scriptIndex;
 	SoundItem	   _soundItems[16];
 	FrameSoundItem _frameSoundItems[50];
 	int32		   _field_67C;
