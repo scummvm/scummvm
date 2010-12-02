@@ -58,19 +58,15 @@ int g_debugObjects;
 int g_debugScrolling;
 
 Scene::Scene(AsylumEngine *engine): _vm(engine),
-	_special(NULL), _speech(NULL), _polygons(NULL), _ws(NULL) {
+	_polygons(NULL), _ws(NULL) {
 
 	// Initialize data
 	_packId = kResourcePackInvalid;
 	_playerIndex = 0;
-	_walking = false;
 
 	g_debugPolygons  = 0;
 	g_debugObjects  = 0;
 	g_debugScrolling = 0;
-
-	_special = new Special(_vm);
-	_speech = new Speech(_vm);
 }
 
 Scene::~Scene() {
@@ -80,8 +76,6 @@ Scene::~Scene() {
 	// Clear script queue
 	getScript()->reset();
 
-	delete _special;
-	delete _speech;
 	delete _polygons;
 	delete _ws;
 
@@ -481,7 +475,7 @@ bool Scene::updateScreen() {
 	}
 
 	if (getSpeech()->getSoundResourceId() != 0) {
-		if (getSound()->isPlaying(_speech->getSoundResourceId())) {
+		if (getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
 			getSpeech()->prepareSpeech();
 		} else {
 			getSpeech()->resetResourceIds();

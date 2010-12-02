@@ -167,8 +167,6 @@ public:
 	bool isInActionArea(const Common::Point &pt, ActionArea *area);
 
 	Polygons    *polygons()   { return _polygons; }
-	Special     *special()    { return _special; }
-	Speech      *speech()     { return _speech; }
 	WorldStats  *worldstats() { return _ws; }
 
 private:
@@ -176,13 +174,7 @@ private:
 
 	ResourcePackId _packId;
 	int32 _playerIndex;
-	bool  _walking;
 
-
-	ActorDirection _globalDirection;
-
-	Special      *_special;
-	Speech       *_speech;
 	Polygons     *_polygons;
 	WorldStats   *_ws;
 

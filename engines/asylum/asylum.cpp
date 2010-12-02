@@ -26,6 +26,7 @@
 #include "asylum/asylum.h"
 
 #include "asylum/resources/script.h"
+#include "asylum/resources/special.h"
 #include "asylum/resources/encounters.h"
 #include "asylum/resources/worldstats.h"
 
@@ -36,6 +37,7 @@
 #include "asylum/system/savegame.h"
 #include "asylum/system/screen.h"
 #include "asylum/system/sound.h"
+#include "asylum/system/speech.h"
 #include "asylum/system/text.h"
 #include "asylum/system/video.h"
 
@@ -125,6 +127,8 @@ Common::Error AsylumEngine::run() {
 	_screen    = new Screen(this);
 	_script    = new ScriptManager(this);
 	_sound     = new Sound(this, _mixer);
+	_special   = new Special(this);
+	_speech    = new Speech(this);
 	_text      = new Text(this);
 	_video     = new Video(this, _mixer);
 	initPuzzles();

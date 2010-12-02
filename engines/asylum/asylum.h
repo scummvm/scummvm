@@ -73,6 +73,8 @@ class Savegame;
 class Scene;
 class Screen;
 class ScriptManager;
+class Special;
+class Speech;
 class Sound;
 class Text;
 class Video;
@@ -139,6 +141,8 @@ public:
 	Scene           *scene()     { return _scene; }
 	Screen          *screen()    { return _screen; }
 	ScriptManager   *script()    { return _script; }
+	Special         *special()   { return _special; }
+	Speech          *speech()    { return _speech; }
 	Sound           *sound()     { return _sound; }
 	Text            *text()      { return _text; }
 	Video           *video()     { return _video; }
@@ -191,6 +195,8 @@ private:
 	Scene           *_scene;
 	Screen          *_screen;
 	ScriptManager   *_script;
+	Special         *_special;
+	Speech          *_speech;
 	Sound           *_sound;
 	Text            *_text;
 	Video           *_video;

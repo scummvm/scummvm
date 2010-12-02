@@ -344,7 +344,7 @@ void Object::update() {
 	if (doPlaySounds)
 		playSounds();
 
-	getScene()->special()->run(this, -1);
+	getSpecial()->run(this, -1);
 }
 
 void Object::setNextFrame(int32 targetFlags) {
