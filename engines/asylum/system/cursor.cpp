@@ -36,7 +36,7 @@ namespace Asylum {
 const uint32 CURSOR_UPDATE_TICKS = 100;
 
 Cursor::Cursor(AsylumEngine *engine) : graphicResourceId(kResourceNone), currentFrame(0), frameCount(0), counter(0), flags(0), field_11(0),
-	_vm(engine), _cursorRes(NULL), _cursorTicks(0), _cursor_byte_45756C(0) {
+	_vm(engine), _cursorRes(NULL), _cursorTicks(0), _cursor_byte_45756C(0), _state(0) {
 
 }
 
@@ -94,6 +94,37 @@ void Cursor::update() {
 			fra->surface.w,
 			fra->surface.h,
 			0, 0, 0);
+}
+
+void Cursor::setState(const Common::Event &evt) {
+	switch (evt.type) {
+	default:
+		break;
+
+	case Common::EVENT_LBUTTONDOWN:
+		_state |= kCursorLeft;
+		break;
+
+	case Common::EVENT_RBUTTONDOWN:
+		_state |= kCursorRight;
+		break;
+
+	case Common::EVENT_MBUTTONDOWN:
+		_state |= kCursorMiddle;
+		break;
+
+	case Common::EVENT_LBUTTONUP:
+		_state &= ~kCursorLeft;
+		break;
+
+	case Common::EVENT_RBUTTONUP:
+		_state &= ~kCursorRight;
+		break;
+
+	case Common::EVENT_MBUTTONUP:
+		_state &= ~kCursorMiddle;
+		break;
+	}
 }
 
 /*
@@ -168,7 +199,7 @@ bool Cursor::isHidden() const {
 	return !CursorMan.isVisible();
 }
 
-Common::Point Cursor::position() const {
+const Common::Point Cursor::position() const {
 	return g_system->getEventManager()->getMousePos();
 }
 

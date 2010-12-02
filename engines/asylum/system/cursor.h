@@ -28,12 +28,19 @@
 
 #include "asylum/shared.h"
 
+#include "common/events.h"
 #include "common/rect.h"
 
 namespace Asylum {
 
 class AsylumEngine;
 class GraphicResource;
+
+enum CursorState {
+	kCursorLeft = 1,
+	kCursorRight = 2,
+	kCursorMiddle = 3
+};
 
 /**
  * Asylum cursors are GraphicResources, and are stored in
@@ -82,10 +89,13 @@ public:
 
 	void update();
 
+	void setState(const Common::Event &evt);
+	byte getState() { return _state; }
+
 	/**
 	 * Return the cursor's position on the screen
 	 */
-	Common::Point position() const;
+	const Common::Point position() const;
 
 	// NOTE
 	// .text:00435060 contains a function that assigns global variables to a
@@ -105,6 +115,8 @@ public:
 
 private:
 	AsylumEngine *_vm;
+
+	byte _state;
 
 	// Cursor resource
 	GraphicResource *_cursorRes;
