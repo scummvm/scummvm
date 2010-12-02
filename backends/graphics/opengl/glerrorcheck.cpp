@@ -28,7 +28,7 @@
 #if defined(DEBUG) && defined(USE_OPENGL)
 
 #include "backends/graphics/opengl/glerrorcheck.h"
-#include "common/debug.h"
+#include "common/textconsole.h"
 
 #ifdef WIN32
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
