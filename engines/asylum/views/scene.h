@@ -415,6 +415,15 @@ private:
 	void stopSpeech();
 
 	/**
+	 * Play specific speech. 
+	 *
+	 * @param code The key code. 
+	 *
+	 * @return true if it succeeds, false if it fails. 
+	 */
+	bool speak(Common::KeyCode code);
+
+	/**
 	 * Check if point intersects the rectangle.
 	 *
 	 * @param point The point.
