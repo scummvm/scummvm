@@ -23,9 +23,11 @@
  *
  */
 
+#include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_saveload.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/myst.h"
@@ -78,6 +80,9 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(135, opcode_135);
 	OPCODE(136, opcode_136);
 	OPCODE(137, opcode_137);
+	OPCODE(141, o_circuitBreakerStartMove);
+	OPCODE(142, o_circuitBreakerMove);
+	OPCODE(143, o_circuitBreakerEndMove);
 	OPCODE(146, opcode_146);
 	OPCODE(147, opcode_147);
 	OPCODE(149, opcode_149);
@@ -610,6 +615,80 @@ void MystScriptParser_Myst::opcode_136(uint16 op, uint16 var, uint16 argc, uint1
 void MystScriptParser_Myst::opcode_137(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Card 4500
 	// TODO: Time slider movement
+}
+
+void MystScriptParser_Myst::o_circuitBreakerStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Circuit breaker start move", op);
+
+	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
+	breaker->drawFrame(0);
+	_vm->_cursor->setCursor(700);
+	_tempVar = 0;
+}
+
+void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Circuit breaker move", op);
+
+	uint16 *mystVars = _vm->_saveLoad->_v->myst_vars;
+	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
+
+	int16 maxStep = breaker->getStepsV() - 1;
+	int16 step = ((_vm->_mouse.y - 80) * breaker->getStepsV()) / 65;
+
+	if (step > maxStep)
+		step = maxStep;
+	else if (step < 0)
+		step = 0;
+
+	breaker->drawFrame(step);
+
+	if (_tempVar != step) {
+		_tempVar = step;
+
+		// Breaker switched
+		if (step == maxStep) {
+
+			// Choose breaker
+			if (breaker->getType8Var() == 93) {
+
+				// Voltage is still too high or not broken
+				if (mystVars[17] > 59 || mystVars[15] != 1) {
+					uint16 soundId = breaker->getList2(1);
+					if (soundId)
+						_vm->_sound->playSound(soundId);
+				} else {
+					uint16 soundId = breaker->getList2(0);
+					if (soundId)
+						_vm->_sound->playSound(soundId);
+
+					// Reset breaker state
+					mystVars[15] = 0;
+				}
+			} else {
+				// Voltage is still too high or not broken
+				if (mystVars[17] > 59 || mystVars[15] != 2) {
+					uint16 soundId = breaker->getList2(1);
+					if (soundId)
+						_vm->_sound->playSound(soundId);
+				} else {
+					uint16 soundId = breaker->getList2(0);
+					if (soundId)
+						_vm->_sound->playSound(soundId);
+
+					// Reset breaker state
+					mystVars[15] = 0;
+				}
+			}
+		}
+	}
+}
+
+void MystScriptParser_Myst::o_circuitBreakerEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Circuit breaker end move", op);
+
+	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
+	_vm->redrawArea(breaker->getType8Var());
+	_vm->checkCursorHints();
 }
 
 void MystScriptParser_Myst::opcode_146(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

@@ -93,6 +93,9 @@ private:
 	DECLARE_OPCODE(opcode_135);
 	DECLARE_OPCODE(opcode_136);
 	DECLARE_OPCODE(opcode_137);
+	DECLARE_OPCODE(o_circuitBreakerStartMove);
+	DECLARE_OPCODE(o_circuitBreakerMove);
+	DECLARE_OPCODE(o_circuitBreakerEndMove);
 	DECLARE_OPCODE(opcode_146);
 	DECLARE_OPCODE(opcode_147);
 	DECLARE_OPCODE(opcode_149);
