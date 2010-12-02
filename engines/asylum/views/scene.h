@@ -386,6 +386,8 @@ private:
 	void playerReaction();
 
 	void hitAreaChapter2(int32 id);
+	bool _isCTRLPressed;
+	int32 _hitAreaChapter7Counter;
 	void hitAreaChapter7(int32 id);
 	void hitAreaChapter11(int32 id);
 

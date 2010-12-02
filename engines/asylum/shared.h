@@ -138,7 +138,8 @@ enum GameFlag {
 	kGameFlag1067                 = 1067,
 	kGameFlag1108                 = 1108,
 	kGameFlag1131                 = 1131,
-	kGameFlag1137                 = 1137
+	kGameFlag1137                 = 1137,
+	kGameFlag1144                 = 1144
 };
 
 enum ChapterIndex {
