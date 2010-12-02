@@ -89,6 +89,7 @@ public:
 	void setPalette(byte *rgbPalette) const;
 	void setPalette(ResourceId id);
 	void setupPaletteAndStartFade(uint32 red, int32 milliseconds, int32 param);
+	void stopFadeAndSetPalette(ResourceId id, int32 milliseconds, int32 param);
 	void paletteFade(uint32 red, int32 milliseconds, int32 param);
 	void startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param);
 	void updatePalette(int32 param);

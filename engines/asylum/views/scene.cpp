@@ -474,16 +474,14 @@ bool Scene::updateScreen() {
 	if (getSharedData()->getFlag(kFlagScene1)) {
 		getScreen()->clear();
 
-		//getScreen()->paletteSetupAndStartFade(0, 0, 0);
-		//updateScene();
-		//drawScene();
-		// refresh screen
-		//getScreen->paletteStopAndFade(getWorld()->currentPaletteId, 100, 10);
-		//drawScene();
-		// refresh screen
+		getScreen()->setupPaletteAndStartFade(0, 0, 0);
+		updateScene();
+		drawScene();
+		getScreen()->copyBackBufferToScreen();
 
-		warning("[Scene::updateScreen] Not implemented!");
-
+		getScreen()->stopFadeAndSetPalette(getWorld()->currentPaletteId, 100, 10);
+		drawScene();
+		getScreen()->copyBackBufferToScreen();
 
 		getSharedData()->setFlag(kFlagScene1, false);
 	}
@@ -660,10 +658,9 @@ void Scene::updateMouse() {
 
 	updateCursor(newDirection, actorRect);
 
-	if (newDirection >= kDirectionN) {
+	if (newDirection >= kDirectionN)
 		if (player->getStatus() == kActorStatus1 || player->getStatus() == kActorStatus12)
 			player->updateFromDirection(newDirection);
-	}
 }
 
 

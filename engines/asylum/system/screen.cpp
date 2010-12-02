@@ -209,23 +209,29 @@ void Screen::setPalette(byte *rgbPalette) const {
 }
 
 void Screen::setupPaletteAndStartFade(uint32 red, int32 milliseconds, int32 param) {
-	warning("[Screen::setupPaletteAndStartFade] not implemented");
+	warning("[Screen::setupPaletteAndStartFade] Not implemented!");
+}
+
+void Screen::stopFadeAndSetPalette(ResourceId id, int32 milliseconds, int32 param) {
+	// HACK so we have a proper screen palette
+	setPalette(id);
+	warning("[Screen::stopFadeAndSetPalette] Not implemented!");
 }
 
 void Screen::paletteFade(uint32 red, int32 milliseconds, int32 param) {
-	warning("[Screen::paletteFade] not implemented");
+	warning("[Screen::paletteFade] Not implemented!");
 }
 
 void Screen::startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param) {
-	warning("[Screen::startPaletteFade] not implemented");
+	warning("[Screen::startPaletteFade] Not implemented!");
 }
 
 void Screen::updatePalette(int32 param) {
-	error("[Screen::updatePalette] not implemented!");
+	error("[Screen::updatePalette] Not implemented!");
 }
 
 void Screen::makeGreyPalette() {
-	warning("[Screen::makeGreyPalette] not implemented!");
+	warning("[Screen::makeGreyPalette] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////
