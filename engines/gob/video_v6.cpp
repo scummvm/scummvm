@@ -206,28 +206,35 @@ void Video_v6::drawYUV(Surface &destDesc, int16 x, int16 y,
 	for (int i = 0; i < height; i++) {
 		Pixel dstRow = dst;
 
-		const byte *srcY = dataY +  i       *  dataWidth;
-		const byte *srcU = dataU + (i >> 2) * (dataWidth >> 2);
-		const byte *srcV = dataV + (i >> 2) * (dataWidth >> 2);
+		for (int j = 0; j < width; j++, dstRow++) {
+			// Get (7bit) YUV data
+			byte dY = dataY[j     ] << 1;
+			byte dU = dataU[j >> 2] << 1;
+			byte dV = dataV[j >> 2] << 1;
 
-		for (int j = 0; j < (width >> 2); j++, srcU++, srcV++) {
-			for (int n = 0; n < 4; n++, dstRow++, srcY++) {
-				byte dY = *srcY << 1, dU = *srcU << 1, dV = *srcV << 1;
+			byte r, g, b;
+			Graphics::YUV2RGB(dY, dU, dV, r, g, b);
 
-				byte r, g, b;
-				Graphics::YUV2RGB(dY, dU, dV, r, g, b);
+			if (dY != 0) {
+				// Solid pixel
+				uint32 c = pixelFormat.RGBToColor(r, g, b);
 
-				if (dY != 0) {
-					uint32 c = pixelFormat.RGBToColor(r, g, b);
+				// If the solid pixel's value is 0, we'll fudge it to 1
+				dstRow.set((c == 0) ? 1 : c);
+			} else
+				// Transparent pixel, we'll use pixel value 0
+				dstRow.set(0);
 
-					dstRow.set((c == 0) ? 1 : c);
-				} else
-					dstRow.set(0);
-
-			}
 		}
 
-		dst += destDesc.getWidth();
+		dst   += destDesc.getWidth();
+		dataY += dataWidth;
+
+		if ((i & 3) == 3) {
+			// Next line of chroma data
+			dataU += dataWidth >> 2;
+			dataV += dataWidth >> 2;
+		}
 	}
 
 }
