@@ -25,10 +25,10 @@
 
 #include "asylum/console.h"
 
-#include "asylum/resources/actionlist.h"
 #include "asylum/resources/actor.h"
 #include "asylum/resources/encounters.h"
 #include "asylum/resources/object.h"
+#include "asylum/resources/script.h"
 #include "asylum/resources/worldstats.h"
 
 #include "asylum/system/screen.h"
@@ -320,7 +320,7 @@ bool Console::cmdPlayVideo(int32 argc, const char **argv) {
 	}
 
 	getScreen()->clear();
-	getScene()->actions()->setDelayedVideoIndex(index);
+	getScript()->setDelayedVideoIndex(index);
 
 	return false;
 }
@@ -335,7 +335,7 @@ bool Console::cmdRunScript(int32 argc, const char **argv) {
 	uint32 actor = atoi(argv[2]);
 
 	// Check parameters
-	if (index >= getScene()->actions()->_scripts.size()) {
+	if (index >= getScript()->_scripts.size()) {
 		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, _vm->encounter()->_items.size() - 1);
 		return true;
 	}
@@ -344,7 +344,7 @@ bool Console::cmdRunScript(int32 argc, const char **argv) {
 		DebugPrintf("[Error] Invalid actor index (was: %d - valid: [0-%d])\n", actor, getWorld()->actors.size() - 1);
 	}
 
-	getScene()->actions()->queueScript(index, actor);
+	getScript()->queueScript(index, actor);
 
 	return false;
 }
@@ -365,7 +365,7 @@ bool Console::cmdChangeScene(int32 argc, const char **argv) {
 		return true;
 	}
 
-	_vm->scene()->actions()->setDelayedSceneIndex(index);
+	getScript()->setDelayedSceneIndex(index);
 
 	return false;
 }

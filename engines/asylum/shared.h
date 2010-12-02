@@ -606,7 +606,7 @@ enum ObjectFlag {
 #define getSaveLoad()    _vm->savegame()
 #define getScene()       _vm->scene()
 #define getScreen()      _vm->screen()
-#define getScript()      _vm->scene()->actions()
+#define getScript()      _vm->script()
 #define getSharedData()  _vm->getData()
 #define getSpeech()      _vm->scene()->speech()
 #define getText()        _vm->text()

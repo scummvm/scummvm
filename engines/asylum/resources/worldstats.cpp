@@ -25,9 +25,9 @@
 
 #include "asylum/resources/worldstats.h"
 
-#include "asylum/resources/actionlist.h"
 #include "asylum/resources/actor.h"
 #include "asylum/resources/object.h"
+#include "asylum/resources/script.h"
 
 #include "asylum/asylum.h"
 

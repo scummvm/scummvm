@@ -25,11 +25,11 @@
 
 #include "asylum/views/scene.h"
 
-#include "asylum/resources/actionlist.h"
 #include "asylum/resources/actor.h"
 #include "asylum/resources/encounters.h"
 #include "asylum/resources/object.h"
 #include "asylum/resources/polygons.h"
+#include "asylum/resources/script.h"
 #include "asylum/resources/special.h"
 #include "asylum/resources/worldstats.h"
 
@@ -58,7 +58,7 @@ int g_debugObjects;
 int g_debugScrolling;
 
 Scene::Scene(AsylumEngine *engine): _vm(engine),
-	_actions(NULL), _special(NULL), _speech(NULL), _polygons(NULL), _ws(NULL) {
+	_special(NULL), _speech(NULL), _polygons(NULL), _ws(NULL) {
 
 	// Initialize data
 	_packId = kResourcePackInvalid;
@@ -77,7 +77,9 @@ Scene::~Scene() {
 	// Unload the associated resources
 	getResource()->unload(_packId);
 
-	delete _actions;
+	// Clear script queue
+	getScript()->reset();
+
 	delete _special;
 	delete _speech;
 	delete _polygons;
@@ -158,7 +160,7 @@ void Scene::enter(ResourcePackId packId) {
 
 	// Queue scene script
 	if (_ws->scriptIndex)
-		_actions->queueScript(_ws->scriptIndex, 0);
+		getScript()->queueScript(_ws->scriptIndex, 0);
 
 	// Clear the graphic queue (FIXME: not sure why we need to do this again)
 	getScreen()->clearGraphicsInQueue();
@@ -227,8 +229,7 @@ void Scene::load(ResourcePackId packId) {
 
 	_polygons = new Polygons(fd);
 
-	_actions = new ActionList(_vm);
-	_actions->load(fd);
+	getScript()->load(fd);
 
 	fd->close();
 	delete fd;
@@ -525,7 +526,7 @@ bool Scene::updateScene() {
 			debugShowObjects();
 	}
 
-	return _actions->process();
+	return getScript()->process();
 }
 
 void Scene::updateMouse() {
@@ -1130,8 +1131,8 @@ void Scene::handleHit(int32 index, HitType type) {
 		break;
 
 	case kHitActionArea:
-		if (!_actions->isInQueue(_ws->actions[index]->scriptIndex))
-			_actions->queueScript(_ws->actions[index]->scriptIndex, _playerIndex);
+		if (!getScript()->isInQueue(_ws->actions[index]->scriptIndex))
+			getScript()->queueScript(_ws->actions[index]->scriptIndex, _playerIndex);
 
 		switch (_ws->chapter) {
 		default:
@@ -1161,8 +1162,8 @@ void Scene::handleHit(int32 index, HitType type) {
 			}
 		}
 
-		if (!_actions->isInQueue(object->getScriptIndex()))
-			_actions->queueScript(object->getScriptIndex(), _playerIndex);
+		if (!getScript()->isInQueue(object->getScriptIndex()))
+			getScript()->queueScript(object->getScriptIndex(), _playerIndex);
 
 		// Original executes special script hit functions, but since there is none, we can skip this part
 		}
@@ -1173,8 +1174,8 @@ void Scene::handleHit(int32 index, HitType type) {
 
 		if (actor->actionType & (kActionTypeFind | kActionType16)) {
 
-			if (_actions->isInQueue(actor->getScriptIndex()))
-				_actions->queueScript(actor->getScriptIndex(), _playerIndex);
+			if (getScript()->isInQueue(actor->getScriptIndex()))
+				getScript()->queueScript(actor->getScriptIndex(), _playerIndex);
 
 		} else if (actor->actionType & kActionTypeTalk) {
 
@@ -1186,8 +1187,8 @@ void Scene::handleHit(int32 index, HitType type) {
 				actor->setSoundResourceId(kResourceNone);
 			}
 
-			if (_actions->isInQueue(actor->getScriptIndex()))
-				_actions->queueScript(actor->getScriptIndex(), _playerIndex);
+			if (getScript()->isInQueue(actor->getScriptIndex()))
+				getScript()->queueScript(actor->getScriptIndex(), _playerIndex);
 		}
 
 		switch (_ws->chapter) {

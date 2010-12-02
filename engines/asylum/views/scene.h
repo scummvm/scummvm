@@ -39,7 +39,6 @@
 
 namespace Asylum {
 
-class ActionList;
 class Actor;
 class AsylumEngine;
 class BlowUpPuzzle;
@@ -167,7 +166,6 @@ public:
 	 */
 	bool isInActionArea(const Common::Point &pt, ActionArea *area);
 
-	ActionList  *actions()    { return _actions; }
 	Polygons    *polygons()   { return _polygons; }
 	Special     *special()    { return _special; }
 	Speech      *speech()     { return _speech; }
@@ -183,7 +181,6 @@ private:
 
 	ActorDirection _globalDirection;
 
-	ActionList   *_actions;
 	Special      *_special;
 	Speech       *_speech;
 	Polygons     *_polygons;

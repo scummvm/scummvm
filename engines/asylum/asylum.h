@@ -72,6 +72,7 @@ class ResourceManager;
 class Savegame;
 class Scene;
 class Screen;
+class ScriptManager;
 class Sound;
 class Text;
 class Video;
@@ -137,6 +138,7 @@ public:
 	Savegame        *savegame()  { return _savegame; }
 	Scene           *scene()     { return _scene; }
 	Screen          *screen()    { return _screen; }
+	ScriptManager   *script()    { return _script; }
 	Sound           *sound()     { return _sound; }
 	Text            *text()      { return _text; }
 	Video           *video()     { return _video; }
@@ -188,6 +190,7 @@ private:
 	Savegame        *_savegame;
 	Scene           *_scene;
 	Screen          *_screen;
+	ScriptManager   *_script;
 	Sound           *_sound;
 	Text            *_text;
 	Video           *_video;

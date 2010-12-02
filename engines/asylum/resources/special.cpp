@@ -25,10 +25,10 @@
 
 #include "asylum/resources/special.h"
 
-#include "asylum/resources/actionlist.h"
 #include "asylum/resources/actor.h"
 #include "asylum/resources/object.h"
 #include "asylum/resources/encounters.h"
+#include "asylum/resources/script.h"
 #include "asylum/resources/worldstats.h"
 
 #include "asylum/system/cursor.h"
