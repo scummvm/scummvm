@@ -878,10 +878,82 @@ const uint16 sq4FloppyPatchEndlessFlight[] = {
 	PATCH_END
 };
 
+// The scripts in SQ4CD support simultaneous playing of speech and subtitles,
+// but this was not available as an option. The following two patches enable
+// this functionality in the game's GUI options dialog.
+// Patch 1: iconTextSwitch::show, called when the text options button is shown.
+// This is patched to add the "Both" text resource (i.e. we end up with
+// "Speech", "Text" and "Both")
+const byte sq4CdSignatureTextOptionsButton[] = {
+	11,
+	0x35, 0x01,      // ldi 0x01
+	0xa1, 0x53,      // sag 0x53
+	0x39, 0x03,      // pushi 0x03
+	0x78,            // push1
+	0x39, 0x09,      // pushi 0x09
+	0x54, 0x06,      // self 0x06
+	0
+};
+
+const uint16 sq4CdPatchTextOptionsButton[] = {
+	PATCH_ADDTOOFFSET | +7,
+	0x39, 0x0b,      // pushi 0x0b
+	PATCH_END
+};
+
+// Patch 2: Add the ability to toggle among the three available options,
+// when the text options button is clicked: "Speech", "Text" and "Both".
+// Refer to the patch above for additional details.
+// iconTextSwitch::doit (called when the text options button is clicked)
+const byte sq4CdSignatureTextOptions[] = {
+	32,
+	0x89, 0x5a,       // lsg 0x5a (load global 90 to stack)
+	0x3c,             // dup
+	0x35, 0x01,       // ldi 0x01
+	0x1a,             // eq? (global 90 == 1)
+	0x31, 0x06,       // bnt 0x06 (0x0691)
+	0x35, 0x02,       // ldi 0x02
+	0xa1, 0x5a,       // sag 0x5a (save acc to global 90)
+	0x33, 0x0a,       // jmp 0x0a (0x69b)
+	0x3c,             // dup
+	0x35, 0x02,       // ldi 0x02
+	0x1a,             // eq? (global 90 == 2)
+	0x31, 0x04,       // bnt 0x04 (0x069b)
+	0x35, 0x01,       // ldi 0x01
+	0xa1, 0x5a,       // sag 0x5a (save acc to global 90)
+	0x3a,             // toss
+	0x38, 0xd9, 0x00, // pushi 0x00d9
+	0x76,             // push0
+	0x54, 0x04,       // self 0x04
+	0x48,             // ret
+	0
+};
+
+const uint16 sq4CdPatchTextOptions[] = {
+	0x89, 0x5a,       // lsg 0x5a (load global 90 to stack)
+	0x3c,             // dup
+	0x35, 0x03,       // ldi 0x03 (acc = 3)
+	0x1a,             // eq? (global 90 == 3)
+	0x2f, 0x07,       // bt 0x07
+	0x89, 0x5a,       // lsg 0x5a (load global 90 to stack again)
+	0x35, 0x01,       // ldi 0x01 (acc = 1)
+	0x02,             // add: acc = global 90 (on stack) + 1 (previous acc value)
+	0x33, 0x02,       // jmp 0x02
+	0x35, 0x01,       // ldi 0x01 (reset acc to 1)
+	0xa1, 0x5a,       // sag 0x5a (save acc to global 90)
+	0x33, 0x03,       // jmp 0x03 (jump over the wasted bytes below)
+	0x34, 0x00, 0x00, // ldi 0x0000 (waste 3 bytes)
+	0x3a,             // toss
+	// (the rest of the code is the same)
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature sq4Signatures[] = {
 	{    298, "Floppy: endless flight",                      1, PATCH_MAGICDWORD(0x67, 0x08, 0x63, 0x44),    -3,       sq4FloppySignatureEndlessFlight, sq4FloppyPatchEndlessFlight },
 	{    298, "Floppy (German): endless flight",             1, PATCH_MAGICDWORD(0x67, 0x08, 0x63, 0x4c),    -3, sq4FloppySignatureEndlessFlightGerman, sq4FloppyPatchEndlessFlight },
+	{    818, "CD: Speech and subtitles option",             1, PATCH_MAGICDWORD(0x89, 0x5a, 0x3c, 0x35),     0,             sq4CdSignatureTextOptions,       sq4CdPatchTextOptions },
+	{    818, "CD: Speech and subtitles option button",      1, PATCH_MAGICDWORD(0x35, 0x01, 0xa1, 0x53),     0,       sq4CdSignatureTextOptionsButton, sq4CdPatchTextOptionsButton },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
