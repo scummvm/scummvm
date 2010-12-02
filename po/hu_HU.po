@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-11-15 21:11+0000\n"
-"PO-Revision-Date: 2010-11-15 08:55+0100\n"
+"PO-Revision-Date: 2010-12-01 09:23+0100\n"
 "Last-Translator: Gruby <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -31,7 +31,7 @@ msgstr "Lefordított összetevõk:"
 
 #: gui/about.cpp:112
 msgid "Available engines:"
-msgstr "Támogatott motorok:"
+msgstr "Támogatott játékmotorok:"
 
 #: gui/browser.cpp:70
 msgid "Go up"
@@ -63,7 +63,7 @@ msgstr "Bezár"
 
 #: gui/GuiManager.cpp:115
 msgid "Mouse click"
-msgstr "Egérkatt"
+msgstr "Egérkattintás"
 
 #: gui/GuiManager.cpp:118 base/main.cpp:285
 msgid "Display keyboard"
@@ -75,7 +75,7 @@ msgstr "Billentyûk átállítása"
 
 #: gui/KeysDialog.h:39 gui/KeysDialog.cpp:148
 msgid "Choose an action to map"
-msgstr "Válaszz mûveletet a kiosztáshoz"
+msgstr "Válassz mûveletet a kiosztáshoz"
 
 #: gui/KeysDialog.cpp:44
 msgid "Map"
@@ -90,17 +90,17 @@ msgstr "OK"
 
 #: gui/KeysDialog.cpp:52
 msgid "Select an action and click 'Map'"
-msgstr "Válassz mûveletet és katt 'Kiosztás'-ra"
+msgstr "Válassz mûveletet és katt a 'Kiosztás'-ra"
 
 #: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:144
 #, c-format
 msgid "Associated key : %s"
-msgstr "Társított billentyü: %s"
+msgstr "Társított billentyû: %s"
 
 #: gui/KeysDialog.cpp:85 gui/KeysDialog.cpp:107 gui/KeysDialog.cpp:146
 #, c-format
 msgid "Associated key : none"
-msgstr "Társított billentyü: nincs"
+msgstr "Társított billentyû: nincs"
 
 #: gui/KeysDialog.cpp:93
 msgid "Please select an action"
@@ -108,7 +108,7 @@ msgstr "Válassz egy mûveletet"
 
 #: gui/KeysDialog.cpp:109
 msgid "Press the key to associate"
-msgstr "Nyomj billentyüt a társításhoz"
+msgstr "Nyomj egy billentyût a társításhoz"
 
 #: gui/launcher.cpp:172
 msgid "Game"
@@ -1391,7 +1391,7 @@ msgstr "Kilépés"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:56
 msgid "Debugger"
-msgstr "Debugger"
+msgstr "Hibakeresõ"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:57
 msgid "Global menu"
@@ -1621,65 +1621,3 @@ msgstr "Kijelzõ"
 msgid "Do you want to perform an automatic scan ?"
 msgstr "El akarod kezdeni az automatikus vizsgálatot ?"
 
-#~ msgid "Map right click action"
-#~ msgstr "Jobbkatt mûvelet gomb"
-
-#~ msgid "You must map a key to the 'Right Click' action to play this game"
-#~ msgstr "Válassz egy billentyût a 'Jobbkatt' mûvelethez"
-
-#~ msgid "Map hide toolbar action"
-#~ msgstr "Eszköztár rejtés gomb"
-
-#~ msgid "You must map a key to the 'Hide toolbar' action to play this game"
-#~ msgstr "Válassz egy billentyût az 'Eszköztár rejtés' mûvelethez"
-
-#~ msgid "Map Zoom Up action (optional)"
-#~ msgstr "Nagyítás mûvelet (opcionális)"
-
-#~ msgid "Map Zoom Down action (optional)"
-#~ msgstr "Kicsinyítés mûvelet (opcionális)"
-
-#~ msgid ""
-#~ "Don't forget to map a key to 'Hide Toolbar' action to see the whole "
-#~ "inventory"
-#~ msgstr ""
-#~ "Ne felejts billentyût társítani az 'Eszköztár rejtés' mûvelethez, hogy "
-#~ "lásd a teljes listát"
-
-#, fuzzy
-#~ msgctxt "context"
-#~ msgid "Game Path:"
-#~ msgstr "Extra Útvonal:"
-
-#, fuzzy
-#~ msgctxt "lowres"
-#~ msgid "True Roland MT-32 (disable GM emulation)"
-#~ msgstr "Igaz Roland MT-32 (megbénít GM emuláció)"
-
-#, fuzzy
-#~ msgctxt "lowres"
-#~ msgid "Save Path: "
-#~ msgstr "Extra Útvonal:"
-
-#~ msgid "Music driver:"
-#~ msgstr "Zenei vezet :"
-
-#, fuzzy
-#~ msgid "CoreAudio"
-#~ msgstr "Hang"
-
-#, fuzzy
-#~ msgid "AdLib"
-#~ msgstr "Hang"
-
-#~ msgid "Speech Only"
-#~ msgstr "Csak a beszéd"
-
-#~ msgid "Speech and Subtitles"
-#~ msgstr "Beszéd és a Feliratok"
-
-#~ msgid "Subtitles Only"
-#~ msgstr "Csak feliratok"
-
-#~ msgid "Speech & Subs"
-#~ msgstr "Beszéd s Feliratok"
