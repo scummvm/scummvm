@@ -81,7 +81,7 @@ void SceneTitle::update(int32 tick) {
 	// but load on demand from offset/length within a ResourcePack, the progress indicator is effectively
 	// useless. It's just in here as "eye candy" :P
 	if ((tick - _start) % 500 > 100)
-		_spinnerProgress += 5;
+		_spinnerProgress += 10;
 
 	_spinnerFrameIndex++;
 
