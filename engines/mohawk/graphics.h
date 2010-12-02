@@ -35,6 +35,7 @@
 
 namespace Mohawk {
 
+class MohawkEngine;
 class MohawkEngine_Myst;
 class MohawkEngine_Riven;
 class MohawkEngine_LivingBooks;
@@ -83,6 +84,11 @@ public:
 	// Free all surfaces in the cache
 	void clearCache();
 
+	void preloadImage(uint16 image);
+	virtual void setPalette(uint16 id);
+	void copyAnimImageToScreen(uint16 image, int left = 0, int top = 0);
+	void copyAnimImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
+
 protected:
 	// findImage will search the cache to find the image.
 	// If not found, it will call decodeImage to get a new one.
@@ -90,6 +96,8 @@ protected:
 
 	// decodeImage will always return a new image.
 	virtual MohawkSurface *decodeImage(uint16 id) = 0;
+
+	virtual MohawkEngine *getVM() = 0;
 
 private:
 	// An image cache that stores images until clearCache() is called
@@ -110,6 +118,7 @@ public:
 
 protected:
 	MohawkSurface *decodeImage(uint16 id);
+	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
 
 private:
 	MohawkEngine_Myst *_vm;
@@ -177,6 +186,7 @@ public:
 
 protected:
 	MohawkSurface *decodeImage(uint16 id);
+	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
 
 private:
 	MohawkEngine_Riven *_vm;
@@ -205,14 +215,13 @@ public:
 	LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height);
 	~LBGraphics();
 
-	void preloadImage(uint16 image);
-	void copyImageToScreen(uint16 image, bool useOffsets = false, int left = 0, int top = 0);
-	void copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
 	void setPalette(uint16 id);
+	void copyOffsetAnimImageToScreen(uint16 image, int left = 0, int top = 0);
 	bool imageIsTransparentAt(uint16 image, bool useOffsets, int x, int y);
 
 protected:
 	MohawkSurface *decodeImage(uint16 id);
+	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
 
 private:
 	MohawkBitmap *_bmpDecoder;

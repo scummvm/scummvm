@@ -117,6 +117,99 @@ MohawkSurface *GraphicsManager::findImage(uint16 id) {
 	return _cache[id];
 }
 
+void GraphicsManager::preloadImage(uint16 image) {
+	findImage(image);
+}
+
+void GraphicsManager::setPalette(uint16 id) {
+	Common::SeekableReadStream *tpalStream = getVM()->getResource(ID_TPAL, id);
+
+	uint16 colorStart = tpalStream->readUint16BE();
+	uint16 colorCount = tpalStream->readUint16BE();
+	byte *palette = new byte[colorCount * 4];
+
+	for (uint16 i = 0; i < colorCount; i++) {
+		palette[i * 4] = tpalStream->readByte();
+		palette[i * 4 + 1] = tpalStream->readByte();
+		palette[i * 4 + 2] = tpalStream->readByte();
+		palette[i * 4 + 3] = tpalStream->readByte();
+	}
+
+	delete tpalStream;
+
+	getVM()->_system->setPalette(palette, colorStart, colorCount);
+	delete[] palette;
+}
+
+void GraphicsManager::copyAnimImageToScreen(uint16 image, int left, int top) {
+	Graphics::Surface *surface = findImage(image)->getSurface();
+
+	Common::Rect srcRect(0, 0, surface->w, surface->h);
+	Common::Rect dstRect(left, top, left + surface->w, top + surface->h);
+	copyAnimImageSectionToScreen(image, srcRect, dstRect);
+}
+
+void GraphicsManager::copyAnimImageSectionToScreen(uint16 image, Common::Rect srcRect, Common::Rect dstRect) {
+	uint16 startX = 0;
+	uint16 startY = 0;
+
+	assert(srcRect.isValidRect() && dstRect.isValidRect());
+	assert(srcRect.left >= 0 && srcRect.top >= 0);
+
+	// TODO: clip rect
+	if (dstRect.left < 0) {
+		startX -= dstRect.left;
+		dstRect.left = 0;
+	}
+
+	if (dstRect.top < 0) {
+		startY -= dstRect.top;
+		dstRect.top = 0;
+	}
+
+	if (dstRect.left >= getVM()->_system->getWidth())
+		return;
+	if (dstRect.top >= getVM()->_system->getHeight())
+		return;
+
+	Graphics::Surface *surface = findImage(image)->getSurface();
+	if (startX >= surface->w)
+		return;
+	if (startY >= surface->h)
+		return;
+
+	if (srcRect.left > surface->w)
+		return;
+	if (srcRect.top > surface->h)
+		return;
+	if (srcRect.right > surface->w)
+		srcRect.right = surface->w;
+	if (srcRect.bottom > surface->h)
+		srcRect.bottom = surface->h;
+
+	uint16 width = MIN<int>(srcRect.right - srcRect.left - startX, getVM()->_system->getWidth() - dstRect.left);
+	uint16 height = MIN<int>(srcRect.bottom - srcRect.top - startY, getVM()->_system->getHeight() - dstRect.top);
+
+	byte *surf = (byte *)surface->getBasePtr(0, srcRect.top + startY);
+	Graphics::Surface *screen = getVM()->_system->lockScreen();
+
+	// image and screen should always be 8bpp
+	for (uint16 y = 0; y < height; y++) {
+		byte *dest = (byte *)screen->getBasePtr(dstRect.left, dstRect.top + y);
+		byte *src = surf + srcRect.left + startX;
+		// blit, with 0 being transparent
+		for (uint16 x = 0; x < width; x++) {
+			if (*src)
+				*dest = *src;
+			src++;
+			dest++;
+		}
+		surf += surface->pitch;
+	}
+
+	getVM()->_system->unlockScreen();
+}
+
 MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = new MystBitmap();
 
@@ -784,85 +877,13 @@ MohawkSurface *LBGraphics::decodeImage(uint16 id) {
 	return _bmpDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
 }
 
-void LBGraphics::preloadImage(uint16 image) {
-	findImage(image);
-}
-
-void LBGraphics::copyImageToScreen(uint16 image, bool useOffsets, int left, int top) {
-	MohawkSurface *mhkSurface = findImage(image);
-	Graphics::Surface *surface = mhkSurface->getSurface();
-
-	if (useOffsets) {
-		left -= mhkSurface->getOffsetX();
-		top -= mhkSurface->getOffsetY();
-	}
-
-	Common::Rect srcRect(0, 0, surface->w, surface->h);
-	Common::Rect dstRect(left, top, left + surface->w, top + surface->h);
-	copyImageSectionToScreen(image, srcRect, dstRect);
-}
-
-void LBGraphics::copyImageSectionToScreen(uint16 image, Common::Rect srcRect, Common::Rect dstRect) {
+void LBGraphics::copyOffsetAnimImageToScreen(uint16 image, int left, int top) {
 	MohawkSurface *mhkSurface = findImage(image);
 
-	uint16 startX = 0;
-	uint16 startY = 0;
+	left -= mhkSurface->getOffsetX();
+	top -= mhkSurface->getOffsetY();
 
-	assert(srcRect.isValidRect() && dstRect.isValidRect());
-	assert(srcRect.left >= 0 && srcRect.top >= 0);
-
-	// TODO: clip rect
-	if (dstRect.left < 0) {
-		startX -= dstRect.left;
-		dstRect.left = 0;
-	}
-
-	if (dstRect.top < 0) {
-		startY -= dstRect.top;
-		dstRect.top = 0;
-	}
-
-	if (dstRect.left >= _vm->_system->getWidth())
-		return;
-	if (dstRect.top >= _vm->_system->getHeight())
-		return;
-
-	Graphics::Surface *surface = mhkSurface->getSurface();
-	if (startX >= surface->w)
-		return;
-	if (startY >= surface->h)
-		return;
-
-	if (srcRect.left > surface->w)
-		return;
-	if (srcRect.top > surface->h)
-		return;
-	if (srcRect.right > surface->w)
-		srcRect.right = surface->w;
-	if (srcRect.bottom > surface->h)
-		srcRect.bottom = surface->h;
-
-	uint16 width = MIN<int>(srcRect.right - srcRect.left - startX, _vm->_system->getWidth() - dstRect.left);
-	uint16 height = MIN<int>(srcRect.bottom - srcRect.top - startY, _vm->_system->getHeight() - dstRect.top);
-
-	byte *surf = (byte *)surface->getBasePtr(0, srcRect.top + startY);
-	Graphics::Surface *screen = _vm->_system->lockScreen();
-
-	// image and screen are always 8bpp for LB
-	for (uint16 y = 0; y < height; y++) {
-		byte *dest = (byte *)screen->getBasePtr(dstRect.left, dstRect.top + y);
-		byte *src = surf + srcRect.left + startX;
-		// blit, with 0 being transparent
-		for (uint16 x = 0; x < width; x++) {
-			if (*src)
-				*dest = *src;
-			src++;
-			dest++;
-		}
-		surf += surface->pitch;
-	}
-
-	_vm->_system->unlockScreen();
+	GraphicsManager::copyAnimImageToScreen(image, left, top);
 }
 
 bool LBGraphics::imageIsTransparentAt(uint16 image, bool useOffsets, int x, int y) {
@@ -903,22 +924,7 @@ void LBGraphics::setPalette(uint16 id) {
 		_vm->_system->setPalette(palette, 0, colorCount);
 		delete[] palette;
 	} else {
-		Common::SeekableReadStream *tpalStream = _vm->getResource(ID_TPAL, id);
-		uint16 colorStart = tpalStream->readUint16BE();
-		uint16 colorCount = tpalStream->readUint16BE();
-		byte *palette = new byte[colorCount * 4];
-
-		for (uint16 i = 0; i < colorCount; i++) {
-			palette[i * 4] = tpalStream->readByte();
-			palette[i * 4 + 1] = tpalStream->readByte();
-			palette[i * 4 + 2] = tpalStream->readByte();
-			palette[i * 4 + 3] = tpalStream->readByte();
-		}
-
-		delete tpalStream;
-
-		_vm->_system->setPalette(palette, colorStart, colorCount);
-		delete[] palette;
+		GraphicsManager::setPalette(id);
 	}
 }
 

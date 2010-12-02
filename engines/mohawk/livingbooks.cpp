@@ -1030,7 +1030,7 @@ void LBAnimationNode::draw(const Common::Rect &_bounds) {
 		yOffset -= offset.y;
 	}
 
-	_vm->_gfx->copyImageToScreen(resourceId, true, xOffset, yOffset);
+	_vm->_gfx->copyOffsetAnimImageToScreen(resourceId, xOffset, yOffset);
 }
 
 void LBAnimationNode::reset() {
@@ -2289,7 +2289,7 @@ void LBLiveTextItem::drawWord(uint word, uint yPos) {
 		yPos + _words[word].bounds.bottom - _words[word].bounds.top);
 	Common::Rect dstRect = _words[word].bounds;
 	dstRect.translate(_rect.left, _rect.top);
-	_vm->_gfx->copyImageSectionToScreen(_resourceId, srcRect, dstRect);
+	_vm->_gfx->copyAnimImageSectionToScreen(_resourceId, srcRect, dstRect);
 }
 
 void LBLiveTextItem::handleMouseDown(Common::Point pos) {
@@ -2412,7 +2412,7 @@ void LBPictureItem::draw() {
 	if (!_visible)
 		return;
 
-	_vm->_gfx->copyImageToScreen(_resourceId, false, _rect.left, _rect.top);
+	_vm->_gfx->copyAnimImageToScreen(_resourceId, _rect.left, _rect.top);
 }
 
 LBAnimationItem::LBAnimationItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
