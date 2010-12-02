@@ -974,8 +974,6 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 }
 
 LBAnimationNode::LBAnimationNode(MohawkEngine_LivingBooks *vm, LBAnimation *parent, uint16 scriptResourceId) : _vm(vm), _parent(parent) {
-	_currentCel = 0;
-
 	loadScript(scriptResourceId);
 }
 
@@ -1042,6 +1040,7 @@ void LBAnimationNode::reset() {
 
 	_currentCel = 0;
 	_currentEntry = 0;
+	_delay = 0;
 
 	_xPos = 0;
 	_yPos = 0;
@@ -1050,6 +1049,9 @@ void LBAnimationNode::reset() {
 NodeState LBAnimationNode::update(bool seeking) {
 	if (_currentEntry == _scriptEntries.size())
 		return kLBNodeDone;
+
+	if (_delay > 0 && --_delay)
+		return kLBNodeRunning;
 
 	while (_currentEntry < _scriptEntries.size()) {
 		LBAnimScriptEntry &entry = _scriptEntries[_currentEntry];
@@ -1187,11 +1189,14 @@ NodeState LBAnimationNode::update(bool seeking) {
 			}
 			break;
 
-		case kLBAnimOpUnknownF:
-			// TODO: Found in maggiesfa
-			// Seems to always be a uint32 as the data
+		case kLBAnimOpDelay:
+			{
 			assert(entry.size == 4);
-			warning("f: UnknownF(%d)", READ_BE_UINT32(entry.data));
+			uint32 delay = READ_BE_UINT32(entry.data);
+			debug(4, "f: Delay(%d)", delay);
+			_delay = delay;
+			return kLBNodeRunning;
+			}
 			break;
 
 		default:

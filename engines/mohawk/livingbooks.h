@@ -81,7 +81,7 @@ enum {
 	kLBAnimOpReleaseSound = 0xc,
 	kLBAnimOpResetSound = 0xd,
 	kLBAnimOpUnknownE = 0xe,
-	kLBAnimOpUnknownF = 0xf
+	kLBAnimOpDelay = 0xf
 };
 
 enum {
@@ -179,6 +179,7 @@ protected:
 
 	uint _currentCel;
 	int16 _xPos, _yPos;
+	uint32 _delay;
 };
 
 class LBAnimationItem;
