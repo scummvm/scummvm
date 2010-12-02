@@ -3,12 +3,12 @@ MODULE := engines/asylum
 MODULE_OBJS := \
 	puzzles/puzzle.o \
 	puzzles/vcr.o \
-	resources/actionlist.o \
 	resources/actor.o \
 	resources/object.o \
 	resources/encounters.o \
 	resources/polygons.o \
 	resources/reaction.o \
+	resources/script.o \
 	resources/special.o \
 	resources/worldstats.o \
 	system/config.o \

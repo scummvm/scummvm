@@ -23,7 +23,7 @@
  *
  */
 
-#include "asylum/resources/actionlist.h"
+#include "asylum/resources/script.h"
 
 #include "asylum/resources/actor.h"
 #include "asylum/resources/encounters.h"
@@ -79,9 +79,9 @@ void ActionArea::load(Common::SeekableReadStream *stream) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// ActionList
+// ScriptManager
 //////////////////////////////////////////////////////////////////////////
-ActionList::ActionList(AsylumEngine *engine) : _vm(engine) {
+ScriptManager::ScriptManager(AsylumEngine *engine) : _vm(engine) {
 	// Build list of opcodes
 	ADD_OPCODE(Return);
 	ADD_OPCODE(SetGameFlag);
@@ -187,7 +187,7 @@ ActionList::ActionList(AsylumEngine *engine) : _vm(engine) {
 	reset();
 }
 
-ActionList::~ActionList() {
+ScriptManager::~ScriptManager() {
 	for (int i = 0; i < (int)_opcodes.size(); i++)
 		delete _opcodes[i];
 
@@ -200,7 +200,7 @@ ActionList::~ActionList() {
 	_vm = NULL;
 }
 
-void ActionList::load(Common::SeekableReadStream *stream) {
+void ScriptManager::load(Common::SeekableReadStream *stream) {
 	stream->readSint32LE();  // size
 	int32 numEntries = stream->readSint32LE();
 
@@ -235,9 +235,12 @@ void ActionList::load(Common::SeekableReadStream *stream) {
 	}
 }
 
-void ActionList::reset() {
+void ScriptManager::reset() {
 	// Reset script queue
 	resetQueue();
+
+	// Remove all scripts
+	_scripts.clear();
 
 	_skipProcessing    = false;
 	_currentLine       = 0;
@@ -251,11 +254,11 @@ void ActionList::reset() {
 	_waitCycle = false;
 }
 
-void ActionList::resetQueue() {
+void ScriptManager::resetQueue() {
 	_queue.clear();
 }
 
-void ActionList::queueScript(int scriptIndex, ActorIndex actorIndex) {
+void ScriptManager::queueScript(int scriptIndex, ActorIndex actorIndex) {
 	// When the skipProcessing flag is set, do not queue any more scripts
 	if (_skipProcessing)
 		return;
@@ -275,7 +278,7 @@ void ActionList::queueScript(int scriptIndex, ActorIndex actorIndex) {
 	}
 }
 
-bool ActionList::isInQueue(int32 scriptIndex) {
+bool ScriptManager::isInQueue(int32 scriptIndex) {
 	for (int32 i = 0; i < _queue.size(); i++) {
 		if (_queue[i].scriptIndex == scriptIndex)
 			return true;
@@ -284,7 +287,7 @@ bool ActionList::isInQueue(int32 scriptIndex) {
 	return false;
 }
 
-bool ActionList::process() {
+bool ScriptManager::process() {
 	_done          = false;
 	_exit          = false;
 	_waitCycle     = false;
@@ -1774,7 +1777,7 @@ END_OPCODE
 // Opcode Helper functions
 //////////////////////////////////////////////////////////////////////////
 
-void ActionList::enableObject(ScriptEntry *cmd, ObjectEnableType type) {
+void ScriptManager::enableObject(ScriptEntry *cmd, ObjectEnableType type) {
 	int32 field67C = 0;
 
 	// Setup field67C
@@ -1885,7 +1888,7 @@ void ActionList::enableObject(ScriptEntry *cmd, ObjectEnableType type) {
 	}
 }
 
-void ActionList::setActionFlag(ScriptEntry *cmd, ActionType flag) {
+void ScriptManager::setActionFlag(ScriptEntry *cmd, ActionType flag) {
 	switch (cmd->param2) {
 	default:
 		getWorld()->getObjectById((ObjectId)cmd->param1)->actionType |= flag;
@@ -1901,7 +1904,7 @@ void ActionList::setActionFlag(ScriptEntry *cmd, ActionType flag) {
 	}
 }
 
-void ActionList::clearActionFlag(ScriptEntry *cmd, ActionType flag) {
+void ScriptManager::clearActionFlag(ScriptEntry *cmd, ActionType flag) {
 	switch (cmd->param2) {
 	default:
 		getWorld()->getObjectById((ObjectId)cmd->param1)->actionType &= ~flag;
@@ -1917,7 +1920,7 @@ void ActionList::clearActionFlag(ScriptEntry *cmd, ActionType flag) {
 	}
 }
 
-void ActionList::jumpIfActionFlag(ScriptEntry *cmd, ActionType flag) {
+void ScriptManager::jumpIfActionFlag(ScriptEntry *cmd, ActionType flag) {
 	bool done = false;
 
 	switch (cmd->param3) {
@@ -1940,7 +1943,7 @@ void ActionList::jumpIfActionFlag(ScriptEntry *cmd, ActionType flag) {
 	setNextLine(cmd->param2);
 }
 
-void ActionList::setNextLine(int32 line) {
+void ScriptManager::setNextLine(int32 line) {
 	if (!_currentScript)
 		error("[ActionList::setNextLine] No current script set!");
 

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_ACTIONLIST_H
-#define ASYLUM_ACTIONLIST_H
+#ifndef ASYLUM_SCRIPT_H
+#define ASYLUM_SCRIPT_H
 
 #include "asylum/shared.h"
 
@@ -41,7 +41,7 @@ namespace Asylum {
 	void k##name(ScriptEntry *cmd)
 
 #define IMPLEMENT_OPCODE(name) \
-	void ActionList::k##name(ScriptEntry *cmd) { \
+	void ScriptManager::k##name(ScriptEntry *cmd) { \
 	if (!_currentScript) error("[" #name "] No current script set!"); \
 	if (!cmd) error("[" #name "] Invalid command parameter!");
 
@@ -49,7 +49,7 @@ namespace Asylum {
 
 
 #define ADD_OPCODE(name) { \
-	Opcode *func = new Opcode(#name, new Common::Functor1Mem<ScriptEntry *, void, ActionList>(this, &ActionList::k##name)); \
+	Opcode *func = new Opcode(#name, new Common::Functor1Mem<ScriptEntry *, void, ScriptManager>(this, &ScriptManager::k##name)); \
 	_opcodes.push_back(func); \
 }
 
@@ -117,10 +117,10 @@ struct ActionArea {
 	}
 };
 
-class ActionList {
+class ScriptManager {
 public:
-	ActionList(AsylumEngine *engine);
-	virtual ~ActionList();
+	ScriptManager(AsylumEngine *engine);
+	virtual ~ScriptManager();
 
 	/**
 	 * Loads the script entries
@@ -135,11 +135,23 @@ public:
 	bool process();
 
 	/**
+	 * Resets the queue and local variables
+	 */
+	void reset();
+
+	/**
 	 * Initialize the script element at actionIndex to
 	 * the actor at actorIndex
 	 */
 	void queueScript(int32 scriptIndex, ActorIndex actorIndex);
 
+	/**
+	 * Query if 'scriptIndex' is in queue. 
+	 *
+	 * @param scriptIndex Zero-based index of the script. 
+	 *
+	 * @return true if in queue, false if not. 
+	 */
 	bool isInQueue(int32 scriptIndex);
 
 	// Accessors
@@ -244,11 +256,6 @@ private:
 	 * Resets the queue.
 	 */
 	void resetQueue();
-
-	/**
-	 * Resets the queue and local variables
-	 */
-	void reset();
 
 	// Opcode helper functions
 	void enableObject(ScriptEntry *cmd, ObjectEnableType type);
@@ -364,4 +371,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif // ASYLUM_ACTIONLIST_H
+#endif // ASYLUM_SCRIPT_H

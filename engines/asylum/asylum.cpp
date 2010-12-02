@@ -25,7 +25,7 @@
 
 #include "asylum/asylum.h"
 
-#include "asylum/resources/actionlist.h"
+#include "asylum/resources/script.h"
 #include "asylum/resources/encounters.h"
 #include "asylum/resources/worldstats.h"
 
@@ -56,7 +56,7 @@ namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
 	_console(NULL), _cursor(NULL), _encounter(NULL), _mainMenu(NULL), _resource(NULL), _savegame(NULL),
-	_scene(NULL), _screen(NULL), _sound(NULL), _text(NULL), _video(NULL), _handler(NULL) {
+	_scene(NULL), _screen(NULL), _script(NULL), _sound(NULL), _text(NULL), _video(NULL), _handler(NULL) {
 
 	// Init data
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
@@ -91,6 +91,7 @@ AsylumEngine::~AsylumEngine() {
 	delete _encounter;
 	delete _savegame;
 	delete _screen;
+	delete _script;
 	delete _sound;
 	delete _text;
 	delete _video;
@@ -122,6 +123,7 @@ Common::Error AsylumEngine::run() {
 	_cursor    = new Cursor(this);
 	_savegame  = new Savegame(this);
 	_screen    = new Screen(this);
+	_script    = new ScriptManager(this);
 	_sound     = new Sound(this, _mixer);
 	_text      = new Text(this);
 	_video     = new Video(this, _mixer);
@@ -313,22 +315,22 @@ void AsylumEngine::processDelayedEvents() {
 		error("[AsylumEngine::processDelayedEvents] Subsystems not initialized properly!");
 
 	// check for a delayed video
-	int videoIdx = _scene->actions()->getDelayedVideoIndex();
+	int videoIdx = _script->getDelayedVideoIndex();
 	if (videoIdx >= 0) {
 		_sound->stopMusic();
 		_sound->stopAll();
 		_video->playVideo(videoIdx);
-		_scene->actions()->setDelayedVideoIndex(-1);
+		_script->setDelayedVideoIndex(-1);
 	}
 
 	// check for a delayed scene change
-	ResourcePackId packId = _scene->actions()->getDelayedSceneIndex();
+	ResourcePackId packId = _script->getDelayedSceneIndex();
 	// XXX Flag 183 indicates whether the actionlist is currently
 	// processing
 	if (packId != kResourcePackInvalid && isGameFlagNotSet(kGameFlagScriptProcessing)) {
 
 		// Reset delayed scene
-		_scene->actions()->setDelayedSceneIndex(kResourcePackInvalid);
+		_script->setDelayedSceneIndex(kResourcePackInvalid);
 
 		_sound->stopMusic();
 		_sound->stopAll();

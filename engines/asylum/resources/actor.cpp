@@ -25,10 +25,10 @@
 
 #include "asylum/resources/actor.h"
 
-#include "asylum/resources/actionlist.h"
 #include "asylum/resources/encounters.h"
 #include "asylum/resources/object.h"
 #include "asylum/resources/polygons.h"
+#include "asylum/resources/script.h"
 #include "asylum/resources/worldstats.h"
 
 #include "asylum/system/config.h"
@@ -328,7 +328,7 @@ void Actor::update() {
 						getScene()->getActor(0)->updateFromDirection(kDirectionS);
 
 						// Queue script
-						getScene()->actions()->queueScript(getWorld()->getActionAreaById(2696)->scriptIndex, getScene()->getPlayerIndex());
+						getScript()->queueScript(getWorld()->getActionAreaById(2696)->scriptIndex, getScene()->getPlayerIndex());
 
 						_vm->setGameFlag(kGameFlag279);
 						_vm->setGameFlag(kGameFlag368);
@@ -367,7 +367,7 @@ void Actor::update() {
 					_vm->setGameFlag(kGameFlag238);
 
 					// Queue script
-					getScene()->actions()->queueScript(getWorld()->getActionAreaById(1000)->scriptIndex, getScene()->getPlayerIndex());
+					getScript()->queueScript(getWorld()->getActionAreaById(1000)->scriptIndex, getScene()->getPlayerIndex());
 				}
 			}
 
@@ -1356,7 +1356,7 @@ void Actor::updateStatus12_Chapter11_Actor1() {
 		actor0->updateStatus(kActorStatusEnabled);
 
 		getWorld()->field_E848C = 0;
-		getScene()->actions()->queueScript(getWorld()->getActionAreaById(1574)->scriptIndex, 1);
+		getScript()->queueScript(getWorld()->getActionAreaById(1574)->scriptIndex, 1);
 	}
 }
 
@@ -1669,9 +1669,9 @@ void Actor::updateFinish() {
 
 	ActionArea *area = getWorld()->actions[areaIndex];
 	ActionArea *actorArea = getWorld()->actions[_actionIdx3];
-	if (!getScene()->actions()->isProcessingSkipped()) {
-		getScene()->actions()->queueScript(actorArea->scriptIndex2, _index);
-		getScene()->actions()->queueScript(area->scriptIndex, _index);
+	if (!getScript()->isProcessingSkipped()) {
+		getScript()->queueScript(actorArea->scriptIndex2, _index);
+		getScript()->queueScript(area->scriptIndex, _index);
 	}
 
 	if (!area->paletteResourceId || area->paletteResourceId == actorArea->paletteResourceId || _index) {

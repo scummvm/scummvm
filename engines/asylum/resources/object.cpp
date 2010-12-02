@@ -509,7 +509,7 @@ Common::String Object::toString(bool shortString) {
 		output += Common::String::format("    tickCount2:      %d\n", _tickCount2);
 		output += Common::String::format("    field_C0:        %d\n", _field_C0);
 		output += Common::String::format("    priority:        %d\n", _priority);
-		output += Common::String::format("    actionListIdx:   %d\n", _scriptIndex);
+		output += Common::String::format("    scriptIndex:   %d\n", _scriptIndex);
 		output += Common::String::format("    field_67C:       %d\n", _field_67C);
 		output += Common::String::format("    soundX:          %d\n", _soundX);
 		output += Common::String::format("    soundY:          %d\n", _soundY);

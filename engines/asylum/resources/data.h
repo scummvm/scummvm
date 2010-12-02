@@ -62,10 +62,10 @@ enum GlobalFlag {
  *  -- Scene data (reset on scene load)
  *  uint32 {16}     - ambient sound panning array
  *  uint32 {1}      - scene counter
- *  -- Script queue (stored in ActionList - reset on scene change)
+ *  -- Script queue (stored in ScriptManager - reset on scene change)
  *  uint32 {1}      - global Object X
  *  uint32 {1}      - global Object Y
- *  -- Skip processing flag (stored in ActionList)
+ *  -- Skip processing flag (stored in ScriptManager)
  *  uint32 {1}      - Encounter flag 2
  *  -- Player ActorIndex (reset on scene enter)
  *  uint32 {1}      -  scene xLeft
