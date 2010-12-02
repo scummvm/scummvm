@@ -69,6 +69,7 @@ public:
 	void setNumberFlag01(int32 number) { _numberFlag01 = number; }
 	void setPriority(int32 priority) { _priority = priority; }
 	void setResourceId(ResourceId id) { _resourceId = id; }
+	void setSoundResourceId(ResourceId id) { _soundResourceId = id; }
 	void setStatus(ActorStatus status) { _status = status; }
 
 	void setField638(int32 val) { _field_638 = val; }
@@ -90,6 +91,7 @@ public:
 	int32          getReaction(uint32 index) { return _reaction[index]; }
 	ResourceId     getResourceId() { return _resourceId; }
 	ResourceId     getResourcesId(uint32 index) { return _graphicResourceIds[index]; }
+	int32          getScriptIndex() { return _scriptIndex; }
 	ResourceId     getSoundResourceId() { return _soundResourceId; }
 	ActorStatus    getStatus()    { return _status; }
 
@@ -326,7 +328,7 @@ private:
 	int32  _actionIdx2;
 	int32  _field_924;
 	uint32 _lastScreenUpdate;
-	int32  _field_92C;
+	int32  _scriptIndex;
 	//actionType
 	int32  _field_934;
 	int32  _field_938;

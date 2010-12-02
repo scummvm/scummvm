@@ -105,14 +105,14 @@ public:
 	/**
 	 * Return the index of the player actor
 	 */
-	ActorIndex getPlayerIndex() { return _playerActorIndex; }
+	ActorIndex getPlayerIndex() { return _playerIndex; }
 
 	/**
 	 * Sets the player actor index.
 	 *
 	 * @param index index of the player actor
 	 */
-	void setPlayerActorIndex(ActorIndex index) { _playerActorIndex = index; }
+	void setPlayerActorIndex(ActorIndex index) { _playerIndex = index; }
 
 	/**
 	 * Gets the current scene pack identifier.
@@ -177,7 +177,7 @@ private:
 	AsylumEngine  *_vm;
 
 	ResourcePackId _packId;
-	int32 _playerActorIndex;
+	int32 _playerIndex;
 	bool  _walking;
 
 
@@ -379,6 +379,10 @@ private:
 	 */
 	bool hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped);
 
+	//////////////////////////////////////////////////////////////////////////
+	// Hit actions
+	//////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * Handle hit
 	 *
@@ -391,6 +395,13 @@ private:
 	 * Handle player reaction
 	 */
 	void playerReaction();
+
+	void hitAreaChapter2(int32 id);
+	void hitAreaChapter7(int32 id);
+	void hitAreaChapter11(int32 id);
+
+	void hitActorChapter2(ActorIndex index);
+	void hitActorChapter11(ActorIndex index);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
@@ -416,6 +427,20 @@ private:
 	 */
 	bool pointIntersectsRect(Common::Point point, Common::Rect rect);
 
+	/**
+	 * Check if rectangles intersect.
+	 *
+	 * @param x  The x coordinate.
+	 * @param y  The y coordinate.
+	 * @param x1 The first x value.
+	 * @param y1 The first y value.
+	 * @param x2 The second x value.
+	 * @param y2 The second y value.
+	 * @param x3 The third int32.
+	 * @param y3 The third int32.
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
 	bool rectIntersect(int32 x, int32 y, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3);
 
 	//////////////////////////////////////////////////////////////////////////

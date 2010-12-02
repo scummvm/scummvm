@@ -82,7 +82,7 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_actionIdx2 = 0;
  	_field_924 = 0;
  	_lastScreenUpdate = 0;
- 	_field_92C = 0;
+ 	_scriptIndex = 0;
  	actionType = 0;
  	_field_934 = 0;
  	_field_938 = 0;
@@ -190,7 +190,7 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	_actionIdx2 = stream->readSint32LE();
 	_field_924  = stream->readSint32LE();
 	_lastScreenUpdate = stream->readUint32LE();
-	_field_92C  = stream->readSint32LE();
+	_scriptIndex  = stream->readSint32LE();
 	actionType     = stream->readSint32LE();
 	_field_934  = stream->readSint32LE();
 	_field_938  = stream->readSint32LE();
