@@ -148,6 +148,8 @@ Common::Error AsylumEngine::run() {
 	while (!shouldQuit()) {
 		handleEvents();
 
+		_system->delayMillis(10);
+
 		_system->updateScreen();
 	}
 
