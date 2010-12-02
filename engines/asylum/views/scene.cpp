@@ -242,47 +242,6 @@ void Scene::load(ResourcePackId packId) {
 	getCursor()->show();
 }
 
-Actor* Scene::getActor(ActorIndex index) {
-	if (!_ws)
-		error("[Scene::getActor] WorldStats not initialized properly!");
-
-	ActorIndex computedIndex =  (index != -1) ? index : _playerActorIndex;
-
-	if (computedIndex < 0 || computedIndex >= (int16)_ws->actors.size())
-		error("[Scene::getActor] Invalid actor index: %d ([0-%d] allowed)", computedIndex, _ws->actors.size() - 1);
-
-	return _ws->actors[computedIndex];
-}
-
-//void Scene::setScenePosition(int x, int y) {
-//	if (!_ws)
-//		error("[Scene::setScenePosition] WorldStats not initialized properly!");
-//
-//	if (!_bgResource)
-//		error("[Scene::setScenePosition] Scene resources not initialized properly!");
-//
-//	GraphicFrame *bg = _bgResource->getFrame(0);
-//	//_startX = x;
-//	//_startY = y;
-//
-//	int32 *targetX = &_ws->coordinates[0];
-//	int32 *targetY = &_ws->coordinates[1];
-//
-//	*targetX = x;
-//	*targetY = y;
-//
-//	if (*targetX < 0)
-//		*targetX = 0;
-//	if (*targetX > (bg->surface.w - 640))
-//		*targetX = bg->surface.w - 640;
-//
-//
-//	if (*targetY < 0)
-//		*targetY = 0;
-//	if (*targetY > (bg->surface.h - 480))
-//		*targetY = bg->surface.h - 480;
-//}
-
 //////////////////////////////////////////////////////////////////////////
 // Event handling
 //////////////////////////////////////////////////////////////////////////
@@ -718,6 +677,174 @@ void Scene::updateMouse() {
 	}
 }
 
+
+void Scene::updateActors() {
+	if (!_ws)
+		error("[Scene::updateActors] WorldStats not initialized properly!");
+
+	for (uint32 i = 0; i < _ws->actors.size(); i++)
+		_ws->actors[i]->update();
+}
+
+void Scene::updateObjects() {
+	if (!_ws)
+		error("[Scene::updateObjects] WorldStats not initialized properly!");
+
+	for (uint32 i = 0; i < _ws->objects.size(); i++)
+		_ws->objects[i]->update();
+}
+
+void Scene::updateAmbientSounds() {
+	if (!_ws)
+		error("[Scene::updateAmbientSounds] WorldStats not initialized properly!");
+
+	if (Config.performance <= 3)
+		return;
+
+	for (int32 i = 0; i < _ws->numAmbientSound; i++) {
+		bool processSound = true;
+		int panning = 0;
+		int volume  = 0;
+		AmbientSoundItem *snd = &_ws->ambientSounds[i];
+
+		for (int32 f = 0; f < 6; f++) {
+			GameFlag gameFlag = snd->flagNum[f];
+			if (gameFlag >= 0) {
+				if (_vm->isGameFlagNotSet(gameFlag)) {
+					processSound = false;
+					break;
+				}
+			} else {
+				if (_vm->isGameFlagSet((GameFlag)-gameFlag)) {
+					processSound = false;
+					break;
+				}
+			}
+		}
+		if (processSound) {
+			if (_vm->sound()->isPlaying(snd->resourceId)) {
+				if (snd->field_0) {
+					// TODO optimize
+					// This adjustment only uses the actor at
+					// index zero, but it's supposed to loop through
+					// all available actors as well (I think)
+					volume = getSound()->calculateVolumeAdjustement(snd->x, snd->y, snd->attenuation, snd->delta);
+					if (volume <= 0) {
+						if (volume < -10000)
+							volume = -10000;
+						// TODO setSoundVolume(snd->resourceId, volume);
+					} else
+						; // TODO setSoundVolume(snd->resourceId, 0);
+				}
+			} else {
+				int loflag = BYTE1(snd->flags);
+				if (snd->field_0) {
+					; // TODO calculate panning at point
+				} else {
+					panning = 0;
+				}
+				if (snd->field_0 == 0) {
+					volume = -(snd->delta ^ 2);
+				} else {
+					volume = getSound()->calculateVolumeAdjustement(snd->x, snd->y, snd->attenuation, snd->delta);
+					volume += Config.ambientVolume;
+				}
+				if (loflag & 2) {
+					int tmpVol = volume;
+					if (_vm->getRandom(10000) < 10) {
+						if (snd->field_0) {
+							getSound()->playSound(snd->resourceId, false, volume, panning);
+						} else {
+							// FIXME will this even work?
+							tmpVol += (_vm->getRandom(500)) * (((_vm->getRandom(100) >= 50) - 1) & 2) - 1;
+							if (tmpVol <= -10000)
+								volume = -10000;
+							if (volume >= 0)
+								tmpVol = 0;
+							else
+								if (tmpVol <= -10000)
+									tmpVol = -10000;
+							getSound()->playSound(snd->resourceId, false, tmpVol, _vm->getRandom(20001) - 10000);
+						}
+					}
+				} else {
+					if (loflag & 4) {
+						// TODO panning array stuff
+					}
+				}
+			}
+		} else {
+			if (_vm->sound()->isPlaying(snd->resourceId))
+				_vm->sound()->stop(snd->resourceId);
+		}
+	}
+}
+
+void Scene::updateMusic() {
+	//warning("[Scene::updateMusic] not implemented!");
+}
+
+void Scene::updateAdjustScreen() {
+	if (g_debugScrolling) {
+		debugScreenScrolling();
+	} else {
+		updateCoordinates();
+	}
+}
+
+void Scene::updateCoordinates() {
+	Actor *act = getActor();
+	int32 newXLeft = -1;
+	int32 newYTop  = -1;
+	Common::Rect b = _ws->boundingRect;
+
+	if (_ws->motionStatus == 1) {
+		int32 posX = act->getPoint1()->x - _ws->xLeft;
+		int32 posY = act->getPoint1()->y - _ws->yTop;
+
+		if (posX < b.left || posX > b.right) {
+			int32 newRBounds = posX - b.right;
+			newXLeft = newRBounds + _ws->xLeft;
+			_ws->xLeft += newRBounds;
+		}
+
+		if (posY < b.top || posY > b.bottom) {
+			int32 newBBounds = posY - b.bottom;
+			newYTop = newBBounds + _ws->yTop;
+			_ws->yTop += newBBounds;
+		}
+
+		if (newXLeft < 0)
+			newXLeft = _ws->xLeft = 0;
+
+		if (newXLeft > _ws->width - 640)
+			newXLeft = _ws->xLeft = _ws->width - 640;
+
+		if (newYTop < 0)
+			newYTop = _ws->yTop = 0;
+
+		if (newYTop > _ws->height - 480)
+			newYTop = _ws->yTop = _ws->height - 480;
+	} else {
+		// TODO
+	}
+
+	uint8 rectIndex = _ws->sceneRectIdx;
+	b = _ws->sceneRects[rectIndex];
+
+	if (newXLeft < b.left)
+		newXLeft = _ws->xLeft = b.left;
+
+	if (newYTop < b.top)
+		newYTop = _ws->yTop = b.top;
+
+	if (newXLeft + 639 > b.right)
+		newXLeft = _ws->xLeft = b.right - 639;
+
+	if (newYTop + 479 > b.bottom)
+		newYTop = _ws->yTop = b.bottom - 479;
+}
+
 void Scene::updateCursor(int direction, Common::Rect rect) {
 	int16 rlimit = rect.right - 10;
 	ResourceId newGraphicResourceId;
@@ -836,25 +963,9 @@ void Scene::updateCursor(int direction, Common::Rect rect) {
 
 }
 
-int32 Scene::hitTestObject() {
-	if (!_ws)
-		error("[Scene::hitTestObject] WorldStats not initialized properly!");
-
-	const Common::Point pt = getCursor()->position();
-
-	int32 targetIdx = -1;
-	for (uint32 i = 0; i < _ws->objects.size(); i++) {
-		Object *object = _ws->objects[i];
-		if (object->isOnScreen())
-			if (object->getPolygonIndex())
-				if (hitTestPixel(object->getResourceId(), object->getFrameIndex(), pt.x, pt.y, object->flags & 0x1000)) {
-					targetIdx = i;
-					break;
-				}
-	}
-	return targetIdx;
-}
-
+//////////////////////////////////////////////////////////////////////////
+// HitTest
+//////////////////////////////////////////////////////////////////////////
 int32 Scene::hitTest(HitType &type) {
 	type = kHitNone;
 	int32 targetIdx = hitTestObject();
@@ -872,52 +983,6 @@ int32 Scene::hitTest(HitType &type) {
 		type = kHitObject;
 	}
 	return targetIdx;
-}
-
-void Scene::handleHit(int32 index, HitType type) {
-	error("[Scene::handleHit] Not implemented!");
-}
-
-void Scene::playerReaction() {
-	error("[Scene::playerReaction] Not implemented!");
-}
-
-int32 Scene::hitTestActionArea() {
-	const Common::Point pt = getCursor()->position();
-
-	int32 targetIdx = findActionArea(Common::Point(_ws->xLeft + pt.x, _ws->yTop + pt.y));
-
-	if ( targetIdx == -1 || !(_ws->actions[targetIdx]->actionType & 0x17))
-		targetIdx = -1;
-
-	return targetIdx;
-}
-
-int32 Scene::findActionArea(const Common::Point pt) {
-	if (!_ws)
-		error("[Scene::findActionArea] WorldStats not initialized properly!");
-
-	if (!_polygons)
-		error("[Scene::findActionArea] Polygons not initialized properly!");
-
-	// TODO
-	// This is a VERY loose implementation of the target
-	// function, as this doesn't do any of the flag checking
-	// the original did
-	int32 targetIdx = -1;
-	for (uint32 i = 0; i < _ws->actions.size(); i++) {
-		ActionArea *a = _ws->actions[i];
-		PolyDefinitions p = _polygons->entries[a->polyIdx];
-		if (p.contains(pt.x, pt.y)) {
-			targetIdx = i;
-			break;
-		}
-	}
-	return targetIdx;
-}
-
-bool Scene::isInActionArea(const Common::Point &pt, ActionArea *area) {
-	error("[Scene::isInActionArea] Not implemented!");
 }
 
 ResourceId Scene::hitTestScene(HitType &type) {
@@ -942,6 +1007,17 @@ ResourceId Scene::hitTestScene(HitType &type) {
 	// TODO object and actor checks
 
 	return result;
+}
+
+int32 Scene::hitTestActionArea() {
+	const Common::Point pt = getCursor()->position();
+
+	int32 targetIdx = findActionArea(Common::Point(_ws->xLeft + pt.x, _ws->yTop + pt.y));
+
+	if ( targetIdx == -1 || !(_ws->actions[targetIdx]->actionType & 0x17))
+		targetIdx = -1;
+
+	return targetIdx;
 }
 
 bool Scene::hitTestActor() {
@@ -970,130 +1046,42 @@ bool Scene::hitTestPlayer() {
 	error("[Scene::hitTestPlayer] Not implemented!");
 }
 
+int32 Scene::hitTestObject() {
+	if (!_ws)
+		error("[Scene::hitTestObject] WorldStats not initialized properly!");
+
+	const Common::Point pt = getCursor()->position();
+
+	int32 targetIdx = -1;
+	for (uint32 i = 0; i < _ws->objects.size(); i++) {
+		Object *object = _ws->objects[i];
+		if (object->isOnScreen())
+			if (object->getPolygonIndex())
+				if (hitTestPixel(object->getResourceId(), object->getFrameIndex(), pt.x, pt.y, object->flags & 0x1000)) {
+					targetIdx = i;
+					break;
+				}
+	}
+	return targetIdx;
+}
+
 bool Scene::hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped) {
 	// TODO this gets a bit funky with the "flipped" calculations for x intersection
 	// The below is a pretty basic intersection test for proof of concept
 	return GraphicResource::getFrameRect(_vm, resourceId, frame).contains(x, y);
 }
 
-void Scene::changePlayer(ActorIndex index) {
-	error("[Scene::changePlayer] not implemented");
+void Scene::handleHit(int32 index, HitType type) {
+	error("[Scene::handleHit] Not implemented!");
 }
 
-void Scene::updateActors() {
-	if (!_ws)
-		error("[Scene::updateActors] WorldStats not initialized properly!");
-
-	for (uint32 i = 0; i < _ws->actors.size(); i++)
-		_ws->actors[i]->update();
+void Scene::playerReaction() {
+	error("[Scene::playerReaction] Not implemented!");
 }
 
-void Scene::updateObjects() {
-	if (!_ws)
-		error("[Scene::updateObjects] WorldStats not initialized properly!");
-
-	for (uint32 i = 0; i < _ws->objects.size(); i++)
-		_ws->objects[i]->update();
-}
-
-void Scene::updateAmbientSounds() {
-	if (!_ws)
-		error("[Scene::updateAmbientSounds] WorldStats not initialized properly!");
-
-	if (Config.performance <= 3)
-		return;
-
-	for (int32 i = 0; i < _ws->numAmbientSound; i++) {
-		bool processSound = true;
-		int panning = 0;
-		int volume  = 0;
-		AmbientSoundItem *snd = &_ws->ambientSounds[i];
-
-		for (int32 f = 0; f < 6; f++) {
-			GameFlag gameFlag = snd->flagNum[f];
-			if (gameFlag >= 0) {
-				if (_vm->isGameFlagNotSet(gameFlag)) {
-					processSound = false;
-					break;
-				}
-			} else {
-				if (_vm->isGameFlagSet((GameFlag)-gameFlag)) {
-					processSound = false;
-					break;
-				}
-			}
-		}
-		if (processSound) {
-			if (_vm->sound()->isPlaying(snd->resourceId)) {
-				if (snd->field_0) {
-					// TODO optimize
-					// This adjustment only uses the actor at
-					// index zero, but it's supposed to loop through
-					// all available actors as well (I think)
-					volume = getSound()->calculateVolumeAdjustement(snd->x, snd->y, snd->attenuation, snd->delta);
-					if (volume <= 0) {
-						if (volume < -10000)
-							volume = -10000;
-						// TODO setSoundVolume(snd->resourceId, volume);
-					} else
-						; // TODO setSoundVolume(snd->resourceId, 0);
-				}
-			} else {
-				int loflag = BYTE1(snd->flags);
-				if (snd->field_0) {
-					; // TODO calculate panning at point
-				} else {
-					panning = 0;
-				}
-				if (snd->field_0 == 0) {
-					volume = -(snd->delta ^ 2);
-				} else {
-					volume = getSound()->calculateVolumeAdjustement(snd->x, snd->y, snd->attenuation, snd->delta);
-					volume += Config.ambientVolume;
-				}
-				if (loflag & 2) {
-					int tmpVol = volume;
-					if (_vm->getRandom(10000) < 10) {
-						if (snd->field_0) {
-							getSound()->playSound(snd->resourceId, false, volume, panning);
-						} else {
-							// FIXME will this even work?
-							tmpVol += (_vm->getRandom(500)) * (((_vm->getRandom(100) >= 50) - 1) & 2) - 1;
-							if (tmpVol <= -10000)
-								volume = -10000;
-							if (volume >= 0)
-								tmpVol = 0;
-							else
-								if (tmpVol <= -10000)
-									tmpVol = -10000;
-							getSound()->playSound(snd->resourceId, false, tmpVol, _vm->getRandom(20001) - 10000);
-						}
-					}
-				} else {
-					if (loflag & 4) {
-						// TODO panning array stuff
-					}
-				}
-			}
-		} else {
-			if (_vm->sound()->isPlaying(snd->resourceId))
-				_vm->sound()->stop(snd->resourceId);
-		}
-	}
-}
-
-void Scene::updateMusic() {
-	//warning("[Scene::updateMusic] not implemented!");
-}
-
-void Scene::updateAdjustScreen() {
-	if (g_debugScrolling) {
-		debugScreenScrolling();
-	} else {
-		updateCoordinates();
-	}
-}
-
+//////////////////////////////////////////////////////////////////////////
+// Helpers
+//////////////////////////////////////////////////////////////////////////
 void Scene::playIntroSpeech() {
 	ResourceId resourceId;
 
@@ -1130,58 +1118,26 @@ void Scene::stopSpeech() {
 	}
 }
 
-void Scene::updateCoordinates() {
-	Actor *act = getActor();
-	int32 newXLeft = -1;
-	int32 newYTop  = -1;
-	Common::Rect b = _ws->boundingRect;
+bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {
+	if (rect.top || rect.left || rect.bottom || rect.right) {
+		Common::Rational res((rect.bottom - rect.top) * (point.x - rect.left), rect.right - rect.left);
 
-	if (_ws->motionStatus == 1) {
-		int32 posX = act->getPoint1()->x - _ws->xLeft;
-		int32 posY = act->getPoint1()->y - _ws->yTop;
-
-		if (posX < b.left || posX > b.right) {
-			int32 newRBounds = posX - b.right;
-			newXLeft = newRBounds + _ws->xLeft;
-			_ws->xLeft += newRBounds;
-		}
-
-		if (posY < b.top || posY > b.bottom) {
-			int32 newBBounds = posY - b.bottom;
-			newYTop = newBBounds + _ws->yTop;
-			_ws->yTop += newBBounds;
-		}
-
-		if (newXLeft < 0)
-			newXLeft = _ws->xLeft = 0;
-
-		if (newXLeft > _ws->width - 640)
-			newXLeft = _ws->xLeft = _ws->width - 640;
-
-		if (newYTop < 0)
-			newYTop = _ws->yTop = 0;
-
-		if (newYTop > _ws->height - 480)
-			newYTop = _ws->yTop = _ws->height - 480;
-	} else {
-		// TODO
+		return (bool)(point.y > rect.top ? 1 + res.toInt() : res.toInt());
 	}
 
-	uint8 rectIndex = _ws->sceneRectIdx;
-	b = _ws->sceneRects[rectIndex];
+	return true;
+}
 
-	if (newXLeft < b.left)
-		newXLeft = _ws->xLeft = b.left;
+Actor* Scene::getActor(ActorIndex index) {
+	if (!_ws)
+		error("[Scene::getActor] WorldStats not initialized properly!");
 
-	if (newYTop < b.top)
-		newYTop = _ws->yTop = b.top;
+	ActorIndex computedIndex =  (index != -1) ? index : _playerActorIndex;
 
-	if (newXLeft + 639 > b.right)
-		newXLeft = _ws->xLeft = b.right - 639;
+	if (computedIndex < 0 || computedIndex >= (int16)_ws->actors.size())
+		error("[Scene::getActor] Invalid actor index: %d ([0-%d] allowed)", computedIndex, _ws->actors.size() - 1);
 
-	if (newYTop + 479 > b.bottom)
-		newYTop = _ws->yTop = b.bottom - 479;
-
+	return _ws->actors[computedIndex];
 }
 
 bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkSceneCoords, int32 *param) {
@@ -1254,6 +1210,39 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 	return false;
 }
 
+
+int32 Scene::findActionArea(const Common::Point pt) {
+	if (!_ws)
+		error("[Scene::findActionArea] WorldStats not initialized properly!");
+
+	if (!_polygons)
+		error("[Scene::findActionArea] Polygons not initialized properly!");
+
+	// TODO
+	// This is a VERY loose implementation of the target
+	// function, as this doesn't do any of the flag checking
+	// the original did
+	int32 targetIdx = -1;
+	for (uint32 i = 0; i < _ws->actions.size(); i++) {
+		ActionArea *a = _ws->actions[i];
+		PolyDefinitions p = _polygons->entries[a->polyIdx];
+		if (p.contains(pt.x, pt.y)) {
+			targetIdx = i;
+			break;
+		}
+	}
+	return targetIdx;
+}
+
+bool Scene::isInActionArea(const Common::Point &pt, ActionArea *area) {
+	error("[Scene::isInActionArea] Not implemented!");
+}
+
+
+void Scene::changePlayer(ActorIndex index) {
+	error("[Scene::changePlayer] not implemented");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Scene drawing
 //////////////////////////////////////////////////////////////////////////
@@ -1321,7 +1310,7 @@ bool Scene::drawScene() {
 }
 
 bool Scene::updateListCompare(const UpdateItem &item1, const UpdateItem &item2) {
-	return item1.priority - item2.priority;
+	return (item1.priority - item2.priority < 0) ? false : true;
 }
 
 void Scene::buildUpdateList() {
@@ -1518,19 +1507,6 @@ void Scene::checkVisibleActorsPriority() {
 
 void Scene::adjustActorPriority(ActorIndex index) {
 	error("[Scene::adjustActorPriority] not implemented");
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Helpers
-//////////////////////////////////////////////////////////////////////////
-bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {
-	if (rect.top || rect.left || rect.bottom || rect.right) {
-		Common::Rational res((rect.bottom - rect.top) * (point.x - rect.left), rect.right - rect.left);
-
-		return (bool)(point.y > rect.top ? 1 + res.toInt() : res.toInt());
-	}
-
-	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

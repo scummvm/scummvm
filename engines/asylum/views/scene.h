@@ -265,70 +265,150 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Scene drawing
 	//////////////////////////////////////////////////////////////////////////
-	void preload(); // Draw the loading screen
+
+	/**
+	 * Draw the loading screen
+	 */
+	void preload();
+
+	/**
+	 * Draw the scene
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
 	bool drawScene();
 
+	/**
+	 * Builds the update list.
+	 */
 	void buildUpdateList();
+
+	/**
+	 * Process the update list.
+	 */
 	void processUpdateList();
+
+	/**
+	 * Compare two items priority on the update list
+	 *
+	 * @param item1 The first item.
+	 * @param item2 The second item.
+	 *
+	 * @return true item1 priority is superior to item2 priority, false otherwise
+	 */
 	static bool updateListCompare(const UpdateItem &item1, const UpdateItem &item2);
 
+	/**
+	 * Check visible actors priority.
+	 */
 	void checkVisibleActorsPriority();
+
+	/**
+	 * Adjust actor priority.
+	 *
+	 * @param index Zero-based index of the actor
+	 */
 	void adjustActorPriority(ActorIndex index);
 
 	//////////////////////////////////////////////////////////////////////////
 	// HitTest
 	//////////////////////////////////////////////////////////////////////////
 
-	/** .text:0040EA50
-	 * Run various hit tests and return the index,
-	 * and a reference to the located type
+	/**
+	 * Run various hit tests and return the index, and a reference to the located type.
+	 *
+	 * @param [in,out] type The type.
+	 *
+	 * @return The index
 	 */
 	int32 hitTest(HitType &type);
 
-	/** .text:0040F010
-	 * TODO
+	/**
+	 * Checks if the supplied coordinates are inside an action area, object or actor, and returns -1 if nothing was found, or the type of hit if
+	 * found.
+	 *
+	 * @param [in,out] type The type.
+	 *
+	 * @return
+	 */
+	ResourceId hitTestScene(HitType &type);
+
+	/**
+	 * Check if the mouse cursor is currently intersecting an action area
+	 *
+	 * @return the index
 	 */
 	int32 hitTestActionArea();
 
-	/** .text:0040E7F0
-	 * Check if the mouse cursor is currently intersecting
-	 * the currently active actor
+	/**
+	 * Check if the mouse cursor is currently intersecting the currently active actor.
+	 *
+	 * @return true if it succeeds, false if it fails.
 	 */
 	bool hitTestActor();
 
 	/**
-	 * Check if the mouse cursor is currently intersecting the player
+	 * Check if the mouse cursor is currently intersecting the player.
+	 *
+	 * @return true if it succeeds, false if it fails.
 	 */
 	bool hitTestPlayer();
 
-	/** .text:004341E0
-	 * Check if the mouse cursor is currently intersecting
-	 * a graphic resource at the supplied coordinates
-	 */
-	bool hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped);
-
-	/** .text:0040E8A0
-	 * Checks if the supplied coordinates are inside an action area, object or
-	 * actor, and returns -1 if nothing was found, or the type of hit if found
-	 */
-	ResourceId hitTestScene(HitType &type);
-
-	/** .text:0040EAA0
-	 * Check if a object exist at the supplied coordinates.
-	 * If so, return it's index within the objects array, if not,
-	 * return -1
+	/**
+	 * Check if a object exist at the supplied coordinates. If so, return it's index within the objects array, if not, return -1.
+	 *
+	 * @return the object index
 	 */
 	int32 hitTestObject();
 
+	/**
+	 * .Check if the mouse cursor is currently intersecting a graphic resource at the supplied coordinates.
+	 *
+	 * @param resourceId Identifier for the resource.
+	 * @param frame 	 The frame.
+	 * @param x 		 The x coordinate.
+	 * @param y 		 The y coordinate.
+	 * @param flipped    true to flipped.
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	bool hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped);
+
+	/**
+	 * Handle hit
+	 *
+	 * @param index The index
+	 * @param type  The type.
+	 */
 	void handleHit(int32 index, HitType type);
 
+	/**
+	 * Handle player reaction
+	 */
 	void playerReaction();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Play intro speech.
+	 */
 	void playIntroSpeech();
+
+	/**
+	 * Stop speech.
+	 */
 	void stopSpeech();
+
+	/**
+	 * Check if point intersects the rectangle.
+	 *
+	 * @param point The point.
+	 * @param rect  The rectangle.
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
 	bool pointIntersectsRect(Common::Point point, Common::Rect rect);
 
 	//////////////////////////////////////////////////////////////////////////
