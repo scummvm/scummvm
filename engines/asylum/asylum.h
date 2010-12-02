@@ -148,11 +148,14 @@ public:
 	Video           *video()     { return _video; }
 
 	// Flags
+	void setGameFlagByIndex(int32 index);
+	int32 getGameFlagByIndex(int32 index);
 	void setGameFlag(GameFlag flag);
 	void clearGameFlag(GameFlag flag);
 	void toggleGameFlag(GameFlag flag);
 	bool isGameFlagSet(GameFlag flag) const;
 	bool isGameFlagNotSet(GameFlag flag) const;
+	void resetFlags();
 
 	// Misc
 	uint getRandom(uint max) { return _rnd.getRandomNumber(max); }
@@ -207,7 +210,7 @@ private:
 
 	// Game data
 	SharedData _data;
-	int  _gameFlags[1512];
+	int  _gameFlags[145];
 	bool _introPlayed;
 
 	void handleEvents();

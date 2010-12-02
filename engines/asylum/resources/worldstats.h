@@ -111,7 +111,7 @@ public:
 	int32 actorType;
 	ResourceId soundResourceIds[50];
 	AmbientSoundItem ambientSounds[15];
-	int32 numAmbientSound;
+	int32 numAmbientSounds;
 	int32 musicStatus;
 	uint32 musicCurrentResourceIndex;
 	int32 musicFlag;

@@ -78,7 +78,7 @@ struct AmbientSoundItem {
 	ResourceId resourceId;
 	int32 delta;
 	int32 attenuation;
-	int32 field_14;
+	int32 nextTick;
 	GameFlag flagNum[6];
 	int32 x;
 	int32 y;
@@ -89,7 +89,7 @@ struct AmbientSoundItem {
 		resourceId = kResourceNone;
 		delta = 0;
 		attenuation = 0;
-		field_14 = 0;
+		nextTick = 0;
 		memset(&flagNum, 0, sizeof(flagNum));
 		x = 0;
 		y = 0;

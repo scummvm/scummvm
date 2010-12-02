@@ -231,11 +231,12 @@ void Scene::load(ResourcePackId packId) {
 	fd->close();
 	delete fd;
 
-	// TODO figure out what field_120 is used for
+	_vm->resetFlags();
 	_ws->field_120 = -1;
 
+	int32 tick = _vm->getTick();
 	for (uint32 a = 0; a < _ws->actors.size(); a++)
-		_ws->actors[a]->setLastScreenUpdate(_vm->getTick());
+		_ws->actors[a]->setLastScreenUpdate(tick);
 
 	getCursor()->show();
 }
@@ -536,151 +537,132 @@ bool Scene::updateScene() {
 }
 
 void Scene::updateMouse() {
-	Common::Rect  actorPos;
+	Actor *player = getActor();
+	Common::Point mouse = getCursor()->position();
+
 	Common::Point pt;
-	Actor *act = getActor();
+	player->adjustCoordinates(&pt);
 
-	// The code below was from
-	// .text:0040A1B0 getCharacterScreenPosition()
-	// which was only ever called at this point, so
-	// inlining it for simplicity
-	pt.x = (int16)(act->getPoint1()->x -_ws->xLeft);
-	pt.y = (int16)(act->getPoint1()->y -_ws->yTop);
-
-	if (_packId != 2 || _playerIndex != 10) {
-		actorPos.left   = pt.x + 20;
-		actorPos.top    = pt.y;
-		actorPos.right  = (int16)(pt.x + 2 * act->getPoint2()->x);
-		actorPos.bottom = (int16)(pt.y + act->getPoint2()->y);
+	Common::Rect actorRect;
+	if (_ws->chapter != kChapter2 || _playerIndex != 10) {
+		actorRect.left   = pt.x + 20;
+		actorRect.top    = pt.y;
+		actorRect.right  = (int16)(pt.x + 2 * player->getPoint2()->x);
+		actorRect.bottom = (int16)(pt.y + player->getPoint2()->y);
 	} else {
-		actorPos.left   = pt.x + 50;
-		actorPos.top    = pt.y + 60;
-		actorPos.right  = (int16)(pt.x + getActor(10)->getPoint2()->x + 10);
-		actorPos.bottom = (int16)(pt.y + getActor(10)->getPoint2()->y - 20);
+		actorRect.left   = pt.x + 50;
+		actorRect.top    = pt.y + 60;
+		actorRect.right  = (int16)(pt.x + getActor(10)->getPoint2()->x + 10);
+		actorRect.bottom = (int16)(pt.y + getActor(10)->getPoint2()->y - 20);
 	}
 
-	ActorDirection dir = kDirectionInvalid;
-	bool done = false;
+	ActorDirection newDirection = kDirectionInvalid;
 
-	if (getCursor()->position().x < actorPos.left) {
-		if (getCursor()->position().y >= actorPos.top) {
-			if (getCursor()->position().y > actorPos.bottom) {
-				if (act->getDirection() == 2) {
-					if (getCursor()->position().y - actorPos.bottom > 10)
-						dir = kDirectionSO;
+	if (mouse.x < actorRect.left) {
+		if (mouse.y >= actorRect.top) {
+			if (mouse.y > actorRect.bottom) {
+				if (player->getDirection() == kDirectionO) {
+					if ((mouse.y - actorRect.bottom) > 10)
+						newDirection = kDirectionSO;
 				} else {
-					if (act->getDirection() == kDirectionS) {
-						if (actorPos.left - getCursor()->position().x > 10)
-							dir = kDirectionSO;
+					if (player->getDirection() == kDirectionS) {
+						if ((actorRect.left - mouse.x) > 10)
+							newDirection = kDirectionSO;
 					} else {
-						dir = kDirectionSO;
+						newDirection = kDirectionSO;
 					}
 				}
 			} else {
-				if (act->getDirection() == 1) {
-					if (getCursor()->position().y - actorPos.top > 10)
-						dir = kDirectionO;
+				if (player->getDirection() == kDirectionNO) {
+					if ((mouse.y - actorRect.top) > 10)
+						newDirection = kDirectionO;
 				} else {
-					if (act->getDirection() == kDirectionSO) {
-						if (actorPos.bottom - getCursor()->position().y > 10)
-							dir = kDirectionO;
+					if (player->getDirection() == kDirectionSO) {
+						if ((actorRect.bottom - mouse.y) > 10)
+							newDirection = kDirectionO;
 					} else {
-						dir = kDirectionO;
-					}
-				}
-			}
-		} else {
-			if (act->getDirection()) {
-				if (act->getDirection() == kDirectionO) {
-					if (actorPos.top - getCursor()->position().y > 10)
-						dir = kDirectionNO;
-				} else {
-					dir = kDirectionNO;
-				}
-			} else {
-				if (actorPos.left - getCursor()->position().x > 10)
-					dir = kDirectionNO;
-			}
-		}
-		done = true;
-	}
-
-	if (!done && getCursor()->position().x <= actorPos.right) {
-		if (getCursor()->position().y >= actorPos.top) {
-			if (getCursor()->position().y > actorPos.bottom) {
-				if (act->getDirection() == kDirectionSO) {
-					if (getCursor()->position().x - actorPos.left > 10)
-						dir = kDirectionS;
-				} else {
-					if (act->getDirection() == kDirectionSE) {
-						if (actorPos.right - getCursor()->position().x > 10)
-							dir = kDirectionS;
-					} else {
-						dir = kDirectionS;
+						newDirection = kDirectionO;
 					}
 				}
 			}
 		} else {
-			if (act->getDirection() == kDirectionNO) {
-				if (getCursor()->position().x - actorPos.left > 10)
-					dir = kDirectionN;
-			} else {
-				if (act->getDirection() == kDirectionNE) {
-					if (actorPos.right - getCursor()->position().x > 10)
-						dir = kDirectionN;
+			if (player->getDirection() != kDirectionN) {
+				if (player->getDirection() == kDirectionO) {
+					if ((actorRect.top - mouse.y) > 10)
+						newDirection = kDirectionNO;
 				} else {
-					dir = kDirectionN;
+					newDirection = kDirectionNO;
+				}
+			} else {
+				if ((actorRect.left - mouse.x) > 10)
+					newDirection = kDirectionNO;
+			}
+		}
+
+	} else if (mouse.x <= actorRect.right) {
+		if (mouse.y >= actorRect.top) {
+			if (mouse.y > actorRect.bottom) {
+				if (player->getDirection() == kDirectionSO) {
+					if ((mouse.x - actorRect.left) > 10)
+						newDirection = kDirectionS;
+				} else {
+					if (player->getDirection() == kDirectionSE) {
+						if ((actorRect.right - mouse.x) > 10)
+							newDirection = kDirectionS;
+					} else {
+						newDirection = kDirectionS;
+					}
+				}
+			}
+		} else {
+			if (player->getDirection() == kDirectionNO) {
+				if ((mouse.x - actorRect.left) > 10)
+					newDirection = kDirectionN;
+			} else {
+				if (player->getDirection() == kDirectionNE) {
+					if ((actorRect.right - mouse.x) > 10)
+						newDirection = kDirectionN;
+				} else {
+					newDirection = kDirectionN;
 				}
 			}
 		}
-		done = true;
-	}
-
-	if (!done && getCursor()->position().y < actorPos.top) {
-		if (act->getDirection()) {
-			if (act->getDirection() == kDirectionE) {
-				if (actorPos.top - getCursor()->position().y > 10)
-					dir = kDirectionNE;
+	} else if (mouse.y < actorRect.top) {
+		if (player->getDirection() != kDirectionN) {
+			if (player->getDirection() == kDirectionE) {
+				if ((actorRect.top - mouse.y) > 10)
+					newDirection = kDirectionNE;
 			} else {
-				dir = kDirectionNE;
+				newDirection = kDirectionNE;
 			}
 		} else {
-			if (getCursor()->position().x - actorPos.right > 10)
-				dir = kDirectionNE;
+			if ((mouse.x - actorRect.right) > 10)
+				newDirection = kDirectionNE;
 		}
-		done = true;
-	}
-
-	if (!done && getCursor()->position().y <= actorPos.bottom) {
-		if (act->getDirection() == kDirectionSE) {
-			if (actorPos.bottom - getCursor()->position().y > 10)
-				dir = kDirectionE;
+	} else if (mouse.y <= actorRect.bottom) {
+		if (player->getDirection() == kDirectionSE) {
+			if ((actorRect.bottom - mouse.y) > 10)
+				newDirection = kDirectionE;
 		} else {
-			if (act->getDirection() == kDirectionNE) {
-				if (getCursor()->position().y - actorPos.top > 10)
-					dir = kDirectionE;
+			if (player->getDirection() == kDirectionNE) {
+				if ((mouse.y - actorRect.top) > 10)
+					newDirection = kDirectionE;
 			} else {
-				dir = kDirectionE;
+				newDirection = kDirectionE;
 			}
 		}
-		done = true;
+	} else if ( player->getDirection() == kDirectionS) {
+		if ((mouse.x - actorRect.right) > 10)
+			newDirection = kDirectionSE;
+	} else if ((player->getDirection() != kDirectionE || (mouse.y - actorRect.bottom) > 10)) {
+		newDirection = kDirectionSE;
 	}
 
-	if (!done && act->getDirection() == kDirectionS) {
-		if (getCursor()->position().x - actorPos.right <= 10)
-			done = true;
-		if (!done)
-			dir = kDirectionSE;
-	}
+	updateCursor(newDirection, actorRect);
 
-	if (!done && (act->getDirection() != kDirectionE || getCursor()->position().y - actorPos.bottom > 10))
-		dir = kDirectionSE;
-
-	updateCursor(dir, actorPos);
-
-	if (dir >= 0) {
-		if (act->getStatus() == 1 || act->getStatus() == 12)
-			act->setDirection(dir);
+	if (newDirection >= kDirectionN) {
+		if (player->getStatus() == kActorStatus1 || player->getStatus() == kActorStatus12)
+			player->updateFromDirection(newDirection);
 	}
 }
 
@@ -708,11 +690,12 @@ void Scene::updateAmbientSounds() {
 	if (Config.performance <= 3)
 		return;
 
-	for (int32 i = 0; i < _ws->numAmbientSound; i++) {
+	// The original loops for each actor, but the volume calculation is always the same
+
+	for (int32 i = 0; i < _ws->numAmbientSounds; i++) {
 		bool processSound = true;
-		int panning = 0;
-		int volume  = 0;
 		AmbientSoundItem *snd = &_ws->ambientSounds[i];
+		uint32 *ambientTick = getSharedData()->getAmbientTick(i);
 
 		for (int32 f = 0; f < 6; f++) {
 			GameFlag gameFlag = snd->flagNum[f];
@@ -730,54 +713,69 @@ void Scene::updateAmbientSounds() {
 		}
 		if (processSound) {
 			if (_vm->sound()->isPlaying(snd->resourceId)) {
+
 				if (snd->field_0) {
-					// TODO optimize
-					// This adjustment only uses the actor at
-					// index zero, but it's supposed to loop through
-					// all available actors as well (I think)
-					volume = getSound()->calculateVolumeAdjustement(snd->x, snd->y, snd->attenuation, snd->delta);
+					int32 volume = Config.ambientVolume + getSound()->calculateVolumeAdjustement(snd->x, snd->y, snd->attenuation, snd->delta);
+
 					if (volume <= 0) {
 						if (volume < -10000)
 							volume = -10000;
-						// TODO setSoundVolume(snd->resourceId, volume);
-					} else
-						; // TODO setSoundVolume(snd->resourceId, 0);
+
+						getSound()->setVolume(snd->resourceId, volume);
+					} else {
+						getSound()->setVolume(snd->resourceId, 0);
+					}
 				}
+
 			} else {
-				int loflag = BYTE1(snd->flags);
-				if (snd->field_0) {
-					; // TODO calculate panning at point
-				} else {
-					panning = 0;
-				}
-				if (snd->field_0 == 0) {
-					volume = -(snd->delta ^ 2);
-				} else {
+				int32 panning = (snd->field_0) ? getSound()->calculatePanningAtPoint(snd->x, snd->y) : 0;
+
+				int32 volume = 0;
+				if (snd->field_0)
 					volume = getSound()->calculateVolumeAdjustement(snd->x, snd->y, snd->attenuation, snd->delta);
-					volume += Config.ambientVolume;
-				}
-				if (loflag & 2) {
-					int tmpVol = volume;
+				else
+					volume = -pow((double)snd->delta, 2);
+
+				volume += Config.ambientVolume;
+
+
+				if (LOBYTE(snd->flags) & 1) {
+
+					getSound()->playSound(snd->resourceId, true, volume, panning);
+
+				} else if (LOBYTE(snd->flags) & 2) {
 					if (_vm->getRandom(10000) < 10) {
 						if (snd->field_0) {
 							getSound()->playSound(snd->resourceId, false, volume, panning);
 						} else {
-							// FIXME will this even work?
-							tmpVol += (_vm->getRandom(500)) * (((_vm->getRandom(100) >= 50) - 1) & 2) - 1;
+							int32 tmpVol = volume + _vm->getRandom(500) * ((((_vm->getRandom(100) >= 50) - 1) & 2) - 1);
+
 							if (tmpVol <= -10000)
-								volume = -10000;
-							if (volume >= 0)
+								tmpVol = -10000;
+
+							if (tmpVol >= 0)
 								tmpVol = 0;
-							else
-								if (tmpVol <= -10000)
-									tmpVol = -10000;
+							else if (tmpVol <= -10000)
+								tmpVol = -10000;
+
 							getSound()->playSound(snd->resourceId, false, tmpVol, _vm->getRandom(20001) - 10000);
 						}
 					}
-				} else {
-					if (loflag & 4) {
-						// TODO panning array stuff
+				} else if (LOBYTE(snd->flags) & 4) {
+					if (*ambientTick > _vm->getTick()) {
+						if (snd->nextTick >= 0)
+							*ambientTick = 60000 * snd->nextTick + _vm->getTick();
+						else
+							*ambientTick = _vm->getTick() - 1000 * snd->nextTick;
+
+						getSound()->playSound(snd->resourceId, false, volume, panning);
 					}
+				} else if (LOBYTE(snd->flags) & 8) {
+					if (_vm->getGameFlagByIndex(85 + i)) {
+						getSound()->playSound(snd->resourceId, false, volume, panning);
+						_vm->setGameFlagByIndex(85 + i);
+					}
+
 				}
 			}
 		} else {

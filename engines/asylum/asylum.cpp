@@ -425,6 +425,14 @@ void AsylumEngine::updateReverseStereo() {
 //////////////////////////////////////////////////////////////////////////
 #define FLAG_MASK 0xFFFFFFE0
 
+void AsylumEngine::setGameFlagByIndex(int32 index) {
+	_gameFlags[index] = 1;
+}
+
+int32 AsylumEngine::getGameFlagByIndex(int32 index) {
+	return _gameFlags[index];
+}
+
 void AsylumEngine::setGameFlag(GameFlag flag) {
 	_gameFlags[flag / 32] |= 1 << (flag % FLAG_MASK);
 }
@@ -443,6 +451,10 @@ bool AsylumEngine::isGameFlagSet(GameFlag flag) const {
 
 bool AsylumEngine::isGameFlagNotSet(GameFlag flag) const {
 	return ((1 << (flag % FLAG_MASK)) & (unsigned int)_gameFlags[flag / 32]) >> (flag % FLAG_MASK) == 0;
+}
+
+void AsylumEngine::resetFlags() {
+	memset(&_gameFlags[130], 0, 60);
 }
 
 } // namespace Asylum
