@@ -199,6 +199,50 @@ void Scene::enter(ResourcePackId packId) {
 	}
 }
 
+void Scene::enterLoad() {
+	_vm->setGameFlag(kGameFlagScriptProcessing);
+	getScreen()->clearGraphicsInQueue();
+
+	// Setup scene bounding rect
+	_ws->boundingRect.left   = 195;
+	_ws->boundingRect.top    = 115;
+	_ws->boundingRect.right  = 445 - getActor()->getBoundingRect()->right;
+	_ws->boundingRect.bottom = 345 - getActor()->getBoundingRect()->bottom;
+
+	// Setup transparency table
+	getScreen()->setupTransTables(3, _ws->cellShadeMask1, _ws->cellShadeMask2, _ws->cellShadeMask3);
+	getScreen()->selectTransTable(1);
+	getText()->loadFont(_ws->font1);
+
+	preload();
+
+	// Adjust object priority
+	if (_ws->objects.size() > 0) {
+		int32 priority = 4091;
+
+		for (uint32 i = 0; i < _ws->objects.size(); i++) {
+			Object *object  = _ws->objects[i];
+			object->setPriority(priority);
+			object->flags &= ~kObjectFlagC000;
+			priority -= 4;
+		}
+	}
+
+	// Play intro music
+	if (_ws->musicCurrentResourceIndex != kMusicStopped)
+		getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, _ws->musicCurrentResourceIndex));
+	else
+		getSound()->playMusic(kResourceNone, 0);
+
+	// Palette fade
+	getScreen()->paletteFade(0, 75, 8);
+	getScreen()->clear();
+
+	getSharedData()->setFlag(kFlagScene1, true);
+	_vm->lastScreenUpdate = 1;
+	getActor()->setLastScreenUpdate(_vm->screenUpdateCount);
+}
+
 void Scene::load(ResourcePackId packId) {
 	// Setup resource manager
 	_packId = packId;
@@ -1985,7 +2029,123 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt) {
 }
 
 void Scene::changePlayer(ActorIndex index) {
-	error("[Scene::changePlayer] not implemented");
+	switch (index) {
+	default:
+		if (_ws->chapter == kChapter9) {
+			changePlayerUpdate(index);
+
+			getActor(index)->show();
+		}
+		_playerIndex = index;
+		break;
+
+	case 1:
+		if (_ws->chapter == kChapter9) {
+			changePlayerUpdate(index);
+
+			getScreen()->setPalette(_ws->graphicResourceIds[0]);
+			_ws->currentPaletteId = _ws->graphicResourceIds[0];
+			getScreen()->setGammaLevel(_ws->graphicResourceIds[0], 0);
+			_vm->setGameFlag(kGameFlag635);
+			_vm->clearGameFlag(kGameFlag636);
+			_vm->clearGameFlag(kGameFlag637);
+
+			getActor(index)->show();
+		}
+
+		_playerIndex = index;
+		break;
+
+	case 2:
+		if (_ws->chapter == kChapter9) {
+			changePlayerUpdate(index);
+
+			getScreen()->setPalette(_ws->graphicResourceIds[1]);
+			_ws->currentPaletteId = _ws->graphicResourceIds[1];
+			getScreen()->setGammaLevel(_ws->graphicResourceIds[1], 0);
+			_vm->setGameFlag(kGameFlag636);
+			_vm->clearGameFlag(kGameFlag635);
+			_vm->clearGameFlag(kGameFlag637);
+
+			getActor(index)->show();
+		}
+
+		_playerIndex = index;
+		break;
+
+	case 3:
+		if (_ws->chapter == kChapter9) {
+			changePlayerUpdate(index);
+
+			getScreen()->setPalette(_ws->graphicResourceIds[2]);
+			_ws->currentPaletteId = _ws->graphicResourceIds[2];
+			getScreen()->setGammaLevel(_ws->graphicResourceIds[2], 0);
+			_vm->setGameFlag(kGameFlag637);
+			_vm->clearGameFlag(kGameFlag635);
+			_vm->clearGameFlag(kGameFlag636);
+
+			getActor(index)->show();
+		}
+
+		getActor(index)->show();
+		_playerIndex = index;
+		break;
+
+	case 666:
+		memcpy(getSharedData()->cursorResources, _ws->cursorResources, 44);
+		getScreen()->setupTransTables(3, _ws->graphicResourceIds[50], _ws->graphicResourceIds[49], _ws->graphicResourceIds[48]);
+		getSharedData()->sceneFonts[0] = _ws->font1;
+		getSharedData()->sceneFonts[1] = _ws->font2;
+		getSharedData()->sceneFonts[2] = _ws->font3;
+		getSharedData()->smallCurDown  = _ws->smallCurDown;
+		getSharedData()->smallCurUp    = _ws->smallCurUp;
+		getSharedData()->encounterFrameBg = _ws->encounterFrameBg;
+
+		// Setup new values
+		for (uint32 i = 0; i < 11; i++)
+			_ws->cursorResources[i] = _ws->graphicResourceIds[40 + i];
+
+		_ws->font1 = _ws->graphicResourceIds[35];
+		_ws->font2 = _ws->graphicResourceIds[37];
+		_ws->font3 = _ws->graphicResourceIds[36];
+
+		_ws->smallCurUp = _ws->graphicResourceIds[33];
+		_ws->smallCurDown = _ws->graphicResourceIds[34];
+		_ws->encounterFrameBg = _ws->graphicResourceIds[32];
+		break;
+
+	case 667:
+		getScreen()->setupTransTables(3, _ws->cellShadeMask1, _ws->cellShadeMask2, _ws->cellShadeMask3);
+		memcpy(_ws->cursorResources, getSharedData()->cursorResources, 44);
+		_ws->font1 = getSharedData()->sceneFonts[0];
+		_ws->font2 = getSharedData()->sceneFonts[1];
+		_ws->font3 = getSharedData()->sceneFonts[2];
+
+		_ws->smallCurDown = getSharedData()->smallCurDown;
+		_ws->smallCurUp = getSharedData()->smallCurUp;
+		_ws->encounterFrameBg = getSharedData()->encounterFrameBg;
+
+		// Reset cursor
+		getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass], 0, kCursorAnimationNone);
+		break;
+
+	case 668:
+		getActor(11)->setPosition(2300, 100, kDirectionN, 0);
+		getSharedData()->setData(40, 0);
+		getSharedData()->setFlag(kFlag1, false);
+		break;
+	}
+}
+
+void Scene::changePlayerUpdate(ActorIndex index) {
+	Actor *actor = getActor(index);
+	Actor *player = getActor();
+
+	actor->setPosition(player->getPoint1()->x + player->getPoint2()->x, player->getPoint1()->y + player->getPoint2()->y, player->getDirection(), 0);
+	player->hide();
+
+	for (uint i = 0; i < 8; i++)
+		actor->setReaction(i, player->getReaction(i));
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -93,6 +93,11 @@ public:
 	void enter(ResourcePackId packId);
 
 	/**
+	 * Enter the scene after a loaded game
+	 */
+	void enterLoad();
+
+	/**
 	 * Handle events
 	 *
 	 * @param ev The event
@@ -133,6 +138,13 @@ public:
 	 * @param index new index for the player actor
 	 */
 	void changePlayer(ActorIndex index);
+
+	/**
+	 * Update player position when changing current player
+	 *
+	 * @param index Zero-based index of the actor
+	 */
+	void changePlayerUpdate(ActorIndex index);
 
 	/**
 	 * Updates the scene coordinates.

@@ -68,6 +68,7 @@ public:
 	void setLastScreenUpdate(int32 tick) { _lastScreenUpdate = tick; }
 	void setNumberFlag01(int32 number) { _numberFlag01 = number; }
 	void setPriority(int32 priority) { _priority = priority; }
+	void setReaction(int32 index, int32 val) { _reaction[index] = val; }
 	void setResourceId(ResourceId id) { _resourceId = id; }
 	void setSoundResourceId(ResourceId id) { _soundResourceId = id; }
 	void setStatus(ActorStatus status) { _status = status; }
@@ -440,10 +441,10 @@ private:
 	void setVolume();
 
 	/**
-	 * Updates the coordinates. 
+	 * Updates the coordinates.
 	 *
-	 * @param vec1 The first vector. 
-	 * @param vec2 The second vector. 
+	 * @param vec1 The first vector.
+	 * @param vec2 The second vector.
 	 */
 	void updateCoordinates(Common::Point vec1, Common::Point vec2);
 

@@ -117,13 +117,13 @@ public:
 		_sceneYTop = 0;
 		_sceneOffset = 0;
 		_sceneOffsetAdd = 0;
-		memset(&_cursorResources, kResourceNone, sizeof(_cursorResources));
-		memset(&_sceneFonts, kResourceNone, sizeof(_sceneFonts));
-		_currentPaletteId = kResourceNone;
-		memset(&_cellShadeMasks, 0, sizeof(_cellShadeMasks));
-		_smallCurUp = 0;
-		_smallCurDown = 0;
-		_encounterFrameBg = 0;
+		memset(&cursorResources, kResourceNone, sizeof(cursorResources));
+		memset(&sceneFonts, kResourceNone, sizeof(sceneFonts));
+		//_currentPaletteId = kResourceNone;
+		//memset(&cellShadeMasks, 0, sizeof(cellShadeMasks));
+		smallCurUp = 0;
+		smallCurDown = 0;
+		encounterFrameBg = 0;
 		_flagSkipDrawScene = false;
 		_matteVar1 = 0;
 		_actorUpdateEnabledCheck = false;
@@ -145,6 +145,17 @@ public:
 		_flagRedraw = false;
 		_nextScreenUpdate = 0;
 	}
+
+	// Saved scene data
+	ResourceId      cursorResources[11];
+	// 2 ResourceId unused
+	ResourceId      sceneFonts[3];
+	//ResourceId      _currentPaletteId;
+	//int32           _cellShadeMasks[3];
+	// unused
+	int32           smallCurUp;
+	int32           smallCurDown;
+	int32           encounterFrameBg;
 
 	// Accessors
 	int32 getActorUpdateEnabledCounter() { return _actorUpdateStatusEnabledCounter; }
@@ -338,17 +349,6 @@ private:
 	int32            _sceneYTop;
 	int32            _sceneOffset;
 	Common::Rational _sceneOffsetAdd;
-
-	// Saved scene data
-	ResourceId      _cursorResources[13];
-	ResourceId      _sceneFonts[3];
-	ResourceId      _currentPaletteId;
-	int32           _cellShadeMasks[3];
-	// unused
-	int32           _smallCurUp;
-	int32           _smallCurDown;
-	int32           _encounterFrameBg;
-
 
 	bool            _flagSkipDrawScene;
 	int32           _matteVar1;

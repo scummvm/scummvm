@@ -25,9 +25,10 @@
 
 #include "asylum/asylum.h"
 
+#include "asylum/resources/actor.h"
+#include "asylum/resources/encounters.h"
 #include "asylum/resources/script.h"
 #include "asylum/resources/special.h"
-#include "asylum/resources/encounters.h"
 #include "asylum/resources/worldstats.h"
 
 #include "asylum/puzzles/vcr.h"
@@ -191,7 +192,7 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 
 	case kStartGameLoad:
 		if (_savegame->load()) {
-			setupLoadedGame();
+			_scene->enterLoad();
 			updateReverseStereo();
 			switchEventHandler(_scene);
 		}
@@ -338,10 +339,7 @@ void AsylumEngine::processDelayedEvents() {
 
 	// check for a delayed scene change
 	ResourcePackId packId = _script->getDelayedSceneIndex();
-	// XXX Flag 183 indicates whether the actionlist is currently
-	// processing
 	if (packId != kResourcePackInvalid && isGameFlagNotSet(kGameFlagScriptProcessing)) {
-
 		// Reset delayed scene
 		_script->setDelayedSceneIndex(kResourcePackInvalid);
 
@@ -471,10 +469,6 @@ Common::Point AsylumEngine::getSinCosValues(int32 index1, int32 index2) {
 	}
 
 	return values;
-}
-
-void AsylumEngine::setupLoadedGame() {
-	warning("[AsylumEngine::initSinCosTables] Not implemented!");
 }
 
 void AsylumEngine::updateReverseStereo() {
