@@ -229,6 +229,7 @@ private:
 	SharedData _data;
 	int  _gameFlags[145];
 	bool _introPlayed;
+	int32 _sinCosTables[72];
 
 	void handleEvents();
 	void updateMouseCursor();
@@ -247,7 +248,16 @@ private:
 	/**
 	 * Initializes the sine/cosine tables.
 	 */
-	void initSinCosTables();
+	void initSinCosTables(double a2, int32 a3, int32 a4);
+
+	/**
+	 * Calculate the offset into the sine/cosine tables.
+	 *
+	 * @param val The value.
+	 *
+	 * @return The calculated offset.
+	 */
+	int32 computeSinCosOffset(int32 val);
 
 	/**
 	 * Sets up the loaded game.
