@@ -46,7 +46,7 @@ enum {
 }
 
 /**
- * Open GL graphics manager. This is an abstract class, it does not do the
+ * OpenGL graphics manager. This is an abstract class, it does not do the
  * window and OpenGL context initialization.
  * Derived classes should at least override internUpdateScreen for doing
  * the buffers swap, and implement loadGFXMode for handling the window/context if
@@ -89,7 +89,7 @@ public:
 	virtual void fillScreen(uint32 col);
 	virtual void updateScreen();
 	virtual void setShakePos(int shakeOffset);
-	virtual void setFocusRectangle(const Common::Rect& rect);
+	virtual void setFocusRectangle(const Common::Rect &rect);
 	virtual void clearFocusRectangle();
 
 	virtual void showOverlay();
@@ -203,7 +203,7 @@ protected:
 	//
 	// Game screen
 	//
-	GLTexture* _gameTexture;
+	GLTexture *_gameTexture;
 	Graphics::Surface _screenData;
 	int _screenChangeCount;
 	bool _screenNeedsRedraw;
@@ -222,7 +222,7 @@ protected:
 	//
 	// Overlay
 	//
-	GLTexture* _overlayTexture;
+	GLTexture *_overlayTexture;
 	Graphics::Surface _overlayData;
 	Graphics::PixelFormat _overlayFormat;
 	bool _overlayVisible;
@@ -256,7 +256,7 @@ protected:
 					vHotX(0), vHotY(0)	{}
 	};
 
-	GLTexture* _cursorTexture;
+	GLTexture *_cursorTexture;
 	Graphics::Surface _cursorData;
 	Graphics::PixelFormat _cursorFormat;
 	byte *_cursorPalette;
