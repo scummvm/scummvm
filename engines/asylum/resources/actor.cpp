@@ -736,7 +736,7 @@ void Actor::faceTarget(uint32 target, DirectionFrom from) {
 			return;
 		}
 
-		PolyDefinitions *polygon = &getScene()->polygons()->entries[getWorld()->actions[actionIndex]->polyIdx];
+		PolyDefinitions *polygon = &getScene()->polygons()->entries[getWorld()->actions[actionIndex]->polygonIndex];
 
 		point.x = polygon->boundingRect.left + (polygon->boundingRect.right  - polygon->boundingRect.left) / 2;
 		point.y = polygon->boundingRect.top  + (polygon->boundingRect.bottom - polygon->boundingRect.top)  / 2;
@@ -1249,7 +1249,7 @@ void Actor::updateStatusEnabled() {
 					if (areaIndex != -1) {
 
 						ActionArea *area = getWorld()->actions[areaIndex];
-						PolyDefinitions *poly = &getScene()->polygons()->entries[area->polyIdx];
+						PolyDefinitions *poly = &getScene()->polygons()->entries[area->polygonIndex];
 
 						Common::Point pt(poly->boundingRect.left + rnd(poly->boundingRect.width()),
 						                 poly->boundingRect.top + rnd(poly->boundingRect.height()));
