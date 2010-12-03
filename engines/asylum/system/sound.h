@@ -96,10 +96,15 @@ struct AmbientSoundItem {
 	}
 };
 
-struct SoundBufferItem {
+struct SoundQueueItem {
 	ResourceId resourceId;
 	Audio::SoundHandle handle;
 	int32 unknown;
+
+	SoundQueueItem() {
+		resourceId = kResourceNone;
+		unknown = 0;
+	}
 };
 
 class Sound {
@@ -263,11 +268,56 @@ private:
 	Audio::Mixer       *_mixer;
 
 	Audio::SoundHandle _musicHandle;
-	Audio::SoundHandle _soundHandle;
-
 	int32 _musicVolume;
 
-	Common::Array<SoundBufferItem> _soundBuffer;
+	Common::Array<SoundQueueItem> _soundQueue;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sound queue
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Find the index within the sound queue of the sound sample with provided id.
+	 *
+	 * @param resourceId Identifier for the resource.
+	 *
+	 * @return The item.
+	 */
+	SoundQueueItem *getItem(ResourceId resourceId);
+
+	/**
+	 * Find the index within the sound queue of the playing sound sample with provided id.
+	 *
+	 * @param resourceId Identifier for the resource.
+	 *
+	 * @return The playing item.
+	 */
+	SoundQueueItem *getPlayingItem(ResourceId resourceId);
+
+	/**
+	 * Adds a sound to the sound queue.
+	 *
+	 * @param resourceId Identifier for the resource.
+	 *
+	 * @return the sound buffer item
+	 */
+	SoundQueueItem *addToQueue(ResourceId resourceId);
+
+	/**
+	 * Clears the sound queue from finished sounds
+	 */
+	void cleanupQueue();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helper functions
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Checks if the sound file is valid
+	 *
+	 * @return true if valid, false if not.
+	 */
+	bool isValidSoundResource(ResourceId resourceId);
 
 	/**
 	 * Play sound data.
@@ -281,49 +331,6 @@ private:
 	 * @param pan 				 The pan.
 	 */
 	void playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte *soundData, uint32 soundDataLength, bool loop = false, int32 vol = 0, int32 pan = 0);
-
-	//////////////////////////////////////////////////////////////////////////
-	// Sound buffer
-	//////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Find the index within the _soundBuffer array of the first sound sample with provided id.
-	 *
-	 * @param resourceId Identifier for the resource.
-	 *
-	 * @return The item.
-	 */
-	SoundBufferItem *getItem(ResourceId resourceId);
-
-	/**
-	 * Find the index within the _soundBuffer array of the first playing sound sample with provided id.
-	 *
-	 * @param resourceId Identifier for the resource.
-	 *
-	 * @return The playing item.
-	 */
-	SoundBufferItem *getPlayingItem(ResourceId resourceId);
-
-	/**
-	 * Adds a sound to the sound buffer.
-	 *
-	 * @param resourceId Identifier for the resource.
-	 *
-	 * @return true if it succeeds, false if it fails.
-	 */
-	bool addToSoundBuffer(ResourceId resourceId);
-
-	/**
-	 * Removes a sound from the sound buffer
-	 *
-	 * @param resourceId Identifier for the resource.
-	 */
-	void removeFromSoundBuffer(ResourceId resourceId);
-
-	/**
-	 * Clears the sound buffer.
-	 */
-	void clearSoundBuffer();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Conversion functions
