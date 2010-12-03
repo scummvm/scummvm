@@ -63,6 +63,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	// Init data
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
 	memset(&_puzzles, 0, sizeof(_puzzles));
+	memset(&_sinCosTables, 0, sizeof(_sinCosTables));
 	_introPlayed = false;
 
 	// Add default search directories
@@ -134,7 +135,7 @@ Common::Error AsylumEngine::run() {
 	initPuzzles();
 
 	// Init tables
-	initSinCosTables();
+	initSinCosTables(80.0, 40, 40);
 
 	// Create main menu
 	_mainMenu  = new MainMenu(this);
@@ -418,12 +419,58 @@ void AsylumEngine::initPuzzles() {
 	warning("[AsylumEngine::initPuzzles] Add missing puzzles!");
 }
 
-void AsylumEngine::initSinCosTables() {
-	warning("[AsylumEngine::initSinCosTables] Not implemented!");
+void AsylumEngine::initSinCosTables(double a2, int32 a3, int32 a4) {
+	uint32 offset = 0;
+	uint32 baseStep = 1;
+
+	do {
+		if (baseStep >= 1) {
+			int32 baseAngle = 90;
+			int32 step = baseStep;
+
+			int32 *val = &_sinCosTables[2 * offset];
+
+			do {
+				double angle = (double)(baseAngle % 360) * 3.141592653589 * 0.005555555555555556;
+
+				*val       = cos(angle) * a2 - (a3 / 2);
+				*(val + 1) = sin(angle) * a2 - (a4 / 2);
+
+				baseAngle += 360 / baseStep;
+				val += 2;
+				--step;
+			} while (step);
+
+			offset += baseStep;
+		}
+
+		++baseStep;
+
+	} while (baseStep <= 8);
+}
+
+int32 AsylumEngine::computeSinCosOffset(int32 val) {
+	int32 offset = 0;
+	for (int32 i = val; i > 0; --i)
+		offset += i;
+
+	return offset - val;
 }
 
 Common::Point AsylumEngine::getSinCosValues(int32 index1, int32 index2) {
-	error("[AsylumEngine::getSinCosValues] Not implemented!");
+	Common::Point values;
+
+	if (_scene->worldstats()->chapter == kChapter11) {
+		int32 offset = computeSinCosOffset(8) + index2 + 3;
+		values.x = _sinCosTables[2 * offset];
+		values.y = _sinCosTables[1];
+	} else {
+		int32 offset = computeSinCosOffset(index1) + index2;
+		values.x = _sinCosTables[2 * offset];
+		values.y = _sinCosTables[2 * offset + 1];
+	}
+
+	return values;
 }
 
 void AsylumEngine::setupLoadedGame() {
