@@ -288,7 +288,7 @@ namespace DC_Flash {
     else
       return -1;
   }
-};
+} // End of namespace DC_Flash
 
 Common::String OSystem_Dreamcast::getSystemLanguage() const {
   static const char *languages[] = {
