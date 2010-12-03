@@ -217,7 +217,7 @@ void AsylumEngine::restart() {
 	_data.getPoint()->x = -1;
 	_data.getPoint()->y = -1;
 
-	// FIXME the original runs a list of "reset" functions (some can be moved to constructors, others need to be part of the global data)
+	reset();
 
 	_introPlayed = false;
 
@@ -225,6 +225,18 @@ void AsylumEngine::restart() {
 	_sound->playMusic(kResourceNone, 0);
 
 	startGame(kResourcePackTowerCells, kStartGamePlayIntro);
+}
+
+void AsylumEngine::reset() {
+	// Set game as started
+	_mainMenu->setGameStarted();
+
+	// Reset puzzles
+	for (uint32 i = 0; i < ARRAYSIZE(_puzzles); i++)
+		if (_puzzles[i] != NULL)
+			_puzzles[i]->reset();
+
+	// FIXME reset shared actor data
 }
 
 void AsylumEngine::playIntro() {

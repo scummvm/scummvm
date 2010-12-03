@@ -57,6 +57,11 @@ public:
 	 */
 	bool handleEvent(const AsylumEvent &evt);
 
+	/**
+	 * Sets the game as started.
+	 */
+	void setGameStarted() { _gameStarted = true; }
+
 private:
 	AsylumEngine *_vm;
 

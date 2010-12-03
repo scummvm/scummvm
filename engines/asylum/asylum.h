@@ -127,6 +127,11 @@ public:
 	SharedData *getData() { return &_data; }
 
 	/**
+	 * Resets the game
+	 */
+	void reset();
+
+	/**
 	 * This is the global tick counter.
 	 */
 	uint32 screenUpdateCount;
