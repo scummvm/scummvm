@@ -1043,7 +1043,7 @@ void OpenGLGraphicsManager::initGL() {
 	glMatrixMode(GL_PROJECTION); CHECK_GL_ERROR();
 	glLoadIdentity(); CHECK_GL_ERROR();
 #ifdef USE_GLES
-	glOrthox(0, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 0, -1, 1); CHECK_GL_ERROR();
+	glOrthof(0, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 0, -1, 1); CHECK_GL_ERROR();
 #else
 	glOrtho(0, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 0, -1, 1); CHECK_GL_ERROR();
 #endif

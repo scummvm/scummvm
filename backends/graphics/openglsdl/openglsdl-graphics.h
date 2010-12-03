@@ -30,7 +30,6 @@
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
 #undef ARRAYSIZE
 #endif
-#include <SDL_opengl.h>
 
 #include "backends/graphics/opengl/opengl-graphics.h"
 

@@ -39,10 +39,10 @@
 #undef ARRAYSIZE
 #endif
 
-#ifdef MACOSX
-#include <OpenGL/gl.h>
-#elif defined(USE_GLES)
+#if defined(USE_GLES)
 #include <GLES/gl.h>
+#elif defined(MACOSX)
+#include <OpenGL/gl.h>
 #else
 #include <GL/gl.h>
 #endif
