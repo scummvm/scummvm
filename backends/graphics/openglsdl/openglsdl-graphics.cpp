@@ -241,6 +241,15 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 	SDL_Rect const* const*availableModes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_OPENGL);
 
+	// SDL_ListModes() returns -1 in case any dimension is okay. In that
+	// case we'll reuse the current desktop resolution for fullscreen.
+	if (availableModes == (void *)-1) {
+		_videoMode.hardwareWidth = _desktopWidth;
+		_videoMode.hardwareHeight = _desktopHeight;
+		_videoMode.activeFullscreenMode = -2;
+		return true;
+	}
+
 	// If -2, autodetect the fullscreen mode
 	// The last used fullscreen mode will be prioritized, if there is no last fullscreen
 	// mode, the desktop resolution will be used, and in case the desktop resolution
