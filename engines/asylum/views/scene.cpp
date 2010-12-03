@@ -1914,20 +1914,74 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt) {
 	if (!_polygons)
 		error("[Scene::findActionArea] Polygons not initialized properly!");
 
-	// TODO
-	// This is a VERY loose implementation of the target
-	// function, as this doesn't do any of the flag checking
-	// the original did
-	int32 targetIdx = -1;
-	for (uint32 i = 0; i < _ws->actions.size(); i++) {
-		ActionArea *a = _ws->actions[i];
-		PolyDefinitions p = _polygons->entries[a->polyIdx];
-		if (p.contains(pt.x, pt.y)) {
-			targetIdx = i;
-			break;
+	switch (type) {
+	default:
+		return type - 2;
+
+	case kActionAreaType1:
+		if (_ws->actions.size() < 1)
+			return -1;
+
+		for (int32 i = _ws->actions.size() - 1; i >= 0; i--) {
+			ActionArea *area = _ws->actions[i];
+
+			bool found = false;
+
+			// Iterate over flagNum
+			for (uint32 j = 0; j < 10; j++) {
+				if (!area->flagNums[j])
+					break;                 // We stop as soon as a flag is 0
+
+				bool flagSet = false;
+				if (area->flagNums[j] <= 0)
+					flagSet = _vm->isGameFlagNotSet((GameFlag)-area->flagNums[j]);
+				else
+					flagSet = _vm->isGameFlagNotSet((GameFlag)area->flagNums[j]);
+
+				if (!flagSet) {
+					found = true;
+					break;
+				}
+			}
+
+			if (!found && _polygons->entries[area->polygonIndex].contains(pt))
+				return i;
 		}
+		break;
+
+	case kActionAreaType2:
+		if (_ws->actions.size() < 1)
+			return -1;
+
+		for (int32 i = _ws->actions.size() - 1; i >= 0; i--) {
+			ActionArea *area = _ws->actions[i];
+
+			bool found = false;
+
+			// Iterate over flagNum
+			for (uint32 j = 0; j < 10; j++) {
+				if (!area->flagNums[j])
+					continue;                 // We skip over null flags
+
+				bool flagSet = false;
+				if (area->flagNums[j] <= 0)
+					flagSet = _vm->isGameFlagNotSet((GameFlag)-area->flagNums[j]);
+				else
+					flagSet = _vm->isGameFlagNotSet((GameFlag)area->flagNums[j]);
+
+				if (!flagSet) {
+					found = true;
+					break;
+				}
+			}
+
+			if (!found && _polygons->entries[area->polygonIndex].contains(pt))
+				return i;
+		}
+		break;
 	}
-	return targetIdx;
+
+	return -1;
 }
 
 bool Scene::isInActionArea(const Common::Point &pt, ActionArea *area) {

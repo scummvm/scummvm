@@ -65,7 +65,7 @@ void ActionArea::load(Common::SeekableReadStream *stream) {
 		flagNums[i] = stream->readSint32LE();
 
 	field_7C          = stream->readSint32LE();
-	polyIdx           = stream->readSint32LE();
+	polygonIndex           = stream->readSint32LE();
 	field_84          = stream->readSint32LE();
 	field_88          = stream->readSint32LE();
 	soundResourceId   = (ResourceId)stream->readSint32LE();
