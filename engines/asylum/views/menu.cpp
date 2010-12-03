@@ -294,7 +294,8 @@ void MainMenu::setupMusic() {
 
 void MainMenu::adjustPerformance() {
 	// Original reinitialize sound to 11kHz for performance == 0, 22kHz otherwise
-
+	getSound()->stopAll();
+	getSound()->playMusic(kResourceNone, 0);
 	setupMusic();
 
 	uint32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
