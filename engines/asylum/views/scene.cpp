@@ -1984,11 +1984,6 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt) {
 	return -1;
 }
 
-bool Scene::isInActionArea(const Common::Point &pt, ActionArea *area) {
-	error("[Scene::isInActionArea] Not implemented!");
-}
-
-
 void Scene::changePlayer(ActorIndex index) {
 	error("[Scene::changePlayer] not implemented");
 }

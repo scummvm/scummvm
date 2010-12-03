@@ -439,6 +439,12 @@ private:
 	 */
 	void setVolume();
 
+	/**
+	 * Updates the coordinates. 
+	 *
+	 * @param vec1 The first vector. 
+	 * @param vec2 The second vector. 
+	 */
 	void updateCoordinates(Common::Point vec1, Common::Point vec2);
 
 	/**
@@ -454,6 +460,16 @@ private:
 	 * @param y 	   The third int32.
 	 */
 	void updateNumbers(int32 reaction, int32 x, int32 y);
+
+	/**
+	 * Determine if the supplied point is in the action area
+	 *
+	 * @param pt 			The point.
+	 * @param [in,out] area If non-null, the area.
+	 *
+	 * @return
+	 */
+	bool isInActionArea(const Common::Point &pt, ActionArea *area);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helper methods

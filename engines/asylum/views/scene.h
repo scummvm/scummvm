@@ -156,16 +156,6 @@ public:
 	 */
 	int32 findActionArea(ActionAreaType type, const Common::Point pt);
 
-	/**
-	 * Determine if the supplied point is in the action area
-	 *
-	 * @param pt 			The point.
-	 * @param [in,out] area If non-null, the area.
-	 *
-	 * @return
-	 */
-	bool isInActionArea(const Common::Point &pt, ActionArea *area);
-
 	Polygons    *polygons()   { return _polygons; }
 	WorldStats  *worldstats() { return _ws; }
 
@@ -415,11 +405,11 @@ private:
 	void stopSpeech();
 
 	/**
-	 * Play specific speech. 
+	 * Play specific speech.
 	 *
-	 * @param code The key code. 
+	 * @param code The key code.
 	 *
-	 * @return true if it succeeds, false if it fails. 
+	 * @return true if it succeeds, false if it fails.
 	 */
 	bool speak(Common::KeyCode code);
 

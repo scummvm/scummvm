@@ -1255,7 +1255,7 @@ void Actor::updateStatusEnabled() {
 						                 poly->boundingRect.top + rnd(poly->boundingRect.height()));
 
 						if (!getSharedData()->getActorUpdateEnabledCheck()) {
-							if (getScene()->isInActionArea(pt, area)) {
+							if (isInActionArea(pt, area)) {
 								Common::Point *polyPoint = &poly->points[rnd(poly->count())];
 								processStatus(polyPoint->x, polyPoint->y, false);
 							} else {
@@ -1723,6 +1723,10 @@ void Actor::updateNumbers(int32 reaction, int32 x, int32 y) {
 	sprintf(_numberString01, "%d", _numberValue01);
 
 	_numberFlag01 = 1;
+}
+
+bool Actor::isInActionArea(const Common::Point &pt, ActionArea *area) {
+	error("[Actor::isInActionArea] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////
