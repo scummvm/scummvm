@@ -259,11 +259,6 @@ private:
 	 */
 	int32 computeSinCosOffset(int32 val);
 
-	/**
-	 * Sets up the loaded game.
-	 */
-	void setupLoadedGame();
-
 	friend class Console;
 };
 
