@@ -47,7 +47,7 @@ Sound::Sound(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine), _mixer(mi
 }
 
 Sound::~Sound() {
-	clearSoundBuffer();
+	cleanupQueue();
 
 	// Zero-out passed pointers
 	_vm = NULL;
@@ -59,24 +59,32 @@ Sound::~Sound() {
 //////////////////////////////////////////////////////////////////////////
 
 void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 panning) {
-	SoundBufferItem *item = getItem(resourceId);
+	// Cleanup sound queue
+	cleanupQueue();
 
-	if (item) {
-		if (_mixer->isSoundHandleActive(item->handle)) {
-			debugC(kDebugLevelSound, "[Sound::playSound] handle for resource %d already active", resourceId);
-
-			return;
-		}
-
-		//warning("[Sound::playSound] resource %d already buffered", resourceId);
-
-		// TODO check what we should do here
+	if (volume <= -10000)
 		return;
+
+	SoundQueueItem *item = getItem(resourceId);
+	if (item) {
+		// Duplicate the queue entry
+		item = addToQueue(item->resourceId);
+		item->unknown = 0;
+	} else {
+		// Check that the sound is valid
+		if (!isValidSoundResource(resourceId))
+			return;
+
+		item = addToQueue(resourceId);
+
+		// TODO add missing code
 	}
 
+	// Original sets position back to 0
+	_mixer->stopHandle(item->handle);
+
 	ResourceEntry *resource = getResource()->get(resourceId);
-	playSoundData(Audio::Mixer::kSFXSoundType, &_soundHandle, resource->data, resource->size, looping, volume, panning);
-	addToSoundBuffer(resourceId);
+	playSoundData(Audio::Mixer::kSFXSoundType, &item->handle, resource->data, resource->size, looping, volume, panning);
 }
 
 void Sound::playMusic(ResourceId resourceId, int32 volume) {
@@ -113,7 +121,7 @@ bool Sound::isPlaying(ResourceId resourceId) {
 //////////////////////////////////////////////////////////////////////////
 
 void Sound::setVolume(ResourceId resourceId, int32 volume) {
-	SoundBufferItem *item = getPlayingItem(resourceId);
+	SoundQueueItem *item = getPlayingItem(resourceId);
 	if (!item)
 		return;
 
@@ -138,7 +146,7 @@ void Sound::setPanning(ResourceId resourceId, int32 panning) {
 	if (Config.performance == 1)
 		return;
 
-	SoundBufferItem *item = getPlayingItem(resourceId);
+	SoundQueueItem *item = getPlayingItem(resourceId);
 	if (!item)
 		return;
 
@@ -220,20 +228,20 @@ int32 Sound::calculatePanningAtPoint(int32 x, int32) {
 // Stopping sounds
 //////////////////////////////////////////////////////////////////////////
 void Sound::stop(ResourceId resourceId) {
-	SoundBufferItem *item = getPlayingItem(resourceId);
+	SoundQueueItem *item = getPlayingItem(resourceId);
 
 	if (item != NULL)
 		_mixer->stopHandle(item->handle);
 }
 
 void Sound::stopAll(ResourceId resourceId) {
-	for (Common::Array<SoundBufferItem>::iterator it = _soundBuffer.begin(); it != _soundBuffer.end(); it++)
+	for (Common::Array<SoundQueueItem>::iterator it = _soundQueue.begin(); it != _soundQueue.end(); it++)
 		if (it->resourceId == resourceId)
 			_mixer->stopHandle(it->handle);
 }
 
 void Sound::stopAll() {
-	for (Common::Array<SoundBufferItem>::iterator it = _soundBuffer.begin(); it != _soundBuffer.end(); it++)
+	for (Common::Array<SoundQueueItem>::iterator it = _soundQueue.begin(); it != _soundQueue.end(); it++)
 		_mixer->stopHandle(it->handle);
 }
 
@@ -260,47 +268,48 @@ void Sound::playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *hand
 // Sound buffer
 //////////////////////////////////////////////////////////////////////////
 
-SoundBufferItem *Sound::getItem(ResourceId resourceId) {
-	for (uint32 i = 0; i < _soundBuffer.size(); i++)
-		if (resourceId == _soundBuffer[i].resourceId)
-			return &_soundBuffer[i];
+SoundQueueItem *Sound::getItem(ResourceId resourceId) {
+	for (uint32 i = 0; i < _soundQueue.size(); i++)
+		if (resourceId == _soundQueue[i].resourceId)
+			return &_soundQueue[i];
 
 	return NULL;
 }
 
-SoundBufferItem *Sound::getPlayingItem(ResourceId resourceId) {
-	for (uint32 i = 0; i < _soundBuffer.size(); i++)
-		if (resourceId == _soundBuffer[i].resourceId
-			&& _mixer->isSoundHandleActive(_soundBuffer[i].handle))
-			return &_soundBuffer[i];
+SoundQueueItem *Sound::getPlayingItem(ResourceId resourceId) {
+	for (uint32 i = 0; i < _soundQueue.size(); i++)
+		if (resourceId == _soundQueue[i].resourceId
+			&& _mixer->isSoundHandleActive(_soundQueue[i].handle))
+			return &_soundQueue[i];
 
 	return NULL;
 }
 
-bool Sound::addToSoundBuffer(ResourceId resourceId) {
-	SoundBufferItem *item = getItem(resourceId);
+SoundQueueItem *Sound::addToQueue(ResourceId resourceId) {
+	SoundQueueItem sound;
+	sound.resourceId = resourceId;
+	_soundQueue.push_back(sound);
 
-	if (item == NULL) {
-		SoundBufferItem sound;
-		sound.resourceId = resourceId;
-		sound.handle = _soundHandle;
-		_soundBuffer.push_back(sound);
-	}
-
-	return (item == NULL) ? true : false;
+	return &_soundQueue.back();
 }
 
-void Sound::removeFromSoundBuffer(ResourceId resourceId) {
-	for (uint i = 0; i < _soundBuffer.size(); i++) {
-		if (_soundBuffer[i].resourceId == resourceId) {
-			_soundBuffer.remove_at(i);
-			break;
-		}
+void Sound::cleanupQueue() {
+	for (uint i = 0; i < _soundQueue.size(); i++) {
+		if (_mixer->isSoundHandleActive(_soundQueue[i].handle))
+			continue;
+
+		// Remove the finished sound from the queue
+		_soundQueue.remove_at(i);
+		--i;
 	}
 }
 
-void Sound::clearSoundBuffer() {
-	_soundBuffer.clear();
+//////////////////////////////////////////////////////////////////////////
+// Helper functions
+//////////////////////////////////////////////////////////////////////////
+bool Sound::isValidSoundResource(ResourceId resourceId) {
+	warning("[Sound::isValidSoundFile] Not implemented!");
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
