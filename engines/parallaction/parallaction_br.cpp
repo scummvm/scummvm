@@ -154,7 +154,8 @@ Common::Error Parallaction_br::go() {
 	while (!shouldQuit()) {
 
 		if (getFeatures() & GF_DEMO) {
-			scheduleLocationSwitch("camalb.1");
+			scheduleLocationSwitch("camalb");
+			_nextPart = 1;
 			_input->_inputMode = Input::kInputModeGame;
 		} else {
 			startGui(splash);
