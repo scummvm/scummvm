@@ -1201,31 +1201,85 @@ ActorIndex Scene::hitTestActor() {
 
 	switch (_ws->chapter) {
 	default:
-		for (int i = _ws->actors.size() - 1; i >= 0 ; i--) {
+		break;
+
+	case kChapter8:
+		if (_ws->actors.size() <= 7)
+			error("[Scene::hitTestActor] Not enough actors to check (chapter 8 - checking actors 1-7)!");
+
+		for (uint i = 1; i < 7; i++) {
 			Actor *actor = getActor(i);
 
-			int32 hitFrame;
-			if (actor->getFrameIndex() >= actor->getFrameCount())
-				hitFrame = 2 * actor->getFrameIndex() - actor->getFrameCount() - 1;
-			else
-				hitFrame = actor->getFrameIndex();
+			if (!actor->isVisible() || !actor->actionType)
+				continue;
 
-			if (hitTestPixel(actor->getResourceId(),
-			                 hitFrame,
-			                 _ws->xLeft - actor->getPoint()->x - actor->getPoint1()->x,
-			                 _ws->yTop  - actor->getPoint()->y - actor->getPoint1()->y,
-			                 actor->getDirection() >= kDirectionSE))
+			int32 x = _ws->xLeft + mouse.x - (actor->getPoint1()->x + actor->getPoint()->x);
+			int32 y = _ws->yTop  + mouse.y - (actor->getPoint1()->y + actor->getPoint()->y);
+
+			if (x > 300 && x < 340 && y > 220 && y < 260)
 				return i;
 		}
 		break;
 
-	case kChapter8:
-		error("[Scene::hitTestActor] Not implemented (chapter 8)!");
-		break;
-
 	case kChapter11:
-		error("[Scene::hitTestActor] Not implemented (chapter 11)!");
+		if (_ws->actors.size() <= 1)
+			error("[Scene::hitTestActor] Not enough actors to check (chapter 11 - checking actor 1)!");
+
+		if (getActor(1)->isOnScreen() && getActor(1)->actionType) {
+			Actor *actor = getActor(1);
+
+			int32 x = _ws->xLeft + mouse.x - (actor->getPoint1()->x + actor->getPoint()->x);
+			int32 y = _ws->yTop  + mouse.y - (actor->getPoint1()->y + actor->getPoint()->y);
+
+			Common::Rect rect = GraphicResource::getFrameRect(_vm, actor->getResourceId(), 0);
+
+			if (x > (rect.left - 10)
+			 && x < (rect.width() + rect.left + 10)
+			 && y > (rect.top - 10)
+			 && y < (rect.height() + rect.top + 10))
+				return 1;
+		}
+
+		if (_ws->actors.size() <= 15)
+			error("[Scene::hitTestActor] Not enough actors to check (chapter 11 - checking actors 10-15)!");
+
+		for (uint i = 10; i < 15; i++) {
+			Actor *actor = getActor(i);
+
+			if (!actor->isOnScreen() || !actor->actionType)
+				continue;
+
+			Common::Rect rect = GraphicResource::getFrameRect(_vm, actor->getResourceId(), 0);
+
+			int32 x = _ws->xLeft + mouse.x - (actor->getPoint1()->x + actor->getPoint()->x);
+			int32 y = _ws->yTop  + mouse.y - (actor->getPoint1()->y + actor->getPoint()->y);
+
+			if (x > (rect.left - 10)
+			 && x < (rect.width() + rect.left + 10)
+			 && y > (rect.top - 10)
+			 && y < (rect.height() + rect.top + 10))
+				return i;
+		}
 		break;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Default check
+	for (int i = _ws->actors.size() - 1; i >= 0 ; i--) {
+	Actor *actor = getActor(i);
+
+	int32 hitFrame;
+	if (actor->getFrameIndex() >= actor->getFrameCount())
+		hitFrame = 2 * actor->getFrameIndex() - actor->getFrameCount() - 1;
+	else
+		hitFrame = actor->getFrameIndex();
+
+	if (hitTestPixel(actor->getResourceId(),
+					 hitFrame,
+					 _ws->xLeft - actor->getPoint()->x - actor->getPoint1()->x,
+					 _ws->yTop  - actor->getPoint()->y - actor->getPoint1()->y,
+					 actor->getDirection() >= kDirectionSE))
+		return i;
 	}
 
 	return -1;
