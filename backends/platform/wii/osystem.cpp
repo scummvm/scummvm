@@ -331,16 +331,16 @@ Common::String OSystem_Wii::getSystemLanguage() const {
 
 
 	const char *wiiLanguages[] = {
-		"ja",      // CONF_LANG_JAPANESE     Japanese
-		"en",      // CONF_LANG_ENGLISH      English
-		"de",      // CONF_LANG_GERMAN       German
-		"fr",      // CONF_LANG_FRENCH       French
-		"es",      // CONF_LANG_SPANISH      Spanish
-		"it",      // CONF_LANG_ITALIAN      Italian
-		"nl",      // CONF_LANG_DUTCH        Dutch
-		"zh-Hans", // CONF_LANG_SIMP_CHINESE Simplified Chinese
-		"zh-Hant", // CONF_LANG_TRAD_CHINESE Traditional Chinese
-		"ko"       // CONF_LANG_KOREAN       Korean
+		"ja", // CONF_LANG_JAPANESE     Japanese
+		"en", // CONF_LANG_ENGLISH      English
+		"de", // CONF_LANG_GERMAN       German
+		"fr", // CONF_LANG_FRENCH       French
+		"es", // CONF_LANG_SPANISH      Spanish
+		"it", // CONF_LANG_ITALIAN      Italian
+		"nl", // CONF_LANG_DUTCH        Dutch
+		"zh", // CONF_LANG_SIMP_CHINESE Simplified Chinese
+		"zh", // CONF_LANG_TRAD_CHINESE Traditional Chinese
+		"ko"  // CONF_LANG_KOREAN       Korean
 	};
 
 	// Now let's read the system language.
