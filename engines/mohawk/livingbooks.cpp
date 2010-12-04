@@ -156,7 +156,8 @@ Common::Error MohawkEngine_LivingBooks::run() {
 
 				case Common::KEYCODE_ESCAPE:
 					if (_curMode == kLBIntroMode)
-						loadPage(kLBControlMode, 1, 0);
+						if (!loadPage(kLBControlMode, 1, 1))
+							loadPage(kLBControlMode, 1, 0);
 					break;
 
 				case Common::KEYCODE_LEFT:
@@ -652,6 +653,8 @@ bool MohawkEngine_LivingBooks::tryDefaultPage() {
 		}
 	} else {
 		// go to menu page
+		if (loadPage(kLBControlMode, 1, 1))
+			return true;
 		if (loadPage(kLBControlMode, 1, 0))
 			return true;
 	}
