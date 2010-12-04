@@ -58,7 +58,7 @@ void Cursor::show() const {
 	CursorMan.showMouse(true);
 }
 
-void Cursor::set(ResourceId resourceId, int32 counter, CursorAnimation animation, int32 frames) {
+void Cursor::set(ResourceId resourceId, int32 cnt, CursorAnimation anim, int32 frames) {
 	hide();
 
 	delete _cursorRes;
@@ -73,13 +73,13 @@ void Cursor::set(ResourceId resourceId, int32 counter, CursorAnimation animation
 	else
 		lastFrameIndex = _cursorRes->count() - 1;
 
-	this->animation = animation;
-	this->counter = counter;
+	this->animation = anim;
+	this->counter = cnt;
 	currentFrame = 0;
 	_frameStep = 1;
 
 	// Do not animate if no frames (and the other way around)
-	if (lastFrameIndex == 0 || animation == kCursorAnimationNone) {
+	if (lastFrameIndex == 0 || anim == kCursorAnimationNone) {
 		lastFrameIndex = 0;
 		animation = kCursorAnimationNone;
 	}
@@ -185,7 +185,9 @@ Common::Point Cursor::getHotspot(uint32 frameIndex) {
 	uint32 resFlags = _cursorRes->getData().flags;
 
 	if (BYTE1(resFlags) & 0x10) {
-		if (frameIndex >= 0 && frameIndex > _cursorRes->count()) {
+		// XXX removed a check for frameIndex >= 0 as it will always
+		// evaluate to true since frameIndex is unsigned
+		if (frameIndex > _cursorRes->count()) {
 			GraphicFrame *frame = _cursorRes->getFrame(currentFrame);
 
 			point.x = frame->x;
