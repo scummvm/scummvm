@@ -2405,7 +2405,10 @@ bool LBLiveTextItem::togglePlaying(bool playing, bool restart) {
 	_vm->_sound->stopSound();
 
 	_currentWord = 0xFFFF;
-	_currentPhrase = 0;
+
+	// some LiveText items don't have any phrases!
+	if (_phrases.size() > 0)
+		_currentPhrase = 0;
 
 	return true;
 }
