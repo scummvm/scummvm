@@ -123,7 +123,7 @@ private:
 	Common::Rect _clipRect;
 	Common::Array<GraphicQueueItem> _queueItems;
 
-	uint16 _flag;
+	int16 _flag;
 	bool _useColorKey;
 
 	// Transparency tables

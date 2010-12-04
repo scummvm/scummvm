@@ -1631,7 +1631,7 @@ void Scene::stopSpeech() {
 }
 
 bool Scene::speak(Common::KeyCode code) {
-#define GET_INDEX(val) ((((long long)val >> 32) ^ abs((int)val) & 1) == ((long long)val >> 32))
+#define GET_INDEX(val) ((((long long)val >> 32) ^ (abs((int)val) & 1)) == ((long long)val >> 32))
 
 	int32 index = -1;
 
