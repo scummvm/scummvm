@@ -220,11 +220,11 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	// Inform backend that the engine finished
 	system.engineDone();
 
-	// We clear all debug levels again even though the engine should do it
-	DebugMan.clearAllDebugChannels();
-
 	// Free up memory
 	delete engine;
+
+	// We clear all debug levels again even though the engine should do it
+	DebugMan.clearAllDebugChannels();
 
 	// Reset the file/directory mappings
 	SearchMan.clear();
