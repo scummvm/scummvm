@@ -118,6 +118,7 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete _loadDialog;
 	delete _optionsDialog;
 	delete _prevStack;
+	delete _rnd;
 
 	delete[] _cursorHints;
 
@@ -257,6 +258,7 @@ Common::Error MohawkEngine_Myst::run() {
 	_loadDialog->setSaveMode(false);
 	_optionsDialog = new MystOptionsDialog(this);
 	_cursor = new MystCursorManager(this);
+	_rnd = new Common::RandomSource();
 	_mouseClicked = false;
 
 	// Start us on the first stack.

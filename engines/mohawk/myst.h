@@ -32,6 +32,8 @@
 #include "mohawk/myst_vars.h"
 #include "mohawk/myst_scripts.h"
 
+#include "common/random.h"
+
 #include "gui/saveload.h"
 
 namespace Mohawk {
@@ -173,6 +175,7 @@ public:
 	Common::Array<MystResource*> _resources;
 	MystResource *_dragResource;
 	Common::Point _mouse;
+	Common::RandomSource *_rnd;
 
 	bool _showResourceRects;
 	MystResource *loadResource(Common::SeekableReadStream *rlstStream, MystResource *parent);

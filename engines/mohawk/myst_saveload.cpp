@@ -474,16 +474,18 @@ void MystSaveLoad::initMystVariables(MystVariables *_tv) {
 	// Most of the variables are zero at game start.
 	_v->globals.u0 = 2;
 	// Current Age / Stack - Start in Myst
-	_v->globals.currentAge = 2;
-	_v->globals.heldPage = 0;
-	_v->globals.u1 = 1;
-	_v->globals.transitions = 0;
-	_v->globals.zipMode = 0;
-	_v->globals.redPagesInBook = 0;
-	_v->globals.bluePagesInBook = 0;
+	_tv->globals.currentAge = 2;
+	_tv->globals.heldPage = 0;
+	_tv->globals.u1 = 1;
+	_tv->globals.transitions = 0;
+	_tv->globals.zipMode = 0;
+	_tv->globals.redPagesInBook = 0;
+	_tv->globals.bluePagesInBook = 0;
 
-	for (i = 0; i < ARRAYSIZE(_tv->myst_vars); i++)
-		_tv->myst_vars[i] = 0;
+	_tv->myst.generatorBreakers = 0;
+	_tv->myst.generatorButtons = 0;
+	_tv->myst.generatorVoltage = 0;
+
 	for (i = 0; i < ARRAYSIZE(_tv->channelwood_vars); i++)
 		_tv->channelwood_vars[i] = 0;
 	for (i = 0; i < ARRAYSIZE(_tv->mech_vars); i++)

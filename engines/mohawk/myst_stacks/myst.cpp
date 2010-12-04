@@ -67,7 +67,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(117, opcode_117);
 	OPCODE(118, opcode_118);
 	OPCODE(119, opcode_119);
-	OPCODE(120, opcode_120);
+	OPCODE(120, o_generatorButtonPressed);
 	OPCODE(121, opcode_121);
 	OPCODE(122, opcode_122);
 	OPCODE(123, opcode_123);
@@ -127,7 +127,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(206, opcode_206);
 	OPCODE(208, opcode_208);
 	OPCODE(209, opcode_209);
-	OPCODE(210, opcode_210);
+	OPCODE(210, o_generatorControlRoom_init);
 	OPCODE(211, opcode_211);
 	OPCODE(212, opcode_212);
 	OPCODE(213, opcode_213);
@@ -164,7 +164,9 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 	opcode_203_disable();
 	opcode_205_disable();
 	opcode_209_disable();
-	opcode_210_disable();
+
+	_generatorControlRoomRunning = false;
+
 	opcode_211_disable();
 	opcode_212_disable();
 }
@@ -176,9 +178,78 @@ void MystScriptParser_Myst::runPersistentScripts() {
 	opcode_203_run();
 	opcode_205_run();
 	opcode_209_run();
-	opcode_210_run();
+
+	if (_generatorControlRoomRunning)
+		o_generatorControlRoom_run();
+
 	opcode_211_run();
 	opcode_212_run();
+}
+
+uint16 MystScriptParser_Myst::getVar(uint16 var) {
+	// MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	switch(var) {
+	case 44: // Rocket ship power state
+		if (myst.generatorBreakers || myst.generatorVoltage == 0)
+			return 0;
+		else if (myst.generatorVoltage != 59)
+			return 1;
+		else
+			return 2;
+	case 49: // Generator running
+		return myst.generatorVoltage > 0;
+	case 52: // Generator Switch #1
+		return (myst.generatorButtons & 1) != 0;
+	case 53: // Generator Switch #2
+		return (myst.generatorButtons & 2) != 0;
+	case 54: // Generator Switch #3
+		return (myst.generatorButtons & 4) != 0;
+	case 55: // Generator Switch #4
+		return (myst.generatorButtons & 8) != 0;
+	case 56: // Generator Switch #5
+		return (myst.generatorButtons & 16) != 0;
+	case 57: // Generator Switch #6
+		return (myst.generatorButtons & 32) != 0;
+	case 58: // Generator Switch #7
+		return (myst.generatorButtons & 64) != 0;
+	case 59: // Generator Switch #8
+		return (myst.generatorButtons & 128) != 0;
+	case 60: // Generator Switch #9
+		return (myst.generatorButtons & 256) != 0;
+	case 61: // Generator Switch #10
+		return (myst.generatorButtons & 512) != 0;
+	case 62: // Generator Power Dial Left LED Digit
+		return _generatorVoltage / 10;
+	case 63: // Generator Power Dial Right LED Digit
+		return _generatorVoltage % 10;
+	case 64: // Generator Power To Spaceship Dial Left LED Digit
+		if (myst.generatorVoltage > 59 || myst.generatorBreakers)
+			return 0;
+		else
+			return myst.generatorVoltage / 10;
+	case 65: // Generator Power To Spaceship Dial Right LED Digit
+		if (myst.generatorVoltage > 59 || myst.generatorBreakers)
+			return 0;
+		else
+			return myst.generatorVoltage % 10;
+	case 66: // Generators lights on
+		return 0;
+	case 93: // Breaker nearest Generator Room Blown
+		return myst.generatorBreakers == 1;
+	case 94: // Breaker nearest Rocket Ship Blown
+		return myst.generatorBreakers == 2;
+	case 96: // Generator Power Dial Needle Position
+		return myst.generatorVoltage / 4;
+	case 97: // Generator Power To Spaceship Dial Needle Position
+		if (myst.generatorVoltage > 59 || myst.generatorBreakers)
+			return 0;
+		else
+			return myst.generatorVoltage / 4;
+	default:
+		return MystScriptParser::getVar(var);
+	}
 }
 
 void MystScriptParser_Myst::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -515,24 +586,96 @@ void MystScriptParser_Myst::opcode_119(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Myst::opcode_120(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Generator button pressed", op);
 
-	// Used for Card 4297 (Generator Puzzle Buttons)
-	debugC(kDebugScript, "Opcode %d: Toggle Var8 of Invoking Resource", op);
-	MystResource *_top = _invokingResource;
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	MystResource *button = _invokingResource->_parent;
 
-	while (_top->_parent != NULL)
-		_top = _top->_parent;
+	generatorRedrawRocket();
 
-	if (argc == 0) {
-		uint16 var8 = _top->getType8Var();
-		if (var8 != 0xFFFF)
-			_vm->_varStore->setVar(var8, !_vm->_varStore->getVar(var8));
+	_generatorVoltage = myst.generatorVoltage;
+
+	uint16 mask = 0;
+	uint16 value = 0;
+	generatorButtonValue(button, mask, value);
+
+	// Button pressed
+	if (myst.generatorButtons & mask) {
+		myst.generatorButtons &= ~mask;
+		myst.generatorVoltage -= value;
+
+		if (myst.generatorVoltage)
+			_vm->_sound->playSound(8297);
 		else
-			warning("Opcode 120: No invoking Resource Var 8 found");
-	} else
-		unknown(op, var, argc, argv);
+			_vm->_sound->playSound(9297);
+	} else {
+		if (_generatorVoltage)
+			_vm->_sound->playSound(6297);
+		else
+			_vm->_sound->playSound(7297); //TODO: Replace with play sound and replace background 4297
+
+		myst.generatorButtons |= mask;
+		myst.generatorVoltage += value;
+	}
+
+	// Redraw button
+	_vm->redrawArea(button->getType8Var());
+
+	// Blow breaker
+	if (myst.generatorVoltage > 59)
+		myst.generatorBreakers = _vm->_rnd->getRandomNumberRng(1, 2);
+}
+
+void MystScriptParser_Myst::generatorRedrawRocket() {
+	_vm->redrawArea(64);
+	_vm->redrawArea(65);
+	_vm->redrawArea(97);
+}
+
+void MystScriptParser_Myst::generatorButtonValue(MystResource *button, uint16 &mask, uint16 &value) {
+	switch (button->getType8Var()) {
+	case 52: // Generator Switch #1
+		mask = 1;
+		value = 10;
+		break;
+	case 53: // Generator Switch #2
+		mask = 2;
+		value = 7;
+		break;
+	case 54: // Generator Switch #3
+		mask = 4;
+		value = 8;
+		break;
+	case 55: // Generator Switch #4
+		mask = 8;
+		value = 16;
+		break;
+	case 56: // Generator Switch #5
+		mask = 16;
+		value = 5;
+		break;
+	case 57: // Generator Switch #6
+		mask = 32;
+		value = 1;
+		break;
+	case 58: // Generator Switch #7
+		mask = 64;
+		value = 2;
+		break;
+	case 59: // Generator Switch #8
+		mask = 128;
+		value = 22;
+		break;
+	case 60: // Generator Switch #9
+		mask = 256;
+		value = 19;
+		break;
+	case 61: // Generator Switch #10
+		mask = 512;
+		value = 9;
+		break;
+	}
 }
 
 void MystScriptParser_Myst::opcode_121(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -629,7 +772,7 @@ void MystScriptParser_Myst::o_circuitBreakerStartMove(uint16 op, uint16 var, uin
 void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Circuit breaker move", op);
 
-	uint16 *mystVars = _vm->_saveLoad->_v->myst_vars;
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
 
 	int16 maxStep = breaker->getStepsV() - 1;
@@ -652,7 +795,7 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 			if (breaker->getType8Var() == 93) {
 
 				// Voltage is still too high or not broken
-				if (mystVars[17] > 59 || mystVars[15] != 1) {
+				if (myst.generatorVoltage > 59 || myst.generatorBreakers != 1) {
 					uint16 soundId = breaker->getList2(1);
 					if (soundId)
 						_vm->_sound->playSound(soundId);
@@ -662,11 +805,11 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 						_vm->_sound->playSound(soundId);
 
 					// Reset breaker state
-					mystVars[15] = 0;
+					myst.generatorBreakers = 0;
 				}
 			} else {
 				// Voltage is still too high or not broken
-				if (mystVars[17] > 59 || mystVars[15] != 2) {
+				if (myst.generatorVoltage > 59 || myst.generatorBreakers != 2) {
 					uint16 soundId = breaker->getList2(1);
 					if (soundId)
 						_vm->_sound->playSound(soundId);
@@ -676,7 +819,7 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 						_vm->_sound->playSound(soundId);
 
 					// Reset breaker state
-					mystVars[15] = 0;
+					myst.generatorBreakers = 0;
 				}
 			}
 		}
@@ -1201,101 +1344,29 @@ void MystScriptParser_Myst::opcode_209(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-static struct {
-	bool enabled;
-} g_opcode210Parameters;
-
-void MystScriptParser_Myst::opcode_210_run(void) {
-	if (g_opcode210Parameters.enabled) {
-		// Code for Generator Puzzle
-
-		// Var 52 to 61 Hold Button State for 10 generators
-		// Var 64, 65 - 2 8-Segments for Rocket Power Dial
-		// Var 62, 63 - 2 8-Segments for Power Dial
-		// Var 96, 97 - Needle for Power and Rocket Power Dials
-
-		// Var 44 Holds State for Rocketship
-		// 0 = No Power
-		// 1 = Insufficient Power
-		// 2 = Correct Power i.e. 59V
-
-		// Var 93 Holds Breaker nearest Generator State
-		// Var 94 Holds Breaker nearest Rocket Ship State
-		// 0 = Closed 1 = Open
-
-		const uint16 correctVoltage = 59;
-
-		// Correct Solution is 4, 7, 8, 9 i.e. 16 + 2 + 22 + 19 = 59
-		const uint16 genVoltages[10] = { 10, 7, 8, 16, 5, 1, 2, 22, 19, 9 };
-
-		uint16 powerVoltage = 0;
-		uint16 rocketPowerVoltage = 0;
-
-		// Calculate Power Voltage from Generator Contributions
-		for (byte i = 0; i < ARRAYSIZE(genVoltages); i++)
-			if (_vm->_varStore->getVar(52 + i))
-				powerVoltage += genVoltages[i];
-
-		// Logic for Var 49 - Generator Running Sound Control
-		if (powerVoltage == 0)
-			_vm->_varStore->setVar(49, 0);
+void MystScriptParser_Myst::o_generatorControlRoom_run(void) {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	if (_generatorVoltage == myst.generatorVoltage) {
+		generatorRedrawRocket();
+	} else {
+		if (_generatorVoltage > myst.generatorVoltage)
+			_generatorVoltage--;
 		else
-			_vm->_varStore->setVar(49, 1);
+			_generatorVoltage++;
 
-		// TODO: Animation Code to Spin Up and Spin Down LED Dials?
-		// Code For Power Dial Var 62 and 63
-		_vm->_varStore->setVar(62, powerVoltage / 10);
-		_vm->_varStore->setVar(63, powerVoltage % 10);
-		// TODO: Var 96 - Power Needle Logic
-
-		// Code For Breaker Logic
-		if (_vm->_varStore->getVar(93) != 0 || _vm->_varStore->getVar(94) != 0)
-			rocketPowerVoltage = 0;
-		else {
-			if (powerVoltage <= correctVoltage)
-				rocketPowerVoltage = powerVoltage;
-			else {
-				// Blow Generator Room Breaker...
-				_vm->_varStore->setVar(93, 1);
-				// TODO: I think Logic For Blowing Other Breaker etc.
-				// is done in process on Breaker Cards.
-
-				rocketPowerVoltage = 0;
-			}
-		}
-
-		// TODO: Animation Code to Spin Up and Spin Down LED Dials?
-		// Code For Rocket Power Dial
-		_vm->_varStore->setVar(64, rocketPowerVoltage / 10);
-		_vm->_varStore->setVar(65, rocketPowerVoltage % 10);
-		// TODO: Var 97 - Rocket Power Needle Logic
-
-		// Set Rocket Ship Power Based on Power Level
-		if (rocketPowerVoltage == 0)
-			_vm->_varStore->setVar(44, 0);
-		else if (rocketPowerVoltage < correctVoltage)
-			_vm->_varStore->setVar(44, 1);
-		else if (rocketPowerVoltage == correctVoltage)
-			_vm->_varStore->setVar(44, 2);
-		else // Should Not Happen Case
-			_vm->_varStore->setVar(44, 0);
+		_vm->redrawArea(62);
+		_vm->redrawArea(63);
+		_vm->redrawArea(96);
 	}
 }
 
-void MystScriptParser_Myst::opcode_210_disable(void) {
-	g_opcode210Parameters.enabled = false;
-}
+void MystScriptParser_Myst::o_generatorControlRoom_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
-void MystScriptParser_Myst::opcode_210(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+	debugC(kDebugScript, "Opcode %d: Generator control room init", op);
 
-	// Used for Card 4297 (Generator Puzzle)
-	if (argc == 2) {
-		// TODO: Work Out 2 parameters meaning... 16, 17
-		// Script Resources for Generator Spinup and Spindown Sounds?
-		g_opcode210Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
+	_generatorVoltage = myst.generatorVoltage;
+	_generatorControlRoomRunning = true;
 }
 
 static struct {

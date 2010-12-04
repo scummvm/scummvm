@@ -47,6 +47,7 @@ public:
 
 private:
 	void setupOpcodes();
+	uint16 getVar(uint16 var);
 
 	void opcode_200_run();
 	void opcode_200_disable();
@@ -60,8 +61,7 @@ private:
 	void opcode_205_disable();
 	void opcode_209_run();
 	void opcode_209_disable();
-	void opcode_210_run();
-	void opcode_210_disable();
+	void o_generatorControlRoom_run();
 	void opcode_211_run();
 	void opcode_211_disable();
 	void opcode_212_run();
@@ -80,7 +80,7 @@ private:
 	DECLARE_OPCODE(opcode_117);
 	DECLARE_OPCODE(opcode_118);
 	DECLARE_OPCODE(opcode_119);
-	DECLARE_OPCODE(opcode_120);
+	DECLARE_OPCODE(o_generatorButtonPressed);
 	DECLARE_OPCODE(opcode_121);
 	DECLARE_OPCODE(opcode_122);
 	DECLARE_OPCODE(opcode_123);
@@ -139,7 +139,7 @@ private:
 	DECLARE_OPCODE(opcode_206);
 	DECLARE_OPCODE(opcode_208);
 	DECLARE_OPCODE(opcode_209);
-	DECLARE_OPCODE(opcode_210);
+	DECLARE_OPCODE(o_generatorControlRoom_init);
 	DECLARE_OPCODE(opcode_211);
 	DECLARE_OPCODE(opcode_212);
 	DECLARE_OPCODE(opcode_213);
@@ -164,6 +164,12 @@ private:
 	DECLARE_OPCODE(opcode_308);
 	DECLARE_OPCODE(opcode_309);
 	DECLARE_OPCODE(opcode_312);
+
+	bool _generatorControlRoomRunning;
+	uint16 _generatorVoltage; // 58
+
+	void generatorRedrawRocket();
+	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
 };
 
 } // End of namespace Mohawk

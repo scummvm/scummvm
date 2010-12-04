@@ -115,6 +115,13 @@ struct MystVariables {
 	*/
 	uint16 myst_vars[50];
 
+	struct Myst {
+		uint16 generatorBreakers;
+		uint16 generatorButtons;
+		uint16 generatorVoltage;
+	} myst;
+
+
 	/* 7 Channelwood Specific Variables :
 	    0 = Water Pump Bridge State
 	    1 = Lower Walkway to Upper Walkway Elevator State
