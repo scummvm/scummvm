@@ -50,7 +50,16 @@ struct MystVariables {
 	   6 = Red Pages in Book
 	   7 = Blue Pages in Book
 	*/
-	uint16 game_globals[8];
+	struct Globals {
+		uint16 u0;
+		uint16 currentAge;
+		uint16 heldPage;
+		uint16 u1;
+		uint16 transitions;
+		uint16 zipMode;
+		uint16 redPagesInBook;
+		uint16 bluePagesInBook;
+	} globals;
 
 	/* 50 Myst Specific Variables :
 	   0  = Marker Switch Near Cabin
@@ -149,7 +158,18 @@ struct MystVariables {
 	   16 = Sound Lock Slider #4 Position
 	   17 = Sound Lock Slider #5 (Right) Position
 	*/
-	uint16 selenitic_vars[18];
+	struct Selenitic {
+		uint32 emitterEnabledWater;
+		uint32 emitterEnabledVolcano;
+		uint32 emitterEnabledClock;
+		uint32 emitterEnabledCrystal;
+		uint32 emitterEnabledWind;
+		uint32 soundReceiverOpened;
+		uint32 tunnelLightsSwitchedOn;
+		uint16 soundReceiverCurrentSource;
+		uint16 soundReceiverPositions[5];
+		uint16 soundLockSliderPositions[5];
+	} selenitic;
 
 	/* 14 Stoneship Specific Variables :
 	    0 = Light State

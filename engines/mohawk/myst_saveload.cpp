@@ -66,19 +66,19 @@ bool MystSaveLoad::loadGame(const Common::String &filename) {
 
 	// Now, we'll read in the variable values.
 	// Lots of checking code here so that save files with differing formats are flagged...
-	if ((_v->game_globals[0] = loadFile->readUint16LE()) != 2)
-		warning("Unexpected value at 0x%03X - Found %u Expected %u", loadFile->pos(), _v->game_globals[0], 2);
+	if ((_v->globals.u0 = loadFile->readUint16LE()) != 2)
+		warning("Unexpected value at 0x%03X - Found %u Expected %u", loadFile->pos(), _v->globals.u0, 2);
 
-	_v->game_globals[1] = loadFile->readUint16LE();
-	_v->game_globals[2] = loadFile->readUint16LE();
+	_v->globals.currentAge = loadFile->readUint16LE();
+	_v->globals.heldPage = loadFile->readUint16LE();
 
-	if ((_v->game_globals[3] = loadFile->readUint16LE()) != 1)
-		warning("Unexpected value at 0x%03X - Found %u Expected %u", loadFile->pos(), _v->game_globals[3], 1);
+	if ((_v->globals.u1 = loadFile->readUint16LE()) != 1)
+		warning("Unexpected value at 0x%03X - Found %u Expected %u", loadFile->pos(), _v->globals.u1, 1);
 
-	_v->game_globals[4] = loadFile->readUint16LE();
-	_v->game_globals[5] = loadFile->readUint16LE();
-	_v->game_globals[6] = loadFile->readUint16LE();
-	_v->game_globals[7] = loadFile->readUint16LE();
+	_v->globals.transitions = loadFile->readUint16LE();
+	_v->globals.zipMode = loadFile->readUint16LE();
+	_v->globals.redPagesInBook = loadFile->readUint16LE();
+	_v->globals.bluePagesInBook = loadFile->readUint16LE();
 
 	for (byte i = 0; i < 8; i++) {
 		if (_vm->getFeatures() & GF_ME) {
@@ -234,21 +234,31 @@ bool MystSaveLoad::loadGame(const Common::String &filename) {
 		if ((_v->mech_vars[i] = loadFile->readUint16LE()) > 9)
 			warning("Value exceeds maximum of %u found at 0x%03X - Found %u", 9, loadFile->pos(), _v->mech_vars[i]);
 
-	for (byte i = 0; i < 7; i++) {
-		if (_vm->getFeatures() & GF_ME) {
-			_v->selenitic_vars[i] = loadFile->readUint16LE();
-
-			if (loadFile->readUint16LE() != 0)
-				warning("Non-zero value at 0x%03X", loadFile->pos());
-		} else
-			_v->selenitic_vars[i] = loadFile->readByte();
-
-		if (_v->selenitic_vars[i] > 1)
-			warning("Non-Boolean value found at 0x%03X - Found %u", loadFile->pos(), _v->selenitic_vars[i]);
+	if (_vm->getFeatures() & GF_ME) {
+		_v->selenitic.emitterEnabledWater = loadFile->readUint32LE();
+		_v->selenitic.emitterEnabledVolcano = loadFile->readUint32LE();
+		_v->selenitic.emitterEnabledClock = loadFile->readUint32LE();
+		_v->selenitic.emitterEnabledCrystal = loadFile->readUint32LE();
+		_v->selenitic.emitterEnabledWind = loadFile->readUint32LE();
+		_v->selenitic.soundReceiverOpened = loadFile->readUint32LE();
+		_v->selenitic.tunnelLightsSwitchedOn = loadFile->readUint32LE();
+	} else {
+		_v->selenitic.emitterEnabledWater = loadFile->readByte();
+		_v->selenitic.emitterEnabledVolcano = loadFile->readByte();
+		_v->selenitic.emitterEnabledClock = loadFile->readByte();
+		_v->selenitic.emitterEnabledCrystal = loadFile->readByte();
+		_v->selenitic.emitterEnabledWind = loadFile->readByte();
+		_v->selenitic.soundReceiverOpened = loadFile->readByte();
+		_v->selenitic.tunnelLightsSwitchedOn = loadFile->readByte();
 	}
 
-	for(byte i = 7; i < 18; i++)
-		_v->selenitic_vars[i] = loadFile->readUint16LE();
+	_v->selenitic.soundReceiverCurrentSource = loadFile->readUint16LE();
+
+	for(byte i = 0; i < 5; i++)
+		_v->selenitic.soundReceiverPositions[i] = loadFile->readUint16LE();
+
+	for(byte i = 0; i < 5; i++)
+		_v->selenitic.soundLockSliderPositions[i] = loadFile->readUint16LE();
 
 	for (byte i = 0; i < 3; i++) {
 		if (_vm->getFeatures() & GF_ME) {
@@ -257,7 +267,7 @@ bool MystSaveLoad::loadGame(const Common::String &filename) {
 			_v->stoneship_vars[i] = loadFile->readByte();
 
 		if (_v->stoneship_vars[i] > 1)
-			warning("Non-Boolean value found at 0x%03X - Found %u", loadFile->pos(), _v->selenitic_vars[i]);
+			warning("Non-Boolean value found at 0x%03X - Found %u", loadFile->pos(), _v->stoneship_vars[i]);
 	}
 	for (byte i = 3; i < 14; i++)
 		_v->stoneship_vars[i] = loadFile->readUint16LE();
@@ -338,8 +348,14 @@ bool MystSaveLoad::saveGame(const Common::String &fname) {
 	debug_printMystVariables(_v);
 
 	// Performs no validation of variable values - Assumes they are valid.
-	for (byte i = 0; i < 8; i++)
-		saveFile->writeUint16LE(_v->game_globals[i]);
+	saveFile->writeUint16LE(_v->globals.u0);
+	saveFile->writeUint16LE(_v->globals.currentAge);
+	saveFile->writeUint16LE(_v->globals.heldPage);
+	saveFile->writeUint16LE(_v->globals.u1);
+	saveFile->writeUint16LE(_v->globals.transitions);
+	saveFile->writeUint16LE(_v->globals.zipMode);
+	saveFile->writeUint16LE(_v->globals.redPagesInBook);
+	saveFile->writeUint16LE(_v->globals.bluePagesInBook);
 
 	for (byte i = 0; i < 8; i++) {
 		if (_vm->getFeatures() & GF_ME) {
@@ -372,16 +388,31 @@ bool MystSaveLoad::saveGame(const Common::String &fname) {
 	for (byte i = 0; i < 8; i++)
 		saveFile->writeUint16LE(_v->mech_vars[i]);
 
-	for (byte i = 0; i < 7; i++) {
-		if (_vm->getFeatures() & GF_ME) {
-			saveFile->writeUint16LE(_v->selenitic_vars[i]);
-			saveFile->writeUint16LE(0);
-		} else
-			saveFile->writeByte(_v->selenitic_vars[i]);
+	if (_vm->getFeatures() & GF_ME) {
+		saveFile->writeUint32LE(_v->selenitic.emitterEnabledWater);
+		saveFile->writeUint32LE(_v->selenitic.emitterEnabledVolcano);
+		saveFile->writeUint32LE(_v->selenitic.emitterEnabledClock);
+		saveFile->writeUint32LE(_v->selenitic.emitterEnabledCrystal);
+		saveFile->writeUint32LE(_v->selenitic.emitterEnabledWind);
+		saveFile->writeUint32LE(_v->selenitic.soundReceiverOpened);
+		saveFile->writeUint32LE(_v->selenitic.tunnelLightsSwitchedOn);
+	} else {
+		saveFile->writeByte(_v->selenitic.emitterEnabledWater);
+		saveFile->writeByte(_v->selenitic.emitterEnabledVolcano);
+		saveFile->writeByte(_v->selenitic.emitterEnabledClock);
+		saveFile->writeByte(_v->selenitic.emitterEnabledCrystal);
+		saveFile->writeByte(_v->selenitic.emitterEnabledWind);
+		saveFile->writeByte(_v->selenitic.soundReceiverOpened);
+		saveFile->writeByte(_v->selenitic.tunnelLightsSwitchedOn);
 	}
 
-	for(byte i = 7; i < 18; i++)
-		saveFile->writeUint16LE(_v->selenitic_vars[i]);
+	saveFile->writeUint16LE(_v->selenitic.soundReceiverCurrentSource);
+
+	for(byte i = 0; i < 5; i++)
+		saveFile->writeUint16LE(_v->selenitic.soundReceiverPositions[i]);
+
+	for(byte i = 0; i < 5; i++)
+		saveFile->writeUint16LE(_v->selenitic.soundLockSliderPositions[i]);
 
 	for (byte i = 0; i < 3; i++) {
 		if (_vm->getFeatures() & GF_ME) {
@@ -441,16 +472,38 @@ void MystSaveLoad::initMystVariables(MystVariables *_tv) {
 	uint8 i;
 
 	// Most of the variables are zero at game start.
-	for (i = 0; i < ARRAYSIZE(_tv->game_globals); i++)
-		_tv->game_globals[i] = 0;
+	_v->globals.u0 = 2;
+	// Current Age / Stack - Start in Myst
+	_v->globals.currentAge = 2;
+	_v->globals.heldPage = 0;
+	_v->globals.u1 = 1;
+	_v->globals.transitions = 0;
+	_v->globals.zipMode = 0;
+	_v->globals.redPagesInBook = 0;
+	_v->globals.bluePagesInBook = 0;
+
 	for (i = 0; i < ARRAYSIZE(_tv->myst_vars); i++)
 		_tv->myst_vars[i] = 0;
 	for (i = 0; i < ARRAYSIZE(_tv->channelwood_vars); i++)
 		_tv->channelwood_vars[i] = 0;
 	for (i = 0; i < ARRAYSIZE(_tv->mech_vars); i++)
 		_tv->mech_vars[i] = 0;
-	for (i = 0; i < ARRAYSIZE(_tv->selenitic_vars); i++)
-		_tv->selenitic_vars[i] = 0;
+
+	_tv->selenitic.emitterEnabledWater = 0;
+	_tv->selenitic.emitterEnabledVolcano = 0;
+	_tv->selenitic.emitterEnabledClock = 0;
+	_tv->selenitic.emitterEnabledCrystal = 0;
+	_tv->selenitic.emitterEnabledWind = 0;
+	_tv->selenitic.soundReceiverOpened = 0;
+	_tv->selenitic.tunnelLightsSwitchedOn = 0;
+	_tv->selenitic.soundReceiverCurrentSource = 0;
+
+	for(i = 0; i < 5; i++)
+		_tv->selenitic.soundReceiverPositions[i] = 0;
+
+	for(i = 0; i < 5; i++)
+		_tv->selenitic.soundLockSliderPositions[i] = 0;
+
 	for (i = 0; i < ARRAYSIZE(_tv->stoneship_vars); i++)
 		_tv->stoneship_vars[i] = 0;
 	for (i = 0; i < ARRAYSIZE(_tv->dunny_vars); i++)
@@ -469,13 +522,6 @@ void MystSaveLoad::initMystVariables(MystVariables *_tv) {
 	// TODO: Not all these may be needed as some of the unknown opcodes
 	//        called by init scripts may set these up as per the others..
 
-	// Unknown - Fixed at 2
-	_tv->game_globals[0] = 2;
-	// Current Age / Stack - Start in Myst
-	_tv->game_globals[1] = 2;
-	// Unknown - Fixed at 1
-	_tv->game_globals[3] = 1;
-
 	// Library Bookcase Door - Default to Up
 	_tv->myst_vars[18] = 1;
 	// Dock Imager Numeric Selection - Default to 67
@@ -491,16 +537,16 @@ void MystSaveLoad::initMystVariables(MystVariables *_tv) {
 	_tv->stoneship_vars[5] = 1;
 }
 
-static const char *game_globals_names[] = {
-	"Unknown - Fixed at 2",
-	"Current Age / Stack",
-	"Page Being Held",
-	"Unknown - Fixed at 1",
-	"Slide Transitions",
-	"Zip Mode",
-	"Red Pages in Book",
-	"Blue Pages in Book"
-};
+//static const char *game_globals_names[] = {
+//	"Unknown - Fixed at 2",
+//	"Current Age / Stack",
+//	"Page Being Held",
+//	"Unknown - Fixed at 1",
+//	"Slide Transitions",
+//	"Zip Mode",
+//	"Red Pages in Book",
+//	"Blue Pages in Book"
+//};
 
 static const char *myst_vars_names[] = {
 	"Marker Switch Near Cabin",
@@ -576,26 +622,26 @@ static const char *mech_vars_names[] = {
 	"Code Lock Shape #4 (Right)"
 };
 
-static const char *selenitic_vars_names[] = {
-	"Sound Pickup At Water Pool",
-	"Sound Pickup At Volcanic Crack",
-	"Sound Pickup At Clock",
-	"Sound Pickup At Crystal Rocks",
-	"Sound Pickup At Windy Tunnel",
-	"Sound Receiver Doors",
-	"Windy Tunnel Lights",
-	"Sound Receiver Current Input",
-	"Sound Receiver Input #0 (Water Pool) Angle Value",
-	"Sound Receiver Input #1 (Volcanic Crack) Angle Value",
-	"Sound Receiver Input #2 (Clock) Angle Value",
-	"Sound Receiver Input #3 (Crystal Rocks) Angle Value",
-	"Sound Receiver Input #4 (Windy Tunnel) Angle Value",
-	"Sound Lock Slider #1 (Left) Position",
-	"Sound Lock Slider #2 Position",
-	"Sound Lock Slider #3 Position",
-	"Sound Lock Slider #4 Position",
-	"Sound Lock Slider #5 (Right) Position"
-};
+//static const char *selenitic_vars_names[] = {
+//	"Sound Pickup At Water Pool",
+//	"Sound Pickup At Volcanic Crack",
+//	"Sound Pickup At Clock",
+//	"Sound Pickup At Crystal Rocks",
+//	"Sound Pickup At Windy Tunnel",
+//	"Sound Receiver Doors",
+//	"Windy Tunnel Lights",
+//	"Sound Receiver Current Input",
+//	"Sound Receiver Input #0 (Water Pool) Angle Value",
+//	"Sound Receiver Input #1 (Volcanic Crack) Angle Value",
+//	"Sound Receiver Input #2 (Clock) Angle Value",
+//	"Sound Receiver Input #3 (Crystal Rocks) Angle Value",
+//	"Sound Receiver Input #4 (Windy Tunnel) Angle Value",
+//	"Sound Lock Slider #1 (Left) Position",
+//	"Sound Lock Slider #2 Position",
+//	"Sound Lock Slider #3 Position",
+//	"Sound Lock Slider #4 Position",
+//	"Sound Lock Slider #5 (Right) Position"
+//};
 
 static const char *stoneship_vars_names[] = {
 	"Light State",
@@ -623,9 +669,9 @@ void MystSaveLoad::debug_printMystVariables(MystVariables *_tv) {
 
 	debugC(kDebugSaveLoad, "Printing Myst Variable State:");
 
-	debugC(kDebugSaveLoad, "  Game Globals:");
-	for (i = 0; i < ARRAYSIZE(_tv->game_globals); i++)
-		debugC(kDebugSaveLoad, "    %s: %u", game_globals_names[i], _tv->game_globals[i]);
+//	debugC(kDebugSaveLoad, "  Game Globals:");
+//	for (i = 0; i < ARRAYSIZE(_tv->game_globals); i++)
+//		debugC(kDebugSaveLoad, "    %s: %u", game_globals_names[i], _tv->game_globals[i]);
 
 	debugC(kDebugSaveLoad, "  Myst Variables:");
 	for (i = 0; i < ARRAYSIZE(_tv->myst_vars); i++)
@@ -639,9 +685,9 @@ void MystSaveLoad::debug_printMystVariables(MystVariables *_tv) {
 	for (i = 0; i < ARRAYSIZE(_tv->mech_vars); i++)
 		debugC(kDebugSaveLoad, "    %s: %u", mech_vars_names[i], _tv->mech_vars[i]);
 
-	debugC(kDebugSaveLoad, "  Selenitic Variables:");
-	for (i = 0; i < ARRAYSIZE(_tv->selenitic_vars); i++)
-		debugC(kDebugSaveLoad, "    %s: %u", selenitic_vars_names[i], _tv->selenitic_vars[i]);
+//	debugC(kDebugSaveLoad, "  Selenitic Variables:");
+//	for (i = 0; i < ARRAYSIZE(_tv->selenitic_vars); i++)
+//		debugC(kDebugSaveLoad, "    %s: %u", selenitic_vars_names[i], _tv->selenitic_vars[i]);
 
 	debugC(kDebugSaveLoad, "  Stoneship Variables:");
 	for (i = 0; i < ARRAYSIZE(_tv->stoneship_vars); i++)

@@ -327,22 +327,22 @@ void MystScriptParser::o_changeCardSwitch(uint16 op, uint16 var, uint16 argc, ui
 }
 
 void MystScriptParser::o_takePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	uint16 *game_globals = _vm->_saveLoad->_v->game_globals;
+	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
 
 	uint16 cursorId = argv[0];
-	uint16 oldPage = game_globals[2];
+	uint16 oldPage = globals.heldPage;
 
 	debugC(kDebugScript, "Opcode %d: takePage Var %d CursorId %d", op, var, cursorId);
 
 	// Take / drop page
 	toggleVar(var);
 
-	if (oldPage != game_globals[2]) {
+	if (oldPage != globals.heldPage) {
 		_vm->_cursor->hideCursor();
 		_vm->redrawArea(var);
 
 		// Set new cursor
-		if (game_globals[2])
+		if (globals.heldPage)
 			_vm->setMainCursor(cursorId);
 		else
 			_vm->setMainCursor(kDefaultMystCursor);
