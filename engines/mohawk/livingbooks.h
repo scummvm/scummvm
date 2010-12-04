@@ -234,6 +234,7 @@ public:
 
 	virtual void destroySelf(); // 0x2
 	virtual void setEnabled(bool enabled); // 0x3
+	virtual void setGlobalEnabled(bool enabled);
 	virtual bool contains(Common::Point point); // 0x7
 	virtual void update(); // 0x8
 	virtual void draw() { } // 0x9
@@ -247,6 +248,7 @@ public:
 	virtual void seek(uint16 pos) { } // 0x13
 	virtual void setFocused(bool focused) { } // 0x14
 	virtual void setVisible(bool visible); // 0x17
+	virtual void setGlobalVisible(bool enabled);
 	virtual void startPhase(uint phase); // 0x18
 	virtual void stop(); // 0x19
 	virtual void notify(uint16 data, uint16 from); // 0x1A
@@ -264,7 +266,7 @@ protected:
 	uint16 _resourceId;
 	uint16 _itemId;
 
-	bool _visible, _playing, _enabled, _neverEnabled;
+	bool _visible, _globalVisible, _playing, _enabled, _neverEnabled, _globalEnabled;
 
 	uint32 _nextTime, _startTime;
 	uint16 _loops;
@@ -305,11 +307,13 @@ public:
 	void readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream);
 
 	void setEnabled(bool enabled);
+	void setGlobalEnabled(bool enabled);
 	bool contains(Common::Point point);
 	bool togglePlaying(bool playing, bool restart);
 	// 0x12
 	void seek(uint16 pos);
 	void setVisible(bool visible);
+	void setGlobalVisible(bool visible);
 	void startPhase(uint phase);
 	void stop();
 	
