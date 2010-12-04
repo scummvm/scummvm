@@ -78,12 +78,12 @@ public:
 	 * Set the current cursor instance to the graphic resource provide. The frames parameter defaults to -1, which in this case means that the frame count
 	 * should be derived from the graphic resource as opposed to being explicitly set.
 	 *
-	 * @param resourceId Identifier for the resource.
-	 * @param counter    The counter.
-	 * @param animation  The animation type
-	 * @param frames 	 The frames.
+	 * @param resourceId  Identifier for the resource.
+	 * @param cnt         The counter.
+	 * @param anim        The animation type
+	 * @param frames      The frames.
 	 */
-	void set(ResourceId resourceId, int32 counter = 0, CursorAnimation animation = kCursorAnimationMirror, int32 frames = -1);
+	void set(ResourceId resourceId, int32 cnt = 0, CursorAnimation anim = kCursorAnimationMirror, int32 frames = -1);
 
 	/**
 	 * Get the next logical frame from the currently loaded
