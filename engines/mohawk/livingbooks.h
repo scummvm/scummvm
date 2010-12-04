@@ -482,6 +482,11 @@ private:
 
 	bool tryDefaultPage();
 
+	void handleUIMenuClick(uint controlId);
+	void handleUIPoetryMenuClick(uint controlId);
+	void handleUIQuitClick(uint controlId);
+	void handleUIOptionsClick(uint controlId);
+
 	Common::Queue<NotifyEvent> _notifyEvents;
 	void handleNotify(NotifyEvent &event);
 

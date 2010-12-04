@@ -683,6 +683,260 @@ void MohawkEngine_LivingBooks::nextPage() {
 	error("Could not find page after %d.%d for mode %d", _curPage, _curSubPage, (int)_curMode);
 }
 
+void MohawkEngine_LivingBooks::handleUIMenuClick(uint controlId) {
+	LBItem *item;
+
+	switch (controlId) {
+	case 1:
+		if (getFeatures() & GF_LB_10) {
+			loadPage(kLBControlMode, 2, 0);
+		} else {
+			loadPage(kLBControlMode, 3, 0);
+		}
+		break;
+
+	case 2:
+		item = getItemById(10);
+		if (item)
+			item->destroySelf();
+		item = getItemById(11);
+		if (item)
+			item->destroySelf();
+		item = getItemById(199 + _curLanguage);
+		if (item) {
+			item->setVisible(true);
+			item->togglePlaying(true);
+		}
+		break;
+
+	case 3:
+		item = getItemById(10);
+		if (item)
+			item->destroySelf();
+		item = getItemById(11);
+		if (item)
+			item->destroySelf();
+		item = getItemById(12);
+		if (item) {
+			item->setVisible(true);
+			item->togglePlaying(true);
+		}
+		break;
+
+	case 4:
+		if (getFeatures() & GF_LB_10) {
+			loadPage(kLBControlMode, 3, 0);
+		} else {
+			loadPage(kLBControlMode, 2, 0);
+		}
+		break;
+
+	case 10:
+		item = getItemById(10);
+		if (item)
+			item->destroySelf();
+		item = getItemById(11);
+		if (item)
+			item->setVisible(true);
+		if (item)
+			item->togglePlaying(false);
+		break;
+
+	case 11:
+		item = getItemById(11);
+		if (item)
+			item->togglePlaying(true);
+		break;
+
+	case 12:
+		// start game, in play mode
+		loadPage(kLBPlayMode, 1, 0);
+		break;
+
+	default:
+		if (controlId >= 100 && controlId < 100 + (uint)_numLanguages) {
+			uint newLanguage = controlId - 99;
+			if (newLanguage == _curLanguage)
+				break;
+			item = getItemById(99 + _curLanguage);
+			if (item)
+				item->seek(1);
+			_curLanguage = newLanguage;
+		} else if (controlId >= 200 && controlId < 200 + (uint)_numLanguages) {
+			// start game, in read mode
+			loadPage(kLBReadMode, 1, 0);
+		}
+		break;
+	}
+}
+
+void MohawkEngine_LivingBooks::handleUIPoetryMenuClick(uint controlId) {
+	LBItem *item;
+
+	// the menu UI in New Kid on the Block is a hybrid of the normal menu
+	// and the normal options screen
+
+	// TODO: this is mostly untested
+
+	switch (controlId) {
+	case 2:
+	case 3:
+		handleUIOptionsClick(controlId);
+		break;
+
+	case 4:
+		handleUIMenuClick(controlId);
+		break;
+
+	case 6:
+		handleUIMenuClick(2);
+		break;
+
+	case 7:
+	case 0xA:
+		item = getItemById(10);
+		if (item)
+			item->destroySelf();
+		item = getItemById(11);
+		if (item)
+			item->destroySelf();
+		item = getItemById(12);
+		if (item) {
+			item->setVisible(true);
+			item->togglePlaying(controlId == 7);
+		}
+		break;
+
+	case 0xB:
+		item = getItemById(12);
+		if (item)
+			item->togglePlaying(true);
+		break;
+
+	case 0xC:
+		if (!tryLoadPageStart(kLBPlayMode, _curSelectedPage))
+			error("failed to load page %d", _curSelectedPage);
+		break;
+
+	default:
+		if (controlId < 100) {
+			handleUIMenuClick(controlId);
+		} else {
+			if (!tryLoadPageStart(kLBReadMode, _curSelectedPage))
+				error("failed to load page %d", _curSelectedPage);
+		}
+	}
+}
+
+void MohawkEngine_LivingBooks::handleUIQuitClick(uint controlId) {
+	LBItem *item;
+
+	switch (controlId) {
+	case 1:
+	case 2:
+		// button clicked, run animation
+		item = getItemById(10);
+		if (item)
+			item->destroySelf();
+		item = getItemById(11);
+		if (item)
+			item->destroySelf();
+		item = getItemById((controlId == 1) ? 12 : 13);
+		if (item) {
+			item->setVisible(true);
+			item->togglePlaying(false);
+		}
+		break;
+
+	case 10:
+	case 11:
+		item = getItemById(11);
+		if (item)
+			item->togglePlaying(true);
+		break;
+
+	case 12:
+		// 'yes', I want to quit
+		quitGame();
+		break;
+
+	case 13:
+		// 'no', go back to menu
+		loadPage(kLBControlMode, 1, 0);
+		break;
+	}
+}
+
+void MohawkEngine_LivingBooks::handleUIOptionsClick(uint controlId) {
+	LBItem *item;
+
+	switch (controlId) {
+	case 1:
+		item = getItemById(10);
+		if (item)
+			item->destroySelf();
+		item = getItemById(202);
+		if (item) {
+			item->setVisible(true);
+			item->togglePlaying(true);
+		}
+		break;
+
+	case 2:
+		// back
+		item = getItemById(2);
+		if (item)
+			item->seek(1);
+		if (_curSelectedPage == 1) {
+			_curSelectedPage = _numPages;
+		} else {
+			_curSelectedPage--;
+		}
+		for (uint i = 0; i < _numPages; i++) {
+			item = getItemById(1000 + i);
+			if (item)
+				item->setVisible(_curSelectedPage == i + 1);
+			item = getItemById(1100 + i);
+			if (item)
+				item->setVisible(_curSelectedPage == i + 1);
+		}
+		break;
+
+	case 3:
+		// forward
+		item = getItemById(3);
+		if (item)
+			item->seek(1);
+		if (_curSelectedPage == _numPages) {
+			_curSelectedPage = 1;
+		} else {
+			_curSelectedPage++;
+		}
+		for (uint i = 0; i < _numPages; i++) {
+			item = getItemById(1000 + i);
+			if (item)
+				item->setVisible(_curSelectedPage == i + 1);
+			item = getItemById(1100 + i);
+			if (item)
+				item->setVisible(_curSelectedPage == i + 1);
+		}
+		break;
+
+	case 4:
+		loadPage(kLBCreditsMode, 1, 0);
+		break;
+
+	case 5:
+		loadPage(kLBPreviewMode, 1, 0);
+		break;
+
+	case 202:
+		if (!tryLoadPageStart(kLBPlayMode, _curSelectedPage))
+			error("failed to load page %d", _curSelectedPage);
+		break;
+	}
+}
+
 void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 	// hard-coded behavior (GUI/navigation)
 
@@ -706,203 +960,23 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 				page = 2;
 		}
 
-		LBItem *item;
 		switch (page) {
 		case 1:
 			// main menu
-			// TODO: poetry mode
-
-			switch (event.param) {
-			case 1:
-				if (getFeatures() & GF_LB_10) {
-					loadPage(kLBControlMode, 2, 0);
-				} else {
-					loadPage(kLBControlMode, 3, 0);
-				}
-				break;
-
-			case 2:
-				item = getItemById(10);
-				if (item)
-					item->destroySelf();
-				item = getItemById(11);
-				if (item)
-					item->destroySelf();
-				item = getItemById(199 + _curLanguage);
-				if (item) {
-					item->setVisible(true);
-					item->togglePlaying(true);
-				}
-				break;
-
-			case 3:
-				item = getItemById(10);
-				if (item)
-					item->destroySelf();
-				item = getItemById(11);
-				if (item)
-					item->destroySelf();
-				item = getItemById(12);
-				if (item) {
-					item->setVisible(true);
-					item->togglePlaying(true);
-				}
-				break;
-
-			case 4:
-				if (getFeatures() & GF_LB_10) {
-					loadPage(kLBControlMode, 3, 0);
-				} else {
-					loadPage(kLBControlMode, 2, 0);
-				}
-				break;
-
-			case 10:
-				item = getItemById(10);
-				if (item)
-					item->destroySelf();
-				item = getItemById(11);
-				if (item)
-					item->setVisible(true);
-				if (item)
-					item->togglePlaying(false);
-				break;
-
-			case 11:
-				item = getItemById(11);
-				if (item)
-					item->togglePlaying(true);
-				break;
-
-			case 12:
-				// start game, in play mode
-				loadPage(kLBPlayMode, 1, 0);
-				break;
-
-			default:
-				if (event.param >= 100 && event.param < 100 + (uint)_numLanguages) {
-					uint newLanguage = event.param - 99;
-					if (newLanguage == _curLanguage)
-						break;
-					item = getItemById(99 + _curLanguage);
-					if (item)
-						item->seek(1);
-					_curLanguage = newLanguage;
-				} else if (event.param >= 200 && event.param < 200 + (uint)_numLanguages) {
-					// start game, in read mode
-					loadPage(kLBReadMode, 1, 0);
-				}
-				break;
-			}
+			if (_poetryMode)
+				handleUIPoetryMenuClick(event.param);
+			else
+				handleUIMenuClick(event.param);
 			break;
 
 		case 2:
 			// quit screen
-
-			switch (event.param) {
-			case 1:
-			case 2:
-				// button clicked, run animation
-				item = getItemById(10);
-				if (item)
-					item->destroySelf();
-				item = getItemById(11);
-				if (item)
-					item->destroySelf();
-				item = getItemById((event.param == 1) ? 12 : 13);
-				if (item) {
-					item->setVisible(true);
-					item->togglePlaying(false);
-				}
-				break;
-
-			case 10:
-			case 11:
-				item = getItemById(11);
-				if (item)
-					item->togglePlaying(true);
-				break;
-
-			case 12:
-				// 'yes', I want to quit
-				quitGame();
-				break;
-
-			case 13:
-				// 'no', go back to menu
-				loadPage(kLBControlMode, 1, 0);
-				break;
-			}
+			handleUIQuitClick(event.param);
 			break;
 
 		case 3:
 			// options screen
-
-			switch (event.param) {
-			case 1:
-				item = getItemById(10);
-				if (item)
-					item->destroySelf();
-				item = getItemById(202);
-				if (item) {
-					item->setVisible(true);
-					item->togglePlaying(true);
-				}
-				break;
-
-			case 2:
-				// back
-				item = getItemById(2);
-				if (item)
-					item->seek(1);
-				if (_curSelectedPage == 1) {
-					_curSelectedPage = _numPages;
-				} else {
-					_curSelectedPage--;
-				}
-				for (uint i = 0; i < _numPages; i++) {
-					item = getItemById(1000 + i);
-					if (item)
-						item->setVisible(_curSelectedPage == i + 1);
-					item = getItemById(1100 + i);
-					if (item)
-						item->setVisible(_curSelectedPage == i + 1);
-				}
-				break;
-
-			case 3:
-				// forward
-				item = getItemById(3);
-				if (item)
-					item->seek(1);
-				if (_curSelectedPage == _numPages) {
-					_curSelectedPage = 1;
-				} else {
-					_curSelectedPage++;
-				}
-				for (uint i = 0; i < _numPages; i++) {
-					item = getItemById(1000 + i);
-					if (item)
-						item->setVisible(_curSelectedPage == i + 1);
-					item = getItemById(1100 + i);
-					if (item)
-						item->setVisible(_curSelectedPage == i + 1);
-				}
-				break;
-
-			case 4:
-				loadPage(kLBCreditsMode, 1, 0);
-				break;
-
-			case 5:
-				loadPage(kLBPreviewMode, 1, 0);
-				break;
-
-			case 202:
-				if (!tryLoadPageStart(kLBPlayMode, _curSelectedPage))
-					error("failed to load page %d", _curSelectedPage);
-				break;
-			}
+			handleUIOptionsClick(event.param);
 			break;
 		}
 		break;
