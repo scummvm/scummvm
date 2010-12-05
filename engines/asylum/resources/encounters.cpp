@@ -324,7 +324,24 @@ bool Encounter::update() {
 }
 
 bool Encounter::key(const AsylumEvent &evt) {
-	error("[Encounter::key] Not implemented!");
+	switch (evt.kbd.keycode) {
+	default:
+		break;
+
+	case Common::KEYCODE_TAB:
+		getScreen()->takeScreenshot();
+		break;
+
+	case Common::KEYCODE_ESCAPE:
+		if (!isSpeaking() 
+		 && _data_455BD0 
+		 && !getSpeech()->getTextData()
+		 && !getSpeech()->getTextDataPos())
+			_data_455BD4 = 1;
+		break;
+	}
+
+	return true;
 }
 
 bool Encounter::mouse(const AsylumEvent &evt) {
