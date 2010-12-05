@@ -224,6 +224,22 @@ protected:
 	Common::Array<Common::Point> _shapeOffsets;
 };
 
+enum LBValueType {
+	kLBValueString,
+	kLBValueInteger
+};
+
+struct LBValue {
+	LBValue() { type = kLBValueInteger; integer = 0; }
+
+	LBValueType type;
+	Common::String string;
+	int integer;
+
+	bool operator==(const LBValue &x) const;
+	bool operator!=(const LBValue &x) const;
+};
+
 class LBItem {
 public:
 	LBItem(MohawkEngine_LivingBooks *vm, Common::Rect rect);
@@ -280,6 +296,10 @@ protected:
 
 	Common::Array<LBScriptEntry *> _scriptEntries;
 	void runScript(uint id);
+
+	LBValue parseValue(const Common::String &command, uint &pos);
+	void runCommand(const Common::String &command);
+	bool checkCondition(const Common::String &condition);
 };
 
 class LBSoundItem : public LBItem {
@@ -459,6 +479,9 @@ public:
 	bool tryLoadPageStart(LBMode mode, uint page);
 	void prevPage();
 	void nextPage();
+
+	// TODO: make private
+	Common::HashMap<Common::String, LBValue> _variables;
 
 private:
 	LivingBooksConsole *_console;
