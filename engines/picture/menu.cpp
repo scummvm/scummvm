@@ -23,23 +23,13 @@
  *
  */
 
-#include "common/events.h"
-#include "common/keyboard.h"
-#include "common/file.h"
 #include "common/savefile.h"
-#include "common/config-manager.h"
-
-#include "base/plugins.h"
-#include "base/version.h"
-
-#include "sound/mixer.h"
 
 #include "picture/picture.h"
 #include "picture/menu.h"
 #include "picture/palette.h"
 #include "picture/render.h"
 #include "picture/resource.h"
-#include "picture/screen.h"
 
 namespace Picture {
 
