@@ -24,6 +24,8 @@
 #ifndef TOLTECS_SEGMAP_H
 #define TOLTECS_SEGMAP_H
 
+#include "common/array.h"
+
 #include "toltecs/screen.h"
 
 namespace Toltecs {

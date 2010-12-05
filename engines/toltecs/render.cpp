@@ -21,14 +21,7 @@
  *
  */
 
-#include "common/events.h"
-#include "common/keyboard.h"
-#include "common/file.h"
-#include "common/savefile.h"
-#include "common/config-manager.h"
-
-#include "base/plugins.h"
-#include "base/version.h"
+#include "common/system.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/render.h"
@@ -80,6 +73,7 @@ void RenderQueue::addSprite(SpriteDrawItem &sprite) {
 
 void RenderQueue::addText(int16 x, int16 y, byte color, uint fontResIndex, byte *text, int len) {
 
+	// TODO: Font caching?
 	Font font(_vm->_res->load(fontResIndex)->data);
 
 	RenderQueueItem item;
