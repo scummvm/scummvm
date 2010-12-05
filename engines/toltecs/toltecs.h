@@ -51,8 +51,6 @@ class Screen;
 class SegmentMap;
 class Sound;
 
-// TODO/FIXME: The includes of the Toltecs engine need serious clean-up
-
 enum SysString {
 	kStrLoadingPleaseWait,
 	kStrWhatCanIDoForYou,

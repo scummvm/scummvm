@@ -21,25 +21,18 @@
  *
  */
 
-#include "common/events.h"
 #include "common/EventRecorder.h"
-#include "common/keyboard.h"
-#include "common/file.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/str.h"
 
 #include "base/plugins.h"
 #include "base/version.h"
 
-#include "graphics/surface.h"
 #include "graphics/cursorman.h"
-#include "graphics/primitives.h"
 
 #include "engines/util.h"
 
 #include "sound/mixer.h"
-#include "backends/audiocd/audiocd.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/animation.h"
@@ -72,11 +65,6 @@ ToltecsEngine::ToltecsEngine(OSystem *syst, const ToltecsGameDescription *gameDe
 
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "toltecs");
-
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0)
-		_system->getAudioCDManager()->openCD(cd_num);
-
 }
 
 ToltecsEngine::~ToltecsEngine() {
