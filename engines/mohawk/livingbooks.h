@@ -151,6 +151,9 @@ struct LBScriptEntry {
 	uint16 argc;
 	uint16 *argvParam;
 	uint16 *argvTarget;
+
+	Common::String command;
+	Common::Array<Common::String> conditions;
 };
 
 struct LBAnimScriptEntry {

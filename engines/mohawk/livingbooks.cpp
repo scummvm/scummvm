@@ -1609,9 +1609,10 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 			entry->param = stream->readUint16();
 			debug(4, "Script entry: type 0x%04x, action 0x%04x, opcode 0x%04x, param 0x%04x",
 				entry->type, entry->action, entry->opcode, entry->param);
+			size -= 6;
 
 			if (type == kLBMsgListScript) {
-				if (size < 8)
+				if (size < 2)
 					error("Script entry of type 0x%04x was too small (%d)", type, size);
 
 				entry->argc = stream->readUint16();
@@ -1619,7 +1620,7 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 				entry->argvTarget = new uint16[entry->argc];
 				debug(4, "With %d targets:", entry->argc);
 
-				if (size < (8 + entry->argc * 4))
+				if (size < (2 + entry->argc * 4))
 					error("Script entry of type 0x%04x was too small (%d)", type, size);
 
 				for (uint i = 0; i < entry->argc; i++) {
@@ -1628,18 +1629,73 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 					debug(4, "Target %d, param 0x%04x", entry->argvTarget[i], entry->argvParam[i]);
 				}
 
-				if (size > (8 + entry->argc * 4)) {
-					// TODO
-					warning("Skipping %d probably-important bytes", size - (8 + entry->argc * 4));
-					stream->skip(size - (8 + entry->argc * 4));
-				}
-			} else {
-				if (size > 6) {
-					// TODO
-					warning("Skipping %d probably-important bytes", size - 6);
-					stream->skip(size - 6);
-				}
+				size -= (2 + entry->argc * 4);
 			}
+
+			if (type == kLBNotifyScript && entry->opcode == kLBNotifyQuit) {
+				if (size < 8) {
+					error("%d unknown bytes in notify entry 0x%04x", size, entry->opcode);
+				}
+				uint16 opcodeId = stream->readUint16();
+				uint16 modeId = stream->readUint16();
+				uint16 pageId = stream->readUint16();
+				uint16 subPageId = stream->readUint16();
+				// FIXME
+				warning("unknown notify: opcode %04x, mode %d, page %d.%d", opcodeId, modeId, pageId, subPageId);
+				size -= 8;
+			}
+			if (entry->action == 7) {
+				if (size < 4)
+					error("not enough bytes (%d) in action 7, opcode 0x%04x", size, entry->opcode);
+				// FIXME: meh
+				size -= 4;
+				uint16 itemId = stream->readUint16();
+				uint16 unknown = stream->readUint16();
+				warning("ignoring id %d, unknown 0x%04x in script entry (type 0x%04x, action 0x%04x, opcode 0x%04x)", itemId, unknown, entry->type, entry->action, entry->opcode);
+			}
+			if (entry->opcode == 0xffff) {
+				if (size < 4)
+					error("didn't get enough bytes (%d) to read command in script entry", size);
+				size -= 4;
+
+				uint16 msgId = stream->readUint16();
+				if (msgId != kLBCommand)
+					error("expected a command in script entry, got 0x%04x", msgId);
+				uint16 msgLen = stream->readUint16();
+				if (msgLen != size)
+					error("script entry msgLen %d is not equal to size %d", msgLen, size);
+
+				Common::String command = readString(stream);
+				if (command.size() + 1 > size) {
+					error("failed to read command in script entry: msgLen %d, command '%s' (%d chars)",
+						msgLen, command.c_str(), command.size());
+				}
+				size -= command.size() + 1;
+
+				entry->command = command;
+				debug(4, "script entry command '%s'", command.c_str());
+			} else if (size) {
+				byte commandLen = stream->readByte();
+				if (commandLen)
+					error("got confused while reading bytes at end of script entry");
+				size--;
+			}
+
+			while (size) {
+				Common::String condition = readString(stream);
+				if (condition.size() + 1 > size)
+					error("failed to read condition (ran out of stream)");
+				size -= (condition.size() + 1);
+
+				entry->conditions.push_back(condition);
+				debug(4, "script entry condition '%s'", condition.c_str());
+			}
+
+			// TODO: read as bytes, if this is correct (but beware endianism)
+			byte expectedConditions = (entry->action & 0xff00) >> 8;
+			entry->action = entry->action & 0xff;
+			if (entry->conditions.size() != expectedConditions)
+				error("got %d conditions, but expected %d", entry->conditions.size(), expectedConditions);
 
 			_scriptEntries.push_back(entry);
 		}
@@ -1700,8 +1756,8 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 			Common::String command = readString(stream);
 			if (size != command.size() + 1)
 				error("failed to read command string");
-			// FIXME
-			warning("ignoring command '%s'", command.c_str());
+
+			runCommand(command);
 		}
 		break;
 
@@ -1957,7 +2013,20 @@ void LBItem::runScript(uint id) {
 		if (entry->action != id)
 			continue;
 
+		bool conditionsMatch = true;
+		for (uint n = 0; n < entry->conditions.size(); n++) {
+			if (!checkCondition(entry->conditions[n])) {
+				conditionsMatch = false;
+				break;
+			}
+		}
+		if (!conditionsMatch)
+			continue;
+
 		if (entry->type == kLBNotifyScript) {
+			debug(2, "Notify: action 0x%04x, opcode 0x%04x, param 0x%04x",
+				entry->action, entry->opcode, entry->param);
+
 			if (entry->opcode == kLBNotifyGUIAction)
 				_vm->addNotifyEvent(NotifyEvent(entry->opcode, _itemId));
 			else
@@ -1983,6 +2052,10 @@ void LBItem::runScript(uint id) {
 					continue;
 
 				switch (entry->opcode) {
+				case 0xffff:
+					runCommand(entry->command);
+					break;
+
 				case 1:
 					// TODO: should be setVisible(true) - not a delayed event -
 					// when we're doing the param 1/2/3 stuff above?
