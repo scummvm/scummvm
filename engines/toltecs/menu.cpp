@@ -21,23 +21,13 @@
  *
  */
 
-#include "common/events.h"
-#include "common/keyboard.h"
-#include "common/file.h"
 #include "common/savefile.h"
-#include "common/config-manager.h"
-
-#include "base/plugins.h"
-#include "base/version.h"
-
-#include "sound/mixer.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/menu.h"
 #include "toltecs/palette.h"
 #include "toltecs/render.h"
 #include "toltecs/resource.h"
-#include "toltecs/screen.h"
 
 namespace Toltecs {
 
