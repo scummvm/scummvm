@@ -27,15 +27,11 @@
 
 #include "graphics/thumbnail.h"
 
-#include "sound/mixer.h"
-
 #include "picture/picture.h"
 #include "picture/animation.h"
 #include "picture/palette.h"
-#include "picture/resource.h"
 #include "picture/script.h"
 #include "picture/screen.h"
-#include "picture/segmap.h"
 
 namespace Picture {
 

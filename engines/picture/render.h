@@ -26,22 +26,7 @@
 #ifndef PICTURE_RENDER_H
 #define PICTURE_RENDER_H
 
-#include "common/scummsys.h"
-#include "common/endian.h"
-#include "common/util.h"
-#include "common/file.h"
-#include "common/savefile.h"
-#include "common/system.h"
-#include "common/hash-str.h"
-#include "common/events.h"
-#include "common/keyboard.h"
-#include "common/list.h"
-#include "common/array.h"
-#include "common/rect.h"
-
 #include "graphics/surface.h"
-
-#include "engines/engine.h"
 
 #include "picture/segmap.h"
 #include "picture/screen.h"
