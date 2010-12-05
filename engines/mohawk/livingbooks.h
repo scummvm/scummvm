@@ -450,6 +450,12 @@ struct NotifyEvent {
 	NotifyEvent(uint t, uint p) : type(t), param(p) { }
 	uint type;
 	uint param;
+
+	// kLBNotifyChangeMode
+	uint16 newUnknown;
+	uint16 newMode;
+	uint16 newPage;
+	uint16 newSubpage;
 };
 
 enum DelayedEventType {

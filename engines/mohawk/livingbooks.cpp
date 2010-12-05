@@ -1041,8 +1041,10 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 			debug(2, "kLBNotifyChangeMode: %d", event.param);
 			quitGame();
 		} else {
-			// FIXME
-			warning("ignoring V2/V3 kLBNotifyChangeMode");
+			// TODO: what is entry.newUnknown?
+			if (!loadPage((LBMode)event.newMode, event.newPage, event.newSubpage))
+				error("kLBNotifyChangeMode failed to move to mode %d, page %d.%d",
+					event.newMode, event.newPage, event.newSubpage);
 		}
 		break;
 
@@ -2050,7 +2052,14 @@ void LBItem::runScript(uint id, uint16 data, uint16 from) {
 
 			if (entry->opcode == kLBNotifyGUIAction)
 				_vm->addNotifyEvent(NotifyEvent(entry->opcode, _itemId));
-			else
+			else if (entry->opcode == kLBNotifyChangeMode && _vm->getGameType() != GType_LIVINGBOOKSV1) {
+				NotifyEvent event(entry->opcode, entry->param);
+				event.newUnknown = entry->newUnknown;
+				event.newMode = entry->newMode;
+				event.newPage = entry->newPage;
+				event.newSubpage = entry->newSubpage;
+				_vm->addNotifyEvent(event);
+			} else
 				_vm->addNotifyEvent(NotifyEvent(entry->opcode, entry->param));
 		} else {
 			if (entry->param != 0xffff) {
