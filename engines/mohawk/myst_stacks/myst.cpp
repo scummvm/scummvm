@@ -924,7 +924,7 @@ void MystScriptParser_Myst::rocketSliderMove() {
 }
 
 uint16 MystScriptParser_Myst::rocketSliderGetSound(uint16 pos) {
-	return 9530 + (pos - 216) * 35.0 * 0.01639344262295082;
+	return (uint16)(9530 + (pos - 216) * 35.0 * 0.01639344262295082);
 }
 
 void MystScriptParser_Myst::rocketCheckSolution() {
