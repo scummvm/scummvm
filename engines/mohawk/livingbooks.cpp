@@ -2144,8 +2144,6 @@ bool LBValue::operator==(const LBValue &x) const {
 	case kLBValueInteger:
 		return integer == x.integer;
 	}
-
-	error("internal error in LBValue");
 }
 
 bool LBValue::operator!=(const LBValue &x) const {
@@ -2307,8 +2305,6 @@ LBValue LBItem::parseValue(const Common::String &source, uint &pos) {
 				value.integer += nextValue.integer;
 			else if (postOp == "-")
 				value.integer -= nextValue.integer;
-			else
-				error("internal error in parseValue");
 		}
 	}
 
@@ -2350,8 +2346,6 @@ void LBItem::runCommand(const Common::String &command) {
 				_vm->_variables[varname].integer++;
 			else if (op == "--")
 				_vm->_variables[varname].integer--;
-			else
-				error("internal error in runCommand");
 		}
 	}
 }
@@ -2403,7 +2397,7 @@ bool LBItem::checkCondition(const Common::String &condition) {
 	else if (op == "<=")
 		return (value1.integer <= value2.integer);
 
-	error("internal error in checkCondition");
+	return false; // unreachable
 }
 
 LBSoundItem::LBSoundItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
