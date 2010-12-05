@@ -943,55 +943,100 @@ void Scene::updateAdjustScreen() {
 
 void Scene::updateCoordinates() {
 	Actor *act = getActor();
-	int32 newXLeft = -1;
-	int32 newYTop  = -1;
-	Common::Rect b = _ws->boundingRect;
+	int32 xLeft = _ws->xLeft;
+	int32 yTop  = _ws->yTop;
+	int32 posX = act->getPoint1()->x - _ws->xLeft;
+	int32 posY = act->getPoint1()->y - _ws->yTop;	
+	Common::Rect boundingRect = _ws->boundingRect;
 
-	if (_ws->motionStatus == 1) {
-		int32 posX = act->getPoint1()->x - _ws->xLeft;
-		int32 posY = act->getPoint1()->y - _ws->yTop;
+	switch (_ws->motionStatus) {
+	default:
+		break;
 
-		if (posX < b.left || posX > b.right) {
-			int32 newRBounds = posX - b.right;
-			newXLeft = newRBounds + _ws->xLeft;
-			_ws->xLeft += newRBounds;
+	case 1:
+		if (posX < boundingRect.left) {
+			xLeft = posX - boundingRect.left + _ws->xLeft;
+			_ws->xLeft += posX - boundingRect.left;
+		} else if (posX > boundingRect.right) {
+			xLeft = posX - boundingRect.right + _ws->xLeft;
+			_ws->xLeft += posX - boundingRect.right;
 		}
 
-		if (posY < b.top || posY > b.bottom) {
-			int32 newBBounds = posY - b.bottom;
-			newYTop = newBBounds + _ws->yTop;
-			_ws->yTop += newBBounds;
+		if (posY < boundingRect.top) {
+			yTop = posY - boundingRect.top + _ws->yTop;
+			_ws->yTop += posY - boundingRect.top;
+		} else if (posY > boundingRect.bottom) {
+			yTop = posY - boundingRect.bottom + _ws->yTop;
+			_ws->yTop += posY - boundingRect.bottom;
 		}
 
-		if (newXLeft < 0)
-			newXLeft = _ws->xLeft = 0;
+		if (xLeft < 0)
+			xLeft = _ws->xLeft = 0;
 
-		if (newXLeft > _ws->width - 640)
-			newXLeft = _ws->xLeft = _ws->width - 640;
+		if (xLeft > (_ws->width - 640))
+			xLeft = _ws->xLeft = _ws->width - 640;
 
-		if (newYTop < 0)
-			newYTop = _ws->yTop = 0;
+		if (yTop < 0)
+			yTop = _ws->yTop = 0;
 
-		if (newYTop > _ws->height - 480)
-			newYTop = _ws->yTop = _ws->height - 480;
-	} else {
-		// TODO
+		if (yTop > (_ws->height - 480))
+			yTop = _ws->yTop = _ws->height - 480;
+			
+		break;
+
+	case 2:
+	case 5: {
+		getSharedData()->sceneOffset += getSharedData()->sceneOffsetAdd;
+
+		int32 coord1 = 0;
+		int32 coord2 = 0;
+		
+		if (abs(getSharedData()->sceneXLeft - _ws->coordinates[0]) <= abs(getSharedData()->sceneYTop - _ws->coordinates[1])) {
+			coord1 = _ws->coordinates[1];
+			coord2 = yTop;
+
+			if (_ws->coordinates[1] != _ws->yTop)
+				xLeft = _ws->xLeft = getSharedData()->sceneOffset + getSharedData()->sceneXLeft;
+
+			yTop = _ws->coordinates[2] + _ws->yTop;
+			_ws->yTop += _ws->coordinates[2];
+			
+		} else {
+			coord1 = _ws->coordinates[0];
+			coord2 = xLeft;
+			
+			if (_ws->coordinates[0] != _ws->xLeft)
+				yTop = _ws->yTop = getSharedData()->sceneOffset + getSharedData()->sceneYTop;
+			
+			xLeft = _ws->coordinates[2] + _ws->xLeft;
+			_ws->xLeft += _ws->coordinates[2];
+		}
+
+		if (abs(coord2 - coord1) <= abs(_ws->coordinates[2])) {
+			_ws->motionStatus = 3;
+			_ws->coordinates[0] = -1;
+		}
+
+		}
+		break;
 	}
 
-	uint8 rectIndex = _ws->sceneRectIdx;
-	b = _ws->sceneRects[rectIndex];
+	// Update scene coordinates
+	Common::Rect sceneRect = _ws->sceneRects[_ws->sceneRectIdx];
 
-	if (newXLeft < b.left)
-		newXLeft = _ws->xLeft = b.left;
+	if (xLeft < sceneRect.left)
+		xLeft =_ws->xLeft =sceneRect.left;
 
-	if (newYTop < b.top)
-		newYTop = _ws->yTop = b.top;
+	if (yTop < sceneRect.top)
+		yTop = _ws->yTop = sceneRect.top;
 
-	if (newXLeft + 639 > b.right)
-		newXLeft = _ws->xLeft = b.right - 639;
+	if ((xLeft + 639) > sceneRect.right)
+		xLeft = _ws->xLeft = sceneRect.right - 639;
 
-	if (newYTop + 479 > b.bottom)
-		newYTop = _ws->yTop = b.bottom - 479;
+	if ((yTop + 479) > sceneRect.bottom)
+		yTop = _ws->yTop = sceneRect.bottom - 479;
+
+	// TODO set a var if scene coordinates changed
 }
 
 void Scene::updateCursor(ActorDirection direction, Common::Rect rect) {
@@ -1917,9 +1962,9 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 			*targetY = _ws->height - 480;
 
 	// Adjust scene offsets & coordinates
-	getSharedData()->setSceneOffset(0);
-	getSharedData()->setSceneXLeft(_ws->xLeft);
-	getSharedData()->setSceneYTop(_ws->yTop);
+	getSharedData()->sceneOffset = 0;
+	getSharedData()->sceneXLeft = _ws->xLeft;
+	getSharedData()->sceneYTop = _ws->yTop;
 
 	int32 diffX = *targetX - _ws->xLeft;
 	int32 diffY = *targetY - _ws->yTop;
@@ -1928,7 +1973,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 		if (_ws->yTop > *targetY)
 			*coord3 = -*coord3;
 
-		getSharedData()->setSceneOffsetAdd(Common::Rational(*coord3, diffY) * diffX);
+		getSharedData()->sceneOffsetAdd =Common::Rational(*coord3 * diffX, diffY).toInt();
 
 		if (param != NULL && abs(diffY) <= abs(*coord3)) {
 			*targetX = -1;
@@ -1939,7 +1984,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 		if (_ws->xLeft > *targetX)
 			*coord3 = -*coord3;
 
-		getSharedData()->setSceneOffsetAdd(Common::Rational(*coord3, diffX) * diffY);
+		getSharedData()->sceneOffsetAdd = Common::Rational(*coord3 * diffY, diffX).toInt();
 
 		if (param != NULL && abs(diffX) <= abs(*coord3)) {
 			*targetX = -1;

@@ -113,10 +113,10 @@ public:
 		_sceneCounter = 0;
 		_point.x = -1;
 		_point.y = -1;
-		_sceneXLeft = 0;
-		_sceneYTop = 0;
-		_sceneOffset = 0;
-		_sceneOffsetAdd = 0;
+		sceneXLeft = 0;
+		sceneYTop = 0;
+		sceneOffset = 0;
+		sceneOffsetAdd = 0;
 		memset(&cursorResources, kResourceNone, sizeof(cursorResources));
 		memset(&sceneFonts, kResourceNone, sizeof(sceneFonts));
 		//_currentPaletteId = kResourceNone;
@@ -157,6 +157,12 @@ public:
 	int32           smallCurDown;
 	int32           encounterFrameBg;
 
+	// Global scene coordinates and offset
+	int32            sceneXLeft;
+	int32            sceneYTop;
+	int32            sceneOffset;
+	int32            sceneOffsetAdd;
+
 	// Accessors
 	int32 getActorUpdateEnabledCounter() { return _actorUpdateStatusEnabledCounter; }
 	void  setActorUpdateEnabledCounter(int32 val) { _actorUpdateStatusEnabledCounter = val; }
@@ -193,12 +199,6 @@ public:
 
 	bool getMattePlaySound() { return _mattePlaySound; }
 	void setMattePlaySound(bool state) { _mattePlaySound = state; }
-
-	// Scene
-	void setSceneXLeft(int32 val) { _sceneXLeft = val; }
-	void setSceneYTop(int32 val) { _sceneYTop = val; }
-	void setSceneOffset(int32 val) { _sceneOffset = val; }
-	void setSceneOffsetAdd(const Common::Rational &offset) { _sceneOffsetAdd = offset; }
 
 	Common::Point *getVector1() { return &_vector1; }
 	Common::Point *getVector2() { return &_vector2; }
@@ -345,10 +345,6 @@ private:
 	uint32           _sceneCounter;
 	Common::Point    _point; // global point
 	//bool             _flagEncouter2;
-	int32            _sceneXLeft;
-	int32            _sceneYTop;
-	int32            _sceneOffset;
-	Common::Rational _sceneOffsetAdd;
 
 	bool            _flagSkipDrawScene;
 	int32           _matteVar1;
