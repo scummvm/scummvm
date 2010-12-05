@@ -25,14 +25,6 @@
 
 // TODO: Clean up game variable handling and move it to PictureEngine
 
-#include "common/events.h"
-#include "common/keyboard.h"
-#include "common/file.h"
-#include "common/savefile.h"
-#include "common/config-manager.h"
-
-#include "sound/mixer.h"
-
 #include "picture/picture.h"
 #include "picture/animation.h"
 #include "picture/menu.h"
@@ -40,7 +32,6 @@
 #include "picture/palette.h"
 #include "picture/resource.h"
 #include "picture/script.h"
-#include "picture/screen.h"
 #include "picture/segmap.h"
 #include "picture/sound.h"
 
