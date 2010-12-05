@@ -53,8 +53,6 @@ class Screen;
 class SegmentMap;
 class Sound;
 
-// TODO/FIXME: The includes of the Picture engine need serious clean-up
-
 enum SysString {
 	kStrLoadingPleaseWait,
 	kStrWhatCanIDoForYou,
