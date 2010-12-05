@@ -241,8 +241,8 @@ bool MacResManager::loadFromAppleDouble(SeekableReadStream &stream) {
 		uint32 offset = stream.readUint32BE();
 		uint32 length = stream.readUint32BE(); // length
 
-		if (id == 1) {
-			// Found the data fork!
+		if (id == 2) {
+			// Found the resource fork!
 			_resForkOffset = offset;
 			_mode = kResForkAppleDouble;
 			_resForkSize = length;
