@@ -141,11 +141,25 @@ public:
 	void setTextData(char *text) { _textData = text; }
 
 	/**
+	 * Get text data
+	 *
+	 * @return the text data
+	 */
+	char *getTextData() { return _textData; }
+
+	/**
 	 * Sets text data position.
 	 *
 	 * @param text The text.
 	 */
 	void setTextDataPos(char *text) { _textDataPos = text; }
+
+	/**
+	 * Get text data position
+	 *
+	 * @return the text data position
+	 */
+	char *getTextDataPos() { return _textDataPos; }
 
 private:
 	AsylumEngine *_vm;
@@ -162,7 +176,7 @@ private:
 	 */
 	void process();
 
-}; // end of class Speech
+};
 
 } // end of namespace Asylum
 
