@@ -110,7 +110,7 @@ public:
 	 *
 	 * @return The tick.
 	 */
-	int32 getTick() { return _tick; }
+	uint32 getTick() { return _tick; }
 
 	/**
 	 * Sets the sound resource identifier

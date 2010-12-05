@@ -45,6 +45,8 @@ public:
 
 	bool handleEvent(const AsylumEvent &evt);
 
+	void drawScreen();
+
 	void setFlag1(bool state) { _flag1 = state; }
 	bool getFlag1() { return _flag1; }
 	void setFlag3(bool state) { _flag3 = state; }
@@ -171,6 +173,7 @@ private:
 	int32 findRect();
 	void updateDrawingStatus1(int32 rectIndex);
 	void updateDrawingStatus2(int32 rectIndex);
+	bool updateScreen();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling
@@ -191,7 +194,6 @@ private:
 	int32 getKeywordIndex();
 	void choose(int32 keywordIndex);
 	
-	
 	//////////////////////////////////////////////////////////////////////////
 	// Speech
 	void resetSpeech(uint32 a1, uint32 a2);
@@ -199,6 +201,7 @@ private:
 	void setupSpeechText();
 	void setupSpeechData(char val, EncounterGraphic *encounterGraphic);
 	void setupSpeech(ResourceId textResourceId, ResourceId fontResourceId);
+	bool setupSpeech(ResourceId id);
 	bool isSpeaking();
 
 	//////////////////////////////////////////////////////////////////////////
