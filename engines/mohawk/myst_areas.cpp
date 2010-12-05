@@ -482,6 +482,12 @@ void MystResourceType10::setStep(uint16 step) {
 	_subImages[0].rect.bottom = 333 - _rect.top - 1;
 }
 
+void MystResourceType10::setPosition(uint16 pos) {
+	Common::Point mouse;
+	mouse.y = pos;
+	updatePosition(mouse);
+}
+
 Common::Rect MystResourceType10::boundingBox() {
 	Common::Rect bb;
 

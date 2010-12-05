@@ -206,6 +206,7 @@ public:
 	void handleMouseUp(const Common::Point &mouse);
 	void handleMouseDrag(const Common::Point &mouse);
 	void setStep(uint16 step);
+	void setPosition(uint16 pos);
 
 protected:
 	Common::Rect boundingBox();

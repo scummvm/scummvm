@@ -43,8 +43,7 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScript
 
 	// Card ID preinitialized by the engine for use by opcode 18
 	// when linking back to Myst in the library
-	if (_vm->getCurStack() == kMystStack)
-		_savedCardId = 4329;
+	_savedCardId = 4329;
 }
 
 MystScriptParser_Myst::~MystScriptParser_Myst() {
@@ -88,7 +87,13 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(149, opcode_149);
 	OPCODE(150, opcode_150);
 	OPCODE(151, opcode_151);
-	OPCODE(164, opcode_164);
+	OPCODE(158, o_rocketSoundSliderStartMove);
+	OPCODE(159, o_rocketSoundSliderMove);
+	OPCODE(160, o_rocketSoundSliderEndMove);
+	OPCODE(163, o_rocketLeverStartMove);
+	OPCODE(164, o_rocketOpenBook);
+	OPCODE(165, o_rocketLeverMove);
+	OPCODE(166, o_rocketLeverEndMove);
 	OPCODE(169, opcode_169);
 	OPCODE(170, opcode_170);
 	OPCODE(171, opcode_171);
@@ -136,8 +141,8 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(216, opcode_216);
 	OPCODE(217, opcode_217);
 	OPCODE(218, opcode_218);
-	OPCODE(219, opcode_219);
-	OPCODE(220, opcode_220);
+	OPCODE(219, o_rocketSliders_init);
+	OPCODE(220, o_rocketLinkVideo_init);
 	OPCODE(221, opcode_221);
 	OPCODE(222, opcode_222);
 
@@ -247,6 +252,8 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return 0;
 		else
 			return myst.generatorVoltage / 4;
+	case 300: // Rocket Ship Music Puzzle Slider State
+		return 1;
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -777,11 +784,7 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 
 	int16 maxStep = breaker->getStepsV() - 1;
 	int16 step = ((_vm->_mouse.y - 80) * breaker->getStepsV()) / 65;
-
-	if (step > maxStep)
-		step = maxStep;
-	else if (step < 0)
-		step = 0;
+	step = CLIP<uint16>(step, 0, maxStep);
 
 	breaker->drawFrame(step);
 
@@ -864,13 +867,185 @@ void MystScriptParser_Myst::opcode_151(uint16 op, uint16 var, uint16 argc, uint1
 	// TODO: Boiler wheel counter-clockwise mouse up
 }
 
-void MystScriptParser_Myst::opcode_164(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_rocketSoundSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Rocket slider start move", op);
 
-	// Used on Card 4530 (Rocketship Music Slider Controls)
-	// TODO: Finish Implementation...
-	// Var 105 is used to set between 0 to 2 = No Function, Movie Playback and Linkable...
-	// This is called when Var 105 = 1 i.e. this plays back Movie...
+	_rocketSliderSound = 0;
+	_vm->_cursor->setCursor(700);
+	_vm->_sound->pauseBackground();
+	rocketSliderMove();
+}
+
+void MystScriptParser_Myst::o_rocketSoundSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Rocket slider move", op);
+
+	rocketSliderMove();
+}
+
+void MystScriptParser_Myst::o_rocketSoundSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Rocket slider end move", op);
+
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	_vm->checkCursorHints();
+
+	if (myst.generatorVoltage == 59 && !myst.generatorBreakers) {
+		if (_rocketSliderSound)
+			_vm->_sound->stopSound();
+	}
+
+	if (_invokingResource == _rocketSlider1) {
+		myst.rocketSliderPosition[0] = _rocketSlider1->_pos.y;
+	} else if (_invokingResource == _rocketSlider2) {
+		myst.rocketSliderPosition[1] = _rocketSlider2->_pos.y;
+	} else if (_invokingResource == _rocketSlider3) {
+		myst.rocketSliderPosition[2] = _rocketSlider3->_pos.y;
+	} else if (_invokingResource == _rocketSlider4) {
+		myst.rocketSliderPosition[3] = _rocketSlider4->_pos.y;
+	} else if (_invokingResource == _rocketSlider5) {
+		myst.rocketSliderPosition[4] = _rocketSlider5->_pos.y;
+	}
+
+	_vm->_sound->resumeBackground();
+}
+
+void MystScriptParser_Myst::rocketSliderMove() {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	MystResourceType10 *slider = static_cast<MystResourceType10 *>(_invokingResource);
+
+	if (myst.generatorVoltage == 59 && !myst.generatorBreakers) {
+		uint16 soundId = rocketSliderGetSound(slider->_pos.y);
+		if (soundId != _rocketSliderSound) {
+			_rocketSliderSound = soundId;
+			_vm->_sound->replaceSound(soundId, Audio::Mixer::kMaxChannelVolume, true);
+		}
+	}
+}
+
+uint16 MystScriptParser_Myst::rocketSliderGetSound(uint16 pos) {
+	return 9530 + (pos - 216) * 35.0 * 0.01639344262295082;
+}
+
+void MystScriptParser_Myst::rocketCheckSolution() {
+	_vm->_cursor->hideCursor();
+
+	uint16 soundId;
+	bool solved = true;
+
+	soundId = rocketSliderGetSound(_rocketSlider1->_pos.y);
+	_vm->_sound->replaceSound(soundId);
+	_rocketSlider1->drawConditionalDataToScreen(2);
+	_vm->_system->delayMillis(250);
+	if (soundId != 9558)
+		solved = false;
+
+	soundId = rocketSliderGetSound(_rocketSlider2->_pos.y);
+	_vm->_sound->replaceSound(soundId);
+	_rocketSlider2->drawConditionalDataToScreen(2);
+	_vm->_system->delayMillis(250);
+	if (soundId != 9546)
+		solved = false;
+
+	soundId = rocketSliderGetSound(_rocketSlider3->_pos.y);
+	_vm->_sound->replaceSound(soundId);
+	_rocketSlider3->drawConditionalDataToScreen(2);
+	_vm->_system->delayMillis(250);
+	if (soundId != 9543)
+		solved = false;
+
+	soundId = rocketSliderGetSound(_rocketSlider4->_pos.y);
+	_vm->_sound->replaceSound(soundId);
+	_rocketSlider4->drawConditionalDataToScreen(2);
+	_vm->_system->delayMillis(250);
+	if (soundId != 9553)
+		solved = false;
+
+	soundId = rocketSliderGetSound(_rocketSlider5->_pos.y);
+	_vm->_sound->replaceSound(soundId);
+	_rocketSlider5->drawConditionalDataToScreen(2);
+	_vm->_system->delayMillis(250);
+	if (soundId != 9560)
+		solved = false;
+
+	_vm->_sound->stopSound();
+
+	if (solved) {
+		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("selenbok", kMystStack), 224, 41, true);
+
+		// TODO: Movie control
+		// Play from 0 to 660
+		// Then from 660 to 3500, looping
+
+		_tempVar = 1;
+	}
+
+	_rocketSlider1->drawConditionalDataToScreen(1);
+	_rocketSlider2->drawConditionalDataToScreen(1);
+	_rocketSlider3->drawConditionalDataToScreen(1);
+	_rocketSlider4->drawConditionalDataToScreen(1);
+	_rocketSlider5->drawConditionalDataToScreen(1);
+
+	_vm->_cursor->showCursor();
+}
+
+void MystScriptParser_Myst::o_rocketLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Rocket lever start move", op);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	_vm->_cursor->setCursor(700);
+	_rocketLeverPosition = 0;
+	lever->drawFrame(0);
+}
+
+void MystScriptParser_Myst::o_rocketOpenBook(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Rocket open link book", op);
+
+	// TODO: Update video playing
+	// Play from 3500 to 13100, looping
+
+	// Set linkable
+	_tempVar = 2;
+}
+
+void MystScriptParser_Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Rocket lever move", op);
+
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Make the lever follow the mouse
+	int16 maxStep = lever->getStepsV() - 1;
+    Common::Rect rect = lever->getRect();
+    int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
+	step = CLIP<uint16>(step, 0, maxStep);
+
+	lever->drawFrame(step);
+
+	// If lever pulled
+	if (step == maxStep && step != _rocketLeverPosition) {
+		uint16 soundId = lever->getList2(0);
+		if (soundId)
+			_vm->_sound->playSound(soundId);
+
+		// If rocket correctly powered
+		if (myst.generatorVoltage == 59 && !myst.generatorBreakers) {
+			rocketCheckSolution();
+		}
+	}
+
+	_rocketLeverPosition = step;
+}
+
+void MystScriptParser_Myst::o_rocketLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Rocket lever end move", op);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	_vm->checkCursorHints();
+	_rocketLeverPosition = 0;
+	lever->drawFrame(0);
 }
 
 void MystScriptParser_Myst::opcode_169(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1346,14 +1521,17 @@ void MystScriptParser_Myst::opcode_209(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::o_generatorControlRoom_run(void) {
 	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
 	if (_generatorVoltage == myst.generatorVoltage) {
 		generatorRedrawRocket();
 	} else {
+		// Animate generator gauge		
 		if (_generatorVoltage > myst.generatorVoltage)
 			_generatorVoltage--;
 		else
 			_generatorVoltage++;
 
+		// Redraw generator gauge
 		_vm->redrawArea(62);
 		_vm->redrawArea(63);
 		_vm->redrawArea(96);
@@ -1568,38 +1746,37 @@ void MystScriptParser_Myst::opcode_218(uint16 op, uint16 var, uint16 argc, uint1
 	}
 }
 
-void MystScriptParser_Myst::opcode_219(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_rocketSliders_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Rocket sliders init", op);
 
-	// Used for Card 4530 (Rocketship Music Puzzle)
-	if (argc == 5) {
-		debugC(kDebugScript, "Opcode %d: Unknown...", op);
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
-		uint16 u0 = argv[0];
-		uint16 u1 = argv[1];
-		uint16 u2 = argv[2];
-		uint16 u3 = argv[3];
-		uint16 u4 = argv[4];
+	_rocketSlider1 = static_cast<MystResourceType10 *>(_vm->_resources[argv[0]]);
+	_rocketSlider2 = static_cast<MystResourceType10 *>(_vm->_resources[argv[1]]);
+	_rocketSlider3 = static_cast<MystResourceType10 *>(_vm->_resources[argv[2]]);
+	_rocketSlider4 = static_cast<MystResourceType10 *>(_vm->_resources[argv[3]]);
+	_rocketSlider5 = static_cast<MystResourceType10 *>(_vm->_resources[argv[4]]);
 
-		debugC(kDebugScript, "\tu0: %d", u0);
-		debugC(kDebugScript, "\tu1: %d", u1);
-		debugC(kDebugScript, "\tu2: %d", u2);
-		debugC(kDebugScript, "\tu3: %d", u3);
-		debugC(kDebugScript, "\tu4: %d", u4);
-		// TODO: Fill in logic...
-	} else
-		unknown(op, var, argc, argv);
+	if (myst.rocketSliderPosition[0]) {
+		_rocketSlider1->setPosition(myst.rocketSliderPosition[0]);
+	}
+	if (myst.rocketSliderPosition[1]) {
+		_rocketSlider2->setPosition(myst.rocketSliderPosition[1]);
+	}
+	if (myst.rocketSliderPosition[2]) {
+		_rocketSlider3->setPosition(myst.rocketSliderPosition[2]);
+	}
+	if (myst.rocketSliderPosition[3]) {
+		_rocketSlider4->setPosition(myst.rocketSliderPosition[3]);
+	}
+	if (myst.rocketSliderPosition[4]) {
+		_rocketSlider5->setPosition(myst.rocketSliderPosition[4]);
+	}
 }
 
-void MystScriptParser_Myst::opcode_220(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 4530 (Rocketship Music Puzzle Video)
-	// TODO: Fill in logic.
-	if (false) {
-		// loop?
-		_vm->_video->playMovie(_vm->wrapMovieFilename("selenbok", kMystStack), 224, 41);
-	}
+void MystScriptParser_Myst::o_rocketLinkVideo_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Rocket link video init", op);
+	_tempVar = 0;
 }
 
 void MystScriptParser_Myst::opcode_221(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

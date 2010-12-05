@@ -119,6 +119,7 @@ struct MystVariables {
 		uint16 generatorBreakers;
 		uint16 generatorButtons;
 		uint16 generatorVoltage;
+		uint16 rocketSliderPosition[5];
 	} myst;
 
 

@@ -302,11 +302,15 @@ void MystScriptParser::NOP(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 }
 
 void MystScriptParser::o_toggleVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Toggle var %d", op, var);
+
 	toggleVar(var);
 	_vm->redrawArea(var);
 }
 
 void MystScriptParser::o_setVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Set var %d: %d", op, var, argv[0]);
+
 	if (setVarValue(var, argv[0])) {
 		_vm->redrawArea(var);
 	}

@@ -101,7 +101,13 @@ private:
 	DECLARE_OPCODE(opcode_149);
 	DECLARE_OPCODE(opcode_150);
 	DECLARE_OPCODE(opcode_151);
-	DECLARE_OPCODE(opcode_164);
+	DECLARE_OPCODE(o_rocketSoundSliderStartMove);
+	DECLARE_OPCODE(o_rocketSoundSliderMove);
+	DECLARE_OPCODE(o_rocketSoundSliderEndMove);
+	DECLARE_OPCODE(o_rocketLeverStartMove);
+	DECLARE_OPCODE(o_rocketOpenBook);
+	DECLARE_OPCODE(o_rocketLeverMove);
+	DECLARE_OPCODE(o_rocketLeverEndMove);
 	DECLARE_OPCODE(opcode_169);
 	DECLARE_OPCODE(opcode_170);
 	DECLARE_OPCODE(opcode_171);
@@ -148,8 +154,8 @@ private:
 	DECLARE_OPCODE(opcode_216);
 	DECLARE_OPCODE(opcode_217);
 	DECLARE_OPCODE(opcode_218);
-	DECLARE_OPCODE(opcode_219);
-	DECLARE_OPCODE(opcode_220);
+	DECLARE_OPCODE(o_rocketSliders_init);
+	DECLARE_OPCODE(o_rocketLinkVideo_init);
 	DECLARE_OPCODE(opcode_221);
 	DECLARE_OPCODE(opcode_222);
 
@@ -168,8 +174,20 @@ private:
 	bool _generatorControlRoomRunning;
 	uint16 _generatorVoltage; // 58
 
+	MystResourceType10 *_rocketSlider1; // 248
+	MystResourceType10 *_rocketSlider2; // 252
+	MystResourceType10 *_rocketSlider3; // 256
+	MystResourceType10 *_rocketSlider4; // 260
+	MystResourceType10 *_rocketSlider5; // 264
+	uint16 _rocketSliderSound; // 294
+	uint16 _rocketLeverPosition; // 296
+
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
+
+	void rocketSliderMove();
+	uint16 rocketSliderGetSound(uint16 pos);
+	void rocketCheckSolution();
 };
 
 } // End of namespace Mohawk

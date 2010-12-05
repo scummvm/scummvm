@@ -329,6 +329,7 @@ Common::Error MohawkEngine_Myst::run() {
 					debug(2, "Sending mouse up event to resource %d", _curResource);
 					_resources[_curResource]->handleMouseUp(event.mouse);
 				}
+				checkCurrentResource();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_mouseClicked = true;
