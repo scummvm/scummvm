@@ -79,11 +79,10 @@ void ArchiveReader::dump(uint resIndex, const char *prefix) {
 	read(data, resourceSize);
 	closeResource();
 
-#if 0
-	FILE *o = fopen(fn, "wb");
-	fwrite(data, resourceSize, 1, o);
-	fclose(o);
-#endif
+	Common::DumpFile o;
+	o.open(fn);
+	o.write(data, resourceSize);
+	o.close();
 
 	delete[] data;
 }
