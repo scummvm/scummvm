@@ -25,15 +25,11 @@
 
 #include "graphics/thumbnail.h"
 
-#include "sound/mixer.h"
-
 #include "toltecs/toltecs.h"
 #include "toltecs/animation.h"
 #include "toltecs/palette.h"
-#include "toltecs/resource.h"
 #include "toltecs/script.h"
 #include "toltecs/screen.h"
-#include "toltecs/segmap.h"
 
 namespace Toltecs {
 

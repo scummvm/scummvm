@@ -24,17 +24,9 @@
 #ifndef TOLTECS_RESOURCE_H
 #define TOLTECS_RESOURCE_H
 
-#include "common/scummsys.h"
-#include "common/endian.h"
-#include "common/util.h"
 #include "common/file.h"
-#include "common/savefile.h"
-#include "common/system.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
-#include "common/events.h"
-#include "common/keyboard.h"
-#include "common/array.h"
 
 #include "engines/engine.h"
 
