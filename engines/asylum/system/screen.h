@@ -84,6 +84,7 @@ public:
 	void fillRect(int32 x, int32 y, int32 x2, int32 y2, int32 color);
 	void copyBackBufferToScreen();
 	void setFlag(int32 val) { _flag = (val < -1) ? -1 : val; }
+	void takeScreenshot();
 
 	// Palette
 	void setPalette(byte *rgbPalette) const;

@@ -500,7 +500,7 @@ bool Scene::key(const AsylumEvent &evt) {
 		break;
 
 	case Common::KEYCODE_TAB:
-		warning("[Scene::key] Screenshot function not implemented!");
+		getScreen()->takeScreenshot();
 		break;
 	}
 
