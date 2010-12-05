@@ -134,7 +134,7 @@ enum {
 	kLBNotifyGoToControls = 2,
 	kLBNotifyChangePage = 3,
 	kLBNotifyIntroDone = 5,
-	kLBNotifyQuit = 6,
+	kLBNotifyChangeMode = 6,
 	kLBNotifyCursorChange = 7
 };
 
@@ -150,9 +150,20 @@ struct LBScriptEntry {
 	uint16 action;
 	uint16 opcode;
 	uint16 param;
+
 	uint16 argc;
 	uint16 *argvParam;
 	uint16 *argvTarget;
+
+	// kLBNotifyChangeMode
+	uint16 newUnknown;
+	uint16 newMode;
+	uint16 newPage;
+	uint16 newSubpage;
+
+	// kLBActionNotified
+	uint16 matchFrom;
+	uint16 matchNotify;
 
 	Common::String command;
 	Common::Array<Common::String> conditions;
@@ -300,7 +311,7 @@ protected:
 	bool _isAmbient;
 
 	Common::Array<LBScriptEntry *> _scriptEntries;
-	void runScript(uint id);
+	void runScript(uint id, uint16 data = 0, uint16 from = 0);
 
 	LBValue parseValue(const Common::String &command, uint &pos);
 	void runCommand(const Common::String &command);

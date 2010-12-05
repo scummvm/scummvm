@@ -1036,10 +1036,14 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 		nextPage();
 		break;
 
-	case kLBNotifyQuit:
-		debug(2, "kLBNotifyQuit: %d", event.param);
-
-		quitGame();
+	case kLBNotifyChangeMode:
+		if (getGameType() == GType_LIVINGBOOKSV1) {
+			debug(2, "kLBNotifyChangeMode: %d", event.param);
+			quitGame();
+		} else {
+			// FIXME
+			warning("ignoring V2/V3 kLBNotifyChangeMode");
+		}
 		break;
 
 	case kLBNotifyCursorChange:
@@ -1635,26 +1639,25 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 				size -= (2 + entry->argc * 4);
 			}
 
-			if (type == kLBNotifyScript && entry->opcode == kLBNotifyQuit) {
+			if (type == kLBNotifyScript && entry->opcode == kLBNotifyChangeMode && _vm->getGameType() != GType_LIVINGBOOKSV1) {
 				if (size < 8) {
-					error("%d unknown bytes in notify entry 0x%04x", size, entry->opcode);
+					error("%d unknown bytes in notify entry kLBNotifyChangeMode", size);
 				}
-				uint16 opcodeId = stream->readUint16();
-				uint16 modeId = stream->readUint16();
-				uint16 pageId = stream->readUint16();
-				uint16 subPageId = stream->readUint16();
-				// FIXME
-				warning("unknown notify: opcode %04x, mode %d, page %d.%d", opcodeId, modeId, pageId, subPageId);
+				entry->newUnknown = stream->readUint16();
+				entry->newMode = stream->readUint16();
+				entry->newPage = stream->readUint16();
+				entry->newSubpage = stream->readUint16();
+				debug(4, "kLBNotifyChangeMode: unknown %04x, mode %d, page %d.%d",
+					entry->newUnknown, entry->newMode, entry->newPage, entry->newSubpage);
 				size -= 8;
 			}
-			if (entry->action == 7) {
+			// FIXME: what is 0x1d?
+			if (entry->action == kLBActionNotified || entry->opcode == 0x1d) {
 				if (size < 4)
-					error("not enough bytes (%d) in action 7, opcode 0x%04x", size, entry->opcode);
-				// FIXME: meh
+					error("not enough bytes (%d) in action %d, opcode 0x%04x", size, entry->action, entry->opcode);
+				entry->matchFrom = stream->readUint16();
+				entry->matchNotify = stream->readUint16();
 				size -= 4;
-				uint16 itemId = stream->readUint16();
-				uint16 unknown = stream->readUint16();
-				warning("ignoring id %d, unknown 0x%04x in script entry (type 0x%04x, action 0x%04x, opcode 0x%04x)", itemId, unknown, entry->type, entry->action, entry->opcode);
 			}
 			if (entry->opcode == 0xffff) {
 				if (size < 4)
@@ -2009,24 +2012,27 @@ void LBItem::stop() {
 }
 
 void LBItem::notify(uint16 data, uint16 from) {
-	if (_timingMode != 4)
-		return;
+	if (_timingMode == 4) {
+		// TODO: is this correct?
+		if (_periodMin == from && _periodMax == data) {
+			debug(2, "Handling notify 0x%04x (from %d)", data, from);
+			setNextTime(0, 0);
+		}
+	}
 
-	// TODO: is this correct?
-	if (_periodMin != from)
-		return;
-	if (_periodMax != data)
-		return;
-
-	debug(2, "Handling notify 0x%04x (from %d)", data, from);
-	setNextTime(0, 0);
+	runScript(kLBActionNotified, data, from);
 }
 
-void LBItem::runScript(uint id) {
+void LBItem::runScript(uint id, uint16 data, uint16 from) {
 	for (uint i = 0; i < _scriptEntries.size(); i++) {
 		LBScriptEntry *entry = _scriptEntries[i];
 		if (entry->action != id)
 			continue;
+
+		if (id == kLBActionNotified) {
+			if (entry->matchFrom != from || entry->matchNotify != data)
+				continue;
+		}
 
 		bool conditionsMatch = true;
 		for (uint n = 0; n < entry->conditions.size(); n++) {
