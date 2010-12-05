@@ -25,6 +25,7 @@
 #define TOLTECS_MOVIE_H
 
 #include "sound/audiostream.h"
+#include "sound/mixer.h"	// for Audio::SoundHandle
 
 namespace Toltecs {
 

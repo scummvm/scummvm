@@ -23,14 +23,6 @@
 
 // TODO: Clean up game variable handling and move it to ToltecsEngine
 
-#include "common/events.h"
-#include "common/keyboard.h"
-#include "common/file.h"
-#include "common/savefile.h"
-#include "common/config-manager.h"
-
-#include "sound/mixer.h"
-
 #include "toltecs/toltecs.h"
 #include "toltecs/animation.h"
 #include "toltecs/menu.h"
@@ -38,7 +30,6 @@
 #include "toltecs/palette.h"
 #include "toltecs/resource.h"
 #include "toltecs/script.h"
-#include "toltecs/screen.h"
 #include "toltecs/segmap.h"
 #include "toltecs/sound.h"
 
