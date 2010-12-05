@@ -193,13 +193,19 @@ void Encounter::initDrawStructs() {
 	}
 }
 
-uint32 Encounter::findKeyword(EncounterItem *item, int16 keyword) {
-	for (uint i = 0; i < ARRAYSIZE(item->keywords); i++) {
-		if ((item->keywords[i] & KEYWORD_MASK) == keyword)
-			return i;
-	}
+//////////////////////////////////////////////////////////////////////////
+// Misc
+//////////////////////////////////////////////////////////////////////////
+int32 Encounter::findRect() {
+	error("[Encounter::findRect] not implemented!");
+}
 
-	error("[Encounter::findKeyword] Could not find a valid keyword!");
+void Encounter::updateDrawingStatus1(int32 rectIndex) {
+	error("[Encounter::updateDrawingStatus1] not implemented!");
+}
+
+void Encounter::updateDrawingStatus2(int32 rectIndex) {
+	error("[Encounter::updateDrawingStatus2] not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -345,7 +351,44 @@ bool Encounter::key(const AsylumEvent &evt) {
 }
 
 bool Encounter::mouse(const AsylumEvent &evt) {
-	error("[Encounter::mouse] Not implemented!");
+	switch (evt.type) {
+	default:
+		break;
+
+	case Common::EVENT_LBUTTONDOWN:
+		if (!_data_455BD8) {
+			_data_455BD8 = 1;
+			_rectIndex = findRect();
+
+			if (_rectIndex != -1)
+				updateDrawingStatus2(_rectIndex);
+		}
+		break;
+
+	case Common::EVENT_LBUTTONUP:
+		if (_rectIndex == -1) {
+			if (!isSpeaking())
+				choose(getKeywordIndex());
+			
+			_data_455BD8 = 0;
+		} else {
+			_rectIndex = -1;
+			updateDrawingStatus1(_rectIndex);
+			_data_455BD8 = 0;
+		}		
+		break;
+
+			
+	case Common::EVENT_RBUTTONDOWN:
+		if (!isSpeaking() 
+		 && _data_455BD0 
+		 && !getSpeech()->getTextData()
+		 && !getSpeech()->getTextDataPos())
+			_data_455BD4 = 1;
+		break;
+	}
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -364,11 +407,32 @@ int32 Encounter::getVariable(uint32 index) {
 
 	return _variables[index];
 }
+
 int32 Encounter::getVariableInv(int32 index) {
 	if (index >= 0)
 		return index;
 
 	return getVariable(-index);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Actions
+//////////////////////////////////////////////////////////////////////////
+uint32 Encounter::findKeyword(EncounterItem *item, int16 keyword) {
+	for (uint i = 0; i < ARRAYSIZE(item->keywords); i++) {
+		if ((item->keywords[i] & KEYWORD_MASK) == keyword)
+			return i;
+	}
+
+	error("[Encounter::findKeyword] Could not find a valid keyword!");
+}
+
+int32 Encounter::getKeywordIndex() {
+	error("[Encounter::getKeywordIndex] Not implemented!");
+}
+
+void Encounter::choose(int32 keywordIndex) {
+	error("[Encounter::choose] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////
