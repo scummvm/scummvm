@@ -28,20 +28,14 @@
 
 #include "common/scummsys.h"
 #include "common/endian.h"
-#include "common/util.h"
-#include "common/file.h"
-#include "common/random.h"
-#include "common/savefile.h"
-#include "common/system.h"
-#include "common/hash-str.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/keyboard.h"
-
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
-#include "sound/decoders/voc.h"
+#include "common/random.h"
 
 #include "engines/engine.h"
+
+#include "graphics/surface.h"
 
 namespace Picture {
 

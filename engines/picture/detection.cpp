@@ -26,7 +26,9 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
-#include "common/file.h"
+#include "common/savefile.h"
+#include "common/str-array.h"
+#include "common/system.h"
 
 #include "picture/picture.h"
 

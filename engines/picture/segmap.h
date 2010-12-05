@@ -26,6 +26,8 @@
 #ifndef PICTURE_SEGMAP_H
 #define PICTURE_SEGMAP_H
 
+#include "common/array.h"
+
 #include "picture/screen.h"
 
 namespace Picture {
