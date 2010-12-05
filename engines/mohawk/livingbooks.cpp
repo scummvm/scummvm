@@ -1041,7 +1041,11 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 			debug(2, "kLBNotifyChangeMode: %d", event.param);
 			quitGame();
 		} else {
+			debug(2, "kLBNotifyChangeMode: mode %d, page %d.%d",
+				event.newMode, event.newPage, event.newSubpage);
 			// TODO: what is entry.newUnknown?
+			if (!event.newMode)
+				event.newMode = _curMode;
 			if (!loadPage((LBMode)event.newMode, event.newPage, event.newSubpage))
 				error("kLBNotifyChangeMode failed to move to mode %d, page %d.%d",
 					event.newMode, event.newPage, event.newSubpage);
