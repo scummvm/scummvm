@@ -335,6 +335,9 @@ void MohawkEngine_LivingBooks::updatePage() {
 	switch (_phase) {
 	case 0:
 		for (uint32 i = 0; i < _items.size(); i++)
+			_items[i]->startPhase(0xFFFF);
+
+		for (uint32 i = 0; i < _items.size(); i++)
 			_items[i]->startPhase(_phase);
 
 		if (_curMode == kLBControlMode) {
@@ -1730,6 +1733,7 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		if (size != 2)
 			error("SetPlayPhase had wrong size (%d)", size);
 		_phase = stream->readUint16();
+		debug(2, "kLBSetPlayPhase: %d", _phase);
 		break;
 
 	case kLBUnknown6F:
@@ -1964,8 +1968,19 @@ void LBItem::startPhase(uint phase) {
 		setEnabled(true);
 
 	switch (phase) {
+	case 0xFFFF:
+		runScript(kLBActionPrePhase);
+		if (_timingMode == 6) {
+			debug(2, "Phase -1 time startup");
+			setNextTime(_periodMin, _periodMax);
+		}
+		break;
 	case 0:
 		runScript(kLBActionPhase0);
+		if (_timingMode == 5) {
+			debug(2, "Phase 0 time startup");
+			setNextTime(_periodMin, _periodMax);
+		}
 		break;
 	case 1:
 		runScript(kLBActionPhase1);

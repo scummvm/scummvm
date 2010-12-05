@@ -91,7 +91,9 @@ enum {
 	kLBActionStarted = 3,
 	kLBActionDone = 4,
 	kLBActionMouseUp = 5,
-	kLBActionPhase2 = 6
+	kLBActionPhase2 = 6,
+	kLBActionNotified = 7,
+	kLBActionPrePhase = 0xff
 };
 
 enum {
