@@ -250,7 +250,7 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 * any allocated memory.  Also returns size of data
 */
 sound_pt FileManager::getSound(int16 sound, uint16 *size) {
-	debugC(1, kDebugFile, "getSound(%d, %d)", sound, *size);
+	debugC(1, kDebugFile, "getSound(%d)", sound);
 
 	// No more to do if SILENCE (called for cleanup purposes)
 	if (sound == _vm->_soundSilence)
