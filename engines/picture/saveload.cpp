@@ -23,14 +23,7 @@
  *
  */
 
-#include "common/events.h"
-#include "common/keyboard.h"
-#include "common/file.h"
 #include "common/savefile.h"
-#include "common/config-manager.h"
-
-#include "base/plugins.h"
-#include "base/version.h"
 
 #include "graphics/thumbnail.h"
 
