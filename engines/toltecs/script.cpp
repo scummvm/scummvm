@@ -29,9 +29,6 @@
 #include "common/savefile.h"
 #include "common/config-manager.h"
 
-#include "base/plugins.h"
-#include "base/version.h"
-
 #include "sound/mixer.h"
 
 #include "toltecs/toltecs.h"
