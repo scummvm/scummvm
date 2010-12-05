@@ -166,7 +166,11 @@ private:
 	void initPortraits();
 	void initDrawStructs();
 
-	uint32 findKeyword(EncounterItem *item, int16 keyword);
+	//////////////////////////////////////////////////////////////////////////
+	// Misc	
+	int32 findRect();
+	void updateDrawingStatus1(int32 rectIndex);
+	void updateDrawingStatus2(int32 rectIndex);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling
@@ -181,6 +185,13 @@ private:
 	int32 getVariable(uint32 index);
 	int32 getVariableInv(int32 index);
 
+	/////////////////////////////////////////////////////////////////////////
+	// Actions
+	uint32 findKeyword(EncounterItem *item, int16 keyword);
+	int32 getKeywordIndex();
+	void choose(int32 keywordIndex);
+	
+	
 	//////////////////////////////////////////////////////////////////////////
 	// Speech
 	void resetSpeech(uint32 a1, uint32 a2);
@@ -238,7 +249,7 @@ private:
 	void runScript();
 
 	friend class Console;
-}; // end of class Encounter
+};
 
 } // end of namespace Asylum
 
