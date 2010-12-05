@@ -193,6 +193,9 @@ private:
 	uint32 findKeyword(EncounterItem *item, int16 keyword);
 	int32 getKeywordIndex();
 	void choose(int32 keywordIndex);
+	bool checkKeywords();
+	bool checkKeywords2();
+	void updateFromRect(int32 rectIndex);
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Speech

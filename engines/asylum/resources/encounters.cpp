@@ -197,15 +197,65 @@ void Encounter::initDrawStructs() {
 // Misc
 //////////////////////////////////////////////////////////////////////////
 int32 Encounter::findRect() {
-	error("[Encounter::findRect] not implemented!");
+	Common::Point mousePos = getCursor()->position();
+
+	for (uint32 i = 0; i < ARRAYSIZE(_drawingStructs); i++) {
+		EncounterDrawingStruct *drawStruct = &_drawingStructs[i];
+
+		if (mousePos.x >= drawStruct->point2.x
+		 && mousePos.x < (drawStruct->point2.x + drawStruct->point1.y)
+		 && mousePos.y >= drawStruct->point2.y
+		 && mousePos.y < (drawStruct->point2.y + drawStruct->point1.x))
+			return i;
+	}
+
+	return -1;
 }
 
 void Encounter::updateDrawingStatus1(int32 rectIndex) {
-	error("[Encounter::updateDrawingStatus1] not implemented!");
+	switch (rectIndex) {
+	default:
+		error("[Encounter::updateDrawingStatus1] Invalid rect index (%d)", rectIndex);
+		break;
+
+	case 0:
+		if (checkKeywords2()) {
+		    _drawingStructs[rectIndex].status = 1;
+		    ++_drawingStructs[rectIndex].transTableNum;
+	    }
+		break;
+
+	case 1:
+		if (checkKeywords()) {
+		    _drawingStructs[rectIndex].status = 1;
+		    ++_drawingStructs[rectIndex].transTableNum;
+	    }
+		break;
+	}
 }
 
 void Encounter::updateDrawingStatus2(int32 rectIndex) {
-	error("[Encounter::updateDrawingStatus2] not implemented!");
+	switch (rectIndex) {
+	default:
+		error("[Encounter::updateDrawingStatus1] Invalid rect index (%d)", rectIndex);
+		break;
+
+	case 0:
+		if (checkKeywords2()) {
+		    _drawingStructs[rectIndex].status = 2;
+		    --_drawingStructs[rectIndex].transTableNum;
+			updateFromRect(rectIndex);
+	    }
+		break;
+
+	case 1:
+		if (checkKeywords()) {
+		    _drawingStructs[rectIndex].status = 2;
+		    --_drawingStructs[rectIndex].transTableNum;
+			updateFromRect(rectIndex);
+	    }
+		break;
+	}
 }
 
 bool Encounter::updateScreen() {
@@ -529,6 +579,18 @@ int32 Encounter::getKeywordIndex() {
 
 void Encounter::choose(int32 keywordIndex) {
 	error("[Encounter::choose] Not implemented!");
+}
+
+bool Encounter::checkKeywords() {
+	error("[Encounter::checkKeywords] Not implemented!");
+}
+
+bool Encounter::checkKeywords2() {
+	error("[Encounter::checkKeywords2] Not implemented!");
+}
+
+void Encounter::updateFromRect(int32 rectIndex)  {
+	error("[Encounter::updateFromRect] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////
