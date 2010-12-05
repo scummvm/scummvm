@@ -167,7 +167,7 @@ Common::Error PictureEngine::run() {
 	return Common::kNoError;
 #endif
 
-#if 1
+	// Start main game loop
 	_script->loadScript(0, 0);
 	_script->setMainScript(0);
 	if (ConfMan.hasKey("save_slot")) {
@@ -177,7 +177,6 @@ Common::Error PictureEngine::run() {
 		}
 	}
 	_script->runScript();
-#endif
 
 	delete _arc;
 	delete _res;

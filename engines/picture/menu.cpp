@@ -412,6 +412,7 @@ void MenuSystem::restoreRect(int x, int y, int w, int h) {
 }
 
 void MenuSystem::shadeRect(int x, int y, int w, int h, byte color1, byte color2) {
+	// FIXME: Why is the following block disabled?
 #if 0
 	byte *src = (byte*)_background->getBasePtr(x, y);
 	for (int xc = 0; xc < w; xc++) {
