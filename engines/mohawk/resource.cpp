@@ -320,7 +320,7 @@ Common::SeekableReadStream *MohawkArchive::getResource(uint32 tag, uint16 id) {
 	// We need to do this because of the way Mohawk is set up (this is much more "proper"
 	// than passing _mhk at the right offset). We may want to do that in the future, though.
 	if (_types[typeIndex].tag == ID_TMOV) {
-		if (fileTableIndex == _fileTableAmount)
+		if (fileTableIndex == _fileTableAmount - 1)
 			return new Common::SeekableSubReadStream(_mhk, _fileTable[fileTableIndex].offset, _mhk->size());
 		else
 			return new Common::SeekableSubReadStream(_mhk, _fileTable[fileTableIndex].offset, _fileTable[fileTableIndex + 1].offset);
