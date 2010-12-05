@@ -365,10 +365,12 @@ public:
 
 	void readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream);
 
-	void draw();
+	bool togglePlaying(bool playing, bool restart);
+	void update();
 
 protected:
-	uint16 _start, _count, _drawStart, _drawCount;
+	uint16 _fadeInPeriod, _fadeInStep, _drawStart, _drawCount;
+	uint32 _fadeInStart, _fadeInCurrent;
 	byte _palette[255 * 4];
 };
 

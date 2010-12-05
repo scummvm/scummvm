@@ -2573,6 +2573,7 @@ void LBGroupItem::stop() {
 
 LBPaletteItem::LBPaletteItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
 	debug(3, "new LBPaletteItem");
+	_fadeInStart = 0;
 }
 
 void LBPaletteItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
@@ -2580,8 +2581,8 @@ void LBPaletteItem::readData(uint16 type, uint16 size, Common::SeekableSubReadSt
 	case kLBPaletteXData:
 		{
 		assert(size == 8 + 255 * 4);
-		_start = stream->readUint16();
-		_count = stream->readUint16();
+		_fadeInPeriod = stream->readUint16();
+		_fadeInStep = stream->readUint16();
 		_drawStart = stream->readUint16();
 		_drawCount = stream->readUint16();
 		stream->read(_palette, 255 * 4);
@@ -2593,11 +2594,42 @@ void LBPaletteItem::readData(uint16 type, uint16 size, Common::SeekableSubReadSt
 	}
 }
 
-void LBPaletteItem::draw() {
-	if (!_visible || !_globalVisible)
-		return;
+bool LBPaletteItem::togglePlaying(bool playing, bool restart) {
+	// TODO: this likely isn't the right place
 
-	_vm->_system->setPalette(_palette + _drawStart * 4, _drawStart, _drawCount);
+	if (playing) {
+		_fadeInStart = _vm->_system->getMillis();
+		_fadeInCurrent = 0;
+
+		return true;
+	}
+
+	return LBItem::togglePlaying(playing, restart);
+}
+
+void LBPaletteItem::update() {
+	if (_fadeInStart) {
+		uint32 elapsedTime = _vm->_system->getMillis() - _fadeInStart;
+		uint32 divTime = elapsedTime / _fadeInStep;
+
+		if (divTime > _fadeInPeriod)
+			divTime = _fadeInPeriod;
+
+		if (_fadeInCurrent != divTime) {
+			_fadeInCurrent = divTime;
+
+			// TODO: actual fading-in
+			if (_visible && _globalVisible)
+				_vm->_system->setPalette(_palette + _drawStart * 4, _drawStart, _drawCount);
+		}
+
+		if (elapsedTime >= (uint32)_fadeInPeriod * (uint32)_fadeInStep) {
+			// TODO: correct?
+			_fadeInStart = 0;
+		}
+	}
+
+	LBItem::update();
 }
 
 LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
