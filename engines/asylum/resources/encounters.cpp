@@ -208,11 +208,18 @@ void Encounter::updateDrawingStatus2(int32 rectIndex) {
 	error("[Encounter::updateDrawingStatus2] not implemented!");
 }
 
+bool Encounter::updateScreen() {
+	error("[Encounter::updateScreen] not implemented!");
+}
+
+void Encounter::drawScreen() {
+	error("[Encounter::updateScreen] not implemented!");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Run
 //////////////////////////////////////////////////////////////////////////
 void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2, ActorIndex actorIndex) {
-	// Line: 12/15 :: 0x25 (1, 1584, 1584, 0, 0, 0, 0, 0, 0) // First Encounter
 	debugC(kDebugLevelEncounter, "Running Encounter %d", encounterIndex);
 
 	if (!_keywordIndex) {
@@ -326,7 +333,96 @@ bool Encounter::update() {
 	if (getSound()->getMusicVolume() != Config.musicVolume - 500)
 		getSound()->setMusicVolume(Config.musicVolume - 500);
 
-	error("[Encounter::update] Not implemented!");
+	uint32 tick = _vm->getTick();
+	ResourceId id = kResourceNone;
+
+	if (_objectId3) {
+		_data_455BD0 = 0;
+		
+		Object *object = getWorld()->getObjectById(_objectId3);
+		id = object->getResourceId();
+		
+		if (object->getFrameIndex() == object->getFrameCount() - 1) {
+			switch (getVariable(3)) {
+			default:
+				break;
+
+			case 13:
+				if (_actorIndex)
+					getScene()->getActor(_actorIndex)->show();
+				else
+					setupEntities(true);
+				break;
+
+			case 14:
+				getScene()->getActor()->show();
+				break;
+
+			case 15:
+				if (_actorIndex)
+					getScene()->getActor(_actorIndex)->show();
+				else
+					setupEntities(true);
+
+				getScene()->getActor()->show();
+				break;
+			}
+
+			object->disable();
+			_objectId3 = kObjectNone;
+			_data_455BF4 = 0;
+			getCursor()->show();
+		}
+	}
+
+	if (_data_455BE8) {
+		if (getSharedData()->getMatteBarHeight()) {
+			_data_455BD0 = 0;
+		} else {
+			getCursor()->show();
+			_data_455BE8 = 0;
+			_data_455BF4 = 0;
+		}
+	}
+
+	if (_data_455BD0) {
+		if (_data_455BF4 == 1) {
+			_data_455BF4 = 2;
+			runScript();
+		}
+		bool doScript;
+		if ((getSpeech()->getSoundResourceId() 
+		 && !getSound()->isPlaying(getSpeech()->getSoundResourceId()) 
+		 && !_data_455BE0)
+		 || (getSpeech()->getTick() && tick >= getSpeech()->getTick()))
+			doScript = true;
+		    
+		if (!getSharedData()->getMatteBarHeight() && doScript && _flag4) {
+			if (!setupSpeech(id))
+			    runScript();
+		}
+	}
+
+	// Redraw screen
+	if (!getSharedData()->getFlag(kFlagRedraw)) {
+		if (updateScreen())
+		    return true;
+	
+		getSharedData()->setFlag(kFlagRedraw, true);		
+	}
+
+	if (tick >= getSharedData()->getNextScreenUpdate() && getSharedData()->getFlag(kFlagRedraw)) {
+		if (getSharedData()->getMatteBarHeight() <= 0) {
+			getScreen()->copyBackBufferToScreen();
+		} else {
+			drawScreen();
+		}
+
+		getSharedData()->setFlag(kFlagRedraw, false);
+		getSharedData()->setNextScreenUpdate(tick + 55);
+	}
+	
+	return true;
 }
 
 bool Encounter::key(const AsylumEvent &evt) {
@@ -533,6 +629,10 @@ void Encounter::setupSpeech(ResourceId textResourceId, ResourceId fontResourceId
 
 	_data_455BE0 = 1;
 	getSpeech()->setSoundResourceId(MAKE_RESOURCE(kResourcePackSharedSound, textResourceId - _keywordIndex));
+}
+
+bool Encounter::setupSpeech(ResourceId id) {
+	error("[Encounter::setupSpeech] Not implemented!");
 }
 
 bool Encounter::isSpeaking() {

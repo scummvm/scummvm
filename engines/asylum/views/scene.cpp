@@ -386,7 +386,7 @@ bool Scene::update() {
 			if (getSharedData()->getMatteBarHeight() <= 0)
 				getScreen()->copyBackBufferToScreen();
 			else
-				error("[Scene::update] Not implemented!");
+				getEncounter()->drawScreen();
 
 			// Original also sets an unused value to 0
 			getSharedData()->setData(39, getSharedData()->getData(39) ^ 1);

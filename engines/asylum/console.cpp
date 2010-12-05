@@ -384,6 +384,7 @@ bool Console::cmdRunEncounter(int32 argc, const char **argv) {
 		return true;
 	}
 
+	// Line: 12/15 :: 0x25 (1, 1584, 1584, 0, 0, 0, 0, 0, 0) // First Encounter
 	// TODO update with array of valid objects
 	_vm->encounter()->run(index, kObjectNone, kObjectNone, kActorMax);
 
