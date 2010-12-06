@@ -304,8 +304,8 @@ protected:
 	uint16 _loops;
 
 	uint16 _phase, _timingMode, _delayMin, _delayMax;
-	uint16 _loopMode, _loopCount, _periodMin, _periodMax;
-	uint16 _controlMode;
+	uint16 _loopMode, _periodMin, _periodMax;
+	uint16 _controlMode, _soundMode;
 	Common::Point _relocPoint;
 
 	bool _isAmbient;

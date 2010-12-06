@@ -1546,14 +1546,15 @@ LBScriptEntry::~LBScriptEntry() {
 
 LBItem::LBItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : _vm(vm), _rect(rect) {
 	_phase = 0;
-	_timingMode = 0;
+
+	_loopMode = 0;
 	_delayMin = 0;
 	_delayMax = 0;
-	_loopMode = 0;
-	_loopCount = 0;
+	_timingMode = 0;
 	_periodMin = 0;
 	_periodMax = 0;
 	_controlMode = 0;
+	_soundMode = 0;
 
 	_neverEnabled = true;
 	_enabled = false;
@@ -1727,14 +1728,13 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		_relocPoint.x = stream->readSint16();
 		_relocPoint.y = stream->readSint16();
 		_controlMode = stream->readUint16();
-		uint16 unknown10 = stream->readUint16();
-		// TODO: unknowns
+		_soundMode = stream->readUint16();
 
-		debug(2, "kLBSetPlayInfo: loop mode %d (%d to %d), timing mode %d (%d to %d), reloc (%d, %d), unknowns %04x, %04x",
+		debug(2, "kLBSetPlayInfo: loop mode %d (%d to %d), timing mode %d (%d to %d), reloc (%d, %d), control mode %04x, sound mode %04x",
 			_loopMode, _delayMin, _delayMax,
 			_timingMode, _periodMin, _periodMax,
 			_relocPoint.x, _relocPoint.y,
-			_controlMode, unknown10);
+			_controlMode, _soundMode);
 		}
 		break;
 
