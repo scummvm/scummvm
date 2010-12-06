@@ -36,6 +36,12 @@ class AsylumEngine;
 class GraphicResource;
 class ResourcePack;
 
+enum TextCentering {
+	kTextNormal,
+	kTextCenter,
+	kTextCalculate
+};
+
 class Text {
 public:
 	Text(AsylumEngine *engine);
@@ -57,8 +63,8 @@ public:
 	void draw(int32 x, int32 y, ResourceId resourceId);
 	void draw(const char *text, ResourceId fontResourceId, int32 y);
 	void draw(const char *text, uint32 length);
-	void draw(bool isCentered, int32 x, int32 y, int32 spacing, int32 width, const char *text);
-	void draw(int32 a1, int32 a2, bool isCentered, int32 x, int32 y, int32 spacing, int32 width, const char *text);
+	uint32 draw(TextCentering centering, int32 x, int32 y, int32 spacing, int32 width, const char *text);
+	uint32 draw(int32 a1, int32 a2, TextCentering centering, int32 x, int32 y, int32 spacing, int32 width, const char *text);
 
 	void drawCentered(int32 x, int32 y, int32 width, const char *text);
 	void drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId);

@@ -141,7 +141,7 @@ private:
 
 	// Internal data
 	int32 _data_455B14;
-	bool _data_455B3C;
+	uint32 _data_455B3C;
 	uint32 _data_455B70;
 	bool _data_455BCC;
 	bool _data_455BD0;
