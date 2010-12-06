@@ -748,18 +748,255 @@ bool Encounter::drawBackground() {
 }
 
 bool Encounter::drawPortraits() {
-	error("[Encounter::drawPortraits] not implemented!");
+	bool ret = true;
+	
+	if (_data_455BD4) {
+		_portrait1.transTableMax = 0;
+		_portrait2.transTableMax = 0;
+	}
+
+	// Portrait 1
+	if (_portrait1.transTableNum == 3 )
+		getScreen()->draw(_portrait1.resourceId,
+		                  _portrait1.frameIndex,
+		                  _point.x + 5,
+		                  _point.y + 5,
+		                  0);
+	else
+		getScreen()->draw(_portrait1.resourceId,
+		                  _portrait1.frameIndex,
+		                  _point.x + 5,
+		                  _point.y + 5,
+		                  0,
+		                  _portrait1.transTableNum);
+
+	if (_portrait1.transTableNum != _portrait1.transTableMax) {
+		if (_portrait1.transTableNum <= _portrait1.transTableMax)
+			++_portrait1.transTableNum;
+		else
+			--_portrait1.transTableNum;
+
+		ret = false;
+	}
+
+	if (_portrait1.speech0) {
+		if (_portrait1.speech0 == 1)
+			++_portrait1.frameIndex;
+		else
+			--_portrait1.frameIndex;
+
+		_portrait1.frameIndex %= _portrait1.frameCount;
+	}
+
+	// Portrait 2
+	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _portrait2.resourceId, _portrait2.frameIndex);
+
+	if (_portrait2.transTableNum == 3)
+		getScreen()->draw(_portrait2.resourceId,
+		                  _portrait2.frameIndex,
+		                  _point.x - frameRect.width() + _background.rect.width() - 6,
+		                  _point.y + 5,
+		                  0);
+	else
+		getScreen()->draw(_portrait2.resourceId,
+		                  _portrait2.frameIndex,
+		                  _point.x - frameRect.width() + _background.rect.width() - 6,
+		                  _point.y + 5,
+		                  0,
+		                  _portrait2.transTableNum);
+
+	if (_portrait2.transTableNum != _portrait2.transTableMax) {
+		if (_portrait2.transTableNum <= _portrait2.transTableMax)
+			++_portrait2.transTableNum;
+		else
+			--_portrait2.transTableNum;
+
+		ret = false;
+	}
+
+	if (_portrait2.speech0) {
+		if (_portrait2.speech0 == 1)
+			++_portrait2.frameIndex;
+		else
+			--_portrait2.frameIndex;
+
+		_portrait2.frameIndex %= _portrait2.frameCount;
+	}
+	
+	if (_data_455BD4)
+		if (_portrait1.transTableNum == _portrait1.transTableMax
+		 && _portrait2.transTableNum == _portrait2.transTableMax)
+			_data_455BE4 = true;
+
+	return ret;
 }
 
 void Encounter::drawStructs() {
-	error("[Encounter::drawStructs] not implemented!");
+	// Drawing structure 1
+	if (_drawingStructs[0].transTableNum < -1 || _drawingStructs[0].transTableNum > 3)
+		error("[Encounter::drawStructs] Something got <redacted> wrong!");
+	
+	if (checkKeywords2() || _drawingStructs[0].transTableNum > -1) {
+		int32 val = _drawingStructs[0].transTableNum;
+
+		if (_data_455BD4
+		 && _drawingStructs[0].status != 2
+		 && _drawingStructs[0].transTableNum > -1) {
+			val = _drawingStructs[0].transTableNum - 1;
+			_drawingStructs[0].status = 2;
+			--_drawingStructs[0].transTableNum;
+		}
+
+		switch (val) {
+		default:
+			break;
+
+		case -1:
+			getScreen()->draw(_drawingStructs[0].resourceId,
+			                  _drawingStructs[0].frameIndex,
+			                  _drawingStructs[0].point2.x,
+			                  _drawingStructs[0].point2.y,
+			                  0,
+			                  0);
+				
+			_drawingStructs[0].status = 0;
+			break;
+				
+		case 0:
+		case 1:
+		case 2:
+			getScreen()->draw(_drawingStructs[0].resourceId,
+			                  _drawingStructs[0].frameIndex,
+			                  _drawingStructs[0].point2.x,
+			                  _drawingStructs[0].point2.y,
+			                  0,
+			                  val);
+
+			if (_drawingStructs[0].status == 1)
+				++_drawingStructs[0].transTableNum;
+			else if (_drawingStructs[0].status == 2)
+				--_drawingStructs[0].transTableNum;
+
+			break;
+				
+		case 3:
+			getScreen()->draw(_drawingStructs[0].resourceId,
+			                  _drawingStructs[0].frameIndex,
+			                  _drawingStructs[0].point2.x,
+			                  _drawingStructs[0].point2.y,
+			                  0);
+
+			_drawingStructs[0].status = 0;
+			break;
+		}
+	}
+
+	// Drawing structure 2
+	if (_drawingStructs[1].transTableNum < -1 || _drawingStructs[1].transTableNum > 3)
+		error("[Encounter::drawStructs] Something got <redacted> wrong!");
+
+	if (checkKeywords() || _drawingStructs[1].transTableNum > -1) {
+		int32 val = _drawingStructs[1].transTableNum;
+
+		if (_data_455BD4
+		 && _drawingStructs[1].status != 2
+		 && _drawingStructs[1].transTableNum > -1) {
+			val = _drawingStructs[1].transTableNum - 1;
+			_drawingStructs[1].status = 2;
+			--_drawingStructs[1].transTableNum;
+		}
+
+		switch (val) {
+		default:
+			break;
+
+		case -1:
+			getScreen()->draw(_drawingStructs[1].resourceId,
+			                  _drawingStructs[1].frameIndex,
+			                  _drawingStructs[1].point2.x,
+			                  _drawingStructs[1].point2.y,
+			                  0,
+			                  0);
+				
+			_drawingStructs[1].status = 0;
+			break;
+				
+		case 0:
+		case 1:
+		case 2:
+			getScreen()->draw(_drawingStructs[1].resourceId,
+			                  _drawingStructs[1].frameIndex,
+			                  _drawingStructs[1].point2.x,
+			                  _drawingStructs[1].point2.y,
+			                  0,
+			                  val);
+
+			if (_drawingStructs[1].status == 1)
+				++_drawingStructs[1].transTableNum;
+			else if (_drawingStructs[1].status == 2)
+				--_drawingStructs[1].transTableNum;
+
+			break;
+				
+		case 3:
+			getScreen()->draw(_drawingStructs[1].resourceId,
+			                  _drawingStructs[1].frameIndex,
+			                  _drawingStructs[1].point2.x,
+			                  _drawingStructs[1].point2.y,
+			                  0);
+
+			_drawingStructs[1].status = 0;
+			break;
+		}
+	}
 }
 
 void Encounter::drawDialog() {
-	error("[Encounter::drawDialog] not implemented!");
+	getText()->loadFont(getWorld()->font1);
+
+	if (_data_455BF8 >= 50)
+		return;
+	
+	int32 counter = 0;
+
+	for (uint32 i = _data_455BF8; i < ARRAYSIZE(_keywordIndexes); i++) {
+		if (counter / 3 >= 8)
+			return;
+
+		int32 index = _keywordIndexes[i];
+		
+		if (index < 0)
+			continue;
+		
+		if ((_item->keywords[index] & KEYWORD_MASK) > 0 && (BYTE1(_keywordIndexes[i]) & 0x80)) {
+
+			if (BYTE1(_keywordIndexes[i]) & 0x20)
+				getText()->loadFont(getWorld()->font2);
+			else
+				getText()->loadFont(getWorld()->font1);
+
+			int32 x = _drawingStructs[0].point1.y + 144 * (counter % 3) + _point.x + (counter % 3) + _portrait1.rect.width() + 15;
+			int32 y = _point.y + (16 * counter / 3);
+
+			if (getKeywordIndex() == index)
+				getScreen()->fillRect(x -1, y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackShared, 3681)), 18, 0);
+				
+			getText()->setPosition(x, y);
+			getText()->draw(MAKE_RESOURCE(kResourcePackShared, 3681));
+
+			++counter;
+			_data_455B14 = i;
+		}
+	}
 }
 
 void Encounter::drawText(char *text, ResourceId font, int32 y) {
+	if (!text)
+		return;
+
+	//int width = _background.rect.width() - _portrait1.rect.width() - _portrait2.rect.width() - 20;
+	//int x = _point.x + _portrait1.rect.width() + 10;
+	
 	error("[Encounter::drawText] not implemented!");
 }
 
