@@ -209,6 +209,7 @@ void GfxFrameout::kernelAddScreenItem(reg_t object) {
 		return;
 
 	FrameoutEntry *itemEntry = new FrameoutEntry();
+	memset(itemEntry, 0, sizeof(FrameoutEntry));
 	itemEntry->object = object;
 	itemEntry->givenOrderNr = _screenItems.size();
 	_screenItems.push_back(itemEntry);
