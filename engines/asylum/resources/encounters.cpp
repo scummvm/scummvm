@@ -273,17 +273,17 @@ bool Encounter::init() {
 
 	if (!getSharedData()->getMatteBarHeight()) {
 		_flag6 = true;
-		_data_455BD4 = 0;
-		_data_455BD8 = 0;
-		_data_455BDC = 0;
-		_data_455BE0 = 0;
-		_data_455BE4 = 0;
-		_data_455BCC = 0;
-		_data_455B3C = 1;
+		_data_455BD4 = false;
+		_data_455BD8 = false;
+		_data_455BDC = false;
+		_data_455BE0 = false;
+		_data_455BE4 = false;
+		_data_455BCC = false;
+		_data_455B3C = true;
 		_rectIndex = -1;
 		_value1 = 0;
 		_data_455BF4 = 0;
-		_data_455BF8 = 0;
+		_data_455BF8 = false;
 		_data_455B14 = -1;
 
 		getSpeech()->resetTextData();
@@ -297,7 +297,7 @@ bool Encounter::init() {
 		initDrawStructs();
 	}
 
-	_data_455BD0 = 0;
+	_data_455BD0 = false;
 	getCursor()->set(getWorld()->cursorResources[kCursorResourceTalkNPC], -1, kCursorAnimationMirror);
 
 	if (!getSharedData()->getMatteBarHeight())
@@ -314,7 +314,7 @@ bool Encounter::update() {
 	ResourceId id = kResourceNone;
 
 	if (_objectId3) {
-		_data_455BD0 = 0;
+		_data_455BD0 = false;
 		
 		Object *object = getWorld()->getObjectById(_objectId3);
 		id = object->getResourceId();
@@ -354,10 +354,10 @@ bool Encounter::update() {
 
 	if (_data_455BE8) {
 		if (getSharedData()->getMatteBarHeight()) {
-			_data_455BD0 = 0;
+			_data_455BD0 = false;
 		} else {
 			getCursor()->show();
-			_data_455BE8 = 0;
+			_data_455BE8 = false;
 			_data_455BF4 = 0;
 		}
 	}
@@ -416,7 +416,7 @@ bool Encounter::key(const AsylumEvent &evt) {
 		 && _data_455BD0 
 		 && !getSpeech()->getTextData()
 		 && !getSpeech()->getTextDataPos())
-			_data_455BD4 = 1;
+			_data_455BD4 = true;
 		break;
 	}
 
@@ -430,7 +430,7 @@ bool Encounter::mouse(const AsylumEvent &evt) {
 
 	case Common::EVENT_LBUTTONDOWN:
 		if (!_data_455BD8) {
-			_data_455BD8 = 1;
+			_data_455BD8 = true;
 			_rectIndex = findRect();
 
 			if (_rectIndex != -1)
@@ -443,11 +443,11 @@ bool Encounter::mouse(const AsylumEvent &evt) {
 			if (!isSpeaking())
 				choose(getKeywordIndex());
 			
-			_data_455BD8 = 0;
+			_data_455BD8 = false;
 		} else {
 			_rectIndex = -1;
 			updateDrawingStatus1(_rectIndex);
-			_data_455BD8 = 0;
+			_data_455BD8 = false;
 		}		
 		break;
 
@@ -457,7 +457,7 @@ bool Encounter::mouse(const AsylumEvent &evt) {
 		 && _data_455BD0 
 		 && !getSpeech()->getTextData()
 		 && !getSpeech()->getTextDataPos())
-			_data_455BD4 = 1;
+			_data_455BD4 = true;
 		break;
 	}
 
@@ -530,8 +530,8 @@ void Encounter::resetSpeech(uint32 keywordIndex, uint32 a2) {
 	getSpeech()->resetTextData();
 	setupPortraits();
 
-	_data_455BCC = 0;
-	_data_455B3C = 0;
+	_data_455BCC = false;
+	_data_455B3C = false;
 
 	if (keywordIndex) {
 		getSpeech()->setTextResourceId(keywordIndex + a2);
@@ -594,8 +594,8 @@ void Encounter::setupSpeechText() {
 		setupSpeech(getSpeech()->getTextResourceId(), getWorld()->font3);
 	}
 
-	_data_455BCC = 0;
-	_data_455B3C = 1;
+	_data_455BCC = false;
+	_data_455B3C = true;
 }
 
 void Encounter::setupSpeech(ResourceId textResourceId, ResourceId fontResourceId) {
@@ -604,11 +604,11 @@ void Encounter::setupSpeech(ResourceId textResourceId, ResourceId fontResourceId
 	char *text = getText()->get(textResourceId);
 
 	if (*text == '{') {
-		_data_455BDC = 1;
+		_data_455BDC = true;
 		setupEntities(true);
 		setupSpeechData(text[1], &_portrait1);
 	} else {
-		_data_455BDC = 0;
+		_data_455BDC = false;
 		setupEntities(false);
 		if (*text == '/') {
 			char *c = text + 1;
@@ -619,12 +619,35 @@ void Encounter::setupSpeech(ResourceId textResourceId, ResourceId fontResourceId
 		}
 	}
 
-	_data_455BE0 = 1;
+	_data_455BE0 = true;
 	getSpeech()->setSoundResourceId(MAKE_RESOURCE(kResourcePackSharedSound, textResourceId - _keywordIndex));
 }
 
 bool Encounter::setupSpeech(ResourceId id) {
-	error("[Encounter::setupSpeech] Not implemented!");
+	getSpeech()->setTick(0);
+	getSpeech()->setSoundResourceId(kResourceNone);
+
+	setupEntities(false);
+
+	char *text = getText()->get(id);
+	if (text[strlen(text) - 2] == 1) {
+		setupEntities(true);
+		getSpeech()->setTextResourceId(kResourceNone);
+		getSpeech()->setTextData(0);
+		getSpeech()->setTextDataPos(0);
+
+		_data_455BCC = false;
+		_data_455B3C = true;
+
+		setupPortraits();
+
+		return false;
+	}
+
+	getSpeech()->setTextResourceId(getSpeech()->getTextResourceId() + 1);
+	setupSpeechText();
+	
+	return true;
 }
 
 bool Encounter::isSpeaking() {
@@ -744,7 +767,33 @@ int32 Encounter::findRect() {
 }
 
 void Encounter::updateDrawingStatus() {
-	error("[Encounter::updateDrawingStatus] not implemented!");
+	if (checkKeywords2()) {
+		if (_rectIndex) {
+			if (_drawingStructs[0].transTableNum == -1) {
+				_drawingStructs[0].status = 1;
+				_drawingStructs[0].transTableNum = 0;
+			}
+		}
+	} else {
+		if (_drawingStructs[0].transTableNum == 3) {
+			_drawingStructs[0].status = 2;
+			_drawingStructs[0].transTableNum = 2;
+		}
+	}
+
+	if (checkKeywords()) {
+		if (_rectIndex != 1) {
+			if (_drawingStructs[1].transTableNum == -1) {
+				_drawingStructs[1].status = 1;
+				_drawingStructs[1].transTableNum = 0;
+			}
+		}
+	} else {
+		if (_drawingStructs[1].transTableNum == 3) {
+			_drawingStructs[1].status = 2;
+			_drawingStructs[1].transTableNum = 2;
+		}
+	}
 }
 
 void Encounter::updateDrawingStatus1(int32 rectIndex) {
@@ -800,12 +849,12 @@ bool Encounter::updateScreen() {
 	getText()->loadFont(getWorld()->font1);
 
 	if (!drawBackground()) {
-		_data_455BD0 = 0;
+		_data_455BD0 = false;
 	    return false;
     }
 
 	if (!drawPortraits()) {
-		_data_455BD0 = 0;
+		_data_455BD0 = false;
 
 	    if (_data_455BD4)
 	    	drawStructs();
@@ -831,7 +880,7 @@ bool Encounter::updateScreen() {
 		drawText(getSpeech()->getTextData(), getWorld()->font1, _point.y);
 
 		if (_data_455BE0) {
-			_data_455BE0 = 0;
+			_data_455BE0 = false;
 
 			// Check resources
 			if (!_data_455BDC && !_objectId1 && !_objectId2 && !_actorIndex)
@@ -849,7 +898,7 @@ bool Encounter::updateScreen() {
 	if (_data_455BF4)
 		_data_455BF4 = 1;
 
-	_data_455BD0 = 1;
+	_data_455BD0 = true;
 
 	return false;
 }
