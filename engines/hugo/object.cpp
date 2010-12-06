@@ -217,31 +217,26 @@ void ObjectHandler::freeObjects() {
 	// Free all sequence lists and image data
 	for (int i = 0; i < _numObj; i++) {
 		object_t *obj = &_objects[i];
-		debugC(1, kDebugObject, "\tObject %d: %d Sequences", i, obj->seqNumb);
-
-		debugC(1, kDebugObject, "\tObject %d->currImagePtr: %p", i, (void *) obj->currImagePtr);
-		// FIXME - currImagePtr can be an alias into one of obj->seqList[].seqPtr so need to avoid freeing in that case.
-		//if (obj->currImagePtr != 0 && obj->currImagePtr != seq) {
-		//	free(obj->currImagePtr);
-		//	obj->currImagePtr = 0;
-		//}
-
-		for (int j = 0; j < obj->seqNumb; j++) {    // for each sequence
-			debugC(1, kDebugObject, "\tSequence %d: seqlist %p", j, (void *) &obj->seqList[j]);
-			debugC(1, kDebugObject, "\tSequence %d: seqPtr %p", j, (void *) obj->seqList[j].seqPtr);
-			seq_t *seq = obj->seqList[j].seqPtr;    // Free image
-			if (seq == 0)                           // Failure during database load
+		for (int j = 0; j < obj->seqNumb; j++) {
+			seq_t *seq = obj->seqList[j].seqPtr;
+			seq_t *next;
+			if (seq == 0) // Failure during database load
 				break;
-			do {
-				debugC(1, kDebugObject, "\t\tseq->ImagePtr: %p", seq->imagePtr);
+			if (seq->imagePtr != 0) {
+				free(seq->imagePtr);
+				seq->imagePtr = 0;
+			}
+			seq = seq->nextSeqPtr;
+			while (seq != obj->seqList[j].seqPtr) {
 				if (seq->imagePtr != 0) {
 					free(seq->imagePtr);
 					seq->imagePtr = 0;
 				}
-				seq = seq->nextSeqPtr;
-			} while (seq != obj->seqList[j].seqPtr);
-			free(seq);                              // Free sequence record
-			seq = 0;
+				next = seq->nextSeqPtr;
+				free(seq);
+				seq = next;
+			}
+			free(seq);
 		}
 	}
 }
