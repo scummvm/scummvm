@@ -30,6 +30,10 @@
 #include "common/file.h"
 #include "common/str.h"
 
+namespace Common {
+	class Serializer;
+}
+
 namespace Mohawk {
 
 // These are left as uint16 currently, rather than
@@ -66,7 +70,7 @@ struct MystVariables {
 	   1  = Marker Switch Near Clock Tower
 	   2  = Marker Switch on Dock
 	   3  = Marker Switch Near Ship Pool
-	   4  = Marker Switch Near Cogs
+	   4  = Marker Switch Near Gears
 	   5  = Marker Switch Near Generator Room
 	   6  = Marker Switch Near Stellar Observatory
 	   7  = Marker Switch Near Rocket Ship
@@ -75,7 +79,7 @@ struct MystVariables {
 	   10 = Cabin Gas Valve Position
 	   11 = Clock Tower Hour Hand Position
 	   12 = Clock Tower Minute Hand Position
-	   13 = Clock Tower Puzzle Solved / Cogs Open
+	   13 = Clock Tower Puzzle Solved / Gears Open
 	   14 = Clock Tower Gear Bridge
 	   15 = Generator Breaker State
 	   16 = Generator Button State
@@ -113,16 +117,54 @@ struct MystVariables {
 	   48 = Unknown #7
 	   49 = Unknown #8
 	*/
-	uint16 myst_vars[50];
-
 	struct Myst {
+		uint32 cabinMarkerSwitch;
+		uint32 clockTowerMarkerSwitch;
+		uint32 dockMarkerSwitch;
+		uint32 poolMarkerSwitch;
+		uint32 gearsMarkerSwitch;
+		uint32 generatorMarkerSwitch;
+		uint32 observatoryMarkerSwitch;
+		uint32 rocketshipMarkerSwitch;
+		uint16 greenBookState;
+		uint16 shipState;
+		uint16 cabinValvePosition;
+		uint16 clockTowerHourPosition;
+		uint16 clockTowerMinutePosition;
+		uint16 gearsOpen;
+		uint16 clockTowerBridgeOpen;
 		uint16 generatorBreakers;
 		uint16 generatorButtons;
 		uint16 generatorVoltage;
 		uint16 libraryBookcaseDoor;
+		uint16 imagerSelection;
+		uint16 imagerActive;
+		uint16 u0;
+		uint16 u1;
+		uint16 u2;
+		uint16 u3;
+		uint16 towerRotationAngle;
+		uint16 courtyardImageBoxes;
+		uint16 cabinPilotLightLit;
+		uint16 observatoryDaySetting;
+		uint16 observatoryLights;
+		uint16 observatoryMonthSetting;
+		uint16 observatoryTimeSetting;
+		uint16 observatoryYearSetting;
+		uint16 observatoryDayTarget;
+		uint16 observatoryMonthTarget;
+		uint16 observatoryTimeTarget;
+		uint16 observatoryYearTarget;
+		uint16 cabinSafeCombination;
+		uint16 treePosition;
+		uint16 u4;
+		uint16 u5;
 		uint16 rocketSliderPosition[5];
+		uint16 u6;
+		uint16 u7;
+		uint16 u8;
+		uint16 u9;
 	} myst;
-
 
 	/* 7 Channelwood Specific Variables :
 	    0 = Water Pump Bridge State
@@ -133,7 +175,15 @@ struct MystVariables {
 	    5 = Achenar's Holoprojector Selection
 	    6 = Lower Walkway to Upper Walkway Spiral Stair Upper Door State
 	*/
-	uint16 channelwood_vars[7];
+	struct Channelwood {
+		uint32 waterPumpBridgeState;
+		uint32 elevatorState;
+		uint32 stairsLowerDoorState;
+		uint32 pipeState;
+		uint16 waterValveStates;
+		uint16 holoprojectorSelection;
+		uint16 stairsUpperDoorState;
+	} channelwood;
 
 	/* 8 Mech Specific Variables :
 	    0 = Achenar's Room Secret Panel State
@@ -145,7 +195,13 @@ struct MystVariables {
 	    6 = Code Lock Shape #3
 	    7 = Code Lock Shape #4 (Right)
 	*/
-	uint16 mech_vars[8];
+	struct Mechanical {
+		uint16 achenarPanelState;
+		uint16 sirrusPanelState;
+		uint16 staircaseState;
+		uint16 elevatorRotation;
+		uint16 codeShape[4];
+	} mechanical;
 
 	/* 18 Selenitic Specific Variables :
 	    0 = Sound Pickup At Water Pool
@@ -193,27 +249,40 @@ struct MystVariables {
 	    9 = Lighthouse Generator Power Level(?)
 	   10 = Lighthouse Generator Power...?
 	   11 = Lighthouse Generator Power Good
-	   12 = Lighthouse Generator Power #1 ?
+	   12 = Lighthouse Generator Power #1?
 	   13 = Lighthouse Generator Power #2?
 	*/
-	uint16 stoneship_vars[14];
+	struct Stoneship {
+		uint16 lightState;
+		uint16 u0;
+		uint16 u1;
+		uint16 pumpState;
+		uint16 trapdoorState;
+		uint16 chestWaterState;
+		uint16 chestValveState;
+		uint16 chestOpenState;
+		uint16 trapdoorKeyState;
+		uint16 generatorPowerLevel[5];
+	} stoneship;
 
 	/* 1 Dunny Specific Variable :
 	    0 = Outcome State
 	*/
-	uint16 dunny_vars[1];
+	struct Dni {
+		uint16 outcomeState;
+	} dni;
 
 	// The values in these regions seem to be lists of resource IDs
 	// which correspond to VIEW resources i.e. cards
-	uint16 unknown_myst[31];
+	uint16 unknownMyst[31];
 
-	uint16 unknown_channelwood[37];
+	uint16 unknownChannelwood[37];
 
-	uint16 unknown_mech[18];
+	uint16 unknownMech[18];
 
-	uint16 unknown_selenitic[30];
+	uint16 unknownSelenitic[30];
 
-	uint16 unknown_stoneship[22];
+	uint16 unknownStoneship[22];
 };
 
 class MohawkEngine_Myst;
@@ -227,9 +296,7 @@ public:
 	bool loadGame(const Common::String &);
 	bool saveGame(const Common::String &);
 	void deleteSave(const Common::String &);
-
-	void initMystVariables(MystVariables *_tv);
-	void debug_printMystVariables(MystVariables *_tv);
+	void syncGameState(Common::Serializer &s);
 
 	MystVariables *_v;
 private:
