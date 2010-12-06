@@ -55,7 +55,6 @@ struct ResourceEntry {
 class ResourcePack {
 public:
 	ResourceEntry *get(uint16 index);
-	int count();
 
 protected:
 	ResourcePack(Common::String filename);

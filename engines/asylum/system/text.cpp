@@ -171,17 +171,17 @@ void Text::draw(int32 x, int32 y, ResourceId resourceId) {
 void Text::draw(const char *text, ResourceId fontResourceId, int32 y) {
 	if (text) {
 		loadFont(fontResourceId);
-		draw(true, 20, y, 16, 600, text);
+		draw(kTextCenter, 20, y, 16, 600, text);
 	}
 }
 
-void Text::draw(bool isCentered, int32 x, int32 y, int32 spacing, int32 width, const char *text) {
-	draw(0, 99, isCentered, x, y, spacing, width, text);
+uint32 Text::draw(TextCentering centering, int32 x, int32 y, int32 spacing, int32 width, const char *text) {
+	return draw(0, 99, centering, x, y, spacing, width, text);
 }
 
-void Text::draw(int32 a1, int32 a2, bool isCentered, int32 x, int32 y, int32 spacing, int32 width, const char *text) {
+uint32 Text::draw(int32 a1, int32 a2, TextCentering centering, int32 x, int32 y, int32 spacing, int32 width, const char *text) {
 	if (!text || !*text)
-		return;
+		return 0;
 
 	bool drawText = false;
 	int32 charWidth = 0;
@@ -190,6 +190,8 @@ void Text::draw(int32 a1, int32 a2, bool isCentered, int32 x, int32 y, int32 spa
 
 	const char *string = text;
 	const char *endText = text;
+
+	uint32 printed = 0;
 
 	for (;;) {
 label_start:
@@ -201,14 +203,23 @@ label_start:
 			char currentChar = *endText;
 
 			if (index >= a1 && index <= (a1 + 2)) {
-				if (isCentered) {
+				switch (centering) {
+				default:
+				case kTextCalculate:
+					break;
+
+				case kTextCenter:
 					drawCentered(x, y, width, endText - string, string);
-				} else {
+					break;
+
+				case kTextNormal:
 					setPosition(x, y);
 					draw(text, endText - text);
+					break;
 				}
 
 				y += spacing;
+				++printed;
 			}
 
 			++index;
@@ -271,6 +282,8 @@ label_start:
 		endText = txt;
 		drawText = true;
 	}
+
+	return printed;
 }
 
 void Text::drawCentered(int32 x, int32 y, int32 width, const char *text) {

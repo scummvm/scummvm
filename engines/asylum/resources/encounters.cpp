@@ -58,7 +58,7 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_value1 = 0;
 	_tick = 0;
 	_data_455B14 = 0;
-	_data_455B3C = false;
+	_data_455B3C = 0;
 	_data_455B70 = 0;
 	_data_455BCC = false;
 	_data_455BD0 = false;
@@ -328,7 +328,7 @@ bool Encounter::init() {
 		_data_455BE0 = false;
 		_data_455BE4 = false;
 		_data_455BCC = false;
-		_data_455B3C = true;
+		_data_455B3C = 1;
 		_rectIndex = -1;
 		_value1 = 0;
 		_data_455BF4 = 0;
@@ -687,7 +687,7 @@ void Encounter::resetSpeech(uint32 keywordIndex, uint32 a2) {
 	setupPortraits();
 
 	_data_455BCC = false;
-	_data_455B3C = false;
+	_data_455B3C = 1;
 
 	if (keywordIndex) {
 		getSpeech()->setTextResourceId(keywordIndex + a2);
@@ -751,7 +751,7 @@ void Encounter::setupSpeechText() {
 	}
 
 	_data_455BCC = false;
-	_data_455B3C = true;
+	_data_455B3C = 1;
 }
 
 void Encounter::setupSpeech(ResourceId textResourceId, ResourceId fontResourceId) {
@@ -793,7 +793,7 @@ bool Encounter::setupSpeech(ResourceId id) {
 		getSpeech()->setTextDataPos(0);
 
 		_data_455BCC = false;
-		_data_455B3C = true;
+		_data_455B3C = 1;
 
 		setupPortraits();
 
@@ -1119,10 +1119,27 @@ void Encounter::drawText(char *text, ResourceId font, int32 y) {
 	if (!text)
 		return;
 
-	//int width = _background.rect.width() - _portrait1.rect.width() - _portrait2.rect.width() - 20;
-	//int x = _point.x + _portrait1.rect.width() + 10;
+	int width = _background.rect.width() - _portrait1.rect.width() - _portrait2.rect.width() - 20;
+	int x = _point.x + _portrait1.rect.width() + 10;
 
-	error("[Encounter::drawText] not implemented!");
+	getText()->loadFont(font);
+
+	if (_data_455BCC) {
+		if (_data_455B3C != 1 && _tick < _vm->getTick()) {
+			_tick = _vm->getTick() + 1000 * getResource()->get(getSpeech()->getSoundResourceId())->size / 11025 / _data_455B3C;
+
+			if ((_data_455BF0 + 8) < _data_455B70)
+				_data_455BF0 += 8;
+		}
+	} else {
+		_data_455BCC = true;
+		_data_455B70 = getText()->draw(kTextCalculate, x, y, 16, width, text);
+		_data_455B3C = _data_455B70 / 8 + 1;
+		_data_455BF0 = 0;
+		_tick = _vm->getTick() + 1000 * getResource()->get(getSpeech()->getSoundResourceId())->size / 11025 / _data_455B3C;
+	}
+
+	getText()->draw(_data_455BF0, 7, kTextCenter, x, y, 16, width, text);
 }
 
 void Encounter::drawScreen() {
