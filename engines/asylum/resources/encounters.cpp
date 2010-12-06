@@ -209,7 +209,7 @@ void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2
 
 	// Original engine saves the main event handler (to be restored later)
 	_index = encounterIndex;
-	_item = &_items[encounterIndex];
+	_item = &_items[_index];
 	_objectId1 = objectId1;
 	_objectId2 = objectId2;
 	_actorIndex = actorIndex;
@@ -234,6 +234,37 @@ void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2
 
 	// Setup encounter event handler
 	_vm->switchEventHandler(this);
+}
+
+void Encounter::exit() {
+	setVariable(1, 32767);
+	initScript(_item->scriptResourceId);
+	_flag3 = true;
+	runScript();
+	
+	setupEntities(true);
+
+	++_item->value;
+	// Original saves the item back here
+
+	// Update flags
+	_flag6 = false;
+	getSharedData()->setFlag(kFlag3, true);
+
+	if (_flag2)
+		_flag2 = false;
+	else
+		_flag1 = true;
+
+	if (_flag5)
+		getScene()->getActor()->updateStatus(kActorStatusDisabled);
+
+	_flag5 = false;
+
+	if (getSound()->getMusicVolume() != Config.musicVolume)
+		getSound()->setMusicVolume(Config.musicVolume);
+
+	_vm->switchEventHandler(getScene());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -672,7 +703,48 @@ bool Encounter::isSpeaking() {
 // Drawing
 //////////////////////////////////////////////////////////////////////////
 bool Encounter::drawBackground() {
-	error("[Encounter::drawBackground] not implemented!");
+	if (Config.performance > 1) {
+		if (_vm->isGameFlagSet(kGameFlag528)) {
+			Common::Point origin;
+			
+			getScreen()->addGraphicToQueueCrossfade(_background.resourceId,
+			                                        _background.frameIndex,
+			                                        _point,
+			                                        getWorld()->getObjectById((ObjectId)1763)->getResourceId(),
+			                                        origin,
+			                                        _background.transTableNum);
+		} else {
+			Common::Point origin(getWorld()->xLeft, getWorld()->yTop);
+			
+			getScreen()->addGraphicToQueueCrossfade(_background.resourceId,
+			                                        _background.frameIndex,
+			                                        _point,
+			                                        getWorld()->backgroundImage,
+			                                        origin,
+			                                        _background.transTableNum);
+		}		
+	} else {
+		getScreen()->draw(_background.resourceId, _background.frameIndex, _point.x, _point.y, 0);		
+	}
+
+	if (_data_455BE4) {
+		--_background.frameIndex;
+
+		if (_background.frameIndex - 1 < 0) {
+			_background.frameIndex = 0;
+			exit();
+		}
+
+		return false;
+	}
+
+	if (_background.frameIndex < _background.frameCount - 1) {
+		++_background.frameIndex;
+
+		return false;
+	}
+
+	return true;
 }
 
 bool Encounter::drawPortraits() {
@@ -1007,6 +1079,8 @@ void Encounter::runScript() {
 		case 12:
 			_items[entry.param1].keywords[findKeyword(&_items[entry.param1], entry.param2)] |= kEncounterArray4000;
 			_items[entry.param1].keywords[findKeyword(&_items[entry.param1], entry.param2)] |= kEncounterArray8000;
+
+			// Original saves the item back here
 			break;
 
 		case 13:
