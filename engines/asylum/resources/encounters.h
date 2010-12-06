@@ -210,6 +210,7 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc	
+	void exit();
 	void setupEntities(bool type4);
 	int32 findRect();
 	void updateDrawingStatus();
