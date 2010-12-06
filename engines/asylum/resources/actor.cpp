@@ -518,7 +518,7 @@ void Actor::update() {
 		break;
 
 	case kActorStatus8:
-		if (_vm->encounter()->getFlag6()
+		if (_vm->encounter()->isRunning()
 		 || !_soundResourceId
 		 || getSound()->isPlaying(_soundResourceId)) {
 			_frameIndex = (_frameIndex + 1) % _frameCount;
@@ -613,7 +613,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 		break;
 
 	case kActorStatus9:
-		if (_vm->encounter()->getFlag6())
+		if (_vm->encounter()->isRunning())
 			return;
 
 		if (_vm->getRandomBit() == 1 && isDefaultDirection(15))
@@ -1186,7 +1186,7 @@ void Actor::updateStatusEnabled() {
 
 			if (_vm->isGameFlagNotSet(kGameFlagScriptProcessing)
 			 && isVisible()
-			 && !_vm->encounter()->getFlag6()
+			 && !_vm->encounter()->isRunning()
 			 && !getSpeech()->getSoundResourceId()) {
 				if (_vm->getRandom(100) < 50) {
 					if (getWorld()->chapter == kChapter13)
