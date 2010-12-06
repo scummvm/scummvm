@@ -50,7 +50,7 @@ namespace Asylum {
 
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_index(0), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _actorIndex(kActorInvalid),
-	_flag1(false), _flag2(false), _flag3(false), _flag4(false), _flag5(false), _flag6(false) {
+	_flag1(false), _flag2(false), _flag3(false), _flag4(false), _disablePlayerOnExit(false), _isRunning(false) {
 
 	// TODO init rest of members
 
@@ -241,14 +241,14 @@ void Encounter::exit() {
 	initScript(_item->scriptResourceId);
 	_flag3 = true;
 	runScript();
-	
+
 	setupEntities(true);
 
 	++_item->value;
 	// Original saves the item back here
 
 	// Update flags
-	_flag6 = false;
+	_isRunning = false;
 	getSharedData()->setFlag(kFlag3, true);
 
 	if (_flag2)
@@ -256,10 +256,10 @@ void Encounter::exit() {
 	else
 		_flag1 = true;
 
-	if (_flag5)
+	if (_disablePlayerOnExit)
 		getScene()->getActor()->updateStatus(kActorStatusDisabled);
 
-	_flag5 = false;
+	_disablePlayerOnExit = false;
 
 	if (getSound()->getMusicVolume() != Config.musicVolume)
 		getSound()->setMusicVolume(Config.musicVolume);
@@ -303,7 +303,7 @@ bool Encounter::init() {
 		getSound()->setMusicVolume(Config.musicVolume - 500);
 
 	if (!getSharedData()->getMatteBarHeight()) {
-		_flag6 = true;
+		_isRunning = true;
 		_data_455BD4 = false;
 		_data_455BD8 = false;
 		_data_455BDC = false;
@@ -314,7 +314,7 @@ bool Encounter::init() {
 		_rectIndex = -1;
 		_value1 = 0;
 		_data_455BF4 = 0;
-		_data_455BF8 = false;
+		_data_455BF8 = 0;
 		_data_455B14 = -1;
 
 		getSpeech()->resetTextData();
@@ -346,10 +346,10 @@ bool Encounter::update() {
 
 	if (_objectId3) {
 		_data_455BD0 = false;
-		
+
 		Object *object = getWorld()->getObjectById(_objectId3);
 		id = object->getResourceId();
-		
+
 		if (object->getFrameIndex() == object->getFrameCount() - 1) {
 			switch (getVariable(3)) {
 			default:
@@ -398,13 +398,14 @@ bool Encounter::update() {
 			_data_455BF4 = 2;
 			runScript();
 		}
-		bool doScript;
-		if ((getSpeech()->getSoundResourceId() 
-		 && !getSound()->isPlaying(getSpeech()->getSoundResourceId()) 
+
+		bool doScript = false;
+		if ((getSpeech()->getSoundResourceId()
+		 && !getSound()->isPlaying(getSpeech()->getSoundResourceId())
 		 && !_data_455BE0)
 		 || (getSpeech()->getTick() && tick >= getSpeech()->getTick()))
 			doScript = true;
-		    
+
 		if (!getSharedData()->getMatteBarHeight() && doScript && _flag4) {
 			if (!setupSpeech(id))
 			    runScript();
@@ -415,8 +416,8 @@ bool Encounter::update() {
 	if (!getSharedData()->getFlag(kFlagRedraw)) {
 		if (updateScreen())
 		    return true;
-	
-		getSharedData()->setFlag(kFlagRedraw, true);		
+
+		getSharedData()->setFlag(kFlagRedraw, true);
 	}
 
 	if (tick >= getSharedData()->getNextScreenUpdate() && getSharedData()->getFlag(kFlagRedraw)) {
@@ -429,7 +430,7 @@ bool Encounter::update() {
 		getSharedData()->setFlag(kFlagRedraw, false);
 		getSharedData()->setNextScreenUpdate(tick + 55);
 	}
-	
+
 	return true;
 }
 
@@ -443,8 +444,8 @@ bool Encounter::key(const AsylumEvent &evt) {
 		break;
 
 	case Common::KEYCODE_ESCAPE:
-		if (!isSpeaking() 
-		 && _data_455BD0 
+		if (!isSpeaking()
+		 && _data_455BD0
 		 && !getSpeech()->getTextData()
 		 && !getSpeech()->getTextDataPos())
 			_data_455BD4 = true;
@@ -473,19 +474,19 @@ bool Encounter::mouse(const AsylumEvent &evt) {
 		if (_rectIndex == -1) {
 			if (!isSpeaking())
 				choose(getKeywordIndex());
-			
+
 			_data_455BD8 = false;
 		} else {
 			_rectIndex = -1;
 			updateDrawingStatus1(_rectIndex);
 			_data_455BD8 = false;
-		}		
+		}
 		break;
 
-			
+
 	case Common::EVENT_RBUTTONDOWN:
-		if (!isSpeaking() 
-		 && _data_455BD0 
+		if (!isSpeaking()
+		 && _data_455BD0
 		 && !getSpeech()->getTextData()
 		 && !getSpeech()->getTextDataPos())
 			_data_455BD4 = true;
@@ -677,7 +678,7 @@ bool Encounter::setupSpeech(ResourceId id) {
 
 	getSpeech()->setTextResourceId(getSpeech()->getTextResourceId() + 1);
 	setupSpeechText();
-	
+
 	return true;
 }
 
@@ -706,7 +707,7 @@ bool Encounter::drawBackground() {
 	if (Config.performance > 1) {
 		if (_vm->isGameFlagSet(kGameFlag528)) {
 			Common::Point origin;
-			
+
 			getScreen()->addGraphicToQueueCrossfade(_background.resourceId,
 			                                        _background.frameIndex,
 			                                        _point,
@@ -715,16 +716,16 @@ bool Encounter::drawBackground() {
 			                                        _background.transTableNum);
 		} else {
 			Common::Point origin(getWorld()->xLeft, getWorld()->yTop);
-			
+
 			getScreen()->addGraphicToQueueCrossfade(_background.resourceId,
 			                                        _background.frameIndex,
 			                                        _point,
 			                                        getWorld()->backgroundImage,
 			                                        origin,
 			                                        _background.transTableNum);
-		}		
+		}
 	} else {
-		getScreen()->draw(_background.resourceId, _background.frameIndex, _point.x, _point.y, 0);		
+		getScreen()->draw(_background.resourceId, _background.frameIndex, _point.x, _point.y, 0);
 	}
 
 	if (_data_455BE4) {
@@ -749,7 +750,7 @@ bool Encounter::drawBackground() {
 
 bool Encounter::drawPortraits() {
 	bool ret = true;
-	
+
 	if (_data_455BD4) {
 		_portrait1.transTableMax = 0;
 		_portrait2.transTableMax = 0;
@@ -822,7 +823,7 @@ bool Encounter::drawPortraits() {
 
 		_portrait2.frameIndex %= _portrait2.frameCount;
 	}
-	
+
 	if (_data_455BD4)
 		if (_portrait1.transTableNum == _portrait1.transTableMax
 		 && _portrait2.transTableNum == _portrait2.transTableMax)
@@ -835,7 +836,7 @@ void Encounter::drawStructs() {
 	// Drawing structure 1
 	if (_drawingStructs[0].transTableNum < -1 || _drawingStructs[0].transTableNum > 3)
 		error("[Encounter::drawStructs] Something got <redacted> wrong!");
-	
+
 	if (checkKeywords2() || _drawingStructs[0].transTableNum > -1) {
 		int32 val = _drawingStructs[0].transTableNum;
 
@@ -858,10 +859,10 @@ void Encounter::drawStructs() {
 			                  _drawingStructs[0].point2.y,
 			                  0,
 			                  0);
-				
+
 			_drawingStructs[0].status = 0;
 			break;
-				
+
 		case 0:
 		case 1:
 		case 2:
@@ -878,7 +879,7 @@ void Encounter::drawStructs() {
 				--_drawingStructs[0].transTableNum;
 
 			break;
-				
+
 		case 3:
 			getScreen()->draw(_drawingStructs[0].resourceId,
 			                  _drawingStructs[0].frameIndex,
@@ -917,10 +918,10 @@ void Encounter::drawStructs() {
 			                  _drawingStructs[1].point2.y,
 			                  0,
 			                  0);
-				
+
 			_drawingStructs[1].status = 0;
 			break;
-				
+
 		case 0:
 		case 1:
 		case 2:
@@ -937,7 +938,7 @@ void Encounter::drawStructs() {
 				--_drawingStructs[1].transTableNum;
 
 			break;
-				
+
 		case 3:
 			getScreen()->draw(_drawingStructs[1].resourceId,
 			                  _drawingStructs[1].frameIndex,
@@ -956,7 +957,7 @@ void Encounter::drawDialog() {
 
 	if (_data_455BF8 >= 50)
 		return;
-	
+
 	int32 counter = 0;
 
 	for (uint32 i = _data_455BF8; i < ARRAYSIZE(_keywordIndexes); i++) {
@@ -964,10 +965,10 @@ void Encounter::drawDialog() {
 			return;
 
 		int32 index = _keywordIndexes[i];
-		
+
 		if (index < 0)
 			continue;
-		
+
 		if ((_item->keywords[index] & KEYWORD_MASK) > 0 && (BYTE1(_keywordIndexes[i]) & 0x80)) {
 
 			if (BYTE1(_keywordIndexes[i]) & 0x20)
@@ -980,7 +981,7 @@ void Encounter::drawDialog() {
 
 			if (getKeywordIndex() == index)
 				getScreen()->fillRect(x -1, y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackShared, 3681)), 18, 0);
-				
+
 			getText()->setPosition(x, y);
 			getText()->draw(MAKE_RESOURCE(kResourcePackShared, 3681));
 
@@ -996,7 +997,7 @@ void Encounter::drawText(char *text, ResourceId font, int32 y) {
 
 	//int width = _background.rect.width() - _portrait1.rect.width() - _portrait2.rect.width() - 20;
 	//int x = _point.x + _portrait1.rect.width() + 10;
-	
+
 	error("[Encounter::drawText] not implemented!");
 }
 
@@ -1167,7 +1168,7 @@ bool Encounter::updateScreen() {
 
 	    if (_data_455BD4)
 	    	drawStructs();
-	    
+
 	    return false;
     }
 
@@ -1181,11 +1182,11 @@ bool Encounter::updateScreen() {
 
 			if (_rectIndex == -1 && findRect() == -1)
 				updateFromRect(-1);
-			
+
 			return false;
 		}
 
-		drawText(getSpeech()->getTextDataPos(), getWorld()->font3, _point.y); 
+		drawText(getSpeech()->getTextDataPos(), getWorld()->font3, _point.y);
 		drawText(getSpeech()->getTextData(), getWorld()->font1, _point.y);
 
 		if (_data_455BE0) {

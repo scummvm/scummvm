@@ -666,7 +666,7 @@ void Special::chapter9(Object *object, ActorIndex actorIndex) {
 void Special::playChapterSound(Object *object, ActorIndex actorIndex) {
 	ResourceId id = getResourceId(object, actorIndex);
 
-	if (_vm->encounter()->getFlag6())
+	if (_vm->encounter()->isRunning())
 		return;
 
 	if (id != kResourceNone && getSound()->isPlaying(id))

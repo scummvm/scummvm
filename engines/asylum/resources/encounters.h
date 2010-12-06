@@ -51,8 +51,8 @@ public:
 	bool getFlag1() { return _flag1; }
 	void setFlag3(bool state) { _flag3 = state; }
 	bool getFlag3() { return _flag3; }
-	void setFlag5(bool state) { _flag5 = state; }
-	bool getFlag6() { return _flag6; }
+	void disablePlayerOnExit(bool state) { _disablePlayerOnExit = state; }
+	bool isRunning() { return _isRunning; }
 
 private:
 	AsylumEngine *_vm;
@@ -150,15 +150,15 @@ private:
 	bool _data_455BE4;
 	bool _data_455BE8;
 	uint32 _data_455BF4;
-	bool _data_455BF8;
+	uint32 _data_455BF8;
 
 	// Internal flags
 	bool _flag1;
 	bool _flag2;
 	bool _flag3;
 	bool _flag4;
-	bool _flag5;
-	bool _flag6;
+	bool _disablePlayerOnExit;
+	bool _isRunning;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
@@ -189,7 +189,7 @@ private:
 	bool checkKeywords();
 	bool checkKeywords2();
 	void updateFromRect(int32 rectIndex);
-	
+
 	//////////////////////////////////////////////////////////////////////////
 	// Speech
 	void resetSpeech(uint32 a1, uint32 a2);
@@ -209,7 +209,7 @@ private:
 	void drawText(char *text, ResourceId font, int32 y);
 
 	//////////////////////////////////////////////////////////////////////////
-	// Misc	
+	// Misc
 	void exit();
 	void setupEntities(bool type4);
 	int32 findRect();

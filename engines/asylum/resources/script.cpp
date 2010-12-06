@@ -756,10 +756,10 @@ END_OPCODE
 IMPLEMENT_OPCODE(RunEncounter)
 	Encounter *encounter = _vm->encounter();
 
-	encounter->setFlag5(cmd->param5);
+	encounter->disablePlayerOnExit(cmd->param5);
 
 	if (cmd->param6) {
-		if (encounter->getFlag6())
+		if (encounter->isRunning())
 			_lineIncrement = 1;
 		else
 			cmd->param6 = 0;
