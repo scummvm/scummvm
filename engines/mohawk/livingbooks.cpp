@@ -2802,7 +2802,7 @@ void LBLiveTextItem::drawWord(uint word, uint yPos) {
 }
 
 void LBLiveTextItem::handleMouseDown(Common::Point pos) {
-	if (_neverEnabled || !_enabled || _globalEnabled || _currentPhrase != 0xFFFF)
+	if (_neverEnabled || !_enabled || !_globalEnabled || _currentPhrase != 0xFFFF)
 		return LBItem::handleMouseDown(pos);
 
 	pos.x -= _rect.left;
