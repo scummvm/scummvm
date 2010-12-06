@@ -160,6 +160,13 @@ public:
 	bool updateSceneCoordinates(int32 targetX, int32 targetY, int32 val, bool checkSceneCoords = false, int32 *param = NULL);
 
 	/**
+	 * Updates the screen
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	bool updateScreen();
+	
+	/**
 	 * Determine if the supplied point intersects an action area's active region.
 	 *
 	 * @param pt The point.
@@ -198,13 +205,6 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Scene update
 	//////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Updates the screen
-	 *
-	 * @return true if it succeeds, false if it fails.
-	 */
-	bool updateScreen();
 
 	/**
 	 * Loop through the various update blocks (actors, objects, mouse, music, sfx, coordinates), then process the current action script.
