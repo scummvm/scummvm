@@ -137,10 +137,12 @@ private:
 	ActorIndex _actorIndex;
 
 	uint32 _value1;
+	uint32 _tick;
 
 	// Internal data
 	int32 _data_455B14;
 	bool _data_455B3C;
+	uint32 _data_455B70;
 	bool _data_455BCC;
 	bool _data_455BD0;
 	bool _data_455BD4;
@@ -149,6 +151,7 @@ private:
 	bool _data_455BE0;
 	bool _data_455BE4;
 	bool _data_455BE8;
+	uint32 _data_455BF0;
 	uint32 _data_455BF4;
 	uint32 _data_455BF8;
 

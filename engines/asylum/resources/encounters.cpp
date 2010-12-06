@@ -52,7 +52,25 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_index(0), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _actorIndex(kActorInvalid),
 	_flag1(false), _flag2(false), _flag3(false), _flag4(false), _disablePlayerOnExit(false), _isRunning(false) {
 
-	// TODO init rest of members
+	memset(&_keywordIndexes, 0, sizeof(_keywordIndexes));
+	_rectIndex = -1;
+
+	_value1 = 0;
+	_tick = 0;
+	_data_455B14 = 0;
+	_data_455B3C = false;
+	_data_455B70 = 0;
+	_data_455BCC = false;
+	_data_455BD0 = false;
+	_data_455BD4 = false;
+	_data_455BD8 = false;
+	_data_455BDC = false;
+	_data_455BE0 = false;
+	_data_455BE4 = false;
+	_data_455BE8 = false;
+	_data_455BF0 = 0;
+	_data_455BF4 = 0;
+	_data_455BF8 = 0;
 
 	load();
 }
@@ -533,26 +551,132 @@ uint32 Encounter::findKeyword(EncounterItem *item, int16 keyword) {
 }
 
 int32 Encounter::getKeywordIndex() {
-	error("[Encounter::getKeywordIndex] Not implemented!");
+	Common::Point mousePos = getCursor()->position();
+
+	uint32 counter = 0;
+	for (uint i = _data_455BF8; i < ARRAYSIZE(_keywordIndexes); i++) {
+		int32 index = _keywordIndexes[i];
+
+		if (counter / 3 >= 8)
+			break;
+
+		if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
+			int32 x = _drawingStructs[0].point1.x + 144 * (counter % 3) + _point.x + (counter % 3) + _portrait1.rect.width() + 15;
+			int32 y = 16 * counter / 3 + _point.y + 5;
+
+			if (mousePos.x >= x && mousePos.x <= (x + getText()->getWidth(MAKE_RESOURCE(kResourcePackShared, 3681)))
+			 && mousePos.y >= y && mousePos.y <= (y + 16))
+				return i;
+
+			++counter;
+		}
+	}
+
+	return -1;
 }
 
 void Encounter::choose(int32 index) {
 	if (_flag4 || index == -1)
 		return;
 
-	error("[Encounter::choose] Not implemented!");
+	if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
+
+		_value1 = (_item->keywords[index] & KEYWORD_MASK);
+		setVariable(1, _value1);
+
+		if (strcmp("Goodbye", getText()->get(MAKE_RESOURCE(kResourcePackShared, 3681 + _value1))))
+			if (_index != 79)
+				BYTE1(_item->keywords[index]) |= 0x20;
+
+		initScript(_item->scriptResourceId);
+		runScript();
+	}
 }
 
 bool Encounter::checkKeywords() {
-	error("[Encounter::checkKeywords] Not implemented!");
+	if (_data_455B14 == -1 || _data_455B14 + 1 >= 50)
+		return false;
+
+	for (uint32 i = _data_455B14 + 1; i < ARRAYSIZE(_keywordIndexes); i++) {
+		int32 index = _keywordIndexes[i];
+
+		if (index < 0)
+			continue;
+
+		if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80))
+			return true;
+	}
+
+	return false;
 }
 
 bool Encounter::checkKeywords2() {
-	error("[Encounter::checkKeywords2] Not implemented!");
+	for (uint32 i = 0; i < _data_455BF8; i++) {
+		int32 index = _keywordIndexes[i];
+
+		if (index < 0)
+			continue;
+
+		if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80))
+			return true;
+	}
+
+	return false;
 }
 
 void Encounter::updateFromRect(int32 rectIndex)  {
-	error("[Encounter::updateFromRect] Not implemented!");
+	if (rectIndex) {
+		if (rectIndex == 1 && (_data_455B14 + 1) < 50) {
+			bool cont = false;
+
+			for (uint32 i = _data_455B14 + 1; i < ARRAYSIZE(_keywordIndexes); i++) {
+				int32 index = _keywordIndexes[i];
+
+				if (index < 0)
+					continue;
+
+				if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
+					cont = true;
+					break;
+				}
+			}
+
+			if (!cont)
+				return;
+
+			uint32 counter = 0;
+			for (uint32 i = _data_455BF8 + 1; i < ARRAYSIZE(_keywordIndexes); i++) {
+				int32 index = _keywordIndexes[i];
+
+				if (counter == 3)
+					break;
+
+				if (index < 0)
+					continue;
+
+				if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
+					_data_455BF8 = i;
+					++counter;
+				}
+			}
+		}
+	} else {
+		uint32 counter = 0;
+		for (uint32 i = _data_455BF8 - 1; i > -1; i--) {
+			int32 index = _keywordIndexes[i];
+
+			if (counter == 3)
+				break;
+
+			if (index < 0)
+				continue;
+
+			if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
+				_data_455BF8 = i;
+				++counter;
+			}
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
