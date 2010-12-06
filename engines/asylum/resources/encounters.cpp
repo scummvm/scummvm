@@ -194,79 +194,6 @@ void Encounter::initDrawStructs() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Misc
-//////////////////////////////////////////////////////////////////////////
-int32 Encounter::findRect() {
-	Common::Point mousePos = getCursor()->position();
-
-	for (uint32 i = 0; i < ARRAYSIZE(_drawingStructs); i++) {
-		EncounterDrawingStruct *drawStruct = &_drawingStructs[i];
-
-		if (mousePos.x >= drawStruct->point2.x
-		 && mousePos.x < (drawStruct->point2.x + drawStruct->point1.y)
-		 && mousePos.y >= drawStruct->point2.y
-		 && mousePos.y < (drawStruct->point2.y + drawStruct->point1.x))
-			return i;
-	}
-
-	return -1;
-}
-
-void Encounter::updateDrawingStatus1(int32 rectIndex) {
-	switch (rectIndex) {
-	default:
-		error("[Encounter::updateDrawingStatus1] Invalid rect index (%d)", rectIndex);
-		break;
-
-	case 0:
-		if (checkKeywords2()) {
-		    _drawingStructs[rectIndex].status = 1;
-		    ++_drawingStructs[rectIndex].transTableNum;
-	    }
-		break;
-
-	case 1:
-		if (checkKeywords()) {
-		    _drawingStructs[rectIndex].status = 1;
-		    ++_drawingStructs[rectIndex].transTableNum;
-	    }
-		break;
-	}
-}
-
-void Encounter::updateDrawingStatus2(int32 rectIndex) {
-	switch (rectIndex) {
-	default:
-		error("[Encounter::updateDrawingStatus1] Invalid rect index (%d)", rectIndex);
-		break;
-
-	case 0:
-		if (checkKeywords2()) {
-		    _drawingStructs[rectIndex].status = 2;
-		    --_drawingStructs[rectIndex].transTableNum;
-			updateFromRect(rectIndex);
-	    }
-		break;
-
-	case 1:
-		if (checkKeywords()) {
-		    _drawingStructs[rectIndex].status = 2;
-		    --_drawingStructs[rectIndex].transTableNum;
-			updateFromRect(rectIndex);
-	    }
-		break;
-	}
-}
-
-bool Encounter::updateScreen() {
-	error("[Encounter::updateScreen] not implemented!");
-}
-
-void Encounter::drawScreen() {
-	error("[Encounter::updateScreen] not implemented!");
-}
-
-//////////////////////////////////////////////////////////////////////////
 // Run
 //////////////////////////////////////////////////////////////////////////
 void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2, ActorIndex actorIndex) {
@@ -577,7 +504,10 @@ int32 Encounter::getKeywordIndex() {
 	error("[Encounter::getKeywordIndex] Not implemented!");
 }
 
-void Encounter::choose(int32 keywordIndex) {
+void Encounter::choose(int32 index) {
+	if (_flag4 || index == -1)
+		return;
+
 	error("[Encounter::choose] Not implemented!");
 }
 
@@ -714,8 +644,36 @@ bool Encounter::isSpeaking() {
 	return false;
 }
 
+
 //////////////////////////////////////////////////////////////////////////
-// Actor & Object
+// Drawing
+//////////////////////////////////////////////////////////////////////////
+bool Encounter::drawBackground() {
+	error("[Encounter::drawBackground] not implemented!");
+}
+
+bool Encounter::drawPortraits() {
+	error("[Encounter::drawPortraits] not implemented!");
+}
+
+void Encounter::drawStructs() {
+	error("[Encounter::drawStructs] not implemented!");
+}
+
+void Encounter::drawDialog() {
+	error("[Encounter::drawDialog] not implemented!");
+}
+
+void Encounter::drawText(char *text, ResourceId font, int32 y) {
+	error("[Encounter::drawText] not implemented!");
+}
+
+void Encounter::drawScreen() {
+	error("[Encounter::drawScreen] not implemented!");
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Misc
 //////////////////////////////////////////////////////////////////////////
 void Encounter::setupEntities(bool type4) {
 	// Actor
@@ -767,6 +725,133 @@ void Encounter::setupEntities(bool type4) {
 			}
 		}
 	}
+}
+
+int32 Encounter::findRect() {
+	Common::Point mousePos = getCursor()->position();
+
+	for (uint32 i = 0; i < ARRAYSIZE(_drawingStructs); i++) {
+		EncounterDrawingStruct *drawStruct = &_drawingStructs[i];
+
+		if (mousePos.x >= drawStruct->point2.x
+		 && mousePos.x < (drawStruct->point2.x + drawStruct->point1.y)
+		 && mousePos.y >= drawStruct->point2.y
+		 && mousePos.y < (drawStruct->point2.y + drawStruct->point1.x))
+			return i;
+	}
+
+	return -1;
+}
+
+void Encounter::updateDrawingStatus() {
+	error("[Encounter::updateDrawingStatus] not implemented!");
+}
+
+void Encounter::updateDrawingStatus1(int32 rectIndex) {
+	switch (rectIndex) {
+	default:
+		error("[Encounter::updateDrawingStatus1] Invalid rect index (%d)", rectIndex);
+		break;
+
+	case 0:
+		if (checkKeywords2()) {
+		    _drawingStructs[rectIndex].status = 1;
+		    ++_drawingStructs[rectIndex].transTableNum;
+	    }
+		break;
+
+	case 1:
+		if (checkKeywords()) {
+		    _drawingStructs[rectIndex].status = 1;
+		    ++_drawingStructs[rectIndex].transTableNum;
+	    }
+		break;
+	}
+}
+
+void Encounter::updateDrawingStatus2(int32 rectIndex) {
+	switch (rectIndex) {
+	default:
+		error("[Encounter::updateDrawingStatus1] Invalid rect index (%d)", rectIndex);
+		break;
+
+	case 0:
+		if (checkKeywords2()) {
+		    _drawingStructs[rectIndex].status = 2;
+		    --_drawingStructs[rectIndex].transTableNum;
+			updateFromRect(rectIndex);
+	    }
+		break;
+
+	case 1:
+		if (checkKeywords()) {
+		    _drawingStructs[rectIndex].status = 2;
+		    --_drawingStructs[rectIndex].transTableNum;
+			updateFromRect(rectIndex);
+	    }
+		break;
+	}
+}
+
+bool Encounter::updateScreen() {
+	if (getScene()->updateScreen())
+		return true;
+
+	getText()->loadFont(getWorld()->font1);
+
+	if (!drawBackground()) {
+		_data_455BD0 = 0;
+	    return false;
+    }
+
+	if (!drawPortraits()) {
+		_data_455BD0 = 0;
+
+	    if (_data_455BD4)
+	    	drawStructs();
+	    
+	    return false;
+    }
+
+	if (_data_455BD0) {
+
+		if (!getSpeech()->getTextDataPos() && !getSpeech()->getTextData()) {
+
+			drawDialog();
+			updateDrawingStatus();
+			drawStructs();
+
+			if (_rectIndex == -1 && findRect() == -1)
+				updateFromRect(-1);
+			
+			return false;
+		}
+
+		drawText(getSpeech()->getTextDataPos(), getWorld()->font3, _point.y); 
+		drawText(getSpeech()->getTextData(), getWorld()->font1, _point.y);
+
+		if (_data_455BE0) {
+			_data_455BE0 = 0;
+
+			// Check resources
+			if (!_data_455BDC && !_objectId1 && !_objectId2 && !_actorIndex)
+				error("[Encounter::updateScreen] Invalid encounter resources!");
+
+			getSound()->playSound(getSpeech()->getSoundResourceId(), false, Config.voiceVolume);
+		}
+
+		return false;
+	}
+
+	if (_objectId3 || _data_455BE8)
+		return false;
+
+	if (_data_455BF4)
+		_data_455BF4 = 1;
+
+	_data_455BD0 = 1;
+
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

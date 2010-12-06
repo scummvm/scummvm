@@ -169,13 +169,6 @@ private:
 	void initDrawStructs();
 
 	//////////////////////////////////////////////////////////////////////////
-	// Misc	
-	int32 findRect();
-	void updateDrawingStatus1(int32 rectIndex);
-	void updateDrawingStatus2(int32 rectIndex);
-	bool updateScreen();
-
-	//////////////////////////////////////////////////////////////////////////
 	// Message handling
 	bool init();
 	bool update();
@@ -208,8 +201,21 @@ private:
 	bool isSpeaking();
 
 	//////////////////////////////////////////////////////////////////////////
-	// Actor & Object
+	// Drawing
+	bool drawBackground();
+	bool drawPortraits();
+	void drawStructs();
+	void drawDialog();
+	void drawText(char *text, ResourceId font, int32 y);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Misc	
 	void setupEntities(bool type4);
+	int32 findRect();
+	void updateDrawingStatus();
+	void updateDrawingStatus1(int32 rectIndex);
+	void updateDrawingStatus2(int32 rectIndex);
+	bool updateScreen();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scripts
