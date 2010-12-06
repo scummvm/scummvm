@@ -2177,6 +2177,8 @@ bool LBValue::operator==(const LBValue &x) const {
 
 	case kLBValueInteger:
 		return integer == x.integer;
+	default:
+		error("Unknown type when testing for equality");
 	}
 }
 
