@@ -140,7 +140,7 @@ protected:
 
 	uint16 _savedCardId;
 	uint16 _savedCursorId;
-	uint16 _tempVar; // Generic temp var used by the scripts
+	int16 _tempVar; // Generic temp var used by the scripts
 
 	static const uint8 _stackMap[];
 	static const uint16 _startCard[];

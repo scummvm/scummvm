@@ -166,7 +166,10 @@ void MystScriptParser_Intro::opcode_201(uint16 op, uint16 var, uint16 argc, uint
 	_vm->_gfx->updateScreen();
 	_vm->_system->delayMillis(4 * 1000);
 	_vm->_gfx->copyImageToScreen(4, Common::Rect(0, 0, 544, 333));
-	// TODO: Wait until video ends, then change to card 5
+
+	MystResourceType6 *resource = static_cast<MystResourceType6 *>(_invokingResource);
+	resource->playMovie();
+	// TODO: Complete
 }
 
 void MystScriptParser_Intro::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

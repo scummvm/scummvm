@@ -44,6 +44,7 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScript
 	// Card ID preinitialized by the engine for use by opcode 18
 	// when linking back to Myst in the library
 	_savedCardId = 4329;
+	_libraryBookcaseChanged = false;
 }
 
 MystScriptParser_Myst::~MystScriptParser_Myst() {
@@ -53,8 +54,9 @@ MystScriptParser_Myst::~MystScriptParser_Myst() {
 
 void MystScriptParser_Myst::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(101, opcode_101);
-	OPCODE(102, opcode_102);
+	OPCODE(100, NOP);
+	OPCODE(101, o_libraryBookPageTurnLeft);
+	OPCODE(102, o_libraryBookPageTurnRight);
 	OPCODE(103, opcode_103);
 	OPCODE(104, opcode_104);
 	OPCODE(105, opcode_105);
@@ -103,7 +105,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(175, opcode_175);
 	OPCODE(176, opcode_176);
 	OPCODE(177, opcode_177);
-	OPCODE(180, opcode_180);
+	OPCODE(180, o_libraryCombinationBookStop);
 	OPCODE(181, opcode_181);
 	OPCODE(182, opcode_182);
 	OPCODE(183, opcode_183);
@@ -112,8 +114,8 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(186, opcode_186);
 	OPCODE(188, opcode_188);
 	OPCODE(189, opcode_189);
-	OPCODE(190, opcode_190);
-	OPCODE(191, opcode_191);
+	OPCODE(190, o_libraryCombinationBookStartRight);
+	OPCODE(191, o_libraryCombinationBookStartLeft);
 	OPCODE(192, opcode_192);
 	OPCODE(194, opcode_194);
 	OPCODE(195, opcode_195);
@@ -123,7 +125,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(199, opcode_199);
 
 	// "Init" Opcodes
-	OPCODE(200, opcode_200);
+	OPCODE(200, o_libraryBook_init);
 	OPCODE(201, opcode_201);
 	OPCODE(202, opcode_202);
 	OPCODE(203, opcode_203);
@@ -131,7 +133,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(205, opcode_205);
 	OPCODE(206, opcode_206);
 	OPCODE(208, opcode_208);
-	OPCODE(209, opcode_209);
+	OPCODE(209, o_libraryBookcaseTransform_init);
 	OPCODE(210, o_generatorControlRoom_init);
 	OPCODE(211, opcode_211);
 	OPCODE(212, opcode_212);
@@ -163,39 +165,53 @@ void MystScriptParser_Myst::setupOpcodes() {
 #undef OPCODE
 
 void MystScriptParser_Myst::disablePersistentScripts() {
-	opcode_200_disable();
 	opcode_201_disable();
 	opcode_202_disable();
 	opcode_203_disable();
 	opcode_205_disable();
-	opcode_209_disable();
 
+	_libraryBookcaseMoving = false;
 	_generatorControlRoomRunning = false;
+	_libraryCombinationBookPagesTurning = false;
 
 	opcode_211_disable();
 	opcode_212_disable();
 }
 
 void MystScriptParser_Myst::runPersistentScripts() {
-	opcode_200_run();
 	opcode_201_run();
 	opcode_202_run();
 	opcode_203_run();
 	opcode_205_run();
-	opcode_209_run();
 
 	if (_generatorControlRoomRunning)
-		o_generatorControlRoom_run();
+		generatorControlRoom_run();
+
+	if (_libraryCombinationBookPagesTurning)
+		libraryCombinationBook_run();
+
+	if (_libraryBookcaseMoving)
+		libraryBookcaseTransform_run();
 
 	opcode_211_run();
 	opcode_212_run();
 }
 
 uint16 MystScriptParser_Myst::getVar(uint16 var) {
-	// MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
 	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
 	switch(var) {
+	case 0: // Myst Library Bookcase Closed
+		return myst.libraryBookcaseDoor;
+	case 1:
+		if (globals.ending != 4) {
+			return myst.libraryBookcaseDoor != 1;
+		} else if (myst.libraryBookcaseDoor == 1) {
+			return 2;
+		} else {
+			return 3;
+		}
 	case 44: // Rocket ship power state
 		if (myst.generatorBreakers || myst.generatorVoltage == 0)
 			return 0;
@@ -252,6 +268,18 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return 0;
 		else
 			return myst.generatorVoltage / 4;
+	case 102: // Red page
+		if (globals.ending != 4) {
+			return !(globals.redPagesInBook & 1) && (globals.heldPage != 7);
+		} else {
+			return 0;
+		}
+	case 103: // Blue page
+		if (globals.ending != 4) {
+			return !(globals.bluePagesInBook & 1) && (globals.heldPage != 1);
+		} else {
+			return 0;
+		}
 	case 300: // Rocket Ship Music Puzzle Slider State
 		return 1;
 	default:
@@ -259,27 +287,92 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 	}
 }
 
-void MystScriptParser_Myst::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Decrement Variable", op);
-	if (argc == 0) {
-		debugC(kDebugScript, "\tvar: %d", var);
-		uint16 varValue = _vm->_varStore->getVar(var);
-		// Logic to prevent decrement to negative
-		if (varValue != 0)
-			_vm->_varStore->setVar(var, varValue - 1);
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Myst::toggleVar(uint16 var) {
+	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+	// MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	switch(var) {
+	case 102: // Red page
+		if (globals.ending != 4 && !(globals.redPagesInBook & 1)) {
+			if (globals.heldPage == 7)
+				globals.heldPage = 0;
+			else {
+				globals.heldPage = 7;
+			}
+		}
+		break;
+	case 103: // Blue page
+		if (globals.ending != 4 && !(globals.bluePagesInBook & 1)) {
+			if (globals.heldPage == 1)
+				globals.heldPage = 0;
+			else {
+				globals.heldPage = 1;
+			}
+		}
+		break;
+	default:
+		MystScriptParser::toggleVar(var);
+		break;
+	}
 }
 
-void MystScriptParser_Myst::opcode_102(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Increment Variable", op);
-		debugC(kDebugScript, "\tvar: %d", var);
+bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	bool refresh = false;
 
-		// AFAIK no logic to put ceiling on increment at least in this opcode
-		_vm->_varStore->setVar(var, _vm->_varStore->getVar(var) + 1);
-	} else
-		unknown(op, var, argc, argv);
+	switch (var) {
+	case 0: // Myst Library Bookcase Closed
+		if (myst.libraryBookcaseDoor != value) {
+			myst.libraryBookcaseDoor = value;
+			_tempVar = 0;
+			refresh = true;
+		}
+		break;
+	case 303: // Library Bookcase status changed
+		_libraryBookcaseChanged = value;
+		break;
+	default:
+		refresh = MystScriptParser::setVarValue(var, value);
+		break;
+	}
+
+	return refresh;
+}
+
+void MystScriptParser_Myst::o_libraryBookPageTurnLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Turn book page left", op);
+
+	if (_libraryBookPage - 1 >= 0) {
+		_libraryBookPage--;
+
+		Common::Rect rect = Common::Rect(0, 0, 544, 333);
+		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
+
+		if (_vm->_rnd->getRandomBit())
+			_vm->_sound->playSound(_libraryBookSound1);
+		else
+			_vm->_sound->playSound(_libraryBookSound2);
+
+		_vm->_gfx->updateScreen();
+	}
+}
+
+void MystScriptParser_Myst::o_libraryBookPageTurnRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Turn book page right", op);
+
+	if (_libraryBookPage + 1 < _libraryBookNumPages) {
+		_libraryBookPage++;
+
+		Common::Rect rect = Common::Rect(0, 0, 544, 333);
+		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
+
+		if (_vm->_rnd->getRandomBit())
+			_vm->_sound->playSound(_libraryBookSound1);
+		else
+			_vm->_sound->playSound(_libraryBookSound2);
+
+		_vm->_gfx->updateScreen();
+	}
 }
 
 void MystScriptParser_Myst::opcode_103(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1095,9 +1188,9 @@ void MystScriptParser_Myst::opcode_177(uint16 op, uint16 var, uint16 argc, uint1
 	// TODO: Time slider mouse up
 }
 
-void MystScriptParser_Myst::opcode_180(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4059
-	// TODO: Draw fireplace combination book page
+void MystScriptParser_Myst::o_libraryCombinationBookStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Combiation book stop turning pages", op);
+	_libraryCombinationBookPagesTurning = false;
 }
 
 void MystScriptParser_Myst::opcode_181(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1164,14 +1257,87 @@ void MystScriptParser_Myst::opcode_189(uint16 op, uint16 var, uint16 argc, uint1
 	// TODO: Hour wheel turn
 }
 
-void MystScriptParser_Myst::opcode_190(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4059
-	// TODO: Increase fireplace combination book page
+void MystScriptParser_Myst::o_libraryCombinationBookStartRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Combination book start turning pages right", op);
+
+	_tempVar = 0;
+	libraryCombinationBookTurnRight();
+	_libraryCombinationBookStart = _vm->_system->getMillis();
+	_libraryCombinationBookPagesTurning = true;
 }
 
-void MystScriptParser_Myst::opcode_191(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4059
-	// TODO: Decrease fireplace combination book page
+void MystScriptParser_Myst::o_libraryCombinationBookStartLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Combination book start turning pages left", op);
+
+	_tempVar = 0;
+	libraryCombinationBookTurnLeft();
+	_libraryCombinationBookStart = _vm->_system->getMillis();
+	_libraryCombinationBookPagesTurning = true;
+}
+
+void MystScriptParser_Myst::libraryCombinationBookTurnLeft() {
+	// Turn page left
+	if (_libraryBookPage - 1 >=  0) {
+		_tempVar--;
+
+		if (_tempVar >= -5) {
+			_libraryBookPage--;
+		} else {
+			_libraryBookPage -= 5;
+			_tempVar = -5;
+		}
+
+		_libraryBookPage = CLIP<int16>(_libraryBookPage, 0, _libraryBookNumPages - 1);
+
+		Common::Rect rect = Common::Rect(157, 115, 544, 333);
+		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
+
+		if (_vm->_rnd->getRandomBit())
+			_vm->_sound->playSound(_libraryBookSound1);
+		else
+			_vm->_sound->playSound(_libraryBookSound2);
+
+		_vm->_gfx->updateScreen();
+	}
+}
+
+void MystScriptParser_Myst::libraryCombinationBookTurnRight() {
+	// Turn page right
+	if (_libraryBookPage + 1 < _libraryBookNumPages) {
+		_tempVar++;
+
+		if (_tempVar <= 5) {
+			_libraryBookPage++;
+		} else {
+			_libraryBookPage += 5;
+			_tempVar = 5;
+		}
+
+		_libraryBookPage = CLIP<uint16>(_libraryBookPage, 0, _libraryBookNumPages - 1);
+
+		Common::Rect rect = Common::Rect(157, 115, 544, 333);
+		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
+
+		if (_vm->_rnd->getRandomBit())
+			_vm->_sound->playSound(_libraryBookSound1);
+		else
+			_vm->_sound->playSound(_libraryBookSound2);
+
+		_vm->_gfx->updateScreen();
+	}
+}
+
+void MystScriptParser_Myst::libraryCombinationBook_run() {
+	uint32 time = _vm->_system->getMillis();
+	if (time >= _libraryCombinationBookStart + 500) {
+		if (_tempVar > 0) {
+			libraryCombinationBookTurnRight();
+			_libraryCombinationBookStart = time;
+		} else if (_tempVar < 0) {
+			libraryCombinationBookTurnLeft();
+			_libraryCombinationBookStart = time;
+		}
+	}
 }
 
 void MystScriptParser_Myst::opcode_192(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1271,72 +1437,12 @@ void MystScriptParser_Myst::opcode_199(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-static struct {
-	bool enabled;
-
-	uint16 var;
-	uint16 imageCount;
-	uint16 imageBaseId;
-	uint16 soundDecrement;
-	uint16 soundIncrement;
-} g_opcode200Parameters;
-
-void MystScriptParser_Myst::opcode_200_run() {
-	static uint16 lastImageIndex = 0;
-
-	if (g_opcode200Parameters.enabled) {
-		uint16 curImageIndex = _vm->_varStore->getVar(g_opcode200Parameters.var);
-
-		if (curImageIndex >= g_opcode200Parameters.imageCount) {
-			curImageIndex = g_opcode200Parameters.imageCount - 1;
-			_vm->_varStore->setVar(g_opcode200Parameters.var, curImageIndex);
-		}
-
-		Common::Rect rect;
-
-		// HACK: Think these images are centered on screen (when smaller than full screen),
-		//       and since no _gfx call for image size, hack this to deal with this case for now...
-		if (_vm->getCurCard() == 4059)
-			rect = Common::Rect(157, 115, 544, 333);
-		else
-			rect = Common::Rect(0, 0, 544, 333);
-
-		if (curImageIndex != lastImageIndex)
-			_vm->_gfx->copyImageToScreen(g_opcode200Parameters.imageBaseId + curImageIndex, rect);
-
-		// TODO: Comparison with original engine shows that this simple solution
-		//       may not be the correct one and the choice of which sound
-		//       may be more complicated or even random..
-		if (curImageIndex < lastImageIndex && g_opcode200Parameters.soundDecrement != 0)
-			_vm->_sound->playSound(g_opcode200Parameters.soundDecrement);
-		else if (curImageIndex > lastImageIndex && g_opcode200Parameters.soundIncrement != 0)
-			_vm->_sound->playSound(g_opcode200Parameters.soundIncrement);
-
-		lastImageIndex = curImageIndex;
-	}
-}
-
-void MystScriptParser_Myst::opcode_200_disable() {
-	g_opcode200Parameters.enabled = false;
-	g_opcode200Parameters.var = 0;
-	g_opcode200Parameters.imageCount = 0;
-	g_opcode200Parameters.imageBaseId = 0;
-	g_opcode200Parameters.soundDecrement = 0;
-	g_opcode200Parameters.soundIncrement = 0;
-}
-
-void MystScriptParser_Myst::opcode_200(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 4) {
-		g_opcode200Parameters.var = var;
-		g_opcode200Parameters.imageCount = argv[0];
-		g_opcode200Parameters.imageBaseId = argv[1];
-		g_opcode200Parameters.soundDecrement = argv[2];
-		g_opcode200Parameters.soundIncrement = argv[3];
-		g_opcode200Parameters.enabled = true;
-
-		_vm->_varStore->setVar(var, 0);
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Myst::o_libraryBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_libraryBookPage = 0;
+	_libraryBookNumPages = argv[0];
+	_libraryBookBaseImage = argv[1];
+	_libraryBookSound1 = argv[2];
+	_libraryBookSound2 = argv[3];
 }
 
 static struct {
@@ -1482,44 +1588,27 @@ void MystScriptParser_Myst::opcode_208(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-static struct {
-	uint16 soundId;
+void MystScriptParser_Myst::libraryBookcaseTransform_run(void) {
+	if (_libraryBookcaseChanged) {
+		_libraryBookcaseChanged = false;
+		_libraryBookcaseMoving = false;
 
-	bool enabled;
-} g_opcode209Parameters;
-
-void MystScriptParser_Myst::opcode_209_run(void) {
-	static bool enabledLast;
-
-	if (g_opcode209Parameters.enabled) {
-		// Used for Card 4334 and 4348 (Myst Library Bookcase Door)
-		if (!enabledLast) {
-			// TODO: If Variable changed...
-			_vm->_sound->playSound(g_opcode209Parameters.soundId);
-		}
-
-		// TODO: Code to trigger Type 6 to play movie...
+		// Play transform sound and video
+		_vm->_sound->playSound(_libraryBookcaseSoundId);
+		_libraryBookcaseMovie->playMovie();
 	}
-
-	enabledLast = g_opcode209Parameters.enabled;
 }
 
-void MystScriptParser_Myst::opcode_209_disable(void) {
-	g_opcode209Parameters.enabled = false;
+void MystScriptParser_Myst::o_libraryBookcaseTransform_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	if (_libraryBookcaseChanged) {
+		MystResourceType7 *resource = static_cast<MystResourceType7 *>(_invokingResource);
+		_libraryBookcaseMovie = static_cast<MystResourceType6 *>(resource->getSubResource(getVar(0)));
+		_libraryBookcaseSoundId = argv[0];
+		_libraryBookcaseMoving = true;
+	}
 }
 
-void MystScriptParser_Myst::opcode_209(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 4334 and 4348 (Myst Library Bookcase Door)
-	if (argc == 1) {
-		g_opcode209Parameters.soundId = argv[0];
-		g_opcode209Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
-}
-
-void MystScriptParser_Myst::o_generatorControlRoom_run(void) {
+void MystScriptParser_Myst::generatorControlRoom_run(void) {
 	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
 	if (_generatorVoltage == myst.generatorVoltage) {

@@ -304,10 +304,6 @@ Common::Error MohawkEngine_Myst::run() {
 		_needsUpdate = _video->updateBackgroundMovies();
 		_scriptParser->runPersistentScripts();
 
-		// Run animations...
-		for (uint16 i = 0; i < _resources.size(); i++)
-			_resources[i]->handleAnimation();
-
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
@@ -549,6 +545,9 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 
 	// Update the images of each area too
 	drawResourceImages();
+
+	for (uint16 i = 0; i < _resources.size(); i++)
+		_resources[i]->handleCardChange();
 
 	// TODO: Handle Script Resources
 

@@ -76,7 +76,7 @@ bool MystSaveLoad::loadGame(const Common::String &filename) {
 		warning("Unexpected value at 0x%03X - Found %u Expected %u", loadFile->pos(), _v->globals.u1, 1);
 
 	_v->globals.transitions = loadFile->readUint16LE();
-	_v->globals.zipMode = loadFile->readUint16LE();
+	_v->globals.ending = loadFile->readUint16LE();
 	_v->globals.redPagesInBook = loadFile->readUint16LE();
 	_v->globals.bluePagesInBook = loadFile->readUint16LE();
 
@@ -353,7 +353,7 @@ bool MystSaveLoad::saveGame(const Common::String &fname) {
 	saveFile->writeUint16LE(_v->globals.heldPage);
 	saveFile->writeUint16LE(_v->globals.u1);
 	saveFile->writeUint16LE(_v->globals.transitions);
-	saveFile->writeUint16LE(_v->globals.zipMode);
+	saveFile->writeUint16LE(_v->globals.ending);
 	saveFile->writeUint16LE(_v->globals.redPagesInBook);
 	saveFile->writeUint16LE(_v->globals.bluePagesInBook);
 
@@ -478,7 +478,7 @@ void MystSaveLoad::initMystVariables(MystVariables *_tv) {
 	_tv->globals.heldPage = 0;
 	_tv->globals.u1 = 1;
 	_tv->globals.transitions = 0;
-	_tv->globals.zipMode = 0;
+	_tv->globals.ending = 0;
 	_tv->globals.redPagesInBook = 0;
 	_tv->globals.bluePagesInBook = 0;
 
@@ -525,7 +525,7 @@ void MystSaveLoad::initMystVariables(MystVariables *_tv) {
 	//        called by init scripts may set these up as per the others..
 
 	// Library Bookcase Door - Default to Up
-	_tv->myst_vars[18] = 1;
+	_tv->myst.libraryBookcaseDoor = 1;
 	// Dock Imager Numeric Selection - Default to 67
 	_tv->myst_vars[19] = 67;
 	// Dock Imager Active - Default to Active

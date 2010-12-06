@@ -225,9 +225,13 @@ MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, Myst
 }
 
 uint16 MystScriptParser::getVar(uint16 var) {
+	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+
 	switch(var) {
 	case 105:
 		return _tempVar;
+	case 106:
+		return globals.ending;
 	default:
 		warning("Unimplemented var getter 0x%02x (%d)", var, var);
 		return _vm->_varStore->getVar(var);
@@ -297,8 +301,6 @@ void MystScriptParser::unknown(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 }
 
 void MystScriptParser::NOP(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// NOTE: Don't check argc/argv here as they vary depending on NOP erased opcode
-	debugC(kDebugScript, "NOP");
 }
 
 void MystScriptParser::o_toggleVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -374,7 +376,7 @@ void MystScriptParser::o_goToDest(uint16 op, uint16 var, uint16 argc, uint16 *ar
 }
 void MystScriptParser::o_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Trigger Type 6 Resource Movie..", op);
-	// If movie has sound, pause background music
+	// TODO: If movie has sound, pause background music
 
 	int16 direction = 1;
 	if (argc == 1) {
@@ -383,8 +385,10 @@ void MystScriptParser::o_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16
 	debugC(kDebugScript, "\tDirection: %d", direction);
 
 	// Trigger resource 6 movie overriding play direction
+	MystResourceType6 *resource = static_cast<MystResourceType6 *>(_invokingResource);
+	resource->playMovie();
 
-	// If movie has sound, resume background music
+	// TODO: If movie has sound, resume background music
 }
 
 void MystScriptParser::o_toggleVarNoRedraw(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

@@ -66,7 +66,7 @@ public:
 
 	bool contains(Common::Point point) { return _rect.contains(point); }
 	virtual void drawDataToScreen() {}
-	virtual void handleAnimation() {}
+	virtual void handleCardChange() {}
 	virtual Common::Rect getRect() { return _rect; }
 	bool isEnabled();
 	void setEnabled(bool enabled);
@@ -103,7 +103,8 @@ protected:
 class MystResourceType6 : public MystResourceType5 {
 public:
 	MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	void handleAnimation();
+	void playMovie();
+	void handleCardChange();
 
 protected:
 	static Common::String convertMystVideoName(Common::String name);
@@ -126,13 +127,14 @@ public:
 	virtual ~MystResourceType7();
 
 	virtual void drawDataToScreen();
-	virtual void handleAnimation();
+	virtual void handleCardChange();
 
 	virtual void handleMouseUp(const Common::Point &mouse);
 	virtual void handleMouseDown(const Common::Point &mouse);
 	virtual void handleMouseEnter();
 	virtual void handleMouseLeave();
 
+	MystResource *getSubResource(uint16 index) { return _subResources[index]; }
 protected:
 	uint16 _var7;
 	uint16 _numSubResources;

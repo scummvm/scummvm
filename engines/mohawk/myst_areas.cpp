@@ -161,20 +161,20 @@ MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableRead
 	_videoRunning = false;
 }
 
-void MystResourceType6::handleAnimation() {
-	// TODO: Implement Code to allow _playOnCardChange when set
-	//       and trigger by Opcode 9 when clear
-
+void MystResourceType6::playMovie() {
 	if (!_videoRunning) {
-		// NOTE: The left and top coordinates are often incorrect and do not make sense.
-		// We use the rect coordinates here instead.
-
 		if (_playBlocking)
-			_vm->_video->playMovie(_videoFile, _rect.left, _rect.top);
+			_vm->_video->playMovie(_videoFile, _left, _top);
 		else
-			_vm->_video->playBackgroundMovie(_videoFile, _rect.left, _rect.top, _loop);
+			_vm->_video->playBackgroundMovie(_videoFile, _left, _top, _loop);
 
 		_videoRunning = true;
+	}
+}
+
+void MystResourceType6::handleCardChange() {
+	if (_playOnCardChange) {
+		playMovie();
 	}
 }
 
@@ -218,20 +218,20 @@ void MystResourceType7::drawDataToScreen() {
 	}
 }
 
-void MystResourceType7::handleAnimation() {
+void MystResourceType7::handleCardChange() {
 	if (_var7 == 0xFFFF) {
 		if (_numSubResources == 1)
-			_subResources[0]->handleAnimation();
+			_subResources[0]->handleCardChange();
 		else if (_numSubResources != 0)
 			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
 	} else {
 		uint16 varValue = _vm->_scriptParser->getVar(_var7);
 
 		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleAnimation();
+			_subResources[0]->handleCardChange();
 		else if (_numSubResources != 0) {
 			if (varValue < _numSubResources)
-				_subResources[varValue]->handleAnimation();
+				_subResources[varValue]->handleCardChange();
 			else
 				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
 		}

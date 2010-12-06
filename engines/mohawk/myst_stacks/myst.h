@@ -48,9 +48,9 @@ public:
 private:
 	void setupOpcodes();
 	uint16 getVar(uint16 var);
+	void toggleVar(uint16 var);
+	bool setVarValue(uint16 var, uint16 value);
 
-	void opcode_200_run();
-	void opcode_200_disable();
 	void opcode_201_run();
 	void opcode_201_disable();
 	void opcode_202_run();
@@ -59,16 +59,17 @@ private:
 	void opcode_203_disable();
 	void opcode_205_run();
 	void opcode_205_disable();
-	void opcode_209_run();
-	void opcode_209_disable();
-	void o_generatorControlRoom_run();
+	void libraryBookcaseTransform_run();
+	void generatorControlRoom_run();
 	void opcode_211_run();
 	void opcode_211_disable();
 	void opcode_212_run();
 	void opcode_212_disable();
+	void libraryCombinationBook_run();
 
-	DECLARE_OPCODE(opcode_101);
-	DECLARE_OPCODE(opcode_102);
+
+	DECLARE_OPCODE(o_libraryBookPageTurnLeft);
+	DECLARE_OPCODE(o_libraryBookPageTurnRight);
 	DECLARE_OPCODE(opcode_103);
 	DECLARE_OPCODE(opcode_104);
 	DECLARE_OPCODE(opcode_105);
@@ -117,7 +118,7 @@ private:
 	DECLARE_OPCODE(opcode_175);
 	DECLARE_OPCODE(opcode_176);
 	DECLARE_OPCODE(opcode_177);
-	DECLARE_OPCODE(opcode_180);
+	DECLARE_OPCODE(o_libraryCombinationBookStop);
 	DECLARE_OPCODE(opcode_181);
 	DECLARE_OPCODE(opcode_182);
 	DECLARE_OPCODE(opcode_183);
@@ -126,8 +127,8 @@ private:
 	DECLARE_OPCODE(opcode_186);
 	DECLARE_OPCODE(opcode_188);
 	DECLARE_OPCODE(opcode_189);
-	DECLARE_OPCODE(opcode_190);
-	DECLARE_OPCODE(opcode_191);
+	DECLARE_OPCODE(o_libraryCombinationBookStartRight);
+	DECLARE_OPCODE(o_libraryCombinationBookStartLeft);
 	DECLARE_OPCODE(opcode_192);
 	DECLARE_OPCODE(opcode_194);
 	DECLARE_OPCODE(opcode_195);
@@ -136,7 +137,7 @@ private:
 	DECLARE_OPCODE(opcode_198);
 	DECLARE_OPCODE(opcode_199);
 
-	DECLARE_OPCODE(opcode_200);
+	DECLARE_OPCODE(o_libraryBook_init);
 	DECLARE_OPCODE(opcode_201);
 	DECLARE_OPCODE(opcode_202);
 	DECLARE_OPCODE(opcode_203);
@@ -144,7 +145,7 @@ private:
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
 	DECLARE_OPCODE(opcode_208);
-	DECLARE_OPCODE(opcode_209);
+	DECLARE_OPCODE(o_libraryBookcaseTransform_init);
 	DECLARE_OPCODE(o_generatorControlRoom_init);
 	DECLARE_OPCODE(opcode_211);
 	DECLARE_OPCODE(opcode_212);
@@ -182,12 +183,28 @@ private:
 	uint16 _rocketSliderSound; // 294
 	uint16 _rocketLeverPosition; // 296
 
+	bool _libraryCombinationBookPagesTurning;
+	uint32 _libraryCombinationBookStart; // 8
+	int16 _libraryBookPage; // 86
+	uint16 _libraryBookNumPages; // 88
+	uint16 _libraryBookBaseImage; // 90
+
+	bool _libraryBookcaseMoving;
+	MystResourceType6 *_libraryBookcaseMovie; // 104
+	uint16 _libraryBookcaseSoundId; // 284
+	bool _libraryBookcaseChanged; // 288
+	uint16 _libraryBookSound1; // 298
+	uint16 _libraryBookSound2; // 300
+
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
 
 	void rocketSliderMove();
 	uint16 rocketSliderGetSound(uint16 pos);
 	void rocketCheckSolution();
+
+	void libraryCombinationBookTurnRight();
+	void libraryCombinationBookTurnLeft();
 };
 
 } // End of namespace Mohawk

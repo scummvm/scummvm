@@ -46,7 +46,7 @@ struct MystVariables {
 	   2 = Page Being Held
 	   3 = Unknown - Fixed at 1
 	   4 = Slide Transitions
-	   5 = Zip Mode
+	   5 = Ending
 	   6 = Red Pages in Book
 	   7 = Blue Pages in Book
 	*/
@@ -56,7 +56,7 @@ struct MystVariables {
 		uint16 heldPage;
 		uint16 u1;
 		uint16 transitions;
-		uint16 zipMode;
+		uint16 ending;
 		uint16 redPagesInBook;
 		uint16 bluePagesInBook;
 	} globals;
@@ -119,6 +119,7 @@ struct MystVariables {
 		uint16 generatorBreakers;
 		uint16 generatorButtons;
 		uint16 generatorVoltage;
+		uint16 libraryBookcaseDoor;
 		uint16 rocketSliderPosition[5];
 	} myst;
 
