@@ -48,6 +48,7 @@ namespace Hugo {
 
 ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0) {
 	_numObj = 0;
+	_objCount = 0;
 }
 
 ObjectHandler::~ObjectHandler() {
@@ -211,7 +212,7 @@ void ObjectHandler::freeObjects() {
 	debugC(1, kDebugObject, "freeObjects");
 
 	// Nothing to do if not allocated yet
-	if (_vm->_hero->seqList[0].seqPtr == 0)
+	if (_vm->_hero == 0 || _vm->_hero->seqList[0].seqPtr == 0)
 		return;
 
 	// Free all sequence lists and image data
