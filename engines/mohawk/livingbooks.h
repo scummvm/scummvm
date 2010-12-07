@@ -85,15 +85,31 @@ enum {
 };
 
 enum {
-	kLBActionPhase0 = 0,
-	kLBActionPhase1 = 1,
-	kLBActionMouseDown = 2,
-	kLBActionStarted = 3,
-	kLBActionDone = 4,
-	kLBActionMouseUp = 5,
-	kLBActionPhase2 = 6,
-	kLBActionNotified = 7,
-	kLBActionPrePhase = 0xff
+	kLBEventPhaseInit = 0,
+	kLBEventPhaseIntro = 1,
+	kLBEventMouseDown = 2,
+	kLBEventStarted = 3,
+	kLBEventDone = 4,
+	kLBEventMouseUp = 5,
+	kLBEventPhaseMain = 6,
+	kLBEventNotified = 7,
+	kLBEventDragMove = 9,
+	kLBEventRolloverBegin = 0xb,
+	kLBEventRolloverMove = 0xc,
+	kLBEventRolloverEnd = 0xd,
+	kLBEventMouseUpIn = 0xe,
+	kLBEventMouseUpOut = 0xf,
+	kLBEventMouseTrackIn = 0x10,
+	kLBEventMouseTrackMove = 0x11,
+	kLBEventMouseTrackMoveIn = 0x12,
+	kLBEventMouseTrackMoveOut = 0x13,
+	kLBEventMouseTrackOut = 0x14,
+	kLBEventFocusBegin = 0x15,
+	kLBEventFocusEnd = 0x16,
+	kLBEventInit = 0x17,
+	kLBEventLoad = 0x1a,
+	kLBEventListLoad = 0x1b,
+	kLBEventPhaseCreate = 0xff
 };
 
 enum {
@@ -147,7 +163,7 @@ struct LBScriptEntry {
 	~LBScriptEntry();
 
 	uint16 type;
-	uint16 action;
+	uint16 event;
 	uint16 opcode;
 	uint16 param;
 
@@ -161,7 +177,7 @@ struct LBScriptEntry {
 	uint16 newPage;
 	uint16 newSubpage;
 
-	// kLBActionNotified
+	// kLBEventNotified
 	uint16 matchFrom;
 	uint16 matchNotify;
 
@@ -459,9 +475,9 @@ struct NotifyEvent {
 };
 
 enum DelayedEventType {
-	kLBEventDestroy = 0,
-	kLBEventSetNotVisible = 1,
-	kLBEventDone = 2
+	kLBDelayedEventDestroy = 0,
+	kLBDelayedEventSetNotVisible = 1,
+	kLBDelayedEventDone = 2
 };
 
 struct DelayedEvent {

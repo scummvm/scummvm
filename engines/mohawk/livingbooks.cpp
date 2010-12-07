@@ -449,16 +449,16 @@ void MohawkEngine_LivingBooks::updatePage() {
 				continue;
 
 			switch (delayedEvent.type) {
-			case kLBEventDestroy:
+			case kLBDelayedEventDestroy:
 				_items.remove_at(i);
 				delete delayedEvent.item;
 				if (_focus == delayedEvent.item)
 					_focus = NULL;
 				break;
-			case kLBEventSetNotVisible:
+			case kLBDelayedEventSetNotVisible:
 				_items[i]->setVisible(false);
 				break;
-			case kLBEventDone:
+			case kLBDelayedEventDone:
 				_items[i]->done(true);
 				break;
 			}
@@ -1618,11 +1618,11 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 
 			LBScriptEntry *entry = new LBScriptEntry;
 			entry->type = type;
-			entry->action = stream->readUint16();
+			entry->event = stream->readUint16();
 			entry->opcode = stream->readUint16();
 			entry->param = stream->readUint16();
-			debug(4, "Script entry: type 0x%04x, action 0x%04x, opcode 0x%04x, param 0x%04x",
-				entry->type, entry->action, entry->opcode, entry->param);
+			debug(4, "Script entry: type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x",
+				entry->type, entry->event, entry->opcode, entry->param);
 			size -= 6;
 
 			if (type == kLBMsgListScript) {
@@ -1659,11 +1659,13 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 				size -= 8;
 			}
 			// FIXME: what is 0x1d?
-			if (entry->action == kLBActionNotified || entry->opcode == 0x1d) {
+			if (entry->event == kLBEventNotified || entry->opcode == 0x1d) {
 				if (size < 4)
-					error("not enough bytes (%d) in action %d, opcode 0x%04x", size, entry->action, entry->opcode);
+					error("not enough bytes (%d) in event %d, opcode 0x%04x", size, entry->event, entry->opcode);
 				entry->matchFrom = stream->readUint16();
 				entry->matchNotify = stream->readUint16();
+				debug(4, "kLBEventNotified: unknowns %04x, %04x",
+					entry->matchFrom, entry->matchNotify);
 				size -= 4;
 			}
 			if (entry->opcode == 0xffff) {
@@ -1690,7 +1692,7 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 			} else if (size) {
 				byte commandLen = stream->readByte();
 				if (commandLen)
-					error("got confused while reading bytes at end of script entry");
+					error("got confused while reading bytes at end of script entry (got %d)", commandLen);
 				size--;
 			}
 
@@ -1705,8 +1707,8 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 			}
 
 			// TODO: read as bytes, if this is correct (but beware endianism)
-			byte expectedConditions = (entry->action & 0xff00) >> 8;
-			entry->action = entry->action & 0xff;
+			byte expectedConditions = (entry->event & 0xff00) >> 8;
+			entry->event = entry->event & 0xff;
 			if (entry->conditions.size() != expectedConditions)
 				error("got %d conditions, but expected %d", entry->conditions.size(), expectedConditions);
 
@@ -1817,7 +1819,7 @@ void LBItem::destroySelf() {
 	if (!this->_itemId)
 		error("destroySelf() on an item which was already dead");
 
-	_vm->queueDelayedEvent(DelayedEvent(this, kLBEventDestroy));
+	_vm->queueDelayedEvent(DelayedEvent(this, kLBDelayedEventDestroy));
 
 	_itemId = 0;
 }
@@ -1871,7 +1873,7 @@ void LBItem::handleMouseDown(Common::Point pos) {
 		return;
 
 	_vm->setFocus(this);
-	runScript(kLBActionMouseDown);
+	runScript(kLBEventMouseDown);
 }
 
 void LBItem::handleMouseMove(Common::Point pos) {
@@ -1880,12 +1882,12 @@ void LBItem::handleMouseMove(Common::Point pos) {
 
 void LBItem::handleMouseUp(Common::Point pos) {
 	_vm->setFocus(NULL);
-	runScript(kLBActionMouseUp);
+	runScript(kLBEventMouseUp);
 }
 
 bool LBItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
-		_vm->queueDelayedEvent(DelayedEvent(this, kLBEventDone));
+		_vm->queueDelayedEvent(DelayedEvent(this, kLBDelayedEventDone));
 		return true;
 	}
 	if (!_neverEnabled && _enabled && _globalEnabled && !_playing) {
@@ -1910,7 +1912,7 @@ bool LBItem::togglePlaying(bool playing, bool restart) {
 				}
 			}
 
-			runScript(kLBActionStarted);
+			runScript(kLBEventStarted);
 			notify(0, _itemId);
 		}
 	}
@@ -1953,7 +1955,7 @@ void LBItem::done(bool onlyNotify) {
 		setNextTime(_periodMin, _periodMax);
 	}
 
-	runScript(kLBActionDone);
+	runScript(kLBEventDone);
 	notify(0xFFFF, _itemId);
 }
 
@@ -1978,30 +1980,30 @@ void LBItem::startPhase(uint phase) {
 
 	switch (phase) {
 	case 0xFFFF:
-		runScript(kLBActionPrePhase);
+		runScript(kLBEventPhaseCreate);
 		if (_timingMode == 6) {
-			debug(2, "Phase -1 time startup");
+			debug(2, "Phase create: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
 	case 0:
-		runScript(kLBActionPhase0);
+		runScript(kLBEventPhaseInit);
 		if (_timingMode == 5) {
-			debug(2, "Phase 0 time startup");
+			debug(2, "Phase init: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
 	case 1:
-		runScript(kLBActionPhase1);
+		runScript(kLBEventPhaseIntro);
 		if (_timingMode == 1 || _timingMode == 2) {
-			debug(2, "Phase 1 time startup");
+			debug(2, "Phase intro: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
 	case 2:
-		runScript(kLBActionPhase2);
+		runScript(kLBEventPhaseMain);
 		if (_timingMode == 2 || _timingMode == 3) {
-			debug(2, "Phase 2 time startup");
+			debug(2, "Phase main: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
@@ -2026,16 +2028,16 @@ void LBItem::notify(uint16 data, uint16 from) {
 		}
 	}
 
-	runScript(kLBActionNotified, data, from);
+	runScript(kLBEventNotified, data, from);
 }
 
 void LBItem::runScript(uint id, uint16 data, uint16 from) {
 	for (uint i = 0; i < _scriptEntries.size(); i++) {
 		LBScriptEntry *entry = _scriptEntries[i];
-		if (entry->action != id)
+		if (entry->event != id)
 			continue;
 
-		if (id == kLBActionNotified) {
+		if (id == kLBEventNotified) {
 			if (entry->matchFrom != from || entry->matchNotify != data)
 				continue;
 		}
@@ -2051,8 +2053,8 @@ void LBItem::runScript(uint id, uint16 data, uint16 from) {
 			continue;
 
 		if (entry->type == kLBNotifyScript) {
-			debug(2, "Notify: action 0x%04x, opcode 0x%04x, param 0x%04x",
-				entry->action, entry->opcode, entry->param);
+			debug(2, "Notify: event 0x%04x, opcode 0x%04x, param 0x%04x",
+				entry->event, entry->opcode, entry->param);
 
 			if (entry->opcode == kLBNotifyGUIAction)
 				_vm->addNotifyEvent(NotifyEvent(entry->opcode, _itemId));
@@ -2068,23 +2070,37 @@ void LBItem::runScript(uint id, uint16 data, uint16 from) {
 		} else {
 			if (entry->param != 0xffff) {
 				// TODO: if param is 1/2/3..
-				warning("Ignoring script entry (type 0x%04x, action 0x%04x, opcode 0x%04x, param 0x%04x)",
-					entry->type, entry->action, entry->opcode, entry->param);
+				warning("Ignoring script entry (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x)",
+					entry->type, entry->event, entry->opcode, entry->param);
 				continue;
 			}
 
-			for (uint n = 0; n < entry->argc; n++) {
-				uint16 targetId = entry->argvTarget[n];
-				// TODO: is this type, perhaps?
-				uint16 param = entry->argvParam[n];
-				LBItem *target = _vm->getItemById(targetId);
-			
-				debug(2, "Script run: type 0x%04x, action 0x%04x, opcode 0x%04x, param 0x%04x, target id %d",
-					entry->type, entry->action, entry->opcode, entry->param, targetId);
-			
-				if (!target)
-					continue;
+			uint count = entry->argc;
+			// zero targets = apply to self
+			if (!count)
+				count = 1;
 
+			for (uint n = 0; n < count; n++) {
+				LBItem *target;
+
+				debug(2, "Script run: type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x",
+					entry->type, entry->event, entry->opcode, entry->param);
+
+				if (entry->argc) {
+					uint16 targetId = entry->argvTarget[n];
+					// TODO: is this type, perhaps?
+					uint16 param = entry->argvParam[n];
+					target = _vm->getItemById(targetId);
+					if (!target) {
+						debug(2, "Target %04x (%04x) doesn't exist, skipping", targetId, param);
+						continue;
+					}
+					debug(2, "Target: %04x (%04x) '%s'", targetId, param, _desc.c_str());
+				} else {
+					target = this;
+					debug(2, "Self-target on '%s'", _desc.c_str());
+				}
+			
 				switch (entry->opcode) {
 				case 0xffff:
 					runCommand(entry->command);
@@ -2094,7 +2110,7 @@ void LBItem::runScript(uint id, uint16 data, uint16 from) {
 					// TODO: should be setVisible(true) - not a delayed event -
 					// when we're doing the param 1/2/3 stuff above?
 					// and in modern LB this is perhaps just a direct target->setVisible(true)..
-					_vm->queueDelayedEvent(DelayedEvent(this, kLBEventSetNotVisible));
+					_vm->queueDelayedEvent(DelayedEvent(this, kLBDelayedEventSetNotVisible));
 					break;
 
 				case 2:
@@ -2151,8 +2167,8 @@ void LBItem::runScript(uint id, uint16 data, uint16 from) {
 
 				default:
 					// TODO
-					warning("Ignoring script entry (type 0x%04x, action 0x%04x, opcode 0x%04x, param 0x%04x) for %d (param %04x)",
-					entry->type, entry->action, entry->opcode, entry->param, targetId, param);
+					warning("Ignoring script entry (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x)",
+						entry->type, entry->event, entry->opcode, entry->param);
 				}
 			}
 		}
