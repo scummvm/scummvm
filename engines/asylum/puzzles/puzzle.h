@@ -41,23 +41,28 @@ class Cursor;
 class GraphicResource;
 struct GraphicQueueItem;
 
-class BlowUpPuzzle : public EventHandler {
+class Puzzle : public EventHandler {
 public:
-	BlowUpPuzzle(AsylumEngine *engine);
-	virtual ~BlowUpPuzzle();
-
-	void init();
-
-	virtual void open() = 0;
-	virtual void close() = 0;
+	Puzzle(AsylumEngine *engine);
+	virtual ~Puzzle();
 
 	virtual void reset() {}
 
+	//////////////////////////////////////////////////////////////////////////
+	// TODO remove
+	void init();
+	virtual void open() = 0;
+	virtual void close() = 0;
 	bool isActive() { return _active; }
+	//////////////////////////////////////////////////////////////////////////
 
 protected:
 	AsylumEngine *_vm;
 
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// TODO remove
 	Cursor *_cursor;
 	GraphicResource *_bgResource;
 
@@ -68,6 +73,7 @@ protected:
 
 	virtual void update() {};
 	void playSound(ResourceId resourceId, bool loop = false);
+	//////////////////////////////////////////////////////////////////////////
 };
 
 } // End of namespace Asylum
