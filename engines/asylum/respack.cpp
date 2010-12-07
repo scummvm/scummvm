@@ -85,14 +85,6 @@ ResourcePack::ResourcePack(Common::String filename) {
 	init(filename);
 }
 
-//ResourcePack::ResourcePack(ResourcePackId id) {
-//	// We don't use the file number part of resource IDs
-//	//uint32 fileNum = (resourceID >> 16) & 0x7FFF;
-//	char filename[20];
-//	sprintf(filename, "res.%03d", id);
-//	init(filename);
-//}
-
 ResourcePack::~ResourcePack() {
 	for (uint32 i = 0; i < _resources.size(); i++)
 		delete [] _resources[i].data;
@@ -127,6 +119,9 @@ void ResourcePack::init(Common::String filename) {
 }
 
 ResourceEntry *ResourcePack::get(uint16 index) {
+	if (index > _resources.size() - 1)
+		return NULL;
+
 	if (!_resources[index].data) {
 		// Load the requested resource if it's not loaded already
 		_packFile.seek(_resources[index].offset, SEEK_SET);
