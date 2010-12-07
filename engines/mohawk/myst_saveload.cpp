@@ -38,7 +38,7 @@ MystSaveLoad::MystSaveLoad(MohawkEngine_Myst *vm, Common::SaveFileManager *saveF
 	// Most of the variables are zero at game start.
 	_v->globals.u0 = 2;
 	// Current Age / Stack - Start in Myst
-	_v->globals.currentAge = 2;
+	_v->globals.currentAge = 7;
 	_v->globals.u1 = 1;
 
 	// Library Bookcase Door - Default to Up
