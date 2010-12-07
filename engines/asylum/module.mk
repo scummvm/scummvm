@@ -1,8 +1,22 @@
 MODULE := engines/asylum
 
 MODULE_OBJS := \
+	puzzles/boardkeyhidesto.o \
+	puzzles/boardsalvation.o \
+	puzzles/boardyouth.o \
+	puzzles/clock.o \
+	puzzles/fisherman.o \
+	puzzles/hivecontrol.o \
+	puzzles/hivemachine.o \
+	puzzles/lock.o \
+	puzzles/morguedoor.o \
+	puzzles/pipes.o \
 	puzzles/puzzle.o \
+	puzzles/tictactoe.o \
+	puzzles/timemachine.o \
 	puzzles/vcr.o \
+	puzzles/wheel.o \
+	puzzles/writings.o \
 	resources/actor.o \
 	resources/object.o \
 	resources/encounters.o \
