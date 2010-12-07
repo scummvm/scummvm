@@ -74,17 +74,14 @@ bool MystSaveLoad::loadGame(const Common::String &filename) {
 	// First, let's make sure we're using a saved game file from this version of Myst
 	// By checking length of file...
 	int32 size = loadFile->size();
-	if ((size == -1)
-	    || (size != 664 && (_vm->getFeatures() & GF_ME))
-	    || (size != 601 && !(_vm->getFeatures() & GF_ME))) {
+	if (size != 664 && size != 601) {
 		warning("Incompatible saved game version");
-		// FIXME: Add Support to load original game saves in ME and vice versa
 		delete loadFile;
 		return false;
 	}
 
 	Common::Serializer s(loadFile, 0);
-	syncGameState(s);
+	syncGameState(s, size == 664);
 	delete loadFile;
 
 	// Switch us back to the intro stack
@@ -124,14 +121,14 @@ bool MystSaveLoad::saveGame(const Common::String &fname) {
 	debugC(kDebugSaveLoad, "Saving game to '%s'", filename.c_str());
 
 	Common::Serializer s(0, saveFile);
-	syncGameState(s);
+	syncGameState(s, _vm->getFeatures() & GF_ME);
 	saveFile->finalize();
 	delete saveFile;
 
 	return true;
 }
 
-void MystSaveLoad::syncGameState(Common::Serializer &s) {
+void MystSaveLoad::syncGameState(Common::Serializer &s, bool isME) {
 	// Globals first
 	s.syncAsUint16LE(_v->globals.u0);
 	s.syncAsUint16LE(_v->globals.currentAge);
@@ -143,7 +140,7 @@ void MystSaveLoad::syncGameState(Common::Serializer &s) {
 	s.syncAsUint16LE(_v->globals.bluePagesInBook);
 
 	// Onto Myst
-	if (_vm->getFeatures() & GF_ME) {
+	if (isME) {
 		s.syncAsUint32LE(_v->myst.cabinMarkerSwitch);
 		s.syncAsUint32LE(_v->myst.clockTowerMarkerSwitch);
 		s.syncAsUint32LE(_v->myst.dockMarkerSwitch);
@@ -206,7 +203,7 @@ void MystSaveLoad::syncGameState(Common::Serializer &s) {
 	s.syncAsUint16LE(_v->myst.u9);
 
 	// Channelwood
-	if (_vm->getFeatures() & GF_ME) {
+	if (isME) {
 		s.syncAsUint32LE(_v->channelwood.waterPumpBridgeState);
 		s.syncAsUint32LE(_v->channelwood.elevatorState);
 		s.syncAsUint32LE(_v->channelwood.stairsLowerDoorState);
@@ -222,7 +219,7 @@ void MystSaveLoad::syncGameState(Common::Serializer &s) {
 	s.syncAsUint16LE(_v->channelwood.holoprojectorSelection);
 	s.syncAsUint16LE(_v->channelwood.stairsUpperDoorState);
 
-	if (_vm->getFeatures() & GF_ME)
+	if (isME)
 		s.skip(4);
 	else
 		s.skip(1);
@@ -239,7 +236,7 @@ void MystSaveLoad::syncGameState(Common::Serializer &s) {
 
 	// Selenitic
 
-	if (_vm->getFeatures() & GF_ME) {
+	if (isME) {
 		s.syncAsUint32LE(_v->selenitic.emitterEnabledWater);
 		s.syncAsUint32LE(_v->selenitic.emitterEnabledVolcano);
 		s.syncAsUint32LE(_v->selenitic.emitterEnabledClock);
@@ -267,7 +264,7 @@ void MystSaveLoad::syncGameState(Common::Serializer &s) {
 
 	// Stoneship
 
-	if (_vm->getFeatures() & GF_ME) {
+	if (isME) {
 		s.syncAsUint16LE(_v->stoneship.lightState);
 		s.syncAsUint16LE(_v->stoneship.u0);
 		s.syncAsUint16LE(_v->stoneship.u1);
@@ -319,7 +316,7 @@ void MystSaveLoad::syncGameState(Common::Serializer &s) {
 
 	s.skip(38);
 
-	if ((_vm->getFeatures() & GF_ME && s.bytesSynced() != 664) || (!(_vm->getFeatures() & GF_ME) && s.bytesSynced() != 601))
+	if ((isME && s.bytesSynced() != 664) || (!isME && s.bytesSynced() != 601))
 		warning("Unexpected File Position 0x%03X At End of Save/Load", s.bytesSynced());
 }
 

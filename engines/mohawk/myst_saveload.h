@@ -296,7 +296,7 @@ public:
 	bool loadGame(const Common::String &);
 	bool saveGame(const Common::String &);
 	void deleteSave(const Common::String &);
-	void syncGameState(Common::Serializer &s);
+	void syncGameState(Common::Serializer &s, bool isME);
 
 	MystVariables *_v;
 private:

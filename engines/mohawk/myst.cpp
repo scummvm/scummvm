@@ -261,14 +261,6 @@ Common::Error MohawkEngine_Myst::run() {
 	_rnd = new Common::RandomSource();
 	_mouseClicked = false;
 
-	// Load Help System (Masterpiece Edition Only)
-	if (getFeatures() & GF_ME) {
-		MohawkArchive *mhk = new MohawkArchive();
-		if (!mhk->open("help.dat"))
-			error("Could not load help.dat");
-		_mhk.push_back(mhk);
-	}
-
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && canLoadGameStateCurrently()) {
 		uint32 gameToLoad = ConfMan.getInt("save_slot");
@@ -289,6 +281,14 @@ Common::Error MohawkEngine_Myst::run() {
 			changeToCard(2000, true);
 		else
 			changeToCard(1, true);
+	}
+
+	// Load Help System (Masterpiece Edition Only)
+	if (getFeatures() & GF_ME) {
+		MohawkArchive *mhk = new MohawkArchive();
+		if (!mhk->open("help.dat"))
+			error("Could not load help.dat");
+		_mhk.push_back(mhk);
 	}
 
 	// Test Load Function...
