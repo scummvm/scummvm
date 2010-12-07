@@ -662,7 +662,7 @@ void Encounter::updateFromRect(int32 rectIndex)  {
 		}
 	} else {
 		uint32 counter = 0;
-		for (uint32 i = _data_455BF8 - 1; i > -1; i--) {
+		for (int32 i = (int32)_data_455BF8 - 1; i > -1; i--) {
 			int32 index = _keywordIndexes[i];
 
 			if (counter == 3)
@@ -672,7 +672,7 @@ void Encounter::updateFromRect(int32 rectIndex)  {
 				continue;
 
 			if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
-				_data_455BF8 = i;
+				_data_455BF8 = (uint32)i;
 				++counter;
 			}
 		}
