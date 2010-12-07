@@ -1874,6 +1874,7 @@ void LBItem::handleMouseDown(Common::Point pos) {
 
 	_vm->setFocus(this);
 	runScript(kLBEventMouseDown);
+	runScript(kLBEventMouseTrackIn);
 }
 
 void LBItem::handleMouseMove(Common::Point pos) {
