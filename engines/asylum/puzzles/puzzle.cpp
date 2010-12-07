@@ -36,18 +36,18 @@
 
 namespace Asylum {
 
-BlowUpPuzzle::BlowUpPuzzle(AsylumEngine *engine): _vm(engine),
+Puzzle::Puzzle(AsylumEngine *engine): _vm(engine),
 	_cursor(NULL), _bgResource(NULL),
 	_leftClickUp(false), _leftClickDown(false), _rightClickDown(false), _active(false) {
 }
 
-void BlowUpPuzzle::init() {
+void Puzzle::init() {
 	// setup cursor & background
 	_cursor     = new Cursor(_vm);
 	_bgResource = new GraphicResource(_vm, getWorld()->graphicResourceIds[0]);
 }
 
-BlowUpPuzzle::~BlowUpPuzzle() {
+Puzzle::~Puzzle() {
 	delete _cursor;
 	delete _bgResource;
 

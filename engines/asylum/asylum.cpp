@@ -411,7 +411,7 @@ EventHandler *AsylumEngine::getPuzzle(uint32 index) {
 }
 
 void AsylumEngine::initPuzzles() {
-	_puzzles[0] = new BlowUpPuzzleVCR(this);
+	_puzzles[0] = new PuzzleVCR(this);
 	_puzzles[1] = NULL;
 	_puzzles[2] = NULL;
 	_puzzles[3] = NULL;

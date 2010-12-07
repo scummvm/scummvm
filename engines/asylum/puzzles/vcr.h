@@ -58,14 +58,15 @@ const Common::Rect BlowUpPuzzleVCRPolies[10] = {
 	Common::Rect(0x0BB, 0x1B7, 0x0F0, 0x1E0)  // yellow jack on table region
 };
 
-class BlowUpPuzzleVCR : public BlowUpPuzzle {
+class PuzzleVCR : public Puzzle {
 public:
-	BlowUpPuzzleVCR(AsylumEngine *engine);
-	~BlowUpPuzzleVCR();
+	PuzzleVCR(AsylumEngine *engine);
+	~PuzzleVCR();
 
 	bool handleEvent(const AsylumEvent &event);
 	void open();
 	void close();
+
 private:
 	enum Jack {
 		kBlack  = 0,

@@ -41,7 +41,7 @@ namespace Asylum {
 
 class Actor;
 class AsylumEngine;
-class BlowUpPuzzle;
+class Puzzle;
 class Cursor;
 class GraphicResource;
 class Polygons;

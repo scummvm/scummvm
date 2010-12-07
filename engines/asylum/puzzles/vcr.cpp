@@ -41,7 +41,7 @@
 
 namespace Asylum {
 
-BlowUpPuzzleVCR::BlowUpPuzzleVCR(AsylumEngine *engine): BlowUpPuzzle(engine) {
+PuzzleVCR::PuzzleVCR(AsylumEngine *engine): Puzzle(engine) {
 	// reset all states
 	memset(&_jacksState,   0, sizeof(_jacksState));
 	memset(&_holesState,   0, sizeof(_holesState));
@@ -51,12 +51,12 @@ BlowUpPuzzleVCR::BlowUpPuzzleVCR(AsylumEngine *engine): BlowUpPuzzle(engine) {
 	_isAccomplished  = false;
 }
 
-BlowUpPuzzleVCR::~BlowUpPuzzleVCR() {
+PuzzleVCR::~PuzzleVCR() {
 	delete _cursor;
 	delete _bgResource;
 }
 
-void BlowUpPuzzleVCR::open() {
+void PuzzleVCR::open() {
 	_active = true;
 
 	getSound()->stopAll();
@@ -76,12 +76,12 @@ void BlowUpPuzzleVCR::open() {
 	_rightClickDown = false;
 }
 
-void BlowUpPuzzleVCR::close() {
+void PuzzleVCR::close() {
 	_active = false;
 	// TODO Switch back to scene event handler
 }
 
-bool BlowUpPuzzleVCR::handleEvent(const AsylumEvent &ev) {
+bool PuzzleVCR::handleEvent(const AsylumEvent &ev) {
 	switch (ev.type) {
 	case Common::EVENT_MOUSEMOVE:
 		//_cursor->move(ev.mouse.x, ev.mouse.y);
@@ -105,16 +105,16 @@ bool BlowUpPuzzleVCR::handleEvent(const AsylumEvent &ev) {
 	return true;
 }
 
-void BlowUpPuzzle::playSound(ResourceId resourceId, bool loop) {
+void Puzzle::playSound(ResourceId resourceId, bool loop) {
 	getSound()->playSound(resourceId, loop, Config.sfxVolume, 0);
 }
 
-int BlowUpPuzzleVCR::inPolyRegion(int x, int y, int polyIdx) const {
+int PuzzleVCR::inPolyRegion(int x, int y, int polyIdx) const {
 	return  x >= BlowUpPuzzleVCRPolies[polyIdx].left && x <= BlowUpPuzzleVCRPolies[polyIdx].right &&
 	        y >= BlowUpPuzzleVCRPolies[polyIdx].top  && y <= BlowUpPuzzleVCRPolies[polyIdx].bottom;
 }
 
-void BlowUpPuzzleVCR::update() {
+void PuzzleVCR::update() {
 	getScreen()->clearGraphicsInQueue();
 
 	if (_rightClickDown) { // quits BlowUp Puzzle
@@ -170,7 +170,7 @@ void BlowUpPuzzleVCR::update() {
 	}
 }
 
-GraphicQueueItem BlowUpPuzzleVCR::getGraphicJackItem(int32 index) {
+GraphicQueueItem PuzzleVCR::getGraphicJackItem(int32 index) {
 	GraphicQueueItem jackItemOnHand;
 
 	int jackY = _cursor->position().y;
@@ -186,7 +186,7 @@ GraphicQueueItem BlowUpPuzzleVCR::getGraphicJackItem(int32 index) {
 	return jackItemOnHand;
 }
 
-GraphicQueueItem BlowUpPuzzleVCR::getGraphicShadowItem() {
+GraphicQueueItem PuzzleVCR::getGraphicShadowItem() {
 	GraphicQueueItem shadowItem;
 
 	int shadowY = (_cursor->position().y - 356) / 4;
@@ -201,7 +201,7 @@ GraphicQueueItem BlowUpPuzzleVCR::getGraphicShadowItem() {
 	return shadowItem;
 }
 
-void BlowUpPuzzleVCR::updateJack(Jack jack, const VCRDrawInfo &onTable, const VCRDrawInfo &pluggedOnRed, const VCRDrawInfo &pluggedOnYellow, const VCRDrawInfo &pluggedOnBlack, int32 resourceOnHandIndex) {
+void PuzzleVCR::updateJack(Jack jack, const VCRDrawInfo &onTable, const VCRDrawInfo &pluggedOnRed, const VCRDrawInfo &pluggedOnYellow, const VCRDrawInfo &pluggedOnBlack, int32 resourceOnHandIndex) {
 	GraphicQueueItem item;
 
 	switch (_jacksState[jack]) {
@@ -250,7 +250,7 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, const VCRDrawInfo &onTable, const VC
 		getScreen()->addGraphicToQueue(item);
 }
 
-void BlowUpPuzzleVCR::updateBlackJack() {
+void PuzzleVCR::updateBlackJack() {
 	VCRDrawInfo onTable;
 	onTable.resourceId = 1;
 	onTable.point = Common::Point(0, 411);
@@ -267,7 +267,7 @@ void BlowUpPuzzleVCR::updateBlackJack() {
 	updateJack(kBlack, onTable, pluggedOnRed, pluggedOnYellow, pluggedOnBlack, 27);
 }
 
-void BlowUpPuzzleVCR::updateRedJack() {
+void PuzzleVCR::updateRedJack() {
 	VCRDrawInfo onTable;
 	onTable.resourceId = 2;
 	onTable.point = Common::Point(76, 428);
@@ -284,7 +284,7 @@ void BlowUpPuzzleVCR::updateRedJack() {
 	updateJack(kRed, onTable, pluggedOnRed, pluggedOnYellow, pluggedOnBlack, 25);
 }
 
-void BlowUpPuzzleVCR::updateYellowJack() {
+void PuzzleVCR::updateYellowJack() {
 	VCRDrawInfo onTable;
 	onTable.resourceId = 3;
 	onTable.point = Common::Point(187, 439);
@@ -303,7 +303,7 @@ void BlowUpPuzzleVCR::updateYellowJack() {
 
 
 // common function to set and unset the jack on holes for each type of jack
-int BlowUpPuzzleVCR::setJackOnHole(int jackType, JackState plugged) {
+int PuzzleVCR::setJackOnHole(int jackType, JackState plugged) {
 	if (!_holesState[plugged-1]) {
 		if (_jacksState[jackType-1] == kOnHand) {
 			_jacksState[jackType-1] = plugged;
@@ -320,7 +320,7 @@ int BlowUpPuzzleVCR::setJackOnHole(int jackType, JackState plugged) {
 	return 1;
 }
 
-void BlowUpPuzzleVCR::updateButton(Button button, const VCRDrawInfo &btON, const VCRDrawInfo &btDown) {
+void PuzzleVCR::updateButton(Button button, const VCRDrawInfo &btON, const VCRDrawInfo &btDown) {
 	GraphicQueueItem item;
 
 	switch (_buttonsState[button]) {
@@ -347,7 +347,7 @@ void BlowUpPuzzleVCR::updateButton(Button button, const VCRDrawInfo &btON, const
 
 }
 
-void BlowUpPuzzleVCR::updatePowerButton() {
+void PuzzleVCR::updatePowerButton() {
 	VCRDrawInfo btON;
 	btON.resourceId = 17;
 	btON.point = Common::Point(512, 347);
@@ -359,7 +359,7 @@ void BlowUpPuzzleVCR::updatePowerButton() {
 	updateButton(kPower, btON, btDown);
 }
 
-void BlowUpPuzzleVCR::updateRewindButton() {
+void PuzzleVCR::updateRewindButton() {
 	VCRDrawInfo btON;
 	btON.resourceId = 14;
 	btON.point = Common::Point(248, 347);
@@ -371,7 +371,7 @@ void BlowUpPuzzleVCR::updateRewindButton() {
 	updateButton(kRewind, btON, btDown);
 }
 
-void BlowUpPuzzleVCR::updatePlayButton() {
+void PuzzleVCR::updatePlayButton() {
 	VCRDrawInfo btON;
 	btON.resourceId = 16;
 	btON.point = Common::Point(401, 359);
@@ -383,7 +383,7 @@ void BlowUpPuzzleVCR::updatePlayButton() {
 	updateButton(kPlay, btON, btDown);
 }
 
-void BlowUpPuzzleVCR::updateStopButton() {
+void PuzzleVCR::updateStopButton() {
 	VCRDrawInfo btON;
 	btON.resourceId = 15;
 	btON.point = Common::Point(330, 354);
@@ -396,7 +396,7 @@ void BlowUpPuzzleVCR::updateStopButton() {
 }
 
 
-void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
+void PuzzleVCR::updateCursorInPolyRegion() {
 	int showCursor = 0;
 
 	if (_jacksState[kBlack] == kOnHand) {
@@ -438,7 +438,7 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
 	}
 }
 
-void BlowUpPuzzleVCR::handleMouseDown() {
+void PuzzleVCR::handleMouseDown() {
 
 	if (_isAccomplished)
 		return;
@@ -541,7 +541,7 @@ void BlowUpPuzzleVCR::handleMouseDown() {
 	}
 }
 
-void BlowUpPuzzleVCR::handleMouseUp() {
+void PuzzleVCR::handleMouseUp() {
 	if (_isAccomplished)
 		return;
 

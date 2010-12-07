@@ -64,7 +64,7 @@ namespace Asylum {
 // If defined, will show the scene update times on the debugger output
 //#define DEBUG_SCENE_TIMES
 
-class BlowUpPuzzle;
+class Puzzle;
 class Cursor;
 class Encounter;
 class MainMenu;
@@ -228,7 +228,7 @@ private:
 
 	// Current EventHandler class instance
 	EventHandler *_handler;
-	BlowUpPuzzle *_puzzles[16];
+	Puzzle *_puzzles[16];
 
 	// Game data
 	SharedData _data;
