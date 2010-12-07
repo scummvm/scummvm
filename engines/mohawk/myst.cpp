@@ -935,8 +935,14 @@ void MohawkEngine_Myst::setMainCursor(uint16 cursor) {
 }
 
 void MohawkEngine_Myst::checkCursorHints() {
-	if (!_view.hint)
+	if (!_view.hint) {
+		// Default to the main cursor when no hints are present
+		if (_currentCursor != _mainCursor) {
+			_currentCursor = _mainCursor;
+			_cursor->setCursor(_currentCursor);
+		}
 		return;
+	}
 
 	// Check all the cursor hints to see if we're in a hotspot that contains a hint.
 	for (uint16 i = 0; i < _cursorHintCount; i++)
