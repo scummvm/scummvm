@@ -1079,4 +1079,24 @@ Common::Error MohawkEngine_Myst::saveGameState(int slot, const char *desc) {
 	return _saveLoad->saveGame(Common::String(desc)) ? Common::kNoError : Common::kUnknownError;
 }
 
+bool MohawkEngine_Myst::canLoadGameStateCurrently() {
+	// No loading in the demo/makingof
+	return !(getFeatures() & GF_DEMO) && getGameType() != GType_MAKINGOF;
+}
+
+bool MohawkEngine_Myst::canSaveGameStateCurrently() {
+	// There's a limited number of stacks the game can save in
+	switch (_curStack) {
+	case kChannelwoodStack:
+	case kDniStack:
+	case kMechanicalStack:
+	case kMystStack:
+	case kSeleniticStack:
+	case kStoneshipStack:
+		return true;
+	}
+
+	return false;
+}
+
 } // End of namespace Mohawk
