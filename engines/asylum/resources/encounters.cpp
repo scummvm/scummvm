@@ -835,7 +835,7 @@ bool Encounter::drawBackground() {
 			getScreen()->addGraphicToQueueCrossfade(_background.resourceId,
 			                                        _background.frameIndex,
 			                                        _point,
-			                                        getWorld()->getObjectById((ObjectId)1763)->getResourceId(),
+			                                        getWorld()->getObjectById(kObjectCave)->getResourceId(),
 			                                        origin,
 			                                        _background.transTableNum);
 		} else {
