@@ -262,7 +262,7 @@ public:
 	void process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 field984, int32 field988);
 	bool process_4069B0(int32 *x, int32 *y);
 	bool process_408B20(Common::Point *point, ActorDirection direction, uint32 count, bool hasDelta);
-	void process_408D00(ActorDirection direction, uint32 count);
+	void process_408D00(ActorDirection dir, uint32 count);
 	void process_41BC00(int32 reactionIndex, int32 numberValue01Add);
 	void process_41BCC0(int32 reactionIndex, int32 numberValue01Substract);
 	bool process_41BDB0(int32 reactionIndex, int32 testNumberValue01);

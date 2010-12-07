@@ -1009,7 +1009,7 @@ bool Actor::process_408B20(Common::Point *point, ActorDirection dir, uint32 coun
 	return true;
 }
 
-void Actor::process_408D00(ActorDirection direction, uint32 count) {
+void Actor::process_408D00(ActorDirection dir, uint32 count) {
 	error("[Actor::process_408D00] Not implemented!");
 }
 
