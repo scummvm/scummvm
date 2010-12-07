@@ -33,12 +33,6 @@
 namespace Asylum {
 
 class AsylumEngine;
-//class Screen;
-//class Sound;
-//class Video;
-//class Cursor;
-//class GraphicResource;
-//struct GraphicQueueItem;
 
 typedef struct VCRDrawInfo {
 	int32 resourceId;
@@ -58,6 +52,9 @@ const Common::Rect BlowUpPuzzleVCRPolies[10] = {
 	Common::Rect(0x0BB, 0x1B7, 0x0F0, 0x1E0)  // yellow jack on table region
 };
 
+//////////////////////////////////////////////////////////////////////////
+// Puzzle 1
+//////////////////////////////////////////////////////////////////////////
 class PuzzleVCR : public Puzzle {
 public:
 	PuzzleVCR(AsylumEngine *engine);
