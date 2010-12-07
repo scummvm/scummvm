@@ -316,7 +316,7 @@ byte *DataIO::getFile(const Common::String &name, int32 &size) {
 		return 0;
 	}
 
-	return 0;
+	return data;
 }
 
 DataIO::File *DataIO::findFile(const Common::String &name) {
