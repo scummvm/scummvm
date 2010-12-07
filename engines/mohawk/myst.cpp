@@ -388,6 +388,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 
 	switch (_curStack) {
 	case kChannelwoodStack:
+		_saveLoad->_v->globals.currentAge = 4;
 		_scriptParser = new MystScriptParser_Channelwood(this);
 		break;
 	case kCreditsStack:
@@ -397,6 +398,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 		_scriptParser = new MystScriptParser_Demo(this);
 		break;
 	case kDniStack:
+		_saveLoad->_v->globals.currentAge = 6;
 		_scriptParser = new MystScriptParser_Dni(this);
 		break;
 	case kIntroStack:
@@ -406,21 +408,25 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 		_scriptParser = new MystScriptParser_MakingOf(this);
 		break;
 	case kMechanicalStack:
+		_saveLoad->_v->globals.currentAge = 3;
 		_scriptParser = new MystScriptParser_Mechanical(this);
 		break;
 	case kMystStack:
+		_saveLoad->_v->globals.currentAge = 2;
 		_scriptParser = new MystScriptParser_Myst(this);
 		break;
 	case kDemoPreviewStack:
 		_scriptParser = new MystScriptParser_Preview(this);
 		break;
 	case kSeleniticStack:
+		_saveLoad->_v->globals.currentAge = 0;
 		_scriptParser = new MystScriptParser_Selenitic(this);
 		break;
 	case kDemoSlidesStack:
 		_scriptParser = new MystScriptParser_Slides(this);
 		break;
 	case kStoneshipStack:
+		_saveLoad->_v->globals.currentAge = 1;
 		_scriptParser = new MystScriptParser_Stoneship(this);
 		break;
 	default:

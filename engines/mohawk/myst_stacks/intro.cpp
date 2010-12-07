@@ -26,6 +26,7 @@
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_saveload.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/intro.h"
@@ -63,6 +64,15 @@ void MystScriptParser_Intro::disablePersistentScripts() {
 void MystScriptParser_Intro::runPersistentScripts() {
 }
 
+uint16 MystScriptParser_Intro::getVar(uint16 var) {
+	switch(var) {
+	case 0:
+		return _vm->_saveLoad->_v->globals.currentAge;
+	default:
+		return MystScriptParser::getVar(var);
+	}
+}
+
 void MystScriptParser_Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Hard coded SoundId valid only for Intro Stack.
 	// Other stacks use Opcode 40, which takes SoundId values as arguments.
@@ -72,7 +82,7 @@ void MystScriptParser_Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, u
 	debugC(kDebugScript, "\tvar: %d", var);
 
 	// TODO: Merge with changeStack (Opcode 40) Implementation?
-	if (_vm->_varStore->getVar(var) == 5 || _vm->_varStore->getVar(var) > 7) {
+	if (getVar(var) == 5 || getVar(var) > 7) {
 		// TODO: Dead Book i.e. Released Sirrus/Achenar
 	} else {
 		// Play Linking Sound, blocking...
@@ -84,7 +94,7 @@ void MystScriptParser_Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, u
 		// Play Flyby Entry Movie on Masterpiece Edition. The Macintosh version is currently hooked
 		// up to the Cinepak versions of the video (the 'c' suffix) until the SVQ1 decoder is completed.
 		if ((_vm->getFeatures() & GF_ME)) {
-			switch (_stackMap[_vm->_varStore->getVar(var)]) {
+			switch (_stackMap[getVar(var)]) {
 			case kSeleniticStack:
 				if (_vm->getPlatform() == Common::kPlatformMacintosh)
 					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_SEc", kMasterpieceOnly));
@@ -123,7 +133,7 @@ void MystScriptParser_Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, u
 			}
 		}
 
-		uint16 varValue = _vm->_varStore->getVar(var);
+		uint16 varValue = getVar(var);
 		_vm->changeToStack(_stackMap[varValue]);
 		_vm->changeToCard(_startCard[varValue], true);
 
