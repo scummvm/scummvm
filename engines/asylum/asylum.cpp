@@ -31,7 +31,21 @@
 #include "asylum/resources/special.h"
 #include "asylum/resources/worldstats.h"
 
+#include "asylum/puzzles/boardkeyhidesto.h"
+#include "asylum/puzzles/boardsalvation.h"
+#include "asylum/puzzles/boardyouth.h"
+#include "asylum/puzzles/clock.h"
+#include "asylum/puzzles/fisherman.h"
+#include "asylum/puzzles/hivecontrol.h"
+#include "asylum/puzzles/hivemachine.h"
+#include "asylum/puzzles/lock.h"
+#include "asylum/puzzles/morguedoor.h"
+#include "asylum/puzzles/pipes.h"
+#include "asylum/puzzles/tictactoe.h"
+#include "asylum/puzzles/timemachine.h"
 #include "asylum/puzzles/vcr.h"
+#include "asylum/puzzles/wheel.h"
+#include "asylum/puzzles/writings.h"
 
 #include "asylum/system/config.h"
 #include "asylum/system/cursor.h"
@@ -417,22 +431,22 @@ EventHandler *AsylumEngine::getPuzzle(uint32 index) {
 
 void AsylumEngine::initPuzzles() {
 	_puzzles[0] = new PuzzleVCR(this);
-	_puzzles[1] = NULL;
-	_puzzles[2] = NULL;
-	_puzzles[3] = NULL;
-	_puzzles[4] = NULL;
-	_puzzles[5] = NULL;
-	_puzzles[6] = NULL;
-	_puzzles[7] = NULL;
-	_puzzles[8] = NULL;
-	_puzzles[9] = NULL;
-	_puzzles[10] = NULL;
-	_puzzles[11] = NULL;
-	_puzzles[12] = NULL;
-	_puzzles[13] = NULL;
-	_puzzles[14] = NULL;
-	_puzzles[15] = NULL;
-	_puzzles[16] = NULL;
+	_puzzles[1] = new PuzzlePipes(this);
+	_puzzles[2] = new PuzzleTicTacToe(this);
+	_puzzles[3] = new PuzzleLock(this);
+	_puzzles[4] = NULL;// No event handler for Puzzle 5
+	_puzzles[5] = new PuzzleWheel(this);
+	_puzzles[6] = new PuzzleBoardSalvation(this);
+	_puzzles[7] = new PuzzleBoardYouth(this);
+	_puzzles[8] = new PuzzleBoardKeyHidesTo(this);
+	_puzzles[9] = new PuzzleWritings(this);
+	_puzzles[10] = new PuzzleClock(this);
+	_puzzles[11] = new PuzzleMorgueDoor(this);
+	_puzzles[12] = NULL; // FIXME Not sure which puzzle this is
+	_puzzles[13] = new PuzzleTimeMachine(this);
+	_puzzles[14] = new PuzzleFisherman(this);
+	_puzzles[15] = new PuzzleHiveMachine(this);
+	_puzzles[16] = new PuzzleHiveControl(this);
 
 	warning("[AsylumEngine::initPuzzles] Add missing puzzles!");
 }
