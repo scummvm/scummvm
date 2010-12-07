@@ -58,6 +58,8 @@ protected:
 	virtual bool update() = 0;
 	virtual bool key(const AsylumEvent &evt);
 	virtual bool mouse(const AsylumEvent &evt) = 0;
+
+	void exit();
 };
 
 } // End of namespace Asylum

@@ -61,6 +61,11 @@ bool Puzzle::key(const AsylumEvent &evt) {
 	return true;
 }
 
+void Puzzle::exit() {
+	getScreen()->clear();
+	getScreen()->copyBackBufferToScreen();
 
+	_vm->switchEventHandler(getScene());
+}
 
 } // end of namespace Asylum
