@@ -150,7 +150,8 @@ Common::Error AsylumEngine::run() {
 
 	// Send init event to our default event handler
 	AsylumEvent initEvt(EVENT_ASYLUM_INIT);
-	_handler->handleEvent(initEvt);
+	if (_handler)
+		_handler->handleEvent(initEvt);
 
 	// Start running event loop
 	while (!shouldQuit()) {
@@ -300,12 +301,14 @@ void AsylumEngine::handleEvents() {
 			}
 
 			// Handle key events
-			_handler->handleEvent(ev);
+			if (_handler)
+				_handler->handleEvent(ev);
 			break;
 
 		case Common::EVENT_KEYUP:
 			// Handle key events
-			_handler->handleEvent(ev);
+			if (_handler)
+				_handler->handleEvent(ev);
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -317,7 +320,9 @@ void AsylumEngine::handleEvents() {
 		case Common::EVENT_MBUTTONDOWN:
 			// Handle mouse events
 			_cursor->setState(ev);
-			_handler->handleEvent(ev);
+
+			if (_handler)
+				_handler->handleEvent(ev);
 			break;
 
 		case Common::EVENT_QUIT:
@@ -333,7 +338,8 @@ void AsylumEngine::handleEvents() {
 
 	// Send update event to our event handler
 	AsylumEvent updateEvt = AsylumEvent(EVENT_ASYLUM_UPDATE);
-	_handler->handleEvent(updateEvt);
+	if (_handler)
+		_handler->handleEvent(updateEvt);
 
 	// TODO replace by original game code based on switchEventHandler
 	processDelayedEvents();
@@ -374,7 +380,7 @@ void AsylumEngine::processDelayedEvents() {
 //////////////////////////////////////////////////////////////////////////
 void AsylumEngine::switchEventHandler(EventHandler *handler) {
 	if (handler == NULL)
-		error("[AsylumEngine::switchMessageHandler] Invalid handler parameter (cannot be NULL)!");
+		warning("[AsylumEngine::switchMessageHandler] NULL handler parameter (shouldn't happen outside of debug commands)!");
 
 	// De-init previous handler
 	if (_handler != NULL) {
@@ -387,7 +393,8 @@ void AsylumEngine::switchEventHandler(EventHandler *handler) {
 
 	// Init new handler
 	AsylumEvent init(EVENT_ASYLUM_INIT);
-	_handler->handleEvent(init);
+	if (_handler)
+		_handler->handleEvent(init);
 }
 
 void AsylumEngine::notify(AsylumEventType type) {
