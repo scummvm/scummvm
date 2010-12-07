@@ -42,12 +42,6 @@ GobConsole::GobConsole(GobEngine *vm) : GUI::Debugger(), _vm(vm) {
 GobConsole::~GobConsole() {
 }
 
-void GobConsole::preEnter() {
-}
-
-void GobConsole::postEnter() {
-}
-
 bool GobConsole::cmd_varSize(int argc, const char **argv) {
 	DebugPrintf("Size of the variable space: %d bytes\n", _vm->_inter->_variables->getSize());
 	return true;

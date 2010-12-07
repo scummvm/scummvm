@@ -34,10 +34,4 @@ ToucheConsole::ToucheConsole(ToucheEngine *vm) : GUI::Debugger(), _vm(vm) {
 ToucheConsole::~ToucheConsole() {
 }
 
-void ToucheConsole::preEnter() {
-}
-
-void ToucheConsole::postEnter() {
-}
-
 } // End of namespace Touche

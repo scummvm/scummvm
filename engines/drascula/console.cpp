@@ -36,12 +36,6 @@ Console::Console(DrasculaEngine *vm) : GUI::Debugger(), _vm(vm) {
 Console::~Console() {
 }
 
-void Console::preEnter() {
-}
-
-void Console::postEnter() {
-}
-
 bool Console::Cmd_Room(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("Usage: changeCard <card>\n");

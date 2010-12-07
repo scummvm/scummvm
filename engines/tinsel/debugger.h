@@ -33,15 +33,16 @@ namespace Tinsel {
 class TinselEngine;
 
 class Console: public GUI::Debugger {
-protected:
+public:
+	Console();
+	virtual ~Console();
+
+private:
 	bool cmd_item(int argc, const char **argv);
 	bool cmd_scene(int argc, const char **argv);
 	bool cmd_music(int argc, const char **argv);
 	bool cmd_sound(int argc, const char **argv);
 	bool cmd_string(int argc, const char **argv);
-public:
-	Console();
-	virtual ~Console();
 };
 
 } // End of namespace Tinsel

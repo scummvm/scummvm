@@ -14,12 +14,13 @@ public:
 	Debugger(Parallaction *vm);
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
-protected:
-	Parallaction *_vm;
-	MouseTriState _mouseState;
-
+private:
 	virtual void preEnter();
 	virtual void postEnter();
+
+private:
+	Parallaction *_vm;
+	MouseTriState _mouseState;
 
 	bool Cmd_DebugLevel(int argc, const char **argv);
 	bool Cmd_Location(int argc, const char **argv);

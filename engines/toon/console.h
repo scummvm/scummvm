@@ -37,10 +37,6 @@ public:
 	ToonConsole(ToonEngine *vm);
 	virtual ~ToonConsole(void);
 
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
 private:
 	ToonEngine *_vm;
 };

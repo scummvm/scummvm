@@ -34,10 +34,4 @@ Sword25Console::Sword25Console(Sword25Engine *vm) : GUI::Debugger(), _vm(vm) {
 Sword25Console::~Sword25Console() {
 }
 
-void Sword25Console::preEnter() {
-}
-
-void Sword25Console::postEnter() {
-}
-
 } // End of namespace Sword25

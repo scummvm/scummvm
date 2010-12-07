@@ -39,10 +39,6 @@ public:
 	MystConsole(MohawkEngine_Myst *vm);
 	virtual ~MystConsole(void);
 
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
 private:
 	MohawkEngine_Myst *_vm;
 
@@ -65,10 +61,6 @@ class RivenConsole : public GUI::Debugger {
 public:
 	RivenConsole(MohawkEngine_Riven *vm);
 	virtual ~RivenConsole(void);
-
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
 
 private:
 	MohawkEngine_Riven *_vm;
@@ -96,10 +88,6 @@ class LivingBooksConsole : public GUI::Debugger {
 public:
 	LivingBooksConsole(MohawkEngine_LivingBooks *vm);
 	virtual ~LivingBooksConsole(void);
-
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
 
 private:
 	MohawkEngine_LivingBooks *_vm;

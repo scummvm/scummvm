@@ -34,10 +34,4 @@ ToonConsole::ToonConsole(ToonEngine *vm) : GUI::Debugger(), _vm(vm) {
 ToonConsole::~ToonConsole() {
 }
 
-void ToonConsole::preEnter() {
-}
-
-void ToonConsole::postEnter() {
-}
-
 } // End of namespace Toon

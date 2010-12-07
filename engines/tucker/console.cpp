@@ -28,16 +28,10 @@
 
 namespace Tucker {
 
-TuckerConsole::TuckerConsole(TuckerEngine *vm) : GUI::Debugger(), _vm(vm) {
+TuckerConsole::TuckerConsole(TuckerEngine *vm) :  _vm(vm) {
 }
 
 TuckerConsole::~TuckerConsole() {
-}
-
-void TuckerConsole::preEnter() {
-}
-
-void TuckerConsole::postEnter() {
 }
 
 } // End of namespace Tucker

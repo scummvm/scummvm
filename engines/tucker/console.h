@@ -37,10 +37,6 @@ public:
 	TuckerConsole(TuckerEngine *vm);
 	virtual ~TuckerConsole(void);
 
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
 private:
 	TuckerEngine *_vm;
 };

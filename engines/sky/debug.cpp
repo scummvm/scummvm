@@ -1103,10 +1103,11 @@ Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCo
 Debugger::~Debugger() {} // we need this here for __SYMBIAN32__
 
 void Debugger::preEnter() {
-
+	::GUI::Debugger::preEnter();
 }
 
 void Debugger::postEnter() {
+	::GUI::Debugger::postEnter();
 	_mouse->resetCursor();
 }
 

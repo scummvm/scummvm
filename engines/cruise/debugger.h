@@ -35,7 +35,7 @@ public:
 	Debugger();
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
-protected:
+private:
 	bool cmd_hotspots(int argc, const char **argv);
 	bool cmd_items(int argc, const char **argv);
 };

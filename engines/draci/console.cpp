@@ -34,10 +34,4 @@ DraciConsole::DraciConsole(DraciEngine *vm) : GUI::Debugger(), _vm(vm) {
 DraciConsole::~DraciConsole() {
 }
 
-void DraciConsole::preEnter() {
-}
-
-void DraciConsole::postEnter() {
-}
-
 } // End of namespace Draci

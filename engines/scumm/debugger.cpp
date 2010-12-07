@@ -107,17 +107,6 @@ ScummDebugger::~ScummDebugger() {
 	 // we need this destructor, even if it is empty, for __SYMBIAN32__
 }
 
-void ScummDebugger::preEnter() {
-	// Pause sound output
-	_old_soundsPaused = _vm->_sound->_soundsPaused;
-	_vm->_sound->pauseSounds(true);
-}
-
-void ScummDebugger::postEnter() {
-	// Resume previous sound state
-	_vm->_sound->pauseSounds(_old_soundsPaused);
-}
-
 ///////////////////////////////////////////////////
 // Now the fun stuff:
 

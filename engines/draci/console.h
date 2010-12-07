@@ -37,10 +37,6 @@ public:
 	DraciConsole(DraciEngine *vm);
 	virtual ~DraciConsole(void);
 
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
 private:
 	DraciEngine *_vm;
 };

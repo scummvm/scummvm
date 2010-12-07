@@ -26,6 +26,7 @@
 #include "agi/agi.h"
 #include "agi/opcodes.h"
 
+#include "agi/preagi.h"
 #include "agi/preagi_mickey.h"
 #include "agi/preagi_winnie.h"
 

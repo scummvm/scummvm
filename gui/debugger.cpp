@@ -30,6 +30,8 @@
 #include "common/debug-channels.h"
 #include "common/system.h"
 
+#include "engines/engine.h"
+
 #include "gui/debugger.h"
 #ifndef USE_TEXT_CONSOLE
 	#include "gui/console.h"
@@ -87,6 +89,14 @@ int Debugger::DebugPrintf(const char *format, ...) {
 #endif
 	va_end (argptr);
 	return count;
+}
+
+void Debugger::preEnter() {
+	g_engine->pauseEngine(true);
+}
+
+void Debugger::postEnter() {
+	g_engine->pauseEngine(false);
 }
 
 void Debugger::attach(const char *entry) {

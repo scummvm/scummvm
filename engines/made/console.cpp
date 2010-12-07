@@ -34,10 +34,4 @@ MadeConsole::MadeConsole(MadeEngine *vm) : GUI::Debugger(), _vm(vm) {
 MadeConsole::~MadeConsole() {
 }
 
-void MadeConsole::preEnter() {
-}
-
-void MadeConsole::postEnter() {
-}
-
 } // End of namespace Made

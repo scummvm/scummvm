@@ -37,10 +37,6 @@ public:
 	MadeConsole(MadeEngine *vm);
 	virtual ~MadeConsole(void);
 
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
 private:
 	MadeEngine *_vm;
 };

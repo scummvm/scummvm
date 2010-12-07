@@ -37,10 +37,6 @@ public:
 	Sword25Console(Sword25Engine *vm);
 	virtual ~Sword25Console(void);
 
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
 private:
 	Sword25Engine *_vm;
 };

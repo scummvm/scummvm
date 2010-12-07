@@ -37,10 +37,6 @@ public:
 	ToucheConsole(ToucheEngine *vm);
 	virtual ~ToucheConsole(void);
 
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
 private:
 	ToucheEngine *_vm;
 };

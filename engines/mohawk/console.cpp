@@ -54,14 +54,6 @@ MystConsole::MystConsole(MohawkEngine_Myst *vm) : GUI::Debugger(), _vm(vm) {
 MystConsole::~MystConsole() {
 }
 
-void MystConsole::preEnter() {
-	_vm->_sound->pauseSound();
-}
-
-void MystConsole::postEnter() {
-	_vm->_sound->resumeSound();
-}
-
 bool MystConsole::Cmd_ChangeCard(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("Usage: changeCard <card>\n");
@@ -315,15 +307,6 @@ RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
 RivenConsole::~RivenConsole() {
 }
 
-void RivenConsole::preEnter() {
-	_vm->_sound->pauseSound();
-	_vm->_sound->pauseSLST();
-}
-
-void RivenConsole::postEnter() {
-	_vm->_sound->resumeSound();
-	_vm->_sound->resumeSLST();
-}
 
 bool RivenConsole::Cmd_ChangeCard(int argc, const char **argv) {
 	if (argc < 2) {
@@ -656,14 +639,6 @@ LivingBooksConsole::LivingBooksConsole(MohawkEngine_LivingBooks *vm) : GUI::Debu
 }
 
 LivingBooksConsole::~LivingBooksConsole() {
-}
-
-void LivingBooksConsole::preEnter() {
-	_vm->_sound->pauseSound();
-}
-
-void LivingBooksConsole::postEnter() {
-	_vm->_sound->resumeSound();
 }
 
 bool LivingBooksConsole::Cmd_PlaySound(int argc, const char **argv) {

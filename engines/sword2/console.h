@@ -82,11 +82,12 @@ public:
 	void buildDebugText();
 	void drawDebugGraphics();
 
-protected:
-	Sword2Engine *_vm;
-
+private:
 	virtual void preEnter();
 	virtual void postEnter();
+
+private:
+	Sword2Engine *_vm;
 
 	// Commands
 	bool Cmd_Mem(int argc, const char **argv);

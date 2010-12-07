@@ -37,11 +37,8 @@ public:
 	Debugger(AGOSEngine *vm);
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
-protected:
+private:
 	AGOSEngine *_vm;
-
-	virtual void preEnter();
-	virtual void postEnter();
 
 	bool Cmd_DebugLevel(int argc, const char **argv);
 	bool Cmd_PlayMusic(int argc, const char **argv);

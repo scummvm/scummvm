@@ -53,16 +53,6 @@ Debugger::Debugger(KyraEngine_v1 *vm)
 	DCmd_Register("settimercountdown",	WRAP_METHOD(Debugger, cmd_setTimerCountdown));
 }
 
-void Debugger::preEnter() {
-	_vm->pauseEngine(true);
-	::GUI::Debugger::preEnter();
-}
-
-void Debugger::postEnter() {
-	::GUI::Debugger::postEnter();
-	_vm->pauseEngine(false);
-}
-
 bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
 	if (argc > 1) {
 		if (scumm_stricmp(argv[1], "enable") == 0)

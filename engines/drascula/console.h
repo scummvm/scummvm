@@ -37,10 +37,6 @@ public:
 	Console(DrasculaEngine *vm);
 	virtual ~Console(void);
 
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
 private:
 	DrasculaEngine *_vm;
 

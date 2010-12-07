@@ -43,10 +43,11 @@ public:
 	virtual ~Debugger(); // we need this here for __SYMBIAN32__ archaic gcc/UIQ
 	bool showGrid()	{	return _showGrid; }
 
-protected:
+private:
 	virtual void preEnter();
 	virtual void postEnter();
 
+private:
 	bool Cmd_ShowGrid(int argc, const char **argv);
 	bool Cmd_ReloadGrid(int argc, const char **argv);
 	bool Cmd_ShowCompact(int argc, const char **argv);

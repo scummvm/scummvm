@@ -37,10 +37,6 @@ public:
 	HugoConsole(HugoEngine *vm);
 	virtual ~HugoConsole(void);
 
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
 private:
 	HugoEngine *_vm;
 };

@@ -37,10 +37,6 @@ public:
 	GobConsole(GobEngine *vm);
 	virtual ~GobConsole(void);
 
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
 private:
 	GobEngine *_vm;
 

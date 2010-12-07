@@ -34,10 +34,4 @@ HugoConsole::HugoConsole(HugoEngine *vm) : GUI::Debugger(), _vm(vm) {
 HugoConsole::~HugoConsole() {
 }
 
-void HugoConsole::preEnter() {
-}
-
-void HugoConsole::postEnter() {
-}
-
 } // End of namespace Hugo

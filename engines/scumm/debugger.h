@@ -36,12 +36,9 @@ public:
 	ScummDebugger(ScummEngine *s);
 	virtual ~ScummDebugger(); // we need this here for __SYMBIAN32__
 
-protected:
+private:
 	ScummEngine *_vm;
 	bool  _old_soundsPaused;
-
-	virtual void preEnter();
-	virtual void postEnter();
 
 	// Commands
 	bool Cmd_Room(int argc, const char **argv);

@@ -34,10 +34,4 @@ CineConsole::CineConsole(CineEngine *vm) : GUI::Debugger(), _vm(vm) {
 CineConsole::~CineConsole() {
 }
 
-void CineConsole::preEnter() {
-}
-
-void CineConsole::postEnter() {
-}
-
 } // End of namespace Cine

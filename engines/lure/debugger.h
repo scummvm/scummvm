@@ -35,7 +35,7 @@ public:
 	Debugger();
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
-protected:
+private:
 	bool cmd_enterRoom(int argc, const char **argv);
 	bool cmd_listRooms(int argc, const char **argv);
 	bool cmd_listFields(int argc, const char **argv);

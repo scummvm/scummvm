@@ -37,10 +37,6 @@ public:
 	CineConsole(CineEngine *vm);
 	virtual ~CineConsole(void);
 
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
-
 private:
 	CineEngine *_vm;
 };

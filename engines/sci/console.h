@@ -42,10 +42,12 @@ class Console : public GUI::Debugger {
 public:
 	Console(SciEngine *engine);
 	virtual ~Console();
-	void preEnter();
-	void postEnter();
 
 	int printObject(reg_t pos);
+
+private:
+	virtual void preEnter();
+	virtual void postEnter();
 
 private:
 	// General

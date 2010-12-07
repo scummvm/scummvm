@@ -34,10 +34,4 @@ SwordConsole::SwordConsole(SwordEngine *vm) : GUI::Debugger(), _vm(vm) {
 SwordConsole::~SwordConsole() {
 }
 
-void SwordConsole::preEnter() {
-}
-
-void SwordConsole::postEnter() {
-}
-
 } // End of namespace Sword

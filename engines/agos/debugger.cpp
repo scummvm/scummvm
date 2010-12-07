@@ -53,16 +53,6 @@ Debugger::Debugger(AGOSEngine *vm)
 }
 
 
-void Debugger::preEnter() {
-	//_vm->_midi.pause(1);
-}
-
-
-void Debugger::postEnter() {
-	//_vm->_midi.pause(0);
-}
-
-
 bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 	if (argc == 1) {
 		if (_vm->_debugMode == false)
