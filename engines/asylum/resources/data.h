@@ -106,8 +106,7 @@ struct SharedData {
 public:
 	SharedData() {
 		_actorEnableForStatus7 = false;
-		_flag1 = false;
-		_actorUpdateCounter = 0;
+		_flag1 = false;		
 		_matteBarHeight = 0;
 		_matteVar2 = 0;
 		_sceneCounter = 0;
@@ -175,9 +174,6 @@ public:
 	ActorDirection getGlobalDirection() { return _globalDirection; }
 
 	void setActorUpdateFlag(int32 val) { _data1[40] = 2; }
-
-	int32 getUpdateCounter() { return _actorUpdateCounter; }
-	void  setUpdateCounter(int32 val) { _actorUpdateCounter = val; }
 
 	int32 getActorUpdateFlag2() { return _data1[36]; }
 	void setActorUpdateFlag2(int32 val) { _data1[36] = val; }
@@ -329,7 +325,6 @@ private:
 
 	bool            _flag1;
 
-	uint32          _actorUpdateCounter;
 	uint32          _matteBarHeight;
 	uint32          _matteVar2;
 
