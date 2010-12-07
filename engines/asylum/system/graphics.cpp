@@ -32,8 +32,12 @@
 
 namespace Asylum {
 
+GraphicResource::GraphicResource(AsylumEngine *engine) : _vm(engine), _resourceId(kResourceNone) {
+}
+
 GraphicResource::GraphicResource(AsylumEngine *engine, ResourceId id) : _vm(engine), _resourceId(kResourceNone) {
-	load(id);
+	if (!load(id))
+		error("[GraphicResource::GraphicResource] Error loading resource (0x%X)", id);
 }
 
 GraphicResource::~GraphicResource() {
@@ -43,13 +47,18 @@ GraphicResource::~GraphicResource() {
 	_vm = NULL;
 }
 
-void GraphicResource::load(ResourceId id) {
+bool GraphicResource::load(ResourceId id) {
 	// Clear previously loaded data
 	clear();
 
 	ResourceEntry *resEntry = getResource()->get(id);
+	if (!resEntry)
+		return false;
+
 	_resourceId = id;
 	init(resEntry->data, resEntry->size);
+
+	return true;
 }
 
 void GraphicResource::clear() {

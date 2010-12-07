@@ -76,11 +76,11 @@ public:
 		}
 	};
 
-	GraphicResource(AsylumEngine *engine) {}
+	GraphicResource(AsylumEngine *engine);
 	GraphicResource(AsylumEngine *engine, ResourceId id);
 	~GraphicResource();
 
-	void load(ResourceId id);
+	bool load(ResourceId id);
 
 	/**
 	 * Copies an animation frame to the target buffer

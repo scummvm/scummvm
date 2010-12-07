@@ -75,6 +75,9 @@ private:
 	bool cmdChangeScene(int32 argc, const char **argv);
 	bool cmdRunEncounter(int32 argc, const char **argv);
 
+	bool cmdSetPalette(int32 argc, const char **argv);
+	bool cmdDrawResource(int32 argc, const char **argv);
+
 	bool cmdToggleFlag(int32 argc, const char **argv);
 };
 

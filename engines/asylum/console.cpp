@@ -31,11 +31,14 @@
 #include "asylum/resources/script.h"
 #include "asylum/resources/worldstats.h"
 
+#include "asylum/system/cursor.h"
+#include "asylum/system/graphics.h"
 #include "asylum/system/screen.h"
 
 #include "asylum/views/scene.h"
 
 #include "asylum/asylum.h"
+#include "asylum/respack.h"
 
 #include "common/debug-channels.h"
 
@@ -62,6 +65,9 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 	DCmd_Register("script",         WRAP_METHOD(Console, cmdRunScript));
 	DCmd_Register("scene",          WRAP_METHOD(Console, cmdChangeScene));
 	DCmd_Register("encounter",      WRAP_METHOD(Console, cmdRunEncounter));
+
+	DCmd_Register("palette",        WRAP_METHOD(Console, cmdSetPalette));
+	DCmd_Register("draw",           WRAP_METHOD(Console, cmdDrawResource));
 
 	DCmd_Register("toggle_flag",    WRAP_METHOD(Console, cmdToggleFlag));
 
@@ -106,6 +112,9 @@ bool Console::cmdHelp(int, const char **) {
 	DebugPrintf(" script      - run a script\n");
 	DebugPrintf(" scene       - change the scene\n");
 	DebugPrintf(" encounter   - run an encounter\n");
+	DebugPrintf("\n");
+	DebugPrintf(" palette     - set the screen palette\n");
+	DebugPrintf(" draw        - draw a resource\n");
 	DebugPrintf("\n");
 	DebugPrintf(" toggle_flag - toggle a flag\n");
 	DebugPrintf("\n");
@@ -387,6 +396,82 @@ bool Console::cmdRunEncounter(int32 argc, const char **argv) {
 	// Line: 12/15 :: 0x25 (1, 1584, 1584, 0, 0, 0, 0, 0, 0) // First Encounter
 	// TODO update with array of valid objects
 	_vm->encounter()->run(index, kObjectNone, kObjectNone, kActorMax);
+
+	return false;
+}
+
+bool Console::cmdSetPalette(int32 argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Syntax: %s <pack> <index>\n", argv[0]);
+		return true;
+	}
+
+	uint32 pack = atoi(argv[1]);
+	uint32 index = atoi(argv[2]);
+
+	// Check resource pack
+	if (pack > 18) {
+		DebugPrintf("[Error] Invalid resource pack (was: %d - valid: [0-18])\n", pack);
+		return true;
+	}
+
+	// Try loading resource
+	ResourceId id = MAKE_RESOURCE(pack, index);
+
+	ResourceEntry *entry = getResource()->get(id);
+	if (!entry) {
+		DebugPrintf("[Error] Invalid resource (0x%X)\n", id);
+		return true;
+	}
+
+	getScreen()->setPalette(id);
+
+	return true;
+}
+
+bool Console::cmdDrawResource(int32 argc, const char **argv) {
+	if (argc != 3 && argc != 4) {
+		DebugPrintf("Syntax: %s <pack> <index> (<frame>)\n", argv[0]);
+		return true;
+	}
+
+	uint32 pack = atoi(argv[1]);
+	uint32 index = atoi(argv[2]);
+
+	uint32 frame = 0;
+	if (argc == 4)
+		frame = atoi(argv[3]);
+
+	// Check resource pack
+	if (pack > 18) {
+		DebugPrintf("[Error] Invalid resource pack (was: %d - valid: [0-18])\n", pack);
+		return true;
+	}
+
+	// Try loading resource
+	GraphicResource *resource = new GraphicResource(_vm);
+	if (!resource->load(MAKE_RESOURCE(pack, index))) {
+		DebugPrintf("[Error] Invalid resource index (was: %d)\n", index);
+		return true;
+	}
+
+	if (frame > resource->count() - 1) {
+		DebugPrintf("[Error] Invalid resource frame index (was: %d , max: %d)\n", frame, resource->count() - 1);
+		return true;
+	}
+
+	delete resource;
+
+	// Stop current event handler (to prevent screen refresh)
+	_vm->switchEventHandler(NULL);
+	getCursor()->hide();
+
+	// Draw resource
+	getScreen()->clear();
+	getScreen()->draw(MAKE_RESOURCE(pack, index), frame, 0, 0, 0);
+	getScreen()->copyBackBufferToScreen();
+
+	g_system->updateScreen();
 
 	return false;
 }
