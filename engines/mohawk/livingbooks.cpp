@@ -2101,7 +2101,14 @@ void LBItem::runScript(uint id, uint16 data, uint16 from) {
 					target = this;
 					debug(2, "Self-target on '%s'", _desc.c_str());
 				}
-			
+
+				// an opcode in the form 0x1xx means to run the script for event 0xx
+				if ((entry->opcode & 0xff00) == 0x0100) {
+					// FIXME: pass on param
+					target->runScript(entry->opcode & 0xff);
+					break;
+				}
+
 				switch (entry->opcode) {
 				case 0xffff:
 					runCommand(entry->command);
