@@ -65,9 +65,6 @@ Common::StringArray MystSaveLoad::generateSaveGameList() {
 }
 
 bool MystSaveLoad::loadGame(const Common::String &filename) {
-	if (_vm->getFeatures() & GF_DEMO) // Don't load games in the demo
-		return false;
-
 	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(filename);
 	if (!loadFile)
 		return false;
@@ -90,6 +87,9 @@ bool MystSaveLoad::loadGame(const Common::String &filename) {
 	syncGameState(s);
 	delete loadFile;
 
+	// Switch us back to the intro stack
+	_vm->changeToStack(kIntroStack);
+
 	// Set our default cursor
 	switch (_v->globals.heldPage) {
 	case 2:
@@ -104,6 +104,9 @@ bool MystSaveLoad::loadGame(const Common::String &filename) {
 	default:
 		_vm->setMainCursor(kDefaultMystCursor);
 	}
+
+	// Set us to the linking book
+	_vm->changeToCard(5, true);
 
 	return true;
 }

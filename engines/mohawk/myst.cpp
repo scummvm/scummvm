@@ -261,34 +261,34 @@ Common::Error MohawkEngine_Myst::run() {
 	_rnd = new Common::RandomSource();
 	_mouseClicked = false;
 
-	// Start us on the first stack.
-	if (getGameType() == GType_MAKINGOF)
-		changeToStack(kMakingOfStack);
-	else if (getFeatures() & GF_DEMO)
-		changeToStack(kDemoStack);
-	else
-		changeToStack(kIntroStack);
-
-	if (getFeatures() & GF_DEMO)
-		changeToCard(2000, true);
-	else
-		changeToCard(1, true);
-
-	// Load game from launcher/command line if requested
-	if (ConfMan.hasKey("save_slot") && !(getFeatures() & GF_DEMO)) {
-		uint32 gameToLoad = ConfMan.getInt("save_slot");
-		Common::StringArray savedGamesList = _saveLoad->generateSaveGameList();
-		if (gameToLoad > savedGamesList.size())
-			error ("Could not find saved game");
-		_saveLoad->loadGame(savedGamesList[gameToLoad]);
-	}
-
 	// Load Help System (Masterpiece Edition Only)
 	if (getFeatures() & GF_ME) {
 		MohawkArchive *mhk = new MohawkArchive();
 		if (!mhk->open("help.dat"))
 			error("Could not load help.dat");
 		_mhk.push_back(mhk);
+	}
+
+	// Load game from launcher/command line if requested
+	if (ConfMan.hasKey("save_slot") && canLoadGameStateCurrently()) {
+		uint32 gameToLoad = ConfMan.getInt("save_slot");
+		Common::StringArray savedGamesList = _saveLoad->generateSaveGameList();
+		if (gameToLoad > savedGamesList.size())
+			error ("Could not find saved game");
+		_saveLoad->loadGame(savedGamesList[gameToLoad]);
+	} else {
+		// Start us on the first stack.
+		if (getGameType() == GType_MAKINGOF)
+			changeToStack(kMakingOfStack);
+		else if (getFeatures() & GF_DEMO)
+			changeToStack(kDemoStack);
+		else
+			changeToStack(kIntroStack);
+	
+		if (getFeatures() & GF_DEMO)
+			changeToCard(2000, true);
+		else
+			changeToCard(1, true);
 	}
 
 	// Test Load Function...
@@ -1062,12 +1062,10 @@ void MohawkEngine_Myst::runLoadDialog() {
 }
 
 Common::Error MohawkEngine_Myst::loadGameState(int slot) {
-	if (_saveLoad->loadGame(_saveLoad->generateSaveGameList()[slot])) {
-		changeToStack(kIntroStack);
-		changeToCard(5, true);
+	if (_saveLoad->loadGame(_saveLoad->generateSaveGameList()[slot]))
 		return Common::kNoError;
-	} else
-		return Common::kUnknownError;
+
+	return Common::kUnknownError;
 }
 
 Common::Error MohawkEngine_Myst::saveGameState(int slot, const char *desc) {
