@@ -107,8 +107,6 @@ void SetupHandleTable() {
 	if (f.open(TinselV1PSX? PSX_INDEX_FILENAME : INDEX_FILENAME)) {
 		// get size of index file
 		len = f.size();
-		if (TinselV1Mac)
-			len -= 2;	// Macintosh version has two redundant ending bytes
 
 		if (len > 0) {
 			if ((len % RECORD_SIZE) != 0) {

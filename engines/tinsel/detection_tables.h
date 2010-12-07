@@ -78,12 +78,13 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 #if 0
-	{	// Macintosh CD Demo V1 version, with *.scn files
+	{	// Macintosh CD Demo V1 version, with *.scn files, see tracker #3110936
 		{
 			"dw",
 			"CD Demo",
 			{
-				{"dw.scn", 0, "ae291aa4ed7f7caacbfb711b6ff2c8bd", 1286264},
+				{"dw.scn", 0, "cfc40a8d5d476a1c9d3abf826fa46f8c", 1272686},
+				{"english.txt", 0, "c69b5d2067e9114a63569a61e9a82faa", 228878},
 				{"english.smp", 0, NULL, -1},
 			},
 			Common::EN_ANY,
@@ -93,7 +94,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_CD | GF_BIG_ENDIAN,
+		GF_CD | GF_SCNFILES | GF_BIG_ENDIAN,
 		TINSEL_V1,
 	},
 #endif

@@ -46,8 +46,6 @@ byte *FindChunk(SCNHANDLE handle, uint32 chunk) {
 	byte *bptr = LockMem(handle);
 	uint32 *lptr = (uint32 *)bptr;
 	uint32 add;
-	bool bigEndian = (_vm->getFeatures() & GF_BIG_ENDIAN) != 0;
-	assert(!bigEndian);		// Big endian data not yet supported
 
 	// Initial adjustmnet for Tinsel 1 chunk types
 	if ((TinselVersion != TINSEL_V2) && (chunk >= CHUNK_SCENE) &&
