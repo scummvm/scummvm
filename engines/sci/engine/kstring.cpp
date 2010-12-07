@@ -706,34 +706,22 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 
 		// A count of -1 means fill the rest of the array
 		uint32 count = argv[5].toSint16() == -1 ? string2Size - index2 + 1 : argv[5].toUint16();
+		reg_t strAddress = argv[1];
+
+		SciString *string1 = s->_segMan->lookupString(argv[1]);
+		//SciString *string1 = !argv[1].isNull() ? s->_segMan->lookupString(argv[1]) : s->_segMan->allocateString(&strAddress);
+
+		if (string1->getSize() < index1 + count)
+			string1->setSize(index1 + count);
+
+		// Note: We're accessing from c_str() here because the
+		// string's size ignores the trailing 0 and therefore
+		// triggers an assert when doing string2[i + index2].
+		for (uint16 i = 0; i < count; i++)
+			string1->setValue(i + index1, string2[i + index2]);
 	
-		// We have a special case here for argv[1] being a system string
-		if (argv[1].segment == s->_segMan->getSysStringsSegment()) {
-			// Resize if necessary
-			const uint16 sysStringId = argv[1].toUint16();
-			SystemString *sysString = s->_segMan->getSystemString(sysStringId);
-			assert(sysString);
-			if ((uint32)sysString->_maxSize < index1 + count) {
-				free(sysString->_value);
-				sysString->_maxSize = index1 + count;
-				sysString->_value = (char *)calloc(index1 + count, sizeof(char));
-			}
-
-			strncpy(sysString->_value + index1, string2 + index2, count);
-		} else {
-			SciString *string1 = s->_segMan->lookupString(argv[1]);
-
-			if (string1->getSize() < index1 + count)
-				string1->setSize(index1 + count);
-
-			// Note: We're accessing from c_str() here because the
-			// string's size ignores the trailing 0 and therefore
-			// triggers an assert when doing string2[i + index2].
-			for (uint16 i = 0; i < count; i++)
-				string1->setValue(i + index1, string2[i + index2]);
-		}
-		
-	} return argv[1];
+		return strAddress;
+	}
 	case 7: { // Cmp
 		Common::String string1 = argv[1].isNull() ? "" : s->_segMan->getString(argv[1]);
 		Common::String string2 = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);

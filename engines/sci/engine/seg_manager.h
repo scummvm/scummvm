@@ -438,22 +438,8 @@ public:
 	void setClassOffset(int index, reg_t offset) { _classTable[index].reg = offset;	}
 	void resizeClassTable(uint32 size) { _classTable.resize(size); }
 
-	/**
-	 * Obtains the system strings segment ID
-	 */
-	SegmentId getSysStringsSegment() { return _sysStringsSegId; }
-
-	/**
-	 * Get a pointer to the system string with the specified index,
-	 * or NULL if that index is invalid.
-	 *
-	 * This method is currently only used by kString().
-	 */
-	SystemString *getSystemString(uint idx) const {
-		if (idx >= SYS_STRINGS_MAX)
-			return NULL;
-		return &_sysStrings->_strings[idx];
-	}
+	reg_t getSaveDirPtr() const { return _saveDirPtr; }
+	reg_t getParserPtr() const { return _parserPtr; }
 
 #ifdef ENABLE_SCI32
 	SciArray<reg_t> *allocateArray(reg_t *addr);
@@ -480,9 +466,9 @@ private:
 	SegmentId _nodesSegId; ///< ID of the (a) node segment
 	SegmentId _hunksSegId; ///< ID of the (a) hunk segment
 
-	/* System strings */
-	SegmentId _sysStringsSegId;
-	SystemStrings *_sysStrings;
+	// Statically allocated memory for system strings
+	reg_t _saveDirPtr;
+	reg_t _parserPtr;
 
 #ifdef ENABLE_SCI32
 	SegmentId _arraysSegId;

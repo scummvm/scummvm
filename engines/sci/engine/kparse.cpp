@@ -97,7 +97,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 	g_sci->checkVocabularySwitch();
 	Vocabulary *voc = g_sci->getVocabulary();
 	voc->parser_event = event;
-	reg_t params[2] = { voc->parser_base, stringpos };
+	reg_t params[2] = { s->_segMan->getParserPtr(), stringpos };
 
 	ResultWordListList words;
 	bool res = voc->tokenizeString(words, string.c_str(), &error);
@@ -154,7 +154,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 		// forgotten :)
 		writeSelectorValue(segMan, event, SELECTOR(claimed), 1);
 		if (error) {
-			s->_segMan->strcpy(voc->parser_base, error);
+			s->_segMan->strcpy(s->_segMan->getParserPtr(), error);
 			debugC(2, kDebugLevelParser, "Word unknown: %s", error);
 			/* Issue warning: */
 

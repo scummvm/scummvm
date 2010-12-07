@@ -52,9 +52,6 @@ SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	case SEG_TYPE_LOCALS:
 		mem = new LocalVariables();
 		break;
-	case SEG_TYPE_SYS_STRINGS:
-		mem = new SystemStrings();
-		break;
 	case SEG_TYPE_STACK:
 		mem = new DataStack();
 		break;
@@ -98,9 +95,6 @@ const char *SegmentObj::getSegmentTypeName(SegmentType type) {
 		break;
 	case SEG_TYPE_LOCALS:
 		return "locals";
-		break;
-	case SEG_TYPE_SYS_STRINGS:
-		return "strings";
 		break;
 	case SEG_TYPE_STACK:
 		return "stack";
@@ -200,28 +194,6 @@ SegmentRef DynMem::dereference(reg_t pointer) {
 	ret.raw = _buf + pointer.offset;
 	return ret;
 }
-
-bool SystemStrings::isValidOffset(uint16 offset) const {
-	return offset < SYS_STRINGS_MAX && !_strings[offset]._name.empty();
-}
-
-SegmentRef SystemStrings::dereference(reg_t pointer) {
-	SegmentRef ret;
-	ret.isRaw = true;
-	ret.maxSize = _strings[pointer.offset]._maxSize;
-	if (isValidOffset(pointer.offset))
-		ret.raw = (byte *)(_strings[pointer.offset]._value);
-	else {
-		if (g_sci->getGameId() == GID_KQ5) {
-			// This occurs in KQ5CD when interacting with certain objects
-		} else {
-			error("SystemStrings::dereference(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
-		}
-	}
-
-	return ret;
-}
-
 
 //-------------------- clones --------------------
 

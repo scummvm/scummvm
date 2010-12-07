@@ -384,7 +384,6 @@ uint16 Kernel::findRegType(reg_t reg) {
 		break;
 	case SEG_TYPE_LOCALS:
 	case SEG_TYPE_STACK:
-	case SEG_TYPE_SYS_STRINGS:
 	case SEG_TYPE_DYNMEM:
 	case SEG_TYPE_HUNK:
 #ifdef ENABLE_SCI32

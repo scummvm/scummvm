@@ -370,8 +370,7 @@ reg_t kGetSaveDir(EngineState *s, int argc, reg_t *argv) {
 	if (argc > 0)
 		warning("kGetSaveDir called with %d parameter(s): %04x:%04x", argc, PRINT_REG(argv[0]));
 #endif
-
-	return make_reg(s->_segMan->getSysStringsSegment(), SYS_STRING_SAVEDIR);
+		return s->_segMan->getSaveDirPtr();
 }
 
 reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {

@@ -148,6 +148,23 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		if (type == SEG_TYPE_HUNK)
 			continue;
 
+		// Don't save or load the obsolete system string segments
+		if (type == 5) {
+			if (s.isSaving()) {
+				continue;
+			} else {
+				// Old saved game. Skip the data.
+				Common::String tmp;
+				for (int i = 0; i < 4; i++) {
+					s.syncString(tmp);	// OBSOLETE: name
+					s.skip(4);			// OBSOLETE: maxSize
+					s.syncString(tmp);	// OBSOLETE: value
+				}
+				_heap[i] = NULL;	// set as freed
+				continue;
+			}
+		}
+
 		if (s.isLoading())
 			mobj = SegmentObj::createSegmentObj(type);
 
@@ -482,32 +499,6 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_localsSegment);
 
 	s.syncAsSint32LE(_markedAsDeleted);
-}
-
-static void sync_SystemString(Common::Serializer &s, SystemString &obj) {
-	s.syncString(obj._name);
-	s.syncAsSint32LE(obj._maxSize);
-
-	// Sync obj._value. We cannot use syncCStr as we must make sure that
-	// the allocated buffer has the correct size, i.e., obj._maxSize
-	Common::String tmp;
-	if (s.isSaving() && obj._value)
-		tmp = obj._value;
-	s.syncString(tmp);
-	if (s.isLoading()) {
-		if (!obj._maxSize) {
-			obj._value = NULL;
-		} else {
-			//free(*str);
-			obj._value = (char *)calloc(obj._maxSize, sizeof(char));
-			strncpy(obj._value, tmp.c_str(), obj._maxSize);
-		}
-	}
-}
-
-void SystemStrings::saveLoadWithSerializer(Common::Serializer &s) {
-	for (int i = 0; i < SYS_STRINGS_MAX; ++i)
-		sync_SystemString(s, _strings[i]);
 }
 
 void DynMem::saveLoadWithSerializer(Common::Serializer &s) {
@@ -890,6 +881,9 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Message state:
 	delete s->_msgState;
 	s->_msgState = new MessageState(s->_segMan);
+
+	// System strings:
+	s->_segMan->initSysStrings();
 
 	s->abortScriptProcessing = kAbortLoadGame;
 

@@ -64,7 +64,7 @@ enum SegmentType {
 	SEG_TYPE_CLONES = 2,
 	SEG_TYPE_LOCALS = 3,
 	SEG_TYPE_STACK = 4,
-	SEG_TYPE_SYS_STRINGS = 5,
+	// 5 used to be system strings,	now obsolete
 	SEG_TYPE_LISTS = 6,
 	SEG_TYPE_NODES = 7,
 	SEG_TYPE_HUNK = 8,
@@ -143,49 +143,6 @@ public:
 	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const {
 		return Common::Array<reg_t>();
 	}
-};
-
-enum {
-	SYS_STRINGS_MAX = 4,
-
-	SYS_STRING_SAVEDIR = 0,
-	SYS_STRING_PARSER_BASE = 1,
-
-	MAX_PARSER_BASE = 64
-};
-
-struct SystemString {
-	Common::String _name;
-	int _maxSize;
-	char *_value;
-};
-
-struct SystemStrings : public SegmentObj {
-	SystemString _strings[SYS_STRINGS_MAX];
-
-public:
-	SystemStrings() : SegmentObj(SEG_TYPE_SYS_STRINGS) {
-		for (int i = 0; i < SYS_STRINGS_MAX; i++) {
-			_strings[i]._maxSize = 0;
-			_strings[i]._value = 0;
-		}
-	}
-	~SystemStrings() {
-		for (int i = 0; i < SYS_STRINGS_MAX; i++) {
-			SystemString *str = &_strings[i];
-			if (!str->_name.empty()) {
-				free(str->_value);
-				str->_value = NULL;
-
-				str->_maxSize = 0;
-			}
-		}
-	}
-
-	virtual bool isValidOffset(uint16 offset) const;
-	virtual SegmentRef dereference(reg_t pointer);
-
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 struct LocalVariables : public SegmentObj {

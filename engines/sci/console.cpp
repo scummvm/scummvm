@@ -1616,10 +1616,6 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 				DebugPrintf("D  data stack (%d)", (*(DataStack *)mobj)._capacity);
 				break;
 
-			case SEG_TYPE_SYS_STRINGS:
-				DebugPrintf("Y  system string table");
-				break;
-
 			case SEG_TYPE_LISTS:
 				DebugPrintf("L  lists (%d)", (*(ListTable *)mobj).entries_used);
 				break;
@@ -1711,18 +1707,6 @@ bool Console::segmentInfo(int nr) {
 		DataStack *stack = (DataStack *)mobj;
 		DebugPrintf("stack\n");
 		DebugPrintf("  %d (0x%x) entries\n", stack->_capacity, stack->_capacity);
-	}
-	break;
-
-	case SEG_TYPE_SYS_STRINGS: {
-		DebugPrintf("system string table - viewing currently disabled\n");
-#if 0
-		SystemStrings *strings = &(mobj->data.sys_strings);
-
-		for (int i = 0; i < SYS_STRINGS_MAX; i++)
-			if (strings->strings[i].name)
-				DebugPrintf("  %s[%d]=\"%s\"\n", strings->strings[i].name, strings->strings[i].max_size, strings->strings[i].value);
-#endif
 	}
 	break;
 

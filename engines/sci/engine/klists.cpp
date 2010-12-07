@@ -635,10 +635,18 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 			return kString(s, argc, argv);
 	} else {
 		if (s->_segMan->getSegmentType(argv[1].segment) == SEG_TYPE_STRING ||
-			s->_segMan->getSegmentType(argv[1].segment) == SEG_TYPE_SYS_STRINGS ||
 			s->_segMan->getSegmentType(argv[1].segment) == SEG_TYPE_SCRIPT) {
 			return kString(s, argc, argv);
 		}
+
+#if 0
+		if (op == 6) {
+			if (s->_segMan->getSegmentType(argv[3].segment) == SEG_TYPE_STRING ||
+				s->_segMan->getSegmentType(argv[3].segment) == SEG_TYPE_SCRIPT) {
+				return kString(s, argc, argv);
+			}
+		}
+#endif
 	}
 
 	switch (op) {
@@ -694,11 +702,16 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		return argv[1];
 	}
 	case 6: { // Cpy
+#if 0
 		if (argv[1].isNull() || argv[3].isNull()) {
 			warning("kArray(Cpy): Request to copy from or to a null pointer");
 			return NULL_REG;
 		}
+#endif
+
+		reg_t arrayHandle = argv[1];
 		SciArray<reg_t> *array1 = s->_segMan->lookupArray(argv[1]);
+		//SciArray<reg_t> *array1 = !argv[1].isNull() ? s->_segMan->lookupArray(argv[1]) : s->_segMan->allocateArray(&arrayHandle);
 		SciArray<reg_t> *array2 = s->_segMan->lookupArray(argv[3]);
 		uint32 index1 = argv[2].toUint16();
 		uint32 index2 = argv[4].toUint16();
@@ -716,7 +729,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		for (uint16 i = 0; i < count; i++)
 			array1->setValue(i + index1, array2->getValue(i + index2));
 
-		return argv[1];
+		return arrayHandle;
 	}
 	case 7: // Cmp
 		// Not implemented in SSCI

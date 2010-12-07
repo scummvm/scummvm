@@ -82,22 +82,19 @@ void SegManager::resetSegMan() {
 }
 
 void SegManager::initSysStrings() {
-	_sysStrings = (SystemStrings *)allocSegment(new SystemStrings(), &_sysStringsSegId);
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		// We need to allocate system strings in one segment, for compatibility reasons
+		allocDynmem(512, "system strings", &_saveDirPtr);
+		_parserPtr = make_reg(_saveDirPtr.segment, _saveDirPtr.offset + 256);
+#ifdef ENABLE_SCI32
+	} else {
+		SciString *saveDirString = allocateString(&_saveDirPtr);
+		saveDirString->setSize(256);
+		saveDirString->setValue(0, 0);
 
-	// Allocate static buffer for savegame and CWD directories
-	SystemString *strSaveDir = getSystemString(SYS_STRING_SAVEDIR);
-	strSaveDir->_name = "savedir";
-	strSaveDir->_maxSize = MAX_SAVE_DIR_SIZE;
-	strSaveDir->_value = (char *)calloc(MAX_SAVE_DIR_SIZE, sizeof(char));
-	// Set the savegame dir (actually, we set it to a fake value,
-	// since we cannot let the game control where saves are stored)
-	::strcpy(strSaveDir->_value, "");
-
-	// Allocate static buffer for the parser base
-	SystemString *strParserBase = getSystemString(SYS_STRING_PARSER_BASE);
-	strParserBase->_name = "parser-base";
-	strParserBase->_maxSize = MAX_PARSER_BASE;
-	strParserBase->_value = (char *)calloc(MAX_PARSER_BASE, sizeof(char));
+		_parserPtr = NULL_REG;	// no SCI2 game had a parser
+#endif
+	}
 }
 
 SegmentId SegManager::findFreeSegment() const {

@@ -343,7 +343,7 @@ int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 	}
 	// otherwise look for unused channel
 	for (int channelNr = _driverFirstChannel; channelNr < 15; channelNr++) {
-		if (channelNr == 9) // never map to channel 9 (precussion)
+		if (channelNr == 9) // never map to channel 9 (percussion)
 			continue;
 		if (!_usedChannel[channelNr]) {
 			_usedChannel[channelNr] = caller;
