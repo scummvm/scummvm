@@ -23,6 +23,7 @@
  *
  */
 
+#include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_saveload.h"
 
@@ -88,6 +89,21 @@ bool MystSaveLoad::loadGame(const Common::String &filename) {
 	Common::Serializer s(loadFile, 0);
 	syncGameState(s);
 	delete loadFile;
+
+	// Set our default cursor
+	switch (_v->globals.heldPage) {
+	case 2:
+		_vm->setMainCursor(kBluePageCursor);
+		break;
+	case 8:
+		_vm->setMainCursor(kRedPageCursor);
+		break;
+	case 12:
+		_vm->setMainCursor(kWhitePageCursor);
+		break;
+	default:
+		_vm->setMainCursor(kDefaultMystCursor);
+	}
 
 	return true;
 }
