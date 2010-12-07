@@ -155,7 +155,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 			} else {
 				// Old saved game. Skip the data.
 				Common::String tmp;
-				for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 4; j++) {
 					s.syncString(tmp);	// OBSOLETE: name
 					s.skip(4);			// OBSOLETE: maxSize
 					s.syncString(tmp);	// OBSOLETE: value
