@@ -64,8 +64,6 @@ public:
 	~PuzzleVCR();
 
 	bool handleEvent(const AsylumEvent &event);
-	void open();
-	void close();
 
 private:
 	enum Jack {
@@ -117,7 +115,13 @@ private:
 
 	int inPolyRegion(int x, int y, int polyIdx) const;
 
-	void update();
+	//////////////////////////////////////////////////////////////////////////
+	// Event Handling
+	//////////////////////////////////////////////////////////////////////////
+	bool init();
+	bool update();
+	bool key(const AsylumEvent &evt);
+	bool mouse(const AsylumEvent &evt);
 
 	void updateCursorInPolyRegion();
 

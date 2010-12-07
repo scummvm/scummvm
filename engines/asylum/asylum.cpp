@@ -412,8 +412,6 @@ EventHandler *AsylumEngine::getPuzzle(uint32 index) {
 	if (_puzzles[index] == NULL)
 		error("[AsylumEngine::getPuzzleEventHandler] This puzzle doesn't have an event handler! (index: %d)", index);
 
-	_puzzles[index]->init();
-
 	return (EventHandler *)_puzzles[index];
 }
 
