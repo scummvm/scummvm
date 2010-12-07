@@ -29,6 +29,7 @@
 
 #include "asylum/system/cursor.h"
 #include "asylum/system/graphics.h"
+#include "asylum/system/screen.h"
 
 #include "asylum/views/scene.h"
 
@@ -36,23 +37,30 @@
 
 namespace Asylum {
 
-Puzzle::Puzzle(AsylumEngine *engine): _vm(engine),
-	_cursor(NULL), _bgResource(NULL),
-	_leftClickUp(false), _leftClickDown(false), _rightClickDown(false), _active(false) {
-}
-
-void Puzzle::init() {
-	// setup cursor & background
-	_cursor     = new Cursor(_vm);
-	_bgResource = new GraphicResource(_vm, getWorld()->graphicResourceIds[0]);
+Puzzle::Puzzle(AsylumEngine *engine): _vm(engine) {
 }
 
 Puzzle::~Puzzle() {
-	delete _cursor;
-	delete _bgResource;
-
 	// Zero passed pointers
 	_vm = NULL;
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Event Handling
+//////////////////////////////////////////////////////////////////////////
+bool Puzzle::key(const AsylumEvent &evt) {
+	switch (evt.kbd.keycode) {
+	default:
+		break;
+
+	case Common::KEYCODE_TAB:
+		getScreen()->takeScreenshot();
+		break;
+	}
+
+	return true;
+}
+
+
 
 } // end of namespace Asylum

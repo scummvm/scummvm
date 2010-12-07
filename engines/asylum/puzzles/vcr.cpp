@@ -52,135 +52,144 @@ PuzzleVCR::PuzzleVCR(AsylumEngine *engine): Puzzle(engine) {
 }
 
 PuzzleVCR::~PuzzleVCR() {
-	delete _cursor;
-	delete _bgResource;
 }
 
-void PuzzleVCR::open() {
-	_active = true;
-
-	getSound()->stopAll();
-
-	// Load the graphics palette
-	getScreen()->setPalette(getWorld()->graphicResourceIds[29]);
-
-	// show blow up puzzle BG
-	getScreen()->draw(getWorld()->graphicResourceIds[0], 0, 0, 0, 0);
-
-	// Set mouse cursor
-	_cursor->set(getWorld()->graphicResourceIds[28]);
-	_cursor->show();
-
-	_leftClickUp    = false;
-	_leftClickDown  = false;
-	_rightClickDown = false;
+//////////////////////////////////////////////////////////////////////////
+// Event Handling
+//////////////////////////////////////////////////////////////////////////
+bool PuzzleVCR::handleEvent(const AsylumEvent &event) {
+	error("[PuzzleVCR::handleEvent] Not implemented!");
 }
 
-void PuzzleVCR::close() {
-	_active = false;
-	// TODO Switch back to scene event handler
+bool PuzzleVCR::init()  {
+	error("[PuzzleVCR::init] Not implemented!");
 }
 
-bool PuzzleVCR::handleEvent(const AsylumEvent &ev) {
-	switch (ev.type) {
-	case Common::EVENT_MOUSEMOVE:
-		//_cursor->move(ev.mouse.x, ev.mouse.y);
-		break;
-	case Common::EVENT_LBUTTONUP:
-		_leftClickUp = true;
-		break;
-	case Common::EVENT_LBUTTONDOWN:
-		_leftClickDown = true;
-		break;
-	case Common::EVENT_RBUTTONDOWN:
-		_rightClickDown = true;
-		break;
-	default:
-		break;
-	}
-
-	if (_leftClickUp || _leftClickDown)
-		update();
-
-	return true;
+bool PuzzleVCR::update()  {
+	error("[PuzzleVCR::update] Not implemented!");
 }
 
-void Puzzle::playSound(ResourceId resourceId, bool loop) {
-	getSound()->playSound(resourceId, loop, Config.sfxVolume, 0);
+bool PuzzleVCR::key(const AsylumEvent &evt) {
+	error("[PuzzleVCR::key] Not implemented!");
 }
+
+bool PuzzleVCR::mouse(const AsylumEvent &evt) {
+	error("[PuzzleVCR::mouse] Not implemented!");
+}
+
+//void PuzzleVCR::open() {
+//	getSound()->stopAll();
+//
+//	// Load the graphics palette
+//	getScreen()->setPalette(getWorld()->graphicResourceIds[29]);
+//
+//	// show blow up puzzle BG
+//	getScreen()->draw(getWorld()->graphicResourceIds[0], 0, 0, 0, 0);
+//
+//	// Set mouse cursor
+//	getCursor()->set(getWorld()->graphicResourceIds[28]);
+//	getCursor()->show();
+//}
+
+//bool PuzzleVCR::handleEvent(const AsylumEvent &ev) {
+//	switch (ev.type) {
+//	case Common::EVENT_MOUSEMOVE:
+//		//getCursor()->move(ev.mouse.x, ev.mouse.y);
+//		break;
+//	case Common::EVENT_LBUTTONUP:
+//		_leftClickUp = true;
+//		break;
+//	case Common::EVENT_LBUTTONDOWN:
+//		_leftClickDown = true;
+//		break;
+//	case Common::EVENT_RBUTTONDOWN:
+//		_rightClickDown = true;
+//		break;
+//	default:
+//		break;
+//	}
+//
+//	if (_leftClickUp || _leftClickDown)
+//		update();
+//
+//	return true;
+//}
+
 
 int PuzzleVCR::inPolyRegion(int x, int y, int polyIdx) const {
 	return  x >= BlowUpPuzzleVCRPolies[polyIdx].left && x <= BlowUpPuzzleVCRPolies[polyIdx].right &&
 	        y >= BlowUpPuzzleVCRPolies[polyIdx].top  && y <= BlowUpPuzzleVCRPolies[polyIdx].bottom;
 }
 
-void PuzzleVCR::update() {
-	getScreen()->clearGraphicsInQueue();
-
-	if (_rightClickDown) { // quits BlowUp Puzzle
-		_rightClickDown = false;
-		close();
-		getSound()->stopAll();
-	}
-
-	if (_leftClickDown) {
-		_leftClickDown = false;
-		handleMouseDown();
-	}
-
-	if (_leftClickUp) {
-		_leftClickUp = false;
-		handleMouseUp();
-	}
-
-	updateCursorInPolyRegion();
-
-	updateBlackJack();
-	updateRedJack();
-	updateYellowJack();
-
-	updatePowerButton();
-	updateRewindButton();
-	updatePlayButton();
-	updateStopButton();
-
-	if (_buttonsState[kPower] == kON) {
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[22], _tvScreenAnimIdx, Common::Point(0, 37), 0, 0, 1);
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[23], _tvScreenAnimIdx++, Common::Point(238, 22), 0, 0, 1);
-		_tvScreenAnimIdx %= 6;
-	}
-
-	if (_isAccomplished) {
-		getScreen()->drawGraphicsInQueue();
-
-		int16 barSize = 0;
-		do {
-			getScreen()->drawWideScreenBars(barSize);
-			barSize += 4;
-		} while (barSize < 84);
-
-		// TODO: fade palette to gray
-
-		getVideo()->playVideo(2);
-
-		_isAccomplished = false;
-		close();
-	} else {
-		getScreen()->drawGraphicsInQueue();
-	}
-}
+//bool PuzzleVCR::update() {
+//	getScreen()->clearGraphicsInQueue();
+//
+//	if (_rightClickDown) { // quits BlowUp Puzzle
+//		_rightClickDown = false;
+//		close();
+//		getSound()->stopAll();
+//	}
+//
+//	if (_leftClickDown) {
+//		_leftClickDown = false;
+//		handleMouseDown();
+//	}
+//
+//	if (_leftClickUp) {
+//		_leftClickUp = false;
+//		handleMouseUp();
+//	}
+//
+//	updateCursorInPolyRegion();
+//
+//	updateBlackJack();
+//	updateRedJack();
+//	updateYellowJack();
+//
+//	updatePowerButton();
+//	updateRewindButton();
+//	updatePlayButton();
+//	updateStopButton();
+//
+//	if (_buttonsState[kPower] == kON) {
+//		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[22], _tvScreenAnimIdx, Common::Point(0, 37), 0, 0, 1);
+//		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[23], _tvScreenAnimIdx++, Common::Point(238, 22), 0, 0, 1);
+//		_tvScreenAnimIdx %= 6;
+//	}
+//
+//	if (_isAccomplished) {
+//		getScreen()->drawGraphicsInQueue();
+//
+//		int16 barSize = 0;
+//		do {
+//			getScreen()->drawWideScreenBars(barSize);
+//			barSize += 4;
+//		} while (barSize < 84);
+//
+//		// TODO: fade palette to gray
+//
+//		getVideo()->playVideo(2);
+//
+//		_isAccomplished = false;
+//		close();
+//	} else {
+//		getScreen()->drawGraphicsInQueue();
+//	}
+//
+//	return true;
+//}
 
 GraphicQueueItem PuzzleVCR::getGraphicJackItem(int32 index) {
 	GraphicQueueItem jackItemOnHand;
 
-	int jackY = _cursor->position().y;
-	if (_cursor->position().y < 356) {
+	int jackY = getCursor()->position().y;
+	if (getCursor()->position().y < 356) {
 		jackY = 356;
 	}
 
 	jackItemOnHand.resourceId = getWorld()->graphicResourceIds[index];
 	jackItemOnHand.frameIndex = 0;
-	jackItemOnHand.source = Common::Point(_cursor->position().x - 114, jackY - 14);
+	jackItemOnHand.source = Common::Point(getCursor()->position().x - 114, jackY - 14);
 	jackItemOnHand.priority = 1;
 
 	return jackItemOnHand;
@@ -189,13 +198,13 @@ GraphicQueueItem PuzzleVCR::getGraphicJackItem(int32 index) {
 GraphicQueueItem PuzzleVCR::getGraphicShadowItem() {
 	GraphicQueueItem shadowItem;
 
-	int shadowY = (_cursor->position().y - 356) / 4;
-	if (_cursor->position().y < 356) {
+	int shadowY = (getCursor()->position().y - 356) / 4;
+	if (getCursor()->position().y < 356) {
 		shadowY = 0;
 	}
 	shadowItem.resourceId = getWorld()->graphicResourceIds[30];
 	shadowItem.frameIndex = 0;
-	shadowItem.source = Common::Point(_cursor->position().x - shadowY, 450);
+	shadowItem.source = Common::Point(getCursor()->position().x - shadowY, 450);
 	shadowItem.priority = 2;
 
 	return shadowItem;
@@ -308,13 +317,13 @@ int PuzzleVCR::setJackOnHole(int jackType, JackState plugged) {
 		if (_jacksState[jackType-1] == kOnHand) {
 			_jacksState[jackType-1] = plugged;
 			_holesState[plugged-1] = jackType; // set jack on red
-			playSound(getWorld()->graphicResourceIds[44]);
+			getSound()->playSound(getWorld()->graphicResourceIds[44]);
 		}
 	} else if (jackType == 0) {
 		jackType = _holesState[plugged-1];
 		_jacksState[jackType-1] = kOnHand;
 		_holesState[plugged-1] = 0;
-		playSound(getWorld()->graphicResourceIds[43]);
+		getSound()->playSound(getWorld()->graphicResourceIds[43]);
 		return 0;
 	}
 	return 1;
@@ -408,33 +417,33 @@ void PuzzleVCR::updateCursorInPolyRegion() {
 	}
 
 	if (!showCursor) {
-		if (inPolyRegion(_cursor->position().x, _cursor->position().y, kRewindButton)
-		 || inPolyRegion(_cursor->position().x, _cursor->position().y, kStopButton)
-		 || inPolyRegion(_cursor->position().x, _cursor->position().y, kPlayButton)
-		 || inPolyRegion(_cursor->position().x, _cursor->position().y, kPowerButton)
-		 || inPolyRegion(_cursor->position().x, _cursor->position().y, kBlackJack)
-		 || inPolyRegion(_cursor->position().x, _cursor->position().y, kRedJack)
-		 || inPolyRegion(_cursor->position().x, _cursor->position().y, kYellowJack)) {
-			_cursor->animate();
+		if (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kRewindButton)
+		 || inPolyRegion(getCursor()->position().x, getCursor()->position().y, kStopButton)
+		 || inPolyRegion(getCursor()->position().x, getCursor()->position().y, kPlayButton)
+		 || inPolyRegion(getCursor()->position().x, getCursor()->position().y, kPowerButton)
+		 || inPolyRegion(getCursor()->position().x, getCursor()->position().y, kBlackJack)
+		 || inPolyRegion(getCursor()->position().x, getCursor()->position().y, kRedJack)
+		 || inPolyRegion(getCursor()->position().x, getCursor()->position().y, kYellowJack)) {
+			getCursor()->animate();
 		} else {
-			if ((inPolyRegion(_cursor->position().x, _cursor->position().y, kRedHole) && _holesState[kOnTable])
-			 || (inPolyRegion(_cursor->position().x, _cursor->position().y, kYellowHole) && _holesState[kPluggedOnRed])
-			 || (inPolyRegion(_cursor->position().x, _cursor->position().y, kBlackHole) && _holesState[kPluggedOnYellow])) {
-				if (_cursor->currentFrame != 2) { // reset cursor
-					_cursor->show();
-					_cursor->set(MAKE_RESOURCE(kResourcePackShared, 2));
-					_cursor->animate();
+			if ((inPolyRegion(getCursor()->position().x, getCursor()->position().y, kRedHole) && _holesState[kOnTable])
+			 || (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kYellowHole) && _holesState[kPluggedOnRed])
+			 || (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kBlackHole) && _holesState[kPluggedOnYellow])) {
+				if (getCursor()->currentFrame != 2) { // reset cursor
+					getCursor()->show();
+					getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 2));
+					getCursor()->animate();
 				}
 			} else {
-				if (_cursor->currentFrame != 0) { // reset cursor
-					_cursor->show();
-					_cursor->set(MAKE_RESOURCE(kResourcePackShared, 0));
-					_cursor->animate();
+				if (getCursor()->currentFrame != 0) { // reset cursor
+					getCursor()->show();
+					getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 0));
+					getCursor()->animate();
 				}
 			}
 		}
 	} else {
-		_cursor->hide();
+		getCursor()->hide();
 	}
 }
 
@@ -453,17 +462,17 @@ void PuzzleVCR::handleMouseDown() {
 	}
 
 	// Plug-in jacks
-	if (inPolyRegion(_cursor->position().x, _cursor->position().y, kRedHole)) {
+	if (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kRedHole)) {
 		if (!setJackOnHole(jackType, kPluggedOnRed)) {
 			return;
 		}
 	}
-	if (inPolyRegion(_cursor->position().x, _cursor->position().y, kYellowHole)) {
+	if (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kYellowHole)) {
 		if (!setJackOnHole(jackType, kPluggedOnYellow)) {
 			return;
 		}
 	}
-	if (inPolyRegion(_cursor->position().x, _cursor->position().y, kBlackHole)) {
+	if (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kBlackHole)) {
 		if (!setJackOnHole(jackType, kPluggedOnBlack)) {
 			// TODO: this will probably segfault!
 			error("[BlowUpPuzzleVCR::handleMouseDown] Not implemented!");
@@ -479,28 +488,28 @@ void PuzzleVCR::handleMouseDown() {
 
 	// Put jacks on table --
 	if (jackType) {
-		if (_cursor->position().x >= (int32)BlowUpPuzzleVCRPolies[kBlackJack].left && _cursor->position().x <= (int32)BlowUpPuzzleVCRPolies[kYellowJack].right
-		 && _cursor->position().y >= (int32)BlowUpPuzzleVCRPolies[kBlackJack].top  && _cursor->position().y <= (int32)BlowUpPuzzleVCRPolies[kYellowJack].bottom) {
+		if (getCursor()->position().x >= (int32)BlowUpPuzzleVCRPolies[kBlackJack].left && getCursor()->position().x <= (int32)BlowUpPuzzleVCRPolies[kYellowJack].right
+		 && getCursor()->position().y >= (int32)BlowUpPuzzleVCRPolies[kBlackJack].top  && getCursor()->position().y <= (int32)BlowUpPuzzleVCRPolies[kYellowJack].bottom) {
 
 			_jacksState[jackType-1] = kOnTable;
-			playSound(getWorld()->graphicResourceIds[50]);
-			_cursor->show();
+			getSound()->playSound(getWorld()->graphicResourceIds[50]);
+			getCursor()->show();
 		}
 		return;
 	}
 
 	// Get Jacks from Table
-	if (inPolyRegion(_cursor->position().x, _cursor->position().y, kBlackJack)) {
+	if (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kBlackJack)) {
 		_jacksState[kBlack] = kOnHand;
-	} else if (inPolyRegion(_cursor->position().x, _cursor->position().y, kRedJack)) {
+	} else if (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kRedJack)) {
 		_jacksState[kRed] = kOnHand;
-	} else if (inPolyRegion(_cursor->position().x, _cursor->position().y, kYellowJack)) {
+	} else if (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kYellowJack)) {
 		_jacksState[kYellow] = kOnHand;
 	}
 
 	// VCR button regions
-	if (inPolyRegion(_cursor->position().x, _cursor->position().y, kRewindButton)) {
-		playSound(getWorld()->graphicResourceIds[39]);
+	if (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kRewindButton)) {
+		getSound()->playSound(getWorld()->graphicResourceIds[39]);
 		if (!_buttonsState[kRewind]) {
 			_buttonsState[kRewind] = kDownON;
 			return;
@@ -509,8 +518,8 @@ void PuzzleVCR::handleMouseDown() {
 			_buttonsState[kRewind] = kDownOFF;
 			return;
 		}
-	} else if (inPolyRegion(_cursor->position().x, _cursor->position().y, kPlayButton)) {
-		playSound(getWorld()->graphicResourceIds[39]);
+	} else if (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kPlayButton)) {
+		getSound()->playSound(getWorld()->graphicResourceIds[39]);
 		if (!_buttonsState[kPlay]) {
 			_buttonsState[kPlay] = kDownON;
 			return;
@@ -519,8 +528,8 @@ void PuzzleVCR::handleMouseDown() {
 			_buttonsState[kPlay] = kDownOFF;
 			return;
 		}
-	} else if (inPolyRegion(_cursor->position().x, _cursor->position().y, kStopButton)) {
-		playSound(getWorld()->graphicResourceIds[39]);
+	} else if (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kStopButton)) {
+		getSound()->playSound(getWorld()->graphicResourceIds[39]);
 		if (_buttonsState[kStop]) {
 			if (_buttonsState[kStop] == kON) {
 				_buttonsState[kStop] = kDownOFF;
@@ -530,8 +539,8 @@ void PuzzleVCR::handleMouseDown() {
 			_buttonsState[kStop] = kDownON;
 			return;
 		}
-	} else if (inPolyRegion(_cursor->position().x, _cursor->position().y, kPowerButton)) {
-		playSound(getWorld()->graphicResourceIds[39]);
+	} else if (inPolyRegion(getCursor()->position().x, getCursor()->position().y, kPowerButton)) {
+		getSound()->playSound(getWorld()->graphicResourceIds[39]);
 
 		if (!_buttonsState[kPower] && _holesState[kPluggedOnYellow] == kRed && _holesState[kOnTable] && _holesState[kPluggedOnRed]) {
 			_buttonsState[kPower] = kDownON;
@@ -546,7 +555,7 @@ void PuzzleVCR::handleMouseUp() {
 		return;
 
 	if (_buttonsState[kPower] == kDownON) {
-		playSound(getWorld()->graphicResourceIds[47], true);
+		getSound()->playSound(getWorld()->graphicResourceIds[47], true);
 		_buttonsState[kPower]  = kON;
 		_buttonsState[kStop]   = kON;
 		_buttonsState[kPlay]   = kON;
@@ -561,7 +570,7 @@ void PuzzleVCR::handleMouseUp() {
 
 	if (_buttonsState[kRewind] == kDownOFF) {
 		_buttonsState[kRewind] = kON;
-		playSound(getWorld()->graphicResourceIds[46]);
+		getSound()->playSound(getWorld()->graphicResourceIds[46]);
 	} else if (_buttonsState[kRewind] == kDownON) {
 		_buttonsState[kRewind] = kOFF;
 	}

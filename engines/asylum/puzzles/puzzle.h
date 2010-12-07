@@ -48,32 +48,16 @@ public:
 
 	virtual void reset() {}
 
-	//////////////////////////////////////////////////////////////////////////
-	// TODO remove
-	void init();
-	virtual void open() = 0;
-	virtual void close() = 0;
-	bool isActive() { return _active; }
-	//////////////////////////////////////////////////////////////////////////
-
 protected:
 	AsylumEngine *_vm;
 
-
-
 	//////////////////////////////////////////////////////////////////////////
-	// TODO remove
-	Cursor *_cursor;
-	GraphicResource *_bgResource;
-
-	bool    _leftClickUp;
-	bool    _leftClickDown;
-	bool    _rightClickDown;
-	bool    _active;
-
-	virtual void update() {};
-	void playSound(ResourceId resourceId, bool loop = false);
+	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
+	virtual bool init() = 0;
+	virtual bool update() = 0;
+	virtual bool key(const AsylumEvent &evt);
+	virtual bool mouse(const AsylumEvent &evt) = 0;
 };
 
 } // End of namespace Asylum
