@@ -126,8 +126,8 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 sourceX, int32
 //////////////////////////////////////////////////////////////////////////
 // Misc
 //////////////////////////////////////////////////////////////////////////
-void Screen::clear() const {
-	_vm->_system->fillScreen(0);
+void Screen::clear() {
+	_backBuffer.fillRect(Common::Rect(0, 0, 640, 480), 0);
 }
 
 void Screen::drawWideScreenBars(int16 barSize) const {

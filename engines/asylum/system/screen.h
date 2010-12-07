@@ -79,7 +79,7 @@ public:
 	void draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, ResourceId resourceId2, int32 destX, int32 destY, bool colorKey = true);
 
 	// Misc
-	void clear() const;
+	void clear();
 	void drawWideScreenBars(int16 barSize) const;
 	void fillRect(int32 x, int32 y, int32 x2, int32 y2, int32 color);
 	void copyBackBufferToScreen();
