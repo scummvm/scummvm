@@ -43,18 +43,18 @@
  * This is the namespace of the Asylum engine.
  *
  * Status of this engine:
- *  - Code for scrolling and showing up objects and actors (properly clipped) is present
- *  - A preliminary script interpreter is implemented, and game scripts are read and partially parsed,
- *    actors are now drawn in the scene, and there is some interaction with the environment (e.g. "examine" actions).
+ *  - Script interpreters for main game and encounters are implemented
+ *  - Object handling, player reaction and special chapter logic is implemented
+ *  - Scene parsing and drawing is almost complete
  *  - Movie code is almost complete
- *  - Scene information is partially read, and the scene hotspots are created correctly.
  *  - Mouse cursor is initialized and animated properly
- *  - Game texts and game fonts are read correctly
+ *  - Menu handling is mostly done (missing savegame management and movie list)
+ *  - Sound code is almost complete (music is still WIP)
+ *  - Only one puzzle is partially implemented
  *  - Preliminary code for walking around with the mouse.
- *  - Some of the menu screens are working (like, for example, the credits screen)
  *
  * Maintainers:
- *  alexbevi, alexandrefontoura, bluegr
+ *  alexbevi, alexandrefontoura, bluegr, littleboy
  *
  * Supported games:
  *  - Sanitarium
