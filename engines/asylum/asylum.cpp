@@ -334,10 +334,13 @@ void AsylumEngine::handleEvents() {
 	// Send update event to our event handler
 	AsylumEvent updateEvt = AsylumEvent(EVENT_ASYLUM_UPDATE);
 	_handler->handleEvent(updateEvt);
+
+	// TODO replace by original game code based on switchEventHandler
+	processDelayedEvents();
 }
 
 void AsylumEngine::processDelayedEvents() {
-	if (!_video || !_sound || !_scene || !_mainMenu)
+	if (!_video || !_sound || !_mainMenu)
 		error("[AsylumEngine::processDelayedEvents] Subsystems not initialized properly!");
 
 	// check for a delayed video
@@ -358,11 +361,11 @@ void AsylumEngine::processDelayedEvents() {
 		_sound->stopMusic();
 		_sound->stopAll();
 
-		if (_scene)
-			delete _scene;
-
+		delete _scene;
 		_scene = new Scene(this);
 		_scene->enter(packId);
+
+		switchEventHandler(_scene);
 	}
 }
 
