@@ -99,6 +99,8 @@ public:
 	int32          getField638() { return _field_638; }
 	int32          getField934() { return _field_934; }
 	int32          getField944() { return _field_944; }
+	int32          getField948() { return _field_948; }
+	int32          getField94C() { return _field_94C; }
 	int32          getField96C() { return _field_96C; }
 	int32          getField974() { return _field_974; }
 	int32          getField980() { return _field_980; }
@@ -260,6 +262,7 @@ public:
 	void process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 field984, int32 field988);
 	bool process_4069B0(int32 *x, int32 *y);
 	bool process_408B20(Common::Point *point, ActorDirection direction, uint32 count, bool hasDelta);
+	void process_408D00(ActorDirection direction, uint32 count);
 	void process_41BC00(int32 reactionIndex, int32 numberValue01Add);
 	void process_41BCC0(int32 reactionIndex, int32 numberValue01Substract);
 	bool process_41BDB0(int32 reactionIndex, int32 testNumberValue01);
@@ -383,6 +386,8 @@ private:
 
 	int32 _tickCount;
 
+	uint32 _updateCounter;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Update methods
 	//////////////////////////////////////////////////////////////////////////
@@ -505,7 +510,7 @@ private:
 	 *
 	 * @return The distance for frame.
 	 */
-	uint32 getDistanceForFrame(ActorDirection direction, uint32 frameIndex);
+	int32 getDistanceForFrame(ActorDirection direction, uint32 frameIndex);
 
 	/**
 	 * Updates the coordinates depending on the direction.

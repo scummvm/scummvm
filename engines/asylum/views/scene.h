@@ -165,7 +165,7 @@ public:
 	 * @return true if it succeeds, false if it fails.
 	 */
 	bool updateScreen();
-	
+
 	/**
 	 * Determine if the supplied point intersects an action area's active region.
 	 *
@@ -174,6 +174,22 @@ public:
 	 * @return The found action area.
 	 */
 	int32 findActionArea(ActionAreaType type, const Common::Point pt);
+
+	/**
+	 * Check if rectangles intersect.
+	 *
+	 * @param x  The x coordinate.
+	 * @param y  The y coordinate.
+	 * @param x1 The first x value.
+	 * @param y1 The first y value.
+	 * @param x2 The second x value.
+	 * @param y2 The second y value.
+	 * @param x3 The third int32.
+	 * @param y3 The third int32.
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	bool rectIntersect(int32 x, int32 y, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3);
 
 	Polygons    *polygons()   { return _polygons; }
 	WorldStats  *worldstats() { return _ws; }
@@ -364,7 +380,7 @@ private:
 	int32 hitTestObject();
 
 	/**
-	 * .Check if the mouse cursor is currently intersecting a graphic resource at the supplied coordinates.
+	 * Check if the mouse cursor is currently intersecting a graphic resource at the supplied coordinates.
 	 *
 	 * @param resourceId Identifier for the resource.
 	 * @param frame 	 The frame.
@@ -434,22 +450,6 @@ private:
 	 * @return true if it succeeds, false if it fails.
 	 */
 	bool pointIntersectsRect(Common::Point point, Common::Rect rect);
-
-	/**
-	 * Check if rectangles intersect.
-	 *
-	 * @param x  The x coordinate.
-	 * @param y  The y coordinate.
-	 * @param x1 The first x value.
-	 * @param y1 The first y value.
-	 * @param x2 The second x value.
-	 * @param y2 The second y value.
-	 * @param x3 The third int32.
-	 * @param y3 The third int32.
-	 *
-	 * @return true if it succeeds, false if it fails.
-	 */
-	bool rectIntersect(int32 x, int32 y, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3);
 
 	/**
 	 * Adjust coordinates.

@@ -114,6 +114,7 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
 
 	// Instance data
 	_tickCount = -1;
+	_updateCounter = 0;
 }
 
 Actor::~Actor() {
@@ -306,10 +307,10 @@ void Actor::update() {
 			if (_index == 11) {
 				if (_frameIndex <= _frameCount - 1) {
 					// Looks like a simple check using the counter, since it doesn't seem to be used anywhere else
-					if (getSharedData()->getUpdateCounter() <= 0) {
-						getSharedData()->setUpdateCounter(getSharedData()->getUpdateCounter() + 1);
+					if (_updateCounter <= 0) {
+						++_updateCounter;
 					} else {
-						getSharedData()->setUpdateCounter(0);
+						_updateCounter = 0;
 						++_frameIndex;
 					}
 				} else {
@@ -467,9 +468,28 @@ void Actor::update() {
 		}
 		// Fallback to next case
 
-	case kActorStatus1:
-		// TODO: do actor direction
-		error("[Actor::update] kActorStatus1 / kActorStatus12 case not implemented");
+	case kActorStatus1: {
+		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
+
+		uint32 dir = _direction;
+		uint32 dist = abs((double)getDistanceForFrame(_direction, index));
+		// FIXME the original tests for != 0 and sets to an unknown value
+
+		Common::Point point(_point1.x + _point2.x, _point1.y + _point2.y);
+
+		if (process_408B20(&point, _direction, dist, false)) {
+			process_408D00(_direction, dist);
+		} else if (process_408B20(&point, (ActorDirection)((dir + 1) % 7), dist, false)) {
+			process_408D00((ActorDirection)((dir + 1) % 7), dist);
+		} else if (process_408B20(&point, (ActorDirection)((dir + 7) % 7), dist, false)) {
+			process_408D00((ActorDirection)((dir + 7) % 7), dist);
+		} else if (process_408B20(&point, (ActorDirection)((dir + 2) % 7), dist, false)) {
+			process_408D00((ActorDirection)((dir + 2) % 7), dist);
+		} else if (process_408B20(&point, (ActorDirection)((dir + 6) % 7), dist, false)) {
+			process_408D00((ActorDirection)((dir + 6) % 7), dist);
+		}
+
+		}
 		break;
 
 	case kActorStatus2:
@@ -989,6 +1009,10 @@ bool Actor::process_408B20(Common::Point *point, ActorDirection dir, uint32 coun
 	return true;
 }
 
+void Actor::process_408D00(ActorDirection direction, uint32 count) {
+	error("[Actor::process_408D00] Not implemented!");
+}
+
 void Actor::process_41BC00(int32 reactionIndex, int32 numberValue01Add) {
 	if (reactionIndex > 16)
 		return;
@@ -1058,11 +1082,99 @@ bool Actor::process_41BDB0(int32 reactionIndex, int32 testNumberValue01) {
 }
 
 bool Actor::process_4103B0(Common::Point *point, ActorDirection dir) {
-	error("[Actor::update_40DE20] not implemented!");
+	int32 dist = getDistanceForFrame(dir, (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex);
+
+	int32 x = point->x + deltaPointsArray[dir].x * dist - _field_948 - 10;
+	int32 y = point->y + deltaPointsArray[dir].y * dist - _field_94C - 10;
+	int32 x1 = x + 2 * _field_948 + 20;
+	int32 y1 = y + 2 * _field_94C + 20;
+
+	for (int32 i = 0; i < (int32)getWorld()->actors.size(); i++) {
+		if (i == _index)
+			continue;
+
+		Actor *actor = getScene()->getActor(i);
+
+		if (!actor->isOnScreen())
+			continue;
+
+		int32 x2 = actor->getPoint1()->x + actor->getPoint2()->x - actor->getField948() - 15;
+		int32 y2 = actor->getPoint1()->y + actor->getPoint2()->y - actor->getField94C() - 10;
+		int32 x3 = actor->getPoint1()->x + actor->getPoint2()->x + 2 * actor->getField948() + 15;
+		int32 y3 = actor->getPoint1()->y + actor->getPoint2()->y + 2 * actor->getField94C() + 10;
+
+		if (i == getScene()->getPlayerIndex() && getWorld()->chapter == kChapter11) {
+			x2 -= 10;
+			y2 -= 10;
+			x3 += 10;
+			y3 += 10;
+		}
+
+		if (getScene()->rectIntersect(x, y, x1, y1, x2, y2, x3, y3)) {
+			if (i)
+				return false;
+
+			int32 x4 = x2 + 10;
+			int32 y4 = y2 + 10;
+			int32 x5 = x3 - 10;
+			int32 y5 = y3 - 10;
+
+			switch (actor->getDirection()) {
+			default:
+				break;
+
+			case kDirectionNO:
+				if (x4 >= x)
+					break;
+				// Fallback to next case
+
+			case kDirectionN:
+				if (x4 >= y)
+					break;
+
+				return false;
+
+			case kDirectionO:
+				if (x4 < x)
+					return false;
+
+				break;
+
+			case kDirectionSO:
+				if (x4 < x && y4 > y)
+					return false;
+
+				break;
+
+			case kDirectionS:
+				if (y5 > y1)
+					return false;
+
+				break;
+
+			case kDirectionE:
+				if (x5 > x1)
+					return false;
+
+				break;
+
+			case kDirectionNE:
+				if (x5 > x1 && y4 < y)
+					return false;
+
+				break;
+			}
+
+			if (getScene()->rectIntersect(x, y, x1, y1, x4, y4, x5, y5))
+				return false;
+		}
+	}
+
+	return true;
 }
 
 void Actor::updateAndDraw() {
-	error("[Actor::update_40DE20] not implemented!");
+	error("[Actor::updateAndDraw] not implemented!");
 }
 
 void Actor::update_409230() {
@@ -1914,7 +2026,7 @@ int32 Actor::getDistance() const {
 	}
 }
 
-uint32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) {
+int32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) {
 	switch (dir) {
 	default:
 	case kDirectionN:
