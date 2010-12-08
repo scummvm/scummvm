@@ -36,6 +36,7 @@
 #include "asylum/system/screen.h"
 
 #include "asylum/views/scene.h"
+#include "asylum/views/video.h"
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
@@ -328,8 +329,7 @@ bool Console::cmdPlayVideo(int32 argc, const char **argv) {
 		return true;
 	}
 
-	getScreen()->clear();
-	getScript()->setDelayedVideoIndex(index);
+	_vm->_delayedVideoIndex = index;
 
 	return false;
 }
@@ -374,7 +374,7 @@ bool Console::cmdChangeScene(int32 argc, const char **argv) {
 		return true;
 	}
 
-	getScript()->setDelayedSceneIndex(index);
+	_vm->_delayedSceneIndex = index;	
 
 	return false;
 }

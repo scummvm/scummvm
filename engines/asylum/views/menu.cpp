@@ -354,7 +354,7 @@ bool MainMenu::init() {
 			_needEyeCursorInit = true;
 
 			// Play start video
-			getVideo()->playVideo(0);
+			getVideo()->play(0, this);
 
 			// If no savegame is present, start the game directly
 			if (!getSaveLoad()->hasSavegames()) {

@@ -141,8 +141,7 @@ void Screen::drawWideScreenBars(int16 barSize) const {
 }
 
 void Screen::fillRect(int32 x, int32 y, int32 width, int32 height, int32 color) {
-	_vm->_system->lockScreen()->fillRect(Common::Rect(x, y, x + width, y + height), color);
-	_vm->_system->unlockScreen();
+	_backBuffer.fillRect(Common::Rect(x, y, x + width, y + height), color);
 }
 
 void Screen::copyBackBufferToScreen() {
@@ -237,6 +236,10 @@ void Screen::updatePalette(int32 param) {
 
 void Screen::makeGreyPalette() {
 	warning("[Screen::makeGreyPalette] Not implemented!");
+}
+
+void Screen::setupPalette(byte *buffer, int start, int count) {
+	warning("[Screen::setupPalette] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////

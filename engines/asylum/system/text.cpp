@@ -51,17 +51,21 @@ Text::~Text() {
 	_vm = NULL;
 }
 
-void Text::loadFont(ResourceId resourceId) {
+ResourceId Text::loadFont(ResourceId resourceId) {
 	if (_fontResource && resourceId == _fontResource->getResourceId())
-		return;
+		return resourceId;
+
+	ResourceId previousFont = _fontResource ? _fontResource->getResourceId() : kResourceNone;
 
 	delete _fontResource;
-	_fontResource = new GraphicResource(_vm, resourceId);
+	_fontResource = NULL;
 
 	if (resourceId != kResourceNone) {
-		// load font flag data
+		_fontResource = new GraphicResource(_vm, resourceId);		
 		_curFontFlags = Common::Rational(_fontResource->getData().flags, 16).toInt() & 0x0F;
 	}
+
+	return previousFont;
 }
 
 void Text::setPosition(int32 x, int32 y) {

@@ -160,12 +160,6 @@ public:
 	 */
 	void resetQueue();
 
-	// Accessors
-	int32 getDelayedVideoIndex() const { return _delayedVideoIndex; }
-	void setDelayedVideoIndex(int32 val) { _delayedVideoIndex = val; }
-	ResourcePackId getDelayedSceneIndex() const { return _delayedSceneIndex; }
-	void setDelayedSceneIndex(ResourcePackId id) { _delayedSceneIndex = id; }
-
 	bool isProcessingSkipped() { return _skipProcessing; }
 
 	// Serializable
