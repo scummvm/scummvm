@@ -26,6 +26,7 @@
 #ifndef ASYLUM_ENGINE_H
 #define ASYLUM_ENGINE_H
 
+#include "asylum/puzzles/data.h"
 #include "asylum/resources/data.h"
 
 #include "asylum/console.h"
@@ -34,6 +35,7 @@
 
 #include "common/random.h"
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "common/system.h"
 
 #include "engines/advancedDetector.h"
@@ -79,7 +81,7 @@ class Sound;
 class Text;
 class Video;
 
-class AsylumEngine: public Engine {
+class AsylumEngine: public Engine, public Common::Serializable {
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -120,13 +122,6 @@ public:
 	uint32 getTick() { return _system->getMillis(); }
 
 	/**
-	 * Gets the shared data.
-	 *
-	 * @return a pointer to the shared data.
-	 */
-	SharedData *getData() { return &_data; }
-
-	/**
 	 * Resets the game
 	 */
 	void reset();
@@ -151,6 +146,9 @@ public:
 	Sound           *sound()     { return _sound; }
 	Text            *text()      { return _text; }
 	Video           *video()     { return _video; }
+
+	SharedData      *data()       { return &_data; }
+	PuzzleData      *puzzleData() { return &_puzzleData; }
 
 	// Flags
 	void setGameFlagByIndex(int32 index);
@@ -204,6 +202,9 @@ public:
 	 */
 	Common::Point getSinCosValues(int32 index1, int32 index2);
 
+	// Serializable
+	void saveLoadWithSerializer(Common::Serializer &s);
+
 private:
 	const ADGameDescription *_gameDescription;
 
@@ -231,6 +232,7 @@ private:
 	Puzzle *_puzzles[16];
 
 	// Game data
+	PuzzleData _puzzleData;
 	SharedData _data;
 	int  _gameFlags[145];
 	bool _introPlayed;

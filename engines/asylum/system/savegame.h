@@ -175,25 +175,34 @@ private:
 	bool saveData(Common::String filename, Common::String name, ChapterIndex chapter);
 
 	/**
-	 * Reads header data from a file
+	 * Seeks to a specific place in the file
 	 *
 	 * @param [in,out] file If non-null, the file.
-	 * @param size 			The size.
+	 * @param offset 		Offset index of the info into the file
 	 * @param description   The description.
 	 */
-	void read(Common::InSaveFile *file, uint32 size, Common::String description);
+	void seek(Common::InSaveFile *file, uint32 offset, Common::String description);
 
 	/**
-	 * Reads data from a file.
+	 * Reads data from a file. 
 	 *
-	 * @param [in,out] file If non-null, the file.
-	 * @param [in,out] data If non-null, the data.
-	 * @param size 			The size.
-	 * @param count 		Number of.
-	 * @param description   The description.
+	 * @param [in,out] file If non-null, the file. 
+	 * @param description   The description. 
+	 *
+	 * @return the value
 	 */
-	void read(Common::InSaveFile *file, byte *data, uint32 size, uint32 count, Common::String description);
+	uint32 read(Common::InSaveFile *file, Common::String description);
 
+	/**
+	 * Reads data from a file. 
+	 *
+	 * @param [in,out] file If non-null, the file. 
+	 * @param strLength 	Length of the string. 
+	 * @param description   The description. 
+	 *
+	 * @return the string
+	 */
+	Common::String read(Common::InSaveFile *file, uint32 strLength, Common::String description);
 
 	/**
 	 * Reads data from a file.
@@ -210,12 +219,20 @@ private:
 	 * Writes data to a file.
 	 *
 	 * @param [in,out] file If non-null, the file.
-	 * @param [in,out] data If non-null, the data.
-	 * @param size 			The size.
-	 * @param count 		Number of.
+	 * @param val 			The value
 	 * @param description   The description.
 	 */
-	void write(Common::OutSaveFile *file, byte *data, uint32 size, uint32 count, Common::String description);
+	void write(Common::OutSaveFile *file, uint32 val, Common::String description);
+
+	/**
+	 * Writes data to a file.
+	 *
+	 * @param [in,out] file If non-null, the file.
+	 * @param val 			The string
+	 * @param count 		The size of the string.
+	 * @param description   The description.
+	 */
+	void write(Common::OutSaveFile *file, Common::String val, uint32 count, Common::String description);
 
 	/**
 	 * Writes data to a file.

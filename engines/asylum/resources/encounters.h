@@ -31,10 +31,43 @@
 #include "asylum/shared.h"
 
 #include "common/array.h"
+#include "common/serializer.h"
 
 namespace Asylum {
 
 class AsylumEngine;
+
+struct EncounterItem {
+	int16 keywordIndex;
+	int16 field2;
+	ResourceId scriptResourceId;
+	int16 keywords[50];
+	byte value;
+
+	EncounterItem() {
+		keywordIndex = 0;
+		field2 = 0;
+		scriptResourceId = kResourceNone;
+		memset(&keywords, 0, sizeof(keywords));
+		value = 0;
+	}
+};
+
+class EncounterVariables : public Common::Array<int16>, public Common::Serializable {
+public:
+	// Serializable
+	void saveLoadWithSerializer(Common::Serializer &s) {
+		error("[EncounterVariables::saveLoadWithSerializer] Not implemented!");
+	}
+};
+
+class EncounterItems : public Common::Array<EncounterItem>, public Common::Serializable {
+public:
+	// Serializable
+	void saveLoadWithSerializer(Common::Serializer &s) {
+		error("[EncounterItems::saveLoadWithSerializer] Not implemented!");
+	}
+};
 
 class Encounter : public EventHandler {
 public:
@@ -54,6 +87,10 @@ public:
 	void disablePlayerOnExit(bool state) { _disablePlayerOnExit = state; }
 	bool isRunning() { return _isRunning; }
 
+	// Accessors (for saving game)
+	EncounterItems *items() { return &_items; }
+	EncounterVariables *variables() { return &_variables; }
+
 private:
 	AsylumEngine *_vm;
 
@@ -63,14 +100,6 @@ private:
 		kEncounterArray2000 = 0x2000,
 		kEncounterArray4000 = 0x4000,
 		kEncounterArray8000 = 0x8000
-	};
-
-	struct EncounterItem {
-		int16 keywordIndex;
-		int16 field2;
-		ResourceId scriptResourceId;
-		int16 keywords[50];
-		byte value;
 	};
 
 	struct EncounterGraphic {
@@ -114,8 +143,8 @@ private:
 		}
 	};
 
-	Common::Array<int16> _variables;
-	Common::Array<EncounterItem> _items;
+	EncounterVariables _variables;
+	EncounterItems _items;
 	EncounterDrawingStruct _drawingStructs[2];
 	int32 _keywordIndexes[50];
 

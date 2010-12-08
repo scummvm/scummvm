@@ -510,6 +510,10 @@ void AsylumEngine::updateReverseStereo() {
 		_scene->worldstats()->reverseStereo = Config.reverseStereo;
 }
 
+void AsylumEngine::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[AsylumEngine::saveLoadWithSerializer] Not implemented!");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Game flags
 //////////////////////////////////////////////////////////////////////////

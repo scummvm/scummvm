@@ -25,6 +25,9 @@
 
 #include "asylum/system/savegame.h"
 
+#include "asylum/puzzles/data.h"
+
+#include "asylum/resources/encounters.h"
 #include "asylum/resources/script.h"
 #include "asylum/resources/worldstats.h"
 
@@ -44,13 +47,15 @@ namespace Asylum {
 
 #define SAVEGAME_BUILD 851
 #define SAVEGAME_VERSION_SIZE 11
+#define SAVEGAME_NAME_SIZE 45
 
 #define SAVEGAME_NAME "asylum"
+
 #define SAVEGAME_QUICKSLOT 25
 
 #define SAVEGAME_MOVIES "asylum.movies"
 
-const char savegame_version[12] = "v1.01 FINAL";
+const Common::String savegame_version = "v1.01 FINAL";
 
 Savegame::Savegame(AsylumEngine *engine) : _vm(engine), _index(0), _valid(false) {
 	memset(&_moviesViewed, 0, sizeof(_moviesViewed));
@@ -78,8 +83,8 @@ void Savegame::loadList() {
 			if (!file)
 				error("[Savegame::loadList] Cannot open savegame: %s", getFilename(i).c_str());
 
-			read(file, (byte *)&_savegameToScene[i], 4, 1, "Level");
-			read(file, (byte *)&_names[i], 1, 45, "Game Name");
+			_savegameToScene[i] = read(file, "Level");
+			_names[i] = read(file, 45, "Game Name");
 			_savegames[i] = true;
 
 			delete file;
@@ -162,16 +167,13 @@ bool Savegame::quickSave() {
 
 		save();
 	} else {
-		char name[45];
-
 		Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(getFilename(SAVEGAME_QUICKSLOT));
 		if (!file)
 			return false;
 
 		// Read game name
-		read(file, 1, "Level");
-		read(file, (byte *)&name, 1, 45, "Game Name");
-		_names[_index] = name;
+		seek(file, 1, "Level");		
+		_names[_index] = read(file, 45, "Game Name");
 
 		delete file;
 
@@ -202,7 +204,7 @@ bool Savegame::check() {
 	if (!file)
 		return false;
 
-	read(file, 2, "Level and Name");
+	seek(file, 2, "Level and Name");
 
 	bool valid = false;
 	if (readHeader(file))
@@ -231,13 +233,9 @@ bool Savegame::isSavegamePresent(Common::String filename) {
 // Reading & writing
 //////////////////////////////////////////////////////////////////////////
 bool Savegame::readHeader(Common::InSaveFile *file) {
-	int32 versionLength = 0;
-	int32 version = 0;
-	int32 build = 0;
-
-	read(file, (byte *)&versionLength, 4, 1, "Version Length");
-	read(file, (byte *)&version, 4, 1, "Version");
-	read(file, (byte *)&build, 4, 1, "Build");
+	uint32 versionLength = read(file, "Version Length");
+	Common::String version = read(file, versionLength, "Version");
+	/*uint32 build = */read(file, "Build");
 
 	// Original does not do any version check
 	// TODO check version to make sure we can read the data
@@ -248,40 +246,97 @@ bool Savegame::readHeader(Common::InSaveFile *file) {
 
 void Savegame::writeHeader(Common::OutSaveFile *file) {
 	// We write saved games with a 1.01 final version (build 851)
-	int length = SAVEGAME_VERSION_SIZE;
-	int build  = SAVEGAME_BUILD;
 
-	write(file, (byte *)&length, 4, 1, "Version Length");
-	write(file, (byte *)&savegame_version, 1, SAVEGAME_VERSION_SIZE, "Version");
-	write(file, (byte *)&build, 4, 1, "Build");
+	write(file, SAVEGAME_VERSION_SIZE, "Version Length");
+	write(file, savegame_version, SAVEGAME_VERSION_SIZE, "Version");
+	write(file, SAVEGAME_BUILD, "Build");
 }
 
 bool Savegame::loadData(Common::String filename) {
+	//Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(getFilename(_index));
+
 	error("[Savegame::loadData] Not implemented!");
 }
 
 bool Savegame::saveData(Common::String filename, Common::String name, ChapterIndex chapter) {
-	error("[Savegame::saveData] Not implemented!");
+	Common::OutSaveFile *file = g_system->getSavefileManager()->openForSaving(getFilename(_index));
+	if (!file)
+		return false;
+
+	write(file, chapter, "Level");
+	write(file, name, SAVEGAME_NAME_SIZE, "Game Name");
+	writeHeader(file);
+	write(file, _vm, 1512, 1, "Game Stats");
+	write(file, getWorld(), 951928, 1, "World Stats");
+	write(file, getPuzzleData(), 752, 1, "Blowup Puzzle Data");
+	write(file, getEncounter()->items(), 109, getEncounter()->items()->size(), "Encounter Data");
+	write(file, getEncounter()->variables(), 2, getEncounter()->variables()->size(), "Encounter Variables");
+
+	if (getWorld()->numScripts)
+		write(file, getScript(), 7096, getWorld()->numScripts, "Action Lists");
+
+	write(file, _vm->getTick(), "Time");
+
+	delete file;
+
+	return true;
 }
 
-void Savegame::read(Common::InSaveFile *file, uint32 size, Common::String description) {
+void Savegame::seek(Common::InSaveFile *file, uint32 offset, Common::String description) {
+	if (offset == 0)
+		return;
+
+	uint32 size = 0;
+	uint32 count = 0;
+
+	for (uint i = 0; i < offset; i++) {
+		size = file->readUint32LE();
+		count = file->readUint32LE();
+
+		file->seek(size * count, SEEK_CUR);
+	}
+}
+
+uint32 Savegame::read(Common::InSaveFile *file, Common::String description) {
 	error("[Savegame::read] Not implemented!");
 }
 
-void Savegame::read(Common::InSaveFile *file, byte *data, uint32 size, uint32 count, Common::String description) {
+Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, Common::String description) {
 	error("[Savegame::read] Not implemented!");
 }
+
 
 void Savegame::read(Common::InSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) {
 	error("[Savegame::read] Not implemented!");
 }
 
-void Savegame::write(Common::OutSaveFile *file, byte *data, uint32 size, uint32 count, Common::String description) {
-	error("[Savegame::write] Not implemented!");
+void Savegame::write(Common::OutSaveFile *file, uint32 val, Common::String description) {
+	file->writeUint32LE(4);
+	file->writeUint32LE(1);
+
+	// Write data
+	// TODO check for errors
+	file->writeUint32LE(val);
+}
+
+void Savegame::write(Common::OutSaveFile *file, Common::String val, uint32 count, Common::String description) {
+	file->writeUint32LE(1);
+	file->writeUint32LE(count);
+
+	// Write data
+	// TODO check for errors
+	file->writeString(val);
 }
 
 void Savegame::write(Common::OutSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) {
-	error("[Savegame::write] Not implemented!");
+	file->writeUint32LE(size);
+	file->writeUint32LE(count);
+
+	if (size * count == 0)
+		return;
+
+	Common::Serializer ser(NULL, file);
+	data->saveLoadWithSerializer(ser);
 }
 
 //////////////////////////////////////////////////////////////////////////

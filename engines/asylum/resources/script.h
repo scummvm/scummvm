@@ -30,6 +30,7 @@
 
 #include "common/array.h"
 #include "common/func.h"
+#include "common/serializer.h"
 #include "common/stack.h"
 #include "common/stream.h"
 
@@ -117,7 +118,7 @@ struct ActionArea {
 	}
 };
 
-class ScriptManager {
+class ScriptManager : public Common::Serializable {
 public:
 	ScriptManager(AsylumEngine *engine);
 	virtual ~ScriptManager();
@@ -166,6 +167,9 @@ public:
 	void setDelayedSceneIndex(ResourcePackId id) { _delayedSceneIndex = id; }
 
 	bool isProcessingSkipped() { return _skipProcessing; }
+
+	// Serializable
+	void saveLoadWithSerializer(Common::Serializer &s);
 
 private:
 	enum ObjectEnableType {

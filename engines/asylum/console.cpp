@@ -345,7 +345,7 @@ bool Console::cmdRunScript(int32 argc, const char **argv) {
 
 	// Check parameters
 	if (index >= getScript()->_scripts.size()) {
-		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, _vm->encounter()->_items.size() - 1);
+		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, _vm->encounter()->items()->size() - 1);
 		return true;
 	}
 
