@@ -1017,6 +1017,13 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 		}
 		break;
 
+	case kLBNotifyGotoQuit:
+		debug(2, "kLBNotifyGotoQuit: %d", event.param);
+
+		if (!loadPage(kLBControlMode, 2, 0))
+			error("couldn't load quit page");
+		break;
+
 	case kLBNotifyIntroDone:
 		debug(2, "kLBNotifyIntroDone: %d", event.param);
 
@@ -1056,6 +1063,18 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 		debug(2, "kLBNotifyCursorChange: %d", event.param);
 
 		// TODO: show/hide cursor according to parameter?
+		break;
+
+	case kLBNotifyPrintPage:
+		debug(2, "kLBNotifyPrintPage: %d", event.param);
+
+		warning("kLBNotifyPrintPage unimplemented");
+		break;
+
+	case kLBNotifyQuit:
+		debug(2, "kLBNotifyQuit: %d", event.param);
+
+		quitGame();
 		break;
 
 	default:

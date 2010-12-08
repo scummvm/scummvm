@@ -149,9 +149,12 @@ enum {
 	kLBNotifyGUIAction = 1,
 	kLBNotifyGoToControls = 2,
 	kLBNotifyChangePage = 3,
+	kLBNotifyGotoQuit = 4,
 	kLBNotifyIntroDone = 5,
 	kLBNotifyChangeMode = 6,
-	kLBNotifyCursorChange = 7
+	kLBNotifyCursorChange = 7,
+	kLBNotifyPrintPage = 0xc,
+	kLBNotifyQuit = 0xd
 };
 
 class MohawkEngine_LivingBooks;
