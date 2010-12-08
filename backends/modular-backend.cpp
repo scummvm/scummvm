@@ -264,12 +264,7 @@ AudioCDManager *ModularBackend::getAudioCDManager() {
 }
 
 void ModularBackend::displayMessageOnOSD(const char *msg) {
-#ifdef USE_OSD
 	_graphicsManager->displayMessageOnOSD(msg);
-#else
-	GUI::TimedMessageDialog dialog(msg, 1500);
-	dialog.runModal();
-#endif
 }
 
 Common::SaveFileManager *ModularBackend::getSavefileManager() {

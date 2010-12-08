@@ -987,8 +987,9 @@ public:
 	 *
 	 * Currently, only pure ASCII messages can be expected to show correctly.
 	 *
-	 * @note There is a default implementation which uses a TimedMessageDialog
-	 *       to display the message. Hence implementing this is optional.
+	 * @note There is a default implementation in BaseBackend which uses a
+	 *       TimedMessageDialog to display the message. Hence implementing
+	 *       this is optional.
 	 *
 	 * @param msg	the message to display on screen
 	 */
