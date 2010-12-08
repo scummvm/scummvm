@@ -28,8 +28,9 @@
 
 #include "asylum/system/sound.h"
 
-#include "common/rect.h"
 #include "common/array.h"
+#include "common/rect.h"
+#include "common/serializer.h"
 
 namespace Asylum {
 
@@ -64,7 +65,7 @@ enum CursorResourceType {
 	kCursorResourceTalkNPC2
 };
 
-class WorldStats {
+class WorldStats : public Common::Serializable {
 public:
 	WorldStats(AsylumEngine *engine);
 	virtual ~WorldStats();
@@ -124,7 +125,7 @@ public:
 	Common::Array<Object*>     objects;   // maxsize 400
 	Common::Array<Actor*>      actors;   // maxsize 50
 	// ActorData is stored in each actor instance
-	int32 numActionLists;
+	int32 numScripts;
 	int32 numPolygons;
 	ResourceId cursorResourcesAlternate[64];
 	Common::Array<ActionArea*> actions;  // maxsize 400
@@ -153,6 +154,9 @@ public:
 	Object* getObjectById(ObjectId id);
 
 	Common::String toString();
+
+	// Serializable
+	void saveLoadWithSerializer(Common::Serializer &s);
 
 private:
 	AsylumEngine *_vm;

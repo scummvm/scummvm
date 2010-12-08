@@ -1193,7 +1193,7 @@ void Actor::enableActorsChapter2(AsylumEngine *engine) {
 	engine->clearGameFlag(kGameFlag442);
 
 	// Reset shared data
-	engine->getData()->resetActorData();
+	engine->data()->resetActorData();
 
 	engine->scene()->getActor(13)->enable();
 	engine->scene()->getActor(13)->processStatus(2300, 71, false);

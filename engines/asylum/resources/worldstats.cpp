@@ -76,7 +76,7 @@ WorldStats::WorldStats(AsylumEngine *engine) : _vm(engine) {
 	musicFlag = 0;
 	musicResourceId = kResourceNone;
 	musicStatusExt = 0;
-	numActionLists = 0;
+	numScripts = 0;
 	numPolygons = 0;
 	memset(&cursorResourcesAlternate, kResourceNone, sizeof(cursorResourcesAlternate));
 
@@ -220,7 +220,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Read number of scripts and polygons
-	numActionLists = stream->readUint32LE();
+	numScripts = stream->readUint32LE();
 	numPolygons    = stream->readUint32LE();
 
 	// Load the alternate cursor resources
@@ -357,4 +357,9 @@ Common::String WorldStats::toString() {
 
 	return output;
 }
+
+void WorldStats::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[WorldStats::saveLoadWithSerializer] Not implemented!");
+}
+
 } // end of namespace Asylum

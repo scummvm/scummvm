@@ -335,6 +335,10 @@ bool ScriptManager::process() {
 	return false;
 }
 
+void ScriptManager::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[ScriptManager::saveLoadWithSerializer] Not implemented!");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Opcode Functions
 //////////////////////////////////////////////////////////////////////////
