@@ -33,10 +33,10 @@ MODULE_OBJS := \
 	system/sound.o \
 	system/speech.o \
 	system/text.o \
-	system/video.o \
 	views/menu.o \
 	views/scene.o \
 	views/scenetitle.o \
+	views/video.o \
 	asylum.o \
 	console.o \
 	detection.o \
