@@ -128,6 +128,7 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 sourceX, int32
 //////////////////////////////////////////////////////////////////////////
 void Screen::clear() {
 	_backBuffer.fillRect(Common::Rect(0, 0, 640, 480), 0);
+	copyBackBufferToScreen();
 }
 
 void Screen::drawWideScreenBars(int16 barSize) const {
