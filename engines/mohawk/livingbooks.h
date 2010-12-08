@@ -146,6 +146,40 @@ enum {
 };
 
 enum {
+	kLBOpNone = 0x0,
+	kLBOpXShow = 0x1,
+	kLBOpTogglePlay = 0x2,
+	kLBOpSetNotVisible = 0x3,
+	kLBOpSetVisible = 0x4,
+	kLBOpDestroy = 0x5,
+	kLBOpRewind = 0x6,
+	kLBOpStop = 0x7,
+	kLBOpDisable = 0x8,
+	kLBOpEnable = 0x9,
+	// (no 0xa)
+	kLBOpGlobalSetNotVisible = 0xb,
+	kLBOpGlobalSetVisible = 0xc,
+	kLBOpGlobalDisable = 0xd,
+	kLBOpGlobalEnable = 0xe,
+	kLBOpSeekToEnd = 0xf,
+	// (no 0x10)
+	kLBOpMute = 0x11,
+	kLBOpUnmute = 0x12,
+	kLBOpLoad = 0x13,
+	kLBOpPreload = 0x14,
+	kLBOpUnload = 0x15,
+	kLBOpSeekToNext = 0x16,
+	kLBOpSeekToPrev = 0x17,
+	kLBOpDragBegin = 0x18,
+	kLBOpDragEnd = 0x19,
+	kLBOpScriptDisable = 0x1a,
+	kLBOpScriptEnable = 0x1b,
+	kLBOpUnknown1C = 0x1c,
+	kLBOpSendExpression = 0x1d,
+	kLBOpRunCommand = 0xffff
+};
+
+enum {
 	kLBNotifyGUIAction = 1,
 	kLBNotifyGoToControls = 2,
 	kLBNotifyChangePage = 3,

@@ -2129,73 +2129,125 @@ void LBItem::runScript(uint id, uint16 data, uint16 from) {
 				}
 
 				switch (entry->opcode) {
-				case 0xffff:
-					runCommand(entry->command);
+				case kLBOpNone:
+					warning("ignoring kLBOpNone (event 0x%04x, param 0x%04x, target '%s')",
+						entry->event, entry->param, target->_desc.c_str());
 					break;
 
-				case 1:
+				case kLBOpXShow:
 					// TODO: should be setVisible(true) - not a delayed event -
 					// when we're doing the param 1/2/3 stuff above?
 					// and in modern LB this is perhaps just a direct target->setVisible(true)..
 					_vm->queueDelayedEvent(DelayedEvent(this, kLBDelayedEventSetNotVisible));
 					break;
 
-				case 2:
+				case kLBOpTogglePlay:
 					target->togglePlaying(false);
 					break;
 
-				case 3:
+				case kLBOpSetNotVisible:
 					target->setVisible(false);
 					break;
 
-				case 4:
+				case kLBOpSetVisible:
 					target->setVisible(true);
 					break;
 
-				case 5:
+				case kLBOpDestroy:
 					target->destroySelf();
 					break;
 
-				case 6:
-					target->seek(1);
+				case kLBOpRewind:
+					target->seek(0);
 					break;
 
-				case 7:
+				case kLBOpStop:
 					target->stop();
 					break;
 
-				case 8:
+				case kLBOpDisable:
 					target->setEnabled(false);
 					break;
 
-				case 9:
+				case kLBOpEnable:
 					target->setEnabled(true);
 					break;
 
-				case 0xb:
+				case kLBOpGlobalSetNotVisible:
 					target->setGlobalVisible(false);
 					break;
 
-				case 0xc:
+				case kLBOpGlobalSetVisible:
 					target->setGlobalVisible(true);
 					break;
 
-				case 0xd:
+				case kLBOpGlobalDisable:
 					target->setGlobalEnabled(false);
 					break;
 
-				case 0xe:
+				case kLBOpGlobalEnable:
 					target->setGlobalEnabled(true);
 					break;
 
-				case 0xf:
+				case kLBOpSeekToEnd:
 					target->seek(0xFFFF);
 					break;
 
+				case kLBOpMute:
+				case kLBOpUnmute:
+					// FIXME
+					warning("ignoring kLBOpMute/Unmute (event 0x%04x, param 0x%04x, target '%s')",
+						entry->event, entry->param, target->_desc.c_str());
+					break;
+
+				case kLBOpLoad:
+				case kLBOpPreload:
+				case kLBOpUnload:
+					// FIXME
+					warning("ignoring kLBOpLoad/Preload/Unload (event 0x%04x, param 0x%04x, target '%s')",
+						entry->event, entry->param, target->_desc.c_str());
+					break;
+
+				case kLBOpSeekToPrev:
+				case kLBOpSeekToNext:
+					// FIXME
+					warning("ignoring kLBOpSeekToPrev/Next (event 0x%04x, param 0x%04x, target '%s')",
+						entry->event, entry->param, target->_desc.c_str());
+					break;
+
+				case kLBOpDragBegin:
+				case kLBOpDragEnd:
+					// FIXME
+					warning("ignoring kLBOpDragBegin/End (event 0x%04x, param 0x%04x, target '%s')",
+						entry->event, entry->param, target->_desc.c_str());
+					break;
+
+				case kLBOpScriptDisable:
+				case kLBOpScriptEnable:
+					// FIXME
+					warning("ignoring kLBOpScriptDisable/Enable (event 0x%04x, param 0x%04x, target '%s')",
+						entry->event, entry->param, target->_desc.c_str());
+					break;
+
+				case kLBOpUnknown1C:
+					// FIXME
+					warning("ignoring kLBOpUnknown1C (event 0x%04x, param 0x%04x, target '%s')",
+						entry->event, entry->param, target->_desc.c_str());
+					break;
+
+				case kLBOpSendExpression:
+					// FIXME
+					warning("ignoring kLBOpSendExpression (event 0x%04x, param 0x%04x, target '%s')",
+						entry->event, entry->param, target->_desc.c_str());
+					break;
+
+				case kLBOpRunCommand:
+					runCommand(entry->command);
+					break;
+
 				default:
-					// TODO
-					warning("Ignoring script entry (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x)",
-						entry->type, entry->event, entry->opcode, entry->param);
+					error("Unknown script opcode (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x, target '%s')",
+						entry->type, entry->event, entry->opcode, entry->param, target->_desc.c_str());
 				}
 			}
 		}
