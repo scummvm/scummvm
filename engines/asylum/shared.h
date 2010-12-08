@@ -146,6 +146,7 @@ enum GameFlag {
 };
 
 enum ChapterIndex {
+	kChapterInvalid = -1,
 	kChapterNone = 0,
 	kChapter1,
 	kChapter2,
