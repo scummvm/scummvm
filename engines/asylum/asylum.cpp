@@ -289,7 +289,7 @@ void AsylumEngine::playIntro() {
 
 	_cursor->show();
 
-	_savegame->loadViewedMovies();
+	_savegame->loadMoviesViewed();
 
 	// Switch to scene event handling
 	switchEventHandler(_scene);
