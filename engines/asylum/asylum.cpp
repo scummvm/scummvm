@@ -54,10 +54,10 @@
 #include "asylum/system/sound.h"
 #include "asylum/system/speech.h"
 #include "asylum/system/text.h"
-#include "asylum/system/video.h"
 
 #include "asylum/views/scene.h"
 #include "asylum/views/menu.h"
+#include "asylum/views/video.h"
 
 #include "asylum/console.h"
 #include "asylum/respack.h"

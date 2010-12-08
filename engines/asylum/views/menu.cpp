@@ -35,9 +35,9 @@
 #include "asylum/system/screen.h"
 #include "asylum/system/sound.h"
 #include "asylum/system/text.h"
-#include "asylum/system/video.h"
 
 #include "asylum/views/scene.h"
+#include "asylum/views/video.h"
 
 #include "asylum/respack.h"
 #include "asylum/staticres.h"

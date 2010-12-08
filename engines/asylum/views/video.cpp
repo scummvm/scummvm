@@ -23,7 +23,7 @@
  *
  */
 
-#include "asylum/system/video.h"
+#include "asylum/views/video.h"
 
 #include "asylum/system/config.h"
 #include "asylum/system/graphics.h"
@@ -36,7 +36,7 @@
 
 namespace Asylum {
 
-Video::Video(AsylumEngine *engine, Audio::Mixer *mixer): _vm(engine), _skipVideo(false) {
+Video::Video(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine), _skipVideo(false) {
 	Common::Event stopEvent;
 	_stopEvents.clear();
 	stopEvent.type = Common::EVENT_KEYDOWN;

@@ -31,9 +31,9 @@
 #include "asylum/system/cursor.h"
 #include "asylum/system/graphics.h"
 #include "asylum/system/screen.h"
-#include "asylum/system/video.h"
 
 #include "asylum/views/scene.h"
+#include "asylum/views/video.h"
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
