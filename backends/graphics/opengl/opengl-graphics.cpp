@@ -39,7 +39,7 @@
 OpenGLGraphicsManager::OpenGLGraphicsManager()
 	:
 #ifdef USE_OSD
-	_osdTexture(0), _osdAlpha(0), _osdFadeStartTime(0),
+	_osdTexture(0), _osdAlpha(0), _osdFadeStartTime(0), _requireOSDUpdate(false),
 #endif
 	_gameTexture(0), _overlayTexture(0), _cursorTexture(0),
 	_screenChangeCount(1 << (sizeof(int) * 8 - 2)), _screenNeedsRedraw(false),
@@ -596,26 +596,7 @@ void OpenGLGraphicsManager::disableCursorPalette(bool disable) {
 //
 
 void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
-	// TODO: Fix OSD support.
-	//
-	// Actually we have nice OSD support for the OpenGL backend, but
-	// since the OpenGL context/resources are not shared between threads we
-	// can not use this here.
-	//
-	// A possible way of making the code crash hard is to use the MT-32 emu.
-	// Whenever there is some message send to the OSD from the emulator's
-	// sound thread the glBindTexture call inside _osdTexture->updateBuffer
-	// will result in a crash.
-	//
-	// To try it out just uncomment the below code and start up any game which
-	// prints some info on the MT-32 display. Whenever the message should be
-	// displayed it will crash hard.
-	//
-	// We can not even use a GUI dialog here, since that would also result in
-	// an change of the overlay surface and thus result in the same problem
-	// just in another place.
-	warning("OpenGL: OSD messsage \"%s\" suppressed", msg);
-	/*assert(_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 	assert(msg);
 
 	// The font we are going to use:
@@ -674,13 +655,12 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 							0xFFFF, Graphics::kTextAlignCenter);
 	}
 
-	// Update the texture
-	_osdTexture->updateBuffer(_osdSurface.pixels, _osdSurface.pitch, 0, 0, 
-		_osdSurface.w, _osdSurface.h);
+	// Request update of the texture
+	_requireOSDUpdate = true;
 
 	// Init the OSD display parameters, and the fade out
 	_osdAlpha = kOSDInitialAlpha;
-	_osdFadeStartTime = g_system->getMillis() + kOSDFadeOutDelay;*/
+	_osdFadeStartTime = g_system->getMillis() + kOSDFadeOutDelay;
 }
 
 //
@@ -1009,6 +989,13 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 
 #ifdef USE_OSD
 	if (_osdAlpha > 0) {
+		if (_requireOSDUpdate) {
+			// Update the texture
+			_osdTexture->updateBuffer(_osdSurface.pixels, _osdSurface.pitch, 0, 0, 
+			                          _osdSurface.w, _osdSurface.h);
+			_requireOSDUpdate = false;
+		}
+
 		// Update alpha value
 		const int diff = g_system->getMillis() - _osdFadeStartTime;
 		if (diff > 0) {

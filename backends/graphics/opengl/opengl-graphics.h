@@ -282,6 +282,7 @@ protected:
 	Graphics::Surface _osdSurface;
 	uint8 _osdAlpha;
 	uint32 _osdFadeStartTime; 
+	bool _requireOSDUpdate;
 	enum {
 		kOSDFadeOutDelay = 2 * 1000,
 		kOSDFadeOutDuration = 500,
