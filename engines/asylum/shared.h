@@ -606,6 +606,7 @@ enum ObjectFlag {
 // Engine subclasses
 #define getEncounter()   _vm->encounter()
 #define getCursor()      _vm->cursor()
+#define getMenu()        _vm->menu()
 #define getResource()    _vm->resource()
 #define getSound()       _vm->sound()
 #define getSaveLoad()    _vm->savegame()

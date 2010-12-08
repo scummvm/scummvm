@@ -105,8 +105,9 @@ enum GlobalFlag {
 struct SharedData {
 public:
 	SharedData() {
+		cdNumber = 0;
 		_actorEnableForStatus7 = false;
-		_flag1 = false;		
+		_flag1 = false;
 		_matteBarHeight = 0;
 		_matteVar2 = 0;
 		_sceneCounter = 0;
@@ -144,6 +145,8 @@ public:
 		_flagRedraw = false;
 		_nextScreenUpdate = 0;
 	}
+
+	int32 cdNumber;
 
 	// Saved scene data
 	ResourceId      cursorResources[11];

@@ -26,10 +26,15 @@
 #ifndef ASYLUM_SAVEGAME_H
 #define ASYLUM_SAVEGAME_H
 
-#include "common/scummsys.h"
+#include "asylum/shared.h"
+
+#include "common/savefile.h"
+#include "common/serializer.h"
 #include "common/util.h"
 
 namespace Asylum {
+
+#define SAVEGAME_COUNT 25
 
 class AsylumEngine;
 
@@ -38,27 +43,190 @@ public:
 	Savegame(AsylumEngine *engine);
 	~Savegame();
 
-	bool setup();
+	/**
+	 * Checks if saved games are present
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	bool hasSavegames();
 
 	/**
-	 * Loads the list of saved games
+	 * Loads the list of saved games.
 	 */
 	void loadList();
 
+	/**
+	 * Loads a game
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
 	bool load();
+
+	/**
+	 * Quick loads a game
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
 	bool quickLoad();
 
-	bool save();
+	/**
+	 * Saves a game
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	void save();
+
+	/**
+	 * Quick saves a game
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
 	bool quickSave();
 
+	/**
+	 * Removes a savegame
+	 */
+	void remove();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Movies
+	//////////////////////////////////////////////////////////////////////////
 	void setMovieViewed(uint32 index);
 	uint32 getMoviesViewed(byte *movieList);
-	void loadViewedMovies();
+	void loadMoviesViewed();
 
 private:
 	AsylumEngine* _vm;
 
+	uint32 _index;
 	byte _moviesViewed[196];
+	uint32 _savegameToScene[SAVEGAME_COUNT];
+	bool _savegames[SAVEGAME_COUNT];
+	Common::String _names[SAVEGAME_COUNT];
+	bool _valid;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Checks if a savegame is valid
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	bool check();
+
+	/**
+	 * Gets a filename for a given save index
+	 *
+	 * @param index Zero-based index of the savegame
+	 *
+	 * @return The filename.
+	 */
+	Common::String getFilename(uint32 index);
+
+	/**
+	 * Check if a specific savegame exists
+	 *
+	 * @param filename Filename of the file.
+	 *
+	 * @return true if savegame present, false if not.
+	 */
+	bool isSavegamePresent(Common::String filename);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Reading & writing
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Reads a savegame header.
+	 *
+	 * @param [in,out] file If non-null, the file.
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	bool readHeader(Common::InSaveFile *file);
+
+	/**
+	 * Writes a savegame header.
+	 *
+	 * @param [in,out] file If non-null, the file.
+	 */
+	void writeHeader(Common::OutSaveFile *file);
+
+	/**
+	 * Loads savegame data
+	 *
+	 * @param filename Filename of the file.
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	bool loadData(Common::String filename);
+
+	/**
+	 * Save savegame data.
+	 *
+	 * @param filename Filename of the file.
+	 * @param name 	   The name.
+	 * @param chapter  The chapter.
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	bool saveData(Common::String filename, Common::String name, ChapterIndex chapter);
+
+	/**
+	 * Reads header data from a file
+	 *
+	 * @param [in,out] file If non-null, the file.
+	 * @param size 			The size.
+	 * @param description   The description.
+	 */
+	void read(Common::InSaveFile *file, uint32 size, Common::String description);
+
+	/**
+	 * Reads data from a file.
+	 *
+	 * @param [in,out] file If non-null, the file.
+	 * @param [in,out] data If non-null, the data.
+	 * @param size 			The size.
+	 * @param count 		Number of.
+	 * @param description   The description.
+	 */
+	void read(Common::InSaveFile *file, byte *data, uint32 size, uint32 count, Common::String description);
+
+
+	/**
+	 * Reads data from a file.
+	 *
+	 * @param [in,out] file If non-null, the file.
+	 * @param [in,out] data If non-null, the data.
+	 * @param size 			The size.
+	 * @param count 		Number of.
+	 * @param description   The description.
+	 */
+	void read(Common::InSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description);
+
+	/**
+	 * Writes data to a file.
+	 *
+	 * @param [in,out] file If non-null, the file.
+	 * @param [in,out] data If non-null, the data.
+	 * @param size 			The size.
+	 * @param count 		Number of.
+	 * @param description   The description.
+	 */
+	void write(Common::OutSaveFile *file, byte *data, uint32 size, uint32 count, Common::String description);
+
+	/**
+	 * Writes data to a file.
+	 *
+	 * @param [in,out] file If non-null, the file.
+	 * @param [in,out] data If non-null, the data.
+	 * @param size 			The size.
+	 * @param count 		Number of.
+	 * @param description   The description.
+	 */
+	void write(Common::OutSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description);
 };
 
 } // End of namespace Asylum

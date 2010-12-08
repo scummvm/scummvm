@@ -146,13 +146,18 @@ public:
 	void queueScript(int32 scriptIndex, ActorIndex actorIndex);
 
 	/**
-	 * Query if 'scriptIndex' is in queue. 
+	 * Query if 'scriptIndex' is in queue.
 	 *
-	 * @param scriptIndex Zero-based index of the script. 
+	 * @param scriptIndex Zero-based index of the script.
 	 *
-	 * @return true if in queue, false if not. 
+	 * @return true if in queue, false if not.
 	 */
 	bool isInQueue(int32 scriptIndex);
+
+	/**
+	 * Resets the queue.
+	 */
+	void resetQueue();
 
 	// Accessors
 	int32 getDelayedVideoIndex() const { return _delayedVideoIndex; }
@@ -251,11 +256,6 @@ private:
 	bool              _exit;
 	int32             _lineIncrement;
 	bool              _waitCycle;
-
-	/**
-	 * Resets the queue.
-	 */
-	void resetQueue();
 
 	// Opcode helper functions
 	void enableObject(ScriptEntry *cmd, ObjectEnableType type);

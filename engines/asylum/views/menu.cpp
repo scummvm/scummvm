@@ -349,21 +349,20 @@ bool MainMenu::init() {
 			// The original also
 			//  - load the config (this is done when constructing the config singleton).
 			//  - initialize game structures (this is done in classes constructors)
-
-			getSaveLoad()->loadViewedMovies();
+			getSaveLoad()->loadMoviesViewed();
 
 			_needEyeCursorInit = true;
 
 			// Play start video
 			getVideo()->playVideo(0);
 
-			if (!getSaveLoad()->setup()) {
+			// If no savegame is present, start the game directly
+			if (!getSaveLoad()->hasSavegames()) {
 				_vm->restart();
 				return true;
 			}
 
 			// The original preloads graphics
-
 			getCursor()->show();
 		}
 
