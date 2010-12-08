@@ -997,16 +997,16 @@ void HugoEngine::initialize() {
 		_picDir = "";
 		break;
 	case kGameVariantH2Dos:
-		_episode = "\"Hugo 2: Whodunit?\"";
-		_picDir = "hugo2/";
+		_episode = "\"Hugo II: Whodunit?\"";
+		_picDir = "";
 		break;
 	case kGameVariantH3Dos:
 		_episode = "\"Hugo III: Jungle of Doom\"";
-		_picDir = "hugo3/";
+		_picDir = "pictures/";
 		break;
 	case kGameVariantH1Win:
 		_episode = "\"Hugo's Horrific Adventure\"";
-		_picDir = "";
+		_picDir = "hugo1/";
 		break;
 	case kGameVariantH2Win:
 		_episode = "\"Hugo's Mystery Adventure\"";
