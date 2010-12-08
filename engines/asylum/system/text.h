@@ -47,7 +47,7 @@ public:
 	Text(AsylumEngine *engine);
 	~Text();
 
-	void loadFont(ResourceId resourceId);
+	ResourceId loadFont(ResourceId resourceId);
 
 	void   setPosition(int32 x, int32 y);
 	int32  getWidth(char c);

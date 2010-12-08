@@ -37,6 +37,7 @@
 #include "asylum/system/text.h"
 
 #include "asylum/views/scene.h"
+#include "asylum/views/video.h"
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
@@ -1549,7 +1550,7 @@ void Encounter::runScript() {
 			if (!getSharedData()->getMatteBarHeight()) {
 				getScreen()->makeGreyPalette();
 				getSharedData()->setMatteBarHeight(1);
-				getScript()->setDelayedVideoIndex(getVariableInv(entry.param2));
+				getVideo()->play(getVariableInv(entry.param2), this);
 				getSharedData()->setMatteVar1(1);
 				getSharedData()->setMattePlaySound(true);
 				getSharedData()->setMatteInitialized(true);

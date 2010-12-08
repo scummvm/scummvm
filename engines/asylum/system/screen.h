@@ -95,6 +95,7 @@ public:
 	void startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param);
 	void updatePalette(int32 param);
 	void makeGreyPalette();
+	void setupPalette(byte *buffer, int start, int count);
 
 	// Gamma
 	void setGammaLevel(ResourceId id, int32 val);
@@ -113,6 +114,9 @@ public:
 	void drawGraphicsInQueue();
 	void clearGraphicsInQueue();
 	void deleteGraphicFromQueue(ResourceId resourceId);
+
+	// Used by Video
+	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height);
 
 	// Debug
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
@@ -146,8 +150,6 @@ private:
 	void blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey);
 	void bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, bool useColorKey);
 
-
-	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height);
 	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 };
 

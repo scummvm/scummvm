@@ -26,6 +26,7 @@
 #ifndef ASYLUM_VIDEO_H
 #define ASYLUM_VIDEO_H
 
+#include "asylum/eventhandler.h"
 #include "asylum/shared.h"
 
 #include "common/array.h"
@@ -48,54 +49,62 @@ struct GraphicFrame;
 struct VideoSubtitle {
 	int frameStart;
 	int frameEnd;
-	ResourceId textResourceId;
+	ResourceId resourceId;
 };
 
-class Video {
+class Video : public EventHandler {
 public:
 	Video(AsylumEngine *engine, Audio::Mixer *mixer);
 	virtual ~Video();
 
-	void playVideo(int32 videoNumber);
+	/**
+	 * Plays a video. 
+	 *
+	 * @param videoNumber 	   The video number. 
+	 * @param handler          The previous event handler. 
+	 */
+	void play(int32 videoNumber, EventHandler *handler);
+
+	/**
+	 * Handle event.
+	 *
+	 * @param evt The event.
+	 *
+	 * @return true if it succeeds, false if it fails.
+	 */
+	bool handleEvent(const AsylumEvent &evt);
 
 private:
 	AsylumEngine *_vm;
 
-	void performPostProcessing(byte *screen);
-	void loadSubtitles(int32 videoNumber);
-	void processVideoEvents();
-
-	bool _skipVideo;
-	VideoText *_text;
 	Graphics::SmackerDecoder *_smkDecoder;
-	Common::List<Common::Event> _stopEvents;
-	Common::Array<VideoSubtitle> _subtitles;
-}; // end of class Video
+	Common::Array<VideoSubtitle> _subtitles;	
 
-// The VideoText class has some methods from the Text class,
-// but it differs from the text class: this class draws text
-// to a predefined screen buffer, whereas the Text class draws
-// text directly to the screen
-class VideoText {
-public:
-	VideoText(AsylumEngine *engine);
-	~VideoText();
+	int32 _currentMovie;
+	int32 _subtitleIndex;
+	int32 _subtitleCounter;
+	ResourceId _previousFont;
+	bool _done;
 
-	void loadFont(ResourceId resourceId);
-	void drawMovieSubtitle(byte *screenBuffer, ResourceId resourceId);
+	
+	/**
+	 * Plays the given file. 
+	 *
+	 * @param filename 		Filename of the file. 
+	 * @param showSubtitles true to show, false to hide the subtitles. 
+	 */
+	void play(Common::String filename, bool showSubtitles);
 
-private:
-	AsylumEngine *_vm;
+	/**
+	 * Sets up the palette. 
+	 */
+	void setupPalette();
 
-	int32 getTextWidth(const char *text);
-
-	void drawText(byte *screenBuffer, int16 x, int16 y, const char *text);
-	void copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int x, int y) const;
-
-	GraphicResource *_fontResource;
-	uint8           _curFontFlags;
-
-}; // end of class VideoText
+	/**
+	 * Loads the subtitles (vids.cap)
+	 */
+	void loadSubtitles();
+};
 
 } // end of namespace Asylum
 

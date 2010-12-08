@@ -45,13 +45,21 @@ enum AsylumEventType {
 };
 
 struct AsylumEvent : public Common::Event {
-	AsylumEvent() : Event() {}
+	AsylumEvent() : Event() {
+		param1 = 0;
+		param2 = 0;
+	}
 
 	// Since we don't feed any custom message into the event manager,
 	// we can safely use our own custom event type.
-	AsylumEvent(AsylumEventType msgType) : Event() {
+	AsylumEvent(AsylumEventType msgType, int32 p1 = 0, int32 p2 = 0) : Event() {
 		type = (Common::EventType)msgType;
+		param1 = p1;
+		param2 = p2;
 	}
+
+	int32 param1;
+	int32 param2;
 };
 
 class EventHandler {

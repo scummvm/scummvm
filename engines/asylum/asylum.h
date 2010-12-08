@@ -110,6 +110,11 @@ public:
 	void restart();
 
 	/**
+	 * Run event loop
+	 */
+	void handleEvents();
+
+	/**
 	 * Switch to a new scene
 	 *
 	 * @param sceneId ResourcePack for the scene
@@ -185,7 +190,7 @@ public:
 	 *
 	 * @param type The event type.
 	 */
-	void notify(AsylumEventType type);
+	void notify(AsylumEventType type, int32 param1 = 0, int32 param2 = 0);
 
 	/**
 	 * Gets a message handler.
@@ -248,7 +253,6 @@ private:
 	bool _introPlayed;	
 	int32 _tickOffset;
 
-	void handleEvents();
 	void updateMouseCursor();
 	void processDelayedEvents();
 
@@ -276,7 +280,11 @@ private:
 	 */
 	int32 computeSinCosOffset(int32 val);
 
+
+	// Debug
 	friend class Console;
+	ResourcePackId _delayedSceneIndex;
+	int32 _delayedVideoIndex;
 };
 
 } // namespace Asylum

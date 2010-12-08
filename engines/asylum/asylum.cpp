@@ -82,6 +82,10 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	_introPlayed = false;
 	_tickOffset = 0;
 
+	// Debug
+	_delayedSceneIndex = kResourcePackInvalid;
+	_delayedVideoIndex = -1;
+
 	// Add default search directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
@@ -271,7 +275,7 @@ void AsylumEngine::playIntro() {
 			_sound->playMusic(kResourceNone, 0);
 
 			// TODO convert to new event handling
-			_video->playVideo(1);
+			_video->play(1, _mainMenu);
 
 			if (_scene->worldstats()->musicCurrentResourceIndex != kMusicStopped)
 				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
@@ -356,7 +360,7 @@ void AsylumEngine::handleEvents() {
 	if (_handler)
 		_handler->handleEvent(updateEvt);
 
-	// TODO replace by original game code based on switchEventHandler
+	// Handle debug events
 	processDelayedEvents();
 }
 
@@ -364,29 +368,31 @@ void AsylumEngine::processDelayedEvents() {
 	if (!_video || !_sound || !_mainMenu)
 		error("[AsylumEngine::processDelayedEvents] Subsystems not initialized properly!");
 
-	// check for a delayed video
-	int videoIdx = _script->getDelayedVideoIndex();
-	if (videoIdx >= 0) {
-		_sound->stopMusic();
-		_sound->stopAll();
-		_video->playVideo(videoIdx);
-		_script->setDelayedVideoIndex(-1);
-	}
+	// check for a delayed scene change	
+	if (_delayedSceneIndex != kResourcePackInvalid && isGameFlagNotSet(kGameFlagScriptProcessing)) {
+		ResourcePackId sceneIndex = _delayedSceneIndex;
 
-	// check for a delayed scene change
-	ResourcePackId packId = _script->getDelayedSceneIndex();
-	if (packId != kResourcePackInvalid && isGameFlagNotSet(kGameFlagScriptProcessing)) {
 		// Reset delayed scene
-		_script->setDelayedSceneIndex(kResourcePackInvalid);
+		_delayedSceneIndex = kResourcePackInvalid;
 
 		_sound->stopMusic();
 		_sound->stopAll();
+
+		switchEventHandler(NULL);
 
 		delete _scene;
 		_scene = new Scene(this);
-		_scene->enter(packId);
+		_scene->enter(sceneIndex);
 
 		switchEventHandler(_scene);
+	}
+
+	// Check for delayed video
+	if (_delayedVideoIndex != -1 && isGameFlagNotSet(kGameFlagScriptProcessing)) {
+		int32 index = _delayedVideoIndex;
+		_delayedVideoIndex = -1;
+
+		_video->play(index, _handler);
 	}
 }
 
@@ -412,11 +418,11 @@ void AsylumEngine::switchEventHandler(EventHandler *handler) {
 		_handler->handleEvent(init);
 }
 
-void AsylumEngine::notify(AsylumEventType type) {
+void AsylumEngine::notify(AsylumEventType type, int32 param1, int32 param2) {
 	if (_handler == NULL)
 		error("[AsylumEngine::notify] Invalid handler parameter (cannot be NULL)!");
 
-	AsylumEvent evt(type);
+	AsylumEvent evt(type, param1, param2);
 	_handler->handleEvent(evt);
 }
 

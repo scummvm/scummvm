@@ -26,8 +26,11 @@
 #include "asylum/views/video.h"
 
 #include "asylum/system/config.h"
+#include "asylum/system/cursor.h"
 #include "asylum/system/graphics.h"
 #include "asylum/system/savegame.h"
+#include "asylum/system/screen.h"
+#include "asylum/system/sound.h"
 #include "asylum/system/text.h"
 
 #include "asylum/asylum.h"
@@ -36,98 +39,176 @@
 
 namespace Asylum {
 
-Video::Video(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine), _skipVideo(false) {
-	Common::Event stopEvent;
-	_stopEvents.clear();
-	stopEvent.type = Common::EVENT_KEYDOWN;
-	stopEvent.kbd.keycode  = Common::KEYCODE_ESCAPE;
-	_stopEvents.push_back(stopEvent);
-
+Video::Video(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine),
+	_currentMovie(0), _subtitleIndex(0), _subtitleCounter(0), _previousFont(kResourceNone), _done(false) {
 	_smkDecoder = new Graphics::SmackerDecoder(mixer);
-
-	_text = new VideoText(engine);
-	_text->loadFont(MAKE_RESOURCE(kResourcePackShared, 57));	// video font
 }
 
 Video::~Video() {
 	delete _smkDecoder;
-	delete _text;
 
 	// Zero-out passed pointers
 	_vm = NULL;
 }
 
-void Video::playVideo(int32 videoNumber) {
-	char filename[20];
-	sprintf(filename, "mov%03d.smk", videoNumber);
+//////////////////////////////////////////////////////////////////////////
+// Event Handler
+//////////////////////////////////////////////////////////////////////////
+bool Video::handleEvent(const AsylumEvent &evt) {
+	switch ((uint32)evt.type) {
+	default:
+		break;
 
-	getSaveLoad()->setMovieViewed(videoNumber);
+	case EVENT_ASYLUM_INIT:
+		_previousFont = getText()->loadFont(MAKE_RESOURCE(kResourcePackShared, 57));
+		_subtitleCounter = 0;
+		_subtitleIndex = -1;
+		break;
 
-	if (!_smkDecoder->loadFile(filename)) {
-		_smkDecoder->close();
+	case EVENT_ASYLUM_DEINIT:
+		getScreen()->clear();
+		getText()->loadFont(_previousFont);
+		break;
 
-		error("[Video::playVideo] Invalid video index (%d)", videoNumber);
+	case EVENT_ASYLUM_SUBTITLE: {
+		int32 newIndex = (evt.param2 == 1) ? evt.param1 : -1;
+
+		if (_subtitleIndex != newIndex) {
+			_subtitleIndex = newIndex;
+			_subtitleCounter = 2;
+		}
+
+		if (_subtitleCounter > 0) {
+			getScreen()->fillRect(0, 400, 640, 80, 0);
+
+			if (_subtitleIndex >= 0) {
+				char *text1 = getText()->get((ResourceId)_currentMovie);
+				
+				int32 y = 10 * (44 - getText()->draw(0, 99, kTextCalculate, 10, 400, 20, 620, text1));
+				if (y <= 400)
+					y = 405;
+
+				char *text = getText()->get(_subtitles[_subtitleIndex].resourceId);
+				getText()->draw(0, 99, kTextCenter, 10, y, 20, 620, text);
+			}
+
+			--_subtitleCounter;
+		}
+		
+		return true;
+		}
+
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_KEYDOWN:
+		_done = true;
+		getScreen()->clear();
+
+		// Original set a value that does not seems to be used anywhere
+		return true;
 	}
 
-	bool lastMouseState = g_system->showMouse(false);
-	_skipVideo = false;
+	return false;
+}
 
-	if (Config.showMovieSubtitles)
-		loadSubtitles(videoNumber);
+//////////////////////////////////////////////////////////////////////////
+// Playing
+//////////////////////////////////////////////////////////////////////////
+void Video::play(int32 videoNumber, EventHandler *handler) {
+	getSaveLoad()->setMovieViewed(videoNumber);
+	_currentMovie = videoNumber;
+
+	// Prepare
+	getCursor()->hide();
+	getSharedData()->setFlag(kFlag1, true);
+	getScreen()->paletteFade(0, 25, 10);
+	getSound()->stopAll();
+
+	// Play movie
+	_vm->switchEventHandler(this);
+	play(Common::String::format("mov%03d.smk", videoNumber), Config.showMovieSubtitles);
+
+	// Cleanup and switch to previous event handler
+	getCursor()->show();
+	getSharedData()->setFlag(kFlag1, false);
+	_vm->switchEventHandler(handler);
+}
+
+void Video::play(Common::String filename, bool showSubtitles) {
+	if (!_smkDecoder->loadFile(filename))
+		error("[Video::playVideo] Invalid video index (%d)", _currentMovie);
 
 	int32 x = Common::Rational(g_system->getWidth()  - _smkDecoder->getWidth(),  2).toInt();
 	int32 y = Common::Rational(g_system->getHeight() - _smkDecoder->getHeight(), 2).toInt();
 
-	while (!_smkDecoder->endOfVideo() && !_skipVideo) {
-		processVideoEvents();
+	getScreen()->clear();
+
+	// TODO check flags and setup volume panning
+
+	// Load subtitles
+	if (showSubtitles)
+		loadSubtitles();
+
+	// Setup playing
+	_done = false;
+	uint32 index = 0;
+	int32 frameStart = 0;
+	int32 frameEnd = 0;
+	int32 currentSubtitle = 0;
+
+	while (!_done && !_vm->shouldQuit() && !_smkDecoder->endOfVideo()) {
+		_vm->handleEvents();
+
 		if (_smkDecoder->needsUpdate()) {
 			Graphics::Surface *frame = _smkDecoder->decodeNextFrame();
+			
+			if (!frame)
+				continue;
 
-			if (frame) {
-				g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+			if (_smkDecoder->hasDirtyPalette())
+				setupPalette();
 
-				if(Config.showMovieSubtitles) {
-					Graphics::Surface *screen = g_system->lockScreen();
-					performPostProcessing((byte *)screen->pixels);
-					g_system->unlockScreen();
+			getScreen()->copyToBackBuffer((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+
+			if (showSubtitles) {
+				int32 currentFrame = _smkDecoder->getCurFrame() + 1;
+				
+				// Check for next frame
+				if (currentFrame > frameEnd) {
+					if (index < _subtitles.size()) {
+						frameStart = _subtitles[index].frameStart;
+						frameEnd = _subtitles[index].frameEnd;
+						currentSubtitle = index;
+						++index;
+					}
 				}
-
-				if (_smkDecoder->hasDirtyPalette())
-					_smkDecoder->setSystemPalette();
-
-				g_system->updateScreen();
+				
+				if (currentFrame < frameStart || currentFrame > frameEnd)
+					_vm->notify(EVENT_ASYLUM_SUBTITLE, 0, 0);
+				else
+					_vm->notify(EVENT_ASYLUM_SUBTITLE, currentSubtitle, 1);				
 			}
+
+			getScreen()->copyBackBufferToScreen();
+
+			g_system->updateScreen();			
 		}
 		g_system->delayMillis(10);
 	}
 
-
 	_smkDecoder->close();
 	_subtitles.clear();
-	g_system->showMouse(lastMouseState);
 }
 
-void Video::performPostProcessing(byte *screen) {
-	int32 curFrame = _smkDecoder->getCurFrame();
+void Video::setupPalette() {
+	_smkDecoder->setSystemPalette();
 
-	// Reset subtitle area, by filling it with zeroes
-	memset(screen + 640 * 400, 0, 640 * 80);
-
-	for (uint32 i = 0; i < _subtitles.size(); i++) {
-		VideoSubtitle curSubtitle = _subtitles[i];
-		if (curFrame >= curSubtitle.frameStart &&
-		        curFrame <= curSubtitle.frameEnd) {
-			_text->drawMovieSubtitle(screen, curSubtitle.textResourceId);
-			break;
-		}
-	}
+	warning("[Video::setupPalette] Video palette setup not implemented!");
+	//getScreen()->setupPalette(0, 0, 0);
 }
 
-void Video::loadSubtitles(int32 videoNumber) {
-	// Read vids.cap
-
+void Video::loadSubtitles() {	
 	char movieToken[10];
-	sprintf(movieToken, "[MOV%03d]", videoNumber);
+	sprintf(movieToken, "[MOV%03d]", _currentMovie);
 
 	Common::File subsFile;
 	subsFile.open("vids.cap");
@@ -163,7 +244,7 @@ void Video::loadSubtitles(int32 videoNumber) {
 			if (!tok)
 				error("[Video::loadSubtitles] Invalid subtitle (resource id missing)!");
 
-			newSubtitle.textResourceId = (ResourceId)(atoi(tok) + video_subtitle_resourceIds[videoNumber]);
+			newSubtitle.resourceId = (ResourceId)(atoi(tok) + video_subtitle_resourceIds[_currentMovie]);
 
 			tok = strtok(NULL, " ");
 
@@ -174,133 +255,6 @@ void Video::loadSubtitles(int32 videoNumber) {
 	}
 
 	delete [] buffer;
-}
-
-void Video::processVideoEvents() {
-	Common::Event curEvent;
-	while (g_system->getEventManager()->pollEvent(curEvent)) {
-		if (curEvent.type == Common::EVENT_RTL || curEvent.type == Common::EVENT_QUIT) {
-			_skipVideo = true;
-		}
-
-		for (Common::List<Common::Event>::const_iterator iter = _stopEvents.begin(); iter != _stopEvents.end(); ++iter) {
-			if (curEvent.type == iter->type) {
-				if (iter->type == Common::EVENT_KEYDOWN || iter->type == Common::EVENT_KEYUP) {
-					if (curEvent.kbd.keycode == iter->kbd.keycode) {
-						_skipVideo = true;
-						break;
-					}
-				} else {
-					_skipVideo = true;
-					break;
-				}
-			}
-		}
-	}
-}
-
-
-VideoText::VideoText(AsylumEngine *engine) : _vm(engine) {
-	_curFontFlags = 0;
-	_fontResource = NULL;
-}
-
-VideoText::~VideoText() {
-	delete _fontResource;
-
-	// Zero-out passed pointers
-	_vm = NULL;
-}
-
-void VideoText::loadFont(ResourceId resourceId) {
-	delete _fontResource;
-
-	_fontResource = new GraphicResource(_vm, resourceId);
-
-	if (resourceId != kResourceNone) {
-		// load font flag data
-		_curFontFlags = Common::Rational(_fontResource->getData().flags, 16).toInt() & 0x0F;
-	}
-}
-
-void VideoText::drawMovieSubtitle(byte *screenBuffer, ResourceId resourceId) {
-	Common::String textLine[4];
-	Common::String tmpLine;
-	int32 curLine = 0;
-	ResourceEntry *textRes = getResource()->get(resourceId);
-	char *text = strdup((const char *)textRes->data);	// for strtok
-	char *tok  = strtok(text, " ");
-	int32 startY  = 420; // starting y for up to 2 subtitles
-	int32 spacing = 30;  // spacing for up to 2 subtitles
-
-	// Videos can have up to 4 lines of text
-	while (tok) {
-		tmpLine += tok;
-		tmpLine += " ";
-		if (getTextWidth(tmpLine.c_str()) > 640) {
-			tmpLine = tok;
-			curLine++;
-			if (curLine >= 2) {
-				startY  = 410; // starting Y for 3 subtitles
-				spacing = 20;  // spacing for 3-4 subtitles
-			}
-			if (curLine >= 3) {
-				startY = 402;  // starting Y for 4 subtitles
-			}
-		}
-		textLine[curLine] += tok;
-		textLine[curLine] += " ";
-		tok = strtok(NULL, " ");
-	}
-
-	for (int32 i = 0; i < curLine + 1; i++) {
-		int32 textWidth = getTextWidth(textLine[i].c_str());
-		drawText(screenBuffer, (int16)Common::Rational(640 - textWidth, 2).toInt(), (int16)(startY + i * spacing), textLine[i].c_str());
-	}
-
-	free(text);
-}
-
-int32 VideoText::getTextWidth(const char *text) {
-	if (!_fontResource)
-		error("[VideoText::getTextWidth] Video text resources not initialized properly!");
-
-	int32 width = 0;
-
-	while (*text) {
-		GraphicFrame *font = _fontResource->getFrame((uint8)*text);
-		width += font->surface.w + font->x - _curFontFlags;
-
-		text++;
-	}
-
-	return width;
-}
-
-void VideoText::drawText(byte *screenBuffer, int16 x, int16 y, const char *text) {
-	if (!_fontResource)
-		error("[VideoText::drawText] Video text resources not initialized properly!");
-
-	while (*text) {
-		GraphicFrame *fontLetter = _fontResource->getFrame((uint8)*text);
-		copyToVideoFrame(screenBuffer, fontLetter, x, y + fontLetter->y);
-		x += (int16)(fontLetter->surface.w + fontLetter->x - _curFontFlags);
-		text++;
-	}
-}
-
-void VideoText::copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int32 x, int32 y) const {
-	uint16 h = frame->surface.h;
-	uint16 w = frame->surface.w;
-	int32 screenBufferPitch = 640;
-	byte *buffer = (byte *)frame->surface.pixels;
-	byte *dest   = screenBuffer + y * screenBufferPitch + x;
-
-	while (h--) {
-		memcpy(dest, buffer, w);
-		dest   += screenBufferPitch;
-		buffer += frame->surface.w;
-	}
 }
 
 } // end of namespace Asylum
