@@ -22,7 +22,7 @@
 #ifndef MT32EMU_FILE_H
 #define MT32EMU_FILE_H
 
-#include <stdio.h>
+#include "common/scummsys.h"
 
 namespace MT32Emu {
 
@@ -47,19 +47,6 @@ public:
 	virtual bool isEOF() = 0;
 };
 
-class ANSIFile: public File {
-private:
-	void *fp;
-public:
-	bool open(const char *filename, OpenMode mode);
-	void close();
-	size_t read(void *in, size_t size);
-	bool readBit8u(Bit8u *in);
-	size_t write(const void *out, size_t size);
-	bool writeBit8u(Bit8u out);
-	bool isEOF();
-};
-
-}
+} // End of namespace MT32Emu
 
 #endif

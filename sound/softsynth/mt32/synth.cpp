@@ -162,21 +162,11 @@ void Synth::initReverb(Bit8u newRevMode, Bit8u newRevTime, Bit8u newRevLevel) {
 }
 
 File *Synth::openFile(const char *filename, File::OpenMode mode) {
-	if (myProp.openFile != NULL) {
-		return myProp.openFile(myProp.userData, filename, mode);
-	}
-	char pathBuf[2048];
-	if (myProp.baseDir != NULL) {
-		strcpy(&pathBuf[0], myProp.baseDir);
-		strcat(&pathBuf[0], filename);
-		filename = pathBuf;
-	}
-	ANSIFile *file = new ANSIFile();
-	if (!file->open(filename, mode)) {
-		delete file;
-		return NULL;
-	}
-	return file;
+	// It should never happen that openFile is NULL in our use case.
+	// Just to cover the case where something is horrible wrong we
+	// use an assert here.
+	assert(myProp.openFile != NULL);
+	return myProp.openFile(myProp.userData, filename, mode);
 }
 
 void Synth::closeFile(File *file) {
