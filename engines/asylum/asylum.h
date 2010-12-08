@@ -116,10 +116,19 @@ public:
 	 */
 	void switchScene(ResourcePackId sceneId) { startGame(sceneId, kStartGameScene); }
 
- 	/**
-	 * Wrapper function to the OSystem getMillis() method
- 	 */
-	uint32 getTick() { return _system->getMillis(); }
+	/**
+	 * Get the number of engine ticks
+	 *
+	 * @return The tick. 
+	 */
+	uint32 getTick() { return _system->getMillis() + _tickOffset; }
+
+	/**
+	 * Sets the tick value
+	 *
+	 * @param offset The offset. 
+	 */
+	void setTick(uint32 offset) { _tickOffset = offset - _system->getMillis(); }
 
 	/**
 	 * Resets the game
@@ -235,8 +244,9 @@ private:
 	PuzzleData _puzzleData;
 	SharedData _data;
 	int  _gameFlags[145];
-	bool _introPlayed;
 	int32 _sinCosTables[72];
+	bool _introPlayed;	
+	int32 _tickOffset;
 
 	void handleEvents();
 	void updateMouseCursor();

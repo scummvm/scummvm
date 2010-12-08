@@ -122,7 +122,6 @@ bool Savegame::load() {
 	loadMoviesViewed();
 
 	getMenu()->setDword455C80(false);
-
 	getScreen()->clear();
 
 	return true;
@@ -154,7 +153,6 @@ void Savegame::save() {
 	}
 
 	getMenu()->setDword455C80(false);
-
 	getCursor()->show();
 }
 
@@ -192,7 +190,6 @@ void Savegame::remove() {
 	_names[_index] = getText()->get(MAKE_RESOURCE(kResourcePackText, 1344));
 
 	getMenu()->setDword455C80(false);
-
 	getCursor()->show();
 }
 
@@ -253,9 +250,38 @@ void Savegame::writeHeader(Common::OutSaveFile *file) {
 }
 
 bool Savegame::loadData(Common::String filename) {
-	//Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(getFilename(_index));
+	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(getFilename(_index));
+	if (!file) {
+		getWorld()->chapter = kChapterInvalid;
+		return false;
+	}
 
-	error("[Savegame::loadData] Not implemented!");
+	seek(file, 1, "Level");
+	seek(file, 1, "Game Name");
+
+	if (!readHeader(file)) {
+		getWorld()->chapter = kChapterInvalid;
+		return false;
+	} 
+
+	read(file, _vm, 1512, 1, "Game Stats");
+	read(file, getWorld(), 951928, 1, "World Stats");
+	read(file, getPuzzleData(), 752, 1, "Blowup Puzzle Data");
+	read(file, getEncounter()->items(), 109, getEncounter()->items()->size(), "Encounter Data");
+	read(file, getEncounter()->variables(), 2, getEncounter()->variables()->size(), "Encounter Variables");
+
+	getScript()->reset();
+
+	if (getWorld()->numScripts)
+		read(file, getScript(), 7096, getWorld()->numScripts, "Action Lists");
+	
+	uint32 tick = read(file, "Time");
+
+	_vm->setTick(tick);
+
+	delete file;
+
+	return true;
 }
 
 bool Savegame::saveData(Common::String filename, Common::String name, ChapterIndex chapter) {
@@ -298,16 +324,47 @@ void Savegame::seek(Common::InSaveFile *file, uint32 offset, Common::String desc
 }
 
 uint32 Savegame::read(Common::InSaveFile *file, Common::String description) {
-	error("[Savegame::read] Not implemented!");
+	uint32 size = file->readUint32LE();
+	uint32 count = file->readUint32LE();
+
+	if (size * count == 0)
+		return 0;
+
+	return file->readUint32LE();
 }
 
 Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, Common::String description) {
-	error("[Savegame::read] Not implemented!");
+	/*uint32 size =*/ file->readUint32LE();
+	uint32 count = file->readUint32LE();
+
+	if (strLength > count)
+		error("[Savegame::read] Count too large (asked: %d, present: %d)", strLength, count);
+	
+	char *str = new char[strLength + 1];
+	memset(str, 0, strLength + 1);
+	file->read(str, strLength);
+
+	Common::String ret(str);
+
+	delete str;
+
+	return ret;
 }
 
-
 void Savegame::read(Common::InSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) {
-	error("[Savegame::read] Not implemented!");
+	uint32 fileSize = file->readUint32LE();
+	if (size > fileSize)
+		error("[Savegame::read] Size too large (asked: %d, present: %d)", size, fileSize);
+
+	uint32 fileCount = file->readUint32LE();
+	if (count > fileCount)
+		error("[Savegame::read] Count too large (asked: %d, present: %d)", count, fileCount);
+	
+	if (fileCount * fileSize == 0)
+		return;
+
+	Common::Serializer ser(file, NULL);
+	data->saveLoadWithSerializer(ser);
 }
 
 void Savegame::write(Common::OutSaveFile *file, uint32 val, Common::String description) {

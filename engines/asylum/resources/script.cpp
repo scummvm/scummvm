@@ -813,6 +813,7 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2B
 IMPLEMENT_OPCODE(ChangeScene)
+	uint32 tick = _vm->getTick();
 	getScene()->getActor(0)->updateStatus(kActorStatusDisabled);
 	resetQueue();
 
@@ -821,6 +822,7 @@ IMPLEMENT_OPCODE(ChangeScene)
 	getScreen()->clear();
 
 	// Stop all sounds & music
+	_vm->setTick(tick);
 	getSound()->stopAll();
 	getSound()->stopMusic();
 

@@ -80,6 +80,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	memset(&_puzzles, 0, sizeof(_puzzles));
 	memset(&_sinCosTables, 0, sizeof(_sinCosTables));
 	_introPlayed = false;
+	_tickOffset = 0;
 
 	// Add default search directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
