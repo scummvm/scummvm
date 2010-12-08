@@ -361,9 +361,9 @@ void ObjectHandler_v1d::swapImages(int objNumb1, int objNumb2) {
 	seqList_t tmpSeqList[MAX_SEQUENCES];
 	int seqListSize = sizeof(seqList_t) * MAX_SEQUENCES;
 
-	memcpy(tmpSeqList, _objects[objNumb1].seqList, seqListSize);
-	memcpy(_objects[objNumb1].seqList, _objects[objNumb2].seqList, seqListSize);
-	memcpy(_objects[objNumb2].seqList, tmpSeqList, seqListSize);
+	memmove(tmpSeqList, _objects[objNumb1].seqList, seqListSize);
+	memmove(_objects[objNumb1].seqList, _objects[objNumb2].seqList, seqListSize);
+	memmove(_objects[objNumb2].seqList, tmpSeqList, seqListSize);
 	_objects[objNumb1].currImagePtr = _objects[objNumb1].seqList[0].seqPtr;
 	_objects[objNumb2].currImagePtr = _objects[objNumb2].seqList[0].seqPtr;
 	_vm->_heroImage = (_vm->_heroImage == HERO) ? objNumb2 : HERO;
