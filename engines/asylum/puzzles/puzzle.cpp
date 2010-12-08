@@ -63,7 +63,6 @@ bool Puzzle::key(const AsylumEvent &evt) {
 
 void Puzzle::exit() {
 	getScreen()->clear();
-	getScreen()->copyBackBufferToScreen();
 
 	_vm->switchEventHandler(getScene());
 }
