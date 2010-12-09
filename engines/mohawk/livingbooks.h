@@ -63,7 +63,11 @@ enum {
 	kLBAnimationItem = 0x40,
 	kLBSoundItem = 0x41,
 	kLBGroupItem = 0x42,
-	kLBPaletteItem = 0x45 // v3
+	kLBMovieItem = 0x43,
+	kLBPaletteAItem = 0x44, // unused?
+	kLBPaletteItem = 0x45,
+	kLBProxyItem = 0x46,
+	kLBXDataFileItem = 0x3e9
 };
 
 enum {
@@ -497,6 +501,15 @@ public:
 protected:
 	LBAnimation *_anim;
 	bool _running;
+};
+
+class LBMovieItem : public LBItem {
+public:
+	LBMovieItem(MohawkEngine_LivingBooks *_vm, Common::Rect rect);
+	~LBMovieItem();
+
+	void update();
+	bool togglePlaying(bool playing, bool restart);
 };
 
 struct NotifyEvent {

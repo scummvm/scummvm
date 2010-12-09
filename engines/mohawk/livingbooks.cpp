@@ -26,6 +26,7 @@
 #include "mohawk/livingbooks.h"
 #include "mohawk/resource.h"
 #include "mohawk/cursors.h"
+#include "mohawk/video.h"
 
 #include "common/events.h"
 #include "common/EventRecorder.h"
@@ -180,6 +181,9 @@ Common::Error MohawkEngine_LivingBooks::run() {
 
 		updatePage();
 
+		if (_video->updateBackgroundMovies())
+			_needsUpdate = true;
+
 		if (_needsUpdate) {
 			_system->updateScreen();
 			_needsUpdate = false;
@@ -245,6 +249,7 @@ Common::String MohawkEngine_LivingBooks::stringForMode(LBMode mode) {
 void MohawkEngine_LivingBooks::destroyPage() {
 	_sound->stopSound();
 	_gfx->clearCache();
+	_video->stopVideos();
 
 	_eventQueue.clear();
 
@@ -545,6 +550,9 @@ void MohawkEngine_LivingBooks::loadBITL(uint16 resourceId) {
 			break;
 		case kLBLiveTextItem:
 			res = new LBLiveTextItem(this, rect);
+			break;
+		case kLBMovieItem:
+			res = new LBMovieItem(this, rect);
 			break;
 		default:
 			warning("Unknown item type %04x", type);
@@ -3126,6 +3134,35 @@ void LBAnimationItem::draw() {
 		return;
 
 	_anim->draw();
+}
+
+LBMovieItem::LBMovieItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
+	debug(3, "new LBMovieItem");
+}
+
+LBMovieItem::~LBMovieItem() {
+}
+
+void LBMovieItem::update() {
+	if (_playing) {
+		VideoHandle videoHandle = _vm->_video->findVideoHandle(_resourceId);
+		if (_vm->_video->endOfVideo(videoHandle))
+			done(true);
+	}
+
+	LBItem::update();
+}
+
+bool LBMovieItem::togglePlaying(bool playing, bool restart) {
+	if (playing) {
+		if ((!_neverEnabled && _enabled && _globalEnabled) || _phase == 0x7FFF) {
+			_vm->_video->playBackgroundMovie(_resourceId, _rect.left, _rect.top);
+
+			return true;
+		}
+	}
+
+	return LBItem::togglePlaying(playing, restart);
 }
 
 } // End of namespace Mohawk
