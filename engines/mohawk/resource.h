@@ -93,6 +93,7 @@ namespace Mohawk {
 #define ID_SHP  MKID_BE('SHP#') // Shape
 #define ID_WAV  MKID_BE('WAV ') // Old Sound Resource
 #define ID_BMAP MKID_BE('BMAP') // Old Mohawk Bitmap
+#define ID_BCOD MKID_BE('BCOD') // Book Code
 
 // JamesMath Resource FourCC's
 #define ID_TANM MKID_BE('tANM') // Animation?
