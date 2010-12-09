@@ -61,7 +61,6 @@ namespace Graphics {
 QuickTimeDecoder::QuickTimeDecoder() : VideoDecoder() {
 	_audStream = NULL;
 	_beginOffset = 0;
-	_videoCodec = NULL;
 	_curFrame = -1;
 	_startTime = _nextFrameStartTime = 0;
 	_audHandle = Audio::SoundHandle();
@@ -72,6 +71,7 @@ QuickTimeDecoder::QuickTimeDecoder() : VideoDecoder() {
 	_scaleFactorY = 1;
 	_dirtyPalette = false;
 	_resFork = new Common::MacResManager();
+	_palette = 0;
 
 	initParseTable();
 }
@@ -100,20 +100,6 @@ uint32 QuickTimeDecoder::getFrameCount() const {
 		return 0;
 
 	return _streams[_videoStreamIndex]->nb_frames;
-}
-
-byte QuickTimeDecoder::getBitsPerPixel() {
-	if (_videoStreamIndex < 0)
-		return 0;
-
-	return _streams[_videoStreamIndex]->bits_per_sample & 0x1F;
-}
-
-uint32 QuickTimeDecoder::getCodecTag() {
-	if (_videoStreamIndex < 0)
-		return 0;
-
-	return _streams[_videoStreamIndex]->codec_tag;
 }
 
 Common::Rational QuickTimeDecoder::getScaleFactorX() const {
@@ -149,10 +135,12 @@ uint32 QuickTimeDecoder::getFrameDuration() {
 }
 
 PixelFormat QuickTimeDecoder::getPixelFormat() const {
-	if (!_videoCodec)
+	Codec *codec = findDefaultVideoCodec();
+
+	if (!codec)
 		return PixelFormat::createFormatCLUT8();
 
-	return _videoCodec->getPixelFormat();
+	return codec->getPixelFormat();
 }
 
 void QuickTimeDecoder::rewind() {
@@ -163,8 +151,10 @@ void QuickTimeDecoder::rewind() {
 	stopAudio();
 	if (_audioStreamIndex >= 0) {
 		_curAudioChunk = 0;
-		_audStream = Audio::makeQueuingAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels == 2);
+		STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
+		_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
 	}
+
 	startAudio();
 }
 
@@ -219,9 +209,16 @@ void QuickTimeDecoder::pauseVideoIntern(bool pause) {
 		g_system->getMixer()->pauseHandle(_audHandle, pause);
 }
 
+Codec *QuickTimeDecoder::findDefaultVideoCodec() const {
+	if (_videoStreamIndex < 0 || !_streams[_videoStreamIndex]->stsdEntryCount)
+		return 0;
+
+	return _streams[_videoStreamIndex]->stsdEntries[0].videoCodec;
+}
+
 Surface *QuickTimeDecoder::decodeNextFrame() {
-	if (!_videoCodec || _curFrame >= (int32)getFrameCount() - 1)
-		return NULL;
+	if (_videoStreamIndex < 0 || _curFrame >= (int32)getFrameCount() - 1)
+		return 0;
 
 	if (_startTime == 0)
 		_startTime = g_system->getMillis();
@@ -229,15 +226,31 @@ Surface *QuickTimeDecoder::decodeNextFrame() {
 	_curFrame++;
 	_nextFrameStartTime += getFrameDuration();
 
-	Common::SeekableReadStream *frameData = getNextFramePacket();
+	// Get the next packet
+	uint32 descId;
+	Common::SeekableReadStream *frameData = getNextFramePacket(descId);
 
-	if (frameData) {
-		Surface *frame = _videoCodec->decodeImage(frameData);
-		delete frameData;
-		return scaleSurface(frame);
+	if (!frameData || !descId || descId > _streams[_videoStreamIndex]->stsdEntryCount)
+		return 0;
+
+	// Find which video description entry we want
+	STSDEntry *entry = &_streams[_videoStreamIndex]->stsdEntries[descId - 1];
+
+	if (!entry->videoCodec)
+		return 0;
+
+	Surface *frame = entry->videoCodec->decodeImage(frameData);
+	delete frameData;
+
+	// Update the palette in case it changes between video descriptions
+	byte *palette = entry->palette;
+
+	if (palette != _palette) {
+		_palette = palette;
+		_dirtyPalette = true;
 	}
 
-	return NULL;
+	return scaleSurface(frame);
 }
 
 Surface *QuickTimeDecoder::scaleSurface(Surface *frame) {
@@ -254,7 +267,7 @@ Surface *QuickTimeDecoder::scaleSurface(Surface *frame) {
 }
 
 bool QuickTimeDecoder::endOfVideo() const {
-	return (!_audStream || _audStream->endOfData()) && (!_videoCodec || VideoDecoder::endOfVideo());
+	return (!_audStream || _audStream->endOfData()) && (!findDefaultVideoCodec() || VideoDecoder::endOfVideo());
 }
 
 uint32 QuickTimeDecoder::getElapsedTime() const {
@@ -339,7 +352,7 @@ bool QuickTimeDecoder::load(Common::SeekableReadStream *stream) {
 
 void QuickTimeDecoder::init() {
 	// some cleanup : make sure we are on the mdat atom
-	if((uint32)_fd->pos() != _mdatOffset)
+	if ((uint32)_fd->pos() != _mdatOffset)
 		_fd->seek(_mdatOffset, SEEK_SET);
 
 	for (uint32 i = 0; i < _numStreams;) {
@@ -363,28 +376,32 @@ void QuickTimeDecoder::init() {
 
 		sc->duration /= sc->time_rate;
 
-		sc->ffindex = i;
-		sc->is_ff_stream = 1;
-
 		if (sc->codec_type == CODEC_TYPE_VIDEO && _videoStreamIndex < 0)
 			_videoStreamIndex = i;
 		else if (sc->codec_type == CODEC_TYPE_AUDIO && _audioStreamIndex < 0)
 			_audioStreamIndex = i;
 	}
 
-	if (_audioStreamIndex >= 0 && checkAudioCodecSupport(_streams[_audioStreamIndex]->codec_tag)) {
-		_audStream = Audio::makeQueuingAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels == 2);
-		_curAudioChunk = 0;
+	if (_audioStreamIndex >= 0) {
+		STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
 
-		// Make sure the bits per sample transfers to the sample size
-		if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('raw ') || _streams[_audioStreamIndex]->codec_tag == MKID_BE('twos'))
-			_streams[_audioStreamIndex]->sample_size = (_streams[_audioStreamIndex]->bits_per_sample / 8) * _streams[_audioStreamIndex]->channels;
+		if (checkAudioCodecSupport(entry->codecTag)) {
+			_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
+			_curAudioChunk = 0;
 
-		startAudio();
+			// Make sure the bits per sample transfers to the sample size
+			if (entry->codecTag == MKID_BE('raw ') || entry->codecTag == MKID_BE('twos'))
+				_streams[_audioStreamIndex]->sample_size = (entry->bitsPerSample / 8) * entry->channels;
+
+			startAudio();
+		}
 	}
 
 	if (_videoStreamIndex >= 0) {
-		_videoCodec = createCodec(getCodecTag(), getBitsPerPixel());
+		for (uint32 i = 0; i < _streams[_videoStreamIndex]->stsdEntryCount; i++) {
+			STSDEntry *entry = &_streams[_videoStreamIndex]->stsdEntries[i];
+			entry->videoCodec = createCodec(entry->codecTag, entry->bitsPerSample & 0x1F);
+		}
 
 		if (getScaleFactorX() != 1 || getScaleFactorY() != 1) {
 			// We have to initialize the scaled surface
@@ -799,9 +816,12 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
-	uint32 entries = _fd->readUint32BE();
+	st->stsdEntryCount = _fd->readUint32BE();
+	st->stsdEntries = new STSDEntry[st->stsdEntryCount];
 
-	while (entries--) { //Parsing Sample description table
+	for (uint32 i = 0; i < st->stsdEntryCount; i++) { // Parsing Sample description table
+		STSDEntry *entry = &st->stsdEntries[i];
+
 		MOVatom a = { 0, 0, 0 };
 		uint32 start_pos = _fd->pos();
 		int size = _fd->readUint32BE(); // size
@@ -813,17 +833,7 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 
 		debug(0, "size=%d 4CC= %s codec_type=%d", size, tag2str(format), st->codec_type);
 
-		if (st->codec_tag && st->codec_tag != format) {
-			// HACK: Multiple FourCC, skip this. FFmpeg does this too and also
-			// skips it with a TODO. However, we really don't need to support
-			// multiple codec tags since the only two videos in Riven DVD that
-			// do this just have a fake second stream (or so it seems).
-			debug(3, "Multiple FourCC not supported");
-			_fd->seek(start_pos + size);
-			continue;
-		}
-
-		st->codec_tag = format;
+		entry->codecTag = format;
 
 		if (st->codec_type == CODEC_TYPE_VIDEO) {
 			debug(0, "Video Codec FourCC: \'%s\'", tag2str(format));
@@ -834,41 +844,40 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 			_fd->readUint32BE(); // temporal quality
 			_fd->readUint32BE(); // spacial quality
 
-			st->width = _fd->readUint16BE(); // width
-			st->height = _fd->readUint16BE(); // height
+			uint16 width = _fd->readUint16BE(); // width
+			uint16 height = _fd->readUint16BE(); // height
+
+			// The width is most likely invalid for entries after the first one
+			// so only set the overall width if it is not zero here.
+			if (width)
+				st->width = width;
+
+			if (height)
+				st->height = height;
 
 			_fd->readUint32BE(); // horiz resolution
 			_fd->readUint32BE(); // vert resolution
 			_fd->readUint32BE(); // data size, always 0
-			uint16 frames_per_sample = _fd->readUint16BE(); // frames per samples
-
-			debug(0, "frames/samples = %d", frames_per_sample);
+			_fd->readUint16BE(); // frames per samples
 
 			byte codec_name[32];
 			_fd->read(codec_name, 32); // codec name, pascal string (FIXME: true for mp4?)
 			if (codec_name[0] <= 31) {
-				memcpy(st->codec_name, &codec_name[1], codec_name[0]);
-				st->codec_name[codec_name[0]] = 0;
+				memcpy(entry->codecName, &codec_name[1], codec_name[0]);
+				entry->codecName[codec_name[0]] = 0;
 			}
 
-			st->bits_per_sample = _fd->readUint16BE(); // depth
-			st->color_table_id = _fd->readUint16BE(); // colortable id
-
-//		  These are set in mov_read_stts and might already be set!
-//			st->codec->time_base.den	  = 25;
-//			st->codec->time_base.num = 1;
-
+			entry->bitsPerSample = _fd->readUint16BE(); // depth
+			entry->colorTableId = _fd->readUint16BE(); // colortable id
 
 			// figure out the palette situation
-			byte colorDepth = st->bits_per_sample & 0x1F;
-			bool colorGreyscale = (st->bits_per_sample & 0x20) != 0;
+			byte colorDepth = entry->bitsPerSample & 0x1F;
+			bool colorGreyscale = (entry->bitsPerSample & 0x20) != 0;
 
 			debug(0, "color depth: %d", colorDepth);
 
 			// if the depth is 2, 4, or 8 bpp, file is palettized
 			if (colorDepth == 2 || colorDepth == 4 || colorDepth == 8) {
-				_dirtyPalette = true;
-
 				if (colorGreyscale) {
 					debug(0, "Greyscale palette");
 
@@ -877,35 +886,16 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 					int16 colorIndex = 255;
 					byte colorDec = 256 / (colorCount - 1);
 					for (byte j = 0; j < colorCount; j++) {
-						_palette[j * 3] = _palette[j * 3 + 1] = _palette[j * 3 + 2] = colorIndex;
+						entry->palette[j * 3] = entry->palette[j * 3 + 1] = entry->palette[j * 3 + 2] = colorIndex;
 						colorIndex -= colorDec;
 						if (colorIndex < 0)
 							colorIndex = 0;
 					}
-				} else if (st->color_table_id & 0x08) {
+				} else if (entry->colorTableId & 0x08) {
 					// if flag bit 3 is set, use the default palette
 					//uint16 colorCount = 1 << colorDepth;
 
 					warning("Predefined palette! %dbpp", colorDepth);
-#if 0
-					byte *color_table;
-					byte  r, g, b;
-
-					if (colorDepth == 2)
-						color_table = ff_qt_default_palette_4;
-					else if (colorDepth == 4)
-						color_table = ff_qt_default_palette_16;
-					else
-						color_table = ff_qt_default_palette_256;
-
-					for (byte j = 0; j < color_count; j++) {
-						r = color_table[j * 4 + 0];
-						g = color_table[j * 4 + 1];
-						b = color_table[j * 4 + 2];
-						_palette_control.palette[j] = (r << 16) | (g << 8) | (b);
-					}
-#endif
-
 				} else {
 					debug(0, "Palette from file");
 
@@ -919,57 +909,56 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 						// up front
 						_fd->readByte();
 						_fd->readByte();
-						_palette[j * 3] = _fd->readByte();
+						entry->palette[j * 3] = _fd->readByte();
 						_fd->readByte();
-						_palette[j * 3 + 1] = _fd->readByte();
+						entry->palette[j * 3 + 1] = _fd->readByte();
 						_fd->readByte();
-						_palette[j * 3 + 2] = _fd->readByte();
+						entry->palette[j * 3 + 2] = _fd->readByte();
 						_fd->readByte();
 					}
 				}
-				st->palettized = true;
-			} else
-				st->palettized = false;
+			}
 		} else if (st->codec_type == CODEC_TYPE_AUDIO) {
 			debug(0, "Audio Codec FourCC: \'%s\'", tag2str(format));
 
-			st->stsd_version = _fd->readUint16BE();
+			uint16 stsdVersion = _fd->readUint16BE();
 			_fd->readUint16BE(); // revision level
 			_fd->readUint32BE(); // vendor
 
-			st->channels = _fd->readUint16BE();			 // channel count
-			st->bits_per_sample = _fd->readUint16BE();	  // sample size
-			// do we need to force to 16 for AMR ?
+			entry->channels = _fd->readUint16BE();			 // channel count
+			entry->bitsPerSample = _fd->readUint16BE();	  // sample size
 
-			// handle specific s8 codec
 			_fd->readUint16BE(); // compression id = 0
 			_fd->readUint16BE(); // packet size = 0
 
-			st->sample_rate = (_fd->readUint32BE() >> 16);
+			entry->sampleRate = (_fd->readUint32BE() >> 16);
 
-			debug(0, "stsd version =%d", st->stsd_version);
-			if (st->stsd_version == 0) {
+			debug(0, "stsd version =%d", stsdVersion);
+			if (stsdVersion == 0) {
 				// Not used, except in special cases. See below.
-				st->samples_per_frame = st->bytes_per_frame = 0;
-			} else if (st->stsd_version == 1) {
+				entry->samplesPerFrame = entry->bytesPerFrame = 0;
+			} else if (stsdVersion == 1) {
 				// Read QT version 1 fields. In version 0 these dont exist.
-				st->samples_per_frame = _fd->readUint32BE();
-				debug(0, "stsd samples_per_frame =%d", st->samples_per_frame);
+				entry->samplesPerFrame = _fd->readUint32BE();
+				debug(0, "stsd samples_per_frame =%d",entry->samplesPerFrame);
 				_fd->readUint32BE(); // bytes per packet
-				st->bytes_per_frame = _fd->readUint32BE();
-				debug(0, "stsd bytes_per_frame =%d", st->bytes_per_frame);
+				entry->bytesPerFrame = _fd->readUint32BE();
+				debug(0, "stsd bytes_per_frame =%d", entry->bytesPerFrame);
 				_fd->readUint32BE(); // bytes per sample
 			} else {
-				warning("Unsupported QuickTime STSD audio version %d", st->stsd_version);
+				warning("Unsupported QuickTime STSD audio version %d", stsdVersion);
 				return 1;
 			}
 
 			// Version 0 videos (such as the Riven ones) don't have this set,
 			// but we need it later on. Add it in here.
 			if (format == MKID_BE('ima4')) {
-				st->samples_per_frame = 64;
-				st->bytes_per_frame = 34 * st->channels;
+				entry->samplesPerFrame = 64;
+				entry->bytesPerFrame = 34 * entry->channels;
 			}
+
+			if (entry->sampleRate == 0 && st->time_scale > 1)
+				entry->sampleRate = st->time_scale;
 		} else {
 			// other codec type, just skip (rtp, mp4s, tmcd ...)
 			_fd->seek(size - (_fd->pos() - start_pos), SEEK_CUR);
@@ -982,9 +971,6 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 		else if (a.size > 0)
 			_fd->seek(a.size, SEEK_CUR);
 	}
-
-	if (st->codec_type == CODEC_TYPE_AUDIO && st->sample_rate == 0 && st->time_scale > 1)
-		st->sample_rate= st->time_scale;
 
 	return 0;
 }
@@ -1152,7 +1138,7 @@ int QuickTimeDecoder::readWAVE(MOVatom atom) {
 	if (atom.size > (1 << 30))
 		return -1;
 
-	if (st->codec_tag == MKID_BE('QDM2')) // Read extradata for QDM2
+	if (st->stsdEntries[0].codecTag == MKID_BE('QDM2')) // Read extradata for QDM2
 		st->extradata = _fd->readStream(atom.size - 8);
 	else if (atom.size > 8)
 		return readDefault(atom);
@@ -1164,8 +1150,6 @@ int QuickTimeDecoder::readWAVE(MOVatom atom) {
 
 void QuickTimeDecoder::close() {
 	stopAudio();
-
-	delete _videoCodec; _videoCodec = 0;
 
 	for (uint32 i = 0; i < _numStreams; i++)
 		delete _streams[i];
@@ -1185,7 +1169,7 @@ void QuickTimeDecoder::close() {
 	VideoDecoder::reset();
 }
 
-Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket() {
+Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket(uint32 &descId) {
 	if (_videoStreamIndex < 0)
 		return NULL;
 
@@ -1208,6 +1192,7 @@ Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket() {
 
 		if (totalSampleCount > getCurFrame()) {
 			actualChunk = i;
+			descId = _streams[_videoStreamIndex]->sample_to_chunk[sampleToChunkIndex].id;
 			sampleInChunk = _streams[_videoStreamIndex]->sample_to_chunk[sampleToChunkIndex].count - totalSampleCount + getCurFrame();
 			break;
 		}
@@ -1257,25 +1242,27 @@ Audio::AudioStream *QuickTimeDecoder::createAudioStream(Common::SeekableReadStre
 	if (!stream || _audioStreamIndex < 0)
 		return NULL;
 
-	if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('twos') || _streams[_audioStreamIndex]->codec_tag == MKID_BE('raw ')) {
+	STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
+
+	if (entry->codecTag == MKID_BE('twos') || entry->codecTag == MKID_BE('raw ')) {
 		// Fortunately, most of the audio used in Myst videos is raw...
 		uint16 flags = 0;
-		if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('raw '))
+		if (entry->codecTag == MKID_BE('raw '))
 			flags |= Audio::FLAG_UNSIGNED;
-		if (_streams[_audioStreamIndex]->channels == 2)
+		if (entry->channels == 2)
 			flags |= Audio::FLAG_STEREO;
-		if (_streams[_audioStreamIndex]->bits_per_sample == 16)
+		if (entry->bitsPerSample == 16)
 			flags |= Audio::FLAG_16BITS;
 		uint32 dataSize = stream->size();
 		byte *data = (byte *)malloc(dataSize);
 		stream->read(data, dataSize);
 		delete stream;
-		return Audio::makeRawStream(data, dataSize, _streams[_audioStreamIndex]->sample_rate, flags);
-	} else if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('ima4')) {
+		return Audio::makeRawStream(data, dataSize, entry->sampleRate, flags);
+	} else if (entry->codecTag == MKID_BE('ima4')) {
 		// Riven uses this codec (as do some Myst ME videos)
-		return Audio::makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), Audio::kADPCMApple, _streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels, 34);
+		return Audio::makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), Audio::kADPCMApple, entry->sampleRate, entry->channels, 34);
 #ifdef GRAPHICS_QDM2_H
-	} else if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('QDM2')) {
+	} else if (entry->codecTag == MKID_BE('QDM2')) {
 		// Several Myst ME videos use this codec
 		return makeQDM2Stream(stream, _streams[_audioStreamIndex]->extradata);
 #endif
@@ -1289,6 +1276,8 @@ Audio::AudioStream *QuickTimeDecoder::createAudioStream(Common::SeekableReadStre
 void QuickTimeDecoder::updateAudioBuffer() {
 	if (!_audStream)
 		return;
+
+	STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
 
 	// Keep three streams in buffer so that if/when the first two end, it goes right into the next
 	for (; _audStream->numQueuedStreams() < 3 && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count; _curAudioChunk++) {
@@ -1307,12 +1296,12 @@ void QuickTimeDecoder::updateAudioBuffer() {
 		while (sampleCount > 0) {
 			uint32 samples = 0, size = 0;
 
-			if (_streams[_audioStreamIndex]->samples_per_frame >= 160) {
-				samples = _streams[_audioStreamIndex]->samples_per_frame;
-				size = _streams[_audioStreamIndex]->bytes_per_frame;
-			} else if (_streams[_audioStreamIndex]->samples_per_frame > 1) {
-				samples = MIN<uint32>((1024 / _streams[_audioStreamIndex]->samples_per_frame) * _streams[_audioStreamIndex]->samples_per_frame, sampleCount);
-				size = (samples / _streams[_audioStreamIndex]->samples_per_frame) * _streams[_audioStreamIndex]->bytes_per_frame;
+			if (entry->samplesPerFrame >= 160) {
+				samples = entry->samplesPerFrame;
+				size = entry->bytesPerFrame;
+			} else if (entry->samplesPerFrame > 1) {
+				samples = MIN<uint32>((1024 / entry->samplesPerFrame) * entry->samplesPerFrame, sampleCount);
+				size = (samples / entry->samplesPerFrame) * entry->bytesPerFrame;
 			} else {
 				samples = MIN<uint32>(1024, sampleCount);
 				size = samples * _streams[_audioStreamIndex]->sample_size;
@@ -1332,6 +1321,23 @@ void QuickTimeDecoder::updateAudioBuffer() {
 	}
 }
 
+QuickTimeDecoder::STSDEntry::STSDEntry() {
+	codecTag = 0;
+	bitsPerSample = 0;
+	memset(codecName, 0, 32);
+	colorTableId = 0;
+	memset(palette, 0, 256 * 3);
+	videoCodec = 0;
+	channels = 0;
+	sampleRate = 0;
+	samplesPerFrame = 0;
+	bytesPerFrame = 0;
+}
+
+QuickTimeDecoder::STSDEntry::~STSDEntry() {
+	delete videoCodec;
+}
+
 QuickTimeDecoder::MOVStreamContext::MOVStreamContext() {
 	// FIXME: Setting all members to 0 via memset is a hack -- it works
 	// because the only non-POD member of MOVStreamContext is of type
@@ -1348,6 +1354,7 @@ QuickTimeDecoder::MOVStreamContext::~MOVStreamContext() {
 	delete[] sample_to_chunk;
 	delete[] sample_sizes;
 	delete[] keyframes;
+	delete[] stsdEntries;
 	delete extradata;
 }
 

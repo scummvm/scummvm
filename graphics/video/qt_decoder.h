@@ -148,6 +148,26 @@ protected:
 		uint32 id;
 	};
 
+	struct STSDEntry {
+		STSDEntry();
+		~STSDEntry();
+
+		uint32 codecTag;
+		uint16 bitsPerSample;
+
+		// Video
+		char codecName[32];
+		uint16 colorTableId;
+		byte palette[256 * 3];
+		Codec *videoCodec;
+
+		// Audio
+		uint16 channels;
+		uint32 sampleRate;
+		uint32 samplesPerFrame;
+		uint32 bytesPerFrame;
+	};
+
 	enum CodecType {
 		CODEC_TYPE_MOV_OTHER,
 		CODEC_TYPE_VIDEO,
@@ -158,9 +178,6 @@ protected:
 		MOVStreamContext();
 		~MOVStreamContext();
 
-		int ffindex; /* the ffmpeg stream id */
-		int is_ff_stream; /* Is this stream presented to ffmpeg ? i.e. is this an audio or video stream ? */
-		uint32 next_chunk;
 		uint32 chunk_count;
 		uint32 *chunk_offsets;
 		int stts_count;
@@ -183,24 +200,15 @@ protected:
 		uint32 *keyframes;
 		int32 time_scale;
 		int time_rate;
-		uint32 current_sample;
-		uint32 left_in_chunk; /* how many samples before next chunk */
 
 		uint16 width;
 		uint16 height;
 		int codec_type;
-		uint32 codec_tag;
-		char codec_name[32];
-		uint16 bits_per_sample;
-		uint16 color_table_id;
-		bool palettized;
-		Common::SeekableReadStream *extradata;
 
-		uint16 stsd_version;
-		uint16 channels;
-		uint16 sample_rate;
-		uint32 samples_per_frame;
-		uint32 bytes_per_frame;
+		uint32 stsdEntryCount;
+		STSDEntry *stsdEntries;
+
+		Common::SeekableReadStream *extradata;
 
 		uint32 nb_frames;
 		uint32 duration;
@@ -222,7 +230,7 @@ protected:
 	Common::Rational _scaleFactorX;
 	Common::Rational _scaleFactorY;
 	MOVStreamContext *_streams[20];
-	byte _palette[256 * 3];
+	byte *_palette;
 	bool _dirtyPalette;
 	uint32 _beginOffset;
 	Common::MacResManager *_resFork;
@@ -230,10 +238,8 @@ protected:
 	void initParseTable();
 	Audio::AudioStream *createAudioStream(Common::SeekableReadStream *stream);
 	bool checkAudioCodecSupport(uint32 tag);
-	Common::SeekableReadStream *getNextFramePacket();
+	Common::SeekableReadStream *getNextFramePacket(uint32 &descId);
 	uint32 getFrameDuration();
-	uint32 getCodecTag();
-	byte getBitsPerPixel();
 	void init();
 
 	Audio::QueuingAudioStream *_audStream;
@@ -244,7 +250,7 @@ protected:
 	Audio::SoundHandle _audHandle;
 
 	Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
-	Codec *_videoCodec;
+	Codec *findDefaultVideoCodec() const;
 	uint32 _nextFrameStartTime;
 	int8 _videoStreamIndex;
 
