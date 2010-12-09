@@ -67,7 +67,7 @@ Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	uint32 prevBlockPtr = 0;
 	uint32 prevBlockPtr1 = 0, prevBlockPtr2 = 0;
 	byte prevBlockFlag = false;
-	byte pixel = 0;
+	uint32 pixel = 0;
 
 	uint32 colorPairIndex = 0;
 	uint32 colorQuadIndex = 0;
