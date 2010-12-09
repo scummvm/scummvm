@@ -419,6 +419,7 @@ protected:
 class LBPaletteItem : public LBItem {
 public:
 	LBPaletteItem(MohawkEngine_LivingBooks *_vm, Common::Rect rect);
+	~LBPaletteItem();
 
 	void readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream);
 
@@ -428,7 +429,7 @@ public:
 protected:
 	uint16 _fadeInPeriod, _fadeInStep, _drawStart, _drawCount;
 	uint32 _fadeInStart, _fadeInCurrent;
-	byte _palette[255 * 4];
+	byte *_palette;
 };
 
 struct LiveTextWord {

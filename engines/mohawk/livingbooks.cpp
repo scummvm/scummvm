@@ -2692,19 +2692,29 @@ void LBGroupItem::stop() {
 
 LBPaletteItem::LBPaletteItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : LBItem(vm, rect) {
 	debug(3, "new LBPaletteItem");
+
 	_fadeInStart = 0;
+	_palette = NULL;
+}
+
+LBPaletteItem::~LBPaletteItem() {
+	delete[] _palette;
 }
 
 void LBPaletteItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
 	switch (type) {
 	case kLBPaletteXData:
 		{
-		assert(size == 8 + 255 * 4);
+		assert(size >= 8);
 		_fadeInPeriod = stream->readUint16();
 		_fadeInStep = stream->readUint16();
 		_drawStart = stream->readUint16();
 		_drawCount = stream->readUint16();
-		stream->read(_palette, 255 * 4);
+		if (_drawStart + _drawCount > 256)
+			error("encountered palette trying to set more than 256 colours");
+		assert(size == 8 + _drawCount * 4);
+		_palette = new byte[_drawCount * 4];
+		stream->read(_palette, _drawCount * 4);
 		}
 		break;
 
@@ -2728,6 +2738,9 @@ bool LBPaletteItem::togglePlaying(bool playing, bool restart) {
 
 void LBPaletteItem::update() {
 	if (_fadeInStart) {
+		if (!_palette)
+			error("LBPaletteItem had no palette on startup");
+
 		uint32 elapsedTime = _vm->_system->getMillis() - _fadeInStart;
 		uint32 divTime = elapsedTime / _fadeInStep;
 
