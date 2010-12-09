@@ -1,7 +1,17 @@
 diff -Naur branch-1-2-0.orig/debian/changelog branch-1-2-0/debian/changelog
 --- branch-1-2-0.orig/debian/changelog	1970-01-01 01:00:00.000000000 +0100
-+++ branch-1-2-0/debian/changelog	2010-10-08 20:59:27.000000000 +0200
-@@ -0,0 +1,211 @@
++++ branch-1-2-0/debian/changelog	2010-12-08 21:44:13.000000000 +0100
+@@ -0,0 +1,221 @@
++scummvm (1.2.1~pre) unstable; urgency=low
++
++  * 1.2.1 testing release
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Wed,  8 Dec 2010 21:43:29 +0100
++scummvm (1.2.0~pre) unstable; urgency=low
++
++  * 1.2.0 testing release
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Fri,  8 Oct 2010 21:38:12 +0200
 +scummvm (1.1.0~pre) unstable; urgency=low
 +
 +  * 1.1.0 testing release
@@ -409,18 +419,18 @@ diff -Naur branch-1-2-0.orig/debian/scummvm.dirs branch-1-2-0/debian/scummvm.dir
 +usr/share/applications/hildon
 +usr/share/dbus-1/services
 \ No newline at end of file
---- branch-1-2-0.orig/configure	2010-10-08 00:43:16.000000000 +0200
-+++ branch-1-2-0/configure	2010-10-08 21:06:36.000000000 +0200
-@@ -180,7 +180,7 @@
- datarootdir='${prefix}/share'
- datadir='${datarootdir}/scummvm'
- docdir='${datarootdir}/doc/scummvm'
+--- branch-1-2-0.orig/configure	2010-12-08 21:03:02.000000000 +0100
++++ branch-1-2-0/configure	2010-12-08 21:16:03.000000000 +0100
+@@ -177,7 +177,7 @@
+ prefix=NONE
+ exec_prefix=NONE
+ bindir='${exec_prefix}/bin'
 -libdir='${exec_prefix}/lib'
 +libdir='${exec_prefix}/lib/scummvm'
- #localedir='${datarootdir}/locale'
+ datarootdir='${prefix}/share'
+ datadir='${datarootdir}/scummvm'
  mandir='${datarootdir}/man'
- 
-@@ -2571,7 +2571,7 @@
+@@ -2574,7 +2574,7 @@
  		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"../plugins\\\""
  		;;
  	*)
@@ -703,8 +713,8 @@ diff -Naur branch-1-2-0.orig/debian/scummvm.dirs branch-1-2-0/debian/scummvm.dir
  				break;
  			case Common::EVENT_MOUSEMOVE:
  				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
---- branch-1-2-0.orig/engines/lure/menu.cpp	2010-10-08 00:39:16.000000000 +0200
-+++ branch-1-2-0/engines/lure/menu.cpp	2010-10-08 20:59:27.000000000 +0200
+--- branch-1-2-0.orig/engines/lure/menu.cpp	2010-12-08 21:03:00.000000000 +0100
++++ branch-1-2-0/engines/lure/menu.cpp	2010-12-08 21:05:03.000000000 +0100
 @@ -34,7 +34,7 @@
  #include "lure/events.h"
  #include "lure/lure.h"
