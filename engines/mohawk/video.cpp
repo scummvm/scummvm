@@ -141,6 +141,20 @@ void VideoManager::playBackgroundMovie(const Common::String &filename, int16 x, 
 		_videoStreams[videoHandle].y = (_vm->_system->getHeight() - _videoStreams[videoHandle]->getHeight()) / 2;
 }
 
+void VideoManager::playBackgroundMovie(uint16 id, int16 x, int16 y, bool loop) {
+	VideoHandle videoHandle = createVideoHandle(id, x, y, loop);
+	if (videoHandle == NULL_VID_HANDLE)
+		return;
+
+	// Center x if requested
+	if (x < 0)
+		_videoStreams[videoHandle].x = (_vm->_system->getWidth() - _videoStreams[videoHandle]->getWidth()) / 2;
+
+	// Center y if requested
+	if (y < 0)
+		_videoStreams[videoHandle].y = (_vm->_system->getHeight() - _videoStreams[videoHandle]->getHeight()) / 2;
+}
+
 bool VideoManager::updateBackgroundMovies() {
 	bool updateScreen = false;
 
@@ -169,9 +183,9 @@ bool VideoManager::updateBackgroundMovies() {
 
 			if (frame && _videoStreams[i].enabled) {
 				// Convert from 8bpp to the current screen format if necessary
-				if (frame->bytesPerPixel == 1) {
+				Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
+				if (frame->bytesPerPixel == 1 && pixelFormat.bytesPerPixel != 1) {
 					Graphics::Surface *newFrame = new Graphics::Surface();
-					Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
 					byte *palette = _videoStreams[i]->getPalette();
 					assert(palette);
 
@@ -392,12 +406,20 @@ VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint
 	return _videoStreams.size() - 1;
 }
 
-VideoHandle VideoManager::findVideoHandle(uint16 id) {
+VideoHandle VideoManager::findVideoHandleRiven(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id)
 			for (uint16 j = 0; j < _videoStreams.size(); j++)
 				if (_videoStreams[j].video && _mlstRecords[i].movieID == _videoStreams[j].id)
 					return j;
+
+	return NULL_VID_HANDLE;
+}
+
+VideoHandle VideoManager::findVideoHandle(uint16 id) {
+	for (uint16 j = 0; j < _videoStreams.size(); j++)
+		if (_videoStreams[j].video && _videoStreams[j].id == id)
+			return j;
 
 	return NULL_VID_HANDLE;
 }

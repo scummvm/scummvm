@@ -75,6 +75,7 @@ public:
 	void playMovie(const Common::String &filename, uint16 x = 0, uint16 y = 0, bool clearScreen = false);
 	void playMovieCentered(const Common::String &filename, bool clearScreen = true);
 	void playBackgroundMovie(const Common::String &filename, int16 x = -1, int16 y = -1, bool loop = false);
+	void playBackgroundMovie(uint16 id, int16 x = -1, int16 y = -1, bool loop = false);
 	bool updateBackgroundMovies();
 	void pauseVideos();
 	void resumeVideos();
@@ -89,6 +90,7 @@ public:
 	void playMovie(uint16 id);
 	void stopMovie(uint16 id);
 	void playMovieBlocking(uint16 id);
+	VideoHandle findVideoHandleRiven(uint16 id);
 
 	// Handle functions
 	VideoHandle findVideoHandle(uint16 id);

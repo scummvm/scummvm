@@ -223,7 +223,7 @@ void RivenExternal::runEndGame(uint16 video) {
 void RivenExternal::runCredits(uint16 video) {
 	// TODO: Play until the last frame and then run the credits
 
-	VideoHandle videoHandle = _vm->_video->findVideoHandle(video);
+	VideoHandle videoHandle = _vm->_video->findVideoHandleRiven(video);
 
 	while (!_vm->_video->endOfVideo(videoHandle) && !_vm->shouldQuit()) {
 		if (_vm->_video->updateBackgroundMovies())
@@ -247,7 +247,7 @@ void RivenExternal::runDomeButtonMovie() {
 void RivenExternal::runDomeCheck() {
 	// Check if we clicked while the golden frame was showing
 
-	VideoHandle video = _vm->_video->findVideoHandle(1);
+	VideoHandle video = _vm->_video->findVideoHandleRiven(1);
 	assert(video != NULL_VID_HANDLE);
 
 	int32 curFrame = _vm->_video->getCurFrame(video);
@@ -1531,7 +1531,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 	_vm->_cursor->setCursor(kRivenHideCursor);
 
 	// Let's hook onto our video
-	VideoHandle video = _vm->_video->findVideoHandle(argv[0]);
+	VideoHandle video = _vm->_video->findVideoHandleRiven(argv[0]);
 
 	// Convert from the standard QuickTime base time to milliseconds
 	// The values are in terms of 1/600 of a second.
