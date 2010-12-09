@@ -474,6 +474,7 @@ void MohawkEngine_LivingBooks::updatePage() {
 		for (uint16 i = 0; i < _items.size(); i++)
 			_items[i]->draw();
 
+		_needsRedraw = false;
 		_needsUpdate = true;
 	}
 }
