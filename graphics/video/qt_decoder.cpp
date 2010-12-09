@@ -161,7 +161,7 @@ void QuickTimeDecoder::rewind() {
 Codec *QuickTimeDecoder::createCodec(uint32 codecTag, byte bitsPerPixel) {
 	if (codecTag == MKID_BE('cvid')) {
 		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
-		return new CinepakDecoder();
+		return new CinepakDecoder(bitsPerPixel);
 	} else if (codecTag == MKID_BE('rpza')) {
 		// Apple Video ("Road Pizza"): Used by some Myst videos.
 		return new RPZADecoder(getWidth(), getHeight());

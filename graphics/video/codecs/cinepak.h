@@ -61,7 +61,7 @@ struct CinepakFrame {
 
 class CinepakDecoder : public Codec {
 public:
-	CinepakDecoder();
+	CinepakDecoder(int bitsPerPixel = 24);
 	~CinepakDecoder();
 
 	Surface *decodeImage(Common::SeekableReadStream *stream);

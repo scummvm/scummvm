@@ -39,17 +39,24 @@ inline static void CPYUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) 
 }
 
 #define PUT_PIXEL(offset, lum, u, v) \
-	CPYUV2RGB(lum, u, v, r, g, b); \
-	if (_pixelFormat.bytesPerPixel == 2) \
-		*((uint16 *)_curFrame.surface->pixels + offset) = _pixelFormat.RGBToColor(r, g, b); \
-	else \
-		*((uint32 *)_curFrame.surface->pixels + offset) = _pixelFormat.RGBToColor(r, g, b)
+	if (_pixelFormat.bytesPerPixel != 1) { \
+		CPYUV2RGB(lum, u, v, r, g, b); \
+		if (_pixelFormat.bytesPerPixel == 2) \
+			*((uint16 *)_curFrame.surface->pixels + offset) = _pixelFormat.RGBToColor(r, g, b); \
+		else \
+			*((uint32 *)_curFrame.surface->pixels + offset) = _pixelFormat.RGBToColor(r, g, b); \
+	} else \
+		*((byte *)_curFrame.surface->pixels + offset) = lum
 
-CinepakDecoder::CinepakDecoder() : Codec() {
+CinepakDecoder::CinepakDecoder(int bitsPerPixel) : Codec() {
 	_curFrame.surface = NULL;
 	_curFrame.strips = NULL;
 	_y = 0;
-	_pixelFormat = g_system->getScreenFormat();
+
+	if (bitsPerPixel == 8)
+		_pixelFormat = PixelFormat::createFormatCLUT8();
+	else
+		_pixelFormat = g_system->getScreenFormat();
 }
 
 CinepakDecoder::~CinepakDecoder() {
@@ -181,8 +188,8 @@ void CinepakDecoder::loadCodebook(Common::SeekableReadStream *stream, uint16 str
 				codebook[i].v  = stream->readByte() + 128;
 			} else {
 				// This codebook type indicates either greyscale or
-				// palettized video. We don't handle palettized video
-				// currently.
+				// palettized video. For greyscale, default us to
+				// 128 for both u and v.
 				codebook[i].u  = 128;
 				codebook[i].v  = 128;
 			}

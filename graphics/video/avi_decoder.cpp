@@ -401,7 +401,7 @@ Codec *AviDecoder::createCodec() {
 		case ID_RLE:
 			return new MSRLEDecoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
 		case ID_CVID:
-			return new CinepakDecoder();
+			return new CinepakDecoder(_bmInfo.bitCount);
 #ifdef USE_INDEO3
 		case ID_IV32:
 			return new Indeo3Decoder(_bmInfo.width, _bmInfo.height);
