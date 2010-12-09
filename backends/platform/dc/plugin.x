@@ -55,5 +55,6 @@ SECTIONS
    *(.dynbss)
    *(.bss .bss.* .gnu.linkonce.b.*)
    *(COMMON)
+   . = . + 4;
   }
 }
