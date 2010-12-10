@@ -424,7 +424,7 @@ uint32 Savegame::getMoviesViewed(int32 *movieList) {
 
 	for (uint32 i = 0; i < ARRAYSIZE(_moviesViewed); i++) {
 		if (_moviesViewed[i]) {
-			movieList[i] = i;
+			movieList[count] = i;
 			++count;
 		}
 	}
