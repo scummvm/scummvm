@@ -114,7 +114,7 @@ private:
 	bool             _testSoundsPlaying;
 	int32            _dword_456288;
 	int32            _dword_4562C0;
-	int32            _textScroll;
+	int32            _startIndex;
 	int32            _creditsFrameIndex;
 	bool             _showMovie;
 	uint32           _iconFrames[12];

@@ -64,7 +64,7 @@ Menu::Menu(AsylumEngine *vm): _vm(vm) {
 	_testSoundsPlaying = false;
 	_dword_456288 = 0;
 	_dword_4562C0 = 0;
-	_textScroll = 0;
+	_startIndex = 0;
 	_creditsFrameIndex = 0;
 	_showMovie = false;
 	memset(&_iconFrames, 0, sizeof(_iconFrames));
@@ -100,7 +100,7 @@ void Menu::show() {
 	_musicResourceId = kResourceNone;
 	_gameStarted = false;
 
-	_textScroll = 480;
+	_startIndex = 480;
 	_creditsFrameIndex = 0;
 
 	setup();
@@ -656,13 +656,13 @@ bool Menu::click(const AsylumEvent &evt) {
 		_dword_455C80 = false;
 		_dword_455C78 = false;
 		_dword_456288 = 0;
-		_textScroll = 0;
+		_startIndex = 0;
 		getSaveLoad()->loadList();
 		break;
 
 	case kMenuDeleteGame:
 		_dword_455C80 = false;
-		_textScroll = 0;
+		_startIndex = 0;
 		getSaveLoad()->loadList();
 		break;
 
@@ -670,7 +670,7 @@ bool Menu::click(const AsylumEvent &evt) {
 		_showMovie = false;
 		_dword_455C78 = false;
 		_dword_456288 = 0;
-		_textScroll = 0;
+		_startIndex = 0;
 		_movieCount = getSaveLoad()->getMoviesViewed((int32 *)&_movieList);
 		break;
 
@@ -686,7 +686,7 @@ bool Menu::click(const AsylumEvent &evt) {
 		break;
 
 	case kMenuShowCredits:
-		_textScroll = 480;
+		_startIndex = 480;
 		_creditsFrameIndex = 0;
 		setup();
 		break;
@@ -772,10 +772,10 @@ void Menu::updateLoadGame() {
 		// First column
 		uint32 index = 0;
 		for (int32 y = 150; y < 324; y += 29) {
-			if (index + _textScroll >= 25)
+			if (index + _startIndex >= 25)
 				break;
 
-			sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
 
 			if (cursor.x < 30 || cursor.x > (30 + getText()->getWidth((char *)&text))
 			 || cursor.y < y  || cursor.y > (y + 24))
@@ -792,10 +792,10 @@ void Menu::updateLoadGame() {
 		//////////////////////////////////////////////////////////////////////////
 		// Second column
 		for (int32 y = 150; y < 324; y += 29) {
-			if (index + _textScroll >= 25)
+			if (index + _startIndex >= 25)
 				break;
 
-			sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
 
 			if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth((char *)&text))
 				|| cursor.y < y   || cursor.y > (y + 24))
@@ -895,10 +895,10 @@ void Menu::updateSaveGame() {
 		// First column
 		uint32 index = 0;
 		for (int32 y = 150; y < 324; y += 29) {
-			if (index + _textScroll >= 25)
+			if (index + _startIndex >= 25)
 				break;
 
-			sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
 
 			if (!_dword_455DD8) {
 				if (cursor.x < 30 || cursor.x > (30 + getText()->getWidth((char *)&text))
@@ -907,7 +907,7 @@ void Menu::updateSaveGame() {
 				else
 					getText()->loadFont(kFontBlue);
 			} else {
-				if (getSaveLoad()->getIndex() != index + _textScroll)
+				if (getSaveLoad()->getIndex() != index + _startIndex)
 					getText()->loadFont(kFontYellow);
 				else
 					getText()->loadFont(kFontBlue);
@@ -918,7 +918,7 @@ void Menu::updateSaveGame() {
 
 			// Draw underscore
 			if (_dword_455DD8) {
-				if (getSaveLoad()->getIndex() == index + _textScroll) {
+				if (getSaveLoad()->getIndex() == index + _startIndex) {
 					if (_dword_4562C0 < 6)
 						getText()->drawChar('_');
 
@@ -932,10 +932,10 @@ void Menu::updateSaveGame() {
 		//////////////////////////////////////////////////////////////////////////
 		// Second column
 		for (int32 y = 150; y < 324; y += 29) {
-			if (index + _textScroll >= 25)
+			if (index + _startIndex >= 25)
 				break;
 
-			sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
 
 			if (!_dword_455DD8) {
 				if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth((char *)&text))
@@ -944,7 +944,7 @@ void Menu::updateSaveGame() {
 				else
 					getText()->loadFont(kFontBlue);
 			} else {
-				if (getSaveLoad()->getIndex() != index + _textScroll)
+				if (getSaveLoad()->getIndex() != index + _startIndex)
 					getText()->loadFont(kFontYellow);
 				else
 					getText()->loadFont(kFontBlue);
@@ -955,7 +955,7 @@ void Menu::updateSaveGame() {
 
 			// Draw underscore
 			if (_dword_455DD8) {
-				if (getSaveLoad()->getIndex() == index + _textScroll) {
+				if (getSaveLoad()->getIndex() == index + _startIndex) {
 					if (_dword_4562C0 < 6)
 						getText()->drawChar('_');
 
@@ -1043,10 +1043,10 @@ void Menu::updateDeleteGame() {
 	// First column
 	uint32 index = 0;
 	for (int32 y = 150; y < 324; y += 29) {
-		if (index + _textScroll >= 25)
+		if (index + _startIndex >= 25)
 			break;
 
-		sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+		sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
 
 		if (cursor.x < 30 || cursor.x > (30 + getText()->getWidth((char *)&text))
 		 || cursor.y < y  || cursor.y > (y + 24))
@@ -1063,10 +1063,10 @@ void Menu::updateDeleteGame() {
 	//////////////////////////////////////////////////////////////////////////
 	// Second column
 	for (int32 y = 150; y < 324; y += 29) {
-		if (index + _textScroll >= 25)
+		if (index + _startIndex >= 25)
 			break;
 
-		sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+		sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
 
 		if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth((char *)&text))
 		 || cursor.y < y   || cursor.y > (y + 24))
@@ -1127,7 +1127,7 @@ void Menu::updateViewMovies() {
 
 		//////////////////////////////////////////////////////////////////////////
 		// First column
-		int32 index = _textScroll;
+		int32 index = _startIndex;
 		for (int32 y = 150; y < 324; y += 29) {
 			if (index >= ARRAYSIZE(_movieList))
 				break;
@@ -1536,21 +1536,21 @@ void Menu::updateShowCredits() {
 	int32 step = 0;
 	uint32 index = 0;
 	do {
-		if ((_textScroll + step - 24) >= 0) {
-			if ((_textScroll + step) > 480)
+		if ((_startIndex + step - 24) >= 0) {
+			if ((_startIndex + step) > 480)
 				break;
 
-			int32 minBound = _textScroll + step + 24;
+			int32 minBound = _startIndex + step + 24;
 			if (minBound >= 0)
 				if (minBound < 32)
 					getText()->setTransTableNum(3 - minBound / 8);
 
-			int32 maxBound = _textScroll + step;
-			if ((_textScroll + step) < 480)
+			int32 maxBound = _startIndex + step;
+			if ((_startIndex + step) < 480)
 				if (maxBound > 448)
 					getText()->setTransTableNum(3 - (479 - maxBound) / 8);
 
-			getText()->setPosition(320, step + _textScroll);
+			getText()->setPosition(320, step + _startIndex);
 			getText()->draw(MAKE_RESOURCE(kResourcePackText, 1447 + index));
 		}
 
@@ -1566,8 +1566,8 @@ void Menu::updateShowCredits() {
 		}
 	}
 
-	_textScroll -= 2;
-	if (_textScroll < -(8688 + 24))
+	_startIndex -= 2;
+	if (_startIndex < -(8688 + 24))
 		closeCredits();
 }
 
@@ -1610,10 +1610,10 @@ void Menu::clickLoadGame() {
 	// Previous page
 	if (cursor.x >= 30  && cursor.x <= (30 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1326)))
 	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
-		if (_textScroll) {
-			_textScroll -= 12;
-			if (_textScroll < 0)
-				_textScroll = 0;
+		if (_startIndex) {
+			_startIndex -= 12;
+			if (_startIndex < 0)
+				_startIndex = 0;
 		}
 
 		return;
@@ -1631,10 +1631,10 @@ void Menu::clickLoadGame() {
 	// Next page
 	if (cursor.x >= 550 && cursor.x <= (550 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1327)))
 	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
-		if (_textScroll + 12 < 25) {
-			_textScroll += 12;
-			if (_textScroll >= 25)
-				_textScroll = 24;
+		if (_startIndex + 12 < 25) {
+			_startIndex += 12;
+			if (_startIndex >= 25)
+				_startIndex = 24;
 		}
 
 		return;
@@ -1647,28 +1647,28 @@ void Menu::clickLoadGame() {
 	uint32 index = 0;
 	for (int32 y = 150; y < 324; y += 29) {
 		if (cursor.x >= 350) {
-			sprintf((char *)&text, "%d. %s ", index + _textScroll + 7, getSaveLoad()->getName(index + _textScroll + 6).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName(index + _startIndex + 6).c_str());
 
 			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
-				if (index + _textScroll + 6 < 25) {
-					if (getSaveLoad()->hasSavegame(index + _textScroll + 6)) {
+				if (index + _startIndex + 6 < 25) {
+					if (getSaveLoad()->hasSavegame(index + _startIndex + 6)) {
 						_dword_455C80 = true;
-						getSaveLoad()->setIndex(index + _textScroll + 6);
+						getSaveLoad()->setIndex(index + _startIndex + 6);
 					}
 				}
 			}
 		} else if (cursor.x >= 30) {
-			sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
 
 			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
-				if (index + _textScroll < 25) {
-					if (getSaveLoad()->hasSavegame(index + _textScroll)) {
+				if (index + _startIndex < 25) {
+					if (getSaveLoad()->hasSavegame(index + _startIndex)) {
 						_dword_455C80 = true;
-						getSaveLoad()->setIndex(index + _textScroll);
+						getSaveLoad()->setIndex(index + _startIndex);
 					}
 				}
 			}
@@ -1704,10 +1704,10 @@ void Menu::clickDeleteGame() {
 	// Previous page
 	if (cursor.x >= 30  && cursor.x <= (30 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1346)))
 	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
-		if (_textScroll) {
-			_textScroll -= 12;
-			if (_textScroll < 0)
-				_textScroll = 0;
+		if (_startIndex) {
+			_startIndex -= 12;
+			if (_startIndex < 0)
+				_startIndex = 0;
 		}
 
 		return;
@@ -1725,10 +1725,10 @@ void Menu::clickDeleteGame() {
 	// Next page
 	if (cursor.x >= 550 && cursor.x <= (550 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1347)))
 	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
-		if (_textScroll + 12 < 25) {
-			_textScroll += 12;
-			if (_textScroll >= 25)
-				_textScroll = 24;
+		if (_startIndex + 12 < 25) {
+			_startIndex += 12;
+			if (_startIndex >= 25)
+				_startIndex = 24;
 		}
 
 		return;
@@ -1741,28 +1741,28 @@ void Menu::clickDeleteGame() {
 	uint32 index = 0;
 	for (int32 y = 150; y < 324; y += 29) {
 		if (cursor.x >= 350) {
-			sprintf((char *)&text, "%d. %s ", index + _textScroll + 7, getSaveLoad()->getName(index + _textScroll + 6).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName(index + _startIndex + 6).c_str());
 
 			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
-				if (index + _textScroll < 25) {
-					if (getSaveLoad()->hasSavegame(index + _textScroll)) {
+				if (index + _startIndex < 25) {
+					if (getSaveLoad()->hasSavegame(index + _startIndex)) {
 						_dword_455C80 = true;
-						getSaveLoad()->setIndex(index + _textScroll);
+						getSaveLoad()->setIndex(index + _startIndex);
 					}
 				}
 			}
 		} else if (cursor.x >= 30) {
-			sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
 
 			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 				&& cursor.y >= y
 				&& cursor.y <= (y + 24)) {
-					if (index + _textScroll + 6 < 25) {
-						if (getSaveLoad()->hasSavegame(index + _textScroll + 6)) {
+					if (index + _startIndex + 6 < 25) {
+						if (getSaveLoad()->hasSavegame(index + _startIndex + 6)) {
 							_dword_455C80 = true;
-							getSaveLoad()->setIndex(index + _textScroll + 6);
+							getSaveLoad()->setIndex(index + _startIndex + 6);
 						}
 					}
 			}
@@ -1782,10 +1782,10 @@ void Menu::clickViewMovies() {
 	// Previous page
 	if (cursor.x >= 30  && cursor.x <= (30 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1353)))
 	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
-		if (_textScroll) {
-			_textScroll -= 12;
-			if (_textScroll < 0)
-				_textScroll = 0;
+		if (_startIndex) {
+			_startIndex -= 12;
+			if (_startIndex < 0)
+				_startIndex = 0;
 		}
 
 		return;
@@ -1803,10 +1803,10 @@ void Menu::clickViewMovies() {
 	// Next page
 	if (cursor.x >= 550 && cursor.x <= (550 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1354)))
 	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
-		if (_textScroll + 12 < (int32)_movieCount) {
-			_textScroll += 12;
-			if (_textScroll >= (int32)_movieCount)
-				_textScroll = _movieCount - 1;
+		if (_startIndex + 12 < (int32)_movieCount) {
+			_startIndex += 12;
+			if (_startIndex >= (int32)_movieCount)
+				_startIndex = _movieCount - 1;
 		}
 
 		return;
@@ -1820,7 +1820,7 @@ void Menu::clickViewMovies() {
 	uint32 index = 0;
 	for (int32 y = 150; y < 324; y += 29) {
 		if (cursor.x >= 350) {
-			if (_movieList[index + _textScroll + 6] == -1)
+			if (_movieList[index + _startIndex + 6] == -1)
 				break;
 
 			sprintf((char *)&text, "%d. %s ", index + 1, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359 + _movieList[index])));
@@ -1830,9 +1830,9 @@ void Menu::clickViewMovies() {
 			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
-				if (index + _textScroll  + 6 <= _movieCount) {
+				if (index + _startIndex  + 6 <= _movieCount) {
 					// The original checks for the proper cd, but we can skip that since we have all data on disk
-					_movieIndex = _movieList[index + _textScroll  + 6];
+					_movieIndex = _movieList[index + _startIndex  + 6];
 
 					//if (moviesCd[_movieIndex] != getSharedData()->cdNumber) {
 					//	_dword_455C78 = true;
@@ -1843,7 +1843,7 @@ void Menu::clickViewMovies() {
 				}
 			}
 		} else if (cursor.x >= 30) {
-			if (_movieList[index + _textScroll] == -1)
+			if (_movieList[index + _startIndex] == -1)
 				break;
 
 			sprintf((char *)&text, "%d. %s ", index + 1, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359 + _movieList[index])));
@@ -1853,9 +1853,9 @@ void Menu::clickViewMovies() {
 			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
-				if (index + _textScroll < _movieCount) {
+				if (index + _startIndex < _movieCount) {
 					// The original checks for the proper cd, but we can skip that since we have all data on disk
-					_movieIndex = _movieList[index + _textScroll];
+					_movieIndex = _movieList[index + _startIndex];
 
 					//if (moviesCd[_movieIndex] != getSharedData()->cdNumber) {
 					//	_dword_455C78 = true;
