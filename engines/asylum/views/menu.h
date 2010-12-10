@@ -189,6 +189,13 @@ private:
 	 */
 	void adjustPerformance();
 
+	/**
+	 * Gets the chapter name. 
+	 *
+	 * @return The chapter name. 
+	 */
+	Common::String getChapterName();
+
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling
 	bool init();

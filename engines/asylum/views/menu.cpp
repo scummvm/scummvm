@@ -306,6 +306,10 @@ void Menu::adjustPerformance() {
 		getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, index));
 }
 
+Common::String Menu::getChapterName() {
+	return Common::String::format("%s%2d", getText()->get(MAKE_RESOURCE(kResourcePackText, 1334)), chapterIndexes[getWorld()->chapter]);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handler
 //////////////////////////////////////////////////////////////////////////
@@ -1681,7 +1685,107 @@ void Menu::clickLoadGame() {
 void Menu::clickSaveGame() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::clickSaveGame] Not implemented!");
+	if (_dword_455C80) {
+		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1340)))
+		 || cursor.y < 273 || cursor.y > (247 + 24)) {
+			if (cursor.x >= 369 && cursor.x <= (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1341)))
+			 && cursor.y >= 273 && cursor.y <= (273 + 24))
+				_dword_455C80 = 0;
+		} else {
+			_dword_455C80 = false;
+			_dword_455DD8 = true;
+
+			_previousName = *getSaveLoad()->getName();
+			_prefixWidth = getText()->getWidth(Common::String::format("%d. %c", getSaveLoad()->getIndex() + 1, '_').c_str());
+			getCursor()->hide();
+		}
+
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Previous page
+	if (cursor.x >= 30  && cursor.x <= (30 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1336)))
+	&& cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		if (_startIndex) {
+			_startIndex -= 12;
+			if (_startIndex < 0)
+				_startIndex = 0;
+		}
+
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Main menu
+	if (cursor.x >= 300 && cursor.x <= (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1338)))
+	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		leave();
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Next page
+	if (cursor.x >= 550 && cursor.x <= (550 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1337)))
+	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		if (_startIndex + 12 < 25) {
+			_startIndex += 12;
+			if (_startIndex >= 25)
+				_startIndex = 24;
+		}
+		return;
+	}
+
+	char text[200];
+
+	//////////////////////////////////////////////////////////////////////////
+	// Columns
+	uint32 index = 0;
+	for (int32 y = 150; y < 324; y += 29) {
+		if (cursor.x >= 350) {
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName(index + _startIndex + 6).c_str());
+
+			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
+			 && cursor.y >= y
+			 && cursor.y <= (y + 24)
+			 && getWorld()->chapter != kChapterNone) {
+				if (index + _startIndex < 25) {
+					getSaveLoad()->setIndex(index + _startIndex + 6);
+					if (getSaveLoad()->hasSavegame(index + _startIndex + 6)) {
+						_dword_455C80 = true;
+					} else {
+						_dword_455DD8 = true;
+						_previousName = *getSaveLoad()->getName();
+						*getSaveLoad()->getName() = getChapterName();
+						_prefixWidth = getText()->getWidth(Common::String::format("%d. %c", getSaveLoad()->getIndex() + 1, '_').c_str());
+						getCursor()->hide();
+					}
+				}
+			}
+		} else if (cursor.x >= 30) {
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
+
+			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
+			 && cursor.y >= y
+			 && cursor.y <= (y + 24)
+			 && getWorld()->chapter != kChapterNone) {
+				if (index + _startIndex < 25) {
+					getSaveLoad()->setIndex(index + _startIndex);
+					if (getSaveLoad()->hasSavegame(index + _startIndex)) {
+						_dword_455C80 = true;
+					} else {
+						_dword_455DD8 = true;
+						_previousName = *getSaveLoad()->getName();
+						*getSaveLoad()->getName() = getChapterName();
+						_prefixWidth = getText()->getWidth(Common::String::format("%d. %c", getSaveLoad()->getIndex() + 1, '_').c_str());
+						getCursor()->hide();
+					}
+				}
+			}
+		}
+
+		++index;
+	}
 }
 
 void Menu::clickDeleteGame() {
@@ -1747,9 +1851,9 @@ void Menu::clickDeleteGame() {
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
 				if (index + _startIndex < 25) {
-					if (getSaveLoad()->hasSavegame(index + _startIndex)) {
+					if (getSaveLoad()->hasSavegame(index + _startIndex + 6)) {
 						_dword_455C80 = true;
-						getSaveLoad()->setIndex(index + _startIndex);
+						getSaveLoad()->setIndex(index + _startIndex + 6);
 					}
 				}
 			}
@@ -1759,10 +1863,10 @@ void Menu::clickDeleteGame() {
 			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 				&& cursor.y >= y
 				&& cursor.y <= (y + 24)) {
-					if (index + _startIndex + 6 < 25) {
-						if (getSaveLoad()->hasSavegame(index + _startIndex + 6)) {
+					if (index + _startIndex < 25) {
+						if (getSaveLoad()->hasSavegame(index + _startIndex)) {
 							_dword_455C80 = true;
-							getSaveLoad()->setIndex(index + _startIndex + 6);
+							getSaveLoad()->setIndex(index + _startIndex);
 						}
 					}
 			}
@@ -2185,9 +2289,9 @@ void Menu::keySaveGame(const AsylumEvent &evt) {
 
 			bool test = false;
 			if ((getSaveLoad()->getIndex() % 12) >= 6)
-				test = (width + _prefixWidth + 350 == 630);
+				test = (width + _prefixWidth + 350 != 630);
 			else
-				test = (width + _prefixWidth + 30 == 340);
+				test = (width + _prefixWidth + 30 != 340);
 
 			if (test)
 				*getSaveLoad()->getName() += (char)evt.kbd.ascii;
@@ -2207,11 +2311,12 @@ void Menu::keySaveGame(const AsylumEvent &evt) {
 		break;
 
 	case Common::KEYCODE_BACKSPACE:
+	case Common::KEYCODE_DELETE:
 		if (getSaveLoad()->getName()->size())
 			getSaveLoad()->getName()->deleteLastChar();
 		break;
 
-	case Common::KEYCODE_PERIOD:
+	case Common::KEYCODE_KP_PERIOD:
 		*getSaveLoad()->getName() = "";
 		break;
 	}
