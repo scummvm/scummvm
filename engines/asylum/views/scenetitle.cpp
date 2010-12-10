@@ -80,8 +80,12 @@ void SceneTitle::update(int32 tick) {
 	// of buffering the various scene resource. Since we don't actually buffer content like the original,
 	// but load on demand from offset/length within a ResourcePack, the progress indicator is effectively
 	// useless. It's just in here as "eye candy" :P
+#ifdef DEBUG
 	if ((tick - _start) % 500 > 100)
 		_spinnerProgress += 10;
+#else
+	_spinnerProgress += 35;
+#endif
 
 	_spinnerFrameIndex++;
 
