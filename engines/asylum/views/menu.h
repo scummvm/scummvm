@@ -123,6 +123,10 @@ private:
 	byte _movieList[196];
 	uint32 _movieCount;
 
+	// Savegames
+	Common::String _previousName;
+	int32 _prefixWidth;
+
 	/**
 	 * Setups menu screen
 	 */

@@ -67,12 +67,14 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_textScroll = 0;
 	_creditsFrameIndex = 0;
 	_needEyeCursorInit = false;
+	memset(&_iconFrames, 0, sizeof(_iconFrames));
 
 	// Movies
 	_movieCount = 0;
 	memset(&_movieList, 0 , sizeof(_movieList));
 
-	memset(&_iconFrames, 0, sizeof(_iconFrames));
+	// Savegames
+	_prefixWidth = 0;
 }
 
 MainMenu::~MainMenu() {
@@ -1409,7 +1411,49 @@ void MainMenu::clickShowCredits() {
 // Key handlers
 //////////////////////////////////////////////////////////////////////////
 void MainMenu::keySaveGame(const AsylumEvent &evt) {
-	error("[MainMenu::keySaveGame] Not implemented!");
+	if (!_dword_455DD8)
+		return;
+
+	switch (evt.kbd.keycode) {
+	default:
+		if (evt.kbd.ascii > 255 || !isalnum(evt.kbd.ascii))
+			break;
+
+		if (getSaveLoad()->getName()->size() < 44) {			
+			int32 width = getText()->getWidth(getSaveLoad()->getName()->c_str());
+
+			bool test = false;
+			if ((getSaveLoad()->getIndex() % 12) >= 6)
+				test = (width + _prefixWidth + 350 == 630);
+			else
+				test = (width + _prefixWidth + 30 == 340);
+
+			if (test)
+				*getSaveLoad()->getName() += (char)evt.kbd.ascii;
+		}
+		break;
+
+	case Common::KEYCODE_RETURN:
+		_dword_455DD8 = false;
+		getSaveLoad()->save();
+		break;
+
+	case Common::KEYCODE_ESCAPE:
+		_dword_455C80 = false;
+		_dword_455DD8 = false;
+		*getSaveLoad()->getName() = _previousName;
+		getCursor()->show();
+		break;
+
+	case Common::KEYCODE_BACKSPACE:
+		if (getSaveLoad()->getName()->size())
+			getSaveLoad()->getName()->deleteLastChar();
+		break;
+	
+	case Common::KEYCODE_PERIOD:
+		*getSaveLoad()->getName() = "";
+		break;
+	}
 }
 
 void MainMenu::keyKeyboardConfig(const AsylumEvent &evt) {

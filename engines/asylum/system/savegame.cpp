@@ -446,5 +446,22 @@ void Savegame::loadMoviesViewed() {
 	delete movies;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Accessors
+//////////////////////////////////////////////////////////////////////////
+void Savegame::setName(uint32 index, Common::String name) {
+	if (index > ARRAYSIZE(_names) - 1)
+		error("[Savegame::setName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names) - 1);
+
+	_names[index] = name;
+}
+
+Common::String Savegame::getName(uint32 index) {
+	if (index > ARRAYSIZE(_names) - 1)
+		error("[Savegame::getName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names) - 1);
+
+	return _names[index];
+}
+
 
 } // End of namespace Asylum
