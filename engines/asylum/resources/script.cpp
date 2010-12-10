@@ -246,8 +246,6 @@ void ScriptManager::reset() {
 	_currentLine       = 0;
 	_currentLoops      = 0;
 	_currentScript     = NULL;
-	_delayedSceneIndex = kResourcePackInvalid;
-	_delayedVideoIndex = -1;
 	_done = false;
 	_exit = false;
 	_lineIncrement = 0;
@@ -826,8 +824,8 @@ IMPLEMENT_OPCODE(ChangeScene)
 	getSound()->stopAll();
 	getSound()->stopMusic();
 
-	// Change the scene number
-	_delayedSceneIndex = (ResourcePackId)(cmd->param1 + 4);
+	// Switch the scene
+	_vm->switchScene((ResourcePackId)(cmd->param1 + 4));
 
 	_exit = true;
 END_OPCODE
@@ -909,7 +907,7 @@ IMPLEMENT_OPCODE(PlayMovie)
 			getSharedData()->matteVar2 = 0;
 			getSharedData()->mattePlaySound = (cmd->param3 == 0);
 			getSharedData()->matteInitialized = (cmd->param2 == 0);
-			_delayedVideoIndex = cmd->param1;
+			getSharedData()->movieIndex = cmd->param1;
 		}
 
 		return;

@@ -248,8 +248,6 @@ private:
 	int32             _currentLoops;
 	Script           *_currentScript;
 	ScriptQueueEntry  _currentQueueEntry;
-	ResourcePackId    _delayedSceneIndex;
-	int32             _delayedVideoIndex;
 	bool              _done;
 	bool              _exit;
 	int32             _lineIncrement;
