@@ -75,7 +75,7 @@ private:
 		kMenuLoadGame        = 1,
 		kMenuSaveGame        = 2,
 		kMenuDeleteGame      = 3,
-		kMenuViewMovies  = 4,
+		kMenuViewMovies      = 4,
 		kMenuQuitGame        = 5,
 		kMenuTextOptions     = 6,
 		kMenuAudioOptions    = 7,
@@ -116,12 +116,13 @@ private:
 	int32            _dword_4562C0;
 	int32            _textScroll;
 	int32            _creditsFrameIndex;
-	bool             _needEyeCursorInit;
+	bool             _showMovie;
 	uint32           _iconFrames[12];
 
 	// Movies
 	int32  _movieList[196];
 	uint32 _movieCount;
+	uint32 _movieIndex;
 
 	// Savegames
 	Common::String _previousName;

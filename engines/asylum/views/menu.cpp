@@ -66,11 +66,12 @@ Menu::Menu(AsylumEngine *vm): _vm(vm) {
 	_dword_4562C0 = 0;
 	_textScroll = 0;
 	_creditsFrameIndex = 0;
-	_needEyeCursorInit = false;
+	_showMovie = false;
 	memset(&_iconFrames, 0, sizeof(_iconFrames));
 
 	// Movies
 	_movieCount = 0;
+	_movieIndex = 0;
 	memset(&_movieList, 0 , sizeof(_movieList));
 
 	// Savegames
@@ -341,7 +342,8 @@ bool Menu::handleEvent(const AsylumEvent &evt) {
 bool Menu::init() {
 	// TODO: save dialog key codes into sntrm_k.txt (need to figure out why they use such thing) (address 00411CD0)
 
-	if (_needEyeCursorInit) {
+	if (_showMovie) {
+		_showMovie = false;
 		getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 3));
 	} else {
 		// Init the game if not already done
@@ -353,7 +355,7 @@ bool Menu::init() {
 			//  - initialize game structures (this is done in classes constructors)
 			getSaveLoad()->loadMoviesViewed();
 
-			_needEyeCursorInit = true;
+			_showMovie = true;
 
 			// Play start video
 			getVideo()->play(0, this);
@@ -665,7 +667,7 @@ bool Menu::click(const AsylumEvent &evt) {
 		break;
 
 	case kMenuViewMovies:
-		_needEyeCursorInit = false;
+		_showMovie = false;
 		_dword_455C78 = false;
 		_dword_456288 = 0;
 		_textScroll = 0;
@@ -1212,10 +1214,10 @@ void Menu::updateViewMovies() {
 
 		//////////////////////////////////////////////////////////////////////////
 		// Play video if needed
-		if (_needEyeCursorInit) {
+		if (_showMovie) {
 			getSound()->playMusic(0, 0);
 
-			getVideo()->play(getSaveLoad()->getIndex(), this);
+			getVideo()->play(_movieIndex, this);
 
 			getSound()->playMusic(_musicResourceId);
 		}
@@ -1227,8 +1229,8 @@ void Menu::updateViewMovies() {
 	sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1357)), getSharedData()->cdNumber);
 	getText()->drawCentered(10, 100, 620, text2);
 
-	strcpy((char *)&text, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359)));
-	sprintf((char *)&text2, getText()->get((ResourceId)getSaveLoad()->getIndex()), moviesCd[getSaveLoad()->getIndex()]);
+	strcpy((char *)&text, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359 + _movieIndex)));
+	sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1356)), moviesCd[_movieIndex]);
 	strcat((char *)&text, (char *)&text2);
 	getText()->drawCentered(10, 134, 620, text);
 
@@ -1617,6 +1619,8 @@ void Menu::clickDeleteGame() {
 		return;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Previous page
 	if (cursor.x >= 30  && cursor.x <= (30 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1346)))
 	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
 		if (_textScroll) {
@@ -1628,12 +1632,16 @@ void Menu::clickDeleteGame() {
 		return;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Main menu
 	if (cursor.x >= 300 && cursor.x <= (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1348)))
 	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
 		leave();
 		return;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Next page
 	if (cursor.x >= 550 && cursor.x <= (550 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1347)))
 	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
 		if (_textScroll) {
@@ -1648,12 +1656,9 @@ void Menu::clickDeleteGame() {
 	char text[200];
 
 	//////////////////////////////////////////////////////////////////////////
-	// First column
+	// Columns
 	uint32 index = 0;
 	for (int32 y = 150; y < 324; y += 29) {
-		if (index + _textScroll >= 25)
-			break;
-
 		if (cursor.x >= 350) {
 			sprintf((char *)&text, "%d. %s ", index + _textScroll + 7, getSaveLoad()->getName(index + _textScroll + 6).c_str());
 
@@ -1689,7 +1694,100 @@ void Menu::clickDeleteGame() {
 void Menu::clickViewMovies() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::clickViewMovies] Not implemented!");
+	if (_dword_455C78)
+		return;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Previous page
+	if (cursor.x >= 30  && cursor.x <= (30 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1353)))
+	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		if (_textScroll) {
+			_textScroll -= 12;
+			if (_textScroll < 0)
+				_textScroll = 0;
+		}
+
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Main Menu
+	if (cursor.x >= 300 && cursor.x <= (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1355)))
+	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		leave();
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Next page
+	if (cursor.x >= 550 && cursor.x <= (550 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1354)))
+	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		if (_textScroll + 12 < (int32)_movieCount) {
+			_textScroll += 12;
+			if (_textScroll >= (int32)_movieCount)
+				_textScroll = _movieCount - 1;
+		}
+
+		return;
+	}
+
+	char text[100];
+	char text2[100];
+
+	//////////////////////////////////////////////////////////////////////////
+	// Columns
+	uint32 index = 0;
+	for (int32 y = 150; y < 324; y += 29) {
+		if (cursor.x >= 350) {
+			if (_movieList[index + _textScroll + 6] == -1)
+				break;
+
+			sprintf((char *)&text, "%d. %s ", index + 1, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359 + _movieList[index])));
+			sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1356)), moviesCd[_movieList[index]]);
+			strcat((char *)&text, (char *)&text2);
+
+			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
+			 && cursor.y >= y
+			 && cursor.y <= (y + 24)) {
+				if (index + _textScroll  + 6 <= _movieCount) {
+					// The original checks for the proper cd, but we can skip that since we have all data on disk
+					_movieIndex = _movieList[index + _textScroll  + 6];
+
+					//if (moviesCd[_movieIndex] != getSharedData()->cdNumber) {
+					//	_dword_455C78 = true;
+					//	getCursor()->hide();
+					//} else {
+						_showMovie = true;
+					//}
+				}
+			}
+		} else if (cursor.x >= 30) {
+			if (_movieList[index + _textScroll] == -1)
+				break;
+
+			sprintf((char *)&text, "%d. %s ", index + 1, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359 + _movieList[index])));
+			sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1356)), moviesCd[_movieList[index]]);
+			strcat((char *)&text, (char *)&text2);
+
+			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
+			 && cursor.y >= y
+			 && cursor.y <= (y + 24)) {
+				if (index + _textScroll < _movieCount) {
+					// The original checks for the proper cd, but we can skip that since we have all data on disk
+					_movieIndex = _movieList[index + _textScroll];
+
+					//if (moviesCd[_movieIndex] != getSharedData()->cdNumber) {
+					//	_dword_455C78 = true;
+					//	getCursor()->hide();
+					//} else {
+						_showMovie = true;
+					//}
+				}
+			}
+		}
+
+		++index;
+	}
 }
 
 void Menu::clickQuitGame() {
