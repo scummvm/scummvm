@@ -34,6 +34,8 @@ namespace Asylum {
 enum GameFlag {
 	kGameFlag4 = 4,
 	kGameFlag12 = 12,
+	kGameFlag114                  = 114,
+	kGameFlag215                  = 215,
 	kGameFlagScriptProcessing     = 183,
 	kGameFlag186                  = 186,
 	kGameFlagCommentLeavingCell   = 214,

@@ -38,12 +38,54 @@ public:
 	~PuzzleTicTacToe();
 
 private:
+	enum GameStatus {
+		kStatus0,
+		kStatus1,
+		kStatus2
+	};
+
+	uint32 _ticker;
+	uint32 _frameIndex;
+	int32 _lastMarkedField;
+	bool _needToInitialize;
+	int32 _strikeOutPosition;
+
+	char _gameField[9];
+	uint32 _field[40];
+
+
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init();
 	bool update();
+	bool key(const AsylumEvent &evt);
 	bool mouse(const AsylumEvent &evt);
+
+	void mouseDown();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Init & update
+	//////////////////////////////////////////////////////////////////////////
+	void initField();
+
+	void updateField();
+	void updatePositions(uint32 field1, uint32 field2, uint32 field3);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Game
+	//////////////////////////////////////////////////////////////////////////
+	bool check();
+	GameStatus checkField(uint32 field1, uint32 field2, uint32 field3, char mark, uint32 *counterX, uint32 *counterO);
+	bool checkFields1();
+	bool checkFields2();
+	uint32 checkPosition(uint32 position1, uint32 position2, uint position32);
+	bool checkWinner();
+	bool checkWinnerHelper();
+	bool checkWinningO();
+	bool checkWinningX();
+	bool countEmptyFields();
+	void placeOpponentMark();
 };
 
 } // End of namespace Asylum
