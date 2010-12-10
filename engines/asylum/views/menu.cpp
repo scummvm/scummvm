@@ -1604,7 +1604,86 @@ void Menu::clickSaveGame() {
 void Menu::clickDeleteGame() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::clickDeleteGame] Not implemented!");
+	if (_dword_455C80) {
+		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1350)))
+		 || cursor.y < 273 || cursor.y > (247 + 24)) {
+			if (cursor.x >= 369 && cursor.x <= (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1351)))
+			 && cursor.y >= 273 && cursor.y <= (273 + 24))
+				_dword_455C80 = 0;
+		} else {
+			getSaveLoad()->remove();
+		}
+
+		return;
+	}
+
+	if (cursor.x >= 30  && cursor.x <= (30 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1346)))
+	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		if (_textScroll) {
+			_textScroll -= 12;
+			if (_textScroll < 0)
+				_textScroll = 0;
+		}
+
+		return;
+	}
+
+	if (cursor.x >= 300 && cursor.x <= (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1348)))
+	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		leave();
+		return;
+	}
+
+	if (cursor.x >= 550 && cursor.x <= (550 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1347)))
+	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		if (_textScroll) {
+			_textScroll += 12;
+			if (_textScroll >= 25)
+				_textScroll = 24;
+		}
+
+		return;
+	}
+
+	char text[200];
+
+	//////////////////////////////////////////////////////////////////////////
+	// First column
+	uint32 index = 0;
+	for (int32 y = 150; y < 324; y += 29) {
+		if (index + _textScroll >= 25)
+			break;
+
+		if (cursor.x >= 350) {
+			sprintf((char *)&text, "%d. %s ", index + _textScroll + 7, getSaveLoad()->getName(index + _textScroll + 6).c_str());
+
+			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
+			 && cursor.y >= y
+			 && cursor.y <= (y + 24)) {
+				if (index + _textScroll < 25) {
+					if (getSaveLoad()->hasSavegame(index + _textScroll)) {
+						_dword_455C80 = true;
+						getSaveLoad()->setIndex(index + _textScroll);
+					}
+				}
+			}
+		} else if (cursor.x >= 30) {
+			sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+
+			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
+				&& cursor.y >= y
+				&& cursor.y <= (y + 24)) {
+					if (index + _textScroll + 6 < 25) {
+						if (getSaveLoad()->hasSavegame(index + _textScroll + 6)) {
+							_dword_455C80 = true;
+							getSaveLoad()->setIndex(index + _textScroll + 6);
+						}
+					}
+			}
+		}
+
+		++index;
+	}
 }
 
 void Menu::clickViewMovies() {

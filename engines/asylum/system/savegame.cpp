@@ -463,5 +463,11 @@ Common::String Savegame::getName(uint32 index) {
 	return _names[index];
 }
 
+bool Savegame::hasSavegame(uint32 index) {
+	if (index > ARRAYSIZE(_savegames) - 1)
+		error("[Savegame::hasSavegame] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_savegames) - 1);
+
+	return _savegames[index];
+}
 
 } // End of namespace Asylum

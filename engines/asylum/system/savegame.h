@@ -105,6 +105,8 @@ public:
 	void setIndex(uint32 index) { _index = index; }
 	uint32 getIndex() { return _index; }
 
+	bool hasSavegame(uint32 index);
+
 private:
 	AsylumEngine* _vm;
 
