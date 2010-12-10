@@ -174,6 +174,7 @@ bool MystConsole::Cmd_DrawImage(int argc, const char **argv) {
 		rect = Common::Rect((uint16)atoi(argv[2]), (uint16)atoi(argv[3]), (uint16)atoi(argv[4]), (uint16)atoi(argv[5]));
 
 	_vm->_gfx->copyImageToScreen((uint16)atoi(argv[1]), rect);
+	_vm->_gfx->updateScreen();
 	return false;
 }
 
