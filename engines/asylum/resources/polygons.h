@@ -38,6 +38,14 @@ typedef struct PolyDefinitions {
 	Common::Array<Common::Point> points;
 	Common::Rect  boundingRect;
 
+	PolyDefinitions() {};
+	PolyDefinitions(Common::Point point1, Common::Point point2, Common::Point point3, Common::Point point4) {
+		points.push_back(point1);
+		points.push_back(point2);
+		points.push_back(point3);
+		points.push_back(point4);
+	}
+
 	/**
 	 * Check if the x/y coordinates exist within
 	 * the current polygon definition
