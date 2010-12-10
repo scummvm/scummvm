@@ -234,8 +234,8 @@ void AsylumEngine::restart() {
 	delete _scene;
 	_scene = NULL;
 
-	_data.getPoint()->x = -1;
-	_data.getPoint()->y = -1;
+	_data.point.x = -1;
+	_data.point.y = -1;
 
 	reset();
 
@@ -368,7 +368,7 @@ void AsylumEngine::processDelayedEvents() {
 	if (!_video || !_sound || !_menu)
 		error("[AsylumEngine::processDelayedEvents] Subsystems not initialized properly!");
 
-	// check for a delayed scene change	
+	// check for a delayed scene change
 	if (_delayedSceneIndex != kResourcePackInvalid && isGameFlagNotSet(kGameFlagScriptProcessing)) {
 		ResourcePackId sceneIndex = _delayedSceneIndex;
 

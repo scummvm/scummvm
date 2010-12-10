@@ -524,12 +524,12 @@ bool Menu::update() {
 		getSharedData()->setFlag(kFlagRedraw, true);
 	}
 
-	if (ticks > getSharedData()->getNextScreenUpdate()) {
+	if (ticks > getSharedData()->nextScreenUpdate) {
 		if (getSharedData()->getFlag(kFlagRedraw)) {
 			getScreen()->copyBackBufferToScreen();
 
 			getSharedData()->setFlag(kFlagRedraw, false);
-			getSharedData()->setNextScreenUpdate(ticks + 55);
+			getSharedData()->nextScreenUpdate = ticks + 55;
 		}
 	}
 

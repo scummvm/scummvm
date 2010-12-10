@@ -509,8 +509,8 @@ void Actor::update() {
 		break;
 
 	case kActorStatus7:
-		if (getSharedData()->getActorEnableForStatus7()) {
-			getSharedData()->setActorEnableForStatus7(false);
+		if (getSharedData()->actorEnableForStatus7) {
+			getSharedData()->actorEnableForStatus7 = false;
 			enable();
 		}
 		break;
@@ -661,7 +661,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			}
 
 			if (_index == 11)
-				_resourceId = _graphicResourceIds[getSharedData()->getGlobalDirection() > 4 ? 8 - getSharedData()->getGlobalDirection() : getSharedData()->getGlobalDirection()];
+				_resourceId = _graphicResourceIds[getSharedData()->globalDirection > 4 ? 8 - getSharedData()->globalDirection : getSharedData()->globalDirection];
 
 			// Reload the graphic resource if the resource ID has changed
 			if (resource->getResourceId() != _resourceId)
@@ -1366,7 +1366,7 @@ void Actor::updateStatusEnabled() {
 						Common::Point pt(poly->boundingRect.left + rnd(poly->boundingRect.width()),
 						                 poly->boundingRect.top + rnd(poly->boundingRect.height()));
 
-						if (!getSharedData()->getActorUpdateEnabledCheck()) {
+						if (!getSharedData()->actorUpdateEnabledCheck) {
 							if (isInActionArea(pt, area)) {
 								Common::Point *polyPoint = &poly->points[rnd(poly->count())];
 								processStatus(polyPoint->x, polyPoint->y, false);
@@ -1379,7 +1379,7 @@ void Actor::updateStatusEnabled() {
 			}
 		}
 	} else {
-		switch (getSharedData()->getActorUpdateEnabledCounter()) {
+		switch (getSharedData()->actorUpdateStatusEnabledCounter) {
 		default:
 			break;
 
@@ -1418,7 +1418,7 @@ void Actor::updateStatusEnabledProcessStatus(int32 testX, int32 testY, uint32 co
 		if (rnd(1000) < 5)
 			processStatus(testX, testY, false);
 	} else {
-		getSharedData()->setActorUpdateEnabledCounter(counter);
+		getSharedData()->actorUpdateStatusEnabledCounter = counter;
 
 		if (rnd(1000) < 5)
 			processStatus(setX, setY, false);
@@ -1484,17 +1484,15 @@ void Actor::updateStatus12_Chapter11() {
 		getWorld()->tickValueArray[_index] = rnd(4000) + _vm->getTick();
 	}
 
-	Common::Point *vector1 = getSharedData()->getVector1();
-	Common::Point *vector2 = getSharedData()->getVector2();
 	Actor *actor0 = getScene()->getActor(0);
 
-	vector1->x = actor0->getPoint1()->x + actor0->getPoint2()->x;
-	vector1->y = actor0->getPoint1()->y + actor0->getPoint2()->y - 5;
+	getSharedData()->vector1.x = actor0->getPoint1()->x + actor0->getPoint2()->x;
+	getSharedData()->vector1.y = actor0->getPoint1()->y + actor0->getPoint2()->y - 5;
 
-	vector2->x = _point1.x + _point2.x;
-	vector2->y = _point1.y + _point2.y;
+	getSharedData()->vector2.x = _point1.x + _point2.x;
+	getSharedData()->vector2.y = _point1.y + _point2.y;
 
-	updateCoordinates(*vector1, *vector2);
+	updateCoordinates(getSharedData()->vector1, getSharedData()->vector2);
 }
 
 void Actor::updateStatus14() {
@@ -1530,24 +1528,22 @@ void Actor::updateStatus14_Chapter2() {
 }
 
 void Actor::updateStatus14_Chapter11() {
-	Common::Point *vector1 = getSharedData()->getVector1();
-	Common::Point *vector2 = getSharedData()->getVector2();
 	Actor *actor0 = getScene()->getActor(0);
 
-	vector1->x = actor0->getPoint1()->x + actor0->getPoint2()->x;
-	vector1->y = actor0->getPoint1()->y + actor0->getPoint2()->y - 5;
+	getSharedData()->vector1.x = actor0->getPoint1()->x + actor0->getPoint2()->x;
+	getSharedData()->vector1.y = actor0->getPoint1()->y + actor0->getPoint2()->y - 5;
 
-	vector2->x = _point1.x + _point2.x;
-	vector2->y = _point1.y + _point2.y;
+	getSharedData()->vector2.x = _point1.x + _point2.x;
+	getSharedData()->vector2.y = _point1.y + _point2.y;
 
 	if (getWorld()->tickValueArray[_index] == -666)
 		getWorld()->tickValueArray[_index] = rnd(4000) + _vm->getTick();
 
 	faceTarget(kActorMax, kDirectionFromActor);
-	updateCoordinates(*vector1, *vector2);
+	updateCoordinates(getSharedData()->vector1, getSharedData()->vector2);
 
 	if (getWorld()->tickValueArray[_index] < (int)_vm->getTick()) {
-		if (distance(*vector1, *vector2) >= 75) {
+		if (distance(getSharedData()->vector1, getSharedData()->vector2) >= 75) {
 			getWorld()->tickValueArray[_index] = rnd(1000) + 2000 + _vm->getTick();
 		} else {
 			if (actor0->getStatus() == kActorStatus12 || actor0->getStatus() == kActorStatus14 || actor0->getStatus() == kActorStatus15)
@@ -1602,25 +1598,23 @@ void Actor::updateStatus15_Chapter2_Actor11() {
 }
 
 void Actor::updateStatus15_Chapter11() {
-	Common::Point *vector1 = getSharedData()->getVector1();
-	Common::Point *vector2 = getSharedData()->getVector2();
 	Actor *actor0 = getScene()->getActor(0);
 
 	// Update vectors
-	vector1->x = actor0->getPoint1()->x + actor0->getPoint2()->x;
-	vector1->y = actor0->getPoint1()->y + actor0->getPoint2()->y - 5;
+	getSharedData()->vector1.x = actor0->getPoint1()->x + actor0->getPoint2()->x;
+	getSharedData()->vector1.y = actor0->getPoint1()->y + actor0->getPoint2()->y - 5;
 
-	vector2->x = actor0->getPoint1()->x + actor0->getPoint2()->x;
-	vector2->y = actor0->getPoint1()->y + actor0->getPoint2()->y;
+	getSharedData()->vector2.x = actor0->getPoint1()->x + actor0->getPoint2()->x;
+	getSharedData()->vector2.y = actor0->getPoint1()->y + actor0->getPoint2()->y;
 
-	updateCoordinates(*vector1, *vector2);
+	updateCoordinates(getSharedData()->vector1, getSharedData()->vector2);
 
 	++_frameIndex;
 	if (_frameIndex >= _frameCount)
 		updateStatus(kActorStatus14);
 
 	if (_frameIndex == 14) {
-		if (Actor::distance(*vector1, *vector2) < 75) {
+		if (Actor::distance(getSharedData()->vector1, getSharedData()->vector2) < 75) {
 
 			actor0->updateStatus(kActorStatus16);
 			++getWorld()->field_E848C;
