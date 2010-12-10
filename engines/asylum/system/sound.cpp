@@ -100,6 +100,9 @@ void Sound::playMusic(ResourceId resourceId, int32 volume) {
 	if (_mixer->isSoundHandleActive(_musicHandle))
 		return;
 
+	if (!isValidSoundResource(resourceId))
+		return;
+
 	ResourceEntry *resource = getResource()->get(resourceId);
 	playSoundData(Audio::Mixer::kMusicSoundType, &_musicHandle, resource->data, resource->size, true, volume, 0);
 }
