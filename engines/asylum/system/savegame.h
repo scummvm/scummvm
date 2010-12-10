@@ -106,6 +106,7 @@ public:
 	uint32 getIndex() { return _index; }
 
 	bool hasSavegame(uint32 index);
+	ResourcePackId getScenePack() { return (ResourcePackId)(_savegameToScene[_index] + 4); }
 
 private:
 	AsylumEngine* _vm;
