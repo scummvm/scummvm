@@ -2412,35 +2412,29 @@ void Scene::processUpdateList() {
 				if (!object->isOnScreen())
 					continue;
 
-				// Rect for the object
-				Common::Rect objectRect(object->x, object->y, object->x + object->getBoundingRect()->right, object->y + object->getBoundingRect()->bottom);
-
 				// Check that the rects are contained
-				if (!objectRect.contains(actorRect)) {
+				if (!rectIntersect(object->x, object->y, object->x + object->getBoundingRect()->right, object->y + object->getBoundingRect()->bottom,
+				                   actor->getPoint1()->x, actor->getPoint1()->y, actor->getPoint1()->x + actor->getBoundingRect()->right, bottomRight)) {
 					if (BYTE1(object->flags) & kObjectFlag20)
 						if (!(BYTE1(object->flags) & kObjectFlag80))
 							object->flags = BYTE1(object->flags) | kObjectFlag40;
+
 					continue;
 				}
 
 				// Check if it intersects with either the object rect or the related polygon
-				bool intersects = false;
+				bool notIntersects = false;
 				if (object->flags & kObjectFlag2) {
-					intersects = pointIntersectsRect(point, *object->getRect());
-				} else {
-					if (object->flags & kObjectFlag40) {
-						PolyDefinitions *poly = &_polygons->entries[object->getPolygonIndex()];
-						if (point.x > 0 && point.y > 0 && poly->count() > 0)
-							intersects = poly->contains(point);
-						else
-							warning ("[drawActorsAndObjects] trying to find intersection of uninitialized point");
-					}
+					notIntersects = !pointIntersectsRect(point, *object->getRect());
+				} else if (object->flags & kObjectFlag40) {
+					PolyDefinitions *poly = &_polygons->entries[object->getPolygonIndex()];
+					notIntersects = poly->contains(point);
 				}
 
 				// Adjust object flags
-				if (BYTE1(object->flags) & kObjectFlag80 || intersects) {
+				if (BYTE1(object->flags) & kObjectFlag80 || notIntersects) {
 					if (BYTE1(object->flags) & kObjectFlag20)
-						object->flags = (BYTE1(object->flags) & 0xBF) | kObjectFlag80;
+						object->flags = (BYTE1(object->flags) & kObjectFlagBF) | kObjectFlag80;
 				} else {
 					if (BYTE1(object->flags) & kObjectFlag20) {
 						object->flags = BYTE1(object->flags) | kObjectFlag40;
@@ -2448,15 +2442,15 @@ void Scene::processUpdateList() {
 				}
 
 				if (object->flags & kObjectFlag4) {
-					if (intersects && LOBYTE(actor->flags) & kActorFlagMasked) {
-						error("[Scene::processUpdateList] Assigning mask to masked character [%s]", actor->getName());
+					if (notIntersects && LOBYTE(actor->flags) & kActorFlagMasked) {
+						error("[Scene::processUpdateList] Assigning mask to masked character (%s)", actor->getName());
 					} else {
 						object->adjustCoordinates(&point);
 						actor->setObjectIndex(j);
 						actor->flags |= kActorFlagMasked;
 					}
 				} else {
-					if (intersects) {
+					if (notIntersects) {
 						if (actor->getPriority() < object->getPriority()) {
 							actor->setField934(1);
 							actor->setPriority(object->getPriority() + 3);
