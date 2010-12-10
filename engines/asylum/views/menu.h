@@ -113,7 +113,7 @@ private:
 	bool             _dword_455DD8;
 	bool             _testSoundsPlaying;
 	int32            _dword_456288;
-	int32            _dword_4562C0;
+	int32            _caretBlink;
 	int32            _startIndex;
 	int32            _creditsFrameIndex;
 	bool             _showMovie;
