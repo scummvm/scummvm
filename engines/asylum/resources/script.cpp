@@ -243,7 +243,6 @@ void ScriptManager::reset() {
 	_scripts.clear();
 
 	_skipProcessing    = false;
-	_currentLine       = 0;
 	_currentLoops      = 0;
 	_currentScript     = NULL;
 	_done = false;
@@ -297,7 +296,7 @@ bool ScriptManager::process() {
 		while (!_done && !_waitCycle) {
 			_lineIncrement = 0; //Reset line increment value
 
-			ScriptEntry *cmd = &_currentScript->commands[_currentLine];
+			ScriptEntry *cmd = &_currentScript->commands[_currentQueueEntry.currentLine];
 
 			int32 opcode = cmd->opcode;
 
@@ -313,11 +312,13 @@ bool ScriptManager::process() {
 				return true;
 
 			if (!_lineIncrement)
-				_currentLine ++;
+				++_currentQueueEntry.currentLine;
+
+
 		}
 
 		if (_done) {
-			_currentLine  = 0;
+			_currentQueueEntry.currentLine  = 0;
 
 			if (!_queue.empty()) {
 				_currentQueueEntry = _queue.pop();
@@ -408,9 +409,10 @@ IMPLEMENT_OPCODE(PlayAnimation)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (cmd->param2 == 2) {
-		if (object->checkFlags())
+		if (object->checkFlags()) {
+			_waitCycle = true;
 			_lineIncrement = 1;
-		else
+		} else
 			cmd->param2 = 1;
 
 		return;
@@ -581,7 +583,7 @@ IMPLEMENT_OPCODE(JumpActorSpeech)
 	if (actor->process(cmd->param2, cmd->param3))
 		return;
 
-	_currentLine = cmd->param4;
+	_currentQueueEntry.currentLine = cmd->param4;
 
 	if (cmd->param5)
 		getSpeech()->playIndexed(1);
@@ -805,7 +807,7 @@ IMPLEMENT_OPCODE(JumpIfActorField638)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (actor->getField638())
-		_currentLine = cmd->param3;
+		_currentQueueEntry.currentLine = cmd->param3;
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -1026,7 +1028,7 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x36
 IMPLEMENT_OPCODE(Jump)
-	_currentLine = cmd->param1 - 1;
+	_currentQueueEntry.currentLine = cmd->param1 - 1;
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -1037,7 +1039,7 @@ IMPLEMENT_OPCODE(RunBlowUpPuzzle)
 
 	_vm->switchEventHandler(_vm->getPuzzle((uint32)cmd->param1));
 
-	_currentLine++;
+	_currentQueueEntry.currentLine++;
 
 	_exit = true;
 END_OPCODE
@@ -1073,7 +1075,7 @@ IMPLEMENT_OPCODE(_unk3B_PALETTE_MOD)
 
 		cmd->param1 = 0;
 		cmd->param2 = 0;
-		_currentLine++;
+		_currentQueueEntry.currentLine++;
 
 		getScreen()->clearGraphicsInQueue();
 
@@ -1141,7 +1143,7 @@ IMPLEMENT_OPCODE(JumpIfActor)
 	ActorIndex index = (cmd->param1 == kActorInvalid) ? getScene()->getPlayerIndex() : cmd->param1;
 
 	if (_currentQueueEntry.actorIndex != index)
-		_currentLine = cmd->param2 - 1;
+		_currentQueueEntry.currentLine = cmd->param2 - 1;
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -1440,10 +1442,10 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpIfSoundPlaying)
 	if (cmd->param3 == 1) {
 		if (_vm->sound()->isPlaying((ResourceId)cmd->param1)) {
-			_currentLine = cmd->param2;
+			_currentQueueEntry.currentLine = cmd->param2;
 		}
 	} else if (!_vm->sound()->isPlaying((ResourceId)cmd->param1)) {
-		_currentLine = cmd->param2;
+		_currentQueueEntry.currentLine = cmd->param2;
 	}
 END_OPCODE
 
@@ -1608,7 +1610,7 @@ IMPLEMENT_OPCODE(_unk56)
 			getScene()->getActor()->faceTarget((ObjectId)cmd->param1, kDirectionFromActor);
 			actor->updateFromDirection((ActorDirection)((actor->getDirection() + 4) & 7));
 		} else {
-			_currentLine = cmd->param3;
+			_currentQueueEntry.currentLine = cmd->param3;
 		}
 	} else {
 		int32 x = 0;
@@ -1627,7 +1629,7 @@ IMPLEMENT_OPCODE(_unk56)
 			if (cmd->param4)
 				getSpeech()->playIndexed(1);
 
-			_currentLine = cmd->param3;
+			_currentQueueEntry.currentLine = cmd->param3;
 		}
 	}
 END_OPCODE
@@ -1953,7 +1955,7 @@ void ScriptManager::setNextLine(int32 line) {
 
 	int32 opcode = _currentScript->commands[line].opcode;
 	if (opcode == 0x10 || opcode == 0) { // Return
-		_currentLine = line;
+		_currentQueueEntry.currentLine = line;
 	} else {
 		_done = true;
 	}
