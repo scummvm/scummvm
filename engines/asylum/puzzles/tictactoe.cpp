@@ -128,7 +128,7 @@ bool PuzzleTicTacToe::update()  {
 		}
 	}
 
-	getScreen()->draw(getWorld()->graphicResourceIds[0], 0, 0, 0, 0, false);
+	getScreen()->draw(getWorld()->graphicResourceIds[0]);
 	updateField();
 	getScene()->updateAmbientSounds();
 

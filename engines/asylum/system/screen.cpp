@@ -58,6 +58,10 @@ Screen::~Screen() {
 //////////////////////////////////////////////////////////////////////////
 // Drawing
 //////////////////////////////////////////////////////////////////////////
+void Screen::draw(ResourceId resourceId) {
+	draw(resourceId, 0, 0, 0, 0, kResourceNone, 0, 0, false);
+}
+
 void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, bool colorKey) {
 	draw(resourceId, frameIndex, x, y, flags, kResourceNone, 0, 0, colorKey);
 }

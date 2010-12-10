@@ -1529,9 +1529,9 @@ void Menu::updateReturnToGame() {
 
 void Menu::updateShowCredits() {
 	if (_vm->isGameFlagSet(kGameFlagFinishGame)) {
-		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 33), 0, 0, 0, 0, false);
+		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 33));
 	} else {
-		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 23), 0, 0, 0, 0, false);
+		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 23));
 		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 24), _creditsFrameIndex++ / 2, 0, 0, 0, false);
 
 		_creditsFrameIndex %= 2 * GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, 24));
