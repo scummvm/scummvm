@@ -39,7 +39,7 @@ typedef struct VCRDrawInfo {
 	Common::Point point;
 } VCRDrawInfo;
 
-const Common::Rect BlowUpPuzzleVCRPolies[10] = {
+const Common::Rect puzzleVCRPolygons[10] = {
 	Common::Rect(0x0F7, 0x157, 0x13A, 0x183), // rewind button region
 	Common::Rect(0x14B, 0x15C, 0x17B, 0x18B), // stop button region
 	Common::Rect(0x18C, 0x161, 0x1D2, 0x18F), // play button region
@@ -61,7 +61,8 @@ public:
 	~PuzzleVCR();
 
 private:
-	enum Jack {
+	enum Color {
+		kNone   = -1,
 		kBlack  = 0,
 		kRed    = 1,
 		kYellow = 2
@@ -88,13 +89,6 @@ private:
 		kYellowJack     = 9
 	};
 
-	enum Button {
-		kRewind  = 0,
-		kStop    = 1,
-		kPlay    = 2,
-		kPower   = 3
-	};
-
 	enum ButtonState {
 		kOFF     = 0,
 		kON      = 1,
@@ -102,13 +96,11 @@ private:
 		kDownOFF = 3
 	};
 
-	int _jacksState[3];
-	int _holesState[3];
-	int _buttonsState[4];
-	uint32 _tvScreenAnimIdx;
+	JackState _jacksState[3];
+	JackState _holesState[3];
+	ButtonState _buttonsState[4];
+	uint32 _tvScreenFrameIndex;
 	bool _isAccomplished;
-
-	int inPolyRegion(int x, int y, int polyIdx) const;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
@@ -118,17 +110,24 @@ private:
 	bool key(const AsylumEvent &evt);
 	bool mouse(const AsylumEvent &evt);
 
-	void updateCursorInPolyRegion();
+	void mouseDown(const AsylumEvent &evt);
+	void mouseUp();
 
-	GraphicQueueItem getGraphicJackItem(int32 index);
-	GraphicQueueItem getGraphicShadowItem();
-	void updateJack(Jack jack, const VCRDrawInfo &onTable, const VCRDrawInfo &pluggedOnRed, const VCRDrawInfo &pluggedOnYellow, const VCRDrawInfo &pluggedOnBlack, int32 resourceOnHandIndex);
+	//////////////////////////////////////////////////////////////////////////
+	// Drawing
+	//////////////////////////////////////////////////////////////////////////
+	void updateScreen();
+	void updateCursor();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Updates
+	//////////////////////////////////////////////////////////////////////////
+	void updateJack(Color jack, const VCRDrawInfo &onTable, const VCRDrawInfo &pluggedOnRed, const VCRDrawInfo &pluggedOnYellow, const VCRDrawInfo &pluggedOnBlack, int32 resourceOnHandIndex);
 	void updateBlackJack();
 	void updateRedJack();
 	void updateYellowJack();
-	int setJackOnHole(int jackType, JackState plugged);
 
-	void updateButton(Button button, const VCRDrawInfo &btON, const VCRDrawInfo &btDown);
+	void updateButton(VCRRegions button, const VCRDrawInfo &btON, const VCRDrawInfo &btDown);
 	void updatePowerButton();
 	void updateRewindButton();
 	void updatePlayButton();
@@ -136,8 +135,14 @@ private:
 
 	void updateTVSync();
 
-	void handleMouseDown();
-	void handleMouseUp();
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+	int inPolygon(int x, int y, int polyIdx) const;
+	Color getJackOnHand();
+	void setJackOnHole(Color hole, JackState state, JackState newState);
+	void pickJack(Color jack);
+
 };
 
 } // end of namespace Asylum
