@@ -273,14 +273,14 @@ void Object::update() {
 			if (_frameIndex < _frameCount - 1) {
 				if (_field_688 == 1) {
 					Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
-					getSharedData()->getPoint()->x = x + frameRect.left + Common::Rational(frameRect.width(), 2).toInt();
-					getSharedData()->getPoint()->y = y + frameRect.top  + Common::Rational(frameRect.height(), 2).toInt();
+					getSharedData()->point.x = x + frameRect.left + Common::Rational(frameRect.width(), 2).toInt();
+					getSharedData()->point.y = y + frameRect.top  + Common::Rational(frameRect.height(), 2).toInt();
 				}
 			} else {
 				flags &= ~kObjectFlag8;
 				if (_field_688 == 1) {
-					getSharedData()->getPoint()->x = -1;
-					getSharedData()->getPoint()->y = -1;
+					getSharedData()->point.x = -1;
+					getSharedData()->point.y = -1;
 				}
 			}
 			_tickCount = _vm->getTick();
@@ -295,13 +295,13 @@ void Object::update() {
 			if (_frameIndex == 0) {
 				flags &= ~kObjectFlag10000;
 				if (_field_688 == 1) {
-					getSharedData()->getPoint()->x = -1;
-					getSharedData()->getPoint()->y = -1;
+					getSharedData()->point.x = -1;
+					getSharedData()->point.y = -1;
 				}
 			} else if (_field_688 == 1) {
 				Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
-				getSharedData()->getPoint()->x = x + frameRect.left + Common::Rational(frameRect.width(), 2).toInt();
-				getSharedData()->getPoint()->y = y + frameRect.top  + Common::Rational(frameRect.height(), 2).toInt();
+				getSharedData()->point.x = x + frameRect.left + Common::Rational(frameRect.width(), 2).toInt();
+				getSharedData()->point.y = y + frameRect.top  + Common::Rational(frameRect.height(), 2).toInt();
 			}
 
 			_tickCount = _vm->getTick();

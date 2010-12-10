@@ -383,9 +383,9 @@ bool Scene::update() {
 		getSharedData()->setFlag(kFlagRedraw, true);
 	}
 
-	if (ticks > getSharedData()->getNextScreenUpdate()) {
+	if (ticks > getSharedData()->nextScreenUpdate) {
 		if (getSharedData()->getFlag(kFlagRedraw)) {
-			if (getSharedData()->getMatteBarHeight() <= 0)
+			if (getSharedData()->matteBarHeight <= 0)
 				getScreen()->copyBackBufferToScreen();
 			else
 				getEncounter()->drawScreen();
@@ -394,7 +394,7 @@ bool Scene::update() {
 			getSharedData()->setData(39, getSharedData()->getData(39) ^ 1);
 
 			getSharedData()->setFlag(kFlagRedraw, false);
-			getSharedData()->setNextScreenUpdate(ticks + 55);
+			getSharedData()->nextScreenUpdate = ticks + 55;
 			++_vm->screenUpdateCount;
 		}
 	}
@@ -665,7 +665,7 @@ bool Scene::updateScene() {
 #endif
 
 	// Update each part of the scene
-	if (getSharedData()->getMatteBarHeight() != 170 || getSharedData()->getMattePlaySound()) {
+	if (getSharedData()->matteBarHeight != 170 || getSharedData()->mattePlaySound) {
 		MESURE_TICKS(updateMouse);
 		MESURE_TICKS(updateActors);
 		MESURE_TICKS(updateObjects);

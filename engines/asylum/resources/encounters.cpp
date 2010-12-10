@@ -321,7 +321,7 @@ bool Encounter::init() {
 	if (getSound()->getMusicVolume() != Config.musicVolume - 500)
 		getSound()->setMusicVolume(Config.musicVolume - 500);
 
-	if (!getSharedData()->getMatteBarHeight()) {
+	if (!getSharedData()->matteBarHeight) {
 		_isRunning = true;
 		_data_455BD4 = false;
 		_data_455BD8 = false;
@@ -350,7 +350,7 @@ bool Encounter::init() {
 	_data_455BD0 = false;
 	getCursor()->set(getWorld()->cursorResources[kCursorResourceTalkNPC], -1, kCursorAnimationMirror);
 
-	if (!getSharedData()->getMatteBarHeight())
+	if (!getSharedData()->matteBarHeight)
 		initScript(_item->scriptResourceId);
 
 	return true;
@@ -403,7 +403,7 @@ bool Encounter::update() {
 	}
 
 	if (_data_455BE8) {
-		if (getSharedData()->getMatteBarHeight()) {
+		if (getSharedData()->matteBarHeight) {
 			_data_455BD0 = false;
 		} else {
 			getCursor()->show();
@@ -425,7 +425,7 @@ bool Encounter::update() {
 		 || (getSpeech()->getTick() && tick >= getSpeech()->getTick()))
 			doScript = true;
 
-		if (!getSharedData()->getMatteBarHeight() && doScript && _flag4) {
+		if (!getSharedData()->matteBarHeight && doScript && _flag4) {
 			if (!setupSpeech(id))
 			    runScript();
 		}
@@ -439,15 +439,15 @@ bool Encounter::update() {
 		getSharedData()->setFlag(kFlagRedraw, true);
 	}
 
-	if (tick >= getSharedData()->getNextScreenUpdate() && getSharedData()->getFlag(kFlagRedraw)) {
-		if (getSharedData()->getMatteBarHeight() <= 0) {
+	if (tick >= getSharedData()->nextScreenUpdate && getSharedData()->getFlag(kFlagRedraw)) {
+		if (getSharedData()->matteBarHeight <= 0) {
 			getScreen()->copyBackBufferToScreen();
 		} else {
 			drawScreen();
 		}
 
 		getSharedData()->setFlag(kFlagRedraw, false);
-		getSharedData()->setNextScreenUpdate(tick + 55);
+		getSharedData()->nextScreenUpdate = tick + 55;
 	}
 
 	return true;
@@ -1547,14 +1547,14 @@ void Encounter::runScript() {
 			break;
 
 		case 23:
-			if (!getSharedData()->getMatteBarHeight()) {
+			if (!getSharedData()->matteBarHeight) {
 				getScreen()->makeGreyPalette();
-				getSharedData()->setMatteBarHeight(1);
+				getSharedData()->matteBarHeight = 1;
 				getVideo()->play(getVariableInv(entry.param2), this);
-				getSharedData()->setMatteVar1(1);
-				getSharedData()->setMattePlaySound(true);
-				getSharedData()->setMatteInitialized(true);
-				getSharedData()->setMatteVar2(0);
+				getSharedData()->matteVar1 = 1;
+				getSharedData()->mattePlaySound = true;
+				getSharedData()->matteInitialized = true;
+				getSharedData()->matteVar2 = 0;
 				done = true;
 			}
 

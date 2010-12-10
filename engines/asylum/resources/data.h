@@ -106,13 +106,13 @@ struct SharedData {
 public:
 	SharedData() {
 		cdNumber = 0;
-		_actorEnableForStatus7 = false;
+		actorEnableForStatus7 = false;
 		_flag1 = false;
-		_matteBarHeight = 0;
-		_matteVar2 = 0;
-		_sceneCounter = 0;
-		_point.x = -1;
-		_point.y = -1;
+		matteBarHeight = 0;
+		matteVar2 = 0;
+		sceneCounter = 0;
+		point.x = -1;
+		point.y = -1;
 		sceneXLeft = 0;
 		sceneYTop = 0;
 		sceneOffset = 0;
@@ -125,85 +125,72 @@ public:
 		smallCurDown = 0;
 		encounterFrameBg = 0;
 		_flagSkipDrawScene = false;
-		_matteVar1 = 0;
-		_actorUpdateEnabledCheck = false;
-		_matteInitialized = false;
-		_mattePlaySound = false;
-		_currentScreenUpdatesCount = 0;
+		matteVar1 = 0;
+		actorUpdateEnabledCheck = false;
+		matteInitialized = false;
+		mattePlaySound = false;
+		currentScreenUpdatesCount = 0;
 		memset(&_data1, 0, sizeof(_data1));
 		memset(&_data2, 0, sizeof(_data2));
-		_actorUpdateStatusEnabledCounter = 0;
+		actorUpdateStatusEnabledCounter = 0;
 		memset(&_data3, 0, sizeof(_data3));
 		_flagScene1 = false;
-		memset(&_movies, 0, sizeof(_movies));
-		_actorUpdateStatus15Check = false;
+		//memset(&_movies, 0, sizeof(_movies));
+		actorUpdateStatus15Check = false;
 		_flag2 = false;
-		_globalDirection = kDirectionN;
+		globalDirection = kDirectionN;
 		memset(&_ambientTick, 0, sizeof(_ambientTick));
 
 		// Screen updates
 		_flagRedraw = false;
-		_nextScreenUpdate = 0;
+		nextScreenUpdate = 0;
 	}
 
+	// Public variables
 	int32 cdNumber;
 
 	// Saved scene data
 	ResourceId      cursorResources[11];
-	// 2 ResourceId unused
 	ResourceId      sceneFonts[3];
-	//ResourceId      _currentPaletteId;
-	//int32           _cellShadeMasks[3];
-	// unused
 	int32           smallCurUp;
 	int32           smallCurDown;
 	int32           encounterFrameBg;
 
+	Common::Point   point; // global point
+	uint32          sceneCounter;
+
 	// Global scene coordinates and offset
-	int32            sceneXLeft;
-	int32            sceneYTop;
-	int32            sceneOffset;
-	int32            sceneOffsetAdd;
+	int32           sceneXLeft;
+	int32           sceneYTop;
+	int32           sceneOffset;
+	int32           sceneOffsetAdd;
+
+	// Actor
+	Common::Point   vector1;
+	Common::Point   vector2;
+	bool            actorEnableForStatus7;
+	bool            actorUpdateEnabledCheck;
+	int32           actorUpdateStatusEnabledCounter;
+	bool            actorUpdateStatus15Check;
+	ActorDirection  globalDirection;
+
+	// Matte bars
+	uint32          matteBarHeight;
+	int32           matteVar1;
+	uint32          matteVar2;
+	bool            matteInitialized;
+	bool            mattePlaySound;
+
+	// Screen updates
+	uint32          nextScreenUpdate;
+	int32           currentScreenUpdatesCount;
+
 
 	// Accessors
-	int32 getActorUpdateEnabledCounter() { return _actorUpdateStatusEnabledCounter; }
-	void  setActorUpdateEnabledCounter(int32 val) { _actorUpdateStatusEnabledCounter = val; }
-
-	bool getActorEnableForStatus7() { return _actorEnableForStatus7; }
-	void setActorEnableForStatus7(bool state) { _actorEnableForStatus7 = state; }
-
-	bool getActorUpdateEnabledCheck() { return _actorUpdateEnabledCheck; }
-
-	ActorDirection getGlobalDirection() { return _globalDirection; }
-
-	void setActorUpdateFlag(int32 val) { _data1[40] = 2; }
+	void  setActorUpdateFlag(int32 val)  { _data1[40] = 2; }
+	void  setActorUpdateFlag2(int32 val) { _data1[36] = val; }
 
 	int32 getActorUpdateFlag2() { return _data1[36]; }
-	void setActorUpdateFlag2(int32 val) { _data1[36] = val; }
-
-	// Shared global Data
-	Common::Point *getPoint() { return &_point; }
-
-	int32 getMatteBarHeight() { return _matteBarHeight;}
-	void setMatteBarHeight(int32 val) { _matteBarHeight = val; }
-
-	int32 getMatteVar1() { return _matteVar1; }
-	void setMatteVar1(int32 val) { _matteVar1 = val; }
-
-	int32 getMatteVar2() { return _matteVar2; }
-	void setMatteVar2(int32 val) { _matteVar2 = val; }
-
-	bool getMatteInitialized() { return _matteInitialized; }
-	void setMatteInitialized(bool state) { _matteInitialized = state; }
-
-	bool getMattePlaySound() { return _mattePlaySound; }
-	void setMattePlaySound(bool state) { _mattePlaySound = state; }
-
-	Common::Point *getVector1() { return &_vector1; }
-	Common::Point *getVector2() { return &_vector2; }
-
-	void setNextScreenUpdate(uint32 ticks) { _nextScreenUpdate = ticks; }
-	uint32 getNextScreenUpdate() { return _nextScreenUpdate; }
 
 	void setData(ActorIndex index, int32 val) {
 		if (index < 50)
@@ -321,55 +308,20 @@ public:
 	}
 
 private:
-	Common::Point   _vector1;
-	Common::Point   _vector2;
+	uint32          _ambientTick[16];
 
-	bool            _actorEnableForStatus7;
-
+	// Flags
 	bool            _flag1;
-
-	uint32          _matteBarHeight;
-	uint32          _matteVar2;
-
-	// Lots of other data
-
-	//////////////////////////////////////////////////////////////////////////
-	// Shared data
-	// (Some functions access those by offset, so until we figure out what
-	//  exact data they need, we keep all of them here)
-	//////////////////////////////////////////////////////////////////////////
-
-	// TODO Add ambient sound panning array
-	uint32           _sceneCounter;
-	Common::Point    _point; // global point
-	//bool             _flagEncouter2;
-
+	bool            _flag2;
+	bool            _flag3;
 	bool            _flagSkipDrawScene;
-	int32           _matteVar1;
-	bool            _actorUpdateEnabledCheck;
-	bool            _matteInitialized;
-	bool            _mattePlaySound;
-	int32           _currentScreenUpdatesCount;
+	bool            _flagScene1;
+	bool            _flagRedraw;
+
+	// Shared data
 	int32           _data1[50];
 	int32           _data2[11];
-	bool            _actorUpdateStatusEnabledCounter;
 	bool            _data3[9];
-	//bool            _flagEncouter5;
-	bool            _flagScene1;
-	int32           _movies[49];
-	bool            _actorUpdateStatus15Check;
-	// Skip opening flag (not used)
-	bool            _flag3;
-	bool            _flag2;
-
-	ActorDirection  _globalDirection;
-
-	uint32 _ambientTick[16];
-
-
-	// Screen updates
-	bool            _flagRedraw;
-	uint32          _nextScreenUpdate;
 };
 
 } // End of namespace Asylum
