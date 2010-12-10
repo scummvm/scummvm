@@ -69,7 +69,7 @@ namespace Asylum {
 class Puzzle;
 class Cursor;
 class Encounter;
-class MainMenu;
+class Menu;
 class ResourceManager;
 class Savegame;
 class Scene;
@@ -149,7 +149,7 @@ public:
 	// Game
 	Cursor          *cursor()    { return _cursor; }
 	Encounter       *encounter() { return _encounter; }
-	MainMenu        *menu()      { return _mainMenu; }
+	Menu            *menu()      { return _menu; }
 	ResourceManager *resource()  { return _resource; }
 	Savegame        *savegame()  { return _savegame; }
 	Scene           *scene()     { return _scene; }
@@ -229,7 +229,7 @@ private:
 	// Game
 	Cursor          *_cursor;
 	Encounter       *_encounter;
-	MainMenu        *_mainMenu;
+	Menu            *_menu;
 	ResourceManager *_resource;
 	Savegame        *_savegame;
 	Scene           *_scene;

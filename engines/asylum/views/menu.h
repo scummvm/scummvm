@@ -38,10 +38,10 @@ class ResourcePack;
 class Scene;
 class Text;
 
-class MainMenu : public EventHandler {
+class Menu : public EventHandler {
 public:
-	MainMenu(AsylumEngine *vm);
-	~MainMenu();
+	Menu(AsylumEngine *vm);
+	~Menu();
 
 	/**
 	 * Shows the menu

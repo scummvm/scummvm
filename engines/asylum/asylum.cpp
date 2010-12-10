@@ -72,7 +72,7 @@
 namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
-	_console(NULL), _cursor(NULL), _encounter(NULL), _mainMenu(NULL), _resource(NULL), _savegame(NULL),
+	_console(NULL), _cursor(NULL), _encounter(NULL), _menu(NULL), _resource(NULL), _savegame(NULL),
 	_scene(NULL), _screen(NULL), _script(NULL), _sound(NULL), _text(NULL), _video(NULL), _handler(NULL) {
 
 	// Init data
@@ -118,7 +118,7 @@ AsylumEngine::~AsylumEngine() {
 	delete _sound;
 	delete _text;
 	delete _video;
-	delete _mainMenu;
+	delete _menu;
 	delete _resource;
 	delete _console;
 
@@ -158,8 +158,8 @@ Common::Error AsylumEngine::run() {
 	initSinCosTables(80.0, 40, 40);
 
 	// Create main menu
-	_mainMenu  = new MainMenu(this);
-	_handler = _mainMenu;
+	_menu  = new Menu(this);
+	_handler = _menu;
 
     // Load config
     Config.read();
@@ -249,7 +249,7 @@ void AsylumEngine::restart() {
 
 void AsylumEngine::reset() {
 	// Set game as started
-	_mainMenu->setGameStarted();
+	_menu->setGameStarted();
 
 	// Reset puzzles
 	for (uint32 i = 0; i < ARRAYSIZE(_puzzles); i++)
@@ -275,7 +275,7 @@ void AsylumEngine::playIntro() {
 			_sound->playMusic(kResourceNone, 0);
 
 			// TODO convert to new event handling
-			_video->play(1, _mainMenu);
+			_video->play(1, _menu);
 
 			if (_scene->worldstats()->musicCurrentResourceIndex != kMusicStopped)
 				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
@@ -301,7 +301,7 @@ void AsylumEngine::playIntro() {
 }
 
 void AsylumEngine::handleEvents() {
-	if (!_console || !_video || !_screen || !_sound || !_mainMenu)
+	if (!_console || !_video || !_screen || !_sound || !_menu)
 		error("[AsylumEngine::handleEvents] Subsystems not initialized properly!");
 
 	// Show the debugger if required
@@ -365,7 +365,7 @@ void AsylumEngine::handleEvents() {
 }
 
 void AsylumEngine::processDelayedEvents() {
-	if (!_video || !_sound || !_mainMenu)
+	if (!_video || !_sound || !_menu)
 		error("[AsylumEngine::processDelayedEvents] Subsystems not initialized properly!");
 
 	// check for a delayed scene change	

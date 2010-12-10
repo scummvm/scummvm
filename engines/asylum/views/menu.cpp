@@ -46,7 +46,7 @@
 
 namespace Asylum {
 
-MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
+Menu::Menu(AsylumEngine *vm): _vm(vm) {
 	_initGame = false;
 
 	_activeScreen   = kMenuNone;
@@ -77,7 +77,7 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_prefixWidth = 0;
 }
 
-MainMenu::~MainMenu() {
+Menu::~Menu() {
 	// Zero-out passed pointers
 	_vm = NULL;
 }
@@ -85,7 +85,7 @@ MainMenu::~MainMenu() {
 //////////////////////////////////////////////////////////////////////////
 // Loading and setup
 //////////////////////////////////////////////////////////////////////////
-void MainMenu::show() {
+void Menu::show() {
 	getSharedData()->setFlag(kFlagSkipDrawScene, true);
 	getScreen()->clear();
 
@@ -105,7 +105,7 @@ void MainMenu::show() {
 	setup();
 }
 
-void MainMenu::setup() {
+void Menu::setup() {
 	getScreen()->clear();
 	// Original fills the screen with black
 
@@ -142,17 +142,17 @@ void MainMenu::setup() {
 	}
 }
 
-void MainMenu::leave() {
+void Menu::leave() {
 	_activeScreen = kMenuNone;
 	getCursor()->set(MAKE_RESOURCE(kResourcePackShared, 2));
 	getText()->loadFont(kFontYellow);
 }
 
-void MainMenu::switchFont(bool condition) {
+void Menu::switchFont(bool condition) {
 	getText()->loadFont((condition) ? kFontYellow : kFontBlue);
 }
 
-void MainMenu::closeCredits() {
+void Menu::closeCredits() {
 	getScreen()->clear();
 	// Original fills the screen with black
 
@@ -181,7 +181,7 @@ void MainMenu::closeCredits() {
 	leave();
 }
 
-MainMenu::MenuScreen MainMenu::findMousePosition() {
+Menu::MenuScreen Menu::findMousePosition() {
 	for (uint i = 0; i < ARRAYSIZE(menuRects); i++)
 		if (menuRects[i].contains(getCursor()->position()))
 			return (MenuScreen)i;
@@ -189,21 +189,21 @@ MainMenu::MenuScreen MainMenu::findMousePosition() {
 	return kMenuNone;
 }
 
-void MainMenu::playTestSounds() {
+void Menu::playTestSounds() {
 	_testSoundsPlaying = true;
 	getSound()->playSound(kAmbientSound, true, Config.ambientVolume);
 	getSound()->playSound(kSfxSound, true, Config.sfxVolume);
 	getSound()->playSound(kVoiceSound, true, Config.voiceVolume);
 }
 
-void MainMenu::stopTestSounds() {
+void Menu::stopTestSounds() {
 	_testSoundsPlaying = false;
 	getSound()->stop(kAmbientSound);
 	getSound()->stop(kSfxSound);
 	getSound()->stop(kVoiceSound);
 }
 
-void MainMenu::adjustMasterVolume(int32 delta) {
+void Menu::adjustMasterVolume(int32 delta) {
 	int32 *volume = NULL;
 	int32 volumeIndex = 1;
 
@@ -257,7 +257,7 @@ void MainMenu::adjustMasterVolume(int32 delta) {
 	} while (volumeIndex < 6);
 }
 
-void MainMenu::adjustTestVolume() {
+void Menu::adjustTestVolume() {
 	getSound()->setMusicVolume(Config.musicVolume);
 	if ((Config.movieVolume / 250 + 20) <= 0)
 		getSound()->playMusic(_musicResourceId);
@@ -278,7 +278,7 @@ void MainMenu::adjustTestVolume() {
 		getSound()->playSound(kVoiceSound, true, Config.voiceVolume);
 }
 
-void MainMenu::setupMusic() {
+void Menu::setupMusic() {
 	getSound()->stopAll();
 
 	uint32 index = getScene() ? getWorld()->musicCurrentResourceIndex : kMusicStopped;
@@ -294,7 +294,7 @@ void MainMenu::setupMusic() {
 	}
 }
 
-void MainMenu::adjustPerformance() {
+void Menu::adjustPerformance() {
 	// Original reinitialize sound to 11kHz for performance == 0, 22kHz otherwise
 	getSound()->stopAll();
 	getSound()->playMusic(kResourceNone, 0);
@@ -308,7 +308,7 @@ void MainMenu::adjustPerformance() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handler
 //////////////////////////////////////////////////////////////////////////
-bool MainMenu::handleEvent(const AsylumEvent &evt) {
+bool Menu::handleEvent(const AsylumEvent &evt) {
 	switch ((uint32)evt.type) {
 	default:
 		break;
@@ -338,7 +338,7 @@ bool MainMenu::handleEvent(const AsylumEvent &evt) {
 	return false;
 }
 
-bool MainMenu::init() {
+bool Menu::init() {
 	// TODO: save dialog key codes into sntrm_k.txt (need to figure out why they use such thing) (address 00411CD0)
 
 	if (_needEyeCursorInit) {
@@ -399,7 +399,7 @@ bool MainMenu::init() {
 	return true;
 }
 
-bool MainMenu::update() {
+bool Menu::update() {
 	uint32 ticks = _vm->getTick();
 
 	if (!getSharedData()->getFlag(kFlagRedraw)) {
@@ -530,7 +530,7 @@ bool MainMenu::update() {
 	return true;
 }
 
-bool MainMenu::music() {
+bool Menu::music() {
 	if (_activeScreen == kMenuShowCredits
 	 && _vm->isGameFlagSet(kGameFlagFinishGame)
 	 && !_dword_455D5C
@@ -546,7 +546,7 @@ bool MainMenu::music() {
 	return false;
 }
 
-bool MainMenu::key(const AsylumEvent &evt) {
+bool Menu::key(const AsylumEvent &evt) {
 	switch (_activeScreen) {
 	default:
 		break;
@@ -567,7 +567,7 @@ bool MainMenu::key(const AsylumEvent &evt) {
 	return true;
 }
 
-bool MainMenu::click(const AsylumEvent &evt) {
+bool Menu::click(const AsylumEvent &evt) {
 	if (evt.type == Common::EVENT_RBUTTONDOWN
 	 && _activeScreen == kMenuShowCredits) {
 		 clickShowCredits();
@@ -697,7 +697,7 @@ bool MainMenu::click(const AsylumEvent &evt) {
 //////////////////////////////////////////////////////////////////////////
 // Update handlers
 //////////////////////////////////////////////////////////////////////////
-void MainMenu::updateNewGame() {
+void Menu::updateNewGame() {
 	Common::Point cursor = getCursor()->position();
 
 	getText()->loadFont(kFontYellow);
@@ -716,31 +716,31 @@ void MainMenu::updateNewGame() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1323));
 }
 
-void MainMenu::updateLoadGame() {
+void Menu::updateLoadGame() {
 	Common::Point cursor = getCursor()->position();
 
 	error("[MainMenu::updateLoadGame] Not implemented!");
 }
 
-void MainMenu::updateSaveGame() {
+void Menu::updateSaveGame() {
 	Common::Point cursor = getCursor()->position();
 
 	error("[MainMenu::updateSaveGame] Not implemented!");
 }
 
-void MainMenu::updateDeleteGame() {
+void Menu::updateDeleteGame() {
 	Common::Point cursor = getCursor()->position();
 
 	error("[MainMenu::updateDeleteGame] Not implemented!");
 }
 
-void MainMenu::updateViewMovies() {
+void Menu::updateViewMovies() {
 	Common::Point cursor = getCursor()->position();
 
 	error("[MainMenu::updateViewMovies] Not implemented!");
 }
 
-void MainMenu::updateQuitGame() {
+void Menu::updateQuitGame() {
 	Common::Point cursor = getCursor()->position();
 
 	getText()->loadFont(kFontYellow);
@@ -757,7 +757,7 @@ void MainMenu::updateQuitGame() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1410));
 }
 
-void MainMenu::updateTextOptions() {
+void Menu::updateTextOptions() {
 	Common::Point cursor = getCursor()->position();
 
 	getText()->loadFont(kFontYellow);
@@ -781,7 +781,7 @@ void MainMenu::updateTextOptions() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1416));
 }
 
-void MainMenu::updateAudioOptions() {
+void Menu::updateAudioOptions() {
 	Common::Point cursor = getCursor()->position();
 
 	// Size of - and +
@@ -867,7 +867,7 @@ void MainMenu::updateAudioOptions() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1431));
 }
 
-void MainMenu::updateSettings() {
+void Menu::updateSettings() {
 	Common::Point cursor = getCursor()->position();
 
 	// Size of - and +
@@ -935,7 +935,7 @@ void MainMenu::updateSettings() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1437));
 }
 
-void MainMenu::updateKeyboardConfig() {
+void Menu::updateKeyboardConfig() {
 	Common::Point cursor = getCursor()->position();
 
 	getText()->loadFont(kFontYellow);
@@ -1003,7 +1003,7 @@ void MainMenu::updateKeyboardConfig() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1446));
 }
 
-void MainMenu::updateReturnToGame() {
+void Menu::updateReturnToGame() {
 	Common::Point cursor = getCursor()->position();
 
 	getText()->loadFont(kFontYellow);
@@ -1018,7 +1018,7 @@ void MainMenu::updateReturnToGame() {
 
 }
 
-void MainMenu::updateShowCredits() {
+void Menu::updateShowCredits() {
 	if (_vm->isGameFlagSet(kGameFlagFinishGame)) {
 		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 33), 0, 0, 0, 0, false);
 	} else {
@@ -1069,7 +1069,7 @@ void MainMenu::updateShowCredits() {
 //////////////////////////////////////////////////////////////////////////
 // Click handlers
 //////////////////////////////////////////////////////////////////////////
-void MainMenu::clickNewGame() {
+void Menu::clickNewGame() {
 	Common::Point cursor = getCursor()->position();
 
 	if (cursor.x < 247
@@ -1086,31 +1086,31 @@ void MainMenu::clickNewGame() {
 	}
 }
 
-void MainMenu::clickLoadGame() {
+void Menu::clickLoadGame() {
 	Common::Point cursor = getCursor()->position();
 
 	error("[MainMenu::clickLoadGame] Not implemented!");
 }
 
-void MainMenu::clickSaveGame() {
+void Menu::clickSaveGame() {
 	Common::Point cursor = getCursor()->position();
 
 	error("[MainMenu::clickSaveGame] Not implemented!");
 }
 
-void MainMenu::clickDeleteGame() {
+void Menu::clickDeleteGame() {
 	Common::Point cursor = getCursor()->position();
 
 	error("[MainMenu::clickDeleteGame] Not implemented!");
 }
 
-void MainMenu::clickViewMovies() {
+void Menu::clickViewMovies() {
 	Common::Point cursor = getCursor()->position();
 
 	error("[MainMenu::clickViewMovies] Not implemented!");
 }
 
-void MainMenu::clickQuitGame() {
+void Menu::clickQuitGame() {
 	Common::Point cursor = getCursor()->position();
 
 	if (cursor.x < 247
@@ -1130,7 +1130,7 @@ void MainMenu::clickQuitGame() {
 	}
 }
 
-void MainMenu::clickTextOptions() {
+void Menu::clickTextOptions() {
 	Common::Point cursor = getCursor()->position();
 
 	if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, Config.showMovieSubtitles ? 1414 : 1415))) || cursor.y < 150 || cursor.y > 174) {
@@ -1147,7 +1147,7 @@ void MainMenu::clickTextOptions() {
 	}
 }
 
-void MainMenu::clickAudioOptions() {
+void Menu::clickAudioOptions() {
 	Common::Point cursor = getCursor()->position();
 
 	// Size of - and +
@@ -1269,7 +1269,7 @@ void MainMenu::clickAudioOptions() {
 		playTestSounds();
 }
 
-void MainMenu::clickSettings() {
+void Menu::clickSettings() {
 	Common::Point cursor = getCursor()->position();
 
 	// Size of - and +
@@ -1334,7 +1334,7 @@ void MainMenu::clickSettings() {
 	}
 }
 
-void MainMenu::clickKeyboardConfig() {
+void Menu::clickKeyboardConfig() {
 	Common::Point cursor = getCursor()->position();
 
 	if (cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1446))) || cursor.y < 340 || cursor.y > (340 + 24)) {
@@ -1384,7 +1384,7 @@ void MainMenu::clickKeyboardConfig() {
 	}
 }
 
-void MainMenu::clickReturnToGame() {
+void Menu::clickReturnToGame() {
 	if (_gameStarted) {
 		if (_musicResourceId != MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicCurrentResourceIndex))
 			getSound()->playMusic(kResourceNone, 0);
@@ -1403,14 +1403,14 @@ void MainMenu::clickReturnToGame() {
 	}
 }
 
-void MainMenu::clickShowCredits() {
+void Menu::clickShowCredits() {
 	closeCredits();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Key handlers
 //////////////////////////////////////////////////////////////////////////
-void MainMenu::keySaveGame(const AsylumEvent &evt) {
+void Menu::keySaveGame(const AsylumEvent &evt) {
 	if (!_dword_455DD8)
 		return;
 
@@ -1456,7 +1456,7 @@ void MainMenu::keySaveGame(const AsylumEvent &evt) {
 	}
 }
 
-void MainMenu::keyKeyboardConfig(const AsylumEvent &evt) {
+void Menu::keyKeyboardConfig(const AsylumEvent &evt) {
 	if (_selectedShortcutIndex == -1)
 		return;
 
@@ -1507,7 +1507,7 @@ void MainMenu::keyKeyboardConfig(const AsylumEvent &evt) {
 	}
 }
 
-void MainMenu::keyShowCredits() {
+void Menu::keyShowCredits() {
 	closeCredits();
 }
 
