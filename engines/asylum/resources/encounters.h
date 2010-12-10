@@ -238,7 +238,7 @@ private:
 	bool drawPortraits();
 	void drawStructs();
 	void drawDialog();
-	void drawText(char *text, ResourceId font, int32 y);
+	void drawText(char *text, ResourceId font, int32 y);	
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc
@@ -249,6 +249,8 @@ private:
 	void updateDrawingStatus1(int32 rectIndex);
 	void updateDrawingStatus2(int32 rectIndex);
 	bool updateScreen();
+	void updatePalette1();
+	void updatePalette2();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scripts

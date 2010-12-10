@@ -144,10 +144,12 @@ public:
 		// Screen updates
 		_flagRedraw = false;
 		nextScreenUpdate = 0;
+		movieIndex = 0;
 	}
 
 	// Public variables
 	int32 cdNumber;
+	int32 movieIndex;
 
 	// Saved scene data
 	ResourceId      cursorResources[11];
