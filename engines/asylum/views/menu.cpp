@@ -1594,7 +1594,88 @@ void Menu::clickNewGame() {
 void Menu::clickLoadGame() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::clickLoadGame] Not implemented!");
+	if (_dword_455C80) {
+		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1330)))
+		 || cursor.y < 273 || cursor.y > (273 + 24)) {
+			if (cursor.x >= 369 && cursor.x <= (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1331)))
+			 && cursor.y >= 273 && cursor.y <= (273 + 24))
+				_dword_455C80 = false;
+		} else {
+			_vm->startGame(getSaveLoad()->getScenePack(), AsylumEngine::kStartGameLoad);
+		}
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Previous page
+	if (cursor.x >= 30  && cursor.x <= (30 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1326)))
+	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		if (_textScroll) {
+			_textScroll -= 12;
+			if (_textScroll < 0)
+				_textScroll = 0;
+		}
+
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Main Menu
+	if (cursor.x >= 300 && cursor.x <= (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1328)))
+	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		leave();
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Next page
+	if (cursor.x >= 550 && cursor.x <= (550 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1327)))
+	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
+		if (_textScroll + 12 < 25) {
+			_textScroll += 12;
+			if (_textScroll >= 25)
+				_textScroll = 24;
+		}
+
+		return;
+	}
+
+	char text[100];
+
+	//////////////////////////////////////////////////////////////////////////
+	// Columns
+	uint32 index = 0;
+	for (int32 y = 150; y < 324; y += 29) {
+		if (cursor.x >= 350) {
+			sprintf((char *)&text, "%d. %s ", index + _textScroll + 7, getSaveLoad()->getName(index + _textScroll + 6).c_str());
+
+			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
+			 && cursor.y >= y
+			 && cursor.y <= (y + 24)) {
+				if (index + _textScroll + 6 < 25) {
+					if (getSaveLoad()->hasSavegame(index + _textScroll + 6)) {
+						_dword_455C80 = true;
+						getSaveLoad()->setIndex(index + _textScroll + 6);
+					}
+				}
+			}
+		} else if (cursor.x >= 30) {
+			sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+
+			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
+			 && cursor.y >= y
+			 && cursor.y <= (y + 24)) {
+				if (index + _textScroll < 25) {
+					if (getSaveLoad()->hasSavegame(index + _textScroll)) {
+						_dword_455C80 = true;
+						getSaveLoad()->setIndex(index + _textScroll);
+					}
+				}
+			}
+		}
+
+		++index;
+	}
 }
 
 void Menu::clickSaveGame() {
@@ -1644,7 +1725,7 @@ void Menu::clickDeleteGame() {
 	// Next page
 	if (cursor.x >= 550 && cursor.x <= (550 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1347)))
 	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
-		if (_textScroll) {
+		if (_textScroll + 12 < 25) {
 			_textScroll += 12;
 			if (_textScroll >= 25)
 				_textScroll = 24;
