@@ -878,6 +878,10 @@ int QuickTimeDecoder::readSTSD(MOVatom atom) {
 
 			// if the depth is 2, 4, or 8 bpp, file is palettized
 			if (colorDepth == 2 || colorDepth == 4 || colorDepth == 8) {
+				// Initialize the palette
+				entry->palette = new byte[256 * 3];
+				memset(entry->palette, 0, 256 * 3);
+
 				if (colorGreyscale) {
 					debug(0, "Greyscale palette");
 
@@ -1326,7 +1330,7 @@ QuickTimeDecoder::STSDEntry::STSDEntry() {
 	bitsPerSample = 0;
 	memset(codecName, 0, 32);
 	colorTableId = 0;
-	memset(palette, 0, 256 * 3);
+	palette = 0;
 	videoCodec = 0;
 	channels = 0;
 	sampleRate = 0;
@@ -1335,6 +1339,7 @@ QuickTimeDecoder::STSDEntry::STSDEntry() {
 }
 
 QuickTimeDecoder::STSDEntry::~STSDEntry() {
+	delete[] palette;
 	delete videoCodec;
 }
 

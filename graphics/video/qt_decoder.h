@@ -158,7 +158,7 @@ protected:
 		// Video
 		char codecName[32];
 		uint16 colorTableId;
-		byte palette[256 * 3];
+		byte *palette;
 		Codec *videoCodec;
 
 		// Audio
