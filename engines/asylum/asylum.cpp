@@ -440,7 +440,7 @@ void AsylumEngine::notify(AsylumEventType type, int32 param1, int32 param2) {
 }
 
 EventHandler *AsylumEngine::getPuzzle(uint32 index) {
-	if (index >= ARRAYSIZE(_puzzles))
+	if (index > ARRAYSIZE(_puzzles))
 		error("[AsylumEngine::getPuzzleEventHandler] Invalid index (was: %d - max: %d)", index, ARRAYSIZE(_puzzles));
 
 	if (_puzzles[index] == NULL)
@@ -462,13 +462,11 @@ void AsylumEngine::initPuzzles() {
 	_puzzles[9] = new PuzzleWritings(this);
 	_puzzles[10] = new PuzzleClock(this);
 	_puzzles[11] = new PuzzleMorgueDoor(this);
-	_puzzles[12] = NULL; // FIXME Not sure which puzzle this is
+	_puzzles[12] = NULL; warning("[AsylumEngine::initPuzzles] Add missing puzzles!"); // FIXME Not sure which puzzle this is
 	_puzzles[13] = new PuzzleTimeMachine(this);
 	_puzzles[14] = new PuzzleFisherman(this);
 	_puzzles[15] = new PuzzleHiveMachine(this);
 	_puzzles[16] = new PuzzleHiveControl(this);
-
-	warning("[AsylumEngine::initPuzzles] Add missing puzzles!");
 }
 
 void AsylumEngine::initSinCosTables(double a2, int32 a3, int32 a4) {
