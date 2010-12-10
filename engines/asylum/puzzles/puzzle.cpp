@@ -25,6 +25,7 @@
 
 #include "asylum/puzzles/puzzle.h"
 
+#include "asylum/resources/polygons.h"
 #include "asylum/resources/worldstats.h"
 
 #include "asylum/system/cursor.h"
@@ -97,6 +98,47 @@ void Puzzle::exit() {
 	getScreen()->clear();
 
 	_vm->switchEventHandler(getScene());
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Hit test functions
+//////////////////////////////////////////////////////////////////////////
+bool Puzzle::hitTest(const Common::Point *polygonPoint, Common::Point point, uint32 index) {
+	uint32 counter = 0;
+
+	for (uint32 i = index; i < index + 3; i++)
+		if (Polygons::contains(point.x, point.y,
+		                       polygonPoint[index + 1].x + point.x + 100, point.y,
+		                       polygonPoint[i].x, polygonPoint[i].y,
+		                       polygonPoint[i + 1].x, polygonPoint[i + 1].y))
+			++counter;
+
+	if (Polygons::contains(point.x, point.y,
+	                       polygonPoint[index + 1].x + point.x + 100, point.y,
+	                       polygonPoint[index].x, polygonPoint[index].y,
+	                       polygonPoint[index + 3].x, polygonPoint[index + 3].y))
+		++counter;
+
+	return (counter & 1);
+}
+
+bool Puzzle::hitTest(const Common::Point *polygonPoint, Common::Point point) {
+	uint32 counter = 0;
+
+	for (uint32 i = 3; i > 1; i--)
+		if (Polygons::contains(point.x, point.y,
+		                       polygonPoint[1].x + point.x + 700, point.y,
+		                       polygonPoint[i].x, polygonPoint[i].y,
+		                       polygonPoint[i + 1].x, polygonPoint[i + 1].y))
+			++counter;
+
+	if (Polygons::contains(point.x, point.y,
+	                       polygonPoint[0].x + point.x + 100, point.y,
+	                       polygonPoint[0].x, polygonPoint[0].y,
+	                       polygonPoint[3].x, polygonPoint[3].y))
+		++counter;
+
+	return (counter & 1);
 }
 
 } // end of namespace Asylum

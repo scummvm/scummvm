@@ -63,6 +63,13 @@ protected:
 	virtual bool mouse(const AsylumEvent &evt) = 0;
 
 	void exit();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Hit test functions
+	//////////////////////////////////////////////////////////////////////////
+	bool hitTest(const Common::Point *polygonPoint, Common::Point point, uint32 index);
+	bool hitTest(const Common::Point *polygonPoint, Common::Point point);
+
 };
 
 } // End of namespace Asylum
