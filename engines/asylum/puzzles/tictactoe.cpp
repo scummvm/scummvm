@@ -36,25 +36,18 @@
 
 namespace Asylum {
 
+extern int32 g_debugPolygons;
+
 const Common::Point puzzleTicTacToePolygons[36] = {
-	Common::Point( 27, 381), Common::Point(172, 368),
-	Common::Point(190, 474), Common::Point( 36, 476),
-	Common::Point(176, 362), Common::Point(294, 328),
-	Common::Point(331, 456), Common::Point(191, 472),
-	Common::Point(304, 327), Common::Point(426, 306),
-	Common::Point(457, 440), Common::Point(340, 460),
-	Common::Point( 26, 257), Common::Point(151, 238),
-	Common::Point(169, 356), Common::Point( 27, 373),
-	Common::Point(162, 234), Common::Point(275, 214),
-	Common::Point(299, 321), Common::Point(173, 355),
-	Common::Point(283, 210), Common::Point(403, 173),
-	Common::Point(437, 294), Common::Point(305, 317),
-	Common::Point( 22, 120), Common::Point(132, 126),
-	Common::Point(146, 223), Common::Point( 25, 247),
-	Common::Point(144, 119), Common::Point(247,  87),
-	Common::Point(268, 205), Common::Point(159, 222),
-	Common::Point(259,  84), Common::Point(380,  73),
-	Common::Point(405, 169), Common::Point(281, 201)
+	Common::Point( 27, 381), Common::Point(172, 368), Common::Point(190, 474), Common::Point( 36, 476),
+	Common::Point(176, 362), Common::Point(294, 328), Common::Point(331, 456), Common::Point(191, 472),
+	Common::Point(304, 327), Common::Point(426, 306), Common::Point(457, 440), Common::Point(340, 460),
+	Common::Point( 26, 257), Common::Point(151, 238), Common::Point(169, 356), Common::Point( 27, 373),
+	Common::Point(162, 234), Common::Point(275, 214), Common::Point(299, 321), Common::Point(173, 355),
+	Common::Point(283, 210), Common::Point(403, 173), Common::Point(437, 294), Common::Point(305, 317),
+	Common::Point( 22, 120), Common::Point(132, 126), Common::Point(146, 223), Common::Point( 25, 247),
+	Common::Point(144, 119), Common::Point(247,  87), Common::Point(268, 205), Common::Point(159, 222),
+	Common::Point(259,  84), Common::Point(380,  73), Common::Point(405, 169), Common::Point(281, 201)
 };
 
 const Common::Point puzzleTicTacToePositions[9] = {
@@ -76,7 +69,7 @@ static const struct {
 	uint32 strikeOutPositionX;
 	uint32 strikeOutPositionO;
 	uint32 frameCount;
-} fieldsToCheck[8] = {
+} puzzleTicTacToeFieldsToCheck[8] = {
 	{0, 1, 2, 1,  9, 14},
 	{3, 4, 5, 2, 10, 14},
 	{6, 7, 8, 3, 11, 14},
@@ -100,7 +93,7 @@ PuzzleTicTacToe::PuzzleTicTacToe(AsylumEngine *engine) : Puzzle(engine) {
 	memset(&_field, 0, sizeof(_field));
 	_emptyCount = 0;
 
-	_var5 = 0;
+	_counter = 0;
 }
 
 PuzzleTicTacToe::~PuzzleTicTacToe() {
@@ -208,8 +201,8 @@ void PuzzleTicTacToe::mouseLeft() {
 		return;
 	}
 
-	for (uint32 i = 0; i < ARRAYSIZE(puzzleTicTacToePolygons) - 2; i++) {
-		if (hitTest(&puzzleTicTacToePolygons[i], mousePos, 0)) {
+	for (uint32 i = 0; i < ARRAYSIZE(_gameField); i++) {
+		if (hitTest(&puzzleTicTacToePolygons[i * 4], mousePos, 0)) {
 			if (_gameField[i] == ' ') {
 				getSound()->playSound(getWorld()->soundResourceIds[11], false, Config.sfxVolume - 100);
 				_gameField[i] = 'X';
@@ -230,7 +223,49 @@ void PuzzleTicTacToe::initField() {
 }
 
 void PuzzleTicTacToe::drawField() {
-	warning("[PuzzleTicTacToe::updateField] Not implemented!");
+	if (_counter > 0) {
+		--_counter;
+
+		if (_counter < 2) {
+			getCursor()->show();
+			exit();
+			_counter = 0;
+			return;
+		}
+
+	}
+
+	if (g_debugPolygons) {
+		for (uint32 p = 0; p < ARRAYSIZE(puzzleTicTacToePolygons); p += 4) {
+			getScreen()->drawLine(puzzleTicTacToePolygons[p].x, puzzleTicTacToePolygons[p].y, puzzleTicTacToePolygons[p + 1].x, puzzleTicTacToePolygons[p + 1].y);
+			getScreen()->drawLine(puzzleTicTacToePolygons[p + 1].x, puzzleTicTacToePolygons[p + 1].y, puzzleTicTacToePolygons[p + 2].x, puzzleTicTacToePolygons[p + 2].y);
+			getScreen()->drawLine(puzzleTicTacToePolygons[p + 2].x, puzzleTicTacToePolygons[p + 2].y, puzzleTicTacToePolygons[p + 3].x, puzzleTicTacToePolygons[p + 3].y);
+			getScreen()->drawLine(puzzleTicTacToePolygons[p + 3].x, puzzleTicTacToePolygons[p + 3].y, puzzleTicTacToePolygons[p].x, puzzleTicTacToePolygons[p].y);
+		}
+	}
+
+	for (uint32 i = 0; i < ARRAYSIZE(puzzleTicTacToePositions); i++) {
+		char mark = _gameField[i];
+		Common::Point point = puzzleTicTacToePositions[i];
+
+		if (_lastMarkedField = i) {
+
+		} else {
+			if (mark == 'O')
+				getScreen()->draw(getWorld()->graphicResourceIds[2], 12, point.x, point.y, 0);
+			else if (mark == 'X')
+				getScreen()->draw(getWorld()->graphicResourceIds[1], 14, point.x, point.y, 0);
+		}
+	}
+
+	if (_lastMarkedField == -1 && checkWinner())
+		_needToInitialize = true;
+
+	if (_strikeOutPosition > 0 && !_ticker) {
+
+	}
+
+	//getScreen()->draw(getWorld()->graphicResourceIds[17], 0, 0, 0, 0);
 }
 
 void PuzzleTicTacToe::updatePositions(uint32 field1, uint32 field2, uint32 field3) {
@@ -268,7 +303,7 @@ bool PuzzleTicTacToe::check() {
 	 && !checkFieldsUpdatePositions()
 	 && !checkFields()
 	 && !countEmptyFields()) {
-		if (!_var5)
+		if (!_counter)
 			getCursor()->show();
 
 		_needToInitialize = true;
@@ -321,9 +356,9 @@ bool PuzzleTicTacToe::checkFieldsUpdatePositions() {
 	uint32 counterX = 0;
 	uint32 counterO = 0;
 
-	for (uint32 i = 0; i < ARRAYSIZE(fieldsToCheck) - 1; i++)
-		if (checkField(fieldsToCheck[i].field1, fieldsToCheck[i].field2, fieldsToCheck[i].field3, 'O', &counterX, &counterO) == kStatusFree)
-			updatePositions(fieldsToCheck[i].field1, fieldsToCheck[i].field2, fieldsToCheck[i].field3);
+	for (uint32 i = 0; i < ARRAYSIZE(puzzleTicTacToeFieldsToCheck); i++)
+		if (checkField(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, 'O', &counterX, &counterO) == kStatusFree)
+			updatePositions(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3);
 
 	return (_emptyCount != 0);
 }
@@ -332,15 +367,15 @@ bool PuzzleTicTacToe::checkFields() {
 	uint32 counterX = 0;
 	uint32 counterO = 0;
 
-	for (uint32 i = 0; i < ARRAYSIZE(fieldsToCheck) - 1; i++) {
-		checkField(fieldsToCheck[i].field1, fieldsToCheck[i].field2, fieldsToCheck[i].field3, 'O', &counterX, &counterO);
+	for (uint32 i = 0; i < ARRAYSIZE(puzzleTicTacToeFieldsToCheck); i++) {
+		checkField(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, 'O', &counterX, &counterO);
 
 		if (counterX || counterO)
 			continue;
 
 		_field[_emptyCount] = 0;
-		_field[_emptyCount + 1] = fieldsToCheck[i].field3;
-		_field[_emptyCount + 2] = fieldsToCheck[i].field2;
+		_field[_emptyCount + 1] = puzzleTicTacToeFieldsToCheck[i].field3;
+		_field[_emptyCount + 2] = puzzleTicTacToeFieldsToCheck[i].field2;
 
 		_emptyCount += 3;
 	}
@@ -381,19 +416,19 @@ int32 PuzzleTicTacToe::checkWinnerHelper() {
 	uint32 counterX = 0;
 	uint32 counterO = 0;
 
-	for (uint32 i = 0; i < ARRAYSIZE(fieldsToCheck) - 1; i++) {
-		checkField(fieldsToCheck[i].field1, fieldsToCheck[i].field2, fieldsToCheck[i].field3, 'O', &counterX, &counterO);
+	for (uint32 i = 0; i < ARRAYSIZE(puzzleTicTacToeFieldsToCheck); i++) {
+		checkField(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, 'O', &counterX, &counterO);
 
 		if (counterX == 3) {
-			_strikeOutPosition = fieldsToCheck[i].strikeOutPositionX;
-			_frameCount = fieldsToCheck[i].frameCount;
+			_strikeOutPosition = puzzleTicTacToeFieldsToCheck[i].strikeOutPositionX;
+			_frameCount = puzzleTicTacToeFieldsToCheck[i].frameCount;
 			_frameIndex = 0;
 			return 1;
 		}
 
 		if (counterO == 3) {
-			_strikeOutPosition = fieldsToCheck[i].strikeOutPositionO;
-			_frameCount = fieldsToCheck[i].frameCount;
+			_strikeOutPosition = puzzleTicTacToeFieldsToCheck[i].strikeOutPositionO;
+			_frameCount = puzzleTicTacToeFieldsToCheck[i].frameCount;
 			_frameIndex = 0;
 			return -1;
 		}
@@ -407,9 +442,9 @@ bool PuzzleTicTacToe::checkWinning(char mark) {
 	uint32 counterO = 0;
 	_emptyCount = 0;
 
-	for (uint32 i = 0; i < ARRAYSIZE(fieldsToCheck) - 1; i++) {
-		if (checkField(fieldsToCheck[i].field1, fieldsToCheck[i].field2, fieldsToCheck[i].field3, 'O', &counterX, &counterO) == kStatusNeedBlocking) {
-			_field[_emptyCount] = checkPosition(fieldsToCheck[i].field1, fieldsToCheck[i].field2, fieldsToCheck[i].field3);
+	for (uint32 i = 0; i < ARRAYSIZE(puzzleTicTacToeFieldsToCheck); i++) {
+		if (checkField(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, 'O', &counterX, &counterO) == kStatusNeedBlocking) {
+			_field[_emptyCount] = checkPosition(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3);
 			++_emptyCount;
 		}
 	}
