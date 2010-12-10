@@ -123,6 +123,7 @@ public:
 	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height);
 
 	// Debug
+	void drawLine(int x0, int y0, int x1, int y1);
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
 private:
