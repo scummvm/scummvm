@@ -104,7 +104,7 @@ void Sound::playMusic(ResourceId resourceId, int32 volume) {
 	playSoundData(Audio::Mixer::kMusicSoundType, &_musicHandle, resource->data, resource->size, true, volume, 0);
 }
 
-void Sound::changeMusic(uint32 index, int32 musicStatusExt) {
+void Sound::changeMusic(int32 index, int32 musicStatusExt) {
 	if (index != getWorld()->musicCurrentResourceIndex) {
 		getWorld()->musicCurrentResourceIndex = index;
 		getWorld()->musicStatusExt = musicStatusExt;

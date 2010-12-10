@@ -69,6 +69,8 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 	_hitAreaChapter7Counter = 0;
 	_chapter5FrameIndex = 0;
 
+	_musicVolume = 0;
+
 	g_debugPolygons  = 0;
 	g_debugObjects  = 0;
 	g_debugScrolling = 0;
@@ -930,7 +932,91 @@ void Scene::updateAmbientSounds() {
 }
 
 void Scene::updateMusic() {
-	//warning("[Scene::updateMusic] not implemented!");
+	if (!getWorld()->musicFlag)
+		return;
+
+	if (getWorld()->musicCurrentResourceIndex != kMusicStopped) {
+		switch (getWorld()->musicStatus) {
+		default:
+			break;
+
+		case 1:
+			getWorld()->musicCurrentResourceIndex = getWorld()->musicResourceIndex;
+
+			if (getWorld()->musicResourceIndex == kMusicStopped) {
+				getWorld()->musicStatus = 0;
+				getSound()->playMusic(kResourceNone, 0);
+			} else {
+				getWorld()->musicStatus = getWorld()->musicStatusExt;
+				getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicResourceIndex));
+			}
+			break;
+
+		case 2:
+			_musicVolume = getSound()->getMusicVolume();
+			getWorld()->musicStatus = 4;
+			break;
+
+		case 4:
+			_musicVolume -= 150;
+			if (_musicVolume >= -2500) {
+				getSound()->setMusicVolume(_musicVolume);
+				break;
+			}
+
+			_musicVolume = -10000;
+			getWorld()->musicCurrentResourceIndex = kMusicStopped;
+
+			if (getWorld()->musicResourceIndex == kMusicStopped) {
+				getWorld()->musicStatus = 0;
+				getSound()->playMusic(kResourceNone, 0);
+			} else {
+				getWorld()->musicStatus = 8;
+				getSound()->playMusic(kResourceNone, 0);
+				getWorld()->musicCurrentResourceIndex = getWorld()->musicResourceIndex;
+				_musicVolume = -2500;
+				getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicResourceIndex), _musicVolume);
+			}
+			break;
+
+		case 8:
+			_musicVolume += 150;
+			if (_musicVolume < 150) {
+				getSound()->setMusicVolume(_musicVolume);
+				break;
+			}
+
+			getSound()->setMusicVolume(Config.musicVolume);
+			getWorld()->musicStatus = getWorld()->musicStatusExt;
+			getWorld()->musicResourceIndex = (int32)kMusicStopped;
+			getWorld()->musicStatusExt = 0;
+			break;
+		}
+	} if (getWorld()->musicResourceIndex != kMusicStopped) {
+		switch (getWorld()->musicStatusExt) {
+		default:
+			break;
+
+		case 1:
+			getWorld()->musicCurrentResourceIndex = getWorld()->musicResourceIndex;
+			getWorld()->musicStatus = 1;
+			getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicResourceIndex));
+			getWorld()->musicResourceIndex = kMusicStopped;
+			getWorld()->musicStatusExt = 0;
+			getWorld()->musicFlag = 0;
+			break;
+
+		case 2:
+			_musicVolume = -10000;
+			getSound()->setMusicVolume(_musicVolume);
+			getWorld()->musicCurrentResourceIndex = getWorld()->musicResourceIndex;
+			getWorld()->musicStatus = 8;
+			getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicResourceIndex), _musicVolume);
+			break;
+		}
+	} else {
+		getWorld()->musicFlag = 0;
+	}
 }
 
 void Scene::updateAdjustScreen() {
@@ -946,7 +1032,7 @@ void Scene::updateCoordinates() {
 	int32 xLeft = _ws->xLeft;
 	int32 yTop  = _ws->yTop;
 	int32 posX = act->getPoint1()->x - _ws->xLeft;
-	int32 posY = act->getPoint1()->y - _ws->yTop;	
+	int32 posY = act->getPoint1()->y - _ws->yTop;
 	Common::Rect boundingRect = _ws->boundingRect;
 
 	switch (_ws->motionStatus) {
@@ -981,7 +1067,7 @@ void Scene::updateCoordinates() {
 
 		if (yTop > (_ws->height - 480))
 			yTop = _ws->yTop = _ws->height - 480;
-			
+
 		break;
 
 	case 2:
@@ -990,7 +1076,7 @@ void Scene::updateCoordinates() {
 
 		int32 coord1 = 0;
 		int32 coord2 = 0;
-		
+
 		if (abs(getSharedData()->sceneXLeft - _ws->coordinates[0]) <= abs(getSharedData()->sceneYTop - _ws->coordinates[1])) {
 			coord1 = _ws->coordinates[1];
 			coord2 = yTop;
@@ -1000,14 +1086,14 @@ void Scene::updateCoordinates() {
 
 			yTop = _ws->coordinates[2] + _ws->yTop;
 			_ws->yTop += _ws->coordinates[2];
-			
+
 		} else {
 			coord1 = _ws->coordinates[0];
 			coord2 = xLeft;
-			
+
 			if (_ws->coordinates[0] != _ws->xLeft)
 				yTop = _ws->yTop = getSharedData()->sceneOffset + getSharedData()->sceneYTop;
-			
+
 			xLeft = _ws->coordinates[2] + _ws->xLeft;
 			_ws->xLeft += _ws->coordinates[2];
 		}

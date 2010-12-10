@@ -72,9 +72,9 @@ WorldStats::WorldStats(AsylumEngine *engine) : _vm(engine) {
 
 	numAmbientSounds = 0;
 	musicStatus = 0;
-	musicCurrentResourceIndex = kResourceNone;
+	musicCurrentResourceIndex = 0;
 	musicFlag = 0;
-	musicResourceId = kResourceNone;
+	musicResourceIndex = 0;
 	musicStatusExt = 0;
 	numScripts = 0;
 	numPolygons = 0;
@@ -182,12 +182,12 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		ambientSounds[s].y = stream->readSint32LE();
 	}
 
-	numAmbientSounds   = stream->readSint32LE();
-	musicStatus       = stream->readSint32LE();
-	musicCurrentResourceIndex = stream->readUint32LE();
-	musicFlag         = stream->readSint32LE();
-	musicResourceId        = (ResourceId)stream->readUint32LE();
-	musicStatusExt    = stream->readSint32LE();
+	numAmbientSounds          = stream->readSint32LE();
+	musicStatus               = stream->readSint32LE();
+	musicCurrentResourceIndex = stream->readSint32LE();
+	musicFlag                 = stream->readSint32LE();
+	musicResourceIndex        = stream->readSint32LE();
+	musicStatusExt            = stream->readSint32LE();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Read Objects
