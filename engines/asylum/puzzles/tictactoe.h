@@ -52,7 +52,7 @@ private:
 
 	char _gameField[9];
 	uint32 _field[40];
-
+	uint32 _emptyCount;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
