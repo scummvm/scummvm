@@ -138,10 +138,10 @@ MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableRead
 	// Position values require modulus 10000 to keep in sane range.
 	_left = rlstStream->readUint16LE() % 10000;
 	_top = rlstStream->readUint16LE() % 10000;
-	_loop = rlstStream->readUint16LE();
+	_playOnCardChange = rlstStream->readUint16LE();
 	_direction = rlstStream->readUint16LE();
 	_playBlocking = rlstStream->readUint16LE();
-	_playOnCardChange = rlstStream->readUint16LE();
+	_loop = rlstStream->readUint16LE();
 	_u3 = rlstStream->readUint16LE();
 
 	if (_direction != 1)

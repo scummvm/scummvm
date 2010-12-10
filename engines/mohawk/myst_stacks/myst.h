@@ -76,7 +76,7 @@ private:
 	DECLARE_OPCODE(opcode_109);
 	DECLARE_OPCODE(opcode_113);
 	DECLARE_OPCODE(opcode_114);
-	DECLARE_OPCODE(opcode_115);
+	DECLARE_OPCODE(o_bookGivePage);
 	DECLARE_OPCODE(opcode_116);
 	DECLARE_OPCODE(opcode_117);
 	DECLARE_OPCODE(opcode_118);
@@ -205,6 +205,8 @@ private:
 
 	void libraryCombinationBookTurnRight();
 	void libraryCombinationBookTurnLeft();
+
+	uint16 bookCountPages(uint16 var);
 };
 
 } // End of namespace Mohawk

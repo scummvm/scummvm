@@ -63,7 +63,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(109, opcode_109);
 	OPCODE(113, opcode_113);
 	OPCODE(114, opcode_114);
-	OPCODE(115, opcode_115);
+	OPCODE(115, o_bookGivePage);
 	OPCODE(116, opcode_116);
 	OPCODE(117, opcode_117);
 	OPCODE(118, opcode_118);
@@ -219,6 +219,10 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return 1;
 		else
 			return 2;
+	case 46:
+		return bookCountPages(100);
+	case 47:
+		return bookCountPages(101);
 	case 49: // Generator running
 		return myst.generatorVoltage > 0;
 	case 52: // Generator Switch #1
@@ -337,6 +341,41 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 	}
 
 	return refresh;
+}
+
+uint16 MystScriptParser_Myst::bookCountPages(uint16 var) {
+	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+
+	uint16 pages = 0;
+	uint16 cnt = 0;
+
+	// Select book according to var
+	if (var == 100)
+		pages = globals.redPagesInBook;
+	else if (var == 101)
+		pages = globals.bluePagesInBook;
+
+	// Special page present
+	if (pages & 64)
+		return 6;
+
+	// Count pages
+	if (pages & 1)
+		cnt++;
+
+	if (pages & 2)
+		cnt++;
+
+	if (pages & 4)
+		cnt++;
+
+	if (pages & 8)
+		cnt++;
+
+	if (pages & 16)
+		cnt++;
+
+	return cnt;
 }
 
 void MystScriptParser_Myst::o_libraryBookPageTurnLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -552,41 +591,93 @@ void MystScriptParser_Myst::opcode_114(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Myst::opcode_115(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 3) {
-		uint16 cardIdLose = argv[0];
-		uint16 cardIdBookCover = argv[1];
-		uint16 soundIdAddPage = argv[2];
+void MystScriptParser_Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
 
-		debugC(kDebugScript, "Opcode %d: Red and Blue Book/Page Interaction", op);
-		debugC(kDebugScript, "Var: %d", var);
-		debugC(kDebugScript, "Card Id (Lose): %d", cardIdLose);
-		debugC(kDebugScript, "Card Id (Book Cover): %d", cardIdBookCover);
-		debugC(kDebugScript, "SoundId (Add Page): %d", soundIdAddPage);
+	uint16 cardIdLose = argv[0];
+	uint16 cardIdBookCover = argv[1];
+	uint16 soundIdAddPage = argv[2];
 
-		// TODO: if holding page for this book, play SoundIdAddPage
-		if (false) { // TODO: Should be access to mainCursor...
-			_vm->_sound->playSound(soundIdAddPage);
-			// TODO: Code for updating variables based on adding page
-		}
+	debugC(kDebugScript, "Opcode %d: Red and Blue Book/Page Interaction", op);
+	debugC(kDebugScript, "Var: %d", var);
+	debugC(kDebugScript, "Card Id (Lose): %d", cardIdLose);
+	debugC(kDebugScript, "Card Id (Book Cover): %d", cardIdBookCover);
+	debugC(kDebugScript, "SoundId (Add Page): %d", soundIdAddPage);
 
-		// TODO: Add Tweak to improve original logic by denying
-		//       lose until all red / blue pages collected, rather
-		//       than allowing shortcut based on 1 fireplace page?
+	// No page or white page
+	if (!globals.heldPage || globals.heldPage == 13) {
+		_vm->changeToCard(cardIdBookCover, true);
+		return;
+	}
 
-		// If holding last page for this book i.e. var 24/25
-		// Then trigger Trapped in Book Losing Ending
-		if ((var == 100 && !_vm->_varStore->getVar(25)) ||
-			(var == 101 && !_vm->_varStore->getVar(24))) {
-			// TODO: Clear mainCursor back to nominal..
-			_vm->changeToCard(cardIdLose, true);
-		} else
-			_vm->changeToCard(cardIdBookCover, true);
+	uint16 bookVar = 101;
+	uint16 mask = 0;
 
-		// TODO: Is this logic here?
-		//       i.e. If was holding page, wait then auto open and play book...
-	} else
-		unknown(op, var, argc, argv);
+	switch (globals.heldPage) {
+	case 7:
+		bookVar = 100;
+	case 1:
+		mask = 1;
+		break;
+	case 8:
+		bookVar = 100;
+	case 2:
+		mask = 2;
+		break;
+	case 9:
+		bookVar = 100;
+	case 3:
+		mask = 4;
+		break;
+	case 10:
+		bookVar = 100;
+	case 4:
+		mask = 8;
+		break;
+	case 11:
+		bookVar = 100;
+	case 5:
+		mask = 16;
+		break;
+	case 12:
+		bookVar = 100;
+	case 6:
+		mask = 32;
+		break;
+	}
+
+	// Wrong book
+	if (bookVar != var) {
+		_vm->changeToCard(cardIdBookCover, true);
+		return;
+	}
+
+	_vm->_cursor->hideCursor();
+	_vm->_sound->playSoundBlocking(soundIdAddPage);
+	_vm->setMainCursor(kDefaultMystCursor);
+
+	// Add page to book
+	if (var == 100)
+		globals.redPagesInBook |= mask;
+	else
+		globals.bluePagesInBook |= mask;
+
+	// Remove page from hand
+	globals.heldPage = 0;
+
+	_vm->_cursor->showCursor();
+
+	if (mask == 32) {
+		// Loose
+		if (var == 100)
+			globals.currentAge = 9;
+		else
+			globals.currentAge = 10;
+
+		_vm->changeToCard(cardIdLose, true);
+	} else {
+		_vm->changeToCard(cardIdBookCover, true);
+	}
 }
 
 void MystScriptParser_Myst::opcode_116(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
