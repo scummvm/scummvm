@@ -170,7 +170,7 @@ bool Savegame::quickSave() {
 			return false;
 
 		// Read game name
-		seek(file, 1, "Level");		
+		seek(file, 1, "Level");
 		_names[_index] = read(file, 45, "Game Name");
 
 		delete file;
@@ -262,7 +262,7 @@ bool Savegame::loadData(Common::String filename) {
 	if (!readHeader(file)) {
 		getWorld()->chapter = kChapterInvalid;
 		return false;
-	} 
+	}
 
 	read(file, _vm, 1512, 1, "Game Stats");
 	read(file, getWorld(), 951928, 1, "World Stats");
@@ -274,7 +274,7 @@ bool Savegame::loadData(Common::String filename) {
 
 	if (getWorld()->numScripts)
 		read(file, getScript(), 7096, getWorld()->numScripts, "Action Lists");
-	
+
 	uint32 tick = read(file, "Time");
 
 	_vm->setTick(tick);
@@ -339,7 +339,7 @@ Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, Common
 
 	if (strLength > count)
 		error("[Savegame::read] Count too large (asked: %d, present: %d)", strLength, count);
-	
+
 	char *str = new char[strLength + 1];
 	memset(str, 0, strLength + 1);
 	file->read(str, strLength);
@@ -359,7 +359,7 @@ void Savegame::read(Common::InSaveFile *file, Common::Serializable *data, uint32
 	uint32 fileCount = file->readUint32LE();
 	if (count > fileCount)
 		error("[Savegame::read] Count too large (asked: %d, present: %d)", count, fileCount);
-	
+
 	if (fileCount * fileSize == 0)
 		return;
 
@@ -417,8 +417,8 @@ void Savegame::setMovieViewed(uint32 index) {
 	}
 }
 
-uint32 Savegame::getMoviesViewed(byte *movieList) {
-	memset(movieList, -1, 196);
+uint32 Savegame::getMoviesViewed(int32 *movieList) {
+	memset(movieList, -1, 196 * sizeof(int32));
 
 	uint32 count = 0;
 

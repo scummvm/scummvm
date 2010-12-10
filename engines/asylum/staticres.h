@@ -44,6 +44,12 @@ const Common::Rect menuRects[12] = {Common::Rect(  40,  19,   93,  68),
 
 const int eyeFrameIndex[8] = {3, 5, 1, 7, 4, 8, 2, 6};
 
+const int moviesCd[49] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                          1, 1, 1, 1, 1, 1, 1, 2, 2, 2,
+                          2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+                          2, 2, 2, 2, 2, 2, 2, 2, 3, 3,
+                          3, 3, 3, 3, 3, 3, 3, 3, 2};
+
 /** Default Actor Indices by Scene */
 const int actorType[16] = {0, 0, 0, 0, 1, 0, 2, 0, 3, 0, 1, 1, 3, 0, 0, 0};
 

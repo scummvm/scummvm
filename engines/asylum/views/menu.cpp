@@ -669,7 +669,7 @@ bool Menu::click(const AsylumEvent &evt) {
 		_dword_455C78 = false;
 		_dword_456288 = 0;
 		_textScroll = 0;
-		_movieCount = getSaveLoad()->getMoviesViewed((byte *)&_movieList);
+		_movieCount = getSaveLoad()->getMoviesViewed((int32 *)&_movieList);
 		break;
 
 	case kMenuKeyboardConfig:
@@ -737,7 +737,128 @@ void Menu::updateDeleteGame() {
 void Menu::updateViewMovies() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::updateViewMovies] Not implemented!");
+	char text[100];
+	char text2[100];
+
+	if (!_dword_455C78) {
+		getText()->loadFont(kFontYellow);
+		sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1352)), getSharedData()->cdNumber);
+		getText()->drawCentered(10, 100, 620, (char *)&text2);
+
+		int32 index = _textScroll;
+		for (int32 y = 150; y < 324; y += 29) {
+			if (index >= ARRAYSIZE(_movieList))
+				break;
+
+			if (_movieList[index] != -1 ) {
+				sprintf((char *)&text, "%d. %s ", index + 1, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359 + _movieList[index])));
+				sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1356)), moviesCd[_movieList[index]]);
+				strcat((char *)&text, (char *)&text2);
+
+				if (getCursor()->isHidden()
+				 || cursor.x < 30 || cursor.x > (30 + getText()->getWidth((char *)&text))
+				 || cursor.y < y || cursor.y > (y + 24))
+					getText()->loadFont(kFontYellow);
+				else
+					getText()->loadFont(kFontBlue);
+
+				getText()->setPosition(30, y);
+				getText()->draw((char *)&text);
+			}
+
+			++index;
+		}
+
+		for (int32 y = 150; y < 324; y += 29) {
+			if (index >= ARRAYSIZE(_movieList))
+				break;
+
+			if (_movieList[index] != -1 ) {
+				sprintf((char *)&text, "%d. %s ", index + 1, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359 + _movieList[index])));
+				sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1356)), moviesCd[_movieList[index]]);
+				strcat((char *)&text, (char *)&text2);
+
+				if (getCursor()->isHidden()
+					|| cursor.x < 350 || cursor.x > (350 + getText()->getWidth((char *)&text))
+					|| cursor.y < y || cursor.y > (y + 24))
+					getText()->loadFont(kFontYellow);
+				else
+					getText()->loadFont(kFontBlue);
+
+				getText()->setPosition(350, y);
+				getText()->draw((char *)&text);
+			}
+
+			index++;
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Previous page
+		if (getCursor()->isHidden()
+			|| cursor.x < 30 || cursor.x > (30 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1353)))
+			|| cursor.y < 340 || cursor.y > (340 + 24))
+			getText()->loadFont(kFontYellow);
+		else
+			getText()->loadFont(kFontBlue);
+
+		getText()->setPosition(30, 340);
+		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1353));
+
+		//////////////////////////////////////////////////////////////////////////
+		// Main Menu
+		if (getCursor()->isHidden()
+		 || cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1355)))
+		 || cursor.y < 340 || cursor.y > (340 + 24))
+			getText()->loadFont(kFontYellow);
+		else
+			getText()->loadFont(kFontBlue);
+
+		getText()->setPosition(300, 340);
+		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1355));
+
+		//////////////////////////////////////////////////////////////////////////
+		// Next Page
+		if (getCursor()->isHidden()
+		 || cursor.x < 550 || cursor.x > (550 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1354)))
+		 || cursor.y < 340 || cursor.y > (340 + 24))
+			getText()->loadFont(kFontYellow);
+		else
+			getText()->loadFont(kFontBlue);
+
+		getText()->setPosition(550, 340);
+		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1354));
+
+		//////////////////////////////////////////////////////////////////////////
+		// Play video if needed
+		if (_needEyeCursorInit) {
+			getSound()->playMusic(0, 0);
+
+			getVideo()->play(getSaveLoad()->getIndex(), this);
+
+			getSound()->playMusic(_musicResourceId);
+		}
+
+		return;
+	}
+
+	getText()->loadFont(kFontYellow);
+	sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1357)), getSharedData()->cdNumber);
+	getText()->drawCentered(10, 100, 620, text2);
+
+	strcpy((char *)&text, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359)));
+	sprintf((char *)&text2, getText()->get((ResourceId)getSaveLoad()->getIndex()), moviesCd[getSaveLoad()->getIndex()]);
+	strcat((char *)&text, (char *)&text2);
+	getText()->drawCentered(10, 134, 620, text);
+
+	getText()->drawCentered(10, 168, 620, getText()->get(MAKE_RESOURCE(kResourcePackText, 1358)));
+
+	++_dword_456288;
+	if (_dword_456288 == 90) {
+		_dword_456288 = 0;
+		_dword_455C78 = false;
+
+		getCursor()->show();
+	}
 }
 
 void Menu::updateQuitGame() {
@@ -1419,7 +1540,7 @@ void Menu::keySaveGame(const AsylumEvent &evt) {
 		if (evt.kbd.ascii > 255 || !isalnum(evt.kbd.ascii))
 			break;
 
-		if (getSaveLoad()->getName()->size() < 44) {			
+		if (getSaveLoad()->getName()->size() < 44) {
 			int32 width = getText()->getWidth(getSaveLoad()->getName()->c_str());
 
 			bool test = false;
@@ -1449,7 +1570,7 @@ void Menu::keySaveGame(const AsylumEvent &evt) {
 		if (getSaveLoad()->getName()->size())
 			getSaveLoad()->getName()->deleteLastChar();
 		break;
-	
+
 	case Common::KEYCODE_PERIOD:
 		*getSaveLoad()->getName() = "";
 		break;

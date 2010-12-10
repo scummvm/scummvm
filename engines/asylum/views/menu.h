@@ -120,7 +120,7 @@ private:
 	uint32           _iconFrames[12];
 
 	// Movies
-	byte _movieList[196];
+	int32  _movieList[196];
 	uint32 _movieCount;
 
 	// Savegames
