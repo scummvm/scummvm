@@ -40,15 +40,18 @@ public:
 private:
 	enum GameStatus {
 		kStatus0,
-		kStatus1,
-		kStatus2
+		kStatusFree,
+		kStatusNeedBlocking
 	};
 
 	uint32 _ticker;
 	uint32 _frameIndex;
+	uint32 _frameCount;
 	int32 _lastMarkedField;
 	bool _needToInitialize;
 	int32 _strikeOutPosition;
+
+	uint32 _var5;
 
 	char _gameField[9];
 	uint32 _field[40];
@@ -62,14 +65,13 @@ private:
 	bool key(const AsylumEvent &evt);
 	bool mouse(const AsylumEvent &evt);
 
-	void mouseDown();
+	void mouseLeft();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Init & update
 	//////////////////////////////////////////////////////////////////////////
 	void initField();
-
-	void updateField();
+	void drawField();
 	void updatePositions(uint32 field1, uint32 field2, uint32 field3);
 
 	//////////////////////////////////////////////////////////////////////////
@@ -77,13 +79,12 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	bool check();
 	GameStatus checkField(uint32 field1, uint32 field2, uint32 field3, char mark, uint32 *counterX, uint32 *counterO);
-	bool checkFields1();
-	bool checkFields2();
-	uint32 checkPosition(uint32 position1, uint32 position2, uint position32);
+	bool checkFieldsUpdatePositions();
+	bool checkFields();
+	uint32 checkPosition(uint32 position1, uint32 position2, uint position3);
 	bool checkWinner();
-	bool checkWinnerHelper();
-	bool checkWinningO();
-	bool checkWinningX();
+	int32 checkWinnerHelper();
+	bool checkWinning(char mark);
 	bool countEmptyFields();
 	void placeOpponentMark();
 };
