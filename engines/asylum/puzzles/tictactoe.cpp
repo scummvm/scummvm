@@ -69,17 +69,38 @@ const Common::Point puzzleTicTacToePositions[9] = {
 	Common::Point(269,  70)
 };
 
+static const struct {
+	uint32 field1;
+	uint32 field2;
+	uint32 field3;
+	uint32 strikeOutPositionX;
+	uint32 strikeOutPositionO;
+	uint32 frameCount;
+} fieldsToCheck[8] = {
+	{0, 1, 2, 1,  9, 14},
+	{3, 4, 5, 2, 10, 14},
+	{6, 7, 8, 3, 11, 14},
+	{0, 3, 6, 4, 12, 10},
+	{4, 1, 7, 5, 13, 10},
+	{8, 5, 2, 6, 14, 10},
+	{4, 6, 2, 7, 15,  4},
+	{0, 4, 8, 8, 16,  4}
+};
+
 PuzzleTicTacToe::PuzzleTicTacToe(AsylumEngine *engine) : Puzzle(engine) {
 	_ticker = 0;
 	_frameIndex = 0;
+	_frameCount = 0;
 	_lastMarkedField = 0;
 	_needToInitialize = false;
 	_strikeOutPosition = 0;
 
+	// Field
 	memset(&_gameField, 0, sizeof(_gameField));
 	memset(&_field, 0, sizeof(_field));
-
 	_emptyCount = 0;
+
+	_var5 = 0;
 }
 
 PuzzleTicTacToe::~PuzzleTicTacToe() {
@@ -129,7 +150,7 @@ bool PuzzleTicTacToe::update()  {
 	}
 
 	getScreen()->draw(getWorld()->graphicResourceIds[0]);
-	updateField();
+	drawField();
 	getScene()->updateAmbientSounds();
 
 	getScreen()->copyBackBufferToScreen();
@@ -161,15 +182,44 @@ bool PuzzleTicTacToe::mouse(const AsylumEvent &evt) {
 		break;
 
 	case Common::EVENT_LBUTTONDOWN:
-		mouseDown();
+		mouseLeft();
 		break;
 	}
 
 	return true;
 }
 
-void PuzzleTicTacToe::mouseDown() {
-	error("[PuzzleTicTacToe::mouseDown] Not implemented!");
+void PuzzleTicTacToe::mouseLeft() {
+	Common::Point mousePos = getCursor()->position();
+
+	if (!_vm->isGameFlagNotSet(kGameFlag215) || !_vm->isGameFlagNotSet(kGameFlag114)) {
+		getCursor()->show();
+		exit();
+		return;
+	}
+
+	if (_needToInitialize) {
+		_needToInitialize = false;
+		_frameIndex = 0;
+		_lastMarkedField = -1;
+		_strikeOutPosition = -1;
+		initField();
+
+		return;
+	}
+
+	for (uint32 i = 0; i < ARRAYSIZE(puzzleTicTacToePolygons) - 2; i++) {
+		if (hitTest(&puzzleTicTacToePolygons[i], mousePos, 0)) {
+			if (_gameField[i] == ' ') {
+				getSound()->playSound(getWorld()->soundResourceIds[11], false, Config.sfxVolume - 100);
+				_gameField[i] = 'X';
+				_lastMarkedField = i;
+				_frameIndex = 0;
+
+				getCursor()->hide();
+			}
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -179,59 +229,213 @@ void PuzzleTicTacToe::initField() {
 	memset(&_gameField, 32, sizeof(_gameField)); // ' ' == 32
 }
 
-void PuzzleTicTacToe::updateField() {
+void PuzzleTicTacToe::drawField() {
 	warning("[PuzzleTicTacToe::updateField] Not implemented!");
 }
 
 void PuzzleTicTacToe::updatePositions(uint32 field1, uint32 field2, uint32 field3) {
-	error("[PuzzleTicTacToe::updatePositions] Not implemented!");
+	if (_gameField[field1] != ' ') {
+		_field[_emptyCount] = field3;
+		_field[_emptyCount + 1] = field2;
+
+		_emptyCount += 2;
+	}
+
+	if (_gameField[field3] != ' ') {
+		_field[_emptyCount] = field1;
+		_field[_emptyCount + 1] = field2;
+
+		_emptyCount += 2;
+	}
+
+	if (_gameField[field2] != ' ') {
+		_field[_emptyCount] = field3;
+		_field[_emptyCount + 1] = field1;
+
+		_emptyCount += 2;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Game
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleTicTacToe::check() {
-	error("[PuzzleTicTacToe::check] Not implemented!");
+	if (_needToInitialize)
+		return false;
+
+	if (!checkWinning('X')
+	 && !checkWinning('O')
+	 && !checkFieldsUpdatePositions()
+	 && !checkFields()
+	 && !countEmptyFields()) {
+		if (!_var5)
+			getCursor()->show();
+
+		_needToInitialize = true;
+
+		return false;
+	}
+
+	return true;
 }
 
 PuzzleTicTacToe::GameStatus PuzzleTicTacToe::checkField(uint32 field1, uint32 field2, uint32 field3, char mark, uint32 *counterX, uint32 *counterO) {
-	error("[PuzzleTicTacToe::checkField] Not implemented!");
+	*counterX = 0;
+	*counterO = 0;
+	GameStatus status = kStatus0;
+
+	if (_gameField[field1] == 'X')
+		++*counterX;
+	if (_gameField[field2] == 'X')
+		++*counterX;
+	if (_gameField[field3] == 'X')
+		++*counterX;
+
+	if (_gameField[field1] == 'O')
+		++*counterO;
+	if (_gameField[field2] == 'O')
+		++*counterO;
+	if (_gameField[field3] == 'O')
+		++*counterO;
+
+	if (mark == 'O') {
+		if (*counterO == 1 && !*counterX)
+			status = kStatusFree;
+	} else if (mark == 'X') {
+		if (!*counterO && *counterX == 1)
+			status = kStatusFree;
+	}
+
+	if (mark == 'O') {
+		if (!*counterO && *counterX == 2)
+			status = kStatusNeedBlocking;
+	} else if (mark == 'X') {
+		if (*counterO == 2 && !*counterX)
+			status = kStatusNeedBlocking;
+	}
+
+	return status;
 }
 
-bool PuzzleTicTacToe::checkFields1() {
-	error("[PuzzleTicTacToe::checkFields1] Not implemented!");
+bool PuzzleTicTacToe::checkFieldsUpdatePositions() {
+	uint32 counterX = 0;
+	uint32 counterO = 0;
+
+	for (uint32 i = 0; i < ARRAYSIZE(fieldsToCheck) - 1; i++)
+		if (checkField(fieldsToCheck[i].field1, fieldsToCheck[i].field2, fieldsToCheck[i].field3, 'O', &counterX, &counterO) == kStatusFree)
+			updatePositions(fieldsToCheck[i].field1, fieldsToCheck[i].field2, fieldsToCheck[i].field3);
+
+	return (_emptyCount != 0);
 }
 
-bool PuzzleTicTacToe::checkFields2() {
-	error("[PuzzleTicTacToe::checkFields2] Not implemented!");
+bool PuzzleTicTacToe::checkFields() {
+	uint32 counterX = 0;
+	uint32 counterO = 0;
+
+	for (uint32 i = 0; i < ARRAYSIZE(fieldsToCheck) - 1; i++) {
+		checkField(fieldsToCheck[i].field1, fieldsToCheck[i].field2, fieldsToCheck[i].field3, 'O', &counterX, &counterO);
+
+		if (counterX || counterO)
+			continue;
+
+		_field[_emptyCount] = 0;
+		_field[_emptyCount + 1] = fieldsToCheck[i].field3;
+		_field[_emptyCount + 2] = fieldsToCheck[i].field2;
+
+		_emptyCount += 3;
+	}
+
+	return (_emptyCount != 0);
 }
 
-uint32 PuzzleTicTacToe::checkPosition(uint32 position1, uint32 position2, uint position32) {
-	error("[PuzzleTicTacToe::checkPosition] Not implemented!");
+uint32 PuzzleTicTacToe::checkPosition(uint32 position1, uint32 position2, uint position3) {
+	if (_gameField[position1] == ' ')
+		return position1;
+
+	if (_gameField[position2] == ' ')
+		return position2;
+
+	return position3;
 }
 
 bool PuzzleTicTacToe::checkWinner() {
-	error("[PuzzleTicTacToe::checkWinner] Not implemented!");
+	if (_needToInitialize)
+		return true;
+
+	if (checkWinnerHelper() == 1) {
+		_vm->setGameFlag(kGameFlag114);
+		_ticker = 30;
+		return true;
+	}
+
+	if (checkWinnerHelper() == -1) {
+		_vm->setGameFlag(kGameFlag215);
+		_ticker = 30;
+		return true;
+	}
+
+	return false;
 }
 
-bool PuzzleTicTacToe::checkWinnerHelper() {
-	error("[PuzzleTicTacToe::checkWinnerHelper] Not implemented!");
+int32 PuzzleTicTacToe::checkWinnerHelper() {
+	uint32 counterX = 0;
+	uint32 counterO = 0;
+
+	for (uint32 i = 0; i < ARRAYSIZE(fieldsToCheck) - 1; i++) {
+		checkField(fieldsToCheck[i].field1, fieldsToCheck[i].field2, fieldsToCheck[i].field3, 'O', &counterX, &counterO);
+
+		if (counterX == 3) {
+			_strikeOutPosition = fieldsToCheck[i].strikeOutPositionX;
+			_frameCount = fieldsToCheck[i].frameCount;
+			_frameIndex = 0;
+			return 1;
+		}
+
+		if (counterO == 3) {
+			_strikeOutPosition = fieldsToCheck[i].strikeOutPositionO;
+			_frameCount = fieldsToCheck[i].frameCount;
+			_frameIndex = 0;
+			return -1;
+		}
+	}
+
+	return 0;
 }
 
-bool PuzzleTicTacToe::checkWinningO() {
-	error("[PuzzleTicTacToe::checkWinningO] Not implemented!");
-}
+bool PuzzleTicTacToe::checkWinning(char mark) {
+	uint32 counterX = 0;
+	uint32 counterO = 0;
+	_emptyCount = 0;
 
-bool PuzzleTicTacToe::checkWinningX() {
-	error("[PuzzleTicTacToe::checkWinningX] Not implemented!");
+	for (uint32 i = 0; i < ARRAYSIZE(fieldsToCheck) - 1; i++) {
+		if (checkField(fieldsToCheck[i].field1, fieldsToCheck[i].field2, fieldsToCheck[i].field3, 'O', &counterX, &counterO) == kStatusNeedBlocking) {
+			_field[_emptyCount] = checkPosition(fieldsToCheck[i].field1, fieldsToCheck[i].field2, fieldsToCheck[i].field3);
+			++_emptyCount;
+		}
+	}
+
+	return (_emptyCount != 0);
 }
 
 bool PuzzleTicTacToe::countEmptyFields() {
-	error("[PuzzleTicTacToe::countEmptyFields] Not implemented!");
+	_emptyCount = 0;
+
+	for (uint32 i = 0; i < ARRAYSIZE(_gameField); i++) {
+		if (_gameField[i] == ' ') {
+			_field[i] = i;
+			++_emptyCount;
+		}
+	}
+
+	return (_emptyCount != 0);
 }
 
 void PuzzleTicTacToe::placeOpponentMark() {
-	error("[PuzzleTicTacToe::placeOpponentMark] Not implemented!");
+	_frameIndex = 0;
+	_lastMarkedField = _field[rnd(_emptyCount)];
+	_gameField[_lastMarkedField] = 'O';
+
+	getSound()->playSound(getWorld()->soundResourceIds[12], false, Config.sfxVolume - 100);
 }
 
 } // End of namespace Asylum
