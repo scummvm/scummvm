@@ -199,6 +199,7 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 	// Reset scene (this ensures the current resource pack is closed as in the original)
 	delete _scene;
 	_scene = new Scene(this);
+	_handler = _scene;
 
 	// Original checks for the current cd (we have all data files on disc, so this is not needed)
 
@@ -234,6 +235,9 @@ void AsylumEngine::restart() {
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
 	delete _scene;
 	_scene = NULL;
+	// TODO reset puzzle data
+	// TODO reset encounter data
+	_script->resetQueue();
 
 	_data.point.x = -1;
 	_data.point.y = -1;
@@ -376,16 +380,13 @@ void AsylumEngine::processDelayedEvents() {
 		// Reset delayed scene
 		_delayedSceneIndex = kResourcePackInvalid;
 
+		_scene->getActor(0)->updateStatus(kActorStatusDisabled);
+		_script->reset();
+
 		_sound->stopMusic();
 		_sound->stopAll();
 
-		switchEventHandler(NULL);
-
-		delete _scene;
-		_scene = new Scene(this);
-		_scene->enter(sceneIndex);
-
-		switchEventHandler(_scene);
+		switchScene(sceneIndex);
 	}
 
 	// Check for delayed video
