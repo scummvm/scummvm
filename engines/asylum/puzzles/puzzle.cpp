@@ -104,41 +104,15 @@ void Puzzle::exit() {
 // Hit test functions
 //////////////////////////////////////////////////////////////////////////
 bool Puzzle::hitTest(const Common::Point *polygonPoint, Common::Point point, uint32 index) {
-	uint32 counter = 0;
+	PolyDefinitions polygon(polygonPoint[index], polygonPoint[index + 1], polygonPoint[index + 2], polygonPoint[index + 3]);
 
-	for (uint32 i = index; i < index + 3; i++)
-		if (Polygons::contains(point.x, point.y,
-		                       polygonPoint[index + 1].x + point.x + 100, point.y,
-		                       polygonPoint[i].x, polygonPoint[i].y,
-		                       polygonPoint[i + 1].x, polygonPoint[i + 1].y))
-			++counter;
-
-	if (Polygons::contains(point.x, point.y,
-	                       polygonPoint[index + 1].x + point.x + 100, point.y,
-	                       polygonPoint[index].x, polygonPoint[index].y,
-	                       polygonPoint[index + 3].x, polygonPoint[index + 3].y))
-		++counter;
-
-	return (counter & 1);
+	return polygon.contains(point);
 }
 
 bool Puzzle::hitTest(const Common::Point *polygonPoint, Common::Point point) {
-	uint32 counter = 0;
+	PolyDefinitions polygon(polygonPoint[0], polygonPoint[1], polygonPoint[2], polygonPoint[3]);
 
-	for (uint32 i = 3; i > 1; i--)
-		if (Polygons::contains(point.x, point.y,
-		                       polygonPoint[1].x + point.x + 700, point.y,
-		                       polygonPoint[i].x, polygonPoint[i].y,
-		                       polygonPoint[i + 1].x, polygonPoint[i + 1].y))
-			++counter;
-
-	if (Polygons::contains(point.x, point.y,
-	                       polygonPoint[0].x + point.x + 100, point.y,
-	                       polygonPoint[0].x, polygonPoint[0].y,
-	                       polygonPoint[3].x, polygonPoint[3].y))
-		++counter;
-
-	return (counter & 1);
+	return polygon.contains(point);
 }
 
 } // end of namespace Asylum
