@@ -705,7 +705,6 @@ bool HugoEngine::loadHugoDat() {
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
-			_maxInvent = numElem;
 			_defltTunes = (int16 *)malloc(sizeof(int16) * numElem);
 			for (int i = 0; i < numElem; i++)
 				_defltTunes[i] = in.readSint16BE();
