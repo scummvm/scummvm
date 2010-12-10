@@ -212,6 +212,10 @@ void Screen::setPalette(byte *rgbPalette) const {
 	_vm->_system->setPalette(palette, 0, 256);
 }
 
+void Screen::setPaletteGamma(ResourceId id) {
+	warning("[Screen::setGammaPalette] not implemented");
+}
+
 void Screen::setupPaletteAndStartFade(uint32 red, int32 milliseconds, int32 param) {
 	warning("[Screen::setupPaletteAndStartFade] Not implemented!");
 }
@@ -228,6 +232,10 @@ void Screen::paletteFade(uint32 red, int32 milliseconds, int32 param) {
 
 void Screen::startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param) {
 	warning("[Screen::startPaletteFade] Not implemented!");
+}
+
+void Screen::updatePalette() {
+	error("[Screen::updatePalette] Not implemented!");
 }
 
 void Screen::updatePalette(int32 param) {

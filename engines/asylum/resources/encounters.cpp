@@ -1144,7 +1144,77 @@ void Encounter::drawText(char *text, ResourceId font, int32 y) {
 }
 
 void Encounter::drawScreen() {
-	error("[Encounter::drawScreen] not implemented!");
+	getScene()->getActor()->setLastScreenUpdate(_vm->screenUpdateCount);
+
+	if (!getSharedData()->matteInitialized)
+		getSharedData()->matteBarHeight = 85;
+
+	if (getSharedData()->matteBarHeight >= 84) {
+		if (getSharedData()->matteBarHeight == 85) {
+			if (getSharedData()->matteInitialized) {
+				getScreen()->drawWideScreenBars(82);
+
+				getScreen()->updatePalette();
+				getScreen()->setupPalette(NULL, 0, 0);
+				getScreen()->paletteFade(0, 25, 10);
+			} else {
+				getSharedData()->matteInitialized = true;
+				getScreen()->clear();
+			}
+
+			if (getSharedData()->matteVar1) {
+				if (!getSharedData()->matteVar2)
+					getSound()->playMusic(kResourceNone, 0);
+
+				// Play movie
+				getScreen()->clear();
+				getVideo()->play(getSharedData()->movieIndex, _isRunning ? (EventHandler*)this : getScene());
+				getScreen()->clearGraphicsInQueue();
+				getScreen()->clear();
+				getCursor()->hide();
+
+				if (getSharedData()->mattePlaySound) {
+					getScreen()->paletteFade(0, 2, 1);
+					getScene()->updateScreen();
+					getScreen()->drawWideScreenBars(82);
+
+					getScreen()->updatePalette();
+					getScreen()->setupPalette(NULL, 0, 0);
+
+					if (getSharedData()->mattePlaySound /* Scene::updateScreen() does script processing, so the value might have changed */
+					 && !getSharedData()->matteVar2
+					 && getWorld()->musicCurrentResourceIndex != kMusicStopped)
+						getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicCurrentResourceIndex));
+				}
+
+				getSharedData()->matteBarHeight = (getSharedData()->mattePlaySound ? 346 : 170);
+			} else {
+				getSharedData()->matteBarHeight = 170;
+			}
+		} else if (getSharedData()->matteBarHeight >= 170) {
+			if (_isRunning) {
+				getSharedData()->matteBarHeight = 0;
+				getCursor()->show();
+			}
+		} else {
+			getScreen()->drawWideScreenBars(172 - getSharedData()->matteBarHeight);
+			getSharedData()->matteBarHeight += 4;
+
+			ResourceId paletteId = getWorld()->actions[getScene()->getActor()->getActionIndex3()]->paletteResourceId;
+			getScreen()->setPaletteGamma(paletteId ? paletteId : getWorld()->currentPaletteId);
+
+			updatePalette1();
+			getScreen()->setupPalette(NULL, 0, 0);
+		}
+	} else {
+		getScreen()->drawWideScreenBars(getSharedData()->matteBarHeight);
+		getSharedData()->matteBarHeight += 4;
+
+		getScreen()->setPaletteGamma(getWorld()->currentPaletteId);
+
+		updatePalette2();
+		getScreen()->setupPalette(NULL, 0, 0);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1355,6 +1425,14 @@ bool Encounter::updateScreen() {
 	return false;
 }
 
+void Encounter::updatePalette1() {
+	error("[Encounter::updatePalette1] Not implemented!");
+}
+
+void Encounter::updatePalette2() {
+	error("[Encounter::updatePalette2] Not implemented!");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Scripts
 //////////////////////////////////////////////////////////////////////////
@@ -1550,7 +1628,7 @@ void Encounter::runScript() {
 			if (!getSharedData()->matteBarHeight) {
 				getScreen()->makeGreyPalette();
 				getSharedData()->matteBarHeight = 1;
-				getVideo()->play(getVariableInv(entry.param2), this);
+				getSharedData()->movieIndex = getVariableInv(entry.param2);
 				getSharedData()->matteVar1 = 1;
 				getSharedData()->mattePlaySound = true;
 				getSharedData()->matteInitialized = true;
