@@ -92,7 +92,7 @@ public:
 	// Movies
 	//////////////////////////////////////////////////////////////////////////
 	void setMovieViewed(uint32 index);
-	uint32 getMoviesViewed(byte *movieList);
+	uint32 getMoviesViewed(int32 *movieList);
 	void loadMoviesViewed();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	void setName(uint32 index, Common::String name);
 	Common::String getName(uint32 index);
-	
+
 	Common::String *getName() { return &_names[_index]; }
 	void setIndex(uint32 index) { _index = index; }
 	uint32 getIndex() { return _index; }
@@ -194,21 +194,21 @@ private:
 	void seek(Common::InSaveFile *file, uint32 offset, Common::String description);
 
 	/**
-	 * Reads data from a file. 
+	 * Reads data from a file.
 	 *
-	 * @param [in,out] file If non-null, the file. 
-	 * @param description   The description. 
+	 * @param [in,out] file If non-null, the file.
+	 * @param description   The description.
 	 *
 	 * @return the value
 	 */
 	uint32 read(Common::InSaveFile *file, Common::String description);
 
 	/**
-	 * Reads data from a file. 
+	 * Reads data from a file.
 	 *
-	 * @param [in,out] file If non-null, the file. 
-	 * @param strLength 	Length of the string. 
-	 * @param description   The description. 
+	 * @param [in,out] file If non-null, the file.
+	 * @param strLength 	Length of the string.
+	 * @param description   The description.
 	 *
 	 * @return the string
 	 */
