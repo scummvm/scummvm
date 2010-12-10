@@ -203,9 +203,7 @@ enum ResourcesId {
 	kResourceInvalid       = 0xFFFFFFFF
 };
 
-enum MusicIndex {
-	kMusicStopped         = 0xFFFFFD66 // -666
-};
+#define kMusicStopped -666
 
 //////////////////////////////////////////////////////////////////////////
 // Actions

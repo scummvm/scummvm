@@ -140,7 +140,7 @@ public:
 	 * @param index 		 Zero-based index of the music
 	 * @param musicStatusExt The music status.
 	 */
-	void changeMusic(uint32 index, int32 musicStatusExt);
+	void changeMusic(int32 index, int32 musicStatusExt);
 
 	/**
 	 * Query if a sound with the resource id is playing.

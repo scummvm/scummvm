@@ -118,9 +118,9 @@ public:
 	AmbientSoundItem ambientSounds[15];
 	int32 numAmbientSounds;
 	int32 musicStatus;
-	uint32 musicCurrentResourceIndex;
+	int32 musicCurrentResourceIndex;
 	int32 musicFlag;
-	ResourceId musicResourceId;
+	int32 musicResourceIndex;
 	int32 musicStatusExt;
 	Common::Array<Object*>     objects;   // maxsize 400
 	Common::Array<Actor*>      actors;   // maxsize 50

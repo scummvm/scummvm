@@ -208,6 +208,9 @@ private:
 		int32 priority;
 	};
 
+	// Music volume
+	int32 _musicVolume;
+
 	Common::Array<UpdateItem> _updateList;
 
 	//////////////////////////////////////////////////////////////////////////
