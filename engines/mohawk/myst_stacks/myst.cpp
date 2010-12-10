@@ -668,7 +668,7 @@ void MystScriptParser_Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, u
 	_vm->_cursor->showCursor();
 
 	if (mask == 32) {
-		// Loose
+		// You lose!
 		if (var == 100)
 			globals.currentAge = 9;
 		else
