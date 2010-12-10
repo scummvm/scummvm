@@ -252,7 +252,7 @@ void Actor::draw() {
 	if (_frameIndex >= _frameCount)
 		frameIndex = 2 * _frameCount - (_frameIndex + 1);
 
-	if (LOBYTE(flags) & kActorFlagMasked) {
+	if (flags & kActorFlagMasked) {
 		Object *object = getWorld()->objects[_objectIndex];
 		Common::Point objPoint;
 		object->adjustCoordinates(&objPoint);
