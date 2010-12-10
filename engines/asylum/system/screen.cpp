@@ -487,6 +487,13 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Debug
+//////////////////////////////////////////////////////////////////////////
+void Screen::drawLine(int x0, int y0, int x1, int y1) {
+	_backBuffer.drawLine(x0, y0, x1, y1, 0xFF);
+}
+
 void Screen::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 	Common::Rect screenRect(getWorld()->xLeft, getWorld()->yTop, getWorld()->xLeft + 640, getWorld()->yTop + 480);
 	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
