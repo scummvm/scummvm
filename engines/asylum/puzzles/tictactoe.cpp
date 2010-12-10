@@ -77,6 +77,9 @@ PuzzleTicTacToe::PuzzleTicTacToe(AsylumEngine *engine) : Puzzle(engine) {
 	_strikeOutPosition = 0;
 
 	memset(&_gameField, 0, sizeof(_gameField));
+	memset(&_field, 0, sizeof(_field));
+
+	_emptyCount = 0;
 }
 
 PuzzleTicTacToe::~PuzzleTicTacToe() {
@@ -106,7 +109,32 @@ bool PuzzleTicTacToe::init()  {
 }
 
 bool PuzzleTicTacToe::update()  {
-	error("[PuzzleTicTacToe::update] Not implemented!");
+	if (_ticker) {
+		++_ticker;
+
+		if (_ticker <= 25) {
+			if (_ticker > 20) {
+				if (check())
+					placeOpponentMark();
+
+				_ticker = 0;
+			}
+		} else {
+			if (_ticker > 40) {
+				getSound()->playSound(getWorld()->soundResourceIds[13], false, Config.sfxVolume - 100);
+
+				_ticker = 0;
+			}
+		}
+	}
+
+	getScreen()->draw(getWorld()->graphicResourceIds[0], 0, 0, 0, 0, false);
+	updateField();
+	getScene()->updateAmbientSounds();
+
+	getScreen()->copyBackBufferToScreen();
+
+	return true;
 }
 
 bool PuzzleTicTacToe::key(const AsylumEvent &evt) {
@@ -152,7 +180,7 @@ void PuzzleTicTacToe::initField() {
 }
 
 void PuzzleTicTacToe::updateField() {
-	error("[PuzzleTicTacToe::updateField] Not implemented!");
+	warning("[PuzzleTicTacToe::updateField] Not implemented!");
 }
 
 void PuzzleTicTacToe::updatePositions(uint32 field1, uint32 field2, uint32 field3) {

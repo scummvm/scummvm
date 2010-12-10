@@ -167,6 +167,11 @@ public:
 	bool updateScreen();
 
 	/**
+	 * Updates the ambient sounds.
+	 */
+	void updateAmbientSounds();
+
+	/**
 	 * Determine if the supplied point intersects an action area's active region.
 	 *
 	 * @param pt The point.
@@ -246,11 +251,6 @@ private:
 	 * Updates the objects.
 	 */
 	void updateObjects();
-
-	/**
-	 * Updates the ambient sounds.
-	 */
-	void updateAmbientSounds();
 
 	/**
 	 * Updates the music.
