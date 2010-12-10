@@ -314,7 +314,7 @@ void PuzzleVCR::updateScreen() {
 
 	// Draw background
 	getScreen()->clearGraphicsInQueue();
-	getScreen()->draw(getWorld()->graphicResourceIds[0], 0, 0, 0, 0, false);
+	getScreen()->draw(getWorld()->graphicResourceIds[0]);
 
 	updateBlackJack();
 	updateRedJack();
@@ -334,7 +334,7 @@ void PuzzleVCR::updateScreen() {
 
 	if (_isAccomplished) {
 		getCursor()->show();
-		getScreen()->draw(getWorld()->graphicResourceIds[0], 0, 0, 0, 0, false);
+		getScreen()->draw(getWorld()->graphicResourceIds[0]);
 		getScreen()->drawGraphicsInQueue();
 
 		for (uint32 barSize = 0; barSize < 84; barSize += 4)
