@@ -217,7 +217,7 @@ protected:
 
 	uint16 _dragSound;
 	uint16 _sliderWidth;
-	uint16 _sliderHeigth;
+	uint16 _sliderHeight;
 };
 
 class MystResourceType12 : public MystResourceType11 {

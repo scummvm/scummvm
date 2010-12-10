@@ -469,15 +469,15 @@ MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableRe
 	debugC(kDebugResource, "\tdrag sound : %d", _dragSound);
 
 	_sliderWidth = _rect.right - _rect.left;
-	_sliderHeigth = _rect.bottom - _rect.top;
+	_sliderHeight = _rect.bottom - _rect.top;
 }
 
 MystResourceType10::~MystResourceType10() {
 }
 
 void MystResourceType10::setStep(uint16 step) {
-	_rect.top = _minV + _stepV * step - _sliderHeigth / 2;
-	_rect.bottom = _rect.top + _sliderHeigth;
+	_rect.top = _minV + _stepV * step - _sliderHeight / 2;
+	_rect.bottom = _rect.top + _sliderHeight;
 	_subImages[0].rect.top = 333 - _rect.bottom - 1;
 	_subImages[0].rect.bottom = 333 - _rect.top - 1;
 }
@@ -502,8 +502,8 @@ Common::Rect MystResourceType10::boundingBox() {
 	}
 
 	if (_flagHV & 2) {
-		bb.top = _minV - _sliderHeigth / 2;
-		bb.bottom = _maxV + _sliderHeigth / 2;
+		bb.top = _minV - _sliderHeight / 2;
+		bb.bottom = _maxV + _sliderHeight / 2;
 	}
 
 	return bb;
@@ -594,7 +594,7 @@ void MystResourceType10::updatePosition(const Common::Point &mouse) {
 	if (_flagHV & 2) {
 		if (_stepV) {
 			uint16 center = _minV + _stepV * (mouseClipped.y - _minV) / _stepV;
-			uint16 top = center - _sliderHeigth / 2;
+			uint16 top = center - _sliderHeight / 2;
 			if (_rect.top != top) {
 				positionChanged = true;
 				_pos.y = center;
@@ -603,10 +603,10 @@ void MystResourceType10::updatePosition(const Common::Point &mouse) {
 		} else {
 			positionChanged = true;
 			_pos.y = mouseClipped.y;
-			_rect.top = mouseClipped.y - _sliderHeigth / 2;
+			_rect.top = mouseClipped.y - _sliderHeight / 2;
 		}
 		if (positionChanged) {
-			_rect.bottom = _rect.top + _sliderHeigth;
+			_rect.bottom = _rect.top + _sliderHeight;
 			_subImages[0].rect.top = 333 - _rect.bottom - 1;
 			_subImages[0].rect.bottom = 333 - _rect.top - 1;
 		}
