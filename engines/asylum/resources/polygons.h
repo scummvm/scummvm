@@ -66,9 +66,14 @@ public:
 
 	Common::Array<PolyDefinitions> entries;
 
-private:
+	static bool contains(Common::Point *points, uint32 count, Common::Point point, Common::Rect *boundingRect);
+	static bool contains(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, int32 x4, int32 y4);
 
+private:
 	void load(Common::SeekableReadStream *stream);
+
+	static int32 compareDistance(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3);
+	static bool containsHelper(Common::Point *points, uint32 count, Common::Point point, Common::Rect *boundingRect);
 
 }; // end of class Polygons
 

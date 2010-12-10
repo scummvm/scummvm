@@ -87,4 +87,28 @@ void Polygons::load(Common::SeekableReadStream *stream) {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Contains
+//////////////////////////////////////////////////////////////////////////
+
+bool Polygons::contains(Common::Point *points, uint32 count, Common::Point point, Common::Rect *boundingRect) {
+	error("[Polygons::contains] Not implemented!");
+}
+
+bool Polygons::contains(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, int32 x4, int32 y4) {
+	return (compareDistance(x1, y1, x2, y2, x3, y3) * compareDistance(x1, y1, x2, y2, x4, y4) <= 0
+	     && compareDistance(x3, y3, x4, y4, x1, y1) * compareDistance(x3, y3, x4, y4, x2, y2) <= 0);
+}
+
+int32 Polygons::compareDistance(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3) {
+	uint32 d1 = (y3 - y1) * (x2 - x1);
+	uint32 d2 = (x3 - x1) * (y2 - y1);
+
+	return (d1 <= d2) ? -1 : 1;
+}
+
+bool Polygons::containsHelper(Common::Point *points, uint32 count, Common::Point point, Common::Rect *boundingRect) {
+	error("[Polygons::containsHelper] Not implemented!");
+}
+
 } // end of namespace Asylum
