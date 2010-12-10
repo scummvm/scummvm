@@ -52,6 +52,7 @@ private:
 	int32 _strikeOutPosition;
 
 	uint32 _counter;
+	uint32 _counter2;
 
 	char _gameField[9];
 	uint32 _field[40];
