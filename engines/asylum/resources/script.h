@@ -215,7 +215,18 @@ private:
 
 	typedef struct ScriptQueueEntry {
 		int32 scriptIndex;
+		int32 currentLine;
 		ActorIndex actorIndex;
+		int32 field_C;
+		int32 field_10;
+
+		ScriptQueueEntry() {
+			scriptIndex = 0;
+			currentLine = 0;
+			actorIndex = 0;
+			field_C = 0;
+			field_10 = 0;
+		}
 	} ScriptQueueEntry;
 
 	// Opcodes
@@ -244,7 +255,6 @@ private:
 	Common::Array<Script>           _scripts;
 
 	bool              _skipProcessing;
-	int32             _currentLine;
 	int32             _currentLoops;
 	Script           *_currentScript;
 	ScriptQueueEntry  _currentQueueEntry;
