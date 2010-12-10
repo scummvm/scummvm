@@ -719,7 +719,127 @@ void Menu::updateNewGame() {
 void Menu::updateLoadGame() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::updateLoadGame] Not implemented!");
+	char text[100];
+
+	if (_dword_455C80) {
+		getText()->loadFont(kFontYellow);
+		getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1329));
+
+		sprintf((char *)&text, "%s ?", getSaveLoad()->getName()->c_str());
+		getText()->drawCentered(10, 134, 620, (char *)&text);
+
+		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1330)))
+		 || cursor.y < 273 || cursor.y > (273 + 24))
+			getText()->loadFont(kFontYellow);
+		else
+			getText()->loadFont(kFontBlue);
+
+		getText()->setPosition(247, 273);
+		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1330));
+
+		if (cursor.x < 369 || cursor.x > (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1331)))
+		 || cursor.y < 273 || cursor.y > (273 + 24))
+			getText()->loadFont(kFontYellow);
+		else
+			getText()->loadFont(kFontBlue);
+
+		getText()->setPosition(369, 273);
+		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1331));
+		return;
+	}
+
+	getText()->loadFont(kFontYellow);
+	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1325));
+
+	if (_dword_455C78) {
+		getText()->drawCentered(10, 190, 620, MAKE_RESOURCE(kResourcePackText, 1332));
+		getText()->drawCentered(10, 190 + 29, 620, MAKE_RESOURCE(kResourcePackText, 1333));
+		getText()->drawCentered(10, 190 + 53, 620, getSaveLoad()->getName()->c_str());
+
+		++_dword_456288;
+
+		if (_dword_456288 == 60) {
+			_dword_456288 = 0;
+			_dword_455C78 = false;
+			getCursor()->show();
+		} else if (_dword_456288 == 1) {
+			getCursor()->hide();
+		}
+	} else {
+		//////////////////////////////////////////////////////////////////////////
+		// First column
+		uint32 index = 0;
+		for (int32 y = 150; y < 324; y += 29) {
+			if (index + _textScroll >= 25)
+				break;
+
+			sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+
+			if (cursor.x < 30 || cursor.x > (30 + getText()->getWidth((char *)&text))
+			 || cursor.y < y  || cursor.y > (y + 24))
+				getText()->loadFont(kFontYellow);
+			else
+				getText()->loadFont(kFontBlue);
+
+			getText()->setPosition(30, y);
+			getText()->draw((char *)&text);
+
+			++index;
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Second column
+		for (int32 y = 150; y < 324; y += 29) {
+			if (index + _textScroll >= 25)
+				break;
+
+			sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+
+			if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth((char *)&text))
+				|| cursor.y < y   || cursor.y > (y + 24))
+				getText()->loadFont(kFontYellow);
+			else
+				getText()->loadFont(kFontBlue);
+
+			getText()->setPosition(350, y);
+			getText()->draw((char *)&text);
+
+			++index;
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Previous page
+	if (cursor.x < 30  || cursor.x > (30 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1326)))
+	 || cursor.y < 340 || cursor.y > (340 + 24))
+		getText()->loadFont(kFontYellow);
+	else
+		getText()->loadFont(kFontBlue);
+
+	getText()->setPosition(30, 340);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1326));
+
+	//////////////////////////////////////////////////////////////////////////
+	// Main menu
+	if (cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1328)))
+	 || cursor.y < 340 || cursor.y > (340 + 24))
+		getText()->loadFont(kFontYellow);
+	else
+		getText()->loadFont(kFontBlue);
+
+	getText()->setPosition(300, 340);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1328));
+
+	//////////////////////////////////////////////////////////////////////////
+	// Next page
+	if (cursor.x < 550 || cursor.x > (550 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1327)))
+	 || cursor.y < 340 || cursor.y > (340 + 24))
+		getText()->loadFont(kFontYellow);
+	else
+		getText()->loadFont(kFontBlue);
+
+	getText()->setPosition(550, 347);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1327));
 }
 
 void Menu::updateSaveGame() {
@@ -731,7 +851,111 @@ void Menu::updateSaveGame() {
 void Menu::updateDeleteGame() {
 	Common::Point cursor = getCursor()->position();
 
-	error("[MainMenu::updateDeleteGame] Not implemented!");
+	char text[100];
+
+	if (_dword_455C80) {
+		getText()->loadFont(kFontYellow);
+		getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1349));
+
+		sprintf((char *)&text, "%s ?", getSaveLoad()->getName()->c_str());
+		getText()->drawCentered(10, 134, 620, (char *)&text);
+
+		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1350)))
+		 || cursor.y < 273 || cursor.y > (273 + 24))
+			getText()->loadFont(kFontYellow);
+		else
+			getText()->loadFont(kFontBlue);
+
+		getText()->setPosition(247, 273);
+		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1350));
+
+		if (cursor.x < 369 || cursor.x > (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1351)))
+		 || cursor.y < 273 || cursor.y > (273 + 24))
+			getText()->loadFont(kFontYellow);
+		else
+			getText()->loadFont(kFontBlue);
+
+		getText()->setPosition(369, 273);
+		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1351));
+		return;
+	}
+
+	getText()->loadFont(kFontYellow);
+	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1345));
+
+	//////////////////////////////////////////////////////////////////////////
+	// First column
+	uint32 index = 0;
+	for (int32 y = 150; y < 324; y += 29) {
+		if (index + _textScroll >= 25)
+			break;
+
+		sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+
+		if (cursor.x < 30 || cursor.x > (30 + getText()->getWidth((char *)&text))
+		 || cursor.y < y  || cursor.y > (y + 24))
+			getText()->loadFont(kFontYellow);
+		else
+			getText()->loadFont(kFontBlue);
+
+		getText()->setPosition(30, y);
+		getText()->draw((char *)&text);
+
+		++index;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Second column
+	for (int32 y = 150; y < 324; y += 29) {
+		if (index + _textScroll >= 25)
+			break;
+
+		sprintf((char *)&text, "%d. %s ", index + _textScroll + 1, getSaveLoad()->getName(index + _textScroll).c_str());
+
+		if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth((char *)&text))
+		 || cursor.y < y   || cursor.y > (y + 24))
+			getText()->loadFont(kFontYellow);
+		else
+			getText()->loadFont(kFontBlue);
+
+		getText()->setPosition(350, y);
+		getText()->draw((char *)&text);
+
+		++index;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Previous page
+	if (cursor.x < 30  || cursor.x > (30 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1346)))
+	 || cursor.y < 340 || cursor.y > (340 + 24))
+		getText()->loadFont(kFontYellow);
+	else
+		getText()->loadFont(kFontBlue);
+
+	getText()->setPosition(30, 340);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1346));
+
+	//////////////////////////////////////////////////////////////////////////
+	// Main menu
+	if (cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1348)))
+	 || cursor.y < 340 || cursor.y > (340 + 24))
+		getText()->loadFont(kFontYellow);
+	else
+		getText()->loadFont(kFontBlue);
+
+	getText()->setPosition(300, 340);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1348));
+
+	//////////////////////////////////////////////////////////////////////////
+	// Next page
+	if (cursor.x < 550 || cursor.x > (550 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1347)))
+	 || cursor.y < 340 || cursor.y > (340 + 24))
+		getText()->loadFont(kFontYellow);
+	else
+		getText()->loadFont(kFontBlue);
+
+	getText()->setPosition(550, 347);
+	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1347));
 }
 
 void Menu::updateViewMovies() {
@@ -745,6 +969,8 @@ void Menu::updateViewMovies() {
 		sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1352)), getSharedData()->cdNumber);
 		getText()->drawCentered(10, 100, 620, (char *)&text2);
 
+		//////////////////////////////////////////////////////////////////////////
+		// First column
 		int32 index = _textScroll;
 		for (int32 y = 150; y < 324; y += 29) {
 			if (index >= ARRAYSIZE(_movieList))
@@ -769,6 +995,8 @@ void Menu::updateViewMovies() {
 			++index;
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// Second column
 		for (int32 y = 150; y < 324; y += 29) {
 			if (index >= ARRAYSIZE(_movieList))
 				break;
