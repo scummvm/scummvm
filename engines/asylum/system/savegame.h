@@ -95,6 +95,16 @@ public:
 	uint32 getMoviesViewed(byte *movieList);
 	void loadMoviesViewed();
 
+	//////////////////////////////////////////////////////////////////////////
+	// Accessors
+	//////////////////////////////////////////////////////////////////////////
+	void setName(uint32 index, Common::String name);
+	Common::String getName(uint32 index);
+	
+	Common::String *getName() { return &_names[_index]; }
+	void setIndex(uint32 index) { _index = index; }
+	uint32 getIndex() { return _index; }
+
 private:
 	AsylumEngine* _vm;
 
