@@ -60,6 +60,7 @@ typedef struct GraphicQueueItem {
 	GraphicQueueItem() {
 		priority = 0;
 
+		type = kGraphicItemNormal;
 		resourceId = kResourceNone;
 		frameIndex = 0;
 		resourceIdDestination = kResourceNone;
