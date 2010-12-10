@@ -42,7 +42,7 @@ Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
 	_useColorKey(false), _transTableCount(0), _transTableIndex(NULL), _transTableData(NULL), _transTableBuffer(NULL) {
 	_backBuffer.create(640, 480, 1);
 
-	_flag = 0xFF;
+	_flag = -1;
 	_clipRect = Common::Rect(0, 0, 639, 479);
 }
 
@@ -87,7 +87,7 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 sourceX, int32
 				destination.left = sourceX + resource->getData().maxWidth - frame->getWidth() - frame->x;
 			}
 		} else {
-			destination.left += 2 * _flag - (frame->getHeight() * 2 - frame->x);
+			destination.left += 2 * (_flag - (frame->getHeight() * 2 - frame->x));
 		}
 	}
 
