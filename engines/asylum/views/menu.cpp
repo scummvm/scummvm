@@ -63,7 +63,7 @@ Menu::Menu(AsylumEngine *vm): _vm(vm) {
 	_dword_455DD8 = false;
 	_testSoundsPlaying = false;
 	_dword_456288 = 0;
-	_dword_4562C0 = 0;
+	_caretBlink = 0;
 	_startIndex = 0;
 	_creditsFrameIndex = 0;
 	_showMovie = false;
@@ -374,7 +374,7 @@ bool Menu::init() {
 			getCursor()->show();
 		}
 
-		_dword_4562C0 = 0;
+		_caretBlink = 0;
 		_activeScreen = kMenuNone;
 		_currentIcon = kMenuNone;
 		_dword_455C74 = 0;
@@ -923,10 +923,10 @@ void Menu::updateSaveGame() {
 			// Draw underscore
 			if (_dword_455DD8) {
 				if (getSaveLoad()->getIndex() == index + _startIndex) {
-					if (_dword_4562C0 < 6)
+					if (_caretBlink < 6)
 						getText()->drawChar('_');
 
-					_dword_4562C0 = (_dword_4562C0 + 1) % 12;
+					_caretBlink = (_caretBlink + 1) % 12;
 				}
 			}
 
@@ -960,10 +960,10 @@ void Menu::updateSaveGame() {
 			// Draw underscore
 			if (_dword_455DD8) {
 				if (getSaveLoad()->getIndex() == index + _startIndex) {
-					if (_dword_4562C0 < 6)
+					if (_caretBlink < 6)
 						getText()->drawChar('_');
 
-					_dword_4562C0 = (_dword_4562C0 + 1) % 12;
+					_caretBlink = (_caretBlink + 1) % 12;
 				}
 			}
 
@@ -1495,10 +1495,10 @@ void Menu::updateKeyboardConfig() {
 		if (keyIndex == _selectedShortcutIndex) {
 			getText()->loadFont(kFontBlue);
 
-			if (_dword_4562C0 < 6)
+			if (_caretBlink < 6)
 				getText()->drawChar('_');
 
-			_dword_4562C0 = (_dword_4562C0 + 1) % 12;
+			_caretBlink = (_caretBlink + 1) % 12;
 		} else {
 			switchFont(getCursor()->isHidden() || cursor.x < 350 || cursor.x > (350 + getText()->getWidth(keyCode)) || cursor.y < (29 * keyIndex + 150) || cursor.y > (29 * (keyIndex + 6)));
 			getText()->drawChar(keyCode);
@@ -2289,9 +2289,9 @@ void Menu::keySaveGame(const AsylumEvent &evt) {
 
 			bool test = false;
 			if ((getSaveLoad()->getIndex() % 12) >= 6)
-				test = (width + _prefixWidth + 350 != 630);
+				test = (width + _prefixWidth + 350 < 630);
 			else
-				test = (width + _prefixWidth + 30 != 340);
+				test = (width + _prefixWidth + 30 < 340);
 
 			if (test)
 				*getSaveLoad()->getName() += (char)evt.kbd.ascii;
