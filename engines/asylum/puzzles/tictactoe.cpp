@@ -116,7 +116,7 @@ bool PuzzleTicTacToe::init()  {
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[3], 0);
 
 	getCursor()->show();
-	getCursor()->set(getWorld()->graphicResourceIds[12], 4, kCursorAnimationLinear);
+	getCursor()->set(getWorld()->graphicResourceIds[12], 4, kCursorAnimationLinear, 4);
 
 	initField();
 
