@@ -51,7 +51,7 @@ private:
 	bool _needToInitialize;
 	int32 _strikeOutPosition;
 
-	uint32 _var5;
+	uint32 _counter;
 
 	char _gameField[9];
 	uint32 _field[40];
