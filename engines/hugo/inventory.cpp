@@ -73,7 +73,7 @@ void InventoryHandler::constructInventory(int16 imageTotNumb, int displayNumb, b
 	// Copy inventory icons to remaining positions
 	int16 displayed = 0;
 	int16 carried = 0;
-	for (int16 i = 0; i < imageTotNumb; i++) {
+	for (int16 i = 0; (i < imageTotNumb) && (displayed < displayNumb); i++) {
 		if (_vm->_object->isCarried(_vm->_invent[i])) {
 			// Check still room to display and past first scroll index
 			if (displayed < displayNumb && carried >= firstObjId) {

@@ -113,7 +113,7 @@ void ObjectHandler::useObject(int16 objId) {
 	} else {
 		// Use status.objid on objid
 		// Default to first cmd verb
-		sprintf(_line, "%s %s %s", _vm->_arrayVerbs[_vm->_cmdList[_objects[_vm->getGameStatus().inventoryObjId].cmdIndex][1].verbIndex][0],
+		sprintf(_line, "%s %s %s", _vm->_arrayVerbs[_vm->_cmdList[_objects[_vm->getGameStatus().inventoryObjId].cmdIndex][0].verbIndex][0],
 			                       _vm->_arrayNouns[_objects[_vm->getGameStatus().inventoryObjId].nounIndex][0],
 			                       _vm->_arrayNouns[obj->nounIndex][0]);
 
@@ -123,7 +123,7 @@ void ObjectHandler::useObject(int16 objId) {
 				// Look for secondary object, if found use matching verb
 				bool foundFl = false;
 				for (target_t *target = use->targets; _vm->_arrayNouns[target->nounIndex] != 0; target++)
-					if (_vm->_arrayNouns[target->nounIndex][0] == _vm->_arrayNouns[obj->nounIndex][0]) {
+					if (target->nounIndex == obj->nounIndex) {
 						foundFl = true;
 						sprintf(_line, "%s %s %s", _vm->_arrayVerbs[target->verbIndex][0],
 							                       _vm->_arrayNouns[_objects[_vm->getGameStatus().inventoryObjId].nounIndex][0],

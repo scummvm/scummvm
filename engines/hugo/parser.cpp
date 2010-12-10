@@ -86,12 +86,6 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 			_vm->_screen->userHelp();
 		_checkDoubleF1Fl = !_checkDoubleF1Fl;
 		break;
-	case Common::KEYCODE_F6:                        // Inventory
-		showDosInventory();
-		break;
-	case Common::KEYCODE_F8:                        // Turbo mode
-		_config.turboFl = !_config.turboFl;
-		break;
 	case Common::KEYCODE_F2:                        // Toggle sound
 		_vm->_sound->toggleSound();
 		_vm->_sound->toggleMusic();
@@ -107,6 +101,12 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 		_vm->_file->restoreGame(-1);
 		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
 		gameStatus.viewState = V_PLAY;
+		break;
+	case Common::KEYCODE_F6:                        // Inventory
+		showDosInventory();
+		break;
+	case Common::KEYCODE_F8:                        // Turbo mode
+		_config.turboFl = !_config.turboFl;
 		break;
 	case Common::KEYCODE_F9:                        // Boss button
 		warning("STUB: F9 (DOS) - BossKey");
