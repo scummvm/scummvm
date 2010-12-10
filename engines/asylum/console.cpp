@@ -66,6 +66,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 	DCmd_Register("script",         WRAP_METHOD(Console, cmdRunScript));
 	DCmd_Register("scene",          WRAP_METHOD(Console, cmdChangeScene));
 	DCmd_Register("encounter",      WRAP_METHOD(Console, cmdRunEncounter));
+	DCmd_Register("puzzle",         WRAP_METHOD(Console, cmdRunPuzzle));
 
 	DCmd_Register("palette",        WRAP_METHOD(Console, cmdSetPalette));
 	DCmd_Register("draw",           WRAP_METHOD(Console, cmdDrawResource));
@@ -113,6 +114,7 @@ bool Console::cmdHelp(int, const char **) {
 	DebugPrintf(" script      - run a script\n");
 	DebugPrintf(" scene       - change the scene\n");
 	DebugPrintf(" encounter   - run an encounter\n");
+	DebugPrintf(" puzzle      - run an puzzle\n");
 	DebugPrintf("\n");
 	DebugPrintf(" palette     - set the screen palette\n");
 	DebugPrintf(" draw        - draw a resource\n");
@@ -374,7 +376,7 @@ bool Console::cmdChangeScene(int32 argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_delayedSceneIndex = index;	
+	_vm->_delayedSceneIndex = index;
 
 	return false;
 }
@@ -396,6 +398,34 @@ bool Console::cmdRunEncounter(int32 argc, const char **argv) {
 	// Line: 12/15 :: 0x25 (1, 1584, 1584, 0, 0, 0, 0, 0, 0) // First Encounter
 	// TODO update with array of valid objects
 	_vm->encounter()->run(index, kObjectNone, kObjectNone, kActorMax);
+
+	return false;
+}
+
+bool Console::cmdRunPuzzle(int32 argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Syntax: %s <puzzle index>\n", argv[0]);
+		return true;
+	}
+
+	uint32 index = atoi(argv[1]);
+
+	// Check index is valid
+	if (index >= 16) {
+		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-16])\n", index);
+		return true;
+	}
+
+	EventHandler *puzzle = _vm->getPuzzle(index);
+	if (puzzle == NULL) {
+		DebugPrintf("[Error] This puzzle does not exists (%d)", index);
+		return true;
+	}
+
+	getScreen()->clear();
+	getScreen()->clearGraphicsInQueue();
+
+	_vm->switchEventHandler(puzzle);
 
 	return false;
 }
