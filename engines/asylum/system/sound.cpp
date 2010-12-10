@@ -308,7 +308,15 @@ void Sound::cleanupQueue() {
 // Helper functions
 //////////////////////////////////////////////////////////////////////////
 bool Sound::isValidSoundResource(ResourceId resourceId) {
-	warning("[Sound::isValidSoundFile] Not implemented!");
+	ResourceEntry *entry = getResource()->get(resourceId);
+
+	if (memcmp(entry->data, "RIFF", 4) != 0)
+		return false;
+
+	if (memcmp(&entry->data[8], "WAVE", 4) != 0)
+		return false;
+
+	// Original checks for "fmt " and "data" tags and return values to the calling function
 	return true;
 }
 
