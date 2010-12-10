@@ -36,10 +36,6 @@ PuzzleBoardSalvation::~PuzzleBoardSalvation() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleBoardSalvation::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleBoardSalvation::handleEvent] Not implemented!");
-}
-
 bool PuzzleBoardSalvation::init()  {
 	error("[PuzzleBoardSalvation::init] Not implemented!");
 }

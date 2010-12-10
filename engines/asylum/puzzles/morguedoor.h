@@ -37,8 +37,6 @@ public:
 	PuzzleMorgueDoor(AsylumEngine *engine);
 	~PuzzleMorgueDoor();
 
-	bool handleEvent(const AsylumEvent &event);
-
 private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling

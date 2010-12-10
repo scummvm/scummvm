@@ -36,10 +36,6 @@ PuzzleBoardYouth::~PuzzleBoardYouth() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleBoardYouth::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleBoardYouth::handleEvent] Not implemented!");
-}
-
 bool PuzzleBoardYouth::init()  {
 	error("[PuzzleBoardYouth::init] Not implemented!");
 }

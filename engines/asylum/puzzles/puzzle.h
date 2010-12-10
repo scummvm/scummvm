@@ -48,6 +48,8 @@ public:
 
 	virtual void reset() {}
 
+	bool handleEvent(const AsylumEvent &evt);
+
 protected:
 	AsylumEngine *_vm;
 
@@ -56,6 +58,7 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	virtual bool init() = 0;
 	virtual bool update() = 0;
+	virtual bool activate() { return true; }
 	virtual bool key(const AsylumEvent &evt);
 	virtual bool mouse(const AsylumEvent &evt) = 0;
 

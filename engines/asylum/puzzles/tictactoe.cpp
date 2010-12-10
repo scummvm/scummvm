@@ -36,10 +36,6 @@ PuzzleTicTacToe::~PuzzleTicTacToe() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleTicTacToe::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleTicTacToe::handleEvent] Not implemented!");
-}
-
 bool PuzzleTicTacToe::init()  {
 	error("[PuzzleTicTacToe::init] Not implemented!");
 }

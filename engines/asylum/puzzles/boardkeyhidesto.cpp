@@ -36,10 +36,6 @@ PuzzleBoardKeyHidesTo::~PuzzleBoardKeyHidesTo() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleBoardKeyHidesTo::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleBoardKeyHidesTo::handleEvent] Not implemented!");
-}
-
 bool PuzzleBoardKeyHidesTo::init()  {
 	error("[PuzzleBoardKeyHidesTo::init] Not implemented!");
 }

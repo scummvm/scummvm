@@ -36,10 +36,6 @@ PuzzleHiveMachine::~PuzzleHiveMachine() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleHiveMachine::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleHiveMachine::handleEvent] Not implemented!");
-}
-
 bool PuzzleHiveMachine::init()  {
 	error("[PuzzleHiveMachine::init] Not implemented!");
 }

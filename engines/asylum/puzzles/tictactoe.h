@@ -37,8 +37,6 @@ public:
 	PuzzleTicTacToe(AsylumEngine *engine);
 	~PuzzleTicTacToe();
 
-	bool handleEvent(const AsylumEvent &event);
-
 private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling

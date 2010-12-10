@@ -36,10 +36,6 @@ PuzzleHiveControl::~PuzzleHiveControl() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleHiveControl::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleHiveControl::handleEvent] Not implemented!");
-}
-
 bool PuzzleHiveControl::init()  {
 	error("[PuzzleHiveControl::init] Not implemented!");
 }

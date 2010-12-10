@@ -48,6 +48,38 @@ Puzzle::~Puzzle() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
+bool Puzzle::handleEvent(const AsylumEvent &evt) {
+	switch ((uint32)evt.type) {
+	default:
+		break;
+
+	case EVENT_ASYLUM_INIT:
+		return init();
+		break;
+
+	case EVENT_ASYLUM_ACTIVATE:
+		return activate();
+		break;
+
+	case EVENT_ASYLUM_UPDATE:
+		return update();
+		break;
+
+	case Common::EVENT_KEYDOWN:
+		return key(evt);
+		break;
+
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_RBUTTONUP:
+		return mouse(evt);
+		break;
+	}
+
+	return false;
+}
+
 bool Puzzle::key(const AsylumEvent &evt) {
 	switch (evt.kbd.keycode) {
 	default:

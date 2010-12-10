@@ -36,10 +36,6 @@ PuzzleFisherman::~PuzzleFisherman() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleFisherman::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleFisherman::handleEvent] Not implemented!");
-}
-
 bool PuzzleFisherman::init()  {
 	error("[PuzzleFisherman::init] Not implemented!");
 }

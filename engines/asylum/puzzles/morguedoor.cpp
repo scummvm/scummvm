@@ -36,10 +36,6 @@ PuzzleMorgueDoor::~PuzzleMorgueDoor() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleMorgueDoor::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleMorgueDoor::handleEvent] Not implemented!");
-}
-
 bool PuzzleMorgueDoor::init()  {
 	error("[PuzzleMorgueDoor::init] Not implemented!");
 }

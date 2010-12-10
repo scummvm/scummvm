@@ -60,8 +60,6 @@ public:
 	PuzzleVCR(AsylumEngine *engine);
 	~PuzzleVCR();
 
-	bool handleEvent(const AsylumEvent &event);
-
 private:
 	enum Jack {
 		kBlack  = 0,

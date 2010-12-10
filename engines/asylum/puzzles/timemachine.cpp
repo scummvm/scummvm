@@ -36,10 +36,6 @@ PuzzleTimeMachine::~PuzzleTimeMachine() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleTimeMachine::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleTimeMachine::handleEvent] Not implemented!");
-}
-
 bool PuzzleTimeMachine::init()  {
 	error("[PuzzleTimeMachine::init] Not implemented!");
 }
