@@ -36,10 +36,6 @@ PuzzleWheel::~PuzzleWheel() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleWheel::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleWheel::handleEvent] Not implemented!");
-}
-
 bool PuzzleWheel::init()  {
 	error("[PuzzleWheel::init] Not implemented!");
 }

@@ -37,8 +37,6 @@ public:
 	PuzzleBoardYouth(AsylumEngine *engine);
 	~PuzzleBoardYouth();
 
-	bool handleEvent(const AsylumEvent &event);
-
 private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling

@@ -36,10 +36,6 @@ PuzzleClock::~PuzzleClock() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleClock::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleClock::handleEvent] Not implemented!");
-}
-
 bool PuzzleClock::init()  {
 	error("[PuzzleClock::init] Not implemented!");
 }

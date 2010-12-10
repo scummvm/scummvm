@@ -36,10 +36,6 @@ PuzzleLock::~PuzzleLock() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleLock::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleLock::handleEvent] Not implemented!");
-}
-
 bool PuzzleLock::init()  {
 	error("[PuzzleLock::init] Not implemented!");
 }

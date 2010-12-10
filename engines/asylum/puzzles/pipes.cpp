@@ -36,10 +36,6 @@ PuzzlePipes::~PuzzlePipes() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzlePipes::handleEvent(const AsylumEvent &event) {
-	error("[PuzzlePipes::handleEvent] Not implemented!");
-}
-
 bool PuzzlePipes::init()  {
 	error("[PuzzlePipes::init] Not implemented!");
 }

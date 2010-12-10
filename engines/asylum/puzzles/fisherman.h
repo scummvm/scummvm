@@ -37,8 +37,6 @@ public:
 	PuzzleFisherman(AsylumEngine *engine);
 	~PuzzleFisherman();
 
-	bool handleEvent(const AsylumEvent &event);
-
 private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling

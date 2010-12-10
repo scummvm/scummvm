@@ -57,10 +57,6 @@ PuzzleVCR::~PuzzleVCR() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleVCR::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleVCR::handleEvent] Not implemented!");
-}
-
 bool PuzzleVCR::init()  {
 	error("[PuzzleVCR::init] Not implemented!");
 }

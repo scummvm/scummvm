@@ -37,8 +37,6 @@ public:
 	PuzzleLock(AsylumEngine *engine);
 	~PuzzleLock();
 
-	bool handleEvent(const AsylumEvent &event);
-
 private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling

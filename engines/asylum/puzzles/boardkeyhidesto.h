@@ -37,8 +37,6 @@ public:
 	PuzzleBoardKeyHidesTo(AsylumEngine *engine);
 	~PuzzleBoardKeyHidesTo();
 
-	bool handleEvent(const AsylumEvent &event);
-
 private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling

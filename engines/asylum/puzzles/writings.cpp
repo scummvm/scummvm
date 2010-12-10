@@ -36,10 +36,6 @@ PuzzleWritings::~PuzzleWritings() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleWritings::handleEvent(const AsylumEvent &event) {
-	error("[PuzzleWritings::handleEvent] Not implemented!");
-}
-
 bool PuzzleWritings::init()  {
 	error("[PuzzleWritings::init] Not implemented!");
 }

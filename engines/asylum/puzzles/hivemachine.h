@@ -37,8 +37,6 @@ public:
 	PuzzleHiveMachine(AsylumEngine *engine);
 	~PuzzleHiveMachine();
 
-	bool handleEvent(const AsylumEvent &event);
-
 private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
