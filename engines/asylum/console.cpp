@@ -49,6 +49,26 @@ extern int32 g_debugPolygons;
 extern int32 g_debugObjects;
 extern int32 g_debugScrolling;
 
+const ResourcePackId puzzleToScenes[17] = {
+	kResourcePackTowerCells,
+	kResourcePackCourtyardAndChapel,
+	kResourcePackInnocentAbandoned,
+	kResourcePackMansion,
+	kResourcePackInvalid,
+	kResourcePackLaboratory,
+	kResourcePackLaboratory,
+	kResourcePackLaboratory,
+	kResourcePackLaboratory,
+	kResourcePackMorgueCementary,
+	kResourcePackMansion,
+	kResourcePackMorgueCementary,
+	kResourcePackInvalid,
+	kResourcePackMorgueCementary,
+	kResourcePackLostVillage,
+	kResourcePackHive,
+	kResourcePackHive
+};
+
 Console::Console(AsylumEngine *engine) : _vm(engine) {
 	// Commands
 	DCmd_Register("help",           WRAP_METHOD(Console, cmdHelp));
@@ -424,6 +444,13 @@ bool Console::cmdRunPuzzle(int32 argc, const char **argv) {
 
 	getScreen()->clear();
 	getScreen()->clearGraphicsInQueue();
+
+	// Save previous scene
+	_vm->_previousScene = getScene();
+
+	// Load puzzle scene
+	_vm->_scene = new Scene(_vm);
+	getScene()->load(puzzleToScenes[index]);
 
 	_vm->switchEventHandler(puzzle);
 

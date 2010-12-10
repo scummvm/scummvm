@@ -85,6 +85,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	// Debug
 	_delayedSceneIndex = kResourcePackInvalid;
 	_delayedVideoIndex = -1;
+	_previousScene = NULL;
 
 	// Add default search directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -408,6 +409,18 @@ void AsylumEngine::switchEventHandler(EventHandler *handler) {
 		AsylumEvent deinit(EVENT_ASYLUM_DEINIT);
 		_handler->handleEvent(deinit);
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// DEBUG - If a previous scene is found, replace the current scene by this one
+	if (handler == _scene) {
+		if (_previousScene) {
+			delete _scene;
+			_scene = _previousScene;
+			handler = _scene;
+			_previousScene = NULL;
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
 
 	// replace message handler
 	_handler = handler;
