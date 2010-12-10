@@ -431,8 +431,8 @@ bool Console::cmdRunPuzzle(int32 argc, const char **argv) {
 	uint32 index = atoi(argv[1]);
 
 	// Check index is valid
-	if (index >= 16) {
-		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-16])\n", index);
+	if (index > ARRAYSIZE(_vm->_puzzles)) {
+		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, ARRAYSIZE(_vm->_puzzles));
 		return true;
 	}
 

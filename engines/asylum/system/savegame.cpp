@@ -400,7 +400,7 @@ void Savegame::write(Common::OutSaveFile *file, Common::Serializable *data, uint
 // Movies
 //////////////////////////////////////////////////////////////////////////
 void Savegame::setMovieViewed(uint32 index) {
-	if (index >= ARRAYSIZE(_moviesViewed))
+	if (index > ARRAYSIZE(_moviesViewed))
 		error("[Savegame::setMovieViewed] Invalid movie index!");
 
 	if (!_moviesViewed[index]) {
@@ -450,22 +450,22 @@ void Savegame::loadMoviesViewed() {
 // Accessors
 //////////////////////////////////////////////////////////////////////////
 void Savegame::setName(uint32 index, Common::String name) {
-	if (index > ARRAYSIZE(_names) - 1)
-		error("[Savegame::setName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names) - 1);
+	if (index > ARRAYSIZE(_names))
+		error("[Savegame::setName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names));
 
 	_names[index] = name;
 }
 
 Common::String Savegame::getName(uint32 index) {
-	if (index > ARRAYSIZE(_names) - 1)
-		error("[Savegame::getName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names) - 1);
+	if (index > ARRAYSIZE(_names))
+		error("[Savegame::getName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names));
 
 	return _names[index];
 }
 
 bool Savegame::hasSavegame(uint32 index) {
-	if (index > ARRAYSIZE(_savegames) - 1)
-		error("[Savegame::hasSavegame] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_savegames) - 1);
+	if (index > ARRAYSIZE(_savegames))
+		error("[Savegame::hasSavegame] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_savegames));
 
 	return _savegames[index];
 }
