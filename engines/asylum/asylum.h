@@ -124,14 +124,14 @@ public:
 	/**
 	 * Get the number of engine ticks
 	 *
-	 * @return The tick. 
+	 * @return The tick.
 	 */
 	uint32 getTick() { return _system->getMillis() + _tickOffset; }
 
 	/**
 	 * Sets the tick value
 	 *
-	 * @param offset The offset. 
+	 * @param offset The offset.
 	 */
 	void setTick(uint32 offset) { _tickOffset = offset - _system->getMillis(); }
 
@@ -250,7 +250,7 @@ private:
 	SharedData _data;
 	int  _gameFlags[145];
 	int32 _sinCosTables[72];
-	bool _introPlayed;	
+	bool _introPlayed;
 	int32 _tickOffset;
 
 	void updateMouseCursor();
@@ -283,6 +283,7 @@ private:
 
 	// Debug
 	friend class Console;
+	Scene *_previousScene;
 	ResourcePackId _delayedSceneIndex;
 	int32 _delayedVideoIndex;
 };
