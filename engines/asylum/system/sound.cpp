@@ -189,9 +189,27 @@ int32 Sound::getAdjustedVolume(int32 volume) {
 	if (volume < 2)
 		return volume;
 
-	//warning("[Sound::getAdjustedVolume] not implemented");
+	uint32 counter = (uint32)(log((double)volume) / log(2.0)) / 2;
+	int32 adjustedVolume = pow(2.0, (int32)counter);
 
-	return volume;
+	uint32 offset = adjustedVolume;
+	int32 base = adjustedVolume << counter;
+
+	for (;;) {
+		--counter;
+		if ((int32)counter < 0)
+			break;
+
+		offset /= 2;
+		int32 val = base + ((offset + 2 * volume) << counter);
+
+		if (val <= volume) {
+			adjustedVolume += offset;
+			base = val;
+		}
+	}
+
+	return adjustedVolume;
 }
 
 int32 Sound::calculatePanningAtPoint(int32 x, int32) {
