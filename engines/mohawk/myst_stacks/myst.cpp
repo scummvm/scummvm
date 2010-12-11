@@ -57,8 +57,8 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(100, NOP);
 	OPCODE(101, o_libraryBookPageTurnLeft);
 	OPCODE(102, o_libraryBookPageTurnRight);
-	OPCODE(103, opcode_103);
-	OPCODE(104, opcode_104);
+	OPCODE(103, o_fireplaceToggleButton);
+	OPCODE(104, o_fireplaceRotation);
 	OPCODE(105, opcode_105);
 	OPCODE(109, opcode_109);
 	OPCODE(113, opcode_113);
@@ -128,14 +128,14 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(200, o_libraryBook_init);
 	OPCODE(201, opcode_201);
 	OPCODE(202, opcode_202);
-	OPCODE(203, opcode_203);
+	OPCODE(203, o_forechamberDoor_init);
 	OPCODE(204, opcode_204);
 	OPCODE(205, opcode_205);
 	OPCODE(206, opcode_206);
 	OPCODE(208, opcode_208);
 	OPCODE(209, o_libraryBookcaseTransform_init);
 	OPCODE(210, o_generatorControlRoom_init);
-	OPCODE(211, opcode_211);
+	OPCODE(211, o_fireplace_init);
 	OPCODE(212, opcode_212);
 	OPCODE(213, opcode_213);
 	OPCODE(214, opcode_214);
@@ -145,7 +145,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(218, opcode_218);
 	OPCODE(219, o_rocketSliders_init);
 	OPCODE(220, o_rocketLinkVideo_init);
-	OPCODE(221, opcode_221);
+	OPCODE(221, o_greenBook_init);
 	OPCODE(222, opcode_222);
 
 	// "Exit" Opcodes
@@ -167,21 +167,18 @@ void MystScriptParser_Myst::setupOpcodes() {
 void MystScriptParser_Myst::disablePersistentScripts() {
 	opcode_201_disable();
 	opcode_202_disable();
-	opcode_203_disable();
 	opcode_205_disable();
 
 	_libraryBookcaseMoving = false;
 	_generatorControlRoomRunning = false;
 	_libraryCombinationBookPagesTurning = false;
 
-	opcode_211_disable();
 	opcode_212_disable();
 }
 
 void MystScriptParser_Myst::runPersistentScripts() {
 	opcode_201_run();
 	opcode_202_run();
-	opcode_203_run();
 	opcode_205_run();
 
 	if (_generatorControlRoomRunning)
@@ -193,7 +190,6 @@ void MystScriptParser_Myst::runPersistentScripts() {
 	if (_libraryBookcaseMoving)
 		libraryBookcaseTransform_run();
 
-	opcode_211_run();
 	opcode_212_run();
 }
 
@@ -211,6 +207,25 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return 2;
 		} else {
 			return 3;
+		}
+	case 23: // Fireplace Pattern Correct
+		return _fireplaceLines[0] == 195
+				&& _fireplaceLines[1] == 107
+				&& _fireplaceLines[2] == 163
+				&& _fireplaceLines[3] == 147
+				&& _fireplaceLines[4] == 204
+				&& _fireplaceLines[5] == 250;
+	case 24: // Fireplace Blue Page Present
+		if (globals.ending != 4) {
+			return !(globals.bluePagesInBook & 32) && (globals.heldPage != 6);
+		} else {
+			return 0;
+		}
+	case 25: // Fireplace Red Page Present
+		if (globals.ending != 4) {
+			return !(globals.redPagesInBook & 32) && (globals.heldPage != 12);
+		} else {
+			return 0;
 		}
 	case 44: // Rocket ship power state
 		if (myst.generatorBreakers || myst.generatorVoltage == 0)
@@ -286,6 +301,8 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		}
 	case 300: // Rocket Ship Music Puzzle Slider State
 		return 1;
+	case 302: // Green Book Opened Before Flag
+		return myst.greenBookOpenedBefore;
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -296,6 +313,24 @@ void MystScriptParser_Myst::toggleVar(uint16 var) {
 	// MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
 	switch(var) {
+	case 24: // Fireplace Blue Page
+		if (globals.ending != 4 && !(globals.bluePagesInBook & 32)) {
+			if (globals.heldPage == 6)
+				globals.heldPage = 0;
+			else {
+				globals.heldPage = 6;
+			}
+		}
+		break;
+	case 25: // Fireplace Red page
+		if (globals.ending != 4 && !(globals.redPagesInBook & 32)) {
+			if (globals.heldPage == 12)
+				globals.heldPage = 0;
+			else {
+				globals.heldPage = 12;
+			}
+		}
+		break;
 	case 102: // Red page
 		if (globals.ending != 4 && !(globals.redPagesInBook & 1)) {
 			if (globals.heldPage == 7)
@@ -331,6 +366,9 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 			_tempVar = 0;
 			refresh = true;
 		}
+		break;
+	case 302: // Green Book Opened Before Flag
+		myst.greenBookOpenedBefore = value;
 		break;
 	case 303: // Library Bookcase status changed
 		_libraryBookcaseChanged = value;
@@ -414,41 +452,45 @@ void MystScriptParser_Myst::o_libraryBookPageTurnRight(uint16 op, uint16 var, ui
 	}
 }
 
-void MystScriptParser_Myst::opcode_103(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Myst::o_fireplaceToggleButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Myst Card 4162 (Fireplace Grid)
-	if (argc == 1) {
-		debugC(kDebugScript, "Opcode %d: Toggle Variable with Bitmask", op);
+	debugC(kDebugScript, "Opcode %d: Fireplace grid toggle button", op);
 
-		uint16 bitmask = argv[0];
-		uint16 varValue = _vm->_varStore->getVar(var);
+	uint16 bitmask = argv[0];
+	uint16 line = _fireplaceLines[var - 17];
 
-		debugC(kDebugScript, "\tvar: %d", var);
-		debugC(kDebugScript, "\tbitmask: 0x%02X", bitmask);
+	debugC(kDebugScript, "\tvar: %d", var);
+	debugC(kDebugScript, "\tbitmask: 0x%02X", bitmask);
 
-		if (varValue & bitmask)
-			_vm->_varStore->setVar(var, varValue & ~bitmask);
-		else
-			_vm->_varStore->setVar(var, varValue | bitmask);
-	} else
-		unknown(op, var, argc, argv);
+	if (line & bitmask) {
+		// Unset button
+		for (uint i = 4795; i >= 4779; i--) {
+			_vm->_gfx->copyImageToScreen(i, _invokingResource->getRect());
+			_vm->_gfx->updateScreen();
+			_vm->_system->delayMillis(1);
+		}
+		_fireplaceLines[var - 17] &= ~bitmask;
+	} else {
+		// Set button
+		for (uint i = 4779; i <= 4795; i++) {
+			_vm->_gfx->copyImageToScreen(i, _invokingResource->getRect());
+			_vm->_gfx->updateScreen();
+			_vm->_system->delayMillis(1);
+		}
+		_fireplaceLines[var - 17] |= bitmask;
+	}
 }
 
-void MystScriptParser_Myst::opcode_104(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
+void MystScriptParser_Myst::o_fireplaceRotation(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Myst Card 4162 and 4166 (Fireplace Puzzle Rotation Movies)
-	if (argc == 1) {
-		debugC(kDebugScript, "Opcode %d: Play Fireplace Puzzle Rotation Movies", op);
+	uint16 movieNum = argv[0];
+	debugC(kDebugScript, "Opcode %d: Play Fireplace Puzzle Rotation Movies", op);
+	debugC(kDebugScript, "\tmovieNum: %d", movieNum);
 
-		uint16 movieNum = argv[0];
-		debugC(kDebugScript, "\tmovieNum: %d", movieNum);
-
-		if (movieNum == 0)
-			_vm->_video->playMovie(_vm->wrapMovieFilename("fpin", kMystStack), 167, 5);
-		if (movieNum == 1)
-			_vm->_video->playMovie(_vm->wrapMovieFilename("fpout", kMystStack), 167, 5);
-	} else
-		unknown(op, var, argc, argv);
+	if (movieNum)
+		_vm->_video->playMovie(_vm->wrapMovieFilename("fpout", kMystStack), 167, 4);
+	else
+		_vm->_video->playMovie(_vm->wrapMovieFilename("fpin", kMystStack), 167, 4);
 }
 
 void MystScriptParser_Myst::opcode_105(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1600,31 +1642,10 @@ void MystScriptParser_Myst::opcode_202(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-static struct {
-	bool enabled;
-} g_opcode203Parameters;
-
-void MystScriptParser_Myst::opcode_203_run(void) {
-	if (g_opcode203Parameters.enabled) {
-		// Used for Card 4138 (Dock Forechamber Door)
-		// TODO: Fill in Logic. Slide for Dock Forechamber Door?
-		// Original has Left to Right Open Slide and Upon leaving card,
-		// Right to left Slide before card change.
-		//debugC(kDebugScript, "Opcode %d: Clear Dock Forechamber Door Variable", op);
-		//_vm->_varStore->setVar(105, 0);
-	}
-}
-
-void MystScriptParser_Myst::opcode_203_disable(void) {
-	g_opcode203Parameters.enabled = false;
-}
-
-void MystScriptParser_Myst::opcode_203(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
+void MystScriptParser_Myst::o_forechamberDoor_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 4138 (Dock Forechamber Door)
 	// Set forechamber door to closed
-	setVarValue(105, 0);
+	_tempVar = 0;
 }
 
 void MystScriptParser_Myst::opcode_204(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1727,65 +1748,12 @@ void MystScriptParser_Myst::o_generatorControlRoom_init(uint16 op, uint16 var, u
 	_generatorControlRoomRunning = true;
 }
 
-static struct {
-	bool enabled;
-} g_opcode211Parameters;
+void MystScriptParser_Myst::o_fireplace_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Fireplace grid init", op);
 
-void MystScriptParser_Myst::opcode_211_run(void) {
-	const uint16 imageBaseId = 4779;
-	const uint16 gridBaseLeft = 173;
-	const uint16 gridBaseTop = 168;
-
-	static uint16 lastGridState[6];
-	uint16 gridState[6];
-	uint16 image;
-
-	if (g_opcode211Parameters.enabled) {
-		// Grid uses Var 17 to 22 as bitfields (8 horizontal cells x 6 vertical)
-		for (byte i = 0; i < 6; i++) {
-			gridState[i] = _vm->_varStore->getVar(i + 17);
-
-			if (gridState[i] != lastGridState[i]) {
-				for (byte j = 0; j < 8; j++) {
-					// TODO: Animation Code
-					if ((gridState[i] >> (7 - j)) & 1)
-						image = 16;
-					else
-						image = 0;
-
-					_vm->_gfx->copyImageToScreen(imageBaseId + image, Common::Rect(gridBaseLeft + (j * 26), gridBaseTop + (i * 26), gridBaseLeft + ((j + 1) * 26), gridBaseTop + ((i + 1) * 26)));
-				}
-			}
-
-			lastGridState[i] = gridState[i];
-		}
-
-		// Var 23 contains boolean for whether pattern matches correct book pattern i.e. Pattern 158
-		if (gridState[0] == 0xc3 && gridState[1] == 0x6b && gridState[2] == 0xa3 &&
-		    gridState[3] == 0x93 && gridState[4] == 0xcc && gridState[5] == 0xfa)
-			_vm->_varStore->setVar(23, 1);
-		else
-			_vm->_varStore->setVar(23, 0);
-
-		_vm->_gfx->updateScreen();
-	}
-}
-
-void MystScriptParser_Myst::opcode_211_disable(void) {
-	g_opcode211Parameters.enabled = false;
-}
-
-void MystScriptParser_Myst::opcode_211(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 4059 (Fireplace Puzzle)
-	if (argc == 0) {
-		for (byte i = 0; i < 6; i++)
-			_vm->_varStore->setVar(i + 17, 0);
-
-		g_opcode211Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
+	// Clear fireplace grid
+	for (uint i = 0; i < 6; i++)
+		_fireplaceLines[i] = 0;
 }
 
 static struct {
@@ -1959,22 +1927,36 @@ void MystScriptParser_Myst::o_rocketLinkVideo_init(uint16 op, uint16 var, uint16
 	_tempVar = 0;
 }
 
-void MystScriptParser_Myst::opcode_221(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
+void MystScriptParser_Myst::o_greenBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 4168 (Green Book Movies)
-	// Movie plays in resource #0 rect
-	// TODO: Not sure if subsection is looped...
-	if (!_vm->_varStore->getVar(302)) {
-		// HACK: Stop Wind Sounds.. Think this is a problem at library entrance.
-		_vm->_sound->stopSound();
-		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("atrusbk1", kMystStack), 314, 76);
-		_vm->_varStore->setVar(302, 1);
+	debugC(kDebugScript, "Opcode %d: Green book init", op);
+
+	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	uint loopStart = 0;
+	uint loopEnd = 0;
+	Common::String file;
+
+	if (!myst.greenBookOpenedBefore) {
+		loopStart = 113200;
+		loopEnd = 116400;
+		file = _vm->wrapMovieFilename("atrusbk1", kMystStack);
 	} else {
-		// HACK: Stop Wind Sounds.. Think this is a problem at library entrance.
-		_vm->_sound->stopSound();
-		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("atrusbk2", kMystStack), 314, 76);
+		loopStart = 8800;
+		loopEnd = 9700;
+		file = _vm->wrapMovieFilename("atrusbk2", kMystStack);
 	}
+
+	_vm->_sound->stopSound();
+	_vm->_sound->pauseBackground();
+
+	if (globals.ending != 4) {
+		_vm->_video->playBackgroundMovie(file, 314, 76);
+	}
+
+	// TODO: Movie play control
+	// loop between loopStart and loopEnd
 }
 
 void MystScriptParser_Myst::opcode_222(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

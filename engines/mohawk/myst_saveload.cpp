@@ -160,7 +160,7 @@ void MystSaveLoad::syncGameState(Common::Serializer &s, bool isME) {
 		s.syncAsByte(_v->myst.rocketshipMarkerSwitch);
 	}
 
-	s.syncAsUint16LE(_v->myst.greenBookState);
+	s.syncAsUint16LE(_v->myst.greenBookOpenedBefore);
 	s.syncAsUint16LE(_v->myst.shipState);
 	s.syncAsUint16LE(_v->myst.cabinValvePosition);
 	s.syncAsUint16LE(_v->myst.clockTowerHourPosition);

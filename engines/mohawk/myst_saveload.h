@@ -126,7 +126,7 @@ struct MystVariables {
 		uint32 generatorMarkerSwitch;
 		uint32 observatoryMarkerSwitch;
 		uint32 rocketshipMarkerSwitch;
-		uint16 greenBookState;
+		uint16 greenBookOpenedBefore;
 		uint16 shipState;
 		uint16 cabinValvePosition;
 		uint16 clockTowerHourPosition;

@@ -55,14 +55,10 @@ private:
 	void opcode_201_disable();
 	void opcode_202_run();
 	void opcode_202_disable();
-	void opcode_203_run();
-	void opcode_203_disable();
 	void opcode_205_run();
 	void opcode_205_disable();
 	void libraryBookcaseTransform_run();
 	void generatorControlRoom_run();
-	void opcode_211_run();
-	void opcode_211_disable();
 	void opcode_212_run();
 	void opcode_212_disable();
 	void libraryCombinationBook_run();
@@ -70,8 +66,8 @@ private:
 
 	DECLARE_OPCODE(o_libraryBookPageTurnLeft);
 	DECLARE_OPCODE(o_libraryBookPageTurnRight);
-	DECLARE_OPCODE(opcode_103);
-	DECLARE_OPCODE(opcode_104);
+	DECLARE_OPCODE(o_fireplaceToggleButton);
+	DECLARE_OPCODE(o_fireplaceRotation);
 	DECLARE_OPCODE(opcode_105);
 	DECLARE_OPCODE(opcode_109);
 	DECLARE_OPCODE(opcode_113);
@@ -140,14 +136,14 @@ private:
 	DECLARE_OPCODE(o_libraryBook_init);
 	DECLARE_OPCODE(opcode_201);
 	DECLARE_OPCODE(opcode_202);
-	DECLARE_OPCODE(opcode_203);
+	DECLARE_OPCODE(o_forechamberDoor_init);
 	DECLARE_OPCODE(opcode_204);
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
 	DECLARE_OPCODE(opcode_208);
 	DECLARE_OPCODE(o_libraryBookcaseTransform_init);
 	DECLARE_OPCODE(o_generatorControlRoom_init);
-	DECLARE_OPCODE(opcode_211);
+	DECLARE_OPCODE(o_fireplace_init);
 	DECLARE_OPCODE(opcode_212);
 	DECLARE_OPCODE(opcode_213);
 	DECLARE_OPCODE(opcode_214);
@@ -157,7 +153,7 @@ private:
 	DECLARE_OPCODE(opcode_218);
 	DECLARE_OPCODE(o_rocketSliders_init);
 	DECLARE_OPCODE(o_rocketLinkVideo_init);
-	DECLARE_OPCODE(opcode_221);
+	DECLARE_OPCODE(o_greenBook_init);
 	DECLARE_OPCODE(opcode_222);
 
 	DECLARE_OPCODE(opcode_300);
@@ -195,6 +191,8 @@ private:
 	bool _libraryBookcaseChanged; // 288
 	uint16 _libraryBookSound1; // 298
 	uint16 _libraryBookSound2; // 300
+
+	uint16 _fireplaceLines[6]; // 74 to 84
 
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
