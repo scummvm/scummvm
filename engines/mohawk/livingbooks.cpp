@@ -1625,11 +1625,17 @@ void LBItem::readFrom(Common::SeekableSubReadStreamEndian *stream) {
 		if (stream->pos() == endPos)
 			break;
 
+		uint oldPos = stream->pos();
+
 		uint16 dataType = stream->readUint16();
 		uint16 dataSize = stream->readUint16();
 
 		debug(4, "Data type %04x, size %d", dataType, dataSize);
 		readData(dataType, dataSize, stream);
+
+		if ((uint)stream->pos() != oldPos + 4 + (uint)dataSize)
+			error("Failed to read correct number of bytes (off by %d) for data type %04x (size %d)",
+				(int)stream->pos() - (int)(oldPos + 4 + (uint)dataSize), dataType, dataSize);
 
 		if (stream->pos() > endPos)
 			error("Read off the end (at %d) of data (ends at %d)", stream->pos(), endPos);
