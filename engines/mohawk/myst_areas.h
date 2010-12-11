@@ -146,7 +146,7 @@ public:
 	MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType8();
 	virtual void drawDataToScreen();
-	void drawConditionalDataToScreen(uint16 state);
+	void drawConditionalDataToScreen(uint16 state, bool update = true);
 	uint16 getType8Var();
 
 	struct SubImage {

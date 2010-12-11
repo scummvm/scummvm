@@ -45,6 +45,7 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScript
 	// when linking back to Myst in the library
 	_savedCardId = 4329;
 	_libraryBookcaseChanged = false;
+	_dockVaultState = 0;
 }
 
 MystScriptParser_Myst::~MystScriptParser_Myst() {
@@ -60,9 +61,12 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(103, o_fireplaceToggleButton);
 	OPCODE(104, o_fireplaceRotation);
 	OPCODE(105, opcode_105);
+	OPCODE(106, o_towerRotationStart);
+	OPCODE(107, NOP);
+	OPCODE(108, o_towerRotationEnd);
 	OPCODE(109, opcode_109);
-	OPCODE(113, opcode_113);
-	OPCODE(114, opcode_114);
+	OPCODE(113, o_dockVaultOpen);
+	OPCODE(114, o_dockVaultClose);
 	OPCODE(115, o_bookGivePage);
 	OPCODE(116, o_clockWheelsExecute);
 	OPCODE(117, opcode_117);
@@ -122,13 +126,13 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(195, opcode_195);
 	OPCODE(196, opcode_196);
 	OPCODE(197, opcode_197);
-	OPCODE(198, opcode_198);
+	OPCODE(198, o_dockVaultForceClose);
 	OPCODE(199, opcode_199);
 
 	// "Init" Opcodes
 	OPCODE(200, o_libraryBook_init);
 	OPCODE(201, opcode_201);
-	OPCODE(202, opcode_202);
+	OPCODE(202, o_towerRotationMap_init);
 	OPCODE(203, o_forechamberDoor_init);
 	OPCODE(204, opcode_204);
 	OPCODE(205, opcode_205);
@@ -167,20 +171,23 @@ void MystScriptParser_Myst::setupOpcodes() {
 
 void MystScriptParser_Myst::disablePersistentScripts() {
 	opcode_201_disable();
-	opcode_202_disable();
 	opcode_205_disable();
 
 	_libraryBookcaseMoving = false;
 	_generatorControlRoomRunning = false;
 	_libraryCombinationBookPagesTurning = false;
 	_clockTurningWheel = 0;
+	_towerRotationMapRunning = false;
 
 	opcode_212_disable();
 }
 
 void MystScriptParser_Myst::runPersistentScripts() {
 	opcode_201_run();
-	opcode_202_run();
+
+	if (_towerRotationMapRunning)
+		towerRotationMap_run();
+
 	opcode_205_run();
 
 	if (_generatorControlRoomRunning)
@@ -213,6 +220,22 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		} else {
 			return 3;
 		}
+	case 2: // Marker Switch Near Cabin
+		return myst.cabinMarkerSwitch;
+	case 3: // Marker Switch Near Clock Tower
+		return myst.clockTowerMarkerSwitch;
+	case 4: // Marker Switch on Dock
+		return myst.dockMarkerSwitch;
+	case 5: // Marker Switch Near Ship Pool
+		return myst.poolMarkerSwitch;
+	case 6: // Marker Switch Near Cogs
+		return myst.gearsMarkerSwitch;
+	case 7: // Marker Switch Near Generator Room
+		return myst.generatorMarkerSwitch;
+	case 8: // Marker Switch Near Stellar Observatory
+		return myst.observatoryMarkerSwitch;
+	case 9: // Marker Switch Near Rocket Ship
+		return myst.rocketshipMarkerSwitch;
 	case 12: // Clock tower gears bridge
 		return myst.clockTowerBridgeOpen;
 	case 23: // Fireplace Pattern Correct
@@ -236,6 +259,8 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		}
 	case 37: // Clock Tower Control Wheels Position
 		return 3 * ((myst.clockTowerMinutePosition / 5) % 3) + myst.clockTowerHourPosition % 3;
+	case 41: // Dock Marker Switch Vault State
+		return _dockVaultState;
 	case 43: // Clock Tower Time
 		return myst.clockTowerHourPosition * 12 + myst.clockTowerMinutePosition / 5;
 	case 44: // Rocket ship power state
@@ -314,6 +339,8 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		return 1;
 	case 302: // Green Book Opened Before Flag
 		return myst.greenBookOpenedBefore;
+	case 304: // Tower Rotation Map Initialized
+		return _towerRotationMapInitialized;
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -321,9 +348,33 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 
 void MystScriptParser_Myst::toggleVar(uint16 var) {
 	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-	// MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
 	switch(var) {
+	case 2: // Marker Switch Near Cabin
+		myst.cabinMarkerSwitch = (myst.cabinMarkerSwitch + 1) % 2;
+		break;
+	case 3: // Marker Switch Near Clock Tower
+		myst.clockTowerMarkerSwitch = (myst.clockTowerMarkerSwitch + 1) % 2;
+		break;
+	case 4: // Marker Switch on Dock
+		myst.dockMarkerSwitch = (myst.dockMarkerSwitch + 1) % 2;
+		break;
+	case 5: // Marker Switch Near Ship Pool
+		myst.poolMarkerSwitch = (myst.poolMarkerSwitch + 1) % 2;
+		break;
+	case 6: // Marker Switch Near Cogs
+		myst.gearsMarkerSwitch = (myst.gearsMarkerSwitch + 1) % 2;
+		break;
+	case 7: // Marker Switch Near Generator Room
+		myst.generatorMarkerSwitch = (myst.generatorMarkerSwitch + 1) % 2;
+		break;
+	case 8: // Marker Switch Near Stellar Observatory
+		myst.observatoryMarkerSwitch = (myst.observatoryMarkerSwitch + 1) % 2;
+		break;
+	case 9: // Marker Switch Near Rocket Ship
+		myst.rocketshipMarkerSwitch = (myst.rocketshipMarkerSwitch + 1) % 2;
+		break;
 	case 24: // Fireplace Blue Page
 		if (globals.ending != 4 && !(globals.bluePagesInBook & 32)) {
 			if (globals.heldPage == 6)
@@ -339,6 +390,17 @@ void MystScriptParser_Myst::toggleVar(uint16 var) {
 				globals.heldPage = 0;
 			else {
 				globals.heldPage = 12;
+			}
+		}
+		break;
+	case 41: // Vault white page
+		if (globals.ending != 4) {
+			if (_dockVaultState == 1) {
+				_dockVaultState = 2;
+				globals.heldPage = 0;
+			} else if (_dockVaultState == 2) {
+				_dockVaultState = 1;
+				globals.heldPage = 13;
 			}
 		}
 		break;
@@ -383,6 +445,9 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 		break;
 	case 303: // Library Bookcase status changed
 		_libraryBookcaseChanged = value;
+		break;
+	case 304: // Myst Library Image Present on Tower Rotation Map
+		_towerRotationMapInitialized = value;
 		break;
 	default:
 		refresh = MystScriptParser::setVarValue(var, value);
@@ -540,6 +605,14 @@ void MystScriptParser_Myst::opcode_105(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
+void MystScriptParser_Myst::o_towerRotationStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_towerRotationMapClicked = true;
+}
+
+void MystScriptParser_Myst::o_towerRotationEnd(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_towerRotationMapClicked = false;
+}
+
 void MystScriptParser_Myst::opcode_109(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (argc == 1) {
 		int16 signedValue = argv[0];
@@ -553,95 +626,63 @@ void MystScriptParser_Myst::opcode_109(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Myst::opcode_113(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
+void MystScriptParser_Myst::o_dockVaultOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Myst 4143 (Dock near Marker Switch)
-	if (argc == 9) {
-		uint16 soundId = argv[0];
+	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	uint16 soundId = argv[0];
+	uint16 delay = argv[1];
+	uint16 directionalUpdateDataSize = argv[2];
 
-		uint16 u0 = argv[1];
-		uint16 u1 = argv[2];
+	debugC(kDebugScript, "Opcode %d: Vault Open Logic", op);
+	debugC(kDebugScript, "\tsoundId: %d", soundId);
+	debugC(kDebugScript, "\tdirectionalUpdateDataSize: %d", directionalUpdateDataSize);
 
-		Common::Rect rect = Common::Rect(argv[3], argv[4], argv[5], argv[6]);
+	if ((myst.cabinMarkerSwitch == 1) &&
+		(myst.clockTowerMarkerSwitch == 1) &&
+		(myst.dockMarkerSwitch == 0) &&
+		(myst.gearsMarkerSwitch == 1) &&
+		(myst.generatorMarkerSwitch == 1) &&
+		(myst.observatoryMarkerSwitch == 1) &&
+		(myst.poolMarkerSwitch == 1) &&
+		(myst.rocketshipMarkerSwitch == 1)) {
+		if (globals.heldPage != 13 && globals.ending != 4)
+			_dockVaultState = 2;
+		else
+			_dockVaultState = 1;
 
-		uint16 updateDirection = argv[7];
-		uint16 u2 = argv[8];
-
-		debugC(kDebugScript, "Opcode %d: Vault Open Logic", op);
-		debugC(kDebugScript, "\tsoundId: %d", soundId);
-		debugC(kDebugScript, "\tu0: %d", u0);
-		debugC(kDebugScript, "\tu1: %d", u1);
-
-		debugC(kDebugScript, "\trect.left: %d", rect.left);
-		debugC(kDebugScript, "\trect.top: %d", rect.top);
-		debugC(kDebugScript, "\trect.right: %d", rect.right);
-		debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
-		debugC(kDebugScript, "\trect updateDirection: %d", updateDirection);
-		debugC(kDebugScript, "\tu2: %d", u2);
-
-		if ((_vm->_varStore->getVar(2) == 1) &&
-			(_vm->_varStore->getVar(3) == 1) &&
-			(_vm->_varStore->getVar(4) == 0) &&
-			(_vm->_varStore->getVar(5) == 1) &&
-			(_vm->_varStore->getVar(6) == 1) &&
-			(_vm->_varStore->getVar(7) == 1) &&
-			(_vm->_varStore->getVar(8) == 1) &&
-			(_vm->_varStore->getVar(9) == 1)) {
-			// TODO: Implement correct function...
-			// Blit Image in Left to Right Vertical stripes i.e. transistion
-			// like door opening
-			_vm->_sound->playSound(soundId);
-			// TODO: Set 41 to 1 if page already present in hand.
-			_vm->_varStore->setVar(41, 2);
-		}
-	} else
-		unknown(op, var, argc, argv);
+		_vm->_sound->playSound(soundId);
+		_vm->redrawArea(41, false);
+		animatedUpdate(directionalUpdateDataSize, &argv[3], delay);
+	}
 }
 
-void MystScriptParser_Myst::opcode_114(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
+void MystScriptParser_Myst::o_dockVaultClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Myst 4143 (Dock near Marker Switch)
-	if (argc == 9) {
-		uint16 soundId = argv[0];
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	uint16 soundId = argv[0];
+	uint16 delay = argv[1];
+	uint16 directionalUpdateDataSize = argv[2];
 
-		uint16 u0 = argv[1];
-		uint16 u1 = argv[2];
+	debugC(kDebugScript, "Opcode %d: Vault Close Logic", op);
+	debugC(kDebugScript, "\tsoundId: %d", soundId);
+	debugC(kDebugScript, "\tdirectionalUpdateDataSize: %d", directionalUpdateDataSize);
 
-		Common::Rect rect = Common::Rect(argv[3], argv[4], argv[5], argv[6]);
+	if ((myst.cabinMarkerSwitch == 1) &&
+		(myst.clockTowerMarkerSwitch == 1) &&
+		(myst.dockMarkerSwitch == 1) &&
+		(myst.gearsMarkerSwitch == 1) &&
+		(myst.generatorMarkerSwitch == 1) &&
+		(myst.observatoryMarkerSwitch == 1) &&
+		(myst.poolMarkerSwitch == 1) &&
+		(myst.rocketshipMarkerSwitch == 1)) {
+		if (_dockVaultState == 1 || _dockVaultState == 2)
+			_dockVaultState = 0;
 
-		uint16 updateDirection = argv[7];
-		uint16 u2 = argv[8];
-
-		debugC(kDebugScript, "Opcode %d: Vault Close Logic", op);
-		debugC(kDebugScript, "\tsoundId: %d", soundId);
-		debugC(kDebugScript, "\tu0: %d", u0);
-		debugC(kDebugScript, "\tu1: %d", u1);
-
-		debugC(kDebugScript, "\trect.left: %d", rect.left);
-		debugC(kDebugScript, "\trect.top: %d", rect.top);
-		debugC(kDebugScript, "\trect.right: %d", rect.right);
-		debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
-		debugC(kDebugScript, "\tupdateDirection: %d", updateDirection);
-		debugC(kDebugScript, "\tu2: %d", u2);
-
-		if ((_vm->_varStore->getVar(2) == 1) &&
-			(_vm->_varStore->getVar(3) == 1) &&
-			(_vm->_varStore->getVar(4) == 1) &&
-			(_vm->_varStore->getVar(5) == 1) &&
-			(_vm->_varStore->getVar(6) == 1) &&
-			(_vm->_varStore->getVar(7) == 1) &&
-			(_vm->_varStore->getVar(8) == 1) &&
-			(_vm->_varStore->getVar(9) == 1)) {
-			// TODO: Implement correct function...
-			// Blit Image in Right to Left Vertical stripes i.e. transistion
-			// like door closing
-			_vm->_sound->playSound(soundId);
-			_vm->_varStore->setVar(41, 0);
-		}
-	} else
-		unknown(op, var, argc, argv);
+		_vm->_sound->playSound(soundId);
+		_vm->redrawArea(41, false);
+		animatedUpdate(directionalUpdateDataSize, &argv[3], delay);
+	}
 }
 
 void MystScriptParser_Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1559,40 +1600,29 @@ void MystScriptParser_Myst::opcode_197(uint16 op, uint16 var, uint16 argc, uint1
 	// TODO: Year decrease
 }
 
-// TODO: Merge with Opcode 42?
-void MystScriptParser_Myst::opcode_198(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_dockVaultForceClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Myst 4143 (Dock near Marker Switch)
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	uint16 soundId = argv[0];
+	uint16 delay = argv[1];
+	uint16 directionalUpdateDataSize = argv[2];
 
-	// Used on Card 4143 (Dock near Marker Switch, facing Cogs)
-	if (argc == 9) {
-		uint16 soundId = argv[0];
-		uint16 u0 = argv[1];
-		uint16 u1 = argv[2];
-		Common::Rect rect = Common::Rect(argv[3], argv[4], argv[5], argv[6]);
-		uint16 updateDirection = argv[7];
-		uint16 u2 = argv[8];
+	debugC(kDebugScript, "Opcode %d: Vault Force Close", op);
+	debugC(kDebugScript, "\tsoundId: %d", soundId);
+	debugC(kDebugScript, "\tdirectionalUpdateDataSize: %d", directionalUpdateDataSize);
 
-		debugC(kDebugScript, "Opcode %d: Close Dock Marker Switch Vault", op);
-		debugC(kDebugScript, "\tsoundId: %d", soundId);
-		debugC(kDebugScript, "\tu0: %d", u0);
-		debugC(kDebugScript, "\tu1: %d", u1);
+	if (_dockVaultState) {
+		// Open switch
+		myst.dockMarkerSwitch = 1;
+		_vm->_sound->playSound(4143);
+		_vm->redrawArea(4);
 
-		debugC(kDebugScript, "\trect.left: %d", rect.left);
-		debugC(kDebugScript, "\trect.top: %d", rect.top);
-		debugC(kDebugScript, "\trect.right: %d", rect.right);
-		debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
-		debugC(kDebugScript, "\tupdateDirection: %d", updateDirection);
-		debugC(kDebugScript, "\tu2: %d", u2);
-
-		if (_vm->_varStore->getVar(41) != 0) {
-			Audio::SoundHandle *handle = _vm->_sound->playSound(soundId);
-
-			while (_vm->_mixer->isSoundHandleActive(*handle))
-				_vm->_system->delayMillis(10);
-			// TODO: Do Image Blit
-		}
-	} else
-		unknown(op, var, argc, argv);
+		// Close vault
+		_dockVaultState = 0;
+		_vm->_sound->playSound(soundId);
+		_vm->redrawArea(41, false);
+		animatedUpdate(directionalUpdateDataSize, &argv[3], delay);
+	}
 }
 
 void MystScriptParser_Myst::opcode_199(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1675,32 +1705,45 @@ void MystScriptParser_Myst::opcode_201(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-static struct {
-	bool enabled;
-	uint16 var;
-} g_opcode202Parameters;
+void MystScriptParser_Myst::towerRotationMap_run() {
+	if (!_towerRotationMapInitialized) {
+		_towerRotationMapInitialized = true;
+		_vm->_sound->playSound(4378);
 
-void MystScriptParser_Myst::opcode_202_run(void) {
-	// Used for Card 4378 (Library Tower Rotation Map)
-	// TODO: Fill in.. Code for Tower Rotation Angle etc..
-	// Var 0, 3, 4, 5, 6, 7, 8, 9 used for Type 8 Image Display
-	// Type 11 Hotspot for control..
-	// Var 304 controls presence of Myst Library Image
+		// Draw library
+		_vm->redrawArea(304, false);
+
+		// Draw other resources
+		for (uint i = 1; i <= 10; i++) {
+			MystResourceType8 *resource = static_cast<MystResourceType8 *>(_vm->_resources[i]);
+			_vm->redrawResource(resource, false);
+		}
+
+		// Draw to screen
+		_vm->_gfx->updateScreen();
+	}
+
+	uint32 time = _vm->_system->getMillis();
+	if (time > _startTime) {
+		if (_towerRotationMapClicked) {
+			// TODO: handle tower rotation
+			_startTime = time + 100;
+		} else {
+			// Blink tower
+			_startTime = time + 500;
+			_tempVar = (_tempVar + 1) % 2;
+			_towerRotationMapTower->drawConditionalDataToScreen(_tempVar);
+		}
+	}
 }
 
-void MystScriptParser_Myst::opcode_202_disable(void) {
-	g_opcode202Parameters.enabled = false;
-}
-
-void MystScriptParser_Myst::opcode_202(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 4378 (Library Tower Rotation Map)
-	if (argc == 1) {
-		// TODO: Figure Out argv[0] purpose.. number of image resources?
-		g_opcode202Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Myst::o_towerRotationMap_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_towerRotationMapRunning = true;
+	_towerRotationMapTower = static_cast<MystResourceType11 *>(_invokingResource);
+	_towerRotationMapLabel = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
+	_tempVar = 0;
+	_startTime = 0;
+	_towerRotationMapClicked = false;
 }
 
 void MystScriptParser_Myst::o_forechamberDoor_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

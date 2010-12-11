@@ -53,8 +53,7 @@ private:
 
 	void opcode_201_run();
 	void opcode_201_disable();
-	void opcode_202_run();
-	void opcode_202_disable();
+	void towerRotationMap_run();
 	void opcode_205_run();
 	void opcode_205_disable();
 	void libraryBookcaseTransform_run();
@@ -70,9 +69,11 @@ private:
 	DECLARE_OPCODE(o_fireplaceToggleButton);
 	DECLARE_OPCODE(o_fireplaceRotation);
 	DECLARE_OPCODE(opcode_105);
+	DECLARE_OPCODE(o_towerRotationStart);
+	DECLARE_OPCODE(o_towerRotationEnd);
 	DECLARE_OPCODE(opcode_109);
-	DECLARE_OPCODE(opcode_113);
-	DECLARE_OPCODE(opcode_114);
+	DECLARE_OPCODE(o_dockVaultOpen);
+	DECLARE_OPCODE(o_dockVaultClose);
 	DECLARE_OPCODE(o_bookGivePage);
 	DECLARE_OPCODE(o_clockWheelsExecute);
 	DECLARE_OPCODE(opcode_117);
@@ -131,12 +132,12 @@ private:
 	DECLARE_OPCODE(opcode_195);
 	DECLARE_OPCODE(opcode_196);
 	DECLARE_OPCODE(opcode_197);
-	DECLARE_OPCODE(opcode_198);
+	DECLARE_OPCODE(o_dockVaultForceClose);
 	DECLARE_OPCODE(opcode_199);
 
 	DECLARE_OPCODE(o_libraryBook_init);
 	DECLARE_OPCODE(opcode_201);
-	DECLARE_OPCODE(opcode_202);
+	DECLARE_OPCODE(o_towerRotationMap_init);
 	DECLARE_OPCODE(o_forechamberDoor_init);
 	DECLARE_OPCODE(opcode_204);
 	DECLARE_OPCODE(opcode_205);
@@ -195,6 +196,14 @@ private:
 	uint16 _fireplaceLines[6]; // 74 to 84
 
 	uint16 _clockTurningWheel;
+
+	uint16 _dockVaultState; // 92
+
+	bool _towerRotationMapRunning;
+	uint16 _towerRotationMapInitialized; // 292
+	MystResourceType11 *_towerRotationMapTower; // 108
+	MystResourceType8 *_towerRotationMapLabel; // 112
+	bool _towerRotationMapClicked; // 132
 
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);

@@ -410,7 +410,7 @@ void MystResourceType8::drawDataToScreen() {
 	}
 }
 
-void MystResourceType8::drawConditionalDataToScreen(uint16 state) {
+void MystResourceType8::drawConditionalDataToScreen(uint16 state, bool update) {
 	// Need to call overidden Type 7 function to ensure
 	// switch section is processed correctly.
 	MystResourceType7::drawDataToScreen();
@@ -453,7 +453,10 @@ void MystResourceType8::drawConditionalDataToScreen(uint16 state) {
 			imageToDraw = _subImages[subImageId].wdib;
 
 		_vm->_gfx->copyImageSectionToScreen(imageToDraw, _subImages[subImageId].rect, _rect);
-		_vm->_gfx->updateScreen();
+
+		// Draw to screen
+		if (update)
+			_vm->_gfx->updateScreen();
 	}
 }
 
