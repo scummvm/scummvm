@@ -2308,6 +2308,10 @@ void ScummEngine_v5::o5_verbOps() {
 			break;
 		case 9:		// SO_VERB_NEW
 			slot = getVerbSlot(verb, 0);
+
+			if (_game.platform == Common::kPlatformFMTowns && _game.version == 3 && slot)
+				continue;
+			
 			if (slot == 0) {
 				for (slot = 1; slot < _numVerbs; slot++) {
 					if (_verbs[slot].verbid == 0)
