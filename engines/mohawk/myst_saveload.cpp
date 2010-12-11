@@ -88,19 +88,14 @@ bool MystSaveLoad::loadGame(const Common::String &filename) {
 	_vm->changeToStack(kIntroStack);
 
 	// Set our default cursor
-	switch (_v->globals.heldPage) {
-	case 2:
-		_vm->setMainCursor(kBluePageCursor);
-		break;
-	case 8:
-		_vm->setMainCursor(kRedPageCursor);
-		break;
-	case 12:
-		_vm->setMainCursor(kWhitePageCursor);
-		break;
-	default:
+	if (_v->globals.heldPage == 0 || _v->globals.heldPage > 13)
 		_vm->setMainCursor(kDefaultMystCursor);
-	}
+	else if (_v->globals.heldPage < 7)
+		_vm->setMainCursor(kBluePageCursor);
+	else if (_v->globals.heldPage < 13)
+		_vm->setMainCursor(kRedPageCursor);
+	else // if (_v->globals.heldPage == 13)
+		_vm->setMainCursor(kWhitePageCursor);
 
 	// Set us to the linking book
 	_vm->changeToCard(5, true);
