@@ -95,11 +95,11 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 
 		if (line.size() == 0) {
 			// Do nothing
-		} else if (line[0] == '#' || line[0] == ';') {
+		} else if (line[0] == '#' || line[0] == ';' || line.hasPrefix("//")) {
 			// Accumulate comments here. Once we encounter either the start
 			// of a new section, or a key-value-pair, we associate the value
-			// of the 'comment' variable with that entity. The semicolon
-			// comment is used for Living Books games in Mohawk.
+			// of the 'comment' variable with that entity. The semicolon and
+			// C++-style comments are used for Living Books games in Mohawk.
 			comment += line;
 			comment += "\n";
 		} else if (line[0] == '(') {
