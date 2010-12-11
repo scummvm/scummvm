@@ -64,7 +64,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(113, opcode_113);
 	OPCODE(114, opcode_114);
 	OPCODE(115, o_bookGivePage);
-	OPCODE(116, opcode_116);
+	OPCODE(116, o_clockWheelsExecute);
 	OPCODE(117, opcode_117);
 	OPCODE(118, opcode_118);
 	OPCODE(119, opcode_119);
@@ -111,9 +111,10 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(183, opcode_183);
 	OPCODE(184, opcode_184);
 	OPCODE(185, opcode_185);
-	OPCODE(186, opcode_186);
-	OPCODE(188, opcode_188);
-	OPCODE(189, opcode_189);
+	OPCODE(186, o_clockMinuteWheelStartTurn);
+	OPCODE(187, NOP);
+	OPCODE(188, o_clockWheelEndTurn);
+	OPCODE(189, o_clockHourWheelStartTurn);
 	OPCODE(190, o_libraryCombinationBookStartRight);
 	OPCODE(191, o_libraryCombinationBookStartLeft);
 	OPCODE(192, opcode_192);
@@ -172,6 +173,7 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 	_libraryBookcaseMoving = false;
 	_generatorControlRoomRunning = false;
 	_libraryCombinationBookPagesTurning = false;
+	_clockTurningWheel = 0;
 
 	opcode_212_disable();
 }
@@ -189,6 +191,9 @@ void MystScriptParser_Myst::runPersistentScripts() {
 
 	if (_libraryBookcaseMoving)
 		libraryBookcaseTransform_run();
+
+	if (_clockTurningWheel)
+		clockWheel_run();
 
 	opcode_212_run();
 }
@@ -208,6 +213,8 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		} else {
 			return 3;
 		}
+	case 12: // Clock tower gears bridge
+		return myst.clockTowerBridgeOpen;
 	case 23: // Fireplace Pattern Correct
 		return _fireplaceLines[0] == 195
 				&& _fireplaceLines[1] == 107
@@ -227,6 +234,10 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		} else {
 			return 0;
 		}
+	case 37: // Clock Tower Control Wheels Position
+		return 3 * ((myst.clockTowerMinutePosition / 5) % 3) + myst.clockTowerHourPosition % 3;
+	case 43: // Clock Tower Time
+		return myst.clockTowerHourPosition * 12 + myst.clockTowerMinutePosition / 5;
 	case 44: // Rocket ship power state
 		if (myst.generatorBreakers || myst.generatorVoltage == 0)
 			return 0;
@@ -722,39 +733,36 @@ void MystScriptParser_Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, u
 	}
 }
 
-void MystScriptParser_Myst::opcode_116(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used on Card 4006 (Clock Tower Time Controls)
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	uint16 soundId = argv[0];
 
-	if (argc == 1) {
-		// Used on Card 4006 (Clock Tower Time Controls)
-		uint16 soundId = argv[0];
+	debugC(kDebugScript, "Opcode %d: Clock Tower Bridge Puzzle Execute Button", op);
 
-		debugC(kDebugScript, "Opcode %d: Clock Tower Bridge Puzzle Execute Button", op);
+	// Correct time is 2:40
+	bool correctTime = myst.clockTowerHourPosition == 2
+						&& myst.clockTowerMinutePosition == 40;
 
-		uint16 bridgeState = _vm->_varStore->getVar(12);
-		uint16 currentTime = _vm->_varStore->getVar(43);
+	if (!myst.clockTowerBridgeOpen && correctTime) {
+		_vm->_sound->playSound(soundId);
+		_vm->_system->delayMillis(500);
 
-		const uint16 correctTime = 32; // 2:40 i.e. From 12 Noon in 5 min increments
+		// TODO: Play only 1st half of movie i.e. gears rise up, from 0 to 650
+		_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 36);
 
-		if (!bridgeState && currentTime == correctTime) {
-			_vm->_sound->playSound(soundId);
+		myst.clockTowerBridgeOpen = 1;
+		_vm->redrawArea(12);
+	} else if (myst.clockTowerBridgeOpen && !correctTime) {
+		_vm->_sound->playSound(soundId);
+		_vm->_system->delayMillis(500);
 
-			// TODO: Play only 1st half of movie i.e. gears rise up
-			_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 36);
+		// TODO: Play only 2nd half of movie i.e. gears sink down, from 700 to 1300
+		_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 36);
 
-			bridgeState = 1;
-			_vm->_varStore->setVar(12, bridgeState);
-		} else if (bridgeState && currentTime != correctTime) {
-			_vm->_sound->playSound(soundId);
-
-			// TODO: Play only 2nd half of movie i.e. gears sink down
-			_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 36);
-
-			bridgeState = 0;
-			_vm->_varStore->setVar(12, bridgeState);
-		}
-	} else
-		unknown(op, var, argc, argv);
+		myst.clockTowerBridgeOpen = 0;
+		_vm->redrawArea(12);
+	}
 }
 
 void MystScriptParser_Myst::opcode_117(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1375,19 +1383,72 @@ void MystScriptParser_Myst::opcode_185(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Myst::opcode_186(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Myst::o_clockMinuteWheelStartTurn(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Card 4006
-	// TODO: Minute wheel turn
+	debugC(kDebugScript, "Opcode %d: Minute wheel start turn", op);
+
+	clockWheelStartTurn(2);
 }
 
-void MystScriptParser_Myst::opcode_188(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Myst::o_clockWheelEndTurn(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Card 4006
-	// TODO: Redraw time wheels?
+	debugC(kDebugScript, "Opcode %d: Wheel end turn", op);
+
+	_clockTurningWheel = 0;
 }
 
-void MystScriptParser_Myst::opcode_189(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Myst::o_clockHourWheelStartTurn(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Card 4006
-	// TODO: Hour wheel turn
+	debugC(kDebugScript, "Opcode %d: Hour wheel start turn", op);
+
+	clockWheelStartTurn(1);
+}
+
+void MystScriptParser_Myst::clockWheel_run() {
+	// Turn wheel one step each second
+	uint32 time = _vm->_system->getMillis();
+	if (time > _startTime + 1000) {
+		_startTime = time;
+
+		if (_clockTurningWheel == 1) {
+			clockWheelTurn(39);
+		} else {
+			clockWheelTurn(38);
+		}
+		_vm->redrawArea(37);
+	}
+
+}
+
+void MystScriptParser_Myst::clockWheelStartTurn(uint16 wheel) {
+	MystResourceType11 *resource = static_cast<MystResourceType11 *>(_invokingResource);
+	uint16 soundId = resource->getList1(0);
+	if (soundId)
+		_vm->_sound->playSound(soundId);
+
+	// Turn wheel one step
+	if (wheel == 1) {
+		clockWheelTurn(39);
+	} else {
+		clockWheelTurn(38);
+	}
+	_vm->redrawArea(37);
+
+	// Continue turning wheel until mouse button is released
+	_clockTurningWheel = wheel;
+	_startTime = _vm->_system->getMillis();
+}
+
+void MystScriptParser_Myst::clockWheelTurn(uint16 var) {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	if (var == 38) {
+		// Hours
+		myst.clockTowerHourPosition = (myst.clockTowerHourPosition + 1) % 12;
+	} else {
+		// Minutes
+		myst.clockTowerMinutePosition = (myst.clockTowerMinutePosition + 5) % 60;
+	}
 }
 
 void MystScriptParser_Myst::o_libraryCombinationBookStartRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1395,7 +1456,7 @@ void MystScriptParser_Myst::o_libraryCombinationBookStartRight(uint16 op, uint16
 
 	_tempVar = 0;
 	libraryCombinationBookTurnRight();
-	_libraryCombinationBookStart = _vm->_system->getMillis();
+	_startTime = _vm->_system->getMillis();
 	_libraryCombinationBookPagesTurning = true;
 }
 
@@ -1404,7 +1465,7 @@ void MystScriptParser_Myst::o_libraryCombinationBookStartLeft(uint16 op, uint16 
 
 	_tempVar = 0;
 	libraryCombinationBookTurnLeft();
-	_libraryCombinationBookStart = _vm->_system->getMillis();
+	_startTime = _vm->_system->getMillis();
 	_libraryCombinationBookPagesTurning = true;
 }
 
@@ -1462,13 +1523,13 @@ void MystScriptParser_Myst::libraryCombinationBookTurnRight() {
 
 void MystScriptParser_Myst::libraryCombinationBook_run() {
 	uint32 time = _vm->_system->getMillis();
-	if (time >= _libraryCombinationBookStart + 500) {
+	if (time >= _startTime + 500) {
 		if (_tempVar > 0) {
 			libraryCombinationBookTurnRight();
-			_libraryCombinationBookStart = time;
+			_startTime = time;
 		} else if (_tempVar < 0) {
 			libraryCombinationBookTurnLeft();
-			_libraryCombinationBookStart = time;
+			_startTime = time;
 		}
 	}
 }

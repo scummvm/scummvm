@@ -721,6 +721,14 @@ void MystResourceType11::setPositionClipping(const Common::Point &mouse, Common:
 }
 
 uint16 MystResourceType11::getList1(uint16 index) {
+	if (index < _lists[0].listCount) {
+		return _lists[0].list[index];
+	}
+
+	return 0;
+}
+
+uint16 MystResourceType11::getList2(uint16 index) {
 	if (index < _lists[1].listCount) {
 		return _lists[1].list[index];
 	}
@@ -728,17 +736,9 @@ uint16 MystResourceType11::getList1(uint16 index) {
 	return 0;
 }
 
-uint16 MystResourceType11::getList2(uint16 index) {
+uint16 MystResourceType11::getList3(uint16 index) {
 	if (index < _lists[2].listCount) {
 		return _lists[2].list[index];
-	}
-
-	return 0;
-}
-
-uint16 MystResourceType11::getList3(uint16 index) {
-	if (index < _lists[3].listCount) {
-		return _lists[3].list[index];
 	}
 
 	return 0;

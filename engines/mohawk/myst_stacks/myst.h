@@ -62,6 +62,7 @@ private:
 	void opcode_212_run();
 	void opcode_212_disable();
 	void libraryCombinationBook_run();
+	void clockWheel_run();
 
 
 	DECLARE_OPCODE(o_libraryBookPageTurnLeft);
@@ -73,7 +74,7 @@ private:
 	DECLARE_OPCODE(opcode_113);
 	DECLARE_OPCODE(opcode_114);
 	DECLARE_OPCODE(o_bookGivePage);
-	DECLARE_OPCODE(opcode_116);
+	DECLARE_OPCODE(o_clockWheelsExecute);
 	DECLARE_OPCODE(opcode_117);
 	DECLARE_OPCODE(opcode_118);
 	DECLARE_OPCODE(opcode_119);
@@ -120,9 +121,9 @@ private:
 	DECLARE_OPCODE(opcode_183);
 	DECLARE_OPCODE(opcode_184);
 	DECLARE_OPCODE(opcode_185);
-	DECLARE_OPCODE(opcode_186);
-	DECLARE_OPCODE(opcode_188);
-	DECLARE_OPCODE(opcode_189);
+	DECLARE_OPCODE(o_clockMinuteWheelStartTurn);
+	DECLARE_OPCODE(o_clockWheelEndTurn);
+	DECLARE_OPCODE(o_clockHourWheelStartTurn);
 	DECLARE_OPCODE(o_libraryCombinationBookStartRight);
 	DECLARE_OPCODE(o_libraryCombinationBookStartLeft);
 	DECLARE_OPCODE(opcode_192);
@@ -180,7 +181,6 @@ private:
 	uint16 _rocketLeverPosition; // 296
 
 	bool _libraryCombinationBookPagesTurning;
-	uint32 _libraryCombinationBookStart; // 8
 	int16 _libraryBookPage; // 86
 	uint16 _libraryBookNumPages; // 88
 	uint16 _libraryBookBaseImage; // 90
@@ -194,6 +194,8 @@ private:
 
 	uint16 _fireplaceLines[6]; // 74 to 84
 
+	uint16 _clockTurningWheel;
+
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
 
@@ -205,6 +207,9 @@ private:
 	void libraryCombinationBookTurnLeft();
 
 	uint16 bookCountPages(uint16 var);
+
+	void clockWheelStartTurn(uint16 wheel);
+	void clockWheelTurn(uint16 var);
 };
 
 } // End of namespace Mohawk
