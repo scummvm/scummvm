@@ -603,7 +603,13 @@ void MystScriptParser::o_restoreDefaultRect(uint16 op, uint16 var, uint16 argc, 
 		debugC(kDebugScript, "\trect.right: %d", rect.right);
 		debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
 
-		_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), rect, rect);
+		Common::Rect src;
+		src.left = rect.left;
+		src.top = 333 - rect.bottom;
+		src.right = rect.right;
+		src.bottom = 333 - rect.top;
+
+		_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), src, rect);
 	} else
 		unknown(op, var, argc, argv);
 }
