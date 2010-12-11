@@ -2,7 +2,7 @@
 <!-- NB: android:versionCode needs to be bumped for formal releases -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="org.inodes.gus.scummvm"
-      android:versionCode="6" android:versionName="1.2.0pre"
+      android:versionCode="6" android:versionName="1.2.1"
       android:installLocation="preferExternal">
 
   <!-- This version works on Android 1.5 (SDK 3) and newer, but we
