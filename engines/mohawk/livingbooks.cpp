@@ -1661,6 +1661,10 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 				entry->type, entry->event, entry->opcode, entry->param);
 			size -= 6;
 
+			// TODO: read as bytes, if this is correct (but beware endianism)
+			byte expectedConditions = (entry->event & 0xff00) >> 8;
+			entry->event = entry->event & 0xff;
+
 			if (type == kLBMsgListScript) {
 				if (size < 2)
 					error("Script entry of type 0x%04x was too small (%d)", type, size);
@@ -1694,26 +1698,33 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 					entry->newUnknown, entry->newMode, entry->newPage, entry->newSubpage);
 				size -= 8;
 			}
-			// FIXME: what is 0x1d?
-			if (entry->event == kLBEventNotified || entry->opcode == 0x1d) {
+			if (entry->event == kLBEventNotified) {
 				if (size < 4)
-					error("not enough bytes (%d) in event %d, opcode 0x%04x", size, entry->event, entry->opcode);
+					error("not enough bytes (%d) in kLBEventNotified, opcode 0x%04x", size, entry->opcode);
 				entry->matchFrom = stream->readUint16();
 				entry->matchNotify = stream->readUint16();
 				debug(4, "kLBEventNotified: unknowns %04x, %04x",
 					entry->matchFrom, entry->matchNotify);
 				size -= 4;
 			}
+			if (entry->opcode == kLBOpSendExpression) {
+				if (size < 4)
+					error("not enough bytes (%d) in kLBOpSendExpression, event 0x%04x", size, entry->event);
+				entry->offset = stream->readUint32();
+				debug(4, "kLBOpSendExpression: offset %08x", entry->offset);
+				size -= 4;
+			}
 			if (entry->opcode == 0xffff) {
 				if (size < 4)
-					error("didn't get enough bytes (%d) to read command in script entry", size);
+					error("didn't get enough bytes (%d) to read message in script entry", size);
 				size -= 4;
 
 				uint16 msgId = stream->readUint16();
+				uint16 msgLen = stream->readUint16();
 				if (msgId != kLBCommand)
 					error("expected a command in script entry, got 0x%04x", msgId);
-				uint16 msgLen = stream->readUint16();
-				if (msgLen != size)
+
+				if (msgLen != size && expectedConditions == 0)
 					error("script entry msgLen %d is not equal to size %d", msgLen, size);
 
 				Common::String command = readString(stream);
@@ -1725,7 +1736,9 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 
 				entry->command = command;
 				debug(4, "script entry command '%s'", command.c_str());
-			} else if (size) {
+			}
+
+			if (size) {
 				byte commandLen = stream->readByte();
 				if (commandLen)
 					error("got confused while reading bytes at end of script entry (got %d)", commandLen);
@@ -1742,9 +1755,6 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 				debug(4, "script entry condition '%s'", condition.c_str());
 			}
 
-			// TODO: read as bytes, if this is correct (but beware endianism)
-			byte expectedConditions = (entry->event & 0xff00) >> 8;
-			entry->event = entry->event & 0xff;
 			if (entry->conditions.size() != expectedConditions)
 				error("got %d conditions, but expected %d", entry->conditions.size(), expectedConditions);
 

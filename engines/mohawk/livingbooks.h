@@ -222,6 +222,9 @@ struct LBScriptEntry {
 	uint16 matchFrom;
 	uint16 matchNotify;
 
+	// kLBOpSendExpression
+	uint32 offset;
+
 	Common::String command;
 	Common::Array<Common::String> conditions;
 };
