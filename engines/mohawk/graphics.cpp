@@ -323,15 +323,17 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 			// The PICT resource exists. However, it could still contain a MystBitmap
 			// instead of a PICT image...
 			dataStream = _vm->getResource(ID_PICT, id);
+		} else // No PICT, so the WDIB must exist. Let's go grab it.
+			dataStream = _vm->getResource(ID_WDIB, id);
 
+		if (_vm->getFeatures() & GF_ME) {
 			// Here we detect whether it's really a PICT or a WDIB. Since a MystBitmap
 			// would be compressed, there's no way to detect for the BM without a hack.
 			// So, we search for the PICT version opcode for detection.
 			dataStream->seek(512 + 10); // 512 byte pict header
 			isPict = (dataStream->readUint32BE() == 0x001102FF);
 			dataStream->seek(0);
-		} else // No PICT, so the WDIB must exist. Let's go grab it.
-			dataStream = _vm->getResource(ID_WDIB, id);
+		}
 
 		if (isPict)
 			mhkSurface = new MohawkSurface(_pictDecoder->decodeImage(dataStream));
