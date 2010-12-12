@@ -520,6 +520,7 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 	TypeData *data = &_commentZone->u;
 
 	if (data->_examineText.empty()) {
+		exitCommentMode();
 		return;
 	}
 
