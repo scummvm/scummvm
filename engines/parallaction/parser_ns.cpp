@@ -1412,6 +1412,24 @@ void LocationParser_ns::parseSpeakData(ZonePtr z) {
 	}
 }
 
+void LocationParser_ns::parseNoneData(ZonePtr z) {
+	// "None" zones should have no content, but some 
+	// inconsistently define their command list after 
+	// the TYPE marker. This routine catches these 
+	// command lists that would be lost otherwise.
+	if (!scumm_stricmp(_tokens[0], "commands")) {
+		parseCommands(z->_commands);
+		ctxt.endcommands = false;
+		do {
+			_script->readLineToken(true);
+			_parser->parseStatement();
+		} while (!ctxt.endcommands);
+		
+		// no need to parse one more line here, as
+		// it is done by the caller
+	}
+}
+
 typedef void (LocationParser_ns::*ZoneTypeParser)(ZonePtr);
 static ZoneTypeParser parsers[] = {
 	0,	// no type
@@ -1423,7 +1441,7 @@ static ZoneTypeParser parsers[] = {
 	&LocationParser_ns::parseHearData,
 	0,	// feel
 	&LocationParser_ns::parseSpeakData,
-	0,	// none
+	&LocationParser_ns::parseNoneData,
 	0,	// trap
 	0,	// you
 	0	// command

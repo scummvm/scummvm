@@ -179,6 +179,7 @@ public:
 	virtual void parseMergeData(ZonePtr z);
 	virtual void parseHearData(ZonePtr z);
 	virtual void parseSpeakData(ZonePtr z);
+	virtual void parseNoneData(ZonePtr z);
 protected:
 	Common::String	parseComment();
 	Common::String	parseDialogueString();
