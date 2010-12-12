@@ -203,7 +203,9 @@ private:
 	uint16 _towerRotationMapInitialized; // 292
 	MystResourceType11 *_towerRotationMapTower; // 108
 	MystResourceType8 *_towerRotationMapLabel; // 112
+	uint16 _towerRotationSpeed; // 124
 	bool _towerRotationMapClicked; // 132
+	bool _towerRotationOverSpot; // 136
 
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
@@ -219,6 +221,12 @@ private:
 
 	void clockWheelStartTurn(uint16 wheel);
 	void clockWheelTurn(uint16 var);
+
+	void towerRotationMapRotate();
+	void towerRotationDrawBuildings();
+	uint16 towerRotationMapComputeAngle();
+	Common::Point towerRotationMapComputeCoords(const Common::Point &center, uint16 angle);
+	void towerRotationMapDrawLine(const Common::Point &center, const Common::Point &end);
 };
 
 } // End of namespace Mohawk

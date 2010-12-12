@@ -115,6 +115,7 @@ public:
 	void updateScreen();
 	void runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay);
 	void drawRect(Common::Rect rect, RectState state);
+	void drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color);
 
 protected:
 	MohawkSurface *decodeImage(uint16 id);

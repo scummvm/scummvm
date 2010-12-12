@@ -32,6 +32,7 @@
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/myst.h"
 
+#include "graphics/colormasks.h"
 #include "gui/message.h"
 
 namespace Mohawk {
@@ -238,6 +239,55 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		return myst.rocketshipMarkerSwitch;
 	case 12: // Clock tower gears bridge
 		return myst.clockTowerBridgeOpen;
+	case 13: // Tower in right position
+		return myst.towerRotationAngle == 271
+				|| myst.towerRotationAngle == 83
+				|| myst.towerRotationAngle == 129
+				|| myst.towerRotationAngle == 152;
+	case 14: // Tower Solution (Key) Plaque
+		switch (myst.towerRotationAngle) {
+		case 271:
+			return 1;
+		case 83:
+			return 2;
+		case 129:
+			return 3;
+		case 152:
+			return 4;
+		default:
+			return 0;
+		}
+	case 15: // Tower Window (Book) View
+		switch (myst.towerRotationAngle) {
+		case 271:
+			return 1;
+		case 83:
+			if (myst.gearsOpen)
+				return 6;
+			else
+				return 2;
+		case 129:
+			if (myst.shipState)
+				return 5;
+			else
+				return 3;
+		case 152:
+			return 4;
+		default:
+			return 0;
+		}
+	case 16: // Tower Window (Book) View From Ladder Top
+		if (myst.towerRotationAngle != 271
+						&& myst.towerRotationAngle != 83
+						&& myst.towerRotationAngle != 129) {
+			if (myst.towerRotationAngle == 152)
+				return 2;
+			else
+				return 0;
+		} else {
+			return 1;
+		}
+
 	case 23: // Fireplace Pattern Correct
 		return _fireplaceLines[0] == 195
 				&& _fireplaceLines[1] == 107
@@ -606,11 +656,63 @@ void MystScriptParser_Myst::opcode_105(uint16 op, uint16 var, uint16 argc, uint1
 }
 
 void MystScriptParser_Myst::o_towerRotationStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
 	_towerRotationMapClicked = true;
+	_towerRotationSpeed = 0;
+
+	_vm->_cursor->setCursor(700);
+
+	const Common::Point center = Common::Point(383, 124);
+	Common::Point end = towerRotationMapComputeCoords(center, myst.towerRotationAngle);
+	towerRotationMapComputeAngle();
+	towerRotationMapDrawLine(center, end);
+
+	_vm->_sound->playSound(5378, Audio::Mixer::kMaxChannelVolume, true);
 }
 
 void MystScriptParser_Myst::o_towerRotationEnd(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
 	_towerRotationMapClicked = false;
+
+	_vm->_cursor->hideCursor();
+
+	uint16 cnt = 0;
+	_vm->_sound->replaceSound(6378);
+	while (_vm->_sound->isPlaying(6378)) {
+		_vm->_system->delayMillis(100);
+
+		// Blink tower rotation label while sound is playing
+		cnt = (cnt +1) % 14;
+		if (cnt == 7)
+			_towerRotationMapLabel->drawConditionalDataToScreen(0);
+		else if (cnt == 0)
+			_towerRotationMapLabel->drawConditionalDataToScreen(1);
+	}
+
+	_towerRotationMapLabel->drawConditionalDataToScreen(0);
+
+	_vm->_cursor->showCursor();
+
+	// Set angle value to expected value
+	if (myst.towerRotationAngle >= 265
+			&& myst.towerRotationAngle <= 277
+			&& myst.rocketshipMarkerSwitch) {
+		myst.towerRotationAngle = 271;
+	} else if (myst.towerRotationAngle >= 77
+			&& myst.towerRotationAngle <= 89
+			&& myst.gearsMarkerSwitch) {
+		myst.towerRotationAngle = 83;
+	} else if (myst.towerRotationAngle >= 123
+			&& myst.towerRotationAngle <= 135
+			&& myst.dockMarkerSwitch) {
+		myst.towerRotationAngle = 129;
+	} else if (myst.towerRotationAngle >= 146
+			&& myst.towerRotationAngle <= 158
+			&& myst.cabinMarkerSwitch) {
+		myst.towerRotationAngle = 152;
+	}
 }
 
 void MystScriptParser_Myst::opcode_109(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1710,14 +1812,7 @@ void MystScriptParser_Myst::towerRotationMap_run() {
 		_towerRotationMapInitialized = true;
 		_vm->_sound->playSound(4378);
 
-		// Draw library
-		_vm->redrawArea(304, false);
-
-		// Draw other resources
-		for (uint i = 1; i <= 10; i++) {
-			MystResourceType8 *resource = static_cast<MystResourceType8 *>(_vm->_resources[i]);
-			_vm->redrawResource(resource, false);
-		}
+		towerRotationDrawBuildings();
 
 		// Draw to screen
 		_vm->_gfx->updateScreen();
@@ -1726,7 +1821,7 @@ void MystScriptParser_Myst::towerRotationMap_run() {
 	uint32 time = _vm->_system->getMillis();
 	if (time > _startTime) {
 		if (_towerRotationMapClicked) {
-			// TODO: handle tower rotation
+			towerRotationMapRotate();
 			_startTime = time + 100;
 		} else {
 			// Blink tower
@@ -1744,6 +1839,107 @@ void MystScriptParser_Myst::o_towerRotationMap_init(uint16 op, uint16 var, uint1
 	_tempVar = 0;
 	_startTime = 0;
 	_towerRotationMapClicked = false;
+}
+
+void MystScriptParser_Myst::towerRotationDrawBuildings() {
+	// Draw library
+	_vm->redrawArea(304, false);
+
+	// Draw other resources
+	for (uint i = 1; i <= 10; i++) {
+		MystResourceType8 *resource = static_cast<MystResourceType8 *>(_vm->_resources[i]);
+		_vm->redrawResource(resource, false);
+	}
+}
+
+uint16 MystScriptParser_Myst::towerRotationMapComputeAngle() {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	_towerRotationSpeed++;
+	if (_towerRotationSpeed >= 7)
+		_towerRotationSpeed = 7;
+	else
+		_towerRotationSpeed++;
+
+	myst.towerRotationAngle = (myst.towerRotationAngle + _towerRotationSpeed) % 360;
+	uint16 angle = myst.towerRotationAngle;
+	_towerRotationOverSpot = false;
+
+	if (angle >= 265 && angle <= 277
+			&& myst.rocketshipMarkerSwitch) {
+		angle = 271;
+		_towerRotationOverSpot = true;
+		_towerRotationSpeed = 1;
+	} else if (angle >= 77 && angle <= 89
+			&& myst.gearsMarkerSwitch) {
+		angle = 83;
+		_towerRotationOverSpot = true;
+		_towerRotationSpeed = 1;
+	} else if (angle >= 123 && angle <= 135
+			&& myst.dockMarkerSwitch) {
+		angle = 129;
+		_towerRotationOverSpot = true;
+		_towerRotationSpeed = 1;
+	} else if (angle >= 146 && angle <= 158
+			&& myst.cabinMarkerSwitch) {
+		angle = 152;
+		_towerRotationOverSpot = true;
+		_towerRotationSpeed = 1;
+	}
+
+	return angle;
+}
+
+Common::Point MystScriptParser_Myst::towerRotationMapComputeCoords(const Common::Point &center, uint16 angle) {
+	Common::Point end;
+
+	// Polar to rect coords
+	double radians = angle * PI / 180.0;
+	end.x = center.x + cos(radians) * 310.0;
+	end.y = center.y + sin(radians) * 310.0;
+
+	return end;
+}
+
+void MystScriptParser_Myst::towerRotationMapDrawLine(const Common::Point &center, const Common::Point &end) {
+	Graphics::PixelFormat pf = _vm->_system->getScreenFormat();
+	uint32 color = 0;
+
+	if (!_towerRotationOverSpot)
+		color = pf.RGBToColor(0xFF, 0xFF, 0xFF); // White
+	else
+		color = pf.RGBToColor(0xFF, 0, 0); // Red
+
+	const Common::Rect rect = Common::Rect(106, 42, 459, 273);
+
+	Common::Rect src;
+	src.left = rect.left;
+	src.top = 333 - rect.bottom;
+	src.right = rect.right;
+	src.bottom = 333 - rect.top;
+
+	// Redraw background
+	_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), src, rect);
+
+	// Draw buildings
+	towerRotationDrawBuildings();
+
+	// Draw tower
+	_towerRotationMapTower->drawConditionalDataToScreen(0, false);
+
+	// Draw label
+	_towerRotationMapLabel->drawConditionalDataToScreen(1, false);
+
+	// Draw line
+	_vm->_gfx->drawLine(center, end, color);
+	_vm->_gfx->updateScreen();
+}
+
+void MystScriptParser_Myst::towerRotationMapRotate() {
+	const Common::Point center = Common::Point(383, 124);
+	uint16 angle = towerRotationMapComputeAngle();
+	Common::Point end = towerRotationMapComputeCoords(center, angle);
+	towerRotationMapDrawLine(center, end);
 }
 
 void MystScriptParser_Myst::o_forechamberDoor_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

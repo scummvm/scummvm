@@ -517,6 +517,10 @@ void MystGraphics::drawRect(Common::Rect rect, RectState state) {
 		_mainScreen->frameRect(rect, _pixelFormat.RGBToColor(255, 0, 0));
 }
 
+void MystGraphics::drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color) {
+	_mainScreen->drawLine(p1.x, p1.y, p2.x, p2.y, color);
+}
+
 RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm) {
 	_bitmapDecoder = new MohawkBitmap();
 
