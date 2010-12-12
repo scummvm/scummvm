@@ -340,6 +340,9 @@ void MohawkEngine_LivingBooks::updatePage() {
 	switch (_phase) {
 	case 0:
 		for (uint32 i = 0; i < _items.size(); i++)
+			_items[i]->startPhase(0xFFFE);
+
+		for (uint32 i = 0; i < _items.size(); i++)
 			_items[i]->startPhase(0xFFFF);
 
 		for (uint32 i = 0; i < _items.size(); i++)
@@ -2064,6 +2067,12 @@ void LBItem::startPhase(uint phase) {
 		setEnabled(true);
 
 	switch (phase) {
+	case 0xFFFE:
+		if (_timingMode == 7) {
+			debug(2, "Phase load: time startup");
+			setNextTime(_periodMin, _periodMax);
+		}
+		break;
 	case 0xFFFF:
 		runScript(kLBEventPhaseCreate);
 		if (_timingMode == 6) {
