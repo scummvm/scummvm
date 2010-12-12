@@ -67,6 +67,7 @@ sub html_entities_to_ascii {
 	# &ouml;    -> o / oe
 	# &auml;    -> a
 	# &uuml;    -> ue
+	# &aring;   -> aa
 	# &amp;     -> &
 	# &#322;    -> l
 	# &Scaron;  -> S
@@ -76,6 +77,7 @@ sub html_entities_to_ascii {
 	$text =~ s/&oslash;/o/g;
 	$text =~ s/&#322;/l/g;
 	$text =~ s/&Scaron;/S/g;
+	$text =~ s/&aring;/aa/g;
 
 	$text =~ s/&auml;/a/g;
 	$text =~ s/&uuml;/ue/g;
@@ -99,6 +101,7 @@ sub html_entities_to_cpp {
 	$text =~ s/&oslash;/\\370/g;
 	$text =~ s/&#322;/l/g;
 	$text =~ s/&Scaron;/S/g;
+	$text =~ s/&aring;/\\345/g;
 
 	$text =~ s/&auml;/\\344/g;
 	$text =~ s/&ouml;/\\366/g;
@@ -901,6 +904,9 @@ begin_credits("Credits");
 		end_section();
 		begin_section("Italian");
 			add_person("Matteo Angelino", "Maff", "");
+		end_section();
+		begin_section("Norwegian (Bokm&aring;l)");
+			add_person("Einar Johan T. S&oslash;m&aring;en", "", "");
 		end_section();
 		begin_section("Brazilian Portuguese");
 			add_person("ScummBR Team", "", "");
