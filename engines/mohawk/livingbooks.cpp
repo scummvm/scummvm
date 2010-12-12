@@ -1669,21 +1669,51 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 				if (size < 2)
 					error("Script entry of type 0x%04x was too small (%d)", type, size);
 
+
+
 				entry->argc = stream->readUint16();
-				entry->argvParam = new uint16[entry->argc];
-				entry->argvTarget = new uint16[entry->argc];
-				debug(4, "With %d targets:", entry->argc);
+				size -= 2;
 
-				if (size < (2 + entry->argc * 4))
-					error("Script entry of type 0x%04x was too small (%d)", type, size);
+				if ((entry->opcode & 0xff00) == 0x0100) {
+					uint16 targetingType = entry->argc;
+					if (targetingType == 0x3f3f || targetingType == 0xffff) {
+						entry->argc = 0;
 
-				for (uint i = 0; i < entry->argc; i++) {
-					entry->argvParam[i] = stream->readUint16();
-					entry->argvTarget[i] = stream->readUint16();
-					debug(4, "Target %d, param 0x%04x", entry->argvTarget[i], entry->argvParam[i]);
+						uint16 count = stream->readUint16();
+						size -= 2;
+
+						// FIXME: targeting by name
+						for (uint i = 0; i < count; i++) {
+							Common::String target = readString(stream);
+							warning("ignoring target '%s' in script entry", target.c_str());
+							size -= target.size() + 1;
+						}
+
+						// FIXME: unknown
+						if (targetingType == 0xffff) {
+							byte unknown = stream->readByte();
+							warning("ignoring unknown script entry byte %02x", unknown);
+							size--;
+						}
+					}
 				}
 
-				size -= (2 + entry->argc * 4);
+				if (entry->argc) {
+					entry->argvParam = new uint16[entry->argc];
+					entry->argvTarget = new uint16[entry->argc];
+					debug(4, "With %d targets:", entry->argc);
+
+					if (size < (entry->argc * 4))
+						error("Script entry of type 0x%04x was too small (%d)", type, size);
+
+					for (uint i = 0; i < entry->argc; i++) {
+						entry->argvParam[i] = stream->readUint16();
+						entry->argvTarget[i] = stream->readUint16();
+						debug(4, "Target %d, param 0x%04x", entry->argvTarget[i], entry->argvParam[i]);
+					}
+
+					size -= (entry->argc * 4);
+				}
 			}
 
 			if (type == kLBNotifyScript && entry->opcode == kLBNotifyChangeMode && _vm->getGameType() != GType_LIVINGBOOKSV1) {
