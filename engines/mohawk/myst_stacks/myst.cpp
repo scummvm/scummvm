@@ -73,7 +73,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(118, opcode_118);
 	OPCODE(119, opcode_119);
 	OPCODE(120, o_generatorButtonPressed);
-	OPCODE(121, opcode_121);
+	OPCODE(121, o_cabinSafeChangeDigit);
 	OPCODE(122, opcode_122);
 	OPCODE(123, opcode_123);
 	OPCODE(129, opcode_129);
@@ -236,6 +236,8 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		return myst.observatoryMarkerSwitch;
 	case 9: // Marker Switch Near Rocket Ship
 		return myst.rocketshipMarkerSwitch;
+	case 11: // Cabin Door Open State
+		return _cabinDoorOpened;
 	case 12: // Clock tower gears bridge
 		return myst.clockTowerBridgeOpen;
 	case 13: // Tower in right position
@@ -361,6 +363,12 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return myst.generatorVoltage % 10;
 	case 66: // Generators lights on
 		return 0;
+	case 67: // Cabin Safe Lock Number #1 - Left
+		return myst.cabinSafeCombination / 100;
+	case 68: // Cabin Safe Lock Number #2
+		return (myst.cabinSafeCombination / 10) % 10;
+	case 69: // Cabin Safe Lock Number #3 - Right
+		return myst.cabinSafeCombination % 10;
 	case 93: // Breaker nearest Generator Room Blown
 		return myst.generatorBreakers == 1;
 	case 94: // Breaker nearest Rocket Ship Blown
@@ -486,6 +494,12 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 		if (myst.libraryBookcaseDoor != value) {
 			myst.libraryBookcaseDoor = value;
 			_tempVar = 0;
+			refresh = true;
+		}
+		break;
+	case 11: // Cabin Door Open State
+		if (_cabinDoorOpened != value) {
+			_cabinDoorOpened = value;
 			refresh = true;
 		}
 		break;
@@ -657,6 +671,7 @@ void MystScriptParser_Myst::opcode_105(uint16 op, uint16 var, uint16 argc, uint1
 void MystScriptParser_Myst::o_towerRotationStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
+	_towerRotationBlinkLabel = false;
 	_towerRotationMapClicked = true;
 	_towerRotationSpeed = 0;
 
@@ -667,32 +682,13 @@ void MystScriptParser_Myst::o_towerRotationStart(uint16 op, uint16 var, uint16 a
 	towerRotationMapComputeAngle();
 	towerRotationMapDrawLine(center, end);
 
-	_vm->_sound->playSound(5378, Audio::Mixer::kMaxChannelVolume, true);
+	_vm->_sound->replaceSound(5378, Audio::Mixer::kMaxChannelVolume, true);
 }
 
 void MystScriptParser_Myst::o_towerRotationEnd(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
 	_towerRotationMapClicked = false;
-
-	_vm->_cursor->hideCursor();
-
-	uint16 cnt = 0;
-	_vm->_sound->replaceSound(6378);
-	while (_vm->_sound->isPlaying(6378)) {
-		_vm->_system->delayMillis(100);
-
-		// Blink tower rotation label while sound is playing
-		cnt = (cnt +1) % 14;
-		if (cnt == 7)
-			_towerRotationMapLabel->drawConditionalDataToScreen(0);
-		else if (cnt == 0)
-			_towerRotationMapLabel->drawConditionalDataToScreen(1);
-	}
-
-	_towerRotationMapLabel->drawConditionalDataToScreen(0);
-
-	_vm->_cursor->showCursor();
 
 	// Set angle value to expected value
 	if (myst.towerRotationAngle >= 265
@@ -712,6 +708,11 @@ void MystScriptParser_Myst::o_towerRotationEnd(uint16 op, uint16 var, uint16 arg
 			&& myst.cabinMarkerSwitch) {
 		myst.towerRotationAngle = 152;
 	}
+
+	_vm->_sound->replaceSound(6378);
+
+	_towerRotationBlinkLabel = true;
+	_towerRotationBlinkLabelCount = 0;
 }
 
 void MystScriptParser_Myst::opcode_109(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1061,19 +1062,25 @@ void MystScriptParser_Myst::generatorButtonValue(MystResource *button, uint16 &m
 	}
 }
 
-void MystScriptParser_Myst::opcode_121(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4100 (Cabin Safe Buttons)
-	// Correct Solution (724) -> Var 67=2, 68=7, 69=5
-	// Jump to Card 4103 when solution correct and handle pulled...
-	if (argc == 0) {
-		uint16 varValue = _vm->_varStore->getVar(var);
-		if (varValue == 0)
-			varValue = 9;
-		else
-			varValue--;
-		_vm->_varStore->setVar(var, varValue);
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Myst::o_cabinSafeChangeDigit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Cabin safe change digit", op);
+
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	uint16 d1 = myst.cabinSafeCombination / 100;
+	uint16 d2 = (myst.cabinSafeCombination / 10) % 10;
+	uint16 d3 = myst.cabinSafeCombination % 10;
+
+	if (var == 67)
+		d1 = (d1 + 1) % 10;
+	else if (var == 68)
+		d2 = (d2 + 1) % 10;
+	else
+		d3 = (d3 + 1) % 10;
+
+	myst.cabinSafeCombination = 100 * d1 + 10 * d2 + d3;
+
+	_vm->redrawArea(var);
 }
 
 void MystScriptParser_Myst::opcode_122(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1822,7 +1829,22 @@ void MystScriptParser_Myst::towerRotationMap_run() {
 		if (_towerRotationMapClicked) {
 			towerRotationMapRotate();
 			_startTime = time + 100;
+		} else if (_towerRotationBlinkLabel
+				&& _vm->_sound->isPlaying(6378)) {
+			// Blink tower rotation label while sound is playing
+			_towerRotationBlinkLabelCount = (_towerRotationBlinkLabelCount + 1) % 14;
+
+			if (_towerRotationBlinkLabelCount == 7)
+				_towerRotationMapLabel->drawConditionalDataToScreen(0);
+			else if (_towerRotationBlinkLabelCount == 0)
+				_towerRotationMapLabel->drawConditionalDataToScreen(1);
+
+			_startTime = time + 100;
 		} else {
+			// Stop blinking label
+			_towerRotationBlinkLabel = false;
+			_towerRotationMapLabel->drawConditionalDataToScreen(0);
+
 			// Blink tower
 			_startTime = time + 500;
 			_tempVar = (_tempVar + 1) % 2;

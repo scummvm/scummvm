@@ -80,7 +80,7 @@ private:
 	DECLARE_OPCODE(opcode_118);
 	DECLARE_OPCODE(opcode_119);
 	DECLARE_OPCODE(o_generatorButtonPressed);
-	DECLARE_OPCODE(opcode_121);
+	DECLARE_OPCODE(o_cabinSafeChangeDigit);
 	DECLARE_OPCODE(opcode_122);
 	DECLARE_OPCODE(opcode_123);
 	DECLARE_OPCODE(opcode_129);
@@ -200,12 +200,16 @@ private:
 	uint16 _dockVaultState; // 92
 
 	bool _towerRotationMapRunning;
+	bool _towerRotationBlinkLabel;
+	uint16 _towerRotationBlinkLabelCount;
 	uint16 _towerRotationMapInitialized; // 292
 	MystResourceType11 *_towerRotationMapTower; // 108
 	MystResourceType8 *_towerRotationMapLabel; // 112
 	uint16 _towerRotationSpeed; // 124
 	bool _towerRotationMapClicked; // 132
 	bool _towerRotationOverSpot; // 136
+
+	uint16 _cabinDoorOpened; // 56
 
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
