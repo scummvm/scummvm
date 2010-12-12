@@ -11260,8 +11260,6 @@ act33 aweb3_3d =     {INIT_SCREEN, 0, PENNY_3d,  WEB_3d};
 
 act35 amap0_3d =  {REMAPPAL, 0, _TRED,          _LIGHTYELLOW};
 act35 amap1_3d =  {REMAPPAL, 0, _TLIGHTMAGENTA, _BLACK};
-act35 amap2_3d =  {REMAPPAL, 0, _TRED,          0x002a2aL}; // Light khaki
-act35 amap3_3d =  {REMAPPAL, 0, _TRED,          0x00153fL}; // Orange
 act35 amap4a_3d = {REMAPPAL, 0, _TGRAY,         _BLACK};
 act35 amap4b_3d = {REMAPPAL, 1, _TGRAY,         _GRAY};
 act35 amap4c_3d = {REMAPPAL, 2, _TGRAY,         _BLACK};
