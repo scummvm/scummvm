@@ -32,7 +32,6 @@
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/myst.h"
 
-#include "graphics/colormasks.h"
 #include "gui/message.h"
 
 namespace Mohawk {
@@ -1895,8 +1894,8 @@ Common::Point MystScriptParser_Myst::towerRotationMapComputeCoords(const Common:
 
 	// Polar to rect coords
 	double radians = angle * PI / 180.0;
-	end.x = center.x + cos(radians) * 310.0;
-	end.y = center.y + sin(radians) * 310.0;
+	end.x = (int16)(center.x + cos(radians) * 310.0);
+	end.y = (int16)(center.y + sin(radians) * 310.0);
 
 	return end;
 }
