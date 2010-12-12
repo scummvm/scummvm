@@ -1971,6 +1971,7 @@ void LBItem::handleMouseMove(Common::Point pos) {
 void LBItem::handleMouseUp(Common::Point pos) {
 	_vm->setFocus(NULL);
 	runScript(kLBEventMouseUp);
+	runScript(kLBEventMouseUpIn);
 }
 
 bool LBItem::togglePlaying(bool playing, bool restart) {
