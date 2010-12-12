@@ -1591,7 +1591,7 @@ LBItem::LBItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : _vm(vm), _rect
 	_loopMode = 0;
 	_delayMin = 0;
 	_delayMax = 0;
-	_timingMode = 0;
+	_timingMode = kLBAutoNone;
 	_periodMin = 0;
 	_periodMax = 0;
 	_controlMode = 0;
@@ -1960,7 +1960,7 @@ void LBItem::destroySelf() {
 
 void LBItem::setEnabled(bool enabled) {
 	if (enabled && _neverEnabled && !_playing) {
-		if (_timingMode == 2) {
+		if (_timingMode == kLBAutoUserIdle) {
 			setNextTime(_periodMin, _periodMax);
 			debug(2, "Enable time startup");
 		}
@@ -1981,7 +1981,7 @@ bool LBItem::contains(Common::Point point) {
 	if (_playing && _loopMode == 0xFFFF)
 		stop();
 
-	if (!_playing && _timingMode == 2)
+	if (!_playing && _timingMode == kLBAutoUserIdle)
 		setNextTime(_periodMin, _periodMax);
 
 	return _visible && _globalVisible && _rect.contains(point);
@@ -1996,7 +1996,7 @@ void LBItem::update() {
 
 	if (togglePlaying(_playing, true)) {
 		_nextTime = 0;
-	} else if (_loops == 0 && _timingMode == 2) {
+	} else if (_loops == 0 && _timingMode == kLBAutoUserIdle) {
 		debug(9, "Looping in update()");
 		setNextTime(_periodMin, _periodMax);
 	}
@@ -2086,7 +2086,7 @@ void LBItem::done(bool onlyNotify) {
 		}
 	}
 
-	if (_timingMode == 2) {
+	if (_timingMode == kLBAutoUserIdle) {
 		debug(9, "Looping in done() - %d to %d", _periodMin, _periodMax);
 		setNextTime(_periodMin, _periodMax);
 	}
@@ -2116,35 +2116,35 @@ void LBItem::startPhase(uint phase) {
 
 	switch (phase) {
 	case 0xFFFE:
-		if (_timingMode == 7) {
+		if (_timingMode == kLBAutoLoad) {
 			debug(2, "Phase load: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
 	case 0xFFFF:
 		runScript(kLBEventPhaseCreate);
-		if (_timingMode == 6) {
+		if (_timingMode == kLBAutoCreate) {
 			debug(2, "Phase create: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
 	case 0:
 		runScript(kLBEventPhaseInit);
-		if (_timingMode == 5) {
+		if (_timingMode == kLBAutoInit) {
 			debug(2, "Phase init: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
 	case 1:
 		runScript(kLBEventPhaseIntro);
-		if (_timingMode == 1 || _timingMode == 2) {
+		if (_timingMode == kLBAutoIntro || _timingMode == kLBAutoUserIdle) {
 			debug(2, "Phase intro: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
 		break;
 	case 2:
 		runScript(kLBEventPhaseMain);
-		if (_timingMode == 2 || _timingMode == 3) {
+		if (_timingMode == kLBAutoUserIdle || _timingMode == kLBAutoMain) {
 			debug(2, "Phase main: time startup");
 			setNextTime(_periodMin, _periodMax);
 		}
@@ -2162,7 +2162,7 @@ void LBItem::stop() {
 }
 
 void LBItem::notify(uint16 data, uint16 from) {
-	if (_timingMode == 4) {
+	if (_timingMode == kLBAutoSync) {
 		// TODO: is this correct?
 		if (_periodMin == from && _periodMax == data) {
 			debug(2, "Handling notify 0x%04x (from %d)", data, from);

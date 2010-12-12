@@ -55,6 +55,18 @@ enum LBMode {
 	kLBPlayMode = 6
 };
 
+// automatic modes used in _timingMode
+enum {
+	kLBAutoNone = 0,
+	kLBAutoIntro = 1,
+	kLBAutoUserIdle = 2,
+	kLBAutoMain = 3,
+	kLBAutoSync = 4,
+	kLBAutoInit = 5,
+	kLBAutoCreate = 6,
+	kLBAutoLoad = 7
+};
+
 enum {
 	kLBStaticTextItem = 0x1,
 	kLBPictureItem = 0x2,
