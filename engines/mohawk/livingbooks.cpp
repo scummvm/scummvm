@@ -1669,10 +1669,8 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 	size -= 6;
 
 	// TODO: read as bytes, if this is correct (but beware endianism)
-	byte expectedConditions = (entry->event & 0xff00) >> 8;
+	byte conditionTag = (entry->event & 0xff00) >> 8;
 	entry->event = entry->event & 0xff;
-	if (expectedConditions)
-		debug(4, "expecting %d conditions", expectedConditions);
 
 	if (type == kLBMsgListScript && entry->opcode == 0xfffe) {
 		debug(4, "%d script subentries:", entry->param);
@@ -1681,6 +1679,12 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 			// FIXME: deal with subentry
 			delete subentry;
 			//entry->_scriptEntries.push_back(entry);
+
+			// subentries are aligned
+			if (i + 1 < entry->param && size % 2 == 1) {
+				stream->skip(1);
+				size--;
+			}
 		}
 	} else if (type == kLBMsgListScript) {
 		if (size < 2)
@@ -1704,7 +1708,6 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 				warning("ignoring target '%s' in script entry", target.c_str());
 				size -= target.size() + 1;
 			}
-
 		}
 
 		if (entry->argc) {
@@ -1786,7 +1789,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 		if (msgId != kLBCommand)
 			error("expected a command in script entry, got 0x%04x", msgId);
 
-		if (msgLen != size && expectedConditions == 0)
+		if (msgLen != size && !conditionTag)
 			error("script entry msgLen %d is not equal to size %d", msgLen, size);
 
 		Common::String command = readString(stream);
@@ -1804,25 +1807,33 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 	if (isSubentry)
 		return entry;
 
-	if (size) {
-		byte commandLen = stream->readByte();
-		if (commandLen)
-			error("got confused while reading bytes at end of script entry (got %d)", commandLen);
-		size--;
-	}
-
-	while (size) {
+	if (conditionTag == 1) {
 		Common::String condition = readString(stream);
+		if (condition.size() == 0) {
+			size--;
+			if (!size)
+				error("failed to read condition (null byte, then ran out of stream)");
+			condition = readString(stream);
+		}
 		if (condition.size() + 1 > size)
 			error("failed to read condition (ran out of stream)");
 		size -= (condition.size() + 1);
 
 		entry->conditions.push_back(condition);
 		debug(4, "script entry condition '%s'", condition.c_str());
+	} else if (conditionTag == 2) {
+		// FIXME
+		stream->skip(4);
+		size -= 4;
 	}
 
-	if (entry->conditions.size() != expectedConditions)
-		error("got %d conditions, but expected %d", entry->conditions.size(), expectedConditions);
+	if (size == 1) {
+		// FIXME: this is alignment, but why?
+		stream->skip(1);
+		size--;
+	} else if (size)
+		error("failed to read script entry correctly (%d bytes left): type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x",
+			size, entry->type, entry->event, entry->opcode, entry->param);
 
 	return entry;
 }
