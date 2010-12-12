@@ -10818,10 +10818,15 @@ act2 axy_wfall_cave_3d     = {INIT_OBJXY, 0,  HERO,      27,  140};
 act2 axy_wfall_clf_3d      = {INIT_OBJXY, 0,  HERO,      280, 140};
 act2 axy_wfallb_wbase_3d   = {INIT_OBJXY, 0,  HERO,      273, 114};
 
-act3 abtipprompt_3d = {PROMPT, 0,  kSTBridgeprompt_3d, tiprsp_3d, kALnotip_3d, kALbtip_3d,  false};
-act3 aold1c_3d      = {PROMPT, 60, kSTOldman1_3d,      oldrsp_3d, kALold2_3d,  kALwrong_3d, false};
-act3 aold2_3d       = {PROMPT, 0,  kSTOldman2_3d,      oldrsp_3d, kALold3_3d,  kALwrong_3d, false};
-act3 aold3_3d       = {PROMPT, 0,  kSTOldman3_3d,      oldrsp_3d, kALold7_3d,  kALold4_3d,  false};
+act3 abtipprompt_3d = {PROMPT, 0,  kSTBridgeprompt_3d, tiprsp_3d,   kALnotip_3d, kALbtip_3d,  false};
+//HACK: Use YESNO Box instead of PROMPT box as the PROMPT box is not currently implemented
+//This allows to test if the game is completable
+//act3 aold1c_3d      = {PROMPT, 60, kSTOldman1_3d,      oldrsp_3d,   kALold2_3d,  kALwrong_3d, false};
+//act3 aold2_3d       = {PROMPT, 0,  kSTOldman2_3d,      oldrsp_3d,   kALold3_3d,  kALwrong_3d, false};
+//act3 aold3_3d       = {PROMPT, 0,  kSTOldman3_3d,      oldrsp_3d,   kALold7_3d,  kALold4_3d,  false};
+act43 aold1c_3d     = {YESNO, 60,  kSTOldman1_3d,      kALwrong_3d, kALold2_3d};
+act43 aold2_3d      = {YESNO, 0,   kSTOldman2_3d,      kALwrong_3d, kALold3_3d};
+act43 aold3_3d      = {YESNO, 0,   kSTOldman3_3d,      kALold4_3d,  kALold7_3d};
 
 act5 acamp4a_3d =    {INIT_OBJVXY, 0,   NAT2_3d,     4,       0};
 act5 acamp4b_3d =    {INIT_OBJVXY, 0,   NATG_3d,     3,       0};
