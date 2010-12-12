@@ -1655,152 +1655,183 @@ void LBItem::readFrom(Common::SeekableSubReadStreamEndian *stream) {
 	}
 }
 
+LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::SeekableSubReadStreamEndian *stream, bool isSubentry) {
+	if (size < 6)
+		error("Script entry of type 0x%04x was too small (%d)", type, size);
+
+	LBScriptEntry *entry = new LBScriptEntry;
+	entry->type = type;
+	entry->event = stream->readUint16();
+	entry->opcode = stream->readUint16();
+	entry->param = stream->readUint16();
+	debug(4, "Script entry: type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x",
+			entry->type, entry->event, entry->opcode, entry->param);
+	size -= 6;
+
+	// TODO: read as bytes, if this is correct (but beware endianism)
+	byte expectedConditions = (entry->event & 0xff00) >> 8;
+	entry->event = entry->event & 0xff;
+	if (expectedConditions)
+		debug(4, "expecting %d conditions", expectedConditions);
+
+	if (type == kLBMsgListScript && entry->opcode == 0xfffe) {
+		debug(4, "%d script subentries:", entry->param);
+		for (uint i = 0; i < entry->param; i++) {
+			LBScriptEntry *subentry = parseScriptEntry(type, size, stream, true);
+			// FIXME: deal with subentry
+			delete subentry;
+			//entry->_scriptEntries.push_back(entry);
+		}
+	} else if (type == kLBMsgListScript) {
+		if (size < 2)
+			error("Script entry of type 0x%04x was too small (%d)", type, size);
+
+		entry->argc = stream->readUint16();
+		size -= 2;
+
+		uint16 targetingType = entry->argc;
+		if (targetingType == 0x3f3f || targetingType == 0xffff) {
+			entry->argc = 0;
+
+			uint16 count = stream->readUint16();
+			size -= 2;
+
+			debug(4, "%d targets with targeting type %04x", count, targetingType);
+
+			// FIXME: targeting by name
+			for (uint i = 0; i < count; i++) {
+				Common::String target = readString(stream);
+				warning("ignoring target '%s' in script entry", target.c_str());
+				size -= target.size() + 1;
+			}
+
+		}
+
+		if (entry->argc) {
+			entry->argvParam = new uint16[entry->argc];
+			entry->argvTarget = new uint16[entry->argc];
+			debug(4, "With %d targets:", entry->argc);
+
+			if (size < (entry->argc * 4))
+				error("Script entry of type 0x%04x was too small (%d)", type, size);
+
+			for (uint i = 0; i < entry->argc; i++) {
+				entry->argvParam[i] = stream->readUint16();
+				entry->argvTarget[i] = stream->readUint16();
+				debug(4, "Target %d, param 0x%04x", entry->argvTarget[i], entry->argvParam[i]);
+			}
+
+			size -= (entry->argc * 4);
+		}
+	}
+
+	if (type == kLBMsgListScript && entry->opcode == 0xfffb) {
+		uint16 u1 = stream->readUint16();
+		uint16 u2 = stream->readUint16();
+		uint16 u3 = stream->readUint16();
+		warning("unknown 0xfffb: %04x, %04x, %04x", u1, u2, u3);
+		size -= 6;
+	}
+	if (type == kLBMsgListScript && entry->opcode == 0xfffd) {
+		uint16 u1 = stream->readUint16();
+		uint16 u2 = stream->readUint16();
+		warning("unknown 0xfffd: %04x, %04x", u1, u2);
+		size -= 4;
+	}
+
+	if (type == kLBNotifyScript && entry->opcode == kLBNotifyChangeMode && _vm->getGameType() != GType_LIVINGBOOKSV1) {
+		if (size < 8) {
+			error("%d unknown bytes in notify entry kLBNotifyChangeMode", size);
+		}
+		entry->newUnknown = stream->readUint16();
+		entry->newMode = stream->readUint16();
+		entry->newPage = stream->readUint16();
+		entry->newSubpage = stream->readUint16();
+		debug(4, "kLBNotifyChangeMode: unknown %04x, mode %d, page %d.%d",
+			entry->newUnknown, entry->newMode, entry->newPage, entry->newSubpage);
+		size -= 8;
+	}
+	if (entry->event == kLBEventNotified) {
+		if (size < 4)
+			error("not enough bytes (%d) in kLBEventNotified, opcode 0x%04x", size, entry->opcode);
+		entry->matchFrom = stream->readUint16();
+		entry->matchNotify = stream->readUint16();
+		debug(4, "kLBEventNotified: unknowns %04x, %04x",
+			entry->matchFrom, entry->matchNotify);
+		size -= 4;
+	}
+	if (entry->opcode == kLBOpSendExpression) {
+		if (size < 4)
+			error("not enough bytes (%d) in kLBOpSendExpression, event 0x%04x", size, entry->event);
+		entry->offset = stream->readUint32();
+		debug(4, "kLBOpSendExpression: offset %08x", entry->offset);
+		size -= 4;
+	}
+	if (entry->opcode == 0xffff) {
+		if (size < 4)
+			error("didn't get enough bytes (%d) to read message in script entry", size);
+		uint16 msgId = stream->readUint16();
+		uint16 msgLen = stream->readUint16();
+		size -= 4;
+
+		if (msgId == kLBSetPlayInfo) {
+			if (size != 20)
+				error("wah, more than just the kLBSetPlayInfo in here");
+			// FIXME
+			warning("ignoring kLBSetPlayInfo");
+			size -= 20;
+			stream->skip(20);
+			return entry;
+		}
+		if (msgId != kLBCommand)
+			error("expected a command in script entry, got 0x%04x", msgId);
+
+		if (msgLen != size && expectedConditions == 0)
+			error("script entry msgLen %d is not equal to size %d", msgLen, size);
+
+		Common::String command = readString(stream);
+		if (command.size() + 1 > size) {
+			error("failed to read command in script entry: msgLen %d, command '%s' (%d chars)",
+				msgLen, command.c_str(), command.size());
+		}
+		size -= command.size() + 1;
+
+		entry->command = command;
+		debug(4, "script entry command '%s'", command.c_str());
+	}
+
+	// FIXME
+	if (isSubentry)
+		return entry;
+
+	if (size) {
+		byte commandLen = stream->readByte();
+		if (commandLen)
+			error("got confused while reading bytes at end of script entry (got %d)", commandLen);
+		size--;
+	}
+
+	while (size) {
+		Common::String condition = readString(stream);
+		if (condition.size() + 1 > size)
+			error("failed to read condition (ran out of stream)");
+		size -= (condition.size() + 1);
+
+		entry->conditions.push_back(condition);
+		debug(4, "script entry condition '%s'", condition.c_str());
+	}
+
+	if (entry->conditions.size() != expectedConditions)
+		error("got %d conditions, but expected %d", entry->conditions.size(), expectedConditions);
+
+	return entry;
+}
+
 void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
 	switch (type) {
 	case kLBMsgListScript:
 	case kLBNotifyScript:
-		{
-			if (size < 6)
-				error("Script entry of type 0x%04x was too small (%d)", type, size);
-
-			LBScriptEntry *entry = new LBScriptEntry;
-			entry->type = type;
-			entry->event = stream->readUint16();
-			entry->opcode = stream->readUint16();
-			entry->param = stream->readUint16();
-			debug(4, "Script entry: type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x",
-				entry->type, entry->event, entry->opcode, entry->param);
-			size -= 6;
-
-			// TODO: read as bytes, if this is correct (but beware endianism)
-			byte expectedConditions = (entry->event & 0xff00) >> 8;
-			entry->event = entry->event & 0xff;
-
-			if (type == kLBMsgListScript) {
-				if (size < 2)
-					error("Script entry of type 0x%04x was too small (%d)", type, size);
-
-
-
-				entry->argc = stream->readUint16();
-				size -= 2;
-
-				if ((entry->opcode & 0xff00) == 0x0100) {
-					uint16 targetingType = entry->argc;
-					if (targetingType == 0x3f3f || targetingType == 0xffff) {
-						entry->argc = 0;
-
-						uint16 count = stream->readUint16();
-						size -= 2;
-
-						// FIXME: targeting by name
-						for (uint i = 0; i < count; i++) {
-							Common::String target = readString(stream);
-							warning("ignoring target '%s' in script entry", target.c_str());
-							size -= target.size() + 1;
-						}
-
-						// FIXME: unknown
-						if (targetingType == 0xffff) {
-							byte unknown = stream->readByte();
-							warning("ignoring unknown script entry byte %02x", unknown);
-							size--;
-						}
-					}
-				}
-
-				if (entry->argc) {
-					entry->argvParam = new uint16[entry->argc];
-					entry->argvTarget = new uint16[entry->argc];
-					debug(4, "With %d targets:", entry->argc);
-
-					if (size < (entry->argc * 4))
-						error("Script entry of type 0x%04x was too small (%d)", type, size);
-
-					for (uint i = 0; i < entry->argc; i++) {
-						entry->argvParam[i] = stream->readUint16();
-						entry->argvTarget[i] = stream->readUint16();
-						debug(4, "Target %d, param 0x%04x", entry->argvTarget[i], entry->argvParam[i]);
-					}
-
-					size -= (entry->argc * 4);
-				}
-			}
-
-			if (type == kLBNotifyScript && entry->opcode == kLBNotifyChangeMode && _vm->getGameType() != GType_LIVINGBOOKSV1) {
-				if (size < 8) {
-					error("%d unknown bytes in notify entry kLBNotifyChangeMode", size);
-				}
-				entry->newUnknown = stream->readUint16();
-				entry->newMode = stream->readUint16();
-				entry->newPage = stream->readUint16();
-				entry->newSubpage = stream->readUint16();
-				debug(4, "kLBNotifyChangeMode: unknown %04x, mode %d, page %d.%d",
-					entry->newUnknown, entry->newMode, entry->newPage, entry->newSubpage);
-				size -= 8;
-			}
-			if (entry->event == kLBEventNotified) {
-				if (size < 4)
-					error("not enough bytes (%d) in kLBEventNotified, opcode 0x%04x", size, entry->opcode);
-				entry->matchFrom = stream->readUint16();
-				entry->matchNotify = stream->readUint16();
-				debug(4, "kLBEventNotified: unknowns %04x, %04x",
-					entry->matchFrom, entry->matchNotify);
-				size -= 4;
-			}
-			if (entry->opcode == kLBOpSendExpression) {
-				if (size < 4)
-					error("not enough bytes (%d) in kLBOpSendExpression, event 0x%04x", size, entry->event);
-				entry->offset = stream->readUint32();
-				debug(4, "kLBOpSendExpression: offset %08x", entry->offset);
-				size -= 4;
-			}
-			if (entry->opcode == 0xffff) {
-				if (size < 4)
-					error("didn't get enough bytes (%d) to read message in script entry", size);
-				size -= 4;
-
-				uint16 msgId = stream->readUint16();
-				uint16 msgLen = stream->readUint16();
-				if (msgId != kLBCommand)
-					error("expected a command in script entry, got 0x%04x", msgId);
-
-				if (msgLen != size && expectedConditions == 0)
-					error("script entry msgLen %d is not equal to size %d", msgLen, size);
-
-				Common::String command = readString(stream);
-				if (command.size() + 1 > size) {
-					error("failed to read command in script entry: msgLen %d, command '%s' (%d chars)",
-						msgLen, command.c_str(), command.size());
-				}
-				size -= command.size() + 1;
-
-				entry->command = command;
-				debug(4, "script entry command '%s'", command.c_str());
-			}
-
-			if (size) {
-				byte commandLen = stream->readByte();
-				if (commandLen)
-					error("got confused while reading bytes at end of script entry (got %d)", commandLen);
-				size--;
-			}
-
-			while (size) {
-				Common::String condition = readString(stream);
-				if (condition.size() + 1 > size)
-					error("failed to read condition (ran out of stream)");
-				size -= (condition.size() + 1);
-
-				entry->conditions.push_back(condition);
-				debug(4, "script entry condition '%s'", condition.c_str());
-			}
-
-			if (entry->conditions.size() != expectedConditions)
-				error("got %d conditions, but expected %d", entry->conditions.size(), expectedConditions);
-
-			_scriptEntries.push_back(entry);
-		}
+		_scriptEntries.push_back(parseScriptEntry(type, size, stream));
 		break;
 
 	case kLBSetPlayInfo:

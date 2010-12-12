@@ -376,6 +376,8 @@ protected:
 	LBValue parseValue(const Common::String &command, uint &pos);
 	void runCommand(const Common::String &command);
 	bool checkCondition(const Common::String &condition);
+
+	LBScriptEntry *parseScriptEntry(uint16 type, uint16 &size, Common::SeekableSubReadStreamEndian *stream, bool isSubentry = false);
 };
 
 class LBSoundItem : public LBItem {
