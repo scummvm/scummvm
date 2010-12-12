@@ -56,7 +56,6 @@ namespace Hugo {
 
 // Game specific equates
 #define MAX_TUNES      16                           // Max number of tunes
-#define NORMAL_TPS     9                            // Number of ticks (frames) per second
 #define TURBO_TPS      16                           // This many in turbo mode
 #define DX             5                            // Num pixels moved in x by HERO per step
 #define DY             4                            // Num pixels moved in y by HERO per step
@@ -98,9 +97,6 @@ namespace Hugo {
 #define TAKE           2
 #define DROP           4
 #define LOOK_S         8                            // Description depends on state of object
-
-// Macros:
-#define TPS           ((_config.turboFl) ? TURBO_TPS : NORMAL_TPS)
 
 #define NUM_COLORS  16                              // Num colors to save in palette
 #define MAX_UIFS   32                               // Max possible uif items in hdr

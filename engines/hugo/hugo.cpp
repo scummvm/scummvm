@@ -203,6 +203,7 @@ Common::Error HugoEngine::run() {
 		_screen = new Screen_v1w(this);
 		_parser = new Parser_v1w(this);
 		_object = new ObjectHandler_v1w(this);
+		_normalTPS = 9;
 		break;
 	case 1:
 		_file = new FileManager_v2d(this);
@@ -211,6 +212,7 @@ Common::Error HugoEngine::run() {
 		_screen = new Screen_v1w(this);
 		_parser = new Parser_v1w(this);
 		_object = new ObjectHandler_v1w(this);
+		_normalTPS = 9;
 		break;
 	case 2:
 		_file = new FileManager_v2d(this);
@@ -219,6 +221,7 @@ Common::Error HugoEngine::run() {
 		_screen = new Screen_v1w(this);
 		_parser = new Parser_v1w(this);
 		_object = new ObjectHandler_v1w(this);
+		_normalTPS = 9;
 		break;
 	case 3: // H1 DOS
 		_file = new FileManager_v1d(this);
@@ -227,6 +230,7 @@ Common::Error HugoEngine::run() {
 		_screen = new Screen_v1d(this);
 		_parser = new Parser_v1d(this);
 		_object = new ObjectHandler_v1d(this);
+		_normalTPS = 8;
 		break;
 	case 4:
 		_file = new FileManager_v2d(this);
@@ -235,6 +239,7 @@ Common::Error HugoEngine::run() {
 		_screen = new Screen_v1d(this);
 		_parser = new Parser_v2d(this);
 		_object = new ObjectHandler_v2d(this);
+		_normalTPS = 8;
 		break;
 	case 5:
 		_file = new FileManager_v3d(this);
@@ -242,7 +247,8 @@ Common::Error HugoEngine::run() {
 		_intro = new intro_v3d(this);
 		_screen = new Screen_v1d(this);
 		_parser = new Parser_v3d(this);
-		_object = new ObjectHandler_v1d(this);
+		_object = new ObjectHandler_v3d(this);
+		_normalTPS = 9;
 		break;
 	}
 
@@ -335,7 +341,7 @@ void HugoEngine::runMachine() {
 		return;
 
 	// Process machine once every tick
-	if (g_system->getMillis() - lastTime < (uint32)(1000 / TPS))
+	if (g_system->getMillis() - lastTime < (uint32)(1000 / getTPS()))
 		return;
 	lastTime = g_system->getMillis();
 
@@ -1267,4 +1273,7 @@ bool HugoEngine::canSaveGameStateCurrently() {
 	return (_status.viewState == V_PLAY);
 }
 
+int8 HugoEngine::getTPS() {
+	return ((_config.turboFl) ? TURBO_TPS : _normalTPS);
+}
 } // End of namespace Hugo

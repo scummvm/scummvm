@@ -175,7 +175,7 @@ void Parser::charHandler() {
 	}
 
 	// See if time to blink cursor, set cursor character
-	if ((tick++ % (TPS / BLINKS)) == 0)
+	if ((tick++ % (_vm->getTPS() / BLINKS)) == 0)
 		cursor = (cursor == '_') ? ' ' : '_';
 
 	// See if recall button pressed

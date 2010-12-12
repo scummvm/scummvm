@@ -131,7 +131,7 @@ void ObjectHandler_v3d::moveObjects() {
 				}
 			case WANDER2:
 			case WANDER:
-				if (!_vm->_rnd->getRandomNumber(3 * NORMAL_TPS)) {       // Kick on random interval
+				if (!_vm->_rnd->getRandomNumber(3 * _vm->_normalTPS)) {       // Kick on random interval
 					obj->vx = _vm->_rnd->getRandomNumber(obj->vxPath << 1) - obj->vxPath;
 					obj->vy = _vm->_rnd->getRandomNumber(obj->vyPath << 1) - obj->vyPath;
 

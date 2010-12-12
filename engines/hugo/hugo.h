@@ -127,6 +127,9 @@ public:
 	int8   _soundTest;
 	int8   _tunesNbr;
 	uint16 _numScreens;
+	int8   _normalTPS;                              // Number of ticks (frames) per second. 
+	                                                //8 for Win versions, 9 for DOS versions
+
 
 	object_t *_hero;
 	byte  *_screen_p;
@@ -197,6 +200,8 @@ public:
 
 	int  deltaX(int x1, int x2, int vx, int y);
 	int  deltaY(int x1, int x2, int vy, int y);
+
+	int8 getTPS();
 
 	void initGame(const HugoGameDescription *gd);
 	void initGamePart(const HugoGameDescription *gd);
