@@ -2600,6 +2600,9 @@ void LBItem::runCommand(const Common::String &command) {
 			else if (op == "--")
 				_vm->_variables[varname].integer--;
 		}
+
+		if (pos < command.size() && command[pos] == ';')
+			pos++;
 	}
 }
 
