@@ -137,7 +137,7 @@ enum {
 	kLBEnable = 0x74,        // unused?
 	kLBSetNotVisible = 0x75,
 	kLBSetVisible = 0x76,    // unused?
-	kLBGlobalDisable = 0x77, // unused?
+	kLBGlobalDisable = 0x77,
 	kLBGlobalEnable = 0x78,  // unused?
 	kLBGlobalSetNotVisible = 0x79,
 	kLBGlobalSetVisible = 0x7a, // unused?

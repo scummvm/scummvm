@@ -1910,6 +1910,11 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		_visible = false;
 		break;
 
+	case kLBGlobalDisable:
+		assert(size == 0);
+		_globalEnabled = false;
+		break;
+
 	case kLBGlobalSetNotVisible:
 		assert(size == 0);
 		_globalVisible = false;
