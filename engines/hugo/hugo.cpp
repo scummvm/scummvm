@@ -258,7 +258,6 @@ Common::Error HugoEngine::run() {
 	/* Use Windows-looking mouse cursor */
 	CursorMan.replaceCursorPalette(stdMouseCursorPalette, 1, ARRAYSIZE(stdMouseCursorPalette) / 4);
 	CursorMan.replaceCursor(stdMouseCursor, stdMousrCursorWidth, stdMousrCursorHeight, 1, 1, 0);
-	CursorMan.showMouse(true);
 
 	initStatus();                                   // Initialize game status
 	initConfig(INSTALL);                            // Initialize user's config
@@ -347,11 +346,11 @@ void HugoEngine::runMachine() {
 
 	switch (gameStatus.viewState) {
 	case V_IDLE:                                    // Not processing state machine
+		CursorMan.showMouse(false);
 		_intro->preNewGame();                       // Any processing before New Game selected
 		break;
 	case V_INTROINIT:                               // Initialization before intro begins
 		_intro->introInit();
-		CursorMan.showMouse(false);
 		gameStatus.viewState = V_INTRO;
 		break;
 	case V_INTRO:                                   // Do any game-dependant preamble

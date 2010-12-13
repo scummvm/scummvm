@@ -34,6 +34,7 @@
 
 #include "hugo/hugo.h"
 #include "hugo/intro.h"
+#include "hugo/display.h"
 
 
 namespace Hugo {
@@ -48,6 +49,11 @@ void intro_v2w::preNewGame() {
 }
 
 void intro_v2w::introInit() {
+	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
+
+	_vm->_screen->displayBackground();
+	g_system->updateScreen();
+	g_system->delayMillis(3000);
 }
 
 bool intro_v2w::introPlay() {

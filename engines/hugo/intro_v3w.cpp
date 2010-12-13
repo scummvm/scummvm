@@ -53,6 +53,13 @@ void intro_v3w::preNewGame() {
 * Hugo 3 - show map and set up for introPlay()
 */
 void intro_v3w::introInit() {
+
+	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
+
+	_vm->_screen->displayBackground();
+	g_system->updateScreen();
+	g_system->delayMillis(3000);
+
 //#if STORY
 	_vm->_file->readBackground(22); // display screen MAP_3w
 	_vm->_screen->displayBackground();
