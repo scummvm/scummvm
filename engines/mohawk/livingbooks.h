@@ -67,6 +67,13 @@ enum {
 	kLBAutoLoad = 7
 };
 
+// control modes used in _controlMode
+enum {
+	kLBControlNone = 0,
+	kLBControlHideMouse = 1,
+	kLBControlPauseItems = 2
+};
+
 enum {
 	kLBStaticTextItem = 0x1,
 	kLBPictureItem = 0x2,

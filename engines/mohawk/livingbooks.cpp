@@ -1594,7 +1594,7 @@ LBItem::LBItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : _vm(vm), _rect
 	_timingMode = kLBAutoNone;
 	_periodMin = 0;
 	_periodMax = 0;
-	_controlMode = 0;
+	_controlMode = kLBControlNone;
 	_soundMode = 0;
 
 	_neverEnabled = true;
@@ -2037,12 +2037,12 @@ bool LBItem::togglePlaying(bool playing, bool restart) {
 			else
 				_loops = _loopMode;
 
-			if (_controlMode >= 1) {
+			if (_controlMode >= kLBControlHideMouse) {
 				debug(2, "Hiding cursor");
 				_vm->_cursor->hideCursor();
 				// TODO: lock sound?
 
-				if (_controlMode >= 2) {
+				if (_controlMode >= kLBControlPauseItems) {
 					debug(2, "Disabling all");
 					_vm->setEnableForAll(false, this);
 				}
@@ -2075,12 +2075,12 @@ void LBItem::done(bool onlyNotify) {
 	_loops = 0;
 	_startTime = 0;
 
-	if (_controlMode >= 1) {
+	if (_controlMode >= kLBControlHideMouse) {
 		debug(2, "Showing cursor");
 		_vm->_cursor->showCursor();
 		// TODO: unlock sound?
 
-		if (_controlMode >= 2) {
+		if (_controlMode >= kLBControlPauseItems) {
 			debug(2, "Enabling all");
 			_vm->setEnableForAll(true, this);
 		}
