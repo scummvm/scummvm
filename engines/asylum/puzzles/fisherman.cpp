@@ -25,27 +25,108 @@
 
 #include "asylum/puzzles/fisherman.h"
 
+#include "asylum/resources/worldstats.h"
+
+#include "asylum/system/cursor.h"
+#include "asylum/system/screen.h"
+
+#include "asylum/views/scene.h"
+
+#include "asylum/asylum.h"
+
 namespace Asylum {
 
 PuzzleFisherman::PuzzleFisherman(AsylumEngine *engine) : Puzzle(engine) {
+	memset(&_state, 0, sizeof(_state));
+
+	_dword_45AAD4 = false;
+	_counter = 0;
+
+	_dword_45A130 = false;
+
 }
 
 PuzzleFisherman::~PuzzleFisherman() {
 }
 
 //////////////////////////////////////////////////////////////////////////
+// Reset
+//////////////////////////////////////////////////////////////////////////
+void PuzzleFisherman::reset() {
+	memset(&_state, 0, sizeof(_state));
+	_dword_45AAD4 = false;
+
+	// Original setups polygons here
+
+	_dword_45A130 = false;
+	_counter = 0;
+
+	// TODO update scene fields
+}
+
+//////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleFisherman::init()  {
-	error("[PuzzleFisherman::init] Not implemented!");
+	getCursor()->set(getWorld()->graphicResourceIds[47], -1, kCursorAnimationMirror, 7);
+
+	for (uint32 i = 0; i < ARRAYSIZE(_state); i++)
+		if (_vm->isGameFlagNotSet((GameFlag)(kGameFlag801 + i)))
+			_state[i] = 0;
+
+	if (_counter == 6) {
+		_vm->clearGameFlag(kGameFlag619);
+		_counter = 0;
+	}
+
+	_dword_45A130 = false;
+	getScreen()->setPalette(getWorld()->graphicResourceIds[39]);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[39], 0);
+
+	return mouseDown();
 }
 
 bool PuzzleFisherman::update()  {
 	error("[PuzzleFisherman::update] Not implemented!");
 }
 
+bool PuzzleFisherman::key(const AsylumEvent &evt) {
+	switch (evt.kbd.keycode) {
+	default:
+		_vm->switchEventHandler(getScene());
+		break;
+
+	case Common::KEYCODE_TAB:
+		getScreen()->takeScreenshot();
+		break;
+	}
+
+	return false;
+}
+
 bool PuzzleFisherman::mouse(const AsylumEvent &evt) {
-	error("[PuzzleFisherman::mouse] Not implemented!");
+	switch (evt.type) {
+	case Common::EVENT_LBUTTONDOWN:
+		return mouseDown();
+		break;
+
+	case Common::EVENT_RBUTTONDOWN:
+		getCursor()->hide();
+		getSharedData()->setFlag(kFlag1, true);
+		getScreen()->setupPaletteAndStartFade(0, 0, 0);
+
+		_vm->switchEventHandler(getScene());
+		break;
+	}
+
+	return false;
+}
+
+bool PuzzleFisherman::mouseDown() {
+	if (!_dword_45A130)
+		return false;
+
+	error("[PuzzleFisherman::mouseDown] Not implemented!");
 }
 
 } // End of namespace Asylum
