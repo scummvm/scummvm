@@ -37,13 +37,24 @@ public:
 	PuzzleFisherman(AsylumEngine *engine);
 	~PuzzleFisherman();
 
+	void reset();
+
 private:
+	uint32 _state[6];
+	int32 _counter;
+
+	bool _dword_45A130;
+	bool _dword_45AAD4;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init();
 	bool update();
+	bool key(const AsylumEvent &evt);
 	bool mouse(const AsylumEvent &evt);
+
+	bool mouseDown();
 };
 
 } // End of namespace Asylum
