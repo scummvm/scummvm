@@ -1583,6 +1583,9 @@ LBScriptEntry::LBScriptEntry() {
 LBScriptEntry::~LBScriptEntry() {
 	delete[] argvParam;
 	delete[] argvTarget;
+
+	for (uint i = 0; i < subentries.size(); i++)
+		delete subentries[i];
 }
 
 LBItem::LBItem(MohawkEngine_LivingBooks *vm, Common::Rect rect) : _vm(vm), _rect(rect) {
@@ -1659,9 +1662,15 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 	if (size < 6)
 		error("Script entry of type 0x%04x was too small (%d)", type, size);
 
+	uint16 expectedEndSize = 0;
+
 	LBScriptEntry *entry = new LBScriptEntry;
 	entry->type = type;
-	entry->event = stream->readUint16();
+	if (isSubentry) {
+		expectedEndSize = size - (stream->readUint16() + 2);
+		entry->event = 0xffff;
+	} else
+		entry->event = stream->readUint16();
 	entry->opcode = stream->readUint16();
 	entry->param = stream->readUint16();
 	debug(4, "Script entry: type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x",
@@ -1672,13 +1681,11 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 	byte conditionTag = (entry->event & 0xff00) >> 8;
 	entry->event = entry->event & 0xff;
 
-	if (type == kLBMsgListScript && entry->opcode == 0xfffe) {
+	if (type == kLBMsgListScript && entry->opcode == kLBOpRunSubentries) {
 		debug(4, "%d script subentries:", entry->param);
 		for (uint i = 0; i < entry->param; i++) {
 			LBScriptEntry *subentry = parseScriptEntry(type, size, stream, true);
-			// FIXME: deal with subentry
-			delete subentry;
-			//entry->_scriptEntries.push_back(entry);
+			entry->subentries.push_back(subentry);
 
 			// subentries are aligned
 			if (i + 1 < entry->param && size % 2 == 1) {
@@ -1803,9 +1810,13 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 		debug(4, "script entry command '%s'", command.c_str());
 	}
 
-	// FIXME
-	if (isSubentry)
+	if (isSubentry) {
+		// TODO: subentries may be aligned, so this check is a bit too relaxed
+		if (size != expectedEndSize && size != expectedEndSize + 1)
+			error("expected %d bytes left at end of subentry, but had %d",
+				expectedEndSize, size);
 		return entry;
+	}
 
 	if (conditionTag == 1) {
 		Common::String condition = readString(stream);
@@ -2173,13 +2184,14 @@ void LBItem::notify(uint16 data, uint16 from) {
 	runScript(kLBEventNotified, data, from);
 }
 
-void LBItem::runScript(uint id, uint16 data, uint16 from) {
+void LBItem::runScript(uint event, uint16 data, uint16 from) {
 	for (uint i = 0; i < _scriptEntries.size(); i++) {
 		LBScriptEntry *entry = _scriptEntries[i];
-		if (entry->event != id)
+
+		if (entry->event != event)
 			continue;
 
-		if (id == kLBEventNotified) {
+		if (event == kLBEventNotified) {
 			if (entry->matchFrom != from || entry->matchNotify != data)
 				continue;
 		}
@@ -2201,177 +2213,190 @@ void LBItem::runScript(uint id, uint16 data, uint16 from) {
 			if (entry->opcode == kLBNotifyGUIAction)
 				_vm->addNotifyEvent(NotifyEvent(entry->opcode, _itemId));
 			else if (entry->opcode == kLBNotifyChangeMode && _vm->getGameType() != GType_LIVINGBOOKSV1) {
-				NotifyEvent event(entry->opcode, entry->param);
-				event.newUnknown = entry->newUnknown;
-				event.newMode = entry->newMode;
-				event.newPage = entry->newPage;
-				event.newSubpage = entry->newSubpage;
-				_vm->addNotifyEvent(event);
+				NotifyEvent notifyEvent(entry->opcode, entry->param);
+				notifyEvent.newUnknown = entry->newUnknown;
+				notifyEvent.newMode = entry->newMode;
+				notifyEvent.newPage = entry->newPage;
+				notifyEvent.newSubpage = entry->newSubpage;
+				_vm->addNotifyEvent(notifyEvent);
 			} else
 				_vm->addNotifyEvent(NotifyEvent(entry->opcode, entry->param));
-		} else {
-			if (entry->param != 0xffff) {
-				// TODO: if param is 1/2/3..
-				warning("Ignoring script entry (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x)",
-					entry->type, entry->event, entry->opcode, entry->param);
+		} else
+			runScriptEntry(entry);
+	}
+}
+
+void LBItem::runScriptEntry(LBScriptEntry *entry) {
+	if (entry->param != 0xffff) {
+		// TODO: if param is 1/2/3..
+		warning("Ignoring script entry (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x)",
+			entry->type, entry->event, entry->opcode, entry->param);
+		return;
+	}
+
+	uint count = entry->argc;
+	// zero targets = apply to self
+	if (!count)
+		count = 1;
+
+	for (uint n = 0; n < count; n++) {
+		LBItem *target;
+
+		debug(2, "Script run: type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x",
+			entry->type, entry->event, entry->opcode, entry->param);
+
+		if (entry->argc) {
+			uint16 targetId = entry->argvTarget[n];
+			// TODO: is this type, perhaps?
+			uint16 param = entry->argvParam[n];
+			target = _vm->getItemById(targetId);
+			if (!target) {
+				debug(2, "Target %04x (%04x) doesn't exist, skipping", targetId, param);
 				continue;
 			}
+			debug(2, "Target: %04x (%04x) '%s'", targetId, param, _desc.c_str());
+		} else {
+			target = this;
+			debug(2, "Self-target on '%s'", _desc.c_str());
+		}
 
-			uint count = entry->argc;
-			// zero targets = apply to self
-			if (!count)
-				count = 1;
+		// an opcode in the form 0x1xx means to run the script for event 0xx
+		if ((entry->opcode & 0xff00) == 0x0100) {
+			// FIXME: pass on param
+			target->runScript(entry->opcode & 0xff);
+			break;
+		}
 
-			for (uint n = 0; n < count; n++) {
-				LBItem *target;
+		switch (entry->opcode) {
+		case kLBOpNone:
+			warning("ignoring kLBOpNone (event 0x%04x, param 0x%04x, target '%s')",
+					entry->event, entry->param, target->_desc.c_str());
+			break;
 
-				debug(2, "Script run: type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x",
-					entry->type, entry->event, entry->opcode, entry->param);
+		case kLBOpXShow:
+			// TODO: should be setVisible(true) - not a delayed event -
+			// when we're doing the param 1/2/3 stuff above?
+			// and in modern LB this is perhaps just a direct target->setVisible(true)..
+			if (_vm->getGameType() != GType_LIVINGBOOKSV1)
+				warning("kLBOpXShow on '%s' is probably broken", target->_desc.c_str());
+			_vm->queueDelayedEvent(DelayedEvent(this, kLBDelayedEventSetNotVisible));
+			break;
 
-				if (entry->argc) {
-					uint16 targetId = entry->argvTarget[n];
-					// TODO: is this type, perhaps?
-					uint16 param = entry->argvParam[n];
-					target = _vm->getItemById(targetId);
-					if (!target) {
-						debug(2, "Target %04x (%04x) doesn't exist, skipping", targetId, param);
-						continue;
-					}
-					debug(2, "Target: %04x (%04x) '%s'", targetId, param, _desc.c_str());
-				} else {
-					target = this;
-					debug(2, "Self-target on '%s'", _desc.c_str());
-				}
+		case kLBOpTogglePlay:
+			target->togglePlaying(false);
+			break;
 
-				// an opcode in the form 0x1xx means to run the script for event 0xx
-				if ((entry->opcode & 0xff00) == 0x0100) {
-					// FIXME: pass on param
-					target->runScript(entry->opcode & 0xff);
-					break;
-				}
+		case kLBOpSetNotVisible:
+			target->setVisible(false);
+			break;
 
-				switch (entry->opcode) {
-				case kLBOpNone:
-					warning("ignoring kLBOpNone (event 0x%04x, param 0x%04x, target '%s')",
-						entry->event, entry->param, target->_desc.c_str());
-					break;
+		case kLBOpSetVisible:
+			target->setVisible(true);
+			break;
 
-				case kLBOpXShow:
-					// TODO: should be setVisible(true) - not a delayed event -
-					// when we're doing the param 1/2/3 stuff above?
-					// and in modern LB this is perhaps just a direct target->setVisible(true)..
-					_vm->queueDelayedEvent(DelayedEvent(this, kLBDelayedEventSetNotVisible));
-					break;
+		case kLBOpDestroy:
+			target->destroySelf();
+			break;
 
-				case kLBOpTogglePlay:
-					target->togglePlaying(false);
-					break;
+		case kLBOpRewind:
+			target->seek(0);
+			break;
 
-				case kLBOpSetNotVisible:
-					target->setVisible(false);
-					break;
+		case kLBOpStop:
+			target->stop();
+			break;
 
-				case kLBOpSetVisible:
-					target->setVisible(true);
-					break;
+		case kLBOpDisable:
+			target->setEnabled(false);
+			break;
 
-				case kLBOpDestroy:
-					target->destroySelf();
-					break;
+		case kLBOpEnable:
+			target->setEnabled(true);
+			break;
 
-				case kLBOpRewind:
-					target->seek(0);
-					break;
+		case kLBOpGlobalSetNotVisible:
+			target->setGlobalVisible(false);
+			break;
 
-				case kLBOpStop:
-					target->stop();
-					break;
+		case kLBOpGlobalSetVisible:
+			target->setGlobalVisible(true);
+			break;
 
-				case kLBOpDisable:
-					target->setEnabled(false);
-					break;
+		case kLBOpGlobalDisable:
+			target->setGlobalEnabled(false);
+			break;
 
-				case kLBOpEnable:
-					target->setEnabled(true);
-					break;
+		case kLBOpGlobalEnable:
+			target->setGlobalEnabled(true);
+			break;
 
-				case kLBOpGlobalSetNotVisible:
-					target->setGlobalVisible(false);
-					break;
+		case kLBOpSeekToEnd:
+			target->seek(0xFFFF);
+			break;
 
-				case kLBOpGlobalSetVisible:
-					target->setGlobalVisible(true);
-					break;
+		case kLBOpMute:
+		case kLBOpUnmute:
+			// FIXME
+			warning("ignoring kLBOpMute/Unmute (event 0x%04x, param 0x%04x, target '%s')",
+				entry->event, entry->param, target->_desc.c_str());
+			break;
 
-				case kLBOpGlobalDisable:
-					target->setGlobalEnabled(false);
-					break;
+		case kLBOpLoad:
+		case kLBOpPreload:
+		case kLBOpUnload:
+			// FIXME
+			warning("ignoring kLBOpLoad/Preload/Unload (event 0x%04x, param 0x%04x, target '%s')",
+				entry->event, entry->param, target->_desc.c_str());
+			break;
 
-				case kLBOpGlobalEnable:
-					target->setGlobalEnabled(true);
-					break;
+		case kLBOpSeekToPrev:
+		case kLBOpSeekToNext:
+			// FIXME
+			warning("ignoring kLBOpSeekToPrev/Next (event 0x%04x, param 0x%04x, target '%s')",
+				entry->event, entry->param, target->_desc.c_str());
+			break;
 
-				case kLBOpSeekToEnd:
-					target->seek(0xFFFF);
-					break;
+		case kLBOpDragBegin:
+		case kLBOpDragEnd:
+			// FIXME
+			warning("ignoring kLBOpDragBegin/End (event 0x%04x, param 0x%04x, target '%s')",
+				entry->event, entry->param, target->_desc.c_str());
+			break;
 
-				case kLBOpMute:
-				case kLBOpUnmute:
-					// FIXME
-					warning("ignoring kLBOpMute/Unmute (event 0x%04x, param 0x%04x, target '%s')",
-						entry->event, entry->param, target->_desc.c_str());
-					break;
+		case kLBOpScriptDisable:
+		case kLBOpScriptEnable:
+			// FIXME
+			warning("ignoring kLBOpScriptDisable/Enable (event 0x%04x, param 0x%04x, target '%s')",
+				entry->event, entry->param, target->_desc.c_str());
+			break;
 
-				case kLBOpLoad:
-				case kLBOpPreload:
-				case kLBOpUnload:
-					// FIXME
-					warning("ignoring kLBOpLoad/Preload/Unload (event 0x%04x, param 0x%04x, target '%s')",
-						entry->event, entry->param, target->_desc.c_str());
-					break;
+		case kLBOpUnknown1C:
+			// FIXME
+			warning("ignoring kLBOpUnknown1C (event 0x%04x, param 0x%04x, target '%s')",
+				entry->event, entry->param, target->_desc.c_str());
+			break;
 
-				case kLBOpSeekToPrev:
-				case kLBOpSeekToNext:
-					// FIXME
-					warning("ignoring kLBOpSeekToPrev/Next (event 0x%04x, param 0x%04x, target '%s')",
-						entry->event, entry->param, target->_desc.c_str());
-					break;
+		case kLBOpSendExpression:
+			// FIXME
+			warning("ignoring kLBOpSendExpression (event 0x%04x, param 0x%04x, target '%s')",
+				entry->event, entry->param, target->_desc.c_str());
+			break;
 
-				case kLBOpDragBegin:
-				case kLBOpDragEnd:
-					// FIXME
-					warning("ignoring kLBOpDragBegin/End (event 0x%04x, param 0x%04x, target '%s')",
-						entry->event, entry->param, target->_desc.c_str());
-					break;
+		case kLBOpRunSubentries:
+			for (uint i = 0; i < entry->subentries.size(); i++) {
+				LBScriptEntry *subentry = entry->subentries[i];
 
-				case kLBOpScriptDisable:
-				case kLBOpScriptEnable:
-					// FIXME
-					warning("ignoring kLBOpScriptDisable/Enable (event 0x%04x, param 0x%04x, target '%s')",
-						entry->event, entry->param, target->_desc.c_str());
-					break;
-
-				case kLBOpUnknown1C:
-					// FIXME
-					warning("ignoring kLBOpUnknown1C (event 0x%04x, param 0x%04x, target '%s')",
-						entry->event, entry->param, target->_desc.c_str());
-					break;
-
-				case kLBOpSendExpression:
-					// FIXME
-					warning("ignoring kLBOpSendExpression (event 0x%04x, param 0x%04x, target '%s')",
-						entry->event, entry->param, target->_desc.c_str());
-					break;
-
-				case kLBOpRunCommand:
-					runCommand(entry->command);
-					break;
-
-				default:
-					error("Unknown script opcode (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x, target '%s')",
-						entry->type, entry->event, entry->opcode, entry->param, target->_desc.c_str());
-				}
+				runScriptEntry(subentry);
 			}
+			break;
+
+		case kLBOpRunCommand:
+			runCommand(entry->command);
+			break;
+
+		default:
+			error("Unknown script opcode (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x, target '%s')",
+				entry->type, entry->event, entry->opcode, entry->param, target->_desc.c_str());
 		}
 	}
 }

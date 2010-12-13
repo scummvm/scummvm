@@ -199,6 +199,7 @@ enum {
 	kLBOpScriptEnable = 0x1b,
 	kLBOpUnknown1C = 0x1c,
 	kLBOpSendExpression = 0x1d,
+	kLBOpRunSubentries = 0xfffe,
 	kLBOpRunCommand = 0xffff
 };
 
@@ -246,6 +247,7 @@ struct LBScriptEntry {
 
 	Common::String command;
 	Common::Array<Common::String> conditions;
+	Common::Array<LBScriptEntry *> subentries;
 };
 
 struct LBAnimScriptEntry {
@@ -390,7 +392,8 @@ protected:
 	bool _isAmbient;
 
 	Common::Array<LBScriptEntry *> _scriptEntries;
-	void runScript(uint id, uint16 data = 0, uint16 from = 0);
+	void runScript(uint event, uint16 data = 0, uint16 from = 0);
+	void runScriptEntry(LBScriptEntry *entry);
 
 	LBValue parseValue(const Common::String &command, uint &pos);
 	void runCommand(const Common::String &command);
