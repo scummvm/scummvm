@@ -1493,16 +1493,6 @@ enum objid_3d {
 	PLANT5_3d,   LASTOBJ_3d
 };
 
-#define _BLUE         1
-#define _BLACK        0
-#define _LIGHTYELLOW  14
-#define _LIGHTMAGENTA 13
-#define _LIGHTRED     4
-#define _CYAN         3
-
-// TODO: Added by Strangerke, to be validated
-#define _GRAY         7
-
 // Enumerate sequence index matching direction of travel
 enum {RIGHT, LEFT, DOWN, _UP};
 
