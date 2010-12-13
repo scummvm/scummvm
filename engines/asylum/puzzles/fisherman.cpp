@@ -36,14 +36,25 @@
 
 namespace Asylum {
 
+const Common::Point puzzleFishermanPolygons[31] = {
+	Common::Point( 10,  53), Common::Point(113,  52), Common::Point(222,  46), Common::Point(328,  51),
+	Common::Point(426,  51), Common::Point(523,  49), Common::Point(277, 398), Common::Point( 30,  44),
+	Common::Point(112,  44), Common::Point( 93, 400), Common::Point(  0, 400), Common::Point(130,  44),
+	Common::Point(210,  44), Common::Point(201, 400), Common::Point(112, 400), Common::Point(224,  44),
+	Common::Point(315,  44), Common::Point(309, 400), Common::Point(219, 400), Common::Point(326,  44),
+	Common::Point(411,  44), Common::Point(415, 400), Common::Point(326, 400), Common::Point(422,  44),
+	Common::Point(506,  44), Common::Point(526, 400), Common::Point(434, 400), Common::Point(523,  44),
+	Common::Point(607,  44), Common::Point(640, 400), Common::Point(545, 400)
+};
+
 PuzzleFisherman::PuzzleFisherman(AsylumEngine *engine) : Puzzle(engine) {
 	memset(&_state, 0, sizeof(_state));
 
 	_dword_45AAD4 = false;
 	_counter = 0;
 
+	_dword_45A12C = 0;
 	_dword_45A130 = false;
-
 }
 
 PuzzleFisherman::~PuzzleFisherman() {
@@ -61,7 +72,11 @@ void PuzzleFisherman::reset() {
 	_dword_45A130 = false;
 	_counter = 0;
 
-	// TODO update scene fields
+	// Original resets scene fields, but since we are called during a restart, the whole scene is recreated later anyway
+	/*for (uint32 i = 0; i < 6; i++) {
+		getWorld()->field_E8610[i] = 0;
+		getWorld()->field_E8628[i] = 0;
+	}*/
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -87,7 +102,52 @@ bool PuzzleFisherman::init()  {
 }
 
 bool PuzzleFisherman::update()  {
-	error("[PuzzleFisherman::update] Not implemented!");
+	updateCursor();
+
+	// Draw background
+	getScreen()->clearGraphicsInQueue();
+	getScreen()->draw(getWorld()->graphicResourceIds[38]);
+
+	// Draw 7 graphics
+	for (uint32 i = 0; i < 7; i++) {
+		if (_state[i])
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40 + i], 0, puzzleFishermanPolygons[i], 0, 0, 1);
+	}
+
+	getScreen()->drawGraphicsInQueue();
+
+	_dword_45A130 = true;
+	getScreen()->copyBackBufferToScreen();
+
+	if (_dword_45AAD4 == 1) {
+		++_dword_45A12C;
+
+		if (_dword_45A12C > 5) {
+			// Reset state
+			memset(&_state, 0, sizeof(_state));
+
+			for (uint32 i = 0; i < 6; i++)
+				_vm->clearGameFlag((GameFlag)(kGameFlag801 + i));
+
+			_dword_45A130 = true;
+			_dword_45A12C = 0;
+		}
+	}
+
+	if (_counter == 6) {
+		++_dword_45A12C;
+
+		if (_dword_45A12C > 10) {
+			_dword_45A12C = 0;
+
+			_vm->setGameFlag(kGameFlag619);
+			getScreen()->setPalette(getWorld()->currentPaletteId);
+
+			_vm->switchEventHandler(getScene());
+		}
+	}
+
+	return true;
 }
 
 bool PuzzleFisherman::key(const AsylumEvent &evt) {
@@ -126,7 +186,111 @@ bool PuzzleFisherman::mouseDown() {
 	if (!_dword_45A130)
 		return false;
 
-	error("[PuzzleFisherman::mouseDown] Not implemented!");
+	Common::Point mousePos = getCursor()->position();
+
+	for (uint32 i = 0; i < 7; i++) {
+		if (hitTest(&puzzleFishermanPolygons[i * 4 + 7], mousePos)) {
+			if (!_state[i]) {
+				getSound()->playSound(getWorld()->graphicResourceIds[9], false, Config.sfxVolume - 10);
+				_state[i] = true;
+				setFlags(i);
+			}
+		}
+	}
+
+	if (puzzleFishermanPolygons[6].x < mousePos.x
+	 && puzzleFishermanPolygons[6].y < mousePos.y
+	 && puzzleFishermanPolygons[6].x + 70 > mousePos.x
+	 && puzzleFishermanPolygons[6].y + 30 > mousePos.y) {
+		 getSound()->playSound(getWorld()->graphicResourceIds[10], false, Config.sfxVolume - 10);
+
+		 for (uint32 i = 0; i < 6; i++)
+			 _vm->clearGameFlag((GameFlag)(kGameFlag801 + i));
+
+		 _dword_45AAD4 = true;
+	}
+
+	if (_dword_45AAD4)
+		_dword_45A130 = false;
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Helpers
+//////////////////////////////////////////////////////////////////////////
+void PuzzleFisherman::updateCursor() {
+	Common::Point mousePos = getCursor()->position();
+	bool found = false;
+
+	for (uint32 i = 0; i < 6; i++) {
+		if (found)
+			break;
+
+		if (hitTest(&puzzleFishermanPolygons[i * 4 + 7], mousePos)) {
+			if (!_state[i]) {
+				found = true;
+
+				if (getCursor()->animation != kCursorAnimationMirror)
+					getCursor()->set(getWorld()->graphicResourceIds[47], -1, kCursorAnimationMirror, 7);
+			}
+		}
+	}
+
+	if (found)
+		return;
+
+	if (puzzleFishermanPolygons[6].x >= mousePos.x
+	 || puzzleFishermanPolygons[6].y >= mousePos.y
+	 || puzzleFishermanPolygons[6].x + 70 <= mousePos.x
+	 || puzzleFishermanPolygons[6].y + 30 <= mousePos.y) {
+		 if (getCursor()->animation != kCursorAnimationNone)
+			 getCursor()->set(getWorld()->graphicResourceIds[47], -1, kCursorAnimationNone, 7);
+		 else if (getCursor()->animation != kCursorAnimationMirror)
+			 getCursor()->set(getWorld()->graphicResourceIds[47], -1, kCursorAnimationMirror, 7);
+	}
+}
+
+void PuzzleFisherman::setFlags(uint32 index) {
+	switch (index) {
+	default:
+		break;
+
+	case 0:
+		_vm->setGameFlag(kGameFlag801);
+		_counter = (_counter == 2) ? 3 : 0;
+		break;
+
+	case 1:
+		_vm->setGameFlag(kGameFlag802);
+		_counter = (_counter == 3) ? 4 : 0;
+		break;
+
+	case 2:
+		_vm->setGameFlag(kGameFlag803);
+		_counter = (_counter == 1) ? 2 : 0;
+		break;
+
+	case 3:
+		_vm->setGameFlag(kGameFlag804);
+		if (_counter == 5) {
+			_dword_45A130 = false;
+			_counter = 6;
+		} else {
+			_counter = 0;
+		}
+		break;
+
+	case 4:
+		_vm->setGameFlag(kGameFlag805);
+		_counter = (_counter == 0) ? 1 : 0;
+		break;
+
+	case 5:
+		_vm->setGameFlag(kGameFlag806);
+		_counter = (_counter == 4) ? 5 : 0;
+		break;
+	}
 }
 
 } // End of namespace Asylum

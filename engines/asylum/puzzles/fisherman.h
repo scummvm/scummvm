@@ -40,9 +40,10 @@ public:
 	void reset();
 
 private:
-	uint32 _state[6];
+	bool _state[6];
 	int32 _counter;
 
+	int32 _dword_45A12C;
 	bool _dword_45A130;
 	bool _dword_45AAD4;
 
@@ -55,6 +56,12 @@ private:
 	bool mouse(const AsylumEvent &evt);
 
 	bool mouseDown();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+	void updateCursor();
+	void setFlags(uint32 index);
 };
 
 } // End of namespace Asylum
