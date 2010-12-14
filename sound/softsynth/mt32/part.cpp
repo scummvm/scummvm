@@ -283,6 +283,7 @@ void Part::cacheTimbre(PatchCache cache[4], const TimbreParam *timbre) {
 	backupCacheToPartials(cache);
 	int partialCount = 0;
 	for (int t = 0; t < 4; t++) {
+		cache[t].PCMPartial = false;
 		if (((timbre->common.pmute >> t) & 0x1) == 1) {
 			cache[t].playPartial = true;
 			partialCount++;

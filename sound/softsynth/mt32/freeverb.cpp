@@ -125,12 +125,12 @@ revmodel::revmodel() {
 	allpassR[2].setfeedback(0.5f);
 	allpassL[3].setfeedback(0.5f);
 	allpassR[3].setfeedback(0.5f);
+	setmode(initialmode);
 	setwet(initialwet);
 	setroomsize(initialroom);
 	setdry(initialdry);
 	setdamp(initialdamp);
 	setwidth(initialwidth);
-	setmode(initialmode);
 
 	// Buffer will be full of rubbish - so we MUST mute them
 	mute();
