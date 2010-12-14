@@ -759,4 +759,122 @@ MohawkSurface *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) 
 	return mhkSurface;
 }
 
+// Partially based on the Prince of Persia Format Specifications
+// See http://sdfg.com.ar/git/?p=fp-git.git;a=blob;f=FP/doc/FormatSpecifications
+
+MohawkSurface *DOSBitmap::decodeImage(Common::SeekableReadStream *stream) {
+	_header.height = stream->readUint16LE();
+	_header.width = stream->readUint16LE();
+	stream->readByte(); // Always 0
+	_header.format = stream->readByte();
+
+	debug(2, "Decoding DOS Bitmap (%dx%d, %dbpp, Compression %d)", _header.width, _header.height, getBitsPerPixel(), _header.format & 0xf);
+
+	// All the PoP games seem to have this flag, but at least CSWorld Deluxe doesn't...
+	// Perhaps this differentiates between normal bitmap mode and planar mode?
+	if (_header.format & 0x80)
+		error("Unknown EGA flag?");
+
+	// Calculate the bytes per row
+	byte pixelsPerByte = 8 / getBitsPerPixel();
+	_header.bytesPerRow = (_header.width + pixelsPerByte - 1) / pixelsPerByte;
+
+	// Only Raw and LZ L/R are supported currently
+	// Notice how Broderbund used their same LZ compression for every PC game possibly ever?
+	switch (_header.format & 0xf) {
+	case 0: // Raw
+		_data = stream;
+		break;
+	case 3: // LZ Left/Right
+		_data = decompressLZ(stream, _header.bytesPerRow * _header.height);
+		delete stream;
+		break;
+	case 1: // RLE Left/Right (Used by PoP, haven't seen in a CS game)
+	case 2: // RLE Up/Down (Used by PoP, haven't seen in a CS game)
+	case 4: // LZ Up/Down (Used by CS America's Past and CS Space)
+		error("Unhandled DOS bitmap compression %d", _header.format & 0xf);
+		break;
+	default:
+		error("Unknown DOS bitmap compression %d", _header.format & 0xf);
+	}
+
+	Graphics::Surface *surface = createSurface(_header.width, _header.height);
+	memset(surface->pixels, 0, _header.width * _header.height);
+
+	// Expand the <8bpp data to one byte per pixel
+	switch (getBitsPerPixel()) {
+	case 1:
+		expandMonochromePlane(surface, _data);
+		break;
+	case 4:
+		expandEGAPlanes(surface, _data);
+		break;
+	default:
+		error("Unhandled %dbpp", getBitsPerPixel());
+	}
+
+	delete _data;
+
+	return new MohawkSurface(surface);
+}
+
+void DOSBitmap::expandMonochromePlane(Graphics::Surface *surface, Common::SeekableReadStream *rawStream) {
+	assert(surface->bytesPerPixel == 1);
+
+	byte *dst = (byte *)surface->pixels;
+
+	// Expand the 8 pixels in a byte into a full byte per pixel
+
+	for (uint32 i = 0; i < surface->h; i++) {
+		for (uint x = 0; x < surface->w;) {
+			byte temp = rawStream->readByte();
+
+			for (int j = 7; j >= 0 && x < surface->w; j--) {
+				if (temp & (1 << j))
+					*dst++ = 0xf;
+				else
+					*dst++ = 0;
+
+				x++;
+			}
+		}
+	}
+}
+
+#define ADD_BIT(dstPixel, srcBit) \
+	*(dst + j * 4 + dstPixel) = (*(dst + j * 4 + dstPixel) >> 1) | (((temp >> srcBit) & 1) << 3)
+
+void DOSBitmap::expandEGAPlanes(Graphics::Surface *surface, Common::SeekableReadStream *rawStream) {
+	assert(surface->bytesPerPixel == 1);
+
+	// Note that the image is in EGA planar form and not just standard 4bpp
+	// This seems to contradict the PoP specs which seem to do
+
+	byte *dst = (byte *)surface->pixels;
+
+	for (uint32 i = 0; i < surface->h; i++) {
+		uint x = 0;
+
+		for (int32 j = 0; j < surface->w / 4; j++) {
+			byte temp = rawStream->readByte();
+			ADD_BIT(3, 4);
+			ADD_BIT(2, 5);
+			ADD_BIT(1, 6);
+			ADD_BIT(0, 7);
+			j++;
+			ADD_BIT(3, 0);
+			ADD_BIT(2, 1);
+			ADD_BIT(1, 2);
+			ADD_BIT(0, 3);
+
+			if (x < 3 && j + 1 >= surface->w / 4) {
+				j = -1;
+				x++;
+			}
+		}	
+
+		dst += surface->w;
+	}
+}
+
 } // End of namespace Mohawk

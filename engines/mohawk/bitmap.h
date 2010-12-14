@@ -188,6 +188,21 @@ protected:
 	byte getBitsPerPixel() { return 8; }
 };
 
+class DOSBitmap : public MohawkBitmap {
+public:
+	DOSBitmap() : MohawkBitmap() {}
+	~DOSBitmap() {}
+
+	MohawkSurface *decodeImage(Common::SeekableReadStream *stream);
+
+protected:
+	byte getBitsPerPixel() { return ((_header.format & 0x30) >> 4) + 1; }
+
+private:
+	void expandMonochromePlane(Graphics::Surface *surface, Common::SeekableReadStream *rawStream);
+	void expandEGAPlanes(Graphics::Surface *surface, Common::SeekableReadStream *rawStream);
+};
+
 } // End of namespace Mohawk
 
 #endif
