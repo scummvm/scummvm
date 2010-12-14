@@ -473,4 +473,53 @@ int LivingBooksArchive_v1::getIDIndex(int typeIndex, uint16 id) {
 	return -1;	// not found
 }
 
+// Partially based on the Prince of Persia Format Specifications
+// See http://sdfg.com.ar/git/?p=fp-git.git;a=blob;f=FP/doc/FormatSpecifications
+// However, I'm keeping with the terminology we've been using with the
+// later archive formats.
+
+bool DOSArchive_v2::open(Common::SeekableReadStream *stream) {
+	close();
+
+	uint32 typeTableOffset = stream->readUint32LE();
+	uint16 typeTableSize = stream->readUint16LE();
+
+	if (typeTableOffset + typeTableSize != (uint32)stream->size())
+		return false;
+
+	stream->seek(typeTableOffset);
+
+	_typeTable.resource_types = stream->readUint16LE();
+	_types = new OldType[_typeTable.resource_types];
+
+	for (uint16 i = 0; i < _typeTable.resource_types; i++) {
+		_types[i].tag = stream->readUint32LE();
+		_types[i].resource_table_offset = stream->readUint16LE();
+
+		debug(3, "Type[%02d]: Tag = \'%s\'  ResTable Offset = %04x", i, tag2str(_types[i].tag), _types[i].resource_table_offset);
+
+		uint32 oldPos = stream->pos();
+
+		// Resource Table/File Table
+		stream->seek(_types[i].resource_table_offset + typeTableOffset);
+		_types[i].resTable.resources = stream->readUint16LE();
+		_types[i].resTable.entries = new OldType::ResourceTable::Entries[_types[i].resTable.resources];
+
+		for (uint16 j = 0; j < _types[i].resTable.resources; j++) {
+			_types[i].resTable.entries[j].id = stream->readUint16LE();
+			_types[i].resTable.entries[j].offset = stream->readUint32LE() + 1; // Need to add one to the offset to skip the checksum byte
+			_types[i].resTable.entries[j].size = stream->readUint16LE();
+			stream->skip(3); // Skip the useless flags
+
+			debug (4, "Entry[%02x]: ID = %04x (%d)\tOffset = %08x, Size = %08x", j, _types[i].resTable.entries[j].id, _types[i].resTable.entries[j].id, _types[i].resTable.entries[j].offset, _types[i].resTable.entries[j].size);
+		}
+
+		stream->seek(oldPos);
+		debug (3, "\n");
+	}
+
+	_mhk = stream;
+	return true;
+}
+
 }	// End of namespace Mohawk

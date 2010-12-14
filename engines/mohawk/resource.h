@@ -214,13 +214,13 @@ public:
 
 	bool hasResource(uint32 tag, uint16 id);
 	bool hasResource(uint32 tag, const Common::String &resName) { return false; }
-	bool open(Common::SeekableReadStream *stream);
+	virtual bool open(Common::SeekableReadStream *stream);
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
 	Common::SeekableReadStream *getResource(uint32 tag, const Common::String &resName) { return 0; }
 	uint32 getOffset(uint32 tag, uint16 id);
 	uint16 findResourceID(uint32 type, const Common::String &resName) { return 0xFFFF; }
 
-private:
+protected:
 	struct OldType {
 		uint32 tag;
 		uint16 resource_table_offset;
@@ -234,8 +234,17 @@ private:
 		} resTable;
 	} *_types;
 
+private:
 	int getTypeIndex(uint32 tag);
 	int getIDIndex(int typeIndex, uint16 id);
+};
+
+class DOSArchive_v2 : public LivingBooksArchive_v1 {
+public:
+	DOSArchive_v2() : LivingBooksArchive_v1() {}
+	~DOSArchive_v2() {}
+
+	virtual bool open(Common::SeekableReadStream *stream);
 };
 
 } // End of namespace Mohawk
