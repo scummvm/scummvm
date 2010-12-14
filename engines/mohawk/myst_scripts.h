@@ -101,10 +101,11 @@ public:
 	DECLARE_OPCODE(o_playSound);
 	DECLARE_OPCODE(o_stopSoundBackground);
 	DECLARE_OPCODE(o_playSoundBlocking);
-	DECLARE_OPCODE(o_restoreDefaultRect);
-	DECLARE_OPCODE(o_blitRect);
+	DECLARE_OPCODE(o_copyBackBufferToScreen);
+	DECLARE_OPCODE(o_copyImageToBackBuffer);
 	DECLARE_OPCODE(o_changeSound);
 	DECLARE_OPCODE(o_soundPlaySwitch);
+	DECLARE_OPCODE(o_copyImageToScreen);
 	DECLARE_OPCODE(o_soundResumeBackground);
 	DECLARE_OPCODE(o_changeCard);
 	DECLARE_OPCODE(o_drawImageChangeCard);

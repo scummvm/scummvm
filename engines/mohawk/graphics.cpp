@@ -235,8 +235,8 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	_pictureFile.entries = NULL;
 
 	// Initialize our buffer
-	_mainScreen = new Graphics::Surface();
-	_mainScreen->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat.bytesPerPixel);
+	_backBuffer = new Graphics::Surface();
+	_backBuffer->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat.bytesPerPixel);
 }
 
 MystGraphics::~MystGraphics() {
@@ -245,8 +245,8 @@ MystGraphics::~MystGraphics() {
 	delete _pictDecoder;
 	delete[] _pictureFile.entries;
 
-	_mainScreen->free();
-	delete _mainScreen;
+	_backBuffer->free();
+	delete _backBuffer;
 }
 
 static const char* picFileNames[] = {
@@ -371,36 +371,50 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	// Convert from bitmap coordinates to surface coordinates
 	uint16 top = surface->h - src.top - height;
 
-	for (uint16 i = 0; i < height; i++)
-		memcpy(_mainScreen->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->bytesPerPixel);
+	_vm->_system->copyRectToScreen((byte *)surface->getBasePtr(src.left, top), surface->pitch, dest.left, dest.top, width, height);
+}
 
-	// Add to the list of dirty rects
-	_dirtyRects.push_back(dest);
+void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, Common::Rect dest) {
+	// Clip the destination rect to the screen
+	if (dest.right > _vm->_system->getWidth() || dest.bottom > _vm->_system->getHeight())
+		dest.debugPrint(4, "Clipping destination rect to the screen:");
+
+	dest.right = CLIP<int>(dest.right, 0, _vm->_system->getWidth());
+	dest.bottom = CLIP<int>(dest.bottom, 0, _vm->_system->getHeight());
+
+	Graphics::Surface *surface = findImage(image)->getSurface();
+
+	debug(3, "Image Blit:");
+	debug(3, "src.x: %d", src.left);
+	debug(3, "src.y: %d", src.top);
+	debug(3, "dest.x: %d", dest.left);
+	debug(3, "dest.y: %d", dest.top);
+	debug(3, "width: %d", src.width());
+	debug(3, "height: %d", src.height());
+
+	uint16 width = MIN<int>(surface->w, dest.width());
+	uint16 height = MIN<int>(surface->h, dest.height());
+
+	// Convert from bitmap coordinates to surface coordinates
+	uint16 top = surface->h - src.top - height;
+
+	for (uint16 i = 0; i < height; i++)
+		memcpy(_backBuffer->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->bytesPerPixel);
 }
 
 void MystGraphics::copyImageToScreen(uint16 image, Common::Rect dest) {
 	copyImageSectionToScreen(image, Common::Rect(0, 0, 544, 333), dest);
 }
 
-void MystGraphics::updateScreen() {
-	// Only update the screen if there have been changes since last frame
-	if (!_dirtyRects.empty()) {
+void MystGraphics::copyImageToBackBuffer(uint16 image, Common::Rect dest) {
+	copyImageSectionToBackBuffer(image, Common::Rect(0, 0, 544, 333), dest);
+}
 
-		// Copy any modified area
-		for (uint i = 0; i < _dirtyRects.size(); i++) {
-			Common::Rect &r = _dirtyRects[i];
-			_vm->_system->copyRectToScreen((byte *)_mainScreen->getBasePtr(r.left, r.top), _mainScreen->pitch, r.left, r.top, r.width(), r.height());
-		}
-
-		_vm->_system->updateScreen();
-		_dirtyRects.clear();
-	}
+void MystGraphics::copyBackBufferToScreen(const Common::Rect &r) {
+	_vm->_system->copyRectToScreen((byte *)_backBuffer->getBasePtr(r.left, r.top), _backBuffer->pitch, r.left, r.top, r.width(), r.height());
 }
 
 void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay) {
-	// Bypass dirty rects for animated updates
-	_dirtyRects.clear();
-
 	switch (type) {
 	case 0:	{
 			debugC(kDebugScript, "Left to Right");
@@ -413,15 +427,15 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 
 				_vm->_system->delayMillis(delay);
 
-				_dirtyRects.push_back(area);
-				updateScreen();
+				copyBackBufferToScreen(area);
+				_vm->_system->updateScreen();
 			}
 			if (area.right < rect.right) {
 				area.left = area.right;
 				area.right = rect.right;
 
-				_dirtyRects.push_back(area);
-				updateScreen();
+				copyBackBufferToScreen(area);
+				_vm->_system->updateScreen();
 			}
 		}
 		break;
@@ -436,15 +450,15 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 
 				_vm->_system->delayMillis(delay);
 
-				_dirtyRects.push_back(area);
-				updateScreen();
+				copyBackBufferToScreen(area);
+				_vm->_system->updateScreen();
 			}
 			if (area.left > rect.left) {
 				area.right = area.left;
 				area.left = rect.left;
 
-				_dirtyRects.push_back(area);
-				updateScreen();
+				copyBackBufferToScreen(area);
+				_vm->_system->updateScreen();
 			}
 		}
 		break;
@@ -459,15 +473,15 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 
 				_vm->_system->delayMillis(delay);
 
-				_dirtyRects.push_back(area);
-				updateScreen();
+				copyBackBufferToScreen(area);
+				_vm->_system->updateScreen();
 			}
 			if (area.bottom < rect.bottom) {
 				area.top = area.bottom;
 				area.bottom = rect.bottom;
 
-				_dirtyRects.push_back(area);
-				updateScreen();
+				copyBackBufferToScreen(area);
+				_vm->_system->updateScreen();
 			}
 		}
 		break;
@@ -482,15 +496,15 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 
 				_vm->_system->delayMillis(delay);
 
-				_dirtyRects.push_back(area);
-				updateScreen();
+				copyBackBufferToScreen(area);
+				_vm->_system->updateScreen();
 			}
 			if (area.top > rect.top) {
 				area.bottom = area.top;
 				area.top = rect.top;
 
-				_dirtyRects.push_back(area);
-				updateScreen();
+				copyBackBufferToScreen(area);
+				_vm->_system->updateScreen();
 			}
 		}
 		break;
@@ -498,8 +512,8 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 		warning("Unknown Update Direction");
 
 		//TODO: Replace minimal implementation
-		_dirtyRects.push_back(rect);
-		updateScreen();
+		copyBackBufferToScreen(rect);
+		_vm->_system->updateScreen();
 		break;
 	}
 }
@@ -510,15 +524,15 @@ void MystGraphics::drawRect(Common::Rect rect, RectState state) {
 		return;
 
 	if (state == kRectEnabled)
-		_mainScreen->frameRect(rect, _pixelFormat.RGBToColor(0, 255, 0));
+		_backBuffer->frameRect(rect, _pixelFormat.RGBToColor(0, 255, 0));
 	else if (state == kRectUnreachable)
-		_mainScreen->frameRect(rect, _pixelFormat.RGBToColor(0, 0, 255));
+		_backBuffer->frameRect(rect, _pixelFormat.RGBToColor(0, 0, 255));
 	else
-		_mainScreen->frameRect(rect, _pixelFormat.RGBToColor(255, 0, 0));
+		_backBuffer->frameRect(rect, _pixelFormat.RGBToColor(255, 0, 0));
 }
 
 void MystGraphics::drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color) {
-	_mainScreen->drawLine(p1.x, p1.y, p2.x, p2.y, color);
+	_backBuffer->drawLine(p1.x, p1.y, p2.x, p2.y, color);
 }
 
 RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm) {

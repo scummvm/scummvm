@@ -75,7 +75,7 @@ void MystScriptParser_Credits::runPersistentScripts() {
 
 		// Note: The modulus by 6 is because the 6th image is the one at imageBaseId
 		_vm->_gfx->copyImageToScreen(_baseImageId + curImageIndex % 6, Common::Rect(0, 0, 544, 333));
-		_vm->_gfx->updateScreen();
+		_vm->_system->updateScreen();
 
 		_vm->_varStore->setVar(_creditsVar, curImageIndex + 1);
 		_lastCardTime = _vm->_system->getMillis();

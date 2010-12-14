@@ -872,12 +872,12 @@ void MystScriptParser_Selenitic::o_soundLockEndMove(uint16 op, uint16 var, uint1
 	*value = stepped;
 
 	slider->setStep(stepped);
-	slider->drawDataToScreen();
-	_vm->_gfx->updateScreen();
+	slider->restoreBackground();
+	slider->drawConditionalDataToScreen(1);
 
 	uint16 soundId = slider->getList3(0);
 	if (soundId)
-		_vm->_sound->playSoundBlocking(soundId);
+		_vm->_sound->playSound(soundId);
 
 	_vm->_sound->stopSound();
 	_vm->_sound->resumeBackground();

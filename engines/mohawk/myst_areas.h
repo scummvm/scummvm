@@ -203,17 +203,16 @@ public:
 	MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType10();
 
-	void drawDataToScreen();
 	void handleMouseDown(const Common::Point &mousee);
 	void handleMouseUp(const Common::Point &mouse);
 	void handleMouseDrag(const Common::Point &mouse);
 	void setStep(uint16 step);
 	void setPosition(uint16 pos);
+    void restoreBackground();
 
 protected:
 	Common::Rect boundingBox();
 	void updatePosition(const Common::Point &mouse);
-    void restoreBackground();
 
 	uint16 _dragSound;
 	uint16 _sliderWidth;

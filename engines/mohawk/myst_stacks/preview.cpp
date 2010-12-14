@@ -115,12 +115,12 @@ void MystScriptParser_Preview::opcode_298(uint16 op, uint16 var, uint16 argc, ui
 	// TODO: Flash Library Red
 	// TODO: Move to run process based delay to prevent
 	//       blocking...
-	_vm->_gfx->updateScreen();
+	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(20 * 1000);
 
 	for (uint16 imageId = 3001; imageId <= 3012; imageId++) {
 		_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
-		_vm->_gfx->updateScreen();
+		_vm->_system->updateScreen();
 		_vm->_system->delayMillis(5 * 1000);
 	}
 }

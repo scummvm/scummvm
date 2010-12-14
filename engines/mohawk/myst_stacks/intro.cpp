@@ -173,13 +173,16 @@ void MystScriptParser_Intro::o_playIntroMovies(uint16 op, uint16 var, uint16 arg
 void MystScriptParser_Intro::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
-	_vm->_gfx->updateScreen();
+	_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
+	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(4 * 1000);
-	_vm->_gfx->copyImageToScreen(4, Common::Rect(0, 0, 544, 333));
+	_vm->_gfx->copyImageToBackBuffer(4, Common::Rect(544, 333));
+	_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
+	_vm->_system->updateScreen();
 
 	MystResourceType6 *resource = static_cast<MystResourceType6 *>(_invokingResource);
 	resource->playMovie();
-	// TODO: Complete
+	// TODO: Complete / Fix
 }
 
 void MystScriptParser_Intro::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

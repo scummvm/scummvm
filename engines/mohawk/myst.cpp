@@ -472,7 +472,7 @@ uint16 MohawkEngine_Myst::getCardBackgroundId() {
 }
 
 void MohawkEngine_Myst::drawCardBackground() {
-	_gfx->copyImageToScreen(getCardBackgroundId(), Common::Rect(0, 0, 544, 333));
+	_gfx->copyImageToBackBuffer(getCardBackgroundId(), Common::Rect(0, 0, 544, 333));
 }
 
 void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
@@ -568,7 +568,8 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 
 	// Make sure the screen is updated
 	if (updateScreen) {
-		_gfx->updateScreen();
+		_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
+		_system->updateScreen();
 	}
 }
 

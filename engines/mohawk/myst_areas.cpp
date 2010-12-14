@@ -386,35 +386,18 @@ void MystResourceType8::drawDataToScreen() {
 	}
 
 	if (drawSubImage) {
-		uint16 imageToDraw = 0;
+		uint16 imageToDraw = _subImages[subImageId].wdib;
 
-		if (_subImages[subImageId].wdib == 0xFFFF) {
-			// TODO: Think the reason for problematic screen updates in some rects is that they
-			//       are these -1 cases.
-			// They need to be redrawn i.e. if the Myst marker switches are changed, but I don't think
-			// the rects are valid. This does not matter in the original engine as the screen update redraws
-			// the VIEW images, followed by the RLST resource images, and -1 for the WDIB is interpreted as
-			// "Do Not Draw Image" i.e so the VIEW image is shown through.. We need to fix screen update
-			// to do this same behaviour.
-			if (_vm->_view.conditionalImageCount == 0)
-				imageToDraw = _vm->_view.mainImage;
-			else {
-				for (uint16 i = 0; i < _vm->_view.conditionalImageCount; i++)
-					if (_vm->_scriptParser->getVar(_vm->_view.conditionalImages[i].var) < _vm->_view.conditionalImages[i].numStates)
-						imageToDraw = _vm->_view.conditionalImages[i].values[_vm->_scriptParser->getVar(_vm->_view.conditionalImages[i].var)];
-			}
-		} else
-			imageToDraw = _subImages[subImageId].wdib;
+		// This special case means redraw background
+		if (imageToDraw == 0xFFFF) {
+			imageToDraw = _vm->getCardBackgroundId();
+		}
 
-		_vm->_gfx->copyImageSectionToScreen(imageToDraw, _subImages[subImageId].rect, _rect);
+		_vm->_gfx->copyImageSectionToBackBuffer(imageToDraw, _subImages[subImageId].rect, _rect);
 	}
 }
 
 void MystResourceType8::drawConditionalDataToScreen(uint16 state, bool update) {
-	// Need to call overidden Type 7 function to ensure
-	// switch section is processed correctly.
-	MystResourceType7::drawDataToScreen();
-
 	bool drawSubImage = false;
 	int16 subImageId = 0;
 
@@ -432,31 +415,20 @@ void MystResourceType8::drawConditionalDataToScreen(uint16 state, bool update) {
 
 
 	if (drawSubImage) {
-		uint16 imageToDraw = 0;
+		uint16 imageToDraw = _subImages[subImageId].wdib;
 
-		if (_subImages[subImageId].wdib == 0xFFFF) {
-			// TODO: Think the reason for problematic screen updates in some rects is that they
-			//       are these -1 cases.
-			// They need to be redrawn i.e. if the Myst marker switches are changed, but I don't think
-			// the rects are valid. This does not matter in the original engine as the screen update redraws
-			// the VIEW images, followed by the RLST resource images, and -1 for the WDIB is interpreted as
-			// "Do Not Draw Image" i.e so the VIEW image is shown through.. We need to fix screen update
-			// to do this same behaviour.
-			if (_vm->_view.conditionalImageCount == 0)
-				imageToDraw = _vm->_view.mainImage;
-			else {
-				for (uint16 i = 0; i < _vm->_view.conditionalImageCount; i++)
-					if (_vm->_scriptParser->getVar(_vm->_view.conditionalImages[i].var) < _vm->_view.conditionalImages[i].numStates)
-						imageToDraw = _vm->_view.conditionalImages[i].values[_vm->_scriptParser->getVar(_vm->_view.conditionalImages[i].var)];
-			}
-		} else
-			imageToDraw = _subImages[subImageId].wdib;
-
-		_vm->_gfx->copyImageSectionToScreen(imageToDraw, _subImages[subImageId].rect, _rect);
+		// This special case means redraw background
+		if (imageToDraw == 0xFFFF) {
+			imageToDraw = _vm->getCardBackgroundId();
+		}
 
 		// Draw to screen
-		if (update)
-			_vm->_gfx->updateScreen();
+		if (update) {
+			_vm->_gfx->copyImageSectionToScreen(imageToDraw, _subImages[subImageId].rect, _rect);
+			_vm->_system->updateScreen();
+		} else {
+			_vm->_gfx->copyImageSectionToBackBuffer(imageToDraw, _subImages[subImageId].rect, _rect);
+		}
 	}
 }
 
@@ -519,14 +491,6 @@ void MystResourceType10::restoreBackground() {
 	src.top = 333 - dest.bottom;
 	src.bottom = 333 - dest.top;
 	_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), src, dest);
-}
-
-void MystResourceType10::drawDataToScreen()
-{
-	// Restore background
-	restoreBackground();
-
-	MystResourceType8::drawDataToScreen();
 }
 
 void MystResourceType10::handleMouseDown(const Common::Point &mouse) {
@@ -775,7 +739,7 @@ MystResourceType12::~MystResourceType12() {
 void MystResourceType12::drawFrame(uint16 frame) {
 	_currentFrame = _firstFrame + frame;
 	_vm->_gfx->copyImageToScreen(_currentFrame, _frameRect);
-	_vm->_gfx->updateScreen();
+	_vm->_system->updateScreen();
 }
 
 MystResourceType13::MystResourceType13(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {

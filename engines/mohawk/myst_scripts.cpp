@@ -126,12 +126,12 @@ void MystScriptParser::setupCommonOpcodes() {
 	// Opcode 25 is unused; original calls replaceSound
 	OPCODE(26, o_stopSoundBackground);
 	OPCODE(27, o_playSoundBlocking);
-	OPCODE(28, o_restoreDefaultRect);
-	OPCODE(29, o_blitRect);
+	OPCODE(28, o_copyBackBufferToScreen);
+	OPCODE(29, o_copyImageToBackBuffer);
 	OPCODE(30, o_changeSound);
 	OPCODE(31, o_soundPlaySwitch);
 	OPCODE(32, o_soundResumeBackground);
-	OPCODE(33, o_blitRect);
+	OPCODE(33, o_copyImageToScreen);
 	OPCODE(34, o_changeCard);
 	OPCODE(35, o_drawImageChangeCard);
 	OPCODE(36, o_changeMainCursor);
@@ -360,10 +360,10 @@ void MystScriptParser::o_takePage(uint16 op, uint16 var, uint16 argc, uint16 *ar
 void MystScriptParser::o_redrawCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Redraw card", op);
 
-	// TODO: Is redrawing the background correct ?
 	_vm->drawCardBackground();
 	_vm->drawResourceImages();
-	_vm->_gfx->updateScreen();
+	_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
+	_vm->_system->updateScreen();
 }
 
 void MystScriptParser::o_goToDest(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -406,7 +406,7 @@ void MystScriptParser::o_drawAreaState(uint16 op, uint16 var, uint16 argc, uint1
 }
 
 void MystScriptParser::o_redrawAreaForVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: dropPage", op);
+	debugC(kDebugScript, "Opcode %d: redraw area", op);
 	debugC(kDebugScript, "\tvar: %d", var);
 
 	_vm->redrawArea(var);
@@ -577,81 +577,56 @@ void MystScriptParser::o_playSoundBlocking(uint16 op, uint16 var, uint16 argc, u
 	_vm->_sound->playSoundBlocking(soundId);
 }
 
-void MystScriptParser::o_restoreDefaultRect(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser::o_copyBackBufferToScreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Copy back buffer to screen", op);
 
 	Common::Rect rect;
+	if (argv[0] == 0xFFFF) {
+		// Used in Stoneship Card 2111 (Compass Rose)
+		// Used in Mechanical Card 6267 (Code Lock)
+		rect = _invokingResource->getRect();
+	} else {
+		// Used in ... TODO: Fill in.
+		rect = Common::Rect(argv[0], argv[1], argv[2], argv[3]);
+	}
 
-	if (argc == 1 || argc == 4) {
-		debugC(kDebugScript, "Opcode %d: Restore VIEW Default Image in Region", op);
+	debugC(kDebugScript, "\trect.left: %d", rect.left);
+	debugC(kDebugScript, "\trect.top: %d", rect.top);
+	debugC(kDebugScript, "\trect.right: %d", rect.right);
+	debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
 
-		if (argc == 1) {
-			// Used in Stoneship Card 2111 (Compass Rose)
-			// Used in Mechanical Card 6267 (Code Lock)
-			if (argv[0] == 0xFFFF) {
-				rect = _invokingResource->getRect();
-			} else
-				unknown(op, var, argc, argv);
-		} else if (argc == 4) {
-			// Used in ... TODO: Fill in.
-			rect = Common::Rect(argv[0], argv[1], argv[2], argv[3]);
-		} else
-			warning("Opcode %d: argc Error", op);
-
-		debugC(kDebugScript, "\trect.left: %d", rect.left);
-		debugC(kDebugScript, "\trect.top: %d", rect.top);
-		debugC(kDebugScript, "\trect.right: %d", rect.right);
-		debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
-
-		Common::Rect src;
-		src.left = rect.left;
-		src.top = 333 - rect.bottom;
-		src.right = rect.right;
-		src.bottom = 333 - rect.top;
-
-		_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), src, rect);
-	} else
-		unknown(op, var, argc, argv);
+	_vm->_gfx->copyBackBufferToScreen(rect);
+	_vm->_system->updateScreen();
 }
 
-void MystScriptParser::o_blitRect(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	uint16 imageId = argv[0];
 
-	// TODO: Opcode 29 called on Mechanical Card 6178 causes a engine
-	//       abort this is because imageId is 7158 (not valid), but the
-	//       script resource gives this as 7178 (valid)...
-	// FIXME: opcode 33 also hides the cursor when drawing if it is in the way
+	Common::Rect srcRect = Common::Rect(argv[1], argv[2], argv[3], argv[4]);
 
-	if (argc == 7) {
-		uint16 imageId = argv[0];
+	Common::Rect dstRect = Common::Rect(argv[5], argv[6], 544, 333);
 
-		Common::Rect srcRect = Common::Rect(argv[1], argv[2], argv[3], argv[4]);
+	if (dstRect.left == -1 || dstRect.top == -1) {
+		// Interpreted as full screen
+		dstRect.left = 0;
+		dstRect.top = 0;
+	}
 
-		Common::Rect dstRect = Common::Rect(argv[5], argv[6], 544, 333);
+	dstRect.right = dstRect.left + srcRect.width();
+	dstRect.bottom = dstRect.top + srcRect.height();
 
-		if (dstRect.left == -1 || dstRect.top == -1) {
-			// Interpreted as full screen
-			dstRect.left = 0;
-			dstRect.top = 0;
-		}
+	debugC(kDebugScript, "Opcode %d: Copy image to back buffer", op);
+	debugC(kDebugScript, "\timageId: %d", imageId);
+	debugC(kDebugScript, "\tsrcRect.left: %d", srcRect.left);
+	debugC(kDebugScript, "\tsrcRect.top: %d", srcRect.top);
+	debugC(kDebugScript, "\tsrcRect.right: %d", srcRect.right);
+	debugC(kDebugScript, "\tsrcRect.bottom: %d", srcRect.bottom);
+	debugC(kDebugScript, "\tdstRect.left: %d", dstRect.left);
+	debugC(kDebugScript, "\tdstRect.top: %d", dstRect.top);
+	debugC(kDebugScript, "\tdstRect.right: %d", dstRect.right);
+	debugC(kDebugScript, "\tdstRect.bottom: %d", dstRect.bottom);
 
-		dstRect.right = dstRect.left + srcRect.width();
-		dstRect.bottom = dstRect.top + srcRect.height();
-
-		debugC(kDebugScript, "Opcode %d: Blit Image", op);
-		debugC(kDebugScript, "\timageId: %d", imageId);
-		debugC(kDebugScript, "\tsrcRect.left: %d", srcRect.left);
-		debugC(kDebugScript, "\tsrcRect.top: %d", srcRect.top);
-		debugC(kDebugScript, "\tsrcRect.right: %d", srcRect.right);
-		debugC(kDebugScript, "\tsrcRect.bottom: %d", srcRect.bottom);
-		debugC(kDebugScript, "\tdstRect.left: %d", dstRect.left);
-		debugC(kDebugScript, "\tdstRect.top: %d", dstRect.top);
-		debugC(kDebugScript, "\tdstRect.right: %d", dstRect.right);
-		debugC(kDebugScript, "\tdstRect.bottom: %d", dstRect.bottom);
-
-		_vm->_gfx->copyImageSectionToScreen(imageId, srcRect, dstRect);
-	} else
-		unknown(op, var, argc, argv);
+	_vm->_gfx->copyImageSectionToBackBuffer(imageId, srcRect, dstRect);
 }
 
 // TODO: Implement common engine function for read and processing of sound blocks
@@ -760,6 +735,37 @@ void MystScriptParser::o_soundResumeBackground(uint16 op, uint16 var, uint16 arg
 	//_vm->_sound->resumeBackground();
 }
 
+void MystScriptParser::o_copyImageToScreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	uint16 imageId = argv[0];
+
+	Common::Rect srcRect = Common::Rect(argv[1], argv[2], argv[3], argv[4]);
+
+	Common::Rect dstRect = Common::Rect(argv[5], argv[6], 544, 333);
+
+	if (dstRect.left == -1 || dstRect.top == -1) {
+		// Interpreted as full screen
+		dstRect.left = 0;
+		dstRect.top = 0;
+	}
+
+	dstRect.right = dstRect.left + srcRect.width();
+	dstRect.bottom = dstRect.top + srcRect.height();
+
+	debugC(kDebugScript, "Opcode %d: Copy image to screen", op);
+	debugC(kDebugScript, "\timageId: %d", imageId);
+	debugC(kDebugScript, "\tsrcRect.left: %d", srcRect.left);
+	debugC(kDebugScript, "\tsrcRect.top: %d", srcRect.top);
+	debugC(kDebugScript, "\tsrcRect.right: %d", srcRect.right);
+	debugC(kDebugScript, "\tsrcRect.bottom: %d", srcRect.bottom);
+	debugC(kDebugScript, "\tdstRect.left: %d", dstRect.left);
+	debugC(kDebugScript, "\tdstRect.top: %d", dstRect.top);
+	debugC(kDebugScript, "\tdstRect.right: %d", dstRect.right);
+	debugC(kDebugScript, "\tdstRect.bottom: %d", dstRect.bottom);
+
+	_vm->_gfx->copyImageSectionToScreen(imageId, srcRect, dstRect);
+	_vm->_system->updateScreen();
+}
+
 void MystScriptParser::o_changeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Change Card", op);
 
@@ -789,7 +795,7 @@ void MystScriptParser::o_drawImageChangeCard(uint16 op, uint16 var, uint16 argc,
 		debugC(kDebugScript, "\tdelay: %d", delay);
 
 		_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
-		_vm->_gfx->updateScreen();
+		_vm->_system->updateScreen();
 		_vm->_system->delayMillis(delay * 100);
 		_vm->changeToCard(cardId, true);
 	} else

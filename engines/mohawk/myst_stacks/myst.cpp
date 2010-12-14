@@ -579,7 +579,7 @@ void MystScriptParser_Myst::o_libraryBookPageTurnLeft(uint16 op, uint16 var, uin
 		else
 			_vm->_sound->playSound(_libraryBookSound2);
 
-		_vm->_gfx->updateScreen();
+		_vm->_system->updateScreen();
 	}
 }
 
@@ -597,7 +597,7 @@ void MystScriptParser_Myst::o_libraryBookPageTurnRight(uint16 op, uint16 var, ui
 		else
 			_vm->_sound->playSound(_libraryBookSound2);
 
-		_vm->_gfx->updateScreen();
+		_vm->_system->updateScreen();
 	}
 }
 
@@ -615,7 +615,7 @@ void MystScriptParser_Myst::o_fireplaceToggleButton(uint16 op, uint16 var, uint1
 		// Unset button
 		for (uint i = 4795; i >= 4779; i--) {
 			_vm->_gfx->copyImageToScreen(i, _invokingResource->getRect());
-			_vm->_gfx->updateScreen();
+			_vm->_system->updateScreen();
 			_vm->_system->delayMillis(1);
 		}
 		_fireplaceLines[var - 17] &= ~bitmask;
@@ -623,7 +623,7 @@ void MystScriptParser_Myst::o_fireplaceToggleButton(uint16 op, uint16 var, uint1
 		// Set button
 		for (uint i = 4779; i <= 4795; i++) {
 			_vm->_gfx->copyImageToScreen(i, _invokingResource->getRect());
-			_vm->_gfx->updateScreen();
+			_vm->_system->updateScreen();
 			_vm->_system->delayMillis(1);
 		}
 		_fireplaceLines[var - 17] |= bitmask;
@@ -1698,7 +1698,7 @@ void MystScriptParser_Myst::libraryCombinationBookTurnLeft() {
 		else
 			_vm->_sound->playSound(_libraryBookSound2);
 
-		_vm->_gfx->updateScreen();
+		_vm->_system->updateScreen();
 	}
 }
 
@@ -1724,7 +1724,7 @@ void MystScriptParser_Myst::libraryCombinationBookTurnRight() {
 		else
 			_vm->_sound->playSound(_libraryBookSound2);
 
-		_vm->_gfx->updateScreen();
+		_vm->_system->updateScreen();
 	}
 }
 
@@ -1879,7 +1879,8 @@ void MystScriptParser_Myst::towerRotationMap_run() {
 		towerRotationDrawBuildings();
 
 		// Draw to screen
-		_vm->_gfx->updateScreen();
+		_vm->_gfx->copyBackBufferToScreen(Common::Rect(106, 42, 459, 273));
+		_vm->_system->updateScreen();
 	}
 
 	uint32 time = _vm->_system->getMillis();
@@ -1998,7 +1999,7 @@ void MystScriptParser_Myst::towerRotationMapDrawLine(const Common::Point &center
 	src.bottom = 333 - rect.top;
 
 	// Redraw background
-	_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), src, rect);
+	_vm->_gfx->copyImageSectionToBackBuffer(_vm->getCardBackgroundId(), src, rect);
 
 	// Draw buildings
 	towerRotationDrawBuildings();
@@ -2011,7 +2012,8 @@ void MystScriptParser_Myst::towerRotationMapDrawLine(const Common::Point &center
 
 	// Draw line
 	_vm->_gfx->drawLine(center, end, color);
-	_vm->_gfx->updateScreen();
+	_vm->_gfx->copyBackBufferToScreen(rect);
+	_vm->_system->updateScreen();
 }
 
 void MystScriptParser_Myst::towerRotationMapRotate() {
