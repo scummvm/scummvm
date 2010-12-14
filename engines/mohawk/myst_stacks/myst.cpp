@@ -46,6 +46,7 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScript
 	_savedCardId = 4329;
 	_libraryBookcaseChanged = false;
 	_dockVaultState = 0;
+	_cabinMatchboxState = 2;
 }
 
 MystScriptParser_Myst::~MystScriptParser_Myst() {
@@ -74,8 +75,9 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(119, opcode_119);
 	OPCODE(120, o_generatorButtonPressed);
 	OPCODE(121, o_cabinSafeChangeDigit);
-	OPCODE(122, opcode_122);
-	OPCODE(123, opcode_123);
+	OPCODE(122, o_cabinSafeHandleStartMove);
+	OPCODE(123, o_cabinSafeHandleMove);
+	OPCODE(124, o_cabinSafeHandleEndMove);
 	OPCODE(129, opcode_129);
 	OPCODE(130, opcode_130);
 	OPCODE(131, opcode_131);
@@ -369,6 +371,8 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		return (myst.cabinSafeCombination / 10) % 10;
 	case 69: // Cabin Safe Lock Number #3 - Right
 		return myst.cabinSafeCombination % 10;
+	case 70: // Cabin Safe Matchbox State
+		return _cabinMatchboxState;
 	case 93: // Breaker nearest Generator Room Blown
 		return myst.generatorBreakers == 1;
 	case 94: // Breaker nearest Rocket Ship Blown
@@ -500,6 +504,12 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 	case 11: // Cabin Door Open State
 		if (_cabinDoorOpened != value) {
 			_cabinDoorOpened = value;
+			refresh = true;
+		}
+		break;
+	case 70: // Cabin Safe Matchbox State
+		if (_cabinMatchboxState != value) {
+			_cabinMatchboxState = value;
 			refresh = true;
 		}
 		break;
@@ -1083,14 +1093,62 @@ void MystScriptParser_Myst::o_cabinSafeChangeDigit(uint16 op, uint16 var, uint16
 	_vm->redrawArea(var);
 }
 
-void MystScriptParser_Myst::opcode_122(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Myst::o_cabinSafeHandleStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Cabin safe handle start move", op);
+
 	// Used on Card 4100
-	// TODO: Mouse down on handle
+	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	handle->drawFrame(0);
+	_vm->_cursor->setCursor(700);
+	_tempVar = 0;
 }
 
-void MystScriptParser_Myst::opcode_123(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Cabin safe handle move", op);
+
 	// Used on Card 4100
-	// TODO: Mouse drag on handle
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Make the handle follow the mouse
+	int16 maxStep = handle->getStepsV() - 1;
+    Common::Rect rect = handle->getRect();
+    int16 step = ((_vm->_mouse.y - rect.top) * handle->getStepsV()) / rect.height();
+	step = CLIP<uint16>(step, 0, maxStep);
+
+	handle->drawFrame(step);
+
+	if (step == maxStep) {
+		// Sound not played yet
+		if (_tempVar == 0) {
+			uint16 soundId = handle->getList2(0);
+			if (soundId)
+				_vm->_sound->playSound(soundId);
+		}
+		// Combination is right
+		if (myst.cabinSafeCombination == 724) {
+			uint16 soundId = handle->getList2(1);
+			if (soundId)
+				_vm->_sound->playSound(soundId);
+
+			_vm->changeToCard(4103, false);
+
+			Common::Rect screenRect = Common::Rect(544, 333);
+			_vm->_gfx->runTransition(0, screenRect, 2, 5);
+		}
+		_tempVar = 1;
+	} else {
+		_tempVar = 0;
+	}
+}
+
+void MystScriptParser_Myst::o_cabinSafeHandleEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Cabin safe handle end move", op);
+
+	// Used on Card 4100
+	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	handle->drawFrame(0);
+	_vm->checkCursorHints();
 }
 
 void MystScriptParser_Myst::opcode_129(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

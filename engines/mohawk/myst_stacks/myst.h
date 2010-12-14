@@ -81,8 +81,9 @@ private:
 	DECLARE_OPCODE(opcode_119);
 	DECLARE_OPCODE(o_generatorButtonPressed);
 	DECLARE_OPCODE(o_cabinSafeChangeDigit);
-	DECLARE_OPCODE(opcode_122);
-	DECLARE_OPCODE(opcode_123);
+	DECLARE_OPCODE(o_cabinSafeHandleStartMove);
+	DECLARE_OPCODE(o_cabinSafeHandleMove);
+	DECLARE_OPCODE(o_cabinSafeHandleEndMove);
 	DECLARE_OPCODE(opcode_129);
 	DECLARE_OPCODE(opcode_130);
 	DECLARE_OPCODE(opcode_131);
@@ -210,6 +211,7 @@ private:
 	bool _towerRotationOverSpot; // 136
 
 	uint16 _cabinDoorOpened; // 56
+	uint16 _cabinMatchboxState; // 60
 
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
