@@ -195,6 +195,7 @@ Resource::Resource(ResourceManager *resMan, ResourceId id) : _resMan(resMan), _i
 
 Resource::~Resource() {
 	delete[] data;
+	delete[] _header;
 	if (_source && _source->getSourceType() == kSourcePatch)
 		delete _source;
 }
@@ -1091,8 +1092,10 @@ ResVersion ResourceManager::detectMapVersion() {
 					fileStream = file;
 			}
 			break;
-		} else if (rsrc->getSourceType() == kSourceMacResourceFork)
+		} else if (rsrc->getSourceType() == kSourceMacResourceFork) {
+			delete fileStream;
 			return kResVersionSci11Mac;
+		}
 	}
 
 	if (!fileStream)
@@ -1106,9 +1109,12 @@ ResVersion ResourceManager::detectMapVersion() {
 		// check if 0 or 01 - try to read resources in SCI0 format and see if exists
 		fileStream->seek(0, SEEK_SET);
 		while (fileStream->read(buff, 6) == 6 && !(buff[0] == 0xFF && buff[1] == 0xFF && buff[2] == 0xFF)) {
-			if (findVolume(rsrc, (buff[5] & 0xFC) >> 2) == NULL)
+			if (findVolume(rsrc, (buff[5] & 0xFC) >> 2) == NULL) {
+				delete fileStream;
 				return kResVersionSci1Middle;
+			}
 		}
+		delete fileStream;
 		return kResVersionSci0Sci1Early;
 	}
 
