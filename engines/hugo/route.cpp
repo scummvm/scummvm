@@ -275,9 +275,10 @@ void Route::segment(int16 x, int16 y) {
 Point *Route::newNode() {
 	debugC(1, kDebugRoute, "newNode");
 
+	_routeListIndex++;
 	if (_routeListIndex >= kMaxNodes)               // Too many nodes
 		return 0;                                   // Incomplete route - failure
-	_routeListIndex++;
+
 	_route[_routeListIndex] = _route[_routeListIndex - 1];  // Initialize with previous node
 	return &_route[_routeListIndex];
 }
