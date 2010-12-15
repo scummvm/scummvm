@@ -138,7 +138,7 @@ void ObjectHandler_v3d::moveObjects() {
 					// Set first image in sequence (if multi-seq object)
 					if (obj->seqNumb > 1) {
 						if (!obj->vx && (obj->seqNumb >= 4)) {
-							if (obj->vx != obj->oldvx)  { // vx just stopped
+							if (obj->vx != obj->oldvx) { // vx just stopped
 								if (obj->vy > 0)
 									obj->currImagePtr = obj->seqList[DOWN].seqPtr;
 								else

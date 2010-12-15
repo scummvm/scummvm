@@ -354,7 +354,7 @@ void HugoEngine::runMachine() {
 		gameStatus.viewState = V_INTRO;
 		break;
 	case V_INTRO:                                   // Do any game-dependant preamble
-		if (_intro->introPlay())    {               // Process intro screen
+		if (_intro->introPlay()) {                  // Process intro screen
 			_scheduler->newScreen(0);               // Initialize first screen
 			gameStatus.viewState = V_PLAY;
 		}

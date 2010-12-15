@@ -62,7 +62,7 @@ void Parser::keyHandler(uint16 nChar, uint16 nFlags) {
 	bool repeatedFl = (nFlags & 0x4000);            // TRUE if key is a repeat
 
 // Process key down event - called from OnKeyDown()
-	switch (nChar)  {                               // Set various toggle states
+	switch (nChar) {                                // Set various toggle states
 	case Common::KEYCODE_ESCAPE:                    // Escape key, may want to QUIT
 		if (gameStatus.inventoryState == I_ACTIVE)  // Remove inventory, if displayed
 			gameStatus.inventoryState = I_UP;
