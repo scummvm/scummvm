@@ -146,11 +146,10 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *segid) {
 	return (Script *)mem;
 }
 
-int SegManager::deallocate(SegmentId seg, bool recursive) {
-	SegmentObj *mobj;
+void SegManager::deallocate(SegmentId seg, bool recursive) {
 	VERIFY(check(seg), "invalid seg id");
 
-	mobj = _heap[seg];
+	SegmentObj *mobj = _heap[seg];
 
 	if (mobj->getType() == SEG_TYPE_SCRIPT) {
 		Script *scr = (Script *)mobj;
@@ -161,8 +160,6 @@ int SegManager::deallocate(SegmentId seg, bool recursive) {
 
 	delete mobj;
 	_heap[seg] = NULL;
-
-	return 1;
 }
 
 bool SegManager::isHeapObject(reg_t pos) const {

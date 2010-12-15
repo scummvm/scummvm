@@ -477,7 +477,7 @@ private:
 
 private:
 	SegmentObj *allocSegment(SegmentObj *mem, SegmentId *segid);
-	int deallocate(SegmentId seg, bool recursive);
+	void deallocate(SegmentId seg, bool recursive);
 	void createClassTable();
 
 	SegmentId findFreeSegment() const;
