@@ -207,7 +207,7 @@ void InventoryHandler::runInventory() {
 		}
 
 		gameStatus.inventoryHeight += STEP_DY;      // Move the icon bar down
-		if (gameStatus.inventoryHeight >= INV_DY)   // Limit travel
+		if (gameStatus.inventoryHeight > INV_DY)    // Limit travel
 			gameStatus.inventoryHeight = INV_DY;
 
 		// Move visible portion to _frontBuffer, display results

@@ -66,7 +66,7 @@ namespace Hugo {
 #define VIEW_DY        184                          // Height of window view
 #define INV_DX         32                           // Width of an inventory icon
 #define INV_DY         32                           // Height of inventory icon
-#define DIBOFF_Y       8                            // Offset into dib SrcY (old status line area)
+#define DIBOFF_Y       0                            // Offset into dib SrcY (old status line area). In original game: 8
 #define OVL_SIZE       (XBYTES * YPIX)              // Size of an overlay file
 #define MAX_SEQUENCES  4                            // Number of sequences of images in object
 #define MAX_CHARS      (XBYTES - 2)                 // Max length of user input line
