@@ -99,8 +99,10 @@ void Parser_v1w::keyHandler(uint16 nChar, uint16 nFlags) {
 		gameStatus.viewState = V_PLAY;
 		break;
 	case Common::KEYCODE_F6:                        // Inventory
-		gameStatus.inventoryState = I_DOWN;
-		gameStatus.viewState = V_INVENT;
+		if ((gameStatus.inventoryState == I_OFF) && (gameStatus.viewState == V_PLAY)) {
+			gameStatus.inventoryState = I_DOWN;
+			gameStatus.viewState = V_INVENT;
+		}
 		break;
 	case Common::KEYCODE_F8:                        // Turbo mode
 		_config.turboFl = !_config.turboFl;
