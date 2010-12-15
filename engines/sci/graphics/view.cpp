@@ -429,7 +429,9 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 					pixel = *rlePtr++;
 					runLength = pixel & 0x3F;
 					switch (pixel & 0xC0) {
-					case 0: // copy bytes as-is
+					case 0x40: // copy bytes as is (In copy case, runLength can go upto 127 i.e. pixel & 0x40)
+						runLength += 64;
+					case 0x00: // copy bytes as-is
 						while (runLength-- && pixelNo < pixelCount)
 							outPtr[pixelNo++] = *rlePtr++;
 						break;
