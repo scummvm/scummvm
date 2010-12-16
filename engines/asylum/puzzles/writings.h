@@ -38,13 +38,29 @@ public:
 	~PuzzleWritings();
 
 private:
+	int32 _frameIndex;
+
+	bool _hasGlassMagnifier;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
 	bool update(const AsylumEvent &evt);
 	bool key(const AsylumEvent &evt) { return keyExit(evt); }
-	bool mouseLeftDown(const AsylumEvent &evt);
+	bool mouseRightUp(const AsylumEvent &evt);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Draw the background.
+	 *
+	 * @note the original draws the background once during initialization
+	 * 		 and saves the resulting surface into the original background
+	 */
+	void drawBackground();
 };
 
 } // End of namespace Asylum
