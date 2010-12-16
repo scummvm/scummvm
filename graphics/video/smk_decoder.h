@@ -65,7 +65,7 @@ public:
 	uint16 getHeight() const { return _surface->h; }
 	uint32 getFrameCount() const { return _frameCount; }
 	uint32 getElapsedTime() const;
-	Surface *decodeNextFrame();
+	const Surface *decodeNextFrame();
 	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
 	byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }

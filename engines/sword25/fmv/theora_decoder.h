@@ -67,7 +67,7 @@ public:
 	 * @note the return surface should *not* be freed
 	 * @note this may return 0, in which case the last frame should be kept on screen
 	 */
-	Graphics::Surface *decodeNextFrame();
+	const Graphics::Surface *decodeNextFrame();
 
 	bool isVideoLoaded() const {
 		return _fileStream != 0;

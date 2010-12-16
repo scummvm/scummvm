@@ -252,7 +252,7 @@ bool MoviePlayer::playVideo() {
 
 	while (!_vm->shouldQuit() && !_decoder->endOfVideo()) {
 		if (_decoder->needsUpdate()) {
-			Graphics::Surface *frame = _decoder->decodeNextFrame();
+			const Graphics::Surface *frame = _decoder->decodeNextFrame();
 			if (frame)
 				_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 

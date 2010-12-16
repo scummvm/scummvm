@@ -47,7 +47,7 @@ public:
 	uint16 getWidth() const { return SEQ_SCREEN_WIDTH; }
 	uint16 getHeight() const { return SEQ_SCREEN_HEIGHT; }
 	uint32 getFrameCount() const { return _frameCount; }
-	Graphics::Surface *decodeNextFrame();
+	const Graphics::Surface *decodeNextFrame();
 	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 	byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }

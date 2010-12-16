@@ -216,7 +216,7 @@ Codec *QuickTimeDecoder::findDefaultVideoCodec() const {
 	return _streams[_videoStreamIndex]->stsdEntries[0].videoCodec;
 }
 
-Surface *QuickTimeDecoder::decodeNextFrame() {
+const Surface *QuickTimeDecoder::decodeNextFrame() {
 	if (_videoStreamIndex < 0 || _curFrame >= (int32)getFrameCount() - 1)
 		return 0;
 

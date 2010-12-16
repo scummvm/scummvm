@@ -68,7 +68,7 @@ void MoviePlayer::copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint
 	uint h = getHeight();
 	uint w = getWidth();
 
-	Graphics::Surface *surface = decodeNextFrame();
+	const Graphics::Surface *surface = decodeNextFrame();
 	byte *src = (byte *)surface->pixels;
 
 	if (hasDirtyPalette())

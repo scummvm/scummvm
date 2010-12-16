@@ -267,7 +267,7 @@ void MoviePlayerDXA::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	uint h = getHeight();
 	uint w = getWidth();
 
-	Graphics::Surface *surface = decodeNextFrame();
+	const Graphics::Surface *surface = decodeNextFrame();
 	byte *src = (byte *)surface->pixels;
 	dst += y * pitch + x;
 
@@ -428,7 +428,7 @@ void MoviePlayerSMK::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	uint h = getHeight();
 	uint w = getWidth();
 
-	Graphics::Surface *surface = decodeNextFrame();
+	const Graphics::Surface *surface = decodeNextFrame();
 	byte *src = (byte *)surface->pixels;
 	dst += y * pitch + x;
 

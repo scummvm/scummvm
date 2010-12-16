@@ -325,7 +325,7 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 			_vm->_draw->forceBlit();
 	}
 
-	Graphics::Surface *surface = video->decoder->decodeNextFrame();
+	const Graphics::Surface *surface = video->decoder->decodeNextFrame();
 
 	WRITE_VAR(11, video->decoder->getCurFrame());
 

@@ -124,7 +124,7 @@ bool MoviePlayer::pause() {
 
 void MoviePlayer::update() {
 	if (_decoder.isVideoLoaded()) {
-		Graphics::Surface *s = _decoder.decodeNextFrame();
+		const Graphics::Surface *s = _decoder.decodeNextFrame();
 		if (s) {
 			// Transfer the next frame
 			assert(s->bytesPerPixel == 4);

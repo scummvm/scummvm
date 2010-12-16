@@ -97,7 +97,7 @@ bool Movie::playVideo() {
 	int32 y = 0;
 	while (!_vm->shouldQuit() && !_decoder->endOfVideo()) {
 		if (_decoder->needsUpdate()) {
-			Graphics::Surface *frame = _decoder->decodeNextFrame();
+			const Graphics::Surface *frame = _decoder->decodeNextFrame();
 			if (frame)
 				_vm->getSystem()->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 			_decoder->setSystemPalette();

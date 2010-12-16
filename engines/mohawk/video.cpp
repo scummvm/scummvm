@@ -178,18 +178,19 @@ bool VideoManager::updateBackgroundMovies() {
 
 		// Check if we need to draw a frame
 		if (_videoStreams[i]->needsUpdate()) {
-			Graphics::Surface *frame = _videoStreams[i]->decodeNextFrame();
-			bool deleteFrame = false;
+			const Graphics::Surface *frame = _videoStreams[i]->decodeNextFrame();
+			Graphics::Surface *convertedFrame = 0;
 
 			if (frame && _videoStreams[i].enabled) {
 				// Convert from 8bpp to the current screen format if necessary
 				Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
+
 				if (frame->bytesPerPixel == 1 && pixelFormat.bytesPerPixel != 1) {
-					Graphics::Surface *newFrame = new Graphics::Surface();
+					convertedFrame = new Graphics::Surface();
 					byte *palette = _videoStreams[i]->getPalette();
 					assert(palette);
 
-					newFrame->create(frame->w, frame->h, pixelFormat.bytesPerPixel);
+					convertedFrame->create(frame->w, frame->h, pixelFormat.bytesPerPixel);
 
 					for (uint16 j = 0; j < frame->h; j++) {
 						for (uint16 k = 0; k < frame->w; k++) {
@@ -198,14 +199,13 @@ bool VideoManager::updateBackgroundMovies() {
 							byte g = palette[palIndex * 3 + 1];
 							byte b = palette[palIndex * 3 + 2];
 							if (pixelFormat.bytesPerPixel == 2)
-								*((uint16 *)newFrame->getBasePtr(k, j)) = pixelFormat.RGBToColor(r, g, b);
+								*((uint16 *)convertedFrame->getBasePtr(k, j)) = pixelFormat.RGBToColor(r, g, b);
 							else
-								*((uint32 *)newFrame->getBasePtr(k, j)) = pixelFormat.RGBToColor(r, g, b);
+								*((uint32 *)convertedFrame->getBasePtr(k, j)) = pixelFormat.RGBToColor(r, g, b);
 						}
 					}
 
-					frame = newFrame;
-					deleteFrame = true;
+					frame = convertedFrame;
 				}
 
 				// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
@@ -216,10 +216,10 @@ bool VideoManager::updateBackgroundMovies() {
 				// We've drawn something to the screen, make sure we update it
 				updateScreen = true;
 
-				// Delete the frame if we're using the buffer from the 8bpp conversion
-				if (deleteFrame) {
-					frame->free();
-					delete frame;
+				// Delete 8bpp conversion surface
+				if (convertedFrame) {
+					convertedFrame->free();
+					delete convertedFrame;
 				}
 			}
 		}

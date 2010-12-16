@@ -519,7 +519,7 @@ void SmackerDecoder::close() {
 	reset();
 }
 
-Surface *SmackerDecoder::decodeNextFrame() {
+const Surface *SmackerDecoder::decodeNextFrame() {
 	uint i;
 	uint32 chunkSize = 0;
 	uint32 dataSizeUnpacked = 0;

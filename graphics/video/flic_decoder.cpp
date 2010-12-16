@@ -194,7 +194,7 @@ void FlicDecoder::decodeDeltaFLC(uint8 *data) {
 #define PSTAMP     18
 #define FRAME_TYPE 0xF1FA
 
-Surface *FlicDecoder::decodeNextFrame() {
+const Surface *FlicDecoder::decodeNextFrame() {
 	// Read chunk
 	uint32 frameSize = _fileStream->readUint32LE();
 	uint16 frameType = _fileStream->readUint16LE();

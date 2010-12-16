@@ -329,7 +329,7 @@ void TheoraDecoder::close() {
 	reset();
 }
 
-Graphics::Surface *TheoraDecoder::decodeNextFrame() {
+const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	int i, j;
 
 //	_stateFlag = false; // playback has not begun

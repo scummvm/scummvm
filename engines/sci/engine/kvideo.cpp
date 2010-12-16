@@ -67,7 +67,7 @@ void playVideo(Graphics::VideoDecoder *videoDecoder) {
 
 	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
-			Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 			if (frame) {
 				if (scaleBuffer) {
 					// TODO: Probably should do aspect ratio correction in e.g. GK1 Windows 

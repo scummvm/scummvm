@@ -107,7 +107,7 @@ public:
 	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
 
 	bool isVideoLoaded() const { return _fd != 0; }
-	Surface *decodeNextFrame();
+	const Surface *decodeNextFrame();
 	bool endOfVideo() const;
 	uint32 getElapsedTime() const;
 	uint32 getTimeToNextFrame() const;

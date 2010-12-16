@@ -59,7 +59,7 @@ public:
 	 * @note the return surface should *not* be freed
 	 * @note this may return 0, in which case the last frame should be kept on screen
 	 */
-	Surface *decodeNextFrame();
+	const Surface *decodeNextFrame();
 
 	bool isVideoLoaded() const { return _fileStream != 0; }
 	uint16 getWidth() const { return _surface->w; }

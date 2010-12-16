@@ -316,7 +316,7 @@ uint32 AviDecoder::getElapsedTime() const {
 	return VideoDecoder::getElapsedTime();
 }
 
-Surface *AviDecoder::decodeNextFrame() {
+const Surface *AviDecoder::decodeNextFrame() {
 	uint32 nextTag = _fileStream->readUint32BE();
 
 	if (_fileStream->eos())
@@ -334,9 +334,9 @@ Surface *AviDecoder::decodeNextFrame() {
 			error ("Expected 'rec ' LIST");
 
 		// Decode chunks in the list and see if we get a frame
-		Surface *frame = NULL;
+		const Surface *frame = NULL;
 		while (_fileStream->pos() < startPos + (int32)listSize) {
-			Surface *temp = decodeNextFrame();
+			const Surface *temp = decodeNextFrame();
 			if (temp)
 				frame = temp;
 		}

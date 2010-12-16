@@ -477,7 +477,7 @@ void DXADecoder::decode13(int size) {
 #endif
 }
 
-Surface *DXADecoder::decodeNextFrame() {
+const Surface *DXADecoder::decodeNextFrame() {
 	uint32 tag = _fileStream->readUint32BE();
 	if (tag == MKID_BE('CMAP')) {
 		_fileStream->read(_palette, 256 * 3);

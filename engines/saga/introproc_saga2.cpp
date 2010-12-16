@@ -103,7 +103,7 @@ void Scene::playMovie(const char *filename) {
 
 	while (!_vm->shouldQuit() && !smkDecoder->endOfVideo() && !skipVideo) {
 		if (smkDecoder->needsUpdate()) {
-			Graphics::Surface *frame = smkDecoder->decodeNextFrame();
+			const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
 			if (frame) {
 				_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 

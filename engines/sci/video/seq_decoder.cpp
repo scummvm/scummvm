@@ -108,7 +108,7 @@ void SeqDecoder::close() {
 	reset();
 }
 
-Graphics::Surface *SeqDecoder::decodeNextFrame() {
+const Graphics::Surface *SeqDecoder::decodeNextFrame() {
 	int16 frameWidth = _fileStream->readUint16LE();
 	int16 frameHeight = _fileStream->readUint16LE();
 	int16 frameLeft = _fileStream->readUint16LE();

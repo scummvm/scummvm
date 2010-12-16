@@ -109,7 +109,7 @@ public:
 	 * @note the return surface should *not* be freed
 	 * @note this may return 0, in which case the last frame should be kept on screen
 	 */
-	virtual Surface *decodeNextFrame() = 0;
+	virtual const Surface *decodeNextFrame() = 0;
 
 	/**
 	 * Get the pixel format of the video

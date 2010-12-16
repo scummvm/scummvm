@@ -669,7 +669,7 @@ bool PreIMDDecoder::isVideoLoaded() const {
 	return _stream != 0;
 }
 
-Surface *PreIMDDecoder::decodeNextFrame() {
+const Surface *PreIMDDecoder::decodeNextFrame() {
 	if (!isVideoLoaded() || endOfVideo())
 		return 0;
 
@@ -1128,7 +1128,7 @@ bool IMDDecoder::isVideoLoaded() const {
 	return _stream != 0;
 }
 
-Surface *IMDDecoder::decodeNextFrame() {
+const Surface *IMDDecoder::decodeNextFrame() {
 	if (!isVideoLoaded() || endOfVideo())
 		return 0;
 
@@ -1925,7 +1925,7 @@ bool VMDDecoder::isVideoLoaded() const {
 	return _stream != 0;
 }
 
-Surface *VMDDecoder::decodeNextFrame() {
+const Surface *VMDDecoder::decodeNextFrame() {
 	if (!isVideoLoaded() || endOfVideo())
 		return 0;
 

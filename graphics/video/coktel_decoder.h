@@ -227,7 +227,7 @@ public:
 
 	bool isVideoLoaded() const;
 
-	Surface *decodeNextFrame();
+	const Surface *decodeNextFrame();
 
 	PixelFormat getPixelFormat() const;
 
@@ -260,7 +260,7 @@ public:
 
 	bool isVideoLoaded() const;
 
-	Surface *decodeNextFrame();
+	const Surface *decodeNextFrame();
 
 	PixelFormat getPixelFormat() const;
 
@@ -364,7 +364,7 @@ public:
 
 	bool isVideoLoaded() const;
 
-	Surface *decodeNextFrame();
+	const Surface *decodeNextFrame();
 
 	PixelFormat getPixelFormat() const;
 
