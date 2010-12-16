@@ -41,6 +41,7 @@
 #include "asylum/puzzles/lock.h"
 #include "asylum/puzzles/morguedoor.h"
 #include "asylum/puzzles/pipes.h"
+#include "asylum/puzzles/puzzle11.h"
 #include "asylum/puzzles/tictactoe.h"
 #include "asylum/puzzles/timemachine.h"
 #include "asylum/puzzles/vcr.h"
@@ -461,9 +462,9 @@ void AsylumEngine::initPuzzles() {
 	_puzzles[7] = new PuzzleBoardYouth(this);
 	_puzzles[8] = new PuzzleBoardKeyHidesTo(this);
 	_puzzles[9] = new PuzzleWritings(this);
-	_puzzles[10] = new PuzzleClock(this);
+	_puzzles[10] = new Puzzle11(this);
 	_puzzles[11] = new PuzzleMorgueDoor(this);
-	_puzzles[12] = NULL; warning("[AsylumEngine::initPuzzles] Add missing puzzles!"); // FIXME Not sure which puzzle this is
+	_puzzles[12] = new PuzzleClock(this);
 	_puzzles[13] = new PuzzleTimeMachine(this);
 	_puzzles[14] = new PuzzleFisherman(this);
 	_puzzles[15] = new PuzzleHiveMachine(this);

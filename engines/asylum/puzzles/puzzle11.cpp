@@ -23,47 +23,29 @@
  *
  */
 
-#ifndef ASYLUM_CLOCK_H
-#define ASYLUM_CLOCK_H
-
-#include "asylum/puzzles/puzzle.h"
+#include "asylum/puzzles/puzzle11.h"
 
 namespace Asylum {
 
-class AsylumEngine;
+Puzzle11::Puzzle11(AsylumEngine *engine) : Puzzle(engine) {
+}
 
-class PuzzleClock : public Puzzle {
-public:
-	PuzzleClock(AsylumEngine *engine);
-	~PuzzleClock();
+Puzzle11::~Puzzle11() {
+}
 
-	void reset();
+//////////////////////////////////////////////////////////////////////////
+// Event Handling
+//////////////////////////////////////////////////////////////////////////
+bool Puzzle11::init()  {
+	error("[Puzzle11::init] Not implemented!");
+}
 
-private:
-	uint32 _frameIndexes[3];
-	bool _showCursor;
-	bool _rightButtonClicked;
-	int32 _currentRect;
-	uint32 _currentFrameIndex;
+bool Puzzle11::update()  {
+	error("[Puzzle11::update] Not implemented!");
+}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Event Handling
-	//////////////////////////////////////////////////////////////////////////
-	bool init();
-	bool update();
-	bool mouse(const AsylumEvent &evt);
-
-	bool mouseLeft();
-	void mouseRight();
-
-	//////////////////////////////////////////////////////////////////////////
-	// Helpers
-	//////////////////////////////////////////////////////////////////////////
-	void updateCursor();
-	void setFlag();
-	int32 findRect();
-};
+bool Puzzle11::mouse(const AsylumEvent &evt) {
+	error("[Puzzle11::mouse] Not implemented!");
+}
 
 } // End of namespace Asylum
-
-#endif // ASYLUM_CLOCK_H
