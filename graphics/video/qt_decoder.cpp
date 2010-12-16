@@ -242,7 +242,7 @@ const Surface *QuickTimeDecoder::decodeNextFrame() {
 	if (!entry->videoCodec)
 		return 0;
 
-	Surface *frame = entry->videoCodec->decodeImage(frameData);
+	const Surface *frame = entry->videoCodec->decodeImage(frameData);
 	delete frameData;
 
 	// Update the palette in case it changes between video descriptions
@@ -256,7 +256,7 @@ const Surface *QuickTimeDecoder::decodeNextFrame() {
 	return scaleSurface(frame);
 }
 
-Surface *QuickTimeDecoder::scaleSurface(Surface *frame) {
+const Surface *QuickTimeDecoder::scaleSurface(const Surface *frame) {
 	if (getScaleFactorX() == 1 && getScaleFactorY() == 1)
 		return frame;
 

@@ -41,7 +41,7 @@ MSRLEDecoder::~MSRLEDecoder() {
 	delete _surface;
 }
 
-Surface *MSRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Surface *MSRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	if (_bitsPerPixel == 8) {
 		decode8(stream);
 	} else

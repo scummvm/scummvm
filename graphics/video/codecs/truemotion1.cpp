@@ -395,7 +395,7 @@ void TrueMotion1Decoder::decode16() {
 	}
 }
 
-Surface *TrueMotion1Decoder::decodeImage(Common::SeekableReadStream *stream) {
+const Surface *TrueMotion1Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	decodeHeader(stream);
 
 	if (compressionTypes[_header.compression].algorithm == ALGO_NOP)

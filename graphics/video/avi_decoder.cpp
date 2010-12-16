@@ -357,7 +357,7 @@ const Surface *AviDecoder::decodeNextFrame() {
 			return NULL;
 
 		Common::SeekableReadStream *frameData = _fileStream->readStream(chunkSize);
-		Graphics::Surface *surface = _videoCodec->decodeImage(frameData);
+		const Graphics::Surface *surface = _videoCodec->decodeImage(frameData);
 		delete frameData;
 		_fileStream->skip(chunkSize & 1); // Alignment
 		return surface;

@@ -36,7 +36,7 @@ public:
 	RPZADecoder(uint16 width, uint16 height);
 	~RPZADecoder() { delete _surface; }
 
-	Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Surface *decodeImage(Common::SeekableReadStream *stream);
 	PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:

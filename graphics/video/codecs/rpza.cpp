@@ -69,7 +69,7 @@ RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Codec() {
 	} \
 	blockPtr++
 
-Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *stream) {
 	uint16 colorA = 0, colorB = 0;
 	uint16 color4[4];
 

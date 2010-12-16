@@ -45,7 +45,7 @@ JPEGDecoder::~JPEGDecoder() {
 	}
 }
 
-Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream* stream) {
+const Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream* stream) {
 	_jpeg->read(stream);
 	Surface *ySurface = _jpeg->getComponent(1);
 	Surface *uSurface = _jpeg->getComponent(2);

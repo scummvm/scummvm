@@ -35,7 +35,7 @@ public:
 	MSRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
 	~MSRLEDecoder();
 
-	Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Surface *decodeImage(Common::SeekableReadStream *stream);
 	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
 
 private:

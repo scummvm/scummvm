@@ -354,7 +354,7 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream *stream, uint32 rowPtr, u
 	}
 }
 
-Surface *QTRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Surface *QTRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	uint16 start_line = 0;
 	uint16 height = _surface->h;
 

@@ -40,7 +40,7 @@ public:
 	Codec() {}
 	virtual ~Codec() {}
 
-	virtual Surface *decodeImage(Common::SeekableReadStream *stream) = 0;
+	virtual const Surface *decodeImage(Common::SeekableReadStream *stream) = 0;
 	virtual PixelFormat getPixelFormat() const = 0;
 };
 

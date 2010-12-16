@@ -68,7 +68,7 @@ CinepakDecoder::~CinepakDecoder() {
 	delete[] _curFrame.strips;
 }
 
-Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	_curFrame.flags = stream->readByte();
 	_curFrame.length = (stream->readByte() << 16) + stream->readUint16BE();
 	_curFrame.width = stream->readUint16BE();

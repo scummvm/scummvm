@@ -126,7 +126,7 @@ void MSVideo1Decoder::decode8(Common::SeekableReadStream *stream) {
     }
 }
 
-Surface *MSVideo1Decoder::decodeImage(Common::SeekableReadStream *stream) {
+const Surface *MSVideo1Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	if (_bitsPerPixel == 8)
 		decode8(stream);
 	else {

@@ -52,7 +52,7 @@ SMCDecoder::SMCDecoder(uint16 width, uint16 height) {
 	_surface->create(width, height, 1);
 }
 
-Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	byte *pixels = (byte *)_surface->pixels;
 
 	uint32 numBlocks = 0;

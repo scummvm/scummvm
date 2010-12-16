@@ -35,7 +35,7 @@ public:
 	MSVideo1Decoder(uint16 width, uint16 height, byte bitsPerPixel);
 	~MSVideo1Decoder();
 
-	Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Surface *decodeImage(Common::SeekableReadStream *stream);
 	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
 
 private:

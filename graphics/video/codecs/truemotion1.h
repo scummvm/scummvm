@@ -40,7 +40,7 @@ public:
 	TrueMotion1Decoder(uint16 width, uint16 height);
 	~TrueMotion1Decoder();
 
-	Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Surface *decodeImage(Common::SeekableReadStream *stream);
 
 	// Always return RGB565
 	PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); }

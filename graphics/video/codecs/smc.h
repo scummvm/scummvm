@@ -42,7 +42,7 @@ public:
 	SMCDecoder(uint16 width, uint16 height);
 	~SMCDecoder() { delete _surface; }
 
-	Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Surface *decodeImage(Common::SeekableReadStream *stream);
 	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
 
 private:

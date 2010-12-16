@@ -251,7 +251,7 @@ private:
 	int8 _videoStreamIndex;
 
 	Surface *_scaledSurface;
-	Surface *scaleSurface(Surface *frame);
+	const Surface *scaleSurface(const Surface *frame);
 	Common::Rational getScaleFactorX() const;
 	Common::Rational getScaleFactorY() const;
 

@@ -168,7 +168,7 @@ void Indeo3Decoder::allocFrames() {
 	}
 }
 
-Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
+const Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	// Not Indeo 3? Fail
 	if (!isIndeo3(*stream))
 		return 0;

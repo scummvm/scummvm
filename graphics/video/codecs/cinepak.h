@@ -64,7 +64,7 @@ public:
 	CinepakDecoder(int bitsPerPixel = 24);
 	~CinepakDecoder();
 
-	Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Surface *decodeImage(Common::SeekableReadStream *stream);
 	PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:

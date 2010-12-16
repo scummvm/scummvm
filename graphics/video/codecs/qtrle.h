@@ -36,7 +36,7 @@ public:
 	QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
 	~QTRLEDecoder();
 
-	Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Surface *decodeImage(Common::SeekableReadStream *stream);
 	PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
