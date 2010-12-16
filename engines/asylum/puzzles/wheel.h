@@ -42,11 +42,13 @@ public:
 private:
 	int32 _currentRect;
 	uint32 _resourceIndex;
+	uint32 _resourceIndex9;
 	uint32 _resourceIndex10;
 	uint32 _frameIndex30;
 	int32 _frameIndexes[8];
 	int32 _frameCounts[12];
 
+	bool _showResource9;
 	bool _flag1;
 	bool _flag2;
 	bool _flag3;
@@ -64,6 +66,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	void updateCursor(const AsylumEvent &evt);
 	int32 findRect(Common::Point mousePos);
+	void updateIndex();
 	void checkFlags();
 	void playSound();
 	void playSoundReset();
