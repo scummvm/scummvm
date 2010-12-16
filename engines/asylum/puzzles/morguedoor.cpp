@@ -60,6 +60,11 @@ PuzzleMorgueDoor::PuzzleMorgueDoor(AsylumEngine *engine) : Puzzle(engine) {
 PuzzleMorgueDoor::~PuzzleMorgueDoor() {
 }
 
+void PuzzleMorgueDoor::reset() {
+	_data_45A9D8 = 0;
+	_data_45A9DC = 0;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
