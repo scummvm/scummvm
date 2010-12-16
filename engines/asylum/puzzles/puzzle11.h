@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_CLOCK_H
-#define ASYLUM_CLOCK_H
+#ifndef ASYLUM_PUZZLE11_H
+#define ASYLUM_PUZZLE11_H
 
 #include "asylum/puzzles/puzzle.h"
 
@@ -32,38 +32,20 @@ namespace Asylum {
 
 class AsylumEngine;
 
-class PuzzleClock : public Puzzle {
+class Puzzle11 : public Puzzle {
 public:
-	PuzzleClock(AsylumEngine *engine);
-	~PuzzleClock();
-
-	void reset();
+	Puzzle11(AsylumEngine *engine);
+	~Puzzle11();
 
 private:
-	uint32 _frameIndexes[3];
-	bool _showCursor;
-	bool _rightButtonClicked;
-	int32 _currentRect;
-	uint32 _currentFrameIndex;
-
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init();
 	bool update();
 	bool mouse(const AsylumEvent &evt);
-
-	bool mouseLeft();
-	void mouseRight();
-
-	//////////////////////////////////////////////////////////////////////////
-	// Helpers
-	//////////////////////////////////////////////////////////////////////////
-	void updateCursor();
-	void setFlag();
-	int32 findRect();
 };
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_CLOCK_H
+#endif // ASYLUM_PUZZLE11_H

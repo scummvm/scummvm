@@ -62,7 +62,7 @@ const ResourcePackId puzzleToScenes[17] = {
 	kResourcePackMorgueCementary,
 	kResourcePackMansion,
 	kResourcePackMorgueCementary,
-	kResourcePackInvalid,
+	kResourcePackMansion,
 	kResourcePackMorgueCementary,
 	kResourcePackLostVillage,
 	kResourcePackHive,
