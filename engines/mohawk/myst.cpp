@@ -562,28 +562,21 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 	_curResource = -1;
 	checkCurrentResource();
 
-	// Debug: Show resource rects
-	if (_showResourceRects)
-		drawResourceRects();
-
 	// Make sure the screen is updated
 	if (updateScreen) {
 		_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 		_system->updateScreen();
 	}
+
+	// Debug: Show resource rects
+	if (_showResourceRects)
+		drawResourceRects();
 }
 
 void MohawkEngine_Myst::drawResourceRects() {
 	for (uint16 i = 0; i < _resources.size(); i++) {
 		_resources[i]->getRect().debugPrint(0);
-		if (_resources[i]->getRect().isValidRect()) {
-			if (!_resources[i]->canBecomeActive())
-				_gfx->drawRect(_resources[i]->getRect(), kRectUnreachable);
-			else if (_resources[i]->isEnabled())
-				_gfx->drawRect(_resources[i]->getRect(), kRectEnabled);
-			else
-				_gfx->drawRect(_resources[i]->getRect(), kRectDisabled);
-		}
+		_resources[i]->drawBoundingRect();
 	}
 
 	_system->updateScreen();

@@ -181,12 +181,12 @@ void MystScriptParser::runOpcode(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		warning("Trying to run invalid opcode %d", op);
 }
 
-const char *MystScriptParser::getOpcodeDesc(uint16 op) {
+const Common::String MystScriptParser::getOpcodeDesc(uint16 op) {
 	for (uint16 i = 0; i < _opcodes.size(); i++)
 		if (_opcodes[i]->op == op)
 			return _opcodes[i]->desc;
 
-	return "unknown";
+	return Common::String::format("%d", op);
 }
 
 MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, MystScriptType type) {

@@ -60,6 +60,8 @@ class MystResource {
 public:
 	MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResource();
+	virtual const Common::String describe();
+	void drawBoundingRect();
 
 	MystResource *_parent;
 	ResourceType type;
@@ -95,6 +97,7 @@ class MystResourceType5 : public MystResource {
 public:
 	MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	void handleMouseUp(const Common::Point &mouse);
+	const Common::String describe();
 
 protected:
 	MystScript _script;
@@ -145,6 +148,8 @@ class MystResourceType8 : public MystResourceType7 {
 public:
 	MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType8();
+	virtual const Common::String describe();
+
 	virtual void drawDataToScreen();
 	void drawConditionalDataToScreen(uint16 state, bool update = true);
 	uint16 getType8Var();
@@ -165,6 +170,8 @@ class MystResourceType11 : public MystResourceType8 {
 public:
 	MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType11();
+	const Common::String describe();
+
 	void handleMouseDown(const Common::Point &mouse);
 	void handleMouseUp(const Common::Point &mouse);
 	void handleMouseDrag(const Common::Point &mouse);
@@ -237,6 +244,8 @@ private:
 class MystResourceType13 : public MystResource {
 public:
 	MystResourceType13(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
+	const Common::String describe();
+
 	void handleMouseUp(const Common::Point &mouse);
 	void handleMouseEnter();
 	void handleMouseLeave();

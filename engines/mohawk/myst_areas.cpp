@@ -95,6 +95,27 @@ void MystResource::setEnabled(bool enabled) {
 	}
 }
 
+const Common::String MystResource::describe() {
+	Common::String desc = Common::String::format("type: %2d rect: (%3d %3d %3d %3d)",
+			type, _rect.left, _rect.top, _rect.width(), _rect.height());
+
+	if (_dest != 0)
+		desc += Common::String::format(" dest: %4d", _dest);
+
+	return desc;
+}
+
+void MystResource::drawBoundingRect() {
+	if (_rect.isValidRect()) {
+		if (!canBecomeActive())
+			_vm->_gfx->drawRect(_rect, kRectUnreachable);
+		else if (isEnabled())
+			_vm->_gfx->drawRect(_rect, kRectEnabled);
+		else
+			_vm->_gfx->drawRect(_rect, kRectDisabled);
+	}
+}
+
 MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {
 	debugC(kDebugResource, "\tResource Type 5 Script:");
 
@@ -103,6 +124,20 @@ MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableRead
 
 void MystResourceType5::handleMouseUp(const Common::Point &mouse) {
 	_vm->_scriptParser->runScript(_script, this);
+}
+
+const Common::String MystResourceType5::describe() {
+	Common::String desc = MystResource::describe();
+
+	if (_script->size() != 0) {
+		desc += " ops:";
+
+		for (uint i = 0; i < _script->size(); i++) {
+			desc += " " + _vm->_scriptParser->getOpcodeDesc(_script->operator[](i).opcode);
+		}
+	}
+
+	return desc;
 }
 
 // In Myst/Making of Myst, the paths are hardcoded ala Windows style without extension. Convert them.
@@ -436,6 +471,20 @@ uint16 MystResourceType8::getType8Var() {
 	return _var8;
 }
 
+const Common::String MystResourceType8::describe() {
+	Common::String desc = Common::String::format("%s var: %2d",
+			MystResourceType7::describe().c_str(), _var8);
+
+	if (_numSubImages > 0) {
+		desc +=  " subImgs:";
+		for (uint i = 0; i < _numSubImages; i++) {
+			desc += Common::String::format(" %d", (int16)_subImages[i].wdib);
+		}
+	}
+
+	return desc;
+}
+
 // No MystResourceType9!
 
 MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType11(vm, rlstStream, parent) {
@@ -678,6 +727,14 @@ void MystResourceType11::handleMouseDrag(const Common::Point &mouse) {
 	_vm->_scriptParser->runOpcode(_mouseDragOpcode, _var8);
 }
 
+const Common::String MystResourceType11::describe() {
+	return Common::String::format("%s down: %s drag: %s up: %s",
+			MystResourceType8::describe().c_str(),
+			_vm->_scriptParser->getOpcodeDesc(_mouseDownOpcode).c_str(),
+			_vm->_scriptParser->getOpcodeDesc(_mouseDragOpcode).c_str(),
+			_vm->_scriptParser->getOpcodeDesc(_mouseUpOpcode).c_str());
+}
+
 void MystResourceType11::setPositionClipping(const Common::Point &mouse, Common::Point &dest) {
 	if (_flagHV & 2) {
 		dest.y = CLIP<uint16>(mouse.y, _minV, _maxV);
@@ -764,6 +821,13 @@ void MystResourceType13::handleMouseUp(const Common::Point &mouse) {
 	// Type 13 Resources do nothing on Mouse Clicks.
 	// This is required to override the inherited default
 	// i.e. MystResource::handleMouseUp
+}
+
+const Common::String MystResourceType13::describe() {
+	return Common::String::format("%s enter: %s leave: %s",
+			MystResource::describe().c_str(),
+			_vm->_scriptParser->getOpcodeDesc(_enterOpcode).c_str(),
+			_vm->_scriptParser->getOpcodeDesc(_leaveOpcode).c_str());
 }
 
 } // End of namespace Mohawk

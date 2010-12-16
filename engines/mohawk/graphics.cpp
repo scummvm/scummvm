@@ -523,12 +523,16 @@ void MystGraphics::drawRect(Common::Rect rect, RectState state) {
 	if (rect.left < 0 || rect.top < 0 || rect.right > 544 || rect.bottom > 333 || !rect.isValidRect() || rect.width() == 0 || rect.height() == 0)
 		return;
 
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+
 	if (state == kRectEnabled)
-		_backBuffer->frameRect(rect, _pixelFormat.RGBToColor(0, 255, 0));
+		screen->frameRect(rect, _pixelFormat.RGBToColor(0, 255, 0));
 	else if (state == kRectUnreachable)
-		_backBuffer->frameRect(rect, _pixelFormat.RGBToColor(0, 0, 255));
+		screen->frameRect(rect, _pixelFormat.RGBToColor(0, 0, 255));
 	else
-		_backBuffer->frameRect(rect, _pixelFormat.RGBToColor(255, 0, 0));
+		screen->frameRect(rect, _pixelFormat.RGBToColor(255, 0, 0));
+
+	_vm->_system->unlockScreen();
 }
 
 void MystGraphics::drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color) {

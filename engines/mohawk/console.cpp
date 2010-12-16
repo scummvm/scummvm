@@ -25,6 +25,7 @@
 
 #include "mohawk/console.h"
 #include "mohawk/myst.h"
+#include "mohawk/myst_areas.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/graphics.h"
 #include "mohawk/riven.h"
@@ -49,6 +50,7 @@ MystConsole::MystConsole(MohawkEngine_Myst *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("playMovie",			WRAP_METHOD(MystConsole, Cmd_PlayMovie));
 	DCmd_Register("disableInitOpcodes",	WRAP_METHOD(MystConsole, Cmd_DisableInitOpcodes));
 	DCmd_Register("cache",				WRAP_METHOD(MystConsole, Cmd_Cache));
+	DCmd_Register("resources",			WRAP_METHOD(MystConsole, Cmd_Resources));
 }
 
 MystConsole::~MystConsole() {
@@ -179,12 +181,20 @@ bool MystConsole::Cmd_DrawImage(int argc, const char **argv) {
 }
 
 bool MystConsole::Cmd_DrawRect(int argc, const char **argv) {
-	if (argc < 5) {
+	if (argc != 5 && argc != 2) {
 		DebugPrintf("Usage: drawRect <left> <top> <right> <bottom>\n");
+		DebugPrintf("Usage: drawRect <resource id>\n");
 		return true;
 	}
 
-	_vm->_gfx->drawRect(Common::Rect((uint16)atoi(argv[1]), (uint16)atoi(argv[2]), (uint16)atoi(argv[3]), (uint16)atoi(argv[4])), kRectEnabled);
+	if (argc == 5) {
+		_vm->_gfx->drawRect(Common::Rect((uint16)atoi(argv[1]), (uint16)atoi(argv[2]), (uint16)atoi(argv[3]), (uint16)atoi(argv[4])), kRectEnabled);
+	} else if (argc == 2) {
+		uint16 resourceId = (uint16)atoi(argv[1]);
+		if (resourceId < _vm->_resources.size())
+			_vm->_resources[resourceId]->drawBoundingRect();
+	}
+
 	return false;
 }
 
@@ -283,6 +293,16 @@ bool MystConsole::Cmd_Cache(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Cache: %s\n", state ? "Enabled" : "Disabled");
+	return true;
+}
+
+bool MystConsole::Cmd_Resources(int argc, const char **argv) {
+	DebugPrintf("Resources in card %d:\n", _vm->getCurCard());
+
+	for (uint i = 0; i < _vm->_resources.size(); i++) {
+		DebugPrintf("#%2d %s\n", i, _vm->_resources[i]->describe().c_str());
+	}
+
 	return true;
 }
 
