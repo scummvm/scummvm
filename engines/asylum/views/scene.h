@@ -172,6 +172,11 @@ public:
 	void updateAmbientSounds();
 
 	/**
+	 * Rain drawing function for chapter 5.
+	 */
+	void drawRain();
+
+	/**
 	 * Determine if the supplied point intersects an action area's active region.
 	 *
 	 * @param pt The point.
@@ -325,10 +330,6 @@ private:
 	 */
 	void adjustActorPriority(ActorIndex index);
 
-	/**
-	 * Special drawing function for chapter 5.
-	 */
-	void drawChapter5();
 	uint32 _chapter5FrameIndex;
 
 	//////////////////////////////////////////////////////////////////////////

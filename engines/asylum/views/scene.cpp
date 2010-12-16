@@ -646,7 +646,7 @@ bool Scene::updateScreen() {
 
 	if (getWorld()->chapter == kChapter5) {
 		if (_vm->isGameFlagSet(kGameFlag249))
-			drawChapter5();
+			drawRain();
 	}
 
 	return false;
@@ -2558,7 +2558,7 @@ void Scene::adjustActorPriority(ActorIndex index) {
 	}
 }
 
-void Scene::drawChapter5() {
+void Scene::drawRain() {
 	if (getSharedData()->getFlag(kFlagSkipDrawScene))
 		return;
 
