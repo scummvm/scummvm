@@ -46,7 +46,8 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScript
 	_savedCardId = 4329;
 	_libraryBookcaseChanged = false;
 	_dockVaultState = 0;
-	_cabinMatchboxState = 2;
+	_cabinMatchState = 2;
+	_matchBurning = false;
 }
 
 MystScriptParser_Myst::~MystScriptParser_Myst() {
@@ -91,7 +92,8 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(142, o_circuitBreakerMove);
 	OPCODE(143, o_circuitBreakerEndMove);
 	OPCODE(146, opcode_146);
-	OPCODE(147, opcode_147);
+	OPCODE(147, o_boilerLightPilot);
+	OPCODE(148, NOP);
 	OPCODE(149, opcode_149);
 	OPCODE(150, opcode_150);
 	OPCODE(151, opcode_151);
@@ -102,7 +104,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(164, o_rocketOpenBook);
 	OPCODE(165, o_rocketLeverMove);
 	OPCODE(166, o_rocketLeverEndMove);
-	OPCODE(169, opcode_169);
+	OPCODE(169, o_cabinLeave);
 	OPCODE(170, opcode_170);
 	OPCODE(171, opcode_171);
 	OPCODE(172, opcode_172);
@@ -112,11 +114,11 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(176, opcode_176);
 	OPCODE(177, opcode_177);
 	OPCODE(180, o_libraryCombinationBookStop);
-	OPCODE(181, opcode_181);
-	OPCODE(182, opcode_182);
+	OPCODE(181, NOP);
+	OPCODE(182, o_cabinMatchLight);
 	OPCODE(183, opcode_183);
 	OPCODE(184, opcode_184);
-	OPCODE(185, opcode_185);
+	OPCODE(185, NOP);
 	OPCODE(186, o_clockMinuteWheelStartTurn);
 	OPCODE(187, NOP);
 	OPCODE(188, o_clockWheelEndTurn);
@@ -203,6 +205,9 @@ void MystScriptParser_Myst::runPersistentScripts() {
 
 	if (_clockTurningWheel)
 		clockWheel_run();
+
+	if (_matchBurning)
+		matchBurn_run();
 
 	opcode_212_run();
 }
@@ -372,7 +377,7 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 	case 69: // Cabin Safe Lock Number #3 - Right
 		return myst.cabinSafeCombination % 10;
 	case 70: // Cabin Safe Matchbox State
-		return _cabinMatchboxState;
+		return _cabinMatchState;
 	case 93: // Breaker nearest Generator Room Blown
 		return myst.generatorBreakers == 1;
 	case 94: // Breaker nearest Rocket Ship Blown
@@ -384,6 +389,10 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return 0;
 		else
 			return myst.generatorVoltage / 4;
+	case 98: // Cabin Boiler Pilot Light Lit
+		return myst.cabinPilotLightLit;
+	case 99: // Cabin Boiler Gas Valve Position
+		return myst.cabinValvePosition % 6;
 	case 102: // Red page
 		if (globals.ending != 4) {
 			return !(globals.redPagesInBook & 1) && (globals.heldPage != 7);
@@ -402,6 +411,19 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		return myst.greenBookOpenedBefore;
 	case 304: // Tower Rotation Map Initialized
 		return _towerRotationMapInitialized;
+	case 305: // Cabin Boiler Lit
+		return myst.cabinPilotLightLit == 1 && myst.cabinValvePosition > 0;
+	case 306: // Cabin Boiler Steam Sound Control
+		if (myst.cabinPilotLightLit == 1) {
+			if (myst.cabinValvePosition <= 0)
+				return 26;
+			else
+				return 27;
+		} else {
+			return myst.cabinValvePosition;
+		}
+	case 307: // Cabin Boiler Fully Pressurised
+		return myst.cabinPilotLightLit == 1 && myst.cabinValvePosition > 12;
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -508,8 +530,8 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 		}
 		break;
 	case 70: // Cabin Safe Matchbox State
-		if (_cabinMatchboxState != value) {
-			_cabinMatchboxState = value;
+		if (_cabinMatchState != value) {
+			_cabinMatchState = value;
 			refresh = true;
 		}
 		break;
@@ -1283,14 +1305,20 @@ void MystScriptParser_Myst::opcode_146(uint16 op, uint16 var, uint16 argc, uint1
 	// TODO: Boiler wheel clockwise mouse down
 }
 
-void MystScriptParser_Myst::opcode_147(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_boilerLightPilot(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Boiler light pilot", op);
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
-	if (argc == 0) {
-		// TODO: Extra Logic to do this in INIT process watching cursor and var 98?
-		_vm->_varStore->setVar(98, 0);
-	} else
-		unknown(op, var, argc, argv);
+	// Match is lit
+	if (_cabinMatchState == 1) {
+		myst.cabinPilotLightLit = 1;
+		_vm->redrawArea(98);
+
+		// Put out match
+		_matchGoOutTime = _vm->_system->getMillis();
+
+		// TODO: Complete. Play fire movie. Handle case where pressure is already right
+	}
 }
 
 void MystScriptParser_Myst::opcode_149(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1489,11 +1517,16 @@ void MystScriptParser_Myst::o_rocketLeverEndMove(uint16 op, uint16 var, uint16 a
 	lever->drawFrame(0);
 }
 
-void MystScriptParser_Myst::opcode_169(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_cabinLeave(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Leave cabin", op);
 
-	// Used on Card 4099 (In Cabin, Looking Out Door)
-	// TODO: Finish Implementation...
+	// If match is lit, put out
+	if (_cabinMatchState == 1) {
+		_matchGoOutTime = _vm->_system->getMillis();
+	} else if (_cabinMatchState == 0) {
+		_vm->setMainCursor(_savedCursorId);
+		_cabinMatchState = 2;
+	}
 }
 
 void MystScriptParser_Myst::opcode_170(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1541,22 +1574,43 @@ void MystScriptParser_Myst::o_libraryCombinationBookStop(uint16 op, uint16 var, 
 	_libraryCombinationBookPagesTurning = false;
 }
 
-void MystScriptParser_Myst::opcode_181(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_cabinMatchLight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	if (!_cabinMatchState) {
+		_vm->_sound->playSound(4103);
 
-	if (argc == 0) {
-		// TODO: Logic for lighting the match
-	} else
-		unknown(op, var, argc, argv);
+		// Match is lit
+		_cabinMatchState = 1;
+		_matchBurning = true;
+		_matchGoOutCnt = 0;
+		_vm->setMainCursor(kLitMatchCursor);
+
+		// Match will stay lit for one minute
+		_matchGoOutTime = _vm->_system->getMillis() + 60 * 1000;
+	}
 }
 
-void MystScriptParser_Myst::opcode_182(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::matchBurn_run() {
+	uint32 time = _vm->_system->getMillis();
 
-	if (argc == 0) {
-		// TODO: Logic for lighting the match
-	} else
-		unknown(op, var, argc, argv);
+	if (time > _matchGoOutTime) {
+		_matchGoOutTime = time + 150;
+
+		// Switch between lit match and dead match every 150 ms when match is dying
+		if (_matchGoOutCnt % 2)
+			_vm->setMainCursor(kLitMatchCursor);
+		else
+			_vm->setMainCursor(kDeadMatchCursor);
+
+		_matchGoOutCnt++;
+
+		// Match is dead
+		if (_matchGoOutCnt >= 5) {
+			_matchBurning = false;
+			_vm->setMainCursor(_savedCursorId);
+
+			_cabinMatchState = 2;
+		}
+	}
 }
 
 void MystScriptParser_Myst::opcode_183(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1575,17 +1629,6 @@ void MystScriptParser_Myst::opcode_184(uint16 op, uint16 var, uint16 argc, uint1
 	if (argc == 0) {
 		// Used for Myst Cards 4257, 4260, 4263, 4266, 4269, 4272, 4275 and 4278 (Ship Puzzle Boxes)
 		_vm->_varStore->setVar(105, 0);
-	} else
-		unknown(op, var, argc, argv);
-}
-
-void MystScriptParser_Myst::opcode_185(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	if (argc == 0) {
-		// Used for Myst Card 4098 (Cabin Boiler Pilot Light)
-		// TODO: Extra Logic to do this in INIT process watching cursor and var 98?
-		_vm->_varStore->setVar(98, 1);
 	} else
 		unknown(op, var, argc, argv);
 }

@@ -62,6 +62,7 @@ private:
 	void opcode_212_disable();
 	void libraryCombinationBook_run();
 	void clockWheel_run();
+	void matchBurn_run();
 
 
 	DECLARE_OPCODE(o_libraryBookPageTurnLeft);
@@ -97,7 +98,7 @@ private:
 	DECLARE_OPCODE(o_circuitBreakerMove);
 	DECLARE_OPCODE(o_circuitBreakerEndMove);
 	DECLARE_OPCODE(opcode_146);
-	DECLARE_OPCODE(opcode_147);
+	DECLARE_OPCODE(o_boilerLightPilot);
 	DECLARE_OPCODE(opcode_149);
 	DECLARE_OPCODE(opcode_150);
 	DECLARE_OPCODE(opcode_151);
@@ -108,7 +109,7 @@ private:
 	DECLARE_OPCODE(o_rocketOpenBook);
 	DECLARE_OPCODE(o_rocketLeverMove);
 	DECLARE_OPCODE(o_rocketLeverEndMove);
-	DECLARE_OPCODE(opcode_169);
+	DECLARE_OPCODE(o_cabinLeave);
 	DECLARE_OPCODE(opcode_170);
 	DECLARE_OPCODE(opcode_171);
 	DECLARE_OPCODE(opcode_172);
@@ -118,11 +119,9 @@ private:
 	DECLARE_OPCODE(opcode_176);
 	DECLARE_OPCODE(opcode_177);
 	DECLARE_OPCODE(o_libraryCombinationBookStop);
-	DECLARE_OPCODE(opcode_181);
-	DECLARE_OPCODE(opcode_182);
+	DECLARE_OPCODE(o_cabinMatchLight);
 	DECLARE_OPCODE(opcode_183);
 	DECLARE_OPCODE(opcode_184);
-	DECLARE_OPCODE(opcode_185);
 	DECLARE_OPCODE(o_clockMinuteWheelStartTurn);
 	DECLARE_OPCODE(o_clockWheelEndTurn);
 	DECLARE_OPCODE(o_clockHourWheelStartTurn);
@@ -210,8 +209,11 @@ private:
 	bool _towerRotationMapClicked; // 132
 	bool _towerRotationOverSpot; // 136
 
+	bool _matchBurning;
+	uint16 _matchGoOutCnt;
 	uint16 _cabinDoorOpened; // 56
-	uint16 _cabinMatchboxState; // 60
+	uint16 _cabinMatchState; // 60
+	uint32 _matchGoOutTime; // 144
 
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);

@@ -76,7 +76,7 @@ void MystResource::handleMouseUp(const Common::Point &mouse) {
 }
 
 bool MystResource::canBecomeActive() {
-	return !unreachableZipDest() && (isEnabled() || (_flags & kMystUnknownFlag));
+	return !unreachableZipDest() && (isEnabled() || (_flags & kMystUnknownFlag) || type == kMystHoverArea);
 }
 
 bool MystResource::unreachableZipDest() {

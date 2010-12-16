@@ -592,15 +592,13 @@ void MohawkEngine_Myst::drawResourceRects() {
 void MohawkEngine_Myst::checkCurrentResource() {
 	// See what resource we're over
 	bool foundResource = false;
+	int16 oldResource = _curResource;
 
 	for (uint16 i = 0; i < _resources.size(); i++)
 		if (_resources[i]->canBecomeActive() &&
 				_resources[i]->contains(_system->getEventManager()->getMousePos())) {
-			if (_curResource != i) {
-				if (_curResource != -1 && _resources[_curResource]->isEnabled())
-					_resources[_curResource]->handleMouseLeave();
-
-				if (_resources[i]->isEnabled())
+			if (oldResource != i) {
+				if (_resources[i]->type == kMystHoverArea)
 					_resources[i]->handleMouseEnter();
 			}
 
@@ -612,6 +610,11 @@ void MohawkEngine_Myst::checkCurrentResource() {
 	// Set the resource to none if we're not over any
 	if (!foundResource)
 		_curResource = -1;
+
+	// Tell previous resource the mouse is no longer hovering it
+	if (oldResource != -1 && _curResource != oldResource
+			&& _resources[oldResource]->type == kMystHoverArea)
+		_resources[oldResource]->handleMouseLeave();
 
 	checkCursorHints();
 }
