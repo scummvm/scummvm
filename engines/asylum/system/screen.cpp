@@ -43,7 +43,7 @@ Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
 	_backBuffer.create(640, 480, 1);
 
 	_flag = -1;
-	_clipRect = Common::Rect(0, 0, 639, 479);
+	_clipRect = Common::Rect(0, 0, 640, 480);
 }
 
 Screen::~Screen() {
@@ -75,7 +75,7 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, in
 	_transTableIndex = index;
 }
 
-void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 sourceX, int32 sourceY, int32 flags, ResourceId resourceIdDestination, int32 destX, int32 destY, bool colorKey) {
+void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, ResourceId resourceIdDestination, int32 destX, int32 destY, bool colorKey) {
 	// Get the frame to draw
 	GraphicResource *resource = new GraphicResource(_vm, resourceId);
 	GraphicFrame *frame = resource->getFrame(frameIndex);
@@ -83,19 +83,19 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 sourceX, int32
 	// Compute coordinates
 	Common::Rect source;
 	Common::Rect destination;
-	destination.left = sourceX + frame->x;
+	destination.left = x + frame->x;
 
 	if (flags & 2) {
 		if (_flag == -1) {
 			if ((resource->getData().flags & 15) >= 2) {
-				destination.left = sourceX + resource->getData().maxWidth - frame->getWidth() - frame->x;
+				destination.left = x + resource->getData().maxWidth - frame->getWidth() - frame->x;
 			}
 		} else {
 			destination.left += 2 * (_flag - (frame->getHeight() * 2 - frame->x));
 		}
 	}
 
-	destination.top = sourceY + frame->y;
+	destination.top = y + frame->y;
 	destination.right = destination.left + frame->getWidth();
 	destination.bottom = destination.top + frame->getHeight();
 
@@ -164,7 +164,7 @@ void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) 
 			source->left += diffLeft;
 	}
 
-	int32 diffRight = destination->right - _clipRect.right - 1;
+	int32 diffRight = destination->right - _clipRect.right;
 	if (diffRight > 0) {
 		destination->right -= diffRight;
 
@@ -180,7 +180,7 @@ void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) 
 		source->top += diffTop;
 	}
 
-	int32 diffBottom = destination->bottom - _clipRect.bottom - 1;
+	int32 diffBottom = destination->bottom - _clipRect.bottom;
 	if (diffBottom > 0) {
 		source->bottom -= diffBottom;
 		destination->bottom -= diffBottom;
@@ -426,14 +426,14 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey) {
 	// TODO adjust destination rect
 	if (useColorKey) {
-		copyToBackBufferWithTransparency((byte *)frame->surface.pixels - (source->top * frame->surface.w + source->left),
+		copyToBackBufferWithTransparency((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                                 frame->surface.w,
 		                                 dest->left,
 		                                 dest->top,
 		                                 source->width(),
 		                                 source->height());
 	} else {
-		copyToBackBuffer((byte *)frame->surface.pixels - (source->top * frame->surface.w + source->left),
+		copyToBackBuffer((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                 frame->surface.w,
 		                 dest->left,
 		                 dest->top,
@@ -444,14 +444,14 @@ void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, 
 
 void Screen::bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, bool useColorKey) {
 	if (useColorKey) {
-		copyToBackBufferWithTransparency((byte *)frame->surface.pixels - (source->top * frame->surface.w + source->left),
+		copyToBackBufferWithTransparency((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                                 frame->surface.w,
 		                                 dX,
 		                                 dY,
 		                                 source->width(),
 		                                 source->height());
 	} else {
-		copyToBackBuffer((byte *)frame->surface.pixels - (source->top * frame->surface.w + source->left),
+		copyToBackBuffer((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                 frame->surface.w,
 		                 dX,
 		                 dY,
