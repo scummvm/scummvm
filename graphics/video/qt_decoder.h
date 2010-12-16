@@ -224,7 +224,7 @@ private:
 	Common::Rational _scaleFactorX;
 	Common::Rational _scaleFactorY;
 	MOVStreamContext *_streams[20];
-	byte *_palette;
+	const byte *_palette;
 	bool _dirtyPalette;
 	uint32 _beginOffset;
 	Common::MacResManager *_resFork;

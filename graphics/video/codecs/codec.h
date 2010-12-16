@@ -42,6 +42,10 @@ public:
 
 	virtual const Surface *decodeImage(Common::SeekableReadStream *stream) = 0;
 	virtual PixelFormat getPixelFormat() const = 0;
+
+	virtual bool containsPalette() const { return false; }
+	virtual const byte *getPalette() { return 0; }
+	virtual bool hasDirtyPalette() const { return false; }
 };
 
 } // End of namespace Graphics

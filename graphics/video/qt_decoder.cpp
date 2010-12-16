@@ -245,12 +245,21 @@ const Surface *QuickTimeDecoder::decodeNextFrame() {
 	const Surface *frame = entry->videoCodec->decodeImage(frameData);
 	delete frameData;
 
-	// Update the palette in case it changes between video descriptions
-	byte *palette = entry->palette;
+	// Update the palette
+	if (entry->videoCodec->containsPalette()) {
+		// The codec itself contains a palette
+		if (entry->videoCodec->hasDirtyPalette()) {
+			_palette = entry->videoCodec->getPalette();
+			_dirtyPalette = true;
+		}
+	} else {
+		// Check if the video description has been updated
+		byte *palette = entry->palette;
 
-	if (palette != _palette) {
-		_palette = palette;
-		_dirtyPalette = true;
+		if (palette != _palette) {
+			_palette = palette;
+			_dirtyPalette = true;
+		}
 	}
 
 	return scaleSurface(frame);
