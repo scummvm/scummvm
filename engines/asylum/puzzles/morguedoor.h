@@ -38,16 +38,38 @@ public:
 	~PuzzleMorgueDoor();
 
 private:
-	uint32 _frameCounts[10];
-	uint32 _frameIndexes[12];
+	enum PuzzleObject {
+		kTopLever = 0,
+		kBottomLever = 1,
+		kTopLeverOpened = 2,
+		kBottomLeverOpened = 3,
+		kTopRightValve = 4,
+		kCenterValve = 5,
+		kRightGear = 6,
+		kTopRightLever = 7,
+		kTopSmallLever = 8,
+		kBottomSmallLever = 9,
+		kTopGear = 10,
+		kBottomGear = 11
+	};
+
+	int32 _frameCounts[12]; // indexes 8 & 9 aren't used
+	int32 _frameIndexes[12];
 	bool _data_4572A4;
 	bool _data_4572A8;
 	bool _data_4572AC;
 	bool _data_4572B0;
 
-	bool _flag1;
-	bool _flag2;
+	uint32 _data_45A9D8;
+	uint32 _data_45A9DC;
+
+	bool _topLeverOpen;
+	bool _bottomLeverOpen;
 	bool _flag3;
+	bool _flag4;
+	bool _flag5;
+	bool _flag6;
+	bool _flag7;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
@@ -63,6 +85,7 @@ private:
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
 	void updateCursor();
+	void updateState();
 };
 
 } // End of namespace Asylum
