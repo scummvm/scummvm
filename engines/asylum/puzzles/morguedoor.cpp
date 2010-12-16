@@ -212,7 +212,39 @@ bool PuzzleMorgueDoor::mouseDown() {
 // Helpers
 //////////////////////////////////////////////////////////////////////////
 void PuzzleMorgueDoor::updateCursor() {
-	warning("[PuzzleMorgueDoor::updateCursor] Not implemented!");
+	Common::Point mousePos = getCursor()->position();
+
+	bool animate = false;
+
+	if (mousePos.x > 347 && mousePos.x < 357 && mousePos.y > 124 && mousePos.y < 154)
+		animate = true;
+
+	if (mousePos.x > 346 && mousePos.x < 356 && mousePos.y > 339 && mousePos.y < 386)
+		animate = true;
+
+	if (mousePos.x > 515 && mousePos.x < 605 && mousePos.y > 41  && mousePos.y < 120)
+		animate = true;
+
+	if (mousePos.x > 267 && mousePos.x < 325 && mousePos.y > 190 && mousePos.y < 320)
+		animate = true;
+
+	if (mousePos.x > 325 && mousePos.x < 383 && mousePos.y > 190 && mousePos.y < 320)
+		animate = true;
+
+	if (mousePos.x > 507 && mousePos.x < 556 && mousePos.y > 124 && mousePos.y < 177)
+		animate = true;
+
+	if (mousePos.x > 556 && mousePos.x < 605 && mousePos.y > 124 && mousePos.y < 177)
+		animate = true;
+
+	// Default cursor
+	if (animate) {
+		if (getCursor()->animation != kCursorAnimationMirror) {
+			getCursor()->set(getWorld()->graphicResourceIds[33], -1, kCursorAnimationMirror, 7);
+		}
+	} else if (getCursor()->animation != kCursorAnimationNone) {
+		getCursor()->set(getWorld()->graphicResourceIds[33], -1, kCursorAnimationNone, 7);
+	}
 }
 
 } // End of namespace Asylum
