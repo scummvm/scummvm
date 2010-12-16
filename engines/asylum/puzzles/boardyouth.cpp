@@ -36,16 +36,16 @@ PuzzleBoardYouth::~PuzzleBoardYouth() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleBoardYouth::init()  {
+bool PuzzleBoardYouth::init(const AsylumEvent &evt)  {
 	error("[PuzzleBoardYouth::init] Not implemented!");
 }
 
-bool PuzzleBoardYouth::update()  {
+bool PuzzleBoardYouth::update(const AsylumEvent &evt)  {
 	error("[PuzzleBoardYouth::update] Not implemented!");
 }
 
-bool PuzzleBoardYouth::mouse(const AsylumEvent &evt) {
-	error("[PuzzleBoardYouth::mouse] Not implemented!");
+bool PuzzleBoardYouth::mouseLeftDown(const AsylumEvent &evt) {
+	error("[PuzzleBoardYouth::mouseLeftDown] Not implemented!");
 }
 
 } // End of namespace Asylum

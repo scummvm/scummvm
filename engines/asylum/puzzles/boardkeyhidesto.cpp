@@ -36,16 +36,16 @@ PuzzleBoardKeyHidesTo::~PuzzleBoardKeyHidesTo() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleBoardKeyHidesTo::init()  {
+bool PuzzleBoardKeyHidesTo::init(const AsylumEvent &evt)  {
 	error("[PuzzleBoardKeyHidesTo::init] Not implemented!");
 }
 
-bool PuzzleBoardKeyHidesTo::update()  {
+bool PuzzleBoardKeyHidesTo::update(const AsylumEvent &evt)  {
 	error("[PuzzleBoardKeyHidesTo::update] Not implemented!");
 }
 
-bool PuzzleBoardKeyHidesTo::mouse(const AsylumEvent &evt) {
-	error("[PuzzleBoardKeyHidesTo::mouse] Not implemented!");
+bool PuzzleBoardKeyHidesTo::mouseLeftDown(const AsylumEvent &evt) {
+	error("[PuzzleBoardKeyHidesTo::mouseLeftDown] Not implemented!");
 }
 
 } // End of namespace Asylum

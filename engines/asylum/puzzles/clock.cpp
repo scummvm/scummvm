@@ -84,10 +84,10 @@ void PuzzleClock::reset() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleClock::init()  {
+bool PuzzleClock::init(const AsylumEvent &evt)  {
 	_currentRect = -2;
 
-	updateCursor();
+	updateCursor(evt.mouse);
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[6]);
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[6], 0);
@@ -103,7 +103,7 @@ bool PuzzleClock::init()  {
 	return true;
 }
 
-bool PuzzleClock::update() {
+bool PuzzleClock::update(const AsylumEvent &evt) {
 	// Draw elements
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[5]);
@@ -134,31 +134,14 @@ bool PuzzleClock::update() {
 		_vm->switchEventHandler(getScene());
 	} else {
 		if (_vm->isGameFlagSet(kGameFlag511))
-			mouseRight();
+			mouseRightDown(evt);
 	}
 
 	return true;
 }
 
-bool PuzzleClock::mouse(const AsylumEvent &evt) {
-	switch (evt.type) {
-	default:
-		break;
-
-	case Common::EVENT_RBUTTONDOWN:
-		mouseRight();
-		break;
-
-	case Common::EVENT_LBUTTONDOWN:
-		return mouseLeft();
-		break;
-	}
-
-	return true;
-}
-
-bool PuzzleClock::mouseLeft() {
-	int32 index = findRect();
+bool PuzzleClock::mouseLeftDown(const AsylumEvent &evt) {
+	int32 index = findRect(evt.mouse);
 
 	if (index == -1)
 		return false;
@@ -173,16 +156,18 @@ bool PuzzleClock::mouseLeft() {
 	return true;
 }
 
-void PuzzleClock::mouseRight() {
+bool PuzzleClock::mouseRightDown(const AsylumEvent &evt) {
 	setFlag();
 	_rightButtonClicked = true;
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-void PuzzleClock::updateCursor() {
-	int32 index = findRect();
+void PuzzleClock::updateCursor(Common::Point mousePos) {
+	int32 index = findRect(mousePos);
 
 	if (index != _currentRect) {
 		_currentRect = index;
@@ -194,20 +179,18 @@ void PuzzleClock::updateCursor() {
 	}
 }
 
-void PuzzleClock::setFlag() {
-	if (_frameIndexes[2] == puzzleClockFrameIndexes[11])
-		_vm->setGameFlag(kGameFlag511);
-}
-
-int32 PuzzleClock::findRect() {
-	Common::Point mousePos = getCursor()->position();
-
+int32 PuzzleClock::findRect(Common::Point mousePos) {
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleClockRects); i++) {
 		if (puzzleClockRects[i].contains(mousePos))
 			return i;
 	}
 
 	return -1;
+}
+
+void PuzzleClock::setFlag() {
+	if (_frameIndexes[2] == puzzleClockFrameIndexes[11])
+		_vm->setGameFlag(kGameFlag511);
 }
 
 } // End of namespace Asylum

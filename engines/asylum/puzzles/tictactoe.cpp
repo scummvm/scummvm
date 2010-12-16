@@ -103,7 +103,7 @@ PuzzleTicTacToe::~PuzzleTicTacToe() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleTicTacToe::init()  {
+bool PuzzleTicTacToe::init(const AsylumEvent &evt)  {
 	_ticker = 0;
 	_vm->clearGameFlag(kGameFlag114);
 	_vm->clearGameFlag(kGameFlag215);
@@ -123,7 +123,7 @@ bool PuzzleTicTacToe::init()  {
 	return true;
 }
 
-bool PuzzleTicTacToe::update()  {
+bool PuzzleTicTacToe::update(const AsylumEvent &evt)  {
 	if (_ticker) {
 		++_ticker;
 
@@ -152,44 +152,11 @@ bool PuzzleTicTacToe::update()  {
 	return true;
 }
 
-bool PuzzleTicTacToe::key(const AsylumEvent &evt) {
-	switch (evt.kbd.keycode) {
-	default:
-		_vm->switchEventHandler(getScene());
-		break;
-
-	case Common::KEYCODE_TAB:
-		getScreen()->takeScreenshot();
-		break;
-	}
-
-	return true;
-}
-
-bool PuzzleTicTacToe::mouse(const AsylumEvent &evt) {
-	switch (evt.type) {
-	default:
-		break;
-
-	case Common::EVENT_RBUTTONDOWN:
-		exit();
-		break;
-
-	case Common::EVENT_LBUTTONDOWN:
-		mouseLeft();
-		break;
-	}
-
-	return true;
-}
-
-void PuzzleTicTacToe::mouseLeft() {
-	Common::Point mousePos = getCursor()->position();
-
+bool PuzzleTicTacToe::mouseLeftDown(const AsylumEvent &evt) {
 	if (!_vm->isGameFlagNotSet(kGameFlag215) || !_vm->isGameFlagNotSet(kGameFlag114)) {
 		getCursor()->show();
 		exit();
-		return;
+		return true;
 	}
 
 	if (_needToInitialize) {
@@ -199,11 +166,11 @@ void PuzzleTicTacToe::mouseLeft() {
 		_strikeOutPosition = -1;
 		initField();
 
-		return;
+		return true;
 	}
 
 	for (uint32 i = 0; i < ARRAYSIZE(_gameField); i++) {
-		if (hitTest(&puzzleTicTacToePolygons[i * 4], mousePos, 0)) {
+		if (hitTest(&puzzleTicTacToePolygons[i * 4], evt.mouse, 0)) {
 			if (_gameField[i] == ' ') {
 				getSound()->playSound(getWorld()->soundResourceIds[11], false, Config.sfxVolume - 100);
 				_gameField[i] = 'X';
@@ -214,6 +181,14 @@ void PuzzleTicTacToe::mouseLeft() {
 			}
 		}
 	}
+
+	return true;
+}
+
+bool PuzzleTicTacToe::mouseRightDown(const AsylumEvent &) {
+	exit();
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

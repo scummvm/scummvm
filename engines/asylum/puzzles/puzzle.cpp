@@ -55,27 +55,28 @@ bool Puzzle::handleEvent(const AsylumEvent &evt) {
 		break;
 
 	case EVENT_ASYLUM_INIT:
-		return init();
-		break;
+		return init(evt);
 
 	case EVENT_ASYLUM_ACTIVATE:
-		return activate();
-		break;
+		return activate(evt);
 
 	case EVENT_ASYLUM_UPDATE:
-		return update();
-		break;
+		return update(evt);
 
 	case Common::EVENT_KEYDOWN:
 		return key(evt);
-		break;
 
 	case Common::EVENT_LBUTTONDOWN:
+		return mouseLeftDown(evt);
+
 	case Common::EVENT_LBUTTONUP:
+		return mouseLeftUp(evt);
+
 	case Common::EVENT_RBUTTONDOWN:
+		return mouseRightDown(evt);
+
 	case Common::EVENT_RBUTTONUP:
-		return mouse(evt);
-		break;
+		return mouseRightUp(evt);
 	}
 
 	return false;
@@ -84,6 +85,7 @@ bool Puzzle::handleEvent(const AsylumEvent &evt) {
 bool Puzzle::key(const AsylumEvent &evt) {
 	switch (evt.kbd.keycode) {
 	default:
+		_vm->switchEventHandler(getScene());
 		break;
 
 	case Common::KEYCODE_TAB:

@@ -76,17 +76,15 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
-	bool init();
-	bool update();
-	bool key(const AsylumEvent &evt);
-	bool mouse(const AsylumEvent &evt);
-
-	bool mouseDown();
+	bool init(const AsylumEvent &evt);
+	bool update(const AsylumEvent &evt);
+	bool mouseLeftDown(const AsylumEvent &evt);
+	bool mouseRightUp(const AsylumEvent &evt);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
-	void updateCursor();
+	void updateCursor(Common::Point mousePos);
 	void updateState();
 };
 

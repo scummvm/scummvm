@@ -82,7 +82,7 @@ void PuzzleFisherman::reset() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleFisherman::init()  {
+bool PuzzleFisherman::init(const AsylumEvent &evt)  {
 	getCursor()->set(getWorld()->graphicResourceIds[47], -1, kCursorAnimationMirror, 7);
 
 	for (uint32 i = 0; i < ARRAYSIZE(_state); i++)
@@ -98,11 +98,11 @@ bool PuzzleFisherman::init()  {
 	getScreen()->setPalette(getWorld()->graphicResourceIds[39]);
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[39], 0);
 
-	return mouseDown();
+	return mouseLeftDown(evt);
 }
 
-bool PuzzleFisherman::update()  {
-	updateCursor();
+bool PuzzleFisherman::update(const AsylumEvent &evt)  {
+	updateCursor(evt);
 
 	// Draw background
 	getScreen()->clearGraphicsInQueue();
@@ -150,46 +150,12 @@ bool PuzzleFisherman::update()  {
 	return true;
 }
 
-bool PuzzleFisherman::key(const AsylumEvent &evt) {
-	switch (evt.kbd.keycode) {
-	default:
-		_vm->switchEventHandler(getScene());
-		break;
-
-	case Common::KEYCODE_TAB:
-		getScreen()->takeScreenshot();
-		break;
-	}
-
-	return false;
-}
-
-bool PuzzleFisherman::mouse(const AsylumEvent &evt) {
-	switch (evt.type) {
-	case Common::EVENT_LBUTTONDOWN:
-		return mouseDown();
-		break;
-
-	case Common::EVENT_RBUTTONDOWN:
-		getCursor()->hide();
-		getSharedData()->setFlag(kFlag1, true);
-		getScreen()->setupPaletteAndStartFade(0, 0, 0);
-
-		_vm->switchEventHandler(getScene());
-		break;
-	}
-
-	return false;
-}
-
-bool PuzzleFisherman::mouseDown() {
+bool PuzzleFisherman::mouseLeftDown(const AsylumEvent &evt) {
 	if (!_dword_45A130)
 		return false;
 
-	Common::Point mousePos = getCursor()->position();
-
 	for (uint32 i = 0; i < 7; i++) {
-		if (hitTest(&puzzleFishermanPolygons[i * 4 + 7], mousePos)) {
+		if (hitTest(&puzzleFishermanPolygons[i * 4 + 7], evt.mouse)) {
 			if (!_state[i]) {
 				getSound()->playSound(getWorld()->graphicResourceIds[9], false, Config.sfxVolume - 10);
 				_state[i] = true;
@@ -198,10 +164,10 @@ bool PuzzleFisherman::mouseDown() {
 		}
 	}
 
-	if (puzzleFishermanPolygons[6].x < mousePos.x
-	 && puzzleFishermanPolygons[6].y < mousePos.y
-	 && puzzleFishermanPolygons[6].x + 70 > mousePos.x
-	 && puzzleFishermanPolygons[6].y + 30 > mousePos.y) {
+	if (puzzleFishermanPolygons[6].x < evt.mouse.x
+	 && puzzleFishermanPolygons[6].y < evt.mouse.y
+	 && puzzleFishermanPolygons[6].x + 70 > evt.mouse.x
+	 && puzzleFishermanPolygons[6].y + 30 > evt.mouse.y) {
 		 getSound()->playSound(getWorld()->graphicResourceIds[10], false, Config.sfxVolume - 10);
 
 		 for (uint32 i = 0; i < 6; i++)
@@ -216,18 +182,27 @@ bool PuzzleFisherman::mouseDown() {
 	return true;
 }
 
+bool PuzzleFisherman::mouseRightDown(const AsylumEvent &evt) {
+	getCursor()->hide();
+	getSharedData()->setFlag(kFlag1, true);
+	getScreen()->setupPaletteAndStartFade(0, 0, 0);
+
+	_vm->switchEventHandler(getScene());
+
+	return false;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-void PuzzleFisherman::updateCursor() {
-	Common::Point mousePos = getCursor()->position();
+void PuzzleFisherman::updateCursor(const AsylumEvent &evt) {
 	bool found = false;
 
 	for (uint32 i = 0; i < 6; i++) {
 		if (found)
 			break;
 
-		if (hitTest(&puzzleFishermanPolygons[i * 4 + 7], mousePos)) {
+		if (hitTest(&puzzleFishermanPolygons[i * 4 + 7], evt.mouse)) {
 			if (!_state[i]) {
 				found = true;
 
@@ -240,10 +215,10 @@ void PuzzleFisherman::updateCursor() {
 	if (found)
 		return;
 
-	if (puzzleFishermanPolygons[6].x >= mousePos.x
-	 || puzzleFishermanPolygons[6].y >= mousePos.y
-	 || puzzleFishermanPolygons[6].x + 70 <= mousePos.x
-	 || puzzleFishermanPolygons[6].y + 30 <= mousePos.y) {
+	if (puzzleFishermanPolygons[6].x >= evt.mouse.x
+	 || puzzleFishermanPolygons[6].y >= evt.mouse.y
+	 || puzzleFishermanPolygons[6].x + 70 <= evt.mouse.x
+	 || puzzleFishermanPolygons[6].y + 30 <= evt.mouse.y) {
 		 if (getCursor()->animation != kCursorAnimationNone)
 			 getCursor()->set(getWorld()->graphicResourceIds[47], -1, kCursorAnimationNone, 7);
 		 else if (getCursor()->animation != kCursorAnimationMirror)

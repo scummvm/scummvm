@@ -49,19 +49,17 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
-	bool init();
-	bool update();
-	bool mouse(const AsylumEvent &evt);
-
-	bool mouseLeft();
-	void mouseRight();
+	bool init(const AsylumEvent &evt);
+	bool update(const AsylumEvent &evt);
+	bool mouseLeftDown(const AsylumEvent &evt);
+	bool mouseRightDown(const AsylumEvent &evt);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
-	void updateCursor();
+	void updateCursor(Common::Point mousePos);
+	int32 findRect(Common::Point mousePos);
 	void setFlag();
-	int32 findRect();
 };
 
 } // End of namespace Asylum

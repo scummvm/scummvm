@@ -56,11 +56,14 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
-	virtual bool init() = 0;
-	virtual bool update() = 0;
-	virtual bool activate() { return true; }
+	virtual bool init(const AsylumEvent &evt) = 0;
+	virtual bool update(const AsylumEvent &evt) = 0;
+	virtual bool activate(const AsylumEvent &evt) { return true; }
 	virtual bool key(const AsylumEvent &evt);
-	virtual bool mouse(const AsylumEvent &evt) = 0;
+	virtual bool mouseLeftUp(const AsylumEvent &evt) { return true; }
+	virtual bool mouseLeftDown(const AsylumEvent &evt) { return true; }
+	virtual bool mouseRightUp(const AsylumEvent &evt) { return true; }
+	virtual bool mouseRightDown(const AsylumEvent &evt) { return true; }
 
 	void exit();
 

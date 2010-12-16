@@ -36,16 +36,16 @@ PuzzlePipes::~PuzzlePipes() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzlePipes::init()  {
+bool PuzzlePipes::init(const AsylumEvent &evt)  {
 	error("[PuzzlePipes::init] Not implemented!");
 }
 
-bool PuzzlePipes::update()  {
+bool PuzzlePipes::update(const AsylumEvent &evt)  {
 	error("[PuzzlePipes::update] Not implemented!");
 }
 
-bool PuzzlePipes::mouse(const AsylumEvent &evt) {
-	error("[PuzzlePipes::mouse] Not implemented!");
+bool PuzzlePipes::mouseLeftDown(const AsylumEvent &evt) {
+	error("[PuzzlePipes::mouseLeftDown] Not implemented!");
 }
 
 } // End of namespace Asylum

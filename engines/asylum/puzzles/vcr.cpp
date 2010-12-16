@@ -57,7 +57,7 @@ PuzzleVCR::~PuzzleVCR() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleVCR::init()  {
+bool PuzzleVCR::init(const AsylumEvent &evt)  {
 	// Load the graphics palette
 	getScreen()->setPalette(getWorld()->graphicResourceIds[29]);
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[29], 0);
@@ -72,11 +72,11 @@ bool PuzzleVCR::init()  {
 	return true;
 }
 
-bool PuzzleVCR::update()  {
+bool PuzzleVCR::update(const AsylumEvent &evt)  {
 	uint32 ticks = _vm->getTick();
 
 	if (!getSharedData()->getFlag(kFlagRedraw)) {
-		updateScreen();
+		updateScreen(evt);
 
 		getSharedData()->setFlag(kFlagRedraw, true);
 	}
@@ -113,37 +113,9 @@ bool PuzzleVCR::key(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleVCR::mouse(const AsylumEvent &evt) {
-	switch (evt.type) {
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_RBUTTONDOWN:
-		mouseDown(evt);
-		break;
-
-	case Common::EVENT_LBUTTONUP:
-		mouseUp();
-		break;
-	}
-
-	return true;
-}
-
-void PuzzleVCR::mouseDown(const AsylumEvent &evt) {
+bool PuzzleVCR::mouseLeftDown(const AsylumEvent &evt) {
 	if (_isAccomplished)
-		return;
-
-	// Handle right click
-	if (evt.type == Common::EVENT_RBUTTONDOWN) {
-		getScreen()->clearGraphicsInQueue();
-		getScreen()->clear();
-
-		getSound()->stop(getWorld()->graphicResourceIds[47]);
-
-		_vm->switchEventHandler(getScene());
-		return;
-	}
-
-	Common::Point mousePos = getCursor()->position();
+		return true;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Plug-in jacks
@@ -156,11 +128,11 @@ void PuzzleVCR::mouseDown(const AsylumEvent &evt) {
 			state = (JackState)(((_jacksState[kYellow] != kOnHand) - 1) & 3);
 	}
 
-	if (inPolygon(mousePos.x, mousePos.y, kRedHole)) {
+	if (inPolygon(evt.mouse, kRedHole)) {
 		setJackOnHole(kBlack, state, kPluggedOnRed);
-	} else if (inPolygon(mousePos.x, mousePos.y, kYellowHole)) {
+	} else if (inPolygon(evt.mouse, kYellowHole)) {
 		setJackOnHole(kRed, state, kPluggedOnYellow);
-	} else if (inPolygon(mousePos.x, mousePos.y, kBlackHole)) {
+	} else if (inPolygon(evt.mouse, kBlackHole)) {
 		setJackOnHole(kYellow, state, kPluggedOnBlack);
 
 		if (_holesState[kYellow] != kPluggedOnYellow && _buttonsState[kPowerButton] == kON) {
@@ -176,8 +148,8 @@ void PuzzleVCR::mouseDown(const AsylumEvent &evt) {
 	//////////////////////////////////////////////////////////////////////////
 	Color jack = getJackOnHand();
 	if (jack != kNone) {
-		if (mousePos.x >= (int32)puzzleVCRPolygons[kBlackJack].left && mousePos.x <= (int32)puzzleVCRPolygons[kYellowJack].right
-		 && mousePos.y >= (int32)puzzleVCRPolygons[kBlackJack].top  && mousePos.y <= (int32)puzzleVCRPolygons[kYellowJack].bottom) {
+		if (evt.mouse.x >= (int32)puzzleVCRPolygons[kBlackJack].left && evt.mouse.x <= (int32)puzzleVCRPolygons[kYellowJack].right
+		 && evt.mouse.y >= (int32)puzzleVCRPolygons[kBlackJack].top  && evt.mouse.y <= (int32)puzzleVCRPolygons[kYellowJack].bottom) {
 
 			_jacksState[jack] = kOnTable;
 			getSound()->playSound(getWorld()->graphicResourceIds[50]);
@@ -185,7 +157,7 @@ void PuzzleVCR::mouseDown(const AsylumEvent &evt) {
 			getSharedData()->setFlag(kFlag1, false);
 		}
 
-		return;
+		return true;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -195,17 +167,17 @@ void PuzzleVCR::mouseDown(const AsylumEvent &evt) {
 	getSharedData()->setFlag(kFlag1, false);
 
 
-	if (inPolygon(mousePos.x, mousePos.y, kBlackJack))
+	if (inPolygon(evt.mouse, kBlackJack))
 		pickJack(kBlack);
-	else if (inPolygon(mousePos.x, mousePos.y, kRedJack))
+	else if (inPolygon(evt.mouse, kRedJack))
 		pickJack(kRed);
-	else if (inPolygon(mousePos.x, mousePos.y, kYellowJack))
+	else if (inPolygon(evt.mouse, kYellowJack))
 		pickJack(kYellow);
 
 	//////////////////////////////////////////////////////////////////////////
 	// VCR button regions
 	//////////////////////////////////////////////////////////////////////////
-	if (inPolygon(mousePos.x, mousePos.y, kRewindButton)) {
+	if (inPolygon(evt.mouse, kRewindButton)) {
 		getSound()->playSound(getWorld()->graphicResourceIds[39]);
 
 		if (!_buttonsState[kRewindButton])
@@ -213,7 +185,7 @@ void PuzzleVCR::mouseDown(const AsylumEvent &evt) {
 		else if (_buttonsState[kRewindButton] == kON)
 			_buttonsState[kRewindButton] = kDownOFF;
 
-	} else if (inPolygon(mousePos.x, mousePos.y, kPlayButton)) {
+	} else if (inPolygon(evt.mouse, kPlayButton)) {
 		getSound()->playSound(getWorld()->graphicResourceIds[39]);
 
 		if (!_buttonsState[kPlayButton])
@@ -221,7 +193,7 @@ void PuzzleVCR::mouseDown(const AsylumEvent &evt) {
 		else if (_buttonsState[kPlayButton] == kON)
 			_buttonsState[kPlayButton] = kDownOFF;
 
-	} else if (inPolygon(mousePos.x, mousePos.y, kStopButton)) {
+	} else if (inPolygon(evt.mouse, kStopButton)) {
 		getSound()->playSound(getWorld()->graphicResourceIds[39]);
 
 		if (!_buttonsState[kStopButton])
@@ -229,7 +201,7 @@ void PuzzleVCR::mouseDown(const AsylumEvent &evt) {
 		else if (_buttonsState[kStopButton] == kON)
 			_buttonsState[kStopButton] = kDownOFF;
 
-	} else if (inPolygon(mousePos.x, mousePos.y, kPowerButton)) {
+	} else if (inPolygon(evt.mouse, kPowerButton)) {
 		getSound()->playSound(getWorld()->graphicResourceIds[39]);
 
 		if (!_buttonsState[kPowerButton] && _holesState[kYellow] == kPluggedOnRed) {
@@ -238,11 +210,13 @@ void PuzzleVCR::mouseDown(const AsylumEvent &evt) {
 			_buttonsState[kPowerButton] = kDownOFF;
 		}
 	}
+
+	return true;
 }
 
-void PuzzleVCR::mouseUp() {
+bool PuzzleVCR::mouseLeftUp(const AsylumEvent &) {
 	if (_isAccomplished)
-		return;
+		return true;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Power
@@ -299,18 +273,31 @@ void PuzzleVCR::mouseUp() {
 	} else if (_buttonsState[kStopButton] == kDownON) {
 		_buttonsState[kStopButton] = kOFF;
 	}
+
+	return true;
+}
+
+bool PuzzleVCR::mouseRightDown(const AsylumEvent &evt) {
+	getScreen()->clearGraphicsInQueue();
+	getScreen()->clear();
+
+	getSound()->stop(getWorld()->graphicResourceIds[47]);
+
+	_vm->switchEventHandler(getScene());
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Drawing
 //////////////////////////////////////////////////////////////////////////
-void PuzzleVCR::updateScreen() {
-	Common::Point mousePos = getCursor()->position();
+void PuzzleVCR::updateScreen(const AsylumEvent &evt) {
+	Common::Point mousePos = evt.mouse;
 
-	if (mousePos.x > 465)
+	if (mousePos.x)
 		mousePos.x = 465;
 
-	updateCursor();
+	updateCursor(mousePos);
 
 	// Draw background
 	getScreen()->clearGraphicsInQueue();
@@ -368,24 +355,22 @@ void PuzzleVCR::updateScreen() {
 	}
 }
 
-void PuzzleVCR::updateCursor() {
-	Common::Point mousePos = getCursor()->position();
-
+void PuzzleVCR::updateCursor(Common::Point mousePos) {
 	Color jack = getJackOnHand();
 
 	if (jack == kNone) {
-		if (inPolygon(mousePos.x, mousePos.y, kRewindButton)
-		 || inPolygon(mousePos.x, mousePos.y, kStopButton)
-		 || inPolygon(mousePos.x, mousePos.y, kPlayButton)
-		 || inPolygon(mousePos.x, mousePos.y, kPowerButton)
-		 || inPolygon(mousePos.x, mousePos.y, kBlackJack)
-		 || inPolygon(mousePos.x, mousePos.y, kRedJack)
-		 || inPolygon(mousePos.x, mousePos.y, kYellowJack)) {
+		if (inPolygon(mousePos, kRewindButton)
+		 || inPolygon(mousePos, kStopButton)
+		 || inPolygon(mousePos, kPlayButton)
+		 || inPolygon(mousePos, kPowerButton)
+		 || inPolygon(mousePos, kBlackJack)
+		 || inPolygon(mousePos, kRedJack)
+		 || inPolygon(mousePos, kYellowJack)) {
 			if (getCursor()->animation != kCursorAnimationMirror)
 				getCursor()->set(getWorld()->graphicResourceIds[28]);
-		} else if ((inPolygon(mousePos.x, mousePos.y, kRedHole) && _holesState[kBlack])
-		        || (inPolygon(mousePos.x, mousePos.y, kYellowHole) && _holesState[kRed])
-		        || (inPolygon(mousePos.x, mousePos.y, kBlackHole) && _holesState[kYellow])) {
+		} else if ((inPolygon(mousePos, kRedHole) && _holesState[kBlack])
+		        || (inPolygon(mousePos, kYellowHole) && _holesState[kRed])
+		        || (inPolygon(mousePos, kBlackHole) && _holesState[kYellow])) {
 			if (getCursor()->animation != kCursorAnimationMirror)
 				getCursor()->set(getWorld()->graphicResourceIds[28]);
 		} else {
@@ -578,9 +563,9 @@ void PuzzleVCR::updateStopButton() {
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-int PuzzleVCR::inPolygon(int x, int y, int polygonIndex) const {
-	return  x >= puzzleVCRPolygons[polygonIndex].left && x <= puzzleVCRPolygons[polygonIndex].right
-	     && y >= puzzleVCRPolygons[polygonIndex].top  && y <= puzzleVCRPolygons[polygonIndex].bottom;
+int PuzzleVCR::inPolygon(Common::Point point, int polygonIndex) const {
+	return point.x >= puzzleVCRPolygons[polygonIndex].left && point.x <= puzzleVCRPolygons[polygonIndex].right
+	    && point.y >= puzzleVCRPolygons[polygonIndex].top  && point.y <= puzzleVCRPolygons[polygonIndex].bottom;
 }
 
 PuzzleVCR::Color PuzzleVCR::getJackOnHand() {

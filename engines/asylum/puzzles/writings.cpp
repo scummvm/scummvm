@@ -36,15 +36,15 @@ PuzzleWritings::~PuzzleWritings() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleWritings::init()  {
+bool PuzzleWritings::init(const AsylumEvent &evt)  {
 	error("[PuzzleWritings::init] Not implemented!");
 }
 
-bool PuzzleWritings::update()  {
+bool PuzzleWritings::update(const AsylumEvent &evt)  {
 	error("[PuzzleWritings::update] Not implemented!");
 }
 
-bool PuzzleWritings::mouse(const AsylumEvent &evt) {
+bool PuzzleWritings::mouseLeftDown(const AsylumEvent &evt) {
 	error("[PuzzleWritings::mouse] Not implemented!");
 }
 

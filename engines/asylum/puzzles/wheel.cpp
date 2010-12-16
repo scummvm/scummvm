@@ -36,16 +36,16 @@ PuzzleWheel::~PuzzleWheel() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleWheel::init()  {
+bool PuzzleWheel::init(const AsylumEvent &evt)  {
 	error("[PuzzleWheel::init] Not implemented!");
 }
 
-bool PuzzleWheel::update()  {
+bool PuzzleWheel::update(const AsylumEvent &evt)  {
 	error("[PuzzleWheel::update] Not implemented!");
 }
 
-bool PuzzleWheel::mouse(const AsylumEvent &evt) {
-	error("[PuzzleWheel::mouse] Not implemented!");
+bool PuzzleWheel::mouseLeftDown(const AsylumEvent &evt) {
+	error("[PuzzleWheel::mouseLeftDown] Not implemented!");
 }
 
 } // End of namespace Asylum

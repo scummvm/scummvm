@@ -36,16 +36,16 @@ PuzzleLock::~PuzzleLock() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleLock::init()  {
+bool PuzzleLock::init(const AsylumEvent &evt)  {
 	error("[PuzzleLock::init] Not implemented!");
 }
 
-bool PuzzleLock::update()  {
+bool PuzzleLock::update(const AsylumEvent &evt)  {
 	error("[PuzzleLock::update] Not implemented!");
 }
 
-bool PuzzleLock::mouse(const AsylumEvent &evt) {
-	error("[PuzzleLock::mouse] Not implemented!");
+bool PuzzleLock::mouseLeftDown(const AsylumEvent &evt) {
+	error("[PuzzleLock::mouseLeftDown] Not implemented!");
 }
 
 } // End of namespace Asylum
