@@ -292,12 +292,7 @@ bool PuzzleVCR::mouseRightDown(const AsylumEvent &evt) {
 // Drawing
 //////////////////////////////////////////////////////////////////////////
 void PuzzleVCR::updateScreen(const AsylumEvent &evt) {
-	Common::Point mousePos = evt.mouse;
-
-	if (mousePos.x)
-		mousePos.x = 465;
-
-	updateCursor(mousePos);
+	updateCursor();
 
 	// Draw background
 	getScreen()->clearGraphicsInQueue();
@@ -355,8 +350,12 @@ void PuzzleVCR::updateScreen(const AsylumEvent &evt) {
 	}
 }
 
-void PuzzleVCR::updateCursor(Common::Point mousePos) {
+void PuzzleVCR::updateCursor() {
 	Color jack = getJackOnHand();
+	Common::Point mousePos = getCursor()->position();
+
+	if (mousePos.x)
+		mousePos.x = 465;
 
 	if (jack == kNone) {
 		if (inPolygon(mousePos, kRewindButton)

@@ -89,7 +89,7 @@ bool PuzzleMorgueDoor::init(const AsylumEvent &evt)  {
 }
 
 bool PuzzleMorgueDoor::update(const AsylumEvent &evt)  {
-	updateCursor(evt.mouse);
+	updateCursor();
 
 	// Draw elements
 	getScreen()->clearGraphicsInQueue();
@@ -210,8 +210,9 @@ bool PuzzleMorgueDoor::mouseRightUp(const AsylumEvent &evt) {
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-void PuzzleMorgueDoor::updateCursor(Common::Point mousePos) {
+void PuzzleMorgueDoor::updateCursor() {
 	bool animate = false;
+	Common::Point mousePos = getCursor()->position();
 
 	if (mousePos.x > 347 && mousePos.x < 357 && mousePos.y > 124 && mousePos.y < 154)
 		animate = true;

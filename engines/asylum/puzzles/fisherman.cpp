@@ -102,7 +102,7 @@ bool PuzzleFisherman::init(const AsylumEvent &evt)  {
 }
 
 bool PuzzleFisherman::update(const AsylumEvent &evt)  {
-	updateCursor(evt);
+	updateCursor();
 
 	// Draw background
 	getScreen()->clearGraphicsInQueue();
@@ -195,14 +195,15 @@ bool PuzzleFisherman::mouseRightDown(const AsylumEvent &evt) {
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-void PuzzleFisherman::updateCursor(const AsylumEvent &evt) {
+void PuzzleFisherman::updateCursor() {
 	bool found = false;
+	Common::Point mousePos = getCursor()->position();
 
 	for (uint32 i = 0; i < 6; i++) {
 		if (found)
 			break;
 
-		if (hitTest(&puzzleFishermanPolygons[i * 4 + 7], evt.mouse)) {
+		if (hitTest(&puzzleFishermanPolygons[i * 4 + 7], mousePos)) {
 			if (!_state[i]) {
 				found = true;
 
@@ -215,10 +216,10 @@ void PuzzleFisherman::updateCursor(const AsylumEvent &evt) {
 	if (found)
 		return;
 
-	if (puzzleFishermanPolygons[6].x >= evt.mouse.x
-	 || puzzleFishermanPolygons[6].y >= evt.mouse.y
-	 || puzzleFishermanPolygons[6].x + 70 <= evt.mouse.x
-	 || puzzleFishermanPolygons[6].y + 30 <= evt.mouse.y) {
+	if (puzzleFishermanPolygons[6].x >= mousePos.x
+	 || puzzleFishermanPolygons[6].y >= mousePos.y
+	 || puzzleFishermanPolygons[6].x + 70 <= mousePos.x
+	 || puzzleFishermanPolygons[6].y + 30 <= mousePos.y) {
 		 if (getCursor()->animation != kCursorAnimationNone)
 			 getCursor()->set(getWorld()->graphicResourceIds[47], -1, kCursorAnimationNone, 7);
 		 else if (getCursor()->animation != kCursorAnimationMirror)
