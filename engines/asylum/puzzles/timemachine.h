@@ -37,13 +37,34 @@ public:
 	PuzzleTimeMachine(AsylumEngine *engine);
 	~PuzzleTimeMachine();
 
+	void reset();
+
 private:
+	bool _leftButtonClicked;
+	uint32 _counter;
+	uint32 _frameIndexes[6];
+	uint32 _frameCounts[6];
+	int32 _frameIncrements[6];
+	int8 _state[8];
+
+	bool _data_4572BC;
+	bool _data_4572CC;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init();
 	bool update();
+	bool key(const AsylumEvent &evt);
 	bool mouse(const AsylumEvent &evt);
+
+	void mouseDown();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+	void updateCursor();
+
 };
 
 } // End of namespace Asylum
