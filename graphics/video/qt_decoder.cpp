@@ -226,6 +226,9 @@ const Surface *QuickTimeDecoder::decodeNextFrame() {
 	_curFrame++;
 	_nextFrameStartTime += getFrameDuration();
 
+	// Update the audio while we're at it
+	updateAudioBuffer();
+
 	// Get the next packet
 	uint32 descId;
 	Common::SeekableReadStream *frameData = getNextFramePacket(descId);
@@ -1277,23 +1280,49 @@ Audio::AudioStream *QuickTimeDecoder::createAudioStream(Common::SeekableReadStre
 	return NULL;
 }
 
+uint32 QuickTimeDecoder::getAudioChunkSampleCount(uint chunk) {
+	if (_audioStreamIndex < 0)
+		return 0;
+
+	uint32 sampleCount = 0;
+
+	for (uint32 j = 0; j < _streams[_audioStreamIndex]->sample_to_chunk_sz; j++)
+		if (chunk >= (_streams[_audioStreamIndex]->sample_to_chunk[j].first - 1))
+			sampleCount = _streams[_audioStreamIndex]->sample_to_chunk[j].count;
+
+	return sampleCount;
+}
+
 void QuickTimeDecoder::updateAudioBuffer() {
 	if (!_audStream)
 		return;
 
 	STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
 
+	// Calculate the amount of chunks we need in memory until the next frame
+	uint32 timeToNextFrame = getTimeToNextFrame();
+	uint32 numberOfChunksNeeded = 0;
+	uint32 timeFilled = 0;
+	uint32 curAudioChunk = _curAudioChunk - _audStream->numQueuedStreams();
+
+	for (; timeFilled < timeToNextFrame && curAudioChunk < _streams[_audioStreamIndex]->chunk_count; numberOfChunksNeeded++, curAudioChunk++) {
+		uint32 sampleCount = getAudioChunkSampleCount(curAudioChunk);
+		assert(sampleCount);
+
+		timeFilled += sampleCount * 1000 / entry->sampleRate;
+	}
+
+	// Add a couple extra to ensure we don't underrun
+	numberOfChunksNeeded += 3;
+
 	// Keep three streams in buffer so that if/when the first two end, it goes right into the next
-	for (; _audStream->numQueuedStreams() < 3 && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count; _curAudioChunk++) {
+	for (; _audStream->numQueuedStreams() < numberOfChunksNeeded && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count; _curAudioChunk++) {
 		Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
 
 		_fd->seek(_streams[_audioStreamIndex]->chunk_offsets[_curAudioChunk]);
 
 		// First, we have to get the sample count
-		uint32 sampleCount = 0;
-		for (uint32 j = 0; j < _streams[_audioStreamIndex]->sample_to_chunk_sz; j++)
-			if (_curAudioChunk >= (_streams[_audioStreamIndex]->sample_to_chunk[j].first - 1))
-				sampleCount = _streams[_audioStreamIndex]->sample_to_chunk[j].count;
+		uint32 sampleCount = getAudioChunkSampleCount(_curAudioChunk);
 		assert(sampleCount);
 
 		// Then calculate the right sizes

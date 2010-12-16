@@ -223,9 +223,6 @@ bool VideoManager::updateBackgroundMovies() {
 				}
 			}
 		}
-
-		// Update the audio buffer too
-		_videoStreams[i]->updateAudioBuffer();
 	}
 
 	// Return true if we need to update the screen

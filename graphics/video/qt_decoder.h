@@ -116,13 +116,7 @@ public:
 	// RewindableVideoDecoder API
 	void rewind();
 
-	// TODO: This audio function need to be removed from the public and/or added to
-	// the VideoDecoder API directly. I plan on replacing this function with something
-	// that can figure out how much audio is needed instead of constantly keeping two
-	// chunks in memory.
-	void updateAudioBuffer();
-
-protected:
+private:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
 	Common::SeekableReadStream *_fd;
 
@@ -245,6 +239,8 @@ protected:
 	Audio::QueuingAudioStream *_audStream;
 	void startAudio();
 	void stopAudio();
+	void updateAudioBuffer();
+	uint32 getAudioChunkSampleCount(uint chunk);
 	int8 _audioStreamIndex;
 	uint _curAudioChunk;
 	Audio::SoundHandle _audHandle;
