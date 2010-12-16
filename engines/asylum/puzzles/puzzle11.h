@@ -38,12 +38,22 @@ public:
 	~Puzzle11();
 
 private:
+	uint32 _counter;
+	uint32 _frameCounts[5];
+	uint32 _frameIndexes[7];
+	bool _data_457298;
+	bool _data_45AA34;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init();
 	bool update();
+	bool key(const AsylumEvent &evt);
 	bool mouse(const AsylumEvent &evt);
+
+	void mouseUp();
+	void mouseDown();
 };
 
 } // End of namespace Asylum
