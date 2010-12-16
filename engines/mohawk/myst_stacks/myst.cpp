@@ -324,6 +324,21 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		} else {
 			return 0;
 		}
+	case 26: // Courtyard Image Box - Cross
+	case 27: // Courtyard Image Box - Leaf
+	case 28: // Courtyard Image Box - Arrow
+	case 29: // Courtyard Image Box - Eye
+	case 30: // Courtyard Image Box - Snake
+	case 31: // Courtyard Image Box - Spider
+	case 32: // Courtyard Image Box - Anchor
+	case 33: // Courtyard Image Box - Ostrich
+		if (!_tempVar) {
+			return 0;
+		} else if (myst.courtyardImageBoxes & (0x01 << (var - 26))) {
+			return 2;
+		} else {
+			return 1;
+		}
 	case 37: // Clock Tower Control Wheels Position
 		return 3 * ((myst.clockTowerMinutePosition / 5) % 3) + myst.clockTowerHourPosition % 3;
 	case 41: // Dock Marker Switch Vault State
