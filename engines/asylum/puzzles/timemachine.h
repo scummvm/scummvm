@@ -44,7 +44,7 @@ private:
 	uint32 _counter;
 	uint32 _counter2;
 	uint32 _currentFrameIndex;
-	uint32 _frameIndexes[6];
+	int32 _frameIndexes[6];
 	uint32 _frameCounts[6];
 	int32 _frameIncrements[6];
 	int8 _state[5];
