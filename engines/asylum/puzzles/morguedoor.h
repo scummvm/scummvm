@@ -37,6 +37,8 @@ public:
 	PuzzleMorgueDoor(AsylumEngine *engine);
 	~PuzzleMorgueDoor();
 
+	void reset();
+
 private:
 	enum PuzzleObject {
 		kTopLever = 0,
