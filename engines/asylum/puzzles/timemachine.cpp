@@ -192,7 +192,7 @@ bool PuzzleTimeMachine::update(const AsylumEvent &evt)  {
 	// Reset frame increments & state
 	if (_counter2 == 0 && _data_4572CC == 0 && _leftButtonClicked && _data_45AAA8 == 0 && _currentFrameIndex == _data_45AAAC) {
 		for (uint32 i = 0; i < 5; i++) {
-			if (!(_frameIndexes[i] % -4))
+			if (!(_frameIndexes[i] % ~3))
 				_frameIncrements[i] = 0;
 		}
 
@@ -231,7 +231,7 @@ bool PuzzleTimeMachine::mouseLeftDown(const AsylumEvent &evt) {
 	_data_4572CC = true;
 	_data_4572BC = true;
 
-	if (index % -2 == 1) {
+	if (index % ~1 == 1) {
 		_frameIncrements[index] = 1;
 		_state[index] = 1;
 	} else {
