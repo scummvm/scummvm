@@ -48,6 +48,9 @@ GraphicResource::~GraphicResource() {
 }
 
 bool GraphicResource::load(ResourceId id) {
+	if (id == kResourceNone)
+		error("[GraphicResource::load] Trying to load an invalid resource!");
+
 	// Clear previously loaded data
 	clear();
 
