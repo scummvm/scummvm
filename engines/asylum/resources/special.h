@@ -43,6 +43,8 @@ public:
 
 	void run(Object* object, ActorIndex index);
 
+	void reset(bool resetPaletteTick2);
+
 private:
 	AsylumEngine* _vm;
 
