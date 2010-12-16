@@ -48,6 +48,7 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScript
 	_dockVaultState = 0;
 	_cabinMatchState = 2;
 	_matchBurning = false;
+	_treeStopped = false;
 }
 
 MystScriptParser_Myst::~MystScriptParser_Myst() {
@@ -91,12 +92,12 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(141, o_circuitBreakerStartMove);
 	OPCODE(142, o_circuitBreakerMove);
 	OPCODE(143, o_circuitBreakerEndMove);
-	OPCODE(146, opcode_146);
+	OPCODE(146, o_boilerIncreasePressureStart);
 	OPCODE(147, o_boilerLightPilot);
 	OPCODE(148, NOP);
-	OPCODE(149, opcode_149);
-	OPCODE(150, opcode_150);
-	OPCODE(151, opcode_151);
+	OPCODE(149, o_boilerIncreasePressureStop);
+	OPCODE(150, o_boilerDecreasePressureStart);
+	OPCODE(151, o_boilerDecreasePressureStop);
 	OPCODE(158, o_rocketSoundSliderStartMove);
 	OPCODE(159, o_rocketSoundSliderMove);
 	OPCODE(160, o_rocketSoundSliderEndMove);
@@ -182,6 +183,8 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 	_libraryCombinationBookPagesTurning = false;
 	_clockTurningWheel = 0;
 	_towerRotationMapRunning = false;
+	_boilerPressureIncreasing = false;
+	_boilerPressureDecreasing = false;
 
 	opcode_212_disable();
 }
@@ -208,6 +211,12 @@ void MystScriptParser_Myst::runPersistentScripts() {
 
 	if (_matchBurning)
 		matchBurn_run();
+
+	if (_boilerPressureIncreasing)
+		boilerPressureIncrease_run();
+
+	if (_boilerPressureDecreasing)
+		boilerPressureDecrease_run();
 
 	opcode_212_run();
 }
@@ -1300,9 +1309,15 @@ void MystScriptParser_Myst::o_circuitBreakerEndMove(uint16 op, uint16 var, uint1
 	_vm->checkCursorHints();
 }
 
-void MystScriptParser_Myst::opcode_146(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4098
-	// TODO: Boiler wheel clockwise mouse down
+void MystScriptParser_Myst::o_boilerIncreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Boiler increase pressure start", op);
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	_treeStopped = true;
+	if (myst.cabinValvePosition < 25)
+		_vm->_sound->stopBackground();
+
+	_boilerPressureIncreasing = true;
 }
 
 void MystScriptParser_Myst::o_boilerLightPilot(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1317,23 +1332,103 @@ void MystScriptParser_Myst::o_boilerLightPilot(uint16 op, uint16 var, uint16 arg
 		// Put out match
 		_matchGoOutTime = _vm->_system->getMillis();
 
-		// TODO: Complete. Play fire movie. Handle case where pressure is already right
+		if (myst.cabinValvePosition > 0)
+			_vm->_sound->replaceBackground(8098, 49152);
+
+		// TODO: Complete. Play movies
 	}
 }
 
-void MystScriptParser_Myst::opcode_149(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4098
-	// TODO: Boiler wheel clockwise mouse up
+void MystScriptParser_Myst::o_boilerIncreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Boiler increase pressure stop", op);
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	_treeStopped = false;
+	_boilerPressureIncreasing = false;
+
+	if (myst.cabinPilotLightLit == 1) {
+		if (myst.cabinValvePosition > 0)
+			_vm->_sound->replaceBackground(8098, 49152);
+
+		// TODO: Play movies
+	} else {
+		if (myst.cabinValvePosition > 0)
+			_vm->_sound->replaceBackground(4098, myst.cabinValvePosition << 10);
+	}
 }
 
-void MystScriptParser_Myst::opcode_150(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4098
-	// TODO: Boiler wheel counter-clockwise mouse down
+void MystScriptParser_Myst::boilerPressureIncrease_run() {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	// Allow increasing pressure if sound has stopped
+	if (!_vm->_sound->isPlaying(5098) && myst.cabinValvePosition < 25) {
+		myst.cabinValvePosition++;
+		if (myst.cabinValvePosition == 1) {
+			// TODO: Play fire movie
+
+			// Draw fire
+			_vm->redrawArea(305);
+		} else if (myst.cabinValvePosition == 25) {
+			if (myst.cabinPilotLightLit == 1)
+				_vm->_sound->replaceBackground(8098, 49152);
+			else
+				_vm->_sound->replaceBackground(4098, 25600);
+		}
+
+		// Pressure increasing sound
+		_vm->_sound->playSound(5098);
+
+		// Redraw wheel
+		_vm->redrawArea(99);
+	}
 }
 
-void MystScriptParser_Myst::opcode_151(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4098
-	// TODO: Boiler wheel counter-clockwise mouse up
+void MystScriptParser_Myst::boilerPressureDecrease_run() {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	// Allow increasing pressure if sound has stopped
+	if (!_vm->_sound->isPlaying(5098) && myst.cabinValvePosition > 0) {
+		myst.cabinValvePosition--;
+		if (myst.cabinValvePosition == 0) {
+			// TODO: Play fire movie
+
+			// Draw fire
+			_vm->redrawArea(305);
+		}
+
+		// Pressure increasing sound
+		_vm->_sound->playSound(5098);
+
+		// Redraw wheel
+		_vm->redrawArea(99);
+	}
+}
+
+void MystScriptParser_Myst::o_boilerDecreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Boiler decrease pressure start", op);
+
+	_treeStopped = true;
+	_vm->_sound->stopBackground();
+
+	_boilerPressureDecreasing = true;
+}
+
+void MystScriptParser_Myst::o_boilerDecreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Boiler decrease pressure stop", op);
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	_treeStopped = false;
+	_boilerPressureDecreasing = false;
+
+	if (myst.cabinPilotLightLit == 1) {
+		if (myst.cabinValvePosition > 0)
+			_vm->_sound->replaceBackground(8098, 49152);
+
+		// TODO: Play movies
+	} else {
+		if (myst.cabinValvePosition > 0)
+			_vm->_sound->replaceBackground(4098, myst.cabinValvePosition << 10);
+	}
 }
 
 void MystScriptParser_Myst::o_rocketSoundSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

@@ -63,7 +63,8 @@ private:
 	void libraryCombinationBook_run();
 	void clockWheel_run();
 	void matchBurn_run();
-
+	void boilerPressureIncrease_run();
+	void boilerPressureDecrease_run();
 
 	DECLARE_OPCODE(o_libraryBookPageTurnLeft);
 	DECLARE_OPCODE(o_libraryBookPageTurnRight);
@@ -97,11 +98,11 @@ private:
 	DECLARE_OPCODE(o_circuitBreakerStartMove);
 	DECLARE_OPCODE(o_circuitBreakerMove);
 	DECLARE_OPCODE(o_circuitBreakerEndMove);
-	DECLARE_OPCODE(opcode_146);
+	DECLARE_OPCODE(o_boilerIncreasePressureStart);
 	DECLARE_OPCODE(o_boilerLightPilot);
-	DECLARE_OPCODE(opcode_149);
-	DECLARE_OPCODE(opcode_150);
-	DECLARE_OPCODE(opcode_151);
+	DECLARE_OPCODE(o_boilerIncreasePressureStop);
+	DECLARE_OPCODE(o_boilerDecreasePressureStart);
+	DECLARE_OPCODE(o_boilerDecreasePressureStop);
 	DECLARE_OPCODE(o_rocketSoundSliderStartMove);
 	DECLARE_OPCODE(o_rocketSoundSliderMove);
 	DECLARE_OPCODE(o_rocketSoundSliderEndMove);
@@ -214,6 +215,11 @@ private:
 	uint16 _cabinDoorOpened; // 56
 	uint16 _cabinMatchState; // 60
 	uint32 _matchGoOutTime; // 144
+
+	bool _boilerPressureIncreasing;
+	bool _boilerPressureDecreasing;
+
+	bool _treeStopped;
 
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
