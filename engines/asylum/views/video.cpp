@@ -159,7 +159,7 @@ void Video::play(Common::String filename, bool showSubtitles) {
 		_vm->handleEvents();
 
 		if (_smkDecoder->needsUpdate()) {
-			Graphics::Surface *frame = _smkDecoder->decodeNextFrame();
+			const Graphics::Surface *frame = _smkDecoder->decodeNextFrame();
 			
 			if (!frame)
 				continue;
