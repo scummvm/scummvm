@@ -36,7 +36,7 @@
 namespace Mohawk {
 
 // read a null-terminated string from a stream
-static Common::String readString(Common::SeekableSubReadStreamEndian *stream) {
+Common::String MohawkEngine_LivingBooks::readString(Common::SeekableSubReadStreamEndian *stream) {
 	Common::String ret;
 	while (!stream->eos()) {
 		byte in = stream->readByte();
@@ -1622,7 +1622,7 @@ void LBItem::readFrom(Common::SeekableSubReadStreamEndian *stream) {
 	_resourceId = stream->readUint16();
 	_itemId = stream->readUint16();
 	uint16 size = stream->readUint16();
-	_desc = readString(stream);
+	_desc = _vm->readString(stream);
 
 	debug(2, "Item: size %d, resource %d, id %d", size, _resourceId, _itemId);
 	debug(2, "Coords: %d, %d, %d, %d", _rect.left, _rect.top, _rect.right, _rect.bottom);
@@ -1711,7 +1711,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 
 			// FIXME: targeting by name
 			for (uint i = 0; i < count; i++) {
-				Common::String target = readString(stream);
+				Common::String target = _vm->readString(stream);
 				warning("ignoring target '%s' in script entry", target.c_str());
 				size -= target.size() + 1;
 			}
@@ -1799,7 +1799,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 		if (msgLen != size && !conditionTag)
 			error("script entry msgLen %d is not equal to size %d", msgLen, size);
 
-		Common::String command = readString(stream);
+		Common::String command = _vm->readString(stream);
 		if (command.size() + 1 > size) {
 			error("failed to read command in script entry: msgLen %d, command '%s' (%d chars)",
 				msgLen, command.c_str(), command.size());
@@ -1819,12 +1819,12 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 	}
 
 	if (conditionTag == 1) {
-		Common::String condition = readString(stream);
+		Common::String condition = _vm->readString(stream);
 		if (condition.size() == 0) {
 			size--;
 			if (!size)
 				error("failed to read condition (null byte, then ran out of stream)");
-			condition = readString(stream);
+			condition = _vm->readString(stream);
 		}
 		if (condition.size() + 1 > size)
 			error("failed to read condition (ran out of stream)");
@@ -1908,7 +1908,7 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 
 	case kLBCommand:
 		{
-			Common::String command = readString(stream);
+			Common::String command = _vm->readString(stream);
 			if (size != command.size() + 1)
 				error("failed to read command string");
 

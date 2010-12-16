@@ -580,6 +580,7 @@ public:
 	void addNotifyEvent(NotifyEvent event);
 
 	Common::SeekableSubReadStreamEndian *wrapStreamEndian(uint32 tag, uint16 id);
+	Common::String readString(Common::SeekableSubReadStreamEndian *stream);
 	Common::Rect readRect(Common::SeekableSubReadStreamEndian *stream);
 	GUI::Debugger *getDebugger() { return _console; }
 
