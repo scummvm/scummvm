@@ -42,13 +42,18 @@ public:
 private:
 	bool _leftButtonClicked;
 	uint32 _counter;
+	uint32 _counter2;
+	uint32 _currentFrameIndex;
 	uint32 _frameIndexes[6];
 	uint32 _frameCounts[6];
 	int32 _frameIncrements[6];
-	int8 _state[8];
+	int8 _state[5];
 
 	bool _data_4572BC;
 	bool _data_4572CC;
+
+	uint32 _data_45AAA8;
+	uint32 _data_45AAAC;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
