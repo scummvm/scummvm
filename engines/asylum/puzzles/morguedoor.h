@@ -38,12 +38,31 @@ public:
 	~PuzzleMorgueDoor();
 
 private:
+	uint32 _frameCounts[10];
+	uint32 _frameIndexes[12];
+	bool _data_4572A4;
+	bool _data_4572A8;
+	bool _data_4572AC;
+	bool _data_4572B0;
+
+	bool _flag1;
+	bool _flag2;
+	bool _flag3;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init();
 	bool update();
+	bool key(const AsylumEvent &evt);
 	bool mouse(const AsylumEvent &evt);
+
+	bool mouseDown();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+	void updateCursor();
 };
 
 } // End of namespace Asylum
