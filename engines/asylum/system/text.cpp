@@ -61,7 +61,7 @@ ResourceId Text::loadFont(ResourceId resourceId) {
 	_fontResource = NULL;
 
 	if (resourceId != kResourceNone) {
-		_fontResource = new GraphicResource(_vm, resourceId);		
+		_fontResource = new GraphicResource(_vm, resourceId);
 		_curFontFlags = Common::Rational(_fontResource->getData().flags, 16).toInt() & 0x0F;
 	}
 
@@ -187,26 +187,24 @@ uint32 Text::draw(int32 a1, int32 a2, TextCentering centering, int32 x, int32 y,
 	if (!text || !*text)
 		return 0;
 
+	uint32 printed = 0;
 	bool drawText = false;
-	int32 charWidth = 0;
 	int32 spaceWidth = 0;
 	int32 index = 0;
 
 	const char *string = text;
 	const char *endText = text;
 
-	uint32 printed = 0;
-
 	for (;;) {
 label_start:
 
-		charWidth = 0;
+		int32 charWidth = 0;
 
 		// Draw the text
 		if (drawText) {
 			char currentChar = *endText;
 
-			if (index >= a1 && index <= (a1 + 2)) {
+			if (index >= a1 && index <= (a1 + a2)) {
 				switch (centering) {
 				default:
 				case kTextCalculate:
@@ -256,16 +254,17 @@ label_start:
 					if (!c)
 						break;
 
-					if (c == 1)
+					if (c == 1) // Start of heading (SOH)
 						break;
 
 					charWidth += getWidth(c);
 					txt++;
 					c = txt[0];
+
 				} while (c != ' ');
 			}
 
-			if (w + charWidth > width) {
+			if ((w + charWidth) > width) {
 				string = text;
 				endText = txt2 - 1;
 				drawText = true;
@@ -275,7 +274,7 @@ label_start:
 			if (!*txt)
 				break;
 
-			if (*txt == 1 || *txt == 2)
+			if (*txt == 1 || *txt == 2) // Start of heading (SOH) or start of text (STX)
 				break;
 
 			++txt;
