@@ -50,23 +50,23 @@ extern int32 g_debugObjects;
 extern int32 g_debugScrolling;
 
 const ResourcePackId puzzleToScenes[17] = {
-	kResourcePackTowerCells,
-	kResourcePackCourtyardAndChapel,
-	kResourcePackInnocentAbandoned,
-	kResourcePackMansion,
-	kResourcePackInvalid,
-	kResourcePackLaboratory,
-	kResourcePackLaboratory,
-	kResourcePackLaboratory,
-	kResourcePackLaboratory,
-	kResourcePackMorgueCementary,
-	kResourcePackMansion,
-	kResourcePackMorgueCementary,
-	kResourcePackMansion,
-	kResourcePackMorgueCementary,
-	kResourcePackLostVillage,
-	kResourcePackHive,
-	kResourcePackHive
+	kResourcePackTowerCells,           // VCR
+	kResourcePackCourtyardAndChapel,   // Pipes
+	kResourcePackInnocentAbandoned,    // TicTacToe
+	kResourcePackMansion,              // Lock
+	kResourcePackInvalid,              // Puzzle 5 has no event handler
+	kResourcePackLaboratory,           // Wheel
+	kResourcePackLaboratory,           // Board Salvation
+	kResourcePackLaboratory,           // Board Youth
+	kResourcePackLaboratory,           // Board Key Hides To
+	kResourcePackMorgueCementary,      // Writings
+	kResourcePackInvalid,           // ?? (11)
+	kResourcePackMorgueCementary,      // Morgue Door
+	kResourcePackMansion,              // Clock
+	kResourcePackMorgueCementary,      // Time Machine
+	kResourcePackLostVillage,          // Fisherman
+	kResourcePackHive,                 // Hive Machine
+	kResourcePackHive                  // Hive Control
 };
 
 Console::Console(AsylumEngine *engine) : _vm(engine) {

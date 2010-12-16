@@ -34,13 +34,17 @@ namespace Asylum {
 
 struct PuzzleData : public Common::Serializable {
 public:
+	uint32 timeMachineCounter;
+
+
+	PuzzleData() {
+		timeMachineCounter = 0;
+	}
+
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s) {
 		error("[PuzzleData::saveLoadWithSerializer] Not implemented!");
 	}
-
-private:
-
 };
 
 } // End of namespace Asylum
