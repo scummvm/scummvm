@@ -62,6 +62,8 @@ const Common::Point puzzleTimeMachinePoints[6] = {
 PuzzleTimeMachine::PuzzleTimeMachine(AsylumEngine *engine) : Puzzle(engine) {
 	_leftButtonClicked = false;
 	_counter = 0;
+	_counter2 = 0;
+	_currentFrameIndex = 0;
 	memset(&_frameIndexes, 0, sizeof(_frameIndexes));
 	memset(&_frameCounts, 0, sizeof(_frameCounts));
 	memset(&_frameIncrements, 0, sizeof(_frameIncrements));
@@ -69,6 +71,9 @@ PuzzleTimeMachine::PuzzleTimeMachine(AsylumEngine *engine) : Puzzle(engine) {
 
 	_data_4572BC = false;
 	_data_4572CC = false;
+
+	_data_45AAA8 = 0;
+	_data_45AAAC = 0;
 }
 
 PuzzleTimeMachine::~PuzzleTimeMachine() {
@@ -80,6 +85,8 @@ void PuzzleTimeMachine::reset() {
 	_frameIndexes[2] = 20;
 	_frameIndexes[3] = 16;
 	_frameIndexes[4] = 20;
+	memset(&_state, 0, sizeof(_state));
+	_data_45AAAC = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -149,7 +156,7 @@ bool PuzzleTimeMachine::update()  {
 	getScreen()->drawGraphicsInQueue();
 	getScreen()->copyBackBufferToScreen();
 
-	// Update data
+	// Check for puzzle completion
 	if (_counter > 30 && _vm->isGameFlagSet(kGameFlag925)) {
 		getCursor()->hide();
 		getSharedData()->setFlag(kFlag1, true);
@@ -158,8 +165,42 @@ bool PuzzleTimeMachine::update()  {
 		_vm->switchEventHandler(getScene());
 	}
 
+	// Update frame indexes
+	if (_currentFrameIndex == 0 && _frameIncrements[0] != 0) {
+		_data_4572BC = 0;
+		_data_4572CC = 0;
 
-	warning("[PuzzleTimeMachine::update] Not implemented!");
+		_frameIndexes[5] += _frameIncrements[0];
+
+		if (_counter2 > 4) {
+			_counter2 = 0;
+
+			if (!getSound()->isPlaying(getWorld()->soundResourceIds[14]))
+				getSound()->playSound(getWorld()->soundResourceIds[14]);
+
+			_frameIndexes[0] += _frameIncrements[0];
+		} else {
+			++_counter2;
+		}
+	} else {
+		warning("[PuzzleTimeMachine::update] Not implemented!");
+	}
+
+	// Reset frame increments & state
+	if (_counter2 == 0 && _data_4572CC == 0 && _leftButtonClicked && _data_45AAA8 == 0 && _currentFrameIndex == _data_45AAAC) {
+		for (uint32 i = 0; i < 5; i++) {
+			if (!(_frameIndexes[i] % -4))
+				_frameIncrements[i] = 0;
+		}
+
+		memset(&_state, 0, sizeof(_state));
+	}
+
+	// Adjust frame indexes
+	for (uint32 i = 0; i < ARRAYSIZE(_frameIndexes); i++) {
+		if (_frameIndexes[i] >= _frameCounts[i])
+			_frameIndexes[i] = 0;
+	}
 
 	return true;
 }
