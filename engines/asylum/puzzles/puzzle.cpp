@@ -85,6 +85,19 @@ bool Puzzle::handleEvent(const AsylumEvent &evt) {
 bool Puzzle::key(const AsylumEvent &evt) {
 	switch (evt.kbd.keycode) {
 	default:
+		break;
+
+	case Common::KEYCODE_TAB:
+		getScreen()->takeScreenshot();
+		break;
+	}
+
+	return true;
+}
+
+bool Puzzle::keyExit(const AsylumEvent &evt) {
+	switch (evt.kbd.keycode) {
+	default:
 		_vm->switchEventHandler(getScene());
 		break;
 
@@ -95,6 +108,7 @@ bool Puzzle::key(const AsylumEvent &evt) {
 
 	return true;
 }
+
 
 void Puzzle::exit() {
 	getScreen()->clear();
