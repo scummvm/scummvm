@@ -41,9 +41,9 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
-	bool init();
-	bool update();
-	bool mouse(const AsylumEvent &evt);
+	bool init(const AsylumEvent &evt);
+	bool update(const AsylumEvent &evt);
+	bool mouseLeftDown(const AsylumEvent &evt);
 };
 
 } // End of namespace Asylum

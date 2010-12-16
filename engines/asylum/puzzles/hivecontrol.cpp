@@ -36,16 +36,16 @@ PuzzleHiveControl::~PuzzleHiveControl() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleHiveControl::init()  {
+bool PuzzleHiveControl::init(const AsylumEvent &evt)  {
 	error("[PuzzleHiveControl::init] Not implemented!");
 }
 
-bool PuzzleHiveControl::update()  {
+bool PuzzleHiveControl::update(const AsylumEvent &evt)  {
 	error("[PuzzleHiveControl::update] Not implemented!");
 }
 
-bool PuzzleHiveControl::mouse(const AsylumEvent &evt) {
-	error("[PuzzleHiveControl::mouse] Not implemented!");
+bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &evt) {
+	error("[PuzzleHiveControl::mouseLeftDown] Not implemented!");
 }
 
 } // End of namespace Asylum

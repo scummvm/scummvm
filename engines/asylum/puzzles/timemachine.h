@@ -59,17 +59,16 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
-	bool init();
-	bool update();
-	bool key(const AsylumEvent &evt);
-	bool mouse(const AsylumEvent &evt);
-
-	void mouseDown();
+	bool init(const AsylumEvent &evt);
+	bool update(const AsylumEvent &evt);
+	bool mouseLeftDown(const AsylumEvent &evt);
+	bool mouseLeftUp(const AsylumEvent &evt);
+	bool mouseRightDown(const AsylumEvent &evt);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
-	void updateCursor();
+	void updateCursor(const AsylumEvent &evt);
 
 };
 

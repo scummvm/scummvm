@@ -52,7 +52,7 @@ Puzzle11::~Puzzle11() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool Puzzle11::init()  {
+bool Puzzle11::init(const AsylumEvent &evt)  {
 	getPuzzleData()->timeMachineCounter = 0;
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[12]);
@@ -67,12 +67,12 @@ bool Puzzle11::init()  {
 	_frameCounts[3] = GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[56]);
 	_frameCounts[4] = GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[13]);
 
-	mouseDown();
+	mouseLeftDown(evt);
 
 	return true;
 }
 
-bool Puzzle11::update()  {
+bool Puzzle11::update(const AsylumEvent &evt)  {
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[11]);
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[15], _frameIndexes[0], Common::Point(122, 269), 0, 0, 1);
@@ -88,51 +88,26 @@ bool Puzzle11::update()  {
 	return true;
 }
 
-bool Puzzle11::key(const AsylumEvent &evt) {
-	switch (evt.kbd.keycode) {
-	default:
-		_vm->switchEventHandler(getScene());
-		break;
-
-	case Common::KEYCODE_TAB:
-		getScreen()->takeScreenshot();
-		break;
-	}
-
-	return false;
-}
-
-bool Puzzle11::mouse(const AsylumEvent &evt) {
-	switch (evt.type) {
-	default:
-		break;
-
-	case Common::EVENT_RBUTTONDOWN:
-		getCursor()->hide();
-		getSharedData()->setFlag(kFlag1, true);
-		getScreen()->setupPaletteAndStartFade(0, 0, 0);
-
-		_vm->switchEventHandler(getScene());
-		break;
-
-	case Common::EVENT_LBUTTONUP:
-		mouseUp();
-		break;
-
-	case Common::EVENT_LBUTTONDOWN:
-		mouseDown();
-		return true;
-	}
-
-	return false;
-}
-
-void Puzzle11::mouseUp() {
+bool Puzzle11::mouseRightDown(const AsylumEvent &evt) {
 	warning("[Puzzle11::mouseUp] Not implemented!");
+
+	return false;
 }
 
-void Puzzle11::mouseDown() {
+bool Puzzle11::mouseLeftUp(const AsylumEvent &evt) {
+	getCursor()->hide();
+	getSharedData()->setFlag(kFlag1, true);
+	getScreen()->setupPaletteAndStartFade(0, 0, 0);
+
+	_vm->switchEventHandler(getScene());
+
+	return false;
+}
+
+bool Puzzle11::mouseLeftDown(const AsylumEvent &evt) {
 	warning("[Puzzle11::mouseDown] Not implemented!");
+
+	return true;
 }
 
 } // End of namespace Asylum

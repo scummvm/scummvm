@@ -36,16 +36,16 @@ PuzzleHiveMachine::~PuzzleHiveMachine() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleHiveMachine::init()  {
+bool PuzzleHiveMachine::init(const AsylumEvent &evt)  {
 	error("[PuzzleHiveMachine::init] Not implemented!");
 }
 
-bool PuzzleHiveMachine::update()  {
+bool PuzzleHiveMachine::update(const AsylumEvent &evt)  {
 	error("[PuzzleHiveMachine::update] Not implemented!");
 }
 
-bool PuzzleHiveMachine::mouse(const AsylumEvent &evt) {
-	error("[PuzzleHiveMachine::mouse] Not implemented!");
+bool PuzzleHiveMachine::mouseLeftDown(const AsylumEvent &evt) {
+	error("[PuzzleHiveMachine::mouseLeftDown] Not implemented!");
 }
 
 } // End of namespace Asylum

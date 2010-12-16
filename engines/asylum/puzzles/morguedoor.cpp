@@ -68,7 +68,7 @@ void PuzzleMorgueDoor::reset() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleMorgueDoor::init()  {
+bool PuzzleMorgueDoor::init(const AsylumEvent &evt)  {
 	getCursor()->set(getWorld()->graphicResourceIds[33], -1, kCursorAnimationNone, 7);
 
 	_frameCounts[kTopLever] = GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[21]);
@@ -85,11 +85,11 @@ bool PuzzleMorgueDoor::init()  {
 	getScreen()->setPalette(getWorld()->graphicResourceIds[20]);
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[20], 0);
 
-	return mouseDown();
+	return mouseLeftDown(evt);
 }
 
-bool PuzzleMorgueDoor::update()  {
-	updateCursor();
+bool PuzzleMorgueDoor::update(const AsylumEvent &evt)  {
+	updateCursor(evt.mouse);
 
 	// Draw elements
 	getScreen()->clearGraphicsInQueue();
@@ -120,40 +120,8 @@ bool PuzzleMorgueDoor::update()  {
 	return true;
 }
 
-bool PuzzleMorgueDoor::key(const AsylumEvent &evt) {
-	switch (evt.kbd.keycode) {
-	default:
-		_vm->switchEventHandler(getScene());
-		break;
-
-	case Common::KEYCODE_TAB:
-		getScreen()->takeScreenshot();
-		break;
-	}
-
-	return true;
-}
-
-bool PuzzleMorgueDoor::mouse(const AsylumEvent &evt) {
-	switch (evt.type) {
-	case Common::EVENT_LBUTTONDOWN:
-		return mouseDown();
-		break;
-
-	case Common::EVENT_RBUTTONUP:
-		getCursor()->hide();
-		getSharedData()->setFlag(kFlag1, true);
-		getScreen()->setupPaletteAndStartFade(0, 0, 0);
-
-		_vm->switchEventHandler(getScene());
-		break;
-	}
-
-	return false;
-}
-
-bool PuzzleMorgueDoor::mouseDown() {
-	Common::Point mousePos = getCursor()->position();
+bool PuzzleMorgueDoor::mouseLeftDown(const AsylumEvent &evt) {
+	Common::Point mousePos = evt.mouse;
 
 	// Top small lever
 	if (mousePos.x > 347 && mousePos.x < 357
@@ -229,12 +197,20 @@ bool PuzzleMorgueDoor::mouseDown() {
 	return true;
 }
 
+bool PuzzleMorgueDoor::mouseRightUp(const AsylumEvent &evt) {
+	getCursor()->hide();
+	getSharedData()->setFlag(kFlag1, true);
+	getScreen()->setupPaletteAndStartFade(0, 0, 0);
+
+	_vm->switchEventHandler(getScene());
+
+	return false;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-void PuzzleMorgueDoor::updateCursor() {
-	Common::Point mousePos = getCursor()->position();
-
+void PuzzleMorgueDoor::updateCursor(Common::Point mousePos) {
 	bool animate = false;
 
 	if (mousePos.x > 347 && mousePos.x < 357 && mousePos.y > 124 && mousePos.y < 154)

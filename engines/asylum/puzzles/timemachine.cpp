@@ -95,7 +95,7 @@ void PuzzleTimeMachine::reset() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleTimeMachine::init()  {
+bool PuzzleTimeMachine::init(const AsylumEvent &evt)  {
 	_counter = 0;
 	getCursor()->set(getWorld()->graphicResourceIds[62], -1, kCursorAnimationMirror, 7);
 
@@ -109,13 +109,13 @@ bool PuzzleTimeMachine::init()  {
 	getScreen()->setPalette(getWorld()->graphicResourceIds[41]);
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[41], 0);
 
-	mouseDown();
+	mouseLeftDown(evt);
 
 	return true;
 }
 
-bool PuzzleTimeMachine::update()  {
-	updateCursor();
+bool PuzzleTimeMachine::update(const AsylumEvent &evt)  {
+	updateCursor(evt);
 
 	// Draw screen elements
 	getScreen()->clearGraphicsInQueue();
@@ -208,51 +208,15 @@ bool PuzzleTimeMachine::update()  {
 	return true;
 }
 
-bool PuzzleTimeMachine::key(const AsylumEvent &evt) {
-	switch (evt.kbd.keycode) {
-	default:
-		_vm->switchEventHandler(getScene());
-		break;
-
-	case Common::KEYCODE_TAB:
-		getScreen()->takeScreenshot();
-		break;
-	}
-
-	return false;
-}
-
-bool PuzzleTimeMachine::mouse(const AsylumEvent &evt) {
-	switch (evt.type) {
-	case Common::EVENT_RBUTTONDOWN:
-		getCursor()->hide();
-		getSharedData()->setFlag(kFlag1, true);
-		getScreen()->setupPaletteAndStartFade(0, 0, 0);
-		_vm->switchEventHandler(getScene());
-		break;
-
-	case Common::EVENT_LBUTTONDOWN:
-		mouseDown();
-		break;
-
-	case Common::EVENT_LBUTTONUP:
-		_leftButtonClicked = true;
-		break;
-	}
-
-	return true;
-}
-
-void PuzzleTimeMachine::mouseDown() {
+bool PuzzleTimeMachine::mouseLeftDown(const AsylumEvent &evt) {
 	if (_vm->isGameFlagSet(kGameFlag925))
-		return;
+		return true;
 
-	Common::Point mousePos = getCursor()->position();
 	_leftButtonClicked = false;
 
 	int32 index = -1;
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTimeMachineRects); i++) {
-		if (puzzleTimeMachineRects[i].contains(mousePos)) {
+		if (puzzleTimeMachineRects[i].contains(evt.mouse)) {
 			index =  i;
 
 			break;
@@ -260,7 +224,7 @@ void PuzzleTimeMachine::mouseDown() {
 	}
 
 	if (index == -1)
-		return;
+		return true;
 
 	getSound()->playSound(getWorld()->soundResourceIds[15]);
 
@@ -274,16 +238,31 @@ void PuzzleTimeMachine::mouseDown() {
 		_frameIncrements[index] = -1;
 		_state[index] = -1;
 	}
+
+	return true;
+}
+
+bool PuzzleTimeMachine::mouseLeftUp(const AsylumEvent &evt) {
+	_leftButtonClicked = true;
+
+	return true;
+}
+
+bool PuzzleTimeMachine::mouseRightDown(const AsylumEvent &evt) {
+	getCursor()->hide();
+	getSharedData()->setFlag(kFlag1, true);
+	getScreen()->setupPaletteAndStartFade(0, 0, 0);
+	_vm->switchEventHandler(getScene());
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-void PuzzleTimeMachine::updateCursor() {
-	Common::Point mousePos = getCursor()->position();
-
+void PuzzleTimeMachine::updateCursor(const AsylumEvent &evt) {
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTimeMachineRects); i++) {
-		if (puzzleTimeMachineRects[i].contains(mousePos)) {
+		if (puzzleTimeMachineRects[i].contains(evt.mouse)) {
 			if (getCursor()->animation != kCursorAnimationMirror)
 				getCursor()->set(getWorld()->graphicResourceIds[62], -1, kCursorAnimationMirror, 7);
 

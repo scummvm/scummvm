@@ -105,19 +105,18 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
-	bool init();
-	bool update();
+	bool init(const AsylumEvent &evt);
+	bool update(const AsylumEvent &evt);
 	bool key(const AsylumEvent &evt);
-	bool mouse(const AsylumEvent &evt);
-
-	void mouseDown(const AsylumEvent &evt);
-	void mouseUp();
+	bool mouseLeftDown(const AsylumEvent &evt);
+	bool mouseLeftUp(const AsylumEvent &evt);
+	bool mouseRightDown(const AsylumEvent &evt);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Drawing
 	//////////////////////////////////////////////////////////////////////////
-	void updateScreen();
-	void updateCursor();
+	void updateScreen(const AsylumEvent &evt);
+	void updateCursor(Common::Point mousePos);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Updates
@@ -138,7 +137,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
-	int inPolygon(int x, int y, int polyIdx) const;
+	int inPolygon(Common::Point point, int polyIdx) const;
 	Color getJackOnHand();
 	void setJackOnHole(Color hole, JackState state, JackState newState);
 	void pickJack(Color jack);
