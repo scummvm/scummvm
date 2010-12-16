@@ -53,7 +53,7 @@ const ResourcePackId puzzleToScenes[17] = {
 	kResourcePackTowerCells,           // VCR
 	kResourcePackCourtyardAndChapel,   // Pipes
 	kResourcePackInnocentAbandoned,    // TicTacToe
-	kResourcePackMansion,              // Lock
+	kResourcePackInnocentAbandoned,    // Lock
 	kResourcePackInvalid,              // Puzzle 5 has no event handler
 	kResourcePackLaboratory,           // Wheel
 	kResourcePackLaboratory,           // Board Salvation

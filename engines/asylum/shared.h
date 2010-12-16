@@ -32,9 +32,11 @@ namespace Asylum {
 // Global
 //////////////////////////////////////////////////////////////////////////
 enum GameFlag {
-	kGameFlag4 = 4,
-	kGameFlag12 = 12,
+	kGameFlag4                    = 4,
+	kGameFlag12                   = 12,
+	kGameFlag52                   = 52,
 	kGameFlag114                  = 114,
+	kGameFlag115                  = 115,
 	kGameFlag215                  = 215,
 	kGameFlagScriptProcessing     = 183,
 	kGameFlag186                  = 186,
