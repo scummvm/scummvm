@@ -87,7 +87,7 @@ void PuzzleClock::reset() {
 bool PuzzleClock::init(const AsylumEvent &evt)  {
 	_currentRect = -2;
 
-	updateCursor(evt.mouse);
+	updateCursor();
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[6]);
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[6], 0);
@@ -141,7 +141,7 @@ bool PuzzleClock::update(const AsylumEvent &evt) {
 }
 
 bool PuzzleClock::mouseLeftDown(const AsylumEvent &evt) {
-	int32 index = findRect(evt.mouse);
+	int32 index = findRect();
 
 	if (index == -1)
 		return false;
@@ -166,8 +166,8 @@ bool PuzzleClock::mouseRightDown(const AsylumEvent &evt) {
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-void PuzzleClock::updateCursor(Common::Point mousePos) {
-	int32 index = findRect(mousePos);
+void PuzzleClock::updateCursor() {
+	int32 index = findRect();
 
 	if (index != _currentRect) {
 		_currentRect = index;
@@ -179,9 +179,9 @@ void PuzzleClock::updateCursor(Common::Point mousePos) {
 	}
 }
 
-int32 PuzzleClock::findRect(Common::Point mousePos) {
+int32 PuzzleClock::findRect() {
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleClockRects); i++) {
-		if (puzzleClockRects[i].contains(mousePos))
+		if (puzzleClockRects[i].contains(getCursor()->position()))
 			return i;
 	}
 

@@ -115,7 +115,7 @@ bool PuzzleTimeMachine::init(const AsylumEvent &evt)  {
 }
 
 bool PuzzleTimeMachine::update(const AsylumEvent &evt)  {
-	updateCursor(evt);
+	updateCursor();
 
 	// Draw screen elements
 	getScreen()->clearGraphicsInQueue();
@@ -260,9 +260,9 @@ bool PuzzleTimeMachine::mouseRightDown(const AsylumEvent &evt) {
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-void PuzzleTimeMachine::updateCursor(const AsylumEvent &evt) {
+void PuzzleTimeMachine::updateCursor() {
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTimeMachineRects); i++) {
-		if (puzzleTimeMachineRects[i].contains(evt.mouse)) {
+		if (puzzleTimeMachineRects[i].contains(getCursor()->position())) {
 			if (getCursor()->animation != kCursorAnimationMirror)
 				getCursor()->set(getWorld()->graphicResourceIds[62], -1, kCursorAnimationMirror, 7);
 
