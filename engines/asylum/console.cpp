@@ -59,11 +59,11 @@ const ResourcePackId puzzleToScenes[17] = {
 	kResourcePackLaboratory,           // Board Salvation
 	kResourcePackLaboratory,           // Board Youth
 	kResourcePackLaboratory,           // Board Key Hides To
-	kResourcePackMorgueCementary,      // Writings
+	kResourcePackMorgueAndCemetery,      // Writings
 	kResourcePackInvalid,           // ?? (11)
-	kResourcePackMorgueCementary,      // Morgue Door
+	kResourcePackMorgueAndCemetery,      // Morgue Door
 	kResourcePackMansion,              // Clock
-	kResourcePackMorgueCementary,      // Time Machine
+	kResourcePackMorgueAndCemetery,      // Time Machine
 	kResourcePackLostVillage,          // Fisherman
 	kResourcePackHive,                 // Hive Machine
 	kResourcePackHive                  // Hive Control
