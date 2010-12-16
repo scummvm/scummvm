@@ -37,7 +37,14 @@ public:
 	PuzzleLock(AsylumEngine *engine);
 	~PuzzleLock();
 
+	void reset();
+
 private:
+	int32 _frameIndexes[7];
+	bool _incrementLock;
+	uint32 _counter;
+	uint32 _ticks[3];
+
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
@@ -45,6 +52,12 @@ private:
 	bool update(const AsylumEvent &evt);
 	bool key(const AsylumEvent &evt) { return keyExit(evt); }
 	bool mouseLeftDown(const AsylumEvent &evt);
+	bool mouseRightDown(const AsylumEvent &evt);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+	void updateCursor();
 };
 
 } // End of namespace Asylum
