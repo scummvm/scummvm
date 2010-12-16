@@ -104,6 +104,15 @@ void Special::run(Object* object, ActorIndex index) {
 	}
 }
 
+void Special::reset(bool resetPaletteTick2) {
+	_chapter5Counter = 0;
+	_paletteFlag = false;
+	_paletteTick1 = 0;
+
+	if (resetPaletteTick2)
+		_paletteTick2 = 0;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Spec functions
 //////////////////////////////////////////////////////////////////////////

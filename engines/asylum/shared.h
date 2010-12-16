@@ -51,6 +51,7 @@ enum GameFlag {
 	kGameFlag247                  = 247,
 	kGameFlag248                  = 248,
 	kGameFlag249                  = 249,
+	kGameFlag253                  = 253,
 	kGameFlag263                  = 263,
 	kGameFlag262                  = 262,
 	kGameFlag264                  = 264,
