@@ -67,7 +67,7 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 	_playerIndex = 0;
 
 	_hitAreaChapter7Counter = 0;
-	_chapter5FrameIndex = 0;
+	_chapter5RainFrameIndex = 0;
 
 	_musicVolume = 0;
 
@@ -2564,11 +2564,11 @@ void Scene::drawRain() {
 
 	for (uint y = 0; y < 512; y = y + 64) {
 		for (uint x = 0; x < 704; x = x + 64) {
-			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 58), _chapter5FrameIndex, x + (_ws->xLeft % 64) / 8, y + (_ws->yTop % 64) / 8, 0);
+			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 58), _chapter5RainFrameIndex, x + (_ws->xLeft % 64) / 8, y + (_ws->yTop % 64) / 8, 0);
 		}
 	}
 
-	_chapter5FrameIndex = (_chapter5FrameIndex + 1) % GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, 58));
+	_chapter5RainFrameIndex = (_chapter5RainFrameIndex + 1) % GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, 58));
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -330,7 +330,7 @@ private:
 	 */
 	void adjustActorPriority(ActorIndex index);
 
-	uint32 _chapter5FrameIndex;
+	int32 _chapter5RainFrameIndex;
 
 	//////////////////////////////////////////////////////////////////////////
 	// HitTest
