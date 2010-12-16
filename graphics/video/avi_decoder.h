@@ -178,7 +178,7 @@ public:
 	uint32 getElapsedTime() const;
 	const Surface *decodeNextFrame();
 	PixelFormat getPixelFormat() const;
-	byte *getPalette() { _dirtyPalette = false; return _palette; }
+	const byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 
 protected:

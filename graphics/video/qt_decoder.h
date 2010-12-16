@@ -96,7 +96,7 @@ public:
 	 * Returns the palette of the video
 	 * @return the palette of the video
 	 */
-	byte *getPalette() { _dirtyPalette = false; return _palette; }
+	const byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 
 	/**

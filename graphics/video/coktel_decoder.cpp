@@ -257,7 +257,7 @@ uint32 CoktelDecoder::getFrameCount() const {
 	return _frameCount;
 }
 
-byte *CoktelDecoder::getPalette() {
+const byte *CoktelDecoder::getPalette() {
 	return _palette;
 }
 

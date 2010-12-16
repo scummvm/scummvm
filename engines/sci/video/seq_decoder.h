@@ -49,7 +49,7 @@ public:
 	uint32 getFrameCount() const { return _frameCount; }
 	const Graphics::Surface *decodeNextFrame();
 	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
-	byte *getPalette() { _dirtyPalette = false; return _palette; }
+	const byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
   
 protected:

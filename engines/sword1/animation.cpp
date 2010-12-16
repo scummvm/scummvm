@@ -264,7 +264,7 @@ bool MoviePlayer::playVideo() {
 				uint32 weight;
 				byte r, g, b;
 				
-				byte *palette = _decoder->getPalette();
+				const byte *palette = _decoder->getPalette();
 
 				for (int i = 0; i < 256; i++) {
 					r = *palette++;

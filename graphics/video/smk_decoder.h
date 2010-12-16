@@ -67,7 +67,7 @@ public:
 	uint32 getElapsedTime() const;
 	const Surface *decodeNextFrame();
 	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
-	byte *getPalette() { _dirtyPalette = false; return _palette; }
+	const byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 	virtual void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
 

@@ -187,7 +187,7 @@ bool VideoManager::updateBackgroundMovies() {
 
 				if (frame->bytesPerPixel == 1 && pixelFormat.bytesPerPixel != 1) {
 					convertedFrame = new Graphics::Surface();
-					byte *palette = _videoStreams[i]->getPalette();
+					const byte *palette = _videoStreams[i]->getPalette();
 					assert(palette);
 
 					convertedFrame->create(frame->w, frame->h, pixelFormat.bytesPerPixel);

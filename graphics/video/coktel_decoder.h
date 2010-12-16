@@ -123,7 +123,7 @@ public:
 
 	uint32 getFrameCount() const;
 
-	byte *getPalette();
+	const byte *getPalette();
 	bool  hasDirtyPalette() const;
 
 

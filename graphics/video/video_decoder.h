@@ -119,7 +119,7 @@ public:
 	/**
 	 * Get the palette for the video in RGB format (if 8bpp or less)
 	 */
-	virtual byte *getPalette() { return 0; }
+	virtual const byte *getPalette() { return 0; }
 
 	/**
 	 * Returns if the palette is dirty or not

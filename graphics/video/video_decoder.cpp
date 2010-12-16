@@ -50,7 +50,7 @@ uint32 VideoDecoder::getElapsedTime() const {
 }
 
 void VideoDecoder::setSystemPalette() {
-	byte *vidPalette = getPalette();
+	const byte *vidPalette = getPalette();
 	byte *sysPalette = new byte[256 * 4];
 
 	for (uint16 i = 0; i < 256; i++) {
