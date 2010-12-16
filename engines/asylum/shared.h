@@ -193,7 +193,7 @@ enum ResourcePackId {
 	kResourcePackCircusOfFools         = 8,
 	kResourcePackLaboratory            = 9,
 	kResourcePackHive                  = 10,
-	kResourcePackMorgueCementary       = 11,
+	kResourcePackMorgueAndCemetery     = 11,
 	kResourcePackLostVillage           = 12,
 	kResourcePackGauntlet              = 13,
 	kResourcePackMansion               = 14,
