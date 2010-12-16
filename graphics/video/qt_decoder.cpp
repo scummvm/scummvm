@@ -51,6 +51,7 @@
 #include "graphics/video/codecs/qtrle.h"
 #include "graphics/video/codecs/rpza.h"
 #include "graphics/video/codecs/smc.h"
+#include "graphics/video/codecs/cdtoons.h"
 
 namespace Graphics {
 
@@ -181,8 +182,8 @@ Codec *QuickTimeDecoder::createCodec(uint32 codecTag, byte bitsPerPixel) {
 		// Motion JPEG: Used by some Myst ME 10th Anniversary videos.
 		return new JPEGDecoder();
 	} else if (codecTag == MKID_BE('QkBk')) {
-		// CDToons: Used by most of the Broderbund games. This is an unknown format so far.
-		warning ("CDToons not yet supported");
+		// CDToons: Used by most of the Broderbund games.
+		return new CDToonsDecoder(getWidth(), getHeight());
 	} else {
 		warning ("Unsupported codec \'%s\'", tag2str(codecTag));
 	}

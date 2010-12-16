@@ -30,6 +30,7 @@ MODULE_OBJS := \
 	video/qt_decoder.o \
 	video/smk_decoder.o \
 	video/video_decoder.o \
+	video/codecs/cdtoons.o \
 	video/codecs/cinepak.o \
 	video/codecs/indeo3.o \
 	video/codecs/mjpeg.o \
