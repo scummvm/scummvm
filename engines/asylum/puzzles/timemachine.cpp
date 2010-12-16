@@ -87,6 +87,9 @@ void PuzzleTimeMachine::reset() {
 	_frameIndexes[4] = 20;
 	memset(&_state, 0, sizeof(_state));
 	_data_45AAAC = 0;
+
+	// Reset point only (the other values are static)
+	_point = Common::Point(-65, -30);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -138,7 +141,7 @@ bool PuzzleTimeMachine::update()  {
 		++_counter;
 	}
 
-	//getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], _frameIndexes[5], puzzleTimeMachinePoints[5], 0, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], _frameIndexes[5], _point, 0, 0, 1);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Show all buttons

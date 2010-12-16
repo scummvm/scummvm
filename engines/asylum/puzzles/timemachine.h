@@ -48,6 +48,7 @@ private:
 	uint32 _frameCounts[6];
 	int32 _frameIncrements[6];
 	int8 _state[5];
+	Common::Point _point;
 
 	bool _data_4572BC;
 	bool _data_4572CC;
