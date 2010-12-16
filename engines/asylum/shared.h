@@ -141,6 +141,7 @@ enum GameFlag {
 	kGameFlag881                  = 881,
 	kGameFlag897                  = 897,
 	kGameFlagFinishGame           = 901,
+	kGameFlag925                  = 925,
 	kGameFlag937                  = 937,
 	kGameFlag1009                 = 1009,
 	kGameFlag1021                 = 1021,
