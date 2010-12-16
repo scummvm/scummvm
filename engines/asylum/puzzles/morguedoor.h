@@ -65,8 +65,8 @@ private:
 
 	bool _topLeverOpen;
 	bool _bottomLeverOpen;
-	bool _flag3;
-	bool _flag4;
+	bool _moveTopGear;
+	bool _moveBottomGear;
 	bool _flag5;
 	bool _flag6;
 	bool _flag7;

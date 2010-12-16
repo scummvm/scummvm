@@ -50,8 +50,8 @@ PuzzleMorgueDoor::PuzzleMorgueDoor(AsylumEngine *engine) : Puzzle(engine) {
 
 	_topLeverOpen = false;
 	_bottomLeverOpen = false;
-	_flag3 = false;
-	_flag4 = false;
+	_moveTopGear = false;
+	_moveBottomGear = false;
 	_flag5 = false;
 	_flag6 = false;
 	_flag7 = false;
@@ -264,11 +264,48 @@ void PuzzleMorgueDoor::updateCursor() {
 }
 
 void PuzzleMorgueDoor::updateState() {
-	if (_flag3) {
-		warning("[PuzzleMorgueDoor::updateState] Not implemented (flag 3)!");
+	// Move top gear
+	if (_moveTopGear) {
+		switch (_data_45A9D8) {
+		default:
+			break;
+
+		case 1:
+			--_frameIndexes[kTopGear];
+
+			if (_frameIndexes[kTopGear] < 0) {
+				_data_45A9D8 = 0;
+				_moveTopGear = false;
+				_frameIndexes[kTopGear] = 0;
+				getSound()->stop(getWorld()->soundResourceIds[8]);
+			}
+			break;
+
+		case 2:
+			--_frameIndexes[kTopGear];
+
+			if (_frameIndexes[kTopGear] < 0) {
+				_data_45A9D8 = 1;
+				_frameIndexes[kTopGear] = 10;
+			}
+			break;
+
+		case 3:
+			--_frameIndexes[kTopGear];
+
+			if (_frameIndexes[kTopGear] < 0) {
+				_data_45A9D8 = 2;
+				_frameIndexes[kTopGear] = 10;
+			}
+			break;
+		}
+
+		if (!_flag6 || _data_45A9D8 < 3)
+			_frameIndexes[kTopLever] = 5 * _data_45A9D8;
 	}
 
-	if (_flag4) {
+	// Move bottom gear
+	if (_moveBottomGear) {
 		switch (_data_45A9DC) {
 		default:
 			break;
@@ -397,7 +434,99 @@ void PuzzleMorgueDoor::updateState() {
 		++_frameIndexes[kTopRightValve];
 
 	if (_frameIndexes[kCenterValve]) {
-		warning("[PuzzleMorgueDoor::updateState] Not implemented (centerValve)!");
+		if (_data_4572B0) {
+			if (!_flag6 || _frameIndexes[kTopLever] < 15) {
+				if (_flag7 && _frameIndexes[kBottomLever] >= 15) {
+					_frameIndexes[kCenterValve] = 0;
+					getSound()->stop(getWorld()->soundResourceIds[0]);
+				} else {
+					++_frameIndexes[kCenterValve];
+
+					// Update top lever
+					if (_frameIndexes[kTopLever] >= 15) {
+						if (_frameIndexes[kTopLever] == 15)
+							getSound()->playSound(getWorld()->soundResourceIds[4], false, Config.sfxVolume - 10);
+
+						if (_frameIndexes[kTopLever] >= _frameCounts[kTopLever] - 1) {
+							_frameIndexes[kCenterValve] = 0;
+							_topLeverOpen = true;
+							_flag6 = true;
+						} else {
+							++_frameIndexes[kTopLever];
+						}
+					} else {
+						if (_frameIndexes[kCenterValve] >= 14)
+							_frameIndexes[kTopLever] = 5 * _data_45A9D8;
+						else
+							_frameIndexes[kTopLever] = _frameIndexes[kCenterValve] / 3 + 5 * _data_45A9D8;
+					}
+
+					// Update bottom lever
+					if (_frameIndexes[kBottomLever] >= 15) {
+						if (_frameIndexes[kBottomLever] == 15)
+							getSound()->playSound(getWorld()->soundResourceIds[4], false, Config.sfxVolume - 10);
+
+						if (_frameIndexes[kBottomLever] >= _frameCounts[kBottomLever] - 1) {
+							_frameIndexes[kCenterValve] = 0;
+							_bottomLeverOpen = true;
+							_flag7 = true;
+						} else {
+							++_frameIndexes[kTopLever];
+						}
+					} else {
+						if (_frameIndexes[kCenterValve] >= 14)
+							_frameIndexes[kBottomLever] = 5 * _data_45A9DC;
+						else
+							_frameIndexes[kBottomLever] = _frameIndexes[kCenterValve] / 3 + 5 * _data_45A9DC;
+					}
+				}
+			} else {
+				_frameIndexes[kCenterValve] = 0;
+				getSound()->stop(getWorld()->soundResourceIds[0]);
+			}
+		}
+
+		if ((!_flag6 && _frameIndexes[kTopLever] >= 15)
+		 || (!_flag7 && _frameIndexes[kBottomLever] >= 15)) {
+			 _frameIndexes[kCenterValve] = 0;
+			 getSound()->stop(getWorld()->soundResourceIds[0]);
+		} else {
+			--_frameIndexes[kCenterValve];
+
+			// Top lever
+			if (_frameIndexes[kTopLever] >= 15) {
+				if (_frameIndexes[kTopLever] == 20)
+					getSound()->playSound(getWorld()->soundResourceIds[3], false, Config.sfxVolume - 10);
+
+				if (_frameIndexes[kTopLever] <= 15) {
+					_frameIndexes[kCenterValve] = 0;
+					_flag6 = false;
+				} else {
+					--_frameIndexes[kTopLever];
+				}
+
+				_topLeverOpen = false;
+			} else {
+				_frameIndexes[kTopLever] = _frameIndexes[kCenterValve] / 3 + 5 * _data_45A9D8;
+			}
+
+			// Bottom lever
+			if (_frameIndexes[kBottomLever]) {
+				if (_frameIndexes[kBottomLever] == 20)
+					getSound()->playSound(getWorld()->soundResourceIds[3], false, Config.sfxVolume - 10);
+
+				if (_frameIndexes[kTopLever] <= 15) {
+					_frameIndexes[kCenterValve] = 0;
+					_flag7 = false;
+				} else {
+					--_frameIndexes[kTopLever];
+				}
+
+				_bottomLeverOpen = false;
+			} else {
+				_frameIndexes[kBottomLever] = _frameIndexes[kCenterValve] / 3 + 5 * _data_45A9DC;
+			}
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -439,7 +568,7 @@ void PuzzleMorgueDoor::updateState() {
 
 			if (_data_45A9D8 > 0) {
 				getSound()->playSound(getWorld()->graphicResourceIds[8], false, Config.sfxVolume - 10);
-				_flag3 = true;
+				_moveTopGear = true;
 			}
 
 			_frameIndexes[10] = 10;
@@ -455,7 +584,7 @@ void PuzzleMorgueDoor::updateState() {
 
 			if (_data_45A9DC > 0) {
 				getSound()->playSound(getWorld()->graphicResourceIds[8], false, Config.sfxVolume - 10);
-				_flag4 = true;
+				_moveBottomGear = true;
 			}
 		}
 	}
