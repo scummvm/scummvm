@@ -75,12 +75,14 @@ private:
  */
 class MasterGuRenderer : public PspThreadable {
 public:
-	MasterGuRenderer() : _lastRenderTime(0), _renderFinished(true), _callbackId(-1) {}
+	MasterGuRenderer() : _lastRenderTime(0), _renderFinished(true), 
+		_renderSema(1, 1), _callbackId(-1) {}
 	void guInit();
 	void guPreRender();
 	void guPostRender();
 	void guShutDown();
 	bool isRenderFinished() { return _renderFinished; }
+	void sleepUntilRenderFinished();
 	void setupCallbackThread();
 private:
 	virtual void threadFunction();			// for the display callback thread
@@ -89,6 +91,7 @@ private:
 	void guProgramDisplayBufferSizes();
 	static int guCallback(int, int, void *__this);	// for the display callback
 	bool _renderFinished;					// for sync with render callback
+	PspSemaphore _renderSema;				// semaphore for syncing
 	int _callbackId;						// to keep track of render callback
 };
 
@@ -114,6 +117,7 @@ public:
 
 	void init();
 	bool renderAll();	// return true if rendered or nothing dirty. False otherwise
+	void waitUntilRenderFinished();
 	bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
 	int getGraphicsMode() const { return _graphicsMode; }

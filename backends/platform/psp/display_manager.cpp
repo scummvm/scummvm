@@ -149,6 +149,17 @@ void MasterGuRenderer::threadFunction() {
 	sceKernelSleepThreadCB();	// sleep until we get a callback
 }
 
+// Sleep on the render mutex if the rendering thread hasn't finished its work
+//
+void MasterGuRenderer::sleepUntilRenderFinished() {
+	if (!isRenderFinished()) {
+		_renderSema.take();   // sleep on the semaphore
+		_renderSema.give();
+		PSP_DEBUG_PRINT("slept on the rendering semaphore\n");
+	}
+}
+
+
 // This callback is called when the render is finished. It swaps the buffers
 int MasterGuRenderer::guCallback(int, int, void *__this) {
 
@@ -160,6 +171,7 @@ int MasterGuRenderer::guCallback(int, int, void *__this) {
 
 	_this->_renderFinished = true;	// Only this thread can set the variable to true
 
+	_this->_renderSema.give(); 		// Release render semaphore
 	return 0;
 }
 
@@ -214,7 +226,11 @@ void MasterGuRenderer::guProgramDisplayBufferSizes() {
 inline void MasterGuRenderer::guPreRender() {
 	DEBUG_ENTER_FUNC();
 
+#ifdef USE_DISPLAY_CALLBACK
+	_renderSema.take(); 		// Take the semaphore to prevent writes
+								// to the palette/screen before we're done
 	_renderFinished = false;	// set to synchronize with callback thread
+#endif
 
 #ifdef ENABLE_RENDER_MEASURE
 	_lastRenderTime = g_system->getMillis();
@@ -372,6 +388,12 @@ void DisplayManager::calculateScaleParams() {
 	_displayParams.scaleX = ((float)_displayParams.screenOutput.width) / _displayParams.screenSource.width;
 	_displayParams.scaleY = ((float)_displayParams.screenOutput.height) / _displayParams.screenSource.height;
 
+}
+
+void DisplayManager::waitUntilRenderFinished() {
+#ifdef USE_DISPLAY_CALLBACK
+	_masterGuRenderer.sleepUntilRenderFinished();
+#endif /* USE_DISPLAY_CALLBACK */
 }
 
 // return true if we really rendered or no dirty. False otherwise
