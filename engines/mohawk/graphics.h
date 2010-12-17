@@ -114,7 +114,7 @@ public:
 	void copyImageSectionToBackBuffer(uint16 image, Common::Rect src, Common::Rect dest);
 	void copyImageToScreen(uint16 image, Common::Rect dest);
 	void copyImageToBackBuffer(uint16 image, Common::Rect dest);
-	void copyBackBufferToScreen(const Common::Rect &r);
+	void copyBackBufferToScreen(Common::Rect r);
 	void runTransition(uint16 type, Common::Rect rect, uint16 steps, uint16 delay);
 	void drawRect(Common::Rect rect, RectState state);
 	void drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color);
@@ -145,6 +145,7 @@ private:
 
 	Graphics::Surface *_backBuffer;
 	Graphics::PixelFormat _pixelFormat;
+	static const Common::Rect _viewport;
 };
 
 struct SFXERecord {

@@ -210,6 +210,8 @@ void GraphicsManager::copyAnimImageSectionToScreen(uint16 image, Common::Rect sr
 	getVM()->_system->unlockScreen();
 }
 
+const Common::Rect MystGraphics::_viewport = Common::Rect(544, 332);
+
 MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = new MystBitmap();
 
@@ -217,7 +219,7 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	// However, it dithered videos to 8bpp and they looked considerably
 	// worse (than they already did :P). So we're not even going to
 	// support 8bpp mode in Myst (Myst ME required >8bpp anyway).
-	initGraphics(544, 333, true, NULL); // What an odd screen size!
+	initGraphics(_viewport.width(), _viewport.height(), true, NULL); // What an odd screen size!
 
 	_pixelFormat = _vm->_system->getScreenFormat();
 
@@ -355,6 +357,8 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	dest.right = CLIP<int>(dest.right, 0, _vm->_system->getWidth());
 	dest.bottom = CLIP<int>(dest.bottom, 0, _vm->_system->getHeight());
 
+	src.clip(_viewport);
+
 	Graphics::Surface *surface = findImage(image)->getSurface();
 
 	debug(3, "Image Blit:");
@@ -382,6 +386,8 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 	dest.right = CLIP<int>(dest.right, 0, _vm->_system->getWidth());
 	dest.bottom = CLIP<int>(dest.bottom, 0, _vm->_system->getHeight());
 
+	src.clip(_viewport);
+
 	Graphics::Surface *surface = findImage(image)->getSurface();
 
 	debug(3, "Image Blit:");
@@ -403,14 +409,15 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 }
 
 void MystGraphics::copyImageToScreen(uint16 image, Common::Rect dest) {
-	copyImageSectionToScreen(image, Common::Rect(0, 0, 544, 333), dest);
+	copyImageSectionToScreen(image, _viewport, dest);
 }
 
 void MystGraphics::copyImageToBackBuffer(uint16 image, Common::Rect dest) {
-	copyImageSectionToBackBuffer(image, Common::Rect(0, 0, 544, 333), dest);
+	copyImageSectionToBackBuffer(image, _viewport, dest);
 }
 
-void MystGraphics::copyBackBufferToScreen(const Common::Rect &r) {
+void MystGraphics::copyBackBufferToScreen(Common::Rect r) {
+	r.clip(_viewport);
 	_vm->_system->copyRectToScreen((byte *)_backBuffer->getBasePtr(r.left, r.top), _backBuffer->pitch, r.left, r.top, r.width(), r.height());
 }
 
@@ -519,8 +526,10 @@ void MystGraphics::runTransition(uint16 type, Common::Rect rect, uint16 steps, u
 }
 
 void MystGraphics::drawRect(Common::Rect rect, RectState state) {
+	rect.clip(_viewport);
+
 	// Useful with debugging. Shows where hotspots are on the screen and whether or not they're active.
-	if (rect.left < 0 || rect.top < 0 || rect.right > 544 || rect.bottom > 333 || !rect.isValidRect() || rect.width() == 0 || rect.height() == 0)
+	if (!rect.isValidRect() || rect.width() == 0 || rect.height() == 0)
 		return;
 
 	Graphics::Surface *screen = _vm->_system->lockScreen();
