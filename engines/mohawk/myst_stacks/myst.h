@@ -65,6 +65,9 @@ private:
 	void matchBurn_run();
 	void boilerPressureIncrease_run();
 	void boilerPressureDecrease_run();
+	void basementPressureIncrease_run();
+	void basementPressureDecrease_run();
+	void tree_run();
 
 	DECLARE_OPCODE(o_libraryBookPageTurnLeft);
 	DECLARE_OPCODE(o_libraryBookPageTurnRight);
@@ -86,6 +89,7 @@ private:
 	DECLARE_OPCODE(o_cabinSafeHandleStartMove);
 	DECLARE_OPCODE(o_cabinSafeHandleMove);
 	DECLARE_OPCODE(o_cabinSafeHandleEndMove);
+	DECLARE_OPCODE(o_treePressureReleaseStart);
 	DECLARE_OPCODE(opcode_129);
 	DECLARE_OPCODE(opcode_130);
 	DECLARE_OPCODE(opcode_131);
@@ -103,6 +107,10 @@ private:
 	DECLARE_OPCODE(o_boilerIncreasePressureStop);
 	DECLARE_OPCODE(o_boilerDecreasePressureStart);
 	DECLARE_OPCODE(o_boilerDecreasePressureStop);
+	DECLARE_OPCODE(o_basementIncreasePressureStart);
+	DECLARE_OPCODE(o_basementIncreasePressureStop);
+	DECLARE_OPCODE(o_basementDecreasePressureStart);
+	DECLARE_OPCODE(o_basementDecreasePressureStop);
 	DECLARE_OPCODE(o_rocketSoundSliderStartMove);
 	DECLARE_OPCODE(o_rocketSoundSliderMove);
 	DECLARE_OPCODE(o_rocketSoundSliderEndMove);
@@ -111,6 +119,7 @@ private:
 	DECLARE_OPCODE(o_rocketLeverMove);
 	DECLARE_OPCODE(o_rocketLeverEndMove);
 	DECLARE_OPCODE(o_cabinLeave);
+	DECLARE_OPCODE(o_treePressureReleaseStop);
 	DECLARE_OPCODE(opcode_170);
 	DECLARE_OPCODE(opcode_171);
 	DECLARE_OPCODE(opcode_172);
@@ -151,8 +160,8 @@ private:
 	DECLARE_OPCODE(opcode_213);
 	DECLARE_OPCODE(opcode_214);
 	DECLARE_OPCODE(opcode_215);
-	DECLARE_OPCODE(opcode_216);
-	DECLARE_OPCODE(opcode_217);
+	DECLARE_OPCODE(o_treeCard_init);
+	DECLARE_OPCODE(o_treeEntry_init);
 	DECLARE_OPCODE(opcode_218);
 	DECLARE_OPCODE(o_rocketSliders_init);
 	DECLARE_OPCODE(o_rocketLinkVideo_init);
@@ -163,8 +172,8 @@ private:
 	DECLARE_OPCODE(opcode_301);
 	DECLARE_OPCODE(opcode_302);
 	DECLARE_OPCODE(opcode_303);
-	DECLARE_OPCODE(opcode_304);
-	DECLARE_OPCODE(opcode_305);
+	DECLARE_OPCODE(o_treeCard_exit);
+	DECLARE_OPCODE(o_treeEntry_exit);
 	DECLARE_OPCODE(opcode_306);
 	DECLARE_OPCODE(opcode_307);
 	DECLARE_OPCODE(opcode_308);
@@ -218,8 +227,16 @@ private:
 
 	bool _boilerPressureIncreasing;
 	bool _boilerPressureDecreasing;
+	bool _basementPressureIncreasing;
+	bool _basementPressureDecreasing;
 
-	bool _treeStopped;
+	bool _treeStopped; // 236
+	MystResourceType8 *_tree; // 220
+	MystResourceType5 *_treeAlcove; // 224
+	uint16 _treeMinPosition; // 228
+	uint16 _treeMinAccessiblePosition; // 230
+	uint16 _treeMaxAccessiblePosition; // 232
+	uint32 _treeLastMoveTime;
 
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
@@ -241,6 +258,9 @@ private:
 	uint16 towerRotationMapComputeAngle();
 	Common::Point towerRotationMapComputeCoords(const Common::Point &center, uint16 angle);
 	void towerRotationMapDrawLine(const Common::Point &center, const Common::Point &end);
+
+	void treeSetAlcoveAccessible();
+	uint32 treeNextMoveDelay(uint16 pressure);
 };
 
 } // End of namespace Mohawk

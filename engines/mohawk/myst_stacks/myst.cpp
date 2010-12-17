@@ -44,11 +44,16 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScript
 	// Card ID preinitialized by the engine for use by opcode 18
 	// when linking back to Myst in the library
 	_savedCardId = 4329;
+
 	_libraryBookcaseChanged = false;
 	_dockVaultState = 0;
 	_cabinMatchState = 2;
 	_matchBurning = false;
+	_tree = 0;
+	_treeAlcove = 0;
 	_treeStopped = false;
+	_treeMinPosition = 0;
+	_treeLastMoveTime = _vm->_system->getMillis();
 }
 
 MystScriptParser_Myst::~MystScriptParser_Myst() {
@@ -80,6 +85,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(122, o_cabinSafeHandleStartMove);
 	OPCODE(123, o_cabinSafeHandleMove);
 	OPCODE(124, o_cabinSafeHandleEndMove);
+	OPCODE(128, o_treePressureReleaseStart);
 	OPCODE(129, opcode_129);
 	OPCODE(130, opcode_130);
 	OPCODE(131, opcode_131);
@@ -98,6 +104,11 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(149, o_boilerIncreasePressureStop);
 	OPCODE(150, o_boilerDecreasePressureStart);
 	OPCODE(151, o_boilerDecreasePressureStop);
+	OPCODE(152, NOP);
+	OPCODE(153, o_basementIncreasePressureStart);
+	OPCODE(154, o_basementIncreasePressureStop);
+	OPCODE(155, o_basementDecreasePressureStart);
+	OPCODE(156, o_basementDecreasePressureStop);
 	OPCODE(158, o_rocketSoundSliderStartMove);
 	OPCODE(159, o_rocketSoundSliderMove);
 	OPCODE(160, o_rocketSoundSliderEndMove);
@@ -105,6 +116,8 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(164, o_rocketOpenBook);
 	OPCODE(165, o_rocketLeverMove);
 	OPCODE(166, o_rocketLeverEndMove);
+	OPCODE(167, NOP);
+	OPCODE(168, o_treePressureReleaseStop);
 	OPCODE(169, o_cabinLeave);
 	OPCODE(170, opcode_170);
 	OPCODE(171, opcode_171);
@@ -150,8 +163,8 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(213, opcode_213);
 	OPCODE(214, opcode_214);
 	OPCODE(215, opcode_215);
-	OPCODE(216, opcode_216);
-	OPCODE(217, opcode_217);
+	OPCODE(216, o_treeCard_init);
+	OPCODE(217, o_treeEntry_init);
 	OPCODE(218, opcode_218);
 	OPCODE(219, o_rocketSliders_init);
 	OPCODE(220, o_rocketLinkVideo_init);
@@ -163,8 +176,8 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(301, opcode_301);
 	OPCODE(302, opcode_302);
 	OPCODE(303, opcode_303);
-	OPCODE(304, opcode_304);
-	OPCODE(305, opcode_305);
+	OPCODE(304, o_treeCard_exit);
+	OPCODE(305, o_treeEntry_exit);
 	OPCODE(306, opcode_306);
 	OPCODE(307, opcode_307);
 	OPCODE(308, opcode_308);
@@ -185,17 +198,19 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 	_towerRotationMapRunning = false;
 	_boilerPressureIncreasing = false;
 	_boilerPressureDecreasing = false;
+	_basementPressureIncreasing = false;
+	_basementPressureDecreasing = false;
 
 	opcode_212_disable();
 }
 
 void MystScriptParser_Myst::runPersistentScripts() {
 	opcode_201_run();
+	opcode_205_run();
+	opcode_212_run();
 
 	if (_towerRotationMapRunning)
 		towerRotationMap_run();
-
-	opcode_205_run();
 
 	if (_generatorControlRoomRunning)
 		generatorControlRoom_run();
@@ -218,7 +233,14 @@ void MystScriptParser_Myst::runPersistentScripts() {
 	if (_boilerPressureDecreasing)
 		boilerPressureDecrease_run();
 
-	opcode_212_run();
+	if (_basementPressureIncreasing)
+		basementPressureIncrease_run();
+
+	if (_basementPressureDecreasing)
+		basementPressureDecrease_run();
+
+	if (!_treeStopped)
+		tree_run();
 }
 
 uint16 MystScriptParser_Myst::getVar(uint16 var) {
@@ -402,10 +424,19 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		return myst.cabinSafeCombination % 10;
 	case 70: // Cabin Safe Matchbox State
 		return _cabinMatchState;
+	case 72: // Channelwood tree position
+		return myst.treePosition;
 	case 93: // Breaker nearest Generator Room Blown
 		return myst.generatorBreakers == 1;
 	case 94: // Breaker nearest Rocket Ship Blown
 		return myst.generatorBreakers == 2;
+	case 95: // Going out of tree destination selection
+		if (myst.treePosition == 0)
+			return 0;
+		else if (myst.treePosition == 4 || myst.treePosition == 5)
+			return 1;
+		else
+			return 2;
 	case 96: // Generator Power Dial Needle Position
 		return myst.generatorVoltage / 4;
 	case 97: // Generator Power To Spaceship Dial Needle Position
@@ -1350,6 +1381,9 @@ void MystScriptParser_Myst::o_boilerLightPilot(uint16 op, uint16 var, uint16 arg
 		if (myst.cabinValvePosition > 0)
 			_vm->_sound->replaceBackground(8098, 49152);
 
+		if (myst.cabinValvePosition > 12)
+			_treeLastMoveTime = _vm->_system->getMillis();
+
 		// TODO: Complete. Play movies
 	}
 }
@@ -1360,6 +1394,7 @@ void MystScriptParser_Myst::o_boilerIncreasePressureStop(uint16 op, uint16 var, 
 
 	_treeStopped = false;
 	_boilerPressureIncreasing = false;
+	_treeLastMoveTime = _vm->_system->getMillis();
 
 	if (myst.cabinPilotLightLit == 1) {
 		if (myst.cabinValvePosition > 0)
@@ -1401,7 +1436,7 @@ void MystScriptParser_Myst::boilerPressureIncrease_run() {
 void MystScriptParser_Myst::boilerPressureDecrease_run() {
 	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
-	// Allow increasing pressure if sound has stopped
+	// Allow decreasing pressure if sound has stopped
 	if (!_vm->_sound->isPlaying(5098) && myst.cabinValvePosition > 0) {
 		myst.cabinValvePosition--;
 		if (myst.cabinValvePosition == 0) {
@@ -1434,6 +1469,7 @@ void MystScriptParser_Myst::o_boilerDecreasePressureStop(uint16 op, uint16 var, 
 
 	_treeStopped = false;
 	_boilerPressureDecreasing = false;
+	_treeLastMoveTime = _vm->_system->getMillis();
 
 	if (myst.cabinPilotLightLit == 1) {
 		if (myst.cabinValvePosition > 0)
@@ -1444,6 +1480,131 @@ void MystScriptParser_Myst::o_boilerDecreasePressureStop(uint16 op, uint16 var, 
 		if (myst.cabinValvePosition > 0)
 			_vm->_sound->replaceBackground(4098, myst.cabinValvePosition << 10);
 	}
+}
+
+void MystScriptParser_Myst::o_basementIncreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Basement increase pressure start", op);
+
+	_treeStopped = true;
+	_basementPressureIncreasing = true;
+}
+
+void MystScriptParser_Myst::o_basementIncreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Basement increase pressure stop", op);
+
+	_treeStopped = false;
+	_basementPressureIncreasing = false;
+	_treeLastMoveTime = _vm->_system->getMillis();
+}
+
+void MystScriptParser_Myst::basementPressureIncrease_run() {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	// Allow increasing pressure if sound has stopped
+	if (!_vm->_sound->isPlaying(4642) && myst.cabinValvePosition < 25) {
+		myst.cabinValvePosition++;
+
+		// Pressure increasing sound
+		_vm->_sound->playSound(4642);
+
+		// Redraw wheel
+		_vm->redrawArea(99);
+	}
+}
+
+void MystScriptParser_Myst::basementPressureDecrease_run() {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	// Allow decreasing pressure if sound has stopped
+	if (!_vm->_sound->isPlaying(4642) && myst.cabinValvePosition > 0) {
+		myst.cabinValvePosition--;
+
+		// Pressure decreasing sound
+		_vm->_sound->playSound(4642);
+
+		// Redraw wheel
+		_vm->redrawArea(99);
+	}
+}
+
+void MystScriptParser_Myst::o_basementDecreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Basement decrease pressure start", op);
+
+	_treeStopped = true;
+	_basementPressureDecreasing = true;
+}
+
+void MystScriptParser_Myst::o_basementDecreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Basement decrease pressure stop", op);
+
+	_treeStopped = false;
+	_basementPressureDecreasing = false;
+	_treeLastMoveTime = _vm->_system->getMillis();
+}
+
+void MystScriptParser_Myst::tree_run() {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	uint16 pressure;
+	if (myst.cabinPilotLightLit)
+		pressure = myst.cabinValvePosition;
+	else
+		pressure = 0;
+
+	// 12 means tree is balanced
+	if (pressure != 12) {
+		bool goingDown = true;
+		if (pressure >= 12)
+			goingDown = false;
+
+		// Tree is within bounds
+		if ((myst.treePosition < 12 && !goingDown)
+				|| (myst.treePosition > _treeMinPosition && goingDown)) {
+			uint16 delay = treeNextMoveDelay(pressure);
+			uint32 time = _vm->_system->getMillis();
+			if (delay < time - _treeLastMoveTime) {
+
+				// Tree movement
+				if (goingDown) {
+					myst.treePosition--;
+					_vm->_sound->playSound(2);
+				} else {
+					myst.treePosition++;
+					_vm->_sound->playSound(1);
+				}
+
+				// Stop background music if going up from book room
+				if (_vm->getCurCard() == 4630 && myst.treePosition > 0) {
+					_vm->_sound->stopBackground();
+				}
+
+				// Redraw tree
+				_vm->redrawArea(72);
+
+				// Check if alcove is accessible
+				treeSetAlcoveAccessible();
+
+				_treeLastMoveTime = time;
+			}
+		}
+	}
+}
+
+void MystScriptParser_Myst::treeSetAlcoveAccessible() {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	if (_treeAlcove) {
+		// Make alcove accessible if the tree is in the correct position
+		_treeAlcove->setEnabled(myst.treePosition >= _treeMinAccessiblePosition
+					&& myst.treePosition <= _treeMaxAccessiblePosition);
+	}
+}
+
+uint32 MystScriptParser_Myst::treeNextMoveDelay(uint16 pressure) {
+	if (pressure >= 12)
+		return 25000 * (13 - (pressure - 12)) / 12 + 3000;
+	else
+		return 25000 * pressure / 13 + 3000;
 }
 
 void MystScriptParser_Myst::o_rocketSoundSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1637,6 +1798,38 @@ void MystScriptParser_Myst::o_cabinLeave(uint16 op, uint16 var, uint16 argc, uin
 		_vm->setMainCursor(_savedCursorId);
 		_cabinMatchState = 2;
 	}
+}
+
+void MystScriptParser_Myst::o_treePressureReleaseStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Tree pressure release start", op);
+
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	Common::Rect src = Common::Rect(0, 0, 49, 86);
+	Common::Rect dest = Common::Rect(78, 46, 127, 132);
+	_vm->_gfx->copyImageSectionToScreen(4631, src, dest);
+	_vm->_system->updateScreen();
+
+	_tempVar = myst.cabinValvePosition;
+
+	if (myst.treePosition >= 4) {
+		myst.cabinValvePosition = 0;
+		_treeMinPosition = 4;
+		_treeLastMoveTime = 0;
+	}
+}
+
+void MystScriptParser_Myst::o_treePressureReleaseStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Tree pressure release stop", op);
+
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	Common::Rect rect = Common::Rect(78, 46, 127, 132);
+	_vm->_gfx->copyBackBufferToScreen(rect);
+	_vm->_system->updateScreen();
+
+	myst.cabinValvePosition = _tempVar;
+	_treeMinPosition = 0;
 }
 
 void MystScriptParser_Myst::opcode_170(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -2380,34 +2573,20 @@ void MystScriptParser_Myst::opcode_215(uint16 op, uint16 var, uint16 argc, uint1
 	}
 }
 
-void MystScriptParser_Myst::opcode_216(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_treeCard_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Enter tree card", op);
 
-	// Used for Cards 4571 (Channelwood Tree), 4586 (Channelwood Tree), 
-	// 4615 (Channelwood Tree) and 4601 (Channelwood Tree)
-	if (argc == 0) {
-		// TODO: Fill in logic for Channelwood Tree Position i.e. Var 72 update // 0 to 12, 4 for Alcove
-		// Based on Timer code and following variables :
-		// 98  "Cabin Boiler Pilot Light Lit"
-		// 99  "Cabin Boiler Gas Valve Position" }, // 0 to 5
-		// 305 "Cabin Boiler Lit" },
-		// 306 "Cabin Boiler Steam Sound Control" }, // 0 to 27
-		// 307 "Cabin Boiler Needle Position i.e. Fully Pressurised" }, // 0 to 1
-
-		// Note : Opcode 218 does boiler update code..
-	} else
-		unknown(op, var, argc, argv);
+	_tree = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
-void MystScriptParser_Myst::opcode_217(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_treeEntry_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Enter tree card with entry", op);
 
-	// Used for Card 4601 (Channelwood Tree)
-	if (argc == 2) {
-		// TODO: Fill in logic for Tree Position Close Up...
-		// 2 arguments: 4, 4
-	} else
-		unknown(op, var, argc, argv);
+	_treeAlcove = static_cast<MystResourceType5 *>(_invokingResource);
+	_treeMinAccessiblePosition = argv[0];
+	_treeMaxAccessiblePosition = argv[1];
+
+	treeSetAlcoveAccessible();
 }
 
 void MystScriptParser_Myst::opcode_218(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -2531,26 +2710,16 @@ void MystScriptParser_Myst::opcode_303(uint16 op, uint16 var, uint16 argc, uint1
 	// upon card change, but this behavior is now default in this engine.
 }
 
-void MystScriptParser_Myst::opcode_304(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_treeCard_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Exit tree card", op);
 
-	// Used for Card 4601 (Channelwood Tree)
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Unknown...", op);
-		// TODO: Logic for clearing variable?
-	} else
-		unknown(op, var, argc, argv);
+	_tree = 0;
 }
 
-void MystScriptParser_Myst::opcode_305(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_treeEntry_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Exit tree card with entry", op);
 
-	// Used for Card 4601 (Channelwood Tree)
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Unknown...", op);
-		// TODO: Logic for clearing variable?
-	} else
-		unknown(op, var, argc, argv);
+	_treeAlcove = 0;
 }
 
 void MystScriptParser_Myst::opcode_306(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
