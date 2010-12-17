@@ -145,7 +145,7 @@ private:
 
 	Graphics::Surface *_backBuffer;
 	Graphics::PixelFormat _pixelFormat;
-	static const Common::Rect _viewport;
+	Common::Rect _viewport;
 };
 
 struct SFXERecord {

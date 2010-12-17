@@ -210,10 +210,10 @@ void GraphicsManager::copyAnimImageSectionToScreen(uint16 image, Common::Rect sr
 	getVM()->_system->unlockScreen();
 }
 
-const Common::Rect MystGraphics::_viewport = Common::Rect(544, 332);
-
 MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = new MystBitmap();
+
+	_viewport = Common::Rect(544, 332);
 
 	// The original version of Myst could run in 8bpp color too.
 	// However, it dithered videos to 8bpp and they looked considerably
