@@ -247,12 +247,6 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 		else
 			insertActionList(action->a25.actFailIndex);
 		break;
-//	case SOUND:                                     // act26: Play a sound (or tune)
-//		if (action->a26.soundIndex < _vm->_tunesNbr)
-//			_vm->_sound->playMusic(action->a26.soundIndex);
-//		else
-//			_vm->_sound->playSound(action->a26.soundIndex, BOTH_CHANNELS, MED_PRI);
-//		break;
 	case ADD_SCORE:                                 // act27: Add object's value to score
 		_vm->adjustScore(_vm->_object->_objects[action->a27.objNumb].objValue);
 		break;
@@ -266,10 +260,10 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 			insertActionList(action->a29.actFailIndex);
 		break;
 	case OLD_SONG:
-		//TODO For Hugo 1 and Hugo2 DOS: The songs were not stored in a DAT file, but directly as
+		//TODO For DOS versions: The songs were not stored in a DAT file, but directly as
 		//strings. the current play_music should be modified to use a strings instead of reading
 		//the file, in those cases. This replaces, for those DOS versions, act26.
-		warning("STUB: doAction(act49)");
+		warning("STUB: doAction(act49) %s", _vm->_textData[action->a49.songIndex]);
 		break;
 	default:
 		error("An error has occurred: %s", "doAction");
@@ -282,52 +276,6 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 		wrkEvent = curEvent->nextEvent;
 		delQueue(curEvent);                         // Return event to free list
 		return wrkEvent;                            // Return next event ptr
-	}
-}
-
-/**
-* Insert the action pointed to by p into the timer event queue
-* The queue goes from head (earliest) to tail (latest) timewise
-*/
-void Scheduler_v1d::insertAction(act *action) {
-	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
-
-	// First, get and initialise the event structure
-	event_t *curEvent = getQueue();
-	curEvent->action = action;
-
-	curEvent->localActionFl = true;                 // Rest are for current screen only
-
-	curEvent->time = action->a0.timer + getTicks(); // Convert rel to abs time
-
-	// Now find the place to insert the event
-	if (!_tailEvent) {                              // Empty queue
-		_tailEvent = _headEvent = curEvent;
-		curEvent->nextEvent = curEvent->prevEvent = 0;
-	} else {
-		event_t *wrkEvent = _tailEvent;             // Search from latest time back
-		bool found = false;
-
-		while (wrkEvent && !found) {
-			if (wrkEvent->time <= curEvent->time) { // Found if new event later
-				found = true;
-				if (wrkEvent == _tailEvent)         // New latest in list
-					_tailEvent = curEvent;
-				else
-					wrkEvent->nextEvent->prevEvent = curEvent;
-				curEvent->nextEvent = wrkEvent->nextEvent;
-				wrkEvent->nextEvent = curEvent;
-				curEvent->prevEvent = wrkEvent;
-			}
-			wrkEvent = wrkEvent->prevEvent;
-		}
-
-		if (!found) {                               // Must be earliest in list
-			_headEvent->prevEvent = curEvent;       // So insert as new head
-			curEvent->nextEvent = _headEvent;
-			curEvent->prevEvent = 0;
-			_headEvent = curEvent;
-		}
 	}
 }
 

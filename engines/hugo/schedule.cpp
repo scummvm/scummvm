@@ -537,7 +537,7 @@ void Scheduler::loadActListArr(Common::File &in) {
 						break;
 					case OLD_SONG:           //49
 						_actListArr[i][j].a49.timer = in.readSint16BE();
-						_actListArr[i][j].a49.soundIndex = in.readUint16BE();
+						_actListArr[i][j].a49.songIndex = in.readUint16BE();
 						break;
 					default:
 						error("Engine - Unknown action type encountered: %d", _actListArr[i][j].a0.actType);
@@ -945,6 +945,58 @@ void Scheduler::restoreEvents(Common::SeekableReadStream *f) {
 	while (wrkEvent) {                              // While mature events found
 		wrkEvent->time = wrkEvent->time - saveTime + curTime;
 		wrkEvent = wrkEvent->nextEvent;
+	}
+}
+
+/**
+* Insert the action pointed to by p into the timer event queue
+* The queue goes from head (earliest) to tail (latest) timewise
+*/
+void Scheduler::insertAction(act *action) {
+	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
+
+	// First, get and initialise the event structure
+	event_t *curEvent = getQueue();
+	curEvent->action = action;
+	switch (action->a0.actType) {                   // Assign whether local or global
+	case AGSCHEDULE:
+		curEvent->localActionFl = false;            // Lasts over a new screen
+		break;
+	default:
+		curEvent->localActionFl = true;             // Rest are for current screen only
+		break;
+	}
+
+	curEvent->time = action->a0.timer + getTicks(); // Convert rel to abs time
+
+	// Now find the place to insert the event
+	if (!_tailEvent) {                              // Empty queue
+		_tailEvent = _headEvent = curEvent;
+		curEvent->nextEvent = curEvent->prevEvent = 0;
+	} else {
+		event_t *wrkEvent = _tailEvent;             // Search from latest time back
+		bool found = false;
+
+		while (wrkEvent && !found) {
+			if (wrkEvent->time <= curEvent->time) { // Found if new event later
+				found = true;
+				if (wrkEvent == _tailEvent)         // New latest in list
+					_tailEvent = curEvent;
+				else
+					wrkEvent->nextEvent->prevEvent = curEvent;
+				curEvent->nextEvent = wrkEvent->nextEvent;
+				wrkEvent->nextEvent = curEvent;
+				curEvent->prevEvent = wrkEvent;
+			}
+			wrkEvent = wrkEvent->prevEvent;
+		}
+
+		if (!found) {                               // Must be earliest in list
+			_headEvent->prevEvent = curEvent;       // So insert as new head
+			curEvent->nextEvent = _headEvent;
+			curEvent->prevEvent = 0;
+			_headEvent = curEvent;
+		}
 	}
 }
 

@@ -87,13 +87,13 @@ protected:
 	virtual const char *getCypher() = 0;
 	virtual event_t *doAction(event_t *curEvent) = 0;
 	virtual void delQueue(event_t *curEvent) = 0;
-	virtual void insertAction(act *action) = 0;
 
 	event_t *getQueue();
 
 	uint32 getDosTicks(bool updateFl);
 	uint32 getWinTicks();
 
+	void insertAction(act *action);
 };
 
 class Scheduler_v1d : public Scheduler {
@@ -102,11 +102,9 @@ public:
 	~Scheduler_v1d();
 
 	virtual const char *getCypher();
-
 	virtual uint32 getTicks();
-
-	virtual void insertAction(act *action);
 	virtual void runScheduler();
+
 protected:
 	virtual void delQueue(event_t *curEvent);
 	virtual event_t *doAction(event_t *curEvent);
@@ -118,7 +116,6 @@ public:
 	virtual ~Scheduler_v2d();
 
 	virtual const char *getCypher();
-	void insertAction(act *action);
 protected:
 	void delQueue(event_t *curEvent);
 	event_t *doAction(event_t *curEvent);

@@ -376,10 +376,10 @@ event_t *Scheduler_v2d::doAction(event_t *curEvent) {
 			_vm->_object->_objects[action->a48.objNumb].currImagePtr = _vm->_object->_objects[action->a48.objNumb].currImagePtr->nextSeqPtr;
 		break;
 	case OLD_SONG:
-		//TODO For Hugo 1 and Hugo2 DOS: The songs were not stored in a DAT file, but directly as
+		//TODO For DOS versions: The songs were not stored in a DAT file, but directly as
 		//strings. the current play_music should be modified to use a strings instead of reading
 		//the file, in those cases. This replaces, for those DOS versions, act26.
-		warning("STUB: doAction(act49)");
+		warning("STUB: doAction(act49) %s", _vm->_textData[action->a49.songIndex]);
 		break;
 	default:
 		error("An error has occurred: %s", "doAction");
@@ -392,58 +392,6 @@ event_t *Scheduler_v2d::doAction(event_t *curEvent) {
 		wrkEvent = curEvent->nextEvent;
 		delQueue(curEvent);                         // Return event to free list
 		return wrkEvent;                            // Return next event ptr
-	}
-}
-
-/**
-* Insert the action pointed to by p into the timer event queue
-* The queue goes from head (earliest) to tail (latest) timewise
-*/
-void Scheduler_v2d::insertAction(act *action) {
-	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
-
-	// First, get and initialise the event structure
-	event_t *curEvent = getQueue();
-	curEvent->action = action;
-	switch (action->a0.actType) {                   // Assign whether local or global
-	case AGSCHEDULE:
-		curEvent->localActionFl = false;            // Lasts over a new screen
-		break;
-	default:
-		curEvent->localActionFl = true;             // Rest are for current screen only
-		break;
-	}
-
-	curEvent->time = action->a0.timer + getTicks(); // Convert rel to abs time
-
-	// Now find the place to insert the event
-	if (!_tailEvent) {                              // Empty queue
-		_tailEvent = _headEvent = curEvent;
-		curEvent->nextEvent = curEvent->prevEvent = 0;
-	} else {
-		event_t *wrkEvent = _tailEvent;             // Search from latest time back
-		bool found = false;
-
-		while (wrkEvent && !found) {
-			if (wrkEvent->time <= curEvent->time) { // Found if new event later
-				found = true;
-				if (wrkEvent == _tailEvent)         // New latest in list
-					_tailEvent = curEvent;
-				else
-					wrkEvent->nextEvent->prevEvent = curEvent;
-				curEvent->nextEvent = wrkEvent->nextEvent;
-				wrkEvent->nextEvent = curEvent;
-				curEvent->prevEvent = wrkEvent;
-			}
-			wrkEvent = wrkEvent->prevEvent;
-		}
-
-		if (!found) {                               // Must be earliest in list
-			_headEvent->prevEvent = curEvent;       // So insert as new head
-			curEvent->nextEvent = _headEvent;
-			curEvent->prevEvent = 0;
-			_headEvent = curEvent;
-		}
 	}
 }
 } // End of namespace Hugo

@@ -211,7 +211,7 @@ enum action_t {                                     // Parameters:
 	START_OBJ,                                      //  1 - Object number
 	INIT_OBJXY,                                     //  2 - Object number, x,y
 	PROMPT,                                         //  3 - index of prompt & response string, ptrs to action
-	// lists.  First if response matches, 2nd if not.
+	                                                //      lists.  First if response matches, 2nd if not.
 	BKGD_COLOR,                                     //  4 - new background color
 	INIT_OBJVXY,                                    //  5 - Object number, vx, vy
 	INIT_CARRY,                                     //  6 - Object number, carried status
@@ -520,7 +520,7 @@ struct act30 {                                      // Type 30 - Start special m
 };
 
 struct act31 {                                      // Type 31 - Exit special maze processing
-	action_t actType;                                   // The type of action
+	action_t actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 };
 
@@ -638,17 +638,17 @@ struct act47 {                                      // Type 47 - Init viewx,view
 };
 
 struct act48 {                                      // Type 48 - Set curr_seq_p to frame n
-	action_t actType;                                   // The type of action
+	action_t actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objNumb;                               // The object number
 	int      seqIndex;                              // The index of seq array to set to
 	int      frameIndex;                            // The index of frame to set to
 };
 
-struct act49 {                                      // Added by Strangerke - Type 79 - Play a sound (DOS way)
-	action_t actType;                                   // The type of action
+struct act49 {                                      // Added by Strangerke - Type 79 - Play a song (DOS way)
+	action_t actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
-	uint16   soundIndex;                            // Sound index in string array
+	uint16   songIndex;                             // Song index in string array
 };
 
 union act {
