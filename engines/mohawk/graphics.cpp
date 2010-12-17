@@ -354,12 +354,21 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	if (dest.right > _vm->_system->getWidth() || dest.bottom > _vm->_system->getHeight())
 		dest.debugPrint(4, "Clipping destination rect to the screen:");
 
+	Graphics::Surface *surface = findImage(image)->getSurface();
+
+	// Make sure the image is bottom aligned in the dest rect
+	dest.top = dest.bottom - MIN<int>(surface->h, dest.height());
+
+	// Convert from bitmap coordinates to surface coordinates
+	uint16 top = surface->h - (src.top + MIN<int>(surface->h, dest.height()));
+
+	// Do not draw the top pixels if the image is too tall
+	if (dest.height() > _viewport.height()) {
+		top += dest.height() - _viewport.height();
+	}
+
 	dest.right = CLIP<int>(dest.right, 0, _vm->_system->getWidth());
 	dest.bottom = CLIP<int>(dest.bottom, 0, _vm->_system->getHeight());
-
-	src.clip(_viewport);
-
-	Graphics::Surface *surface = findImage(image)->getSurface();
 
 	debug(3, "Image Blit:");
 	debug(3, "src.x: %d", src.left);
@@ -371,9 +380,6 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 
 	uint16 width = MIN<int>(surface->w, dest.width());
 	uint16 height = MIN<int>(surface->h, dest.height());
-
-	// Convert from bitmap coordinates to surface coordinates
-	uint16 top = surface->h - src.top - height;
 
 	_vm->_system->copyRectToScreen((byte *)surface->getBasePtr(src.left, top), surface->pitch, dest.left, dest.top, width, height);
 }
@@ -383,12 +389,21 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 	if (dest.right > _vm->_system->getWidth() || dest.bottom > _vm->_system->getHeight())
 		dest.debugPrint(4, "Clipping destination rect to the screen:");
 
+	Graphics::Surface *surface = findImage(image)->getSurface();
+
+	// Make sure the image is bottom aligned in the dest rect
+	dest.top = dest.bottom - MIN<int>(surface->h, dest.height());
+
+	// Convert from bitmap coordinates to surface coordinates
+	uint16 top = surface->h - (src.top + MIN<int>(surface->h, dest.height()));
+
+	// Do not draw the top pixels if the image is too tall
+	if (dest.height() > _viewport.height()) {
+		top += dest.height() - _viewport.height();
+	}
+
 	dest.right = CLIP<int>(dest.right, 0, _vm->_system->getWidth());
 	dest.bottom = CLIP<int>(dest.bottom, 0, _vm->_system->getHeight());
-
-	src.clip(_viewport);
-
-	Graphics::Surface *surface = findImage(image)->getSurface();
 
 	debug(3, "Image Blit:");
 	debug(3, "src.x: %d", src.left);
@@ -401,19 +416,16 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 	uint16 width = MIN<int>(surface->w, dest.width());
 	uint16 height = MIN<int>(surface->h, dest.height());
 
-	// Convert from bitmap coordinates to surface coordinates
-	uint16 top = surface->h - src.top - height;
-
 	for (uint16 i = 0; i < height; i++)
 		memcpy(_backBuffer->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->bytesPerPixel);
 }
 
 void MystGraphics::copyImageToScreen(uint16 image, Common::Rect dest) {
-	copyImageSectionToScreen(image, _viewport, dest);
+	copyImageSectionToScreen(image, Common::Rect(544, 333), dest);
 }
 
 void MystGraphics::copyImageToBackBuffer(uint16 image, Common::Rect dest) {
-	copyImageSectionToBackBuffer(image, _viewport, dest);
+	copyImageSectionToBackBuffer(image, Common::Rect(544, 333), dest);
 }
 
 void MystGraphics::copyBackBufferToScreen(Common::Rect r) {
