@@ -212,7 +212,6 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 		// 80
 		INTCB(pcmUpdateEnvelopeGenerator),
 		INTCB(notImpl)
-
 	};
 #undef INTCB
 
@@ -788,8 +787,7 @@ void TownsAudioInterface::fmReset() {
 	memset(&_fmSaveReg[0][240], 0x7f, 16);
 	memset(_fmSaveReg[1], 0, 256);
 	memset(&_fmSaveReg[1][240], 0x7f, 16);
-	_fmSaveReg[0][243] = _fmSaveReg[0][247] = _fmSaveReg[0][251] = _fmSaveReg[0][255] =
-	                         _fmSaveReg[1][243] = _fmSaveReg[1][247] = _fmSaveReg[1][251] = _fmSaveReg[1][255] = 0xff;
+	_fmSaveReg[0][243] = _fmSaveReg[0][247] = _fmSaveReg[0][251] = _fmSaveReg[0][255] = _fmSaveReg[1][243] = _fmSaveReg[1][247] = _fmSaveReg[1][251] = _fmSaveReg[1][255] = 0xff;
 
 	for (int i = 0; i < 128; i++)
 		fmLoadInstrument(i, _fmDefaultInstrument);

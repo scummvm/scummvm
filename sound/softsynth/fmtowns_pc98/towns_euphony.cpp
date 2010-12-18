@@ -857,7 +857,7 @@ void TownsEuphonyDriver::sendChanVolume() {
 	while (*chan != -1) {
 		_intf->callback(8, *chan, _para[1] & 0x7f);
 		chan = &_assignedChannels[*chan].next;
-	};
+	}
 }
 
 void TownsEuphonyDriver::sendPanPosition() {
@@ -865,7 +865,7 @@ void TownsEuphonyDriver::sendPanPosition() {
 	while (*chan != -1) {
 		_intf->callback(3, *chan, _para[1] & 0x7f);
 		chan = &_assignedChannels[*chan].next;
-	};
+	}
 }
 
 void TownsEuphonyDriver::sendAllNotesOff() {
@@ -882,7 +882,7 @@ void TownsEuphonyDriver::sendAllNotesOff() {
 			_intf->callback(2, *chan);
 		}
 		chan = &_assignedChannels[*chan].next;
-	};
+	}
 }
 
 void TownsEuphonyDriver::sendSetInstrument() {
@@ -891,7 +891,7 @@ void TownsEuphonyDriver::sendSetInstrument() {
 		_intf->callback(4, *chan, _para[0]);
 		_intf->callback(7, *chan, 0);
 		chan = &_assignedChannels[*chan].next;
-	};
+	}
 }
 
 void TownsEuphonyDriver::sendPitch() {
@@ -901,5 +901,5 @@ void TownsEuphonyDriver::sendPitch() {
 		int16 pitch = (((READ_LE_UINT16(_para)) >> 1) & 0x3fff) - 0x2000;
 		_intf->callback(7, *chan, pitch);
 		chan = &_assignedChannels[*chan].next;
-	};
+	}
 }
