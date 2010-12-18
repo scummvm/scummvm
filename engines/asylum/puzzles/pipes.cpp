@@ -25,27 +25,91 @@
 
 #include "asylum/puzzles/pipes.h"
 
+#include "asylum/resources/worldstats.h"
+
+#include "asylum/system/cursor.h"
+#include "asylum/system/graphics.h"
+#include "asylum/system/screen.h"
+
+#include "asylum/views/scene.h"
+
+#include "asylum/asylum.h"
+
 namespace Asylum {
 
 PuzzlePipes::PuzzlePipes(AsylumEngine *engine) : Puzzle(engine) {
+	_previousMusicVolume = 0;
+	_rectIndex = -2;
 }
 
 PuzzlePipes::~PuzzlePipes() {
 }
 
+void PuzzlePipes::reset() {
+	warning("[PuzzlePipes::reset] Not implemented!");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzlePipes::init(const AsylumEvent &evt)  {
-	error("[PuzzlePipes::init] Not implemented!");
+bool PuzzlePipes::init(const AsylumEvent &evt) {
+	_previousMusicVolume = getSound()->getMusicVolume();
+
+	if (_previousMusicVolume >= -1000)
+		getSound()->setMusicVolume(-1000);
+
+	getSound()->playSound(getWorld()->graphicResourceIds[41], true, Config.ambientVolume);
+	getScreen()->setPalette(getWorld()->graphicResourceIds[0]);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[0], 0);
+
+	_rectIndex = -2;
+
+	updateCursor();
+	initResources();
+	setup(true);
+
+	return true;
 }
 
-bool PuzzlePipes::update(const AsylumEvent &evt)  {
+bool PuzzlePipes::update(const AsylumEvent &evt) {
 	error("[PuzzlePipes::update] Not implemented!");
 }
 
 bool PuzzlePipes::mouseLeftDown(const AsylumEvent &evt) {
 	error("[PuzzlePipes::mouseLeftDown] Not implemented!");
+}
+
+bool PuzzlePipes::mouseRightDown(const AsylumEvent &evt) {
+	getScreen()->clear();
+	getSound()->stop(getWorld()->graphicResourceIds[41]);
+	getSound()->setMusicVolume(_previousMusicVolume);
+
+	_vm->switchEventHandler(getScene());
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Helpers
+//////////////////////////////////////////////////////////////////////////
+void PuzzlePipes::initResources() {
+	error("[PuzzlePipes::initResources] Not implemented!");
+}
+
+void PuzzlePipes::setup(bool val) {
+	error("[PuzzlePipes::setup] Not implemented!");
+}
+
+void PuzzlePipes::updateCursor() {
+	error("[PuzzlePipes::updateCursor] Not implemented!");
+}
+
+int32 PuzzlePipes::findRect() {
+	error("[PuzzlePipes::findRect] Not implemented!");
+}
+
+void PuzzlePipes::checkFlags() {
+	error("[PuzzlePipes::checkFlags] Not implemented!");
 }
 
 } // End of namespace Asylum
