@@ -279,6 +279,8 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		return myst.observatoryMarkerSwitch;
 	case 9: // Marker Switch Near Rocket Ship
 		return myst.rocketshipMarkerSwitch;
+	case 10: // Ship State
+		return myst.shipState;
 	case 11: // Cabin Door Open State
 		return _cabinDoorOpened;
 	case 12: // Clock tower gears bridge
@@ -366,8 +368,14 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		} else {
 			return 1;
 		}
+	//case 34: // FIXME: Sound Control In Dock Vault
+	//	return 0;
+	//	return 1;
+	//	return 2;
 	case 37: // Clock Tower Control Wheels Position
 		return 3 * ((myst.clockTowerMinutePosition / 5) % 3) + myst.clockTowerHourPosition % 3;
+	case 40: // Gears Open State
+		return myst.gearsOpen;
 	case 41: // Dock Marker Switch Vault State
 		return _dockVaultState;
 	case 43: // Clock Tower Time
@@ -379,6 +387,8 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return 1;
 		else
 			return 2;
+	case 45: // Dock Vault Imager Active On Water
+		return myst.imagerActive && myst.imagerSelection == 67;
 	case 46:
 		return bookCountPages(100);
 	case 47:
@@ -604,6 +614,8 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 	case 304: // Myst Library Image Present on Tower Rotation Map
 		_towerRotationMapInitialized = value;
 		break;
+	//case 309: // FIXME: Red/Blue Book Opened
+	//	break;
 	default:
 		refresh = MystScriptParser::setVarValue(var, value);
 		break;
