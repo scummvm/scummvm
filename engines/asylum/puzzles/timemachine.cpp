@@ -201,7 +201,7 @@ bool PuzzleTimeMachine::update(const AsylumEvent &evt)  {
 
 	// Adjust frame indexes
 	for (uint32 i = 0; i < ARRAYSIZE(_frameIndexes); i++) {
-		if (_frameIndexes[i] >= _frameCounts[i])
+		if (_frameIndexes[i] >= (int32)_frameCounts[i])
 			_frameIndexes[i] = 0;
 	}
 
