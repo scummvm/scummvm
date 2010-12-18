@@ -172,7 +172,51 @@ private:
 		kObjectEnableType2
 	};
 
-	typedef struct ScriptEntry {
+	//////////////////////////////////////////////////////////////////////////
+	// Script Queue
+	//////////////////////////////////////////////////////////////////////////
+	struct ScriptQueueEntry {
+		int32 scriptIndex;
+		int32 currentLine;
+		ActorIndex actorIndex;
+		int32 field_C;
+		int32 field_10;
+
+		ScriptQueueEntry() {
+			reset();
+		}
+
+		void reset() {
+			scriptIndex = -1;
+			currentLine = 0;
+			actorIndex = 0;
+			field_C = 0;
+			field_10 = 0;
+		}
+	};
+
+	struct ScriptQueue {
+		ScriptQueueEntry entries[10];
+		uint32 currentEntry;
+		uint32 field_CC;
+
+		ScriptQueue() {
+			reset();
+		}
+
+		void reset() {
+			for (uint32 i = 0; i < ARRAYSIZE(entries); i++)
+				entries[i].reset();
+
+			currentEntry = 0;
+			field_CC = 0;
+		}
+	};
+
+	//////////////////////////////////////////////////////////////////////////
+	// Scripts
+	//////////////////////////////////////////////////////////////////////////
+	struct ScriptEntry {
 		int32 numLines; // Only set on the first line of each script
 		int32 opcode;
 		int32 param1;
@@ -198,9 +242,9 @@ private:
 			param8 = 0;
 			param9 = 0;
 		}
-	} ScriptEntry;
+	};
 
-	typedef struct Script {
+	struct Script {
 		ScriptEntry commands[MAX_ACTION_COMMANDS];
 		int32       field_1BAC;
 		int32       field_1BB0;
@@ -211,25 +255,11 @@ private:
 			field_1BB0 = 0;
 			counter = 0;
 		}
-	} Script;
+	};
 
-	typedef struct ScriptQueueEntry {
-		int32 scriptIndex;
-		int32 currentLine;
-		ActorIndex actorIndex;
-		int32 field_C;
-		int32 field_10;
-
-		ScriptQueueEntry() {
-			scriptIndex = 0;
-			currentLine = 0;
-			actorIndex = 0;
-			field_C = 0;
-			field_10 = 0;
-		}
-	} ScriptQueueEntry;
-
+	//////////////////////////////////////////////////////////////////////////
 	// Opcodes
+	//////////////////////////////////////////////////////////////////////////
 	typedef Common::Functor1<ScriptEntry *, void> OpcodeFunctor;
 
 	struct Opcode {
@@ -250,18 +280,19 @@ private:
 	AsylumEngine *_vm;
 
 	// Script queue and data
+	ScriptQueue _queue;
 	Common::Array<Opcode *>         _opcodes;
-	Common::Stack<ScriptQueueEntry> _queue;
 	Common::Array<Script>           _scripts;
 
 	bool              _skipProcessing;
-	int32             _currentLoops;
-	Script           *_currentScript;
-	ScriptQueueEntry  _currentQueueEntry;
 	bool              _done;
 	bool              _exit;
-	int32             _lineIncrement;
-	bool              _waitCycle;
+	bool              _processNextEntry;
+
+	Script           *_currentScript;
+	ScriptQueueEntry *_currentQueueEntry;
+
+	void updateQueue(uint32 entryIndex);
 
 	// Opcode helper functions
 	void enableObject(ScriptEntry *cmd, ObjectEnableType type);

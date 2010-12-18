@@ -192,9 +192,7 @@ ScriptManager::~ScriptManager() {
 		delete _opcodes[i];
 
 	_scripts.clear();
-	_queue.clear();
-
-	_currentScript = NULL;
+	_queue.reset();
 
 	// Zero-out passed pointers
 	_vm = NULL;
@@ -243,16 +241,16 @@ void ScriptManager::reset() {
 	_scripts.clear();
 
 	_skipProcessing    = false;
-	_currentLoops      = 0;
-	_currentScript     = NULL;
 	_done = false;
 	_exit = false;
-	_lineIncrement = 0;
-	_waitCycle = false;
+	_processNextEntry = 0;
+
+	_currentScript = NULL;
+	_currentQueueEntry = NULL;
 }
 
 void ScriptManager::resetQueue() {
-	_queue.clear();
+	_queue.reset();
 }
 
 void ScriptManager::queueScript(int scriptIndex, ActorIndex actorIndex) {
@@ -260,75 +258,135 @@ void ScriptManager::queueScript(int scriptIndex, ActorIndex actorIndex) {
 	if (_skipProcessing)
 		return;
 
-	ScriptQueueEntry entry;
-	entry.scriptIndex = scriptIndex;
-	entry.actorIndex  = actorIndex;
-
-	// If there's currently no script for the processor to run,
-	// assign it directly and skip the stack push. If however the
-	// current script is assigned, push the script to the stack
-	if (_currentScript)
-		_queue.push(entry);
-	else {
-		_currentQueueEntry = entry;
-		_currentScript     = &_scripts[entry.scriptIndex];
+	// Look for a empty queue slot
+	int32 index = 0;
+	for (index = 1; index < ARRAYSIZE(_queue.entries); index++) {
+		if (_queue.entries[index].scriptIndex == -1)
+			break;
 	}
+
+	// No empty queue slot, return
+	if (index == 0)
+		return;
+
+	// Setup script and queue
+	// TODO once everything is working properly, convert back to stack based script queue
+	_scripts[scriptIndex].counter = 0;
+	_queue.entries[index].field_10 = 0;
+	_queue.entries[index].field_C = 0;
+
+	if (_queue.currentEntry) {
+		_queue.entries[_queue.field_CC].field_C = index;
+		_queue.entries[index].field_10 = _queue.field_CC;
+	} else {
+		_queue.currentEntry = index;
+	}
+
+	_queue.field_CC = index;
+
+	_queue.entries[index].scriptIndex = scriptIndex;
+	_queue.entries[index].currentLine = 0;
+	_queue.entries[index].actorIndex = actorIndex;
 }
 
 bool ScriptManager::isInQueue(int32 scriptIndex) {
-	for (int32 i = 0; i < _queue.size(); i++) {
-		if (_queue[i].scriptIndex == scriptIndex)
+	for (int32 i = 0; i < ARRAYSIZE(_queue.entries); i++) {
+		if (_queue.entries[i].scriptIndex == scriptIndex)
 			return true;
 	}
 
 	return false;
 }
 
+void ScriptManager::updateQueue(uint32 entryIndex) {
+	if (_queue.currentEntry == _queue.field_CC) {
+		_queue.field_CC = 0;
+		_queue.currentEntry = 0;
+		_queue.entries[entryIndex].scriptIndex = -1;
+	} else if (_queue.currentEntry == entryIndex) {
+		_queue.currentEntry = _queue.entries[entryIndex].field_C;
+		_queue.entries[_queue.currentEntry].field_10 = 0;
+		_queue.entries[entryIndex].scriptIndex = -1;
+	} else if (_queue.field_CC == entryIndex) {
+		_queue.field_CC = _queue.entries[entryIndex].field_10;
+		_queue.entries[_queue.field_CC].field_C = 0;
+		_queue.entries[entryIndex].scriptIndex = -1;
+	} else {
+		_queue.entries[_queue.entries[entryIndex].field_10].field_C = _queue.entries[entryIndex].field_C;
+		_queue.entries[_queue.entries[entryIndex].field_C].field_10 = _queue.entries[entryIndex].field_10;
+		_queue.entries[entryIndex].scriptIndex = -1;
+	}
+}
+
 bool ScriptManager::process() {
-	_done          = false;
 	_exit          = false;
-	_waitCycle     = false;
-	_lineIncrement = 1;
 
 	_vm->setGameFlag(kGameFlagScriptProcessing);
 
-	if (_currentScript) {
-		while (!_done && !_waitCycle) {
-			_lineIncrement = 0; //Reset line increment value
+	// Setup queue entry
+	if (_queue.currentEntry) {
+		uint32 entryIndex = _queue.currentEntry;
+		uint32 nextIndex = _queue.entries[entryIndex].field_C;
+		uint32 scriptIndex = _queue.entries[entryIndex].scriptIndex;
 
-			ScriptEntry *cmd = &_currentScript->commands[_currentQueueEntry.currentLine];
+		if (scriptIndex != -1) {
 
-			int32 opcode = cmd->opcode;
+			// Setup script
+			for (;;) {
+				_processNextEntry = false;
+				_done             = false;
+				_currentScript    = &_scripts[scriptIndex];
 
-			debugC(kDebugLevelScripts, "[0x%02X] %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
-			       opcode, _opcodes[opcode]->name,
-			       cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
-			       cmd->param6, cmd->param7, cmd->param8, cmd->param9);
+				// Run script
+				for (;;) {
+					ScriptEntry *cmd = NULL;
 
-			// Execute opcode
-			(*_opcodes[opcode]->func)(cmd);
+					if (_processNextEntry)
+						goto label_processNextEntry;
 
-			if (_exit)
-				return true;
+					// TODO Check for bounds error
 
-			if (!_lineIncrement)
-				++_currentQueueEntry.currentLine;
+					// Get the script command
+					cmd = &_currentScript->commands[_queue.entries[entryIndex].currentLine];
+					debugC(kDebugLevelScripts, "[0x%02X] %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
+						cmd->opcode, _opcodes[cmd->opcode]->name,
+						cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
+						cmd->param6, cmd->param7, cmd->param8, cmd->param9);
 
+					// Execute opcode
+					_currentQueueEntry = &_queue.entries[entryIndex];
+					(*_opcodes[cmd->opcode]->func)(cmd);
 
-		}
+					// When we are asked to exit, return directly without setting the processing flag
+					if (_exit)
+						return true;
 
-		if (_done) {
-			_currentQueueEntry.currentLine  = 0;
+					if (!_processNextEntry)
+						++_queue.entries[entryIndex].currentLine;
 
-			if (!_queue.empty()) {
-				_currentQueueEntry = _queue.pop();
-				_currentScript     = &_scripts[_currentQueueEntry.scriptIndex];
-			} else {
-				_currentScript = NULL;
+					if (_done)
+						updateQueue(entryIndex);
+
+					if (!_done)
+						continue;
+
+label_processNextEntry:
+					entryIndex = nextIndex;
+
+					if (!nextIndex)
+						goto label_exit_processing;
+
+					nextIndex = _queue.entries[nextIndex].field_C;
+					scriptIndex = _queue.entries[nextIndex].scriptIndex;
+
+					if (scriptIndex == -1)
+						goto label_exit_processing;
+				}
 			}
 		}
 	}
 
+label_exit_processing:
 	_vm->clearGameFlag(kGameFlagScriptProcessing);
 
 	return false;
@@ -346,7 +404,7 @@ void ScriptManager::saveLoadWithSerializer(Common::Serializer &s) {
 // Opcode 0x00
 IMPLEMENT_OPCODE(Return)
 	_done          = true;
-	_lineIncrement = 0;
+	_processNextEntry = 0;
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -410,8 +468,7 @@ IMPLEMENT_OPCODE(PlayAnimation)
 
 	if (cmd->param2 == 2) {
 		if (object->checkFlags()) {
-			_waitCycle = true;
-			_lineIncrement = 1;
+			_processNextEntry = true;
 		} else
 			cmd->param2 = 1;
 
@@ -448,7 +505,7 @@ IMPLEMENT_OPCODE(PlayAnimation)
 
 	if (cmd->param2) {
 		cmd->param2 = 2;
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 	}
 END_OPCODE
 
@@ -469,7 +526,7 @@ IMPLEMENT_OPCODE(MoveScenePosition)
 
 	} else if (cmd->param5) {
 		if (getWorld()->motionStatus == 2)
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 		else
 			cmd->param5 = 0;
 	} else {
@@ -481,7 +538,7 @@ IMPLEMENT_OPCODE(MoveScenePosition)
 		                               cmd->param3,
 		                               true);
 
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 	}
 END_OPCODE
 
@@ -557,7 +614,7 @@ IMPLEMENT_OPCODE(EnableObjects)
 			enableObject(cmd, kObjectEnableType0);
 		}
 
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 	}
 END_OPCODE
 
@@ -583,7 +640,7 @@ IMPLEMENT_OPCODE(JumpActorSpeech)
 	if (actor->process(cmd->param2, cmd->param3))
 		return;
 
-	_currentQueueEntry.currentLine = cmd->param4;
+	_currentQueueEntry->currentLine = cmd->param4;
 
 	if (cmd->param5)
 		getSpeech()->playIndexed(1);
@@ -606,19 +663,19 @@ IMPLEMENT_OPCODE(JumpAndSetDirection)
 
 				if (cmd->param5 == 1) {
 					cmd->param5 = 2;
-					_lineIncrement = 1;
+					_processNextEntry = 1;
 				}
 			}
 		} else {
 			cmd->param5 = 1;
-			_lineIncrement = 0;
+			_processNextEntry = 0;
 
 			if ((actor->getPoint1()->x + actor->getPoint2()->x) == cmd->param2 && (actor->getPoint1()->y + actor->getPoint2()->y) == cmd->param3)
 				actor->updateFromDirection((ActorDirection)cmd->param4);
 		}
 	} else {
 		if (cmd->param5 == 2)
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 	}
 END_OPCODE
 
@@ -628,7 +685,7 @@ IMPLEMENT_OPCODE(JumpIfActorCoordinates)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if ((actor->getPoint1()->x + actor->getPoint2()->x) != cmd->param2 || (actor->getPoint1()->y + actor->getPoint2()->y) != cmd->param3)
-		_lineIncrement = cmd->param4;
+		_processNextEntry = cmd->param4;
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -663,7 +720,7 @@ IMPLEMENT_OPCODE(JumpIfSoundPlayingAndPlaySound)
 
 	if (cmd->param2 == 2) {
 		if (getSound()->isPlaying(resource))
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 		else
 			cmd->param2 = 1;
 	} else if (!_vm->sound()->isPlaying(resource)) {
@@ -672,7 +729,7 @@ IMPLEMENT_OPCODE(JumpIfSoundPlayingAndPlaySound)
 
 		if (cmd->param2 == 1) {
 			cmd->param2 = 2;
-			_lineIncrement= 1;
+			_processNextEntry= 1;
 		}
 	}
 END_OPCODE
@@ -734,7 +791,7 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x22
 IMPLEMENT_OPCODE(_unk22)
-	Actor *actor = getScene()->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry.actorIndex);
+	Actor *actor = getScene()->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry->actorIndex);
 
 	actor->process_41BC00(cmd->param1, cmd->param2);
 END_OPCODE
@@ -742,7 +799,7 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x23
 IMPLEMENT_OPCODE(_unk23)
-	Actor *actor = getScene()->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry.actorIndex);
+	Actor *actor = getScene()->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry->actorIndex);
 
 	actor->process_41BCC0(cmd->param1, cmd->param2);
 END_OPCODE
@@ -750,7 +807,7 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x24
 IMPLEMENT_OPCODE(_unk24)
-	Actor *actor = getScene()->getActor(cmd->param4 ? cmd->param4 : _currentQueueEntry.actorIndex);
+	Actor *actor = getScene()->getActor(cmd->param4 ? cmd->param4 : _currentQueueEntry->actorIndex);
 
 	actor->process_41BDB0(cmd->param1, (bool)cmd->param3);
 END_OPCODE
@@ -764,14 +821,14 @@ IMPLEMENT_OPCODE(RunEncounter)
 
 	if (cmd->param6) {
 		if (encounter->isRunning())
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 		else
 			cmd->param6 = 0;
 	} else {
 		encounter->run(cmd->param1, (ObjectId)cmd->param2, (ObjectId)cmd->param3, cmd->param4);
 
 		cmd->param6 = 2;
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 	}
 END_OPCODE
 
@@ -807,7 +864,7 @@ IMPLEMENT_OPCODE(JumpIfActorField638)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if (actor->getField638())
-		_currentQueueEntry.currentLine = cmd->param3;
+		_currentQueueEntry->currentLine = cmd->param3;
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -836,7 +893,7 @@ END_OPCODE
 // Opcode 0x2C
 IMPLEMENT_OPCODE(_unk2C_ActorSub)
 	Actor *player = getScene()->getActor();
-	Actor *actor = getScene()->getActor(_currentQueueEntry.actorIndex);
+	Actor *actor = getScene()->getActor(_currentQueueEntry->actorIndex);
 	Common::Point playerPoint((int16)(player->getPoint1()->x + player->getPoint2()->x), (int16)(player->getPoint1()->y + player->getPoint2()->y));
 	ActorDirection direction = (cmd->param2 == 8) ? player->getDirection() : (ActorDirection)cmd->param2;
 
@@ -848,7 +905,7 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub)
 	if (cmd->param3 == 2) {
 		switch (actor->getStatus()) {
 		default:
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 			return;
 
 		case kActorStatus7:
@@ -891,7 +948,7 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub)
 		actor->updateStatus(actor->getStatus() <= kActorStatus11 ? kActorStatus3 : kActorStatus19);
 
 		cmd->param3 = 2;
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 	}
 END_OPCODE
 
@@ -899,7 +956,7 @@ END_OPCODE
 // Opcode 0x2D
 IMPLEMENT_OPCODE(PlayMovie)
 	if (getSharedData()->matteBarHeight < 170) {
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 
 		if (!getSharedData()->matteBarHeight) {
 			getCursor()->hide();
@@ -926,7 +983,7 @@ IMPLEMENT_OPCODE(PlayMovie)
 	}
 
 	getSharedData()->matteBarHeight = 0;
-	_lineIncrement = 0;
+	_processNextEntry = 0;
 
 	if (!getSharedData()->mattePlaySound && _currentScript->commands[0].numLines != 0) {
 		bool found = true;
@@ -1003,7 +1060,7 @@ IMPLEMENT_OPCODE(_unk34_Status)
 		cmd->param1 = 0;
 	} else {
 		cmd->param1++;
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 	}
 END_OPCODE
 
@@ -1028,7 +1085,7 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x36
 IMPLEMENT_OPCODE(Jump)
-	_currentQueueEntry.currentLine = cmd->param1 - 1;
+	_currentQueueEntry->currentLine = cmd->param1 - 1;
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -1039,7 +1096,7 @@ IMPLEMENT_OPCODE(RunBlowUpPuzzle)
 
 	_vm->switchEventHandler(_vm->getPuzzle((uint32)cmd->param1));
 
-	_currentQueueEntry.currentLine++;
+	_currentQueueEntry->currentLine++;
 
 	_exit = true;
 END_OPCODE
@@ -1075,7 +1132,7 @@ IMPLEMENT_OPCODE(_unk3B_PALETTE_MOD)
 
 		cmd->param1 = 0;
 		cmd->param2 = 0;
-		_currentQueueEntry.currentLine++;
+		_currentQueueEntry->currentLine++;
 
 		getScreen()->clearGraphicsInQueue();
 
@@ -1085,7 +1142,7 @@ IMPLEMENT_OPCODE(_unk3B_PALETTE_MOD)
 
 	getScreen()->updatePalette(cmd->param1);
 
-	_lineIncrement = 1;
+	_processNextEntry = 1;
 	++cmd->param1;
 END_OPCODE
 
@@ -1097,7 +1154,7 @@ IMPLEMENT_OPCODE(IncrementParam2)
 			cmd->param2 = 0;
 		} else {
 			++cmd->param2;
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 		}
 	}
 END_OPCODE
@@ -1111,10 +1168,8 @@ IMPLEMENT_OPCODE(WaitUntilFramePlayed)
 	if (frameNum == -1)
 		frameNum = object->getFrameCount() - 1;
 
-	if ((int32)object->getFrameIndex() != frameNum) {
-		_lineIncrement = 1;
-		_waitCycle     = true;
-	}
+	if ((int32)object->getFrameIndex() != frameNum)
+		_processNextEntry = true;
 END_OPCODE
 
 
@@ -1125,13 +1180,13 @@ IMPLEMENT_OPCODE(UpdateWideScreen)
 
 	if (barSize >= 22) {
 		cmd->param1 = 0;
-		_lineIncrement = 0;
+		_processNextEntry = 0;
 
 		getSharedData()->matteBarHeight = 0;
 	} else {
 		getScreen()->drawWideScreenBars((int16)(4 * barSize));
 
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 		++cmd->param1;
 	}
 END_OPCODE
@@ -1142,8 +1197,8 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpIfActor)
 	ActorIndex index = (cmd->param1 == kActorInvalid) ? getScene()->getPlayerIndex() : cmd->param1;
 
-	if (_currentQueueEntry.actorIndex != index)
-		_currentQueueEntry.currentLine = cmd->param2 - 1;
+	if (_currentQueueEntry->actorIndex != index)
+		_currentQueueEntry->currentLine = cmd->param2 - 1;
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -1162,7 +1217,7 @@ IMPLEMENT_OPCODE(PlaySpeechScene)
 				getSharedData()->setFlag(kFlag1, true);
 				getSharedData()->setFlag(kFlag2, true);
 			}
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 		}
 
 		if (cmd->param3 && !cmd->param6)
@@ -1172,7 +1227,7 @@ IMPLEMENT_OPCODE(PlaySpeechScene)
 	}
 
 	if (_vm->sound()->isPlaying((ResourceId)cmd->param5)) {
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 		return;
 	}
 
@@ -1214,7 +1269,7 @@ IMPLEMENT_OPCODE(PlaySpeech)
 				getSharedData()->setFlag(kFlag1, true);
 				getSharedData()->setFlag(kFlag2, true);
 			}
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 		}
 
 		if (cmd->param3 && !cmd->param6)
@@ -1224,7 +1279,7 @@ IMPLEMENT_OPCODE(PlaySpeech)
 	}
 
 	if (_vm->sound()->isPlaying((ResourceId)cmd->param5)) {
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 		return;
 	}
 
@@ -1258,7 +1313,7 @@ IMPLEMENT_OPCODE(PlaySpeechScene2)
 
 	if (cmd->param5 == 2) {
 		if (getSound()->isPlaying((ResourceId)cmd->param6)) {
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 			return;
 		}
 
@@ -1294,7 +1349,7 @@ IMPLEMENT_OPCODE(PlaySpeechScene2)
 			getSharedData()->setFlag(kFlag2, false);
 		}
 
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 	}
 
 	if (cmd->param4 && !cmd->param7)
@@ -1314,7 +1369,7 @@ IMPLEMENT_OPCODE(MoveScenePositionFromActor)
 		                               cmd->param2);
 	} else if (cmd->param6) {
 		if (getWorld()->motionStatus == 2) {
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 		} else {
 			cmd->param6 = 0;
 			getWorld()->coordinates[0] = -1;
@@ -1328,9 +1383,9 @@ IMPLEMENT_OPCODE(MoveScenePositionFromActor)
 										   cmd->param2,
 										   true,
 										   &cmd->param6))
-			_lineIncrement = 0;
+			_processNextEntry = 0;
 		else
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 	}
 END_OPCODE
 
@@ -1351,7 +1406,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(_unk46)
 	if (cmd->param6) {
 		if (getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 		} else {
 			cmd->param6 = 0;
 			if (cmd->param5) {
@@ -1374,7 +1429,7 @@ IMPLEMENT_OPCODE(_unk46)
 		if (cmd->param2) {
 			getScene()->getActor(cmd->param5)->updateStatus(kActorStatus8);
 			cmd->param6 = 1;
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 		} else {
 			if (cmd->param4 != cmd->param3) {
 				if (cmd->param4)
@@ -1385,7 +1440,7 @@ IMPLEMENT_OPCODE(_unk46)
 			}
 
 			cmd->param6 = 1;
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 		}
 	}
 END_OPCODE
@@ -1404,10 +1459,10 @@ IMPLEMENT_OPCODE(_unk48_MATTE_01)
 
 	if (getSharedData()->matteBarHeight >= 170) {
 		getSharedData()->matteBarHeight = 0;
-		_lineIncrement = 0;
+		_processNextEntry = 0;
 		getCursor()->show();
 	} else {
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 
 		if (!getSharedData()->matteBarHeight) {
 			getCursor()->hide();
@@ -1425,10 +1480,10 @@ IMPLEMENT_OPCODE(_unk49_MATTE_90)
 
 	if (getSharedData()->matteBarHeight >= 170) {
 		getSharedData()->matteBarHeight = 0;
-		_lineIncrement = 0;
+		_processNextEntry = 0;
 		getCursor()->show();
 	} else {
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 
 		if (!getSharedData()->matteBarHeight) {
 			getCursor()->hide();
@@ -1442,10 +1497,10 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpIfSoundPlaying)
 	if (cmd->param3 == 1) {
 		if (_vm->sound()->isPlaying((ResourceId)cmd->param1)) {
-			_currentQueueEntry.currentLine = cmd->param2;
+			_currentQueueEntry->currentLine = cmd->param2;
 		}
 	} else if (!_vm->sound()->isPlaying((ResourceId)cmd->param1)) {
-		_currentQueueEntry.currentLine = cmd->param2;
+		_currentQueueEntry->currentLine = cmd->param2;
 	}
 END_OPCODE
 
@@ -1597,20 +1652,20 @@ IMPLEMENT_OPCODE(_unk56)
 
 	if (actor->getStatus() == kActorStatus2 || actor->getStatus() == kActorStatus13) {
 		if (cmd->param2 == 2)
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 
 		return;
 	}
 
 	if (cmd->param2 == 2) {
 		cmd->param2 = 1;
-		_lineIncrement = 0;
+		_processNextEntry = 0;
 
 		if ((actor->getPoint1()->x + actor->getPoint2()->x == cmd->param6) && (actor->getPoint1()->y + actor->getPoint2()->y == cmd->param7)) {
 			getScene()->getActor()->faceTarget((ObjectId)cmd->param1, kDirectionFromActor);
 			actor->updateFromDirection((ActorDirection)((actor->getDirection() + 4) & 7));
 		} else {
-			_currentQueueEntry.currentLine = cmd->param3;
+			_currentQueueEntry->currentLine = cmd->param3;
 		}
 	} else {
 		int32 x = 0;
@@ -1623,13 +1678,13 @@ IMPLEMENT_OPCODE(_unk56)
 
 			if (cmd->param2 == 1) {
 				cmd->param2 = 2;
-				_lineIncrement = 1;
+				_processNextEntry = 1;
 			}
 		} else {
 			if (cmd->param4)
 				getSpeech()->playIndexed(1);
 
-			_currentQueueEntry.currentLine = cmd->param3;
+			_currentQueueEntry->currentLine = cmd->param3;
 		}
 	}
 END_OPCODE
@@ -1667,7 +1722,7 @@ IMPLEMENT_OPCODE(_unk59)
 	}
 
 	if (cmd->param3 && (object->flags & kObjectFlag10E38))
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -1722,10 +1777,10 @@ IMPLEMENT_OPCODE(SetObjectLastFrameIdx)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
 	if (object->getFrameIndex() == object->getFrameCount() - 1) {
-		_lineIncrement = 0;
+		_processNextEntry = 0;
 		object->flags &= ~kObjectFlag10E38;
 	} else {
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 	}
 END_OPCODE
 
@@ -1745,15 +1800,15 @@ END_OPCODE
 IMPLEMENT_OPCODE(_unk61)
 	if (cmd->param2) {
 		if (getWorld()->nextPlayer == kActorInvalid) {
-			_lineIncrement = 0;
+			_processNextEntry = 0;
 			cmd->param2 = 0;
 		} else {
-			_lineIncrement = 1;
+			_processNextEntry = 1;
 		}
 	} else {
 		Actor::updatePlayerChapter9(_vm, cmd->param1);
 		cmd->param2 = 1;
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 	}
 END_OPCODE
 
@@ -1772,7 +1827,7 @@ IMPLEMENT_OPCODE(_unk63)
 	}
 
 	if (_vm->sound()->isPlaying(getSpeech()->getSoundResourceId())) {
-		_lineIncrement = 1;
+		_processNextEntry = 1;
 		return;
 	} else if (!cmd->param1) {
 		cmd->param1 = 1;
@@ -1955,7 +2010,7 @@ void ScriptManager::setNextLine(int32 line) {
 
 	int32 opcode = _currentScript->commands[line].opcode;
 	if (opcode == 0x10 || opcode == 0) { // Return
-		_currentQueueEntry.currentLine = line;
+		_currentQueueEntry->currentLine = line;
 	} else {
 		_done = true;
 	}
