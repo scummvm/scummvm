@@ -1222,11 +1222,78 @@ void Actor::enableActorsChapter2(AsylumEngine *engine) {
 	engine->scene()->getActor(21)->enable();
 	engine->scene()->getActor(21)->processStatus(2541, 40, false);
 
-	error("[Actor::enableActorsChapter2] Missing update shared data part!");
+	for (uint32 i = 0; i < 9; i++) {
+		engine->data()->setData(i, 160);
+		engine->data()->setData(i + 18, 0);
+		engine->data()->setData(i + 44, 0);
+	}
 }
 
-void Actor::updatePlayerChapter9(AsylumEngine *engine, int type) {
-	error("[Actor::updatePlayerChapter9] Not implemented!");
+void Actor::updatePlayerChapter9(AsylumEngine *engine, int nextPlayer) {
+	WorldStats *world = engine->scene()->worldstats();
+	if (world->chapter != kChapter9)
+		return;
+
+	Actor *player = engine->scene()->getActor();
+	world->nextPlayer = nextPlayer;
+
+	switch (engine->scene()->getPlayerIndex()) {
+	default:
+		break;
+
+	case 1:
+		if (nextPlayer == 2) {
+			player->setResourceId(world->graphicResourceIds[7]);
+
+			uint32 frameCount = GraphicResource::getFrameCount(engine, player->getResourceId());
+			player->setFrameCount(frameCount);
+			player->setFrameIndex(frameCount - 1);
+
+		} else if (nextPlayer == 3) {
+			player->setResourceId(world->graphicResourceIds[8]);
+
+			uint32 frameCount = GraphicResource::getFrameCount(engine, player->getResourceId());
+			player->setFrameCount(frameCount);
+			player->setFrameIndex(frameCount - 1);
+		}
+		break;
+
+	case 2:
+		if (nextPlayer == 1) {
+			player->setResourceId(world->graphicResourceIds[4]);
+
+			uint32 frameCount = GraphicResource::getFrameCount(engine, player->getResourceId());
+			player->setFrameCount(frameCount);
+			player->setFrameIndex(0);
+
+		} else if (nextPlayer == 3) {
+			player->setResourceId(world->graphicResourceIds[3]);
+
+			uint32 frameCount = GraphicResource::getFrameCount(engine, player->getResourceId());
+			player->setFrameCount(frameCount);
+			player->setFrameIndex(0);
+		}
+		break;
+
+	case 3:
+		if (nextPlayer == 1) {
+			player->setResourceId(world->graphicResourceIds[5]);
+
+			uint32 frameCount = GraphicResource::getFrameCount(engine, player->getResourceId());
+			player->setFrameCount(frameCount);
+			player->setFrameIndex(0);
+
+		} else if (nextPlayer == 2) {
+			player->setResourceId(world->graphicResourceIds[6]);
+
+			uint32 frameCount = GraphicResource::getFrameCount(engine, player->getResourceId());
+			player->setFrameCount(frameCount);
+			player->setFrameIndex(frameCount - 1);
+		}
+		break;
+	}
+
+	player->updateStatus(kActorStatus21);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -281,7 +281,14 @@ public:
 	// Static update methods
 	//////////////////////////////////////////////////////////////////////////
 	static void enableActorsChapter2(AsylumEngine *engine);
-	static void updatePlayerChapter9(AsylumEngine *engine, int type);
+
+	/**
+	 * Updates the player appearance in chapter 9.
+	 *
+	 * @param [in,out] engine If non-null, the engine.
+	 * @param nextPlayer 	  The next player index
+	 */
+	static void updatePlayerChapter9(AsylumEngine *engine, int nextPlayer);
 
 	/**
 	 * Gets a direction using the angle between the two points.
