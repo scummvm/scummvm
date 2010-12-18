@@ -37,13 +37,28 @@ public:
 	PuzzlePipes(AsylumEngine *engine);
 	~PuzzlePipes();
 
+	void reset();
+
 private:
+	int32 _previousMusicVolume;
+	int32 _rectIndex;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
 	bool update(const AsylumEvent &evt);
 	bool mouseLeftDown(const AsylumEvent &evt);
+	bool mouseRightDown(const AsylumEvent &evt);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+	void initResources();
+	void setup(bool val);
+	void updateCursor();
+	int32 findRect();
+	void checkFlags();	
 };
 
 } // End of namespace Asylum
