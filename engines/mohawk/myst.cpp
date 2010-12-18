@@ -612,6 +612,15 @@ void MohawkEngine_Myst::checkCurrentResource() {
 	checkCursorHints();
 }
 
+MystResource *MohawkEngine_Myst::updateCurrentResource() {
+	checkCurrentResource();
+
+	if (_curResource >= 0)
+		return _resources[_curResource];
+	else
+		return 0;
+}
+
 void MohawkEngine_Myst::loadCard() {
 	debugC(kDebugView, "Loading Card View:");
 

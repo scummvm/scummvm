@@ -111,6 +111,9 @@ private:
 	DECLARE_OPCODE(o_basementIncreasePressureStop);
 	DECLARE_OPCODE(o_basementDecreasePressureStart);
 	DECLARE_OPCODE(o_basementDecreasePressureStop);
+	DECLARE_OPCODE(o_rocketPianoStart);
+	DECLARE_OPCODE(o_rocketPianoMove);
+	DECLARE_OPCODE(o_rocketPianoStop);
 	DECLARE_OPCODE(o_rocketSoundSliderStartMove);
 	DECLARE_OPCODE(o_rocketSoundSliderMove);
 	DECLARE_OPCODE(o_rocketSoundSliderEndMove);

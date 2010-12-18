@@ -160,6 +160,7 @@ public:
 	void setMainCursor(uint16 cursor);
 	uint16 getMainCursor() { return _mainCursor; }
 	void checkCursorHints();
+	MystResource *updateCurrentResource();
 
 	MystVar *_varStore;
 

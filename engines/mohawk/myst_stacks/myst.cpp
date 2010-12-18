@@ -32,6 +32,8 @@
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/myst.h"
 
+#include "common/events.h"
+
 #include "gui/message.h"
 
 namespace Mohawk {
@@ -109,9 +111,12 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(154, o_basementIncreasePressureStop);
 	OPCODE(155, o_basementDecreasePressureStart);
 	OPCODE(156, o_basementDecreasePressureStop);
+	OPCODE(157, o_rocketPianoMove);
 	OPCODE(158, o_rocketSoundSliderStartMove);
 	OPCODE(159, o_rocketSoundSliderMove);
 	OPCODE(160, o_rocketSoundSliderEndMove);
+	OPCODE(161, o_rocketPianoStart);
+	OPCODE(162, o_rocketPianoStop);
 	OPCODE(163, o_rocketLeverStartMove);
 	OPCODE(164, o_rocketOpenBook);
 	OPCODE(165, o_rocketLeverMove);
@@ -979,7 +984,7 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 		_vm->_system->delayMillis(500);
 
 		// TODO: Play only 1st half of movie i.e. gears rise up, from 0 to 650
-		_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 36);
+		_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
 
 		myst.clockTowerBridgeOpen = 1;
 		_vm->redrawArea(12);
@@ -988,7 +993,7 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 		_vm->_system->delayMillis(500);
 
 		// TODO: Play only 2nd half of movie i.e. gears sink down, from 700 to 1300
-		_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 36);
+		_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
 
 		myst.clockTowerBridgeOpen = 0;
 		_vm->redrawArea(12);
@@ -1576,6 +1581,8 @@ void MystScriptParser_Myst::tree_run() {
 				// Stop background music if going up from book room
 				if (_vm->getCurCard() == 4630 && myst.treePosition > 0) {
 					_vm->_sound->stopBackground();
+				} else {
+					_vm->_sound->replaceBackground(4630, 24576);
 				}
 
 				// Redraw tree
@@ -1727,6 +1734,95 @@ void MystScriptParser_Myst::rocketCheckSolution() {
 	_rocketSlider5->drawConditionalDataToScreen(1);
 
 	_vm->_cursor->showCursor();
+}
+
+void MystScriptParser_Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Rocket piano start move", op);
+
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	MystResourceType11 *key = static_cast<MystResourceType11 *>(_invokingResource);
+
+	// What the hell ??
+	Common::Rect src = key->_subImages[1].rect;
+	Common::Rect rect = key->_subImages[0].rect;
+	Common::Rect dest = rect;
+	dest.top = 332 - rect.bottom;
+	dest.bottom = 332 - rect.top;
+
+	// Draw pressed piano key
+	_vm->_gfx->copyImageSectionToScreen(key->_subImages[1].wdib, src, dest);
+	_vm->_system->updateScreen();
+
+	// Play note
+	if (myst.generatorVoltage == 59 && !myst.generatorBreakers) {
+		uint16 soundId = key->getList1(0);
+		_vm->_sound->replaceSound(soundId, Audio::Mixer::kMaxChannelVolume, true);
+	}
+}
+
+void MystScriptParser_Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Rocket piano move", op);
+
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+	Common::Rect piano = Common::Rect(85, 123, 460, 270);
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	// Unpress previous key
+	MystResourceType11 *key = static_cast<MystResourceType11 *>(_invokingResource);
+
+	Common::Rect src = key->_subImages[0].rect;
+	Common::Rect dest = src;
+	dest.top = 332 - src.bottom;
+	dest.bottom = 332 - src.top;
+
+	// Draw unpressed piano key
+	_vm->_gfx->copyImageSectionToScreen(key->_subImages[0].wdib, src, dest);
+
+	if (piano.contains(mouse)) {
+		MystResource *resource = _vm->updateCurrentResource();
+		if (resource && resource->type == kMystDragArea) {
+			// Press new key
+			key = static_cast<MystResourceType11 *>(resource);
+			src = key->_subImages[1].rect;
+			Common::Rect rect = key->_subImages[0].rect;
+			dest = rect;
+			dest.top = 332 - rect.bottom;
+			dest.bottom = 332 - rect.top;
+
+			// Draw pressed piano key
+			_vm->_gfx->copyImageSectionToScreen(key->_subImages[1].wdib, src, dest);
+
+			// Play note
+			if (myst.generatorVoltage == 59 && !myst.generatorBreakers) {
+				uint16 soundId = key->getList1(0);
+				_vm->_sound->replaceSound(soundId, Audio::Mixer::kMaxChannelVolume, true);
+			}
+		} else {
+			// Not pressing a key anymore
+			_vm->_sound->stopSound();
+			_vm->_sound->resumeBackground();
+		}
+	}
+
+	_vm->_system->updateScreen();
+}
+
+void MystScriptParser_Myst::o_rocketPianoStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Rocket piano end move", op);
+
+	MystResourceType8 *key = static_cast<MystResourceType8 *>(_invokingResource);
+
+	Common::Rect &src = key->_subImages[0].rect;
+	Common::Rect dest = src;
+	dest.top = 332 - src.bottom;
+	dest.bottom = 332 - src.top;
+
+	// Draw unpressed piano key
+	_vm->_gfx->copyImageSectionToScreen(key->_subImages[0].wdib, src, dest);
+	_vm->_system->updateScreen();
+
+	_vm->_sound->stopSound();
+	_vm->_sound->resumeBackground();
 }
 
 void MystScriptParser_Myst::o_rocketLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
