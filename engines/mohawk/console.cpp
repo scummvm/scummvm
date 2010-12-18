@@ -215,8 +215,7 @@ bool MystConsole::Cmd_PlaySound(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_sound->stopSound();
-	_vm->_sound->playSound((uint16)atoi(argv[1]));
+	_vm->_sound->replaceSound((uint16)atoi(argv[1]));
 
 	return false;
 }

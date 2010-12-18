@@ -103,7 +103,7 @@ public:
 	DECLARE_OPCODE(o_playSoundBlocking);
 	DECLARE_OPCODE(o_copyBackBufferToScreen);
 	DECLARE_OPCODE(o_copyImageToBackBuffer);
-	DECLARE_OPCODE(o_changeSound);
+	DECLARE_OPCODE(o_changeBackgroundSound);
 	DECLARE_OPCODE(o_soundPlaySwitch);
 	DECLARE_OPCODE(o_copyImageToScreen);
 	DECLARE_OPCODE(o_soundResumeBackground);

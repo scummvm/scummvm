@@ -128,7 +128,7 @@ void MystScriptParser::setupCommonOpcodes() {
 	OPCODE(27, o_playSoundBlocking);
 	OPCODE(28, o_copyBackBufferToScreen);
 	OPCODE(29, o_copyImageToBackBuffer);
-	OPCODE(30, o_changeSound);
+	OPCODE(30, o_changeBackgroundSound);
 	OPCODE(31, o_soundPlaySwitch);
 	OPCODE(32, o_soundResumeBackground);
 	OPCODE(33, o_copyImageToScreen);
@@ -558,14 +558,14 @@ void MystScriptParser::o_playSound(uint16 op, uint16 var, uint16 argc, uint16 *a
 		debugC(kDebugScript, "Opcode %d: playSound", op);
 		debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 	} else
 		unknown(op, var, argc, argv);
 }
 
 void MystScriptParser::o_stopSoundBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: stopSoundBackground", op);
-	//_vm->_sound->stopBackground();
+	_vm->_sound->stopBackground();
 }
 
 void MystScriptParser::o_playSoundBlocking(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -636,7 +636,7 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, uint16 arg
 //       Current behaviour here and with VIEW sound block is not right as demonstrated
 //       by Channelwood Card 3280 (Tank Valve) and water flow sound behaviour in pipe
 //       on cards leading from shed...
-void MystScriptParser::o_changeSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	int16 *soundList = NULL;
@@ -682,27 +682,20 @@ void MystScriptParser::o_changeSound(uint16 op, uint16 var, uint16 argc, uint16 
 			}
 		}
 
-		// NOTE: Mixer only has 8-bit channel volume granularity,
-		// Myst uses 16-bit? Or is part of this balance?
-		soundVolume = (byte)(soundVolume / 255);
-
 		if (soundAction == kMystSoundActionContinue)
 			debugC(kDebugScript, "Continue current sound");
 		else if (soundAction == kMystSoundActionChangeVolume) {
 			debugC(kDebugScript, "Continue current sound, change volume");
 			debugC(kDebugScript, "\tVolume: %d", soundVolume);
-			// TODO: Implement Volume Control..
+			_vm->_sound->changeBackgroundVolume(soundVolume);
 		} else if (soundAction == kMystSoundActionStop) {
 			debugC(kDebugScript, "Stop sound");
-			_vm->_sound->stopSound();
+			_vm->_sound->stopBackground();
 		} else if (soundAction > 0) {
 			debugC(kDebugScript, "Play new Sound, change volume");
 			debugC(kDebugScript, "\tSound: %d", soundAction);
 			debugC(kDebugScript, "\tVolume: %d", soundVolume);
-			_vm->_sound->stopSound();
-			// TODO: Need to keep sound handle and add function to change volume of
-			// looped running sound for kMystSoundActionChangeVolume type
-			_vm->_sound->playSound(soundAction, soundVolume);
+			_vm->_sound->replaceBackground(soundAction, soundVolume);
 		} else {
 			debugC(kDebugScript, "Unknown");
 			warning("Unknown sound control value in opcode %d", op);
@@ -726,13 +719,13 @@ void MystScriptParser::o_soundPlaySwitch(uint16 op, uint16 var, uint16 argc, uin
 		debugC(kDebugScript, "\tsoundId: %d", soundId);
 
 		if (soundId)
-			_vm->_sound->playSound(soundId);
+			_vm->_sound->replaceSound(soundId);
 	}
 }
 
 void MystScriptParser::o_soundResumeBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: soundResumeBackground", op);
-	//_vm->_sound->resumeBackground();
+	_vm->_sound->resumeBackground();
 }
 
 void MystScriptParser::o_copyImageToScreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -857,7 +850,7 @@ void MystScriptParser::o_changeStack(uint16 op, uint16 var, uint16 argc, uint16 
 			// wrong as you're not actually linking when using this opcode. The sounds are only
 			// played for the full game linking.
 			if (!_vm->_tweaksEnabled) {
-				handle= _vm->_sound->playSound(soundIdLinkSrc);
+				handle= _vm->_sound->replaceSound(soundIdLinkSrc);
 				while (_vm->_mixer->isSoundHandleActive(*handle))
 					_vm->_system->delayMillis(10);
 			}
@@ -872,12 +865,12 @@ void MystScriptParser::o_changeStack(uint16 op, uint16 var, uint16 argc, uint16 
 			}
 
 			if (!_vm->_tweaksEnabled) {
-				handle = _vm->_sound->playSound(soundIdLinkDst);
+				handle = _vm->_sound->replaceSound(soundIdLinkDst);
 				while (_vm->_mixer->isSoundHandleActive(*handle))
 					_vm->_system->delayMillis(10);
 			}
 		} else {
-			handle = _vm->_sound->playSound(soundIdLinkSrc);
+			handle = _vm->_sound->replaceSound(soundIdLinkSrc);
 			while (_vm->_mixer->isSoundHandleActive(*handle))
 				_vm->_system->delayMillis(10);
 
@@ -886,7 +879,7 @@ void MystScriptParser::o_changeStack(uint16 op, uint16 var, uint16 argc, uint16 
 			_vm->changeToStack(_stackMap[targetStack]);
 			_vm->changeToCard(_startCard[targetStack], true);
 
-			handle = _vm->_sound->playSound(soundIdLinkDst);
+			handle = _vm->_sound->replaceSound(soundIdLinkDst);
 			while (_vm->_mixer->isSoundHandleActive(*handle))
 				_vm->_system->delayMillis(10);
 		}
@@ -908,7 +901,7 @@ void MystScriptParser::o_changeCardPlaySoundDirectional(uint16 op, uint16 var, u
 	debugC(kDebugScript, "\tanimated update data size: %d", dataSize);
 
 	if (soundId)
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 
 	_vm->changeToCard(cardId, false);
 
@@ -927,7 +920,7 @@ void MystScriptParser::o_directionalUpdatePlaySound(uint16 op, uint16 var, uint1
 	debugC(kDebugScript, "\tanimated update data size: %d", dataSize);
 
 	if (soundId)
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 
 	animatedUpdate(dataSize, &argv[3], delayBetweenSteps);
 }

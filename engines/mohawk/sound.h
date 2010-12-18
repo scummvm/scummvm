@@ -59,7 +59,8 @@ struct SLSTRecord {
 
 enum SndHandleType {
 	kFreeHandle,
-	kUsedHandle
+	kUsedHandle,
+	kBackgroundHandle
 };
 
 struct SndHandle {
@@ -129,10 +130,12 @@ public:
 	void resumeSound();
 	bool isPlaying(uint16 id);
 
-	void pauseBackground() {} //TODO: implement
-	void replaceBackground(uint16 id, uint16 volume) {}
-	void resumeBackground() {}
-	void stopBackground() {}
+	// Myst background sound functions
+	Audio::SoundHandle *replaceBackground(uint16 id, uint16 volume = 0xFFFF);
+	void pauseBackground();
+	void resumeBackground();
+	void stopBackground();
+	void changeBackgroundVolume(uint16 vol);
 
 	// Riven-specific
 	void playSLST(uint16 index, uint16 card);
@@ -153,6 +156,7 @@ private:
 
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
+	Audio::AudioStream *makeAudioStream(uint16 id);
 
 	// Riven-specific
 	void playSLSTSound(uint16 index, bool fade, bool loop, uint16 volume, int16 balance);

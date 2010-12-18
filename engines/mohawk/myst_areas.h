@@ -112,8 +112,8 @@ public:
 protected:
 	static Common::String convertMystVideoName(Common::String name);
 	Common::String _videoFile;
-	uint16 _left;
-	uint16 _top;
+	int16 _left;
+	int16 _top;
 	uint16 _loop;
 	uint16 _direction; // 1 => forward, -1 => backwards
 	uint16 _playBlocking;

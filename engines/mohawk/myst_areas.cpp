@@ -171,13 +171,19 @@ MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableRead
 	_videoFile = convertMystVideoName(_videoFile);
 
 	// Position values require modulus 10000 to keep in sane range.
-	_left = rlstStream->readUint16LE() % 10000;
-	_top = rlstStream->readUint16LE() % 10000;
+	_left = rlstStream->readSint16LE() % 10000;
+	_top = rlstStream->readSint16LE() % 10000;
 	_playOnCardChange = rlstStream->readUint16LE();
 	_direction = rlstStream->readUint16LE();
 	_playBlocking = rlstStream->readUint16LE();
 	_loop = rlstStream->readUint16LE();
 	_u3 = rlstStream->readUint16LE();
+
+	// TODO: Out of bound values should clip the movie
+	if (_left < 0)
+		_left = 0;
+	if (_top < 0)
+		_top = 0;
 
 	if (_direction != 1)
 		warning("Type 6 _u0 != 1");
@@ -648,7 +654,7 @@ void MystResourceType10::updatePosition(const Common::Point &mouse) {
 	}
 
 	if (positionChanged && _dragSound) {
-		_vm->_sound->playSound(_dragSound);
+		_vm->_sound->replaceSound(_dragSound);
 	}
 }
 

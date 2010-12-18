@@ -453,6 +453,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 	// Clear the resource cache and the image cache
 	_cache.clear();
 	_gfx->clearCache();
+	_sound->stopBackground();
 }
 
 uint16 MohawkEngine_Myst::getCardBackgroundId() {
@@ -521,27 +522,17 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 		soundActionVolume = _view.soundVolume;
 	}
 
-	// NOTE: Mixer only has 8-bit channel volume granularity,
-	// Myst uses 16-bit? Or is part of this balance?
-	soundActionVolume = (byte)(soundActionVolume / 255);
-
 	if (soundAction == kMystSoundActionContinue)
 		debug(2, "Continuing with current sound");
 	else if (soundAction == kMystSoundActionChangeVolume) {
 		debug(2, "Continuing with current sound, changing volume");
-		// TODO: Implement Volume Control..
+		_sound->changeBackgroundVolume(soundActionVolume);
 	} else if (soundAction == kMystSoundActionStop) {
 		debug(2, "Stopping sound");
-		_sound->stopSound();
+		_sound->stopBackground();
 	} else if (soundAction > 0) {
 		debug(2, "Playing new sound %d", soundAction);
-		_sound->stopSound();
-		// TODO: Need to keep sound handle and add function to change volume of
-		// looped running sound for kMystSoundActionChangeVolume type
-
-		// NOTE: All sounds are looped when played via the sound section of the
-		// VIEW resources.
-		_sound->playSound(soundAction, soundActionVolume, true);
+		_sound->replaceBackground(soundAction, soundActionVolume);
 	} else {
 		error("Unknown sound action %d", soundAction);
 	}
