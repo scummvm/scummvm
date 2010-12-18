@@ -604,7 +604,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 		updateGraphicData(15);
 		_resourceId = _graphicResourceIds[(_direction > kDirectionS ? kDirection8 - _direction : _direction) + 15];
 
-		// TODO set word_446EE4 to -1. This global seems to be used with screen blitting
+		getScreen()->setFlag(-1);
 		break;
 
 	case kActorStatus7:
