@@ -1497,12 +1497,56 @@ int32 Scene::hitTestObject() {
 	return -1;
 }
 
-bool Scene::hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped) {
-	Common::Rect rect = GraphicResource::getFrameRect(_vm, resourceId, frame);
+bool Scene::hitTestPixel(ResourceId resourceId, int32 frameIndex, int16 x, int16 y, bool flipped) {
+	if (x < 0 || y < 0)
+		return false;
 
-	// TODO we need to test each pixel of the surface!
+	GraphicResource *resource = new GraphicResource(_vm, resourceId);
+	GraphicFrame *frame = resource->getFrame(frameIndex);
+	Common::Rect frameRect = frame->getRect();
 
-	return rect.contains(x, y);
+	// Check y coordinates
+	if (y < frameRect.top || y >= frameRect.bottom)
+		goto cleanup;
+
+	// Compute left/right x coordinates, using flipped value
+	int32 left, right;
+	if (flipped) {
+		if (getScreen()->getFlag() == -1) {
+			left = resource->getData().maxWidth - frameRect.right;
+			right = resource->getData().maxWidth - frameRect.left;
+		} else {
+			left = frameRect.left + 2 * (getScreen()->getFlag() - (frameRect.right / 2));
+			right = x;
+		}
+	} else {
+		left = frameRect.left;
+		right = frameRect.right;
+	}
+
+	// Check x coordinates
+	if (x < left || x >= right)
+		goto cleanup;
+
+	// Check pixel value
+	byte *pixel;
+	if (flipped) {
+		pixel = (byte *)frame->surface.getBasePtr(left - x + frame->getWidth() - 1, y - frame->y);
+	} else {
+		pixel = (byte *)frame->surface.getBasePtr(x - left, y - frame->y);
+	}
+
+	if (pixel == 0)
+		goto cleanup;
+
+	delete resource;
+
+	return true;
+
+cleanup:
+	delete resource;
+
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

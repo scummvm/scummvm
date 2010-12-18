@@ -85,7 +85,8 @@ public:
 	void drawWideScreenBars(int16 barSize) const;
 	void fillRect(int32 x, int32 y, int32 x2, int32 y2, int32 color);
 	void copyBackBufferToScreen();
-	void setFlag(int32 val) { _flag = (val < -1) ? -1 : val; }
+	void setFlag(int16 val) { _flag = (val < -1) ? -1 : val; }
+	int16 getFlag() { return _flag; }
 	void takeScreenshot();
 
 	// Palette
