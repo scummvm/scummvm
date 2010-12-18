@@ -579,7 +579,7 @@ void MystScriptParser_Selenitic::mazeRunnerPlaySoundHelp() {
 		soundId =  2191;
 
 	if (soundId)
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 
 	_mazeRunnerLight->drawConditionalDataToScreen(0);
 }
@@ -623,17 +623,17 @@ void MystScriptParser_Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uin
 		}
 
 		_soundReceiverPosition = &selenitic.soundReceiverPositions[source];
-		_vm->_sound->stopSound();
-		_vm->_sound->playSound(2287);
+		_vm->_sound->stopBackground();
+		_vm->_sound->replaceSound(2287);
 		soundReceiverDrawView();
 		uint16 soundId = soundReceiverCurrentSound(source, *_soundReceiverPosition);
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceBackground(soundId);
 		_vm->_system->delayMillis(1000);
 	}
 
 	_soundReceiverPosition = oldPosition;
 	_soundReceiverSigmaPressed = true;
-	_vm->_sound->stopSound();
+	_vm->_sound->stopBackground();
 
 	_soundReceiverSources[selenitic.soundReceiverCurrentSource]->drawConditionalDataToScreen(1);
 
@@ -738,7 +738,8 @@ void MystScriptParser_Selenitic::o_soundReceiverSource(uint16 op, uint16 var, ui
 		_vm->_sound->stopSound();
 
 		uint16 soundId = argv[0];
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->stopBackground();
+		_vm->_sound->replaceSound(soundId);
 
 		_soundReceiverCurrentSource->drawConditionalDataToScreen(1);
 
@@ -755,11 +756,11 @@ void MystScriptParser_Selenitic::o_mazeRunnerDoorButton(uint16 op, uint16 var, u
 
 	if (_mazeRunnerPosition == 288) {
 		_vm->changeToCard(cardIdEntry, false);
-		_vm->_sound->playSound(cardIdEntry);
+		_vm->_sound->replaceSound(cardIdEntry);
 		animatedUpdate(argv[2], &argv[3], 10);
 	} else if (_mazeRunnerPosition == 289) {
 		_vm->changeToCard(cardIdExit, false);
-		_vm->_sound->playSound(cardIdExit);
+		_vm->_sound->replaceSound(cardIdExit);
 		animatedUpdate(argv[2], &argv[3], 10);
 	}
 }
@@ -877,15 +878,14 @@ void MystScriptParser_Selenitic::o_soundLockEndMove(uint16 op, uint16 var, uint1
 
 	uint16 soundId = slider->getList3(0);
 	if (soundId)
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 
-	_vm->_sound->stopSound();
 	_vm->_sound->resumeBackground();
 }
 
 void MystScriptParser_Selenitic::soundLockCheckSolution(MystResourceType10 *slider, uint16 value, uint16 solution, bool &solved) {
 	slider->drawConditionalDataToScreen(2);
-	_vm->_sound->playSound(soundLockCurrentSound(value / 12, false));
+	_vm->_sound->replaceSound(soundLockCurrentSound(value / 12, false));
 	_vm->_system->delayMillis(1500);
 
 	if (value / 12 != solution) {
@@ -903,7 +903,7 @@ void MystScriptParser_Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16
 	bool solved = true;
 
 	_vm->_sound->pauseBackground();
-	_vm->_sound->playSound(1147);
+	_vm->_sound->replaceSound(1147);
 	_soundLockButton->drawConditionalDataToScreen(1);
 	_vm->_cursor->hideCursor();
 
@@ -913,7 +913,7 @@ void MystScriptParser_Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16
 	soundLockCheckSolution(_soundLockSlider4, selenitic.soundLockSliderPositions[3], 6, solved);
 	soundLockCheckSolution(_soundLockSlider5, selenitic.soundLockSliderPositions[4], 7, solved);
 
-	_vm->_sound->playSound(1148);
+	_vm->_sound->replaceSound(1148);
 	_vm->_sound->resumeBackground();
 
 	if (solved) {
@@ -925,7 +925,7 @@ void MystScriptParser_Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16
 		_vm->changeToCard(cardIdClosed, true);
 
 		_vm->changeToCard(cardIdOpen, false);
-		_vm->_sound->playSound(argv[2]);
+		_vm->_sound->replaceSound(argv[2]);
 
 		animatedUpdate(argv[4], &argv[5], argv[3]);
 	} else {

@@ -87,7 +87,7 @@ void MystScriptParser_Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, u
 	} else {
 		// Play Linking Sound, blocking...
 		_vm->_sound->stopSound();
-		Audio::SoundHandle *handle = _vm->_sound->playSound(soundIdLinkSrc);
+		Audio::SoundHandle *handle = _vm->_sound->replaceSound(soundIdLinkSrc);
 		while (_vm->_mixer->isSoundHandleActive(*handle))
 			_vm->_system->delayMillis(10);
 

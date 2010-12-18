@@ -85,7 +85,7 @@ void MystScriptParser_Channelwood::opcode_101(uint16 op, uint16 var, uint16 argc
 		uint16 soundId = argv[0];
 		debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 
 		// TODO: Get Movie Location from Invoking Resource Rect, rather than
 		//       hardcoded 267, 170 ?

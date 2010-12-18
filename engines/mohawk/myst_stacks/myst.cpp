@@ -657,9 +657,9 @@ void MystScriptParser_Myst::o_libraryBookPageTurnLeft(uint16 op, uint16 var, uin
 		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
 
 		if (_vm->_rnd->getRandomBit())
-			_vm->_sound->playSound(_libraryBookSound1);
+			_vm->_sound->replaceSound(_libraryBookSound1);
 		else
-			_vm->_sound->playSound(_libraryBookSound2);
+			_vm->_sound->replaceSound(_libraryBookSound2);
 
 		_vm->_system->updateScreen();
 	}
@@ -675,9 +675,9 @@ void MystScriptParser_Myst::o_libraryBookPageTurnRight(uint16 op, uint16 var, ui
 		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
 
 		if (_vm->_rnd->getRandomBit())
-			_vm->_sound->playSound(_libraryBookSound1);
+			_vm->_sound->replaceSound(_libraryBookSound1);
 		else
-			_vm->_sound->playSound(_libraryBookSound2);
+			_vm->_sound->replaceSound(_libraryBookSound2);
 
 		_vm->_system->updateScreen();
 	}
@@ -742,14 +742,14 @@ void MystScriptParser_Myst::opcode_105(uint16 op, uint16 var, uint16 argc, uint1
 		uint16 var10 = _vm->_varStore->getVar(10);
 
 		if (boxValue == 0x32 && var10 == 0) {
-			handle = _vm->_sound->playSound(soundId);
+			handle = _vm->_sound->replaceSound(soundId);
 
 			while (_vm->_mixer->isSoundHandleActive(*handle))
 				_vm->_system->delayMillis(10);
 
 			_vm->_varStore->setVar(10, 1);
 		} else if (boxValue != 0x32 && var10 == 1) {
-			handle = _vm->_sound->playSound(soundId);
+			handle = _vm->_sound->replaceSound(soundId);
 
 			while (_vm->_mixer->isSoundHandleActive(*handle))
 				_vm->_system->delayMillis(10);
@@ -845,7 +845,7 @@ void MystScriptParser_Myst::o_dockVaultOpen(uint16 op, uint16 var, uint16 argc, 
 		else
 			_dockVaultState = 1;
 
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 		_vm->redrawArea(41, false);
 		animatedUpdate(directionalUpdateDataSize, &argv[3], delay);
 	}
@@ -873,7 +873,7 @@ void MystScriptParser_Myst::o_dockVaultClose(uint16 op, uint16 var, uint16 argc,
 		if (_dockVaultState == 1 || _dockVaultState == 2)
 			_dockVaultState = 0;
 
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 		_vm->redrawArea(41, false);
 		animatedUpdate(directionalUpdateDataSize, &argv[3], delay);
 	}
@@ -980,7 +980,7 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 						&& myst.clockTowerMinutePosition == 40;
 
 	if (!myst.clockTowerBridgeOpen && correctTime) {
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 		_vm->_system->delayMillis(500);
 
 		// TODO: Play only 1st half of movie i.e. gears rise up, from 0 to 650
@@ -989,7 +989,7 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 		myst.clockTowerBridgeOpen = 1;
 		_vm->redrawArea(12);
 	} else if (myst.clockTowerBridgeOpen && !correctTime) {
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 		_vm->_system->delayMillis(500);
 
 		// TODO: Play only 2nd half of movie i.e. gears sink down, from 700 to 1300
@@ -1006,9 +1006,9 @@ void MystScriptParser_Myst::opcode_117(uint16 op, uint16 var, uint16 argc, uint1
 		uint16 varValue = _vm->_varStore->getVar(var);
 
 		if (varValue)
-			_vm->_sound->playSound(argv[1]);
+			_vm->_sound->replaceSound(argv[1]);
 		else
-			_vm->_sound->playSound(argv[0]);
+			_vm->_sound->replaceSound(argv[0]);
 
 		_vm->_varStore->setVar(var, !varValue);
 		// TODO: Change Var 45 "Dock Forechamber Imager Water Effect Enabled" here?
@@ -1036,7 +1036,7 @@ void MystScriptParser_Myst::opcode_118(uint16 op, uint16 var, uint16 argc, uint1
 		debugC(kDebugScript, "\tsoundIdBeepTune: %d", soundIdBeepTune);
 		debugC(kDebugScript, "\tsoundIdPanelSlam: %d", soundIdPanelSlam);
 
-		_vm->_sound->playSound(soundIdBeepLo);
+		_vm->_sound->replaceSound(soundIdBeepLo);
 
 		// TODO: Complete Logic...
 	} else
@@ -1082,14 +1082,16 @@ void MystScriptParser_Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint
 		myst.generatorVoltage -= value;
 
 		if (myst.generatorVoltage)
-			_vm->_sound->playSound(8297);
+			_vm->_sound->replaceSound(8297);
 		else
-			_vm->_sound->playSound(9297);
+			_vm->_sound->replaceSound(9297);
 	} else {
 		if (_generatorVoltage)
-			_vm->_sound->playSound(6297);
-		else
-			_vm->_sound->playSound(7297); //TODO: Replace with play sound and replace background 4297
+			_vm->_sound->replaceSound(6297);
+		else {
+			_vm->_sound->replaceSound(7297); //TODO: Replace with play sound and replace background 4297
+			_vm->_sound->replaceBackground(4297);
+		}
 
 		myst.generatorButtons |= mask;
 		myst.generatorVoltage += value;
@@ -1205,13 +1207,13 @@ void MystScriptParser_Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 
 		if (_tempVar == 0) {
 			uint16 soundId = handle->getList2(0);
 			if (soundId)
-				_vm->_sound->playSound(soundId);
+				_vm->_sound->replaceSound(soundId);
 		}
 		// Combination is right
 		if (myst.cabinSafeCombination == 724) {
 			uint16 soundId = handle->getList2(1);
 			if (soundId)
-				_vm->_sound->playSound(soundId);
+				_vm->_sound->replaceSound(soundId);
 
 			_vm->changeToCard(4103, false);
 
@@ -1265,7 +1267,7 @@ void MystScriptParser_Myst::opcode_133(uint16 op, uint16 var, uint16 argc, uint1
 		//       etc.
 
 		// TODO: Sound seems to be stuck looping?
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -1324,11 +1326,11 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 				if (myst.generatorVoltage > 59 || myst.generatorBreakers != 1) {
 					uint16 soundId = breaker->getList2(1);
 					if (soundId)
-						_vm->_sound->playSound(soundId);
+						_vm->_sound->replaceSound(soundId);
 				} else {
 					uint16 soundId = breaker->getList2(0);
 					if (soundId)
-						_vm->_sound->playSound(soundId);
+						_vm->_sound->replaceSound(soundId);
 
 					// Reset breaker state
 					myst.generatorBreakers = 0;
@@ -1338,11 +1340,11 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 				if (myst.generatorVoltage > 59 || myst.generatorBreakers != 2) {
 					uint16 soundId = breaker->getList2(1);
 					if (soundId)
-						_vm->_sound->playSound(soundId);
+						_vm->_sound->replaceSound(soundId);
 				} else {
 					uint16 soundId = breaker->getList2(0);
 					if (soundId)
-						_vm->_sound->playSound(soundId);
+						_vm->_sound->replaceSound(soundId);
 
 					// Reset breaker state
 					myst.generatorBreakers = 0;
@@ -1431,7 +1433,7 @@ void MystScriptParser_Myst::boilerPressureIncrease_run() {
 		}
 
 		// Pressure increasing sound
-		_vm->_sound->playSound(5098);
+		_vm->_sound->replaceSound(5098);
 
 		// Redraw wheel
 		_vm->redrawArea(99);
@@ -1452,7 +1454,7 @@ void MystScriptParser_Myst::boilerPressureDecrease_run() {
 		}
 
 		// Pressure increasing sound
-		_vm->_sound->playSound(5098);
+		_vm->_sound->replaceSound(5098);
 
 		// Redraw wheel
 		_vm->redrawArea(99);
@@ -1510,7 +1512,7 @@ void MystScriptParser_Myst::basementPressureIncrease_run() {
 		myst.cabinValvePosition++;
 
 		// Pressure increasing sound
-		_vm->_sound->playSound(4642);
+		_vm->_sound->replaceSound(4642);
 
 		// Redraw wheel
 		_vm->redrawArea(99);
@@ -1525,7 +1527,7 @@ void MystScriptParser_Myst::basementPressureDecrease_run() {
 		myst.cabinValvePosition--;
 
 		// Pressure decreasing sound
-		_vm->_sound->playSound(4642);
+		_vm->_sound->replaceSound(4642);
 
 		// Redraw wheel
 		_vm->redrawArea(99);
@@ -1572,17 +1574,18 @@ void MystScriptParser_Myst::tree_run() {
 				// Tree movement
 				if (goingDown) {
 					myst.treePosition--;
-					_vm->_sound->playSound(2);
+					_vm->_sound->replaceSound(2);
 				} else {
 					myst.treePosition++;
-					_vm->_sound->playSound(1);
+					_vm->_sound->replaceSound(1);
 				}
 
 				// Stop background music if going up from book room
-				if (_vm->getCurCard() == 4630 && myst.treePosition > 0) {
-					_vm->_sound->stopBackground();
-				} else {
-					_vm->_sound->replaceBackground(4630, 24576);
+				if (_vm->getCurCard() == 4630) {
+					if (myst.treePosition > 0)
+						_vm->_sound->stopBackground();
+					else
+						_vm->_sound->replaceBackground(4630, 24576);
 				}
 
 				// Redraw tree
@@ -1863,7 +1866,7 @@ void MystScriptParser_Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc
 	if (step == maxStep && step != _rocketLeverPosition) {
 		uint16 soundId = lever->getList2(0);
 		if (soundId)
-			_vm->_sound->playSound(soundId);
+			_vm->_sound->replaceSound(soundId);
 
 		// If rocket correctly powered
 		if (myst.generatorVoltage == 59 && !myst.generatorBreakers) {
@@ -1975,7 +1978,7 @@ void MystScriptParser_Myst::o_libraryCombinationBookStop(uint16 op, uint16 var, 
 
 void MystScriptParser_Myst::o_cabinMatchLight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (!_cabinMatchState) {
-		_vm->_sound->playSound(4103);
+		_vm->_sound->replaceSound(4103);
 
 		// Match is lit
 		_cabinMatchState = 1;
@@ -2073,7 +2076,7 @@ void MystScriptParser_Myst::clockWheelStartTurn(uint16 wheel) {
 	MystResourceType11 *resource = static_cast<MystResourceType11 *>(_invokingResource);
 	uint16 soundId = resource->getList1(0);
 	if (soundId)
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 
 	// Turn wheel one step
 	if (wheel == 1) {
@@ -2136,9 +2139,9 @@ void MystScriptParser_Myst::libraryCombinationBookTurnLeft() {
 		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
 
 		if (_vm->_rnd->getRandomBit())
-			_vm->_sound->playSound(_libraryBookSound1);
+			_vm->_sound->replaceSound(_libraryBookSound1);
 		else
-			_vm->_sound->playSound(_libraryBookSound2);
+			_vm->_sound->replaceSound(_libraryBookSound2);
 
 		_vm->_system->updateScreen();
 	}
@@ -2162,9 +2165,9 @@ void MystScriptParser_Myst::libraryCombinationBookTurnRight() {
 		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
 
 		if (_vm->_rnd->getRandomBit())
-			_vm->_sound->playSound(_libraryBookSound1);
+			_vm->_sound->replaceSound(_libraryBookSound1);
 		else
-			_vm->_sound->playSound(_libraryBookSound2);
+			_vm->_sound->replaceSound(_libraryBookSound2);
 
 		_vm->_system->updateScreen();
 	}
@@ -2222,12 +2225,12 @@ void MystScriptParser_Myst::o_dockVaultForceClose(uint16 op, uint16 var, uint16 
 	if (_dockVaultState) {
 		// Open switch
 		myst.dockMarkerSwitch = 1;
-		_vm->_sound->playSound(4143);
+		_vm->_sound->replaceSound(4143);
 		_vm->redrawArea(4);
 
 		// Close vault
 		_dockVaultState = 0;
-		_vm->_sound->playSound(soundId);
+		_vm->_sound->replaceSound(soundId);
 		_vm->redrawArea(41, false);
 		animatedUpdate(directionalUpdateDataSize, &argv[3], delay);
 	}
@@ -2289,7 +2292,7 @@ void MystScriptParser_Myst::opcode_201_run() {
 		uint16 var105 = _vm->_varStore->getVar(105);
 
 		if (var105 && !g_opcode201Parameters.lastVar105)
-			_vm->_sound->playSound(g_opcode201Parameters.soundId);
+			_vm->_sound->replaceSound(g_opcode201Parameters.soundId);
 
 		g_opcode201Parameters.lastVar105 = var105;
 	}
@@ -2316,7 +2319,7 @@ void MystScriptParser_Myst::opcode_201(uint16 op, uint16 var, uint16 argc, uint1
 void MystScriptParser_Myst::towerRotationMap_run() {
 	if (!_towerRotationMapInitialized) {
 		_towerRotationMapInitialized = true;
-		_vm->_sound->playSound(4378);
+		_vm->_sound->replaceSound(4378);
 
 		towerRotationDrawBuildings();
 
@@ -2529,7 +2532,7 @@ void MystScriptParser_Myst::libraryBookcaseTransform_run(void) {
 		_libraryBookcaseMoving = false;
 
 		// Play transform sound and video
-		_vm->_sound->playSound(_libraryBookcaseSoundId);
+		_vm->_sound->replaceSound(_libraryBookcaseSoundId);
 		_libraryBookcaseMovie->playMovie();
 	}
 }
