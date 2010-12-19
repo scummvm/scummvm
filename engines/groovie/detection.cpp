@@ -71,6 +71,28 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT7G, 0
 	},
 
+	// The 7th Guest Mac English (Aztec single disc)
+	{
+		{
+			"t7g", "",
+			AD_ENTRY1s("T7GMac", "6bdee8d0f9eef6d58d02fcd7deec3fb2", 1830783),
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM
+		},
+		kGroovieT7G, 0
+	},
+
+	// The 7th Guest Mac English (Aztec bundle, provided by Thefinaleofseem)
+	{
+		{
+			"t7g", "",
+			AD_ENTRY1s("T7GMac", "0d595d4b44ae1814082938d051e5174e", 1830783),
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM
+		},
+		kGroovieT7G, 0
+	},
+
 	// The 7th Guest DOS Russian (Akella)
 	{
 		{
