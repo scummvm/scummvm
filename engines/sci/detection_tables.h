@@ -2857,6 +2857,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Quest for Glory 3 - English DOS (supplied by dknute in bug report #3125559)
+	{"qfg3", "", {
+		{"resource.map", 0, "19e2bf9b693932b5e2bb59b9f9ab86c9", 5958},
+		{"resource.000", 0, "6178ad2e83e58e4671ca03315f7a6498", 5868042},
+		{"resource.msg", 0, "27e5419c98ce444253f88c95dced14a9", 246888},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Quest for Glory 3 - German DOS (supplied by markcoolio in bug report #2723846)
 	// Executable scanning reports "L.rry.083"
 	{"qfg3", "", {
