@@ -79,6 +79,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_curCard = 0;
 	_needsUpdate = false;
 	_curResource = -1;
+	_hoverResource = 0;
 	_dragResource = 0;
 
 	_gfx = NULL;
@@ -550,6 +551,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 
 	// Make sure we have the right cursor showing
 	_dragResource = 0;
+	_hoverResource = 0;
 	_curResource = -1;
 	checkCurrentResource();
 
@@ -576,29 +578,30 @@ void MohawkEngine_Myst::drawResourceRects() {
 void MohawkEngine_Myst::checkCurrentResource() {
 	// See what resource we're over
 	bool foundResource = false;
-	int16 oldResource = _curResource;
+	const Common::Point &mouse = _system->getEventManager()->getMousePos();
+
+	// Tell previous resource the mouse is no longer hovering it
+	if (_hoverResource && !_hoverResource->contains(mouse)) {
+		_hoverResource->handleMouseLeave();
+		_hoverResource = 0;
+	}
 
 	for (uint16 i = 0; i < _resources.size(); i++)
-		if (_resources[i]->canBecomeActive() &&
-				_resources[i]->contains(_system->getEventManager()->getMousePos())) {
-			if (oldResource != i) {
-				if (_resources[i]->type == kMystHoverArea)
-					_resources[i]->handleMouseEnter();
+		if (_resources[i]->contains(mouse)) {
+			if (_hoverResource != _resources[i] && _resources[i]->type == kMystHoverArea) {
+				_hoverResource = static_cast<MystResourceType13 *>(_resources[i]);
+				_hoverResource->handleMouseEnter();
 			}
 
-			_curResource = i;
-			foundResource = true;
-			break;
+			if (!foundResource && _resources[i]->canBecomeActive()) {
+				_curResource = i;
+				foundResource = true;
+			}
 		}
 
 	// Set the resource to none if we're not over any
 	if (!foundResource)
 		_curResource = -1;
-
-	// Tell previous resource the mouse is no longer hovering it
-	if (oldResource != -1 && _curResource != oldResource
-			&& _resources[oldResource]->type == kMystHoverArea)
-		_resources[oldResource]->handleMouseLeave();
 
 	checkCursorHints();
 }

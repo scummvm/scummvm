@@ -41,6 +41,8 @@ namespace Mohawk {
 // NOTE: Credits Start Card is 10000
 
 MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
 	setupOpcodes();
 
 	// Card ID preinitialized by the engine for use by opcode 18
@@ -55,7 +57,7 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScript
 	_treeAlcove = 0;
 	_treeStopped = false;
 	_treeMinPosition = 0;
-	_treeLastMoveTime = _vm->_system->getMillis();
+	myst.treeLastMoveTime = _vm->_system->getMillis();
 }
 
 MystScriptParser_Myst::~MystScriptParser_Myst() {
@@ -70,7 +72,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(102, o_libraryBookPageTurnRight);
 	OPCODE(103, o_fireplaceToggleButton);
 	OPCODE(104, o_fireplaceRotation);
-	OPCODE(105, opcode_105);
+	OPCODE(105, o_courtyardBoxesCheckSolution);
 	OPCODE(106, o_towerRotationStart);
 	OPCODE(107, NOP);
 	OPCODE(108, o_towerRotationEnd);
@@ -135,8 +137,8 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(180, o_libraryCombinationBookStop);
 	OPCODE(181, NOP);
 	OPCODE(182, o_cabinMatchLight);
-	OPCODE(183, opcode_183);
-	OPCODE(184, opcode_184);
+	OPCODE(183, o_courtyardBoxEnter);
+	OPCODE(184, o_courtyardBoxLeave);
 	OPCODE(185, NOP);
 	OPCODE(186, o_clockMinuteWheelStartTurn);
 	OPCODE(187, NOP);
@@ -154,11 +156,11 @@ void MystScriptParser_Myst::setupOpcodes() {
 
 	// "Init" Opcodes
 	OPCODE(200, o_libraryBook_init);
-	OPCODE(201, opcode_201);
+	OPCODE(201, o_courtyardBox_init);
 	OPCODE(202, o_towerRotationMap_init);
 	OPCODE(203, o_forechamberDoor_init);
-	OPCODE(204, opcode_204);
-	OPCODE(205, opcode_205);
+	OPCODE(204, o_shipAccess_init);
+	OPCODE(205, NOP);
 	OPCODE(206, opcode_206);
 	OPCODE(208, opcode_208);
 	OPCODE(209, o_libraryBookcaseTransform_init);
@@ -193,9 +195,6 @@ void MystScriptParser_Myst::setupOpcodes() {
 #undef OPCODE
 
 void MystScriptParser_Myst::disablePersistentScripts() {
-	opcode_201_disable();
-	opcode_205_disable();
-
 	_libraryBookcaseMoving = false;
 	_generatorControlRoomRunning = false;
 	_libraryCombinationBookPagesTurning = false;
@@ -210,8 +209,6 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 }
 
 void MystScriptParser_Myst::runPersistentScripts() {
-	opcode_201_run();
-	opcode_205_run();
 	opcode_212_run();
 
 	if (_towerRotationMapRunning)
@@ -279,8 +276,8 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		return myst.observatoryMarkerSwitch;
 	case 9: // Marker Switch Near Rocket Ship
 		return myst.rocketshipMarkerSwitch;
-	case 10: // Ship State
-		return myst.shipState;
+	case 10: // Ship Floating State
+		return myst.shipFloating;
 	case 11: // Cabin Door Open State
 		return _cabinDoorOpened;
 	case 12: // Clock tower gears bridge
@@ -313,7 +310,7 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			else
 				return 2;
 		case 129:
-			if (myst.shipState)
+			if (myst.shipFloating)
 				return 5;
 			else
 				return 3;
@@ -372,6 +369,13 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 	//	return 0;
 	//	return 1;
 	//	return 2;
+	case 35: // Dock Forechamber Imager Control Left Digit
+		if (myst.imagerSelection > 9)
+			return myst.imagerSelection / 10 - 1;
+		else
+			return 9;
+	case 36: // Dock Forechamber Imager Control Right Digit
+		return (myst.imagerSelection - 1) % 10;
 	case 37: // Clock Tower Control Wheels Position
 		return 3 * ((myst.clockTowerMinutePosition / 5) % 3) + myst.clockTowerHourPosition % 3;
 	case 40: // Gears Open State
@@ -388,16 +392,16 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		else
 			return 2;
 	case 45: // Dock Vault Imager Active On Water
-		return myst.imagerActive && myst.imagerSelection == 67;
+		return myst.imagerActive && myst.imagerSelection == 67 && !myst.imagerWaterErased;
 	case 46:
 		return bookCountPages(100);
 	case 47:
 		return bookCountPages(101);
 	case 48:
-		if (myst.shipState)
-			return 2;
-		else if (myst.dockMarkerSwitch)
+		if (myst.dockMarkerSwitch && !myst.shipFloating)
 			return 1;
+		else if (!myst.dockMarkerSwitch && myst.shipFloating)
+			return 2;
 		else
 			return 0;
 	case 49: // Generator running
@@ -562,6 +566,21 @@ void MystScriptParser_Myst::toggleVar(uint16 var) {
 			}
 		}
 		break;
+	case 26: // Courtyard Image Box - Cross
+	case 27: // Courtyard Image Box - Leaf
+	case 28: // Courtyard Image Box - Arrow
+	case 29: // Courtyard Image Box - Eye
+	case 30: // Courtyard Image Box - Snake
+	case 31: // Courtyard Image Box - Spider
+	case 32: // Courtyard Image Box - Anchor
+	case 33: // Courtyard Image Box - Ostrich
+		{
+			uint16 mask = 0x01 << (var - 26);
+			if (myst.courtyardImageBoxes & mask)
+				myst.courtyardImageBoxes &= ~mask;
+			else
+				myst.courtyardImageBoxes |= mask;
+		}
 	case 41: // Vault white page
 		if (globals.ending != 4) {
 			if (_dockVaultState == 1) {
@@ -755,40 +774,25 @@ void MystScriptParser_Myst::o_fireplaceRotation(uint16 op, uint16 var, uint16 ar
 		_vm->_video->playMovie(_vm->wrapMovieFilename("fpin", kMystStack), 167, 4);
 }
 
-void MystScriptParser_Myst::opcode_105(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 1) {
-		varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_courtyardBoxesCheckSolution(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	uint16 soundId = argv[0];
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
-		uint16 soundId = argv[0];
-		uint16 boxValue = 0;
-		Audio::SoundHandle *handle;
+	debugC(kDebugScript, "Opcode %d: Ship Puzzle Logic", op);
+	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-		debugC(kDebugScript, "Opcode %d: Ship Puzzle Logic", op);
-		debugC(kDebugScript, "\tsoundId: %d", soundId);
-
-		// Logic for Myst Ship Box Puzzle Solution
-		for (byte i = 0; i < 8; i++)
-			boxValue |= _vm->_varStore->getVar(i + 26) ? (1 << i) : 0;
-
-		uint16 var10 = _vm->_varStore->getVar(10);
-
-		if (boxValue == 0x32 && var10 == 0) {
-			handle = _vm->_sound->replaceSound(soundId);
-
-			while (_vm->_mixer->isSoundHandleActive(*handle))
-				_vm->_system->delayMillis(10);
-
-			_vm->_varStore->setVar(10, 1);
-		} else if (boxValue != 0x32 && var10 == 1) {
-			handle = _vm->_sound->replaceSound(soundId);
-
-			while (_vm->_mixer->isSoundHandleActive(*handle))
-				_vm->_system->delayMillis(10);
-
-			_vm->_varStore->setVar(10, 0);
-		}
-	} else
-		unknown(op, var, argc, argv);
+	// Change ship state if the boxes are correctly enabled
+	if (myst.courtyardImageBoxes == 50 && !myst.shipFloating) {
+		_vm->_cursor->hideCursor();
+		myst.shipFloating = 1;
+		_vm->_sound->playSoundBlocking(soundId);
+		_vm->_cursor->showCursor();
+	} else if (myst.courtyardImageBoxes != 50 && myst.shipFloating) {
+		_vm->_cursor->hideCursor();
+		myst.shipFloating = 0;
+		_vm->_sound->playSoundBlocking(soundId);
+		_vm->_cursor->showCursor();
+	}
 }
 
 void MystScriptParser_Myst::o_towerRotationStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -839,16 +843,27 @@ void MystScriptParser_Myst::o_towerRotationEnd(uint16 op, uint16 var, uint16 arg
 }
 
 void MystScriptParser_Myst::opcode_109(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 1) {
-		int16 signedValue = argv[0];
+	debugC(kDebugScript, "Opcode %d: Dock imager change selection", op);
 
-		debugC(kDebugScript, "Opcode %d: Add Signed Value to Var", op);
-		debugC(kDebugScript, "\tVar: %d", var);
-		debugC(kDebugScript, "\tsignedValue: %d", signedValue);
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
-		_vm->_varStore->setVar(var, _vm->_varStore->getVar(var) + signedValue);
-	} else
-		unknown(op, var, argc, argv);
+	int16 signedValue = argv[0];
+	uint16 d1 = (myst.imagerSelection / 10) % 10;
+	uint16 d2 = myst.imagerSelection % 10;
+
+	if (var == 35 && signedValue > 0 && d1 < 9)
+		d1++;
+	else if (var == 35 && signedValue < 0 && d1 > 0)
+		d1--;
+	else if (var == 36 && signedValue > 0 && d2 < 9)
+		d2++;
+	else if (var == 36 && signedValue < 0 && d2 > 0)
+		d2--;
+
+	myst.imagerSelection = 10 * d1 + d2;
+	myst.imagerActive = 0;
+
+	_vm->redrawArea(var);
 }
 
 void MystScriptParser_Myst::o_dockVaultOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1420,7 +1435,7 @@ void MystScriptParser_Myst::o_boilerLightPilot(uint16 op, uint16 var, uint16 arg
 			_vm->_sound->replaceBackground(8098, 49152);
 
 		if (myst.cabinValvePosition > 12)
-			_treeLastMoveTime = _vm->_system->getMillis();
+			myst.treeLastMoveTime = _vm->_system->getMillis();
 
 		// TODO: Complete. Play movies
 	}
@@ -1432,7 +1447,7 @@ void MystScriptParser_Myst::o_boilerIncreasePressureStop(uint16 op, uint16 var, 
 
 	_treeStopped = false;
 	_boilerPressureIncreasing = false;
-	_treeLastMoveTime = _vm->_system->getMillis();
+	myst.treeLastMoveTime = _vm->_system->getMillis();
 
 	if (myst.cabinPilotLightLit == 1) {
 		if (myst.cabinValvePosition > 0)
@@ -1507,7 +1522,7 @@ void MystScriptParser_Myst::o_boilerDecreasePressureStop(uint16 op, uint16 var, 
 
 	_treeStopped = false;
 	_boilerPressureDecreasing = false;
-	_treeLastMoveTime = _vm->_system->getMillis();
+	myst.treeLastMoveTime = _vm->_system->getMillis();
 
 	if (myst.cabinPilotLightLit == 1) {
 		if (myst.cabinValvePosition > 0)
@@ -1530,9 +1545,11 @@ void MystScriptParser_Myst::o_basementIncreasePressureStart(uint16 op, uint16 va
 void MystScriptParser_Myst::o_basementIncreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Basement increase pressure stop", op);
 
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
 	_treeStopped = false;
 	_basementPressureIncreasing = false;
-	_treeLastMoveTime = _vm->_system->getMillis();
+	myst.treeLastMoveTime = _vm->_system->getMillis();
 }
 
 void MystScriptParser_Myst::basementPressureIncrease_run() {
@@ -1575,9 +1592,11 @@ void MystScriptParser_Myst::o_basementDecreasePressureStart(uint16 op, uint16 va
 void MystScriptParser_Myst::o_basementDecreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Basement decrease pressure stop", op);
 
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
 	_treeStopped = false;
 	_basementPressureDecreasing = false;
-	_treeLastMoveTime = _vm->_system->getMillis();
+	myst.treeLastMoveTime = _vm->_system->getMillis();
 }
 
 void MystScriptParser_Myst::tree_run() {
@@ -1600,7 +1619,7 @@ void MystScriptParser_Myst::tree_run() {
 				|| (myst.treePosition > _treeMinPosition && goingDown)) {
 			uint16 delay = treeNextMoveDelay(pressure);
 			uint32 time = _vm->_system->getMillis();
-			if (delay < time - _treeLastMoveTime) {
+			if (delay < time - myst.treeLastMoveTime) {
 
 				// Tree movement
 				if (goingDown) {
@@ -1625,7 +1644,7 @@ void MystScriptParser_Myst::tree_run() {
 				// Check if alcove is accessible
 				treeSetAlcoveAccessible();
 
-				_treeLastMoveTime = time;
+				myst.treeLastMoveTime = time;
 			}
 		}
 	}
@@ -1945,7 +1964,7 @@ void MystScriptParser_Myst::o_treePressureReleaseStart(uint16 op, uint16 var, ui
 	if (myst.treePosition >= 4) {
 		myst.cabinValvePosition = 0;
 		_treeMinPosition = 4;
-		_treeLastMoveTime = 0;
+		myst.treeLastMoveTime = 0;
 	}
 }
 
@@ -2046,24 +2065,17 @@ void MystScriptParser_Myst::matchBurn_run() {
 	}
 }
 
-void MystScriptParser_Myst::opcode_183(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	if (argc == 0) {
-		// Used for Myst Cards 4257, 4260, 4263, 4266, 4269, 4272, 4275 and 4278 (Ship Puzzle Boxes)
-		_vm->_varStore->setVar(105, 1);
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Myst::o_courtyardBoxEnter(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Mouse enters courtyard box", op);
+	_tempVar = 1;
+	_vm->_sound->playSound(_courtyardBoxSound);
+	_vm->redrawArea(var);
 }
 
-void MystScriptParser_Myst::opcode_184(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	if (argc == 0) {
-		// Used for Myst Cards 4257, 4260, 4263, 4266, 4269, 4272, 4275 and 4278 (Ship Puzzle Boxes)
-		_vm->_varStore->setVar(105, 0);
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Myst::o_courtyardBoxLeave(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Mouse leaves courtyard box", op);
+	_tempVar = 0;
+	_vm->redrawArea(var);
 }
 
 void MystScriptParser_Myst::o_clockMinuteWheelStartTurn(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -2311,40 +2323,10 @@ void MystScriptParser_Myst::o_libraryBook_init(uint16 op, uint16 var, uint16 arg
 	_libraryBookSound2 = argv[3];
 }
 
-static struct {
-	uint16 lastVar105;
-	uint16 soundId;
+void MystScriptParser_Myst::o_courtyardBox_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Courtyard box init", op);
 
-	bool enabled;
-} g_opcode201Parameters;
-
-void MystScriptParser_Myst::opcode_201_run() {
-	if (g_opcode201Parameters.enabled) {
-		uint16 var105 = _vm->_varStore->getVar(105);
-
-		if (var105 && !g_opcode201Parameters.lastVar105)
-			_vm->_sound->replaceSound(g_opcode201Parameters.soundId);
-
-		g_opcode201Parameters.lastVar105 = var105;
-	}
-}
-
-void MystScriptParser_Myst::opcode_201_disable() {
-	g_opcode201Parameters.enabled = false;
-	g_opcode201Parameters.soundId = 0;
-	g_opcode201Parameters.lastVar105 = 0;
-}
-
-void MystScriptParser_Myst::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Cards 4257, 4260, 4263, 4266, 4269, 4272, 4275 and 4278 (Ship Puzzle Boxes)
-	if (argc == 1) {
-		g_opcode201Parameters.soundId = argv[0];
-		g_opcode201Parameters.lastVar105 = 0;
-		g_opcode201Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
+	_courtyardBoxSound = argv[0];
 }
 
 void MystScriptParser_Myst::towerRotationMap_run() {
@@ -2505,36 +2487,13 @@ void MystScriptParser_Myst::o_forechamberDoor_init(uint16 op, uint16 var, uint16
 	_tempVar = 0;
 }
 
-void MystScriptParser_Myst::opcode_204(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_shipAccess_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
-	// Used for Card 4134 and 4149 (Dock)
-}
-
-static struct {
-	bool enabled;
-} g_opcode205Parameters;
-
-void MystScriptParser_Myst::opcode_205_run(void) {
-	if (g_opcode205Parameters.enabled) {
-		// Used for Card 4532 (Rocketship Piano)
-		// TODO: Fill in function...
+	// Enable acces to the ship
+	if (myst.shipFloating) {
+		_invokingResource->setEnabled(true);
 	}
-}
-
-void MystScriptParser_Myst::opcode_205_disable(void) {
-	g_opcode205Parameters.enabled = false;
-}
-
-void MystScriptParser_Myst::opcode_205(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 4532 (Rocketship Piano)
-
-	if (argc == 0)
-		g_opcode205Parameters.enabled = true;
-	else
-		unknown(op, var, argc, argv);
 }
 
 void MystScriptParser_Myst::opcode_206(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

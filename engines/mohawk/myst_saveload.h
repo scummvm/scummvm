@@ -127,7 +127,7 @@ struct MystVariables {
 		uint32 observatoryMarkerSwitch;
 		uint32 rocketshipMarkerSwitch;
 		uint16 greenBookOpenedBefore;
-		uint16 shipState;
+		uint16 shipFloating;
 		uint16 cabinValvePosition;
 		uint16 clockTowerHourPosition;
 		uint16 clockTowerMinutePosition;
@@ -139,10 +139,10 @@ struct MystVariables {
 		uint16 libraryBookcaseDoor;
 		uint16 imagerSelection;
 		uint16 imagerActive;
-		uint16 u0;
-		uint16 u1;
-		uint16 u2;
-		uint16 u3;
+		uint16 imagerWaterErased;
+		uint16 imagerMountainErased;
+		uint16 imagerAtrusErased;
+		uint16 imagerMarkerErased;
 		uint16 towerRotationAngle;
 		uint16 courtyardImageBoxes;
 		uint16 cabinPilotLightLit;
@@ -157,8 +157,7 @@ struct MystVariables {
 		uint16 observatoryYearTarget;
 		uint16 cabinSafeCombination;
 		uint16 treePosition;
-		uint16 u4;
-		uint16 u5;
+		uint32 treeLastMoveTime;
 		uint16 rocketSliderPosition[5];
 		uint16 u6;
 		uint16 u7;

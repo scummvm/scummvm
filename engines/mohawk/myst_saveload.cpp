@@ -156,7 +156,7 @@ void MystSaveLoad::syncGameState(Common::Serializer &s, bool isME) {
 	}
 
 	s.syncAsUint16LE(_v->myst.greenBookOpenedBefore);
-	s.syncAsUint16LE(_v->myst.shipState);
+	s.syncAsUint16LE(_v->myst.shipFloating);
 	s.syncAsUint16LE(_v->myst.cabinValvePosition);
 	s.syncAsUint16LE(_v->myst.clockTowerHourPosition);
 	s.syncAsUint16LE(_v->myst.clockTowerMinutePosition);
@@ -168,10 +168,10 @@ void MystSaveLoad::syncGameState(Common::Serializer &s, bool isME) {
 	s.syncAsUint16LE(_v->myst.libraryBookcaseDoor);
 	s.syncAsUint16LE(_v->myst.imagerSelection);
 	s.syncAsUint16LE(_v->myst.imagerActive);
-	s.syncAsUint16LE(_v->myst.u0);
-	s.syncAsUint16LE(_v->myst.u1);
-	s.syncAsUint16LE(_v->myst.u2);
-	s.syncAsUint16LE(_v->myst.u3);
+	s.syncAsUint16LE(_v->myst.imagerWaterErased);
+	s.syncAsUint16LE(_v->myst.imagerMountainErased);
+	s.syncAsUint16LE(_v->myst.imagerAtrusErased);
+	s.syncAsUint16LE(_v->myst.imagerMarkerErased);
 	s.syncAsUint16LE(_v->myst.towerRotationAngle);
 	s.syncAsUint16LE(_v->myst.courtyardImageBoxes);
 	s.syncAsUint16LE(_v->myst.cabinPilotLightLit);
@@ -186,8 +186,7 @@ void MystSaveLoad::syncGameState(Common::Serializer &s, bool isME) {
 	s.syncAsUint16LE(_v->myst.observatoryYearTarget);
 	s.syncAsUint16LE(_v->myst.cabinSafeCombination);
 	s.syncAsUint16LE(_v->myst.treePosition);
-	s.syncAsUint16LE(_v->myst.u4);
-	s.syncAsUint16LE(_v->myst.u5);
+	s.syncAsUint32LE(_v->myst.treeLastMoveTime);
 
 	for (int i = 0; i < 5; i++)
 		s.syncAsUint16LE(_v->myst.rocketSliderPosition[i]);

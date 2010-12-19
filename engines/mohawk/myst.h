@@ -47,6 +47,7 @@ class MystSaveLoad;
 class MystOptionsDialog;
 class MystResource;
 class MystResourceType8;
+class MystResourceType13;
 
 // Engine Debug Flags
 enum {
@@ -222,6 +223,7 @@ private:
 	void drawResourceRects();
 	void checkCurrentResource();
 	int16 _curResource;
+	MystResourceType13 *_hoverResource;
 
 	uint16 _cursorHintCount;
 	MystCursorHint *_cursorHints;

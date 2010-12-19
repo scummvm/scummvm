@@ -82,8 +82,6 @@ public:
 	virtual void handleMouseUp(const Common::Point &mouse);
 	virtual void handleMouseDown(const Common::Point &mouse) {}
 	virtual void handleMouseDrag(const Common::Point &mouse) {}
-	virtual void handleMouseEnter() {}
-	virtual void handleMouseLeave() {}
 
 protected:
 	MohawkEngine_Myst *_vm;
@@ -134,8 +132,6 @@ public:
 
 	virtual void handleMouseUp(const Common::Point &mouse);
 	virtual void handleMouseDown(const Common::Point &mouse);
-	virtual void handleMouseEnter();
-	virtual void handleMouseLeave();
 
 	MystResource *getSubResource(uint16 index) { return _subResources[index]; }
 protected:

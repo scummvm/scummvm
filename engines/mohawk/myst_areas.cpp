@@ -76,7 +76,7 @@ void MystResource::handleMouseUp(const Common::Point &mouse) {
 }
 
 bool MystResource::canBecomeActive() {
-	return !unreachableZipDest() && (isEnabled() || (_flags & kMystUnknownFlag) || type == kMystHoverArea);
+	return !unreachableZipDest() && (isEnabled() || (_flags & kMystUnknownFlag));
 }
 
 bool MystResource::unreachableZipDest() {
@@ -313,46 +313,6 @@ void MystResourceType7::handleMouseDown(const Common::Point &mouse) {
 		else if (_numSubResources != 0) {
 			if (varValue < _numSubResources)
 				_subResources[varValue]->handleMouseDown(mouse);
-			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
-		}
-	}
-}
-
-void MystResourceType7::handleMouseEnter() {
-	if (_var7 == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->handleMouseEnter();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_var7);
-
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleMouseEnter();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->handleMouseEnter();
-			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
-		}
-	}
-}
-
-void MystResourceType7::handleMouseLeave() {
-	if (_var7 == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->handleMouseLeave();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_var7);
-
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleMouseLeave();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->handleMouseLeave();
 			else
 				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
 		}
@@ -814,13 +774,15 @@ MystResourceType13::MystResourceType13(MohawkEngine_Myst *vm, Common::SeekableRe
 }
 
 void MystResourceType13::handleMouseEnter() {
-	// Pass along the enter opcode (with no parameters) to the script parser
-	_vm->_scriptParser->runOpcode(_enterOpcode);
+	// Pass along the enter opcode to the script parser
+	// The variable to use is stored in the dest field
+	_vm->_scriptParser->runOpcode(_enterOpcode, _dest);
 }
 
 void MystResourceType13::handleMouseLeave() {
 	// Pass along the leave opcode (with no parameters) to the script parser
-	_vm->_scriptParser->runOpcode(_leaveOpcode);
+	// The variable to use is stored in the dest field
+	_vm->_scriptParser->runOpcode(_leaveOpcode, _dest);
 }
 
 void MystResourceType13::handleMouseUp(const Common::Point &mouse) {

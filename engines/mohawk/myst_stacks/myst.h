@@ -51,11 +51,7 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
-	void opcode_201_run();
-	void opcode_201_disable();
 	void towerRotationMap_run();
-	void opcode_205_run();
-	void opcode_205_disable();
 	void libraryBookcaseTransform_run();
 	void generatorControlRoom_run();
 	void opcode_212_run();
@@ -73,7 +69,7 @@ private:
 	DECLARE_OPCODE(o_libraryBookPageTurnRight);
 	DECLARE_OPCODE(o_fireplaceToggleButton);
 	DECLARE_OPCODE(o_fireplaceRotation);
-	DECLARE_OPCODE(opcode_105);
+	DECLARE_OPCODE(o_courtyardBoxesCheckSolution);
 	DECLARE_OPCODE(o_towerRotationStart);
 	DECLARE_OPCODE(o_towerRotationEnd);
 	DECLARE_OPCODE(opcode_109);
@@ -133,8 +129,8 @@ private:
 	DECLARE_OPCODE(opcode_177);
 	DECLARE_OPCODE(o_libraryCombinationBookStop);
 	DECLARE_OPCODE(o_cabinMatchLight);
-	DECLARE_OPCODE(opcode_183);
-	DECLARE_OPCODE(opcode_184);
+	DECLARE_OPCODE(o_courtyardBoxEnter);
+	DECLARE_OPCODE(o_courtyardBoxLeave);
 	DECLARE_OPCODE(o_clockMinuteWheelStartTurn);
 	DECLARE_OPCODE(o_clockWheelEndTurn);
 	DECLARE_OPCODE(o_clockHourWheelStartTurn);
@@ -149,10 +145,10 @@ private:
 	DECLARE_OPCODE(opcode_199);
 
 	DECLARE_OPCODE(o_libraryBook_init);
-	DECLARE_OPCODE(opcode_201);
+	DECLARE_OPCODE(o_courtyardBox_init);
 	DECLARE_OPCODE(o_towerRotationMap_init);
 	DECLARE_OPCODE(o_forechamberDoor_init);
-	DECLARE_OPCODE(opcode_204);
+	DECLARE_OPCODE(o_shipAccess_init);
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
 	DECLARE_OPCODE(opcode_208);
@@ -206,6 +202,8 @@ private:
 	uint16 _libraryBookSound1; // 298
 	uint16 _libraryBookSound2; // 300
 
+	uint16 _courtyardBoxSound; // 302
+
 	uint16 _fireplaceLines[6]; // 74 to 84
 
 	uint16 _clockTurningWheel;
@@ -239,7 +237,6 @@ private:
 	uint16 _treeMinPosition; // 228
 	uint16 _treeMinAccessiblePosition; // 230
 	uint16 _treeMaxAccessiblePosition; // 232
-	uint32 _treeLastMoveTime;
 
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
