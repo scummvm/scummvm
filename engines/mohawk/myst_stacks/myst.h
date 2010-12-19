@@ -64,6 +64,8 @@ private:
 	void basementPressureIncrease_run();
 	void basementPressureDecrease_run();
 	void tree_run();
+	void imagerValidation_run();
+	void imager_run();
 
 	DECLARE_OPCODE(o_libraryBookPageTurnLeft);
 	DECLARE_OPCODE(o_libraryBookPageTurnRight);
@@ -72,14 +74,14 @@ private:
 	DECLARE_OPCODE(o_courtyardBoxesCheckSolution);
 	DECLARE_OPCODE(o_towerRotationStart);
 	DECLARE_OPCODE(o_towerRotationEnd);
-	DECLARE_OPCODE(opcode_109);
+	DECLARE_OPCODE(o_imagerChangeSelection);
 	DECLARE_OPCODE(o_dockVaultOpen);
 	DECLARE_OPCODE(o_dockVaultClose);
 	DECLARE_OPCODE(o_bookGivePage);
 	DECLARE_OPCODE(o_clockWheelsExecute);
-	DECLARE_OPCODE(opcode_117);
-	DECLARE_OPCODE(opcode_118);
-	DECLARE_OPCODE(opcode_119);
+	DECLARE_OPCODE(o_imagerPlayButton);
+	DECLARE_OPCODE(o_imagerEraseButton);
+	DECLARE_OPCODE(o_towerElevatorAnimation);
 	DECLARE_OPCODE(o_generatorButtonPressed);
 	DECLARE_OPCODE(o_cabinSafeChangeDigit);
 	DECLARE_OPCODE(o_cabinSafeHandleStartMove);
@@ -149,9 +151,8 @@ private:
 	DECLARE_OPCODE(o_towerRotationMap_init);
 	DECLARE_OPCODE(o_forechamberDoor_init);
 	DECLARE_OPCODE(o_shipAccess_init);
-	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
-	DECLARE_OPCODE(opcode_208);
+	DECLARE_OPCODE(o_imager_init);
 	DECLARE_OPCODE(o_libraryBookcaseTransform_init);
 	DECLARE_OPCODE(o_generatorControlRoom_init);
 	DECLARE_OPCODE(o_fireplace_init);
@@ -203,6 +204,15 @@ private:
 	uint16 _libraryBookSound2; // 300
 
 	uint16 _courtyardBoxSound; // 302
+
+	bool _imagerValidationRunning;
+	MystResourceType8 *_imagerRedButton; // 304
+	uint16 _imagerSound[4]; // 308 to 314
+	uint16 _imagerValidationCard; // 316
+	uint16 _imagerValidationStep; // 318
+
+	bool _imagerRunning;
+	MystResourceType6 *_imagerMovie; // 64
 
 	uint16 _fireplaceLines[6]; // 74 to 84
 

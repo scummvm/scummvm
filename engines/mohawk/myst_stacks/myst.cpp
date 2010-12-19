@@ -57,6 +57,7 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScript
 	_treeAlcove = 0;
 	_treeStopped = false;
 	_treeMinPosition = 0;
+	_imagerValidationStep = 0;
 	myst.treeLastMoveTime = _vm->_system->getMillis();
 }
 
@@ -76,14 +77,14 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(106, o_towerRotationStart);
 	OPCODE(107, NOP);
 	OPCODE(108, o_towerRotationEnd);
-	OPCODE(109, opcode_109);
+	OPCODE(109, o_imagerChangeSelection);
 	OPCODE(113, o_dockVaultOpen);
 	OPCODE(114, o_dockVaultClose);
 	OPCODE(115, o_bookGivePage);
 	OPCODE(116, o_clockWheelsExecute);
-	OPCODE(117, opcode_117);
-	OPCODE(118, opcode_118);
-	OPCODE(119, opcode_119);
+	OPCODE(117, o_imagerPlayButton);
+	OPCODE(118, o_imagerEraseButton);
+	OPCODE(119, o_towerElevatorAnimation);
 	OPCODE(120, o_generatorButtonPressed);
 	OPCODE(121, o_cabinSafeChangeDigit);
 	OPCODE(122, o_cabinSafeHandleStartMove);
@@ -147,6 +148,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(190, o_libraryCombinationBookStartRight);
 	OPCODE(191, o_libraryCombinationBookStartLeft);
 	OPCODE(192, opcode_192);
+	OPCODE(193, NOP);
 	OPCODE(194, opcode_194);
 	OPCODE(195, opcode_195);
 	OPCODE(196, opcode_196);
@@ -162,7 +164,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(204, o_shipAccess_init);
 	OPCODE(205, NOP);
 	OPCODE(206, opcode_206);
-	OPCODE(208, opcode_208);
+	OPCODE(208, o_imager_init);
 	OPCODE(209, o_libraryBookcaseTransform_init);
 	OPCODE(210, o_generatorControlRoom_init);
 	OPCODE(211, o_fireplace_init);
@@ -204,6 +206,8 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 	_boilerPressureDecreasing = false;
 	_basementPressureIncreasing = false;
 	_basementPressureDecreasing = false;
+	_imagerValidationRunning = false;
+	_imagerRunning = false;
 
 	opcode_212_disable();
 }
@@ -243,6 +247,12 @@ void MystScriptParser_Myst::runPersistentScripts() {
 
 	if (!_treeStopped)
 		tree_run();
+
+	if (_imagerValidationRunning)
+		imagerValidation_run();
+
+	if (_imagerRunning)
+		imager_run();
 }
 
 uint16 MystScriptParser_Myst::getVar(uint16 var) {
@@ -413,6 +423,17 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return 0;
 	case 49: // Generator running
 		return myst.generatorVoltage > 0;
+	case 51: // Forechamber Imager Movie Control
+		if (myst.imagerSelection == 40 && !myst.imagerMountainErased)
+			return 1;
+		else if (myst.imagerSelection == 67 && !myst.imagerWaterErased)
+			return 2;
+		else if (myst.imagerSelection == 8 && !myst.imagerAtrusErased)
+			return 3;
+		else if (myst.imagerSelection == 47 && !myst.imagerMarkerErased)
+			return 4;
+		else
+			return 0;
 	case 52: // Generator Switch #1
 	case 53: // Generator Switch #2
 	case 54: // Generator Switch #3
@@ -468,6 +489,11 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return 0; // AM
 		else
 			return 1; // PM
+	case 89:
+	case 90:
+	case 91:
+	case 92: // Stellar observatory sliders state
+		return 1;
 	case 93: // Breaker nearest Generator Room Blown
 		return myst.generatorBreakers == 1;
 	case 94: // Breaker nearest Rocket Ship Blown
@@ -650,6 +676,12 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 	case 71: // Stellar Observatory Lights
 		myst.observatoryLights = value;
 		break;
+	case 89:
+	case 90:
+	case 91:
+	case 92:
+	case 300: // Set slider value
+		break; // Do nothing
 	case 302: // Green Book Opened Before Flag
 		myst.greenBookOpenedBefore = value;
 		break;
@@ -661,6 +693,10 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 		break;
 	case 309: // Tree stopped
 		_treeStopped = value;
+		break;
+	case 310: // Imager validation step
+		_imagerValidationStep = value;
+		break;
 	default:
 		refresh = MystScriptParser::setVarValue(var, value);
 		break;
@@ -849,28 +885,32 @@ void MystScriptParser_Myst::o_towerRotationEnd(uint16 op, uint16 var, uint16 arg
 	_towerRotationBlinkLabelCount = 0;
 }
 
-void MystScriptParser_Myst::opcode_109(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Myst::o_imagerChangeSelection(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Dock imager change selection", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	if (_imagerValidationStep != 10) {
+		_imagerValidationStep = 0;
 
-	int16 signedValue = argv[0];
-	uint16 d1 = (myst.imagerSelection / 10) % 10;
-	uint16 d2 = myst.imagerSelection % 10;
+		MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
-	if (var == 35 && signedValue > 0 && d1 < 9)
-		d1++;
-	else if (var == 35 && signedValue < 0 && d1 > 0)
-		d1--;
-	else if (var == 36 && signedValue > 0 && d2 < 9)
-		d2++;
-	else if (var == 36 && signedValue < 0 && d2 > 0)
-		d2--;
+		int16 signedValue = argv[0];
+		uint16 d1 = (myst.imagerSelection / 10) % 10;
+		uint16 d2 = myst.imagerSelection % 10;
 
-	myst.imagerSelection = 10 * d1 + d2;
-	myst.imagerActive = 0;
+		if (var == 35 && signedValue > 0 && d1 < 9)
+			d1++;
+		else if (var == 35 && signedValue < 0 && d1 > 0)
+			d1--;
+		else if (var == 36 && signedValue > 0 && d2 < 9)
+			d2++;
+		else if (var == 36 && signedValue < 0 && d2 > 0)
+			d2--;
 
-	_vm->redrawArea(var);
+		myst.imagerSelection = 10 * d1 + d2;
+		myst.imagerActive = 0;
+
+		_vm->redrawArea(var);
+	}
 }
 
 void MystScriptParser_Myst::o_dockVaultOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1053,66 +1093,172 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 	}
 }
 
-void MystScriptParser_Myst::opcode_117(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 2) {
-		// Used by Myst Imager Control Button
-		uint16 varValue = _vm->_varStore->getVar(var);
+void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Imager play button", op);
 
-		if (varValue)
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+	uint16 video = getVar(51);
+
+	// Press button
+	_vm->_sound->replaceSound(4698);
+
+	Common::Rect src = Common::Rect(0, 0, 32, 75);
+	Common::Rect dest = Common::Rect(261, 257, 293, 332);
+	_vm->_gfx->copyImageSectionToScreen(4699, src, dest);
+	_vm->_system->updateScreen();
+
+	_vm->_system->delayMillis(200);
+
+	_vm->_gfx->copyBackBufferToScreen(dest);
+	_vm->_system->updateScreen();
+
+	_vm->_cursor->hideCursor();
+
+
+	// Play selected video
+	if (!myst.imagerActive && video != 3)
+		_vm->_sound->replaceSound(argv[0]);
+
+	switch (video) {
+	case 0: // Nothing
+	case 3: // Atrus
+	case 4: // Marker
+		_imagerMovie->playMovie();
+		break;
+	case 1: // Mountain
+		if (myst.imagerActive) {
+			// TODO: Play from 11180 to 16800
+			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
+			_vm->_video->playBackgroundMovie(file, 159, 96, false);
+
+			myst.imagerActive = 0;
+		} else {
+			// TODO: Play from 0 to 11180
+			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
+			_vm->_video->playBackgroundMovie(file, 159, 96, false);
+
+			myst.imagerActive = 1;
+		}
+	case 2: // Water
+		if (myst.imagerActive) {
 			_vm->_sound->replaceSound(argv[1]);
-		else
-			_vm->_sound->replaceSound(argv[0]);
 
-		_vm->_varStore->setVar(var, !varValue);
-		// TODO: Change Var 45 "Dock Forechamber Imager Water Effect Enabled" here?
-	} else
-		unknown(op, var, argc, argv);
+			// TODO: Play from 4204 to 6040
+			_imagerMovie->playMovie();
+
+			myst.imagerActive = 0;
+		} else {
+			// TODO: Play from 0 to 1814
+			// Then play from 1814 to 4204, looping
+			_imagerMovie->playMovie();
+
+			myst.imagerActive = 1;
+		}
+	}
+
+	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser_Myst::opcode_118(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_imagerEraseButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Imager erase button", op);
 
-	if (argc == 5) {
-		// Used by Card 4709 (Myst Imager Control Panel Red Button)
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
-		debugC(kDebugScript, "Opcode %d: Imager Change Value", op);
+	_imagerRedButton = static_cast<MystResourceType8 *>(_invokingResource->_parent);
+	for (uint i = 0; i < 4; i++)
+		_imagerSound[i] = argv[i];
+	_imagerValidationCard = argv[4];
 
-		uint16 soundIdBeepLo = argv[0];
-		uint16 soundIdBeepHi = argv[1];
-		uint16 soundIdBwapp = argv[2];
-		uint16 soundIdBeepTune = argv[3]; // 5 tones..
-		uint16 soundIdPanelSlam = argv[4];
+	if (_imagerValidationStep == 0) {
+		// Validation script is not running, run it
+		_startTime = _vm->_system->getMillis() + 100;
+		_imagerValidationRunning = true;
+		return;
+	} else if (_imagerValidationStep < 7) {
+		// Too early
+		_vm->_sound->playSoundBlocking(_imagerSound[2]);
+		_imagerValidationStep = 0;
+		return;
+	} else if (_imagerValidationStep < 11) {
+		_vm->_sound->playSoundBlocking(_imagerSound[3]);
 
-		debugC(kDebugScript, "\tsoundIdBeepLo: %d", soundIdBeepLo);
-		debugC(kDebugScript, "\tsoundIdBeepHi: %d", soundIdBeepHi);
-		debugC(kDebugScript, "\tsoundIdBwapp: %d", soundIdBwapp);
-		debugC(kDebugScript, "\tsoundIdBeepTune: %d", soundIdBeepTune);
-		debugC(kDebugScript, "\tsoundIdPanelSlam: %d", soundIdPanelSlam);
-
-		_vm->_sound->replaceSound(soundIdBeepLo);
-
-		// TODO: Complete Logic...
-	} else
-		unknown(op, var, argc, argv);
-}
-
-void MystScriptParser_Myst::opcode_119(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	if (argc == 1) {
-		// Used on Card 4383 and 4451 (Tower Elevator)
-		switch (argv[0]) {
-		case 0:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("libdown", kMystStack), 216, 78);
+		// Erase selected video from imager
+		switch (myst.imagerSelection) {
+		case 8:
+			myst.imagerAtrusErased = 1;
 			break;
-		case 1:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("libup", kMystStack), 214, 75);
+		case 40:
+			myst.imagerMountainErased = 1;
 			break;
-		default:
+		case 47:
+			myst.imagerMarkerErased = 1;
+			break;
+		case 67:
+			myst.imagerWaterErased = 1;
 			break;
 		}
-	} else
-		unknown(op, var, argc, argv);
+
+		myst.imagerActive = 0;
+		_imagerValidationStep = 0;
+		return;
+	} else if (_imagerValidationStep == 11) {
+		// Too late
+		_imagerValidationStep = 0;
+		return;
+	}
+}
+
+void MystScriptParser_Myst::imagerValidation_run() {
+	uint32 time = _vm->_system->getMillis();
+
+	if (time > _startTime) {
+		_imagerRedButton->drawConditionalDataToScreen(1);
+
+		if (_imagerValidationStep < 6)
+			_vm->_sound->replaceSound(_imagerSound[0]);
+		else if (_imagerValidationStep < 10)
+			_vm->_sound->replaceSound(_imagerSound[1]);
+		else if (_imagerValidationStep == 10)
+			_vm->_sound->replaceSound(_imagerSound[2]);
+
+		_imagerValidationStep++;
+
+		_vm->_system->delayMillis(50);
+
+		_imagerRedButton->drawConditionalDataToScreen(0);
+
+		if (_imagerValidationStep == 11) {
+			_imagerValidationStep = 0;
+			_vm->changeToCard(_imagerValidationCard, true);
+		} else {
+			_startTime = time + 100;
+		}
+	}
+}
+
+void MystScriptParser_Myst::o_towerElevatorAnimation(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Tower elevator animation", op);
+
+	_treeStopped = true;
+
+	_vm->_cursor->hideCursor();
+	_vm->_sound->stopSound();
+	_vm->_sound->pauseBackground();
+
+	switch (argv[0]) {
+	case 0:
+		_vm->_video->playMovie(_vm->wrapMovieFilename("libdown", kMystStack), 216, 78);
+		break;
+	case 1:
+		_vm->_video->playMovie(_vm->wrapMovieFilename("libup", kMystStack), 216, 78);
+		break;
+	default:
+		break;
+	}
+
+	_vm->_sound->resumeBackground();
+	_vm->_cursor->showCursor();
+	_treeStopped = false;
 }
 
 void MystScriptParser_Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -2510,17 +2656,24 @@ void MystScriptParser_Myst::opcode_206(uint16 op, uint16 var, uint16 argc, uint1
 	// TODO: Implement Logic...
 }
 
-void MystScriptParser_Myst::opcode_208(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Imager Function", op);
-		debugC(kDebugScript, "Var: %d", var);
+void MystScriptParser_Myst::o_imager_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Imager init", op);
+	debugC(kDebugScript, "Var: %d", var);
 
-		// TODO: Fill in Correct Function
-		if (false) {
-			_vm->_video->playMovie(_vm->wrapMovieFilename("vltmntn", kMystStack), 159, 97);
-		}
-	} else
-		unknown(op, var, argc, argv);
+	MystResourceType7 *select = static_cast<MystResourceType7 *>(_invokingResource);
+	_imagerMovie = static_cast<MystResourceType6 *>(select->getSubResource(getVar(var)));
+	_imagerRunning = true;
+}
+
+void MystScriptParser_Myst::imager_run() {
+	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
+
+	_imagerRunning = false;
+
+	if (myst.imagerActive && myst.imagerSelection == 67) {
+		// TODO: play between 1814 and 4204 looping
+		_imagerMovie->playMovie();
+	}
 }
 
 void MystScriptParser_Myst::libraryBookcaseTransform_run(void) {
