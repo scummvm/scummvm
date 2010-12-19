@@ -365,10 +365,17 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		} else {
 			return 1;
 		}
-	//case 34: // FIXME: Sound Control In Dock Vault
-	//	return 0;
-	//	return 1;
-	//	return 2;
+	case 34: // Sound Control In Dock forechamber
+		if (myst.imagerActive) {
+			if (myst.imagerSelection == 40 && !myst.imagerMountainErased)
+				return 1;
+			else if (myst.imagerSelection == 67 && !myst.imagerWaterErased)
+				return 2;
+			else
+				return 0;
+		} else {
+			return 0;
+		}
 	case 35: // Dock Forechamber Imager Control Left Digit
 		if (myst.imagerSelection > 9)
 			return myst.imagerSelection / 10 - 1;
@@ -652,8 +659,8 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 	case 304: // Myst Library Image Present on Tower Rotation Map
 		_towerRotationMapInitialized = value;
 		break;
-	//case 309: // FIXME: Red/Blue Book Opened
-	//	break;
+	case 309: // Tree stopped
+		_treeStopped = value;
 	default:
 		refresh = MystScriptParser::setVarValue(var, value);
 		break;
