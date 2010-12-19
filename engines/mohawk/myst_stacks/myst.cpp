@@ -393,28 +393,26 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		return bookCountPages(100);
 	case 47:
 		return bookCountPages(101);
+	case 48:
+		if (myst.shipState)
+			return 2;
+		else if (myst.dockMarkerSwitch)
+			return 1;
+		else
+			return 0;
 	case 49: // Generator running
 		return myst.generatorVoltage > 0;
 	case 52: // Generator Switch #1
-		return (myst.generatorButtons & 1) != 0;
 	case 53: // Generator Switch #2
-		return (myst.generatorButtons & 2) != 0;
 	case 54: // Generator Switch #3
-		return (myst.generatorButtons & 4) != 0;
 	case 55: // Generator Switch #4
-		return (myst.generatorButtons & 8) != 0;
 	case 56: // Generator Switch #5
-		return (myst.generatorButtons & 16) != 0;
 	case 57: // Generator Switch #6
-		return (myst.generatorButtons & 32) != 0;
 	case 58: // Generator Switch #7
-		return (myst.generatorButtons & 64) != 0;
 	case 59: // Generator Switch #8
-		return (myst.generatorButtons & 128) != 0;
 	case 60: // Generator Switch #9
-		return (myst.generatorButtons & 256) != 0;
 	case 61: // Generator Switch #10
-		return (myst.generatorButtons & 512) != 0;
+		return (myst.generatorButtons & (1 << (var - 52))) != 0;
 	case 62: // Generator Power Dial Left LED Digit
 		return _generatorVoltage / 10;
 	case 63: // Generator Power Dial Right LED Digit
@@ -439,8 +437,26 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		return myst.cabinSafeCombination % 10;
 	case 70: // Cabin Safe Matchbox State
 		return _cabinMatchState;
+	case 71: // Stellar Observatory Lights
+		return myst.observatoryLights;
 	case 72: // Channelwood tree position
 		return myst.treePosition;
+	case 80: // Stellar Observatory Hour #1 - Left ( Number 1 (0) or Blank (10))
+		if (myst.observatoryTimeSetting % (12 * 60) < (10 * 60))
+			return 10;
+		else
+			return 0;
+	case 81: // Stellar Observatory Hour #2 - Right
+		return ((myst.observatoryTimeSetting % (12 * 60)) / 60) % 10;
+	case 82: // Stellar Observatory Minutes #1 - Left
+		return (myst.observatoryTimeSetting % 60) / 10;
+	case 83: // Stellar Observatory Minutes #2 - Right
+		return (myst.observatoryTimeSetting % 60) % 10;
+	case 88: // Stellar Observatory AM/PM
+		if (myst.observatoryTimeSetting < (12 * 60))
+			return 0; // AM
+		else
+			return 1; // PM
 	case 93: // Breaker nearest Generator Room Blown
 		return myst.generatorBreakers == 1;
 	case 94: // Breaker nearest Rocket Ship Blown
@@ -604,6 +620,9 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 			_cabinMatchState = value;
 			refresh = true;
 		}
+		break;
+	case 71: // Stellar Observatory Lights
+		myst.observatoryLights = value;
 		break;
 	case 302: // Green Book Opened Before Flag
 		myst.greenBookOpenedBefore = value;
