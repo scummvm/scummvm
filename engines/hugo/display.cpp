@@ -158,12 +158,14 @@ void Screen::restorePal(Common::SeekableReadStream *f) {
 
 
 /**
-* Set the new background color
+* Set the new background color.
+* This implementation gives the same result than the DOS version.
+* It wasn't implemented in the Win version
 */
 void Screen::setBackgroundColor(long color) {
 	debugC(1, kDebugDisplay, "setBackgroundColor(%ld)", color);
 
-	// How???  Translate existing pixels in dib before objects rendered?
+	remapPal(0, color);
 }
 
 /**
