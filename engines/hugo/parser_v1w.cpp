@@ -138,7 +138,7 @@ void Parser_v1w::lineHandler() {
 	// Toggle God Mode
 	if (!strncmp(_line, "PPG", 3)) {
 		_vm->_sound->playSound(!_vm->_soundTest, BOTH_CHANNELS, HIGH_PRI);
-		gameStatus.godModeFl ^= 1;
+		gameStatus.godModeFl = !gameStatus.godModeFl;
 		return;
 	}
 
@@ -153,7 +153,7 @@ void Parser_v1w::lineHandler() {
 		// Special code to allow me to go straight to any screen
 		if (strstr(_line, "goto")) {
 			for (int i = 0; i < _vm->_numScreens; i++) {
-				if (!strcmp(&_line[strlen("goto") + 1], _vm->_screenNames[i])) {
+				if (!scumm_stricmp(&_line[strlen("goto") + 1], _vm->_screenNames[i])) {
 					_vm->_scheduler->newScreen(i);
 					return;
 				}
@@ -171,7 +171,7 @@ void Parser_v1w::lineHandler() {
 
 		if (strstr(_line, "fetch")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!strcmp(&_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
 					takeObject(&_vm->_object->_objects[i]);
 					return;
 				}
@@ -181,7 +181,7 @@ void Parser_v1w::lineHandler() {
 		// Special code to allow me to goto objects
 		if (strstr(_line, "find")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!strcmp(&_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
 					_vm->_scheduler->newScreen(_vm->_object->_objects[i].screenIndex);
 					return;
 				}
