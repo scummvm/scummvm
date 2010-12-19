@@ -224,6 +224,11 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 			warning("Error: EOF on file");
 			return 0;
 		}
+
+		/* note: the way sscanf is used here ensures that a terminating null
+		   character is automatically added. Refer to:
+		   http://pubs.opengroup.org/onlinepubs/009695399/functions/fscanf.html */
+
 		if (isprefix(buf, "FONT ")) {		/* not required*/
 			if (sscanf(buf, "FONT %[^\n]", facename) != 1) {
 				warning("Error: bad 'FONT'");
@@ -506,7 +511,11 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 
 	/* reallocate bits array to actual bits used*/
 	if (ofs < pf->bits_size) {
-		pf->bits = (bitmap_t *)realloc(pf->bits, ofs * sizeof(bitmap_t));
+		bitmap_t *tmp = (bitmap_t *)realloc(pf->bits, ofs * sizeof(bitmap_t));
+		if (tmp != NULL || ofs == 0)
+			pf->bits = tmp;
+		else
+			error("bdf_read_bitmaps: Error while reallocating memory");
 		pf->bits_size = ofs;
 	}
 	else {
