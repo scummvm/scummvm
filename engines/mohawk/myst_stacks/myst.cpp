@@ -473,6 +473,23 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		return myst.observatoryLights;
 	case 72: // Channelwood tree position
 		return myst.treePosition;
+	case 73: // Stellar Observatory Date - Month
+		return myst.observatoryMonthSetting;
+	case 74: // Stellar Observatory Date - Day #1 (Left)
+		if (myst.observatoryDaySetting / 10 == 0)
+			return 10;
+		else
+			return myst.observatoryDaySetting / 10;
+	case 75: // Stellar Observatory Date - Day #2 (Right)
+		return myst.observatoryDaySetting % 10;
+	case 76: // Stellar Observatory Date - Year #1 (Left)
+		return (myst.observatoryYearSetting >> 12) & 0x0f;
+	case 77: // Stellar Observatory Date - Year #2
+		return (myst.observatoryYearSetting >> 8) & 0x0f;
+	case 78: // Stellar Observatory Date - Year #3
+		return (myst.observatoryYearSetting >> 4) & 0x0f;
+	case 79: // Stellar Observatory Date - Year #4 (Right)
+		return (myst.observatoryYearSetting >> 0) & 0x0f;
 	case 80: // Stellar Observatory Hour #1 - Left ( Number 1 (0) or Blank (10))
 		if (myst.observatoryTimeSetting % (12 * 60) < (10 * 60))
 			return 10;
