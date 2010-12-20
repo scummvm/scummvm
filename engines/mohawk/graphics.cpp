@@ -350,10 +350,6 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 }
 
 void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest) {
-	// Clip the destination rect to the screen
-	if (dest.right > _vm->_system->getWidth() || dest.bottom > _vm->_system->getHeight())
-		dest.debugPrint(4, "Clipping destination rect to the screen:");
-
 	Graphics::Surface *surface = findImage(image)->getSurface();
 
 	// Make sure the image is bottom aligned in the dest rect
@@ -367,19 +363,29 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 		top += dest.height() - _viewport.height();
 	}
 
+	// Clip the destination rect to the screen
+	if (dest.right > _vm->_system->getWidth() || dest.bottom > _vm->_system->getHeight())
+		dest.debugPrint(4, "Clipping destination rect to the screen");
 	dest.right = CLIP<int>(dest.right, 0, _vm->_system->getWidth());
 	dest.bottom = CLIP<int>(dest.bottom, 0, _vm->_system->getHeight());
 
-	debug(3, "Image Blit:");
-	debug(3, "src.x: %d", src.left);
-	debug(3, "src.y: %d", src.top);
-	debug(3, "dest.x: %d", dest.left);
-	debug(3, "dest.y: %d", dest.top);
-	debug(3, "width: %d", src.width());
-	debug(3, "height: %d", src.height());
-
 	uint16 width = MIN<int>(surface->w, dest.width());
 	uint16 height = MIN<int>(surface->h, dest.height());
+
+	// Clamp Width and Height to within src surface dimensions
+	if (src.left + width > surface->w)
+		width = surface->w - src.left;
+	if (src.top + height > surface->h)
+		height = surface->h - src.top;
+
+	debug(3, "MystGraphics::copyImageSectionToScreen()");
+	debug(3, "\tImage: %d", image);
+	debug(3, "\tsrc.left: %d", src.left);
+	debug(3, "\tsrc.top: %d", src.top);
+	debug(3, "\tdest.left: %d", dest.left);
+	debug(3, "\tdest.top: %d", dest.top);
+	debug(3, "\twidth: %d", width);
+	debug(3, "\theight: %d", height);
 
 	_vm->_system->copyRectToScreen((byte *)surface->getBasePtr(src.left, top), surface->pitch, dest.left, dest.top, width, height);
 }
