@@ -39,6 +39,7 @@
 #include "hugo/file.h"
 #include "hugo/schedule.h"
 #include "hugo/util.h"
+#include "hugo/sound.h"
 #include "hugo/object.h"
 
 namespace Hugo {
@@ -55,12 +56,61 @@ Parser_v2d::~Parser_v2d() {
 void Parser_v2d::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
 
-	object_t    *obj;
 	status_t &gameStatus = _vm->getGameStatus();
-	char        farComment[XBYTES * 5] = "";        // hold 5 line comment if object not nearby
 
-//	Reset_prompt_line ();
+	// Toggle God Mode
+	if (!strncmp(_line, "PPG", 3)) {
+		_vm->_sound->playSound(!_vm->_soundTest, BOTH_CHANNELS, HIGH_PRI);
+		gameStatus.godModeFl = !gameStatus.godModeFl;
+		return;
+	}
+
 	Utils::strlwr(_line);                           // Convert to lower case
+
+	// God Mode cheat commands:
+	// goto <screen>                                Takes hero to named screen
+	// fetch <object name>                          Hero carries named object
+	// fetch all                                    Hero carries all possible objects
+	// find <object name>                           Takes hero to screen containing named object
+	if (gameStatus.godModeFl) {
+		// Special code to allow me to go straight to any screen
+		if (strstr(_line, "goto")) {
+			for (int i = 0; i < _vm->_numScreens; i++) {
+				if (!scumm_stricmp(&_line[strlen("goto") + 1], _vm->_screenNames[i])) {
+					_vm->_scheduler->newScreen(i);
+					return;
+				}
+			}
+		}
+
+		// Special code to allow me to get objects from anywhere
+		if (strstr(_line, "fetch all")) {
+			for (int i = 0; i < _vm->_object->_numObj; i++) {
+				if (_vm->_object->_objects[i].genericCmd & TAKE)
+					takeObject(&_vm->_object->_objects[i]);
+			}
+			return;
+		}
+
+		if (strstr(_line, "fetch")) {
+			for (int i = 0; i < _vm->_object->_numObj; i++) {
+				if (!scumm_stricmp(&_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+					takeObject(&_vm->_object->_objects[i]);
+					return;
+				}
+			}
+		}
+
+		// Special code to allow me to goto objects
+		if (strstr(_line, "find")) {
+			for (int i = 0; i < _vm->_object->_numObj; i++) {
+				if (!scumm_stricmp(&_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+					_vm->_scheduler->newScreen(_vm->_object->_objects[i].screenIndex);
+					return;
+				}
+			}
+		}
+	}
 
 	if (!strcmp("exit", _line) || strstr(_line, "quit")) {
 		if (Utils::Box(BOX_YESNO, "%s", _vm->_textParser[kTBExit_1d]) != 0)
@@ -101,13 +151,14 @@ void Parser_v2d::lineHandler() {
 	// Find the first verb in the line
 	char *verb = findVerb();
 	char *noun = 0;                                 // Noun not found yet
+	char farComment[XBYTES * 5] = "";               // hold 5 line comment if object not nearby
 
 	if (verb) {                                     // OK, verb found.  Try to match with object
 		do {
 			noun = findNextNoun(noun);              // Find a noun in the line
 			// Must try at least once for objects allowing verb-context
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				obj = &_vm->_object->_objects[i];
+				object_t *obj = &_vm->_object->_objects[i];
 				if (isNear(verb, noun, obj, farComment)) {
 					if (isObjectVerb(verb, obj)     // Foreground object
 					 || isGenericVerb(verb, obj))   // Common action type
