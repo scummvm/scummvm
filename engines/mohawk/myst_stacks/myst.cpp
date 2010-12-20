@@ -392,7 +392,7 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		else
 			return 9;
 	case 36: // Dock Forechamber Imager Control Right Digit
-		return (myst.imagerSelection - 1) % 10;
+		return (10 + myst.imagerSelection - 1) % 10;
 	case 37: // Clock Tower Control Wheels Position
 		return 3 * ((myst.clockTowerMinutePosition / 5) % 3) + myst.clockTowerHourPosition % 3;
 	case 40: // Gears Open State
@@ -1139,6 +1139,7 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 
 			myst.imagerActive = 1;
 		}
+		break;
 	case 2: // Water
 		if (myst.imagerActive) {
 			_vm->_sound->replaceSound(argv[1]);
@@ -1154,6 +1155,7 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 
 			myst.imagerActive = 1;
 		}
+		break;
 	}
 
 	_vm->_cursor->showCursor();
