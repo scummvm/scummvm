@@ -548,6 +548,23 @@ public:
 	 * Grabs a specified part of the currently active palette.
 	 * The format is the same as for setPalette.
 	 *
+	 * This should return exactly the same RGB data as was setup via previous
+	 * setPalette calls.
+	 *
+	 * For example, for every valid value of start and num of the following
+	 * code:
+	 *
+	 * byte origPal[num*4];
+	 * // Setup origPal's data however you like
+	 * g_system->setPalette(origPal, start, num);
+	 * byte obtainedPal[num*4];
+	 * g_system->grabPalette(obtainedPal, start, num);
+	 *
+	 * the following should be true:
+	 *
+	 * For each i < num : memcmp(&origPal[i*4], &obtainedPal[i*4], 3) == 0
+	 * (i is an uint here)
+	 *
 	 * @see setPalette
 	 * @param colors	the palette data, in interleaved RGBA format
 	 * @param start		the first platte entry to be read
