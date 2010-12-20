@@ -145,7 +145,7 @@ void FileManager_v2d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 	do {
 		int8 data = _sceneryArchive1.readByte();    // Read a code byte
 		if ((byte)data == 0x80)                     // Noop
-			k = k;
+			;
 		else if (data >= 0) {                       // Copy next data+1 literally
 			for (i = 0; i <= (byte)data; i++, k++)
 				*tmpImage++ = _sceneryArchive1.readByte();

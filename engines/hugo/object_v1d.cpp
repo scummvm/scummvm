@@ -178,7 +178,7 @@ void ObjectHandler_v1d::updateImages() {
 void ObjectHandler_v1d::moveObjects() {
 	debugC(4, kDebugObject, "moveObjects");
 
-	static int dxOld, dyOld;                        // previous directions for CHASEing
+	static int dxOld;                               // previous direction for CHASEing
 
 	// Added to DOS version in order to handle mouse properly
 	// If route mode enabled, do special route processing
@@ -231,7 +231,6 @@ void ObjectHandler_v1d::moveObjects() {
 					_vm->boundaryCollision(obj);     // Must have got hero!
 				}
 				dxOld = obj->vx;
-				dyOld = obj->vy;
 				currImage = obj->currImagePtr;      // Get (new) ptr to current image
 				break;
 				}
@@ -262,7 +261,6 @@ void ObjectHandler_v1d::moveObjects() {
 							obj->cycling = NOT_CYCLING;
 					}
 					dxOld = obj->vx;
-					dyOld = obj->vy;
 					currImage = obj->currImagePtr;  // Get (new) ptr to current image
 				}
 				break;
