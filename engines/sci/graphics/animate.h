@@ -41,11 +41,11 @@ enum ViewSignals {
 	kSignalForceUpdate   = 0x0040,
 	kSignalRemoveView    = 0x0080,
 	kSignalFrozen        = 0x0100, // I got frozen today!!
-	kSignalExtraActor	 = 0x0200, // unused by us, defines all actors that may be included into the background if speed is too slow
+	//kSignalExtraActor	 = 0x0200, // unused by us, defines all actors that may be included into the background if speed is too slow
 	kSignalHitObstacle	 = 0x0400, // used in the actor movement code by kDoBresen()
 	kSignalDoesntTurn	 = 0x0800, // used by _k_dirloop() to determine if an actor can turn or not
-	kSignalNoCycler		 = 0x1000, // unused by us
-	kSignalIgnoreHorizon = 0x2000, // unused by us, defines actor that can ignore horizon
+	//kSignalNoCycler		 = 0x1000, // unused by us
+	//kSignalIgnoreHorizon = 0x2000, // unused by us, defines actor that can ignore horizon
 	kSignalIgnoreActor   = 0x4000,
 	kSignalDisposeMe     = 0x8000
 };
