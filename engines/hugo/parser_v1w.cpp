@@ -33,6 +33,7 @@
 // parser.c - handles all keyboard/command input
 
 #include "common/system.h"
+#include "common/events.h"
 
 #include "hugo/hugo.h"
 #include "hugo/parser.h"
@@ -51,13 +52,13 @@ Parser_v1w::Parser_v1w(HugoEngine *vm) : Parser_v3d(vm) {
 Parser_v1w::~Parser_v1w() {
 }
 
-void Parser_v1w::keyHandler(uint16 nChar, uint16 nFlags) {
-	debugC(1, kDebugParser, "keyHandler(%d, %d)", nChar, nFlags);
+void Parser_v1w::keyHandler(Common::Event event) {
+	debugC(1, kDebugParser, "keyHandler(%d)", event.kbd.keycode);
 
 	status_t &gameStatus = _vm->getGameStatus();
-	bool repeatedFl = (nFlags & 0x4000);            // TRUE if key is a repeat
+	uint16 nChar = event.kbd.keycode;
 
-// Process key down event - called from OnKeyDown()
+	// Process key down event - called from OnKeyDown()
 	switch (nChar) {                                // Set various toggle states
 	case Common::KEYCODE_ESCAPE:                    // Escape key, may want to QUIT
 		if (gameStatus.inventoryState == I_ACTIVE)  // Remove inventory, if displayed
@@ -66,14 +67,22 @@ void Parser_v1w::keyHandler(uint16 nChar, uint16 nFlags) {
 		break;
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_PAGEUP:
+	case Common::KEYCODE_PAGEDOWN:
+	case Common::KEYCODE_KP1:
+	case Common::KEYCODE_KP7:
+	case Common::KEYCODE_KP9:
+	case Common::KEYCODE_KP3:
 	case Common::KEYCODE_LEFT:
 	case Common::KEYCODE_RIGHT:
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_DOWN:
-		if (!repeatedFl) {
-			gameStatus.routeIndex = -1;             // Stop any automatic route
-			_vm->_route->setWalk(nChar);             // Direction of hero travel
-		}
+	case Common::KEYCODE_KP4:
+	case Common::KEYCODE_KP6:
+	case Common::KEYCODE_KP8:
+	case Common::KEYCODE_KP2:
+		gameStatus.routeIndex = -1;                 // Stop any automatic route
+		_vm->_route->setWalk(nChar);                // Direction of hero travel
 		break;
 	case Common::KEYCODE_F1:                        // User Help (DOS)
 		if (_checkDoubleF1Fl)
@@ -117,7 +126,7 @@ void Parser_v1w::keyHandler(uint16 nChar, uint16 nFlags) {
 			if (bnext >= sizeof(_ringBuffer))
 				bnext = 0;
 			if (bnext != _getIndex) {
-				_ringBuffer[_putIndex] = nChar;
+				_ringBuffer[_putIndex] = event.kbd.ascii;
 				_putIndex = bnext;
 			}
 		}

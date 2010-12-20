@@ -55,27 +55,35 @@ void Route::setDirection(uint16 keyCode) {
 	// Set first image in sequence
 	switch (keyCode) {
 	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
 		obj->currImagePtr = obj->seqList[_UP].seqPtr;
 		break;
 	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
 		obj->currImagePtr = obj->seqList[DOWN].seqPtr;
 		break;
 	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP4:
 		obj->currImagePtr = obj->seqList[LEFT].seqPtr;
 		break;
 	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP6:
 		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
 		break;
 	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_KP7:
 		obj->currImagePtr = obj->seqList[LEFT].seqPtr;
 		break;
 	case Common::KEYCODE_END:
+	case Common::KEYCODE_KP1:
 		obj->currImagePtr = obj->seqList[LEFT].seqPtr;
 		break;
 	case Common::KEYCODE_PAGEUP:
+	case Common::KEYCODE_KP9:
 		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
 		break;
 	case Common::KEYCODE_PAGEDOWN:
+	case Common::KEYCODE_KP3:
 		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
 		break;
 	}
@@ -103,33 +111,41 @@ void Route::setWalk(uint16 direction) {
 		obj->vx = obj->vy = 0;
 		switch (direction) {                        // And set correct velocity
 		case Common::KEYCODE_UP:
+		case Common::KEYCODE_KP8:
 			obj->vy = -DY;
 			break;
 		case Common::KEYCODE_DOWN:
+		case Common::KEYCODE_KP2:
 			obj->vy =  DY;
 			break;
 		case Common::KEYCODE_LEFT:
+		case Common::KEYCODE_KP4:
 			obj->vx = -DX;
 			break;
 		case Common::KEYCODE_RIGHT:
+		case Common::KEYCODE_KP6:
 			obj->vx =  DX;
 			break;
 		case Common::KEYCODE_HOME:
+		case Common::KEYCODE_KP7:
 			obj->vx = -DX;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to DY
 			obj->vy = -DY / 2;
 			break;
 		case Common::KEYCODE_END:
+		case Common::KEYCODE_KP1:
 			obj->vx = -DX;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
 			obj->vy =  DY / 2;
 			break;
 		case Common::KEYCODE_PAGEUP:
+		case Common::KEYCODE_KP9:
 			obj->vx =  DX;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
 			obj->vy = -DY / 2;
 			break;
 		case Common::KEYCODE_PAGEDOWN:
+		case Common::KEYCODE_KP3:
 			obj->vx =  DX;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to DY
 			obj->vy =  DY / 2;

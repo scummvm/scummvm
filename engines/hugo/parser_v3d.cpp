@@ -44,7 +44,7 @@
 
 namespace Hugo {
 
-Parser_v3d::Parser_v3d(HugoEngine *vm) : Parser(vm) {
+Parser_v3d::Parser_v3d(HugoEngine *vm) : Parser_v1d(vm) {
 }
 
 Parser_v3d::~Parser_v3d() {

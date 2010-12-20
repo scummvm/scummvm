@@ -284,7 +284,7 @@ Common::Error HugoEngine::run() {
 					this->getDebugger()->attach();
 					this->getDebugger()->onFrame();
 				}
-				_parser->keyHandler(event.kbd.keycode, 0);
+				_parser->keyHandler(event);
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
