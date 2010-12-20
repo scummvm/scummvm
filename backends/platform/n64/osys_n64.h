@@ -91,6 +91,10 @@ protected:
 	OverlayColor *_overlayBuffer; // Offscreen for the overlay (16 bit)
 
 	uint16 *_screenPalette; // Array for palette entries (256 colors max)
+
+#ifndef N64_EXTREME_MEMORY_SAVING
+	uint32 *_screenExactPalette; // Array for palette entries, as received by setPalette(), no precision loss
+#endif
 	uint16 _cursorPalette[256]; // Palette entries for the cursor
 
 	int _graphicMode; // Graphic mode

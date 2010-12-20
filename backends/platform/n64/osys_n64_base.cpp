@@ -112,6 +112,10 @@ OSystem_N64::OSystem_N64() {
 
 	// Clear palette array
 	_screenPalette = (uint16*)memalign(8, 256 * sizeof(uint16));
+#ifndef N64_EXTREME_MEMORY_SAVING
+	_screenExactPalette = (uint32*)memalign(8, 256 * sizeof(uint32));
+	memset(_screenExactPalette, 0, 256 * sizeof(uint32));
+#endif
 	memset(_screenPalette, 0, 256 * sizeof(uint16));
 	memset(_cursorPalette, 0, 256 * sizeof(uint16));
 
@@ -348,6 +352,9 @@ int16 OSystem_N64::getWidth() {
 void OSystem_N64::setPalette(const byte *colors, uint start, uint num) {
 	for (uint i = 0; i < num; ++i) {
 		_screenPalette[start + i] = colRGB888toBGR555(colors[2], colors[1], colors[0]);
+#ifndef N64_EXTREME_MEMORY_SAVING
+		_screenExactPalette[start + i] = *((uint32*)(colors));
+#endif
 		colors += 4;
 	}
 
@@ -395,6 +402,7 @@ void OSystem_N64::rebuildOffscreenMouseBuffer(void) {
 }
 
 void OSystem_N64::grabPalette(byte *colors, uint start, uint num) {
+#ifdef N64_EXTREME_MEMORY_SAVING  // This way loses precisions
 	uint32 i;
 	uint16 color;
 
@@ -407,6 +415,9 @@ void OSystem_N64::grabPalette(byte *colors, uint start, uint num) {
 		*colors++ = (((color >> 10) & 0x1F) << 3);
 		*colors++ = 0;
 	}
+#else
+	memcpy(colors, (uint8*)(_screenExactPalette + start), num * 4);
+#endif
 
 	return;
 }
