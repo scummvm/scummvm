@@ -304,6 +304,12 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	openPort(pwnd);
 
 	r = dims;
+	// This looks fishy, but it's exactly what Sierra did. They removed last
+	// bit of the left dimension in their interpreter. It seems Sierra did it
+	// for EGA byte alignment (EGA uses 1 byte for 2 pixels) and left it in
+	// their interpreter even in the newer VGA games.
+	r.left = r.left & 0x7FFE;
+
 	if (r.width() > _screen->getWidth()) {
 		// We get invalid dimensions at least at the end of sq3 (script bug!).
 		// Same happens very often in lsl5, sierra sci didnt fix it but it looked awful.
@@ -361,19 +367,6 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 		drawWindow(pwnd);
 	setPort((Port *)pwnd);
 
-	// FIXME: changing setOrigin to not clear the rightmost bit fixes the display of windows
-	// in some fanmade games (e.g. New Year's Mystery (Updated)). Since the fanmade games
-	// use an unmodified SCI interpreter, this leads me to believe that there either is some
-	// off-by-one error in the window drawing code, or there is another place where the
-	// rightmost bit should be cleeared. New Year's Mystery is a good test case for this, as
-	// it draws dialogs and then draws cels on top of them, for fancier dialog corners (like,
-	// for example, KQ5). KQ5 has a custom window style, however, whereas New Year's mystery
-	// has a "classic" style with only SCI_WINDOWMGR_STYLE_NOFRAME set. If
-	// SCI_WINDOWMGR_STYLE_NOFRAME is removed, the window is cleared correctly, because it
-	// grows slightly, covering the view pixels on the left. In any case, the views and the
-	// window have a difference of one pixel when they're drawn via kNewWindow and kDrawCel,
-	// which causes the glitch to appear when the window is closed.
-
 	// All SCI0 games till kq4 .502 (not including) did not adjust against _wmgrPort, we set _wmgrPort->top to 0 in that case
 	setOrigin(pwnd->rect.left, pwnd->rect.top + _wmgrPort->top);
 	pwnd->rect.moveTo(0, 0);
@@ -383,7 +376,6 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 void GfxPorts::drawWindow(Window *pWnd) {
 	if (pWnd->bDrawn)
 		return;
-	Common::Rect r;
 	int16 wndStyle = pWnd->wndStyle;
 
 	pWnd->bDrawn = true;
@@ -400,7 +392,8 @@ void GfxPorts::drawWindow(Window *pWnd) {
 
 	// drawing frame,shadow and title
 	if ((getSciVersion() >= SCI_VERSION_1_LATE) ? !(wndStyle & _styleUser) : wndStyle != _styleUser) {
-		r = pWnd->dims;
+		Common::Rect r = pWnd->dims;
+
 		if (!(wndStyle & SCI_WINDOWMGR_STYLE_NOFRAME)) {
 			r.top++;
 			r.left++;
@@ -505,10 +498,7 @@ Port *GfxPorts::getPort() {
 }
 
 void GfxPorts::setOrigin(int16 left, int16 top) {
-	// This looks fishy, but it's exactly what sierra did. They removed last bit of left in their interpreter
-	//  It seems sierra did it for EGA byte alignment (EGA uses 1 byte for 2 pixels) and left it in their interpreter even
-	//  when going VGA.
-	_curPort->left = left & 0x7FFE;
+	_curPort->left = left;
 	_curPort->top = top;
 }
 
