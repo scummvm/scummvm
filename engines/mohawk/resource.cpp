@@ -25,6 +25,7 @@
 
 #include "mohawk/resource.h"
 
+#include "common/debug.h"
 #include "common/substream.h"
 #include "common/util.h"
 

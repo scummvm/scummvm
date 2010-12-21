@@ -36,6 +36,7 @@
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_saveload.h"
 #include "mohawk/dialogs.h"
+#include "mohawk/sound.h"
 #include "mohawk/video.h"
 #include "mohawk/console.h"
 

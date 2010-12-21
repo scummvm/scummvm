@@ -26,6 +26,7 @@
 #ifndef MOHAWK_VIDEO_H
 #define MOHAWK_VIDEO_H
 
+#include "common/array.h"
 #include "graphics/pixelformat.h"
 
 namespace Graphics {

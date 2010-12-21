@@ -26,6 +26,7 @@
 #include "mohawk/livingbooks.h"
 #include "mohawk/resource.h"
 #include "mohawk/cursors.h"
+#include "mohawk/sound.h"
 #include "mohawk/video.h"
 
 #include "common/events.h"

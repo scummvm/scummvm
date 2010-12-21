@@ -36,6 +36,7 @@
 #include "mohawk/dialogs.h"
 #include "mohawk/resource.h"
 #include "mohawk/resource_cache.h"
+#include "mohawk/sound.h"
 #include "mohawk/video.h"
 
 // The stacks

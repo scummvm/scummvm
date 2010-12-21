@@ -23,6 +23,7 @@
  *
  */
 
+#include "mohawk/mohawk.h"
 #include "mohawk/resource.h"
 #include "mohawk/video.h"
 

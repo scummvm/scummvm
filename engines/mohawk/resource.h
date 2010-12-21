@@ -28,8 +28,6 @@
 #include "common/file.h"
 #include "common/str.h"
 
-#include "mohawk/sound.h"
-
 #ifndef MOHAWK_RESOURCE_H
 #define MOHAWK_RESOURCE_H
 
