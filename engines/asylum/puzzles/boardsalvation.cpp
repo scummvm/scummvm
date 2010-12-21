@@ -79,18 +79,7 @@ bool PuzzleBoardSalvation::mouseLeftDown(const AsylumEvent &evt) {
 			updateScreen();
 		}
 	} else if (_vm->isGameFlagNotSet(kGameFlag281)) {
-		if (mousePos.x >= 215 && mousePos.x < 431 && mousePos.y >= 360 && mousePos.y < 376) {
-			int32 index = (mousePos.x - 215) / 12;
-
-			if (_solvedText[index]) {
-				if (_selectedSlot == -1)
-					_selectedSlot = index;
-				else
-					SWAP(_solvedText[index], _solvedText[_selectedSlot]);
-
-				updateScreen();
-			}
-		}
+		checkSlots();
 	}
 
 	return true;

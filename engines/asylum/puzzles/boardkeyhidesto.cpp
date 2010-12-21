@@ -25,6 +25,10 @@
 
 #include "asylum/puzzles/boardkeyhidesto.h"
 
+#include "asylum/system/cursor.h"
+
+#include "asylum/asylum.h"
+
 namespace Asylum {
 
 static const PuzzleBoard::PuzzleData puzzleKeyHidesToData = {
@@ -55,7 +59,31 @@ PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : PuzzleBoard
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleBoardKeyHidesTo::mouseLeftDown(const AsylumEvent &evt) {
-	error("[PuzzleBoardKeyHidesTo::mouseLeftDown] Not implemented!");
+	Common::Point mousePos = getCursor()->position();
+
+	if (mousePos.y <= 350) {
+		int32 index = findRect();
+
+		if (index != -1 && _position < 24) {
+			_charUsed[index] = true;
+			_selectedSlot = -1;
+
+			_solvedText[_position++] = puzzleKeyHidesToData.charMap[index].character;
+			_solvedText[_position++] = ' ';
+
+			if (_position == 5 || _position == 18) {
+				_solvedText[++_position] = ' ';
+				_solvedText[++_position] = ' ';
+				++_position;
+			}
+
+			updateScreen();
+		}
+	} else if (_vm->isGameFlagNotSet(kGameFlag283)) {
+		checkSlots();
+	}
+
+	return true;
 }
 
 } // End of namespace Asylum

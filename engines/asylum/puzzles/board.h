@@ -79,6 +79,7 @@ protected:
 	bool updateScreen();
 	int32 findRect();
 	bool stopSound();
+	void checkSlots();
 
 private:
 	PuzzleData _data;
