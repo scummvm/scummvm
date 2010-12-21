@@ -101,7 +101,16 @@ void PuzzlePipes::setup(bool val) {
 }
 
 void PuzzlePipes::updateCursor() {
-	error("[PuzzlePipes::updateCursor] Not implemented!");
+	int32 index = findRect();
+
+	if (_rectIndex == index)
+		return;
+
+	_rectIndex = index;
+	if (index == -1)
+		getCursor()->set(getWorld()->graphicResourceIds[16], 0, kCursorAnimationNone);
+	else
+		getCursor()->set(getWorld()->graphicResourceIds[16]);
 }
 
 int32 PuzzlePipes::findRect() {
