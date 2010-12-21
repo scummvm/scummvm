@@ -27,11 +27,14 @@
 
 namespace Asylum {
 
-static const struct {
-	char character;
-	Common::Point position;
-} puzzleKeyHidesToCharmap[10] = {
-	{'I', Common::Point( 30,  53)},
+static const PuzzleBoard::PuzzleData puzzleKeyHidesToData = {
+	56,
+	kGameFlag283,
+	503,
+	3,
+	{{5, false}, {6, false}, {7, false}},
+	10,
+	{{'I', Common::Point( 30,  53)},
 	{'E', Common::Point(212,  71)},
 	{'D', Common::Point( 31, 103)},
 	{'H', Common::Point(447, 134)},
@@ -40,13 +43,11 @@ static const struct {
 	{'O', Common::Point(372, 182)},
 	{'K', Common::Point(210, 215)},
 	{'Y', Common::Point(440, 247)},
-	{'T', Common::Point(479, 262)}
+	{'T', Common::Point(479, 262)}},
+	true
 };
 
-PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : PuzzleBoard(engine, 56) {
-}
-
-PuzzleBoardKeyHidesTo::~PuzzleBoardKeyHidesTo() {
+PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : PuzzleBoard(engine, puzzleKeyHidesToData) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,36 +57,8 @@ bool PuzzleBoardKeyHidesTo::init(const AsylumEvent &evt)  {
 	error("[PuzzleBoardKeyHidesTo::init] Not implemented!");
 }
 
-bool PuzzleBoardKeyHidesTo::update(const AsylumEvent &evt)  {
-	error("[PuzzleBoardKeyHidesTo::update] Not implemented!");
-}
-
 bool PuzzleBoardKeyHidesTo::mouseLeftDown(const AsylumEvent &evt) {
 	error("[PuzzleBoardKeyHidesTo::mouseLeftDown] Not implemented!");
 }
-
-//////////////////////////////////////////////////////////////////////////
-// Helpers
-//////////////////////////////////////////////////////////////////////////
-void PuzzleBoardKeyHidesTo::updateCursor() {
-	error("[PuzzleBoardKeyHidesTo::updateCursor] Not implemented!");
-}
-
-void PuzzleBoardKeyHidesTo::drawText() {
-	error("[PuzzleBoardKeyHidesTo::drawText] Not implemented!");
-}
-
-int32 PuzzleBoardKeyHidesTo::findRect() {
-	error("[PuzzleBoardKeyHidesTo::findRect] Not implemented!");
-}
-
-int32 PuzzleBoardKeyHidesTo::checkMouse() {
-	error("[PuzzleBoardKeyHidesTo::checkMouse] Not implemented!");
-}
-
-void PuzzleBoardKeyHidesTo::playSound() {
-	error("[PuzzleBoardKeyHidesTo::playSound] Not implemented!");
-}
-
 
 } // End of namespace Asylum

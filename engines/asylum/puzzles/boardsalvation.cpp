@@ -25,13 +25,23 @@
 
 #include "asylum/puzzles/boardsalvation.h"
 
+#include "asylum/system/screen.h"
+#include "asylum/system/sound.h"
+
+#include "asylum/views/scene.h"
+
+#include "asylum/asylum.h"
+
 namespace Asylum {
 
-static const struct {
-	char character;
-	Common::Point position;
-} puzzleSalvationCharmap[9] = {
-	{'I', Common::Point( 61,  53)},
+static const PuzzleBoard::PuzzleData puzzleSalvationData = {
+	31,
+	kGameFlag281,
+	431,
+	3,
+	{{0, false}, {1, false}, {2, false}},
+	9,
+	{{'I', Common::Point( 61,  53)},
 	{'S', Common::Point(322,  53)},
 	{'A', Common::Point(529,  86)},
 	{'L', Common::Point(256, 117)},
@@ -39,13 +49,13 @@ static const struct {
 	{'A', Common::Point( 66, 199)},
 	{'T', Common::Point(436, 229)},
 	{'O', Common::Point(172, 262)},
-	{'N', Common::Point(393, 296)}
+	{'N', Common::Point(393, 296)}},
+	false
 };
 
-PuzzleBoardSalvation::PuzzleBoardSalvation(AsylumEngine *engine) : PuzzleBoard(engine, 31) {
-}
+static const uint32 puzzleSalvationSoundResourceIndex[11] = {5, 6, 7, 10, 11, 28, 29, 30, 31, 32, 36};
 
-PuzzleBoardSalvation::~PuzzleBoardSalvation() {
+PuzzleBoardSalvation::PuzzleBoardSalvation(AsylumEngine *engine) : PuzzleBoard(engine, puzzleSalvationData) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -55,35 +65,26 @@ bool PuzzleBoardSalvation::init(const AsylumEvent &evt)  {
 	error("[PuzzleBoardSalvation::init] Not implemented!");
 }
 
-bool PuzzleBoardSalvation::update(const AsylumEvent &evt)  {
-	error("[PuzzleBoardSalvation::update] Not implemented!");
-}
-
 bool PuzzleBoardSalvation::mouseLeftDown(const AsylumEvent &evt) {
 	error("[PuzzleBoardSalvation::mouseLeftDown] Not implemented!");
+}
+
+bool PuzzleBoardSalvation::mouseRightDown(const AsylumEvent &evt) {
+	if (!stopSound()) {
+		checkANALText();
+		getScreen()->clear();
+		_vm->switchEventHandler(getScene());
+	}
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-void PuzzleBoardSalvation::updateCursor() {
-	error("[PuzzleBoardSalvation::updateCursor] Not implemented!");
-}
-
-void PuzzleBoardSalvation::drawText() {
-	error("[PuzzleBoardSalvation::drawText] Not implemented!");
-}
-
-int32 PuzzleBoardSalvation::findRect() {
-	error("[PuzzleBoardSalvation::findRect] Not implemented!");
-}
-
-int32 PuzzleBoardSalvation::checkMouse() {
-	error("[PuzzleBoardSalvation::checkMouse] Not implemented!");
-}
-
-void PuzzleBoardSalvation::playSound() {
-	error("[PuzzleBoardSalvation::playSound] Not implemented!");
+void PuzzleBoardSalvation::checkANALText() {
+	if (!strcmp(_solvedText, "A N A L "))
+		getSound()->playSound(MAKE_RESOURCE(kResourcePackSpeech, puzzleSalvationSoundResourceIndex[rnd(11)]), false, Config.voiceVolume);
 }
 
 } // End of namespace Asylum

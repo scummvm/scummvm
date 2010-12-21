@@ -37,10 +37,6 @@ struct PuzzleData : public Common::Serializable {
 public:
 	uint32 timeMachineCounter;
 
-	// Board puzzles
-	ResourceId soundResourceId;
-	char boardText[800];
-
 	PuzzleData() {
 		timeMachineCounter = 0;
 	}
