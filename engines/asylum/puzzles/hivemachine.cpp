@@ -25,9 +25,20 @@
 
 #include "asylum/puzzles/hivemachine.h"
 
+#include "asylum/resources/worldstats.h"
+
+#include "asylum/system/cursor.h"
+#include "asylum/system/graphics.h"
+#include "asylum/system/screen.h"
+
+#include "asylum/views/scene.h"
+
+#include "asylum/asylum.h"
+
 namespace Asylum {
 
 PuzzleHiveMachine::PuzzleHiveMachine(AsylumEngine *engine) : Puzzle(engine) {
+	_rectIndex = 0;
 }
 
 PuzzleHiveMachine::~PuzzleHiveMachine() {
@@ -38,6 +49,13 @@ PuzzleHiveMachine::~PuzzleHiveMachine() {
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleHiveMachine::init(const AsylumEvent &evt)  {
 	error("[PuzzleHiveMachine::init] Not implemented!");
+
+	getScreen()->setPalette(getWorld()->graphicResourceIds[9]);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[9], 0);
+	_rectIndex = -2;
+	updateCursor();
+
+	return true;
 }
 
 bool PuzzleHiveMachine::update(const AsylumEvent &evt)  {
@@ -49,14 +67,26 @@ bool PuzzleHiveMachine::mouseLeftDown(const AsylumEvent &evt) {
 }
 
 bool PuzzleHiveMachine::mouseRightDown(const AsylumEvent &evt) {
-	error("[PuzzleHiveMachine::mouseLeftDown] Not implemented!");
+	getScreen()->clear();
+	_vm->switchEventHandler(getScene());
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
 void PuzzleHiveMachine::updateCursor() {
-	error("[PuzzleHiveMachine::updateCursor] Not implemented!");
+	int32 index = findRect();
+
+	if (_rectIndex == index)
+		return;
+
+	_rectIndex = index;
+	if (index == -1)
+		getCursor()->set(getWorld()->graphicResourceIds[12], -1, kCursorAnimationNone);
+	else
+		getCursor()->set(getWorld()->graphicResourceIds[12], -1);
 }
 
 int32 PuzzleHiveMachine::findRect() {
