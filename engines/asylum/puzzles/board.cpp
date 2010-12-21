@@ -188,4 +188,51 @@ int32 PuzzleBoard::checkMouse() {
 	return -1;
 }
 
+void PuzzleBoard::updateCursor() {
+	Common::Point mousePos = getCursor()->position();
+
+	if (mousePos.y <= 350) {
+		int32 index = findRect();
+
+		if (index == -1) {
+			if (getCursor()->graphicResourceId == getWorld()->graphicResourceIds[34])
+				return;
+
+			_rectIndex = index;
+
+			getCursor()->set(getWorld()->graphicResourceIds[34]);
+		} else {
+			if (getCursor()->graphicResourceId == getWorld()->graphicResourceIds[33])
+				return;
+
+			if (index == _rectIndex)
+				return;
+
+			_rectIndex = index;
+
+			getCursor()->set(getWorld()->graphicResourceIds[33]);
+		}
+	} else {
+		if (_vm->isGameFlagSet(_data.gameFlag)) {
+			if (getCursor()->graphicResourceId == getWorld()->graphicResourceIds[34])
+				return;
+
+			getCursor()->set(getWorld()->graphicResourceIds[34]);
+		} else {
+			int32 index = checkMouse();
+
+			if (getCursor()->graphicResourceId == getWorld()->graphicResourceIds[33])
+				return;
+
+			if (index == _rectIndex)
+				return;
+
+			if (index == -1)
+				getCursor()->set(getWorld()->graphicResourceIds[33], 0, kCursorAnimationNone);
+			else
+				getCursor()->set(getWorld()->graphicResourceIds[33]);
+		}
+	}
+}
+
 } // End of namespace Asylum
