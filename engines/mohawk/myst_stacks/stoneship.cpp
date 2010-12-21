@@ -92,8 +92,8 @@ void MystScriptParser_Stoneship::runPersistentScripts() {
 }
 
 uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
-	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-	MystVariables::Stoneship &stoneship = _vm->_saveLoad->_v->stoneship;
+//	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+//	MystVariables::Stoneship &stoneship = _vm->_saveLoad->_v->stoneship;
 
 	switch(var) {
 //case 0: // Water Drained From Lighthouse / Right Button Of Pump
@@ -152,8 +152,8 @@ uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
 }
 
 void MystScriptParser_Stoneship::toggleVar(uint16 var) {
-	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-	MystVariables::Stoneship &stoneship = _vm->_saveLoad->_v->stoneship;
+//	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+//	MystVariables::Stoneship &stoneship = _vm->_saveLoad->_v->stoneship;
 
 	switch(var) {
 	default:
@@ -163,7 +163,7 @@ void MystScriptParser_Stoneship::toggleVar(uint16 var) {
 }
 
 bool MystScriptParser_Stoneship::setVarValue(uint16 var, uint16 value) {
-	MystVariables::Stoneship &stoneship = _vm->_saveLoad->_v->stoneship;
+//	MystVariables::Stoneship &stoneship = _vm->_saveLoad->_v->stoneship;
 	bool refresh = false;
 
 	switch (var) {
