@@ -26,27 +26,22 @@
 #ifndef ASYLUM_BOARDYOUTH_H
 #define ASYLUM_BOARDYOUTH_H
 
-#include "asylum/puzzles/puzzle.h"
+#include "asylum/puzzles/board.h"
 
 namespace Asylum {
 
 class AsylumEngine;
 
-class PuzzleBoardYouth : public Puzzle {
+class PuzzleBoardYouth : public PuzzleBoard {
 public:
 	PuzzleBoardYouth(AsylumEngine *engine);
 	~PuzzleBoardYouth();
 
-	void reset();
-
 private:
-	char _charUsed[68];
-
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
-	bool activate(const AsylumEvent &evt);
 	bool update(const AsylumEvent &evt);
 	bool mouseLeftDown(const AsylumEvent &evt);
 

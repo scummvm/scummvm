@@ -1,6 +1,7 @@
 MODULE := engines/asylum
 
 MODULE_OBJS := \
+	puzzles/board.o \
 	puzzles/boardkeyhidesto.o \
 	puzzles/boardsalvation.o \
 	puzzles/boardyouth.o \

@@ -43,14 +43,10 @@ static const struct {
 	{'T', Common::Point(479, 262)}
 };
 
-PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : Puzzle(engine) {
+PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : PuzzleBoard(engine, 56) {
 }
 
 PuzzleBoardKeyHidesTo::~PuzzleBoardKeyHidesTo() {
-}
-
-void PuzzleBoardKeyHidesTo::reset() {
-	memset(&_charUsed, 0, sizeof(_charUsed));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,10 +54,6 @@ void PuzzleBoardKeyHidesTo::reset() {
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleBoardKeyHidesTo::init(const AsylumEvent &evt)  {
 	error("[PuzzleBoardKeyHidesTo::init] Not implemented!");
-}
-
-bool PuzzleBoardKeyHidesTo::activate(const AsylumEvent &evt)  {
-	error("[PuzzleBoardKeyHidesTo::activate] Not implemented!");
 }
 
 bool PuzzleBoardKeyHidesTo::update(const AsylumEvent &evt)  {

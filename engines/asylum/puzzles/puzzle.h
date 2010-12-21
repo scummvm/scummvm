@@ -73,7 +73,6 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	bool hitTest(const Common::Point *polygonPoint, Common::Point point, uint32 index);
 	bool hitTest(const Common::Point *polygonPoint, Common::Point point);
-
 };
 
 } // End of namespace Asylum
