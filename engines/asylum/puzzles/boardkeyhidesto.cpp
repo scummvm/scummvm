@@ -33,11 +33,19 @@ PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : Puzzle(engi
 PuzzleBoardKeyHidesTo::~PuzzleBoardKeyHidesTo() {
 }
 
+void PuzzleBoardKeyHidesTo::reset() {
+	memset(&_charUsed, 0, sizeof(_charUsed));
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleBoardKeyHidesTo::init(const AsylumEvent &evt)  {
 	error("[PuzzleBoardKeyHidesTo::init] Not implemented!");
+}
+
+bool PuzzleBoardKeyHidesTo::activate(const AsylumEvent &evt)  {
+	error("[PuzzleBoardKeyHidesTo::activate] Not implemented!");
 }
 
 bool PuzzleBoardKeyHidesTo::update(const AsylumEvent &evt)  {
@@ -47,5 +55,29 @@ bool PuzzleBoardKeyHidesTo::update(const AsylumEvent &evt)  {
 bool PuzzleBoardKeyHidesTo::mouseLeftDown(const AsylumEvent &evt) {
 	error("[PuzzleBoardKeyHidesTo::mouseLeftDown] Not implemented!");
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Helpers
+//////////////////////////////////////////////////////////////////////////
+void PuzzleBoardKeyHidesTo::updateCursor() {
+	error("[PuzzleBoardKeyHidesTo::updateCursor] Not implemented!");
+}
+
+void PuzzleBoardKeyHidesTo::drawText() {
+	error("[PuzzleBoardKeyHidesTo::drawText] Not implemented!");
+}
+
+int32 PuzzleBoardKeyHidesTo::findRect() {
+	error("[PuzzleBoardKeyHidesTo::findRect] Not implemented!");
+}
+
+int32 PuzzleBoardKeyHidesTo::checkMouse() {
+	error("[PuzzleBoardKeyHidesTo::checkMouse] Not implemented!");
+}
+
+void PuzzleBoardKeyHidesTo::playSound() {
+	error("[PuzzleBoardKeyHidesTo::playSound] Not implemented!");
+}
+
 
 } // End of namespace Asylum
