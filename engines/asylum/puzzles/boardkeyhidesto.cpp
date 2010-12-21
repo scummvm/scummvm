@@ -27,6 +27,22 @@
 
 namespace Asylum {
 
+static const struct {
+	char character;
+	Common::Point position;
+} puzzleKeyHidesToCharmap[10] = {
+	{'I', Common::Point( 30,  53)},
+	{'E', Common::Point(212,  71)},
+	{'D', Common::Point( 31, 103)},
+	{'H', Common::Point(447, 134)},
+	{'S', Common::Point(240, 151)},
+	{'E', Common::Point( 95, 167)},
+	{'O', Common::Point(372, 182)},
+	{'K', Common::Point(210, 215)},
+	{'Y', Common::Point(440, 247)},
+	{'T', Common::Point(479, 262)}
+};
+
 PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : Puzzle(engine) {
 }
 

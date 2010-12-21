@@ -27,6 +27,20 @@
 
 namespace Asylum {
 
+static const struct {
+	char character;
+	Common::Point position;
+} puzzleYouthCharmap[8] = {
+	{'E', Common::Point( 64,  55)},
+	{'U', Common::Point( 26,  69)},
+	{'T', Common::Point(135, 102)},
+	{'O', Common::Point( 57, 134)},
+	{'H', Common::Point(417, 152)},
+	{'T', Common::Point(223, 181)},
+	{'H', Common::Point(497, 198)},
+	{'Y', Common::Point(435, 231)}
+};
+
 PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : Puzzle(engine) {
 }
 
