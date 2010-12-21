@@ -47,16 +47,17 @@ PuzzleBoard::PuzzleBoard(AsylumEngine *engine, PuzzleData data) : Puzzle(engine)
 
 	// Init board
 	_solved = false;
-	memset(&_text,       0, sizeof(_text));
-	memset(&_charUsed,   0, sizeof(_charUsed));
-	memset(&_solvedText, 0, sizeof(_solvedText));
+	memset(&_text,       0,     sizeof(_text));
+	memset(&_charUsed,   false, sizeof(_charUsed));
+	memset(&_solvedText, 0,     sizeof(_solvedText));
 	_rectIndex = -2;
 	_soundResourceId = kResourceNone;
-	_data_456958 = -1;
+	_selectedSlot = -1;
+	_position = 0;
 }
 
 void PuzzleBoard::reset() {
-	memset(&_charUsed, 0, sizeof(_charUsed));
+	memset(&_charUsed, false, sizeof(_charUsed));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -64,7 +65,7 @@ void PuzzleBoard::reset() {
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleBoard::init(const AsylumEvent &evt)  {
 	_rectIndex = -2;
-	_data_456958 = -1;
+	_selectedSlot = -1;
 	_solved = false;
 	_soundResourceId = 0;
 
@@ -81,14 +82,14 @@ bool PuzzleBoard::init(const AsylumEvent &evt)  {
 		strcat((char *)&_text, " ");
 	}
 
-	activate(evt);
+	updateScreen();
 
 	getCursor()->show();
 
 	return true;
 }
 
-bool PuzzleBoard::activate(const AsylumEvent &evt)  {
+bool PuzzleBoard::updateScreen()  {
 	getScreen()->clearGraphicsInQueue();
 
 	getScreen()->draw(getWorld()->graphicResourceIds[_data.backgroundIndex]);
@@ -159,7 +160,7 @@ void PuzzleBoard::drawText() {
 		if (!_solvedText[index])
 			break;
 
-		getText()->setPosition(x, _data_456958 != index ? 360 : 370);
+		getText()->setPosition(x, _selectedSlot != index ? 360 : 370);
 		getText()->drawChar(_solvedText[index]);
 
 		index += 2;

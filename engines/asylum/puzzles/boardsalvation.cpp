@@ -25,6 +25,7 @@
 
 #include "asylum/puzzles/boardsalvation.h"
 
+#include "asylum/system/cursor.h"
 #include "asylum/system/screen.h"
 #include "asylum/system/sound.h"
 
@@ -63,7 +64,36 @@ PuzzleBoardSalvation::PuzzleBoardSalvation(AsylumEngine *engine) : PuzzleBoard(e
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleBoardSalvation::mouseLeftDown(const AsylumEvent &evt) {
-	error("[PuzzleBoardSalvation::mouseLeftDown] Not implemented!");
+	Common::Point mousePos = getCursor()->position();
+
+	if (mousePos.y <= 350) {
+		int32 index = findRect();
+
+		if (index != -1 && _position < 18) {
+			_charUsed[index] = true;
+			_selectedSlot = -1;
+
+			_solvedText[_position++] = puzzleSalvationData.charMap[index].character;
+			_solvedText[_position++] = ' ';
+
+			updateScreen();
+		}
+	} else if (_vm->isGameFlagNotSet(kGameFlag281)) {
+		if (mousePos.x >= 215 && mousePos.x < 431 && mousePos.y >= 360 && mousePos.y < 376) {
+			int32 index = (mousePos.x - 215) / 12;
+
+			if (_solvedText[index]) {
+				if (_selectedSlot == -1)
+					_selectedSlot = index;
+				else
+					SWAP(_solvedText[index], _solvedText[_selectedSlot]);
+
+				updateScreen();
+			}
+		}
+	}
+
+	return true;
 }
 
 bool PuzzleBoardSalvation::mouseRightDown(const AsylumEvent &evt) {
