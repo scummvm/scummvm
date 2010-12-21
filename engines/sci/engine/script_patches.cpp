@@ -231,9 +231,71 @@ const uint16 ecoquest2PatchEcorder[] = {
 	PATCH_END
 };
 
+// ===========================================================================
+// Same patch as above for the ecorder introduction. Fixes bug #3092115.
+// Two workarounds are needed for this patch in workarounds.cpp (when calling
+// kGraphFillBoxAny and kGraphUpdateBox), as there isn't enough space to patch
+// the function otherwise.
+const byte ecoquest2SignatureEcorderTutorial[] = {
+	36,
+	0x30, 0x23, 0x00,  // bnt [next state]
+	0x39, 0x0a,        // pushi 0a
+	0x5b, 0x04, 0x1f,  // lea temp[1f]
+	0x36,              // push
+	0x39, 0x64,        // pushi 64
+	0x39, 0x7d,        // pushi 7d
+	0x39, 0x32,        // pushi 32
+	0x39, 0x66,        // pushi 66
+	0x39, 0x17,        // pushi 17
+	0x39, 0x69,        // pushi 69
+	0x38, 0x31, 0x26,  // pushi 2631
+	0x39, 0x6a,        // pushi 6a
+	0x39, 0x64,        // pushi 64
+	0x43, 0x1b, 0x14,  // call kDisplay
+	0x35, 0x1e,        // ldi 1e
+	0x65, 0x20,        // aTop ticks
+	0x32,              // jmp [end]
+	// 2 extra bytes, jmp offset
+	0
+};
+
+const uint16 ecoquest2PatchEcorderTutorial[] = {
+	0x31, 0x23,        // bnt [next state] (save 1 byte)
+	// The parameter count below should be 7, but we're out of bytes 
+	// to patch! A workaround has been added because of this
+	0x78,              // push1 (parameter count)
+	//0x39, 0x07,        // pushi 07 (parameter count)
+	0x39, 0x0b,        // push (FillBoxAny)
+	0x39, 0x1d,        // pushi 29d
+	0x39, 0x73,        // pushi 115d
+	0x39, 0x5e,        // pushi 94d
+	0x38, 0xd7, 0x00,  // pushi 215d
+	0x78,              // push1 (visual screen)
+	0x39, 0x17,        // pushi 17 (color)
+	0x43, 0x6c, 0x0e,  // call kGraph
+	// The parameter count below should be 5, but we're out of bytes 
+	// to patch! A workaround has been added because of this
+	0x78,              // push1 (parameter count)
+	//0x39, 0x05,        // pushi 05 (parameter count)
+	0x39, 0x0c,        // pushi 12d (UpdateBox)
+	0x39, 0x1d,        // pushi 29d
+	0x39, 0x73,        // pushi 115d
+	0x39, 0x5e,        // pushi 94d
+	0x38, 0xd7, 0x00,  // pushi 215d
+	0x43, 0x6c, 0x0a,  // call kGraph
+	// We are out of bytes to patch at this point,
+	// so we skip 494 (0x1EE) bytes to reuse this code:
+	// ldi 1e
+	// aTop 20
+	// jmp 030e (jump to end)
+	0x32, 0xee, 0x01,  // skip 494 (0x1EE) bytes
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                 adjust
 const SciScriptSignature ecoquest2Signatures[] = {
 	{     50, "initial text not removed on ecorder",         1, PATCH_MAGICDWORD(0x39, 0x64, 0x39, 0x7d),    -8, ecoquest2SignatureEcorder, ecoquest2PatchEcorder },
+	{    333, "initial text not removed on ecorder tutorial",1, PATCH_MAGICDWORD(0x39, 0x64, 0x39, 0x7d),    -9, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
