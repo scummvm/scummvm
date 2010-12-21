@@ -51,10 +51,6 @@ PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : PuzzleBoard(engine, p
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleBoardYouth::init(const AsylumEvent &evt)  {
-	error("[PuzzleBoardYouth::init] Not implemented!");
-}
-
 bool PuzzleBoardYouth::mouseLeftDown(const AsylumEvent &evt) {
 	error("[PuzzleBoardYouth::mouseLeftDown] Not implemented!");
 }
