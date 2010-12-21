@@ -44,7 +44,8 @@ static const PuzzleBoard::PuzzleData puzzleKeyHidesToData = {
 	{'K', Common::Point(210, 215)},
 	{'Y', Common::Point(440, 247)},
 	{'T', Common::Point(479, 262)}},
-	true
+	true,
+	"K E Y   H I D E S   T O "
 };
 
 PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : PuzzleBoard(engine, puzzleKeyHidesToData) {

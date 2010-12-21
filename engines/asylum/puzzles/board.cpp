@@ -106,8 +106,10 @@ bool PuzzleBoard::update(const AsylumEvent &evt) {
 	if (!_solved)
 		playSound();
 
-
 	if (_vm->isGameFlagNotSet(_data.gameFlag)) {
+		if (strcmp(_solvedText, _data.solvedText))
+			return true;
+
 		if (_solved) {
 			if (!getSound()->isPlaying(MAKE_RESOURCE(kResourcePackSpeech, 1))) {
 				_vm->setGameFlag(_data.gameFlag);

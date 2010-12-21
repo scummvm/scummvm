@@ -55,6 +55,7 @@ public:
 		uint32 charMapSize;
 		CharMap charMap[10];
 		bool checkForSpace;
+		char solvedText[28];
 	};
 
 	PuzzleBoard(AsylumEngine *engine);
