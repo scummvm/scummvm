@@ -23,34 +23,40 @@
  *
  */
 
-#ifndef ASYLUM_PUZZLE_DATA_H
-#define ASYLUM_PUZZLE_DATA_H
+#ifndef ASYLUM_BOARD_H
+#define ASYLUM_BOARD_H
 
-#include "asylum/console.h"
-#include "asylum/shared.h"
-
-#include "common/serializer.h"
+#include "asylum/puzzles/puzzle.h"
 
 namespace Asylum {
 
-struct PuzzleData : public Common::Serializable {
+class AsylumEngine;
+
+class PuzzleBoard : public Puzzle {
 public:
-	uint32 timeMachineCounter;
+	PuzzleBoard(AsylumEngine *engine);
+	PuzzleBoard(AsylumEngine *engine, int32 backgroundIndex);
 
-	// Board puzzles
-	ResourceId soundResourceId;
-	char boardText[800];
+	void reset();
 
-	PuzzleData() {
-		timeMachineCounter = 0;
-	}
+protected:
+	char _charUsed[80];
 
-	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &s) {
-		error("[PuzzleData::saveLoadWithSerializer] Not implemented!");
-	}
+private:
+	int32 _backgroundIndex;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Event Handling
+	//////////////////////////////////////////////////////////////////////////
+	bool activate(const AsylumEvent &evt);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+	bool stopSound();
+	virtual void drawText();
 };
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_PUZZLE_DATA_H
+#endif // ASYLUM_BOARD_H

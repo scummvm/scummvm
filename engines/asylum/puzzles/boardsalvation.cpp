@@ -42,14 +42,10 @@ static const struct {
 	{'N', Common::Point(393, 296)}
 };
 
-PuzzleBoardSalvation::PuzzleBoardSalvation(AsylumEngine *engine) : Puzzle(engine) {
+PuzzleBoardSalvation::PuzzleBoardSalvation(AsylumEngine *engine) : PuzzleBoard(engine, 31) {
 }
 
 PuzzleBoardSalvation::~PuzzleBoardSalvation() {
-}
-
-void PuzzleBoardSalvation::reset() {
-	memset(&_charUsed, 0, sizeof(_charUsed));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,10 +53,6 @@ void PuzzleBoardSalvation::reset() {
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleBoardSalvation::init(const AsylumEvent &evt)  {
 	error("[PuzzleBoardSalvation::init] Not implemented!");
-}
-
-bool PuzzleBoardSalvation::activate(const AsylumEvent &evt)  {
-	error("[PuzzleBoardSalvation::activate] Not implemented!");
 }
 
 bool PuzzleBoardSalvation::update(const AsylumEvent &evt)  {

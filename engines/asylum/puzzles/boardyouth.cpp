@@ -41,14 +41,10 @@ static const struct {
 	{'Y', Common::Point(435, 231)}
 };
 
-PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : Puzzle(engine) {
+PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : PuzzleBoard(engine, 55) {
 }
 
 PuzzleBoardYouth::~PuzzleBoardYouth() {
-}
-
-void PuzzleBoardYouth::reset() {
-	memset(&_charUsed, 0, sizeof(_charUsed));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,10 +52,6 @@ void PuzzleBoardYouth::reset() {
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleBoardYouth::init(const AsylumEvent &evt)  {
 	error("[PuzzleBoardYouth::init] Not implemented!");
-}
-
-bool PuzzleBoardYouth::activate(const AsylumEvent &evt)  {
-	error("[PuzzleBoardYouth::activate] Not implemented!");
 }
 
 bool PuzzleBoardYouth::update(const AsylumEvent &evt)  {
