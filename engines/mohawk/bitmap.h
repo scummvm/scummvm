@@ -30,6 +30,7 @@
 
 #include "common/scummsys.h"
 #include "common/stream.h"
+#include "common/array.h"
 #include "graphics/surface.h"
 
 namespace Mohawk {
@@ -85,10 +86,13 @@ public:
 	virtual ~MohawkBitmap();
 
 	virtual MohawkSurface *decodeImage(Common::SeekableReadStream *stream);
+	Common::Array<MohawkSurface *> decodeImages(Common::SeekableReadStream *stream);
 
 protected:
 	BitmapHeader _header;
 	virtual byte getBitsPerPixel();
+
+	void decodeImageData(Common::SeekableReadStream *stream);
 
 	// The actual LZ decoder
 	static Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream *stream, uint32 uncompressedSize);

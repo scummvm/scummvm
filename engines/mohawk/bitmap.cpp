@@ -59,7 +59,7 @@ MohawkBitmap::MohawkBitmap() {
 MohawkBitmap::~MohawkBitmap() {
 }
 
-MohawkSurface *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
+void MohawkBitmap::decodeImageData(Common::SeekableReadStream *stream) {
 	_data = stream;
 	_header.colorTable.palette = NULL;
 
@@ -90,13 +90,48 @@ MohawkSurface *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 		}
 	}
 
-	Graphics::Surface *surface = createSurface(_header.width, _header.height);
-
 	unpackImage();
+}
+
+MohawkSurface *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
+	decodeImageData(stream);
+
+	Graphics::Surface *surface = createSurface(_header.width, _header.height);
 	drawImage(surface);
 	delete _data;
 
 	return new MohawkSurface(surface, _header.colorTable.palette);
+}
+
+Common::Array<MohawkSurface *> MohawkBitmap::decodeImages(Common::SeekableReadStream *stream) {
+	decodeImageData(stream);
+
+	// Some Mohawk games (CSTime, Zoombinis) store 'compound shapes' by
+	// packing several sub-images inside the data portion of an image.
+	// We take a copy of what we need (since it will be overwritten),
+	// and then decodeImage() all these sub-images.
+	Common::SeekableReadStream *data = _data;
+	int32 startPos = data->pos();
+	uint16 count = _header.width;
+
+	Common::Array<uint32> offsets;
+	for (uint i = 0; i < count; i++)
+		offsets.push_back(data->readUint32BE());
+
+	Common::Array<MohawkSurface *> surfaces;
+	for (uint i = 0; i < count; i++) {
+		uint32 start = startPos + offsets[i] - 8;
+		uint32 end;
+		if (i != (uint)count - 1)
+			end = startPos + offsets[i + 1] - 8;
+		else
+			end = data->size();
+		Common::SeekableSubReadStream *substream = new Common::SeekableSubReadStream(data, start, end);
+		surfaces.push_back(decodeImage(substream));
+	}
+
+	delete data;
+	return surfaces;
 }
 
 Graphics::Surface *MohawkBitmap::createSurface(uint16 width, uint16 height) {
