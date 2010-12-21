@@ -33,11 +33,19 @@ PuzzleBoardSalvation::PuzzleBoardSalvation(AsylumEngine *engine) : Puzzle(engine
 PuzzleBoardSalvation::~PuzzleBoardSalvation() {
 }
 
+void PuzzleBoardSalvation::reset() {
+	memset(&_charUsed, 0, sizeof(_charUsed));
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleBoardSalvation::init(const AsylumEvent &evt)  {
 	error("[PuzzleBoardSalvation::init] Not implemented!");
+}
+
+bool PuzzleBoardSalvation::activate(const AsylumEvent &evt)  {
+	error("[PuzzleBoardSalvation::activate] Not implemented!");
 }
 
 bool PuzzleBoardSalvation::update(const AsylumEvent &evt)  {
@@ -46,6 +54,29 @@ bool PuzzleBoardSalvation::update(const AsylumEvent &evt)  {
 
 bool PuzzleBoardSalvation::mouseLeftDown(const AsylumEvent &evt) {
 	error("[PuzzleBoardSalvation::mouseLeftDown] Not implemented!");
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Helpers
+//////////////////////////////////////////////////////////////////////////
+void PuzzleBoardSalvation::updateCursor() {
+	error("[PuzzleBoardSalvation::updateCursor] Not implemented!");
+}
+
+void PuzzleBoardSalvation::drawText() {
+	error("[PuzzleBoardSalvation::drawText] Not implemented!");
+}
+
+int32 PuzzleBoardSalvation::findRect() {
+	error("[PuzzleBoardSalvation::findRect] Not implemented!");
+}
+
+int32 PuzzleBoardSalvation::checkMouse() {
+	error("[PuzzleBoardSalvation::checkMouse] Not implemented!");
+}
+
+void PuzzleBoardSalvation::playSound() {
+	error("[PuzzleBoardSalvation::playSound] Not implemented!");
 }
 
 } // End of namespace Asylum

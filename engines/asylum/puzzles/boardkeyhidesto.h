@@ -37,13 +37,27 @@ public:
 	PuzzleBoardKeyHidesTo(AsylumEngine *engine);
 	~PuzzleBoardKeyHidesTo();
 
+	void reset();
+
 private:
+	char _charUsed[80];
+
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
+	bool activate(const AsylumEvent &evt);
 	bool update(const AsylumEvent &evt);
 	bool mouseLeftDown(const AsylumEvent &evt);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+	void updateCursor();
+	void drawText();
+	int32 findRect();
+	int32 checkMouse();
+	void playSound();
 };
 
 } // End of namespace Asylum

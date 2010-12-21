@@ -33,11 +33,19 @@ PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : Puzzle(engine) {
 PuzzleBoardYouth::~PuzzleBoardYouth() {
 }
 
+void PuzzleBoardYouth::reset() {
+	memset(&_charUsed, 0, sizeof(_charUsed));
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleBoardYouth::init(const AsylumEvent &evt)  {
 	error("[PuzzleBoardYouth::init] Not implemented!");
+}
+
+bool PuzzleBoardYouth::activate(const AsylumEvent &evt)  {
+	error("[PuzzleBoardYouth::activate] Not implemented!");
 }
 
 bool PuzzleBoardYouth::update(const AsylumEvent &evt)  {
@@ -46,6 +54,29 @@ bool PuzzleBoardYouth::update(const AsylumEvent &evt)  {
 
 bool PuzzleBoardYouth::mouseLeftDown(const AsylumEvent &evt) {
 	error("[PuzzleBoardYouth::mouseLeftDown] Not implemented!");
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Helpers
+//////////////////////////////////////////////////////////////////////////
+void PuzzleBoardYouth::updateCursor() {
+	error("[PuzzleBoardYouth::updateCursor] Not implemented!");
+}
+
+void PuzzleBoardYouth::drawText() {
+	error("[PuzzleBoardYouth::drawText] Not implemented!");
+}
+
+int32 PuzzleBoardYouth::findRect() {
+	error("[PuzzleBoardYouth::findRect] Not implemented!");
+}
+
+int32 PuzzleBoardYouth::checkMouse() {
+	error("[PuzzleBoardYouth::checkMouse] Not implemented!");
+}
+
+void PuzzleBoardYouth::playSound() {
+	error("[PuzzleBoardYouth::playSound] Not implemented!");
 }
 
 } // End of namespace Asylum
