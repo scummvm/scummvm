@@ -95,7 +95,7 @@ private:
 	void playSound();
 	int32 findRect();
 	int32 checkMouse();
-	virtual void updateCursor();
+	void updateCursor();
 };
 
 } // End of namespace Asylum
