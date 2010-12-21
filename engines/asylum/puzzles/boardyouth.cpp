@@ -27,24 +27,25 @@
 
 namespace Asylum {
 
-static const struct {
-	char character;
-	Common::Point position;
-} puzzleYouthCharmap[8] = {
-	{'E', Common::Point( 64,  55)},
+static const PuzzleBoard::PuzzleData puzzleYouthData = {
+	55,
+	kGameFlag282,
+	431,
+	2,
+	{{3, false}, {4, false}, {0, false}},
+	8,
+	{{'E', Common::Point( 64,  55)},
 	{'U', Common::Point( 26,  69)},
 	{'T', Common::Point(135, 102)},
 	{'O', Common::Point( 57, 134)},
 	{'H', Common::Point(417, 152)},
 	{'T', Common::Point(223, 181)},
 	{'H', Common::Point(497, 198)},
-	{'Y', Common::Point(435, 231)}
+	{'Y', Common::Point(435, 231)}},
+	true
 };
 
-PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : PuzzleBoard(engine, 55) {
-}
-
-PuzzleBoardYouth::~PuzzleBoardYouth() {
+PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : PuzzleBoard(engine, puzzleYouthData) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -54,35 +55,8 @@ bool PuzzleBoardYouth::init(const AsylumEvent &evt)  {
 	error("[PuzzleBoardYouth::init] Not implemented!");
 }
 
-bool PuzzleBoardYouth::update(const AsylumEvent &evt)  {
-	error("[PuzzleBoardYouth::update] Not implemented!");
-}
-
 bool PuzzleBoardYouth::mouseLeftDown(const AsylumEvent &evt) {
 	error("[PuzzleBoardYouth::mouseLeftDown] Not implemented!");
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Helpers
-//////////////////////////////////////////////////////////////////////////
-void PuzzleBoardYouth::updateCursor() {
-	error("[PuzzleBoardYouth::updateCursor] Not implemented!");
-}
-
-void PuzzleBoardYouth::drawText() {
-	error("[PuzzleBoardYouth::drawText] Not implemented!");
-}
-
-int32 PuzzleBoardYouth::findRect() {
-	error("[PuzzleBoardYouth::findRect] Not implemented!");
-}
-
-int32 PuzzleBoardYouth::checkMouse() {
-	error("[PuzzleBoardYouth::checkMouse] Not implemented!");
-}
-
-void PuzzleBoardYouth::playSound() {
-	error("[PuzzleBoardYouth::playSound] Not implemented!");
 }
 
 } // End of namespace Asylum

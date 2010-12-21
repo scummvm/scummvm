@@ -32,6 +32,8 @@ namespace Asylum {
 // Global
 //////////////////////////////////////////////////////////////////////////
 enum GameFlag {
+	kGameFlag0                    = 0,
+
 	kGameFlag4                    = 4,
 	kGameFlag12                   = 12,
 	kGameFlag52                   = 52,
@@ -78,6 +80,9 @@ enum GameFlag {
 	kGameFlag275                  = 275,
 	kGameFlag276                  = 276,
 	kGameFlag279                  = 279,
+	kGameFlag281                  = 281,
+	kGameFlag282                  = 282,
+	kGameFlag283                  = 283,
 	kGameFlag353                  = 353,
 	kGameFlag354                  = 354,
 	kGameFlag355                  = 355,

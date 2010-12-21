@@ -35,24 +35,13 @@ class AsylumEngine;
 class PuzzleBoardKeyHidesTo : public PuzzleBoard {
 public:
 	PuzzleBoardKeyHidesTo(AsylumEngine *engine);
-	~PuzzleBoardKeyHidesTo();
 
 private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
-	bool update(const AsylumEvent &evt);
 	bool mouseLeftDown(const AsylumEvent &evt);
-
-	//////////////////////////////////////////////////////////////////////////
-	// Helpers
-	//////////////////////////////////////////////////////////////////////////
-	void updateCursor();
-	void drawText();
-	int32 findRect();
-	int32 checkMouse();
-	void playSound();
 };
 
 } // End of namespace Asylum

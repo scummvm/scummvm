@@ -35,24 +35,19 @@ class AsylumEngine;
 class PuzzleBoardSalvation : public PuzzleBoard {
 public:
 	PuzzleBoardSalvation(AsylumEngine *engine);
-	~PuzzleBoardSalvation();
 
 private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
-	bool update(const AsylumEvent &evt);
 	bool mouseLeftDown(const AsylumEvent &evt);
+	bool mouseRightDown(const AsylumEvent &evt);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
-	void updateCursor();
-	void drawText();
-	int32 findRect();
-	int32 checkMouse();
-	void playSound();
+	void checkANALText();
 };
 
 } // End of namespace Asylum

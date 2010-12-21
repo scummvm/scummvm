@@ -28,33 +28,74 @@
 
 #include "asylum/puzzles/puzzle.h"
 
+#include "asylum/shared.h"
+
 namespace Asylum {
 
 class AsylumEngine;
 
 class PuzzleBoard : public Puzzle {
 public:
+	struct SoundResource {
+		int32 index;
+		bool played;
+	};
+
+	struct CharMap {
+		char character;
+		Common::Point position;
+	};
+
+	struct PuzzleData {
+		uint32 backgroundIndex;
+		GameFlag gameFlag;
+		uint32 maxWidth;
+		uint32 soundResourceSize;
+		SoundResource soundResources[3];
+		uint32 charMapSize;
+		CharMap charMap[10];
+		bool checkForSpace;
+	};
+
 	PuzzleBoard(AsylumEngine *engine);
-	PuzzleBoard(AsylumEngine *engine, int32 backgroundIndex);
+	PuzzleBoard(AsylumEngine *engine, PuzzleData data);
 
 	void reset();
 
 protected:
-	char _charUsed[80];
+	bool _solved;
+	char _text[800];
+	int32 _charUsed[20];
+	char _solvedText[28]; // KeyHidesTo uses 28 chars, the other puzzles 20
+	int32 _rectIndex;
+	ResourceId _soundResourceId;
+	//Common::Array<PuzzleSoundResource> _soundResources;
 
-private:
-	int32 _backgroundIndex;
-
-	//////////////////////////////////////////////////////////////////////////
-	// Event Handling
-	//////////////////////////////////////////////////////////////////////////
-	bool activate(const AsylumEvent &evt);
+	int32 _data_456958;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
 	bool stopSound();
-	virtual void drawText();
+
+private:
+	PuzzleData _data;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Event Handling
+	//////////////////////////////////////////////////////////////////////////
+	bool activate(const AsylumEvent &evt);
+	bool update(const AsylumEvent &evt);
+	virtual bool mouseRightDown(const AsylumEvent &evt);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+	void drawText();
+	void playSound();
+	int32 findRect();
+	int32 checkMouse();
+	virtual void updateCursor();
 };
 
 } // End of namespace Asylum
