@@ -66,17 +66,18 @@ public:
 protected:
 	bool _solved;
 	char _text[800];
-	int32 _charUsed[20];
+	bool _charUsed[20];
 	char _solvedText[28]; // KeyHidesTo uses 28 chars, the other puzzles 20
+	uint32 _position;
 	int32 _rectIndex;
+	int32 _selectedSlot;
 	ResourceId _soundResourceId;
-	//Common::Array<PuzzleSoundResource> _soundResources;
-
-	int32 _data_456958;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
+	bool updateScreen();
+	int32 findRect();
 	bool stopSound();
 
 private:
@@ -86,7 +87,7 @@ private:
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
-	bool activate(const AsylumEvent &evt);
+	bool activate(const AsylumEvent &evt) { return updateScreen(); }
 	bool update(const AsylumEvent &evt);
 	virtual bool mouseRightDown(const AsylumEvent &evt);
 
@@ -95,7 +96,6 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	void drawText();
 	void playSound();
-	int32 findRect();
 	int32 checkMouse();
 	void updateCursor();
 };
