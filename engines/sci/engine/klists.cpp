@@ -702,12 +702,11 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		return argv[1];
 	}
 	case 6: { // Cpy
-#if 0
 		if (argv[1].isNull() || argv[3].isNull()) {
+			// Happens in SCI3
 			warning("kArray(Cpy): Request to copy from or to a null pointer");
 			return NULL_REG;
 		}
-#endif
 
 		reg_t arrayHandle = argv[1];
 		SciArray<reg_t> *array1 = s->_segMan->lookupArray(argv[1]);
