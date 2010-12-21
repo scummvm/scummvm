@@ -53,10 +53,6 @@ PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : PuzzleBoard
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleBoardKeyHidesTo::init(const AsylumEvent &evt)  {
-	error("[PuzzleBoardKeyHidesTo::init] Not implemented!");
-}
-
 bool PuzzleBoardKeyHidesTo::mouseLeftDown(const AsylumEvent &evt) {
 	error("[PuzzleBoardKeyHidesTo::mouseLeftDown] Not implemented!");
 }

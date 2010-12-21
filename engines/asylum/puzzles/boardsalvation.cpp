@@ -61,10 +61,6 @@ PuzzleBoardSalvation::PuzzleBoardSalvation(AsylumEngine *engine) : PuzzleBoard(e
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleBoardSalvation::init(const AsylumEvent &evt)  {
-	error("[PuzzleBoardSalvation::init] Not implemented!");
-}
-
 bool PuzzleBoardSalvation::mouseLeftDown(const AsylumEvent &evt) {
 	error("[PuzzleBoardSalvation::mouseLeftDown] Not implemented!");
 }
