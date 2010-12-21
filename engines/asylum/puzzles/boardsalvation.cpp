@@ -50,7 +50,8 @@ static const PuzzleBoard::PuzzleData puzzleSalvationData = {
 	{'T', Common::Point(436, 229)},
 	{'O', Common::Point(172, 262)},
 	{'N', Common::Point(393, 296)}},
-	false
+	false,
+	"S A L V A T I O N "
 };
 
 static const uint32 puzzleSalvationSoundResourceIndex[11] = {5, 6, 7, 10, 11, 28, 29, 30, 31, 32, 36};

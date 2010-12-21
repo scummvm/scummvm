@@ -42,7 +42,8 @@ static const PuzzleBoard::PuzzleData puzzleYouthData = {
 	{'T', Common::Point(223, 181)},
 	{'H', Common::Point(497, 198)},
 	{'Y', Common::Point(435, 231)}},
-	true
+	true,
+	"T H E   Y O U T H "
 };
 
 PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : PuzzleBoard(engine, puzzleYouthData) {
