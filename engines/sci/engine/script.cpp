@@ -356,14 +356,8 @@ void Script::relocateSci3(reg_t block) {
 
 	ObjMap::iterator it;
 	for (it = _objects.begin(); it != _objects.end(); ++it) {
-		unsigned int ofs = it->_value.getPos().offset;
-		unsigned int size = READ_SCI11ENDIAN_UINT16(_buf + ofs + 2);
 		const byte *seeker = relocStart;
-		while (READ_SCI11ENDIAN_UINT32(seeker) < ofs + size &&
-			    seeker < _buf + _bufSize) {
-			while (READ_SCI11ENDIAN_UINT32(seeker) < ofs)
-				seeker += 10;
-
+		while (seeker < _buf + _bufSize) {
 			// TODO: Find out what UINT16 at (seeker + 8) means
 			it->_value.relocateSci3(block.segment,
 						READ_SCI11ENDIAN_UINT32(seeker),
