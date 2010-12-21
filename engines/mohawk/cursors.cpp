@@ -107,7 +107,7 @@ void DefaultCursorManager::setCursor(uint16 id) {
 	// The Broderbund devs decided to rip off the Mac format, it seems.
 	// However, they reversed the x/y hotspot. That makes it totally different!!!!
 
-	Common::SeekableReadStream *stream = _vm->getResource(ID_TCUR, id);
+	Common::SeekableReadStream *stream = _vm->getResource(_tag, id);
 
 	byte cursorBitmap[16 * 16];
 	decodeMacXorCursor(stream, cursorBitmap);

@@ -35,6 +35,8 @@ namespace Common {
 	class String;
 }
 
+#include "mohawk/resource.h"
+
 namespace Mohawk {
 
 // 803-805 are animated, one large bmp which is in chunks - these are NEVER USED
@@ -87,13 +89,14 @@ protected:
 // Uses standard tCUR resources
 class DefaultCursorManager : public CursorManager {
 public:
-	DefaultCursorManager(MohawkEngine *vm) : _vm(vm) {}
+	DefaultCursorManager(MohawkEngine *vm, uint32 tag = ID_TCUR) : _vm(vm), _tag(tag) {}
 	~DefaultCursorManager() {}
 
 	void setCursor(uint16 id);
 
 private:
 	MohawkEngine *_vm;
+	uint32 _tag;
 };
 
 // The cursor manager for Myst
