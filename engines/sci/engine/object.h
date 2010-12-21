@@ -65,12 +65,11 @@ public:
 		_flags = 0;
 		_baseObj = 0;
 		_baseVars = 0;
-		_baseMethod = 0;
 		_methodCount = 0;
 		_propertyOffsetsSci3 = 0;
 	}
 
-	~Object() { }
+	~Object() { free(_propertyOffsetsSci3); }
 
 	reg_t getSpeciesSelector() const {
 		if (getSciVersion() <= SCI_VERSION_2_1) 
@@ -162,14 +161,14 @@ public:
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? _methodCount + 1 + i : i * 2 + 2;
 		if (getSciVersion() == SCI_VERSION_3)
 			offset--;
-		return make_reg(_pos.segment, READ_SCI11ENDIAN_UINT16(_baseMethod + offset));
+		return make_reg(_pos.segment, _baseMethod[offset]);
 	}
 
 	Selector getFuncSelector(uint16 i) const {
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? i : i * 2 + 1;
 		if (getSciVersion() == SCI_VERSION_3)
 			offset--;
-		return READ_SCI11ENDIAN_UINT16(_baseMethod + offset);
+		return _baseMethod[offset];
 	}
 
 	/**
@@ -212,7 +211,7 @@ public:
 
 	void cloneFromObject(const Object *obj) {
 		_baseObj = obj ? obj->_baseObj : NULL;
-		_baseMethod = obj ? obj->_baseMethod : NULL;
+		_baseMethod = obj ? obj->_baseMethod : Common::Array<uint16>();
 		_baseVars = obj ? obj->_baseVars : NULL;
 	}
 
@@ -231,8 +230,8 @@ private:
 
 	const byte *_baseObj; /**< base + object offset within base */
 	const uint16 *_baseVars; /**< Pointer to the varselector area for this object */
-	const uint16 *_baseMethod; /**< Pointer to the method selector area for this object */
-	const uint16 *_propertyOffsetsSci3;
+	Common::Array<uint16> _baseMethod; /**< Pointer to the method selector area for this object */
+	uint16 *_propertyOffsetsSci3; /**< This is used to enable relocation of property valuesa in SCI3 */
 
 	Common::Array<reg_t> _variables;
 	uint16 _methodCount;
