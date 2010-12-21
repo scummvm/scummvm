@@ -266,4 +266,24 @@ void PuzzleBoard::updateCursor() {
 	}
 }
 
+void PuzzleBoard::checkSlots() {
+	Common::Point mousePos = getCursor()->position();
+
+	if (mousePos.x >= 215 && mousePos.x < (int16)_data.maxWidth && mousePos.y >= 360 && mousePos.y < 376) {
+		int32 index = (mousePos.x - 215) / 12;
+
+		if (_solvedText[index]) {
+			if (_data.checkForSpace && _solvedText[index] == ' ')
+				return;
+
+			if (_selectedSlot == -1)
+				_selectedSlot = index;
+			else
+				SWAP(_solvedText[index], _solvedText[_selectedSlot]);
+
+			updateScreen();
+		}
+	}
+}
+
 } // End of namespace Asylum

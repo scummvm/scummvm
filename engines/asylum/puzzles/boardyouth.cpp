@@ -25,6 +25,10 @@
 
 #include "asylum/puzzles/boardyouth.h"
 
+#include "asylum/system/cursor.h"
+
+#include "asylum/asylum.h"
+
 namespace Asylum {
 
 static const PuzzleBoard::PuzzleData puzzleYouthData = {
@@ -53,7 +57,31 @@ PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : PuzzleBoard(engine, p
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleBoardYouth::mouseLeftDown(const AsylumEvent &evt) {
-	error("[PuzzleBoardYouth::mouseLeftDown] Not implemented!");
+	Common::Point mousePos = getCursor()->position();
+
+	if (mousePos.y <= 350) {
+		int32 index = findRect();
+
+		if (index != -1 && _position < 18) {
+			_charUsed[index] = true;
+			_selectedSlot = -1;
+
+			_solvedText[_position++] = puzzleYouthData.charMap[index].character;
+			_solvedText[_position++] = ' ';
+
+			if (_position == 5) {
+				_solvedText[++_position] = ' ';
+				_solvedText[++_position] = ' ';
+				++_position;
+			}
+
+			updateScreen();
+		}
+	} else if (_vm->isGameFlagNotSet(kGameFlag282)) {
+		checkSlots();
+	}
+
+	return true;
 }
 
 } // End of namespace Asylum
