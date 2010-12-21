@@ -203,8 +203,12 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		}
 	}
 
-	if (userAbort)
+	if (userAbort) {
+		// Reset the portrait bitmap to "closed mouth" state, when skipping dialogs
+		drawBitmap(0);
+		bitsShow();
 		_audio->stopAudio();
+	}
 
 	_resMan->unlockResource(syncResource);
 }
