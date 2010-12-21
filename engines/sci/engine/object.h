@@ -69,7 +69,16 @@ public:
 		_propertyOffsetsSci3 = 0;
 	}
 
-	~Object() { free(_propertyOffsetsSci3); }
+	~Object() {
+		if (getSciVersion() == SCI_VERSION_3) {
+			// FIXME: memory leak! Commented out because of reported heap
+			// corruption by MSVC (e.g. in LSL7, when it starts)
+			//free(_baseVars);
+			//_baseVars = 0;
+			//free(_propertyOffsetsSci3);
+			//_propertyOffsetsSci3 = 0;
+		}
+	}
 
 	reg_t getSpeciesSelector() const {
 		if (getSciVersion() <= SCI_VERSION_2_1) 
@@ -229,7 +238,7 @@ private:
 	void initSelectorsSci3(const byte *buf);
 
 	const byte *_baseObj; /**< base + object offset within base */
-	const uint16 *_baseVars; /**< Pointer to the varselector area for this object */
+	uint16 *_baseVars; /**< Pointer to the varselector area for this object */
 	Common::Array<uint16> _baseMethod; /**< Pointer to the method selector area for this object */
 	uint16 *_propertyOffsetsSci3; /**< This is used to enable relocation of property valuesa in SCI3 */
 
