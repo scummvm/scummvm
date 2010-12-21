@@ -26,6 +26,7 @@
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_saveload.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/stoneship.h"
@@ -88,6 +89,90 @@ void MystScriptParser_Stoneship::runPersistentScripts() {
 	opcode_200_run();
 	opcode_201_run();
 	opcode_209_run();
+}
+
+uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
+	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+	MystVariables::Stoneship &stoneship = _vm->_saveLoad->_v->stoneship;
+
+	switch(var) {
+//case 0: // Water Drained From Lighthouse / Right Button Of Pump
+//	return 0; // Water Present / Button Dark
+//	return 1; // Water Drained / Button Lit & Released
+//	return 2; // Button Lit & Depressed
+//case 1: // Water Drained From Tunnels To Brothers' Rooms / Middle Button Of Pump
+//	return 0; // Water Present / Button Dark
+//	return 1; // Water Drained / Button Lit & Released
+//	return 2; // Button Lit & Depressed
+//case 2: // Water Drained From Ship Cabin Tunnel / Left Button Of Pump
+//	return 0; // Water Present / Button Dark
+//	return 1; // Water Drained / Button Lit & Released
+//	return 2; // Button Lit & Depressed
+//case 3: // Lighthouse Chest Floating(?)
+//	return 0;
+//	return 1;
+//case 4: // Lighthouse State - Close Up
+//	return 0; // Flooded
+//	return 1; // Drained
+//	return 2; // Flooded, Chest Floating
+//case 5: // Lighthouse Trapdoor State
+//	return 0; // Closed, No Lock
+//	return 1; // Open
+//	return 2; // Closed, Lock
+//case 7:
+//	return;
+//case 11:
+//	return;
+//case 12:
+//	return;
+//case 13: // State Of Tunnels To Brothers' Rooms - Close Up
+//	return 0; Dark, Flooded
+//	return 1; Dark, Drained
+//	return 2; Lit, Flooded
+//	return 3; Lit, Drained
+//case 14: // State Of Tunnels To Brothers' Rooms - Far
+//	return 0; // Lights Off
+//	return 1; // Lights On
+//	return 2; // Lights Off
+//case 16: // Ship Chamber Light State
+//	return 0; // Off
+//	return 1; // On
+//case 20: // Ship Chamber Table/Book State
+//	return 0;
+//	return 1;
+//case 28: // Telescope Angle Position
+//	return;
+//case 36: // Ship Chamber Door State
+//	return 0; // Closed
+//	return 1; // Open, Light Off
+//	return 2; // Open, Light On
+	default:
+		return MystScriptParser::getVar(var);
+	}
+}
+
+void MystScriptParser_Stoneship::toggleVar(uint16 var) {
+	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+	MystVariables::Stoneship &stoneship = _vm->_saveLoad->_v->stoneship;
+
+	switch(var) {
+	default:
+		MystScriptParser::toggleVar(var);
+		break;
+	}
+}
+
+bool MystScriptParser_Stoneship::setVarValue(uint16 var, uint16 value) {
+	MystVariables::Stoneship &stoneship = _vm->_saveLoad->_v->stoneship;
+	bool refresh = false;
+
+	switch (var) {
+	default:
+		refresh = MystScriptParser::setVarValue(var, value);
+		break;
+	}
+
+	return refresh;
 }
 
 void MystScriptParser_Stoneship::opcode_100(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

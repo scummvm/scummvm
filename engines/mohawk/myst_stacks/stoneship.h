@@ -47,6 +47,9 @@ public:
 
 private:
 	void setupOpcodes();
+	uint16 getVar(uint16 var);
+	void toggleVar(uint16 var);
+	bool setVarValue(uint16 var, uint16 value);
 
 	void opcode_200_run();
 	void opcode_200_disable();
