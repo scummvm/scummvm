@@ -27,6 +27,21 @@
 
 namespace Asylum {
 
+static const struct {
+	char character;
+	Common::Point position;
+} puzzleSalvationCharmap[9] = {
+	{'I', Common::Point( 61,  53)},
+	{'S', Common::Point(322,  53)},
+	{'A', Common::Point(529,  86)},
+	{'L', Common::Point(256, 117)},
+	{'V', Common::Point(251, 151)},
+	{'A', Common::Point( 66, 199)},
+	{'T', Common::Point(436, 229)},
+	{'O', Common::Point(172, 262)},
+	{'N', Common::Point(393, 296)}
+};
+
 PuzzleBoardSalvation::PuzzleBoardSalvation(AsylumEngine *engine) : Puzzle(engine) {
 }
 
