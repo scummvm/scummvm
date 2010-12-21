@@ -48,4 +48,27 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &evt) {
 	error("[PuzzleHiveControl::mouseLeftDown] Not implemented!");
 }
 
+bool PuzzleHiveControl::mouseRightDown(const AsylumEvent &evt) {
+	error("[PuzzleHiveControl::mouseLeftDown] Not implemented!");
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Helpers
+//////////////////////////////////////////////////////////////////////////
+void PuzzleHiveControl::updateCursor() {
+	error("[PuzzleHiveControl::updateCursor] Not implemented!");
+}
+
+int32 PuzzleHiveControl::findRect() {
+	error("[PuzzleHiveControl::findRect] Not implemented!");
+}
+
+void PuzzleHiveControl::updateScreen() {
+	error("[PuzzleHiveControl::updateScreen] Not implemented!");
+}
+
+void PuzzleHiveControl::playSound() {
+	error("[PuzzleHiveControl::playSound] Not implemented!");
+}
+
 } // End of namespace Asylum
