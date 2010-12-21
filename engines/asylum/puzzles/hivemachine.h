@@ -44,6 +44,15 @@ private:
 	bool init(const AsylumEvent &evt);
 	bool update(const AsylumEvent &evt);
 	bool mouseLeftDown(const AsylumEvent &evt);
+	bool mouseRightDown(const AsylumEvent &evt);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+	//////////////////////////////////////////////////////////////////////////
+	void updateCursor();
+	int32 findRect();
+	void updateScreen();
+	void playSound();
 };
 
 } // End of namespace Asylum
