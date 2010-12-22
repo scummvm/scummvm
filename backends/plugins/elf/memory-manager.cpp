@@ -24,8 +24,11 @@
  */
 
 #include "common/scummsys.h" 
-#include "common/util.h"
+
+#if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
+
 #include "backends/plugins/elf/memory-manager.h"
+#include "common/util.h"
  
 DECLARE_SINGLETON(ELFMemoryManager); 
 
@@ -166,3 +169,6 @@ void ELFMemoryManager::deallocateFromHeap(void *ptr) {
 		}
 	}	
 }
+
+#endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) */
+

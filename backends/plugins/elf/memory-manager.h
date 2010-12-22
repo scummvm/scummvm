@@ -26,6 +26,10 @@
 #ifndef ELF_MEMORY_MANAGER_H
 #define ELF_MEMORY_MANAGER_H
 
+#include "common/scummsys.h"
+
+#if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
+
 #include "common/singleton.h"
 #include "common/list.h"
 #include "common/mutex.h"
@@ -80,4 +84,6 @@ private:
 	uint32 _bytesAllocated;
 };
  
+#endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) */
+
 #endif /* ELF_MEMORY_MANAGER_H */
