@@ -46,7 +46,7 @@ public:
 	void allocateHeap();
 
 	void *pluginAllocate(size_t size);
-	void *pluginAllocate(uint32 align, uint32 size);
+	void *pluginAllocate(size_t align, size_t size);
 	void pluginDeallocate(void *ptr);
 	
 private:
