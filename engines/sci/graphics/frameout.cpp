@@ -541,6 +541,7 @@ void GfxFrameout::kernelFrameout() {
 		for (PlanePictureList::iterator pictureIt = _planePictures.begin(); pictureIt != _planePictures.end(); pictureIt++) {
 			if (pictureIt->object == planeObject) {
 				delete[] pictureIt->pictureCels;
+				pictureIt->pictureCels = 0;
 			}
 		}
 	}
