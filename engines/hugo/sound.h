@@ -56,7 +56,7 @@ public:
 	void adjustVolume(int diff);
 	void setChannelVolume(int channel);
 	void setVolume(int volume);
-    void syncVolume();
+	void syncVolume();
 	int getVolume() const { return _masterVolume; }
 	void setLooping(bool loop) { _isLooping = loop; }
 
