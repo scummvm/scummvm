@@ -703,9 +703,14 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 	}
 	case 6: { // Cpy
 		if (argv[1].isNull() || argv[3].isNull()) {
-			// Happens in SCI3
-			warning("kArray(Cpy): Request to copy from or to a null pointer");
-			return NULL_REG;
+			if (getSciVersion() == SCI_VERSION_3) {
+				// FIXME: Happens in SCI3, probably because of a missing kernel function.
+				warning("kArray(Cpy): Request to copy from or to a null pointer");
+				return NULL_REG;
+			} else {
+				// SCI2-2.1: error out
+				error("kArray(Cpy): Request to copy from or to a null pointer");
+			}
 		}
 
 		reg_t arrayHandle = argv[1];
