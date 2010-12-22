@@ -45,12 +45,12 @@
 class ELFMemoryManager : public Common::Singleton<ELFMemoryManager> {
 public:	
 	void trackPlugin(bool value);
-	void trackAlloc(size_t align, size_t size);
+	void trackAlloc(uint32 align, uint32 size);
 
 	void allocateHeap();
 
-	void *pluginAllocate(size_t size);
-	void *pluginAllocate(size_t align, size_t size);
+	void *pluginAllocate(uint32 size);
+	void *pluginAllocate(uint32 align, uint32 size);
 	void pluginDeallocate(void *ptr);
 	
 private:
@@ -59,25 +59,25 @@ private:
 	ELFMemoryManager();
 	~ELFMemoryManager();
 
-	void *allocateOnHeap(size_t align, size_t size);
+	void *allocateOnHeap(uint32 align, uint32 size);
 	void deallocateFromHeap(void *ptr);
 	
 	struct Allocation {
 		byte *start;
-		size_t size;
+		uint32 size;
 		byte *end() { return start + size; }
-		Allocation(byte *a, size_t b) : start(a), size(b) {}
+		Allocation(byte *a, uint32 b) : start(a), size(b) {}
 	};
 
 	// heap
 	void *_heap;
-	size_t _heapAlign;			// alignment of the heap
-	size_t _heapSize;			// size of the heap
+	uint32 _heapAlign;			// alignment of the heap
+	uint32 _heapSize;			// size of the heap
 	
 	// tracking allocations
 	bool _trackAllocs;		// whether we are currently tracking
-	size_t _measuredSize; 
-	size_t _measuredAlign;	
+	uint32 _measuredSize; 
+	uint32 _measuredAlign;	
 	
 	// real allocations
 	Common::List<Allocation> _allocList;

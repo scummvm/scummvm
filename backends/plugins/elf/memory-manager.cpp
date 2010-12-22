@@ -29,6 +29,7 @@
 
 #include "backends/plugins/elf/memory-manager.h"
 #include "common/util.h"
+#include <malloc.h>
  
 DECLARE_SINGLETON(ELFMemoryManager); 
 
@@ -56,7 +57,7 @@ void ELFMemoryManager::trackPlugin(bool value) {
 		
 	} else {	// we're done measuring
 		// get the total allocated size
-		size_t measuredSize = _allocList.back().end() - _allocList.front().start;
+		uint32 measuredSize = _allocList.back().end() - _allocList.front().start;
 
 		_heapSize = MAX(_heapSize, measuredSize);
 		_heapAlign = MAX(_heapAlign, _measuredAlign);
@@ -68,7 +69,7 @@ void ELFMemoryManager::trackPlugin(bool value) {
 	}
 }
 
-void ELFMemoryManager::trackAlloc(size_t align, size_t size) {
+void ELFMemoryManager::trackAlloc(uint32 align, uint32 size) {
 	if (!_measuredAlign)
 		_measuredAlign = align;
 		
@@ -97,14 +98,14 @@ void ELFMemoryManager::allocateHeap() {
 	assert(_heap);
 }
 
-void *ELFMemoryManager::pluginAllocate(size_t size) {
+void *ELFMemoryManager::pluginAllocate(uint32 size) {
 	if (_heap) {
 		return pluginAllocate(sizeof(void *), size);
 	}
 	return ::malloc(size);
 }
 
-void *ELFMemoryManager::pluginAllocate(size_t align, size_t size) {
+void *ELFMemoryManager::pluginAllocate(uint32 align, uint32 size) {
 	if (_heap) {
 		return allocateOnHeap(align, size);
 	} 
@@ -119,7 +120,7 @@ void ELFMemoryManager::pluginDeallocate(void *ptr) {
 }
 
 // Allocate space for the request in our heap
-void *ELFMemoryManager::allocateOnHeap(size_t align, size_t size) {
+void *ELFMemoryManager::allocateOnHeap(uint32 align, uint32 size) {
 	byte *lastAddress = (byte *)_heap;
 	
 	// We can't allow allocations smaller than sizeof(Allocation). This could
@@ -135,13 +136,13 @@ void *ELFMemoryManager::allocateOnHeap(size_t align, size_t size) {
 		lastAddress = i->end();
 		// align to desired alignment
 		if (align) {
-			lastAddress = (byte *)( ((size_t)lastAddress + align - 1) & ~(align - 1) );
+			lastAddress = (byte *)( ((uint32)lastAddress + align - 1) & ~(align - 1) );
 		}
 	}
 	
 	// Check if we exceeded our heap limit
 	// We skip this case if we're only tracking allocations
-	if (!_trackAllocs && ((size_t)lastAddress + size > (size_t)_heap + _heapSize)) {
+	if (!_trackAllocs && ((uint32)lastAddress + size > (uint32)_heap + _heapSize)) {
 		debug(2, "failed to find space to allocate %d bytes", size);
 		return 0;
 	}
