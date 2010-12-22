@@ -86,23 +86,32 @@ uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
 		return channelwood.waterPumpBridgeState;
 	case 2: // Lower Walkway to Upper Walkway Elevator Raised
 		return channelwood.elevatorState;
-//	case 4: // Water Flowing To Book Room Elevator
-//		based on channelwood.waterValveStates;
-//		return 0;
-//		return 1;
+	case 3: // Water Flowing To Lower Walkway To Upper Walkway Elevator
+		return (channelwood.waterValveStates & 0xc0) ? 1 : 0;
+	case 4: // Water Flowing To Book Room Elevator
+		return ((channelwood.waterValveStates & 0xf8) == 0xb0 && channelwood.pipeState) ? 1 : 0;
 	case 5: // Lower Walkway to Upper Walkway Spiral Stair Lower Door State
 		return channelwood.stairsLowerDoorState;
 	case 6: // Pipe Bridge Extended
 		return channelwood.pipeState;
-//	case 7: // Water Flowing To Water Pump For Bridge
-//		return 0;
-//		return 1;
+	case 7: // Water Flowing To Water Pump For Bridge
+		return ((channelwood.waterValveStates & 0xe2) == 0xc2 || (channelwood.waterValveStates & 0xf4) == 0xa0) ? 1 : 0;
 	case 8: // Water Tank Valve
 		return (channelwood.waterValveStates & 0x80) ? 1 : 0;
-//	case 13: // Valve State
-//		based on channelwood.waterValveStates;
-//		return 0;
-//		return 1;
+	case 9: // State of First Water Valve
+		return (channelwood.waterValveStates & 0x40) ? 1 : 0;
+	case 10: // State of Second Water Valve
+		return (channelwood.waterValveStates & 0x20) ? 1 : 0;
+	case 11: // State of Right Third Water Valve
+		return (channelwood.waterValveStates & 0x10) ? 1 : 0;
+	case 12: // State of Right-Right Fourth Water Valve
+		return (channelwood.waterValveStates & 0x08) ? 1 : 0;
+	case 13: // State of Right-Left Fourth Water Valve
+		return (channelwood.waterValveStates & 0x04) ? 1 : 0;
+	case 14: // State of Left Third Water Valve
+		return (channelwood.waterValveStates & 0x02) ? 1 : 0;
+	case 15: // Water Flowing To Lower Walkway To Upper Walkway Elevator
+		return ((channelwood.waterValveStates & 0xf8) == 0xb8) ? 1 : 0;
 	case 16: // Channelwood Lower Walkway to Upper Walkway Spiral Stair Upper Door State
 		return channelwood.stairsUpperDoorState;
 	case 17: // Achenar's Holoprojector Selection
@@ -112,17 +121,31 @@ uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
 //		return 1;
 	case 19: // Sound - Water Tank Valve
 		return (channelwood.waterValveStates & 0x80) ? 1 : 0;
-//	case 26: // Sound - Water Flowing in <TODO>
-//		based on channelwood.waterValveStates;
-//		return 0;
-//		return 1;
+	case 20: // Sound - First Water Valve Water Flowing To Left
+		return ((channelwood.waterValveStates & 0xc0) == 0x80) ? 1 : 0;
+	case 21: // Sound - Second Water Valve Water Flowing To Right
+		return ((channelwood.waterValveStates & 0xe0) == 0xa0) ? 1 : 0;
+	case 22: // Sound - Right Third Water Valve Water Flowing To Right
+		return ((channelwood.waterValveStates & 0xf0) == 0xb0) ? 1 : 0;
+	case 23: // Sound - Right Third Water Valve Water Flowing To Left
+		return ((channelwood.waterValveStates & 0xf0) == 0xa0) ? 1 : 0;
+	case 24: // Sound - Second Water Valve Water Flowing To Left
+		return ((channelwood.waterValveStates & 0xe0) == 0xc0) ? 1 : 0;
+	case 25: // Sound - Right-Right Fourth Valve Water Flowing To Left (To Pipe Bridge)
+		return ((channelwood.waterValveStates & 0xf8) == 0xb0) ? 1 : 0;
+	case 26: // Sound - Right-Left Fourth Valve Water Flowing To Right (To Pipe Down Tree)
+		return ((channelwood.waterValveStates & 0xf4) == 0xa4) ? 1 : 0;
+	case 27: // Sound - Right-Left Fourth Valve Water Flowing To Left (To Pipe Fork)
+		return ((channelwood.waterValveStates & 0xf4) == 0xa0) ? 1 : 0;
+	case 28: // Sound - Left Third Water Valve Flowing To Right (To Pipe Fork)
+		return ((channelwood.waterValveStates & 0xe2) == 0xc2) ? 1 : 0;
+	case 29: // Sound - Left Third Water Valve Flowing To Left (To Pipe In Water)
+		return ((channelwood.waterValveStates & 0xe2) == 0xc0) ? 1 : 0;
 //	case 30: // Temple Door State
 //		return 0;
 //		return 1;
-//	case 32: // Sound - Water Flowing in Pipe to Book Room Elevator
-//		based on channelwood.waterValveStates;
-//		return 0;
-//		return 1;
+	case 32: // Sound - Water Flowing in Pipe to Book Room Elevator
+		return ((channelwood.waterValveStates & 0xf8) == 0xb0 && channelwood.pipeState) ? 1 : 0;
 //	case 102: // Sirrus's Desk Drawer / Red Page State
 //		return 0; // Drawer Closed
 //		return 1; // Drawer Open, Red Page Taken
