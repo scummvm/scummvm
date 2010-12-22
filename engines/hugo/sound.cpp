@@ -179,17 +179,16 @@ void MidiPlayer::send(uint32 b) {
 	byte volume, ch = (byte)(b & 0xF);
 	debugC(9, kDebugMusic, "MidiPlayer::send, channel %d (volume is %d)", ch, _channelsVolume[ch]);
 	switch (b & 0xFFF0) {
-	case 0x07B0: // volume change
+	case 0x07B0:                                    // volume change
 		volume = (byte)((b >> 16) & 0x7F);
 		_channelsVolume[ch] = volume;
 		volume = volume * _masterVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
         debugC(8, kDebugMusic, "Volume change, channel %d volume %d", ch, volume);
 		break;
-	case 0x7BB0: // all notes off
+	case 0x7BB0:                                    // all notes off
         debugC(8, kDebugMusic, "All notes off, channel %d", ch);
-		if (!_channelsTable[ch]) {
-			// channel not yet allocated, no need to send the event
+		if (!_channelsTable[ch]) {                  // channel not yet allocated, no need to send the event
 			return;
 		}
 		break;
@@ -207,7 +206,7 @@ void MidiPlayer::send(uint32 b) {
 
 void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
-	case 0x2F: // end of Track
+	case 0x2F:                                      // end of Track
 		if (_isLooping) {
 			_parser->jumpToTick(0);
 		} else {
@@ -237,31 +236,40 @@ SoundHandler::~SoundHandler() {
 	delete _midiPlayer;
 }
 
+/**
+* Set the FM music volume from config.mvolume (0..100%)
+*/
 void SoundHandler::setMusicVolume() {
-	/* Set the FM music volume from config.mvolume (0..100%) */
-
 	_midiPlayer->setVolume(_config.musicVolume * 255 / 100);
 }
 
+/**
+* Stop any sound that might be playing
+*/
 void SoundHandler::stopSound() {
-	/* Stop any sound that might be playing */
 	_vm->_mixer->stopAll();
 }
 
+/**
+* Stop any tune that might be playing
+*/
 void SoundHandler::stopMusic() {
-	/* Stop any tune that might be playing */
 	_midiPlayer->stop();
 }
 
+/**
+* Turn music on and off
+*/
 void SoundHandler::toggleMusic() {
-// Turn music on and off
 	_config.musicFl = !_config.musicFl;
 
 	_midiPlayer->pause(!_config.musicFl);
 }
 
+/**
+* Turn digitized sound on and off
+*/
 void SoundHandler::toggleSound() {
-// Turn digitized sound on and off
 	_config.soundFl = !_config.soundFl;
 }
 
@@ -269,9 +277,10 @@ void SoundHandler::playMIDI(sound_pt seq_p, uint16 size) {
 	_midiPlayer->play(seq_p, size);
 }
 
-
+/**
+* Read a tune sequence from the sound database and start playing it
+*/
 void SoundHandler::playMusic(int16 tune) {
-	/* Read a tune sequence from the sound database and start playing it */
 	sound_pt seqPtr;                                // Sequence data from file
 	uint16 size;                                    // Size of sequence data
 
@@ -283,11 +292,11 @@ void SoundHandler::playMusic(int16 tune) {
 	}
 }
 
-
+/**
+* Produce various sound effects on supplied stereo channel(s)
+* Override currently playing sound only if lower or same priority
+*/
 void SoundHandler::playSound(int16 sound, stereo_t channel, byte priority) {
-	/* Produce various sound effects on supplied stereo channel(s) */
-	/* Override currently playing sound only if lower or same priority */
-
 	// uint32 dwVolume;                             // Left, right volume of sound
 	sound_pt sound_p;                               // Sound data
 	uint16 size;                                    // Size of data
@@ -314,9 +323,10 @@ void SoundHandler::playSound(int16 sound, stereo_t channel, byte priority) {
 
 }
 
+/**
+* Initialize for MCI sound and midi
+*/
 void SoundHandler::initSound() {
-	/* Initialize for MCI sound and midi */
-
 	_midiPlayer->open();
 }
 
