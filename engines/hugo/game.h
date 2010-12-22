@@ -81,8 +81,6 @@ namespace Hugo {
 #define TAKE_TEXT      "Picked up the %s ok."
 #define REP_MASK       0xC0                         // Top 2 bits mean a repeat code
 #define MAX_STRLEN     1024
-#define WARNLEN        512
-#define ERRLEN         512
 #define STEP_DY        8                            // Pixels per step movement
 #define CENTER         -1                           // Used to center text in x
 
