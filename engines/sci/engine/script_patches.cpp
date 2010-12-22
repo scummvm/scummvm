@@ -719,6 +719,32 @@ const SciScriptSignature mothergoose256Signatures[] = {
 };
 
 // ===========================================================================
+// PQ2 does not call SetSynonyms in Game::replay() (i.e. when loading a game).
+// This results in invalid synonyms in some rooms. We patch Game::replay() to
+// call SetSynonyms properly, by replacing the kDoSoundResumeAfterRestore
+// kernel call, which is a stub in ScummVM. Fixes bug #3037618.
+const byte pq2SignatureReplay[] = {
+	6,
+	0x78,             // push1
+	0x39, 0x07,       // pushi 07
+	0x43, 0x31, 0x02, // callk DoSound[31] 02
+	0
+};
+
+const uint16 pq2PatchReplay[] = {
+	0x78,             // push1 (parameter count)
+	0x89, 0x06,       // lsg 06
+	0x43, 0x26, 0x02, // callk SetSynonyms[26] 02
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                  adjust
+const SciScriptSignature pq2Signatures[] = {
+	{    994, "replay synonyms issue",                       1, PATCH_MAGICDWORD(0x39, 0x07, 0x43, 0x31),     -1, pq2SignatureReplay,    pq2PatchReplay },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 //  script 215 of qfg1vga pointBox::doit actually processes button-presses
 //   during fighting with monsters. It strangely also calls kGetEvent. Because
 //   the main User::doit also calls kGetEvent it's pure luck, where the event
@@ -1195,6 +1221,9 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		break;
 	case GID_MOTHERGOOSE256:
 		signatureTable = mothergoose256Signatures;
+		break;
+	case GID_PQ2:
+		signatureTable = pq2Signatures;
 		break;
 	case GID_QFG1VGA:
 		signatureTable = qfg1vgaSignatures;
