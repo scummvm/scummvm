@@ -134,7 +134,7 @@ struct VideoState {
 
 	void reset() {
 		fileName = "";
-		x = y = 0;
+		x = y = flags = 0;
 	}
 };
 
