@@ -257,7 +257,7 @@ void SoundHandler::toggleMusic() {
 // Turn music on and off
 	_config.musicFl = !_config.musicFl;
 
-	_midiPlayer->pause(_config.musicFl);
+	_midiPlayer->pause(!_config.musicFl);
 }
 
 void SoundHandler::toggleSound() {
