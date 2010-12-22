@@ -26,6 +26,7 @@
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_saveload.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/channelwood.h"
@@ -74,6 +75,92 @@ void MystScriptParser_Channelwood::disablePersistentScripts() {
 void MystScriptParser_Channelwood::runPersistentScripts() {
 	opcode_202_run();
 	opcode_203_run();
+}
+
+uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
+//	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+	MystVariables::Channelwood &channelwood = _vm->_saveLoad->_v->channelwood;
+
+	switch(var) {
+	case 1: // Water Pump Bridge Raised
+		return channelwood.waterPumpBridgeState;
+	case 2: // Lower Walkway to Upper Walkway Elevator Raised
+		return channelwood.elevatorState;
+//	case 4: // Water Flowing To Book Room Elevator
+//		based on channelwood.waterValveStates;
+//		return 0;
+//		return 1;
+	case 5: // Lower Walkway to Upper Walkway Spiral Stair Lower Door State
+		return channelwood.stairsLowerDoorState;
+	case 6: // Pipe Bridge Extended
+		return channelwood.pipeState;
+//	case 7: // Water Flowing To Water Pump For Bridge
+//		return 0;
+//		return 1;
+	case 8: // Water Tank Valve
+		return (channelwood.waterValveStates & 0x80) ? 1 : 0;
+//	case 13: // Valve State
+//		based on channelwood.waterValveStates;
+//		return 0;
+//		return 1;
+	case 16: // Channelwood Lower Walkway to Upper Walkway Spiral Stair Upper Door State
+		return channelwood.stairsUpperDoorState;
+	case 17: // Achenar's Holoprojector Selection
+		return channelwood.holoprojectorSelection;
+//	case 18: // Sirrus's Room Bed Drawer Open
+//		return 0;
+//		return 1;
+	case 19: // Sound - Water Tank Valve
+		return (channelwood.waterValveStates & 0x80) ? 1 : 0;
+//	case 26: // Sound - Water Flowing in <TODO>
+//		based on channelwood.waterValveStates;
+//		return 0;
+//		return 1;
+//	case 30: // Temple Door State
+//		return 0;
+//		return 1;
+//	case 32: // Sound - Water Flowing in Pipe to Book Room Elevator
+//		based on channelwood.waterValveStates;
+//		return 0;
+//		return 1;
+//	case 102: // Sirrus's Desk Drawer / Red Page State
+//		return 0; // Drawer Closed
+//		return 1; // Drawer Open, Red Page Taken
+//		return 2; // Drawer Open, Red Page Present
+//	case 103: // Blue Page Present
+//		return 0; // Blue Page Taken
+//		return 1; // Blue Page Present
+	default:
+		return MystScriptParser::getVar(var);
+	}
+}
+
+void MystScriptParser_Channelwood::toggleVar(uint16 var) {
+//	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+	MystVariables::Channelwood &channelwood = _vm->_saveLoad->_v->channelwood;
+
+	switch(var) {
+	case 6: // Pipe Bridge Extended
+		channelwood.pipeState ^= 1;
+	default:
+		MystScriptParser::toggleVar(var);
+		break;
+	}
+}
+
+bool MystScriptParser_Channelwood::setVarValue(uint16 var, uint16 value) {
+//	MystVariables::Channelwood &channelwood = _vm->_saveLoad->_v->channelwood;
+	bool refresh = false;
+
+	switch (var) {
+//	case 18: // Sirrus's Room Bed Drawer Open
+//	temp ^= 1;
+	default:
+		refresh = MystScriptParser::setVarValue(var, value);
+		break;
+	}
+
+	return refresh;
 }
 
 void MystScriptParser_Channelwood::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
