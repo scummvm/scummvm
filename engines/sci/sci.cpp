@@ -816,8 +816,8 @@ void SciEngine::syncSoundSettings() {
 }
 
 void SciEngine::syncIngameAudioOptions() {
-	// Now, sync the in-game speech/subtitles settings for CD games
-	if (isCD()) {
+	// Now, sync the in-game speech/subtitles settings for SCI1.1 CD games
+	if (isCD() && getSciVersion() == SCI_VERSION_1_1) {
 		bool subtitlesOn = ConfMan.getBool("subtitles");
 		bool speechOn = !ConfMan.getBool("speech_mute");
 
