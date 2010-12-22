@@ -33,6 +33,7 @@
 /* sound.c - sound effects and music support */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 
 #include "sound/decoders/raw.h"
 #include "sound/audiostream.h"
@@ -68,6 +69,7 @@ void MidiPlayer::play(uint8 *stream, uint16 size) {
 	if (_midiData) {
 		memcpy(_midiData, stream, size);
 		_mutex.lock();
+		syncVolume();
 		_parser->loadMusic(_midiData, size);
 		_parser->setTrack(0);
 		_isLooping = true;
@@ -115,6 +117,15 @@ void MidiPlayer::adjustVolume(int diff) {
 	setVolume(_masterVolume + diff);
 }
 
+void MidiPlayer::syncVolume() {
+	int volume = ConfMan.getInt("music_volume");
+	if (ConfMan.getBool("mute")) {
+		volume = -1;
+	}
+	debugC(2, kDebugMusic, "Syncing music volume to %d", volume);
+	setVolume(volume);
+}
+
 void MidiPlayer::setVolume(int volume) {
 	debugC(3, kDebugMusic, "MidiPlayer::setVolume");
 	_masterVolume = CLIP(volume, 0, 255);
@@ -125,6 +136,13 @@ void MidiPlayer::setVolume(int volume) {
 		}
 	}
 	_mutex.unlock();
+}
+
+void MidiPlayer::setChannelVolume(int channel) {
+	int newVolume = _channelsVolume[channel] * _masterVolume / 255;
+	debugC(3, kDebugMusic, "Music channel %d: volume %d->%d",
+		channel, _channelsVolume[channel], newVolume);
+	_channelsTable[channel]->volume(newVolume);
 }
 
 int MidiPlayer::open() {
@@ -179,6 +197,8 @@ void MidiPlayer::send(uint32 b) {
 
 	if (!_channelsTable[ch]) {
 		_channelsTable[ch] = (ch == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		if (_channelsTable[ch])
+			setChannelVolume(ch);
 	}
 	if (_channelsTable[ch]) {
 		_channelsTable[ch]->send(b);
