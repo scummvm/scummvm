@@ -63,6 +63,33 @@ void MystScriptParser_Dni::disablePersistentScripts() {
 void MystScriptParser_Dni::runPersistentScripts() {
 }
 
+uint16 MystScriptParser_Dni::getVar(uint16 var) {
+//	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+//	MystVariables::Dni &dni = _vm->_saveLoad->_v->dni;
+
+	switch(var) {
+//	case 0: // Atrus Gone (from across room)
+//		return 0; // Present
+//		return 1; // Absent
+//	case 1: // Myst Book Status
+//		return 0; // Not Usuable
+//		return 1; // Openable, but not linkable (Atrus Gone?)
+//		return 2; // Linkable
+//	case 2: // Music Type
+//		return 0;
+//		return 1;
+//		return 2;
+//	case 106: // Atrus Static Image State
+//		return 0; // Initial State
+//		return 1; // Holding Out Hand for Page
+//		return 2; // Gone, Book Open
+//		return 3; // Back #1
+//		return 4; // Back #2
+	default:
+		return MystScriptParser::getVar(var);
+	}
+}
+
 void MystScriptParser_Dni::opcode_100(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used in Card 5022 (Rocks)
 	varUnusedCheck(op, var);

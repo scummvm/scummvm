@@ -47,6 +47,7 @@ public:
 
 private:
 	void setupOpcodes();
+	uint16 getVar(uint16 var);
 
 	DECLARE_OPCODE(opcode_100);
 	DECLARE_OPCODE(opcode_101);
