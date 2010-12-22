@@ -206,7 +206,6 @@ enum kLanguage {
 	K_LANG_PORTUGUESE = 351
 };
 
-
 class SciEngine : public Engine {
 	friend class Console;
 public:
@@ -224,6 +223,7 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	void syncSoundSettings();
+	void syncIngameAudioOptions();
 
 	const SciGameId &getGameId() const { return _gameId; }
 	const char *getGameIdStr() const;

@@ -286,6 +286,13 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			value.segment = 0;
 
 		r[index] = value;
+
+		// If the game is trying to change its speech/subtitle settings, apply the ScummVM audio
+		// options first, if they haven't been applied yet
+		if (type == VAR_GLOBAL && index == 90 && !g_sci->getEngineState()->_syncedAudioOptions) {
+			g_sci->syncIngameAudioOptions();
+			g_sci->getEngineState()->_syncedAudioOptions = true;
+		}
 	}
 }
 

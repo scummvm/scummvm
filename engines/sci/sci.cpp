@@ -252,6 +252,7 @@ Common::Error SciEngine::run() {
 	_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, _features->detectDoSoundType());
 
 	syncSoundSettings();
+	syncIngameAudioOptions();
 
 	// Initialize all graphics related subsystems
 	initGraphics();
@@ -662,10 +663,14 @@ void SciEngine::runGame() {
 	if (DebugMan.isDebugChannelEnabled(kDebugLevelOnStartup))
 		_console->attach();
 
+	g_sci->getEngineState()->_syncedAudioOptions = false;
+
 	do {
 		_gamestate->_executionStackPosChanged = false;
 		run_vm(_gamestate);
 		exitGame();
+
+		g_sci->getEngineState()->_syncedAudioOptions = true;
 
 		if (_gamestate->abortScriptProcessing == kAbortRestartGame) {
 			_gamestate->_segMan->resetSegMan();
@@ -683,6 +688,9 @@ void SciEngine::runGame() {
 			patchGameSaveRestore(_gamestate->_segMan);
 			_gamestate->shrinkStackToBase();
 			_gamestate->abortScriptProcessing = kAbortNone;
+
+			syncSoundSettings();
+			syncIngameAudioOptions();
 		} else {
 			break;	// exit loop
 		}
@@ -804,6 +812,33 @@ void SciEngine::syncSoundSettings() {
 	if (_gamestate && g_sci->_soundCmd) {
 		int vol =  (soundVolumeMusic + 1) * MUSIC_MASTERVOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
 		g_sci->_soundCmd->setMasterVolume(vol);
+	}
+}
+
+void SciEngine::syncIngameAudioOptions() {
+	// Now, sync the in-game speech/subtitles settings for CD games
+	if (isCD()) {
+		bool subtitlesOn = ConfMan.getBool("subtitles");
+		bool speechOn = !ConfMan.getBool("speech_mute");
+
+		if (subtitlesOn && !speechOn) {
+			_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 1);	// subtitles
+		} else if (!subtitlesOn && speechOn) {
+			_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
+		} else if (subtitlesOn && speechOn) {
+			// Is it a game that supports simultaneous speech and subtitles?
+			if (getGameId() == GID_SQ4 
+				|| getGameId() == GID_FREDDYPHARKAS
+				// TODO: The following need script patches for simultaneous speech and subtitles
+				//|| getGameId() == GID_KQ6
+				//|| getGameId() == GID_LB2
+				) {
+				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 3);	// speech + subtitles
+			} else {
+				// Game does not support speech and subtitles, set it to speech
+				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
+			}
+		}
 	}
 }
 
