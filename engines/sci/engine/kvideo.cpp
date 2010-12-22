@@ -39,7 +39,7 @@
 
 namespace Sci {
 
-void playVideo(Graphics::VideoDecoder *videoDecoder) {
+void playVideo(Graphics::VideoDecoder *videoDecoder, VideoState videoState) {
 	if (!videoDecoder)
 		return;
 
@@ -50,16 +50,24 @@ void playVideo(Graphics::VideoDecoder *videoDecoder) {
 	uint16 pitch = videoDecoder->getWidth() * bytesPerPixel;
 	uint16 screenWidth = g_system->getWidth();
 	uint16 screenHeight = g_system->getHeight();
+	bool isVMD = videoState.fileName.hasSuffix(".vmd");
 
-	if (screenWidth == 640 && width <= 320 && height <= 240) {
+	if (screenWidth == 640 && width <= 320 && height <= 240 && ((videoState.flags & kDoubled) || !isVMD)) {
 		width *= 2;
 		height *= 2;
 		pitch *= 2;
 		scaleBuffer = new byte[width * height * bytesPerPixel];
 	}
 
-	uint16 x = (screenWidth - width) / 2;
-	uint16 y = (screenHeight - height) / 2;
+	uint16 x, y; 
+
+	if (videoState.x > 0 && videoState.y > 0 && isVMD) {
+		x = videoState.x;
+		y = videoState.y;
+	} else {
+		x = (screenWidth - width) / 2;
+		y = (screenHeight - height) / 2;
+	}
 	bool skipVideo = false;
 
 	if (videoDecoder->hasDirtyPalette())
@@ -172,7 +180,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (videoDecoder) {
-		playVideo(videoDecoder);
+		playVideo(videoDecoder, s->_videoState);
 
 		// HACK: Switch back to 8bpp if we played a QuickTime video.
 		// We also won't be copying the screen to the SCI screen...
@@ -196,32 +204,17 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 	Graphics::VideoDecoder *videoDecoder = 0;
 	bool reshowCursor = g_sci->_gfxCursor->isVisible();
-	Common::String fileName, warningMsg;
+	Common::String warningMsg;
 
 	switch (operation) {
 	case 0:	// init
-		// This is actually meant to init the video file, but we play it instead
-		fileName = s->_segMan->derefString(argv[1]);
+		s->_videoState.reset();
+		s->_videoState.fileName = s->_segMan->derefString(argv[1]);
 		// TODO: argv[2] (usually null). When it exists, it points to an "Event" object,
 		// that holds no data initially (e.g. in the intro of Phantasmagoria 1 demo).
 		// Perhaps it's meant for syncing
 		if (argv[2] != NULL_REG)
 			warning("kPlayVMD: third parameter isn't 0 (it's %04x:%04x - %s)", PRINT_REG(argv[2]), s->_segMan->getObjectName(argv[2]));
-
-		videoDecoder = new Graphics::VMDDecoder(g_system->getMixer());
-
-		if (!videoDecoder->loadFile(fileName)) {
-			warning("Could not open VMD %s", fileName.c_str());
-			break;
-		}
-
-		if (reshowCursor)
-			g_sci->_gfxCursor->kernelHide();
-
-		playVideo(videoDecoder);
-
-		if (reshowCursor)
-			g_sci->_gfxCursor->kernelShow();
 		break;
 	case 1:
 	{
@@ -229,17 +222,6 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		//
 		// x, y, flags, gammaBoost, gammaFirst, gammaLast
 		//
-		// Flags are as follows:
-		// bit 0		doubled
-		// bit 1		"drop frames"?
-		// bit 2		insert black lines
-		// bit 3		unknown
-		// bit 4		gamma correction
-		// bit 5		hold black frame
-		// bit 6		hold last frame
-		// bit 7		unknown
-		// bit 8		stretch
-
 		// gammaBoost boosts palette colors in the range gammaFirst to
 		// gammaLast, but only if bit 4 in flags is set. Percent value such that
 		// 0% = no amplification These three parameters are optional if bit 4 is
@@ -247,40 +229,58 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		// with subfx 21. The subtleness has to do with creation of temporary
 		// planes and positioning relative to such planes.
 
-		int flags = argv[3].offset;
+		uint16 flags = argv[3].offset;
 		Common::String flagspec;
 
 		if (argc > 3) {
-			if (flags & 1)
+			if (flags & kDoubled)
 				flagspec += "doubled ";
-			if (flags & 2)
+			if (flags & kDropFrames)
 				flagspec += "dropframes ";
-			if (flags & 4)
+			if (flags & kBlackLines)
 				flagspec += "blacklines ";
-			if (flags & 8)
+			if (flags & kUnkBit3)
 				flagspec += "bit3 ";
-			if (flags & 16)
+			if (flags & kGammaBoost)
 				flagspec += "gammaboost ";
-			if (flags & 32)
+			if (flags & kHoldBlackFrame)
 				flagspec += "holdblack ";
-			if (flags & 64)
+			if (flags & kHoldLastFrame)
 				flagspec += "holdlast ";
-			if (flags & 128)
+			if (flags & kUnkBit7)
 				flagspec += "bit7 ";
-			if (flags & 256)
+			if (flags & kStretch)
 				flagspec += "stretch";
 
 			warning("VMDFlags: %s", flagspec.c_str());
+
+			s->_videoState.flags = flags;
 		}
 
 		warning("x, y: %d, %d", argv[1].offset, argv[2].offset);
+		s->_videoState.x = argv[1].offset;
+		s->_videoState.y = argv[2].offset;
 
 		if (argc > 4 && flags & 16)
 			warning("gammaBoost: %d%% between palette entries %d and %d", argv[4].offset, argv[5].offset, argv[6].offset);
 		break;
 	}
-	case 6:
-		// Play, perhaps? Or stop? This is the last call made, and takes no extra parameters
+	case 6:	// Play
+		videoDecoder = new Graphics::VMDDecoder(g_system->getMixer());
+
+		if (!videoDecoder->loadFile(s->_videoState.fileName)) {
+			warning("Could not open VMD %s", s->_videoState.fileName.c_str());
+			break;
+		}
+
+		if (reshowCursor)
+			g_sci->_gfxCursor->kernelHide();
+
+		playVideo(videoDecoder, s->_videoState);
+
+		if (reshowCursor)
+			g_sci->_gfxCursor->kernelShow();
+		break;
 	case 14:
 		// Takes an additional integer parameter (e.g. 3)
 	case 16:

@@ -113,6 +113,31 @@ public:
 	bool isOpen() const;
 };
 
+enum VideoFlags {
+	kNone            = 0,
+	kDoubled         = 1 << 0,
+	kDropFrames      = 1 << 1,
+	kBlackLines      = 1 << 2,
+	kUnkBit3         = 1 << 3,
+	kGammaBoost      = 1 << 4,
+	kHoldBlackFrame  = 1 << 5,
+	kHoldLastFrame   = 1 << 6,
+	kUnkBit7         = 1 << 7,
+	kStretch         = 1 << 8
+};
+
+struct VideoState {
+	Common::String fileName;
+	uint16 x;
+	uint16 y;
+	uint16 flags;
+
+	void reset() {
+		fileName = "";
+		x = y = 0;
+	}
+};
+
 struct EngineState : public Common::Serializable {
 public:
 	EngineState(SegManager *segMan);
@@ -197,7 +222,6 @@ public:
 
 	int gcCountDown; /**< Number of kernel calls until next gc */
 
-public:
 	MessageState *_msgState;
 
 	// MemorySegment provides access to a 256-byte block of memory that remains
@@ -207,6 +231,9 @@ public:
 	};
 	uint _memorySegmentSize;
 	byte _memorySegment[kMemorySegmentMax];
+
+	VideoState _videoState;
+	bool _syncedAudioOptions;
 
 	/**
 	 * Resets the engine state.

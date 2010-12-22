@@ -226,7 +226,7 @@ void Console::preEnter() {
 	_engine->pauseEngine(true);
 }
 
-extern void playVideo(Graphics::VideoDecoder *videoDecoder);
+extern void playVideo(Graphics::VideoDecoder *videoDecoder, VideoState videoState);
 
 void Console::postEnter() {
 	if (!_videoFile.empty()) {
@@ -272,7 +272,10 @@ void Console::postEnter() {
 			}
 #endif
 
-			playVideo(videoDecoder);
+			VideoState emptyState;
+			emptyState.fileName = _videoFile;
+			emptyState.flags = kDoubled;	// always allow the videos to be double sized
+			playVideo(videoDecoder, emptyState);
 
 #ifdef ENABLE_SCI32
 			// Switch back to 8bpp if we played a duck video

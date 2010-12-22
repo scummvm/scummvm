@@ -116,6 +116,9 @@ void EngineState::reset(bool isRestoring) {
 
 	scriptStepCounter = 0;
 	scriptGCInterval = GC_INTERVAL;
+
+	_videoState.reset();
+	_syncedAudioOptions = false;
 }
 
 void EngineState::speedThrottler(uint32 neededSleep) {
