@@ -97,6 +97,7 @@ public:
 	void playMusic(int16 tune);
 	void playSound(int16 sound, stereo_t channel, byte priority);
 	void initSound();
+	void syncVolume();
 
 private:
 	HugoEngine *_vm;

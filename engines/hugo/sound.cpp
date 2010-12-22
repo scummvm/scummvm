@@ -305,6 +305,9 @@ void SoundHandler::playSound(int16 sound, stereo_t channel, byte priority) {
 	/* Sound disabled */
 	if (!_config.soundFl || !_vm->_mixer->isReady())
 		return;
+	
+	syncVolume();
+	
 	//
 	// // See if last wave still playing - if so, check priority
 	// if (waveOutUnprepareHeader(hwav, lphdr, sizeof(WAVEHDR)) == WAVERR_STILLPLAYING)
@@ -319,8 +322,7 @@ void SoundHandler::playSound(int16 sound, stereo_t channel, byte priority) {
 		return;
 
 	Audio::AudioStream *stream = Audio::makeRawStream(sound_p, size, 11025, Audio::FLAG_UNSIGNED);
-	_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, stream);
-
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream);
 }
 
 /**
@@ -328,6 +330,18 @@ void SoundHandler::playSound(int16 sound, stereo_t channel, byte priority) {
 */
 void SoundHandler::initSound() {
 	_midiPlayer->open();
+}
+
+void SoundHandler::syncVolume() {
+	int soundVolume;
+
+	if (ConfMan.getBool("sfx_mute") || ConfMan.getBool("mute"))
+		soundVolume = -1;
+	else
+		soundVolume = MIN(255, ConfMan.getInt("sfx_volume"));
+
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolume);
+	_midiPlayer->syncVolume();
 }
 
 } // End of namespace Hugo

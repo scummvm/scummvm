@@ -215,6 +215,7 @@ public:
 	void setNewScreen(int screen);
 	void shutdown();
 	void storeBoundary(int x1, int x2, int y);
+	void syncSoundSettings();
 
 	int getMouseX() const {
 		return _mouseX;

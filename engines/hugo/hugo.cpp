@@ -1276,4 +1276,12 @@ bool HugoEngine::canSaveGameStateCurrently() {
 int8 HugoEngine::getTPS() {
 	return ((_config.turboFl) ? TURBO_TPS : _normalTPS);
 }
+
+void HugoEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_sound->syncVolume();
+}
+
+
 } // End of namespace Hugo
