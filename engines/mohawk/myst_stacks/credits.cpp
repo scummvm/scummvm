@@ -82,6 +82,21 @@ void MystScriptParser_Credits::runPersistentScripts() {
 	}
 }
 
+uint16 MystScriptParser_Credits::getVar(uint16 var) {
+//	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
+//	MystVariables::Dni &dni = _vm->_saveLoad->_v->dni;
+
+	switch(var) {
+//	case 0: // Credits Image Control
+//		return _creditsVar;
+//	case 1: // Credits Music Control
+//		return 0; // Bad Ending Music
+//		return 1; // Good Ending Music
+	default:
+		return MystScriptParser::getVar(var);
+	}
+}
+
 void MystScriptParser_Credits::o_quit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_vm->_system->quit();
 }
