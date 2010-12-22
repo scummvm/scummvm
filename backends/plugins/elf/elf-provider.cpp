@@ -33,6 +33,7 @@
 
 #include "backends/plugins/elf/elf-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
+#include "backends/plugins/elf/memory-manager.h"
 
 #include "common/debug.h"
 #include "common/fs.h"
@@ -94,6 +95,17 @@ DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 	VoidFunc tmp;
 	memcpy(&tmp, &func, sizeof(VoidFunc));
 	return tmp;
+}
+
+ /**
+  * Test the size of the plugin.
+  */
+void ELFPlugin::trackSize() {
+	// All we need to do is create our object, track its size, then delete it
+	DLObject *obj = makeDLObject();
+	
+	obj->trackSize(_filename.c_str());
+	delete obj;
 }
 
 bool ELFPlugin::loadPlugin() {
@@ -160,6 +172,30 @@ void ELFPlugin::unloadPlugin() {
 		delete _dlHandle;
 		_dlHandle = 0;
 	}
+}
+
+ /**
+  * We override this function in FilePluginProvider to allow the single
+  * plugin method to create a non-fragmenting memory allocation. We take
+  * the plugins found and tell the memory manager to allocate space for
+  * them.
+  */
+PluginList ELFPluginProvider::getPlugins() {
+	PluginList pl = FilePluginProvider::getPlugins();
+
+#if defined(ONE_PLUGIN_AT_A_TIME) && !defined(ELF_NO_MEM_MANAGER) 	
+	// This static downcast is safe because all of the plugins must
+	// be ELF plugins
+	for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
+		(static_cast<ELFPlugin *>(*p))->trackSize();
+	}
+
+	// The Memory Manager should now allocate space based on the information
+	// it collected
+	ELFMemMan.allocateHeap();
+#endif	
+	
+	return pl;
 }
 
 bool ELFPluginProvider::isPluginFilename(const Common::FSNode &node) const {

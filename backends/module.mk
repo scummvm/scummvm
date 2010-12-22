@@ -51,6 +51,7 @@ MODULE_OBJS := \
 	plugins/elf/ppc-loader.o \
 	plugins/elf/arm-loader.o \
 	plugins/elf/elf-provider.o \
+	plugins/elf/memory-manager.o \
 	plugins/elf/version.o \
 	plugins/posix/posix-provider.o \
 	plugins/sdl/sdl-provider.o \

@@ -67,8 +67,9 @@ public:
 
 	virtual DLObject *makeDLObject() = 0;
 
-	bool loadPlugin();
-	void unloadPlugin();
+	virtual bool loadPlugin();
+	virtual void unloadPlugin();
+	void trackSize();
 };
 
 template<class T>
@@ -87,6 +88,7 @@ public:
 class ELFPluginProvider : public FilePluginProvider {
 protected:
 	virtual Plugin *createPlugin(const Common::FSNode &node) const = 0;
+	virtual PluginList getPlugins();
 
 	bool isPluginFilename(const Common::FSNode &node) const;
 };

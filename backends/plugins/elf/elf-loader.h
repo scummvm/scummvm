@@ -67,6 +67,7 @@ protected:
 	bool readProgramHeaders(Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, Elf32_Half num);
 	virtual bool loadSegment(Elf32_Phdr *phdr);
 	Elf32_Shdr *loadSectionHeaders(Elf32_Ehdr *ehdr);
+	int findSymbolTableSection(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 	int loadSymbolTable(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 	bool loadStringTable(Elf32_Shdr *shdr);
 	virtual void relocateSymbols(ptrdiff_t offset);
@@ -90,6 +91,11 @@ public:
 	DLObject();
 	virtual ~DLObject();
 
+	/**
+	 * Test the size of the plugin in memory using the memory manager.
+	 * @param path			Path of file
+	 */
+	void trackSize(const char *path);
 	bool open(const char *path);
 	bool close();
 	void *symbol(const char *name);

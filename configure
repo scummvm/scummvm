@@ -2148,7 +2148,7 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 		;;
 	ds)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DARM_TARGET -DELF_LOADER_CXA_ATEXIT -DONE_PLUGIN_AT_A_TIME"
+		DEFINES="$DEFINES -DARM_TARGET -DELF_LOADER_CXA_ATEXIT -DONE_PLUGIN_AT_A_TIME -DELF_NO_MEM_MANAGER"
 _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mno-fpu
 '
@@ -2239,7 +2239,7 @@ PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backend
 		;;
 	psp)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DMIPS_TARGET"
+		DEFINES="$DEFINES -DMIPS_TARGET -DONE_PLUGIN_AT_A_TIME"
 _mak_plugins='
 LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc

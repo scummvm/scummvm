@@ -28,6 +28,7 @@
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
 #include "backends/plugins/elf/elf-loader.h"
+#include "backends/plugins/elf/memory-manager.h"
 
 #include "common/debug.h"
 #include "common/file.h"
@@ -52,7 +53,7 @@ DLObject::DLObject() :
 
 DLObject::~DLObject() {
 	discardSymtab();
-	free(_segment);
+	ELFMemMan.pluginDeallocate(_segment);
 	_segment = 0;
 }
 
@@ -71,7 +72,7 @@ void DLObject::discardSymtab() {
 void DLObject::unload() {
 	discardSymtab();
 
-	free(_segment);
+	ELFMemMan.pluginDeallocate(_segment);
 
 	_segment = 0;
 	_segmentSize = 0;
@@ -165,7 +166,7 @@ bool DLObject::readProgramHeaders(Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, Elf32_Half
 }
 
 bool DLObject::loadSegment(Elf32_Phdr *phdr) {
-	_segment = (byte *)memalign(phdr->p_align, phdr->p_memsz);
+	_segment = (byte *)ELFMemMan.pluginAllocate(phdr->p_align, phdr->p_memsz);
 
 	if (!_segment) {
 		warning("elfloader: Out of memory.");
@@ -222,19 +223,27 @@ Elf32_Shdr * DLObject::loadSectionHeaders(Elf32_Ehdr *ehdr) {
 	return shdr;
 }
 
-int DLObject::loadSymbolTable(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
-	assert(_file);
-
+int DLObject::findSymbolTableSection(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
+	int SymbolTableSection = -1;
+	
 	// Loop over sections, looking for symbol table linked to a string table
 	for (uint32 i = 0; i < ehdr->e_shnum; i++) {
 		if (shdr[i].sh_type == SHT_SYMTAB &&
 				shdr[i].sh_entsize == sizeof(Elf32_Sym) &&
 				shdr[i].sh_link < ehdr->e_shnum &&
-				shdr[shdr[i].sh_link].sh_type == SHT_STRTAB &&
-				_symtab_sect < 0) {
-			_symtab_sect = i;
+				shdr[shdr[i].sh_link].sh_type == SHT_STRTAB) {
+			SymbolTableSection = i;
+			break;
 		}
 	}
+	
+	return SymbolTableSection;
+}
+
+int DLObject::loadSymbolTable(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
+	assert(_file);
+
+	_symtab_sect = findSymbolTableSection(ehdr, shdr);
 
 	// Check for no symbol table
 	if (_symtab_sect < 0) {
@@ -308,6 +317,43 @@ void DLObject::relocateSymbols(ptrdiff_t offset) {
 	}
 }
 
+// Track the size of the plugin through memory manager without loading
+// the plugin into memory. 
+//
+void DLObject::trackSize(const char *path) {
+	
+	_file = Common::FSNode(path).createReadStream();
+	
+	if (!_file) {
+		warning("elfloader: File %s not found.", path);
+		return;
+	}
+
+	Elf32_Ehdr ehdr;
+	Elf32_Phdr phdr;
+
+	if (!readElfHeader(&ehdr))
+		return;
+	
+	ELFMemMan.trackPlugin(true);	// begin tracking the plugin size
+	
+	// Load the segments
+	for (uint32 i = 0; i < ehdr.e_phnum; i++) {	
+		debug(2, "elfloader: Loading segment %d", i);
+
+		if (!readProgramHeaders(&ehdr, &phdr, i))
+			return;
+
+		if (phdr.p_flags & PF_X) {	// check for executable, allocated segment
+			ELFMemMan.trackAlloc(phdr.p_align, phdr.p_memsz);
+		}
+	}
+	
+	ELFMemMan.trackPlugin(false);	// we're done tracking the plugin size
+
+	// No need to track the symbol table sizes -- they get discarded
+}
+
 bool DLObject::load() {
 	Elf32_Ehdr ehdr;
 	Elf32_Phdr phdr;
@@ -315,7 +361,8 @@ bool DLObject::load() {
 	if (readElfHeader(&ehdr) == false)
 		return false;
 
-	for (uint32 i = 0; i < ehdr.e_phnum; i++) {	//Load our segments
+	//Load the segments
+	for (uint32 i = 0; i < ehdr.e_phnum; i++) {	
 		debug(2, "elfloader: Loading segment %d", i);
 
 		if (readProgramHeaders(&ehdr, &phdr, i) == false)
