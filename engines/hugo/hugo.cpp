@@ -80,6 +80,7 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	DebugMan.addDebugChannel(kDebugRoute, "Route", "Route debug level");
 	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Inventory debug level");
 	DebugMan.addDebugChannel(kDebugObject, "Object", "Object debug level");
+	DebugMan.addDebugChannel(kDebugMusic, "Music", "Music debug level");
 
 	_console = new HugoConsole(this);
 	_rnd = 0;

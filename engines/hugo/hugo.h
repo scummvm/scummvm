@@ -87,7 +87,8 @@ enum HugoDebugChannels {
 	kDebugFile      = 1 <<  5,
 	kDebugRoute     = 1 <<  6,
 	kDebugInventory = 1 <<  7,
-	kDebugObject    = 1 <<  8
+	kDebugObject    = 1 <<  8,
+	kDebugMusic     = 1 <<  9
 };
 
 enum HugoGameFeatures {

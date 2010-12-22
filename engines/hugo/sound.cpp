@@ -58,6 +58,7 @@ MidiPlayer::~MidiPlayer() {
 }
 
 void MidiPlayer::play(uint8 *stream, uint16 size) {
+	debugC(3, kDebugMusic, "MidiPlayer::play");
 	if (!stream) {
 		stop();
 		return;
@@ -76,6 +77,7 @@ void MidiPlayer::play(uint8 *stream, uint16 size) {
 }
 
 void MidiPlayer::stop() {
+	debugC(3, kDebugMusic, "MidiPlayer::stop");
 	_mutex.lock();
 	if (_isPlaying) {
 		_isPlaying = false;
@@ -109,10 +111,12 @@ void MidiPlayer::updateTimer() {
 }
 
 void MidiPlayer::adjustVolume(int diff) {
+	debugC(3, kDebugMusic, "MidiPlayer::adjustVolume");
 	setVolume(_masterVolume + diff);
 }
 
 void MidiPlayer::setVolume(int volume) {
+	debugC(3, kDebugMusic, "MidiPlayer::setVolume");
 	_masterVolume = CLIP(volume, 0, 255);
 	_mutex.lock();
 	for (int i = 0; i < NUM_CHANNELS; ++i) {
@@ -124,7 +128,13 @@ void MidiPlayer::setVolume(int volume) {
 }
 
 int MidiPlayer::open() {
-	_driver->open();
+	if (!_driver)
+		return 255;
+	int ret = _driver->open();
+	if (ret)
+		return ret;
+
+    _driver->sendGMReset();
 
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
@@ -149,14 +159,17 @@ void MidiPlayer::close() {
 
 void MidiPlayer::send(uint32 b) {
 	byte volume, ch = (byte)(b & 0xF);
+	debugC(9, kDebugMusic, "MidiPlayer::send, channel %d (volume is %d)", ch, _channelsVolume[ch]);
 	switch (b & 0xFFF0) {
 	case 0x07B0: // volume change
 		volume = (byte)((b >> 16) & 0x7F);
 		_channelsVolume[ch] = volume;
 		volume = volume * _masterVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
+        debugC(8, kDebugMusic, "Volume change, channel %d volume %d", ch, volume);
 		break;
 	case 0x7BB0: // all notes off
+        debugC(8, kDebugMusic, "All notes off, channel %d", ch);
 		if (!_channelsTable[ch]) {
 			// channel not yet allocated, no need to send the event
 			return;
