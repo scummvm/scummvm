@@ -777,9 +777,9 @@ struct object_t {
 
 /**
 * Following is structure of verbs and nouns for 'background' objects
-*   These are objects that appear in the various screens, but nothing
-*   interesting ever happens with them.  Rather than just be dumb and say
-*   "don't understand" we produce an interesting msg to keep user sane.
+* These are objects that appear in the various screens, but nothing
+* interesting ever happens with them.  Rather than just be dumb and say
+* "don't understand" we produce an interesting msg to keep user sane.
 */
 struct background_t {
 	uint16 verbIndex;
@@ -849,10 +849,7 @@ struct config_t {                                   // User's config (saved)
 	bool musicFl;                                   // State of Music button/menu item
 	bool soundFl;                                   // State of Sound button/menu item
 	bool turboFl;                                   // State of Turbo button/menu item
-	bool  backgroundMusicFl;                        // Continue music when task inactive
-	byte  musicVolume;                              // Music volume percentage
-	byte  soundVolume;                              // Sound volume percentage
-	bool  playlist[MAX_TUNES];                      // Tune playlist
+	bool playlist[MAX_TUNES];                       // Tune playlist
 };
 
 struct target_t {                                   // Secondary target for action

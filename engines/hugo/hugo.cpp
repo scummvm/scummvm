@@ -958,12 +958,8 @@ void HugoEngine::initConfig(inst_t action) {
 		_config.musicFl = true;                     // Music state initially on
 		_config.soundFl = true;                     // Sound state initially on
 		_config.turboFl = false;                    // Turbo state initially off
-		_config.backgroundMusicFl = false;          // No music when inactive
-		_config.musicVolume = 85;                   // Music volume %
-		_config.soundVolume = 100;                  // Sound volume %
 		initPlaylist(_config.playlist);             // Initialize default tune playlist
-
-		_file->readBootFile();    // Read startup structure
+		_file->readBootFile();                      // Read startup structure
 		break;
 	case RESET:
 		// Find first tune and play it

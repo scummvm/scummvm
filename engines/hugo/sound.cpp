@@ -240,7 +240,7 @@ SoundHandler::~SoundHandler() {
 * Set the FM music volume from config.mvolume (0..100%)
 */
 void SoundHandler::setMusicVolume() {
-	_midiPlayer->setVolume(_config.musicVolume * 255 / 100);
+	_midiPlayer->syncVolume();
 }
 
 /**
