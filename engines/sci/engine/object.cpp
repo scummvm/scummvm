@@ -63,14 +63,18 @@ void Object::init(byte *buf, reg_t obj_pos, bool initVariables) {
 		_variables.resize(READ_LE_UINT16(data + kOffsetSelectorCounter));
 		_baseVars = (uint16 *)(_baseObj + _variables.size() * 2);
 		_methodCount = READ_LE_UINT16(data + READ_LE_UINT16(data + kOffsetFunctionArea) - 2);
-		_baseMethod = Common::Array<uint16>((const uint16 *)(data + READ_LE_UINT16(data + kOffsetFunctionArea)),
-						    _methodCount*2+2);
+		for (int i = 0; i < _methodCount * 2 + 2; ++i)
+		{
+			_baseMethod.push_back(READ_SCI11ENDIAN_UINT16(data + READ_LE_UINT16(data + kOffsetFunctionArea) + i * 2));
+		}
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
 		_variables.resize(READ_SCI11ENDIAN_UINT16(data + 2));
 		_baseVars = (uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 4));
 		_methodCount = READ_SCI11ENDIAN_UINT16(buf + READ_SCI11ENDIAN_UINT16(data + 6));
-		_baseMethod = Common::Array<uint16>((const uint16 *) (buf + READ_SCI11ENDIAN_UINT16(data + 6)),
-						    _methodCount*2+3);
+		for (int i = 0; i < _methodCount * 2 + 3; ++i)
+		{
+			_baseMethod.push_back(READ_SCI11ENDIAN_UINT16(buf + READ_SCI11ENDIAN_UINT16(data + 6) + i * 2));
+		}
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		initSelectorsSci3(buf);
 	}
