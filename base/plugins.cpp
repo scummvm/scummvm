@@ -338,16 +338,20 @@ void PluginManager::loadNonEnginePluginsAndEnumerate() {
 	                            pp != _providers.end();
 	                            ++pp) {
 		PluginList pl((*pp)->getPlugins());
+		
 		for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
-			// To find out which are engine plugins, we have to load them. This is inefficient
-			// Hopefully another way can be found (e.g. if the music plugins are all static, 
-			// we can use only the static provider
-			if ((*p)->loadPlugin()) {
+			// This is a 'hack' based on the assumption that we have no sound
+			// file plugins. Currently this is the case. If it changes, we
+			// should find a fast way of detecting whether a plugin is a
+			// music or an engine plugin.
+			if ((*pp)->isFilePluginProvider()) {
+				_allEnginePlugins.push_back(*p);
+			} else if ((*p)->loadPlugin()) { // and this is the proper method 
 				if ((*p)->getType() == PLUGIN_TYPE_ENGINE) {
-					(*p)->unloadPlugin();				// to prevent fragmentation
+					(*p)->unloadPlugin();
 					_allEnginePlugins.push_back(*p);
 				} else {	// add non-engine plugins to the 'in-memory' list
-							// these won't ever get unloaded (in this implementation)
+							// these won't ever get unloaded
 					addToPluginsInMemList(*p);			
 				}
 			}	
