@@ -298,35 +298,58 @@ protected:
  * Singleton class which manages all plugins, including loading them,
  * managing all Plugin class instances, and unloading them.
  */
-class PluginManager : public Common::Singleton<PluginManager> {
+class PluginManager {
+protected:
 	typedef Common::Array<PluginProvider *> ProviderList;
-private:
+
 	PluginList _pluginsInMem[PLUGIN_TYPE_MAX];
 	ProviderList _providers;
-
-	PluginList _allEnginePlugins;
-	PluginList::iterator _currentPlugin;
 
 	bool tryLoadPlugin(Plugin *plugin);
 	void addToPluginsInMemList(Plugin *plugin);
 	
-	friend class Common::Singleton<SingletonBaseType>;
-	PluginManager();
+	static PluginManager *_instance;
+	PluginManager(); 
 
 public:
-	~PluginManager();
+	virtual ~PluginManager();
+
+	static void createInstance(bool cached);
+	static void destroy() { delete _instance; }
+	static PluginManager &instance();
 
 	void addPluginProvider(PluginProvider *pp);
 
-	void loadNonEnginePluginsAndEnumerate();	
-	void loadFirstPlugin();
-	bool loadNextPlugin();
+	virtual void init()	{}
+	virtual void loadFirstPlugin() {}
+	virtual bool loadNextPlugin() { return false; }
 	
-	void loadPlugins();
-	void unloadPlugins();
+	virtual void loadAllPlugins();
+	void unloadAllPlugins();
+
 	void unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin = true);
 
 	const PluginList &getPlugins(PluginType t) { return _pluginsInMem[t]; }
+};
+
+/** 
+ *  Uncached version of plugin manager
+ *  Keeps only one dynamic plugin in memory at a time
+ **/
+class PluginManagerUncached : public PluginManager {
+protected:
+	friend class PluginManager;
+	PluginList _allEnginePlugins;
+	PluginList::iterator _currentPlugin;
+
+	PluginManagerUncached() {}
+
+public:
+	virtual void init();
+	virtual void loadFirstPlugin();
+	virtual bool loadNextPlugin();
+	
+	virtual void loadAllPlugins() {} 	// we don't allow this
 };
 
 #endif

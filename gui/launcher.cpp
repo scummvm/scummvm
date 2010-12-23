@@ -924,11 +924,7 @@ void LauncherDialog::loadGame(int item) {
 
 	const EnginePlugin *plugin = 0;
 	
-#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
-	EngineMan.findGameOnePluginAtATime(gameId, &plugin);
-#else
 	EngineMan.findGame(gameId, &plugin);
-#endif
 
 	String target = _domains[item];
 	target.toLowercase();

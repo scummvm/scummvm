@@ -300,7 +300,19 @@ void FilePluginProvider::addCustomDirectories(Common::FSList &dirs) const {
 
 #pragma mark -
 
-DECLARE_SINGLETON(PluginManager);
+PluginManager *PluginManager::_instance = NULL;
+
+PluginManager &PluginManager::instance() {
+	if (_instance)
+		return *_instance;
+
+#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)		
+		_instance = new PluginManagerUncached();
+#else
+		_instance = new PluginManager();
+#endif
+	return *_instance;
+}
 
 PluginManager::PluginManager() {
 	// Always add the static plugin provider.
@@ -309,7 +321,7 @@ PluginManager::PluginManager() {
 
 PluginManager::~PluginManager() {
 	// Explicitly unload all loaded plugins
-	unloadPlugins();
+	unloadAllPlugins();
 
 	// Delete the plugin providers
 	for (ProviderList::iterator pp = _providers.begin();
@@ -325,8 +337,8 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 
 //
 // This should only be run once
-void PluginManager::loadNonEnginePluginsAndEnumerate() {
-	unloadPlugins();
+void PluginManagerUncached::init() {
+	unloadAllPlugins();
 	_allEnginePlugins.clear();
 	
 	// We need to resize our pluginsInMem list to prevent fragmentation
@@ -359,7 +371,7 @@ void PluginManager::loadNonEnginePluginsAndEnumerate() {
  	}
 }
 
-void PluginManager::loadFirstPlugin() { 
+void PluginManagerUncached::loadFirstPlugin() { 
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
 
 	// let's try to find one we can load
@@ -371,7 +383,7 @@ void PluginManager::loadFirstPlugin() {
 	}
 }
 
-bool PluginManager::loadNextPlugin() {
+bool PluginManagerUncached::loadNextPlugin() {
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
 
 	for (++_currentPlugin; _currentPlugin != _allEnginePlugins.end(); ++_currentPlugin) {
@@ -383,7 +395,7 @@ bool PluginManager::loadNextPlugin() {
 	return false;	// no more in list
 }
 
-void PluginManager::loadPlugins() {
+void PluginManager::loadAllPlugins() {
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
 	                            ++pp) {
@@ -392,7 +404,7 @@ void PluginManager::loadPlugins() {
 	}
 }
 
-void PluginManager::unloadPlugins() {
+void PluginManager::unloadAllPlugins() {
 	for (int i = 0; i < PLUGIN_TYPE_MAX; i++)
 		unloadPluginsExcept((PluginType)i, NULL);
 }
@@ -456,11 +468,12 @@ void PluginManager::addToPluginsInMemList(Plugin *plugin) {
 
 DECLARE_SINGLETON(EngineManager);
 
-GameDescriptor EngineManager::findGameOnePluginAtATime(const Common::String &gameName, const EnginePlugin **plugin) const {
+GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
 	GameDescriptor result;
+
 	PluginManager::instance().loadFirstPlugin();
 	do {
-		result = findGame(gameName, plugin); 
+		result = findGameInLoadedPlugins(gameName, plugin); 
 		if (!result.gameid().empty()) {
 			break;
 		}
@@ -468,7 +481,10 @@ GameDescriptor EngineManager::findGameOnePluginAtATime(const Common::String &gam
 	return result;
 }
 
-GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
+/** 
+ * Find the game within the plugins loaded in memory
+ **/
+GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &gameName, const EnginePlugin **plugin) const {
 	// Find the GameDescriptor for this target
 	const EnginePlugin::List &plugins = getPlugins();
 	GameDescriptor result;
@@ -493,19 +509,15 @@ GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 	GameList candidates;
 	EnginePlugin::List plugins;
 	EnginePlugin::List::const_iterator iter;
-#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
 	PluginManager::instance().loadFirstPlugin();
 	do {
-#endif
 		plugins = getPlugins();
 		// Iterate over all known games and for each check if it might be
 		// the game in the presented directory.
 		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 			candidates.push_back((**iter)->detectGames(fslist));
 		}
-#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
 	} while (PluginManager::instance().loadNextPlugin());
-#endif
 	return candidates;
 }
 

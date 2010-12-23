@@ -107,11 +107,7 @@ static const EnginePlugin *detectPlugin() {
 	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
 	printf("%s", "  Looking for a plugin supporting this gameid... ");
 
-#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
-	GameDescriptor game = EngineMan.findGameOnePluginAtATime(gameid, &plugin);
-#else
  	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
-#endif
 
 	if (plugin == 0) {
 		printf("failed\n");
@@ -342,14 +338,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		settings.erase("debugflags");
 	}
 
-#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
-	// Only load non-engine plugins and first engine plugin initially in this case.
-	PluginManager::instance().loadNonEnginePluginsAndEnumerate();
-#else
- 	// Load the plugins.
- 	PluginManager::instance().loadPlugins();
-#endif
-
+	PluginManager::instance().init();
+ 	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
+	
 	// If we received an invalid music parameter via command line we check this here.
 	// We can't check this before loading the music plugins.
 	// On the other hand we cannot load the plugins before we know the file paths (in case of external plugins).
@@ -463,11 +454,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// Clear the active config domain
 			ConfMan.setActiveDomain("");
 
-			// PluginManager::instance().unloadPlugins();
+			PluginManager::instance().loadAllPlugins(); // only for cached manager
 
-#if !defined(ONE_PLUGIN_AT_A_TIME)
-			PluginManager::instance().loadPlugins();
-#endif
 		} else {
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
 		}
@@ -476,7 +464,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		setupGraphics(system);
 		launcherDialog();
 	}
-	PluginManager::instance().unloadPlugins();
+	PluginManager::instance().unloadAllPlugins();
 	PluginManager::destroy();
 	GUI::GuiManager::destroy();
 	Common::ConfigManager::destroy();
