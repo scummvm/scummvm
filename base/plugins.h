@@ -309,13 +309,12 @@ protected:
 	void addToPluginsInMemList(Plugin *plugin);
 	
 	static PluginManager *_instance;
-	PluginManager(); 
+	PluginManager();
 
 public:
 	virtual ~PluginManager();
 
-	static void createInstance(bool cached);
-	static void destroy() { delete _instance; }
+	static void destroy() { delete _instance; _instance = 0; }
 	static PluginManager &instance();
 
 	void addPluginProvider(PluginProvider *pp);
