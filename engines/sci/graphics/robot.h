@@ -52,6 +52,7 @@ private:
 	uint16 _frameCount;
 	uint32 _frameSize; // is width * height (pixelCount)
 	uint16 _audioSize;
+	bool _hasSound;
 };
 #endif
 

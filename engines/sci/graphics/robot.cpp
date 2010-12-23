@@ -27,8 +27,13 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/robot.h"
+#include "sci/sound/audio.h"
+
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
 
 #include "common/file.h"
+#include "common/system.h"
 
 namespace Sci {
 
@@ -64,9 +69,9 @@ void GfxRobot::initData(GuiResourceId resourceId) {
 	_audioSize = READ_LE_UINT16(_resourceData + 15);
 
 	//_frameSize = READ_LE_UINT32(_resourceData + 34);
-	byte hasSound = _resourceData[25];
+	_hasSound = (_resourceData[25] != 0);
 
-	debug("Robot %d, %d frames, sound: %d\n", resourceId, _frameCount, hasSound);
+	debug("Robot %d, %d frames, sound: %s\n", resourceId, _frameCount, _hasSound ? "yes" : "no");
 }
 
 // TODO: just trying around in here...
@@ -75,6 +80,15 @@ void GfxRobot::draw() {
 	byte *bitmapData = _resourceData + _audioSize;
 	int x, y;
 	int frame;
+
+	// Play the audio of the robot file (for debugging)
+#if 0
+	if (_hasSound) {
+		Audio::SoundHandle _audioHandle;
+		Audio::AudioStream *audioStream = g_sci->_audio->getRobotAudioStream(_resourceData);
+		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
+	}
+#endif
 
 	return;
 
