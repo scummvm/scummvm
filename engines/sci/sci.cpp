@@ -831,7 +831,7 @@ void SciEngine::syncIngameAudioOptions() {
 				|| getGameId() == GID_FREDDYPHARKAS
 				// TODO: The following need script patches for simultaneous speech and subtitles
 				//|| getGameId() == GID_KQ6
-				//|| getGameId() == GID_LB2
+				//|| getGameId() == GID_LAURABOW2
 				) {
 				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 3);	// speech + subtitles
 			} else {
