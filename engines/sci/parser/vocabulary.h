@@ -34,6 +34,12 @@
 #include "sci/sci.h"
 #include "sci/engine/vm_types.h"
 
+namespace Common {
+
+class Serializer;
+
+}
+
 namespace Sci {
 
 class ResourceManager;
@@ -143,11 +149,11 @@ typedef Common::List<suffix_t> SuffixList;
 
 
 struct synonym_t {
-	int replaceant; /**< The word group to replace */
-	int replacement; /**< The replacement word group for this one */
+	uint16 replaceant; /**< The word group to replace */
+	uint16 replacement; /**< The replacement word group for this one */
 };
 
-typedef Common::List<synonym_t> SynonymList;
+typedef Common::Array<synonym_t> SynonymList;
 
 
 struct AltInput {
@@ -292,6 +298,11 @@ public:
 	 */
 	bool checkAltInput(Common::String& text, uint16& cursorPos);
 
+	/**
+	 * Save/load vocabulary data
+	 */
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+
 private:
 	/**
 	 * Loads all words from the main vocabulary.
@@ -335,8 +346,6 @@ private:
 	 * Frees all alternative input combinations.
 	 */
 	void freeAltInputs();
-
-
 
 	ResourceManager *_resMan;
 	VocabularyVersions _vocabVersion;

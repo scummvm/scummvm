@@ -210,8 +210,8 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 				} else
 					for (int i = 0; i < numSynonyms; i++) {
 						synonym_t tmp;
-						tmp.replaceant = (int16)READ_LE_UINT16(synonyms + i * 4);
-						tmp.replacement = (int16)READ_LE_UINT16(synonyms + i * 4 + 2);
+						tmp.replaceant = READ_LE_UINT16(synonyms + i * 4);
+						tmp.replacement = READ_LE_UINT16(synonyms + i * 4 + 2);
 						voc->addSynonym(tmp);
 					}
 			} else

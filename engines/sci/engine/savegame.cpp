@@ -43,6 +43,7 @@
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
+#include "sci/parser/vocabulary.h"
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
 
@@ -115,6 +116,12 @@ template <>
 void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
 	s.syncAsUint16LE(obj.segment);
 	s.syncAsUint16LE(obj.offset);
+}
+
+template <>
+void syncWithSerializer(Common::Serializer &s, synonym_t &obj) {
+	s.syncAsUint16LE(obj.replaceant);
+	s.syncAsUint16LE(obj.replacement);
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
@@ -288,11 +295,14 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	g_sci->_gfxPalette->saveLoadWithSerializer(s);
 }
 
+void Vocabulary::saveLoadWithSerializer(Common::Serializer &s) {
+	syncArray<synonym_t>(s, _synonyms);
+}
+
 void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(script_id);
 	syncArray<reg_t>(s, _locals);
 }
-
 
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_flags);
@@ -811,6 +821,7 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savenam
 	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
+	g_sci->getVocabulary()->saveLoadWithSerializer(ser);
 
 	return true;
 }
@@ -861,7 +872,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->reset(true);
 	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
 
-
 	// Now copy all current state information
 
 	s->_segMan->reconstructStack(s);
@@ -876,6 +886,9 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
+	if (ser.getVersion() >= 30)
+		g_sci->getVocabulary()->saveLoadWithSerializer(ser);
+
 	g_sci->_soundCmd->reconstructPlayList();
 
 	// Message state:
