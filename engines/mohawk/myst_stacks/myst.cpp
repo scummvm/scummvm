@@ -2350,7 +2350,7 @@ void MystScriptParser_Myst::libraryCombinationBookTurnLeft() {
 
 		_libraryBookPage = CLIP<int16>(_libraryBookPage, 0, _libraryBookNumPages - 1);
 
-		Common::Rect rect = Common::Rect(157, 115, 544, 333);
+		Common::Rect rect = Common::Rect(157, 113, 446, 220);
 		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
 
 		if (_vm->_rnd->getRandomBit())
@@ -2376,7 +2376,7 @@ void MystScriptParser_Myst::libraryCombinationBookTurnRight() {
 
 		_libraryBookPage = CLIP<uint16>(_libraryBookPage, 0, _libraryBookNumPages - 1);
 
-		Common::Rect rect = Common::Rect(157, 115, 544, 333);
+		Common::Rect rect = Common::Rect(157, 113, 446, 220);
 		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
 
 		if (_vm->_rnd->getRandomBit())
