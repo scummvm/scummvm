@@ -80,8 +80,6 @@ Then build ScummVM:
  PATH=$ANDROID_SDK/platforms/android-1.6/tools:$ANDROID_SDK/tools:$PATH
  # You also want to ensure your arm-oe-linux-androideabi toolchain is in $PATH
 
- export ANDROID_TOP=<root of built Android source>
-
  ./configure --backend=android --host=android --enable-zlib --disable-timidity
     # ... and any other configure flags you want
  make scummvm.apk
