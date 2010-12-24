@@ -157,6 +157,7 @@ private:
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
 	Audio::AudioStream *makeAudioStream(uint16 id);
+	Common::String getName(uint16 id);
 
 	// Riven-specific
 	void playSLSTSound(uint16 index, bool fade, bool loop, uint16 volume, int16 balance);

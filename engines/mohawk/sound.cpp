@@ -130,13 +130,13 @@ Audio::SoundHandle *Sound::replaceSound(uint16 id, byte volume, bool loop) {
 
 	//TODO: The original engine does fading
 
-	Common::String name = _vm->getResourceName(ID_MSND, id);
+	Common::String name = getName(id);
 
 	// Check if sound is already playing
 	for (uint32 i = 0; i < _handles.size(); i++)
 		if (_handles[i].type == kUsedHandle
 				&& _vm->_mixer->isSoundHandleActive(_handles[i].handle)
-				&& name.equals(_vm->getResourceName(ID_MSND, _handles[i].id)))
+				&& name.equals(getName(_handles[i].id)))
 			return &_handles[i].handle;
 
 	stopSound();
@@ -562,13 +562,13 @@ Audio::SoundHandle *Sound::replaceBackground(uint16 id, uint16 volume) {
 
 	//TODO: The original engine does fading
 
-	Common::String name = _vm->getResourceName(ID_MSND, id);
+	Common::String name = getName(id);
 
 	// Check if sound is already playing
 	for (uint32 i = 0; i < _handles.size(); i++)
 		if (_handles[i].type == kBackgroundHandle
 				&& _vm->_mixer->isSoundHandleActive(_handles[i].handle)
-				&& name.equals(_vm->getResourceName(ID_MSND, _handles[i].id)))
+				&& name.equals(getName(_handles[i].id)))
 			return &_handles[i].handle;
 
 	// Stop old background sound
@@ -617,6 +617,23 @@ void Sound::changeBackgroundVolume(uint16 vol) {
 	for (uint32 i = 0; i < _handles.size(); i++)
 		if (_handles[i].type == kBackgroundHandle)
 			_vm->_mixer->setChannelVolume(_handles[i].handle, vol >> 8);
+}
+
+Common::String Sound::getName(uint16 id) {
+	if (_vm->getFeatures() & GF_ME) {
+		// Myst ME is a bit more efficient with sound storage than Myst
+		// Myst has lots of sounds repeated. To overcome this, Myst ME
+		// has MJMP resources which provide a link to the actual MSND
+		// resource we're looking for. This saves a lot of space from
+		// repeated data.
+		if (_vm->hasResource(ID_MJMP, id)) {
+			Common::SeekableReadStream *mjmpStream = _vm->getResource(ID_MJMP, id);
+			id = mjmpStream->readUint16LE();
+			delete mjmpStream;
+		}
+	}
+
+	return _vm->getResourceName(ID_MSND, id);
 }
 
 } // End of namespace Mohawk
