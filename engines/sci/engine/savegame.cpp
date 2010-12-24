@@ -821,7 +821,9 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savenam
 	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
-	g_sci->getVocabulary()->saveLoadWithSerializer(ser);
+	Vocabulary *voc = g_sci->getVocabulary();
+	if (voc)
+		voc->saveLoadWithSerializer(ser);
 
 	return true;
 }
@@ -886,8 +888,10 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
-	if (ser.getVersion() >= 30)
-		g_sci->getVocabulary()->saveLoadWithSerializer(ser);
+
+	Vocabulary *voc = g_sci->getVocabulary();
+	if (ser.getVersion() >= 30 && voc)
+		voc->saveLoadWithSerializer(ser);
 
 	g_sci->_soundCmd->reconstructPlayList();
 
