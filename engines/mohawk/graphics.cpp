@@ -101,8 +101,14 @@ GraphicsManager::~GraphicsManager() {
 void GraphicsManager::clearCache() {
 	for (Common::HashMap<uint16, MohawkSurface*>::iterator it = _cache.begin(); it != _cache.end(); it++)
 		delete it->_value;
+	for (Common::HashMap<uint16, Common::Array<MohawkSurface*> >::iterator it = _subImageCache.begin(); it != _subImageCache.end(); it++) {
+		Common::Array<MohawkSurface *> &array = it->_value;
+		for (uint i = 0; i < array.size(); i++)
+			delete array[i];
+	}
 
 	_cache.clear();
+	_subImageCache.clear();
 }
 
 MohawkSurface *GraphicsManager::findImage(uint16 id) {
@@ -115,6 +121,10 @@ MohawkSurface *GraphicsManager::findImage(uint16 id) {
 	// Doesn't mean this shouldn't be done in the future.
 
 	return _cache[id];
+}
+
+Common::Array<MohawkSurface *> GraphicsManager::decodeImages(uint16 id) {
+	error("decodeImages not implemented for this game");
 }
 
 void GraphicsManager::preloadImage(uint16 image) {
@@ -150,6 +160,22 @@ void GraphicsManager::copyAnimImageToScreen(uint16 image, int left, int top) {
 }
 
 void GraphicsManager::copyAnimImageSectionToScreen(uint16 image, Common::Rect srcRect, Common::Rect dstRect) {
+	copyAnimImageSectionToScreen(findImage(image), srcRect, dstRect);
+}
+
+void GraphicsManager::copyAnimSubImageToScreen(uint16 image, uint16 subimage, int left, int top) {
+	if (!_subImageCache.contains(image))
+		_subImageCache[image] = decodeImages(image);
+	Common::Array<MohawkSurface *> &images = _subImageCache[image];
+
+	Graphics::Surface *surface = images[subimage]->getSurface();
+
+	Common::Rect srcRect(0, 0, surface->w, surface->h);
+	Common::Rect dstRect(left, top, left + surface->w, top + surface->h);
+	copyAnimImageSectionToScreen(images[subimage], srcRect, dstRect);
+}
+
+void GraphicsManager::copyAnimImageSectionToScreen(MohawkSurface *image, Common::Rect srcRect, Common::Rect dstRect) {
 	uint16 startX = 0;
 	uint16 startY = 0;
 
@@ -172,7 +198,7 @@ void GraphicsManager::copyAnimImageSectionToScreen(uint16 image, Common::Rect sr
 	if (dstRect.top >= getVM()->_system->getHeight())
 		return;
 
-	Graphics::Surface *surface = findImage(image)->getSurface();
+	Graphics::Surface *surface = image->getSurface();
 	if (startX >= surface->w)
 		return;
 	if (startY >= surface->h)

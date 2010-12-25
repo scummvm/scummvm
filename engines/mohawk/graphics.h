@@ -88,20 +88,25 @@ public:
 	virtual void setPalette(uint16 id);
 	void copyAnimImageToScreen(uint16 image, int left = 0, int top = 0);
 	void copyAnimImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
+	void copyAnimSubImageToScreen(uint16 image, uint16 subimage, int left = 0, int top = 0);
 
 protected:
+	void copyAnimImageSectionToScreen(MohawkSurface *image, Common::Rect src, Common::Rect dest);
+
 	// findImage will search the cache to find the image.
 	// If not found, it will call decodeImage to get a new one.
 	MohawkSurface *findImage(uint16 id);
 
 	// decodeImage will always return a new image.
 	virtual MohawkSurface *decodeImage(uint16 id) = 0;
+	virtual Common::Array<MohawkSurface *> decodeImages(uint16 id);
 
 	virtual MohawkEngine *getVM() = 0;
 
 private:
 	// An image cache that stores images until clearCache() is called
 	Common::HashMap<uint16, MohawkSurface*> _cache;
+	Common::HashMap<uint16, Common::Array<MohawkSurface*> > _subImageCache;
 };
 
 class MystGraphics : public GraphicsManager {
