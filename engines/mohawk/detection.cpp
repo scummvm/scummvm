@@ -102,7 +102,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"MakingOfMyst", "The Making of Myst"},
 	{"riven", "Riven: The Sequel to Myst"},
 #ifdef DETECT_BRODERBUND_TITLES
-	{"zoombini", "Logical Journey of the Zoombinis Deluxe"},
+	{"zoombini", "Logical Journey of the Zoombinis"},
 	{"csworld", "Where in the World is Carmen Sandiego?"},
 	{"csamtrak", "Where in America is Carmen Sandiego? (The Great Amtrak Train Adventure)"},
 	{"maggiesfa", "Maggie's Farmyard Adventure"},

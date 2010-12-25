@@ -404,6 +404,51 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"zoombini",
+			"",
+			AD_ENTRY1("ZOOMBINI.MHK", "0672f65c40dd065840c896e41c13f980"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ZOOMBINI,
+		GF_HASMIDI,
+		0
+	},
+
+	{
+		{
+			"zoombini",
+			"",
+			AD_ENTRY1("ZOOMBINI.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa"),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ZOOMBINI,
+		GF_HASMIDI,
+		0
+	},
+
+	{
+		{
+			"zoombini",
+			"",
+			AD_ENTRY1("ZOOMBINI.MHK", "8231e58525143ccf6e8b747df34b139f"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ZOOMBINI,
+		GF_HASMIDI,
+		0
+	},
+
+	{
+		{
 			"csworld",
 			"v3.0",
 			AD_ENTRY1("C2K.MHK", "605fe88380848031bbd0ff84ade6fe40"),
