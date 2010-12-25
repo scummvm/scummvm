@@ -1008,6 +1008,36 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		"Little Monster at School"
 	},
+
+	{
+		{
+			"rugrats",
+			"",
+			AD_ENTRY1("outline", "525be248363fe27d50d750632c1e759e"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
+	{
+		{
+			"rugrats",
+			"",
+			AD_ENTRY1("BookOutline", "54a324ee6f8260258bff7043a05b0004"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
 #endif
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }

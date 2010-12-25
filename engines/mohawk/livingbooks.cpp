@@ -31,6 +31,8 @@
 
 #include "common/events.h"
 #include "common/EventRecorder.h"
+#include "common/fs.h"
+#include "common/archive.h"
 
 #include "engines/util.h"
 
@@ -80,6 +82,10 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "livingbooks");
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "program");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Rugrats Adventure Game");
 }
 
 MohawkEngine_LivingBooks::~MohawkEngine_LivingBooks() {

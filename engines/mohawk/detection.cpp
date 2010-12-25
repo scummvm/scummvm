@@ -120,6 +120,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"arthurrace", "Arthur's Reading Race"},
 	{"arthurbday", "Arthur's Birthday"},
 	{"lilmonster", "Little Monster at School"},
+	{"rugrats", "Rugrats Adventure Game"},
 #endif
 	{0, 0}
 };
@@ -130,6 +131,8 @@ static const char *directoryGlobs[] = {
 	"all",
 	"assets1",
 	"data",
+	"program",
+	"Rugrats Adventure Game",
 	0
 };
 
