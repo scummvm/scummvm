@@ -248,8 +248,10 @@ void SoundTowns::beginFadeOut() {
 			_vm->delay(_vm->tickLength());
 		}
 
-		for (int i = 58; i > 0; i--)
+		for (int i = 58; i > 0; i--) {
 			_driver->setOutputVolume(1, i, i);
+			_vm->delay(1);
+		}
 
 		_driver->setOutputVolume(1, 0, 0);
 
