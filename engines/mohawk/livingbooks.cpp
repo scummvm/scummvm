@@ -595,7 +595,18 @@ int MohawkEngine_LivingBooks::getIntFromConfig(const Common::String &section, co
 }
 
 Common::String MohawkEngine_LivingBooks::getFileNameFromConfig(const Common::String &section, const Common::String &key) {
-	Common::String x = getStringFromConfig(section, key);
+	Common::String string = getStringFromConfig(section, key);
+	Common::String x;
+
+	uint32 i = 0;
+	if (string.hasPrefix("//")) {
+		// skip "//CD-ROM Title/" prefixes which we don't care about
+		i = 3;
+		while (i < string.size() && string[i - 1] != '/')
+			i++;
+	}
+	x = string.c_str() + i;
+
 	return (getPlatform() == Common::kPlatformMacintosh) ? convertMacFileName(x) : convertWinFileName(x);
 }
 
@@ -633,15 +644,7 @@ Common::String MohawkEngine_LivingBooks::convertMacFileName(const Common::String
 Common::String MohawkEngine_LivingBooks::convertWinFileName(const Common::String &string) {
 	Common::String filename;
 
-	uint32 i = 0;
-	if (string.hasPrefix("//")) {
-		// skip "//CD-ROM Title/" prefixes which we don't care about
-		i = 3;
-		while (i < string.size() && string[i - 1] != '/')
-			i++;
-	}
-
-	for (; i < string.size(); i++) {
+	for (uint32 i = 0; i < string.size(); i++) {
 		if (string[i] == '\\')
 			filename += '/';
 		else
