@@ -2499,7 +2499,7 @@ int32 ToonEngine::runConversationCommand(int16 **command) {
 		//
 	case 105:
 		if (getConversationFlag(_gameState->_currentScene, v4)) {
-			result = READ_LE_INT16(*command + 4);
+			result = READ_LE_INT16(*command + 2);
 			*command = (int16 *)((char *)_conversationData + result);
 			*command = (int16 *)((char *)_conversationData + result - 4);
 		} else {
