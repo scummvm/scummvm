@@ -257,7 +257,7 @@ int32 ScriptFunc::sys_Cmd_Draw_Actor_Standing(EMCState *state) {
 	int32 arg2 = stackPos(1);
 
 	if (arg2 > -1)
-		_vm->getDrew()->setFacing(arg2);
+		_vm->getDrew()->forceFacing(arg2);
 
 	if (arg1 < 0) {
 		_vm->getDrew()->setVisible(false);
