@@ -65,6 +65,7 @@ void MidiPlayer::play(uint8 *stream, uint16 size) {
 		return;
 	}
 
+	stop();
 	_midiData = (uint8 *)malloc(size);
 	if (_midiData) {
 		memcpy(_midiData, stream, size);
