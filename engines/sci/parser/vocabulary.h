@@ -301,7 +301,7 @@ public:
 	/**
 	 * Save/load vocabulary data
 	 */
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser);
 
 private:
 	/**
