@@ -30,7 +30,7 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 
-#include "mohawk/myst_saveload.h"
+#include "mohawk/myst_state.h"
 
 namespace Mohawk {
 

@@ -25,7 +25,7 @@
 
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
-#include "mohawk/myst_saveload.h"
+#include "mohawk/myst_state.h"
 
 #include "common/serializer.h"
 #include "common/util.h"

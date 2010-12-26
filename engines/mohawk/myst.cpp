@@ -32,7 +32,7 @@
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_scripts.h"
-#include "mohawk/myst_saveload.h"
+#include "mohawk/myst_state.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/resource.h"
 #include "mohawk/resource_cache.h"
