@@ -244,7 +244,7 @@ public:
 	    1 = Unknown #1
 	    2 = Unknown #2
 	    3 = Water Pump State
-	    4 = Lighthouse Trapdoor St_v->ate
+	    4 = Lighthouse Trapdoor State
 	    5 = Lighthouse Chest Water State
 	    6 = Lighthouse Chest Valve State
 	    7 = Lighthouse Chest Open State
