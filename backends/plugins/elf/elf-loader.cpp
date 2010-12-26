@@ -332,8 +332,11 @@ void DLObject::trackSize(const char *path) {
 	Elf32_Ehdr ehdr;
 	Elf32_Phdr phdr;
 
-	if (!readElfHeader(&ehdr))
+	if (!readElfHeader(&ehdr)) {
+		delete _file;
+		_file = 0;
 		return;
+	}
 	
 	ELFMemMan.trackPlugin(true);	// begin tracking the plugin size
 	
@@ -341,8 +344,11 @@ void DLObject::trackSize(const char *path) {
 	for (uint32 i = 0; i < ehdr.e_phnum; i++) {	
 		debug(2, "elfloader: Loading segment %d", i);
 
-		if (!readProgramHeaders(&ehdr, &phdr, i))
+		if (!readProgramHeaders(&ehdr, &phdr, i)) {
+			delete _file;
+			_file = 0;
 			return;
+		}
 
 		if (phdr.p_flags & PF_X) {	// check for executable, allocated segment
 			ELFMemMan.trackAlloc(phdr.p_align, phdr.p_memsz);
@@ -351,6 +357,8 @@ void DLObject::trackSize(const char *path) {
 	
 	ELFMemMan.trackPlugin(false);	// we're done tracking the plugin size
 
+	delete _file;
+	_file = 0;
 	// No need to track the symbol table sizes -- they get discarded
 }
 
