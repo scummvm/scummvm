@@ -87,7 +87,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_console = NULL;
 	_scriptParser = NULL;
 	_varStore = NULL;
-	_saveLoad = NULL;
+	_gameState = NULL;
 	_loadDialog = NULL;
 	_optionsDialog = NULL;
 
@@ -116,7 +116,7 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete _console;
 	delete _scriptParser;
 	delete _varStore;
-	delete _saveLoad;
+	delete _gameState;
 	delete _loadDialog;
 	delete _optionsDialog;
 	delete _prevStack;
@@ -255,7 +255,7 @@ Common::Error MohawkEngine_Myst::run() {
 	_gfx = new MystGraphics(this);
 	_console = new MystConsole(this);
 	_varStore = new MystVar(this);
-	_saveLoad = new MystSaveLoad(this, _saveFileMan);
+	_gameState = new MystGameState(this, _saveFileMan);
 	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
 	_loadDialog->setSaveMode(false);
 	_optionsDialog = new MystOptionsDialog(this);
@@ -266,10 +266,10 @@ Common::Error MohawkEngine_Myst::run() {
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && canLoadGameStateCurrently()) {
 		uint32 gameToLoad = ConfMan.getInt("save_slot");
-		Common::StringArray savedGamesList = _saveLoad->generateSaveGameList();
+		Common::StringArray savedGamesList = _gameState->generateSaveGameList();
 		if (gameToLoad > savedGamesList.size())
 			error ("Could not find saved game");
-		_saveLoad->loadGame(savedGamesList[gameToLoad]);
+		_gameState->load(savedGamesList[gameToLoad]);
 	} else {
 		// Start us on the first stack.
 		if (getGameType() == GType_MAKINGOF)
@@ -390,7 +390,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 
 	switch (_curStack) {
 	case kChannelwoodStack:
-		_saveLoad->_v->globals.currentAge = 4;
+		_gameState->_globals.currentAge = 4;
 		_scriptParser = new MystScriptParser_Channelwood(this);
 		break;
 	case kCreditsStack:
@@ -400,7 +400,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 		_scriptParser = new MystScriptParser_Demo(this);
 		break;
 	case kDniStack:
-		_saveLoad->_v->globals.currentAge = 6;
+		_gameState->_globals.currentAge = 6;
 		_scriptParser = new MystScriptParser_Dni(this);
 		break;
 	case kIntroStack:
@@ -410,25 +410,25 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 		_scriptParser = new MystScriptParser_MakingOf(this);
 		break;
 	case kMechanicalStack:
-		_saveLoad->_v->globals.currentAge = 3;
+		_gameState->_globals.currentAge = 3;
 		_scriptParser = new MystScriptParser_Mechanical(this);
 		break;
 	case kMystStack:
-		_saveLoad->_v->globals.currentAge = 2;
+		_gameState->_globals.currentAge = 2;
 		_scriptParser = new MystScriptParser_Myst(this);
 		break;
 	case kDemoPreviewStack:
 		_scriptParser = new MystScriptParser_Preview(this);
 		break;
 	case kSeleniticStack:
-		_saveLoad->_v->globals.currentAge = 0;
+		_gameState->_globals.currentAge = 0;
 		_scriptParser = new MystScriptParser_Selenitic(this);
 		break;
 	case kDemoSlidesStack:
 		_scriptParser = new MystScriptParser_Slides(this);
 		break;
 	case kStoneshipStack:
-		_saveLoad->_v->globals.currentAge = 1;
+		_gameState->_globals.currentAge = 1;
 		_scriptParser = new MystScriptParser_Stoneship(this);
 		break;
 	default:
@@ -1069,19 +1069,19 @@ void MohawkEngine_Myst::runLoadDialog() {
 }
 
 Common::Error MohawkEngine_Myst::loadGameState(int slot) {
-	if (_saveLoad->loadGame(_saveLoad->generateSaveGameList()[slot]))
+	if (_gameState->load(_gameState->generateSaveGameList()[slot]))
 		return Common::kNoError;
 
 	return Common::kUnknownError;
 }
 
 Common::Error MohawkEngine_Myst::saveGameState(int slot, const char *desc) {
-	Common::StringArray saveList = _saveLoad->generateSaveGameList();
+	Common::StringArray saveList = _gameState->generateSaveGameList();
 
 	if ((uint)slot < saveList.size())
-		_saveLoad->deleteSave(saveList[slot]);
+		_gameState->deleteSave(saveList[slot]);
 
-	return _saveLoad->saveGame(Common::String(desc)) ? Common::kNoError : Common::kUnknownError;
+	return _gameState->save(Common::String(desc)) ? Common::kNoError : Common::kUnknownError;
 }
 
 bool MohawkEngine_Myst::canLoadGameStateCurrently() {

@@ -67,7 +67,7 @@ void MystScriptParser_Intro::runPersistentScripts() {
 uint16 MystScriptParser_Intro::getVar(uint16 var) {
 	switch(var) {
 	case 0:
-		return _vm->_saveLoad->_v->globals.currentAge;
+		return _vm->_gameState->_globals.currentAge;
 	default:
 		return MystScriptParser::getVar(var);
 	}

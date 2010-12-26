@@ -36,7 +36,8 @@
 
 namespace Mohawk {
 
-MystScriptParser_Selenitic::MystScriptParser_Selenitic(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
+MystScriptParser_Selenitic::MystScriptParser_Selenitic(MohawkEngine_Myst *vm) :
+		MystScriptParser(vm), _state(vm->_gameState->_selenitic) {
 	setupOpcodes();
 	_invokingResource = NULL;
 	_mazeRunnerPosition = 288;
@@ -91,24 +92,21 @@ void MystScriptParser_Selenitic::runPersistentScripts() {
 }
 
 uint16 MystScriptParser_Selenitic::getVar(uint16 var) {
-	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-	MystVariables::Selenitic &selenitic = _vm->_saveLoad->_v->selenitic;
-
 	switch(var) {
 	case 0: // Sound receiver emitters enabled
-		return selenitic.emitterEnabledWind;
+		return _state.emitterEnabledWind;
 	case 1:
-		return selenitic.emitterEnabledVolcano;
+		return _state.emitterEnabledVolcano;
 	case 2:
-		return selenitic.emitterEnabledClock;
+		return _state.emitterEnabledClock;
 	case 3:
-		return selenitic.emitterEnabledWater;
+		return _state.emitterEnabledWater;
 	case 4:
-		return selenitic.emitterEnabledCrystal;
+		return _state.emitterEnabledCrystal;
 	case 5: // Sound receiver opened
-		return selenitic.soundReceiverOpened;
+		return _state.soundReceiverOpened;
 	case 6: // Tunnel lights
-		return selenitic.tunnelLightsSwitchedOn;
+		return _state.tunnelLightsSwitchedOn;
 	case 7:// Maze runner display
 		if (_mazeRunnerPosition == 288) {
 			return 0;
@@ -122,15 +120,15 @@ uint16 MystScriptParser_Selenitic::getVar(uint16 var) {
 	case 8: // Viewer
 		return 0;
 	case 9: // Sound receiver selected source
-		return selenitic.soundReceiverCurrentSource == 0;
+		return _state.soundReceiverCurrentSource == 0;
 	case 10:
-		return selenitic.soundReceiverCurrentSource == 1;
+		return _state.soundReceiverCurrentSource == 1;
 	case 11:
-		return selenitic.soundReceiverCurrentSource == 2;
+		return _state.soundReceiverCurrentSource == 2;
 	case 12:
-		return selenitic.soundReceiverCurrentSource == 3;
+		return _state.soundReceiverCurrentSource == 3;
 	case 13:
-		return selenitic.soundReceiverCurrentSource == 4;
+		return _state.soundReceiverCurrentSource == 4;
 	case 14: // Sound receiver position
 		return (*_soundReceiverPosition) / 1000;
 	case 15:
@@ -161,55 +159,52 @@ uint16 MystScriptParser_Selenitic::getVar(uint16 var) {
 	case 33: // Maze runner at entry
 		return _mazeRunnerPosition != 288;
 	case 102: // Red page
-		return !(globals.redPagesInBook & 2) && (globals.heldPage != 8);
+		return !(_globals.redPagesInBook & 2) && (_globals.heldPage != 8);
 	case 103: // Blue page
-		return !(globals.bluePagesInBook & 2) && (globals.heldPage != 2);
+		return !(_globals.bluePagesInBook & 2) && (_globals.heldPage != 2);
 	default:
 		return MystScriptParser::getVar(var);
 	}
 }
 
 void MystScriptParser_Selenitic::toggleVar(uint16 var) {
-	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-	MystVariables::Selenitic &selenitic = _vm->_saveLoad->_v->selenitic;
-
 	switch(var) {
 	case 0: // Sound receiver emitters enabled
-		selenitic.emitterEnabledWind = (selenitic.emitterEnabledWind + 1) % 2;
+		_state.emitterEnabledWind = (_state.emitterEnabledWind + 1) % 2;
 		break;
 	case 1:
-		selenitic.emitterEnabledVolcano = (selenitic.emitterEnabledVolcano + 1) % 2;
+		_state.emitterEnabledVolcano = (_state.emitterEnabledVolcano + 1) % 2;
 		break;
 	case 2:
-		selenitic.emitterEnabledClock = (selenitic.emitterEnabledClock + 1) % 2;
+		_state.emitterEnabledClock = (_state.emitterEnabledClock + 1) % 2;
 		break;
 	case 3:
-		selenitic.emitterEnabledWater = (selenitic.emitterEnabledWater + 1) % 2;
+		_state.emitterEnabledWater = (_state.emitterEnabledWater + 1) % 2;
 		break;
 	case 4:
-		selenitic.emitterEnabledCrystal = (selenitic.emitterEnabledCrystal + 1) % 2;
+		_state.emitterEnabledCrystal = (_state.emitterEnabledCrystal + 1) % 2;
 		break;
 	case 5: // Sound receiver opened
-		selenitic.soundReceiverOpened = (selenitic.soundReceiverOpened + 1) % 2;
+		_state.soundReceiverOpened = (_state.soundReceiverOpened + 1) % 2;
 		break;
 	case 6: // Tunnel lights
-		selenitic.tunnelLightsSwitchedOn = (selenitic.tunnelLightsSwitchedOn + 1) % 2;
+		_state.tunnelLightsSwitchedOn = (_state.tunnelLightsSwitchedOn + 1) % 2;
 		break;
 	case 102: // Red page
-		if (!(globals.redPagesInBook & 2)) {
-			if (globals.heldPage == 8)
-				globals.heldPage = 0;
+		if (!(_globals.redPagesInBook & 2)) {
+			if (_globals.heldPage == 8)
+				_globals.heldPage = 0;
 			else {
-				globals.heldPage = 8;
+				_globals.heldPage = 8;
 			}
 		}
 		break;
 	case 103: // Blue page
-		if (!(globals.bluePagesInBook & 2)) {
-			if (globals.heldPage == 2)
-				globals.heldPage = 0;
+		if (!(_globals.bluePagesInBook & 2)) {
+			if (_globals.heldPage == 2)
+				_globals.heldPage = 0;
 			else {
-				globals.heldPage = 2;
+				_globals.heldPage = 2;
 			}
 		}
 		break;
@@ -220,66 +215,65 @@ void MystScriptParser_Selenitic::toggleVar(uint16 var) {
 }
 
 bool MystScriptParser_Selenitic::setVarValue(uint16 var, uint16 value) {
-	MystVariables::Selenitic &selenitic = _vm->_saveLoad->_v->selenitic;
 	bool refresh = false;
 
 	switch (var) {
 	case 0: // Sound receiver emitters enabled
-		if (selenitic.emitterEnabledWind != value) {
-			selenitic.emitterEnabledWind = value;
+		if (_state.emitterEnabledWind != value) {
+			_state.emitterEnabledWind = value;
 			refresh = true;
 		}
 		break;
 	case 1:
-		if (selenitic.emitterEnabledVolcano != value) {
-			selenitic.emitterEnabledVolcano = value;
+		if (_state.emitterEnabledVolcano != value) {
+			_state.emitterEnabledVolcano = value;
 			refresh = true;
 		}
 		break;
 	case 2:
-		if (selenitic.emitterEnabledClock != value) {
-			selenitic.emitterEnabledClock = value;
+		if (_state.emitterEnabledClock != value) {
+			_state.emitterEnabledClock = value;
 			refresh = true;
 		}
 		break;
 	case 3:
-		if (selenitic.emitterEnabledWater != value) {
-			selenitic.emitterEnabledWater = value;
+		if (_state.emitterEnabledWater != value) {
+			_state.emitterEnabledWater = value;
 			refresh = true;
 		}
 		break;
 	case 4:
-		if (selenitic.emitterEnabledCrystal != value) {
-			selenitic.emitterEnabledCrystal = value;
+		if (_state.emitterEnabledCrystal != value) {
+			_state.emitterEnabledCrystal = value;
 			refresh = true;
 		}
 		break;
 	case 5: // Sound receiver opened
-		if (selenitic.soundReceiverOpened != value) {
-			selenitic.soundReceiverOpened = value;
+		if (_state.soundReceiverOpened != value) {
+			_state.soundReceiverOpened = value;
 			refresh = true;
 		}
 		break;
 	case 6: // Tunnel lights
-		if (selenitic.tunnelLightsSwitchedOn != value) {
-			selenitic.tunnelLightsSwitchedOn = value;
+		if (_state.tunnelLightsSwitchedOn != value) {
+			_state.tunnelLightsSwitchedOn = value;
 			refresh = true;
 		}
 		break;
 	case 20: // Sound lock sliders
-		selenitic.soundLockSliderPositions[0] = value;
+		_state.soundLockSliderPositions[0] = value;
 		break;
 	case 21:
-		selenitic.soundLockSliderPositions[1] = value;
+		_state.soundLockSliderPositions[1] = value;
 		break;
 	case 22:
-		selenitic.soundLockSliderPositions[2] = value;
+		_state.soundLockSliderPositions[2] = value;
 		break;
 	case 23:
-		selenitic.soundLockSliderPositions[3] = value;
+		_state.soundLockSliderPositions[3] = value;
 		break;
 	case 24:
-		selenitic.soundLockSliderPositions[4] = value;
+		_state.soundLockSliderPositions[4] = value;
 		break;
 	case 30:
 		_mazeRunnerDoorOpened = value;
@@ -592,8 +586,6 @@ void MystScriptParser_Selenitic::o_mazeRunnerSoundRepeat(uint16 op, uint16 var, 
  * Sound receiver sigma button
  */
 void MystScriptParser_Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	MystVariables::Selenitic &selenitic = _vm->_saveLoad->_v->selenitic;
-
 	debugC(kDebugScript, "Opcode %d: Sound receiver sigma button", op);
 
 	_vm->_cursor->hideCursor();
@@ -622,7 +614,7 @@ void MystScriptParser_Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uin
 			break;
 		}
 
-		_soundReceiverPosition = &selenitic.soundReceiverPositions[source];
+		_soundReceiverPosition = &_state.soundReceiverPositions[source];
 		_vm->_sound->stopBackground();
 		_vm->_sound->replaceSound(2287);
 		soundReceiverDrawView();
@@ -635,7 +627,7 @@ void MystScriptParser_Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uin
 	_soundReceiverSigmaPressed = true;
 	_vm->_sound->stopBackground();
 
-	_soundReceiverSources[selenitic.soundReceiverCurrentSource]->drawConditionalDataToScreen(1);
+	_soundReceiverSources[_state.soundReceiverCurrentSource]->drawConditionalDataToScreen(1);
 
 	soundReceiverDrawView();
 
@@ -714,8 +706,6 @@ void MystScriptParser_Selenitic::soundReceiverDrawAngle() {
  * Sound receiver source selection buttons
  */
 void MystScriptParser_Selenitic::o_soundReceiverSource(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	MystVariables::Selenitic &selenitic = _vm->_saveLoad->_v->selenitic;
-
 	debugC(kDebugScript, "Opcode %d: Sound receiver source", op);
 
 	if (_soundReceiverSigmaPressed) {
@@ -727,12 +717,12 @@ void MystScriptParser_Selenitic::o_soundReceiverSource(uint16 op, uint16 var, ui
 
 	uint pressedButton = var - 9;
 
-	if (selenitic.soundReceiverCurrentSource != pressedButton) {
-		selenitic.soundReceiverCurrentSource = pressedButton;
+	if (_state.soundReceiverCurrentSource != pressedButton) {
+		_state.soundReceiverCurrentSource = pressedButton;
 
 		_soundReceiverCurrentSource->drawConditionalDataToScreen(0);
 
-		_soundReceiverPosition = &selenitic.soundReceiverPositions[pressedButton];
+		_soundReceiverPosition = &_state.soundReceiverPositions[pressedButton];
 		_soundReceiverCurrentSource = _soundReceiverSources[pressedButton];
 
 		_vm->_sound->stopSound();
@@ -841,25 +831,24 @@ void MystScriptParser_Selenitic::o_soundLockStartMove(uint16 op, uint16 var, uin
 void MystScriptParser_Selenitic::o_soundLockEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound lock end move", op);
 
-	MystVariables::Selenitic &selenitic = _vm->_saveLoad->_v->selenitic;
 	MystResourceType10 *slider = soundLockSliderFromVar(var);
 	uint16 *value = 0;
 
 	switch (var) {
 	case 20: // Sound lock sliders
-		value = &selenitic.soundLockSliderPositions[0];
+		value = &_state.soundLockSliderPositions[0];
 		break;
 	case 21:
-		value = &selenitic.soundLockSliderPositions[1];
+		value = &_state.soundLockSliderPositions[1];
 		break;
 	case 22:
-		value = &selenitic.soundLockSliderPositions[2];
+		value = &_state.soundLockSliderPositions[2];
 		break;
 	case 23:
-		value = &selenitic.soundLockSliderPositions[3];
+		value = &_state.soundLockSliderPositions[3];
 		break;
 	case 24:
-		value = &selenitic.soundLockSliderPositions[4];
+		value = &_state.soundLockSliderPositions[4];
 		break;
 	}
 
@@ -899,7 +888,6 @@ void MystScriptParser_Selenitic::soundLockCheckSolution(MystResourceType10 *slid
 void MystScriptParser_Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound lock button", op);
 
-	MystVariables::Selenitic &selenitic = _vm->_saveLoad->_v->selenitic;
 	bool solved = true;
 
 	_vm->_sound->pauseBackground();
@@ -907,11 +895,11 @@ void MystScriptParser_Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16
 	_soundLockButton->drawConditionalDataToScreen(1);
 	_vm->_cursor->hideCursor();
 
-	soundLockCheckSolution(_soundLockSlider1, selenitic.soundLockSliderPositions[0], 5, solved);
-	soundLockCheckSolution(_soundLockSlider2, selenitic.soundLockSliderPositions[1], 9, solved);
-	soundLockCheckSolution(_soundLockSlider3, selenitic.soundLockSliderPositions[2], 0, solved);
-	soundLockCheckSolution(_soundLockSlider4, selenitic.soundLockSliderPositions[3], 6, solved);
-	soundLockCheckSolution(_soundLockSlider5, selenitic.soundLockSliderPositions[4], 7, solved);
+	soundLockCheckSolution(_soundLockSlider1, _state.soundLockSliderPositions[0], 5, solved);
+	soundLockCheckSolution(_soundLockSlider2, _state.soundLockSliderPositions[1], 9, solved);
+	soundLockCheckSolution(_soundLockSlider3, _state.soundLockSliderPositions[2], 0, solved);
+	soundLockCheckSolution(_soundLockSlider4, _state.soundLockSliderPositions[3], 6, solved);
+	soundLockCheckSolution(_soundLockSlider5, _state.soundLockSliderPositions[4], 7, solved);
 
 	_vm->_sound->replaceSound(1148);
 	_vm->_sound->resumeBackground();
@@ -1006,9 +994,7 @@ void MystScriptParser_Selenitic::soundReceiverIncreaseSpeed() {
 }
 
 void MystScriptParser_Selenitic::soundReceiverUpdateSound() {
-	MystVariables::Selenitic &selenitic = _vm->_saveLoad->_v->selenitic;
-
-	uint16 soundId = soundReceiverCurrentSound(selenitic.soundReceiverCurrentSource, *_soundReceiverPosition);
+	uint16 soundId = soundReceiverCurrentSound(_state.soundReceiverCurrentSource, *_soundReceiverPosition);
 	_vm->_sound->replaceSound(soundId);
 }
 
@@ -1064,35 +1050,31 @@ uint16 MystScriptParser_Selenitic::soundReceiverCurrentSound(uint16 source, uint
 }
 
 void MystScriptParser_Selenitic::soundReceiverSolution(uint16 source, uint16 &solution, bool &enabled) {
-	MystVariables::Selenitic &selenitic = _vm->_saveLoad->_v->selenitic;
-
 	switch (source) {
 	case 0:
-		enabled = selenitic.emitterEnabledWater;
+		enabled = _state.emitterEnabledWater;
 		solution = 1534;
 		break;
 	case 1:
-		enabled = selenitic.emitterEnabledVolcano;
+		enabled = _state.emitterEnabledVolcano;
 		solution = 1303;
 		break;
 	case 2:
-		enabled = selenitic.emitterEnabledClock;
+		enabled = _state.emitterEnabledClock;
 		solution = 556;
 		break;
 	case 3:
-		enabled = selenitic.emitterEnabledCrystal;
+		enabled = _state.emitterEnabledCrystal;
 		solution = 150;
 		break;
 	case 4:
-		enabled = selenitic.emitterEnabledWind;
+		enabled = _state.emitterEnabledWind;
 		solution = 2122;
 		break;
 	}
 }
 
 void MystScriptParser_Selenitic::o_soundReceiver_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	MystVariables::Selenitic &selenitic = _vm->_saveLoad->_v->selenitic;
-
 	debugC(kDebugScript, "Opcode %d: Sound receiver init", op);
 
 	// Used for Card 1245 (Sound Receiver)
@@ -1112,16 +1094,14 @@ void MystScriptParser_Selenitic::o_soundReceiver_init(uint16 op, uint16 var, uin
 	_soundReceiverAngle3 = static_cast<MystResourceType8 *>(_vm->_resources[12]);
 	_soundReceiverAngle4 = static_cast<MystResourceType8 *>(_vm->_resources[13]);
 
-	uint16 currentSource = selenitic.soundReceiverCurrentSource;
-	_soundReceiverPosition = &selenitic.soundReceiverPositions[currentSource];
+	uint16 currentSource = _state.soundReceiverCurrentSource;
+	_soundReceiverPosition = &_state.soundReceiverPositions[currentSource];
 	_soundReceiverCurrentSource = _soundReceiverSources[currentSource];
 
 	_soundReceiverSigmaPressed = false;
 }
 
 void MystScriptParser_Selenitic::o_soundLock_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	MystVariables::Selenitic &selenitic = _vm->_saveLoad->_v->selenitic;
-
 	debugC(kDebugScript, "Opcode %d: Sound lock init", op);
 
 	for (uint i = 0; i < _vm->_resources.size(); i++) {
@@ -1129,23 +1109,23 @@ void MystScriptParser_Selenitic::o_soundLock_init(uint16 op, uint16 var, uint16 
 			switch (_vm->_resources[i]->getType8Var()) {
 			case 20:
 				_soundLockSlider1 = static_cast<MystResourceType10 *>(_vm->_resources[i]);
-				_soundLockSlider1->setStep(selenitic.soundLockSliderPositions[0]);
+				_soundLockSlider1->setStep(_state.soundLockSliderPositions[0]);
 				break;
 			case 21:
 				_soundLockSlider2 = static_cast<MystResourceType10 *>(_vm->_resources[i]);
-				_soundLockSlider2->setStep(selenitic.soundLockSliderPositions[1]);
+				_soundLockSlider2->setStep(_state.soundLockSliderPositions[1]);
 				break;
 			case 22:
 				_soundLockSlider3 = static_cast<MystResourceType10 *>(_vm->_resources[i]);
-				_soundLockSlider3->setStep(selenitic.soundLockSliderPositions[2]);
+				_soundLockSlider3->setStep(_state.soundLockSliderPositions[2]);
 				break;
 			case 23:
 				_soundLockSlider4 = static_cast<MystResourceType10 *>(_vm->_resources[i]);
-				_soundLockSlider4->setStep(selenitic.soundLockSliderPositions[3]);
+				_soundLockSlider4->setStep(_state.soundLockSliderPositions[3]);
 				break;
 			case 24:
 				_soundLockSlider5 = static_cast<MystResourceType10 *>(_vm->_resources[i]);
-				_soundLockSlider5->setStep(selenitic.soundLockSliderPositions[4]);
+				_soundLockSlider5->setStep(_state.soundLockSliderPositions[4]);
 				break;
 			}
 		} else if (_vm->_resources[i]->type == kMystConditionalImage) {

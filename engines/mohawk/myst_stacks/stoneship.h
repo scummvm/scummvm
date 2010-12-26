@@ -85,6 +85,8 @@ private:
 	DECLARE_OPCODE(opcode_210);
 
 	DECLARE_OPCODE(opcode_300);
+
+	MystGameState::Stoneship &_state;
 };
 
 }

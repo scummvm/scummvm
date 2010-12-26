@@ -36,13 +36,17 @@ namespace Common {
 
 namespace Mohawk {
 
-// These are left as uint16 currently, rather than
-// being changed to bool etc. to save memory.
-// This is because the exact structure
-// is subject to change and the code to implement
-// opcodes to access them is simpler this way..
-struct MystVariables {
-	MystVariables() { memset(this, 0, sizeof(MystVariables)); }
+class MohawkEngine_Myst;
+
+class MystGameState {
+public:
+	MystGameState(MohawkEngine_Myst*, Common::SaveFileManager*);
+	~MystGameState();
+
+	Common::StringArray generateSaveGameList();
+	bool load(const Common::String &);
+	bool save(const Common::String &);
+	void deleteSave(const Common::String &);
 
 	/* 8 Game Global Variables :
 	   0 = Unknown - Fixed at 2
@@ -63,7 +67,7 @@ struct MystVariables {
 		uint16 ending;
 		uint16 redPagesInBook;
 		uint16 bluePagesInBook;
-	} globals;
+	} _globals;
 
 	/* 50 Myst Specific Variables :
 	   0  = Marker Switch Near Cabin
@@ -163,7 +167,7 @@ struct MystVariables {
 		uint16 u7;
 		uint16 u8;
 		uint16 u9;
-	} myst;
+	} _myst;
 
 	/* 7 Channelwood Specific Variables :
 	    0 = Water Pump Bridge State
@@ -182,7 +186,7 @@ struct MystVariables {
 		uint16 waterValveStates;
 		uint16 holoprojectorSelection;
 		uint16 stairsUpperDoorState;
-	} channelwood;
+	} _channelwood;
 
 	/* 8 Mech Specific Variables :
 	    0 = Achenar's Room Secret Panel State
@@ -200,7 +204,7 @@ struct MystVariables {
 		uint16 staircaseState;
 		uint16 elevatorRotation;
 		uint16 codeShape[4];
-	} mechanical;
+	} _mechanical;
 
 	/* 18 Selenitic Specific Variables :
 	    0 = Sound Pickup At Water Pool
@@ -233,14 +237,14 @@ struct MystVariables {
 		uint16 soundReceiverCurrentSource;
 		uint16 soundReceiverPositions[5];
 		uint16 soundLockSliderPositions[5];
-	} selenitic;
+	} _selenitic;
 
 	/* 14 Stoneship Specific Variables :
 	    0 = Light State
 	    1 = Unknown #1
 	    2 = Unknown #2
 	    3 = Water Pump State
-	    4 = Lighthouse Trapdoor State
+	    4 = Lighthouse Trapdoor St_v->ate
 	    5 = Lighthouse Chest Water State
 	    6 = Lighthouse Chest Valve State
 	    7 = Lighthouse Chest Open State
@@ -262,14 +266,14 @@ struct MystVariables {
 		uint16 chestOpenState;
 		uint16 trapdoorKeyState;
 		uint16 generatorPowerLevel[5];
-	} stoneship;
+	} _stoneship;
 
 	/* 1 Dunny Specific Variable :
 	    0 = Outcome State
 	*/
 	struct Dni {
 		uint16 outcomeState;
-	} dni;
+	} _dni;
 
 	// The values in these regions seem to be lists of resource IDs
 	// which correspond to VIEW resources i.e. cards
@@ -282,23 +286,9 @@ struct MystVariables {
 	uint16 unknownSelenitic[30];
 
 	uint16 unknownStoneship[22];
-};
-
-class MohawkEngine_Myst;
-
-class MystSaveLoad {
-public:
-	MystSaveLoad(MohawkEngine_Myst*, Common::SaveFileManager*);
-	~MystSaveLoad();
-
-	Common::StringArray generateSaveGameList();
-	bool loadGame(const Common::String &);
-	bool saveGame(const Common::String &);
-	void deleteSave(const Common::String &);
+private:
 	void syncGameState(Common::Serializer &s, bool isME);
 
-	MystVariables *_v;
-private:
 	MohawkEngine_Myst *_vm;
 	Common::SaveFileManager *_saveFileMan;
 };

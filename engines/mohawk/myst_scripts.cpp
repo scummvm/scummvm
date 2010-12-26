@@ -27,7 +27,6 @@
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
-#include "mohawk/myst_saveload.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
@@ -79,7 +78,9 @@ const uint16 MystScriptParser::_startCard[11] = {
 
 // NOTE: Credits Start Card is 10000
 
-MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm) : _vm(vm) {
+MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm) :
+		_vm(vm),
+		_globals(vm->_gameState->_globals) {
 	setupCommonOpcodes();
 	_invokingResource = NULL;
 	_savedCardId = 0;
@@ -225,13 +226,11 @@ MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, Myst
 }
 
 uint16 MystScriptParser::getVar(uint16 var) {
-	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-
 	switch(var) {
 	case 105:
 		return _tempVar;
 	case 106:
-		return globals.ending;
+		return _globals.ending;
 	default:
 		warning("Unimplemented var getter 0x%02x (%d)", var, var);
 		return _vm->_varStore->getVar(var);
@@ -333,22 +332,20 @@ void MystScriptParser::o_changeCardSwitch(uint16 op, uint16 var, uint16 argc, ui
 }
 
 void MystScriptParser::o_takePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-
 	uint16 cursorId = argv[0];
-	uint16 oldPage = globals.heldPage;
+	uint16 oldPage = _globals.heldPage;
 
 	debugC(kDebugScript, "Opcode %d: takePage Var %d CursorId %d", op, var, cursorId);
 
 	// Take / drop page
 	toggleVar(var);
 
-	if (oldPage != globals.heldPage) {
+	if (oldPage != _globals.heldPage) {
 		_vm->_cursor->hideCursor();
 		_vm->redrawArea(var);
 
 		// Set new cursor
-		if (globals.heldPage)
+		if (_globals.heldPage)
 			_vm->setMainCursor(cursorId);
 		else
 			_vm->setMainCursor(kDefaultMystCursor);

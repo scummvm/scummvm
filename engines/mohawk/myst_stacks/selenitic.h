@@ -76,6 +76,8 @@ private:
 
 	void soundReceiver_run();
 
+	MystGameState::Selenitic &_state;
+
 	bool _soundReceiverRunning;
 	bool _soundReceiverSigmaPressed; // 6
 	MystResourceType8 *_soundReceiverSources[5]; // 92 -> 108

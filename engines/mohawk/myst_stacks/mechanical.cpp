@@ -35,7 +35,8 @@
 
 namespace Mohawk {
 
-MystScriptParser_Mechanical::MystScriptParser_Mechanical(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
+MystScriptParser_Mechanical::MystScriptParser_Mechanical(MohawkEngine_Myst *vm) :
+		MystScriptParser(vm), _state(vm->_gameState->_mechanical) {
 	setupOpcodes();
 }
 
@@ -100,14 +101,11 @@ void MystScriptParser_Mechanical::runPersistentScripts() {
 }
 
 uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
-//	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-	MystVariables::Mechanical &mechanical = _vm->_saveLoad->_v->mechanical;
-
 	switch(var) {
 	case 0: // Sirrus's Secret Panel State
-		return mechanical.sirrusPanelState;
+		return _state.sirrusPanelState;
 	case 1: // Achenar's Secret Panel State
-		return mechanical.achenarPanelState;
+		return _state.achenarPanelState;
 //	case 3: // Sirrus's Secret Room Crate State
 //		return 0;
 //		return 1;
@@ -123,14 +121,14 @@ uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
 //		return 0;
 //		return 1;
 	case 7: // Fortress Elevator Open
-		if (mechanical.elevatorRotation == 4)
+		if (_state.elevatorRotation == 4)
 			return 1; // Open
 		else
 			return 0; // Closed
 	case 10: // Fortress Staircase State
-		return mechanical.staircaseState;
+		return _state.staircaseState;
 	case 11: // Fortress Elevator Rotation Position
-		return mechanical.elevatorRotation;
+		return _state.elevatorRotation;
 //	case 12: // Fortress Elevator Rotation Cog Position
 //		return 0;
 //		return 1;
@@ -146,7 +144,7 @@ uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
 	case 17: // Code Lock Shape #2
 	case 18: // Code Lock Shape #3
 	case 19: // Code Lock Shape #4 - Right
-		return mechanical.codeShape[var - 16];
+		return _state.codeShape[var - 16];
 //	case 20: // Crystal Lit Flag - Yellow
 //		return 0;
 //		return 1;
@@ -170,21 +168,18 @@ uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
 }
 
 void MystScriptParser_Mechanical::toggleVar(uint16 var) {
-//	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-	MystVariables::Mechanical &mechanical = _vm->_saveLoad->_v->mechanical;
-
 	switch(var) {
 //	case 3: // Sirrus's Secret Room Crate State
 //		temp ^= 1;
 //	case 4: // Code Lock Puzzle Correct / Myst Book Room Staircase State
 //		temp ^= 1;
 	case 10: // Fortress Staircase State
-		mechanical.staircaseState ^= 1;
+		_state.staircaseState ^= 1;
 	case 16: // Code Lock Shape #1 - Left
 	case 17: // Code Lock Shape #2
 	case 18: // Code Lock Shape #3
 	case 19: // Code Lock Shape #4 - Right
-		mechanical.codeShape[var - 16] = (mechanical.codeShape[var - 16] + 1) % 10;
+		_state.codeShape[var - 16] = (_state.codeShape[var - 16] + 1) % 10;
 		break;
 //	case 102: // Red Page Grab/Release
 //		globals.heldPage?
@@ -197,7 +192,6 @@ void MystScriptParser_Mechanical::toggleVar(uint16 var) {
 }
 
 bool MystScriptParser_Mechanical::setVarValue(uint16 var, uint16 value) {
-//	MystVariables::Mechanical &mechanical = _vm->_saveLoad->_v->mechanical;
 	bool refresh = false;
 
 	switch (var) {

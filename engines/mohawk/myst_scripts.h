@@ -30,6 +30,8 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 
+#include "mohawk/myst_saveload.h"
+
 namespace Mohawk {
 
 #define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
@@ -124,6 +126,7 @@ public:
 
 protected:
 	MohawkEngine_Myst *_vm;
+	MystGameState::Globals &_globals;
 
 	typedef void (MystScriptParser::*OpcodeProcMyst)(uint16 op, uint16 var, uint16 argc, uint16* argv);
 

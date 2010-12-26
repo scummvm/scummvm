@@ -40,9 +40,8 @@ namespace Mohawk {
 
 // NOTE: Credits Start Card is 10000
 
-MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
+MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) :
+		MystScriptParser(vm), _state(_vm->_gameState->_myst) {
 	setupOpcodes();
 
 	// Card ID preinitialized by the engine for use by opcode 18
@@ -58,7 +57,7 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) : MystScript
 	_treeStopped = false;
 	_treeMinPosition = 0;
 	_imagerValidationStep = 0;
-	myst.treeLastMoveTime = _vm->_system->getMillis();
+	_state.treeLastMoveTime = _vm->_system->getMillis();
 }
 
 MystScriptParser_Myst::~MystScriptParser_Myst() {
@@ -256,49 +255,46 @@ void MystScriptParser_Myst::runPersistentScripts() {
 }
 
 uint16 MystScriptParser_Myst::getVar(uint16 var) {
-	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	switch(var) {
 	case 0: // Myst Library Bookcase Closed
-		return myst.libraryBookcaseDoor;
+		return _state.libraryBookcaseDoor;
 	case 1:
-		if (globals.ending != 4) {
-			return myst.libraryBookcaseDoor != 1;
-		} else if (myst.libraryBookcaseDoor == 1) {
+		if (_globals.ending != 4) {
+			return _state.libraryBookcaseDoor != 1;
+		} else if (_state.libraryBookcaseDoor == 1) {
 			return 2;
 		} else {
 			return 3;
 		}
 	case 2: // Marker Switch Near Cabin
-		return myst.cabinMarkerSwitch;
+		return _state.cabinMarkerSwitch;
 	case 3: // Marker Switch Near Clock Tower
-		return myst.clockTowerMarkerSwitch;
+		return _state.clockTowerMarkerSwitch;
 	case 4: // Marker Switch on Dock
-		return myst.dockMarkerSwitch;
+		return _state.dockMarkerSwitch;
 	case 5: // Marker Switch Near Ship Pool
-		return myst.poolMarkerSwitch;
+		return _state.poolMarkerSwitch;
 	case 6: // Marker Switch Near Cogs
-		return myst.gearsMarkerSwitch;
+		return _state.gearsMarkerSwitch;
 	case 7: // Marker Switch Near Generator Room
-		return myst.generatorMarkerSwitch;
+		return _state.generatorMarkerSwitch;
 	case 8: // Marker Switch Near Stellar Observatory
-		return myst.observatoryMarkerSwitch;
+		return _state.observatoryMarkerSwitch;
 	case 9: // Marker Switch Near Rocket Ship
-		return myst.rocketshipMarkerSwitch;
+		return _state.rocketshipMarkerSwitch;
 	case 10: // Ship Floating State
-		return myst.shipFloating;
+		return _state.shipFloating;
 	case 11: // Cabin Door Open State
 		return _cabinDoorOpened;
 	case 12: // Clock tower gears bridge
-		return myst.clockTowerBridgeOpen;
+		return _state.clockTowerBridgeOpen;
 	case 13: // Tower in right position
-		return myst.towerRotationAngle == 271
-				|| myst.towerRotationAngle == 83
-				|| myst.towerRotationAngle == 129
-				|| myst.towerRotationAngle == 152;
+		return _state.towerRotationAngle == 271
+				|| _state.towerRotationAngle == 83
+				|| _state.towerRotationAngle == 129
+				|| _state.towerRotationAngle == 152;
 	case 14: // Tower Solution (Key) Plaque
-		switch (myst.towerRotationAngle) {
+		switch (_state.towerRotationAngle) {
 		case 271:
 			return 1;
 		case 83:
@@ -311,16 +307,16 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return 0;
 		}
 	case 15: // Tower Window (Book) View
-		switch (myst.towerRotationAngle) {
+		switch (_state.towerRotationAngle) {
 		case 271:
 			return 1;
 		case 83:
-			if (myst.gearsOpen)
+			if (_state.gearsOpen)
 				return 6;
 			else
 				return 2;
 		case 129:
-			if (myst.shipFloating)
+			if (_state.shipFloating)
 				return 5;
 			else
 				return 3;
@@ -330,10 +326,10 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return 0;
 		}
 	case 16: // Tower Window (Book) View From Ladder Top
-		if (myst.towerRotationAngle != 271
-						&& myst.towerRotationAngle != 83
-						&& myst.towerRotationAngle != 129) {
-			if (myst.towerRotationAngle == 152)
+		if (_state.towerRotationAngle != 271
+						&& _state.towerRotationAngle != 83
+						&& _state.towerRotationAngle != 129) {
+			if (_state.towerRotationAngle == 152)
 				return 2;
 			else
 				return 0;
@@ -349,14 +345,14 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 				&& _fireplaceLines[4] == 204
 				&& _fireplaceLines[5] == 250;
 	case 24: // Fireplace Blue Page Present
-		if (globals.ending != 4) {
-			return !(globals.bluePagesInBook & 32) && (globals.heldPage != 6);
+		if (_globals.ending != 4) {
+			return !(_globals.bluePagesInBook & 32) && (_globals.heldPage != 6);
 		} else {
 			return 0;
 		}
 	case 25: // Fireplace Red Page Present
-		if (globals.ending != 4) {
-			return !(globals.redPagesInBook & 32) && (globals.heldPage != 12);
+		if (_globals.ending != 4) {
+			return !(_globals.redPagesInBook & 32) && (_globals.heldPage != 12);
 		} else {
 			return 0;
 		}
@@ -370,16 +366,16 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 	case 33: // Courtyard Image Box - Ostrich
 		if (!_tempVar) {
 			return 0;
-		} else if (myst.courtyardImageBoxes & (0x01 << (var - 26))) {
+		} else if (_state.courtyardImageBoxes & (0x01 << (var - 26))) {
 			return 2;
 		} else {
 			return 1;
 		}
 	case 34: // Sound Control In Dock forechamber
-		if (myst.imagerActive) {
-			if (myst.imagerSelection == 40 && !myst.imagerMountainErased)
+		if (_state.imagerActive) {
+			if (_state.imagerSelection == 40 && !_state.imagerMountainErased)
 				return 1;
-			else if (myst.imagerSelection == 67 && !myst.imagerWaterErased)
+			else if (_state.imagerSelection == 67 && !_state.imagerWaterErased)
 				return 2;
 			else
 				return 0;
@@ -387,50 +383,50 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return 0;
 		}
 	case 35: // Dock Forechamber Imager Control Left Digit
-		if (myst.imagerSelection > 9)
-			return myst.imagerSelection / 10 - 1;
+		if (_state.imagerSelection > 9)
+			return _state.imagerSelection / 10 - 1;
 		else
 			return 9;
 	case 36: // Dock Forechamber Imager Control Right Digit
-		return (10 + myst.imagerSelection - 1) % 10;
+		return (10 + _state.imagerSelection - 1) % 10;
 	case 37: // Clock Tower Control Wheels Position
-		return 3 * ((myst.clockTowerMinutePosition / 5) % 3) + myst.clockTowerHourPosition % 3;
+		return 3 * ((_state.clockTowerMinutePosition / 5) % 3) + _state.clockTowerHourPosition % 3;
 	case 40: // Gears Open State
-		return myst.gearsOpen;
+		return _state.gearsOpen;
 	case 41: // Dock Marker Switch Vault State
 		return _dockVaultState;
 	case 43: // Clock Tower Time
-		return myst.clockTowerHourPosition * 12 + myst.clockTowerMinutePosition / 5;
+		return _state.clockTowerHourPosition * 12 + _state.clockTowerMinutePosition / 5;
 	case 44: // Rocket ship power state
-		if (myst.generatorBreakers || myst.generatorVoltage == 0)
+		if (_state.generatorBreakers || _state.generatorVoltage == 0)
 			return 0;
-		else if (myst.generatorVoltage != 59)
+		else if (_state.generatorVoltage != 59)
 			return 1;
 		else
 			return 2;
 	case 45: // Dock Vault Imager Active On Water
-		return myst.imagerActive && myst.imagerSelection == 67 && !myst.imagerWaterErased;
+		return _state.imagerActive && _state.imagerSelection == 67 && !_state.imagerWaterErased;
 	case 46:
 		return bookCountPages(100);
 	case 47:
 		return bookCountPages(101);
 	case 48:
-		if (myst.dockMarkerSwitch && !myst.shipFloating)
+		if (_state.dockMarkerSwitch && !_state.shipFloating)
 			return 1;
-		else if (!myst.dockMarkerSwitch && myst.shipFloating)
+		else if (!_state.dockMarkerSwitch && _state.shipFloating)
 			return 2;
 		else
 			return 0;
 	case 49: // Generator running
-		return myst.generatorVoltage > 0;
+		return _state.generatorVoltage > 0;
 	case 51: // Forechamber Imager Movie Control
-		if (myst.imagerSelection == 40 && !myst.imagerMountainErased)
+		if (_state.imagerSelection == 40 && !_state.imagerMountainErased)
 			return 1;
-		else if (myst.imagerSelection == 67 && !myst.imagerWaterErased)
+		else if (_state.imagerSelection == 67 && !_state.imagerWaterErased)
 			return 2;
-		else if (myst.imagerSelection == 8 && !myst.imagerAtrusErased)
+		else if (_state.imagerSelection == 8 && !_state.imagerAtrusErased)
 			return 3;
-		else if (myst.imagerSelection == 47 && !myst.imagerMarkerErased)
+		else if (_state.imagerSelection == 47 && !_state.imagerMarkerErased)
 			return 4;
 		else
 			return 0;
@@ -444,65 +440,65 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 	case 59: // Generator Switch #8
 	case 60: // Generator Switch #9
 	case 61: // Generator Switch #10
-		return (myst.generatorButtons & (1 << (var - 52))) != 0;
+		return (_state.generatorButtons & (1 << (var - 52))) != 0;
 	case 62: // Generator Power Dial Left LED Digit
 		return _generatorVoltage / 10;
 	case 63: // Generator Power Dial Right LED Digit
 		return _generatorVoltage % 10;
 	case 64: // Generator Power To Spaceship Dial Left LED Digit
-		if (myst.generatorVoltage > 59 || myst.generatorBreakers)
+		if (_state.generatorVoltage > 59 || _state.generatorBreakers)
 			return 0;
 		else
-			return myst.generatorVoltage / 10;
+			return _state.generatorVoltage / 10;
 	case 65: // Generator Power To Spaceship Dial Right LED Digit
-		if (myst.generatorVoltage > 59 || myst.generatorBreakers)
+		if (_state.generatorVoltage > 59 || _state.generatorBreakers)
 			return 0;
 		else
-			return myst.generatorVoltage % 10;
+			return _state.generatorVoltage % 10;
 	case 66: // Generators lights on
 		return 0;
 	case 67: // Cabin Safe Lock Number #1 - Left
-		return myst.cabinSafeCombination / 100;
+		return _state.cabinSafeCombination / 100;
 	case 68: // Cabin Safe Lock Number #2
-		return (myst.cabinSafeCombination / 10) % 10;
+		return (_state.cabinSafeCombination / 10) % 10;
 	case 69: // Cabin Safe Lock Number #3 - Right
-		return myst.cabinSafeCombination % 10;
+		return _state.cabinSafeCombination % 10;
 	case 70: // Cabin Safe Matchbox State
 		return _cabinMatchState;
 	case 71: // Stellar Observatory Lights
-		return myst.observatoryLights;
+		return _state.observatoryLights;
 	case 72: // Channelwood tree position
-		return myst.treePosition;
+		return _state.treePosition;
 	case 73: // Stellar Observatory Date - Month
-		return myst.observatoryMonthSetting;
+		return _state.observatoryMonthSetting;
 	case 74: // Stellar Observatory Date - Day #1 (Left)
-		if (myst.observatoryDaySetting / 10 == 0)
+		if (_state.observatoryDaySetting / 10 == 0)
 			return 10;
 		else
-			return myst.observatoryDaySetting / 10;
+			return _state.observatoryDaySetting / 10;
 	case 75: // Stellar Observatory Date - Day #2 (Right)
-		return myst.observatoryDaySetting % 10;
+		return _state.observatoryDaySetting % 10;
 	case 76: // Stellar Observatory Date - Year #1 (Left)
-		return (myst.observatoryYearSetting >> 12) & 0x0f;
+		return (_state.observatoryYearSetting >> 12) & 0x0f;
 	case 77: // Stellar Observatory Date - Year #2
-		return (myst.observatoryYearSetting >> 8) & 0x0f;
+		return (_state.observatoryYearSetting >> 8) & 0x0f;
 	case 78: // Stellar Observatory Date - Year #3
-		return (myst.observatoryYearSetting >> 4) & 0x0f;
+		return (_state.observatoryYearSetting >> 4) & 0x0f;
 	case 79: // Stellar Observatory Date - Year #4 (Right)
-		return (myst.observatoryYearSetting >> 0) & 0x0f;
+		return (_state.observatoryYearSetting >> 0) & 0x0f;
 	case 80: // Stellar Observatory Hour #1 - Left ( Number 1 (0) or Blank (10))
-		if (myst.observatoryTimeSetting % (12 * 60) < (10 * 60))
+		if (_state.observatoryTimeSetting % (12 * 60) < (10 * 60))
 			return 10;
 		else
 			return 0;
 	case 81: // Stellar Observatory Hour #2 - Right
-		return ((myst.observatoryTimeSetting % (12 * 60)) / 60) % 10;
+		return ((_state.observatoryTimeSetting % (12 * 60)) / 60) % 10;
 	case 82: // Stellar Observatory Minutes #1 - Left
-		return (myst.observatoryTimeSetting % 60) / 10;
+		return (_state.observatoryTimeSetting % 60) / 10;
 	case 83: // Stellar Observatory Minutes #2 - Right
-		return (myst.observatoryTimeSetting % 60) % 10;
+		return (_state.observatoryTimeSetting % 60) % 10;
 	case 88: // Stellar Observatory AM/PM
-		if (myst.observatoryTimeSetting < (12 * 60))
+		if (_state.observatoryTimeSetting < (12 * 60))
 			return 0; // AM
 		else
 			return 1; // PM
@@ -512,107 +508,104 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 	case 92: // Stellar observatory sliders state
 		return 1;
 	case 93: // Breaker nearest Generator Room Blown
-		return myst.generatorBreakers == 1;
+		return _state.generatorBreakers == 1;
 	case 94: // Breaker nearest Rocket Ship Blown
-		return myst.generatorBreakers == 2;
+		return _state.generatorBreakers == 2;
 	case 95: // Going out of tree destination selection
-		if (myst.treePosition == 0)
+		if (_state.treePosition == 0)
 			return 0;
-		else if (myst.treePosition == 4 || myst.treePosition == 5)
+		else if (_state.treePosition == 4 || _state.treePosition == 5)
 			return 1;
 		else
 			return 2;
 	case 96: // Generator Power Dial Needle Position
-		return myst.generatorVoltage / 4;
+		return _state.generatorVoltage / 4;
 	case 97: // Generator Power To Spaceship Dial Needle Position
-		if (myst.generatorVoltage > 59 || myst.generatorBreakers)
+		if (_state.generatorVoltage > 59 || _state.generatorBreakers)
 			return 0;
 		else
-			return myst.generatorVoltage / 4;
+			return _state.generatorVoltage / 4;
 	case 98: // Cabin Boiler Pilot Light Lit
-		return myst.cabinPilotLightLit;
+		return _state.cabinPilotLightLit;
 	case 99: // Cabin Boiler Gas Valve Position
-		return myst.cabinValvePosition % 6;
+		return _state.cabinValvePosition % 6;
 	case 102: // Red page
-		if (globals.ending != 4) {
-			return !(globals.redPagesInBook & 1) && (globals.heldPage != 7);
+		if (_globals.ending != 4) {
+			return !(_globals.redPagesInBook & 1) && (_globals.heldPage != 7);
 		} else {
 			return 0;
 		}
 	case 103: // Blue page
-		if (globals.ending != 4) {
-			return !(globals.bluePagesInBook & 1) && (globals.heldPage != 1);
+		if (_globals.ending != 4) {
+			return !(_globals.bluePagesInBook & 1) && (_globals.heldPage != 1);
 		} else {
 			return 0;
 		}
 	case 300: // Rocket Ship Music Puzzle Slider State
 		return 1;
 	case 302: // Green Book Opened Before Flag
-		return myst.greenBookOpenedBefore;
+		return _state.greenBookOpenedBefore;
 	case 304: // Tower Rotation Map Initialized
 		return _towerRotationMapInitialized;
 	case 305: // Cabin Boiler Lit
-		return myst.cabinPilotLightLit == 1 && myst.cabinValvePosition > 0;
+		return _state.cabinPilotLightLit == 1 && _state.cabinValvePosition > 0;
 	case 306: // Cabin Boiler Steam Sound Control
-		if (myst.cabinPilotLightLit == 1) {
-			if (myst.cabinValvePosition <= 0)
+		if (_state.cabinPilotLightLit == 1) {
+			if (_state.cabinValvePosition <= 0)
 				return 26;
 			else
 				return 27;
 		} else {
-			return myst.cabinValvePosition;
+			return _state.cabinValvePosition;
 		}
 	case 307: // Cabin Boiler Fully Pressurised
-		return myst.cabinPilotLightLit == 1 && myst.cabinValvePosition > 12;
+		return _state.cabinPilotLightLit == 1 && _state.cabinValvePosition > 12;
 	default:
 		return MystScriptParser::getVar(var);
 	}
 }
 
 void MystScriptParser_Myst::toggleVar(uint16 var) {
-	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	switch(var) {
 	case 2: // Marker Switch Near Cabin
-		myst.cabinMarkerSwitch = (myst.cabinMarkerSwitch + 1) % 2;
+		_state.cabinMarkerSwitch = (_state.cabinMarkerSwitch + 1) % 2;
 		break;
 	case 3: // Marker Switch Near Clock Tower
-		myst.clockTowerMarkerSwitch = (myst.clockTowerMarkerSwitch + 1) % 2;
+		_state.clockTowerMarkerSwitch = (_state.clockTowerMarkerSwitch + 1) % 2;
 		break;
 	case 4: // Marker Switch on Dock
-		myst.dockMarkerSwitch = (myst.dockMarkerSwitch + 1) % 2;
+		_state.dockMarkerSwitch = (_state.dockMarkerSwitch + 1) % 2;
 		break;
 	case 5: // Marker Switch Near Ship Pool
-		myst.poolMarkerSwitch = (myst.poolMarkerSwitch + 1) % 2;
+		_state.poolMarkerSwitch = (_state.poolMarkerSwitch + 1) % 2;
 		break;
 	case 6: // Marker Switch Near Cogs
-		myst.gearsMarkerSwitch = (myst.gearsMarkerSwitch + 1) % 2;
+		_state.gearsMarkerSwitch = (_state.gearsMarkerSwitch + 1) % 2;
 		break;
 	case 7: // Marker Switch Near Generator Room
-		myst.generatorMarkerSwitch = (myst.generatorMarkerSwitch + 1) % 2;
+		_state.generatorMarkerSwitch = (_state.generatorMarkerSwitch + 1) % 2;
 		break;
 	case 8: // Marker Switch Near Stellar Observatory
-		myst.observatoryMarkerSwitch = (myst.observatoryMarkerSwitch + 1) % 2;
+		_state.observatoryMarkerSwitch = (_state.observatoryMarkerSwitch + 1) % 2;
 		break;
 	case 9: // Marker Switch Near Rocket Ship
-		myst.rocketshipMarkerSwitch = (myst.rocketshipMarkerSwitch + 1) % 2;
+		_state.rocketshipMarkerSwitch = (_state.rocketshipMarkerSwitch + 1) % 2;
 		break;
 	case 24: // Fireplace Blue Page
-		if (globals.ending != 4 && !(globals.bluePagesInBook & 32)) {
-			if (globals.heldPage == 6)
-				globals.heldPage = 0;
+		if (_globals.ending != 4 && !(_globals.bluePagesInBook & 32)) {
+			if (_globals.heldPage == 6)
+				_globals.heldPage = 0;
 			else {
-				globals.heldPage = 6;
+				_globals.heldPage = 6;
 			}
 		}
 		break;
 	case 25: // Fireplace Red page
-		if (globals.ending != 4 && !(globals.redPagesInBook & 32)) {
-			if (globals.heldPage == 12)
-				globals.heldPage = 0;
+		if (_globals.ending != 4 && !(_globals.redPagesInBook & 32)) {
+			if (_globals.heldPage == 12)
+				_globals.heldPage = 0;
 			else {
-				globals.heldPage = 12;
+				_globals.heldPage = 12;
 			}
 		}
 		break;
@@ -626,37 +619,37 @@ void MystScriptParser_Myst::toggleVar(uint16 var) {
 	case 33: // Courtyard Image Box - Ostrich
 		{
 			uint16 mask = 0x01 << (var - 26);
-			if (myst.courtyardImageBoxes & mask)
-				myst.courtyardImageBoxes &= ~mask;
+			if (_state.courtyardImageBoxes & mask)
+				_state.courtyardImageBoxes &= ~mask;
 			else
-				myst.courtyardImageBoxes |= mask;
+				_state.courtyardImageBoxes |= mask;
 		}
 	case 41: // Vault white page
-		if (globals.ending != 4) {
+		if (_globals.ending != 4) {
 			if (_dockVaultState == 1) {
 				_dockVaultState = 2;
-				globals.heldPage = 0;
+				_globals.heldPage = 0;
 			} else if (_dockVaultState == 2) {
 				_dockVaultState = 1;
-				globals.heldPage = 13;
+				_globals.heldPage = 13;
 			}
 		}
 		break;
 	case 102: // Red page
-		if (globals.ending != 4 && !(globals.redPagesInBook & 1)) {
-			if (globals.heldPage == 7)
-				globals.heldPage = 0;
+		if (_globals.ending != 4 && !(_globals.redPagesInBook & 1)) {
+			if (_globals.heldPage == 7)
+				_globals.heldPage = 0;
 			else {
-				globals.heldPage = 7;
+				_globals.heldPage = 7;
 			}
 		}
 		break;
 	case 103: // Blue page
-		if (globals.ending != 4 && !(globals.bluePagesInBook & 1)) {
-			if (globals.heldPage == 1)
-				globals.heldPage = 0;
+		if (_globals.ending != 4 && !(_globals.bluePagesInBook & 1)) {
+			if (_globals.heldPage == 1)
+				_globals.heldPage = 0;
 			else {
-				globals.heldPage = 1;
+				_globals.heldPage = 1;
 			}
 		}
 		break;
@@ -667,13 +660,12 @@ void MystScriptParser_Myst::toggleVar(uint16 var) {
 }
 
 bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 	bool refresh = false;
 
 	switch (var) {
 	case 0: // Myst Library Bookcase Closed
-		if (myst.libraryBookcaseDoor != value) {
-			myst.libraryBookcaseDoor = value;
+		if (_state.libraryBookcaseDoor != value) {
+			_state.libraryBookcaseDoor = value;
 			_tempVar = 0;
 			refresh = true;
 		}
@@ -691,7 +683,7 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 		}
 		break;
 	case 71: // Stellar Observatory Lights
-		myst.observatoryLights = value;
+		_state.observatoryLights = value;
 		break;
 	case 89:
 	case 90:
@@ -700,7 +692,7 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 	case 300: // Set slider value
 		break; // Do nothing
 	case 302: // Green Book Opened Before Flag
-		myst.greenBookOpenedBefore = value;
+		_state.greenBookOpenedBefore = value;
 		break;
 	case 303: // Library Bookcase status changed
 		_libraryBookcaseChanged = value;
@@ -723,16 +715,14 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 }
 
 uint16 MystScriptParser_Myst::bookCountPages(uint16 var) {
-	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-
 	uint16 pages = 0;
 	uint16 cnt = 0;
 
 	// Select book according to var
 	if (var == 100)
-		pages = globals.redPagesInBook;
+		pages = _globals.redPagesInBook;
 	else if (var == 101)
-		pages = globals.bluePagesInBook;
+		pages = _globals.bluePagesInBook;
 
 	// Special page present
 	if (pages & 64)
@@ -836,28 +826,25 @@ void MystScriptParser_Myst::o_fireplaceRotation(uint16 op, uint16 var, uint16 ar
 
 void MystScriptParser_Myst::o_courtyardBoxesCheckSolution(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	uint16 soundId = argv[0];
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
 	debugC(kDebugScript, "Opcode %d: Ship Puzzle Logic", op);
 	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
 	// Change ship state if the boxes are correctly enabled
-	if (myst.courtyardImageBoxes == 50 && !myst.shipFloating) {
+	if (_state.courtyardImageBoxes == 50 && !_state.shipFloating) {
 		_vm->_cursor->hideCursor();
-		myst.shipFloating = 1;
+		_state.shipFloating = 1;
 		_vm->_sound->playSoundBlocking(soundId);
 		_vm->_cursor->showCursor();
-	} else if (myst.courtyardImageBoxes != 50 && myst.shipFloating) {
+	} else if (_state.courtyardImageBoxes != 50 && _state.shipFloating) {
 		_vm->_cursor->hideCursor();
-		myst.shipFloating = 0;
+		_state.shipFloating = 0;
 		_vm->_sound->playSoundBlocking(soundId);
 		_vm->_cursor->showCursor();
 	}
 }
 
 void MystScriptParser_Myst::o_towerRotationStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	_towerRotationBlinkLabel = false;
 	_towerRotationMapClicked = true;
 	_towerRotationSpeed = 0;
@@ -865,7 +852,7 @@ void MystScriptParser_Myst::o_towerRotationStart(uint16 op, uint16 var, uint16 a
 	_vm->_cursor->setCursor(700);
 
 	const Common::Point center = Common::Point(383, 124);
-	Common::Point end = towerRotationMapComputeCoords(center, myst.towerRotationAngle);
+	Common::Point end = towerRotationMapComputeCoords(center, _state.towerRotationAngle);
 	towerRotationMapComputeAngle();
 	towerRotationMapDrawLine(center, end);
 
@@ -873,27 +860,25 @@ void MystScriptParser_Myst::o_towerRotationStart(uint16 op, uint16 var, uint16 a
 }
 
 void MystScriptParser_Myst::o_towerRotationEnd(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	_towerRotationMapClicked = false;
 
 	// Set angle value to expected value
-	if (myst.towerRotationAngle >= 265
-			&& myst.towerRotationAngle <= 277
-			&& myst.rocketshipMarkerSwitch) {
-		myst.towerRotationAngle = 271;
-	} else if (myst.towerRotationAngle >= 77
-			&& myst.towerRotationAngle <= 89
-			&& myst.gearsMarkerSwitch) {
-		myst.towerRotationAngle = 83;
-	} else if (myst.towerRotationAngle >= 123
-			&& myst.towerRotationAngle <= 135
-			&& myst.dockMarkerSwitch) {
-		myst.towerRotationAngle = 129;
-	} else if (myst.towerRotationAngle >= 146
-			&& myst.towerRotationAngle <= 158
-			&& myst.cabinMarkerSwitch) {
-		myst.towerRotationAngle = 152;
+	if (_state.towerRotationAngle >= 265
+			&& _state.towerRotationAngle <= 277
+			&& _state.rocketshipMarkerSwitch) {
+		_state.towerRotationAngle = 271;
+	} else if (_state.towerRotationAngle >= 77
+			&& _state.towerRotationAngle <= 89
+			&& _state.gearsMarkerSwitch) {
+		_state.towerRotationAngle = 83;
+	} else if (_state.towerRotationAngle >= 123
+			&& _state.towerRotationAngle <= 135
+			&& _state.dockMarkerSwitch) {
+		_state.towerRotationAngle = 129;
+	} else if (_state.towerRotationAngle >= 146
+			&& _state.towerRotationAngle <= 158
+			&& _state.cabinMarkerSwitch) {
+		_state.towerRotationAngle = 152;
 	}
 
 	_vm->_sound->replaceSound(6378);
@@ -908,11 +893,9 @@ void MystScriptParser_Myst::o_imagerChangeSelection(uint16 op, uint16 var, uint1
 	if (_imagerValidationStep != 10) {
 		_imagerValidationStep = 0;
 
-		MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 		int16 signedValue = argv[0];
-		uint16 d1 = (myst.imagerSelection / 10) % 10;
-		uint16 d2 = myst.imagerSelection % 10;
+		uint16 d1 = (_state.imagerSelection / 10) % 10;
+		uint16 d2 = _state.imagerSelection % 10;
 
 		if (var == 35 && signedValue > 0 && d1 < 9)
 			d1++;
@@ -923,8 +906,8 @@ void MystScriptParser_Myst::o_imagerChangeSelection(uint16 op, uint16 var, uint1
 		else if (var == 36 && signedValue < 0 && d2 > 0)
 			d2--;
 
-		myst.imagerSelection = 10 * d1 + d2;
-		myst.imagerActive = 0;
+		_state.imagerSelection = 10 * d1 + d2;
+		_state.imagerActive = 0;
 
 		_vm->redrawArea(var);
 	}
@@ -932,8 +915,6 @@ void MystScriptParser_Myst::o_imagerChangeSelection(uint16 op, uint16 var, uint1
 
 void MystScriptParser_Myst::o_dockVaultOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Myst 4143 (Dock near Marker Switch)
-	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 	uint16 soundId = argv[0];
 	uint16 delay = argv[1];
 	uint16 directionalUpdateDataSize = argv[2];
@@ -942,15 +923,15 @@ void MystScriptParser_Myst::o_dockVaultOpen(uint16 op, uint16 var, uint16 argc, 
 	debugC(kDebugScript, "\tsoundId: %d", soundId);
 	debugC(kDebugScript, "\tdirectionalUpdateDataSize: %d", directionalUpdateDataSize);
 
-	if ((myst.cabinMarkerSwitch == 1) &&
-		(myst.clockTowerMarkerSwitch == 1) &&
-		(myst.dockMarkerSwitch == 0) &&
-		(myst.gearsMarkerSwitch == 1) &&
-		(myst.generatorMarkerSwitch == 1) &&
-		(myst.observatoryMarkerSwitch == 1) &&
-		(myst.poolMarkerSwitch == 1) &&
-		(myst.rocketshipMarkerSwitch == 1)) {
-		if (globals.heldPage != 13 && globals.ending != 4)
+	if ((_state.cabinMarkerSwitch == 1) &&
+		(_state.clockTowerMarkerSwitch == 1) &&
+		(_state.dockMarkerSwitch == 0) &&
+		(_state.gearsMarkerSwitch == 1) &&
+		(_state.generatorMarkerSwitch == 1) &&
+		(_state.observatoryMarkerSwitch == 1) &&
+		(_state.poolMarkerSwitch == 1) &&
+		(_state.rocketshipMarkerSwitch == 1)) {
+		if (_globals.heldPage != 13 && _globals.ending != 4)
 			_dockVaultState = 2;
 		else
 			_dockVaultState = 1;
@@ -963,7 +944,6 @@ void MystScriptParser_Myst::o_dockVaultOpen(uint16 op, uint16 var, uint16 argc, 
 
 void MystScriptParser_Myst::o_dockVaultClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Myst 4143 (Dock near Marker Switch)
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 	uint16 soundId = argv[0];
 	uint16 delay = argv[1];
 	uint16 directionalUpdateDataSize = argv[2];
@@ -972,14 +952,14 @@ void MystScriptParser_Myst::o_dockVaultClose(uint16 op, uint16 var, uint16 argc,
 	debugC(kDebugScript, "\tsoundId: %d", soundId);
 	debugC(kDebugScript, "\tdirectionalUpdateDataSize: %d", directionalUpdateDataSize);
 
-	if ((myst.cabinMarkerSwitch == 1) &&
-		(myst.clockTowerMarkerSwitch == 1) &&
-		(myst.dockMarkerSwitch == 1) &&
-		(myst.gearsMarkerSwitch == 1) &&
-		(myst.generatorMarkerSwitch == 1) &&
-		(myst.observatoryMarkerSwitch == 1) &&
-		(myst.poolMarkerSwitch == 1) &&
-		(myst.rocketshipMarkerSwitch == 1)) {
+	if ((_state.cabinMarkerSwitch == 1) &&
+		(_state.clockTowerMarkerSwitch == 1) &&
+		(_state.dockMarkerSwitch == 1) &&
+		(_state.gearsMarkerSwitch == 1) &&
+		(_state.generatorMarkerSwitch == 1) &&
+		(_state.observatoryMarkerSwitch == 1) &&
+		(_state.poolMarkerSwitch == 1) &&
+		(_state.rocketshipMarkerSwitch == 1)) {
 		if (_dockVaultState == 1 || _dockVaultState == 2)
 			_dockVaultState = 0;
 
@@ -990,8 +970,6 @@ void MystScriptParser_Myst::o_dockVaultClose(uint16 op, uint16 var, uint16 argc,
 }
 
 void MystScriptParser_Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-
 	uint16 cardIdLose = argv[0];
 	uint16 cardIdBookCover = argv[1];
 	uint16 soundIdAddPage = argv[2];
@@ -1003,7 +981,7 @@ void MystScriptParser_Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, u
 	debugC(kDebugScript, "SoundId (Add Page): %d", soundIdAddPage);
 
 	// No page or white page
-	if (!globals.heldPage || globals.heldPage == 13) {
+	if (!_globals.heldPage || _globals.heldPage == 13) {
 		_vm->changeToCard(cardIdBookCover, true);
 		return;
 	}
@@ -1011,7 +989,7 @@ void MystScriptParser_Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, u
 	uint16 bookVar = 101;
 	uint16 mask = 0;
 
-	switch (globals.heldPage) {
+	switch (_globals.heldPage) {
 	case 7:
 		bookVar = 100;
 	case 1:
@@ -1056,21 +1034,21 @@ void MystScriptParser_Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, u
 
 	// Add page to book
 	if (var == 100)
-		globals.redPagesInBook |= mask;
+		_globals.redPagesInBook |= mask;
 	else
-		globals.bluePagesInBook |= mask;
+		_globals.bluePagesInBook |= mask;
 
 	// Remove page from hand
-	globals.heldPage = 0;
+	_globals.heldPage = 0;
 
 	_vm->_cursor->showCursor();
 
 	if (mask == 32) {
 		// You lose!
 		if (var == 100)
-			globals.currentAge = 9;
+			_globals.currentAge = 9;
 		else
-			globals.currentAge = 10;
+			_globals.currentAge = 10;
 
 		_vm->changeToCard(cardIdLose, true);
 	} else {
@@ -1080,32 +1058,31 @@ void MystScriptParser_Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, u
 
 void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Card 4006 (Clock Tower Time Controls)
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 	uint16 soundId = argv[0];
 
 	debugC(kDebugScript, "Opcode %d: Clock Tower Bridge Puzzle Execute Button", op);
 
 	// Correct time is 2:40
-	bool correctTime = myst.clockTowerHourPosition == 2
-						&& myst.clockTowerMinutePosition == 40;
+	bool correctTime = _state.clockTowerHourPosition == 2
+						&& _state.clockTowerMinutePosition == 40;
 
-	if (!myst.clockTowerBridgeOpen && correctTime) {
+	if (!_state.clockTowerBridgeOpen && correctTime) {
 		_vm->_sound->replaceSound(soundId);
 		_vm->_system->delayMillis(500);
 
 		// TODO: Play only 1st half of movie i.e. gears rise up, from 0 to 650
 		_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
 
-		myst.clockTowerBridgeOpen = 1;
+		_state.clockTowerBridgeOpen = 1;
 		_vm->redrawArea(12);
-	} else if (myst.clockTowerBridgeOpen && !correctTime) {
+	} else if (_state.clockTowerBridgeOpen && !correctTime) {
 		_vm->_sound->replaceSound(soundId);
 		_vm->_system->delayMillis(500);
 
 		// TODO: Play only 2nd half of movie i.e. gears sink down, from 700 to 1300
 		_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
 
-		myst.clockTowerBridgeOpen = 0;
+		_state.clockTowerBridgeOpen = 0;
 		_vm->redrawArea(12);
 	}
 }
@@ -1113,7 +1090,6 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Imager play button", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 	uint16 video = getVar(51);
 
 	// Press button
@@ -1133,7 +1109,7 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 
 
 	// Play selected video
-	if (!myst.imagerActive && video != 3)
+	if (!_state.imagerActive && video != 3)
 		_vm->_sound->replaceSound(argv[0]);
 
 	switch (video) {
@@ -1143,34 +1119,34 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 		_imagerMovie->playMovie();
 		break;
 	case 1: // Mountain
-		if (myst.imagerActive) {
+		if (_state.imagerActive) {
 			// TODO: Play from 11180 to 16800
 			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
 			_vm->_video->playBackgroundMovie(file, 159, 96, false);
 
-			myst.imagerActive = 0;
+			_state.imagerActive = 0;
 		} else {
 			// TODO: Play from 0 to 11180
 			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
 			_vm->_video->playBackgroundMovie(file, 159, 96, false);
 
-			myst.imagerActive = 1;
+			_state.imagerActive = 1;
 		}
 		break;
 	case 2: // Water
-		if (myst.imagerActive) {
+		if (_state.imagerActive) {
 			_vm->_sound->replaceSound(argv[1]);
 
 			// TODO: Play from 4204 to 6040
 			_imagerMovie->playMovie();
 
-			myst.imagerActive = 0;
+			_state.imagerActive = 0;
 		} else {
 			// TODO: Play from 0 to 1814
 			// Then play from 1814 to 4204, looping
 			_imagerMovie->playMovie();
 
-			myst.imagerActive = 1;
+			_state.imagerActive = 1;
 		}
 		break;
 	}
@@ -1180,8 +1156,6 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 
 void MystScriptParser_Myst::o_imagerEraseButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Imager erase button", op);
-
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
 	_imagerRedButton = static_cast<MystResourceType8 *>(_invokingResource->_parent);
 	for (uint i = 0; i < 4; i++)
@@ -1202,22 +1176,22 @@ void MystScriptParser_Myst::o_imagerEraseButton(uint16 op, uint16 var, uint16 ar
 		_vm->_sound->playSoundBlocking(_imagerSound[3]);
 
 		// Erase selected video from imager
-		switch (myst.imagerSelection) {
+		switch (_state.imagerSelection) {
 		case 8:
-			myst.imagerAtrusErased = 1;
+			_state.imagerAtrusErased = 1;
 			break;
 		case 40:
-			myst.imagerMountainErased = 1;
+			_state.imagerMountainErased = 1;
 			break;
 		case 47:
-			myst.imagerMarkerErased = 1;
+			_state.imagerMarkerErased = 1;
 			break;
 		case 67:
-			myst.imagerWaterErased = 1;
+			_state.imagerWaterErased = 1;
 			break;
 		}
 
-		myst.imagerActive = 0;
+		_state.imagerActive = 0;
 		_imagerValidationStep = 0;
 		return;
 	} else if (_imagerValidationStep == 11) {
@@ -1283,23 +1257,22 @@ void MystScriptParser_Myst::o_towerElevatorAnimation(uint16 op, uint16 var, uint
 void MystScriptParser_Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generator button pressed", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 	MystResource *button = _invokingResource->_parent;
 
 	generatorRedrawRocket();
 
-	_generatorVoltage = myst.generatorVoltage;
+	_generatorVoltage = _state.generatorVoltage;
 
 	uint16 mask = 0;
 	uint16 value = 0;
 	generatorButtonValue(button, mask, value);
 
 	// Button pressed
-	if (myst.generatorButtons & mask) {
-		myst.generatorButtons &= ~mask;
-		myst.generatorVoltage -= value;
+	if (_state.generatorButtons & mask) {
+		_state.generatorButtons &= ~mask;
+		_state.generatorVoltage -= value;
 
-		if (myst.generatorVoltage)
+		if (_state.generatorVoltage)
 			_vm->_sound->replaceSound(8297);
 		else
 			_vm->_sound->replaceSound(9297);
@@ -1311,16 +1284,16 @@ void MystScriptParser_Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint
 			_vm->_sound->replaceBackground(4297);
 		}
 
-		myst.generatorButtons |= mask;
-		myst.generatorVoltage += value;
+		_state.generatorButtons |= mask;
+		_state.generatorVoltage += value;
 	}
 
 	// Redraw button
 	_vm->redrawArea(button->getType8Var());
 
 	// Blow breaker
-	if (myst.generatorVoltage > 59)
-		myst.generatorBreakers = _vm->_rnd->getRandomNumberRng(1, 2);
+	if (_state.generatorVoltage > 59)
+		_state.generatorBreakers = _vm->_rnd->getRandomNumberRng(1, 2);
 }
 
 void MystScriptParser_Myst::generatorRedrawRocket() {
@@ -1377,11 +1350,9 @@ void MystScriptParser_Myst::generatorButtonValue(MystResource *button, uint16 &m
 void MystScriptParser_Myst::o_cabinSafeChangeDigit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Cabin safe change digit", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
-	uint16 d1 = myst.cabinSafeCombination / 100;
-	uint16 d2 = (myst.cabinSafeCombination / 10) % 10;
-	uint16 d3 = myst.cabinSafeCombination % 10;
+	uint16 d1 = _state.cabinSafeCombination / 100;
+	uint16 d2 = (_state.cabinSafeCombination / 10) % 10;
+	uint16 d3 = _state.cabinSafeCombination % 10;
 
 	if (var == 67)
 		d1 = (d1 + 1) % 10;
@@ -1390,7 +1361,7 @@ void MystScriptParser_Myst::o_cabinSafeChangeDigit(uint16 op, uint16 var, uint16
 	else
 		d3 = (d3 + 1) % 10;
 
-	myst.cabinSafeCombination = 100 * d1 + 10 * d2 + d3;
+	_state.cabinSafeCombination = 100 * d1 + 10 * d2 + d3;
 
 	_vm->redrawArea(var);
 }
@@ -1409,7 +1380,6 @@ void MystScriptParser_Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 
 	debugC(kDebugScript, "Opcode %d: Cabin safe handle move", op);
 
 	// Used on Card 4100
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
 
 	// Make the handle follow the mouse
@@ -1428,7 +1398,7 @@ void MystScriptParser_Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 
 				_vm->_sound->replaceSound(soundId);
 		}
 		// Combination is right
-		if (myst.cabinSafeCombination == 724) {
+		if (_state.cabinSafeCombination == 724) {
 			uint16 soundId = handle->getList2(1);
 			if (soundId)
 				_vm->_sound->replaceSound(soundId);
@@ -1522,7 +1492,6 @@ void MystScriptParser_Myst::o_circuitBreakerStartMove(uint16 op, uint16 var, uin
 void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Circuit breaker move", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
 
 	int16 maxStep = breaker->getStepsV() - 1;
@@ -1541,7 +1510,7 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 			if (breaker->getType8Var() == 93) {
 
 				// Voltage is still too high or not broken
-				if (myst.generatorVoltage > 59 || myst.generatorBreakers != 1) {
+				if (_state.generatorVoltage > 59 || _state.generatorBreakers != 1) {
 					uint16 soundId = breaker->getList2(1);
 					if (soundId)
 						_vm->_sound->replaceSound(soundId);
@@ -1551,11 +1520,11 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 						_vm->_sound->replaceSound(soundId);
 
 					// Reset breaker state
-					myst.generatorBreakers = 0;
+					_state.generatorBreakers = 0;
 				}
 			} else {
 				// Voltage is still too high or not broken
-				if (myst.generatorVoltage > 59 || myst.generatorBreakers != 2) {
+				if (_state.generatorVoltage > 59 || _state.generatorBreakers != 2) {
 					uint16 soundId = breaker->getList2(1);
 					if (soundId)
 						_vm->_sound->replaceSound(soundId);
@@ -1565,7 +1534,7 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 						_vm->_sound->replaceSound(soundId);
 
 					// Reset breaker state
-					myst.generatorBreakers = 0;
+					_state.generatorBreakers = 0;
 				}
 			}
 		}
@@ -1582,10 +1551,9 @@ void MystScriptParser_Myst::o_circuitBreakerEndMove(uint16 op, uint16 var, uint1
 
 void MystScriptParser_Myst::o_boilerIncreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Boiler increase pressure start", op);
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
 	_treeStopped = true;
-	if (myst.cabinValvePosition < 25)
+	if (_state.cabinValvePosition < 25)
 		_vm->_sound->stopBackground();
 
 	_boilerPressureIncreasing = true;
@@ -1593,21 +1561,20 @@ void MystScriptParser_Myst::o_boilerIncreasePressureStart(uint16 op, uint16 var,
 
 void MystScriptParser_Myst::o_boilerLightPilot(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Boiler light pilot", op);
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
 	// Match is lit
 	if (_cabinMatchState == 1) {
-		myst.cabinPilotLightLit = 1;
+		_state.cabinPilotLightLit = 1;
 		_vm->redrawArea(98);
 
 		// Put out match
 		_matchGoOutTime = _vm->_system->getMillis();
 
-		if (myst.cabinValvePosition > 0)
+		if (_state.cabinValvePosition > 0)
 			_vm->_sound->replaceBackground(8098, 49152);
 
-		if (myst.cabinValvePosition > 12)
-			myst.treeLastMoveTime = _vm->_system->getMillis();
+		if (_state.cabinValvePosition > 12)
+			_state.treeLastMoveTime = _vm->_system->getMillis();
 
 		// TODO: Complete. Play movies
 	}
@@ -1615,36 +1582,33 @@ void MystScriptParser_Myst::o_boilerLightPilot(uint16 op, uint16 var, uint16 arg
 
 void MystScriptParser_Myst::o_boilerIncreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Boiler increase pressure stop", op);
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
 	_treeStopped = false;
 	_boilerPressureIncreasing = false;
-	myst.treeLastMoveTime = _vm->_system->getMillis();
+	_state.treeLastMoveTime = _vm->_system->getMillis();
 
-	if (myst.cabinPilotLightLit == 1) {
-		if (myst.cabinValvePosition > 0)
+	if (_state.cabinPilotLightLit == 1) {
+		if (_state.cabinValvePosition > 0)
 			_vm->_sound->replaceBackground(8098, 49152);
 
 		// TODO: Play movies
 	} else {
-		if (myst.cabinValvePosition > 0)
-			_vm->_sound->replaceBackground(4098, myst.cabinValvePosition << 10);
+		if (_state.cabinValvePosition > 0)
+			_vm->_sound->replaceBackground(4098, _state.cabinValvePosition << 10);
 	}
 }
 
 void MystScriptParser_Myst::boilerPressureIncrease_run() {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	// Allow increasing pressure if sound has stopped
-	if (!_vm->_sound->isPlaying(5098) && myst.cabinValvePosition < 25) {
-		myst.cabinValvePosition++;
-		if (myst.cabinValvePosition == 1) {
+	if (!_vm->_sound->isPlaying(5098) && _state.cabinValvePosition < 25) {
+		_state.cabinValvePosition++;
+		if (_state.cabinValvePosition == 1) {
 			// TODO: Play fire movie
 
 			// Draw fire
 			_vm->redrawArea(305);
-		} else if (myst.cabinValvePosition == 25) {
-			if (myst.cabinPilotLightLit == 1)
+		} else if (_state.cabinValvePosition == 25) {
+			if (_state.cabinPilotLightLit == 1)
 				_vm->_sound->replaceBackground(8098, 49152);
 			else
 				_vm->_sound->replaceBackground(4098, 25600);
@@ -1659,12 +1623,10 @@ void MystScriptParser_Myst::boilerPressureIncrease_run() {
 }
 
 void MystScriptParser_Myst::boilerPressureDecrease_run() {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	// Allow decreasing pressure if sound has stopped
-	if (!_vm->_sound->isPlaying(5098) && myst.cabinValvePosition > 0) {
-		myst.cabinValvePosition--;
-		if (myst.cabinValvePosition == 0) {
+	if (!_vm->_sound->isPlaying(5098) && _state.cabinValvePosition > 0) {
+		_state.cabinValvePosition--;
+		if (_state.cabinValvePosition == 0) {
 			// TODO: Play fire movie
 
 			// Draw fire
@@ -1690,20 +1652,19 @@ void MystScriptParser_Myst::o_boilerDecreasePressureStart(uint16 op, uint16 var,
 
 void MystScriptParser_Myst::o_boilerDecreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Boiler decrease pressure stop", op);
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
 	_treeStopped = false;
 	_boilerPressureDecreasing = false;
-	myst.treeLastMoveTime = _vm->_system->getMillis();
+	_state.treeLastMoveTime = _vm->_system->getMillis();
 
-	if (myst.cabinPilotLightLit == 1) {
-		if (myst.cabinValvePosition > 0)
+	if (_state.cabinPilotLightLit == 1) {
+		if (_state.cabinValvePosition > 0)
 			_vm->_sound->replaceBackground(8098, 49152);
 
 		// TODO: Play movies
 	} else {
-		if (myst.cabinValvePosition > 0)
-			_vm->_sound->replaceBackground(4098, myst.cabinValvePosition << 10);
+		if (_state.cabinValvePosition > 0)
+			_vm->_sound->replaceBackground(4098, _state.cabinValvePosition << 10);
 	}
 }
 
@@ -1717,19 +1678,15 @@ void MystScriptParser_Myst::o_basementIncreasePressureStart(uint16 op, uint16 va
 void MystScriptParser_Myst::o_basementIncreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Basement increase pressure stop", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	_treeStopped = false;
 	_basementPressureIncreasing = false;
-	myst.treeLastMoveTime = _vm->_system->getMillis();
+	_state.treeLastMoveTime = _vm->_system->getMillis();
 }
 
 void MystScriptParser_Myst::basementPressureIncrease_run() {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	// Allow increasing pressure if sound has stopped
-	if (!_vm->_sound->isPlaying(4642) && myst.cabinValvePosition < 25) {
-		myst.cabinValvePosition++;
+	if (!_vm->_sound->isPlaying(4642) && _state.cabinValvePosition < 25) {
+		_state.cabinValvePosition++;
 
 		// Pressure increasing sound
 		_vm->_sound->replaceSound(4642);
@@ -1740,11 +1697,9 @@ void MystScriptParser_Myst::basementPressureIncrease_run() {
 }
 
 void MystScriptParser_Myst::basementPressureDecrease_run() {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	// Allow decreasing pressure if sound has stopped
-	if (!_vm->_sound->isPlaying(4642) && myst.cabinValvePosition > 0) {
-		myst.cabinValvePosition--;
+	if (!_vm->_sound->isPlaying(4642) && _state.cabinValvePosition > 0) {
+		_state.cabinValvePosition--;
 
 		// Pressure decreasing sound
 		_vm->_sound->replaceSound(4642);
@@ -1764,19 +1719,15 @@ void MystScriptParser_Myst::o_basementDecreasePressureStart(uint16 op, uint16 va
 void MystScriptParser_Myst::o_basementDecreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Basement decrease pressure stop", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	_treeStopped = false;
 	_basementPressureDecreasing = false;
-	myst.treeLastMoveTime = _vm->_system->getMillis();
+	_state.treeLastMoveTime = _vm->_system->getMillis();
 }
 
 void MystScriptParser_Myst::tree_run() {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	uint16 pressure;
-	if (myst.cabinPilotLightLit)
-		pressure = myst.cabinValvePosition;
+	if (_state.cabinPilotLightLit)
+		pressure = _state.cabinValvePosition;
 	else
 		pressure = 0;
 
@@ -1787,24 +1738,24 @@ void MystScriptParser_Myst::tree_run() {
 			goingDown = false;
 
 		// Tree is within bounds
-		if ((myst.treePosition < 12 && !goingDown)
-				|| (myst.treePosition > _treeMinPosition && goingDown)) {
+		if ((_state.treePosition < 12 && !goingDown)
+				|| (_state.treePosition > _treeMinPosition && goingDown)) {
 			uint16 delay = treeNextMoveDelay(pressure);
 			uint32 time = _vm->_system->getMillis();
-			if (delay < time - myst.treeLastMoveTime) {
+			if (delay < time - _state.treeLastMoveTime) {
 
 				// Tree movement
 				if (goingDown) {
-					myst.treePosition--;
+					_state.treePosition--;
 					_vm->_sound->replaceSound(2);
 				} else {
-					myst.treePosition++;
+					_state.treePosition++;
 					_vm->_sound->replaceSound(1);
 				}
 
 				// Stop background music if going up from book room
 				if (_vm->getCurCard() == 4630) {
-					if (myst.treePosition > 0)
+					if (_state.treePosition > 0)
 						_vm->_sound->stopBackground();
 					else
 						_vm->_sound->replaceBackground(4630, 24576);
@@ -1816,19 +1767,17 @@ void MystScriptParser_Myst::tree_run() {
 				// Check if alcove is accessible
 				treeSetAlcoveAccessible();
 
-				myst.treeLastMoveTime = time;
+				_state.treeLastMoveTime = time;
 			}
 		}
 	}
 }
 
 void MystScriptParser_Myst::treeSetAlcoveAccessible() {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	if (_treeAlcove) {
 		// Make alcove accessible if the tree is in the correct position
-		_treeAlcove->setEnabled(myst.treePosition >= _treeMinAccessiblePosition
-					&& myst.treePosition <= _treeMaxAccessiblePosition);
+		_treeAlcove->setEnabled(_state.treePosition >= _treeMinAccessiblePosition
+					&& _state.treePosition <= _treeMaxAccessiblePosition);
 	}
 }
 
@@ -1857,36 +1806,32 @@ void MystScriptParser_Myst::o_rocketSoundSliderMove(uint16 op, uint16 var, uint1
 void MystScriptParser_Myst::o_rocketSoundSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket slider end move", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	_vm->checkCursorHints();
 
-	if (myst.generatorVoltage == 59 && !myst.generatorBreakers) {
+	if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
 		if (_rocketSliderSound)
 			_vm->_sound->stopSound();
 	}
 
 	if (_invokingResource == _rocketSlider1) {
-		myst.rocketSliderPosition[0] = _rocketSlider1->_pos.y;
+		_state.rocketSliderPosition[0] = _rocketSlider1->_pos.y;
 	} else if (_invokingResource == _rocketSlider2) {
-		myst.rocketSliderPosition[1] = _rocketSlider2->_pos.y;
+		_state.rocketSliderPosition[1] = _rocketSlider2->_pos.y;
 	} else if (_invokingResource == _rocketSlider3) {
-		myst.rocketSliderPosition[2] = _rocketSlider3->_pos.y;
+		_state.rocketSliderPosition[2] = _rocketSlider3->_pos.y;
 	} else if (_invokingResource == _rocketSlider4) {
-		myst.rocketSliderPosition[3] = _rocketSlider4->_pos.y;
+		_state.rocketSliderPosition[3] = _rocketSlider4->_pos.y;
 	} else if (_invokingResource == _rocketSlider5) {
-		myst.rocketSliderPosition[4] = _rocketSlider5->_pos.y;
+		_state.rocketSliderPosition[4] = _rocketSlider5->_pos.y;
 	}
 
 	_vm->_sound->resumeBackground();
 }
 
 void MystScriptParser_Myst::rocketSliderMove() {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	MystResourceType10 *slider = static_cast<MystResourceType10 *>(_invokingResource);
 
-	if (myst.generatorVoltage == 59 && !myst.generatorBreakers) {
+	if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
 		uint16 soundId = rocketSliderGetSound(slider->_pos.y);
 		if (soundId != _rocketSliderSound) {
 			_rocketSliderSound = soundId;
@@ -1964,7 +1909,6 @@ void MystScriptParser_Myst::rocketCheckSolution() {
 void MystScriptParser_Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket piano start move", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 	MystResourceType11 *key = static_cast<MystResourceType11 *>(_invokingResource);
 
 	// What the hell ??
@@ -1979,7 +1923,7 @@ void MystScriptParser_Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 arg
 	_vm->_system->updateScreen();
 
 	// Play note
-	if (myst.generatorVoltage == 59 && !myst.generatorBreakers) {
+	if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
 		uint16 soundId = key->getList1(0);
 		_vm->_sound->replaceSound(soundId, Audio::Mixer::kMaxChannelVolume, true);
 	}
@@ -1990,7 +1934,6 @@ void MystScriptParser_Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc
 
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	Common::Rect piano = Common::Rect(85, 123, 460, 270);
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 
 	// Unpress previous key
 	MystResourceType11 *key = static_cast<MystResourceType11 *>(_invokingResource);
@@ -2018,7 +1961,7 @@ void MystScriptParser_Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc
 			_vm->_gfx->copyImageSectionToScreen(key->_subImages[1].wdib, src, dest);
 
 			// Play note
-			if (myst.generatorVoltage == 59 && !myst.generatorBreakers) {
+			if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
 				uint16 soundId = key->getList1(0);
 				_vm->_sound->replaceSound(soundId, Audio::Mixer::kMaxChannelVolume, true);
 			}
@@ -2073,7 +2016,6 @@ void MystScriptParser_Myst::o_rocketOpenBook(uint16 op, uint16 var, uint16 argc,
 void MystScriptParser_Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket lever move", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
 
 	// Make the lever follow the mouse
@@ -2091,7 +2033,7 @@ void MystScriptParser_Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc
 			_vm->_sound->replaceSound(soundId);
 
 		// If rocket correctly powered
-		if (myst.generatorVoltage == 59 && !myst.generatorBreakers) {
+		if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
 			rocketCheckSolution();
 		}
 	}
@@ -2124,32 +2066,28 @@ void MystScriptParser_Myst::o_cabinLeave(uint16 op, uint16 var, uint16 argc, uin
 void MystScriptParser_Myst::o_treePressureReleaseStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Tree pressure release start", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	Common::Rect src = Common::Rect(0, 0, 49, 86);
 	Common::Rect dest = Common::Rect(78, 46, 127, 132);
 	_vm->_gfx->copyImageSectionToScreen(4631, src, dest);
 	_vm->_system->updateScreen();
 
-	_tempVar = myst.cabinValvePosition;
+	_tempVar = _state.cabinValvePosition;
 
-	if (myst.treePosition >= 4) {
-		myst.cabinValvePosition = 0;
+	if (_state.treePosition >= 4) {
+		_state.cabinValvePosition = 0;
 		_treeMinPosition = 4;
-		myst.treeLastMoveTime = 0;
+		_state.treeLastMoveTime = 0;
 	}
 }
 
 void MystScriptParser_Myst::o_treePressureReleaseStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Tree pressure release stop", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	Common::Rect rect = Common::Rect(78, 46, 127, 132);
 	_vm->_gfx->copyBackBufferToScreen(rect);
 	_vm->_system->updateScreen();
 
-	myst.cabinValvePosition = _tempVar;
+	_state.cabinValvePosition = _tempVar;
 	_treeMinPosition = 0;
 }
 
@@ -2307,14 +2245,12 @@ void MystScriptParser_Myst::clockWheelStartTurn(uint16 wheel) {
 }
 
 void MystScriptParser_Myst::clockWheelTurn(uint16 var) {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	if (var == 38) {
 		// Hours
-		myst.clockTowerHourPosition = (myst.clockTowerHourPosition + 1) % 12;
+		_state.clockTowerHourPosition = (_state.clockTowerHourPosition + 1) % 12;
 	} else {
 		// Minutes
-		myst.clockTowerMinutePosition = (myst.clockTowerMinutePosition + 5) % 60;
+		_state.clockTowerMinutePosition = (_state.clockTowerMinutePosition + 5) % 60;
 	}
 }
 
@@ -2428,7 +2364,6 @@ void MystScriptParser_Myst::opcode_197(uint16 op, uint16 var, uint16 argc, uint1
 
 void MystScriptParser_Myst::o_dockVaultForceClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Myst 4143 (Dock near Marker Switch)
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
 	uint16 soundId = argv[0];
 	uint16 delay = argv[1];
 	uint16 directionalUpdateDataSize = argv[2];
@@ -2439,7 +2374,7 @@ void MystScriptParser_Myst::o_dockVaultForceClose(uint16 op, uint16 var, uint16 
 
 	if (_dockVaultState) {
 		// Open switch
-		myst.dockMarkerSwitch = 1;
+		_state.dockMarkerSwitch = 1;
 		_vm->_sound->replaceSound(4143);
 		_vm->redrawArea(4);
 
@@ -2563,35 +2498,33 @@ void MystScriptParser_Myst::towerRotationDrawBuildings() {
 }
 
 uint16 MystScriptParser_Myst::towerRotationMapComputeAngle() {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	_towerRotationSpeed++;
 	if (_towerRotationSpeed >= 7)
 		_towerRotationSpeed = 7;
 	else
 		_towerRotationSpeed++;
 
-	myst.towerRotationAngle = (myst.towerRotationAngle + _towerRotationSpeed) % 360;
-	uint16 angle = myst.towerRotationAngle;
+	_state.towerRotationAngle = (_state.towerRotationAngle + _towerRotationSpeed) % 360;
+	uint16 angle = _state.towerRotationAngle;
 	_towerRotationOverSpot = false;
 
 	if (angle >= 265 && angle <= 277
-			&& myst.rocketshipMarkerSwitch) {
+			&& _state.rocketshipMarkerSwitch) {
 		angle = 271;
 		_towerRotationOverSpot = true;
 		_towerRotationSpeed = 1;
 	} else if (angle >= 77 && angle <= 89
-			&& myst.gearsMarkerSwitch) {
+			&& _state.gearsMarkerSwitch) {
 		angle = 83;
 		_towerRotationOverSpot = true;
 		_towerRotationSpeed = 1;
 	} else if (angle >= 123 && angle <= 135
-			&& myst.dockMarkerSwitch) {
+			&& _state.dockMarkerSwitch) {
 		angle = 129;
 		_towerRotationOverSpot = true;
 		_towerRotationSpeed = 1;
 	} else if (angle >= 146 && angle <= 158
-			&& myst.cabinMarkerSwitch) {
+			&& _state.cabinMarkerSwitch) {
 		angle = 152;
 		_towerRotationOverSpot = true;
 		_towerRotationSpeed = 1;
@@ -2660,10 +2593,8 @@ void MystScriptParser_Myst::o_forechamberDoor_init(uint16 op, uint16 var, uint16
 }
 
 void MystScriptParser_Myst::o_shipAccess_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	// Enable acces to the ship
-	if (myst.shipFloating) {
+	if (_state.shipFloating) {
 		_invokingResource->setEnabled(true);
 	}
 }
@@ -2685,11 +2616,9 @@ void MystScriptParser_Myst::o_imager_init(uint16 op, uint16 var, uint16 argc, ui
 }
 
 void MystScriptParser_Myst::imager_run() {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	_imagerRunning = false;
 
-	if (myst.imagerActive && myst.imagerSelection == 67) {
+	if (_state.imagerActive && _state.imagerSelection == 67) {
 		// TODO: play between 1814 and 4204 looping
 		_imagerMovie->playMovie();
 	}
@@ -2716,13 +2645,11 @@ void MystScriptParser_Myst::o_libraryBookcaseTransform_init(uint16 op, uint16 va
 }
 
 void MystScriptParser_Myst::generatorControlRoom_run(void) {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
-	if (_generatorVoltage == myst.generatorVoltage) {
+	if (_generatorVoltage == _state.generatorVoltage) {
 		generatorRedrawRocket();
 	} else {
 		// Animate generator gauge		
-		if (_generatorVoltage > myst.generatorVoltage)
+		if (_generatorVoltage > _state.generatorVoltage)
 			_generatorVoltage--;
 		else
 			_generatorVoltage++;
@@ -2735,11 +2662,9 @@ void MystScriptParser_Myst::generatorControlRoom_run(void) {
 }
 
 void MystScriptParser_Myst::o_generatorControlRoom_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	debugC(kDebugScript, "Opcode %d: Generator control room init", op);
 
-	_generatorVoltage = myst.generatorVoltage;
+	_generatorVoltage = _state.generatorVoltage;
 	_generatorControlRoomRunning = true;
 }
 
@@ -2878,28 +2803,26 @@ void MystScriptParser_Myst::opcode_218(uint16 op, uint16 var, uint16 argc, uint1
 void MystScriptParser_Myst::o_rocketSliders_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket sliders init", op);
 
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	_rocketSlider1 = static_cast<MystResourceType10 *>(_vm->_resources[argv[0]]);
 	_rocketSlider2 = static_cast<MystResourceType10 *>(_vm->_resources[argv[1]]);
 	_rocketSlider3 = static_cast<MystResourceType10 *>(_vm->_resources[argv[2]]);
 	_rocketSlider4 = static_cast<MystResourceType10 *>(_vm->_resources[argv[3]]);
 	_rocketSlider5 = static_cast<MystResourceType10 *>(_vm->_resources[argv[4]]);
 
-	if (myst.rocketSliderPosition[0]) {
-		_rocketSlider1->setPosition(myst.rocketSliderPosition[0]);
+	if (_state.rocketSliderPosition[0]) {
+		_rocketSlider1->setPosition(_state.rocketSliderPosition[0]);
 	}
-	if (myst.rocketSliderPosition[1]) {
-		_rocketSlider2->setPosition(myst.rocketSliderPosition[1]);
+	if (_state.rocketSliderPosition[1]) {
+		_rocketSlider2->setPosition(_state.rocketSliderPosition[1]);
 	}
-	if (myst.rocketSliderPosition[2]) {
-		_rocketSlider3->setPosition(myst.rocketSliderPosition[2]);
+	if (_state.rocketSliderPosition[2]) {
+		_rocketSlider3->setPosition(_state.rocketSliderPosition[2]);
 	}
-	if (myst.rocketSliderPosition[3]) {
-		_rocketSlider4->setPosition(myst.rocketSliderPosition[3]);
+	if (_state.rocketSliderPosition[3]) {
+		_rocketSlider4->setPosition(_state.rocketSliderPosition[3]);
 	}
-	if (myst.rocketSliderPosition[4]) {
-		_rocketSlider5->setPosition(myst.rocketSliderPosition[4]);
+	if (_state.rocketSliderPosition[4]) {
+		_rocketSlider5->setPosition(_state.rocketSliderPosition[4]);
 	}
 }
 
@@ -2912,14 +2835,11 @@ void MystScriptParser_Myst::o_greenBook_init(uint16 op, uint16 var, uint16 argc,
 	// Used for Card 4168 (Green Book Movies)
 	debugC(kDebugScript, "Opcode %d: Green book init", op);
 
-	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-	MystVariables::Myst &myst = _vm->_saveLoad->_v->myst;
-
 	uint loopStart = 0;
 	uint loopEnd = 0;
 	Common::String file;
 
-	if (!myst.greenBookOpenedBefore) {
+	if (!_state.greenBookOpenedBefore) {
 		loopStart = 113200;
 		loopEnd = 116400;
 		file = _vm->wrapMovieFilename("atrusbk1", kMystStack);
@@ -2932,7 +2852,7 @@ void MystScriptParser_Myst::o_greenBook_init(uint16 op, uint16 var, uint16 argc,
 	_vm->_sound->stopSound();
 	_vm->_sound->pauseBackground();
 
-	if (globals.ending != 4) {
+	if (_globals.ending != 4) {
 		_vm->_video->playBackgroundMovie(file, 314, 76);
 	}
 

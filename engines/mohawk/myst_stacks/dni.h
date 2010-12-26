@@ -55,6 +55,8 @@ private:
 	DECLARE_OPCODE(opcode_200);
 
 	DECLARE_OPCODE(opcode_300);
+
+	MystGameState::Dni &_state;
 };
 
 } // End of namespace Mohawk

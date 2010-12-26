@@ -180,6 +180,8 @@ private:
 	DECLARE_OPCODE(opcode_309);
 	DECLARE_OPCODE(opcode_312);
 
+	MystGameState::Myst &_state;
+
 	bool _generatorControlRoomRunning;
 	uint16 _generatorVoltage; // 58
 

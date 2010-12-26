@@ -93,6 +93,8 @@ private:
 	DECLARE_OPCODE(opcode_209);
 
 	DECLARE_OPCODE(opcode_300);
+
+	MystGameState::Mechanical &_state;
 };
 
 } // End of namespace Mohawk

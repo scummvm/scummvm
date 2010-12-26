@@ -34,7 +34,8 @@
 
 namespace Mohawk {
 
-MystScriptParser_Dni::MystScriptParser_Dni(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
+MystScriptParser_Dni::MystScriptParser_Dni(MohawkEngine_Myst *vm) :
+		MystScriptParser(vm), _state(_vm->_gameState->_dni) {
 	setupOpcodes();
 }
 
@@ -64,9 +65,6 @@ void MystScriptParser_Dni::runPersistentScripts() {
 }
 
 uint16 MystScriptParser_Dni::getVar(uint16 var) {
-//	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-//	MystVariables::Dni &dni = _vm->_saveLoad->_v->dni;
-
 	switch(var) {
 //	case 0: // Atrus Gone (from across room)
 //		return 0; // Present

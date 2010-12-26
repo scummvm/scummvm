@@ -43,7 +43,7 @@ class VideoManager;
 class MystGraphics;
 class MystScriptParser;
 class MystConsole;
-class MystSaveLoad;
+class MystGameState;
 class MystOptionsDialog;
 class MystResource;
 class MystResourceType8;
@@ -172,7 +172,7 @@ public:
 
 	MystView _view;
 	MystGraphics *_gfx;
-	MystSaveLoad *_saveLoad;
+	MystGameState *_gameState;
 	MystScriptParser *_scriptParser;
 	Common::Array<MystResource*> _resources;
 	MystResource *_dragResource;

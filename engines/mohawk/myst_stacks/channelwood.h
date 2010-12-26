@@ -71,6 +71,8 @@ private:
 	DECLARE_OPCODE(opcode_203);
 
 	DECLARE_OPCODE(opcode_300);
+
+	MystGameState::Channelwood &_state;
 };
 
 } // End of namespace Mohawk

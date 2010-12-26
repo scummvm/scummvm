@@ -32,39 +32,45 @@
 
 namespace Mohawk {
 
-MystSaveLoad::MystSaveLoad(MohawkEngine_Myst *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
-	_v = new MystVariables();
-
+MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
 	// Most of the variables are zero at game start.
-	_v->globals.u0 = 2;
+	memset(&_globals, 0, sizeof(_globals));
+	memset(&_myst, 0, sizeof(_myst));
+	memset(&_channelwood, 0, sizeof(_channelwood));
+	memset(&_mechanical, 0, sizeof(_mechanical));
+	memset(&_selenitic, 0, sizeof(_selenitic));
+	memset(&_stoneship, 0, sizeof(_stoneship));
+	memset(&_dni, 0, sizeof(_dni));
+
+	// Unknown
+	_globals.u0 = 2;
 	// Current Age / Stack - Start in Myst
-	_v->globals.currentAge = 7;
-	_v->globals.u1 = 1;
+	_globals.currentAge = 7;
+	_globals.u1 = 1;
 
 	// Library Bookcase Door - Default to Up
-	_v->myst.libraryBookcaseDoor = 1;
+	_myst.libraryBookcaseDoor = 1;
 	// Dock Imager Numeric Selection - Default to 67
-	_v->myst.imagerSelection = 67;
+	_myst.imagerSelection = 67;
 	// Dock Imager Active - Default to Active
-	_v->myst.imagerActive = 1;
+	_myst.imagerActive = 1;
 	// Stellar Observatory Lights - Default to On
-	_v->myst.observatoryLights = 1;
+	_myst.observatoryLights = 1;
 
 	// Lighthouse Trapdoor State - Default to Locked
-	_v->stoneship.trapdoorState = 2;
+	_stoneship.trapdoorState = 2;
 	// Lighthouse Chest Water State - Default to Full
-	_v->stoneship.chestWaterState = 1;
+	_stoneship.chestWaterState = 1;
 }
 
-MystSaveLoad::~MystSaveLoad() {
-	delete _v;
+MystGameState::~MystGameState() {
 }
 
-Common::StringArray MystSaveLoad::generateSaveGameList() {
+Common::StringArray MystGameState::generateSaveGameList() {
 	return _saveFileMan->listSavefiles("*.mys");
 }
 
-bool MystSaveLoad::loadGame(const Common::String &filename) {
+bool MystGameState::load(const Common::String &filename) {
 	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(filename);
 	if (!loadFile)
 		return false;
@@ -88,13 +94,13 @@ bool MystSaveLoad::loadGame(const Common::String &filename) {
 	_vm->changeToStack(kIntroStack);
 
 	// Set our default cursor
-	if (_v->globals.heldPage == 0 || _v->globals.heldPage > 13)
+	if (_globals.heldPage == 0 || _globals.heldPage > 13)
 		_vm->setMainCursor(kDefaultMystCursor);
-	else if (_v->globals.heldPage < 7)
+	else if (_globals.heldPage < 7)
 		_vm->setMainCursor(kBluePageCursor);
-	else if (_v->globals.heldPage < 13)
+	else if (_globals.heldPage < 13)
 		_vm->setMainCursor(kRedPageCursor);
-	else // if (_v->globals.heldPage == 13)
+	else // if (globals.heldPage == 13)
 		_vm->setMainCursor(kWhitePageCursor);
 
 	// Set us to the linking book
@@ -103,7 +109,7 @@ bool MystSaveLoad::loadGame(const Common::String &filename) {
 	return true;
 }
 
-bool MystSaveLoad::saveGame(const Common::String &fname) {
+bool MystGameState::save(const Common::String &fname) {
 	Common::String filename(fname);
 	// Make sure we have the right extension
 	if (!filename.hasSuffix(".mys") && !filename.hasSuffix(".MYS"))
@@ -123,95 +129,95 @@ bool MystSaveLoad::saveGame(const Common::String &fname) {
 	return true;
 }
 
-void MystSaveLoad::syncGameState(Common::Serializer &s, bool isME) {
+void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 	// Globals first
-	s.syncAsUint16LE(_v->globals.u0);
-	s.syncAsUint16LE(_v->globals.currentAge);
-	s.syncAsUint16LE(_v->globals.heldPage);
-	s.syncAsUint16LE(_v->globals.u1);
-	s.syncAsUint16LE(_v->globals.transitions);
-	s.syncAsUint16LE(_v->globals.ending);
-	s.syncAsUint16LE(_v->globals.redPagesInBook);
-	s.syncAsUint16LE(_v->globals.bluePagesInBook);
+	s.syncAsUint16LE(_globals.u0);
+	s.syncAsUint16LE(_globals.currentAge);
+	s.syncAsUint16LE(_globals.heldPage);
+	s.syncAsUint16LE(_globals.u1);
+	s.syncAsUint16LE(_globals.transitions);
+	s.syncAsUint16LE(_globals.ending);
+	s.syncAsUint16LE(_globals.redPagesInBook);
+	s.syncAsUint16LE(_globals.bluePagesInBook);
 
 	// Onto Myst
 	if (isME) {
-		s.syncAsUint32LE(_v->myst.cabinMarkerSwitch);
-		s.syncAsUint32LE(_v->myst.clockTowerMarkerSwitch);
-		s.syncAsUint32LE(_v->myst.dockMarkerSwitch);
-		s.syncAsUint32LE(_v->myst.poolMarkerSwitch);
-		s.syncAsUint32LE(_v->myst.gearsMarkerSwitch);
-		s.syncAsUint32LE(_v->myst.generatorMarkerSwitch);
-		s.syncAsUint32LE(_v->myst.observatoryMarkerSwitch);
-		s.syncAsUint32LE(_v->myst.rocketshipMarkerSwitch);
+		s.syncAsUint32LE(_myst.cabinMarkerSwitch);
+		s.syncAsUint32LE(_myst.clockTowerMarkerSwitch);
+		s.syncAsUint32LE(_myst.dockMarkerSwitch);
+		s.syncAsUint32LE(_myst.poolMarkerSwitch);
+		s.syncAsUint32LE(_myst.gearsMarkerSwitch);
+		s.syncAsUint32LE(_myst.generatorMarkerSwitch);
+		s.syncAsUint32LE(_myst.observatoryMarkerSwitch);
+		s.syncAsUint32LE(_myst.rocketshipMarkerSwitch);
 	} else {
-		s.syncAsByte(_v->myst.cabinMarkerSwitch);
-		s.syncAsByte(_v->myst.clockTowerMarkerSwitch);
-		s.syncAsByte(_v->myst.dockMarkerSwitch);
-		s.syncAsByte(_v->myst.poolMarkerSwitch);
-		s.syncAsByte(_v->myst.gearsMarkerSwitch);
-		s.syncAsByte(_v->myst.generatorMarkerSwitch);
-		s.syncAsByte(_v->myst.observatoryMarkerSwitch);
-		s.syncAsByte(_v->myst.rocketshipMarkerSwitch);
+		s.syncAsByte(_myst.cabinMarkerSwitch);
+		s.syncAsByte(_myst.clockTowerMarkerSwitch);
+		s.syncAsByte(_myst.dockMarkerSwitch);
+		s.syncAsByte(_myst.poolMarkerSwitch);
+		s.syncAsByte(_myst.gearsMarkerSwitch);
+		s.syncAsByte(_myst.generatorMarkerSwitch);
+		s.syncAsByte(_myst.observatoryMarkerSwitch);
+		s.syncAsByte(_myst.rocketshipMarkerSwitch);
 	}
 
-	s.syncAsUint16LE(_v->myst.greenBookOpenedBefore);
-	s.syncAsUint16LE(_v->myst.shipFloating);
-	s.syncAsUint16LE(_v->myst.cabinValvePosition);
-	s.syncAsUint16LE(_v->myst.clockTowerHourPosition);
-	s.syncAsUint16LE(_v->myst.clockTowerMinutePosition);
-	s.syncAsUint16LE(_v->myst.gearsOpen);
-	s.syncAsUint16LE(_v->myst.clockTowerBridgeOpen);
-	s.syncAsUint16LE(_v->myst.generatorBreakers);
-	s.syncAsUint16LE(_v->myst.generatorButtons);
-	s.syncAsUint16LE(_v->myst.generatorVoltage);
-	s.syncAsUint16LE(_v->myst.libraryBookcaseDoor);
-	s.syncAsUint16LE(_v->myst.imagerSelection);
-	s.syncAsUint16LE(_v->myst.imagerActive);
-	s.syncAsUint16LE(_v->myst.imagerWaterErased);
-	s.syncAsUint16LE(_v->myst.imagerMountainErased);
-	s.syncAsUint16LE(_v->myst.imagerAtrusErased);
-	s.syncAsUint16LE(_v->myst.imagerMarkerErased);
-	s.syncAsUint16LE(_v->myst.towerRotationAngle);
-	s.syncAsUint16LE(_v->myst.courtyardImageBoxes);
-	s.syncAsUint16LE(_v->myst.cabinPilotLightLit);
-	s.syncAsUint16LE(_v->myst.observatoryDaySetting);
-	s.syncAsUint16LE(_v->myst.observatoryLights);
-	s.syncAsUint16LE(_v->myst.observatoryMonthSetting);
-	s.syncAsUint16LE(_v->myst.observatoryTimeSetting);
-	s.syncAsUint16LE(_v->myst.observatoryYearSetting);
-	s.syncAsUint16LE(_v->myst.observatoryDayTarget);
-	s.syncAsUint16LE(_v->myst.observatoryMonthTarget);
-	s.syncAsUint16LE(_v->myst.observatoryTimeTarget);
-	s.syncAsUint16LE(_v->myst.observatoryYearTarget);
-	s.syncAsUint16LE(_v->myst.cabinSafeCombination);
-	s.syncAsUint16LE(_v->myst.treePosition);
-	s.syncAsUint32LE(_v->myst.treeLastMoveTime);
+	s.syncAsUint16LE(_myst.greenBookOpenedBefore);
+	s.syncAsUint16LE(_myst.shipFloating);
+	s.syncAsUint16LE(_myst.cabinValvePosition);
+	s.syncAsUint16LE(_myst.clockTowerHourPosition);
+	s.syncAsUint16LE(_myst.clockTowerMinutePosition);
+	s.syncAsUint16LE(_myst.gearsOpen);
+	s.syncAsUint16LE(_myst.clockTowerBridgeOpen);
+	s.syncAsUint16LE(_myst.generatorBreakers);
+	s.syncAsUint16LE(_myst.generatorButtons);
+	s.syncAsUint16LE(_myst.generatorVoltage);
+	s.syncAsUint16LE(_myst.libraryBookcaseDoor);
+	s.syncAsUint16LE(_myst.imagerSelection);
+	s.syncAsUint16LE(_myst.imagerActive);
+	s.syncAsUint16LE(_myst.imagerWaterErased);
+	s.syncAsUint16LE(_myst.imagerMountainErased);
+	s.syncAsUint16LE(_myst.imagerAtrusErased);
+	s.syncAsUint16LE(_myst.imagerMarkerErased);
+	s.syncAsUint16LE(_myst.towerRotationAngle);
+	s.syncAsUint16LE(_myst.courtyardImageBoxes);
+	s.syncAsUint16LE(_myst.cabinPilotLightLit);
+	s.syncAsUint16LE(_myst.observatoryDaySetting);
+	s.syncAsUint16LE(_myst.observatoryLights);
+	s.syncAsUint16LE(_myst.observatoryMonthSetting);
+	s.syncAsUint16LE(_myst.observatoryTimeSetting);
+	s.syncAsUint16LE(_myst.observatoryYearSetting);
+	s.syncAsUint16LE(_myst.observatoryDayTarget);
+	s.syncAsUint16LE(_myst.observatoryMonthTarget);
+	s.syncAsUint16LE(_myst.observatoryTimeTarget);
+	s.syncAsUint16LE(_myst.observatoryYearTarget);
+	s.syncAsUint16LE(_myst.cabinSafeCombination);
+	s.syncAsUint16LE(_myst.treePosition);
+	s.syncAsUint32LE(_myst.treeLastMoveTime);
 
 	for (int i = 0; i < 5; i++)
-		s.syncAsUint16LE(_v->myst.rocketSliderPosition[i]);
+		s.syncAsUint16LE(_myst.rocketSliderPosition[i]);
 
-	s.syncAsUint16LE(_v->myst.u6);
-	s.syncAsUint16LE(_v->myst.u7);
-	s.syncAsUint16LE(_v->myst.u8);
-	s.syncAsUint16LE(_v->myst.u9);
+	s.syncAsUint16LE(_myst.u6);
+	s.syncAsUint16LE(_myst.u7);
+	s.syncAsUint16LE(_myst.u8);
+	s.syncAsUint16LE(_myst.u9);
 
 	// Channelwood
 	if (isME) {
-		s.syncAsUint32LE(_v->channelwood.waterPumpBridgeState);
-		s.syncAsUint32LE(_v->channelwood.elevatorState);
-		s.syncAsUint32LE(_v->channelwood.stairsLowerDoorState);
-		s.syncAsUint32LE(_v->channelwood.pipeState);
+		s.syncAsUint32LE(_channelwood.waterPumpBridgeState);
+		s.syncAsUint32LE(_channelwood.elevatorState);
+		s.syncAsUint32LE(_channelwood.stairsLowerDoorState);
+		s.syncAsUint32LE(_channelwood.pipeState);
 	} else {
-		s.syncAsByte(_v->channelwood.waterPumpBridgeState);
-		s.syncAsByte(_v->channelwood.elevatorState);
-		s.syncAsByte(_v->channelwood.stairsLowerDoorState);
-		s.syncAsByte(_v->channelwood.pipeState);
+		s.syncAsByte(_channelwood.waterPumpBridgeState);
+		s.syncAsByte(_channelwood.elevatorState);
+		s.syncAsByte(_channelwood.stairsLowerDoorState);
+		s.syncAsByte(_channelwood.pipeState);
 	}
 
-	s.syncAsUint16LE(_v->channelwood.waterValveStates);
-	s.syncAsUint16LE(_v->channelwood.holoprojectorSelection);
-	s.syncAsUint16LE(_v->channelwood.stairsUpperDoorState);
+	s.syncAsUint16LE(_channelwood.waterValveStates);
+	s.syncAsUint16LE(_channelwood.holoprojectorSelection);
+	s.syncAsUint16LE(_channelwood.stairsUpperDoorState);
 
 	if (isME)
 		s.skip(4);
@@ -220,93 +226,93 @@ void MystSaveLoad::syncGameState(Common::Serializer &s, bool isME) {
 
 	// Mechanical
 
-	s.syncAsUint16LE(_v->mechanical.achenarPanelState);
-	s.syncAsUint16LE(_v->mechanical.sirrusPanelState);
-	s.syncAsUint16LE(_v->mechanical.staircaseState);
-	s.syncAsUint16LE(_v->mechanical.elevatorRotation);
+	s.syncAsUint16LE(_mechanical.achenarPanelState);
+	s.syncAsUint16LE(_mechanical.sirrusPanelState);
+	s.syncAsUint16LE(_mechanical.staircaseState);
+	s.syncAsUint16LE(_mechanical.elevatorRotation);
 
 	for (int i = 0; i < 4; i++)
-		s.syncAsUint16LE(_v->mechanical.codeShape[i]);
+		s.syncAsUint16LE(_mechanical.codeShape[i]);
 
 	// Selenitic
 
 	if (isME) {
-		s.syncAsUint32LE(_v->selenitic.emitterEnabledWater);
-		s.syncAsUint32LE(_v->selenitic.emitterEnabledVolcano);
-		s.syncAsUint32LE(_v->selenitic.emitterEnabledClock);
-		s.syncAsUint32LE(_v->selenitic.emitterEnabledCrystal);
-		s.syncAsUint32LE(_v->selenitic.emitterEnabledWind);
-		s.syncAsUint32LE(_v->selenitic.soundReceiverOpened);
-		s.syncAsUint32LE(_v->selenitic.tunnelLightsSwitchedOn);
+		s.syncAsUint32LE(_selenitic.emitterEnabledWater);
+		s.syncAsUint32LE(_selenitic.emitterEnabledVolcano);
+		s.syncAsUint32LE(_selenitic.emitterEnabledClock);
+		s.syncAsUint32LE(_selenitic.emitterEnabledCrystal);
+		s.syncAsUint32LE(_selenitic.emitterEnabledWind);
+		s.syncAsUint32LE(_selenitic.soundReceiverOpened);
+		s.syncAsUint32LE(_selenitic.tunnelLightsSwitchedOn);
 	} else {
-		s.syncAsByte(_v->selenitic.emitterEnabledWater);
-		s.syncAsByte(_v->selenitic.emitterEnabledVolcano);
-		s.syncAsByte(_v->selenitic.emitterEnabledClock);
-		s.syncAsByte(_v->selenitic.emitterEnabledCrystal);
-		s.syncAsByte(_v->selenitic.emitterEnabledWind);
-		s.syncAsByte(_v->selenitic.soundReceiverOpened);
-		s.syncAsByte(_v->selenitic.tunnelLightsSwitchedOn);
+		s.syncAsByte(_selenitic.emitterEnabledWater);
+		s.syncAsByte(_selenitic.emitterEnabledVolcano);
+		s.syncAsByte(_selenitic.emitterEnabledClock);
+		s.syncAsByte(_selenitic.emitterEnabledCrystal);
+		s.syncAsByte(_selenitic.emitterEnabledWind);
+		s.syncAsByte(_selenitic.soundReceiverOpened);
+		s.syncAsByte(_selenitic.tunnelLightsSwitchedOn);
 	}
 
-	s.syncAsUint16LE(_v->selenitic.soundReceiverCurrentSource);
+	s.syncAsUint16LE(_selenitic.soundReceiverCurrentSource);
 
 	for (byte i = 0; i < 5; i++)
-		s.syncAsUint16LE(_v->selenitic.soundReceiverPositions[i]);
+		s.syncAsUint16LE(_selenitic.soundReceiverPositions[i]);
 
 	for (byte i = 0; i < 5; i++)
-		s.syncAsUint16LE(_v->selenitic.soundLockSliderPositions[i]);
+		s.syncAsUint16LE(_selenitic.soundLockSliderPositions[i]);
 
 	// Stoneship
 
 	if (isME) {
-		s.syncAsUint16LE(_v->stoneship.lightState);
-		s.syncAsUint16LE(_v->stoneship.u0);
-		s.syncAsUint16LE(_v->stoneship.u1);
+		s.syncAsUint16LE(_stoneship.lightState);
+		s.syncAsUint16LE(_stoneship.u0);
+		s.syncAsUint16LE(_stoneship.u1);
 	} else {
-		s.syncAsByte(_v->stoneship.lightState);
-		s.syncAsByte(_v->stoneship.u0);
-		s.syncAsByte(_v->stoneship.u1);
+		s.syncAsByte(_stoneship.lightState);
+		s.syncAsByte(_stoneship.u0);
+		s.syncAsByte(_stoneship.u1);
 	}
 
-	s.syncAsUint16LE(_v->stoneship.pumpState);
-	s.syncAsUint16LE(_v->stoneship.trapdoorState);
-	s.syncAsUint16LE(_v->stoneship.chestWaterState);
-	s.syncAsUint16LE(_v->stoneship.chestValveState);
-	s.syncAsUint16LE(_v->stoneship.chestOpenState);
-	s.syncAsUint16LE(_v->stoneship.trapdoorKeyState);
+	s.syncAsUint16LE(_stoneship.pumpState);
+	s.syncAsUint16LE(_stoneship.trapdoorState);
+	s.syncAsUint16LE(_stoneship.chestWaterState);
+	s.syncAsUint16LE(_stoneship.chestValveState);
+	s.syncAsUint16LE(_stoneship.chestOpenState);
+	s.syncAsUint16LE(_stoneship.trapdoorKeyState);
 
 	for (int i = 0; i < 5; i++)
-		s.syncAsUint16LE(_v->stoneship.generatorPowerLevel[i]);
+		s.syncAsUint16LE(_stoneship.generatorPowerLevel[i]);
 
 	// D'ni
-	s.syncAsUint16LE(_v->dni.outcomeState);
+	s.syncAsUint16LE(_dni.outcomeState);
 
 	// Reading unknown region...
 	// When Zero Value regions are included, these are 5 blocks of
 	// 41 uint16 values.
 
 	for (byte i = 0; i < 31; i++)
-		s.syncAsUint16LE(_v->unknownMyst[i]);
+		s.syncAsUint16LE(unknownMyst[i]);
 
 	s.skip(20);
 
 	for (byte i = 0; i < 37; i++)
-		s.syncAsUint16LE(_v->unknownChannelwood[i]);
+		s.syncAsUint16LE(unknownChannelwood[i]);
 
 	s.skip(8);
 
 	for (byte i = 0; i < 18; i++)
-		s.syncAsUint16LE(_v->unknownMech[i]);
+		s.syncAsUint16LE(unknownMech[i]);
 
 	s.skip(46);
 
 	for (byte i = 0; i < 30; i++)
-		s.syncAsUint16LE(_v->unknownSelenitic[i]);
+		s.syncAsUint16LE(unknownSelenitic[i]);
 
 	s.skip(22);
 
 	for (byte i = 0; i < 22; i++)
-		s.syncAsUint16LE(_v->unknownStoneship[i]);
+		s.syncAsUint16LE(unknownStoneship[i]);
 
 	s.skip(38);
 
@@ -314,7 +320,7 @@ void MystSaveLoad::syncGameState(Common::Serializer &s, bool isME) {
 		warning("Unexpected File Position 0x%03X At End of Save/Load", s.bytesSynced());
 }
 
-void MystSaveLoad::deleteSave(const Common::String &saveName) {
+void MystGameState::deleteSave(const Common::String &saveName) {
 	debugC(kDebugSaveLoad, "Deleting save file \'%s\'", saveName.c_str());
 	_saveFileMan->removeSavefile(saveName.c_str());
 }
