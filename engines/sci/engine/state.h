@@ -159,6 +159,7 @@ public:
 	uint32 _throttleCounter; /**< total times kAnimate was invoked */
 	uint32 _throttleLastTime; /**< last time kAnimate was invoked */
 	bool _throttleTrigger;
+	bool _gameIsBenchmarking;
 
 	/* Kernel File IO stuff */
 

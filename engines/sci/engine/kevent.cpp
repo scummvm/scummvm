@@ -176,15 +176,11 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	// Wait a bit here, so that the CPU isn't maxed out when the game
 	// is waiting for user input (e.g. when showing text boxes) - bug
-	// #3037874. This works when games do benchmarking at the beginning,
-	// because most of them call kAnimate for benchmarking without
-	// calling kGetEvent in between (rightly so).
-	if (g_sci->getGameId() == GID_JONES && g_sci->getEngineState()->currentRoomNumber() == 764) {
-		// Jones CD is an exception, as it incorrectly calls GetEvent
-		// while benchmarking. Thus, don't delay here for room 764 in
-		// Jones (the speed test room), otherwise speed testing will
-		// fail and the game won't show any views, as it will think that
-		// the user has a slow machine - bug #3058865
+	// #3037874. Make sure that we're not delaying while the game is
+	// benchmarking, as that will affect the final benchmarked result - 
+	// check bugs #3058865 and #3127824
+	if (s->_gameIsBenchmarking) {
+		// Game is benchmarking, don't add a delay
 	} else {
 		g_system->delayMillis(10);
 	}
