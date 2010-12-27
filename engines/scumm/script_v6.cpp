@@ -381,15 +381,17 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::getArray(int array) {
 	if (!ah)
 		return 0;
 
-	// Workaround for a long standing bug where we saved array headers in native
-	// endianness, instead of a fixed endianness. We now always store the
-	// dimensions in little endian byte order. But to stay compatible with older
-	// savegames, we try to detect savegames which were created on a big endian
-	// system and convert them to the proper little endian format on the fly.
-	if ((FROM_LE_16(ah->dim1) & 0xF000) || (FROM_LE_16(ah->dim2) & 0xF000) || (FROM_LE_16(ah->type) & 0xFF00)) {
-		SWAP16(ah->dim1);
-		SWAP16(ah->dim2);
-		SWAP16(ah->type);
+	if (_game.heversion == 0) {
+		// Workaround for a long standing bug where we saved array headers in native
+		// endianness, instead of a fixed endianness. We now always store the
+		// dimensions in little endian byte order. But to stay compatible with older
+		// savegames, we try to detect savegames which were created on a big endian
+		// system and convert them to the proper little endian format on the fly.
+		if ((FROM_LE_16(ah->dim1) & 0xF000) || (FROM_LE_16(ah->dim2) & 0xF000) || (FROM_LE_16(ah->type) & 0xFF00)) {
+			SWAP16(ah->dim1);
+			SWAP16(ah->dim2);
+			SWAP16(ah->type);
+		}
 	}
 
 	return ah;
