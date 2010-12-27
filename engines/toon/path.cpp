@@ -148,10 +148,7 @@ PathFinding::~PathFinding(void) {
 	delete[] _gridTemp;
 }
 
-bool PathFinding::isWalkable(int32 x, int32 y) {
-	//debugC(6, kDebugPath, "isWalkable(%d, %d)", x, y);
-
-	bool maskWalk = (_currentMask->getData(x, y) & 0x1f) > 0;
+bool PathFinding::isLikelyWalkable(int32 x, int32 y) {
 	for (int32 i = 0; i < _numBlockingRects; i++) {
 		if (_blockingRects[i][4] == 0) {
 			if (x >= _blockingRects[i][0] && x <= _blockingRects[i][2] && y >= _blockingRects[i][1] && y < _blockingRects[i][3])
@@ -164,6 +161,14 @@ bool PathFinding::isWalkable(int32 x, int32 y) {
 			}
 		}
 	}
+	return true;
+}
+
+bool PathFinding::isWalkable(int32 x, int32 y) {
+	//debugC(6, kDebugPath, "isWalkable(%d, %d)", x, y);
+
+	bool maskWalk = (_currentMask->getData(x, y) & 0x1f) > 0;
+
 	return maskWalk;
 }
 
@@ -181,7 +186,7 @@ int32 PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32
 
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
-			if (isWalkable(x, y)) {
+			if (isWalkable(x, y) && isLikelyWalkable(x,y)) {
 				int32 ndist = (x - xx) * (x - xx) + (y - yy) * (y - yy);
 				int32 ndist2 = (x - origX) * (x - origX) + (y - origY) * (y - origY);
 				if (currentFound < 0 || ndist < dist || (ndist == dist && ndist2 < dist2)) {
@@ -239,6 +244,12 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 		return true;
 	}
 
+	// ignore path finding if the character is outside the screen
+	if (x < 0 || x > 1280 || y < 0 || y > 400 || destx < 0 || destx > 1280 || desty < 0 || desty > 400) {
+		_gridPathCount = 0;
+		return true;
+	}
+
 	// first test direct line
 	//if(lineIsWalkable(x,y,destx,desty))
 
@@ -270,7 +281,7 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 
 					int32 curPNode = px + py * _width;
 					if (isWalkable(px, py)) { // walkable ?
-						int sum = sq[curNode] + wei;
+						int sum = sq[curNode] + wei * (1 + (isLikelyWalkable(px,py) ? 5 : 0));
 						if (sq[curPNode] > sum || !sq[curPNode]) {
 							int newWeight = abs(destx - px) + abs(desty - py);
 							sq[curPNode] = sum;

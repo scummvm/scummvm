@@ -62,6 +62,7 @@ public:
 	int32 findPath(int32 x, int32 y, int32 destX, int32 destY);
 	int32 findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32 *fyy, int origX = -1, int origY = -1);
 	bool isWalkable(int32 x, int32 y);
+	bool isLikelyWalkable(int32 x, int32 y);
 	bool lineIsWalkable(int32 x, int32 y, int32 x2, int32 y2);
 	void init(Picture *mask);
 
