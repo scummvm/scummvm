@@ -2037,7 +2037,7 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	_haveMsg = 1;
 	if (_game.id == GID_FT)
 		VAR(VAR_HAVE_MSG) = 0xFF;
-	_haveActorSpeechMsg = true;
+	_haveActorSpeechMsg = (_game.id == GID_FT) ? true : (!_sound->isSoundRunning(kTalkSoundID));
 	if (_game.id == GID_DIG || _game.id == GID_CMI) {
 		stringWrap = _string[0].wrapping;
 		_string[0].wrapping = true;
