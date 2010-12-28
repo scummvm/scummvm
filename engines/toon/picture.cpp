@@ -23,6 +23,7 @@
 *
 */
 
+
 #include "toon/picture.h"
 #include "toon/tools.h"
 #include "common/stack.h"
@@ -31,7 +32,7 @@ namespace Toon {
 
 bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 	debugC(1, kDebugPicture, "loadPicture(%s, %d)", file.c_str(), (totalPalette) ? 1 : 0);
-
+	
 	uint32 size = 0;
 	uint8 *fileData = _vm->resources()->getFileData(file, &size);
 	if (!fileData)
@@ -96,6 +97,7 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 		uint32 decSize = READ_BE_UINT32(fileData + 4);
 
 		_data = new uint8[decSize];
+
 		rnc.unpackM1(fileData, _data);
 
 		// size can only be 640x400 or 1280x400
@@ -224,7 +226,6 @@ uint8 Picture::getData(int32 x, int32 y) {
 // use original work from johndoe
 void Picture::floodFillNotWalkableOnMask(int32 x, int32 y) {
 	debugC(1, kDebugPicture, "floodFillNotWalkableOnMask(%d, %d)", x, y);
-
 	// Stack-based floodFill algorithm based on
 	// http://student.kuleuven.be/~m0216922/CG/files/floodfill.cpp
 	Common::Stack<Common::Point> stack;
@@ -258,7 +259,6 @@ void Picture::floodFillNotWalkableOnMask(int32 x, int32 y) {
 
 void Picture::drawLineOnMask(int32 x, int32 y, int32 x2, int32 y2, bool walkable) {
 	debugC(1, kDebugPicture, "drawLineOnMask(%d, %d, %d, %d, %d)", x, y, x2, y2, (walkable) ? 1 : 0);
-
 	static int32 lastX = 0;
 	static int32 lastY = 0;
 
@@ -285,13 +285,20 @@ void Picture::drawLineOnMask(int32 x, int32 y, int32 x2, int32 y2, bool walkable
 
 	int32 i = t;
 	while (i) {
-		if (!walkable) {
-			_data[_width * (by >> 16) + (bx >> 16)] &= 0xe0;
-			_data[_width * (by >> 16) + (bx >> 16)+1] &= 0xe0;
-		} else {
-			int32 v = _data[_width * (by >> 16) + (bx >> 16) - 1];
-			_data[_width * (by >> 16) + (bx >> 16)] = v;
-			_data[_width * (by >> 16) + (bx >> 16)+1] = v;
+
+		int32 rx = bx >> 16;
+		int32 ry = by >> 16;
+
+		if( rx >= 0 && rx < _width-1 && ry >= 0 && ry < _height) {	// sanity check: some lines in the game 
+																	// were drawing outside the screen causing corruption
+			if (!walkable) {
+				_data[_width * ry + rx] &= 0xe0;
+				_data[_width * ry + rx+1] &= 0xe0;
+			} else {
+				int32 v = _data[_width * (by >> 16) + rx - 1];
+				_data[_width * ry + rx] = v;
+				_data[_width * ry + rx+1] = v;
+			}
 		}
 
 		bx += cdx;
