@@ -143,16 +143,8 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 	} else {
 
 		s->r_acc = make_reg(0, 0);
-		// FIXME: When typing something wrong in the fanmade game Demo Quest,
-		// after the error dialog, the game checks for claimed to be 0 before
-		// showing a subsequent dialog. The following selector change causes
-		// it to be 1, thus causing the game to hang in an endless loop (bug
-		// #3038870. Thus, this seems to be wrong (since fanmade games use
-		// the original SCI interpreter), but we need to check against
-		// dissassembly. Since kParse is in the process of being dissassembled
-		// again, I'm leaving this FIXME in for now, so that it won't be
-		// forgotten :)
 		writeSelectorValue(segMan, event, SELECTOR(claimed), 1);
+
 		if (error) {
 			s->_segMan->strcpy(s->_segMan->getParserPtr(), error);
 			debugC(2, kDebugLevelParser, "Word unknown: %s", error);

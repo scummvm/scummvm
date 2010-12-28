@@ -300,6 +300,35 @@ const SciScriptSignature ecoquest2Signatures[] = {
 };
 
 // ===========================================================================
+// EventHandler::handleEvent in Demo Quest has a bug, and it jumps to the
+// wrong address when an incorrect word is typed, therefore leading to an
+// infinite loop. This script bug was not apparent in SSCI, probably because
+// event handling was slightly different there, so it was never discovered.
+// Fixes bug #3038870.
+const byte fanmadeSignatureInfiniteLoop[] = {
+	13,
+	0x38, 0x4c, 0x00,  // pushi 004c
+	0x39, 0x00,        // pushi 00
+	0x87, 0x01,        // lap 01
+	0x4b, 0x04,        // send 04
+	0x18,              // not
+	0x30, 0x2f, 0x00,  // bnt 002f  [06a5]	--> jmp ffbc  [0664] --> BUG! infinite loop
+	0
+};
+
+const uint16 fanmadePatchInfiniteLoop[] = {
+	PATCH_ADDTOOFFSET | +10,
+	0x30, 0x32, 0x00,  // bnt 0032  [06a8] --> pushi 004c
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                 adjust
+const SciScriptSignature fanmadeSignatures[] = {
+	{    999, "infinite loop on typo",                       1, PATCH_MAGICDWORD(0x18, 0x30, 0x2f, 0x00),    -9, fanmadeSignatureInfiniteLoop, fanmadePatchInfiniteLoop },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 //  script 0 of freddy pharkas/CD PointsSound::check waits for a signal and if
 //   no signal received will call kDoSound(0xD) which is a dummy in sierra sci
 //   and ScummVM and will use acc (which is not set by the dummy) to trigger
@@ -1171,6 +1200,9 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		break;
 	case GID_ECOQUEST2:
 		signatureTable = ecoquest2Signatures;
+		break;
+	case GID_FANMADE:
+		signatureTable = fanmadeSignatures;
 		break;
 	case GID_FREDDYPHARKAS:
 		signatureTable = freddypharkasSignatures;
