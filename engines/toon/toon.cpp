@@ -2493,14 +2493,12 @@ int32 ToonEngine::runConversationCommand(int16 **command) {
 		playSoundWrong();
 		break;
 	case 104:
-		*command = (int16 *)((char *)_conversationData + v4);
 		*command = (int16 *)((char *)_conversationData + v4 - 4);
 		break;
 		//
 	case 105:
 		if (getConversationFlag(_gameState->_currentScene, v4)) {
 			result = READ_LE_INT16(*command + 2);
-			*command = (int16 *)((char *)_conversationData + result);
 			*command = (int16 *)((char *)_conversationData + result - 4);
 		} else {
 			int16 *newPtr = *command + 1;
