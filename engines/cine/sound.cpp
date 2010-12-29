@@ -645,8 +645,8 @@ void PCSoundFxPlayer::stop() {
 			_driver->stopChannel(i);
 		}
 		_driver->stopAll();
-		unload();
 	}
+	unload();
 }
 
 void PCSoundFxPlayer::fadeOut() {
