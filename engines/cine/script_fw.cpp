@@ -249,7 +249,7 @@ ScriptVars::ScriptVars(Common::SeekableReadStream &fHandle, unsigned int len)
 }
 
 void ScriptVars::reinit(unsigned int len) {
-	delete _vars;
+	delete[] _vars;
 
 	_size = len;
 	_vars = new int16[len];
