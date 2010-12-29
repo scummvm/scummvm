@@ -48,15 +48,14 @@ protected:
 	typedef const char *(*CharFunc)();
 
 	DLObject *_dlHandle;
-	Common::String _filename;
 	void *_dso_handle;
 
 	virtual VoidFunc findSymbol(const char *symbol);
 
 public:
 	ELFPlugin(const Common::String &filename) :
+		DynamicPlugin(filename),
 		_dlHandle(0),
-		_filename(filename),
 		_dso_handle(0) {
 	}
 

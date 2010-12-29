@@ -335,16 +335,15 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
 }
 
-//
-// This should only be run once
+/**
+ * This should only be called once by main()
+ **/
 void PluginManagerUncached::init() {
 	unloadAllPlugins();
 	_allEnginePlugins.clear();
 	
-	// We need to resize our pluginsInMem list to prevent fragmentation
-	// Otherwise, as soon as we add our 1 engine plugin (which is all we'll have in memory at a time)
-	// We'll get an allocation in memory that will never go away
-	_pluginsInMem[PLUGIN_TYPE_ENGINE].resize(2);	// more than we need
+	// Resize our pluginsInMem list to prevent fragmentation
+	_pluginsInMem[PLUGIN_TYPE_ENGINE].resize(2);
 
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
@@ -371,6 +370,63 @@ void PluginManagerUncached::init() {
  	}
 }
 
+/**
+ * Try to load the plugin by searching in the ConfigManager for a matching
+ * gameId under the domain 'plugin_files'.
+ **/
+bool PluginManagerUncached::loadPluginFromGameId(const Common::String &gameId) {
+	Common::ConfigManager::Domain *domain = ConfMan.getDomain("plugin_files");
+
+	if (domain) {
+		if (domain->contains(gameId)) {
+			Common::String filename = (*domain)[gameId];
+
+		    if (loadPluginByFileName(filename)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/**
+ * Load a plugin with a filename taken from ConfigManager.
+ **/
+bool PluginManagerUncached::loadPluginByFileName(const Common::String &filename) {
+	if (filename.empty())
+		return false;
+	
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
+
+	PluginList::iterator i;
+	for (i = _allEnginePlugins.begin(); i != _allEnginePlugins.end(); ++i) {
+		if (Common::String((*i)->getFileName()) == filename && (*i)->loadPlugin()) {
+			addToPluginsInMemList(*i);
+			_currentPlugin = i;
+			return true;
+		}
+	}
+	return false;
+}
+
+/** 
+ * Update the config manager with a plugin file name that we found can handle
+ * the game.
+ **/
+void PluginManagerUncached::updateConfigWithFileName(const Common::String &gameId) {
+	// Check if we have a filename for the current plugin
+	if ((*_currentPlugin)->getFileName()) {
+		if (!ConfMan.hasMiscDomain("plugin_files"))
+			ConfMan.addMiscDomain("plugin_files");
+
+		Common::ConfigManager::Domain *domain = ConfMan.getDomain("plugin_files");
+		assert(domain);
+		(*domain)[gameId] = (*_currentPlugin)->getFileName();
+
+		ConfMan.flushToDisk();
+	}
+}
+
 void PluginManagerUncached::loadFirstPlugin() { 
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
 
@@ -395,6 +451,10 @@ bool PluginManagerUncached::loadNextPlugin() {
 	return false;	// no more in list
 }
 
+/**
+ * Used by only the cached plugin manager. The uncached manager can only have
+ * one plugin in memory at a time.
+ **/
 void PluginManager::loadAllPlugins() {
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
@@ -426,6 +486,9 @@ void PluginManager::unloadPluginsExcept(PluginType type, const Plugin *plugin, b
 	}
 }
 
+/*
+ * Used only by the cached plugin manager since it deletes the plugin.
+ */
 bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	assert(plugin);
 	// Try to load the plugin
@@ -439,6 +502,9 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	}
 }
 
+/**
+ * Add to the list of plugins loaded in memory.
+ */
 void PluginManager::addToPluginsInMemList(Plugin *plugin) {
 	bool found = false;
 	// The plugin is valid, see if it provides the same module as an
@@ -468,16 +534,35 @@ void PluginManager::addToPluginsInMemList(Plugin *plugin) {
 
 DECLARE_SINGLETON(EngineManager);
 
+/** 
+ * This function works for both cached and uncached PluginManagers.
+ * For the cached version, most of the logic here will short circuit.
+ *
+ * For the uncached version, we first try to find the plugin using the gameId
+ * and only if we can't find it there, we loop through the plugins.
+ **/
 GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
 	GameDescriptor result;
-
-	PluginManager::instance().loadFirstPlugin();
+	
+	// first look for the game using the gameId
+	if (PluginMan.loadPluginFromGameId(gameName))  {
+		result = findGameInLoadedPlugins(gameName, plugin); 
+		if (!result.gameid().empty()) {
+			return result;
+		}
+	}
+	
+	// We failed to find it using the gameid. Scan the list of plugins
+	PluginMan.loadFirstPlugin();
 	do {
 		result = findGameInLoadedPlugins(gameName, plugin); 
 		if (!result.gameid().empty()) {
+			// Update with new plugin file name
+			PluginMan.updateConfigWithFileName(gameName);
 			break;
 		}
-	} while (PluginManager::instance().loadNextPlugin());
+	} while (PluginMan.loadNextPlugin());
+
 	return result;
 }
 
