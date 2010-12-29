@@ -56,6 +56,11 @@ MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *sav
 	_myst.imagerActive = 1;
 	// Stellar Observatory Lights - Default to On
 	_myst.observatoryLights = 1;
+	// Stellar Observatory sliders
+	_myst.observatoryDaySlider = 90;
+	_myst.observatoryMonthSlider = 90;
+	_myst.observatoryYearSlider = 90;
+	_myst.observatoryTimeSlider = 90;
 
 	// Lighthouse Trapdoor State - Default to Locked
 	_stoneship.trapdoorState = 2;
@@ -197,10 +202,10 @@ void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 	for (int i = 0; i < 5; i++)
 		s.syncAsUint16LE(_myst.rocketSliderPosition[i]);
 
-	s.syncAsUint16LE(_myst.u6);
-	s.syncAsUint16LE(_myst.u7);
-	s.syncAsUint16LE(_myst.u8);
-	s.syncAsUint16LE(_myst.u9);
+	s.syncAsUint16LE(_myst.observatoryDaySlider);
+	s.syncAsUint16LE(_myst.observatoryMonthSlider);
+	s.syncAsUint16LE(_myst.observatoryYearSlider);
+	s.syncAsUint16LE(_myst.observatoryTimeSlider);
 
 	// Channelwood
 	if (isME) {

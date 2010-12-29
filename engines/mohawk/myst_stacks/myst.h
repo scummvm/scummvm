@@ -66,6 +66,7 @@ private:
 	void tree_run();
 	void imagerValidation_run();
 	void imager_run();
+	void observatory_run();
 
 	DECLARE_OPCODE(o_libraryBookPageTurnLeft);
 	DECLARE_OPCODE(o_libraryBookPageTurnRight);
@@ -158,7 +159,7 @@ private:
 	DECLARE_OPCODE(o_fireplace_init);
 	DECLARE_OPCODE(opcode_212);
 	DECLARE_OPCODE(opcode_213);
-	DECLARE_OPCODE(opcode_214);
+	DECLARE_OPCODE(o_observatory_init);
 	DECLARE_OPCODE(opcode_215);
 	DECLARE_OPCODE(o_treeCard_init);
 	DECLARE_OPCODE(o_treeEntry_init);
@@ -250,6 +251,16 @@ private:
 	uint16 _treeMinAccessiblePosition; // 230
 	uint16 _treeMaxAccessiblePosition; // 232
 
+	bool _observatoryRunning;
+	MystResourceType8 *_observatoryVisualizer; // 184
+	MystResourceType8 *_observatoryGoButton; // 188
+	MystResourceType10 *_observatoryDaySlider; // 192
+	MystResourceType10 *_observatoryMonthSlider; // 196
+	MystResourceType10 *_observatoryYearSlider; // 200
+	MystResourceType10 *_observatoryTimeSlider; // 204
+	uint32 _observatoryLastTime; // 208
+	bool _observatoryNotInitialized; // 212
+
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
 
@@ -273,6 +284,9 @@ private:
 
 	void treeSetAlcoveAccessible();
 	uint32 treeNextMoveDelay(uint16 pressure);
+
+	void observatorySetTargetToSetting();
+	void observatoryUpdateVisualizer(uint16 x, uint16 y);
 };
 
 } // End of namespace Mohawk

@@ -163,10 +163,10 @@ public:
 		uint16 treePosition;
 		uint32 treeLastMoveTime;
 		uint16 rocketSliderPosition[5];
-		uint16 u6;
-		uint16 u7;
-		uint16 u8;
-		uint16 u9;
+		uint16 observatoryDaySlider;
+		uint16 observatoryMonthSlider;
+		uint16 observatoryYearSlider;
+		uint16 observatoryTimeSlider;
 	} _myst;
 
 	/* 7 Channelwood Specific Variables :

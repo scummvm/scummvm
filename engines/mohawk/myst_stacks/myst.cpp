@@ -169,7 +169,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(211, o_fireplace_init);
 	OPCODE(212, opcode_212);
 	OPCODE(213, opcode_213);
-	OPCODE(214, opcode_214);
+	OPCODE(214, o_observatory_init);
 	OPCODE(215, opcode_215);
 	OPCODE(216, o_treeCard_init);
 	OPCODE(217, o_treeEntry_init);
@@ -207,6 +207,7 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 	_basementPressureDecreasing = false;
 	_imagerValidationRunning = false;
 	_imagerRunning = false;
+	_observatoryRunning = false;
 
 	opcode_212_disable();
 }
@@ -252,6 +253,9 @@ void MystScriptParser_Myst::runPersistentScripts() {
 
 	if (_imagerRunning)
 		imager_run();
+
+	if (_observatoryRunning)
+		observatory_run();
 }
 
 uint16 MystScriptParser_Myst::getVar(uint16 var) {
@@ -2728,27 +2732,104 @@ void MystScriptParser_Myst::opcode_213(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Myst::opcode_214(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_observatory_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Stellar observatory init", op);
 
-	// Used for Card 4500 (Stellar Observatory)
-	if (argc == 5) {
-		debugC(kDebugScript, "Opcode %d: Unknown...", op);
+	_tempVar = 0;
+	_observatoryNotInitialized = true;
+	_observatoryVisualizer = static_cast<MystResourceType8 *>(_invokingResource);
+	_observatoryGoButton = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
+	_observatoryDaySlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[1]]);
+	_observatoryMonthSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[2]]);
+	_observatoryYearSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[3]]);
+	_observatoryTimeSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[4]]);
 
-		uint16 u0 = argv[0];
-		uint16 u1 = argv[1];
-		uint16 u2 = argv[2];
-		uint16 u3 = argv[3];
-		uint16 u4 = argv[4];
+	// Set date selection sliders position
+	_observatoryDaySlider->setPosition(_state.observatoryDaySlider);
+	_observatoryMonthSlider->setPosition(_state.observatoryMonthSlider);
+	_observatoryYearSlider->setPosition(_state.observatoryYearSlider);
+	_observatoryTimeSlider->setPosition(_state.observatoryTimeSlider);
 
-		debugC(kDebugScript, "\tu0: %d", u0);
-		debugC(kDebugScript, "\tu1: %d", u1);
-		debugC(kDebugScript, "\tu2: %d", u2);
-		debugC(kDebugScript, "\tu3: %d", u3);
-		debugC(kDebugScript, "\tu4: %d", u4);
-		// TODO: Complete Implementation...
-	} else
-		unknown(op, var, argc, argv);
+	_observatoryLastTime = _vm->_system->getMillis();
+
+	observatorySetTargetToSetting();
+
+	_observatoryRunning = true;
+}
+
+void MystScriptParser_Myst::observatoryUpdateVisualizer(uint16 x, uint16 y) {
+	Common::Rect &visu0 = _observatoryVisualizer->_subImages[0].rect;
+	Common::Rect &visu1 = _observatoryVisualizer->_subImages[1].rect;
+
+	visu0.left = x;
+	visu0.right = visu0.left + 105;
+	visu0.bottom = 512 - y;
+	visu0.top = visu0.bottom - 106;
+
+	visu1.left = visu0.left;
+	visu1.top = visu0.top;
+	visu1.right = visu0.right;
+	visu1.bottom = visu0.bottom;
+}
+
+void MystScriptParser_Myst::observatorySetTargetToSetting() {
+	uint16 visuX = _state.observatoryYearSetting * 0.28;
+	uint16 visuY = 250 * _state.observatoryTimeSetting
+			+ 65 * (_state.observatoryMonthSetting + 1)
+			+ 20 * _state.observatoryDaySetting;
+
+	observatoryUpdateVisualizer(visuX % 407, visuY % 407);
+
+	_state.observatoryDayTarget = _state.observatoryDaySetting;
+	_state.observatoryMonthTarget = _state.observatoryMonthSetting;
+	_state.observatoryYearTarget = _state.observatoryYearSetting;
+	_state.observatoryTimeTarget = _state.observatoryTimeSetting;
+}
+
+void MystScriptParser_Myst::observatory_run() {
+	if (_observatoryNotInitialized) {
+		_observatoryNotInitialized = false;
+
+		_vm->_cursor->hideCursor();
+
+		// Make sliders "initialize"
+		_vm->_sound->replaceSound(8500);
+		_observatoryDaySlider->drawConditionalDataToScreen(2);
+		_vm->_system->delayMillis(200);
+		_vm->redrawResource(_observatoryDaySlider);
+
+		_vm->_sound->replaceSound(8500);
+		_observatoryMonthSlider->drawConditionalDataToScreen(2);
+		_vm->_system->delayMillis(200);
+		_vm->redrawResource(_observatoryMonthSlider);
+
+		_vm->_sound->replaceSound(8500);
+		_observatoryYearSlider->drawConditionalDataToScreen(2);
+		_vm->_system->delayMillis(200);
+		_vm->redrawResource(_observatoryYearSlider);
+
+		_vm->_sound->replaceSound(8500);
+		_observatoryTimeSlider->drawConditionalDataToScreen(2);
+		_vm->_system->delayMillis(200);
+		_vm->redrawResource(_observatoryTimeSlider);
+
+		_vm->_cursor->showCursor();
+	}
+
+	// Setting not at target
+	if (_state.observatoryDayTarget != _state.observatoryDaySetting
+			|| _state.observatoryMonthTarget != _state.observatoryMonthSetting
+			|| _state.observatoryYearTarget != _state.observatoryYearSetting
+			|| _state.observatoryTimeTarget != _state.observatoryTimeSetting) {
+
+		// Blink go button
+		uint32 time = _vm->_system->getMillis();
+		if (time > _observatoryLastTime + 250) {
+			_tempVar = (_tempVar + 1) % 2;
+			_observatoryGoButton->drawConditionalDataToScreen(_tempVar);
+			_observatoryLastTime = time;
+		}
+	}
 }
 
 void MystScriptParser_Myst::opcode_215(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
