@@ -224,7 +224,7 @@ static inline Bits MakeVolume( Bitu wave, Bitu volume ) {
 	}
 #endif
 	return (sig >> exp);
-};
+}
 
 static Bits DB_FASTCALL WaveForm0( Bitu i, Bitu volume ) {
 	Bits neg = 0 - (( i >> 9) & 1);//Create ~0 or 0
@@ -576,7 +576,7 @@ INLINE Bits Operator::GetWave( Bitu index, Bitu vol ) {
 	return (waveBase[ index & waveMask ] * MulTable[ vol >> ENV_EXTRA ]) >> MUL_SH;
 #elif ( DBOPL_WAVE == WAVE_TABLELOG )
 	Bit32s wave = waveBase[ index & waveMask ];
-	Bit32u total = ( wave & 0x7fff ) + vol << ( 3 - ENV_EXTRA );
+	Bit32u total = ( wave & 0x7fff ) + ( vol << ( 3 - ENV_EXTRA ) );
 	Bit32s sig = ExpTable[ total & 0xff ];
 	Bit32u exp = total >> 8;
 	Bit32s neg = wave >> 16;
