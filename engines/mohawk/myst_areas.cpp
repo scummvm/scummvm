@@ -658,6 +658,9 @@ MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableRe
 		}
 	}
 
+	_stepH = 0;
+	_stepV = 0;
+
 	if (_stepsH) {
 		_stepH = (_maxH - _minH) / (_stepsH - 1);
 	}

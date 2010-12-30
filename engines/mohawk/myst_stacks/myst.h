@@ -67,6 +67,10 @@ private:
 	void imagerValidation_run();
 	void imager_run();
 	void observatory_run();
+	void observatoryMonthChange_run();
+	void observatoryDayChange_run();
+	void observatoryYearChange_run();
+	void observatoryTimeChange_run();
 
 	DECLARE_OPCODE(o_libraryBookPageTurnLeft);
 	DECLARE_OPCODE(o_libraryBookPageTurnRight);
@@ -89,10 +93,8 @@ private:
 	DECLARE_OPCODE(o_cabinSafeHandleMove);
 	DECLARE_OPCODE(o_cabinSafeHandleEndMove);
 	DECLARE_OPCODE(o_treePressureReleaseStart);
-	DECLARE_OPCODE(opcode_129);
-	DECLARE_OPCODE(opcode_130);
-	DECLARE_OPCODE(opcode_131);
-	DECLARE_OPCODE(opcode_132);
+	DECLARE_OPCODE(o_observatoryMonthChangeStart);
+	DECLARE_OPCODE(o_observatoryDayChangeStart);
 	DECLARE_OPCODE(opcode_133);
 	DECLARE_OPCODE(opcode_134);
 	DECLARE_OPCODE(opcode_135);
@@ -139,11 +141,9 @@ private:
 	DECLARE_OPCODE(o_clockHourWheelStartTurn);
 	DECLARE_OPCODE(o_libraryCombinationBookStartRight);
 	DECLARE_OPCODE(o_libraryCombinationBookStartLeft);
-	DECLARE_OPCODE(opcode_192);
-	DECLARE_OPCODE(opcode_194);
-	DECLARE_OPCODE(opcode_195);
-	DECLARE_OPCODE(opcode_196);
-	DECLARE_OPCODE(opcode_197);
+	DECLARE_OPCODE(o_observatoryTimeChangeStart);
+	DECLARE_OPCODE(o_observatoryChangeSettingStop);
+	DECLARE_OPCODE(o_observatoryYearChangeStart);
 	DECLARE_OPCODE(o_dockVaultForceClose);
 	DECLARE_OPCODE(opcode_199);
 
@@ -252,6 +252,10 @@ private:
 	uint16 _treeMaxAccessiblePosition; // 232
 
 	bool _observatoryRunning;
+	bool _observatoryMonthChanging;
+	bool _observatoryDayChanging;
+	bool _observatoryYearChanging;
+	bool _observatoryTimeChanging;
 	MystResourceType8 *_observatoryVisualizer; // 184
 	MystResourceType8 *_observatoryGoButton; // 188
 	MystResourceType10 *_observatoryDaySlider; // 192
@@ -260,6 +264,8 @@ private:
 	MystResourceType10 *_observatoryTimeSlider; // 204
 	uint32 _observatoryLastTime; // 208
 	bool _observatoryNotInitialized; // 212
+	int16 _observatoryIncrement; // 346
+	MystResourceType10 *_observatoryCurrentSlider; // 348
 
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);
@@ -285,8 +291,13 @@ private:
 	void treeSetAlcoveAccessible();
 	uint32 treeNextMoveDelay(uint16 pressure);
 
+	bool observatoryIsDDMMYYYY2400();
 	void observatorySetTargetToSetting();
 	void observatoryUpdateVisualizer(uint16 x, uint16 y);
+	void observatoryIncrementMonth(int16 increment);
+	void observatoryIncrementDay(int16 increment);
+	void observatoryIncrementYear(int16 increment);
+	void observatoryIncrementTime(int16 increment);
 };
 
 } // End of namespace Mohawk

@@ -56,6 +56,8 @@ MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *sav
 	_myst.imagerActive = 1;
 	// Stellar Observatory Lights - Default to On
 	_myst.observatoryLights = 1;
+	// First day of month
+	_myst.observatoryDaySetting = 1;
 	// Stellar Observatory sliders
 	_myst.observatoryDaySlider = 90;
 	_myst.observatoryMonthSlider = 90;
