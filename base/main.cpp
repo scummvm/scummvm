@@ -423,7 +423,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// Try to run the game
 			Common::Error result = runGame(plugin, system, specialDebug);
 
-		#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)
+		#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
 			// do our best to prevent fragmentation by unloading as soon as we can
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
 			// reallocate the config manager to get rid of any fragmentation

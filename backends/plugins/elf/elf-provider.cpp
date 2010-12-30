@@ -183,7 +183,7 @@ void ELFPlugin::unloadPlugin() {
 PluginList ELFPluginProvider::getPlugins() {
 	PluginList pl = FilePluginProvider::getPlugins();
 
-#if defined(ONE_PLUGIN_AT_A_TIME) && !defined(ELF_NO_MEM_MANAGER) 	
+#if defined(UNCACHED_PLUGINS) && !defined(ELF_NO_MEM_MANAGER) 	
 	// This static downcast is safe because all of the plugins must
 	// be ELF plugins
 	for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {

@@ -306,7 +306,7 @@ PluginManager &PluginManager::instance() {
 	if (_instance)
 		return *_instance;
 
-#if defined(ONE_PLUGIN_AT_A_TIME) && defined(DYNAMIC_MODULES)		
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)		
 		_instance = new PluginManagerUncached();
 #else
 		_instance = new PluginManager();
