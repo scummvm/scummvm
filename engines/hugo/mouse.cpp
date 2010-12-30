@@ -118,7 +118,7 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 		else if (gameStatus.inventoryObjId == objId)
 			gameStatus.inventoryObjId = -1;         // Same icon - deselect it
 		else
-			_vm->_object->useObject(objId);                   // Use status.objid on object
+			_vm->_object->useObject(objId);         // Use status.objid on object
 	} else {                                        // Clicked over viewport object
 		object_t *obj = &_vm->_object->_objects[objId];
 		int16 x, y;
@@ -130,12 +130,12 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 				_vm->_object->useObject(objId);
 			break;
 		case 0:                                     // Immediate use
-			_vm->_object->useObject(objId);          // Pick up or use object
+			_vm->_object->useObject(objId);         // Pick up or use object
 			break;
 		default:                                    // Walk to view point if possible
 			if (!_vm->_route->startRoute(GO_GET, objId, obj->viewx, obj->viewy)) {
-				if (_vm->_hero->cycling == INVISIBLE)// If invisible do
-					_vm->_object->useObject(objId);           // immediate use
+				if (_vm->_hero->cycling == INVISIBLE) // If invisible do
+					_vm->_object->useObject(objId); // immediate use
 				else
 					Utils::Box(BOX_ANY, "%s", _vm->_textMouse[kMsNoWayText]);      // Can't get there
 			}

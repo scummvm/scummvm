@@ -100,12 +100,8 @@ void ObjectHandler::useObject(int16 objId) {
 		// Get or use objid directly
 		if ((obj->genericCmd & TAKE) || obj->objValue)  // Get collectible item
 			sprintf(_line, "%s %s", _vm->_arrayVerbs[_vm->_take][0], _vm->_arrayNouns[obj->nounIndex][0]);
-		else if (obj->genericCmd & LOOK)            // Look item
-			sprintf(_line, "%s %s", _vm->_arrayVerbs[_vm->_look][0], _vm->_arrayNouns[obj->nounIndex][0]);
-		else if (obj->genericCmd & DROP)            // Drop item
-			sprintf(_line, "%s %s", _vm->_arrayVerbs[_vm->_drop][0], _vm->_arrayNouns[obj->nounIndex][0]);
 		else if (obj->cmdIndex != 0)                // Use non-collectible item if able
-			sprintf(_line, "%s %s", _vm->_arrayVerbs[_vm->_cmdList[obj->cmdIndex][1].verbIndex][0], _vm->_arrayNouns[obj->nounIndex][0]);
+			sprintf(_line, "%s %s", _vm->_arrayVerbs[_vm->_cmdList[obj->cmdIndex][0].verbIndex][0], _vm->_arrayNouns[obj->nounIndex][0]);
 		else if ((verb = _vm->useBG(_vm->_arrayNouns[obj->nounIndex][0])) != 0)
 			sprintf(_line, "%s %s", verb, _vm->_arrayNouns[obj->nounIndex][0]);
 		else
@@ -142,10 +138,10 @@ void ObjectHandler::useObject(int16 objId) {
 		}
 	}
 
-	if (_vm->getGameStatus().inventoryState == I_ACTIVE)         // If inventory active, remove it
+	if (_vm->getGameStatus().inventoryState == I_ACTIVE) // If inventory active, remove it
 		_vm->getGameStatus().inventoryState = I_UP;
-	_vm->getGameStatus().inventoryObjId  = -1;                   // Deselect any dragged icon
-	_vm->_parser->lineHandler();                         // and process command
+	_vm->getGameStatus().inventoryObjId  = -1;      // Deselect any dragged icon
+	_vm->_parser->lineHandler();                    // and process command
 }
 
 /**

@@ -277,7 +277,7 @@ bool Parser_v3d::isGenericVerb(object_t *obj, char *comment) {
 			Utils::Box(BOX_ANY, "%s", _vm->_textData[obj->stateDataIndex[obj->state]]);
 		} else {
 			if ((LOOK & obj->genericCmd) == LOOK) {
-				if (_vm->_textData[obj->dataIndex])
+				if (obj->dataIndex != 0)
 					Utils::Box(BOX_ANY, "%s", _vm->_textData[obj->dataIndex]);
 				else
 					return false;
@@ -290,7 +290,7 @@ bool Parser_v3d::isGenericVerb(object_t *obj, char *comment) {
 			Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBHave]);
 		else if ((TAKE & obj->genericCmd) == TAKE)
 			takeObject(obj);
-		else if (obj->cmdIndex != 0)                // No comment if possible commands
+		else if (obj->cmdIndex)                     // No comment if possible commands
 			return false;
 		else if (!obj->verbOnlyFl && (TAKE & obj->genericCmd) == TAKE)  // Make sure not taking object in context!
 			Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBNoUse]);
