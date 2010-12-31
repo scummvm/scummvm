@@ -360,13 +360,73 @@ void Parser_v1d::keyHandler(Common::Event event) {
 		gameStatus.viewState = V_PLAY;
 		break;
 	case Common::KEYCODE_F6:                        // Inventory
-		showDosInventory();
+		if (gameStatus.viewState == V_PLAY) {
+			if (gameStatus.gameOverFl)
+				Utils::gameOverMsg();
+			else
+				showDosInventory();
+		}
 		break;
 	case Common::KEYCODE_F8:                        // Turbo mode
 		_config.turboFl = !_config.turboFl;
 		break;
 	case Common::KEYCODE_F9:                        // Boss button
 		warning("STUB: F9 (DOS) - BossKey");
+		break;
+	case Common::KEYCODE_l:
+		if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+			_vm->_file->restoreGame(-1);
+			_vm->_scheduler->restoreScreen(*_vm->_screen_p);
+			gameStatus.viewState = V_PLAY;
+		} else {
+			if (!gameStatus.storyModeFl) {          // Keyboard disabled
+				// Add printable keys to ring buffer
+				uint16 bnext = _putIndex + 1;
+				if (bnext >= sizeof(_ringBuffer))
+					bnext = 0;
+				if (bnext != _getIndex) {
+					_ringBuffer[_putIndex] = event.kbd.ascii;
+					_putIndex = bnext;
+				}
+			}
+		}
+		break;
+	case Common::KEYCODE_n:
+		if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+			warning("STUB: CTRL-N (WIN) - New Game");
+		} else {
+			if (!gameStatus.storyModeFl) {          // Keyboard disabled
+				// Add printable keys to ring buffer
+				uint16 bnext = _putIndex + 1;
+				if (bnext >= sizeof(_ringBuffer))
+					bnext = 0;
+				if (bnext != _getIndex) {
+					_ringBuffer[_putIndex] = event.kbd.ascii;
+					_putIndex = bnext;
+				}
+			}
+		}
+		break;
+	case Common::KEYCODE_s:
+		if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+			if (gameStatus.viewState == V_PLAY) {
+				if (gameStatus.gameOverFl)
+					Utils::gameOverMsg();
+				else
+					_vm->_file->saveGame(-1, Common::String());
+			}
+		} else {
+			if (!gameStatus.storyModeFl) {              // Keyboard disabled
+				// Add printable keys to ring buffer
+				uint16 bnext = _putIndex + 1;
+				if (bnext >= sizeof(_ringBuffer))
+					bnext = 0;
+				if (bnext != _getIndex) {
+					_ringBuffer[_putIndex] = event.kbd.ascii;
+					_putIndex = bnext;
+				}
+			}
+		}
 		break;
 	default:                                        // Any other key
 		if (!gameStatus.storyModeFl) {              // Keyboard disabled
