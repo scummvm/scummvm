@@ -111,6 +111,9 @@ void Parser_v1w::keyHandler(Common::Event event) {
 		if ((gameStatus.inventoryState == I_OFF) && (gameStatus.viewState == V_PLAY)) {
 			gameStatus.inventoryState = I_DOWN;
 			gameStatus.viewState = V_INVENT;
+		} else if (gameStatus.inventoryState == I_ACTIVE) {
+			gameStatus.inventoryState = I_UP;
+			gameStatus.viewState = V_INVENT;
 		}
 		break;
 	case Common::KEYCODE_F8:                        // Turbo mode
