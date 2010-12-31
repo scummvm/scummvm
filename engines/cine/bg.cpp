@@ -38,6 +38,7 @@ byte *additionalBgTable[9];
 int16 currentAdditionalBgIdx = 0, currentAdditionalBgIdx2 = 0;
 
 byte loadCtFW(const char *ctName) {
+	debugC(1, kCineDebugCollision, "loadCtFW(\"%s\")", ctName);
 	uint16 header[32];
 	byte *ptr, *dataPtr;
 
@@ -71,12 +72,21 @@ byte loadCtFW(const char *ctName) {
 }
 
 byte loadCtOS(const char *ctName) {
+	debugC(1, kCineDebugCollision, "loadCtOS(\"%s\")", ctName);
 	byte *ptr, *dataPtr;
+
+	int16 foundFileIdx = findFileInBundle(ctName);
+	if (foundFileIdx == -1) {
+		warning("loadCtOS: Unable to find collision data file '%s'", ctName);
+		// FIXME: Rework this function's return value policy and return an appropriate value here.
+		// The return value isn't yet used for anything so currently it doesn't really matter.
+		return 0;
+	}
 
 	if (currentCtName != ctName)
 		strcpy(currentCtName, ctName);
 
-	ptr = dataPtr = readBundleFile(findFileInBundle(ctName));
+	ptr = dataPtr = readBundleFile(foundFileIdx);
 
 	uint16 bpp = READ_BE_UINT16(ptr);
 	ptr += 2;

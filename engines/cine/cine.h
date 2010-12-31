@@ -217,9 +217,10 @@ enum {
 };
 
 enum {
-	kCineDebugScript = 1 << 0,
-	kCineDebugPart   = 1 << 1,
-	kCineDebugSound  = 1 << 2
+	kCineDebugScript    = 1 << 0,
+	kCineDebugPart      = 1 << 1,
+	kCineDebugSound     = 1 << 2,
+	kCineDebugCollision = 1 << 3
 };
 
 enum {

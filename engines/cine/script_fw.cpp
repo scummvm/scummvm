@@ -1915,6 +1915,7 @@ int16 getZoneFromPositionRaw(byte *page, int16 x, int16 y, int16 width) {
 }
 
 int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx) {
+	debugC(1, kCineDebugCollision, "checkCollision(objIdx: %d x: %d y:%d numZones:%d zoneIdx: %d)", objIdx, x, y, numZones, zoneIdx);
 	int16 lx = g_cine->_objectTable[objIdx].x + x;
 	int16 ly = g_cine->_objectTable[objIdx].y + y;
 	int16 idx;
