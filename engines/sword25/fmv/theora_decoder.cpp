@@ -225,7 +225,7 @@ bool TheoraDecoder::load(Common::SeekableReadStream *stream) {
 		switch (_theoraInfo.colorspace){
 		case TH_CS_UNSPECIFIED:
 			/* nothing to report */
-			break;;
+			break;
 		case TH_CS_ITU_REC_470M:
 			debug(1, "  encoder specified ITU Rec 470M (NTSC) color.");
 			break;
