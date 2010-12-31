@@ -575,9 +575,7 @@ PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
 
 PCSoundFxPlayer::~PCSoundFxPlayer() {
 	_driver->setUpdateCallback(NULL, NULL);
-	if (_playing) {
-		stop();
-	}
+	stop();
 }
 
 bool PCSoundFxPlayer::load(const char *song) {
@@ -589,9 +587,7 @@ bool PCSoundFxPlayer::load(const char *song) {
 	}
 	_fadeOutCounter = 0;
 
-	if (_playing) {
-		stop();
-	}
+	stop();
 
 	_sfxData = readBundleSoundFile(song);
 	if (!_sfxData) {
