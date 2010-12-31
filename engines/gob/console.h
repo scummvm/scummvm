@@ -49,6 +49,6 @@ private:
 	bool cmd_listArchives(int argc, const char **argv);
 };
 
-} // End of namespace Mohawk
+} // End of namespace Gob
 
 #endif
