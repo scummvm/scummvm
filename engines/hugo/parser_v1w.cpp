@@ -99,8 +99,12 @@ void Parser_v1w::keyHandler(Common::Event event) {
 		gameStatus.recallFl = true;
 		break;
 	case Common::KEYCODE_F4:                        // Save game
-		if (gameStatus.viewState == V_PLAY)
-			_vm->_file->saveGame(-1, Common::String());
+		if (gameStatus.viewState == V_PLAY) {
+			if (gameStatus.gameOverFl)
+				Utils::gameOverMsg();
+			else
+				_vm->_file->saveGame(-1, Common::String());
+		}
 		break;
 	case Common::KEYCODE_F5:                        // Restore game
 		_vm->_file->restoreGame(-1);
@@ -108,7 +112,9 @@ void Parser_v1w::keyHandler(Common::Event event) {
 		gameStatus.viewState = V_PLAY;
 		break;
 	case Common::KEYCODE_F6:                        // Inventory
-		if ((gameStatus.inventoryState == I_OFF) && (gameStatus.viewState == V_PLAY)) {
+		if (gameStatus.gameOverFl) {
+			Utils::gameOverMsg();
+	    } else if ((gameStatus.inventoryState == I_OFF) && (gameStatus.viewState == V_PLAY)) {
 			gameStatus.inventoryState = I_DOWN;
 			gameStatus.viewState = V_INVENT;
 		} else if (gameStatus.inventoryState == I_ACTIVE) {

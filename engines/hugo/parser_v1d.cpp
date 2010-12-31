@@ -347,8 +347,12 @@ void Parser_v1d::keyHandler(Common::Event event) {
 		gameStatus.recallFl = true;
 		break;
 	case Common::KEYCODE_F4:                        // Save game
-		if (gameStatus.viewState == V_PLAY)
-			_vm->_file->saveGame(-1, Common::String());
+		if (gameStatus.viewState == V_PLAY) {
+			if (gameStatus.gameOverFl)
+				Utils::gameOverMsg();
+			else
+				_vm->_file->saveGame(-1, Common::String());
+		}
 		break;
 	case Common::KEYCODE_F5:                        // Restore game
 		_vm->_file->restoreGame(-1);
