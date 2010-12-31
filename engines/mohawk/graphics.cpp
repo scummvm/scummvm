@@ -445,7 +445,7 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 	if (src.top + height > surface->h)
 		height = surface->h - src.top;
 
-	debug(3, "MystGraphics::copyImageSectionToScreen()");
+	debug(3, "MystGraphics::copyImageSectionToBackBuffer()");
 	debug(3, "\tImage: %d", image);
 	debug(3, "\tsrc.left: %d", src.left);
 	debug(3, "\tsrc.top: %d", src.top);
