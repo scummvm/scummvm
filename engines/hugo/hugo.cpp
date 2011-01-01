@@ -330,6 +330,7 @@ void HugoEngine::initMachine() {
 */
 void HugoEngine::runMachine() {
 	static uint32 lastTime;
+	uint32 curTime;
 
 	status_t &gameStatus = getGameStatus();
 	// Don't process if we're in a textbox
@@ -340,10 +341,13 @@ void HugoEngine::runMachine() {
 	if (gameStatus.gameOverFl)
 		return;
 
+	curTime = g_system->getMillis();
 	// Process machine once every tick
-	if (g_system->getMillis() - lastTime < (uint32)(1000 / getTPS()))
-		return;
-	lastTime = g_system->getMillis();
+	while (curTime - lastTime < (uint32)(1000 / getTPS())) {
+		g_system->delayMillis(5);
+		curTime = g_system->getMillis();
+	}
+	lastTime = curTime;
 
 	switch (gameStatus.viewState) {
 	case V_IDLE:                                    // Not processing state machine
