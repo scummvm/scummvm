@@ -29,6 +29,9 @@
 #include "sci/engine/kernel.h"
 
 namespace Sci {
+//#define CHECK_LISTS	// adds sanity checking for lists and errors out when problems are found
+
+#ifdef CHECK_LISTS
 
 static bool isSaneNodePointer(SegManager *segMan, reg_t addr) {
 	bool havePrev = false;
@@ -122,6 +125,8 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 	}
 }
 
+#endif
+
 reg_t kNewList(EngineState *s, int argc, reg_t *argv) {
 	reg_t listRef;
 	List *list = s->_segMan->allocateList(&listRef);
@@ -157,7 +162,9 @@ reg_t kFirstNode(EngineState *s, int argc, reg_t *argv) {
 	List *list = s->_segMan->lookupList(argv[0]);
 
 	if (list) {
+#ifdef CHECK_LISTS
 		checkListPointer(s->_segMan, argv[0]);
+#endif
 		return list->first;
 	} else {
 		return NULL_REG;
@@ -171,7 +178,9 @@ reg_t kLastNode(EngineState *s, int argc, reg_t *argv) {
 	List *list = s->_segMan->lookupList(argv[0]);
 
 	if (list) {
+#ifdef CHECK_LISTS
 		checkListPointer(s->_segMan, argv[0]);
+#endif
 		return list->last;
 	} else {
 		return NULL_REG;
@@ -183,8 +192,9 @@ reg_t kEmptyList(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 
 	List *list = s->_segMan->lookupList(argv[0]);
+#ifdef CHECK_LISTS
 	checkListPointer(s->_segMan, argv[0]);
-
+#endif
 	return make_reg(0, ((list) ? list->first.isNull() : 0));
 }
 
@@ -196,7 +206,10 @@ static void addToFront(EngineState *s, reg_t listRef, reg_t nodeRef) {
 
 	if (!newNode)
 		error("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodeRef), PRINT_REG(listRef));
+
+#ifdef CHECK_LISTS
 	checkListPointer(s->_segMan, listRef);
+#endif
 
 	newNode->pred = NULL_REG;
 	newNode->succ = list->first;
@@ -219,7 +232,10 @@ static void addToEnd(EngineState *s, reg_t listRef, reg_t nodeRef) {
 
 	if (!newNode)
 		error("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodeRef), PRINT_REG(listRef));
+
+#ifdef CHECK_LISTS
 	checkListPointer(s->_segMan, listRef);
+#endif
 
 	newNode->pred = list->last;
 	newNode->succ = NULL_REG;
@@ -236,26 +252,37 @@ static void addToEnd(EngineState *s, reg_t listRef, reg_t nodeRef) {
 
 reg_t kNextNode(EngineState *s, int argc, reg_t *argv) {
 	Node *n = s->_segMan->lookupNode(argv[0]);
+
+#ifdef CHECK_LISTS
 	if (!isSaneNodePointer(s->_segMan, argv[0]))
 		return NULL_REG;
+#endif
 
 	return n->succ;
 }
 
 reg_t kPrevNode(EngineState *s, int argc, reg_t *argv) {
 	Node *n = s->_segMan->lookupNode(argv[0]);
+
+#ifdef CHECK_LISTS
 	if (!isSaneNodePointer(s->_segMan, argv[0]))
 		return NULL_REG;
+#endif
 
 	return n->pred;
 }
 
 reg_t kNodeValue(EngineState *s, int argc, reg_t *argv) {
 	Node *n = s->_segMan->lookupNode(argv[0]);
+
+#ifdef CHECK_LISTS
 	if (!isSaneNodePointer(s->_segMan, argv[0]))
 		return NULL_REG;
+#endif
 
-	return n->value;
+	// ICEMAN: when plotting a course in room 40, unDrawLast is called by
+	// startPlot::changeState, but there is no previous entry, so we get 0 here
+	return n ? n->value : NULL_REG;
 }
 
 reg_t kAddToFront(EngineState *s, int argc, reg_t *argv) {
@@ -281,7 +308,9 @@ reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 	Node *firstnode = argv[1].isNull() ? NULL : s->_segMan->lookupNode(argv[1]);
 	Node *newnode = s->_segMan->lookupNode(argv[2]);
 
+#ifdef CHECK_LISTS
 	checkListPointer(s->_segMan, argv[0]);
+#endif
 
 	if (!newnode) {
 		error("New 'node' %04x:%04x is not a node", PRINT_REG(argv[2]));
@@ -323,7 +352,9 @@ reg_t kFindKey(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelNodes, "Looking for key %04x:%04x in list %04x:%04x", PRINT_REG(key), PRINT_REG(list_pos));
 
+#ifdef CHECK_LISTS
 	checkListPointer(s->_segMan, argv[0]);
+#endif
 
 	node_pos = s->_segMan->lookupList(list_pos)->first;
 
