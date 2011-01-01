@@ -354,8 +354,8 @@ public:
 
 	/**
 	 * Return a bitmask with the button states:
-	 * - bit 0: left button up=1, down=0
-	 * - bit 1: right button up=1, down=0
+	 * - bit 0: left button up=0, down=1
+	 * - bit 1: right button up=0, down=1
 	 */
 	virtual int getButtonState() const = 0;
 
