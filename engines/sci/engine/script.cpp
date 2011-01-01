@@ -673,9 +673,9 @@ reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 
 void Script::freeAtAddress(SegManager *segMan, reg_t addr) {
 	/*
-		debugC(2, kDebugLevelGC, "[GC] Freeing script %04x:%04x", PRINT_REG(addr));
+		debugC(kDebugLevelGC, "[GC] Freeing script %04x:%04x", PRINT_REG(addr));
 		if (_localsSegment)
-			debugC(2, kDebugLevelGC, "[GC] Freeing locals %04x:0000", _localsSegment);
+			debugC(kDebugLevelGC, "[GC] Freeing locals %04x:0000", _localsSegment);
 	*/
 
 	if (_markedAsDeleted)

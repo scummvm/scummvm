@@ -38,7 +38,7 @@ struct WorklistManager {
 		if (!reg.segment) // No numbers
 			return;
 
-		debugC(2, kDebugLevelGC, "[GC] Adding %04x:%04x", PRINT_REG(reg));
+		debugC(kDebugLevelGC, "[GC] Adding %04x:%04x", PRINT_REG(reg));
 
 		if (_map.contains(reg))
 			return; // already dealt with it
@@ -98,7 +98,7 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 	for (pos = s->stack_base; pos < xs.sp; pos++)
 		wm.push(*pos);
 
-	debugC(2, kDebugLevelGC, "[GC] -- Finished adding value stack");
+	debugC(kDebugLevelGC, "[GC] -- Finished adding value stack");
 
 	// Init: Execution Stack
 	for (iter = s->_executionStack.begin();
@@ -113,7 +113,7 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 		}
 	}
 
-	debugC(2, kDebugLevelGC, "[GC] -- Finished adding execution stack");
+	debugC(kDebugLevelGC, "[GC] -- Finished adding execution stack");
 
 	const Common::Array<SegmentObj *> &heap = segMan->getSegments();
 
@@ -128,7 +128,7 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 		}
 	}
 
-	debugC(2, kDebugLevelGC, "[GC] -- Finished explicitly loaded scripts, done with root set");
+	debugC(kDebugLevelGC, "[GC] -- Finished explicitly loaded scripts, done with root set");
 
 	// Run Worklist Algorithm
 	SegmentId stack_seg = segMan->findSegmentByType(SEG_TYPE_STACK);
@@ -136,7 +136,7 @@ AddrSet *findAllActiveReferences(EngineState *s) {
 		reg_t reg = wm._worklist.back();
 		wm._worklist.pop_back();
 		if (reg.segment != stack_seg) { // No need to repeat this one
-			debugC(2, kDebugLevelGC, "[GC] Checking %04x:%04x", PRINT_REG(reg));
+			debugC(kDebugLevelGC, "[GC] Checking %04x:%04x", PRINT_REG(reg));
 			if (reg.segment < heap.size() && heap[reg.segment]) {
 				// Valid heap object? Find its outgoing references!
 				wm.pushArray(heap[reg.segment]->listAllOutgoingReferences(reg));
@@ -154,7 +154,7 @@ void run_gc(EngineState *s) {
 	SegManager *segMan = s->_segMan;
 
 	// Some debug stuff
-	debugC(2, kDebugLevelGC, "[GC] Running...");
+	debugC(kDebugLevelGC, "[GC] Running...");
 #ifdef GC_DEBUG_CODE
 	const char *segnames[SEG_TYPE_MAX + 1];
 	int segcount[SEG_TYPE_MAX + 1];
@@ -185,7 +185,7 @@ void run_gc(EngineState *s) {
 				if (!activeRefs->contains(addr)) {
 					// Not found -> we can free it
 					mobj->freeAtAddress(segMan, addr);
-					debugC(2, kDebugLevelGC, "[GC] Deallocating %04x:%04x", PRINT_REG(addr));
+					debugC(kDebugLevelGC, "[GC] Deallocating %04x:%04x", PRINT_REG(addr));
 #ifdef GC_DEBUG_CODE
 					segcount[type]++;
 #endif
@@ -199,10 +199,10 @@ void run_gc(EngineState *s) {
 
 #ifdef GC_DEBUG_CODE
 	// Output debug summary of garbage collection
-	debugC(2, kDebugLevelGC, "[GC] Summary:");
+	debugC(kDebugLevelGC, "[GC] Summary:");
 	for (int i = 0; i <= SEG_TYPE_MAX; i++)
 		if (segcount[i])
-			debugC(2, kDebugLevelGC, "\t%d\t* %s", segcount[i], segnames[i]);
+			debugC(kDebugLevelGC, "\t%d\t* %s", segcount[i], segnames[i]);
 #endif
 }
 

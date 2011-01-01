@@ -114,7 +114,7 @@ static reg_t &validate_property(EngineState *s, Object *obj, int index) {
 	if (index < 0 || (uint)index >= obj->getVarCount()) {
 		// This is same way sierra does it and there are some games, that contain such scripts like
 		//  iceman script 998 (fred::canBeHere, executed right at the start)
-		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!",
+		debugC(kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!",
 			index, obj->getVarCount());
 		return dummyReg;
 	}
@@ -165,8 +165,8 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 				error("%s. [VM] Access would be outside even of the stack (%d); access denied", txt.c_str(), total_offset);
 				return false;
 			} else {
-				debugC(2, kDebugLevelVM, "%s", txt.c_str());
-				debugC(2, kDebugLevelVM, "[VM] Access within stack boundaries; access granted.");
+				debugC(kDebugLevelVM, "%s", txt.c_str());
+				debugC(kDebugLevelVM, "[VM] Access within stack boundaries; access granted.");
 				return true;
 			}
 		}
@@ -235,7 +235,7 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			case VAR_PARAM:
 				// Out-of-bounds read for a parameter that goes onto stack and hits an uninitialized temp
 				//  We return 0 currently in that case
-				debugC(2, kDebugLevelVM, "[VM] Read for a parameter goes out-of-bounds, onto the stack and gets uninitialized temp");
+				debugC(kDebugLevelVM, "[VM] Read for a parameter goes out-of-bounds, onto the stack and gets uninitialized temp");
 				return NULL_REG;
 			default:
 				break;

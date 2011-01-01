@@ -102,7 +102,7 @@ int Kernel::findSelector(const char *selectorName) const {
 			return pos;
 	}
 
-	debugC(2, kDebugLevelVM, "Could not map '%s' to any selector", selectorName);
+	debugC(kDebugLevelVM, "Could not map '%s' to any selector", selectorName);
 
 	return -1;
 }
@@ -662,7 +662,7 @@ void Kernel::mapFunctions() {
 		}
 	} // for all functions requesting to be mapped
 
-	debugC(2, kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.",
+	debugC(kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.",
 				mapped + ignored, _kernelNames.size(), mapped, ignored);
 
 	return;

@@ -132,17 +132,17 @@ reg_t file_open(EngineState *s, const char *filename, int mode, bool unwrapFilen
 		}
 
 		if (!inFile)
-			debugC(2, kDebugLevelFile, "  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
+			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_CREATE) {
 		// Create the file, destroying any content it might have had
 		outFile = saveFileMan->openForSaving(wrappedName);
 		if (!outFile)
-			debugC(2, kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
+			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_OPEN_OR_CREATE) {
 		// Try to open file, create it if it doesn't exist
 		outFile = saveFileMan->openForSaving(wrappedName);
 		if (!outFile)
-			debugC(2, kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
+			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
 		// QfG1 opens the character export file with _K_FILE_MODE_CREATE first,
 		// closes it immediately and opens it again with this here. Perhaps
 		// other games use this for read access as well. I guess changing this
@@ -153,7 +153,7 @@ reg_t file_open(EngineState *s, const char *filename, int mode, bool unwrapFilen
 	}
 
 	if (!inFile && !outFile) { // Failed
-		debugC(2, kDebugLevelFile, "  -> file_open() failed");
+		debugC(kDebugLevelFile, "  -> file_open() failed");
 		return SIGNAL_REG;
 	}
 
@@ -171,7 +171,7 @@ reg_t file_open(EngineState *s, const char *filename, int mode, bool unwrapFilen
 	s->_fileHandles[handle]._out = outFile;
 	s->_fileHandles[handle]._name = englishName;
 
-	debugC(2, kDebugLevelFile, "  -> opened file '%s' with handle %d", englishName.c_str(), handle);
+	debugC(kDebugLevelFile, "  -> opened file '%s' with handle %d", englishName.c_str(), handle);
 	return make_reg(0, handle);
 }
 
@@ -179,7 +179,7 @@ reg_t kFOpen(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 	int mode = argv[1].toUint16();
 
-	debugC(2, kDebugLevelFile, "kFOpen(%s,0x%x)", name.c_str(), mode);
+	debugC(kDebugLevelFile, "kFOpen(%s,0x%x)", name.c_str(), mode);
 	return file_open(s, name.c_str(), mode, true);
 }
 
@@ -198,7 +198,7 @@ static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
 }
 
 reg_t kFClose(EngineState *s, int argc, reg_t *argv) {
-	debugC(2, kDebugLevelFile, "kFClose(%d)", argv[0].toUint16());
+	debugC(kDebugLevelFile, "kFClose(%d)", argv[0].toUint16());
 	if (argv[0] != SIGNAL_REG) {
 		FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 		if (f)
@@ -241,7 +241,7 @@ static int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 		*dest = 0;
 	}
 
-	debugC(2, kDebugLevelFile, "  -> FGets'ed \"%s\"", dest);
+	debugC(kDebugLevelFile, "  -> FGets'ed \"%s\"", dest);
 	return readBytes;
 }
 
@@ -250,7 +250,7 @@ reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
 	char *buf = new char[maxsize];
 	int handle = argv[2].toUint16();
 
-	debugC(2, kDebugLevelFile, "kFGets(%d, %d)", handle, maxsize);
+	debugC(kDebugLevelFile, "kFGets(%d, %d)", handle, maxsize);
 	int readBytes = fgets_wrapper(s, buf, maxsize, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
 	return readBytes ? argv[0] : NULL_REG;
@@ -265,7 +265,7 @@ reg_t kGetCWD(EngineState *s, int argc, reg_t *argv) {
 	// TODO/FIXME: Is "/" a good value? Maybe "" or "." or "C:\" are better?
 	s->_segMan->strcpy(argv[0], "/");
 
-	debugC(2, kDebugLevelFile, "kGetCWD() -> %s", "/");
+	debugC(kDebugLevelFile, "kGetCWD() -> %s", "/");
 
 	return argv[0];
 }
@@ -768,16 +768,16 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	// loading, so just stop the game from modifying the file here in order
 	// to avoid having it saved in the ScummVM save directory.
 	if (name == "sq4sg.dir") {
-		debugC(2, kDebugLevelFile, "Not opening unused file sq4sg.dir");
+		debugC(kDebugLevelFile, "Not opening unused file sq4sg.dir");
 		return SIGNAL_REG;
 	}
 
 	if (name.empty()) {
 		// Happens many times during KQ1 (e.g. when typing something)
-		debugC(2, kDebugLevelFile, "Attempted to open a file with an empty filename");
+		debugC(kDebugLevelFile, "Attempted to open a file with an empty filename");
 		return SIGNAL_REG;
 	}
-	debugC(2, kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
+	debugC(kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
 
 	// QFG import rooms get a virtual filelisting instead of an actual one
 	if (g_sci->inQfGImportRoom()) {
@@ -791,7 +791,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
-	debugC(2, kDebugLevelFile, "kFileIO(close): %d", argv[0].toUint16());
+	debugC(kDebugLevelFile, "kFileIO(close): %d", argv[0].toUint16());
 
 	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 	if (f) {
@@ -806,7 +806,7 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 	int size = argv[2].toUint16();
 	int bytesRead = 0;
 	char *buf = new char[size];
-	debugC(2, kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
+	debugC(kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
 		
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
@@ -824,7 +824,7 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 	char *buf = new char[size];
 	bool success = false;
 	s->_segMan->memcpy((byte*)buf, argv[1], size);
-	debugC(2, kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
+	debugC(kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
@@ -867,7 +867,7 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 		result = saveFileMan->removeSavefile(wrappedName);
 	}
 
-	debugC(2, kDebugLevelFile, "kFileIO(unlink): %s", name.c_str());
+	debugC(kDebugLevelFile, "kFileIO(unlink): %s", name.c_str());
 	if (result)
 		return NULL_REG;
 	return make_reg(0, 2); // DOS - file not found error code
@@ -877,7 +877,7 @@ reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
 	int size = argv[1].toUint16();
 	char *buf = new char[size];
 	int handle = argv[2].toUint16();
-	debugC(2, kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
+	debugC(kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
 
 	int readBytes = fgets_wrapper(s, buf, size, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, size);
@@ -888,7 +888,7 @@ reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[0].toUint16();
 	Common::String str = s->_segMan->getString(argv[1]);
-	debugC(2, kDebugLevelFile, "kFileIO(writeString): %d", handle);
+	debugC(kDebugLevelFile, "kFileIO(writeString): %d", handle);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 
@@ -904,7 +904,7 @@ reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[0].toUint16();
 	int offset = argv[1].toUint16();
 	int whence = argv[2].toUint16();
-	debugC(2, kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
+	debugC(kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
 		
 	FileHandle *f = getFileFromHandle(s, handle);
 
@@ -1016,7 +1016,7 @@ reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv) {
 	Common::String mask = s->_segMan->getString(argv[0]);
 	reg_t buf = argv[1];
 	int attr = argv[2].toUint16(); // We won't use this, Win32 might, though...
-	debugC(2, kDebugLevelFile, "kFileIO(findFirst): %s, 0x%x", mask.c_str(), attr);
+	debugC(kDebugLevelFile, "kFileIO(findFirst): %s, 0x%x", mask.c_str(), attr);
 
 	// We remove ".*". mask will get prefixed, so we will return all additional files for that gameid
 	if (mask == "*.*")
@@ -1025,7 +1025,7 @@ reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFileIOFindNext(EngineState *s, int argc, reg_t *argv) {
-	debugC(2, kDebugLevelFile, "kFileIO(findNext)");
+	debugC(kDebugLevelFile, "kFileIO(findNext)");
 	return s->_dirseeker.nextFile(s->_segMan);
 }
 
@@ -1067,7 +1067,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 		exists = true;
 	}
 
-	debugC(2, kDebugLevelFile, "kFileIO(fileExists) %s -> %d", name.c_str(), exists);
+	debugC(kDebugLevelFile, "kFileIO(fileExists) %s -> %d", name.c_str(), exists);
 	return make_reg(0, exists);
 }
 

@@ -108,7 +108,7 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 					// Happens in CD games (e.g. LSL6CD) with the message
 					// resource. It isn't fatal, and it's usually caused
 					// by leftover scripts.
-					debugC(2, kDebugLevelResMan, "[resMan] Attempt to unlock non-existant resource %s", id.toString().c_str());
+					debugC(kDebugLevelResMan, "[resMan] Attempt to unlock non-existant resource %s", id.toString().c_str());
 			}
 		}
 		break;
@@ -153,7 +153,7 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	debugC(2, kDebugLevelMemory, "Attempting to clone from %04x:%04x", PRINT_REG(parentAddr));
+	debugC(kDebugLevelMemory, "Attempting to clone from %04x:%04x", PRINT_REG(parentAddr));
 
 	uint16 infoSelector = parentObj->getInfoSelector().offset;
 	cloneObj = s->_segMan->allocateClone(&cloneAddr);

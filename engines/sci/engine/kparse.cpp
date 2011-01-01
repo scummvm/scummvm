@@ -109,7 +109,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, 1);
 
 #ifdef DEBUG_PARSER
-		debugC(2, kDebugLevelParser, "Parsed to the following blocks:");
+		debugC(kDebugLevelParser, "Parsed to the following blocks:");
 
 		for (ResultWordListList::const_iterator i = words.begin(); i != words.end(); ++i) {
 			debugCN(2, kDebugLevelParser, "   ");
@@ -129,7 +129,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 			invokeSelector(s, g_sci->getGameObject(), SELECTOR(syntaxFail), argc, argv, 2, params);
 			/* Issue warning */
 
-			debugC(2, kDebugLevelParser, "Tree building failed");
+			debugC(kDebugLevelParser, "Tree building failed");
 
 		} else {
 			voc->parserIsValid = true;
@@ -147,7 +147,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 
 		if (error) {
 			s->_segMan->strcpy(s->_segMan->getParserPtr(), error);
-			debugC(2, kDebugLevelParser, "Word unknown: %s", error);
+			debugC(kDebugLevelParser, "Word unknown: %s", error);
 			/* Issue warning: */
 
 			invokeSelector(s, g_sci->getGameObject(), SELECTOR(wordFail), argc, argv, 2, params);
@@ -191,7 +191,7 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 			const byte *synonyms = s->_segMan->getScript(seg)->getSynonyms();
 
 			if (synonyms) {
-				debugC(2, kDebugLevelParser, "Setting %d synonyms for script.%d",
+				debugC(kDebugLevelParser, "Setting %d synonyms for script.%d",
 				          numSynonyms, script);
 
 				if (numSynonyms > 16384) {
@@ -214,7 +214,7 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 		node = s->_segMan->lookupNode(node->succ);
 	}
 
-	debugC(2, kDebugLevelParser, "A total of %d synonyms are active now.", numSynonyms);
+	debugC(kDebugLevelParser, "A total of %d synonyms are active now.", numSynonyms);
 
 	return s->r_acc;
 }

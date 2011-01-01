@@ -170,7 +170,7 @@ reg_t kMemorySegment(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kFlushResources(EngineState *s, int argc, reg_t *argv) {
 	run_gc(s);
-	debugC(2, kDebugLevelRoom, "Entering room number %d", argv[0].toUint16());
+	debugC(kDebugLevelRoom, "Entering room number %d", argv[0].toUint16());
 	return s->r_acc;
 }
 
@@ -206,19 +206,19 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 	switch (mode) {
 	case KGETTIME_TICKS :
 		retval = elapsedTime * 60 / 1000;
-		debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
+		debugC(kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		break;
 	case KGETTIME_TIME_12HOUR :
 		retval = ((loc_time.tm_hour % 12) << 12) | (loc_time.tm_min << 6) | (loc_time.tm_sec);
-		debugC(2, kDebugLevelTime, "GetTime(12h) returns %d", retval);
+		debugC(kDebugLevelTime, "GetTime(12h) returns %d", retval);
 		break;
 	case KGETTIME_TIME_24HOUR :
 		retval = (loc_time.tm_hour << 11) | (loc_time.tm_min << 5) | (loc_time.tm_sec >> 1);
-		debugC(2, kDebugLevelTime, "GetTime(24h) returns %d", retval);
+		debugC(kDebugLevelTime, "GetTime(24h) returns %d", retval);
 		break;
 	case KGETTIME_DATE :
 		retval = loc_time.tm_mday | ((loc_time.tm_mon + 1) << 5) | (((loc_time.tm_year + 1900) & 0x7f) << 9);
-		debugC(2, kDebugLevelTime, "GetTime(date) returns %d", retval);
+		debugC(kDebugLevelTime, "GetTime(date) returns %d", retval);
 		break;
 	default:
 		error("Attempt to use unknown GetTime mode %d", mode);

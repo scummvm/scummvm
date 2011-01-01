@@ -149,7 +149,7 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			return NULL_REG;
 		}
 
-		debugC(2, kDebugLevelSound, "kDoAudio: play sample %d, module %d", number, module);
+		debugC(kDebugLevelSound, "kDoAudio: play sample %d, module %d", number, module);
 
 		// return sample length in ticks
 		if (argv[0].toUint16() == kSciAudioWPlay)
@@ -158,28 +158,28 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			return make_reg(0, g_sci->_audio->startAudio(module, number));
 	}
 	case kSciAudioStop:
-		debugC(2, kDebugLevelSound, "kDoAudio: stop");
+		debugC(kDebugLevelSound, "kDoAudio: stop");
 		g_sci->_audio->stopAudio();
 		break;
 	case kSciAudioPause:
-		debugC(2, kDebugLevelSound, "kDoAudio: pause");
+		debugC(kDebugLevelSound, "kDoAudio: pause");
 		g_sci->_audio->pauseAudio();
 		break;
 	case kSciAudioResume:
-		debugC(2, kDebugLevelSound, "kDoAudio: resume");
+		debugC(kDebugLevelSound, "kDoAudio: resume");
 		g_sci->_audio->resumeAudio();
 		break;
 	case kSciAudioPosition:
-		//debugC(2, kDebugLevelSound, "kDoAudio: get position");	// too verbose
+		//debugC(kDebugLevelSound, "kDoAudio: get position");	// too verbose
 		return make_reg(0, g_sci->_audio->getAudioPosition());
 	case kSciAudioRate:
-		debugC(2, kDebugLevelSound, "kDoAudio: set audio rate to %d", argv[1].toUint16());
+		debugC(kDebugLevelSound, "kDoAudio: set audio rate to %d", argv[1].toUint16());
 		g_sci->_audio->setAudioRate(argv[1].toUint16());
 		break;
 	case kSciAudioVolume: {
 		int16 volume = argv[1].toUint16();
 		volume = CLIP<int16>(volume, 0, AUDIO_VOLUME_MAX);
-		debugC(2, kDebugLevelSound, "kDoAudio: set volume to %d", volume);
+		debugC(kDebugLevelSound, "kDoAudio: set volume to %d", volume);
 #ifdef ENABLE_SCI32
 		if (getSciVersion() >= SCI_VERSION_2_1) {
 			int16 volumePrev = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2;
@@ -193,11 +193,11 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 	case kSciAudioLanguage:
 		// In SCI1.1: tests for digital audio support
 		if (getSciVersion() == SCI_VERSION_1_1) {
-			debugC(2, kDebugLevelSound, "kDoAudio: audio capability test");
+			debugC(kDebugLevelSound, "kDoAudio: audio capability test");
 			return make_reg(0, 1);
 		} else {
 			int16 language = argv[1].toSint16();
-			debugC(2, kDebugLevelSound, "kDoAudio: set language to %d", language);
+			debugC(kDebugLevelSound, "kDoAudio: set language to %d", language);
 
 			if (language != -1)
 				g_sci->getResMan()->setAudioLanguage(language);
@@ -211,7 +211,7 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 	case kSciAudioCD:
 
 		if (getSciVersion() <= SCI_VERSION_1_1) {
-			debugC(2, kDebugLevelSound, "kDoAudio: CD audio subop");
+			debugC(kDebugLevelSound, "kDoAudio: CD audio subop");
 			return kDoCdAudio(s, argc - 1, argv + 1);
 #ifdef ENABLE_SCI32
 		} else {

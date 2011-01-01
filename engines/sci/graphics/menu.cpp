@@ -276,7 +276,7 @@ void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeI
 		// PQ2 demo calls this, for example, but has no menus (bug report #3034507). Some SCI
 		// fan games (Al Pond 2, Aquarius) call this too on non-existent menu items. The
 		// original interpreter ignored these as well.
-		debugC(2, kDebugLevelGraphics, "Tried to setAttribute() on non-existent menu-item %d:%d", menuId, itemId);
+		debugC(kDebugLevelGraphics, "Tried to setAttribute() on non-existent menu-item %d:%d", menuId, itemId);
 		return;
 	}
 

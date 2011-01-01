@@ -215,7 +215,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	Common::String source_str = g_sci->getKernel()->lookupText(position, index);
 	const char* source = source_str.c_str();
 
-	debugC(2, kDebugLevelStrings, "Formatting \"%s\"", source);
+	debugC(kDebugLevelStrings, "Formatting \"%s\"", source);
 
 
 	arguments = (uint16 *)malloc(sizeof(uint16) * argc);
@@ -813,7 +813,7 @@ reg_t kPrintDebug(EngineState *s, int argc, reg_t *argv) {
 	char debugString[500];
 
 	sprintf(debugString, debugTemplate.c_str(), argv[1].toUint16());
-	debugC(2, "kPrintDebug: \"%s\"\n", debugString);
+	debugC(kDebugLevelScripts, "kPrintDebug: \"%s\"\n", debugString);
 
 	return s->r_acc;
 }

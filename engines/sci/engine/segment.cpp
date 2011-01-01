@@ -213,7 +213,7 @@ Common::Array<reg_t> CloneTable::listAllOutgoingReferences(reg_t addr) const {
 
 	// Note that this also includes the 'base' object, which is part of the script and therefore also emits the locals.
 	tmp.push_back(clone->getPos());
-	//debugC(2, kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x", PRINT_REG(clone->pos));
+	//debugC(kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x", PRINT_REG(clone->pos));
 
 	return tmp;
 }

@@ -125,7 +125,7 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	// POST: (dx != 0)  ==>  ABS(tmp) > ABS(dx)
 	// POST: (dx != 0)  ==>  ABS(tmp) ~>=~ ABS(dy)
 
-	debugC(2, kDebugLevelBresen, "c: %d, tmp: %d", c, tmp);
+	debugC(kDebugLevelBresen, "c: %d, tmp: %d", c, tmp);
 
 	// Compute x step
 	if (tmp != 0)
@@ -157,8 +157,8 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	// Always force vy to be upwards
 	vy = -ABS(vy);
 
-	debugC(2, kDebugLevelBresen, "SetJump for object at %04x:%04x", PRINT_REG(object));
-	debugC(2, kDebugLevelBresen, "xStep: %d, yStep: %d", vx, vy);
+	debugC(kDebugLevelBresen, "SetJump for object at %04x:%04x", PRINT_REG(object));
+	debugC(kDebugLevelBresen, "xStep: %d, yStep: %d", vx, vy);
 
 	writeSelectorValue(segMan, object, SELECTOR(xStep), vx);
 	writeSelectorValue(segMan, object, SELECTOR(yStep), vy);
@@ -537,7 +537,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	destx = readSelectorValue(segMan, mover, SELECTOR(x));
 	desty = readSelectorValue(segMan, mover, SELECTOR(y));
 
-	debugC(2, kDebugLevelBresen, "Doing avoider %04x:%04x (dest=%d,%d)", PRINT_REG(avoider), destx, desty);
+	debugC(kDebugLevelBresen, "Doing avoider %04x:%04x (dest=%d,%d)", PRINT_REG(avoider), destx, desty);
 
 	invokeSelector(s, mover, SELECTOR(doit), argc, argv);
 
@@ -551,7 +551,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	dy = desty - readSelectorValue(segMan, client, SELECTOR(y));
 	angle = getAngle(dx, dy);
 
-	debugC(2, kDebugLevelBresen, "Movement (%d,%d), angle %d is %sblocked", dx, dy, angle, (s->r_acc.offset) ? " " : "not ");
+	debugC(kDebugLevelBresen, "Movement (%d,%d), angle %d is %sblocked", dx, dy, angle, (s->r_acc.offset) ? " " : "not ");
 
 	if (s->r_acc.offset) { // isBlocked() returned non-zero
 		int rotation = (g_sci->getRNG().getRandomBit() == 1) ? 45 : (360 - 45); // Clockwise/counterclockwise
@@ -561,7 +561,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 		int ystep = readSelectorValue(segMan, client, SELECTOR(yStep));
 		int moves;
 
-		debugC(2, kDebugLevelBresen, " avoider %04x:%04x", PRINT_REG(avoider));
+		debugC(kDebugLevelBresen, " avoider %04x:%04x", PRINT_REG(avoider));
 
 		for (moves = 0; moves < 8; moves++) {
 			int move_x = (int)(sin(angle * PI / 180.0) * (xstep));
@@ -570,7 +570,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 			writeSelectorValue(segMan, client, SELECTOR(x), oldx + move_x);
 			writeSelectorValue(segMan, client, SELECTOR(y), oldy + move_y);
 
-			debugC(2, kDebugLevelBresen, "Pos (%d,%d): Trying angle %d; delta=(%d,%d)", oldx, oldy, angle, move_x, move_y);
+			debugC(kDebugLevelBresen, "Pos (%d,%d): Trying angle %d; delta=(%d,%d)", oldx, oldy, angle, move_x, move_y);
 
 			invokeSelector(s, client, SELECTOR(canBeHere), argc, argv);
 
@@ -578,7 +578,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 			writeSelectorValue(segMan, client, SELECTOR(y), oldy);
 
 			if (s->r_acc.offset) { // We can be here
-				debugC(2, kDebugLevelBresen, "Success");
+				debugC(kDebugLevelBresen, "Success");
 				writeSelectorValue(segMan, client, SELECTOR(heading), angle);
 
 				return make_reg(0, angle);
