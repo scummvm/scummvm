@@ -52,7 +52,7 @@ ObjectHandler_v2d::ObjectHandler_v2d(HugoEngine *vm) : ObjectHandler_v1d(vm) {
 ObjectHandler_v2d::~ObjectHandler_v2d() {
 }
 
-/** 
+/**
 * Draw all objects on screen as follows:
 * 1. Sort 'FLOATING' objects in order of y2 (base of object)
 * 2. Display new object frames/positions in dib

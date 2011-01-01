@@ -128,7 +128,7 @@ public:
 	int8   _soundTest;
 	int8   _tunesNbr;
 	uint16 _numScreens;
-	int8   _normalTPS;                              // Number of ticks (frames) per second. 
+	int8   _normalTPS;                              // Number of ticks (frames) per second.
 	                                                //8 for Win versions, 9 for DOS versions
 
 
@@ -258,7 +258,6 @@ public:
 		return _introXSize;
 	}
 	Common::Error saveGameState(int slot, const char *desc) {
-		
 		return (_file->saveGame(slot, desc) ? Common::kWritingFailed : Common::kNoError);
 	}
 

@@ -435,7 +435,7 @@ void Screen::shadowStr(int16 sx, int16 sy, const char *s, byte color) {
 }
 
 /**
-* Introduce user to the game. In the original games, it was only 
+* Introduce user to the game. In the original games, it was only
 * present in the DOS versions
 */
 void Screen::userHelp() {

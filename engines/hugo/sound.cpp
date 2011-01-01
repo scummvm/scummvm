@@ -153,7 +153,7 @@ int MidiPlayer::open() {
 	if (ret)
 		return ret;
 
-    _driver->sendGMReset();
+	_driver->sendGMReset();
 
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
@@ -185,10 +185,10 @@ void MidiPlayer::send(uint32 b) {
 		_channelsVolume[ch] = volume;
 		volume = volume * _masterVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
-        debugC(8, kDebugMusic, "Volume change, channel %d volume %d", ch, volume);
+		debugC(8, kDebugMusic, "Volume change, channel %d volume %d", ch, volume);
 		break;
 	case 0x7BB0:                                    // all notes off
-        debugC(8, kDebugMusic, "All notes off, channel %d", ch);
+		debugC(8, kDebugMusic, "All notes off, channel %d", ch);
 		if (!_channelsTable[ch]) {                  // channel not yet allocated, no need to send the event
 			return;
 		}
@@ -302,23 +302,23 @@ void SoundHandler::playSound(int16 sound, stereo_t channel, byte priority) {
 	sound_pt sound_p;                               // Sound data
 	uint16 size;                                    // Size of data
 	static byte curPriority = 0;                    // Priority of currently playing sound
-	//
-	/* Sound disabled */
+
+	// Sound disabled
 	if (!_config.soundFl || !_vm->_mixer->isReady())
 		return;
-	
+
 	syncVolume();
-	
+
 	//
-	// // See if last wave still playing - if so, check priority
+	// See if last wave still playing - if so, check priority
 	// if (waveOutUnprepareHeader(hwav, lphdr, sizeof(WAVEHDR)) == WAVERR_STILLPLAYING)
-	//  if (priority < curPriority)                 // Don't override unless priority >= current
-	//      return;
-	//  else
-	//      Stop_sound();
+	//    if (priority < curPriority)                 // Don't override unless priority >= current
+	//       return;
+	//    else
+	//       Stop_sound();
 	curPriority = priority;
-	//
-	/* Get sound data */
+
+	// Get sound data
 	if ((sound_p = _vm->_file->getSound(sound, &size)) == 0)
 		return;
 
@@ -355,7 +355,7 @@ void SoundHandler::checkMusic() {
 
 	for (int i = 0; _vm->_defltTunes[i] != -1; i++) {
 		if (_vm->_defltTunes[i] == _vm->getGameStatus().song) {
-			if (_vm->_defltTunes[i + 1] != -1) 
+			if (_vm->_defltTunes[i + 1] != -1)
 				playMusic(_vm->_defltTunes[i + 1]);
 			else
 				playMusic(_vm->_defltTunes[0]);

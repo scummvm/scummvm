@@ -42,7 +42,7 @@ class SeekableReadStream;
 
 namespace Hugo {
 
-// WARNING!!  
+// WARNING!!
 // Type "PPG" in the game to enter cheat mode.
 
 #define COPYRIGHT   "Copyright 1989-1997 David P Gray, All Rights Reserved."
