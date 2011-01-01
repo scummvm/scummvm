@@ -73,7 +73,7 @@ void MidiPlayer::play(uint8 *stream, uint16 size) {
 		syncVolume();
 		_parser->loadMusic(_midiData, size);
 		_parser->setTrack(0);
-		_isLooping = true;
+		_isLooping = false;
 		_isPlaying = true;
 		_mutex.unlock();
 	}
@@ -345,4 +345,22 @@ void SoundHandler::syncVolume() {
 	_midiPlayer->syncVolume();
 }
 
+/**
+* Check if music is still playing.
+* If not, select the next track in the playlist and play it
+*/
+void SoundHandler::checkMusic() {
+	if (_midiPlayer->isPlaying())
+		return;
+
+	for (int i = 0; _vm->_defltTunes[i] != -1; i++) {
+		if (_vm->_defltTunes[i] == _vm->getGameStatus().song) {
+			if (_vm->_defltTunes[i + 1] != -1) 
+				playMusic(_vm->_defltTunes[i + 1]);
+			else
+				playMusic(_vm->_defltTunes[0]);
+			break;
+		}
+	}
+}
 } // End of namespace Hugo

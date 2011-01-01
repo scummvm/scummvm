@@ -374,6 +374,7 @@ void HugoEngine::runMachine() {
 		_mouse->mouseHandler();                     // Mouse activity - adds to display list
 		_screen->drawStatusText();
 		_screen->displayList(D_DISPLAY);            // Blit the display list to screen
+		_sound->checkMusic();
 		break;
 	case V_INVENT:                                  // Accessing inventory
 		_inventory->runInventory();                 // Process Inventory state machine

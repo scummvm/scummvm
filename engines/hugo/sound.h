@@ -59,6 +59,7 @@ public:
 	void syncVolume();
 	int getVolume() const { return _masterVolume; }
 	void setLooping(bool loop) { _isLooping = loop; }
+	bool isPlaying() { return _isPlaying; }
 
 	// MidiDriver interface
 	int open();
@@ -98,6 +99,7 @@ public:
 	void playSound(int16 sound, stereo_t channel, byte priority);
 	void initSound();
 	void syncVolume();
+	void checkMusic();
 
 private:
 	HugoEngine *_vm;
