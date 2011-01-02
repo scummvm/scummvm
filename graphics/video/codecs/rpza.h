@@ -34,7 +34,7 @@ namespace Graphics {
 class RPZADecoder : public Codec {
 public:
 	RPZADecoder(uint16 width, uint16 height);
-	~RPZADecoder() { delete _surface; }
+	~RPZADecoder();
 
 	const Surface *decodeImage(Common::SeekableReadStream *stream);
 	PixelFormat getPixelFormat() const { return _pixelFormat; }

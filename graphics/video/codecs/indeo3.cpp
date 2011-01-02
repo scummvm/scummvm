@@ -58,6 +58,7 @@ Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height) : _ModPred(0), _correc
 }
 
 Indeo3Decoder::~Indeo3Decoder() {
+	_surface->free();
 	delete _surface;
 
 	delete[] _iv_frame[0].the_buf;

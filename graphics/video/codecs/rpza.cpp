@@ -47,6 +47,11 @@ RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Codec() {
 	_surface->create(width, height, _pixelFormat.bytesPerPixel);
 }
 
+RPZADecoder::~RPZADecoder() {
+	_surface->free();
+	delete _surface;
+}
+
 #define ADVANCE_BLOCK() \
 	pixelPtr += 4; \
 	if (pixelPtr >= _surface->w) { \

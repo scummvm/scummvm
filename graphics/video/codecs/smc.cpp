@@ -52,6 +52,11 @@ SMCDecoder::SMCDecoder(uint16 width, uint16 height) {
 	_surface->create(width, height, 1);
 }
 
+SMCDecoder::~SMCDecoder() {
+	_surface->free();
+	delete _surface;
+}
+
 const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	byte *pixels = (byte *)_surface->pixels;
 

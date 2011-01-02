@@ -62,6 +62,7 @@ CDToonsDecoder::CDToonsDecoder(uint16 width, uint16 height) {
 }
 
 CDToonsDecoder::~CDToonsDecoder() {
+	_surface->free();
 	delete _surface;
 
 	for (Common::HashMap<uint16, CDToonsBlock>::iterator i = _blocks.begin(); i != _blocks.end(); i++)

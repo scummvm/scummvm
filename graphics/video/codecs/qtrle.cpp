@@ -415,6 +415,7 @@ const Surface *QTRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
 
 QTRLEDecoder::~QTRLEDecoder() {
 	_surface->free();
+	delete _surface;
 }
 
 } // End of namespace Graphics

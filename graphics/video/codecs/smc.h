@@ -40,7 +40,7 @@ enum {
 class SMCDecoder : public Codec {
 public:
 	SMCDecoder(uint16 width, uint16 height);
-	~SMCDecoder() { delete _surface; }
+	~SMCDecoder();
 
 	const Surface *decodeImage(Common::SeekableReadStream *stream);
 	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
