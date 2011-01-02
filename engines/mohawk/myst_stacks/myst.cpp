@@ -161,7 +161,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(196, o_observatoryYearChangeStart);
 	OPCODE(197, o_observatoryYearChangeStart);
 	OPCODE(198, o_dockVaultForceClose);
-	OPCODE(199, opcode_199);
+	OPCODE(199, o_imagerEraseStop);
 
 	// "Init" Opcodes
 	OPCODE(200, o_libraryBook_init);
@@ -188,17 +188,17 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(222, opcode_222);
 
 	// "Exit" Opcodes
-	OPCODE(300, opcode_300);
-	OPCODE(301, opcode_301);
-	OPCODE(302, opcode_302);
-	OPCODE(303, opcode_303);
+	OPCODE(300, o_bookAddSpecialPage_exit);
+	OPCODE(301, NOP);
+	OPCODE(302, NOP);
+	OPCODE(303, NOP);
 	OPCODE(304, o_treeCard_exit);
 	OPCODE(305, o_treeEntry_exit);
-	OPCODE(306, opcode_306);
-	OPCODE(307, opcode_307);
-	OPCODE(308, opcode_308);
-	OPCODE(309, opcode_309);
-	OPCODE(312, opcode_312);
+	OPCODE(306, NOP);
+	OPCODE(307, o_generatorControlRoom_exit);
+	OPCODE(308, NOP);
+	OPCODE(309, NOP);
+	OPCODE(312, NOP);
 }
 
 #undef OPCODE
@@ -220,13 +220,9 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 	_observatoryDayChanging = false;
 	_observatoryYearChanging = false;
 	_observatoryTimeChanging = false;
-
-	opcode_212_disable();
 }
 
 void MystScriptParser_Myst::runPersistentScripts() {
-	opcode_212_run();
-
 	if (_towerRotationMapRunning)
 		towerRotationMap_run();
 
@@ -2638,40 +2634,9 @@ void MystScriptParser_Myst::o_dockVaultForceClose(uint16 op, uint16 var, uint16 
 	}
 }
 
-void MystScriptParser_Myst::opcode_199(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Myst Imager Control Execute Button Logic", op);
-
-		uint16 numericSelection = (_vm->_varStore->getVar(36) + 1) % 10;
-		numericSelection += ((_vm->_varStore->getVar(35) + 1) % 10) * 10;
-
-		debugC(kDebugScript, "\tImager Selection: %d", numericSelection);
-
-		switch (numericSelection) {
-		case 40:
-			_vm->_varStore->setVar(51, 1); // Mountain
-			break;
-		case 67:
-			_vm->_varStore->setVar(51, 2); // Water
-			break;
-		case 47:
-			_vm->_varStore->setVar(51, 4); // Marker Switch
-			break;
-		case 8:
-			_vm->_varStore->setVar(51, 3); // Atrus
-			break;
-		default:
-			_vm->_varStore->setVar(51, 0); // Blank
-			break;
-		}
-
-		// TODO: Fill in Logic
-		//{  34, 2, "Dock Forechamber Imager State" }, // 0 to 2 = Off, Mountain, Water
-		//{ 310, 0, "Dock Forechamber Imager Control Temp Value?" }
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Myst::o_imagerEraseStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Imager stop erase", op);
+	_imagerValidationRunning = false;
 }
 
 void MystScriptParser_Myst::o_libraryBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -2928,45 +2893,22 @@ void MystScriptParser_Myst::o_fireplace_init(uint16 op, uint16 var, uint16 argc,
 		_fireplaceLines[i] = 0;
 }
 
-static struct {
-	bool enabled;
-} g_opcode212Parameters;
-
-void MystScriptParser_Myst::opcode_212_run(void) {
-	if (g_opcode212Parameters.enabled) {
-		// TODO: Implement Correct Code for Myst Clock Tower Cog Puzzle
-		// Card 4113
-
-		if (false) {
-			// 3 videos to be played of Cog Movement
-			// TODO: Not 100% sure of movie positions.
-			_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wg1", kMystStack), 220, 50);
-			_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wg2", kMystStack), 220, 80);
-			_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wg3", kMystStack), 220, 110);
-
-			// 1 video of weight descent
-			_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack), 123, 0);
-
-			// Video of Cog Open on Success
-			_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wggat", kMystStack), 195, 225);
-			// Var 40 set on success
-			_vm->_varStore->setVar(40, 1);
-		}
-	}
-}
-
-void MystScriptParser_Myst::opcode_212_disable(void) {
-	g_opcode212Parameters.enabled = false;
-}
-
 void MystScriptParser_Myst::opcode_212(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
 	// Used for Card 4113 (Clock Tower Cog Puzzle)
-	if (argc == 0)
-		g_opcode212Parameters.enabled = true;
-	else
-		unknown(op, var, argc, argv);
+
+	if (false) {
+		// 3 videos to be played of Cog Movement
+		// TODO: Not 100% sure of movie positions.
+		_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wg1", kMystStack), 220, 50);
+		_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wg2", kMystStack), 220, 80);
+		_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wg3", kMystStack), 220, 110);
+
+		// 1 video of weight descent
+		_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack), 123, 0);
+
+		// Video of Cog Open on Success
+		_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wggat", kMystStack), 195, 225);
+	}
 }
 
 void MystScriptParser_Myst::opcode_213(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -3159,21 +3101,16 @@ void MystScriptParser_Myst::o_rocketSliders_init(uint16 op, uint16 var, uint16 a
 	_rocketSlider4 = static_cast<MystResourceType10 *>(_vm->_resources[argv[3]]);
 	_rocketSlider5 = static_cast<MystResourceType10 *>(_vm->_resources[argv[4]]);
 
-	if (_state.rocketSliderPosition[0]) {
-		_rocketSlider1->setPosition(_state.rocketSliderPosition[0]);
-	}
-	if (_state.rocketSliderPosition[1]) {
-		_rocketSlider2->setPosition(_state.rocketSliderPosition[1]);
-	}
-	if (_state.rocketSliderPosition[2]) {
-		_rocketSlider3->setPosition(_state.rocketSliderPosition[2]);
-	}
-	if (_state.rocketSliderPosition[3]) {
-		_rocketSlider4->setPosition(_state.rocketSliderPosition[3]);
-	}
-	if (_state.rocketSliderPosition[4]) {
-		_rocketSlider5->setPosition(_state.rocketSliderPosition[4]);
-	}
+	// Initialize sliders position
+	for (uint i = 0; i < 5; i++)
+		if (!_state.rocketSliderPosition[i])
+			_state.rocketSliderPosition[i] = 277;
+
+	_rocketSlider1->setPosition(_state.rocketSliderPosition[0]);
+	_rocketSlider2->setPosition(_state.rocketSliderPosition[1]);
+	_rocketSlider3->setPosition(_state.rocketSliderPosition[2]);
+	_rocketSlider4->setPosition(_state.rocketSliderPosition[3]);
+	_rocketSlider5->setPosition(_state.rocketSliderPosition[4]);
 }
 
 void MystScriptParser_Myst::o_rocketLinkVideo_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -3220,32 +3157,18 @@ void MystScriptParser_Myst::opcode_222(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Myst::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used in Card 4371 (Blue Book) Var = 101
-	//     and Card 4363 (Red Book)  Var = 100
-	debugC(kDebugScript, "Opcode %d: Book Exit Function...", op);
-	debugC(kDebugScript, "Var: %d", var);
-	// TODO: Fill in Logic
-}
+void MystScriptParser_Myst::o_bookAddSpecialPage_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Book Exit Function", op);
 
-void MystScriptParser_Myst::opcode_301(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used in Cards 4047, 4059, 4060, 4068 and 4080 (Myst Library Books - Open)
-	// TODO: Fill in Logic. Clear Variable on Book exit.. or Copy from duplicate..
-	_vm->_varStore->setVar(0, 1);
-}
+	uint16 numPages = bookCountPages(var);
 
-void MystScriptParser_Myst::opcode_302(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used in Card 4113 (Clock Tower Cog Puzzle)
-	// TODO: Fill in Logic
-}
-
-void MystScriptParser_Myst::opcode_303(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 4134 (Dock Facing Marker Switch)
-	// Used for Card 4141 (Myst Dock Facing Sea)
-	// In the original engine, this opcode stopped Gull Movies if playing,
-	// upon card change, but this behavior is now default in this engine.
+	// Add special page
+	if (numPages == 5) {
+		if (var == 100)
+			_globals.redPagesInBook |= 64;
+		else
+			_globals.bluePagesInBook |= 64;
+	}
 }
 
 void MystScriptParser_Myst::o_treeCard_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -3260,48 +3183,10 @@ void MystScriptParser_Myst::o_treeEntry_exit(uint16 op, uint16 var, uint16 argc,
 	_treeAlcove = 0;
 }
 
-void MystScriptParser_Myst::opcode_306(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_generatorControlRoom_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Generator room exit", op);
 
-	// Used for Card 4098 (Cabin Boiler Puzzle)
-	// In the original engine, this opcode stopped the Boiler Fire and Meter Needle videos
-	// if playing, upon card change, but this behavior is now default in this engine.
-}
-
-void MystScriptParser_Myst::opcode_307(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 4297 (Generator Room Controls)
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Unknown...", op);
-		// TODO: Logic for clearing variable?
-	} else
-		unknown(op, var, argc, argv);
-}
-
-void MystScriptParser_Myst::opcode_308(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 4530 (Rocketship Music Sliders)
-	// In the original engine, this opcode stopped the Selenitic Book Movie if playing,
-	// upon card change, but this behavior is now default in this engine.
-}
-
-void MystScriptParser_Myst::opcode_309(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 4168 (Green D'ni Book Open)
-	// In the original engine, this opcode stopped the Green Book Atrus Movies if playing,
-	// upon card change, but this behavior is now default in this engine.
-}
-
-void MystScriptParser_Myst::opcode_312(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 4698 (Dock Forechamber Imager)
-	// In the original engine, this opcode stopped the Imager Movie if playing,
-	// especially the hardcoded Topological Extrusion (Mountain) video,
-	// upon card change, but this behavior is now default in this engine.
+	_generatorVoltage = _state.generatorVoltage;
 }
 
 } // End of namespace Mohawk

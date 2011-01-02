@@ -55,7 +55,6 @@ private:
 	void libraryBookcaseTransform_run();
 	void generatorControlRoom_run();
 	void opcode_212_run();
-	void opcode_212_disable();
 	void libraryCombinationBook_run();
 	void clockWheel_run();
 	void matchBurn_run();
@@ -145,7 +144,7 @@ private:
 	DECLARE_OPCODE(o_observatoryChangeSettingStop);
 	DECLARE_OPCODE(o_observatoryYearChangeStart);
 	DECLARE_OPCODE(o_dockVaultForceClose);
-	DECLARE_OPCODE(opcode_199);
+	DECLARE_OPCODE(o_imagerEraseStop);
 
 	DECLARE_OPCODE(o_libraryBook_init);
 	DECLARE_OPCODE(o_courtyardBox_init);
@@ -169,17 +168,11 @@ private:
 	DECLARE_OPCODE(o_greenBook_init);
 	DECLARE_OPCODE(opcode_222);
 
-	DECLARE_OPCODE(opcode_300);
-	DECLARE_OPCODE(opcode_301);
-	DECLARE_OPCODE(opcode_302);
-	DECLARE_OPCODE(opcode_303);
+	DECLARE_OPCODE(o_bookAddSpecialPage_exit);
 	DECLARE_OPCODE(o_treeCard_exit);
 	DECLARE_OPCODE(o_treeEntry_exit);
-	DECLARE_OPCODE(opcode_306);
-	DECLARE_OPCODE(opcode_307);
-	DECLARE_OPCODE(opcode_308);
-	DECLARE_OPCODE(opcode_309);
-	DECLARE_OPCODE(opcode_312);
+	DECLARE_OPCODE(o_generatorControlRoom_exit);
+
 
 	MystGameState::Myst &_state;
 

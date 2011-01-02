@@ -496,6 +496,8 @@ Common::Rect MystResourceType10::boundingBox() {
 		bb.bottom = _maxV + _sliderHeight / 2;
 	}
 
+	bb.grow(1);
+
 	return bb;
 }
 
@@ -503,8 +505,8 @@ void MystResourceType10::restoreBackground() {
 	// Restore background
 	Common::Rect src = boundingBox();
 	Common::Rect dest = boundingBox();
-	src.top = 333 - dest.bottom;
-	src.bottom = 333 - dest.top;
+	src.top = 332 - dest.bottom;
+	src.bottom = 332 - dest.top;
 	_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), src, dest);
 }
 
@@ -577,7 +579,7 @@ void MystResourceType10::updatePosition(const Common::Point &mouse) {
 		if (_stepV) {
 			uint16 center = _minV + _stepV * (mouseClipped.y - _minV) / _stepV;
 			uint16 top = center - _sliderHeight / 2;
-			if (_rect.top != top) {
+			if (_rect.top != top || _pos.y != center) {
 				positionChanged = true;
 				_pos.y = center;
 				_rect.top = top;
@@ -598,7 +600,7 @@ void MystResourceType10::updatePosition(const Common::Point &mouse) {
 		if (_stepH) {
 			uint16 center = _minH + _stepH * (mouseClipped.x - _minH) / _stepH;
 			uint16 left = center - _sliderWidth / 2;
-			if (_rect.left != left) {
+			if (_rect.left != left || _pos.x != center) {
 				positionChanged = true;
 				_pos.x = center;
 				_rect.left = left;
