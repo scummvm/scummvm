@@ -35,9 +35,6 @@
 
 #include "graphics/cursorman.h"
 
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
-
 #include "cine/cine.h"
 #include "cine/bg_list.h"
 #include "cine/main_loop.h"

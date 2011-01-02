@@ -30,7 +30,6 @@
 #include "scumm/scumm_v8.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
-#include "sound/mididrv.h"
 
 namespace Scumm {
 

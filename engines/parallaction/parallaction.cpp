@@ -31,9 +31,6 @@
 #include "common/util.h"
 #include "common/system.h"
 
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
-
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"

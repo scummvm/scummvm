@@ -42,9 +42,6 @@
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
-
 namespace Scumm {
 
 #define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v6, x)

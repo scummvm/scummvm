@@ -45,9 +45,6 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
-
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
 #include "tinsel/bmv.h"

@@ -35,9 +35,6 @@
 
 #include "graphics/cursorman.h"
 
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
-
 #include "cruise/cruise.h"
 #include "cruise/font.h"
 #include "cruise/gfxModule.h"

@@ -25,8 +25,6 @@
 
 #include "scumm/player_v2.h"
 #include "scumm/scumm.h"
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
 
 namespace Scumm {
 
