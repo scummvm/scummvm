@@ -344,6 +344,7 @@ void PluginManagerUncached::init() {
 	
 	// Resize our pluginsInMem list to prevent fragmentation
 	_pluginsInMem[PLUGIN_TYPE_ENGINE].resize(2);
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);	// empty the engine plugins
 
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
@@ -543,8 +544,16 @@ DECLARE_SINGLETON(EngineManager);
  **/
 GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
 	GameDescriptor result;
+
+	// First look for the game using the plugins in memory. This is critical
+	// for calls coming from inside games
+	result = findGameInLoadedPlugins(gameName, plugin); 
+	if (!result.gameid().empty()) {
+		return result;
+	}
 	
-	// first look for the game using the gameId
+	// Now look for the game using the gameId. This is much faster than scanning plugin
+	// by plugin
 	if (PluginMan.loadPluginFromGameId(gameName))  {
 		result = findGameInLoadedPlugins(gameName, plugin); 
 		if (!result.gameid().empty()) {
