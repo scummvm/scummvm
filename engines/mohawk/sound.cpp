@@ -45,14 +45,14 @@ Sound::~Sound() {
 	stopSound();
 	stopAllSLST();
 
-	if (_midiDriver) {
-		_midiDriver->close();
-		delete _midiDriver;
-	}
-
 	if (_midiParser) {
 		_midiParser->unloadMusic();
 		delete _midiParser;
+	}
+
+	if (_midiDriver) {
+		_midiDriver->close();
+		delete _midiDriver;
 	}
 }
 
