@@ -118,7 +118,8 @@ void ObjectHandler::useObject(int16 objId) {
 			if (_vm->getGameStatus().inventoryObjId == use->objId) {
 				// Look for secondary object, if found use matching verb
 				bool foundFl = false;
-				for (target_t *target = use->targets; _vm->_arrayNouns[target->nounIndex] != 0; target++)
+				
+				for (target_t *target = use->targets; target->nounIndex != 0; target++)
 					if (target->nounIndex == obj->nounIndex) {
 						foundFl = true;
 						sprintf(_line, "%s %s %s", _vm->_arrayVerbs[target->verbIndex][0],

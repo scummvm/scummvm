@@ -1173,7 +1173,7 @@ char *HugoEngine::useBG(char *name) {
 	debugC(1, kDebugEngine, "useBG(%s)", name);
 
 	objectList_t p = _backgroundObjects[*_screen_p];
-	for (int i = 0; *_arrayVerbs[p[i].verbIndex]; i++) {
+	for (int i = 0; p[i].verbIndex != 0; i++) {
 		if ((name == _arrayNouns[p[i].nounIndex][0] &&
 		     p[i].verbIndex != _look) &&
 		    ((p[i].roomState == DONT_CARE) || (p[i].roomState == _screenStates[*_screen_p])))
