@@ -38,6 +38,7 @@ namespace Mohawk {
 Sound::Sound(MohawkEngine* vm) : _vm(vm) {
 	_midiDriver = NULL;
 	_midiParser = NULL;
+	_midiData = NULL;
 	initMidi();
 }
 
@@ -54,6 +55,9 @@ Sound::~Sound() {
 		_midiDriver->close();
 		delete _midiDriver;
 	}
+
+	if (_midiData)
+		delete[] _midiData;
 }
 
 void Sound::initMidi() {
@@ -160,6 +164,9 @@ void Sound::playMidi(uint16 id) {
 	assert(_midiDriver && _midiParser);
 
 	_midiParser->unloadMusic();
+	if (_midiData)
+		delete[] _midiData;
+
 	Common::SeekableReadStream *midi = _vm->getResource(ID_TMID, id);
 
 	idTag = midi->readUint32BE();
@@ -168,10 +175,10 @@ void Sound::playMidi(uint16 id) {
 	idTag = midi->readUint32BE();
 	assert(idTag == ID_MIDI);
 
-	byte *midiData = (byte *)malloc(midi->size() - 12); // Enough to cover MThd/Prg#/MTrk
+	_midiData = new byte[midi->size() - 12]; // Enough to cover MThd/Prg#/MTrk
 
 	// Read the MThd Data
-	midi->read(midiData, 14);
+	midi->read(_midiData, 14);
 
 	// TODO: Load patches from the Prg# section... skip it for now.
 	idTag = midi->readUint32BE();
@@ -180,12 +187,12 @@ void Sound::playMidi(uint16 id) {
 
 	// Read the MTrk Data
 	uint32 mtrkSize = midi->size() - midi->pos();
-	midi->read(midiData + 14, mtrkSize);
+	midi->read(_midiData + 14, mtrkSize);
 
 	delete midi;
 
 	// Now, play it :)
-	if (!_midiParser->loadMusic(midiData, 14 + mtrkSize))
+	if (!_midiParser->loadMusic(_midiData, 14 + mtrkSize))
 		error ("Could not play MIDI music from tMID %04x\n", id);
 
 	_midiDriver->setTimerCallback(_midiParser, MidiParser::timerCallback);

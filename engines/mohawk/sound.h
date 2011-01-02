@@ -149,6 +149,7 @@ private:
 	MohawkEngine *_vm;
 	MidiDriver *_midiDriver;
 	MidiParser *_midiParser;
+	byte *_midiData;
 
 	static Audio::AudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream);
 	static Audio::AudioStream *makeOldMohawkWaveStream(Common::SeekableReadStream *stream);
