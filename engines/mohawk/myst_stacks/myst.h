@@ -95,10 +95,10 @@ private:
 	DECLARE_OPCODE(o_observatoryMonthChangeStart);
 	DECLARE_OPCODE(o_observatoryDayChangeStart);
 	DECLARE_OPCODE(opcode_133);
-	DECLARE_OPCODE(opcode_134);
-	DECLARE_OPCODE(opcode_135);
-	DECLARE_OPCODE(opcode_136);
-	DECLARE_OPCODE(opcode_137);
+	DECLARE_OPCODE(o_observatoryMonthSliderMove);
+	DECLARE_OPCODE(o_observatoryDaySliderMove);
+	DECLARE_OPCODE(o_observatoryYearSliderMove);
+	DECLARE_OPCODE(o_observatoryTimeSliderMove);
 	DECLARE_OPCODE(o_circuitBreakerStartMove);
 	DECLARE_OPCODE(o_circuitBreakerMove);
 	DECLARE_OPCODE(o_circuitBreakerEndMove);
@@ -123,14 +123,14 @@ private:
 	DECLARE_OPCODE(o_rocketLeverEndMove);
 	DECLARE_OPCODE(o_cabinLeave);
 	DECLARE_OPCODE(o_treePressureReleaseStop);
-	DECLARE_OPCODE(opcode_170);
-	DECLARE_OPCODE(opcode_171);
-	DECLARE_OPCODE(opcode_172);
-	DECLARE_OPCODE(opcode_173);
-	DECLARE_OPCODE(opcode_174);
-	DECLARE_OPCODE(opcode_175);
-	DECLARE_OPCODE(opcode_176);
-	DECLARE_OPCODE(opcode_177);
+	DECLARE_OPCODE(o_observatoryMonthSliderStartMove);
+	DECLARE_OPCODE(o_observatoryMonthSliderEndMove);
+	DECLARE_OPCODE(o_observatoryDaySliderStartMove);
+	DECLARE_OPCODE(o_observatoryDaySliderEndMove);
+	DECLARE_OPCODE(o_observatoryYearSliderStartMove);
+	DECLARE_OPCODE(o_observatoryYearSliderEndMove);
+	DECLARE_OPCODE(o_observatoryTimeSliderStartMove);
+	DECLARE_OPCODE(o_observatoryTimeSliderEndMove);
 	DECLARE_OPCODE(o_libraryCombinationBookStop);
 	DECLARE_OPCODE(o_cabinMatchLight);
 	DECLARE_OPCODE(o_courtyardBoxEnter);
@@ -291,6 +291,10 @@ private:
 	void observatoryIncrementDay(int16 increment);
 	void observatoryIncrementYear(int16 increment);
 	void observatoryIncrementTime(int16 increment);
+	void observatoryUpdateMonth();
+	void observatoryUpdateDay();
+	void observatoryUpdateYear();
+	void observatoryUpdateTime();
 };
 
 } // End of namespace Mohawk

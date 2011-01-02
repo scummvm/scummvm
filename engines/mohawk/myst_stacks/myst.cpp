@@ -103,10 +103,10 @@ void MystScriptParser_Myst::setupOpcodes() {
 		OPCODE(132, o_observatoryMonthChangeStart);
 	}
 	OPCODE(133, opcode_133);
-	OPCODE(134, opcode_134);
-	OPCODE(135, opcode_135);
-	OPCODE(136, opcode_136);
-	OPCODE(137, opcode_137);
+	OPCODE(134, o_observatoryMonthSliderMove);
+	OPCODE(135, o_observatoryDaySliderMove);
+	OPCODE(136, o_observatoryYearSliderMove);
+	OPCODE(137, o_observatoryTimeSliderMove);
 	OPCODE(141, o_circuitBreakerStartMove);
 	OPCODE(142, o_circuitBreakerMove);
 	OPCODE(143, o_circuitBreakerEndMove);
@@ -134,14 +134,14 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(167, NOP);
 	OPCODE(168, o_treePressureReleaseStop);
 	OPCODE(169, o_cabinLeave);
-	OPCODE(170, opcode_170);
-	OPCODE(171, opcode_171);
-	OPCODE(172, opcode_172);
-	OPCODE(173, opcode_173);
-	OPCODE(174, opcode_174);
-	OPCODE(175, opcode_175);
-	OPCODE(176, opcode_176);
-	OPCODE(177, opcode_177);
+	OPCODE(170, o_observatoryMonthSliderStartMove);
+	OPCODE(171, o_observatoryMonthSliderEndMove);
+	OPCODE(172, o_observatoryDaySliderStartMove);
+	OPCODE(173, o_observatoryDaySliderEndMove);
+	OPCODE(174, o_observatoryYearSliderStartMove);
+	OPCODE(175, o_observatoryYearSliderEndMove);
+	OPCODE(176, o_observatoryTimeSliderStartMove);
+	OPCODE(177, o_observatoryTimeSliderEndMove);
 	OPCODE(180, o_libraryCombinationBookStop);
 	OPCODE(181, NOP);
 	OPCODE(182, o_cabinMatchLight);
@@ -1714,24 +1714,28 @@ void MystScriptParser_Myst::opcode_133(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Myst::opcode_134(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4500
-	// TODO: Month slider movement
+void MystScriptParser_Myst::o_observatoryMonthSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Month slider move", op);
+
+	observatoryUpdateMonth();
 }
 
-void MystScriptParser_Myst::opcode_135(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4500
-	// TODO: Day slider movement
+void MystScriptParser_Myst::o_observatoryDaySliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Day slider move", op);
+
+	observatoryUpdateDay();
 }
 
-void MystScriptParser_Myst::opcode_136(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4500
-	// TODO: Year slider movement
+void MystScriptParser_Myst::o_observatoryYearSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Year slider move", op);
+
+	observatoryUpdateYear();
 }
 
-void MystScriptParser_Myst::opcode_137(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4500
-	// TODO: Time slider movement
+void MystScriptParser_Myst::o_observatoryTimeSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Time slider move", op);
+
+	observatoryUpdateTime();
 }
 
 void MystScriptParser_Myst::o_circuitBreakerStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -2345,48 +2349,144 @@ void MystScriptParser_Myst::o_treePressureReleaseStop(uint16 op, uint16 var, uin
 	_treeMinPosition = 0;
 }
 
-void MystScriptParser_Myst::opcode_170(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4500
-	// TODO: Month slider mouse down
+void MystScriptParser_Myst::o_observatoryMonthSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Month slider start move", op);
+
+	_vm->_cursor->setCursor(700);
+	_vm->_sound->pauseBackground();
+
+	observatoryUpdateMonth();
 }
 
-void MystScriptParser_Myst::opcode_171(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4500
-	// TODO: Month slider mouse up
+void MystScriptParser_Myst::o_observatoryMonthSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Month slider end move", op);
+
+	_vm->checkCursorHints();
+	_vm->_sound->resumeBackground();
+
+	observatoryUpdateMonth();
 }
 
-void MystScriptParser_Myst::opcode_172(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4500
-	// TODO: Day slider mouse down
+void MystScriptParser_Myst::observatoryUpdateMonth() {
+	int16 month = (_observatoryMonthSlider->_pos.y - 94) / 8;
+
+	if (month != _state.observatoryMonthSetting) {
+		_state.observatoryMonthSetting = month;
+		_state.observatoryMonthSlider = _observatoryMonthSlider->_pos.y;
+		_vm->_sound->replaceSound(8500);
+
+		// Redraw digits
+		_vm->redrawArea(73);
+	}
 }
 
-void MystScriptParser_Myst::opcode_173(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4500
-	// TODO: Day slider mouse up
+void MystScriptParser_Myst::o_observatoryDaySliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Day slider start move", op);
+
+	_vm->_cursor->setCursor(700);
+	_vm->_sound->pauseBackground();
+
+	observatoryUpdateDay();
 }
 
-void MystScriptParser_Myst::opcode_174(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4500
-	// TODO: Year slider mouse down
+void MystScriptParser_Myst::o_observatoryDaySliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Day slider end move", op);
+
+	_vm->checkCursorHints();
+	_vm->_sound->resumeBackground();
+
+	observatoryUpdateDay();
 }
 
-void MystScriptParser_Myst::opcode_175(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4500
-	// TODO: Year slider mouse up
+void MystScriptParser_Myst::observatoryUpdateDay() {
+	int16 day = (_observatoryDaySlider->_pos.y - 94) * 30 / 94 + 1;
+
+	if (day != _state.observatoryDaySetting) {
+		_state.observatoryDaySetting = day;
+		_state.observatoryDaySlider = _observatoryDaySlider->_pos.y;
+		_vm->_sound->replaceSound(8500);
+
+		// Redraw digits
+		_vm->redrawArea(75);
+		_vm->redrawArea(74);
+	}
 }
 
-void MystScriptParser_Myst::opcode_176(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4500
-	// TODO: Time slider mouse down
+void MystScriptParser_Myst::o_observatoryYearSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Year slider start move", op);
+
+	_vm->_cursor->setCursor(700);
+	_vm->_sound->pauseBackground();
+
+	observatoryUpdateYear();
 }
 
-void MystScriptParser_Myst::opcode_177(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 4500
-	// TODO: Time slider mouse up
+void MystScriptParser_Myst::o_observatoryYearSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Year slider end move", op);
+
+	_vm->checkCursorHints();
+	_vm->_sound->resumeBackground();
+
+	observatoryUpdateYear();
+}
+
+void MystScriptParser_Myst::observatoryUpdateYear() {
+	int16 year = (_observatoryYearSlider->_pos.y - 94) * 9999 / 94;
+
+	if (year != _state.observatoryYearSetting) {
+		_state.observatoryYearSetting = year;
+		_state.observatoryYearSlider = _observatoryYearSlider->_pos.y;
+		_vm->_sound->replaceSound(8500);
+
+		// Redraw digits
+		_vm->redrawArea(79);
+		_vm->redrawArea(78);
+		_vm->redrawArea(77);
+		_vm->redrawArea(76);
+	}
+}
+
+void MystScriptParser_Myst::o_observatoryTimeSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Time slider start move", op);
+
+	_vm->_cursor->setCursor(700);
+	_vm->_sound->pauseBackground();
+
+	observatoryUpdateTime();
+}
+
+void MystScriptParser_Myst::o_observatoryTimeSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Time slider end move", op);
+
+	_vm->checkCursorHints();
+	_vm->_sound->resumeBackground();
+
+	observatoryUpdateTime();
+}
+
+void MystScriptParser_Myst::observatoryUpdateTime() {
+	int16 time = (_observatoryTimeSlider->_pos.y - 94) * 1439 / 94;
+
+	if (time != _state.observatoryTimeSetting) {
+		_state.observatoryTimeSetting = time;
+		_state.observatoryTimeSlider = _observatoryTimeSlider->_pos.y;
+		_vm->_sound->replaceSound(8500);
+
+		// Redraw digits
+		_vm->redrawArea(80);
+		_vm->redrawArea(81);
+		_vm->redrawArea(82);
+		_vm->redrawArea(83);
+
+		// Draw AM/PM
+		if (!observatoryIsDDMMYYYY2400()) {
+			_vm->redrawArea(88);
+		}
+	}
 }
 
 void MystScriptParser_Myst::o_libraryCombinationBookStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Combiation book stop turning pages", op);
+	debugC(kDebugScript, "Opcode %d: Combination book stop turning pages", op);
 	_libraryCombinationBookPagesTurning = false;
 }
 
