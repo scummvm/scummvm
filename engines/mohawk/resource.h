@@ -73,12 +73,12 @@ namespace Mohawk {
 
 // Zoombini Resource FourCC's
 #define ID_SND  MKID_BE('\0SND') // Standard Mohawk Sound
-#define ID_CURS MKID_BE('CURS') // Cursor?
-#define ID_SCRB MKID_BE('SCRB') // Script?
-#define ID_SCRS MKID_BE('SCRS') // Script?
-#define ID_NODE MKID_BE('NODE') // Walk Node?
-#define ID_PATH MKID_BE('PATH') // Walk Path?
-#define ID_SHPL MKID_BE('SHPL') // Shape List?
+#define ID_CURS MKID_BE('CURS') // Cursor
+#define ID_SCRB MKID_BE('SCRB') // Feature Script
+#define ID_SCRS MKID_BE('SCRS') // Snoid Script
+#define ID_NODE MKID_BE('NODE') // Walk Node
+#define ID_PATH MKID_BE('PATH') // Walk Path
+#define ID_SHPL MKID_BE('SHPL') // Shape List
 
 // Living Books Resource FourCC's
 #define ID_TCUR MKID_BE('tCUR') // Cursor
@@ -97,6 +97,15 @@ namespace Mohawk {
 #define ID_TANM MKID_BE('tANM') // Animation?
 #define ID_TMFO MKID_BE('tMFO') // ???
 
+// CSTime Resource FourCC's
+#define ID_CINF MKID_BE('CINF') // Case Info
+#define ID_CONV MKID_BE('CONV') // Conversation
+#define ID_HOTS MKID_BE('HOTS') // Hotspot
+#define ID_INVO MKID_BE('INVO') // Inventory Object
+#define ID_QARS MKID_BE('QARS') // Conversation Entry
+#define ID_SCEN MKID_BE('SCEN') // Scene
+#define ID_STRI MKID_BE('STRI') // String Entry?
+
 // Mohawk Wave Tags
 #define ID_WAVE MKID_BE('WAVE') // Game Sound (Third Tag)
 #define ID_ADPC MKID_BE('ADPC') // Game Sound Chunk
@@ -111,12 +120,12 @@ namespace Mohawk {
 #define ID_TBMP MKID_BE('tBMP') // Standard Mohawk Bitmap
 #define ID_TWAV MKID_BE('tWAV') // Standard Mohawk Sound
 #define ID_TPAL MKID_BE('tPAL') // Standard Mohawk Palette
-#define ID_TCNT MKID_BE('tCNT') // ??? (CSWorld, CSAmtrak, JamesMath)
-#define ID_TSCR MKID_BE('tSCR') // Script? Screen? (CSWorld, CSAmtrak, Treehouse)
+#define ID_TCNT MKID_BE('tCNT') // Shape Count (CSWorld, CSAmtrak, JamesMath)
+#define ID_TSCR MKID_BE('tSCR') // Script (CSWorld, CSAmtrak, Treehouse)
 #define ID_STRL MKID_BE('STRL') // String List (Zoombini, CSWorld, CSAmtrak)
 #define ID_TBMH MKID_BE('tBMH') // Standard Mohawk Bitmap
 #define ID_TMID MKID_BE('tMID') // Standard Mohawk MIDI
-#define ID_REGS MKID_BE('REGS') // ??? (Zoombini, Treehouse)
+#define ID_REGS MKID_BE('REGS') // Registration Data - Shape Offsets (Zoombini, Treehouse)
 #define ID_BYTS MKID_BE('BYTS') // Byte Array? (Used as Database Entry in CSWorld, CSAmtrak)
 #define ID_INTS MKID_BE('INTS') // uint16 Array? (CSWorld, CSAmtrak)
 #define ID_BBOX MKID_BE('BBOX') // Boxes? (CSWorld, CSAmtrak)
