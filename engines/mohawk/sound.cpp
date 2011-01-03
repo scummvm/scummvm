@@ -198,6 +198,10 @@ void Sound::playMidi(uint16 id) {
 	_midiDriver->setTimerCallback(_midiParser, MidiParser::timerCallback);
 }
 
+void Sound::stopMidi() {
+	_midiParser->unloadMusic();
+}
+
 byte Sound::convertRivenVolume(uint16 volume) {
 	return (volume == 256) ? 255 : volume;
 }

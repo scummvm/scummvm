@@ -124,6 +124,7 @@ public:
 	Audio::SoundHandle *replaceSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
 	void playSoundBlocking(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void playMidi(uint16 id);
+	void stopMidi();
 	void stopSound();
 	void stopSound(uint16 id);
 	void pauseSound();
