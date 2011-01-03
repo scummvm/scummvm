@@ -24,14 +24,17 @@
  */
 
 #include "hugo/hugo.h"
+#include "graphics/imagedec.h"
 
 namespace Hugo {
 
 enum {
+	kMenuWidth = 320,
+	kMenuHeight = 24,
 	kMenuX = 5,
 	kMenuY = 1,
-	kButtonWidth = 18,
-	kButtonHeight = 18,
+	kButtonWidth = 20,
+	kButtonHeight = 20,
 	kButtonPad = 1,
 	kButtonSpace = 5
 };
@@ -48,7 +51,7 @@ enum {
 	kCmdBomb = 'BOMB'
 };
 
-TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, 320, 20),
+TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, kMenuWidth, kMenuHeight),
 	_vm(vm) {
 	init();
 }
@@ -57,7 +60,16 @@ void TopMenu::init() {
 	int x = kMenuX;
 	int y = kMenuY;
 
+	Graphics::Surface *surf;
+	Common::File in;
+
+	in.open("btn_1.bmp");
+	
+	surf = Graphics::ImageDecoder::loadFile(in, g_system->getOverlayFormat());
+
 	_whatButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "What is it?", kCmdWhat);
+	_whatButton->setGfx(surf);
+
 	x += kButtonWidth + kButtonPad;
 
 	_musicButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Music", kCmdMusic);
