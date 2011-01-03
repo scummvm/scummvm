@@ -103,6 +103,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"riven", "Riven: The Sequel to Myst"},
 #ifdef DETECT_BRODERBUND_TITLES
 	{"zoombini", "Logical Journey of the Zoombinis"},
+	{"cstime", "Where in Time is Carmen Sandiego?"},
 	{"csworld", "Where in the World is Carmen Sandiego?"},
 	{"csamtrak", "Where in America is Carmen Sandiego? (The Great Amtrak Train Adventure)"},
 	{"maggiesfa", "Maggie's Farmyard Adventure"},
@@ -236,6 +237,7 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 			*engine = new Mohawk::MohawkEngine_LivingBooks(syst, gd);
 			break;
 		case Mohawk::GType_ZOOMBINI:
+		case Mohawk::GType_CSTIME:
 		case Mohawk::GType_CSWORLD:
 		case Mohawk::GType_CSAMTRAK:
 		case Mohawk::GType_JAMESMATH:

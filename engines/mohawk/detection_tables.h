@@ -389,6 +389,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 #ifdef DETECT_BRODERBUND_TITLES
 	{
 		{
+			"cstime",
+			"",
+			AD_ENTRY1("signin.mhk", "410b4ce8d1a8702971e4d1ffba9b965d"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_CSTIME,
+		GF_HASMIDI,
+		0
+	},
+
+	{
+		{
 			"zoombini",
 			"",
 			AD_ENTRY1("ZOOMBINI.MHK", "98b758fec55104c096cfd129048be9a6"),

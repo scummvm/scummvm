@@ -53,6 +53,7 @@ enum MohawkGameType {
 	GType_MAKINGOF,
 	GType_RIVEN,
 	GType_ZOOMBINI,
+	GType_CSTIME,
 	GType_CSWORLD,
 	GType_CSAMTRAK,
 	GType_JAMESMATH,
