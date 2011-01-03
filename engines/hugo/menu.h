@@ -46,9 +46,10 @@ class TopMenu : public GUI::Dialog {
 public:
 	TopMenu(HugoEngine *vm);
 
+	void reflowLayout();
+
 	/*
 	void handleTickle();
-	void reflowLayout();
 	void handleMouseWheel(int x, int y, int direction);
 	void handleKeyDown(Common::KeyState state);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
