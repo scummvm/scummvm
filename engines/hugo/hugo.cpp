@@ -159,6 +159,8 @@ HugoEngine::~HugoEngine() {
 
 	_screen->freeFonts();
 
+	delete _topMenu;
+
 	delete _object;
 	delete _sound;
 	delete _route;
@@ -195,6 +197,8 @@ Common::Error HugoEngine::run() {
 	_inventory = new InventoryHandler(this);
 	_route = new Route(this);
 	_sound = new SoundHandler(this);
+
+	_topMenu = new TopMenu(this);
 
 	switch (_gameVariant) {
 	case 0: // H1 Win

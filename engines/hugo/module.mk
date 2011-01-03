@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	intro_v2w.o \
 	intro_v3w.o \
 	inventory.o \
+	menu.o \
 	mouse.o \
 	object.o \
 	object_v1d.o \

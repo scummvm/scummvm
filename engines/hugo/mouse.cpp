@@ -276,8 +276,14 @@ void MouseHandler::mouseHandler() {
 
 	int16 objId = -1;                               // Current source object
 	// Process cursor over an object or icon
-	if (gameStatus.inventoryState == I_ACTIVE)      // Check inventory icon bar first
+	if (gameStatus.inventoryState == I_ACTIVE) {      // Check inventory icon bar first
 		objId = _vm->_inventory->processInventory(INV_GET, cx, cy);
+	} else {
+		if (cy < 5 && cy > 0) {
+			_vm->_topMenu->runModal();
+		}
+	}
+
 	if (objId == -1)                                // No match, check rest of view
 		objId = _vm->_object->findObject(cx, cy);
 	if (objId >= 0) {                               // Got a match
