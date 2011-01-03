@@ -847,6 +847,281 @@ int main(int argc, char *argv[]) {
 	for (int j = 0; j < nbrElem; j++)
 		writeByte(outFile, font8[j]);
 
+	//bitmap images for menu
+	writeUint16BE(outFile, 18);
+
+	FILE* src_file;
+	char buf[2];
+	src_file = fopen("btn_1.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_1.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_1_off.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_1_off.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_2.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_2.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_2_off.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_2_off.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_3.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_3.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_3_off.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_3_off.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_4.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_4.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_4_off.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_4_off.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_5.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_5.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_5_off.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_5_off.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_6.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_6.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_6_off.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_6_off.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_7.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_7.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_7_off.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_7_off.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_8.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_8.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_8_off.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_8_off.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_9.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_9.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
+	src_file = fopen("btn_9_off.bmp", "rb");
+	if (src_file == NULL) {
+		perror("btn_9_off.bmp");
+		return -1;
+	}
+	fseek(src_file , 0 , SEEK_END);
+	nbrElem = ftell(src_file);
+	writeUint16BE(outFile, nbrElem);
+	rewind(src_file);
+	for (int j = 0; j < nbrElem; j++) {
+		fread(buf, 1, 1, src_file);
+		writeByte(outFile, buf[0]);
+	}
+	fclose(src_file);
+
 	fclose(outFile);
 	return 0;
 }
