@@ -25,6 +25,7 @@
 
 #include "hugo/hugo.h"
 #include "graphics/imagedec.h"
+#include "common/substream.h"
 
 namespace Hugo {
 
@@ -42,16 +43,16 @@ enum {
 enum {
 	kCmdWhat = 'WHAT',
 	kCmdMusic = 'MUZK',
-	kCmdVolume = 'VOLM',
+	kCmdSoundFX = 'SOUN',
 	kCmdLoad = 'LOAD',
 	kCmdSave = 'SAVE',
-	kCmdUndo = 'UNDO',
-	kCmdText = 'TEXT',
+	kCmdRecall = 'RECL',
+	kCmdTurbo = 'TURB',
 	kCmdLook = 'LOOK',
-	kCmdBomb = 'BOMB'
+	kCmdInvent = 'INVT'
 };
 
-TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, kMenuWidth, kMenuHeight),
+TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, kMenuWidth, kMenuHeight), arrayBmp(0),
 	_vm(vm) {
 	init();
 }
@@ -60,22 +61,13 @@ void TopMenu::init() {
 	int x = kMenuX;
 	int y = kMenuY;
 
-	Graphics::Surface *surf;
-	Common::File in;
-
-	in.open("btn_1.bmp");
-	
-	surf = Graphics::ImageDecoder::loadFile(in, g_system->getOverlayFormat());
-
 	_whatButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "What is it?", kCmdWhat);
-	_whatButton->setGfx(surf);
-
 	x += kButtonWidth + kButtonPad;
 
 	_musicButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Music", kCmdMusic);
 	x += kButtonWidth + kButtonPad;
 
-	_volumeButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Volume", kCmdVolume);
+	_soundFXButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Sound FX", kCmdSoundFX);
 	x += kButtonWidth + kButtonPad;
 
 	x += kButtonSpace;
@@ -88,20 +80,44 @@ void TopMenu::init() {
 
 	x += kButtonSpace;
 
-	_undoButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Undo", kCmdUndo);
+	_recallButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Recall last command", kCmdRecall);
 	x += kButtonWidth + kButtonPad;
 	
-	_textButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Text", kCmdText);
+	_turboButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Turbo", kCmdTurbo);
 	x += kButtonWidth + kButtonPad;
 
 	x += kButtonSpace;
 	
-	_lookButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Look", kCmdLook);
+	_lookButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Description of the scene", kCmdLook);
 	x += kButtonWidth + kButtonPad;
 	
-	_bombButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Bomb", kCmdBomb);
+	_inventButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Inventory", kCmdInvent);
 	x += kButtonWidth + kButtonPad;
 
+}
+
+void TopMenu::loadBmpArr(Common::File &in) {
+	uint16 arraySize = in.readUint16BE();
+
+	arrayBmp = (Graphics::Surface **)malloc(sizeof(Graphics::Surface *) * (arraySize));
+	for (int i = 0; i < arraySize; i++) {
+		uint16 bmpSize = in.readUint16BE();
+		uint32 filPos = in.pos();
+		Common::SeekableSubReadStream stream(&in, filPos, filPos + bmpSize); 
+		arrayBmp[i] = Graphics::ImageDecoder::loadFile(stream, g_system->getOverlayFormat());
+		in.skip(bmpSize);
+	}
+
+	// Set the graphics to the 'on' buttons 
+	_whatButton->setGfx(arrayBmp[2*kMenuWhat]);
+	_musicButton->setGfx(arrayBmp[2*kMenuMusic]);
+	_soundFXButton->setGfx(arrayBmp[2*kMenuSoundFX]);
+	_loadButton->setGfx(arrayBmp[2*kMenuLoad]);
+	_saveButton->setGfx(arrayBmp[2*kMenuSave]);
+	_recallButton->setGfx(arrayBmp[2*kMenuRecall]);
+	_turboButton->setGfx(arrayBmp[2*kMenuTurbo]);
+	_lookButton->setGfx(arrayBmp[2*kMenuLook]);
+	_inventButton->setGfx(arrayBmp[2*kMenuInventory]);
 }
 
 } // End of namespace Hugo

@@ -30,6 +30,18 @@
 
 namespace Hugo {
 
+enum MenuOption {
+	kMenuWhat = 0,
+	kMenuMusic,
+	kMenuSoundFX,
+	kMenuLoad,
+	kMenuSave,
+	kMenuRecall,
+	kMenuTurbo,
+	kMenuLook,
+	kMenuInventory
+};
+
 class TopMenu : public GUI::Dialog {
 public:
 	TopMenu(HugoEngine *vm);
@@ -41,6 +53,7 @@ public:
 	void handleKeyDown(Common::KeyState state);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	*/
+	void loadBmpArr(Common::File &in);
 
 protected:
 	void init();
@@ -49,13 +62,16 @@ protected:
 
 	GUI::PicButtonWidget *_whatButton;
 	GUI::PicButtonWidget *_musicButton;
-	GUI::PicButtonWidget *_volumeButton;
+	GUI::PicButtonWidget *_soundFXButton;
 	GUI::PicButtonWidget *_loadButton;
 	GUI::PicButtonWidget *_saveButton;
-	GUI::PicButtonWidget *_undoButton;
-	GUI::PicButtonWidget *_textButton;
+	GUI::PicButtonWidget *_recallButton;
+	GUI::PicButtonWidget *_turboButton;
 	GUI::PicButtonWidget *_lookButton;
-	GUI::PicButtonWidget *_bombButton;
+	GUI::PicButtonWidget *_inventButton;
+
+	Graphics::Surface **arrayBmp;
+
 };
 
 }

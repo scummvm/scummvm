@@ -755,6 +755,7 @@ bool HugoEngine::loadHugoDat() {
 	_object->loadNumObj(in);
 	_scheduler->loadAlNewscrIndex(in);
 	_screen->loadFontArr(in);
+	_topMenu->loadBmpArr(in);
 
 	return true;
 }
