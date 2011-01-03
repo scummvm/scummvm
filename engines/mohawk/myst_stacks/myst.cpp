@@ -3090,7 +3090,7 @@ void MystScriptParser_Myst::observatoryUpdateVisualizer(uint16 x, uint16 y) {
 }
 
 void MystScriptParser_Myst::observatorySetTargetToSetting() {
-	uint32 visuX = _state.observatoryTimeSetting * 0.28;
+	uint32 visuX = (uint16)(_state.observatoryTimeSetting * 0.28);
 	uint32 visuY = 250 * _state.observatoryYearSetting
 			+ 65 * (_state.observatoryMonthSetting + 1)
 			+ 20 * _state.observatoryDaySetting;
