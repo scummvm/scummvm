@@ -166,4 +166,43 @@ void TopMenu::loadBmpArr(Common::File &in) {
 	}
 }
 
+void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kCmdWhat:
+		close();
+		break;
+	case kCmdMusic:
+		close();
+		break;
+	case kCmdSoundFX:
+		close();
+		break;
+	case kCmdLoad:
+		close();
+		break;
+	case kCmdSave:
+		close();
+		break;
+	case kCmdRecall:
+		close();
+		break;
+	case kCmdTurbo:
+		close();
+		break;
+	case kCmdLook:
+		close();
+		break;
+	case kCmdInvent:
+		close();
+		break;
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void TopMenu::handleMouseUp(int x, int y, int button, int clickCount) {
+	if (y > _h)
+		close();
+}
+
 } // End of namespace Hugo
