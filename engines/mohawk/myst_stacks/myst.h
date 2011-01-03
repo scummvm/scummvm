@@ -94,7 +94,7 @@ private:
 	DECLARE_OPCODE(o_treePressureReleaseStart);
 	DECLARE_OPCODE(o_observatoryMonthChangeStart);
 	DECLARE_OPCODE(o_observatoryDayChangeStart);
-	DECLARE_OPCODE(opcode_133);
+	DECLARE_OPCODE(o_observatoryGoButton);
 	DECLARE_OPCODE(o_observatoryMonthSliderMove);
 	DECLARE_OPCODE(o_observatoryDaySliderMove);
 	DECLARE_OPCODE(o_observatoryYearSliderMove);

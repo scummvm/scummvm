@@ -102,7 +102,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 		OPCODE(131, o_observatoryMonthChangeStart);
 		OPCODE(132, o_observatoryMonthChangeStart);
 	}
-	OPCODE(133, opcode_133);
+	OPCODE(133, o_observatoryGoButton);
 	OPCODE(134, o_observatoryMonthSliderMove);
 	OPCODE(135, o_observatoryDaySliderMove);
 	OPCODE(136, o_observatoryYearSliderMove);
@@ -1696,22 +1696,39 @@ void MystScriptParser_Myst::observatoryTimeChange_run() {
 		observatoryIncrementTime(_observatoryIncrement);
 }
 
-void MystScriptParser_Myst::opcode_133(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Myst::o_observatoryGoButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Observatory go button", op);
-	varUnusedCheck(op, var);
 
-	// Used on Card 4500 (Stellar Observatory Controls)
-	if (argc == 1) {
-		// Called by Telescope Slew Button
+	// Setting not at target
+	if (_state.observatoryDayTarget != _state.observatoryDaySetting
+			|| _state.observatoryMonthTarget != _state.observatoryMonthSetting
+			|| _state.observatoryYearTarget != _state.observatoryYearSetting
+			|| _state.observatoryTimeTarget != _state.observatoryTimeSetting) {
 		uint16 soundId = argv[0];
-
-		// TODO: Function to change variables controlling telescope view
-		//       etc.
-
-		// TODO: Sound seems to be stuck looping?
 		_vm->_sound->replaceSound(soundId);
-	} else
-		unknown(op, var, argc, argv);
+
+		int16 distance = _state.observatoryYearTarget - _state.observatoryYearSetting;
+		uint32 end = _vm->_system->getMillis() + 32 * abs(distance) / 50 + 800;
+		uint16 delay = 50;
+
+		while (end > _vm->_system->getMillis()) {
+			_vm->_system->delayMillis(delay);
+
+			observatoryUpdateVisualizer(_vm->_rnd->getRandomNumber(409), _vm->_rnd->getRandomNumber(409));
+
+			_vm->redrawResource(_observatoryVisualizer);
+		}
+
+		_vm->_sound->resumeBackground();
+
+		// Redraw visualizer
+		observatorySetTargetToSetting();
+		_vm->redrawResource(_observatoryVisualizer);
+
+		// Redraw button
+		_tempVar = 0;
+		_vm->redrawArea(105);
+	}
 }
 
 void MystScriptParser_Myst::o_observatoryMonthSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -3053,7 +3070,8 @@ void MystScriptParser_Myst::o_observatory_init(uint16 op, uint16 var, uint16 arg
 }
 
 bool MystScriptParser_Myst::observatoryIsDDMMYYYY2400() {
-	return !(_vm->getFeatures() & GF_ME) && _vm->getLanguage() == Common::FR_FRA;
+	return !(_vm->getFeatures() & GF_ME) && (_vm->getLanguage() == Common::FR_FRA
+			|| _vm->getLanguage() == Common::DE_DEU);
 }
 
 void MystScriptParser_Myst::observatoryUpdateVisualizer(uint16 x, uint16 y) {
@@ -3072,8 +3090,8 @@ void MystScriptParser_Myst::observatoryUpdateVisualizer(uint16 x, uint16 y) {
 }
 
 void MystScriptParser_Myst::observatorySetTargetToSetting() {
-	uint16 visuX = _state.observatoryYearSetting * 0.28;
-	uint16 visuY = 250 * _state.observatoryTimeSetting
+	uint32 visuX = _state.observatoryTimeSetting * 0.28;
+	uint32 visuY = 250 * _state.observatoryYearSetting
 			+ 65 * (_state.observatoryMonthSetting + 1)
 			+ 20 * _state.observatoryDaySetting;
 
