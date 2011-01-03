@@ -47,7 +47,7 @@ public:
 	TopMenu(HugoEngine *vm);
 
 	void reflowLayout();
-	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data);
 	void handleMouseUp(int x, int y, int button, int clickCount);
 
 	void loadBmpArr(Common::File &in);

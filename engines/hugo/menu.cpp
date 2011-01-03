@@ -166,8 +166,8 @@ void TopMenu::loadBmpArr(Common::File &in) {
 	}
 }
 
-void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	switch (cmd) {
+void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data) {
+	switch (command) {
 	case kCmdWhat:
 		close();
 		break;
@@ -196,7 +196,7 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data)
 		close();
 		break;
 	default:
-		Dialog::handleCommand(sender, cmd, data);
+		Dialog::handleCommand(sender, command, data);
 	}
 }
 
