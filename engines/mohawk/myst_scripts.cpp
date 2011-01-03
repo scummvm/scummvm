@@ -289,12 +289,14 @@ void MystScriptParser::unknown(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 	warning("Unimplemented opcode 0x%02x (%d)", op, op);
 	warning("\tUses var %d", var);
 	warning("\tArg count = %d", argc);
+
 	if (argc) {
 		Common::String str;
 		str += Common::String::format("%d", argv[0]);
-		for (uint16 i = 1; i < argc; i++) {
+
+		for (uint16 i = 1; i < argc; i++)
 			str += Common::String::format(", %d", argv[i]);
-		}
+
 		warning("\tArgs: %s\n", str.c_str());
 	}
 }
@@ -312,9 +314,8 @@ void MystScriptParser::o_toggleVar(uint16 op, uint16 var, uint16 argc, uint16 *a
 void MystScriptParser::o_setVar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Set var %d: %d", op, var, argv[0]);
 
-	if (setVarValue(var, argv[0])) {
+	if (setVarValue(var, argv[0]))
 		_vm->redrawArea(var);
-	}
 }
 
 void MystScriptParser::o_changeCardSwitch(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -376,9 +377,9 @@ void MystScriptParser::o_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16
 	// TODO: If movie has sound, pause background music
 
 	int16 direction = 1;
-	if (argc == 1) {
+	if (argc == 1)
 		direction = argv[0];
-	}
+
 	debugC(kDebugScript, "\tDirection: %d", direction);
 
 	// Trigger resource 6 movie overriding play direction
@@ -630,8 +631,8 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, uint16 arg
 //       for use by this opcode and VIEW sound block.
 // TODO: Though the playSound and PlaySoundBlocking opcodes play sounds immediately,
 //       this opcode changes the main background sound playing..
-//       Current behaviour here and with VIEW sound block is not right as demonstrated
-//       by Channelwood Card 3280 (Tank Valve) and water flow sound behaviour in pipe
+//       Current behavior here and with VIEW sound block is not right as demonstrated
+//       by Channelwood Card 3280 (Tank Valve) and water flow sound behavior in pipe
 //       on cards leading from shed...
 void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
@@ -710,6 +711,7 @@ void MystScriptParser::o_soundPlaySwitch(uint16 op, uint16 var, uint16 argc, uin
 	debugC(kDebugScript, "Opcode %d: Switch Choice of Play Sound", op);
 
 	uint16 value = getVar(var);
+
 	if (value < argc) {
 		uint16 soundId = argv[value];
 		debugC(kDebugScript, "\tvar: %d", var);

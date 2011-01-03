@@ -88,11 +88,10 @@ bool MystResource::isEnabled() {
 }
 
 void MystResource::setEnabled(bool enabled) {
-	if (enabled) {
+	if (enabled)
 		_flags |= kMystHotspotEnableFlag;
-	} else {
+	else
 		_flags &= ~kMystHotspotEnableFlag;
-	}
 }
 
 const Common::String MystResource::describe() {
@@ -132,9 +131,8 @@ const Common::String MystResourceType5::describe() {
 	if (_script->size() != 0) {
 		desc += " ops:";
 
-		for (uint i = 0; i < _script->size(); i++) {
+		for (uint i = 0; i < _script->size(); i++)
 			desc += " " + _vm->_scriptParser->getOpcodeDesc(_script->operator[](i).opcode);
-		}
 	}
 
 	return desc;
@@ -214,9 +212,8 @@ void MystResourceType6::playMovie() {
 }
 
 void MystResourceType6::handleCardChange() {
-	if (_playOnCardChange) {
+	if (_playOnCardChange)
 		playMovie();
-	}
 }
 
 MystResourceType7::MystResourceType7(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {
@@ -230,11 +227,10 @@ MystResourceType7::MystResourceType7(MohawkEngine_Myst *vm, Common::SeekableRead
 }
 
 MystResourceType7::~MystResourceType7() {
-	while(!_subResources.empty()) {
-		MystResource *temp = _subResources.back();
-		_subResources.pop_back();
-		delete temp;
-	}
+	for (uint32 i = 0; i < _subResources.size(); i++)
+		delete _subResources[i];
+
+	_subResources.clear();
 }
 
 // TODO: All these functions to switch subresource are very similar.
@@ -326,6 +322,7 @@ MystResourceType8::MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableRead
 	debugC(kDebugResource, "\tnumSubImages: %d", _numSubImages);
 
 	_subImages = new MystResourceType8::SubImage[_numSubImages];
+
 	for (uint16 i = 0; i < _numSubImages; i++) {
 		debugC(kDebugResource, "\tSubimage %d:", i);
 
@@ -390,9 +387,8 @@ void MystResourceType8::drawDataToScreen() {
 		uint16 imageToDraw = _subImages[subImageId].wdib;
 
 		// This special case means redraw background
-		if (imageToDraw == 0xFFFF) {
+		if (imageToDraw == 0xFFFF)
 			imageToDraw = _vm->getCardBackgroundId();
-		}
 
 		_vm->_gfx->copyImageSectionToBackBuffer(imageToDraw, _subImages[subImageId].rect, _rect);
 	}
@@ -419,9 +415,8 @@ void MystResourceType8::drawConditionalDataToScreen(uint16 state, bool update) {
 		uint16 imageToDraw = _subImages[subImageId].wdib;
 
 		// This special case means redraw background
-		if (imageToDraw == 0xFFFF) {
+		if (imageToDraw == 0xFFFF)
 			imageToDraw = _vm->getCardBackgroundId();
-		}
 
 		// Draw to screen
 		if (update) {
@@ -443,9 +438,9 @@ const Common::String MystResourceType8::describe() {
 
 	if (_numSubImages > 0) {
 		desc +=  " subImgs:";
-		for (uint i = 0; i < _numSubImages; i++) {
+
+		for (uint i = 0; i < _numSubImages; i++)
 			desc += Common::String::format(" %d", (int16)_subImages[i].wdib);
-		}
 	}
 
 	return desc;
@@ -537,18 +532,17 @@ void MystResourceType10::handleMouseUp(const Common::Point &mouse) {
 	// Save slider value
 	uint16 value = 0;
 	if (_flagHV & 2) {
-		if (_stepsV) {
+		if (_stepsV)
 			value = (_pos.y - _minV) / _stepV;
-		} else {
+		else
 			value = _pos.y;
-		}
 	} else if (_flagHV & 1) {
-		if (_stepsH) {
+		if (_stepsH)
 			value = (_pos.x - _minH) / _stepH;
-		} else {
+		else
 			value = _pos.x;
-		}
 	}
+
 	_vm->_scriptParser->setVarValue(_var8, value);
 
 	MystResourceType11::handleMouseUp(mouse);
@@ -579,6 +573,7 @@ void MystResourceType10::updatePosition(const Common::Point &mouse) {
 		if (_stepV) {
 			uint16 center = _minV + _stepV * (mouseClipped.y - _minV) / _stepV;
 			uint16 top = center - _sliderHeight / 2;
+
 			if (_rect.top != top || _pos.y != center) {
 				positionChanged = true;
 				_pos.y = center;
@@ -589,6 +584,7 @@ void MystResourceType10::updatePosition(const Common::Point &mouse) {
 			_pos.y = mouseClipped.y;
 			_rect.top = mouseClipped.y - _sliderHeight / 2;
 		}
+
 		if (positionChanged) {
 			_rect.bottom = _rect.top + _sliderHeight;
 			_subImages[0].rect.top = 333 - _rect.bottom - 1;
@@ -600,6 +596,7 @@ void MystResourceType10::updatePosition(const Common::Point &mouse) {
 		if (_stepH) {
 			uint16 center = _minH + _stepH * (mouseClipped.x - _minH) / _stepH;
 			uint16 left = center - _sliderWidth / 2;
+
 			if (_rect.left != left || _pos.x != center) {
 				positionChanged = true;
 				_pos.x = center;
@@ -610,14 +607,13 @@ void MystResourceType10::updatePosition(const Common::Point &mouse) {
 			_pos.x = mouseClipped.x;
 			_rect.left = mouseClipped.x - _sliderWidth / 2;
 		}
-		if (positionChanged) {
+
+		if (positionChanged)
 			_rect.right = _rect.left + _sliderWidth;
-		}
 	}
 
-	if (positionChanged && _dragSound) {
+	if (positionChanged && _dragSound)
 		_vm->_sound->replaceSound(_dragSound);
-	}
 }
 
 MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType8(vm, rlstStream, parent) {
@@ -663,13 +659,11 @@ MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableRe
 	_stepH = 0;
 	_stepV = 0;
 
-	if (_stepsH) {
+	if (_stepsH)
 		_stepH = (_maxH - _minH) / (_stepsH - 1);
-	}
 
-	if (_stepsV) {
+	if (_stepsV)
 		_stepV = (_maxV - _minV) / (_stepsV - 1);
-	}
 }
 
 MystResourceType11::~MystResourceType11() {
@@ -707,36 +701,23 @@ const Common::String MystResourceType11::describe() {
 }
 
 void MystResourceType11::setPositionClipping(const Common::Point &mouse, Common::Point &dest) {
-	if (_flagHV & 2) {
+	if (_flagHV & 2)
 		dest.y = CLIP<uint16>(mouse.y, _minV, _maxV);
-	}
-	if (_flagHV & 1) {
+
+	if (_flagHV & 1)
 		dest.x = CLIP<uint16>(mouse.x, _minH, _maxH);
-	}
 }
 
 uint16 MystResourceType11::getList1(uint16 index) {
-	if (index < _lists[0].listCount) {
-		return _lists[0].list[index];
-	}
-
-	return 0;
+	return (index < _lists[0].listCount) ? _lists[0].list[index] : 0;
 }
 
 uint16 MystResourceType11::getList2(uint16 index) {
-	if (index < _lists[1].listCount) {
-		return _lists[1].list[index];
-	}
-
-	return 0;
+	return (index < _lists[1].listCount) ?  _lists[1].list[index] : 0;
 }
 
 uint16 MystResourceType11::getList3(uint16 index) {
-	if (index < _lists[2].listCount) {
-		return _lists[2].list[index];
-	}
-
-	return 0;
+	return (index < _lists[2].listCount) ?  _lists[2].list[index] : 0;
 }
 
 MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType11(vm, rlstStream, parent) {
@@ -761,7 +742,6 @@ MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableRe
 }
 
 MystResourceType12::~MystResourceType12() {
-
 }
 
 void MystResourceType12::drawFrame(uint16 frame) {

@@ -385,9 +385,8 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	uint16 top = surface->h - (src.top + MIN<int>(surface->h, dest.height()));
 
 	// Do not draw the top pixels if the image is too tall
-	if (dest.height() > _viewport.height()) {
+	if (dest.height() > _viewport.height())
 		top += dest.height() - _viewport.height();
-	}
 
 	// Clip the destination rect to the screen
 	if (dest.right > _vm->_system->getWidth() || dest.bottom > _vm->_system->getHeight())

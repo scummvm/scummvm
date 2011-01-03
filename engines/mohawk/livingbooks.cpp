@@ -2862,7 +2862,7 @@ void LBPaletteItem::readData(uint16 type, uint16 size, Common::SeekableSubReadSt
 		_drawStart = stream->readUint16();
 		_drawCount = stream->readUint16();
 		if (_drawStart + _drawCount > 256)
-			error("encountered palette trying to set more than 256 colours");
+			error("encountered palette trying to set more than 256 colors");
 		assert(size == 8 + _drawCount * 4);
 		_palette = new byte[_drawCount * 4];
 		stream->read(_palette, _drawCount * 4);

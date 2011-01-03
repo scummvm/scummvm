@@ -71,7 +71,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_transitionsEnabled = false;
 
 	// Engine tweaks
-	// Disabling this makes engine behaviour as per
+	// Disabling this makes engine behavior as per
 	// original, including bugs, missing bits etc. :)
 	_tweaksEnabled = true;
 
@@ -127,11 +127,10 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete[] _view.conditionalImages;
 	delete[] _view.scriptResources;
 
-	while(!_resources.empty()) {
-		MystResource *temp = _resources.back();
-		_resources.pop_back();
-		delete temp;
-	}
+	for (uint32 i = 0; i < _resources.size(); i++)
+		delete _resources[i];
+
+	_resources.clear();
 }
 
 // Uses cached data objects in preference to disk access
@@ -989,8 +988,8 @@ void MohawkEngine_Myst::drawResourceImages() {
 			_resources[i]->drawDataToScreen();
 }
 
-void MohawkEngine_Myst::redrawResource(MystResourceType8 *_resource, bool update) {
-	_resource->drawConditionalDataToScreen(_scriptParser->getVar(_resource->getType8Var()), update);
+void MohawkEngine_Myst::redrawResource(MystResourceType8 *resource, bool update) {
+	resource->drawConditionalDataToScreen(_scriptParser->getVar(resource->getType8Var()), update);
 }
 
 void MohawkEngine_Myst::redrawArea(uint16 var, bool update) {
@@ -1042,11 +1041,10 @@ MystResource *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstSt
 }
 
 void MohawkEngine_Myst::loadResources() {
-	while(!_resources.empty()) {
-		MystResource *temp = _resources.back();
-		_resources.pop_back();
-		delete temp;
-	}
+	for (uint32 i = 0; i < _resources.size(); i++)
+		delete _resources[i];
+
+	_resources.clear();
 
 	if (!_view.rlst) {
 		debugC(kDebugResource, "No RLST present");
@@ -1061,6 +1059,7 @@ void MohawkEngine_Myst::loadResources() {
 		debugC(kDebugResource, "Resource #%d:", i);
 		_resources.push_back(loadResource(rlstStream, NULL));
 	}
+
 	delete rlstStream;
 }
 

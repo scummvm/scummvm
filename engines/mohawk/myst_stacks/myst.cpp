@@ -283,13 +283,12 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 	case 0: // Myst Library Bookcase Closed
 		return _state.libraryBookcaseDoor;
 	case 1:
-		if (_globals.ending != 4) {
+		if (_globals.ending != 4)
 			return _state.libraryBookcaseDoor != 1;
-		} else if (_state.libraryBookcaseDoor == 1) {
+		else if (_state.libraryBookcaseDoor == 1)
 			return 2;
-		} else {
+		else
 			return 3;
-		}
 	case 2: // Marker Switch Near Cabin
 		return _state.cabinMarkerSwitch;
 	case 3: // Marker Switch Near Clock Tower
@@ -350,17 +349,13 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 			return 0;
 		}
 	case 16: // Tower Window (Book) View From Ladder Top
-		if (_state.towerRotationAngle != 271
-						&& _state.towerRotationAngle != 83
-						&& _state.towerRotationAngle != 129) {
+		if (_state.towerRotationAngle != 271 && _state.towerRotationAngle != 83	&& _state.towerRotationAngle != 129) {
 			if (_state.towerRotationAngle == 152)
 				return 2;
 			else
 				return 0;
-		} else {
+		} else
 			return 1;
-		}
-
 	case 23: // Fireplace Pattern Correct
 		return _fireplaceLines[0] == 195
 				&& _fireplaceLines[1] == 107
@@ -369,17 +364,15 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 				&& _fireplaceLines[4] == 204
 				&& _fireplaceLines[5] == 250;
 	case 24: // Fireplace Blue Page Present
-		if (_globals.ending != 4) {
+		if (_globals.ending != 4)
 			return !(_globals.bluePagesInBook & 32) && (_globals.heldPage != 6);
-		} else {
+		else
 			return 0;
-		}
 	case 25: // Fireplace Red Page Present
-		if (_globals.ending != 4) {
+		if (_globals.ending != 4) 
 			return !(_globals.redPagesInBook & 32) && (_globals.heldPage != 12);
-		} else {
+		else
 			return 0;
-		}
 	case 26: // Courtyard Image Box - Cross
 	case 27: // Courtyard Image Box - Leaf
 	case 28: // Courtyard Image Box - Arrow
@@ -388,13 +381,12 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 	case 31: // Courtyard Image Box - Spider
 	case 32: // Courtyard Image Box - Anchor
 	case 33: // Courtyard Image Box - Ostrich
-		if (!_tempVar) {
+		if (!_tempVar)
 			return 0;
-		} else if (_state.courtyardImageBoxes & (0x01 << (var - 26))) {
+		else if (_state.courtyardImageBoxes & (0x01 << (var - 26)))
 			return 2;
-		} else {
+		else
 			return 1;
-		}
 	case 34: // Sound Control In Dock forechamber
 		if (_state.imagerActive) {
 			if (_state.imagerSelection == 40 && !_state.imagerMountainErased)
@@ -403,9 +395,9 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 				return 2;
 			else
 				return 0;
-		} else {
-			return 0;
 		}
+
+		return 0;
 	case 35: // Dock Forechamber Imager Control Left Digit
 		if (_state.imagerSelection > 9)
 			return _state.imagerSelection / 10 - 1;
@@ -575,17 +567,15 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 	case 99: // Cabin Boiler Gas Valve Position
 		return _state.cabinValvePosition % 6;
 	case 102: // Red page
-		if (_globals.ending != 4) {
+		if (_globals.ending != 4)
 			return !(_globals.redPagesInBook & 1) && (_globals.heldPage != 7);
-		} else {
+		else
 			return 0;
-		}
 	case 103: // Blue page
-		if (_globals.ending != 4) {
+		if (_globals.ending != 4)
 			return !(_globals.bluePagesInBook & 1) && (_globals.heldPage != 1);
-		} else {
+		else
 			return 0;
-		}
 	case 300: // Rocket Ship Music Puzzle Slider State
 		return 1;
 	case 302: // Green Book Opened Before Flag
@@ -600,10 +590,10 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 				return 26;
 			else
 				return 27;
-		} else {
-			return _state.cabinValvePosition;
 		}
-	case 307: // Cabin Boiler Fully Pressurised
+
+		return _state.cabinValvePosition;
+	case 307: // Cabin Boiler Fully Pressurized
 		return _state.cabinPilotLightLit == 1 && _state.cabinValvePosition > 12;
 	default:
 		return MystScriptParser::getVar(var);
@@ -640,18 +630,16 @@ void MystScriptParser_Myst::toggleVar(uint16 var) {
 		if (_globals.ending != 4 && !(_globals.bluePagesInBook & 32)) {
 			if (_globals.heldPage == 6)
 				_globals.heldPage = 0;
-			else {
+			else
 				_globals.heldPage = 6;
-			}
 		}
 		break;
 	case 25: // Fireplace Red page
 		if (_globals.ending != 4 && !(_globals.redPagesInBook & 32)) {
 			if (_globals.heldPage == 12)
 				_globals.heldPage = 0;
-			else {
+			else
 				_globals.heldPage = 12;
-			}
 		}
 		break;
 	case 26: // Courtyard Image Box - Cross
@@ -684,18 +672,16 @@ void MystScriptParser_Myst::toggleVar(uint16 var) {
 		if (_globals.ending != 4 && !(_globals.redPagesInBook & 1)) {
 			if (_globals.heldPage == 7)
 				_globals.heldPage = 0;
-			else {
+			else
 				_globals.heldPage = 7;
-			}
 		}
 		break;
 	case 103: // Blue page
 		if (_globals.ending != 4 && !(_globals.bluePagesInBook & 1)) {
 			if (_globals.heldPage == 1)
 				_globals.heldPage = 0;
-			else {
+			else
 				_globals.heldPage = 1;
-			}
 		}
 		break;
 	default:
@@ -1518,6 +1504,7 @@ void MystScriptParser_Myst::observatoryIncrementMonth(int16 increment) {
 		_observatoryMonthSlider->drawConditionalDataToScreen(2);
 		_state.observatoryMonthSlider = _observatoryMonthSlider->_pos.y;
 	}
+
 	_vm->_sound->replaceSound(8500);
 }
 
@@ -1577,6 +1564,7 @@ void MystScriptParser_Myst::observatoryIncrementDay(int16 increment) {
 		_observatoryDaySlider->drawConditionalDataToScreen(2);
 		_state.observatoryDaySlider = _observatoryDaySlider->_pos.y;
 	}
+
 	_vm->_sound->replaceSound(8500);
 }
 
@@ -1630,6 +1618,7 @@ void MystScriptParser_Myst::observatoryIncrementYear(int16 increment) {
 		_observatoryYearSlider->drawConditionalDataToScreen(2);
 		_state.observatoryYearSlider = _observatoryYearSlider->_pos.y;
 	}
+
 	_vm->_sound->replaceSound(8500);
 }
 
@@ -1688,6 +1677,7 @@ void MystScriptParser_Myst::observatoryIncrementTime(int16 increment) {
 		_observatoryTimeSlider->drawConditionalDataToScreen(2);
 		_state.observatoryTimeSlider = _observatoryTimeSlider->_pos.y;
 	}
+
 	_vm->_sound->replaceSound(8500);
 }
 
@@ -1708,11 +1698,10 @@ void MystScriptParser_Myst::o_observatoryGoButton(uint16 op, uint16 var, uint16 
 		_vm->_sound->replaceSound(soundId);
 
 		int16 distance = _state.observatoryYearTarget - _state.observatoryYearSetting;
-		uint32 end = _vm->_system->getMillis() + 32 * abs(distance) / 50 + 800;
-		uint16 delay = 50;
+		uint32 end = _vm->_system->getMillis() + 32 * ABS(distance) / 50 + 800;
 
 		while (end > _vm->_system->getMillis()) {
-			_vm->_system->delayMillis(delay);
+			_vm->_system->delayMillis(50);
 
 			observatoryUpdateVisualizer(_vm->_rnd->getRandomNumber(409), _vm->_rnd->getRandomNumber(409));
 
@@ -1780,10 +1769,8 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 
 		// Breaker switched
 		if (step == maxStep) {
-
 			// Choose breaker
 			if (breaker->getType8Var() == 93) {
-
 				// Voltage is still too high or not broken
 				if (_state.generatorVoltage > 59 || _state.generatorBreakers != 1) {
 					uint16 soundId = breaker->getList2(1);
@@ -1867,10 +1854,8 @@ void MystScriptParser_Myst::o_boilerIncreasePressureStop(uint16 op, uint16 var, 
 			_vm->_sound->replaceBackground(8098, 49152);
 
 		// TODO: Play movies
-	} else {
-		if (_state.cabinValvePosition > 0)
-			_vm->_sound->replaceBackground(4098, _state.cabinValvePosition << 10);
-	}
+	} else if (_state.cabinValvePosition > 0)
+		_vm->_sound->replaceBackground(4098, _state.cabinValvePosition << 10);
 }
 
 void MystScriptParser_Myst::boilerPressureIncrease_run() {
@@ -2083,22 +2068,19 @@ void MystScriptParser_Myst::o_rocketSoundSliderEndMove(uint16 op, uint16 var, ui
 
 	_vm->checkCursorHints();
 
-	if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
-		if (_rocketSliderSound)
-			_vm->_sound->stopSound();
-	}
+	if (_state.generatorVoltage == 59 && !_state.generatorBreakers && _rocketSliderSound)
+		_vm->_sound->stopSound();
 
-	if (_invokingResource == _rocketSlider1) {
+	if (_invokingResource == _rocketSlider1)
 		_state.rocketSliderPosition[0] = _rocketSlider1->_pos.y;
-	} else if (_invokingResource == _rocketSlider2) {
+	else if (_invokingResource == _rocketSlider2)
 		_state.rocketSliderPosition[1] = _rocketSlider2->_pos.y;
-	} else if (_invokingResource == _rocketSlider3) {
+	else if (_invokingResource == _rocketSlider3)
 		_state.rocketSliderPosition[2] = _rocketSlider3->_pos.y;
-	} else if (_invokingResource == _rocketSlider4) {
+	else if (_invokingResource == _rocketSlider4)
 		_state.rocketSliderPosition[3] = _rocketSlider4->_pos.y;
-	} else if (_invokingResource == _rocketSlider5) {
+	else if (_invokingResource == _rocketSlider5)
 		_state.rocketSliderPosition[4] = _rocketSlider5->_pos.y;
-	}
 
 	_vm->_sound->resumeBackground();
 }
@@ -2186,7 +2168,7 @@ void MystScriptParser_Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 arg
 
 	MystResourceType11 *key = static_cast<MystResourceType11 *>(_invokingResource);
 
-	// What the hell ??
+	// What the hell??
 	Common::Rect src = key->_subImages[1].rect;
 	Common::Rect rect = key->_subImages[0].rect;
 	Common::Rect dest = rect;
@@ -2304,13 +2286,13 @@ void MystScriptParser_Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc
 	// If lever pulled
 	if (step == maxStep && step != _rocketLeverPosition) {
 		uint16 soundId = lever->getList2(0);
+
 		if (soundId)
 			_vm->_sound->replaceSound(soundId);
 
 		// If rocket correctly powered
-		if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
+		if (_state.generatorVoltage == 59 && !_state.generatorBreakers)
 			rocketCheckSolution();
-		}
 	}
 
 	_rocketLeverPosition = step;
@@ -2496,9 +2478,8 @@ void MystScriptParser_Myst::observatoryUpdateTime() {
 		_vm->redrawArea(83);
 
 		// Draw AM/PM
-		if (!observatoryIsDDMMYYYY2400()) {
+		if (!observatoryIsDDMMYYYY2400())
 			_vm->redrawArea(88);
-		}
 	}
 }
 
@@ -2583,31 +2564,32 @@ void MystScriptParser_Myst::o_clockHourWheelStartTurn(uint16 op, uint16 var, uin
 void MystScriptParser_Myst::clockWheel_run() {
 	// Turn wheel one step each second
 	uint32 time = _vm->_system->getMillis();
+
 	if (time > _startTime + 1000) {
 		_startTime = time;
 
-		if (_clockTurningWheel == 1) {
+		if (_clockTurningWheel == 1)
 			clockWheelTurn(39);
-		} else {
+		else
 			clockWheelTurn(38);
-		}
+
 		_vm->redrawArea(37);
 	}
-
 }
 
 void MystScriptParser_Myst::clockWheelStartTurn(uint16 wheel) {
 	MystResourceType11 *resource = static_cast<MystResourceType11 *>(_invokingResource);
 	uint16 soundId = resource->getList1(0);
+
 	if (soundId)
 		_vm->_sound->replaceSound(soundId);
 
 	// Turn wheel one step
-	if (wheel == 1) {
+	if (wheel == 1)
 		clockWheelTurn(39);
-	} else {
+	else
 		clockWheelTurn(38);
-	}
+
 	_vm->redrawArea(37);
 
 	// Continue turning wheel until mouse button is released
@@ -2645,7 +2627,7 @@ void MystScriptParser_Myst::o_libraryCombinationBookStartLeft(uint16 op, uint16 
 
 void MystScriptParser_Myst::libraryCombinationBookTurnLeft() {
 	// Turn page left
-	if (_libraryBookPage - 1 >=  0) {
+	if (_libraryBookPage - 1 >= 0) {
 		_tempVar--;
 
 		if (_tempVar >= -5) {
@@ -3070,6 +3052,7 @@ void MystScriptParser_Myst::o_observatory_init(uint16 op, uint16 var, uint16 arg
 }
 
 bool MystScriptParser_Myst::observatoryIsDDMMYYYY2400() {
+	// TODO: Auto-detect based on the month rect position
 	return !(_vm->getFeatures() & GF_ME) && (_vm->getLanguage() == Common::FR_FRA
 			|| _vm->getLanguage() == Common::DE_DEU);
 }
@@ -3151,7 +3134,7 @@ void MystScriptParser_Myst::observatory_run() {
 			|| _state.observatoryYearTarget != _state.observatoryYearSetting
 			|| _state.observatoryTimeTarget != _state.observatoryTimeSetting) {
 
-		// Blink go button
+		// Blink the go button
 		uint32 time = _vm->_system->getMillis();
 		if (time > _observatoryLastTime + 250) {
 			_tempVar = (_tempVar + 1) % 2;
@@ -3170,9 +3153,9 @@ void MystScriptParser_Myst::opcode_215(uint16 op, uint16 var, uint16 argc, uint1
 	//       to run in sequence with opcode215_run() process...
 	if (false) {
 		// All birds(x) videos are 120x48 and played in top right corner of card
-		_vm->_video->playMovie(_vm->wrapMovieFilename("birds1", kMystStack), 544-120-1, 0);
-		_vm->_video->playMovie(_vm->wrapMovieFilename("birds2", kMystStack), 544-120-1, 0);
-		_vm->_video->playMovie(_vm->wrapMovieFilename("birds3", kMystStack), 544-120-1, 0);
+		_vm->_video->playMovie(_vm->wrapMovieFilename("birds1", kMystStack), 544 - 120 - 1, 0);
+		_vm->_video->playMovie(_vm->wrapMovieFilename("birds2", kMystStack), 544 - 120 - 1, 0);
+		_vm->_video->playMovie(_vm->wrapMovieFilename("birds3", kMystStack), 544 - 120 - 1, 0);
 	}
 }
 

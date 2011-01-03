@@ -183,13 +183,13 @@ public:
 	MystResource *loadResource(Common::SeekableReadStream *rlstStream, MystResource *parent);
 	void setResourceEnabled(uint16 resourceId, bool enable);
 	void redrawArea(uint16 var, bool update = true);
-	void redrawResource(MystResourceType8 *_resource, bool update = true);
+	void redrawResource(MystResourceType8 *resource, bool update = true);
 	void drawResourceImages();
 	void drawCardBackground();
 	uint16 getCardBackgroundId();
 
 	void setCacheState(bool state) { _cache.enabled = state; }
-	bool getCacheState(void) { return _cache.enabled; }
+	bool getCacheState() { return _cache.enabled; }
 
 	GUI::Debugger *getDebugger() { return _console; }
 
