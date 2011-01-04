@@ -121,14 +121,14 @@ void TopMenu::reflowLayout() {
 	_inventButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
 	x += kButtonWidth + kButtonPad;
 
-	// Set the graphics to the 'on' buttons 
+	// Set the graphics to the 'on' buttons, except for the variable ones 
 	_whatButton->setGfx(arrayBmp[4 * kMenuWhat + scale - 1]);
-	_musicButton->setGfx(arrayBmp[4 * kMenuMusic + scale - 1]);
-	_soundFXButton->setGfx(arrayBmp[4 * kMenuSoundFX + scale - 1]);
+	_musicButton->setGfx(arrayBmp[4 * kMenuMusic + scale - 1 + ((_config.musicFl) ? 0 : 2)]);
+	_soundFXButton->setGfx(arrayBmp[4 * kMenuSoundFX + scale - 1 + ((_config.soundFl) ? 0 : 2)]);
 	_loadButton->setGfx(arrayBmp[4 * kMenuLoad + scale - 1]);
 	_saveButton->setGfx(arrayBmp[4 * kMenuSave + scale - 1]);
 	_recallButton->setGfx(arrayBmp[4 * kMenuRecall + scale - 1]);
-	_turboButton->setGfx(arrayBmp[4 * kMenuTurbo + scale - 1]);
+	_turboButton->setGfx(arrayBmp[4 * kMenuTurbo + scale - 1 + ((_config.turboFl) ? 0 : 2)]);
 	_lookButton->setGfx(arrayBmp[4 * kMenuLook + scale - 1]);
 	_inventButton->setGfx(arrayBmp[4 * kMenuInventory + scale - 1]);
 }
