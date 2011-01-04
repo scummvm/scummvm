@@ -58,7 +58,6 @@ public:
 	bool     fileExists(char *filename);
 	sound_pt getSound(int16 sound, uint16 *size);
 
-	void     instructions();
 	void     readBootFile();
 	void     readImage(int objNum, object_t *objPtr);
 	void     readUIFImages();
@@ -68,6 +67,7 @@ public:
 
 	virtual void openDatabaseFiles() = 0;
 	virtual void closeDatabaseFiles() = 0;
+	virtual void instructions() = 0;
 
 	virtual void readBackground(int screenIndex) = 0;
 	virtual void readOverlay(int screenNum, image_pt image, ovl_t overlayType) = 0;
@@ -96,22 +96,23 @@ public:
 	FileManager_v1d(HugoEngine *vm);
 	~FileManager_v1d();
 
-	void openDatabaseFiles();
-	void closeDatabaseFiles();
-	void readBackground(int screenIndex);
-	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
-	char *fetchString(int index);
+	virtual void closeDatabaseFiles();
+	virtual void instructions();
+	virtual void openDatabaseFiles();
+	virtual void readBackground(int screenIndex);
+	virtual void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
+	virtual char *fetchString(int index);
 };
 
-class FileManager_v2d : public FileManager {
+class FileManager_v2d : public FileManager_v1d {
 public:
 	FileManager_v2d(HugoEngine *vm);
 	~FileManager_v2d();
 
-	void openDatabaseFiles();
-	void closeDatabaseFiles();
-	void readBackground(int screenIndex);
-	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
+	virtual void closeDatabaseFiles();
+	virtual void openDatabaseFiles();
+	virtual void readBackground(int screenIndex);
+	virtual void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
 	char *fetchString(int index);
 };
 
@@ -120,15 +121,23 @@ public:
 	FileManager_v3d(HugoEngine *vm);
 	~FileManager_v3d();
 
-	void openDatabaseFiles();
 	void closeDatabaseFiles();
+	void openDatabaseFiles();
 	void readBackground(int screenIndex);
 	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
 private:
 	Common::File _sceneryArchive2;                  // Handle for scenery file
 };
 
-class FileManager_v1w : public FileManager_v2d {
+class FileManager_v2w : public FileManager_v2d {
+public:
+	FileManager_v2w(HugoEngine *vm);
+	~FileManager_v2w();
+
+	void instructions();
+};
+
+class FileManager_v1w : public FileManager_v2w {
 public:
 	FileManager_v1w(HugoEngine *vm);
 	~FileManager_v1w();

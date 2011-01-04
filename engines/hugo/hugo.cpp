@@ -211,7 +211,7 @@ Common::Error HugoEngine::run() {
 		_normalTPS = 9;
 		break;
 	case 1:
-		_file = new FileManager_v2d(this);
+		_file = new FileManager_v2w(this);
 		_scheduler = new Scheduler_v1w(this);
 		_intro = new intro_v2w(this);
 		_screen = new Screen_v1w(this);
@@ -220,7 +220,7 @@ Common::Error HugoEngine::run() {
 		_normalTPS = 9;
 		break;
 	case 2:
-		_file = new FileManager_v2d(this);
+		_file = new FileManager_v2w(this);
 		_scheduler = new Scheduler_v1w(this);
 		_intro = new intro_v3w(this);
 		_screen = new Screen_v1w(this);

@@ -24,6 +24,11 @@
  */
 
 #include "hugo/hugo.h"
+#include "hugo/display.h"
+#include "hugo/parser.h"
+#include "hugo/schedule.h"
+#include "hugo/sound.h"
+#include "hugo/util.h"
 #include "graphics/imagedec.h"
 #include "common/substream.h"
 
@@ -170,39 +175,56 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 	switch (command) {
 	case kCmdWhat:
 		close();
+		_vm->_file->instructions();
 		break;
 	case kCmdMusic:
 		close();
+		_vm->_sound->toggleMusic();
 		break;
 	case kCmdSoundFX:
 		close();
+		_vm->_sound->toggleSound();
 		break;
 	case kCmdLoad:
 		close();
+		_vm->_file->restoreGame(-1);
+		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
+		_vm->getGameStatus().viewState = V_PLAY;
 		break;
 	case kCmdSave:
 		close();
+		if (_vm->getGameStatus().viewState == V_PLAY) {
+			if (_vm->getGameStatus().gameOverFl)
+				Utils::gameOverMsg();
+			else
+				_vm->_file->saveGame(-1, Common::String());
+		}
 		break;
 	case kCmdRecall:
+
 		close();
+		_vm->getGameStatus().recallFl = true;
 		break;
 	case kCmdTurbo:
 		close();
+		_vm->_parser->switchTurbo();
 		break;
 	case kCmdLook:
 		close();
+		_vm->_parser->command("look around");
 		break;
 	case kCmdInvent:
 		close();
+		_vm->_parser->showInventory();
 		break;
 	default:
 		Dialog::handleCommand(sender, command, data);
 	}
 }
 
-void TopMenu::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (y > _h)
-		close();
-}
+//void TopMenu::handleMouseUp(int x, int y, int button, int clickCount) {
+//	if (y > _h)
+//		close();
+//}
 
 } // End of namespace Hugo

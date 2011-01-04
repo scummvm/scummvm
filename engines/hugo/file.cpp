@@ -653,34 +653,6 @@ void FileManager::readUIFItem(int16 id, byte *buf) {
 }
 
 /**
-* Simple instructions given when F1 pressed twice in a row
-* Only in DOS versions
-*/
-void FileManager::instructions() {
-	Common::File f;
-	if (!f.open(HELPFILE)) {
-		warning("help.dat not found");
-		return;
-	}
-
-	char readBuf[2];
-	while (f.read(readBuf, 1)) {
-		char line[1024], *wrkLine;
-		wrkLine = line;
-		wrkLine[0] = readBuf[0];
-		wrkLine++;
-		do {
-			f.read(wrkLine, 1);
-		} while (*wrkLine++ != EOP);
-		wrkLine[-2] = '\0';                         // Remove EOP and previous CR
-		Utils::Box(BOX_ANY, "%s", line);
-		wrkLine = line;
-		f.read(readBuf, 2);                         // Remove CRLF after EOP
-	}
-	f.close();
-}
-
-/**
 * Read the uif image file (inventory icons)
 */
 void FileManager::readUIFImages() {

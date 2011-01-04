@@ -23,54 +23,33 @@
  *
  */
 
-#ifndef HUGO_TOPMENU_H
-#define HUGO_TOPMENU_H
+/*
+ * This code is based on original Hugo Trilogy source code
+ *
+ * Copyright (c) 1989-1995 David P. Gray
+ *
+ */
 
-#include "gui/dialog.h"
+#include "common/system.h"
+
+#include "hugo/hugo.h"
+#include "hugo/file.h"
+#include "hugo/util.h"
 
 namespace Hugo {
-
-enum MenuOption {
-	kMenuWhat = 0,
-	kMenuMusic,
-	kMenuSoundFX,
-	kMenuLoad,
-	kMenuSave,
-	kMenuRecall,
-	kMenuTurbo,
-	kMenuLook,
-	kMenuInventory
-};
-
-class TopMenu : public GUI::Dialog {
-public:
-	TopMenu(HugoEngine *vm);
-
-	void reflowLayout();
-	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data);
-//	void handleMouseUp(int x, int y, int button, int clickCount);
-
-	void loadBmpArr(Common::File &in);
-
-protected:
-	void init();
-
-	HugoEngine *_vm;
-
-	GUI::PicButtonWidget *_whatButton;
-	GUI::PicButtonWidget *_musicButton;
-	GUI::PicButtonWidget *_soundFXButton;
-	GUI::PicButtonWidget *_loadButton;
-	GUI::PicButtonWidget *_saveButton;
-	GUI::PicButtonWidget *_recallButton;
-	GUI::PicButtonWidget *_turboButton;
-	GUI::PicButtonWidget *_lookButton;
-	GUI::PicButtonWidget *_inventButton;
-
-	Graphics::Surface **arrayBmp;
-
-};
-
+FileManager_v2w::FileManager_v2w(HugoEngine *vm) : FileManager_v2d(vm) {
 }
 
-#endif // HUGO_TOPMENU_H
+FileManager_v2w::~FileManager_v2w() {
+}
+
+/**
+* Display a Windows help file
+* Dame comment than in SCI: maybe in the future we can implement this, but for now this message should suffice
+*/
+void FileManager_v2w::instructions() {
+	Utils::Box(BOX_ANY, "Please use an external viewer to open the game''s help file: HUGOWIN%d.HLP", _vm->_gameVariant + 1);
+}
+
+} // End of namespace Hugo
+

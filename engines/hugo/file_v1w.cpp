@@ -37,7 +37,7 @@
 #include "hugo/util.h"
 
 namespace Hugo {
-FileManager_v1w::FileManager_v1w(HugoEngine *vm) : FileManager_v2d(vm) {
+FileManager_v1w::FileManager_v1w(HugoEngine *vm) : FileManager_v2w(vm) {
 }
 
 FileManager_v1w::~FileManager_v1w() {

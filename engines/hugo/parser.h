@@ -51,9 +51,11 @@ public:
 
 	void charHandler();
 	void command(const char *format, ...);
+	void keyHandler(Common::Event event);
+	void switchTurbo();
 
-	virtual void keyHandler(Common::Event event) = 0;
 	virtual void lineHandler() = 0;
+	virtual void showInventory() = 0;
 
 protected:
 	HugoEngine *_vm;
@@ -74,8 +76,8 @@ public:
 	Parser_v1d(HugoEngine *vm);
 	~Parser_v1d();
 
-	virtual void keyHandler(Common::Event event);
 	virtual void lineHandler();
+	virtual void showInventory();
 
 protected:
 	virtual void  dropObject(object_t *obj);
@@ -118,7 +120,8 @@ public:
 	Parser_v1w(HugoEngine *vm);
 	~Parser_v1w();
 
-	void  keyHandler(Common::Event event);
+	virtual void showInventory();
+
 	void  lineHandler();
 };
 
