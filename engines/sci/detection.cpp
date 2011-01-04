@@ -52,7 +52,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"funseeker",       "Fun Seeker's Guide"},
 	{"hoyle1",          "Hoyle Official Book of Games: Volume 1"},
 	{"hoyle2",          "Hoyle Official Book of Games: Volume 2"},
-	{"kq4sci",          "King's Quest IV: The Perils of Rosella, SCI Remake"},	// Note: There was also an AGI version of this
+	{"kq4sci",          "King's Quest IV: The Perils of Rosella"},	// Note: There was also an AGI version of this
 	{"laurabow",        "Laura Bow: The Colonel's Bequest"},
 	{"lsl2",            "Leisure Suit Larry 2: Goes Looking for Love (in Several Wrong Places)"},
 	{"lsl3",            "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals"},
@@ -62,7 +62,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"sq3",             "Space Quest III: The Pirates of Pestulon"},
 	// === SCI01 games ========================================================
 	{"qfg2",            "Quest for Glory II: Trial by Fire"},
-	{"kq1sci",          "King's Quest I: Quest for the Crown, SCI Remake"},	// Note: There was also an AGI version of this
+	{"kq1sci",          "King's Quest I: Quest for the Crown"},	// Note: There was also an AGI version of this
 	// === SCI1 games =========================================================
 	{"castlebrain",     "Castle of Dr. Brain"},
 	{"christmas1990",   "Christmas Card 1990: The Seasoned Professional"},
@@ -77,13 +77,13 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"jones",           "Jones in the Fast Lane"},
 	{"kq5",             "King's Quest V: Absence Makes the Heart Go Yonder"},
 	{"longbow",         "Conquests of the Longbow: The Adventures of Robin Hood"},
-	{"lsl1sci",         "Leisure Suit Larry in the Land of the Lounge Lizards, SCI Remake"},	// Note: There was also an AGI version of this
+	{"lsl1sci",         "Leisure Suit Larry in the Land of the Lounge Lizards"},	// Note: There was also an AGI version of this
 	{"lsl5",            "Leisure Suit Larry 5: Passionate Patti Does a Little Undercover Work"},
 	{"mothergoose256",  "Mixed-Up Mother Goose"},
 	{"msastrochicken",  "Ms. Astro Chicken"},
-	{"pq1sci",          "Police Quest: In Pursuit of the Death Angel, SCI Remake"},	// Note: There was also an AGI version of this
+	{"pq1sci",          "Police Quest: In Pursuit of the Death Angel"},	// Note: There was also an AGI version of this
 	{"pq3",             "Police Quest III: The Kindred"},
-	{"sq1sci",          "Space Quest I: The Sarien Encounter, SCI Remake"},	// Note: There was also an AGI version of this
+	{"sq1sci",          "Space Quest I: The Sarien Encounter"},	// Note: There was also an AGI version of this
 	{"sq4",             "Space Quest IV: Roger Wilco and the Time Rippers"},	// floppy is SCI1, CD SCI1.1
 	// === SCI1.1 games =======================================================
 	{"christmas1992",   "Christmas Card 1992"},
@@ -92,7 +92,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"hoyle4",          "Hoyle Classic Card Games"},
 	{"kq6",             "King's Quest VI: Heir Today, Gone Tomorrow"},
 	{"laurabow2",       "Laura Bow 2: The Dagger of Amon Ra"},
-	{"qfg1vga",         "Quest for Glory I: So You Want to Be a Hero, VGA Remake"},	// Note: There was also a SCI0 version of this (further up)
+	{"qfg1vga",         "Quest for Glory I: So You Want to Be a Hero"},	// Note: There was also a SCI0 version of this (further up)
 	{"qfg3",            "Quest for Glory III: Wages of War"},
 	{"sq5",             "Space Quest V: The Next Mutation"},
 	{"islandbrain",     "The Island of Dr. Brain"},
@@ -585,16 +585,21 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 
 	// Fill in extras field
-	if (!strcmp(s_fallbackDesc.gameid, "lsl1sci") ||
-		!strcmp(s_fallbackDesc.gameid, "sq1sci")) {
+
+	if (gameId.hasSuffix("sci")) {
+		s_fallbackDesc.extra = "SCI";
+
 		// Differentiate EGA versions from the VGA ones, where needed
+		if (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga)
+			s_fallbackDesc.extra = "SCI/EGA";
+	} else {
 		if (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga)
 			s_fallbackDesc.extra = "EGA";
 	}
 
 	// Add "demo" to the description for demos
 	if (s_fallbackDesc.flags & ADGF_DEMO)
-		s_fallbackDesc.extra = "demo";
+		s_fallbackDesc.extra = (gameId.hasSuffix("sci")) ? "SCI/Demo" : "Demo";
 
 	delete resMan;
 
