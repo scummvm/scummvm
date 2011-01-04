@@ -595,10 +595,7 @@ void Script::initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 								// #3150767.
 								// Same happens with script 764, it seems to
 								// contain junk towards its end.
-								if (getSciVersion() < SCI_VERSION_1_1)
-									addr.offset += 8;
-
-								_objects.erase(addr.toUint16());
+								_objects.erase(addr.toUint16() + (getSciVersion() < SCI_VERSION_1_1) ? 8 : 0);
 							} else {
 								error("Failed to locate base object for object at %04X:%04X", PRINT_REG(addr));
 							}
