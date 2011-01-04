@@ -222,9 +222,11 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 	}
 }
 
-//void TopMenu::handleMouseUp(int x, int y, int button, int clickCount) {
-//	if (y > _h)
-//		close();
-//}
+void TopMenu::handleMouseUp(int x, int y, int button, int clickCount) {
+	if (y > _h)
+		close();
+	else
+		Dialog::handleMouseUp(x, y, button, clickCount);
+}
 
 } // End of namespace Hugo
