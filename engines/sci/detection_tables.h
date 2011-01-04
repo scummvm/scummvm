@@ -949,7 +949,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// King's Quest 1 SCI Remake - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.003.007"
 	// SCI interpreter version 0.001.010
-	{"kq1sci", "SCI Remake", {
+	{"kq1sci", "", {
 		{"resource.map", 0, "37ed1a05eb719629eba15059c2eb6cbe", 6798},
 		{"resource.001", 0, "9ae2a13708d691cd42f9129173c4b39d", 266621},
 		{"resource.002", 0, "9ae2a13708d691cd42f9129173c4b39d", 795123},
@@ -960,7 +960,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// King's Quest 1 SCI Remake - English DOS Non-Interactive Demo
 	// Executable scanning reports "S.old.010"
-	{"kq1sci", "SCI Remake Demo", {
+	{"kq1sci", "Demo", {
 		{"resource.map", 0, "59b13619078bd47011421468959ee5d4", 954},
 		{"resource.001", 0, "4cfb9040db152868f7cb6a1e8151c910", 296555},
 		AD_LISTEND},
@@ -969,7 +969,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// King's Quest 1 SCI Remake - English DOS (from the King's Quest Collection)
 	// Executable scanning reports "S.old.010", VERSION file reports "1.000.051"
 	// SCI interpreter version 0.000.999
-	{"kq1sci", "SCI Remake", {
+	{"kq1sci", "", {
 		{"resource.map", 0, "7fe9399a0bec84ca5727309778d27f07", 5790},
 		{"resource.001", 0, "fed9e0072ffd511d248674e60dee2099", 555439},
 		{"resource.002", 0, "fed9e0072ffd511d248674e60dee2099", 714062},
@@ -979,7 +979,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// King's Quest 1 SCI Remake - English DOS (supplied by ssburnout in bug report #3049193)
 	// 1.000.051 9x5.25" (label: INT#9.19.90)
-	{"kq1sci", "SCI Remake", {
+	{"kq1sci", "", {
 		{"resource.map", 0, "4dac689e98b2fa6806232fdd61e24712", 9936},
 		{"resource.001", 0, "fed9e0072ffd511d248674e60dee2099", 196027},
 		{"resource.002", 0, "fed9e0072ffd511d248674e60dee2099", 330278},
@@ -1580,7 +1580,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Larry 1 EGA Remake - English DOS (from spookypeanut)
 	// SCI interpreter version 0.000.510 (or 0.000.577?)
-	{"lsl1sci", "EGA Remake", {
+	{"lsl1sci", "EGA", {
 		{"resource.map", 0, "abc0dc50c55de5b9723bb6de193f8756", 3282},
 		{"resource.000", 0, "d3bceaebef3f7be941c2038b3565161e", 451366},
 		{"resource.001", 0, "38936d3c68b6f79d3ffb13955713fed7", 591352},
@@ -1592,7 +1592,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Larry 1 VGA Remake - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.004.024"
 	// SCI interpreter version 1.000.784
-	{"lsl1sci", "VGA Remake", {
+	{"lsl1sci", "", {
 		{"resource.map", 0, "7d115a9e27dc8ac71e8d5ef33d589bd5", 3366},
 		{"resource.000", 0, "e67fd129d5810fc7ad8ea509d891cc00", 363073},
 		{"resource.001", 0, "24ed6dc01b1e7fbc66c3d63a5994549a", 750465},
@@ -1603,7 +1603,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Larry 1 VGA Remake - English DOS (from spookypeanut)
 	// Executable scanning reports "1.000.577", VERSION file reports "2.1"
-	{"lsl1sci", "VGA Remake", {
+	{"lsl1sci", "", {
 		{"resource.map", 0, "6d04d26466337a1a64b8c6c0eb65c9a9", 3222},
 		{"resource.000", 0, "d3bceaebef3f7be941c2038b3565161e", 922406},
 		{"resource.001", 0, "ec20246209d7b19f38989261e5c8f5b8", 1111226},
@@ -1613,7 +1613,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Larry 1 VGA Remake - English DOS (from FRG)
 	// SCI interpreter version 1.000.510
-	{"lsl1sci", "VGA Remake", {
+	{"lsl1sci", "", {
 		{"resource.map", 0, "8606b083b011a0cc4a1fbfc2198a0a77", 3198},
 		{"resource.000", 0, "d3bceaebef3f7be941c2038b3565161e", 918242},
 		{"resource.001", 0, "d34cadb11e1aefbb497cf91bc1d3baa7", 1114688},
@@ -1623,7 +1623,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Larry 1 VGA Remake - English DOS Non-Interactive Demo
 	// SCI interpreter version 1.000.084
-	{"lsl1sci", "VGA Remake, Demo", {
+	{"lsl1sci", "Demo", {
 		{"resource.map", 0, "434e1f6c39d71647b34f0ee57b2bbd68", 444},
 		{"resource.001", 0, "0c0768215c562d9dace4a5ca53696cf3", 359913},
 		AD_LISTEND},
@@ -1633,7 +1633,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Executable scanning reports "1.SQ4.057", VERSION file reports "1.000"
 	// This version is known to be corrupted
 	// SCI interpreter version 1.000.510
-	{"lsl1sci", "VGA Remake", {
+	{"lsl1sci", "", {
 		{"resource.map", 0, "4fbe5c25878d51d7b2a68b710de4491b", 3327},
 		{"resource.000", 0, "5e501a9bf8c753bf4c96158042422f00", 839172},
 		{"resource.001", 0, "112648995dbc194037f1e4ed2e195910", 1063341},
@@ -1645,7 +1645,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Larry 1 VGA Remake - Russian DOS (also includes english language?!)
 	// Executable scanning reports "1.000.510", VERSION file reports "2.0"
 	// SCI interpreter version 1.000.510
-	{"lsl1sci", "VGA Remake", {
+	{"lsl1sci", "", {
 		{"resource.map", 0, "b54413d35e206d21ae2b2bdb092bd13a", 3198},
 		{"resource.000", 0, "0d7b2afa666bd36d9535a15d3a837a66", 928566},
 		{"resource.001", 0, "bc8ca10c807515d959cbd91f9ba47735", 1123759},
@@ -1655,7 +1655,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Larry 1 VGA Remake - Polish DOS (from Polish Leisure Suit Larry Collection, official release)
 	// SCI interpreter version 1.000.577, VERSION file reports "2.1" (this release does NOT include english text)
-	{"lsl1sci", "VGA Remake", {
+	{"lsl1sci", "", {
 		{"resource.map", 0, "58330a85767e42a2487129913283ab5b", 3228},
 		{"resource.000", 0, "b6097ff35cdc8469f02150fe2f824198", 4781210},
 		AD_LISTEND},
@@ -2391,7 +2391,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Police Quest 1 VGA Remake - English DOS (from the Police Quest Collection)
 	// Executable scanning reports "1.001.029", VERSION file reports "2.000"
-	{"pq1sci", "VGA Remake", {
+	{"pq1sci", "", {
 		{"resource.map", 0, "35efa814fb994b1cbdac9611e401da67", 5013},
 		{"resource.000", 0, "e0d5ddf34eda903a38f0837e2aa7145b", 6401433},
 		AD_LISTEND},
@@ -2733,7 +2733,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 1 VGA Remake - English DOS
 	// Executable scanning reports "2.000.411"
-	{"qfg1vga", "VGA Remake", {
+	{"qfg1vga", "", {
 		{"resource.map", 0, "a731fb6c9c0b282443f7027bc8694d4c", 8469},
 		{"resource.000", 0, "ecace1a2771846b1a8aa1afdd44111a0", 6570147},
 		AD_LISTEND},
@@ -2741,7 +2741,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 1 VGA Remake - English DOS Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.001.029
-	{"qfg1vga", "VGA Remake, Demo", {
+	{"qfg1vga", "Demo", {
 		{"resource.map", 0, "ac0257051c95a59c0cdc0be24d9b11fa", 729},
 		{"resource.000", 0, "ec6f5cf369054dd3e5392995e9975b9e", 768218},
 		AD_LISTEND},
@@ -2749,7 +2749,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 1 VGA Remake - English Macintosh Floppy
 	// VERSION file reports "2.0"
-	{"qfg1vga", "VGA Remake", {
+	{"qfg1vga", "", {
 		{"Data1", 0, "14f26bc75f24bb1ecc94532df17b5371", 1768155},
 		{"Data2", 0, "a7aee8bd46fc9cef7fd3bea93ef173e0", 6586422},
 		AD_LISTEND},
@@ -3045,7 +3045,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Space Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
 	// SCI interpreter version 1.000.510 (just a guess)
-	{"sq1sci", "VGA Remake", {
+	{"sq1sci", "", {
 		{"resource.map", 0, "106484b372af1d4cbf866472cc2813dc", 6396},
 		{"resource.000", 0, "cc9d6ace343661ae51ec8bd6e6b00a8c", 340944},
 		{"resource.001", 0, "59efcfa2268d2f8608f544e2674d8151", 761721},
@@ -3059,7 +3059,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Space Quest 1 VGA Remake - English DOS (from the Space Quest Collection)
 	// Executable scanning reports "T.A00.081", VERSION file reports "2.000"
 	// SCI interpreter version 1.000.510 (just a guess)
-	{"sq1sci", "VGA Remake", {
+	{"sq1sci", "", {
 		{"resource.map", 0, "38a74d8f555a2da9ca4f21d14e3c1d33", 5913},
 		{"resource.000", 0, "e9d866534f8c84de82e25f2631ff258c", 1016436},
 		{"resource.001", 0, "a89b7b52064c75b1985b289edc2f5c69", 1038757},
@@ -3070,7 +3070,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 	// Space Quest 1 VGA Remake - English Mac (from Fingolfin)
-	{"sq1sci", "VGA Remake", {
+	{"sq1sci", "", {
 		{"resource.map", 0, "5c6ad20407261b544238e8dce87afead", 5895},
 		{"resource.000", 0, "2c414644b23839069c8d1a93b721df16", 1017033},
 		{"resource.001", 0, "8744ae2ea6b316e91e2a35ab1aa301d2", 1024622},
@@ -3082,7 +3082,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Space Quest 1 VGA Remake - English Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.000.181
-	{"sq1sci", "VGA Remake, Demo", {
+	{"sq1sci", "Demo", {
 		{"resource.map", 0, "5af709ac5e0e923e0b8174f49978c30e", 636},
 		{"resource.001", 0, "fd99ea43f57576ded7c86036996346cf", 507642},
 		AD_LISTEND},
@@ -3091,7 +3091,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Space Quest 1 VGA Remake - Spanish DOS Floppy (from jvprat)
 	// Executable scanning reports "T.A00.081", VERSION file reports "2.000"
 	// SCI interpreter version 1.000.510 (just a guess)
-	{"sq1sci", "VGA Remake", {
+	{"sq1sci", "", {
 		{"resource.map", 0, "cee2a67fa7f8f1f520f398110ca1c37e", 6111},
 		{"resource.000", 0, "945081a73211e0c40e62f709edcd8d1d", 970657},
 		{"resource.001", 0, "94692dc84c85c93bb8850f58aebf3cfc", 1085687},
@@ -3104,7 +3104,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Space Quest I 2.0 EGA DOS (6 x 3.5" disks)
 	// Provided by ssburnout in bug report #3046805
-	{"sq1sci", "EGA Remake", {
+	{"sq1sci", "EGA", {
 		{"resource.map", 0, "dc1bb935bf32da652b2e687617f50cd4", 6003},
 		{"resource.000", 0, "e9d866534f8c84de82e25f2631ff258c", 409145},
 		{"resource.001", 0, "a89b7b52064c75b1985b289edc2f5c69", 647747},
