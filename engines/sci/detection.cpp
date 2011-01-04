@@ -77,7 +77,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"jones",           "Jones in the Fast Lane"},
 	{"kq5",             "King's Quest V: Absence Makes the Heart Go Yonder"},
 	{"longbow",         "Conquests of the Longbow: The Adventures of Robin Hood"},
-	{"lsl1sci",         "Leisure Suit Larry in the Land of the Lounge Lizards"},
+	{"lsl1sci",         "Leisure Suit Larry in the Land of the Lounge Lizards, SCI Remake"},	// Note: There was also an AGI version of this
 	{"lsl5",            "Leisure Suit Larry 5: Passionate Patti Does a Little Undercover Work"},
 	{"mothergoose256",  "Mixed-Up Mother Goose"},
 	{"msastrochicken",  "Ms. Astro Chicken"},
