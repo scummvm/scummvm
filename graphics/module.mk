@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	fonts/newfont_big.o \
 	fonts/newfont.o \
 	fonts/scummfont.o \
+	fonts/winfont.o \
 	iff.o \
 	imagedec.o \
 	jpeg.o \
