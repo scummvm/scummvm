@@ -50,8 +50,12 @@ void intro_v3d::preNewGame() {
 }
 
 void intro_v3d::introInit() {
-	_vm->_screen->loadFont(0);
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
+	surf.w = 320;
+	surf.h = 200;
+	surf.pixels = _vm->_screen->getFrontBuffer();
+	surf.pitch = 320;
+	surf.bytesPerPixel = 1;
 
 	char buffer[128];
 	if (_boot.registered)
@@ -59,11 +63,15 @@ void intro_v3d::introInit() {
 	else
 		sprintf(buffer,"%s  Shareware Version", COPYRIGHT);
 
-	_vm->_screen->writeStr(CENTER, 190, buffer, _TBROWN);
+	// TROMAN, size 10-5
+	if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
+		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
+
+	font.drawString(&surf, buffer, 0, 190, 320, _TBROWN, Graphics::kTextAlignCenter);
 
 	if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
 		sprintf(buffer, "Distributed by %s.", _boot.distrib);
-		_vm->_screen->writeStr(CENTER, 0, buffer, _TBROWN);
+		font.drawString(&surf, buffer, 0, 0, 320, _TBROWN, Graphics::kTextAlignCenter);
 	}
 
 	_vm->_screen->displayBackground();
@@ -80,12 +88,10 @@ void intro_v3d::introInit() {
 * Called every tick.  Returns TRUE when complete
 */
 bool intro_v3d::introPlay() {
-	byte introSize = _vm->getIntroSize();
-
 //TODO : Add proper check of story mode
 //#if STORY
-	if (introTicks < introSize) {
-		_vm->_screen->writeStr(_vm->_introX[introTicks], _vm->_introY[introTicks] - DIBOFF_Y, "x", _TBRIGHTWHITE);
+	if (introTicks < _vm->getIntroSize()) {
+		font.drawString(&surf, "x", _vm->_introX[introTicks], _vm->_introY[introTicks] - DIBOFF_Y, 320, _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();
 
 		// Text boxes at various times
@@ -102,7 +108,7 @@ bool intro_v3d::introPlay() {
 		}
 	}
 
-	return (++introTicks >= introSize);
+	return (++introTicks >= _vm->getIntroSize());
 //#else //STORY
 //	return true;
 //#endif //STORY

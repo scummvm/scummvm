@@ -201,7 +201,6 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 		}
 		break;
 	case kCmdRecall:
-
 		close();
 		_vm->getGameStatus().recallFl = true;
 		break;

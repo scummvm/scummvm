@@ -73,15 +73,12 @@ void intro_v3w::introInit() {
 * Called every tick.  Returns TRUE when complete
 */
 bool intro_v3w::introPlay() {
-	byte introSize = _vm->getIntroSize();
-
 //TODO : Add proper check of story mode
 //#if STORY
-	if (introTicks < introSize) {
+	if (introTicks < _vm->getIntroSize()) {
 		// Scale viewport x_intro,y_intro to screen (offsetting y)
 		_vm->_screen->writeStr(_vm->_introX[introTicks], _vm->_introY[introTicks] - DIBOFF_Y, "x", _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();
-
 
 		// Text boxes at various times
 		switch (introTicks) {
@@ -97,7 +94,7 @@ bool intro_v3w::introPlay() {
 		}
 	}
 
-	return (++introTicks >= introSize);
+	return (++introTicks >= _vm->getIntroSize());
 //#else //STORY
 //	return true;
 //#endif //STORY

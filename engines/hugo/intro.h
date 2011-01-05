@@ -32,6 +32,7 @@
 
 #ifndef INTRO_H
 #define INTRO_H
+#include "graphics/fonts/winfont.h"
 
 namespace Hugo {
 
@@ -44,6 +45,9 @@ enum seqTextIntro {
 class IntroHandler {
 public:
 	IntroHandler(HugoEngine *vm);
+	Graphics::Surface surf;
+	Graphics::WinFont font;
+
 	virtual ~IntroHandler();
 
 	virtual void preNewGame() = 0;
