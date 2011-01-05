@@ -308,7 +308,7 @@ bool QuickTimeDecoder::loadFile(const Common::String &filename) {
 	if (!_resFork->open(filename) || !_resFork->hasDataFork())
 		return false;
 
-	_foundMOOV = _foundMDAT = false;
+	_foundMOOV = false;
 	_numStreams = 0;
 	_partial = 0;
 	_videoStreamIndex = _audioStreamIndex = -1;
@@ -337,7 +337,7 @@ bool QuickTimeDecoder::loadFile(const Common::String &filename) {
 
 	_fd = _resFork->getDataFork();
 
-	if (readDefault(atom) < 0 || !_foundMOOV || !_foundMDAT)
+	if (readDefault(atom) < 0 || !_foundMOOV)
 		return false;
 
 	init();
@@ -346,7 +346,7 @@ bool QuickTimeDecoder::loadFile(const Common::String &filename) {
 
 bool QuickTimeDecoder::load(Common::SeekableReadStream *stream) {
 	_fd = stream;
-	_foundMOOV = _foundMDAT = false;
+	_foundMOOV = false;
 	_numStreams = 0;
 	_partial = 0;
 	_videoStreamIndex = _audioStreamIndex = -1;
@@ -354,7 +354,7 @@ bool QuickTimeDecoder::load(Common::SeekableReadStream *stream) {
 
 	MOVatom atom = { 0, 0, 0xffffffff };
 
-	if (readDefault(atom) < 0 || !_foundMOOV || !_foundMDAT) {
+	if (readDefault(atom) < 0 || !_foundMOOV) {
 		_fd = 0;
 		return false;
 	}
@@ -364,12 +364,9 @@ bool QuickTimeDecoder::load(Common::SeekableReadStream *stream) {
 }
 
 void QuickTimeDecoder::init() {
-	// some cleanup : make sure we are on the mdat atom
-	if ((uint32)_fd->pos() != _mdatOffset)
-		_fd->seek(_mdatOffset, SEEK_SET);
-
+	// Remove non-Video/Audio streams
 	for (uint32 i = 0; i < _numStreams;) {
-		if (_streams[i]->codec_type == CODEC_TYPE_MOV_OTHER) {// not audio, not video, delete
+		if (_streams[i]->codec_type == CODEC_TYPE_MOV_OTHER) {
 			delete _streams[i];
 			for (uint32 j = i + 1; j < _numStreams; j++)
 				_streams[j - 1] = _streams[j];
@@ -378,6 +375,7 @@ void QuickTimeDecoder::init() {
 			i++;
 	}
 
+	// Adjust time/duration
 	for (uint32 i = 0; i < _numStreams; i++) {
 		MOVStreamContext *sc = _streams[i];
 
@@ -395,6 +393,7 @@ void QuickTimeDecoder::init() {
 			_audioStreamIndex = i;
 	}
 
+	// Initialize audio, if present
 	if (_audioStreamIndex >= 0) {
 		STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
 
@@ -410,6 +409,7 @@ void QuickTimeDecoder::init() {
 		}
 	}
 
+	// Initialize video, if present
 	if (_videoStreamIndex >= 0) {
 		for (uint32 i = 0; i < _streams[_videoStreamIndex]->stsdEntryCount; i++) {
 			STSDEntry *entry = &_streams[_videoStreamIndex]->stsdEntries[i];
@@ -431,7 +431,7 @@ void QuickTimeDecoder::initParseTable() {
 		{ &QuickTimeDecoder::readDefault, MKID_BE('edts') },
 		{ &QuickTimeDecoder::readELST,    MKID_BE('elst') },
 		{ &QuickTimeDecoder::readHDLR,    MKID_BE('hdlr') },
-		{ &QuickTimeDecoder::readMDAT,    MKID_BE('mdat') },
+		{ &QuickTimeDecoder::readDefault, MKID_BE('mdat') },
 		{ &QuickTimeDecoder::readMDHD,    MKID_BE('mdhd') },
 		{ &QuickTimeDecoder::readDefault, MKID_BE('mdia') },
 		{ &QuickTimeDecoder::readDefault, MKID_BE('minf') },
@@ -538,14 +538,9 @@ int QuickTimeDecoder::readMOOV(MOVatom atom) {
 	if (readDefault(atom) < 0)
 		return -1;
 
-	// we parsed the 'moov' atom, we can terminate the parsing as soon as we find the 'mdat'
-	// so we don't parse the whole file if over a network
+	// We parsed the 'moov' atom, so we don't need anything else
 	_foundMOOV = true;
-
-	if(_foundMDAT)
-		return 1; // found both, just go
-
-	return 0; // now go for mdat
+	return 1;
 }
 
 int QuickTimeDecoder::readCMOV(MOVatom atom) {
@@ -662,24 +657,6 @@ int QuickTimeDecoder::readTRAK(MOVatom atom) {
 	_streams[_numStreams++] = sc;
 
 	return readDefault(atom);
-}
-
-// this atom contains actual media data
-int QuickTimeDecoder::readMDAT(MOVatom atom) {
-	if (atom.size == 0) // wrong one (MP4)
-		return 0;
-
-	_foundMDAT = true;
-
-	_mdatOffset = atom.offset;
-	_mdatSize = atom.size;
-
-	if (_foundMOOV)
-		return 1; // found both, just go
-
-	_fd->seek(atom.size, SEEK_CUR);
-
-	return 0; // now go for moov
 }
 
 int QuickTimeDecoder::readTKHD(MOVatom atom) {
@@ -1068,8 +1045,7 @@ int QuickTimeDecoder::readSTSZ(MOVatom atom) {
 }
 
 static uint32 ff_gcd(uint32 a, uint32 b) {
-	if(b) return ff_gcd(b, a%b);
-	else  return a;
+	return b ? ff_gcd(b, a % b) : a;
 }
 
 int QuickTimeDecoder::readSTTS(MOVatom atom) {
@@ -1134,7 +1110,7 @@ int QuickTimeDecoder::readSTCO(MOVatom atom) {
 	for (uint32 i = 0; i < _numStreams; i++) {
 		MOVStreamContext *sc2 = _streams[i];
 
-		if(sc2 && sc2->chunk_offsets){
+		if (sc2 && sc2->chunk_offsets) {
 			uint32 first = sc2->chunk_offsets[0];
 			uint32 last = sc2->chunk_offsets[sc2->chunk_count - 1];
 

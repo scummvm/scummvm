@@ -213,11 +213,8 @@ private:
 
 	const ParseTable *_parseTable;
 	bool _foundMOOV;
-	bool _foundMDAT;
 	uint32 _timeScale;
 	uint32 _duration;
-	uint32 _mdatOffset;
-	uint32 _mdatSize;
 	MOVStreamContext *_partial;
 	uint32 _numStreams;
 	int _ni;
@@ -261,7 +258,6 @@ private:
 	int readLeaf(MOVatom atom);
 	int readELST(MOVatom atom);
 	int readHDLR(MOVatom atom);
-	int readMDAT(MOVatom atom);
 	int readMDHD(MOVatom atom);
 	int readMOOV(MOVatom atom);
 	int readMVHD(MOVatom atom);
