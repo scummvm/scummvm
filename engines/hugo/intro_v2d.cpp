@@ -49,8 +49,6 @@ void intro_v2d::preNewGame() {
 }
 
 void intro_v2d::introInit() {
-	Graphics::WinFont font;
-
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
 	surf.w = 320;
 	surf.h = 200;
