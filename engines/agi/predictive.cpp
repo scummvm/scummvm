@@ -35,11 +35,16 @@
 
 namespace Agi {
 
-#define kModePre 0
-#define kModeNum 1
-#define kModeAbc 2
+enum {
+	kModePre = 0,
+	kModeNum = 1,
+	kModeAbc = 2
+};
 
-#define MAXLINELEN 80
+enum {
+	MAXLINELEN = 80,
+	MAXWORDLEN = 24
+};
 
 uint8 countWordsInString(char *str) {
   // Count the number of (space separated) words in the given string.
@@ -98,7 +103,7 @@ bool AgiEngine::predictiveDialog() {
 	uint8 x;
 	int y;
 	int bx[17], by[17];
-	String prefix;
+	Common::String prefix;
 	char temp[MAXWORDLEN + 1], repeatcount[MAXWORDLEN];
 	AgiBlock tmpwindow;
 	bool navigationwithkeys = false;
@@ -137,7 +142,7 @@ bool AgiEngine::predictiveDialog() {
 	_predictiveDialogRunning = true;
 	_system->setFeatureState(OSystem::kFeatureDisableKeyFiltering, true);
 
-	memset(repeatcount, 0, MAXWORDLEN);
+	memset(repeatcount, 0, sizeof(repeatcount));
 
 	// show the predictive dialog.
 	// if another window is already in display, save its state into tmpwindow
@@ -373,7 +378,7 @@ bool AgiEngine::predictiveDialog() {
 					_currentCode.clear();
 					_currentWord.clear();
 					numMatchingWords = 0;
-					memset(repeatcount, 0, MAXWORDLEN);
+					memset(repeatcount, 0, sizeof(repeatcount));
 				} else if (active < 9 || active == 11 || active == 15) { // number or backspace
 					if (active == 11) { // backspace
 						if (_currentCode.size()) {
@@ -419,7 +424,7 @@ bool AgiEngine::predictiveDialog() {
 							char *tok = strtok(tmp, " ");
 							for (uint8 i = 0; i <= _wordNumber; i++)
 								tok = strtok(NULL, " ");
-							_currentWord = String(tok, _currentCode.size());
+							_currentWord = Common::String(tok, _currentCode.size());
 						}
 					} else if (mode == kModeAbc){
 						x = _currentCode.size();
@@ -451,7 +456,7 @@ bool AgiEngine::predictiveDialog() {
 					prefix += temp;
 					_currentCode.clear();
 					_currentWord.clear();
-					memset(repeatcount, 0, MAXWORDLEN);
+					memset(repeatcount, 0, sizeof(repeatcount));
 				} else {
 					goto press;
 				}
@@ -593,7 +598,7 @@ bool AgiEngine::matchWord() {
 		tmp[MAXLINELEN - 1] = 0;
 		char *tok = strtok(tmp, " ");
 		tok = strtok(NULL, " ");
-		_currentWord = String(tok, _currentCode.size());
+		_currentWord = Common::String(tok, _currentCode.size());
 		return true;
 	} else {
 		_predictiveDictActLine = NULL;

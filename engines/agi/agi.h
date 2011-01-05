@@ -1010,10 +1010,6 @@ public:
 
 	// Text
 public:
-	#define MAXWORDLEN 24
-
-	typedef Common::String String;
-
 	int messageBox(const char *);
 	int selectionBox(const char *, const char **);
 	void closeWindow();
@@ -1044,8 +1040,8 @@ private:
 	char **_predictiveDictLine;
 	int32 _predictiveDictLineCount;
 	char *_predictiveDictActLine;
-	String _currentCode;
-	String _currentWord;
+	Common::String _currentCode;
+	Common::String _currentWord;
 	int _wordNumber;
 	bool _predictiveDialogRunning;
 public:
