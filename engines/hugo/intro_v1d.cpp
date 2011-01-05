@@ -91,7 +91,7 @@ bool intro_v1d::introPlay() {
 			// SCRIPT, size 24-16
 			strcpy(buffer, "Hugo's");
 
-			if (font.loadFromFON("SCRIPT.FON", Graphics::WinFontDirEntry("Script", 16))) {
+			if (font.loadFromFON("SCRIPT.FON")) {
 				font.drawString(&surf, buffer, 0, 20, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			} else {
 				// Workaround: SCRIPT.FON doesn't load properly at the moment
@@ -110,14 +110,17 @@ bool intro_v1d::introPlay() {
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 16-9
-			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 10)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 10");
+			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
+				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
 
 			strcpy(buffer, "S t a r r i n g :");
 			font.drawString(&surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 3:
 			// TROMAN, size 20-9
+			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
+				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 18");
+
 			strcpy(buffer, "Hugo !");
 			font.drawString(&surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
@@ -125,6 +128,9 @@ bool intro_v1d::introPlay() {
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 16-9
+			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
+				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
+
 			strcpy(buffer, "P r o d u c e d  b y :");
 			font.drawString(&surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			break;
@@ -161,8 +167,8 @@ bool intro_v1d::introPlay() {
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 20-14
-			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
+			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
+				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 18");
 
 			strcpy(buffer, "E n j o y !");
 			font.drawString(&surf, buffer, 0, 100, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
