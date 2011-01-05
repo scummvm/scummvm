@@ -58,28 +58,21 @@ void intro_v2d::introInit() {
 
 	char buffer[128];
 
+	// TROMAN, size 10-5
+	if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
+		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
+
 	if (_boot.registered)
 		sprintf(buffer, "%s  Registered Version", COPYRIGHT);
 	else
 		sprintf(buffer, "%s  Shareware Version", COPYRIGHT);
 
-	// TROMAN, size 10-5
-	if (font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8))) {
-		font.drawString(&surf, buffer, 0, 186, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
-	} else {
-		_vm->_screen->loadFont(0);
-		_vm->_screen->writeStr(CENTER, 186, buffer, _TLIGHTRED);
-	}
+	font.drawString(&surf, buffer, 0, 186, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 
 	if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
-		sprintf(buffer, "Distributed by %s.", _boot.distrib);
 		// TROMAN, size 10-5
-		if (font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8))) {
-			font.drawString(&surf, buffer, 0, 1, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
-		} else {
-			_vm->_screen->loadFont(0);
-			_vm->_screen->writeStr(CENTER, 1, buffer, _TLIGHTRED);
-		}
+		sprintf(buffer, "Distributed by %s.", _boot.distrib);
+		font.drawString(&surf, buffer, 0, 1, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 	}
 
 	_vm->_screen->displayBackground();
