@@ -260,10 +260,8 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 			insertActionList(action->a29.actFailIndex);
 		break;
 	case OLD_SONG:
-		//TODO For DOS versions: The songs were not stored in a DAT file, but directly as
-		//strings. the current play_music should be modified to use a strings instead of reading
-		//the file, in those cases. This replaces, for those DOS versions, act26.
-		warning("STUB: doAction(act49) %s", _vm->_textData[action->a49.songIndex]);
+		// Replaces ACT26 for DOS games.
+		_vm->_sound->DOSSongPtr = _vm->_textData[action->a49.songIndex];
 		break;
 	default:
 		error("An error has occurred: %s", "doAction");

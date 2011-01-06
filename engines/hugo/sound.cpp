@@ -231,9 +231,15 @@ SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
 	MidiDriver *driver = MidiDriver::createMidi(dev);
 
 	_midiPlayer = new MidiPlayer(driver);
+	_speakerStream = new Audio::PCSpeaker(_vm->_mixer->getOutputRate());
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
+						_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	DOSSongPtr = 0;
 }
 
 SoundHandler::~SoundHandler() {
+	_vm->_mixer->stopHandle(_speakerHandle);
+	delete _speakerStream;
 	delete _midiPlayer;
 }
 
@@ -363,4 +369,107 @@ void SoundHandler::checkMusic() {
 		}
 	}
 }
+
+/**
+* Decrement last note's timer and see if time to play next note yet.
+* If so, interpret next note in string and play it.  Update ptr to string
+* Timer: >0 - song still going, 0 - Stop note, -1 - Set next note
+*/
+void SoundHandler::pcspkr_player() {
+	static char pcspkrTimer = 0;                    // Timer (ticks) for note being played
+	static char pcspkrOctave = 3;                   // Current octave 1..7
+	static byte pcspkrNoteDuration = 2;             // Current length of note (ticks)
+	static uint16 pcspkrNotes[8] =  {1352, 1205, 2274, 2026, 1805, 1704, 1518}; // The 3rd octave note counts A..G
+	static uint16 pcspkrSharps[8] = {1279, 1171, 2150, 1916, 1755, 1611, 1435}; // The sharps, A# to B#
+	static uint16 pcspkrFlats[8] =  {1435, 1279, 2342, 2150, 1916, 1755, 1611}; // The flats, Ab to Bb
+
+	uint16 count;                                   // Value to set timer chip to for note
+	bool   cmd_note;
+
+	if (!_config.soundFl || !_vm->_mixer->isReady())
+		return;                                     // Poo!  User doesn't want sound!
+
+	if (!DOSSongPtr)
+		return;
+
+	if (!*DOSSongPtr)                               // Song has finished
+		return;
+
+	if (!--pcspkrTimer) {                           // timer zero, stop note
+		_speakerStream->stop();
+		return;
+	} else if (pcspkrTimer >= 0) {                  // Note still going
+		return;
+	}
+	
+	/* Time to play next note */
+	do {
+		cmd_note = true;
+		switch (*DOSSongPtr) {
+		case 'O':                                   // Switch to new octave 1..7
+			DOSSongPtr++;
+			pcspkrOctave = *DOSSongPtr - '0';
+			if ((pcspkrOctave < 0) || (pcspkrOctave > 7))
+				error("pcspkr_player() - Bad octave");
+			DOSSongPtr++;
+			break;
+		case 'L':                                   // Switch to new duration (in ticks)
+			DOSSongPtr++;
+			pcspkrNoteDuration = *DOSSongPtr - '0';
+			if (pcspkrNoteDuration < 0)
+				error("pcspkr_player() - Bad duration");
+			pcspkrNoteDuration--;
+			DOSSongPtr++;
+			break;
+		case '<':
+		case '^':                                   // Move up an octave
+			pcspkrOctave++;
+			DOSSongPtr++;
+			break;
+		case '>':
+		case 'v':                                   // Move down an octave
+			pcspkrOctave--;
+			DOSSongPtr++;
+			break;
+		default:
+			cmd_note = false;
+			break;
+		}
+	} while (cmd_note);
+
+	switch (*DOSSongPtr) {
+	case 'A':                                       // The notes.
+	case 'B':
+	case 'C':
+	case 'D':
+	case 'E':
+	case 'F':
+	case 'G':
+		count = pcspkrNotes[*DOSSongPtr - 'A'];
+		switch (DOSSongPtr[1]) {                    // Check for sharp or flat (#, -)
+		case '#':   
+			count = pcspkrSharps[*DOSSongPtr++ - 'A'];
+			break;
+		case 'b':   
+			count = pcspkrFlats[*DOSSongPtr++ - 'A']; 
+			break;
+		default:
+			break;
+		}
+		if (pcspkrOctave > 3)                       // Adjust for octave
+			count /= (1 << (pcspkrOctave - 3));
+		else if (pcspkrOctave < 3)
+			count *= (1 << (3 - pcspkrOctave));
+		_speakerStream->play(Audio::PCSpeaker::kWaveFormSaw, kHugoCNT / count, (int32) ((1 + pcspkrNoteDuration) * _vm->_normalTPS) * 8);
+		pcspkrTimer = pcspkrNoteDuration;
+		DOSSongPtr++;
+		break;
+	case '.':   /* A rest note */
+		_speakerStream->stop();
+		pcspkrTimer = pcspkrNoteDuration;
+		DOSSongPtr++;
+		break;
+	}
+}
+
 } // End of namespace Hugo

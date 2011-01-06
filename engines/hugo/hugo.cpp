@@ -278,7 +278,7 @@ Common::Error HugoEngine::run() {
 
 	while (!_status.doQuitFl) {
 		g_system->updateScreen();
-
+		_sound->pcspkr_player();
 		runMachine();
 		// Handle input
 		Common::Event event;

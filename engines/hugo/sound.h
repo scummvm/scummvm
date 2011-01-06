@@ -36,8 +36,11 @@
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
+#include "sound/softsynth/pcspk.h"
 
 namespace Hugo {
+
+#define kHugoCNT 1190000
 
 class MidiPlayer : public MidiDriver {
 public:
@@ -92,9 +95,12 @@ public:
 	SoundHandler(HugoEngine *vm);
 	~SoundHandler();
 
+	char *DOSSongPtr;
+
 	void toggleMusic();
 	void toggleSound();
 	void setMusicVolume();
+	void pcspkr_player();
 	void playMusic(int16 tune);
 	void playSound(int16 sound, stereo_t channel, byte priority);
 	void initSound();
@@ -105,6 +111,8 @@ private:
 	HugoEngine *_vm;
 	Audio::SoundHandle _soundHandle;
 	MidiPlayer *_midiPlayer;
+	Audio::PCSpeaker *_speakerStream;
+	Audio::SoundHandle _speakerHandle;
 
 	void stopSound();
 	void stopMusic();
