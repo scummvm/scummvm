@@ -1564,6 +1564,7 @@ case $_host_os in
 			CXXFLAGS="$CXXFLAGS $(getconf LFS_CFLAGS 2>/dev/null)"
 		fi
 		_unix=yes
+		DEFINES="$DEFINES -DLUA_USE_POSIX"
 		;;
 	mingw*)
 		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
