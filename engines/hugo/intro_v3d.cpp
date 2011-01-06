@@ -91,7 +91,7 @@ bool intro_v3d::introPlay() {
 //TODO : Add proper check of story mode
 //#if STORY
 	if (introTicks < _vm->getIntroSize()) {
-		font.drawString(&surf, "x", _vm->_introX[introTicks], _vm->_introY[introTicks] - DIBOFF_Y, 320, _TBRIGHTWHITE);
+		font.drawString(&surf, ".", _vm->_introX[introTicks], _vm->_introY[introTicks] - DIBOFF_Y, 320, _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();
 
 		// Text boxes at various times
