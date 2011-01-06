@@ -376,9 +376,9 @@ void SoundHandler::checkMusic() {
 * Timer: >0 - song still going, 0 - Stop note, -1 - Set next note
 */
 void SoundHandler::pcspkr_player() {
-	static byte pcspkrTimer = 0;                    // Timer (ticks) for note being played
-	static byte pcspkrOctave = 3;                   // Current octave 1..7
-	static byte pcspkrNoteDuration = 2;             // Current length of note (ticks)
+	static int8 pcspkrTimer = 0;                    // Timer (ticks) for note being played
+	static int8 pcspkrOctave = 3;                   // Current octave 1..7
+	static int8 pcspkrNoteDuration = 2;             // Current length of note (ticks)
 	static uint16 pcspkrNotes[8] =  {1352, 1205, 2274, 2026, 1805, 1704, 1518}; // The 3rd octave note counts A..G
 	static uint16 pcspkrSharps[8] = {1279, 1171, 2150, 1916, 1755, 1611, 1435}; // The sharps, A# to B#
 	static uint16 pcspkrFlats[8] =  {1435, 1279, 2342, 2150, 1916, 1755, 1611}; // The flats, Ab to Bb
