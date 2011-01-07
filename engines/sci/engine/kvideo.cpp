@@ -61,9 +61,17 @@ void playVideo(Graphics::VideoDecoder *videoDecoder, VideoState videoState) {
 
 	uint16 x, y; 
 
+	// Sanity check...
 	if (videoState.x > 0 && videoState.y > 0 && isVMD) {
 		x = videoState.x;
 		y = videoState.y;
+
+		if (x + width > screenWidth || y + height > screenHeight) {
+			// Happens in the Lighthouse demo
+			warning("VMD video won't fit on screen, centering it instead");
+			x = (screenWidth - width) / 2;
+			y = (screenHeight - height) / 2;
+		}
 	} else {
 		x = (screenWidth - width) / 2;
 		y = (screenHeight - height) / 2;
