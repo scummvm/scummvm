@@ -1078,8 +1078,6 @@ static const char *sci21_default_knames[] = {
 
 #endif
 
-#define END Script_None
-
 opcode_format g_opcode_formats[128][4] = {
 	/*00*/
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
@@ -1092,47 +1090,47 @@ opcode_format g_opcode_formats[128][4] = {
 	/*10*/
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
 	/*14*/
-	{Script_None}, {Script_None}, {Script_None}, {Script_SRelative, END},
+	{Script_None}, {Script_None}, {Script_None}, {Script_SRelative},
 	/*18*/
-	{Script_SRelative, END}, {Script_SRelative, END}, {Script_SVariable, END}, {Script_None},
+	{Script_SRelative}, {Script_SRelative}, {Script_SVariable}, {Script_None},
 	/*1C*/
-	{Script_SVariable, END}, {Script_None}, {Script_None}, {Script_Variable, END},
+	{Script_SVariable}, {Script_None}, {Script_None}, {Script_Variable},
 	/*20*/
-	{Script_SRelative, Script_Byte, END}, {Script_Variable, Script_Byte, END}, {Script_Variable, Script_Byte, END}, {Script_Variable, Script_SVariable, Script_Byte, END},
+	{Script_SRelative, Script_Byte}, {Script_Variable, Script_Byte}, {Script_Variable, Script_Byte}, {Script_Variable, Script_SVariable, Script_Byte},
 	/*24 (24=ret)*/
-	{Script_End}, {Script_Byte, END}, {Script_Invalid}, {Script_Invalid},
+	{Script_End}, {Script_Byte}, {Script_Invalid}, {Script_Invalid},
 	/*28*/
-	{Script_Variable, END}, {Script_Invalid}, {Script_Byte, END}, {Script_Variable, Script_Byte, END},
+	{Script_Variable}, {Script_Invalid}, {Script_Byte}, {Script_Variable, Script_Byte},
 	/*2C*/
-	{Script_SVariable, END}, {Script_SVariable, Script_Variable, END}, {Script_None}, {Script_Invalid},
+	{Script_SVariable}, {Script_SVariable, Script_Variable}, {Script_None}, {Script_Invalid},
 	/*30*/
-	{Script_None}, {Script_Property, END}, {Script_Property, END}, {Script_Property, END},
+	{Script_None}, {Script_Property}, {Script_Property}, {Script_Property},
 	/*34*/
-	{Script_Property, END}, {Script_Property, END}, {Script_Property, END}, {Script_Property, END},
+	{Script_Property}, {Script_Property}, {Script_Property}, {Script_Property},
 	/*38*/
-	{Script_Property, END}, {Script_SRelative, END}, {Script_SRelative, END}, {Script_None},
+	{Script_Property}, {Script_SRelative}, {Script_SRelative}, {Script_None},
 	/*3C*/
 	{Script_None}, {Script_None}, {Script_None}, {Script_Word},
 	/*40-4F*/
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
 	/*50-5F*/
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
 	/*60-6F*/
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
 	/*70-7F*/
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END}
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param},
+	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param}
 };
 #undef END
 
