@@ -38,9 +38,9 @@ namespace Graphics {
 /** Text alignment modes */
 enum TextAlign {
 	kTextAlignInvalid,
-	kTextAlignLeft,		///< Text should be aligned to the left
-	kTextAlignCenter,	///< Text should be centered
-	kTextAlignRight		///< Text should be aligned to the right
+	kTextAlignLeft,     ///< Text should be aligned to the left
+	kTextAlignCenter,   ///< Text should be centered
+	kTextAlignRight     ///< Text should be aligned to the right
 };
 
 /**
@@ -53,12 +53,46 @@ public:
 	Font() {}
 	virtual ~Font() {}
 
+	/**
+	 * Query the height of the font.
+	 *
+	 * @return font height.
+	 */
 	virtual int getFontHeight() const = 0;
+
+	/**
+	 * Query the maximum width of the font.
+	 *
+	 * @return maximum font width.
+	 */
 	virtual int getMaxCharWidth() const = 0;
 
+	/**
+	 * Query the width of a specific character.
+	 *
+	 * @param chr The character to query the width of.
+	 * @return The character's width.
+	 */
 	virtual int getCharWidth(byte chr) const = 0;
+
+	/**
+	 * Draw a character at a specific point on a surface.
+	 *
+	 * Note that the point describes the top left edge point of the
+	 * character's bounding box.
+	 *
+	 * The Font implemenation should take care of not drawing outside of the
+	 * specified surface.
+	 *
+	 * @param dst The surface to drawn on.
+	 * @param chr The character to draw.
+	 * @param x   The x coordinate where to draw the character.
+	 * @param y   The y coordinate where to draw the character.
+	 * @param color The color of the character.
+	 */
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const = 0;
 
+	// TODO: Add doxygen comments to this
 	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 
 	/**
@@ -74,15 +108,17 @@ public:
 	 * It returns the maximal width of any of the new lines (i.e. a value which is less
 	 * or equal to maxWidth).
 	 *
-	 * @param str	the string to word wrap
-	 * @param maxWidth	the maximum width a line may have
-	 * @param lines	the string list to which the text lines from str are appended
+	 * @param str      the string to word wrap
+	 * @param maxWidth the maximum width a line may have
+	 * @param lines    the string list to which the text lines from str are appended
 	 * @return the maximal width of any of the lines added to lines
 	 */
 	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines) const;
 };
 
-
+/**
+ * A SCUMM style font.
+ */
 class ScummFont : public Font {
 public:
 	virtual int getFontHeight() const { return 8; }
