@@ -420,18 +420,6 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-#ifdef ENABLE_SCI32
-reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
-	kStub(s, argc, argv);
-
-	// TODO: This seems to be loading and calling Windows DLLs. We'll probably
-	// need to either ignore calls made here, or wire each call for each game
-	// that requests it by hand
-
-	error("kWinDLL called");
-}
-#endif
-
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
 	// Placeholder for empty kernel functions which are still called from the
 	// engine scripts (like the empty kSetSynonyms function in SCI1.1). This

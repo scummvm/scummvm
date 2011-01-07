@@ -510,7 +510,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// memory") are available. We have our own memory manager and garbage collector, thus we ignore this call.
 	{ MAP_EMPTY(Purge),            SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 
-	// Unused SCI2 unused functions, always mapped to kDummy
+	// Unused / debug SCI2 unused functions, always mapped to kDummy
 	{ MAP_DUMMY(InspectObject),    SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	// Profiler (same as SCI0-SCI1.1)
 	// Record (same as SCI0-SCI1.1)
@@ -541,50 +541,55 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_CALL(WinDLL),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(GetConfig),         SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
-// Commented out because it needs to be implemented in full generality in Shivers/Full.
-// Since it is not essential to game play, removing it also works.
-//
-//	{ MAP_CALL(PrintDebug),        SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
 
-	// SCI2.1 unmapped functions - TODO!
-	// SetLanguage
-	// FindSelector
-	// FindClass
-	// CelRect
-	// BaseLineSpan
-	// CelInfo
-	// Bitmap
-	// CelLink
-	// MovePlaneItems
-	// Font
-	// ScrollWindow
-	// AddLine
-	// DeleteLine
-	// UpdateLine
-	// AddPolygon
-	// DeletePolygon
-	// UpdatePolygon
-	// GetConfig
-	// Table
-	// LoadChunk
-	// SetPalStyleRange
-	// NewRoom
-	// Priority
-	// MorphOn
-	// SetHotRectangles
-	// DeletePic
+	// SCI2.1 Empty Functions
 
-	// SCI2.1 empty functions
+	// Debug function, used in of Shivers (demo and full). It's marked as a
+	// stub in the original interpreters, but it gets called by the game scripts.
+	// Usually, it gets called with a string (which is the output format) and a
+	// variable number of parameters
+	{ MAP_EMPTY(PrintDebug),        SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
 
 	// SetWindowsOption is used to set Windows specific options, like for example the title bar visibility of
 	// the game window in Phantasmagoria 2. We ignore these settings completely.
 	{ MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 
-	// Unused SCI2.1 unused functions, always mapped to kDummy
-	{ MAP_DUMMY(GetSierraProfileInt),    SIG_EVERYWHERE,     "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,     "(.*)",                  NULL,            NULL },
+	// Unused / debug SCI2.1 unused functions, always mapped to kDummy
+	// The debug functions are called from the inbuilt debugger or polygon
+	// editor in SCI2.1 games. Related objects are: PEditor, EditablePolygon, 
+	// aeDisplayClass and scalerCode
+	{ MAP_DUMMY(FindSelector),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(FindClass),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(CelRect),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(BaseLineSpan),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(CelLink),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(UpdateLine),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(AddPolygon),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(DeletePolygon),     SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(UpdatePolygon),     SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(Table),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(LoadChunk),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(Priority),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(WinDLL),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(DeletePic),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(GetSierraProfileInt),    SIG_EVERYWHERE,      "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,      "(.*)",                  NULL,            NULL },
+
+	// SCI2.1 unmapped functions - TODO!
+	// SetLanguage - used by MUMG Deluxe from the main menu to switch languages
+	// CelInfo - used by Shivers 1
+	// Bitmap
+	// MovePlaneItems - used by SQ6
+	// Font
+	// ScrollWindow - used by Phantasmagoria 1 and SQ6
+	// AddLine - used by Torin's Passage to highlight the chapter buttons
+	// DeleteLine - used by Torin's Passage to delete the highlight from the chapter buttons
+	// GetConfig - used by Phantasmagoria 1
+	// SetPalStyleRange
+	// NewRoom
+	// MorphOn - used by SQ6
+	// SetHotRectangles - used by Phantasmagoria 1
 #endif
 
 	{ NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
@@ -1037,7 +1042,7 @@ static const char *sci21_default_knames[] = {
 	/*0x80*/ "Dummy",
 	/*0x81*/ "Dummy",
 	/*0x82*/ "Dummy",
-	/*0x83*/ "PrintDebug",	// used by Shivers 2 (demo and full)
+	/*0x83*/ "PrintDebug",	// debug function, used by Shivers 2 (demo and full)
 	/*0x84*/ "Dummy",
 	/*0x85*/ "Dummy",
 	/*0x86*/ "Dummy",

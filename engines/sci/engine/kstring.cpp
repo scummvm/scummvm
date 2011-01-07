@@ -804,20 +804,6 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-/**
- * Debug function, used in the demo of Shivers. It's marked as a stub
- * in the original interpreter, but it gets called by the game scripts.
- */
-reg_t kPrintDebug(EngineState *s, int argc, reg_t *argv) {
-	Common::String debugTemplate = s->_segMan->getString(argv[0]);
-	char debugString[500];
-
-	sprintf(debugString, debugTemplate.c_str(), argv[1].toUint16());
-	debugC(kDebugLevelScripts, "kPrintDebug: \"%s\"\n", debugString);
-
-	return s->r_acc;
-}
-
 #endif
 
 } // End of namespace Sci
