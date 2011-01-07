@@ -14,6 +14,7 @@ plugin_dist : plugins
 	  if /usr/bin/test "$$p" -ot "$$t"; then :; else \
 	    echo sh-elf-strip -g -o "$$t" "$$p"; \
 	    sh-elf-strip -g -o "$$t" "$$p"; \
+	    $(srcdir)/backends/platform/dc/check_plugin_symbols "$$t"; \
           fi;\
 	done
 
