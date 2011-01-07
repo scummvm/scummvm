@@ -351,8 +351,11 @@ void Parallaction_ns::changeLocation() {
 	MouseTriState oldMouseState = _input->getMouseState();
 	_input->setMouseState(MOUSE_DISABLED);
 
-	_soundManI->playLocationMusic(location);
-
+	if (!_intro) {
+		// prevent music changes during the introduction
+		_soundManI->playLocationMusic(location);
+	}
+	
 	_input->stopHovering();
 	// this is still needed to remove the floatingLabel
 	_gfx->freeLabels();
@@ -468,8 +471,11 @@ void Parallaction_ns::changeCharacter(const char *name) {
 		_objects = _disk->loadObjects(_char.getBaseName());
 		_objectsNames = _disk->loadTable(_char.getBaseName());
 
-		_soundManI->playCharacterMusic(_char.getBaseName());
-
+		if (!_intro) {
+			// prevent music changes during the introduction
+			_soundManI->playCharacterMusic(_char.getBaseName());
+		}
+			
 		// The original engine used to reload 'common' only on loadgames. We are reloading here since 'common'
 		// contains character specific stuff. This causes crashes like bug #1816899, because parseLocation tries
 		// to reload scripts but the data archive selected is occasionally wrong. This has been solved by having
