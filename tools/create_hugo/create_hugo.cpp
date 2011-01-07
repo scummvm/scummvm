@@ -823,6 +823,17 @@ int main(int argc, char *argv[]) {
 	writeUint16BE(outFile, 0);
 	writeUint16BE(outFile, kALnewscr_2d);
 	writeUint16BE(outFile, 0);
+	
+	// DOS Intro music
+	// Win version do not use it
+	// H1 Dos doesn't have an intro
+	// H2 Dos handles the intro song in its scripts
+	writeUint16BE(outFile, 0);
+	writeUint16BE(outFile, 0);
+	writeUint16BE(outFile, 0);
+	writeUint16BE(outFile, 0);
+	writeUint16BE(outFile, 0);
+	writeUint16BE(outFile, kDTsong11_3d);
 
 	// The following fonts info have been added to avoid temporarly the .FON
 	// used in the DOS version

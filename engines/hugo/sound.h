@@ -75,7 +75,6 @@ public:
 	MidiChannel *getPercussionChannel() { return 0; }
 
 private:
-
 	static void timerCallback(void *p);
 
 	MidiDriver *_driver;
@@ -96,6 +95,7 @@ public:
 	~SoundHandler();
 
 	char *DOSSongPtr;
+	char *DOSIntroSong;
 
 	void toggleMusic();
 	void toggleSound();
@@ -106,6 +106,7 @@ public:
 	void initSound();
 	void syncVolume();
 	void checkMusic();
+	void loadIntroSong(Common::File &in);
 
 private:
 	HugoEngine *_vm;

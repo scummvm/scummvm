@@ -36,7 +36,7 @@
 #include "hugo/file.h"
 
 #define HUGO_DAT_VER_MAJ 0                          // 1 byte
-#define HUGO_DAT_VER_MIN 36                         // 1 byte
+#define HUGO_DAT_VER_MIN 37                         // 1 byte
 #define DATAALIGNMENT    4
 #define EDGE             10                         // Closest object can get to edge of screen
 #define EDGE2            (EDGE * 2)                 // Push object further back on edge collision

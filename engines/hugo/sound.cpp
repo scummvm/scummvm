@@ -472,4 +472,12 @@ void SoundHandler::pcspkr_player() {
 	}
 }
 
+void SoundHandler::loadIntroSong(Common::File &in) {
+	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
+		uint16 numBuf = in.readUint16BE();
+		if (varnt == _vm->_gameVariant)
+			DOSIntroSong = _vm->_textData[numBuf];
+	}
+}
+
 } // End of namespace Hugo

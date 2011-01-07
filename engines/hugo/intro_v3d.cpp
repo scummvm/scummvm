@@ -37,6 +37,7 @@
 #include "hugo/file.h"
 #include "hugo/display.h"
 #include "hugo/util.h"
+#include "hugo/sound.h"
 
 
 namespace Hugo {
@@ -81,6 +82,7 @@ void intro_v3d::introInit() {
 	_vm->_file->readBackground(22); // display screen MAP_3d
 	_vm->_screen->displayBackground();
 	introTicks = 0;
+	_vm->_sound->DOSSongPtr = _vm->_sound->DOSIntroSong;
 }
 
 /**
