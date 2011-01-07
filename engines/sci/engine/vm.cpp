@@ -903,6 +903,22 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 		}
 	}
 
+	// Special handling of the op_line opcode
+	if (opcode == op_pushSelf) {
+		// Compensate for a bug in non-Sierra compilers, which seem to generate
+		// pushSelf instructions with the low bit set. This makes the following
+		// heuristic fail and leads to endless loops and crashes. Our
+		// interpretation of this seems correct, as other SCI tools, like for
+		// example SCI Viewer, have issues with these scripts (e.g. script 999
+		// in Circus Quest). Fixes bug #3038686.
+		if (!(extOpcode & 1) || g_sci->getGameId() == GID_FANMADE) {
+			// op_pushSelf: no adjustment necessary
+		} else {
+			// Debug opcode op_file, skip null-terminated string (file name)
+			while (src[offset++]) {}
+		}
+	}
+
 	return offset;
 }
 
@@ -1825,9 +1841,7 @@ void run_vm(EngineState *s) {
 			if (!(extOpcode & 1) || g_sci->getGameId() == GID_FANMADE) {
 				PUSH32(s->xs->objp);
 			} else {
-				// Debug opcode op_file, skip null-terminated string (file name)
-				const byte *code_buf = scr->getBuf();
-				while (code_buf[s->xs->addr.pc.offset++]) ;
+				// Debug opcode op_file
 			}
 			break;
 

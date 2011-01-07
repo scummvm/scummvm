@@ -2771,16 +2771,6 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 						uint16 curJmpOffset = offset + (uint16)opparams[0];
 						if (curJmpOffset > maxJmpOffset)
 							maxJmpOffset = curJmpOffset;
-						// FIXME: There seems to be a bug in the way we handle the SCI2 debug opcode
-						// (i.e. 0x7e/0x3f), which is probably why the bugs below occur
-						if (maxJmpOffset >= script->getBufSize()) {
-							warning("Called from script %d, object %s, method %s(%d) with %d parameters", 
-								itr->getNumber(), objName, 
-								_engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), i, 0);
-							warning("Script %d has a jump to an invalid offset (%d, script size is %d) - adjusting", 
-									script->getScriptNumber(), maxJmpOffset, script->getBufSize());
-							maxJmpOffset = script->getBufSize() - 1;
-						}
 					}
 
 					// Check for end of function/script
