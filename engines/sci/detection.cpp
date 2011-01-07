@@ -109,7 +109,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
 	// TODO: King's Questions
 	{"lsl6hires",       "Leisure Suit Larry 6: Shape Up or Slip Out!"},
-	{"mothergoosehires","Mixed-Up Mother Goose"},
+	{"mothergoosehires","Mixed-Up Mother Goose Deluxe"},
 	{"phantasmagoria",  "Phantasmagoria"},
 	{"pqswat",          "Police Quest: SWAT"},
 	{"shivers",         "Shivers"},
