@@ -67,7 +67,10 @@ void MystScriptParser_Intro::runPersistentScripts() {
 uint16 MystScriptParser_Intro::getVar(uint16 var) {
 	switch(var) {
 	case 0:
-		return _vm->_gameState->_globals.currentAge;
+		if (_globals.currentAge == 9 || _globals.currentAge == 10)
+			return 2;
+		else
+			return _globals.currentAge;
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -77,68 +80,13 @@ void MystScriptParser_Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, u
 	// Hard coded SoundId valid only for Intro Stack.
 	// Other stacks use Opcode 40, which takes SoundId values as arguments.
 	const uint16 soundIdLinkSrc = 5;
+	const uint16 soundIdLinkDst[] = { 2282, 3029, 6396, 7122, 3137, 0, 9038, 5134, 0, 4739, 4741 };
 
 	debugC(kDebugScript, "Opcode %d: o_useLinkBook", op);
 	debugC(kDebugScript, "\tvar: %d", var);
 
-	// TODO: Merge with changeStack (Opcode 40) Implementation?
-	if (getVar(var) == 5 || getVar(var) > 7) {
-		// TODO: Dead Book i.e. Released Sirrus/Achenar
-	} else {
-		// Play Linking Sound, blocking...
-		_vm->_sound->stopSound();
-		Audio::SoundHandle *handle = _vm->_sound->replaceSound(soundIdLinkSrc);
-		while (_vm->_mixer->isSoundHandleActive(*handle))
-			_vm->_system->delayMillis(10);
-
-		// Play Flyby Entry Movie on Masterpiece Edition. The Macintosh version is currently hooked
-		// up to the Cinepak versions of the video (the 'c' suffix) until the SVQ1 decoder is completed.
-		if ((_vm->getFeatures() & GF_ME)) {
-			switch (_stackMap[getVar(var)]) {
-			case kSeleniticStack:
-				if (_vm->getPlatform() == Common::kPlatformMacintosh)
-					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_SEc", kMasterpieceOnly));
-				else
-					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("selenitic flyby", kMasterpieceOnly));
-				break;
-			case kStoneshipStack:
-				if (_vm->getPlatform() == Common::kPlatformMacintosh)
-					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_STc", kMasterpieceOnly));
-				else
-					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("stoneship flyby", kMasterpieceOnly));
-				break;
-			// Myst Flyby Movie not used in Original Masterpiece Edition Engine
-			case kMystStack:
-				if (_vm->_tweaksEnabled) {
-					if (_vm->getPlatform() == Common::kPlatformMacintosh)
-						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_MYc", kMasterpieceOnly));
-					else
-						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("myst flyby", kMasterpieceOnly));
-				}
-				break;
-			case kMechanicalStack:
-				if (_vm->getPlatform() == Common::kPlatformMacintosh)
-					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_MEc", kMasterpieceOnly));
-				else
-					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("mech age flyby", kMasterpieceOnly));
-				break;
-			case kChannelwoodStack:
-				if (_vm->getPlatform() == Common::kPlatformMacintosh)
-					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_CHc", kMasterpieceOnly));
-				else
-					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("channelwood flyby", kMasterpieceOnly));
-				break;
-			default:
-				break;
-			}
-		}
-
-		uint16 varValue = getVar(var);
-		_vm->changeToStack(_stackMap[varValue]);
-		_vm->changeToCard(_startCard[varValue], true);
-
-		// TODO: No soundIdLinkDst for Opcode 100 link? Check Original.
-	}
+	// Change to dest stack
+	_vm->changeToStack(_stackMap[_globals.currentAge], _startCard[_globals.currentAge], soundIdLinkSrc, soundIdLinkDst[_globals.currentAge]);
 }
 
 void MystScriptParser_Intro::o_playIntroMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -167,7 +115,7 @@ void MystScriptParser_Intro::o_playIntroMovies(uint16 op, uint16 var, uint16 arg
 			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("intro", kIntroStack));
 	}
 
-	_vm->changeToCard(_vm->getCurCard() + 1, true);
+	_vm->changeToCard(2, true);
 }
 
 void MystScriptParser_Intro::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

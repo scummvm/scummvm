@@ -154,7 +154,7 @@ public:
 	void runLoadDialog();
 	void runSaveDialog();
 
-	void changeToStack(uint16 stack);
+	void changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound);
 	void changeToCard(uint16 card, bool updateScreen);
 	uint16 getCurCard() { return _curCard; }
 	uint16 getCurStack() { return _curStack; }

@@ -272,16 +272,11 @@ Common::Error MohawkEngine_Myst::run() {
 	} else {
 		// Start us on the first stack.
 		if (getGameType() == GType_MAKINGOF)
-			changeToStack(kMakingOfStack);
+			changeToStack(kMakingOfStack, 1, 0, 0);
 		else if (getFeatures() & GF_DEMO)
-			changeToStack(kDemoStack);
+			changeToStack(kDemoStack, 2000, 0, 0);
 		else
-			changeToStack(kIntroStack);
-	
-		if (getFeatures() & GF_DEMO)
-			changeToCard(2000, true);
-		else
-			changeToCard(1, true);
+			changeToStack(kIntroStack, 1, 0, 0);
 	}
 
 	// Load Help System (Masterpiece Edition Only)
@@ -376,10 +371,15 @@ Common::Error MohawkEngine_Myst::run() {
 	return Common::kNoError;
 }
 
-void MohawkEngine_Myst::changeToStack(uint16 stack) {
+void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound) {
 	debug(2, "changeToStack(%d)", stack);
 
 	_curStack = stack;
+
+	_sound->stopSound();
+	_sound->stopBackground();
+	if (linkSrcSound)
+		_sound->playSoundBlocking(linkSrcSound);
 
 	// Delete the previous stack and move the current stack to the previous one
 	// There's probably a better way to do this, but the script classes shouldn't
@@ -454,7 +454,57 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 	// Clear the resource cache and the image cache
 	_cache.clear();
 	_gfx->clearCache();
-	_sound->stopBackground();
+
+	// Play Flyby Entry Movie on Masterpiece Edition. The Macintosh version is currently hooked
+	// up to the Cinepak versions of the video (the 'c' suffix) until the SVQ1 decoder is completed.
+	const char *flyby = 0;
+	if (getFeatures() & GF_ME) {
+		switch (_curStack) {
+		case kSeleniticStack:
+			if (getPlatform() == Common::kPlatformMacintosh)
+				flyby = "FLY_SEc";
+			else
+				flyby = "selenitic flyby";
+			break;
+		case kStoneshipStack:
+			if (getPlatform() == Common::kPlatformMacintosh)
+				flyby = "FLY_STc";
+			else
+				flyby = "stoneship flyby";
+			break;
+		// Myst Flyby Movie not used in Original Masterpiece Edition Engine
+		case kMystStack:
+			if (_tweaksEnabled) {
+				if (getPlatform() == Common::kPlatformMacintosh)
+					flyby = "FLY_MYc";
+				else
+					flyby = "myst flyby";
+			}
+			break;
+		case kMechanicalStack:
+			if (getPlatform() == Common::kPlatformMacintosh)
+				flyby = "FLY_MEc";
+			else
+				flyby = "mech age flyby";
+			break;
+		case kChannelwoodStack:
+			if (getPlatform() == Common::kPlatformMacintosh)
+				flyby = "FLY_CHc";
+			else
+				flyby = "channelwood flyby";
+			break;
+		default:
+			break;
+		}
+
+		if (flyby)
+			_video->playMovieCentered(wrapMovieFilename(flyby, kMasterpieceOnly));
+	}
+
+	changeToCard(card, true);
+
+	if (linkDstSound)
+		_sound->playSoundBlocking(linkDstSound);
 }
 
 uint16 MohawkEngine_Myst::getCardBackgroundId() {

@@ -203,7 +203,7 @@ MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, Myst
 		MystScriptEntry &entry = script->operator[](i);
 		entry.type = type;
 
-		// u0 only exists in INIT and EXIT scripts
+		// Resource ID only exists in INIT and EXIT scripts
 		if (type != kMystScriptNormal)
 			entry.resourceId = stream->readUint16LE();
 
@@ -827,63 +827,27 @@ void MystScriptParser::o_delay(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 }
 
 void MystScriptParser::o_changeStack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	Audio::SoundHandle *handle;
-	varUnusedCheck(op, var);
+	debugC(kDebugScript, "Opcode %d: changeStack", op);
 
-	if (argc == 3) {
-		debugC(kDebugScript, "Opcode %d: changeStack", op);
+	uint16 targetStack = argv[0];
+	uint16 soundIdLinkSrc = argv[1];
+	uint16 soundIdLinkDst = argv[2];
 
-		uint16 targetStack = argv[0];
-		uint16 soundIdLinkSrc = argv[1];
-		uint16 soundIdLinkDst = argv[2];
+	debugC(kDebugScript, "\tTarget Stack: %d", targetStack);
+	debugC(kDebugScript, "\tSource Stack Link Sound: %d", soundIdLinkSrc);
+	debugC(kDebugScript, "\tDestination Stack Link Sound: %d", soundIdLinkDst);
 
-		debugC(kDebugScript, "\tTarget Stack: %d", targetStack);
-		debugC(kDebugScript, "\tSource Stack Link Sound: %d", soundIdLinkSrc);
-		debugC(kDebugScript, "\tDestination Stack Link Sound: %d", soundIdLinkDst);
+	_vm->_sound->stopSound();
 
-		_vm->_sound->stopSound();
-
-		if (_vm->getFeatures() & GF_DEMO) {
-
-			// The demo has linking sounds too for this, but it just sounds completely
-			// wrong as you're not actually linking when using this opcode. The sounds are only
-			// played for the full game linking.
-			if (!_vm->_tweaksEnabled) {
-				handle= _vm->_sound->replaceSound(soundIdLinkSrc);
-				while (_vm->_mixer->isSoundHandleActive(*handle))
-					_vm->_system->delayMillis(10);
-			}
-
-			// No need to have a table for just this data...
-			if (targetStack == 1) {
-				_vm->changeToStack(kDemoSlidesStack);
-				_vm->changeToCard(1000, true);
-			} else if (targetStack == 2) {
-				_vm->changeToStack(kDemoPreviewStack);
-				_vm->changeToCard(3000, true);
-			}
-
-			if (!_vm->_tweaksEnabled) {
-				handle = _vm->_sound->replaceSound(soundIdLinkDst);
-				while (_vm->_mixer->isSoundHandleActive(*handle))
-					_vm->_system->delayMillis(10);
-			}
-		} else {
-			handle = _vm->_sound->replaceSound(soundIdLinkSrc);
-			while (_vm->_mixer->isSoundHandleActive(*handle))
-				_vm->_system->delayMillis(10);
-
-			// TODO: Play Flyby Entry Movie on Masterpiece Edition..? Only on Myst to Age Link?
-
-			_vm->changeToStack(_stackMap[targetStack]);
-			_vm->changeToCard(_startCard[targetStack], true);
-
-			handle = _vm->_sound->replaceSound(soundIdLinkDst);
-			while (_vm->_mixer->isSoundHandleActive(*handle))
-				_vm->_system->delayMillis(10);
-		}
-	} else
-		unknown(op, var, argc, argv);
+	if (_vm->getFeatures() & GF_DEMO) {
+		// No need to have a table for just this data...
+		if (targetStack == 1)
+			_vm->changeToStack(kDemoSlidesStack, 1000, soundIdLinkSrc, soundIdLinkDst);
+		else if (targetStack == 2)
+			_vm->changeToStack(kDemoPreviewStack, 3000, soundIdLinkSrc, soundIdLinkDst);
+	} else {
+		_vm->changeToStack(_stackMap[targetStack], _startCard[targetStack], soundIdLinkSrc, soundIdLinkDst);
+	}
 }
 
 void MystScriptParser::o_changeCardPlaySoundDirectional(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

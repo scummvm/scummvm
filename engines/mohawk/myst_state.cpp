@@ -97,9 +97,6 @@ bool MystGameState::load(const Common::String &filename) {
 	syncGameState(s, size == 664);
 	delete loadFile;
 
-	// Switch us back to the intro stack
-	_vm->changeToStack(kIntroStack);
-
 	// Set our default cursor
 	if (_globals.heldPage == 0 || _globals.heldPage > 13)
 		_vm->setMainCursor(kDefaultMystCursor);
@@ -110,8 +107,8 @@ bool MystGameState::load(const Common::String &filename) {
 	else // if (globals.heldPage == 13)
 		_vm->setMainCursor(kWhitePageCursor);
 
-	// Set us to the linking book
-	_vm->changeToCard(5, true);
+	// Switch us back to the intro stack, to the linking book
+	_vm->changeToStack(kIntroStack, 5, 0, 0);
 
 	return true;
 }

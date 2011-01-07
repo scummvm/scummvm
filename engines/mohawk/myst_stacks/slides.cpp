@@ -68,9 +68,7 @@ void MystScriptParser_Slides::runPersistentScripts() {
 }
 
 void MystScriptParser_Slides::o_returnToMenu(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// TODO: Change to changeStack call?
-	_vm->changeToStack(kDemoStack);
-	_vm->changeToCard(2001, true);
+	_vm->changeToStack(kDemoStack, 2001, 0, 0);
 }
 
 void MystScriptParser_Slides::o_setCardSwap(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

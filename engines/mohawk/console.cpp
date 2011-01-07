@@ -152,12 +152,13 @@ bool MystConsole::Cmd_ChangeStack(int argc, const char **argv) {
 	// as the next card could continue playing it if it.
 	_vm->_sound->stopSound();
 
-	_vm->changeToStack(stackNum - 1);
-
+	uint16 card = 0;
 	if (argc == 3)
-		_vm->changeToCard((uint16)atoi(argv[2]), true);
+		card = (uint16)atoi(argv[2]);
 	else
-		_vm->changeToCard(default_start_card[stackNum - 1], true);
+		card = default_start_card[stackNum - 1];
+
+	_vm->changeToStack(stackNum - 1, card, 0, 0);
 
 	return false;
 }
