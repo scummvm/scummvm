@@ -136,7 +136,9 @@ class DosSoundMan_ns : public SoundMan_ns {
 	int			_musicData1;
 
 	bool isLocationSilent(const char *locationName);
+	bool locationHasOwnSoftMusic(const char *locationName);
 
+	
 public:
 	DosSoundMan_ns(Parallaction_ns *vm, MidiDriver *midiDriver);
 	~DosSoundMan_ns();

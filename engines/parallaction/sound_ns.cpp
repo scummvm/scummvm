@@ -284,13 +284,16 @@ void DosSoundMan_ns::pause(bool p) {
 	_midiPlayer->pause(p);
 }
 
+bool DosSoundMan_ns::locationHasOwnSoftMusic(const char *locationName) {
+	return !scumm_stricmp(locationName, "night") || !scumm_stricmp(locationName, "intsushi");
+}
+	
 void DosSoundMan_ns::playCharacterMusic(const char *character) {
 	if (character == NULL) {
 		return;
 	}
 
-	if (!scumm_stricmp(_vm->_location._name, "night") ||
-		!scumm_stricmp(_vm->_location._name, "intsushi")) {
+	if (locationHasOwnSoftMusic(_vm->_location._name)) {
 		return;
 	}
 
@@ -319,7 +322,7 @@ void DosSoundMan_ns::playLocationMusic(const char *location) {
 		debugC(2, kDebugExec, "changeLocation: started character specific music");
 	}
 
-	if (!scumm_stricmp(location, "night") || !scumm_stricmp(location, "intsushi")) {
+	if (locationHasOwnSoftMusic(location)) {
 		setMusicFile("soft");
 		playMusic();
 
