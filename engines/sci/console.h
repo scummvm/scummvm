@@ -165,6 +165,13 @@ private:
 	void hexDumpReg(const reg_t *data, int len, int regsPerLine = 4, int startOffset = 0, bool isArray = false);
 
 private:
+	/**
+	 * Prints all the scripts calling the specified kernel function.
+	 * NOTE: The results produced by this aren't 100% correct, as it
+	 * does not dissect script exports
+	 */
+	void printKernelCallsFound(int kernelFuncNum, bool showFoundScripts);
+
 	SciEngine *_engine;
 	DebugState &_debugState;
 	bool _mouseVisible;

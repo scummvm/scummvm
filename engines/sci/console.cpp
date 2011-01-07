@@ -2710,27 +2710,13 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {
-	if (argc < 2) {
-		DebugPrintf("Finds the scripts and methods that call a specific kernel function.\n");
-		DebugPrintf("Usage: %s <kernel function>\n", argv[0]);
-		DebugPrintf("Example: %s Display\n", argv[0]);
-		return true;
-	}
-
-	// Find the number of the kernel function call
-	int kernelFuncNum = _engine->getKernel()->findKernelFuncPos(argv[1]);
-
-	if (kernelFuncNum < 0) {
-		DebugPrintf("Invalid kernel function requested\n");
-		return true;
-	}
-
+void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeScript);
 	Common::sort(resources->begin(), resources->end());
 	Common::List<ResourceId>::iterator itr = resources->begin();
 
-	DebugPrintf("%d scripts found, dissassembling...\n", resources->size());
+	if (showFoundScripts)
+		DebugPrintf("%d scripts found, dissassembling...\n", resources->size());
 
 	int scriptSegment;
 	Script *script;
@@ -2762,6 +2748,7 @@ bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {
 				int16 opparams[4];
 				byte extOpcode;
 				byte opcode;
+				uint16 maxJmpOffset = 0;
 
 				while (true) {
 					offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
@@ -2778,8 +2765,28 @@ bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {
 						}
 					}
 
+					// Monitor all jump opcodes (bt, bnt and jmp), so that if
+					// there is a jump after a ret, we don't stop processing
+					if (opcode == op_bt || opcode == op_bnt || opcode == op_jmp) {
+						uint16 curJmpOffset = offset + (uint16)opparams[0];
+						if (curJmpOffset > maxJmpOffset)
+							maxJmpOffset = curJmpOffset;
+						// FIXME: There seems to be a bug in the way we handle the SCI2 debug opcode
+						// (i.e. 0x7e/0x3f), which is probably why the bugs below occur
+						if (maxJmpOffset >= script->getBufSize()) {
+							warning("Called from script %d, object %s, method %s(%d) with %d parameters", 
+								itr->getNumber(), objName, 
+								_engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), i, 0);
+							warning("Script %d has a jump to an invalid offset (%d, script size is %d) - adjusting", 
+									script->getScriptNumber(), maxJmpOffset, script->getBufSize());
+							maxJmpOffset = script->getBufSize() - 1;
+						}
+					}
+
 					// Check for end of function/script
-					if (opcode == op_ret || offset >= script->getBufSize())
+					if (offset >= script->getBufSize())
+						break;
+					if (opcode == op_ret)// && offset >= maxJmpOffset)
 						break;
 				}	// while (true)
 			}	// for (uint16 i = 0; i < obj->getMethodCount(); i++)
@@ -2790,6 +2797,69 @@ bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {
 	}
 
 	delete resources;
+}
+
+bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Finds the scripts and methods that call a specific kernel function.\n");
+		DebugPrintf("Usage: %s <kernel function>\n", argv[0]);
+		DebugPrintf("Example: %s Display\n", argv[0]);
+		DebugPrintf("Special usage:\n");
+		DebugPrintf("%s Dummy - find all calls to actual dummy functions "
+					"(mapped to kDummy, and dummy in the kernel table). "
+					"There shouldn't be calls to these (apart from a known "
+					"one in Shivers)\n", argv[0]);
+		DebugPrintf("%s Unused - find all calls to unused functions (mapped to "
+					"kDummy - i.e. mapped in SSCI but dummy in ScummVM, thus "
+					"they'll error out when called). Only debug scripts should "
+					"be calling these\n", argv[0]);
+		DebugPrintf("%s Unmapped - find all calls to currently unmapped or "
+					"unimplemented functions (mapped to kStub/kStubNull)\n", argv[0]);
+		return true;
+	}
+
+	Kernel *kernel = _engine->getKernel();
+	Common::String funcName(argv[1]);
+
+	if (funcName != "Dummy" && funcName != "Unused" && funcName != "Unmapped") {
+		// Find the number of the kernel function call
+		int kernelFuncNum = kernel->findKernelFuncPos(argv[1]);
+
+		if (kernelFuncNum < 0) {
+			DebugPrintf("Invalid kernel function requested\n");
+			return true;
+		}
+
+		printKernelCallsFound(kernelFuncNum, true);
+	} else if (funcName == "Dummy") {
+		// Find all actual dummy kernel functions (mapped to kDummy, and dummy
+		// in the kernel table)
+		for (uint i = 0; i < kernel->_kernelFuncs.size(); i++) {
+			if (kernel->_kernelFuncs[i].function == &kDummy && kernel->getKernelName(i) == "Dummy") {
+				DebugPrintf("Searching for kernel function %d (%s)...\n", i, kernel->getKernelName(i).c_str());
+				printKernelCallsFound(i, false);
+			}
+		}
+	} else if (funcName == "Unused") {
+		// Find all actual dummy kernel functions (mapped to kDummy - i.e.
+		// mapped in SSCI but dummy in ScummVM, thus they'll error out when
+		// called)
+		for (uint i = 0; i < kernel->_kernelFuncs.size(); i++) {
+			if (kernel->_kernelFuncs[i].function == &kDummy && kernel->getKernelName(i) != "Dummy") {
+				DebugPrintf("Searching for kernel function %d (%s)...\n", i, kernel->getKernelName(i).c_str());
+				printKernelCallsFound(i, false);
+			}
+		}
+	} else if (funcName == "Unmapped") {
+		// Find all unmapped kernel functions (mapped to kStub/kStubNull)
+		for (uint i = 0; i < kernel->_kernelFuncs.size(); i++) {
+			if (kernel->_kernelFuncs[i].function == &kStub ||
+				kernel->_kernelFuncs[i].function == &kStubNull) {
+				DebugPrintf("Searching for kernel function %d (%s)...\n", i, kernel->getKernelName(i).c_str());
+				printKernelCallsFound(i, false);
+			}
+		}
+	}
 
 	return true;
 }

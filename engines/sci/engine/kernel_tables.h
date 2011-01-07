@@ -462,6 +462,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(Profiler),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(ShiftScreen),     SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(ListOps),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	// Used by the sysLogger class (e.g. script 952 in GK1CD), a class used to report bugs by Sierra's testers
 	{ MAP_DUMMY(ATan),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(Record),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(PlayBack),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -503,6 +504,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// VibrateMouse - used in QFG4 floppy
 	// PalCycle
 	// ObjectIntersect - used in QFG4 floppy
+	// MakeSaveCatName - used in the Save/Load dialog of GK1CD (SRDialog, script 64990)
+	// MakeSaveFileName - used in the Save/Load dialog of GK1CD (SRDialog, script 64990)
 
 	// SCI2 empty functions
 
@@ -524,8 +527,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(ShowStylePercent), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(InvertRect),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(MakeSaveCatName),  SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(MakeSaveFileName), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(TextWidth),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
@@ -564,7 +565,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(CelRect),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(BaseLineSpan),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(CelLink),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(UpdateLine),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(AddPolygon),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(DeletePolygon),     SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(UpdatePolygon),     SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
@@ -573,7 +573,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(Priority),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(WinDLL),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(DeletePic),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(GetSierraProfileInt),    SIG_EVERYWHERE,      "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,      "(.*)",                  NULL,            NULL },
 
 	// SCI2.1 unmapped functions - TODO!
@@ -585,11 +584,13 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// ScrollWindow - used by Phantasmagoria 1 and SQ6
 	// AddLine - used by Torin's Passage to highlight the chapter buttons
 	// DeleteLine - used by Torin's Passage to delete the highlight from the chapter buttons
+	// UpdateLine = used by LSL6
 	// GetConfig - used by Phantasmagoria 1
 	// SetPalStyleRange
 	// NewRoom
 	// MorphOn - used by SQ6
 	// SetHotRectangles - used by Phantasmagoria 1
+	// GetSierraProfileInt - used by Phantasmagoria 1
 #endif
 
 	{ NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
@@ -1040,7 +1041,7 @@ static const char *sci21_default_knames[] = {
 	/*0x7e*/ "Table",
 	/*0x7f*/ "WinHelp",		// Windows only
 	/*0x80*/ "Dummy",
-	/*0x81*/ "Dummy",
+	/*0x81*/ "Dummy",		// called when changing rooms in most SCI2.1 games (e.g. KQ7, GK2, MUMG deluxe, Phant1)
 	/*0x82*/ "Dummy",
 	/*0x83*/ "PrintDebug",	// debug function, used by Shivers 2 (demo and full)
 	/*0x84*/ "Dummy",
