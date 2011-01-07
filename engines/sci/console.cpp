@@ -458,6 +458,8 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2)
 		DebugPrintf("kString type: %s\n", (_engine->_features->detectSci2StringFunctionType() == kSci2StringFunctionOld) ? "SCI2 (old)" : "SCI2.1 (new)");
+	if (getSciVersion() == SCI_VERSION_2_1)
+		DebugPrintf("SCI2.1 kernel table: %s\n", (_engine->_features->detectSci21KernelType() == SCI_VERSION_2) ? "modified SCI2 (old)" : "SCI2.1 (new)");
 #endif
 	DebugPrintf("View type: %s\n", viewTypeDesc[g_sci->getResMan()->getViewType()]);
 	DebugPrintf("Uses palette merging: %s\n", g_sci->_gfxPalette->isMerging() ? "yes" : "no");
