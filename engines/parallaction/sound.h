@@ -133,8 +133,8 @@ public:
 class DosSoundMan_ns : public SoundMan_ns {
 
 	MidiPlayer	*_midiPlayer;
-	int			_musicData1;
-
+	bool		_playing;
+	
 	bool isLocationSilent(const char *locationName);
 	bool locationHasOwnSoftMusic(const char *locationName);
 

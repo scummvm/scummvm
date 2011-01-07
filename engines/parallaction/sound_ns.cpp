@@ -236,7 +236,7 @@ void MidiPlayer::timerCallback(void *p) {
 	player->updateTimer();
 }
 
-DosSoundMan_ns::DosSoundMan_ns(Parallaction_ns *vm, MidiDriver *midiDriver) : SoundMan_ns(vm), _musicData1(0) {
+DosSoundMan_ns::DosSoundMan_ns(Parallaction_ns *vm, MidiDriver *midiDriver) : SoundMan_ns(vm), _playing(false) {
 	_midiPlayer = new MidiPlayer(midiDriver);
 }
 
@@ -273,10 +273,15 @@ void DosSoundMan_ns::playMusic() {
 	Common::SeekableReadStream *stream = _vm->_disk->loadMusic(_musicFile);
 	_midiPlayer->play(stream);
 	_midiPlayer->setVolume(255);
+	
+	_playing = true;
 }
 
 void DosSoundMan_ns::stopMusic() {
+	_musicFile[0] = 0;
 	_midiPlayer->stop();
+
+	_playing = false;
 }
 
 void DosSoundMan_ns::pause(bool p) {
@@ -289,52 +294,46 @@ bool DosSoundMan_ns::locationHasOwnSoftMusic(const char *locationName) {
 }
 	
 void DosSoundMan_ns::playCharacterMusic(const char *character) {
-	if (character == NULL) {
-		return;
-	}
-
-	if (locationHasOwnSoftMusic(_vm->_location._name)) {
+	if (!character || locationHasOwnSoftMusic(_vm->_location._name)) {
 		return;
 	}
 
 	char *name = const_cast<char*>(character);
-
+	const char *newMusicFile = 0;
+	
 	if (!scumm_stricmp(name, _dinoName)) {
-		setMusicFile("dino");
+		newMusicFile = "dino";
 	} else
 	if (!scumm_stricmp(name, _donnaName)) {
-		setMusicFile("donna");
+		newMusicFile = "donna";
 	} else
 	if (!scumm_stricmp(name, _doughName)) {
-		setMusicFile("nuts");
+		newMusicFile = "nuts";
 	} else {
 		warning("unknown character '%s' in DosSoundMan_ns_ns::playCharacterMusic", character);
 		return;
 	}
 
-	playMusic();
+	if (!_playing || (newMusicFile && scumm_stricmp(newMusicFile, _musicFile))) {
+		// avoid restarting the same piece
+		setMusicFile(newMusicFile);
+		playMusic();
+		debugC(2, kDebugExec, "changeLocation: started character specific music (%s)", newMusicFile);
+	}
 }
 
 void DosSoundMan_ns::playLocationMusic(const char *location) {
-	if (_musicData1 != 0) {
-		playCharacterMusic(_vm->_char.getBaseName());
-		_musicData1 = 0;
-		debugC(2, kDebugExec, "changeLocation: started character specific music");
-	}
-
 	if (locationHasOwnSoftMusic(location)) {
 		setMusicFile("soft");
 		playMusic();
-
 		debugC(2, kDebugExec, "changeLocation: started music 'soft'");
-	}
-
+	} else
 	if (isLocationSilent(location)) {
 		stopMusic();
-		_musicData1 = 1;
-
 		debugC(2, kDebugExec, "changeLocation: music stopped");
-	}
+	} else {
+		playCharacterMusic(_vm->_char.getBaseName());
+	}	
 }
 
 
