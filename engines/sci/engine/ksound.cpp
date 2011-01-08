@@ -277,4 +277,21 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+#ifdef ENABLE_SCI32
+
+reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv) {
+	// This is used by script 90 of MUMG Deluxe from the main menu to toggle
+	// the audio language between English and Spanish.
+	// Basically, it instructs the interpreter to switch the audio resources
+	// (resource.aud and associated map files) and load them from the "Spanish"
+	// subdirectory instead. Therefore, this is only needed for the Spanish 
+	// version, and it needs support at the resource manager level.
+	Common::String languageFolder = s->_segMan->getString(argv[0]);
+	warning("SetLanguage: set audio resource folder to '%s'", languageFolder.c_str());
+
+	return s->r_acc;
+}
+
+#endif
+
 } // End of namespace Sci
