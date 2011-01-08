@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #include "saga/shorten.h"
 
 #ifdef SOUND_SHORTEN_H
