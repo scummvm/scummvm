@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include "common/scummsys.h"
 #include "graphics/sjis.h"
 
 #ifdef GRAPHICS_SJIS_H

@@ -25,6 +25,7 @@
 
 // Based on the TrueMotion 1 decoder by Alex Beregszaszi & Mike Melanson in FFmpeg
 
+#include "common/scummsys.h"
 #include "graphics/video/codecs/truemotion1.h"
 
 #ifdef GRAPHICS_TRUEMOTION1_H

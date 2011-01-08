@@ -25,6 +25,7 @@
 
 // Based off ffmpeg's QDM2 decoder
 
+#include "common/scummsys.h"
 #include "graphics/video/codecs/qdm2.h"
 
 #ifdef GRAPHICS_QDM2_H
