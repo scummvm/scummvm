@@ -546,6 +546,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetConfig),         SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
 	{ MAP_CALL(CelInfo),           SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
 	{ MAP_CALL(SetLanguage),       SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 
@@ -586,13 +587,11 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	// SCI2.1 unmapped functions - TODO!
 	// Bitmap
-	// MovePlaneItems - used by SQ6
+	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
 	// Font
-	// ScrollWindow - used by Phantasmagoria 1 and SQ6
 	// AddLine - used by Torin's Passage to highlight the chapter buttons
 	// DeleteLine - used by Torin's Passage to delete the highlight from the chapter buttons
 	// UpdateLine = used by LSL6
-	// GetConfig - used by Phantasmagoria 1
 	// SetPalStyleRange
 	// NewRoom
 	// MorphOn - used by SQ6

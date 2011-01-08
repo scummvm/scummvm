@@ -1517,6 +1517,110 @@ reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
+	// Used by Phantasmagoria 1 and SQ6. In SQ6, it is used for the messages
+	// shown in the scroll window at the bottom of the screen.
+
+	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
+	kStub(s, argc, argv);
+
+	switch (argv[0].toUint16()) {
+	case 0:	// Init
+		// 2 parameters
+		// argv[1] points to the scroll object (e.g. textScroller in SQ6)
+		// argv[2] is an integer (e.g. 0x32)
+		break;
+	case 1: // Show message
+		// 5 or 6 parameters
+		// Seems to be called with 5 parameters when the narrator speaks, and
+		// with 6 when Roger speaks
+		// argv[1] unknown (usually 0)
+		// argv[2] the text to show
+		// argv[3] a small integer (e.g. 0x32)
+		// argv[4] a small integer (e.g. 0x54)
+		// argv[5] optional, unknown (usually 0)
+		warning("kScrollWindow: '%s'", s->_segMan->getString(argv[2]).c_str());
+		break;
+	case 2: // Clear
+		// 2 parameters
+		// TODO
+		break;
+	case 3: // Page up
+		// 2 parameters
+		// TODO
+		break;
+	case 4: // Page down
+		// 2 parameters
+		// TODO
+		break;
+	case 5: // Up arrow
+		// 2 parameters
+		// TODO
+		break;
+	case 6: // Down arrow
+		// 2 parameters
+		// TODO
+		break;
+	case 7: // Home
+		// 2 parameters
+		// TODO
+		break;
+	case 8: // End
+		// 2 parameters
+		// TODO
+		break;
+	case 9: // Resize
+		// 3 parameters
+		// TODO
+		break;
+	case 10: // Where
+		// 3 parameters
+		// TODO
+		break;
+	case 11: // Go
+		// 4 parameters
+		// TODO
+		break;
+	case 12: // Insert
+		// 7 parameters
+		// TODO
+		break;
+	case 13: // Delete
+		// 3 parameters
+		// TODO
+		break;
+	case 14: // Modify
+		// 7 or 8 parameters
+		// TODO
+		break;
+	case 15: // Hide
+		// 2 parameters
+		// TODO
+		break;
+	case 16: // Show
+		// 2 parameters
+		// TODO
+		break;
+	case 17: // Destroy
+		// 2 parameters
+		// TODO
+		break;
+	case 18: // Text
+		// 2 parameters
+		// TODO
+		break;
+	case 19: // Reconstruct
+		// 3 parameters
+		// TODO
+		break;
+	default:
+		error("kScrollWindow: unknown subop %d", argv[0].toUint16());
+		break;
+	}
+
+	return s->r_acc;
+}
+
 #endif
 
 } // End of namespace Sci
