@@ -306,7 +306,7 @@ Common::String OSystem_Dreamcast::getSystemLanguage() const {
     "it_IT"
   };
   int l = DC_Flash::get_locale_setting();
-  if (l<0 || l>=sizeof(languages)/sizeof(languages[0]))
+  if (l<0 || ((unsigned)l)>=sizeof(languages)/sizeof(languages[0]))
     l = 1;
   return Common::String(languages[l]);
 }
