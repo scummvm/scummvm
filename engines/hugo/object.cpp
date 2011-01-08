@@ -131,7 +131,7 @@ void ObjectHandler::useObject(int16 objId) {
 				if (!foundFl) {
 					// Deselect dragged icon if inventory not active
 					if (_vm->getGameStatus().inventoryState != I_ACTIVE)
-						_vm->getGameStatus().inventoryObjId  = -1;
+						_vm->_screen->resetInventoryObjId();
 					Utils::Box(BOX_ANY, "%s", _vm->_textData[use->dataIndex]);
 					return;
 				}
@@ -141,7 +141,9 @@ void ObjectHandler::useObject(int16 objId) {
 
 	if (_vm->getGameStatus().inventoryState == I_ACTIVE) // If inventory active, remove it
 		_vm->getGameStatus().inventoryState = I_UP;
-	_vm->getGameStatus().inventoryObjId  = -1;      // Deselect any dragged icon
+
+	_vm->_screen->resetInventoryObjId();
+
 	_vm->_parser->lineHandler();                    // and process command
 }
 

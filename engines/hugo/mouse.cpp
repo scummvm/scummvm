@@ -114,9 +114,9 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 	// Check if this was over iconbar
 	if (gameStatus.inventoryState == I_ACTIVE && cy < INV_DY + DIBOFF_Y) { // Clicked over iconbar object
 		if (gameStatus.inventoryObjId == -1)
-			gameStatus.inventoryObjId = objId;      // Not using so select new object
+			_vm->_screen->selectInventoryObjId(objId);
 		else if (gameStatus.inventoryObjId == objId)
-			gameStatus.inventoryObjId = -1;         // Same icon - deselect it
+			_vm->_screen->resetInventoryObjId();
 		else
 			_vm->_object->useObject(objId);         // Use status.objid on object
 	} else {                                        // Clicked over viewport object
@@ -195,7 +195,7 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 			}
 
 			// Get rid of any attached icon
-			gameStatus.inventoryObjId = -1;
+			_vm->_screen->resetInventoryObjId();
 		}
 		break;
 	default:                                        // Look at an icon or object
@@ -247,32 +247,6 @@ void MouseHandler::mouseHandler() {
 	// Don't process if outside client area
 	if (cx < 0 || cx > XPIX || cy < DIBOFF_Y || cy > VIEW_DY + DIBOFF_Y)
 		return;
-
-	// Display dragged inventory icon if one currently selected
-	if (gameStatus.inventoryObjId != -1) {
-		// Find index of icon
-		int16 iconId;                               // Find index of dragged icon
-		for (iconId = 0; iconId < _vm->_maxInvent; iconId++) {
-			if (gameStatus.inventoryObjId == _vm->_invent[iconId])
-				break;
-		}
-
-		// Compute source coordinates in dib_u
-		int16 ux = (iconId + NUM_ARROWS) * INV_DX % XPIX;
-		int16 uy = (iconId + NUM_ARROWS) * INV_DX / XPIX * INV_DY;
-
-		// Compute destination coordinates in dib_a
-		int iconx = cx + IX_OFF;
-		int icony = cy + IY_OFF;
-		iconx = MAX(iconx, 0);                      // Keep within dib_a bounds
-		iconx = MIN(iconx, XPIX - INV_DX);
-		icony = MAX(icony, 0);
-		icony = MIN(icony, YPIX - INV_DY);
-
-		// Copy the icon and add to display list
-		_vm->_screen->moveImage(_vm->_screen->getGUIBuffer(), ux, uy, INV_DX, INV_DY, XPIX, _vm->_screen->getFrontBuffer(), iconx, icony, XPIX);
-		_vm->_screen->displayList(D_ADD, iconx, icony, INV_DX, INV_DY);
-	}
 
 	int16 objId = -1;                               // Current source object
 	// Process cursor over an object or icon

@@ -139,7 +139,7 @@ void Parser::keyHandler(Common::Event event) {
 	case Common::KEYCODE_ESCAPE:                    // Escape key, may want to QUIT
 		if (gameStatus.inventoryState == I_ACTIVE)  // Remove inventory, if displayed
 			gameStatus.inventoryState = I_UP;
-		gameStatus.inventoryObjId = -1;             // Deselect any dragged icon
+		_vm->_screen->resetInventoryObjId();
 		break;
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_HOME:

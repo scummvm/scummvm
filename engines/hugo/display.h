@@ -46,45 +46,36 @@ struct rect_t {                                     // Rectangle used in Display
 
 /**
  * A black and white Windows-style arrow cursor (12x20).
- * 0 = Transparent.
- * 1 = Black (#000000 in 24-bit RGB).
- * 2 = White (#FFFFFF in 24-bit RGB).
+ * 0 = Black (#000000 in 24-bit RGB).
+ * 1 = Transparent.
+ * 15 = White (#FFFFFF in 24-bit RGB).
  * This cursor comes from Mohawk engine.
  */
+
 static const byte stdMouseCursor[] = {
-	1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-	1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
-	1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
-	1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
-	1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
-	1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
-	1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
-	1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
-	1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
-	1, 2, 2, 2, 1, 2, 2, 1, 0, 0, 0, 0,
-	1, 2, 2, 1, 1, 2, 2, 1, 0, 0, 0, 0,
-	1, 2, 1, 0, 1, 1, 2, 2, 1, 0, 0, 0,
-	1, 1, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0,
-	1, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
-	0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
-	0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0
+	0, 0,  1,  1,  1,  1,  1,  1,  1,  1,  1, 1,
+	0, 15, 0,  1,  1,  1,  1,  1,  1,  1,  1, 1,
+	0, 15, 15, 0,  1,  1,  1,  1,  1,  1,  1, 1,
+	0, 15, 15, 15, 0,  1,  1,  1,  1,  1,  1, 1,
+	0, 15, 15, 15, 15, 0,  1,  1,  1,  1,  1, 1,
+	0, 15, 15, 15, 15, 15, 0,  1,  1,  1,  1, 1,
+	0, 15, 15, 15, 15, 15, 15, 0,  1,  1,  1, 1,
+	0, 15, 15, 15, 15, 15, 15, 15, 0,  1,  1, 1,
+	0, 15, 15, 15, 15, 15, 15, 15, 15, 0,  1, 1,
+	0, 15, 15, 15, 15, 15, 15, 15, 15, 15, 0, 1,
+	0, 15, 15, 15, 15, 15, 15, 0,  0,  0,  0, 0,
+	0, 15, 15, 15, 0,  15, 15, 0,  1,  1,  1, 1,
+	0, 15, 15, 0,  0,  15, 15, 0,  1,  1,  1, 1,
+	0, 15, 0,  1,  0,  0,  15, 15, 0,  1,  1, 1,
+	0, 0,  1,  1,  1,  0,  15, 15, 0,  1,  1, 1,
+	0, 1,  1,  1,  1,  1,  0,  15, 15, 0,  1, 1,
+	1, 1,  1,  1,  1,  1,  0,  15, 15, 0,  1, 1,
+	1, 1,  1,  1,  1,  1,  1,  0,  15, 15, 0, 1,
+	1, 1,  1,  1,  1,  1,  1,  0,  15, 15, 0, 1,
+	1, 1,  1,  1,  1,  1,  1,  1,  0,  0,  1, 1
 };
-
-static const byte stdMousrCursorHeight = 20;
-static const byte stdMousrCursorWidth = 12;
-
-/**
- * RGBA-palette for the black and white arrow cursor.
- * This palette comes from AGI engine.
- */
-static const byte stdMouseCursorPalette[] = {
-	0x00, 0x00, 0x00,	0x00, // Black
-	0xFF, 0xFF, 0xFF,	0x00  // White
-};
+static const byte stdMouseCursorHeight = 20;
+static const byte stdMouseCursorWidth = 12;
 
 class Screen {
 public:
@@ -106,17 +97,21 @@ public:
 	void     drawStatusText();
 	void     freeFonts();
 	void     freePalette();
+	void     hideCursor();
 	void     initDisplay();
 	void     initNewScreenDisplay();
 	void     loadPalette(Common::File &in);
 	void     moveImage(image_pt srcImage, uint16 x1, uint16 y1, uint16 dx, uint16 dy, uint16 width1, image_pt dstImage, uint16 x2, uint16 y2, uint16 width2);
 	void     remapPal(uint16 oldIndex, uint16 newIndex);
+	void     resetInventoryObjId();
 	void     restorePal(Common::SeekableReadStream *f);
 	void     savePal(Common::WriteStream *f);
 	void     setBackgroundColor(long color);
+	void     setCursorPal();
+	void     selectInventoryObjId(int16 objId);
 	void     shadowStr(int16 sx, int16 sy, const char *s, byte color);
+	void     showCursor();
 	void     userHelp();
-	void     writeChr(int sx, int sy, byte color, char *local_fontdata);
 	void     writeStr(int16 sx, int16 sy, const char *s, byte color);
 
 	icondib_t &getIconBuffer() {
@@ -150,23 +145,28 @@ protected:
 	byte  _fontdata[NUM_FONTS][FONTSIZE];           // Font data
 	byte *_font[NUM_FONTS][FONT_LEN];               // Ptrs to each char
 	byte *_mainPalette;
-	byte *_curPalette;
-	byte  _paletteSize;
-
 	int16 _arrayFontSize[NUM_FONTS];
 
 private:
+	byte     *_curPalette;
+	byte      _iconImage[INV_DX * INV_DY];
+	byte      _paletteSize;
+
+	icondib_t _iconBuffer;                          // Inventory icon DIB
+
+	int16 mergeLists(rect_t *list, rect_t *blist, int16 len, int16 blen, int16 bmax);
+	int16 center(const char *s);
+
+	overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y);
+
 	viewdib_t _frontBuffer;
 	viewdib_t _backBuffer;
 	viewdib_t _GUIBuffer;                           // User interface images
 	viewdib_t _backBufferBackup;                    // Backup _backBuffer during inventory
-	icondib_t _iconBuffer;                          // Inventory icon DIB
 
 	void createPal();
-	overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y);
 	void merge(rect_t *rectA, rect_t *rectB);
-	int16 mergeLists(rect_t *list, rect_t *blist, int16 len, int16 blen, int16 bmax);
-	int16 center(const char *s);
+	void writeChr(int sx, int sy, byte color, char *local_fontdata);
 };
 
 class Screen_v1d : public Screen {

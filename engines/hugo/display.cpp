@@ -33,9 +33,11 @@
 // Display.c - DIB related code for HUGOWIN
 
 #include "common/system.h"
+#include "graphics/cursorman.h"
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"
+#include "hugo/inventory.h"
 #include "hugo/util.h"
 
 namespace Hugo {
@@ -64,6 +66,10 @@ void Screen::createPal() {
 	debugC(1, kDebugDisplay, "createPal");
 
 	g_system->setPalette(_mainPalette, 0, NUM_COLORS);
+}
+
+void Screen::setCursorPal() {
+	CursorMan.replaceCursorPalette(_curPalette, 0, _paletteSize / 4);
 }
 
 /**
@@ -542,6 +548,48 @@ void Screen::freeFonts() {
 		if (_arrayFont[i])
 			free(_arrayFont[i]);
 	}
+}
+
+void Screen::selectInventoryObjId(int16 objId) {
+
+	status_t &gameStatus = _vm->getGameStatus();
+
+	gameStatus.inventoryObjId = objId;              // Select new object
+
+	// Find index of icon
+	int16 iconId;                                   // Find index of dragged icon
+	for (iconId = 0; iconId < _vm->_maxInvent; iconId++) {
+		if (gameStatus.inventoryObjId == _vm->_invent[iconId])
+			break;
+	}
+
+	// Compute source coordinates in dib_u
+	int16 ux = (iconId + NUM_ARROWS) * INV_DX % XPIX;
+	int16 uy = (iconId + NUM_ARROWS) * INV_DX / XPIX * INV_DY;
+
+	// Copy the icon and add to display list
+	moveImage(getGUIBuffer(), ux, uy, INV_DX, INV_DY, XPIX, _iconImage, 0, 0, 32);
+
+	for (int i = 0; i < stdMouseCursorHeight; i++) {
+		for (int j = 0; j < stdMouseCursorWidth; j++) {
+			_iconImage[(i * INV_DX) + j] = (stdMouseCursor[(i * stdMouseCursorWidth) + j] == 1) ? _iconImage[(i * INV_DX) + j] : stdMouseCursor[(i * stdMouseCursorWidth) + j];
+		}
+	}
+
+	CursorMan.replaceCursor(_iconImage, INV_DX, INV_DY, 1, 1, 1);
+}
+
+void Screen::resetInventoryObjId() {
+	_vm->getGameStatus().inventoryObjId = -1;       // Unselect object
+	CursorMan.replaceCursor(stdMouseCursor, stdMouseCursorWidth, stdMouseCursorHeight, 1, 1, 1);
+}
+
+void Screen::showCursor() {
+	CursorMan.showMouse(true);
+}
+
+void Screen::hideCursor() {
+	CursorMan.showMouse(false);
 }
 } // End of namespace Hugo
 

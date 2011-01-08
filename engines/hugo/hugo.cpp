@@ -28,7 +28,6 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/debug-channels.h"
-#include "graphics/cursorman.h"
 
 #include "hugo/hugo.h"
 #include "hugo/global.h"
@@ -261,8 +260,8 @@ Common::Error HugoEngine::run() {
 		return Common::kUnknownError;
 
 	/* Use Windows-looking mouse cursor */
-	CursorMan.replaceCursorPalette(stdMouseCursorPalette, 1, ARRAYSIZE(stdMouseCursorPalette) / 4);
-	CursorMan.replaceCursor(stdMouseCursor, stdMousrCursorWidth, stdMousrCursorHeight, 1, 1, 0);
+	_screen->setCursorPal();
+	_screen->resetInventoryObjId();
 
 	initStatus();                                   // Initialize game status
 	initConfig(INSTALL);                            // Initialize user's config
@@ -355,7 +354,7 @@ void HugoEngine::runMachine() {
 
 	switch (gameStatus.viewState) {
 	case V_IDLE:                                    // Not processing state machine
-		CursorMan.showMouse(false);
+		_screen->hideCursor();
 		_intro->preNewGame();                       // Any processing before New Game selected
 		break;
 	case V_INTROINIT:                               // Initialization before intro begins
@@ -369,7 +368,7 @@ void HugoEngine::runMachine() {
 		}
 		break;
 	case V_PLAY:                                    // Playing game
-		CursorMan.showMouse(true);
+		_screen->showCursor();
 		_parser->charHandler();                     // Process user cmd input
 		_object->moveObjects();                     // Process object movement
 		_scheduler->runScheduler();                 // Process any actions
