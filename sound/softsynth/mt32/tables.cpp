@@ -329,7 +329,7 @@ void Tables::initMT32ConstantTables(Synth *synth) {
 			tdist = (lf - 25.0f) / 25.0f;
 			padjtable[lf] = 1.0f - tdist;
 		}
-		//synth->printDebug("lf %d = padj %f", lf, padjtable[lf]);
+		//synth->printDebug("lf %d = padj %f", lf, (double)padjtable[lf]);
 	}
 
 	float lfp, depf, finalval, tlf;
@@ -352,7 +352,7 @@ void Tables::initMT32ConstantTables(Synth *synth) {
 				pval = (int)finalval;
 
 				pitchEnvVal[lf][depat] = pval;
-				//synth->printDebug("lf %d depat %d pval %d tlf %f lfp %f", lf,depat,pval, tlf, lfp);
+				//synth->printDebug("lf %d depat %d pval %d tlf %f lfp %f", lf,depat,pval, (double)tlf, (double)lfp);
 			} else {
 				pitchEnvVal[lf][depat] = 4096;
 				//synth->printDebug("lf %d depat %d pval 4096", lf, depat);
@@ -402,7 +402,7 @@ void Tables::initMT32ConstantTables(Synth *synth) {
 					tvaBiasMult[lf][distval] = (int)(dval * 256.0f);
 				}
 			}
-			//synth->printDebug("Ampbias lf %d distval %d = %f (%x) %f", lf, distval, dval, tvaBiasMult[lf][distval],amplog);
+			//synth->printDebug("Ampbias lf %d distval %d = %f (%x) %f", lf, distval, (double)dval, tvaBiasMult[lf][distval],(double)amplog);
 		}
 	}
 
@@ -430,7 +430,7 @@ void Tables::initMT32ConstantTables(Synth *synth) {
 					tvfBiasMult[lf][distval] = (int)(dval * 256.0f);
 				}
 			}
-			//synth->printDebug("Fbias lf %d distval %d = %f (%x) %f", lf, distval, dval, tvfBiasMult[lf][distval],amplog);
+			//synth->printDebug("Fbias lf %d distval %d = %f (%x) %f", lf, distval, (double)dval, tvfBiasMult[lf][distval],(double)amplog);
 		}
 	}
 }
@@ -471,7 +471,7 @@ static void initDep(KeyLookup *keyLookup, float f) {
 			keyLookup->envTimeMult[dep] = (int)(ff * 256.0f);
 		}
 	}
-	//synth->printDebug("F %f d1 %x d2 %x d3 %x d4 %x d5 %x", f, noteLookup->fildepTable[0], noteLookup->fildepTable[1], noteLookup->fildepTable[2], noteLookup->fildepTable[3], noteLookup->fildepTable[4]);
+	//synth->printDebug("F %f d1 %x d2 %x d3 %x d4 %x d5 %x", (double)f, noteLookup->fildepTable[0], noteLookup->fildepTable[1], noteLookup->fildepTable[2], noteLookup->fildepTable[3], noteLookup->fildepTable[4]);
 }
 
 Bit16s Tables::clampWF(Synth *synth, const char *n, float ampVal, double input) {
@@ -586,7 +586,7 @@ File *Tables::initNote(Synth *synth, NoteLookup *noteLookup, float note, float r
 
 	initSaw(noteLookup, noteLookup->div2);
 
-	//synth->printDebug("Note %f; freq=%f, div=%f", note, freq, rate / freq);
+	//synth->printDebug("Note %f; freq=%f, div=%f", (double)note, (double)freq, (double) rate / freq);
 	file = initWave(synth, noteLookup, WGAMP, div2, file);
 
 	// Create the pitch tables
@@ -730,7 +730,7 @@ Tables::Tables() {
 
 bool Tables::init(Synth *synth, PCMWaveEntry *pcmWaves, float sampleRate, float masterTune) {
 	if (sampleRate <= 0.0f) {
-		synth->printDebug("Bad sampleRate (%f <= 0.0f)", sampleRate);
+		synth->printDebug("Bad sampleRate (%f <= 0.0f)", (double)sampleRate);
 		return false;
 	}
 	if (initialisedSampleRate == 0.0f) {

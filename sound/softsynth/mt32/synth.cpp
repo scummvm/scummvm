@@ -316,7 +316,7 @@ bool Synth::initPCMList(Bit16u mapAddress, Bit16u count) {
 		// The number below is confirmed to a reasonable degree of accuracy on CM-32L
 		double STANDARDFREQ = 442.0;
 		float rTune = (float)(STANDARDFREQ * pow(2.0, (0x5000 - rTuneOffset) / 4056.0 - 9.0 / 12.0));
-		//printDebug("%f,%d,%d", pTune, tps[i].pitchCoarse, tps[i].pitchFine);
+		//printDebug("%f,%d,%d", (double)pTune, tps[i].pitchCoarse, tps[i].pitchFine);
 		if (rAddr + rLen > pcmROMSize) {
 			printDebug("Control ROM error: Wave map entry %d points to invalid PCM address 0x%04X, length 0x%04X", i, rAddr, rLen);
 			return false;
@@ -1021,7 +1021,7 @@ bool Synth::refreshSystem() {
 	// The LAPC-I documentation claims a range of 427.5Hz-452.6Hz (similar to what we have here)
 	// The MT-32 documentation claims a range of 432.1Hz-457.6Hz
 	masterTune = 440.0f * powf(2.0f, (mt32ram.system.masterTune - 64.0f) / (128.0f * 12.0f));
-	printDebug(" Master Tune: %f", masterTune);
+	printDebug(" Master Tune: %f", (double)masterTune);
 	printDebug(" Reverb: mode=%d, time=%d, level=%d", mt32ram.system.reverbMode, mt32ram.system.reverbTime, mt32ram.system.reverbLevel);
 	report(ReportType_newReverbMode,  &mt32ram.system.reverbMode);
 	report(ReportType_newReverbTime,  &mt32ram.system.reverbTime);

@@ -118,7 +118,7 @@ void Partial::initKeyFollow(int key) {
 #endif
 #if MT32EMU_ACCURATENOTES == 1
 	noteVal = newPitch;
-	synth->printDebug("key=%d, pitch=%f, pitchKeyfollow=%f, pitchShift=%f, newPitch=%f", key, patchCache->pitch, patchCache->pitchKeyfollow, patchCache->pitchShift, newPitch);
+	synth->printDebug("key=%d, pitch=%f, pitchKeyfollow=%f, pitchShift=%f, newPitch=%f", key, (double)patchCache->pitch, (double)patchCache->pitchKeyfollow, (double)patchCache->pitchShift, (double)newPitch);
 #else
 	float newPitchInt;
 	float newPitchFract = modff(newPitch, &newPitchInt);
@@ -128,7 +128,7 @@ void Partial::initKeyFollow(int key) {
 	}
 	noteVal = (int)newPitchInt;
 	fineShift = (int)(powf(2.0f, newPitchFract / 12.0f) * 4096.0f);
-	synth->printDebug("key=%d, pitch=%f, pitchKeyfollow=%f, pitchShift=%f, newPitch=%f, noteVal=%d, fineShift=%d", key, patchCache->pitch, patchCache->pitchKeyfollow, patchCache->pitchShift, newPitch, noteVal, fineShift);
+	synth->printDebug("key=%d, pitch=%f, pitchKeyfollow=%f, pitchShift=%f, newPitch=%f, noteVal=%d, fineShift=%d", key, (double)patchCache->pitch, (double)patchCache->pitchKeyfollow, (double)patchCache->pitchShift, (double)newPitch, noteVal, fineShift);
 #endif
 	// FIXME:KG: Raise/lower by octaves until in the supported range.
 	while (noteVal > HIGHEST_NOTE) // FIXME:KG: see tables.cpp: >108?
@@ -451,7 +451,7 @@ void Partial::setBend(float factor) {
 	// FIXME:KG: Bend should be influenced by pitch key-follow too, according to docs.
 	float bendSemitones = factor * patchCache->benderRange; // -24 .. 24
 	float mult = powf(2.0f, bendSemitones / 12.0f);
-	synth->printDebug("setBend(): factor=%f, benderRange=%f, semitones=%f, mult=%f\n", factor, patchCache->benderRange, bendSemitones, mult);
+	synth->printDebug("setBend(): factor=%f, benderRange=%f, semitones=%f, mult=%f\n", (double)factor, (double)patchCache->benderRange, (double)bendSemitones, (double)mult);
 	bendShift = (int)(mult * 4096.0f);
 }
 
