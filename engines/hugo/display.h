@@ -92,7 +92,7 @@ public:
 	void     displayFrame(int sx, int sy, seq_t *seq, bool foreFl);
 	void     displayList(dupdate_t update, ...);
 	void     displayRect(int16 x, int16 y, int16 dx, int16 dy);
-	void     drawRectangle(bool filledFl, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int color);
+	void     drawRectangle(bool filledFl, int16 x1, int16 y1, int16 x2, int16 y2, int color);
 	void     drawShape(int x, int y, int color1, int color2);
 	void     drawStatusText();
 	void     freeFonts();
@@ -101,7 +101,7 @@ public:
 	void     initDisplay();
 	void     initNewScreenDisplay();
 	void     loadPalette(Common::File &in);
-	void     moveImage(image_pt srcImage, uint16 x1, uint16 y1, uint16 dx, uint16 dy, uint16 width1, image_pt dstImage, uint16 x2, uint16 y2, uint16 width2);
+	void     moveImage(image_pt srcImage, int16 x1, int16 y1, int16 dx, int16 dy, int16 width1, image_pt dstImage, int16 x2, int16 y2, int16 width2);
 	void     remapPal(uint16 oldIndex, uint16 newIndex);
 	void     resetInventoryObjId();
 	void     restorePal(Common::SeekableReadStream *f);

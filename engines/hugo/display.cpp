@@ -83,7 +83,7 @@ void Screen::initDisplay() {
 /**
 * Move an image from source to destination
 */
-void Screen::moveImage(image_pt srcImage, uint16 x1, uint16 y1, uint16 dx, uint16 dy, uint16 width1, image_pt dstImage, uint16 x2, uint16 y2, uint16 width2) {
+void Screen::moveImage(image_pt srcImage, int16 x1, int16 y1, int16 dx, int16 dy, int16 width1, image_pt dstImage, int16 x2, int16 y2, int16 width2) {
 	debugC(3, kDebugDisplay, "moveImage(srcImage, %d, %d, %d, %d, %d, dstImage, %d, %d, %d)", x1, y1, dx, dy, width1, x2, y2, width2);
 
 	int16 wrap_src = width1 - dx;                   // Wrap to next src row
@@ -112,7 +112,10 @@ void Screen::displayBackground() {
 void Screen::displayRect(int16 x, int16 y, int16 dx, int16 dy) {
 	debugC(3, kDebugDisplay, "displayRect(%d, %d, %d, %d)", x, y, dx, dy);
 
-	g_system->copyRectToScreen(&_frontBuffer[x + y * 320], 320, x, y, CLIP<int16>(dx, 0, 320 - x), CLIP<int16>(dy, 0, 200 - y));
+	int16 xClip, yClip;
+	xClip = CLIP<int16>(x, 0, 320);
+	yClip = CLIP<int16>(y, 0, 200);
+	g_system->copyRectToScreen(&_frontBuffer[x + y * 320], 320, xClip, yClip, CLIP<int16>(dx, 0, 320 - x), CLIP<int16>(dy, 0, 200 - y));
 }
 
 /**
@@ -492,7 +495,7 @@ void Screen::drawShape(int x, int y, int color1, int color2) {
 	}
 }
 
-void Screen::drawRectangle(bool filledFl, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int color) {
+void Screen::drawRectangle(bool filledFl, int16 x1, int16 y1, int16 x2, int16 y2, int color) {
 	assert(x1 <= x2);
 	assert(y1 <= y2);
 
