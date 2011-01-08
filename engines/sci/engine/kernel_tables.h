@@ -812,8 +812,8 @@ static const char *sci2_default_knames[] = {
 	/*0x37*/ "RestoreGame",
 	/*0x38*/ "RestartGame",
 	/*0x39*/ "GameIsRestarting",
-	/*0x3a*/ "MakeSaveCatName",		// only in SCI2, not used in any SCI2 game
-	/*0x3b*/ "MakeSaveFileName",	// only in SCI2, not used in any SCI2 game
+	/*0x3a*/ "MakeSaveCatName",
+	/*0x3b*/ "MakeSaveFileName",
 	/*0x3c*/ "GetSaveFiles",
 	/*0x3d*/ "GetSaveDir",
 	/*0x3e*/ "CheckSaveGame",
