@@ -482,7 +482,7 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 	}
 }
 
-void GfxText16::Draw_String(const char *text) {
+void GfxText16::DrawString(const char *text) {
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
 
@@ -493,7 +493,7 @@ void GfxText16::Draw_String(const char *text) {
 
 // we need to have a separate status drawing code
 //  In KQ4 the IV char is actually 0xA, which would otherwise get considered as linebreak and not printed
-void GfxText16::Draw_Status(const char *text) {
+void GfxText16::DrawStatus(const char *text) {
 	uint16 curChar, charWidth;
 	uint16 textLen = strlen(text);
 	Common::Rect rect;

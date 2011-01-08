@@ -345,7 +345,7 @@ void GfxMenu::drawBar() {
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
-		_text16->Draw_String(listEntry->textSplit.c_str());
+		_text16->DrawString(listEntry->textSplit.c_str());
 
 		listIterator++;
 	}
@@ -604,9 +604,9 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 			if (!listItemEntry->separatorLine) {
 				_ports->textGreyedOutput(listItemEntry->enabled ? false : true);
 				_ports->moveTo(_menuRect.left, topPos);
-				_text16->Draw_String(listItemEntry->textSplit.c_str());
+				_text16->DrawString(listItemEntry->textSplit.c_str());
 				_ports->moveTo(_menuRect.right - listItemEntry->textRightAlignedWidth - 5, topPos);
-				_text16->Draw_String(listItemEntry->textRightAligned.c_str());
+				_text16->DrawString(listItemEntry->textRightAligned.c_str());
 			} else {
 				// We dont 100% follow sierra here, we draw the line from left to right. Looks better
 				// BTW. SCI1.1 seems to put 2 pixels and then skip one, we don't do this at all (lsl6)
@@ -905,7 +905,7 @@ void GfxMenu::kernelDrawStatus(const char *text, int16 colorPen, int16 colorBack
 	_paint16->fillRect(_ports->_menuBarRect, 1, colorBack);
 	_ports->penColor(colorPen);
 	_ports->moveTo(0, 1);
-	_text16->Draw_Status(text);
+	_text16->DrawStatus(text);
 	_paint16->bitsShow(_ports->_menuBarRect);
 	_ports->setPort(oldPort);
 }
