@@ -53,9 +53,7 @@ private:
 	DECLARE_OPCODE(o_runCredits);
 
 	bool _creditsRunning;
-	uint16 _creditsVar;
-	uint16 _baseImageId;
-	uint32 _lastCardTime;
+	uint16 _curImage; // 56
 };
 
 } // End of namespace Mohawk

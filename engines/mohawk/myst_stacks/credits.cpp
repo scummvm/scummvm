@@ -57,41 +57,34 @@ void MystScriptParser_Credits::setupOpcodes() {
 
 void MystScriptParser_Credits::disablePersistentScripts() {
 	_creditsRunning = false;
-	_creditsVar = 0;
-	_baseImageId = 0;
-	_lastCardTime = 0;
 }
 
 void MystScriptParser_Credits::runPersistentScripts() {
 	if (!_creditsRunning)
 		return;
 
-	uint16 curImageIndex = _vm->_varStore->getVar(_creditsVar);
+	if (_vm->_system->getMillis() - _startTime >= 7 * 1000) {
+		_curImage++;
 
-	if (_vm->_system->getMillis() - _lastCardTime >= 7 * 1000) {
 		// After the 6th image has shown, it's time to quit
-		if (curImageIndex == 7)
+		if (_curImage == 7)
 			_vm->_system->quit();
 
-		// Note: The modulus by 6 is because the 6th image is the one at imageBaseId
-		_vm->_gfx->copyImageToScreen(_baseImageId + curImageIndex % 6, Common::Rect(0, 0, 544, 333));
+		// Draw next image
+		_vm->drawCardBackground();
+		_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 		_vm->_system->updateScreen();
 
-		_vm->_varStore->setVar(_creditsVar, curImageIndex + 1);
-		_lastCardTime = _vm->_system->getMillis();
+		_startTime = _vm->_system->getMillis();
 	}
 }
 
 uint16 MystScriptParser_Credits::getVar(uint16 var) {
-//	MystVariables::Globals &globals = _vm->_saveLoad->_v->globals;
-//	MystVariables::Dni &dni = _vm->_saveLoad->_v->dni;
-
 	switch(var) {
-//	case 0: // Credits Image Control
-//		return _creditsVar;
-//	case 1: // Credits Music Control
-//		return 0; // Bad Ending Music
-//		return 1; // Good Ending Music
+	case 0: // Credits Image Control
+		return _curImage;
+	case 1: // Credits Music Control (Good / bad ending)
+		return _globals.ending != 4;
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -104,11 +97,8 @@ void MystScriptParser_Credits::o_quit(uint16 op, uint16 var, uint16 argc, uint16
 void MystScriptParser_Credits::o_runCredits(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Activate the credits
 	_creditsRunning = true;
-	_creditsVar = var;
-	_baseImageId = _vm->getCurCard();
-	_lastCardTime = _vm->_system->getMillis();
-
-	_vm->_varStore->setVar(var, 1);
+	_curImage = 0;
+	_startTime = _vm->_system->getMillis();
 }
 
 } // End of namespace Mohawk
