@@ -586,15 +586,17 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,      "(.*)",                 NULL,            NULL },
 
 	// SCI2.1 unmapped functions - TODO!
+
 	// Bitmap
 	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
 	// Font
 	// AddLine - used by Torin's Passage to highlight the chapter buttons
 	// DeleteLine - used by Torin's Passage to delete the highlight from the chapter buttons
-	// UpdateLine = used by LSL6
-	// SetPalStyleRange
-	// NewRoom
-	// MorphOn - used by SQ6
+	// UpdateLine - used by LSL6
+	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end
+	//   (inclusive) are set to 0
+	// NewRoom - 1 integer parameter, the current room number
+	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
 	// SetHotRectangles - used by Phantasmagoria 1
 #endif
 
