@@ -1490,6 +1490,33 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
+	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
+	kStub(s, argc, argv);
+
+	// Used by Shivers 1, room 23601
+
+	// 6 arguments, all integers:
+	// argv[0] - subop (0 - 4). It's constantly called with 4 in Shivers 1
+	// argv[2] - view (used with view 23602 in Shivers 1)
+	// argv[3] - loop
+	// argv[4] - cel
+	// argv[5] - unknown (row?)
+	// argv[6] - unknown (column?)
+
+	// Subops:
+	// 0 - return the view
+	// 1 - return the loop
+	// 2, 3 - nop
+	// 4 - returns some kind of hash (?) based on the view and the two last params
+
+	// This seems to be a debug function, but it could be used to check if
+	// the jigsaw pieces "stick" together (they currently don't, unless I'm missing
+	// something)
+
+	return s->r_acc;
+}
+
 #endif
 
 } // End of namespace Sci

@@ -1113,6 +1113,26 @@ reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc; // FIXME: does this really not return anything?
 }
 
+reg_t kFileIOCreateSaveSlot(EngineState *s, int argc, reg_t *argv) {
+	// Used in Shivers when the user enters his name on the guest book
+	// in the beginning to start the game.
+
+	// Creates a new save slot, and returns if the operation was successful
+
+	// Argument 0 denotes the save slot as a negative integer, 2 means "0"
+	// Argument 1 is a string, with the file name, obtained from kSave(5).
+	// The interpreter checks if it can be written to (by checking for free
+	// disk space and write permissions)
+
+	// We don't really use or need any of this...
+
+	uint16 saveSlot = argv[0].toUint16();
+	char* fileName = s->_segMan->lookupString(argv[1])->getRawData();
+	warning("kFileIOCreateSaveSlot(%d, '%s')", saveSlot, fileName);
+
+	return TRUE_REG;	// slot creation was successful
+}
+
 reg_t kCD(EngineState *s, int argc, reg_t *argv) {
 	// TODO: Stub
 	switch (argv[0].toUint16()) {
@@ -1133,8 +1153,17 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 	case 2: // GetSaveDir
 		// Yay! Reusing the old kernel function!
 		return kGetSaveDir(s, argc - 1, argv + 1);
+	case 5:
+		// TODO
+		// 3 parameters: game ID, a string and an array
+		return s->r_acc;
 	case 8:
 		// TODO
+		// This is a timer callback, with 1 parameter: the timer object
+		// (e.g. "timers").
+		// It's used for auto-saving (i.e. save every X minutes, by checking
+		// the elapsed time from the timer object)
+
 		// This function has to return something other than 0 to proceed
 		return s->r_acc;
 	default:

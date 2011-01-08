@@ -241,6 +241,7 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	{ SIG_SCI32,          14, MAP_CALL(FileIOWriteByte),           "ii",                   NULL },
 	{ SIG_SCI32,          15, MAP_CALL(FileIOReadWord),            "i",                    NULL },
 	{ SIG_SCI32,          16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
+	{ SIG_SCI32,          17, MAP_CALL(FileIOCreateSaveSlot),      "ir",                   NULL },
 	{ SIG_SCI32,          19, MAP_CALL(Stub),                      "r",                    NULL }, // for Torin / Torin demo
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
@@ -543,6 +544,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(GetConfig),         SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
+	{ MAP_CALL(GetCelInfo),        SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 
@@ -577,7 +579,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	// SCI2.1 unmapped functions - TODO!
 	// SetLanguage - used by MUMG Deluxe from the main menu to switch languages
-	// CelInfo - used by Shivers 1
 	// Bitmap
 	// MovePlaneItems - used by SQ6
 	// Font
