@@ -544,7 +544,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(GetConfig),         SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
-	{ MAP_CALL(GetCelInfo),        SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
+	{ MAP_CALL(CelInfo),           SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 
