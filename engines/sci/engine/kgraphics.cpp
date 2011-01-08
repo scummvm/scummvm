@@ -1498,11 +1498,11 @@ reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
 
 	// 6 arguments, all integers:
 	// argv[0] - subop (0 - 4). It's constantly called with 4 in Shivers 1
-	// argv[2] - view (used with view 23602 in Shivers 1)
-	// argv[3] - loop
-	// argv[4] - cel
-	// argv[5] - unknown (row?)
-	// argv[6] - unknown (column?)
+	// argv[1] - view (used with view 23602 in Shivers 1)
+	// argv[2] - loop
+	// argv[3] - cel
+	// argv[4] - unknown (row?)
+	// argv[5] - unknown (column?)
 
 	// Subops:
 	// 0 - return the view
