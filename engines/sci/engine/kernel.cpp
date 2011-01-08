@@ -827,9 +827,15 @@ void Kernel::setKernelNamesSci2() {
 
 void Kernel::setKernelNamesSci21(GameFeatures *features) {
 	// Some SCI games use a modified SCI2 kernel table instead of the
-	// SCI2.1 kernel table. The GK2 demo does this as well as at least
-	// one version of KQ7 (1.4). We detect which version to use based on
+	// SCI2.1 kernel table. We detect which version to use based on
 	// how kDoSound is called from Sound::play().
+	// Known games that use this:
+	// GK2 demo
+	// KQ7 1.4
+	// PQ4 SWAT demo
+	// LSL6
+	// PQ4CD
+	// QFG4CD
 
 	// This is interesting because they all have the same interpreter
 	// version (2.100.002), yet they would not be compatible with other
