@@ -216,6 +216,16 @@ void MystResourceType6::handleCardChange() {
 		playMovie();
 }
 
+bool MystResourceType6::isPlaying() {
+	if (_videoRunning) {
+		VideoHandle handle = _vm->_video->findVideoHandle(0xFFFF);
+		if (handle != NULL_VID_HANDLE)
+			return !_vm->_video->endOfVideo(handle);
+	}
+
+	return false;
+}
+
 MystResourceType7::MystResourceType7(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {
 	_var7 = rlstStream->readUint16LE();
 	_numSubResources = rlstStream->readUint16LE();

@@ -50,18 +50,25 @@ void MystScriptParser_Intro::setupOpcodes() {
 
 	// "Init" Opcodes
 	OPCODE(200, o_playIntroMovies);
-	OPCODE(201, opcode_201);
+	OPCODE(201, o_mystLinkBook_init);
 
 	// "Exit" Opcodes
-	OPCODE(300, opcode_300);
+	OPCODE(300, NOP);
 }
 
 #undef OPCODE
 
 void MystScriptParser_Intro::disablePersistentScripts() {
+	_introMoviesRunning = false;
+	_linkBookRunning = false;
 }
 
 void MystScriptParser_Intro::runPersistentScripts() {
+	if (_introMoviesRunning)
+		introMovies_run();
+
+	if (_linkBookRunning)
+		mystLinkBook_run();
 }
 
 uint16 MystScriptParser_Intro::getVar(uint16 var) {
@@ -89,54 +96,77 @@ void MystScriptParser_Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, u
 	_vm->changeToStack(_stackMap[_globals.currentAge], _startCard[_globals.currentAge], soundIdLinkSrc, soundIdLinkDst[_globals.currentAge]);
 }
 
-void MystScriptParser_Intro::o_playIntroMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// TODO:  Clicking during the intro movies does not stop them and change to Card 5.
-	//        This is due to the movies playing blocking, but making them non-blocking causes
-	//        the card change here to prevent them playing. Need to move the following to the
-	//        opcode_200_run process and wait for all movies to finish playing before the card
-	//        change is performed.
-
+void MystScriptParser_Intro::introMovies_run() {
 	// Play Intro Movies..
-	if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh) {
-		_vm->_video->playMovieCentered(_vm->wrapMovieFilename("mattel", kIntroStack));
-		_vm->_video->playMovieCentered(_vm->wrapMovieFilename("presto", kIntroStack));
-	} else
-		_vm->_video->playMovieCentered(_vm->wrapMovieFilename("broder", kIntroStack));
+	if (_introStep == 0) {
+		_introStep = 1;
 
-	_vm->_video->playMovieCentered(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
+		if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh) {
+			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("mattel", kIntroStack));
+			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("presto", kIntroStack));
+		} else
+			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("broder", kIntroStack));
+	} else if (_introStep == 1) {
+		VideoHandle handle = _vm->_video->findVideoHandle(0xFFFF);
+		if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle))
+			_introStep = 2;
+	} else if (_introStep == 2) {
+		_introStep = 3;
 
-	if (!(_vm->getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
-		if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh)
-			// intro.mov uses Sorenson, introc uses Cinepak. Otherwise, they're the same.
-			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("introc", kIntroStack));
-		else
-			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("intro", kIntroStack));
+		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
+	} else if (_introStep == 3) {
+		VideoHandle handle = _vm->_video->findVideoHandle(0xFFFF);
+		if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle))
+			_introStep = 4;
+	}  else if (_introStep == 4) {
+		_introStep = 5;
+
+		if (!(_vm->getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
+			if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh)
+				// intro.mov uses Sorenson, introc uses Cinepak. Otherwise, they're the same.
+				_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("introc", kIntroStack));
+			else
+				_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("intro", kIntroStack));
+		}
+	} else if (_introStep == 5) {
+		VideoHandle handle = _vm->_video->findVideoHandle(0xFFFF);
+		if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle))
+			_introStep = 6;
+	} else {
+		if (_vm->getFeatures() & GF_DEMO) {
+			_vm->changeToCard(2001, true);
+		} else {
+			_vm->changeToCard(2, true);
+		}
 	}
-
-	_vm->changeToCard(2, true);
 }
 
-void MystScriptParser_Intro::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-	_vm->_system->updateScreen();
-	_vm->_system->delayMillis(4 * 1000);
-	_vm->_gfx->copyImageToBackBuffer(4, Common::Rect(544, 333));
-	_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-	_vm->_system->updateScreen();
-
-	MystResourceType6 *resource = static_cast<MystResourceType6 *>(_invokingResource);
-	resource->playMovie();
-	// TODO: Complete / Fix
+void MystScriptParser_Intro::o_playIntroMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_introMoviesRunning = true;
+	_introStep = 0;
 }
 
-void MystScriptParser_Intro::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-	// In the original engine, this opcode stopped Intro Movies if playing,
-	// upon card change, but this behavior is now default in this engine.
+void MystScriptParser_Intro::mystLinkBook_run() {
+	if (_startTime == 1) {
+		_startTime = 0;
+
+		if (!_vm->skippableWait(5000)) {
+			_linkBookMovie->playMovie();
+			_vm->_gfx->copyImageToBackBuffer(4, Common::Rect(544, 333));
+			_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
+		}
+	} else {
+		if (!_linkBookMovie->isPlaying())
+			_vm->changeToCard(5, true);
+	}
+}
+
+void MystScriptParser_Intro::o_mystLinkBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Myst link book init", op);
+
+	_linkBookMovie = static_cast<MystResourceType6 *>(_invokingResource);
+	_startTime = 1;
+	_linkBookRunning = true;
 }
 
 } // End of namespace Mohawk

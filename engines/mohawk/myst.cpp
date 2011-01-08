@@ -292,7 +292,6 @@ Common::Error MohawkEngine_Myst::run() {
 
 	// Set the cursor
 	_cursor->setCursor(_currentCursor);
-	_cursor->showCursor();
 
 	Common::Event event;
 	while (!shouldQuit()) {
@@ -369,6 +368,40 @@ Common::Error MohawkEngine_Myst::run() {
 	}
 
 	return Common::kNoError;
+}
+
+bool MohawkEngine_Myst::skippableWait(uint32 duration) {
+	uint32 end = _system->getMillis() + duration;
+	bool skipped = false;
+
+	while (_system->getMillis() < end && !skipped) {
+		Common::Event event;
+		while (_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_LBUTTONUP:
+				skipped = true;
+				break;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_SPACE:
+					pauseGame();
+					break;
+				case Common::KEYCODE_ESCAPE:
+					skipped = true;
+					break;
+				default:
+					break;
+			}
+			default:
+				break;
+			}
+		}
+
+		// Cut down on CPU usage
+		_system->delayMillis(10);
+	}
+
+	return skipped;
 }
 
 void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound) {

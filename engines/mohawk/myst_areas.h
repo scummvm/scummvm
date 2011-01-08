@@ -106,6 +106,7 @@ public:
 	MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	void playMovie();
 	void handleCardChange();
+	bool isPlaying();
 
 protected:
 	static Common::String convertMystVideoName(Common::String name);

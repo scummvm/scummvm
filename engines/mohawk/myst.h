@@ -162,6 +162,7 @@ public:
 	uint16 getMainCursor() { return _mainCursor; }
 	void checkCursorHints();
 	MystResource *updateCurrentResource();
+	bool skippableWait(uint32 duration);
 
 	MystVar *_varStore;
 

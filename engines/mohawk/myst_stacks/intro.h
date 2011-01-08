@@ -35,6 +35,7 @@ namespace Mohawk {
 #define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
 class MohawkEngine_Myst;
+class MystResourceType6;
 struct MystScriptEntry;
 
 class MystScriptParser_Intro : public MystScriptParser {
@@ -52,9 +53,16 @@ private:
 	DECLARE_OPCODE(o_useLinkBook);
 
 	DECLARE_OPCODE(o_playIntroMovies);
-	DECLARE_OPCODE(opcode_201);
+	DECLARE_OPCODE(o_mystLinkBook_init);
 
-	DECLARE_OPCODE(opcode_300);
+	void introMovies_run();
+	void mystLinkBook_run();
+
+	bool _introMoviesRunning;
+	uint16 _introStep;
+
+	bool _linkBookRunning;
+	MystResourceType6 *_linkBookMovie;
 };
 
 } // End of namespace Mohawk

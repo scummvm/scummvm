@@ -48,6 +48,7 @@ public:
 private:
 	void setupOpcodes();
 
+	DECLARE_OPCODE(opcode_100);
 	DECLARE_OPCODE(opcode_101);
 	DECLARE_OPCODE(opcode_102);
 

@@ -49,6 +49,7 @@ MystScriptParser_Demo::~MystScriptParser_Demo() {
 
 void MystScriptParser_Demo::setupOpcodes() {
 	// "Stack-Specific" Opcodes
+	OVERRIDE_OPCODE(100, opcode_100);
 	OPCODE(101, opcode_101);
 	OPCODE(102, opcode_102);
 
@@ -76,6 +77,10 @@ void MystScriptParser_Demo::runPersistentScripts() {
 
 		// TODO: Fill in Function...
 	}
+}
+
+void MystScriptParser_Demo::opcode_100(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// TODO: Fill in Function...
 }
 
 void MystScriptParser_Demo::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
