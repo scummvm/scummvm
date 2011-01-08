@@ -23,7 +23,10 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #include "graphics/video/coktel_decoder.h"
+
 #include "graphics/video/codecs/codec.h"
 #include "graphics/video/codecs/indeo3.h"
 
