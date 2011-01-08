@@ -219,6 +219,12 @@ Common::WriteStream *OSystem_Dreamcast::createConfigWriteStream() {
   return 0;
 }
 
+void OSystem_Dreamcast::logMessage(LogMessageType::Type type, const char *message) {
+#ifndef NOSERIAL
+  report(message);
+#endif
+}
+
 namespace DC_Flash {
   static int syscall_info_flash(int sect, int *info)
   {

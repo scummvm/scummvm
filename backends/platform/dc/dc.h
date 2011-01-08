@@ -243,6 +243,7 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   Common::SeekableReadStream *createConfigReadStream();
   Common::WriteStream *createConfigWriteStream();
 
+  void logMessage(LogMessageType::Type type, const char *message);
   Common::String getSystemLanguage() const;
 };
 
