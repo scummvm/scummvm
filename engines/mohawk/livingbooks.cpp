@@ -2902,8 +2902,10 @@ void LBPaletteItem::update() {
 			_fadeInCurrent = divTime;
 
 			// TODO: actual fading-in
-			if (_visible && _globalVisible)
+			if (_visible && _globalVisible) {
 				_vm->_system->setPalette(_palette + _drawStart * 4, _drawStart, _drawCount);
+				_vm->_needsRedraw = true;
+			}
 		}
 
 		if (elapsedTime >= (uint32)_fadeInPeriod * (uint32)_fadeInStep) {
@@ -3005,9 +3007,10 @@ bool LBLiveTextItem::contains(Common::Point point) {
 }
 
 void LBLiveTextItem::paletteUpdate(uint16 word, bool on) {
+	_vm->_needsRedraw = true;
+
 	if (_resourceId) {
 		// with a resource, we draw a bitmap in draw() rather than changing the palette
-		_vm->_needsRedraw = true;
 		return;
 	}
 
