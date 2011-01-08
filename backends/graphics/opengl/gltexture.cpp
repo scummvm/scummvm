@@ -141,6 +141,10 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 }
 
 void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLuint w, GLuint h) {
+	// Skip empty updates.
+	if (w * h == 0)
+		return;
+
 	// Select this OpenGL texture
 	glBindTexture(GL_TEXTURE_2D, _textureName); CHECK_GL_ERROR();
 
