@@ -934,6 +934,7 @@ void HugoEngine::initStatus() {
 	_status.godModeFl     = false;                  // No special cheats allowed
 	_status.helpFl        = false;                  // Not calling WinHelp()
 	_status.doQuitFl      = false;
+	_status.skipIntroFl   = false;
 	_status.path[0]       = 0;                      // Path to write files
 
 	// Initialize every start of new game

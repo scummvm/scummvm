@@ -92,6 +92,9 @@ void intro_v3d::introInit() {
 bool intro_v3d::introPlay() {
 //TODO : Add proper check of story mode
 //#if STORY
+	if (_vm->getGameStatus().skipIntroFl)
+		return true;
+
 	if (introTicks < _vm->getIntroSize()) {
 		font.drawString(&surf, ".", _vm->_introX[introTicks], _vm->_introY[introTicks] - DIBOFF_Y, 320, _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();

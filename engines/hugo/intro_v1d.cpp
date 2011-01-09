@@ -59,6 +59,9 @@ bool intro_v1d::introPlay() {
 	static int state = 0;
 	byte introSize = _vm->getIntroSize();
 
+	if (_vm->getGameStatus().skipIntroFl)
+		return true;
+
 	if (introTicks < introSize) {
 		switch (state++) {
 		case 0:

@@ -821,6 +821,7 @@ struct status_t {                                   // Game status (not saved)
 	bool     godModeFl;                             // Allow DEBUG features in live version
 	bool     helpFl;                                // Calling WinHelp (don't disable music)
 	bool     doQuitFl;
+	bool     skipIntroFl;
 	uint32   tick;                                  // Current time in ticks
 	vstate_t viewState;                             // View state machine
 	istate_t inventoryState;                        // Inventory icon bar state

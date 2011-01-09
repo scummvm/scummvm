@@ -137,9 +137,13 @@ void Parser::keyHandler(Common::Event event) {
 	// Process key down event - called from OnKeyDown()
 	switch (nChar) {                                // Set various toggle states
 	case Common::KEYCODE_ESCAPE:                    // Escape key, may want to QUIT
-		if (gameStatus.inventoryState == I_ACTIVE)  // Remove inventory, if displayed
-			gameStatus.inventoryState = I_UP;
-		_vm->_screen->resetInventoryObjId();
+		if (gameStatus.viewState == V_INTRO)
+			gameStatus.skipIntroFl = true;
+		else {
+			if (gameStatus.inventoryState == I_ACTIVE)  // Remove inventory, if displayed
+				gameStatus.inventoryState = I_UP;
+			_vm->_screen->resetInventoryObjId();
+		}
 		break;
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_HOME:
