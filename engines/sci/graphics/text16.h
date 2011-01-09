@@ -62,7 +62,7 @@ public:
 	int16 Size(Common::Rect &rect, const char *text, GuiResourceId fontId, int16 maxWidth);
 	void Draw(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 	void Show(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
-	void Box(const char *text, int16 bshow, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId);
+	void Box(const char *text, bool show, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId);
 	void DrawString(const char *text);
 	void DrawStatus(const char *text);
 

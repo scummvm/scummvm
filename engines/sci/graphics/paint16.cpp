@@ -594,7 +594,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		result = bitsSave(rect, GFX_SCREEN_MASK_VISUAL);
 	if (colorBack != -1)
 		fillRect(rect, GFX_SCREEN_MASK_VISUAL, colorBack, 0, 0);
-	_text16->Box(text, 0, rect, alignment, -1);
+	_text16->Box(text, false, rect, alignment, -1);
 	if (_screen->_picNotValid == 0 && bRedraw)
 		bitsShow(rect);
 	// restoring port and cursor pos

@@ -415,7 +415,7 @@ void GfxPorts::drawWindow(Window *pWnd) {
 				if (!pWnd->title.empty()) {
 					int16 oldcolor = getPort()->penClr;
 					penColor(_screen->getColorWhite());
-					_text16->Box(pWnd->title.c_str(), 1, r, SCI_TEXT16_ALIGNMENT_CENTER, 0);
+					_text16->Box(pWnd->title.c_str(), true, r, SCI_TEXT16_ALIGNMENT_CENTER, 0);
 					penColor(oldcolor);
 				}
 

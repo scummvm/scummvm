@@ -403,7 +403,7 @@ void GfxText16::Show(const char *text, int16 from, int16 len, GuiResourceId orgF
 }
 
 // Draws a text in rect.
-void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId) {
+void GfxText16::Box(const char *text, bool show, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId) {
 	int16 textWidth, maxTextWidth, textHeight, charCount;
 	int16 offset = 0;
 	int16 hline = 0;
@@ -448,7 +448,7 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 		}
 		_ports->moveTo(rect.left + offset, rect.top + hline);
 
-		if (bshow) {
+		if (show) {
 			Show(text, 0, charCount, fontId, previousPenColor);
 		} else {
 			Draw(text, 0, charCount, fontId, previousPenColor);

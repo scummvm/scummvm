@@ -78,9 +78,9 @@ void GfxControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, 
 	// They "fixed" this in SQ4 by having the arrow character start one pixel line later, we don't adjust there
 	if (g_sci->getGameId() != GID_SQ4)
 		workerRect.top++;
-	_text16->Box(controlListUpArrow, 0, workerRect, SCI_TEXT16_ALIGNMENT_CENTER, 0);
+	_text16->Box(controlListUpArrow, false, workerRect, SCI_TEXT16_ALIGNMENT_CENTER, 0);
 	workerRect.top = workerRect.bottom - 10;
-	_text16->Box(controlListDownArrow, 0, workerRect, SCI_TEXT16_ALIGNMENT_CENTER, 0);
+	_text16->Box(controlListDownArrow, false, workerRect, SCI_TEXT16_ALIGNMENT_CENTER, 0);
 
 	// Draw inner lines
 	workerRect.top = rect.top + 9;
@@ -261,7 +261,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 			g_sci->getVocabulary()->checkAltInput(text, cursorPos);
 		texteditCursorErase();
 		_paint16->eraseRect(rect);
-		_text16->Box(text.c_str(), 0, rect, SCI_TEXT16_ALIGNMENT_LEFT, -1);
+		_text16->Box(text.c_str(), false, rect, SCI_TEXT16_ALIGNMENT_LEFT, -1);
 		_paint16->bitsShow(rect);
 		texteditCursorDraw(rect, text.c_str(), cursorPos);
 		_text16->SetFont(oldFontId);
@@ -300,7 +300,7 @@ void GfxControls::kernelDrawButton(Common::Rect rect, reg_t obj, const char *tex
 		_paint16->frameRect(rect);
 		rect.grow(-2);
 		_ports->textGreyedOutput(style & 1 ? false : true);
-		_text16->Box(text, 0, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
+		_text16->Box(text, false, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
 		_ports->textGreyedOutput(false);
 		rect.grow(1);
 		if (style & SCI_CONTROLS_STYLE_SELECTED)
@@ -328,7 +328,7 @@ void GfxControls::kernelDrawText(Common::Rect rect, reg_t obj, const char *text,
 		rect.grow(1);
 		_paint16->eraseRect(rect);
 		rect.grow(-1);
-		_text16->Box(text, 0, rect, alignment, fontId);
+		_text16->Box(text, false, rect, alignment, fontId);
 		if (style & SCI_CONTROLS_STYLE_SELECTED) {
 			_paint16->frameRect(rect);
 		}
@@ -349,7 +349,7 @@ void GfxControls::kernelDrawTextEdit(Common::Rect rect, reg_t obj, const char *t
 	_texteditCursorVisible = false;
 	texteditCursorErase();
 	_paint16->eraseRect(rect);
-	_text16->Box(text, 0, textRect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
+	_text16->Box(text, false, textRect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
 	_paint16->frameRect(rect);
 	if (style & SCI_CONTROLS_STYLE_SELECTED) {
 		_text16->SetFont(fontId);
