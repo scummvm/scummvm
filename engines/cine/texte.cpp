@@ -605,6 +605,8 @@ void loadErrmessDat(const char *fname) {
 	in.open(fname);
 
 	if (in.isOpen()) {
+		// FIXME - This can leak in some situations in Operation Stealth
+		//         Engine Restart - multiple allocations with no free?
 		char **ptr = (char **)malloc(sizeof(char *) * 6 * 4 + 60 * 6 * 4);
 
 		for (int i = 0; i < 6 * 4; i++) {
