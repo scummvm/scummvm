@@ -40,7 +40,6 @@ MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *sav
 	memset(&_mechanical, 0, sizeof(_mechanical));
 	memset(&_selenitic, 0, sizeof(_selenitic));
 	memset(&_stoneship, 0, sizeof(_stoneship));
-	memset(&_dni, 0, sizeof(_dni));
 
 	// Unknown
 	_globals.u0 = 2;
@@ -140,7 +139,7 @@ void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 	s.syncAsUint16LE(_globals.heldPage);
 	s.syncAsUint16LE(_globals.u1);
 	s.syncAsUint16LE(_globals.transitions);
-	s.syncAsUint16LE(_globals.ending);
+	s.syncAsUint16LE(_globals.zipMode);
 	s.syncAsUint16LE(_globals.redPagesInBook);
 	s.syncAsUint16LE(_globals.bluePagesInBook);
 
@@ -289,36 +288,26 @@ void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 		s.syncAsUint16LE(_stoneship.generatorPowerLevel[i]);
 
 	// D'ni
-	s.syncAsUint16LE(_dni.outcomeState);
+	s.syncAsUint16LE(_globals.ending);
 
 	// Reading unknown region...
 	// When Zero Value regions are included, these are 5 blocks of
 	// 41 uint16 values.
 
-	for (byte i = 0; i < 31; i++)
-		s.syncAsUint16LE(unknownMyst[i]);
+	for (byte i = 0; i < 41; i++)
+		s.syncAsUint16LE(mystReachableZipDests[i]);
 
-	s.skip(20);
+	for (byte i = 0; i < 41; i++)
+		s.syncAsUint16LE(channelwoodReachableZipDests[i]);
 
-	for (byte i = 0; i < 37; i++)
-		s.syncAsUint16LE(unknownChannelwood[i]);
+	for (byte i = 0; i < 41; i++)
+		s.syncAsUint16LE(mechReachableZipDests[i]);
 
-	s.skip(8);
+	for (byte i = 0; i < 41; i++)
+		s.syncAsUint16LE(seleniticReachableZipDests[i]);
 
-	for (byte i = 0; i < 18; i++)
-		s.syncAsUint16LE(unknownMech[i]);
-
-	s.skip(46);
-
-	for (byte i = 0; i < 30; i++)
-		s.syncAsUint16LE(unknownSelenitic[i]);
-
-	s.skip(22);
-
-	for (byte i = 0; i < 22; i++)
-		s.syncAsUint16LE(unknownStoneship[i]);
-
-	s.skip(38);
+	for (byte i = 0; i < 41; i++)
+		s.syncAsUint16LE(stoneshipReachableZipDests[i]);
 
 	if ((isME && s.bytesSynced() != 664) || (!isME && s.bytesSynced() != 601))
 		warning("Unexpected File Position 0x%03X At End of Save/Load", s.bytesSynced());

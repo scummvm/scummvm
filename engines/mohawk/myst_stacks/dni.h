@@ -49,14 +49,17 @@ private:
 	void setupOpcodes();
 	uint16 getVar(uint16 var);
 
-	DECLARE_OPCODE(opcode_100);
-	DECLARE_OPCODE(opcode_101);
+	void atrus_run();
 
-	DECLARE_OPCODE(opcode_200);
+	DECLARE_OPCODE(opcode_100);
+	DECLARE_OPCODE(o_handPage);
+
+	DECLARE_OPCODE(o_atrus_init);
 
 	DECLARE_OPCODE(opcode_300);
 
-	MystGameState::Dni &_state;
+	bool _atrusRunning;
+	bool _notSeenAtrus; // 56
 };
 
 } // End of namespace Mohawk

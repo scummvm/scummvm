@@ -64,9 +64,10 @@ public:
 		uint16 heldPage;
 		uint16 u1;
 		uint16 transitions;
-		uint16 ending;
+		uint16 zipMode;
 		uint16 redPagesInBook;
 		uint16 bluePagesInBook;
+		uint16 ending;
 	} _globals;
 
 	/* 50 Myst Specific Variables :
@@ -268,24 +269,17 @@ public:
 		uint16 generatorPowerLevel[5];
 	} _stoneship;
 
-	/* 1 Dunny Specific Variable :
-	    0 = Outcome State
-	*/
-	struct Dni {
-		uint16 outcomeState;
-	} _dni;
+	// The values in these regions are lists of VIEW resources
+	// which correspond to visited zip destinations
+	uint16 mystReachableZipDests[41];
 
-	// The values in these regions seem to be lists of resource IDs
-	// which correspond to VIEW resources i.e. cards
-	uint16 unknownMyst[31];
+	uint16 channelwoodReachableZipDests[41];
 
-	uint16 unknownChannelwood[37];
+	uint16 mechReachableZipDests[41];
 
-	uint16 unknownMech[18];
+	uint16 seleniticReachableZipDests[41];
 
-	uint16 unknownSelenitic[30];
-
-	uint16 unknownStoneship[22];
+	uint16 stoneshipReachableZipDests[41];
 private:
 	void syncGameState(Common::Serializer &s, bool isME);
 
