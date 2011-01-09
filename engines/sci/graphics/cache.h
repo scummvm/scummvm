@@ -45,8 +45,8 @@ public:
 	~GfxCache();
 
 	GfxFont *getFont(GuiResourceId fontId);
-
 	GfxView *getView(GuiResourceId viewId);
+
 	int16 kernelViewGetCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo);
 	int16 kernelViewGetCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo);
 	int16 kernelViewGetLoopCount(GuiResourceId viewId);

@@ -116,7 +116,6 @@ void GfxFontFromResource::drawToBuffer(uint16 chr, int16 top, int16 left, byte c
 			if ((done & 7) == 0) // fetching next data byte
 				b = *(pIn++) & mask;
 			if (b & 0x80) {	// if MSB is set - paint it
-				_screen->putFontPixel(top, left + done, y, color);
 				int offset = (top + y) * bufWidth + (left + done);
 				buffer[offset] = color;
 			}
