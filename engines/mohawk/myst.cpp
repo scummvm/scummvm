@@ -67,9 +67,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	DebugMan.addDebugChannel(kDebugHelp, "Help", "Track Help File (HELP) Parsing");
 	DebugMan.addDebugChannel(kDebugCache, "Cache", "Track Resource Cache Accesses");
 
-	_zipMode = false;
-	_transitionsEnabled = false;
-
 	// Engine tweaks
 	// Disabling this makes engine behavior as per
 	// original, including bugs, missing bits etc. :)
@@ -620,6 +617,9 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 	} else {
 		error("Unknown sound action %d", soundAction);
 	}
+
+	if (_view.flags & kMystZipDestination)
+		_gameState->addZipDest(_curStack, card);
 
 	// Run the entrance script (if present)
 	runInitScript();

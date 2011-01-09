@@ -80,7 +80,8 @@ bool MystResource::canBecomeActive() {
 }
 
 bool MystResource::unreachableZipDest() {
-	return (_flags & kMystZipModeEnableFlag) && !_vm->_zipMode;
+	return (_flags & kMystZipModeEnableFlag)
+			&& !_vm->_gameState->isReachableZipDest(_vm->getCurStack() , _dest);
 }
 
 bool MystResource::isEnabled() {

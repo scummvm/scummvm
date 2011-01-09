@@ -91,17 +91,17 @@ MystOptionsDialog::~MystOptionsDialog() {
 void MystOptionsDialog::open() {
 	Dialog::open();
 
-	_zipModeCheckbox->setState(_vm->_zipMode);
-	_transitionsCheckbox->setState(_vm->_transitionsEnabled);
+	_zipModeCheckbox->setState(_vm->_gameState->_globals.zipMode);
+	_transitionsCheckbox->setState(_vm->_gameState->_globals.transitions);
 }
 
 void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kZipCmd:
-		_vm->_zipMode = _zipModeCheckbox->getState();
+		_vm->_gameState->_globals.zipMode = _zipModeCheckbox->getState();
 		break;
 	case kTransCmd:
-		_vm->_transitionsEnabled = _transitionsCheckbox->getState();
+		_vm->_gameState->_globals.transitions = _transitionsCheckbox->getState();
 		break;
 	case GUI::kCloseCmd:
 		close();

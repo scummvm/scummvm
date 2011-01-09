@@ -96,6 +96,11 @@ enum {
 	// Other positive values are PlayNewSound of that id
 };
 
+// View flags
+enum {
+	kMystZipDestination = (1 << 0)
+};
+
 struct MystView {
 	uint16 flags;
 
@@ -166,8 +171,6 @@ public:
 
 	MystVar *_varStore;
 
-	bool _zipMode;
-	bool _transitionsEnabled;
 	bool _tweaksEnabled;
 	bool _needsUpdate;
 

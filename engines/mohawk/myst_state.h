@@ -48,6 +48,9 @@ public:
 	bool save(const Common::String &);
 	void deleteSave(const Common::String &);
 
+	void addZipDest(uint16 stack, uint16 view);
+	bool isReachableZipDest(uint16 stack, uint16 view);
+
 	/* 8 Game Global Variables :
 	   0 = Unknown - Fixed at 2
 	   1 = Current Age / Stack
@@ -269,19 +272,23 @@ public:
 		uint16 generatorPowerLevel[5];
 	} _stoneship;
 
-	// The values in these regions are lists of VIEW resources
-	// which correspond to visited zip destinations
-	uint16 mystReachableZipDests[41];
-
-	uint16 channelwoodReachableZipDests[41];
-
-	uint16 mechReachableZipDests[41];
-
-	uint16 seleniticReachableZipDests[41];
-
-	uint16 stoneshipReachableZipDests[41];
 private:
 	void syncGameState(Common::Serializer &s, bool isME);
+
+	// The values in these regions are lists of VIEW resources
+	// which correspond to visited zip destinations
+
+	typedef uint16 ZipDests[41];
+
+	ZipDests _mystReachableZipDests;
+
+	ZipDests _channelwoodReachableZipDests;
+
+	ZipDests _mechReachableZipDests;
+
+	ZipDests _seleniticReachableZipDests;
+
+	ZipDests _stoneshipReachableZipDests;
 
 	MohawkEngine_Myst *_vm;
 	Common::SaveFileManager *_saveFileMan;

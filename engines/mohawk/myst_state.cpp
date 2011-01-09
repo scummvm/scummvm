@@ -40,6 +40,11 @@ MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *sav
 	memset(&_mechanical, 0, sizeof(_mechanical));
 	memset(&_selenitic, 0, sizeof(_selenitic));
 	memset(&_stoneship, 0, sizeof(_stoneship));
+	memset(&_mystReachableZipDests, 0, sizeof(_mystReachableZipDests));
+	memset(&_channelwoodReachableZipDests, 0, sizeof(_channelwoodReachableZipDests));
+	memset(&_mechReachableZipDests, 0, sizeof(_mechReachableZipDests));
+	memset(&_seleniticReachableZipDests, 0, sizeof(_seleniticReachableZipDests));
+	memset(&_stoneshipReachableZipDests, 0, sizeof(_stoneshipReachableZipDests));
 
 	// Unknown
 	_globals.u0 = 2;
@@ -295,19 +300,19 @@ void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 	// 41 uint16 values.
 
 	for (byte i = 0; i < 41; i++)
-		s.syncAsUint16LE(mystReachableZipDests[i]);
+		s.syncAsUint16LE(_mystReachableZipDests[i]);
 
 	for (byte i = 0; i < 41; i++)
-		s.syncAsUint16LE(channelwoodReachableZipDests[i]);
+		s.syncAsUint16LE(_channelwoodReachableZipDests[i]);
 
 	for (byte i = 0; i < 41; i++)
-		s.syncAsUint16LE(mechReachableZipDests[i]);
+		s.syncAsUint16LE(_mechReachableZipDests[i]);
 
 	for (byte i = 0; i < 41; i++)
-		s.syncAsUint16LE(seleniticReachableZipDests[i]);
+		s.syncAsUint16LE(_seleniticReachableZipDests[i]);
 
 	for (byte i = 0; i < 41; i++)
-		s.syncAsUint16LE(stoneshipReachableZipDests[i]);
+		s.syncAsUint16LE(_stoneshipReachableZipDests[i]);
 
 	if ((isME && s.bytesSynced() != 664) || (!isME && s.bytesSynced() != 601))
 		warning("Unexpected File Position 0x%03X At End of Save/Load", s.bytesSynced());
@@ -316,6 +321,82 @@ void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 void MystGameState::deleteSave(const Common::String &saveName) {
 	debugC(kDebugSaveLoad, "Deleting save file \'%s\'", saveName.c_str());
 	_saveFileMan->removeSavefile(saveName.c_str());
+}
+
+void MystGameState::addZipDest(uint16 stack, uint16 view) {
+	ZipDests *zipDests = 0;
+
+	// Select stack
+	switch (stack) {
+	case kChannelwoodStack:
+		zipDests = &_channelwoodReachableZipDests;
+		break;
+	case kMechanicalStack:
+		zipDests = &_mechReachableZipDests;
+		break;
+	case kMystStack:
+		zipDests = &_mystReachableZipDests;
+		break;
+	case kSeleniticStack:
+		zipDests = &_seleniticReachableZipDests;
+		break;
+	case kStoneshipStack:
+		zipDests = &_stoneshipReachableZipDests;
+		break;
+	default:
+		error("Stack does not have zip destination storage");
+	}
+
+	// Check if not already in list
+	int16 firstEmpty = -1;
+	bool found = false;
+	for (uint i = 0; i < ARRAYSIZE(*zipDests); i++) {
+		if (firstEmpty == -1 && (*zipDests)[i] == 0)
+			firstEmpty = i;
+
+		if ((*zipDests)[i] == view)
+			found = true;
+	}
+
+	// Add view to array
+	if (!found && firstEmpty >= 0)
+		(*zipDests)[firstEmpty] = view;
+}
+
+bool MystGameState::isReachableZipDest(uint16 stack, uint16 view) {
+	// Zip mode enabled
+	if (!_globals.zipMode)
+		return false;
+
+	// Select stack
+	ZipDests *zipDests;
+	switch (stack) {
+	case kChannelwoodStack:
+		zipDests = &_channelwoodReachableZipDests;
+		break;
+	case kMechanicalStack:
+		zipDests = &_mechReachableZipDests;
+		break;
+	case kMystStack:
+		zipDests = &_mystReachableZipDests;
+		break;
+	case kSeleniticStack:
+		zipDests = &_seleniticReachableZipDests;
+		break;
+	case kStoneshipStack:
+		zipDests = &_stoneshipReachableZipDests;
+		break;
+	default:
+		error("Stack does not have zip destination storage");
+	}
+
+	// Check if in list
+	for (uint i = 0; i < ARRAYSIZE(*zipDests); i++) {
+		if ((*zipDests)[i] == view)
+			return true;
+	}
+
+	return false;
 }
 
 } // End of namespace Mohawk
