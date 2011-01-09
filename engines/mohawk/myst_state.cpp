@@ -295,9 +295,7 @@ void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 	// D'ni
 	s.syncAsUint16LE(_globals.ending);
 
-	// Reading unknown region...
-	// When Zero Value regions are included, these are 5 blocks of
-	// 41 uint16 values.
+	// Already visited zip destinations
 
 	for (byte i = 0; i < 41; i++)
 		s.syncAsUint16LE(_mystReachableZipDests[i]);

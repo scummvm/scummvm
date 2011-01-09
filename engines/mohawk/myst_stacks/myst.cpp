@@ -595,6 +595,8 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 		return _state.cabinValvePosition;
 	case 307: // Cabin Boiler Fully Pressurized
 		return _state.cabinPilotLightLit == 1 && _state.cabinValvePosition > 12;
+	case 308: // Cabin handle position
+		return 0; // Not implemented in the original
 	default:
 		return MystScriptParser::getVar(var);
 	}
