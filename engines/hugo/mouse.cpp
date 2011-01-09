@@ -74,8 +74,14 @@ void MouseHandler::cursorText(char *buffer, int16 cx, int16 cy, uif_t fontId, in
 	// Find bounding rect for string
 	int16 sdx = _vm->_screen->stringLength(buffer);
 	int16 sdy = _vm->_screen->fontHeight() + 1;                      // + 1 for shadow
-	int16 sx  = (cx < XPIX / 2) ? cx + SX_OFF : cx - sdx - SX_OFF / 2;
-	int16 sy  = cy + SY_OFF;
+	int16 sx, sy;
+	if (cx < XPIX / 2) {
+		sx = cx + SX_OFF;
+		sy = (_vm->getGameStatus().inventoryObjId == -1) ? cy + SY_OFF : cy + SY_OFF - (_vm->_screen->fontHeight() + 1);
+	} else {
+		sx = cx - sdx - SX_OFF / 2;
+		sy = cy + SY_OFF;
+	}
 
 	// Display the string and add rect to display list
 	_vm->_screen->shadowStr(sx, sy, buffer, _TBRIGHTWHITE);
