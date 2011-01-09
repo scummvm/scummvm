@@ -35,6 +35,7 @@
 #include "cine/sound.h"
 #include "cine/various.h"
 #include "cine/script.h"
+#include "cine/console.h"
 
 namespace Cine {
 
@@ -1333,6 +1334,13 @@ int FWScript::o1_startGlobalScript() {
 	assert(param < NUM_MAX_SCRIPT);
 
 	debugC(5, kCineDebugScript, "Line: %d: startScript(%d)", _line, param);
+
+	// Cheat for Scene 6 Labyrinth Arcade Game to disable John's Death (to aid playtesting)
+	if (g_cine->getGameType() == Cine::GType_OS && labyrinthCheat && scumm_stricmp(currentPrcName, "LABY.PRC") == 0 && param == 46) {
+		warning("LABY.PRC startScript(46) Disabled. CHEAT!");
+		return 0;
+	}
+
 	addScriptToGlobalScripts(param);
 	return 0;
 }
@@ -1971,6 +1979,7 @@ uint16 compareVars(int16 a, int16 b) {
 void executeObjectScripts() {
 	ScriptList::iterator it = g_cine->_objectScripts.begin();
 	for (; it != g_cine->_objectScripts.end();) {
+		debugC(5, kCineDebugScript, "executeObjectScripts() Executing Object Index: %d", (*it)->_index);
 		if ((*it)->_index < 0 || (*it)->execute() < 0) {
 			it = g_cine->_objectScripts.erase(it);
 		} else {
@@ -1982,6 +1991,7 @@ void executeObjectScripts() {
 void executeGlobalScripts() {
 	ScriptList::iterator it = g_cine->_globalScripts.begin();
 	for (; it != g_cine->_globalScripts.end();) {
+		debugC(5, kCineDebugScript, "executeGlobalScripts() Executing Object Index: %d", (*it)->_index);
 		if ((*it)->_index < 0 || (*it)->execute() < 0) {
 			it = g_cine->_globalScripts.erase(it);
 		} else {

@@ -30,6 +30,8 @@
 
 namespace Cine {
 
+extern bool labyrinthCheat;
+
 class CineEngine;
 
 class CineConsole : public GUI::Debugger {
@@ -39,6 +41,8 @@ public:
 
 private:
 	CineEngine *_vm;
+
+	bool Cmd_LabyrinthCheat(int argc, const char **argv);
 };
 
 } // End of namespace Cine

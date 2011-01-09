@@ -28,10 +28,22 @@
 
 namespace Cine {
 
+bool labyrinthCheat;
+
 CineConsole::CineConsole(CineEngine *vm) : GUI::Debugger(), _vm(vm) {
+	DCmd_Register("labyrinthCheat",	WRAP_METHOD(CineConsole, Cmd_LabyrinthCheat));
+
+	labyrinthCheat = false;
 }
 
 CineConsole::~CineConsole() {
+}
+
+// Activate Cheat during Scene 6 Labyrinth chased by Guards in Otto's Mansion
+// This puzzle is hard, especially without save/load so this will aid playtesting.
+bool CineConsole::Cmd_LabyrinthCheat(int argc, const char **argv) {
+	labyrinthCheat = true;
+	return true;
 }
 
 } // End of namespace Cine
