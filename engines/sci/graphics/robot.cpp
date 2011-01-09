@@ -29,6 +29,8 @@
 #include "sci/graphics/robot.h"
 #include "sci/sound/audio.h"
 
+#include "graphics/surface.h"
+
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
@@ -36,6 +38,21 @@
 #include "common/system.h"
 
 namespace Sci {
+
+// Some non technical information on robot files, from an interview with
+// Greg Tomko-Pavia of Sierra On-Line
+// Taken from http://anthonylarme.tripod.com/phantas/phintgtp.html
+//
+// (...) What we needed was a way of playing video, but have it blend into
+// normal room art instead of occupying its own rectangular area. Room art 
+// consists of a background pic overlaid with various animating cels 
+// (traditional lingo: sprites). The cels each have a priority that determines 
+// who is on top and who is behind in the drawing order. Cels are read from 
+// *.v56 files (another proprietary format). A Robot is video frames with 
+// transparent background including priority and x,y information. Thus, it is 
+// like a cel, except it comes from an RBT - not a v56. Because it blends into
+// our graphics engine, it looks just like a part of the room. A RBT can move 
+// around the screen and go behind other objects. (...)
 
 #ifdef ENABLE_SCI32
 GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId)
@@ -66,6 +83,8 @@ void GfxRobot::initData(GuiResourceId resourceId) {
 	// video data which is appended after it
 
 	_frameCount = READ_LE_UINT16(_resourceData + 14);
+	// For some weird reason, the audio size seems to ALWAYS
+	// be 0xB000, padded with 0x20 and 0x00 at the end
 	_audioSize = READ_LE_UINT16(_resourceData + 15);
 
 	//_frameSize = READ_LE_UINT32(_resourceData + 34);
@@ -74,13 +93,7 @@ void GfxRobot::initData(GuiResourceId resourceId) {
 	debug("Robot %d, %d frames, sound: %s\n", resourceId, _frameCount, _hasSound ? "yes" : "no");
 }
 
-// TODO: just trying around in here...
-
 void GfxRobot::draw() {
-	byte *bitmapData = _resourceData + _audioSize;
-	int x, y;
-	int frame;
-
 	// Play the audio of the robot file (for debugging)
 #if 0
 	if (_hasSound) {
@@ -90,51 +103,80 @@ void GfxRobot::draw() {
 	}
 #endif
 
-	return;
+	return;	// TODO: Remove once done
 
-	// Each frame contains these bytes:
-	// 01 00 7f 64 - always the same, perhaps resource type + extra
-	// 40 01    -    total frame width (320 in this case)
-	// f0 00    -    total frame height (240 in this case)
-	// The total video size is calculated from the maximum width, height
-	// of all the frames in the robot file
-	// 4 zeroes
-	// 4 bytes, perhaps frame x, y on screen?
-	// 2 bytes, unknown
-	// 2 bytes, a small number (e.g. 01 00 or 02 00)
-	// 7f 7f    -    127x127
-	// 7f 7f    -    127x127
-	// 2 bytes, related to frame size?
-	// 00 00
-	// 00 f0
-	// 4 zeroes
-	// 43 e0
-	// 7f ff
+	byte *frameData = _resourceData + _audioSize;
+	uint16 frameWidth, frameHeight;
+	uint16 maskBlockSize, frameBlockSize;
 
-	// The frames themselves seem to contain a size of the actual drawn data
-	// on screen. The frame data seems to be uncompressed, placed on screen
-	// at appropriate x,y coordinates, and each frame can have a different size.
-	// This is apparent from the fact that a 320x240 frame (e.g. in Phantasmagoria
-	// demo, 91.rbt) has 4833, 4898, 5111, etc bytes, whereas a full frame would
-	// be 320x240 = 76800 bytes. Thus, each frame is either somehow compressed
-	// (but the data seems uncompressed?), or only the part that changes is drawn
-	// on screen, something like the MPEG I-frames
+	// TODO: Palette! Where is it?
+#if 0
+	byte dummyPal[256 * 4];
+	for (int i = 0; i < 256; i++) {
+		dummyPal[i * 4 + 0] = i;
+		dummyPal[i * 4 + 1] = i;
+		dummyPal[i * 4 + 2] = i;
+		dummyPal[i * 4 + 3] = 0;
+	}
+	memset(dummyPal, 255, 256 * 4);
+	g_system->setPalette(dummyPal, 0, 256);
+#endif
 
-	for (frame = 0; frame < _frameCount; frame++) {
-		bitmapData += 4;	// skip header bytes
-		_width = READ_LE_UINT16(bitmapData + 4); bitmapData += 2;
-		_height = READ_LE_UINT16(bitmapData + 6); bitmapData += 2;
+	// Both the frame and the mask data are uncompressed
+	// TODO: How are the rectangle dimensions calculated from the block sizes?
 
-		for (y = 0; y < _width; y++) {
-			for (x = 0; x < _height; x++) {
-				_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, *bitmapData, 0, 0);
-				bitmapData++;
-			}
-		}
+	Graphics::Surface *screen;
+	for (uint16 frame = 0; frame < _frameCount; frame++) {
+		// Read 20 byte header
+		// First 4 bytes are always 01 00 7f 64
+		assert(*(frameData + 0) == 0x01);
+		assert(*(frameData + 1) == 0x00);
+		assert(*(frameData + 2) == 0x7f);
+		assert(*(frameData + 3) == 0x64);
+		frameWidth = READ_LE_UINT16(frameData + 4);
+		frameHeight = READ_LE_UINT16(frameData + 6);
+		// 4 bytes, always 0
+		assert(*(frameData +  8) == 0x00);
+		assert(*(frameData +  9) == 0x00);
+		assert(*(frameData + 10) == 0x00);
+		assert(*(frameData + 11) == 0x00);
+		// 2 bytes: a small number (x, perhaps? But it doesn't match with the movie dimensions shown by SV...)
+		// 2 bytes: a small number (y, perhaps? But it doesn't match with the movie dimensions shown by SV...)
+		// 2 bytes: a small number, 1 or 2 (type, perhaps?)
+		maskBlockSize = READ_LE_UINT16(frameData + 16);
+		assert(*(frameData +  18) == 0x01 || *(frameData +  18) == 0x02);
+		assert(*(frameData + 20) == 0x00);
+		frameData += 20;
 
-		_screen->copyToScreen();
+		// Process mask(?) data
+		// FIXME: This isn't correct, we need to use copyRectToScreen() instead
+		// (but we need to figure out the rectangle dimensions, see TODO above)
+		screen = g_system->lockScreen();
+		memcpy(frameData, screen->pixels, maskBlockSize);
+		g_system->unlockScreen();
+		g_system->updateScreen();
 		// Sleep for a second
 		g_sci->sleep(1000);
+		warning("Mask %d", frame);
+
+		frameData += maskBlockSize;
+
+		// Read 12 byte frame data header
+		frameBlockSize = READ_LE_UINT16(frameData + 8);
+		frameData += 12;
+
+		// Process frame(?) data
+		// FIXME: This isn't correct, we need to use copyRectToScreen() instead
+		// (but we need to figure out the rectangle dimensions, see TODO above)
+		screen = g_system->lockScreen();
+		memcpy(frameData, screen->pixels, frameBlockSize);
+		g_system->unlockScreen();
+		g_system->updateScreen();
+		// Sleep for a second
+		g_sci->sleep(1000);
+		warning("Frame %d", frame);
+
+		frameData += frameBlockSize;
 	}
 
 }

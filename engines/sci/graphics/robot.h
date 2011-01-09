@@ -47,8 +47,8 @@ private:
 	GuiResourceId _resourceId;
 	byte *_resourceData;
 
-	uint16 _width;
-	uint16 _height;
+	//uint16 _width;
+	//uint16 _height;
 	uint16 _frameCount;
 	uint32 _frameSize; // is width * height (pixelCount)
 	uint16 _audioSize;
