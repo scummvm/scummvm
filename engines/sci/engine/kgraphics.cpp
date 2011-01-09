@@ -1380,8 +1380,17 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 			warning("kCreateTextBitmap(0): expected 4 arguments, got %i", argc);
 			return NULL_REG;
 		}
-		reg_t object = argv[3];
-		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
+		//reg_t object = argv[3];
+		//Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
+		break;
+	}
+	case 1: {
+		if (argc != 2) {
+			warning("kCreateTextBitmap(0): expected 2 arguments, got %i", argc);
+			return NULL_REG;
+		}
+		//reg_t object = argv[1];
+		//Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
 		break;
 	}
 	default:
@@ -1468,17 +1477,16 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
 	kStub(s, argc, argv);
 
-	// Can be called with 7, 8 or 9 parameters
+	// Can be called with 7 or 8 parameters
 	// showStyle matches the style selector of the associated plane object
 	uint16 showStyle = argv[0].toUint16();	// 0 - 15
 	reg_t planeObj = argv[1];
-	//argv[2]
-	//int16 priority = argv[3].toSint16();
-	//argv[4]
-	//argv[5]
-	//argv[6]
-	//argv[7]
-	//int16 unk8 = (argc >= 9) ? argv[8].toSint16() : 0;
+	//argv[2]	// seconds
+	//argv[3]	// back
+	//int16 priority = argv[4].toSint16();
+	//argv[5]	// animate
+	//argv[6]	// refFrame
+	//int16 unk7 = (argc >= 8) ? argv[7].toSint16() : 0;	// divisions
 
 	if (showStyle > 15) {
 		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
