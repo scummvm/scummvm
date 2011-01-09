@@ -124,14 +124,14 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 
 	delete _videoStreams[videoHandle].video;
 	_videoStreams[videoHandle].video = 0;
-	_videoStreams[videoHandle].id = 0xffff;
+	_videoStreams[videoHandle].id = 0;
 	_videoStreams[videoHandle].filename.clear();
 }
 
-void VideoManager::playBackgroundMovie(const Common::String &filename, int16 x, int16 y, bool loop) {
+VideoHandle VideoManager::playBackgroundMovie(const Common::String &filename, int16 x, int16 y, bool loop) {
 	VideoHandle videoHandle = createVideoHandle(filename, x, y, loop);
 	if (videoHandle == NULL_VID_HANDLE)
-		return;
+		return NULL_VID_HANDLE;
 
 	// Center x if requested
 	if (x < 0)
@@ -140,12 +140,14 @@ void VideoManager::playBackgroundMovie(const Common::String &filename, int16 x, 
 	// Center y if requested
 	if (y < 0)
 		_videoStreams[videoHandle].y = (_vm->_system->getHeight() - _videoStreams[videoHandle]->getHeight()) / 2;
+
+	return videoHandle;
 }
 
-void VideoManager::playBackgroundMovie(uint16 id, int16 x, int16 y, bool loop) {
+VideoHandle VideoManager::playBackgroundMovie(uint16 id, int16 x, int16 y, bool loop) {
 	VideoHandle videoHandle = createVideoHandle(id, x, y, loop);
 	if (videoHandle == NULL_VID_HANDLE)
-		return;
+		return NULL_VID_HANDLE;
 
 	// Center x if requested
 	if (x < 0)
@@ -154,6 +156,8 @@ void VideoManager::playBackgroundMovie(uint16 id, int16 x, int16 y, bool loop) {
 	// Center y if requested
 	if (y < 0)
 		_videoStreams[videoHandle].y = (_vm->_system->getHeight() - _videoStreams[videoHandle]->getHeight()) / 2;
+
+	return videoHandle;
 }
 
 bool VideoManager::updateBackgroundMovies() {
@@ -171,7 +175,7 @@ bool VideoManager::updateBackgroundMovies() {
 			} else {
 				delete _videoStreams[i].video;
 				_videoStreams[i].video = 0;
-				_videoStreams[i].id = 0xffff;
+				_videoStreams[i].id = 0;
 				_videoStreams[i].filename.clear();
 				continue;
 			}
@@ -304,7 +308,7 @@ void VideoManager::stopMovie(uint16 id) {
 				if (_mlstRecords[i].movieID == _videoStreams[j].id) {
 					delete _videoStreams[j].video;
 					_videoStreams[j].video = 0;
-					_videoStreams[j].id = 0xffff;
+					_videoStreams[j].id = 0;
 					_videoStreams[j].filename.clear();
 					return;
 				}
@@ -380,7 +384,7 @@ VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint
 	entry.x = x;
 	entry.y = y;
 	entry.filename = filename;
-	entry.id = 0xffff;
+	entry.id = 0;
 	entry.loop = loop;
 	entry.enabled = true;
 	
@@ -407,7 +411,7 @@ VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint
 VideoHandle VideoManager::findVideoHandleRiven(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id)
-			for (uint16 j = 0; j < _videoStreams.size(); j++)
+			for (uint32 j = 0; j < _videoStreams.size(); j++)
 				if (_videoStreams[j].video && _mlstRecords[i].movieID == _videoStreams[j].id)
 					return j;
 
@@ -415,9 +419,23 @@ VideoHandle VideoManager::findVideoHandleRiven(uint16 id) {
 }
 
 VideoHandle VideoManager::findVideoHandle(uint16 id) {
-	for (uint16 j = 0; j < _videoStreams.size(); j++)
-		if (_videoStreams[j].video && _videoStreams[j].id == id)
-			return j;
+	if (!id)
+		return NULL_VID_HANDLE;
+
+	for (uint32 i = 0; i < _videoStreams.size(); i++)
+		if (_videoStreams[i].video && _videoStreams[i].id == id)
+			return i;
+
+	return NULL_VID_HANDLE;
+}
+
+VideoHandle VideoManager::findVideoHandle(const Common::String &filename) {
+	if (filename.empty())
+		return NULL_VID_HANDLE;
+
+	for (uint32 i = 0; i < _videoStreams.size(); i++)
+		if (_videoStreams[i].video && _videoStreams[i].filename.equalsIgnoreCase(filename))
+			return i;
 
 	return NULL_VID_HANDLE;
 }
@@ -440,6 +458,14 @@ uint32 VideoManager::getElapsedTime(const VideoHandle &handle) {
 bool VideoManager::endOfVideo(const VideoHandle &handle) {
 	assert(handle != NULL_VID_HANDLE);
 	return _videoStreams[handle]->endOfVideo();
+}
+
+bool VideoManager::isVideoPlaying() {
+	for (uint32 i = 0; i < _videoStreams.size(); i++)
+		if (_videoStreams[i].video && !_videoStreams[i]->endOfVideo())
+			return true;
+
+	return false;
 }
 
 } // End of namespace Mohawk

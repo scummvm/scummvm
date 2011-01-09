@@ -107,14 +107,13 @@ void MystScriptParser_Dni::o_handPage(uint16 op, uint16 var, uint16 argc, uint16
 
 void MystScriptParser_Dni::atrus_run() {
 	if (_globals.ending == 2) {
-		VideoHandle handle = _vm->_video->findVideoHandle(0xFFFF);
-		if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle)) {
+		if (!_vm->_video->isVideoPlaying()) {
 			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("atrus2", kDniStack), 215, 77);
 			_globals.ending = 4;
 			_globals.bluePagesInBook = 63;
 			_globals.redPagesInBook = 63;
 		}
-		// TODO: Complete / fix
+		// TODO: Complete/fix
 	} else if (_globals.ending == 1) {
 		// TODO: Complete, loop atr1page end
 	} else if (_globals.ending != 3 && _globals.ending != 4) {
@@ -122,17 +121,15 @@ void MystScriptParser_Dni::atrus_run() {
 			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("atr1page", kDniStack), 215, 77);
 			_globals.ending = 1;
 
-			// TODO: Complete, movie control / looping
+			// TODO: Complete, movie control/looping
 		} else {
 			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("atr1nopg", kDniStack), 215, 77);
 			_globals.ending = 3;
 
-			// TODO: Complete, movie control / looping
+			// TODO: Complete, movie control/looping
 		}
-	} else {
-		VideoHandle handle = _vm->_video->findVideoHandle(0xFFFF);
-		if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle))
-			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("atrwrite", kDniStack), 215, 77, true);
+	} else if (!_vm->_video->isVideoPlaying()) {
+		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("atrwrite", kDniStack), 215, 77, true);
 	}
 }
 

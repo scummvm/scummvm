@@ -219,9 +219,8 @@ void MystResourceType6::handleCardChange() {
 
 bool MystResourceType6::isPlaying() {
 	if (_videoRunning) {
-		VideoHandle handle = _vm->_video->findVideoHandle(0xFFFF);
-		if (handle != NULL_VID_HANDLE)
-			return !_vm->_video->endOfVideo(handle);
+		VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+		return handle != NULL_VID_HANDLE && !_vm->_video->endOfVideo(handle);
 	}
 
 	return false;

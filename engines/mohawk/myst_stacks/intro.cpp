@@ -107,16 +107,14 @@ void MystScriptParser_Intro::introMovies_run() {
 		} else
 			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("broder", kIntroStack));
 	} else if (_introStep == 1) {
-		VideoHandle handle = _vm->_video->findVideoHandle(0xFFFF);
-		if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle))
+		if (!_vm->_video->isVideoPlaying())
 			_introStep = 2;
 	} else if (_introStep == 2) {
 		_introStep = 3;
 
 		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
 	} else if (_introStep == 3) {
-		VideoHandle handle = _vm->_video->findVideoHandle(0xFFFF);
-		if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle))
+		if (!_vm->_video->isVideoPlaying())
 			_introStep = 4;
 	}  else if (_introStep == 4) {
 		_introStep = 5;
@@ -129,15 +127,13 @@ void MystScriptParser_Intro::introMovies_run() {
 				_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("intro", kIntroStack));
 		}
 	} else if (_introStep == 5) {
-		VideoHandle handle = _vm->_video->findVideoHandle(0xFFFF);
-		if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle))
+		if (!_vm->_video->isVideoPlaying())
 			_introStep = 6;
 	} else {
-		if (_vm->getFeatures() & GF_DEMO) {
+		if (_vm->getFeatures() & GF_DEMO)
 			_vm->changeToCard(2001, true);
-		} else {
+		else
 			_vm->changeToCard(2, true);
-		}
 	}
 }
 
@@ -155,9 +151,8 @@ void MystScriptParser_Intro::mystLinkBook_run() {
 			_vm->_gfx->copyImageToBackBuffer(4, Common::Rect(544, 333));
 			_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 		}
-	} else {
-		if (!_linkBookMovie->isPlaying())
-			_vm->changeToCard(5, true);
+	} else if (!_linkBookMovie->isPlaying()) {
+		_vm->changeToCard(5, true);
 	}
 }
 

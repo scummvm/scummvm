@@ -75,12 +75,13 @@ public:
 	// Generic movie functions
 	void playMovie(const Common::String &filename, uint16 x = 0, uint16 y = 0, bool clearScreen = false);
 	void playMovieCentered(const Common::String &filename, bool clearScreen = true);
-	void playBackgroundMovie(const Common::String &filename, int16 x = -1, int16 y = -1, bool loop = false);
-	void playBackgroundMovie(uint16 id, int16 x = -1, int16 y = -1, bool loop = false);
+	VideoHandle playBackgroundMovie(const Common::String &filename, int16 x = -1, int16 y = -1, bool loop = false);
+	VideoHandle playBackgroundMovie(uint16 id, int16 x = -1, int16 y = -1, bool loop = false);
 	bool updateBackgroundMovies();
 	void pauseVideos();
 	void resumeVideos();
 	void stopVideos();
+	bool isVideoPlaying();
 
 	// Riven-related functions
 	void activateMLST(uint16 mlstId, uint16 card);
@@ -95,6 +96,7 @@ public:
 
 	// Handle functions
 	VideoHandle findVideoHandle(uint16 id);
+	VideoHandle findVideoHandle(const Common::String &filename);
 	int32 getCurFrame(const VideoHandle &handle);
 	uint32 getFrameCount(const VideoHandle &handle);
 	uint32 getElapsedTime(const VideoHandle &handle);
