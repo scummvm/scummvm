@@ -2293,7 +2293,7 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpTogglePlay:
-			target->togglePlaying(false);
+			target->togglePlaying(false, true);
 			break;
 
 		case kLBOpSetNotVisible:
