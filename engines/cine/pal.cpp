@@ -141,9 +141,10 @@ int power(int base, int power) {
 
 // a.k.a. palRotate
 Palette &Palette::rotateRight(byte firstIndex, byte lastIndex, signed rotationAmount) {
-	assert(rotationAmount == 0 || rotationAmount == 1);
+	debug(1, "Palette::rotateRight(firstIndex: %d, lastIndex: %d, rotationAmount:%d)", firstIndex, lastIndex, rotationAmount);
+	assert(rotationAmount >= 0);
 
-	if (rotationAmount == 1) {
+	for (int j = 0; j < rotationAmount; j++) {
 		const Color lastColor = _colors[lastIndex];
 
 		for (int i = lastIndex; i > firstIndex; i--)
