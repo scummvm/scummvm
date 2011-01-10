@@ -97,39 +97,58 @@ void MystScriptParser_Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, u
 }
 
 void MystScriptParser_Intro::introMovies_run() {
-	// Play Intro Movies..
-	if (_introStep == 0) {
-		_introStep = 1;
+	// Play Intro Movies
+	// This is all quite messy...
 
+	switch (_introStep) {
+	case 0:
+		// Play the Mattel (or UbiSoft) logo in the Myst ME Mac version
 		if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh) {
 			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("mattel", kIntroStack));
-			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("presto", kIntroStack));
+			_introStep = 1;
 		} else
-			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("broder", kIntroStack));
-	} else if (_introStep == 1) {
+			_introStep = 2;
+		break;
+	case 1:
 		if (!_vm->_video->isVideoPlaying())
 			_introStep = 2;
-	} else if (_introStep == 2) {
+		break;
+	case 2:
 		_introStep = 3;
-
-		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
-	} else if (_introStep == 3) {
+		if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh)
+			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("presto", kIntroStack));
+		else
+			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("broder", kIntroStack));
+		break;
+	case 3:
 		if (!_vm->_video->isVideoPlaying())
 			_introStep = 4;
-	}  else if (_introStep == 4) {
+		break;
+	case 4:
 		_introStep = 5;
+		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
+		break;
+	case 5:
+		if (!_vm->_video->isVideoPlaying())
+			_introStep = 6;
+		break;
+	case 6:
+		_introStep = 7;
 
 		if (!(_vm->getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
 			if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh)
 				// intro.mov uses Sorenson, introc uses Cinepak. Otherwise, they're the same.
+				// TODO: Switch back to the SVQ version when we support it
 				_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("introc", kIntroStack));
 			else
 				_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("intro", kIntroStack));
 		}
-	} else if (_introStep == 5) {
+		break;
+	case 7:
 		if (!_vm->_video->isVideoPlaying())
-			_introStep = 6;
-	} else {
+			_introStep = 8;
+		break;
+	default:
 		if (_vm->getFeatures() & GF_DEMO)
 			_vm->changeToCard(2001, true);
 		else
