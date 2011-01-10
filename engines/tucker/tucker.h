@@ -41,6 +41,10 @@
 
 #include "tucker/console.h"
 
+namespace Audio {
+class RewindableAudioStream;
+} // End of namespace Audio
+
 /**
  * This is the namespace of the Tucker engine.
  *

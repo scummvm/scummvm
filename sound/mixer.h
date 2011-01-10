@@ -38,8 +38,6 @@ class OSystem;
 namespace Audio {
 
 class AudioStream;
-class RewindableAudioStream;
-class SeekableAudioStream;
 class Channel;
 class Mixer;
 class MixerImpl;

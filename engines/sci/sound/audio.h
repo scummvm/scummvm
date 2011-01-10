@@ -30,6 +30,10 @@
 #include "sci/engine/vm_types.h"
 #include "sound/mixer.h"
 
+namespace Audio {
+class RewindableAudioStream;
+} // End of namespace Audio
+
 namespace Sci {
 
 enum AudioCommands {
