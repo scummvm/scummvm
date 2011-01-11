@@ -1335,9 +1335,14 @@ int FWScript::o1_startGlobalScript() {
 
 	debugC(5, kCineDebugScript, "Line: %d: startScript(%d)", _line, param);
 
-	// Cheat for Scene 6 Labyrinth Arcade Game to disable John's Death (to aid playtesting)
+	// Cheat for Scene 6 Guards Labyrinth Arcade Game to disable John's Death (to aid playtesting)
 	if (g_cine->getGameType() == Cine::GType_OS && labyrinthCheat && scumm_stricmp(currentPrcName, "LABY.PRC") == 0 && param == 46) {
 		warning("LABY.PRC startScript(46) Disabled. CHEAT!");
+		return 0;
+	}
+	// Cheat for Scene 8 Rats Labyrinth Arcade Game to disable John's Death (to aid playtesting)
+	if (g_cine->getGameType() == Cine::GType_OS && labyrinthCheat && scumm_stricmp(currentPrcName, "EGOU.PRC") == 0 && param == 46) {
+		warning("EGOU.PRC startScript(46) Disabled. CHEAT!");
 		return 0;
 	}
 
