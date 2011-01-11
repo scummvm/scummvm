@@ -203,27 +203,32 @@ bool VideoManager::updateBackgroundMovies() {
 				// Convert from 8bpp to the current screen format if necessary
 				Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
 
-				if (frame->bytesPerPixel == 1 && pixelFormat.bytesPerPixel != 1) {
-					convertedFrame = new Graphics::Surface();
-					const byte *palette = _videoStreams[i]->getPalette();
-					assert(palette);
+				if (frame->bytesPerPixel == 1) {
+					if (pixelFormat.bytesPerPixel == 1) {
+						if (_videoStreams[i]->hasDirtyPalette())
+							_videoStreams[i]->setSystemPalette();
+					} else {
+						convertedFrame = new Graphics::Surface();
+						const byte *palette = _videoStreams[i]->getPalette();
+						assert(palette);
 
-					convertedFrame->create(frame->w, frame->h, pixelFormat.bytesPerPixel);
+						convertedFrame->create(frame->w, frame->h, pixelFormat.bytesPerPixel);
 
-					for (uint16 j = 0; j < frame->h; j++) {
-						for (uint16 k = 0; k < frame->w; k++) {
-							byte palIndex = *((byte *)frame->getBasePtr(k, j));
-							byte r = palette[palIndex * 3];
-							byte g = palette[palIndex * 3 + 1];
-							byte b = palette[palIndex * 3 + 2];
-							if (pixelFormat.bytesPerPixel == 2)
-								*((uint16 *)convertedFrame->getBasePtr(k, j)) = pixelFormat.RGBToColor(r, g, b);
-							else
-								*((uint32 *)convertedFrame->getBasePtr(k, j)) = pixelFormat.RGBToColor(r, g, b);
+						for (uint16 j = 0; j < frame->h; j++) {
+							for (uint16 k = 0; k < frame->w; k++) {
+								byte palIndex = *((byte *)frame->getBasePtr(k, j));
+								byte r = palette[palIndex * 3];
+								byte g = palette[palIndex * 3 + 1];
+								byte b = palette[palIndex * 3 + 2];
+								if (pixelFormat.bytesPerPixel == 2)
+									*((uint16 *)convertedFrame->getBasePtr(k, j)) = pixelFormat.RGBToColor(r, g, b);
+								else
+									*((uint32 *)convertedFrame->getBasePtr(k, j)) = pixelFormat.RGBToColor(r, g, b);
+							}
 						}
-					}
 
-					frame = convertedFrame;
+						frame = convertedFrame;
+					}
 				}
 
 				// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
