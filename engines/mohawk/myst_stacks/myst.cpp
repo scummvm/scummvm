@@ -1103,8 +1103,11 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 		_vm->_sound->replaceSound(soundId);
 		_vm->_system->delayMillis(500);
 
-		// TODO: Play only 1st half of movie i.e. gears rise up, from 0 to 650
-		_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
+		// Gears rise up
+		VideoHandle gears = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
+		_vm->_video->setVideoBounds(gears, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(650, 600));
+		_vm->_video->waitUntilMovieEnds(gears);
+
 
 		_state.clockTowerBridgeOpen = 1;
 		_vm->redrawArea(12);
@@ -1112,8 +1115,10 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 		_vm->_sound->replaceSound(soundId);
 		_vm->_system->delayMillis(500);
 
-		// TODO: Play only 2nd half of movie i.e. gears sink down, from 700 to 1300
-		_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
+		// Gears sink down
+		VideoHandle gears = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
+		_vm->_video->setVideoBounds(gears, Graphics::VideoTimestamp(700, 600), Graphics::VideoTimestamp(1300, 600));
+		_vm->_video->waitUntilMovieEnds(gears);
 
 		_state.clockTowerBridgeOpen = 0;
 		_vm->redrawArea(12);
