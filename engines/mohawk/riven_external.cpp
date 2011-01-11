@@ -144,6 +144,8 @@ void RivenExternal::setupCommands() {
 	COMMAND(xjlagoon800_alert);
 	COMMAND(xjlagoon1500_alert);
 	COMMAND(xschool280_playwhark);
+	COMMAND(xjschool280_resetleft);
+	COMMAND(xjschool280_resetright);
 	COMMAND(xjatboundary);
 
 	// ospit (Gehn's Office) external commands
@@ -1493,8 +1495,80 @@ void RivenExternal::xjlagoon1500_alert(uint16 argc, uint16 *argv) {
 	}
 }
 
+void RivenExternal::xjschool280_resetleft(uint16 argc, uint16 *argv) {
+	// Dummy function. This resets the unneeded video timing variable (dropLeftStart) in
+	// the DVD version.
+}
+
+void RivenExternal::xjschool280_resetright(uint16 argc, uint16 *argv) {
+	// Dummy function. This resets the unneeded video timing variable (dropRightStart) in
+	// the DVD version.
+}
+
+void RivenExternal::redrawWharkNumberPuzzle(uint16 overlay, uint16 number) {
+	// Update the screen for the whark number puzzle
+	// We don't update the whole screen here because we don't want to overwrite the video data
+	_vm->_gfx->drawPLST(overlay);
+	_vm->_gfx->drawPLST(number + 1);
+	_vm->_gfx->updateScreen(Common::Rect(80, 212, 477, 392));
+	_vm->_system->updateScreen();
+}
+
 void RivenExternal::xschool280_playwhark(uint16 argc, uint16 *argv) {
-	// TODO: The "monstrous" whark puzzle that teaches the number system
+	// The "monstrous" whark puzzle that teaches the number system
+
+	uint32 *posVar;
+	uint16 spinMLST, overlayPLST, doomMLST, snackMLST;
+
+	// Choose left or right based on jwharkpos (which is set by the scripts)
+	if (*_vm->getVar("jwharkpos") == 1) {
+		posVar = _vm->getVar("jleftpos");
+		spinMLST = 1;
+		overlayPLST = 12;
+		doomMLST = 3;
+		snackMLST = 4;
+	} else {
+		posVar = _vm->getVar("jrightpos");
+		spinMLST = 2;
+		overlayPLST = 13;
+		doomMLST = 5;
+		snackMLST = 6;
+	}
+
+	// Hide the cursor
+	_vm->_cursor->setCursor(kRivenHideCursor);
+
+	// Play the spin movie
+	_vm->_video->playMovieBlocking(spinMLST);
+
+	// Get our random number and redraw the area
+	uint16 number = _vm->_rnd->getRandomNumberRng(1, 10);
+	redrawWharkNumberPuzzle(overlayPLST, number);
+
+	// Handle movement
+	// (11560/600)s is the length of each of the two movies. We divide it into 19 parts
+	// (one for each of the possible positions the villager can have).
+	VideoHandle handle = _vm->_video->playMovie(doomMLST);
+	Graphics::VideoTimestamp startTime = Graphics::VideoTimestamp((11560 / 19) * (*posVar), 600);
+	*posVar += number; // Adjust to the end
+	Graphics::VideoTimestamp endTime = Graphics::VideoTimestamp((11560 / 19) * (*posVar), 600);
+	_vm->_video->setVideoBounds(handle, startTime, endTime);
+	_vm->_video->waitUntilMovieEnds(handle);
+
+	if (*posVar > 19) {
+		// The villager has died :(
+		_vm->_video->playMovieBlocking(snackMLST);
+		redrawWharkNumberPuzzle(overlayPLST, number);
+		*posVar = 0;
+	}
+
+	// Enable the correct hotspots for the movement now
+	_vm->_hotspots[2].enabled = !_vm->_hotspots[2].enabled;
+	_vm->_hotspots[3].enabled = !_vm->_hotspots[3].enabled;
+
+	// Update the cursor
+	_vm->_curHotspot = -1;
+	_vm->checkHotspotChange();
 }
 
 void RivenExternal::xjatboundary(uint16 argc, uint16 *argv) {

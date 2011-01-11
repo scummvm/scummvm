@@ -72,6 +72,7 @@ private:
 	void drawDomeSliders(uint16 startHotspot);
 	void drawMarbles();
 	void setMarbleHotspots();
+	void redrawWharkNumberPuzzle(uint16 overlay, uint16 number);
 
 	// -----------------------------------------------------
 	// aspit (Main Menu, Books, Setup) external commands
@@ -194,6 +195,8 @@ private:
 	void xjlagoon1500_alert(uint16 argc, uint16 *argv);
 	// Play the Whark Game
 	void xschool280_playwhark(uint16 argc, uint16 *argv);
+	void xjschool280_resetleft(uint16 argc, uint16 *argv); // DVD only
+	void xjschool280_resetright(uint16 argc, uint16 *argv); // DVD only
 	// jspit Demo-specific commands
 	void xjatboundary(uint16 argc, uint16 *argv);
 

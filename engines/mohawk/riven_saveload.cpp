@@ -147,7 +147,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 	uint16 stackID = 0;
 	uint16 cardID = 0;
 
-	for (uint32 i = 0; i < rawVariables.size() && i < namesCount && !names->eos(); i++) {
+	for (uint32 i = 0; i < namesCount && !names->eos(); i++) {
 		names->seek(curNamesPos);
 		names->seek(stringOffsets[i], SEEK_CUR);
 
@@ -159,10 +159,9 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 			c = (char)names->readByte();
 		}
 
-		// TODO: Some versions have two extra variables. However, the saves are
-		// still compatible with other saves of the same version (they come from DVD v1.1).
-		// There are used in the whark number puzzle. I thought jleftpos and jrightpos were
-		// for this purpose.
+		// These are timing variables used with the DVD version of Riven for the whark
+		// puzzle and are not needed at all. See xjschool280_resetleft() and
+		// xjschool280_resetright.
 		if (name == "dropLeftStart" || name == "dropRightStart")
 			continue;
 
