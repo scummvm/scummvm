@@ -52,7 +52,7 @@ namespace Common {
 namespace Graphics {
 
 
-class QuickTimeDecoder : public RewindableVideoDecoder {
+class QuickTimeDecoder : public SeekableVideoDecoder {
 public:
 	QuickTimeDecoder();
 	virtual ~QuickTimeDecoder();
@@ -113,8 +113,9 @@ public:
 	uint32 getTimeToNextFrame() const;
 	PixelFormat getPixelFormat() const;
 
-	// RewindableVideoDecoder API
-	void rewind();
+	// SeekableVideoDecoder API
+	void seekToFrame(uint32 frame);
+	void seekToTime(VideoTimestamp time);
 
 private:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
@@ -176,17 +177,9 @@ private:
 		uint32 *chunk_offsets;
 		int stts_count;
 		MOVstts *stts_data;
-		int ctts_count;
-		MOVstts *ctts_data;
 		int edit_count; /* number of 'edit' (elst atom) */
 		uint32 sample_to_chunk_sz;
 		MOVstsc *sample_to_chunk;
-		int32 sample_to_chunk_index;
-		int sample_to_time_index;
-		uint32 sample_to_time_sample;
-		uint32 sample_to_time_time;
-		int sample_to_ctime_index;
-		int sample_to_ctime_sample;
 		uint32 sample_size;
 		uint32 sample_count;
 		uint32 *sample_sizes;
@@ -197,7 +190,7 @@ private:
 
 		uint16 width;
 		uint16 height;
-		int codec_type;
+		CodecType codec_type;
 
 		uint32 stsdEntryCount;
 		STSDEntry *stsdEntries;
@@ -215,9 +208,7 @@ private:
 	bool _foundMOOV;
 	uint32 _timeScale;
 	uint32 _duration;
-	MOVStreamContext *_partial;
 	uint32 _numStreams;
-	int _ni;
 	Common::Rational _scaleFactorX;
 	Common::Rational _scaleFactorY;
 	MOVStreamContext *_streams[20];
@@ -237,15 +228,18 @@ private:
 	void startAudio();
 	void stopAudio();
 	void updateAudioBuffer();
+	void readNextAudioChunk();
 	uint32 getAudioChunkSampleCount(uint chunk);
 	int8 _audioStreamIndex;
 	uint _curAudioChunk;
 	Audio::SoundHandle _audHandle;
+	VideoTimestamp _audioStartOffset;
 
 	Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
 	Codec *findDefaultVideoCodec() const;
 	uint32 _nextFrameStartTime;
 	int8 _videoStreamIndex;
+	uint32 findKeyFrame(uint32 frame) const;
 
 	Surface *_scaledSurface;
 	const Surface *scaleSurface(const Surface *frame);

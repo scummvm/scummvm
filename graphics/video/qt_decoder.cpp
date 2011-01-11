@@ -144,19 +144,127 @@ PixelFormat QuickTimeDecoder::getPixelFormat() const {
 	return codec->getPixelFormat();
 }
 
-void QuickTimeDecoder::rewind() {
-	VideoDecoder::reset();
-	_nextFrameStartTime = 0;
+uint32 QuickTimeDecoder::findKeyFrame(uint32 frame) const {
+	for (int i = _streams[_videoStreamIndex]->keyframe_count - 1; i >= 0; i--)
+		if (_streams[_videoStreamIndex]->keyframes[i] <= frame)
+				return _streams[_videoStreamIndex]->keyframes[i];
+	
+	// If none found, we'll assume the requested frame is a key frame
+	return frame;
+}
 
-	// Restart the audio too
+void QuickTimeDecoder::seekToFrame(uint32 frame) {
+	assert(_videoStreamIndex >= 0);
+	assert(frame < _streams[_videoStreamIndex]->nb_frames);
+
+	// Stop all audio (for now)
 	stopAudio();
-	if (_audioStreamIndex >= 0) {
-		_curAudioChunk = 0;
-		STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
-		_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
+
+	// Track down the keyframe
+	_curFrame = findKeyFrame(frame) - 1;
+	while (_curFrame < (int32)frame - 1)
+		decodeNextFrame();
+
+	// Map out the starting point
+	_nextFrameStartTime = 0;
+	uint32 curFrame = 0;
+
+	for (int32 i = 0; i < _streams[_videoStreamIndex]->stts_count && curFrame < frame; i++) {
+		for (int32 j = 0; j < _streams[_videoStreamIndex]->stts_data[i].count && curFrame < frame; j++) {
+			curFrame++;
+			_nextFrameStartTime += _streams[_videoStreamIndex]->stts_data[i].duration;
+		}
 	}
 
-	startAudio();
+	// Adjust the video starting point
+	_startTime = g_system->getMillis() - _nextFrameStartTime;
+
+	// Adjust the audio starting point
+	if (_audioStreamIndex >= 0) {
+		_audioStartOffset = VideoTimestamp(_nextFrameStartTime, _streams[_videoStreamIndex]->time_scale);
+
+		// Re-create the audio stream
+		STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
+		_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
+
+		// First, we need to track down what audio sample we need
+		uint32 curTime = 0;
+		uint sample = 0;
+		bool done = false;
+		for (int32 i = 0; i < _streams[_audioStreamIndex]->stts_count && !done; i++) {
+			for (int32 j = 0; j < _streams[_audioStreamIndex]->stts_data[i].count; j++) {
+				curTime += _streams[_audioStreamIndex]->stts_data[i].duration;
+
+				if (curTime > Graphics::VideoTimestamp(_nextFrameStartTime, _streams[_videoStreamIndex]->time_scale).getUnitsInScale(_streams[_audioStreamIndex]->time_scale)) {
+					done = true;
+					break;
+				}
+
+				sample++;
+			}
+		}
+
+		// Now to track down what chunk it's in
+		_curAudioChunk = 0;
+		uint32 totalSamples = 0;
+		for (uint32 i = 0; i < _streams[_audioStreamIndex]->sample_to_chunk_sz; i++, _curAudioChunk++) {			
+			int sampleToChunkIndex = -1;
+
+			for (uint32 j = 0; j < _streams[_audioStreamIndex]->sample_to_chunk_sz; j++)
+				if (i >= _streams[_audioStreamIndex]->sample_to_chunk[j].first)
+					sampleToChunkIndex = j;
+
+			assert(sampleToChunkIndex >= 0);
+
+			totalSamples += _streams[_audioStreamIndex]->sample_to_chunk[sampleToChunkIndex].count;
+
+			if (sample < totalSamples) {
+				totalSamples -= _streams[_audioStreamIndex]->sample_to_chunk[sampleToChunkIndex].count;
+				break;
+			}
+		}
+		
+		// Reposition the audio stream
+		readNextAudioChunk();
+		if (sample != totalSamples) {
+			// HACK: Skip a certain amount of samples from the stream
+			// (There's got to be a better way to do this!)
+			int16 *tempBuffer = new int16[sample - totalSamples];
+			_audStream->readBuffer(tempBuffer, sample - totalSamples);
+			delete[] tempBuffer;
+			debug(3, "Skipping %d audio samples", sample - totalSamples);
+		}
+		
+		// Restart the audio
+		startAudio();
+	}
+}
+
+void QuickTimeDecoder::seekToTime(VideoTimestamp time) {
+	// TODO: Audio-only seeking (or really, have QuickTime sounds)
+	if (_videoStreamIndex < 0)
+		error("Audio-only seeking not supported");
+
+	// Convert to the local time scale
+	uint32 localTime = time.getUnitsInScale(_streams[_videoStreamIndex]->time_scale);
+
+	// Try to find the last frame that should have been decoded
+	uint32 frame = 0;
+	uint32 totalDuration = 0;
+	bool done = false;
+
+	for (int32 i = 0; i < _streams[_videoStreamIndex]->stts_count && !done; i++) {
+		for (int32 j = 0; j < _streams[_videoStreamIndex]->stts_data[i].count; j++) {
+			totalDuration += _streams[_videoStreamIndex]->stts_data[i].duration;
+			if (localTime < totalDuration) {
+				done = true;
+				break;
+			}
+			frame++;
+		}
+	}
+
+	seekToFrame(frame);
 }
 
 Codec *QuickTimeDecoder::createCodec(uint32 codecTag, byte bitsPerPixel) {
@@ -174,10 +282,10 @@ Codec *QuickTimeDecoder::createCodec(uint32 codecTag, byte bitsPerPixel) {
 		return new SMCDecoder(getWidth(), getHeight());
 	} else if (codecTag == MKID_BE('SVQ1')) {
 		// Sorenson Video 1: Used by some Myst ME videos.
-		warning ("Sorenson Video 1 not yet supported");
+		warning("Sorenson Video 1 not yet supported");
 	} else if (codecTag == MKID_BE('SVQ3')) {
 		// Sorenson Video 3: Used by some Myst ME videos.
-		warning ("Sorenson Video 3 not yet supported");
+		warning("Sorenson Video 3 not yet supported");
 	} else if (codecTag == MKID_BE('jpeg')) {
 		// Motion JPEG: Used by some Myst ME 10th Anniversary videos.
 		return new JPEGDecoder();
@@ -185,7 +293,7 @@ Codec *QuickTimeDecoder::createCodec(uint32 codecTag, byte bitsPerPixel) {
 		// CDToons: Used by most of the Broderbund games.
 		return new CDToonsDecoder(getWidth(), getHeight());
 	} else {
-		warning ("Unsupported codec \'%s\'", tag2str(codecTag));
+		warning("Unsupported codec \'%s\'", tag2str(codecTag));
 	}
 
 	return NULL;
@@ -285,9 +393,9 @@ bool QuickTimeDecoder::endOfVideo() const {
 
 uint32 QuickTimeDecoder::getElapsedTime() const {
 	if (_audStream)
-		return g_system->getMixer()->getSoundElapsedTime(_audHandle);
+		return g_system->getMixer()->getSoundElapsedTime(_audHandle) + _audioStartOffset.getUnitsInScale(1000);
 
-	return g_system->getMillis() - _startTime;
+	return VideoDecoder::getElapsedTime();
 }
 
 uint32 QuickTimeDecoder::getTimeToNextFrame() const {
@@ -310,7 +418,6 @@ bool QuickTimeDecoder::loadFile(const Common::String &filename) {
 
 	_foundMOOV = false;
 	_numStreams = 0;
-	_partial = 0;
 	_videoStreamIndex = _audioStreamIndex = -1;
 	_startTime = 0;
 
@@ -348,7 +455,6 @@ bool QuickTimeDecoder::load(Common::SeekableReadStream *stream) {
 	_fd = stream;
 	_foundMOOV = false;
 	_numStreams = 0;
-	_partial = 0;
 	_videoStreamIndex = _audioStreamIndex = -1;
 	_startTime = 0;
 
@@ -407,6 +513,8 @@ void QuickTimeDecoder::init() {
 
 			startAudio();
 		}
+
+		_audioStartOffset = VideoTimestamp(0);
 	}
 
 	// Initialize video, if present
@@ -651,7 +759,6 @@ int QuickTimeDecoder::readTRAK(MOVatom atom) {
 	if (!sc)
 		return -1;
 
-	sc->sample_to_chunk_index = -1;
 	sc->codec_type = CODEC_TYPE_MOV_OTHER;
 	sc->start_time = 0; // XXX: check
 	_streams[_numStreams++] = sc;
@@ -985,10 +1092,10 @@ int QuickTimeDecoder::readSTSC(MOVatom atom) {
 		return -1;
 
 	for (uint32 i = 0; i < st->sample_to_chunk_sz; i++) {
-		st->sample_to_chunk[i].first = _fd->readUint32BE();
+		st->sample_to_chunk[i].first = _fd->readUint32BE() - 1;
 		st->sample_to_chunk[i].count = _fd->readUint32BE();
 		st->sample_to_chunk[i].id = _fd->readUint32BE();
-		//printf ("Sample to Chunk[%d]: First = %d, Count = %d\n", i, st->sample_to_chunk[i].first, st->sample_to_chunk[i].count);
+		//warning("Sample to Chunk[%d]: First = %d, Count = %d", i, st->sample_to_chunk[i].first, st->sample_to_chunk[i].count);
 	}
 
 	return 0;
@@ -1010,7 +1117,7 @@ int QuickTimeDecoder::readSTSS(MOVatom atom) {
 		return -1;
 
 	for (uint32 i = 0; i < st->keyframe_count; i++) {
-		st->keyframes[i] = _fd->readUint32BE();
+		st->keyframes[i] = _fd->readUint32BE() - 1; // Adjust here, the frames are based on 1
 		debug(6, "keyframes[%d] = %d", i, st->keyframes[i]);
 
 	}
@@ -1107,18 +1214,6 @@ int QuickTimeDecoder::readSTCO(MOVatom atom) {
 		st->chunk_offsets[i] = _fd->readUint32BE() - _beginOffset;
 	}
 
-	for (uint32 i = 0; i < _numStreams; i++) {
-		MOVStreamContext *sc2 = _streams[i];
-
-		if (sc2 && sc2->chunk_offsets) {
-			uint32 first = sc2->chunk_offsets[0];
-			uint32 last = sc2->chunk_offsets[sc2->chunk_count - 1];
-
-			if(first >= st->chunk_offsets[st->chunk_count - 1] || last <= st->chunk_offsets[0])
-				_ni = 1;
-		}
-	}
-
 	return 0;
 }
 
@@ -1175,7 +1270,7 @@ Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket(uint32 &descId)
 		int32 sampleToChunkIndex = -1;
 
 		for (uint32 j = 0; j < _streams[_videoStreamIndex]->sample_to_chunk_sz; j++)
-			if (i >= _streams[_videoStreamIndex]->sample_to_chunk[j].first - 1)
+			if (i >= _streams[_videoStreamIndex]->sample_to_chunk[j].first)
 				sampleToChunkIndex = j;
 
 		if (sampleToChunkIndex < 0)
@@ -1273,10 +1368,50 @@ uint32 QuickTimeDecoder::getAudioChunkSampleCount(uint chunk) {
 	uint32 sampleCount = 0;
 
 	for (uint32 j = 0; j < _streams[_audioStreamIndex]->sample_to_chunk_sz; j++)
-		if (chunk >= (_streams[_audioStreamIndex]->sample_to_chunk[j].first - 1))
+		if (chunk >= _streams[_audioStreamIndex]->sample_to_chunk[j].first)
 			sampleCount = _streams[_audioStreamIndex]->sample_to_chunk[j].count;
 
 	return sampleCount;
+}
+
+void QuickTimeDecoder::readNextAudioChunk() {
+	STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
+	Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
+
+	_fd->seek(_streams[_audioStreamIndex]->chunk_offsets[_curAudioChunk]);
+
+	// First, we have to get the sample count
+	uint32 sampleCount = getAudioChunkSampleCount(_curAudioChunk);
+	assert(sampleCount);
+
+	// Then calculate the right sizes
+	while (sampleCount > 0) {
+		uint32 samples = 0, size = 0;
+
+		if (entry->samplesPerFrame >= 160) {
+			samples = entry->samplesPerFrame;
+			size = entry->bytesPerFrame;
+		} else if (entry->samplesPerFrame > 1) {
+			samples = MIN<uint32>((1024 / entry->samplesPerFrame) * entry->samplesPerFrame, sampleCount);
+			size = (samples / entry->samplesPerFrame) * entry->bytesPerFrame;
+		} else {
+			samples = MIN<uint32>(1024, sampleCount);
+			size = samples * _streams[_audioStreamIndex]->sample_size;
+		}
+
+		// Now, we read in the data for this data and output it
+		byte *data = (byte *)malloc(size);
+		_fd->read(data, size);
+		wStream->write(data, size);
+		free(data);
+		sampleCount -= samples;
+	}
+
+	// Now queue the buffer
+	_audStream->queueAudioStream(createAudioStream(new Common::MemoryReadStream(wStream->getData(), wStream->size(), DisposeAfterUse::YES)));
+	delete wStream;
+
+	_curAudioChunk++;
 }
 
 void QuickTimeDecoder::updateAudioBuffer() {
@@ -1302,42 +1437,8 @@ void QuickTimeDecoder::updateAudioBuffer() {
 	numberOfChunksNeeded += 3;
 
 	// Keep three streams in buffer so that if/when the first two end, it goes right into the next
-	for (; _audStream->numQueuedStreams() < numberOfChunksNeeded && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count; _curAudioChunk++) {
-		Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
-
-		_fd->seek(_streams[_audioStreamIndex]->chunk_offsets[_curAudioChunk]);
-
-		// First, we have to get the sample count
-		uint32 sampleCount = getAudioChunkSampleCount(_curAudioChunk);
-		assert(sampleCount);
-
-		// Then calculate the right sizes
-		while (sampleCount > 0) {
-			uint32 samples = 0, size = 0;
-
-			if (entry->samplesPerFrame >= 160) {
-				samples = entry->samplesPerFrame;
-				size = entry->bytesPerFrame;
-			} else if (entry->samplesPerFrame > 1) {
-				samples = MIN<uint32>((1024 / entry->samplesPerFrame) * entry->samplesPerFrame, sampleCount);
-				size = (samples / entry->samplesPerFrame) * entry->bytesPerFrame;
-			} else {
-				samples = MIN<uint32>(1024, sampleCount);
-				size = samples * _streams[_audioStreamIndex]->sample_size;
-			}
-
-			// Now, we read in the data for this data and output it
-			byte *data = (byte *)malloc(size);
-			_fd->read(data, size);
-			wStream->write(data, size);
-			free(data);
-			sampleCount -= samples;
-		}
-
-		// Now queue the buffer
-		_audStream->queueAudioStream(createAudioStream(new Common::MemoryReadStream(wStream->getData(), wStream->size(), DisposeAfterUse::YES)));
-		delete wStream;
-	}
+	while (_audStream->numQueuedStreams() < numberOfChunksNeeded && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count)
+		readNextAudioChunk();
 }
 
 QuickTimeDecoder::STSDEntry::STSDEntry() {
@@ -1370,7 +1471,6 @@ QuickTimeDecoder::MOVStreamContext::MOVStreamContext() {
 QuickTimeDecoder::MOVStreamContext::~MOVStreamContext() {
 	delete[] chunk_offsets;
 	delete[] stts_data;
-	delete[] ctts_data;
 	delete[] sample_to_chunk;
 	delete[] sample_sizes;
 	delete[] keyframes;
