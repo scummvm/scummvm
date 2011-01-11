@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GRAPHICS_VIDEO_PLAYER_H
-#define GRAPHICS_VIDEO_PLAYER_H
+#ifndef GRAPHICS_VIDEO_DECODER_H
+#define GRAPHICS_VIDEO_DECODER_H
 
 #include "common/events.h"
 #include "common/list.h"
@@ -177,7 +177,7 @@ protected:
 	virtual void addPauseTime(uint32 ms) { _startTime += ms; }
 
 	int32 _curFrame;
-	uint32 _startTime;
+	int32 _startTime;
 
 private:
 	uint32 _pauseLevel;
@@ -212,6 +212,72 @@ public:
 	 * Rewind to the beginning of the video.
 	 */
 	virtual void rewind() = 0;
+};
+
+/**
+ * A simple video timestamp that holds time according to a specific scale.
+ *
+ * The scale is in terms of 1/x. For example, if you set units to 1 and the scale to 
+ * 1000, the timestamp will hold the value of 1/1000s or 1ms.
+ */
+class VideoTimestamp {
+public:
+	VideoTimestamp();
+	VideoTimestamp(uint units, uint scale = 1000);
+
+	/**
+	 * Get the units in terms of _scale
+	 */
+	uint getUnits() const { return _units; }
+
+	/**
+	 * Get the scale of this timestamp
+	 */
+	uint getScale() const { return _scale; }
+
+	/**
+	 * Get the value of the units in terms of the specified scale
+	 */
+	uint getUnitsInScale(uint scale) const;
+
+	// TODO: Simple comparisons (<, <=, >, >=, ==, !=)
+
+private:
+	uint _units, _scale;
+};
+
+/**
+ * A VideoDecoder that can seek to a frame or point in time.
+ */
+class SeekableVideoDecoder : public virtual RewindableVideoDecoder {
+public:
+	/**
+	 * Seek to the frame specified
+	 * If seekToFrame(0) is called, frame 0 will be decoded next in decodeNextFrame()
+	 */
+	virtual void seekToFrame(uint32 frame) = 0;
+
+	/**
+	 * Seek to the time specified
+	 *
+	 * This will round to the previous frame showing. If the time would happen to
+	 * land while a frame is showing, this function will seek to the beginning of that
+	 * frame. In other words, there is *no* subframe accuracy. This may change in a
+	 * later revision of the API.
+	 */
+	virtual void seekToTime(VideoTimestamp time) = 0;
+
+	/**
+	 * Seek to the frame specified (in ms)
+	 *
+	 * See seekToTime(VideoTimestamp)
+	 */
+	void seekToTime(uint32 time) { seekToTime(VideoTimestamp(time)); }
+
+	/**
+	 * Implementation of RewindableVideoDecoder::rewind()
+	 */
+	virtual void rewind() { seekToTime(0); }
 };
 
 } // End of namespace Graphics

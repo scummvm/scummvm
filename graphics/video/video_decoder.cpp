@@ -121,4 +121,16 @@ uint32 FixedRateVideoDecoder::getFrameBeginTime(uint32 frame) const {
 	return beginTime.toInt();
 }
 
+VideoTimestamp::VideoTimestamp() : _units(0), _scale(1) {
+}
+
+VideoTimestamp::VideoTimestamp(uint units, uint scale) : _units(units), _scale(scale) {
+	assert(_scale);
+}
+
+uint VideoTimestamp::getUnitsInScale(uint scale) const {
+	assert(scale);
+	return (_scale == scale) ? _units : _units * scale / _scale;
+}
+
 } // End of namespace Graphics
