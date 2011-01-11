@@ -74,7 +74,7 @@ struct SLSTSndHandle {
 	uint16 id;
 };
 
-struct ADPC_Chunk {            // Holds ADPCM status data, but is irrelevant for us.
+struct ADPCMStatus { // Holds ADPCM status data, but is irrelevant for us.
 	uint32 size;
 	uint16 itemCount;
 	uint16 channels;
@@ -85,14 +85,13 @@ struct ADPC_Chunk {            // Holds ADPCM status data, but is irrelevant for
 	} *statusItems;
 };
 
-struct Cue_Chunk {
+struct CueList {
 	uint32 size;
-	uint16 point_count;
+	uint16 pointCount;
 	struct {
-		uint32 position;
-		byte length;
+		uint32 sampleFrame;
 		Common::String name;
-	} cueList[CUE_MAX];
+	} points[CUE_MAX];
 };
 
 enum {
@@ -101,16 +100,16 @@ enum {
 	kCodecMPEG2 = 2
 };
 
-struct Data_Chunk {
-	uint16 sample_rate;
-	uint32 sample_count;
+struct DataChunk {
+	uint16 sampleRate;
+	uint32 sampleCount;
 	byte bitsPerSample;
 	byte channels;
 	uint16 encoding;
 	uint16 loop;
 	uint32 loopStart;
 	uint32 loopEnd;
-	Common::SeekableReadStream *audio_data;
+	Common::SeekableReadStream *audioData;
 };
 
 class MohawkEngine;

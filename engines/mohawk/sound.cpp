@@ -352,81 +352,73 @@ void Sound::resumeSLST() {
 
 Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stream) {
 	uint32 tag = 0;
-	ADPC_Chunk adpc;
-	Cue_Chunk cue;
-	Data_Chunk data_chunk;
+	ADPCMStatus adpcmStatus;
+	CueList cueList;
+	DataChunk dataChunk;
 	uint32 dataSize = 0;
 
-	memset(&data_chunk, 0, sizeof(Data_Chunk));
+	memset(&dataChunk, 0, sizeof(DataChunk));
 
 	if (stream->readUint32BE() != ID_MHWK) // MHWK tag again
-		error ("Could not find tag \'MHWK\'");
+		error ("Could not find tag 'MHWK'");
 
 	stream->readUint32BE(); // Skip size
 
 	if (stream->readUint32BE() != ID_WAVE)
-		error ("Could not find tag \'WAVE\'");
+		error ("Could not find tag 'WAVE'");
 
-	while (!data_chunk.audio_data) {
+	while (!dataChunk.audioData) {
 		tag = stream->readUint32BE();
 
 		switch (tag) {
 		case ID_ADPC:
 			debug(2, "Found Tag ADPC");
-			// Riven ADPCM Sound Only
+			// ADPCM Sound Only
 			// NOTE: We completely ignore the contents of this chunk on purpose. In the original
 			// engine this held the status for the ADPCM decoder, while in ScummVM we store this data
 			// in the ADPCM decoder itself. The code is here for reference only.
 
-			adpc.size = stream->readUint32BE();
-			adpc.itemCount = stream->readUint16BE();
-			adpc.channels = stream->readUint16BE();
-			adpc.statusItems = new ADPC_Chunk::StatusItem[adpc.itemCount];
+			adpcmStatus.size = stream->readUint32BE();
+			adpcmStatus.itemCount = stream->readUint16BE();
+			adpcmStatus.channels = stream->readUint16BE();
+			adpcmStatus.statusItems = new ADPCMStatus::StatusItem[adpcmStatus.itemCount];
 
-			assert(adpc.channels <= 2);
+			assert(adpcmStatus.channels <= 2);
 
-			for (uint16 i = 0; i < adpc.itemCount; i++) {
-				adpc.statusItems[i].sampleFrame = stream->readUint32BE();
+			for (uint16 i = 0; i < adpcmStatus.itemCount; i++) {
+				adpcmStatus.statusItems[i].sampleFrame = stream->readUint32BE();
 
-				for (uint16 j = 0; j < adpc.channels; j++)
-					adpc.statusItems[i].channelStatus[j] = stream->readUint32BE();
+				for (uint16 j = 0; j < adpcmStatus.channels; j++)
+					adpcmStatus.statusItems[i].channelStatus[j] = stream->readUint32BE();
 			}
 
-			delete[] adpc.statusItems;
+			delete[] adpcmStatus.statusItems;
 			break;
 		case ID_CUE:
 			debug(2, "Found Tag Cue#");
-			// I have not tested this with Myst, but the one Riven test-case,
-			// pspit tWAV 3, has two cue points: "Beg Loop" and "End Loop".
-			// So, my guess is that a cue chunk just holds where to loop the
-			// sound. Some cue chunks even have no point count (such as
-			// Myst's intro.dat MSND 2. So, my theory is that a cue chunk
-			// always represents a loop, and if there is a point count, that
-			// represents the points from which to loop.
-			//
-			// This theory is probably not entirely true anymore. I've found
-			// that the values (which were previously unknown) in the DATA
-			// chunk are for looping. Since it was only used in Myst, it was
-			// always 10 0's, Tito just thought it was useless. I'm still not
-			// sure what purpose this has.
+			// Cues are used for animation sync. There are a couple in Myst and
+			// Riven but are not used there at all.
 
-			cue.size = stream->readUint32BE();
-			cue.point_count = stream->readUint16BE();
+			cueList.size = stream->readUint32BE();
+			cueList.pointCount = stream->readUint16BE();
 
-			if (cue.point_count == 0)
-				debug (2, "Cue# chunk found with no points!");
+			if (cueList.pointCount == 0)
+				debug(2, "Cue# chunk found with no points!");
 			else
-				debug (2, "Cue# chunk found with %d point(s)!", cue.point_count);
+				debug(2, "Cue# chunk found with %d point(s)!", cueList.pointCount);
 
-			for (uint16 i = 0; i < cue.point_count; i++) {
-				cue.cueList[i].position = stream->readUint32BE();
-				cue.cueList[i].length = stream->readByte();
-				for (byte j = 0; j < cue.cueList[i].length; j++)
-					cue.cueList[i].name += stream->readByte();
-				// Realign to uint16 boundaries...
-				if (!(cue.cueList[i].length & 1))
+			for (uint16 i = 0; i < cueList.pointCount; i++) {
+				cueList.points[i].sampleFrame = stream->readUint32BE();
+
+				byte nameLength = stream->readByte();
+				for (byte j = 0; j < nameLength; j++)
+					cueList.points[i].name += stream->readByte();
+
+				// Realign to an even boundary
+				if (!(nameLength & 1))
 					stream->readByte();
-				debug (3, "Cue# chunk point %d: %s", i, cue.cueList[i].name.c_str());
+
+				debug (3, "Cue# chunk point %d: %s", i, cueList.points[i].name.c_str());
 			}
 			break;
 		case ID_DATA:
@@ -434,14 +426,14 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			// We subtract 20 from the actual chunk size, which is the total size
 			// of the chunk's header
 			dataSize = stream->readUint32BE() - 20;
-			data_chunk.sample_rate = stream->readUint16BE();
-			data_chunk.sample_count = stream->readUint32BE();
-			data_chunk.bitsPerSample = stream->readByte();
-			data_chunk.channels = stream->readByte();
-			data_chunk.encoding = stream->readUint16BE();
-			data_chunk.loop = stream->readUint16BE();
-			data_chunk.loopStart = stream->readUint32BE();
-			data_chunk.loopEnd = stream->readUint32BE();
+			dataChunk.sampleRate = stream->readUint16BE();
+			dataChunk.sampleCount = stream->readUint32BE();
+			dataChunk.bitsPerSample = stream->readByte();
+			dataChunk.channels = stream->readByte();
+			dataChunk.encoding = stream->readUint16BE();
+			dataChunk.loop = stream->readUint16BE();
+			dataChunk.loopStart = stream->readUint32BE();
+			dataChunk.loopEnd = stream->readUint32BE();
 
 			// NOTE: We currently ignore all of the loop parameters here. Myst uses the loop
 			// variable but the loopStart and loopEnd are always 0 and the size of the sample.
@@ -449,10 +441,10 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			// therefore does not contain any of this metadata and we have to specify whether
 			// or not to loop elsewhere.
 
-			data_chunk.audio_data = stream->readStream(dataSize);
+			dataChunk.audioData = stream->readStream(dataSize);
 			break;
 		default:
-			error ("Unknown tag found in 'tWAV' chunk -- \'%s\'", tag2str(tag));
+			error ("Unknown tag found in 'tWAV' chunk -- '%s'", tag2str(tag));
 		}
 	}
 
@@ -462,24 +454,24 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 	// The sound in Myst uses raw unsigned 8-bit data
 	// The sound in the CD version of Riven is encoded in Intel DVI ADPCM
 	// The sound in the DVD version of Riven is encoded in MPEG-2 Layer II or Intel DVI ADPCM
-	if (data_chunk.encoding == kCodecRaw) {
+	if (dataChunk.encoding == kCodecRaw) {
 		byte flags = Audio::FLAG_UNSIGNED;
 
-		if (data_chunk.channels == 2)
+		if (dataChunk.channels == 2)
 			flags |= Audio::FLAG_STEREO;
 
-		return Audio::makeRawStream(data_chunk.audio_data, data_chunk.sample_rate, flags);
-	} else if (data_chunk.encoding == kCodecADPCM) {
-		uint32 blockAlign = data_chunk.channels * data_chunk.bitsPerSample / 8;
-		return Audio::makeADPCMStream(data_chunk.audio_data, DisposeAfterUse::YES, dataSize, Audio::kADPCMIma, data_chunk.sample_rate, data_chunk.channels, blockAlign);
-	} else if (data_chunk.encoding == kCodecMPEG2) {
+		return Audio::makeRawStream(dataChunk.audioData, dataChunk.sampleRate, flags);
+	} else if (dataChunk.encoding == kCodecADPCM) {
+		uint32 blockAlign = dataChunk.channels * dataChunk.bitsPerSample / 8;
+		return Audio::makeADPCMStream(dataChunk.audioData, DisposeAfterUse::YES, dataSize, Audio::kADPCMIma, dataChunk.sampleRate, dataChunk.channels, blockAlign);
+	} else if (dataChunk.encoding == kCodecMPEG2) {
 #ifdef USE_MAD
-		return Audio::makeMP3Stream(data_chunk.audio_data, DisposeAfterUse::YES);
+		return Audio::makeMP3Stream(dataChunk.audioData, DisposeAfterUse::YES);
 #else
 		warning ("MAD library not included - unable to play MP2 audio");
 #endif
 	} else {
-		error ("Unknown Mohawk WAVE encoding %d", data_chunk.encoding);
+		error ("Unknown Mohawk WAVE encoding %d", dataChunk.encoding);
 	}
 
 	return NULL;
@@ -571,7 +563,7 @@ bool Sound::isPlaying(uint16 id) {
 Audio::SoundHandle *Sound::replaceBackground(uint16 id, uint16 volume) {
 	debug (0, "Replacing background %d", id);
 
-	//TODO: The original engine does fading
+	// TODO: The original engine does fading
 
 	Common::String name = getName(id);
 
