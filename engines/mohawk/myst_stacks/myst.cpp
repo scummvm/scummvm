@@ -1153,31 +1153,43 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 		break;
 	case 1: // Mountain
 		if (_state.imagerActive) {
-			// TODO: Play from 11180 to 16800
+			// Mountains disappearing
 			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
-			_vm->_video->playBackgroundMovie(file, 159, 96, false);
+			VideoHandle mountain = _vm->_video->playBackgroundMovie(file, 159, 96, false);
+			_vm->_video->setVideoBounds(mountain, Graphics::VideoTimestamp(11180, 600), Graphics::VideoTimestamp(16800, 600));
 
 			_state.imagerActive = 0;
 		} else {
-			// TODO: Play from 0 to 11180
+			// Mountains appearing
 			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
-			_vm->_video->playBackgroundMovie(file, 159, 96, false);
+			VideoHandle mountain = _vm->_video->playBackgroundMovie(file, 159, 96, false);
+			_vm->_video->setVideoBounds(mountain, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(11180, 600));
 
 			_state.imagerActive = 1;
 		}
 		break;
 	case 2: // Water
+		_imagerMovie->setBlocking(false);
+
 		if (_state.imagerActive) {
 			_vm->_sound->replaceSound(argv[1]);
 
-			// TODO: Play from 4204 to 6040
-			_imagerMovie->playMovie();
+			// Water disappearing
+			VideoHandle water = _imagerMovie->playMovie();
+			_vm->_video->setVideoBounds(water, Graphics::VideoTimestamp(4204, 600), Graphics::VideoTimestamp(6040, 600));
+			_vm->_video->setVideoLooping(water, false);
 
 			_state.imagerActive = 0;
 		} else {
-			// TODO: Play from 0 to 1814
-			// Then play from 1814 to 4204, looping
-			_imagerMovie->playMovie();
+			// Water appearing
+			VideoHandle water = _imagerMovie->playMovie();
+			_vm->_video->setVideoBounds(water, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(1814, 600));
+			_vm->_video->waitUntilMovieEnds(water);
+
+			// Water looping
+			water = _imagerMovie->playMovie();
+			_vm->_video->setVideoBounds(water, Graphics::VideoTimestamp(1814, 600), Graphics::VideoTimestamp(4204, 600));
+			_vm->_video->setVideoLooping(water, true);
 
 			_state.imagerActive = 1;
 		}
@@ -2937,8 +2949,9 @@ void MystScriptParser_Myst::imager_run() {
 	_imagerRunning = false;
 
 	if (_state.imagerActive && _state.imagerSelection == 67) {
-		// TODO: play between 1814 and 4204 looping
-		_imagerMovie->playMovie();
+		VideoHandle water = _imagerMovie->playMovie();
+		_vm->_video->setVideoBounds(water, Graphics::VideoTimestamp(1814, 600), Graphics::VideoTimestamp(4204, 600));
+		_vm->_video->setVideoLooping(water, true);
 	}
 }
 

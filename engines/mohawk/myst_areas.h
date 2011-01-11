@@ -24,6 +24,7 @@
  */
 
 #include "mohawk/myst.h"
+#include "mohawk/video.h"
 
 #ifndef MYST_AREAS_H
 #define MYST_AREAS_H
@@ -104,9 +105,10 @@ protected:
 class MystResourceType6 : public MystResourceType5 {
 public:
 	MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	void playMovie();
+	VideoHandle playMovie();
 	void handleCardChange();
 	bool isPlaying();
+	void setBlocking(bool blocking) { _playBlocking = blocking; }
 
 protected:
 	static Common::String convertMystVideoName(Common::String name);
@@ -118,9 +120,6 @@ protected:
 	uint16 _playBlocking;
 	uint16 _playOnCardChange;
 	uint16 _u3;
-
-private:
-	bool _videoRunning;
 };
 
 class MystResourceType7 : public MystResource {
@@ -177,6 +176,7 @@ public:
 	uint16 getList2(uint16 index);
 	uint16 getList3(uint16 index);
 
+	uint16 getStepsH() { return _stepsH; }
 	uint16 getStepsV() { return _stepsV; }
 
 	Common::Point _pos;

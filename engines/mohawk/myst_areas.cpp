@@ -197,19 +197,23 @@ MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableRead
 	debugC(kDebugResource, "\tplayBlocking: %d", _playBlocking);
 	debugC(kDebugResource, "\tplayOnCardChange: %d", _playOnCardChange);
 	debugC(kDebugResource, "\tu3: %d", _u3);
-
-	_videoRunning = false;
 }
 
-void MystResourceType6::playMovie() {
-	if (!_videoRunning) {
-		if (_playBlocking)
-			_vm->_video->playMovie(_videoFile, _left, _top);
-		else
-			_vm->_video->playBackgroundMovie(_videoFile, _left, _top, _loop);
+VideoHandle MystResourceType6::playMovie() {
+	// Check if the video is already running
+	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
 
-		_videoRunning = true;
+	// If the video is not running, play it
+	if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle)) {
+		if (_playBlocking) {
+			_vm->_video->playMovie(_videoFile, _left, _top);
+			handle = NULL_VID_HANDLE;
+		} else {
+			handle = _vm->_video->playBackgroundMovie(_videoFile, _left, _top, _loop);
+		}
 	}
+
+	return handle;
 }
 
 void MystResourceType6::handleCardChange() {
@@ -218,12 +222,8 @@ void MystResourceType6::handleCardChange() {
 }
 
 bool MystResourceType6::isPlaying() {
-	if (_videoRunning) {
-		VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
-		return handle != NULL_VID_HANDLE && !_vm->_video->endOfVideo(handle);
-	}
-
-	return false;
+	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+	return handle != NULL_VID_HANDLE && !_vm->_video->endOfVideo(handle);
 }
 
 MystResourceType7::MystResourceType7(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {
