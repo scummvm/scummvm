@@ -28,10 +28,7 @@
 
 #include "common/array.h"
 #include "graphics/pixelformat.h"
-
-namespace Graphics {
-	class QuickTimeDecoder;
-}
+#include "graphics/video/video_decoder.h"
 
 namespace Mohawk {
 
@@ -50,15 +47,22 @@ struct MLSTRecord {
 };
 
 struct VideoEntry {
-	Graphics::QuickTimeDecoder *video;
+	// Playback variables
+	Graphics::SeekableVideoDecoder *video;
 	uint16 x;
 	uint16 y;
 	bool loop;
-	Common::String filename;
-	uint16 id; // Riven only
 	bool enabled;
+	Graphics::VideoTimestamp start, end;
 
-	Graphics::QuickTimeDecoder *operator->() const { assert(video); return video; }
+	// Identification
+	Common::String filename; // External video files
+	uint16 id;               // Internal Mohawk files
+
+	// Helper functions
+	Graphics::SeekableVideoDecoder *operator->() const { assert(video); return video; } // TODO: Remove this eventually
+	void clear();
+	bool endOfVideo();
 };
 
 typedef int32 VideoHandle;
@@ -89,7 +93,7 @@ public:
 	void enableMovie(uint16 id);
 	void disableMovie(uint16 id);
 	void disableAllMovies();
-	void playMovie(uint16 id);
+	VideoHandle playMovie(uint16 id);
 	void stopMovie(uint16 id);
 	void playMovieBlocking(uint16 id);
 	VideoHandle findVideoHandleRiven(uint16 id);
@@ -97,10 +101,15 @@ public:
 	// Handle functions
 	VideoHandle findVideoHandle(uint16 id);
 	VideoHandle findVideoHandle(const Common::String &filename);
-	int32 getCurFrame(const VideoHandle &handle);
-	uint32 getFrameCount(const VideoHandle &handle);
-	uint32 getElapsedTime(const VideoHandle &handle);
-	bool endOfVideo(const VideoHandle &handle);
+	int32 getCurFrame(VideoHandle handle);
+	uint32 getFrameCount(VideoHandle handle);
+	uint32 getElapsedTime(VideoHandle handle);
+	bool endOfVideo(VideoHandle handle);
+	void setVideoBounds(VideoHandle handle, Graphics::VideoTimestamp start, Graphics::VideoTimestamp end);
+	void seekToTime(VideoHandle handle, Graphics::VideoTimestamp time);
+	void seekToFrame(VideoHandle handle, uint32 frame);
+	void setVideoLooping(VideoHandle handle, bool loop);
+	void waitUntilMovieEnds(VideoHandle videoHandle);
 
 private:
 	MohawkEngine *_vm;
@@ -113,7 +122,6 @@ private:
 
 	VideoHandle createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop);
 	VideoHandle createVideoHandle(const Common::String &filename, uint16 x, uint16 y, bool loop);
-	void waitUntilMovieEnds(VideoHandle videoHandle);
 };
 
 } // End of namespace Mohawk

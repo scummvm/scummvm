@@ -32,6 +32,22 @@
 
 namespace Mohawk {
 
+void VideoEntry::clear() {
+	video = 0;
+	x = 0;
+	y = 0;
+	loop = false;
+	enabled = false;
+	start = Graphics::VideoTimestamp(0);
+	end = Graphics::VideoTimestamp(0xFFFFFFFF); // Largest possible, there is an endOfVideo() check anyway
+	filename.clear();
+	id = 0;
+}
+
+bool VideoEntry::endOfVideo() {
+	return !video || video->endOfVideo() || video->getElapsedTime() >= end.getUnitsInScale(1000);
+}
+
 VideoManager::VideoManager(MohawkEngine* vm) : _vm(vm) {
 }
 
@@ -54,6 +70,7 @@ void VideoManager::resumeVideos() {
 void VideoManager::stopVideos() {
 	for (uint16 i = 0; i < _videoStreams.size(); i++)
 		delete _videoStreams[i].video;
+
 	_videoStreams.clear();
 }
 
@@ -91,7 +108,7 @@ void VideoManager::playMovieCentered(const Common::String &filename, bool clearS
 void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	bool continuePlaying = true;
 
-	while (_videoStreams[videoHandle].video && !_videoStreams[videoHandle]->endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
+	while (!_videoStreams[videoHandle].endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
 		if (updateBackgroundMovies())
 			_vm->_system->updateScreen();
 
@@ -123,9 +140,7 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	}
 
 	delete _videoStreams[videoHandle].video;
-	_videoStreams[videoHandle].video = 0;
-	_videoStreams[videoHandle].id = 0;
-	_videoStreams[videoHandle].filename.clear();
+	_videoStreams[videoHandle].clear();
 }
 
 VideoHandle VideoManager::playBackgroundMovie(const Common::String &filename, int16 x, int16 y, bool loop) {
@@ -169,14 +184,12 @@ bool VideoManager::updateBackgroundMovies() {
 			continue;
 
 		// Remove any videos that are over
-		if (_videoStreams[i]->endOfVideo()) {
+		if (_videoStreams[i].endOfVideo()) {
 			if (_videoStreams[i].loop) {
-				_videoStreams[i]->rewind();
+				_videoStreams[i]->seekToTime(_videoStreams[i].start);
 			} else {
 				delete _videoStreams[i].video;
-				_videoStreams[i].video = 0;
-				_videoStreams[i].id = 0;
-				_videoStreams[i].filename.clear();
+				_videoStreams[i].clear();
 				continue;
 			}
 		}
@@ -281,13 +294,14 @@ void VideoManager::clearMLST() {
 	_mlstRecords.clear();
 }
 
-void VideoManager::playMovie(uint16 id) {
+VideoHandle VideoManager::playMovie(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id) {
 			debug(1, "Play tMOV %d (non-blocking) at (%d, %d) %s", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0 ? "looping" : "non-looping");
-			createVideoHandle(_mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0);
-			return;
+			return createVideoHandle(_mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0);
 		}
+
+	return NULL_VID_HANDLE;
 }
 
 void VideoManager::playMovieBlocking(uint16 id) {
@@ -306,10 +320,8 @@ void VideoManager::stopMovie(uint16 id) {
 		if (_mlstRecords[i].code == id)
 			for (uint16 j = 0; j < _videoStreams.size(); j++)
 				if (_mlstRecords[i].movieID == _videoStreams[j].id) {
-					delete _videoStreams[j].video;
-					_videoStreams[j].video = 0;
-					_videoStreams[j].id = 0;
-					_videoStreams[j].filename.clear();
+					delete _videoStreams[i].video;
+					_videoStreams[j].clear();
 					return;
 				}
 }
@@ -349,16 +361,18 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 			return i;
 
 	// Otherwise, create a new entry
+	Graphics::QuickTimeDecoder *decoder = new Graphics::QuickTimeDecoder();
+	decoder->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
+	decoder->load(_vm->getResource(ID_TMOV, id));
+
 	VideoEntry entry;
-	entry.video = new Graphics::QuickTimeDecoder();
+	entry.clear();
+	entry.video = decoder;
 	entry.x = x;
 	entry.y = y;
-	entry.filename = "";
 	entry.id = id;
 	entry.loop = loop;
 	entry.enabled = true;
-	entry->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
-	entry->load(_vm->getResource(ID_TMOV, id));
 
 	// Search for any deleted videos so we can take a formerly used slot
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
@@ -380,11 +394,11 @@ VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint
 
 	// Otherwise, create a new entry
 	VideoEntry entry;
+	entry.clear();
 	entry.video = new Graphics::QuickTimeDecoder();
 	entry.x = x;
 	entry.y = y;
 	entry.filename = filename;
-	entry.id = 0;
 	entry.loop = loop;
 	entry.enabled = true;
 	
@@ -440,32 +454,54 @@ VideoHandle VideoManager::findVideoHandle(const Common::String &filename) {
 	return NULL_VID_HANDLE;
 }
 
-int32 VideoManager::getCurFrame(const VideoHandle &handle) {
+int32 VideoManager::getCurFrame(VideoHandle handle) {
 	assert(handle != NULL_VID_HANDLE);
 	return _videoStreams[handle]->getCurFrame();
 }
 
-uint32 VideoManager::getFrameCount(const VideoHandle &handle) {
+uint32 VideoManager::getFrameCount(VideoHandle handle) {
 	assert(handle != NULL_VID_HANDLE);
 	return _videoStreams[handle]->getFrameCount();
 }
 
-uint32 VideoManager::getElapsedTime(const VideoHandle &handle) {
+uint32 VideoManager::getElapsedTime(VideoHandle handle) {
 	assert(handle != NULL_VID_HANDLE);
 	return _videoStreams[handle]->getElapsedTime();
 }
 
-bool VideoManager::endOfVideo(const VideoHandle &handle) {
+bool VideoManager::endOfVideo(VideoHandle handle) {
 	assert(handle != NULL_VID_HANDLE);
-	return _videoStreams[handle]->endOfVideo();
+	return _videoStreams[handle].endOfVideo();
 }
 
 bool VideoManager::isVideoPlaying() {
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
-		if (_videoStreams[i].video && !_videoStreams[i]->endOfVideo())
+		if (!_videoStreams[i].endOfVideo())
 			return true;
 
 	return false;
+}
+
+void VideoManager::setVideoBounds(VideoHandle handle, Graphics::VideoTimestamp start, Graphics::VideoTimestamp end) {
+	assert(handle != NULL_VID_HANDLE);
+	_videoStreams[handle].start = start;
+	_videoStreams[handle].end = end;
+	_videoStreams[handle]->seekToTime(start);
+}
+
+void VideoManager::seekToTime(VideoHandle handle, Graphics::VideoTimestamp time) {
+	assert(handle != NULL_VID_HANDLE);
+	_videoStreams[handle]->seekToTime(time);
+}
+
+void VideoManager::seekToFrame(VideoHandle handle, uint32 frame) {
+	assert(handle != NULL_VID_HANDLE);
+	_videoStreams[handle]->seekToFrame(frame);
+}
+
+void VideoManager::setVideoLooping(VideoHandle handle, bool loop) {
+	assert(handle != NULL_VID_HANDLE);
+	_videoStreams[handle].loop = loop;
 }
 
 } // End of namespace Mohawk
