@@ -1885,7 +1885,13 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 	} else {
 		// We're not at the bottom, and we can move down again
 
-		// TODO: Down movie, it involves playing a chunk of a movie
+		// Play a piece of the moving down movie
+		static const uint32 timeIntervals[] = { 4320, 3440, 2560, 1760, 880, 0 };
+		uint16 movieCode = (*telescopeCover) ? 1 : 2;
+		VideoHandle handle = _vm->_video->playMovie(movieCode);
+		_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(timeIntervals[*telescopePos], 600), Graphics::VideoTimestamp(timeIntervals[*telescopePos - 1], 600));
+		_vm->_sound->playSound(14); // Play the moving sound
+		_vm->_video->waitUntilMovieEnds(handle);
 
 		// Now move the telescope down a position and refresh
 		*telescopePos -= 1;
@@ -1911,7 +1917,13 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 		return;
 	}
 
-	// TODO: Up movie, it involves playing a chunk of a movie
+	// Play a piece of the moving up movie
+	static const uint32 timeIntervals[] = { 0, 800, 1680, 2560, 3440, 4320 };
+	uint16 movieCode = (*_vm->getVar("ttelecover")) ? 4 : 5;
+	VideoHandle handle = _vm->_video->playMovie(movieCode);
+	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(timeIntervals[*telescopePos - 1], 600), Graphics::VideoTimestamp(timeIntervals[*telescopePos], 600));
+	_vm->_sound->playSound(14); // Play the moving sound
+	_vm->_video->waitUntilMovieEnds(handle);
 
 	// Now move the telescope up a position and refresh
 	*telescopePos += 1;
