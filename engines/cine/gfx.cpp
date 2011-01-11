@@ -1429,10 +1429,13 @@ void OSRenderer::loadCt256(const byte *ct, const char *name) {
  * @param idx Background index
  */
 void OSRenderer::selectBg(unsigned int idx) {
-	assert(idx < 9 && _bgTable[idx].bg);
-	assert(_bgTable[idx].pal.isValid() && !(_bgTable[idx].pal.empty()));
+	assert(idx < 9);
 
+	if (_bgTable[idx].bg) {
+		assert(_bgTable[idx].pal.isValid() && !(_bgTable[idx].pal.empty()));
 	_currentBg = idx;
+	} else
+		warning("OSRenderer::selectBg(%d) - attempt to select null background", idx);
 	reloadPalette();
 }
 
