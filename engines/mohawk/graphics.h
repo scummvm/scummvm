@@ -171,7 +171,7 @@ public:
 	~RivenGraphics();
 
 	void copyImageToScreen(uint16, uint32, uint32, uint32, uint32);
-	void updateScreen();
+	void updateScreen(Common::Rect updateRect = Common::Rect(0, 0, 608, 392));
 	bool _updatesEnabled;
 	Common::Array<uint16> _activatedPLSTs;
 	void drawPLST(uint16 x);

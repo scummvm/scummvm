@@ -672,7 +672,7 @@ void RivenGraphics::drawPLST(uint16 x) {
 	delete plst;
 }
 
-void RivenGraphics::updateScreen() {
+void RivenGraphics::updateScreen(Common::Rect updateRect) {
 	if (_updatesEnabled) {
 		_vm->runUpdateScreenScript();
 
@@ -681,7 +681,7 @@ void RivenGraphics::updateScreen() {
 
 			// Copy to screen if there's no transition. Otherwise transition. ;)
 			if (_scheduledTransition < 0)
-				_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
+				_vm->_system->copyRectToScreen((byte *)_mainScreen->getBasePtr(updateRect.left, updateRect.top), _mainScreen->pitch, updateRect.left, updateRect.top, updateRect.width(), updateRect.height());
 			else
 				runScheduledTransition();
 
