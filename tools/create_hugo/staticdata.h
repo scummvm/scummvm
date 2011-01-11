@@ -1215,7 +1215,7 @@ const char **arrayNouns_1d[] = {
 	nFood_1w,        nWoman_1w,    nMan_1d,      nMirror_1w,   nToilet_1w,
 	nBath_1w,        nSink_1w,     nUnits_1w,    nBroom_1w,    nGardenbits_1w,
 	nMousehole_1w,   nPenelope_1w, nRock_1w,     nTomb_1w,     nDroppings_1w,
-	nMachinebits_1w, nHands_1w,    nWindow_1w
+	nMachinebits_1w, nHands_1w,    nWindow_1w,   nBatpic_1w
 };
 
 //***************************************************************************
@@ -3324,7 +3324,7 @@ background_t screen0_desc_1d[] = {      // Outside house
 	{kVLook_1d,  kNMoon_1d,   kSTlooks0moon_1d,    false, 0, 0},
 	{kVEat_1d,   kNPkin_1d,   kSTeats0pkin_1d,     false, 0, 0},
 	{kVUnder_1d, kNCarpet_1d, kSTunders0carpet_1d, false, 0, 0},
-	{kVLook_1d,  0,           kSTlooks0_1d,        false, 0, 0},
+	{kVLook_1d,  0,           kSTlooks0_1d,        true,  0, 0},
 	{0, 0, 0, false, 0, 0}
 };
 
@@ -3335,7 +3335,7 @@ background_t screen1_desc_1d[] = {      // Hall
 	{kVLook_1d,   kNCarpet_1d,  kSTdull_1d,          false, 0, 0},
 	{kVLook_1d,   kNStairs_1d,  kSTlooks1stairs_1d,  false, 0, 0},
 	{kVLook_1d,   kNLight_1d,   kSTlooks1light_1d,   false, 0, 0},
-	{kVLook_1d,   0,            kSTlooks1_1d,        false, 0, 0},
+	{kVLook_1d,   0,            kSTlooks1_1d,        true,  0, 0},
 	{kVListen_1d, 0,            kSTlistens1_1d,      false, 0, 0},
 	{0, 0, 0, false, 0, 0}
 };
@@ -3350,7 +3350,7 @@ background_t screen2_desc_1d[] = {      // Bedroom 1
 	{kVLook_1d,  kNWindow_1d, kSTlooks2window_1d, false, 0, 0},
 	{kVLook_1d,  kNLight_1d,  kSTdull_1d,         false, 0, 0},
 	{kVLook_1d,  kNFace_1d,   kSTlooks2face_1d,   false, 0, 0},
-	{kVLook_1d,  0,           kSTlooks2_1d,       false, 0, 0},
+	{kVLook_1d,  0,           kSTlooks2_1d,       true,  0, 0},
 	{0, 0, 0, false, 0, 0}
 };
 
@@ -3365,7 +3365,7 @@ background_t screen3_desc_1d[] = {      // Dining room
 	{kVLook_1d,   kNMan_1d,     kSTlooks3man_1d,    false, 0, 0},
 	{kVLook_1d,   kNCupb_1d,    kSTdull_1d,         false, 0, 0},
 	{kVLook_1d,   kNWoman_1d,   kSTlooks3woman_1d,  false, 0, 0},
-	{kVLook_1d,   0,            kSTlooks3_1d,       false, 0, 0},
+	{kVLook_1d,   0,            kSTlooks3_1d,       true,  0, 0},
 	{kVSit_1d,    0,            kSTsits3_1d,        false, 0, 0},
 	{kVTake_1d,   kNFood_1d,    kSTtakes3food_1d,   false, 0, 0},
 	{kVEat_1d,    0,            kSTtakes3food_1d,   false, 0, 0},
@@ -3385,7 +3385,7 @@ background_t screen4_desc_1d[] = {      // Bathroom
 	{kVLook_1d, kNToilet_1d, kSTlooks4toilet_1d, false, 0, 0},
 	{kVLook_1d, kNBath_1d,   kSTdull_1d,         false, 0, 0},
 	{kVLook_1d, kNSink_1d,   kSTdull_1d,         false, 0, 0},
-	{kVLook_1d, 0,           kSTlooks4_1d,       false, 0, 0},
+	{kVLook_1d, 0,           kSTlooks4_1d,       true,  0, 0},
 	{kVCrap_1d, 0,           kSTcraps4_1d,       false, 0, 0},
 	{kVSit_1d,  0,           kSTsits4_1d,        false, 0, 0},
 	{kVWash_1d, kNHands_1d,  kSTwashs4hands_1d,  false, 0, 0},
@@ -3400,7 +3400,7 @@ background_t screen5_desc_1d[] = {      // Kitchen
 	{kVLook_1d,   kNBroom_1d,  kSTlooks5broom_1d,  false, 0, 0},
 	{kVTake_1d,   kNBroom_1d,  kSTtakes5broom_1d,  false, 0, 0},
 	{kVRide_1d,   kNBroom_1d,  kSTrides5broom_1d,  false, 0, 0},
-	{kVLook_1d,   0,           kSTlooks5_1d,       false, 0, 0},
+	{kVLook_1d,   0,           kSTlooks5_1d,       true,  0, 0},
 	{kVSweep_1d,  0,           kSTsweeps5_1d,      false, 0, 0},
 	{kVListen_1d, 0,           kSTlistens1_1d,     false, 0, 0},
 	{0, 0, 0, false, 0, 0}
@@ -3412,7 +3412,7 @@ background_t screen6_desc_1d[] = {      // Garden
 	{kVLook_1d,  kNTree_1d,       kSTlooks0tree_1d,       false, 0, 0},
 	{kVClimb_1d, kNTree_1d,       kSTclimbs6tree_1d,      false, 0, 0},
 	{kVLook_1d,  kNGardenbits_1d, kSTlooks6gardenbits_1d, false, 0, 0},
-	{kVLook_1d,  0,               kSTlooks6_1d,           false, 0, 0},
+	{kVLook_1d,  0,               kSTlooks6_1d,           true,  0, 0},
 	{0, 0, 0, false, 0, 0}
 };
 
@@ -3424,7 +3424,7 @@ background_t screen7_desc_1d[] = {      // Store room
 	{kVTake_1d,   kNDroppings_1d, kSTtakes7droppings_1d, false, 0, 0},
 	{kVGive_1d,   kNChop_1d,      kSTchop1_1d,           false, 0, 0},
 	{kVFeed_1d,   kNDog_1d,       kSTchop1_1d,           false, 0, 0},
-	{kVLook_1d,   0,              kSTlooks7_1d,          false, 0, 0},
+	{kVLook_1d,   0,              kSTlooks7_1d,          true,  0, 0},
 	{0, 0, 0, false, 0, 0}
 };
 
@@ -3446,12 +3446,12 @@ background_t screen8_desc_1d[] = {      // Basement
 	{kVTalk_1d,   kNPenelope_1d, kSTtalks8penelope_1d, false, 0, 0},
 	{kVShout_1d,  kNPenelope_1d, kSTtalks8penelope_1d, false, 0, 0},
 	{kVListen_1d, 0,             kSTlistens8_1d,       false, 0, 0},
-	{kVLook_1d,   0,             kSTlooks8_1d,         false, 0, 0},
+	{kVLook_1d,   0,             kSTlooks8_1d,         true,  0, 0},
 	{0, 0, 0, false, 0, 0}
 };
 
 background_t screen9_desc_1d[] = {      // Bat cave
-	{kVLook_1d,  0,         kSTlooks9_1d,     false, 0, 0},
+	{kVLook_1d,  0,         kSTlooks9_1d,     true,  0, 0},
 	{kVLook_1d,  kNRock_1d, kSTlooks9rock_1d, false, 0, 0},
 	{kVPush_1d,  kNRock_1d, kSTnowayhose_1d,  false, 0, 0},
 	{kVLift_1d,  kNRock_1d, kSTnowayhose_1d,  false, 0, 0},
@@ -3461,7 +3461,7 @@ background_t screen9_desc_1d[] = {      // Bat cave
 };
 
 background_t screen10_desc_1d[] = {     // Mummy room
-	{kVLook_1d,  0,         kSTlooks10_1d,     false, 0, 0},
+	{kVLook_1d,  0,         kSTlooks10_1d,     true,  0, 0},
 	{kVLook_1d,  kNRock_1d, kSTlooks9rock_1d,  false, 0, 0},
 	{kVPush_1d,  kNRock_1d, kSTnowayhose_1d,   false, 0, 0},
 	{kVLift_1d,  kNRock_1d, kSTnowayhose_1d,   false, 0, 0},
@@ -3477,7 +3477,7 @@ background_t screen11_desc_1d[] = {     // Lake room
 	{kVLift_1d,      kNRock_1d, kSTnowayhose_1d,    false, 0, 0},
 	{kVMove_1d,      kNRock_1d, kSTnowayhose_1d,    false, 0, 0},
 	{kVUnder_1d,     kNRock_1d, kSTnounder_1d,      false, 0, 0},
-	{kVLook_1d,      0,         kSTlooks11_1d,      false, 0, 0},
+	{kVLook_1d,      0,         kSTlooks11_1d,      true,  0, 0},
 	{kVLakeverbs_1d, 0,         kSTlakeverbss11_1d, false, 0, 0},
 	{kVDrink_1d,     0,         kSTdrinks3_1d,      false, 0, 0},
 	{kVPlug_1d,      0,         kSTplugs11_1d,      false, 0, 0},
@@ -3490,7 +3490,7 @@ background_t screen12_desc_1d[] = {     // Dead end
 	{kVLift_1d,  kNRock_1d,  kSTnowayhose_1d,    false, 0, 0},
 	{kVMove_1d,  kNRock_1d,  kSTnowayhose_1d,    false, 0, 0},
 	{kVUnder_1d, kNRock_1d,  kSTnounder_1d,      false, 0, 0},
-	{kVLook_1d,  0,          kSTlooks12_1d,      false, 0, 0},
+	{kVLook_1d,  0,          kSTlooks12_1d,      true,  0, 0},
 	{kVTalk_1d,  kNGuard_1d, kSTtalks12guard_1d, false, 0, 0},
 	{0, 0, 0, false, 0, 0}
 };
@@ -3504,7 +3504,7 @@ background_t screen14_desc_1d[] = {     // The end
 };
 
 background_t screen15_desc_1d[] = {     // Laboratory
-	{kVLook_1d,  0,                kSTlooks15_1d,            false, 0, 0},
+	{kVLook_1d,  0,                kSTlooks15_1d,            true,  0, 0},
 	{kVTalk_1d,  kNIgor_1d,        kSTtalks15igor_1d,        false, 0, 0},
 	{kVTalk_1d,  kNProf_1d,        kSTtalks15prof_1d,        false, 0, 0},
 	{kVLook_1d,  kNMachinebits_1d, kSTlooks15machinebits_1d, false, 0, 0},
@@ -4198,7 +4198,7 @@ background_t cliff_desc_3d[] = {      // Lower cliff path
 };
 
 background_t camp_desc_3d[] = {      // Camp scene in village
-	{kVLook_3d,   0,             kSTLookcamp_3d,    true, 0, 0},
+	{kVLook_3d,   0,             kSTLookcamp_3d,    true,  0, 0},
 	{kVLook_3d,   kNFire_3d,     kSTLookhyena_3d,   false, 0, 0},
 	{kVLook_3d,   kNPole_3d,     kSTLookpole_3d,    false, 0, 0},
 	{kVBehind_3d, kNHut_3d,      kSTBehindhut_3d,   false, 0, 0},
@@ -4681,7 +4681,7 @@ cmd bung_1d[] =    {plugbung_1d,   emptyCmd};
 cmd carpet_1d[] =  {movecarp1_1d,  movecarp2_1d,   movecarp3_1d,  emptyCmd};
 cmd chop_1d[] =    {eatchop_1d,    throwchop_1d,   emptyCmd};
 cmd cupb_1d[] =    {lookcupb_1d,   emptyCmd};
-cmd door1_1d[] =   {lockdoor_1d,   unlkdoor_1d,    opendoor1_1d,  closedoor1_1d, knock_1d,    emptyCmd};
+cmd door1_1d[] =   {opendoor1_1d,  closedoor1_1d,  unlkdoor_1d,   lockdoor_1d,   knock_1d,    emptyCmd};
 cmd door2_1d[] =   {opendoor2_1d,  closedoor2_1d,  knock_1d,      unlock_1d,     emptyCmd};
 cmd door3_1d[] =   {opendoor3_1d,  closedoor3_1d,  knock_1d,      unlock_1d,     emptyCmd};
 cmd door4_1d[] =   {opendoor4_1d,  closedoor4_1d,  knock_1d,      emptyCmd};
@@ -5452,275 +5452,275 @@ object_t objects_3w[] = {
 
 object_t objects_1d[] = {
 //name, description, path, dx, dy, aptr, seq, seqp,           cyc, n, frm, rad, scr, x, y  , oldxy, vxy, val, g, cmnd, c, s, ctx, fgb
-{kNHero_1d,     kDTthero_1d,    0, USER, 0, 0, 0,            PERSON,  CYCLE_FORWARD, 0, 0, 0, 0,  0,  229, 144, 90, 90, 0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNHero_1d,     kDTthero_1d,    0, USER, 0,  0,  0,            PERSON,  CYCLE_FORWARD, 0, 0, 0, 0,  0,  229, 144, 90,  90,  0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 0: (Outside house)
-{kNDoor_1d,     kDTtdoor_1d,    0, AUTO, 0, 0, 0,            THING4,  NOT_CYCLING,   1, 4, 4, 16, 0,  26,  131, 90, 90, 0,  0, 0,  1, kCMDdoor1_1d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNEyes_1d,     kDTteyes_1d,    0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, -1, 0,  80,  148, 90, 90, 0,  0, 0,  1, 0,              0, 0, 0, BACKGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNEyes_1d,     kDTteyes_1d,    0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, -1, 0,  59,  78,  90, 90, 0,  0, 0,  1, 0,              0, 0, 0, BACKGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNBat_1d,      kDTtbat_1d,     0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, -1, 0,  95,  55,  90, 90, 0,  0, 0,  1, 0,              0, 0, 0, BACKGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNPkin_1d,     kDTtpkin_1d,    0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, 10, 0,  20,  168, 90, 90, 0,  0, 2,  7, kCMDpkin_1d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNKey_1d,      kDTtkey_1d,     0, AUTO, 0, 0, 0,            THING1,  INVISIBLE,     0, 0, 0, 10, 0,  24,  177, 90, 90, 0,  0, 5,  7, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNDoor_1d,     kDTtdoor_1d,    0, AUTO, 0,  0,  0,            THING4,  NOT_CYCLING,   1, 4, 4, 16, 0,  26,  131, 90,  90,  0,  0, 0,  1, kCMDdoor1_1d,   0, 0, 0, FLOATING,   29,  175, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNEyes_1d,     kDTteyes_1d,    0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, -1, 0,  80,  148, 90,  90,  0,  0, 0,  1, 0,              0, 0, 0, BACKGROUND, 72,  175, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNEyes_1d,     kDTteyes_1d,    0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, -1, 0,  59,  78,  90,  90,  0,  0, 0,  1, 0,              0, 0, 0, BACKGROUND, 72,  175, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNBat_1d,      kDTtbat_1d,     0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, -1, 0,  95,  55,  90,  90,  0,  0, 0,  1, 0,              0, 0, 0, BACKGROUND, 0,   0,   0,                     0, 0, 0, 0},
+{kNPkin_1d,     kDTtpkin_1d,    0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, 10, 0,  20,  168, 90,  90,  0,  0, 2,  7, kCMDpkin_1d,    0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
+{kNKey_1d,      kDTtkey_1d,     0, AUTO, 0,  0,  0,            THING1,  INVISIBLE,     0, 0, 0, 10, 0,  24,  177, 90,  90,  0,  0, 5,  7, 0,              0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
 // Screen 1: (Hall)
-{kNDoor_1d,     kDTtdoor_1d,    0, AUTO, 0, 0, 0,            THING4,  NOT_CYCLING,   1, 4, 4, 16, 1,  125, 56,  90, 90, 0,  0, 0,  1, kCMDdoor2_1d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNDoor_1d,     kDTtdoor_1d,    0, AUTO, 0, 0, 0,            THING4,  NOT_CYCLING,   1, 4, 4, 16, 1,  208, 56,  90, 90, 0,  0, 0,  1, kCMDdoor3_1d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNEyes_1d,     kDTteyes_1d,    0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, -1, 1,  23,  48,  90, 90, 0,  0, 0,  1, 0,              0, 0, 0, BACKGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNEyes_1d,     kDTteyes_1d,    0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, -1, 1,  7,   93,  90, 90, 0,  0, 0,  1, 0,              0, 0, 0, BACKGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNCandle_1d,   kDTtcandle_1d,  0, AUTO, 0, 0, 0,            THING2,  CYCLE_FORWARD, 0, 0, 0, 20, 1,  176, 131, 90, 90, 0,  0, 3,  7, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNCupb_1d,     0,              0, AUTO, 0, 0, 0,            THING0,  INVISIBLE,     0, 0, 0, 20, 1,  69,  161, 90, 90, 0,  0, 0,  1, kCMDcupb_1d,    0, 0, 1, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNKnife_1d,    kDTtknife_1d,   0, AUTO, 0, 0, 0,            THING0,  INVISIBLE,     0, 0, 0, 20, 1,  69,  161, 90, 90, 0,  0, 6,  3, kCMDknife_1d,   0, 0, 0, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNWhistle_1d,  kDTtwhistle_1d, 0, AUTO, 0, 0, 0,            THING0,  INVISIBLE,     0, 0, 0, 20, 1,  69,  161, 90, 90, 0,  0, 6,  3, kCMDwhistle_1d, 0, 0, 0, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
+{kNDoor_1d,     kDTtdoor_1d,    0, AUTO, 0,  0,  0,            THING4,  NOT_CYCLING,   1, 4, 4, 16, 1,  125, 56,  90,  90,  0,  0, 0,  1, kCMDdoor2_1d,   0, 0, 0, FLOATING,   127, 98,  Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNDoor_1d,     kDTtdoor_1d,    0, AUTO, 0,  0,  0,            THING4,  NOT_CYCLING,   1, 4, 4, 16, 1,  208, 56,  90,  90,  0,  0, 0,  1, kCMDdoor3_1d,   0, 0, 0, FLOATING,   210, 98,  Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNEyes_1d,     kDTteyes_1d,    0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, -1, 1,  23,  48,  90,  90,  0,  0, 0,  1, 0,              0, 0, 0, BACKGROUND, 48,  98,  Common::KEYCODE_LEFT,  0, 0, 0, 0},
+{kNEyes_1d,     kDTteyes_1d,    0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, -1, 1,  7,   93,  90,  90,  0,  0, 0,  1, 0,              0, 0, 0, BACKGROUND, 32,  140, Common::KEYCODE_LEFT,  0, 0, 0, 0},
+{kNCandle_1d,   kDTtcandle_1d,  0, AUTO, 0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 0, 0, 20, 1,  176, 131, 90,  90,  0,  0, 3,  7, 0,              0, 0, 0, FLOATING,   169, 164, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNCupb_1d,     0,              0, AUTO, 9, 25,  0,            THING0,  INVISIBLE,     0, 0, 0, 20, 1,  69,  161, 67,  140, 0,  0, 0,  1, kCMDcupb_1d,    0, 0, 1, FOREGROUND, 81,  168, Common::KEYCODE_LEFT,  0, 0, 0, 0},
+{kNKnife_1d,    kDTtknife_1d,   0, AUTO, 0,  0,  0,            THING0,  INVISIBLE,     0, 0, 0, 20, 1,  69,  161, 90,  90,  0,  0, 6,  3, kCMDknife_1d,   0, 0, 0, FOREGROUND, -1,  0,   0,                     0, 0, 0, 0},
+{kNWhistle_1d,  kDTtwhistle_1d, 0, AUTO, 0,  0,  0,            THING0,  INVISIBLE,     0, 0, 0, 20, 1,  69,  161, 90,  90,  0,  0, 6,  3, kCMDwhistle_1d, 0, 0, 0, FOREGROUND, -1,  0,   0,                     0, 0, 0, 0},
 // Screen 2: (Bedroom 1)
 // Note how wardrobe doors are catered for: The wardrobe has a name but no images,
 // the right and left doors have no reference but are cycled by the wardrobe action list
-{kNWard_1d,     kDTtward_1d,    0, AUTO, 0, 0, 0,            THING0,  INVISIBLE,     1, 4, 4, 30, 2,  172, 113, 90, 90, 0,  0, 0,  1, kCMDward_1d,    0, 0, 1, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNWdoorl_1d,   0,              0, AUTO, 0, 0, 0,            THING4,  NOT_CYCLING,   1, 4, 4, 0,  2,  150, 56,  90, 90, 0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNWdoorr_1d,   0,              0, AUTO, 0, 0, 0,            THING4,  NOT_CYCLING,   1, 4, 4, 0,  2,  174, 56,  90, 90, 0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNMask_1d,     kDTtmask_1d,    0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, 10, 2,  155, 100, 90, 90, 0,  0, 4,  7, kCMDmask_1d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNMonkey_1d,   0,              0, AUTO, 0, 0, 0,            PERSON,  INVISIBLE,     0, 0, 0, 0,  2,  229, 144, 90, 90, 0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNWard_1d,     kDTtward_1d,    0, AUTO, 0,  0,  0,            THING0,  INVISIBLE,     1, 4, 4, 30, 2,  172, 113, 90,  90,  0,  0, 0,  1, kCMDward_1d,    0, 0, 1, FOREGROUND, 168, 117, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNWdoorl_1d,   0,              0, AUTO, 0,  0,  0,            THING4,  NOT_CYCLING,   1, 4, 4, 0,  2,  150, 56,  90,  90,  0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNWdoorr_1d,   0,              0, AUTO, 0,  0,  0,            THING4,  NOT_CYCLING,   1, 4, 4, 0,  2,  174, 56,  90,  90,  0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNMask_1d,     kDTtmask_1d,    0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, 10, 2,  155, 100, 90,  90,  0,  0, 4,  7, kCMDmask_1d,    0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
+{kNMonkey_1d,   0,              0, AUTO, 0,  0,  0,            PERSON,  INVISIBLE,     0, 0, 0, 0,  2,  229, 144, 90,  90,  0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 3: (Dining room)
-{kNButler_1d,   kDTtbutler_1d,  0, AUTO, 0, 0, kALbutler_1d, PERSON,  NOT_CYCLING,   0, 0, 0, DX, 3,  70,  78,  90, 90, 0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNChop_1d,     kDTtchop_1d,    0, AUTO, 0, 0, 0,            THING1,  INVISIBLE,     0, 0, 0, 20, 3,  69,  161, 90, 90, 0,  0, 8,  7, kCMDchop_1d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNRedeyes_1d,  0,              0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, 0,  3,  212, 108, 90, 90, 0,  0, 0,  0, 0,              0, 0, 0, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNLips_1d,     0,              0, AUTO, 0, 0, 0,            THING2,  NOT_CYCLING,   0, 1, 1, 0,  3,  113, 105, 90, 90, 0,  0, 0,  0, 0,              0, 0, 0, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNArm_1d,      0,              0, AUTO, 0, 0, 0,            THING2,  NOT_CYCLING,   0, 5, 5, 0,  3,  166, 122, 90, 90, 0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNHdlshero_1d, 0,              0, AUTO, 0, 0, 0,            THING1,  INVISIBLE,     0, 0, 0, 10, 0,  24,  177, 90, 90, 0,  0, 0,  7, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNButler_1d,   kDTtbutler_1d,  0, AUTO, 0,  0,  kALbutler_1d, PERSON,  NOT_CYCLING,   0, 0, 0, DX, 3,  70,  78,  90,  90,  0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNChop_1d,     kDTtchop_1d,    0, AUTO, 0,  0,  0,            THING1,  INVISIBLE,     0, 0, 0, 20, 3,  69,  161, 90,  90,  0,  0, 8,  7, kCMDchop_1d,    0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNRedeyes_1d,  0,              0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, 0,  3,  212, 108, 90,  90,  0,  0, 0,  0, 0,              0, 0, 0, FOREGROUND, 0,   0,   0,                     0, 0, 0, 0},
+{kNLips_1d,     0,              0, AUTO, 0,  0,  0,            THING2,  NOT_CYCLING,   0, 1, 1, 0,  3,  113, 105, 90,  90,  0,  0, 0,  0, 0,              0, 0, 0, FOREGROUND, 0,   0,   0,                     0, 0, 0, 0},
+{kNArm_1d,      0,              0, AUTO, 0,  0,  0,            THING2,  NOT_CYCLING,   0, 5, 5, 0,  3,  166, 122, 90,  90,  0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNHdlshero_1d, 0,              0, AUTO, 0,  0,  0,            THING1,  INVISIBLE,     0, 0, 0, 10, 0,  24,  177, 90,  90,  0,  0, 0,  7, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 6: (Garden)
-{kNDoor_1d,     kDTtdoor_1d,    0, AUTO, 0, 0, 0,            THING4,  NOT_CYCLING,   1, 4, 4, 16, 6,  226, 58,  90, 90, 0,  0, 0,  1, kCMDdoor4_1d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNShed_1d,     0,              0, AUTO, 0, 0, 0,            THING0,  INVISIBLE,     0, 0, 0, 60, 6,  277, 39,  90, 90, 0,  0, 0,  1, kCMDshed_1d,    0, 0, 1, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNOilcan_1d,   kDTtoilcan_1d,  0, AUTO, 0, 0, 0,            THING0,  INVISIBLE,     0, 0, 0, 40, 6,  240, 65,  90, 90, 0,  0, 4,  3, kCMDoilcan_1d,  0, 0, 0, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
+{kNDoor_1d,     kDTtdoor_1d,    0, AUTO, 0,  0,  0,            THING4,  NOT_CYCLING,   1, 4, 4, 16, 6,  226, 58,  90,  90,  0,  0, 0,  1, kCMDdoor4_1d,   0, 0, 0, FLOATING,   224, 104, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNShed_1d,     0,              0, AUTO, 0,  0,  0,            THING0,  INVISIBLE,     0, 0, 0, 60, 6,  277, 39,  214, 37,  0,  0, 0,  1, kCMDshed_1d,    0, 0, 1, FOREGROUND, 213, 103, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNOilcan_1d,   kDTtoilcan_1d,  0, AUTO, 0,  0,  0,            THING0,  INVISIBLE,     0, 0, 0, 40, 6,  240, 65,  90,  90,  0,  0, 4,  3, kCMDoilcan_1d,  0, 0, 0, FOREGROUND, 0,   0,   0,                     0, 0, 0, 0},
 // Screen 7: (Store room)
-{kNDog_1d,      kDTtdog_1d,     0, AUTO, 0, 0, kALdoggy_1d,  ANIMAL,  NOT_CYCLING,   0, 0, 0, 20, 7,  105, 119, 90, 90, 0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNCarpet_1d,   0,              0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, 50, 7,  191, 142, 90, 90, 0,  0, 0,  0, kCMDcarpet_1d,  0, 0, 0, BACKGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNTrap_1d,     0,              0, AUTO, 0, 0, 0,            THING4,  INVISIBLE,     0, 2, 2, 20, 7,  216, 140, 90, 90, 0,  0, 0,  1, kCMDtrap_1d,    0, 0, 0, BACKGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNBolt_1d,     0,              0, AUTO, 0, 0, 0,            THING0,  INVISIBLE,     0, 0, 0, 20, 7,  220, 145, 90, 90, 0,  0, 0,  1, kCMDbolt_1d,    0, 0, 0, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNHerodead_1d, 0,              0, AUTO, 0, 0, 0,            THING1,  INVISIBLE,     0, 0, 0, 10, 0,  24,  177, 90, 90, 0,  0, 0,  7, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNDog_1d,      kDTtdog_1d,     0, AUTO, 0,  0,  kALdoggy_1d,  ANIMAL,  NOT_CYCLING,   0, 0, 0, 20, 7,  105, 119, 90,  90,  0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNCarpet_1d,   0,              0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, 50, 7,  191, 142, 90,  90,  0,  0, 0,  0, kCMDcarpet_1d,  0, 0, 0, BACKGROUND, 234, 153, Common::KEYCODE_LEFT,  0, 0, 0, 0},
+{kNTrap_1d,     0,              0, AUTO, 0,  0,  0,            THING4,  INVISIBLE,     0, 2, 2, 20, 7,  216, 140, 90,  90,  0,  0, 0,  1, kCMDtrap_1d,    0, 0, 0, BACKGROUND, 240, 152, Common::KEYCODE_LEFT,  0, 0, 0, 0},
+{kNBolt_1d,     0,              0, AUTO, 0,  0,  0,            THING0,  INVISIBLE,     0, 0, 0, 20, 7,  220, 145, 237, 151, 0,  0, 0,  1, kCMDbolt_1d,    0, 0, 0, FOREGROUND, 240, 152, Common::KEYCODE_LEFT,  0, 0, 0, 0},
+{kNHerodead_1d, 0,              0, AUTO, 0,  0,  0,            THING1,  INVISIBLE,     0, 0, 0, 10, 0,  24,  177, 90,  90,  0,  0, 0,  7, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 9: (Batcave)
-{kNBat_1d,      kDTtbat_1d,     0, AUTO, 0, 0, kALbats_1d,   THING1,  NOT_CYCLING,   0, 0, 0, 16, 9,  65,  25,  90, 90, 0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBat_1d,      kDTtbat_1d,     0, AUTO, 0, 0, kALbats_1d,   THING1,  NOT_CYCLING,   0, 0, 0, 16, 9,  55,  65,  90, 90, 0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBat_1d,      kDTtbat_1d,     0, AUTO, 0, 0, kALbats_1d,   THING1,  NOT_CYCLING,   0, 0, 0, 16, 9,  55,  120, 90, 90, 0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBat_1d,      kDTtbat_1d,     0, AUTO, 0, 0, kALbats_1d,   THING1,  NOT_CYCLING,   0, 0, 0, 16, 9,  55,  130, 90, 90, 0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNBat_1d,      kDTtbat_1d,     0, AUTO, 0,  0,  kALbats_1d,   THING1,  NOT_CYCLING,   0, 0, 0, 16, 9,  65,  25,  90,  90,  0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNBat_1d,      kDTtbat_1d,     0, AUTO, 0,  0,  kALbats_1d,   THING1,  NOT_CYCLING,   0, 0, 0, 16, 9,  55,  65,  90,  90,  0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNBat_1d,      kDTtbat_1d,     0, AUTO, 0,  0,  kALbats_1d,   THING1,  NOT_CYCLING,   0, 0, 0, 16, 9,  55,  120, 90,  90,  0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNBat_1d,      kDTtbat_1d,     0, AUTO, 0,  0,  kALbats_1d,   THING1,  NOT_CYCLING,   0, 0, 0, 16, 9,  55,  130, 90,  90,  0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 10: (Mummy room)
-{kNMummy_1d,    0,              0, AUTO, 0, 0, kALmummy_1d,  PERSON,  NOT_CYCLING,   0, 0, 0, DX, 10, 256, 77,  90, 90, 0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNMdoor_1d,    0,              0, AUTO, 0, 0, 0,            THING4,  NOT_CYCLING,   1, 4, 4, 0,  10, 258, 55,  90, 90, 0,  0, 0,  1, kCMDdoor4_1d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNGold_1d,     kDTtgold_1d,    0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, 20, 10, 208, 152, 90, 90, 0,  0, 10, 7, kCMDgold_1d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNMummy_1d,    0,              0, AUTO, 0,  0,  kALmummy_1d,  PERSON,  NOT_CYCLING,   0, 0, 0, DX, 10, 256, 77,  90,  90,  0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNMdoor_1d,    0,              0, AUTO, 0,  0,  0,            THING4,  NOT_CYCLING,   1, 4, 4, 0,  10, 258, 55,  90,  90,  0,  0, 0,  1, kCMDdoor4_1d,   0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNGold_1d,     kDTtgold_1d,    0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, 20, 10, 208, 152, 90,  90,  0,  0, 10, 7, kCMDgold_1d,    0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
 // Screen 11: (Lakeroom)
-{kNBoat_1d,     kDTtboat_1d,    0, AUTO, 0, 0, 0,            THING2c, NOT_CYCLING,   0, 0, 0, 30, 11, 230, 118, 90, 90, 0,  0, 0,  1, kCMDboat_1d,    0, 0, 1, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNRope_1d,     kDTtrope_1d,    0, AUTO, 0, 0, 0,            THING2c, NOT_CYCLING,   0, 0, 0, 30, 11, 220, 132, 90, 90, 0,  0, 0,  1, kCMDrope_1d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNOldman_1d,   kDTtoldman_1d,  0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, 30, 11, 160, 38,  90, 90, 0,  0, 0,  1, kCMDoldman_1d,  0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNWhero_1d,    0,              0, AUTO, 0, 0, 0,            PERSON,  INVISIBLE,     0, 0, 0, 0,  11, 100, 100, 90, 90, 0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNBoat_1d,     kDTtboat_1d,    0, AUTO, 0,  0,  0,            THING2c, NOT_CYCLING,   0, 0, 0, 30, 11, 230, 118, 90,  90,  0,  0, 0,  1, kCMDboat_1d,    0, 0, 1, FLOATING,   250, 150, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNRope_1d,     kDTtrope_1d,    0, AUTO, 0,  0,  0,            THING2c, NOT_CYCLING,   0, 0, 0, 30, 11, 220, 132, 90,  90,  0,  0, 0,  1, kCMDrope_1d,    0, 0, 0, FLOATING,   209, 153, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNOldman_1d,   kDTtoldman_1d,  0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, 30, 11, 160, 38,  90,  90,  0,  0, 0,  1, kCMDoldman_1d,  0, 0, 0, FLOATING,   150, 54,  Common::KEYCODE_DOWN,  0, 0, 0, 0},
+{kNWhero_1d,    0,              0, AUTO, 0,  0,  0,            PERSON,  INVISIBLE,     0, 0, 0, 0,  11, 100, 100, 90,  90,  0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 12: (Dead end)
-{kNGuard_1d,    kDTtguard_1d,   0, AUTO, 0, 0, 0,            THING2d, NOT_CYCLING,   0, 0, 0, -1, 12, 147, 39,  90, 90, 0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNGuard_1d,    kDTtguard_1d,   0, AUTO, 0,  0,  0,            THING2d, NOT_CYCLING,   0, 0, 0, -1, 12, 147, 39,  90,  90,  0,  0, 0,  1, 0,              0, 0, 0, FLOATING,   133, 91,  Common::KEYCODE_UP,    0, 0, 0, 0},
 // Screen 15: (Laboratory)
-{kNProf_1d,     kDTtprof_1d,    0, AUTO, 0, 0, 0,            PERSON2, CYCLE_FORWARD, 0, 0, 0, -1, 1,  150, 55,  90, 90, DX, 0, 0,  1, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNIgor_1d,     kDTtigor_1d,    0, AUTO, 0, 0, 0,            PERSON2, CYCLE_FORWARD, 0, 0, 0, -1, 15, 180, 122, 90, 90, DX, 0, 0,  1, kCMDigor_1d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBung_1d,     kDTtbung_1d,    0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, 14, 15, 75,  145, 90, 90, 0,  0, 11, 7, kCMDbung_1d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNGdoor_1d,    0,              0, AUTO, 0, 0, 0,            THING1,  NOT_CYCLING,   0, 0, 0, 30, 15, 59,  100, 90, 90, 0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNSpachero_1d, 0,              0, AUTO, 0, 0, 0,            PERSON,  INVISIBLE,     0, 0, 0, 0,  15, 100, 100, 90, 90, 0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNFuzyhero_1d, 0,              0, AUTO, 0, 0, 0,            PERSON,  INVISIBLE,     0, 0, 0, 0,  15, 100, 100, 90, 90, 0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNArc_1d,      0,              0, AUTO, 0, 0, 0,            THING2,  CYCLE_FORWARD, 0, 0, 0, 0,  15, 106, 74,  90, 90, 0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0}
+{kNProf_1d,     kDTtprof_1d,    0, AUTO, 0,  0,  0,            PERSON2, CYCLE_FORWARD, 0, 0, 0, -1, 1,  150, 55,  90,  90,  DX, 0, 0,  1, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNIgor_1d,     kDTtigor_1d,    0, AUTO, 0,  0,  0,            PERSON2, CYCLE_FORWARD, 0, 0, 0, -1, 15, 180, 122, 90,  90,  DX, 0, 0,  1, kCMDigor_1d,    0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNBung_1d,     kDTtbung_1d,    0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, 14, 15, 75,  145, 90,  90,  0,  0, 11, 7, kCMDbung_1d,    0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
+{kNGdoor_1d,    0,              0, AUTO, 0,  0,  0,            THING1,  NOT_CYCLING,   0, 0, 0, 30, 15, 59,  100, 90,  90,  0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNSpachero_1d, 0,              0, AUTO, 0,  0,  0,            PERSON,  INVISIBLE,     0, 0, 0, 0,  15, 100, 100, 90,  90,  0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNFuzyhero_1d, 0,              0, AUTO, 0,  0,  0,            PERSON,  INVISIBLE,     0, 0, 0, 0,  15, 100, 100, 90,  90,  0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNArc_1d,      0,              0, AUTO, 0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 0, 0, 0,  15, 106, 74,  90,  90,  0,  0, 0,  0, 0,              0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0}
 };
 
 object_t objects_2d[] = {
 //name,description, path,dx,dy,aptr,seq,seqp,                 cyc,n,frm,rad,scr,x,y  ,oldxy,vxy,val,g,cmnd,c,s,ctx,fgb
-{kNHero_2d,      kDTthero_2d,     0, AUTO,    0,    0,    0,            PERSON,  INVISIBLE,        0, 0, 0,  0,  0,                319, 199, 90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNPenny_2d,     kDTtpenny_2d,    0, AUTO,    0,    0,    0,            PERSON,  NOT_CYCLING,      0, 0, 0,  -1, 1,                109, 140, 90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNHero_2d,      kDTthero_2d,     0, AUTO,    0,    0,    0,            PERSON,  INVISIBLE,        0, 0, 0,  0,  0,                319, 199, 90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNPenny_2d,     kDTtpenny_2d,    0, AUTO,    0,    0,    0,            PERSON,  NOT_CYCLING,      0, 0, 0,  -1, 1,                109, 140, 90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 0: (Outside house)
-{kNSmoke_2d,     0,               0, AUTO,    0,    0,    0,            THING3,  CYCLE_FORWARD,    0, 2, 0,  0,  0,                233, 20,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNSmoke_2d,     0,               0, AUTO,    0,    0,    0,            THING3,  CYCLE_FORWARD,    0, 2, 0,  0,  0,                233, 20,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 1: (Hall)
-{kNDoor_2d,      kDTtdoor_2d,     0, AUTO,    0,    0,    0,            THING4,  NOT_CYCLING,      1, 4, 4,  16, 1,                238, 40,  90, 90, 0, 0, 0,  1, kCMDdoor1_2d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNLips_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  INVISIBLE,        0, 0, 0,  0,  1,                186, 100, 90, 90, 0, 0, 0,  0, 0,               0, 0, 0, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNMaid_2d,      kDTtmaid_2d,     0, AUTO,    0,    0,    0,            PERSON4, NOT_CYCLING,      0, 0, 0,  8,  1,                149, 135, 90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNDoor_2d,      kDTtdoor_2d,     0, AUTO,    0,    0,    0,            THING4,  NOT_CYCLING,      1, 4, 4,  16, 1,                238, 40,  90,  90,  0, 0, 0,  1, kCMDdoor1_2d,    0, 0, 0, FLOATING,   239, 82,  Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNLips_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  INVISIBLE,        0, 0, 0,  0,  1,                186, 100, 90,  90,  0, 0, 0,  0, 0,               0, 0, 0, FOREGROUND, 0,   0,   0,                     0, 0, 0, 0},
+{kNMaid_2d,      kDTtmaid_2d,     0, AUTO,    0,    0,    0,            PERSON4, NOT_CYCLING,      0, 0, 0,  8,  1,                149, 135, 90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 2: (Bedroom 1)
-{kNPennylie_2d,  0,               0, AUTO,    0,    0,    0,            THING1,  INVISIBLE,        0, 0, 0,  10, 2,                24,  177, 90, 90, 0, 0, 0,  1, 0,               0, 0, 0, OVEROVL,    0, 0, 0, 0, 0, 0, 0},
-{kNPenfall_2d,   0,               0, AUTO,    0,    0,    0,            THING2,  INVISIBLE,        0, 0, 0,  10, 2,                24,  177, 90, 90, 0, 0, 0,  0, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBookcase_2d,  kDTtbookcase_2d, 0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  -1, 2,                70,  81,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBook_2d,      kDTtbook_2d,     0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  10, 2,                90,  140, 90, 90, 0, 0, 0,  1, kCMDbook_2d,     0, 0, 1, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNKeyhole_2d,   0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  10, 2,                28,  166, 90, 90, 0, 0, 0,  0, kCMDkeyhole_2d,  0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNPennylie_2d,  0,               0, AUTO,    0,    0,    0,            THING1,  INVISIBLE,        0, 0, 0,  10, 2,                24,  177, 90,  90,  0, 0, 0,  1, 0,               0, 0, 0, OVEROVL,    0,   0,   0,                     0, 0, 0, 0},
+{kNPenfall_2d,   0,               0, AUTO,    0,    0,    0,            THING2,  INVISIBLE,        0, 0, 0,  10, 2,                24,  177, 90,  90,  0, 0, 0,  0, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNBookcase_2d,  kDTtbookcase_2d, 0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  -1, 2,                70,  81,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   90,  138, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNBook_2d,      kDTtbook_2d,     0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  10, 2,                90,  140, 90,  90,  0, 0, 0,  1, kCMDbook_2d,     0, 0, 1, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNKeyhole_2d,   0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  10, 2,                28,  166, 26,  129, 0, 0, 0,  0, kCMDkeyhole_2d,  0, 0, 0, FLOATING,   35,  166, Common::KEYCODE_LEFT,  0, 0, 0, 0},
 // Screen 3: (Bedroom 2)
-{kNPanel_2d,     0,               0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  -1, 3,                189, 91,  90, 90, 0, 0, 0,  0, 0,               0, 0, 0, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNCupb_2d,      0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  55, 3,                135, 142, 90, 90, 0, 0, 0,  0, kCMDlookdesk_2d, 0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBird_2d,      kDTtbird_2d,     0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 0, 0,  -1, 3,                186, 100, 90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNMatches_2d,   0,               0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  20, 255,              78,  30,  90, 90, 0, 0, 5,  7, kCMDmatches_2d,  0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNDumb_2d,      kDTtdumb_2d,     0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  20, 3,                72,  138, 90, 90, 0, 0, 0,  1, kCMDdumb_2d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNPanel_2d,     0,               0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  -1, 3,                189, 91,  90,  90,  0, 0, 0,  0, 0,               0, 0, 0, FOREGROUND, 0,   0,   0,                     0, 0, 0, 0},
+{kNCupb_2d,      0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  55, 3,                135, 142, 90,  90,  0, 0, 0,  0, kCMDlookdesk_2d, 0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNBird_2d,      kDTtbird_2d,     0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 0, 0,  -1, 3,                186, 100, 90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FOREGROUND, 192, 157, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNMatches_2d,   0,               0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  20, 255,              78,  30,  90,  90,  0, 0, 5,  7, kCMDmatches_2d,  0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
+{kNDumb_2d,      kDTtdumb_2d,     0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  20, 3,                72,  138, 55,  91,  0, 0, 0,  1, kCMDdumb_2d,     0, 0, 0, FLOATING,   66,  140, Common::KEYCODE_UP,    0, 0, 0, 0},
 // Screen 4: (Keyhole)
-{kNMurder_2d,    0,               0, AUTO,    0,    0,    0,            THING2e, CYCLE_FORWARD,    1, 2, 16, -1, 4,                141, 76,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNMurder_2d,    0,               0, AUTO,    0,    0,    0,            THING2e, CYCLE_FORWARD,    1, 2, 16, -1, 4,                141, 76,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 5: (Bed3)
-{kNBalloon_2d,   kDTtballoon_2d,  0, WANDER,  DX/2, DY/2, 0,            THING1,  NOT_CYCLING,      0, 0, 0,  50, 5,                180, 40,  90, 90, 0, 0, 0,  1, kCMDballoon_2d,  0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNBalloon_2d,   kDTtballoon_2d,  0, WANDER,  DX/2, DY/2, 0,            THING1,  NOT_CYCLING,      0, 0, 0,  50, 5,                180, 40,  90,  90,  0, 0, 0,  1, kCMDballoon_2d,  0, 0, 0, FLOATING,   146, 130, Common::KEYCODE_UP,    0, 0, 0, 0},
 // Screen 6: (Kitchen)
-{kNDumb_2d,      kDTtdumb_2d,     0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  20, 6,                35,  152, 90, 90, 0, 0, 0,  1, kCMDdumb_2d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNCupb_2d,      0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  55, 6,                135, 142, 90, 90, 0, 0, 0,  0, kCMDlookcupb_2d, 0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNGarlic_2d,    kDTtgarlic_2d,   0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  20, 255,              78,  30,  90, 90, 0, 0, 5,  7, kCMDgarlic_2d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNDoor_2d,      kDTdull_2d,      0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  55, 6,                290, 196, 90, 90, 0, 0, 0,  0, kCMDkdoor_2d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNDumb_2d,      kDTtdumb_2d,     0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  20, 6,                35,  152, 26,  99,  0, 0, 0,  1, kCMDdumb_2d,     0, 0, 0, FLOATING,   40,  153, Common::KEYCODE_LEFT,  0, 0, 0, 0},
+{kNCupb_2d,      0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  55, 6,                135, 142, 90,  118, 0, 0, 0,  0, kCMDlookcupb_2d, 0, 0, 0, FLOATING,   112, 143, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNGarlic_2d,    kDTtgarlic_2d,   0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  20, 255,              78,  30,  90,  90,  0, 0, 5,  7, kCMDgarlic_2d,   0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
+{kNDoor_2d,      kDTdull_2d,      0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  55, 6,                290, 196, 90,  90,  0, 0, 0,  0, kCMDkdoor_2d,    0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 8: (Shed)
-{kNGardner_2d,   kDTtgardner_2d,  0, WANDER,  DX,   DY,   0,            PERSON2, CYCLE_FORWARD,    0, 0, 0,  -1, 8,                250, 90,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNGardner_2d,   kDTtgardner_2d,  0, WANDER,  DX,   DY,   0,            PERSON2, CYCLE_FORWARD,    0, 0, 0,  -1, 8,                250, 90,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 9: In shed
-{kNButton_2d,    kDTtbutton_2d,   0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 9,                190, 137, 90, 90, 0, 0, 0,  1, kCMDbutton_2d,   0, 1, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNRed_2d,       0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 9,                190, 137, 90, 90, 0, 0, 0,  1, kCMDred_2d,      0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNYellow_2d,    0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 9,                190, 137, 90, 90, 0, 0, 0,  1, kCMDyellow_2d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNGreen_2d,     0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 9,                190, 137, 90, 90, 0, 0, 0,  1, kCMDgreen_2d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBlue_2d,      0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 9,                190, 137, 90, 90, 0, 0, 0,  1, kCMDblue_2d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNShedlight_2d, 0,               0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  -1, 9,                161, 48,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNButton_2d,    kDTtbutton_2d,   0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 9,                190, 137, 90,  90,  0, 0, 0,  1, kCMDbutton_2d,   0, 1, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNRed_2d,       0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 9,                190, 137, 177, 99,  0, 0, 0,  1, kCMDred_2d,      0, 0, 0, FLOATING,   188, 137, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNYellow_2d,    0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 9,                190, 137, 189, 99,  0, 0, 0,  1, kCMDyellow_2d,   0, 0, 0, FLOATING,   172, 137, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNGreen_2d,     0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 9,                190, 137, 201, 99,  0, 0, 0,  1, kCMDgreen_2d,    0, 0, 0, FLOATING,   184, 137, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNBlue_2d,      0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 9,                190, 137, 215, 99,  0, 0, 0,  1, kCMDblue_2d,     0, 0, 0, FLOATING,   198, 137, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNShedlight_2d, 0,               0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  -1, 9,                161, 48,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 10: Venus fly traps
-{kNMagnify_2d,   kDTtmagnify_2d,  0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  20, 10,               95,  96,  90, 90, 0, 0, 15, 7, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNFly_2d,       0,               0, WANDER2, DX,   DY,   0,            THING2,  NOT_CYCLING,      0, 1, 0,  20, 10,               48,  60,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNFly_2d,       0,               0, WANDER2, DX,   DY,   0,            THING2,  NOT_CYCLING,      0, 1, 0,  20, 10,               58,  70,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNFly_2d,       0,               0, WANDER2, DX,   DY,   0,            THING2,  NOT_CYCLING,      0, 1, 0,  20, 10,               268, 90,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 1, 0,  20, 10,               48,  86,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 2, 0,  20, 10,               79,  104, 90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 1, 0,  20, 10,               71,  141, 90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 3, 0,  20, 10,               116, 113, 90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 1, 1,  20, 10,               164, 120, 90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 2, 0,  20, 10,               185, 83,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 1, 0,  20, 10,               232, 96,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 1, 0,  20, 10,               273, 141, 90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNMagnify_2d,   kDTtmagnify_2d,  0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  20, 10,               95,  96,  90,  90,  0, 0, 15, 7, 0,               0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
+{kNFly_2d,       0,               0, WANDER2, DX,   DY,   0,            THING2,  NOT_CYCLING,      0, 1, 0,  20, 10,               48,  60,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNFly_2d,       0,               0, WANDER2, DX,   DY,   0,            THING2,  NOT_CYCLING,      0, 1, 0,  20, 10,               58,  70,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNFly_2d,       0,               0, WANDER2, DX,   DY,   0,            THING2,  NOT_CYCLING,      0, 1, 0,  20, 10,               268, 90,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 1, 0,  20, 10,               48,  86,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   41,  103, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 2, 0,  20, 10,               79,  104, 90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   69,  121, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 1, 0,  20, 10,               71,  141, 90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   68,  153, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 3, 0,  20, 10,               116, 113, 90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   99,  132, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 1, 1,  20, 10,               164, 120, 90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   184, 136, Common::KEYCODE_LEFT,  0, 0, 0, 0},
+{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 2, 0,  20, 10,               185, 83,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   167, 101, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 1, 0,  20, 10,               232, 96,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   223, 116, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNLeaf_2d,      0,               0, AUTO,    0,    0,    0,            THING2,  CYCLE_FORWARD,    0, 1, 0,  20, 10,               273, 141, 90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   251, 156, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
 // Screen 11: Gates
-{kNGatelight_2d, 0,               0, AUTO,    0,    0,    0,            THING1,  ALMOST_INVISIBLE, 1, 0, 0,  -1, 11,               90,  72,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNGatelight_2d, 0,               0, AUTO,    0,    0,    0,            THING1,  ALMOST_INVISIBLE, 1, 0, 0,  -1, 11,               90,  72,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 13: Stream
-{kNCatnip_2d,    kDTdull_2d,      0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  -1, 13,               211, 136, 90, 90, 0, 0, 5,  3, kCMDcatnip_2d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNCatnip_2d,    kDTdull_2d,      0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  -1, 13,               211, 136, 29,  114, 0, 0, 5,  3, kCMDcatnip_2d,   0, 0, 0, FLOATING,   49,  130, Common::KEYCODE_UP,    0, 0, 0, 0},
 // Screen 14: Zapper
-{kNZapper_2d,    kDTtzapper_2d,   0, AUTO,    0,    0,    0,            THING1,  ALMOST_INVISIBLE, 1, 0, 0,  -1, 14,               134, 46,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBug_2d,       kDTtbug_2d,      0, AUTO,    0,    0,    kALbugs_2d,   THING2,  CYCLE_FORWARD,    0, 0, 0,  16, 14,               65,  25,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBug_2d,       kDTtbug_2d,      0, AUTO,    0,    0,    kALbugs_2d,   THING2,  CYCLE_FORWARD,    0, 0, 0,  16, 14,               65,  25,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBug_2d,       kDTtbug_2d,      0, AUTO,    0,    0,    kALbugs_2d,   THING2,  CYCLE_FORWARD,    0, 0, 0,  16, 14,               65,  25,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBug_2d,       kDTtbug_2d,      0, AUTO,    0,    0,    kALbugs_2d,   THING2,  CYCLE_FORWARD,    0, 0, 0,  16, 14,               65,  25,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBug_2d,       kDTtbug_2d,      0, AUTO,    0,    0,    kALbugs_2d,   THING2,  CYCLE_FORWARD,    0, 0, 0,  16, 14,               65,  25,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNZapper_2d,    kDTtzapper_2d,   0, AUTO,    0,    0,    0,            THING1,  ALMOST_INVISIBLE, 1, 0, 0,  -1, 14,               134, 46,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNBug_2d,       kDTtbug_2d,      0, AUTO,    0,    0,    kALbugs_2d,   THING2,  CYCLE_FORWARD,    0, 0, 0,  16, 14,               65,  25,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNBug_2d,       kDTtbug_2d,      0, AUTO,    0,    0,    kALbugs_2d,   THING2,  CYCLE_FORWARD,    0, 0, 0,  16, 14,               65,  25,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNBug_2d,       kDTtbug_2d,      0, AUTO,    0,    0,    kALbugs_2d,   THING2,  CYCLE_FORWARD,    0, 0, 0,  16, 14,               65,  25,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNBug_2d,       kDTtbug_2d,      0, AUTO,    0,    0,    kALbugs_2d,   THING2,  CYCLE_FORWARD,    0, 0, 0,  16, 14,               65,  25,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNBug_2d,       kDTtbug_2d,      0, AUTO,    0,    0,    kALbugs_2d,   THING2,  CYCLE_FORWARD,    0, 0, 0,  16, 14,               65,  25,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 15: Mushroom
-{kNOldman_2d,    kDTtoldman_2d,   0, AUTO,    0,    0,    0,            THING2c, NOT_CYCLING,      1, 0, 0,  -1, 15,               126, 77,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNOldman_2d,    kDTtoldman_2d,   0, AUTO,    0,    0,    0,            THING2c, NOT_CYCLING,      1, 0, 0,  -1, 15,               126, 77,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 16: Well
-{kNWell_2d,      kDTtwell_2d,     0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 16,               211, 136, 90, 90, 0, 0, 0,  1, kCMDwell_2d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNWell_2d,      kDTtwell_2d,     0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 16,               211, 136, 184, 85,  0, 0, 0,  1, kCMDwell_2d,     0, 0, 0, FLOATING,   242, 131, Common::KEYCODE_LEFT,  0, 0, 0, 0},
 // Screen 17: Snakepit
-{kNSnake_2d,     kDTtsnake_2d,    0, CHASE2,  DX,   DY,   kALsnake_2d,  PERSON2, CYCLE_FORWARD,    0, 0, 0,  16, 17,               165, 95,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNSnake_2d,     kDTtsnake_2d,    0, CHASE2,  DX,   DY,   kALsnake_2d,  PERSON2, CYCLE_FORWARD,    0, 0, 0,  16, 17,               165, 95,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
 // Screen 18: Phonebox
-{kNTardis_2d,    0,               0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  50, 18,               21,  74,  90, 90, 0, 0, 0,  0, kCMDtardis_2d,   0, 0, 1, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNTardis_2d,    0,               0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  50, 18,               21,  74,  90,  90,  0, 0, 0,  0, kCMDtardis_2d,   0, 0, 1, FLOATING,   50,  126, Common::KEYCODE_LEFT,  0, 0, 0, 0},
 // Screen 20: Kennel
-{kNStick_2d,     kDTdull_2d,      0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 20,               89,  120, 90, 90, 0, 0, 5,  3, kCMDstick_2d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNDynamite_2d,  kDTtdynamite_2d, 0, AUTO,    0,    0,    0,            THING2a, INVISIBLE,        0, 0, 0,  30, 20,               200, 100, 90, 90, 0, 0, 0,  7, kCMDdynamite_2d, 0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNKennel_2d,    0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  20, 20,               195, 114, 90, 90, 0, 0, 0,  0, kCMDkennel_2d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNDog_2d,       kDTtdog_2d,      0, AUTO,    0,    0,    0,            THING2f, CYCLE_FORWARD,    0, 2, 0,  30, 20,               184, 80,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNStick_2d,     kDTdull_2d,      0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 20,               89,  120, 83,  116, 0, 0, 5,  3, kCMDstick_2d,    0, 0, 0, FLOATING,   88,  132, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNDynamite_2d,  kDTtdynamite_2d, 0, AUTO,    0,    0,    0,            THING2a, INVISIBLE,        0, 0, 0,  30, 20,               200, 100, 90,  90,  0, 0, 0,  7, kCMDdynamite_2d, 0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
+{kNKennel_2d,    0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  20, 20,               195, 114, 173, 73,  0, 0, 0,  0, kCMDkennel_2d,   0, 0, 0, FLOATING,   160, 113, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNDog_2d,       kDTtdog_2d,      0, AUTO,    0,    0,    0,            THING2f, CYCLE_FORWARD,    0, 2, 0,  30, 20,               184, 80,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   200, 117, Common::KEYCODE_LEFT,  0, 0, 0, 0},
 // Screen 21: (Rockroom)
-{kNRope_2d,      kDTtrope_2d,     0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  60, 21,               78,  30,  90, 90, 0, 0, 0,  1, kCMDrope_2d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNRope_2d,      kDTtrope_2d,     0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  60, 21,               78,  30,  90,  90,  0, 0, 0,  1, kCMDrope_2d,     0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
 // Screen 22: (Rockgone)
-{kNRope_2d,      kDTtrope_2d,     0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  60, 22,               78,  30,  90, 90, 0, 0, 0,  1, kCMDrope_2d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNRope_2d,      kDTtrope_2d,     0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  60, 22,               78,  30,  90,  90,  0, 0, 0,  1, kCMDrope_2d,     0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
 // Screen 24: (Lampcave)
-{kNLamp_2d,      kDTtlamp_2d,     0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  30, 24,               78,  114, 90, 90, 0, 0, 10, 7, kCMDlamp_2d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNLamp_2d,      kDTtlamp_2d,     0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  30, 24,               78,  114, 90,  90,  0, 0, 10, 7, kCMDlamp_2d,     0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
 // Screen 25: (Chasm)
-{kNBanana_2d,    kDTtbanana_2d,   0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  20, 25,               254, 107, 90, 90, 0, 0, 5,  7, kCMDbanana_2d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNBanana_2d,    kDTtbanana_2d,   0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  20, 25,               254, 107, 90,  90,  0, 0, 5,  7, kCMDbanana_2d,   0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
 // Screen 27: (Ladder)
-{kNGenie_2d,     kDTtgenie_2d,    0, AUTO,    0,    0,    0,            PERSON3, INVISIBLE,        0, 0, 0,  30, 27,               138, 70,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNGenie_2d,     kDTtgenie_2d,    0, AUTO,    0,    0,    0,            PERSON3, INVISIBLE,        0, 0, 0,  30, 27,               138, 70,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
 // Screen 28: (Traproom)
-{kNSafe_2d,      kDTtsafe_2d,     0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  20, 28,               122, 144, 90, 90, 0, 0, 0,  1, kCMDsafe_2d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNWill_2d,      kDTtwill_2d,     0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  20, 28,               122, 144, 90, 90, 0, 0, 5,  7, kCMDwill_2d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNSafe_2d,      kDTtsafe_2d,     0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  20, 28,               122, 144, 104, 110, 0, 0, 0,  1, kCMDsafe_2d,     0, 0, 0, FLOATING,   106, 145, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNWill_2d,      kDTtwill_2d,     0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  20, 28,               122, 144, 90,  90,  0, 0, 5,  7, kCMDwill_2d,     0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
 // Screen 31: (Parlor)
-{kNCupb_2d,      0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  55, 31,               212, 142, 90, 90, 0, 0, 0,  0, kCMDcupbp_2d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNDoor_2d,      kDTdull_2d,      0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  55, 31,               28,  154, 90, 90, 0, 0, 0,  0, kCMDpdoor_2d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNAlbum_2d,     kDTtalbum_2d,    0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  55, 255,              212, 142, 90, 90, 0, 0, 5,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNCupb_2d,      0,               0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  55, 31,               212, 142, 182, 113, 0, 0, 0,  0, kCMDcupbp_2d,    0, 0, 0, FLOATING,   200, 150, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNDoor_2d,      kDTdull_2d,      0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  55, 31,               28,  154, 90,  90,  0, 0, 0,  0, kCMDpdoor_2d,    0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNAlbum_2d,     kDTtalbum_2d,    0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  55, 255,              212, 142, 90,  90,  0, 0, 5,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Screen 32: (Catroom)
-{kNCat_2d,       kDTdull_2d,      0, AUTO,    0,    0,    0,            THING2b, CYCLE_FORWARD,    0, 2, 0,  40, 32,               189, 69,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNCat_2d,       kDTdull_2d,      0, AUTO,    0,    0,    0,            THING2b, CYCLE_FORWARD,    0, 2, 0,  40, 32,               189, 69,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   171, 117, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
 // Screen 33: (Boxroom)
-{kNDoor_2d,      kDTtbdoor_2d,    0, AUTO,    0,    0,    0,            THING4,  NOT_CYCLING,      1, 4, 4,  16, 33,               137, 97,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNPaper_2d,     0,               0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  20, 33,               205, 147, 90, 90, 0, 0, 5,  7, kCMDpaper_2d,    0, 0, 0, BACKGROUND, 0, 0, 0, 0, 0, 0, 0},
-{kNPencil_2d,    kDTdull_2d,      0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  20, 33,               205, 163, 90, 90, 0, 0, 5,  7, kCMDpencil_2d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNDoor_2d,      kDTtbdoor_2d,    0, AUTO,    0,    0,    0,            THING4,  NOT_CYCLING,      1, 4, 4,  16, 33,               137, 97,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   140, 142, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNPaper_2d,     0,               0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  20, 33,               205, 147, 90,  90,  0, 0, 5,  7, kCMDpaper_2d,    0, 0, 0, BACKGROUND, 188, 159, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNPencil_2d,    kDTdull_2d,      0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  20, 33,               205, 163, 90,  90,  0, 0, 5,  7, kCMDpencil_2d,   0, 0, 0, FLOATING,   188, 168, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
 // Screen 34: (Hall3)
-{kNDoor_2d,      kDTtdoor_2d,     0, AUTO,    0,    0,    0,            THING4,  NOT_CYCLING,      1, 4, 4,  16, 34,               234, 73,  90, 90, 0, 0, 0,  1, kCMDdoor2_2d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNDoor_2d,      kDTtdoor_2d,     0, AUTO,    0,    0,    0,            THING4,  NOT_CYCLING,      1, 4, 4,  16, 34,               103, 73,  90, 90, 0, 0, 0,  1, kCMDdoor3_2d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNDoor_2d,      kDTtdoor_2d,     0, AUTO,    0,    0,    0,            THING4,  NOT_CYCLING,      1, 4, 4,  16, 34,               234, 73,  90,  90,  0, 0, 0,  1, kCMDdoor2_2d,    0, 0, 0, FLOATING,   240, 121, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNDoor_2d,      kDTtdoor_2d,     0, AUTO,    0,    0,    0,            THING4,  NOT_CYCLING,      1, 4, 4,  16, 34,               103, 73,  90,  90,  0, 0, 0,  1, kCMDdoor3_2d,    0, 0, 0, FLOATING,   107, 121, Common::KEYCODE_UP,    0, 0, 0, 0},
 // Screen 35: (Organ)
-{kNHarry_2d,     kDTtharry_2d,    0, AUTO,    DX,   DY,   0,            THING2g, CYCLE_FORWARD,    0, 2, 0,  -1, 35,               188, 84,  90, 90, 0, 0, 0,  1, kCMDharry_2d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNHarry_2d,     kDTtharry_2d,    0, AUTO,    DX,   DY,   0,            THING2g, CYCLE_FORWARD,    0, 2, 0,  -1, 35,               188, 84,  90,  90,  0, 0, 0,  1, kCMDharry_2d,    0, 0, 0, FLOATING,   216, 132, Common::KEYCODE_LEFT,  0, 0, 0, 0},
 // Screen 36: (Hestroom)
-{kNHester_2d,    kDTthester_2d,   0, AUTO,    0,    0,    0,            PERSON,  CYCLE_FORWARD,    0, 0, 0,  30, 36,               78,  114, 90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNLetter_2d,    kDTtletter_2d,   0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 36,               110, 150, 90, 90, 0, 0, 0,  1, kCMDletter_2d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNHester_2d,    kDTthester_2d,   0, AUTO,    0,    0,    0,            PERSON,  CYCLE_FORWARD,    0, 0, 0,  30, 36,               78,  114, 90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   70,  150, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNLetter_2d,    kDTtletter_2d,   0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  30, 36,               110, 150, 106, 132, 0, 0, 0,  1, kCMDletter_2d,   0, 0, 0, FLOATING,   98,  151, Common::KEYCODE_UP,    0, 0, 0, 0},
 // Screen 37: (Retupmoc)
-{kNDoctor_2d,    kDTtdoctor_2d,   0, WANDER,  DX,   DY,   kALdoctor_2d, PERSON,  CYCLE_FORWARD,    0, 0, 0,  -1, 37,               78,  114, 90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNDalek_2d,     kDTtdalek_2d,    0, CHASE2,  DX,   DY,   kALdalek_2d,  PERSON5, NOT_CYCLING,      0, 0, 0,  -1, 37,               78,  114, 90, 90, 0, 0, 0,  1, kCMDgun_2d,      0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNScrew_2d,     kDTtscrew_2d,    0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  20, 37,               100, 123, 90, 90, 0, 0, 15, 3, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNDoctor_2d,    kDTtdoctor_2d,   0, WANDER,  DX,   DY,   kALdoctor_2d, PERSON,  CYCLE_FORWARD,    0, 0, 0,  -1, 37,               78,  114, 90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
+{kNDalek_2d,     kDTtdalek_2d,    0, CHASE2,  DX,   DY,   kALdalek_2d,  PERSON5, NOT_CYCLING,      0, 0, 0,  -1, 37,               78,  114, 90,  90,  0, 0, 0,  1, kCMDgun_2d,      0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNScrew_2d,     kDTtscrew_2d,    0, AUTO,    0,    0,    0,            THING0,  INVISIBLE,        0, 0, 0,  20, 37,               100, 123, 90,  90,  0, 0, 15, 3, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
 // Misc:
-{kNCook_2d,      kDTtcook_2d,     0, AUTO,    DX,   DY,   0,            PERSON,  INVISIBLE,        0, 0, 0,  30, 06,               98,  98,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNCookb_2d,     kDTtcook_2d,     0, AUTO,    0,    0,    0,            THING4,  CYCLE_FORWARD,    0, 0, 0,  30, 255,              98,  98,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNCop_2d,       kDTtcop_2d,      0, AUTO,    0,    0,    0,            PERSON2, INVISIBLE,        0, 0, 0,  30, 29,               180, 47,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNHorace_2d,    kDTthorace_2d,   0, AUTO,    0,    0,    0,            PERSON,  INVISIBLE,        0, 0, 0,  30, 34,               215, 76,  90, 90, 0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBell_2d,      kDTtbell_2d,     0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  30, MAZE_SCREEN + 15, 149, 109, 90, 90, 0, 0, 5,  7, kCMDbell_2d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNGun_2d,       kDTtgun_2d,      0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  30, MAZE_SCREEN + 26, 149, 109, 90, 90, 0, 0, 10, 7, kCMDgun_2d,      0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBottle_2d,    kDTtbottle_2d,   0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  30, MAZE_SCREEN + 27, 149, 109, 90, 90, 0, 0, 15, 7, kCMDbottle_2d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0}
+{kNCook_2d,      kDTtcook_2d,     0, AUTO,    DX,   DY,   0,            PERSON,  INVISIBLE,        0, 0, 0,  30, 06,               98,  98,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNCookb_2d,     kDTtcook_2d,     0, AUTO,    0,    0,    0,            THING4,  CYCLE_FORWARD,    0, 0, 0,  30, 255,              98,  98,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNCop_2d,       kDTtcop_2d,      0, AUTO,    0,    0,    0,            PERSON2, INVISIBLE,        0, 0, 0,  30, 29,               180, 47,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNHorace_2d,    kDTthorace_2d,   0, AUTO,    0,    0,    0,            PERSON,  INVISIBLE,        0, 0, 0,  30, 34,               215, 76,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   0,   0,   0,                     0, 0, 0, 0},
+{kNBell_2d,      kDTtbell_2d,     0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  30, MAZE_SCREEN + 15, 149, 109, 90,  90,  0, 0, 5,  7, kCMDbell_2d,     0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
+{kNGun_2d,       kDTtgun_2d,      0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  30, MAZE_SCREEN + 26, 149, 109, 90,  90,  0, 0, 10, 7, kCMDgun_2d,      0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0},
+{kNBottle_2d,    kDTtbottle_2d,   0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      0, 0, 0,  30, MAZE_SCREEN + 27, 149, 109, 90,  90,  0, 0, 15, 7, kCMDbottle_2d,   0, 0, 0, FLOATING,   -1,  0,   0,                     0, 0, 0, 0}
 };
 
 object_t objects_3d[] = {
 //name,description,path,dx,dy,aptr,SPRITE, cyc, n,frm,rad,      scr,x,y  ,oldxy,vxy,val,g,cmnd,c,s,ctx,fgb
 // Common objects  // Set Penny state to 3 to avoid story
-{kNHero_3d,     kDTthero_3d,     0, USER,   0,  0,  0,            PERSON,  CYCLE_FORWARD, 0, 0,  0, 0,  0,           161, 110, 90, 90, 0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNWhero_3d,    kDTthero_3d,     0, USER,   0,  0,  0,            PERSON,  INVISIBLE,     0, 0,  0, 0,  0,           219, 133, 90, 90, 0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNHero_3d,     kDTthero_3d,     0, USER,   0,  0,  0,            PERSON,  CYCLE_FORWARD, 0, 0,  0, 0,  0,           161, 110, 90,  90,  0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNWhero_3d,    kDTthero_3d,     0, USER,   0,  0,  0,            PERSON,  INVISIBLE,     0, 0,  0, 0,  0,           219, 133, 90,  90,  0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
 //#if NO_STORY
-//{kNPenny_3d,    kDTtpenny_3d,    0, AUTO,   0,  0,  0,            PERSON,  CYCLE_FORWARD, 0, 0,  0, -1, 0,           109, 110, 90, 90, 0,  0,  0,  1, 0,                0, 3, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+//{kNPenny_3d,    kDTtpenny_3d,    0, AUTO,   0,  0,  0,            PERSON,  CYCLE_FORWARD, 0, 0,  0, -1, 0,           109, 110, 90,  90,  0,  0,  0,  1, 0,                0, 3, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
 //#else
-{kNPenny_3d,    kDTtpenny_3d,    0, AUTO,   0,  0,  0,            PERSON,  CYCLE_FORWARD, 0, 0,  0, -1, 0,           109, 110, 90, 90, 0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNPenny_3d,    kDTtpenny_3d,    0, AUTO,   0,  0,  0,            PERSON,  CYCLE_FORWARD, 0, 0,  0, -1, 0,           109, 110, 90,  90,  0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
 //#endif
-{kNPennylie_3d, 0,               0, AUTO,   0,  0,  0,            THING1,  INVISIBLE,     0, 0,  0, -1, WEB_3d,      75,  156, 90, 90, 0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNLips_3d,     0,               0, AUTO,   0,  0,  0,            THING2,  INVISIBLE,     0, 0,  0, 0,  0,           186, 100, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
+{kNPennylie_3d, 0,               0, AUTO,   0,  0,  0,            THING1,  INVISIBLE,     0, 0,  0, -1, WEB_3d,      75,  156, 90,  90,  0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNLips_3d,     0,               0, AUTO,   0,  0,  0,            THING2,  INVISIBLE,     0, 0,  0, 0,  0,           186, 100, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FOREGROUND, 0,      0,   0,                     0, 0, 0, 0},
 // CRASH site
-{kNPlane_3d,    kDTtplane_3d,    0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, CRASH_3d,    184, 136, 90, 90, 0,  0,  0,  1, kCMDcplane_3d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNDoor_3d,     kDTdull_3d,      0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, 80, CRASH_3d,    184, 136, 90, 90, 0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNPlant1_3d,   0,               0, AUTO,   0,  0,  0,            THING1,  INVISIBLE,     0, 0,  0, 0,  CRASH_3d,    132, 165, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, OVEROVL,    0, 0, 0, 0, 0, 0, 0},
+{kNPlane_3d,    kDTtplane_3d,    0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, CRASH_3d,    184, 136, 90,  90,  0,  0,  0,  1, kCMDcplane_3d,    0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNDoor_3d,     kDTdull_3d,      0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, 80, CRASH_3d,    184, 136, 90,  90,  0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNPlant1_3d,   0,               0, AUTO,   0,  0,  0,            THING1,  INVISIBLE,     0, 0,  0, 0,  CRASH_3d,    132, 165, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, OVEROVL,    0,      0,   0,                     0, 0, 0, 0},
 // INPLANE
-{kNPlane_3d,    0,               0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, PLANE_3d,    184, 136, 90, 90, 0,  0,  0,  0, kCMDcexit_3d,     0, 0, 1, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNWater_3d,    0,               0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, WFALL_3d,    184, 136, 90, 90, 0,  0,  0,  0, kCMDcwfall_3d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNWater_3d,    0,               0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, WFALL_B_3d,  184, 136, 90, 90, 0,  0,  0,  0, kCMDcwfall_3d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNWater_3d,    0,               0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, STREAM_3d,   184, 136, 90, 90, 0,  0,  0,  0, kCMDcwstream_3d,  0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNWater_3d,    0,               0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, GARDEN_3d,   184, 136, 90, 90, 0,  0,  0,  0, kCMDcwpool_3d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNClay_3d,     kDTtclay_3d,     0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, PLANE_3d,    162, 96,  90, 90, 0,  0,  5,  7, kCMDcclay_3d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNNeedles_3d,  kDTtneedles_3d,  0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, PLANE_3d,    172, 90,  90, 90, 0,  0,  5,  7, kCMDcpins_3d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNFlask_3d,    kDTtflask_3d,    0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, PLANE_3d,    190, 90,  90, 90, 0,  0,  5,  7, kCMDcflask_3d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBouillon_3d, kDTtbouillon_3d, 0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, PLANE_3d,    185, 94,  90, 90, 0,  0,  5,  7, kCMDcbouillon_3d, 0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNCheese_3d,   kDTtcheese_3d,   0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, PLANE_3d,    185, 100, 90, 90, 0,  0,  5,  1, kCMDccheese_3d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNPlane_3d,    0,               0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, PLANE_3d,    184, 136, 90,  90,  0,  0,  0,  0, kCMDcexit_3d,     0, 0, 1, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNWater_3d,    0,               0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, WFALL_3d,    184, 136, 239, 22,  0,  0,  0,  0, kCMDcwfall_3d,    0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNWater_3d,    0,               0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, WFALL_B_3d,  184, 136, 90,  90,  0,  0,  0,  0, kCMDcwfall_3d,    0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNWater_3d,    0,               0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, STREAM_3d,   184, 136, 55,  183, 0,  0,  0,  0, kCMDcwstream_3d,  0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNWater_3d,    0,               0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, GARDEN_3d,   184, 136, 112, 129, 0,  0,  0,  0, kCMDcwpool_3d,    0, 0, 0, FLOATING,   155,    170, Common::KEYCODE_UP,    0, 0, 0, 0},
+{kNClay_3d,     kDTtclay_3d,     0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, PLANE_3d,    162, 96,  90,  90,  0,  0,  5,  7, kCMDcclay_3d,     0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
+{kNNeedles_3d,  kDTtneedles_3d,  0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, PLANE_3d,    172, 90,  90,  90,  0,  0,  5,  7, kCMDcpins_3d,     0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
+{kNFlask_3d,    kDTtflask_3d,    0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, PLANE_3d,    190, 90,  90,  90,  0,  0,  5,  7, kCMDcflask_3d,    0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
+{kNBouillon_3d, kDTtbouillon_3d, 0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, PLANE_3d,    185, 94,  90,  90,  0,  0,  5,  7, kCMDcbouillon_3d, 0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
+{kNCheese_3d,   kDTtcheese_3d,   0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, PLANE_3d,    185, 100, 90,  90,  0,  0,  5,  1, kCMDccheese_3d,   0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
 // WEB
-{kNSpider_3d,   kDTtspider_3d,   0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, -1, WEB_3d,      77,  50,  90, 90, 0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNPlant3_3d,   0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 0,  WEB_3d,      245, 117, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNPlant4_3d,   0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 0,  WEB_3d,      285, 90,  91, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNSpider_3d,   kDTtspider_3d,   0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, -1, WEB_3d,      77,  50,  90,  90,  0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNPlant3_3d,   0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 0,  WEB_3d,      245, 117, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNPlant4_3d,   0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 0,  WEB_3d,      285, 90,  91,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
 // BRIDGE
-{kNBlock_3d,    0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, BRIDGE_3d,   225, 133, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBlock_3d,    0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, BRIDGE_3d,   225, 134, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBlock_3d,    0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, BRIDGE_3d,   225, 135, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNVine_3d,     kDTtvine_3d,     0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, BRIDGE_3d,   184, 136, 90, 90, 0,  0,  0,  1, kCMDcvine_3d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNBlock_3d,    0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, BRIDGE_3d,   225, 133, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNBlock_3d,    0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, BRIDGE_3d,   225, 134, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNBlock_3d,    0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, BRIDGE_3d,   225, 135, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNVine_3d,     kDTtvine_3d,     0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, BRIDGE_3d,   184, 136, 228, 24,  0,  0,  0,  1, kCMDcvine_3d,     0, 0, 0, FLOATING,   237,    131, Common::KEYCODE_UP,    0, 0, 0, 0},
 // STREAM
-{kNVine_3d,     kDTtvine_3d,     0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, STREAM_3d,   184, 136, 90, 90, 0,  0,  0,  1, kCMDcswing_3d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNSwinger_3d,  0,               0, AUTO,   0,  0,  0,            PERSON2, INVISIBLE,     0, 0,  0, 0,  STREAM_3d,   219, 133, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNVine_3d,     kDTtvine_3d,     0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, STREAM_3d,   184, 136, 101, 96,  0,  0,  0,  1, kCMDcswing_3d,    0, 0, 0, FLOATING,   50,     172, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNSwinger_3d,  0,               0, AUTO,   0,  0,  0,            PERSON2, INVISIBLE,     0, 0,  0, 0,  STREAM_3d,   219, 133, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
 // HUT_IN
-{kNDoctor_3d,   kDTtdoctor_3d,   0, WANDER, DX, DY, kALdocgot_3d, PERSON3, CYCLE_FORWARD, 0, 0,  0, -1, CAMP_3d,     273, 83,  90, 90, 0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNDoclie_3d,   0,               0, AUTO,   0,  0,  0,            THING2,  INVISIBLE,     0, 0,  0, 30, HUT_IN_3d,   239, 103, 90, 90, 0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNCdoor_3d,    kDTdull_3d,      0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 40, HUT_IN_3d,   239, 103, 90, 90, 0,  0,  0,  1, kCMDcdoor_3d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNMouse_3d,    kDTtmouse_3d,    0, AUTO,   0,  0,  0,            THING2b, INVISIBLE,     0, 0,  0, 30, HUT_IN_3d,   186, 170, 90, 90, 0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNMoushole_3d, 0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, HUT_IN_3d,   203, 122, 90, 90, 0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNCage_3d,     kDTtcage_3d,     0, AUTO,   0,  0,  0,            THING2a, NOT_CYCLING,   0, 0,  0, 30, HUT_IN_3d,   156, 121, 90, 90, 0,  0,  1,  5, kCMDccage_3d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNFire_1_3d,   0,               0, AUTO,   0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 0,  0, 0,  HUT_OUT_3d,  127, 100, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNFire_1_3d,   0,               0, AUTO,   0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 0,  0, 0,  HUT_OUT_3d,  172, 100, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNFire_2_3d,   0,               0, AUTO,   0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 0,  0, 0,  HUT_IN_3d,   30, 145,  90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNFire_3_3d,   0,               0, AUTO,   0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 0,  0, 0,  CAMP_3d,     120, 135, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNDoctor_3d,   kDTtdoctor_3d,   0, WANDER, DX, DY, kALdocgot_3d, PERSON3, CYCLE_FORWARD, 0, 0,  0, -1, CAMP_3d,     273, 83,  90,  90,  0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNDoclie_3d,   0,               0, AUTO,   0,  0,  0,            THING2,  INVISIBLE,     0, 0,  0, 30, HUT_IN_3d,   239, 103, 90,  90,  0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNCdoor_3d,    kDTdull_3d,      0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 40, HUT_IN_3d,   239, 103, 90,  90,  0,  0,  0,  1, kCMDcdoor_3d,     0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
+{kNMouse_3d,    kDTtmouse_3d,    0, AUTO,   0,  0,  0,            THING2b, INVISIBLE,     0, 0,  0, 30, HUT_IN_3d,   186, 170, 90,  90,  0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNMoushole_3d, 0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, HUT_IN_3d,   203, 122, 90,  90,  0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNCage_3d,     kDTtcage_3d,     0, AUTO,   0,  0,  0,            THING2a, NOT_CYCLING,   0, 0,  0, 30, HUT_IN_3d,   156, 121, 90,  90,  0,  0,  1,  5, kCMDccage_3d,     0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
+{kNFire_1_3d,   0,               0, AUTO,   0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 0,  0, 0,  HUT_OUT_3d,  127, 100, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNFire_1_3d,   0,               0, AUTO,   0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 0,  0, 0,  HUT_OUT_3d,  172, 100, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNFire_2_3d,   0,               0, AUTO,   0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 0,  0, 0,  HUT_IN_3d,   30, 145,  90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNFire_3_3d,   0,               0, AUTO,   0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 0,  0, 0,  CAMP_3d,     120, 135, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
 // CAMP
-{kNNat1_3d,     kDTtnative_3d,   0, WANDER, DX, 0,  0,            PERSON,  NOT_CYCLING,   0, 0,  0, -1, CAMP_3d,     130, 105, 90, 90, 0,  0,  0,  1, kCMDcnative_3d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNNat2_3d,     kDTtnative_3d,   0, AUTO,   DX, DY, 0,            PERSON,  CYCLE_FORWARD, 0, 0,  0, -1, CAMP_3d,     17,  97,  90, 90, 4,  0,  0,  1, kCMDcnative_3d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNNat3_3d,     kDTtnative_3d,   0, AUTO,   DX, DY, 0,            THING2,  CYCLE_FORWARD, 0, 16, 0, -1, CAMP_3d,     96,  40,  90, 90, 0,  0,  0,  1, kCMDcnative_3d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNNatb_3d,     kDTtnative_3d,   0, AUTO,   DX, DY, 0,            THING2,  CYCLE_FORWARD, 0, 20, 0, -1, CAMP_3d,     72,  51,  90, 90, 0,  0,  0,  1, kCMDcnative_3d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNNatg_3d,     kDTtnatgirl_3d,  0, AUTO,   DX, DY, kALnative_3d, PERSON,  CYCLE_FORWARD, 0, 0,  0, -1, CAMP_3d,     28,  101, 90, 90, 3,  0,  0,  1, kCMDcnative_3d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNPipe_3d,     kDTtpipe_3d,     0, AUTO,   0,  0,  0,            THING1,  INVISIBLE,     0, 0,  0, 30, CAMP_3d,     225, 135, 90, 90, 0,  0,  0,  7, kCMDcdart_3d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNNat1_3d,     kDTtnative_3d,   0, WANDER, DX, 0,  0,            PERSON,  NOT_CYCLING,   0, 0,  0, -1, CAMP_3d,     130, 105, 90,  90,  0,  0,  0,  1, kCMDcnative_3d,   0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNNat2_3d,     kDTtnative_3d,   0, AUTO,   DX, DY, 0,            PERSON,  CYCLE_FORWARD, 0, 0,  0, -1, CAMP_3d,     17,  97,  90,  90,  4,  0,  0,  1, kCMDcnative_3d,   0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNNat3_3d,     kDTtnative_3d,   0, AUTO,   DX, DY, 0,            THING2,  CYCLE_FORWARD, 0, 16, 0, -1, CAMP_3d,     96,  40,  90,  90,  0,  0,  0,  1, kCMDcnative_3d,   0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNNatb_3d,     kDTtnative_3d,   0, AUTO,   DX, DY, 0,            THING2,  CYCLE_FORWARD, 0, 20, 0, -1, CAMP_3d,     72,  51,  90,  90,  0,  0,  0,  1, kCMDcnative_3d,   0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNNatg_3d,     kDTtnatgirl_3d,  0, AUTO,   DX, DY, kALnative_3d, PERSON,  CYCLE_FORWARD, 0, 0,  0, -1, CAMP_3d,     28,  101, 90,  90,  3,  0,  0,  1, kCMDcnative_3d,   0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNPipe_3d,     kDTtpipe_3d,     0, AUTO,   0,  0,  0,            THING1,  INVISIBLE,     0, 0,  0, 30, CAMP_3d,     225, 135, 90,  90,  0,  0,  0,  7, kCMDcdart_3d,     0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
 // PATH_2
-{kNElephant_3d, kDTtelephant_3d, 0, AUTO,   0,  0,  0,            THING2a, NOT_CYCLING,   0, 4,  0, -1, PATH_3d,     163, 85,  90, 90, 0,  0,  0,  1, kCMDcdart_3d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNE_eyes_3d,   0,               0, AUTO,   0,  0,  0,            THING2c, NOT_CYCLING,   0, 0,  0, -1, PATH_3d,     194, 102, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FOREGROUND, 0, 0, 0, 0, 0, 0, 0},
+{kNElephant_3d, kDTtelephant_3d, 0, AUTO,   0,  0,  0,            THING2a, NOT_CYCLING,   0, 4,  0, -1, PATH_3d,     163, 85,  90,  90,  0,  0,  0,  1, kCMDcdart_3d,     0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNE_eyes_3d,   0,               0, AUTO,   0,  0,  0,            THING2c, NOT_CYCLING,   0, 0,  0, -1, PATH_3d,     194, 102, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FOREGROUND, 0,      0,   0,                     0, 0, 0, 0},
 // Misc
-{kNHero_old_3d, 0,               0, USER,   0,  0,  0,            PERSON,  INVISIBLE,     0, 0,  0, 0,  0,           161, 120, 90, 90, 0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNAircraft_3d, 0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, -1, SUNSET_3d,   275, 116, 90, 90, -2, -1, 0,  1, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNScroll_3d,   kDTtscroll_3d,   0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, CLIFFTOP_3d, 75,  116, 90, 90, 0,  0,  3,  7, kCMDcscroll_3d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNCrystal_3d,  kDTtcrystal_3d,  0, AUTO,   0,  0,  0,            THING1,  INVISIBLE,     0, 0,  0, 30, TURN_3d,     275, 116, 90, 90, 0,  0,  9,  7, kCMDccrystal_3d,  0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNRock_3d,     0,               0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, TURN_3d,     100, 100, 90, 90, 0,  0,  0,  0, kCMDcrock_3d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNHero_old_3d, 0,               0, USER,   0,  0,  0,            PERSON,  INVISIBLE,     0, 0,  0, 0,  0,           161, 120, 90,  90,  0,  0,  0,  1, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNAircraft_3d, 0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, -1, SUNSET_3d,   275, 116, 90,  90,  -2, -1, 0,  1, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNScroll_3d,   kDTtscroll_3d,   0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, CLIFFTOP_3d, 75,  116, 90,  90,  0,  0,  3,  7, kCMDcscroll_3d,   0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
+{kNCrystal_3d,  kDTtcrystal_3d,  0, AUTO,   0,  0,  0,            THING1,  INVISIBLE,     0, 0,  0, 30, TURN_3d,     275, 116, 90,  90,  0,  0,  9,  7, kCMDccrystal_3d,  0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
+{kNRock_3d,     0,               0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, TURN_3d,     100, 100, 220, 120, 0,  0,  0,  0, kCMDcrock_3d,     0, 0, 0, FLOATING,   220,    169, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
 // CAVE etc.
-{kNPlant2_3d,   0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 0,  CAVE_3d,     27,  160, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, OVEROVL,    0, 0, 0, 0, 0, 0, 0},
-{kNGhost_3d,    kDTtghost_3d,    0, CHASE,  DX, DY, 0,            THING2c, NOT_CYCLING,   0, 0,  0, -1, CAVE_3d,     121, 86,  90, 90, 0,  0,  0,  1, kCMDcghost_3d,    0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBell_3d,     kDTtbell_3d,     0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, CLIFF_3d,    202, 152, 90, 90, 0,  0,  2,  7, kCMDcbell_3d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNBook_3d,     kDTtbook_3d,     0, AUTO,   0,  0,  0,            THING1,  INVISIBLE,     0, 0,  0, 30, STREAM_3d,   275, 116, 90, 90, 0,  0,  10, 7, kCMDcbook_3d,     0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNCandle_3d,   kDTtcandle_3d,   0, AUTO,   0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 20, 0, 30, HUT_IN_3d,   77,  134, 90, 90, 0,  0,  3,  7, kCMDccandle_3d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNVine_3d,     kDTtvine_3d,     0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, CAVE_3d,     184, 136, 90, 90, 0,  0,  0,  1, kCMDcswingc_3d,   0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
+{kNPlant2_3d,   0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 0,  CAVE_3d,     27,  160, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, OVEROVL,    0,      0,   0,                     0, 0, 0, 0},
+{kNGhost_3d,    kDTtghost_3d,    0, CHASE,  DX, DY, 0,            THING2c, NOT_CYCLING,   0, 0,  0, -1, CAVE_3d,     121, 86,  90,  90,  0,  0,  0,  1, kCMDcghost_3d,    0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNBell_3d,     kDTtbell_3d,     0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 30, CLIFF_3d,    202, 152, 90,  90,  0,  0,  2,  7, kCMDcbell_3d,     0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
+{kNBook_3d,     kDTtbook_3d,     0, AUTO,   0,  0,  0,            THING1,  INVISIBLE,     0, 0,  0, 30, STREAM_3d,   275, 116, 90,  90,  0,  0,  10, 7, kCMDcbook_3d,     0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
+{kNCandle_3d,   kDTtcandle_3d,   0, AUTO,   0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 20, 0, 30, HUT_IN_3d,   77,  134, 90,  90,  0,  0,  3,  7, kCMDccandle_3d,   0, 0, 0, FLOATING,   GO_OBJ, 0,   0,                     0, 0, 0, 0},
+{kNVine_3d,     kDTtvine_3d,     0, AUTO,   0,  0,  0,            THING0,  INVISIBLE,     0, 0,  0, -1, CAVE_3d,     184, 136, 116, 80,  0,  0,  0,  1, kCMDcswingc_3d,   0, 0, 0, FLOATING,   114,    139, Common::KEYCODE_UP,    0, 0, 0, 0},
 // OLDMAN (inside cave)
-{kNO_eye_3d,    0,               0, AUTO,   0,  0,  0,            THING3,  INVISIBLE,     0, 0,  0, 0,  OLDMAN_3d,   237, 77,  90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNFire_4_3d,   0,               0, AUTO,   0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 0,  0, 0,  OLDMAN_3d,   65,  56,  90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNMouth_3d,    0,               0, AUTO,   0,  0,  0,            THING2,  NOT_CYCLING,   0, 0,  0, 0,  OLDMAN_3d,   191, 128, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNPole_3d,     0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 0,  CAMP_3d,     126, 35,  90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0},
-{kNPlant5_3d,   0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 0,  TURN_3d,     65,  139, 90, 90, 0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0, 0, 0, 0, 0, 0, 0}
+{kNO_eye_3d,    0,               0, AUTO,   0,  0,  0,            THING3,  INVISIBLE,     0, 0,  0, 0,  OLDMAN_3d,   237, 77,  90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNFire_4_3d,   0,               0, AUTO,   0,  0,  0,            THING2,  CYCLE_FORWARD, 0, 0,  0, 0,  OLDMAN_3d,   65,  56,  90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNMouth_3d,    0,               0, AUTO,   0,  0,  0,            THING2,  NOT_CYCLING,   0, 0,  0, 0,  OLDMAN_3d,   191, 128, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNPole_3d,     0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 0,  CAMP_3d,     126, 35,  90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0},
+{kNPlant5_3d,   0,               0, AUTO,   0,  0,  0,            THING1,  NOT_CYCLING,   0, 0,  0, 0,  TURN_3d,     65,  139, 90,  90,  0,  0,  0,  0, 0,                0, 0, 0, FLOATING,   0,      0,   0,                     0, 0, 0, 0}
 };
 
 // Hugo 1 Win

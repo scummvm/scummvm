@@ -233,7 +233,9 @@ enum seqNouns_1d {
 	kNWoman_1d,      kNMan_1d,         kNMirror_1d,   kNToilet_1d,     kNBath_1d,
 	kNSink_1d,       kNUnits_1d,       kNBroom_1d,    kNGardenbits_1d, kNMousehole_1d,
 	kNPenelope_1d,   kNRock_1d,        kNTomb_1d,     kNDroppings_1d,  kNMachinebits_1d,
-	kNHands_1d,      kNWindow_1d
+	kNHands_1d,      kNWindow_1d,
+	// Added by Strangerke for mouse support
+	kNBatpic_1d
 };
 
 enum seqNouns_2d {
