@@ -81,9 +81,9 @@ void NORETURN_PRE error(const char *s, ...) {
 		strncpy(buf_output, buf_input, STRINGBUFLEN);
 	}
 
-	buf_output[STRINGBUFLEN-3] = '\0';
-	buf_output[STRINGBUFLEN-2] = '\0';
-	buf_output[STRINGBUFLEN-1] = '\0';
+	buf_output[STRINGBUFLEN - 3] = '\0';
+	buf_output[STRINGBUFLEN - 2] = '\0';
+	buf_output[STRINGBUFLEN - 1] = '\0';
 	strcat(buf_output, "!\n");
 
 	if (g_system)

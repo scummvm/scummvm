@@ -368,7 +368,7 @@ MacResIDArray MacResManager::getResIDArray(uint32 typeID) {
 	MacResIDArray res;
 
 	for (int i = 0; i < _resMap.numTypes; i++)
-		if (_resTypes[i].id ==  typeID) {
+		if (_resTypes[i].id == typeID) {
 			typeNum = i;
 			break;
 		}
