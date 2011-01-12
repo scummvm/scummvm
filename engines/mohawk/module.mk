@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	dialogs.o \
 	graphics.o \
 	livingbooks.o \
+	livingbooks_code.o \
 	mohawk.o \
 	myst.o \
 	myst_areas.o \

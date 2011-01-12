@@ -80,6 +80,8 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 
 	_alreadyShowedIntro = false;
 
+	_code = NULL;
+
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "livingbooks");
 
@@ -260,6 +262,9 @@ void MohawkEngine_LivingBooks::destroyPage() {
 
 	_eventQueue.clear();
 
+	delete _code;
+	_code = NULL;
+
 	for (uint32 i = 0; i < _items.size(); i++)
 		delete _items[i];
 	_items.clear();
@@ -330,8 +335,11 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 	_cursor->showCursor();
 
 	_gfx->setPalette(1000);
-	loadBITL(1000);
 
+	if (hasResource(ID_BCOD, 1000))
+		_code = new LBCode(this);
+
+	loadBITL(1000);
 	for (uint32 i = 0; i < _items.size(); i++)
 		_items[i]->init();
 
@@ -1875,6 +1883,8 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		_delayMin = stream->readUint16();
 		_delayMax = stream->readUint16();
 		_timingMode = stream->readUint16();
+		if (_timingMode > 7)
+			error("encountered timing mode %04x", _timingMode);
 		_periodMin = stream->readUint16();
 		_periodMax = stream->readUint16();
 		_relocPoint.x = stream->readSint16();
@@ -1903,16 +1913,16 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 			error("0x6f had wrong size (%d)", size);
 		uint u1 = stream->readUint16();
 		uint u2 = stream->readUint16();
-		uint u3 = stream->readUint16();
-		uint u4 = stream->readUint16();
-		uint u5 = stream->readUint16();
+		uint event = stream->readUint16();
+		uint opcode = stream->readUint16();
+		uint param = stream->readUint16();
 		uint u6 = stream->readUint16();
 		uint u7 = stream->readUint16();
 		uint u8 = stream->readUint16();
 		uint u9 = stream->readUint16();
 		// FIXME: this is scripting stuff
-		debug(2, "0x6f: item %s, unknowns: %04x, %04x, %04x, %04x, %04x, %04x, %04x, %04x, %04x\n",
-			_desc.c_str(), u1, u2, u3, u4, u5, u6, u7, u8, u9);
+		warning("0x6f: unknown: item %s, unknowns: %04x, %04x, event %04x, opcode %04x, param %04x, unknowns %04x, %04x, %04x, %04x",
+			_desc.c_str(), u1, u2, event, opcode, param, u6, u7, u8, u9);
 		}
 		break;
 
@@ -1951,13 +1961,33 @@ void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEnd
 		if (size != 10)
 			error("0x7d had wrong size (%d)", size);
 		uint u1 = stream->readUint16();
-		uint u2 = stream->readUint16();
+		uint key = stream->readUint16();
 		uint u3 = stream->readUint16();
-		uint u4 = stream->readUint16();
-		uint u5 = stream->readUint16();
-		// FIXME: this is scripting stuff
-		debug(2, "0x7d: item %s, unknowns: %04x, %04x, %04x, %04x, %04x\n",
-			_desc.c_str(), u1, u2, u3, u4, u5);
+		uint target = stream->readUint16();
+		byte event = stream->readByte();
+		byte u4 = stream->readByte();
+		// FIXME: this is scripting stuff: what to run when key is pressed
+		warning("0x7d: unknown: item %s, unknown %04x, key %04x, unknown %04x, target %d, event %02x, unknown %02x",
+			_desc.c_str(), u1, key, u3, target, event, u4);
+		}
+		break;
+
+	case kLBUnknown80:
+		{
+		assert(size == 2);
+		uint id = stream->readUint16();
+		warning("0x80: unknown: item %s, id %04x", _desc.c_str(), id);
+		// FIXME
+		}
+		break;
+
+	case kLBUnknown194:
+		{
+		assert(size == 4);
+		uint offset = stream->readUint32();
+		if (!_vm->_code)
+			error("no BCOD?");
+		_vm->_code->runCode(this, offset);
 		}
 		break;
 
@@ -2009,7 +2039,7 @@ bool LBItem::contains(Common::Point point) {
 }
 
 void LBItem::update() {
-	if (_neverEnabled || !_enabled || !_globalEnabled)
+	if (_phase != 0x7FFF && (_neverEnabled || !_enabled || !_globalEnabled))
 		return;
 
 	if (_nextTime == 0 || _nextTime > (uint32)(_vm->_system->getMillis() / 16))
@@ -2047,7 +2077,7 @@ bool LBItem::togglePlaying(bool playing, bool restart) {
 		_vm->queueDelayedEvent(DelayedEvent(this, kLBDelayedEventDone));
 		return true;
 	}
-	if (!_neverEnabled && _enabled && _globalEnabled && !_playing) {
+	if (((!_neverEnabled && _enabled && _globalEnabled) || _phase == 0x7FFF) && !_playing) {
 		_playing = togglePlaying(true, restart);
 		if (_playing) {
 			_nextTime = 0;
@@ -2387,9 +2417,9 @@ void LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpSendExpression:
-			// FIXME
-			warning("ignoring kLBOpSendExpression (event 0x%04x, param 0x%04x, target '%s')",
-				entry->event, entry->param, target->_desc.c_str());
+			if (!_vm->_code)
+				error("no BCOD?");
+			_vm->_code->runCode(this, entry->offset);
 			break;
 
 		case kLBOpRunSubentries:

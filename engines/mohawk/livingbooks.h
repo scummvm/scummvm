@@ -38,6 +38,8 @@
 
 #include "sound/mixer.h"
 
+#include "livingbooks_code.h"
+
 namespace Mohawk {
 
 enum NodeState {
@@ -86,7 +88,8 @@ enum {
 	kLBPaletteAItem = 0x44, // unused?
 	kLBPaletteItem = 0x45,
 	kLBProxyItem = 0x46,
-	kLBXDataFileItem = 0x3e9
+	kLBXDataFileItem = 0x3e9,
+	kLBDiscDectectorItem = 0xfa1
 };
 
 enum {
@@ -163,9 +166,11 @@ enum {
 	kLBSetAmbient = 0x7b,
 	kLBUnknown7C = 0x7c,     // unused?
 	kLBUnknown7D = 0x7d,
-	kLBUnknown7E = 0x7e,     // unused?
+	kLBUnknown7E = 0x7e,     // unused? (rect flag)
 	kLBSetParent = 0x7f,     // unused?
-	kLBUnknown80 = 0x80      // unused?
+	kLBUnknown80 = 0x80,      // unused? TODO: sets +36
+	// from here, rugrats
+	kLBUnknown194 = 0x194
 };
 
 enum {
@@ -321,23 +326,9 @@ protected:
 	Common::Array<Common::Point> _shapeOffsets;
 };
 
-enum LBValueType {
-	kLBValueString,
-	kLBValueInteger
-};
-
-struct LBValue {
-	LBValue() { type = kLBValueInteger; integer = 0; }
-
-	LBValueType type;
-	Common::String string;
-	int integer;
-
-	bool operator==(const LBValue &x) const;
-	bool operator!=(const LBValue &x) const;
-};
-
 class LBItem {
+	friend class LBCode;
+
 public:
 	LBItem(MohawkEngine_LivingBooks *vm, Common::Rect rect);
 	virtual ~LBItem();
@@ -598,6 +589,8 @@ public:
 	bool tryLoadPageStart(LBMode mode, uint page);
 	void prevPage();
 	void nextPage();
+
+	LBCode *_code;
 
 	// TODO: make private
 	Common::HashMap<Common::String, LBValue> _variables;
