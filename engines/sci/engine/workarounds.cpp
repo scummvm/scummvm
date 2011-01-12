@@ -505,11 +505,20 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 		do {
 			workaround = workaroundList;
 			while (workaround->methodName) {
+				bool objectNameMatches = (workaround->objectName == NULL) || 
+										 (workaround->objectName == g_sci->getSciLanguageString(searchObjectName.c_str(), K_LANG_ENGLISH));
+
+				// Special case: in the fanmade Russian translation of SQ4, all
+				// of the object names have been deleted or renamed to Russian,
+				// thus we disable checking of the object name. Fixes bug #3155550.
+				if (g_sci->getLanguage() == Common::RU_RUS && g_sci->getGameId() == GID_SQ4)
+					objectNameMatches = true;
+
 				if (workaround->gameId == gameId
 						&& ((workaround->scriptNr == -1) || (workaround->scriptNr == curScriptNr))
 						&& ((workaround->roomNr == -1) || (workaround->roomNr == curRoomNumber))
 						&& ((workaround->inheritanceLevel == -1) || (workaround->inheritanceLevel == inheritanceLevel))
-						&& ((workaround->objectName == NULL) || (workaround->objectName == g_sci->getSciLanguageString(searchObjectName.c_str(), K_LANG_ENGLISH)))
+						&& objectNameMatches
 						&& workaround->methodName == g_sci->getSciLanguageString(curMethodName.c_str(), K_LANG_ENGLISH)
 						&& workaround->localCallOffset == lastCall->debugLocalCallOffset
 						&& ((workaround->index == -1) || (workaround->index == index))) {
