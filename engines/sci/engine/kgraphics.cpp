@@ -209,12 +209,7 @@ reg_t kSetCursor(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kMoveCursor(EngineState *s, int argc, reg_t *argv) {
-	Common::Point pos;
-	if (argc == 2) {
-		pos.y = argv[1].toSint16();
-		pos.x = argv[0].toSint16();
-		g_sci->_gfxCursor->kernelSetPos(pos);
-	}
+	g_sci->_gfxCursor->kernelSetPos(Common::Point(argv[0].toSint16(), argv[1].toSint16()));
 	return s->r_acc;
 }
 
