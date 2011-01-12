@@ -382,6 +382,12 @@ const SciWorkaroundEntry kMemory_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kMoveCursor_workarounds[] = {
+	{ GID_KQ5,            -1,   937,  0,            "IconBar", "handleEvent",    -1,    0, { WORKAROUND_IGNORE,  0 } }, // when pressing escape to open the menu, gets called with one parameter instead of 2 - bug #3156472
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kNewWindow_workarounds[] = {
 	{ GID_ECOQUEST,       -1,   981,  0,          "SysWindow", "open",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // EcoQuest 1 demo uses an in-between interpreter from SCI1 to SCI1.1. It's SCI1.1, but uses the SCI1 semantics for this call - bug #3035057
 	SCI_WORKAROUNDENTRY_TERMINATOR

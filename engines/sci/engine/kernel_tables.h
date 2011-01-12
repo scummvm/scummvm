@@ -385,7 +385,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(MenuSelect),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
 	{ MAP_CALL(MergePoly),         SIG_EVERYWHERE,           "rli",                   NULL,            NULL },
 	{ MAP_CALL(Message),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
-	{ MAP_CALL(MoveCursor),        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+	{ MAP_CALL(MoveCursor),        SIG_EVERYWHERE,           "ii",                    NULL,            kMoveCursor_workarounds },
 	{ MAP_CALL(NewList),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(NewNode),           SIG_EVERYWHERE,           "..",                    NULL,            NULL },
 	{ MAP_CALL(NewWindow),         SIG_SCIALL, SIGFOR_MAC,   ".*",                    NULL,            NULL },
