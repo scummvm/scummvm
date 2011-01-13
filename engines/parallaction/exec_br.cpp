@@ -107,10 +107,14 @@ void Parallaction_br::clearSubtitles() {
 	if (_subtitle[0]) {
 		_gfx->hideLabel(_subtitle[0]);
 	}
+	delete _subtitle[0];
+	_subtitle[0] = 0;
 
 	if (_subtitle[1]) {
 		_gfx->hideLabel(_subtitle[1]);
 	}
+	delete _subtitle[1];
+	_subtitle[1] = 0;
 }
 
 

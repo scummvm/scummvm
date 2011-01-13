@@ -228,7 +228,6 @@ void Parallaction_br::freeCharacter() {
 void Parallaction_br::freeLocation(bool removeAll) {
 	// free open location stuff
 	clearSubtitles();
-	_subtitle[0] = _subtitle[1] = 0;
 
 	_localFlagNames->clear();
 
