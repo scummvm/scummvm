@@ -2012,174 +2012,174 @@ hotspot_t hotspots_3w[] = {
 };
 
 hotspot_t hotspots_1d[] = {
-	{0,  30,  159, 50,  165, kALscr1_1d,    33,  175, Common::KEYCODE_UP},    // Front of house to hall
-	{1,  99,  180, 136, 184, kALscr10_1d,   110, 181, Common::KEYCODE_DOWN},  // Hall to front of house
-	{1,  280, 160, 315, 175, kALscr13_1d,   290, 171, Common::KEYCODE_RIGHT}, // Hall to dining room
-	{1,  199, 151, 243, 158, kALscr15_1d,   211, 155, Common::KEYCODE_UP},    // Hall to kitchen
-	{1,  264, 97,  302, 101, kALscr115_1d,  273, 98,  Common::KEYCODE_RIGHT}, // Hall to lab
+	{0,  30,  132, 50,  165, kALscr1_1d,    33,  175, Common::KEYCODE_UP},    // Front of house to hall
+	{1,  99,  178, 136, 186, kALscr10_1d,   110, 181, Common::KEYCODE_DOWN},  // Hall to front of house
+	{1,  288, 110, 315, 175, kALscr13_1d,   290, 171, Common::KEYCODE_RIGHT}, // Hall to dining room
+	{1,  199, 110, 243, 158, kALscr15_1d,   211, 155, Common::KEYCODE_UP},    // Hall to kitchen
+	{1,  268, 53,  302, 101, kALscr115_1d,  273, 98,  Common::KEYCODE_RIGHT}, // Hall to lab
 	{2,  158, 132, 193, 140, kALscr21_1d,   168, 132, Common::KEYCODE_DOWN},  // Bed1 to hall
-	{3,  0,   152, 17,  168, kALscr31_1d,   12,  161, Common::KEYCODE_LEFT},  // Dining room to hall
-	{3,  51,  117, 63,  129, kALscr35_1d,   62,  124, Common::KEYCODE_LEFT},  // Dining room to kitchen
+	{3,  3,   73,  14,  168, kALscr31_1d,   12,  161, Common::KEYCODE_LEFT},  // Dining room to hall
+	{3,  47,  66,  63,  126, kALscr35_1d,   62,  124, Common::KEYCODE_LEFT},  // Dining room to kitchen
 	{4,  126, 165, 160, 173, kALscr41_1d,   135, 166, Common::KEYCODE_DOWN},  // Bathroom to hall
 	{5,  215, 169, 272, 177, kALscr51_1d,   242, 172, Common::KEYCODE_DOWN},  // Kitchen to hall
-	{5,  248, 135, 291, 152, kALscr53_1d,   270, 140, Common::KEYCODE_RIGHT}, // Kitchen to dining room
-	{5,  212, 128, 245, 134, kALscr56_1d,   222, 140, Common::KEYCODE_UP},    // Kitchen to garden
-	{5,  20,  140, 45,  156, kALscr57_1d,   44,  150, Common::KEYCODE_LEFT},  // Kitchen to store room
-	{6,  232, 186, 312, 192, kALscr65_1d,   250, 180, Common::KEYCODE_DOWN},  // Garden to kitchen
-	{7,  257, 142, 279, 157, kALscr75_1d,   265, 150, Common::KEYCODE_RIGHT}, // Store room to kitchen
-	{8,  156, 141, 186, 143, kALscr89_1d,   152, 142, Common::KEYCODE_RIGHT}, // Basement to batcave
-	{8,  108, 50,  141, 56,  kALscr87_1d,   120, 60,  Common::KEYCODE_UP},    // Basement to storeroom
-	{9,  95,  104, 147, 109, kALscr910_1d,  108, 108, Common::KEYCODE_UP},    // Batcave to mummy room
+	{5,  262, 79,  280, 146, kALscr53_1d,   270, 140, Common::KEYCODE_RIGHT}, // Kitchen to dining room
+	{5,  212, 79,  244, 133, kALscr56_1d,   222, 140, Common::KEYCODE_UP},    // Kitchen to garden
+	{5,  25,  87,  43,  157, kALscr57_1d,   44,  150, Common::KEYCODE_LEFT},  // Kitchen to store room
+	{6,  232, 180, 312, 192, kALscr65_1d,   250, 180, Common::KEYCODE_DOWN},  // Garden to kitchen
+	{7,  263, 90,  285, 156, kALscr75_1d,   265, 150, Common::KEYCODE_RIGHT}, // Store room to kitchen
+	{8,  150, 141, 186, 143, kALscr89_1d,   152, 142, Common::KEYCODE_RIGHT}, // Basement to batcave
+	{8,  80,  30,  144, 58,  kALscr87_1d,   120, 60,  Common::KEYCODE_UP},    // Basement to storeroom
+	{9,  95,  74,  147, 109, kALscr910_1d,  108, 108, Common::KEYCODE_UP},    // Batcave to mummy room
 	{9,  250, 177, 319, 185, kALscr98_1d,   275, 179, Common::KEYCODE_DOWN},  // Batcave to basement
-	{10, 30,  178, 223, 188, kALscr109_1d,  107, 178, Common::KEYCODE_DOWN},  // Mummy room to batcave
-	{10, 258, 117, 282, 125, kALscr1011_1d, 265, 125, Common::KEYCODE_UP},    // Mummy room to lake room
-	{11, 43,  183, 88,  191, kALscr1110_1d, 55,  182, Common::KEYCODE_DOWN},  // Lake room to mummy room
-	{11, 300, 50,  319, 86,  kALscr1112_1d, 300, 70,  Common::KEYCODE_RIGHT}, // Lake room to dead-end
-	{12, 52,  175, 295, 187, kALscr1211_1d, 142, 176, Common::KEYCODE_DOWN},  // Dead-end to lake room
-	{12, 137, 67,  178, 76,  kALscr1213_1d, 152, 75,  Common::KEYCODE_UP},    // Dead-end to jail
-	{15, 19,  171, 34,  182, kALscr151_1d,  30,  177, Common::KEYCODE_LEFT},  // Laboratory to hall
+	{10, 30,  178, 218, 188, kALscr109_1d,  107, 178, Common::KEYCODE_DOWN},  // Mummy room to batcave
+	{10, 258, 57,  282, 122, kALscr1011_1d, 265, 125, Common::KEYCODE_UP},    // Mummy room to lake room
+	{11, 43,  180, 88,  193, kALscr1110_1d, 55,  182, Common::KEYCODE_DOWN},  // Lake room to mummy room
+	{11, 300, 30,  319, 86,  kALscr1112_1d, 300, 70,  Common::KEYCODE_RIGHT}, // Lake room to dead-end
+	{12, 52,  175, 295, 190, kALscr1211_1d, 142, 176, Common::KEYCODE_DOWN},  // Dead-end to lake room
+	{12, 137, 33,  178, 80,  kALscr1213_1d, 152, 75,  Common::KEYCODE_UP},    // Dead-end to jail
+	{15, 19,  110, 34,  182, kALscr151_1d,  30,  177, Common::KEYCODE_LEFT},  // Laboratory to hall
 	{15, 109, 150, 144, 156, kALbox_1d,     -1,  -1,  -1},                    // Professor's box
 	{-1, -1,  -1,  -1,  -1,  0,             -1,  -1,  -1}                     // End of list marker
 };
 
 hotspot_t hotspots_2d[] = {
-	{2,   81, 177, 124, 190, kALscr0201_2d,  93,  178, Common::KEYCODE_DOWN},  // bed1 to hall
-	{3,    1, 155,  32, 168, kALscr0305_2d,  30,  162, Common::KEYCODE_LEFT},  // bed2 to bed3
+	{2,  81,  177, 124, 190, kALscr0201_2d,  93,  178, Common::KEYCODE_DOWN},  // bed1 to hall
+	{3,  1,   100, 32,  168, kALscr0305_2d,  30,  162, Common::KEYCODE_LEFT},  // bed2 to bed3
 	{3,  230, 182, 277, 194, kALscr0301_2d,  242, 183, Common::KEYCODE_DOWN},  // bed2 to hall
-	{5,  207, 136, 240, 150, kALscr0503_2d,  209, 143, Common::KEYCODE_RIGHT}, // bed3 to bed2
+	{5,  207, 89,  240, 150, kALscr0503_2d,  209, 143, Common::KEYCODE_RIGHT}, // bed3 to bed2
 	{5,  167, 155, 214, 165, kALscr0301_2d,  182, 157, Common::KEYCODE_DOWN},  // bed3 to hall (same as bed2 to hall)
-	{6,  201, 125, 238, 132, kALscr0607_2d,  217, 130, Common::KEYCODE_UP},    // kitchen to backdoor
-	{6,  279, 154, 313, 162, kALscr0631_2d,  289, 156, Common::KEYCODE_RIGHT}, // kitchen to parlor
-	{7,  122, 154, 171, 159, kALscr0706_2d,  140, 157, Common::KEYCODE_UP},    // backdoor to kitchen
-	{7,    4, 179, 302, 199, kALscr0708_2d,  208, 181, Common::KEYCODE_DOWN},  // backdoor to shed
-	{7,    0, 174,  14, 190, kALscr0708_2d,  80,  181, Common::KEYCODE_LEFT},  // backdoor to shed (again)
+	{6,  201, 80,  238, 132, kALscr0607_2d,  217, 130, Common::KEYCODE_UP},    // kitchen to backdoor
+	{6,  279, 92,  313, 162, kALscr0631_2d,  289, 156, Common::KEYCODE_RIGHT}, // kitchen to parlor
+	{7,  122, 95,  171, 159, kALscr0706_2d,  140, 157, Common::KEYCODE_UP},    // backdoor to kitchen
+	{7,  4,   179, 302, 199, kALscr0708_2d,  208, 181, Common::KEYCODE_DOWN},  // backdoor to shed
+	{7,  0,   174, 14,  190, kALscr0708_2d,  80,  181, Common::KEYCODE_LEFT},  // backdoor to shed (again)
 	{7,  294, 150, 319, 199, kALscr0710_2d,  300, 174, Common::KEYCODE_RIGHT}, // backdoor to venus fly traps
-	{8,    0, 121,  20, 171, kALscr0807_2d,  17,  148, Common::KEYCODE_LEFT},  // shed to backdoor
+	{8,  0,   121, 20,  171, kALscr0807_2d,  17,  148, Common::KEYCODE_LEFT},  // shed to backdoor
 	{8,  305, 121, 319, 171, kALscrgate1_2d, 307, 152, Common::KEYCODE_RIGHT}, // shed to gates
-	{8,  160, 127, 191, 134, kALscr0809_2d,  164, 132, Common::KEYCODE_RIGHT}, // shed to inside shed
-	{9,   34, 129,  66, 137, kALscr0908_2d,  64,  133, Common::KEYCODE_LEFT},  // inside shed to shed
-	{10,   0,  96,  12, 160, kALscr1007_2d,  10,  132, Common::KEYCODE_LEFT},  // venus to backdoor
-	{10, 299,  96, 319, 160, kALscrgate1_2d, 301, 124, Common::KEYCODE_RIGHT}, // venus to gates
-	{10,  32,  97, 298, 158, kALvenus_2d,    -1,  -1,  -1},                    // venus fly traps
-	{11,   0, 155,  12, 185, kALscr1108_2d,  11,  172, Common::KEYCODE_LEFT},  // gates (open) to shed
-	{12,   0, 155,  12, 185, kALscr1108_2d,  11,  172, Common::KEYCODE_LEFT},  // gates (close) to shed
+	{8,  160, 87,  191, 134, kALscr0809_2d,  164, 132, Common::KEYCODE_RIGHT}, // shed to inside shed
+	{9,  34,  76,  66,  137, kALscr0908_2d,  64,  133, Common::KEYCODE_LEFT},  // inside shed to shed
+	{10, 0,   96,  15,  160, kALscr1007_2d,  10,  132, Common::KEYCODE_LEFT},  // venus to backdoor
+	{10, 299, 96,  319, 160, kALscrgate1_2d, 301, 124, Common::KEYCODE_RIGHT}, // venus to gates
+	{10, 32,  97,  298, 158, kALvenus_2d,    -1,  -1,  -1},                    // venus fly traps
+	{11, 0,   155, 12,  185, kALscr1108_2d,  11,  172, Common::KEYCODE_LEFT},  // gates (open) to shed
+	{12, 0,   155, 12,  185, kALscr1108_2d,  11,  172, Common::KEYCODE_LEFT},  // gates (close) to shed
 	{11, 300, 157, 319, 185, kALscr1113_2d,  301, 172, Common::KEYCODE_RIGHT}, // gates (open) to stream
 	{12, 300, 157, 319, 185, kALscr1113_2d,  301, 172, Common::KEYCODE_RIGHT}, // gates (close) to stream
 	{11, 145, 133, 195, 145, kAL11maze_2d,   167, 143, Common::KEYCODE_UP},    // gatesopn to maze
-	{13,   0, 133,  14, 163, kALscrgate2_2d, 14,  145, Common::KEYCODE_LEFT},  // stream to gates
+	{13, 0,   133, 14,  163, kALscrgate2_2d, 14,  145, Common::KEYCODE_LEFT},  // stream to gates
 	{13, 303, 146, 319, 173, kALscr1314_2d,  305, 153, Common::KEYCODE_RIGHT}, // stream to zapper
 	{13, 158, 115, 226, 147, kALbridge_2d,   -1,  -1,  -1},                    // bridge over stream
-	{14,   0,  96,  14, 160, kALscr1413_2d,  10,  134, Common::KEYCODE_LEFT},  // zapper to stream
-	{14, 301,  96, 319, 160, kALscr1415_2d,  302, 134, Common::KEYCODE_RIGHT}, // zapper to mushroom
-	{15,   0,  96,  16, 130, kALscr1514_2d,  14,  130, Common::KEYCODE_LEFT},  // mushroom to zapper
-	{15, 296,  96, 312, 130, kALscr1517_2d,  298, 127, Common::KEYCODE_RIGHT}, // mushroom to snakepit
-	{15,  60, 182, 256, 196, kALscr1516_2d,  157, 183, Common::KEYCODE_DOWN},  // mushroom to well
-	{16,  83,  59, 144,  69, kALscr1615_2d,  106, 69,  Common::KEYCODE_UP},    // well to mushroom
-	{17,   0, 128,  20, 152, kALscr1715_2d,  19,  143, Common::KEYCODE_LEFT},  // snakepit to mushroom
+	{14, 0,   96,  14,  160, kALscr1413_2d,  10,  134, Common::KEYCODE_LEFT},  // zapper to stream
+	{14, 301, 96,  319, 160, kALscr1415_2d,  302, 134, Common::KEYCODE_RIGHT}, // zapper to mushroom
+	{15, 0,   96,  16,  130, kALscr1514_2d,  14,  130, Common::KEYCODE_LEFT},  // mushroom to zapper
+	{15, 296, 96,  312, 130, kALscr1517_2d,  298, 127, Common::KEYCODE_RIGHT}, // mushroom to snakepit
+	{15, 60,  182, 256, 196, kALscr1516_2d,  157, 183, Common::KEYCODE_DOWN},  // mushroom to well
+	{16, 83,  48,  144, 69,  kALscr1615_2d,  106, 69,  Common::KEYCODE_UP},    // well to mushroom
+	{17, 0,   128, 20,  152, kALscr1715_2d,  19,  143, Common::KEYCODE_LEFT},  // snakepit to mushroom
 	{17, 303, 144, 319, 172, kALscr1718_2d,  305, 150, Common::KEYCODE_RIGHT}, // snakepit to phonebox
-	{17, 301,  98, 319, 115, kALscr1720_2d,  303, 110, Common::KEYCODE_RIGHT}, // snakepit to kennel
-	{18,   0,  54,  15, 120, kALscr1817_2d,  12,  108, Common::KEYCODE_LEFT},  // phonebox to snakepit
-	{18,   0, 122,  15, 181, kALscr1819l_2d, 13,  136, Common::KEYCODE_LEFT},  // phonebox to street (left)
-	{18,   0, 175, 319, 199, kALscr1819c_2d, 155, 177, Common::KEYCODE_DOWN},  // phonebox to street (center)
-	{18, 304,  95, 319, 199, kALscr1819r_2d, 307, 136, Common::KEYCODE_RIGHT}, // phonebox to street (right)
-	{18,  15, 122,  56, 130, kALphonebox_2d, -1,  -1,  -1},                    // in the phonebox
-	{19,   0, 122,  20, 183, kALscr1918l_2d, 19,  131, Common::KEYCODE_LEFT},  // street to phonebox (left)
-	{19,   0, 175, 319, 199, kALscr1918c_2d, 153, 175, Common::KEYCODE_DOWN},  // street to phonebox (center)
+	{17, 301, 98,  319, 115, kALscr1720_2d,  303, 110, Common::KEYCODE_RIGHT}, // snakepit to kennel
+	{18, 0,   54,  15,  120, kALscr1817_2d,  12,  108, Common::KEYCODE_LEFT},  // phonebox to snakepit
+	{18, 0,   122, 15,  181, kALscr1819l_2d, 13,  136, Common::KEYCODE_LEFT},  // phonebox to street (left)
+	{18, 0,   175, 319, 199, kALscr1819c_2d, 155, 177, Common::KEYCODE_DOWN},  // phonebox to street (center)
+	{18, 304, 95,  319, 199, kALscr1819r_2d, 307, 136, Common::KEYCODE_RIGHT}, // phonebox to street (right)
+	{18, 15,  122, 56,  130, kALphonebox_2d, -1,  -1,  -1},                    // in the phonebox
+	{19, 0,   122, 20,  183, kALscr1918l_2d, 19,  131, Common::KEYCODE_LEFT},  // street to phonebox (left)
+	{19, 0,   175, 319, 199, kALscr1918c_2d, 153, 175, Common::KEYCODE_DOWN},  // street to phonebox (center)
 	{19, 301, 122, 319, 199, kALscr1918r_2d, 304, 131, Common::KEYCODE_RIGHT}, // street to phonebox (right)
-	{20,   5, 103,  22, 186, kALscr2017_2d,  16,  145, Common::KEYCODE_LEFT},  // kennel to snakepit
-	{22, 287,  75, 312, 102, kALscr2223_2d,  289, 92,  Common::KEYCODE_RIGHT}, // rockgone to threeway
-	{23,  59, 179, 245, 193, kALscr2322_2d,  146, 179, Common::KEYCODE_DOWN},  // threeway to rockgone
-	{23,  11,  82,  33, 103, kALscr2324_2d,  18,  90,  Common::KEYCODE_LEFT},  // threeway to lampcave
-	{23, 141,  52, 178,  65, kALscr2325_2d,  150, 58,  Common::KEYCODE_UP},    // threeway to chasm
-	{23, 273,  79, 296, 100, kALscr2326_2d,  291, 87,  Common::KEYCODE_RIGHT}, // threeway to passage
-	{24, 300,  83, 319, 183, kALscr2423_2d,  304, 120, Common::KEYCODE_RIGHT}, // lampcave to threeway
-	{25,   0,  98,  15, 171, kALscr2523_2d,  14,  167, Common::KEYCODE_LEFT},  // chasm to threeway
-	{25, 172,  95, 221, 172, kALchasm_2d,    -1,  -1,  -1},                    // chasm
-	{26,   0,  94,  19, 179, kALscr2623_2d,  17,  157, Common::KEYCODE_LEFT},  // passage to threeway
-	{26, 300,  87, 319, 179, kALscr2627_2d,  302, 157, Common::KEYCODE_RIGHT}, // passage to ladder
-	{27,   0, 100,  15, 180, kALscr2726_2d,  14,  152, Common::KEYCODE_LEFT},  // ladder to passage
-	{27, 200,  43, 243,  55, kALtrap_2d,     210, 100, Common::KEYCODE_UP},    // trapdoor at top of ladder
+	{20, 5,   103, 22,  186, kALscr2017_2d,  16,  145, Common::KEYCODE_LEFT},  // kennel to snakepit
+	{22, 280, 41,  312, 102, kALscr2223_2d,  289, 92,  Common::KEYCODE_RIGHT}, // rockgone to threeway
+	{23, 59,  179, 245, 193, kALscr2322_2d,  146, 179, Common::KEYCODE_DOWN},  // threeway to rockgone
+	{23, 11,  42,  33,  103, kALscr2324_2d,  18,  90,  Common::KEYCODE_LEFT},  // threeway to lampcave
+	{23, 141, 28,  178, 65,  kALscr2325_2d,  150, 58,  Common::KEYCODE_UP},    // threeway to chasm
+	{23, 273, 40,  296, 100, kALscr2326_2d,  291, 87,  Common::KEYCODE_RIGHT}, // threeway to passage
+	{24, 300, 83,  319, 183, kALscr2423_2d,  304, 120, Common::KEYCODE_RIGHT}, // lampcave to threeway
+	{25, 0,   98,  15,  171, kALscr2523_2d,  14,  167, Common::KEYCODE_LEFT},  // chasm to threeway
+	{25, 172, 95,  221, 172, kALchasm_2d,    -1,  -1,  -1},                    // chasm
+	{26, 0,   94,  19,  179, kALscr2623_2d,  17,  157, Common::KEYCODE_LEFT},  // passage to threeway
+	{26, 300, 87,  319, 179, kALscr2627_2d,  302, 157, Common::KEYCODE_RIGHT}, // passage to ladder
+	{27, 0,   100, 15,  180, kALscr2726_2d,  14,  152, Common::KEYCODE_LEFT},  // ladder to passage
+	{27, 200, 43,  243, 55,  kALtrap_2d,     210, 100, Common::KEYCODE_UP},    // trapdoor at top of ladder
 	{28, 218, 143, 242, 149, kALscr2827_2d,  225, 147, Common::KEYCODE_UP},    // traproom to ladder
-	{28,  35, 146,  74, 153, kALscr2829_2d,  71,  150, Common::KEYCODE_LEFT},  // traproom to hall2
-	{29, 274, 126, 319, 142, kALscr2928_2d,  283, 134, Common::KEYCODE_RIGHT}, // hall2 to traproom
-	{29, 235,  91, 275, 106, kALscr2930_2d,  242, 100, Common::KEYCODE_RIGHT}, // hall2 to lounge
-	{29,  81,  58, 108,  74, kALscr2931_2d,  90,  71,  Common::KEYCODE_UP},    // hall2 to parlor
-	{29,  15,  71,  54,  95, kALscr2934_2d,  48,  84,  Common::KEYCODE_LEFT},  // hall2 to hall3
-	{29,   0, 130,  20, 144, kALscr2938_2d,  19,  135, Common::KEYCODE_LEFT},  // hall2 to hall1
+	{28, 35,  96,  74,  153, kALscr2829_2d,  71,  150, Common::KEYCODE_LEFT},  // traproom to hall2
+	{29, 274, 55,  319, 142, kALscr2928_2d,  283, 134, Common::KEYCODE_RIGHT}, // hall2 to traproom
+	{29, 235, 41,  275, 106, kALscr2930_2d,  242, 100, Common::KEYCODE_RIGHT}, // hall2 to lounge
+	{29, 81,  28,  108, 74,  kALscr2931_2d,  90,  71,  Common::KEYCODE_UP},    // hall2 to parlor
+	{29, 15,  71,  54,  95,  kALscr2934_2d,  48,  84,  Common::KEYCODE_LEFT},  // hall2 to hall3
+	{29, 0,   57,  20,  144, kALscr2938_2d,  19,  135, Common::KEYCODE_LEFT},  // hall2 to hall1
 	{30, 222, 183, 258, 199, kALscr3029_2d,  232, 183, Common::KEYCODE_DOWN},  // lounge to hall2
-	{31, 263, 141, 287, 146, kALscr3132_2d,  266, 143, Common::KEYCODE_RIGHT}, // parlor to catroom
+	{31, 263, 90,  287, 146, kALscr3132_2d,  266, 143, Common::KEYCODE_RIGHT}, // parlor to catroom
 	{31, 172, 164, 211, 178, kALscr3129_2d,  185, 165, Common::KEYCODE_DOWN},  // parlor to hall2
-	{31,   0, 148,  46, 158, kALscr3106_2d,  35,  154, Common::KEYCODE_LEFT},  // parlor to kitchen
-	{32,  60, 118,  90, 123, kALscr3231_2d,  83,  120, Common::KEYCODE_LEFT},  // catroom to parlor
-	{34,   6, 167,  39, 179, kALscr3438_2d,  38,  172, Common::KEYCODE_LEFT},  // hall3 to hall1
-	{34,   7, 185, 311, 199, kALscr3429_2d,  168, 186, Common::KEYCODE_DOWN},  // hall3 to hall2
-	{35,  65, 176, 101, 188, kALscr3534_2d,  74,  178, Common::KEYCODE_DOWN},  // organ to hall3
+	{31, 0,   97,  46,  158, kALscr3106_2d,  35,  154, Common::KEYCODE_LEFT},  // parlor to kitchen
+	{32, 60,  73,  90,  123, kALscr3231_2d,  83,  120, Common::KEYCODE_LEFT},  // catroom to parlor
+	{34, 6,   100, 39,  179, kALscr3438_2d,  38,  172, Common::KEYCODE_LEFT},  // hall3 to hall1
+	{34, 7,   180, 311, 199, kALscr3429_2d,  168, 186, Common::KEYCODE_DOWN},  // hall3 to hall2
+	{35, 65,  176, 101, 188, kALscr3534_2d,  74,  178, Common::KEYCODE_DOWN},  // organ to hall3
 	{36, 238, 164, 272, 177, kALscr3634_2d,  250, 166, Common::KEYCODE_DOWN},  // hestroom to hall3
-	{36,  62, 140, 158, 158, kALhtable_2d,   -1,  -1,  -1},                    // hestroom table
-	{37, 253,  82, 286,  84, kALscr3718_2d,  254, 83,  Common::KEYCODE_RIGHT}, // retupmoc to phonebox
-	{38, 275, 156, 307, 166, kALscr3829_2d,  279, 164, Common::KEYCODE_RIGHT}, // hall1 to hall2
-	{38, 142, 138, 172, 150, kALscr3834_2d,  152, 150, Common::KEYCODE_UP},    // hall1 to hall3
-	{MAZE_SCREEN+59, 100, 140, 180, 160, kALexitmaze_2d, 133, 143, Common::KEYCODE_DOWN},  // Exit maze
+	{36, 62,  140, 158, 158, kALhtable_2d,   -1,  -1,  -1},                    // hestroom table
+	{37, 253, 82,  286, 84,  kALscr3718_2d,  254, 83,  Common::KEYCODE_RIGHT}, // retupmoc to phonebox
+	{38, 275, 116, 307, 166, kALscr3829_2d,  279, 164, Common::KEYCODE_RIGHT}, // hall1 to hall2
+	{38, 142, 108, 172, 150, kALscr3834_2d,  152, 150, Common::KEYCODE_UP},    // hall1 to hall3
+	{MAZE_SCREEN + 59, 100, 140, 180, 160, kALexitmaze_2d, 133, 143, Common::KEYCODE_DOWN},  // Exit maze
 	{-1,  -1,  -1,  -1,  -1, 0,              -1, -1, -1}   // End of list marker
 };
 
 hotspot_t hotspots_3d[] = {
-	{CRASH_3d,      0, 163,  30, 190, kALcrash_web_3d,       11, 176, Common::KEYCODE_LEFT},
-	{CRASH_3d,     65, 148, 309, 158, kALhorizon_3d,        -1,  -1,  -1},
+	{CRASH_3d,    0,   163, 30,  190, kALcrash_web_3d,      11, 176,  Common::KEYCODE_LEFT},
+	{CRASH_3d,    65,  148, 309, 158, kALhorizon_3d,        -1,  -1,  -1},
 	{CRASH_3d,    164, 102, 205, 144, kALplane_3d,          178, 153, Common::KEYCODE_UP},    // Added by Strangerke to enter plane cockpit
-	{PLANE_3d,    120, 126, 220, 170, kALexit_3d,             0,   0, Common::KEYCODE_DOWN},  // Added by Strangerke to exit plane cockpit
-	{WEB_3d,      296,  73, 319, 190, kALweb_crash_3d,      307, 149, Common::KEYCODE_RIGHT},
-	{WEB_3d,        0, 156,  30, 190, kALweb_path_3d,        15, 182, Common::KEYCODE_LEFT},
+	{PLANE_3d,    120, 126, 220, 170, kALexit_3d,           0,   0,   Common::KEYCODE_DOWN},  // Added by Strangerke to exit plane cockpit
+	{WEB_3d,      296, 73,  319, 190, kALweb_crash_3d,      307, 149, Common::KEYCODE_RIGHT},
+	{WEB_3d,      0,   156, 30,  190, kALweb_path_3d,       15,  182, Common::KEYCODE_LEFT},
 	{PATH_UL_3d,  293, 161, 319, 190, kALpath_web_3d,       305, 181, Common::KEYCODE_RIGHT},
-	{PATH_UL_3d,    0, 127,  24, 138, kALpath_brg_3d,        12, 137, Common::KEYCODE_LEFT},
-	{BRIDGE_3d,   296, 131, 319, 135, kALbrg_path_3d,       309, 135, Common::KEYCODE_RIGHT},
-	{BRIDGE_3d,     0, 130,  21, 135, kALbrg_clftop_3d,      10, 135, Common::KEYCODE_LEFT},
-	{BRIDGE_3d,   225, 132, 235, 135, kALblk_3d,             -1, -1, -1},
-	{BRIDGE2_3d,  296, 131, 319, 135, kALbrg_path_3d,       309, 135, Common::KEYCODE_RIGHT},
-	{BRIDGE2_3d,    0, 130,  21, 135, kALbrg_clftop_3d,      10, 135, Common::KEYCODE_LEFT},
-	{CLIFFTOP_3d, 293,  69, 319,  79, kALclftop_brg_3d,     303,  77, Common::KEYCODE_RIGHT},
+	{PATH_UL_3d,  0,   127, 24,  138, kALpath_brg_3d,       12,  137, Common::KEYCODE_LEFT},
+	{BRIDGE_3d,   296, 125, 319, 138, kALbrg_path_3d,       309, 135, Common::KEYCODE_RIGHT},
+	{BRIDGE_3d,   0,   125, 21,  138, kALbrg_clftop_3d,     10,  135, Common::KEYCODE_LEFT},
+	{BRIDGE_3d,   225, 132, 235, 135, kALblk_3d,            -1,  -1, -1},
+	{BRIDGE2_3d,  296, 125, 319, 138, kALbrg_path_3d,       309, 135, Common::KEYCODE_RIGHT},
+	{BRIDGE2_3d,  0,   125, 21,  138, kALbrg_clftop_3d,     10,  135, Common::KEYCODE_LEFT},
+	{CLIFFTOP_3d, 293, 69,  319, 79,  kALclftop_brg_3d,     303, 77,  Common::KEYCODE_RIGHT},
 	{CLIFFTOP_3d, 294, 131, 319, 149, kALclftop_slope_3d,   304, 136, Common::KEYCODE_RIGHT},
 	{CLIFFTOP_3d, 290, 171, 319, 186, kALclftop_clf_3d,     303, 176, Common::KEYCODE_RIGHT},
-	{SLOPE_3d,      0, 147,  25, 165, kALslope_clftop_3d,    13, 164, Common::KEYCODE_LEFT},
+	{SLOPE_3d,    0,   147, 25,  165, kALslope_clftop_3d,   13,  164, Common::KEYCODE_LEFT},
 	{SLOPE_3d,    291, 127, 319, 143, kALslope_stream_3d,   303, 141, Common::KEYCODE_RIGHT},
-	{CLIFF_3d,      0, 152,  26, 190, kALclf_clftop_3d,      15, 183, Common::KEYCODE_LEFT},
+	{CLIFF_3d,    0,   152, 26,  190, kALclf_clftop_3d,     15,  183, Common::KEYCODE_LEFT},
 	{CLIFF_3d,    293, 152, 319, 190, kALclf_wfall_3d,      303, 183, Common::KEYCODE_RIGHT},
-	{STREAM_3d,     0, 160,  26, 190, kALstream_slope_3d,    13, 177, Common::KEYCODE_LEFT},
+	{STREAM_3d,   0,   160, 26,  190, kALstream_slope_3d,   13,  177, Common::KEYCODE_LEFT},
 	{STREAM_3d,   293, 163, 319, 190, kALstream_path_3d,    307, 177, Common::KEYCODE_RIGHT},
-	{STREAM_3d,   198, 140, 245, 160, kALfindbook_3d,        -1, -1, -1},
-	{STREAM2_3d,    0, 160,  26, 190, kALstream_slope_3d,    13, 177, Common::KEYCODE_LEFT},
+	{STREAM_3d,   198, 140, 245, 160, kALfindbook_3d,       -1,  -1,  -1},
+	{STREAM2_3d,  0,   160, 26,  190, kALstream_slope_3d,   13,  177, Common::KEYCODE_LEFT},
 	{STREAM2_3d,  293, 163, 319, 190, kALstream_path_3d,    307, 177, Common::KEYCODE_RIGHT},
-	{STREAM2_3d,  198, 140, 245, 160, kALfindbook_3d,        -1, -1, -1},
+	{STREAM2_3d,  198, 140, 245, 160, kALfindbook_3d,       -1,  -1,  -1},
 	{PATH_3d,     292, 161, 319, 190, kALpath_village_3d,   304, 184, Common::KEYCODE_RIGHT},
-	{PATH_3d,       0, 161,  24, 190, kALpath_stream_3d,     13, 184, Common::KEYCODE_LEFT},
-	{VILLAGE_3d,   14, 137,  41, 156, kALvillage_thing_3d,   -1, -1, -1},
-	{VILLAGE_3d,    0, 148,  24, 190, kALvillage_path_3d,    14, 175, Common::KEYCODE_LEFT},
+	{PATH_3d,     0,   161, 24,  190, kALpath_stream_3d,    13,  184, Common::KEYCODE_LEFT},
+	{VILLAGE_3d,  14,  137, 41,  156, kALvillage_thing_3d,  -1,  -1,  -1},
+	{VILLAGE_3d,  0,   148, 24,  190, kALvillage_path_3d,   14,  175, Common::KEYCODE_LEFT},
 	{VILLAGE_3d,  292, 161, 319, 190, kALvillage_turn_3d,   307, 175, Common::KEYCODE_RIGHT},
-	{VILLAGE_3d,   14, 139, 111, 155, kALvillage_camp_l_3d,  90, 153, Common::KEYCODE_UP},
-	{VILLAGE_3d,  112, 139, 252, 155, kALvillage_camp_r_3d, 162, 153, Common::KEYCODE_UP},
-	{HUT_OUT_3d,    0, 147,  30, 190, kALhut_camp_3d,        14, 177, Common::KEYCODE_LEFT},
+	{VILLAGE_3d,  14,  126, 111, 155, kALvillage_camp_l_3d, 90,  153, Common::KEYCODE_UP},
+	{VILLAGE_3d,  112, 126, 252, 155, kALvillage_camp_r_3d, 162, 153, Common::KEYCODE_UP},
+	{HUT_OUT_3d,  0,   147, 30,  190, kALhut_camp_3d,       14,  177, Common::KEYCODE_LEFT},
 	{HUT_OUT_3d,  290, 147, 319, 190, kALhut_village_r_3d,  304, 177, Common::KEYCODE_RIGHT}, // Exit right
-	{HUT_OUT_3d,   14, 178, 319, 190, kALhut_village_c_3d,  150, 189, Common::KEYCODE_DOWN},  // Exit center
+	{HUT_OUT_3d,  14,  178, 319, 190, kALhut_village_c_3d,  150, 189, Common::KEYCODE_DOWN},  // Exit center
 	{HUT_OUT_3d,  132, 126, 177, 145, kALhut_enter_3d,      150, 136, Common::KEYCODE_UP},
 	{HUT_IN_3d,   138, 183, 189, 199, kALhut_out_3d,        153, 189, Common::KEYCODE_DOWN},
 	{CAMP_3d,     290, 136, 319, 190, kALcamp_hut_3d,       303, 165, Common::KEYCODE_RIGHT},
-	{CAMP_3d,       0, 109,  27, 190, kALcamp_village_l_3d,  13, 155, Common::KEYCODE_LEFT},  // exit left
-	{CAMP_3d,      13, 180, 303, 199, kALcamp_village_c_3d, 130, 190, Common::KEYCODE_DOWN},  // exit center
-	{TURN_3d,       0, 114,  28, 133, kALturn_village_3d,    14, 131, Common::KEYCODE_LEFT},
-	{TURN_3d,       0, 165,  28, 190, kALturn_cave_3d,       13, 180, Common::KEYCODE_LEFT},
+	{CAMP_3d,     0,   109, 27,  190, kALcamp_village_l_3d, 13,  155, Common::KEYCODE_LEFT},  // exit left
+	{CAMP_3d,     13,  180, 303, 199, kALcamp_village_c_3d, 130, 190, Common::KEYCODE_DOWN},  // exit center
+	{TURN_3d,     0,   114, 28,  133, kALturn_village_3d,   14,  131, Common::KEYCODE_LEFT},
+	{TURN_3d,     0,   165, 28,  190, kALturn_cave_3d,      13,  180, Common::KEYCODE_LEFT},
 	{CAVE_3d,     291, 140, 319, 190, kALcave_turn_3d,      307, 184, Common::KEYCODE_RIGHT},
-	{CAVE_3d,       0, 146,  27, 190, kALcave_wfall_3d,      14, 184, Common::KEYCODE_LEFT},
-	{CAVE_3d,      86, 128, 162, 141, kALcave_oldman_3d,    114, 134, Common::KEYCODE_UP},
-	{WFALL_3d,      0, 166,  28, 190, kALwfall_clf_3d,       14, 184, Common::KEYCODE_LEFT},
+	{CAVE_3d,     0,   146, 27,  190, kALcave_wfall_3d,     14,  184, Common::KEYCODE_LEFT},
+	{CAVE_3d,     86,  128, 162, 141, kALcave_oldman_3d,    114, 134, Common::KEYCODE_UP},
+	{WFALL_3d,    0,   166, 28,  190, kALwfall_clf_3d,      14,  184, Common::KEYCODE_LEFT},
 	{WFALL_3d,    294, 159, 319, 190, kALwfall_cave_3d,     306, 184, Common::KEYCODE_RIGHT},
 	{WFALL_3d,    238, 147, 284, 158, kALwfall_wbase_3d,    255, 154, Common::KEYCODE_UP},
-	{WFALL_B_3d,    0, 166,  28, 190, kALwfallb_clf_3d,      14, 184, Common::KEYCODE_LEFT},
+	{WFALL_B_3d,  0,   166, 28,  190, kALwfallb_clf_3d,     14,  184, Common::KEYCODE_LEFT},
 	{WFALL_B_3d,  294, 159, 319, 190, kALwfallb_cave_3d,    306, 184, Common::KEYCODE_RIGHT},
 	{WFALL_B_3d,  238, 147, 284, 158, kALwfallb_wbase_3d,   255, 154, Common::KEYCODE_UP},
 	{WBASE_3d,    295, 146, 319, 190, kALwbase_wfall_3d,    306, 154, Common::KEYCODE_RIGHT},
-	{WBASE_3d,      0, 149,  26, 190, kALwbase_garden_3d,    14, 154, Common::KEYCODE_LEFT},
+	{WBASE_3d,    0,   149, 26,  190, kALwbase_garden_3d,   14,  154, Common::KEYCODE_LEFT},
 	{GARDEN_3d,   294, 165, 319, 190, kALgarden_wbase_3d,   306, 177, Common::KEYCODE_RIGHT},
-	{-1,           -1,  -1,  -1,  -1, 0,                    -1,  -1,  -1} // End of list marker               -1, -1, -1}  // End of list marker
+	{-1,          -1,  -1,  -1,  -1,  0,                    -1,  -1,  -1} // End of list marker               -1, -1, -1}  // End of list marker
 };
 
 // List all objects that can appear in inventory list
@@ -5618,7 +5618,7 @@ object_t objects_2d[] = {
 {kNCat_2d,       kDTdull_2d,      0, AUTO,    0,    0,    0,            THING2b, CYCLE_FORWARD,    0, 2, 0,  40, 32,               189, 69,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   171, 117, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
 // Screen 33: (Boxroom)
 {kNDoor_2d,      kDTtbdoor_2d,    0, AUTO,    0,    0,    0,            THING4,  NOT_CYCLING,      1, 4, 4,  16, 33,               137, 97,  90,  90,  0, 0, 0,  1, 0,               0, 0, 0, FLOATING,   140, 142, Common::KEYCODE_UP,    0, 0, 0, 0},
-{kNPaper_2d,     0,               0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  20, 33,               205, 147, 90,  90,  0, 0, 5,  7, kCMDpaper_2d,    0, 0, 0, BACKGROUND, 188, 159, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
+{kNPaper_2d,     0,               0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  20, 33,               205, 147, 90,  90,  0, 0, 5,  7, kCMDpaper_2d,    0, 0, 0, BACKGROUND, 193, 159, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
 {kNPencil_2d,    kDTdull_2d,      0, AUTO,    0,    0,    0,            THING1,  NOT_CYCLING,      1, 0, 0,  20, 33,               205, 163, 90,  90,  0, 0, 5,  7, kCMDpencil_2d,   0, 0, 0, FLOATING,   188, 168, Common::KEYCODE_RIGHT, 0, 0, 0, 0},
 // Screen 34: (Hall3)
 {kNDoor_2d,      kDTtdoor_2d,     0, AUTO,    0,    0,    0,            THING4,  NOT_CYCLING,      1, 4, 4,  16, 34,               234, 73,  90,  90,  0, 0, 0,  1, kCMDdoor2_2d,    0, 0, 0, FLOATING,   240, 121, Common::KEYCODE_UP,    0, 0, 0, 0},
