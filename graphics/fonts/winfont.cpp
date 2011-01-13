@@ -91,7 +91,7 @@ bool WinFont::loadFromFON(const Common::String &fileName, const WinFontDirEntry 
 
 	uint16 numFonts = fontDirectory->readUint16LE();
 
-	// Probably not possible, so this is really  sanity check
+	// Probably not possible, so this is really a sanity check
 	if (numFonts == 0) {
 		warning("No fonts in '%s'", fileName.c_str());
 		return false;
@@ -166,15 +166,9 @@ int WinFont::getCharWidth(byte chr) const {
 bool WinFont::loadFromFNT(Common::SeekableReadStream &stream) {
 	uint16 version = stream.readUint16LE();
 
-	// We'll accept Win2 and Win3 fonts
-	if (version != 0x200 && version != 0x300) {
-		if (version == 0x100) {
-			// TODO: Hugo1 has a font with this
-			// Even FreeType won't accept this font!
-			warning("Windows 1.0 font? Specs please");
-		} else
-			warning("Bad FNT version %04x", version);
-
+	// We'll accept Win1, Win2, and Win3 fonts
+	if (version != 0x100 && version != 0x200 && version != 0x300) {
+		warning("Bad FNT version %04x", version);
 		return false;
 	}
 
@@ -205,10 +199,13 @@ bool WinFont::loadFromFNT(Common::SeekableReadStream &stream) {
 	/* uint32 device = */ stream.readUint32LE();
 	/* uint32 face = */ stream.readUint32LE();
 	/* uint32 bitsPointer = */ stream.readUint32LE();
-	/* uint32 bitsOffset = */ stream.readUint32LE();
+	uint32 bitsOffset = stream.readUint32LE();
 	/* byte reserved = */ stream.readByte();
 
-	if (version == 0x300) {
+	if (version == 0x100) {
+		// Seems Win1 has an extra byte?
+		stream.readByte();
+	} else if (version == 0x300) {
 		// For Windows 3.0, Microsoft added 6 new fields. All of which are
 		// guaranteed to be 0. Which leads to the question: Why add these at all?
 
@@ -232,6 +229,10 @@ bool WinFont::loadFromFNT(Common::SeekableReadStream &stream) {
 			_glyphs[i].charWidth = pixWidth;
 
 		_glyphs[i].offset = (version == 0x300) ? stream.readUint32LE() : stream.readUint16LE();
+
+		// Seems the offsets in the Win1 font format are based on bitsOffset
+		if (version == 0x100)
+			_glyphs[i].offset += bitsOffset;
 	}
 
 	// TODO: Currently only raster fonts are supported!
