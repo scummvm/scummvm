@@ -301,6 +301,7 @@ void Parallaction_br::changeLocation() {
 		_countersNames = _disk->loadTable("counters");
 
 		// TODO: maybe handle this into Disk
+		delete _objects;
 		if (getPlatform() == Common::kPlatformPC) {
 			_objects = _disk->loadObjects("icone.ico");
 		} else {
