@@ -18,6 +18,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  SCUMM:
    - Improved support for FM-TOWNS versions of games.
+ 
+ PSP:
+   - Added image viewer
 
 1.2.1 (2010-12-19)
  General
