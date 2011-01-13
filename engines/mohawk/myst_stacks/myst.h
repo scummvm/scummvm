@@ -186,6 +186,7 @@ private:
 	MystResourceType10 *_rocketSlider5; // 264
 	uint16 _rocketSliderSound; // 294
 	uint16 _rocketLeverPosition; // 296
+	VideoHandle _rocketLinkBook;
 
 	bool _libraryCombinationBookPagesTurning;
 	int16 _libraryBookPage; // 86

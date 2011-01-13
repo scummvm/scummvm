@@ -2164,11 +2164,19 @@ void MystScriptParser_Myst::rocketCheckSolution() {
 	_vm->_sound->stopSound();
 
 	if (solved) {
-		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("selenbok", kMystStack), 224, 41, true);
+		// Reset lever position
+		MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+		lever->drawFrame(0);
 
-		// TODO: Movie control
-		// Play from 0 to 660
-		// Then from 660 to 3500, looping
+		// Book appearing
+		Common::String movieFile = _vm->wrapMovieFilename("selenbok", kMystStack);
+		_rocketLinkBook = _vm->_video->playBackgroundMovie(movieFile, 224, 41);
+		_vm->_video->setVideoBounds(_rocketLinkBook, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(660, 600));
+		_vm->_video->waitUntilMovieEnds(_rocketLinkBook);
+
+		// Book looping closed
+		_rocketLinkBook = _vm->_video->playBackgroundMovie(movieFile, 224, 41, true);
+		_vm->_video->setVideoBounds(_rocketLinkBook, Graphics::VideoTimestamp(660, 600), Graphics::VideoTimestamp(3500, 600));
 
 		_tempVar = 1;
 	}
@@ -2282,8 +2290,8 @@ void MystScriptParser_Myst::o_rocketLeverStartMove(uint16 op, uint16 var, uint16
 void MystScriptParser_Myst::o_rocketOpenBook(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket open link book", op);
 
-	// TODO: Update video playing
-	// Play from 3500 to 13100, looping
+	// Flyby movie
+	_vm->_video->setVideoBounds(_rocketLinkBook, Graphics::VideoTimestamp(3500, 600), Graphics::VideoTimestamp(13100, 600));
 
 	// Set linkable
 	_tempVar = 2;

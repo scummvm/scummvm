@@ -232,7 +232,6 @@ private:
 	uint16 _cursorHintCount;
 	MystCursorHint *_cursorHints;
 	void loadCursorHints();
-	bool _mouseClicked;
 	uint16 _currentCursor;
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
 };

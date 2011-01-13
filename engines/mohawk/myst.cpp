@@ -257,7 +257,6 @@ Common::Error MohawkEngine_Myst::run() {
 	_optionsDialog = new MystOptionsDialog(this);
 	_cursor = new MystCursorManager(this);
 	_rnd = new Common::RandomSource();
-	_mouseClicked = false;
 
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && canLoadGameStateCurrently()) {
@@ -298,20 +297,22 @@ Common::Error MohawkEngine_Myst::run() {
 
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_MOUSEMOVE:
+			case Common::EVENT_MOUSEMOVE: {
 				_needsUpdate = true;
 				_mouse = event.mouse;
+				bool mouseClicked = _system->getEventManager()->getButtonState() & 1;
+
 				// Keep the same resource when dragging
-				if (!_mouseClicked) {
+				if (!mouseClicked) {
 					checkCurrentResource();
 				}
-				if (_curResource >= 0 && _resources[_curResource]->isEnabled() && _mouseClicked) {
+				if (_curResource >= 0 && _resources[_curResource]->isEnabled() && mouseClicked) {
 					debug(2, "Sending mouse move event to resource %d", _curResource);
 					_resources[_curResource]->handleMouseDrag(event.mouse);
 				}
 				break;
+			}
 			case Common::EVENT_LBUTTONUP:
-				_mouseClicked = false;
 				_mouse = event.mouse;
 				if (_curResource >= 0 && _resources[_curResource]->isEnabled()) {
 					debug(2, "Sending mouse up event to resource %d", _curResource);
@@ -320,7 +321,6 @@ Common::Error MohawkEngine_Myst::run() {
 				checkCurrentResource();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				_mouseClicked = true;
 				_mouse = event.mouse;
 				if (_curResource >= 0 && _resources[_curResource]->isEnabled()) {
 					debug(2, "Sending mouse up event to resource %d", _curResource);
