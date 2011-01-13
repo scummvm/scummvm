@@ -656,7 +656,7 @@ void PathWalker_BR::doWalk(State &s) {
 
 	Common::Point p(*s._walkPath.begin());
 
-	if (s._startFoot.y < p.y && s._startFoot.y < maxY && IS_PATH_CLEAR(s._startFoot.x, yStep + s._startFoot.y)) {
+	if (s._startFoot.y < p.y && (s._startFoot.y + yStep) < maxY && IS_PATH_CLEAR(s._startFoot.x, s._startFoot.y + yStep)) {
 		if (yStep + s._startFoot.y <= p.y) {
 			s._fieldC = 1;
 			delta.y = yStep;
@@ -667,7 +667,7 @@ void PathWalker_BR::doWalk(State &s) {
 		}
 		s._dirFrame = 9;
 	} else
-	if (s._startFoot.y > p.y && s._startFoot.y > minY && IS_PATH_CLEAR(s._startFoot.x, s._startFoot.y - yStep)) {
+	if (s._startFoot.y > p.y && (s._startFoot.y - yStep) > minY && IS_PATH_CLEAR(s._startFoot.x, s._startFoot.y - yStep)) {
 		if (s._startFoot.y - yStep >= p.y) {
 			s._fieldC = 1;
 			delta.y = yStep;
@@ -679,7 +679,7 @@ void PathWalker_BR::doWalk(State &s) {
 		s._dirFrame = 0;
 	}
 
-	if (s._startFoot.x < p.x && s._startFoot.x < maxX && IS_PATH_CLEAR(s._startFoot.x + xStep, s._startFoot.y)) {
+	if (s._startFoot.x < p.x && (s._startFoot.x + xStep) < maxX && IS_PATH_CLEAR(s._startFoot.x + xStep, s._startFoot.y)) {
 		if (s._startFoot.x + xStep <= p.x) {
 			s._fieldC = 1;
 			delta.x = xStep;
@@ -692,7 +692,7 @@ void PathWalker_BR::doWalk(State &s) {
 			s._dirFrame = 18;	// right
 		}
 	} else
-	if (s._startFoot.x > p.x && s._startFoot.x > minX && IS_PATH_CLEAR(s._startFoot.x - xStep, s._startFoot.y)) {
+	if (s._startFoot.x > p.x && (s._startFoot.x - xStep) > minX && IS_PATH_CLEAR(s._startFoot.x - xStep, s._startFoot.y)) {
 		if (s._startFoot.x - xStep >= p.x) {
 			s._fieldC = 1;
 			delta.x = xStep;
