@@ -732,7 +732,9 @@ void PathWalker_BR::doWalk(State &s) {
 
 PathWalker_BR::PathWalker_BR() {
 	_character._active = false;
+	_character._step = 0;
 	_follower._active = false;
+	_follower._step = 0;
 }
 
 
