@@ -272,8 +272,8 @@ void MidiPlayer_MSC::play(Common::SeekableReadStream *stream) {
 		return;
 	}
 
+	stop();
 	int size = stream->size();
-
 	_midiData = (uint8 *)malloc(size);
 	if (_midiData) {
 		stream->read(_midiData, size);
