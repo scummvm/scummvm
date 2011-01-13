@@ -694,6 +694,7 @@ int BalloonManager_br::setLocationBalloon(const char *text, bool endGame) {
 	balloon->obj = _vm->_gfx->registerBalloon(new SurfaceToFrames(balloon->surface), 0);
 	balloon->obj->x = 5;
 	balloon->obj->y = 5;
+	balloon->obj->transparentKey = BALLOON_TRANSPARENT_COLOR_BR;
 
 	return 0;
 }
