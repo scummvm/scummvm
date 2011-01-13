@@ -131,6 +131,12 @@ void ConfigManager::addDomain(const Common::String &domainName, const ConfigMana
 		_gameDomains[domainName] = domain;
 
 		_domainSaveOrder.push_back(domainName);
+			
+			// Check if we have the same misc domain. For older config files
+			// we could have 'ghost' domains with the same name, so delete
+			// the ghost domain
+			if (_miscDomains.contains(domainName))
+				_miscDomains.erase(domainName);
 	} else {
 		// Otherwise it's a miscellaneous domain
 		if (_miscDomains.contains(domainName))
@@ -355,10 +361,10 @@ const ConfigManager::Domain *ConfigManager::getDomain(const String &domName) con
 	if (domName == kKeymapperDomain)
 		return &_keymapperDomain;
 #endif
-	if (_miscDomains.contains(domName))
-		return &_miscDomains[domName];
 	if (_gameDomains.contains(domName))
 		return &_gameDomains[domName];
+	if (_miscDomains.contains(domName))
+		return &_miscDomains[domName];
 
 	return 0;
 }
@@ -375,10 +381,10 @@ ConfigManager::Domain *ConfigManager::getDomain(const String &domName) {
 	if (domName == kKeymapperDomain)
 		return &_keymapperDomain;
 #endif
-	if (_miscDomains.contains(domName))
-		return &_miscDomains[domName];
 	if (_gameDomains.contains(domName))
 		return &_gameDomains[domName];
+	if (_miscDomains.contains(domName))
+		return &_miscDomains[domName];
 
 	return 0;
 }
