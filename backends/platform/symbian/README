@@ -26,6 +26,23 @@ About ScummVM
 	Jurgen and Lars have successfully transfered all needed changes into CVS/SVN, with additional helpful tools for Symbian OS
 
 Release History:
+	Release version: 1.2.1
+	* Symbian port now split in to parts, ScummVM 1 and ScummVM 2 to keep the exe size down.
+	  ScummVM 1 contains the following engines:
+	    scumm queen groovie saga drascula
+	    touche parallaction cine
+	    cruise made m4 tucker
+		
+	  ScummVM 2 contains the following engines:
+	    agos sky gob
+		kyra lure agi tinsel
+		sword1 sword2 draci sci teenagent
+	
+	* See main readme for general ScummVM improvements, minor update
+	Release version: 1.2.0
+	* Nothing significant in the Symbian port, except SDL improvements (new SDL version used)
+	* See main readme for general ScummVM improvements, major update
+	
 	Release version: 1.1.0
 	* Nothing significant in the Symbian port, except SDL improvements.
 	* See main readme for general ScummVM improvements, minor update
