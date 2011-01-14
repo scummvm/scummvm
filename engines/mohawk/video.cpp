@@ -325,7 +325,7 @@ void VideoManager::stopMovie(uint16 id) {
 		if (_mlstRecords[i].code == id)
 			for (uint16 j = 0; j < _videoStreams.size(); j++)
 				if (_mlstRecords[i].movieID == _videoStreams[j].id) {
-					delete _videoStreams[i].video;
+					delete _videoStreams[j].video;
 					_videoStreams[j].clear();
 					return;
 				}
