@@ -1707,16 +1707,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 	}
 
 	// There was no click, so just play the rest of the video.
-	while (!_vm->_video->endOfVideo(video) && !_vm->shouldQuit()) {
-		if (_vm->_video->updateBackgroundMovies())
-			_vm->_system->updateScreen();
-
-		Common::Event event;
-		while (_vm->_system->getEventManager()->pollEvent(event))
-			;
-
-		_vm->_system->delayMillis(10);
-	}
+	_vm->_video->waitUntilMovieEnds(video);
 }
 
 void RivenExternal::xooffice30_closebook(uint16 argc, uint16 *argv) {
