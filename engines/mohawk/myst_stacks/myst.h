@@ -70,6 +70,7 @@ private:
 	void observatoryDayChange_run();
 	void observatoryYearChange_run();
 	void observatoryTimeChange_run();
+	void greenBook_run();
 
 	DECLARE_OPCODE(o_libraryBookPageTurnLeft);
 	DECLARE_OPCODE(o_libraryBookPageTurnRight);
@@ -260,6 +261,8 @@ private:
 	bool _observatoryNotInitialized; // 212
 	int16 _observatoryIncrement; // 346
 	MystResourceType10 *_observatoryCurrentSlider; // 348
+
+	bool _greenBookRunning;
 
 	void generatorRedrawRocket();
 	void generatorButtonValue(MystResource *button, uint16 &offset, uint16 &value);

@@ -220,6 +220,7 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 	_observatoryDayChanging = false;
 	_observatoryYearChanging = false;
 	_observatoryTimeChanging = false;
+	_greenBookRunning = false;
 }
 
 void MystScriptParser_Myst::runPersistentScripts() {
@@ -276,6 +277,9 @@ void MystScriptParser_Myst::runPersistentScripts() {
 
 	if (_observatoryTimeChanging)
 		observatoryTimeChange_run();
+
+	if (_greenBookRunning)
+		greenBook_run();
 }
 
 uint16 MystScriptParser_Myst::getVar(uint16 var) {
@@ -3251,6 +3255,11 @@ void MystScriptParser_Myst::o_greenBook_init(uint16 op, uint16 var, uint16 argc,
 	// Used for Card 4168 (Green Book Movies)
 	debugC(kDebugScript, "Opcode %d: Green book init", op);
 
+	_greenBookRunning = true;
+	_tempVar = 1;
+}
+
+void MystScriptParser_Myst::greenBook_run() {
 	uint loopStart = 0;
 	uint loopEnd = 0;
 	Common::String file;
@@ -3265,15 +3274,24 @@ void MystScriptParser_Myst::o_greenBook_init(uint16 op, uint16 var, uint16 argc,
 		file = _vm->wrapMovieFilename("atrusbk2", kMystStack);
 	}
 
-	_vm->_sound->stopSound();
-	_vm->_sound->pauseBackground();
+	if (_tempVar == 1) {
+		_vm->_sound->stopSound();
+		_vm->_sound->pauseBackground();
 
-	if (_globals.ending != 4) {
-		_vm->_video->playBackgroundMovie(file, 314, 76);
+		if (_globals.ending != 4) {
+			_tempVar = 2;
+			_vm->_video->playBackgroundMovie(file, 314, 76);
+		} else {
+			VideoHandle book = _vm->_video->playBackgroundMovie(file, 314, 76, true);
+			_vm->_video->setVideoBounds(book, Graphics::VideoTimestamp(loopStart, 600), Graphics::VideoTimestamp(loopEnd, 600));
+			_tempVar = 0;
+		}
+	} else if (_tempVar == 2 && !_vm->_video->isVideoPlaying()) {
+		VideoHandle book = _vm->_video->playBackgroundMovie(file, 314, 76);
+		_vm->_video->setVideoBounds(book, Graphics::VideoTimestamp(loopStart, 600), Graphics::VideoTimestamp(loopEnd, 600));
+		_vm->_video->setVideoLooping(book, true);
+		_tempVar = 0;
 	}
-
-	// TODO: Movie play control
-	// loop between loopStart and loopEnd
 }
 
 void MystScriptParser_Myst::opcode_222(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
