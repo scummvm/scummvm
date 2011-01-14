@@ -50,16 +50,21 @@ private:
 	uint16 getVar(uint16 var);
 
 	void atrus_run();
+	void loopVideo_run();
+	void atrusLeft_run();
 
-	DECLARE_OPCODE(opcode_100);
 	DECLARE_OPCODE(o_handPage);
 
 	DECLARE_OPCODE(o_atrus_init);
 
-	DECLARE_OPCODE(opcode_300);
-
 	bool _atrusRunning;
 	bool _notSeenAtrus; // 56
+	uint32 _atrusLeftTime; // 60
+	Common::String _video; // 64
+	bool _waitForLoop;
+	uint32 _loopStart; // 72
+	uint32 _loopEnd; // 76
+	bool _atrusLeft; // 80
 };
 
 } // End of namespace Mohawk
