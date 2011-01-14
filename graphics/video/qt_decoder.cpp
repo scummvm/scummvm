@@ -178,6 +178,7 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 
 	// Adjust the video starting point
 	_startTime = g_system->getMillis() - Graphics::VideoTimestamp(_nextFrameStartTime, _streams[_videoStreamIndex]->time_scale).getUnitsInScale(1000);
+	resetPauseStartTime();
 
 	// Adjust the audio starting point
 	if (_audioStreamIndex >= 0) {

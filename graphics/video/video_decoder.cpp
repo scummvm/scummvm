@@ -100,6 +100,11 @@ void VideoDecoder::pauseVideo(bool pause) {
 	}
 }
 
+void VideoDecoder::resetPauseStartTime() {
+	if (isPaused())
+		_pauseStartTime = g_system->getMillis();
+}
+
 uint32 FixedRateVideoDecoder::getTimeToNextFrame() const {
 	if (endOfVideo() || _curFrame < 0)
 		return 0;

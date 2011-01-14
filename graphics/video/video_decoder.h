@@ -176,6 +176,11 @@ protected:
 	 */
 	virtual void addPauseTime(uint32 ms) { _startTime += ms; }
 
+	/**
+	 * Reset the pause start time (which should be called when seeking)
+	 */
+	void resetPauseStartTime();
+
 	int32 _curFrame;
 	int32 _startTime;
 
