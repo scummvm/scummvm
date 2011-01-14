@@ -33,6 +33,7 @@ private:
 	bool Cmd_Locations(int argc, const char **argv);
 	bool Cmd_GfxObjects(int argc, const char **argv);
 	bool Cmd_Programs(int argc, const char** argv);
+	bool Cmd_ShowMouse(int argc, const char** argv);
 
 	Common::String decodeZoneFlags(uint32 flags);
 };
