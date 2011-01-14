@@ -91,6 +91,7 @@ Parallaction::~Parallaction() {
 	_balloonMan = 0;
 
 	delete _localFlagNames;
+	_char._ani.reset();
 	delete _gfx;
 	delete _soundMan;
 	delete _disk;
