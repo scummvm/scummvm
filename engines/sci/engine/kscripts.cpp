@@ -264,6 +264,28 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		}
 	}
 
+	// HACK: Prevent the murderer from getting stuck behind the door in
+	// Colonel's Bequest, room 215. A temporary fix for bug #3122075.
+	// TODO/FIXME: Add a proper fix for this. There is a regression in this
+	// scene with the new kInitBresen and kDoBresen functions (r52467). Using
+	// just the "old" kInitBresen works. This hack is added for now because the
+	// two functions are quite complex. The "old" versions were created based
+	// on observations, and not on the interpreter itself, thus they have a lot
+	// of differences in the way they behave and set variables to the mover object.
+	// Since this is just a death scene where Laura is supposed to die anyway,
+	// figuring out the exact cause of this is just not worth the effort.
+	// Differences between the new and the old kInitBresen to the MoveTo object:
+	// dy: 1 (new) - 2 (old)
+	// b-i1: 20 (new) - 12 (old)
+	// b-di: 65526 (new) - 65516 (old)
+	// Performing the changes above to MoveTo (0017:033a) allows the killer to
+	// move. Note that the actual issue might not be with kInitBresen/kDoBresen,
+	// and there might be another underlying problem here.
+	if (g_sci->getGameId() == GID_LAURABOW && script == 215) {
+		warning("Moving actor position for the shower scene of Colonel's Bequest");
+		writeSelectorValue(s->_segMan, s->_segMan->findObjectByName("killer"), SELECTOR(x), 6);
+	}
+
 	return make_reg(scriptSeg, address);
 }
 

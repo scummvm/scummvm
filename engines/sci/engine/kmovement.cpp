@@ -166,6 +166,17 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// TODO/FIXME: There is a notable regression with the new kInitBresed/kDoBresen
+// functions below in a death scene of LB1 - the shower scene, room 215 (bug
+// #3122075). There is a hack to get around this bug by modifying the actor's
+// position for that scene in kScriptID. The actual bug should be found, but
+// since only this death scene has an issue, it's not really worth the effort.
+// The new kInitBresen/kDoBresen functions have been enabled in r52467. The
+// old ones are based on observations, so there are many differences in the
+// way that they behave. Check the hack in kScriptID for more info. Note that
+// the actual issue might not be with kInitBresen/kDoBresen, and there might
+// be another underlying problem here.
+
 reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	reg_t mover = argv[0];
