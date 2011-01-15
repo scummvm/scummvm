@@ -337,7 +337,7 @@ char *MidiDriver_TIMIDITY::timidity_ctl_command(const char *fmt, ...) {
 			buff[len++] = '\n';
 
 		/* write command to control socket */
-		(void)write(_control_fd, buff, len);
+		write(_control_fd, buff, len);
 	}
 
 	while (1) {
