@@ -431,7 +431,8 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			_mutex.lock();
 			pSnd->pMidiParser->mainThreadBegin();
 			pSnd->pMidiParser->tryToOwnChannels();
-			pSnd->pMidiParser->sendInitCommands();
+			if (pSnd->status != kSoundPaused)
+				pSnd->pMidiParser->sendInitCommands();
 			pSnd->pMidiParser->setVolume(pSnd->volume);
 			if (pSnd->status == kSoundStopped) {
 				pSnd->pMidiParser->jumpToTick(0);
