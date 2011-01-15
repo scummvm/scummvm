@@ -110,6 +110,7 @@ public:
 	void seekToFrame(VideoHandle handle, uint32 frame);
 	void setVideoLooping(VideoHandle handle, bool loop);
 	void waitUntilMovieEnds(VideoHandle videoHandle);
+	void delayUntilMovieEnds(VideoHandle videoHandle);
 
 private:
 	MohawkEngine *_vm;

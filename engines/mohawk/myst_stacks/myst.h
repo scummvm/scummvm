@@ -71,6 +71,7 @@ private:
 	void observatoryYearChange_run();
 	void observatoryTimeChange_run();
 	void greenBook_run();
+	void clockGears_run();
 
 	DECLARE_OPCODE(o_libraryBookPageTurnLeft);
 	DECLARE_OPCODE(o_libraryBookPageTurnRight);
@@ -139,6 +140,13 @@ private:
 	DECLARE_OPCODE(o_clockMinuteWheelStartTurn);
 	DECLARE_OPCODE(o_clockWheelEndTurn);
 	DECLARE_OPCODE(o_clockHourWheelStartTurn);
+	DECLARE_OPCODE(o_clockLeverStartMove);
+	DECLARE_OPCODE(o_clockLeverMove);
+	DECLARE_OPCODE(o_clockLeverEndMove);
+	DECLARE_OPCODE(o_clockResetLeverStartMove);
+	DECLARE_OPCODE(o_clockResetLeverMove);
+	DECLARE_OPCODE(o_clockResetLeverEndMove);
+
 	DECLARE_OPCODE(o_libraryCombinationBookStartRight);
 	DECLARE_OPCODE(o_libraryCombinationBookStartLeft);
 	DECLARE_OPCODE(o_observatoryTimeChangeStart);
@@ -157,7 +165,7 @@ private:
 	DECLARE_OPCODE(o_libraryBookcaseTransform_init);
 	DECLARE_OPCODE(o_generatorControlRoom_init);
 	DECLARE_OPCODE(o_fireplace_init);
-	DECLARE_OPCODE(opcode_212);
+	DECLARE_OPCODE(o_clockGears_init);
 	DECLARE_OPCODE(opcode_213);
 	DECLARE_OPCODE(o_observatory_init);
 	DECLARE_OPCODE(opcode_215);
@@ -215,6 +223,13 @@ private:
 	uint16 _fireplaceLines[6]; // 74 to 84
 
 	uint16 _clockTurningWheel;
+
+	VideoHandle _clockGearsVideos[3]; // 148 to 156
+	VideoHandle _clockWeightVideo; // 160
+	uint16 _clockGearsPositions[3]; // 164 to 168
+	uint16 _clockWeightPosition; // 172
+	bool _clockMiddleGearMovedAlone; // 176
+	bool _clockLeverPulled; // 328
 
 	uint16 _dockVaultState; // 92
 
@@ -278,6 +293,13 @@ private:
 
 	void clockWheelStartTurn(uint16 wheel);
 	void clockWheelTurn(uint16 var);
+
+	void clockGearForwardOneStep(uint16 gear);
+	void clockWeightDownOneStep();
+	void clockGearsCheckSolution();
+	void clockReset();
+	void clockResetWeight();
+	void clockResetGear(uint16 gear);
 
 	void towerRotationMapRotate();
 	void towerRotationDrawBuildings();

@@ -143,6 +143,21 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	_videoStreams[videoHandle].clear();
 }
 
+void VideoManager::delayUntilMovieEnds(VideoHandle videoHandle) {
+	bool continuePlaying = true;
+
+	while (!_videoStreams[videoHandle].endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
+		if (updateBackgroundMovies())
+			_vm->_system->updateScreen();
+
+		// Cut down on CPU usage
+		_vm->_system->delayMillis(10);
+	}
+
+	delete _videoStreams[videoHandle].video;
+	_videoStreams[videoHandle].clear();
+}
+
 VideoHandle VideoManager::playBackgroundMovie(const Common::String &filename, int16 x, int16 y, bool loop) {
 	VideoHandle videoHandle = createVideoHandle(filename, x, y, loop);
 	if (videoHandle == NULL_VID_HANDLE)

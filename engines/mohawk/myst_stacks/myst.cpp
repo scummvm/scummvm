@@ -90,6 +90,8 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(122, o_cabinSafeHandleStartMove);
 	OPCODE(123, o_cabinSafeHandleMove);
 	OPCODE(124, o_cabinSafeHandleEndMove);
+	OPCODE(126, o_clockLeverStartMove);
+	OPCODE(127, o_clockLeverEndMove);
 	OPCODE(128, o_treePressureReleaseStart);
 	if (!observatoryIsDDMMYYYY2400()) {
 		OPCODE(129, o_observatoryMonthChangeStart);
@@ -107,9 +109,14 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(135, o_observatoryDaySliderMove);
 	OPCODE(136, o_observatoryYearSliderMove);
 	OPCODE(137, o_observatoryTimeSliderMove);
+	OPCODE(138, o_clockResetLeverStartMove);
+	OPCODE(139, o_clockResetLeverMove);
+	OPCODE(140, o_clockResetLeverEndMove);
 	OPCODE(141, o_circuitBreakerStartMove);
 	OPCODE(142, o_circuitBreakerMove);
 	OPCODE(143, o_circuitBreakerEndMove);
+	OPCODE(144, o_clockLeverMove);
+	OPCODE(145, o_clockLeverMove);
 	OPCODE(146, o_boilerIncreasePressureStart);
 	OPCODE(147, o_boilerLightPilot);
 	OPCODE(148, NOP);
@@ -175,7 +182,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(209, o_libraryBookcaseTransform_init);
 	OPCODE(210, o_generatorControlRoom_init);
 	OPCODE(211, o_fireplace_init);
-	OPCODE(212, opcode_212);
+	OPCODE(212, o_clockGears_init);
 	OPCODE(213, opcode_213);
 	OPCODE(214, o_observatory_init);
 	OPCODE(215, opcode_215);
@@ -221,6 +228,7 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 	_observatoryYearChanging = false;
 	_observatoryTimeChanging = false;
 	_greenBookRunning = false;
+	_clockLeverPulled = false;
 }
 
 void MystScriptParser_Myst::runPersistentScripts() {
@@ -280,6 +288,9 @@ void MystScriptParser_Myst::runPersistentScripts() {
 
 	if (_greenBookRunning)
 		greenBook_run();
+
+	if (_clockLeverPulled)
+		clockGears_run();
 }
 
 uint16 MystScriptParser_Myst::getVar(uint16 var) {
@@ -2769,6 +2780,262 @@ void MystScriptParser_Myst::o_imagerEraseStop(uint16 op, uint16 var, uint16 argc
 	_imagerValidationRunning = false;
 }
 
+void MystScriptParser_Myst::o_clockLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Clock lever start move", op);
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	lever->drawFrame(0);
+	_vm->_cursor->setCursor(700);
+	_clockMiddleGearMovedAlone = false;
+	_clockLeverPulled = false;
+}
+
+void MystScriptParser_Myst::o_clockLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Clock left lever move", op);
+
+	if (!_clockLeverPulled) {
+		MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+		// Make the handle follow the mouse
+		int16 maxStep = lever->getStepsV() - 1;
+		Common::Rect rect = lever->getRect();
+		int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
+		step = CLIP<int16>(step, 0, maxStep);
+
+		lever->drawFrame(step);
+
+		if (step == maxStep) {
+			// Start videos for first step
+			if (_clockWeightPosition < 2214) {
+				_vm->_sound->replaceSound(5113);
+				clockGearForwardOneStep(1);
+
+				// Left lever
+				if (op == 144)
+					clockGearForwardOneStep(2);
+				else // Right lever
+					clockGearForwardOneStep(0);
+
+				clockWeightDownOneStep();
+			}
+			_clockLeverPulled = true;
+		}
+	}
+}
+
+void MystScriptParser_Myst::clockGearForwardOneStep(uint16 gear) {
+	static const uint16 startTime[] = { 0, 324, 618 };
+	static const uint16 endTime[] = { 324, 618, 950 };
+	static const char *videos[] = { "cl1wg1", "cl1wg2", "cl1wg3" };
+	static const uint16 x[] = { 224, 224, 224 };
+	static const uint16 y[] = { 49, 82, 109 };
+
+	// Increment value by one
+	_clockGearsPositions[gear] = _clockGearsPositions[gear] % 3 + 1;
+
+	// Set video bounds
+	uint16 gearPosition = _clockGearsPositions[gear] - 1;
+	_clockGearsVideos[gear] = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(videos[gear], kMystStack), x[gear], y[gear]);
+	_vm->_video->setVideoBounds(_clockGearsVideos[gear],
+			Graphics::VideoTimestamp(startTime[gearPosition], 600),
+			Graphics::VideoTimestamp(endTime[gearPosition], 600));
+}
+
+void MystScriptParser_Myst::clockWeightDownOneStep() {
+	// Set video bounds
+	_clockWeightVideo = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+	_vm->_video->setVideoBounds(_clockWeightVideo,
+			Graphics::VideoTimestamp(_clockWeightPosition, 600),
+			Graphics::VideoTimestamp(_clockWeightPosition + 246, 600));
+
+	// Increment value by one step
+	_clockWeightPosition += 246;
+}
+
+void MystScriptParser_Myst::clockGears_run() {
+	if (!_vm->_video->isVideoPlaying() && _clockWeightPosition < 2214) {
+		_clockMiddleGearMovedAlone = true;
+		_vm->_sound->replaceSound(5113);
+		clockGearForwardOneStep(1);
+		clockWeightDownOneStep();
+	}
+}
+
+void MystScriptParser_Myst::o_clockLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Clock lever end move", op);
+	static const char *videos[] = { "cl1wg1", "cl1wg2", "cl1wg3", "cl1wlfch" };
+
+	_vm->_cursor->hideCursor();
+	_clockLeverPulled = false;
+
+	// Let movies stop playing
+	for (uint i = 0; i < ARRAYSIZE(videos); i++) {
+		VideoHandle handle = _vm->_video->findVideoHandle(_vm->wrapMovieFilename(videos[i], kMystStack));
+		if (handle != NULL_VID_HANDLE)
+			_vm->_video->delayUntilMovieEnds(handle);
+	}
+
+	if (_clockMiddleGearMovedAlone)
+		_vm->_sound->replaceSound(8113);
+
+	// Get current lever frame
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	int16 maxStep = lever->getStepsV() - 1;
+	Common::Rect rect = lever->getRect();
+	int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
+	step = CLIP<int16>(step, 0, maxStep);
+
+	// Release lever
+	for (int i = step; i >= 0; i--) {
+		lever->drawFrame(i);
+		_vm->_system->delayMillis(10);
+	}
+
+	// Check if puzzle is solved
+	clockGearsCheckSolution();
+
+	_vm->_cursor->showCursor();
+}
+
+void MystScriptParser_Myst::clockGearsCheckSolution() {
+	if (_clockGearsPositions[0] == 2
+			&& _clockGearsPositions[1] == 2
+			&& _clockGearsPositions[2] == 1
+			&& !_state.gearsOpen) {
+
+		// Make weight go down
+		_vm->_sound->replaceSound(9113);
+		_clockWeightVideo = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+		_vm->_video->setVideoBounds(_clockWeightVideo,
+				Graphics::VideoTimestamp(_clockWeightPosition, 600),
+				Graphics::VideoTimestamp(2214, 600));
+		_vm->_video->waitUntilMovieEnds(_clockWeightVideo);
+		_clockWeightPosition = 2214;
+
+		_vm->_sound->replaceSound(6113);
+		_vm->_system->delayMillis(1000);
+		_vm->_sound->replaceSound(7113);
+
+		// Gear opening video
+		_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wggat", kMystStack) , 195, 225);
+		_state.gearsOpen = 1;
+		_vm->redrawArea(40);
+
+		_vm->_sound->replaceBackground(4113, 16384);
+	}
+}
+
+void MystScriptParser_Myst::o_clockResetLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Clock reset lever start move", op);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	lever->drawFrame(0);
+	_vm->_cursor->setCursor(700);
+}
+
+void MystScriptParser_Myst::o_clockResetLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Clock reset lever move", op);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Make the handle follow the mouse
+	int16 maxStep = lever->getStepsV() - 1;
+	Common::Rect rect = lever->getRect();
+	int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
+	step = CLIP<int16>(step, 0, maxStep);
+
+	lever->drawFrame(step);
+
+	if (step == maxStep && _clockWeightPosition != 0)
+		clockReset();
+}
+
+void MystScriptParser_Myst::clockReset() {
+	static const char *videos[] = { "cl1wg1", "cl1wg2", "cl1wg3", "cl1wlfch" };
+
+	_vm->_cursor->hideCursor();
+
+	_vm->_sound->stopBackground();
+	_vm->_sound->replaceSound(5113);
+
+	// Play reset videos
+	clockResetWeight();
+	clockResetGear(0);
+	clockResetGear(1);
+	clockResetGear(2);
+
+	// Let movies stop playing
+	for (uint i = 0; i < ARRAYSIZE(videos); i++) {
+		VideoHandle handle = _vm->_video->findVideoHandle(_vm->wrapMovieFilename(videos[i], kMystStack));
+		if (handle != NULL_VID_HANDLE)
+			_vm->_video->delayUntilMovieEnds(handle);
+	}
+
+	_vm->_sound->replaceSound(10113);
+
+	// Close gear
+	if (_state.gearsOpen) {
+		_vm->_sound->replaceSound(6113);
+		_vm->_system->delayMillis(1000);
+		_vm->_sound->replaceSound(7113);
+
+		// TODO: Play cl1wggat backwards
+		// Redraw gear
+		_state.gearsOpen = 0;
+		_vm->redrawArea(40);
+	}
+
+	_vm->_cursor->showCursor();
+}
+
+void MystScriptParser_Myst::clockResetWeight() {
+	// Set video bounds
+	_clockWeightVideo = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+	_vm->_video->setVideoBounds(_clockWeightVideo,
+			Graphics::VideoTimestamp(2214 * 2 - _clockWeightPosition, 600),
+			Graphics::VideoTimestamp(2214 * 2, 600));
+
+	// Reset position
+	_clockWeightPosition = 0;
+}
+
+void MystScriptParser_Myst::clockResetGear(uint16 gear) {
+	static const uint16 time[] = { 324, 618, 950 };
+	static const char *videos[] = { "cl1wg1", "cl1wg2", "cl1wg3" };
+	static const uint16 x[] = { 224, 224, 224 };
+	static const uint16 y[] = { 49, 82, 109 };
+
+	// Set video bounds
+	uint16 gearPosition = _clockGearsPositions[gear] - 1;
+	if (gearPosition != 2) {
+		_clockGearsVideos[gear] = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(videos[gear], kMystStack), x[gear], y[gear]);
+		_vm->_video->setVideoBounds(_clockGearsVideos[gear],
+				Graphics::VideoTimestamp(time[gearPosition], 600),
+				Graphics::VideoTimestamp(time[2], 600));
+	}
+
+	// Reset gear position
+	_clockGearsPositions[gear] = 3;
+}
+
+void MystScriptParser_Myst::o_clockResetLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Clock reset lever end move", op);
+
+	// Get current lever frame
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	int16 maxStep = lever->getStepsV() - 1;
+	Common::Rect rect = lever->getRect();
+	int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
+	step = CLIP<int16>(step, 0, maxStep);
+
+	// Release lever
+	for (int i = step; i >= 0; i--) {
+		lever->drawFrame(i);
+		_vm->_system->delayMillis(10);
+	}
+
+	_vm->checkCursorHints();
+}
+
 void MystScriptParser_Myst::o_libraryBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_libraryBookPage = 0;
 	_libraryBookNumPages = argv[0];
@@ -3024,21 +3291,21 @@ void MystScriptParser_Myst::o_fireplace_init(uint16 op, uint16 var, uint16 argc,
 		_fireplaceLines[i] = 0;
 }
 
-void MystScriptParser_Myst::opcode_212(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Myst::o_clockGears_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 4113 (Clock Tower Cog Puzzle)
+	debugC(kDebugScript, "Opcode %d: Gears puzzle init", op);
 
-	if (false) {
-		// 3 videos to be played of Cog Movement
-		// TODO: Not 100% sure of movie positions.
-		_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wg1", kMystStack), 220, 50);
-		_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wg2", kMystStack), 220, 80);
-		_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wg3", kMystStack), 220, 110);
-
-		// 1 video of weight descent
-		_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack), 123, 0);
-
-		// Video of Cog Open on Success
-		_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wggat", kMystStack), 195, 225);
+	// Set gears position
+	if (_state.gearsOpen) {
+		_clockGearsPositions[0] = 2;
+		_clockGearsPositions[1] = 2;
+		_clockGearsPositions[2] = 1;
+		_clockWeightPosition = 2214;
+	} else {
+		_clockGearsPositions[0] = 3;
+		_clockGearsPositions[1] = 3;
+		_clockGearsPositions[2] = 3;
+		_clockWeightPosition = 0;
 	}
 }
 
