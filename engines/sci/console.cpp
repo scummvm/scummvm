@@ -2947,7 +2947,7 @@ bool Console::cmdGo(int argc, const char **argv) {
 bool Console::cmdLogKernel(int argc, const char **argv) {
 	if (argc < 3) {
 		DebugPrintf("Logs calls to specified kernel function.\n");
-		DebugPrintf("Usage: %s <kernel-function/*> <on/off>\n", argv[0]);
+		DebugPrintf("Usage: %s <kernel function/*> <on/off>\n", argv[0]);
 		DebugPrintf("Example: %s StrCpy on\n", argv[0]);
 		return true;
 	}
@@ -3103,15 +3103,25 @@ bool Console::cmdBreakpointWrite(int argc, const char **argv) {
 }
 
 bool Console::cmdBreakpointKernel(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 3) {
 		DebugPrintf("Sets a breakpoint on execution of a kernel function.\n");
-		DebugPrintf("Usage: %s <name>\n", argv[0]);
-		DebugPrintf("Example: %s DrawPic\n", argv[0]);
+		DebugPrintf("Usage: %s <name> <on/off>\n", argv[0]);
+		DebugPrintf("Example: %s DrawPic on\n", argv[0]);
 		return true;
 	}
 
-	if (g_sci->getKernel()->debugSetFunction(argv[1], -1, true))
-		DebugPrintf("Breakpoint enabled for k%s\n", argv[1]);
+	bool breakpoint;
+	if (strcmp(argv[2], "on") == 0)
+		breakpoint = true;
+	else if (strcmp(argv[2], "off") == 0)
+		breakpoint = false;
+	else {
+		DebugPrintf("2nd parameter must be either on or off\n");
+		return true;
+	}
+
+	if (g_sci->getKernel()->debugSetFunction(argv[1], -1, breakpoint))
+		DebugPrintf("Breakpoint %s for k%s\n", (breakpoint ? "enabled" : "disabled"), argv[1]);
 	else
 		DebugPrintf("Unknown kernel function %s\n", argv[1]);
 
