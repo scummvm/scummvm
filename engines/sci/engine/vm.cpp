@@ -395,18 +395,13 @@ struct CallsStruct {
 };
 
 bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector) {
-	char method_name[256];
+	Common::String methodName = _gamestate->_segMan->getObjectName(send_obj);
+	methodName += ("::" + getKernel()->getSelectorName(selector));
 
-	sprintf(method_name, "%s::%s", _gamestate->_segMan->getObjectName(send_obj), getKernel()->getSelectorName(selector).c_str());
-
-	Common::List<Breakpoint>::const_iterator bp;
-	for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
-		int cmplen = bp->name.size();
-		if (bp->name.lastChar() != ':')
-			cmplen = 256;
-
-		if (bp->type == breakpointType && !strncmp(bp->name.c_str(), method_name, cmplen)) {
-			_console->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
+	Common::List<Breakpoint>::const_iterator bpIter;
+	for (bpIter = _debugState._breakpoints.begin(); bpIter != _debugState._breakpoints.end(); ++bpIter) {
+		if ((*bpIter).type == breakpointType && (*bpIter).name == methodName) {
+			_console->DebugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
 			_debugState.debugging = true;
 			_debugState.breakpointWasHit = true;
 			return true;
