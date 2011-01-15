@@ -34,9 +34,6 @@
 #include "mohawk/riven.h"
 #include "mohawk/livingbooks.h"
 
-// Define this to enable detection of other Broderbund titles which use Mohawk (besides Myst/Riven)
-#define DETECT_BRODERBUND_TITLES
-
 namespace Mohawk {
 
 struct MohawkGameDescription {
@@ -101,7 +98,6 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"myst", "Myst"},
 	{"MakingOfMyst", "The Making of Myst"},
 	{"riven", "Riven: The Sequel to Myst"},
-#ifdef DETECT_BRODERBUND_TITLES
 	{"zoombini", "Logical Journey of the Zoombinis"},
 	{"cstime", "Where in Time is Carmen Sandiego?"},
 	{"csworld", "Where in the World is Carmen Sandiego?"},
@@ -122,7 +118,6 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"arthurbday", "Arthur's Birthday"},
 	{"lilmonster", "Little Monster at School"},
 	{"rugrats", "Rugrats Adventure Game"},
-#endif
 	{0, 0}
 };
 

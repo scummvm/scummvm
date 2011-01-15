@@ -386,7 +386,6 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-#ifdef DETECT_BRODERBUND_TITLES
 	{
 		{
 			"cstime",
@@ -1098,7 +1097,6 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-#endif
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
