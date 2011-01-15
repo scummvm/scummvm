@@ -54,14 +54,20 @@ GfxMenu::GfxMenu(EventManager *event, SegManager *segMan, GfxPorts *ports, GfxPa
 }
 
 GfxMenu::~GfxMenu() {
-	// TODO: deallocate _list and _itemList
-	reset();
+	for (GuiMenuItemList::iterator itemIter = _itemList.begin(); itemIter != _itemList.end(); ++itemIter)
+		delete *itemIter;
+
+	_itemList.clear();
+
+	for (GuiMenuList::iterator menuIter = _list.begin(); menuIter != _list.end(); ++menuIter)
+		delete *menuIter;
+
+	_list.clear();
 }
 
 void GfxMenu::reset() {
 	_list.clear();
 	_itemList.clear();
-	_listCount = 0;
 
 	// We actually set active item in here and remember last selection of the
 	// user. Sierra SCI always defaulted to first item every time menu was
@@ -81,15 +87,16 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 	const char *tempPtr;
 
 	// Sierra SCI starts with id 1, so we do so as well
-	_listCount++;
-	menuEntry = new GuiMenuEntry(_listCount);
+	menuEntry = new GuiMenuEntry(_list.size() + 1);
 	menuEntry->text = title;
 	_list.push_back(menuEntry);
 
 	curPos = 0;
+	uint16 listSize = _list.size();
+
 	do {
 		itemCount++;
-		itemEntry = new GuiMenuItemEntry(_listCount, itemCount);
+		itemEntry = new GuiMenuItemEntry(listSize, itemCount);
 
 		beginPos = curPos;
 
@@ -498,10 +505,10 @@ GuiMenuItemEntry *GfxMenu::interactiveGetItem(uint16 menuId, uint16 itemId, bool
 	GuiMenuItemEntry *lastItemEntry = NULL;
 
 	// Fixup menuId if needed
-	if (menuId > _listCount)
+	if (menuId > _list.size())
 		menuId = 1;
 	if (menuId == 0)
-		menuId = _listCount;
+		menuId = _list.size();
 	while (itemIterator != itemEnd) {
 		itemEntry = *itemIterator;
 		if (itemEntry->menuId == menuId) {

@@ -119,7 +119,6 @@ private:
 	GfxScreen *_screen;
 	GfxCursor *_cursor;
 
-	uint16 _listCount;
 	GuiMenuList _list;
 	GuiMenuItemList _itemList;
 
