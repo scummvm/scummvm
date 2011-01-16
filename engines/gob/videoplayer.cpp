@@ -753,7 +753,7 @@ Graphics::CoktelDecoder *VideoPlayer::openVideo(const Common::String &file, Prop
 }
 
 void VideoPlayer::copyPalette(const Video &video, int16 palStart, int16 palEnd) {
-	if (!video.decoder->hasPalette())
+	if (!video.decoder->hasPalette() || !video.decoder->isPaletted())
 		return;
 
 	if (palStart < 0)
