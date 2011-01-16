@@ -132,7 +132,7 @@ public:
 
 	bool copyFrame(int slot, byte *dest,
 			uint16 left, uint16 top, uint16 width, uint16 height,
-			uint16 x, uint16 y, uint16 pitch, int16 transp = -1) const;
+			uint16 x, uint16 y, uint16 pitch, uint8 bpp = 1, int16 transp = -1) const;
 
 private:
 	struct Video {

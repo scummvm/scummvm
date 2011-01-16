@@ -563,7 +563,7 @@ void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 v
 
 bool VideoPlayer::copyFrame(int slot, byte *dest,
 		uint16 left, uint16 top, uint16 width, uint16 height,
-		uint16 x, uint16 y, uint16 pitch, int16 transp) const {
+		uint16 x, uint16 y, uint16 pitch, uint8 bpp, int16 transp) const {
 
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
@@ -572,6 +572,8 @@ bool VideoPlayer::copyFrame(int slot, byte *dest,
 	const Graphics::Surface *surface = video->decoder->getSurface();
 	if (!surface)
 		return false;
+
+	assert(surface->bytesPerPixel == bpp);
 
 	int32 w = MIN<int32>(width , surface->w);
 	int32 h = MIN<int32>(height, surface->h);
@@ -585,7 +587,7 @@ bool VideoPlayer::copyFrame(int slot, byte *dest,
 		if ((x == 0) && (left == 0) && (pitch == surface->pitch) && (width == surface->w)) {
 			// Dimensions fit, we can copy everything at once
 
-			memcpy(dst, src, w * h);
+			memcpy(dst, src, w * h * bpp);
 			return true;
 		}
 
@@ -595,7 +597,7 @@ bool VideoPlayer::copyFrame(int slot, byte *dest,
 			const byte *srcRow = src;
 						byte *dstRow = dst;
 
-			memcpy(dstRow, srcRow, w);
+			memcpy(dstRow, srcRow, w * bpp);
 
 			src += surface->pitch;
 			dst +=          pitch;
@@ -605,6 +607,8 @@ bool VideoPlayer::copyFrame(int slot, byte *dest,
 	}
 
 	// Copy pixel-by-pixel
+
+	assert(bpp == 1);
 
 	while (h-- > 0) {
 		const byte *srcRow = src;
