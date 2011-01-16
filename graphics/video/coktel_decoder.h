@@ -200,12 +200,12 @@ protected:
 	void deRLE(byte *&destPtr, const byte *&srcPtr, int16 destLen, int16 srcLen);
 
 	// Block rendering
-	void renderBlockWhole   (const byte *src, Common::Rect &rect);
-	void renderBlockWhole4X (const byte *src, Common::Rect &rect);
-	void renderBlockWhole2Y (const byte *src, Common::Rect &rect);
-	void renderBlockSparse  (const byte *src, Common::Rect &rect);
-	void renderBlockSparse2Y(const byte *src, Common::Rect &rect);
-	void renderBlockRLE     (const byte *src, Common::Rect &rect);
+	void renderBlockWhole   (Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockWhole4X (Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockWhole2Y (Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockSparse  (Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockSparse2Y(Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockRLE     (Surface &dstSurf, const byte *src, Common::Rect &rect);
 
 	// Sound helper functions
 	inline void unsignedToSigned(byte *buffer, int length);
@@ -457,8 +457,10 @@ private:
 	uint32  _firstFramePos; ///< Position of the first frame's data within the stream.
 
 	uint32 _videoBufferSize;   ///< Size of the video buffers.
-	byte  *_videoBuffer[2];    ///< Video buffers.
-	uint32 _videoBufferLen[2]; ///< Size of the video buffers filled.
+	byte  *_videoBuffer[3];    ///< Video buffers.
+	uint32 _videoBufferLen[3]; ///< Size of the video buffers filled.
+
+	Surface _8bppSurface[3]; ///< Fake 8bpp surfaces over the video buffers.
 
 	bool _externalCodec;
 	Codec *_codec;
@@ -479,6 +481,8 @@ private:
 
 	// Video
 	bool renderFrame(Common::Rect &rect);
+	void blit16(const Surface &srcSurf, Common::Rect &rect);
+	void blit24(const Surface &srcSurf, Common::Rect &rect);
 
 	// Sound
 	void emptySoundSlice  (uint32 size);
