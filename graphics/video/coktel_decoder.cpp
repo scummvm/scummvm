@@ -791,11 +791,13 @@ PixelFormat PreIMDDecoder::getPixelFormat() const {
 
 IMDDecoder::IMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : CoktelDecoder(mixer, soundType),
 	_stream(0), _version(0), _stdX(-1), _stdY(-1), _stdWidth(-1), _stdHeight(-1),
-	_flags(0), _firstFramePos(0), _framePos(0), _frameCoords(0),
-	_frameData(0), _frameDataSize(0), _frameDataLen(0),
-	_videoBuffer(0), _videoBufferSize(0),
+	_flags(0), _firstFramePos(0), _framePos(0), _frameCoords(0), _videoBufferSize(0),
 	_soundFlags(0), _soundFreq(0), _soundSliceSize(0), _soundSlicesCount(0) {
 
+	_videoBuffer   [0] = 0;
+	_videoBuffer   [1] = 0;
+	_videoBufferLen[0] = 0;
+	_videoBufferLen[1] = 0;
 }
 
 IMDDecoder::~IMDDecoder() {
@@ -1004,26 +1006,35 @@ bool IMDDecoder::loadFrameTableOffsets(uint32 &framePosPos, uint32 &frameCoordsP
 }
 
 bool IMDDecoder::assessVideoProperties() {
+	uint32 suggestedVideoBufferSize = 0;
+
 	// Sizes of the frame data and extra video buffer
 	if (_features & kFeaturesDataSize) {
-		_frameDataSize = _stream->readUint16LE();
-		if (_frameDataSize == 0) {
-			_frameDataSize   = _stream->readUint32LE();
-			_videoBufferSize = _stream->readUint32LE();
+		uint32 size1, size2;
+
+		size1 = _stream->readUint16LE();
+		if (size1 == 0) {
+			size1 = _stream->readUint32LE();
+			size2 = _stream->readUint32LE();
 		} else
-			_videoBufferSize = _stream->readUint16LE();
-	} else {
-		_frameDataSize = _width * _height + 500;
-		if (!(_flags & 0x100) || (_flags & 0x1000))
-			_videoBufferSize = _frameDataSize;
+			size2 = _stream->readUint16LE();
+
+		suggestedVideoBufferSize = MAX(size1, size2);
 	}
 
-	// Allocating working memory
-	_frameData = new byte[_frameDataSize + 500];
-	memset(_frameData, 0, _frameDataSize + 500);
+	_videoBufferSize = _width * _height + 1000;
 
-	_videoBuffer = new byte[_videoBufferSize + 500];
-	memset(_videoBuffer, 0, _videoBufferSize + 500);
+	if (suggestedVideoBufferSize > _videoBufferSize) {
+		warning("Suggested video buffer size greater than what should be needed (%d, %d, %dx%d",
+			suggestedVideoBufferSize, _videoBufferSize, _width, _height);
+
+		_videoBufferSize = suggestedVideoBufferSize;
+	}
+
+	for (int i = 0; i < 2; i++) {
+		_videoBuffer[i] = new byte[_videoBufferSize];
+		memset(_videoBuffer[i], 0, _videoBufferSize);
+	}
 
 	return true;
 }
@@ -1091,9 +1102,8 @@ void IMDDecoder::close() {
 	delete[] _framePos;
 	delete[] _frameCoords;
 
-	delete[] _frameData;
-
-	delete[] _videoBuffer;
+	delete[] _videoBuffer[0];
+	delete[] _videoBuffer[1];
 
 	_stream = 0;
 
@@ -1110,12 +1120,11 @@ void IMDDecoder::close() {
 	_framePos      = 0;
 	_frameCoords   = 0;
 
-	_frameData     = 0;
-	_frameDataSize = 0;
-	_frameDataLen  = 0;
-
-	_videoBuffer     = 0;
-	_videoBufferSize = 0;
+	_videoBufferSize   = 0;
+	_videoBuffer   [0] = 0;
+	_videoBuffer   [1] = 0;
+	_videoBufferLen[0] = 0;
+	_videoBufferLen[1] = 0;
 
 	_soundFlags       = 0;
 	_soundFreq        = 0;
@@ -1222,8 +1231,8 @@ void IMDDecoder::processFrame() {
 
 		} else if (cmd == kCommandVideoData) {
 
-			_frameDataLen = _stream->readUint32LE() + 2;
-			_stream->read(_frameData, _frameDataLen);
+			_videoBufferLen[0] = _stream->readUint32LE() + 2;
+			_stream->read(_videoBuffer[0], _videoBufferLen[0]);
 
 			Common::Rect rect = calcFrameCoords(_curFrame);
 
@@ -1232,8 +1241,8 @@ void IMDDecoder::processFrame() {
 
 		} else if (cmd != 0) {
 
-			_frameDataLen = cmd + 2;
-			_stream->read(_frameData, _frameDataLen);
+			_videoBufferLen[0] = cmd + 2;
+			_stream->read(_videoBuffer[0], _videoBufferLen[0]);
 
 			Common::Rect rect = calcFrameCoords(_curFrame);
 
@@ -1307,7 +1316,7 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 		// Result is empty => nothing to do
 		return false;
 
-	byte *dataPtr = _frameData;
+	byte *dataPtr = _videoBuffer[0];
 
 	uint8 type = *dataPtr++;
 
@@ -1338,9 +1347,9 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 			return true;
 		}
 
-		deLZ77(_videoBuffer, dataPtr);
+		deLZ77(_videoBuffer[1], dataPtr);
 
-		dataPtr = _videoBuffer;
+		dataPtr = _videoBuffer[1];
 	}
 
 	// Evaluate the block type
@@ -1488,11 +1497,13 @@ VMDDecoder::VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 	_soundFlags(0), _soundFreq(0), _soundSliceSize(0), _soundSlicesCount(0),
 	_soundBytesPerSample(0), _soundStereo(0), _soundHeaderSize(0), _soundDataSize(0),
 	_audioFormat(kAudioFormat8bitRaw), _hasVideo(false), _videoCodec(0),
-	_blitMode(0), _bytesPerPixel(0), _firstFramePos(0),
-	_frameData(0), _frameDataSize(0), _frameDataLen(0),
-	_videoBuffer(0), _videoBufferSize(0), _externalCodec(false), _codec(0),
-	_subtitle(-1) {
+	_blitMode(0), _bytesPerPixel(0), _firstFramePos(0), _videoBufferSize(0),
+	_externalCodec(false), _codec(0), _subtitle(-1) {
 
+	_videoBuffer   [0] = 0;
+	_videoBuffer   [1] = 0;
+	_videoBufferLen[0] = 0;
+	_videoBufferLen[1] = 0;
 }
 
 VMDDecoder::~VMDDecoder() {
@@ -1616,8 +1627,10 @@ bool VMDDecoder::load(Common::SeekableReadStream *stream) {
 		_paletteDirty = true;
 	}
 
-	_frameDataSize   = _stream->readUint32LE();
-	_videoBufferSize = _stream->readUint32LE();
+	uint32 videoBufferSize1 = _stream->readUint32LE();
+	uint32 videoBufferSize2 = _stream->readUint32LE();
+
+	_videoBufferSize = MAX(videoBufferSize1, videoBufferSize2);
 
 	if (_hasVideo) {
 		if (!assessVideoProperties()) {
@@ -1666,8 +1679,8 @@ bool VMDDecoder::load(Common::SeekableReadStream *stream) {
 
 bool VMDDecoder::assessVideoProperties() {
 	if ((_version & 2) && !(_version & 8)) {
-		_externalCodec = true;
-		_frameDataSize = _videoBufferSize = 0;
+		_externalCodec   = true;
+		_videoBufferSize = 0;
 	} else
 		_externalCodec = false;
 
@@ -1701,17 +1714,25 @@ bool VMDDecoder::assessVideoProperties() {
 		return false;
 	}
 
+	if (_blitMode != 0)
+		_width /= _bytesPerPixel;
+
 	if (_hasVideo) {
-		if ((_frameDataSize == 0) || (_frameDataSize > 1048576))
-			_frameDataSize = _width * _height + 1000;
-		if ((_videoBufferSize == 0) || (_videoBufferSize > 1048576))
-			_videoBufferSize = _frameDataSize;
+		uint32 suggestedVideoBufferSize = _videoBufferSize;
 
-		_frameData = new byte[_frameDataSize];
-		memset(_frameData, 0, _frameDataSize);
+		_videoBufferSize = _width * _height * _bytesPerPixel + 1000;
 
-		_videoBuffer = new byte[_videoBufferSize];
-		memset(_videoBuffer, 0, _videoBufferSize);
+		if ((suggestedVideoBufferSize > _videoBufferSize) && (suggestedVideoBufferSize < 2097152)) {
+			warning("Suggested video buffer size greater than what should be needed (%d, %d, %dx%d",
+				suggestedVideoBufferSize, _videoBufferSize, _width, _height);
+
+			_videoBufferSize = suggestedVideoBufferSize;
+		}
+
+		for (int i = 0; i < 2; i++) {
+			_videoBuffer[i] = new byte[_videoBufferSize];
+			memset(_videoBuffer[i], 0, _videoBufferSize);
+		}
 	}
 
 	return true;
@@ -1879,8 +1900,8 @@ void VMDDecoder::close() {
 
 	delete[] _frames;
 
-	delete[] _frameData;
-	delete[] _videoBuffer;
+	delete[] _videoBuffer[0];
+	delete[] _videoBuffer[1];
 
 	delete _codec;
 
@@ -1913,12 +1934,11 @@ void VMDDecoder::close() {
 
 	_firstFramePos = 0;
 
-	_frameData     = 0;
-	_frameDataSize = 0;
-	_frameDataLen  = 0;
-
-	_videoBuffer     = 0;
-	_videoBufferSize = 0;
+	_videoBufferSize   = 0;
+	_videoBuffer   [0] = 0;
+	_videoBuffer   [1] = 0;
+	_videoBufferLen[0] = 0;
+	_videoBufferLen[1] = 0;
 
 	_externalCodec = false;
 	_codec         = 0;
@@ -2030,8 +2050,8 @@ void VMDDecoder::processFrame() {
 				size -= (768 + 2);
 			}
 
-			_stream->read(_frameData, size);
-			_frameDataLen = size;
+			_stream->read(_videoBuffer[0], size);
+			_videoBufferLen[0] = size;
 
 			Common::Rect rect(part.left, part.top, part.right + 1, part.bottom + 1);
 			if (renderFrame(rect))
@@ -2095,7 +2115,7 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 		if (!_codec)
 			return false;
 
-		Common::MemoryReadStream frameStream(_frameData, _frameDataLen);
+		Common::MemoryReadStream frameStream(_videoBuffer[0], _videoBufferLen[0]);
 		const Surface *codecSurf = _codec->decodeImage(&frameStream);
 		if (!codecSurf)
 			return false;
@@ -2113,7 +2133,7 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 		return false;
 	}
 
-	byte *dataPtr = _frameData;
+	byte *dataPtr = _videoBuffer[0];
 
 	uint8 type = *dataPtr++;
 
@@ -2128,9 +2148,9 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 			return true;
 		}
 
-		deLZ77(_videoBuffer, dataPtr);
+		deLZ77(_videoBuffer[1], dataPtr);
 
-		dataPtr = _videoBuffer;
+		dataPtr = _videoBuffer[1];
 	}
 
 	// Evaluate the block type

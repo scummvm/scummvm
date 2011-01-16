@@ -304,14 +304,9 @@ private:
 	uint32 *_framePos;      ///< Positions of all frames.
 	Coord  *_frameCoords;   ///< Coordinates of all frames.
 
-	// Buffer for raw frame data
-	byte  *_frameData;
-	uint32 _frameDataSize;
-	uint32 _frameDataLen;
-
-	// Buffer for processed frame data
-	byte  *_videoBuffer;
-	uint32 _videoBufferSize;
+	uint32 _videoBufferSize;   ///< Size of the video buffers.
+	byte  *_videoBuffer[2];    ///< Video buffers.
+	uint32 _videoBufferLen[2]; ///< Size of the video buffers filled.
 
 	// Sound properties
 	uint16 _soundFlags;
@@ -452,14 +447,9 @@ private:
 
 	uint32  _firstFramePos; ///< Position of the first frame's data within the stream.
 
-	// Buffer for raw frame data
-	byte  *_frameData;
-	uint32 _frameDataSize;
-	uint32 _frameDataLen;
-
-	// Buffer for processed frame data
-	byte  *_videoBuffer;
-	uint32 _videoBufferSize;
+	uint32 _videoBufferSize;   ///< Size of the video buffers.
+	byte  *_videoBuffer[2];    ///< Video buffers.
+	uint32 _videoBufferLen[2]; ///< Size of the video buffers filled.
 
 	bool _externalCodec;
 	Codec *_codec;
