@@ -246,6 +246,34 @@ const Graphics::PixelFormat &GobEngine::getPixelFormat() const {
 	return _pixelFormat;
 }
 
+void GobEngine::setTrueColor(bool trueColor) {
+	if (isTrueColor() == trueColor)
+		return;
+
+	_features = (_features & ~kFeaturesTrueColor) | (trueColor ? kFeaturesTrueColor : 0);
+
+	_video->setSize(is640x480());
+
+	_pixelFormat = g_system->getScreenFormat();
+
+	Common::Array<SurfacePtr>::iterator surf;
+	for (surf = _draw->_spritesArray.begin(); surf != _draw->_spritesArray.end(); ++surf)
+		if (*surf)
+			(*surf)->setBPP(_pixelFormat.bytesPerPixel);
+
+	if (_draw->_backSurface)
+		_draw->_backSurface->setBPP(_pixelFormat.bytesPerPixel);
+	if (_draw->_frontSurface)
+		_draw->_frontSurface->setBPP(_pixelFormat.bytesPerPixel);
+	if (_draw->_cursorSprites)
+		_draw->_cursorSprites->setBPP(_pixelFormat.bytesPerPixel);
+	if (_draw->_cursorSpritesBack)
+		_draw->_cursorSpritesBack->setBPP(_pixelFormat.bytesPerPixel);
+	if (_draw->_scummvmCursor)
+		_draw->_scummvmCursor->setBPP(_pixelFormat.bytesPerPixel);
+	SurfacePtr _scummvmCursor;
+}
+
 Common::Error GobEngine::run() {
 	if (!initGameParts()) {
 		GUIErrorMessage("GobEngine::init(): Unknown version of game engine");

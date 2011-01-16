@@ -231,6 +231,8 @@ public:
 	bool isTrueColor() const;
 	bool isDemo() const;
 
+	void setTrueColor(bool trueColor);
+
 	GUI::Debugger *getDebugger() { return _console; }
 
 	const Graphics::PixelFormat &getPixelFormat() const;
