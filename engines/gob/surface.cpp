@@ -167,7 +167,7 @@ uint16 Surface::getHeight() const {
 	return _height;
 }
 
-uint16 Surface::getBPP() const {
+uint8 Surface::getBPP() const {
 	return _bpp;
 }
 
@@ -182,6 +182,22 @@ void Surface::resize(uint16 width, uint16 height) {
 
 	_vidMem    = new byte[_bpp * _width * _height];
 	_ownVidMem = true;
+
+	memset(_vidMem, 0, _bpp * _width * _height);
+}
+
+void Surface::setBPP(uint8 bpp) {
+	if (_bpp == bpp)
+		return;
+
+	if (_ownVidMem) {
+		delete[] _vidMem;
+
+		_vidMem = new byte[bpp * _width * _height];
+	} else
+		_width = (_width * _bpp) / bpp;
+
+	_bpp = bpp;
 
 	memset(_vidMem, 0, _bpp * _width * _height);
 }

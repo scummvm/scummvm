@@ -82,12 +82,14 @@ public:
 
 	uint16 getWidth () const;
 	uint16 getHeight() const;
-	uint16 getBPP   () const;
+	uint8  getBPP   () const;
 
 	byte *getData(uint16 x = 0, uint16 y = 0);
 	const byte *getData(uint16 x = 0, uint16 y = 0) const;
 
 	void resize(uint16 width, uint16 height);
+
+	void setBPP(uint8 bpp);
 
 	Pixel get(uint16 x = 0, uint16 y = 0);
 	ConstPixel get(uint16 x = 0, uint16 y = 0) const;
