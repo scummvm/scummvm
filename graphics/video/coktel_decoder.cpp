@@ -2325,8 +2325,43 @@ void VMDDecoder::blit16(const Surface &srcSurf, Common::Rect &rect) {
 }
 
 void VMDDecoder::blit24(const Surface &srcSurf, Common::Rect &rect) {
-	warning("TODO: blit24");
-	return;
+	rect = Common::Rect(rect.left / 3, rect.top, rect.right / 3, rect.bottom);
+
+	Common::Rect srcRect = rect;
+
+	rect.clip(_surface.w, _surface.h);
+
+	PixelFormat pixelFormat = getPixelFormat();
+
+	uint16 x = _x;
+	if (_blitMode == 1)
+		x /= 9;
+
+	const byte *src = (byte *)srcSurf.pixels +
+		(srcRect.top * srcSurf.pitch) + srcRect.left * _bytesPerPixel;
+	byte *dst = (byte *)_surface.pixels +
+		((_y + rect.top) * _surface.pitch) + (x + rect.left) * _surface.bytesPerPixel;
+
+	for (int i = 0; i < rect.height(); i++) {
+		const byte *srcRow = src;
+		      byte *dstRow = dst;
+
+		for (int j = 0; j < rect.width(); j++, srcRow += 3, dstRow += _surface.bytesPerPixel) {
+			byte r = srcRow[2];
+			byte g = srcRow[1];
+			byte b = srcRow[0];
+
+			uint32 c = pixelFormat.RGBToColor(r, g, b);
+			if ((r == 0) && (g == 0) && (b == 0))
+				c = 0;
+
+			if (_surface.bytesPerPixel == 2)
+				*((uint16 *)dstRow) = (uint16) c;
+		}
+
+		src += srcSurf .pitch;
+		dst += _surface.pitch;
+	}
 }
 
 void VMDDecoder::emptySoundSlice(uint32 size) {
