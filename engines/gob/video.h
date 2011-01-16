@@ -188,9 +188,6 @@ public:
 	virtual ~Video_v6() {}
 
 private:
-	void shadeRect(Surface &dest,
-			int16 left, int16 top, int16 right, int16 bottom, byte color, byte strength);
-
 	void drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDesc);
 	void drawYUVData(const byte *srcData, Surface &destDesc,
 			int16 width, int16 height, int16 x, int16 y);
