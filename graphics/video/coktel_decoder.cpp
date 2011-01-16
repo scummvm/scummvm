@@ -268,64 +268,83 @@ bool CoktelDecoder::hasDirtyPalette() const {
 	return (_features & kFeaturesPalette) && _paletteDirty;
 }
 
-void CoktelDecoder::deLZ77(byte *dest, byte *src) {
-	int i;
-	byte buf[4370];
-	uint16 chunkLength;
-	uint32 frameLength;
-	uint16 bufPos1;
-	uint16 bufPos2;
-	uint16 tmp;
-	uint8 chunkBitField;
-	uint8 chunkCount;
-	bool mode;
-
-	frameLength = READ_LE_UINT32(src);
-	src += 4;
-
-	if ((READ_LE_UINT16(src) == 0x1234) && (READ_LE_UINT16(src + 2) == 0x5678)) {
-		src += 4;
-		bufPos1 = 273;
-		mode = 1; // 123Ch (cmp al, 12h)
-	} else {
-		bufPos1 = 4078;
-		mode = 0; // 275h (jnz +2)
+uint32 CoktelDecoder::deLZ77(byte *dest, const byte *src, uint32 srcSize, uint32 destSize) {
+	uint32 frameLength = READ_LE_UINT32(src);
+	if (frameLength > destSize) {
+		warning("CoktelDecoder::deLZ77(): Uncompressed size bigger than buffer size (%d > %d)", frameLength, destSize);
+		return 0;
 	}
 
+	assert(srcSize >= 4);
+
+	uint32 realSize = frameLength;
+
+	src     += 4;
+	srcSize -= 4;
+
+	uint16 bufPos1;
+	bool mode;
+	if ((READ_LE_UINT16(src) == 0x1234) && (READ_LE_UINT16(src + 2) == 0x5678)) {
+		assert(srcSize >= 4);
+
+		src     += 4;
+		srcSize -= 4;
+
+		bufPos1 = 273;
+		mode    = 1; // 123Ch (cmp al, 12h)
+	} else {
+		bufPos1 = 4078;
+		mode    = 0; // 275h (jnz +2)
+	}
+
+	byte buf[4370];
 	memset(buf, 32, bufPos1);
-	chunkCount = 1;
-	chunkBitField = 0;
+
+	uint8 chunkCount    = 1;
+	uint8 chunkBitField = 0;
 
 	while (frameLength > 0) {
 		chunkCount--;
+
 		if (chunkCount == 0) {
-			tmp = *src++;
-			chunkCount = 8;
-			chunkBitField = tmp;
+			chunkCount    = 8;
+			chunkBitField = *src++;
 		}
+
 		if (chunkBitField % 2) {
+			assert(srcSize >= 1);
+
 			chunkBitField >>= 1;
 			buf[bufPos1] = *src;
 			*dest++ = *src++;
 			bufPos1 = (bufPos1 + 1) % 4096;
 			frameLength--;
+			srcSize--;
 			continue;
 		}
 		chunkBitField >>= 1;
 
-		tmp = READ_LE_UINT16(src);
-		src += 2;
-		chunkLength = ((tmp & 0xF00) >> 8) + 3;
+		assert(srcSize >= 2);
+
+		uint16 tmp = READ_LE_UINT16(src);
+		uint16 chunkLength = ((tmp & 0xF00) >> 8) + 3;
+
+		src     += 2;
+		srcSize -= 2;
 
 		if ((mode && ((chunkLength & 0xFF) == 0x12)) ||
-				(!mode && (chunkLength == 0)))
-			chunkLength = *src++ + 0x12;
+				(!mode && (chunkLength == 0))) {
+			assert(srcSize >= 1);
 
-		bufPos2 = (tmp & 0xFF) + ((tmp >> 4) & 0x0F00);
+			chunkLength = *src++ + 0x12;
+			srcSize--;
+		}
+
+		uint16 bufPos2 = (tmp & 0xFF) + ((tmp >> 4) & 0x0F00);
 		if (((tmp + chunkLength) >= 4096) ||
 				((chunkLength + bufPos1) >= 4096)) {
 
-			for (i = 0; i < chunkLength; i++, dest++) {
+			for (int i = 0; i < chunkLength; i++, dest++) {
 				*dest = buf[bufPos2];
 				buf[bufPos1] = buf[bufPos2];
 				bufPos1 = (bufPos1 + 1) % 4096;
@@ -338,13 +357,13 @@ void CoktelDecoder::deLZ77(byte *dest, byte *src) {
 			memcpy(dest, buf + bufPos2, chunkLength);
 			memmove(buf + bufPos1, buf + bufPos2, chunkLength);
 
-			dest += chunkLength;
+			dest    += chunkLength;
 			bufPos1 += chunkLength;
 			bufPos2 += chunkLength;
 
 		} else {
 
-			for (i = 0; i < chunkLength; i++, dest++, bufPos1++, bufPos2++) {
+			for (int i = 0; i < chunkLength; i++, dest++, bufPos1++, bufPos2++) {
 				*dest = buf[bufPos2];
 				buf[bufPos1] = buf[bufPos2];
 			}
@@ -353,6 +372,8 @@ void CoktelDecoder::deLZ77(byte *dest, byte *src) {
 		frameLength -= chunkLength;
 
 	}
+
+	return realSize;
 }
 
 void CoktelDecoder::deRLE(byte *&destPtr, const byte *&srcPtr, int16 destLen, int16 srcLen) {
@@ -1316,7 +1337,8 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 		// Result is empty => nothing to do
 		return false;
 
-	byte *dataPtr = _videoBuffer[0];
+	byte  *dataPtr  = _videoBuffer[0];
+	uint32 dataSize = _videoBufferLen[0] - 1;
 
 	uint8 type = *dataPtr++;
 
@@ -1330,7 +1352,8 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 		for (int i = 0; i < count; i++)
 			_palette[index * 3 + i] = dataPtr[i] << 2;
 
-		dataPtr += 48;
+		dataPtr  += 48;
+		dataSize -= 49;
 		type ^= 0x10;
 
 		_paletteDirty = true;
@@ -1343,13 +1366,15 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 
 		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0)) {
 			// Directly uncompress onto the video surface
-			deLZ77((byte *)_surface.pixels + (_y * _surface.pitch), dataPtr);
+			deLZ77((byte *)_surface.pixels + (_y * _surface.pitch), dataPtr, dataSize,
+					_surface.w * _surface.h * _surface.bytesPerPixel);
 			return true;
 		}
 
-		deLZ77(_videoBuffer[1], dataPtr);
+		_videoBufferLen[1] = deLZ77(_videoBuffer[1], dataPtr, dataSize, _videoBufferSize);
 
-		dataPtr = _videoBuffer[1];
+		dataPtr  = _videoBuffer[1];
+		dataSize = _videoBufferLen[1];
 	}
 
 	// Evaluate the block type
@@ -2133,7 +2158,8 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 		return false;
 	}
 
-	byte *dataPtr = _videoBuffer[0];
+	byte  *dataPtr  = _videoBuffer[0];
+	uint32 dataSize = _videoBufferLen[0] - 1;
 
 	uint8 type = *dataPtr++;
 
@@ -2144,13 +2170,15 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 
 		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0)) {
 			// Directly uncompress onto the video surface
-			deLZ77((byte *)_surface.pixels + (_y * _surface.pitch), dataPtr);
+			deLZ77((byte *)_surface.pixels + (_y * _surface.pitch), dataPtr, dataSize,
+					_surface.w * _surface.h * _surface.bytesPerPixel);
 			return true;
 		}
 
-		deLZ77(_videoBuffer[1], dataPtr);
+		_videoBufferLen[1] = deLZ77(_videoBuffer[1], dataPtr, dataSize, _videoBufferSize);
 
-		dataPtr = _videoBuffer[1];
+		dataPtr  = _videoBuffer[1];
+		dataSize = _videoBufferLen[1];
 	}
 
 	// Evaluate the block type

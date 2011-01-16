@@ -191,7 +191,7 @@ protected:
 	void freeSurface();
 
 	// Decompression
-	void deLZ77(byte *dest, byte *src);
+	uint32 deLZ77(byte *dest, const byte *src, uint32 srcSize, uint32 destSize);
 	void deRLE(byte *&destPtr, const byte *&srcPtr, int16 destLen, int16 srcLen);
 
 	// Block rendering
