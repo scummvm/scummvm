@@ -55,10 +55,10 @@ void ScummEngine::loadCJKFont() {
 #ifdef DISABLE_TOWNS_DUAL_LAYER_MODE
 		error("FM-Towns Kanji font drawing requires dual graphics layer support which is disabled in this build");
 #endif
-		// use FM-TOWNS font rom, since game files don't have kanji font resources	
+		// use FM-TOWNS font rom, since game files don't have kanji font resources
 		_cjkFont = Graphics::FontSJIS::createFont(Common::kPlatformFMTowns);
 		if (!_cjkFont)
-			error("SCUMM::Font: Couldn't open file 'FMT_FNT.ROM'");
+			error("SCUMM::Font: Could not open file 'FMT_FNT.ROM'");
 		_textSurfaceMultiplier = 2;
 		_useCJKMode = true;
 	} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) {
@@ -67,7 +67,7 @@ void ScummEngine::loadCJKFont() {
 		_2byteHeight = 12;
 		// use PC-Engine System Card, since game files don't have kanji font resources
 		if (!fp.open("pce.cdbios")) {
-			error("SCUMM::Font: Couldn't open System Card pce.cdbios");
+			error("SCUMM::Font: Could not open System Card pce.cdbios");
 		} else {
 			_useCJKMode = true;
 			debug(2, "Loading PC-Engine System Card");
@@ -155,9 +155,9 @@ void ScummEngine::loadCJKFont() {
 			fp.close();
 		} else {
 			if (fontFile)
-				error("SCUMM::Font: Couldn't open %s",fontFile);
+				error("SCUMM::Font: Could not open %s",fontFile);
 			else
-				error("SCUMM::Font: Couldn't load any font");
+				error("SCUMM::Font: Could not load any font");
 		}
 	}
 }
