@@ -735,9 +735,17 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_FILLRECT:
-		_spritesArray[_destSurface]->fillRect(destSpriteX,
-				_destSpriteY, _destSpriteX + _spriteRight - 1,
-				_destSpriteY + _spriteBottom - 1, getColor(_backColor));
+		if (!(_backColor & 0xFF00) || !(_backColor & 0x0100)) {
+			_spritesArray[_destSurface]->fillRect(destSpriteX,
+					_destSpriteY, _destSpriteX + _spriteRight - 1,
+					_destSpriteY + _spriteBottom - 1, getColor(_backColor));
+		} else {
+			uint8 strength = 16 - (((uint16) _backColor) >> 12);
+
+			_spritesArray[_destSurface]->shadeRect(destSpriteX,
+					_destSpriteY, _destSpriteX + _spriteRight - 1,
+					_destSpriteY + _spriteBottom - 1, getColor(_backColor), strength);
+		}
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);

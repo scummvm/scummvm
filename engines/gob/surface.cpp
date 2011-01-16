@@ -489,6 +489,61 @@ void Surface::clear() {
 	fill(0);
 }
 
+void Surface::shadeRect(uint16 left, uint16 top, uint16 right, uint16 bottom,
+		uint32 color, uint8 strength) {
+
+	if (_bpp == 1) {
+		// We can't properly shade in paletted mode, fill the rect instead
+		fillRect(left, top, right, bottom, color);
+		return;
+	}
+
+	// Just in case those are swapped
+	if (left > right)
+		SWAP(left, right);
+	if (top  > bottom)
+		SWAP(top, bottom);
+
+	if ((left >= _width) || (top >= _height))
+		// Nothing to do
+		return;
+
+	// Area to actually shade
+	uint16 width  = CLIP<int32>(right  - left + 1, 0, _width  - left);
+	uint16 height = CLIP<int32>(bottom - top  + 1, 0, _height - top);
+
+	if ((width == 0) || (height == 0))
+		// Nothing to do
+		return;
+
+	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
+
+	uint8 cR, cG, cB;
+	pixelFormat.colorToRGB(color, cR, cG, cB);
+
+	int shadeR = cR * (16 - strength);
+	int shadeG = cG * (16 - strength);
+	int shadeB = cB * (16 - strength);
+
+	Pixel p = get(left, top);
+	while (height-- > 0) {
+		for (uint16 i = 0; i < width; i++, ++p) {
+			uint8 r, g, b;
+
+			pixelFormat.colorToRGB(p.get(), r, g, b);
+
+			r = CLIP<int>((shadeR + strength * r) >> 4, 0, 255);
+			g = CLIP<int>((shadeG + strength * g) >> 4, 0, 255);
+			b = CLIP<int>((shadeB + strength * b) >> 4, 0, 255);
+
+			p.set(pixelFormat.RGBToColor(r, g, b));
+		}
+
+		p += _width - width;
+	}
+
+}
+
 void Surface::putPixel(uint16 x, uint16 y, uint32 color) {
 	if ((x >= _width) || (y >= _height))
 		return;
