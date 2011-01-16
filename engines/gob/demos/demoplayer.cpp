@@ -157,6 +157,8 @@ void DemoPlayer::playVideo(const char *fileName) {
 	props.x = _rebase0 ? 0 : -1;
 	props.y = _rebase0 ? 0 : -1;
 
+	props.switchColorMode = true;
+
 	int slot;
 	if ((slot = _vm->_vidPlayer->openVideo(true, file, props)) >= 0) {
 		if (_autoDouble) {

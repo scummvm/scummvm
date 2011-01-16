@@ -74,6 +74,8 @@ public:
 
 		uint32 flags; ///< Video flags.
 
+		bool switchColorMode; ///< Switch between paletted / true color modes?
+
 		int32 startFrame; ///< Frame to start playback from.
 		int32 lastFrame;  ///< Frame to stop playback at.
 		int32 endFrame;   ///< Last frame of this playback cycle.

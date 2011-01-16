@@ -37,7 +37,7 @@
 namespace Gob {
 
 VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFrontSurface),
-	x(-1), y(-1), width(-1), height(-1), flags(kFlagFrontSurface),
+	x(-1), y(-1), width(-1), height(-1), flags(kFlagFrontSurface), switchColorMode(false),
 	startFrame(-1), lastFrame(-1), endFrame(-1), forceSeek(false),
 	breakKey(kShortKeyEscape), palCmd(8), palStart(0), palEnd(255), palFrame(-1),
 	fade(false), waitEndFrame(true), canceled(false) {
@@ -111,6 +111,15 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		// Open the video
 		if (!(video->decoder = openVideo(file, properties)))
 			return -1;
+
+		if (video->decoder->isPaletted() != !_vm->isTrueColor()) {
+			if (!properties.switchColorMode)
+				return -1;
+
+			_vm->setTrueColor(!video->decoder->isPaletted());
+
+			video->decoder->colorModeChanged();
+		}
 
 		// Set the filename
 		video->fileName = file;
