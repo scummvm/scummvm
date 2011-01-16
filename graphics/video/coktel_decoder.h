@@ -98,6 +98,8 @@ public:
 	void enableSound();
 	void disableSound();
 
+	virtual void colorModeChanged();
+
 	/** Return the coordinates of the specified frame. */
 	virtual bool getFrameCoords(int16 frame, int16 &x, int16 &y, int16 &width, int16 &height);
 
@@ -112,6 +114,9 @@ public:
 
 	/** Return the current subtitle index. */
 	virtual int32 getSubtitleIndex() const;
+
+	/** Is the video paletted or true color? */
+	virtual bool isPaletted() const;
 
 
 	// VideoDecoder interface
@@ -343,6 +348,8 @@ public:
 
 	void setXY(uint16 x, uint16 y);
 
+	void colorModeChanged();
+
 	bool getFrameCoords(int16 frame, int16 &x, int16 &y, int16 &width, int16 &height);
 
 	bool hasEmbeddedFiles() const;
@@ -350,6 +357,8 @@ public:
 	Common::SeekableReadStream *getEmbeddedFile(const Common::String &fileName) const;
 
 	int32 getSubtitleIndex() const;
+
+	virtual bool isPaletted() const;
 
 
 	// VideoDecoder interface
@@ -456,9 +465,12 @@ private:
 
 	int32 _subtitle;
 
+	bool _isPaletted;
+
 	// Loading helper functions
 	bool assessVideoProperties();
 	bool assessAudioProperties();
+	bool openExternalCodec();
 	bool readFrameTable(int &numFiles);
 	bool readFiles();
 

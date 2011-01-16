@@ -211,6 +211,9 @@ void CoktelDecoder::disableSound() {
 	_audioStream  = 0;
 }
 
+void CoktelDecoder::colorModeChanged() {
+}
+
 bool CoktelDecoder::getFrameCoords(int16 frame, int16 &x, int16 &y, int16 &width, int16 &height) {
 	return false;
 }
@@ -229,6 +232,10 @@ Common::SeekableReadStream *CoktelDecoder::getEmbeddedFile(const Common::String 
 
 int32 CoktelDecoder::getSubtitleIndex() const {
 	return -1;
+}
+
+bool CoktelDecoder::isPaletted() const {
+	return true;
 }
 
 void CoktelDecoder::close() {
@@ -1523,7 +1530,7 @@ VMDDecoder::VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 	_soundBytesPerSample(0), _soundStereo(0), _soundHeaderSize(0), _soundDataSize(0),
 	_audioFormat(kAudioFormat8bitRaw), _hasVideo(false), _videoCodec(0),
 	_blitMode(0), _bytesPerPixel(0), _firstFramePos(0), _videoBufferSize(0),
-	_externalCodec(false), _codec(0), _subtitle(-1) {
+	_externalCodec(false), _codec(0), _subtitle(-1), _isPaletted(true) {
 
 	_videoBuffer   [0] = 0;
 	_videoBuffer   [1] = 0;
@@ -1580,6 +1587,34 @@ void VMDDecoder::setXY(uint16 x, uint16 y) {
 		_x = x;
 	if (y != 0xFFFF)
 		_y = y;
+}
+
+bool VMDDecoder::openExternalCodec() {
+	delete _codec;
+	_codec = 0;
+
+	if (_externalCodec) {
+		if (_videoCodec == kVideoCodecIndeo3) {
+			_isPaletted = false;
+
+#ifdef USE_INDEO3
+			_codec = new Indeo3Decoder(_width, _height);
+#else
+			warning("VMDDecoder::openExternalCodec(): Indeo3 decoder not compiled in");
+#endif
+
+		} else {
+			warning("VMDDecoder::openExternalCodec(): Unknown video codec FourCC \"%s\"",
+					tag2str(_videoCodec));
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void VMDDecoder::colorModeChanged() {
+	openExternalCodec();
 }
 
 bool VMDDecoder::load(Common::SeekableReadStream *stream) {
@@ -1703,25 +1738,16 @@ bool VMDDecoder::load(Common::SeekableReadStream *stream) {
 }
 
 bool VMDDecoder::assessVideoProperties() {
+	_isPaletted = true;
+
 	if ((_version & 2) && !(_version & 8)) {
 		_externalCodec   = true;
 		_videoBufferSize = 0;
 	} else
 		_externalCodec = false;
 
-	if (_externalCodec) {
-		if (_videoCodec == kVideoCodecIndeo3) {
-#ifdef USE_INDEO3
-			_codec = new Indeo3Decoder(_width, _height);
-#else
-			warning("VMDDecoder::assessVideoProperties(): Indeo3 decoder not compiled in");
-#endif
-		} else {
-			warning("VMDDecoder::assessVideoProperties(): Unknown video codec FourCC \"%s\"",
-					tag2str(_videoCodec));
-			return false;
-		}
-	}
+	if (!openExternalCodec())
+		return false;
 
 	if (_externalCodec)
 		_blitMode = 0;
@@ -1732,6 +1758,8 @@ bool VMDDecoder::assessVideoProperties() {
 
 		_blitMode      = n - 1;
 		_bytesPerPixel = n;
+
+		_isPaletted = false;
 	}
 
 	if ((_bytesPerPixel > 1) && !_externalCodec) {
@@ -1967,6 +1995,8 @@ void VMDDecoder::close() {
 
 	_externalCodec = false;
 	_codec         = 0;
+
+	_isPaletted = true;
 }
 
 bool VMDDecoder::isVideoLoaded() const {
@@ -2532,6 +2562,10 @@ Common::SeekableReadStream *VMDDecoder::getEmbeddedFile(const Common::String &fi
 
 int32 VMDDecoder::getSubtitleIndex() const {
 	return _subtitle;
+}
+
+bool VMDDecoder::isPaletted() const {
+	return _isPaletted;
 }
 
 } // End of namespace Graphics
