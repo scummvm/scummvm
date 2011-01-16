@@ -269,9 +269,9 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 			out = outo;
 			in = ino;
 			for (int j = 0; j < img->w; j++) {
-				int r = in[0];
+				int b = in[0];
 				int g = in[1];
-				int b = in[2];
+				int r = in[2];
 				int a = in[3];
 				in += inStep;
 
@@ -284,39 +284,39 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 					out += 4;
 					break;
 				case 255: // Full opacity
-					if (cr != 255)
-						*out++ = (r * cr) >> 8;
+					if (cb != 255)
+						*out++ = (b * cb) >> 8;
 					else
-						*out++ = r;
+						*out++ = b;
 
 					if (cg != 255)
 						*out++ = (g * cg) >> 8;
 					else
 						*out++ = g;
 
-					if (cb != 255)
-						*out++ = (b * cb) >> 8;
+					if (cr != 255)
+						*out++ = (r * cr) >> 8;
 					else
-						*out++ = b;
+						*out++ = r;
 
 					*out++ = a;
 					break;
 
 				default: // alpha blending
-					if (cr != 255)
-						*out += ((r - *out) * a * cr) >> 16;
+					if (cb != 255)
+						*out += ((b - *out) * a * cb) >> 16;
 					else
-						*out += ((r - *out) * a) >> 8;
+						*out += ((b - *out) * a) >> 8;
 					out++;
 					if (cg != 255)
 						*out += ((g - *out) * a * cg) >> 16;
 					else
 						*out += ((g - *out) * a) >> 8;
 					out++;
-					if (cb != 255)
-						*out += ((b - *out) * a * cb) >> 16;
+					if (cr != 255)
+						*out += ((r - *out) * a * cr) >> 16;
 					else
-						*out += ((b - *out) * a) >> 8;
+						*out += ((r - *out) * a) >> 8;
 					out++;
 					*out = 255;
 					out++;
