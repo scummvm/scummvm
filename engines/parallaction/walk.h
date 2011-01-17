@@ -68,7 +68,7 @@ class PathWalker_BR {
 		bool			_active;
 		AnimationPtr	_a;
 		int				_walkDelay;
-		int				_fieldC;
+		bool			_stillWalkingTowardsNode;
 		Common::Point	_startFoot;
 		bool			_first;
 		int				_step;

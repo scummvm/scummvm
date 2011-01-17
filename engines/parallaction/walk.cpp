@@ -421,7 +421,7 @@ bool PathWalker_BR::directPathExists(const Common::Point &from, const Common::Po
 void PathWalker_BR::setCharacterPath(AnimationPtr a, uint16 x, uint16 y) {
 	_character._a = a;
 	_character._first = true;
-	_character._fieldC = 1;
+	_character._stillWalkingTowardsNode = true;
 	_character._walkDelay = 0;
 	buildPath(_character, x, y);
 	_character._active = true;
@@ -430,7 +430,7 @@ void PathWalker_BR::setCharacterPath(AnimationPtr a, uint16 x, uint16 y) {
 void PathWalker_BR::setFollowerPath(AnimationPtr a, uint16 x, uint16 y) {
 	_follower._a = a;
 	_follower._first = true;
-	_follower._fieldC = 1;
+	_follower._stillWalkingTowardsNode = true;
 	_follower._walkDelay = 5;
 	buildPath(_follower, x - 50, y);
 	_follower._active = true;
@@ -481,6 +481,8 @@ void PathWalker_BR::buildPath(State &s, uint16 x, uint16 y) {
 	if (z1->u._pathLists[id].empty()) {
 		s._walkPath.clear();
 		debugC(3, kDebugWalk, "buildPath: no path found");
+		// If no path, trigger finalise and stop of walking...
+		s._stillWalkingTowardsNode = false;
 		return;
 	}
 
@@ -607,8 +609,7 @@ void PathWalker_BR::doWalk(State &s) {
 		return;
 	}
 
-
-	if (s._fieldC == 0) {
+	if (!s._stillWalkingTowardsNode) {
 		s._walkPath.erase(s._walkPath.begin());
 
 		if (s._walkPath.empty()) {
@@ -641,7 +642,7 @@ void PathWalker_BR::doWalk(State &s) {
 
 	debugC(9, kDebugWalk, "calculated step: (%i, %i)", xStep, yStep);
 
-	s._fieldC = 0;
+	s._stillWalkingTowardsNode = false;
 	s._step++;
 	s._step %= 8;
 
@@ -654,11 +655,12 @@ void PathWalker_BR::doWalk(State &s) {
 	s._dirFrame = 0;
 	Common::Point newpos(s._startFoot), delta;
 
+	assert (!s._walkPath.empty());
 	Common::Point p(*s._walkPath.begin());
 
 	if (s._startFoot.y < p.y && (s._startFoot.y + yStep) < maxY && IS_PATH_CLEAR(s._startFoot.x, s._startFoot.y + yStep)) {
 		if (yStep + s._startFoot.y <= p.y) {
-			s._fieldC = 1;
+			s._stillWalkingTowardsNode = true;
 			delta.y = yStep;
 			newpos.y = yStep + s._startFoot.y;
 		} else {
@@ -669,7 +671,7 @@ void PathWalker_BR::doWalk(State &s) {
 	} else
 	if (s._startFoot.y > p.y && (s._startFoot.y - yStep) > minY && IS_PATH_CLEAR(s._startFoot.x, s._startFoot.y - yStep)) {
 		if (s._startFoot.y - yStep >= p.y) {
-			s._fieldC = 1;
+			s._stillWalkingTowardsNode = true;
 			delta.y = yStep;
 			newpos.y = s._startFoot.y - yStep;
 		} else {
@@ -681,7 +683,7 @@ void PathWalker_BR::doWalk(State &s) {
 
 	if (s._startFoot.x < p.x && (s._startFoot.x + xStep) < maxX && IS_PATH_CLEAR(s._startFoot.x + xStep, s._startFoot.y)) {
 		if (s._startFoot.x + xStep <= p.x) {
-			s._fieldC = 1;
+			s._stillWalkingTowardsNode = true;
 			delta.x = xStep;
 			newpos.x = xStep + s._startFoot.x;
 		} else {
@@ -694,7 +696,7 @@ void PathWalker_BR::doWalk(State &s) {
 	} else
 	if (s._startFoot.x > p.x && (s._startFoot.x - xStep) > minX && IS_PATH_CLEAR(s._startFoot.x - xStep, s._startFoot.y)) {
 		if (s._startFoot.x - xStep >= p.x) {
-			s._fieldC = 1;
+			s._stillWalkingTowardsNode = true;
 			delta.x = xStep;
 			newpos.x = s._startFoot.x - xStep;
 		} else {
@@ -708,7 +710,7 @@ void PathWalker_BR::doWalk(State &s) {
 
 	debugC(9, kDebugWalk, "foot (%i, %i) dest (%i, %i) deltas = %i/%i ", s._startFoot.x, s._startFoot.y, p.x, p.y, delta.x, delta.y);
 
-	if (s._fieldC) {
+	if (s._stillWalkingTowardsNode) {
 		debugC(9, kDebugWalk, "PathWalker_BR::doWalk, foot moved from (%i, %i) to (%i, %i)", s._startFoot.x, s._startFoot.y, newpos.x, newpos.y);
 		s._a->setF(walkFrame + s._dirFrame + 1);
 		s._startFoot.x = newpos.x;
@@ -717,7 +719,7 @@ void PathWalker_BR::doWalk(State &s) {
 		s._a->setZ(newpos.y);
 	}
 
-	if (s._fieldC || !s._walkPath.empty()) {
+	if (s._stillWalkingTowardsNode || !s._walkPath.empty()) {
 		Common::Point p2;
 		s._a->getFoot(p2);
 		checkTrap(p2);
