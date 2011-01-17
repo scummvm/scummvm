@@ -160,29 +160,31 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 				properties.sprite = -1;
 				video->surface.reset();
 				video->decoder->setSurfaceMemory();
-				video->decoder->setXY(0, 0);
+				properties.x = properties.y = 0;
 			} else {
 				video->surface = _vm->_draw->_spritesArray[properties.sprite];
 				video->decoder->setSurfaceMemory(video->surface->getData(),
 						video->surface->getWidth(), video->surface->getHeight(), video->surface->getBPP());
 
 				if (!ownSurf || (ownSurf && screenSize)) {
-					if ((properties.x >= 0) || (properties.y >= 0))
-						video->decoder->setXY((properties.x < 0) ? 0xFFFF : properties.x,
-						                      (properties.y < 0) ? 0xFFFF : properties.y);
-					else
-						video->decoder->setXY();
+					if ((properties.x >= 0) || (properties.y >= 0)) {
+						properties.x = (properties.x < 0) ? 0xFFFF : properties.x;
+						properties.y = (properties.y < 0) ? 0xFFFF : properties.y;
+					} else
+						properties.x = properties.y = -1;
 				} else
-					video->decoder->setXY(0, 0);
+					properties.x = properties.y = 0;
 			}
 
 		} else {
 			properties.sprite = -1;
 			video->surface.reset();
 			video->decoder->setSurfaceMemory();
-			video->decoder->setXY(0, 0);
+			properties.x = properties.y = 0;
 		}
 	}
+
+	video->decoder->setXY(properties.x, properties.y);
 
 	if (primary)
 		_needBlit = (properties.flags & kFlagUseBackSurfaceContent) && (properties.sprite == Draw::kFrontSurface);
