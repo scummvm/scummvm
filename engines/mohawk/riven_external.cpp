@@ -1046,16 +1046,150 @@ void RivenExternal::xbchipper(uint16 argc, uint16 *argv) {
 // gspit (Garden Island) external commands
 // ------------------------------------------------------------------------------------
 
+void RivenExternal::lowerPins() {
+	// Lower the pins
+
+	uint32 *pinUp = _vm->getVar("gpinup");
+
+	if (*pinUp == 0)
+		return;
+
+	uint32 *pinPos = _vm->getVar("gpinpos");
+	uint32 startTime = (*pinPos - 1) * 600 + 4830;
+	*pinUp = 0;
+
+	// Play the down sound
+	_vm->_sound->playSound(13);
+
+	uint32 *upMovie = _vm->getVar("gupmoov");
+
+	// Play the video of the pins going down
+	VideoHandle handle = _vm->_video->playMovie(*upMovie);
+	assert(handle != NULL_VID_HANDLE);
+	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(startTime, 600), Graphics::VideoTimestamp(startTime + 550, 600));
+	_vm->_video->waitUntilMovieEnds(handle);
+
+	*upMovie = 0;
+}
+
 void RivenExternal::xgresetpins(uint16 argc, uint16 *argv) {
-	// TODO: Map related
+	// As the function name suggests, this resets the pins
+	lowerPins();
+	*_vm->getVar("gupmoov") = 0;
 }
 
 void RivenExternal::xgrotatepins(uint16 argc, uint16 *argv) {
-	// TODO: Map related
+	// Rotate the pins, if necessary
+
+	if (*_vm->getVar("gpinup") == 0)
+		return;
+
+	uint32 *pinPos = _vm->getVar("gpinpos");
+	uint32 startTime = (*pinPos - 1) * 1200;
+
+	if (*pinPos == 4)
+		*pinPos = 1;
+	else
+		*pinPos += 1;
+
+	// Play the rotating sound
+	_vm->_sound->playSound(12);
+
+	// Play the video of the pins rotating
+	VideoHandle handle = _vm->_video->playMovie(*_vm->getVar("gupmoov"));
+	assert(handle != NULL_VID_HANDLE);
+	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(startTime, 600), Graphics::VideoTimestamp(startTime + 1215, 600));
+	_vm->_video->waitUntilMovieEnds(handle);
 }
 
 void RivenExternal::xgpincontrols(uint16 argc, uint16 *argv) {
-	// TODO: Map related
+	// Handle a click on a section of an island
+
+	// Get our mouse position and adjust it to the beginning of the hotspot
+	Common::Point mousePos = _vm->_system->getEventManager()->getMousePos();
+	mousePos.x -= _vm->_hotspots[3].rect.left;
+	mousePos.y -= _vm->_hotspots[3].rect.top;
+
+	// And now adjust it to which box we hit
+	mousePos.x /= 10;
+	mousePos.y /= 11;
+
+	// Lastly, adjust it based on the rotational position
+	uint32 pinPos = *_vm->getVar("gpinpos");
+	switch (pinPos) {
+	case 1:
+		mousePos.x = 5 - mousePos.x;
+		mousePos.y = (4 - mousePos.y) * 5;
+		break;
+	case 2:
+		mousePos.x = (4 - mousePos.x) * 5;
+		mousePos.y = 1 + mousePos.y;
+		break;
+	case 3:
+		mousePos.x = 1 + mousePos.x;
+		mousePos.y = mousePos.y * 5;
+		break;
+	case 4:
+		mousePos.x = mousePos.x * 5;
+		mousePos.y = 5 - mousePos.y;
+		break;
+	default:
+		// (Should never happen)
+		error("Bad pin pos");
+	}
+
+	// Now check to see if this section of the island exists
+	uint32 islandIndex = *_vm->getVar("glkbtns") - 1;
+	uint16 imagePos = mousePos.x + mousePos.y;
+
+	static const uint16 islandImages[5][11] = {
+		{ 1, 2, 6, 7 },
+		{ 11, 16, 21, 22 },
+		{ 12, 13, 14, 15, 17, 18, 19, 20, 23, 24, 25 },
+		{ 5 },
+		{ 3, 4, 8, 9, 10 }
+	};
+
+	// The scripts set gimagemax to hold the max pin array length in islandPins above
+	uint32 imageCount = *_vm->getVar("gimagemax");
+	uint32 image = 0;
+	for (; image < imageCount; image++)
+		if (islandImages[islandIndex][image] == imagePos)
+			break;
+
+	// If we past it, we don't have a valid map coordinate
+	if (image == imageCount)
+		return;
+
+	uint32 *pinUp = _vm->getVar("gpinup");
+	uint32 *curImage = _vm->getVar("gimagecurr");
+
+	// Lower the pins if they are currently raised
+	if (*pinUp == 1) {
+		lowerPins();
+
+		// If we just lowered the selected section, don't raise it up again
+		if (*curImage == image)
+			return;
+	}
+
+	// Raise the pins by translating the position to the movie code
+	static const uint16 pinMovieCodes[] = { 1, 2, 1, 2, 1, 3, 4, 3, 4, 5, 1, 1, 2, 3, 4, 2, 5, 6, 7, 8, 3, 4, 9, 10, 11 };
+
+	// Play the up sound
+	_vm->_sound->playSound(14);
+
+	// Actually play the movie
+	VideoHandle handle = _vm->_video->playMovie(pinMovieCodes[imagePos - 1]);
+	assert(handle != NULL_VID_HANDLE);
+	uint32 startTime = 9630 - pinPos * 600;
+	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(startTime, 600), Graphics::VideoTimestamp(startTime + 550, 600));
+	_vm->_video->waitUntilMovieEnds(handle);
+
+	// Update the relevant variables
+	*_vm->getVar("gupmoov") = pinMovieCodes[imagePos - 1];
+	*pinUp = 1;
+	*curImage = image;
 }
 
 void RivenExternal::xgisland25_opencard(uint16 argc, uint16 *argv) {

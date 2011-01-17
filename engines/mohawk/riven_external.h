@@ -73,6 +73,7 @@ private:
 	void drawMarbles();
 	void setMarbleHotspots();
 	void redrawWharkNumberPuzzle(uint16 overlay, uint16 number);
+	void lowerPins();
 
 	// -----------------------------------------------------
 	// aspit (Main Menu, Books, Setup) external commands
