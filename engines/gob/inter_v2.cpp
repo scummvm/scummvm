@@ -626,12 +626,14 @@ void Inter_v2::o2_pushVars() {
 			_varStack[_varStackPos] = _vm->_global->_inter_animDataSize * 4;
 
 		} else {
-			int32 n = _vm->_game->_script->getResultInt();
+			int16 value;
 
-			if (_vm->_game->_script->evalExpr(&varOff) != 20)
-				n = 0;
+			if (_vm->_game->_script->evalExpr(&value) != 20)
+				value = 0;
 
-			memcpy(_varStack + _varStackPos, &n, 4);
+			uint32 value32 = ((uint16) value);
+
+			memcpy(_varStack + _varStackPos, &value32, 4);
 			_varStackPos += 4;
 			_varStack[_varStackPos] = 4;
 		}
