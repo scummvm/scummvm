@@ -609,21 +609,15 @@ void Inter_v2::o2_switchTotSub() {
 }
 
 void Inter_v2::o2_pushVars() {
-	byte count;
-	int16 varOff;
-
-	count = _vm->_game->_script->readByte();
-	for (int i = 0; i < count; i++, _varStackPos++) {
+	uint8 count = _vm->_game->_script->readByte();
+	for (int i = 0; i < count; i++) {
 		if ((_vm->_game->_script->peekByte() == 25) ||
 				(_vm->_game->_script->peekByte() == 28)) {
 
-			varOff = _vm->_game->_script->readVarIndex();
+			int16 varOff = _vm->_game->_script->readVarIndex();
 			_vm->_game->_script->skip(1);
 
-			_variables->copyTo(varOff, _varStack + _varStackPos, _vm->_global->_inter_animDataSize * 4);
-
-			_varStackPos += _vm->_global->_inter_animDataSize * 4;
-			_varStack[_varStackPos] = _vm->_global->_inter_animDataSize * 4;
+			_varStack.pushData(*_variables, varOff, _vm->_global->_inter_animDataSize * 4);
 
 		} else {
 			int16 value;
@@ -631,27 +625,17 @@ void Inter_v2::o2_pushVars() {
 			if (_vm->_game->_script->evalExpr(&value) != 20)
 				value = 0;
 
-			uint32 value32 = ((uint16) value);
-
-			memcpy(_varStack + _varStackPos, &value32, 4);
-			_varStackPos += 4;
-			_varStack[_varStackPos] = 4;
+			_varStack.pushInt((uint16)value);
 		}
 	}
 }
 
 void Inter_v2::o2_popVars() {
-	byte count;
-	int16 varOff;
-	int16 size;
-
-	count = _vm->_game->_script->readByte();
+	uint8 count = _vm->_game->_script->readByte();
 	for (int i = 0; i < count; i++) {
-		varOff = _vm->_game->_script->readVarIndex();
-		size = _varStack[--_varStackPos];
+		int16 varOff = _vm->_game->_script->readVarIndex();
 
-		_varStackPos -= size;
-		_variables->copyFrom(varOff, _varStack + _varStackPos, size);
+		_varStack.pop(*_variables, varOff);
 	}
 }
 

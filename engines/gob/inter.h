@@ -129,8 +129,7 @@ protected:
 	int16 _animPalHighIndex[8];
 	int16 _animPalDir[8];
 
-	byte _varStack[300];
-	int16 _varStackPos;
+	VariableStack _varStack;
 
 	// The busy-wait detection in o1_keyFunc breaks fast scrolling in Ween
 	bool _noBusyWait;

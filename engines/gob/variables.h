@@ -148,6 +148,23 @@ private:
 	Variables::Type _type;
 };
 
+class VariableStack {
+public:
+	VariableStack(uint32 size);
+	~VariableStack();
+
+	void pushData(const Variables &vars, uint32 offset, uint32 size);
+	void pushInt(uint32 value);
+
+	void pop(Variables &vars, uint32 offset);
+
+private:
+	byte *_stack;
+
+	uint32 _size;
+	uint32 _position;
+};
+
 } // End of namespace Gob
 
 #endif // GOB_VARIABLES_H

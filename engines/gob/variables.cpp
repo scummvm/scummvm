@@ -286,4 +286,65 @@ VariableReference &VariableReference::operator*=(uint32 value) {
 	return (*this = (*this * value));
 }
 
+
+VariableStack::VariableStack(uint32 size) : _size(size), _position(0) {
+	_stack = new byte[_size];
+
+	memset(_stack, 0, _size);
+}
+
+VariableStack::~VariableStack() {
+	delete[] _stack;
+}
+
+void VariableStack::pushData(const Variables &vars, uint32 offset, uint32 size) {
+	// Sanity checks
+	assert(size < 256);
+	assert((_position + size) < _size);
+
+	vars.copyTo(offset, _stack + _position, size);
+
+	_position += size;
+	_stack[_position++] = size;
+	_stack[_position++] = 0;
+}
+
+void VariableStack::pushInt(uint32 value) {
+	// Sanity check
+	assert((_position + 4) < _size);
+
+	memcpy(_stack + _position, &value, 4);
+
+	_position += 4;
+	_stack[_position++] = 4;
+	_stack[_position++] = 1;
+}
+
+void VariableStack::pop(Variables &vars, uint32 offset) {
+	// Sanity check
+	assert(_position >= 2);
+
+	bool   isInt = _stack[--_position] == 1;
+	uint32 size  = _stack[--_position];
+
+	// Sanity check
+	assert(_position >= size);
+
+	_position -= size;
+
+	if (isInt) {
+		// If it's an int, explicitely call the int variable writing method,
+		// to make sure the variable space endianness is preserved.
+
+		assert(size == 4);
+
+		uint32 value;
+		memcpy(&value, _stack + _position, 4);
+
+		vars.writeOff32(offset, value);
+	} else
+		// Otherwise, use do a raw copy
+		vars.copyFrom(offset, _stack + _position, size);
+}
+
 } // End of namespace Gob

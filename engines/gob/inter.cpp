@@ -39,7 +39,7 @@
 
 namespace Gob {
 
-Inter::Inter(GobEngine *vm) : _vm(vm) {
+Inter::Inter(GobEngine *vm) : _vm(vm), _varStack(600) {
 	_terminate = 0;
 	_break = false;
 
@@ -54,9 +54,6 @@ Inter::Inter(GobEngine *vm) : _vm(vm) {
 
 	_soundEndTimeKey = 0;
 	_soundStopVal = 0;
-
-	memset(_varStack, 0, 300);
-	_varStackPos = 0;
 
 	_noBusyWait = false;
 
