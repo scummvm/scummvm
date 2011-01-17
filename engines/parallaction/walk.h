@@ -31,11 +31,9 @@
 
 #include "parallaction/objects.h"
 
-
 namespace Parallaction {
 
 struct Character;
-
 
 class PathWalker_NS {
 	AnimationPtr _a;
@@ -60,7 +58,6 @@ public:
 	void buildPath(AnimationPtr a, uint16 x, uint16 y);
 	void walk();
 };
-
 
 class PathWalker_BR {
 
