@@ -1234,9 +1234,7 @@ void RivenExternal::xgwt900_scribe(uint16 argc, uint16 *argv) {
 		*scribeVar = 2;
 }
 
-void RivenExternal::xgplaywhark(uint16 argc, uint16 *argv) {
-	// TODO: Whark response to using the lights
-}
+static const uint16 s_viewerTimeIntervals[] = { 0, 816, 1617, 2416, 3216, 4016, 4816, 5616, 6416, 7216, 8016, 8816 };
 
 void RivenExternal::xgrviewer(uint16 argc, uint16 *argv) {
 	// This controls the viewer on the right side of the 'throne' on Garden Island
@@ -1259,10 +1257,9 @@ void RivenExternal::xgrviewer(uint16 argc, uint16 *argv) {
 	uint32 newPos = *curPos + hotspotPositions[_vm->_curHotspot - 1];
 
 	// Now play the movie
-	static const uint16 timeIntervals[] = { 0, 816, 1617, 2416, 3216, 4016, 4816, 5616, 6416, 7216, 8016, 8816 };
 	VideoHandle handle = _vm->_video->playMovie(1);
 	assert(handle != NULL_VID_HANDLE);
-	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(timeIntervals[*curPos], 600), Graphics::VideoTimestamp(timeIntervals[newPos], 600));
+	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(s_viewerTimeIntervals[*curPos], 600), Graphics::VideoTimestamp(s_viewerTimeIntervals[newPos], 600));
 	_vm->_video->waitUntilMovieEnds(handle);
 
 	// Set the new position and let the card's scripts take over again
@@ -1270,28 +1267,57 @@ void RivenExternal::xgrviewer(uint16 argc, uint16 *argv) {
 	_vm->refreshCard();
 }
 
+void RivenExternal::xgplaywhark(uint16 argc, uint16 *argv) {
+	// TODO: Whark response to using the lights
+}
+
 void RivenExternal::xgwharksnd(uint16 argc, uint16 *argv) {
-	// TODO: Image viewer related
-}
-
-void RivenExternal::xglview_prisonoff(uint16 argc, uint16 *argv) {
-	// TODO: Image viewer related
-}
-
-void RivenExternal::xglview_villageoff(uint16 argc, uint16 *argv) {
-	// TODO: Image viewer related
+	// TODO: Random background whark videos
 }
 
 void RivenExternal::xglviewer(uint16 argc, uint16 *argv) {
-	// TODO: Image viewer related
-}
+	// This controls the viewer on the left side of the 'throne' on Garden Island
+	// (It shows the village from the middle of the lake)
 
-void RivenExternal::xglview_prisonon(uint16 argc, uint16 *argv) {
-	// TODO: Image viewer related
+	// Calculate how much we're moving
+	static const uint16 hotspotPositions[] = { 1, 5, 4, 2, 0, 0, 3 };
+	uint32 *curPos = _vm->getVar("glviewpos");
+	uint32 newPos = *curPos + hotspotPositions[_vm->_curHotspot - 1];
+
+	// Now play the movie
+	VideoHandle handle = _vm->_video->playMovie(1);
+	assert(handle != NULL_VID_HANDLE);
+	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(s_viewerTimeIntervals[*curPos], 600), Graphics::VideoTimestamp(s_viewerTimeIntervals[newPos], 600));
+	_vm->_video->waitUntilMovieEnds(handle);
+
+	// Set the new position to the variable
+	*curPos = newPos % 6; // Clip it to 0-5
+
+	// And update the screen with the new image
+	_vm->_gfx->drawPLST(*curPos + 2);
+	_vm->_gfx->updateScreen();
 }
 
 void RivenExternal::xglview_villageon(uint16 argc, uint16 *argv) {
-	// TODO: Image viewer related
+	// Turn on the left viewer to 'village mode'
+	*_vm->getVar("glview") = 2;
+	_vm->_gfx->drawPLST(*_vm->getVar("glviewpos") + 2);
+	_vm->_gfx->updateScreen();
+}
+
+void RivenExternal::xglview_villageoff(uint16 argc, uint16 *argv) {
+	// Turn off the left viewer when in 'village mode'
+	*_vm->getVar("glview") = 0;
+	_vm->_gfx->drawPLST(1);
+	_vm->_gfx->updateScreen();
+}
+
+void RivenExternal::xglview_prisonon(uint16 argc, uint16 *argv) {
+	// TODO: Activate random background Catherine videos
+}
+
+void RivenExternal::xglview_prisonoff(uint16 argc, uint16 *argv) {
+	// TODO: Deactivate random background Catherine videos
 }
 
 // ------------------------------------------------------------------------------------
