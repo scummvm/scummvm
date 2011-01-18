@@ -15,7 +15,7 @@
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
-					<Add option="-lrpcrt4" />
+					<Add library="rpcrt4" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -28,7 +28,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add option="-lrpcrt4" />
+					<Add library="rpcrt4" />
 				</Linker>
 			</Target>
 		</Build>
