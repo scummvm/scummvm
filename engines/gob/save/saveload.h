@@ -334,6 +334,44 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
+/** Save/Load class for Inca 2. */
+class SaveLoad_Inca2 : public SaveLoad {
+public:
+	SaveLoad_Inca2(GobEngine *vm, const char *targetName);
+	virtual ~SaveLoad_Inca2();
+
+	SaveMode getSaveMode(const char *fileName) const;
+
+protected:
+	struct SaveFile {
+		const char *sourceName;
+		SaveMode mode;
+		SaveHandler *handler;
+		const char *description;
+	};
+
+	/** Handles the voice language info file. */
+	class VoiceHandler : public SaveHandler {
+	public:
+		VoiceHandler(GobEngine *vm);
+		~VoiceHandler();
+
+		int32 getSize();
+		bool load(int16 dataVar, int32 size, int32 offset);
+		bool save(int16 dataVar, int32 size, int32 offset);
+	};
+
+	static SaveFile _saveFiles[];
+
+	VoiceHandler *_voiceHandler;
+
+	SaveHandler *getHandler(const char *fileName) const;
+	const char *getDescription(const char *fileName) const;
+
+	const SaveFile *getSaveFile(const char *fileName) const;
+	SaveFile *getSaveFile(const char *fileName);
+};
+
 /** Save/Load class for Woodruff. */
 class SaveLoad_v4 : public SaveLoad {
 public:

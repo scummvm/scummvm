@@ -476,7 +476,7 @@ bool GobEngine::initGameParts() {
 		_map      = new Map_v2(this);
 		_goblin   = new Goblin_v3(this);
 		_scenery  = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_v3(this, _targetName.c_str(), SaveLoad_v3::kScreenshotTypeGob3);
+		_saveLoad = new SaveLoad_Inca2(this, _targetName.c_str());
 		break;
 
 	case kGameTypeLostInTime:
