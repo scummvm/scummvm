@@ -1219,18 +1219,6 @@ bool Inter_v2::o2_removeHotspot(OpFuncParams &params) {
 }
 
 bool Inter_v2::o2_goblinFunc(OpFuncParams &params) {
-	// TODO: In Inca 2, this is the big SpaceShoot0rz()-Opcode.
-	// It's not yet implemented, so we fudge our way through
-	// and pretend we've won.
-	if (_vm->getGameType() == kGameTypeInca2) {
-		_vm->_game->_script->skip(4);
-		uint16 resVar = _vm->_game->_script->readUint16();
-		_vm->_game->_script->skip(4);
-
-		WRITE_VAR(resVar, 1);
-		return false;
-	}
-
 	OpGobParams gobParams;
 	int16 cmd;
 

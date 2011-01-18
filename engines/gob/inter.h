@@ -474,6 +474,19 @@ protected:
 	void o3_wobble(OpGobParams &params);
 };
 
+class Inter_Inca2 : public Inter_v3 {
+public:
+	Inter_Inca2(GobEngine *vm);
+	virtual ~Inter_Inca2() {}
+
+protected:
+	virtual void setupOpcodesDraw();
+	virtual void setupOpcodesFunc();
+	virtual void setupOpcodesGob();
+
+	bool oInca2_spaceShooter(OpFuncParams &params);
+};
+
 class Inter_v4 : public Inter_v3 {
 public:
 	Inter_v4(GobEngine *vm);
