@@ -3002,10 +3002,15 @@ void MystScriptParser_Myst::clockReset() {
 
 void MystScriptParser_Myst::clockResetWeight() {
 	// Set video bounds, weight going up
-	_clockWeightVideo = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
-	_vm->_video->setVideoBounds(_clockWeightVideo,
-			Graphics::VideoTimestamp(2214 * 2 - _clockWeightPosition, 600),
-			Graphics::VideoTimestamp(2214 * 2, 600));
+	if (!(_vm->getFeatures() & GF_ME)) {
+		_clockWeightVideo = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+		_vm->_video->setVideoBounds(_clockWeightVideo,
+				Graphics::VideoTimestamp(2214 * 2 - _clockWeightPosition, 600),
+				Graphics::VideoTimestamp(2214 * 2, 600));
+	} else {
+		//FIXME: Needs QT backwards playing
+		warning("Weight going back up not implemented");
+	}
 
 	// Reset position
 	_clockWeightPosition = 0;
