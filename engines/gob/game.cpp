@@ -324,6 +324,10 @@ void Game::playTot(int16 skipPlay) {
 				WRITE_VAR(14, _vm->_global->_soundFlags);
 				WRITE_VAR(15, _vm->_global->_fakeVideoMode);
 				WRITE_VAR(16, _vm->_global->_language);
+
+				// WORKAROUND: Inca2 seems to depend on that variable to be cleared
+				if (_vm->getGameType() == kGameTypeInca2)
+					WRITE_VAR(59, 0);
 			}
 
 			_vm->_inter->callSub(2);
