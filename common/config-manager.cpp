@@ -80,7 +80,7 @@ void ConfigManager::loadDefaultConfigFile() {
 	// Open the default config file
 	assert(g_system);
 	SeekableReadStream *stream = g_system->createConfigReadStream();
-	_filename.clear();	// clear the filename to indicate that we are using the default config file
+	_filename.clear();  // clear the filename to indicate that we are using the default config file
 
 	// ... load it, if available ...
 	if (stream) {
@@ -110,7 +110,7 @@ void ConfigManager::loadConfigFile(const String &filename) {
 	}
 }
 
-/** 
+/**
  * Add a ready-made domain based on its name and contents
  * The domain name should not already exist in the ConfigManager.
  **/
@@ -252,7 +252,7 @@ void ConfigManager::flushToDisk() {
 		// Write to the default config file
 		assert(g_system);
 		stream = g_system->createConfigWriteStream();
-		if (!stream)	// If writing to the config file is not possible, do nothing
+		if (!stream)    // If writing to the config file is not possible, do nothing
 			return;
 	} else {
 		DumpFile *dump = new DumpFile();
@@ -281,7 +281,7 @@ void ConfigManager::flushToDisk() {
 	for (d = _miscDomains.begin(); d != _miscDomains.end(); ++d) {
 		writeDomain(*stream, d->_key, d->_value);
 	}
-	
+
 	// First write the domains in _domainSaveOrder, in that order.
 	// Note: It's possible for _domainSaveOrder to list domains which
 	// are not present anymore, so we validate each name.
@@ -289,7 +289,7 @@ void ConfigManager::flushToDisk() {
 	for (i = _domainSaveOrder.begin(); i != _domainSaveOrder.end(); ++i) {
 		if (_gameDomains.contains(*i)) {
 			writeDomain(*stream, *i, _gameDomains[*i]);
-		} 
+		}
 	}
 
 	// Now write the domains which haven't been written yet
@@ -305,7 +305,7 @@ void ConfigManager::flushToDisk() {
 
 void ConfigManager::writeDomain(WriteStream &stream, const String &name, const Domain &domain) {
 	if (domain.empty())
-		return;		// Don't bother writing empty domains.
+		return;     // Don't bother writing empty domains.
 
 	// WORKAROUND: Fix for bug #1972625 "ALL: On-the-fly targets are
 	// written to the config file": Do not save domains that came from
@@ -431,7 +431,7 @@ void ConfigManager::removeKey(const String &key, const String &domName) {
 
 	if (!domain)
 		error("ConfigManager::removeKey(%s, %s) called on non-existent domain",
-					key.c_str(), domName.c_str());
+		      key.c_str(), domName.c_str());
 
 	domain->erase(key);
 }
@@ -440,7 +440,7 @@ void ConfigManager::removeKey(const String &key, const String &domName) {
 #pragma mark -
 
 
-const String & ConfigManager::get(const String &key) const {
+const String &ConfigManager::get(const String &key) const {
 	if (_transientDomain.contains(key))
 		return _transientDomain[key];
 	else if (_activeDomain && _activeDomain->contains(key))
@@ -451,7 +451,7 @@ const String & ConfigManager::get(const String &key) const {
 	return _defaultsDomain.getVal(key);
 }
 
-const String & ConfigManager::get(const String &key, const String &domName) const {
+const String &ConfigManager::get(const String &key, const String &domName) const {
 	// FIXME: For now we continue to allow empty domName to indicate
 	// "use 'default' domain". This is mainly needed for the SCUMM ConfigDialog
 	// and should be removed ASAP.
@@ -462,7 +462,7 @@ const String & ConfigManager::get(const String &key, const String &domName) cons
 
 	if (!domain)
 		error("ConfigManager::get(%s,%s) called on non-existent domain",
-								key.c_str(), domName.c_str());
+		      key.c_str(), domName.c_str());
 
 	if (domain->contains(key))
 		return (*domain)[key];
@@ -486,7 +486,7 @@ int ConfigManager::getInt(const String &key, const String &domName) const {
 	int ivalue = (int)strtol(value.c_str(), &errpos, 0);
 	if (value.c_str() == errpos)
 		error("ConfigManager::getInt(%s,%s): '%s' is not a valid integer",
-					key.c_str(), domName.c_str(), errpos);
+		      key.c_str(), domName.c_str(), errpos);
 
 	return ivalue;
 }
@@ -500,7 +500,7 @@ bool ConfigManager::getBool(const String &key, const String &domName) const {
 		return false;
 
 	error("ConfigManager::getBool(%s,%s): '%s' is not a valid bool",
-				key.c_str(), domName.c_str(), value.c_str());
+	      key.c_str(), domName.c_str(), value.c_str());
 }
 
 
@@ -532,7 +532,7 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 
 	if (!domain)
 		error("ConfigManager::set(%s,%s,%s) called on non-existent domain",
-					key.c_str(), value.c_str(), domName.c_str());
+		      key.c_str(), value.c_str(), domName.c_str());
 
 	(*domain)[key] = value;
 
@@ -547,7 +547,7 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 	// But doing this here seems rather evil... need to comb the options dialog
 	// code to find out if it's still necessary, and if that's the case, how
 	// to replace it in a clean fashion...
-/*
+#if 0
 	if (domName == kTransientDomain)
 		_transientDomain[key] = value;
 	else {
@@ -561,7 +561,7 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 				_transientDomain.erase(key);
 		}
 	}
-*/
+#endif
 }
 
 void ConfigManager::setInt(const String &key, int value, const String &domName) {
@@ -699,4 +699,5 @@ bool ConfigManager::Domain::hasKVComment(const String &key) const {
 	return _keyValueComments.contains(key);
 }
 
-}	// End of namespace Common
+} // End of namespace Common
+
