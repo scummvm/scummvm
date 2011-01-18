@@ -1371,7 +1371,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 
 	WRITE_VAR(1, 1);
 	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(file);
-	if (!file)
+	if (!stream)
 		return false;
 
 	_vm->_draw->animateCursor(4);
