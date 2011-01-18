@@ -184,16 +184,19 @@ void Inter_v4::o4_playVmdOrMusic() {
 		if (_vm->_mult->_objects[props.startFrame].videoSlot > 0)
 			_vm->_vidPlayer->closeVideo(_vm->_mult->_objects[props.startFrame].videoSlot - 1);
 
+		uint32 x = props.x;
+		uint32 y = props.y;
+
 		int slot = _vm->_vidPlayer->openVideo(false, fileName, props);
 
 		_vm->_mult->_objects[props.startFrame].videoSlot = slot + 1;
 
-		if (props.x == -1) {
+		if (x == 0xFFFFFFFF) {
 			*_vm->_mult->_objects[props.startFrame].pPosX = _vm->_vidPlayer->getDefaultX(slot);
 			*_vm->_mult->_objects[props.startFrame].pPosY = _vm->_vidPlayer->getDefaultY(slot);
 		} else {
-			*_vm->_mult->_objects[props.startFrame].pPosX = props.x;
-			*_vm->_mult->_objects[props.startFrame].pPosY = props.y;
+			*_vm->_mult->_objects[props.startFrame].pPosX = x;
+			*_vm->_mult->_objects[props.startFrame].pPosY = y;
 		}
 
 		return;
