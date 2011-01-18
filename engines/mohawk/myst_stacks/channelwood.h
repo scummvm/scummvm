@@ -51,28 +51,37 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
-	void opcode_202_run();
-	void opcode_202_disable();
 	void opcode_203_run();
 	void opcode_203_disable();
 
 	DECLARE_OPCODE(opcode_101);
 	DECLARE_OPCODE(opcode_102);
-	DECLARE_OPCODE(opcode_104);
+	DECLARE_OPCODE(o_waterTankValveOpen);
+	DECLARE_OPCODE(o_valveHandleMove1);
+	DECLARE_OPCODE(o_valveHandleMoveStart1);
+	DECLARE_OPCODE(o_valveHandleMoveStop);
+	DECLARE_OPCODE(o_valveHandleMove2);
+	DECLARE_OPCODE(o_valveHandleMoveStart2);
+	DECLARE_OPCODE(o_valveHandleMove3);
+	DECLARE_OPCODE(o_valveHandleMoveStart3);
 	DECLARE_OPCODE(opcode_117);
 	DECLARE_OPCODE(opcode_118);
 	DECLARE_OPCODE(opcode_119);
-	DECLARE_OPCODE(opcode_122);
+	DECLARE_OPCODE(o_waterTankValveClose);
 	DECLARE_OPCODE(opcode_127);
 	DECLARE_OPCODE(opcode_129);
 
 	DECLARE_OPCODE(opcode_201);
-	DECLARE_OPCODE(opcode_202);
+	DECLARE_OPCODE(o_pipeValve_init);
 	DECLARE_OPCODE(opcode_203);
 
 	DECLARE_OPCODE(opcode_300);
 
 	MystGameState::Channelwood &_state;
+
+	uint16 _valveVar; // 64
+
+	bool pipeChangeValve(bool open, uint16 mask);
 };
 
 } // End of namespace Mohawk

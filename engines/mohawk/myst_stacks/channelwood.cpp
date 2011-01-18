@@ -23,6 +23,7 @@
  *
  */
 
+#include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
@@ -49,17 +50,24 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(101, opcode_101);
 	OPCODE(102, opcode_102);
-	OPCODE(104, opcode_104);
+	OPCODE(104, o_waterTankValveOpen);
+	OPCODE(110, o_valveHandleMove1);
+	OPCODE(111, o_valveHandleMoveStart1);
+	OPCODE(112, o_valveHandleMoveStop);
+	OPCODE(113, o_valveHandleMove2);
+	OPCODE(114, o_valveHandleMoveStart2);
+	OPCODE(115, o_valveHandleMove3);
+	OPCODE(116, o_valveHandleMoveStart3);
 	OPCODE(117, opcode_117);
 	OPCODE(118, opcode_118);
 	OPCODE(119, opcode_119);
-	OPCODE(122, opcode_122);
+	OPCODE(122, o_waterTankValveClose);
 	OPCODE(127, opcode_127);
 	OPCODE(129, opcode_129);
 
 	// "Init" Opcodes
 	OPCODE(201, opcode_201);
-	OPCODE(202, opcode_202);
+	OPCODE(202, o_pipeValve_init);
 	OPCODE(203, opcode_203);
 
 	// "Exit" Opcodes
@@ -69,12 +77,10 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 #undef OPCODE
 
 void MystScriptParser_Channelwood::disablePersistentScripts() {
-	opcode_202_disable();
 	opcode_203_disable();
 }
 
 void MystScriptParser_Channelwood::runPersistentScripts() {
-	opcode_202_run();
 	opcode_203_run();
 }
 
@@ -93,7 +99,7 @@ uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
 	case 6: // Pipe Bridge Extended
 		return _state.pipeState;
 	case 7: // Water Flowing To Water Pump For Bridge
-		return ((_state.waterValveStates & 0xe2) == 0xc2 || (_state.waterValveStates & 0xf4) == 0xa0) ? 1 : 0;
+		return ((_state.waterValveStates & 0xe2) == 0x82 || (_state.waterValveStates & 0xf4) == 0xa0) ? 1 : 0;
 	case 8: // Water Tank Valve
 		return (_state.waterValveStates & 0x80) ? 1 : 0;
 	case 9: // State of First Water Valve
@@ -128,7 +134,7 @@ uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
 	case 23: // Sound - Right Third Water Valve Water Flowing To Left
 		return ((_state.waterValveStates & 0xf0) == 0xa0) ? 1 : 0;
 	case 24: // Sound - Second Water Valve Water Flowing To Left
-		return ((_state.waterValveStates & 0xe0) == 0xc0) ? 1 : 0;
+		return ((_state.waterValveStates & 0xe0) == 0x80) ? 1 : 0;
 	case 25: // Sound - Right-Right Fourth Valve Water Flowing To Left (To Pipe Bridge)
 		return ((_state.waterValveStates & 0xf8) == 0xb0) ? 1 : 0;
 	case 26: // Sound - Right-Left Fourth Valve Water Flowing To Right (To Pipe Down Tree)
@@ -136,9 +142,9 @@ uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
 	case 27: // Sound - Right-Left Fourth Valve Water Flowing To Left (To Pipe Fork)
 		return ((_state.waterValveStates & 0xf4) == 0xa0) ? 1 : 0;
 	case 28: // Sound - Left Third Water Valve Flowing To Right (To Pipe Fork)
-		return ((_state.waterValveStates & 0xe2) == 0xc2) ? 1 : 0;
+		return ((_state.waterValveStates & 0xe2) == 0x82) ? 1 : 0;
 	case 29: // Sound - Left Third Water Valve Flowing To Left (To Pipe In Water)
-		return ((_state.waterValveStates & 0xe2) == 0xc0) ? 1 : 0;
+		return ((_state.waterValveStates & 0xe2) == 0x80) ? 1 : 0;
 //	case 30: // Temple Door State
 //		return 0;
 //		return 1;
@@ -170,6 +176,24 @@ bool MystScriptParser_Channelwood::setVarValue(uint16 var, uint16 value) {
 	bool refresh = false;
 
 	switch (var) {
+	case 9:
+		refresh = pipeChangeValve(value, 0x40);
+		break;
+	case 10:
+		refresh = pipeChangeValve(value, 0x20);
+		break;
+	case 11:
+		refresh = pipeChangeValve(value, 0x10);
+		break;
+	case 12:
+		refresh = pipeChangeValve(value, 0x08);
+		break;
+	case 13:
+		refresh = pipeChangeValve(value, 0x04);
+		break;
+	case 14:
+		refresh = pipeChangeValve(value, 0x02);
+		break;
 //	case 18: // Sirrus's Room Bed Drawer Open
 //	temp ^= 1;
 	default:
@@ -178,6 +202,22 @@ bool MystScriptParser_Channelwood::setVarValue(uint16 var, uint16 value) {
 	}
 
 	return refresh;
+}
+
+bool MystScriptParser_Channelwood::pipeChangeValve(bool open, uint16 mask) {
+	if (open) {
+		if (!(_state.waterValveStates & mask)) {
+			_state.waterValveStates |= mask;
+			return true;
+		}
+	} else {
+		if (_state.waterValveStates & mask) {
+			_state.waterValveStates &= ~mask;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void MystScriptParser_Channelwood::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -232,25 +272,119 @@ void MystScriptParser_Channelwood::opcode_102(uint16 op, uint16 var, uint16 argc
 }
 
 
-void MystScriptParser_Channelwood::opcode_104(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Channelwood::o_waterTankValveOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Do Water Tank Valve Open Animation", op);
+	Common::Rect rect = _invokingResource->getRect();
 
-	// Used on Channelwood Card 3280
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Do Water Tank Valve Open Animation", op);
-		Common::Rect rect = _invokingResource->getRect();
-
-		// TODO: Need to load the image ids from Script Resources structure of VIEW
-		for (uint16 imageId = 3595; imageId <= 3601; imageId++) {
+	for (uint i = 0; i < 2; i++)
+		for (uint16 imageId = 3601; imageId >= 3595; imageId--) {
 			_vm->_gfx->copyImageToScreen(imageId, rect);
-			_vm->_system->delayMillis(50);
+			_vm->_system->updateScreen();
+			_vm->_system->delayMillis(5);
 		}
 
-		// TODO: Is 8 gotten from var7 of calling hotspot, rather than hardcoded?
-		_vm->_varStore->setVar(8, 1);
-		_vm->_varStore->setVar(19, 1);
-	} else
-		unknown(op, var, argc, argv);
+	pipeChangeValve(true, 0x80);
+}
+
+void MystScriptParser_Channelwood::o_valveHandleMove1(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Valve handle move", op);
+
+	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	if (handle->getRect().contains(_vm->_mouse)) {
+		// Compute frame to draw
+		_tempVar = (_vm->_mouse.x - 250) / 4;
+		_tempVar = CLIP<int16>(_tempVar, 1, handle->getStepsH() - 2);
+
+		// Draw frame
+		handle->drawFrame(_tempVar);
+	}
+}
+
+void MystScriptParser_Channelwood::o_valveHandleMoveStart1(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Valve handle move start", op);
+
+	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	uint16 soundId = handle->getList1(0);
+	if (soundId)
+		_vm->_sound->replaceSound(soundId);
+	_vm->_cursor->setCursor(700);
+
+	o_valveHandleMove1(op, var, argc, argv);
+}
+
+void MystScriptParser_Channelwood::o_valveHandleMoveStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Valve handle move stop", op);
+
+	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Update state with valve position
+	if (_tempVar <= 5)
+		setVarValue(_valveVar, 1);
+	else
+		setVarValue(_valveVar, 0);
+
+	// Play release sound
+	uint16 soundId = handle->getList3(0);
+	if (soundId)
+		_vm->_sound->replaceSound(soundId);
+
+	// Redraw valve
+	_vm->redrawArea(_valveVar);
+
+	// Restore cursor
+	_vm->checkCursorHints();
+}
+
+void MystScriptParser_Channelwood::o_valveHandleMove2(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Valve handle move", op);
+
+	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	if (handle->getRect().contains(_vm->_mouse)) {
+		// Compute frame to draw
+		_tempVar = handle->getStepsH() - (_vm->_mouse.x - 234) / 4;
+		_tempVar = CLIP<int16>(_tempVar, 1, handle->getStepsH() - 2);
+
+		// Draw frame
+		handle->drawFrame(_tempVar);
+	}
+}
+
+void MystScriptParser_Channelwood::o_valveHandleMoveStart2(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Valve handle move start", op);
+
+	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	uint16 soundId = handle->getList1(0);
+	if (soundId)
+		_vm->_sound->replaceSound(soundId);
+	_vm->_cursor->setCursor(700);
+
+	o_valveHandleMove2(op, var, argc, argv);
+}
+
+void MystScriptParser_Channelwood::o_valveHandleMove3(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Valve handle move", op);
+
+	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	if (handle->getRect().contains(_vm->_mouse)) {
+		// Compute frame to draw
+		_tempVar = handle->getStepsH() - (_vm->_mouse.x - 250) / 4;
+		_tempVar = CLIP<int16>(_tempVar, 1, handle->getStepsH() - 2);
+
+		// Draw frame
+		handle->drawFrame(_tempVar);
+	}
+}
+
+void MystScriptParser_Channelwood::o_valveHandleMoveStart3(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Valve handle move start", op);
+
+	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	uint16 soundId = handle->getList1(0);
+	if (soundId)
+		_vm->_sound->replaceSound(soundId);
+	_vm->_cursor->setCursor(700);
+
+	o_valveHandleMove3(op, var, argc, argv);
 }
 
 void MystScriptParser_Channelwood::opcode_117(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -320,25 +454,18 @@ void MystScriptParser_Channelwood::opcode_119(uint16 op, uint16 var, uint16 argc
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Channelwood::opcode_122(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Channelwood::o_waterTankValveClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Do Water Tank Valve Close Animation", op);
+	Common::Rect rect = _invokingResource->getRect();
 
-	// Used on Channelwood Card 3280
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Do Water Tank Valve Close Animation", op);
-		Common::Rect rect = _invokingResource->getRect();
-
-		// TODO: Need to load the image ids from Script Resources structure of VIEW
-		for (uint16 imageId = 3601; imageId >= 3595; imageId--) {
+	for (uint i = 0; i < 2; i++)
+		for (uint16 imageId = 3595; imageId <= 3601; imageId++) {
 			_vm->_gfx->copyImageToScreen(imageId, rect);
-			_vm->_system->delayMillis(50);
+			_vm->_system->updateScreen();
+			_vm->_system->delayMillis(5);
 		}
 
-		// TODO: Is 8 gotten from var7 of calling hotspot, rather than hard-coded?
-		_vm->_varStore->setVar(8, 0);
-		_vm->_varStore->setVar(19, 0);
-	} else
-		unknown(op, var, argc, argv);
+	pipeChangeValve(false, 0x80);
 }
 
 void MystScriptParser_Channelwood::opcode_127(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -400,165 +527,9 @@ void MystScriptParser_Channelwood::opcode_201(uint16 op, uint16 var, uint16 argc
 		unknown(op, var, argc, argv);
 }
 
-static struct {
-	bool enabled;
-	uint16 var;
-} g_opcode202Parameters;
-
-void MystScriptParser_Channelwood::opcode_202_run(void) {
-	if (g_opcode202Parameters.enabled) {
-		// Used for Cards 3328, 3691, 3731, 3809, 3846 etc. (Water Valves)
-
-		// Code for Water Flow Logic
-		// Var 8 = "Water Tank Valve State"
-		// Controls
-		// Var 19 = "Water Flowing to First Water Valve"
-		// Code for this in Opcode 104 / 122
-
-		// Var 19 = "Water Flowing to First Water Valve"
-		// and
-		// Var 9 = "First Water Valve State"
-		// Controls
-		// Var 20 = "Water Flowing to Second (L) Water Valve"
-		// Var 3 = "Water Flowing (R) to Pump for Upper Walkway to Temple Elevator"
-		uint16 var9 = _vm->_varStore->getVar(9);
-		if (_vm->_varStore->getVar(19)) {
-			_vm->_varStore->setVar(20, !var9);
-			_vm->_varStore->setVar(3, var9);
-		} else {
-			// No water into Valve
-			_vm->_varStore->setVar(20, 0);
-			_vm->_varStore->setVar(3, 0);
-		}
-
-		// Var 20 = "Water Flowing to Second (L) Water Valve"
-		// and
-		// Var 10 = "Second (L) Water Valve State"
-		// Controls
-		// Var 24 = "Water Flowing to Third (L, L) Water Valve"
-		// Var 21 = "Water Flowing to Third (L, R) Water Valve"
-		uint16 var10 = _vm->_varStore->getVar(10);
-		if (_vm->_varStore->getVar(20)) {
-			_vm->_varStore->setVar(24, !var10);
-			_vm->_varStore->setVar(21, var10);
-		} else {
-			// No water into Valve
-			_vm->_varStore->setVar(24, 0);
-			_vm->_varStore->setVar(21, 0);
-		}
-
-		// Var 21 = "Water Flowing to Third (L, R) Water Valve"
-		// and
-		// Var 11 = "Third (L, R) Water Valve State"
-		// Controls
-		// Var 23 = "Water Flowing to Fourth (L, R, L) Water Valve"
-		// Var 22 = "Water Flowing to Fourth (L, R, R) Water Valve"
-		uint16 var11 = _vm->_varStore->getVar(11);
-		if (_vm->_varStore->getVar(21)) {
-			_vm->_varStore->setVar(23, !var11);
-			_vm->_varStore->setVar(22, var11);
-		} else {
-			// No water into Valve
-			_vm->_varStore->setVar(23, 0);
-			_vm->_varStore->setVar(22, 0);
-		}
-
-		// Var 24 = "Water Flowing to Third (L, L) Water Valve"
-		// and
-		// Var 14 = "Third (L, L) Water Valve State"
-		// Controls
-		// Var 29 = "Water Flowing to Pipe In Water (L, L, L)"
-		// Var 28 = "Water Flowing to Join and Pump Bridge (L, L, R)"
-		uint16 var14 = _vm->_varStore->getVar(14);
-		if (_vm->_varStore->getVar(24)) {
-			_vm->_varStore->setVar(29, !var14);
-			_vm->_varStore->setVar(28, var14);
-		} else {
-			// No water into Valve
-			_vm->_varStore->setVar(29, 0);
-			_vm->_varStore->setVar(28, 0);
-		}
-
-		// Var 22 = "Water Flowing to Fourth (L, R, R) Water Valve"
-		// and
-		// Var 12 = "Fourth (L, R, R) Water Valve State"
-		// Controls
-		// Var 25 = "Water Flowing to Pipe Bridge (L, R, R, L)"
-		// Var 15 = "Water Flowing (L, R, R, R) to Pump for Lower Walkway to Upper Walkway Elevator"
-		uint16 var12 = _vm->_varStore->getVar(12);
-		if (_vm->_varStore->getVar(22)) {
-			_vm->_varStore->setVar(25, !var12);
-			_vm->_varStore->setVar(15, var12);
-		} else {
-			// No water into Valve
-			_vm->_varStore->setVar(25, 0);
-			_vm->_varStore->setVar(15, 0);
-		}
-
-		// Var 23 = "Water Flowing to Fourth (L, R, L) Water Valve"
-		// and
-		// Var 13 = "Fourth (L, R, L) Water Valve State"
-		// Controls
-		// Var 27 = "Water Flowing to Join and Pump Bridge (L, R, L, L)"
-		// Var 26 = "Water Flowing to Pipe At Entry Point (L, R, L, R)"
-		uint16 var13 = _vm->_varStore->getVar(13);
-		if (_vm->_varStore->getVar(23)) {
-			_vm->_varStore->setVar(27, !var13);
-			_vm->_varStore->setVar(26, var13);
-		} else {
-			// No water into Valve
-			_vm->_varStore->setVar(27, 0);
-			_vm->_varStore->setVar(26, 0);
-		}
-
-		// TODO: Not sure that original had OR logic for water flow at Join...
-		// Var 27 = "Water Flowing to Join and Pump Bridge (L, R, L, L)"
-		// Or
-		// Var 28 = "Water Flowing to Join and Pump Bridge (L, L, R)"
-		// Controls
-		// Var 31 = "Water Flowing to Join (L, L, R)" // 0 to 2 = Stop Sound, Background, Background with Water Flow
-		// Var 7 = "Bridge Pump Running"
-		// TODO: Not sure about control of Var 31 which is tristate...
-		if (_vm->_varStore->getVar(27) || _vm->_varStore->getVar(28)) {
-			_vm->_varStore->setVar(31, 2); // Background with Water Flow
-			_vm->_varStore->setVar(7, 1);
-		} else {
-			// No water into Valve
-			_vm->_varStore->setVar(31, 1); // Background
-			_vm->_varStore->setVar(7, 0);
-		}
-
-		// TODO: Code for this shouldn't be here...
-		//       Move to Opcodes called by Pipe Extension...
-		// Var 25 = "Water Flowing to Pipe Bridge (L, R, R, L)"
-		// and
-		// Var 6 = "Pipe Bridge Extended"
-		// Controls
-		// Var 32 = "Water Flowing (L, R, R, L, Pipe) State" }, // 0 to 2 = Stop Sound, Background, Background with Water Flow
-		// Var 4 = "Water Flowing (L, R, R, L, Pipe Extended) to Pump for Book Room Elevator"
-		// TODO: Not sure about control of Var 32 which is tristate...
-		if (_vm->_varStore->getVar(25) && _vm->_varStore->getVar(6)) {
-			_vm->_varStore->setVar(32, 2); // Background with Water Flow
-			_vm->_varStore->setVar(4, 1);
-		} else {
-			// No water into Valve
-			_vm->_varStore->setVar(32, 1); // Background
-			_vm->_varStore->setVar(4, 0);
-		}
-	}
-}
-
-void MystScriptParser_Channelwood::opcode_202_disable(void) {
-	g_opcode202Parameters.enabled = false;
-}
-
-void MystScriptParser_Channelwood::opcode_202(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used for Cards 3328, 3691, 3731, 3809, 3846 etc. (Water Valves)
-	if (argc == 0) {
-		g_opcode202Parameters.var = var;
-		g_opcode202Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Channelwood::o_pipeValve_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Water valve init", op);
+	_valveVar = var;
 }
 
 static struct {
