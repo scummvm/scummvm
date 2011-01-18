@@ -45,7 +45,7 @@ FileManager_v2w::~FileManager_v2w() {
 
 /**
 * Display a Windows help file
-* Dame comment than in SCI: maybe in the future we can implement this, but for now this message should suffice
+* Same comment than in SCI: maybe in the future we can implement this, but for now this message should suffice
 */
 void FileManager_v2w::instructions() {
 	Utils::Box(BOX_ANY, "Please use an external viewer to open the game's help file: HUGOWIN%d.HLP", _vm->_gameVariant + 1);

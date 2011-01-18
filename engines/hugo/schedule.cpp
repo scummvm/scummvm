@@ -111,7 +111,7 @@ void Scheduler::decodeString(char *line) {
 * Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
 */
 uint32 Scheduler::getWinTicks() {
-	debugC(3, kDebugSchedule, "getWinTicks");
+	debugC(5, kDebugSchedule, "getWinTicks()");
 
 	return _vm->getGameStatus().tick;
 }
@@ -227,7 +227,7 @@ void Scheduler::restoreScreen(int screenIndex) {
 * Note: DOS Versions only
 */
 void Scheduler::waitForRefresh(void) {
-	debugC(1, kDebugSchedule, "waitForRefresh()");
+	debugC(5, kDebugSchedule, "waitForRefresh()");
 
 	static uint32 timeout = 0;
 	uint32 t;

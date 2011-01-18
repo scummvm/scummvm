@@ -73,8 +73,6 @@ void intro_v3w::introInit() {
 * Called every tick.  Returns TRUE when complete
 */
 bool intro_v3w::introPlay() {
-//TODO : Add proper check of story mode
-//#if STORY
 	if (_vm->getGameStatus().skipIntroFl)
 		return true;
 
@@ -98,8 +96,5 @@ bool intro_v3w::introPlay() {
 	}
 
 	return (++introTicks >= _vm->getIntroSize());
-//#else //STORY
-//	return true;
-//#endif //STORY
 }
 } // End of namespace Hugo
