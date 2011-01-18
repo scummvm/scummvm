@@ -2171,7 +2171,16 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 	Common::Rect realRect = rect;
 	Common::Rect fakeRect = rect;
 
-	if ((_blitMode == 1) || (_blitMode == 3)) {
+	if         (_blitMode == 0) {
+
+		realRect = Common::Rect(realRect.left  - _x, realRect.top    - _y,
+		                        realRect.right - _x, realRect.bottom - _y);
+
+		fakeRect = Common::Rect(fakeRect.left  - _x, fakeRect.top    - _y,
+		                        fakeRect.right - _x, fakeRect.bottom - _y);
+
+	} else if ((_blitMode == 1) || (_blitMode == 3)) {
+
 		realRect = Common::Rect(rect.left  / _bytesPerPixel, rect.top,
 		                        rect.right / _bytesPerPixel, rect.bottom);
 
@@ -2180,9 +2189,9 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 
 		fakeRect = Common::Rect(fakeRect.left  - _x, fakeRect.top    - _y,
 		                        fakeRect.right - _x, fakeRect.bottom - _y);
-	}
 
-	if (_blitMode == 2) {
+	} else if (_blitMode == 2) {
+
 		fakeRect = Common::Rect(rect.left  * _bytesPerPixel, rect.top,
 		                        rect.right * _bytesPerPixel, rect.bottom);
 
@@ -2191,6 +2200,7 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 
 		fakeRect = Common::Rect(fakeRect.left  - _x * _bytesPerPixel, fakeRect.top    - _y,
 		                        fakeRect.right - _x * _bytesPerPixel, fakeRect.bottom - _y);
+
 	}
 
 	realRect.clip(Common::Rect(_surface.w, _surface.h));
