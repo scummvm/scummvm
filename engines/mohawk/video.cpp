@@ -74,7 +74,7 @@ void VideoManager::stopVideos() {
 	_videoStreams.clear();
 }
 
-void VideoManager::playMovie(const Common::String &filename, uint16 x, uint16 y, bool clearScreen) {
+void VideoManager::playMovieBlocking(const Common::String &filename, uint16 x, uint16 y, bool clearScreen) {
 	VideoHandle videoHandle = createVideoHandle(filename, x, y, false);
 	if (videoHandle == NULL_VID_HANDLE)
 		return;
@@ -88,7 +88,7 @@ void VideoManager::playMovie(const Common::String &filename, uint16 x, uint16 y,
 	waitUntilMovieEnds(videoHandle);
 }
 
-void VideoManager::playMovieCentered(const Common::String &filename, bool clearScreen) {
+void VideoManager::playMovieBlockingCentered(const Common::String &filename, bool clearScreen) {
 	VideoHandle videoHandle = createVideoHandle(filename, 0, 0, false);
 	if (videoHandle == NULL_VID_HANDLE)
 		return;
@@ -112,7 +112,7 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	bool continuePlaying = true;
 
 	while (!_videoStreams[videoHandle].endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
-		if (updateBackgroundMovies())
+		if (updateMovies())
 			_vm->_system->updateScreen();
 
 		Common::Event event;
@@ -150,7 +150,7 @@ void VideoManager::delayUntilMovieEnds(VideoHandle videoHandle) {
 	bool continuePlaying = true;
 
 	while (!_videoStreams[videoHandle].endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
-		if (updateBackgroundMovies())
+		if (updateMovies())
 			_vm->_system->updateScreen();
 
 		// Cut down on CPU usage
@@ -161,7 +161,7 @@ void VideoManager::delayUntilMovieEnds(VideoHandle videoHandle) {
 	_videoStreams[videoHandle].clear();
 }
 
-VideoHandle VideoManager::playBackgroundMovie(const Common::String &filename, int16 x, int16 y, bool loop) {
+VideoHandle VideoManager::playMovie(const Common::String &filename, int16 x, int16 y, bool loop) {
 	VideoHandle videoHandle = createVideoHandle(filename, x, y, loop);
 	if (videoHandle == NULL_VID_HANDLE)
 		return NULL_VID_HANDLE;
@@ -177,7 +177,7 @@ VideoHandle VideoManager::playBackgroundMovie(const Common::String &filename, in
 	return videoHandle;
 }
 
-VideoHandle VideoManager::playBackgroundMovie(uint16 id, int16 x, int16 y, bool loop) {
+VideoHandle VideoManager::playMovie(uint16 id, int16 x, int16 y, bool loop) {
 	VideoHandle videoHandle = createVideoHandle(id, x, y, loop);
 	if (videoHandle == NULL_VID_HANDLE)
 		return NULL_VID_HANDLE;
@@ -193,7 +193,7 @@ VideoHandle VideoManager::playBackgroundMovie(uint16 id, int16 x, int16 y, bool 
 	return videoHandle;
 }
 
-bool VideoManager::updateBackgroundMovies() {
+bool VideoManager::updateMovies() {
 	bool updateScreen = false;
 
 	for (uint32 i = 0; i < _videoStreams.size() && !_vm->shouldQuit(); i++) {
@@ -317,7 +317,7 @@ void VideoManager::clearMLST() {
 	_mlstRecords.clear();
 }
 
-VideoHandle VideoManager::playMovie(uint16 id) {
+VideoHandle VideoManager::playMovieRiven(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id) {
 			debug(1, "Play tMOV %d (non-blocking) at (%d, %d) %s", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0 ? "looping" : "non-looping");
@@ -327,7 +327,7 @@ VideoHandle VideoManager::playMovie(uint16 id) {
 	return NULL_VID_HANDLE;
 }
 
-void VideoManager::playMovieBlocking(uint16 id) {
+void VideoManager::playMovieBlockingRiven(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id) {
 			debug(1, "Play tMOV %d (blocking) at (%d, %d)", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top);
@@ -337,7 +337,7 @@ void VideoManager::playMovieBlocking(uint16 id) {
 		}
 }
 
-void VideoManager::stopMovie(uint16 id) {
+void VideoManager::stopMovieRiven(uint16 id) {
 	debug(2, "Stopping movie %d", id);
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id)
@@ -349,7 +349,7 @@ void VideoManager::stopMovie(uint16 id) {
 				}
 }
 
-void VideoManager::enableMovie(uint16 id) {
+void VideoManager::enableMovieRiven(uint16 id) {
 	debug(2, "Enabling movie %d", id);
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id)
@@ -360,7 +360,7 @@ void VideoManager::enableMovie(uint16 id) {
 				}
 }
 
-void VideoManager::disableMovie(uint16 id) {
+void VideoManager::disableMovieRiven(uint16 id) {
 	debug(2, "Disabling movie %d", id);
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id)

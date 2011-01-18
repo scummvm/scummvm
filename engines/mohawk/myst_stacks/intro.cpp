@@ -104,7 +104,7 @@ void MystScriptParser_Intro::introMovies_run() {
 	case 0:
 		// Play the Mattel (or UbiSoft) logo in the Myst ME Mac version
 		if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh) {
-			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("mattel", kIntroStack));
+			_vm->_video->playMovie(_vm->wrapMovieFilename("mattel", kIntroStack));
 			_introStep = 1;
 		} else
 			_introStep = 2;
@@ -116,9 +116,9 @@ void MystScriptParser_Intro::introMovies_run() {
 	case 2:
 		_introStep = 3;
 		if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh)
-			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("presto", kIntroStack));
+			_vm->_video->playMovie(_vm->wrapMovieFilename("presto", kIntroStack));
 		else
-			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("broder", kIntroStack));
+			_vm->_video->playMovie(_vm->wrapMovieFilename("broder", kIntroStack));
 		break;
 	case 3:
 		if (!_vm->_video->isVideoPlaying())
@@ -126,7 +126,7 @@ void MystScriptParser_Intro::introMovies_run() {
 		break;
 	case 4:
 		_introStep = 5;
-		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
+		_vm->_video->playMovie(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
 		break;
 	case 5:
 		if (!_vm->_video->isVideoPlaying())
@@ -139,9 +139,9 @@ void MystScriptParser_Intro::introMovies_run() {
 			if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh)
 				// intro.mov uses Sorenson, introc uses Cinepak. Otherwise, they're the same.
 				// TODO: Switch back to the SVQ version when we support it
-				_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("introc", kIntroStack));
+				_vm->_video->playMovie(_vm->wrapMovieFilename("introc", kIntroStack));
 			else
-				_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("intro", kIntroStack));
+				_vm->_video->playMovie(_vm->wrapMovieFilename("intro", kIntroStack));
 		}
 		break;
 	case 7:

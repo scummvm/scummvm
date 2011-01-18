@@ -109,8 +109,8 @@ private:
 	DECLARE_OPCODE(disableMovie);
 	DECLARE_OPCODE(disableAllMovies);
 	DECLARE_OPCODE(enableMovie);
+	DECLARE_OPCODE(playMovieBlocking);
 	DECLARE_OPCODE(playMovie);
-	DECLARE_OPCODE(playMovieBg);
 	DECLARE_OPCODE(stopMovie);
 	DECLARE_OPCODE(unk_36);
 	DECLARE_OPCODE(fadeAmbientSounds);

@@ -219,7 +219,7 @@ void MystScriptParser_Stoneship::opcode_102(uint16 op, uint16 var, uint16 argc, 
 		warning("TODO: Opcode %d Movie Time Index %d to %d", op, startTime, endTime);
 		// TODO: Need version of playMovie blocking which allows selection
 		//       of start and finish points.
-		_vm->_video->playMovie(_vm->wrapMovieFilename("bkroom", kStoneshipStack), 159, 99);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("bkroom", kStoneshipStack), 159, 99);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -329,7 +329,7 @@ void MystScriptParser_Stoneship::opcode_117(uint16 op, uint16 var, uint16 argc, 
 		// Called when Valve Hotspot Clicked.
 		// TODO: Fill in Function to play right section of movie
 		//       based on valve state and water in chest..
-		_vm->_video->playMovie(_vm->wrapMovieFilename("ligspig", kStoneshipStack), 97, 267);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("ligspig", kStoneshipStack), 97, 267);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -352,7 +352,7 @@ void MystScriptParser_Stoneship::opcode_119(uint16 op, uint16 var, uint16 argc, 
 	if (argc == 0) {
 		// Used on Card 2143 (Lighthouse Trapdoor)
 		// Called when Lock Hotspot Clicked while holding key.
-		_vm->_video->playMovie(_vm->wrapMovieFilename("openloc", kStoneshipStack), 187, 72);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("openloc", kStoneshipStack), 187, 72);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -370,19 +370,19 @@ void MystScriptParser_Stoneship::opcode_120(uint16 op, uint16 var, uint16 argc, 
 		switch (movieId) {
 		case 0:
 			// Card 2251
-			_vm->_video->playMovie(_vm->wrapMovieFilename("tunaup", kStoneshipStack), 149, 161);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tunaup", kStoneshipStack), 149, 161);
 			break;
 		case 1:
 			// Card 2247
-			_vm->_video->playMovie(_vm->wrapMovieFilename("tunadown", kStoneshipStack), 218, 150);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tunadown", kStoneshipStack), 218, 150);
 			break;
 		case 2:
 			// Card 2289
-			_vm->_video->playMovie(_vm->wrapMovieFilename("tuncup", kStoneshipStack), 259, 161);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tuncup", kStoneshipStack), 259, 161);
 			break;
 		case 3:
 			// Card 2285
-			_vm->_video->playMovie(_vm->wrapMovieFilename("tuncdown", kStoneshipStack), 166, 150);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tuncdown", kStoneshipStack), 166, 150);
 			break;
 		default:
 			warning("Opcode 120 MovieId Out Of Range");

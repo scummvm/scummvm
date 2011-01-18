@@ -121,7 +121,7 @@ void MystScriptParser_Dni::o_handPage(uint16 op, uint16 var, uint16 argc, uint16
 void MystScriptParser_Dni::atrusLeft_run() {
 	if (_vm->_system->getMillis() > _atrusLeftTime + 63333) {
 		_video = _vm->wrapMovieFilename("atrus2", kDniStack);
-		VideoHandle atrus = _vm->_video->playBackgroundMovie(_video, 215, 77);
+		VideoHandle atrus = _vm->_video->playMovie(_video, 215, 77);
 		_vm->_video->setVideoBounds(atrus, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(98000, 600));
 
 		_waitForLoop = true;
@@ -139,7 +139,7 @@ void MystScriptParser_Dni::atrusLeft_run() {
 
 void MystScriptParser_Dni::loopVideo_run() {
 	if (!_vm->_video->isVideoPlaying()) {
-		VideoHandle atrus = _vm->_video->playBackgroundMovie(_video, 215, 77);
+		VideoHandle atrus = _vm->_video->playMovie(_video, 215, 77);
 		_vm->_video->setVideoBounds(atrus, Graphics::VideoTimestamp(_loopStart, 600), Graphics::VideoTimestamp(_loopEnd, 600));
 		_vm->_video->setVideoLooping(atrus, true);
 
@@ -155,13 +155,13 @@ void MystScriptParser_Dni::atrus_run() {
 		// Atrus asking for page
 		if (!_vm->_video->isVideoPlaying()) {
 			_video = _vm->wrapMovieFilename("atr1page", kDniStack);
-			VideoHandle atrus = _vm->_video->playBackgroundMovie(_video, 215, 77, true);
+			VideoHandle atrus = _vm->_video->playMovie(_video, 215, 77, true);
 			_vm->_video->setVideoBounds(atrus, Graphics::VideoTimestamp(7388, 600), Graphics::VideoTimestamp(14700, 600));
 		}
 	} else if (_globals.ending != 3 && _globals.ending != 4) {
 		if (_globals.heldPage == 13) {
 			_video = _vm->wrapMovieFilename("atr1page", kDniStack);
-			VideoHandle atrus = _vm->_video->playBackgroundMovie(_video, 215, 77);
+			VideoHandle atrus = _vm->_video->playMovie(_video, 215, 77);
 			_vm->_video->setVideoBounds(atrus, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(14700, 600));
 
 			_waitForLoop = true;
@@ -173,7 +173,7 @@ void MystScriptParser_Dni::atrus_run() {
 
 		} else {
 			_video = _vm->wrapMovieFilename("atr1nopg", kDniStack);
-			VideoHandle atrus = _vm->_video->playBackgroundMovie(_video, 215, 77);
+			VideoHandle atrus = _vm->_video->playMovie(_video, 215, 77);
 			_vm->_video->setVideoBounds(atrus, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(46175, 600));
 
 			_waitForLoop = true;
@@ -184,7 +184,7 @@ void MystScriptParser_Dni::atrus_run() {
 			_globals.ending = 3;
 		}
 	} else if (!_vm->_video->isVideoPlaying()) {
-		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("atrwrite", kDniStack), 215, 77, true);
+		_vm->_video->playMovie(_vm->wrapMovieFilename("atrwrite", kDniStack), 215, 77, true);
 	}
 }
 

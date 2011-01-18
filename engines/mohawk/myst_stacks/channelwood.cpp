@@ -238,10 +238,10 @@ void MystScriptParser_Channelwood::opcode_101(uint16 op, uint16 var, uint16 argc
 		//       of start and finish points.
 		if (!_vm->_varStore->getVar(6)) {
 			// Play Pipe Extending i.e. 0 to 1/2 way through file
-			_vm->_video->playMovie(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack), 267, 170);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack), 267, 170);
 		} else {
 			// Play Pipe Retracting i.e. 1/2 way to end of file
-			_vm->_video->playMovie(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack), 267, 170);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack), 267, 170);
 		}
 	} else
 		unknown(op, var, argc, argv);
@@ -397,16 +397,16 @@ void MystScriptParser_Channelwood::opcode_117(uint16 op, uint16 var, uint16 argc
 
 		switch (button) {
 		case 0:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("monalgh", kChannelwoodStack), 227, 71);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("monalgh", kChannelwoodStack), 227, 71);
 			break;
 		case 1:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("monamth", kChannelwoodStack), 227, 71);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("monamth", kChannelwoodStack), 227, 71);
 			break;
 		case 2:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("monasirs", kChannelwoodStack), 227, 71);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("monasirs", kChannelwoodStack), 227, 71);
 			break;
 		case 3:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("monsmsg", kChannelwoodStack), 227, 71);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("monsmsg", kChannelwoodStack), 227, 71);
 			break;
 		default:
 			warning("Opcode %d Control Variable Out of Range", op);
@@ -435,16 +435,16 @@ void MystScriptParser_Channelwood::opcode_119(uint16 op, uint16 var, uint16 argc
 		// TODO: Not 100% sure about movie position...
 		switch (_vm->_varStore->getVar(17)) {
 		case 0:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("holoalgh", kChannelwoodStack), 126, 74);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holoalgh", kChannelwoodStack), 126, 74);
 			break;
 		case 1:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("holoamth", kChannelwoodStack), 126, 74);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holoamth", kChannelwoodStack), 126, 74);
 			break;
 		case 2:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("holoasir", kChannelwoodStack), 126, 74);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holoasir", kChannelwoodStack), 126, 74);
 			break;
 		case 3:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("holosmsg", kChannelwoodStack), 126, 74);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holosmsg", kChannelwoodStack), 126, 74);
 			break;
 		default:
 			warning("Opcode %d Control Variable Out of Range", op);
@@ -509,19 +509,19 @@ void MystScriptParser_Channelwood::opcode_201(uint16 op, uint16 var, uint16 argc
 		// TODO: Fill in Function. Video Playback? Rect from invoking hotspot resource...
 		if (false) {
 			// Card 3161
-			_vm->_video->playMovie(_vm->wrapMovieFilename("bridge", kChannelwoodStack), 292, 204);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("bridge", kChannelwoodStack), 292, 204);
 
 			// Card 3247
-			_vm->_video->playMovie(_vm->wrapMovieFilename("welev1dn", kChannelwoodStack), 214, 107);
-			_vm->_video->playMovie(_vm->wrapMovieFilename("welev1up", kChannelwoodStack), 214, 107);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("welev1dn", kChannelwoodStack), 214, 107);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("welev1up", kChannelwoodStack), 214, 107);
 
 			// Card 3252
-			_vm->_video->playMovie(_vm->wrapMovieFilename("welev2dn", kChannelwoodStack), 215, 118);
-			_vm->_video->playMovie(_vm->wrapMovieFilename("welev2up", kChannelwoodStack), 215, 118);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("welev2dn", kChannelwoodStack), 215, 118);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("welev2up", kChannelwoodStack), 215, 118);
 
 			// Card 3259
-			_vm->_video->playMovie(_vm->wrapMovieFilename("welev3dn", kChannelwoodStack), 213, 99);
-			_vm->_video->playMovie(_vm->wrapMovieFilename("welev3up", kChannelwoodStack), 213, 99);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("welev3dn", kChannelwoodStack), 213, 99);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("welev3up", kChannelwoodStack), 213, 99);
 		}
 	} else
 		unknown(op, var, argc, argv);

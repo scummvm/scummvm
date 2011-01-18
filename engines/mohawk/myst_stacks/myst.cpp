@@ -880,9 +880,9 @@ void MystScriptParser_Myst::o_fireplaceRotation(uint16 op, uint16 var, uint16 ar
 	debugC(kDebugScript, "\tmovieNum: %d", movieNum);
 
 	if (movieNum)
-		_vm->_video->playMovie(_vm->wrapMovieFilename("fpout", kMystStack), 167, 4);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("fpout", kMystStack), 167, 4);
 	else
-		_vm->_video->playMovie(_vm->wrapMovieFilename("fpin", kMystStack), 167, 4);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("fpin", kMystStack), 167, 4);
 }
 
 void MystScriptParser_Myst::o_courtyardBoxesCheckSolution(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1132,7 +1132,7 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 		_vm->_system->delayMillis(500);
 
 		// Gears rise up
-		VideoHandle gears = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
+		VideoHandle gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
 		_vm->_video->setVideoBounds(gears, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(650, 600));
 		_vm->_video->waitUntilMovieEnds(gears);
 
@@ -1144,7 +1144,7 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 		_vm->_system->delayMillis(500);
 
 		// Gears sink down
-		VideoHandle gears = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
+		VideoHandle gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
 		_vm->_video->setVideoBounds(gears, Graphics::VideoTimestamp(700, 600), Graphics::VideoTimestamp(1300, 600));
 		_vm->_video->waitUntilMovieEnds(gears);
 
@@ -1188,14 +1188,14 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 		if (_state.imagerActive) {
 			// Mountains disappearing
 			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
-			VideoHandle mountain = _vm->_video->playBackgroundMovie(file, 159, 96, false);
+			VideoHandle mountain = _vm->_video->playMovie(file, 159, 96, false);
 			_vm->_video->setVideoBounds(mountain, Graphics::VideoTimestamp(11180, 600), Graphics::VideoTimestamp(16800, 600));
 
 			_state.imagerActive = 0;
 		} else {
 			// Mountains appearing
 			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
-			VideoHandle mountain = _vm->_video->playBackgroundMovie(file, 159, 96, false);
+			VideoHandle mountain = _vm->_video->playMovie(file, 159, 96, false);
 			_vm->_video->setVideoBounds(mountain, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(11180, 600));
 
 			_state.imagerActive = 1;
@@ -1318,10 +1318,10 @@ void MystScriptParser_Myst::o_towerElevatorAnimation(uint16 op, uint16 var, uint
 
 	switch (argv[0]) {
 	case 0:
-		_vm->_video->playMovie(_vm->wrapMovieFilename("libdown", kMystStack), 216, 78);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("libdown", kMystStack), 216, 78);
 		break;
 	case 1:
-		_vm->_video->playMovie(_vm->wrapMovieFilename("libup", kMystStack), 216, 78);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("libup", kMystStack), 216, 78);
 		break;
 	default:
 		break;
@@ -2198,12 +2198,12 @@ void MystScriptParser_Myst::rocketCheckSolution() {
 
 		// Book appearing
 		Common::String movieFile = _vm->wrapMovieFilename("selenbok", kMystStack);
-		_rocketLinkBook = _vm->_video->playBackgroundMovie(movieFile, 224, 41);
+		_rocketLinkBook = _vm->_video->playMovie(movieFile, 224, 41);
 		_vm->_video->setVideoBounds(_rocketLinkBook, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(660, 600));
 		_vm->_video->waitUntilMovieEnds(_rocketLinkBook);
 
 		// Book looping closed
-		_rocketLinkBook = _vm->_video->playBackgroundMovie(movieFile, 224, 41, true);
+		_rocketLinkBook = _vm->_video->playMovie(movieFile, 224, 41, true);
 		_vm->_video->setVideoBounds(_rocketLinkBook, Graphics::VideoTimestamp(660, 600), Graphics::VideoTimestamp(3500, 600));
 
 		_tempVar = 1;
@@ -2847,7 +2847,7 @@ void MystScriptParser_Myst::clockGearForwardOneStep(uint16 gear) {
 
 	// Set video bounds
 	uint16 gearPosition = _clockGearsPositions[gear] - 1;
-	_clockGearsVideos[gear] = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(videos[gear], kMystStack), x[gear], y[gear]);
+	_clockGearsVideos[gear] = _vm->_video->playMovie(_vm->wrapMovieFilename(videos[gear], kMystStack), x[gear], y[gear]);
 	_vm->_video->setVideoBounds(_clockGearsVideos[gear],
 			Graphics::VideoTimestamp(startTime[gearPosition], 600),
 			Graphics::VideoTimestamp(endTime[gearPosition], 600));
@@ -2855,7 +2855,7 @@ void MystScriptParser_Myst::clockGearForwardOneStep(uint16 gear) {
 
 void MystScriptParser_Myst::clockWeightDownOneStep() {
 	// Set video bounds
-	_clockWeightVideo = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+	_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
 	_vm->_video->setVideoBounds(_clockWeightVideo,
 			Graphics::VideoTimestamp(_clockWeightPosition, 600),
 			Graphics::VideoTimestamp(_clockWeightPosition + 246, 600));
@@ -2917,7 +2917,7 @@ void MystScriptParser_Myst::clockGearsCheckSolution() {
 
 		// Make weight go down
 		_vm->_sound->replaceSound(9113);
-		_clockWeightVideo = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
 		_vm->_video->setVideoBounds(_clockWeightVideo,
 				Graphics::VideoTimestamp(_clockWeightPosition, 600),
 				Graphics::VideoTimestamp(2214, 600));
@@ -2929,7 +2929,7 @@ void MystScriptParser_Myst::clockGearsCheckSolution() {
 		_vm->_sound->replaceSound(7113);
 
 		// Gear opening video
-		_vm->_video->playMovie(_vm->wrapMovieFilename("cl1wggat", kMystStack) , 195, 225);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cl1wggat", kMystStack) , 195, 225);
 		_state.gearsOpen = 1;
 		_vm->redrawArea(40);
 
@@ -3003,7 +3003,7 @@ void MystScriptParser_Myst::clockReset() {
 void MystScriptParser_Myst::clockResetWeight() {
 	// Set video bounds, weight going up
 	if (!(_vm->getFeatures() & GF_ME)) {
-		_clockWeightVideo = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
 		_vm->_video->setVideoBounds(_clockWeightVideo,
 				Graphics::VideoTimestamp(2214 * 2 - _clockWeightPosition, 600),
 				Graphics::VideoTimestamp(2214 * 2, 600));
@@ -3025,7 +3025,7 @@ void MystScriptParser_Myst::clockResetGear(uint16 gear) {
 	// Set video bounds, gears going to 3
 	uint16 gearPosition = _clockGearsPositions[gear] - 1;
 	if (gearPosition != 2) {
-		_clockGearsVideos[gear] = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(videos[gear], kMystStack), x[gear], y[gear]);
+		_clockGearsVideos[gear] = _vm->_video->playMovie(_vm->wrapMovieFilename(videos[gear], kMystStack), x[gear], y[gear]);
 		_vm->_video->setVideoBounds(_clockGearsVideos[gear],
 				Graphics::VideoTimestamp(time[gearPosition], 600),
 				Graphics::VideoTimestamp(time[2], 600));
@@ -3354,7 +3354,7 @@ void MystScriptParser_Myst::gullsFly1_run() {
 			else
 				x = _vm->_rnd->getRandomNumber(160) + 260;
 
-			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(gulls[video], kMystStack), x, 0);
+			_vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack), x, 0);
 
 			_gullsNextTime = time + _vm->_rnd->getRandomNumber(16667) + 13334;
 		}
@@ -3500,7 +3500,7 @@ void MystScriptParser_Myst::gullsFly2_run() {
 	if (time > _gullsNextTime) {
 		uint16 video = _vm->_rnd->getRandomNumber(3);
 		if (video != 3) {
-			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(gulls[video], kMystStack), 424, 0);
+			_vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack), 424, 0);
 
 			_gullsNextTime = time + _vm->_rnd->getRandomNumber(16667) + 13334;
 		}
@@ -3529,15 +3529,15 @@ void MystScriptParser_Myst::opcode_218(uint16 op, uint16 var, uint16 argc, uint1
 	// Used for Card 4097 (Cabin Boiler)
 	// TODO: Fill in logic
 	if (false) {
-		_vm->_video->playMovie(_vm->wrapMovieFilename("cabfirfr", kMystStack), 254, 244);
-		_vm->_video->playMovie(_vm->wrapMovieFilename("cabcgfar", kMystStack), 254, 138);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cabfirfr", kMystStack), 254, 244);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cabcgfar", kMystStack), 254, 138);
 	}
 
 	// Used for Card 4098 (Cabin Boiler)
 	// TODO: Fill in logic
 	if (false) {
-		_vm->_video->playMovie(_vm->wrapMovieFilename("cabfire", kMystStack), 240, 279);
-		_vm->_video->playMovie(_vm->wrapMovieFilename("cabingau", kMystStack), 243, 97);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cabfire", kMystStack), 240, 279);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cabingau", kMystStack), 243, 97);
 	}
 }
 
@@ -3596,14 +3596,14 @@ void MystScriptParser_Myst::greenBook_run() {
 
 		if (_globals.ending != 4) {
 			_tempVar = 2;
-			_vm->_video->playBackgroundMovie(file, 314, 76);
+			_vm->_video->playMovie(file, 314, 76);
 		} else {
-			VideoHandle book = _vm->_video->playBackgroundMovie(file, 314, 76, true);
+			VideoHandle book = _vm->_video->playMovie(file, 314, 76, true);
 			_vm->_video->setVideoBounds(book, Graphics::VideoTimestamp(loopStart, 600), Graphics::VideoTimestamp(loopEnd, 600));
 			_tempVar = 0;
 		}
 	} else if (_tempVar == 2 && !_vm->_video->isVideoPlaying()) {
-		VideoHandle book = _vm->_video->playBackgroundMovie(file, 314, 76);
+		VideoHandle book = _vm->_video->playMovie(file, 314, 76);
 		_vm->_video->setVideoBounds(book, Graphics::VideoTimestamp(loopStart, 600), Graphics::VideoTimestamp(loopEnd, 600));
 		_vm->_video->setVideoLooping(book, true);
 		_tempVar = 0;
@@ -3628,7 +3628,7 @@ void MystScriptParser_Myst::gullsFly3_run() {
 		if (video != 3) {
 			uint16 x = _vm->_rnd->getRandomNumber(280) + 135;
 
-			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(gulls[video], kMystStack), x, 0);
+			_vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack), x, 0);
 
 			_gullsNextTime = time + _vm->_rnd->getRandomNumber(16667) + 13334;
 		}

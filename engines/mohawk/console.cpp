@@ -252,13 +252,13 @@ bool MystConsole::Cmd_PlayMovie(int argc, const char **argv) {
 	}
 
 	if (argc == 2)
-		_vm->_video->playBackgroundMovie(argv[1], 0, 0);
+		_vm->_video->playMovie(argv[1], 0, 0);
 	else if (argc == 3)
-		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(argv[1], stackNum - 1), 0, 0);
+		_vm->_video->playMovie(_vm->wrapMovieFilename(argv[1], stackNum - 1), 0, 0);
 	else if (argc == 4)
-		_vm->_video->playBackgroundMovie(argv[1], atoi(argv[2]), atoi(argv[3]));
+		_vm->_video->playMovie(argv[1], atoi(argv[2]), atoi(argv[3]));
 	else
-		_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(argv[1], stackNum - 1), atoi(argv[3]), atoi(argv[4]));
+		_vm->_video->playMovie(_vm->wrapMovieFilename(argv[1], stackNum - 1), atoi(argv[3]), atoi(argv[4]));
 
 	return false;
 }

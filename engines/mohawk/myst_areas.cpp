@@ -206,10 +206,10 @@ VideoHandle MystResourceType6::playMovie() {
 	// If the video is not running, play it
 	if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle)) {
 		if (_playBlocking) {
-			_vm->_video->playMovie(_videoFile, _left, _top);
+			_vm->_video->playMovieBlocking(_videoFile, _left, _top);
 			handle = NULL_VID_HANDLE;
 		} else {
-			handle = _vm->_video->playBackgroundMovie(_videoFile, _left, _top, _loop);
+			handle = _vm->_video->playMovie(_videoFile, _left, _top, _loop);
 		}
 	}
 

@@ -160,7 +160,7 @@ void MohawkEngine_Riven::handleEvents() {
 
 	// Update background videos and the water effect
 	bool needsUpdate = _gfx->runScheduledWaterEffects();
-	needsUpdate |= _video->updateBackgroundMovies();
+	needsUpdate |= _video->updateMovies();
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
@@ -652,7 +652,7 @@ void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
 
 	while (_system->getMillis() < startTime + ms && !shouldQuit()) {
 		bool needsUpdate = _gfx->runScheduledWaterEffects();
-		needsUpdate |= _video->updateBackgroundMovies();
+		needsUpdate |= _video->updateMovies();
 
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event))

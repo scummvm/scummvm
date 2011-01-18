@@ -224,10 +224,10 @@ void MystScriptParser_Mechanical::opcode_105(uint16 op, uint16 var, uint16 argc,
 
 		if (_vm->_varStore->getVar(10)) {
 			// TODO: Play Movie from 0 to 1/2 way...
-			_vm->_video->playMovie(_vm->wrapMovieFilename("hhstairs", kMechanicalStack), 174, 222);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("hhstairs", kMechanicalStack), 174, 222);
 		} else {
 			// TODO: Play Movie from 1/2 way to end...
-			_vm->_video->playMovie(_vm->wrapMovieFilename("hhstairs", kMechanicalStack), 174, 222);
+			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("hhstairs", kMechanicalStack), 174, 222);
 		}
 	}
 }
@@ -243,7 +243,7 @@ void MystScriptParser_Mechanical::opcode_121(uint16 op, uint16 var, uint16 argc,
 		warning("TODO: Opcode %d Movie Time Index %d to %d\n", op, startTime, endTime);
 		// TODO: Need version of playMovie blocking which allows selection
 		//       of start and finish points.
-		_vm->_video->playMovie(_vm->wrapMovieFilename("ewindow", kMechanicalStack), 253, 0);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("ewindow", kMechanicalStack), 253, 0);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -270,7 +270,7 @@ void MystScriptParser_Mechanical::opcode_123(uint16 op, uint16 var, uint16 argc,
 		// TODO: Need version of playMovie blocking which allows selection
 		//       of start and finish points.
 		// TODO: Not 100% sure about movie position
-		_vm->_video->playMovie(_vm->wrapMovieFilename("hcelev", kMechanicalStack), 205, 40);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("hcelev", kMechanicalStack), 205, 40);
 	} else
 		unknown(op, var, argc, argv);
 }

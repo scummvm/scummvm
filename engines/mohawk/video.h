@@ -77,11 +77,11 @@ public:
 	~VideoManager();
 
 	// Generic movie functions
-	void playMovie(const Common::String &filename, uint16 x = 0, uint16 y = 0, bool clearScreen = false);
-	void playMovieCentered(const Common::String &filename, bool clearScreen = true);
-	VideoHandle playBackgroundMovie(const Common::String &filename, int16 x = -1, int16 y = -1, bool loop = false);
-	VideoHandle playBackgroundMovie(uint16 id, int16 x = -1, int16 y = -1, bool loop = false);
-	bool updateBackgroundMovies();
+	void playMovieBlocking(const Common::String &filename, uint16 x = 0, uint16 y = 0, bool clearScreen = false);
+	void playMovieBlockingCentered(const Common::String &filename, bool clearScreen = true);
+	VideoHandle playMovie(const Common::String &filename, int16 x = -1, int16 y = -1, bool loop = false);
+	VideoHandle playMovie(uint16 id, int16 x = -1, int16 y = -1, bool loop = false);
+	bool updateMovies();
 	void pauseVideos();
 	void resumeVideos();
 	void stopVideos();
@@ -90,12 +90,12 @@ public:
 	// Riven-related functions
 	void activateMLST(uint16 mlstId, uint16 card);
 	void clearMLST();
-	void enableMovie(uint16 id);
-	void disableMovie(uint16 id);
+	void enableMovieRiven(uint16 id);
+	void disableMovieRiven(uint16 id);
 	void disableAllMovies();
-	VideoHandle playMovie(uint16 id);
-	void stopMovie(uint16 id);
-	void playMovieBlocking(uint16 id);
+	VideoHandle playMovieRiven(uint16 id);
+	void stopMovieRiven(uint16 id);
+	void playMovieBlockingRiven(uint16 id);
 	VideoHandle findVideoHandleRiven(uint16 id);
 
 	// Handle functions

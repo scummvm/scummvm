@@ -218,7 +218,7 @@ void RivenExternal::runDemoBoundaryDialog() {
 
 void RivenExternal::runEndGame(uint16 video) {
 	_vm->_sound->stopAllSLST();
-	_vm->_video->playMovie(video);
+	_vm->_video->playMovieRiven(video);
 	runCredits(video);
 }
 
@@ -228,7 +228,7 @@ void RivenExternal::runCredits(uint16 video) {
 	VideoHandle videoHandle = _vm->_video->findVideoHandleRiven(video);
 
 	while (!_vm->_video->endOfVideo(videoHandle) && !_vm->shouldQuit()) {
-		if (_vm->_video->updateBackgroundMovies())
+		if (_vm->_video->updateMovies())
 			_vm->_system->updateScreen();
 
 		Common::Event event;
@@ -243,7 +243,7 @@ void RivenExternal::runCredits(uint16 video) {
 
 void RivenExternal::runDomeButtonMovie() {
 	// This command just plays the video of the button moving down and up.
-	_vm->_video->playMovieBlocking(2);
+	_vm->_video->playMovieBlockingRiven(2);
 }
 
 void RivenExternal::runDomeCheck() {
@@ -830,7 +830,7 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 		_vm->_sound->playSLST(1, _vm->getCurCard());
 
 	_vm->_cursor->setCursor(kRivenHideCursor);
-	_vm->_video->playMovieBlocking(11);
+	_vm->_video->playMovieBlockingRiven(11);
 }
 
 void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
@@ -840,14 +840,14 @@ void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
 	if (heat) {
 		if (platform == 0) {
 			_vm->_video->activateMLST(8, _vm->getCurCard());
-			_vm->_video->playMovie(8);
+			_vm->_video->playMovieRiven(8);
 		} else {
 			_vm->_video->activateMLST(7, _vm->getCurCard());
-			_vm->_video->playMovie(7);
+			_vm->_video->playMovieRiven(7);
 		}
 	} else {
-		_vm->_video->disableMovie(7);
-		_vm->_video->disableMovie(8);
+		_vm->_video->disableMovieRiven(7);
+		_vm->_video->disableMovieRiven(8);
 	}
 }
 
@@ -988,24 +988,24 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 				if (*valve == 0 && changeY <= -10) {
 					*valve = 1;
 					_vm->_cursor->setCursor(kRivenHideCursor);
-					_vm->_video->playMovieBlocking(2);
+					_vm->_video->playMovieBlockingRiven(2);
 					_vm->refreshCard();
 				} else if (*valve == 1) {
 					if (changeX >= 0 && changeY >= 10) {
 						*valve = 0;
 						_vm->_cursor->setCursor(kRivenHideCursor);
-						_vm->_video->playMovieBlocking(3);
+						_vm->_video->playMovieBlockingRiven(3);
 						_vm->refreshCard();
 					} else if (changeX <= -10 && changeY <= 10) {
 						*valve = 2;
 						_vm->_cursor->setCursor(kRivenHideCursor);
-						_vm->_video->playMovieBlocking(1);
+						_vm->_video->playMovieBlockingRiven(1);
 						_vm->refreshCard();
 					}
 				} else if (*valve == 2 && changeX >= 10) {
 					*valve = 1;
 					_vm->_cursor->setCursor(kRivenHideCursor);
-					_vm->_video->playMovieBlocking(4);
+					_vm->_video->playMovieBlockingRiven(4);
 					_vm->refreshCard();
 				}
 				done = true;
@@ -1039,7 +1039,7 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 void RivenExternal::xbchipper(uint16 argc, uint16 *argv) {
 	// Why is this an external command....?
 	if (*_vm->getVar("bvalve") == 2)
-		_vm->_video->playMovieBlocking(2);
+		_vm->_video->playMovieBlockingRiven(2);
 }
 
 // ------------------------------------------------------------------------------------
@@ -1064,7 +1064,7 @@ void RivenExternal::lowerPins() {
 	uint32 *upMovie = _vm->getVar("gupmoov");
 
 	// Play the video of the pins going down
-	VideoHandle handle = _vm->_video->playMovie(*upMovie);
+	VideoHandle handle = _vm->_video->playMovieRiven(*upMovie);
 	assert(handle != NULL_VID_HANDLE);
 	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(startTime, 600), Graphics::VideoTimestamp(startTime + 550, 600));
 	_vm->_video->waitUntilMovieEnds(handle);
@@ -1096,7 +1096,7 @@ void RivenExternal::xgrotatepins(uint16 argc, uint16 *argv) {
 	_vm->_sound->playSound(12);
 
 	// Play the video of the pins rotating
-	VideoHandle handle = _vm->_video->playMovie(*_vm->getVar("gupmoov"));
+	VideoHandle handle = _vm->_video->playMovieRiven(*_vm->getVar("gupmoov"));
 	assert(handle != NULL_VID_HANDLE);
 	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(startTime, 600), Graphics::VideoTimestamp(startTime + 1215, 600));
 	_vm->_video->waitUntilMovieEnds(handle);
@@ -1180,7 +1180,7 @@ void RivenExternal::xgpincontrols(uint16 argc, uint16 *argv) {
 	_vm->_sound->playSound(14);
 
 	// Actually play the movie
-	VideoHandle handle = _vm->_video->playMovie(pinMovieCodes[imagePos - 1]);
+	VideoHandle handle = _vm->_video->playMovieRiven(pinMovieCodes[imagePos - 1]);
 	assert(handle != NULL_VID_HANDLE);
 	uint32 startTime = 9630 - pinPos * 600;
 	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(startTime, 600), Graphics::VideoTimestamp(startTime + 550, 600));
@@ -1219,7 +1219,7 @@ void RivenExternal::xgisland1490_domecheck(uint16 argc, uint16 *argv) {
 void RivenExternal::xgplateau3160_dopools(uint16 argc, uint16 *argv) {
 	// Play the deactivation of a pool if one is active and a different one is activated
 	_vm->_cursor->setCursor(kRivenHideCursor);
-	_vm->_video->playMovieBlocking(*_vm->getVar("glkbtns") * 2);
+	_vm->_video->playMovieBlockingRiven(*_vm->getVar("glkbtns") * 2);
 }
 
 void RivenExternal::xgwt200_scribetime(uint16 argc, uint16 *argv) {
@@ -1257,7 +1257,7 @@ void RivenExternal::xgrviewer(uint16 argc, uint16 *argv) {
 	uint32 newPos = *curPos + hotspotPositions[_vm->_curHotspot - 1];
 
 	// Now play the movie
-	VideoHandle handle = _vm->_video->playMovie(1);
+	VideoHandle handle = _vm->_video->playMovieRiven(1);
 	assert(handle != NULL_VID_HANDLE);
 	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(s_viewerTimeIntervals[*curPos], 600), Graphics::VideoTimestamp(s_viewerTimeIntervals[newPos], 600));
 	_vm->_video->waitUntilMovieEnds(handle);
@@ -1308,7 +1308,7 @@ void RivenExternal::xgplaywhark(uint16 argc, uint16 *argv) {
 	}
 
 	// For whatever reason the devs felt fit, code 31 is used for all of the videos
-	_vm->_video->playMovieBlocking(31);
+	_vm->_video->playMovieBlockingRiven(31);
 	_vm->refreshCard();
 }
 
@@ -1326,7 +1326,7 @@ void RivenExternal::xglviewer(uint16 argc, uint16 *argv) {
 	uint32 newPos = *curPos + hotspotPositions[_vm->_curHotspot - 1];
 
 	// Now play the movie
-	VideoHandle handle = _vm->_video->playMovie(1);
+	VideoHandle handle = _vm->_video->playMovieRiven(1);
 	assert(handle != NULL_VID_HANDLE);
 	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(s_viewerTimeIntervals[*curPos], 600), Graphics::VideoTimestamp(s_viewerTimeIntervals[newPos], 600));
 	_vm->_video->waitUntilMovieEnds(handle);
@@ -1522,19 +1522,19 @@ void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 	// Run the gallows's carriage
 
 	_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor
-	_vm->_video->playMovieBlocking(1);                 // Play handle movie
+	_vm->_video->playMovieBlockingRiven(1);                 // Play handle movie
 	_vm->_gfx->scheduleTransition(15);                 // Set pan down transition
 	_vm->changeToCard(_vm->matchRMAPToCard(0x18e77));  // Change to card facing up
 	_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor (again)
-	_vm->_video->playMovieBlocking(4);                 // Play carriage beginning to drop
+	_vm->_video->playMovieBlockingRiven(4);                 // Play carriage beginning to drop
 	_vm->_gfx->scheduleTransition(14);                 // Set pan up transition
 	_vm->changeToCard(_vm->matchRMAPToCard(0x183a9));  // Change to card looking straight again
-	_vm->_video->playMovieBlocking(2);
+	_vm->_video->playMovieBlockingRiven(2);
 
 	uint32 *gallows = _vm->getVar("jgallows");
 	if (*gallows == 1) {
 		// If the gallows is open, play the up movie and return
-		_vm->_video->playMovieBlocking(3);
+		_vm->_video->playMovieBlockingRiven(3);
 		return;
 	}
 
@@ -1569,10 +1569,10 @@ void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 		_vm->_gfx->scheduleTransition(12);                 // Schedule pan left transition
 		_vm->changeToCard(_vm->matchRMAPToCard(0x18ab5));  // Turn right
 		_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor
-		_vm->_video->playMovieBlocking(1);                 // Play carriage ride movie
+		_vm->_video->playMovieBlockingRiven(1);                 // Play carriage ride movie
 		_vm->changeToCard(_vm->matchRMAPToCard(0x17167));  // We have arrived at the top
 	} else
-		_vm->_video->playMovieBlocking(3);                 // Too slow!
+		_vm->_video->playMovieBlockingRiven(3);                 // Too slow!
 }
 
 void RivenExternal::xjdome25_resetsliders(uint16 argc, uint16 *argv) {
@@ -1633,8 +1633,8 @@ void RivenExternal::xhandlecontrolup(uint16 argc, uint16 *argv) {
 
 	// If we've moved the handle down, go down a floor
 	if (changeLevel == -1) {
-		_vm->_video->playMovieBlocking(1);
-		_vm->_video->playMovieBlocking(2);
+		_vm->_video->playMovieBlockingRiven(1);
+		_vm->_video->playMovieBlockingRiven(2);
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e374));
 	}
 }
@@ -1644,8 +1644,8 @@ void RivenExternal::xhandlecontroldown(uint16 argc, uint16 *argv) {
 
 	// If we've moved the handle up, go up a floor
 	if (changeLevel == 1) {
-		_vm->_video->playMovieBlocking(1);
-		_vm->_video->playMovieBlocking(2);
+		_vm->_video->playMovieBlockingRiven(1);
+		_vm->_video->playMovieBlockingRiven(2);
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e374));
 	}
 }
@@ -1658,24 +1658,24 @@ void RivenExternal::xhandlecontrolmid(uint16 argc, uint16 *argv) {
 
 	// Play the handle moving video
 	if (changeLevel == 1)
-		_vm->_video->playMovieBlocking(7);
+		_vm->_video->playMovieBlockingRiven(7);
 	else
-		_vm->_video->playMovieBlocking(6);
+		_vm->_video->playMovieBlockingRiven(6);
 
 	// If the whark's mouth is open, close it
 	uint32 *mouthVar = _vm->getVar("jwmouth");
 	if (*mouthVar == 1) {
-		_vm->_video->playMovieBlocking(3);
-		_vm->_video->playMovieBlocking(8);
+		_vm->_video->playMovieBlockingRiven(3);
+		_vm->_video->playMovieBlockingRiven(8);
 		*mouthVar = 0;
 	}
 
 	// Play the elevator video and then change the card
 	if (changeLevel == 1) {
-		_vm->_video->playMovieBlocking(5);
+		_vm->_video->playMovieBlockingRiven(5);
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e597));
 	} else {
-		_vm->_video->playMovieBlocking(4);
+		_vm->_video->playMovieBlockingRiven(4);
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e29c));
 	}
 }
@@ -1717,9 +1717,9 @@ void RivenExternal::xjlagoon1500_alert(uint16 argc, uint16 *argv) {
 	// Have the sunners move a bit as you get closer ;)
 	uint32 *sunners = _vm->getVar("jsunners");
 	if (*sunners == 0) {
-		_vm->_video->playMovieBlocking(3);
+		_vm->_video->playMovieBlockingRiven(3);
 	} else if (*sunners == 1) {
-		_vm->_video->playMovieBlocking(2);
+		_vm->_video->playMovieBlockingRiven(2);
 		*sunners = 2;
 	}
 }
@@ -1768,7 +1768,7 @@ void RivenExternal::xschool280_playwhark(uint16 argc, uint16 *argv) {
 	_vm->_cursor->setCursor(kRivenHideCursor);
 
 	// Play the spin movie
-	_vm->_video->playMovieBlocking(spinMLST);
+	_vm->_video->playMovieBlockingRiven(spinMLST);
 
 	// Get our random number and redraw the area
 	uint16 number = _vm->_rnd->getRandomNumberRng(1, 10);
@@ -1777,7 +1777,7 @@ void RivenExternal::xschool280_playwhark(uint16 argc, uint16 *argv) {
 	// Handle movement
 	// (11560/600)s is the length of each of the two movies. We divide it into 19 parts
 	// (one for each of the possible positions the villager can have).
-	VideoHandle handle = _vm->_video->playMovie(doomMLST);
+	VideoHandle handle = _vm->_video->playMovieRiven(doomMLST);
 	Graphics::VideoTimestamp startTime = Graphics::VideoTimestamp((11560 / 19) * (*posVar), 600);
 	*posVar += number; // Adjust to the end
 	Graphics::VideoTimestamp endTime = Graphics::VideoTimestamp((11560 / 19) * (*posVar), 600);
@@ -1786,7 +1786,7 @@ void RivenExternal::xschool280_playwhark(uint16 argc, uint16 *argv) {
 
 	if (*posVar > 19) {
 		// The villager has died :(
-		_vm->_video->playMovieBlocking(snackMLST);
+		_vm->_video->playMovieBlockingRiven(snackMLST);
 		redrawWharkNumberPuzzle(overlayPLST, number);
 		*posVar = 0;
 	}
@@ -1855,7 +1855,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 
 	// Just let the video play while we wait until Gehn opens the trap book for us
 	while (_vm->_video->getElapsedTime(video) < startTime && !_vm->shouldQuit()) {
-		if (_vm->_video->updateBackgroundMovies())
+		if (_vm->_video->updateMovies())
 			_vm->_system->updateScreen();
 
 		Common::Event event;
@@ -1878,7 +1878,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 	// OK, Gehn has opened the trap book and has asked us to go in. Let's watch
 	// and see what the player will do...
 	while (_vm->_video->getElapsedTime(video) < endTime && !_vm->shouldQuit()) {
-		bool updateScreen = _vm->_video->updateBackgroundMovies();
+		bool updateScreen = _vm->_video->updateMovies();
 
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
@@ -1900,7 +1900,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 					_vm->_gfx->updateScreen();                          // Update the screen
 					_vm->_sound->playSound(0);                          // Play the link sound
 					_vm->_video->activateMLST(7, _vm->getCurCard());    // Activate Gehn Link Video
-					_vm->_video->playMovieBlocking(1);                  // Play Gehn Link Video
+					_vm->_video->playMovieBlockingRiven(1);                  // Play Gehn Link Video
 					*_vm->getVar("agehn") = 4;                          // Set Gehn to the trapped state
 					*_vm->getVar("atrapbook") = 1;                      // We've got the trap book again
 					_vm->_sound->playSound(0);                          // Play the link sound again
@@ -1949,7 +1949,7 @@ void RivenExternal::xooffice30_closebook(uint16 argc, uint16 *argv) {
 	*book = 0;
 
 	// Play the movie
-	_vm->_video->playMovieBlocking(1);
+	_vm->_video->playMovieBlockingRiven(1);
 
 	// Set the hotspots into their correct states
 	_vm->_hotspots[2].enabled = false;
@@ -1963,7 +1963,7 @@ void RivenExternal::xooffice30_closebook(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xobedroom5_closedrawer(uint16 argc, uint16 *argv) {
 	// Close the drawer if open when clicking on the journal.
-	_vm->_video->playMovieBlocking(2);
+	_vm->_video->playMovieBlockingRiven(2);
 	*_vm->getVar("ostanddrawer") = 0;
 }
 
@@ -2039,7 +2039,7 @@ void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 
 	// Now play the video for the watch
 	_vm->_video->activateMLST(1, _vm->getCurCard());
-	_vm->_video->playMovieBlocking(1);
+	_vm->_video->playMovieBlockingRiven(1);
 
 	// And, finally, refresh
 	_vm->refreshCard();
@@ -2129,7 +2129,7 @@ void RivenExternal::xrwindowsetup(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 	// First, show the button movie
-	_vm->_video->playMovieBlocking(3);
+	_vm->_video->playMovieBlockingRiven(3);
 
 	// Don't do anything else if the telescope power is off
 	if (*_vm->getVar("ttelevalve") == 0)
@@ -2182,7 +2182,7 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 		// Play a piece of the moving down movie
 		static const uint32 timeIntervals[] = { 4320, 3440, 2560, 1760, 880, 0 };
 		uint16 movieCode = (*telescopeCover) ? 1 : 2;
-		VideoHandle handle = _vm->_video->playMovie(movieCode);
+		VideoHandle handle = _vm->_video->playMovieRiven(movieCode);
 		_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(timeIntervals[*telescopePos], 600), Graphics::VideoTimestamp(timeIntervals[*telescopePos - 1], 600));
 		_vm->_sound->playSound(14); // Play the moving sound
 		_vm->_video->waitUntilMovieEnds(handle);
@@ -2195,7 +2195,7 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 	// First, show the button movie
-	_vm->_video->playMovieBlocking(3);
+	_vm->_video->playMovieBlockingRiven(3);
 
 	// Don't do anything else if the telescope power is off
 	if (*_vm->getVar("ttelevalve") == 0)
@@ -2214,7 +2214,7 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 	// Play a piece of the moving up movie
 	static const uint32 timeIntervals[] = { 0, 800, 1680, 2560, 3440, 4320 };
 	uint16 movieCode = (*_vm->getVar("ttelecover")) ? 4 : 5;
-	VideoHandle handle = _vm->_video->playMovie(movieCode);
+	VideoHandle handle = _vm->_video->playMovieRiven(movieCode);
 	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(timeIntervals[*telescopePos - 1], 600), Graphics::VideoTimestamp(timeIntervals[*telescopePos], 600));
 	_vm->_sound->playSound(14); // Play the moving sound
 	_vm->_video->waitUntilMovieEnds(handle);

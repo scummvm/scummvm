@@ -190,7 +190,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 
 		updatePage();
 
-		if (_video->updateBackgroundMovies())
+		if (_video->updateMovies())
 			_needsUpdate = true;
 
 		if (_needsUpdate) {
@@ -3353,7 +3353,7 @@ void LBMovieItem::update() {
 bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
 		if ((!_neverEnabled && _enabled && _globalEnabled) || _phase == 0x7FFF) {
-			_vm->_video->playBackgroundMovie(_resourceId, _rect.left, _rect.top);
+			_vm->_video->playMovie(_resourceId, _rect.left, _rect.top);
 
 			return true;
 		}

@@ -295,7 +295,7 @@ Common::Error MohawkEngine_Myst::run() {
 	Common::Event event;
 	while (!shouldQuit()) {
 		// Update any background videos
-		_needsUpdate = _video->updateBackgroundMovies();
+		_needsUpdate = _video->updateMovies();
 		_scriptParser->runPersistentScripts();
 
 		while (_eventMan->pollEvent(event)) {
@@ -531,7 +531,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		}
 
 		if (flyby)
-			_video->playMovieCentered(wrapMovieFilename(flyby, kMasterpieceOnly));
+			_video->playMovieBlockingCentered(wrapMovieFilename(flyby, kMasterpieceOnly));
 	}
 
 	changeToCard(card, true);
