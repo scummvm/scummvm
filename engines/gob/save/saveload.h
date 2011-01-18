@@ -517,9 +517,30 @@ protected:
 		void refreshProps();
 	};
 
+	/** Handles the autosave. */
+	class AutoHandler : public SaveHandler {
+	public:
+		AutoHandler(GobEngine *vm, const Common::String &target);
+		~AutoHandler();
+
+		int32 getSize();
+		bool load(int16 dataVar, int32 size, int32 offset);
+		bool save(int16 dataVar, int32 size, int32 offset);
+
+	private:
+		class File : public SlotFileStatic {
+		public:
+			File(GobEngine *vm, const Common::String &base);
+			~File();
+		};
+
+		File _file;
+	};
+
 	static SaveFile _saveFiles[];
 
 	GameHandler *_gameHandler;
+	AutoHandler *_autoHandler;
 
 	SaveHandler *getHandler(const char *fileName) const;
 	const char *getDescription(const char *fileName) const;
