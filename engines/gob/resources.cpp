@@ -172,12 +172,12 @@ bool Resources::load(const Common::String &fileName) {
 	if (!hasTOTRes && !hasEXTRes)
 		return false;
 
-	if (hasTOTRes) {
-		if (!loadTOTTextTable(_fileBase)) {
-			unload();
-			return false;
-		}
+	if (!loadTOTTextTable(_fileBase)) {
+		unload();
+		return false;
+	}
 
+	if (hasTOTRes) {
 		if (!loadIMFile()) {
 			unload();
 			return false;
