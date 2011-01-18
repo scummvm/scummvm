@@ -68,18 +68,27 @@ void Variables::writeVarString(uint32 var, const char *value) {
 }
 
 void Variables::writeOff8(uint32 offset, uint8 value) {
+	assert(offset < _size);
+
 	write8(_vars + offset, value);
 }
 
 void Variables::writeOff16(uint32 offset, uint16 value) {
+	assert((offset + 1) < _size);
+
 	write16(_vars + offset, value);
 }
 
 void Variables::writeOff32(uint32 offset, uint32 value) {
+	assert((offset + 3) < _size);
+
 	write32(_vars + offset, value);
 }
 
 void Variables::writeOffString(uint32 offset, const char *value) {
+	uint32 length = strlen(value);
+	assert((offset + length + 1) < _size);
+
 	strcpy((char *)(_vars + offset), value);
 }
 
@@ -100,19 +109,27 @@ void Variables::readVarString(uint32 var, char *value, uint32 length) {
 }
 
 uint8 Variables::readOff8(uint32 offset) const {
+	assert(offset < _size);
+
 	return read8(_vars + offset);
 }
 
 uint16 Variables::readOff16(uint32 offset) const {
+	assert((offset + 1) < _size);
+
 	return read16(_vars + offset);
 }
 
 uint32 Variables::readOff32(uint32 offset) const {
+	assert((offset + 3) < _size);
+
 	return read32(_vars + offset);
 }
 
 void Variables::readOffString(uint32 offset, char *value, uint32 length) {
-	Common::strlcpy(value, (const char *)(_vars + offset), length);
+	assert(offset < _size);
+
+	Common::strlcpy(value, (const char *)(_vars + offset), MIN<int>(length, _size - offset));
 }
 
 const uint8 *Variables::getAddressVar8(uint32 var) const {
