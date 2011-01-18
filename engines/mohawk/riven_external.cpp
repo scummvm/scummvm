@@ -1239,7 +1239,35 @@ void RivenExternal::xgplaywhark(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xgrviewer(uint16 argc, uint16 *argv) {
-	// TODO: Image viewer related
+	// This controls the viewer on the right side of the 'throne' on Garden Island
+	// (It shows the colors of the marbles)
+
+	// If the light is on, turn it off
+	uint32 *viewerLight = _vm->getVar("grview");
+	if (*viewerLight == 1) {
+		*viewerLight = 0;
+		_vm->_sound->playSound(27);
+		_vm->refreshCard();
+
+		// Delay a bit before turning
+		_vm->_system->delayMillis(200);
+	}
+
+	// Calculate how much we're moving
+	static const uint16 hotspotPositions[] = { 2, 1, 5, 4, 3 };
+	uint32 *curPos = _vm->getVar("grviewpos");
+	uint32 newPos = *curPos + hotspotPositions[_vm->_curHotspot - 1];
+
+	// Now play the movie
+	static const uint16 timeIntervals[] = { 0, 816, 1617, 2416, 3216, 4016, 4816, 5616, 6416, 7216, 8016, 8816 };
+	VideoHandle handle = _vm->_video->playMovie(1);
+	assert(handle != NULL_VID_HANDLE);
+	_vm->_video->setVideoBounds(handle, Graphics::VideoTimestamp(timeIntervals[*curPos], 600), Graphics::VideoTimestamp(timeIntervals[newPos], 600));
+	_vm->_video->waitUntilMovieEnds(handle);
+
+	// Set the new position and let the card's scripts take over again
+	*curPos = newPos % 6; // Clip it to 0-5
+	_vm->refreshCard();
 }
 
 void RivenExternal::xgwharksnd(uint16 argc, uint16 *argv) {
