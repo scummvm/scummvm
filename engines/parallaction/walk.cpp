@@ -367,7 +367,6 @@ PathWalker_NS::PathWalker_NS() : _direction(WALK_DOWN), _step(0) {
 }
 
 bool PathWalker_BR::directPathExists(const Common::Point &from, const Common::Point &to) {
-
 	Common::Point copy(from);
 	Common::Point p(copy);
 
@@ -450,7 +449,7 @@ void PathWalker_BR::buildPath(State &s, uint16 x, uint16 y) {
 	if (z1->u._pathLists[id].empty()) {
 		s._walkPath.clear();
 		debugC(3, kDebugWalk, "buildPath: no path found");
-		// If no path, trigger finalise and stop of walking...
+		// If no path, trigger finalize and stop of walking...
 		s._stillWalkingTowardsNode = false;
 		return;
 	}
@@ -578,7 +577,8 @@ void PathWalker_BR::doWalk(State &s) {
 	}
 
 	if (!s._stillWalkingTowardsNode) {
-		s._walkPath.erase(s._walkPath.begin());
+		if (!s._walkPath.empty())
+			s._walkPath.erase(s._walkPath.begin());
 
 		if (s._walkPath.empty()) {
 			finalizeWalk(s);
