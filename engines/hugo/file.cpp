@@ -521,7 +521,7 @@ void FileManager::printBootText() {
 
 	Common::File ofp;
 	if (!ofp.open(BOOTFILE)) {
-		if (_vm->_gameVariant == 3) {
+		if (_vm->_gameVariant == kGameVariantH1Dos) {
 			//TODO initialize properly _boot structure
 			warning("printBootText - Skipping as H1 Dos may be a freeware");
 			return;
@@ -560,7 +560,7 @@ void FileManager::readBootFile() {
 
 	Common::File ofp;
 	if (!ofp.open(BOOTFILE)) {
-		if (_vm->_gameVariant == 3) {
+		if (_vm->_gameVariant == kGameVariantH1Dos) {
 			//TODO initialize properly _boot structure
 			warning("readBootFile - Skipping as H1 Dos may be a freeware");
 			return;

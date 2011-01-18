@@ -59,13 +59,10 @@ void intro_v3w::introInit() {
 	_vm->_screen->displayBackground();
 	g_system->updateScreen();
 	g_system->delayMillis(3000);
-
-//#if STORY
 	_vm->_file->readBackground(22); // display screen MAP_3w
 	_vm->_screen->displayBackground();
 	introTicks = 0;
 	_vm->_screen->loadFont(0);
-//#endif
 }
 
 /**

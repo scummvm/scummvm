@@ -366,7 +366,6 @@ void ObjectHandler::freeObjectArr() {
 void ObjectHandler::loadObjectArr(Common::File &in) {
 	debugC(6, kDebugObject, "loadObject(&in)");
 
-// TODO: For Hugo3, if not in story mode, set _objects[2].state to 3
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {

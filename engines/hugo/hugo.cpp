@@ -200,7 +200,7 @@ Common::Error HugoEngine::run() {
 	_topMenu = new TopMenu(this);
 
 	switch (_gameVariant) {
-	case 0: // H1 Win
+	case kGameVariantH1Win: // H1 Win
 		_file = new FileManager_v1w(this);
 		_scheduler = new Scheduler_v1w(this);
 		_intro = new intro_v1w(this);
@@ -209,7 +209,7 @@ Common::Error HugoEngine::run() {
 		_object = new ObjectHandler_v1w(this);
 		_normalTPS = 9;
 		break;
-	case 1:
+	case kGameVariantH2Win:
 		_file = new FileManager_v2w(this);
 		_scheduler = new Scheduler_v1w(this);
 		_intro = new intro_v2w(this);
@@ -218,7 +218,7 @@ Common::Error HugoEngine::run() {
 		_object = new ObjectHandler_v1w(this);
 		_normalTPS = 9;
 		break;
-	case 2:
+	case kGameVariantH3Win:
 		_file = new FileManager_v2w(this);
 		_scheduler = new Scheduler_v1w(this);
 		_intro = new intro_v3w(this);
@@ -227,7 +227,7 @@ Common::Error HugoEngine::run() {
 		_object = new ObjectHandler_v1w(this);
 		_normalTPS = 9;
 		break;
-	case 3: // H1 DOS
+	case kGameVariantH1Dos: // H1 DOS
 		_file = new FileManager_v1d(this);
 		_scheduler = new Scheduler_v1d(this);
 		_intro = new intro_v1d(this);
@@ -236,7 +236,7 @@ Common::Error HugoEngine::run() {
 		_object = new ObjectHandler_v1d(this);
 		_normalTPS = 8;
 		break;
-	case 4:
+	case kGameVariantH2Dos:
 		_file = new FileManager_v2d(this);
 		_scheduler = new Scheduler_v2d(this);
 		_intro = new intro_v2d(this);
@@ -245,7 +245,7 @@ Common::Error HugoEngine::run() {
 		_object = new ObjectHandler_v2d(this);
 		_normalTPS = 8;
 		break;
-	case 5:
+	case kGameVariantH3Dos:
 		_file = new FileManager_v3d(this);
 		_scheduler = new Scheduler_v3d(this);
 		_intro = new intro_v3d(this);
@@ -670,7 +670,6 @@ bool HugoEngine::loadHugoDat() {
 	}
 
 	// Read _screenActs
-	// TODO: For Hugo2 and Hugo3, if not in story mode, increment _screenActs[0][0] (ex: kALcrashStory + 1 == kALcrashNoStory)
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
@@ -1055,7 +1054,9 @@ void HugoEngine::readScreenFiles(int screenNum) {
 	_file->readOverlay(screenNum, _overlay, OVERLAY);   // Overlay file
 	_file->readOverlay(screenNum, _ovlBase, OVLBASE);   // Overlay base file
 
-	if ((screenNum == 0) && (_gameVariant == 5))        // H3 Dos
+	// Suppress a boundary used in H3 DOS in 'Crash' screen, which blocks
+	// pathfinding and is useless.
+	if ((screenNum == 0) && (_gameVariant == kGameVariantH3Dos))
 		clearScreenBoundary(50, 311, 152);
 
 }
