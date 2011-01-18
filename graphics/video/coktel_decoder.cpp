@@ -2193,9 +2193,8 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 		                        fakeRect.right - _x * _bytesPerPixel, fakeRect.bottom - _y);
 	}
 
-
-	realRect.clip(Common::Rect(_width, _height));
-	fakeRect.clip(Common::Rect(_width * _bytesPerPixel, _height));
+	realRect.clip(Common::Rect(_surface.w, _surface.h));
+	fakeRect.clip(Common::Rect(_surface.w * _bytesPerPixel, _surface.h));
 
 	if (!realRect.isValidRect() || realRect.isEmpty())
 		return false;
