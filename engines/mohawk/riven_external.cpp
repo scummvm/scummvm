@@ -1268,7 +1268,48 @@ void RivenExternal::xgrviewer(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xgplaywhark(uint16 argc, uint16 *argv) {
-	// TODO: Whark response to using the lights
+	// The whark response to using the lights
+
+	// If we've gotten a visit already since we turned out the light, bail out
+	uint32 *wharkState = _vm->getVar("gwharktime");
+
+	if (*wharkState != 1)
+		return;
+
+	*wharkState = 0;
+
+	// Increase the amount of times the whark has visited
+	uint32 *wharkVisits = _vm->getVar("gwhark");
+	*wharkVisits += 1;
+
+	// If we're at 5 or more, the whark will no longer visit us :(
+	if (*wharkVisits >= 5) {
+		*wharkVisits = 5;
+		return;
+	}
+
+	// Activate the correct video based on the amount of times we've been visited
+	switch (*wharkVisits) {
+	case 1:
+		_vm->_video->activateMLST(3, _vm->getCurCard());
+		break;
+	case 2:
+		// One of two random videos
+		_vm->_video->activateMLST(4 + _vm->_rnd->getRandomBit(), _vm->getCurCard());
+		break;
+	case 3:
+		// One of two random videos
+		_vm->_video->activateMLST(6 + _vm->_rnd->getRandomBit(), _vm->getCurCard());
+		break;
+	case 4:
+		// Red alert! Shields online! Brace yourself for impact!
+		_vm->_video->activateMLST(8, _vm->getCurCard());
+		break;
+	}
+
+	// For whatever reason the devs felt fit, code 31 is used for all of the videos
+	_vm->_video->playMovieBlocking(31);
+	_vm->refreshCard();
 }
 
 void RivenExternal::xgwharksnd(uint16 argc, uint16 *argv) {
@@ -1306,7 +1347,7 @@ void RivenExternal::xglview_villageon(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xglview_villageoff(uint16 argc, uint16 *argv) {
-	// Turn off the left viewer when in 'village mode'
+	// Turn off the left viewer when in 'village mode' (why is this external?)
 	*_vm->getVar("glview") = 0;
 	_vm->_gfx->drawPLST(1);
 	_vm->_gfx->updateScreen();
