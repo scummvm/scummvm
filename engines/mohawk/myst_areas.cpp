@@ -623,7 +623,7 @@ void MystResourceType10::updatePosition(const Common::Point &mouse) {
 	}
 
 	if (positionChanged && _dragSound)
-		_vm->_sound->replaceSound(_dragSound);
+		_vm->_sound->replaceSoundMyst(_dragSound);
 }
 
 MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType8(vm, rlstStream, parent) {

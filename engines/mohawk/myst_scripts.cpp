@@ -124,7 +124,7 @@ void MystScriptParser::setupCommonOpcodes() {
 	OPCODE(22, o_goToDest);
 	OPCODE(23, o_toggleAreasActivation);
 	OPCODE(24, o_playSound);
-	// Opcode 25 is unused; original calls replaceSound
+	// Opcode 25 is unused; original calls replaceSoundMyst
 	OPCODE(26, o_stopSoundBackground);
 	OPCODE(27, o_playSoundBlocking);
 	OPCODE(28, o_copyBackBufferToScreen);
@@ -556,14 +556,14 @@ void MystScriptParser::o_playSound(uint16 op, uint16 var, uint16 argc, uint16 *a
 		debugC(kDebugScript, "Opcode %d: playSound", op);
 		debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 	} else
 		unknown(op, var, argc, argv);
 }
 
 void MystScriptParser::o_stopSoundBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: stopSoundBackground", op);
-	_vm->_sound->stopBackground();
+	_vm->_sound->stopBackgroundMyst();
 }
 
 void MystScriptParser::o_playSoundBlocking(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -685,15 +685,15 @@ void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, uint16 arg
 		else if (soundAction == kMystSoundActionChangeVolume) {
 			debugC(kDebugScript, "Continue current sound, change volume");
 			debugC(kDebugScript, "\tVolume: %d", soundVolume);
-			_vm->_sound->changeBackgroundVolume(soundVolume);
+			_vm->_sound->changeBackgroundVolumeMyst(soundVolume);
 		} else if (soundAction == kMystSoundActionStop) {
 			debugC(kDebugScript, "Stop sound");
-			_vm->_sound->stopBackground();
+			_vm->_sound->stopBackgroundMyst();
 		} else if (soundAction > 0) {
 			debugC(kDebugScript, "Play new Sound, change volume");
 			debugC(kDebugScript, "\tSound: %d", soundAction);
 			debugC(kDebugScript, "\tVolume: %d", soundVolume);
-			_vm->_sound->replaceBackground(soundAction, soundVolume);
+			_vm->_sound->replaceBackgroundMyst(soundAction, soundVolume);
 		} else {
 			debugC(kDebugScript, "Unknown");
 			warning("Unknown sound control value in opcode %d", op);
@@ -718,13 +718,13 @@ void MystScriptParser::o_soundPlaySwitch(uint16 op, uint16 var, uint16 argc, uin
 		debugC(kDebugScript, "\tsoundId: %d", soundId);
 
 		if (soundId)
-			_vm->_sound->replaceSound(soundId);
+			_vm->_sound->replaceSoundMyst(soundId);
 	}
 }
 
 void MystScriptParser::o_soundResumeBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: soundResumeBackground", op);
-	_vm->_sound->resumeBackground();
+	_vm->_sound->resumeBackgroundMyst();
 }
 
 void MystScriptParser::o_copyImageToScreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -864,7 +864,7 @@ void MystScriptParser::o_changeCardPlaySoundDirectional(uint16 op, uint16 var, u
 	debugC(kDebugScript, "\tanimated update data size: %d", dataSize);
 
 	if (soundId)
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 
 	_vm->changeToCard(cardId, false);
 
@@ -883,7 +883,7 @@ void MystScriptParser::o_directionalUpdatePlaySound(uint16 op, uint16 var, uint1
 	debugC(kDebugScript, "\tanimated update data size: %d", dataSize);
 
 	if (soundId)
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 
 	animatedUpdate(dataSize, &argv[3], delayBetweenSteps);
 }

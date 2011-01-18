@@ -818,9 +818,9 @@ void MystScriptParser_Myst::o_libraryBookPageTurnLeft(uint16 op, uint16 var, uin
 		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
 
 		if (_vm->_rnd->getRandomBit())
-			_vm->_sound->replaceSound(_libraryBookSound1);
+			_vm->_sound->replaceSoundMyst(_libraryBookSound1);
 		else
-			_vm->_sound->replaceSound(_libraryBookSound2);
+			_vm->_sound->replaceSoundMyst(_libraryBookSound2);
 
 		_vm->_system->updateScreen();
 	}
@@ -836,9 +836,9 @@ void MystScriptParser_Myst::o_libraryBookPageTurnRight(uint16 op, uint16 var, ui
 		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
 
 		if (_vm->_rnd->getRandomBit())
-			_vm->_sound->replaceSound(_libraryBookSound1);
+			_vm->_sound->replaceSoundMyst(_libraryBookSound1);
 		else
-			_vm->_sound->replaceSound(_libraryBookSound2);
+			_vm->_sound->replaceSoundMyst(_libraryBookSound2);
 
 		_vm->_system->updateScreen();
 	}
@@ -917,7 +917,7 @@ void MystScriptParser_Myst::o_towerRotationStart(uint16 op, uint16 var, uint16 a
 	towerRotationMapComputeAngle();
 	towerRotationMapDrawLine(center, end);
 
-	_vm->_sound->replaceSound(5378, Audio::Mixer::kMaxChannelVolume, true);
+	_vm->_sound->replaceSoundMyst(5378, Audio::Mixer::kMaxChannelVolume, true);
 }
 
 void MystScriptParser_Myst::o_towerRotationEnd(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -942,7 +942,7 @@ void MystScriptParser_Myst::o_towerRotationEnd(uint16 op, uint16 var, uint16 arg
 		_state.towerRotationAngle = 152;
 	}
 
-	_vm->_sound->replaceSound(6378);
+	_vm->_sound->replaceSoundMyst(6378);
 
 	_towerRotationBlinkLabel = true;
 	_towerRotationBlinkLabelCount = 0;
@@ -997,7 +997,7 @@ void MystScriptParser_Myst::o_dockVaultOpen(uint16 op, uint16 var, uint16 argc, 
 		else
 			_dockVaultState = 1;
 
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 		_vm->redrawArea(41, false);
 		animatedUpdate(directionalUpdateDataSize, &argv[3], delay);
 	}
@@ -1024,7 +1024,7 @@ void MystScriptParser_Myst::o_dockVaultClose(uint16 op, uint16 var, uint16 argc,
 		if (_dockVaultState == 1 || _dockVaultState == 2)
 			_dockVaultState = 0;
 
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 		_vm->redrawArea(41, false);
 		animatedUpdate(directionalUpdateDataSize, &argv[3], delay);
 	}
@@ -1128,7 +1128,7 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 						&& _state.clockTowerMinutePosition == 40;
 
 	if (!_state.clockTowerBridgeOpen && correctTime) {
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 		_vm->_system->delayMillis(500);
 
 		// Gears rise up
@@ -1140,7 +1140,7 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 		_state.clockTowerBridgeOpen = 1;
 		_vm->redrawArea(12);
 	} else if (_state.clockTowerBridgeOpen && !correctTime) {
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 		_vm->_system->delayMillis(500);
 
 		// Gears sink down
@@ -1159,7 +1159,7 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 	uint16 video = getVar(51);
 
 	// Press button
-	_vm->_sound->replaceSound(4698);
+	_vm->_sound->replaceSoundMyst(4698);
 
 	Common::Rect src = Common::Rect(0, 0, 32, 75);
 	Common::Rect dest = Common::Rect(261, 257, 293, 332);
@@ -1176,7 +1176,7 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 
 	// Play selected video
 	if (!_state.imagerActive && video != 3)
-		_vm->_sound->replaceSound(argv[0]);
+		_vm->_sound->replaceSoundMyst(argv[0]);
 
 	switch (video) {
 	case 0: // Nothing
@@ -1205,7 +1205,7 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 		_imagerMovie->setBlocking(false);
 
 		if (_state.imagerActive) {
-			_vm->_sound->replaceSound(argv[1]);
+			_vm->_sound->replaceSoundMyst(argv[1]);
 
 			// Water disappearing
 			VideoHandle water = _imagerMovie->playMovie();
@@ -1286,11 +1286,11 @@ void MystScriptParser_Myst::imagerValidation_run() {
 		_imagerRedButton->drawConditionalDataToScreen(1);
 
 		if (_imagerValidationStep < 6)
-			_vm->_sound->replaceSound(_imagerSound[0]);
+			_vm->_sound->replaceSoundMyst(_imagerSound[0]);
 		else if (_imagerValidationStep < 10)
-			_vm->_sound->replaceSound(_imagerSound[1]);
+			_vm->_sound->replaceSoundMyst(_imagerSound[1]);
 		else if (_imagerValidationStep == 10)
-			_vm->_sound->replaceSound(_imagerSound[2]);
+			_vm->_sound->replaceSoundMyst(_imagerSound[2]);
 
 		_imagerValidationStep++;
 
@@ -1314,7 +1314,7 @@ void MystScriptParser_Myst::o_towerElevatorAnimation(uint16 op, uint16 var, uint
 
 	_vm->_cursor->hideCursor();
 	_vm->_sound->stopSound();
-	_vm->_sound->pauseBackground();
+	_vm->_sound->pauseBackgroundMyst();
 
 	switch (argv[0]) {
 	case 0:
@@ -1327,7 +1327,7 @@ void MystScriptParser_Myst::o_towerElevatorAnimation(uint16 op, uint16 var, uint
 		break;
 	}
 
-	_vm->_sound->resumeBackground();
+	_vm->_sound->resumeBackgroundMyst();
 	_vm->_cursor->showCursor();
 	_treeStopped = false;
 }
@@ -1351,15 +1351,15 @@ void MystScriptParser_Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint
 		_state.generatorVoltage -= value;
 
 		if (_state.generatorVoltage)
-			_vm->_sound->replaceSound(8297);
+			_vm->_sound->replaceSoundMyst(8297);
 		else
-			_vm->_sound->replaceSound(9297);
+			_vm->_sound->replaceSoundMyst(9297);
 	} else {
 		if (_generatorVoltage)
-			_vm->_sound->replaceSound(6297);
+			_vm->_sound->replaceSoundMyst(6297);
 		else {
-			_vm->_sound->replaceSound(7297); //TODO: Replace with play sound and replace background 4297
-			_vm->_sound->replaceBackground(4297);
+			_vm->_sound->replaceSoundMyst(7297); // TODO: Replace with play sound and replace background 4297
+			_vm->_sound->replaceBackgroundMyst(4297);
 		}
 
 		_state.generatorButtons |= mask;
@@ -1473,13 +1473,13 @@ void MystScriptParser_Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 
 		if (_tempVar == 0) {
 			uint16 soundId = handle->getList2(0);
 			if (soundId)
-				_vm->_sound->replaceSound(soundId);
+				_vm->_sound->replaceSoundMyst(soundId);
 		}
 		// Combination is right
 		if (_state.cabinSafeCombination == 724) {
 			uint16 soundId = handle->getList2(1);
 			if (soundId)
-				_vm->_sound->replaceSound(soundId);
+				_vm->_sound->replaceSoundMyst(soundId);
 
 			_vm->changeToCard(4103, false);
 
@@ -1504,7 +1504,7 @@ void MystScriptParser_Myst::o_cabinSafeHandleEndMove(uint16 op, uint16 var, uint
 void MystScriptParser_Myst::o_observatoryMonthChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Observatory month change start", op);
 
-	_vm->_sound->pauseBackground();
+	_vm->_sound->pauseBackgroundMyst();
 
 	if (op == 129 || op == 131) {
 		// Increase
@@ -1552,7 +1552,7 @@ void MystScriptParser_Myst::observatoryIncrementMonth(int16 increment) {
 		_state.observatoryMonthSlider = _observatoryMonthSlider->_pos.y;
 	}
 
-	_vm->_sound->replaceSound(8500);
+	_vm->_sound->replaceSoundMyst(8500);
 }
 
 void MystScriptParser_Myst::observatoryMonthChange_run() {
@@ -1563,7 +1563,7 @@ void MystScriptParser_Myst::observatoryMonthChange_run() {
 void MystScriptParser_Myst::o_observatoryDayChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Observatory day change start", op);
 
-	_vm->_sound->pauseBackground();
+	_vm->_sound->pauseBackgroundMyst();
 
 	if (op == 129 || op == 131) {
 		// Increase
@@ -1612,7 +1612,7 @@ void MystScriptParser_Myst::observatoryIncrementDay(int16 increment) {
 		_state.observatoryDaySlider = _observatoryDaySlider->_pos.y;
 	}
 
-	_vm->_sound->replaceSound(8500);
+	_vm->_sound->replaceSoundMyst(8500);
 }
 
 void MystScriptParser_Myst::observatoryDayChange_run() {
@@ -1623,7 +1623,7 @@ void MystScriptParser_Myst::observatoryDayChange_run() {
 void MystScriptParser_Myst::o_observatoryYearChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Observatory year change start", op);
 
-	_vm->_sound->pauseBackground();
+	_vm->_sound->pauseBackgroundMyst();
 
 	if (op == 196) {
 		// Increase
@@ -1666,7 +1666,7 @@ void MystScriptParser_Myst::observatoryIncrementYear(int16 increment) {
 		_state.observatoryYearSlider = _observatoryYearSlider->_pos.y;
 	}
 
-	_vm->_sound->replaceSound(8500);
+	_vm->_sound->replaceSoundMyst(8500);
 }
 
 void MystScriptParser_Myst::observatoryYearChange_run() {
@@ -1677,7 +1677,7 @@ void MystScriptParser_Myst::observatoryYearChange_run() {
 void MystScriptParser_Myst::o_observatoryTimeChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Observatory time change start", op);
 
-	_vm->_sound->pauseBackground();
+	_vm->_sound->pauseBackgroundMyst();
 
 	if (op == 192) {
 		// Increase
@@ -1725,7 +1725,7 @@ void MystScriptParser_Myst::observatoryIncrementTime(int16 increment) {
 		_state.observatoryTimeSlider = _observatoryTimeSlider->_pos.y;
 	}
 
-	_vm->_sound->replaceSound(8500);
+	_vm->_sound->replaceSoundMyst(8500);
 }
 
 void MystScriptParser_Myst::observatoryTimeChange_run() {
@@ -1742,7 +1742,7 @@ void MystScriptParser_Myst::o_observatoryGoButton(uint16 op, uint16 var, uint16 
 			|| _state.observatoryYearTarget != _state.observatoryYearSetting
 			|| _state.observatoryTimeTarget != _state.observatoryTimeSetting) {
 		uint16 soundId = argv[0];
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 
 		int16 distance = _state.observatoryYearTarget - _state.observatoryYearSetting;
 		uint32 end = _vm->_system->getMillis() + 32 * ABS(distance) / 50 + 800;
@@ -1755,7 +1755,7 @@ void MystScriptParser_Myst::o_observatoryGoButton(uint16 op, uint16 var, uint16 
 			_vm->redrawResource(_observatoryVisualizer);
 		}
 
-		_vm->_sound->resumeBackground();
+		_vm->_sound->resumeBackgroundMyst();
 
 		// Redraw visualizer
 		observatorySetTargetToSetting();
@@ -1822,11 +1822,11 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 				if (_state.generatorVoltage > 59 || _state.generatorBreakers != 1) {
 					uint16 soundId = breaker->getList2(1);
 					if (soundId)
-						_vm->_sound->replaceSound(soundId);
+						_vm->_sound->replaceSoundMyst(soundId);
 				} else {
 					uint16 soundId = breaker->getList2(0);
 					if (soundId)
-						_vm->_sound->replaceSound(soundId);
+						_vm->_sound->replaceSoundMyst(soundId);
 
 					// Reset breaker state
 					_state.generatorBreakers = 0;
@@ -1836,11 +1836,11 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 				if (_state.generatorVoltage > 59 || _state.generatorBreakers != 2) {
 					uint16 soundId = breaker->getList2(1);
 					if (soundId)
-						_vm->_sound->replaceSound(soundId);
+						_vm->_sound->replaceSoundMyst(soundId);
 				} else {
 					uint16 soundId = breaker->getList2(0);
 					if (soundId)
-						_vm->_sound->replaceSound(soundId);
+						_vm->_sound->replaceSoundMyst(soundId);
 
 					// Reset breaker state
 					_state.generatorBreakers = 0;
@@ -1863,7 +1863,7 @@ void MystScriptParser_Myst::o_boilerIncreasePressureStart(uint16 op, uint16 var,
 
 	_treeStopped = true;
 	if (_state.cabinValvePosition < 25)
-		_vm->_sound->stopBackground();
+		_vm->_sound->stopBackgroundMyst();
 
 	_boilerPressureIncreasing = true;
 }
@@ -1880,7 +1880,7 @@ void MystScriptParser_Myst::o_boilerLightPilot(uint16 op, uint16 var, uint16 arg
 		_matchGoOutTime = _vm->_system->getMillis();
 
 		if (_state.cabinValvePosition > 0)
-			_vm->_sound->replaceBackground(8098, 49152);
+			_vm->_sound->replaceBackgroundMyst(8098, 49152);
 
 		if (_state.cabinValvePosition > 12)
 			_state.treeLastMoveTime = _vm->_system->getMillis();
@@ -1898,11 +1898,11 @@ void MystScriptParser_Myst::o_boilerIncreasePressureStop(uint16 op, uint16 var, 
 
 	if (_state.cabinPilotLightLit == 1) {
 		if (_state.cabinValvePosition > 0)
-			_vm->_sound->replaceBackground(8098, 49152);
+			_vm->_sound->replaceBackgroundMyst(8098, 49152);
 
 		// TODO: Play movies
 	} else if (_state.cabinValvePosition > 0)
-		_vm->_sound->replaceBackground(4098, _state.cabinValvePosition << 10);
+		_vm->_sound->replaceBackgroundMyst(4098, _state.cabinValvePosition << 10);
 }
 
 void MystScriptParser_Myst::boilerPressureIncrease_run() {
@@ -1916,13 +1916,13 @@ void MystScriptParser_Myst::boilerPressureIncrease_run() {
 			_vm->redrawArea(305);
 		} else if (_state.cabinValvePosition == 25) {
 			if (_state.cabinPilotLightLit == 1)
-				_vm->_sound->replaceBackground(8098, 49152);
+				_vm->_sound->replaceBackgroundMyst(8098, 49152);
 			else
-				_vm->_sound->replaceBackground(4098, 25600);
+				_vm->_sound->replaceBackgroundMyst(4098, 25600);
 		}
 
 		// Pressure increasing sound
-		_vm->_sound->replaceSound(5098);
+		_vm->_sound->replaceSoundMyst(5098);
 
 		// Redraw wheel
 		_vm->redrawArea(99);
@@ -1941,7 +1941,7 @@ void MystScriptParser_Myst::boilerPressureDecrease_run() {
 		}
 
 		// Pressure increasing sound
-		_vm->_sound->replaceSound(5098);
+		_vm->_sound->replaceSoundMyst(5098);
 
 		// Redraw wheel
 		_vm->redrawArea(99);
@@ -1952,7 +1952,7 @@ void MystScriptParser_Myst::o_boilerDecreasePressureStart(uint16 op, uint16 var,
 	debugC(kDebugScript, "Opcode %d: Boiler decrease pressure start", op);
 
 	_treeStopped = true;
-	_vm->_sound->stopBackground();
+	_vm->_sound->stopBackgroundMyst();
 
 	_boilerPressureDecreasing = true;
 }
@@ -1966,12 +1966,12 @@ void MystScriptParser_Myst::o_boilerDecreasePressureStop(uint16 op, uint16 var, 
 
 	if (_state.cabinPilotLightLit == 1) {
 		if (_state.cabinValvePosition > 0)
-			_vm->_sound->replaceBackground(8098, 49152);
+			_vm->_sound->replaceBackgroundMyst(8098, 49152);
 
 		// TODO: Play movies
 	} else {
 		if (_state.cabinValvePosition > 0)
-			_vm->_sound->replaceBackground(4098, _state.cabinValvePosition << 10);
+			_vm->_sound->replaceBackgroundMyst(4098, _state.cabinValvePosition << 10);
 	}
 }
 
@@ -1996,7 +1996,7 @@ void MystScriptParser_Myst::basementPressureIncrease_run() {
 		_state.cabinValvePosition++;
 
 		// Pressure increasing sound
-		_vm->_sound->replaceSound(4642);
+		_vm->_sound->replaceSoundMyst(4642);
 
 		// Redraw wheel
 		_vm->redrawArea(99);
@@ -2009,7 +2009,7 @@ void MystScriptParser_Myst::basementPressureDecrease_run() {
 		_state.cabinValvePosition--;
 
 		// Pressure decreasing sound
-		_vm->_sound->replaceSound(4642);
+		_vm->_sound->replaceSoundMyst(4642);
 
 		// Redraw wheel
 		_vm->redrawArea(99);
@@ -2054,18 +2054,18 @@ void MystScriptParser_Myst::tree_run() {
 				// Tree movement
 				if (goingDown) {
 					_state.treePosition--;
-					_vm->_sound->replaceSound(2);
+					_vm->_sound->replaceSoundMyst(2);
 				} else {
 					_state.treePosition++;
-					_vm->_sound->replaceSound(1);
+					_vm->_sound->replaceSoundMyst(1);
 				}
 
 				// Stop background music if going up from book room
 				if (_vm->getCurCard() == 4630) {
 					if (_state.treePosition > 0)
-						_vm->_sound->stopBackground();
+						_vm->_sound->stopBackgroundMyst();
 					else
-						_vm->_sound->replaceBackground(4630, 24576);
+						_vm->_sound->replaceBackgroundMyst(4630, 24576);
 				}
 
 				// Redraw tree
@@ -2100,7 +2100,7 @@ void MystScriptParser_Myst::o_rocketSoundSliderStartMove(uint16 op, uint16 var, 
 
 	_rocketSliderSound = 0;
 	_vm->_cursor->setCursor(700);
-	_vm->_sound->pauseBackground();
+	_vm->_sound->pauseBackgroundMyst();
 	rocketSliderMove();
 }
 
@@ -2129,7 +2129,7 @@ void MystScriptParser_Myst::o_rocketSoundSliderEndMove(uint16 op, uint16 var, ui
 	else if (_invokingResource == _rocketSlider5)
 		_state.rocketSliderPosition[4] = _rocketSlider5->_pos.y;
 
-	_vm->_sound->resumeBackground();
+	_vm->_sound->resumeBackgroundMyst();
 }
 
 void MystScriptParser_Myst::rocketSliderMove() {
@@ -2139,7 +2139,7 @@ void MystScriptParser_Myst::rocketSliderMove() {
 		uint16 soundId = rocketSliderGetSound(slider->_pos.y);
 		if (soundId != _rocketSliderSound) {
 			_rocketSliderSound = soundId;
-			_vm->_sound->replaceSound(soundId, Audio::Mixer::kMaxChannelVolume, true);
+			_vm->_sound->replaceSoundMyst(soundId, Audio::Mixer::kMaxChannelVolume, true);
 		}
 	}
 }
@@ -2155,35 +2155,35 @@ void MystScriptParser_Myst::rocketCheckSolution() {
 	bool solved = true;
 
 	soundId = rocketSliderGetSound(_rocketSlider1->_pos.y);
-	_vm->_sound->replaceSound(soundId);
+	_vm->_sound->replaceSoundMyst(soundId);
 	_rocketSlider1->drawConditionalDataToScreen(2);
 	_vm->_system->delayMillis(250);
 	if (soundId != 9558)
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider2->_pos.y);
-	_vm->_sound->replaceSound(soundId);
+	_vm->_sound->replaceSoundMyst(soundId);
 	_rocketSlider2->drawConditionalDataToScreen(2);
 	_vm->_system->delayMillis(250);
 	if (soundId != 9546)
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider3->_pos.y);
-	_vm->_sound->replaceSound(soundId);
+	_vm->_sound->replaceSoundMyst(soundId);
 	_rocketSlider3->drawConditionalDataToScreen(2);
 	_vm->_system->delayMillis(250);
 	if (soundId != 9543)
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider4->_pos.y);
-	_vm->_sound->replaceSound(soundId);
+	_vm->_sound->replaceSoundMyst(soundId);
 	_rocketSlider4->drawConditionalDataToScreen(2);
 	_vm->_system->delayMillis(250);
 	if (soundId != 9553)
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider5->_pos.y);
-	_vm->_sound->replaceSound(soundId);
+	_vm->_sound->replaceSoundMyst(soundId);
 	_rocketSlider5->drawConditionalDataToScreen(2);
 	_vm->_system->delayMillis(250);
 	if (soundId != 9560)
@@ -2237,7 +2237,7 @@ void MystScriptParser_Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 arg
 	// Play note
 	if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
 		uint16 soundId = key->getList1(0);
-		_vm->_sound->replaceSound(soundId, Audio::Mixer::kMaxChannelVolume, true);
+		_vm->_sound->replaceSoundMyst(soundId, Audio::Mixer::kMaxChannelVolume, true);
 	}
 }
 
@@ -2275,12 +2275,12 @@ void MystScriptParser_Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc
 			// Play note
 			if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
 				uint16 soundId = key->getList1(0);
-				_vm->_sound->replaceSound(soundId, Audio::Mixer::kMaxChannelVolume, true);
+				_vm->_sound->replaceSoundMyst(soundId, Audio::Mixer::kMaxChannelVolume, true);
 			}
 		} else {
 			// Not pressing a key anymore
 			_vm->_sound->stopSound();
-			_vm->_sound->resumeBackground();
+			_vm->_sound->resumeBackgroundMyst();
 		}
 	}
 
@@ -2302,7 +2302,7 @@ void MystScriptParser_Myst::o_rocketPianoStop(uint16 op, uint16 var, uint16 argc
 	_vm->_system->updateScreen();
 
 	_vm->_sound->stopSound();
-	_vm->_sound->resumeBackground();
+	_vm->_sound->resumeBackgroundMyst();
 }
 
 void MystScriptParser_Myst::o_rocketLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -2343,7 +2343,7 @@ void MystScriptParser_Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc
 		uint16 soundId = lever->getList2(0);
 
 		if (soundId)
-			_vm->_sound->replaceSound(soundId);
+			_vm->_sound->replaceSoundMyst(soundId);
 
 		// If rocket correctly powered
 		if (_state.generatorVoltage == 59 && !_state.generatorBreakers)
@@ -2407,7 +2407,7 @@ void MystScriptParser_Myst::o_observatoryMonthSliderStartMove(uint16 op, uint16 
 	debugC(kDebugScript, "Opcode %d: Month slider start move", op);
 
 	_vm->_cursor->setCursor(700);
-	_vm->_sound->pauseBackground();
+	_vm->_sound->pauseBackgroundMyst();
 
 	observatoryUpdateMonth();
 }
@@ -2416,7 +2416,7 @@ void MystScriptParser_Myst::o_observatoryMonthSliderEndMove(uint16 op, uint16 va
 	debugC(kDebugScript, "Opcode %d: Month slider end move", op);
 
 	_vm->checkCursorHints();
-	_vm->_sound->resumeBackground();
+	_vm->_sound->resumeBackgroundMyst();
 
 	observatoryUpdateMonth();
 }
@@ -2427,7 +2427,7 @@ void MystScriptParser_Myst::observatoryUpdateMonth() {
 	if (month != _state.observatoryMonthSetting) {
 		_state.observatoryMonthSetting = month;
 		_state.observatoryMonthSlider = _observatoryMonthSlider->_pos.y;
-		_vm->_sound->replaceSound(8500);
+		_vm->_sound->replaceSoundMyst(8500);
 
 		// Redraw digits
 		_vm->redrawArea(73);
@@ -2438,7 +2438,7 @@ void MystScriptParser_Myst::o_observatoryDaySliderStartMove(uint16 op, uint16 va
 	debugC(kDebugScript, "Opcode %d: Day slider start move", op);
 
 	_vm->_cursor->setCursor(700);
-	_vm->_sound->pauseBackground();
+	_vm->_sound->pauseBackgroundMyst();
 
 	observatoryUpdateDay();
 }
@@ -2447,7 +2447,7 @@ void MystScriptParser_Myst::o_observatoryDaySliderEndMove(uint16 op, uint16 var,
 	debugC(kDebugScript, "Opcode %d: Day slider end move", op);
 
 	_vm->checkCursorHints();
-	_vm->_sound->resumeBackground();
+	_vm->_sound->resumeBackgroundMyst();
 
 	observatoryUpdateDay();
 }
@@ -2458,7 +2458,7 @@ void MystScriptParser_Myst::observatoryUpdateDay() {
 	if (day != _state.observatoryDaySetting) {
 		_state.observatoryDaySetting = day;
 		_state.observatoryDaySlider = _observatoryDaySlider->_pos.y;
-		_vm->_sound->replaceSound(8500);
+		_vm->_sound->replaceSoundMyst(8500);
 
 		// Redraw digits
 		_vm->redrawArea(75);
@@ -2470,7 +2470,7 @@ void MystScriptParser_Myst::o_observatoryYearSliderStartMove(uint16 op, uint16 v
 	debugC(kDebugScript, "Opcode %d: Year slider start move", op);
 
 	_vm->_cursor->setCursor(700);
-	_vm->_sound->pauseBackground();
+	_vm->_sound->pauseBackgroundMyst();
 
 	observatoryUpdateYear();
 }
@@ -2479,7 +2479,7 @@ void MystScriptParser_Myst::o_observatoryYearSliderEndMove(uint16 op, uint16 var
 	debugC(kDebugScript, "Opcode %d: Year slider end move", op);
 
 	_vm->checkCursorHints();
-	_vm->_sound->resumeBackground();
+	_vm->_sound->resumeBackgroundMyst();
 
 	observatoryUpdateYear();
 }
@@ -2490,7 +2490,7 @@ void MystScriptParser_Myst::observatoryUpdateYear() {
 	if (year != _state.observatoryYearSetting) {
 		_state.observatoryYearSetting = year;
 		_state.observatoryYearSlider = _observatoryYearSlider->_pos.y;
-		_vm->_sound->replaceSound(8500);
+		_vm->_sound->replaceSoundMyst(8500);
 
 		// Redraw digits
 		_vm->redrawArea(79);
@@ -2504,7 +2504,7 @@ void MystScriptParser_Myst::o_observatoryTimeSliderStartMove(uint16 op, uint16 v
 	debugC(kDebugScript, "Opcode %d: Time slider start move", op);
 
 	_vm->_cursor->setCursor(700);
-	_vm->_sound->pauseBackground();
+	_vm->_sound->pauseBackgroundMyst();
 
 	observatoryUpdateTime();
 }
@@ -2513,7 +2513,7 @@ void MystScriptParser_Myst::o_observatoryTimeSliderEndMove(uint16 op, uint16 var
 	debugC(kDebugScript, "Opcode %d: Time slider end move", op);
 
 	_vm->checkCursorHints();
-	_vm->_sound->resumeBackground();
+	_vm->_sound->resumeBackgroundMyst();
 
 	observatoryUpdateTime();
 }
@@ -2524,7 +2524,7 @@ void MystScriptParser_Myst::observatoryUpdateTime() {
 	if (time != _state.observatoryTimeSetting) {
 		_state.observatoryTimeSetting = time;
 		_state.observatoryTimeSlider = _observatoryTimeSlider->_pos.y;
-		_vm->_sound->replaceSound(8500);
+		_vm->_sound->replaceSoundMyst(8500);
 
 		// Redraw digits
 		_vm->redrawArea(80);
@@ -2545,7 +2545,7 @@ void MystScriptParser_Myst::o_libraryCombinationBookStop(uint16 op, uint16 var, 
 
 void MystScriptParser_Myst::o_cabinMatchLight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (!_cabinMatchState) {
-		_vm->_sound->replaceSound(4103);
+		_vm->_sound->replaceSoundMyst(4103);
 
 		// Match is lit
 		_cabinMatchState = 1;
@@ -2637,7 +2637,7 @@ void MystScriptParser_Myst::clockWheelStartTurn(uint16 wheel) {
 	uint16 soundId = resource->getList1(0);
 
 	if (soundId)
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 
 	// Turn wheel one step
 	if (wheel == 1)
@@ -2698,9 +2698,9 @@ void MystScriptParser_Myst::libraryCombinationBookTurnLeft() {
 		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
 
 		if (_vm->_rnd->getRandomBit())
-			_vm->_sound->replaceSound(_libraryBookSound1);
+			_vm->_sound->replaceSoundMyst(_libraryBookSound1);
 		else
-			_vm->_sound->replaceSound(_libraryBookSound2);
+			_vm->_sound->replaceSoundMyst(_libraryBookSound2);
 
 		_vm->_system->updateScreen();
 	}
@@ -2724,9 +2724,9 @@ void MystScriptParser_Myst::libraryCombinationBookTurnRight() {
 		_vm->_gfx->copyImageToScreen(_libraryBookBaseImage + _libraryBookPage, rect);
 
 		if (_vm->_rnd->getRandomBit())
-			_vm->_sound->replaceSound(_libraryBookSound1);
+			_vm->_sound->replaceSoundMyst(_libraryBookSound1);
 		else
-			_vm->_sound->replaceSound(_libraryBookSound2);
+			_vm->_sound->replaceSoundMyst(_libraryBookSound2);
 
 		_vm->_system->updateScreen();
 	}
@@ -2761,7 +2761,7 @@ void MystScriptParser_Myst::o_observatoryChangeSettingStop(uint16 op, uint16 var
 		_vm->redrawResource(_observatoryCurrentSlider);
 		_observatoryCurrentSlider = 0;
 	}
-	_vm->_sound->resumeBackground();
+	_vm->_sound->resumeBackgroundMyst();
 }
 
 void MystScriptParser_Myst::o_dockVaultForceClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -2777,12 +2777,12 @@ void MystScriptParser_Myst::o_dockVaultForceClose(uint16 op, uint16 var, uint16 
 	if (_dockVaultState) {
 		// Open switch
 		_state.dockMarkerSwitch = 1;
-		_vm->_sound->replaceSound(4143);
+		_vm->_sound->replaceSoundMyst(4143);
 		_vm->redrawArea(4);
 
 		// Close vault
 		_dockVaultState = 0;
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 		_vm->redrawArea(41, false);
 		animatedUpdate(directionalUpdateDataSize, &argv[3], delay);
 	}
@@ -2819,7 +2819,7 @@ void MystScriptParser_Myst::o_clockLeverMove(uint16 op, uint16 var, uint16 argc,
 		if (step == maxStep) {
 			// Start videos for first step
 			if (_clockWeightPosition < 2214) {
-				_vm->_sound->replaceSound(5113);
+				_vm->_sound->replaceSoundMyst(5113);
 				clockGearForwardOneStep(1);
 
 				// Left lever
@@ -2867,7 +2867,7 @@ void MystScriptParser_Myst::clockWeightDownOneStep() {
 void MystScriptParser_Myst::clockGears_run() {
 	if (!_vm->_video->isVideoPlaying() && _clockWeightPosition < 2214) {
 		_clockMiddleGearMovedAlone = true;
-		_vm->_sound->replaceSound(5113);
+		_vm->_sound->replaceSoundMyst(5113);
 		clockGearForwardOneStep(1);
 		clockWeightDownOneStep();
 	}
@@ -2888,7 +2888,7 @@ void MystScriptParser_Myst::o_clockLeverEndMove(uint16 op, uint16 var, uint16 ar
 	}
 
 	if (_clockMiddleGearMovedAlone)
-		_vm->_sound->replaceSound(8113);
+		_vm->_sound->replaceSoundMyst(8113);
 
 	// Get current lever frame
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
@@ -2916,7 +2916,7 @@ void MystScriptParser_Myst::clockGearsCheckSolution() {
 			&& !_state.gearsOpen) {
 
 		// Make weight go down
-		_vm->_sound->replaceSound(9113);
+		_vm->_sound->replaceSoundMyst(9113);
 		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
 		_vm->_video->setVideoBounds(_clockWeightVideo,
 				Graphics::VideoTimestamp(_clockWeightPosition, 600),
@@ -2924,16 +2924,16 @@ void MystScriptParser_Myst::clockGearsCheckSolution() {
 		_vm->_video->waitUntilMovieEnds(_clockWeightVideo);
 		_clockWeightPosition = 2214;
 
-		_vm->_sound->replaceSound(6113);
+		_vm->_sound->replaceSoundMyst(6113);
 		_vm->_system->delayMillis(1000);
-		_vm->_sound->replaceSound(7113);
+		_vm->_sound->replaceSoundMyst(7113);
 
 		// Gear opening video
 		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cl1wggat", kMystStack) , 195, 225);
 		_state.gearsOpen = 1;
 		_vm->redrawArea(40);
 
-		_vm->_sound->replaceBackground(4113, 16384);
+		_vm->_sound->replaceBackgroundMyst(4113, 16384);
 	}
 }
 
@@ -2967,8 +2967,8 @@ void MystScriptParser_Myst::clockReset() {
 
 	_vm->_cursor->hideCursor();
 
-	_vm->_sound->stopBackground();
-	_vm->_sound->replaceSound(5113);
+	_vm->_sound->stopBackgroundMyst();
+	_vm->_sound->replaceSoundMyst(5113);
 
 	// Play reset videos
 	clockResetWeight();
@@ -2983,13 +2983,13 @@ void MystScriptParser_Myst::clockReset() {
 			_vm->_video->delayUntilMovieEnds(handle);
 	}
 
-	_vm->_sound->replaceSound(10113);
+	_vm->_sound->replaceSoundMyst(10113);
 
 	// Close gear
 	if (_state.gearsOpen) {
-		_vm->_sound->replaceSound(6113);
+		_vm->_sound->replaceSoundMyst(6113);
 		_vm->_system->delayMillis(1000);
-		_vm->_sound->replaceSound(7113);
+		_vm->_sound->replaceSoundMyst(7113);
 
 		// TODO: Play cl1wggat backwards
 		// Redraw gear
@@ -3071,7 +3071,7 @@ void MystScriptParser_Myst::o_courtyardBox_init(uint16 op, uint16 var, uint16 ar
 void MystScriptParser_Myst::towerRotationMap_run() {
 	if (!_towerRotationMapInitialized) {
 		_towerRotationMapInitialized = true;
-		_vm->_sound->replaceSound(4378);
+		_vm->_sound->replaceSoundMyst(4378);
 
 		towerRotationDrawBuildings();
 
@@ -3268,7 +3268,7 @@ void MystScriptParser_Myst::libraryBookcaseTransform_run(void) {
 		_libraryBookcaseMoving = false;
 
 		// Play transform sound and video
-		_vm->_sound->replaceSound(_libraryBookcaseSoundId);
+		_vm->_sound->replaceSoundMyst(_libraryBookcaseSoundId);
 		_libraryBookcaseMovie->playMovie();
 	}
 }
@@ -3434,33 +3434,33 @@ void MystScriptParser_Myst::observatory_run() {
 
 		// Make sliders "initialize"
 		if (observatoryIsDDMMYYYY2400()) {
-			_vm->_sound->replaceSound(8500);
+			_vm->_sound->replaceSoundMyst(8500);
 			_observatoryDaySlider->drawConditionalDataToScreen(2);
 			_vm->_system->delayMillis(200);
 			_vm->redrawResource(_observatoryDaySlider);
 
-			_vm->_sound->replaceSound(8500);
+			_vm->_sound->replaceSoundMyst(8500);
 			_observatoryMonthSlider->drawConditionalDataToScreen(2);
 			_vm->_system->delayMillis(200);
 			_vm->redrawResource(_observatoryMonthSlider);
 		} else {
-			_vm->_sound->replaceSound(8500);
+			_vm->_sound->replaceSoundMyst(8500);
 			_observatoryMonthSlider->drawConditionalDataToScreen(2);
 			_vm->_system->delayMillis(200);
 			_vm->redrawResource(_observatoryMonthSlider);
 
-			_vm->_sound->replaceSound(8500);
+			_vm->_sound->replaceSoundMyst(8500);
 			_observatoryDaySlider->drawConditionalDataToScreen(2);
 			_vm->_system->delayMillis(200);
 			_vm->redrawResource(_observatoryDaySlider);
 		}
 
-		_vm->_sound->replaceSound(8500);
+		_vm->_sound->replaceSoundMyst(8500);
 		_observatoryYearSlider->drawConditionalDataToScreen(2);
 		_vm->_system->delayMillis(200);
 		_vm->redrawResource(_observatoryYearSlider);
 
-		_vm->_sound->replaceSound(8500);
+		_vm->_sound->replaceSoundMyst(8500);
 		_observatoryTimeSlider->drawConditionalDataToScreen(2);
 		_vm->_system->delayMillis(200);
 		_vm->redrawResource(_observatoryTimeSlider);
@@ -3592,7 +3592,7 @@ void MystScriptParser_Myst::greenBook_run() {
 
 	if (_tempVar == 1) {
 		_vm->_sound->stopSound();
-		_vm->_sound->pauseBackground();
+		_vm->_sound->pauseBackgroundMyst();
 
 		if (_globals.ending != 4) {
 			_tempVar = 2;

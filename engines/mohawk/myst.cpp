@@ -410,7 +410,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	_curStack = stack;
 
 	_sound->stopSound();
-	_sound->stopBackground();
+	_sound->stopBackgroundMyst();
 	if (linkSrcSound)
 		_sound->playSoundBlocking(linkSrcSound);
 
@@ -610,13 +610,13 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 		debug(2, "Continuing with current sound");
 	else if (soundAction == kMystSoundActionChangeVolume) {
 		debug(2, "Continuing with current sound, changing volume");
-		_sound->changeBackgroundVolume(soundActionVolume);
+		_sound->changeBackgroundVolumeMyst(soundActionVolume);
 	} else if (soundAction == kMystSoundActionStop) {
 		debug(2, "Stopping sound");
-		_sound->stopBackground();
+		_sound->stopBackgroundMyst();
 	} else if (soundAction > 0) {
 		debug(2, "Playing new sound %d", soundAction);
-		_sound->replaceBackground(soundAction, soundActionVolume);
+		_sound->replaceBackgroundMyst(soundAction, soundActionVolume);
 	} else {
 		error("Unknown sound action %d", soundAction);
 	}

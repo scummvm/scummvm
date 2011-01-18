@@ -229,7 +229,7 @@ void MystScriptParser_Channelwood::opcode_101(uint16 op, uint16 var, uint16 argc
 		uint16 soundId = argv[0];
 		debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 
 		// TODO: Get Movie Location from Invoking Resource Rect, rather than
 		//       hardcoded 267, 170 ?
@@ -306,7 +306,7 @@ void MystScriptParser_Channelwood::o_valveHandleMoveStart1(uint16 op, uint16 var
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
 	uint16 soundId = handle->getList1(0);
 	if (soundId)
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 	_vm->_cursor->setCursor(700);
 
 	o_valveHandleMove1(op, var, argc, argv);
@@ -326,7 +326,7 @@ void MystScriptParser_Channelwood::o_valveHandleMoveStop(uint16 op, uint16 var, 
 	// Play release sound
 	uint16 soundId = handle->getList3(0);
 	if (soundId)
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 
 	// Redraw valve
 	_vm->redrawArea(_valveVar);
@@ -355,7 +355,7 @@ void MystScriptParser_Channelwood::o_valveHandleMoveStart2(uint16 op, uint16 var
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
 	uint16 soundId = handle->getList1(0);
 	if (soundId)
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 	_vm->_cursor->setCursor(700);
 
 	o_valveHandleMove2(op, var, argc, argv);
@@ -381,7 +381,7 @@ void MystScriptParser_Channelwood::o_valveHandleMoveStart3(uint16 op, uint16 var
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
 	uint16 soundId = handle->getList1(0);
 	if (soundId)
-		_vm->_sound->replaceSound(soundId);
+		_vm->_sound->replaceSoundMyst(soundId);
 	_vm->_cursor->setCursor(700);
 
 	o_valveHandleMove3(op, var, argc, argv);

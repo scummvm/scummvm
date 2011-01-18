@@ -119,8 +119,8 @@ public:
 	Sound(MohawkEngine *vm);
 	~Sound();
 
+	// Generic sound functions
 	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
-	Audio::SoundHandle *replaceSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
 	void playSoundBlocking(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void playMidi(uint16 id);
 	void stopMidi();
@@ -130,14 +130,15 @@ public:
 	void resumeSound();
 	bool isPlaying(uint16 id);
 
-	// Myst background sound functions
-	Audio::SoundHandle *replaceBackground(uint16 id, uint16 volume = 0xFFFF);
-	void pauseBackground();
-	void resumeBackground();
-	void stopBackground();
-	void changeBackgroundVolume(uint16 vol);
+	// Myst-specific sound functions
+	Audio::SoundHandle *replaceSoundMyst(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
+	Audio::SoundHandle *replaceBackgroundMyst(uint16 id, uint16 volume = 0xFFFF);
+	void pauseBackgroundMyst();
+	void resumeBackgroundMyst();
+	void stopBackgroundMyst();
+	void changeBackgroundVolumeMyst(uint16 vol);
 
-	// Riven-specific
+	// Riven-specific sound functions
 	void playSLST(uint16 index, uint16 card);
 	void playSLST(SLSTRecord slstRecord);
 	void pauseSLST();
@@ -158,7 +159,7 @@ private:
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
 	Audio::AudioStream *makeAudioStream(uint16 id);
-	Common::String getName(uint16 id);
+	uint16 convertMystID(uint16 id);
 
 	// Riven-specific
 	void playSLSTSound(uint16 index, bool fade, bool loop, uint16 volume, int16 balance);

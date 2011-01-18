@@ -108,7 +108,7 @@ void MystScriptParser_Preview::opcode_298(uint16 op, uint16 var, uint16 argc, ui
 	// Used for Card 3000 (Closed Myst Book)
 	// TODO: Fill in logic.
 	// Start Voice Over... which controls book opening
-	_vm->_sound->replaceSound(3001);
+	_vm->_sound->replaceSoundMyst(3001);
 
 	// then link to Myst - Trigger of Hotspot? then opcode 199/196/197 for voice over continue?
 	// TODO: Sync Voice and Actions to Original

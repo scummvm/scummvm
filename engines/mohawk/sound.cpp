@@ -79,20 +79,9 @@ Audio::AudioStream *Sound::makeAudioStream(uint16 id) {
 
 	switch (_vm->getGameType()) {
 	case GType_MYST:
-		if (_vm->getFeatures() & GF_ME) {
-			// Myst ME is a bit more efficient with sound storage than Myst
-			// Myst has lots of sounds repeated. To overcome this, Myst ME
-			// has MJMP resources which provide a link to the actual MSND
-			// resource we're looking for. This saves a lot of space from
-			// repeated data.
-			if (_vm->hasResource(ID_MJMP, id)) {
-				Common::SeekableReadStream *mjmpStream = _vm->getResource(ID_MJMP, id);
-				id = mjmpStream->readUint16LE();
-				delete mjmpStream;
-			}
-
-			audStream = Audio::makeWAVStream(_vm->getResource(ID_MSND, id), DisposeAfterUse::YES);
-		} else
+		if (_vm->getFeatures() & GF_ME)
+			audStream = Audio::makeWAVStream(_vm->getResource(ID_MSND, convertMystID(id)), DisposeAfterUse::YES);
+		else
 			audStream = makeMohawkWaveStream(_vm->getResource(ID_MSND, id));
 		break;
 	case GType_ZOOMBINI:
@@ -129,18 +118,18 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop) {
 	return NULL;
 }
 
-Audio::SoundHandle *Sound::replaceSound(uint16 id, byte volume, bool loop) {
+Audio::SoundHandle *Sound::replaceSoundMyst(uint16 id, byte volume, bool loop) {
 	debug (0, "Replacing sound %d", id);
 
-	//TODO: The original engine does fading
+	// TODO: The original engine does fading
 
-	Common::String name = getName(id);
+	Common::String name = _vm->getResourceName(ID_MSND, convertMystID(id));
 
 	// Check if sound is already playing
 	for (uint32 i = 0; i < _handles.size(); i++)
 		if (_handles[i].type == kUsedHandle
 				&& _vm->_mixer->isSoundHandleActive(_handles[i].handle)
-				&& name.equals(getName(_handles[i].id)))
+				&& name.equals(_vm->getResourceName(ID_MSND, convertMystID(_handles[i].id))))
 			return &_handles[i].handle;
 
 	stopSound();
@@ -560,22 +549,37 @@ bool Sound::isPlaying(uint16 id) {
 	return false;
 }
 
-Audio::SoundHandle *Sound::replaceBackground(uint16 id, uint16 volume) {
+uint16 Sound::convertMystID(uint16 id) {
+	// Myst ME is a bit more efficient with sound storage than Myst
+	// Myst has lots of sounds repeated. To overcome this, Myst ME
+	// has MJMP resources which provide a link to the actual MSND
+	// resource we're looking for. This saves a lot of space from
+	// repeated data.
+	if (_vm->hasResource(ID_MJMP, id)) {
+		Common::SeekableReadStream *mjmpStream = _vm->getResource(ID_MJMP, id);
+		id = mjmpStream->readUint16LE();
+		delete mjmpStream;
+	}
+
+	return id;
+}
+
+Audio::SoundHandle *Sound::replaceBackgroundMyst(uint16 id, uint16 volume) {
 	debug (0, "Replacing background %d", id);
 
 	// TODO: The original engine does fading
 
-	Common::String name = getName(id);
+	Common::String name = _vm->getResourceName(ID_MSND, convertMystID(id));
 
 	// Check if sound is already playing
 	for (uint32 i = 0; i < _handles.size(); i++)
 		if (_handles[i].type == kBackgroundHandle
 				&& _vm->_mixer->isSoundHandleActive(_handles[i].handle)
-				&& name.equals(getName(_handles[i].id)))
+				&& name.equals(_vm->getResourceName(ID_MSND, convertMystID(_handles[i].id))))
 			return &_handles[i].handle;
 
 	// Stop old background sound
-	stopBackground();
+	stopBackgroundMyst();
 
 	// Play new sound
 	Audio::AudioStream *audStream = makeAudioStream(id);
@@ -595,7 +599,7 @@ Audio::SoundHandle *Sound::replaceBackground(uint16 id, uint16 volume) {
 	return NULL;
 }
 
-void Sound::stopBackground() {
+void Sound::stopBackgroundMyst() {
 	for (uint32 i = 0; i < _handles.size(); i++)
 		if (_handles[i].type == kBackgroundHandle) {
 			_vm->_mixer->stopHandle(_handles[i].handle);
@@ -604,39 +608,22 @@ void Sound::stopBackground() {
 		}
 }
 
-void Sound::pauseBackground() {
+void Sound::pauseBackgroundMyst() {
 	for (uint32 i = 0; i < _handles.size(); i++)
 		if (_handles[i].type == kBackgroundHandle)
 			_vm->_mixer->pauseHandle(_handles[i].handle, true);
 }
 
-void Sound::resumeBackground() {
+void Sound::resumeBackgroundMyst() {
 	for (uint32 i = 0; i < _handles.size(); i++)
 		if (_handles[i].type == kBackgroundHandle)
 			_vm->_mixer->pauseHandle(_handles[i].handle, false);
 }
 
-void Sound::changeBackgroundVolume(uint16 vol) {
+void Sound::changeBackgroundVolumeMyst(uint16 vol) {
 	for (uint32 i = 0; i < _handles.size(); i++)
 		if (_handles[i].type == kBackgroundHandle)
 			_vm->_mixer->setChannelVolume(_handles[i].handle, vol >> 8);
-}
-
-Common::String Sound::getName(uint16 id) {
-	if (_vm->getFeatures() & GF_ME) {
-		// Myst ME is a bit more efficient with sound storage than Myst
-		// Myst has lots of sounds repeated. To overcome this, Myst ME
-		// has MJMP resources which provide a link to the actual MSND
-		// resource we're looking for. This saves a lot of space from
-		// repeated data.
-		if (_vm->hasResource(ID_MJMP, id)) {
-			Common::SeekableReadStream *mjmpStream = _vm->getResource(ID_MJMP, id);
-			id = mjmpStream->readUint16LE();
-			delete mjmpStream;
-		}
-	}
-
-	return _vm->getResourceName(ID_MSND, id);
 }
 
 } // End of namespace Mohawk

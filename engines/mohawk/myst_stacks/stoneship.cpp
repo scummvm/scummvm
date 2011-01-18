@@ -632,8 +632,8 @@ void MystScriptParser_Stoneship::opcode_210(uint16 op, uint16 var, uint16 argc, 
 
 		// TODO: Work Out Function i.e. control Var etc.
 		if (false) {
-			_vm->_sound->replaceSound(soundId);
-			_vm->_sound->replaceSound(soundIdStopping);
+			_vm->_sound->replaceSoundMyst(soundId);
+			_vm->_sound->replaceSoundMyst(soundIdStopping);
 		}
 	} else
 		unknown(op, var, argc, argv);
