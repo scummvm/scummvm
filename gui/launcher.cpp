@@ -188,8 +188,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// Language popup
 	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", _("Language:"), _("Language of the game. This will not turn your Spanish game version into English"));
 	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup", _("Language of the game. This will not turn your Spanish game version into English"));
-	_langPopUp->appendEntry(_("<default>"), Common::UNK_LANG);
-	_langPopUp->appendEntry("", Common::UNK_LANG);
+	_langPopUp->appendEntry(_("<default>"), (uint32)Common::UNK_LANG);
+	_langPopUp->appendEntry("", (uint32)Common::UNK_LANG);
 	const Common::LanguageDescription *l = Common::g_languages;
 	for (; l->code; ++l) {
 		if (checkGameGUIOptionLanguage(l->id, _guioptionsString))
@@ -373,7 +373,7 @@ void EditGameDialog::open() {
 	if (ConfMan.hasKey("language", _domain)) {
 		_langPopUp->setSelectedTag(lang);
 	} else {
-		_langPopUp->setSelectedTag(Common::UNK_LANG);
+		_langPopUp->setSelectedTag((uint32)Common::UNK_LANG);
 	}
 
 	if (_langPopUp->numEntries() <= 3) { // If only one language is avaliable
