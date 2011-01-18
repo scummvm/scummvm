@@ -196,7 +196,9 @@ static const char *mystFiles[] = {
 // Mechanical Stack Movie "sstairs" referenced in executable, but not used?
 
 // NOTE: cl1wg1.mov etc. found in the root directory in versions of Myst
-// Original are duplicates of those in /qtw/myst directory and thus not necessary.
+// Original are duplicates of those in qtw/myst directory and thus not necessary.
+// However, this *is* a problem for Myst ME Mac. Right now it will use the qtw/myst
+// video, but this is most likely going to fail for the standalone Mac version.
 
 // The following movies are not referenced in RLST or hardcoded into the executables.
 // It is likely they are unused:
@@ -206,11 +208,11 @@ static const char *mystFiles[] = {
 
 Common::String MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieName, uint16 stack) {
 	// The Macintosh release of Myst ME stores its videos in a different folder
-	// WORKAROUND: The gear rotation videos are not in the CD Data folder
+	// WORKAROUND: The gear rotation videos are not in the CD Data folder. See above comments.
 	if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh && !movieName.matchString("cl1wg?"))
 		return Common::String("CD Data/m/") + movieName + ".mov";
 
-	const char* prefix;
+	Common::String prefix;
 
 	switch (stack) {
 	case kIntroStack:
@@ -239,7 +241,7 @@ Common::String MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieN
 		prefix = "stone/";
 		break;
 	default:
-		prefix = ""; // Masterpiece Edition Only Movies
+		// Masterpiece Edition Only Movies
 		break;
 	}
 
