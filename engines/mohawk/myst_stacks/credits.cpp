@@ -90,10 +90,6 @@ uint16 MystScriptParser_Credits::getVar(uint16 var) {
 	}
 }
 
-void MystScriptParser_Credits::o_quit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	_vm->_system->quit();
-}
-
 void MystScriptParser_Credits::o_runCredits(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Activate the credits
 	_creditsRunning = true;

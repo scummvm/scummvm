@@ -56,8 +56,4 @@ void MystScriptParser_MakingOf::disablePersistentScripts() {
 void MystScriptParser_MakingOf::runPersistentScripts() {
 }
 
-void MystScriptParser_MakingOf::o_quit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	_vm->_system->quit();
-}
-
 } // End of namespace Mohawk

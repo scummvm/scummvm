@@ -49,7 +49,6 @@ private:
 	void setupOpcodes();
 	uint16 getVar(uint16 var);
 
-	DECLARE_OPCODE(o_quit);
 	DECLARE_OPCODE(o_runCredits);
 
 	bool _creditsRunning;

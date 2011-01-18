@@ -909,4 +909,8 @@ void MystScriptParser::o_soundWaitStop(uint16 op, uint16 var, uint16 argc, uint1
 	// TODO: Implement
 }
 
+void MystScriptParser::o_quit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_vm->_system->quit();
+}
+
 } // End of namespace Mohawk

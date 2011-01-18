@@ -83,6 +83,7 @@ public:
 
 	DECLARE_OPCODE(unknown);
 
+	// Common opcodes
 	DECLARE_OPCODE(o_toggleVar);
 	DECLARE_OPCODE(o_setVar);
 	DECLARE_OPCODE(o_changeCardSwitch);
@@ -121,6 +122,9 @@ public:
 	DECLARE_OPCODE(o_saveMainCursor);
 	DECLARE_OPCODE(o_restoreMainCursor);
 	DECLARE_OPCODE(o_soundWaitStop);
+
+	// Used in multiple stacks
+	DECLARE_OPCODE(o_quit);
 
 	DECLARE_OPCODE(NOP);
 

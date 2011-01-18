@@ -47,8 +47,6 @@ public:
 
 private:
 	void setupOpcodes();
-
-	DECLARE_OPCODE(o_quit);
 };
 
 } // End of namespace Mohawk
