@@ -157,6 +157,7 @@ void ObjectHandler_v3d::moveObjects() {
 				}
 				if (obj->vx || obj->vy)
 					obj->cycling = CYCLE_FORWARD;
+
 				break;
 			default:
 				; // Really, nothing
@@ -261,6 +262,9 @@ void ObjectHandler_v3d::swapImages(int objNumb1, int objNumb2) {
 	restoreSeq(&_objects[objNumb1]);
 	_objects[objNumb2].currImagePtr = _objects[objNumb2].seqList[0].seqPtr;
 	_vm->_heroImage = (_vm->_heroImage == HERO) ? objNumb2 : HERO;
+
+	// Make sure baseline stays constant
+	_objects[objNumb1].y += _objects[objNumb2].currImagePtr->y2 - _objects[objNumb1].currImagePtr->y2;
 }
 
 } // End of namespace Hugo

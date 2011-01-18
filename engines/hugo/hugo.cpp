@@ -1054,6 +1054,10 @@ void HugoEngine::readScreenFiles(int screenNum) {
 	_file->readOverlay(screenNum, _boundary, BOUNDARY); // Boundary file
 	_file->readOverlay(screenNum, _overlay, OVERLAY);   // Overlay file
 	_file->readOverlay(screenNum, _ovlBase, OVLBASE);   // Overlay base file
+
+	if ((screenNum == 0) && (_gameVariant == 5))        // H3 Dos
+		clearScreenBoundary(50, 311, 152);
+
 }
 
 /**
@@ -1162,6 +1166,24 @@ void HugoEngine::clearBoundary(int x1, int x2, int y) {
 
 	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
 		byte *b = &_objBound[y * XBYTES + i];       // get boundary byte
+		if (i == x2 >> 3)                           // Adjust right end
+			*b &= ~(0xff << ((i << 3) + 7 - x2));
+		else if (i == x1 >> 3)                      // Adjust left end
+			*b &= ~(0xff >> (x1 - (i << 3)));
+		else
+			*b = 0;
+	}
+}
+
+/**
+* Clear a horizontal line segment in the screen boundary file
+* Used to fix some data issues
+*/
+void HugoEngine::clearScreenBoundary(int x1, int x2, int y) {
+	debugC(5, kDebugEngine, "clearScreenBoundary(%d, %d, %d)", x1, x2, y);
+
+	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
+		byte *b = &_boundary[y * XBYTES + i];       // get boundary byte
 		if (i == x2 >> 3)                           // Adjust right end
 			*b &= ~(0xff << ((i << 3) + 7 - x2));
 		else if (i == x1 >> 3)                      // Adjust left end
