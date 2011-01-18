@@ -30,9 +30,8 @@
 #include "mohawk/livingbooks.h"
 
 #include "common/substream.h"
-
 #include "engines/util.h"
-
+#include "graphics/jpeg.h"
 #include "graphics/primitives.h"
 #include "gui/message.h"
 
@@ -253,7 +252,7 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 		error("Myst requires greater than 256 colors to run");
 
 	if (_vm->getFeatures() & GF_ME) {
-		_jpegDecoder = new Graphics::JPEGDecoder();
+		_jpegDecoder = new Graphics::JPEG();
 		_pictDecoder = new Graphics::PictDecoder(_pixelFormat);
 	} else {
 		_jpegDecoder = NULL;
@@ -327,9 +326,13 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 		for (uint32 i = 0; i < _pictureFile.pictureCount; i++)
 			if (_pictureFile.entries[i].id == id) {
 				if (_pictureFile.entries[i].type == 0) {
-					Graphics::Surface *surface = new Graphics::Surface();
-					surface->copyFrom(*_jpegDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size)));
-					mhkSurface = new MohawkSurface(surface);
+					Common::SeekableReadStream *stream = new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size);
+
+					if (!_jpegDecoder->read(stream))
+						error("Could not decode Myst ME Mac JPEG");
+
+					mhkSurface = new MohawkSurface(_jpegDecoder->getSurface(_pixelFormat));
+					delete stream;
 				} else if (_pictureFile.entries[i].type == 1) {
 					mhkSurface = new MohawkSurface(_pictDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size)));
 				} else

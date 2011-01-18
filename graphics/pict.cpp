@@ -334,23 +334,7 @@ void PictDecoder::decodeCompressedQuickTime(Common::SeekableReadStream *stream) 
 	if (!_jpeg->read(jpegStream))
 		error("PictDecoder::decodeCompressedQuickTime(): Could not decode JPEG data");
 
-	Surface *yComponent = _jpeg->getComponent(1);
-	Surface *uComponent = _jpeg->getComponent(2);
-	Surface *vComponent = _jpeg->getComponent(3);
-
-	_outputSurface = new Graphics::Surface();
-	_outputSurface->create(yComponent->w, yComponent->h, _pixelFormat.bytesPerPixel);
-
-	for (uint16 i = 0; i < _outputSurface->h; i++) {
-		for (uint16 j = 0; j < _outputSurface->w; j++) {
-			byte r = 0, g = 0, b = 0;
-			YUV2RGB(*((byte *)yComponent->getBasePtr(j, i)), *((byte *)uComponent->getBasePtr(j, i)), *((byte *)vComponent->getBasePtr(j, i)), r, g, b);
-			if (_pixelFormat.bytesPerPixel == 2)
-				*((uint16 *)_outputSurface->getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
-			else
-				*((uint32 *)_outputSurface->getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
-		}
-	}
+	_outputSurface = _jpeg->getSurface(_pixelFormat);
 
 	stream->seek(startPos + dataSize);
 	delete jpegStream;

@@ -34,6 +34,8 @@ class SeekableReadStream;
 
 namespace Graphics {
 
+struct PixelFormat;
+
 #define JPEG_MAX_QUANT_TABLES 4
 #define JPEG_MAX_HUFF_TABLES 2
 
@@ -43,7 +45,12 @@ public:
 	~JPEG();
 
 	bool read(Common::SeekableReadStream *str);
+	bool isLoaded() const { return _numComp && _w && _h; }
+	uint16 getWidth() const { return _w; }
+	uint16 getHeight() const { return _h; }
+
 	Surface *getComponent(uint c);
+	Surface *getSurface(const PixelFormat &format);
 
 private:
 	void reset();

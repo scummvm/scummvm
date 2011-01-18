@@ -31,7 +31,12 @@
 #include "common/file.h"
 #include "common/hashmap.h"
 #include "graphics/pict.h"
-#include "graphics/video/codecs/mjpeg.h"
+
+namespace Graphics {
+
+class JPEG;
+
+}
 
 namespace Mohawk {
 
@@ -132,7 +137,7 @@ private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
 	Graphics::PictDecoder *_pictDecoder;
-	Graphics::JPEGDecoder *_jpegDecoder;
+	Graphics::JPEG *_jpegDecoder;
 
 	struct PictureFile {
 		uint32 pictureCount;

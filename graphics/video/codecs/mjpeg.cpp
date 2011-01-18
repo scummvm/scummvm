@@ -46,26 +46,23 @@ JPEGDecoder::~JPEGDecoder() {
 }
 
 const Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream* stream) {
-	_jpeg->read(stream);
-	Surface *ySurface = _jpeg->getComponent(1);
-	Surface *uSurface = _jpeg->getComponent(2);
-	Surface *vSurface = _jpeg->getComponent(3);
+	if (!_jpeg->read(stream)) {
+		warning("Failed to decode JPEG frame");
+		return 0;
+	}
 
 	if (!_surface) {
 		_surface = new Surface();
-		_surface->create(ySurface->w, ySurface->h, _pixelFormat.bytesPerPixel);
+		_surface->create(_jpeg->getWidth(), _jpeg->getHeight(), _pixelFormat.bytesPerPixel);
 	}
 
-	for (uint16 i = 0; i < _surface->h; i++) {
-		for (uint16 j = 0; j < _surface->w; j++) {
-			byte r = 0, g = 0, b = 0;
-			YUV2RGB(*((byte *)ySurface->getBasePtr(j, i)), *((byte *)uSurface->getBasePtr(j, i)), *((byte *)vSurface->getBasePtr(j, i)), r, g, b);
-			if (_pixelFormat.bytesPerPixel == 2)
-				*((uint16 *)_surface->getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
-			else
-				*((uint32 *)_surface->getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
-		}
-	}
+	Graphics::Surface *frame = _jpeg->getSurface(_pixelFormat);
+	assert(frame);
+
+	_surface->copyFrom(*frame);
+
+	frame->free();
+	delete frame;
 
 	return _surface;
 }
