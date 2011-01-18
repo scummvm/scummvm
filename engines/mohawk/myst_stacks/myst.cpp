@@ -58,6 +58,7 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) :
 	_treeMinPosition = 0;
 	_imagerValidationStep = 0;
 	_observatoryCurrentSlider = 0;
+	_butterfliesMoviePlayed = false;
 	_state.treeLastMoveTime = _vm->_system->getMillis();
 }
 
@@ -177,22 +178,22 @@ void MystScriptParser_Myst::setupOpcodes() {
 	OPCODE(203, o_forechamberDoor_init);
 	OPCODE(204, o_shipAccess_init);
 	OPCODE(205, NOP);
-	OPCODE(206, opcode_206);
+	OPCODE(206, o_butterflies_init);
 	OPCODE(208, o_imager_init);
 	OPCODE(209, o_libraryBookcaseTransform_init);
 	OPCODE(210, o_generatorControlRoom_init);
 	OPCODE(211, o_fireplace_init);
 	OPCODE(212, o_clockGears_init);
-	OPCODE(213, opcode_213);
+	OPCODE(213, o_gulls1_init);
 	OPCODE(214, o_observatory_init);
-	OPCODE(215, opcode_215);
+	OPCODE(215, o_gulls2_init);
 	OPCODE(216, o_treeCard_init);
 	OPCODE(217, o_treeEntry_init);
 	OPCODE(218, opcode_218);
 	OPCODE(219, o_rocketSliders_init);
 	OPCODE(220, o_rocketLinkVideo_init);
 	OPCODE(221, o_greenBook_init);
-	OPCODE(222, opcode_222);
+	OPCODE(222, o_gulls3_init);
 
 	// "Exit" Opcodes
 	OPCODE(300, o_bookAddSpecialPage_exit);
@@ -229,6 +230,9 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 	_observatoryTimeChanging = false;
 	_greenBookRunning = false;
 	_clockLeverPulled = false;
+	_gullsFlying1 = false;
+	_gullsFlying2 = false;
+	_gullsFlying3 = false;
 }
 
 void MystScriptParser_Myst::runPersistentScripts() {
@@ -291,6 +295,15 @@ void MystScriptParser_Myst::runPersistentScripts() {
 
 	if (_clockLeverPulled)
 		clockGears_run();
+
+	if (_gullsFlying1)
+		gullsFly1_run();
+
+	if (_gullsFlying2)
+		gullsFly2_run();
+
+	if (_gullsFlying3)
+		gullsFly3_run();
 }
 
 uint16 MystScriptParser_Myst::getVar(uint16 var) {
@@ -2988,7 +3001,7 @@ void MystScriptParser_Myst::clockReset() {
 }
 
 void MystScriptParser_Myst::clockResetWeight() {
-	// Set video bounds
+	// Set video bounds, weight going up
 	_clockWeightVideo = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
 	_vm->_video->setVideoBounds(_clockWeightVideo,
 			Graphics::VideoTimestamp(2214 * 2 - _clockWeightPosition, 600),
@@ -3004,7 +3017,7 @@ void MystScriptParser_Myst::clockResetGear(uint16 gear) {
 	static const uint16 x[] = { 224, 224, 224 };
 	static const uint16 y[] = { 49, 82, 109 };
 
-	// Set video bounds
+	// Set video bounds, gears going to 3
 	uint16 gearPosition = _clockGearsPositions[gear] - 1;
 	if (gearPosition != 2) {
 		_clockGearsVideos[gear] = _vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(videos[gear], kMystStack), x[gear], y[gear]);
@@ -3213,11 +3226,16 @@ void MystScriptParser_Myst::o_shipAccess_init(uint16 op, uint16 var, uint16 argc
 	}
 }
 
-void MystScriptParser_Myst::opcode_206(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_butterflies_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Butterflies movie init", op);
 
 	// Used for Card 4256 (Butterfly Movie Activation)
-	// TODO: Implement Logic...
+	if (!_butterfliesMoviePlayed) {
+		MystResourceType6 *butterflies = static_cast<MystResourceType6 *>(_invokingResource);
+		butterflies->playMovie();
+
+		_butterfliesMoviePlayed = true;
+	}
 }
 
 void MystScriptParser_Myst::o_imager_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -3309,15 +3327,33 @@ void MystScriptParser_Myst::o_clockGears_init(uint16 op, uint16 var, uint16 argc
 	}
 }
 
-void MystScriptParser_Myst::opcode_213(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_gulls1_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Gulls init", op);
 
-	// Used for Card 4524 (Dockside Facing Towards Ship)
-	if (argc == 0) {
-		// TODO: Implement Code...
-		// Code for Gull Videos?
-	} else
-		unknown(op, var, argc, argv);
+	if (!_state.shipFloating) {
+		_gullsNextTime = _vm->_system->getMillis() + 2000;
+		_gullsFlying1 = true;
+	}
+}
+
+void MystScriptParser_Myst::gullsFly1_run() {
+	static const char* gulls[] = { "birds1", "birds2", "birds3" };
+	uint32 time = _vm->_system->getMillis();
+
+	if (time > _gullsNextTime) {
+		uint16 video = _vm->_rnd->getRandomNumber(3);
+		if (video != 3) {
+			uint16 x = 0;
+			if (_vm->_rnd->getRandomBit())
+				x = _vm->_rnd->getRandomNumber(110);
+			else
+				x = _vm->_rnd->getRandomNumber(160) + 260;
+
+			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(gulls[video], kMystStack), x, 0);
+
+			_gullsNextTime = time + _vm->_rnd->getRandomNumber(16667) + 13334;
+		}
+	}
 }
 
 void MystScriptParser_Myst::o_observatory_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -3443,18 +3479,26 @@ void MystScriptParser_Myst::observatory_run() {
 	}
 }
 
-void MystScriptParser_Myst::opcode_215(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_gulls2_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Gulls init", op);
 
-	// Used for Card 4134 (Dock Facing Marker Switch)
-	// TODO: Fill in logic for Gull Videos.
-	//       may be offset and overlap and need video update to all these
-	//       to run in sequence with opcode215_run() process...
-	if (false) {
-		// All birds(x) videos are 120x48 and played in top right corner of card
-		_vm->_video->playMovie(_vm->wrapMovieFilename("birds1", kMystStack), 544 - 120 - 1, 0);
-		_vm->_video->playMovie(_vm->wrapMovieFilename("birds2", kMystStack), 544 - 120 - 1, 0);
-		_vm->_video->playMovie(_vm->wrapMovieFilename("birds3", kMystStack), 544 - 120 - 1, 0);
+	if (!_state.shipFloating) {
+		_gullsNextTime = _vm->_system->getMillis() + 2000;
+		_gullsFlying2 = true;
+	}
+}
+
+void MystScriptParser_Myst::gullsFly2_run() {
+	static const char* gulls[] = { "birds1", "birds2", "birds3" };
+	uint32 time = _vm->_system->getMillis();
+
+	if (time > _gullsNextTime) {
+		uint16 video = _vm->_rnd->getRandomNumber(3);
+		if (video != 3) {
+			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(gulls[video], kMystStack), 424, 0);
+
+			_gullsNextTime = time + _vm->_rnd->getRandomNumber(16667) + 13334;
+		}
 	}
 }
 
@@ -3561,14 +3605,29 @@ void MystScriptParser_Myst::greenBook_run() {
 	}
 }
 
-void MystScriptParser_Myst::opcode_222(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Myst::o_gulls3_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Gulls init", op);
 
-	// Used for Card 4141 (Myst Dock Facing Sea)
-	if (argc == 0) {
-		// TODO: Logic for Gull Videos?
-	} else
-		unknown(op, var, argc, argv);
+	if (!_state.shipFloating) {
+		_gullsNextTime = _vm->_system->getMillis() + 2000;
+		_gullsFlying3 = true;
+	}
+}
+
+void MystScriptParser_Myst::gullsFly3_run() {
+	static const char* gulls[] = { "birds1", "birds2", "birds3" };
+	uint32 time = _vm->_system->getMillis();
+
+	if (time > _gullsNextTime) {
+		uint16 video = _vm->_rnd->getRandomNumber(3);
+		if (video != 3) {
+			uint16 x = _vm->_rnd->getRandomNumber(280) + 135;
+
+			_vm->_video->playBackgroundMovie(_vm->wrapMovieFilename(gulls[video], kMystStack), x, 0);
+
+			_gullsNextTime = time + _vm->_rnd->getRandomNumber(16667) + 13334;
+		}
+	}
 }
 
 void MystScriptParser_Myst::o_bookAddSpecialPage_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

@@ -72,6 +72,9 @@ private:
 	void observatoryTimeChange_run();
 	void greenBook_run();
 	void clockGears_run();
+	void gullsFly1_run();
+	void gullsFly2_run();
+	void gullsFly3_run();
 
 	DECLARE_OPCODE(o_libraryBookPageTurnLeft);
 	DECLARE_OPCODE(o_libraryBookPageTurnRight);
@@ -160,22 +163,22 @@ private:
 	DECLARE_OPCODE(o_towerRotationMap_init);
 	DECLARE_OPCODE(o_forechamberDoor_init);
 	DECLARE_OPCODE(o_shipAccess_init);
-	DECLARE_OPCODE(opcode_206);
+	DECLARE_OPCODE(o_butterflies_init);
 	DECLARE_OPCODE(o_imager_init);
 	DECLARE_OPCODE(o_libraryBookcaseTransform_init);
 	DECLARE_OPCODE(o_generatorControlRoom_init);
 	DECLARE_OPCODE(o_fireplace_init);
 	DECLARE_OPCODE(o_clockGears_init);
-	DECLARE_OPCODE(opcode_213);
+	DECLARE_OPCODE(o_gulls1_init);
 	DECLARE_OPCODE(o_observatory_init);
-	DECLARE_OPCODE(opcode_215);
+	DECLARE_OPCODE(o_gulls2_init);
 	DECLARE_OPCODE(o_treeCard_init);
 	DECLARE_OPCODE(o_treeEntry_init);
 	DECLARE_OPCODE(opcode_218);
 	DECLARE_OPCODE(o_rocketSliders_init);
 	DECLARE_OPCODE(o_rocketLinkVideo_init);
 	DECLARE_OPCODE(o_greenBook_init);
-	DECLARE_OPCODE(opcode_222);
+	DECLARE_OPCODE(o_gulls3_init);
 
 	DECLARE_OPCODE(o_bookAddSpecialPage_exit);
 	DECLARE_OPCODE(o_treeCard_exit);
@@ -201,6 +204,13 @@ private:
 	int16 _libraryBookPage; // 86
 	uint16 _libraryBookNumPages; // 88
 	uint16 _libraryBookBaseImage; // 90
+
+	bool _butterfliesMoviePlayed; // 100
+
+	bool _gullsFlying1;
+	bool _gullsFlying2;
+	bool _gullsFlying3;
+	uint32 _gullsNextTime; // 216
 
 	bool _libraryBookcaseMoving;
 	MystResourceType6 *_libraryBookcaseMovie; // 104
