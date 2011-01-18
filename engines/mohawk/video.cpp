@@ -106,6 +106,9 @@ void VideoManager::playMovieCentered(const Common::String &filename, bool clearS
 }
 
 void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
+	if (videoHandle == NULL_VID_HANDLE)
+		return;
+
 	bool continuePlaying = true;
 
 	while (!_videoStreams[videoHandle].endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
