@@ -280,13 +280,13 @@ void Scheduler::loadActListArr(Common::File &in) {
 						break;
 					case START_OBJ:          // 1
 						_actListArr[i][j].a1.timer = in.readSint16BE();
-						_actListArr[i][j].a1.objNumb = in.readSint16BE();
+						_actListArr[i][j].a1.objIndex = in.readSint16BE();
 						_actListArr[i][j].a1.cycleNumb = in.readSint16BE();
 						_actListArr[i][j].a1.cycle = (cycle_t) in.readByte();
 						break;
 					case INIT_OBJXY:         // 2
 						_actListArr[i][j].a2.timer = in.readSint16BE();
-						_actListArr[i][j].a2.objNumb = in.readSint16BE();
+						_actListArr[i][j].a2.objIndex = in.readSint16BE();
 						_actListArr[i][j].a2.x = in.readSint16BE();
 						_actListArr[i][j].a2.y = in.readSint16BE();
 						break;
@@ -307,18 +307,18 @@ void Scheduler::loadActListArr(Common::File &in) {
 						break;
 					case INIT_OBJVXY:        // 5
 						_actListArr[i][j].a5.timer = in.readSint16BE();
-						_actListArr[i][j].a5.objNumb = in.readSint16BE();
+						_actListArr[i][j].a5.objIndex = in.readSint16BE();
 						_actListArr[i][j].a5.vx = in.readSint16BE();
 						_actListArr[i][j].a5.vy = in.readSint16BE();
 						break;
 					case INIT_CARRY:         // 6
 						_actListArr[i][j].a6.timer = in.readSint16BE();
-						_actListArr[i][j].a6.objNumb = in.readSint16BE();
+						_actListArr[i][j].a6.objIndex = in.readSint16BE();
 						_actListArr[i][j].a6.carriedFl = (in.readByte() == 1) ? true : false;
 						break;
 					case INIT_HF_COORD:      // 7
 						_actListArr[i][j].a7.timer = in.readSint16BE();
-						_actListArr[i][j].a7.objNumb = in.readSint16BE();
+						_actListArr[i][j].a7.objIndex = in.readSint16BE();
 						break;
 					case NEW_SCREEN:         // 8
 						_actListArr[i][j].a8.timer = in.readSint16BE();
@@ -326,19 +326,19 @@ void Scheduler::loadActListArr(Common::File &in) {
 						break;
 					case INIT_OBJSTATE:      // 9
 						_actListArr[i][j].a9.timer = in.readSint16BE();
-						_actListArr[i][j].a9.objNumb = in.readSint16BE();
+						_actListArr[i][j].a9.objIndex = in.readSint16BE();
 						_actListArr[i][j].a9.newState = in.readByte();
 						break;
 					case INIT_PATH:          // 10
 						_actListArr[i][j].a10.timer = in.readSint16BE();
-						_actListArr[i][j].a10.objNumb = in.readSint16BE();
+						_actListArr[i][j].a10.objIndex = in.readSint16BE();
 						_actListArr[i][j].a10.newPathType = in.readSint16BE();
 						_actListArr[i][j].a10.vxPath = in.readByte();
 						_actListArr[i][j].a10.vyPath = in.readByte();
 						break;
 					case COND_R:             // 11
 						_actListArr[i][j].a11.timer = in.readSint16BE();
-						_actListArr[i][j].a11.objNumb = in.readSint16BE();
+						_actListArr[i][j].a11.objIndex = in.readSint16BE();
 						_actListArr[i][j].a11.stateReq = in.readByte();
 						_actListArr[i][j].a11.actPassIndex = in.readUint16BE();
 						_actListArr[i][j].a11.actFailIndex = in.readUint16BE();
@@ -349,41 +349,41 @@ void Scheduler::loadActListArr(Common::File &in) {
 						break;
 					case SWAP_IMAGES:        // 13
 						_actListArr[i][j].a13.timer = in.readSint16BE();
-						_actListArr[i][j].a13.obj1 = in.readSint16BE();
-						_actListArr[i][j].a13.obj2 = in.readSint16BE();
+						_actListArr[i][j].a13.objIndex1 = in.readSint16BE();
+						_actListArr[i][j].a13.objIndex2 = in.readSint16BE();
 						break;
 					case COND_SCR:           // 14
 						_actListArr[i][j].a14.timer = in.readSint16BE();
-						_actListArr[i][j].a14.objNumb = in.readSint16BE();
+						_actListArr[i][j].a14.objIndex = in.readSint16BE();
 						_actListArr[i][j].a14.screenReq = in.readSint16BE();
 						_actListArr[i][j].a14.actPassIndex = in.readUint16BE();
 						_actListArr[i][j].a14.actFailIndex = in.readUint16BE();
 						break;
 					case AUTOPILOT:          // 15
 						_actListArr[i][j].a15.timer = in.readSint16BE();
-						_actListArr[i][j].a15.obj1 = in.readSint16BE();
-						_actListArr[i][j].a15.obj2 = in.readSint16BE();
+						_actListArr[i][j].a15.objIndex1 = in.readSint16BE();
+						_actListArr[i][j].a15.objIndex2 = in.readSint16BE();
 						_actListArr[i][j].a15.dx = in.readByte();
 						_actListArr[i][j].a15.dy = in.readByte();
 						break;
 					case INIT_OBJ_SEQ:       // 16
 						_actListArr[i][j].a16.timer = in.readSint16BE();
-						_actListArr[i][j].a16.objNumb = in.readSint16BE();
+						_actListArr[i][j].a16.objIndex = in.readSint16BE();
 						_actListArr[i][j].a16.seqIndex = in.readSint16BE();
 						break;
 					case SET_STATE_BITS:     // 17
 						_actListArr[i][j].a17.timer = in.readSint16BE();
-						_actListArr[i][j].a17.objNumb = in.readSint16BE();
+						_actListArr[i][j].a17.objIndex = in.readSint16BE();
 						_actListArr[i][j].a17.stateMask = in.readSint16BE();
 						break;
 					case CLEAR_STATE_BITS:   // 18
 						_actListArr[i][j].a18.timer = in.readSint16BE();
-						_actListArr[i][j].a18.objNumb = in.readSint16BE();
+						_actListArr[i][j].a18.objIndex = in.readSint16BE();
 						_actListArr[i][j].a18.stateMask = in.readSint16BE();
 						break;
 					case TEST_STATE_BITS:    // 19
 						_actListArr[i][j].a19.timer = in.readSint16BE();
-						_actListArr[i][j].a19.objNumb = in.readSint16BE();
+						_actListArr[i][j].a19.objIndex = in.readSint16BE();
 						_actListArr[i][j].a19.stateMask = in.readSint16BE();
 						_actListArr[i][j].a19.actPassIndex = in.readUint16BE();
 						_actListArr[i][j].a19.actFailIndex = in.readUint16BE();
@@ -397,7 +397,7 @@ void Scheduler::loadActListArr(Common::File &in) {
 						break;
 					case INIT_HH_COORD:      // 22
 						_actListArr[i][j].a22.timer = in.readSint16BE();
-						_actListArr[i][j].a22.objNumb = in.readSint16BE();
+						_actListArr[i][j].a22.objIndex = in.readSint16BE();
 						break;
 					case EXIT:               // 23
 						_actListArr[i][j].a23.timer = in.readSint16BE();
@@ -408,7 +408,7 @@ void Scheduler::loadActListArr(Common::File &in) {
 						break;
 					case COND_BOX:           // 25
 						_actListArr[i][j].a25.timer = in.readSint16BE();
-						_actListArr[i][j].a25.objNumb = in.readSint16BE();
+						_actListArr[i][j].a25.objIndex = in.readSint16BE();
 						_actListArr[i][j].a25.x1 = in.readSint16BE();
 						_actListArr[i][j].a25.y1 = in.readSint16BE();
 						_actListArr[i][j].a25.x2 = in.readSint16BE();
@@ -422,15 +422,15 @@ void Scheduler::loadActListArr(Common::File &in) {
 						break;
 					case ADD_SCORE:          // 27
 						_actListArr[i][j].a27.timer = in.readSint16BE();
-						_actListArr[i][j].a27.objNumb = in.readSint16BE();
+						_actListArr[i][j].a27.objIndex = in.readSint16BE();
 						break;
 					case SUB_SCORE:          // 28
 						_actListArr[i][j].a28.timer = in.readSint16BE();
-						_actListArr[i][j].a28.objNumb = in.readSint16BE();
+						_actListArr[i][j].a28.objIndex = in.readSint16BE();
 						break;
 					case COND_CARRY:         // 29
 						_actListArr[i][j].a29.timer = in.readSint16BE();
-						_actListArr[i][j].a29.objNumb = in.readSint16BE();
+						_actListArr[i][j].a29.objIndex = in.readSint16BE();
 						_actListArr[i][j].a29.actPassIndex = in.readUint16BE();
 						_actListArr[i][j].a29.actFailIndex = in.readUint16BE();
 						break;
@@ -450,12 +450,12 @@ void Scheduler::loadActListArr(Common::File &in) {
 						break;
 					case INIT_PRIORITY:      // 32
 						_actListArr[i][j].a32.timer = in.readSint16BE();
-						_actListArr[i][j].a32.objNumb = in.readSint16BE();
+						_actListArr[i][j].a32.objIndex = in.readSint16BE();
 						_actListArr[i][j].a32.priority = in.readByte();
 						break;
 					case INIT_SCREEN:        // 33
 						_actListArr[i][j].a33.timer = in.readSint16BE();
-						_actListArr[i][j].a33.objNumb = in.readSint16BE();
+						_actListArr[i][j].a33.objIndex = in.readSint16BE();
 						_actListArr[i][j].a33.screenIndex = in.readSint16BE();
 						break;
 					case AGSCHEDULE:         // 34
@@ -480,8 +480,8 @@ void Scheduler::loadActListArr(Common::File &in) {
 						break;
 					case INIT_LIPS:          // 38
 						_actListArr[i][j].a38.timer = in.readSint16BE();
-						_actListArr[i][j].a38.lipsObjNumb = in.readSint16BE();
-						_actListArr[i][j].a38.objNumb = in.readSint16BE();
+						_actListArr[i][j].a38.lipsObjIndex = in.readSint16BE();
+						_actListArr[i][j].a38.objIndex = in.readSint16BE();
 						_actListArr[i][j].a38.dxLips = in.readByte();
 						_actListArr[i][j].a38.dyLips = in.readByte();
 						break;
@@ -501,7 +501,7 @@ void Scheduler::loadActListArr(Common::File &in) {
 						break;
 					case TEXT_TAKE:          // 42
 						_actListArr[i][j].a42.timer = in.readSint16BE();
-						_actListArr[i][j].a42.objNumb = in.readSint16BE();
+						_actListArr[i][j].a42.objIndex = in.readSint16BE();
 						break;
 					case YESNO:              // 43
 						_actListArr[i][j].a43.timer = in.readSint16BE();
@@ -524,14 +524,14 @@ void Scheduler::loadActListArr(Common::File &in) {
 						break;
 					case INIT_VIEW:          // 47
 						_actListArr[i][j].a47.timer = in.readSint16BE();
-						_actListArr[i][j].a47.objNumb = in.readSint16BE();
+						_actListArr[i][j].a47.objIndex = in.readSint16BE();
 						_actListArr[i][j].a47.viewx = in.readSint16BE();
 						_actListArr[i][j].a47.viewy = in.readSint16BE();
 						_actListArr[i][j].a47.direction = in.readSint16BE();
 						break;
 					case INIT_OBJ_FRAME:     // 48
 						_actListArr[i][j].a48.timer = in.readSint16BE();
-						_actListArr[i][j].a48.objNumb = in.readSint16BE();
+						_actListArr[i][j].a48.objIndex = in.readSint16BE();
 						_actListArr[i][j].a48.seqIndex = in.readSint16BE();
 						_actListArr[i][j].a48.frameIndex = in.readSint16BE();
 						break;

@@ -106,12 +106,12 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 		insertActionList(action->a0.actIndex);
 		break;
 	case START_OBJ:                                 // act1: Start an object cycling
-		_vm->_object->_objects[action->a1.objNumb].cycleNumb = action->a1.cycleNumb;
-		_vm->_object->_objects[action->a1.objNumb].cycling = action->a1.cycle;
+		_vm->_object->_objects[action->a1.objIndex].cycleNumb = action->a1.cycleNumb;
+		_vm->_object->_objects[action->a1.objIndex].cycling = action->a1.cycle;
 		break;
 	case INIT_OBJXY:                                // act2: Initialise an object
-		_vm->_object->_objects[action->a2.objNumb].x = action->a2.x;          // Coordinates
-		_vm->_object->_objects[action->a2.objNumb].y = action->a2.y;
+		_vm->_object->_objects[action->a2.objIndex].x = action->a2.x;          // Coordinates
+		_vm->_object->_objects[action->a2.objIndex].y = action->a2.y;
 		break;
 	case PROMPT: {                                  // act3: Prompt user for key phrase
 		response = Utils::Box(BOX_PROMPT, "%s", _vm->_file->fetchString(action->a3.promptIndex));
@@ -137,27 +137,27 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 		_vm->_screen->setBackgroundColor(action->a4.newBackgroundColor);
 		break;
 	case INIT_OBJVXY:                               // act5: Initialise an object velocity
-		_vm->_object->setVelocity(action->a5.objNumb, action->a5.vx, action->a5.vy);
+		_vm->_object->setVelocity(action->a5.objIndex, action->a5.vx, action->a5.vy);
 		break;
 	case INIT_CARRY:                                // act6: Initialise an object
-		_vm->_object->setCarry(action->a6.objNumb, action->a6.carriedFl);  // carried status
+		_vm->_object->setCarry(action->a6.objIndex, action->a6.carriedFl);  // carried status
 		break;
 	case INIT_HF_COORD:                             // act7: Initialise an object to hero's "feet" coords
-		_vm->_object->_objects[action->a7.objNumb].x = _vm->_hero->x - 1;
-		_vm->_object->_objects[action->a7.objNumb].y = _vm->_hero->y + _vm->_hero->currImagePtr->y2 - 1;
-		_vm->_object->_objects[action->a7.objNumb].screenIndex = *_vm->_screen_p;  // Don't forget screen!
+		_vm->_object->_objects[action->a7.objIndex].x = _vm->_hero->x - 1;
+		_vm->_object->_objects[action->a7.objIndex].y = _vm->_hero->y + _vm->_hero->currImagePtr->y2 - 1;
+		_vm->_object->_objects[action->a7.objIndex].screenIndex = *_vm->_screen_p;  // Don't forget screen!
 		break;
 	case NEW_SCREEN:                                // act8: Start new screen
 		newScreen(action->a8.screenIndex);
 		break;
 	case INIT_OBJSTATE:                             // act9: Initialise an object state
-		_vm->_object->_objects[action->a9.objNumb].state = action->a9.newState;
+		_vm->_object->_objects[action->a9.objIndex].state = action->a9.newState;
 		break;
 	case INIT_PATH:                                 // act10: Initialise an object path and velocity
-		_vm->_object->setPath(action->a10.objNumb, (path_t) action->a10.newPathType, action->a10.vxPath, action->a10.vyPath);
+		_vm->_object->setPath(action->a10.objIndex, (path_t) action->a10.newPathType, action->a10.vxPath, action->a10.vyPath);
 		break;
 	case COND_R:                                    // act11: action lists conditional on object state
-		if (_vm->_object->_objects[action->a11.objNumb].state == action->a11.stateReq)
+		if (_vm->_object->_objects[action->a11.objIndex].state == action->a11.stateReq)
 			insertActionList(action->a11.actPassIndex);
 		else
 			insertActionList(action->a11.actFailIndex);
@@ -166,18 +166,18 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 		Utils::Box(BOX_ANY, "%s", _vm->_file->fetchString(action->a12.stringIndex));   // Fetch string from file
 		break;
 	case SWAP_IMAGES:                               // act13: Swap 2 object images
-		_vm->_object->swapImages(action->a13.obj1, action->a13.obj2);
+		_vm->_object->swapImages(action->a13.objIndex1, action->a13.objIndex2);
 		break;
 	case COND_SCR:                                  // act14: Conditional on current screen
-		if (_vm->_object->_objects[action->a14.objNumb].screenIndex == action->a14.screenReq)
+		if (_vm->_object->_objects[action->a14.objIndex].screenIndex == action->a14.screenReq)
 			insertActionList(action->a14.actPassIndex);
 		else
 			insertActionList(action->a14.actFailIndex);
 		break;
 	case AUTOPILOT:                                 // act15: Home in on a (stationary) object
 		// object p1 will home in on object p2
-		obj1 = &_vm->_object->_objects[action->a15.obj1];
-		obj2 = &_vm->_object->_objects[action->a15.obj2];
+		obj1 = &_vm->_object->_objects[action->a15.objIndex1];
+		obj2 = &_vm->_object->_objects[action->a15.objIndex2];
 		obj1->pathType = AUTO;
 		dx = obj1->x + obj1->currImagePtr->x1 - obj2->x - obj2->currImagePtr->x1;
 		dy = obj1->y + obj1->currImagePtr->y1 - obj2->y - obj2->currImagePtr->y1;
@@ -198,16 +198,16 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 	case INIT_OBJ_SEQ:                              // act16: Set sequence number to use
 		// Note: Don't set a sequence at time 0 of a new screen, it causes
 		// problems clearing the boundary bits of the object!  t>0 is safe
-		_vm->_object->_objects[action->a16.objNumb].currImagePtr = _vm->_object->_objects[action->a16.objNumb].seqList[action->a16.seqIndex].seqPtr;
+		_vm->_object->_objects[action->a16.objIndex].currImagePtr = _vm->_object->_objects[action->a16.objIndex].seqList[action->a16.seqIndex].seqPtr;
 		break;
 	case SET_STATE_BITS:                            // act17: OR mask with curr obj state
-		_vm->_object->_objects[action->a17.objNumb].state |= action->a17.stateMask;
+		_vm->_object->_objects[action->a17.objIndex].state |= action->a17.stateMask;
 		break;
 	case CLEAR_STATE_BITS:                          // act18: AND ~mask with curr obj state
-		_vm->_object->_objects[action->a18.objNumb].state &= ~action->a18.stateMask;
+		_vm->_object->_objects[action->a18.objIndex].state &= ~action->a18.stateMask;
 		break;
 	case TEST_STATE_BITS:                           // act19: If all bits set, do apass else afail
-		if ((_vm->_object->_objects[action->a19.objNumb].state & action->a19.stateMask) == action->a19.stateMask)
+		if ((_vm->_object->_objects[action->a19.objIndex].state & action->a19.stateMask) == action->a19.stateMask)
 			insertActionList(action->a19.actPassIndex);
 		else
 			insertActionList(action->a19.actFailIndex);
@@ -227,9 +227,9 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 		gameStatus.gameOverFl = true;
 		break;
 	case INIT_HH_COORD:                             // act22: Initialise an object to hero's actual coords
-		_vm->_object->_objects[action->a22.objNumb].x = _vm->_hero->x;
-		_vm->_object->_objects[action->a22.objNumb].y = _vm->_hero->y;
-		_vm->_object->_objects[action->a22.objNumb].screenIndex = *_vm->_screen_p;// Don't forget screen!
+		_vm->_object->_objects[action->a22.objIndex].x = _vm->_hero->x;
+		_vm->_object->_objects[action->a22.objIndex].y = _vm->_hero->y;
+		_vm->_object->_objects[action->a22.objIndex].screenIndex = *_vm->_screen_p;// Don't forget screen!
 		break;
 	case EXIT:                                      // act23: Exit game back to DOS
 		_vm->endGame();
@@ -238,7 +238,7 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 		processBonus(action->a24.pointIndex);
 		break;
 	case COND_BOX:                                  // act25: Conditional on bounding box
-		obj1 = &_vm->_object->_objects[action->a25.objNumb];
+		obj1 = &_vm->_object->_objects[action->a25.objIndex];
 		dx = obj1->x + obj1->currImagePtr->x1;
 		dy = obj1->y + obj1->currImagePtr->y2;
 		if ((dx >= action->a25.x1) && (dx <= action->a25.x2) &&
@@ -248,13 +248,13 @@ event_t *Scheduler_v1d::doAction(event_t *curEvent) {
 			insertActionList(action->a25.actFailIndex);
 		break;
 	case ADD_SCORE:                                 // act27: Add object's value to score
-		_vm->adjustScore(_vm->_object->_objects[action->a27.objNumb].objValue);
+		_vm->adjustScore(_vm->_object->_objects[action->a27.objIndex].objValue);
 		break;
 	case SUB_SCORE:                                 // act28: Subtract object's value from score
-		_vm->adjustScore(-_vm->_object->_objects[action->a28.objNumb].objValue);
+		_vm->adjustScore(-_vm->_object->_objects[action->a28.objIndex].objValue);
 		break;
 	case COND_CARRY:                                // act29: Conditional on object being carried
-		if (_vm->_object->isCarried(action->a29.objNumb))
+		if (_vm->_object->isCarried(action->a29.objIndex))
 			insertActionList(action->a29.actPassIndex);
 		else
 			insertActionList(action->a29.actFailIndex);

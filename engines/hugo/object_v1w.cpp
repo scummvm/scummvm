@@ -363,23 +363,23 @@ void ObjectHandler_v1w::moveObjects() {
 * the assumption for now that the first obj is always the HERO) to the object
 * number of the swapped image
 */
-void ObjectHandler_v1w::swapImages(int objNumb1, int objNumb2) {
-	debugC(1, kDebugObject, "swapImages(%d, %d)", objNumb1, objNumb2);
+void ObjectHandler_v1w::swapImages(int objIndex1, int objIndex2) {
+	debugC(1, kDebugObject, "swapImages(%d, %d)", objIndex1, objIndex2);
 
-	saveSeq(&_objects[objNumb1]);
+	saveSeq(&_objects[objIndex1]);
 
 	seqList_t tmpSeqList[MAX_SEQUENCES];
 	int seqListSize = sizeof(seqList_t) * MAX_SEQUENCES;
 
-	memmove(tmpSeqList, _objects[objNumb1].seqList, seqListSize);
-	memmove(_objects[objNumb1].seqList, _objects[objNumb2].seqList, seqListSize);
-	memmove(_objects[objNumb2].seqList, tmpSeqList, seqListSize);
-	restoreSeq(&_objects[objNumb1]);
-	_objects[objNumb2].currImagePtr = _objects[objNumb2].seqList[0].seqPtr;
-	_vm->_heroImage = (_vm->_heroImage == HERO) ? objNumb2 : HERO;
+	memmove(tmpSeqList, _objects[objIndex1].seqList, seqListSize);
+	memmove(_objects[objIndex1].seqList, _objects[objIndex2].seqList, seqListSize);
+	memmove(_objects[objIndex2].seqList, tmpSeqList, seqListSize);
+	restoreSeq(&_objects[objIndex1]);
+	_objects[objIndex2].currImagePtr = _objects[objIndex2].seqList[0].seqPtr;
+	_vm->_heroImage = (_vm->_heroImage == HERO) ? objIndex2 : HERO;
 
 	// Make sure baseline stays constant
-	_objects[objNumb1].y += _objects[objNumb2].currImagePtr->y2 - _objects[objNumb1].currImagePtr->y2;
+	_objects[objIndex1].y += _objects[objIndex2].currImagePtr->y2 - _objects[objIndex1].currImagePtr->y2;
 }
 
 } // End of namespace Hugo

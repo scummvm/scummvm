@@ -50,7 +50,7 @@ public:
 
 	virtual void moveObjects() = 0;
 	virtual void updateImages() = 0;
-	virtual void swapImages(int objNumb1, int objNumb2) = 0;
+	virtual void swapImages(int objIndex1, int objIndex2) = 0;
 
 	bool isCarrying(uint16 wordIndex);
 	bool findObjectSpace(object_t *obj, int16 *destx, int16 *desty);
@@ -105,7 +105,7 @@ public:
 
 	void moveObjects();
 	void updateImages();
-	void swapImages(int objNumb1, int objNumb2);
+	void swapImages(int objIndex1, int objIndex2);
 };
 
 class ObjectHandler_v1w : public ObjectHandler {
@@ -115,7 +115,7 @@ public:
 
 	void moveObjects();
 	void updateImages();
-	void swapImages(int objNumb1, int objNumb2);
+	void swapImages(int objIndex1, int objIndex2);
 };
 
 class ObjectHandler_v2d : public ObjectHandler_v1d {
@@ -133,7 +133,7 @@ public:
 	~ObjectHandler_v3d();
 
 	void moveObjects();
-	void swapImages(int objNumb1, int objNumb2);
+	void swapImages(int objIndex1, int objIndex2);
 };
 
 } // End of namespace Hugo
