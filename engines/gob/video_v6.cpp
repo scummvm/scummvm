@@ -126,11 +126,41 @@ void Video_v6::drawYUV(Surface &destDesc, int16 x, int16 y,
 	for (int i = 0; i < height; i++) {
 		Pixel dstRow = dst;
 
+		int nextChromaLine = (i < ((height - 1) & ~3) ) ? dataWidth : 0;
+	
 		for (int j = 0; j < width; j++, dstRow++) {
-			// Get (7bit) YUV data
-			byte dY = dataY[j     ] << 1;
-			byte dU = dataU[j >> 2] << 1;
-			byte dV = dataV[j >> 2] << 1;
+
+			int nextChromaColumn = (j < ((width - 1) & ~3)) ? 1 : 0;
+
+			// Get (7bit) Y data. It is at full res, does not need to be interpolated
+			byte dY = dataY[j] << 1;
+
+			// do linear interpolation on chroma values (7bits)
+			// to avoid blockiness
+			byte dU0 = dataU[j >> 2];
+			byte dV0 = dataV[j >> 2];
+
+			byte dU1 = dataU[(j >> 2) + nextChromaColumn];
+			byte dV1 = dataV[(j >> 2) + nextChromaColumn];
+
+			byte dU2 = dataU[(j + nextChromaLine) >> 2];
+			byte dV2 = dataV[(j + nextChromaLine) >> 2];
+
+			byte dU3 = dataU[((j + nextChromaLine) >> 2) + nextChromaColumn];
+			byte dV3 = dataV[((j + nextChromaLine) >> 2) + nextChromaColumn];
+
+			byte tX = j & 3;
+			byte tY = i & 3;
+			byte invtX = 4 - tX;
+			byte invtY = 4 - tY;
+
+			int16 dUX1 = dU0 * invtX + dU1 * tX;
+			int16 dUX2 = dU2 * invtX + dU3 * tX;
+			byte dU = (dUX1 * invtY + dUX2 * tY) >> 3;
+
+			int16 dVY1 = dV0 * invtX + dV1 * tX;
+			int16 dVY2 = dV2 * invtX + dV3 * tX;
+			byte dV = (dVY1 * invtY + dVY2 * tY) >> 3;
 
 			byte r, g, b;
 			Graphics::YUV2RGB(dY, dU, dV, r, g, b);
