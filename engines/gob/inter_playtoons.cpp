@@ -333,6 +333,13 @@ bool Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 		return false;
 
 	_vm->_draw->animateCursor(4);
+	if (offset > stream->size()) {
+		warning("oPlaytoons_readData: File \"%s\", Offset (%d) > file size (%d)",
+				file, offset, stream->size());
+		delete stream;
+		return false;
+	}
+
 	if (offset < 0)
 		stream->seek(offset + 1, SEEK_END);
 	else
