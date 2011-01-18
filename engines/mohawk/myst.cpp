@@ -206,7 +206,8 @@ static const char *mystFiles[] = {
 
 Common::String MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieName, uint16 stack) {
 	// The Macintosh release of Myst ME stores its videos in a different folder
-	if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh)
+	// WORKAROUND: The gear rotation videos are not in the CD Data folder
+	if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh && !movieName.matchString("cl1wg?"))
 		return Common::String("CD Data/m/") + movieName + ".mov";
 
 	const char* prefix;
