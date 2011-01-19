@@ -174,6 +174,16 @@ void GraphicsManager::copyAnimSubImageToScreen(uint16 image, uint16 subimage, in
 	copyAnimImageSectionToScreen(images[subimage], srcRect, dstRect);
 }
 
+void GraphicsManager::getSubImageSize(uint16 image, uint16 subimage, uint16 &width, uint16 &height) {
+	if (!_subImageCache.contains(image))
+		_subImageCache[image] = decodeImages(image);
+	Common::Array<MohawkSurface *> &images = _subImageCache[image];
+
+	Graphics::Surface *surface = images[subimage]->getSurface();
+	width = surface->w;
+	height = surface->h;
+}
+
 void GraphicsManager::copyAnimImageSectionToScreen(MohawkSurface *image, Common::Rect srcRect, Common::Rect dstRect) {
 	uint16 startX = 0;
 	uint16 startY = 0;

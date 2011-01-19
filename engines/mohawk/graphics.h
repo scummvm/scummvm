@@ -95,6 +95,8 @@ public:
 	void copyAnimImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
 	void copyAnimSubImageToScreen(uint16 image, uint16 subimage, int left = 0, int top = 0);
 
+	void getSubImageSize(uint16 image, uint16 subimage, uint16 &width, uint16 &height);
+
 protected:
 	void copyAnimImageSectionToScreen(MohawkSurface *image, Common::Rect src, Common::Rect dest);
 
