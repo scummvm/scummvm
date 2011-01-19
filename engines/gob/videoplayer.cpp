@@ -45,7 +45,7 @@ VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFront
 }
 
 
-VideoPlayer::Video::Video() : decoder(0) {
+VideoPlayer::Video::Video() : decoder(0), live(false) {
 }
 
 bool VideoPlayer::Video::isEmpty() const {
@@ -58,6 +58,8 @@ void VideoPlayer::Video::close() {
 	decoder = 0;
 	fileName.clear();
 	surface.reset();
+
+	live = false;
 }
 
 
@@ -240,6 +242,13 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 
 	properties.canceled = false;
 
+	if (primary && (properties.flags & kFlagNonBlocking)) {
+		video->live = true;
+		properties.waitEndFrame = false;
+		_liveProperties = properties;
+		return true;
+	}
+
 	while ((properties.startFrame != properties.lastFrame) &&
 	       (properties.startFrame < (int32)(video->decoder->getFrameCount() - 1))) {
 
@@ -272,6 +281,35 @@ void VideoPlayer::waitEndFrame(int slot, bool onlySound) {
 
 	if (!onlySound || video->decoder->hasSound())
 		_vm->_util->delay(video->decoder->getTimeToNextFrame());
+}
+
+void VideoPlayer::updateLive() {
+	Video *video = getVideoBySlot(0);
+	if (!video || !video->live)
+		return;
+
+	if ((_liveProperties.startFrame == _liveProperties.lastFrame) ||
+	    (_liveProperties.startFrame >= (int32)(video->decoder->getFrameCount() - 1))) {
+
+		WRITE_VAR_OFFSET(212, (uint32)-1);
+		_vm->_vidPlayer->closeVideo();
+		return;
+	}
+
+	if (video->decoder->getTimeToNextFrame() > 0)
+		return;
+
+	WRITE_VAR_OFFSET(212, _liveProperties.startFrame + 1);
+
+	bool backwards = _liveProperties.startFrame > _liveProperties.lastFrame;
+	playFrame(0, _liveProperties);
+
+	_liveProperties.startFrame += backwards ? -1 : 1;
+
+	if (_liveProperties.fade) {
+		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
+		_liveProperties.fade = false;
+	}
 }
 
 bool VideoPlayer::playFrame(int slot, Properties &properties) {
@@ -387,7 +425,7 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 
 		}
 
-		if ((video->decoder->getCurFrame() - 1) == properties.startFrame)
+		if (!video->live && ((video->decoder->getCurFrame() - 1) == properties.startFrame))
 			// Only retrace if we're playing the frame we actually want to play
 			_vm->_video->retrace();
 

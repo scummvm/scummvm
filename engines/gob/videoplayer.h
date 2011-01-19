@@ -50,6 +50,7 @@ public:
 		kFlagFrontSurface          = 0x000080, ///< Draw directly into the front surface.
 		kFlagNoVideo               = 0x000100, ///< Only sound.
 		kFlagOtherSurface          = 0x000800, ///< Draw into a specific sprite.
+		kFlagNonBlocking           = 0x001000, ///< "Live" video playing while scripts continue.
 		kFlagScreenSurface         = 0x400000  ///< Draw into a newly created sprite of screen dimensions.
 	};
 
@@ -109,6 +110,8 @@ public:
 	bool play(int slot, Properties &properties);
 	void waitEndFrame(int slot, bool onlySound = false);
 
+	void updateLive();
+
 	bool slotIsOpen(int slot = 0) const;
 
 	Common::String getFileName(int slot = 0) const;
@@ -141,6 +144,8 @@ private:
 
 		SurfacePtr surface;
 
+		bool live;
+
 		Video();
 
 		bool isEmpty() const;
@@ -150,6 +155,8 @@ private:
 	static const int kVideoSlotCount = 32;
 
 	static const char *_extensions[];
+
+	Properties _liveProperties;
 
 	GobEngine *_vm;
 

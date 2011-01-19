@@ -31,6 +31,7 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/video.h"
+#include "gob/videoplayer.h"
 #include "gob/sound/sound.h"
 
 #include "common/events.h"
@@ -93,6 +94,8 @@ void Util::processInput(bool scroll) {
 	Common::EventManager *eventMan = g_system->getEventManager();
 	int16 x = 0, y = 0;
 	bool hasMove = false;
+
+	_vm->_vidPlayer->updateLive();
 
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {

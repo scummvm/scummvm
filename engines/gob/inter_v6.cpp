@@ -176,10 +176,15 @@ void Inter_v6::o6_playVmdOrMusic() {
 		return;
 	}
 
+	if(!(props.flags & 0x1000) && !(props.flags & VideoPlayer::kFlagNoVideo))
+		props.flags |= VideoPlayer::kFlagNonBlocking;
+	else
+		props.flags &= ~0x1000;
+
 	if (props.startFrame >= 0)
 		_vm->_vidPlayer->play(slot, props);
 
-	if (close)
+	if (close && !(props.flags & VideoPlayer::kFlagNonBlocking))
 		_vm->_vidPlayer->closeVideo(slot);
 }
 
