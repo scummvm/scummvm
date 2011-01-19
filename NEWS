@@ -6,7 +6,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Backyard Baseball 2001.
 
  General
-   - Added Norwegian (Bokmaal) translation.
+   - Added Danish translation.
+   - Added Norwegian Bokmaal translation.
+   - Added Norwegian Nynorsk translation.
 
  Drascula:
    - Added German and French subtitles in the Von Braun cutscene (#3069981:
