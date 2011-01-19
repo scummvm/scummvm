@@ -74,7 +74,7 @@ void Sound::initMidi() {
 	_midiParser->setTimerRate(_midiDriver->getBaseTempo());
 }
 
-Audio::AudioStream *Sound::makeAudioStream(uint16 id) {
+Audio::AudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList) {
 	Audio::AudioStream *audStream = NULL;
 
 	switch (_vm->getGameType()) {
@@ -91,21 +91,22 @@ Audio::AudioStream *Sound::makeAudioStream(uint16 id) {
 		audStream = makeOldMohawkWaveStream(_vm->getResource(ID_WAV, id));
 		break;
 	default:
-		audStream = makeMohawkWaveStream(_vm->getResource(ID_TWAV, id));
+		audStream = makeMohawkWaveStream(_vm->getResource(ID_TWAV, id), cueList);
 	}
 
 	return audStream;
 }
 
-Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop) {
+Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop, CueList *cueList) {
 	debug (0, "Playing sound %d", id);
 
-	Audio::AudioStream *audStream = makeAudioStream(id);
+	Audio::AudioStream *audStream = makeAudioStream(id, cueList);
 
 	if (audStream) {
 		SndHandle *handle = getHandle();
 		handle->type = kUsedHandle;
 		handle->id = id;
+		handle->samplesPerSecond = audStream->getRate();
 
 		// Set the stream to loop here if it's requested
 		if (loop)
@@ -339,10 +340,9 @@ void Sound::resumeSLST() {
 		_vm->_mixer->pauseHandle(*_currentSLSTSounds[i].handle, false);
 }
 
-Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stream) {
+Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList) {
 	uint32 tag = 0;
 	ADPCMStatus adpcmStatus;
-	CueList cueList;
 	DataChunk dataChunk;
 	uint32 dataSize = 0;
 
@@ -388,26 +388,33 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			// Cues are used for animation sync. There are a couple in Myst and
 			// Riven but are not used there at all.
 
-			cueList.size = stream->readUint32BE();
-			cueList.pointCount = stream->readUint16BE();
+			if (!cueList) {
+				uint32 size = stream->readUint32BE();
+				stream->skip(size);
+				break;
+			}
 
-			if (cueList.pointCount == 0)
+			cueList->size = stream->readUint32BE();
+			cueList->pointCount = stream->readUint16BE();
+
+			if (cueList->pointCount == 0)
 				debug(2, "Cue# chunk found with no points!");
 			else
-				debug(2, "Cue# chunk found with %d point(s)!", cueList.pointCount);
+				debug(2, "Cue# chunk found with %d point(s)!", cueList->pointCount);
 
-			for (uint16 i = 0; i < cueList.pointCount; i++) {
-				cueList.points[i].sampleFrame = stream->readUint32BE();
+			for (uint16 i = 0; i < cueList->pointCount; i++) {
+				cueList->points[i].sampleFrame = stream->readUint32BE();
 
 				byte nameLength = stream->readByte();
+				cueList->points[i].name.clear();
 				for (byte j = 0; j < nameLength; j++)
-					cueList.points[i].name += stream->readByte();
+					cueList->points[i].name += stream->readByte();
 
 				// Realign to an even boundary
 				if (!(nameLength & 1))
 					stream->readByte();
 
-				debug (3, "Cue# chunk point %d: %s", i, cueList.points[i].name.c_str());
+				debug (3, "Cue# chunk point %d (frame %d): %s", i, cueList->points[i].sampleFrame, cueList->points[i].name.c_str());
 			}
 			break;
 		case ID_DATA:
@@ -549,6 +556,15 @@ bool Sound::isPlaying(uint16 id) {
 	return false;
 }
 
+uint Sound::getNumSamplesPlayed(uint16 id) {
+	for (uint32 i = 0; i < _handles.size(); i++)
+		if (_handles[i].type == kUsedHandle && _handles[i].id == id) {
+			return (_vm->_mixer->getSoundElapsedTime(_handles[i].handle) * _handles[i].samplesPerSecond) / 1000;
+		}
+
+	return 0;
+}
+
 uint16 Sound::convertMystID(uint16 id) {
 	// Myst ME is a bit more efficient with sound storage than Myst
 	// Myst has lots of sounds repeated. To overcome this, Myst ME
@@ -588,6 +604,7 @@ Audio::SoundHandle *Sound::replaceBackgroundMyst(uint16 id, uint16 volume) {
 		SndHandle *handle = getHandle();
 		handle->type = kBackgroundHandle;
 		handle->id = id;
+		handle->samplesPerSecond = audStream->getRate();
 
 		// Set the stream to loop
 		audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);

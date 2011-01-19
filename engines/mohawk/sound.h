@@ -66,6 +66,7 @@ enum SndHandleType {
 struct SndHandle {
 	Audio::SoundHandle handle;
 	SndHandleType type;
+	uint samplesPerSecond;
 	uint16 id;
 };
 
@@ -120,7 +121,7 @@ public:
 	~Sound();
 
 	// Generic sound functions
-	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
+	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false, CueList *cueList = NULL);
 	void playSoundBlocking(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void playMidi(uint16 id);
 	void stopMidi();
@@ -129,6 +130,7 @@ public:
 	void pauseSound();
 	void resumeSound();
 	bool isPlaying(uint16 id);
+	uint getNumSamplesPlayed(uint16 id);
 
 	// Myst-specific sound functions
 	Audio::SoundHandle *replaceSoundMyst(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
@@ -152,13 +154,13 @@ private:
 	MidiParser *_midiParser;
 	byte *_midiData;
 
-	static Audio::AudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream);
+	static Audio::AudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList = NULL);
 	static Audio::AudioStream *makeOldMohawkWaveStream(Common::SeekableReadStream *stream);
 	void initMidi();
 
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
-	Audio::AudioStream *makeAudioStream(uint16 id);
+	Audio::AudioStream *makeAudioStream(uint16 id, CueList *cueList = NULL);
 	uint16 convertMystID(uint16 id);
 
 	// Riven-specific
