@@ -404,6 +404,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			else
 				debug(2, "Cue# chunk found with %d point(s)!", cueList->pointCount);
 
+			cueList->points.resize(cueList->pointCount);
 			for (uint16 i = 0; i < cueList->pointCount; i++) {
 				cueList->points[i].sampleFrame = stream->readUint32BE();
 

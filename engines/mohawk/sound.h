@@ -41,7 +41,6 @@
 namespace Mohawk {
 
 #define MAX_CHANNELS 2         // Can there be more than 2?
-#define CUE_MAX 256
 
 struct SLSTRecord {
 	uint16 index;
@@ -85,13 +84,15 @@ struct ADPCMStatus { // Holds ADPCM status data, but is irrelevant for us.
 	} *statusItems;
 };
 
+struct CueListPoint {
+	uint32 sampleFrame;
+	Common::String name;
+};
+
 struct CueList {
 	uint32 size;
 	uint16 pointCount;
-	struct {
-		uint32 sampleFrame;
-		Common::String name;
-	} points[CUE_MAX];
+	Common::Array<CueListPoint> points;
 };
 
 enum {
