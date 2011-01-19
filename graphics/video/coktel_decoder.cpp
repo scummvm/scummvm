@@ -1400,7 +1400,7 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 }
 
 void IMDDecoder::nextSoundSlice(bool hasNextCmd) {
-	if (hasNextCmd || !_soundEnabled) {
+	if (hasNextCmd || !_soundEnabled || !_audioStream) {
 		// Skip sound
 
 		_stream->skip(_soundSliceSize);
@@ -1420,7 +1420,7 @@ void IMDDecoder::nextSoundSlice(bool hasNextCmd) {
 bool IMDDecoder::initialSoundSlice(bool hasNextCmd) {
 	int dataLength = _soundSliceSize * _soundSlicesCount;
 
-	if (hasNextCmd || !_soundEnabled) {
+	if (hasNextCmd || !_soundEnabled || !_audioStream) {
 		// Skip sound
 
 		_stream->skip(dataLength);
@@ -1440,7 +1440,7 @@ bool IMDDecoder::initialSoundSlice(bool hasNextCmd) {
 }
 
 void IMDDecoder::emptySoundSlice(bool hasNextCmd) {
-	if (hasNextCmd || !_soundEnabled)
+	if (hasNextCmd || !_soundEnabled || !_audioStream)
 		return;
 
 	// Create an empty sound buffer and queue it
