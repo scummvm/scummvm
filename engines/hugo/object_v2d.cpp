@@ -288,7 +288,7 @@ void ObjectHandler_v2d::moveObjects() {
 
 	// Move objects, allowing for boundaries
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];                         // Get pointer to object
+		object_t *obj = &_objects[i];               // Get pointer to object
 		if ((obj->screenIndex == *_vm->_screen_p) && (obj->vx || obj->vy)) {
 			// Only process if it's moving
 
@@ -302,7 +302,7 @@ void ObjectHandler_v2d::moveObjects() {
 			int y2 = obj->y + currImage->y2;        // Bottom edge
 
 			if ((obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
-				_vm->clearBoundary(x1, x2, y2);          // Clear our own boundary
+				_vm->clearBoundary(x1, x2, y2);     // Clear our own boundary
 
 			// Allowable motion wrt boundary
 			int dx = _vm->deltaX(x1, x2, obj->vx, y2);
@@ -320,7 +320,7 @@ void ObjectHandler_v2d::moveObjects() {
 			}
 
 			if ((obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
-				_vm->storeBoundary(x1, x2, y2);          // Re-store our own boundary
+				_vm->storeBoundary(x1, x2, y2);     // Re-store our own boundary
 
 			obj->x += dx;                           // Update object position
 			obj->y += dy;
@@ -342,8 +342,8 @@ void ObjectHandler_v2d::moveObjects() {
 
 	// Clear all object baselines from the boundary file.
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];               // Get pointer to object
-		seq_t *currImage = obj->currImagePtr;       // Get ptr to current image
+		object_t *obj = &_objects[i];                   // Get pointer to object
+		seq_t *currImage = obj->currImagePtr;           // Get ptr to current image
 		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
 			_vm->clearBoundary(obj->oldx + currImage->x1, obj->oldx + currImage->x2, obj->oldy + currImage->y2);
 	}
@@ -361,4 +361,25 @@ void ObjectHandler_v2d::moveObjects() {
 	}
 }
 
+void ObjectHandler_v2d::homeIn(int objIndex1, int objIndex2, int8 objDx, int8 objDy) {
+	// object obj1 will home in on object obj2
+	object_t *obj1 = &_objects[objIndex1];
+	object_t *obj2 = &_objects[objIndex2];
+	obj1->pathType = AUTO;
+	int dx = obj1->x + obj1->currImagePtr->x1 - obj2->x - obj2->currImagePtr->x1;
+	int dy = obj1->y + obj1->currImagePtr->y1 - obj2->y - obj2->currImagePtr->y1;
+
+	if (dx == 0)                                        // Don't EVER divide by zero!
+		dx = 1;
+	if (dy == 0)
+		dy = 1;
+
+	if (abs(dx) > abs(dy)) {
+		obj1->vx = objDx * -SIGN(dx);
+		obj1->vy = abs((objDy * dy) / dx) * -SIGN(dy);
+	} else {
+		obj1->vy = objDy * -SIGN(dy);
+		obj1->vx = abs((objDx * dx) / dy) * -SIGN(dx);
+	}
+}
 } // End of namespace Hugo

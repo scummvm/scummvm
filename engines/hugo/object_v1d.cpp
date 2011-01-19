@@ -228,7 +228,7 @@ void ObjectHandler_v1d::moveObjects() {
 						obj->cycling = CYCLE_FORWARD;
 				} else {
 					obj->cycling = NOT_CYCLING;
-					_vm->boundaryCollision(obj);     // Must have got hero!
+					_vm->boundaryCollision(obj);    // Must have got hero!
 				}
 				dxOld = obj->vx;
 				currImage = obj->currImagePtr;      // Get (new) ptr to current image
@@ -275,7 +275,7 @@ void ObjectHandler_v1d::moveObjects() {
 
 	// Move objects, allowing for boundaries
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];                         // Get pointer to object
+		object_t *obj = &_objects[i];               // Get pointer to object
 		if ((obj->screenIndex == *_vm->_screen_p) && (obj->vx || obj->vy)) {
 			// Only process if it's moving
 
@@ -289,7 +289,7 @@ void ObjectHandler_v1d::moveObjects() {
 			int y2 = obj->y + currImage->y2;        // Bottom edge
 
 			if ((obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
-				_vm->clearBoundary(x1, x2, y2);          // Clear our own boundary
+				_vm->clearBoundary(x1, x2, y2);     // Clear our own boundary
 
 			// Allowable motion wrt boundary
 			int dx = _vm->deltaX(x1, x2, obj->vx, y2);
@@ -307,7 +307,7 @@ void ObjectHandler_v1d::moveObjects() {
 			}
 
 			if ((obj->cycling > ALMOST_INVISIBLE) && (obj->priority == FLOATING))
-				_vm->storeBoundary(x1, x2, y2);          // Re-store our own boundary
+				_vm->storeBoundary(x1, x2, y2);     // Re-store our own boundary
 
 			obj->x += dx;                           // Update object position
 			obj->y += dy;
@@ -337,12 +337,12 @@ void ObjectHandler_v1d::moveObjects() {
 
 	// If maze mode is enabled, do special maze processing
 	if (_maze.enabledFl) {
-		seq_t *currImage = _vm->_hero->currImagePtr;    // Get ptr to current image
+		seq_t *currImage = _vm->_hero->currImagePtr;// Get ptr to current image
 		// hero coordinates
-		int x1 = _vm->_hero->x + currImage->x1;         // Left edge of object
-		int x2 = _vm->_hero->x + currImage->x2;         // Right edge
-		int y1 = _vm->_hero->y + currImage->y1;         // Top edge
-		int y2 = _vm->_hero->y + currImage->y2;         // Bottom edge
+		int x1 = _vm->_hero->x + currImage->x1;     // Left edge of object
+		int x2 = _vm->_hero->x + currImage->x2;     // Right edge
+		int y1 = _vm->_hero->y + currImage->y1;     // Top edge
+		int y2 = _vm->_hero->y + currImage->y2;     // Bottom edge
 
 		_vm->_scheduler->processMaze(x1, x2, y1, y2);
 	}
@@ -367,4 +367,25 @@ void ObjectHandler_v1d::swapImages(int objIndex1, int objIndex2) {
 	_vm->_heroImage = (_vm->_heroImage == HERO) ? objIndex2 : HERO;
 }
 
+void ObjectHandler_v1d::homeIn(int objIndex1, int objIndex2, int8 objDx, int8 objDy) {
+	// object obj1 will home in on object obj2
+	object_t *obj1 = &_objects[objIndex1];
+	object_t *obj2 = &_objects[objIndex2];
+	obj1->pathType = AUTO;
+	int dx = obj1->x + obj1->currImagePtr->x1 - obj2->x - obj2->currImagePtr->x1;
+	int dy = obj1->y + obj1->currImagePtr->y1 - obj2->y - obj2->currImagePtr->y1;
+
+	if (dx == 0)                                    // Don't EVER divide by zero!
+		dx = 1;
+	if (dy == 0)
+		dy = 1;
+
+	if (abs(dx) > abs(dy)) {
+		obj1->vx = objDx * -SIGN(dx);
+		obj1->vy = abs((objDy * dy) / dx) * -SIGN(dy);
+	} else {
+		obj1->vy = objDy * SIGN(dy);
+		obj1->vx = abs((objDx * dx) / dy) * SIGN(dx);
+	}
+}
 } // End of namespace Hugo

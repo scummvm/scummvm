@@ -48,6 +48,7 @@ public:
 	object_t  *_objects;
 	uint16    _numObj;
 
+	virtual void homeIn(int objIndex1, int objIndex2, int8 objDx, int8 objDy) = 0;
 	virtual void moveObjects() = 0;
 	virtual void updateImages() = 0;
 	virtual void swapImages(int objIndex1, int objIndex2) = 0;
@@ -103,19 +104,10 @@ public:
 	ObjectHandler_v1d(HugoEngine *vm);
 	virtual ~ObjectHandler_v1d();
 
-	void moveObjects();
-	void updateImages();
-	void swapImages(int objIndex1, int objIndex2);
-};
-
-class ObjectHandler_v1w : public ObjectHandler {
-public:
-	ObjectHandler_v1w(HugoEngine *vm);
-	~ObjectHandler_v1w();
-
-	void moveObjects();
-	void updateImages();
-	void swapImages(int objIndex1, int objIndex2);
+	virtual void homeIn(int objIndex1, int objIndex2, int8 objDx, int8 objDy);
+	virtual void moveObjects();
+	virtual void updateImages();
+	virtual void swapImages(int objIndex1, int objIndex2);
 };
 
 class ObjectHandler_v2d : public ObjectHandler_v1d {
@@ -123,8 +115,10 @@ public:
 	ObjectHandler_v2d(HugoEngine *vm);
 	virtual ~ObjectHandler_v2d();
 
-	void moveObjects();
-	void updateImages();
+	virtual void moveObjects();
+	virtual void updateImages();
+
+	void homeIn(int objIndex1, int objIndex2, int8 objDx, int8 objDy);
 };
 
 class ObjectHandler_v3d : public ObjectHandler_v2d {
@@ -132,7 +126,17 @@ public:
 	ObjectHandler_v3d(HugoEngine *vm);
 	~ObjectHandler_v3d();
 
+	virtual void moveObjects();
+	virtual void swapImages(int objIndex1, int objIndex2);
+};
+
+class ObjectHandler_v1w : public ObjectHandler_v3d {
+public:
+	ObjectHandler_v1w(HugoEngine *vm);
+	~ObjectHandler_v1w();
+
 	void moveObjects();
+	void updateImages();
 	void swapImages(int objIndex1, int objIndex2);
 };
 

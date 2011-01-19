@@ -85,9 +85,11 @@ protected:
 	act    **_actListArr;
 
 	virtual const char *getCypher() = 0;
-	virtual event_t *doAction(event_t *curEvent) = 0;
+	virtual void delEventType(action_t actTypeDel) = 0;
 	virtual void delQueue(event_t *curEvent) = 0;
+	virtual void promptAction(act *action) = 0;
 
+	event_t *doAction(event_t *curEvent);
 	event_t *getQueue();
 
 	uint32 getDosTicks(bool updateFl);
@@ -106,8 +108,9 @@ public:
 	virtual void runScheduler();
 
 protected:
+	virtual void delEventType(action_t actTypeDel);
 	virtual void delQueue(event_t *curEvent);
-	virtual event_t *doAction(event_t *curEvent);
+	virtual void promptAction(act *action);
 };
 
 class Scheduler_v2d : public Scheduler_v1d {
@@ -116,9 +119,11 @@ public:
 	virtual ~Scheduler_v2d();
 
 	virtual const char *getCypher();
+
 protected:
+	void delEventType(action_t actTypeDel);
 	void delQueue(event_t *curEvent);
-	event_t *doAction(event_t *curEvent);
+	void promptAction(act *action);
 };
 
 class Scheduler_v3d : public Scheduler_v2d {
