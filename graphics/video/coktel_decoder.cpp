@@ -2622,8 +2622,14 @@ byte *VMDDecoder::deADPCM(const byte *data, uint32 &size, int32 init, int32 inde
 }
 
 PixelFormat VMDDecoder::getPixelFormat() const {
-	if (_externalCodec && _codec)
-		return _codec->getPixelFormat();
+	if (_externalCodec) {
+		if (_codec)
+			return _codec->getPixelFormat();
+
+		// If we don't have the needed codec, just assume it's in the
+		// current screen format
+		return g_system->getScreenFormat();
+	}
 
 	if (_blitMode > 0)
 		return g_system->getScreenFormat();
