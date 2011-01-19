@@ -648,16 +648,15 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 
 void RivenGraphics::drawPLST(uint16 x) {
 	Common::SeekableReadStream* plst = _vm->getResource(ID_PLST, _vm->getCurCard());
-	uint16 index, id, left, top, right, bottom;
 	uint16 recordCount = plst->readUint16BE();
 
 	for (uint16 i = 0; i < recordCount; i++) {
-		index = plst->readUint16BE();
-		id = plst->readUint16BE();
-		left = plst->readUint16BE();
-		top = plst->readUint16BE();
-		right = plst->readUint16BE();
-		bottom = plst->readUint16BE();
+		uint16 index = plst->readUint16BE();
+		uint16 id = plst->readUint16BE();
+		uint16 left = plst->readUint16BE();
+		uint16 top = plst->readUint16BE();
+		uint16 right = plst->readUint16BE();
+		uint16 bottom = plst->readUint16BE();
 
 		// We are also checking here to make sure we haven't drawn the image yet on screen.
 		// This fixes problems with drawing PLST 1 twice and some other images twice. PLST

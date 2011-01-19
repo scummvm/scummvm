@@ -238,7 +238,6 @@ void RivenScript::runScript() {
 }
 
 void RivenScript::processCommands(bool runCommands) {
-	bool anotherBlockEvaluated = false;
 	bool runBlock = true;
 
 	uint16 commandCount = _stream->readUint16BE();
@@ -250,8 +249,10 @@ void RivenScript::processCommands(bool runCommands) {
 			// Command 8 contains a conditional branch, similar to switch statements
 			if (_stream->readUint16BE() != 2)
 				warning("if-then-else unknown value is not 2");
+
 			uint16 var = _stream->readUint16BE();				// variable to check against
 			uint16 logicBlockCount = _stream->readUint16BE();	// number of logic blocks
+			bool anotherBlockEvaluated = false;
 
 			for (uint16 k = 0; k < logicBlockCount; k++) {
 				uint16 checkValue = _stream->readUint16BE();	// variable for this logic block
@@ -265,8 +266,6 @@ void RivenScript::processCommands(bool runCommands) {
 				if (runBlock)
 					anotherBlockEvaluated = true;
 			}
-
-			anotherBlockEvaluated = false;
 		} else {
 			uint16 argCount = _stream->readUint16BE();
 			uint16 *argValues = new uint16[argCount];
@@ -292,7 +291,7 @@ void RivenScript::processCommands(bool runCommands) {
 void RivenScript::drawBitmap(uint16 op, uint16 argc, uint16 *argv) {
 	if (argc < 5) // Copy the image to the whole screen, ignoring the rest of the parameters
 		_vm->_gfx->copyImageToScreen(argv[0], 0, 0, 608, 392);
-	else // Copy the image to a certain part of the screen
+	else          // Copy the image to a certain part of the screen
 		_vm->_gfx->copyImageToScreen(argv[0], argv[1], argv[2], argv[3], argv[4]);
 
 	// Now, update the screen
@@ -418,7 +417,7 @@ void RivenScript::runExternalCommand(uint16 op, uint16 argc, uint16 *argv) {
 }
 
 // Command 18: transition
-// Note that this opcode has 1 or 5 parameters, depending on parameter 0
+// Note that this opcode has 1 or 5 parameters, depending on argc
 // Parameter 0: transition type
 // Parameters 1-4: transition rectangle
 void RivenScript::transition(uint16 op, uint16 argc, uint16 *argv) {
@@ -451,7 +450,7 @@ void RivenScript::enableScreenUpdate(uint16 op, uint16 argc, uint16 *argv) {
 void RivenScript::incrementVariable(uint16 op, uint16 argc, uint16 *argv) {
 	uint32 *localVar = _vm->getLocalVar(argv[0]);
 	*localVar += argv[1];
-	debug (2, "Incrementing variable %d by %d, variable now is equal to %d", argv[0], argv[1], *localVar);
+	debug(2, "Incrementing variable %d by %d, variable now is equal to %d", argv[0], argv[1], *localVar);
 }
 
 // Command 27: go to stack (stack_name code_hi code_lo)
@@ -460,13 +459,13 @@ void RivenScript::changeStack(uint16 op, uint16 argc, uint16 *argv) {
 	int8 index = -1;
 
 	for (byte i = 0; i < 8; i++)
-		if (!scumm_stricmp(_vm->getStackName(i).c_str(), stackName.c_str())) {
+		if (_vm->getStackName(i).equalsIgnoreCase(stackName)) {
 			index = i;
 			break;
 		}
 
 	if (index == -1)
-		error ("\'%s\' is not a stack name!", stackName.c_str());
+		error ("'%s' is not a stack name!", stackName.c_str());
 
 	_vm->changeToStack(index);
 	uint32 rmapCode = (argv[1] << 16) + argv[2];
@@ -521,13 +520,13 @@ void RivenScript::complexPlayMovie(uint16 op, uint16 argc, uint16 *argv) {
 	warning("STUB: complexPlayMovie");
 	debugN("\tMovie ID = %d\n", argv[0]);
 	debugN("\tDelay = %d\n", (argv[1] << 16) + argv[2]);
-	if (argv[3] == 0) {
+
+	if (argv[3] == 0)
 		debugN("\tDraw PLST %d\n", argv[4]);
-	} else if (argv[3] == 40) {
+	else if (argv[3] == 40)
 		debugN("\tPlay SLST %d\n", argv[4]);
-	} else {
+	else
 		error("Unknown complexPlayMovie record type %d", argv[3]);
-	}
 }
 
 // Command 39: activate PLST record (card picture lists)
