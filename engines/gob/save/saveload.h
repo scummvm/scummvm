@@ -364,6 +364,7 @@ protected:
 	static SaveFile _saveFiles[];
 
 	VoiceHandler *_voiceHandler;
+	TempSpriteHandler *_tempSpriteHandler;
 
 	SaveHandler *getHandler(const char *fileName) const;
 	const char *getDescription(const char *fileName) const;

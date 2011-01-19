@@ -32,7 +32,10 @@ namespace Gob {
 
 SaveLoad_Inca2::SaveFile SaveLoad_Inca2::_saveFiles[] = {
 	{"speak.inf", kSaveModeExists, 0, 0}, // Exists = speech enabled
-	{"voice.inf", kSaveModeSave  , 0, 0}  // Contains the language of the voices
+	{"voice.inf", kSaveModeSave  , 0, 0}, // Contains the language of the voices
+	{"intro.$$$", kSaveModeSave  , 0, "temporary sprite"},
+	{  "cat.inf", kSaveModeSave  , 0, "savegame"},
+	{  "ima.inf", kSaveModeSave  , 0, "screenshot"},
 };
 
 
@@ -62,9 +65,11 @@ bool SaveLoad_Inca2::VoiceHandler::save(int16 dataVar, int32 size, int32 offset)
 
 
 SaveLoad_Inca2::SaveLoad_Inca2(GobEngine *vm, const char *targetName) : SaveLoad(vm) {
-	_voiceHandler = new VoiceHandler(vm);
+	_tempSpriteHandler = new TempSpriteHandler(vm);
+	_voiceHandler      = new VoiceHandler(vm);
 
 	_saveFiles[1].handler = _voiceHandler;
+	_saveFiles[2].handler = _tempSpriteHandler;
 }
 
 SaveLoad_Inca2::~SaveLoad_Inca2() {
