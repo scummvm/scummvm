@@ -98,19 +98,6 @@ void Scheduler::insertActionList(uint16 actIndex) {
 }
 
 /**
-* Decode a string
-*/
-void Scheduler::decodeString(char *line) {
-	debugC(1, kDebugSchedule, "decodeString(%s)", line);
-
-	static const char *cypher = getCypher();
-
-	for (uint16 i = 0; i < strlen(line); i++)
-		line[i] -= cypher[i % strlen(cypher)];
-	debugC(1, kDebugSchedule, "result : %s", line);
-}
-
-/**
 * Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
 */
 uint32 Scheduler::getWinTicks() {

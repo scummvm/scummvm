@@ -53,11 +53,9 @@ public:
 	Scheduler(HugoEngine *vm);
 	virtual ~Scheduler();
 
-	virtual uint32 getTicks() = 0;
-
+	virtual void decodeString(char *line) = 0;
 	virtual void runScheduler() = 0;
 
-	void decodeString(char *line);
 	void freeActListArr();
 	void initEventQueue();
 	void insertActionList(uint16 actIndex);
@@ -85,6 +83,9 @@ protected:
 	act    **_actListArr;
 
 	virtual const char *getCypher() = 0;
+
+	virtual uint32 getTicks() = 0;
+
 	virtual void delEventType(action_t actTypeDel) = 0;
 	virtual void delQueue(event_t *curEvent) = 0;
 	virtual void promptAction(act *action) = 0;
@@ -103,11 +104,14 @@ public:
 	Scheduler_v1d(HugoEngine *vm);
 	~Scheduler_v1d();
 
-	virtual const char *getCypher();
-	virtual uint32 getTicks();
+	virtual void decodeString(char *line);
 	virtual void runScheduler();
 
 protected:
+	virtual const char *getCypher();
+
+	virtual uint32 getTicks();
+
 	virtual void delEventType(action_t actTypeDel);
 	virtual void delQueue(event_t *curEvent);
 	virtual void promptAction(act *action);
@@ -118,9 +122,11 @@ public:
 	Scheduler_v2d(HugoEngine *vm);
 	virtual ~Scheduler_v2d();
 
-	virtual const char *getCypher();
+	void decodeString(char *line);
 
 protected:
+	virtual const char *getCypher();
+	
 	void delEventType(action_t actTypeDel);
 	void delQueue(event_t *curEvent);
 	void promptAction(act *action);
@@ -131,6 +137,7 @@ public:
 	Scheduler_v3d(HugoEngine *vm);
 	~Scheduler_v3d();
 
+protected:
 	const char *getCypher();
 };
 
@@ -139,9 +146,11 @@ public:
 	Scheduler_v1w(HugoEngine *vm);
 	~Scheduler_v1w();
 
+	void runScheduler();
+
+protected:
 	uint32 getTicks();
 
-	void runScheduler();
 };
 } // End of namespace Hugo
 #endif //HUGO_SCHEDULE_H

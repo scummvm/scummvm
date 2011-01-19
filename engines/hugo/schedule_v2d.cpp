@@ -126,4 +126,17 @@ void Scheduler_v2d::promptAction(act *action) {
 	// HACK: As the answer is not read, currently it's always considered correct
 	insertActionList(action->a3.actPassIndex);
 }
+
+/**
+* Decode a string
+*/
+void Scheduler_v2d::decodeString(char *line) {
+	debugC(1, kDebugSchedule, "decodeString(%s)", line);
+
+	static const char *cypher = getCypher();
+
+	for (uint16 i = 0; i < strlen(line); i++)
+		line[i] -= cypher[i % strlen(cypher)];
+	debugC(1, kDebugSchedule, "result : %s", line);
+}
 } // End of namespace Hugo

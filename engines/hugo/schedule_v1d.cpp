@@ -107,18 +107,20 @@ void Scheduler_v1d::delEventType(action_t actTypeDel) {
 
 void Scheduler_v1d::promptAction(act *action) {
 	Utils::Box(BOX_PROMPT, "%s", _vm->_file->fetchString(action->a3.promptIndex));
+
+	warning("STUB: doAction(act3)");
+	// TODO: The answer of the player is not handled currently! Once it'll be read in the messageBox, uncomment this block
+#if 0
 	char response[256];
-	strcpy(response, _vm->_file->fetchString(action->a3.responsePtr[0]));
+	// TODO: Put user input in response
+
+	Utils::strlwr(response);
 	if (action->a3.encodedFl) {
 		warning("Encrypted flag set");
 		decodeString(response);
 	}
 
-	warning("STUB: doAction(act3), expecting answer %s", response);
-
-	// TODO: The answer of the player is not handled currently! Once it'll be read in the messageBox, uncomment this block
-#if 0
-	if (strstr (response, action->a3.response))
+	if (strstr(response, _vm->_file->fetchString(action->a3.responsePtr[0]))
 		insertActionList(action->a3.actPassIndex);
 	else
 		insertActionList(action->a3.actFailIndex);
@@ -126,5 +128,20 @@ void Scheduler_v1d::promptAction(act *action) {
 
 	// HACK: As the answer is not read, currently it's always considered correct
 	insertActionList(action->a3.actPassIndex);
+}
+
+/**
+* Decode a response to a prompt
+*/
+void Scheduler_v1d::decodeString(char *line) {
+	debugC(1, kDebugSchedule, "decodeString(%s)", line);
+
+	static const char *cypher = getCypher();
+
+	for(uint16 i = 0; i < strlen(line); i++) {
+		line[i] = (line[i] + cypher[i]) % '~';
+		if (line[i] < ' ')
+			line[i] += ' ';
+	}
 }
 } // End of namespace Hugo
