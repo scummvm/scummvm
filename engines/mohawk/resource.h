@@ -102,7 +102,7 @@ namespace Mohawk {
 #define ID_CONV MKID_BE('CONV') // Conversation
 #define ID_HOTS MKID_BE('HOTS') // Hotspot
 #define ID_INVO MKID_BE('INVO') // Inventory Object
-#define ID_QARS MKID_BE('QARS') // Conversation Entry
+#define ID_QARS MKID_BE('QARS') // Question and Responses
 #define ID_SCEN MKID_BE('SCEN') // Scene
 #define ID_STRI MKID_BE('STRI') // String Entry?
 
