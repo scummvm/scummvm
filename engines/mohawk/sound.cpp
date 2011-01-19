@@ -45,6 +45,7 @@ Sound::Sound(MohawkEngine* vm) : _vm(vm) {
 Sound::~Sound() {
 	stopSound();
 	stopAllSLST();
+	stopBackgroundMyst();
 
 	if (_midiParser) {
 		_midiParser->unloadMusic();
@@ -581,18 +582,16 @@ uint16 Sound::convertMystID(uint16 id) {
 }
 
 Audio::SoundHandle *Sound::replaceBackgroundMyst(uint16 id, uint16 volume) {
-	debug (0, "Replacing background %d", id);
+	debug(0, "Replacing background sound with %d", id);
 
 	// TODO: The original engine does fading
 
 	Common::String name = _vm->getResourceName(ID_MSND, convertMystID(id));
 
 	// Check if sound is already playing
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kBackgroundHandle
-				&& _vm->_mixer->isSoundHandleActive(_handles[i].handle)
-				&& name.equals(_vm->getResourceName(ID_MSND, convertMystID(_handles[i].id))))
-			return &_handles[i].handle;
+	if (_mystBackgroundSound.type == kUsedHandle && _vm->_mixer->isSoundHandleActive(_mystBackgroundSound.handle)
+			&& name.equals(_vm->getResourceName(ID_MSND, convertMystID(_mystBackgroundSound.id))))
+		return &_mystBackgroundSound.handle;
 
 	// Stop old background sound
 	stopBackgroundMyst();
@@ -601,46 +600,41 @@ Audio::SoundHandle *Sound::replaceBackgroundMyst(uint16 id, uint16 volume) {
 	Audio::AudioStream *audStream = makeAudioStream(id);
 
 	if (audStream) {
-		SndHandle *handle = getHandle();
-		handle->type = kBackgroundHandle;
-		handle->id = id;
-		handle->samplesPerSecond = audStream->getRate();
+		_mystBackgroundSound.type = kUsedHandle;
+		_mystBackgroundSound.id = id;
+		_mystBackgroundSound.samplesPerSecond = audStream->getRate();
 
 		// Set the stream to loop
 		audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
 
-		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle->handle, audStream, -1, volume >> 8);
-		return &handle->handle;
+		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mystBackgroundSound.handle, audStream, -1, volume >> 8);
+		return &_mystBackgroundSound.handle;
 	}
 
 	return NULL;
 }
 
 void Sound::stopBackgroundMyst() {
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kBackgroundHandle) {
-			_vm->_mixer->stopHandle(_handles[i].handle);
-			_handles[i].type = kFreeHandle;
-			_handles[i].id = 0;
-		}
+	if (_mystBackgroundSound.type == kUsedHandle) {
+		_vm->_mixer->stopHandle(_mystBackgroundSound.handle);
+		_mystBackgroundSound.type = kFreeHandle;
+		_mystBackgroundSound.id = 0;
+	}
 }
 
 void Sound::pauseBackgroundMyst() {
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kBackgroundHandle)
-			_vm->_mixer->pauseHandle(_handles[i].handle, true);
+	if (_mystBackgroundSound.type == kUsedHandle)
+		_vm->_mixer->pauseHandle(_mystBackgroundSound.handle, true);
 }
 
 void Sound::resumeBackgroundMyst() {
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kBackgroundHandle)
-			_vm->_mixer->pauseHandle(_handles[i].handle, false);
+	if (_mystBackgroundSound.type == kUsedHandle)
+		_vm->_mixer->pauseHandle(_mystBackgroundSound.handle, false);
 }
 
 void Sound::changeBackgroundVolumeMyst(uint16 vol) {
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kBackgroundHandle)
-			_vm->_mixer->setChannelVolume(_handles[i].handle, vol >> 8);
+	if (_mystBackgroundSound.type == kUsedHandle)
+		_vm->_mixer->setChannelVolume(_mystBackgroundSound.handle, vol >> 8);
 }
 
 } // End of namespace Mohawk

@@ -59,8 +59,7 @@ struct SLSTRecord {
 
 enum SndHandleType {
 	kFreeHandle,
-	kUsedHandle,
-	kBackgroundHandle
+	kUsedHandle
 };
 
 struct SndHandle {
@@ -162,6 +161,9 @@ private:
 	SndHandle *getHandle();
 	Audio::AudioStream *makeAudioStream(uint16 id, CueList *cueList = NULL);
 	uint16 convertMystID(uint16 id);
+
+	// Myst-specific
+	SndHandle _mystBackgroundSound;
 
 	// Riven-specific
 	void playSLSTSound(uint16 index, bool fade, bool loop, uint16 volume, int16 balance);
