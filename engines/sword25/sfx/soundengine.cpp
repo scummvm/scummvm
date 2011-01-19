@@ -231,12 +231,6 @@ float SoundEngine::getSoundPanning(uint handle) {
 	return 0;
 }
 
-float SoundEngine::getSoundTime(uint handle) {
-	warning("STUB: SoundEngine::getSoundTime(%d)", handle);
-
-	return 0;
-}
-
 Resource *SoundEngine::loadResource(const Common::String &fileName) {
 	warning("STUB: SoundEngine::loadResource(%s)", fileName.c_str());
 

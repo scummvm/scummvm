@@ -238,11 +238,6 @@ public:
 	 */
 	float getSoundPanning(uint handle);
 
-	/**
-	 * Returns the position within a playing sound in seconds
-	 */
-	float getSoundTime(uint handle);
-
 	Resource    *loadResource(const Common::String &fileName);
 	bool         canLoadResource(const Common::String &fileName);
 
