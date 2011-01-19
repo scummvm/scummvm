@@ -102,6 +102,10 @@ ifdef USE_PNG
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libpng.a
 endif
 
+ifdef USE_THEORADEC
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libtheoradec.a
+endif
+
 ifdef USE_ZLIB
 OSX_ZLIB ?= -lz
 endif
