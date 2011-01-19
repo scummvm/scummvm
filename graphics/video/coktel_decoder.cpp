@@ -1420,11 +1420,16 @@ void IMDDecoder::nextSoundSlice(bool hasNextCmd) {
 bool IMDDecoder::initialSoundSlice(bool hasNextCmd) {
 	int dataLength = _soundSliceSize * _soundSlicesCount;
 
-	if (hasNextCmd || !_soundEnabled || !_audioStream) {
+	if (hasNextCmd || !_soundEnabled) {
 		// Skip sound
 
 		_stream->skip(dataLength);
 		return false;
+	}
+
+	if (!_audioStream) {
+		_audioStream = Audio::makeQueuingAudioStream(_soundFreq, false);
+		_soundStage  = kSoundLoaded;
 	}
 
 	// Read, convert, queue
