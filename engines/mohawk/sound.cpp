@@ -39,6 +39,7 @@ Sound::Sound(MohawkEngine* vm) : _vm(vm) {
 	_midiDriver = NULL;
 	_midiParser = NULL;
 	_midiData = NULL;
+	_mystBackgroundSound.type = kFreeHandle;
 	initMidi();
 }
 
