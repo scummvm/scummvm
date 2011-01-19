@@ -340,6 +340,8 @@ bool TempSpriteHandler::isSprite(int32 size) {
 // Contruct the index
 int TempSpriteHandler::getIndex(int32 size) {
 	// Palette flag
+	if (size < -3000)
+		size += 3000;
 	if (size < -1000)
 		size += 1000;
 

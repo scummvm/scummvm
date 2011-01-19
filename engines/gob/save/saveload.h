@@ -337,6 +337,9 @@ protected:
 /** Save/Load class for Inca 2. */
 class SaveLoad_Inca2 : public SaveLoad {
 public:
+	static const uint32 kSlotCount =  40;
+	static const uint32 kPropsSize = 500;
+
 	SaveLoad_Inca2(GobEngine *vm, const char *targetName);
 	virtual ~SaveLoad_Inca2();
 
@@ -361,10 +364,84 @@ protected:
 		bool save(int16 dataVar, int32 size, int32 offset);
 	};
 
+	class ScreenshotHandler;
+
+	/** Handles the save slots. */
+	class GameHandler : public SaveHandler {
+	friend class SaveLoad_Inca2::ScreenshotHandler;
+	public:
+
+		GameHandler(GobEngine *vm, const char *target);
+		~GameHandler();
+
+		int32 getSize();
+		bool load(int16 dataVar, int32 size, int32 offset);
+		bool save(int16 dataVar, int32 size, int32 offset);
+
+		bool saveScreenshot(int slot, const SavePartSprite *screenshot);
+		bool loadScreenshot(int slot, SavePartSprite *screenshot);
+
+		/** Slot file construction. */
+		class File : public SlotFileIndexed {
+		public:
+			File(GobEngine *vm, const char *base);
+			File(const File &file);
+			~File();
+
+			int getSlot(int32 offset) const;
+			int getSlotRemainder(int32 offset) const;
+		};
+
+	private:
+
+		File *_slotFile;
+
+		byte _props[kPropsSize];
+
+		SaveReader *_reader;
+		SaveWriter *_writer;
+
+		void buildIndex();
+
+		bool createReader(int slot);
+		bool createWriter(int slot);
+	};
+
+	/** Handles the screenshots. */
+	class ScreenshotHandler : public TempSpriteHandler {
+	public:
+		ScreenshotHandler(GobEngine *vm, GameHandler *gameHandler);
+		~ScreenshotHandler();
+
+		int32 getSize();
+		bool load(int16 dataVar, int32 size, int32 offset);
+		bool save(int16 dataVar, int32 size, int32 offset);
+
+	private:
+		/** Slot file construction. */
+		class File : public SaveLoad_Inca2::GameHandler::File {
+		public:
+			File(const SaveLoad_Inca2::GameHandler::File &file);
+			~File();
+
+			int getSlot(int32 offset) const;
+			int getSlotRemainder(int32 offset) const;
+
+			void buildIndex(byte *buffer) const;
+		};
+
+		File *_file;
+		GameHandler *_gameHandler;
+
+		byte _index[80];
+	};
+
 	static SaveFile _saveFiles[];
 
-	VoiceHandler *_voiceHandler;
+	VoiceHandler      *_voiceHandler;
 	TempSpriteHandler *_tempSpriteHandler;
+	GameHandler       *_gameHandler;
+	ScreenshotHandler *_screenshotHandler;
 
 	SaveHandler *getHandler(const char *fileName) const;
 	const char *getDescription(const char *fileName) const;
