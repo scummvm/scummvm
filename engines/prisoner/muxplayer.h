@@ -27,11 +27,9 @@
 #define PRISONER_MUXPLAYER_H
 
 #include "common/file.h"
-
 #include "sound/audiostream.h"
 
 class OSystem;
-class Audio::Mixer;
 
 namespace Prisoner {
 

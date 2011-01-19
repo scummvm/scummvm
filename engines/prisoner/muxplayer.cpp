@@ -275,7 +275,7 @@ void MuxPlayer::handlePalette(uint32 chunkSize) {
 void MuxPlayer::decompress(byte *source, byte *dest, uint32 sourceSize, uint32 destSize) {
 	MemoryBitReadStream src(source, sourceSize, 31);
 	byte *dst = dest, *dstEnd = dest + destSize;
-	byte ofs = 0, bitCounter = 1, lengthTmp = 0, length = 0;
+	byte ofs = 0, bitCounter = 1, lengthTmp = 0, length = 0, tmp;
 	while (dst < dstEnd) {
 		if (src.readBit() == 0) {
 			ofs = src.readByte();
@@ -286,8 +286,10 @@ void MuxPlayer::decompress(byte *source, byte *dest, uint32 sourceSize, uint32 d
 				length = (lengthTmp & 0x0F) + 2;
 			}
 			bitCounter ^= 1;
-			while (length-- && dst < dstEnd)
-				*dst++ = *(dst - ofs);
+			while (length-- && dst < dstEnd) {
+				tmp = *(dst - ofs);
+				*dst++ = tmp;
+			}
 		} else {
 			if (bitCounter & 1) {
 				lengthTmp = src.readByte();
