@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-11-28 19:10+0000\n"
+"POT-Creation-Date: 2011-01-19 22:30+0000\n"
 "PO-Revision-Date: 2010-11-27 22:15+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
@@ -55,22 +55,22 @@ msgstr "Abbrechen"
 msgid "Choose"
 msgstr "Auswählen"
 
-#: gui/gui-manager.cpp:104 engines/scumm/help.cpp:128
+#: gui/gui-manager.cpp:106 engines/scumm/help.cpp:128
 #: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
 #: backends/keymapper/remap-dialog.cpp:54
 msgid "Close"
 msgstr "Schließen"
 
-#: gui/gui-manager.cpp:107
+#: gui/gui-manager.cpp:109
 msgid "Mouse click"
 msgstr "Mausklick"
 
-#: gui/gui-manager.cpp:110 base/main.cpp:291
+#: gui/gui-manager.cpp:112 base/main.cpp:287
 msgid "Display keyboard"
 msgstr "Tastatur anzeigen"
 
-#: gui/gui-manager.cpp:113 base/main.cpp:294
+#: gui/gui-manager.cpp:115 base/main.cpp:290
 msgid "Remap keys"
 msgstr "Tasten neu zuweisen"
 
@@ -82,8 +82,8 @@ msgstr "Eine Aktion zum Zuweisen auswählen"
 msgid "Map"
 msgstr "Zuweisen"
 
-#: gui/KeysDialog.cpp:45 gui/launcher.cpp:320 gui/launcher.cpp:947
-#: gui/launcher.cpp:951 gui/massadd.cpp:92 gui/options.cpp:1117
+#: gui/KeysDialog.cpp:45 gui/launcher.cpp:320 gui/launcher.cpp:945
+#: gui/launcher.cpp:949 gui/massadd.cpp:92 gui/options.cpp:1117
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:58
 msgid "OK"
@@ -295,7 +295,7 @@ msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Speichern:"
 
-#: gui/launcher.cpp:328 gui/launcher.cpp:409 gui/launcher.cpp:458
+#: gui/launcher.cpp:328 gui/launcher.cpp:411 gui/launcher.cpp:460
 #: gui/options.cpp:1026 gui/options.cpp:1032 gui/options.cpp:1039
 #: gui/options.cpp:1140 gui/options.cpp:1146 gui/options.cpp:1152
 #: gui/options.cpp:1160 gui/options.cpp:1184 gui/options.cpp:1188
@@ -304,137 +304,137 @@ msgctxt "path"
 msgid "None"
 msgstr "Keiner"
 
-#: gui/launcher.cpp:333 gui/launcher.cpp:413
+#: gui/launcher.cpp:333 gui/launcher.cpp:415
 #: backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Standard"
 
-#: gui/launcher.cpp:451 gui/options.cpp:1294
+#: gui/launcher.cpp:453 gui/options.cpp:1294
 msgid "Select SoundFont"
 msgstr "SoundFont auswählen"
 
-#: gui/launcher.cpp:470 gui/launcher.cpp:617
+#: gui/launcher.cpp:472 gui/launcher.cpp:619
 msgid "Select directory with game data"
 msgstr "Verzeichnis mit Spieldateien auswählen"
 
-#: gui/launcher.cpp:488
+#: gui/launcher.cpp:490
 msgid "Select additional game directory"
 msgstr "Verzeichnis mit zusätzlichen Dateien auswählen"
 
-#: gui/launcher.cpp:500
+#: gui/launcher.cpp:502
 msgid "Select directory for saved games"
 msgstr "Verzeichnis für Spielstände auswählen"
 
-#: gui/launcher.cpp:519
+#: gui/launcher.cpp:521
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Diese Spielkennung ist schon vergeben. Bitte eine andere wählen."
 
-#: gui/launcher.cpp:560 engines/dialogs.cpp:113
+#: gui/launcher.cpp:562 engines/dialogs.cpp:113
 msgid "~Q~uit"
 msgstr "~B~eenden"
 
-#: gui/launcher.cpp:560
+#: gui/launcher.cpp:562
 msgid "Quit ScummVM"
 msgstr "ScummVM beenden"
 
-#: gui/launcher.cpp:561
+#: gui/launcher.cpp:563
 msgid "A~b~out..."
 msgstr "Übe~r~"
 
-#: gui/launcher.cpp:561
+#: gui/launcher.cpp:563
 msgid "About ScummVM"
 msgstr "Über ScummVM"
 
-#: gui/launcher.cpp:562
+#: gui/launcher.cpp:564
 msgid "~O~ptions..."
 msgstr "~O~ptionen"
 
-#: gui/launcher.cpp:562
+#: gui/launcher.cpp:564
 msgid "Change global ScummVM options"
 msgstr "Globale ScummVM-Einstellungen bearbeiten"
 
-#: gui/launcher.cpp:564
+#: gui/launcher.cpp:566
 msgid "~S~tart"
 msgstr "~S~tarten"
 
-#: gui/launcher.cpp:564
+#: gui/launcher.cpp:566
 msgid "Start selected game"
 msgstr "Ausgewähltes Spiel starten"
 
-#: gui/launcher.cpp:567
+#: gui/launcher.cpp:569
 msgid "~L~oad..."
 msgstr "~L~aden..."
 
-#: gui/launcher.cpp:567
+#: gui/launcher.cpp:569
 msgid "Load savegame for selected game"
 msgstr "Spielstand für ausgewähltes Spiel laden"
 
-#: gui/launcher.cpp:572
+#: gui/launcher.cpp:574
 msgid "~A~dd Game..."
 msgstr "Spiel ~h~inzufügen"
 
-#: gui/launcher.cpp:572 gui/launcher.cpp:579
+#: gui/launcher.cpp:574 gui/launcher.cpp:581
 msgid "Hold Shift for Mass Add"
 msgstr ""
 "Umschalttaste (Shift) gedrückt halten, um Verzeichnisse nach Spielen zu "
 "durchsuchen"
 
-#: gui/launcher.cpp:574
+#: gui/launcher.cpp:576
 msgid "~E~dit Game..."
 msgstr "Spielo~p~tionen"
 
-#: gui/launcher.cpp:574 gui/launcher.cpp:581
+#: gui/launcher.cpp:576 gui/launcher.cpp:583
 msgid "Change game options"
 msgstr "Spieloptionen ändern"
 
-#: gui/launcher.cpp:576
+#: gui/launcher.cpp:578
 msgid "~R~emove Game"
 msgstr "Spiel ~e~ntfernen"
 
-#: gui/launcher.cpp:576 gui/launcher.cpp:583
+#: gui/launcher.cpp:578 gui/launcher.cpp:585
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Spiel aus der Liste entfernen. Die Spieldateien bleiben erhalten."
 
-#: gui/launcher.cpp:579
+#: gui/launcher.cpp:581
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~H~inzufügen"
 
-#: gui/launcher.cpp:581
+#: gui/launcher.cpp:583
 msgctxt "lowres"
 msgid "~E~dit Game..."
 msgstr "Spielo~p~tion"
 
-#: gui/launcher.cpp:583
+#: gui/launcher.cpp:585
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~E~ntfernen"
 
-#: gui/launcher.cpp:591
+#: gui/launcher.cpp:593
 msgid "Search in game list"
 msgstr "In Spieleliste suchen"
 
-#: gui/launcher.cpp:595 gui/launcher.cpp:1113
+#: gui/launcher.cpp:597 gui/launcher.cpp:1111
 msgid "Search:"
 msgstr "Suchen:"
 
-#: gui/launcher.cpp:598 gui/options.cpp:764
+#: gui/launcher.cpp:600 gui/options.cpp:764
 msgid "Clear value"
 msgstr "Wert löschen"
 
-#: gui/launcher.cpp:620 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:239
-#: engines/mohawk/riven.cpp:667 engines/cruise/menu.cpp:218
+#: gui/launcher.cpp:622 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:258
+#: engines/mohawk/riven.cpp:669 engines/cruise/menu.cpp:218
 msgid "Load game:"
 msgstr "Spiel laden:"
 
-#: gui/launcher.cpp:620 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:239
-#: engines/mohawk/riven.cpp:667 engines/cruise/menu.cpp:218
+#: gui/launcher.cpp:622 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:258
+#: engines/mohawk/riven.cpp:669 engines/cruise/menu.cpp:218
 #: backends/platform/wince/CEActionsPocket.cpp:266
 #: backends/platform/wince/CEActionsSmartphone.cpp:229
 msgid "Load"
 msgstr "Laden"
 
-#: gui/launcher.cpp:729
+#: gui/launcher.cpp:731
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -442,62 +442,62 @@ msgstr ""
 "Möchten Sie wirklich den PC nach Spielen durchsuchen? Möglicherweise wird "
 "dabei eine größere Menge an Spielen hinzugefügt."
 
-#: gui/launcher.cpp:730 gui/launcher.cpp:879
-#: backends/events/symbiansdl/symbiansdl-events.cpp:185
+#: gui/launcher.cpp:732 gui/launcher.cpp:881
+#: backends/events/symbiansdl/symbiansdl-events.cpp:187
 #: backends/platform/wince/CEActionsPocket.cpp:316
 #: backends/platform/wince/CEActionsSmartphone.cpp:276
 #: backends/platform/wince/CELauncherDialog.cpp:106
 msgid "Yes"
 msgstr "Ja"
 
-#: gui/launcher.cpp:730 gui/launcher.cpp:879
-#: backends/events/symbiansdl/symbiansdl-events.cpp:185
+#: gui/launcher.cpp:732 gui/launcher.cpp:881
+#: backends/events/symbiansdl/symbiansdl-events.cpp:187
 #: backends/platform/wince/CEActionsPocket.cpp:316
 #: backends/platform/wince/CEActionsSmartphone.cpp:276
 #: backends/platform/wince/CELauncherDialog.cpp:106
 msgid "No"
 msgstr "Nein"
 
-#: gui/launcher.cpp:777
+#: gui/launcher.cpp:779
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM konnte das gewählte Verzeichnis nicht öffnen!"
 
-#: gui/launcher.cpp:789
+#: gui/launcher.cpp:791
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM konnte im gewählten Verzeichnis kein Spiel finden!"
 
-#: gui/launcher.cpp:803
+#: gui/launcher.cpp:805
 msgid "Pick the game:"
 msgstr "Spiel auswählen:"
 
-#: gui/launcher.cpp:879
+#: gui/launcher.cpp:881
 msgid "Do you really want to remove this game configuration?"
 msgstr "Möchten Sie wirklich diese Spielkonfiguration entfernen?"
 
-#: gui/launcher.cpp:947
+#: gui/launcher.cpp:945
 msgid "This game does not support loading games from the launcher."
 msgstr ""
 "Für dieses Spiel wird das Laden aus der Spieleliste heraus nicht unterstützt."
 
-#: gui/launcher.cpp:951
+#: gui/launcher.cpp:949
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM konnte keine Engine finden, um das Spiel zu starten!"
 
-#: gui/launcher.cpp:1065
+#: gui/launcher.cpp:1063
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Durchsuchen"
 
-#: gui/launcher.cpp:1065
+#: gui/launcher.cpp:1063
 msgid "Mass Add..."
 msgstr "Durchsuchen"
 
-#: gui/launcher.cpp:1066
+#: gui/launcher.cpp:1064
 msgctxt "lowres"
 msgid "Add Game..."
 msgstr "Hinzufügen"
 
-#: gui/launcher.cpp:1066
+#: gui/launcher.cpp:1064
 msgid "Add Game..."
 msgstr "Spiel hinzufügen"
 
@@ -904,7 +904,7 @@ msgstr "Verzeichnis für zusätzliche Dateien auswählen"
 msgid "Select directory for plugins"
 msgstr "Verzeichnis für Erweiterungen auswählen"
 
-#: gui/options.cpp:1325
+#: gui/options.cpp:1328
 msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
@@ -975,35 +975,35 @@ msgstr "Kantenglättung (16bpp)"
 msgid "Antialiased (16bpp)"
 msgstr "Kantenglättung (16bpp)"
 
-#: base/main.cpp:211
+#: base/main.cpp:207
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Engine unterstützt den Debug-Level \"%s\" nicht."
 
-#: base/main.cpp:279
+#: base/main.cpp:275
 msgid "Menu"
 msgstr "Menü"
 
-#: base/main.cpp:282 backends/platform/symbian/src/SymbianActions.cpp:48
+#: base/main.cpp:278 backends/platform/symbian/src/SymbianActions.cpp:48
 #: backends/platform/wince/CEActionsPocket.cpp:48
 #: backends/platform/wince/CEActionsSmartphone.cpp:49
 msgid "Skip"
 msgstr "Überspringen"
 
-#: base/main.cpp:285 backends/platform/symbian/src/SymbianActions.cpp:53
+#: base/main.cpp:281 backends/platform/symbian/src/SymbianActions.cpp:53
 #: backends/platform/wince/CEActionsPocket.cpp:45
 msgid "Pause"
 msgstr "Pause"
 
-#: base/main.cpp:288
+#: base/main.cpp:284
 msgid "Skip line"
 msgstr "Zeile überspringen"
 
-#: base/main.cpp:445
+#: base/main.cpp:436
 msgid "Error running game:"
 msgstr "Fehler beim Ausführen des Spiels:"
 
-#: base/main.cpp:472
+#: base/main.cpp:460
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Konnte keine Spiel-Engine finden, die dieses Spiel starten kann."
 
@@ -1111,12 +1111,12 @@ msgid "~R~eturn to Launcher"
 msgstr "Zur Spiele~l~iste"
 
 #: engines/dialogs.cpp:119 engines/cruise/menu.cpp:216
-#: engines/sci/engine/kfile.cpp:577
+#: engines/sci/engine/kfile.cpp:576
 msgid "Save game:"
 msgstr "Speichern:"
 
 #: engines/dialogs.cpp:119 engines/cruise/menu.cpp:216
-#: engines/sci/engine/kfile.cpp:577
+#: engines/sci/engine/kfile.cpp:576
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:46
 #: backends/platform/wince/CEActionsPocket.cpp:266
@@ -1749,11 +1749,11 @@ msgstr "Über~g~änge aktiviert"
 msgid "~W~ater Effect Enabled"
 msgstr "~W~assereffekt aktiviert"
 
-#: engines/sci/engine/kfile.cpp:677
+#: engines/sci/engine/kfile.cpp:676
 msgid "Restore game:"
 msgstr "Spiel laden:"
 
-#: engines/sci/engine/kfile.cpp:677
+#: engines/sci/engine/kfile.cpp:676
 msgid "Restore"
 msgstr "Laden"
 
@@ -1821,7 +1821,7 @@ msgstr " (Global)"
 msgid " (Game)"
 msgstr " (Spiel)"
 
-#: backends/midi/windows.cpp:160
+#: backends/midi/windows.cpp:162
 msgid "Windows MIDI"
 msgstr "Windows MIDI"
 
@@ -1905,30 +1905,30 @@ msgstr "Touchpad-Modus aktiviert."
 msgid "Touchpad mode disabled."
 msgstr "Touchpad-Modus ausgeschaltet."
 
-#: backends/graphics/sdl/sdl-graphics.cpp:48
+#: backends/graphics/sdl/sdl-graphics.cpp:47
 #: backends/platform/wince/wince-sdl.cpp:114
 #: backends/platform/wince/wince-sdl.cpp:121
 msgid "Normal (no scaling)"
 msgstr "Normal (keine Skalierung)"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:67
+#: backends/graphics/sdl/sdl-graphics.cpp:66
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal ohn.Skalieren"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:115
+#: backends/graphics/opengl/opengl-graphics.cpp:117
 msgid "OpenGL Normal"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:116
+#: backends/graphics/opengl/opengl-graphics.cpp:118
 msgid "OpenGL Conserve"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:117
+#: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL 4/3"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:118
+#: backends/graphics/opengl/opengl-graphics.cpp:120
 msgid "OpenGL Original"
 msgstr ""
 
@@ -2002,7 +2002,7 @@ msgstr "Virtuelle Tastatur"
 msgid "Key mapper"
 msgstr "Tasten zuordnen"
 
-#: backends/events/symbiansdl/symbiansdl-events.cpp:185
+#: backends/events/symbiansdl/symbiansdl-events.cpp:187
 msgid "Do you want to quit ?"
 msgstr "Möchten Sie beenden?"
 
