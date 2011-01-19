@@ -229,7 +229,6 @@ void InventoryHandler::runInventory() {
 	case I_ACTIVE:                                  // Inventory active
 		_vm->_parser->charHandler();                // Still allow commands
 		_vm->_screen->displayList(D_RESTORE);       // Restore previous background
-		_vm->_mouse->mouseHandler();                // Mouse activity - adds to display list
 		_vm->_screen->displayList(D_DISPLAY);       // Blit the display list to screen
 		break;
 	}

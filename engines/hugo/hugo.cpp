@@ -313,6 +313,9 @@ Common::Error HugoEngine::run() {
 				break;
 			}
 		}
+		_mouse->mouseHandler();                     // Mouse activity - adds to display list
+		_screen->displayList(D_DISPLAY);            // Blit the display list to screen
+
 		_status.doQuitFl |= shouldQuit();           // update game quit flag
 	}
 	return Common::kNoError;
@@ -374,7 +377,6 @@ void HugoEngine::runMachine() {
 		_scheduler->runScheduler();                 // Process any actions
 		_screen->displayList(D_RESTORE);            // Restore previous background
 		_object->updateImages();                    // Draw into _frontBuffer, compile display list
-		_mouse->mouseHandler();                     // Mouse activity - adds to display list
 		_screen->drawStatusText();
 		_screen->displayList(D_DISPLAY);            // Blit the display list to screen
 		_sound->checkMusic();

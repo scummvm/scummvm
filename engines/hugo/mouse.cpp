@@ -242,10 +242,13 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 void MouseHandler::mouseHandler() {
 	debugC(2, kDebugMouse, "mouseHandler");
 
+	status_t &gameStatus = _vm->getGameStatus();
+
+	if ((gameStatus.viewState != V_PLAY) && (gameStatus.inventoryState != I_ACTIVE))
+		return;
+
 	int16 cx = _vm->getMouseX();
 	int16 cy = _vm->getMouseY();
-
-	status_t &gameStatus = _vm->getGameStatus();
 
 	gameStatus.cx = cx;                             // Save cursor coords
 	gameStatus.cy = cy;
@@ -264,29 +267,30 @@ void MouseHandler::mouseHandler() {
 		}
 	}
 
-	if (objId == -1)                                // No match, check rest of view
-		objId = _vm->_object->findObject(cx, cy);
-	if (objId >= 0) {                               // Got a match
-		// Display object name next to cursor (unless CURSOR_NOCHAR)
-		// Note test for swapped hero name
-		char *name = _vm->_arrayNouns[_vm->_object->_objects[(objId == HERO) ? _vm->_heroImage : objId].nounIndex][CURSOR_NAME];
-		if (name[0] != CURSOR_NOCHAR)
-			cursorText(name, cx, cy, U_FONT8, _TBRIGHTWHITE);
+	if (!gameStatus.gameOverFl) {
+		if (objId == -1)                                // No match, check rest of view
+			objId = _vm->_object->findObject(cx, cy);
+		if (objId >= 0) {                               // Got a match
+			// Display object name next to cursor (unless CURSOR_NOCHAR)
+			// Note test for swapped hero name
+			char *name = _vm->_arrayNouns[_vm->_object->_objects[(objId == HERO) ? _vm->_heroImage : objId].nounIndex][CURSOR_NAME];
+			if (name[0] != CURSOR_NOCHAR)
+				cursorText(name, cx, cy, U_FONT8, _TBRIGHTWHITE);
 
-		// Process right click over object in view or iconbar
-		if (gameStatus.rightButtonFl)
-			processRightClick(objId, cx, cy);
-	}
+			// Process right click over object in view or iconbar
+			if (gameStatus.rightButtonFl)
+				processRightClick(objId, cx, cy);
+		}
 
-	// Process cursor over an exit hotspot
-	if (objId == -1) {
-		int i = findExit(cx, cy);
-		if (i != -1 && _vm->_hotspots[i].viewx >= 0) {
-			objId = EXIT_HOTSPOT;
-			cursorText(_vm->_textMouse[kMsExit], cx, cy, U_FONT8, _TBRIGHTWHITE);
+		// Process cursor over an exit hotspot
+		if (objId == -1) {
+			int i = findExit(cx, cy);
+			if (i != -1 && _vm->_hotspots[i].viewx >= 0) {
+				objId = EXIT_HOTSPOT;
+				cursorText(_vm->_textMouse[kMsExit], cx, cy, U_FONT8, _TBRIGHTWHITE);
+			}
 		}
 	}
-
 	// Left click over icon, object or to move somewhere
 	if (gameStatus.leftButtonFl)
 		processLeftClick(objId, cx, cy);
