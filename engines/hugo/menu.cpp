@@ -57,9 +57,19 @@ enum {
 	kCmdInvent = 'INVT'
 };
 
-TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, kMenuWidth, kMenuHeight), arrayBmp(0),
+TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, kMenuWidth, kMenuHeight), arrayBmp(0), arraySize(0),
 	_vm(vm) {
 	init();
+}
+
+TopMenu::~TopMenu() {
+	for (int i = 0; i < arraySize; i++) {
+		arrayBmp[i * 2]->free();
+		delete arrayBmp[i * 2];
+		arrayBmp[i * 2 + 1]->free();
+		delete arrayBmp[i * 2 + 1];
+	}
+	delete[] arrayBmp;
 }
 
 void TopMenu::init() {
@@ -78,7 +88,6 @@ void TopMenu::init() {
 }
 
 void TopMenu::reflowLayout() {
-
 	_w = g_system->getOverlayWidth();
 
 	int scale = (_w > 320 ? 2 : 1);
@@ -134,9 +143,10 @@ void TopMenu::reflowLayout() {
 }
 
 void TopMenu::loadBmpArr(Common::File &in) {
-	uint16 arraySize = in.readUint16BE();
+	arraySize = in.readUint16BE();
 
-	arrayBmp = (Graphics::Surface **)malloc(sizeof(Graphics::Surface *) * (arraySize * 2));
+	delete arrayBmp;
+	arrayBmp = new Graphics::Surface *[arraySize * 2];
 	for (int i = 0; i < arraySize; i++) {
 		uint16 bmpSize = in.readUint16BE();
 		uint32 filPos = in.pos();

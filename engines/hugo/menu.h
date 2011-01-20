@@ -45,6 +45,7 @@ enum MenuOption {
 class TopMenu : public GUI::Dialog {
 public:
 	TopMenu(HugoEngine *vm);
+	~TopMenu();
 
 	void reflowLayout();
 	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data);
@@ -68,7 +69,7 @@ protected:
 	GUI::PicButtonWidget *_inventButton;
 
 	Graphics::Surface **arrayBmp;
-
+	uint16 arraySize;
 };
 
 }
