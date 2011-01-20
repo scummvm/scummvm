@@ -1414,7 +1414,9 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 		} else
 			WRITE_VAR(1, 0);
 
-	} else if (mode == SaveLoad::kSaveModeNone)
+	} else if (mode == SaveLoad::kSaveModeIgnore)
+		return false;
+	else if (mode == SaveLoad::kSaveModeNone)
 		warning("Attempted to write to file \"%s\"", file);
 
 	return false;
