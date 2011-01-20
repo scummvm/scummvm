@@ -31,10 +31,13 @@
 namespace Gob {
 
 SaveLoad_v6::SaveFile SaveLoad_v6::_saveFiles[] = {
-	{  "cat.inf", kSaveModeSave,   0, "savegame"}, // Save file
-	{"cata1.inf", kSaveModeSave,   0, "autosave"}, // Autosave file
-	{  "mdo.def", kSaveModeExists, 0, 0},
-	{"no_cd.txt", kSaveModeExists, 0, 0},
+	{    "cat.inf", kSaveModeSave,   0, "savegame"}, // Save file
+	{  "cata1.inf", kSaveModeSave,   0, "autosave"}, // Autosave file
+	{    "mdo.def", kSaveModeExists, 0, 0},
+	{  "no_cd.txt", kSaveModeExists, 0, 0},
+	{   "vide.inf", kSaveModeIgnore, 0, 0},
+	{"fenetre.txt", kSaveModeIgnore, 0, 0},
+	{  "music.txt", kSaveModeIgnore, 0, 0}
 };
 
 
