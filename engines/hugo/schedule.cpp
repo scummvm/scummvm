@@ -1241,4 +1241,239 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		return wrkEvent;                            // Return next event ptr
 	}
 }
+
+Scheduler_v1d::Scheduler_v1d(HugoEngine *vm) : Scheduler(vm) {
+}
+
+Scheduler_v1d::~Scheduler_v1d() {
+}
+
+const char *Scheduler_v1d::getCypher() {
+	return "Copyright (c) 1990, Gray Design Associates";
+}
+
+uint32 Scheduler_v1d::getTicks() {
+	return getDosTicks(false);
+}
+
+/**
+* Delete an event structure (i.e. return it to the free list)
+* Note that event is assumed at head of queue (i.e. earliest).  To delete
+* an event from the middle of the queue, merely overwrite its action type
+* to be ANULL
+*/
+void Scheduler_v1d::delQueue(event_t *curEvent) {
+	debugC(4, kDebugSchedule, "delQueue()");
+
+	if (curEvent == _headEvent)                     // If p was the head ptr
+		_headEvent = curEvent->nextEvent;           // then make new head_p
+
+	if (_headEvent)
+		_headEvent->prevEvent = 0;                  // Mark end of list
+	else
+		_tailEvent = 0;                             // Empty queue
+
+	curEvent->nextEvent = _freeEvent;               // Return p to free list
+	if (_freeEvent)                                 // Special case, if free list was empty
+		_freeEvent->prevEvent = curEvent;
+	_freeEvent = curEvent;
+}
+
+/**
+* This is the scheduler which runs every tick.  It examines the event queue
+* for any events whose time has come.  It dequeues these events and performs
+* the action associated with the event, returning it to the free queue
+*/
+void Scheduler_v1d::runScheduler() {
+	debugC(6, kDebugSchedule, "runScheduler");
+
+	uint32 ticker = getTicks();                     // The time now, in ticks
+	event_t *curEvent = _headEvent;                 // The earliest event
+
+	while (curEvent && (curEvent->time <= ticker))  // While mature events found
+		curEvent = doAction(curEvent);              // Perform the action (returns next_p)
+}
+
+void Scheduler_v1d::delEventType(action_t actTypeDel) {
+	// Note: actions are not deleted here, simply turned into NOPs!
+	event_t *wrkEvent = _headEvent;                 // The earliest event
+	while (wrkEvent) {                              // While events found in list
+		if (wrkEvent->action->a20.actType == actTypeDel)
+			wrkEvent->action->a20.actType = ANULL;
+		wrkEvent = wrkEvent->nextEvent;
+	}
+}
+
+void Scheduler_v1d::promptAction(act *action) {
+	Utils::Box(BOX_PROMPT, "%s", _vm->_file->fetchString(action->a3.promptIndex));
+
+	warning("STUB: doAction(act3)");
+	// TODO: The answer of the player is not handled currently! Once it'll be read in the messageBox, uncomment this block
+#if 0
+	char response[256];
+	// TODO: Put user input in response
+
+	Utils::strlwr(response);
+	if (action->a3.encodedFl) {
+		warning("Encrypted flag set");
+		decodeString(response);
+	}
+
+	if (strstr(response, _vm->_file->fetchString(action->a3.responsePtr[0]))
+		insertActionList(action->a3.actPassIndex);
+	else
+		insertActionList(action->a3.actFailIndex);
+#endif
+
+	// HACK: As the answer is not read, currently it's always considered correct
+	insertActionList(action->a3.actPassIndex);
+}
+
+/**
+* Decode a response to a prompt
+*/
+void Scheduler_v1d::decodeString(char *line) {
+	debugC(1, kDebugSchedule, "decodeString(%s)", line);
+
+	static const char *cypher = getCypher();
+
+	for(uint16 i = 0; i < strlen(line); i++) {
+		line[i] = (line[i] + cypher[i]) % '~';
+		if (line[i] < ' ')
+			line[i] += ' ';
+	}
+}
+
+Scheduler_v2d::Scheduler_v2d(HugoEngine *vm) : Scheduler_v1d(vm) {
+}
+
+Scheduler_v2d::~Scheduler_v2d() {
+}
+
+const char *Scheduler_v2d::getCypher() {
+	return "Copyright 1991, Gray Design Associates";
+}
+
+/**
+* Delete an event structure (i.e. return it to the free list)
+* Historical note:  Originally event p was assumed to be at head of queue
+* (i.e. earliest) since all events were deleted in order when proceeding to
+* a new screen.  To delete an event from the middle of the queue, the action
+* was overwritten to be ANULL.  With the advent of GLOBAL events, delQueue
+* was modified to allow deletes anywhere in the list, and the DEL_EVENT
+* action was modified to perform the actual delete.
+*/
+void Scheduler_v2d::delQueue(event_t *curEvent) {
+	debugC(4, kDebugSchedule, "delQueue()");
+
+	if (curEvent == _headEvent) {                   // If p was the head ptr
+		_headEvent = curEvent->nextEvent;           // then make new head_p
+	} else {                                        // Unlink p
+		curEvent->prevEvent->nextEvent = curEvent->nextEvent;
+		if (curEvent->nextEvent)
+			curEvent->nextEvent->prevEvent = curEvent->prevEvent;
+		else
+			_tailEvent = curEvent->prevEvent;
+	}
+
+	if (_headEvent)
+		_headEvent->prevEvent = 0;                  // Mark end of list
+	else
+		_tailEvent = 0;                             // Empty queue
+
+	curEvent->nextEvent = _freeEvent;               // Return p to free list
+	if (_freeEvent)                                 // Special case, if free list was empty
+		_freeEvent->prevEvent = curEvent;
+	_freeEvent = curEvent;
+}
+
+void Scheduler_v2d::delEventType(action_t actTypeDel) {
+	// Note: actions are not deleted here, simply turned into NOPs!
+	event_t *wrkEvent = _headEvent;                 // The earliest event
+	event_t *saveEvent;
+
+	while (wrkEvent) {                              // While events found in list
+		saveEvent = wrkEvent->nextEvent;
+		if (wrkEvent->action->a20.actType == actTypeDel)
+			delQueue(wrkEvent);
+		wrkEvent = saveEvent;
+	}
+}
+
+void Scheduler_v2d::promptAction(act *action) {
+	Utils::Box(BOX_PROMPT, "%s", _vm->_file->fetchString(action->a3.promptIndex));
+	warning("STUB: doAction(act3), expecting answer %s", _vm->_file->fetchString(action->a3.responsePtr[0]));
+
+	// TODO: The answer of the player is not handled currently! Once it'll be read in the messageBox, uncomment this block
+#if 0
+	char *response = Utils::Box(BOX_PROMPT, "%s", _vm->_file->fetchString(action->a3.promptIndex));
+
+	bool  found = false;
+	char *tmpStr;                                   // General purpose string ptr
+
+	for (dx = 0; !found && (action->a3.responsePtr[dx] != -1); dx++) {
+		tmpStr = _vm->_file->fetchString(action->a3.responsePtr[dx]);
+		if (strstr(Utils::strlwr(response) , tmpStr))
+			found = true;
+	}
+
+	if (found)
+		insertActionList(action->a3.actPassIndex);
+	else
+		insertActionList(action->a3.actFailIndex);
+#endif
+
+	// HACK: As the answer is not read, currently it's always considered correct
+	insertActionList(action->a3.actPassIndex);
+}
+
+/**
+* Decode a string
+*/
+void Scheduler_v2d::decodeString(char *line) {
+	debugC(1, kDebugSchedule, "decodeString(%s)", line);
+
+	static const char *cypher = getCypher();
+
+	for (uint16 i = 0; i < strlen(line); i++)
+		line[i] -= cypher[i % strlen(cypher)];
+	debugC(1, kDebugSchedule, "result : %s", line);
+}
+
+Scheduler_v3d::Scheduler_v3d(HugoEngine *vm) : Scheduler_v2d(vm) {
+}
+
+Scheduler_v3d::~Scheduler_v3d() {
+}
+
+const char *Scheduler_v3d::getCypher() {
+	return "Copyright 1992, Gray Design Associates";
+}
+
+Scheduler_v1w::Scheduler_v1w(HugoEngine *vm) : Scheduler_v3d(vm) {
+}
+
+Scheduler_v1w::~Scheduler_v1w() {
+}
+
+uint32 Scheduler_v1w::getTicks() {
+	return getWinTicks();
+}
+
+/**
+* This is the scheduler which runs every tick.  It examines the event queue
+* for any events whose time has come.  It dequeues these events and performs
+* the action associated with the event, returning it to the free queue
+*/
+void Scheduler_v1w::runScheduler() {
+	debugC(6, kDebugSchedule, "runScheduler");
+
+	uint32 ticker = getTicks();                     // The time now, in ticks
+	event_t *curEvent = _headEvent;                 // The earliest event
+
+	while (curEvent && (curEvent->time <= ticker))  // While mature events found
+		curEvent = doAction(curEvent);              // Perform the action (returns next_p)
+
+	_vm->getGameStatus().tick++;                    // Accessed elsewhere via getTicks()
+}
 } // End of namespace Hugo

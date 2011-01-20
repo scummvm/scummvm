@@ -34,6 +34,9 @@
 
 #include "hugo/hugo.h"
 #include "hugo/intro.h"
+#include "hugo/util.h"
+#include "hugo/display.h"
+#include "hugo/sound.h"
 
 namespace Hugo {
 
@@ -43,4 +46,363 @@ IntroHandler::IntroHandler(HugoEngine *vm) : _vm(vm) {
 IntroHandler::~IntroHandler() {
 }
 
+intro_v1d::intro_v1d(HugoEngine *vm) : IntroHandler(vm) {
+}
+
+intro_v1d::~intro_v1d() {
+}
+
+void intro_v1d::preNewGame() {
+}
+
+void intro_v1d::introInit() {
+	introTicks = 0;
+	surf.w = 320;
+	surf.h = 200;
+	surf.pixels = _vm->_screen->getFrontBuffer();
+	surf.pitch = 320;
+	surf.bytesPerPixel = 1;
+}
+
+bool intro_v1d::introPlay() {
+	static int state = 0;
+	byte introSize = _vm->getIntroSize();
+
+	if (_vm->getGameStatus().skipIntroFl)
+		return true;
+
+	if (introTicks < introSize) {
+		switch (state++) {
+		case 0:
+			_vm->_screen->drawRectangle(true, 0, 0, 319, 199, _TMAGENTA);
+			_vm->_screen->drawRectangle(true, 10, 10, 309, 189, _TBLACK);
+			break;
+
+		case 1:
+			_vm->_screen->drawShape(20, 92,_TLIGHTMAGENTA,_TMAGENTA);
+			_vm->_screen->drawShape(250,92,_TLIGHTMAGENTA,_TMAGENTA);
+
+			// TROMAN, size 10-5
+			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
+				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
+
+			char buffer[80];
+			if (_boot.registered)
+				strcpy(buffer, "Registered Version");
+			else
+				strcpy(buffer, "Shareware Version");
+
+			font.drawString(&surf, buffer, 0, 163, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			font.drawString(&surf, COPYRIGHT, 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+
+			if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
+				sprintf(buffer, "Distributed by %s.", _boot.distrib);
+				font.drawString(&surf, buffer, 0, 75, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+			}
+
+			// SCRIPT, size 24-16
+			strcpy(buffer, "Hugo's");
+
+			if (font.loadFromFON("SCRIPT.FON")) {
+				font.drawString(&surf, buffer, 0, 20, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+			} else {
+				// Workaround: SCRIPT.FON doesn't load properly at the moment
+				_vm->_screen->loadFont(2);
+				_vm->_screen->writeStr(CENTER, 20, buffer, _TMAGENTA);
+			}
+
+			// TROMAN, size 30-24
+			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 24)))
+				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 24");
+
+			strcpy(buffer, "House of Horrors !");
+			font.drawString(&surf, buffer, 0, 50, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			break;
+		case 2:
+			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
+
+			// TROMAN, size 16-9
+			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
+				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
+
+			strcpy(buffer, "S t a r r i n g :");
+			font.drawString(&surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+			break;
+		case 3:
+			// TROMAN, size 20-9
+			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
+				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 18");
+
+			strcpy(buffer, "Hugo !");
+			font.drawString(&surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			break;
+		case 4:
+			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
+
+			// TROMAN, size 16-9
+			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
+				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
+
+			strcpy(buffer, "P r o d u c e d  b y :");
+			font.drawString(&surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+			break;
+		case 5:
+			// TROMAN size 16-9
+			strcpy(buffer, "David P Gray !");
+			font.drawString(&surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			break;
+		case 6:
+			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
+
+			// TROMAN, size 16-9
+			strcpy(buffer, "D i r e c t e d   b y :");
+			font.drawString(&surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+			break;
+		case 7:
+			// TROMAN, size 16-9
+			strcpy(buffer, "David P Gray !");
+			font.drawString(&surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			break;
+		case 8:
+			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
+
+			// TROMAN, size 16-9
+			strcpy(buffer, "M u s i c   b y :");
+			font.drawString(&surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+			break;
+		case 9:
+			// TROMAN, size 16-9
+			strcpy(buffer, "David P Gray !");
+			font.drawString(&surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			break;
+		case 10:
+			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
+
+			// TROMAN, size 20-14
+			if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
+				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 18");
+
+			strcpy(buffer, "E n j o y !");
+			font.drawString(&surf, buffer, 0, 100, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			break;
+		}
+
+		_vm->_screen->displayBackground();
+		g_system->updateScreen();
+		g_system->delayMillis(1000);
+	}
+
+	return (++introTicks >= introSize);
+}
+
+intro_v2d::intro_v2d(HugoEngine *vm) : IntroHandler(vm) {
+}
+
+intro_v2d::~intro_v2d() {
+}
+
+void intro_v2d::preNewGame() {
+}
+
+void intro_v2d::introInit() {
+	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
+	surf.w = 320;
+	surf.h = 200;
+	surf.pixels = _vm->_screen->getFrontBuffer();
+	surf.pitch = 320;
+	surf.bytesPerPixel = 1;
+
+	char buffer[128];
+
+	// TROMAN, size 10-5
+	if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
+		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
+
+	if (_boot.registered)
+		sprintf(buffer, "%s  Registered Version", COPYRIGHT);
+	else
+		sprintf(buffer, "%s  Shareware Version", COPYRIGHT);
+
+	font.drawString(&surf, buffer, 0, 186, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
+
+	if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
+		// TROMAN, size 10-5
+		sprintf(buffer, "Distributed by %s.", _boot.distrib);
+		font.drawString(&surf, buffer, 0, 1, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
+	}
+
+	_vm->_screen->displayBackground();
+	g_system->updateScreen();
+	g_system->delayMillis(5000);
+}
+
+bool intro_v2d::introPlay() {
+	return true;
+}
+
+intro_v3d::intro_v3d(HugoEngine *vm) : IntroHandler(vm) {
+}
+
+intro_v3d::~intro_v3d() {
+}
+
+void intro_v3d::preNewGame() {
+}
+
+void intro_v3d::introInit() {
+	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
+	surf.w = 320;
+	surf.h = 200;
+	surf.pixels = _vm->_screen->getFrontBuffer();
+	surf.pitch = 320;
+	surf.bytesPerPixel = 1;
+
+	char buffer[128];
+	if (_boot.registered)
+		sprintf(buffer, "%s  Registered Version", COPYRIGHT);
+	else
+		sprintf(buffer,"%s  Shareware Version", COPYRIGHT);
+
+	// TROMAN, size 10-5
+	if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
+		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
+
+	font.drawString(&surf, buffer, 0, 190, 320, _TBROWN, Graphics::kTextAlignCenter);
+
+	if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
+		sprintf(buffer, "Distributed by %s.", _boot.distrib);
+		font.drawString(&surf, buffer, 0, 0, 320, _TBROWN, Graphics::kTextAlignCenter);
+	}
+
+	_vm->_screen->displayBackground();
+	g_system->updateScreen();
+	g_system->delayMillis(5000);
+
+	_vm->_file->readBackground(22); // display screen MAP_3d
+	_vm->_screen->displayBackground();
+	introTicks = 0;
+	_vm->_sound->DOSSongPtr = _vm->_sound->DOSIntroSong;
+}
+
+/**
+* Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
+* Called every tick.  Returns TRUE when complete
+*/
+bool intro_v3d::introPlay() {
+	if (_vm->getGameStatus().skipIntroFl)
+		return true;
+
+	if (introTicks < _vm->getIntroSize()) {
+		font.drawString(&surf, ".", _vm->_introX[introTicks], _vm->_introY[introTicks] - DIBOFF_Y, 320, _TBRIGHTWHITE);
+		_vm->_screen->displayBackground();
+
+		// Text boxes at various times
+		switch (introTicks) {
+		case 4:
+			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro1]);
+			break;
+		case 9:
+			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro2]);
+			break;
+		case 35:
+			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro3]);
+			break;
+		}
+	}
+
+	return (++introTicks >= _vm->getIntroSize());
+}
+
+intro_v1w::intro_v1w(HugoEngine *vm) : IntroHandler(vm) {
+}
+
+intro_v1w::~intro_v1w() {
+}
+
+void intro_v1w::preNewGame() {
+	_vm->getGameStatus().viewState = V_INTROINIT;
+}
+
+void intro_v1w::introInit() {
+}
+
+bool intro_v1w::introPlay() {
+	return true;
+}
+
+intro_v2w::intro_v2w(HugoEngine *vm) : IntroHandler(vm) {
+}
+
+intro_v2w::~intro_v2w() {
+}
+
+void intro_v2w::preNewGame() {
+}
+
+void intro_v2w::introInit() {
+	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
+
+	_vm->_screen->displayBackground();
+	g_system->updateScreen();
+	g_system->delayMillis(3000);
+}
+
+bool intro_v2w::introPlay() {
+	return true;
+}
+
+intro_v3w::intro_v3w(HugoEngine *vm) : IntroHandler(vm) {
+}
+
+intro_v3w::~intro_v3w() {
+}
+
+void intro_v3w::preNewGame() {
+}
+
+/**
+* Hugo 3 - show map and set up for introPlay()
+*/
+void intro_v3w::introInit() {
+
+	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
+
+	_vm->_screen->displayBackground();
+	g_system->updateScreen();
+	g_system->delayMillis(3000);
+	_vm->_file->readBackground(22); // display screen MAP_3w
+	_vm->_screen->displayBackground();
+	introTicks = 0;
+	_vm->_screen->loadFont(0);
+}
+
+/**
+* Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
+* Called every tick.  Returns TRUE when complete
+*/
+bool intro_v3w::introPlay() {
+	if (_vm->getGameStatus().skipIntroFl)
+		return true;
+
+	if (introTicks < _vm->getIntroSize()) {
+		// Scale viewport x_intro,y_intro to screen (offsetting y)
+		_vm->_screen->writeStr(_vm->_introX[introTicks], _vm->_introY[introTicks] - DIBOFF_Y, "x", _TBRIGHTWHITE);
+		_vm->_screen->displayBackground();
+
+		// Text boxes at various times
+		switch (introTicks) {
+		case 4:
+			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro1]);
+			break;
+		case 9:
+			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro2]);
+			break;
+		case 35:
+			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro3]);
+			break;
+		}
+	}
+
+	return (++introTicks >= _vm->getIntroSize());
+}
 } // End of namespace Hugo

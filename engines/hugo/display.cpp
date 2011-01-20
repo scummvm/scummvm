@@ -594,5 +594,112 @@ void Screen::showCursor() {
 void Screen::hideCursor() {
 	CursorMan.showMouse(false);
 }
+
+Screen_v1d::Screen_v1d(HugoEngine *vm) : Screen(vm) {
+}
+
+Screen_v1d::~Screen_v1d() {
+}
+
+/**
+* Load font file, construct font ptrs and reverse data bytes
+* TODO: This uses hardcoded fonts in hugo.dat, it should be replaced
+*       by a proper implementation of .FON files
+*/
+void Screen_v1d::loadFont(int16 fontId) {
+	debugC(2, kDebugDisplay, "loadFont(%d)", fontId);
+
+	assert(fontId < NUM_FONTS);
+
+	_fnt = fontId - FIRST_FONT;                     // Set current font number
+
+	if (fontLoadedFl[_fnt])                         // If already loaded, return
+		return;
+
+	fontLoadedFl[_fnt] = true;
+
+	memcpy(_fontdata[_fnt], _arrayFont[_fnt], _arrayFontSize[_fnt]);
+	_font[_fnt][0] = _fontdata[_fnt];               // Store height,width of fonts
+
+	int16 offset = 2;                               // Start at fontdata[2] ([0],[1] used for height,width)
+
+	// Setup the font array (127 characters)
+	for (int i = 1; i < 128; i++) {
+		_font[_fnt][i] = _fontdata[_fnt] + offset;
+		byte height = *(_fontdata[_fnt] + offset);
+		byte width  = *(_fontdata[_fnt] + offset + 1);
+
+		int16 size = height * ((width + 7) >> 3);
+		for (int j = 0; j < size; j++)
+			Utils::reverseByte(&_fontdata[_fnt][offset + 2 + j]);
+
+		offset += 2 + size;
+	}
+}
+
+/**
+* Load fonts from Hugo.dat
+* These fonts are a workaround to avoid handling TTF fonts used by DOS versions
+* TODO: Properly handle the vector based font files (win31)
+*/
+void Screen_v1d::loadFontArr(Common::File &in) {
+	for (int i = 0; i < NUM_FONTS; i++) {
+		_arrayFontSize[i] = in.readUint16BE();
+		_arrayFont[i] = (byte *)malloc(sizeof(byte) * _arrayFontSize[i]);
+		for (int j = 0; j < _arrayFontSize[i]; j++) {
+			_arrayFont[i][j] = in.readByte();
+		}
+	}
+}
+
+Screen_v1w::Screen_v1w(HugoEngine *vm) : Screen(vm) {
+}
+
+Screen_v1w::~Screen_v1w() {
+}
+
+/**
+* Load font file, construct font ptrs and reverse data bytes
+*/
+void Screen_v1w::loadFont(int16 fontId) {
+	debugC(2, kDebugDisplay, "loadFont(%d)", fontId);
+
+	_fnt = fontId - FIRST_FONT;                     // Set current font number
+
+	if (fontLoadedFl[_fnt])                         // If already loaded, return
+		return;
+
+	fontLoadedFl[_fnt] = true;
+	_vm->_file->readUIFItem(fontId, _fontdata[_fnt]);
+
+	// Compile font ptrs.  Note: First ptr points to height,width of font
+	_font[_fnt][0] = _fontdata[_fnt];               // Store height,width of fonts
+
+	int16 offset = 2;                               // Start at fontdata[2] ([0],[1] used for height,width)
+
+	// Setup the font array (127 characters)
+	for (int i = 1; i < 128; i++) {
+		_font[_fnt][i] = _fontdata[_fnt] + offset;
+		byte height = *(_fontdata[_fnt] + offset);
+		byte width  = *(_fontdata[_fnt] + offset + 1);
+
+		int16 size = height * ((width + 7) >> 3);
+		for (int j = 0; j < size; j++)
+			Utils::reverseByte(&_fontdata[_fnt][offset + 2 + j]);
+
+		offset += 2 + size;
+	}
+}
+
+/**
+* Skips the fonts used by the DOS versions
+*/
+void Screen_v1w::loadFontArr(Common::File &in) {
+	for (int i = 0; i < NUM_FONTS; i++) {
+		uint16 numElem = in.readUint16BE();
+		for (int j = 0; j < numElem; j++)
+			in.readByte();
+	}
+}
 } // End of namespace Hugo
 

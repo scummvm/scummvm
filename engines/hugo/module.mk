@@ -4,8 +4,6 @@ MODULE_OBJS := \
 	console.o \
 	detection.o \
 	display.o \
-	display_v1d.o \
-	display_v1w.o \
 	file.o \
 	file_v1d.o \
 	file_v2d.o \
@@ -14,12 +12,6 @@ MODULE_OBJS := \
 	file_v2w.o \
 	hugo.o \
 	intro.o \
-	intro_v1d.o \
-	intro_v2d.o \
-	intro_v3d.o \
-	intro_v1w.o \
-	intro_v2w.o \
-	intro_v3w.o \
 	inventory.o \
 	menu.o \
 	mouse.o \
@@ -35,10 +27,6 @@ MODULE_OBJS := \
 	parser_v3d.o \
 	route.o \
 	schedule.o \
-	schedule_v1d.o \
-	schedule_v1w.o \
-	schedule_v2d.o \
-	schedule_v3d.o \
 	sound.o \
 	util.o
 
