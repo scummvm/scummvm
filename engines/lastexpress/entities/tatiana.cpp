@@ -104,62 +104,62 @@ Tatiana::Tatiana(LastExpressEngine *engine) : Entity(engine, kEntityTatiana) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Tatiana, reset)
 	Entity::reset(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Tatiana, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(3, Tatiana, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SII(4, Tatiana, updatePosition, CarIndex, Position)
 	Entity::updatePosition(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(5, Tatiana, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(6, Tatiana, enterExitCompartment2, ObjectIndex)
 	Entity::enterExitCompartment(savepoint, kPosition_7500, kPosition_7850, kCarRedSleeping, kObjectCompartmentB);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SIIS(7, Tatiana, callSavepoint, EntityIndex, ActionIndex)
 	Entity::callSavepoint(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Tatiana, callbackActionOnDirection)
 	Entity::callbackActionOnDirection(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(9, Tatiana, updateFromTicks)
 	Entity::updateFromTicks(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(10, Tatiana, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Tatiana, callbackActionRestaurantOrSalon)
 	Entity::callbackActionRestaurantOrSalon(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(12, Tatiana, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(13, Tatiana, updateEntity, CarIndex, EntityPosition)
@@ -173,7 +173,7 @@ IMPLEMENT_FUNCTION_II(13, Tatiana, updateEntity, CarIndex, EntityPosition)
 	}
 
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Tatiana, function14)
@@ -202,7 +202,7 @@ IMPLEMENT_FUNCTION(14, Tatiana, function14)
 		setup_enterExitCompartment2(getProgress().chapter == kChapter1 ? "603Db" : "673Db", kObjectCompartmentB);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Tatiana, function15)
@@ -232,7 +232,7 @@ IMPLEMENT_FUNCTION(15, Tatiana, function15)
 		CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(16, Tatiana, function16, uint32)
@@ -334,7 +334,7 @@ IMPLEMENT_FUNCTION_I(16, Tatiana, function16, uint32)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Tatiana, chapter1)
@@ -358,7 +358,7 @@ IMPLEMENT_FUNCTION(17, Tatiana, chapter1)
 		getData()->car = kCarRestaurant;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Tatiana, function18)
@@ -414,7 +414,7 @@ IMPLEMENT_FUNCTION(18, Tatiana, function18)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Tatiana, chapter1Handler)
@@ -477,7 +477,7 @@ label_tatiana_chapter1_2:
 		setup_function20();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Tatiana, function20)
@@ -520,7 +520,7 @@ IMPLEMENT_FUNCTION(20, Tatiana, function20)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Tatiana, function21)
@@ -603,7 +603,7 @@ IMPLEMENT_FUNCTION(21, Tatiana, function21)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Tatiana, function22)
@@ -704,7 +704,7 @@ label_update:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Tatiana, function23)
@@ -733,7 +733,7 @@ IMPLEMENT_FUNCTION(23, Tatiana, function23)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Tatiana, function24)
@@ -754,7 +754,7 @@ IMPLEMENT_FUNCTION(24, Tatiana, function24)
 		getObjects()->update(kObject49, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObject41, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Tatiana, chapter2)
@@ -779,7 +779,7 @@ IMPLEMENT_FUNCTION(25, Tatiana, chapter2)
 		getData()->clothes = kClothes2;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Tatiana, chapter2Handler)
@@ -816,7 +816,7 @@ IMPLEMENT_FUNCTION(26, Tatiana, chapter2Handler)
 		params->param1 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Tatiana, function27)
@@ -856,7 +856,7 @@ IMPLEMENT_FUNCTION(27, Tatiana, function27)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Tatiana, function28)
@@ -889,7 +889,7 @@ IMPLEMENT_FUNCTION(28, Tatiana, function28)
 		getEntities()->drawSequenceLeft(kEntityTatiana, "BLANK");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Tatiana, function29)
@@ -933,7 +933,7 @@ IMPLEMENT_FUNCTION(29, Tatiana, function29)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(30, Tatiana, function30)
@@ -963,7 +963,7 @@ IMPLEMENT_FUNCTION(30, Tatiana, function30)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, Tatiana, chapter3)
@@ -995,7 +995,7 @@ IMPLEMENT_FUNCTION(31, Tatiana, chapter3)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Tatiana, chapter3Handler)
@@ -1105,7 +1105,7 @@ IMPLEMENT_FUNCTION(32, Tatiana, chapter3Handler)
 		parameters->param4 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(33, Tatiana, function33)
@@ -1140,7 +1140,7 @@ IMPLEMENT_FUNCTION(33, Tatiana, function33)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(34, Tatiana, function34)
@@ -1179,7 +1179,7 @@ IMPLEMENT_FUNCTION(34, Tatiana, function34)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(35, Tatiana, function35)
@@ -1224,7 +1224,7 @@ label_callback_1:
 	case kAction191668032:
 		setup_function36();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(36, Tatiana, function36)
@@ -1270,7 +1270,7 @@ IMPLEMENT_FUNCTION(36, Tatiana, function36)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, Tatiana, function37)
@@ -1395,7 +1395,7 @@ IMPLEMENT_FUNCTION(37, Tatiana, function37)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(38, Tatiana, function38)
@@ -1504,7 +1504,7 @@ IMPLEMENT_FUNCTION(38, Tatiana, function38)
 		setup_enterExitCompartment("673Df", kObjectCompartmentF);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(39, Tatiana, function39)
@@ -1524,7 +1524,7 @@ IMPLEMENT_FUNCTION(39, Tatiana, function39)
 		getObjects()->update(kObject49, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(40, Tatiana, function40)
@@ -1551,7 +1551,7 @@ IMPLEMENT_FUNCTION(40, Tatiana, function40)
 			CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(41, Tatiana, function41)
@@ -1653,7 +1653,7 @@ IMPLEMENT_FUNCTION(41, Tatiana, function41)
 		setup_savegame(kSavegameTypeTime, kTimeNone);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(42, Tatiana, function42, CarIndex, EntityPosition)
@@ -1663,7 +1663,7 @@ IMPLEMENT_FUNCTION_II(42, Tatiana, function42, CarIndex, EntityPosition)
 	}
 
 	Entity::updateEntity(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(43, Tatiana, chapter4)
@@ -1690,7 +1690,7 @@ IMPLEMENT_FUNCTION(43, Tatiana, chapter4)
 		ENTITY_PARAM(0, 1) = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(44, Tatiana, chapter4Handler)
@@ -1708,7 +1708,7 @@ IMPLEMENT_FUNCTION(44, Tatiana, chapter4Handler)
 			setup_function45();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(45, Tatiana, function45)
@@ -1748,7 +1748,7 @@ IMPLEMENT_FUNCTION(45, Tatiana, function45)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(46, Tatiana, function46)
@@ -1882,7 +1882,7 @@ IMPLEMENT_FUNCTION(46, Tatiana, function46)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(47, Tatiana, function47)
@@ -1925,7 +1925,7 @@ IMPLEMENT_FUNCTION(47, Tatiana, function47)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(48, Tatiana, function48)
@@ -2048,7 +2048,7 @@ label_end:
 		setup_updateFromTime(1800);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(49, Tatiana, function49)
@@ -2069,7 +2069,7 @@ IMPLEMENT_FUNCTION(49, Tatiana, function49)
 		setup_function50();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(50, Tatiana, function50)
@@ -2127,7 +2127,7 @@ IMPLEMENT_FUNCTION(50, Tatiana, function50)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(51, Tatiana, function51)
@@ -2135,7 +2135,7 @@ IMPLEMENT_FUNCTION(51, Tatiana, function51)
 		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
 		getObjects()->update(kObject48, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(52, Tatiana, chapter5)
@@ -2157,13 +2157,13 @@ IMPLEMENT_FUNCTION(52, Tatiana, chapter5)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(53, Tatiana, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_function54();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(54, Tatiana, function54)
@@ -2250,7 +2250,7 @@ IMPLEMENT_FUNCTION(54, Tatiana, function54)
 		setup_function55();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(55, Tatiana, function55)
@@ -2267,6 +2267,6 @@ IMPLEMENT_FUNCTION(55, Tatiana, function55)
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 86);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

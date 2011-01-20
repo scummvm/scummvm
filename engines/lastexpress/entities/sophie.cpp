@@ -79,7 +79,7 @@ Sophie::Sophie(LastExpressEngine *engine) : Entity(engine, kEntitySophie) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Sophie, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(2, Sophie, updateEntity, CarIndex, EntityPosition)
@@ -128,7 +128,7 @@ IMPLEMENT_FUNCTION_II(2, Sophie, updateEntity, CarIndex, EntityPosition)
 		CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(3, Sophie, chaptersHandler)
@@ -200,7 +200,7 @@ IMPLEMENT_FUNCTION(3, Sophie, chaptersHandler)
 		setup_updateEntity(kCarRedSleeping, kPosition_4840);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Sophie, chapter1)
@@ -218,32 +218,32 @@ IMPLEMENT_FUNCTION(4, Sophie, chapter1)
 		getData()->car = kCarRedSleeping;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Sophie, function5)
 	DEFAULT_ACTION_IMPLEMENTATION()
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Sophie, chapter2)
 	CHAPTER_IMPLEMENTATION()
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Sophie, chapter3)
 	CHAPTER_IMPLEMENTATION()
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Sophie, chapter4)
 	CHAPTER_IMPLEMENTATION()
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Sophie, function9)
 	DEFAULT_ACTION_IMPLEMENTATION()
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Sophie, chapter5)
@@ -265,13 +265,13 @@ IMPLEMENT_FUNCTION(10, Sophie, chapter5)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Sophie, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_nullfunction();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(12, Sophie)

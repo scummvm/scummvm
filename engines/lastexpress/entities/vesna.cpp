@@ -77,22 +77,22 @@ Vesna::Vesna(LastExpressEngine *engine) : Entity(engine, kEntityVesna) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Vesna, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Vesna, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(3, Vesna, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(4, Vesna, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(5, Vesna, updateEntity, CarIndex, EntityPosition)
@@ -103,12 +103,12 @@ IMPLEMENT_FUNCTION_II(5, Vesna, updateEntity, CarIndex, EntityPosition)
 	}
 
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(6, Vesna, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(7, Vesna, updateEntity2, CarIndex, EntityPosition)
@@ -138,22 +138,22 @@ IMPLEMENT_FUNCTION_II(7, Vesna, updateEntity2, CarIndex, EntityPosition)
 		CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Vesna, callbackActionRestaurantOrSalon)
 	Entity::callbackActionRestaurantOrSalon(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Vesna, callbackActionOnDirection)
 	Entity::callbackActionOnDirection(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(10, Vesna, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Vesna, function11)
@@ -249,7 +249,7 @@ IMPLEMENT_FUNCTION(11, Vesna, function11)
 		CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Vesna, chapter1)
@@ -269,7 +269,7 @@ IMPLEMENT_FUNCTION(12, Vesna, chapter1)
 		getData()->car = kCarRestaurant;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Vesna, chapter1Handler)
@@ -294,7 +294,7 @@ IMPLEMENT_FUNCTION(13, Vesna, chapter1Handler)
 		setup_updateEntity2(kCarRedSleeping, kPosition_3050);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Vesna, function14)
@@ -313,7 +313,7 @@ IMPLEMENT_FUNCTION(14, Vesna, function14)
 		setup_function11();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Vesna, function15)
@@ -325,7 +325,7 @@ IMPLEMENT_FUNCTION(15, Vesna, function15)
 		getEntities()->clearSequences(kEntityVesna);
 		getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Vesna, chapter2)
@@ -348,7 +348,7 @@ IMPLEMENT_FUNCTION(16, Vesna, chapter2)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Vesna, chapter2Handler)
@@ -366,7 +366,7 @@ IMPLEMENT_FUNCTION(17, Vesna, chapter2Handler)
 		setup_function11();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Vesna, function18)
@@ -464,7 +464,7 @@ IMPLEMENT_FUNCTION(18, Vesna, function18)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Vesna, chapter3)
@@ -486,7 +486,7 @@ IMPLEMENT_FUNCTION(19, Vesna, chapter3)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Vesna, chapter3Handler)
@@ -617,7 +617,7 @@ IMPLEMENT_FUNCTION(20, Vesna, chapter3Handler)
 		getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Vesna, function21)
@@ -717,7 +717,7 @@ IMPLEMENT_FUNCTION(21, Vesna, function21)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Vesna, function22)
@@ -817,7 +817,7 @@ IMPLEMENT_FUNCTION(22, Vesna, function22)
 		setup_callbackActionRestaurantOrSalon();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Vesna, function23)
@@ -861,7 +861,7 @@ IMPLEMENT_FUNCTION(23, Vesna, function23)
 		getObjects()->update(kObjectCompartmentG, kEntityVesna, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Vesna, chapter4)
@@ -889,7 +889,7 @@ IMPLEMENT_FUNCTION(24, Vesna, chapter4)
 		if (getCallback() == 1)
 			setup_function25();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Vesna, function25)
@@ -957,7 +957,7 @@ IMPLEMENT_FUNCTION(25, Vesna, function25)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Vesna, function26)
@@ -1010,7 +1010,7 @@ IMPLEMENT_FUNCTION(26, Vesna, function26)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Vesna, function27)
@@ -1023,7 +1023,7 @@ IMPLEMENT_FUNCTION(27, Vesna, function27)
 		getData()->car = kCarRedSleeping;
 		getData()->inventoryItem = kItemNone;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Vesna, chapter5)
@@ -1043,7 +1043,7 @@ IMPLEMENT_FUNCTION(28, Vesna, chapter5)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Vesna, chapter5Handler)
@@ -1074,7 +1074,7 @@ IMPLEMENT_FUNCTION(29, Vesna, chapter5Handler)
 		setup_function30();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(30, Vesna, function30)
@@ -1153,7 +1153,7 @@ IMPLEMENT_FUNCTION(30, Vesna, function30)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(31, Vesna)

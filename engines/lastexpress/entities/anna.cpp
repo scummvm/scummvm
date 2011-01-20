@@ -128,47 +128,47 @@ Anna::Anna(LastExpressEngine *engine) : Entity(engine, kEntityAnna) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Anna, reset)
 	Entity::reset(savepoint, true, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Anna, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SII(3, Anna, updatePosition, CarIndex, Position)
 	Entity::updatePosition(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(4, Anna, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Anna, callbackActionOnDirection)
 	Entity::callbackActionOnDirection(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SIIS(6, Anna, callSavepoint, EntityIndex, ActionIndex)
 	Entity::callSavepoint(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(7, Anna, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Anna, callbackActionRestaurantOrSalon)
 	Entity::callbackActionRestaurantOrSalon(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(9, Anna, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(10, Anna, updateEntity, CarIndex, EntityPosition)
@@ -182,12 +182,12 @@ IMPLEMENT_FUNCTION_II(10, Anna, updateEntity, CarIndex, EntityPosition)
 	}
 
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(11, Anna, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Anna, function12)
@@ -399,17 +399,17 @@ IMPLEMENT_FUNCTION(12, Anna, function12)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SSI(13, Anna, draw2, EntityIndex)
 	Entity::draw2(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(14, Anna, updateFromTicks, uint32)
 	Entity::updateFromTicks(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IS(15, Anna, function15, TimeValue)
@@ -538,7 +538,7 @@ IMPLEMENT_FUNCTION_IS(15, Anna, function15, TimeValue)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Anna, chapter1)
@@ -564,7 +564,7 @@ IMPLEMENT_FUNCTION(16, Anna, chapter1)
 		getData()->clothes = kClothesDefault;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(17, Anna, function17, uint32, uint32)
@@ -653,7 +653,7 @@ IMPLEMENT_FUNCTION_II(17, Anna, function17, uint32, uint32)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(18, Anna, function18, TimeValue)
@@ -760,7 +760,7 @@ IMPLEMENT_FUNCTION_I(18, Anna, function18, TimeValue)
 		CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Anna, chapter1Handler)
@@ -801,7 +801,7 @@ IMPLEMENT_FUNCTION(19, Anna, chapter1Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Anna, function20)
@@ -832,7 +832,7 @@ IMPLEMENT_FUNCTION(20, Anna, function20)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Anna, function21)
@@ -878,7 +878,7 @@ IMPLEMENT_FUNCTION(21, Anna, function21)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Anna, function22)
@@ -896,7 +896,7 @@ IMPLEMENT_FUNCTION(22, Anna, function22)
 		setup_function23();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Anna, function23)
@@ -936,7 +936,7 @@ IMPLEMENT_FUNCTION(23, Anna, function23)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Anna, function24)
@@ -969,7 +969,7 @@ IMPLEMENT_FUNCTION(24, Anna, function24)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Anna, function25)
@@ -1010,7 +1010,7 @@ IMPLEMENT_FUNCTION(25, Anna, function25)
 		setup_function18(kTime1138500);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Anna, function26)
@@ -1063,7 +1063,7 @@ IMPLEMENT_FUNCTION(26, Anna, function26)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Anna, function27)
@@ -1102,7 +1102,7 @@ IMPLEMENT_FUNCTION(27, Anna, function27)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Anna, function28)
@@ -1141,7 +1141,7 @@ IMPLEMENT_FUNCTION(28, Anna, function28)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Anna, function29)
@@ -1238,7 +1238,7 @@ IMPLEMENT_FUNCTION(29, Anna, function29)
 		setup_function30();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(30, Anna, function30)
@@ -1301,7 +1301,7 @@ IMPLEMENT_FUNCTION(30, Anna, function30)
 		params->param1 = getEntities()->isPlayerPosition(kCarRestaurant, 56);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, Anna, function31)
@@ -1344,7 +1344,7 @@ IMPLEMENT_FUNCTION(31, Anna, function31)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Anna, function32)
@@ -1378,7 +1378,7 @@ IMPLEMENT_FUNCTION(32, Anna, function32)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(33, Anna, function33)
@@ -1401,7 +1401,7 @@ IMPLEMENT_FUNCTION(33, Anna, function33)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(34, Anna, function34)
@@ -1473,7 +1473,7 @@ label_callback_1:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(35, Anna, function35)
@@ -1577,7 +1577,7 @@ IMPLEMENT_FUNCTION(35, Anna, function35)
 		setup_enterExitCompartment("608Cf", kObjectCompartmentF);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(36, Anna, function36)
@@ -1614,7 +1614,7 @@ IMPLEMENT_FUNCTION(36, Anna, function36)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, Anna, function37)
@@ -1632,7 +1632,7 @@ IMPLEMENT_FUNCTION(37, Anna, function37)
 		setup_function38();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(38, Anna, function38)
@@ -1654,7 +1654,7 @@ IMPLEMENT_FUNCTION(38, Anna, function38)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(39, Anna, function39, CarIndex, EntityPosition)
@@ -1700,7 +1700,7 @@ IMPLEMENT_FUNCTION_II(39, Anna, function39, CarIndex, EntityPosition)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(40, Anna, function40)
@@ -1790,7 +1790,7 @@ IMPLEMENT_FUNCTION(40, Anna, function40)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(41, Anna, function41)
@@ -1860,7 +1860,7 @@ IMPLEMENT_FUNCTION(41, Anna, function41)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(42, Anna, chapter2)
@@ -1883,7 +1883,7 @@ IMPLEMENT_FUNCTION(42, Anna, chapter2)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(43, Anna, chapter2Handler)
@@ -1930,7 +1930,7 @@ IMPLEMENT_FUNCTION(43, Anna, chapter2Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(44, Anna, chapter3)
@@ -1956,7 +1956,7 @@ IMPLEMENT_FUNCTION(44, Anna, chapter3)
 		getObjects()->update(kObject53, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(45, Anna, function45, bool)
@@ -1995,7 +1995,7 @@ IMPLEMENT_FUNCTION_I(45, Anna, function45, bool)
 		setup_updateFromTime(75);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(46, Anna, chapter3Handler)
@@ -2022,7 +2022,7 @@ IMPLEMENT_FUNCTION(46, Anna, chapter3Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(47, Anna, function47)
@@ -2079,7 +2079,7 @@ IMPLEMENT_FUNCTION(47, Anna, function47)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(48, Anna, function48)
@@ -2183,7 +2183,7 @@ label_callback_4:
 		getEntities()->drawSequenceLeft(kEntityAnna, "BLANK");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(49, Anna, leaveTableWithAugust)
@@ -2204,7 +2204,7 @@ IMPLEMENT_FUNCTION(49, Anna, leaveTableWithAugust)
 		getEntities()->drawSequenceRight(kEntityAnna, "026J1");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(50, Anna, function50)
@@ -2239,7 +2239,7 @@ IMPLEMENT_FUNCTION(50, Anna, function50)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(51, Anna, function51)
@@ -2339,7 +2339,7 @@ IMPLEMENT_FUNCTION(51, Anna, function51)
 		getEntities()->drawSequenceLeft(kEntityAnna, "BLANK");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(52, Anna, function52)
@@ -2376,7 +2376,7 @@ IMPLEMENT_FUNCTION(52, Anna, function52)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(53, Anna, function53)
@@ -2527,7 +2527,7 @@ IMPLEMENT_FUNCTION(53, Anna, function53)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(54, Anna, function54)
@@ -2690,7 +2690,7 @@ IMPLEMENT_FUNCTION(54, Anna, function54)
 		getObjects()->update(kObject53, kEntityAnna, kObjectLocation1, kCursorNormal, kCursorNormal);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(55, Anna, function55)
@@ -2729,7 +2729,7 @@ IMPLEMENT_FUNCTION(55, Anna, function55)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(56, Anna, function56)
@@ -2748,7 +2748,7 @@ IMPLEMENT_FUNCTION(56, Anna, function56)
 		setup_function57();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(57, Anna, function57)
@@ -2839,7 +2839,7 @@ IMPLEMENT_FUNCTION(57, Anna, function57)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(58, Anna, function58)
@@ -2863,7 +2863,7 @@ IMPLEMENT_FUNCTION(58, Anna, function58)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(59, Anna, function59)
@@ -3004,7 +3004,7 @@ IMPLEMENT_FUNCTION(59, Anna, function59)
 		getObjects()->update(kObject53, kEntityAnna, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(60, Anna, function60)
@@ -3050,7 +3050,7 @@ IMPLEMENT_FUNCTION(60, Anna, function60)
 		setup_enterExitCompartment("629EF", kObjectCompartmentF);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(61, Anna, function61)
@@ -3113,7 +3113,7 @@ IMPLEMENT_FUNCTION(61, Anna, function61)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(62, Anna, function62)
@@ -3138,7 +3138,7 @@ IMPLEMENT_FUNCTION(62, Anna, function62)
 		params->param1 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(63, Anna, function63)
@@ -3167,7 +3167,7 @@ IMPLEMENT_FUNCTION(63, Anna, function63)
 		setup_savegame(kSavegameTypeEvent, kEventAnnaKilled);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(64, Anna, baggage)
@@ -3219,7 +3219,7 @@ IMPLEMENT_FUNCTION(64, Anna, baggage)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(65, Anna, function65)
@@ -3235,7 +3235,7 @@ IMPLEMENT_FUNCTION(65, Anna, function65)
 		setCallback(1);
 		setup_function15(kTimeEnd, "NONE");
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(66, Anna, chapter4)
@@ -3258,7 +3258,7 @@ IMPLEMENT_FUNCTION(66, Anna, chapter4)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(67, Anna, chapter4Handler)
@@ -3364,7 +3364,7 @@ label_next:
 		params->param3 = 1;
 		getData()->inventoryItem = kItemInvalid;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(68, Anna, function68)
@@ -3397,7 +3397,7 @@ IMPLEMENT_FUNCTION(68, Anna, function68)
 		params->param1 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(69, Anna, function69)
@@ -3490,7 +3490,7 @@ IMPLEMENT_FUNCTION(69, Anna, function69)
 		getEntities()->drawSequenceLeft(kEntityAnna, "BLANK");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(70, Anna, function70)
@@ -3521,7 +3521,7 @@ IMPLEMENT_FUNCTION(70, Anna, function70)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(71, Anna, function71)
@@ -3573,7 +3573,7 @@ IMPLEMENT_FUNCTION(71, Anna, function71)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(72, Anna, function72, CarIndex, EntityPosition)
@@ -3615,7 +3615,7 @@ IMPLEMENT_FUNCTION_II(72, Anna, function72, CarIndex, EntityPosition)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(73, Anna, function73)
@@ -3690,7 +3690,7 @@ IMPLEMENT_FUNCTION(73, Anna, function73)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(74, Anna, chapter5)
@@ -3715,7 +3715,7 @@ IMPLEMENT_FUNCTION(74, Anna, chapter5)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(75, Anna, chapter5Handler)
@@ -3740,13 +3740,13 @@ IMPLEMENT_FUNCTION(75, Anna, chapter5Handler)
 		setup_savegame(kSavegameTypeEvent, kEventAnnaBaggageTies);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(76, Anna, function76)
 	if (savepoint.action == kAction158480160)
 		setup_function77();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(77, Anna, function77)
@@ -3810,7 +3810,7 @@ IMPLEMENT_FUNCTION(77, Anna, function77)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(78, Anna, function78)
@@ -3849,7 +3849,7 @@ IMPLEMENT_FUNCTION(78, Anna, function78)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(79, Anna, function79)
@@ -3902,7 +3902,7 @@ IMPLEMENT_FUNCTION(79, Anna, function79)
 		getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneNone, true);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(80, Anna, function80)
@@ -3971,7 +3971,7 @@ IMPLEMENT_FUNCTION(80, Anna, function80)
 		setup_savegame(kSavegameTypeEvent, kEventKronosOpenFirebird);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(81, Anna, finalSequence)
@@ -4027,6 +4027,6 @@ IMPLEMENT_FUNCTION(81, Anna, finalSequence)
 		setup_savegame(kSavegameTypeEvent, kEventFinalSequence);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

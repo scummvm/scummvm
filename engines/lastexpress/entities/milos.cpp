@@ -84,47 +84,47 @@ Milos::Milos(LastExpressEngine *engine) : Entity(engine, kEntityMilos) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Milos, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Milos, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(3, Milos, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(4, Milos, enterExitCompartment2, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Milos, callbackActionOnDirection)
 	Entity::callbackActionOnDirection(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(6, Milos, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(7, Milos, playSound16)
 	Entity::playSound(savepoint, false, SoundManager::kFlagDefault);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(8, Milos, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(9, Milos, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(10, Milos, enterCompartmentDialog, CarIndex, EntityPosition)
@@ -161,7 +161,7 @@ IMPLEMENT_FUNCTION_II(10, Milos, enterCompartmentDialog, CarIndex, EntityPositio
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
@@ -355,7 +355,7 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 		getSavePoints()->push(kEntityMilos, kEntityCoudert, kAction123199584);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Milos, chapter1)
@@ -380,7 +380,7 @@ IMPLEMENT_FUNCTION(12, Milos, chapter1)
 		getSavePoints()->addData(kEntityMilos, kAction259125998, 3);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Milos, function13)
@@ -405,7 +405,7 @@ IMPLEMENT_FUNCTION(13, Milos, function13)
 		getEntities()->drawSequenceRight(kEntityMilos, "009D1");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Milos, function14)
@@ -713,7 +713,7 @@ label_callback_12:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Milos, chapter1Handler)
@@ -767,8 +767,7 @@ IMPLEMENT_FUNCTION(15, Milos, chapter1Handler)
 		}
 		break;
 	}
-
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Milos, function16)
@@ -856,7 +855,7 @@ IMPLEMENT_FUNCTION(16, Milos, function16)
 		setup_enterCompartmentDialog(kCarRedSleeping, kPosition_3050);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Milos, function17)
@@ -864,7 +863,7 @@ IMPLEMENT_FUNCTION(17, Milos, function17)
 		setCallback(1);
 		setup_function11(kTimeBedTime);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Milos, function18)
@@ -876,7 +875,7 @@ IMPLEMENT_FUNCTION(18, Milos, function18)
 		getEntities()->clearSequences(kEntityMilos);
 		getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Milos, chapter2)
@@ -899,7 +898,7 @@ IMPLEMENT_FUNCTION(19, Milos, chapter2)
 		getObjects()->update(kObject46, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Milos, chapter2Handler)
@@ -945,7 +944,7 @@ IMPLEMENT_FUNCTION(20, Milos, chapter2Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Milos, function21)
@@ -1009,7 +1008,7 @@ IMPLEMENT_FUNCTION(21, Milos, function21)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Milos, chapter3)
@@ -1036,7 +1035,7 @@ IMPLEMENT_FUNCTION(22, Milos, chapter3)
 		ENTITY_PARAM(0, 4) = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Milos, function23)
@@ -1095,7 +1094,7 @@ IMPLEMENT_FUNCTION(23, Milos, function23)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Milos, function24)
@@ -1275,7 +1274,7 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Milos, function25)
@@ -1377,7 +1376,7 @@ IMPLEMENT_FUNCTION(25, Milos, function25)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
@@ -1452,7 +1451,7 @@ IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(27, Milos, function27, CarIndex, EntityPosition)
@@ -1483,7 +1482,7 @@ IMPLEMENT_FUNCTION_II(27, Milos, function27, CarIndex, EntityPosition)
 			CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Milos, chapter4)
@@ -1505,7 +1504,7 @@ IMPLEMENT_FUNCTION(28, Milos, chapter4)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Milos, chapter4Handler)
@@ -1589,7 +1588,7 @@ IMPLEMENT_FUNCTION(29, Milos, chapter4Handler)
 	}
 
 #undef TIME_CHECK_PLAYSOUND_MILOS
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(30, Milos, function30)
@@ -1627,7 +1626,7 @@ IMPLEMENT_FUNCTION(30, Milos, function30)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, Milos, function31)
@@ -1659,7 +1658,7 @@ IMPLEMENT_FUNCTION(31, Milos, function31)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Milos, function32)
@@ -1672,7 +1671,7 @@ IMPLEMENT_FUNCTION(32, Milos, function32)
 		getData()->car = kCarCoalTender;
 		getData()->inventoryItem = kItemNone;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(33, Milos, chapter5)
@@ -1694,7 +1693,7 @@ IMPLEMENT_FUNCTION(33, Milos, chapter5)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
@@ -1794,12 +1793,12 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 		setup_savegame(kSavegameTypeEvent, kEventLocomotiveRestartTrain);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(35, Milos, function35)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityMilos);
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

@@ -101,52 +101,52 @@ Abbot::Abbot(LastExpressEngine *engine) : Entity(engine, kEntityAbbot) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Abbot, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Abbot, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(3, Abbot, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(4, Abbot, enterExitCompartment2, ObjectIndex)
 	Entity::enterExitCompartment(savepoint, kPosition_6470, kPosition_6130, kCarRedSleeping, kObjectCompartmentC, true, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Abbot, callbackActionOnDirection)
 	Entity::callbackActionOnDirection(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SSI(6, Abbot, draw2, EntityIndex)
 	Entity::draw2(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(7, Abbot, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(8, Abbot, updateFromTicks, uint32)
 	Entity::updateFromTicks(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(9, Abbot, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(10, Abbot, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(11, Abbot, updateEntity, CarIndex, EntityPosition)
@@ -163,34 +163,34 @@ IMPLEMENT_FUNCTION_II(11, Abbot, updateEntity, CarIndex, EntityPosition)
 	}
 
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SIIS(12, Abbot, callSavepoint, EntityIndex, ActionIndex)
 	Entity::callSavepoint(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SII(13, Abbot, updatePosition, CarIndex, Position)
 	Entity::updatePosition(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Abbot, callbackActionRestaurantOrSalon)
 	Entity::callbackActionRestaurantOrSalon(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Abbot, chapter1)
 	if (savepoint.action == kActionDefault)
 		getSavePoints()->addData(kEntityAbbot, kAction203073664, 0);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Abbot, chapter2)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityAbbot);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Abbot, chapter3)
@@ -213,7 +213,7 @@ IMPLEMENT_FUNCTION(17, Abbot, chapter3)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Abbot, chapter3Handler)
@@ -272,7 +272,7 @@ IMPLEMENT_FUNCTION(18, Abbot, chapter3Handler)
 		setup_callbackActionRestaurantOrSalon();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Abbot, function19)
@@ -318,7 +318,7 @@ IMPLEMENT_FUNCTION(19, Abbot, function19)
 			break;
 		}
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Abbot, function20)
@@ -335,7 +335,7 @@ IMPLEMENT_FUNCTION(20, Abbot, function20)
 		getEntities()->drawSequenceLeft(kEntityAbbot, "509A");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Abbot, function21)
@@ -409,7 +409,7 @@ IMPLEMENT_FUNCTION(21, Abbot, function21)
 		setup_draw("029B");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Abbot, function22)
@@ -456,7 +456,7 @@ IMPLEMENT_FUNCTION(22, Abbot, function22)
 		getEntities()->drawSequenceLeft(kEntityAbbot, "BLANK");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Abbot, function23)
@@ -508,7 +508,7 @@ IMPLEMENT_FUNCTION(23, Abbot, function23)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Abbot, function24)
@@ -560,7 +560,7 @@ IMPLEMENT_FUNCTION(24, Abbot, function24)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Abbot, function25)
@@ -609,7 +609,7 @@ IMPLEMENT_FUNCTION(25, Abbot, function25)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Abbot, function26)
@@ -634,7 +634,7 @@ IMPLEMENT_FUNCTION(26, Abbot, function26)
 		break;
 
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Abbot, function27)
@@ -683,7 +683,7 @@ IMPLEMENT_FUNCTION(27, Abbot, function27)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Abbot, function28)
@@ -711,7 +711,7 @@ IMPLEMENT_FUNCTION(28, Abbot, function28)
 	case kAction222609266:
 		setup_function30();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Abbot, function29)
@@ -776,7 +776,7 @@ IMPLEMENT_FUNCTION(29, Abbot, function29)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(30, Abbot, function30)
@@ -832,7 +832,7 @@ switch (savepoint.action) {
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, Abbot, function31)
@@ -940,7 +940,7 @@ IMPLEMENT_FUNCTION(31, Abbot, function31)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Abbot, function32)
@@ -976,7 +976,7 @@ IMPLEMENT_FUNCTION(32, Abbot, function32)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(33, Abbot, function33)
@@ -1014,7 +1014,7 @@ IMPLEMENT_FUNCTION(33, Abbot, function33)
 		setup_function34();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(34, Abbot, function34)
@@ -1070,7 +1070,7 @@ IMPLEMENT_FUNCTION(34, Abbot, function34)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(35, Abbot, function35)
@@ -1132,7 +1132,7 @@ IMPLEMENT_FUNCTION(35, Abbot, function35)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(36, Abbot, function36)
@@ -1200,7 +1200,7 @@ IMPLEMENT_FUNCTION(36, Abbot, function36)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, Abbot, function37)
@@ -1236,7 +1236,7 @@ IMPLEMENT_FUNCTION(37, Abbot, function37)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(38, Abbot, function38)
@@ -1256,7 +1256,7 @@ IMPLEMENT_FUNCTION(38, Abbot, function38)
 			getEntities()->drawSequenceLeft(kEntityAbbot, "508B");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(39, Abbot, chapter4)
@@ -1278,7 +1278,7 @@ IMPLEMENT_FUNCTION(39, Abbot, chapter4)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(40, Abbot, function40, CarIndex, EntityPosition)
@@ -1313,7 +1313,7 @@ IMPLEMENT_FUNCTION_II(40, Abbot, function40, CarIndex, EntityPosition)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(41, Abbot, chapter4Handler)
@@ -1343,7 +1343,7 @@ IMPLEMENT_FUNCTION(41, Abbot, chapter4Handler)
 		getEntities()->drawSequenceLeft(kEntityAbbot, "BLANK");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(42, Abbot, function42)
@@ -1395,7 +1395,7 @@ IMPLEMENT_FUNCTION(42, Abbot, function42)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(43, Abbot, function43)
@@ -1507,7 +1507,7 @@ label_callback_1:
 		params->param1 = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(44, Abbot, function44)
@@ -1530,7 +1530,7 @@ IMPLEMENT_FUNCTION(44, Abbot, function44)
 		setup_function45();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(45, Abbot, function45)
@@ -1571,7 +1571,7 @@ IMPLEMENT_FUNCTION(45, Abbot, function45)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(46, Abbot, function46)
@@ -1591,7 +1591,7 @@ IMPLEMENT_FUNCTION(46, Abbot, function46)
 			setup_drinkAfterDefuse();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(47, Abbot, drinkAfterDefuse)
@@ -1635,7 +1635,7 @@ IMPLEMENT_FUNCTION(47, Abbot, drinkAfterDefuse)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(48, Abbot, function48)
@@ -1742,7 +1742,7 @@ IMPLEMENT_FUNCTION(48, Abbot, function48)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(49, Abbot, pickBomb)
@@ -1810,7 +1810,7 @@ IMPLEMENT_FUNCTION(49, Abbot, pickBomb)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(50, Abbot, chapter5)
@@ -1832,13 +1832,13 @@ IMPLEMENT_FUNCTION(50, Abbot, chapter5)
 		getData()->clothes = kClothesDefault;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(51, Abbot, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_function52();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(52, Abbot, function52)
@@ -1858,7 +1858,7 @@ IMPLEMENT_FUNCTION(52, Abbot, function52)
 		setup_function53();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(53, Abbot, function53)
@@ -1905,6 +1905,6 @@ IMPLEMENT_FUNCTION(53, Abbot, function53)
 		getScenes()->processScene();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

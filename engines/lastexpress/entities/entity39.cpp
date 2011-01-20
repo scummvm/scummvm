@@ -52,31 +52,31 @@ Entity39::Entity39(LastExpressEngine *engine) : Entity(engine, kEntity39) {
 IMPLEMENT_FUNCTION(1, Entity39, chapter1)
 	if (savepoint.action == kActionDefault)
 		setup_process();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(2, Entity39, chapter2)
 	if (savepoint.action == kActionDefault)
 		setup_process();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(3, Entity39, chapter3)
 	if (savepoint.action == kActionDefault)
 		setup_process();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Entity39, chapter4)
 	if (savepoint.action == kActionDefault)
 		setup_process();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Entity39, chapter5)
 	if (savepoint.action == kActionDefault)
 		setup_process();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Entity39, process)
@@ -98,6 +98,6 @@ IMPLEMENT_FUNCTION(6, Entity39, process)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

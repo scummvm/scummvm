@@ -67,47 +67,47 @@ Hadija::Hadija(LastExpressEngine *engine) : Entity(engine, kEntityHadija) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Hadija, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(2, Hadija, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(3, Hadija, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(4, Hadija, updateFromTime)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(5, Hadija, updateEntity, CarIndex, EntityPosition)
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Hadija, compartment6)
 	COMPARTMENT_TO(Hadija, kObjectCompartment6, kPosition_4070, "619Cf", "619Df");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Hadija, compartment8)
 	COMPARTMENT_TO(Hadija, kObjectCompartment8, kPosition_2740, "619Ch", "619Dh");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Hadija, compartment6to8)
 	COMPARTMENT_FROM_TO(Hadija, kObjectCompartment6, kPosition_4070, "619Bf", kObjectCompartment8, kPosition_2740, "619Ah");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Hadija, compartment8to6)
 	COMPARTMENT_FROM_TO(Hadija, kObjectCompartment8, kPosition_2740, "619Bh", kObjectCompartment6, kPosition_4070, "619Af");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Hadija, chapter1)
@@ -126,7 +126,7 @@ IMPLEMENT_FUNCTION(10, Hadija, chapter1)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Hadija, chapter1Handler)
@@ -212,7 +212,7 @@ label_callback4:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Hadija, function12)
@@ -225,7 +225,7 @@ IMPLEMENT_FUNCTION(12, Hadija, function12)
 
 		getEntities()->clearSequences(kEntityHadija);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Hadija, chapter2)
@@ -241,7 +241,7 @@ IMPLEMENT_FUNCTION(13, Hadija, chapter2)
 
 		setup_chapter2Handler();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
@@ -293,7 +293,7 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Hadija, chapter3)
@@ -314,7 +314,7 @@ IMPLEMENT_FUNCTION(15, Hadija, chapter3)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Hadija, chapter3Handler)
@@ -362,7 +362,7 @@ label_callback4:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Hadija, chapter4)
@@ -380,7 +380,7 @@ IMPLEMENT_FUNCTION(17, Hadija, chapter4)
 		getData()->car = kCarGreenSleeping;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Hadija, chapter4Handler)
@@ -419,7 +419,7 @@ label_callback3:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Hadija, function19)
@@ -432,7 +432,7 @@ IMPLEMENT_FUNCTION(19, Hadija, function19)
 
 		getEntities()->clearSequences(kEntityHadija);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Hadija, chapter5)
@@ -455,13 +455,13 @@ IMPLEMENT_FUNCTION(20, Hadija, chapter5)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Hadija, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_function22();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Hadija, function22)
@@ -486,7 +486,7 @@ IMPLEMENT_FUNCTION(22, Hadija, function22)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Hadija, function23)
@@ -524,7 +524,7 @@ IMPLEMENT_FUNCTION(23, Hadija, function23)
 		setup_nullfunction();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(24, Hadija)

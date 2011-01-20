@@ -114,6 +114,8 @@ void class::setup_##name() { \
 		EXPOSE_PARAMS(EntityData::EntityParametersIIII) \
 		debugC(6, kLastExpressDebugLogic, "Entity: " #class "::" #name "() - action: %s", ACTION_NAME(savepoint.action));
 
+#define IMPLEMENT_FUNCTION_END }
+
 // nullfunction call
 #define IMPLEMENT_NULL_FUNCTION(index, class) \
 	IMPLEMENT_SETUP(class, Entity, nullfunction, index)

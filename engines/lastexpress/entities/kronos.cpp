@@ -95,32 +95,32 @@ Kronos::Kronos(LastExpressEngine *engine) : Entity(engine, kEntityKronos) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Kronos, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(2, Kronos, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(3, Kronos, updateEntity, CarIndex, EntityPosition)
 	Entity::updateEntity(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(4, Kronos, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(5, Kronos, updateFromTime)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(6, Kronos, updateFromTicks)
 	Entity::updateFromTicks(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Kronos, chapter1)
@@ -141,7 +141,7 @@ IMPLEMENT_FUNCTION(7, Kronos, chapter1)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Kronos, chapter1Handler)
@@ -161,7 +161,7 @@ IMPLEMENT_FUNCTION(8, Kronos, chapter1Handler)
 		setup_function9();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Kronos, function9)
@@ -183,7 +183,7 @@ IMPLEMENT_FUNCTION(9, Kronos, function9)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Kronos, function10)
@@ -203,7 +203,7 @@ IMPLEMENT_FUNCTION(10, Kronos, function10)
 		getEntities()->clearSequences(kEntityKronos);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Kronos, function11)
@@ -223,13 +223,13 @@ IMPLEMENT_FUNCTION(11, Kronos, function11)
 			getSound()->playSound(kEntityKronos, "KRO1001");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Kronos, chapter2)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityKronos);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Kronos, chapter3)
@@ -254,7 +254,7 @@ IMPLEMENT_FUNCTION(13, Kronos, chapter3)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Kronos, chapter3Handler)
@@ -286,7 +286,7 @@ IMPLEMENT_FUNCTION(14, Kronos, chapter3Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Kronos, function15)
@@ -345,7 +345,7 @@ IMPLEMENT_FUNCTION(15, Kronos, function15)
 			              || getEntities()->isPlayerPosition(kCarRestaurant, 87);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Kronos, function16)
@@ -370,7 +370,7 @@ IMPLEMENT_FUNCTION(16, Kronos, function16)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Kronos, function17)
@@ -392,7 +392,7 @@ IMPLEMENT_FUNCTION(17, Kronos, function17)
 			setup_function18();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Kronos, function18)
@@ -430,7 +430,7 @@ IMPLEMENT_FUNCTION(18, Kronos, function18)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Kronos, function19)
@@ -474,7 +474,7 @@ IMPLEMENT_FUNCTION(19, Kronos, function19)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Kronos, function20)
@@ -687,7 +687,7 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Kronos, function21)
@@ -729,7 +729,7 @@ IMPLEMENT_FUNCTION(21, Kronos, function21)
 		setup_function22();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Kronos, function22)
@@ -841,7 +841,7 @@ IMPLEMENT_FUNCTION(22, Kronos, function22)
 	case kAction138085344:
 		setup_function23();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Kronos, function23)
@@ -875,18 +875,18 @@ IMPLEMENT_FUNCTION(23, Kronos, function23)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Kronos, chapter4)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityKronos);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Kronos, chapter5)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityKronos);
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

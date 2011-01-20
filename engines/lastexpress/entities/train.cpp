@@ -54,37 +54,37 @@ Train::Train(LastExpressEngine *engine) : Entity(engine, kEntityTrain) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(1, Train, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(2, Train, chapter1)
 	if (savepoint.action == kActionDefault)
 		setup_process();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(3, Train, chapter2)
 	if (savepoint.action == kActionDefault)
 		setup_process();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Train, chapter3)
 	if (savepoint.action == kActionDefault)
 		setup_process();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Train, chapter4)
 	if (savepoint.action == kActionDefault)
 		setup_process();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Train, chapter5)
 	if (savepoint.action == kActionDefault)
 		setup_process();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
@@ -255,7 +255,7 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 	getProgress().field_E0 = 1;
 
 	handleCompartmentAction();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Train, process)
@@ -538,7 +538,7 @@ label_process:
 		setup_savegame(kSavegameTypeEvent, kEventCathJumpDownCeiling);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 // Private functions

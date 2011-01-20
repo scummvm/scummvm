@@ -101,17 +101,17 @@ Chapters::Chapters(LastExpressEngine *engine) : Entity(engine, kEntityChapters) 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(1, Chapters, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(2, Chapters, enterStation, CityIndex)
 	enterExitStation(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(3, Chapters, exitStation)
 	enterExitStation(savepoint, false);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Chapters, chapter1)
@@ -119,7 +119,7 @@ IMPLEMENT_FUNCTION(4, Chapters, chapter1)
 		getSavePoints()->addData(kEntityChapters, kAction171843264, 0);
 		setup_chapter1Init();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Chapters, resetMainEntities)
@@ -153,7 +153,7 @@ IMPLEMENT_FUNCTION(5, Chapters, resetMainEntities)
 	RESET_ENTITY_STATE(kEntityYasmin, Yasmin, setup_reset);
 
 	CALLBACK_ACTION();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Chapters, chapter1End)
@@ -313,7 +313,7 @@ IMPLEMENT_FUNCTION(6, Chapters, chapter1End)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Chapters, chapter1Init)
@@ -383,7 +383,7 @@ IMPLEMENT_FUNCTION(7, Chapters, chapter1Init)
 	getObjects()->update(kObject101, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 	setup_chapter1Handler();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 #define PLAY_STEAM() { \
@@ -689,7 +689,7 @@ label_chapter1_next:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Chapters, chapter1Next)
@@ -709,7 +709,7 @@ IMPLEMENT_FUNCTION(9, Chapters, chapter1Next)
 
 		setup_chapter2();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Chapters, chapter2)
@@ -746,7 +746,7 @@ IMPLEMENT_FUNCTION(10, Chapters, chapter2)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Chapters, chapter2Init)
@@ -805,7 +805,7 @@ IMPLEMENT_FUNCTION(11, Chapters, chapter2Init)
 		getScenes()->loadSceneFromPosition(kCarGreenSleeping, 79);
 
 	setup_chapter2Handler();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Chapters, chapter2Handler)
@@ -833,7 +833,7 @@ IMPLEMENT_FUNCTION(12, Chapters, chapter2Handler)
 		setup_chapter3();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Chapters, chapter3)
@@ -850,7 +850,7 @@ IMPLEMENT_FUNCTION(13, Chapters, chapter3)
 
 		setup_chapter3Init();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Chapters, chapter3Init)
@@ -893,7 +893,7 @@ IMPLEMENT_FUNCTION(14, Chapters, chapter3Init)
 			setup_chapter3Handler();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Chapters, chapter3Handler)
@@ -1045,7 +1045,7 @@ label_callback_8:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Chapters, viennaEvents)
@@ -1107,7 +1107,7 @@ IMPLEMENT_FUNCTION(16, Chapters, viennaEvents)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Chapters, chapter4)
@@ -1145,7 +1145,7 @@ IMPLEMENT_FUNCTION(17, Chapters, chapter4)
 		break;
 
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Chapters, chapter4Init)
@@ -1191,7 +1191,8 @@ IMPLEMENT_FUNCTION(18, Chapters, chapter4Init)
 
 	getInventory()->show();
 	setup_chapter4Handler();
-}
+
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Chapters, chapter4Handler)
@@ -1549,7 +1550,7 @@ label_callback_4:
 		setup_savegame(kSavegameTypeEvent, kEventCathDefusingBomb);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Chapters, chapter5)
@@ -1566,7 +1567,7 @@ IMPLEMENT_FUNCTION(20, Chapters, chapter5)
 
 		setup_chapter5Init();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Chapters, chapter5Init)
@@ -1662,7 +1663,7 @@ IMPLEMENT_FUNCTION(21, Chapters, chapter5Init)
 			setup_chapter5Handler();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Chapters, chapter5Handler)
@@ -1718,7 +1719,7 @@ IMPLEMENT_FUNCTION(22, Chapters, chapter5Handler)
 			getSound()->removeFromQueue(kEntityChapters);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 
 //////////////////////////////////////////////////////////////////////////

@@ -79,27 +79,27 @@ IMPLEMENT_FUNCTION(1, Yasmin, reset)
 
 	// Process default actions
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(2, Yasmin, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(3, Yasmin, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(4, Yasmin, updateFromTime)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(5, Yasmin, updateEntity, CarIndex, EntityPosition)
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Yasmin, function6)
@@ -139,7 +139,7 @@ IMPLEMENT_FUNCTION(6, Yasmin, function6)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Yasmin, function7)
@@ -179,7 +179,7 @@ IMPLEMENT_FUNCTION(7, Yasmin, function7)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Yasmin, chapter1)
@@ -197,7 +197,7 @@ IMPLEMENT_FUNCTION(8, Yasmin, chapter1)
 		getData()->car = kCarGreenSleeping;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Yasmin, chapter1Handler)
@@ -247,7 +247,7 @@ IMPLEMENT_FUNCTION(9, Yasmin, chapter1Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Yasmin, function10)
@@ -259,7 +259,7 @@ IMPLEMENT_FUNCTION(10, Yasmin, function10)
 
 		getEntities()->clearSequences(kEntityYasmin);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Yasmin, chapter2)
@@ -274,7 +274,7 @@ IMPLEMENT_FUNCTION(11, Yasmin, chapter2)
 
 		setup_chapter2Handler();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Yasmin, chapter2Handler)
@@ -307,7 +307,7 @@ IMPLEMENT_FUNCTION(12, Yasmin, chapter2Handler)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Yasmin, chapter3)
@@ -327,7 +327,7 @@ IMPLEMENT_FUNCTION(13, Yasmin, chapter3)
 		getData()->car = kCarGreenSleeping;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Yasmin, chapter3Handler)
@@ -356,7 +356,7 @@ IMPLEMENT_FUNCTION(14, Yasmin, chapter3Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Yasmin, chapter4)
@@ -374,7 +374,7 @@ IMPLEMENT_FUNCTION(15, Yasmin, chapter4)
 		getData()->car = kCarGreenSleeping;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Yasmin, chapter4Handler)
@@ -404,13 +404,13 @@ IMPLEMENT_FUNCTION(16, Yasmin, chapter4Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Yasmin, function17)
 	// Same as existing function 10 ?
 	function10(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Yasmin, chapter5)
@@ -432,13 +432,13 @@ IMPLEMENT_FUNCTION(18, Yasmin, chapter5)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Yasmin, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_function20();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Yasmin, function20)
@@ -463,7 +463,7 @@ IMPLEMENT_FUNCTION(20, Yasmin, function20)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Yasmin, function21)
@@ -485,6 +485,6 @@ IMPLEMENT_FUNCTION(21, Yasmin, function21)
 		getSound()->excuseMe(kEntityYasmin);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

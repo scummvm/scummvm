@@ -71,32 +71,32 @@ Salko::Salko(LastExpressEngine *engine) : Entity(engine, kEntitySalko) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Salko, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(2, Salko, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(3, Salko, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(4, Salko, updateEntity, CarIndex, EntityPosition)
 	Entity::updateEntity(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(5, Salko, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(6, Salko, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(7, Salko, function7, CarIndex, EntityPosition)
@@ -140,7 +140,7 @@ IMPLEMENT_FUNCTION_II(7, Salko, function7, CarIndex, EntityPosition)
 		CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Salko, function8)
@@ -149,7 +149,7 @@ IMPLEMENT_FUNCTION(8, Salko, function8)
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarRedSleeping;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Salko, chapter1)
@@ -167,7 +167,7 @@ IMPLEMENT_FUNCTION(9, Salko, chapter1)
 		getData()->car = kCarRestaurant;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Salko, chapter1Handler)
@@ -192,7 +192,7 @@ IMPLEMENT_FUNCTION(10, Salko, chapter1Handler)
 		setup_function7(kCarRedSleeping, kPosition_2740);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Salko, function11)
@@ -204,7 +204,7 @@ IMPLEMENT_FUNCTION(11, Salko, function11)
 		getEntities()->clearSequences(kEntitySalko);
 		getObjects()->update(kObjectCompartmentH, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Salko, chapter2)
@@ -227,7 +227,7 @@ IMPLEMENT_FUNCTION(12, Salko, chapter2)
 		setup_function13();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Salko, function13)
@@ -269,7 +269,7 @@ IMPLEMENT_FUNCTION(13, Salko, function13)
 		setup_function7(kCarRedSleeping, kPosition_2740);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Salko, chapter3)
@@ -291,7 +291,7 @@ IMPLEMENT_FUNCTION(14, Salko, chapter3)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Salko, chapter3Handler)
@@ -313,7 +313,7 @@ IMPLEMENT_FUNCTION(15, Salko, chapter3Handler)
 			params->param1 = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Salko, function16)
@@ -400,7 +400,7 @@ label_callback3:
 		setup_enterExitCompartment("612Bf", kObjectCompartmentF);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Salko, function17)
@@ -440,7 +440,7 @@ IMPLEMENT_FUNCTION(17, Salko, function17)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Salko, chapter4)
@@ -461,7 +461,7 @@ IMPLEMENT_FUNCTION(18, Salko, chapter4)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Salko, chapter4Handler)
@@ -484,7 +484,7 @@ IMPLEMENT_FUNCTION(19, Salko, chapter4Handler)
 		setup_function7(kCarRedSleeping, kPosition_2740);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Salko, function20)
@@ -518,7 +518,7 @@ IMPLEMENT_FUNCTION(20, Salko, function20)
 		setup_enterExitCompartment("612Dh", kObjectCompartmentH);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Salko, function21)
@@ -550,7 +550,7 @@ IMPLEMENT_FUNCTION(21, Salko, function21)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Salko, function22)
@@ -563,7 +563,7 @@ IMPLEMENT_FUNCTION(22, Salko, function22)
 		getData()->car = kCarRedSleeping;
 		getData()->inventoryItem = kItemNone;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Salko, chapter5)
@@ -584,7 +584,7 @@ IMPLEMENT_FUNCTION(23, Salko, chapter5)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Salko, chapter5Handler)
@@ -634,7 +634,7 @@ IMPLEMENT_FUNCTION(24, Salko, chapter5Handler)
 		setup_savegame(kSavegameTypeEvent, kEventCathSalkoTrainTopFight);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(25, Salko)

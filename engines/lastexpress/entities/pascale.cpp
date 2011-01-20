@@ -78,12 +78,12 @@ Pascale::Pascale(LastExpressEngine *engine) : Entity(engine, kEntityPascale) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(1, Pascale, draw)
 	Entity::draw(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(2, Pascale, callbackActionRestaurantOrSalon)
 	Entity::callbackActionRestaurantOrSalon(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(3, Pascale, callbackActionOnDirection)
@@ -97,27 +97,27 @@ IMPLEMENT_FUNCTION(3, Pascale, callbackActionOnDirection)
 	}
 
 	Entity::callbackActionOnDirection(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(4, Pascale, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(5, Pascale, updatePosition)
 	Entity::updatePosition(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(6, Pascale, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(7, Pascale, draw2)
 	Entity::draw2(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Pascale, welcomeSophieAndRebecca)
@@ -177,7 +177,7 @@ IMPLEMENT_FUNCTION(8, Pascale, welcomeSophieAndRebecca)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Pascale, sitSophieAndRebecca)
@@ -195,7 +195,7 @@ IMPLEMENT_FUNCTION(9, Pascale, sitSophieAndRebecca)
 		getEntities()->drawSequenceLeft(kEntityTables3, "012C3");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Pascale, welcomeCath)
@@ -244,7 +244,7 @@ IMPLEMENT_FUNCTION(10, Pascale, welcomeCath)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Pascale, function11)
@@ -289,7 +289,7 @@ IMPLEMENT_FUNCTION(11, Pascale, function11)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Pascale, chapter1)
@@ -319,7 +319,7 @@ IMPLEMENT_FUNCTION(12, Pascale, chapter1)
 		getData()->car = kCarRestaurant;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Pascale, getMessageFromAugustToTyler)
@@ -372,7 +372,7 @@ IMPLEMENT_FUNCTION(13, Pascale, getMessageFromAugustToTyler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Pascale, sitAnna)
@@ -394,7 +394,7 @@ IMPLEMENT_FUNCTION(14, Pascale, sitAnna)
 		getEntities()->updatePositionEnter(kEntityPascale, kCarRestaurant, 62);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Pascale, welcomeAnna)
@@ -439,7 +439,7 @@ IMPLEMENT_FUNCTION(15, Pascale, welcomeAnna)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Pascale, serveTatianaVassili)
@@ -492,7 +492,7 @@ IMPLEMENT_FUNCTION(16, Pascale, serveTatianaVassili)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Pascale, chapter1Handler)
@@ -577,7 +577,7 @@ label_callback4:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Pascale, function18)
@@ -594,7 +594,7 @@ IMPLEMENT_FUNCTION(18, Pascale, function18)
 
 		setup_function19();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Pascale, function19)
@@ -624,7 +624,7 @@ IMPLEMENT_FUNCTION(19, Pascale, function19)
 		getEntities()->clearSequences(kEntityPascale);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Pascale, chapter2)
@@ -639,7 +639,7 @@ IMPLEMENT_FUNCTION(20, Pascale, chapter2)
 
 		getObjects()->update(kObject65, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Pascale, chapter3)
@@ -663,7 +663,7 @@ IMPLEMENT_FUNCTION(21, Pascale, chapter3)
 		ENTITY_PARAM(0, 7) = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Pascale, chapter3Handler)
@@ -693,7 +693,7 @@ label_callback:
 			goto label_callback;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Pascale, function23)
@@ -733,7 +733,7 @@ IMPLEMENT_FUNCTION(23, Pascale, function23)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Pascale, welcomeAbbot)
@@ -762,7 +762,7 @@ IMPLEMENT_FUNCTION(24, Pascale, welcomeAbbot)
 		getEntities()->drawSequenceRight(kEntityAbbot, "029A2");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Pascale, chapter4)
@@ -789,7 +789,7 @@ IMPLEMENT_FUNCTION(25, Pascale, chapter4)
 		ENTITY_PARAM(1, 2) = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Pascale, chapter4Handler)
@@ -906,7 +906,7 @@ label_callback3:
 		getData()->location = kLocationOutsideCompartment;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Pascale, function27)
@@ -959,7 +959,7 @@ IMPLEMENT_FUNCTION(27, Pascale, function27)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Pascale, messageFromAnna)
@@ -1005,7 +1005,7 @@ IMPLEMENT_FUNCTION(28, Pascale, messageFromAnna)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Pascale, function29)
@@ -1043,7 +1043,7 @@ IMPLEMENT_FUNCTION(29, Pascale, function29)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(30, Pascale, function30)
@@ -1081,7 +1081,7 @@ IMPLEMENT_FUNCTION(30, Pascale, function30)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, Pascale, chapter5)
@@ -1102,13 +1102,13 @@ IMPLEMENT_FUNCTION(31, Pascale, chapter5)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Pascale, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_function33();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(33, Pascale, function33)
@@ -1224,7 +1224,7 @@ label_callback1:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(34, Pascale)

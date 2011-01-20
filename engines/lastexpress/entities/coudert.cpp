@@ -118,7 +118,7 @@ Coudert::Coudert(LastExpressEngine *engine) : Entity(engine, kEntityCoudert) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Coudert, reset)
 	Entity::reset(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Coudert, bloodJacket)
@@ -145,7 +145,7 @@ IMPLEMENT_FUNCTION_S(2, Coudert, bloodJacket)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(3, Coudert, enterExitCompartment, ObjectIndex)
@@ -166,7 +166,7 @@ IMPLEMENT_FUNCTION_SI(3, Coudert, enterExitCompartment, ObjectIndex)
 	}
 
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Coudert, callbackActionOnDirection)
@@ -194,7 +194,7 @@ IMPLEMENT_FUNCTION(4, Coudert, callbackActionOnDirection)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SIII(5, Coudert, enterExitCompartment2, ObjectIndex, EntityPosition, EntityPosition)
@@ -215,7 +215,7 @@ IMPLEMENT_FUNCTION_SIII(5, Coudert, enterExitCompartment2, ObjectIndex, EntityPo
 	}
 
 	Entity::enterExitCompartment(savepoint, (EntityPosition)params->param5, (EntityPosition)params->param6, kCarRedSleeping, (ObjectIndex)params->param4, false);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(6, Coudert, playSound)
@@ -242,7 +242,7 @@ IMPLEMENT_FUNCTION_S(6, Coudert, playSound)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(7, Coudert, playSound16)
@@ -271,12 +271,12 @@ IMPLEMENT_FUNCTION_NOSETUP(7, Coudert, playSound16)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(8, Coudert, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(9, Coudert, updateEntity, CarIndex, EntityPosition)
@@ -357,7 +357,7 @@ IMPLEMENT_FUNCTION_II(9, Coudert, updateEntity, CarIndex, EntityPosition)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(10, Coudert, updateFromTime, uint32)
@@ -380,7 +380,7 @@ IMPLEMENT_FUNCTION_I(10, Coudert, updateFromTime, uint32)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(11, Coudert, updateFromTicks, uint32)
@@ -403,7 +403,7 @@ IMPLEMENT_FUNCTION_I(11, Coudert, updateFromTicks, uint32)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 // Parameters
@@ -454,7 +454,7 @@ IMPLEMENT_FUNCTION_I(12, Coudert, excuseMe, EntityIndex)
 	}
 
 	CALLBACK_ACTION();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(13, Coudert, function13, bool, EntityIndex)
@@ -576,7 +576,7 @@ IMPLEMENT_FUNCTION_II(13, Coudert, function13, bool, EntityIndex)
 		getEntities()->drawSequenceLeft(kEntityCoudert, "627K");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(14, Coudert, function14, EntityIndex)
@@ -657,7 +657,7 @@ IMPLEMENT_FUNCTION_I(14, Coudert, function14, EntityIndex)
 		setup_function19(false);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(15, Coudert, function15, bool)
@@ -712,7 +712,7 @@ IMPLEMENT_FUNCTION_I(15, Coudert, function15, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Coudert, function16)
@@ -749,7 +749,7 @@ IMPLEMENT_FUNCTION(16, Coudert, function16)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(17, Coudert, function17, bool)
@@ -795,7 +795,7 @@ IMPLEMENT_FUNCTION_I(17, Coudert, function17, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Coudert, function18)
@@ -863,7 +863,7 @@ IMPLEMENT_FUNCTION(18, Coudert, function18)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(19, Coudert, function19, bool)
@@ -908,7 +908,7 @@ IMPLEMENT_FUNCTION_I(19, Coudert, function19, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(20, Coudert, function20, ObjectIndex, ObjectIndex)
@@ -990,7 +990,7 @@ IMPLEMENT_FUNCTION_II(20, Coudert, function20, ObjectIndex, ObjectIndex)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Coudert, function21)
@@ -1091,7 +1091,7 @@ IMPLEMENT_FUNCTION(21, Coudert, function21)
 		setup_playSound("JAC1012");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Coudert, function22)
@@ -1192,7 +1192,7 @@ IMPLEMENT_FUNCTION(22, Coudert, function22)
 		setup_playSound("JAC1030");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Coudert, function23)
@@ -1231,12 +1231,12 @@ IMPLEMENT_FUNCTION(23, Coudert, function23)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Coudert, visitCompartmentF)
 	visitCompartment(savepoint, kPosition_4070, "627Vf", kObjectCompartmentF, "627Wf", "627Zf", kPosition_4455, kObject53, "697Af");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Coudert, function25)
@@ -1302,7 +1302,7 @@ IMPLEMENT_FUNCTION(25, Coudert, function25)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Coudert, function26)
@@ -1393,7 +1393,7 @@ IMPLEMENT_FUNCTION(26, Coudert, function26)
 		setup_playSound("JAC1012");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Coudert, function27)
@@ -1491,17 +1491,17 @@ IMPLEMENT_FUNCTION(27, Coudert, function27)
 		setup_playSound("JAC1012");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Coudert, visitCompartmentB)
 	visitCompartment(savepoint, kPosition_7500, "627Vb", kObjectCompartmentB, "627Wb", "627Zb", kPosition_7850, kObject49, "697Ab");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Coudert, visitCompartmentA)
 	visitCompartment(savepoint, kPosition_8200, "627Ma", kObjectCompartmentA, "627Na", "627Ra", kPosition_7850, kObject48, "627Sa");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(30, Coudert, function30, ObjectIndex)
@@ -1621,7 +1621,7 @@ IMPLEMENT_FUNCTION_I(30, Coudert, function30, ObjectIndex)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(31, Coudert, function31, uint32)
@@ -1660,7 +1660,7 @@ IMPLEMENT_FUNCTION_I(31, Coudert, function31, uint32)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Coudert, function32)
@@ -1705,7 +1705,7 @@ IMPLEMENT_FUNCTION(32, Coudert, function32)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(33, Coudert, function33)
@@ -1814,7 +1814,7 @@ IMPLEMENT_FUNCTION(33, Coudert, function33)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(34, Coudert, function34, bool)
@@ -1888,7 +1888,7 @@ IMPLEMENT_FUNCTION_I(34, Coudert, function34, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(35, Coudert, function35, bool)
@@ -1957,7 +1957,7 @@ IMPLEMENT_FUNCTION_I(35, Coudert, function35, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(36, Coudert, chapter1)
@@ -2002,7 +2002,7 @@ IMPLEMENT_FUNCTION(36, Coudert, chapter1)
 			setup_chapter1Handler();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, Coudert, function37)
@@ -2055,7 +2055,7 @@ IMPLEMENT_FUNCTION(37, Coudert, function37)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(38, Coudert, function38)
@@ -2097,7 +2097,7 @@ switch (savepoint.action) {
 		setup_updateEntity(kCarRedSleeping, kPosition_2000);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(39, Coudert, function39)
@@ -2180,7 +2180,7 @@ IMPLEMENT_FUNCTION(39, Coudert, function39)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(40, Coudert, chapter1Handler)
@@ -2429,7 +2429,7 @@ label_callback_10:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(41, Coudert, function41)
@@ -2542,7 +2542,7 @@ IMPLEMENT_FUNCTION(41, Coudert, function41)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(42, Coudert, chapter2)
@@ -2588,7 +2588,7 @@ IMPLEMENT_FUNCTION(42, Coudert, chapter2)
 			setup_function43();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(43, Coudert, function43)
@@ -2679,7 +2679,7 @@ label_callback2:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(44, Coudert, chapter3)
@@ -2727,7 +2727,7 @@ IMPLEMENT_FUNCTION(44, Coudert, chapter3)
 			setup_function45();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(45, Coudert, function45)
@@ -2965,7 +2965,7 @@ label_callback_19:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(46, Coudert, function46)
@@ -3057,7 +3057,7 @@ IMPLEMENT_FUNCTION(46, Coudert, function46)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(47, Coudert, function47, bool)
@@ -3122,7 +3122,7 @@ IMPLEMENT_FUNCTION_I(47, Coudert, function47, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(48, Coudert, function48)
@@ -3170,7 +3170,7 @@ IMPLEMENT_FUNCTION(48, Coudert, function48)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(49, Coudert, function49)
@@ -3267,7 +3267,7 @@ IMPLEMENT_FUNCTION(49, Coudert, function49)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(50, Coudert, function50)
@@ -3353,7 +3353,7 @@ IMPLEMENT_FUNCTION(50, Coudert, function50)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(51, Coudert, function51)
@@ -3456,7 +3456,7 @@ IMPLEMENT_FUNCTION(51, Coudert, function51)
 		setup_updateEntity(kCarRedSleeping, kPosition_2000);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(52, Coudert, chapter4)
@@ -3505,7 +3505,7 @@ IMPLEMENT_FUNCTION(52, Coudert, chapter4)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(53, Coudert, function53)
@@ -3661,7 +3661,7 @@ label_callback_6:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(54, Coudert, function54)
@@ -3707,7 +3707,7 @@ IMPLEMENT_FUNCTION(54, Coudert, function54)
 		setCallback(2);
 		setup_updateEntity(kCarRedSleeping, kPosition_1500);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(55, Coudert, function55)
@@ -3775,7 +3775,7 @@ IMPLEMENT_FUNCTION(55, Coudert, function55)
 		setup_updateEntity(kCarRedSleeping, kPosition_2000);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(56, Coudert, function56)
@@ -3874,7 +3874,7 @@ IMPLEMENT_FUNCTION(56, Coudert, function56)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(57, Coudert, chapter5)
@@ -3895,13 +3895,13 @@ IMPLEMENT_FUNCTION(57, Coudert, chapter5)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(58, Coudert, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_function59();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(59, Coudert, function59)
@@ -3927,7 +3927,7 @@ IMPLEMENT_FUNCTION(59, Coudert, function59)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(60, Coudert, function60)
@@ -3945,7 +3945,7 @@ IMPLEMENT_FUNCTION(60, Coudert, function60)
 		setup_updateFromTime(225);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(61, Coudert, function61)
@@ -4025,7 +4025,7 @@ IMPLEMENT_FUNCTION(61, Coudert, function61)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(62, Coudert, function62)
@@ -4109,7 +4109,7 @@ IMPLEMENT_FUNCTION(62, Coudert, function62)
 		setup_nullfunction();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(63, Coudert)

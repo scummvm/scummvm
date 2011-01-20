@@ -109,7 +109,7 @@ Mertens::Mertens(LastExpressEngine *engine) : Entity(engine, kEntityMertens) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Mertens, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Mertens, bloodJacket)
@@ -136,7 +136,7 @@ IMPLEMENT_FUNCTION_S(2, Mertens, bloodJacket)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(3, Mertens, enterExitCompartment, ObjectIndex)
@@ -157,7 +157,7 @@ IMPLEMENT_FUNCTION_SI(3, Mertens, enterExitCompartment, ObjectIndex)
 	}
 
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(4, Mertens, enterExitCompartment2, ObjectIndex)
@@ -183,7 +183,7 @@ IMPLEMENT_FUNCTION_SI(4, Mertens, enterExitCompartment2, ObjectIndex)
 	}
 
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SIII(5, Mertens, enterExitCompartment3, ObjectIndex, EntityPosition, EntityPosition)
@@ -220,7 +220,7 @@ IMPLEMENT_FUNCTION_SIII(5, Mertens, enterExitCompartment3, ObjectIndex, EntityPo
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Mertens, callbackActionOnDirection)
@@ -248,7 +248,7 @@ IMPLEMENT_FUNCTION(6, Mertens, callbackActionOnDirection)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(7, Mertens, playSound)
@@ -275,7 +275,7 @@ IMPLEMENT_FUNCTION_S(7, Mertens, playSound)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(8, Mertens, playSound16)
@@ -302,12 +302,12 @@ IMPLEMENT_FUNCTION_S(8, Mertens, playSound16)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(9, Mertens, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(10, Mertens, updateEntity, CarIndex, EntityPosition)
@@ -474,7 +474,7 @@ IMPLEMENT_FUNCTION_II(10, Mertens, updateEntity, CarIndex, EntityPosition)
 	}
 
 #undef LOADSCENE_FROM_POSITION
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(11, Mertens, function11, uint32)
@@ -497,7 +497,7 @@ IMPLEMENT_FUNCTION_I(11, Mertens, function11, uint32)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(12, Mertens, bonsoir, EntityIndex)
@@ -542,7 +542,7 @@ IMPLEMENT_FUNCTION_I(12, Mertens, bonsoir, EntityIndex)
 	}
 
 	CALLBACK_ACTION();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, bool)
@@ -664,7 +664,7 @@ IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(14, Mertens, function14, EntityIndex)
@@ -733,7 +733,7 @@ IMPLEMENT_FUNCTION_I(14, Mertens, function14, EntityIndex)
 		setup_function18();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(15, Mertens, function15, bool)
@@ -789,7 +789,7 @@ IMPLEMENT_FUNCTION_I(15, Mertens, function15, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(16, Mertens, function16, bool)
@@ -866,7 +866,7 @@ IMPLEMENT_FUNCTION_I(16, Mertens, function16, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Mertens, function17)
@@ -950,7 +950,7 @@ IMPLEMENT_FUNCTION(17, Mertens, function17)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Mertens, function18)
@@ -1014,7 +1014,7 @@ IMPLEMENT_FUNCTION(18, Mertens, function18)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Mertens, function19)
@@ -1044,7 +1044,7 @@ IMPLEMENT_FUNCTION(19, Mertens, function19)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Mertens, function20)
@@ -1070,7 +1070,7 @@ IMPLEMENT_FUNCTION(20, Mertens, function20)
 			CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(21, Mertens, function21, ObjectIndex, ObjectIndex)
@@ -1148,7 +1148,7 @@ IMPLEMENT_FUNCTION_II(21, Mertens, function21, ObjectIndex, ObjectIndex)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Mertens, function22)
@@ -1239,7 +1239,7 @@ IMPLEMENT_FUNCTION(22, Mertens, function22)
 		setup_updateEntity(kCarGreenSleeping, kPosition_5790);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Mertens, function23)
@@ -1297,7 +1297,7 @@ IMPLEMENT_FUNCTION(23, Mertens, function23)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Mertens, function24)
@@ -1400,7 +1400,7 @@ IMPLEMENT_FUNCTION(24, Mertens, function24)
 		setup_enterExitCompartment("601Tc", kObjectCompartment3);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Mertens, function25)
@@ -1507,7 +1507,7 @@ IMPLEMENT_FUNCTION(25, Mertens, function25)
 		setup_enterExitCompartment("641Tb", kObjectCompartment2);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(26, Mertens, function26, bool)
@@ -1619,7 +1619,7 @@ IMPLEMENT_FUNCTION_I(26, Mertens, function26, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(27, Mertens, tylerCompartment, MertensActionType)
@@ -2007,7 +2007,7 @@ label_callback11:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(28, Mertens, function28)
@@ -2067,7 +2067,7 @@ IMPLEMENT_FUNCTION_S(28, Mertens, function28)
 		getEntities()->drawSequenceLeft(kEntityMertens, "601L");
 		getSound()->playSound(kEntityMertens, (char *)&params->seq1);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SS(29, Mertens, function29)
@@ -2130,7 +2130,7 @@ IMPLEMENT_FUNCTION_SS(29, Mertens, function29)
 		getSound()->playSound(kEntityMertens, (char *)&params->seq1);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(30, Mertens, function30, MertensActionType)
@@ -2279,7 +2279,7 @@ IMPLEMENT_FUNCTION_I(30, Mertens, function30, MertensActionType)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(31, Mertens, function31, MertensActionType)
@@ -2318,7 +2318,7 @@ IMPLEMENT_FUNCTION_I(31, Mertens, function31, MertensActionType)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Mertens, function32)
@@ -2366,7 +2366,7 @@ IMPLEMENT_FUNCTION(32, Mertens, function32)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(33, Mertens, function33)
@@ -2505,7 +2505,7 @@ IMPLEMENT_FUNCTION(33, Mertens, function33)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(34, Mertens, chapter1)
@@ -2539,8 +2539,7 @@ IMPLEMENT_FUNCTION(34, Mertens, chapter1)
 
 		break;
 	}
-
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(35, Mertens, function35)
@@ -2618,7 +2617,7 @@ IMPLEMENT_FUNCTION(35, Mertens, function35)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(36, Mertens, function36)
@@ -2719,7 +2718,7 @@ IMPLEMENT_FUNCTION(36, Mertens, function36)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, Mertens, function37)
@@ -2783,7 +2782,7 @@ IMPLEMENT_FUNCTION(37, Mertens, function37)
 		getSound()->playSound(kEntityMertens, "CON1150");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(38, Mertens, function38)
@@ -2827,7 +2826,7 @@ IMPLEMENT_FUNCTION(38, Mertens, function38)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(39, Mertens, function39)
@@ -2901,7 +2900,7 @@ IMPLEMENT_FUNCTION(39, Mertens, function39)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(40, Mertens, function40)
@@ -2947,7 +2946,7 @@ IMPLEMENT_FUNCTION(40, Mertens, function40)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(41, Mertens, chapter1Handler)
@@ -2976,7 +2975,7 @@ IMPLEMENT_FUNCTION(41, Mertens, chapter1Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(42, Mertens, function42)
@@ -3318,7 +3317,7 @@ label_callback_5_6:
 		break;
 
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(43, Mertens, chapter2)
@@ -3356,7 +3355,7 @@ IMPLEMENT_FUNCTION(43, Mertens, chapter2)
 			setup_function44();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(44, Mertens, function44)
@@ -3457,7 +3456,7 @@ label_callback3:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(45, Mertens, chapter3)
@@ -3495,7 +3494,7 @@ IMPLEMENT_FUNCTION(45, Mertens, chapter3)
 			setup_function46();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(46, Mertens, function46)
@@ -3649,7 +3648,7 @@ label_callback_10:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(47, Mertens, chapter4)
@@ -3689,7 +3688,7 @@ IMPLEMENT_FUNCTION(47, Mertens, chapter4)
 			setup_function48();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(48, Mertens, function48)
@@ -3846,7 +3845,7 @@ label_callback_8:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(49, Mertens, function49)
@@ -3920,7 +3919,7 @@ IMPLEMENT_FUNCTION(49, Mertens, function49)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(50, Mertens, chapter5)
@@ -3941,13 +3940,13 @@ IMPLEMENT_FUNCTION(50, Mertens, chapter5)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(51, Mertens, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_function52();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(52, Mertens, function52)
@@ -4002,7 +4001,7 @@ IMPLEMENT_FUNCTION(52, Mertens, function52)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(53, Mertens, function53)
@@ -4105,7 +4104,7 @@ IMPLEMENT_FUNCTION(53, Mertens, function53)
 		setup_nullfunction();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(54, Mertens)

@@ -85,47 +85,47 @@ Boutarel::Boutarel(LastExpressEngine *engine) : Entity(engine, kEntityBoutarel) 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Boutarel, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Boutarel, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(3, Boutarel, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(4, Boutarel, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SII(5, Boutarel, updatePosition, CarIndex, Position)
 	Entity::updatePosition(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(6, Boutarel, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(7, Boutarel, enterExitCompartment2, ObjectIndex)
 	Entity::enterExitCompartment(savepoint, kPosition_6470, kPosition_6130, kCarRedSleeping, kObjectCompartmentC, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Boutarel, callbackActionOnDirection)
 	Entity::callbackActionOnDirection(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Boutarel, callbackActionRestaurantOrSalon)
 	Entity::callbackActionRestaurantOrSalon(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(10, Boutarel, updateEntity, CarIndex, EntityPosition)
@@ -140,7 +140,7 @@ IMPLEMENT_FUNCTION_II(10, Boutarel, updateEntity, CarIndex, EntityPosition)
 	}
 
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(11, Boutarel, function11, bool)
@@ -237,7 +237,7 @@ IMPLEMENT_FUNCTION_I(11, Boutarel, function11, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Boutarel, enterTableWithMmeBoutarel)
@@ -265,7 +265,7 @@ IMPLEMENT_FUNCTION(12, Boutarel, enterTableWithMmeBoutarel)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Boutarel, leaveTableWithMmeBoutarel)
@@ -286,7 +286,7 @@ IMPLEMENT_FUNCTION(13, Boutarel, leaveTableWithMmeBoutarel)
 		getEntities()->drawSequenceRight(kEntityBoutarel, "008E1");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(14, Boutarel, function14, bool)
@@ -364,7 +364,7 @@ IMPLEMENT_FUNCTION_I(14, Boutarel, function14, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IS(15, Boutarel, function15, bool)
@@ -422,7 +422,7 @@ IMPLEMENT_FUNCTION_IS(15, Boutarel, function15, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 // Parameters:
@@ -470,7 +470,7 @@ IMPLEMENT_FUNCTION_IS(16, Boutarel, function16, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IS(17, Boutarel, function17, TimeValue)
@@ -497,7 +497,7 @@ IMPLEMENT_FUNCTION_IS(17, Boutarel, function17, TimeValue)
 		params->param5 = (getEntities()->isPlayerPosition(kCarRestaurant, 52) ? 1 : 0);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(18, Boutarel, function18, TimeValue)
@@ -607,7 +607,7 @@ IMPLEMENT_FUNCTION_I(18, Boutarel, function18, TimeValue)
 		setup_playSound("MRB1001");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Boutarel, chapter1)
@@ -632,7 +632,7 @@ IMPLEMENT_FUNCTION(19, Boutarel, chapter1)
 		getData()->car = kCarRestaurant;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Boutarel, function20)
@@ -706,7 +706,7 @@ IMPLEMENT_FUNCTION(20, Boutarel, function20)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Boutarel, chapter1Handler)
@@ -787,7 +787,7 @@ IMPLEMENT_FUNCTION(21, Boutarel, chapter1Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Boutarel, function22)
@@ -801,7 +801,7 @@ IMPLEMENT_FUNCTION(22, Boutarel, function22)
 
 		getEntities()->clearSequences(kEntityBoutarel);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Boutarel, chapter2)
@@ -826,7 +826,7 @@ IMPLEMENT_FUNCTION(23, Boutarel, chapter2)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Boutarel, chapter2Handler)
@@ -854,7 +854,7 @@ IMPLEMENT_FUNCTION(24, Boutarel, chapter2Handler)
 			setup_function25();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Boutarel, function25)
@@ -862,7 +862,7 @@ IMPLEMENT_FUNCTION(25, Boutarel, function25)
 		getObjects()->update(kObjectCompartmentC, kEntityPlayer, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
 		getEntities()->drawSequenceLeft(kEntityBoutarel, "510");
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Boutarel, chapter3)
@@ -887,7 +887,7 @@ IMPLEMENT_FUNCTION(26, Boutarel, chapter3)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Boutarel, chapter3Handler)
@@ -908,7 +908,7 @@ IMPLEMENT_FUNCTION(27, Boutarel, chapter3Handler)
 		getEntities()->drawSequenceLeft(kEntityBoutarel, "BLANK");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Boutarel, function28)
@@ -926,7 +926,7 @@ IMPLEMENT_FUNCTION(28, Boutarel, function28)
 			setup_function29();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Boutarel, function29)
@@ -991,7 +991,7 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 		getEntities()->drawSequenceLeft(kEntityBoutarel, "BLANK");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(30, Boutarel, function30)
@@ -1012,7 +1012,7 @@ IMPLEMENT_FUNCTION(30, Boutarel, function30)
 		getEntities()->drawSequenceLeft(kEntityBoutarel, "BLANK");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, Boutarel, chapter4)
@@ -1037,7 +1037,7 @@ IMPLEMENT_FUNCTION(31, Boutarel, chapter4)
 		getObjects()->update(kObject50, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Boutarel, chapter4Handler)
@@ -1054,7 +1054,7 @@ IMPLEMENT_FUNCTION(32, Boutarel, chapter4Handler)
 		getEntities()->drawSequenceLeft(kEntityBoutarel, "510");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(33, Boutarel, function33)
@@ -1103,7 +1103,7 @@ IMPLEMENT_FUNCTION(33, Boutarel, function33)
 		getEntities()->drawSequenceLeft(kEntityBoutarel, "BLANK");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(34, Boutarel, function34)
@@ -1192,7 +1192,7 @@ IMPLEMENT_FUNCTION(34, Boutarel, function34)
 		setup_playSound("Mrb1001");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(35, Boutarel, function35)
@@ -1206,7 +1206,7 @@ IMPLEMENT_FUNCTION(35, Boutarel, function35)
 		getObjects()->update(kObjectCompartmentC, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObject50, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(36, Boutarel, chapter5)
@@ -1228,13 +1228,13 @@ IMPLEMENT_FUNCTION(36, Boutarel, chapter5)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, Boutarel, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_function38();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(38, Boutarel, function38)
@@ -1252,7 +1252,7 @@ IMPLEMENT_FUNCTION(38, Boutarel, function38)
 		setup_nullfunction();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(39, Boutarel)

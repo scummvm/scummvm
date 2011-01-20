@@ -63,27 +63,27 @@ Max::Max(LastExpressEngine *engine) : Entity(engine, kEntityMax) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Max, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Max, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(3, Max, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(4, Max, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(5, Max, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Max, chapter12_handler)
@@ -117,7 +117,7 @@ IMPLEMENT_FUNCTION(6, Max, chapter12_handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Max, function7)
@@ -206,7 +206,7 @@ IMPLEMENT_FUNCTION(7, Max, function7)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Max, chapter4Handler)
@@ -268,7 +268,7 @@ IMPLEMENT_FUNCTION(8, Max, chapter4Handler)
 		setup_function9();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Max, function9)
@@ -315,7 +315,7 @@ setup_functions:
 		params->param1 = (uint)(getState()->time + 2700);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Max, chapter1)
@@ -334,7 +334,7 @@ IMPLEMENT_FUNCTION(10, Max, chapter1)
 		getData()->clothes = kClothesDefault;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Max, chapter2)
@@ -357,7 +357,7 @@ IMPLEMENT_FUNCTION(11, Max, chapter2)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Max, chapter3)
@@ -379,7 +379,7 @@ IMPLEMENT_FUNCTION(13, Max, chapter3)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Max, chapter3Handler)
@@ -433,15 +433,12 @@ IMPLEMENT_FUNCTION(13, Max, chapter3Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Max, freeFromCage)
 	switch (savepoint.action) {
 	default:
-		break;
-
-	case kActionNone:
 		break;
 
 	case kActionEndSound:
@@ -503,7 +500,7 @@ IMPLEMENT_FUNCTION(14, Max, freeFromCage)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Max, function15)
@@ -555,7 +552,7 @@ IMPLEMENT_FUNCTION(15, Max, function15)
 		setup_chapter4Handler();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Max, chapter4)
@@ -575,7 +572,7 @@ IMPLEMENT_FUNCTION(16, Max, chapter4)
 		getData()->car = kCarBaggage;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Max, function17)
@@ -610,7 +607,7 @@ IMPLEMENT_FUNCTION(17, Max, function17)
 		setup_chapter4Handler();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Max, chapter5)
@@ -623,6 +620,6 @@ IMPLEMENT_FUNCTION(18, Max, chapter5)
 
 		getObjects()->update(kObjectCageMax, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

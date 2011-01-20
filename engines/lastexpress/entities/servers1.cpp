@@ -75,17 +75,17 @@ Servers1::Servers1(LastExpressEngine *engine) : Entity(engine, kEntityServers1) 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(1, Servers1, updateFromTime)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Servers1, draw)
 	Entity::draw(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SII(3, Servers1, updatePosition, CarIndex, Position)
 	Entity::updatePosition(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Servers1, callbackActionOnDirection)
@@ -97,17 +97,17 @@ IMPLEMENT_FUNCTION(4, Servers1, callbackActionOnDirection)
 	}
 
 	Entity::callbackActionOnDirection(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SIIS(5, Servers1, callSavepoint, EntityIndex, ActionIndex)
 	Entity::callSavepoint(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(6, Servers1, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Servers1, function7)
@@ -150,7 +150,7 @@ IMPLEMENT_FUNCTION(7, Servers1, function7)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Servers1, chapter1)
@@ -180,7 +180,7 @@ IMPLEMENT_FUNCTION(8, Servers1, chapter1)
 		getData()->car = kCarRestaurant;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Servers1, function9)
@@ -226,7 +226,7 @@ IMPLEMENT_FUNCTION(9, Servers1, function9)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Servers1, function10)
@@ -272,22 +272,22 @@ IMPLEMENT_FUNCTION(10, Servers1, function10)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Servers1, function11)
 	serveTable(savepoint, "919", kEntityTables1, "005H", "005J", "921", &ENTITY_PARAM(0, 3), 63);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Servers1, function12)
 	serveTable(savepoint, "923", kEntityTables2, "009F", "009G", "926", &ENTITY_PARAM(0, 4));
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Servers1, function13)
 	serveTable(savepoint, "923", kEntityTables2, "009F", "009G", "926", &ENTITY_PARAM(0, 5));
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Servers1, chapter1Handler)
@@ -336,7 +336,7 @@ switch (savepoint.action) {
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Servers1, function15)
@@ -352,7 +352,7 @@ IMPLEMENT_FUNCTION(15, Servers1, function15)
 		setup_function16();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Servers1, function16)
@@ -363,7 +363,7 @@ IMPLEMENT_FUNCTION(16, Servers1, function16)
 
 		getEntities()->clearSequences(kEntityServers1);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Servers1, chapter2)
@@ -389,7 +389,7 @@ IMPLEMENT_FUNCTION(17, Servers1, chapter2)
 		ENTITY_PARAM(0, 8) = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Servers1, chapter2Handler)
@@ -444,12 +444,12 @@ label_callback_2:
 		setup_draw("975");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Servers1, function19)
 	serveTable(savepoint, "969", kEntityTables1, "005H2", "018A", "971", &ENTITY_PARAM(0, 6), 63);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Servers1, function20)
@@ -475,12 +475,12 @@ IMPLEMENT_FUNCTION(20, Servers1, function20)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Servers1, function21)
 	serveTable(savepoint, "974", kEntityTables2, "009F2", "009G", "976", &ENTITY_PARAM(0, 8), 0, true, &ENTITY_PARAM(0, 5));
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Servers1, chapter3)
@@ -505,7 +505,7 @@ IMPLEMENT_FUNCTION(22, Servers1, chapter3)
 		ENTITY_PARAM(1, 2) = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Servers1, chapter3Handler)
@@ -525,12 +525,12 @@ IMPLEMENT_FUNCTION(23, Servers1, chapter3Handler)
 		setCallback(2);
 		setup_function7();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Servers1, function24)
 	serveSalon(savepoint, "927", "Ann3143A", kEntityAnna, "Ann31444", "112C", kAction122288808, "928", &ENTITY_PARAM(1, 1));
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Servers1, chapter4)
@@ -558,7 +558,7 @@ IMPLEMENT_FUNCTION(25, Servers1, chapter4)
 		ENTITY_PARAM(1, 5) = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Servers1, chapter4Handler)
@@ -610,22 +610,22 @@ IMPLEMENT_FUNCTION(26, Servers1, chapter4Handler)
 		getData()->location = kLocationOutsideCompartment;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Servers1, function27)
 	serveSalon(savepoint, "929", "", kEntityAugust, "Aug4003", "122D", kAction134486752, "930", &ENTITY_PARAM(1, 3));
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Servers1, function28)
 	serveSalon(savepoint, "931", "", kEntityAugust, "Aug4004", "122E", kAction125826561, "930", &ENTITY_PARAM(1, 5));
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Servers1, function29)
 	serveSalon(savepoint, "932", "", kEntityAnna, "Ann4151", "127D", kAction122288808, "930", &ENTITY_PARAM(1, 4));
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(30, Servers1, chapter5)
@@ -646,13 +646,13 @@ IMPLEMENT_FUNCTION(30, Servers1, chapter5)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, Servers1, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_nullfunction();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(32, Servers1)

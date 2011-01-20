@@ -68,17 +68,17 @@ Mahmud::Mahmud(LastExpressEngine *engine) : Entity(engine, kEntityMahmud) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Mahmud, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(2, Mahmud, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(3, Mahmud, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SIII(4, Mahmud, enterExitCompartment2, ObjectIndex, uint32, ObjectIndex)
@@ -104,27 +104,27 @@ IMPLEMENT_FUNCTION_SIII(4, Mahmud, enterExitCompartment2, ObjectIndex, uint32, O
 		getEntities()->enterCompartment(kEntityMahmud, (ObjectIndex)params->param4);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(5, Mahmud, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(6, Mahmud, playSoundMertens)
 	Entity::playSound(savepoint, false, getSound()->getSoundFlag(kEntityMertens));
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(7, Mahmud, updateFromTime)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(8, Mahmud, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(9, Mahmud, updateEntity, CarIndex, EntityPosition)
@@ -138,7 +138,7 @@ IMPLEMENT_FUNCTION_II(9, Mahmud, updateEntity, CarIndex, EntityPosition)
 	}
 
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
@@ -273,7 +273,7 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Mahmud, function11)
@@ -411,7 +411,7 @@ IMPLEMENT_FUNCTION(11, Mahmud, function11)
 		setup_enterExitCompartment("614Cd", kObjectCompartment4);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 // TODO: factorize code between function12 & function13
@@ -478,7 +478,7 @@ IMPLEMENT_FUNCTION(12, Mahmud, function12)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Mahmud, function13)
@@ -544,7 +544,7 @@ IMPLEMENT_FUNCTION(13, Mahmud, function13)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Mahmud, chaptersHandler)
@@ -724,7 +724,7 @@ IMPLEMENT_FUNCTION(14, Mahmud, chaptersHandler)
 		setup_function10((ObjectIndex)savepoint.param.intValue, (bool)params->param3);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Mahmud, chapter1)
@@ -747,7 +747,7 @@ IMPLEMENT_FUNCTION(15, Mahmud, chapter1)
 		getObjects()->update(kObject20, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Mahmud, resetChapter)
@@ -760,7 +760,7 @@ IMPLEMENT_FUNCTION(16, Mahmud, resetChapter)
 
 	getObjects()->update(kObjectCompartment4, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
 	getEntities()->clearSequences(kEntityMahmud);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Mahmud, chapter2)
@@ -782,7 +782,7 @@ IMPLEMENT_FUNCTION(17, Mahmud, chapter2)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Mahmud, chapter3)
@@ -805,7 +805,7 @@ IMPLEMENT_FUNCTION(18, Mahmud, chapter3)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Mahmud, chapter4)
@@ -828,12 +828,12 @@ IMPLEMENT_FUNCTION(19, Mahmud, chapter4)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Mahmud, chapter5)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityMahmud);
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

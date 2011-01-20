@@ -93,72 +93,72 @@ Rebecca::Rebecca(LastExpressEngine *engine) : Entity(engine, kEntityRebecca) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Rebecca, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(2, Rebecca, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(3, Rebecca, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(4, Rebecca, playSound16)
 	Entity::playSound(savepoint, false, getSound()->getSoundFlag(kEntityCoudert));
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SIIS(5, Rebecca, callSavepoint, EntityIndex, ActionIndex)
 	Entity::callSavepoint(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(6, Rebecca, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(7, Rebecca, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(8, Rebecca, enterExitCompartment2, ObjectIndex)
 	Entity::enterExitCompartment(savepoint, kPosition_4840, kPosition_4455, kCarRedSleeping, kObjectCompartmentE, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(9, Rebecca, enterExitCompartment3, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Rebecca, callbackActionOnDirection)
 	Entity::callbackActionOnDirection(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Rebecca, callbackActionRestaurantOrSalon)
 	Entity::callbackActionRestaurantOrSalon(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(12, Rebecca, updateEntity, CarIndex, EntityPosition)
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SII(13, Rebecca, updatePosition, CarIndex, Position)
 	Entity::updatePosition(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SSI(14, Rebecca, draw2, EntityIndex)
 	Entity::draw2(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Rebecca, function15)
@@ -184,7 +184,7 @@ IMPLEMENT_FUNCTION(15, Rebecca, function15)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(16, Rebecca, function16, bool)
@@ -265,7 +265,7 @@ IMPLEMENT_FUNCTION_I(16, Rebecca, function16, bool)
 		CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(17, Rebecca, function17, bool)
@@ -349,7 +349,7 @@ IMPLEMENT_FUNCTION_I(17, Rebecca, function17, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Rebecca, function18)
@@ -403,7 +403,7 @@ IMPLEMENT_FUNCTION(18, Rebecca, function18)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Rebecca, function19)
@@ -479,7 +479,7 @@ IMPLEMENT_FUNCTION(19, Rebecca, function19)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(20, Rebecca, function20, TimeValue)
@@ -649,7 +649,7 @@ label_callback:
 		setup_playSound("REB1039A");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Rebecca, chapter1)
@@ -677,7 +677,7 @@ IMPLEMENT_FUNCTION(21, Rebecca, chapter1)
 		ENTITY_PARAM(0, 2) = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Rebecca, chapter1Handler)
@@ -766,7 +766,7 @@ label_playConversation:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Rebecca, function23)
@@ -835,7 +835,7 @@ IMPLEMENT_FUNCTION(23, Rebecca, function23)
 		setup_enterExitCompartment("623De", kObjectCompartmentE);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Rebecca, function24)
@@ -928,7 +928,7 @@ IMPLEMENT_FUNCTION(24, Rebecca, function24)
 		setup_playSound("REB1200");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Rebecca, function25)
@@ -957,7 +957,7 @@ IMPLEMENT_FUNCTION(25, Rebecca, function25)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Rebecca, function26)
@@ -1000,7 +1000,7 @@ IMPLEMENT_FUNCTION(26, Rebecca, function26)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Rebecca, function27)
@@ -1014,7 +1014,7 @@ IMPLEMENT_FUNCTION(27, Rebecca, function27)
 
 		getEntities()->clearSequences(kEntityRebecca);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Rebecca, chapter2)
@@ -1043,7 +1043,7 @@ IMPLEMENT_FUNCTION(28, Rebecca, chapter2)
 		ENTITY_PARAM(0, 2) = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Rebecca, chapter2Handler)
@@ -1072,7 +1072,7 @@ IMPLEMENT_FUNCTION(29, Rebecca, chapter2Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(30, Rebecca, function30)
@@ -1139,7 +1139,7 @@ IMPLEMENT_FUNCTION(30, Rebecca, function30)
 		params->param3 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, Rebecca, function31)
@@ -1169,7 +1169,7 @@ IMPLEMENT_FUNCTION(31, Rebecca, function31)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Rebecca, chapter3)
@@ -1191,7 +1191,7 @@ IMPLEMENT_FUNCTION(32, Rebecca, chapter3)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(33, Rebecca, chapter3Handler)
@@ -1209,7 +1209,7 @@ IMPLEMENT_FUNCTION(33, Rebecca, chapter3Handler)
 			setup_function34();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(34, Rebecca, function34)
@@ -1282,7 +1282,7 @@ IMPLEMENT_FUNCTION(34, Rebecca, function34)
 		setup_draw("012E");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(35, Rebecca, function35)
@@ -1300,7 +1300,7 @@ IMPLEMENT_FUNCTION(35, Rebecca, function35)
 			setup_function36();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(36, Rebecca, function36)
@@ -1411,7 +1411,7 @@ label_callback_3:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, Rebecca, function37)
@@ -1429,7 +1429,7 @@ IMPLEMENT_FUNCTION(37, Rebecca, function37)
 			setup_function38();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(38, Rebecca, function38)
@@ -1464,7 +1464,7 @@ IMPLEMENT_FUNCTION(38, Rebecca, function38)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(39, Rebecca, function39)
@@ -1487,7 +1487,7 @@ IMPLEMENT_FUNCTION(39, Rebecca, function39)
 		setup_function40();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(40, Rebecca, function40)
@@ -1530,7 +1530,7 @@ IMPLEMENT_FUNCTION(40, Rebecca, function40)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(41, Rebecca, function41)
@@ -1540,7 +1540,7 @@ IMPLEMENT_FUNCTION(41, Rebecca, function41)
 		setCallback(1);
 		setup_function20(kTimeEnd);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(42, Rebecca, chapter4)
@@ -1567,7 +1567,7 @@ IMPLEMENT_FUNCTION(42, Rebecca, chapter4)
 		ENTITY_PARAM(0, 2) = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(43, Rebecca, chapter4Handler)
@@ -1591,7 +1591,7 @@ IMPLEMENT_FUNCTION(43, Rebecca, chapter4Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(44, Rebecca, function44)
@@ -1686,7 +1686,7 @@ label_callback_2:
 		setup_draw("012E");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(45, Rebecca, function45)
@@ -1717,7 +1717,7 @@ IMPLEMENT_FUNCTION(45, Rebecca, function45)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(46, Rebecca, chapter5)
@@ -1740,13 +1740,13 @@ IMPLEMENT_FUNCTION(46, Rebecca, chapter5)
 		getObjects()->updateLocation2(kObject110, kObjectLocation4);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(47, Rebecca, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_function48();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(48, Rebecca, function48)
@@ -1830,7 +1830,7 @@ IMPLEMENT_FUNCTION(48, Rebecca, function48)
 		getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(49, Rebecca)

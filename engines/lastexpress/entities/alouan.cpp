@@ -67,47 +67,47 @@ Alouan::Alouan(LastExpressEngine *engine) : Entity(engine, kEntityAlouan) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Alouan, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(2, Alouan, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(3, Alouan, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(4, Alouan, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(5, Alouan, updateEntity, CarIndex, EntityPosition)
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Alouan, compartment6)
 	COMPARTMENT_TO(Alouan, kObjectCompartment6, kPosition_4070, "621Cf", "621Df");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Alouan, compartment8)
 	COMPARTMENT_TO(Alouan, kObjectCompartment8, kPosition_2740, "621Ch", "621Dh");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Alouan, compartment6to8)
 	COMPARTMENT_FROM_TO(Alouan, kObjectCompartment6, kPosition_4070, "621Bf", kObjectCompartment8, kPosition_2740, "621Ah");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Alouan, compartment8to6)
 	COMPARTMENT_FROM_TO(Alouan, kObjectCompartment8, kPosition_2740, "621Bh", kObjectCompartment6, kPosition_4070, "621Af");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Alouan, chapter1)
@@ -126,7 +126,7 @@ IMPLEMENT_FUNCTION(10, Alouan, chapter1)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Alouan, chapter1Handler)
@@ -165,7 +165,7 @@ label_callback1:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Alouan, function12)
@@ -179,7 +179,7 @@ IMPLEMENT_FUNCTION(12, Alouan, function12)
 
 		getEntities()->clearSequences(kEntityAlouan);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Alouan, chapter2)
@@ -195,7 +195,7 @@ IMPLEMENT_FUNCTION(13, Alouan, chapter2)
 	getData()->inventoryItem = kItemNone;
 
 	setup_chapter2Handler();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Alouan, chapter2Handler)
@@ -256,7 +256,7 @@ IMPLEMENT_FUNCTION(14, Alouan, chapter2Handler)
 		setup_compartment8to6();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Alouan, chapter3)
@@ -277,7 +277,7 @@ IMPLEMENT_FUNCTION(15, Alouan, chapter3)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Alouan, chapter3Handler)
@@ -327,7 +327,7 @@ label_callback4:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Alouan, chapter4)
@@ -348,7 +348,7 @@ IMPLEMENT_FUNCTION(17, Alouan, chapter4)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Alouan, chapter4Handler)
@@ -391,7 +391,7 @@ label_callback2:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Alouan, function19)
@@ -405,7 +405,7 @@ IMPLEMENT_FUNCTION(19, Alouan, function19)
 
 		getEntities()->clearSequences(kEntityAlouan);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Alouan, chapter5)
@@ -428,13 +428,13 @@ IMPLEMENT_FUNCTION(20, Alouan, chapter5)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Alouan, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_function22();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Alouan, function22)
@@ -458,7 +458,7 @@ IMPLEMENT_FUNCTION(22, Alouan, function22)
 			setup_function23();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Alouan, function23)
@@ -496,7 +496,7 @@ IMPLEMENT_FUNCTION(23, Alouan, function23)
 		setup_nullfunction();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(24, Alouan)

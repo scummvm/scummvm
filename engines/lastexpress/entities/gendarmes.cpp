@@ -61,7 +61,7 @@ Gendarmes::Gendarmes(LastExpressEngine *engine) : Entity(engine, kEntityGendarme
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Gendarmes, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(2, Gendarmes, chapter1)
@@ -77,37 +77,37 @@ IMPLEMENT_FUNCTION(2, Gendarmes, chapter1)
 		getData()->car = kCarNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(3, Gendarmes, arrestDraw)
 	arrest(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(4, Gendarmes, arrestPlaysound)
 	arrest(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(5, Gendarmes, arrestPlaysound16)
 	arrest(savepoint, true, SoundManager::kFlagDefault);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(6, Gendarmes, arrestCallback, uint32)
 	arrest(savepoint, true, SoundManager::kFlagInvalid, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(7, Gendarmes, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(8, Gendarmes, arrestUpdateEntity, CarIndex, EntityPosition)
 	arrest(savepoint, true, SoundManager::kFlagInvalid, false, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IISS(9, Gendarmes, function9, CarIndex, EntityPosition)
@@ -241,7 +241,7 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, function9, CarIndex, EntityPosition)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, ObjectIndex)
@@ -348,7 +348,7 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, Obje
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Gendarmes, chapter1Handler)
@@ -356,7 +356,7 @@ IMPLEMENT_FUNCTION(11, Gendarmes, chapter1Handler)
 		getSavePoints()->push(kEntityGendarmes, kEntityMertens, kAction190082817);
 		setup_function12();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Gendarmes, function12)
@@ -512,37 +512,37 @@ IMPLEMENT_FUNCTION(12, Gendarmes, function12)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Gendarmes, function13)
 	if (savepoint.action == kActionDefault)
 		getData()->car = kCarNone;
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Gendarmes, chapter2)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityGendarmes);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Gendarmes, chapter3)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityGendarmes);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Gendarmes, chapter4)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityGendarmes);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Gendarmes, chapter5)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityGendarmes);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 // Private functions

@@ -88,12 +88,12 @@ Verges::Verges(LastExpressEngine *engine) : Entity(engine, kEntityVerges) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Verges, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Verges, draw)
 	Entity::draw(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(3, Verges, callbackActionOnDirection)
@@ -117,27 +117,27 @@ IMPLEMENT_FUNCTION(3, Verges, callbackActionOnDirection)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(4, Verges, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(5, Verges, playSound16)
 	Entity::playSound(savepoint, false, SoundManager::kFlagDefault);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Verges, callbackActionRestaurantOrSalon)
 	Entity::callbackActionRestaurantOrSalon(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(7, Verges, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(8, Verges, updateEntity, CarIndex, EntityPosition)
@@ -149,7 +149,7 @@ IMPLEMENT_FUNCTION_II(8, Verges, updateEntity, CarIndex, EntityPosition)
 	}
 
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(9, Verges, function9)
@@ -225,7 +225,7 @@ switch (savepoint.action) {
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IIS(10, Verges, function10, CarIndex, EntityPosition)
@@ -270,7 +270,7 @@ IMPLEMENT_FUNCTION_IIS(10, Verges, function10, CarIndex, EntityPosition)
 			CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Verges, function11)
@@ -344,7 +344,7 @@ IMPLEMENT_FUNCTION(11, Verges, function11)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Verges, function12)
@@ -403,7 +403,7 @@ IMPLEMENT_FUNCTION(12, Verges, function12)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(13, Verges, function13, bool)
@@ -443,12 +443,12 @@ IMPLEMENT_FUNCTION_I(13, Verges, function13, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(14, Verges, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IS(15, Verges, function15, EntityIndex)
@@ -485,7 +485,7 @@ IMPLEMENT_FUNCTION_IS(15, Verges, function15, EntityIndex)
 		getSound()->playSound(kEntityVerges, (char *)&params->seq);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_ISS(16, Verges, function16, EntityIndex)
@@ -525,7 +525,7 @@ IMPLEMENT_FUNCTION_ISS(16, Verges, function16, EntityIndex)
 		getSound()->playSound(kEntityVerges, (char *)&params->seq1);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Verges, function17)
@@ -565,7 +565,7 @@ IMPLEMENT_FUNCTION(17, Verges, function17)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Verges, chapter1)
@@ -595,22 +595,22 @@ IMPLEMENT_FUNCTION(18, Verges, chapter1)
 		getData()->car = kCarBaggage;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(19, Verges, talkHarem)
 	talk(savepoint, "TRA1202", "TRA1201");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Verges, talkPassengerList)
 	talk(savepoint, "TRA1205", "TRA1206");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Verges, talkGendarmes)
 	talk(savepoint, "TRA1250", "TRA1251");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Verges, function22)
@@ -657,7 +657,7 @@ IMPLEMENT_FUNCTION(22, Verges, function22)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Verges, function23)
@@ -682,7 +682,7 @@ IMPLEMENT_FUNCTION(23, Verges, function23)
 		setup_function11();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
@@ -713,7 +713,7 @@ IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Verges, function25)
@@ -865,7 +865,7 @@ IMPLEMENT_FUNCTION(25, Verges, function25)
 		setup_savegame(kSavegameTypeTime, kTimeNone);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Verges, chapter1Handler)
@@ -1043,7 +1043,7 @@ label_callback15:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Verges, chapter2)
@@ -1069,7 +1069,7 @@ IMPLEMENT_FUNCTION(27, Verges, chapter2)
 		ENTITY_PARAM(0, 3) = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Verges, chapter2Handler)
@@ -1163,7 +1163,7 @@ label_callback_6:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Verges, chapter3)
@@ -1191,7 +1191,7 @@ IMPLEMENT_FUNCTION(29, Verges, chapter3)
 		ENTITY_PARAM(0, 4) = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(30, Verges, function30)
@@ -1230,7 +1230,7 @@ IMPLEMENT_FUNCTION_S(30, Verges, function30)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, Verges, function31)
@@ -1272,7 +1272,7 @@ IMPLEMENT_FUNCTION(31, Verges, function31)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Verges, function32)
@@ -1349,7 +1349,7 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(33, Verges, function33)
@@ -1411,7 +1411,7 @@ IMPLEMENT_FUNCTION(33, Verges, function33)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(34, Verges, function34)
@@ -1501,7 +1501,7 @@ label_callback_9:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(35, Verges, function35)
@@ -1554,7 +1554,7 @@ IMPLEMENT_FUNCTION(35, Verges, function35)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(36, Verges, chapter4)
@@ -1582,7 +1582,7 @@ IMPLEMENT_FUNCTION(36, Verges, chapter4)
 		ENTITY_PARAM(0, 6) = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, Verges, chapter4Handler)
@@ -1673,7 +1673,7 @@ label_callback_8:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(38, Verges, function38)
@@ -1721,7 +1721,7 @@ IMPLEMENT_FUNCTION(38, Verges, function38)
 		setup_updateEntity(kCarGreenSleeping, kPosition_540);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(39, Verges, chapter5)
@@ -1746,7 +1746,7 @@ IMPLEMENT_FUNCTION(39, Verges, chapter5)
 		getObjects()->update(kObject105, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorHand);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(40, Verges, chapter5Handler)
@@ -1786,7 +1786,7 @@ IMPLEMENT_FUNCTION(40, Verges, chapter5Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(41, Verges, function41)
@@ -1836,13 +1836,13 @@ IMPLEMENT_FUNCTION(41, Verges, function41)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(42, Verges, function42)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityVerges);
-}
+IMPLEMENT_FUNCTION_END
 
 
 //////////////////////////////////////////////////////////////////////////

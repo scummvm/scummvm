@@ -75,37 +75,37 @@ Francois::Francois(LastExpressEngine *engine) : Entity(engine, kEntityFrancois) 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Francois, reset)
 	Entity::reset(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(2, Francois, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(3, Francois, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(4, Francois, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(5, Francois, enterExitCompartment2, ObjectIndex)
 	Entity::enterExitCompartment(savepoint, kPosition_5790, kPosition_6130, kCarRedSleeping, kObjectCompartmentD, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(6, Francois, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(7, Francois, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(8, Francois, updateEntity, CarIndex, EntityPosition)
@@ -195,7 +195,7 @@ IMPLEMENT_FUNCTION_II(8, Francois, updateEntity, CarIndex, EntityPosition)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Francois, function9)
@@ -231,7 +231,7 @@ IMPLEMENT_FUNCTION(9, Francois, function9)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Francois, function10)
@@ -269,7 +269,7 @@ IMPLEMENT_FUNCTION(10, Francois, function10)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(11, Francois, function11, TimeValue)
@@ -476,7 +476,7 @@ label_callback:
 			params->param7 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Francois, function12)
@@ -530,7 +530,7 @@ IMPLEMENT_FUNCTION(12, Francois, function12)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Francois, function13)
@@ -620,7 +620,7 @@ IMPLEMENT_FUNCTION(13, Francois, function13)
 		setup_enterExitCompartment("605Ef", kObjectCompartment6);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
@@ -714,7 +714,7 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Francois, function15)
@@ -779,7 +779,7 @@ IMPLEMENT_FUNCTION(15, Francois, function15)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Francois, function16)
@@ -841,7 +841,7 @@ IMPLEMENT_FUNCTION(16, Francois, function16)
 		setup_updateEntity(kCarRedSleeping, kPosition_5790);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Francois, chapter1)
@@ -859,7 +859,7 @@ IMPLEMENT_FUNCTION(17, Francois, chapter1)
 		getData()->car = kCarRedSleeping;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Francois, chapter1Handler)
@@ -876,7 +876,7 @@ IMPLEMENT_FUNCTION(18, Francois, chapter1Handler)
 			setup_function19();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Francois, function19)
@@ -893,7 +893,7 @@ IMPLEMENT_FUNCTION(19, Francois, function19)
 		setup_function16();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Francois, function20)
@@ -904,7 +904,7 @@ IMPLEMENT_FUNCTION(20, Francois, function20)
 
 		getEntities()->clearSequences(kEntityFrancois);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Francois, chapter2)
@@ -926,7 +926,7 @@ IMPLEMENT_FUNCTION(21, Francois, chapter2)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Francois, chapter2Handler)
@@ -960,7 +960,7 @@ IMPLEMENT_FUNCTION(22, Francois, chapter2Handler)
 		setup_updateEntity(kCarRedSleeping, kPosition_5790);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Francois, function23)
@@ -1043,7 +1043,7 @@ label_callback_7:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Francois, chapter3)
@@ -1065,7 +1065,7 @@ IMPLEMENT_FUNCTION(24, Francois, chapter3)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Francois, chapter3Handler)
@@ -1204,7 +1204,7 @@ label_callback_14:
 		params->param1 = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Francois, chapter4)
@@ -1226,7 +1226,7 @@ IMPLEMENT_FUNCTION(26, Francois, chapter4)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Francois, chapter4Handler)
@@ -1234,7 +1234,7 @@ IMPLEMENT_FUNCTION(27, Francois, chapter4Handler)
 		setCallback(1);
 		setup_function16();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Francois, chapter5)
@@ -1256,7 +1256,7 @@ IMPLEMENT_FUNCTION(28, Francois, chapter5)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Francois, chapter5Handler)
@@ -1267,7 +1267,7 @@ IMPLEMENT_FUNCTION(29, Francois, chapter5Handler)
 
 		setup_function30();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(30, Francois, function30)
@@ -1287,7 +1287,7 @@ IMPLEMENT_FUNCTION(30, Francois, function30)
 		setup_nullfunction();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(31, Francois)

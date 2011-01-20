@@ -56,7 +56,7 @@ IMPLEMENT_FUNCTION(1, Tables, chapter1)
 
 		setup_draw();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(2, Tables, chapter2)
@@ -66,7 +66,7 @@ IMPLEMENT_FUNCTION(2, Tables, chapter2)
 
 		setup_draw();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(3, Tables, chapter3)
@@ -76,7 +76,7 @@ IMPLEMENT_FUNCTION(3, Tables, chapter3)
 
 		setup_draw();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Tables, chapter4)
@@ -86,7 +86,7 @@ IMPLEMENT_FUNCTION(4, Tables, chapter4)
 
 		setup_draw();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Tables, chapter5)
@@ -96,7 +96,7 @@ IMPLEMENT_FUNCTION(5, Tables, chapter5)
 
 		setup_draw();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Tables, draw)
@@ -216,6 +216,6 @@ IMPLEMENT_FUNCTION(6, Tables, draw)
 		getEntities()->drawSequenceLeft(_id, "BLANK");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

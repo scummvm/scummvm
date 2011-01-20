@@ -67,17 +67,17 @@ Vassili::Vassili(LastExpressEngine *engine) : Entity(engine, kEntityVassili) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Vassili, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Vassili, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(3, Vassili, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Vassili, chapter1)
@@ -94,7 +94,7 @@ IMPLEMENT_FUNCTION(4, Vassili, chapter1)
 		getObjects()->update(kObject40, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Vassili, chapter1Handler)
@@ -137,7 +137,7 @@ IMPLEMENT_FUNCTION(5, Vassili, chapter1Handler)
 		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Vassili, function6)
@@ -205,7 +205,7 @@ label_function7:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Vassili, function7)
@@ -250,7 +250,7 @@ IMPLEMENT_FUNCTION(7, Vassili, function7)
 		setup_function9();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Vassili, function8)
@@ -274,7 +274,7 @@ IMPLEMENT_FUNCTION(8, Vassili, function8)
 		getSound()->playSound(kEntityVassili, "VAS1027", SoundManager::kFlagDefault);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Vassili, function9)
@@ -307,7 +307,7 @@ IMPLEMENT_FUNCTION(9, Vassili, function9)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Vassili, seizure)
@@ -362,13 +362,13 @@ IMPLEMENT_FUNCTION(10, Vassili, seizure)
 		setup_drawInBed();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Vassili, drawInBed)
 	if (savepoint.action == kActionDefault)
 		getEntities()->drawSequenceLeft(kEntityVassili, "303A");
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Vassili, chapter2)
@@ -393,7 +393,7 @@ IMPLEMENT_FUNCTION(12, Vassili, chapter2)
 		getObjects()->updateLocation2(kObjectCompartmentA, kObjectLocation1);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Vassili, sleeping)
@@ -428,7 +428,7 @@ IMPLEMENT_FUNCTION(13, Vassili, sleeping)
 		params->param2 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Vassili, chapter3)
@@ -452,7 +452,7 @@ IMPLEMENT_FUNCTION(14, Vassili, chapter3)
 		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Vassili, stealEgg)
@@ -510,7 +510,7 @@ IMPLEMENT_FUNCTION(15, Vassili, stealEgg)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Vassili, chapter4)
@@ -535,7 +535,7 @@ IMPLEMENT_FUNCTION(16, Vassili, chapter4)
 		getObjects()->updateLocation2(kObjectCompartmentA, kObjectLocation1);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 // Looks identical to sleeping (#13)
@@ -571,7 +571,7 @@ IMPLEMENT_FUNCTION(17, Vassili, chapter4Handler)
 		params->param2 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Vassili, chapter5)
@@ -584,6 +584,6 @@ IMPLEMENT_FUNCTION(18, Vassili, chapter5)
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

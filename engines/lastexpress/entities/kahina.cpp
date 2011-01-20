@@ -75,17 +75,17 @@ Kahina::Kahina(LastExpressEngine *engine) : Entity(engine, kEntityKahina) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Kahina, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Kahina, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(3, Kahina, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(4, Kahina, updateFromTime, uint32)
@@ -95,12 +95,12 @@ IMPLEMENT_FUNCTION_I(4, Kahina, updateFromTime, uint32)
 	}
 
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(5, Kahina, updateFromTicks)
 	Entity::updateFromTicks(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(6, Kahina, function6, TimeValue)
@@ -189,7 +189,7 @@ IMPLEMENT_FUNCTION_I(6, Kahina, function6, TimeValue)
 		CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(7, Kahina, updateEntity2, CarIndex, EntityPosition)
@@ -222,7 +222,7 @@ IMPLEMENT_FUNCTION_II(7, Kahina, updateEntity2, CarIndex, EntityPosition)
 		CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(8, Kahina, updateEntity, CarIndex, EntityPosition)
@@ -236,12 +236,12 @@ IMPLEMENT_FUNCTION_II(8, Kahina, updateEntity, CarIndex, EntityPosition)
 	}
 
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(9, Kahina, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Kahina, chapter1)
@@ -262,7 +262,7 @@ IMPLEMENT_FUNCTION(10, Kahina, chapter1)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Kahina, chapter1Handler)
@@ -274,7 +274,7 @@ IMPLEMENT_FUNCTION(11, Kahina, chapter1Handler)
 
 	if (getProgress().eventMertensKronosInvitation)
 		setup_function12();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Kahina, function12)
@@ -322,7 +322,7 @@ IMPLEMENT_FUNCTION(12, Kahina, function12)
 		setup_function13();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Kahina, function13)
@@ -363,7 +363,7 @@ label_callback:
 		params->param1 = (uint)getState()->time + 1800;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Kahina, function14)
@@ -387,7 +387,7 @@ IMPLEMENT_FUNCTION(14, Kahina, function14)
 		getSavePoints()->push(kEntityKahina, kEntityMax, kAction158007856);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Kahina, function15)
@@ -548,7 +548,7 @@ IMPLEMENT_FUNCTION(15, Kahina, function15)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Kahina, chapter2)
@@ -573,7 +573,7 @@ IMPLEMENT_FUNCTION(16, Kahina, chapter2)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Kahina, chapter2Handler)
@@ -694,7 +694,7 @@ label_callback_3:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Kahina, chapter3)
@@ -717,7 +717,7 @@ IMPLEMENT_FUNCTION(18, Kahina, chapter3)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(19, Kahina, function19, CarIndex, EntityPosition)
@@ -749,7 +749,7 @@ IMPLEMENT_FUNCTION_II(19, Kahina, function19, CarIndex, EntityPosition)
 			CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Kahina, chapter3Handler)
@@ -915,7 +915,7 @@ label_callback_2:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Kahina, function21)
@@ -1015,7 +1015,7 @@ label_callback_2:
 		params->param1 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Kahina, function22)
@@ -1048,7 +1048,7 @@ IMPLEMENT_FUNCTION(22, Kahina, function22)
 			params->param1 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Kahina, function23)
@@ -1131,7 +1131,7 @@ IMPLEMENT_FUNCTION(23, Kahina, function23)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Kahina, function24)
@@ -1209,7 +1209,7 @@ IMPLEMENT_FUNCTION(24, Kahina, function24)
 		setup_function22();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Kahina, function25)
@@ -1367,7 +1367,7 @@ IMPLEMENT_FUNCTION(25, Kahina, function25)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Kahina, function26)
@@ -1468,7 +1468,7 @@ IMPLEMENT_FUNCTION(26, Kahina, function26)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Kahina, function27)
@@ -1511,18 +1511,18 @@ IMPLEMENT_FUNCTION(27, Kahina, function27)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Kahina, chapter4)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityKahina);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Kahina, chapter5)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityKahina);
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

@@ -94,47 +94,47 @@ Alexei::Alexei(LastExpressEngine *engine) : Entity(engine, kEntityAlexei) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Alexei, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Alexei, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(3, Alexei, updateFromTicks, uint32)
 	Entity::updateFromTicks(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(4, Alexei, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SII(5, Alexei, updatePosition, CarIndex, Position)
 	Entity::updatePosition(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(6, Alexei, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Alexei, callbackActionOnDirection)
 	Entity::callbackActionOnDirection(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SIIS(8, Alexei, callSavepoint, EntityIndex, ActionIndex)
 	Entity::callSavepoint(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(9, Alexei, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(10, Alexei, updateEntity, CarIndex, EntityPosition)
@@ -161,17 +161,17 @@ IMPLEMENT_FUNCTION_II(10, Alexei, updateEntity, CarIndex, EntityPosition)
 	}
 
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(11, Alexei, draw2)
 	Entity::draw2(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Alexei, callbackActionRestaurantOrSalon)
 	Entity::callbackActionRestaurantOrSalon(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Alexei, function13)
@@ -218,7 +218,7 @@ IMPLEMENT_FUNCTION(13, Alexei, function13)
 		setCallback(2);
 		setup_enterExitCompartment("602Eb", kObjectCompartment2);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Alexei, function14)
@@ -247,7 +247,7 @@ IMPLEMENT_FUNCTION(14, Alexei, function14)
 		CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Alexei, function15)
@@ -299,7 +299,7 @@ IMPLEMENT_FUNCTION(15, Alexei, function15)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IS(16, Alexei, function16, TimeValue)
@@ -441,7 +441,7 @@ IMPLEMENT_FUNCTION_IS(16, Alexei, function16, TimeValue)
 		setup_playSound("CON1024");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, Alexei, chapter1)
@@ -463,7 +463,7 @@ IMPLEMENT_FUNCTION(17, Alexei, chapter1)
 		getData()->car = kCarRestaurant;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, Alexei, chapter1Handler)
@@ -552,7 +552,7 @@ IMPLEMENT_FUNCTION(18, Alexei, chapter1Handler)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Alexei, function19)
@@ -639,7 +639,7 @@ IMPLEMENT_FUNCTION(19, Alexei, function19)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, Alexei, function20)
@@ -682,7 +682,7 @@ IMPLEMENT_FUNCTION(20, Alexei, function20)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, Alexei, function21)
@@ -744,7 +744,7 @@ IMPLEMENT_FUNCTION(21, Alexei, function21)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, Alexei, function22)
@@ -828,7 +828,7 @@ IMPLEMENT_FUNCTION(22, Alexei, function22)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, Alexei, function23)
@@ -889,7 +889,7 @@ IMPLEMENT_FUNCTION(23, Alexei, function23)
 		setup_function24();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Alexei, function24)
@@ -934,7 +934,7 @@ IMPLEMENT_FUNCTION(24, Alexei, function24)
 		setup_draw("103G");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, Alexei, function25)
@@ -971,7 +971,7 @@ IMPLEMENT_FUNCTION(25, Alexei, function25)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, Alexei, function26)
@@ -998,7 +998,7 @@ IMPLEMENT_FUNCTION(26, Alexei, function26)
 		getEntities()->clearSequences(kEntityAlexei);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, Alexei, function27)
@@ -1010,7 +1010,7 @@ IMPLEMENT_FUNCTION(27, Alexei, function27)
 
 		getEntities()->drawSequenceLeft(kEntityAlexei, "412");
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, Alexei, chapter2)
@@ -1036,7 +1036,7 @@ IMPLEMENT_FUNCTION(28, Alexei, chapter2)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, Alexei, chapter2Handler)
@@ -1092,7 +1092,7 @@ IMPLEMENT_FUNCTION(29, Alexei, chapter2Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(30, Alexei, function30)
@@ -1153,7 +1153,7 @@ IMPLEMENT_FUNCTION(30, Alexei, function30)
 		setup_callbackActionOnDirection();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, Alexei, function31)
@@ -1190,7 +1190,7 @@ IMPLEMENT_FUNCTION(31, Alexei, function31)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, Alexei, chapter3)
@@ -1215,7 +1215,7 @@ IMPLEMENT_FUNCTION(32, Alexei, chapter3)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(33, Alexei, chapter3Handler)
@@ -1241,7 +1241,7 @@ IMPLEMENT_FUNCTION(33, Alexei, chapter3Handler)
 		getEntities()->drawSequenceLeft(kEntityAlexei, "BLANK");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(34, Alexei, function34)
@@ -1325,7 +1325,7 @@ IMPLEMENT_FUNCTION(34, Alexei, function34)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(35, Alexei, function35)
@@ -1390,7 +1390,7 @@ label_callback_3:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(36, Alexei, function36)
@@ -1465,7 +1465,7 @@ IMPLEMENT_FUNCTION(36, Alexei, function36)
 		params->param3 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, Alexei, chapter4)
@@ -1490,7 +1490,7 @@ IMPLEMENT_FUNCTION(37, Alexei, chapter4)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(38, Alexei, chapter4Handler)
@@ -1508,7 +1508,7 @@ IMPLEMENT_FUNCTION(38, Alexei, chapter4Handler)
 			setup_function39();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(39, Alexei, function39)
@@ -1613,7 +1613,7 @@ IMPLEMENT_FUNCTION(39, Alexei, function39)
 		params->param1 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(40, Alexei, function40)
@@ -1658,7 +1658,7 @@ IMPLEMENT_FUNCTION(40, Alexei, function40)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(41, Alexei, function41)
@@ -1679,7 +1679,7 @@ IMPLEMENT_FUNCTION(41, Alexei, function41)
 			setup_function42();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(42, Alexei, function42)
@@ -1716,7 +1716,7 @@ IMPLEMENT_FUNCTION(42, Alexei, function42)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(43, Alexei, function43)
@@ -1773,7 +1773,7 @@ label_callback_1:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(44, Alexei, function44)
@@ -1840,7 +1840,7 @@ IMPLEMENT_FUNCTION(44, Alexei, function44)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(45, Alexei, function45)
@@ -1867,7 +1867,7 @@ IMPLEMENT_FUNCTION(45, Alexei, function45)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(46, Alexei, function46)
@@ -1977,7 +1977,7 @@ IMPLEMENT_FUNCTION(46, Alexei, function46)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(47, Alexei, function47)
@@ -1991,12 +1991,12 @@ IMPLEMENT_FUNCTION(47, Alexei, function47)
 		getObjects()->update(kObjectCompartment2, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObjectHandleInsideBathroom, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(48, Alexei, chapter5)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityAlexei);
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

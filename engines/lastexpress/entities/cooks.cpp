@@ -57,12 +57,12 @@ Cooks::Cooks(LastExpressEngine *engine) : Entity(engine, kEntityCooks) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(1, Cooks, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, Cooks, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(3, Cooks, function3)
@@ -147,7 +147,7 @@ IMPLEMENT_FUNCTION(3, Cooks, function3)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Cooks, function4)
@@ -233,7 +233,7 @@ IMPLEMENT_FUNCTION(4, Cooks, function4)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Cooks, chapter1)
@@ -254,7 +254,7 @@ IMPLEMENT_FUNCTION(5, Cooks, chapter1)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Cooks, chapter1Handler)
@@ -321,7 +321,7 @@ IMPLEMENT_FUNCTION(6, Cooks, chapter1Handler)
 		params->param1 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Cooks, function7)
@@ -343,7 +343,7 @@ IMPLEMENT_FUNCTION(7, Cooks, function7)
 		getEntities()->clearSequences(kEntityCooks);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Cooks, chapter2)
@@ -367,7 +367,7 @@ IMPLEMENT_FUNCTION(8, Cooks, chapter2)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Cooks, chapter2Handler)
@@ -403,7 +403,7 @@ IMPLEMENT_FUNCTION(9, Cooks, chapter2Handler)
 			params->param2 = !params->param2;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, Cooks, chapter3)
@@ -426,7 +426,7 @@ IMPLEMENT_FUNCTION(10, Cooks, chapter3)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, Cooks, chapter3Handler)
@@ -494,7 +494,7 @@ IMPLEMENT_FUNCTION(11, Cooks, chapter3Handler)
 		break;
 
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, Cooks, chapter4)
@@ -518,7 +518,7 @@ IMPLEMENT_FUNCTION(12, Cooks, chapter4)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, Cooks, chapter4Handler)
@@ -560,12 +560,12 @@ IMPLEMENT_FUNCTION(13, Cooks, chapter4Handler)
 			params->param2 = !params->param2;
 		}
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, Cooks, chapter5)
 	if (savepoint.action == kActionDefault)
 		getEntities()->clearSequences(kEntityCooks);
-}
+IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

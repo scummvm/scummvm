@@ -74,32 +74,32 @@ MmeBoutarel::MmeBoutarel(LastExpressEngine *engine) : Entity(engine, kEntityMmeB
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, MmeBoutarel, reset)
 	Entity::reset(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(2, MmeBoutarel, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(3, MmeBoutarel, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(4, MmeBoutarel, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(5, MmeBoutarel, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(6, MmeBoutarel, enterExitCompartment2, ObjectIndex)
 	Entity::enterExitCompartment(savepoint, kPosition_5790, kPosition_6130, kCarRedSleeping, kObjectCompartmentD, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(7, MmeBoutarel, updateEntity, CarIndex, EntityPosition)
@@ -110,7 +110,7 @@ IMPLEMENT_FUNCTION_II(7, MmeBoutarel, updateEntity, CarIndex, EntityPosition)
 	}
 
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(8, MmeBoutarel, function8)
@@ -154,7 +154,7 @@ IMPLEMENT_FUNCTION_S(8, MmeBoutarel, function8)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, MmeBoutarel, function9)
@@ -238,7 +238,7 @@ IMPLEMENT_FUNCTION(9, MmeBoutarel, function9)
 		setup_enterExitCompartment2("606Ad", kObjectCompartmentD);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(10, MmeBoutarel, chapter1)
@@ -261,7 +261,7 @@ IMPLEMENT_FUNCTION(10, MmeBoutarel, chapter1)
 		getData()->car = kCarRedSleeping;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(11, MmeBoutarel, function11)
@@ -318,7 +318,7 @@ IMPLEMENT_FUNCTION(11, MmeBoutarel, function11)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(12, MmeBoutarel, chapter1Handler)
@@ -393,7 +393,7 @@ IMPLEMENT_FUNCTION(12, MmeBoutarel, chapter1Handler)
 		setup_enterExitCompartment("606Ed", kObjectCompartmentD);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(13, MmeBoutarel, function13)
@@ -517,7 +517,7 @@ label_callback_1:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, MmeBoutarel, function14)
@@ -568,7 +568,7 @@ IMPLEMENT_FUNCTION(14, MmeBoutarel, function14)
 		setup_function9();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, MmeBoutarel, function15)
@@ -718,7 +718,7 @@ label_callback_5:
 		setup_playSound("MME1151B");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, MmeBoutarel, function16)
@@ -732,7 +732,7 @@ IMPLEMENT_FUNCTION(16, MmeBoutarel, function16)
 
 		getEntities()->clearSequences(kEntityMmeBoutarel);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(17, MmeBoutarel, chapter2)
@@ -759,7 +759,7 @@ IMPLEMENT_FUNCTION(17, MmeBoutarel, chapter2)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(18, MmeBoutarel, chapter2Handler)
@@ -806,7 +806,7 @@ IMPLEMENT_FUNCTION(18, MmeBoutarel, chapter2Handler)
 		setup_enterExitCompartment2("606Ad", kObjectCompartmentD);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, MmeBoutarel, function19)
@@ -850,7 +850,7 @@ IMPLEMENT_FUNCTION(19, MmeBoutarel, function19)
 		params->param2 = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(20, MmeBoutarel, chapter3)
@@ -872,7 +872,7 @@ IMPLEMENT_FUNCTION(20, MmeBoutarel, chapter3)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(21, MmeBoutarel, chapter3Handler)
@@ -987,7 +987,7 @@ IMPLEMENT_FUNCTION(21, MmeBoutarel, chapter3Handler)
 		params->param1 = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, MmeBoutarel, chapter4)
@@ -1009,7 +1009,7 @@ IMPLEMENT_FUNCTION(22, MmeBoutarel, chapter4)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(23, MmeBoutarel, chapter4Handler)
@@ -1056,7 +1056,7 @@ IMPLEMENT_FUNCTION(23, MmeBoutarel, chapter4Handler)
 		setup_function9();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, MmeBoutarel, function24)
@@ -1159,7 +1159,7 @@ IMPLEMENT_FUNCTION(24, MmeBoutarel, function24)
 		setup_playSound("Mme1038");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, MmeBoutarel, function25)
@@ -1173,7 +1173,7 @@ IMPLEMENT_FUNCTION(25, MmeBoutarel, function25)
 		getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObject51, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, MmeBoutarel, chapter5)
@@ -1195,13 +1195,13 @@ IMPLEMENT_FUNCTION(26, MmeBoutarel, chapter5)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, MmeBoutarel, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_function28();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, MmeBoutarel, function28)
@@ -1293,7 +1293,7 @@ IMPLEMENT_FUNCTION(28, MmeBoutarel, function28)
 		getObjects()->update(kObject51, kEntityMmeBoutarel, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(29, MmeBoutarel)

@@ -120,32 +120,32 @@ August::August(LastExpressEngine *engine) : Entity(engine, kEntityAugust) {
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, August, reset)
 	Entity::reset(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(2, August, updateFromTime, uint32)
 	Entity::updateFromTime(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(3, August, draw)
 	Entity::draw(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SII(4, August, updatePosition, CarIndex, Position)
 	Entity::updatePosition(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(5, August, enterExitCompartment, ObjectIndex)
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(6, August, enterExitCompartment2, ObjectIndex)
 	Entity::enterExitCompartment(savepoint, kPosition_6470, kPosition_6130, kCarGreenSleeping, kObjectCompartment3, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(7, August, enterExitCompartment3, ObjectIndex)
@@ -156,17 +156,17 @@ IMPLEMENT_FUNCTION_SI(7, August, enterExitCompartment3, ObjectIndex)
 	}
 
 	Entity::enterExitCompartment(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, August, callbackActionOnDirection)
 	Entity::callbackActionOnDirection(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SIIS(9, August, callSavepoint, EntityIndex, ActionIndex)
 	Entity::callSavepoint(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_IIS(10, August, callSavepointNoDrawing, EntityIndex, ActionIndex)
@@ -188,32 +188,32 @@ IMPLEMENT_FUNCTION_IIS(10, August, callSavepointNoDrawing, EntityIndex, ActionIn
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SSI(11, August, draw2, EntityIndex)
 	Entity::draw2(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(12, August, playSound)
 	Entity::playSound(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(13, August, playSound16)
 	Entity::playSound(savepoint, false, SoundManager::kFlagDefault);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(14, August, callbackActionRestaurantOrSalon)
 	Entity::callbackActionRestaurantOrSalon(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(15, August, savegame, SavegameType, uint32)
 	Entity::savegame(savepoint);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(16, August, updateEntity, CarIndex, EntityPosition)
@@ -223,7 +223,7 @@ IMPLEMENT_FUNCTION_II(16, August, updateEntity, CarIndex, EntityPosition)
 	}
 
 	Entity::updateEntity(savepoint, true);
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(17, August, function17, TimeValue)
@@ -299,7 +299,7 @@ IMPLEMENT_FUNCTION_I(17, August, function17, TimeValue)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(18, August, updateEntity2, CarIndex, EntityPosition)
@@ -327,7 +327,7 @@ IMPLEMENT_FUNCTION_II(18, August, updateEntity2, CarIndex, EntityPosition)
 			CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(19, August, function19, bool, bool)
@@ -420,7 +420,7 @@ IMPLEMENT_FUNCTION_II(19, August, function19, bool, bool)
 		setup_updateFromTime(75);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(20, August, function20, bool)
@@ -507,7 +507,7 @@ IMPLEMENT_FUNCTION_I(20, August, function20, bool)
 		CALLBACK_ACTION();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(21, August, function21, TimeValue)
@@ -745,7 +745,7 @@ label_continue:
 		setup_playSound("CON1023");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(22, August, chapter1)
@@ -769,7 +769,7 @@ IMPLEMENT_FUNCTION(22, August, chapter1)
 		getProgress().eventMetAugust = false;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(23, August, function23, TimeValue)
@@ -1076,7 +1076,7 @@ label_callback_9:
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, August, dinner)
@@ -1101,7 +1101,7 @@ IMPLEMENT_FUNCTION(24, August, dinner)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(25, August, chapter1Handler)
@@ -1231,7 +1231,7 @@ IMPLEMENT_FUNCTION(25, August, chapter1Handler)
 		getData()->inventoryItem = (InventoryItem)params->param2;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(26, August, function26)
@@ -1294,7 +1294,7 @@ IMPLEMENT_FUNCTION(26, August, function26)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(27, August, function27)
@@ -1346,7 +1346,7 @@ IMPLEMENT_FUNCTION(27, August, function27)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(28, August, function28)
@@ -1415,7 +1415,7 @@ IMPLEMENT_FUNCTION(28, August, function28)
 		setup_playSound("AUG1052");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(29, August, function29)
@@ -1477,7 +1477,7 @@ IMPLEMENT_FUNCTION(29, August, function29)
 		params->param2 = 0;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(30, August, restaurant)
@@ -1586,7 +1586,7 @@ IMPLEMENT_FUNCTION(30, August, restaurant)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(31, August, function31)
@@ -1626,7 +1626,7 @@ IMPLEMENT_FUNCTION(31, August, function31)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(32, August, function32)
@@ -1738,7 +1738,7 @@ IMPLEMENT_FUNCTION(32, August, function32)
 		params->param1 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(33, August, function33)
@@ -1756,7 +1756,7 @@ IMPLEMENT_FUNCTION(33, August, function33)
 			setup_function34();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(34, August, function34)
@@ -1779,7 +1779,7 @@ IMPLEMENT_FUNCTION(34, August, function34)
 		getEntities()->clearSequences(kEntityAugust);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(35, August, chapter2)
@@ -1805,7 +1805,7 @@ IMPLEMENT_FUNCTION(35, August, chapter2)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(36, August, chapter2Handler)
@@ -1896,7 +1896,7 @@ IMPLEMENT_FUNCTION(36, August, chapter2Handler)
 		setup_playSound("AUG2113");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(37, August, function37)
@@ -1954,7 +1954,7 @@ IMPLEMENT_FUNCTION(37, August, function37)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(38, August, function38)
@@ -2050,7 +2050,7 @@ IMPLEMENT_FUNCTION(38, August, function38)
 		setup_updateFromTime(900);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(39, August, function39)
@@ -2074,7 +2074,7 @@ IMPLEMENT_FUNCTION(39, August, function39)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(40, August, chapter3)
@@ -2096,7 +2096,7 @@ IMPLEMENT_FUNCTION(40, August, chapter3)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(41, August, function41, CarIndex, EntityPosition)
@@ -2156,7 +2156,7 @@ IMPLEMENT_FUNCTION_II(41, August, function41, CarIndex, EntityPosition)
 			params->param3 = kItemInvalid;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_III(42, August, function42, CarIndex, EntityPosition, bool)
@@ -2204,7 +2204,7 @@ IMPLEMENT_FUNCTION_III(42, August, function42, CarIndex, EntityPosition, bool)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(43, August, chapter3Handler)
@@ -2302,7 +2302,7 @@ IMPLEMENT_FUNCTION(43, August, chapter3Handler)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(44, August, function44)
@@ -2368,7 +2368,7 @@ IMPLEMENT_FUNCTION(44, August, function44)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(45, August, function45)
@@ -2397,7 +2397,7 @@ IMPLEMENT_FUNCTION(45, August, function45)
 		getData()->inventoryItem = kItem146;	// TODO which item is that?
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(46, August, function46)
@@ -2434,7 +2434,7 @@ IMPLEMENT_FUNCTION(46, August, function46)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(47, August, function47)
@@ -2479,7 +2479,7 @@ IMPLEMENT_FUNCTION(47, August, function47)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(48, August, function48)
@@ -2528,7 +2528,7 @@ IMPLEMENT_FUNCTION(48, August, function48)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(49, August, function49)
@@ -2557,7 +2557,7 @@ IMPLEMENT_FUNCTION(49, August, function49)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(50, August, function50)
@@ -2577,7 +2577,7 @@ IMPLEMENT_FUNCTION(50, August, function50)
 	case kAction191668032:
 		setup_function51();
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(51, August, function51)
@@ -2630,7 +2630,7 @@ IMPLEMENT_FUNCTION(51, August, function51)
 		setup_function42(kCarRedSleeping, kPosition_3820, true);
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(52, August, function52)
@@ -2722,7 +2722,7 @@ IMPLEMENT_FUNCTION(52, August, function52)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(53, August, function53)
@@ -2756,7 +2756,7 @@ IMPLEMENT_FUNCTION(53, August, function53)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(54, August, function54)
@@ -2855,7 +2855,7 @@ IMPLEMENT_FUNCTION(54, August, function54)
 		getData()->inventoryItem = kItemNone;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(55, August, function55)
@@ -2896,7 +2896,7 @@ IMPLEMENT_FUNCTION(55, August, function55)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(56, August, function56)
@@ -2923,7 +2923,7 @@ IMPLEMENT_FUNCTION(56, August, function56)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(57, August, chapter4)
@@ -2948,7 +2948,7 @@ IMPLEMENT_FUNCTION(57, August, chapter4)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(58, August, chapter4Handler)
@@ -3000,7 +3000,7 @@ IMPLEMENT_FUNCTION(58, August, chapter4Handler)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(59, August, function59)
@@ -3021,7 +3021,7 @@ IMPLEMENT_FUNCTION(59, August, function59)
 		setup_function60();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(60, August, function60)
@@ -3090,7 +3090,7 @@ IMPLEMENT_FUNCTION(60, August, function60)
 		params->param1 = 1;
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(61, August, function61)
@@ -3134,7 +3134,7 @@ IMPLEMENT_FUNCTION(61, August, function61)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(62, August, function62)
@@ -3212,7 +3212,7 @@ IMPLEMENT_FUNCTION(62, August, function62)
 		getEntities()->drawSequenceLeft(kEntityAugust, "122B");
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(63, August, function63)
@@ -3271,7 +3271,7 @@ IMPLEMENT_FUNCTION(63, August, function63)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(64, August, function64)
@@ -3325,7 +3325,7 @@ IMPLEMENT_FUNCTION(64, August, function64)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(65, August, function65)
@@ -3350,7 +3350,7 @@ IMPLEMENT_FUNCTION(65, August, function65)
 			getSound()->playSound(kEntityAugust, "AUG1057");   // August snoring
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(66, August, chapter5)
@@ -3373,13 +3373,13 @@ IMPLEMENT_FUNCTION(66, August, chapter5)
 
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(67, August, chapter5Handler)
 	if (savepoint.action == kActionProceedChapter5)
 		setup_function68();
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(68, August, function68)
@@ -3493,7 +3493,7 @@ IMPLEMENT_FUNCTION(68, August, function68)
 		setup_unhookCars();
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(69, August, unhookCars)
@@ -3528,7 +3528,7 @@ IMPLEMENT_FUNCTION(69, August, unhookCars)
 		}
 		break;
 	}
-}
+IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(70, August)
