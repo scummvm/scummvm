@@ -40,7 +40,7 @@ VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFront
 	x(-1), y(-1), width(-1), height(-1), flags(kFlagFrontSurface), switchColorMode(false),
 	startFrame(-1), lastFrame(-1), endFrame(-1), forceSeek(false),
 	breakKey(kShortKeyEscape), palCmd(8), palStart(0), palEnd(255), palFrame(-1),
-	fade(false), waitEndFrame(true), canceled(false) {
+	loop(false), fade(false), waitEndFrame(true), canceled(false) {
 
 }
 
@@ -313,11 +313,16 @@ void VideoPlayer::updateLive(bool force) {
 	if (_liveProperties.startFrame >= (int32)(video->decoder->getFrameCount() - 1)) {
 		// Video ended
 
-		WRITE_VAR_OFFSET(212, (uint32)-1);
-		if (video->surface == _vm->_draw->_frontSurface)
-			_vm->_draw->forceBlit(true);
-		_vm->_vidPlayer->closeVideo();
-		return;
+		if (!_liveProperties.loop) {
+			WRITE_VAR_OFFSET(212, (uint32)-1);
+			if (video->surface == _vm->_draw->_frontSurface)
+				_vm->_draw->forceBlit(true);
+			_vm->_vidPlayer->closeVideo();
+			return;
+		} else {
+			video->decoder->seek(0, SEEK_SET, true);
+			_liveProperties.startFrame = -1;
+		}
 	}
 
 	if (_liveProperties.startFrame == _liveProperties.lastFrame)

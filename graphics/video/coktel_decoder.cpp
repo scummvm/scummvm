@@ -1562,6 +1562,7 @@ bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
 	// Seek
 	_stream->seek(_frames[frame + 1].offset);
 	_curFrame = frame;
+	_startTime = g_system->getMillis() - ((frame + 2) * getStaticTimeToNextFrame());
 
 	_subtitle = -1;
 

@@ -153,8 +153,10 @@ void Inter_v6::o6_playVmdOrMusic() {
 	} else if (props.lastFrame <= -10) {
 		_vm->_vidPlayer->closeVideo();
 
-		if (props.lastFrame <= -100)
+		if (props.lastFrame <= -100) {
+			props.loop       = true;
 			props.lastFrame += 100;
+		}
 
 		if (((-props.lastFrame) % 10 == 3) && (props.lastFrame <= -20))
 			_vm->_sound->bgPlay(fileName, SOUND_WAV);

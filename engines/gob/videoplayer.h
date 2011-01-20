@@ -90,6 +90,7 @@ public:
 		 int16 palEnd;      ///< Palette entry to end at.
 		 int32 palFrame;    ///< Frame to apply the palette command at.
 
+		bool loop; ///< Loop the video?
 		bool fade; ///< Fade in?
 
 		bool waitEndFrame; ///< Wait for the frame's time to run out?
