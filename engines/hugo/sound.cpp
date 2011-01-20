@@ -30,7 +30,7 @@
  *
  */
 
-/* sound.c - sound effects and music support */
+// sound.c - sound effects and music support
 
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -402,7 +402,7 @@ void SoundHandler::pcspkr_player() {
 		return;
 	}
 	
-	/* Time to play next note */
+	// Time to play next note
 	do {
 		cmd_note = true;
 		switch (*DOSSongPtr) {
@@ -464,7 +464,7 @@ void SoundHandler::pcspkr_player() {
 		pcspkrTimer = pcspkrNoteDuration;
 		DOSSongPtr++;
 		break;
-	case '.':   /* A rest note */
+	case '.':                                       // A rest note
 		_speakerStream->stop();
 		pcspkrTimer = pcspkrNoteDuration;
 		DOSSongPtr++;

@@ -125,7 +125,7 @@ uint32 Scheduler::getDosTicks(bool updateFl) {
 
 	if (t_old == 0)
 		t_old = (uint32) floor((double) (g_system->getMillis() * _vm->getTPS() / 1000));
-	/* Calculate current wall time in ticks */
+	// Calculate current wall time in ticks
 	t_now = g_system->getMillis() * _vm->getTPS() / 1000	;
 
 	if ((t_now - t_old) > 0) {

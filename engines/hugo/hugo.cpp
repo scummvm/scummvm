@@ -259,7 +259,7 @@ Common::Error HugoEngine::run() {
 	if (!loadHugoDat())
 		return Common::kUnknownError;
 
-	/* Use Windows-looking mouse cursor */
+	// Use Windows-looking mouse cursor
 	_screen->setCursorPal();
 	_screen->resetInventoryObjId();
 
