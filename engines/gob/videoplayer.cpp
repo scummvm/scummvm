@@ -114,7 +114,8 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		if (!(video->decoder = openVideo(file, properties)))
 			return -1;
 
-		if (video->decoder->isPaletted() != !_vm->isTrueColor()) {
+		if (video->decoder->hasVideo() && !(properties.flags & kFlagNoVideo) &&
+		    (video->decoder->isPaletted() != !_vm->isTrueColor())) {
 			if (!properties.switchColorMode)
 				return -1;
 
