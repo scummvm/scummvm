@@ -42,8 +42,8 @@ struct PrisonerGameDescription {
 	uint16 version;
 };
 
-uint32 PrisonerEngine::getGameID() const {
-	return _gameDescription->gameID;
+const char *PrisonerEngine::getGameId() const {
+	return _gameDescription->desc.gameid;
 }
 
 uint32 PrisonerEngine::getFeatures() const {
@@ -64,7 +64,6 @@ static const PlainGameDescriptor prisonerGames[] = {
 	{"prisoner", "Prisoner of Ice"},
 	{0, 0}
 };
-
 
 namespace Prisoner {
 

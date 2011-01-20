@@ -53,22 +53,7 @@
 
 namespace Prisoner {
 
-struct GameSettings {
-	const char *gameid;
-	const char *description;
-	byte id;
-	uint32 features;
-	const char *detectname;
-};
-
-static const GameSettings prisonerSettings[] = {
-	{"prisoner", "Prisoner of Ice game", 0, 0, 0},
-
-	{NULL, NULL, 0, 0, NULL}
-};
-
 PrisonerEngine::PrisonerEngine(OSystem *syst, const PrisonerGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
@@ -76,13 +61,6 @@ PrisonerEngine::PrisonerEngine(OSystem *syst, const PrisonerGameDescription *gam
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-
-	const GameSettings *g;
-
-	const char *gameid = ConfMan.get("gameid").c_str();
-	for (g = prisonerSettings; g->gameid; ++g)
-		if (!scumm_stricmp(g->gameid, gameid))
-			_gameId = g->id;
 
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "prisoner");
@@ -94,7 +72,6 @@ PrisonerEngine::~PrisonerEngine() {
 }
 
 Common::Error PrisonerEngine::run() {
-
 	// Initialize backend
 	_system->beginGFXTransaction();
 		initCommonGFX(false);

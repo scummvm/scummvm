@@ -525,8 +525,6 @@ enum {
 /* PrisonerEngine */
 
 class PrisonerEngine : public ::Engine {
-	int _gameId;
-
 protected:
 
 	Common::Error run();
@@ -534,21 +532,16 @@ protected:
 public:
 	PrisonerEngine(OSystem *syst, const PrisonerGameDescription *gameDesc);
 	virtual ~PrisonerEngine();
-	int getGameId() {
-		return _gameId;
-	}
 
-	bool hasFeature(EngineFeature f) const;
-
-	Common::RandomSource *_rnd;
+	// Detection related functions
 	const PrisonerGameDescription *_gameDescription;
-	uint32 getGameID() const;
+	const char *getGameId() const;
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
+	bool hasFeature(EngineFeature f) const;
 
-//private:
-public:
+	Common::RandomSource *_rnd;
 
 	Screen *_screen;
 	PrisonerResourceLoader *_resLoader;
