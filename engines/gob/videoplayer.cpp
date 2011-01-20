@@ -246,6 +246,7 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 		video->live = true;
 		properties.waitEndFrame = false;
 		_liveProperties = properties;
+		updateLive(true);
 		return true;
 	}
 
@@ -279,24 +280,33 @@ void VideoPlayer::waitEndFrame(int slot, bool onlySound) {
 	if (!video)
 		return;
 
-	if (!onlySound || video->decoder->hasSound())
-		_vm->_util->delay(video->decoder->getTimeToNextFrame());
+	if (!onlySound || video->decoder->hasSound()) {
+		uint32 waitTime = video->decoder->getTimeToNextFrame();
+		if (!video->decoder->hasSound())
+			waitTime = video->decoder->getStaticTimeToNextFrame();;
+
+		_vm->_util->delay(waitTime);
+	}
 }
 
-void VideoPlayer::updateLive() {
+void VideoPlayer::updateLive(bool force) {
 	Video *video = getVideoBySlot(0);
 	if (!video || !video->live)
 		return;
 
-	if ((_liveProperties.startFrame == _liveProperties.lastFrame) ||
-	    (_liveProperties.startFrame >= (int32)(video->decoder->getFrameCount() - 1))) {
+	if (_liveProperties.startFrame >= (int32)(video->decoder->getFrameCount() - 1)) {
+		// Video ended
 
 		WRITE_VAR_OFFSET(212, (uint32)-1);
 		_vm->_vidPlayer->closeVideo();
 		return;
 	}
 
-	if (video->decoder->getTimeToNextFrame() > 0)
+	if (_liveProperties.startFrame == _liveProperties.lastFrame)
+		// Current video sequence ended
+		return;
+
+	if (!force && (video->decoder->getTimeToNextFrame() > 0))
 		return;
 
 	WRITE_VAR_OFFSET(212, _liveProperties.startFrame + 1);

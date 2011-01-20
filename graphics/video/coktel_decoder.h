@@ -131,6 +131,7 @@ public:
 	const byte *getPalette();
 	bool  hasDirtyPalette() const;
 
+	uint32 getStaticTimeToNextFrame() const;
 
 	// FixedRateVideoDecoder interface
 

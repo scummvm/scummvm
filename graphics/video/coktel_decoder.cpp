@@ -606,19 +606,11 @@ Common::Rational CoktelDecoder::getFrameRate() const {
 }
 
 uint32 CoktelDecoder::getTimeToNextFrame() const {
-	// If there is no audio, just return the static time between
-	// frames without any elaborate sync calculation. This is
-	// needed for the gob engine, since it has a lot of control
-	// between the videos and often plays just few frames out of
-	// the middle of a long video.
-
-	if (!hasSound())
-		return (1000 / _frameRate).toInt();
-
-	// If there /is/ audio, we do need to keep video and audio
-	// in sync, though.
-
 	return FixedRateVideoDecoder::getTimeToNextFrame();
+}
+
+uint32 CoktelDecoder::getStaticTimeToNextFrame() const {
+	return (1000 / _frameRate).toInt();
 }
 
 inline void CoktelDecoder::unsignedToSigned(byte *buffer, int length) {
