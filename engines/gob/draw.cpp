@@ -329,6 +329,17 @@ void Draw::initSpriteSurf(int16 index, int16 width, int16 height,
 	_spritesArray[index]->clear();
 }
 
+void Draw::freeSprite(int16 index) {
+	assert(index < SPRITES_COUNT);
+
+	_spritesArray[index].reset();
+
+	if (index == kFrontSurface)
+		_spritesArray[index] = _frontSurface;
+	if (index == kBackSurface)
+		_spritesArray[index] = _backSurface;
+}
+
 void Draw::adjustCoords(char adjust, int16 *coord1, int16 *coord2) {
 	if (_needAdjust == 2)
 		return;
@@ -550,10 +561,12 @@ void Draw::forceBlit(bool backwards) {
 		return;
 	if (_frontSurface == _backSurface)
 		return;
+	/*
 	if (_spritesArray[kFrontSurface] != _frontSurface)
 		return;
 	if (_spritesArray[kBackSurface] != _backSurface)
 		return;
+	*/
 
 	if (!backwards) {
 		_frontSurface->blit(*_backSurface);

@@ -66,6 +66,7 @@ void Inter_v6::setupOpcodesFunc() {
 	OPCODEFUNC(0x03, o6_loadCursor);
 	OPCODEFUNC(0x09, o6_assign);
 	OPCODEFUNC(0x19, o6_removeHotspot);
+	OPCODEFUNC(0x32, o1_copySprite);
 	OPCODEFUNC(0x33, o6_fillRect);
 }
 

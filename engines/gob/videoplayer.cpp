@@ -158,13 +158,20 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 					                          screenSize ? _vm->_height : video->decoder->getHeight(), 0);
 			}
 
-			if (!_vm->_draw->_spritesArray[properties.sprite]) {
+			if (!_vm->_draw->_spritesArray[properties.sprite] &&
+			    (properties.sprite != Draw::kFrontSurface) &&
+			    (properties.sprite != Draw::kBackSurface)) {
 				properties.sprite = -1;
 				video->surface.reset();
 				video->decoder->setSurfaceMemory();
 				properties.x = properties.y = 0;
 			} else {
 				video->surface = _vm->_draw->_spritesArray[properties.sprite];
+				if (properties.sprite == Draw::kFrontSurface)
+					video->surface = _vm->_draw->_frontSurface;
+				if (properties.sprite == Draw::kBackSurface)
+					video->surface = _vm->_draw->_backSurface;
+
 				video->decoder->setSurfaceMemory(video->surface->getData(),
 						video->surface->getWidth(), video->surface->getHeight(), video->surface->getBPP());
 

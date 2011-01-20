@@ -179,10 +179,7 @@ public:
 	void dirtiedRect(SurfacePtr surface, int16 left, int16 top, int16 right, int16 bottom);
 
 	void initSpriteSurf(int16 index, int16 width, int16 height, int16 flags);
-	void freeSprite(int16 index) {
-		assert(index < SPRITES_COUNT);
-		_spritesArray[index].reset();
-	}
+	void freeSprite(int16 index);
 	void adjustCoords(char adjust, int16 *coord1, int16 *coord2);
 	void adjustCoords(char adjust, uint16 *coord1, uint16 *coord2) {
 		adjustCoords(adjust, (int16 *)coord1, (int16 *)coord2);
