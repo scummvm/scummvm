@@ -305,6 +305,8 @@ void VideoPlayer::updateLive(bool force) {
 		// Video ended
 
 		WRITE_VAR_OFFSET(212, (uint32)-1);
+		if (video->surface == _vm->_draw->_frontSurface)
+			_vm->_draw->forceBlit(true);
 		_vm->_vidPlayer->closeVideo();
 		return;
 	}
