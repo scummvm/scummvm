@@ -90,6 +90,7 @@ public:
 	const Common::List<Common::Rect> &getDirtyRects() const;
 
 	bool hasPalette() const;
+	virtual bool hasVideo() const;
 
 	bool hasSound()       const;
 	bool isSoundEnabled() const;
@@ -355,7 +356,8 @@ public:
 
 	int32 getSubtitleIndex() const;
 
-	virtual bool isPaletted() const;
+	bool hasVideo() const;
+	bool isPaletted() const;
 
 
 	// VideoDecoder interface

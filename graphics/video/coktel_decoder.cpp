@@ -167,6 +167,10 @@ bool CoktelDecoder::hasPalette() const {
 	return (_features & kFeaturesPalette) != 0;
 }
 
+bool CoktelDecoder::hasVideo() const {
+	return true;
+}
+
 bool CoktelDecoder::hasSound() const {
 	return _hasSound;
 }
@@ -2714,6 +2718,10 @@ Common::SeekableReadStream *VMDDecoder::getEmbeddedFile(const Common::String &fi
 
 int32 VMDDecoder::getSubtitleIndex() const {
 	return _subtitle;
+}
+
+bool VMDDecoder::hasVideo() const {
+	return _hasVideo;
 }
 
 bool VMDDecoder::isPaletted() const {
