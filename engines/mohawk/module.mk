@@ -24,6 +24,7 @@ MODULE_OBJS = \
 	riven_vars.o \
 	sound.o \
 	video.o \
+	view.o \
 	myst_stacks/channelwood.o \
 	myst_stacks/credits.o \
 	myst_stacks/demo.o \
