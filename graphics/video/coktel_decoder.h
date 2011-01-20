@@ -133,10 +133,6 @@ public:
 
 	uint32 getStaticTimeToNextFrame() const;
 
-	// FixedRateVideoDecoder interface
-
-	uint32 getTimeToNextFrame() const;
-
 protected:
 	enum SoundStage {
 		kSoundNone    = 0, ///< No sound.

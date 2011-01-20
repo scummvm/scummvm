@@ -605,10 +605,6 @@ Common::Rational CoktelDecoder::getFrameRate() const {
 	return _frameRate;
 }
 
-uint32 CoktelDecoder::getTimeToNextFrame() const {
-	return FixedRateVideoDecoder::getTimeToNextFrame();
-}
-
 uint32 CoktelDecoder::getStaticTimeToNextFrame() const {
 	return (1000 / _frameRate).toInt();
 }
