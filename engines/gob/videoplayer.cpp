@@ -231,9 +231,6 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 
 	bool primary = slot == 0;
 
-	// NOTE: For testing (and comfort?) purposes, we enable aborting of all videos)
-	properties.breakKey = kShortKeyEscape;
-
 	if (properties.startFrame < 0)
 		properties.startFrame = video->decoder->getCurFrame() + 1;
 	if (properties.lastFrame  < 0)
@@ -265,6 +262,9 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 		updateLive(true);
 		return true;
 	}
+
+	// NOTE: For testing (and comfort?) purposes, we enable aborting of all videos)
+	properties.breakKey = kShortKeyEscape;
 
 	while ((properties.startFrame != properties.lastFrame) &&
 	       (properties.startFrame < (int32)(video->decoder->getFrameCount() - 1))) {
