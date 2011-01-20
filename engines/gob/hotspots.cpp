@@ -1296,7 +1296,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 	uint32 funcEnter = 0, funcLeave = 0;
 
 	if ((windowNum != 0) && (type != 0) && (type != 2))
-		warning("evaluateNew - type %d, win %d",type, windowNum);
+		debugC(0, kDebugHotspots, "evaluateNew - type %d, win %d",type, windowNum);
 
 	// Evaluate parameters for the new hotspot
 	switch (type) {
