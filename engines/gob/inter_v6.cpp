@@ -180,8 +180,13 @@ void Inter_v6::o6_playVmdOrMusic() {
 	if (props.startFrame >= 0)
 		_vm->_vidPlayer->play(slot, props);
 
-	if (close && !(props.flags & VideoPlayer::kFlagNonBlocking))
+	if (close && !(props.flags & VideoPlayer::kFlagNonBlocking)) {
+		if ((props.flags & VideoPlayer::kFlagNoVideo) && (!props.canceled))
+			_vm->_util->longDelay(500);
+
 		_vm->_vidPlayer->closeVideo(slot);
+	}
+
 }
 
 void Inter_v6::o6_openItk() {
