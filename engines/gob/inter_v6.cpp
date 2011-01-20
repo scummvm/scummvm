@@ -169,18 +169,13 @@ void Inter_v6::o6_playVmdOrMusic() {
 		close = false;
 	}
 
-	_vm->_vidPlayer->evaluateFlags(props);
+	_vm->_vidPlayer->evaluateFlags(props, true);
 
 	int slot = 0;
 	if ((fileName[0] != 0) && ((slot = _vm->_vidPlayer->openVideo(true, fileName, props)) < 0)) {
 		WRITE_VAR(11, (uint32) -1);
 		return;
 	}
-
-	if(!(props.flags & 0x1000) && !(props.flags & VideoPlayer::kFlagNoVideo))
-		props.flags |= VideoPlayer::kFlagNonBlocking;
-	else
-		props.flags &= ~0x1000;
 
 	if (props.startFrame >= 0)
 		_vm->_vidPlayer->play(slot, props);

@@ -102,7 +102,7 @@ public:
 	VideoPlayer(GobEngine *vm);
 	~VideoPlayer();
 
-	void evaluateFlags(Properties &properties);
+	void evaluateFlags(Properties &properties, bool allowNonBlock = false);
 
 	int  openVideo(bool primary, const Common::String &file, Properties &properties);
 	bool closeVideo(int slot = 0);

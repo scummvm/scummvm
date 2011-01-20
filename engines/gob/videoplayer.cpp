@@ -74,7 +74,7 @@ VideoPlayer::~VideoPlayer() {
 		_videoSlots[i].close();
 }
 
-void VideoPlayer::evaluateFlags(Properties &properties) {
+void VideoPlayer::evaluateFlags(Properties &properties, bool allowNonBlock) {
 	if        (properties.flags & kFlagFrontSurface) {
 		properties.sprite = Draw::kFrontSurface;
 	} else if (properties.flags & kFlagOtherSurface) {
@@ -87,6 +87,14 @@ void VideoPlayer::evaluateFlags(Properties &properties) {
 	} else {
 		properties.sprite = Draw::kBackSurface;
 	}
+
+	if (allowNonBlock) {
+		if(!(properties.flags & 0x1000) && !(properties.flags & kFlagNoVideo))
+			properties.flags |= kFlagNonBlocking;
+		else
+			properties.flags &= ~0x1000;
+	} else
+			properties.flags &= ~0x1000;
 }
 
 int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties &properties) {
