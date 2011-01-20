@@ -691,6 +691,7 @@ const Feature s_features[] = {
 	{     "mt32emu",     "USE_MT32EMU", "", true, "integrated MT-32 emulator" },
 	{        "nasm",        "USE_NASM", "", true, "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{      "opengl",      "USE_OPENGL", "opengl32", true, "OpenGL support" },
+	{      "indeo3",      "USE_INDEO3", "", true, "Indeo3 codec support"},
 	{ "translation", "USE_TRANSLATION", "", true, "Translation support" },
 	{  "langdetect",  "USE_DETECTLANG", "", true, "System language detection support" } // This feature actually depends on "translation", there
 	                                                                                    // is just no current way of properly detecting this...
