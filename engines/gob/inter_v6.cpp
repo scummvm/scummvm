@@ -244,10 +244,9 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 			props.waitEndFrame = false;
 
 			_vm->_vidPlayer->play(vmdSlot, props);
-			_vm->_vidPlayer->copyFrame(vmdSlot, _vm->_draw->_cursorSprites->getData(),
+			_vm->_vidPlayer->copyFrame(vmdSlot, *_vm->_draw->_cursorSprites,
 					0, 0, _vm->_draw->_cursorWidth, _vm->_draw->_cursorWidth,
-					(start + i) * _vm->_draw->_cursorWidth, 0,
-					_vm->_draw->_cursorSprites->getWidth() * 2, 2);
+					(start + i) * _vm->_draw->_cursorWidth, 0);
 		}
 
 		_vm->_vidPlayer->closeVideo(vmdSlot);

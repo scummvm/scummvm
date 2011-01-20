@@ -733,11 +733,10 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 				_vm->_draw->_spriteLeft = _vm->_vidPlayer->getWidth(obj.videoSlot - 1)  -
 					(destX + _vm->_draw->_spriteRight);
 
-			_vm->_vidPlayer->copyFrame(obj.videoSlot - 1, _vm->_draw->_backSurface->getData(),
+			_vm->_vidPlayer->copyFrame(obj.videoSlot - 1, *_vm->_draw->_backSurface,
 					_vm->_draw->_spriteLeft,  _vm->_draw->_spriteTop,
 					_vm->_draw->_spriteRight, _vm->_draw->_spriteBottom,
 					_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,
-					_vm->_draw->_backSurface->getWidth(), 1,
 					(_vm->_draw->_transparency != 0) ? 0 : -1);
 
 			_vm->_draw->invalidateRect(_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,
