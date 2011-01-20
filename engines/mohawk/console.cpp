@@ -31,6 +31,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/livingbooks.h"
+#include "mohawk/cstime.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
@@ -701,6 +702,56 @@ bool LivingBooksConsole::Cmd_ChangePage(int argc, const char **argv) {
 		return false;
 	DebugPrintf("no such page %d\n", atoi(argv[1]));
 	return true;
+}
+
+CSTimeConsole::CSTimeConsole(MohawkEngine_CSTime *vm) : GUI::Debugger(), _vm(vm) {
+	DCmd_Register("playSound",			WRAP_METHOD(CSTimeConsole, Cmd_PlaySound));
+	DCmd_Register("stopSound",			WRAP_METHOD(CSTimeConsole, Cmd_StopSound));
+	DCmd_Register("drawImage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawImage));
+	DCmd_Register("drawSubimage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawSubimage));
+}
+
+CSTimeConsole::~CSTimeConsole() {
+}
+
+bool CSTimeConsole::Cmd_PlaySound(int argc, const char **argv) {
+	if (argc == 1) {
+		DebugPrintf("Usage: playSound <value>\n");
+		return true;
+	}
+
+	_vm->_sound->stopSound();
+	_vm->_sound->playSound((uint16)atoi(argv[1]));
+	return false;
+}
+
+bool CSTimeConsole::Cmd_StopSound(int argc, const char **argv) {
+	DebugPrintf("Stopping Sound\n");
+
+	_vm->_sound->stopSound();
+	return true;
+}
+
+bool CSTimeConsole::Cmd_DrawImage(int argc, const char **argv) {
+	if (argc == 1) {
+		DebugPrintf("Usage: drawImage <value>\n");
+		return true;
+	}
+
+	_vm->_gfx->copyAnimImageToScreen((uint16)atoi(argv[1]));
+	_vm->_system->updateScreen();
+	return false;
+}
+
+bool CSTimeConsole::Cmd_DrawSubimage(int argc, const char **argv) {
+	if (argc < 3) {
+		DebugPrintf("Usage: drawSubimage <value> <subimage>\n");
+		return true;
+	}
+
+	_vm->_gfx->copyAnimSubImageToScreen((uint16)atoi(argv[1]), (uint16)atoi(argv[2]));
+	_vm->_system->updateScreen();
+	return false;
 }
 
 } // End of namespace Mohawk

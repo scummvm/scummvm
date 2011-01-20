@@ -28,6 +28,7 @@
 #include "mohawk/myst.h"
 #include "mohawk/riven.h"
 #include "mohawk/livingbooks.h"
+#include "mohawk/cstime.h"
 
 #include "common/substream.h"
 #include "engines/util.h"
@@ -1020,6 +1021,38 @@ void LBGraphics::setPalette(uint16 id) {
 	} else {
 		GraphicsManager::setPalette(id);
 	}
+}
+
+CSTimeGraphics::CSTimeGraphics(MohawkEngine_CSTime *vm) : GraphicsManager(), _vm(vm) {
+	_bmpDecoder = new MohawkBitmap();
+
+	initGraphics(640, 480, true);
+}
+
+CSTimeGraphics::~CSTimeGraphics() {
+	delete _bmpDecoder;
+}
+
+void CSTimeGraphics::drawRect(Common::Rect rect, byte color) {
+	rect.clip(Common::Rect(640, 480));
+
+	// Useful with debugging. Shows where hotspots are on the screen and whether or not they're active.
+	if (!rect.isValidRect() || rect.width() == 0 || rect.height() == 0)
+		return;
+
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+
+	screen->frameRect(rect, color);
+
+	_vm->_system->unlockScreen();
+}
+
+MohawkSurface *CSTimeGraphics::decodeImage(uint16 id) {
+	return _bmpDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
+}
+
+Common::Array<MohawkSurface *> CSTimeGraphics::decodeImages(uint16 id) {
+	return _bmpDecoder->decodeImages(_vm->getResource(ID_TBMH, id));
 }
 
 } // End of namespace Mohawk

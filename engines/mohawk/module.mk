@@ -3,6 +3,11 @@ MODULE := engines/mohawk
 MODULE_OBJS = \
 	bitmap.o \
 	console.o \
+	cstime.o \
+	cstime_cases.o \
+	cstime_game.o \
+	cstime_ui.o \
+	cstime_view.o \
 	cursors.o \
 	detection.o \
 	dialogs.o \

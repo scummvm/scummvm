@@ -44,6 +44,7 @@ class MohawkEngine;
 class MohawkEngine_Myst;
 class MohawkEngine_Riven;
 class MohawkEngine_LivingBooks;
+class MohawkEngine_CSTime;
 class MohawkBitmap;
 class MystBitmap;
 
@@ -241,6 +242,23 @@ protected:
 private:
 	MohawkBitmap *_bmpDecoder;
 	MohawkEngine_LivingBooks *_vm;
+};
+
+class CSTimeGraphics : public GraphicsManager {
+public:
+	CSTimeGraphics(MohawkEngine_CSTime *vm);
+	~CSTimeGraphics();
+
+	void drawRect(Common::Rect rect, byte color);
+
+protected:
+	MohawkSurface *decodeImage(uint16 id);
+	Common::Array<MohawkSurface *> decodeImages(uint16 id);
+	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
+
+private:
+	MohawkBitmap *_bmpDecoder;
+	MohawkEngine_CSTime *_vm;
 };
 
 } // End of namespace Mohawk

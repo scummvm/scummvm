@@ -33,6 +33,7 @@ namespace Mohawk {
 class MohawkEngine_Myst;
 class MohawkEngine_Riven;
 class MohawkEngine_LivingBooks;
+class MohawkEngine_CSTime;
 
 class MystConsole : public GUI::Debugger {
 public:
@@ -97,6 +98,20 @@ private:
 	bool Cmd_StopSound(int argc, const char **argv);
 	bool Cmd_DrawImage(int argc, const char **argv);
 	bool Cmd_ChangePage(int argc, const char **argv);
+};
+
+class CSTimeConsole : public GUI::Debugger {
+public:
+	CSTimeConsole(MohawkEngine_CSTime *vm);
+	virtual ~CSTimeConsole(void);
+
+private:
+	MohawkEngine_CSTime *_vm;
+
+	bool Cmd_PlaySound(int argc, const char **argv);
+	bool Cmd_StopSound(int argc, const char **argv);
+	bool Cmd_DrawImage(int argc, const char **argv);
+	bool Cmd_DrawSubimage(int argc, const char **argv);
 };
 
 } // End of namespace Mohawk

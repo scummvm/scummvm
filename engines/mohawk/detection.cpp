@@ -33,6 +33,7 @@
 #include "mohawk/myst.h"
 #include "mohawk/riven.h"
 #include "mohawk/livingbooks.h"
+#include "mohawk/cstime.h"
 
 namespace Mohawk {
 
@@ -231,8 +232,10 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		case Mohawk::GType_LIVINGBOOKSV3:
 			*engine = new Mohawk::MohawkEngine_LivingBooks(syst, gd);
 			break;
-		case Mohawk::GType_ZOOMBINI:
 		case Mohawk::GType_CSTIME:
+			*engine = new Mohawk::MohawkEngine_CSTime(syst, gd);
+			break;
+		case Mohawk::GType_ZOOMBINI:
 		case Mohawk::GType_CSWORLD:
 		case Mohawk::GType_CSAMTRAK:
 		case Mohawk::GType_JAMESMATH:
