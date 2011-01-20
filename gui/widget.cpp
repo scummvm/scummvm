@@ -318,6 +318,10 @@ PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, co
 	_type = kButtonWidget;
 }
 
+PicButtonWidget::~PicButtonWidget() {
+	_gfx.free();
+}
+
 void PicButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h)
 		sendCommand(_cmd, 0);
