@@ -96,10 +96,10 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		writeWarnings(name, project);
 		writeDefines(setup.defines, project);
 
-		project << "\t\t\t\t\t<Add directory=\"..\\..\" />\n"
+		project << "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)include\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\engines\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\common\" />\n"
-		           "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)\\include\" />\n"
+		           "\t\t\t\t\t<Add directory=\"..\\..\" />\n"
 		           "\t\t\t\t</Compiler>\n";
 
 		//////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		project << "\t\t\t\t<Linker>\n";
 
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
-			project << "\t\t\t\t\t<Add library=\"" << *i << ".a\" />\n";
+			project << "\t\t\t\t\t<Add library=\"" << *i << "\" />\n";
 
 		for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
 			if (i->first == "scummvm")
@@ -116,7 +116,7 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 			project << "\t\t\t\t\t<Add library=\"scummvm\\engines\\" << i->first << "\\lib" << i->first << ".a\" />\n";
 		}
 
-		project << "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)\\lib\" />\n"
+		project << "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)lib\\mingw\" />\n"
 		           "\t\t\t\t</Linker>\n";
 
 		//////////////////////////////////////////////////////////////////////////
@@ -208,7 +208,10 @@ void CodeBlocksProvider::writeFileListToProject(const FileNode &dir, std::ofstre
 				projectFile << "\t\t<Unit filename=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
 				               "\t\t\t<Option compilerVar=\"WINDRES\" />\n"
 				               "\t\t</Unit>\n";
-
+			} else if (ext == "asm") {
+				projectFile << "\t\t<Unit filename=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
+				               "\t\t\t<Option compiler=\"gcc\" use=\"1\" buildCommand=\"$(SCUMMVM_LIBS)bin/nasm.exe -f win32 -g $file -o $object\" />"
+				               "\t\t</Unit>\n";
 			} else {
 				projectFile << "\t\t<Unit filename=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
 			}
