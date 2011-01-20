@@ -200,19 +200,18 @@ void CoktelDecoder::enableSound() {
 
 void CoktelDecoder::disableSound() {
 	if (_audioStream) {
-
-		if (_soundStage == kSoundPlaying) {
+		if ((_soundStage == kSoundPlaying) || (_soundStage == kSoundFinished)) {
 			_audioStream->finish();
 			_mixer->stopHandle(_audioHandle);
-		} else
-			delete _audioStream;
+		}
 
+		delete _audioStream;
 	}
 
 	_soundEnabled = false;
 	_soundStage   = kSoundNone;
 
-	_audioStream  = 0;
+	_audioStream = 0;
 }
 
 void CoktelDecoder::colorModeChanged() {
@@ -1275,16 +1274,15 @@ void IMDDecoder::processFrame() {
 
 	// Start the audio stream if necessary
 	if (startSound && _soundEnabled) {
-		_mixer->playStream(_soundType, &_audioHandle, _audioStream);
+			_mixer->playStream(_soundType, &_audioHandle, _audioStream,
+					-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 		_soundStage = kSoundPlaying;
 	}
 
 	// End the audio stream if necessary
 	if ((_curFrame >= (int32)(_frameCount - 1)) && (_soundStage == kSoundPlaying)) {
 		_audioStream->finish();
-		_mixer->stopHandle(_audioHandle);
-		_audioStream = 0;
-		_soundStage  = kSoundNone;
+		_soundStage = kSoundFinished;
 	}
 
 }
@@ -1419,7 +1417,9 @@ bool IMDDecoder::initialSoundSlice(bool hasNextCmd) {
 		return false;
 	}
 
-	if (!_audioStream) {
+	if (!_audioStream || (_soundStage == kSoundFinished)) {
+		delete _audioStream;
+
 		_audioStream = Audio::makeQueuingAudioStream(_soundFreq, false);
 		_soundStage  = kSoundLoaded;
 	}
@@ -1550,7 +1550,11 @@ bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
 		return true;
 
 	// Restart sound
-	if (_hasSound && (frame == -1) && (_soundStage == kSoundNone) && !_audioStream) {
+	if (_hasSound && (frame == -1) &&
+			((_soundStage == kSoundNone) || (_soundStage == kSoundFinished))) {
+
+		delete _audioStream;
+
 		_soundStage  = kSoundLoaded;
 		_audioStream = Audio::makeQueuingAudioStream(_soundFreq, _soundStereo != 0);
 	}
@@ -2150,7 +2154,8 @@ void VMDDecoder::processFrame() {
 
 	if (startSound && _soundEnabled) {
 		if (_hasSound && _audioStream) {
-			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioHandle, _audioStream);
+			_mixer->playStream(_soundType, &_audioHandle, _audioStream,
+					-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 			_soundStage = kSoundPlaying;
 		} else
 			_soundStage = kSoundNone;
@@ -2158,9 +2163,7 @@ void VMDDecoder::processFrame() {
 
 	if (((uint32)_curFrame == (_frameCount - 1)) && (_soundStage == 2)) {
 		_audioStream->finish();
-		_mixer->stopHandle(_audioHandle);
-		_audioStream = 0;
-		_soundStage  = kSoundNone;
+		_soundStage = kSoundFinished;
 	}
 }
 

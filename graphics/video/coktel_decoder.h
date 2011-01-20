@@ -136,9 +136,10 @@ public:
 
 protected:
 	enum SoundStage {
-		kSoundNone    = 0, ///< No sound.
-		kSoundLoaded  = 1, ///< Sound loaded.
-		kSoundPlaying = 2  ///< Sound is playing.
+		kSoundNone     = 0, ///< No sound.
+		kSoundLoaded   = 1, ///< Sound loaded.
+		kSoundPlaying  = 2, ///< Sound is playing.
+		kSoundFinished = 3  ///< No more new sound data.
 	};
 
 	enum Features {
