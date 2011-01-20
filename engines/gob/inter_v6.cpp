@@ -144,15 +144,15 @@ void Inter_v6::o6_playVmdOrMusic() {
 
 		probe16bitMusic(fileName);
 
-		if (props.lastFrame == -9) {
-			warning("Urban/Playtoons Stub: delayed stop not implemented");
-		}
+		if (props.lastFrame == -9)
+			debugC(0, kDebugVideo, "Urban/Playtoons Stub: Delayed music stop?");
+
 		_vm->_sound->bgStop();
 		_vm->_sound->bgPlay(fileName, SOUND_WAV);
 		return;
 	} else if (props.lastFrame <= -10) {
 		_vm->_vidPlayer->closeVideo();
-		warning("Urban/Playtoons Stub: Video/Music command %d (close video?), %s", props.lastFrame, fileName);
+
 		if (props.lastFrame <= -100)
 			props.lastFrame += 100;
 
