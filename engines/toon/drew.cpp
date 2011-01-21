@@ -52,7 +52,9 @@ void CharacterDrew::setPosition(int32 x, int32 y) {
 	debugC(5, kDebugCharacter, "setPosition(%d, %d)", x, y);
 
 	_z = _vm->getLayerAtPoint(x, y);
-	_scale = _vm->getScaleAtPoint(x, y);
+	int newScale = _vm->getScaleAtPoint(x, y);
+	if (newScale > 0)
+		_scale = newScale;
 
 	// work out position and scale of the character sprite
 	int32 width = _walkAnim->getWidth() * _scale / 1024;
