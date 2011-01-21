@@ -96,7 +96,7 @@ uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
 	case 2: // Lower Walkway to Upper Walkway Elevator Raised
 		return _state.elevatorState;
 	case 3: // Water Flowing To Lower Walkway To Upper Walkway Elevator
-		return (_state.waterValveStates & 0xc0) ? 1 : 0;
+		return (_state.waterValveStates & 0xc0) == 0xc0;
 	case 4: // Water Flowing To Book Room Elevator
 		return ((_state.waterValveStates & 0xf8) == 0xb0 && _state.pipeState) ? 1 : 0;
 	case 5: // Lower Walkway to Upper Walkway Spiral Stair Lower Door State
