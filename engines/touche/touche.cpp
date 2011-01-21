@@ -196,6 +196,8 @@ void ToucheEngine::restart() {
 	_conversationAreaCleared = false;
 	memset(_conversationChoicesTable, 0, sizeof(_conversationChoicesTable));
 
+	_currentRoomNum = 0;
+
 	_flagsTable[901] = 1;
 //	_flagsTable[902] = 1;
 	if (_language == Common::FR_FRA) {
