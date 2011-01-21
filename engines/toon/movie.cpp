@@ -41,6 +41,8 @@ void ToonstruckSmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, ui
 bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename, int forcedflags) {
 	debugC(1, kDebugMovie, "loadFile(%s, %d)", filename.c_str(), forcedflags);
 
+	_lowRes = false;
+
 	if (Graphics::SmackerDecoder::loadFile(filename)) {
 		if (forcedflags & 0x10 || _surface->h == 200) {
 			if (_surface) {
@@ -48,8 +50,7 @@ bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename, int forc
 				delete _surface;
 			}
 			_surface = new Graphics::Surface();
-			_surface->create(640, 400, 1);
-			_lowRes = false;
+			_surface->create(640, 400, 1);		
 			_header.flags = 4;
 		}
 
