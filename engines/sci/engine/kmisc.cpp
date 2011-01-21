@@ -176,6 +176,11 @@ reg_t kFlushResources(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetDebug(EngineState *s, int argc, reg_t *argv) {
+	// WORKAROUND: For some reason, GK1 calls this unconditionally when
+	// watching the intro. Older (SCI0) games call it on room change if
+	// a flag is set, in which case the debugger SHOULD get activated.
+	// Therefore, don't break into the debugger in GK1, but do so elsewhere.
+
 	if (g_sci->getGameId() != GID_GK1) {
 		debug("Debug mode activated");
 		
