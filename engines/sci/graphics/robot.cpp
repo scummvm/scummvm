@@ -148,9 +148,9 @@ void GfxRobot::draw(int x, int y) {
 	for (int i = 0; i < colorCount; ++i)
 	{
 		int index = i + startIndex;
-		robotPal[index*4] = resourcePal.colors[i].r;
-		robotPal[index*4+1] = resourcePal.colors[i].g;
-		robotPal[index*4+2] = resourcePal.colors[i].b;
+		robotPal[index*4] = resourcePal.colors[index].r;
+		robotPal[index*4+1] = resourcePal.colors[index].g;
+		robotPal[index*4+2] = resourcePal.colors[index].b;
 		robotPal[index*4+3] = 0;
 	}
 
