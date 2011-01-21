@@ -556,6 +556,7 @@ void CSTimeConversation::mouseMove(Common::Point &pos) {
 	}
 
 	if (_currHover != (uint)~0) {
+		// FIXME: cursorGetState() returns a bool, so this check below can never be true
 		if (_vm->getInterface()->cursorGetState() != 3) {
 			_vm->getInterface()->cursorSetShape(1, true);
 			if (_vm->getInterface()->getInventoryDisplay()->getState() != 4)
@@ -1003,7 +1004,7 @@ void CSTimeScene::mouseMove(Common::Point &pos) {
 				continue;
 		}
 
-		if (i != _hoverHotspot);
+		if (i != _hoverHotspot)
 			_vm->getInterface()->clearTextLine();
 		cursorOverHotspot(i);
 		_hoverHotspot = i;
