@@ -76,7 +76,6 @@ MODULE_OBJS := \
 	save/saveconverter_v2.o \
 	save/saveconverter_v3.o \
 	save/saveconverter_v4.o \
-	save/saveconverter_v6.o \
 	sound/sound.o \
 	sound/sounddesc.o \
 	sound/pcspeaker.o \

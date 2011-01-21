@@ -182,25 +182,6 @@ private:
 			SavePartMem *props, Common::InSaveFile *save);
 };
 
-/** A wrapper for old v6-style saves (Urban Runner). */
-class SaveConverter_v6 : public SaveConverter {
-public:
-	SaveConverter_v6(GobEngine *vm, const Common::String &fileName = "");
-	~SaveConverter_v6();
-
-	int isOldSave(Common::InSaveFile **save = 0) const;
-	char *getDescription(Common::SeekableReadStream &save) const;
-
-	bool load();
-
-private:
-	static const uint32 kSlotCount = 15;
-	static const uint32 kSlotNameLength = 40;
-
-	bool loadFail(SavePartInfo *info, SavePartVars *vars,
-			Common::InSaveFile *save);
-};
-
 } // End of namespace Gob
 
 #endif // GOB_SAVE_SAVECONVERTER_H
