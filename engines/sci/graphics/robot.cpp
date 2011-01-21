@@ -109,7 +109,7 @@ void GfxRobot::initData(GuiResourceId resourceId) {
 
 void GfxRobot::draw(int x, int y) {
 
-	return; /* TODO: Remove once done */
+  	return; // TODO: Remove once done
 	// Play the audio of the robot file (for debugging)
 #if 0
 	if (_hasSound) {
@@ -164,6 +164,7 @@ void GfxRobot::draw(int x, int y) {
 		g_system->copyRectToScreen(pixels, width, x, y, width, (int) (height * getFrameScaleFactor(i)));
 		g_system->updateScreen();
 		g_system->delayMillis(100);
+		delete[] pixels;
 	}
 
 	g_system->setPalette(savePal, 0, 256);
