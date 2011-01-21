@@ -27,6 +27,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/robot.h"
+#include "sci/graphics/palette.h"
 #include "sci/sound/audio.h"
 
 #include "graphics/surface.h"
@@ -36,6 +37,7 @@
 
 #include "common/file.h"
 #include "common/system.h"
+#include "common/memstream.h"
 
 namespace Sci {
 
@@ -55,45 +57,59 @@ namespace Sci {
 // around the screen and go behind other objects. (...)
 
 #ifdef ENABLE_SCI32
-GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId)
-	: _resMan(resMan), _screen(screen), _resourceId(resourceId) {
+GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId)
+	: _resMan(resMan), _screen(screen), _palette(palette), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
 
 GfxRobot::~GfxRobot() {
 	delete[] _resourceData;
+	delete[] _imageStart;
+	delete[] _audioStart;
+	delete[] _audioLen;
 }
 
 void GfxRobot::initData(GuiResourceId resourceId) {
 	char fileName[10];
+	uint32 fileSize;
+
 	sprintf(fileName, "%d.rbt", resourceId);
 
 	Common::File robotFile;
 	if (robotFile.open(fileName)) {
 		_resourceData = new byte[robotFile.size()];
 		robotFile.read(_resourceData, robotFile.size());
+		fileSize = robotFile.size();
 		robotFile.close();
 	} else {
 		warning("Unable to open robot file %s", fileName);
 		return;
 	}
 
-	// The RBT video starts with a SOL audio file, followed by
-	// video data which is appended after it
-
 	_frameCount = READ_LE_UINT16(_resourceData + 14);
-	// For some weird reason, the audio size seems to ALWAYS
-	// be 0xB000, padded with 0x20 and 0x00 at the end
-	_audioSize = READ_LE_UINT16(_resourceData + 15);
+
+	// There is another value in the header, at offset 0x12, which
+	// equals this value plus 14 (audio header size) in the cases
+	// I've seen so far. Dunno which one to use, really.
+	_audioSize = READ_LE_UINT16(_resourceData + 60);
 
 	//_frameSize = READ_LE_UINT32(_resourceData + 34);
 	_hasSound = (_resourceData[25] != 0);
 
+	_palOffset = 60;
+	if (_hasSound)
+		_palOffset += READ_LE_UINT32(_resourceData + 60) + 14;
+
+	getFrameOffsets();
+	assert(_imageStart[_frameCount] == fileSize);
+
 	debug("Robot %d, %d frames, sound: %s\n", resourceId, _frameCount, _hasSound ? "yes" : "no");
 }
 
-void GfxRobot::draw() {
+void GfxRobot::draw(int x, int y) {
+
+	return; /* TODO: Remove once done */
 	// Play the audio of the robot file (for debugging)
 #if 0
 	if (_hasSound) {
@@ -103,83 +119,169 @@ void GfxRobot::draw() {
 	}
 #endif
 
-	return;	// TODO: Remove once done
+	byte *paletteData = _hasSound ? 
+		_resourceData + 60 + 14 + _audioSize : 
+		_resourceData + 60;
+	uint16 paletteSize = READ_LE_UINT16(_resourceData + 16);
 
-	byte *frameData = _resourceData + _audioSize;
-	uint16 frameWidth, frameHeight;
-	uint16 maskBlockSize, frameBlockSize;
+	Palette resourcePal;
 
-	// TODO: Palette! Where is it?
-#if 0
-	byte dummyPal[256 * 4];
-	for (int i = 0; i < 256; i++) {
-		dummyPal[i * 4 + 0] = i;
-		dummyPal[i * 4 + 1] = i;
-		dummyPal[i * 4 + 2] = i;
-		dummyPal[i * 4 + 3] = 0;
+	byte robotPal[256 * 4];
+	byte savePal[256 * 4];
+	int startIndex = READ_LE_UINT16(paletteData + 25);
+	int colorCount = READ_LE_UINT16(paletteData + 29);
+
+	warning("%d palette entries starting at %d", colorCount, startIndex);
+	
+	_palette->createFromData(paletteData, paletteSize, &resourcePal);
+
+	for (int i = 0; i < 256; ++i)
+	{
+		savePal[i*4] = _palette->_sysPalette.colors[i].r;
+		savePal[i*4+1] = _palette->_sysPalette.colors[i].g;
+		savePal[i*4+2] = _palette->_sysPalette.colors[i].b;
+		savePal[i*4+3] = 0;
 	}
-	memset(dummyPal, 255, 256 * 4);
-	g_system->setPalette(dummyPal, 0, 256);
-#endif
+	
+	memcpy(robotPal, savePal, sizeof(savePal));
 
-	// Both the frame and the mask data are uncompressed
-	// TODO: How are the rectangle dimensions calculated from the block sizes?
-
-	Graphics::Surface *screen;
-	for (uint16 frame = 0; frame < _frameCount; frame++) {
-		// Read 20 byte header
-		// First 4 bytes are always 01 00 7f 64
-		assert(*(frameData + 0) == 0x01);
-		assert(*(frameData + 1) == 0x00);
-		assert(*(frameData + 2) == 0x7f);
-		assert(*(frameData + 3) == 0x64);
-		frameWidth = READ_LE_UINT16(frameData + 4);
-		frameHeight = READ_LE_UINT16(frameData + 6);
-		// 4 bytes, always 0
-		assert(*(frameData +  8) == 0x00);
-		assert(*(frameData +  9) == 0x00);
-		assert(*(frameData + 10) == 0x00);
-		assert(*(frameData + 11) == 0x00);
-		// 2 bytes: a small number (x, perhaps? But it doesn't match with the movie dimensions shown by SV...)
-		// 2 bytes: a small number (y, perhaps? But it doesn't match with the movie dimensions shown by SV...)
-		// 2 bytes: a small number, 1 or 2 (type, perhaps?)
-		maskBlockSize = READ_LE_UINT16(frameData + 16);
-		assert(*(frameData +  18) == 0x01 || *(frameData +  18) == 0x02);
-		assert(*(frameData + 20) == 0x00);
-		frameData += 20;
-
-		// Process mask(?) data
-		// FIXME: This isn't correct, we need to use copyRectToScreen() instead
-		// (but we need to figure out the rectangle dimensions, see TODO above)
-		screen = g_system->lockScreen();
-		memcpy(frameData, screen->pixels, maskBlockSize);
-		g_system->unlockScreen();
-		g_system->updateScreen();
-		// Sleep for a second
-		g_sci->sleep(1000);
-		warning("Mask %d", frame);
-
-		frameData += maskBlockSize;
-
-		// Read 12 byte frame data header
-		frameBlockSize = READ_LE_UINT16(frameData + 8);
-		frameData += 12;
-
-		// Process frame(?) data
-		// FIXME: This isn't correct, we need to use copyRectToScreen() instead
-		// (but we need to figure out the rectangle dimensions, see TODO above)
-		screen = g_system->lockScreen();
-		memcpy(frameData, screen->pixels, frameBlockSize);
-		g_system->unlockScreen();
-		g_system->updateScreen();
-		// Sleep for a second
-		g_sci->sleep(1000);
-		warning("Frame %d", frame);
-
-		frameData += frameBlockSize;
+	for (int i = 0; i < colorCount; ++i)
+	{
+		int index = i + startIndex;
+		robotPal[index*4] = resourcePal.colors[i].r;
+		robotPal[index*4+1] = resourcePal.colors[i].g;
+		robotPal[index*4+2] = resourcePal.colors[i].b;
+		robotPal[index*4+3] = 0;
 	}
 
+	g_system->setPalette(robotPal, 0, 256);
+
+	for (int i = 0; i < _frameCount; ++i) {
+		int width, height;
+
+		byte *pixels = assembleVideoFrame(i);
+		getFrameDimensions(i, width, height);
+		g_system->copyRectToScreen(pixels, width, x, y, width, (int) (height * getFrameScaleFactor(i)));
+		g_system->updateScreen();
+		g_system->delayMillis(100);
+	}
+
+	g_system->setPalette(savePal, 0, 256);
 }
+
+void GfxRobot::getFrameOffsets() {
+	int *audioEnd = new int[_frameCount];
+	int *videoEnd = new int[_frameCount];
+
+	for (int i = 0; i < _frameCount; ++i) {
+		videoEnd[i] = READ_LE_UINT16(_resourceData + _palOffset + 1200 + i * 2);
+		audioEnd[i] = READ_LE_UINT16(_resourceData + _palOffset + 1200 + _frameCount * 2 + i * 2);
+	}
+
+	int frameDataOffset = _palOffset + 0x4b0 + 0x400 + 0x200 + _frameCount * 4;
+	
+	// Pad to nearest 2 kilobytes
+	if (frameDataOffset & 0x7ff)
+		frameDataOffset = (frameDataOffset & ~0x7ff)+0x800;
+
+	_imageStart = new uint32[_frameCount+1];
+	_audioStart = new uint32[_frameCount];
+	_audioLen = new uint32[_frameCount];
+
+	_imageStart[0] = frameDataOffset;
+
+	// Plus one so we can assert on this in the calling routine
+	// The last one should point to end-of-file, unless I'm misunderstanding something
+	for (int i = 1; i < _frameCount + 1; ++i) 
+		_imageStart[i] = _imageStart[i-1] + audioEnd[i-1];
+	for (int i = 0; i < _frameCount; ++i)
+		_audioStart[i] = _imageStart[i] + videoEnd[i-1];
+	for (int i = 0; i < _frameCount; ++i)
+		_audioLen[i] = _imageStart[i+1] - _audioStart[i];
+
+	delete[] audioEnd;
+	delete[] videoEnd;
+}
+
+byte *GfxRobot::assembleVideoFrame(int frame) {
+	byte *videoData = _resourceData + _imageStart[frame];
+	int frameWidth = READ_LE_UINT16(videoData + 4);
+	int frameHeight = READ_LE_UINT16(videoData + 6);
+	int frameFragments = READ_LE_UINT16(videoData + 18);
+
+	int decompressedSize = 0;
+
+	DecompressorLZS lzs;
+
+	videoData = _resourceData + _imageStart[frame] + 24;
+	
+	for (int i = 0; i < frameFragments; ++i) {
+		int fragmentCompressed = READ_LE_UINT32(videoData);
+		int fragmentUncompressed = READ_LE_UINT32(videoData + 4);
+
+		decompressedSize += fragmentUncompressed;
+		videoData += 10 + fragmentCompressed;
+	}
+
+	assert(decompressedSize == (frameWidth * frameHeight) * getFrameScaleFactor(frame));
+
+	byte *output = new byte[decompressedSize];
+	int assemblePtr = 0;
+
+	videoData = _resourceData + _imageStart[frame] + 24;
+
+	for (int i = 0; i < frameFragments; ++i) {
+		int fragmentCompressed = READ_LE_UINT32(videoData);
+		int fragmentUncompressed = READ_LE_UINT32(videoData + 4);
+		uint16 compressionType = READ_LE_UINT16(videoData + 8);
+
+		switch (compressionType) {
+		case 0: {
+			Common::MemoryReadStream compressedFrame(videoData + 10, fragmentCompressed, DisposeAfterUse::NO);
+
+			lzs.unpack(&compressedFrame, output + assemblePtr, fragmentCompressed, fragmentUncompressed);
+			assemblePtr += fragmentUncompressed;
+			break;
+		}
+		case 2: // Untested
+			memcpy(output + assemblePtr, videoData + 10, fragmentCompressed);
+			assemblePtr += fragmentUncompressed;
+			break;
+		}
+		
+		videoData += 10 + fragmentCompressed;
+	}
+
+	assert(assemblePtr == decompressedSize);
+
+	return output;
+}
+
+void GfxRobot::getFrameDimensions(int frame, int &width, int &height) {
+	byte *videoData = _resourceData + _imageStart[frame];
+
+	width = READ_LE_UINT16(videoData + 4);
+	height = READ_LE_UINT16(videoData + 6);
+}
+
+void GfxRobot::getFrameRect(int frame, Common::Rect &rect) {
+	byte *videoData = _resourceData + _imageStart[frame];
+
+	int x = READ_LE_UINT16(videoData + 8);
+	int y = READ_LE_UINT16(videoData + 10);
+	int w = READ_LE_UINT16(videoData + 12);
+	int h = READ_LE_UINT16(videoData + 14);
+
+	rect = Common::Rect(x, y, x + w, y + h); 
+}
+
+float GfxRobot::getFrameScaleFactor(int frame) {
+	byte *videoData = _resourceData + _imageStart[frame];
+	byte percentage = videoData[3];
+
+	return (float) percentage/100.0;
+}
+	
 #endif
 
 } // End of namespace Sci

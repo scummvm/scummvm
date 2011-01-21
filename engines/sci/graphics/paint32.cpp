@@ -81,8 +81,8 @@ void GfxPaint32::kernelGraphDrawLine(Common::Point startPoint, Common::Point end
 }
 
 void GfxPaint32::debugDrawRobot(GuiResourceId robotId) {
-	GfxRobot *test = new GfxRobot(g_sci->getResMan(), _screen, robotId);
-	test->draw();
+	GfxRobot *test = new GfxRobot(g_sci->getResMan(), _screen, _palette, robotId);
+	test->draw(0,0);
 	delete test;
 }
 

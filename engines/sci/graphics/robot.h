@@ -33,16 +33,22 @@ namespace Sci {
 #ifdef ENABLE_SCI32
 class GfxRobot {
 public:
-	GfxRobot(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId);
+	GfxRobot(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId);
 	~GfxRobot();
 
-	void draw();
+	void draw(int x, int y);
 
 private:
 	void initData(GuiResourceId resourceId);
+	void getFrameOffsets();
+	byte *assembleVideoFrame(int frame);
+	void getFrameDimensions(int frame, int &width, int &height);
+	void getFrameRect(int frame, Common::Rect &rect); // Not sure what to use this for yet
+	float getFrameScaleFactor(int frame); // Scale factor?? More like custom height, but why use a percentage for it?
 
 	ResourceManager *_resMan;
 	GfxScreen *_screen;
+	GfxPalette *_palette;
 
 	GuiResourceId _resourceId;
 	byte *_resourceData;
@@ -53,6 +59,10 @@ private:
 	uint32 _frameSize; // is width * height (pixelCount)
 	uint16 _audioSize;
 	bool _hasSound;
+	uint32 _palOffset;
+	uint32 *_imageStart;
+	uint32 *_audioStart;
+	uint32 *_audioLen;
 };
 #endif
 

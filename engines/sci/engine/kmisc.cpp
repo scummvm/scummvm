@@ -32,6 +32,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
 #include "sci/graphics/maciconbar.h"
+#include "sci/console.h"
 
 namespace Sci {
 
@@ -177,8 +178,7 @@ reg_t kFlushResources(EngineState *s, int argc, reg_t *argv) {
 reg_t kSetDebug(EngineState *s, int argc, reg_t *argv) {
 	debug("Debug mode activated");
 
-	g_sci->_debugState.seeking = kDebugSeekNothing;
-	g_sci->_debugState.runningStep = 0;
+	g_sci->getDebugger()->attach();
 	return s->r_acc;
 }
 

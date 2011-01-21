@@ -1407,8 +1407,8 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 			int16 x = argv[4].toUint16();
 			int16 y = argv[5].toUint16();
 			warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
-			GfxRobot *test = new GfxRobot(g_sci->getResMan(), g_sci->_gfxScreen, id);
-			test->draw();
+			GfxRobot *test = new GfxRobot(g_sci->getResMan(), g_sci->_gfxScreen, g_sci->_gfxPalette, id);
+			test->draw(x,y);
 			delete test;
 
 			}
