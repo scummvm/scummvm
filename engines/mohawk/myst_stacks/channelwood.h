@@ -54,9 +54,13 @@ private:
 	void opcode_203_run();
 	void opcode_203_disable();
 
+	DECLARE_OPCODE(o_bridgeToggle);
 	DECLARE_OPCODE(opcode_101);
 	DECLARE_OPCODE(opcode_102);
 	DECLARE_OPCODE(o_waterTankValveOpen);
+	DECLARE_OPCODE(o_leverStartMove);
+	DECLARE_OPCODE(o_leverMove);
+	DECLARE_OPCODE(o_leverEndMove);
 	DECLARE_OPCODE(o_valveHandleMove1);
 	DECLARE_OPCODE(o_valveHandleMoveStart1);
 	DECLARE_OPCODE(o_valveHandleMoveStop);
@@ -67,11 +71,12 @@ private:
 	DECLARE_OPCODE(opcode_117);
 	DECLARE_OPCODE(opcode_118);
 	DECLARE_OPCODE(opcode_119);
+	DECLARE_OPCODE(o_executeMouseUp);
 	DECLARE_OPCODE(o_waterTankValveClose);
 	DECLARE_OPCODE(opcode_127);
-	DECLARE_OPCODE(opcode_129);
+	DECLARE_OPCODE(o_soundReplace);
 
-	DECLARE_OPCODE(opcode_201);
+	DECLARE_OPCODE(o_lever_init);
 	DECLARE_OPCODE(o_pipeValve_init);
 	DECLARE_OPCODE(opcode_203);
 
@@ -80,6 +85,9 @@ private:
 	MystGameState::Channelwood &_state;
 
 	uint16 _valveVar; // 64
+
+	bool _leverPulled;
+	MystResourceType5 *_leverAction; // 72
 
 	bool pipeChangeValve(bool open, uint16 mask);
 };
