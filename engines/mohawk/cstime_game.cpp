@@ -556,8 +556,7 @@ void CSTimeConversation::mouseMove(Common::Point &pos) {
 	}
 
 	if (_currHover != (uint)~0) {
-		// FIXME: cursorGetState() returns a bool, so this check below can never be true
-		if (_vm->getInterface()->cursorGetState() != 3) {
+		if (_vm->getInterface()->cursorGetShape() != 3) {
 			_vm->getInterface()->cursorSetShape(1, true);
 			if (_vm->getInterface()->getInventoryDisplay()->getState() != 4)
 				unhighlightLine(_currHover);

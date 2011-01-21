@@ -471,7 +471,7 @@ void CSTimeInterface::mouseUp(Common::Point pos) {
 }
 
 void CSTimeInterface::cursorOverHotspot() {
-	if (cursorGetState() != 1)
+	if (!cursorGetState())
 		return;
 	if (_state == kCSTimeInterfaceStateDragStart || _state == kCSTimeInterfaceStateDragging)
 		return;
