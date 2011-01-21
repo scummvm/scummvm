@@ -430,6 +430,13 @@ void MohawkEngine_CSTime::triggerEvent(CSTimeEvent &event) {
 		_interface->dropItemInInventory(event.param2);
 		break;
 
+	case kCSTimeEventRemoveItemFromInventory:
+		if (!_interface->getInventoryDisplay()->isItemDisplayed(event.param2))
+			break;
+		_haveInvItem[event.param2] = 0;
+		_interface->getInventoryDisplay()->removeItem(event.param2);
+		break;
+
 	case kCSTimeEventAddNotePiece:
 		_interface->clearTextLine();
 		_interface->getCarmenNote()->addPiece(event.param2, event.param1);

@@ -1078,6 +1078,15 @@ void CSTimeInventoryDisplay::setCuffsFlashing() {
 	invObj->featureDisabled = false;
 }
 
+bool CSTimeInventoryDisplay::isItemDisplayed(uint16 id) {
+	for (uint i = 0; i < MAX_DISPLAYED_ITEMS; i++) {
+		if (_displayedItems[i] == id)
+			return true;
+	}
+
+	return false;
+}
+
 CSTimeBook::CSTimeBook(MohawkEngine_CSTime *vm) : _vm(vm) {
 	_state = 0;
 	_smallBookFeature = NULL;

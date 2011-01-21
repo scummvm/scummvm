@@ -83,6 +83,7 @@ public:
 	bool getCuffsState() { return _cuffsState; }
 	uint16 getCuffsShape() { return _cuffsShape; }
 
+	bool isItemDisplayed(uint16 id);
 	uint16 getDisplayedNum(uint id) { return _displayedItems[id]; }
 	uint16 getLastDisplayedClicked() { return getDisplayedNum(_draggedItem); }
 
