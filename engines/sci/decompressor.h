@@ -179,10 +179,6 @@ protected:
 class DecompressorDCL : public Decompressor {
 public:
 	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
-
-protected:
-	int unpackDCL(byte *dest);
-	int huffman_lookup(const int *tree);
 };
 
 #ifdef ENABLE_SCI32
