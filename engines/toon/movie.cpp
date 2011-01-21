@@ -33,8 +33,7 @@ void ToonstruckSmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, ui
 	if (track == 1 && chunkSize == 4) {
 		/* uint16 width = */ _fileStream->readUint16LE();
 		uint16 height = _fileStream->readUint16LE();
-
-		_header.flags = (height == getHeight() / 2) ? 4 : 0;
+		_lowRes = (height == getHeight() / 2);
 	} else
 		Graphics::SmackerDecoder::handleAudioTrack(track, chunkSize, unpackedSize);
 }
@@ -44,21 +43,25 @@ bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename, int forc
 
 	if (Graphics::SmackerDecoder::loadFile(filename)) {
 		if (forcedflags & 0x10 || _surface->h == 200) {
-
-			_header.flags = 4;
 			if (_surface) {
 				_surface->free();
 				delete _surface;
 			}
 			_surface = new Graphics::Surface();
 			_surface->create(640, 400, 1);
+			_lowRes = false;
+			_header.flags = 4;
 		}
+
 		return true;
 	}
+	
+
 	return false;
 }
 
 ToonstruckSmackerDecoder::ToonstruckSmackerDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : Graphics::SmackerDecoder(mixer, soundType) {
+	_lowRes = false;
 }
 
 // decoder is deallocated with Movie destruction i.e. new ToonstruckSmackerDecoder is needed
@@ -98,8 +101,19 @@ bool Movie::playVideo() {
 	while (!_vm->shouldQuit() && !_decoder->endOfVideo()) {
 		if (_decoder->needsUpdate()) {
 			const Graphics::Surface *frame = _decoder->decodeNextFrame();
-			if (frame)
-				_vm->getSystem()->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+			if (frame) {
+				if (_decoder->isLowRes()) {
+					// handle manually 2x scaling here
+					Graphics::Surface* surf = _vm->getSystem()->lockScreen();
+					for (int y = 0; y < frame->h/2; y++) {
+						memcpy(surf->getBasePtr(0, y*2+0), frame->getBasePtr(0, y), frame->pitch);
+						memcpy(surf->getBasePtr(0, y*2+1), frame->getBasePtr(0, y), frame->pitch);
+					}
+					_vm->getSystem()->unlockScreen();
+				} else {
+					_vm->getSystem()->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+				}
+			}
 			_decoder->setSystemPalette();
 			_vm->getSystem()->updateScreen();
 		}

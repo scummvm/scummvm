@@ -37,6 +37,9 @@ public:
 	virtual ~ToonstruckSmackerDecoder() {}
 	void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
 	bool loadFile(const Common::String &filename, int forcedflags) ;
+	bool isLowRes() { return _lowRes; }
+protected:
+	bool _lowRes;
 };
 
 class Movie {
@@ -54,7 +57,6 @@ protected:
 	Audio::Mixer *_mixer;
 	ToonstruckSmackerDecoder *_decoder;
 	bool _playing;
-	
 };
 
 } // End of namespace Toon
