@@ -133,6 +133,7 @@ public:
 	void addPiece(uint16 piece, uint16 speech);
 	void drawSmallNote();
 	void drawBigNote();
+	void closeNote();
 
 protected:
 	MohawkEngine_CSTime *_vm;

@@ -426,7 +426,7 @@ void CSTimeInterface::mouseUp(Common::Point pos) {
 	}
 
 	if (_note->getState() == 2) {
-		// TODO: _note->closeNote();
+		_note->closeNote();
 		mouseMove(pos);
 		return;
 	}
@@ -1158,9 +1158,6 @@ void CSTimeCarmenNote::drawSmallNote() {
 	if (!havePiece(0xffff))
 		return;
 
-	if (_feature)
-		_vm->getView()->removeFeature(_feature, true);
-
 	uint16 id = 100;
 	if (_pieces[2] != 0xffff)
 		id += 5;
@@ -1169,11 +1166,37 @@ void CSTimeCarmenNote::drawSmallNote() {
 	else
 		id += 2;
 
+	if (_feature)
+		_vm->getView()->removeFeature(_feature, true);
 	_feature = _vm->getView()->installViewFeature(id, kFeatureSortStatic | kFeatureNewNoLoop, NULL);
 }
 
 void CSTimeCarmenNote::drawBigNote() {
-	// FIXME
+	if (_vm->getCase()->getCurrConversation()->getState() != (uint)~0) {
+		_vm->getCase()->getCurrConversation()->end(false);
+	} else if (_vm->getInterface()->getHelp()->getState() != (uint)~0) {
+		_vm->getInterface()->getHelp()->end();
+	}
+	// TODO: kill symbols too
+
+	uint16 id = 100;
+	if (_pieces[2] != 0xffff)
+		id += 9;
+	else if (_pieces[1] != 0xffff)
+		id += 8;
+	else
+		id += 6;
+
+	if (_feature)
+		_vm->getView()->removeFeature(_feature, true);
+	_feature = _vm->getView()->installViewFeature(id, kFeatureSortStatic | kFeatureNewNoLoop, NULL);
+	// FIXME: attach note drawing proc
+	_state = 2;
+}
+
+void CSTimeCarmenNote::closeNote() {
+	_state = 0;
+	drawSmallNote();
 }
 
 CSTimeOptions::CSTimeOptions(MohawkEngine_CSTime *vm) : _vm(vm) {
