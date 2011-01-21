@@ -173,7 +173,7 @@ void CSTimeView::dragFeature(NewFeature *feature, Common::Point pos, uint mode, 
 
 	if (mode == 2) {
 		if (feature->_dragFlags & 0x800000) {
-			feature->_dragFlags |= 0x8000;
+			feature->_dragFlags = flags | 0x8000;
 			if (!(flags & 1))
 				(_currentModule->*(feature->_dropProc))(feature);
 		}
