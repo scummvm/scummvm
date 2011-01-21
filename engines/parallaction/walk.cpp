@@ -371,15 +371,13 @@ bool PathWalker_BR::directPathExists(const Common::Point &from, const Common::Po
 	Common::Point p(copy);
 
 	while (p != to) {
-
 		if (p.x < to.x && IS_PATH_CLEAR(p.x + 1, p.y)) p.x++;
 		if (p.x > to.x && IS_PATH_CLEAR(p.x - 1, p.y)) p.x--;
 		if (p.y < to.y && IS_PATH_CLEAR(p.x, p.y + 1)) p.y++;
 		if (p.y > to.y && IS_PATH_CLEAR(p.x, p.y - 1)) p.y--;
 
-		if (p == copy && p != to) {
+		if (p == copy && p != to)
 			return false;
-		}
 
 		copy = p;
 	}
