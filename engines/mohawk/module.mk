@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	detection.o \
 	dialogs.o \
 	graphics.o \
+	installer_archive.o \
 	livingbooks.o \
 	livingbooks_code.o \
 	mohawk.o \

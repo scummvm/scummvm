@@ -31,6 +31,7 @@
 
 #include "mohawk/cursors.h"
 #include "mohawk/graphics.h"
+#include "mohawk/installer_archive.h"
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
@@ -107,6 +108,11 @@ GUI::Debugger *MohawkEngine_Riven::getDebugger() {
 
 Common::Error MohawkEngine_Riven::run() {
 	MohawkEngine::run();
+
+	// Let's try to open the installer file (it holds extras.mhk)
+	// Though, we set a low priority to prefer the extracted version
+	if (_installerArchive.open("arcriven.z"))
+		SearchMan.add("arcriven.z", &_installerArchive, 0, false);
 
 	_gfx = new RivenGraphics(this);
 	_console = new RivenConsole(this);

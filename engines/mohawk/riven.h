@@ -26,6 +26,7 @@
 #ifndef MOHAWK_RIVEN_H
 #define MOHAWK_RIVEN_H
 
+#include "mohawk/installer_archive.h"
 #include "mohawk/mohawk.h"
 #include "mohawk/riven_scripts.h"
 
@@ -131,6 +132,7 @@ private:
 	RivenConsole *_console;
 	RivenSaveLoad *_saveLoad;
 	RivenOptionsDialog *_optionsDialog;
+	InstallerArchive _installerArchive;
 
 	// Stack/Card-related functions and variables
 	uint16 _curCard;
