@@ -63,11 +63,11 @@ CSTimeInterface::CSTimeInterface(MohawkEngine_CSTime *vm) : _vm(vm) {
 	_note = new CSTimeCarmenNote(_vm);
 	_options = new CSTimeOptions(_vm);
 
-	if (!_normalFont.loadFromFON("95instal/EvP14.fon"))
+	if (!_normalFont.loadFromFON("EvP14.fon"))
 		error("failed to load normal font");
-	if (!_dialogFont.loadFromFON("95instal/Int1212.fon"))
+	if (!_dialogFont.loadFromFON("Int1212.fon"))
 		error("failed to load dialog font");
-	if (!_rolloverFont.loadFromFON("95instal/Int1818.fon"))
+	if (!_rolloverFont.loadFromFON("Int1818.fon"))
 		error("failed to load rollover font");
 
 	_uiFeature = NULL;

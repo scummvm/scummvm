@@ -33,8 +33,10 @@
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"
+#include "common/fs.h"
 
 #include "engines/util.h"
 
@@ -43,6 +45,13 @@ namespace Mohawk {
 MohawkEngine_CSTime::MohawkEngine_CSTime(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "cstime");
+
+	// If the user just copied the CD contents, the fonts are in a subdirectory.
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	// They're in setup/data32 for 'Where in Time is Carmen Sandiego?'.
+	SearchMan.addSubDirectoryMatching(gameDataDir, "setup/data32");
+	// They're in 95instal for 'Carmen Sandiego's Great Chase Through Time'.
+	SearchMan.addSubDirectoryMatching(gameDataDir, "95instal");
 
 	_state = kCSTStateStartup;
 
