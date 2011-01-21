@@ -478,7 +478,7 @@ void CSTimeConversation::end(bool useLastClicked, bool runEvents) {
 	}
 
 	setState(~0);
-	_currHover = ~0;
+	_currHover = 0xffff;
 
 	interface->clearTextLine();
 	interface->clearDialogArea();
@@ -555,13 +555,13 @@ void CSTimeConversation::mouseMove(Common::Point &pos) {
 		return;
 	}
 
-	if (_currHover != (uint)~0) {
+	if (_currHover != 0xffff) {
 		if (_vm->getInterface()->cursorGetShape() != 3) {
 			_vm->getInterface()->cursorSetShape(1, true);
 			if (_vm->getInterface()->getInventoryDisplay()->getState() != 4)
 				unhighlightLine(_currHover);
 		}
-		_currHover = ~0;
+		_currHover = 0xffff;
 	}
 }
 
@@ -569,7 +569,7 @@ void CSTimeConversation::mouseUp(Common::Point &pos) {
 	if (_vm->getInterface()->getInventoryDisplay()->getState() == 4)
 		return;
 
-	if (_currEntry == (uint)~0)
+	if (_currEntry == 0xffff)
 		return;
 
 	// TODO: case 20 rect check
@@ -610,8 +610,8 @@ void CSTimeConversation::clear() {
 	_state = ~0;
 	_talkCount = 0;
 	_sourceChar = 0xffff;
-	_currHover = ~0;
-	_currEntry = ~0;
+	_currHover = 0xffff;
+	_currEntry = 0xffff;
 	_nextToProcess = 0xffff;
 	for (uint i = 0; i < 8; i++)
 		for (uint j = 0; j < 5; j++)
@@ -678,7 +678,7 @@ CSTimeCase::CSTimeCase(MohawkEngine_CSTime *vm, uint id) : _vm(vm), _id(id) {
 	assert(!_conversations.empty());
 	_currConv = _conversations[0];
 
-	_currScene = ~0;
+	_currScene = 0xffff;
 }
 
 CSTimeCase::~CSTimeCase() {
@@ -750,8 +750,8 @@ CSTimeScene *CSTimeCase::getCurrScene() {
 
 CSTimeScene::CSTimeScene(MohawkEngine_CSTime *vm, CSTimeCase *case_, uint id) : _vm(vm), _case(case_), _id(id) {
 	_activeChar = NULL;
-	_currHotspot = ~0;
-	_hoverHotspot = ~0;
+	_currHotspot = 0xffff;
+	_hoverHotspot = 0xffff;
 	load();
 }
 
@@ -901,7 +901,7 @@ void CSTimeScene::mouseDown(Common::Point &pos) {
 				// In help mode, we ignore clicks on any help hotspot.
 				if (!hotspotContainsEvent(i, kCSTimeEventStartHelp))
 					break;
-				_currHotspot = ~0;
+				_currHotspot = 0xffff;
 				return;
 			}
 
@@ -910,7 +910,7 @@ void CSTimeScene::mouseDown(Common::Point &pos) {
 				if (hotspot.events[j].type != kCSTimeEventStartConversation)
 					continue;
 				// FIXME: check that the conversation *is* the current one
-				_currHotspot = ~0;
+				_currHotspot = 0xffff;
 				return;
 			}
 
@@ -931,7 +931,7 @@ void CSTimeScene::mouseDown(Common::Point &pos) {
 
 	// FIXME: return if sailing puzzle
 
-	_currHotspot = ~0;
+	_currHotspot = 0xffff;
 	for (uint i = 0; i < _hotspots.size(); i++) {
 		CSTimeHotspot &hotspot = _hotspots[i];
 		if (!hotspot.region.containsPoint(pos))
@@ -942,7 +942,7 @@ void CSTimeScene::mouseDown(Common::Point &pos) {
 		break;
 	}
 
-	if (_currHotspot == (uint)~0)
+	if (_currHotspot == 0xffff)
 		_vm->getInterface()->cursorSetShape(4, false);
 }
 
@@ -1026,7 +1026,7 @@ void CSTimeScene::mouseMove(Common::Point &pos) {
 		}
 	}
 
-	if (_hoverHotspot == (uint)~0)
+	if (_hoverHotspot == 0xffff)
 		return;
 
 	CSTimeConversation *conv = _case->getCurrConversation();
@@ -1046,13 +1046,13 @@ void CSTimeScene::mouseMove(Common::Point &pos) {
 		_vm->getInterface()->clearTextLine();
 	}
 
-	_hoverHotspot = (uint)~0;
+	_hoverHotspot = 0xffff;
 }
 
 void CSTimeScene::mouseUp(Common::Point &pos) {
 	// TODO: if sailing puzzle is active, return
 
-	if (_currHotspot == (uint)~0) {
+	if (_currHotspot == 0xffff) {
 		if (_vm->getInterface()->cursorGetShape() == 4)
 			_vm->getInterface()->cursorChangeShape(1);
 		return;

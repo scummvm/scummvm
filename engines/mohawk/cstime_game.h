@@ -176,7 +176,7 @@ protected:
 	uint _talkCount;
 	uint16 _sourceChar;
 
-	uint _currEntry, _currHover;
+	uint16 _currEntry, _currHover;
 	uint16 _nextToProcess;
 
 	bool _asked[8][5];
@@ -228,8 +228,8 @@ protected:
 	CSTimeCase *_case;
 	uint _id;
 
-	uint _currHotspot;
-	uint _hoverHotspot;
+	uint16 _currHotspot;
+	uint16 _hoverHotspot;
 
 	void load();
 	void cursorOverHotspot(uint id);
@@ -253,7 +253,7 @@ public:
 	uint getId() { return _id; }
 	Common::String &getRolloverText(uint id) { return _rolloverText[id]; }
 	CSTimeScene *getCurrScene();
-	void setCurrScene(uint id) { _currScene = id; }
+	void setCurrScene(uint16 id) { _currScene = id; }
 	void setConversation(uint id) { _currConv = _conversations[id]; }
 	CSTimeConversation *getCurrConversation() { return _currConv; }
 	uint16 getNoteFeatureId(uint16 id) { return _noteFeatureId[id]; }
@@ -271,7 +271,7 @@ protected:
 	MohawkEngine_CSTime *_vm;
 	uint _id;
 
-	uint _currScene;
+	uint16 _currScene;
 	uint16 _noteFeatureId[3];
 	Common::Array<Common::String> _rolloverText;
 	Common::Array<CSTimeScene *> _scenes;

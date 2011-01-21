@@ -654,7 +654,7 @@ void CSTimeInterface::stopDragging() {
 		setCursorForCurrentPoint();
 
 	// Find the inventory object hotspot which is topmost for this drop, if any.
-	uint foundInvObjHotspot = ~0;
+	uint16 foundInvObjHotspot = 0xffff;
 	const Common::Array<CSTimeHotspot> &hotspots = scene->getHotspots();
 	for (uint i = 0; i < hotspots.size(); i++) {
 		if (hotspots[i].state != 1)
@@ -666,7 +666,7 @@ void CSTimeInterface::stopDragging() {
 				continue;
 			if (invObj->hotspots[j].hotspotId != i)
 				continue;
-			if (foundInvObjHotspot != (uint)~0 && invObj->hotspots[foundInvObjHotspot].hotspotId < invObj->hotspots[j].hotspotId)
+			if (foundInvObjHotspot != 0xffff && invObj->hotspots[foundInvObjHotspot].hotspotId < invObj->hotspots[j].hotspotId)
 				continue;
 			foundInvObjHotspot = j;
 		}
@@ -675,7 +675,7 @@ void CSTimeInterface::stopDragging() {
 	// Work out if we're going to consume (nom-nom) the object after the drop.
 	bool consumeObj = false;
 	bool runConsumeEvents = false;
-	if (foundInvObjHotspot != (uint)~0) {
+	if (foundInvObjHotspot != 0xffff) {
 		CSTimeInventoryHotspot &hotspot = invObj->hotspots[foundInvObjHotspot];
 
 		clearTextLine();
@@ -783,7 +783,7 @@ void CSTimeInterface::stopDragging() {
 
 	if (_vm->getCase()->getId() == 1 && _vm->getCase()->getCurrScene()->getId() == 4) {
 		// Hardcoded behaviour for torches in the dark tomb, in the first case.
-		if (_draggedItem == 1 && foundInvObjHotspot == (uint)~0) {
+		if (_draggedItem == 1 && foundInvObjHotspot == 0xffff) {
 			// Trying to drag an unlit torch around?
 			_vm->addEvent(CSTimeEvent(kCSTimeEventCharStartFlapping, 0, 16352));
 		} else if (_draggedItem == 2 && _vm->_caseVariable[2] == 1) {
@@ -868,7 +868,7 @@ void CSTimeInventoryDisplay::install() {
 
 void CSTimeInventoryDisplay::draw() {
 	for (uint i = 0; i < MAX_DISPLAYED_ITEMS; i++) {
-		if (_displayedItems[i] == (uint)~0)
+		if (_displayedItems[i] == 0xffff)
 			continue;
 		CSTimeInventoryObject *invObj = _vm->getCase()->_inventoryObjs[_displayedItems[i]];
 
@@ -900,7 +900,7 @@ void CSTimeInventoryDisplay::draw() {
 
 void CSTimeInventoryDisplay::show() {
 	for (uint i = 0; i < MAX_DISPLAYED_ITEMS; i++) {
-		if (_displayedItems[i] == (uint)~0)
+		if (_displayedItems[i] == 0xffff)
 			continue;
 		CSTimeInventoryObject *invObj = _vm->getCase()->_inventoryObjs[_displayedItems[i]];
 		if (!invObj->feature)
@@ -911,7 +911,7 @@ void CSTimeInventoryDisplay::show() {
 
 void CSTimeInventoryDisplay::hide() {
 	for (uint i = 0; i < MAX_DISPLAYED_ITEMS; i++) {
-		if (_displayedItems[i] == (uint)~0)
+		if (_displayedItems[i] == 0xffff)
 			continue;
 		CSTimeInventoryObject *invObj = _vm->getCase()->_inventoryObjs[_displayedItems[i]];
 		if (!invObj->feature)
@@ -941,7 +941,7 @@ void CSTimeInventoryDisplay::idle() {
 
 void CSTimeInventoryDisplay::clearDisplay() {
 	for (uint i = 0; i < MAX_DISPLAYED_ITEMS; i++)
-		_displayedItems[i] = ~0;
+		_displayedItems[i] = 0xffff;
 
 	// We always start out with the Time Cuffs.
 	_vm->_haveInvItem[TIME_CUFFS_ID] = 1;
@@ -950,13 +950,13 @@ void CSTimeInventoryDisplay::clearDisplay() {
 	_cuffsState = false;
 }
 
-void CSTimeInventoryDisplay::insertItemInDisplay(uint id) {
+void CSTimeInventoryDisplay::insertItemInDisplay(uint16 id) {
 	for (uint i = 0; i < MAX_DISPLAYED_ITEMS; i++)
 		if (_displayedItems[i] == id)
 			return;
 
 	for (uint i = 0; i < MAX_DISPLAYED_ITEMS; i++)
-		if (_displayedItems[i] == (uint)~0) {
+		if (_displayedItems[i] == 0xffff) {
 			_displayedItems[i] = id;
 			return;
 		}
@@ -964,7 +964,7 @@ void CSTimeInventoryDisplay::insertItemInDisplay(uint id) {
 	error("couldn't insert item into display");
 }
 
-void CSTimeInventoryDisplay::removeItem(uint id) {
+void CSTimeInventoryDisplay::removeItem(uint16 id) {
 	CSTimeInventoryObject *invObj = _vm->getCase()->_inventoryObjs[id];
 	if (invObj->feature) {
 		_vm->getView()->removeFeature(invObj->feature, true);
@@ -972,12 +972,12 @@ void CSTimeInventoryDisplay::removeItem(uint id) {
 	}
 	for (uint i = 0; i < MAX_DISPLAYED_ITEMS; i++)
 		if (_displayedItems[i] == id)
-			_displayedItems[i] = ~0;
+			_displayedItems[i] = 0xffff;
 }
 
 void CSTimeInventoryDisplay::mouseDown(Common::Point &pos) {
 	for (uint i = 0; i < MAX_DISPLAYED_ITEMS; i++) {
-		if (_displayedItems[i] == (uint)~0)
+		if (_displayedItems[i] == 0xffff)
 			continue;
 		if (!_itemRect[i].contains(pos))
 			continue;
@@ -1003,7 +1003,7 @@ void CSTimeInventoryDisplay::mouseMove(Common::Point &pos) {
 	}
 
 	for (uint i = 0; i < MAX_DISPLAYED_ITEMS; i++) {
-		if (_displayedItems[i] == (uint)~0)
+		if (_displayedItems[i] == 0xffff)
 			continue;
 		if (!_itemRect[i].contains(pos))
 			continue;
@@ -1029,7 +1029,7 @@ void CSTimeInventoryDisplay::mouseMove(Common::Point &pos) {
 
 void CSTimeInventoryDisplay::mouseUp(Common::Point &pos) {
 	for (uint i = 0; i < MAX_DISPLAYED_ITEMS; i++) {
-		if (_displayedItems[i] == (uint)~0)
+		if (_displayedItems[i] == 0xffff)
 			continue;
 		if (!_itemRect[i].contains(pos))
 			continue;

@@ -71,8 +71,8 @@ public:
 	void hide();
 	void idle();
 	void clearDisplay();
-	void insertItemInDisplay(uint id);
-	void removeItem(uint id);
+	void insertItemInDisplay(uint16 id);
+	void removeItem(uint16 id);
 
 	void mouseDown(Common::Point &pos);
 	void mouseMove(Common::Point &pos);
@@ -99,7 +99,7 @@ protected:
 	bool _cuffsState;
 	uint16 _cuffsShape;
 	uint16 _draggedItem;
-	uint _displayedItems[MAX_DISPLAYED_ITEMS];
+	uint16 _displayedItems[MAX_DISPLAYED_ITEMS];
 };
 
 class CSTimeBook {

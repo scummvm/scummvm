@@ -249,7 +249,7 @@ uint16 MohawkEngine_CSTime::getCurrentEventType() {
 void MohawkEngine_CSTime::eventIdle() {
 	bool done = false;
 	while (_events.size() && !done && true /* TODO: !_options->getState() */) {
-		_lastTimeout = ~0;
+		_lastTimeout = 0xffffffff;
 
 		bool advanceQueue = true;
 		bool processEvent = true;
@@ -346,7 +346,7 @@ bool MohawkEngine_CSTime::NISIsRunning() {
 
 void MohawkEngine_CSTime::reset() {
 	_NISRunning = false;
-	_lastTimeout = ~0;
+	_lastTimeout = 0xffffffff;
 	_processingEvent = false;
 }
 
