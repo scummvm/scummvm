@@ -176,9 +176,12 @@ reg_t kFlushResources(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetDebug(EngineState *s, int argc, reg_t *argv) {
-	debug("Debug mode activated");
+	if (g_sci->getGameId() != GID_GK1) {
+		debug("Debug mode activated");
+		
+		g_sci->getDebugger()->attach();
+	}
 
-	g_sci->getDebugger()->attach();
 	return s->r_acc;
 }
 
