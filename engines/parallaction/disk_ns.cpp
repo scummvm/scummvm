@@ -854,6 +854,7 @@ GfxObj* AmigaDisk_ns::loadStatic(const char* name) {
 Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
 	debugC(3, kDebugDisk, "AmigaDisk_ns::tryOpenFile(%s)", name);
 
+	PowerPackerStream *ret;
 	Common::SeekableReadStream *stream = _sset.createReadStreamForMember(name);
 	if (stream)
 		return stream;
@@ -861,13 +862,19 @@ Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.pp", name);
 	stream = _sset.createReadStreamForMember(path);
-	if (stream)
-		return new PowerPackerStream(*stream);
+	if (stream) {
+		ret = new PowerPackerStream(*stream);
+		delete stream;
+		return ret;
+	}
 
 	sprintf(path, "%s.dd", name);
 	stream = _sset.createReadStreamForMember(path);
-	if (stream)
-		return new PowerPackerStream(*stream);
+	if (stream) {
+		ret = new PowerPackerStream(*stream);
+		delete stream;
+		return ret;
+	}
 
 	return 0;
 }

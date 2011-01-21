@@ -39,20 +39,15 @@
 #include "parallaction/sound.h"
 #include "parallaction/walk.h"
 
-
-
 namespace Parallaction {
-
 Parallaction *_vm = NULL;
 // public stuff
 
 char		_saveData1[30] = { '\0' };
 uint32		_engineFlags = 0;
-
 uint32		_globalFlags = 0;
 
 // private stuff
-
 
 Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc) :
 	Engine(syst), _gameDescription(gameDesc), _location(getGameType()),
@@ -72,7 +67,6 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 
 	g_eventRec.registerRandomSource(_rnd, "parallaction");
 }
-
 
 Parallaction::~Parallaction() {
 	delete _debugger;
@@ -98,9 +92,7 @@ Parallaction::~Parallaction() {
 	delete _input;
 }
 
-
 Common::Error Parallaction::init() {
-	
 	_gameType = getGameType();
 	_engineFlags = 0;
 	_objectsNames = NULL;
@@ -119,6 +111,7 @@ Common::Error Parallaction::init() {
 
 	strcpy(_characterName1, "null");
 
+	memset(_localFlags, 0, sizeof(_localFlags));
 	memset(_locationNames, 0, NUM_LOCATIONS * 32);
 
 	// this needs _disk to be already setup
@@ -158,8 +151,6 @@ void Parallaction::updateView() {
 	_system->delayMillis(30);
 }
 
-
-
 void Parallaction::pauseJobs() {
 	debugC(9, kDebugExec, "pausing jobs execution");
 
@@ -181,7 +172,6 @@ AnimationPtr Location::findAnimation(const char *name) {
 
 	return AnimationPtr();
 }
-
 
 void Parallaction::allocateLocationSlot(const char *name) {
 	// WORKAROUND: the original code erroneously incremented
@@ -212,7 +202,6 @@ void Parallaction::allocateLocationSlot(const char *name) {
 		setLocationFlags(kFlagsVisited);	// 'visited'
 	}
 }
-
 
 Location::Location(int gameType) : _gameType(gameType) {
 	cleanup(true);
@@ -253,7 +242,6 @@ int Location::getScale(int z) const {
 	return scale;
 }
 
-
 void Parallaction::showSlide(const char *name, int x, int y) {
 	BackgroundInfo *info = new BackgroundInfo;
 	_disk->loadSlide(*info, name);
@@ -263,7 +251,6 @@ void Parallaction::showSlide(const char *name, int x, int y) {
 
 	_gfx->setBackground(kBackgroundSlide, info);
 }
-
 
 void Parallaction::showLocationComment(const Common::String &text, bool end) {
 	_balloonMan->setLocationBalloon(text.c_str(), end);
@@ -296,7 +283,6 @@ void Parallaction::runGameFrame(int event) {
 }
 
 void Parallaction::runGame() {
-
 	int event = _input->updateInput();
 	if (shouldQuit())
 		return;
@@ -325,9 +311,6 @@ void Parallaction::runGame() {
 	// change this to endFrame?
 	updateView();
 }
-
-
-
 
 //	displays transition before a new location
 //
@@ -371,8 +354,6 @@ void Parallaction::doLocationEnterTransition() {
 	_gfx->setPalette(_gfx->_palette);
 
 	debugC(2, kDebugExec, "doLocationEnterTransition completed");
-
-	return;
 }
 
 void Parallaction::setLocationFlags(uint32 flags) {
@@ -390,8 +371,6 @@ void Parallaction::toggleLocationFlags(uint32 flags) {
 uint32 Parallaction::getLocationFlags() {
 	return _localFlags[_currentLocationIndex];
 }
-
-
 
 void Parallaction::drawAnimation(AnimationPtr anim) {
 	if ((anim->_flags & kFlagsActive) == 0)   {
@@ -485,7 +464,6 @@ void Parallaction::updateZones() {
 	debugC(9, kDebugExec, "Parallaction::updateZones done()\n");
 }
 
-
 void Parallaction::showZone(ZonePtr z, bool visible) {
 	if (!z) {
 		return;
@@ -503,10 +481,7 @@ void Parallaction::showZone(ZonePtr z, bool visible) {
 	}
 }
 
-
-//
 //	ZONE TYPE: EXAMINE
-//
 
 void Parallaction::enterCommentMode(ZonePtr z) {
 	if (!z) {
@@ -568,7 +543,6 @@ void Parallaction::runCommentFrame() {
 	}
 }
 
-
 void Parallaction::runZone(ZonePtr z) {
 	debugC(3, kDebugExec, "runZone (%s)", z->_name);
 
@@ -617,9 +591,8 @@ void Parallaction::runZone(ZonePtr z) {
 	return;
 }
 
-//
 //	ZONE TYPE: DOOR
-//
+
 void Parallaction::updateDoor(ZonePtr z, bool close) {
 	z->_flags = close ? (z->_flags |= kFlagsClosed) : (z->_flags &= ~kFlagsClosed);
 
@@ -632,11 +605,7 @@ void Parallaction::updateDoor(ZonePtr z, bool close) {
 	return;
 }
 
-
-
-//
 //	ZONE TYPE: GET
-//
 
 bool Parallaction::pickupItem(ZonePtr z) {
 	if (z->_flags & kFlagsFixed) {
@@ -692,7 +661,7 @@ bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 bool Parallaction::checkZoneType(ZonePtr z, uint32 type) {
 	if (_gameType == GType_Nippon) {
 		if ((type == 0) && (ITEMTYPE(z) == 0))
-			return true;		
+			return true;
 	}
 
 	if (_gameType == GType_BRA) {
@@ -765,11 +734,10 @@ bool Parallaction::checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y) {
 	return checkZoneType(z, type);
 }
 
-/* NOTE: hitZone needs to be passed absolute game coordinates to work.
-
-   When type is kZoneMerge, then x and y are the identifiers of the objects to merge,
-   and the above requirement does not apply.
-*/
+// NOTE: hitZone needs to be passed absolute game coordinates to work.
+//
+// When type is kZoneMerge, then x and y are the identifiers of the objects to merge,
+// and the above requirement does not apply.
 ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 	uint16 _di = y;
 	uint16 _si = x;
@@ -811,7 +779,6 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 	return ZonePtr();
 }
 
-
 ZonePtr Location::findZone(const char *name) {
 	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); ++it) {
 		if (!scumm_stricmp((*it)->_name, name)) return *it;
@@ -834,7 +801,6 @@ bool Location::keepZone_br(ZonePtr z) {
 bool Location::keepAnimation_br(AnimationPtr a) {
 	return keepZone_br(a);
 }
-
 
 template <class T>
 void Location::freeList(Common::List<T> &list, bool removeAll, Common::MemFunc1<bool, T, Location> filter) {
@@ -867,8 +833,6 @@ void Location::freeZones(bool removeAll) {
 	}
 }
 
-
-
 Character::Character() : _ani(new Animation) {
 	_talk = NULL;
 	_head = NULL;
@@ -881,7 +845,6 @@ Character::Character() : _ani(new Animation) {
 	_ani->_type = kZoneYou;
 	strncpy(_ani->_name, "yourself", ZONENAME_LENGTH);
 }
-
 
 void Character::setName(const char *name) {
 	_name.bind(name);
@@ -902,8 +865,6 @@ const char *Character::getFullName() const {
 bool Character::dummy() const {
 	return _name.dummy();
 }
-
-
 
 // Various ways of detecting character modes used to exist
 // inside the engine, so they have been unified in the two
@@ -934,7 +895,6 @@ CharacterName::CharacterName() {
 CharacterName::CharacterName(const char *name) {
 	bind(name);
 }
-
 
 void CharacterName::bind(const char *name) {
 	const char *begin = name;
@@ -1001,6 +961,5 @@ void Parallaction::scheduleLocationSwitch(const char *location) {
 	_newLocationName = location;
 	_engineFlags |= kEngineChangeLocation;
 }
-
 
 } // End of namespace Parallaction
