@@ -27,6 +27,8 @@
  * @file
  * Sound decoder used in engines:
  *  - agos
+ *  - lastexpress
+ *  - mohawk
  *  - saga
  *  - scumm
  *  - tinsel

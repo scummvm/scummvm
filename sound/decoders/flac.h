@@ -27,10 +27,12 @@
  * @file
  * Sound decoder used in engines:
  *  - agos
+ *  - draci
  *  - kyra
  *  - m4
  *  - queen
  *  - saga
+ *  - sci
  *  - scumm
  *  - sword1
  *  - sword2

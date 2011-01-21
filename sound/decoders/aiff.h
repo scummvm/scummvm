@@ -27,6 +27,7 @@
  * @file
  * Sound decoder used in engines:
  *  - saga
+ *  - sci
  *  - sword1
  */
 

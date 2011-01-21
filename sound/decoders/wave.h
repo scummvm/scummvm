@@ -28,7 +28,9 @@
  * Sound decoder used in engines:
  *  - agos
  *  - gob
+ *  - mohawk
  *  - saga
+ *  - sci
  *  - scumm
  *  - sword1
  *  - sword2
