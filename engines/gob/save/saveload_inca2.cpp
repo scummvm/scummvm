@@ -322,7 +322,7 @@ bool SaveLoad_Inca2::ScreenshotHandler::load(int16 dataVar, int32 size, int32 of
 			return false;
 		}
 
-		if (!TempSpriteHandler::createSprite(dataVar, size, offset))
+		if (!TempSpriteHandler::createFromSprite(dataVar, size, offset))
 			return false;
 
 		if (!_gameHandler->loadScreenshot(slot, _sprite))

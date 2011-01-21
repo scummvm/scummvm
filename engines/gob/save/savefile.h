@@ -53,6 +53,9 @@ public:
 
 	SaveHeader(uint32 type = 0, uint32 version = 0, uint32 size = 0);
 
+	bool operator==(const SaveHeader &header) const;
+	bool operator!=(const SaveHeader &header) const;
+
 	/** Read the header out of a stream into this class. */
 	bool read(Common::ReadStream &stream);
 	/** Read the header out of a stream and checks it against this class's contents. */
@@ -151,10 +154,10 @@ private:
 /** A save part holding a sprite. */
 class SavePartSprite : public SavePart {
 public:
-	static const uint32 kVersion = 1;
+	static const uint32 kVersion = 2;
 	static const uint32 kID = MKID_BE('SPRT');
 
-	SavePartSprite(uint32 width, uint32 height);
+	SavePartSprite(uint32 width, uint32 height, bool trueColor = false);
 	~SavePartSprite();
 
 	bool read(Common::ReadStream &stream);
@@ -176,6 +179,11 @@ public:
 private:
 	uint32 _width;
 	uint32 _height;
+
+	uint32 _spriteSize;
+
+	bool _oldFormat;
+	bool _trueColor;
 
 	byte *_dataSprite;
 	byte *_dataPalette;

@@ -140,9 +140,8 @@ public:
 	bool load(int16 dataVar, int32 size, int32 offset);
 	bool save(int16 dataVar, int32 size, int32 offset);
 
-	/** Create a fitting sprite. */
-	bool createSprite(int16 dataVar, int32 size,
-			int32 offset, SurfacePtr *sprite = 0);
+	bool create(uint32 width, uint32 height, bool trueColor);
+	bool createFromSprite(int16 dataVar, int32 size, int32 offset);
 
 protected:
 	SavePartSprite *_sprite;
@@ -155,6 +154,8 @@ protected:
 	static int getIndex(int32 size);
 	/** Determine whether the palette should be used too. */
 	static bool usesPalette(int32 size);
+
+	SurfacePtr createSprite(int16 dataVar, int32 size, int32 offset);
 };
 
 /** A handler for notes. */

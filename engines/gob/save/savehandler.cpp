@@ -279,12 +279,11 @@ bool TempSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
 }
 
 bool TempSpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
-	SurfacePtr sprite;
-
 	if (isDummy(size))
 		return true;
 
-	if (!createSprite(dataVar, size, offset, &sprite))
+	SurfacePtr sprite = createSprite(dataVar, size, offset);
+	if (!sprite)
 		return false;
 
 	// Save the sprite
@@ -292,42 +291,47 @@ bool TempSpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
 		return false;
 
 	// Handle palette
-	if (usesPalette(size)) {
+	if (usesPalette(size))
 		if (!_sprite->readPalette((const byte *)_vm->_global->_pPaletteDesc->vgaPal))
 			return false;
-	}
 
 	return true;
 }
 
-bool TempSpriteHandler::createSprite(int16 dataVar, int32 size,
-		int32 offset, SurfacePtr *sprite) {
-
+bool TempSpriteHandler::create(uint32 width, uint32 height, bool trueColor) {
 	delete _sprite;
 	_sprite = 0;
 
+	// Create a new temporary sprite
+	_sprite = new SavePartSprite(width, height, trueColor);
+
+	return true;
+}
+
+bool TempSpriteHandler::createFromSprite(int16 dataVar, int32 size, int32 offset) {
+	return createSprite(dataVar, size, offset) != 0;
+}
+
+SurfacePtr TempSpriteHandler::createSprite(int16 dataVar, int32 size, int32 offset) {
+	SurfacePtr sprt;
+
 	// Sprite requested?
 	if (!isSprite(size))
-		return false;
+		return sprt;
 
 	// Index sane?
 	int index = getIndex(size);
 	if ((index < 0) || (index >= SPRITES_COUNT))
-		return false;
-
-	SurfacePtr sprt = _vm->_draw->_spritesArray[index];
+		return sprt;
 
 	// Sprite exists?
-	if (!sprt)
-		return false;
+	if (!(sprt = _vm->_draw->_spritesArray[index]))
+		return sprt;
 
-	// Create a new temporary sprite
-	_sprite = new SavePartSprite(sprt->getWidth(), sprt->getHeight());
+	if (!create(sprt->getWidth(), sprt->getHeight(), sprt->getBPP() > 1))
+		sprt.reset();
 
-	if (sprite)
-		*sprite = sprt;
-
-	return true;
+	return sprt;
 }
 
 // A size of 0 means no proper sprite should be saved/loaded,
