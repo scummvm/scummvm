@@ -212,6 +212,10 @@ uint32 SaveHandler::getVarSize(GobEngine *vm) {
 	return vm->_inter->_variables->getSize();
 }
 
+bool SaveHandler::deleteFile() {
+	return true;
+}
+
 
 TempSpriteHandler::TempSpriteHandler(GobEngine *vm) : SaveHandler(vm) {
 	_sprite = 0;

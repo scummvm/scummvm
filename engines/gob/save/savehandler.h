@@ -121,6 +121,9 @@ public:
 	/** Saves (parts of) the file. */
 	virtual bool save(int16 dataVar, int32 size, int32 offset) = 0;
 
+	/** Deletes the file. */
+	virtual bool deleteFile();
+
 	static uint32 getVarSize(GobEngine *vm);
 
 protected:

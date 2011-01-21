@@ -26,12 +26,15 @@
 #include "common/endian.h"
 #include "common/file.h"
 
+#include "gui/message.h"
+
 #include "gob/gob.h"
 #include "gob/inter.h"
 #include "gob/global.h"
 #include "gob/game.h"
 #include "gob/script.h"
 #include "gob/draw.h"
+#include "gob/save/saveload.h"
 
 namespace Gob {
 
@@ -95,8 +98,20 @@ void Inter_v5::setupOpcodesGob() {
 
 void Inter_v5::o5_deleteFile() {
 	_vm->_game->_script->evalExpr(0);
+	char *file = _vm->_game->_script->getResultStr();
 
-	warning("deleteFile: \"%s\"", _vm->_game->_script->getResultStr());
+	debugC(2, kDebugFileIO, "Delete file \"%s\"", file);
+
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
+	if (mode == SaveLoad::kSaveModeSave) {
+
+		if (!_vm->_saveLoad->deleteFile(file)) {
+			GUI::MessageDialog dialog("Failed to save game state to file.");
+			dialog.runModal();
+		}
+
+	} else if (mode == SaveLoad::kSaveModeNone)
+		warning("Attempted to delete file \"%s\"", file);
 }
 
 void Inter_v5::o5_initScreen() {

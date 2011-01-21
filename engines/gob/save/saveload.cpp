@@ -117,6 +117,30 @@ bool SaveLoad::save(const char *fileName, int16 dataVar, int32 size, int32 offse
 	return true;
 }
 
+bool SaveLoad::deleteFile(const char *fileName) {
+	debugC(3, kDebugSaveLoad, "Requested deletion save file \"%s\"", fileName);
+
+	SaveHandler *handler = getHandler(fileName);
+
+	if (!handler) {
+		warning("No save handler for \"%s\"", fileName);
+		return false;
+	}
+
+	if (!handler->deleteFile()) {
+		const char *desc = getDescription(fileName);
+
+		if (!desc)
+			desc = "Unknown";
+
+		warning("Could not delete %s (\"%s\")", desc, fileName);
+		return false;
+	}
+
+	debugC(3, kDebugSaveLoad, "Successfully deleted file");
+	return true;
+}
+
 SaveLoad::SaveMode SaveLoad::getSaveMode(const char *fileName) const {
 	return kSaveModeNone;
 }

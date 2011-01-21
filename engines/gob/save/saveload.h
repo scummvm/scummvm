@@ -64,6 +64,9 @@ public:
 	/** Saves size bytes from the variables starting with data dataVar at offset. */
 	bool save(const char *fileName, int16 dataVar, int32 size, int32 offset);
 
+	/** Deletes the file. */
+	bool deleteFile(const char *fileName);
+
 protected:
 	GobEngine *_vm;
 
@@ -653,10 +656,29 @@ protected:
 		File _file;
 	};
 
+	/** Handles the temporary saves. */
+	class TempHandler : public SaveHandler {
+	public:
+		TempHandler(GobEngine *vm);
+		~TempHandler();
+
+		int32 getSize();
+		bool load(int16 dataVar, int32 size, int32 offset);
+		bool save(int16 dataVar, int32 size, int32 offset);
+		bool deleteFile();
+
+	private:
+		bool _empty;
+
+		uint32 _size;
+		byte *_data;
+	};
+
 	static SaveFile _saveFiles[];
 
 	GameHandler *_gameHandler;
 	AutoHandler *_autoHandler;
+	TempHandler *_tmpHandler[2];
 
 	SaveHandler *getHandler(const char *fileName) const;
 	const char *getDescription(const char *fileName) const;

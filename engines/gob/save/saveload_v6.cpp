@@ -37,7 +37,9 @@ SaveLoad_v6::SaveFile SaveLoad_v6::_saveFiles[] = {
 	{  "no_cd.txt", kSaveModeExists, 0, 0},
 	{   "vide.inf", kSaveModeIgnore, 0, 0},
 	{"fenetre.txt", kSaveModeIgnore, 0, 0},
-	{  "music.txt", kSaveModeIgnore, 0, 0}
+	{  "music.txt", kSaveModeIgnore, 0, 0},
+	{  "cata2.inf", kSaveModeSave,   0, "temp save"},
+	{  "cata3.inf", kSaveModeSave,   0, "temp save"}
 };
 
 
@@ -374,17 +376,83 @@ bool SaveLoad_v6::AutoHandler::save(int16 dataVar, int32 size, int32 offset) {
 }
 
 
+SaveLoad_v6::TempHandler::TempHandler(GobEngine *vm) : SaveHandler(vm),
+	_empty(true), _size(0), _data(0) {
+}
+
+SaveLoad_v6::TempHandler::~TempHandler() {
+	delete[] _data;
+}
+
+int32 SaveLoad_v6::TempHandler::getSize() {
+	if (_empty)
+		return -1;
+
+	return _size + 2900;
+}
+
+bool SaveLoad_v6::TempHandler::load(int16 dataVar, int32 size, int32 offset) {
+	if (_empty || (_size == 0) || !_data)
+		return false;
+
+	if ((size != 0) || (offset != 2900)) {
+		warning("Invalid temp loading procedure (%d, %d, %d)", dataVar, size, offset);
+		return false;
+	}
+
+	_vm->_inter->_variables->copyFrom(0, _data, _size);
+
+	return true;
+}
+
+bool SaveLoad_v6::TempHandler::save(int16 dataVar, int32 size, int32 offset) {
+	if ((size != 0) || (offset != 2900)) {
+		warning("Invalid temp saving procedure (%d, %d, %d)", dataVar, size, offset);
+		return false;
+	}
+
+	delete[] _data;
+
+	_size = SaveHandler::getVarSize(_vm);
+	_data = new byte[_size];
+
+	_vm->_inter->_variables->copyTo(0, _data, _size);
+
+	_empty = false;
+
+	return true;
+}
+
+bool SaveLoad_v6::TempHandler::deleteFile() {
+	delete[] _data;
+
+	_empty = true;
+	_size  = 0;
+	_data  = 0;
+
+	return true;
+}
+
+
 SaveLoad_v6::SaveLoad_v6(GobEngine *vm, const char *targetName) :
 		SaveLoad(vm) {
 
 	_gameHandler = new GameHandler(vm, targetName);
 	_autoHandler = new AutoHandler(vm, targetName);
 
+	_tmpHandler[0] = new TempHandler(vm);
+	_tmpHandler[1] = new TempHandler(vm);
+
 	_saveFiles[0].handler = _gameHandler;
 	_saveFiles[1].handler = _autoHandler;
+
+	_saveFiles[7].handler = _tmpHandler[0];
+	_saveFiles[8].handler = _tmpHandler[1];
 }
 
 SaveLoad_v6::~SaveLoad_v6() {
+	delete _tmpHandler[0];
+	delete _tmpHandler[1];
 	delete _autoHandler;
 	delete _gameHandler;
 }
