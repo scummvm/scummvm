@@ -605,10 +605,20 @@ protected:
 		const char *description;
 	};
 
+	/** Handles the temp sprites. */
+	class SpriteHandler : public TempSpriteHandler {
+	public:
+		SpriteHandler(GobEngine *vm);
+		~SpriteHandler();
+
+		bool set(SaveReader *reader, uint32 part);
+		bool get(SaveWriter *writer, uint32 part);
+	};
+
 	/** Handles the save slots. */
 	class GameHandler : public SaveHandler {
 	public:
-		GameHandler(GobEngine *vm, const char *target);
+		GameHandler(GobEngine *vm, const char *target, SpriteHandler &spriteHandler);
 		~GameHandler();
 
 		int32 getSize();
@@ -629,6 +639,8 @@ protected:
 			int getSlot(int32 offset) const;
 			int getSlotRemainder(int32 offset) const;
 		};
+
+		SpriteHandler *_spriteHandler;
 
 		byte _props[kPropsSize];
 		byte _index[kIndexSize];
@@ -705,10 +717,11 @@ protected:
 
 	static SaveFile _saveFiles[];
 
-	GameHandler  *_gameHandler;
-	AutoHandler  *_autoHandler;
-	TempHandler  *_tmpHandler[2];
-	ExtraHandler *_extraHandler[120];
+	SpriteHandler *_spriteHandler;
+	GameHandler   *_gameHandler;
+	AutoHandler   *_autoHandler;
+	TempHandler   *_tmpHandler[2];
+	ExtraHandler  *_extraHandler[120];
 
 	SaveHandler *getHandler(const char *fileName) const;
 	const char *getDescription(const char *fileName) const;
