@@ -615,6 +615,10 @@ protected:
 		bool load(int16 dataVar, int32 size, int32 offset);
 		bool save(int16 dataVar, int32 size, int32 offset);
 
+		uint8 getExtraID(int slot);
+		bool loadExtra(int slot, uint8 id, int16 dataVar, int32 size, int32 offset);
+		bool saveExtra(int slot, uint8 id, int16 dataVar, int32 size, int32 offset);
+
 	private:
 		/** Slot file construction. */
 		class File : public SlotFileIndexed {
@@ -631,9 +635,17 @@ protected:
 
 		File *_slotFile;
 
+		SaveReader *_reader;
+		SaveWriter *_writer;
+
+		bool _hasExtra;
+
 		void buildIndex(byte *buffer) const;
 
 		void refreshProps();
+
+		bool createReader(int slot);
+		bool createWriter(int slot);
 	};
 
 	/** Handles the autosave. */
@@ -674,11 +686,29 @@ protected:
 		byte *_data;
 	};
 
+	class ExtraHandler : public SaveHandler {
+	public:
+		ExtraHandler(GobEngine *vm, GameHandler &game, uint8 id, int slot);
+		~ExtraHandler();
+
+		int32 getSize();
+		bool load(int16 dataVar, int32 size, int32 offset);
+		bool save(int16 dataVar, int32 size, int32 offset);
+
+	private:
+		uint8 _id;
+		int   _slot;
+
+		TempHandler *_tmp;
+		GameHandler *_game;
+	};
+
 	static SaveFile _saveFiles[];
 
-	GameHandler *_gameHandler;
-	AutoHandler *_autoHandler;
-	TempHandler *_tmpHandler[2];
+	GameHandler  *_gameHandler;
+	AutoHandler  *_autoHandler;
+	TempHandler  *_tmpHandler[2];
+	ExtraHandler *_extraHandler[120];
 
 	SaveHandler *getHandler(const char *fileName) const;
 	const char *getDescription(const char *fileName) const;

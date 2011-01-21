@@ -39,7 +39,127 @@ SaveLoad_v6::SaveFile SaveLoad_v6::_saveFiles[] = {
 	{"fenetre.txt", kSaveModeIgnore, 0, 0},
 	{  "music.txt", kSaveModeIgnore, 0, 0},
 	{  "cata2.inf", kSaveModeSave,   0, "temp save"},
-	{  "cata3.inf", kSaveModeSave,   0, "temp save"}
+	{  "cata3.inf", kSaveModeSave,   0, "temp save"},
+	{  "cata2.000", kSaveModeSave,   0, "extra save"}, // Slot 00
+	{  "cata2.001", kSaveModeSave,   0, "extra save"}, // Slot 01
+	{  "cata2.002", kSaveModeSave,   0, "extra save"}, // Slot 02
+	{  "cata2.003", kSaveModeSave,   0, "extra save"}, // Slot 03
+	{  "cata2.004", kSaveModeSave,   0, "extra save"}, // Slot 04
+	{  "cata2.005", kSaveModeSave,   0, "extra save"}, // Slot 05
+	{  "cata2.006", kSaveModeSave,   0, "extra save"}, // Slot 06
+	{  "cata2.007", kSaveModeSave,   0, "extra save"}, // Slot 07
+	{  "cata2.008", kSaveModeSave,   0, "extra save"}, // Slot 08
+	{  "cata2.009", kSaveModeSave,   0, "extra save"}, // Slot 09
+	{  "cata2.010", kSaveModeSave,   0, "extra save"}, // Slot 10
+	{  "cata2.011", kSaveModeSave,   0, "extra save"}, // Slot 11
+	{  "cata2.012", kSaveModeSave,   0, "extra save"}, // Slot 12
+	{  "cata2.013", kSaveModeSave,   0, "extra save"}, // Slot 13
+	{  "cata2.014", kSaveModeSave,   0, "extra save"}, // Slot 14
+	{  "cata2.015", kSaveModeSave,   0, "extra save"}, // Slot 15
+	{  "cata2.016", kSaveModeSave,   0, "extra save"}, // Slot 16
+	{  "cata2.017", kSaveModeSave,   0, "extra save"}, // Slot 17
+	{  "cata2.018", kSaveModeSave,   0, "extra save"}, // Slot 18
+	{  "cata2.019", kSaveModeSave,   0, "extra save"}, // Slot 19
+	{  "cata2.020", kSaveModeSave,   0, "extra save"}, // Slot 20
+	{  "cata2.021", kSaveModeSave,   0, "extra save"}, // Slot 21
+	{  "cata2.022", kSaveModeSave,   0, "extra save"}, // Slot 22
+	{  "cata2.023", kSaveModeSave,   0, "extra save"}, // Slot 23
+	{  "cata2.024", kSaveModeSave,   0, "extra save"}, // Slot 24
+	{  "cata2.025", kSaveModeSave,   0, "extra save"}, // Slot 25
+	{  "cata2.026", kSaveModeSave,   0, "extra save"}, // Slot 26
+	{  "cata2.027", kSaveModeSave,   0, "extra save"}, // Slot 27
+	{  "cata2.028", kSaveModeSave,   0, "extra save"}, // Slot 28
+	{  "cata2.029", kSaveModeSave,   0, "extra save"}, // Slot 29
+	{  "cata2.030", kSaveModeSave,   0, "extra save"}, // Slot 30
+	{  "cata2.031", kSaveModeSave,   0, "extra save"}, // Slot 31
+	{  "cata2.032", kSaveModeSave,   0, "extra save"}, // Slot 32
+	{  "cata2.033", kSaveModeSave,   0, "extra save"}, // Slot 33
+	{  "cata2.034", kSaveModeSave,   0, "extra save"}, // Slot 34
+	{  "cata2.035", kSaveModeSave,   0, "extra save"}, // Slot 35
+	{  "cata2.036", kSaveModeSave,   0, "extra save"}, // Slot 36
+	{  "cata2.037", kSaveModeSave,   0, "extra save"}, // Slot 37
+	{  "cata2.038", kSaveModeSave,   0, "extra save"}, // Slot 38
+	{  "cata2.039", kSaveModeSave,   0, "extra save"}, // Slot 39
+	{  "cata2.040", kSaveModeSave,   0, "extra save"}, // Slot 40
+	{  "cata2.041", kSaveModeSave,   0, "extra save"}, // Slot 41
+	{  "cata2.042", kSaveModeSave,   0, "extra save"}, // Slot 42
+	{  "cata2.043", kSaveModeSave,   0, "extra save"}, // Slot 43
+	{  "cata2.044", kSaveModeSave,   0, "extra save"}, // Slot 44
+	{  "cata2.045", kSaveModeSave,   0, "extra save"}, // Slot 45
+	{  "cata2.046", kSaveModeSave,   0, "extra save"}, // Slot 46
+	{  "cata2.047", kSaveModeSave,   0, "extra save"}, // Slot 47
+	{  "cata2.048", kSaveModeSave,   0, "extra save"}, // Slot 48
+	{  "cata2.049", kSaveModeSave,   0, "extra save"}, // Slot 49
+	{  "cata2.050", kSaveModeSave,   0, "extra save"}, // Slot 50
+	{  "cata2.051", kSaveModeSave,   0, "extra save"}, // Slot 51
+	{  "cata2.052", kSaveModeSave,   0, "extra save"}, // Slot 52
+	{  "cata2.053", kSaveModeSave,   0, "extra save"}, // Slot 53
+	{  "cata2.054", kSaveModeSave,   0, "extra save"}, // Slot 54
+	{  "cata2.055", kSaveModeSave,   0, "extra save"}, // Slot 55
+	{  "cata2.056", kSaveModeSave,   0, "extra save"}, // Slot 56
+	{  "cata2.057", kSaveModeSave,   0, "extra save"}, // Slot 57
+	{  "cata2.058", kSaveModeSave,   0, "extra save"}, // Slot 58
+	{  "cata2.059", kSaveModeSave,   0, "extra save"}, // Slot 59
+	{  "cata3.000", kSaveModeSave,   0, "extra save"}, // Slot 00
+	{  "cata3.001", kSaveModeSave,   0, "extra save"}, // Slot 01
+	{  "cata3.002", kSaveModeSave,   0, "extra save"}, // Slot 02
+	{  "cata3.003", kSaveModeSave,   0, "extra save"}, // Slot 03
+	{  "cata3.004", kSaveModeSave,   0, "extra save"}, // Slot 04
+	{  "cata3.005", kSaveModeSave,   0, "extra save"}, // Slot 05
+	{  "cata3.006", kSaveModeSave,   0, "extra save"}, // Slot 06
+	{  "cata3.007", kSaveModeSave,   0, "extra save"}, // Slot 07
+	{  "cata3.008", kSaveModeSave,   0, "extra save"}, // Slot 08
+	{  "cata3.009", kSaveModeSave,   0, "extra save"}, // Slot 09
+	{  "cata3.010", kSaveModeSave,   0, "extra save"}, // Slot 10
+	{  "cata3.011", kSaveModeSave,   0, "extra save"}, // Slot 11
+	{  "cata3.012", kSaveModeSave,   0, "extra save"}, // Slot 12
+	{  "cata3.013", kSaveModeSave,   0, "extra save"}, // Slot 13
+	{  "cata3.014", kSaveModeSave,   0, "extra save"}, // Slot 14
+	{  "cata3.015", kSaveModeSave,   0, "extra save"}, // Slot 15
+	{  "cata3.016", kSaveModeSave,   0, "extra save"}, // Slot 16
+	{  "cata3.017", kSaveModeSave,   0, "extra save"}, // Slot 17
+	{  "cata3.018", kSaveModeSave,   0, "extra save"}, // Slot 18
+	{  "cata3.019", kSaveModeSave,   0, "extra save"}, // Slot 19
+	{  "cata3.020", kSaveModeSave,   0, "extra save"}, // Slot 20
+	{  "cata3.021", kSaveModeSave,   0, "extra save"}, // Slot 21
+	{  "cata3.022", kSaveModeSave,   0, "extra save"}, // Slot 22
+	{  "cata3.023", kSaveModeSave,   0, "extra save"}, // Slot 23
+	{  "cata3.024", kSaveModeSave,   0, "extra save"}, // Slot 24
+	{  "cata3.025", kSaveModeSave,   0, "extra save"}, // Slot 25
+	{  "cata3.026", kSaveModeSave,   0, "extra save"}, // Slot 26
+	{  "cata3.027", kSaveModeSave,   0, "extra save"}, // Slot 27
+	{  "cata3.028", kSaveModeSave,   0, "extra save"}, // Slot 28
+	{  "cata3.029", kSaveModeSave,   0, "extra save"}, // Slot 29
+	{  "cata3.030", kSaveModeSave,   0, "extra save"}, // Slot 30
+	{  "cata3.031", kSaveModeSave,   0, "extra save"}, // Slot 31
+	{  "cata3.032", kSaveModeSave,   0, "extra save"}, // Slot 32
+	{  "cata3.033", kSaveModeSave,   0, "extra save"}, // Slot 33
+	{  "cata3.034", kSaveModeSave,   0, "extra save"}, // Slot 34
+	{  "cata3.035", kSaveModeSave,   0, "extra save"}, // Slot 35
+	{  "cata3.036", kSaveModeSave,   0, "extra save"}, // Slot 36
+	{  "cata3.037", kSaveModeSave,   0, "extra save"}, // Slot 37
+	{  "cata3.038", kSaveModeSave,   0, "extra save"}, // Slot 38
+	{  "cata3.039", kSaveModeSave,   0, "extra save"}, // Slot 39
+	{  "cata3.040", kSaveModeSave,   0, "extra save"}, // Slot 40
+	{  "cata3.041", kSaveModeSave,   0, "extra save"}, // Slot 41
+	{  "cata3.042", kSaveModeSave,   0, "extra save"}, // Slot 42
+	{  "cata3.043", kSaveModeSave,   0, "extra save"}, // Slot 43
+	{  "cata3.044", kSaveModeSave,   0, "extra save"}, // Slot 44
+	{  "cata3.045", kSaveModeSave,   0, "extra save"}, // Slot 45
+	{  "cata3.046", kSaveModeSave,   0, "extra save"}, // Slot 46
+	{  "cata3.047", kSaveModeSave,   0, "extra save"}, // Slot 47
+	{  "cata3.048", kSaveModeSave,   0, "extra save"}, // Slot 48
+	{  "cata3.049", kSaveModeSave,   0, "extra save"}, // Slot 49
+	{  "cata3.050", kSaveModeSave,   0, "extra save"}, // Slot 50
+	{  "cata3.051", kSaveModeSave,   0, "extra save"}, // Slot 51
+	{  "cata3.052", kSaveModeSave,   0, "extra save"}, // Slot 52
+	{  "cata3.053", kSaveModeSave,   0, "extra save"}, // Slot 53
+	{  "cata3.054", kSaveModeSave,   0, "extra save"}, // Slot 54
+	{  "cata3.055", kSaveModeSave,   0, "extra save"}, // Slot 55
+	{  "cata3.056", kSaveModeSave,   0, "extra save"}, // Slot 56
+	{  "cata3.057", kSaveModeSave,   0, "extra save"}, // Slot 57
+	{  "cata3.058", kSaveModeSave,   0, "extra save"}, // Slot 58
+	{  "cata3.059", kSaveModeSave,   0, "extra save"}  // Slot 59
 };
 
 
@@ -69,7 +189,9 @@ int SaveLoad_v6::GameHandler::File::getSlotRemainder(int32 offset) const {
 }
 
 
-SaveLoad_v6::GameHandler::GameHandler(GobEngine *vm, const char *target) : SaveHandler(vm) {
+SaveLoad_v6::GameHandler::GameHandler(GobEngine *vm, const char *target) :
+	SaveHandler(vm), _reader(0), _writer(0), _hasExtra(false) {
+
 	memset(_props, 0, kPropsSize);
 	memset(_index, 0, kIndexSize);
 
@@ -139,47 +261,24 @@ bool SaveLoad_v6::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 			return false;
 		}
 
-		Common::String slotFile = _slotFile->build(slot);
-
-		SaveReader *reader = 0;
-		SaveConverter_v6 converter(_vm, slotFile);
-
-		if (converter.isOldSave()) {
-			// Old save, plug the converter in
-			if (!converter.load())
-				return false;
-
-			reader = new SaveReader(2, slot, converter);
-
-		} else
-			// New save, load directly
-			reader = new SaveReader(2, slot, slotFile);
+		if (!createReader(slot))
+			return false;
 
 		SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(), 0,
 				_vm->getEndianness(), varSize);
 		SavePartVars vars(_vm, varSize);
 
-		if (!reader->load()) {
-			delete reader;
+		if (!_reader->load())
 			return false;
-		}
 
-		if (!reader->readPart(0, &info)) {
-			delete reader;
+		if (!_reader->readPart(0, &info))
 			return false;
-		}
-		if (!reader->readPart(1, &vars)) {
-			delete reader;
+		if (!_reader->readPart(1, &vars))
 			return false;
-		}
 
 		// Get all variables
-		if (!vars.writeInto(0, 0, varSize)) {
-			delete reader;
+		if (!vars.writeInto(0, 0, varSize))
 			return false;
-		}
-
-		delete reader;
 	}
 
 	return true;
@@ -209,6 +308,25 @@ bool SaveLoad_v6::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 
 		refreshProps();
 
+		// If that screen doesn't save any extra temp saves, write a dummy
+		if (_writer && (size == 40) && (offset == 0)) {
+			if (!_hasExtra) {
+				SavePartMem  mem(1);
+				SavePartVars vars(_vm, varSize);
+
+				uint8 extraSaveNumber = 0;
+				if (!mem.readFrom(&extraSaveNumber, 0, 1))
+					return false;
+				if (!vars.readFrom(0, 0, varSize))
+					return false;
+
+				if (!_writer->writePart(2, &mem))
+					return false;
+				if (!_writer->writePart(3, &vars))
+					return false;
+			}
+		}
+
 	}  else if (((uint32) offset) < kPropsSize + kIndexSize) {
 		// Save index
 
@@ -223,6 +341,8 @@ bool SaveLoad_v6::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 	} else {
 		// Save slot, whole variable block
 
+		_hasExtra = false;
+
 		uint32 slot = _slotFile->getSlot(offset);
 		int slotRem = _slotFile->getSlotRemainder(offset);
 
@@ -236,9 +356,9 @@ bool SaveLoad_v6::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 			return false;
 		}
 
-		Common::String slotFile = _slotFile->build(slot);
+		if (!createWriter(slot))
+			return false;
 
-		SaveWriter writer(2, slot, slotFile);
 		SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(), 0,
 				_vm->getEndianness(), varSize);
 		SavePartVars vars(_vm, varSize);
@@ -249,11 +369,81 @@ bool SaveLoad_v6::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 		if (!vars.readFrom(0, 0, varSize))
 			return false;
 
-		if (!writer.writePart(0, &info))
+		if (!_writer->writePart(0, &info))
 			return false;
-		if (!writer.writePart(1, &vars))
+		if (!_writer->writePart(1, &vars))
 			return false;
 	}
+
+	return true;
+}
+
+uint8 SaveLoad_v6::GameHandler::getExtraID(int slot) {
+	if (!_reader || (_reader->getSlot() != (uint32)slot))
+		return 0;
+
+	SavePartMem mem(1);
+	if (!_reader->readPart(2, &mem))
+		return 0;
+
+	uint8 extraSaveNumber;
+	if (!mem.writeInto(&extraSaveNumber, 0, 1))
+		return 0;
+
+	return extraSaveNumber;
+}
+
+bool SaveLoad_v6::GameHandler::loadExtra(int slot, uint8 id,
+		int16 dataVar, int32 size, int32 offset) {
+
+	if (!_reader || (_reader->getSlot() != (uint32)slot))
+		return false;
+
+	SavePartMem mem(1);
+	if (!_reader->readPart(2, &mem))
+		return false;
+
+	uint8 extraSaveNumber;
+	if (!mem.writeInto(&extraSaveNumber, 0, 1))
+		return false;
+
+	if (extraSaveNumber != id)
+		return false;
+
+	uint32 varSize = SaveHandler::getVarSize(_vm);
+
+	SavePartVars vars(_vm, varSize);
+	if (!_reader->readPart(3, &vars))
+		return false;
+
+	if (!vars.writeInto(0, 0, varSize))
+		return false;
+
+	return true;
+}
+
+bool SaveLoad_v6::GameHandler::saveExtra(int slot, uint8 id,
+		int16 dataVar, int32 size, int32 offset) {
+
+	if (!_writer || (_writer->getSlot() != (uint32)slot))
+		return false;
+
+	uint32 varSize = SaveHandler::getVarSize(_vm);
+
+	SavePartMem  mem(1);
+	SavePartVars vars(_vm, varSize);
+
+	if (!mem.readFrom(&id, 0, 1))
+		return false;
+	if (!vars.readFrom(0, 0, varSize))
+		return false;
+
+	if (!_writer->writePart(2, &mem))
+		return false;
+	if (!_writer->writePart(3, &vars))
+		return false;
+
+	_hasExtra = true;
 
 	return true;
 }
@@ -267,9 +457,7 @@ void SaveLoad_v6::GameHandler::buildIndex(byte *buffer) const {
 	SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(),
 			0, _vm->getEndianness(), varSize);
 
-	SaveConverter_v6 converter(_vm);
-
-	_slotFile->buildIndex(buffer, info, &converter);
+	_slotFile->buildIndex(buffer, info);
 }
 
 void SaveLoad_v6::GameHandler::refreshProps() {
@@ -278,6 +466,48 @@ void SaveLoad_v6::GameHandler::refreshProps() {
 	memset(_props + 40, 0xFF, 40);          // Joker
 	_props[159] = 0x03;                     // # of joker unused
 	WRITE_LE_UINT32(_props + 160, maxSlot); // # of saves
+}
+
+bool SaveLoad_v6::GameHandler::createReader(int slot) {
+	// If slot < 0, just check if a reader exists
+	if (slot < 0)
+		return (_reader != 0);
+
+	if (!_reader || (_reader->getSlot() != ((uint32) slot))) {
+		Common::String slotFile = _slotFile->build(slot);
+
+		if (slotFile.empty())
+			return false;
+
+		delete _reader;
+
+		_reader = new SaveReader(4, slot, slotFile);
+		if (!_reader->load()) {
+			delete _reader;
+			_reader = 0;
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool SaveLoad_v6::GameHandler::createWriter(int slot) {
+	// If slot < 0, just check if a writer exists
+	if (slot < 0)
+		return (_writer != 0);
+
+	if (!_writer || (_writer->getSlot() != ((uint32) slot))) {
+		Common::String slotFile = _slotFile->build(slot);
+
+		if (slotFile.empty())
+			return false;
+
+		delete _writer;
+		_writer = new SaveWriter(4, slot, slotFile);
+	}
+
+	return true;
 }
 
 
@@ -434,6 +664,30 @@ bool SaveLoad_v6::TempHandler::deleteFile() {
 }
 
 
+SaveLoad_v6::ExtraHandler::ExtraHandler(GobEngine *vm, GameHandler &game,
+		uint8 id, int slot) : SaveHandler(vm), _game(&game), _id(id), _slot(slot) {
+
+}
+
+SaveLoad_v6::ExtraHandler::~ExtraHandler() {
+}
+
+int32 SaveLoad_v6::ExtraHandler::getSize() {
+	if (_game->getExtraID(_slot) != _id)
+		return -1;
+
+	return SaveHandler::getVarSize(_vm) + 2900;
+}
+
+bool SaveLoad_v6::ExtraHandler::load(int16 dataVar, int32 size, int32 offset) {
+	return _game->loadExtra(_slot, _id, dataVar, size, offset);
+}
+
+bool SaveLoad_v6::ExtraHandler::save(int16 dataVar, int32 size, int32 offset) {
+	return _game->saveExtra(_slot, _id, dataVar, size, offset);
+}
+
+
 SaveLoad_v6::SaveLoad_v6(GobEngine *vm, const char *targetName) :
 		SaveLoad(vm) {
 
@@ -448,9 +702,19 @@ SaveLoad_v6::SaveLoad_v6(GobEngine *vm, const char *targetName) :
 
 	_saveFiles[7].handler = _tmpHandler[0];
 	_saveFiles[8].handler = _tmpHandler[1];
+
+	for (int i = 0; i < 60; i++)
+		_saveFiles[ 9 + i].handler =
+			_extraHandler[     i] = new ExtraHandler(_vm, *_gameHandler, 2, i);
+	for (int i = 0; i < 60; i++)
+		_saveFiles[69 + i].handler =
+			_extraHandler[60 + i] = new ExtraHandler(_vm, *_gameHandler, 3, i);
 }
 
 SaveLoad_v6::~SaveLoad_v6() {
+	for (int i = 0; i < 120; i++)
+		delete _extraHandler[i];
+
 	delete _tmpHandler[0];
 	delete _tmpHandler[1];
 	delete _autoHandler;
