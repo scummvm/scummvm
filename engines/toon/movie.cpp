@@ -96,8 +96,6 @@ void Movie::play(Common::String video, int32 flags) {
 bool Movie::playVideo() {
 	debugC(1, kDebugMovie, "playVideo()");
 
-	int32 x = 0;
-	int32 y = 0;
 	while (!_vm->shouldQuit() && !_decoder->endOfVideo()) {
 		if (_decoder->needsUpdate()) {
 			const Graphics::Surface *frame = _decoder->decodeNextFrame();
@@ -111,7 +109,7 @@ bool Movie::playVideo() {
 					}
 					_vm->getSystem()->unlockScreen();
 				} else {
-					_vm->getSystem()->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+					_vm->getSystem()->copyRectToScreen((byte *)frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
 				}
 			}
 			_decoder->setSystemPalette();
