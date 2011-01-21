@@ -23,6 +23,13 @@
  *
  */
 
+/**
+ * @file
+ * PKWARE DCL ("explode") decompressor used in engines:
+ * - mohawk
+ * - sci
+ */
+
 #ifndef COMMON_DCL_H
 #define COMMON_DCL_H
 
