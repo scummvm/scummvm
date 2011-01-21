@@ -741,6 +741,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_system = syst;
 	_tickLength = 16;
 	_currentPicture = NULL;
+	_inventoryPicture = NULL;
 	_currentMask = NULL;
 	_showConversationText = true;
 	_isDemo = _gameDescription->flags & ADGF_DEMO;
@@ -828,6 +829,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 ToonEngine::~ToonEngine() {
 	delete _currentPicture;
 	delete _currentMask;
+	delete _inventoryPicture;
 
 	delete _resources;
 	delete _animationManager;
@@ -2564,6 +2566,7 @@ int32 ToonEngine::showInventory() {
 	int32 oldScrollValue = _gameState->_currentScrollValue;
 // Strangerke - Commented (not used)
 //	Common::EventManager *_event = _system->getEventManager();
+	delete _inventoryPicture;
 	_inventoryPicture = new Picture(this);
 	fadeOut(5);
 	_inventoryPicture->loadPicture("SACK128.CPS", true);
