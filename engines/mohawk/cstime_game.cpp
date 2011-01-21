@@ -477,7 +477,7 @@ void CSTimeConversation::end(bool useLastClicked, bool runEvents) {
 		invDisplay->setState(0);
 	}
 
-	setState(~0);
+	setState((uint)~0);
 	_currHover = 0xffff;
 
 	interface->clearTextLine();
@@ -607,7 +607,7 @@ void CSTimeConversation::setAsked(uint qar, uint entry) {
 }
 
 void CSTimeConversation::clear() {
-	_state = ~0;
+	_state = (uint)~0;
 	_talkCount = 0;
 	_sourceChar = 0xffff;
 	_currHover = 0xffff;

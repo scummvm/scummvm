@@ -830,7 +830,7 @@ void CSTimeInterface::dropItemInInventory(uint16 id) {
 }
 
 CSTimeHelp::CSTimeHelp(MohawkEngine_CSTime *vm) : _vm(vm) {
-	_state = ~0;
+	_state = (uint)~0;
 }
 
 CSTimeHelp::~CSTimeHelp() {
