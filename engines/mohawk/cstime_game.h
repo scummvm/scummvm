@@ -123,6 +123,7 @@ struct CSTimeInventoryHotspot {
 struct CSTimeInventoryObject {
 	uint16 id, stringId, hotspotId, featureId, canTake;
 	Feature *feature;
+	bool featureDisabled;
 	Common::Array<CSTimeLocation> locations;
 	Common::Array<CSTimeInventoryHotspot> hotspots;
 	Common::Array<CSTimeEvent> events;

@@ -704,6 +704,7 @@ CSTimeInventoryObject *CSTimeCase::loadInventoryObject(uint id) {
 	invObj->hotspotId = invObjStream->readUint16BE();
 	invObj->featureId = invObjStream->readUint16BE();
 	invObj->canTake = invObjStream->readUint16BE();
+	invObj->featureDisabled = false;
 	debug(" invobj '%s', hotspot id %d, feature id %d, can take %d", _rolloverText[invObj->stringId].c_str(), invObj->hotspotId, invObj->featureId, invObj->canTake);
 	uint16 numConsumableLocations = invObjStream->readUint16BE();
 	debug(" Loading %d consumable locations...", numConsumableLocations);
@@ -970,6 +971,7 @@ void CSTimeScene::mouseMove(Common::Point &pos) {
 					// FIXME: 0x2000 is set! help?
 					uint32 flags = kFeatureNewNoLoop | 0x2000;
 					invObj->feature = _vm->getView()->installViewFeature(id, flags, &grabPoint);
+					invObj->featureDisabled = false;
 					_vm->getInterface()->startDragging(hotspot.invObjId);
 				}
 			}

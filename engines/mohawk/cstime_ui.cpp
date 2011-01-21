@@ -704,21 +704,22 @@ void CSTimeInterface::stopDragging() {
 			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x800, NULL);
 			// TODO: playSound(151);
 		} else if (_draggedItem != TIME_CUFFS_ID) {
-			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x800, NULL);
+			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x600, NULL);
 			_vm->_haveInvItem[_draggedItem] = 0;
-			// FIXME: the original sets the feature to -2 here, see comment below
 			invObj->feature = NULL;
+			invObj->featureDisabled = true;
 			_inventoryDisplay->removeItem(_draggedItem);
 		} else if (!_inventoryDisplay->getCuffsState()) {
 			// Inactive cuffs.
+			// TODO: We never actually get here? Which would explain why it makes no sense.
 			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x800, NULL);
 			invObj->feature = NULL;
 		} else {
 			// Active cuffs.
 			_vm->getView()->dragFeature((NewFeature *)invObj->feature, mousePos, 2, 0x600, NULL);
 			_vm->_haveInvItem[_draggedItem] = 0;
-			// FIXME: the original sets the feature to -2 here, see comment below
 			invObj->feature = NULL;
+			invObj->featureDisabled = true;
 		}
 
 		if (runConsumeEvents) {
@@ -755,9 +756,8 @@ void CSTimeInterface::stopDragging() {
 			CSTimeEvent event;
 			event.param1 = 0xffff;
 			if (consumeObj) {
-				// FIXME: the original sets the feature to -2 here, which is used in the inventory display drawing
-				// so it knows not to draw the object. we should replace that with a flag.
 				invObj->feature = NULL;
+				invObj->featureDisabled = true;
 				event.type = kCSTimeEventDisableHotspot;
 				event.param2 = invObj->hotspotId;
 			} else {
@@ -872,7 +872,8 @@ void CSTimeInventoryDisplay::draw() {
 			continue;
 		CSTimeInventoryObject *invObj = _vm->getCase()->_inventoryObjs[_displayedItems[i]];
 
-		// FIXME: ignore on -2 feature (see CSTimeInterface::stopDragging)
+		if (invObj->featureDisabled)
+			continue;
 
 		if (invObj->feature) {
 			invObj->feature->resetFeatureScript(1, 0);
@@ -1064,6 +1065,7 @@ void CSTimeInventoryDisplay::activateCuffs(bool active) {
 		_vm->getView()->removeFeature(invObj->feature, true);
 	uint32 flags = kFeatureSortStatic | kFeatureNewNoLoop;
 	invObj->feature = _vm->getView()->installViewFeature(100 + _cuffsShape, flags, NULL);
+	invObj->featureDisabled = false;
 }
 
 void CSTimeInventoryDisplay::setCuffsFlashing() {
@@ -1073,6 +1075,7 @@ void CSTimeInventoryDisplay::setCuffsFlashing() {
 		_vm->getView()->removeFeature(invObj->feature, true);
 	uint32 flags = kFeatureSortStatic | 0x2000;
 	invObj->feature = _vm->getView()->installViewFeature(100 + _cuffsShape, flags, NULL);
+	invObj->featureDisabled = false;
 }
 
 CSTimeBook::CSTimeBook(MohawkEngine_CSTime *vm) : _vm(vm) {
