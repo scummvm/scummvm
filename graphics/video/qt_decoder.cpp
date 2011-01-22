@@ -1419,23 +1419,29 @@ void QuickTimeDecoder::updateAudioBuffer() {
 	if (!_audStream)
 		return;
 
-	STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
-
-	// Calculate the amount of chunks we need in memory until the next frame
-	uint32 timeToNextFrame = getTimeToNextFrame();
 	uint32 numberOfChunksNeeded = 0;
-	uint32 timeFilled = 0;
-	uint32 curAudioChunk = _curAudioChunk - _audStream->numQueuedStreams();
 
-	for (; timeFilled < timeToNextFrame && curAudioChunk < _streams[_audioStreamIndex]->chunk_count; numberOfChunksNeeded++, curAudioChunk++) {
-		uint32 sampleCount = getAudioChunkSampleCount(curAudioChunk);
-		assert(sampleCount);
+	if (_curFrame == (int32)_streams[_videoStreamIndex]->nb_frames - 1) {
+		// If we're on the last frame, make sure all audio remaining is buffered
+		numberOfChunksNeeded = _streams[_audioStreamIndex]->chunk_count;
+	} else {
+		STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
 
-		timeFilled += sampleCount * 1000 / entry->sampleRate;
+		// Calculate the amount of chunks we need in memory until the next frame
+		uint32 timeToNextFrame = getTimeToNextFrame();
+		uint32 timeFilled = 0;
+		uint32 curAudioChunk = _curAudioChunk - _audStream->numQueuedStreams();
+
+		for (; timeFilled < timeToNextFrame && curAudioChunk < _streams[_audioStreamIndex]->chunk_count; numberOfChunksNeeded++, curAudioChunk++) {
+			uint32 sampleCount = getAudioChunkSampleCount(curAudioChunk);
+			assert(sampleCount);
+
+			timeFilled += sampleCount * 1000 / entry->sampleRate;
+		}
+
+		// Add a couple extra to ensure we don't underrun
+		numberOfChunksNeeded += 3;
 	}
-
-	// Add a couple extra to ensure we don't underrun
-	numberOfChunksNeeded += 3;
 
 	// Keep three streams in buffer so that if/when the first two end, it goes right into the next
 	while (_audStream->numQueuedStreams() < numberOfChunksNeeded && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count)
