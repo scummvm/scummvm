@@ -57,10 +57,10 @@ namespace Sci {
 // around the screen and go behind other objects. (...)
 
 #ifdef ENABLE_SCI32
-GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId)
-	: _resMan(resMan), _screen(screen), _palette(palette), _resourceId(resourceId) {
-	assert(resourceId != -1);
-	initData(resourceId);
+GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette)
+	: _resMan(resMan), _screen(screen), _palette(palette) {
+	_resourceId = -1;
+	_x = _y = 0;
 }
 
 GfxRobot::~GfxRobot() {
@@ -70,11 +70,17 @@ GfxRobot::~GfxRobot() {
 	delete[] _audioLen;
 }
 
-void GfxRobot::initData(GuiResourceId resourceId) {
+void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 	char fileName[10];
 	uint32 fileSize;
 
-	sprintf(fileName, "%d.rbt", resourceId);
+	//	resourceId = 1305;	// debug
+
+	_resourceId = resourceId;
+	_x = x;
+	_y = y;
+	_curFrame = 0;
+	sprintf(fileName, "%d.rbt", _resourceId);
 
 	Common::File robotFile;
 	if (robotFile.open(fileName)) {
@@ -98,28 +104,22 @@ void GfxRobot::initData(GuiResourceId resourceId) {
 	_hasSound = (_resourceData[25] != 0);
 
 	_palOffset = 60;
-	if (_hasSound)
+
+	// Some robot files have sound, which doesn't start from frame 0
+	// (e.g. Phantasmagoria, robot 1305)
+	if (_hasSound && _audioSize > 14)
 		_palOffset += READ_LE_UINT32(_resourceData + 60) + 14;
 
 	getFrameOffsets();
 	assert(_imageStart[_frameCount] == fileSize);
 
+	setPalette();
+
 	debug("Robot %d, %d frames, sound: %s\n", resourceId, _frameCount, _hasSound ? "yes" : "no");
 }
 
-void GfxRobot::draw(int x, int y) {
-
-  	return; // TODO: Remove once done
-	// Play the audio of the robot file (for debugging)
-#if 0
-	if (_hasSound) {
-		Audio::SoundHandle _audioHandle;
-		Audio::AudioStream *audioStream = g_sci->_audio->getRobotAudioStream(_resourceData);
-		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
-	}
-#endif
-
-	byte *paletteData = _hasSound ? 
+void GfxRobot::setPalette() {
+	byte *paletteData = (_hasSound && _audioSize > 14) ? 
 		_resourceData + 60 + 14 + _audioSize : 
 		_resourceData + 60;
 	uint16 paletteSize = READ_LE_UINT16(_resourceData + 16);
@@ -127,7 +127,6 @@ void GfxRobot::draw(int x, int y) {
 	Palette resourcePal;
 
 	byte robotPal[256 * 4];
-	byte savePal[256 * 4];
 	int startIndex = READ_LE_UINT16(paletteData + 25);
 	int colorCount = READ_LE_UINT16(paletteData + 29);
 
@@ -136,13 +135,13 @@ void GfxRobot::draw(int x, int y) {
 	_palette->createFromData(paletteData, paletteSize, &resourcePal);
 
 	for (int i = 0; i < 256; ++i) {
-		savePal[i * 4 + 0] = _palette->_sysPalette.colors[i].r;
-		savePal[i * 4 + 1] = _palette->_sysPalette.colors[i].g;
-		savePal[i * 4 + 2] = _palette->_sysPalette.colors[i].b;
-		savePal[i * 4 + 3] = 0;
+		_savedPal[i * 4 + 0] = _palette->_sysPalette.colors[i].r;
+		_savedPal[i * 4 + 1] = _palette->_sysPalette.colors[i].g;
+		_savedPal[i * 4 + 2] = _palette->_sysPalette.colors[i].b;
+		_savedPal[i * 4 + 3] = 0;
 	}
 	
-	memcpy(robotPal, savePal, sizeof(savePal));
+	memcpy(robotPal, _savedPal, sizeof(_savedPal));
 
 	for (int i = 0; i < colorCount; ++i) {
 		int index = i + startIndex;
@@ -153,19 +152,34 @@ void GfxRobot::draw(int x, int y) {
 	}
 
 	g_system->setPalette(robotPal, 0, 256);
+}
 
-	for (int i = 0; i < _frameCount; ++i) {
-		int width, height;
-
-		byte *pixels = assembleVideoFrame(i);
-		getFrameDimensions(i, width, height);
-		g_system->copyRectToScreen(pixels, width, x, y, width, height * getFrameScale(i) / 100);
-		g_system->updateScreen();
-		g_system->delayMillis(100);
-		delete[] pixels;
+void GfxRobot::drawNextFrame() {
+	// Play the audio of the robot file (for debugging)
+#if 0
+	if (_hasSound) {
+		Audio::SoundHandle _audioHandle;
+		Audio::AudioStream *audioStream = g_sci->_audio->getRobotAudioStream(_resourceData);
+		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
 	}
+#endif
 
-	g_system->setPalette(savePal, 0, 256);
+	int width, height;
+
+	byte *pixels = assembleVideoFrame(_curFrame);
+	getFrameDimensions(_curFrame, width, height);
+	g_system->copyRectToScreen(pixels, width, _x, _y, width, height * getFrameScale(_curFrame) / 100);
+	g_system->updateScreen();
+	g_system->delayMillis(100);
+	delete[] pixels;
+
+	_curFrame++;
+
+	if (_curFrame == _frameCount) {
+		// End of robot video, restore palette
+		g_system->setPalette(_savedPal, 0, 256);
+		_resourceId = -1;
+	}
 }
 
 void GfxRobot::getFrameOffsets() {
@@ -183,7 +197,7 @@ void GfxRobot::getFrameOffsets() {
 	if (frameDataOffset & 0x7ff)
 		frameDataOffset = (frameDataOffset & ~0x7ff)+0x800;
 
-	_imageStart = new uint32[_frameCount+1];
+	_imageStart = new uint32[_frameCount + 1];
 	_audioStart = new uint32[_frameCount];
 	_audioLen = new uint32[_frameCount];
 
@@ -276,9 +290,7 @@ void GfxRobot::getFrameRect(int frame, Common::Rect &rect) {
 
 int GfxRobot::getFrameScale(int frame) {
 	byte *videoData = _resourceData + _imageStart[frame];
-	byte percentage = videoData[3];
-
-	return percentage;
+	return videoData[3];
 }
 	
 #endif

@@ -25,6 +25,7 @@
 
 #include "common/util.h"
 #include "common/stack.h"
+
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
@@ -81,8 +82,11 @@ void GfxPaint32::kernelGraphDrawLine(Common::Point startPoint, Common::Point end
 }
 
 void GfxPaint32::debugDrawRobot(GuiResourceId robotId) {
-	GfxRobot *test = new GfxRobot(g_sci->getResMan(), _screen, _palette, robotId);
-	test->draw(0,0);
+	GfxRobot *test = new GfxRobot(g_sci->getResMan(), _screen, _palette);
+	test->init(robotId, 0, 0);
+	while (test->getCurFrame() + 1 < test->getFrameCount()) {
+		test->drawNextFrame();
+	}
 	delete test;
 }
 

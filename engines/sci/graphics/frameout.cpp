@@ -40,6 +40,7 @@
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/picture.h"
+#include "sci/graphics/robot.h"
 #include "sci/graphics/frameout.h"
 
 namespace Sci {
@@ -338,6 +339,9 @@ static int16 GetLongest(const char *text, int16 maxWidth, GfxFont *font) {
 }
 
 void GfxFrameout::kernelFrameout() {
+	if (g_sci->_gfxRobot->isPlaying())
+		return;
+
 	_palette->palVaryUpdate();
 
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {

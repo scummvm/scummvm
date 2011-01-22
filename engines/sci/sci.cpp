@@ -66,6 +66,7 @@
 #include "sci/graphics/transitions.h"
 
 #ifdef ENABLE_SCI32
+#include "sci/graphics/robot.h"
 #include "sci/graphics/frameout.h"
 #endif
 
@@ -145,6 +146,7 @@ SciEngine::~SciEngine() {
 	DebugMan.clearAllDebugChannels();
 
 #ifdef ENABLE_SCI32
+	delete _gfxRobot;
 	delete _gfxFrameout;
 #endif
 	delete _gfxMenu;
@@ -585,6 +587,7 @@ void SciEngine::initGraphics() {
 	_gfxText16 = 0;
 	_gfxTransitions = 0;
 #ifdef ENABLE_SCI32
+	_gfxRobot = 0;
 	_gfxFrameout = 0;
 	_gfxPaint32 = 0;
 #endif
@@ -610,24 +613,25 @@ void SciEngine::initGraphics() {
 		// SCI32 graphic objects creation
 		_gfxCoordAdjuster = new GfxCoordAdjuster32(_gamestate->_segMan);
 		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
-		_gfxCompare = new GfxCompare(_gamestate->_segMan, g_sci->getKernel(), _gfxCache, _gfxScreen, _gfxCoordAdjuster);
-		_gfxPaint32 = new GfxPaint32(g_sci->getResMan(), _gamestate->_segMan, g_sci->getKernel(), _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette);
+		_gfxCompare = new GfxCompare(_gamestate->_segMan, _kernel, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
+		_gfxPaint32 = new GfxPaint32(_resMan, _gamestate->_segMan, _kernel, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette);
 		_gfxPaint = _gfxPaint32;
-		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, g_sci->getResMan(), _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
+		_gfxRobot = new GfxRobot(_resMan, _gfxScreen, _gfxPalette);
+		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
 	} else {
 #endif
 		// SCI0-SCI1.1 graphic objects creation
 		_gfxPorts = new GfxPorts(_gamestate->_segMan, _gfxScreen);
 		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);
-		_gfxCursor->init(_gfxCoordAdjuster, g_sci->getEventManager());
-		_gfxCompare = new GfxCompare(_gamestate->_segMan, g_sci->getKernel(), _gfxCache, _gfxScreen, _gfxCoordAdjuster);
-		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette, g_sci->getResMan()->isVGA());
-		_gfxPaint16 = new GfxPaint16(g_sci->getResMan(), _gamestate->_segMan, g_sci->getKernel(), _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette, _gfxTransitions, _audio);
+		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
+		_gfxCompare = new GfxCompare(_gamestate->_segMan, _kernel, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
+		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette, _resMan->isVGA());
+		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _kernel, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette, _gfxTransitions, _audio);
 		_gfxPaint = _gfxPaint16;
 		_gfxAnimate = new GfxAnimate(_gamestate, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette, _gfxCursor, _gfxTransitions);
-		_gfxText16 = new GfxText16(g_sci->getResMan(), _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
+		_gfxText16 = new GfxText16(_resMan, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
 		_gfxControls = new GfxControls(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
-		_gfxMenu = new GfxMenu(g_sci->getEventManager(), _gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
+		_gfxMenu = new GfxMenu(_eventMan, _gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
 
 		_gfxMenu->reset();
 #ifdef ENABLE_SCI32
@@ -663,14 +667,14 @@ void SciEngine::runGame() {
 	if (DebugMan.isDebugChannelEnabled(kDebugLevelOnStartup))
 		_console->attach();
 
-	g_sci->getEngineState()->_syncedAudioOptions = false;
+	_gamestate->_syncedAudioOptions = false;
 
 	do {
 		_gamestate->_executionStackPosChanged = false;
 		run_vm(_gamestate);
 		exitGame();
 
-		g_sci->getEngineState()->_syncedAudioOptions = true;
+		_gamestate->_syncedAudioOptions = true;
 
 		if (_gamestate->abortScriptProcessing == kAbortRestartGame) {
 			_gamestate->_segMan->resetSegMan();
@@ -701,7 +705,7 @@ void SciEngine::exitGame() {
 	if (_gamestate->abortScriptProcessing != kAbortLoadGame) {
 		_gamestate->_executionStack.clear();
 		_audio->stopAllAudio();
-		g_sci->_soundCmd->clearPlayList();
+		_soundCmd->clearPlayList();
 	}
 
 	// TODO Free parser segment here
@@ -809,9 +813,9 @@ void SciEngine::syncSoundSettings() {
 
 	int soundVolumeMusic = (mute ? 0 : ConfMan.getInt("music_volume"));
 
-	if (_gamestate && g_sci->_soundCmd) {
+	if (_gamestate && _soundCmd) {
 		int vol =  (soundVolumeMusic + 1) * MUSIC_MASTERVOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
-		g_sci->_soundCmd->setMasterVolume(vol);
+		_soundCmd->setMasterVolume(vol);
 	}
 }
 

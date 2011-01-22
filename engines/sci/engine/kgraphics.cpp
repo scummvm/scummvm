@@ -1398,6 +1398,7 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 
 	int16 subop = argv[0].toUint16();
+	GfxRobot *robot = g_sci->_gfxRobot;
 
 	switch (subop) {
 		case 0: { // init
@@ -1407,10 +1408,7 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 			int16 x = argv[4].toUint16();
 			int16 y = argv[5].toUint16();
 			warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
-			GfxRobot *test = new GfxRobot(g_sci->getResMan(), g_sci->_gfxScreen, g_sci->_gfxPalette, id);
-			test->draw(x,y);
-			delete test;
-
+			robot->init(id, x, y);
 			}
 			break;
 		case 1:	// LSL6 hires (startup)
@@ -1422,11 +1420,10 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 			}
 			break;
 		case 8: // sync
-			//warning("kRobot(sync), obj %04x:%04x", PRINT_REG(argv[1]));
-			// HACK: Make robots return immediately for now,
-			// otherwise they just hang for a while.
-			// TODO: Replace with proper robot functionality.
-			writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
+			robot->drawNextFrame();
+			// Sync
+			if (robot->getCurFrame() ==  robot->getFrameCount())
+				writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
 			break;
 		default:
 			warning("kRobot(%d)", subop);
