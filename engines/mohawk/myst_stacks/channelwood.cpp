@@ -50,7 +50,7 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, o_bridgeToggle);
 	OPCODE(101, o_pipeExtend);
-	OPCODE(102, opcode_102);
+	OPCODE(102, o_drawImageChangeCardAndVolume);
 	OPCODE(104, o_waterTankValveOpen);
 	OPCODE(105, o_leverStartMove);
 	OPCODE(106, o_leverEndMove);
@@ -64,12 +64,16 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 	OPCODE(114, o_valveHandleMoveStart2);
 	OPCODE(115, o_valveHandleMove3);
 	OPCODE(116, o_valveHandleMoveStart3);
-	OPCODE(117, opcode_117);
+	OPCODE(117, o_hologramMonitor);
 	OPCODE(118, o_drawerOpen);
-	OPCODE(119, opcode_119);
+	OPCODE(119, o_hologramTemple);
+	OPCODE(120, o_leverElev3StartMove);
+	OPCODE(121, o_leverElev3EndMove);
 	OPCODE(122, o_waterTankValveClose);
 	OPCODE(123, o_executeMouseUp);
 	OPCODE(124, o_leverEndMoveWithSound);
+	OPCODE(125, o_pumpLeverMove);
+	OPCODE(126, o_pumpLeverEndMove);
 	OPCODE(127, o_elevatorMovies);
 	OPCODE(128, o_leverEndMoveResumeBackground);
 	OPCODE(129, o_soundReplace);
@@ -80,7 +84,7 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 	OPCODE(203, o_drawer_init);
 
 	// "Exit" Opcodes
-	OPCODE(300, opcode_300);
+	OPCODE(300, NOP);
 }
 
 #undef OPCODE
@@ -315,28 +319,24 @@ void MystScriptParser_Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 ar
 	_vm->_sound->resumeBackgroundMyst();
 }
 
-void MystScriptParser_Channelwood::opcode_102(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Channelwood::o_drawImageChangeCardAndVolume(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Draw Full Screen Image, Change Card, and change volume", op);
 
-	if (argc == 2 || argc == 3) {
-		debugC(kDebugScript, "Opcode %d: Draw Full Screen Image, Optional Delay and Change Card", op);
+	uint16 imageId = argv[0];
+	uint16 cardId = argv[1];
 
-		uint16 imageId = argv[0];
-		uint16 cardId = argv[1];
-		uint16 delay = 0;
+	debugC(kDebugScript, "\timageId: %d", imageId);
+	debugC(kDebugScript, "\tcardId: %d", cardId);
 
-		if (argc == 3)
-			delay = argv[2]; // TODO: Not sure about purpose of this parameter...
+	_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
+	_vm->_system->updateScreen();
+	_vm->_system->delayMillis(10);
+	_vm->changeToCard(cardId, true);
 
-		debugC(kDebugScript, "\timageId: %d", imageId);
-		debugC(kDebugScript, "\tcardId: %d", cardId);
-		debugC(kDebugScript, "\tdelay: %d", delay);
-
-		_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
-		_vm->_system->delayMillis(delay / 100);
-		_vm->changeToCard(cardId, true);
-	} else
-		unknown(op, var, argc, argv);
+	if (argc == 3) {
+		uint16 volume = argv[2];
+		_vm->_sound->changeBackgroundVolumeMyst(volume);
+	}
 }
 
 
@@ -446,6 +446,50 @@ void MystScriptParser_Channelwood::o_leverEndMoveWithSound(uint16 op, uint16 var
 	uint16 soundId = lever->getList3(0);
 	if (soundId)
 		_vm->_sound->replaceSoundMyst(soundId);
+}
+
+void MystScriptParser_Channelwood::o_leverElev3StartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_vm->_gfx->copyImageToScreen(3970, Common::Rect(544, 333));
+	_vm->_system->updateScreen();
+	o_leverStartMove(op, var, argc, argv);
+}
+
+void MystScriptParser_Channelwood::o_leverElev3EndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	o_leverEndMove(op, var, argc, argv);
+	_vm->_gfx->copyImageToScreen(3265, Common::Rect(544, 333));
+	_vm->_system->updateScreen();
+	_vm->_sound->replaceSoundMyst(5265);
+}
+
+void MystScriptParser_Channelwood::o_pumpLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Pump lever move", op);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Make the handle follow the mouse
+	int16 maxStep = lever->getStepsV() - 1;
+	Common::Rect rect = lever->getRect();
+	int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
+	step = CLIP<int16>(step, 0, maxStep);
+
+	lever->drawFrame(step);
+
+	if (step == maxStep) {
+		uint16 soundId = lever->getList2(0);
+		_vm->_sound->replaceBackgroundMyst(soundId, 38400);
+	} else {
+		uint16 soundId = lever->getList2(1);
+		_vm->_sound->replaceBackgroundMyst(soundId, 36864);
+	}
+}
+
+void MystScriptParser_Channelwood::o_pumpLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	o_leverEndMove(op, var, argc, argv);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	uint16 soundId = lever->getList3(0);
+	if (soundId)
+		_vm->_sound->replaceBackgroundMyst(soundId, 36864);
 }
 
 void MystScriptParser_Channelwood::o_stairsDoorToggle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -562,33 +606,36 @@ void MystScriptParser_Channelwood::o_valveHandleMoveStart3(uint16 op, uint16 var
 	o_valveHandleMove3(op, var, argc, argv);
 }
 
-void MystScriptParser_Channelwood::opcode_117(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Channelwood::o_hologramMonitor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Hologram monitor", op);
 
-	if (argc == 1) {
-		// Used on Card 3012 (Temple Hologram Monitor)
-		uint16 button = argv[0]; // 0 to 3
-		_vm->_varStore->setVar(17, button);
+	// Used on Card 3012 (Temple Hologram Monitor)
+	uint16 button = argv[0]; // 0 to 3
+
+	if (_state.holoprojectorSelection != button || !_vm->_video->isVideoPlaying()) {
+		_state.holoprojectorSelection = button;
+		_vm->redrawArea(17);
+
+		_vm->_video->stopVideos();
 
 		switch (button) {
 		case 0:
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("monalgh", kChannelwoodStack), 227, 71);
+			_vm->_video->playMovie(_vm->wrapMovieFilename("monalgh", kChannelwoodStack), 227, 70);
 			break;
 		case 1:
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("monamth", kChannelwoodStack), 227, 71);
+			_vm->_video->playMovie(_vm->wrapMovieFilename("monamth", kChannelwoodStack), 227, 70);
 			break;
 		case 2:
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("monasirs", kChannelwoodStack), 227, 71);
+			_vm->_video->playMovie(_vm->wrapMovieFilename("monasirs", kChannelwoodStack), 227, 70);
 			break;
 		case 3:
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("monsmsg", kChannelwoodStack), 227, 71);
+			_vm->_video->playMovie(_vm->wrapMovieFilename("monsmsg", kChannelwoodStack), 227, 70);
 			break;
 		default:
 			warning("Opcode %d Control Variable Out of Range", op);
 			break;
 		}
-	} else
-		unknown(op, var, argc, argv);
+	}
 }
 
 void MystScriptParser_Channelwood::o_drawerOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -599,31 +646,31 @@ void MystScriptParser_Channelwood::o_drawerOpen(uint16 op, uint16 var, uint16 ar
 	_vm->redrawArea(102, false);
 }
 
-void MystScriptParser_Channelwood::opcode_119(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Channelwood::o_hologramTemple(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Temple hologram", op);
 
-	if (argc == 0) {
-		// Used on Card 3333 (Temple Hologram)
-		// TODO: Not 100% sure about movie position...
-		switch (_vm->_varStore->getVar(17)) {
-		case 0:
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holoalgh", kChannelwoodStack), 126, 74);
-			break;
-		case 1:
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holoamth", kChannelwoodStack), 126, 74);
-			break;
-		case 2:
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holoasir", kChannelwoodStack), 126, 74);
-			break;
-		case 3:
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holosmsg", kChannelwoodStack), 126, 74);
-			break;
-		default:
-			warning("Opcode %d Control Variable Out of Range", op);
-			break;
-		}
-	} else
-		unknown(op, var, argc, argv);
+	_vm->_sound->pauseBackgroundMyst();
+
+	// Used on Card 3333 (Temple Hologram)
+	switch (_state.holoprojectorSelection) {
+	case 0:
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holoalgh", kChannelwoodStack), 139, 64);
+		break;
+	case 1:
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holoamth", kChannelwoodStack), 127, 73);
+		break;
+	case 2:
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holoasir", kChannelwoodStack), 139, 64);
+		break;
+	case 3:
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holosmsg", kChannelwoodStack), 127, 45);
+		break;
+	default:
+		warning("Opcode %d Control Variable Out of Range", op);
+		break;
+	}
+
+	_vm->_sound->resumeBackgroundMyst();
 }
 
 void MystScriptParser_Channelwood::o_executeMouseUp(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -710,13 +757,8 @@ void MystScriptParser_Channelwood::o_pipeValve_init(uint16 op, uint16 var, uint1
 }
 
 void MystScriptParser_Channelwood::o_drawer_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Sirius's drawer init", op);
 	_siriusDrawerState = 0;
-}
-
-void MystScriptParser_Channelwood::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used in Card 3012 (Achenar's Holoprojector Control)
-	varUnusedCheck(op, var);
-	// TODO: Fill in Logic. Clearing Variable for View?
 }
 
 } // End of namespace Mohawk

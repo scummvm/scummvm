@@ -53,7 +53,7 @@ private:
 
 	DECLARE_OPCODE(o_bridgeToggle);
 	DECLARE_OPCODE(o_pipeExtend);
-	DECLARE_OPCODE(opcode_102);
+	DECLARE_OPCODE(o_drawImageChangeCardAndVolume);
 	DECLARE_OPCODE(o_waterTankValveOpen);
 	DECLARE_OPCODE(o_leverStartMove);
 	DECLARE_OPCODE(o_leverMove);
@@ -61,6 +61,10 @@ private:
 	DECLARE_OPCODE(o_leverEndMove);
 	DECLARE_OPCODE(o_leverEndMoveResumeBackground);
 	DECLARE_OPCODE(o_leverEndMoveWithSound);
+	DECLARE_OPCODE(o_leverElev3StartMove);
+	DECLARE_OPCODE(o_leverElev3EndMove);
+	DECLARE_OPCODE(o_pumpLeverMove);
+	DECLARE_OPCODE(o_pumpLeverEndMove);
 	DECLARE_OPCODE(o_stairsDoorToggle);
 	DECLARE_OPCODE(o_valveHandleMove1);
 	DECLARE_OPCODE(o_valveHandleMoveStart1);
@@ -69,9 +73,9 @@ private:
 	DECLARE_OPCODE(o_valveHandleMoveStart2);
 	DECLARE_OPCODE(o_valveHandleMove3);
 	DECLARE_OPCODE(o_valveHandleMoveStart3);
-	DECLARE_OPCODE(opcode_117);
+	DECLARE_OPCODE(o_hologramMonitor);
 	DECLARE_OPCODE(o_drawerOpen);
-	DECLARE_OPCODE(opcode_119);
+	DECLARE_OPCODE(o_hologramTemple);
 	DECLARE_OPCODE(o_executeMouseUp);
 	DECLARE_OPCODE(o_waterTankValveClose);
 	DECLARE_OPCODE(o_elevatorMovies);
@@ -80,8 +84,6 @@ private:
 	DECLARE_OPCODE(o_lever_init);
 	DECLARE_OPCODE(o_pipeValve_init);
 	DECLARE_OPCODE(o_drawer_init);
-
-	DECLARE_OPCODE(opcode_300);
 
 	MystGameState::Channelwood &_state;
 
