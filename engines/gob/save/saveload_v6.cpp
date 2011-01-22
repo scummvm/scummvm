@@ -547,7 +547,7 @@ void SaveLoad_v6::GameHandler::buildIndex(byte *buffer) const {
 	SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(),
 			0, _vm->getEndianness(), varSize);
 
-	_slotFile->buildIndex(buffer, info);
+	_slotFile->buildIndex(buffer, info, 0, true);
 }
 
 void SaveLoad_v6::GameHandler::refreshProps() {

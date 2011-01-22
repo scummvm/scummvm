@@ -77,9 +77,12 @@ int32 SlotFileIndexed::tallyUpFiles(uint32 slotSize, uint32 indexSize) const {
 }
 
 void SlotFileIndexed::buildIndex(byte *buffer, SavePartInfo &info,
-		SaveConverter *converter) const {
+		SaveConverter *converter, bool setLongest) const {
 
 	uint32 descLength = info.getDescMaxLength();
+
+	uint32 longest     = 0;
+	byte  *bufferStart = buffer;
 
 	// Iterate over all files
 	for (uint32 i = 0; i < _slotCount; i++, buffer += descLength) {
@@ -100,9 +103,18 @@ void SlotFileIndexed::buildIndex(byte *buffer, SavePartInfo &info,
 
 			delete[] desc;
 
+			longest = MAX<uint32>(longest, strlen((const char *) buffer));
+
 		} else
 			// No valid slot, fill with 0
 			memset(buffer, 0, descLength);
+	}
+
+	if (setLongest) {
+		uint32 slot0Len;
+		for (slot0Len = strlen((const char *) bufferStart); slot0Len < longest; slot0Len++)
+			buffer[slot0Len] = ' ';
+		buffer[slot0Len] = '\0';
 	}
 }
 

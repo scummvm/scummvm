@@ -78,7 +78,7 @@ public:
 
 	/** Creates an index in buffer. */
 	virtual void buildIndex(byte *buffer, SavePartInfo &info,
-			SaveConverter *converter = 0) const;
+			SaveConverter *converter = 0, bool setLongest = false) const;
 
 	virtual bool exists(int slot) const;
 	virtual Common::InSaveFile *openRead(int slot) const;
