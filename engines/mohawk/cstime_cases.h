@@ -40,6 +40,9 @@ public:
 	bool checkObjectCondition(uint16 objectId);
 	void selectHelpStrings();
 	void handleConditionalEvent(const CSTimeEvent &event);
+
+protected:
+	void incorrectBodySequence(uint16 stage, uint16 speech, uint16 feature);
 };
 
 } // End of namespace Mohawk
