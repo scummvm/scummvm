@@ -238,6 +238,10 @@ bool SaveLoad_v6::SpriteHandler::set(SaveReader *reader, uint32 part) {
 }
 
 bool SaveLoad_v6::SpriteHandler::get(SaveWriter *writer, uint32 part) {
+	if (getSize() < 0)
+		if (!TempSpriteHandler::create(624, 272, true))
+			return false;
+
 	return writer->writePart(part, _sprite);
 }
 
