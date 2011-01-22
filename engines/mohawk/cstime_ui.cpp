@@ -27,6 +27,7 @@
 #include "mohawk/cstime_ui.h"
 #include "mohawk/cstime_view.h"
 #include "mohawk/resource.h"
+#include "common/algorithm.h" // find
 #include "common/events.h"
 
 namespace Mohawk {
@@ -265,7 +266,7 @@ void CSTimeInterface::mouseDown(Common::Point pos) {
 	}
 
 	if (_help->getState() != (uint)~0) {
-		// FIXME: _help->mouseDown(pos);
+		_help->mouseDown(pos);
 		return;
 	}
 
@@ -369,7 +370,7 @@ void CSTimeInterface::mouseMove(Common::Point pos) {
 	}
 
 	if (_help->getState() != (uint)~0) {
-		// FIXME: _help->mouseMove(pos);
+		_help->mouseMove(pos);
 		return;
 	}
 
@@ -446,7 +447,7 @@ void CSTimeInterface::mouseUp(Common::Point pos) {
 	}
 
 	if (_help->getState() != (uint)~0) {
-		// FIXME: _help->mouseUp(pos);
+		_help->mouseUp(pos);
 		return;
 	}
 
@@ -831,13 +832,174 @@ void CSTimeInterface::dropItemInInventory(uint16 id) {
 
 CSTimeHelp::CSTimeHelp(MohawkEngine_CSTime *vm) : _vm(vm) {
 	_state = (uint)~0;
+	_currEntry = 0xffff;
+	_currHover = 0xffff;
+	_nextToProcess = 0xffff;
 }
 
 CSTimeHelp::~CSTimeHelp() {
 }
 
+void CSTimeHelp::addQaR(uint16 text, uint16 speech) {
+	CSTimeHelpQaR qar;
+	qar.text = text;
+	qar.speech = speech;
+	_qars.push_back(qar);
+}
+
+void CSTimeHelp::start() {
+	if (_vm->getInterface()->getInventoryDisplay()->getState() == 4)
+		return;
+
+	_state = 2;
+
+	uint16 speech = 5900 + _vm->_rnd->getRandomNumberRng(0, 2);
+	_vm->addEvent(CSTimeEvent(kCSTimeEventCharStartFlapping, _vm->getCase()->getCurrScene()->getHelperId(), speech));
+
+	if (noHelperChanges())
+		return;
+
+	// Play a NIS, making sure the Good Guide is disabled.
+	_vm->addEvent(CSTimeEvent(kCSTimeEventCharSetState, _vm->getCase()->getCurrScene()->getHelperId(), 0));
+	_vm->addEvent(CSTimeEvent(kCSTimeEventCharPlayNIS, _vm->getCase()->getCurrScene()->getHelperId(), 0));
+	_vm->addEvent(CSTimeEvent(kCSTimeEventCharSetState, _vm->getCase()->getCurrScene()->getHelperId(), 0));
+}
+
 void CSTimeHelp::end(bool runEvents) {
-	// FIXME
+	_state = (uint)~0;
+	_currHover = 0xffff;
+
+	_vm->getInterface()->clearDialogArea();
+	_vm->getInterface()->getInventoryDisplay()->show();
+
+	if (noHelperChanges())
+		return;
+
+	_vm->addEvent(CSTimeEvent(kCSTimeEventCharSetState, _vm->getCase()->getCurrScene()->getHelperId(), 1));
+	_vm->addEvent(CSTimeEvent(kCSTimeEventCharSomeNIS55, _vm->getCase()->getCurrScene()->getHelperId(), 1));
+}
+
+void CSTimeHelp::cleanupAfterFlapping() {
+	if (_state == 2) {
+		// Startup.
+		_vm->getInterface()->getInventoryDisplay()->hide();
+		selectStrings();
+		display();
+		_state = 1;
+		return;
+	}
+
+	if (_nextToProcess == 0xffff)
+		return;
+
+	unhighlightLine(_nextToProcess);
+	_nextToProcess = 0xffff;
+
+	// TODO: case 18 hard-coding
+}
+
+void CSTimeHelp::mouseDown(Common::Point &pos) {
+	for (uint i = 0; i < _qars.size(); i++) {
+		Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
+		thisRect.top += 1 + i*15;
+		thisRect.bottom = thisRect.top + 15;
+		if (!thisRect.contains(pos))
+			continue;
+
+		_currEntry = i;
+		highlightLine(i);
+		_vm->getInterface()->cursorSetShape(5);
+	}
+}
+
+void CSTimeHelp::mouseMove(Common::Point &pos) {
+	bool mouseIsDown = _vm->getEventManager()->getButtonState() & 1;
+
+	for (uint i = 0; i < _qars.size(); i++) {
+		Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
+		thisRect.top += 1 + i*15;
+		thisRect.bottom = thisRect.top + 15;
+		if (!thisRect.contains(pos))
+			continue;
+
+		if (mouseIsDown) {
+			if (i != _currEntry)
+				break;
+			highlightLine(i);
+		}
+
+		_vm->getInterface()->cursorOverHotspot();
+		_currHover = i;
+		return;
+	}
+
+	if (_currHover != 0xffff) {
+		if (_vm->getInterface()->cursorGetShape() != 3) {
+			unhighlightLine(_currHover);
+			_vm->getInterface()->cursorSetShape(1);
+		}
+		_currHover = 0xffff;
+	}
+}
+
+void CSTimeHelp::mouseUp(Common::Point &pos) {
+	if (_currEntry == 0xffff || _qars[_currEntry].speech == 0) {
+		_vm->getInterface()->cursorSetShape(1);
+		end();
+		return;
+	}
+
+	Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
+	thisRect.top += 1 + _currEntry*15;
+	thisRect.bottom = thisRect.top + 15;
+	if (!thisRect.contains(pos))
+		return;
+
+	_vm->addEvent(CSTimeEvent(kCSTimeEventCharStartFlapping, _vm->getCase()->getCurrScene()->getHelperId(), 5900 + _qars[_currEntry].speech));
+	_nextToProcess = _currEntry;
+	_askedAlready.push_back(_qars[_currEntry].text);
+}
+
+void CSTimeHelp::display() {
+	_vm->getInterface()->clearDialogArea();
+
+	for (uint i = 0; i < _qars.size(); i++) {
+		uint16 text = _qars[i].text;
+		bool askedAlready = Common::find(_askedAlready.begin(), _askedAlready.end(), text) != _askedAlready.end();
+
+		_vm->getInterface()->displayDialogLine(5900 + text, i, askedAlready ? 13 : 32);
+	}
+}
+
+void CSTimeHelp::highlightLine(uint line) {
+	uint16 text = _qars[line].text;
+	_vm->getInterface()->displayDialogLine(5900 + text, line, 244);
+}
+
+void CSTimeHelp::unhighlightLine(uint line) {
+	uint16 text = _qars[line].text;
+	bool askedAlready = Common::find(_askedAlready.begin(), _askedAlready.end(), text) != _askedAlready.end();
+	_vm->getInterface()->displayDialogLine(5900 + text, line, askedAlready ? 13 : 32);
+}
+
+
+void CSTimeHelp::selectStrings() {
+	_qars.clear();
+	_vm->getCase()->selectHelpStrings();
+}
+
+bool CSTimeHelp::noHelperChanges() {
+	// These are hardcoded.
+	if (_vm->getCase()->getId() == 4 && _vm->getCase()->getCurrScene()->getId() == 5)
+		return true;
+	if (_vm->getCase()->getId() == 5)
+		return true;
+	if (_vm->getCase()->getId() == 14 && _vm->getCase()->getCurrScene()->getId() == 4)
+		return true;
+	if (_vm->getCase()->getId() == 17 && _vm->getCase()->getCurrScene()->getId() == 2)
+		return true;
+
+	return false;
 }
 
 CSTimeInventoryDisplay::CSTimeInventoryDisplay(MohawkEngine_CSTime *vm, Common::Rect baseRect) : _vm(vm) {

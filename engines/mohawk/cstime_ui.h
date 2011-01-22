@@ -31,12 +31,25 @@
 
 namespace Mohawk {
 
+struct CSTimeHelpQaR {
+	uint16 text, speech;
+};
+
 class CSTimeHelp {
 public:
 	CSTimeHelp(MohawkEngine_CSTime *vm);
 	~CSTimeHelp();
 
+	void addQaR(uint16 text, uint16 speech);
+	void start();
 	void end(bool runEvents = true);
+	void cleanupAfterFlapping();
+
+	void mouseDown(Common::Point &pos);
+	void mouseMove(Common::Point &pos);
+	void mouseUp(Common::Point &pos);
+
+	void reset();
 
 	uint getState() { return _state; }
 
@@ -44,6 +57,16 @@ protected:
 	MohawkEngine_CSTime *_vm;
 
 	uint _state;
+	uint16 _currHover, _currEntry, _nextToProcess;
+	Common::Array<CSTimeHelpQaR> _qars;
+	Common::Array<uint16> _askedAlready;
+
+	void display();
+	void highlightLine(uint line);
+	void unhighlightLine(uint line);
+	void selectStrings();
+
+	bool noHelperChanges();
 };
 
 class CSTimeOptions {

@@ -501,6 +501,10 @@ void MohawkEngine_CSTime::triggerEvent(CSTimeEvent &event) {
 		_case->getCurrConversation()->setAsked(qar, entry);
 		break;
 
+	case kCSTimeEventStartHelp:
+		_interface->getHelp()->start();
+		break;
+
 	case kCSTimeEventShowBigNote:
 		_interface->getCarmenNote()->drawBigNote();
 		break;
@@ -583,11 +587,10 @@ void MohawkEngine_CSTime::triggerEvent(CSTimeEvent &event) {
 		break;
 
 	case kCSTimeEventUnknown70:
-		if (_case->getCurrConversation()->getState() != 0xffff && _case->getCurrConversation()->getState()) {
+		if (_case->getCurrConversation()->getState() != (uint)~0 && _case->getCurrConversation()->getState()) {
 			_case->getCurrConversation()->finishProcessingQaR();
-		} else {
-			// FIXME: handle help stuff
-			warning("ignoring unknown 70");
+		} else if (_interface->getHelp()->getState() != (uint)~0 && _interface->getHelp()->getState()) {
+			_interface->getHelp()->cleanupAfterFlapping();
 		}
 		break;
 
