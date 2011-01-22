@@ -109,19 +109,90 @@ bool CSTimeCase1::checkObjectCondition(uint16 objectId) {
 }
 
 void CSTimeCase1::selectHelpStrings() {
+	CSTimeHelp *help = _vm->getInterface()->getHelp();
+
 	if (_currScene == 1) {
 		if (_vm->_haveInvItem[1]) {
 			// Got the torch, ready to leave.
-			// FIXME
+			help->addQaR(15, 55);
+		} else if (getCurrScene()->getHotspot(6).state == 1) {
+			// Should get the torch.
+			help->addQaR(13, 53);
+		} else if (_conversations[0]->getAsked(2, 1)) {
+			// Should move the bag.
+			help->addQaR(12, 52);
+		} else if (_conversations[0]->getAsked(0, 0) || _conversations[0]->getAsked(1, 0) || _conversations[0]->getAsked(2, 0)) {
+			// Should keep talking to the boatman.
+			help->addQaR(11, 51);
 		} else {
-			// Still don't have the torch.
-			// FIXME
+			// Should talk to the boatman.
+			help->addQaR(10, 50);
 		}
 	} else {
-		// FIXME
+		if (!_conversations[1]->getAsked(2, 0)) {
+			if (!_conversations[1]->getAsked(0, 0) && !_conversations[1]->getAsked(1, 0)) {
+				// Should talk to Hatshepsut.
+				help->addQaR(16, 56);
+			} else {
+				// Should ask Hatshepsut what to do.
+				help->addQaR(17, 57);
+			}
+		} else if (!_conversations[2]->getAsked(0, 2) && !_vm->_caseVariable[1]) {
+			// Haven't asked the head priest what to do, and we haven't dealt with the body.
+			help->addQaR(18, 58);
+		}
+		if (!_vm->getInterface()->getCarmenNote()->havePiece(0)) {
+			// Should get that note piece.
+			help->addQaR(14, 54);
+		}
+		if (_currScene == 5) {
+			if (!_vm->getInterface()->getCarmenNote()->havePiece(2)) {
+				// Should get the last note piece.
+				help->addQaR(28, 68);
+			} else {
+				// Should work out where that henchman is.
+				help->addQaR(29, 69);
+			}
+		} else {
+			if (_conversations[2]->getAsked(0, 2)) {
+				if (!_vm->_caseVariable[1]) {
+					// We haven't dealt with the body yet.
+					help->addQaR(21, 61);
+				}
+				if (!_scenes[3]->_visitCount) {
+					// We haven't checked out that dark tomb.
+					help->addQaR(22, 62);
+				}
+			} else {
+				if (_conversations[2]->getAsked(0, 0) || _conversations[2]->getAsked(1, 0) || _conversations[2]->getAsked(2, 0)) {
+					// We should keep talking to the head priest.
+					help->addQaR(20, 60);
+					if (!_scenes[3]->_visitCount) {
+						// We haven't checked out that dark tomb.
+						help->addQaR(23, 63);
+					}
+				} else if (_scenes[2]->_visitCount) {
+					// We've visited the tomb, but not talked to the head priest.
+					help->addQaR(19, 59);
+				}
+			}
+			if (_vm->_caseVariable[2] && !_vm->_caseVariable[1]) {
+				// We're in the middle of the body sequence.
+				help->addQaR(24, 64);
+			}
+			if (_scenes[3]->_visitCount) {
+				if (_vm->_haveInvItem[1]) {
+					// Need to light that torch.
+					help->addQaR(25, 65);
+				} else if (_vm->_haveInvItem[2] && !_vm->_caseVariable[2]) {
+					// Need to start the body sequence.
+					help->addQaR(27, 67);
+				}
+			}
+		}
 	}
 
-	// FIXME
+	help->addQaR(99, 0);
 }
 
 void CSTimeCase1::handleConditionalEvent(const CSTimeEvent &event) {
@@ -284,8 +355,8 @@ void CSTimeCase1::handleConditionalEvent(const CSTimeEvent &event) {
 				// Congratulate the player and enable the torch.
 				_vm->insertEventAtFront(CSTimeEvent(kCSTimeEventCharStartFlapping, 2, 10551));
 				getCurrScene()->getHotspot(4).invObjId = 1;
-				_vm->insertEventAtFront(CSTimeEvent(kCSTimeEventEnableHotspot, 2, 6));
-				_vm->insertEventAtFront(CSTimeEvent(kCSTimeEventAddFeature, 2, 2));
+				_vm->insertEventAtFront(CSTimeEvent(kCSTimeEventEnableHotspot, 0xffff, 6));
+				_vm->insertEventAtFront(CSTimeEvent(kCSTimeEventAddFeature, 0xffff, 2));
 			} else {
 				assert(event.param1 < 7);
 				// It didn't get dropped onto the boat, so we complain about it.
