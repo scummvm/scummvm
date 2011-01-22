@@ -263,8 +263,10 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 		return true;
 	}
 
-	// NOTE: For testing (and comfort?) purposes, we enable aborting of all videos)
-	properties.breakKey = kShortKeyEscape;
+	if (_vm->getGameType() != kGameTypeUrban)
+		// NOTE: For testing (and comfort?) purposes, we enable aborting of all videos.
+		//       Except for Urban Runner, where it leads to glitches
+		properties.breakKey = kShortKeyEscape;
 
 	while ((properties.startFrame != properties.lastFrame) &&
 	       (properties.startFrame < (int32)(video->decoder->getFrameCount() - 1))) {
@@ -495,7 +497,21 @@ void VideoPlayer::checkAbort(Video &video, Properties &properties) {
 				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
 
 		_vm->_inter->storeKey(_vm->_util->checkKey());
-		if (VAR(0) == (unsigned) properties.breakKey) {
+
+		// Check for that specific key
+		bool pressedBreak = (VAR(0) == (unsigned)properties.breakKey);
+
+		// Mouse buttons
+		if (properties.breakKey < 4)
+			if (_vm->_game->_mouseButtons & properties.breakKey)
+				pressedBreak = true;
+
+		// Any key
+		if (properties.breakKey == 4)
+			if (VAR(0) != 0)
+				pressedBreak = true;
+
+		if (pressedBreak) {
 			video.decoder->disableSound();
 
 			// Seek to the last frame. Some scripts depend on that.
