@@ -92,7 +92,7 @@ void ToonEngine::init() {
 	_currentTextLineY = 0;
 	_currentTextLineCharacterId = 0;
 
-	_saveBufferStream = new Common::MemoryWriteStreamDynamic();
+	_saveBufferStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
 	_firstFrame = false;
 
@@ -3210,8 +3210,8 @@ bool ToonEngine::loadGame(int32 slot) {
 				break;
 			}
 		}
-
 		_saveBufferStream->write(buf, size);
+		delete[] buf;
 	}
 	delete loadFile;
 	return true;
