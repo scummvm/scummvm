@@ -440,15 +440,15 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			dataChunk.bitsPerSample = stream->readByte();
 			dataChunk.channels = stream->readByte();
 			dataChunk.encoding = stream->readUint16BE();
-			dataChunk.loop = stream->readUint16BE();
+			dataChunk.loopCount = stream->readUint16BE();
 			dataChunk.loopStart = stream->readUint32BE();
 			dataChunk.loopEnd = stream->readUint32BE();
 
-			// NOTE: We currently ignore all of the loop parameters here. Myst uses the loop
-			// variable but the loopStart and loopEnd are always 0 and the size of the sample.
-			// Myst ME doesn't use the Mohawk Sound format and just standard WAVE files and
-			// therefore does not contain any of this metadata and we have to specify whether
-			// or not to loop elsewhere.
+			// NOTE: We currently ignore all of the loop parameters here. Myst uses the
+			// loopCount variable but the loopStart and loopEnd are always 0 and the size of
+			// the sample. Myst ME doesn't use the Mohawk Sound format and just standard WAVE
+			// files and therefore does not contain any of this metadata and we have to specify
+			// whether or not to loop elsewhere.
 
 			dataChunk.audioData = stream->readStream(dataSize);
 			break;

@@ -110,7 +110,7 @@ struct DataChunk {
 	byte bitsPerSample;
 	byte channels;
 	uint16 encoding;
-	uint16 loop;
+	uint16 loopCount; // 0 == no looping, 0xFFFF == infinite loop
 	uint32 loopStart;
 	uint32 loopEnd;
 	Common::SeekableReadStream *audioData;
