@@ -222,6 +222,22 @@ bool VideoPlayer::closeVideo(int slot) {
 	return true;
 }
 
+void VideoPlayer::closeLiveSound() {
+	for (int i = 1; i < kVideoSlotCount; i++) {
+		Video *video = getVideoBySlot(i);
+		if (!video)
+			continue;
+
+		if (video->live)
+			closeVideo(i);
+	}
+}
+
+void VideoPlayer::closeAll() {
+	for (int i = 0; i < kVideoSlotCount; i++)
+		closeVideo(i);
+}
+
 bool VideoPlayer::play(int slot, Properties &properties) {
 	Video *video = getVideoBySlot(slot);
 	if (!video)
@@ -253,11 +269,13 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 
 	properties.canceled = false;
 
-	if (primary && properties.noBlock) {
-		video->live = true;
+	if (properties.noBlock) {
 		properties.waitEndFrame = false;
-		_liveProperties = properties;
-		updateLive(true);
+
+		video->live       = true;
+		video->properties = properties;
+
+		updateLive(slot, true);
 		return true;
 	}
 
@@ -311,40 +329,47 @@ bool VideoPlayer::isPlayingLive() const {
 }
 
 void VideoPlayer::updateLive(bool force) {
-	Video *video = getVideoBySlot(0);
+	for (int i = 0; i < kVideoSlotCount; i++)
+		updateLive(i, force);
+}
+
+void VideoPlayer::updateLive(int slot, bool force) {
+	Video *video = getVideoBySlot(slot);
 	if (!video || !video->live)
 		return;
 
-	if (_liveProperties.startFrame >= (int32)(video->decoder->getFrameCount() - 1)) {
+	if (video->properties.startFrame >= (int32)(video->decoder->getFrameCount() - 1)) {
 		// Video ended
 
-		if (!_liveProperties.loop) {
-			WRITE_VAR_OFFSET(212, (uint32)-1);
+		if (!video->properties.loop) {
+			if (!(video->properties.flags & kFlagNoVideo))
+				WRITE_VAR_OFFSET(212, (uint32)-1);
 			_vm->_vidPlayer->closeVideo();
 			return;
 		} else {
 			video->decoder->seek(0, SEEK_SET, true);
-			_liveProperties.startFrame = -1;
+			video->properties.startFrame = -1;
 		}
 	}
 
-	if (_liveProperties.startFrame == _liveProperties.lastFrame)
+	if (video->properties.startFrame == video->properties.lastFrame)
 		// Current video sequence ended
 		return;
 
 	if (!force && (video->decoder->getTimeToNextFrame() > 0))
 		return;
 
-	WRITE_VAR_OFFSET(212, _liveProperties.startFrame + 1);
+	if (!(video->properties.flags & kFlagNoVideo))
+		WRITE_VAR_OFFSET(212, video->properties.startFrame + 1);
 
-	bool backwards = _liveProperties.startFrame > _liveProperties.lastFrame;
-	playFrame(0, _liveProperties);
+	bool backwards = video->properties.startFrame > video->properties.lastFrame;
+	playFrame(slot, video->properties);
 
-	_liveProperties.startFrame += backwards ? -1 : 1;
+	video->properties.startFrame += backwards ? -1 : 1;
 
-	if (_liveProperties.fade) {
+	if (video->properties.fade) {
 		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
-		_liveProperties.fade = false;
+		video->properties.fade = false;
 	}
 }
 

@@ -110,6 +110,9 @@ public:
 	int  openVideo(bool primary, const Common::String &file, Properties &properties);
 	bool closeVideo(int slot = 0);
 
+	void closeLiveSound();
+	void closeAll();
+
 	bool play(int slot, Properties &properties);
 	void waitEndFrame(int slot, bool onlySound = false);
 
@@ -149,6 +152,8 @@ private:
 
 		SurfacePtr surface;
 
+		Properties properties;
+
 		bool live;
 
 		Video();
@@ -160,8 +165,6 @@ private:
 	static const int kVideoSlotCount = 32;
 
 	static const char *_extensions[];
-
-	Properties _liveProperties;
 
 	GobEngine *_vm;
 
@@ -188,6 +191,8 @@ private:
 	void evalBgShading(Video &video);
 
 	void copyPalette(const Video &video, int16 palStart, int16 palEnd);
+
+	void updateLive(int slot, bool force = false);
 };
 
 } // End of namespace Gob

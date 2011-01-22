@@ -125,6 +125,11 @@ void Inter_v6::o6_playVmdOrMusic() {
 			props.x, props.y, props.startFrame, props.lastFrame,
 			props.palCmd, props.palStart, props.palEnd, props.flags);
 
+	if (!strcmp(fileName, "RIEN")) {
+		_vm->_vidPlayer->closeAll();
+		return;
+	}
+
 	close = false;
 	if (props.lastFrame == -1) {
 		close = true;
@@ -152,7 +157,10 @@ void Inter_v6::o6_playVmdOrMusic() {
 		return;
 	} else if (props.lastFrame <= -10) {
 		_vm->_vidPlayer->closeVideo();
-		props.loop = true;
+
+		if (!(props.flags & VideoPlayer::kFlagNoVideo))
+			props.loop = true;
+
 	} else if (props.lastFrame < 0) {
 		warning("Urban/Playtoons Stub: Unknown Video/Music command: %d, %s", props.lastFrame, fileName);
 		return;
@@ -166,8 +174,14 @@ void Inter_v6::o6_playVmdOrMusic() {
 
 	_vm->_vidPlayer->evaluateFlags(props);
 
+	bool primary = true;
+	if (props.noBlock && (props.flags & VideoPlayer::kFlagNoVideo)) {
+		_vm->_vidPlayer->closeLiveSound();
+		primary = false;
+	}
+
 	int slot = 0;
-	if ((fileName[0] != 0) && ((slot = _vm->_vidPlayer->openVideo(true, fileName, props)) < 0)) {
+	if ((fileName[0] != 0) && ((slot = _vm->_vidPlayer->openVideo(primary, fileName, props)) < 0)) {
 		WRITE_VAR(11, (uint32) -1);
 		return;
 	}
