@@ -135,23 +135,21 @@ void GfxRobot::draw(int x, int y) {
 	
 	_palette->createFromData(paletteData, paletteSize, &resourcePal);
 
-	for (int i = 0; i < 256; ++i)
-	{
-		savePal[i*4] = _palette->_sysPalette.colors[i].r;
-		savePal[i*4+1] = _palette->_sysPalette.colors[i].g;
-		savePal[i*4+2] = _palette->_sysPalette.colors[i].b;
-		savePal[i*4+3] = 0;
+	for (int i = 0; i < 256; ++i) {
+		savePal[i * 4 + 0] = _palette->_sysPalette.colors[i].r;
+		savePal[i * 4 + 1] = _palette->_sysPalette.colors[i].g;
+		savePal[i * 4 + 2] = _palette->_sysPalette.colors[i].b;
+		savePal[i * 4 + 3] = 0;
 	}
 	
 	memcpy(robotPal, savePal, sizeof(savePal));
 
-	for (int i = 0; i < colorCount; ++i)
-	{
+	for (int i = 0; i < colorCount; ++i) {
 		int index = i + startIndex;
-		robotPal[index*4] = resourcePal.colors[index].r;
-		robotPal[index*4+1] = resourcePal.colors[index].g;
-		robotPal[index*4+2] = resourcePal.colors[index].b;
-		robotPal[index*4+3] = 0;
+		robotPal[index * 4 + 0] = resourcePal.colors[index].r;
+		robotPal[index * 4 + 1] = resourcePal.colors[index].g;
+		robotPal[index * 4 + 2] = resourcePal.colors[index].b;
+		robotPal[index * 4 + 3] = 0;
 	}
 
 	g_system->setPalette(robotPal, 0, 256);
@@ -194,11 +192,11 @@ void GfxRobot::getFrameOffsets() {
 	// Plus one so we can assert on this in the calling routine
 	// The last one should point to end-of-file, unless I'm misunderstanding something
 	for (int i = 1; i < _frameCount + 1; ++i) 
-		_imageStart[i] = _imageStart[i-1] + audioEnd[i-1];
+		_imageStart[i] = _imageStart[i - 1] + audioEnd[i - 1];
 	for (int i = 0; i < _frameCount; ++i)
-		_audioStart[i] = _imageStart[i] + videoEnd[i-1];
+		_audioStart[i] = _imageStart[i] + videoEnd[i - 1];
 	for (int i = 0; i < _frameCount; ++i)
-		_audioLen[i] = _imageStart[i+1] - _audioStart[i];
+		_audioLen[i] = _imageStart[i + 1] - _audioStart[i];
 
 	delete[] audioEnd;
 	delete[] videoEnd;
@@ -280,7 +278,7 @@ float GfxRobot::getFrameScaleFactor(int frame) {
 	byte *videoData = _resourceData + _imageStart[frame];
 	byte percentage = videoData[3];
 
-	return (float) percentage/100.0;
+	return (float) percentage / 100.0;
 }
 	
 #endif
