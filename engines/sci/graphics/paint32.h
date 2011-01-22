@@ -49,6 +49,7 @@ public:
 	void kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
 
 	void debugDrawRobot(GuiResourceId robotId);
+	void debugPlayRobotAudio(GuiResourceId robotId);
 
 private:
 	ResourceManager *_resMan;

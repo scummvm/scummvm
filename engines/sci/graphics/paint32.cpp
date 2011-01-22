@@ -90,4 +90,12 @@ void GfxPaint32::debugDrawRobot(GuiResourceId robotId) {
 	delete test;
 }
 
+void GfxPaint32::debugPlayRobotAudio(GuiResourceId robotId) {
+	GfxRobot *test = new GfxRobot(g_sci->getResMan(), _screen, _palette);
+	test->init(robotId, 0, 0);
+	test->playAudio();	
+	delete test;
+}
+
+
 } // End of namespace Sci

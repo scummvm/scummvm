@@ -121,6 +121,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
 #ifdef ENABLE_SCI32
 	DCmd_Register("draw_robot",			WRAP_METHOD(Console, cmdDrawRobot));
+	DCmd_Register("play_robot_audio",		WRAP_METHOD(Console, cmdPlayRobotAudio));
 #endif
 	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
 	DCmd_Register("pic_visualize",		WRAP_METHOD(Console, cmdPicVisualize));
@@ -1522,6 +1523,24 @@ bool Console::cmdDrawRobot(int argc, const char **argv) {
 
 	if (_engine->_gfxPaint32) {
 		_engine->_gfxPaint32->debugDrawRobot(resourceId);
+	} else {
+		DebugPrintf("command not available in non-sci32 games");
+	}
+	return true;
+}
+
+bool Console::cmdPlayRobotAudio(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Draws frames from a robot resource\n");
+		DebugPrintf("Usage: %s <resourceId>\n", argv[0]);
+		DebugPrintf("where <resourceId> is the id of the robot resource to draw\n");
+		return true;
+	}
+
+	uint16 resourceId = atoi(argv[1]);
+
+	if (_engine->_gfxPaint32) {
+		_engine->_gfxPaint32->debugPlayRobotAudio(resourceId);
 	} else {
 		DebugPrintf("command not available in non-sci32 games");
 	}

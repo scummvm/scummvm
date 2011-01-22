@@ -292,6 +292,11 @@ int GfxRobot::getFrameScale(int frame) {
 	byte *videoData = _resourceData + _imageStart[frame];
 	return videoData[3];
 }
+
+void GfxRobot::playAudio() {
+//	Audio::Mixer *mixer = g_system->getMixer();
+}
+
 	
 #endif
 

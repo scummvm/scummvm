@@ -41,6 +41,7 @@ public:
 	uint16 getCurFrame() { return _curFrame; }
 	uint16 getFrameCount() { return _frameCount; }
 	bool isPlaying() { return _resourceId != -1; }
+	void playAudio();
 
 private:
 	void initData(GuiResourceId resourceId);
