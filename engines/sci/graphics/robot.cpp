@@ -296,13 +296,11 @@ int GfxRobot::getFrameScale(int frame) {
 }
 
 void GfxRobot::playAudio() {
-#if 0
 	if (_hasSound) {
 		Audio::SoundHandle _audioHandle;
 		Audio::AudioStream *audioStream = g_sci->_audio->getRobotAudioStream(_resourceData);
 		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
 	}
-#endif
 }
 
 	
