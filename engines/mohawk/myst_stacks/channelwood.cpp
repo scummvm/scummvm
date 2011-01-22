@@ -705,6 +705,8 @@ void MystScriptParser_Channelwood::o_elevatorMovies(uint16 op, uint16 var, uint1
 		else
 			movie = _vm->wrapMovieFilename("welev3dn", kChannelwoodStack);
 		break;
+	default:
+		error("Unknown elevator state %d in o_elevatorMovies", elevator);
 	}
 
 	_vm->_sound->pauseBackgroundMyst();
