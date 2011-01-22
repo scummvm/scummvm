@@ -150,7 +150,10 @@ void Inter_v6::o6_playVmdOrMusic() {
 		_vm->_sound->bgStop();
 		_vm->_sound->bgPlay(fileName, SOUND_WAV);
 		return;
-	} else if (props.lastFrame <= -10) {
+	} else if (props.lastFrame == -10) {
+		_vm->_vidPlayer->closeVideo();
+		return;
+	} else if (props.lastFrame < -10) {
 		props.loop = true;
 	} else if (props.lastFrame < 0) {
 		warning("Urban/Playtoons Stub: Unknown Video/Music command: %d, %s", props.lastFrame, fileName);
