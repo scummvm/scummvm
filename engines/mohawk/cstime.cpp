@@ -310,6 +310,24 @@ void MohawkEngine_CSTime::eventIdle() {
 			}
 			break;
 
+		case kCSTimeEventCharSomeNIS55:
+			// This is like kCSTimeEventCharPlayNIS, only using a different flag variable.
+			if (_processingNIS55) {
+				CSTimeChar *chr = _case->getCurrScene()->getChar(event.param1);
+				if (chr->NISIsDone()) {
+					chr->removeNIS();
+					_processingNIS55 = false;
+					chr->setupAmbientAnims(true);
+					_events.pop_front();
+					processEvent = false;
+				} else {
+					done = true;
+				}
+			} else {
+				advanceQueue = false;
+			}
+			break;
+
 		default:
 			break;
 		}
@@ -350,6 +368,7 @@ bool MohawkEngine_CSTime::NISIsRunning() {
 
 void MohawkEngine_CSTime::reset() {
 	_NISRunning = false;
+	_processingNIS55 = false;
 	_lastTimeout = 0xffffffff;
 	_processingEvent = false;
 }
@@ -529,6 +548,11 @@ void MohawkEngine_CSTime::triggerEvent(CSTimeEvent &event) {
 	case kCSTimeEventSetInsertBefore:
 		warning("ignoring insert before");
 		// FIXME
+		break;
+
+	case kCSTimeEventCharSomeNIS55:
+		_processingNIS55 = true;
+		_case->getCurrScene()->getChar(event.param1)->playNIS(event.param2);
 		break;
 
 	case kCSTimeEventUpdateBubble:

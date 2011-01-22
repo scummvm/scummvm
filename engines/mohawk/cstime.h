@@ -178,6 +178,7 @@ private:
 	uint16 _nextSceneId;
 
 	bool _processingEvent;
+	bool _processingNIS55;
 	bool _NISRunning;
 	uint32 _lastTimeout;
 	void reset();
