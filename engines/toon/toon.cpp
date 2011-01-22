@@ -786,6 +786,11 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_script_func = NULL;
 	_script = NULL;
 
+	_mouseX = 0;
+	_mouseY = 0;
+	_mouseButton = 0;
+	_lastMouseButton = 0;
+
 	_saveBufferStream = NULL;
 
 	_pathFinding = NULL;
