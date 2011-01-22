@@ -1460,15 +1460,7 @@ void MystScriptParser_Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 
 	// Used on Card 4100
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
 
-	// Make the handle follow the mouse
-	int16 maxStep = handle->getStepsV() - 1;
-    Common::Rect rect = handle->getRect();
-    int16 step = ((_vm->_mouse.y - rect.top) * handle->getStepsV()) / rect.height();
-	step = CLIP<uint16>(step, 0, maxStep);
-
-	handle->drawFrame(step);
-
-	if (step == maxStep) {
+	if (handle->pullLeverV()) {
 		// Sound not played yet
 		if (_tempVar == 0) {
 			uint16 soundId = handle->getList2(0);
@@ -1804,9 +1796,10 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 	debugC(kDebugScript, "Opcode %d: Circuit breaker move", op);
 
 	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	int16 maxStep = breaker->getStepsV() - 1;
-	int16 step = ((_vm->_mouse.y - 80) * breaker->getStepsV()) / 65;
+	int16 step = ((mouse.y - 80) * breaker->getStepsV()) / 65;
 	step = CLIP<uint16>(step, 0, maxStep);
 
 	breaker->drawFrame(step);
@@ -2329,11 +2322,12 @@ void MystScriptParser_Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc
 	debugC(kDebugScript, "Opcode %d: Rocket lever move", op);
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	// Make the lever follow the mouse
 	int16 maxStep = lever->getStepsV() - 1;
     Common::Rect rect = lever->getRect();
-    int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
+    int16 step = ((mouse.y - rect.top) * lever->getStepsV()) / rect.height();
 	step = CLIP<uint16>(step, 0, maxStep);
 
 	lever->drawFrame(step);
@@ -2808,15 +2802,8 @@ void MystScriptParser_Myst::o_clockLeverMove(uint16 op, uint16 var, uint16 argc,
 	if (!_clockLeverPulled) {
 		MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
 
-		// Make the handle follow the mouse
-		int16 maxStep = lever->getStepsV() - 1;
-		Common::Rect rect = lever->getRect();
-		int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
-		step = CLIP<int16>(step, 0, maxStep);
-
-		lever->drawFrame(step);
-
-		if (step == maxStep) {
+		// If lever pulled
+		if (lever->pullLeverV()) {
 			// Start videos for first step
 			if (_clockWeightPosition < 2214) {
 				_vm->_sound->replaceSoundMyst(5113);
@@ -2890,18 +2877,9 @@ void MystScriptParser_Myst::o_clockLeverEndMove(uint16 op, uint16 var, uint16 ar
 	if (_clockMiddleGearMovedAlone)
 		_vm->_sound->replaceSoundMyst(8113);
 
-	// Get current lever frame
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
-	int16 maxStep = lever->getStepsV() - 1;
-	Common::Rect rect = lever->getRect();
-	int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
-	step = CLIP<int16>(step, 0, maxStep);
-
 	// Release lever
-	for (int i = step; i >= 0; i--) {
-		lever->drawFrame(i);
-		_vm->_system->delayMillis(10);
-	}
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	lever->releaseLeverV();
 
 	// Check if puzzle is solved
 	clockGearsCheckSolution();
@@ -2950,15 +2928,8 @@ void MystScriptParser_Myst::o_clockResetLeverMove(uint16 op, uint16 var, uint16 
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
 
-	// Make the handle follow the mouse
-	int16 maxStep = lever->getStepsV() - 1;
-	Common::Rect rect = lever->getRect();
-	int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
-	step = CLIP<int16>(step, 0, maxStep);
-
-	lever->drawFrame(step);
-
-	if (step == maxStep && _clockWeightPosition != 0)
+	// If pulled
+	if (lever->pullLeverV() && _clockWeightPosition != 0)
 		clockReset();
 }
 
@@ -3040,16 +3011,8 @@ void MystScriptParser_Myst::o_clockResetLeverEndMove(uint16 op, uint16 var, uint
 
 	// Get current lever frame
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
-	int16 maxStep = lever->getStepsV() - 1;
-	Common::Rect rect = lever->getRect();
-	int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
-	step = CLIP<int16>(step, 0, maxStep);
 
-	// Release lever
-	for (int i = step; i >= 0; i--) {
-		lever->drawFrame(i);
-		_vm->_system->delayMillis(10);
-	}
+	lever->releaseLeverV();
 
 	_vm->checkCursorHints();
 }

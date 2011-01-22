@@ -302,7 +302,6 @@ Common::Error MohawkEngine_Myst::run() {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE: {
 				_needsUpdate = true;
-				_mouse = event.mouse;
 				bool mouseClicked = _system->getEventManager()->getButtonState() & 1;
 
 				// Keep the same resource when dragging
@@ -311,23 +310,21 @@ Common::Error MohawkEngine_Myst::run() {
 				}
 				if (_curResource >= 0 && _resources[_curResource]->isEnabled() && mouseClicked) {
 					debug(2, "Sending mouse move event to resource %d", _curResource);
-					_resources[_curResource]->handleMouseDrag(event.mouse);
+					_resources[_curResource]->handleMouseDrag();
 				}
 				break;
 			}
 			case Common::EVENT_LBUTTONUP:
-				_mouse = event.mouse;
 				if (_curResource >= 0 && _resources[_curResource]->isEnabled()) {
 					debug(2, "Sending mouse up event to resource %d", _curResource);
-					_resources[_curResource]->handleMouseUp(event.mouse);
+					_resources[_curResource]->handleMouseUp();
 				}
 				checkCurrentResource();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				_mouse = event.mouse;
 				if (_curResource >= 0 && _resources[_curResource]->isEnabled()) {
 					debug(2, "Sending mouse up event to resource %d", _curResource);
-					_resources[_curResource]->handleMouseDown(event.mouse);
+					_resources[_curResource]->handleMouseDown();
 				}
 				break;
 			case Common::EVENT_KEYDOWN:

@@ -80,9 +80,9 @@ public:
 	bool canBecomeActive();
 
 	// Mouse interface
-	virtual void handleMouseUp(const Common::Point &mouse);
-	virtual void handleMouseDown(const Common::Point &mouse) {}
-	virtual void handleMouseDrag(const Common::Point &mouse) {}
+	virtual void handleMouseUp();
+	virtual void handleMouseDown() {}
+	virtual void handleMouseDrag() {}
 
 protected:
 	MohawkEngine_Myst *_vm;
@@ -95,7 +95,7 @@ protected:
 class MystResourceType5 : public MystResource {
 public:
 	MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
-	void handleMouseUp(const Common::Point &mouse);
+	void handleMouseUp();
 	const Common::String describe();
 
 protected:
@@ -130,8 +130,8 @@ public:
 	virtual void drawDataToScreen();
 	virtual void handleCardChange();
 
-	virtual void handleMouseUp(const Common::Point &mouse);
-	virtual void handleMouseDown(const Common::Point &mouse);
+	virtual void handleMouseUp();
+	virtual void handleMouseDown();
 
 	MystResource *getSubResource(uint16 index) { return _subResources[index]; }
 protected:
@@ -168,9 +168,9 @@ public:
 	virtual ~MystResourceType11();
 	const Common::String describe();
 
-	void handleMouseDown(const Common::Point &mouse);
-	void handleMouseUp(const Common::Point &mouse);
-	void handleMouseDrag(const Common::Point &mouse);
+	void handleMouseDown();
+	void handleMouseUp();
+	void handleMouseDrag();
 
 	uint16 getList1(uint16 index);
 	uint16 getList2(uint16 index);
@@ -207,9 +207,9 @@ public:
 	MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType10();
 
-	void handleMouseDown(const Common::Point &mousee);
-	void handleMouseUp(const Common::Point &mouse);
-	void handleMouseDrag(const Common::Point &mouse);
+	void handleMouseDown();
+	void handleMouseUp();
+	void handleMouseDrag();
 	void setStep(uint16 step);
 	void setPosition(uint16 pos);
     void restoreBackground();
@@ -228,6 +228,8 @@ public:
 	MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	virtual ~MystResourceType12();
 	void drawFrame(uint16 frame);
+	bool pullLeverV();
+	void releaseLeverV();
 
 protected:
 	uint16 _numFrames;
@@ -243,7 +245,7 @@ public:
 	MystResourceType13(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent);
 	const Common::String describe();
 
-	void handleMouseUp(const Common::Point &mouse);
+	void handleMouseUp();
 	void handleMouseEnter();
 	void handleMouseLeave();
 

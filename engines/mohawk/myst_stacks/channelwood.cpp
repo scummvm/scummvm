@@ -368,18 +368,10 @@ void MystScriptParser_Channelwood::o_leverMove(uint16 op, uint16 var, uint16 arg
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
 
-	// Make the handle follow the mouse
-	int16 maxStep = lever->getStepsV() - 1;
-	Common::Rect rect = lever->getRect();
-	int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
-	step = CLIP<int16>(step, 0, maxStep);
-
-	lever->drawFrame(step);
-
-	if (step == maxStep) {
+	if (lever->pullLeverV()) {
 		if (!_leverPulled) {
 			_leverPulled = true;
-			_leverAction->handleMouseUp(_vm->_system->getEventManager()->getMousePos());
+			_leverAction->handleMouseUp();
 		}
 	} else {
 		_leverPulled = false;
@@ -391,15 +383,7 @@ void MystScriptParser_Channelwood::o_leverMoveFail(uint16 op, uint16 var, uint16
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
 
-	// Make the handle follow the mouse
-	int16 maxStep = lever->getStepsV() - 1;
-	Common::Rect rect = lever->getRect();
-	int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
-	step = CLIP<int16>(step, 0, maxStep);
-
-	lever->drawFrame(step);
-
-	if (step == maxStep) {
+	if (lever->pullLeverV()) {
 		if (!_leverPulled) {
 			_leverPulled = true;
 			uint16 soundId = lever->getList2(0);
@@ -416,16 +400,9 @@ void MystScriptParser_Channelwood::o_leverEndMove(uint16 op, uint16 var, uint16 
 
 	// Get current lever frame
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
-	int16 maxStep = lever->getStepsV() - 1;
-	Common::Rect rect = lever->getRect();
-	int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
-	step = CLIP<int16>(step, 0, maxStep);
 
 	// Release lever
-	for (int i = step; i >= 0; i--) {
-		lever->drawFrame(i);
-		_vm->_system->delayMillis(10);
-	}
+	lever->releaseLeverV();
 
 	uint16 soundId = lever->getList3(0);
 	if (soundId)
@@ -466,15 +443,7 @@ void MystScriptParser_Channelwood::o_pumpLeverMove(uint16 op, uint16 var, uint16
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
 
-	// Make the handle follow the mouse
-	int16 maxStep = lever->getStepsV() - 1;
-	Common::Rect rect = lever->getRect();
-	int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
-	step = CLIP<int16>(step, 0, maxStep);
-
-	lever->drawFrame(step);
-
-	if (step == maxStep) {
+	if (lever->pullLeverV()) {
 		uint16 soundId = lever->getList2(0);
 		_vm->_sound->replaceBackgroundMyst(soundId, 38400);
 	} else {
@@ -509,9 +478,11 @@ void MystScriptParser_Channelwood::o_valveHandleMove1(uint16 op, uint16 var, uin
 	debugC(kDebugScript, "Opcode %d: Valve handle move", op);
 
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
-	if (handle->getRect().contains(_vm->_mouse)) {
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+
+	if (handle->getRect().contains(mouse)) {
 		// Compute frame to draw
-		_tempVar = (_vm->_mouse.x - 250) / 4;
+		_tempVar = (mouse.x - 250) / 4;
 		_tempVar = CLIP<int16>(_tempVar, 1, handle->getStepsH() - 2);
 
 		// Draw frame
@@ -558,9 +529,11 @@ void MystScriptParser_Channelwood::o_valveHandleMove2(uint16 op, uint16 var, uin
 	debugC(kDebugScript, "Opcode %d: Valve handle move", op);
 
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
-	if (handle->getRect().contains(_vm->_mouse)) {
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+
+	if (handle->getRect().contains(mouse)) {
 		// Compute frame to draw
-		_tempVar = handle->getStepsH() - (_vm->_mouse.x - 234) / 4;
+		_tempVar = handle->getStepsH() - (mouse.x - 234) / 4;
 		_tempVar = CLIP<int16>(_tempVar, 1, handle->getStepsH() - 2);
 
 		// Draw frame
@@ -584,9 +557,11 @@ void MystScriptParser_Channelwood::o_valveHandleMove3(uint16 op, uint16 var, uin
 	debugC(kDebugScript, "Opcode %d: Valve handle move", op);
 
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
-	if (handle->getRect().contains(_vm->_mouse)) {
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+
+	if (handle->getRect().contains(mouse)) {
 		// Compute frame to draw
-		_tempVar = handle->getStepsH() - (_vm->_mouse.x - 250) / 4;
+		_tempVar = handle->getStepsH() - (mouse.x - 250) / 4;
 		_tempVar = CLIP<int16>(_tempVar, 1, handle->getStepsH() - 2);
 
 		// Draw frame
@@ -677,7 +652,7 @@ void MystScriptParser_Channelwood::o_executeMouseUp(uint16 op, uint16 var, uint1
 	debugC(kDebugScript, "Opcode %d: Execute mouse up", op);
 
 	MystResourceType5 *resource = static_cast<MystResourceType5 *>(_vm->_resources[argv[0]]);
-	resource->handleMouseUp(_vm->_system->getEventManager()->getMousePos());
+	resource->handleMouseUp();
 }
 
 void MystScriptParser_Channelwood::o_waterTankValveClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

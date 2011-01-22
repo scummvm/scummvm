@@ -68,7 +68,7 @@ MystResource::MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rl
 MystResource::~MystResource() {
 }
 
-void MystResource::handleMouseUp(const Common::Point &mouse) {
+void MystResource::handleMouseUp() {
 	if (_dest != 0)
 		_vm->changeToCard(_dest, true);
 	else
@@ -122,7 +122,7 @@ MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableRead
 	_script = vm->_scriptParser->readScript(rlstStream, kMystScriptNormal);
 }
 
-void MystResourceType5::handleMouseUp(const Common::Point &mouse) {
+void MystResourceType5::handleMouseUp() {
 	_vm->_scriptParser->runScript(_script, this);
 }
 
@@ -285,40 +285,40 @@ void MystResourceType7::handleCardChange() {
 	}
 }
 
-void MystResourceType7::handleMouseUp(const Common::Point &mouse) {
+void MystResourceType7::handleMouseUp() {
 	if (_var7 == 0xFFFF) {
 		if (_numSubResources == 1)
-			_subResources[0]->handleMouseUp(mouse);
+			_subResources[0]->handleMouseUp();
 		else if (_numSubResources != 0)
 			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
 	} else {
 		uint16 varValue = _vm->_scriptParser->getVar(_var7);
 
 		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleMouseUp(mouse);
+			_subResources[0]->handleMouseUp();
 		else if (_numSubResources != 0) {
 			if (varValue < _numSubResources)
-				_subResources[varValue]->handleMouseUp(mouse);
+				_subResources[varValue]->handleMouseUp();
 			else
 				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
 		}
 	}
 }
 
-void MystResourceType7::handleMouseDown(const Common::Point &mouse) {
+void MystResourceType7::handleMouseDown() {
 	if (_var7 == 0xFFFF) {
 		if (_numSubResources == 1)
-			_subResources[0]->handleMouseDown(mouse);
+			_subResources[0]->handleMouseDown();
 		else if (_numSubResources != 0)
 			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
 	} else {
 		uint16 varValue = _vm->_scriptParser->getVar(_var7);
 
 		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleMouseDown(mouse);
+			_subResources[0]->handleMouseDown();
 		else if (_numSubResources != 0) {
 			if (varValue < _numSubResources)
-				_subResources[varValue]->handleMouseDown(mouse);
+				_subResources[varValue]->handleMouseDown();
 			else
 				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
 		}
@@ -515,13 +515,14 @@ void MystResourceType10::restoreBackground() {
 	_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), src, dest);
 }
 
-void MystResourceType10::handleMouseDown(const Common::Point &mouse) {
+void MystResourceType10::handleMouseDown() {
 	// Tell the engine we are dragging a resource
 	_vm->_dragResource = this;
 
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	updatePosition(mouse);
 
-	MystResourceType11::handleMouseDown(mouse);
+	MystResourceType11::handleMouseDown();
 
 	// Restore background
 	restoreBackground();
@@ -530,7 +531,8 @@ void MystResourceType10::handleMouseDown(const Common::Point &mouse) {
 	drawConditionalDataToScreen(2);
 }
 
-void MystResourceType10::handleMouseUp(const Common::Point &mouse) {
+void MystResourceType10::handleMouseUp() {
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	updatePosition(mouse);
 
 	// Restore background
@@ -555,16 +557,17 @@ void MystResourceType10::handleMouseUp(const Common::Point &mouse) {
 
 	_vm->_scriptParser->setVarValue(_var8, value);
 
-	MystResourceType11::handleMouseUp(mouse);
+	MystResourceType11::handleMouseUp();
 
 	// No longer in drag mode
 	_vm->_dragResource = 0;
 }
 
-void MystResourceType10::handleMouseDrag(const Common::Point &mouse) {
+void MystResourceType10::handleMouseDrag() {
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	updatePosition(mouse);
 
-	MystResourceType11::handleMouseDrag(mouse);
+	MystResourceType11::handleMouseDrag();
 
 	// Restore background
 	restoreBackground();
@@ -681,21 +684,24 @@ MystResourceType11::~MystResourceType11() {
 		delete[] _lists[i].list;
 }
 
-void MystResourceType11::handleMouseDown(const Common::Point &mouse) {
+void MystResourceType11::handleMouseDown() {
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	setPositionClipping(mouse, _pos);
 
 	_vm->_scriptParser->setInvokingResource(this);
 	_vm->_scriptParser->runOpcode(_mouseDownOpcode, _var8);
 }
 
-void MystResourceType11::handleMouseUp(const Common::Point &mouse) {
+void MystResourceType11::handleMouseUp() {
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	setPositionClipping(mouse, _pos);
 
 	_vm->_scriptParser->setInvokingResource(this);
 	_vm->_scriptParser->runOpcode(_mouseUpOpcode, _var8);
 }
 
-void MystResourceType11::handleMouseDrag(const Common::Point &mouse) {
+void MystResourceType11::handleMouseDrag() {
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	setPositionClipping(mouse, _pos);
 
 	_vm->_scriptParser->setInvokingResource(this);
@@ -760,6 +766,38 @@ void MystResourceType12::drawFrame(uint16 frame) {
 	_vm->_system->updateScreen();
 }
 
+bool MystResourceType12::pullLeverV() {
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+
+	// Make the handle follow the mouse
+	int16 maxStep = getStepsV() - 1;
+	Common::Rect rect = getRect();
+	int16 step = ((mouse.y - rect.top) * getStepsV()) / rect.height();
+	step = CLIP<int16>(step, 0, maxStep);
+
+	// Draw current frame
+	drawFrame(step);
+
+	// Return true if lever fully pulled
+	return step == maxStep;
+}
+
+void MystResourceType12::releaseLeverV() {
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+
+	// Get current lever frame
+	int16 maxStep = getStepsV() - 1;
+	Common::Rect rect = getRect();
+	int16 step = ((mouse.y - rect.top) * getStepsV()) / rect.height();
+	step = CLIP<int16>(step, 0, maxStep);
+
+	// Release lever
+	for (int i = step; i >= 0; i--) {
+		drawFrame(i);
+		_vm->_system->delayMillis(10);
+	}
+}
+
 MystResourceType13::MystResourceType13(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {
 	_enterOpcode = rlstStream->readUint16LE();
 	_leaveOpcode = rlstStream->readUint16LE();
@@ -780,7 +818,7 @@ void MystResourceType13::handleMouseLeave() {
 	_vm->_scriptParser->runOpcode(_leaveOpcode, _dest);
 }
 
-void MystResourceType13::handleMouseUp(const Common::Point &mouse) {
+void MystResourceType13::handleMouseUp() {
 	// Type 13 Resources do nothing on Mouse Clicks.
 	// This is required to override the inherited default
 	// i.e. MystResource::handleMouseUp

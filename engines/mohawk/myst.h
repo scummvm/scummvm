@@ -180,7 +180,6 @@ public:
 	MystScriptParser *_scriptParser;
 	Common::Array<MystResource*> _resources;
 	MystResource *_dragResource;
-	Common::Point _mouse;
 	Common::RandomSource *_rnd;
 
 	bool _showResourceRects;
