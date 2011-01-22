@@ -50,7 +50,6 @@ public:
 		kFlagFrontSurface          = 0x000080, ///< Draw directly into the front surface.
 		kFlagNoVideo               = 0x000100, ///< Only sound.
 		kFlagOtherSurface          = 0x000800, ///< Draw into a specific sprite.
-		kFlagNonBlocking           = 0x001000, ///< "Live" video playing while scripts continue.
 		kFlagScreenSurface         = 0x400000  ///< Draw into a newly created sprite of screen dimensions.
 	};
 
@@ -90,6 +89,8 @@ public:
 		 int16 palEnd;      ///< Palette entry to end at.
 		 int32 palFrame;    ///< Frame to apply the palette command at.
 
+		bool noBlock; ///< Non-blocking "live" video?
+
 		bool loop; ///< Loop the video?
 		bool fade; ///< Fade in?
 
@@ -103,7 +104,7 @@ public:
 	VideoPlayer(GobEngine *vm);
 	~VideoPlayer();
 
-	void evaluateFlags(Properties &properties, bool allowNonBlock = false);
+	void evaluateFlags(Properties &properties);
 
 	int  openVideo(bool primary, const Common::String &file, Properties &properties);
 	bool closeVideo(int slot = 0);

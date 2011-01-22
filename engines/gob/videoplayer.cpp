@@ -40,7 +40,7 @@ VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFront
 	x(-1), y(-1), width(-1), height(-1), flags(kFlagFrontSurface), switchColorMode(false),
 	startFrame(-1), lastFrame(-1), endFrame(-1), forceSeek(false),
 	breakKey(kShortKeyEscape), palCmd(8), palStart(0), palEnd(255), palFrame(-1),
-	loop(false), fade(false), waitEndFrame(true), canceled(false) {
+	noBlock(false), loop(false), fade(false), waitEndFrame(true), canceled(false) {
 
 }
 
@@ -74,7 +74,7 @@ VideoPlayer::~VideoPlayer() {
 		_videoSlots[i].close();
 }
 
-void VideoPlayer::evaluateFlags(Properties &properties, bool allowNonBlock) {
+void VideoPlayer::evaluateFlags(Properties &properties) {
 	if        (properties.flags & kFlagFrontSurface) {
 		properties.sprite = Draw::kFrontSurface;
 	} else if (properties.flags & kFlagOtherSurface) {
@@ -87,14 +87,6 @@ void VideoPlayer::evaluateFlags(Properties &properties, bool allowNonBlock) {
 	} else {
 		properties.sprite = Draw::kBackSurface;
 	}
-
-	if (allowNonBlock) {
-		if(!(properties.flags & 0x1000) && !(properties.flags & kFlagNoVideo))
-			properties.flags |= kFlagNonBlocking;
-		else
-			properties.flags &= ~0x1000;
-	} else
-			properties.flags &= ~0x1000;
 }
 
 int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties &properties) {
@@ -255,7 +247,7 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 
 	properties.canceled = false;
 
-	if (primary && (properties.flags & kFlagNonBlocking)) {
+	if (primary && properties.noBlock) {
 		video->live = true;
 		properties.waitEndFrame = false;
 		_liveProperties = properties;
@@ -263,9 +255,9 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 		return true;
 	}
 
-	if (_vm->getGameType() != kGameTypeUrban)
+	if ((_vm->getGameType() != kGameTypeUrban) && (_vm->getGameType() != kGameTypeBambou))
 		// NOTE: For testing (and comfort?) purposes, we enable aborting of all videos.
-		//       Except for Urban Runner, where it leads to glitches
+		//       Except for Urban Runner and Bambou, where it leads to glitches
 		properties.breakKey = kShortKeyEscape;
 
 	while ((properties.startFrame != properties.lastFrame) &&

@@ -167,11 +167,11 @@ void Inter_v6::o6_playVmdOrMusic() {
 
 	if (props.startFrame == -2) {
 		props.startFrame = 0;
-		props.lastFrame = -1;
-		props.flags &= ~0x1000;
+		props.lastFrame  = -1;
+		props.noBlock    = true;
 	}
 
-	_vm->_vidPlayer->evaluateFlags(props, true);
+	_vm->_vidPlayer->evaluateFlags(props);
 
 	int slot = 0;
 	if ((fileName[0] != 0) && ((slot = _vm->_vidPlayer->openVideo(true, fileName, props)) < 0)) {
@@ -182,7 +182,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	if (props.startFrame >= 0)
 		_vm->_vidPlayer->play(slot, props);
 
-	if (close && !(props.flags & VideoPlayer::kFlagNonBlocking)) {
+	if (close && !props.noBlock) {
 		if ((props.flags & VideoPlayer::kFlagNoVideo) && (!props.canceled))
 			_vm->_util->longDelay(500);
 
