@@ -84,10 +84,12 @@ protected:
 
 	uint16 _bitmapCursorId;
 
+	uint16 _SCRBGroupResources[14];
 	void removeObjectsUsingBaseId(uint16 baseId);
-	void freeShapesUsingGroupId(uint16 groupId);
-	void freeScriptsUsingGroupId(uint16 groupId);
-	void adjustShapeGroups(uint16 groupId);
+	void freeShapesUsingResourceId(uint16 resourceId);
+	void freeScriptsUsingResourceId(uint16 resourceId);
+	void groupFreeScript(uint index);
+	void groupAdjustView(uint index, uint count);
 
 	void finishDraw();
 };

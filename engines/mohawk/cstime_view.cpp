@@ -108,6 +108,7 @@ void CSTimeView::installGroup(uint16 resourceId, uint size, uint count, bool reg
 	installFeatureShapes(regs, _numSCRBGroups, resourceId);
 	if (baseId == 0xffff)
 		baseId = resourceId;
+	_SCRBGroupResources[_numSCRBGroups] = resourceId; // TODO: Meh. This needs some rethinking.
 	installGroupOfSCRBs(false, baseId, size, count);
 }
 
@@ -121,9 +122,9 @@ void CSTimeView::removeGroup(uint16 resourceId) {
 		return;
 
 	removeObjectsUsingBaseId(resourceId);
-	freeShapesUsingGroupId(groupId);
-	freeScriptsUsingGroupId(groupId);
-	adjustShapeGroups(groupId);
+	freeShapesUsingResourceId(resourceId);
+	freeScriptsUsingResourceId(resourceId);
+	// adjustShapeGroups(groupId); - TODO: unnecessary?
 }
 
 void CSTimeView::removeObjectsUsingBaseId(uint16 baseId) {
@@ -139,16 +140,50 @@ void CSTimeView::removeObjectsUsingBaseId(uint16 baseId) {
 	}
 }
 
-void CSTimeView::freeShapesUsingGroupId(uint16 groupId) {
-	_compoundSHAPGroups[groupId] = 0xffff; // FIXME
+void CSTimeView::freeShapesUsingResourceId(uint16 resourceId) {
+	// TODO: Meh. This needs some rethinking.
+	for (int i = _numSCRBGroups - 1; i >= 0; i--) {
+		if (_SCRBGroupResources[i] != resourceId)
+			continue;
+		for (uint j = i; j < 13; j++)
+			_compoundSHAPGroups[j] = _compoundSHAPGroups[j + 1];
+		_compoundSHAPGroups[13] = 0;
+		// TODO: deal with REGS
+	}
 }
 
-void CSTimeView::freeScriptsUsingGroupId(uint16 groupId) {
-	_SCRBGroupBases[groupId] = 0xffff; // FIXME
+void CSTimeView::freeScriptsUsingResourceId(uint16 resourceId) {
+	// TODO: Meh. This needs some rethinking.
+	for (int i = _numSCRBGroups - 1; i >= 0; i--) {
+		if (_SCRBGroupResources[i] == resourceId)
+			groupFreeScript(i);
+	}
 }
 
-void CSTimeView::adjustShapeGroups(uint16 groupId) {
-	// FIXME
+void CSTimeView::groupFreeScript(uint index) {
+	uint count = _SCRBGroupSizes[index];
+	_numSCRBGroups--;
+	for (uint i = index; i < _numSCRBGroups; i++) {
+		_SCRBGroupBases[i] = _SCRBGroupBases[i + 1];
+		_SCRBGroupSizes[i] = _SCRBGroupSizes[i + 1];
+		_SCRBGroupResources[i] = _SCRBGroupResources[i + 1]; // TODO: Meh. This needs some rethinking.
+	}
+	uint base = 0;
+	for (uint i = 0; i < index; i++)
+		base += _SCRBGroupSizes[i];
+	for (uint i = 0; i < count; i++)
+		_SCRBEntries.remove_at(base);
+	// TODO: kill any actual scripts
+	groupAdjustView(index, count);
+}
+
+void CSTimeView::groupAdjustView(uint index, uint count) {
+	for (Feature *node = _rootNode->_next; node->_next; node = node->_next) {
+		if (node->_data.compoundSHAPIndex < index)
+			continue;
+		node->_data.compoundSHAPIndex--;
+		node->_data.scrbIndex -= count;
+	}
 }
 
 void CSTimeView::loadBitmapCursors(uint16 baseId) {
