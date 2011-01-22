@@ -89,6 +89,8 @@ bool CSTimeCase1::checkObjectCondition(uint16 objectId) {
 			return false;
 		else if (objectId == 8 && _vm->_caseVariable[3] != 2)
 			return false;
+		else if (objectId > 8)
+			return false;
 		break;
 
 	case 4:
