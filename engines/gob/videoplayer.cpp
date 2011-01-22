@@ -450,7 +450,8 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 
 			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect)
 				_vm->_draw->invalidateRect(rect->left + ignoreBorder, rect->top, rect->right - 1, rect->bottom - 1);
-			_vm->_draw->blitInvalidated();
+			if (!video->live)
+				_vm->_draw->blitInvalidated();
 
 		} else if (video->surface == _vm->_draw->_frontSurface) {
 			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect)
