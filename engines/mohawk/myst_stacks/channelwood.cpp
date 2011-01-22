@@ -53,6 +53,7 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 	OPCODE(102, opcode_102);
 	OPCODE(104, o_waterTankValveOpen);
 	OPCODE(105, o_leverStartMove);
+	OPCODE(107, o_leverMoveFail);
 	OPCODE(108, o_leverMove);
 	OPCODE(110, o_valveHandleMove1);
 	OPCODE(111, o_valveHandleMoveStart1);
@@ -66,8 +67,9 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 	OPCODE(119, opcode_119);
 	OPCODE(122, o_waterTankValveClose);
 	OPCODE(123, o_executeMouseUp);
-	OPCODE(124, o_leverEndMove);
-	OPCODE(127, opcode_127);
+	OPCODE(124, o_leverEndMoveWithSound);
+	OPCODE(127, o_elevatorMovies);
+	OPCODE(128, o_leverEndMove);
 	OPCODE(129, o_soundReplace);
 
 	// "Init" Opcodes
@@ -333,6 +335,31 @@ void MystScriptParser_Channelwood::o_leverMove(uint16 op, uint16 var, uint16 arg
 	}
 }
 
+void MystScriptParser_Channelwood::o_leverMoveFail(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Generic lever move", op);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Make the handle follow the mouse
+	int16 maxStep = lever->getStepsV() - 1;
+	Common::Rect rect = lever->getRect();
+	int16 step = ((_vm->_mouse.y - rect.top) * lever->getStepsV()) / rect.height();
+	step = CLIP<int16>(step, 0, maxStep);
+
+	lever->drawFrame(step);
+
+	if (step == maxStep) {
+		if (!_leverPulled) {
+			_leverPulled = true;
+			uint16 soundId = lever->getList2(0);
+			if (soundId)
+				_vm->_sound->replaceSoundMyst(soundId);
+		}
+	} else {
+		_leverPulled = false;
+	}
+}
+
 void MystScriptParser_Channelwood::o_leverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generic lever end move", op);
 
@@ -354,6 +381,15 @@ void MystScriptParser_Channelwood::o_leverEndMove(uint16 op, uint16 var, uint16 
 		_vm->_sound->replaceSoundMyst(soundId);
 
 	_vm->checkCursorHints();
+}
+
+void MystScriptParser_Channelwood::o_leverEndMoveWithSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	o_leverEndMove(op, var, argc, argv);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	uint16 soundId = lever->getList3(0);
+	if (soundId)
+		_vm->_sound->replaceSoundMyst(soundId);
 }
 
 void MystScriptParser_Channelwood::o_valveHandleMove1(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -545,22 +581,47 @@ void MystScriptParser_Channelwood::o_waterTankValveClose(uint16 op, uint16 var, 
 	pipeChangeValve(false, 0x80);
 }
 
-void MystScriptParser_Channelwood::opcode_127(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Channelwood::o_elevatorMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used by Card 3262 (Elevator)
+	debugC(kDebugScript, "Opcode %d: Elevator movie", op);
 
-	if (argc == 2) {
-		// Used by Card 3262 (Elevator)
-		debugC(kDebugScript, "Opcode %d: Unknown...", op);
+	uint16 elevator = argv[0];
+	uint16 direction = argv[1];
 
-		uint16 u0 = argv[0];
-		uint16 u1 = argv[1];
+	Common::String movie;
+	uint16 x;
+	uint16 y;
 
-		debugC(kDebugScript, "\tu0: %d", u0);
-		debugC(kDebugScript, "\tu1: %d", u1);
+	switch (elevator) {
+	case 1:
+		x = 214;
+		y = 106;
+		if (direction == 1)
+			movie = _vm->wrapMovieFilename("welev1up", kChannelwoodStack);
+		else
+			movie = _vm->wrapMovieFilename("welev1dn", kChannelwoodStack);
+		break;
+	case 2:
+		x = 215;
+		y = 117;
+		if (direction == 1)
+			movie = _vm->wrapMovieFilename("welev2up", kChannelwoodStack);
+		else
+			movie = _vm->wrapMovieFilename("welev2dn", kChannelwoodStack);
+		break;
+	case 3:
+		x = 213;
+		y = 98;
+		if (direction == 1)
+			movie = _vm->wrapMovieFilename("welev3up", kChannelwoodStack);
+		else
+			movie = _vm->wrapMovieFilename("welev3dn", kChannelwoodStack);
+		break;
+	}
 
-		// TODO: Fill in Code...
-	} else
-		unknown(op, var, argc, argv);
+	_vm->_sound->pauseBackgroundMyst();
+	_vm->_video->playMovieBlocking(movie, x, y);
+	_vm->_sound->resumeBackgroundMyst();
 }
 
 void MystScriptParser_Channelwood::o_soundReplace(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

@@ -60,7 +60,9 @@ private:
 	DECLARE_OPCODE(o_waterTankValveOpen);
 	DECLARE_OPCODE(o_leverStartMove);
 	DECLARE_OPCODE(o_leverMove);
+	DECLARE_OPCODE(o_leverMoveFail);
 	DECLARE_OPCODE(o_leverEndMove);
+	DECLARE_OPCODE(o_leverEndMoveWithSound);
 	DECLARE_OPCODE(o_valveHandleMove1);
 	DECLARE_OPCODE(o_valveHandleMoveStart1);
 	DECLARE_OPCODE(o_valveHandleMoveStop);
@@ -73,7 +75,7 @@ private:
 	DECLARE_OPCODE(opcode_119);
 	DECLARE_OPCODE(o_executeMouseUp);
 	DECLARE_OPCODE(o_waterTankValveClose);
-	DECLARE_OPCODE(opcode_127);
+	DECLARE_OPCODE(o_elevatorMovies);
 	DECLARE_OPCODE(o_soundReplace);
 
 	DECLARE_OPCODE(o_lever_init);
