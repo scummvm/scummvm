@@ -365,9 +365,16 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 		case ID_ADPC:
 			debug(2, "Found Tag ADPC");
 			// ADPCM Sound Only
-			// NOTE: We completely ignore the contents of this chunk on purpose. In the original
-			// engine this held the status for the ADPCM decoder, while in ScummVM we store this data
-			// in the ADPCM decoder itself. The code is here for reference only.
+			//
+			// This is useful for seeking in the stream, and is actually quite brilliant
+			// considering some of the other things Broderbund did with the engine.
+			// Only Riven and CSTime are known to use ADPCM audio and only CSTime
+			// actually requires this for seeking. On the other hand, it may be interesting
+			// to look at that one Riven sample that uses the cue points.
+			//
+			// Basically, the sample frame from the cue list is looked up here and then
+			// sets the starting sample and step index at the point specified. Quite
+			// an elegant/efficient system, really.
 
 			adpcmStatus.size = stream->readUint32BE();
 			adpcmStatus.itemCount = stream->readUint16BE();
@@ -379,10 +386,13 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			for (uint16 i = 0; i < adpcmStatus.itemCount; i++) {
 				adpcmStatus.statusItems[i].sampleFrame = stream->readUint32BE();
 
-				for (uint16 j = 0; j < adpcmStatus.channels; j++)
-					adpcmStatus.statusItems[i].channelStatus[j] = stream->readUint32BE();
+				for (uint16 j = 0; j < adpcmStatus.channels; j++) {
+					adpcmStatus.statusItems[i].channelStatus[j].last = stream->readSint16BE();
+					adpcmStatus.statusItems[i].channelStatus[j].stepIndex = stream->readUint16BE();
+				}
 			}
 
+			// TODO: Actually use this chunk. For now, just delete the status items...
 			delete[] adpcmStatus.statusItems;
 			break;
 		case ID_CUE:

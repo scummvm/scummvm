@@ -80,7 +80,10 @@ struct ADPCMStatus { // Holds ADPCM status data, but is irrelevant for us.
 
 	struct StatusItem {
 		uint32 sampleFrame;
-		uint32 channelStatus[MAX_CHANNELS];
+		struct {
+			int16 last;
+			uint16 stepIndex;
+		} channelStatus[MAX_CHANNELS];
 	} *statusItems;
 };
 
