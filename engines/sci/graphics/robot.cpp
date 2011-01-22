@@ -23,6 +23,9 @@
  *
  */
 
+// fopen() and friends so we can dump frames and stuff to disk, for debugging
+// #define FORBIDDEN_SYMBOL_ALLOW_ALL 
+
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
@@ -107,7 +110,10 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 
 	// Some robot files have sound, which doesn't start from frame 0
 	// (e.g. Phantasmagoria, robot 1305)
-	if (_hasSound && _audioSize > 14)
+	// Yes, strangely, the word at offset 10 is non-zero if it DOESN'T have a preload
+	// in that case, the word is equal to that value which would otherwise be stored
+	// in the audio header (i.e. _audioSize above)
+	if (_hasSound && READ_LE_UINT16(_resourceData + 10) == 0)
 		_palOffset += READ_LE_UINT32(_resourceData + 60) + 14;
 
 	getFrameOffsets();
@@ -266,6 +272,11 @@ byte *GfxRobot::assembleVideoFrame(int frame) {
 	}
 
 	assert(assemblePtr == decompressedSize);
+
+	//	FILE *f = fopen("/tmp/flap", "w");
+	//      fwrite(output, 1, decompressedSize, f);
+	//      fclose(f);
+	//      exit(1);
 
 	return output;
 }
