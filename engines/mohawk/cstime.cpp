@@ -500,6 +500,19 @@ void MohawkEngine_CSTime::triggerEvent(CSTimeEvent &event) {
 		// FIXME
 		break;
 
+	case kCSTimeEventCharSetState:
+		_case->getCurrScene()->getChar(event.param1)->_enabled = event.param2;
+		break;
+
+	case kCSTimeEventCharSetupRestPos:
+		_case->getCurrScene()->getChar(event.param1)->setupRestPos();
+		break;
+
+	case kCSTimeEventSetInsertBefore:
+		warning("ignoring insert before");
+		// FIXME
+		break;
+
 	case kCSTimeEventUpdateBubble:
 		switch (event.param2) {
 		case 0:
