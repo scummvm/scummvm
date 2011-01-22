@@ -49,7 +49,7 @@ MystScriptParser_Channelwood::~MystScriptParser_Channelwood() {
 void MystScriptParser_Channelwood::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, o_bridgeToggle);
-	OPCODE(101, opcode_101);
+	OPCODE(101, o_pipeExtend);
 	OPCODE(102, opcode_102);
 	OPCODE(104, o_waterTankValveOpen);
 	OPCODE(105, o_leverStartMove);
@@ -234,6 +234,7 @@ void MystScriptParser_Channelwood::o_bridgeToggle(uint16 op, uint16 var, uint16 
 
 	VideoHandle bridge = _vm->_video->playMovie(_vm->wrapMovieFilename("bridge", kChannelwoodStack), 292, 203);
 
+	// Toggle bridge state
 	if (_state.waterPumpBridgeState)
 		_vm->_video->setVideoBounds(bridge, Graphics::VideoTimestamp(3050, 600), Graphics::VideoTimestamp(6100, 600));
 	else
@@ -242,31 +243,23 @@ void MystScriptParser_Channelwood::o_bridgeToggle(uint16 op, uint16 var, uint16 
 	_vm->_video->waitUntilMovieEnds(bridge);
 }
 
-void MystScriptParser_Channelwood::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Play Pipe Movie and Sound", op);
 
-	if (argc == 1) {
-		debugC(kDebugScript, "Opcode %d: Play Pipe Movie and Sound", op);
+	uint16 soundId = argv[0];
+	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-		uint16 soundId = argv[0];
-		debugC(kDebugScript, "\tsoundId: %d", soundId);
+	_vm->_sound->replaceSoundMyst(soundId);
+	VideoHandle pipe = _vm->_video->playMovie(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack), 267, 170);
 
-		_vm->_sound->replaceSoundMyst(soundId);
+	// Toggle pipe state
+	if (_state.pipeState)
+		_vm->_video->setVideoBounds(pipe, Graphics::VideoTimestamp(3040, 600), Graphics::VideoTimestamp(6080, 600));
+	else
+		_vm->_video->setVideoBounds(pipe, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(3040, 600));
 
-		// TODO: Get Movie Location from Invoking Resource Rect, rather than
-		//       hardcoded 267, 170 ?
-
-		// TODO: Need version of playMovie blocking which allows selection
-		//       of start and finish points.
-		if (!_vm->_varStore->getVar(6)) {
-			// Play Pipe Extending i.e. 0 to 1/2 way through file
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack), 267, 170);
-		} else {
-			// Play Pipe Retracting i.e. 1/2 way to end of file
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack), 267, 170);
-		}
-	} else
-		unknown(op, var, argc, argv);
+	_vm->_video->waitUntilMovieEnds(pipe);
+	_vm->_sound->resumeBackgroundMyst();
 }
 
 void MystScriptParser_Channelwood::opcode_102(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

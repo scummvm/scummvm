@@ -55,7 +55,7 @@ private:
 	void opcode_203_disable();
 
 	DECLARE_OPCODE(o_bridgeToggle);
-	DECLARE_OPCODE(opcode_101);
+	DECLARE_OPCODE(o_pipeExtend);
 	DECLARE_OPCODE(opcode_102);
 	DECLARE_OPCODE(o_waterTankValveOpen);
 	DECLARE_OPCODE(o_leverStartMove);
