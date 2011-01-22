@@ -491,6 +491,10 @@ void MohawkEngine_CSTime::triggerEvent(CSTimeEvent &event) {
 		_interface->getInventoryDisplay()->activateCuffs(true);
 		break;
 
+	case kCSTimeEventHelperSetupRestPos:
+		_case->getCurrScene()->getChar(_case->getCurrScene()->getHelperId())->setupRestPos();
+		break;
+
 	case kCSTimeEventUnknown25:
 		_case->getCurrScene()->getChar(event.param1)->_unknown2 = 1;
 		break;
@@ -510,6 +514,16 @@ void MohawkEngine_CSTime::triggerEvent(CSTimeEvent &event) {
 
 	case kCSTimeEventCharSetupRestPos:
 		_case->getCurrScene()->getChar(event.param1)->setupRestPos();
+		break;
+
+	case kCSTimeEventStopEnvironmentSound:
+		warning("ignoring stop environment sound");
+		// FIXME
+		break;
+
+	case kCSTimeEventSetMusic:
+		warning("ignoring set music");
+		// FIXME
 		break;
 
 	case kCSTimeEventSetInsertBefore:
