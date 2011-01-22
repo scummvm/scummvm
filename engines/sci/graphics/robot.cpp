@@ -161,15 +161,6 @@ void GfxRobot::setPalette() {
 }
 
 void GfxRobot::drawNextFrame() {
-	// Play the audio of the robot file (for debugging)
-#if 0
-	if (_hasSound) {
-		Audio::SoundHandle _audioHandle;
-		Audio::AudioStream *audioStream = g_sci->_audio->getRobotAudioStream(_resourceData);
-		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
-	}
-#endif
-
 	int width, height;
 
 	byte *pixels = assembleVideoFrame(_curFrame);
@@ -305,7 +296,13 @@ int GfxRobot::getFrameScale(int frame) {
 }
 
 void GfxRobot::playAudio() {
-//	Audio::Mixer *mixer = g_system->getMixer();
+#if 0
+	if (_hasSound) {
+		Audio::SoundHandle _audioHandle;
+		Audio::AudioStream *audioStream = g_sci->_audio->getRobotAudioStream(_resourceData);
+		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
+	}
+#endif
 }
 
 	
