@@ -112,6 +112,8 @@ public:
 	bool play(int slot, Properties &properties);
 	void waitEndFrame(int slot, bool onlySound = false);
 
+	bool isPlayingLive() const;
+
 	void updateLive(bool force = false);
 
 	bool slotIsOpen(int slot = 0) const;

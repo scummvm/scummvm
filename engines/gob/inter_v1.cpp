@@ -45,6 +45,7 @@
 #include "gob/palanim.h"
 #include "gob/scenery.h"
 #include "gob/video.h"
+#include "gob/videoplayer.h"
 #include "gob/sound/sound.h"
 
 namespace Gob {
@@ -1189,8 +1190,10 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	int16 key;
 	uint32 now;
 
-	_vm->_draw->forceBlit();
-	_vm->_video->retrace();
+	if (!_vm->_vidPlayer->isPlayingLive()) {
+		_vm->_draw->forceBlit();
+		_vm->_video->retrace();
+	}
 
 	cmd = _vm->_game->_script->readInt16();
 	animPalette();

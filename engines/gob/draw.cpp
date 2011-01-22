@@ -245,6 +245,9 @@ void Draw::blitInvalidated() {
 	if (_noInvalidated && !_applyPal)
 		return;
 
+	if (_vm->isTrueColor())
+		_applyPal = false;
+
 	if (_noInvalidated) {
 		setPalette();
 		_applyPal = false;

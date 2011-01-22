@@ -299,6 +299,11 @@ void VideoPlayer::waitEndFrame(int slot, bool onlySound) {
 	}
 }
 
+bool VideoPlayer::isPlayingLive() const {
+	const Video *video = getVideoBySlot(0);
+	return video && video->live;
+}
+
 void VideoPlayer::updateLive(bool force) {
 	Video *video = getVideoBySlot(0);
 	if (!video || !video->live)
