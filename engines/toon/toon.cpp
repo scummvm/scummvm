@@ -3087,7 +3087,6 @@ bool ToonEngine::loadGame(int32 slot) {
 		exitScene();
 	}
 
-
 	_gameState->load(loadFile);
 	loadScene(_gameState->_currentScene, true);
 	_gameState->loadConversations(loadFile);
@@ -3208,14 +3207,13 @@ bool ToonEngine::loadGame(int32 slot) {
 		}
 
 		_saveBufferStream->write(buf, size);
-		delete loadFile;
 	}
+	delete loadFile;
 	return true;
 }
 
 // another special case for inventory
 int32 ToonEngine::getSpecialInventoryItem(int32 item) {
-
 	// butter
 	if (item == 12) {
 		for (int32 i = 0; i < _gameState->_numInventoryItems; i++) {
