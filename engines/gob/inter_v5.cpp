@@ -67,6 +67,9 @@ void Inter_v5::setupOpcodesGob() {
 
 	OPCODEGOB( 33, o5_spaceShooter);
 
+	OPCODEGOB( 34, o5_spaceShooter);
+	OPCODEGOB( 37, o5_spaceShooter);
+
 	OPCODEGOB( 80, o5_getSystemCDSpeed);
 	OPCODEGOB( 81, o5_getSystemRAM);
 	OPCODEGOB( 82, o5_getSystemCPUSpeed);
@@ -264,8 +267,9 @@ void Inter_v5::o5_spaceShooter(OpGobParams &params) {
 	_vm->_game->_script->readInt16();
 
 	if (params.extraData != 0) {
-		WRITE_VARO_UINT32(var1, 2);
-		WRITE_VARO_UINT32(var2, 0);
+		// we need to return 1 for the shooter mission 34. There is only one planet to choose from in the map.
+		WRITE_VARO_UINT32(var1,(params.extraData == 34) ? 1 : 2);
+		WRITE_VARO_UINT32(var2,0);
 	} else {
 		if (params.paramCount < 5) {
 			warning("Space shooter variable counter < 5");
