@@ -1559,12 +1559,25 @@ bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
 		_audioStream = Audio::makeQueuingAudioStream(_soundFreq, _soundStereo != 0);
 	}
 
+	_subtitle = -1;
+
+	if ((_blitMode > 0) && (_flags & 0x4000)) {
+		if (_curFrame > frame) {
+			_stream->seek(_frames[0].offset);
+			_curFrame = -1;
+		}
+
+		while (frame > _curFrame)
+			decodeNextFrame();
+
+		return true;
+	}
+
 	// Seek
 	_stream->seek(_frames[frame + 1].offset);
 	_curFrame = frame;
 	_startTime = g_system->getMillis() - ((frame + 2) * getStaticTimeToNextFrame());
 
-	_subtitle = -1;
 
 	return true;
 }
