@@ -53,8 +53,10 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 	OPCODE(102, opcode_102);
 	OPCODE(104, o_waterTankValveOpen);
 	OPCODE(105, o_leverStartMove);
+	OPCODE(106, o_leverEndMove);
 	OPCODE(107, o_leverMoveFail);
 	OPCODE(108, o_leverMove);
+	OPCODE(109, o_stairsDoorToggle);
 	OPCODE(110, o_valveHandleMove1);
 	OPCODE(111, o_valveHandleMoveStart1);
 	OPCODE(112, o_valveHandleMoveStop);
@@ -69,7 +71,7 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 	OPCODE(123, o_executeMouseUp);
 	OPCODE(124, o_leverEndMoveWithSound);
 	OPCODE(127, o_elevatorMovies);
-	OPCODE(128, o_leverEndMove);
+	OPCODE(128, o_leverEndMoveResumeBackground);
 	OPCODE(129, o_soundReplace);
 
 	// "Init" Opcodes
@@ -152,9 +154,8 @@ uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
 		return ((_state.waterValveStates & 0xe2) == 0x82) ? 1 : 0;
 	case 29: // Sound - Left Third Water Valve Flowing To Left (To Pipe In Water)
 		return ((_state.waterValveStates & 0xe2) == 0x80) ? 1 : 0;
-//	case 30: // Temple Door State
-//		return 0;
-//		return 1;
+	case 30: // Door State
+		return _doorOpened;
 	case 32: // Sound - Water Flowing in Pipe to Book Room Elevator
 		return ((_state.waterValveStates & 0xf8) == 0xb0 && _state.pipeState) ? 1 : 0;
 //	case 102: // Sirrus's Desk Drawer / Red Page State
@@ -177,6 +178,9 @@ void MystScriptParser_Channelwood::toggleVar(uint16 var) {
 	case 6: // Pipe Bridge Extended
 		_state.pipeState ^= 1;
 		break;
+	case 16: // Channelwood Lower Walkway to Upper Walkway Spiral Stair Upper Door State
+		_state.stairsUpperDoorState ^= 1;
+		break;
 	default:
 		MystScriptParser::toggleVar(var);
 		break;
@@ -187,6 +191,12 @@ bool MystScriptParser_Channelwood::setVarValue(uint16 var, uint16 value) {
 	bool refresh = false;
 
 	switch (var) {
+	case 2: // Lower Walkway to Upper Walkway Elevator Raised
+		if (_state.elevatorState != value) {
+			_state.elevatorState = value;
+			refresh = true;
+		}
+		break;
 	case 9:
 		refresh = pipeChangeValve(value, 0x40);
 		break;
@@ -207,6 +217,9 @@ bool MystScriptParser_Channelwood::setVarValue(uint16 var, uint16 value) {
 		break;
 //	case 18: // Sirrus's Room Bed Drawer Open
 //	temp ^= 1;
+	case 30: // Door opened
+		_doorOpened = value;
+		break;
 	default:
 		refresh = MystScriptParser::setVarValue(var, value);
 		break;
@@ -383,6 +396,11 @@ void MystScriptParser_Channelwood::o_leverEndMove(uint16 op, uint16 var, uint16 
 	_vm->checkCursorHints();
 }
 
+void MystScriptParser_Channelwood::o_leverEndMoveResumeBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_vm->_sound->resumeBackgroundMyst();
+	o_leverEndMove(op, var, argc, argv);
+}
+
 void MystScriptParser_Channelwood::o_leverEndMoveWithSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	o_leverEndMove(op, var, argc, argv);
 
@@ -390,6 +408,19 @@ void MystScriptParser_Channelwood::o_leverEndMoveWithSound(uint16 op, uint16 var
 	uint16 soundId = lever->getList3(0);
 	if (soundId)
 		_vm->_sound->replaceSoundMyst(soundId);
+}
+
+void MystScriptParser_Channelwood::o_stairsDoorToggle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Play stairs door video", op);
+
+	MystResourceType6 *movie = static_cast<MystResourceType6 *>(_invokingResource);
+
+	if (_state.stairsUpperDoorState) {
+		// TODO: Play backwards
+		movie->playMovie();
+	} else {
+		movie->playMovie();
+	}
 }
 
 void MystScriptParser_Channelwood::o_valveHandleMove1(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

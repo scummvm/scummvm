@@ -62,7 +62,9 @@ private:
 	DECLARE_OPCODE(o_leverMove);
 	DECLARE_OPCODE(o_leverMoveFail);
 	DECLARE_OPCODE(o_leverEndMove);
+	DECLARE_OPCODE(o_leverEndMoveResumeBackground);
 	DECLARE_OPCODE(o_leverEndMoveWithSound);
+	DECLARE_OPCODE(o_stairsDoorToggle);
 	DECLARE_OPCODE(o_valveHandleMove1);
 	DECLARE_OPCODE(o_valveHandleMoveStart1);
 	DECLARE_OPCODE(o_valveHandleMoveStop);
@@ -87,6 +89,8 @@ private:
 	MystGameState::Channelwood &_state;
 
 	uint16 _valveVar; // 64
+
+	uint16 _doorOpened; // 68
 
 	bool _leverPulled;
 	MystResourceType5 *_leverAction; // 72
