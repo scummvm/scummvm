@@ -159,7 +159,7 @@ void GfxRobot::draw(int x, int y) {
 
 		byte *pixels = assembleVideoFrame(i);
 		getFrameDimensions(i, width, height);
-		g_system->copyRectToScreen(pixels, width, x, y, width, (int) (height * getFrameScaleFactor(i)));
+		g_system->copyRectToScreen(pixels, width, x, y, width, height * getFrameScale(i) / 100);
 		g_system->updateScreen();
 		g_system->delayMillis(100);
 		delete[] pixels;
@@ -222,7 +222,7 @@ byte *GfxRobot::assembleVideoFrame(int frame) {
 		videoData += 10 + fragmentCompressed;
 	}
 
-	assert(decompressedSize == (frameWidth * frameHeight) * getFrameScaleFactor(frame));
+	assert(decompressedSize == (frameWidth * frameHeight) * getFrameScale(frame) / 100);
 
 	byte *output = new byte[decompressedSize];
 	int assemblePtr = 0;
@@ -274,11 +274,11 @@ void GfxRobot::getFrameRect(int frame, Common::Rect &rect) {
 	rect = Common::Rect(x, y, x + w, y + h); 
 }
 
-float GfxRobot::getFrameScaleFactor(int frame) {
+int GfxRobot::getFrameScale(int frame) {
 	byte *videoData = _resourceData + _imageStart[frame];
 	byte percentage = videoData[3];
 
-	return (float) percentage / 100.0;
+	return percentage;
 }
 	
 #endif

@@ -44,7 +44,7 @@ private:
 	byte *assembleVideoFrame(int frame);
 	void getFrameDimensions(int frame, int &width, int &height);
 	void getFrameRect(int frame, Common::Rect &rect); // Not sure what to use this for yet
-	float getFrameScaleFactor(int frame); // Scale factor?? More like custom height, but why use a percentage for it?
+	int getFrameScale(int frame); // Scale factor (multiplied by 100). More like custom height, but why use a percentage for it?
 
 	ResourceManager *_resMan;
 	GfxScreen *_screen;
