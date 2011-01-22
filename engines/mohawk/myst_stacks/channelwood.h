@@ -51,9 +51,6 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
-	void opcode_203_run();
-	void opcode_203_disable();
-
 	DECLARE_OPCODE(o_bridgeToggle);
 	DECLARE_OPCODE(o_pipeExtend);
 	DECLARE_OPCODE(opcode_102);
@@ -73,7 +70,7 @@ private:
 	DECLARE_OPCODE(o_valveHandleMove3);
 	DECLARE_OPCODE(o_valveHandleMoveStart3);
 	DECLARE_OPCODE(opcode_117);
-	DECLARE_OPCODE(opcode_118);
+	DECLARE_OPCODE(o_drawerOpen);
 	DECLARE_OPCODE(opcode_119);
 	DECLARE_OPCODE(o_executeMouseUp);
 	DECLARE_OPCODE(o_waterTankValveClose);
@@ -82,13 +79,15 @@ private:
 
 	DECLARE_OPCODE(o_lever_init);
 	DECLARE_OPCODE(o_pipeValve_init);
-	DECLARE_OPCODE(opcode_203);
+	DECLARE_OPCODE(o_drawer_init);
 
 	DECLARE_OPCODE(opcode_300);
 
 	MystGameState::Channelwood &_state;
 
 	uint16 _valveVar; // 64
+
+	uint16 _siriusDrawerState; // 66
 
 	uint16 _doorOpened; // 68
 

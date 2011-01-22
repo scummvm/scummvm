@@ -65,7 +65,7 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 	OPCODE(115, o_valveHandleMove3);
 	OPCODE(116, o_valveHandleMoveStart3);
 	OPCODE(117, opcode_117);
-	OPCODE(118, opcode_118);
+	OPCODE(118, o_drawerOpen);
 	OPCODE(119, opcode_119);
 	OPCODE(122, o_waterTankValveClose);
 	OPCODE(123, o_executeMouseUp);
@@ -77,7 +77,7 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 	// "Init" Opcodes
 	OPCODE(201, o_lever_init);
 	OPCODE(202, o_pipeValve_init);
-	OPCODE(203, opcode_203);
+	OPCODE(203, o_drawer_init);
 
 	// "Exit" Opcodes
 	OPCODE(300, opcode_300);
@@ -86,11 +86,11 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 #undef OPCODE
 
 void MystScriptParser_Channelwood::disablePersistentScripts() {
-	opcode_203_disable();
+
 }
 
 void MystScriptParser_Channelwood::runPersistentScripts() {
-	opcode_203_run();
+
 }
 
 uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
@@ -129,9 +129,8 @@ uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
 		return _state.stairsUpperDoorState;
 	case 17: // Achenar's Holoprojector Selection
 		return _state.holoprojectorSelection;
-//	case 18: // Sirrus's Room Bed Drawer Open
-//		return 0;
-//		return 1;
+	case 18: // Sirrus's Room Bed Drawer Open
+		return _siriusDrawerState;
 	case 19: // Sound - Water Tank Valve
 		return (_state.waterValveStates & 0x80) ? 1 : 0;
 	case 20: // Sound - First Water Valve Water Flowing To Left
@@ -158,13 +157,26 @@ uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
 		return _doorOpened;
 	case 32: // Sound - Water Flowing in Pipe to Book Room Elevator
 		return ((_state.waterValveStates & 0xf8) == 0xb0 && _state.pipeState) ? 1 : 0;
-//	case 102: // Sirrus's Desk Drawer / Red Page State
-//		return 0; // Drawer Closed
-//		return 1; // Drawer Open, Red Page Taken
-//		return 2; // Drawer Open, Red Page Present
-//	case 103: // Blue Page Present
-//		return 0; // Blue Page Taken
-//		return 1; // Blue Page Present
+	case 33: // Channelwood Lower Walkway to Upper Walkway Spiral Stair Upper Door State
+		if (_state.stairsUpperDoorState) {
+			if (_tempVar == 1)
+				return 2;
+			else
+				return 1;
+		} else {
+			return 0;
+		}
+	case 102: // Sirrus's Desk Drawer / Red Page State
+		if (_siriusDrawerState) {
+			if(!(_globals.redPagesInBook & 16) && (_globals.heldPage != 11))
+				return 2; // Drawer Open, Red Page Present
+			else
+				return 1; // Drawer Open, Red Page Taken
+		} else {
+			return 0; // Drawer Closed
+		}
+	case 103: // Blue Page Present
+		return !(_globals.bluePagesInBook & 16) && (_globals.heldPage != 5);
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -181,6 +193,22 @@ void MystScriptParser_Channelwood::toggleVar(uint16 var) {
 	case 16: // Channelwood Lower Walkway to Upper Walkway Spiral Stair Upper Door State
 		_state.stairsUpperDoorState ^= 1;
 		break;
+	case 102: // Red page
+		if (!(_globals.redPagesInBook & 16)) {
+			if (_globals.heldPage == 11)
+				_globals.heldPage = 0;
+			else
+				_globals.heldPage = 11;
+		}
+		break;
+	case 103: // Blue page
+		if (!(_globals.bluePagesInBook & 16)) {
+			if (_globals.heldPage == 5)
+				_globals.heldPage = 0;
+			else
+				_globals.heldPage = 5;
+		}
+		break;
 	default:
 		MystScriptParser::toggleVar(var);
 		break;
@@ -194,6 +222,12 @@ bool MystScriptParser_Channelwood::setVarValue(uint16 var, uint16 value) {
 	case 2: // Lower Walkway to Upper Walkway Elevator Raised
 		if (_state.elevatorState != value) {
 			_state.elevatorState = value;
+			refresh = true;
+		}
+		break;
+	case 5: // Lower Walkway to Upper Walkway Spiral Stair Lower Door State
+		if (_state.stairsLowerDoorState != value) {
+			_state.stairsLowerDoorState = value;
 			refresh = true;
 		}
 		break;
@@ -215,8 +249,12 @@ bool MystScriptParser_Channelwood::setVarValue(uint16 var, uint16 value) {
 	case 14:
 		refresh = pipeChangeValve(value, 0x02);
 		break;
-//	case 18: // Sirrus's Room Bed Drawer Open
-//	temp ^= 1;
+	case 18: // Sirrus's Room Bed Drawer Open
+		if (_siriusDrawerState != value) {
+			_siriusDrawerState = value;
+			refresh = true;
+		}
+		break;
 	case 30: // Door opened
 		_doorOpened = value;
 		break;
@@ -553,15 +591,12 @@ void MystScriptParser_Channelwood::opcode_117(uint16 op, uint16 var, uint16 argc
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Channelwood::opcode_118(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Channelwood::o_drawerOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Open Sirius drawer", op);
 
-	if (argc == 0) {
-		// Used on Card 3318 (Sirrus' Room Nightstand Drawer)
-		// Triggered when clicked on drawer
-		// TODO: Implement function...
-	} else
-		unknown(op, var, argc, argv);
+	_siriusDrawerState = 1;
+	_vm->redrawArea(18, false);
+	_vm->redrawArea(102, false);
 }
 
 void MystScriptParser_Channelwood::opcode_119(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -674,33 +709,8 @@ void MystScriptParser_Channelwood::o_pipeValve_init(uint16 op, uint16 var, uint1
 	_valveVar = var;
 }
 
-static struct {
-	bool enabled;
-} g_opcode203Parameters;
-
-void MystScriptParser_Channelwood::opcode_203_run(void) {
-	if (g_opcode203Parameters.enabled) {
-		// Used for Card 3310 (Sirrus' Room Right Bed Drawer),
-		// Card 3307 (Sirrus' Room Left Bed Drawer)
-		// and Card 3318 (Sirrus' Room Nightstand Drawer)
-		// TODO: Fill in Logic...
-	}
-}
-
-void MystScriptParser_Channelwood::opcode_203_disable(void) {
-	g_opcode203Parameters.enabled = false;
-}
-
-void MystScriptParser_Channelwood::opcode_203(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 3310 (Sirrus' Room Right Bed Drawer),
-	// Card 3307 (Sirrus' Room Left Bed Drawer)
-	// and Card 3318 (Sirrus' Room Nightstand Drawer)
-	if (argc == 0)
-		g_opcode203Parameters.enabled = true;
-	else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Channelwood::o_drawer_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_siriusDrawerState = 0;
 }
 
 void MystScriptParser_Channelwood::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
