@@ -96,6 +96,7 @@ public:
 
 		bool waitEndFrame; ///< Wait for the frame's time to run out?
 
+		bool hasSound; ///< Does the video have sound?
 		bool canceled; ///< Was the video canceled?
 
 		Properties();

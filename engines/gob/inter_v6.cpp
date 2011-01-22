@@ -183,7 +183,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 		_vm->_vidPlayer->play(slot, props);
 
 	if (close && !props.noBlock) {
-		if ((props.flags & VideoPlayer::kFlagNoVideo) && (!props.canceled))
+		if (props.hasSound && !props.canceled)
 			_vm->_util->longDelay(500);
 
 		_vm->_vidPlayer->closeVideo(slot);

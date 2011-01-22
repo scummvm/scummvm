@@ -40,7 +40,8 @@ VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFront
 	x(-1), y(-1), width(-1), height(-1), flags(kFlagFrontSurface), switchColorMode(false),
 	startFrame(-1), lastFrame(-1), endFrame(-1), forceSeek(false),
 	breakKey(kShortKeyEscape), palCmd(8), palStart(0), palEnd(255), palFrame(-1),
-	noBlock(false), loop(false), fade(false), waitEndFrame(true), canceled(false) {
+	noBlock(false), loop(false), fade(false), waitEndFrame(true),
+	hasSound(false), canceled(false) {
 
 }
 
@@ -201,6 +202,8 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 
 	if (primary)
 		_needBlit = (properties.flags & kFlagUseBackSurfaceContent) && (properties.sprite == Draw::kFrontSurface);
+
+	properties.hasSound = video->decoder->hasSound();
 
 	if (!video->decoder->hasSound())
 		video->decoder->setFrameRate(_vm->_util->getFrameRate());
