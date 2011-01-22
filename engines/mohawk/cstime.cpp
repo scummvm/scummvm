@@ -200,6 +200,7 @@ void MohawkEngine_CSTime::nextScene() {
 	_case->setCurrScene(_nextSceneId);
 	CSTimeScene *scene = _case->getCurrScene();
 	// TODO: scene->setState(1);
+	scene->_visitCount++;
 	scene->installGroup();
 
 	_interface->draw();
@@ -210,8 +211,11 @@ void MohawkEngine_CSTime::nextScene() {
 	addEvent(CSTimeEvent(kCSTimeEventWait, 0xffff, 500));
 	scene->idleAmbientAnims();
 	// TODO: startEnvironmentSound();
-	// TODO: queue one of the scene event queues, depending on whether a value is <= 1 or not
-	addEventList(scene->getEvents(false));
+	if (scene->_visitCount == 1) {
+		addEventList(scene->getEvents(false));
+	} else {
+		addEventList(scene->getEvents(true));
+	}
 	_view->idleView();
 	// TODO: maybe startMusic();
 }

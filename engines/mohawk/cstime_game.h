@@ -220,6 +220,7 @@ public:
 	uint16 getHelperId() { return _helperId; }
 	uint getId() { return _id; }
 
+	uint _visitCount;
 	CSTimeChar *_activeChar;
 
 	Common::Array<Feature *> _objectFeatures;

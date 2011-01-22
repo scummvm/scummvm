@@ -750,6 +750,7 @@ CSTimeScene *CSTimeCase::getCurrScene() {
 }
 
 CSTimeScene::CSTimeScene(MohawkEngine_CSTime *vm, CSTimeCase *case_, uint id) : _vm(vm), _case(case_), _id(id) {
+	_visitCount = 0;
 	_activeChar = NULL;
 	_currHotspot = 0xffff;
 	_hoverHotspot = 0xffff;
