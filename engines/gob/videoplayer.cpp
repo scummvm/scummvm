@@ -87,6 +87,9 @@ void VideoPlayer::evaluateFlags(Properties &properties) {
 	} else {
 		properties.sprite = Draw::kBackSurface;
 	}
+
+	if (properties.noBlock && (properties.sprite == Draw::kFrontSurface))
+		properties.sprite = Draw::kBackSurface;
 }
 
 int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties &properties) {
@@ -314,8 +317,6 @@ void VideoPlayer::updateLive(bool force) {
 
 		if (!_liveProperties.loop) {
 			WRITE_VAR_OFFSET(212, (uint32)-1);
-			if (video->surface == _vm->_draw->_frontSurface)
-				_vm->_draw->forceBlit(true);
 			_vm->_vidPlayer->closeVideo();
 			return;
 		} else {
