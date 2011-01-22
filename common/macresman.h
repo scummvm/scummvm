@@ -23,6 +23,15 @@
  *
  */
 
+/**
+ * @file
+ * Macintosh resource fork manager used in engines:
+ * - groovie
+ * - mohawk
+ * - sci
+ * - scumm
+ */
+
 #include "common/array.h"
 #include "common/file.h"
 
@@ -37,8 +46,8 @@ typedef Array<uint16> MacResIDArray;
 typedef Array<uint32> MacResTagArray;
 
 /**
- * Class for reading Mac Binary files.
- * Is able to read dumped resource forks too.
+ * Class for handling Mac data and resource forks.
+ * It can read from raw, MacBinary, and AppleDouble formats.
  */
 class MacResManager {
 
@@ -46,17 +55,48 @@ public:
 	MacResManager();
 	~MacResManager();
 
+	/**
+	 * Open a Mac data/resource fork pair.
+	 * @param filename The base file name of the file
+	 * @note This will check for the raw resource fork, MacBinary, and AppleDouble formats.
+	 * @return True on success
+	 */
 	bool open(String filename);
+
+	/**
+	 * Open a Mac data/resource fork pair.
+	 * @param path The path that holds the forks
+	 * @param filename The base file name of the file
+	 * @note This will check for the raw resource fork, MacBinary, and AppleDouble formats.
+	 * @return True on success
+	 */
 	bool open(FSNode path, String filename);
+
+	/**
+	 * Close the Mac data/resource fork pair.
+	 */
 	void close();
 
+	/**
+	 * Query whether or not we have a data fork present.
+	 * @return True if the data fork is present
+	 */
 	bool hasDataFork() const;
+
+	/**
+	 * Query whether or not we have a data fork present.
+	 * @return True if the resource fork is present
+	 */
 	bool hasResFork() const;
 
+	/**
+	 * Check if the given stream is in the MacBinary format.
+	 * @param stream The stream we're checking
+	 */
 	static bool isMacBinary(SeekableReadStream &stream);
 
 	/**
-	 * Read resource from the Mac Binary file
+	 * Read resource from the MacBinary file
 	 * @param typeID FourCC of the type
 	 * @param resID Resource ID to fetch
 	 * @return Pointer to a SeekableReadStream with loaded resource
@@ -64,26 +104,52 @@ public:
 	SeekableReadStream *getResource(uint32 typeID, uint16 resID);
 
 	/**
-	 * Read resource from the Mac Binary file
+	 * Read resource from the MacBinary file
 	 * @note This will take the first resource that matches this name, regardless of type
-	 * @param filename filename of the resource
+	 * @param filename file name of the resource
 	 * @return Pointer to a SeekableReadStream with loaded resource
 	 */
 	SeekableReadStream *getResource(const String &filename);
 
 	/**
-	 * Read resource from the Mac Binary file
+	 * Read resource from the MacBinary file
 	 * @param typeID FourCC of the type
-	 * @param filename filename of the resource
+	 * @param filename file name of the resource
 	 * @return Pointer to a SeekableReadStream with loaded resource
 	 */
 	SeekableReadStream *getResource(uint32 typeID, const String &filename);
 
+	/**
+	 * Retrieve the data fork
+	 * @return The stream if present, 0 otherwise
+	 */
 	SeekableReadStream *getDataFork();
+
+	/**
+	 * Get the name of a given resource
+	 * @param typeID FourCC of the type
+	 * @param resID Resource ID to fetch
+	 * @return The name of a given resource and an empty string if not present
+	 */
 	String getResName(uint32 typeID, uint16 resID) const;
+
+	/**
+	 * Get the size of the resource fork
+	 * @return The size of the resource fork
+	 */
 	uint32 getResForkSize() const;
+
+	/**
+	 * Calculate the MD5 checksum of the resource fork
+	 * @param length The maximum length to compute for
+	 * @return The MD5 checksum of the resource fork
+	 */
 	String computeResForkMD5AsString(uint32 length = 0) const;
 
+	/**
+	 * Get the base file name of the data/resource fork pair
+	 * @return The base file name of the data/resource fork pair
+	 */
 	String getBaseFileName() const { return _baseFileName; }
 
 	/**
