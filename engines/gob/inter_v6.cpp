@@ -168,7 +168,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	if (props.startFrame == -2) {
 		props.startFrame = 0;
 		props.lastFrame = -1;
-		close = false;
+		props.flags &= ~0x1000;
 	}
 
 	_vm->_vidPlayer->evaluateFlags(props, true);
