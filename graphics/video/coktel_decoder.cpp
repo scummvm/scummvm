@@ -1570,16 +1570,21 @@ bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
 }
 
 void VMDDecoder::setXY(uint16 x, uint16 y) {
-	if ((_blitMode == 1) || (_blitMode == 3))
-		x *= _bytesPerPixel;
+	uint16 curX = _x;
+	uint16 setX =  x;
+
+	if ((x != 0xFFFF) && (_blitMode == 1)) {
+		curX *= _bytesPerPixel;
+		setX *= _bytesPerPixel;
+	}
 
 	for (uint32 i = 0; i < _frameCount; i++) {
 		for (int j = 0; j < _partsPerFrame; j++) {
 
 			if (_frames[i].parts[j].type == kPartTypeVideo) {
 				if (x != 0xFFFF) {
-					_frames[i].parts[j].left  = _frames[i].parts[j].left  - _x + x;
-					_frames[i].parts[j].right = _frames[i].parts[j].right - _x + x;
+					_frames[i].parts[j].left  = _frames[i].parts[j].left  - curX + setX;
+					_frames[i].parts[j].right = _frames[i].parts[j].right - curX + setX;
 				}
 				if (y != 0xFFFF) {
 					_frames[i].parts[j].top    = _frames[i].parts[j].top    - _y + y;
@@ -1766,14 +1771,14 @@ bool VMDDecoder::assessVideoProperties() {
 		_blitMode      = _bytesPerPixel - 1;
 		_bytesPerPixel = n;
 
-		if ((_blitMode == 1) && !(_flags & 0x1000))
-			_blitMode = 3;
-
 		_isPaletted = false;
 	}
 
-	if ((_blitMode == 1) || (_blitMode == 3))
-		_width /= _bytesPerPixel;
+	if (_blitMode == 1) {
+		_width    /= _bytesPerPixel;
+		_defaultX /= _bytesPerPixel;
+		_x        /= _bytesPerPixel;
+	}
 
 	if (_hasVideo) {
 		uint32 suggestedVideoBufferSize = _videoBufferSize;
@@ -2169,47 +2174,8 @@ void VMDDecoder::processFrame() {
 }
 
 bool VMDDecoder::renderFrame(Common::Rect &rect) {
-	Common::Rect realRect = rect;
-	Common::Rect fakeRect = rect;
-
-	if         (_blitMode == 0) {
-
-		realRect = Common::Rect(realRect.left  - _x, realRect.top    - _y,
-		                        realRect.right - _x, realRect.bottom - _y);
-
-		fakeRect = Common::Rect(fakeRect.left  - _x, fakeRect.top    - _y,
-		                        fakeRect.right - _x, fakeRect.bottom - _y);
-
-	} else if ((_blitMode == 1) || (_blitMode == 3)) {
-
-		realRect = Common::Rect(rect.left  / _bytesPerPixel, rect.top,
-		                        rect.right / _bytesPerPixel, rect.bottom);
-
-		realRect = Common::Rect(realRect.left  - _x / _bytesPerPixel, realRect.top    - _y,
-		                        realRect.right - _x / _bytesPerPixel, realRect.bottom - _y);
-
-		fakeRect = Common::Rect(fakeRect.left  - _x, fakeRect.top    - _y,
-		                        fakeRect.right - _x, fakeRect.bottom - _y);
-
-	} else if (_blitMode == 2) {
-
-		fakeRect = Common::Rect(rect.left  * _bytesPerPixel, rect.top,
-		                        rect.right * _bytesPerPixel, rect.bottom);
-
-		realRect = Common::Rect(realRect.left  - _x, realRect.top    - _y,
-		                        realRect.right - _x, realRect.bottom - _y);
-
-		fakeRect = Common::Rect(fakeRect.left  - _x * _bytesPerPixel, fakeRect.top    - _y,
-		                        fakeRect.right - _x * _bytesPerPixel, fakeRect.bottom - _y);
-
-	}
-
-	realRect.clip(Common::Rect(_surface.w, _surface.h));
-	fakeRect.clip(Common::Rect(_surface.w * _bytesPerPixel, _surface.h));
-
-	if (!realRect.isValidRect() || realRect.isEmpty())
-		return false;
-	if (!fakeRect.isValidRect() || realRect.isEmpty())
+	Common::Rect realRect, fakeRect;
+	if (!getRenderRects(rect, realRect, fakeRect))
 		return false;
 
 	if (_externalCodec) {
@@ -2283,15 +2249,60 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 		else if (_bytesPerPixel == 3)
 			blit24(*surface, *blockRect);
 
-		if ((_blitMode == 1) || (_blitMode == 3))
-			*blockRect = Common::Rect(blockRect->left  + _x / _bytesPerPixel, blockRect->top    + _y,
-			                          blockRect->right + _x / _bytesPerPixel, blockRect->bottom + _y);
-		else
-			*blockRect = Common::Rect(blockRect->left  + _x, blockRect->top    + _y,
-			                          blockRect->right + _x, blockRect->bottom + _y);
+		*blockRect = Common::Rect(blockRect->left  + _x, blockRect->top    + _y,
+		                          blockRect->right + _x, blockRect->bottom + _y);
 	}
 
 	rect = *blockRect;
+	return true;
+}
+
+bool VMDDecoder::getRenderRects(const Common::Rect &rect,
+		Common::Rect &realRect, Common::Rect &fakeRect) {
+
+	realRect = rect;
+	fakeRect = rect;
+
+	if        (_blitMode == 0) {
+
+		realRect = Common::Rect(realRect.left  - _x, realRect.top    - _y,
+		                        realRect.right - _x, realRect.bottom - _y);
+
+		fakeRect = Common::Rect(fakeRect.left  - _x, fakeRect.top    - _y,
+		                        fakeRect.right - _x, fakeRect.bottom - _y);
+
+	} else if (_blitMode == 1) {
+
+		realRect = Common::Rect(rect.left  / _bytesPerPixel, rect.top,
+		                        rect.right / _bytesPerPixel, rect.bottom);
+
+		realRect = Common::Rect(realRect.left  - _x, realRect.top    - _y,
+		                        realRect.right - _x, realRect.bottom - _y);
+
+		fakeRect = Common::Rect(fakeRect.left  - _x * _bytesPerPixel, fakeRect.top    - _y,
+		                        fakeRect.right - _x * _bytesPerPixel, fakeRect.bottom - _y);
+
+	} else if (_blitMode == 2) {
+
+		fakeRect = Common::Rect(rect.left  * _bytesPerPixel, rect.top,
+		                        rect.right * _bytesPerPixel, rect.bottom);
+
+		realRect = Common::Rect(realRect.left  - _x, realRect.top    - _y,
+		                        realRect.right - _x, realRect.bottom - _y);
+
+		fakeRect = Common::Rect(fakeRect.left  - _x * _bytesPerPixel, fakeRect.top    - _y,
+		                        fakeRect.right - _x * _bytesPerPixel, fakeRect.bottom - _y);
+
+	}
+
+	realRect.clip(Common::Rect(_surface.w, _surface.h));
+	fakeRect.clip(Common::Rect(_surface.w * _bytesPerPixel, _surface.h));
+
+	if (!realRect.isValidRect() || realRect.isEmpty())
+		return false;
+	if (!fakeRect.isValidRect() || realRect.isEmpty())
+		return false;
+
 	return true;
 }
 
@@ -2304,16 +2315,10 @@ void VMDDecoder::blit16(const Surface &srcSurf, Common::Rect &rect) {
 
 	PixelFormat pixelFormat = getPixelFormat();
 
-	uint16 x = _x;
-	if (_blitMode == 1)
-		x /= 4;
-	else if (_blitMode == 3)
-		x /= 2;
-
 	const byte *src = (byte *)srcSurf.pixels +
 		(srcRect.top * srcSurf.pitch) + srcRect.left * _bytesPerPixel;
 	byte *dst = (byte *)_surface.pixels +
-		((_y + rect.top) * _surface.pitch) + (x + rect.left) * _surface.bytesPerPixel;
+		((_y + rect.top) * _surface.pitch) + (_x + rect.left) * _surface.bytesPerPixel;
 
 	for (int i = 0; i < rect.height(); i++) {
 		const byte *srcRow = src;
@@ -2348,14 +2353,10 @@ void VMDDecoder::blit24(const Surface &srcSurf, Common::Rect &rect) {
 
 	PixelFormat pixelFormat = getPixelFormat();
 
-	uint16 x = _x;
-	if ((_blitMode == 1) || (_blitMode == 3))
-		x /= 9;
-
 	const byte *src = (byte *)srcSurf.pixels +
 		(srcRect.top * srcSurf.pitch) + srcRect.left * _bytesPerPixel;
 	byte *dst = (byte *)_surface.pixels +
-		((_y + rect.top) * _surface.pitch) + (x + rect.left) * _surface.bytesPerPixel;
+		((_y + rect.top) * _surface.pitch) + (_x + rect.left) * _surface.bytesPerPixel;
 
 	for (int i = 0; i < rect.height(); i++) {
 		const byte *srcRow = src;

@@ -481,6 +481,8 @@ private:
 
 	// Video
 	bool renderFrame(Common::Rect &rect);
+	bool getRenderRects(const Common::Rect &rect,
+			Common::Rect &realRect, Common::Rect &fakeRect);
 	void blit16(const Surface &srcSurf, Common::Rect &rect);
 	void blit24(const Surface &srcSurf, Common::Rect &rect);
 
