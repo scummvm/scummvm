@@ -424,9 +424,8 @@ void MohawkEngine_CSTime::triggerEvent(CSTimeEvent &event) {
 	case kCSTimeEventCharStartFlapping:
 		{
 		CSTimeChar *chr = _case->getCurrScene()->getChar(event.param1);
-		if (!chr->_enabled) {
-			// FIXME
-			warning("chr not enabled in kCSTimeEventCharStartFlapping");
+		if (!chr->_unknown2) {
+			_case->getCurrScene()->_activeChar->_flappingState = 0;
 			break;
 		}
 

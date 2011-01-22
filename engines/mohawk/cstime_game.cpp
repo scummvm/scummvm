@@ -171,7 +171,7 @@ void CSTimeChar::setupRestPos() {
 		return;
 
 	if (!_restFeature) {
-		uint id = 0; // FIXME
+		uint id = _enabled ? 0 : 13;
 		uint32 flags = kFeatureSortStatic | kFeatureNewNoLoop | kFeatureNewDisableOnReset;
 		Feature *feature = _vm->getView()->installViewFeature(getChrBaseId() + id, flags, NULL);
 		// FIXME: fix priorities
@@ -192,7 +192,7 @@ void CSTimeChar::removeChr() {
 		_vm->getView()->removeFeature(_talkFeature3, true);
 		if (_talkFeature1)
 			_vm->getView()->removeFeature(_talkFeature1, true);
-		if (_unknown1 > 1)
+		if (_talkFeature2) // original checks unknown1 > 1, but this is silly when e.g. _enabled is false
 			_vm->getView()->removeFeature(_talkFeature2, true);
 	}
 
