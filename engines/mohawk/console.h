@@ -112,6 +112,10 @@ private:
 	bool Cmd_StopSound(int argc, const char **argv);
 	bool Cmd_DrawImage(int argc, const char **argv);
 	bool Cmd_DrawSubimage(int argc, const char **argv);
+	bool Cmd_ChangeCase(int argc, const char **argv);
+	bool Cmd_ChangeScene(int argc, const char **argv);
+	bool Cmd_CaseVariable(int argc, const char **argv);
+	bool Cmd_InvItem(int argc, const char **argv);
 };
 
 } // End of namespace Mohawk

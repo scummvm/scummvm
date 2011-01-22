@@ -709,6 +709,10 @@ CSTimeConsole::CSTimeConsole(MohawkEngine_CSTime *vm) : GUI::Debugger(), _vm(vm)
 	DCmd_Register("stopSound",			WRAP_METHOD(CSTimeConsole, Cmd_StopSound));
 	DCmd_Register("drawImage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawImage));
 	DCmd_Register("drawSubimage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawSubimage));
+	DCmd_Register("changeCase",			WRAP_METHOD(CSTimeConsole, Cmd_ChangeCase));
+	DCmd_Register("changeScene",			WRAP_METHOD(CSTimeConsole, Cmd_ChangeScene));
+	DCmd_Register("caseVariable",			WRAP_METHOD(CSTimeConsole, Cmd_CaseVariable));
+	DCmd_Register("invItem",			WRAP_METHOD(CSTimeConsole, Cmd_InvItem));
 }
 
 CSTimeConsole::~CSTimeConsole() {
@@ -751,6 +755,54 @@ bool CSTimeConsole::Cmd_DrawSubimage(int argc, const char **argv) {
 
 	_vm->_gfx->copyAnimSubImageToScreen((uint16)atoi(argv[1]), (uint16)atoi(argv[2]));
 	_vm->_system->updateScreen();
+	return false;
+}
+
+bool CSTimeConsole::Cmd_ChangeCase(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Usage: changeCase <value>\n");
+		return true;
+	}
+
+	error("Can't change case yet"); // FIXME
+	return false;
+}
+
+bool CSTimeConsole::Cmd_ChangeScene(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Usage: changeScene <value>\n");
+		return true;
+	}
+
+	_vm->addEvent(CSTimeEvent(kCSTimeEventNewScene, 0xffff, atoi(argv[1])));
+	return false;
+}
+
+bool CSTimeConsole::Cmd_CaseVariable(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Usage: caseVariable <id> [<value>]\n");
+		return true;
+	}
+
+	if (argc == 2) {
+		DebugPrintf("case variable %d has value %d\n", atoi(argv[1]), _vm->_caseVariable[atoi(argv[1])]);
+	} else {
+		_vm->_caseVariable[atoi(argv[1])] = atoi(argv[2]);
+	}
+	return true;
+}
+
+bool CSTimeConsole::Cmd_InvItem(int argc, const char **argv) {
+	if (argc < 3) {
+		DebugPrintf("Usage: invItem <id> <0 or 1>\n");
+		return true;
+	}
+
+	if (atoi(argv[2])) {
+		_vm->addEvent(CSTimeEvent(kCSTimeEventDropItemInInventory, 0xffff, atoi(argv[1])));
+	} else {
+		_vm->addEvent(CSTimeEvent(kCSTimeEventRemoveItemFromInventory, 0xffff, atoi(argv[1])));
+	}
 	return false;
 }
 
