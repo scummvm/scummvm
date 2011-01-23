@@ -173,7 +173,7 @@ char *FileManager_v2d::fetchString(int index) {
 		error("An error has occurred: bad String offset");
 
 	// Check size of string
-	if ((off2 - off1) >= kMaxBoxChar)
+	if ((off2 - off1) >= (uint32) kMaxBoxChar)
 		error("Fetched string too long!");
 
 	// Position to string and read it into gen purpose _textBoxBuffer
