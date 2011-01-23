@@ -77,7 +77,7 @@ protected:
 	uint32 _firstFrameOffset;
 };
 
-class MoviePlayerDXA : public MoviePlayer, ::Graphics::DXADecoder {
+class MoviePlayerDXA : public MoviePlayer, Video::DXADecoder {
 	static const char *_sequenceList[90];
 	uint8 _sequenceNum;
 public:
@@ -95,7 +95,7 @@ private:
 	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
 };
 
-class MoviePlayerSMK : public MoviePlayer, ::Graphics::SmackerDecoder {
+class MoviePlayerSMK : public MoviePlayer, Video::SmackerDecoder {
 public:
 	MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name);
 

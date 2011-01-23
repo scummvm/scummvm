@@ -150,7 +150,7 @@ public:
 
 private:
 	struct Video {
-		Graphics::CoktelDecoder *decoder;
+		::Video::CoktelDecoder *decoder;
 		Common::String fileName;
 
 		SurfacePtr surface;
@@ -186,7 +186,7 @@ private:
 
 	Common::String findFile(const Common::String &file, Properties &properties);
 
-	Graphics::CoktelDecoder *openVideo(const Common::String &file, Properties &properties);
+	::Video::CoktelDecoder *openVideo(const Common::String &file, Properties &properties);
 
 	bool playFrame(int slot, Properties &properties);
 

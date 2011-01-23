@@ -48,19 +48,19 @@ struct MLSTRecord {
 
 struct VideoEntry {
 	// Playback variables
-	Graphics::SeekableVideoDecoder *video;
+	Video::SeekableVideoDecoder *video;
 	uint16 x;
 	uint16 y;
 	bool loop;
 	bool enabled;
-	Graphics::VideoTimestamp start, end;
+	Video::VideoTimestamp start, end;
 
 	// Identification
 	Common::String filename; // External video files
 	uint16 id;               // Internal Mohawk files
 
 	// Helper functions
-	Graphics::SeekableVideoDecoder *operator->() const { assert(video); return video; } // TODO: Remove this eventually
+	Video::SeekableVideoDecoder *operator->() const { assert(video); return video; } // TODO: Remove this eventually
 	void clear();
 	bool endOfVideo();
 };
@@ -105,8 +105,8 @@ public:
 	uint32 getFrameCount(VideoHandle handle);
 	uint32 getElapsedTime(VideoHandle handle);
 	bool endOfVideo(VideoHandle handle);
-	void setVideoBounds(VideoHandle handle, Graphics::VideoTimestamp start, Graphics::VideoTimestamp end);
-	void seekToTime(VideoHandle handle, Graphics::VideoTimestamp time);
+	void setVideoBounds(VideoHandle handle, Video::VideoTimestamp start, Video::VideoTimestamp end);
+	void seekToTime(VideoHandle handle, Video::VideoTimestamp time);
 	void seekToFrame(VideoHandle handle, uint32 frame);
 	void setVideoLooping(VideoHandle handle, bool loop);
 	void waitUntilMovieEnds(VideoHandle videoHandle);

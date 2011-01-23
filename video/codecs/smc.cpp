@@ -28,7 +28,7 @@
 #include "video/codecs/smc.h"
 #include "common/stream.h"
 
-namespace Graphics {
+namespace Video {
 
 #define GET_BLOCK_COUNT() \
   (opcode & 0x10) ? (1 + stream->readByte()) : 1 + (opcode & 0x0F);
@@ -388,4 +388,4 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 	return _surface;
 }
 
-} // End of namespace Graphics
+} // End of namespace Video

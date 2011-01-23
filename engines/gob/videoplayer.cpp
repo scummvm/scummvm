@@ -798,7 +798,7 @@ Common::String VideoPlayer::findFile(const Common::String &file, Properties &pro
 	return fileName;
 }
 
-Graphics::CoktelDecoder *VideoPlayer::openVideo(const Common::String &file, Properties &properties) {
+::Video::CoktelDecoder *VideoPlayer::openVideo(const Common::String &file, Properties &properties) {
 	Common::String fileName = findFile(file, properties);
 	if (fileName.empty())
 		return 0;
@@ -807,15 +807,15 @@ Graphics::CoktelDecoder *VideoPlayer::openVideo(const Common::String &file, Prop
 	if (!stream)
 		return 0;
 
-	Graphics::CoktelDecoder *video = 0;
+	::Video::CoktelDecoder *video = 0;
 	if (properties.type == kVideoTypeIMD)
-		video = new Graphics::IMDDecoder(_vm->_mixer, Audio::Mixer::kSFXSoundType);
+		video = new ::Video::IMDDecoder(_vm->_mixer, Audio::Mixer::kSFXSoundType);
 	else if (properties.type == kVideoTypePreIMD)
-		video = new Graphics::PreIMDDecoder(properties.width, properties.height, _vm->_mixer, Audio::Mixer::kSFXSoundType);
+		video = new ::Video::PreIMDDecoder(properties.width, properties.height, _vm->_mixer, Audio::Mixer::kSFXSoundType);
 	else if (properties.type == kVideoTypeVMD)
-		video = new Graphics::VMDDecoder(_vm->_mixer, Audio::Mixer::kSFXSoundType);
+		video = new ::Video::VMDDecoder(_vm->_mixer, Audio::Mixer::kSFXSoundType);
 	else if (properties.type == kVideoTypeRMD)
-		video = new Graphics::VMDDecoder(_vm->_mixer, Audio::Mixer::kSFXSoundType);
+		video = new ::Video::VMDDecoder(_vm->_mixer, Audio::Mixer::kSFXSoundType);
 	else
 		warning("Couldn't open video \"%s\": Invalid video Type", fileName.c_str());
 

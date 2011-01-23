@@ -227,11 +227,11 @@ void Console::preEnter() {
 	_engine->pauseEngine(true);
 }
 
-extern void playVideo(Graphics::VideoDecoder *videoDecoder, VideoState videoState);
+extern void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState);
 
 void Console::postEnter() {
 	if (!_videoFile.empty()) {
-		Graphics::VideoDecoder *videoDecoder = 0;
+		Video::VideoDecoder *videoDecoder = 0;
 
 #ifdef ENABLE_SCI32
 		bool duckMode = false;
@@ -243,17 +243,17 @@ void Console::postEnter() {
 			videoDecoder = seqDecoder;
 #ifdef ENABLE_SCI32
 		} else if (_videoFile.hasSuffix(".vmd")) {
-			videoDecoder = new Graphics::VMDDecoder(g_system->getMixer());
+			videoDecoder = new Video::VMDDecoder(g_system->getMixer());
 #endif
 		} else if (_videoFile.hasSuffix(".duk")) {
 #ifdef ENABLE_SCI32
 			duckMode = true;
-			videoDecoder = new Graphics::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AviDecoder(g_system->getMixer());
 #else
 			warning("Duck videos require SCI32 support compiled in");
 #endif
 		} else if (_videoFile.hasSuffix(".avi")) {
-			videoDecoder = new Graphics::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AviDecoder(g_system->getMixer());
 		}
 
 		if (videoDecoder && videoDecoder->loadFile(_videoFile)) {

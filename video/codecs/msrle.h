@@ -28,24 +28,24 @@
 
 #include "video/codecs/codec.h"
 
-namespace Graphics {
+namespace Video {
 
 class MSRLEDecoder : public Codec {
 public:
 	MSRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
 	~MSRLEDecoder();
 
-	const Surface *decodeImage(Common::SeekableReadStream *stream);
-	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
+	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 
 private:
 	byte _bitsPerPixel;
 
-	Surface *_surface;
+	Graphics::Surface *_surface;
 
 	void decode8(Common::SeekableReadStream *stream);
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

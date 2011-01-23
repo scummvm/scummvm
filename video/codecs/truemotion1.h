@@ -33,20 +33,20 @@
  
 #include "video/codecs/codec.h"
 
-namespace Graphics {
+namespace Video {
 
 class TrueMotion1Decoder : public Codec {
 public:
 	TrueMotion1Decoder(uint16 width, uint16 height);
 	~TrueMotion1Decoder();
 
-	const Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
 
 	// Always return RGB565
-	PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); }
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); }
 
 private:
-	Surface *_surface;
+	Graphics::Surface *_surface;
 
 	int _mbChangeBitsRowSize;
 	byte *_buf, *_mbChangeBits, *_indexStream;
@@ -100,7 +100,7 @@ private:
 	void genVectorTable16(const byte *selVectorTable);
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif // VIDEO_CODECS_TRUEMOTION1_H
 #endif // SCI32/Plugins guard

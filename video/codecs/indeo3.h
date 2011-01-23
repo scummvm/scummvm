@@ -39,22 +39,22 @@
 
 #include "video/codecs/codec.h"
 
-namespace Graphics {
+namespace Video {
 
 class Indeo3Decoder : public Codec {
 public:
 	Indeo3Decoder(uint16 width, uint16 height);
 	~Indeo3Decoder();
 
-	const Surface *decodeImage(Common::SeekableReadStream *stream);
-	PixelFormat getPixelFormat() const;
+	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const;
 
 	static bool isIndeo3(Common::SeekableReadStream &stream);
 
 private:
-	Surface *_surface;
+	Graphics::Surface *_surface;
 
-	PixelFormat _pixelFormat;
+	Graphics::PixelFormat _pixelFormat;
 
 	static const int _corrector_type_0[24];
 	static const int _corrector_type_2[8];
@@ -87,7 +87,7 @@ private:
 			const byte *buf2, int min_width_160);
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif // VIDEO_CODECS_INDEO3_H
 

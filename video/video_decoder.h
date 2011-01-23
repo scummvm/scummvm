@@ -37,7 +37,7 @@ namespace Common {
 	class SeekableReadStream;
 }
 
-namespace Graphics {
+namespace Video {
 
 /**
  * Implementation of a generic video decoder
@@ -109,12 +109,12 @@ public:
 	 * @note the return surface should *not* be freed
 	 * @note this may return 0, in which case the last frame should be kept on screen
 	 */
-	virtual const Surface *decodeNextFrame() = 0;
+	virtual const Graphics::Surface *decodeNextFrame() = 0;
 
 	/**
 	 * Get the pixel format of the video
 	 */
-	virtual PixelFormat getPixelFormat() const = 0;
+	virtual Graphics::PixelFormat getPixelFormat() const = 0;
 
 	/**
 	 * Get the palette for the video in RGB format (if 8bpp or less)
@@ -285,6 +285,6 @@ public:
 	virtual void rewind() { seekToTime(0); }
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

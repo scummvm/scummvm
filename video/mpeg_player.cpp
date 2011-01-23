@@ -91,7 +91,7 @@
 #include "common/system.h"
 #include "common/util.h"
 
-namespace Graphics {
+namespace Video {
 
 BaseAnimationState::BaseAnimationState(OSystem *sys, int width, int height)
 	: _movieWidth(width), _movieHeight(height), _frameWidth(width), _frameHeight(height), _sys(sys) {
@@ -622,4 +622,4 @@ void BaseAnimationState::updateScreen() {
 	_sys->updateScreen();
 }
 
-} // End of namespace Graphics
+} // End of namespace Video

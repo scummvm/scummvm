@@ -34,7 +34,7 @@ namespace Common {
 	class SeekableReadStream;
 }
 
-namespace Graphics {
+namespace Video {
 
 /**
  * Decoder for FLIC videos.
@@ -59,13 +59,13 @@ public:
 	 * @note the return surface should *not* be freed
 	 * @note this may return 0, in which case the last frame should be kept on screen
 	 */
-	const Surface *decodeNextFrame();
+	const Graphics::Surface *decodeNextFrame();
 
 	bool isVideoLoaded() const { return _fileStream != 0; }
 	uint16 getWidth() const { return _surface->w; }
 	uint16 getHeight() const { return _surface->h; }
 	uint32 getFrameCount() const { return _frameCount; }
-	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 
 	const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
 	void clearDirtyRects() { _dirtyRects.clear(); }
@@ -89,13 +89,13 @@ private:
 	void unpackPalette(uint8 *mem);
 
 	Common::SeekableReadStream *_fileStream;
-	Surface *_surface;
+	Graphics::Surface *_surface;
 	uint32 _frameCount;
 	Common::Rational _frameRate;
 
 	Common::List<Common::Rect> _dirtyRects;
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

@@ -30,7 +30,7 @@
 
 #include "common/hashmap.h"
 
-namespace Graphics {
+namespace Video {
 
 struct CDToonsBlock {
 	uint16 flags;
@@ -46,14 +46,14 @@ public:
 	CDToonsDecoder(uint16 width, uint16 height);
 	~CDToonsDecoder();
 
-	Surface *decodeImage(Common::SeekableReadStream *stream);
-	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
+	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 	bool containsPalette() const { return true; }
 	const byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 
 private:
-	Surface *_surface;
+	Graphics::Surface *_surface;
 	byte _palette[256 * 3];
 	bool _dirtyPalette;
 	uint16 _currentPaletteId;
@@ -65,6 +65,6 @@ private:
 	void setPalette(byte *data);
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

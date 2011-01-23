@@ -49,7 +49,7 @@ namespace Sword25 {
  * Video decoder used in engines:
  *  - sword25
  */
-class TheoraDecoder : public Graphics::FixedRateVideoDecoder {
+class TheoraDecoder : public Video::FixedRateVideoDecoder {
 public:
 	TheoraDecoder(Audio::Mixer *mixer = 0, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual ~TheoraDecoder();

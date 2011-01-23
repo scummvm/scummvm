@@ -34,7 +34,7 @@
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
-namespace Graphics {
+namespace Video {
 
 QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Codec() {
 	_bitsPerPixel = bitsPerPixel;
@@ -47,7 +47,7 @@ QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Cod
 
 	debug(2, "QTRLE corrected width: %d", width);
 
-	_surface = new Surface();
+	_surface = new Graphics::Surface();
 	_surface->create(width, height, _bitsPerPixel <= 8 ? 1 : _pixelFormat.bytesPerPixel);
 }
 
@@ -239,7 +239,7 @@ void QTRLEDecoder::decode16(Common::SeekableReadStream *stream, uint32 rowPtr, u
 				while (rleCode--) {
 					// Convert from RGB555 to the format specified by the Overlay
 					byte r = 0, g = 0, b = 0;
-					colorToRGB<ColorMasks<555> >(rgb16, r, g, b);
+					Graphics::colorToRGB<Graphics::ColorMasks<555> >(rgb16, r, g, b);
 					rgb[pixelPtr++] = _pixelFormat.RGBToColor(r, g, b);
 				}
 			} else {
@@ -252,7 +252,7 @@ void QTRLEDecoder::decode16(Common::SeekableReadStream *stream, uint32 rowPtr, u
 
 					// Convert from RGB555 to the format specified by the Overlay
 					byte r = 0, g = 0, b = 0;
-					colorToRGB<ColorMasks<555> >(rgb16, r, g, b);
+					Graphics::colorToRGB<Graphics::ColorMasks<555> >(rgb16, r, g, b);
 					rgb[pixelPtr++] = _pixelFormat.RGBToColor(r, g, b);
 				}
 			}
@@ -354,7 +354,7 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream *stream, uint32 rowPtr, u
 	}
 }
 
-const Surface *QTRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *QTRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	uint16 start_line = 0;
 	uint16 height = _surface->h;
 
@@ -418,4 +418,4 @@ QTRLEDecoder::~QTRLEDecoder() {
 	delete _surface;
 }
 
-} // End of namespace Graphics
+} // End of namespace Video

@@ -38,7 +38,7 @@
 
 static const uint32 kVideoCodecIndeo3 = MKID_BE('iv32');
 
-namespace Graphics {
+namespace Video {
 
 CoktelDecoder::State::State() : flags(0), speechId(0) {
 }
@@ -107,7 +107,7 @@ void CoktelDecoder::setSurfaceMemory() {
 	_ownSurface = true;
 }
 
-const Surface *CoktelDecoder::getSurface() const {
+const Graphics::Surface *CoktelDecoder::getSurface() const {
 	if (!isVideoLoaded())
 		return 0;
 
@@ -435,7 +435,7 @@ void CoktelDecoder::deRLE(byte *&destPtr, const byte *&srcPtr, int16 destLen, in
 }
 
 // A whole, completely filled block
-void CoktelDecoder::renderBlockWhole(Surface &dstSurf, const byte *src, Common::Rect &rect) {
+void CoktelDecoder::renderBlockWhole(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect) {
 	Common::Rect srcRect = rect;
 
 	rect.clip(dstSurf.w, dstSurf.h);
@@ -450,7 +450,7 @@ void CoktelDecoder::renderBlockWhole(Surface &dstSurf, const byte *src, Common::
 }
 
 // A quarter-wide whole, completely filled block
-void CoktelDecoder::renderBlockWhole4X(Surface &dstSurf, const byte *src, Common::Rect &rect) {
+void CoktelDecoder::renderBlockWhole4X(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect) {
 	Common::Rect srcRect = rect;
 
 	rect.clip(dstSurf.w, dstSurf.h);
@@ -475,7 +475,7 @@ void CoktelDecoder::renderBlockWhole4X(Surface &dstSurf, const byte *src, Common
 }
 
 // A half-high whole, completely filled block
-void CoktelDecoder::renderBlockWhole2Y(Surface &dstSurf, const byte *src, Common::Rect &rect) {
+void CoktelDecoder::renderBlockWhole2Y(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect) {
 	Common::Rect srcRect = rect;
 
 	rect.clip(dstSurf.w, dstSurf.h);
@@ -497,7 +497,7 @@ void CoktelDecoder::renderBlockWhole2Y(Surface &dstSurf, const byte *src, Common
 }
 
 // A sparse block
-void CoktelDecoder::renderBlockSparse(Surface &dstSurf, const byte *src, Common::Rect &rect) {
+void CoktelDecoder::renderBlockSparse(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect) {
 	Common::Rect srcRect = rect;
 
 	rect.clip(dstSurf.w, dstSurf.h);
@@ -532,7 +532,7 @@ void CoktelDecoder::renderBlockSparse(Surface &dstSurf, const byte *src, Common:
 }
 
 // A half-high sparse block
-void CoktelDecoder::renderBlockSparse2Y(Surface &dstSurf, const byte *src, Common::Rect &rect) {
+void CoktelDecoder::renderBlockSparse2Y(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect) {
 	warning("renderBlockSparse2Y");
 
 	Common::Rect srcRect = rect;
@@ -569,7 +569,7 @@ void CoktelDecoder::renderBlockSparse2Y(Surface &dstSurf, const byte *src, Commo
 	}
 }
 
-void CoktelDecoder::renderBlockRLE(Surface &dstSurf, const byte *src, Common::Rect &rect) {
+void CoktelDecoder::renderBlockRLE(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect) {
 	Common::Rect srcRect = rect;
 
 	rect.clip(dstSurf.w, dstSurf.h);
@@ -697,7 +697,7 @@ bool PreIMDDecoder::isVideoLoaded() const {
 	return _stream != 0;
 }
 
-const Surface *PreIMDDecoder::decodeNextFrame() {
+const Graphics::Surface *PreIMDDecoder::decodeNextFrame() {
 	if (!isVideoLoaded() || endOfVideo())
 		return 0;
 
@@ -809,8 +809,8 @@ void PreIMDDecoder::renderFrame() {
 	_dirtyRects.push_back(Common::Rect(_x, _y, _x + _width, _y + _height));
 }
 
-PixelFormat PreIMDDecoder::getPixelFormat() const {
-	return PixelFormat::createFormatCLUT8();
+Graphics::PixelFormat PreIMDDecoder::getPixelFormat() const {
+	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
 
@@ -1165,7 +1165,7 @@ bool IMDDecoder::isVideoLoaded() const {
 	return _stream != 0;
 }
 
-const Surface *IMDDecoder::decodeNextFrame() {
+const Graphics::Surface *IMDDecoder::decodeNextFrame() {
 	if (!isVideoLoaded() || endOfVideo())
 		return 0;
 
@@ -1455,8 +1455,8 @@ void IMDDecoder::emptySoundSlice(bool hasNextCmd) {
 	_audioStream->queueBuffer(soundBuf, _soundSliceSize, DisposeAfterUse::YES, 0);
 }
 
-PixelFormat IMDDecoder::getPixelFormat() const {
-	return PixelFormat::createFormatCLUT8();
+Graphics::PixelFormat IMDDecoder::getPixelFormat() const {
+	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
 
@@ -2041,7 +2041,7 @@ bool VMDDecoder::isVideoLoaded() const {
 	return _stream != 0;
 }
 
-const Surface *VMDDecoder::decodeNextFrame() {
+const Graphics::Surface *VMDDecoder::decodeNextFrame() {
 	if (!isVideoLoaded() || endOfVideo())
 		return 0;
 
@@ -2202,7 +2202,7 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 			return false;
 
 		Common::MemoryReadStream frameStream(_videoBuffer[0], _videoBufferLen[0]);
-		const Surface *codecSurf = _codec->decodeImage(&frameStream);
+		const Graphics::Surface *codecSurf = _codec->decodeImage(&frameStream);
 		if (!codecSurf)
 			return false;
 
@@ -2239,8 +2239,8 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 		dataSize = _videoBufferLen[srcBuffer];
 	}
 
-	Common::Rect *blockRect = &fakeRect;
-	Surface      *surface   = &_surface;
+	Common::Rect      *blockRect = &fakeRect;
+	Graphics::Surface *surface   = &_surface;
 	if (_blitMode == 0) {
 		*blockRect = Common::Rect(blockRect->left  + _x, blockRect->top    + _y,
 		                          blockRect->right + _x, blockRect->bottom + _y);
@@ -2325,14 +2325,14 @@ bool VMDDecoder::getRenderRects(const Common::Rect &rect,
 	return true;
 }
 
-void VMDDecoder::blit16(const Surface &srcSurf, Common::Rect &rect) {
+void VMDDecoder::blit16(const Graphics::Surface &srcSurf, Common::Rect &rect) {
 	rect = Common::Rect(rect.left / 2, rect.top, rect.right / 2, rect.bottom);
 
 	Common::Rect srcRect = rect;
 
 	rect.clip(_surface.w, _surface.h);
 
-	PixelFormat pixelFormat = getPixelFormat();
+	Graphics::PixelFormat pixelFormat = getPixelFormat();
 
 	const byte *src = (byte *)srcSurf.pixels +
 		(srcRect.top * srcSurf.pitch) + srcRect.left * _bytesPerPixel;
@@ -2363,14 +2363,14 @@ void VMDDecoder::blit16(const Surface &srcSurf, Common::Rect &rect) {
 	}
 }
 
-void VMDDecoder::blit24(const Surface &srcSurf, Common::Rect &rect) {
+void VMDDecoder::blit24(const Graphics::Surface &srcSurf, Common::Rect &rect) {
 	rect = Common::Rect(rect.left / 3, rect.top, rect.right / 3, rect.bottom);
 
 	Common::Rect srcRect = rect;
 
 	rect.clip(_surface.w, _surface.h);
 
-	PixelFormat pixelFormat = getPixelFormat();
+	Graphics::PixelFormat pixelFormat = getPixelFormat();
 
 	const byte *src = (byte *)srcSurf.pixels +
 		(srcRect.top * srcSurf.pitch) + srcRect.left * _bytesPerPixel;
@@ -2642,7 +2642,7 @@ byte *VMDDecoder::deADPCM(const byte *data, uint32 &size, int32 init, int32 inde
 	return sound;
 }
 
-PixelFormat VMDDecoder::getPixelFormat() const {
+Graphics::PixelFormat VMDDecoder::getPixelFormat() const {
 	if (_externalCodec) {
 		if (_codec)
 			return _codec->getPixelFormat();
@@ -2655,7 +2655,7 @@ PixelFormat VMDDecoder::getPixelFormat() const {
 	if (_blitMode > 0)
 		return g_system->getScreenFormat();
 
-	return PixelFormat::createFormatCLUT8();
+	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
 bool VMDDecoder::getPartCoords(int16 frame, PartType type, int16 &x, int16 &y, int16 &width, int16 &height) {
@@ -2752,6 +2752,6 @@ bool VMDDecoder::isPaletted() const {
 	return _isPaletted;
 }
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif // VIDEO_COKTELDECODER_H

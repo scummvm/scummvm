@@ -38,8 +38,8 @@ void VideoEntry::clear() {
 	y = 0;
 	loop = false;
 	enabled = false;
-	start = Graphics::VideoTimestamp(0);
-	end = Graphics::VideoTimestamp(0xFFFFFFFF); // Largest possible, there is an endOfVideo() check anyway
+	start = Video::VideoTimestamp(0);
+	end = Video::VideoTimestamp(0xFFFFFFFF); // Largest possible, there is an endOfVideo() check anyway
 	filename.clear();
 	id = 0;
 }
@@ -384,7 +384,7 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 			return i;
 
 	// Otherwise, create a new entry
-	Graphics::QuickTimeDecoder *decoder = new Graphics::QuickTimeDecoder();
+	Video::QuickTimeDecoder *decoder = new Video::QuickTimeDecoder();
 	decoder->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
 	decoder->load(_vm->getResource(ID_TMOV, id));
 
@@ -418,7 +418,7 @@ VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint
 	// Otherwise, create a new entry
 	VideoEntry entry;
 	entry.clear();
-	entry.video = new Graphics::QuickTimeDecoder();
+	entry.video = new Video::QuickTimeDecoder();
 	entry.x = x;
 	entry.y = y;
 	entry.filename = filename;
@@ -505,14 +505,14 @@ bool VideoManager::isVideoPlaying() {
 	return false;
 }
 
-void VideoManager::setVideoBounds(VideoHandle handle, Graphics::VideoTimestamp start, Graphics::VideoTimestamp end) {
+void VideoManager::setVideoBounds(VideoHandle handle, Video::VideoTimestamp start, Video::VideoTimestamp end) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle].start = start;
 	_videoStreams[handle].end = end;
 	_videoStreams[handle]->seekToTime(start);
 }
 
-void VideoManager::seekToTime(VideoHandle handle, Graphics::VideoTimestamp time) {
+void VideoManager::seekToTime(VideoHandle handle, Video::VideoTimestamp time) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle]->seekToTime(time);
 }

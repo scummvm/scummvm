@@ -1133,7 +1133,7 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 
 		// Gears rise up
 		VideoHandle gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
-		_vm->_video->setVideoBounds(gears, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(650, 600));
+		_vm->_video->setVideoBounds(gears, Video::VideoTimestamp(0, 600), Video::VideoTimestamp(650, 600));
 		_vm->_video->waitUntilMovieEnds(gears);
 
 
@@ -1145,7 +1145,7 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 
 		// Gears sink down
 		VideoHandle gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
-		_vm->_video->setVideoBounds(gears, Graphics::VideoTimestamp(700, 600), Graphics::VideoTimestamp(1300, 600));
+		_vm->_video->setVideoBounds(gears, Video::VideoTimestamp(700, 600), Video::VideoTimestamp(1300, 600));
 		_vm->_video->waitUntilMovieEnds(gears);
 
 		_state.clockTowerBridgeOpen = 0;
@@ -1189,14 +1189,14 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 			// Mountains disappearing
 			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
 			VideoHandle mountain = _vm->_video->playMovie(file, 159, 96, false);
-			_vm->_video->setVideoBounds(mountain, Graphics::VideoTimestamp(11180, 600), Graphics::VideoTimestamp(16800, 600));
+			_vm->_video->setVideoBounds(mountain, Video::VideoTimestamp(11180, 600), Video::VideoTimestamp(16800, 600));
 
 			_state.imagerActive = 0;
 		} else {
 			// Mountains appearing
 			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
 			VideoHandle mountain = _vm->_video->playMovie(file, 159, 96, false);
-			_vm->_video->setVideoBounds(mountain, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(11180, 600));
+			_vm->_video->setVideoBounds(mountain, Video::VideoTimestamp(0, 600), Video::VideoTimestamp(11180, 600));
 
 			_state.imagerActive = 1;
 		}
@@ -1209,19 +1209,19 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 
 			// Water disappearing
 			VideoHandle water = _imagerMovie->playMovie();
-			_vm->_video->setVideoBounds(water, Graphics::VideoTimestamp(4204, 600), Graphics::VideoTimestamp(6040, 600));
+			_vm->_video->setVideoBounds(water, Video::VideoTimestamp(4204, 600), Video::VideoTimestamp(6040, 600));
 			_vm->_video->setVideoLooping(water, false);
 
 			_state.imagerActive = 0;
 		} else {
 			// Water appearing
 			VideoHandle water = _imagerMovie->playMovie();
-			_vm->_video->setVideoBounds(water, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(1814, 600));
+			_vm->_video->setVideoBounds(water, Video::VideoTimestamp(0, 600), Video::VideoTimestamp(1814, 600));
 			_vm->_video->waitUntilMovieEnds(water);
 
 			// Water looping
 			water = _imagerMovie->playMovie();
-			_vm->_video->setVideoBounds(water, Graphics::VideoTimestamp(1814, 600), Graphics::VideoTimestamp(4204, 600));
+			_vm->_video->setVideoBounds(water, Video::VideoTimestamp(1814, 600), Video::VideoTimestamp(4204, 600));
 			_vm->_video->setVideoLooping(water, true);
 
 			_state.imagerActive = 1;
@@ -2192,12 +2192,12 @@ void MystScriptParser_Myst::rocketCheckSolution() {
 		// Book appearing
 		Common::String movieFile = _vm->wrapMovieFilename("selenbok", kMystStack);
 		_rocketLinkBook = _vm->_video->playMovie(movieFile, 224, 41);
-		_vm->_video->setVideoBounds(_rocketLinkBook, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(660, 600));
+		_vm->_video->setVideoBounds(_rocketLinkBook, Video::VideoTimestamp(0, 600), Video::VideoTimestamp(660, 600));
 		_vm->_video->waitUntilMovieEnds(_rocketLinkBook);
 
 		// Book looping closed
 		_rocketLinkBook = _vm->_video->playMovie(movieFile, 224, 41, true);
-		_vm->_video->setVideoBounds(_rocketLinkBook, Graphics::VideoTimestamp(660, 600), Graphics::VideoTimestamp(3500, 600));
+		_vm->_video->setVideoBounds(_rocketLinkBook, Video::VideoTimestamp(660, 600), Video::VideoTimestamp(3500, 600));
 
 		_tempVar = 1;
 	}
@@ -2312,7 +2312,7 @@ void MystScriptParser_Myst::o_rocketOpenBook(uint16 op, uint16 var, uint16 argc,
 	debugC(kDebugScript, "Opcode %d: Rocket open link book", op);
 
 	// Flyby movie
-	_vm->_video->setVideoBounds(_rocketLinkBook, Graphics::VideoTimestamp(3500, 600), Graphics::VideoTimestamp(13100, 600));
+	_vm->_video->setVideoBounds(_rocketLinkBook, Video::VideoTimestamp(3500, 600), Video::VideoTimestamp(13100, 600));
 
 	// Set linkable
 	_tempVar = 2;
@@ -2836,16 +2836,16 @@ void MystScriptParser_Myst::clockGearForwardOneStep(uint16 gear) {
 	uint16 gearPosition = _clockGearsPositions[gear] - 1;
 	_clockGearsVideos[gear] = _vm->_video->playMovie(_vm->wrapMovieFilename(videos[gear], kMystStack), x[gear], y[gear]);
 	_vm->_video->setVideoBounds(_clockGearsVideos[gear],
-			Graphics::VideoTimestamp(startTime[gearPosition], 600),
-			Graphics::VideoTimestamp(endTime[gearPosition], 600));
+			Video::VideoTimestamp(startTime[gearPosition], 600),
+			Video::VideoTimestamp(endTime[gearPosition], 600));
 }
 
 void MystScriptParser_Myst::clockWeightDownOneStep() {
 	// Set video bounds
 	_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
 	_vm->_video->setVideoBounds(_clockWeightVideo,
-			Graphics::VideoTimestamp(_clockWeightPosition, 600),
-			Graphics::VideoTimestamp(_clockWeightPosition + 246, 600));
+			Video::VideoTimestamp(_clockWeightPosition, 600),
+			Video::VideoTimestamp(_clockWeightPosition + 246, 600));
 
 	// Increment value by one step
 	_clockWeightPosition += 246;
@@ -2897,8 +2897,8 @@ void MystScriptParser_Myst::clockGearsCheckSolution() {
 		_vm->_sound->replaceSoundMyst(9113);
 		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
 		_vm->_video->setVideoBounds(_clockWeightVideo,
-				Graphics::VideoTimestamp(_clockWeightPosition, 600),
-				Graphics::VideoTimestamp(2214, 600));
+				Video::VideoTimestamp(_clockWeightPosition, 600),
+				Video::VideoTimestamp(2214, 600));
 		_vm->_video->waitUntilMovieEnds(_clockWeightVideo);
 		_clockWeightPosition = 2214;
 
@@ -2976,8 +2976,8 @@ void MystScriptParser_Myst::clockResetWeight() {
 	if (!(_vm->getFeatures() & GF_ME)) {
 		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
 		_vm->_video->setVideoBounds(_clockWeightVideo,
-				Graphics::VideoTimestamp(2214 * 2 - _clockWeightPosition, 600),
-				Graphics::VideoTimestamp(2214 * 2, 600));
+				Video::VideoTimestamp(2214 * 2 - _clockWeightPosition, 600),
+				Video::VideoTimestamp(2214 * 2, 600));
 	} else {
 		//FIXME: Needs QT backwards playing
 		warning("Weight going back up not implemented");
@@ -2998,8 +2998,8 @@ void MystScriptParser_Myst::clockResetGear(uint16 gear) {
 	if (gearPosition != 2) {
 		_clockGearsVideos[gear] = _vm->_video->playMovie(_vm->wrapMovieFilename(videos[gear], kMystStack), x[gear], y[gear]);
 		_vm->_video->setVideoBounds(_clockGearsVideos[gear],
-				Graphics::VideoTimestamp(time[gearPosition], 600),
-				Graphics::VideoTimestamp(time[2], 600));
+				Video::VideoTimestamp(time[gearPosition], 600),
+				Video::VideoTimestamp(time[2], 600));
 	}
 
 	// Reset gear position
@@ -3220,7 +3220,7 @@ void MystScriptParser_Myst::imager_run() {
 
 	if (_state.imagerActive && _state.imagerSelection == 67) {
 		VideoHandle water = _imagerMovie->playMovie();
-		_vm->_video->setVideoBounds(water, Graphics::VideoTimestamp(1814, 600), Graphics::VideoTimestamp(4204, 600));
+		_vm->_video->setVideoBounds(water, Video::VideoTimestamp(1814, 600), Video::VideoTimestamp(4204, 600));
 		_vm->_video->setVideoLooping(water, true);
 	}
 }
@@ -3562,12 +3562,12 @@ void MystScriptParser_Myst::greenBook_run() {
 			_vm->_video->playMovie(file, 314, 76);
 		} else {
 			VideoHandle book = _vm->_video->playMovie(file, 314, 76, true);
-			_vm->_video->setVideoBounds(book, Graphics::VideoTimestamp(loopStart, 600), Graphics::VideoTimestamp(loopEnd, 600));
+			_vm->_video->setVideoBounds(book, Video::VideoTimestamp(loopStart, 600), Video::VideoTimestamp(loopEnd, 600));
 			_tempVar = 0;
 		}
 	} else if (_tempVar == 2 && !_vm->_video->isVideoPlaying()) {
 		VideoHandle book = _vm->_video->playMovie(file, 314, 76);
-		_vm->_video->setVideoBounds(book, Graphics::VideoTimestamp(loopStart, 600), Graphics::VideoTimestamp(loopEnd, 600));
+		_vm->_video->setVideoBounds(book, Video::VideoTimestamp(loopStart, 600), Video::VideoTimestamp(loopEnd, 600));
 		_vm->_video->setVideoLooping(book, true);
 		_tempVar = 0;
 	}

@@ -29,21 +29,21 @@
 #include "graphics/pixelformat.h"
 #include "video/codecs/codec.h"
 
-namespace Graphics {
+namespace Video {
 
 class RPZADecoder : public Codec {
 public:
 	RPZADecoder(uint16 width, uint16 height);
 	~RPZADecoder();
 
-	const Surface *decodeImage(Common::SeekableReadStream *stream);
-	PixelFormat getPixelFormat() const { return _pixelFormat; }
+	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
-	Surface *_surface;
-	PixelFormat _pixelFormat;
+	Graphics::Surface *_surface;
+	Graphics::PixelFormat _pixelFormat;
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

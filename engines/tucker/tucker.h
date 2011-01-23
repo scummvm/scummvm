@@ -976,7 +976,7 @@ private:
 	bool _changeToNextSequence;
 	const SequenceUpdateFunc *_updateFunc;
 	int _updateFuncIndex;
-	::Graphics::FlicDecoder _flicPlayer[2];
+	Video::FlicDecoder _flicPlayer[2];
 	uint8 _animationPalette[256 * 4];
 	int _soundSeqDataCount;
 	int _soundSeqDataIndex;

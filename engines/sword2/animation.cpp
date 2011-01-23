@@ -46,7 +46,7 @@ namespace Sword2 {
 // Basic movie player
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayer::MoviePlayer(Sword2Engine *vm, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Graphics::VideoDecoder *decoder, DecoderType decoderType)
+MoviePlayer::MoviePlayer(Sword2Engine *vm, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Video::VideoDecoder *decoder, DecoderType decoderType)
 	: _vm(vm), _snd(snd), _bgSoundHandle(bgSoundHandle), _system(system) {
 	_bgSoundStream = NULL;
 	_decoderType = decoderType;
@@ -360,7 +360,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, Audio::Mixer *s
 	snprintf(filename, sizeof(filename), "%s.smk", name);
 
 	if (Common::File::exists(filename)) {
-		Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(snd);
+		Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder(snd);
 		return new MoviePlayer(vm, snd, system, bgSoundHandle, smkDecoder, kVideoDecoderSMK);
 	}
 

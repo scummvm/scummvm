@@ -36,7 +36,7 @@
   #include "common/zlib.h"
 #endif
 
-namespace Graphics {
+namespace Video {
 
 DXADecoder::DXADecoder() {
 	_fileStream = 0;
@@ -477,7 +477,7 @@ void DXADecoder::decode13(int size) {
 #endif
 }
 
-const Surface *DXADecoder::decodeNextFrame() {
+const Graphics::Surface *DXADecoder::decodeNextFrame() {
 	uint32 tag = _fileStream->readUint32BE();
 	if (tag == MKID_BE('CMAP')) {
 		_fileStream->read(_palette, 256 * 3);
@@ -559,4 +559,4 @@ const Surface *DXADecoder::decodeNextFrame() {
 	return _surface;
 }
 
-} // End of namespace Graphics
+} // End of namespace Video

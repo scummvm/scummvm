@@ -28,7 +28,7 @@
 
 #include "video/codecs/codec.h"
 
-namespace Graphics {
+namespace Video {
 
 enum {
 	CPAIR = 2,
@@ -42,11 +42,11 @@ public:
 	SMCDecoder(uint16 width, uint16 height);
 	~SMCDecoder();
 
-	const Surface *decodeImage(Common::SeekableReadStream *stream);
-	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
+	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 
 private:
-	Surface *_surface;
+	Graphics::Surface *_surface;
 
 	// SMC color tables
 	byte _colorPairs[COLORS_PER_TABLE * CPAIR];
@@ -54,6 +54,6 @@ private:
 	byte _colorOctets[COLORS_PER_TABLE * COCTET];
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

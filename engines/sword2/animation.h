@@ -58,7 +58,7 @@ struct MovieText {
 	}
 };
 
-class DXADecoderWithSound : public Graphics::DXADecoder {
+class DXADecoderWithSound : public Video::DXADecoder {
 public:
 	DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle);
 	~DXADecoderWithSound() {}
@@ -71,7 +71,7 @@ private:
 
 class MoviePlayer {
 public:
-	MoviePlayer(Sword2Engine *vm, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Graphics::VideoDecoder *decoder, DecoderType decoderType);
+	MoviePlayer(Sword2Engine *vm, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Video::VideoDecoder *decoder, DecoderType decoderType);
 	virtual ~MoviePlayer();
 
 	bool load(const char *name);
@@ -89,7 +89,7 @@ protected:
 	byte _white, _black;
 	DecoderType _decoderType;
 
-	Graphics::VideoDecoder *_decoder;
+	Video::VideoDecoder *_decoder;
 	Audio::SoundHandle *_bgSoundHandle;
 	Audio::AudioStream *_bgSoundStream;
 

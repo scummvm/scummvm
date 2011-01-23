@@ -34,7 +34,7 @@
 
 #include "video/codecs/codec.h"
 
-namespace Graphics {
+namespace Video {
 
 struct CinepakCodebook {
 	byte y[4];
@@ -56,7 +56,7 @@ struct CinepakFrame {
 	uint16 stripCount;
 	CinepakStrip *strips;
 
-	Surface *surface;
+	Graphics::Surface *surface;
 };
 
 class CinepakDecoder : public Codec {
@@ -64,18 +64,18 @@ public:
 	CinepakDecoder(int bitsPerPixel = 24);
 	~CinepakDecoder();
 
-	const Surface *decodeImage(Common::SeekableReadStream *stream);
-	PixelFormat getPixelFormat() const { return _pixelFormat; }
+	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
 	CinepakFrame _curFrame;
 	int32 _y;
-	PixelFormat _pixelFormat;
+	Graphics::PixelFormat _pixelFormat;
 
 	void loadCodebook(Common::SeekableReadStream *stream, uint16 strip, byte codebookType, byte chunkID, uint32 chunkSize);
 	void decodeVectors(Common::SeekableReadStream *stream, uint16 strip, byte chunkID, uint32 chunkSize);
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

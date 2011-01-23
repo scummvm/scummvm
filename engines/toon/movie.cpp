@@ -35,7 +35,7 @@ void ToonstruckSmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, ui
 		uint16 height = _fileStream->readUint16LE();
 		_lowRes = (height == getHeight() / 2);
 	} else
-		Graphics::SmackerDecoder::handleAudioTrack(track, chunkSize, unpackedSize);
+		Video::SmackerDecoder::handleAudioTrack(track, chunkSize, unpackedSize);
 }
 
 bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename, int forcedflags) {
@@ -43,7 +43,7 @@ bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename, int forc
 
 	_lowRes = false;
 
-	if (Graphics::SmackerDecoder::loadFile(filename)) {
+	if (Video::SmackerDecoder::loadFile(filename)) {
 		if (forcedflags & 0x10 || _surface->h == 200) {
 			if (_surface) {
 				_surface->free();
@@ -61,7 +61,7 @@ bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename, int forc
 	return false;
 }
 
-ToonstruckSmackerDecoder::ToonstruckSmackerDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : Graphics::SmackerDecoder(mixer, soundType) {
+ToonstruckSmackerDecoder::ToonstruckSmackerDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : Video::SmackerDecoder(mixer, soundType) {
 	_lowRes = false;
 }
 

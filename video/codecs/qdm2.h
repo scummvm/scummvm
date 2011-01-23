@@ -37,7 +37,7 @@ namespace Audio {
 	class AudioStream;
 }
 
-namespace Graphics {
+namespace Video {
 
 /**
  * Create a new AudioStream from the QDM2 data in the given stream.
@@ -48,7 +48,7 @@ namespace Graphics {
  */
 Audio::AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData);
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif // VIDEO_CODECS_QDM2_H
 #endif // Mohawk/Plugins guard

@@ -44,7 +44,7 @@
 #include "video/codecs/msrle.h"
 #include "video/codecs/truemotion1.h"
 
-namespace Graphics {
+namespace Video {
 
 /*
 static byte char2num(char c) {
@@ -316,7 +316,7 @@ uint32 AviDecoder::getElapsedTime() const {
 	return VideoDecoder::getElapsedTime();
 }
 
-const Surface *AviDecoder::decodeNextFrame() {
+const Graphics::Surface *AviDecoder::decodeNextFrame() {
 	uint32 nextTag = _fileStream->readUint32BE();
 
 	if (_fileStream->eos())
@@ -334,9 +334,9 @@ const Surface *AviDecoder::decodeNextFrame() {
 			error ("Expected 'rec ' LIST");
 
 		// Decode chunks in the list and see if we get a frame
-		const Surface *frame = NULL;
+		const Graphics::Surface *frame = NULL;
 		while (_fileStream->pos() < startPos + (int32)listSize) {
-			const Surface *temp = decodeNextFrame();
+			const Graphics::Surface *temp = decodeNextFrame();
 			if (temp)
 				frame = temp;
 		}
@@ -417,7 +417,7 @@ Codec *AviDecoder::createCodec() {
 	return NULL;
 }
 
-PixelFormat AviDecoder::getPixelFormat() const {
+Graphics::PixelFormat AviDecoder::getPixelFormat() const {
 	assert(_videoCodec);
 	return _videoCodec->getPixelFormat();
 }
@@ -456,4 +456,4 @@ void AviDecoder::queueAudioBuffer(uint32 chunkSize) {
 	}
 }
 
-} // End of namespace Graphics
+} // End of namespace Video

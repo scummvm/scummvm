@@ -33,7 +33,7 @@ namespace Audio {
 	class QueuingAudioStream;
 }
 
-namespace Graphics {
+namespace Video {
 
 class BigHuffmanTree;
 
@@ -66,8 +66,8 @@ public:
 	uint16 getHeight() const { return _surface->h; }
 	uint32 getFrameCount() const { return _frameCount; }
 	uint32 getElapsedTime() const;
-	const Surface *decodeNextFrame();
-	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
+	const Graphics::Surface *decodeNextFrame();
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 	const byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 	virtual void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
@@ -124,7 +124,7 @@ protected:
 
 	Common::Rational _frameRate;
 	uint32 _frameCount;
-	Surface *_surface;
+	Graphics::Surface *_surface;
 
 	Audio::Mixer::SoundType _soundType;
 	Audio::Mixer *_mixer;
@@ -138,6 +138,6 @@ protected:
 	BigHuffmanTree *_TypeTree;
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

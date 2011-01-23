@@ -28,25 +28,25 @@
 
 #include "video/codecs/codec.h"
 
-namespace Graphics {
+namespace Video {
 
 class MSVideo1Decoder : public Codec {
 public:
 	MSVideo1Decoder(uint16 width, uint16 height, byte bitsPerPixel);
 	~MSVideo1Decoder();
 
-	const Surface *decodeImage(Common::SeekableReadStream *stream);
-	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
+	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 
 private:
 	byte _bitsPerPixel;
 
-	Surface *_surface;
+	Graphics::Surface *_surface;
 
 	void decode8(Common::SeekableReadStream *stream);
 	//void decode16(Common::SeekableReadStream *stream);
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

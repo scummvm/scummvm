@@ -33,7 +33,7 @@
 #include "video/codecs/truemotion1data.h"
 #include "common/stream.h"
 
-namespace Graphics {
+namespace Video {
 
 enum {
 	FLAG_SPRITE = (1 << 5),
@@ -88,7 +88,7 @@ struct {
 };
 
 TrueMotion1Decoder::TrueMotion1Decoder(uint16 width, uint16 height) {
-	_surface = new Surface();
+	_surface = new Graphics::Surface();
 	_width = width;
 	_height = height;
 
@@ -396,7 +396,7 @@ void TrueMotion1Decoder::decode16() {
 	}
 }
 
-const Surface *TrueMotion1Decoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *TrueMotion1Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	decodeHeader(stream);
 
 	if (compressionTypes[_header.compression].algorithm == ALGO_NOP)
@@ -413,6 +413,6 @@ const Surface *TrueMotion1Decoder::decodeImage(Common::SeekableReadStream *strea
 	return _surface;
 }
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

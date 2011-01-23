@@ -39,7 +39,7 @@
 #include "sound/mixer.h"
 #include "sound/decoders/raw.h"
 
-namespace Graphics {
+namespace Video {
 
 enum SmkBlockTypes {
 	SMK_BLOCK_MONO = 0,
@@ -519,7 +519,7 @@ void SmackerDecoder::close() {
 	reset();
 }
 
-const Surface *SmackerDecoder::decodeNextFrame() {
+const Graphics::Surface *SmackerDecoder::decodeNextFrame() {
 	uint i;
 	uint32 chunkSize = 0;
 	uint32 dataSizeUnpacked = 0;
@@ -899,4 +899,4 @@ void SmackerDecoder::unpackPalette() {
 	free(chunk);
 }
 
-} // End of namespace Graphics
+} // End of namespace Video

@@ -29,7 +29,7 @@
 
 // Code here partially based off of ffmpeg ;)
 
-namespace Graphics {
+namespace Video {
 
 // Convert a color from YUV to RGB colorspace, Cinepak style.
 inline static void CPYUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
@@ -54,7 +54,7 @@ CinepakDecoder::CinepakDecoder(int bitsPerPixel) : Codec() {
 	_y = 0;
 
 	if (bitsPerPixel == 8)
-		_pixelFormat = PixelFormat::createFormatCLUT8();
+		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	else
 		_pixelFormat = g_system->getScreenFormat();
 }
@@ -68,7 +68,7 @@ CinepakDecoder::~CinepakDecoder() {
 	delete[] _curFrame.strips;
 }
 
-const Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	_curFrame.flags = stream->readByte();
 	_curFrame.length = (stream->readByte() << 16) + stream->readUint16BE();
 	_curFrame.width = stream->readUint16BE();
@@ -88,7 +88,7 @@ const Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	}
 
 	if (!_curFrame.surface) {
-		_curFrame.surface = new Surface();
+		_curFrame.surface = new Graphics::Surface();
 		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat.bytesPerPixel);
 	}
 
@@ -289,4 +289,4 @@ void CinepakDecoder::decodeVectors(Common::SeekableReadStream *stream, uint16 st
 	}
 }
 
-} // End of namespace Graphics
+} // End of namespace Video

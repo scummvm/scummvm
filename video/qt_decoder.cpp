@@ -53,7 +53,7 @@
 #include "video/codecs/smc.h"
 #include "video/codecs/cdtoons.h"
 
-namespace Graphics {
+namespace Video {
 
 ////////////////////////////////////////////
 // QuickTimeDecoder
@@ -135,11 +135,11 @@ uint32 QuickTimeDecoder::getFrameDuration() {
 	return 0;
 }
 
-PixelFormat QuickTimeDecoder::getPixelFormat() const {
+Graphics::PixelFormat QuickTimeDecoder::getPixelFormat() const {
 	Codec *codec = findDefaultVideoCodec();
 
 	if (!codec)
-		return PixelFormat::createFormatCLUT8();
+		return Graphics::PixelFormat::createFormatCLUT8();
 
 	return codec->getPixelFormat();
 }
@@ -177,7 +177,7 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 	}
 
 	// Adjust the video starting point
-	_startTime = g_system->getMillis() - Graphics::VideoTimestamp(_nextFrameStartTime, _streams[_videoStreamIndex]->time_scale).getUnitsInScale(1000);
+	_startTime = g_system->getMillis() - Video::VideoTimestamp(_nextFrameStartTime, _streams[_videoStreamIndex]->time_scale).getUnitsInScale(1000);
 	resetPauseStartTime();
 
 	// Adjust the audio starting point
@@ -196,7 +196,7 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 			for (int32 j = 0; j < _streams[_audioStreamIndex]->stts_data[i].count; j++) {
 				curTime += _streams[_audioStreamIndex]->stts_data[i].duration;
 
-				if (curTime > Graphics::VideoTimestamp(_nextFrameStartTime, _streams[_videoStreamIndex]->time_scale).getUnitsInScale(_streams[_audioStreamIndex]->time_scale)) {
+				if (curTime > Video::VideoTimestamp(_nextFrameStartTime, _streams[_videoStreamIndex]->time_scale).getUnitsInScale(_streams[_audioStreamIndex]->time_scale)) {
 					done = true;
 					break;
 				}
@@ -326,7 +326,7 @@ Codec *QuickTimeDecoder::findDefaultVideoCodec() const {
 	return _streams[_videoStreamIndex]->stsdEntries[0].videoCodec;
 }
 
-const Surface *QuickTimeDecoder::decodeNextFrame() {
+const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
 	if (_videoStreamIndex < 0 || _curFrame >= (int32)getFrameCount() - 1)
 		return 0;
 
@@ -352,7 +352,7 @@ const Surface *QuickTimeDecoder::decodeNextFrame() {
 	if (!entry->videoCodec)
 		return 0;
 
-	const Surface *frame = entry->videoCodec->decodeImage(frameData);
+	const Graphics::Surface *frame = entry->videoCodec->decodeImage(frameData);
 	delete frameData;
 
 	// Update the palette
@@ -375,7 +375,7 @@ const Surface *QuickTimeDecoder::decodeNextFrame() {
 	return scaleSurface(frame);
 }
 
-const Surface *QuickTimeDecoder::scaleSurface(const Surface *frame) {
+const Graphics::Surface *QuickTimeDecoder::scaleSurface(const Graphics::Surface *frame) {
 	if (getScaleFactorX() == 1 && getScaleFactorY() == 1)
 		return frame;
 
@@ -527,7 +527,7 @@ void QuickTimeDecoder::init() {
 
 		if (getScaleFactorX() != 1 || getScaleFactorY() != 1) {
 			// We have to initialize the scaled surface
-			_scaledSurface = new Surface();
+			_scaledSurface = new Graphics::Surface();
 			_scaledSurface->create(getWidth(), getHeight(), getPixelFormat().bytesPerPixel);
 		}
 	}
@@ -1485,4 +1485,4 @@ QuickTimeDecoder::MOVStreamContext::~MOVStreamContext() {
 	delete extradata;
 }
 
-} // End of namespace Graphics
+} // End of namespace Video

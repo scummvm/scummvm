@@ -293,9 +293,9 @@ void MystScriptParser_Channelwood::o_bridgeToggle(uint16 op, uint16 var, uint16 
 
 	// Toggle bridge state
 	if (_state.waterPumpBridgeState)
-		_vm->_video->setVideoBounds(bridge, Graphics::VideoTimestamp(3050, 600), Graphics::VideoTimestamp(6100, 600));
+		_vm->_video->setVideoBounds(bridge, Video::VideoTimestamp(3050, 600), Video::VideoTimestamp(6100, 600));
 	else
-		_vm->_video->setVideoBounds(bridge, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(3050, 600));
+		_vm->_video->setVideoBounds(bridge, Video::VideoTimestamp(0, 600), Video::VideoTimestamp(3050, 600));
 
 	_vm->_video->waitUntilMovieEnds(bridge);
 }
@@ -311,9 +311,9 @@ void MystScriptParser_Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 ar
 
 	// Toggle pipe state
 	if (_state.pipeState)
-		_vm->_video->setVideoBounds(pipe, Graphics::VideoTimestamp(3040, 600), Graphics::VideoTimestamp(6080, 600));
+		_vm->_video->setVideoBounds(pipe, Video::VideoTimestamp(3040, 600), Video::VideoTimestamp(6080, 600));
 	else
-		_vm->_video->setVideoBounds(pipe, Graphics::VideoTimestamp(0, 600), Graphics::VideoTimestamp(3040, 600));
+		_vm->_video->setVideoBounds(pipe, Video::VideoTimestamp(0, 600), Video::VideoTimestamp(3040, 600));
 
 	_vm->_video->waitUntilMovieEnds(pipe);
 	_vm->_sound->resumeBackgroundMyst();

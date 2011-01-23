@@ -29,21 +29,21 @@
 #include "graphics/pixelformat.h"
 #include "video/codecs/codec.h"
 
-namespace Graphics {
+namespace Video {
 
 class QTRLEDecoder : public Codec {
 public:
 	QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
 	~QTRLEDecoder();
 
-	const Surface *decodeImage(Common::SeekableReadStream *stream);
-	PixelFormat getPixelFormat() const { return _pixelFormat; }
+	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
 	byte _bitsPerPixel;
 
-	Surface *_surface;
-	PixelFormat _pixelFormat;
+	Graphics::Surface *_surface;
+	Graphics::PixelFormat _pixelFormat;
 
 	void decode1(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
 	void decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange, byte bpp);
@@ -53,6 +53,6 @@ private:
 	void decode32(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

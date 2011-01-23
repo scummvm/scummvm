@@ -28,10 +28,10 @@
 
 #include "video/codecs/mjpeg.h"
 
-namespace Graphics {
+namespace Video {
 
 JPEGDecoder::JPEGDecoder() : Codec() {
-	_jpeg = new JPEG();
+	_jpeg = new Graphics::JPEG();
 	_pixelFormat = g_system->getScreenFormat();
 	_surface = NULL;
 }
@@ -45,14 +45,14 @@ JPEGDecoder::~JPEGDecoder() {
 	}
 }
 
-const Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream* stream) {
+const Graphics::Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream* stream) {
 	if (!_jpeg->read(stream)) {
 		warning("Failed to decode JPEG frame");
 		return 0;
 	}
 
 	if (!_surface) {
-		_surface = new Surface();
+		_surface = new Graphics::Surface();
 		_surface->create(_jpeg->getWidth(), _jpeg->getHeight(), _pixelFormat.bytesPerPixel);
 	}
 
@@ -67,4 +67,4 @@ const Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream* stream) {
 	return _surface;
 }
 
-} // End of namespace Graphics
+} // End of namespace Video

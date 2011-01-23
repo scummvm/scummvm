@@ -42,7 +42,7 @@
 
 #include "video/codecs/indeo3.h"
 
-namespace Graphics {
+namespace Video {
 
 Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height) : _ModPred(0), _corrector_type(0) {
 	_iv_frame[0].the_buf = 0;
@@ -50,7 +50,7 @@ Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height) : _ModPred(0), _correc
 
 	_pixelFormat = g_system->getScreenFormat();
 
-	_surface = new Surface;
+	_surface = new Graphics::Surface;
 	_surface->create(width, height, _pixelFormat.bytesPerPixel);
 
 	buildModPred();
@@ -66,7 +66,7 @@ Indeo3Decoder::~Indeo3Decoder() {
 	delete[] _corrector_type;
 }
 
-PixelFormat Indeo3Decoder::getPixelFormat() const {
+Graphics::PixelFormat Indeo3Decoder::getPixelFormat() const {
 	return _pixelFormat;
 }
 
@@ -169,7 +169,7 @@ void Indeo3Decoder::allocFrames() {
 	}
 }
 
-const Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	// Not Indeo 3? Fail
 	if (!isIndeo3(*stream))
 		return 0;
@@ -318,7 +318,7 @@ const Surface *Indeo3Decoder::decodeImage(Common::SeekableReadStream *stream) {
 				}
 
 				byte r = 0, g = 0, b = 0;
-				YUV2RGB(cY, cU, cV, r, g, b);
+				Graphics::YUV2RGB(cY, cU, cV, r, g, b);
 
 				const uint32 color = _pixelFormat.RGBToColor(r, g, b);
 
@@ -3490,6 +3490,6 @@ const uint32 Indeo3Decoder::correctionhighorder[] = {
 	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif // USE_INDEO3

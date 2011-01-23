@@ -92,7 +92,7 @@ int Scene::FTA2EndProc(FTA2Endings whichEnding) {
 }
 
 void Scene::playMovie(const char *filename) {
-	Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
+	Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder(_vm->_mixer);
 
 	if (!smkDecoder->loadFile(filename))
 		return;

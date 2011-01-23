@@ -45,7 +45,7 @@ namespace Audio {
 	class QueuingAudioStream;
 }
 
-namespace Graphics {
+namespace Video {
 
 class Codec;
 
@@ -78,7 +78,7 @@ public:
 	/** Reset the video memory. */
 	void setSurfaceMemory();
 
-	const Surface *getSurface() const;
+	const Graphics::Surface *getSurface() const;
 
 	/** Draw the video starting at this position within the video memory. */
 	virtual void setXY(uint16 x, uint16 y);
@@ -180,7 +180,7 @@ protected:
 	bool _paletteDirty;
 
 	bool    _ownSurface;
-	Surface _surface;
+	Graphics::Surface _surface;
 
 	Common::List<Common::Rect> _dirtyRects;
 
@@ -206,12 +206,12 @@ protected:
 	void deRLE(byte *&destPtr, const byte *&srcPtr, int16 destLen, int16 srcLen);
 
 	// Block rendering
-	void renderBlockWhole   (Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockWhole4X (Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockWhole2Y (Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockSparse  (Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockSparse2Y(Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockRLE     (Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockWhole   (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockWhole4X (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockWhole2Y (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockSparse  (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockSparse2Y(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockRLE     (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
 
 	// Sound helper functions
 	inline void unsignedToSigned(byte *buffer, int length);
@@ -238,9 +238,9 @@ public:
 
 	bool isVideoLoaded() const;
 
-	const Surface *decodeNextFrame();
+	const Graphics::Surface *decodeNextFrame();
 
-	PixelFormat getPixelFormat() const;
+	Graphics::PixelFormat getPixelFormat() const;
 
 private:
 	Common::SeekableReadStream *_stream;
@@ -271,9 +271,9 @@ public:
 
 	bool isVideoLoaded() const;
 
-	const Surface *decodeNextFrame();
+	const Graphics::Surface *decodeNextFrame();
 
-	PixelFormat getPixelFormat() const;
+	Graphics::PixelFormat getPixelFormat() const;
 
 private:
 	enum Command {
@@ -375,9 +375,9 @@ public:
 
 	bool isVideoLoaded() const;
 
-	const Surface *decodeNextFrame();
+	const Graphics::Surface *decodeNextFrame();
 
-	PixelFormat getPixelFormat() const;
+	Graphics::PixelFormat getPixelFormat() const;
 
 private:
 	enum PartType {
@@ -467,7 +467,7 @@ private:
 	byte  *_videoBuffer[3];    ///< Video buffers.
 	uint32 _videoBufferLen[3]; ///< Size of the video buffers filled.
 
-	Surface _8bppSurface[3]; ///< Fake 8bpp surfaces over the video buffers.
+	Graphics::Surface _8bppSurface[3]; ///< Fake 8bpp surfaces over the video buffers.
 
 	bool _externalCodec;
 	Codec *_codec;
@@ -490,8 +490,8 @@ private:
 	bool renderFrame(Common::Rect &rect);
 	bool getRenderRects(const Common::Rect &rect,
 			Common::Rect &realRect, Common::Rect &fakeRect);
-	void blit16(const Surface &srcSurf, Common::Rect &rect);
-	void blit24(const Surface &srcSurf, Common::Rect &rect);
+	void blit16(const Graphics::Surface &srcSurf, Common::Rect &rect);
+	void blit24(const Graphics::Surface &srcSurf, Common::Rect &rect);
 
 	// Sound
 	void emptySoundSlice  (uint32 size);
@@ -513,7 +513,7 @@ private:
 	bool getPartCoords(int16 frame, PartType type, int16 &x, int16 &y, int16 &width, int16 &height);
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif // VIDEO_COKTELDECODER_H
 

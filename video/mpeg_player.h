@@ -86,7 +86,7 @@ namespace Common {
 
 class OSystem;
 
-namespace Graphics {
+namespace Video {
 
 class BaseAnimationState {
 protected:
@@ -167,6 +167,6 @@ protected:
 #endif
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

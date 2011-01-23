@@ -28,7 +28,7 @@
 #include "common/file.h"
 #include "common/system.h"
 
-namespace Graphics {
+namespace Video {
 
 VideoDecoder::VideoDecoder() {
 	reset();
@@ -138,4 +138,4 @@ uint VideoTimestamp::getUnitsInScale(uint scale) const {
 	return (_scale == scale) ? _units : _units * scale / _scale;
 }
 
-} // End of namespace Graphics
+} // End of namespace Video

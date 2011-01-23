@@ -37,7 +37,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 
-namespace Graphics {
+namespace Video {
 
 enum {
 	SOFTCLIP_THRESHOLD = 27600,
@@ -3282,6 +3282,6 @@ Audio::AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::S
 	return new QDM2Stream(stream, extraData);
 }
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

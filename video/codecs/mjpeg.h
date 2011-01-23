@@ -32,7 +32,7 @@
 #include "graphics/jpeg.h"
 #include "graphics/pixelformat.h"
 
-namespace Graphics {
+namespace Video {
 
 // Motion JPEG Decoder
 // Basically a wrapper around JPEG which converts to RGB and also functions
@@ -43,15 +43,15 @@ public:
 	JPEGDecoder();
 	~JPEGDecoder();
 
-	const Surface *decodeImage(Common::SeekableReadStream *stream);
-	PixelFormat getPixelFormat() const { return _pixelFormat; }
+	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
-	PixelFormat _pixelFormat;
-	JPEG *_jpeg;
-	Surface *_surface;
+	Graphics::PixelFormat _pixelFormat;
+	Graphics::JPEG *_jpeg;
+	Graphics::Surface *_surface;
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

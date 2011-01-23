@@ -29,7 +29,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 
-namespace Graphics {
+namespace Video {
 
 FlicDecoder::FlicDecoder() {
 	_paletteChanged = false;
@@ -194,7 +194,7 @@ void FlicDecoder::decodeDeltaFLC(uint8 *data) {
 #define PSTAMP     18
 #define FRAME_TYPE 0xF1FA
 
-const Surface *FlicDecoder::decodeNextFrame() {
+const Graphics::Surface *FlicDecoder::decodeNextFrame() {
 	// Read chunk
 	uint32 frameSize = _fileStream->readUint32LE();
 	uint16 frameType = _fileStream->readUint16LE();
@@ -320,4 +320,4 @@ void FlicDecoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 	_dirtyRects.clear();
 }
 
-} // End of namespace Graphics
+} // End of namespace Video

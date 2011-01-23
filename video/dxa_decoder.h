@@ -28,7 +28,7 @@
 
 #include "video/video_decoder.h"
 
-namespace Graphics {
+namespace Video {
 
 /**
  * Decoder for DXA videos.
@@ -50,8 +50,8 @@ public:
 	uint16 getWidth() const { return _width; }
 	uint16 getHeight() const { return _height; }
 	uint32 getFrameCount() const { return _frameCount; }
-	const Surface *decodeNextFrame();
-	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
+	const Graphics::Surface *decodeNextFrame();
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 	const byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 
@@ -96,6 +96,6 @@ private:
 	uint32 _frameCount;
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

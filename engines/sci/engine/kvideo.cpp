@@ -39,7 +39,7 @@
 
 namespace Sci {
 
-void playVideo(Graphics::VideoDecoder *videoDecoder, VideoState videoState) {
+void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	if (!videoDecoder)
 		return;
 
@@ -122,7 +122,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	uint16 screenWidth = g_system->getWidth();
 	uint16 screenHeight = g_system->getHeight();
 		
-	Graphics::VideoDecoder *videoDecoder = 0;
+	Video::VideoDecoder *videoDecoder = 0;
 
 	if (argv[0].segment != 0) {
 		Common::String filename = s->_segMan->getString(argv[0]);
@@ -139,7 +139,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 				return NULL_REG;
 			}
 
-			videoDecoder = new Graphics::QuickTimeDecoder();
+			videoDecoder = new Video::QuickTimeDecoder();
 			if (!videoDecoder->loadFile(filename))
 				error("Could not open '%s'", filename.c_str());
 		} else {
@@ -173,7 +173,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		switch (argv[0].toUint16()) {
 		case 0: {
 			Common::String filename = s->_segMan->getString(argv[1]);
-			videoDecoder = new Graphics::AviDecoder(g_system->getMixer());
+			videoDecoder = new Video::AviDecoder(g_system->getMixer());
 
 			if (!videoDecoder->loadFile(filename.c_str())) {
 				warning("Failed to open movie file %s", filename.c_str());
@@ -210,7 +210,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
-	Graphics::VideoDecoder *videoDecoder = 0;
+	Video::VideoDecoder *videoDecoder = 0;
 	bool reshowCursor = g_sci->_gfxCursor->isVisible();
 	Common::String warningMsg;
 
@@ -274,7 +274,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case 6:	// Play
-		videoDecoder = new Graphics::VMDDecoder(g_system->getMixer());
+		videoDecoder = new Video::VMDDecoder(g_system->getMixer());
 
 		if (!videoDecoder->loadFile(s->_videoState.fileName)) {
 			warning("Could not open VMD %s", s->_videoState.fileName.c_str());

@@ -31,7 +31,7 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
-namespace Graphics {
+namespace Video {
 
 #define UNKNOWN_HEADER(a) error("Unknown header found -- \'%s\'", tag2str(a))
 
@@ -182,8 +182,8 @@ public:
 	uint16 getHeight() const { return _header.height; }
 	uint32 getFrameCount() const { return _header.totalFrames; }
 	uint32 getElapsedTime() const;
-	const Surface *decodeNextFrame();
-	PixelFormat getPixelFormat() const;
+	const Graphics::Surface *decodeNextFrame();
+	Graphics::PixelFormat getPixelFormat() const;
 	const byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 
@@ -220,6 +220,6 @@ private:
 	void queueAudioBuffer(uint32 chunkSize);
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

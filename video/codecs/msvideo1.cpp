@@ -28,7 +28,7 @@
 #include "video/codecs/msvideo1.h"
 #include "common/stream.h"
 
-namespace Graphics {
+namespace Video {
 
 #define CHECK_STREAM_PTR(n) \
   if ((stream->pos() + n) > stream->size() ) { \
@@ -126,7 +126,7 @@ void MSVideo1Decoder::decode8(Common::SeekableReadStream *stream) {
     }
 }
 
-const Surface *MSVideo1Decoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *MSVideo1Decoder::decodeImage(Common::SeekableReadStream *stream) {
 	if (_bitsPerPixel == 8)
 		decode8(stream);
 	else {
@@ -137,4 +137,4 @@ const Surface *MSVideo1Decoder::decodeImage(Common::SeekableReadStream *stream) 
     return _surface;
 }
 
-} // End of namespace JMP
+} // End of namespace Video

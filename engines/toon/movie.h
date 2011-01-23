@@ -31,7 +31,7 @@
 
 namespace Toon {
 
-class ToonstruckSmackerDecoder : public Graphics::SmackerDecoder {
+class ToonstruckSmackerDecoder : public Video::SmackerDecoder {
 public:
 	ToonstruckSmackerDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
 	virtual ~ToonstruckSmackerDecoder() {}

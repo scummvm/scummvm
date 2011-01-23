@@ -49,7 +49,7 @@ namespace Common {
 	class MacResManager;
 }
 
-namespace Graphics {
+namespace Video {
 
 /**
  * Decoder for QuickTime videos.
@@ -113,11 +113,11 @@ public:
 	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
 
 	bool isVideoLoaded() const { return _fd != 0; }
-	const Surface *decodeNextFrame();
+	const Graphics::Surface *decodeNextFrame();
 	bool endOfVideo() const;
 	uint32 getElapsedTime() const;
 	uint32 getTimeToNextFrame() const;
-	PixelFormat getPixelFormat() const;
+	Graphics::PixelFormat getPixelFormat() const;
 
 	// SeekableVideoDecoder API
 	void seekToFrame(uint32 frame);
@@ -247,8 +247,8 @@ private:
 	int8 _videoStreamIndex;
 	uint32 findKeyFrame(uint32 frame) const;
 
-	Surface *_scaledSurface;
-	const Surface *scaleSurface(const Surface *frame);
+	Graphics::Surface *_scaledSurface;
+	const Graphics::Surface *scaleSurface(const Graphics::Surface *frame);
 	Common::Rational getScaleFactorX() const;
 	Common::Rational getScaleFactorY() const;
 
@@ -273,6 +273,6 @@ private:
 	int readWAVE(MOVatom atom);
 };
 
-} // End of namespace Graphics
+} // End of namespace Video
 
 #endif

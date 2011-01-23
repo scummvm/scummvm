@@ -28,7 +28,7 @@
 #include "video/codecs/msrle.h"
 #include "common/stream.h"
 
-namespace Graphics {
+namespace Video {
 
 MSRLEDecoder::MSRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) {
 	_surface = new Graphics::Surface();
@@ -41,7 +41,7 @@ MSRLEDecoder::~MSRLEDecoder() {
 	delete _surface;
 }
 
-const Surface *MSRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *MSRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	if (_bitsPerPixel == 8) {
 		decode8(stream);
 	} else
@@ -75,7 +75,7 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream *stream) {
 				output = data + (y * width);
 
 				if (y < 0) {
-					warning("Next line is beyond picture bounds");
+					warning("MS RLE Codec: Next line is beyond picture bounds");
 					return;
 				}
 
@@ -93,7 +93,7 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream *stream) {
 				x += count;
 
 				if (y < 0) {
-					warning("Skip beyond picture bounds");
+					warning("MS RLE Codec: Skip beyond picture bounds");
 					return;
 				}
 
@@ -128,7 +128,7 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream *stream) {
 
 	}
 
-	warning("No end-of-picture code");
+	warning("MS RLE Codec: No end-of-picture code");
 }
 
-} // End of namespace Graphics
+} // End of namespace Video

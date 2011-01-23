@@ -28,7 +28,7 @@
 
 #include "common/system.h"
 
-namespace Graphics {
+namespace Video {
 
 struct CDToonsAction {
 	uint16 blockId;
@@ -447,4 +447,4 @@ void CDToonsDecoder::setPalette(byte *data) {
 	_palette[0] = _palette[1] = _palette[2] = 0;
 }
 
-} // End of namespace Graphics
+} // End of namespace Video
