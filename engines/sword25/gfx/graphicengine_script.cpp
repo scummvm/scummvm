@@ -128,7 +128,7 @@ static int newAnimationTemplate(lua_State *L) {
 		newUintUserData(L, animationTemplateHandle);
 		//luaL_getmetatable(L, ANIMATION_TEMPLATE_CLASS_NAME);
 		LuaBindhelper::getMetatable(L, ANIMATION_TEMPLATE_CLASS_NAME);
-		BS_ASSERT(!lua_isnil(L, -1));
+		assert(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 	} else {
 		lua_pushnil(L);
@@ -198,9 +198,9 @@ static const luaL_reg ANIMATION_TEMPLATE_METHODS[] = {
 
 static GraphicEngine *getGE() {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	GraphicEngine *pGE = pKernel->getGfx();
-	BS_ASSERT(pGE);
+	assert(pGE);
 	return pGE;
 }
 
@@ -238,17 +238,17 @@ static int init(lua_State *L) {
 
 	// Main-Panel zum Gfx-Modul hinzufügen
 	RenderObjectPtr<Panel> mainPanelPtr(getGE()->getMainPanel());
-	BS_ASSERT(mainPanelPtr.isValid());
+	assert(mainPanelPtr.isValid());
 
 	lua_pushstring(L, GFX_LIBRARY_NAME);
 	lua_gettable(L, LUA_GLOBALSINDEX);
-	BS_ASSERT(!lua_isnil(L, -1));
+	assert(!lua_isnil(L, -1));
 
 	newUintUserData(L, mainPanelPtr->getHandle());
-	BS_ASSERT(!lua_isnil(L, -1));
+	assert(!lua_isnil(L, -1));
 	// luaL_getmetatable(L, PANEL_CLASS_NAME);
 	LuaBindhelper::getMetatable(L, PANEL_CLASS_NAME);
-	BS_ASSERT(!lua_isnil(L, -1));
+	assert(!lua_isnil(L, -1));
 	lua_setmetatable(L, -2);
 
 	lua_pushstring(L, "MainPanel");
@@ -258,7 +258,7 @@ static int init(lua_State *L) {
 	lua_pop(L, 1);
 
 #ifdef DEBUG
-	BS_ASSERT(__startStackDepth == lua_gettop(L));
+	assert(__startStackDepth == lua_gettop(L));
 #endif
 
 	return 1;
@@ -445,7 +445,7 @@ static RenderObjectPtr<RenderObject> checkRenderObject(lua_State *L, bool errorI
 
 static int ro_setPos(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	Vertex pos;
 	Vertex::luaVertexToVertex(L, 2, pos);
 	roPtr->setPos(pos.x, pos.y);
@@ -454,35 +454,35 @@ static int ro_setPos(lua_State *L) {
 
 static int ro_setX(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	roPtr->setX(static_cast<int>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int ro_setY(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	roPtr->setY(static_cast<int>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int ro_setZ(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	roPtr->setZ(static_cast<int>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int ro_setVisible(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	roPtr->setVisible(lua_tobooleancpp(L, 2));
 	return 0;
 }
 
 static int ro_getX(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	lua_pushnumber(L, roPtr->getX());
 
 	return 1;
@@ -490,7 +490,7 @@ static int ro_getX(lua_State *L) {
 
 static int ro_getY(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	lua_pushnumber(L, roPtr->getY());
 
 	return 1;
@@ -498,7 +498,7 @@ static int ro_getY(lua_State *L) {
 
 static int ro_getZ(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	lua_pushnumber(L, roPtr->getZ());
 
 	return 1;
@@ -506,7 +506,7 @@ static int ro_getZ(lua_State *L) {
 
 static int ro_getAbsoluteX(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	lua_pushnumber(L, roPtr->getAbsoluteX());
 
 	return 1;
@@ -514,7 +514,7 @@ static int ro_getAbsoluteX(lua_State *L) {
 
 static int ro_getAbsoluteY(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	lua_pushnumber(L, roPtr->getAbsoluteY());
 
 	return 1;
@@ -522,7 +522,7 @@ static int ro_getAbsoluteY(lua_State *L) {
 
 static int ro_getWidth(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	lua_pushnumber(L, roPtr->getWidth());
 
 	return 1;
@@ -530,7 +530,7 @@ static int ro_getWidth(lua_State *L) {
 
 static int ro_getHeight(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	lua_pushnumber(L, roPtr->getHeight());
 
 	return 1;
@@ -538,7 +538,7 @@ static int ro_getHeight(lua_State *L) {
 
 static int ro_isVisible(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	lua_pushbooleancpp(L, roPtr->isVisible());
 
 	return 1;
@@ -546,7 +546,7 @@ static int ro_isVisible(lua_State *L) {
 
 static int ro_addPanel(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	RenderObjectPtr<Panel> panelPtr = roPtr->addPanel(static_cast<int>(luaL_checknumber(L, 2)),
 	                                        static_cast<int>(luaL_checknumber(L, 3)),
 	                                        GraphicEngine::luaColorToARGBColor(L, 4));
@@ -554,7 +554,7 @@ static int ro_addPanel(lua_State *L) {
 		newUintUserData(L, panelPtr->getHandle());
 		// luaL_getmetatable(L, PANEL_CLASS_NAME);
 		LuaBindhelper::getMetatable(L, PANEL_CLASS_NAME);
-		BS_ASSERT(!lua_isnil(L, -1));
+		assert(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 	} else
 		lua_pushnil(L);
@@ -564,13 +564,13 @@ static int ro_addPanel(lua_State *L) {
 
 static int ro_addBitmap(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	RenderObjectPtr<Bitmap> bitmaPtr = roPtr->addBitmap(luaL_checkstring(L, 2));
 	if (bitmaPtr.isValid()) {
 		newUintUserData(L, bitmaPtr->getHandle());
 		// luaL_getmetatable(L, BITMAP_CLASS_NAME);
 		LuaBindhelper::getMetatable(L, BITMAP_CLASS_NAME);
-		BS_ASSERT(!lua_isnil(L, -1));
+		assert(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 	} else
 		lua_pushnil(L);
@@ -580,7 +580,7 @@ static int ro_addBitmap(lua_State *L) {
 
 static int ro_addText(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 
 	RenderObjectPtr<Text> textPtr;
 	if (lua_gettop(L) >= 3)
@@ -592,7 +592,7 @@ static int ro_addText(lua_State *L) {
 		newUintUserData(L, textPtr->getHandle());
 		// luaL_getmetatable(L, TEXT_CLASS_NAME);
 		LuaBindhelper::getMetatable(L, TEXT_CLASS_NAME);
-		BS_ASSERT(!lua_isnil(L, -1));
+		assert(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 	} else
 		lua_pushnil(L);
@@ -602,7 +602,7 @@ static int ro_addText(lua_State *L) {
 
 static int ro_addAnimation(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 
 	RenderObjectPtr<Animation> animationPtr;
 	if (lua_type(L, 2) == LUA_TUSERDATA)
@@ -614,7 +614,7 @@ static int ro_addAnimation(lua_State *L) {
 		newUintUserData(L, animationPtr->getHandle());
 		// luaL_getmetatable(L, ANIMATION_CLASS_NAME);
 		LuaBindhelper::getMetatable(L, ANIMATION_CLASS_NAME);
-		BS_ASSERT(!lua_isnil(L, -1));
+		assert(!lua_isnil(L, -1));
 		lua_setmetatable(L, -2);
 
 		// Alle Animationscallbacks registrieren.
@@ -670,7 +670,7 @@ static RenderObjectPtr<Panel> checkPanel(lua_State *L) {
 
 static int p_getColor(lua_State *L) {
 	RenderObjectPtr<Panel> PanelPtr = checkPanel(L);
-	BS_ASSERT(PanelPtr.isValid());
+	assert(PanelPtr.isValid());
 	GraphicEngine::ARGBColorToLuaColor(L, PanelPtr->getColor());
 
 	return 1;
@@ -678,14 +678,14 @@ static int p_getColor(lua_State *L) {
 
 static int p_setColor(lua_State *L) {
 	RenderObjectPtr<Panel> PanelPtr = checkPanel(L);
-	BS_ASSERT(PanelPtr.isValid());
+	assert(PanelPtr.isValid());
 	PanelPtr->setColor(GraphicEngine::luaColorToARGBColor(L, 2));
 	return 0;
 }
 
 static int p_remove(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	roPtr.erase();
 	return 0;
 }
@@ -715,98 +715,98 @@ static RenderObjectPtr<Bitmap> checkBitmap(lua_State *L) {
 
 static int b_setAlpha(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	bitmapPtr->setAlpha(static_cast<uint>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int b_setTintColor(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	bitmapPtr->setModulationColor(GraphicEngine::luaColorToARGBColor(L, 2));
 	return 0;
 }
 
 static int b_setScaleFactor(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	bitmapPtr->setScaleFactor(static_cast<float>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int b_setScaleFactorX(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	bitmapPtr->setScaleFactorX(static_cast<float>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int b_setScaleFactorY(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	bitmapPtr->setScaleFactorY(static_cast<float>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int b_setFlipH(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	bitmapPtr->setFlipH(lua_tobooleancpp(L, 2));
 	return 0;
 }
 
 static int b_setFlipV(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	bitmapPtr->setFlipV(lua_tobooleancpp(L, 2));
 	return 0;
 }
 
 static int b_getAlpha(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	lua_pushnumber(L, bitmapPtr->getAlpha());
 	return 1;
 }
 
 static int b_getTintColor(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	GraphicEngine::ARGBColorToLuaColor(L, bitmapPtr->getModulationColor());
 	return 1;
 }
 
 static int b_getScaleFactorX(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	lua_pushnumber(L, bitmapPtr->getScaleFactorX());
 	return 1;
 }
 
 static int b_getScaleFactorY(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	lua_pushnumber(L, bitmapPtr->getScaleFactorY());
 	return 1;
 }
 
 static int b_isFlipH(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	lua_pushbooleancpp(L, bitmapPtr->isFlipH());
 	return 1;
 }
 
 static int b_isFlipV(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	lua_pushbooleancpp(L, bitmapPtr->isFlipV());
 	return 1;
 }
 
 static int b_getPixel(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	Vertex Pos;
 	Vertex::luaVertexToVertex(L, 2, Pos);
 	GraphicEngine::ARGBColorToLuaColor(L, bitmapPtr->getPixel(Pos.x, Pos.y));
@@ -815,28 +815,28 @@ static int b_getPixel(lua_State *L) {
 
 static int b_isScalingAllowed(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	lua_pushbooleancpp(L, bitmapPtr->isScalingAllowed());
 	return 1;
 }
 
 static int b_isAlphaAllowed(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	lua_pushbooleancpp(L, bitmapPtr->isAlphaAllowed());
 	return 1;
 }
 
 static int b_isTintingAllowed(lua_State *L) {
 	RenderObjectPtr<Bitmap> bitmapPtr = checkBitmap(L);
-	BS_ASSERT(bitmapPtr.isValid());
+	assert(bitmapPtr.isValid());
 	lua_pushbooleancpp(L, bitmapPtr->isColorModulationAllowed());
 	return 1;
 }
 
 static int b_remove(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
-	BS_ASSERT(roPtr.isValid());
+	assert(roPtr.isValid());
 	roPtr.erase();
 	return 0;
 }
@@ -882,84 +882,84 @@ static RenderObjectPtr<Animation> checkAnimation(lua_State *L) {
 
 static int a_play(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	animationPtr->play();
 	return 0;
 }
 
 static int a_pause(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	animationPtr->pause();
 	return 0;
 }
 
 static int a_stop(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	animationPtr->stop();
 	return 0;
 }
 
 static int a_setFrame(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	animationPtr->setFrame(static_cast<uint>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int a_setAlpha(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	animationPtr->setAlpha(static_cast<int>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int a_setTintColor(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	animationPtr->setModulationColor(GraphicEngine::luaColorToARGBColor(L, 2));
 	return 0;
 }
 
 static int a_setScaleFactor(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	animationPtr->setScaleFactor(static_cast<float>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int a_setScaleFactorX(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	animationPtr->setScaleFactorX(static_cast<float>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int a_setScaleFactorY(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	animationPtr->setScaleFactorY(static_cast<float>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int a_getScaleFactorX(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	lua_pushnumber(L, animationPtr->getScaleFactorX());
 	return 1;
 }
 
 static int a_getScaleFactorY(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	lua_pushnumber(L, animationPtr->getScaleFactorY());
 	return 1;
 }
 
 static int a_getAnimationType(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	switch (animationPtr->getAnimationType()) {
 	case Animation::AT_JOJO:
 		lua_pushstring(L, "jojo");
@@ -971,63 +971,63 @@ static int a_getAnimationType(lua_State *L) {
 		lua_pushstring(L, "oneshot");
 		break;
 	default:
-		BS_ASSERT(false);
+		assert(false);
 	}
 	return 1;
 }
 
 static int a_getFPS(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	lua_pushnumber(L, animationPtr->getFPS());
 	return 1;
 }
 
 static int a_getFrameCount(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	lua_pushnumber(L, animationPtr->getFrameCount());
 	return 1;
 }
 
 static int a_isScalingAllowed(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	lua_pushbooleancpp(L, animationPtr->isScalingAllowed());
 	return 1;
 }
 
 static int a_isAlphaAllowed(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	lua_pushbooleancpp(L, animationPtr->isAlphaAllowed());
 	return 1;
 }
 
 static int a_isTintingAllowed(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	lua_pushbooleancpp(L, animationPtr->isColorModulationAllowed());
 	return 1;
 }
 
 static int a_getCurrentFrame(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	lua_pushnumber(L, animationPtr->getCurrentFrame());
 	return 1;
 }
 
 static int a_getCurrentAction(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	lua_pushstring(L, animationPtr->getCurrentAction().c_str());
 	return 1;
 }
 
 static int a_isPlaying(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	lua_pushbooleancpp(L, animationPtr->isRunning());
 	return 1;
 }
@@ -1041,7 +1041,7 @@ static bool animationLoopPointCallback(uint handle) {
 
 static int a_registerLoopPointCallback(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	luaL_checktype(L, 2, LUA_TFUNCTION);
 
 	lua_pushvalue(L, 2);
@@ -1052,7 +1052,7 @@ static int a_registerLoopPointCallback(lua_State *L) {
 
 static int a_unregisterLoopPointCallback(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	luaL_checktype(L, 2, LUA_TFUNCTION);
 
 	lua_pushvalue(L, 2);
@@ -1074,7 +1074,7 @@ static bool animationActionCallback(uint Handle) {
 
 static int a_registerActionCallback(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	luaL_checktype(L, 2, LUA_TFUNCTION);
 
 	lua_pushvalue(L, 2);
@@ -1085,7 +1085,7 @@ static int a_registerActionCallback(lua_State *L) {
 
 static int a_unregisterActionCallback(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	luaL_checktype(L, 2, LUA_TFUNCTION);
 
 	lua_pushvalue(L, 2);
@@ -1103,7 +1103,7 @@ static bool animationDeleteCallback(uint Handle) {
 
 static int a_remove(lua_State *L) {
 	RenderObjectPtr<Animation> animationPtr = checkAnimation(L);
-	BS_ASSERT(animationPtr.isValid());
+	assert(animationPtr.isValid());
 	animationPtr.erase();
 	return 0;
 }
@@ -1155,91 +1155,91 @@ static RenderObjectPtr<Text> checkText(lua_State *L) {
 
 static int t_setFont(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	textPtr->setFont(luaL_checkstring(L, 2));
 	return 0;
 }
 
 static int t_setText(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	textPtr->setText(luaL_checkstring(L, 2));
 	return 0;
 }
 
 static int t_setAlpha(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	textPtr->setAlpha(static_cast<int>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int t_setColor(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	textPtr->setColor(GraphicEngine::luaColorToARGBColor(L, 2));
 	return 0;
 }
 
 static int t_setAutoWrap(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	textPtr->setAutoWrap(lua_tobooleancpp(L, 2));
 	return 0;
 }
 
 static int t_setAutoWrapThreshold(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	textPtr->setAutoWrapThreshold(static_cast<uint>(luaL_checknumber(L, 2)));
 	return 0;
 }
 
 static int t_getText(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	lua_pushstring(L, textPtr->getText().c_str());
 	return 1;
 }
 
 static int t_getFont(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	lua_pushstring(L, textPtr->getFont().c_str());
 	return 1;
 }
 
 static int t_getAlpha(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	lua_pushnumber(L, textPtr->getAlpha());
 	return 1;
 }
 
 static int t_getColor(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	lua_pushnumber(L, textPtr->getColor());
 	return 1;
 }
 
 static int t_isAutoWrap(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	lua_pushbooleancpp(L, textPtr->isAutoWrapActive());
 	return 1;
 }
 
 static int t_getAutoWrapThreshold(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	lua_pushnumber(L, textPtr->getAutoWrapThreshold());
 	return 1;
 }
 
 static int t_remove(lua_State *L) {
 	RenderObjectPtr<Text> textPtr = checkText(L);
-	BS_ASSERT(textPtr.isValid());
+	assert(textPtr.isValid());
 	textPtr.erase();
 	return 0;
 }
@@ -1263,11 +1263,11 @@ static const luaL_reg TEXT_METHODS[] = {
 
 bool GraphicEngine::registerScriptBindings() {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ScriptEngine *pScript = pKernel->getScript();
-	BS_ASSERT(pScript);
+	assert(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
-	BS_ASSERT(L);
+	assert(L);
 
 	if (!LuaBindhelper::addMethodsToClass(L, BITMAP_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
 	if (!LuaBindhelper::addMethodsToClass(L, ANIMATION_CLASS_NAME, RENDEROBJECT_METHODS)) return false;

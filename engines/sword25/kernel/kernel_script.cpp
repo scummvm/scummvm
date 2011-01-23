@@ -86,7 +86,7 @@ static int getServiceIdentifier(lua_State *L) {
 
 static int getMilliTicks(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 
 	lua_pushnumber(L, pKernel->getMilliTicks());
 
@@ -95,7 +95,7 @@ static int getMilliTicks(lua_State *L) {
 
 static int getTimer(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 
 	lua_pushnumber(L, static_cast<lua_Number>(pKernel->getMilliTicks()) / 1000.0);
 
@@ -112,23 +112,23 @@ static int startService(lua_State *L) {
 
 static int sleep(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	pKernel->sleep(static_cast<uint>(luaL_checknumber(L, 1) * 1000));
 	return 0;
 }
 
 static int crash(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	pKernel->crash();
 	return 0;
 }
 
 static int executeFile(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ScriptEngine *pSE = pKernel->getScript();
-	BS_ASSERT(pSE);
+	assert(pSE);
 
 	lua_pushbooleancpp(L, pSE->executeFile(luaL_checkstring(L, 1)));
 
@@ -370,9 +370,9 @@ static const luaL_reg WINDOW_FUNCTIONS[] = {
 
 static int precacheResource(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ResourceManager *pResource = pKernel->getResourceManager();
-	BS_ASSERT(pResource);
+	assert(pResource);
 
 	lua_pushbooleancpp(L, pResource->precacheResource(luaL_checkstring(L, 1)));
 
@@ -381,9 +381,9 @@ static int precacheResource(lua_State *L) {
 
 static int forcePrecacheResource(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ResourceManager *pResource = pKernel->getResourceManager();
-	BS_ASSERT(pResource);
+	assert(pResource);
 
 	lua_pushbooleancpp(L, pResource->precacheResource(luaL_checkstring(L, 1), true));
 
@@ -392,9 +392,9 @@ static int forcePrecacheResource(lua_State *L) {
 
 static int getMaxMemoryUsage(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ResourceManager *pResource = pKernel->getResourceManager();
-	BS_ASSERT(pResource);
+	assert(pResource);
 
 	lua_pushnumber(L, pResource->getMaxMemoryUsage());
 
@@ -403,9 +403,9 @@ static int getMaxMemoryUsage(lua_State *L) {
 
 static int setMaxMemoryUsage(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ResourceManager *pResource = pKernel->getResourceManager();
-	BS_ASSERT(pResource);
+	assert(pResource);
 
 	pResource->setMaxMemoryUsage(static_cast<uint>(lua_tonumber(L, 1)));
 
@@ -414,9 +414,9 @@ static int setMaxMemoryUsage(lua_State *L) {
 
 static int emptyCache(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ResourceManager *pResource = pKernel->getResourceManager();
-	BS_ASSERT(pResource);
+	assert(pResource);
 
 	pResource->emptyCache();
 
@@ -425,9 +425,9 @@ static int emptyCache(lua_State *L) {
 
 static int isLogCacheMiss(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ResourceManager *pResource = pKernel->getResourceManager();
-	BS_ASSERT(pResource);
+	assert(pResource);
 
 	lua_pushbooleancpp(L, pResource->isLogCacheMiss());
 
@@ -436,9 +436,9 @@ static int isLogCacheMiss(lua_State *L) {
 
 static int setLogCacheMiss(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ResourceManager *pResource = pKernel->getResourceManager();
-	BS_ASSERT(pResource);
+	assert(pResource);
 
 	pResource->setLogCacheMiss(lua_tobooleancpp(L, 1));
 
@@ -447,9 +447,9 @@ static int setLogCacheMiss(lua_State *L) {
 
 static int dumpLockedResources(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ResourceManager *pResource = pKernel->getResourceManager();
-	BS_ASSERT(pResource);
+	assert(pResource);
 
 	pResource->dumpLockedResources();
 
@@ -535,9 +535,9 @@ static const luaL_reg PERSISTENCE_FUNCTIONS[] = {
 
 bool Kernel::registerScriptBindings() {
 	ScriptEngine *pScript = getScript();
-	BS_ASSERT(pScript);
+	assert(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
-	BS_ASSERT(L);
+	assert(L);
 
 	if (!LuaBindhelper::addFunctionsToLib(L, KERNEL_LIBRARY_NAME, KERNEL_FUNCTIONS)) return false;
 	if (!LuaBindhelper::addFunctionsToLib(L, WINDOW_LIBRARY_NAME, WINDOW_FUNCTIONS)) return false;

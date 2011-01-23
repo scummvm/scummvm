@@ -45,7 +45,7 @@ SWImage::SWImage(const Common::String &filename, bool &result) :
 	result = false;
 
 	PackageManager *pPackage = Kernel::getInstance()->getPackage();
-	BS_ASSERT(pPackage);
+	assert(pPackage);
 
 	// Datei laden
 	byte *pFileData;
@@ -104,8 +104,8 @@ bool SWImage::setContent(const byte *pixeldata, uint size, uint offset, uint str
 }
 
 uint SWImage::getPixel(int x, int y) {
-	BS_ASSERT(x >= 0 && x < _width);
-	BS_ASSERT(y >= 0 && y < _height);
+	assert(x >= 0 && x < _width);
+	assert(y >= 0 && y < _height);
 
 	return _imageDataPtr[_width * y + x];
 }

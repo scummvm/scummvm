@@ -114,7 +114,7 @@ static bool isValidPolygonDefinition(lua_State *L) {
 	}
 
 #ifdef DEBUG
-	BS_ASSERT(__startStackDepth == lua_gettop(L));
+	assert(__startStackDepth == lua_gettop(L));
 #endif
 
 	return true;
@@ -151,10 +151,10 @@ static void tablePolygonToPolygon(lua_State *L, Polygon &polygon) {
 		// Vertex
 		vertices.push_back(Vertex(X, Y));
 	}
-	BS_ASSERT((int)vertices.size() == vertexCount);
+	assert((int)vertices.size() == vertexCount);
 
 #ifdef DEBUG
-	BS_ASSERT(__startStackDepth == lua_gettop(L));
+	assert(__startStackDepth == lua_gettop(L));
 #endif
 
 	// Create polygon
@@ -185,10 +185,10 @@ static uint tableRegionToRegion(lua_State *L, const char *className) {
 	} else if (!strcmp(className, WALKREGION_CLASS_NAME)) {
 		regionHandle = WalkRegion::create(Region::RT_WALKREGION);
 	} else {
-		BS_ASSERT(false);
+		assert(false);
 	}
 
-	BS_ASSERT(regionHandle);
+	assert(regionHandle);
 
 	// If the first element of the parameter is a number, then case 1 is accepted
 	// If the first element of the parameter is a table, then case 2 is accepted
@@ -224,7 +224,7 @@ static uint tableRegionToRegion(lua_State *L, const char *className) {
 				tablePolygonToPolygon(L, holes.back());
 				lua_pop(L, 1);
 			}
-			BS_ASSERT((int)holes.size() == polygonCount - 1);
+			assert((int)holes.size() == polygonCount - 1);
 
 			RegionRegistry::instance().resolveHandle(regionHandle)->init(polygon, &holes);
 		}
@@ -237,7 +237,7 @@ static uint tableRegionToRegion(lua_State *L, const char *className) {
 	}
 
 #ifdef DEBUG
-	BS_ASSERT(__startStackDepth == lua_gettop(L));
+	assert(__startStackDepth == lua_gettop(L));
 #endif
 
 	return regionHandle;
@@ -247,12 +247,12 @@ static void newUserdataRegion(lua_State *L, const char *className) {
 	// Region due to the Lua code to create
 	// Any errors that occur will be intercepted to the luaL_error
 	uint regionHandle = tableRegionToRegion(L, className);
-	BS_ASSERT(regionHandle);
+	assert(regionHandle);
 
 	newUintUserData(L, regionHandle);
 	// luaL_getmetatable(L, className);
 	LuaBindhelper::getMetatable(L, className);
-	BS_ASSERT(!lua_isnil(L, -1));
+	assert(!lua_isnil(L, -1));
 	lua_setmetatable(L, -2);
 }
 
@@ -290,7 +290,7 @@ static Region *checkRegion(lua_State *L) {
 
 static int r_isValid(lua_State *L) {
 	Region *pR = checkRegion(L);
-	BS_ASSERT(pR);
+	assert(pR);
 
 	lua_pushbooleancpp(L, pR->isValid());
 	return 1;
@@ -298,7 +298,7 @@ static int r_isValid(lua_State *L) {
 
 static int r_getX(lua_State *L) {
 	Region *pR = checkRegion(L);
-	BS_ASSERT(pR);
+	assert(pR);
 
 	lua_pushnumber(L, pR->getPosX());
 	return 1;
@@ -306,7 +306,7 @@ static int r_getX(lua_State *L) {
 
 static int r_getY(lua_State *L) {
 	Region *pR = checkRegion(L);
-	BS_ASSERT(pR);
+	assert(pR);
 
 	lua_pushnumber(L, pR->getPosY());
 	return 1;
@@ -314,7 +314,7 @@ static int r_getY(lua_State *L) {
 
 static int r_getPos(lua_State *L) {
 	Region *pR = checkRegion(L);
-	BS_ASSERT(pR);
+	assert(pR);
 
 	Vertex::vertexToLuaVertex(L, pR->getPosition());
 	return 1;
@@ -322,7 +322,7 @@ static int r_getPos(lua_State *L) {
 
 static int r_isPointInRegion(lua_State *L) {
 	Region *pR = checkRegion(L);
-	BS_ASSERT(pR);
+	assert(pR);
 
 	Vertex vertex;
 	Vertex::luaVertexToVertex(L, 2, vertex);
@@ -332,7 +332,7 @@ static int r_isPointInRegion(lua_State *L) {
 
 static int r_setPos(lua_State *L) {
 	Region *pR = checkRegion(L);
-	BS_ASSERT(pR);
+	assert(pR);
 
 	Vertex vertex;
 	Vertex::luaVertexToVertex(L, 2, vertex);
@@ -343,7 +343,7 @@ static int r_setPos(lua_State *L) {
 
 static int r_setX(lua_State *L) {
 	Region *pR = checkRegion(L);
-	BS_ASSERT(pR);
+	assert(pR);
 
 	pR->setPosX(static_cast<int>(luaL_checknumber(L, 2)));
 
@@ -352,7 +352,7 @@ static int r_setX(lua_State *L) {
 
 static int r_setY(lua_State *L) {
 	Region *pR = checkRegion(L);
-	BS_ASSERT(pR);
+	assert(pR);
 
 	pR->setPosY(static_cast<int>(luaL_checknumber(L, 2)));
 
@@ -361,7 +361,7 @@ static int r_setY(lua_State *L) {
 
 static void drawPolygon(const Polygon &polygon, uint color, const Vertex &offset) {
 	GraphicEngine *pGE = Kernel::getInstance()->getGfx();
-	BS_ASSERT(pGE);
+	assert(pGE);
 
 	for (int i = 0; i < polygon.vertexCount - 1; i++)
 		pGE->drawDebugLine(polygon.vertices[i] + offset, polygon.vertices[i + 1] + offset, color);
@@ -377,7 +377,7 @@ static void drawRegion(const Region &region, uint color, const Vertex &offset) {
 
 static int r_draw(lua_State *L) {
 	Region *pR = checkRegion(L);
-	BS_ASSERT(pR);
+	assert(pR);
 
 	switch (lua_gettop(L)) {
 	case 3: {
@@ -400,7 +400,7 @@ static int r_draw(lua_State *L) {
 
 static int r_getCentroid(lua_State *L) {
 	Region *RPtr = checkRegion(L);
-	BS_ASSERT(RPtr);
+	assert(RPtr);
 
 	Vertex::vertexToLuaVertex(L, RPtr->getCentroid());
 
@@ -409,7 +409,7 @@ static int r_getCentroid(lua_State *L) {
 
 static int r_delete(lua_State *L) {
 	Region *pR = checkRegion(L);
-	BS_ASSERT(pR);
+	assert(pR);
 	delete pR;
 	return 0;
 }
@@ -443,7 +443,7 @@ static WalkRegion *checkWalkRegion(lua_State *L) {
 
 static int wr_getPath(lua_State *L) {
 	WalkRegion *pWR = checkWalkRegion(L);
-	BS_ASSERT(pWR);
+	assert(pWR);
 
 	Vertex start;
 	Vertex::luaVertexToVertex(L, 2, start);
@@ -471,11 +471,11 @@ static const luaL_reg WALKREGION_METHODS[] = {
 
 bool Geometry::registerScriptBindings() {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ScriptEngine *pScript = pKernel->getScript();
-	BS_ASSERT(pScript);
+	assert(pScript);
 	lua_State *L = static_cast< lua_State *>(pScript->getScriptObject());
-	BS_ASSERT(L);
+	assert(L);
 
 	if (!LuaBindhelper::addMethodsToClass(L, REGION_CLASS_NAME, REGION_METHODS)) return false;
 	if (!LuaBindhelper::addMethodsToClass(L, WALKREGION_CLASS_NAME, REGION_METHODS)) return false;

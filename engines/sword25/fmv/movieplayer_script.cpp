@@ -45,7 +45,7 @@ namespace Sword25 {
 
 int loadMovie(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::getInstance()->getFMV();
-	BS_ASSERT(FMVPtr);
+	assert(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->loadMovie(luaL_checkstring(L, 1), lua_gettop(L) == 2 ? static_cast<uint>(luaL_checknumber(L, 2)) : 10));
 
@@ -54,7 +54,7 @@ int loadMovie(lua_State *L) {
 
 int unloadMovie(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::getInstance()->getFMV();
-	BS_ASSERT(FMVPtr);
+	assert(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->unloadMovie());
 
@@ -63,7 +63,7 @@ int unloadMovie(lua_State *L) {
 
 int play(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::getInstance()->getFMV();
-	BS_ASSERT(FMVPtr);
+	assert(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->play());
 
@@ -72,7 +72,7 @@ int play(lua_State *L) {
 
 int pause(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::getInstance()->getFMV();
-	BS_ASSERT(FMVPtr);
+	assert(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->pause());
 
@@ -81,7 +81,7 @@ int pause(lua_State *L) {
 
 int update(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::getInstance()->getFMV();
-	BS_ASSERT(FMVPtr);
+	assert(FMVPtr);
 
 	FMVPtr->update();
 
@@ -90,7 +90,7 @@ int update(lua_State *L) {
 
 int isMovieLoaded(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::getInstance()->getFMV();
-	BS_ASSERT(FMVPtr);
+	assert(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->isMovieLoaded());
 
@@ -99,7 +99,7 @@ int isMovieLoaded(lua_State *L) {
 
 int isPaused(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::getInstance()->getFMV();
-	BS_ASSERT(FMVPtr);
+	assert(FMVPtr);
 
 	lua_pushbooleancpp(L, FMVPtr->isPaused());
 
@@ -108,7 +108,7 @@ int isPaused(lua_State *L) {
 
 int getScaleFactor(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::getInstance()->getFMV();
-	BS_ASSERT(FMVPtr);
+	assert(FMVPtr);
 
 	lua_pushnumber(L, FMVPtr->getScaleFactor());
 
@@ -117,7 +117,7 @@ int getScaleFactor(lua_State *L) {
 
 int setScaleFactor(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::getInstance()->getFMV();
-	BS_ASSERT(FMVPtr);
+	assert(FMVPtr);
 
 	FMVPtr->setScaleFactor(static_cast<float>(luaL_checknumber(L, 1)));
 
@@ -126,7 +126,7 @@ int setScaleFactor(lua_State *L) {
 
 int getTime(lua_State *L) {
 	MoviePlayer *FMVPtr = Kernel::getInstance()->getFMV();
-	BS_ASSERT(FMVPtr);
+	assert(FMVPtr);
 
 	lua_pushnumber(L, FMVPtr->getTime());
 
@@ -151,9 +151,9 @@ const luaL_reg LIBRARY_FUNCTIONS[] = {
 
 bool MoviePlayer::registerScriptBindings() {
 	ScriptEngine *pScript = Kernel::getInstance()->getScript();
-	BS_ASSERT(pScript);
+	assert(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
-	BS_ASSERT(L);
+	assert(L);
 
 	if (!LuaBindhelper::addFunctionsToLib(L, LIBRARY_NAME, LIBRARY_FUNCTIONS)) return false;
 

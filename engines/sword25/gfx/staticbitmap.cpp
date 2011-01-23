@@ -87,13 +87,13 @@ StaticBitmap::~StaticBitmap() {
 bool StaticBitmap::doRender() {
 	// Bitmap holen
 	Resource *resourcePtr = Kernel::getInstance()->getResourceManager()->requestResource(_resourceFilename);
-	BS_ASSERT(resourcePtr);
-	BS_ASSERT(resourcePtr->getType() == Resource::TYPE_BITMAP);
+	assert(resourcePtr);
+	assert(resourcePtr->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *bitmapResourcePtr = static_cast<BitmapResource *>(resourcePtr);
 
 	// Framebufferobjekt holen
 	GraphicEngine *gfxPtr = Kernel::getInstance()->getGfx();
-	BS_ASSERT(gfxPtr);
+	assert(gfxPtr);
 
 	// Bitmap zeichnen
 	bool result;
@@ -116,11 +116,11 @@ bool StaticBitmap::doRender() {
 }
 
 uint StaticBitmap::getPixel(int x, int y) const {
-	BS_ASSERT(x >= 0 && x < _width);
-	BS_ASSERT(y >= 0 && y < _height);
+	assert(x >= 0 && x < _width);
+	assert(y >= 0 && y < _height);
 
 	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(_resourceFilename);
-	BS_ASSERT(pResource->getType() == Resource::TYPE_BITMAP);
+	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmapResource = static_cast<BitmapResource *>(pResource);
 	uint result = pBitmapResource->getPixel(x, y);
 	pResource->release();
@@ -134,7 +134,7 @@ bool StaticBitmap::setContent(const byte *pixeldata, uint size, uint offset, uin
 
 bool StaticBitmap::isAlphaAllowed() const {
 	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(_resourceFilename);
-	BS_ASSERT(pResource->getType() == Resource::TYPE_BITMAP);
+	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	bool result = static_cast<BitmapResource *>(pResource)->isAlphaAllowed();
 	pResource->release();
 	return result;
@@ -142,7 +142,7 @@ bool StaticBitmap::isAlphaAllowed() const {
 
 bool StaticBitmap::isColorModulationAllowed() const {
 	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(_resourceFilename);
-	BS_ASSERT(pResource->getType() == Resource::TYPE_BITMAP);
+	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	bool result = static_cast<BitmapResource *>(pResource)->isColorModulationAllowed();
 	pResource->release();
 	return result;
@@ -150,7 +150,7 @@ bool StaticBitmap::isColorModulationAllowed() const {
 
 bool StaticBitmap::isScalingAllowed() const {
 	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(_resourceFilename);
-	BS_ASSERT(pResource->getType() == Resource::TYPE_BITMAP);
+	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	bool result = static_cast<BitmapResource *>(pResource)->isScalingAllowed();
 	pResource->release();
 	return result;

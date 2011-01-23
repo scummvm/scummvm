@@ -313,7 +313,7 @@ public:
 			return width * 4;
 
 		default:
-			BS_ASSERT(false);
+			assert(false);
 		}
 
 		return -1;

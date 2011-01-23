@@ -76,7 +76,7 @@ bool Panel::doRender() {
 		return true;
 
 	GraphicEngine *gfxPtr = Kernel::getInstance()->getGfx();
-	BS_ASSERT(gfxPtr);
+	assert(gfxPtr);
 
 	return gfxPtr->fill(&_bbox, _color);
 }

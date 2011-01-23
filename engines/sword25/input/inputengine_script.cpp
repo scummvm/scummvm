@@ -84,9 +84,9 @@ static CommandCallbackClass *commandCallbackPtr = 0;	// FIXME: should be turned 
 
 static InputEngine *getIE() {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	InputEngine *pIE = pKernel->getInput();
-	BS_ASSERT(pIE);
+	assert(pIE);
 	return pIE;
 }
 
@@ -263,11 +263,11 @@ static const lua_constant_reg PACKAGE_CONSTANTS[] = {
 
 bool InputEngine::registerScriptBindings() {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ScriptEngine *pScript = pKernel->getScript();
-	BS_ASSERT(pScript);
+	assert(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
-	BS_ASSERT(L);
+	assert(L);
 
 	if (!LuaBindhelper::addFunctionsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_FUNCTIONS)) return false;
 	if (!LuaBindhelper::addConstantsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_CONSTANTS)) return false;

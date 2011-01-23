@@ -52,7 +52,7 @@ LuaCallback::~LuaCallback() {
 }
 
 void LuaCallback::registerCallbackFunction(lua_State *L, uint objectHandle) {
-	BS_ASSERT(lua_isfunction(L, -1));
+	assert(lua_isfunction(L, -1));
 	ensureObjectCallbackTableExists(L, objectHandle);
 
 	// Store function in the callback object table store
@@ -64,7 +64,7 @@ void LuaCallback::registerCallbackFunction(lua_State *L, uint objectHandle) {
 }
 
 void LuaCallback::unregisterCallbackFunction(lua_State *L, uint objectHandle) {
-	BS_ASSERT(lua_isfunction(L, -1));
+	assert(lua_isfunction(L, -1));
 	ensureObjectCallbackTableExists(L, objectHandle);
 
 	// Iterate over all elements of the object callback table and remove the function from it

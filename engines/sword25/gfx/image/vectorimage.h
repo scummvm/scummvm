@@ -101,12 +101,12 @@ public:
 		return _pathInfos.size();
 	}
 	const VectorPathInfo &getPathInfo(uint pathNr) const {
-		BS_ASSERT(pathNr < getPathCount());
+		assert(pathNr < getPathCount());
 		return _pathInfos[pathNr];
 	}
 
 	double getLineStyleWidth(uint lineStyle) const {
-		BS_ASSERT(lineStyle < _lineStyles.size());
+		assert(lineStyle < _lineStyles.size());
 		return _lineStyles[lineStyle].width;
 	}
 
@@ -115,7 +115,7 @@ public:
 	}
 
 	uint32 getLineStyleColor(uint lineStyle) const {
-		BS_ASSERT(lineStyle < _lineStyles.size());
+		assert(lineStyle < _lineStyles.size());
 		return _lineStyles[lineStyle].color;
 	}
 
@@ -124,7 +124,7 @@ public:
 	}
 
 	uint32 getFillStyleColor(uint fillStyle) const {
-		BS_ASSERT(fillStyle < _fillStyles.size());
+		assert(fillStyle < _fillStyles.size());
 		return _fillStyles[fillStyle];
 	}
 
@@ -165,7 +165,7 @@ public:
 		return _elements.size();
 	}
 	const VectorImageElement &getElement(uint elementNr) const {
-		BS_ASSERT(elementNr < _elements.size());
+		assert(elementNr < _elements.size());
 		return _elements[elementNr];
 	}
 	const Common::Rect &getBoundingBox() const {

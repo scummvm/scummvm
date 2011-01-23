@@ -62,7 +62,7 @@ Vertex &Vertex::luaVertexToVertex(lua_State *L, int stackIndex, Vertex &vertex) 
 	lua_pop(L, 1);
 
 #ifdef DEBUG
-	BS_ASSERT(__startStackDepth == lua_gettop(L));
+	assert(__startStackDepth == lua_gettop(L));
 #endif
 
 	return vertex;

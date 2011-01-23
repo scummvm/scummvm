@@ -55,7 +55,7 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	result = false;
 
 	PackageManager *pPackage = Kernel::getInstance()->getPackage();
-	BS_ASSERT(pPackage);
+	assert(pPackage);
 
 	_backSurface = Kernel::getInstance()->getGfx()->getSurface();
 

@@ -232,7 +232,7 @@ protected:
 };
 
 inline const Polygon &Region::getHole(uint i) const {
-	BS_ASSERT(i < _polygons.size() - 1);
+	assert(i < _polygons.size() - 1);
 	return _polygons[i + 1];
 }
 

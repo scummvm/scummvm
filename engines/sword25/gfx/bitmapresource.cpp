@@ -51,8 +51,8 @@ BitmapResource::~BitmapResource() {
 }
 
 uint BitmapResource::getPixel(int x, int y) const {
-	BS_ASSERT(x >= 0 && x < _pImage->getWidth());
-	BS_ASSERT(y >= 0 && y < _pImage->getHeight());
+	assert(x >= 0 && x < _pImage->getWidth());
+	assert(y >= 0 && y < _pImage->getHeight());
 
 	return _pImage->getPixel(x, y);
 }

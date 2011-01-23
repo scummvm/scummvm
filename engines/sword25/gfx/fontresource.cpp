@@ -51,9 +51,9 @@ FontResource::FontResource(Kernel *pKernel, const Common::String &fileName) :
 	Common::XMLParser() {
 
 	// Get a pointer to the package manager
-	BS_ASSERT(_pKernel);
+	assert(_pKernel);
 	PackageManager *pPackage = _pKernel->getPackage();
-	BS_ASSERT(pPackage);
+	assert(pPackage);
 
 	// Load the contents of the file
 	uint fileSize;
@@ -89,9 +89,9 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 	}
 	
 	// Get a reference to the package manager
-	BS_ASSERT(_pKernel);
+	assert(_pKernel);
 	PackageManager *pPackage = _pKernel->getPackage();
-	BS_ASSERT(pPackage);
+	assert(pPackage);
 
 	// Get the full path and filename for the bitmap resource
 	_bitmapFileName = pPackage->getAbsolutePath(bitmapFilename);

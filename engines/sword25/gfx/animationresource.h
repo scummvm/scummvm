@@ -52,7 +52,7 @@ public:
 	virtual ~AnimationResource();
 
 	virtual const Frame    &getFrame(uint index) const {
-		BS_ASSERT(index < _frames.size());
+		assert(index < _frames.size());
 		return _frames[index];
 	}
 	virtual uint    getFrameCount() const {

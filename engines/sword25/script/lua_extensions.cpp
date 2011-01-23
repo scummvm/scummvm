@@ -50,7 +50,7 @@ static int warning(lua_State *L) {
 	lua_pop(L, 1);
 
 #ifdef DEBUG
-	BS_ASSERT(__startStackDepth == lua_gettop(L));
+	assert(__startStackDepth == lua_gettop(L));
 #endif
 
 	return 0;
@@ -63,7 +63,7 @@ static const luaL_reg GLOBAL_FUNCTIONS[] = {
 
 bool LuaScriptEngine::registerStandardLibExtensions() {
 	lua_State *L = _state;
-	BS_ASSERT(_state);
+	assert(_state);
 
 	if (!LuaBindhelper::addFunctionsToLib(L, "", GLOBAL_FUNCTIONS))
 		return false;

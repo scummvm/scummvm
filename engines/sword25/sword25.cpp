@@ -127,7 +127,7 @@ Common::Error Sword25Engine::appStart() {
 bool Sword25Engine::appMain() {
 	// The main script start. This script loads all the other scripts and starts the actual game.
 	ScriptEngine *scriptPtr = Kernel::getInstance()->getScript();
-	BS_ASSERT(scriptPtr);
+	assert(scriptPtr);
 	scriptPtr->executeFile(DEFAULT_SCRIPT_FILE);
 
 	return true;
@@ -146,7 +146,7 @@ bool Sword25Engine::appEnd() {
 
 bool Sword25Engine::loadPackages() {
 	PackageManager *packageManagerPtr = Kernel::getInstance()->getPackage();
-	BS_ASSERT(packageManagerPtr);
+	assert(packageManagerPtr);
 
 	// Load the main package
 	if (!packageManagerPtr->loadPackage("data.b25c", "/"))

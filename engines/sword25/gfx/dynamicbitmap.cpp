@@ -67,8 +67,8 @@ DynamicBitmap::~DynamicBitmap() {
 }
 
 uint DynamicBitmap::getPixel(int x, int y) const {
-	BS_ASSERT(x >= 0 && x < _width);
-	BS_ASSERT(y >= 0 && y < _height);
+	assert(x >= 0 && x < _width);
+	assert(y >= 0 && y < _height);
 
 	return _image->getPixel(x, y);
 }
@@ -76,7 +76,7 @@ uint DynamicBitmap::getPixel(int x, int y) const {
 bool DynamicBitmap::doRender() {
 	// Framebufferobjekt holen
 	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
-	BS_ASSERT(pGfx);
+	assert(pGfx);
 
 	// Bitmap zeichnen
 	bool result;

@@ -258,7 +258,7 @@ Graphics::Surface *GraphicEngine::getScreenshot() {
 // -----------------------------------------------------------------------------
 
 Resource *GraphicEngine::loadResource(const Common::String &filename) {
-	BS_ASSERT(canLoadResource(filename));
+	assert(canLoadResource(filename));
 
 	// Load image for "software buffer" (FIXME: Whatever that means?)
 	if (filename.hasSuffix("_s.png")) {
@@ -303,7 +303,7 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 
 		// Pointer auf Package-Manager holen
 		PackageManager *pPackage = Kernel::getInstance()->getPackage();
-		BS_ASSERT(pPackage);
+		assert(pPackage);
 
 		// Datei laden
 		byte *pFileData;
@@ -470,7 +470,7 @@ uint GraphicEngine::luaColorToARGBColor(lua_State *L, int stackIndex) {
 	}
 
 #ifdef DEBUG
-	BS_ASSERT(__startStackDepth == lua_gettop(L));
+	assert(__startStackDepth == lua_gettop(L));
 #endif
 
 	return (alpha << 24) | (red << 16) | (green << 8) | blue;

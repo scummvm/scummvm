@@ -52,7 +52,7 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 		_valid(false) {
 	// Get a pointer to the package manager
 	_pPackage = Kernel::getInstance()->getPackage();
-	BS_ASSERT(_pPackage);
+	assert(_pPackage);
 
 	// Switch to the folder the specified Xml fiile is in
 	Common::String oldDirectory = _pPackage->getCurrentDirectory();
@@ -218,7 +218,7 @@ bool AnimationResource::precacheAllFrames() const {
 }
 
 bool AnimationResource::computeFeatures() {
-	BS_ASSERT(_frames.size());
+	assert(_frames.size());
 
 	// Alle Features werden als vorhanden angenommen
 	_scalingAllowed = true;

@@ -68,7 +68,7 @@ bool WalkRegion::init(const Polygon &contour, const Common::Array<Polygon> *pHol
 }
 
 bool WalkRegion::queryPath(Vertex startPoint, Vertex endPoint, BS_Path &path) {
-	BS_ASSERT(path.empty());
+	assert(path.empty());
 
 	// If the start and finish are identical, no path can be found trivially
 	if (startPoint == endPoint)
@@ -111,7 +111,7 @@ static void initDijkstraNodes(DijkstraNode::Container &dijkstraNodes, const Regi
 		(*dijkstraIter).parentIter = dijkstraNodes.end();
 		if (region.isLineOfSight(*nodesIter, start))(*dijkstraIter).cost = (*nodesIter).distance(start);
 	}
-	BS_ASSERT(dijkstraIter == dijkstraNodes.end());
+	assert(dijkstraIter == dijkstraNodes.end());
 }
 
 static DijkstraNode::Iter chooseClosestNode(DijkstraNode::Container &nodes) {
@@ -204,7 +204,7 @@ bool WalkRegion::findPath(const Vertex &start, const Vertex &end, BS_Path &path)
 			// The list is done in reverse order and inserted into the path
 			DijkstraNode::ConstIter curNode = endPoint.parentIter;
 			while (curNode != dijkstraNodes.end()) {
-				BS_ASSERT((*curNode).chosen);
+				assert((*curNode).chosen);
 				path.push_back(_nodes[curNode - dijkstraNodes.begin()]);
 				curNode = (*curNode).parentIter;
 			}

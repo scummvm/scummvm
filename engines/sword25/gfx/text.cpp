@@ -98,7 +98,7 @@ void Text::setColor(uint modulationColor) {
 }
 
 void Text::setAlpha(int alpha) {
-	BS_ASSERT(alpha >= 0 && alpha < 256);
+	assert(alpha >= 0 && alpha < 256);
 	uint newModulationColor = (_modulationColor & 0x00ffffff) | alpha << 24;
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
@@ -147,7 +147,7 @@ bool Text::doRender() {
 
 	// Framebufferobjekt holen.
 	GraphicEngine *gfxPtr = Kernel::getInstance()->getGfx();
-	BS_ASSERT(gfxPtr);
+	assert(gfxPtr);
 
 	bool result = true;
 	Common::Array<Line>::iterator iter = _lines.begin();
@@ -212,7 +212,7 @@ FontResource *Text::lockFontResource() {
 
 void Text::updateFormat() {
 	FontResource *fontPtr = lockFontResource();
-	BS_ASSERT(fontPtr);
+	assert(fontPtr);
 
 	updateMetrics(*fontPtr);
 
@@ -263,7 +263,7 @@ void Text::updateFormat() {
 
 			if (lastSpace < _text.size()) {
 				++curLine;
-				BS_ASSERT(curLine == _lines.size());
+				assert(curLine == _lines.size());
 				_lines.resize(curLine + 1);
 				_lines[curLine].text = "";
 			}

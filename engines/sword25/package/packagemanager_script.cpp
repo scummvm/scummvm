@@ -43,9 +43,9 @@ namespace Sword25 {
 
 static PackageManager *getPM() {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	PackageManager *pPM = pKernel->getPackage();
-	BS_ASSERT(pPM);
+	assert(pPM);
 	return pPM;
 }
 
@@ -196,11 +196,11 @@ static const luaL_reg PACKAGE_FUNCTIONS[] = {
 
 bool PackageManager::registerScriptBindings() {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ScriptEngine *pScript = pKernel->getScript();
-	BS_ASSERT(pScript);
+	assert(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
-	BS_ASSERT(L);
+	assert(L);
 
 	if (!LuaBindhelper::addFunctionsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_FUNCTIONS))
 		return false;

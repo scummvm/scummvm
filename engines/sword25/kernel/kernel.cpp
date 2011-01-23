@@ -139,7 +139,7 @@ Kernel::~Kernel() {
  * @param Max       The maximum allowed value
  */
 int Kernel::getRandomNumber(int min, int max) {
-	BS_ASSERT(min <= max);
+	assert(min <= max);
 
 	return min + _rnd.getRandomNumber(max - min + 1);
 }

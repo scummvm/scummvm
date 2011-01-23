@@ -62,7 +62,7 @@ uint Region::create(REGION_TYPE type) {
 		break;
 
 	default:
-		BS_ASSERT(true);
+		assert(true);
 	}
 
 	return RegionRegistry::instance().resolvePtr(regionPtr);
@@ -80,7 +80,7 @@ uint Region::create(InputPersistenceBlock &reader, uint handle) {
 	} else if (type == RT_WALKREGION) {
 		regionPtr = new WalkRegion(reader, handle);
 	} else {
-		BS_ASSERT(false);
+		assert(false);
 	}
 
 	return RegionRegistry::instance().resolvePtr(regionPtr);
@@ -206,7 +206,7 @@ Vertex Region::findClosestRegionPoint(const Vertex &point) const {
 
 	const Polygon &polygon = _polygons[polygonIdx];
 
-	BS_ASSERT(polygon.vertexCount > 1);
+	assert(polygon.vertexCount > 1);
 
 	// For each line of the polygon, calculate the point that is cloest to the given point
 	// The point of this set with the smallest distance to the given point is the result.
@@ -287,7 +287,7 @@ Vertex Region::findClosestPointOnLine(const Vertex &lineStart, const Vertex &lin
 
 // Line of Sight
 bool Region::isLineOfSight(const Vertex &a, const Vertex &b) const {
-	BS_ASSERT(_polygons.size());
+	assert(_polygons.size());
 
 	// The line must be within the contour polygon, and outside of any hole polygons
 	Common::Array<Polygon>::const_iterator iter = _polygons.begin();

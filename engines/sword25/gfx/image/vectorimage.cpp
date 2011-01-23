@@ -293,7 +293,7 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, co
 
 	// Die Ausführung darf nicht an dieser Stelle ankommen: Entweder es wird ein Shape gefunden, dann wird die Funktion mit vorher verlassen, oder
 	// es wird keines gefunden, dann tritt eine Exception auf sobald über das Ende der Datei hinaus gelesen wird.
-	BS_ASSERT(false);
+	assert(false);
 }
 
 VectorImage::~VectorImage() {

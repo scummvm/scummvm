@@ -54,6 +54,4 @@
 #include "sword25/kernel/common.h"
 #include "common/debug.h"
 
-#define BS_ASSERT(EXP) assert(EXP)
-
 #endif

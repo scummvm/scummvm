@@ -47,9 +47,9 @@ namespace Sword25 {
 
 static int init(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	if (lua_gettop(L) == 0)
 		lua_pushbooleancpp(L, pSfx->init(44100, 32));
@@ -63,9 +63,9 @@ static int init(lua_State *L) {
 
 static int update(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	pSfx->update();
 
@@ -74,9 +74,9 @@ static int update(lua_State *L) {
 
 static int setVolume(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	pSfx->setVolume(static_cast<float>(luaL_checknumber(L, 1)),
 	                static_cast<SoundEngine::SOUND_TYPES>(static_cast<uint>(luaL_checknumber(L, 2))));
@@ -86,9 +86,9 @@ static int setVolume(lua_State *L) {
 
 static int getVolume(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	lua_pushnumber(L, pSfx->getVolume(static_cast<SoundEngine::SOUND_TYPES>(static_cast<uint>(luaL_checknumber(L, 1)))));
 
@@ -97,9 +97,9 @@ static int getVolume(lua_State *L) {
 
 static int pauseAll(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	pSfx->pauseAll();
 
@@ -108,9 +108,9 @@ static int pauseAll(lua_State *L) {
 
 static int resumeAll(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	pSfx->resumeAll();
 
@@ -119,9 +119,9 @@ static int resumeAll(lua_State *L) {
 
 static int pauseLayer(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	pSfx->pauseLayer(static_cast<int>(luaL_checknumber(L, 1)));
 
@@ -130,9 +130,9 @@ static int pauseLayer(lua_State *L) {
 
 static int resumeLayer(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	pSfx->resumeLayer(static_cast<int>(luaL_checknumber(L, 1)));
 
@@ -177,9 +177,9 @@ static void processPlayParams(lua_State *L, Common::String &fileName, SoundEngin
 
 static int playSound(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	Common::String fileName;
 	SoundEngine::SOUND_TYPES type;
@@ -198,9 +198,9 @@ static int playSound(lua_State *L) {
 
 static int playSoundEx(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	Common::String fileName;
 	SoundEngine::SOUND_TYPES type;
@@ -219,9 +219,9 @@ static int playSoundEx(lua_State *L) {
 
 static int setSoundVolume(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	pSfx->setSoundVolume(static_cast<uint>(luaL_checknumber(L, 1)), static_cast<float>(luaL_checknumber(L, 2)));
 
@@ -230,9 +230,9 @@ static int setSoundVolume(lua_State *L) {
 
 static int setSoundPanning(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	pSfx->setSoundPanning(static_cast<uint>(luaL_checknumber(L, 1)), static_cast<float>(luaL_checknumber(L, 2)));
 
@@ -241,9 +241,9 @@ static int setSoundPanning(lua_State *L) {
 
 static int pauseSound(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	pSfx->pauseSound(static_cast<uint>(luaL_checknumber(L, 1)));
 
@@ -252,9 +252,9 @@ static int pauseSound(lua_State *L) {
 
 static int resumeSound(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	pSfx->resumeSound(static_cast<uint>(luaL_checknumber(L, 1)));
 
@@ -263,9 +263,9 @@ static int resumeSound(lua_State *L) {
 
 static int stopSound(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	pSfx->stopSound(static_cast<uint>(luaL_checknumber(L, 1)));
 
@@ -274,9 +274,9 @@ static int stopSound(lua_State *L) {
 
 static int isSoundPaused(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	lua_pushbooleancpp(L, pSfx->isSoundPaused(static_cast<uint>(luaL_checknumber(L, 1))));
 
@@ -285,9 +285,9 @@ static int isSoundPaused(lua_State *L) {
 
 static int isSoundPlaying(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	lua_pushbooleancpp(L, pSfx->isSoundPlaying(static_cast<uint>(luaL_checknumber(L, 1))));
 
@@ -296,9 +296,9 @@ static int isSoundPlaying(lua_State *L) {
 
 static int getSoundVolume(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	lua_pushnumber(L, pSfx->getSoundVolume(static_cast<uint>(luaL_checknumber(L, 1))));
 
@@ -307,9 +307,9 @@ static int getSoundVolume(lua_State *L) {
 
 static int getSoundPanning(lua_State *L) {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	SoundEngine *pSfx = pKernel->getSfx();
-	BS_ASSERT(pSfx);
+	assert(pSfx);
 
 	lua_pushnumber(L, pSfx->getSoundPanning(static_cast<uint>(luaL_checknumber(L, 1))));
 
@@ -350,11 +350,11 @@ static const lua_constant_reg SFX_CONSTANTS[] = {
 
 bool SoundEngine::registerScriptBindings() {
 	Kernel *pKernel = Kernel::getInstance();
-	BS_ASSERT(pKernel);
+	assert(pKernel);
 	ScriptEngine *pScript = pKernel->getScript();
-	BS_ASSERT(pScript);
+	assert(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
-	BS_ASSERT(L);
+	assert(L);
 
 	if (!LuaBindhelper::addFunctionsToLib(L, SFX_LIBRARY_NAME, SFX_FUNCTIONS)) return false;
 	if (!LuaBindhelper::addConstantsToLib(L, SFX_LIBRARY_NAME, SFX_CONSTANTS)) return false;

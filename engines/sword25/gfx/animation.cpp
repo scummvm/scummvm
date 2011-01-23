@@ -159,7 +159,7 @@ void Animation::stop() {
 
 void Animation::setFrame(uint nr) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 
 	if (nr >= animationDescriptionPtr->getFrameCount()) {
 		error("Tried to set animation to illegal frame (%d). Value must be between 0 and %d.",
@@ -175,18 +175,18 @@ void Animation::setFrame(uint nr) {
 
 bool Animation::doRender() {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
-	BS_ASSERT(_currentFrame < animationDescriptionPtr->getFrameCount());
+	assert(animationDescriptionPtr);
+	assert(_currentFrame < animationDescriptionPtr->getFrameCount());
 
 	// Bitmap des aktuellen Frames holen
 	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(animationDescriptionPtr->getFrame(_currentFrame).fileName);
-	BS_ASSERT(pResource);
-	BS_ASSERT(pResource->getType() == Resource::TYPE_BITMAP);
+	assert(pResource);
+	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmapResource = static_cast<BitmapResource *>(pResource);
 
 	// Framebufferobjekt holen
 	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
-	BS_ASSERT(pGfx);
+	assert(pGfx);
 
 	// Bitmap zeichnen
 	bool result;
@@ -210,8 +210,8 @@ bool Animation::doRender() {
 
 void Animation::frameNotification(int timeElapsed) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
-	BS_ASSERT(timeElapsed >= 0);
+	assert(animationDescriptionPtr);
+	assert(timeElapsed >= 0);
 
 	// Nur wenn die Animation läuft wird sie auch weiterbewegt
 	if (_running) {
@@ -236,7 +236,7 @@ void Animation::frameNotification(int timeElapsed) {
 			break;
 
 		default:
-			BS_ASSERT(0);
+			assert(0);
 		}
 
 		// Deal with overflows
@@ -246,7 +246,7 @@ void Animation::frameNotification(int timeElapsed) {
 				_loopPointCallback = 0;
 
 			// An underflow may only occur if the animation type is JOJO.
-			BS_ASSERT(animationDescriptionPtr->getAnimationType() == AT_JOJO);
+			assert(animationDescriptionPtr->getAnimationType() == AT_JOJO);
 			tmpCurFrame = - tmpCurFrame;
 			_direction = FORWARD;
 		} else if (static_cast<uint>(tmpCurFrame) >= animationDescriptionPtr->getFrameCount()) {
@@ -271,7 +271,7 @@ void Animation::frameNotification(int timeElapsed) {
 				break;
 
 			default:
-				BS_ASSERT(0);
+				assert(0);
 			}
 		}
 
@@ -291,18 +291,18 @@ void Animation::frameNotification(int timeElapsed) {
 	// Größe und Position der Animation anhand des aktuellen Frames bestimmen
 	computeCurrentCharacteristics();
 
-	BS_ASSERT(_currentFrame < animationDescriptionPtr->getFrameCount());
-	BS_ASSERT(_currentFrameTime >= 0);
+	assert(_currentFrame < animationDescriptionPtr->getFrameCount());
+	assert(_currentFrameTime >= 0);
 }
 
 void Animation::computeCurrentCharacteristics() {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	const AnimationResource::Frame &curFrame = animationDescriptionPtr->getFrame(_currentFrame);
 
 	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(curFrame.fileName);
-	BS_ASSERT(pResource);
-	BS_ASSERT(pResource->getType() == Resource::TYPE_BITMAP);
+	assert(pResource);
+	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
 	// Größe des Bitmaps auf die Animation übertragen
@@ -321,7 +321,7 @@ void Animation::computeCurrentCharacteristics() {
 bool Animation::lockAllFrames() {
 	if (!_framesLocked) {
 		AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-		BS_ASSERT(animationDescriptionPtr);
+		assert(animationDescriptionPtr);
 		for (uint i = 0; i < animationDescriptionPtr->getFrameCount(); ++i) {
 			if (!Kernel::getInstance()->getResourceManager()->requestResource(animationDescriptionPtr->getFrame(i).fileName)) {
 				error("Could not lock all animation frames.");
@@ -338,7 +338,7 @@ bool Animation::lockAllFrames() {
 bool Animation::unlockAllFrames() {
 	if (_framesLocked) {
 		AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-		BS_ASSERT(animationDescriptionPtr);
+		assert(animationDescriptionPtr);
 		for (uint i = 0; i < animationDescriptionPtr->getFrameCount(); ++i) {
 			Resource *pResource;
 			if (!(pResource = Kernel::getInstance()->getResourceManager()->requestResource(animationDescriptionPtr->getFrame(i).fileName))) {
@@ -360,37 +360,37 @@ bool Animation::unlockAllFrames() {
 
 Animation::ANIMATION_TYPES Animation::getAnimationType() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	return animationDescriptionPtr->getAnimationType();
 }
 
 int Animation::getFPS() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	return animationDescriptionPtr->getFPS();
 }
 
 int Animation::getFrameCount() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	return animationDescriptionPtr->getFrameCount();
 }
 
 bool Animation::isScalingAllowed() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	return animationDescriptionPtr->isScalingAllowed();
 }
 
 bool Animation::isAlphaAllowed() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	return animationDescriptionPtr->isAlphaAllowed();
 }
 
 bool Animation::isColorModulationAllowed() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	return animationDescriptionPtr->isColorModulationAllowed();
 }
 
@@ -415,7 +415,7 @@ void Animation::setY(int relY) {
 
 void Animation::setAlpha(int alpha) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	if (!animationDescriptionPtr->isAlphaAllowed()) {
 		warning("Tried to set alpha value on an animation that does not support alpha. Call was ignored.");
 		return;
@@ -430,7 +430,7 @@ void Animation::setAlpha(int alpha) {
 
 void Animation::setModulationColor(uint modulationColor) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	if (!animationDescriptionPtr->isColorModulationAllowed()) {
 		warning("Tried to set modulation color on an animation that does not support color modulation. Call was ignored");
 		return;
@@ -450,7 +450,7 @@ void Animation::setScaleFactor(float scaleFactor) {
 
 void Animation::setScaleFactorX(float scaleFactorX) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	if (!animationDescriptionPtr->isScalingAllowed()) {
 		warning("Tried to set x scale factor on an animation that does not support scaling. Call was ignored");
 		return;
@@ -467,7 +467,7 @@ void Animation::setScaleFactorX(float scaleFactorX) {
 
 void Animation::setScaleFactorY(float scaleFactorY) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	if (!animationDescriptionPtr->isScalingAllowed()) {
 		warning("Tried to set y scale factor on an animation that does not support scaling. Call was ignored");
 		return;
@@ -484,7 +484,7 @@ void Animation::setScaleFactorY(float scaleFactorY) {
 
 const Common::String &Animation::getCurrentAction() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	return animationDescriptionPtr->getFrame(_currentFrame).action;
 }
 
@@ -506,12 +506,12 @@ int Animation::getAbsoluteY() const {
 
 int Animation::computeXModifier() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	const AnimationResource::Frame &curFrame = animationDescriptionPtr->getFrame(_currentFrame);
 
 	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(curFrame.fileName);
-	BS_ASSERT(pResource);
-	BS_ASSERT(pResource->getType() == Resource::TYPE_BITMAP);
+	assert(pResource);
+	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
 	int result = curFrame.flipV ? - static_cast<int>((pBitmap->getWidth() - 1 - curFrame.hotspotX) * _scaleFactorX) :
@@ -524,12 +524,12 @@ int Animation::computeXModifier() const {
 
 int Animation::computeYModifier() const {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
-	BS_ASSERT(animationDescriptionPtr);
+	assert(animationDescriptionPtr);
 	const AnimationResource::Frame &curFrame = animationDescriptionPtr->getFrame(_currentFrame);
 
 	Resource *pResource = Kernel::getInstance()->getResourceManager()->requestResource(curFrame.fileName);
-	BS_ASSERT(pResource);
-	BS_ASSERT(pResource->getType() == Resource::TYPE_BITMAP);
+	assert(pResource);
+	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
 	int result = curFrame.flipH ? - static_cast<int>((pBitmap->getHeight() - 1 - curFrame.hotspotY) * _scaleFactorY) :
@@ -566,7 +566,7 @@ bool Animation::persist(OutputPersistenceBlock &writer) {
 		writer.write(marker);
 		writer.write(_animationTemplateHandle);
 	} else {
-		BS_ASSERT(false);
+		assert(false);
 	}
 
 	//writer.write(_AnimationDescriptionPtr);
@@ -620,7 +620,7 @@ bool Animation::unpersist(InputPersistenceBlock &reader) {
 	} else if (marker == 1) {
 		reader.read(_animationTemplateHandle);
 	} else {
-		BS_ASSERT(false);
+		assert(false);
 	}
 
 	reader.read(_framesLocked);

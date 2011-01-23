@@ -88,7 +88,7 @@ public:
 	    @return Das Bounding-Rect des übergebenen Zeichens auf der Charactermap.
 	*/
 	const Common::Rect &getCharacterRect(int character) const {
-		BS_ASSERT(character >= 0 && character < 256);
+		assert(character >= 0 && character < 256);
 		return _characterRects[character];
 	}
 

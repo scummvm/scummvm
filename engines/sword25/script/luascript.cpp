@@ -146,7 +146,7 @@ bool LuaScriptEngine::executeFile(const Common::String &fileName) {
 
 	// Get a pointer to the package manager
 	PackageManager *pPackage = Kernel::getInstance()->getPackage();
-	BS_ASSERT(pPackage);
+	assert(pPackage);
 
 	// File read
 	uint fileSize;
@@ -154,7 +154,7 @@ bool LuaScriptEngine::executeFile(const Common::String &fileName) {
 	if (!fileData) {
 		error("Couldn't read \"%s\".", fileName.c_str());
 #ifdef DEBUG
-		BS_ASSERT(__startStackDepth == lua_gettop(_state));
+		assert(__startStackDepth == lua_gettop(_state));
 #endif
 		return false;
 	}
@@ -164,7 +164,7 @@ bool LuaScriptEngine::executeFile(const Common::String &fileName) {
 		// Release file buffer
 		delete[] fileData;
 #ifdef DEBUG
-		BS_ASSERT(__startStackDepth == lua_gettop(_state));
+		assert(__startStackDepth == lua_gettop(_state));
 #endif
 		return false;
 	}
@@ -173,7 +173,7 @@ bool LuaScriptEngine::executeFile(const Common::String &fileName) {
 	delete[] fileData;
 
 #ifdef DEBUG
-	BS_ASSERT(__startStackDepth == lua_gettop(_state));
+	assert(__startStackDepth == lua_gettop(_state));
 #endif
 
 	return true;

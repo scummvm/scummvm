@@ -123,7 +123,7 @@ bool LuaBindhelper::addFunctionsToLib(lua_State *L, const Common::String &libNam
 	}
 
 #ifdef DEBUG
-	BS_ASSERT(__startStackDepth == lua_gettop(L));
+	assert(__startStackDepth == lua_gettop(L));
 #endif
 
 	return true;
@@ -168,7 +168,7 @@ bool LuaBindhelper::addConstantsToLib(lua_State *L, const Common::String &libNam
 	}
 
 #ifdef DEBUG
-	BS_ASSERT(__startStackDepth == lua_gettop(L));
+	assert(__startStackDepth == lua_gettop(L));
 #endif
 
 	return true;
@@ -207,7 +207,7 @@ bool LuaBindhelper::addMethodsToClass(lua_State *L, const Common::String &classN
 	lua_pop(L, 1);
 
 #ifdef DEBUG
-	BS_ASSERT(__startStackDepth == lua_gettop(L));
+	assert(__startStackDepth == lua_gettop(L));
 #endif
 
 	return true;
@@ -243,7 +243,7 @@ bool LuaBindhelper::setClassGCHandler(lua_State *L, const Common::String &classN
 	lua_pop(L, 1);
 
 #ifdef DEBUG
-	BS_ASSERT(__startStackDepth == lua_gettop(L));
+	assert(__startStackDepth == lua_gettop(L));
 #endif
 
 	return true;

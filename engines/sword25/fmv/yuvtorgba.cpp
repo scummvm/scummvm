@@ -167,16 +167,16 @@ static const int CLAMP_TAB[1024] = {
 void YUVtoBGRA::translate(th_ycbcr_buffer &YUVBuffer, const th_info &theoraInfo, byte *pixelData, int pixelsSize) {
 
 	// Width and height of all buffers have to be divisible by 2.
-	BS_ASSERT((YUVBuffer[0].width & 1)   == 0);
-	BS_ASSERT((YUVBuffer[0].height & 1)  == 0);
-	BS_ASSERT((YUVBuffer[1].width & 1)   == 0);
-	BS_ASSERT((YUVBuffer[2].width & 1)  == 0);
+	assert((YUVBuffer[0].width & 1)   == 0);
+	assert((YUVBuffer[0].height & 1)  == 0);
+	assert((YUVBuffer[1].width & 1)   == 0);
+	assert((YUVBuffer[2].width & 1)  == 0);
 
 	// UV images have to have a quarter of the Y image resolution
-	BS_ASSERT(YUVBuffer[1].width  == YUVBuffer[0].width >> 1);
-	BS_ASSERT(YUVBuffer[2].width  == YUVBuffer[0].width >> 1);
-	BS_ASSERT(YUVBuffer[1].height == YUVBuffer[0].height >> 1);
-	BS_ASSERT(YUVBuffer[2].height == YUVBuffer[0].height >> 1);
+	assert(YUVBuffer[1].width  == YUVBuffer[0].width >> 1);
+	assert(YUVBuffer[2].width  == YUVBuffer[0].width >> 1);
+	assert(YUVBuffer[1].height == YUVBuffer[0].height >> 1);
+	assert(YUVBuffer[2].height == YUVBuffer[0].height >> 1);
 
 	const int *cl = &CLAMP_TAB[320];
 
