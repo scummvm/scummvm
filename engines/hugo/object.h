@@ -35,8 +35,7 @@
 
 #include "common/file.h"
 
-#define MAXOBJECTS      128                         // Used in Update_images()
-#define BOUND(X, Y)     ((_vm->getBoundaryOverlay()[Y * XBYTES + X / 8] & (0x80 >> X % 8)) != 0)  // Boundary bit set
+#define BOUND(X, Y)     ((_vm->getBoundaryOverlay()[Y * kCompLineSize + X / 8] & (0x80 >> X % 8)) != 0)  // Boundary bit set
 
 namespace Hugo {
 
@@ -94,6 +93,11 @@ public:
 	}
 protected:
 	HugoEngine *_vm;
+
+	static const int kEdge = 10;                    // Closest object can get to edge of screen
+	static const int kEdge2 = kEdge * 2;            // Push object further back on edge collision
+	static const int kMaxObjNumb = 128;             // Used in Update_images()
+
 	uint16     _objCount;
 
 	void restoreSeq(object_t *obj);

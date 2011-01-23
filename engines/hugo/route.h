@@ -35,12 +35,6 @@
 
 namespace Hugo {
 
-#define kMapBound 1                                 // Mark a boundary outline
-#define kMapFill  2                                 // Mark a boundary filled
-#define kMaxSeg   256                               // Maximum number of segments
-#define kMaxNodes 256                               // Maximum nodes in route
-#define DEBUG_ROUTE FALSE
-
 struct Point {
 	int x;
 	int y;
@@ -63,7 +57,12 @@ public:
 private:
 	HugoEngine *_vm;
 
-	byte _boundaryMap[YPIX][XPIX];                  // Boundary byte map
+	static const int kMapBound = 1;                 // Mark a boundary outline
+	static const int kMapFill = 2;                  // Mark a boundary filled
+	static const int kMaxSeg = 256;                 // Maximum number of segments
+	static const int kMaxNodes = 256;               // Maximum nodes in route
+
+	byte _boundaryMap[kYPix][kXPix];                // Boundary byte map
 	segment_t _segment[kMaxSeg];                    // List of points in fill-path
 	Point _route[kMaxNodes];                        // List of nodes in route (global)
 	int16 _segmentNumb;                             // Count number of segments

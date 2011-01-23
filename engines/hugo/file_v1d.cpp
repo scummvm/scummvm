@@ -64,7 +64,7 @@ void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 	strcat(strcpy(buf, _vm->_screenNames[screenNum]), ovl_ext[overlayType]);
 
 	if (!fileExists(buf)) {
-		for (uint32 i = 0; i < OVL_SIZE; i++)
+		for (uint32 i = 0; i < kOvlSize; i++)
 			image[i] = 0;
 		warning("File not found: %s", buf);
 		return;
@@ -75,7 +75,7 @@ void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 
 	image_pt tmpImage = image;                      // temp ptr to overlay file
 
-	_sceneryArchive1.read(tmpImage, OVL_SIZE);
+	_sceneryArchive1.read(tmpImage, kOvlSize);
 	_sceneryArchive1.close();
 	free(buf);
 }
@@ -125,7 +125,7 @@ void FileManager_v1d::instructions() {
 			f.read(wrkLine, 1);
 		} while (*wrkLine++ != EOP);
 		wrkLine[-2] = '\0';                         // Remove EOP and previous CR
-		Utils::Box(BOX_ANY, "%s", line);
+		Utils::Box(kBoxAny, "%s", line);
 		wrkLine = line;
 		f.read(readBuf, 2);                         // Remove CRLF after EOP
 	}

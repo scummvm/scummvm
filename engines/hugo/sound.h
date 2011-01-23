@@ -40,42 +40,42 @@
 
 namespace Hugo {
 
-#define kHugoCNT 1190000
-
 class MidiPlayer : public MidiDriver {
 public:
-
-	enum {
-		NUM_CHANNELS = 16
-	};
-
 	MidiPlayer(MidiDriver *driver);
 	~MidiPlayer();
 
-	void play(uint8 *stream, uint16 size);
-	void stop();
-	void pause(bool p);
-	void updateTimer();
-	void adjustVolume(int diff);
-	void setChannelVolume(int channel);
-	void setVolume(int volume);
-	void syncVolume();
-	int getVolume() const { return _masterVolume; }
-	void setLooping(bool loop) { _isLooping = loop; }
 	bool isPlaying() { return _isPlaying; }
+
+	int getVolume() const { return _masterVolume; }
+
+	void adjustVolume(int diff);
+	void pause(bool p);
+	void play(uint8 *stream, uint16 size);
+	void setChannelVolume(int channel);
+	void setLooping(bool loop) { _isLooping = loop; }
+	void setVolume(int volume);
+	void stop();
+	void syncVolume();
+	void updateTimer();
 
 	// MidiDriver interface
 	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
+
 	MidiChannel *allocateChannel() { return 0; }
 	MidiChannel *getPercussionChannel() { return 0; }
 
+	void close();
+	void metaEvent(byte type, byte *data, uint16 length);
+	void send(uint32 b);
+	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
+
+	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
+
 private:
 	static void timerCallback(void *p);
+
+	static const int kNumbChannels = 16;
 
 	MidiDriver *_driver;
 	MidiParser *_parser;
@@ -84,8 +84,8 @@ private:
 	bool _isPlaying;
 	bool _paused;
 	int _masterVolume;
-	MidiChannel *_channelsTable[NUM_CHANNELS];
-	uint8 _channelsVolume[NUM_CHANNELS];
+	MidiChannel *_channelsTable[kNumbChannels];
+	uint8 _channelsVolume[kNumbChannels];
 	Common::Mutex _mutex;
 };
 
@@ -93,6 +93,8 @@ class SoundHandler {
 public:
 	SoundHandler(HugoEngine *vm);
 	~SoundHandler();
+
+	static const int kHugoCNT = 1190000;
 
 	char *DOSSongPtr;
 	char *DOSIntroSong;
@@ -102,7 +104,7 @@ public:
 	void setMusicVolume();
 	void pcspkr_player();
 	void playMusic(int16 tune);
-	void playSound(int16 sound, stereo_t channel, byte priority);
+	void playSound(int16 sound, byte priority);
 	void initSound();
 	void syncVolume();
 	void checkMusic();

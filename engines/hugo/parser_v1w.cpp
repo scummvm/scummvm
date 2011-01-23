@@ -61,13 +61,13 @@ void Parser_v1w::lineHandler() {
 	status_t &gameStatus = _vm->getGameStatus();
 
 	// Toggle God Mode
-	if (!strncmp(_line, "PPG", 3)) {
-		_vm->_sound->playSound(!_vm->_soundTest, BOTH_CHANNELS, HIGH_PRI);
+	if (!strncmp(_vm->_line, "PPG", 3)) {
+		_vm->_sound->playSound(!_vm->_soundTest, kSoundPriorityHigh);
 		gameStatus.godModeFl = !gameStatus.godModeFl;
 		return;
 	}
 
-	Utils::strlwr(_line);                           // Convert to lower case
+	Utils::strlwr(_vm->_line);                      // Convert to lower case
 
 	// God Mode cheat commands:
 	// goto <screen>                                Takes hero to named screen
@@ -76,9 +76,9 @@ void Parser_v1w::lineHandler() {
 	// find <object name>                           Takes hero to screen containing named object
 	if (gameStatus.godModeFl) {
 		// Special code to allow me to go straight to any screen
-		if (strstr(_line, "goto")) {
+		if (strstr(_vm->_line, "goto")) {
 			for (int i = 0; i < _vm->_numScreens; i++) {
-				if (!scumm_stricmp(&_line[strlen("goto") + 1], _vm->_screenNames[i])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("goto") + 1], _vm->_screenNames[i])) {
 					_vm->_scheduler->newScreen(i);
 					return;
 				}
@@ -86,7 +86,7 @@ void Parser_v1w::lineHandler() {
 		}
 
 		// Special code to allow me to get objects from anywhere
-		if (strstr(_line, "fetch all")) {
+		if (strstr(_vm->_line, "fetch all")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
 				if (_vm->_object->_objects[i].genericCmd & TAKE)
 					takeObject(&_vm->_object->_objects[i]);
@@ -94,9 +94,9 @@ void Parser_v1w::lineHandler() {
 			return;
 		}
 
-		if (strstr(_line, "fetch")) {
+		if (strstr(_vm->_line, "fetch")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
 					takeObject(&_vm->_object->_objects[i]);
 					return;
 				}
@@ -104,9 +104,9 @@ void Parser_v1w::lineHandler() {
 		}
 
 		// Special code to allow me to goto objects
-		if (strstr(_line, "find")) {
+		if (strstr(_vm->_line, "find")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
 					_vm->_scheduler->newScreen(_vm->_object->_objects[i].screenIndex);
 					return;
 				}
@@ -116,28 +116,28 @@ void Parser_v1w::lineHandler() {
 
 	// Special meta commands
 	// EXIT/QUIT
-	if (!strcmp("exit", _line) || strstr(_line, "quit")) {
-		Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBExit]);
+	if (!strcmp("exit", _vm->_line) || strstr(_vm->_line, "quit")) {
+		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBExit]);
 		return;
 	}
 
 	// SAVE/RESTORE
-	if (!strcmp("save", _line) && gameStatus.viewState == V_PLAY) {
+	if (!strcmp("save", _vm->_line) && gameStatus.viewState == kViewPlay) {
 		_vm->_file->saveGame(-1, Common::String());
 		return;
 	}
 
-	if (!strcmp("restore", _line) && (gameStatus.viewState == V_PLAY || gameStatus.viewState == V_IDLE)) {
+	if (!strcmp("restore", _vm->_line) && (gameStatus.viewState == kViewPlay || gameStatus.viewState == kViewIdle)) {
 		_vm->_file->restoreGame(-1);
 		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-		gameStatus.viewState = V_PLAY;
+		gameStatus.viewState = kViewPlay;
 		return;
 	}
 
 	// Empty line
-	if (*_line == '\0')                             // Empty line
+	if (*_vm->_line == '\0')                        // Empty line
 		return;
-	if (strspn(_line, " ") == strlen(_line))        // Nothing but spaces!
+	if (strspn(_vm->_line, " ") == strlen(_vm->_line)) // Nothing but spaces!
 		return;
 
 	if (gameStatus.gameOverFl) {
@@ -146,7 +146,7 @@ void Parser_v1w::lineHandler() {
 		return;
 	}
 
-	char farComment[XBYTES * 5] = "";               // hold 5 line comment if object not nearby
+	char farComment[kCompLineSize * 5] = "";        // hold 5 line comment if object not nearby
 
 	// Test for nearby objects referenced explicitly
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
@@ -162,7 +162,7 @@ void Parser_v1w::lineHandler() {
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		object_t *obj = &_vm->_object->_objects[i];
 		if (obj->verbOnlyFl) {
-			char contextComment[XBYTES * 5] = "";   // Unused comment for context objects
+			char contextComment[kCompLineSize * 5] = ""; // Unused comment for context objects
 			if (isObjectVerb(obj, contextComment) || isGenericVerb(obj, contextComment))
 				return;
 		}
@@ -180,7 +180,7 @@ void Parser_v1w::lineHandler() {
 
 	// If a not-near comment was generated, print it
 	if (*farComment != '\0') {
-		Utils::Box(BOX_ANY, "%s", farComment);
+		Utils::Box(kBoxAny, "%s", farComment);
 		return;
 	}
 
@@ -188,16 +188,16 @@ void Parser_v1w::lineHandler() {
 	char *verb = findVerb();
 	char *noun = findNoun();
 	if (verb == _vm->_arrayVerbs[_vm->_look][0] && _maze.enabledFl) {
-		Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBMaze]);
+		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBMaze]);
 		_vm->_object->showTakeables();
 	} else if (verb && noun) {                      // A combination I didn't think of
-		Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBNoPoint]);
+		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBNoPoint]);
 	} else if (noun) {
-		Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBNoun]);
+		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBNoun]);
 	} else if (verb) {
-		Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBVerb]);
+		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBVerb]);
 	} else {
-		Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBEh]);
+		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBEh]);
 	}
 }
 
@@ -205,12 +205,12 @@ void Parser_v1w::showInventory() {
 	status_t &gameStatus = _vm->getGameStatus();
 	if (gameStatus.gameOverFl) {
 		Utils::gameOverMsg();
-	} else if ((gameStatus.inventoryState == I_OFF) && (gameStatus.viewState == V_PLAY)) {
-		gameStatus.inventoryState = I_DOWN;
-		gameStatus.viewState = V_INVENT;
-	} else if (gameStatus.inventoryState == I_ACTIVE) {
-		gameStatus.inventoryState = I_UP;
-		gameStatus.viewState = V_INVENT;
+	} else if ((gameStatus.inventoryState == kInventoryOff) && (gameStatus.viewState == kViewPlay)) {
+		gameStatus.inventoryState = kInventoryDown;
+		gameStatus.viewState = kViewInvent;
+	} else if (gameStatus.inventoryState == kInventoryActive) {
+		gameStatus.inventoryState = kInventoryUp;
+		gameStatus.viewState = kViewInvent;
 	}
 }
 

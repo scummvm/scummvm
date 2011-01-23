@@ -60,7 +60,6 @@ public:
 protected:
 	HugoEngine *_vm;
 
-protected:
 	char *findNoun();
 	char *findVerb();
 	void  showDosInventory();
@@ -69,6 +68,9 @@ protected:
 	uint16 _getIndex;                               // Index into ring buffer
 	uint16 _putIndex;
 	char   _ringBuffer[32];                         // Ring buffer
+
+private:
+	static const int kBlinksPerSec = 2;             // Cursor blinks per second
 };
 
 class Parser_v1d : public Parser {

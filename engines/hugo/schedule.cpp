@@ -161,7 +161,7 @@ void Scheduler::newScreen(int screenIndex) {
 	// Make sure the background file exists!
 	if (!_vm->isPacked()) {
 		char line[32];
-		if (!_vm->_file->fileExists(strcat(strncat(strcpy(line, _vm->_picDir), _vm->_screenNames[screenIndex], NAME_LEN), BKGEXT)) &&
+		if (!_vm->_file->fileExists(strcat(strncat(strcpy(line, _vm->_picDir), _vm->_screenNames[screenIndex], kFilenameLength), BKGEXT)) &&
 		    !_vm->_file->fileExists(strcat(strcpy(line, _vm->_screenNames[screenIndex]), ".ART"))) {
 				error("Unable to find background file for %s", _vm->_screenNames[screenIndex]);
 			return;
@@ -843,29 +843,29 @@ void Scheduler::processMaze(int x1, int x2, int y1, int y2) {
 	if (x1 < _maze.x1) {
 		// Exit west
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p - 1;
-		_actListArr[_alNewscrIndex][0].a2.x = _maze.x2 - SHIFT - (x2 - x1);
+		_actListArr[_alNewscrIndex][0].a2.x = _maze.x2 - kShiftSize - (x2 - x1);
 		_actListArr[_alNewscrIndex][0].a2.y = _vm->_hero->y;
 		gameStatus.routeIndex = -1;
 		insertActionList(_alNewscrIndex);
 	} else if (x2 > _maze.x2) {
 		// Exit east
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p + 1;
-		_actListArr[_alNewscrIndex][0].a2.x = _maze.x1 + SHIFT;
+		_actListArr[_alNewscrIndex][0].a2.x = _maze.x1 + kShiftSize;
 		_actListArr[_alNewscrIndex][0].a2.y = _vm->_hero->y;
 		gameStatus.routeIndex = -1;
 		insertActionList(_alNewscrIndex);
-	} else if (y1 < _maze.y1 - SHIFT) {
+	} else if (y1 < _maze.y1 - kShiftSize) {
 		// Exit north
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p - _maze.size;
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x3;
-		_actListArr[_alNewscrIndex][0].a2.y = _maze.y2 - SHIFT - (y2 - y1);
+		_actListArr[_alNewscrIndex][0].a2.y = _maze.y2 - kShiftSize - (y2 - y1);
 		gameStatus.routeIndex = -1;
 		insertActionList(_alNewscrIndex);
-	} else if (y2 > _maze.y2 - SHIFT / 2) {
+	} else if (y2 > _maze.y2 - kShiftSize / 2) {
 		// Exit south
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p + _maze.size;
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x4;
-		_actListArr[_alNewscrIndex][0].a2.y = _maze.y1 + SHIFT;
+		_actListArr[_alNewscrIndex][0].a2.y = _maze.y1 + kShiftSize;
 		gameStatus.routeIndex = -1;
 		insertActionList(_alNewscrIndex);
 	}
@@ -1051,7 +1051,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			insertActionList(action->a11.actFailIndex);
 		break;
 	case TEXT:                                      // act12: Text box (CF WARN)
-		Utils::Box(BOX_ANY, "%s", _vm->_file->fetchString(action->a12.stringIndex));   // Fetch string from file
+		Utils::Box(kBoxAny, "%s", _vm->_file->fetchString(action->a12.stringIndex));   // Fetch string from file
 		break;
 	case SWAP_IMAGES:                               // act13: Swap 2 object images
 		_vm->_object->swapImages(action->a13.objIndex1, action->a13.objIndex2);
@@ -1115,7 +1115,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		if (action->a26.soundIndex < _vm->_tunesNbr)
 			_vm->_sound->playMusic(action->a26.soundIndex);
 		else
-			_vm->_sound->playSound(action->a26.soundIndex, BOTH_CHANNELS, MED_PRI);
+			_vm->_sound->playSound(action->a26.soundIndex, kSoundPriorityMedium);
 		break;
 	case ADD_SCORE:                                 // act27: Add object's value to score
 		_vm->adjustScore(_vm->_object->_objects[action->a27.objIndex].objValue);
@@ -1168,7 +1168,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		_vm->_object->_objects[action->a38.lipsObjIndex].x = _vm->_object->_objects[action->a38.objIndex].x + action->a38.dxLips;
 		_vm->_object->_objects[action->a38.lipsObjIndex].y = _vm->_object->_objects[action->a38.objIndex].y + action->a38.dyLips;
 		_vm->_object->_objects[action->a38.lipsObjIndex].screenIndex = *_vm->_screen_p; // Don't forget screen!
-		_vm->_object->_objects[action->a38.lipsObjIndex].cycling = CYCLE_FORWARD;
+		_vm->_object->_objects[action->a38.lipsObjIndex].cycling = kCycleForward;
 		break;
 	case INIT_STORY_MODE:                           // act39: Init story_mode flag
 		// This is similar to the QUIET path mode, except that it is
@@ -1180,7 +1180,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			_vm->endGame();
 		break;
 	case WARN:                                      // act40: Text box (CF TEXT)
-		Utils::Box(BOX_OK, "%s", _vm->_file->fetchString(action->a40.stringIndex));
+		Utils::Box(kBoxOk, "%s", _vm->_file->fetchString(action->a40.stringIndex));
 		break;
 	case COND_BONUS:                                // act41: Perform action if got bonus
 		if (_vm->_points[action->a41.BonusIndex].scoredFl)
@@ -1189,10 +1189,10 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			insertActionList(action->a41.actFailIndex);
 		break;
 	case TEXT_TAKE:                                 // act42: Text box with "take" message
-		Utils::Box(BOX_ANY, TAKE_TEXT, _vm->_arrayNouns[_vm->_object->_objects[action->a42.objIndex].nounIndex][TAKE_NAME]);
+		Utils::Box(kBoxAny, TAKE_TEXT, _vm->_arrayNouns[_vm->_object->_objects[action->a42.objIndex].nounIndex][TAKE_NAME]);
 		break;
 	case YESNO:                                     // act43: Prompt user for Yes or No
-		if (Utils::Box(BOX_YESNO, "%s", _vm->_file->fetchString(action->a43.promptIndex)) != 0)
+		if (Utils::Box(kBoxYesNo, "%s", _vm->_file->fetchString(action->a43.promptIndex)) != 0)
 			insertActionList(action->a43.actYesIndex);
 		else
 			insertActionList(action->a43.actNoIndex);
@@ -1305,7 +1305,7 @@ void Scheduler_v1d::delEventType(action_t actTypeDel) {
 }
 
 void Scheduler_v1d::promptAction(act *action) {
-	Utils::Box(BOX_PROMPT, "%s", _vm->_file->fetchString(action->a3.promptIndex));
+	Utils::Box(kBoxPrompt, "%s", _vm->_file->fetchString(action->a3.promptIndex));
 
 	warning("STUB: doAction(act3)");
 	// TODO: The answer of the player is not handled currently! Once it'll be read in the messageBox, uncomment this block
@@ -1401,7 +1401,7 @@ void Scheduler_v2d::delEventType(action_t actTypeDel) {
 }
 
 void Scheduler_v2d::promptAction(act *action) {
-	Utils::Box(BOX_PROMPT, "%s", _vm->_file->fetchString(action->a3.promptIndex));
+	Utils::Box(kBoxPrompt, "%s", _vm->_file->fetchString(action->a3.promptIndex));
 	warning("STUB: doAction(act3), expecting answer %s", _vm->_file->fetchString(action->a3.responsePtr[0]));
 
 	// TODO: The answer of the player is not handled currently! Once it'll be read in the messageBox, uncomment this block

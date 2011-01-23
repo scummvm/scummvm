@@ -38,9 +38,6 @@
 #define HUGO_DAT_VER_MAJ 0                          // 1 byte
 #define HUGO_DAT_VER_MIN 40                         // 1 byte
 #define DATAALIGNMENT    4
-#define EDGE             10                         // Closest object can get to edge of screen
-#define EDGE2            (EDGE * 2)                 // Push object further back on edge collision
-#define SHIFT            8                          // Place hero this far inside bounding box
 
 namespace Common {
 class RandomSource;
@@ -62,6 +59,54 @@ class RandomSource;
 namespace Hugo {
 
 static const int kSavegameVersion = 2;
+static const int kInvDx = 32;                       // Width of an inventory icon
+static const int kInvDy = 32;                       // Height of inventory icon
+static const int kMaxTunes = 16;                    // Max number of tunes
+static const int kStepDx = 5;                       // Num pixels moved in x by HERO per step
+static const int kStepDy = 4;                       // Num pixels moved in y by HERO per step
+static const int kXPix = 320;                       // Width of pcx background file
+static const int kYPix = 200;                       // Height of pcx background file
+static const int kViewSizeX = kXPix;                // Width of window view
+static const int kViewSizeY = 184;                  // Height of window view
+static const int kDibOffY = 0;                      // Offset into dib SrcY (old status line area). In original game: 8
+static const int kCompLineSize = 40;                // number of bytes in a compressed line
+static const int kMaxLineSize = kCompLineSize - 2;  // Max length of user input line
+static const int kMaxTextRows = 25;                 // Number of text lines in display
+static const int kMaxBoxChar = kMaxLineSize * kMaxTextRows; // Max chars on screen
+static const int kOvlSize = kCompLineSize * kYPix;  // Size of an overlay file
+static const int kStateDontCare = 0xFF;             // Any state allowed in command verb
+static const int kHeroIndex = 0;                    // In all enums, HERO is the first element
+static const int kArrowNumb = 2;                    // Number of arrows (left/right)
+static const int kLeftArrow = -2;                   // Cursor over Left arrow in inventory icon bar
+static const int kRightArrow = -3;                  // Cursor over Right arrow in inventory icon bar
+static const int kMaxPath = 256;                    // Max length of a full path name
+static const int kHeroMaxWidth = 24;                // Maximum width of hero
+static const int kHeroMinWidth = 16;                // Minimum width of hero
+static const int kNumColors = 16;                   // Num colors to save in palette
+
+typedef char fpath_t[kMaxPath];                     // File path
+typedef char command_t[kMaxLineSize + 8];           // Command line (+spare for prompt,cursor)
+
+struct PCC_header_t {                               // Structure of PCX file header
+	byte   mfctr, vers, enc, bpx;
+	uint16  x1, y1, x2, y2;                         // bounding box
+	uint16  xres, yres;
+	byte   palette[3 * kNumColors];                 // EGA color palette
+	byte   vmode, planes;
+	uint16 bytesPerLine;                            // Bytes per line
+	byte   fill2[60];
+};                                                  // Header of a PCC file
+
+struct config_t {                                   // User's config (saved)
+	bool musicFl;                                   // State of Music button/menu item
+	bool soundFl;                                   // State of Sound button/menu item
+	bool turboFl;                                   // State of Turbo button/menu item
+	bool playlist[kMaxTunes];                       // Tune playlist
+};
+
+typedef byte icondib_t[kXPix * kInvDy];             // Icon bar dib
+typedef byte viewdib_t[(long)kXPix * kYPix];        // Viewport dib
+typedef byte overlay_t[kOvlSize];                   // Overlay file
 
 enum GameType {
 	kGameTypeNone  = 0,
@@ -92,6 +137,47 @@ enum HugoDebugChannels {
 	kDebugMusic     = 1 <<  9
 };
 
+/**
+* Ways to dismiss a text/prompt box
+*/
+enum box_t {kBoxAny, kBoxOk, kBoxPrompt, kBoxYesNo};
+
+/**
+* Inventory icon bar states
+*/
+enum istate_t {kInventoryOff, kInventoryUp, kInventoryDown, kInventoryActive};
+
+/**
+* Game view state machine
+*/
+enum vstate_t {kViewIdle, kViewIntroInit, kViewIntro, kViewPlay, kViewInvent, kViewExit};
+
+/**
+* Purpose of an automatic route
+*/
+enum go_t {kRouteSpace, kRouteExit, kRouteLook, kRouteGet};
+
+/**
+* Enumerate whether object is foreground, background or 'floating'
+* If floating, HERO can collide with it and fore/back ground is determined
+* by relative y-coord of object base.  This is the general case.
+* If fore or background, no collisions can take place and object is either
+* behind or in front of all others, although can still be hidden by the
+* the overlay plane.  OVEROVL means the object is FLOATING (to other
+* objects) but is never hidden by the overlay plane
+*/
+enum {kPriorityForeground, kPriorityBackground, kPriorityFloating, kPriorityOverOverlay};
+
+/**
+* Display list functions
+*/
+enum dupdate_t {kDisplayInit, kDisplayAdd, kDisplayDisplay, kDisplayRestore};
+
+/**
+* Priority for sound effect
+*/
+enum priority_t {kSoundPriorityLow, kSoundPriorityMedium, kSoundPriorityHigh};
+
 enum HugoGameFeatures {
 	GF_PACKED = (1 << 0) // Database
 };
@@ -100,7 +186,55 @@ enum HugoGameFeatures {
 enum seqTextEngine {
 	kEsAdvertise = 0
 };
+
 struct HugoGameDescription;
+
+struct status_t {                                   // Game status (not saved)
+	bool     storyModeFl;                           // Game is telling story - no commands
+	bool     gameOverFl;                            // Game is over - hero knobbled
+	bool     demoFl;                                // Game is in demo mode
+	bool     textBoxFl;                             // Game is (halted) in text box
+	bool     lookFl;                                // Toolbar "look" button pressed
+	bool     recallFl;                              // Toolbar "recall" button pressed
+	bool     leftButtonFl;                          // Left mouse button pressed
+	bool     rightButtonFl;                         // Right button pressed
+	bool     newScreenFl;                           // New screen just loaded in dib_a
+	bool     jumpExitFl;                            // Allowed to jump to a screen exit
+	bool     godModeFl;                             // Allow DEBUG features in live version
+	bool     helpFl;                                // Calling WinHelp (don't disable music)
+	bool     doQuitFl;
+	bool     skipIntroFl;
+	uint32   tick;                                  // Current time in ticks
+	vstate_t viewState;                             // View state machine
+	istate_t inventoryState;                        // Inventory icon bar state
+	int16    inventoryHeight;                       // Inventory icon bar height
+	int16    inventoryObjId;                        // Inventory object selected, or -1
+	int16    routeIndex;                            // Index into route list, or -1
+	go_t     go_for;                                // Purpose of an automatic route
+	int16    go_id;                                 // Index of exit of object walking to
+	fpath_t  path;                                  // Alternate path for saved files
+	int16    song;                                  // Current song
+	int16    cx, cy;                                // Cursor position (dib coords)
+
+// Strangerke - Suppress as related to playback
+//	bool     playbackFl;                            // Game is in playback mode
+//	bool     recordFl;                              // Game is in record mode
+// Strangerke - Not used ?
+//	bool     mmtimeFl;                              // Multimedia timer supported
+//	int16    screenWidth;                           // Desktop screen width
+//	uint32   saveTick;                              // Time of last save in ticks
+//	int16    saveSlot;                              // Current slot to save/restore game
+};
+
+/**
+* Structure to define an EXIT or other collision-activated hotspot
+*/
+struct hotspot_t {
+	int        screenIndex;                         // Screen in which hotspot appears
+	int        x1, y1, x2, y2;                      // Bounding box of hotspot
+	uint16     actIndex;                            // Actions to carry out if a 'hit'
+	int16      viewx, viewy, direction;             // Used in auto-route mode
+};
 
 class FileManager;
 class Scheduler;
@@ -130,9 +264,7 @@ public:
 	int8   _tunesNbr;
 	uint16 _numScreens;
 	int8   _normalTPS;                              // Number of ticks (frames) per second.
-	                                                //8 for Win versions, 9 for DOS versions
-
-
+	                                                // 8 for Win versions, 9 for DOS versions
 	object_t *_hero;
 	byte  *_screen_p;
 	byte  _heroImage;
@@ -150,6 +282,8 @@ public:
 	char  **_textUtil;
 	char  ***_arrayNouns;
 	char  ***_arrayVerbs;
+	command_t _line;                                // Line of user text input
+	config_t  _config;                              // User's config
 	uint16    **_arrayReqs;
 	hotspot_t *_hotspots;
 	int16     *_invent;
@@ -290,6 +424,8 @@ protected:
 	Common::Error run();
 
 private:
+	static const int kTurboTps = 16;                // This many in turbo mode
+
 	int _mouseX;
 	int _mouseY;
 	byte _introXSize;
@@ -320,15 +456,17 @@ private:
 
 	char **loadTextsVariante(Common::File &in, uint16 *arraySize);
 	char ***loadTextsArray(Common::File &in);
-	uint16 **loadLongArray(Common::File &in);
 	char **loadTexts(Common::File &in);
-	void freeTexts(char **ptr);
 
-	void initPlaylist(bool playlist[MAX_TUNES]);
-	void initConfig(inst_t action);
+	uint16 **loadLongArray(Common::File &in);
+
+	void freeTexts(char **ptr);
+	void initPlaylist(bool playlist[kMaxTunes]);
+	void initConfig();
 	void initialize();
-	void calcMaxScore();
 	void initMachine();
+	void calcMaxScore();
+	void resetConfig();
 	void runMachine();
 
 };

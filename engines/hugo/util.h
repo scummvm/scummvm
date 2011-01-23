@@ -39,6 +39,8 @@ enum seqTextUtil {
 	kGameOver = 0
 };
 
+static const int kMaxStrLength = 1024;
+
 namespace Utils {
 int      firstBit(byte data);
 int      lastBit(byte data);

@@ -43,6 +43,18 @@ public:
 private:
 	HugoEngine *_vm;
 
+	#define CURSOR_NOCHAR  '~'                          // Don't show name of object under cursor
+
+	static const int kExitHotspot = -4;                 // Cursor over Exit hotspot
+	static const int kCursorNameIndex = 2;              // Index of name used under cursor
+	static const int kCursorNameOffX = 10;              // Cursor offset to name string
+	static const int kCursorNameOffY = -2;              // Cursor offset to name string
+
+	enum seqTextMouse {
+		kMsNoWayText = 0,
+		kMsExit      = 1
+	};
+
 	void  cursorText(char *buffer, int16 cx, int16 cy, uif_t fontId, int16 color);
 	int16 findExit(int16 cx, int16 cy);
 	void  processRightClick(int16 objId, int16 cx, int16 cy);

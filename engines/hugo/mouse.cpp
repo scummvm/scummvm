@@ -34,10 +34,9 @@
 
 #include "common/system.h"
 
-#include "hugo/game.h"
 #include "hugo/hugo.h"
+#include "hugo/game.h"
 #include "hugo/mouse.h"
-#include "hugo/global.h"
 #include "hugo/schedule.h"
 #include "hugo/display.h"
 #include "hugo/inventory.h"
@@ -46,19 +45,6 @@
 #include "hugo/object.h"
 
 namespace Hugo {
-
-#define EXIT_HOTSPOT   -4                           // Cursor over Exit hotspot
-#define CURSOR_NAME    2                            // Index of name used under cursor
-#define CURSOR_NOCHAR  '~'                          // Don't show name of object under cursor
-#define SX_OFF         10                           // Cursor offset to name string
-#define SY_OFF         -2                           // Cursor offset to name string
-#define IX_OFF         8                            // Cursor to icon image (dib coords)
-#define IY_OFF         10                           // Cursor to icon image (dib coords)
-
-enum seqTextMouse {
-	kMsNoWayText = 0,
-	kMsExit      = 1
-};
 
 MouseHandler::MouseHandler(HugoEngine *vm) : _vm(vm) {
 }
@@ -73,19 +59,19 @@ void MouseHandler::cursorText(char *buffer, int16 cx, int16 cy, uif_t fontId, in
 
 	// Find bounding rect for string
 	int16 sdx = _vm->_screen->stringLength(buffer);
-	int16 sdy = _vm->_screen->fontHeight() + 1;                      // + 1 for shadow
+	int16 sdy = _vm->_screen->fontHeight() + 1;     // + 1 for shadow
 	int16 sx, sy;
-	if (cx < XPIX / 2) {
-		sx = cx + SX_OFF;
-		sy = (_vm->getGameStatus().inventoryObjId == -1) ? cy + SY_OFF : cy + SY_OFF - (_vm->_screen->fontHeight() + 1);
+	if (cx < kXPix / 2) {
+		sx = cx + kCursorNameOffX;
+		sy = (_vm->getGameStatus().inventoryObjId == -1) ? cy + kCursorNameOffY : cy + kCursorNameOffY - (_vm->_screen->fontHeight() + 1);
 	} else {
-		sx = cx - sdx - SX_OFF / 2;
-		sy = cy + SY_OFF;
+		sx = cx - sdx - kCursorNameOffX / 2;
+		sy = cy + kCursorNameOffY;
 	}
 
 	// Display the string and add rect to display list
 	_vm->_screen->shadowStr(sx, sy, buffer, _TBRIGHTWHITE);
-	_vm->_screen->displayList(D_ADD, sx, sy, sdx, sdy);
+	_vm->_screen->displayList(kDisplayAdd, sx, sy, sdx, sdy);
 }
 
 /**
@@ -113,12 +99,12 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 
 	status_t &gameStatus = _vm->getGameStatus();
 
-	if (gameStatus.storyModeFl || _vm->_hero->pathType == QUIET)     // Make sure user has control
+	if (gameStatus.storyModeFl || _vm->_hero->pathType == kPathQuiet) // Make sure user has control
 		return;
 
 	bool foundFl = false;                           // TRUE if route found to object
 	// Check if this was over iconbar
-	if (gameStatus.inventoryState == I_ACTIVE && cy < INV_DY + DIBOFF_Y) { // Clicked over iconbar object
+	if ((gameStatus.inventoryState == kInventoryActive) && (cy < kInvDy + kDibOffY)) { // Clicked over iconbar object
 		if (gameStatus.inventoryObjId == -1)
 			_vm->_screen->selectInventoryObjId(objId);
 		else if (gameStatus.inventoryObjId == objId)
@@ -131,7 +117,7 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 		switch (obj->viewx) {                       // Where to walk to
 		case -1:                                    // Walk to object position
 			if (_vm->_object->findObjectSpace(obj, &x, &y))
-				foundFl = _vm->_route->startRoute(GO_GET, objId, x, y);
+				foundFl = _vm->_route->startRoute(kRouteGet, objId, x, y);
 			if (!foundFl)                           // Can't get there, try to use from here
 				_vm->_object->useObject(objId);
 			break;
@@ -139,11 +125,11 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 			_vm->_object->useObject(objId);         // Pick up or use object
 			break;
 		default:                                    // Walk to view point if possible
-			if (!_vm->_route->startRoute(GO_GET, objId, obj->viewx, obj->viewy)) {
-				if (_vm->_hero->cycling == INVISIBLE) // If invisible do
+			if (!_vm->_route->startRoute(kRouteGet, objId, obj->viewx, obj->viewy)) {
+				if (_vm->_hero->cycling == kCycleInvisible) // If invisible do
 					_vm->_object->useObject(objId); // immediate use
 				else
-					Utils::Box(BOX_ANY, "%s", _vm->_textMouse[kMsNoWayText]);      // Can't get there
+					Utils::Box(kBoxAny, "%s", _vm->_textMouse[kMsNoWayText]);      // Can't get there
 			}
 			break;
 		}
@@ -165,22 +151,22 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 
 	status_t &gameStatus = _vm->getGameStatus();
 
-	if (gameStatus.storyModeFl || _vm->_hero->pathType == QUIET)     // Make sure user has control
+	if (gameStatus.storyModeFl || _vm->_hero->pathType == kPathQuiet) // Make sure user has control
 		return;
 
 	switch (objId) {
 	case -1:                                        // Empty space - attempt to walk there
-		_vm->_route->startRoute(GO_SPACE, 0, cx, cy);
+		_vm->_route->startRoute(kRouteSpace, 0, cx, cy);
 		break;
-	case LEFT_ARROW:                                // A scroll arrow - scroll the iconbar
-	case RIGHT_ARROW:
+	case kLeftArrow:                                // A scroll arrow - scroll the iconbar
+	case kRightArrow:
 		// Scroll the iconbar and display results
-		_vm->_inventory->processInventory((objId == LEFT_ARROW) ? INV_LEFT : INV_RIGHT);
-		_vm->_screen->moveImage(_vm->_screen->getIconBuffer(), 0, 0, XPIX, INV_DY, XPIX, _vm->_screen->getFrontBuffer(), 0, DIBOFF_Y, XPIX);
-		_vm->_screen->moveImage(_vm->_screen->getIconBuffer(), 0, 0, XPIX, INV_DY, XPIX, _vm->_screen->getBackBuffer(), 0, DIBOFF_Y, XPIX);
-		_vm->_screen->displayList(D_ADD, 0, DIBOFF_Y, XPIX, INV_DY);
+		_vm->_inventory->processInventory((objId == kLeftArrow) ? kInventoryActionLeft : kInventoryActionRight);
+		_vm->_screen->moveImage(_vm->_screen->getIconBuffer(), 0, 0, kXPix, kInvDy, kXPix, _vm->_screen->getFrontBuffer(), 0, kDibOffY, kXPix);
+		_vm->_screen->moveImage(_vm->_screen->getIconBuffer(), 0, 0, kXPix, kInvDy, kXPix, _vm->_screen->getBackBuffer(), 0, kDibOffY, kXPix);
+		_vm->_screen->displayList(kDisplayAdd, 0, kDibOffY, kXPix, kInvDy);
 		break;
-	case EXIT_HOTSPOT:                              // Walk to exit hotspot
+	case kExitHotspot:                              // Walk to exit hotspot
 		i = findExit(cx, cy);
 		x = _vm->_hotspots[i].viewx;
 		y = _vm->_hotspots[i].viewy;
@@ -188,16 +174,16 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 			// Special case of immediate exit
 			if (gameStatus.jumpExitFl) {
 				// Get rid of iconbar if necessary
-				if (gameStatus.inventoryState != I_OFF)
-					gameStatus.inventoryState = I_UP;
+				if (gameStatus.inventoryState != kInventoryOff)
+					gameStatus.inventoryState = kInventoryUp;
 				_vm->_scheduler->insertActionList(_vm->_hotspots[i].actIndex);
 			} else {    // Set up route to exit spot
 				if (_vm->_hotspots[i].direction == Common::KEYCODE_RIGHT)
-					x -= HERO_MAX_WIDTH;
+					x -= kHeroMaxWidth;
 				else if (_vm->_hotspots[i].direction == Common::KEYCODE_LEFT)
-					x += HERO_MAX_WIDTH;
-				if (!_vm->_route->startRoute(GO_EXIT, i, x, y))
-					Utils::Box(BOX_ANY, "%s", _vm->_textMouse[kMsNoWayText]);      // Can't get there
+					x += kHeroMaxWidth;
+				if (!_vm->_route->startRoute(kRouteExit, i, x, y))
+					Utils::Box(kBoxAny, "%s", _vm->_textMouse[kMsNoWayText]); // Can't get there
 			}
 
 			// Get rid of any attached icon
@@ -208,14 +194,14 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 		obj = &_vm->_object->_objects[objId];
 
 		// Over iconbar - immediate description
-		if (gameStatus.inventoryState == I_ACTIVE && cy < INV_DY + DIBOFF_Y)
+		if ((gameStatus.inventoryState == kInventoryActive) && (cy < kInvDy + kDibOffY)) {
 			_vm->_object->lookObject(obj);
-		else {
+		} else {
 			bool foundFl = false;                   // TRUE if route found to object
 			switch (obj->viewx) {                   // Clicked over viewport object
 			case -1:                                // Walk to object position
 				if (_vm->_object->findObjectSpace(obj, &x, &y))
-					foundFl = _vm->_route->startRoute(GO_LOOK, objId, x, y);
+					foundFl = _vm->_route->startRoute(kRouteLook, objId, x, y);
 				if (!foundFl)                       // Can't get there, immediate description
 					_vm->_object->lookObject(obj);
 				break;
@@ -223,11 +209,11 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 				_vm->_object->lookObject(obj);
 				break;
 			default:                                // Walk to view point if possible
-				if (!_vm->_route->startRoute(GO_LOOK, objId, obj->viewx, obj->viewy)) {
-					if (_vm->_hero->cycling == INVISIBLE)    // If invisible do
-						_vm->_object->lookObject(obj);       // immediate decription
+				if (!_vm->_route->startRoute(kRouteLook, objId, obj->viewx, obj->viewy)) {
+					if (_vm->_hero->cycling == kCycleInvisible) // If invisible do
+						_vm->_object->lookObject(obj);          // immediate decription
 					else
-						Utils::Box(BOX_ANY, "%s", _vm->_textMouse[kMsNoWayText]);  // Can't get there
+						Utils::Box(kBoxAny, "%s", _vm->_textMouse[kMsNoWayText]);  // Can't get there
 				}
 				break;
 			}
@@ -244,7 +230,7 @@ void MouseHandler::mouseHandler() {
 
 	status_t &gameStatus = _vm->getGameStatus();
 
-	if ((gameStatus.viewState != V_PLAY) && (gameStatus.inventoryState != I_ACTIVE))
+	if ((gameStatus.viewState != kViewPlay) && (gameStatus.inventoryState != kInventoryActive))
 		return;
 
 	int16 cx = _vm->getMouseX();
@@ -254,13 +240,13 @@ void MouseHandler::mouseHandler() {
 	gameStatus.cy = cy;
 
 	// Don't process if outside client area
-	if (cx < 0 || cx > XPIX || cy < DIBOFF_Y || cy > VIEW_DY + DIBOFF_Y)
+	if ((cx < 0) || (cx > kXPix) || (cy < kDibOffY) || (cy > kViewSizeY + kDibOffY))
 		return;
 
 	int16 objId = -1;                               // Current source object
 	// Process cursor over an object or icon
-	if (gameStatus.inventoryState == I_ACTIVE) {      // Check inventory icon bar first
-		objId = _vm->_inventory->processInventory(INV_GET, cx, cy);
+	if (gameStatus.inventoryState == kInventoryActive) { // Check inventory icon bar first
+		objId = _vm->_inventory->processInventory(kInventoryActionGet, cx, cy);
 	} else {
 		if (cy < 5 && cy > 0) {
 			_vm->_topMenu->runModal();
@@ -268,12 +254,13 @@ void MouseHandler::mouseHandler() {
 	}
 
 	if (!gameStatus.gameOverFl) {
-		if (objId == -1)                                // No match, check rest of view
+		if (objId == -1)                            // No match, check rest of view
 			objId = _vm->_object->findObject(cx, cy);
-		if (objId >= 0) {                               // Got a match
+
+		if (objId >= 0) {                           // Got a match
 			// Display object name next to cursor (unless CURSOR_NOCHAR)
 			// Note test for swapped hero name
-			char *name = _vm->_arrayNouns[_vm->_object->_objects[(objId == HERO) ? _vm->_heroImage : objId].nounIndex][CURSOR_NAME];
+			char *name = _vm->_arrayNouns[_vm->_object->_objects[(objId == kHeroIndex) ? _vm->_heroImage : objId].nounIndex][kCursorNameIndex];
 			if (name[0] != CURSOR_NOCHAR)
 				cursorText(name, cx, cy, U_FONT8, _TBRIGHTWHITE);
 
@@ -286,7 +273,7 @@ void MouseHandler::mouseHandler() {
 		if (objId == -1) {
 			int i = findExit(cx, cy);
 			if (i != -1 && _vm->_hotspots[i].viewx >= 0) {
-				objId = EXIT_HOTSPOT;
+				objId = kExitHotspot;
 				cursorText(_vm->_textMouse[kMsExit], cx, cy, U_FONT8, _TBRIGHTWHITE);
 			}
 		}

@@ -34,9 +34,10 @@
 #define HUGO_INVENTORY_H
 namespace Hugo {
 
-#define NUM_ARROWS     2                            // Number of arrows (left/right)
-#define LEFT_ARROW     -2                           // Cursor over Left arrow in inventory icon bar
-#define RIGHT_ARROW    -3                           // Cursor over Right arrow in inventory icon bar
+/**
+* Actions for Process_inventory()
+*/
+enum invact_t {kInventoryActionInit, kInventoryActionLeft, kInventoryActionRight, kInventoryActionGet};
 
 class InventoryHandler {
 public:
@@ -47,6 +48,8 @@ public:
 
 private:
 	HugoEngine *_vm;
+
+	static const int kStepDy = 8;                   // Pixels per step movement
 
 	void constructInventory(int16 imageTotNumb, int displayNumb, bool scrollFl, int16 firstObjId);
 };

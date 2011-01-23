@@ -132,12 +132,12 @@ void TopMenu::reflowLayout() {
 
 	// Set the graphics to the 'on' buttons, except for the variable ones 
 	_whatButton->setGfx(arrayBmp[4 * kMenuWhat + scale - 1]);
-	_musicButton->setGfx(arrayBmp[4 * kMenuMusic + scale - 1 + ((_config.musicFl) ? 0 : 2)]);
-	_soundFXButton->setGfx(arrayBmp[4 * kMenuSoundFX + scale - 1 + ((_config.soundFl) ? 0 : 2)]);
+	_musicButton->setGfx(arrayBmp[4 * kMenuMusic + scale - 1 + ((_vm->_config.musicFl) ? 0 : 2)]);
+	_soundFXButton->setGfx(arrayBmp[4 * kMenuSoundFX + scale - 1 + ((_vm->_config.soundFl) ? 0 : 2)]);
 	_loadButton->setGfx(arrayBmp[4 * kMenuLoad + scale - 1]);
 	_saveButton->setGfx(arrayBmp[4 * kMenuSave + scale - 1]);
 	_recallButton->setGfx(arrayBmp[4 * kMenuRecall + scale - 1]);
-	_turboButton->setGfx(arrayBmp[4 * kMenuTurbo + scale - 1 + ((_config.turboFl) ? 0 : 2)]);
+	_turboButton->setGfx(arrayBmp[4 * kMenuTurbo + scale - 1 + ((_vm->_config.turboFl) ? 0 : 2)]);
 	_lookButton->setGfx(arrayBmp[4 * kMenuLook + scale - 1]);
 	_inventButton->setGfx(arrayBmp[4 * kMenuInventory + scale - 1]);
 }
@@ -199,11 +199,11 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 		close();
 		_vm->_file->restoreGame(-1);
 		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-		_vm->getGameStatus().viewState = V_PLAY;
+		_vm->getGameStatus().viewState = kViewPlay;
 		break;
 	case kCmdSave:
 		close();
-		if (_vm->getGameStatus().viewState == V_PLAY) {
+		if (_vm->getGameStatus().viewState == kViewPlay) {
 			if (_vm->getGameStatus().gameOverFl)
 				Utils::gameOverMsg();
 			else

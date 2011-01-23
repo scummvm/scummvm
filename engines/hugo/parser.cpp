@@ -45,10 +45,6 @@
 
 namespace Hugo {
 
-#define BLINKS  2                                   // Cursor blinks per second
-#define CX(X)   LOWORD(X)
-#define CY(Y)   HIWORD(Y)
-
 Parser::Parser(HugoEngine *vm) :
 	_vm(vm), _putIndex(0), _getIndex(0), _checkDoubleF1Fl(false) {
 }
@@ -57,7 +53,7 @@ Parser::~Parser() {
 }
 
 void Parser::switchTurbo() {
-	_config.turboFl = !_config.turboFl;
+	_vm->_config.turboFl = !_vm->_config.turboFl;
 }
 
 /**
@@ -85,17 +81,17 @@ void Parser::charHandler() {
 				cmdLine[--lineIndex] = '\0';
 			break;
 		case Common::KEYCODE_RETURN:                // EOL, pass line to line handler
-			if (lineIndex && (_vm->_hero->pathType != QUIET)) {
+			if (lineIndex && (_vm->_hero->pathType != kPathQuiet)) {
 				// Remove inventory bar if active
-				if (gameStatus.inventoryState == I_ACTIVE)
-					gameStatus.inventoryState = I_UP;
+				if (gameStatus.inventoryState == kInventoryActive)
+					gameStatus.inventoryState = kInventoryUp;
 				// Call Line handler and reset line
 				command(cmdLine);
 				cmdLine[lineIndex = 0] = '\0';
 			}
 			break;
 		default:                                    // Normal text key, add to line
-			if (lineIndex >= MAX_CHARS) {
+			if (lineIndex >= kMaxLineSize) {
 				//MessageBeep(MB_ICONASTERISK);
 				warning("STUB: MessageBeep() - Command line too long");
 			} else if (isprint(c)) {
@@ -107,19 +103,19 @@ void Parser::charHandler() {
 	}
 
 	// See if time to blink cursor, set cursor character
-	if ((tick++ % (_vm->getTPS() / BLINKS)) == 0)
+	if ((tick++ % (_vm->getTPS() / kBlinksPerSec)) == 0)
 		cursor = (cursor == '_') ? ' ' : '_';
 
 	// See if recall button pressed
 	if (gameStatus.recallFl) {
 		// Copy previous line to current cmdline
 		gameStatus.recallFl = false;
-		strcpy(cmdLine, _line);
+		strcpy(cmdLine, _vm->_line);
 		lineIndex = strlen(cmdLine);
 	}
 
 	sprintf(_vm->_statusLine, ">%s%c", cmdLine, cursor);
-	sprintf(_vm->_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_config.turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_config.soundFl) ? "On" : "Off");
+	sprintf(_vm->_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_vm->_config.turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_vm->_config.soundFl) ? "On" : "Off");
 
 	// See if "look" button pressed
 	if (gameStatus.lookFl) {
@@ -137,11 +133,11 @@ void Parser::keyHandler(Common::Event event) {
 	// Process key down event - called from OnKeyDown()
 	switch (nChar) {                                // Set various toggle states
 	case Common::KEYCODE_ESCAPE:                    // Escape key, may want to QUIT
-		if (gameStatus.viewState == V_INTRO)
+		if (gameStatus.viewState == kViewIntro)
 			gameStatus.skipIntroFl = true;
 		else {
-			if (gameStatus.inventoryState == I_ACTIVE)  // Remove inventory, if displayed
-				gameStatus.inventoryState = I_UP;
+			if (gameStatus.inventoryState == kInventoryActive) // Remove inventory, if displayed
+				gameStatus.inventoryState = kInventoryUp;
 			_vm->_screen->resetInventoryObjId();
 		}
 		break;
@@ -179,7 +175,7 @@ void Parser::keyHandler(Common::Event event) {
 		gameStatus.recallFl = true;
 		break;
 	case Common::KEYCODE_F4:                        // Save game
-		if (gameStatus.viewState == V_PLAY) {
+		if (gameStatus.viewState == kViewPlay) {
 			if (gameStatus.gameOverFl)
 				Utils::gameOverMsg();
 			else
@@ -189,7 +185,7 @@ void Parser::keyHandler(Common::Event event) {
 	case Common::KEYCODE_F5:                        // Restore game
 		_vm->_file->restoreGame(-1);
 		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-		gameStatus.viewState = V_PLAY;
+		gameStatus.viewState = kViewPlay;
 		break;
 	case Common::KEYCODE_F6:                        // Inventory
 		showInventory();
@@ -204,7 +200,7 @@ void Parser::keyHandler(Common::Event event) {
 		if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 			_vm->_file->restoreGame(-1);
 			_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-			gameStatus.viewState = V_PLAY;
+			gameStatus.viewState = kViewPlay;
 		} else {
 			if (!gameStatus.storyModeFl) {          // Keyboard disabled
 				// Add printable keys to ring buffer
@@ -236,7 +232,7 @@ void Parser::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_s:
 		if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-			if (gameStatus.viewState == V_PLAY) {
+			if (gameStatus.viewState == kViewPlay) {
 				if (gameStatus.gameOverFl)
 					Utils::gameOverMsg();
 				else
@@ -281,7 +277,7 @@ void Parser::command(const char *format, ...) {
 
 	va_list marker;
 	va_start(marker, format);
-	vsprintf(_line, format, marker);
+	vsprintf(_vm->_line, format, marker);
 	va_end(marker);
 
 	lineHandler();
@@ -295,7 +291,7 @@ bool Parser::isWordPresent(char **wordArr) {
 
 	if (wordArr != 0) {
 		for (int i = 0; strlen(wordArr[i]); i++) {
-			if (strstr(_line, wordArr[i]))
+			if (strstr(_vm->_line, wordArr[i]))
 				return true;
 		}
 	}
@@ -310,7 +306,7 @@ char *Parser::findNoun() {
 
 	for (int i = 0; _vm->_arrayNouns[i]; i++) {
 		for (int j = 0; strlen(_vm->_arrayNouns[i][j]); j++) {
-			if (strstr(_line, _vm->_arrayNouns[i][j]))
+			if (strstr(_vm->_line, _vm->_arrayNouns[i][j]))
 				return _vm->_arrayNouns[i][0];
 		}
 	}
@@ -325,7 +321,7 @@ char *Parser::findVerb() {
 
 	for (int i = 0; _vm->_arrayVerbs[i]; i++) {
 		for (int j = 0; strlen(_vm->_arrayVerbs[i][j]); j++) {
-			if (strstr(_line, _vm->_arrayVerbs[i][j]))
+			if (strstr(_vm->_line, _vm->_arrayVerbs[i][j]))
 				return _vm->_arrayVerbs[i][0];
 		}
 	}
@@ -354,7 +350,7 @@ void Parser::showDosInventory() {
 	if (len1 + len2 < (uint16)strlen(_vm->_textParser[kTBOutro]))
 		len1 = strlen(_vm->_textParser[kTBOutro]);
 
-	char buffer[XBYTES *NUM_ROWS] = "\0";
+	char buffer[kCompLineSize * kMaxTextRows] = "\0";
 	strncat(buffer, blanks, (len1 + len2 - strlen(_vm->_textParser[kTBIntro])) / 2);
 	strcat(strcat(buffer, _vm->_textParser[kTBIntro]), "\n");
 	index = 0;
@@ -370,7 +366,7 @@ void Parser::showDosInventory() {
 		strcat(buffer, "\n");
 	strcat(buffer, _vm->_textParser[kTBOutro]);
 
-	Utils::Box(BOX_ANY, "%s", buffer);
+	Utils::Box(kBoxAny, "%s", buffer);
 }
 
 } // End of namespace Hugo

@@ -30,7 +30,6 @@
 #include "common/debug-channels.h"
 
 #include "hugo/hugo.h"
-#include "hugo/global.h"
 #include "hugo/game.h"
 #include "hugo/file.h"
 #include "hugo/schedule.h"
@@ -55,11 +54,8 @@ overlay_t HugoEngine::_overlay;
 overlay_t HugoEngine::_ovlBase;
 overlay_t HugoEngine::_objBound;
 
-config_t    _config;                            // User's config
-maze_t      _maze;                              // Default to not in maze
+maze_t      _maze;                              // Default to not in maze 
 hugo_boot_t _boot;                              // Boot info structure file
-char        _textBoxBuffer[MAX_BOX];            // Buffer for text box
-command_t   _line;                              // Line of user text input
 
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd), _mouseX(0), _mouseY(0),
 	_textData(0), _stringtData(0), _screenNames(0), _textEngine(0), _textIntro(0), _textMouse(0), _textParser(0), _textUtil(0),
@@ -264,14 +260,14 @@ Common::Error HugoEngine::run() {
 	_screen->resetInventoryObjId();
 
 	initStatus();                                   // Initialize game status
-	initConfig(INSTALL);                            // Initialize user's config
+	initConfig();                                   // Initialize user's config
 	initialize();
-	initConfig(RESET);                              // Reset user's config
+	resetConfig();                                  // Reset user's config
 
 	initMachine();
 
 	// Start the state machine
-	_status.viewState = V_INTROINIT;
+	_status.viewState = kViewIntroInit;
 
 	_status.doQuitFl = false;
 
@@ -314,7 +310,7 @@ Common::Error HugoEngine::run() {
 			}
 		}
 		_mouse->mouseHandler();                     // Mouse activity - adds to display list
-		_screen->displayList(D_DISPLAY);            // Blit the display list to screen
+		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
 
 		_status.doQuitFl |= shouldQuit();           // update game quit flag
 	}
@@ -356,36 +352,36 @@ void HugoEngine::runMachine() {
 	lastTime = curTime;
 
 	switch (gameStatus.viewState) {
-	case V_IDLE:                                    // Not processing state machine
+	case kViewIdle:                                 // Not processing state machine
 		_screen->hideCursor();
 		_intro->preNewGame();                       // Any processing before New Game selected
 		break;
-	case V_INTROINIT:                               // Initialization before intro begins
+	case kViewIntroInit:                            // Initialization before intro begins
 		_intro->introInit();
-		gameStatus.viewState = V_INTRO;
+		gameStatus.viewState = kViewIntro;
 		break;
-	case V_INTRO:                                   // Do any game-dependant preamble
+	case kViewIntro:                                // Do any game-dependant preamble
 		if (_intro->introPlay()) {                  // Process intro screen
 			_scheduler->newScreen(0);               // Initialize first screen
-			gameStatus.viewState = V_PLAY;
+			gameStatus.viewState = kViewPlay;
 		}
 		break;
-	case V_PLAY:                                    // Playing game
+	case kViewPlay:                                 // Playing game
 		_screen->showCursor();
 		_parser->charHandler();                     // Process user cmd input
 		_object->moveObjects();                     // Process object movement
 		_scheduler->runScheduler();                 // Process any actions
-		_screen->displayList(D_RESTORE);            // Restore previous background
+		_screen->displayList(kDisplayRestore);      // Restore previous background
 		_object->updateImages();                    // Draw into _frontBuffer, compile display list
 		_screen->drawStatusText();
-		_screen->displayList(D_DISPLAY);            // Blit the display list to screen
+		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
 		_sound->checkMusic();
 		break;
-	case V_INVENT:                                  // Accessing inventory
+	case kViewInvent:                               // Accessing inventory
 		_inventory->runInventory();                 // Process Inventory state machine
 		break;
-	case V_EXIT:                                    // Game over or user exited
-		gameStatus.viewState = V_IDLE;
+	case kViewExit:                                 // Game over or user exited
+		gameStatus.viewState = kViewIdle;
 		_status.doQuitFl = true;
 		break;
 	}
@@ -698,9 +694,9 @@ bool HugoEngine::loadHugoDat() {
 
 	_object->loadObjectArr(in);
 
-	_hero = &_object->_objects[HERO];               // This always points to hero
-	_screen_p = &(_object->_objects[HERO].screenIndex); // Current screen is hero's
-	_heroImage = HERO;                              // Current in use hero image
+	_hero = &_object->_objects[kHeroIndex];         // This always points to hero
+	_screen_p = &(_object->_objects[kHeroIndex].screenIndex); // Current screen is hero's
+	_heroImage = kHeroIndex;                        // Current in use hero image
 
 	_scheduler->loadActListArr(in);
 
@@ -908,10 +904,10 @@ void HugoEngine::freeTexts(char **ptr) {
 /**
 * Sets the playlist to be the default tune selection
 */
-void HugoEngine::initPlaylist(bool playlist[MAX_TUNES]) {
+void HugoEngine::initPlaylist(bool playlist[kMaxTunes]) {
 	debugC(1, kDebugEngine, "initPlaylist");
 
-	for (int16 i = 0; i < MAX_TUNES; i++)
+	for (int16 i = 0; i < kMaxTunes; i++)
 		playlist[i] = false;
 	for (int16 i = 0; _defltTunes[i] != -1; i++)
 		playlist[_defltTunes[i]] = true;
@@ -940,12 +936,12 @@ void HugoEngine::initStatus() {
 
 	// Initialize every start of new game
 	_status.tick            = 0;                    // Tick count
-	_status.viewState       = V_IDLE;               // View state
-	_status.inventoryState  = I_OFF;                // Inventory icon bar state
+	_status.viewState       = kViewIdle;            // View state
+	_status.inventoryState  = kInventoryOff;        // Inventory icon bar state
 	_status.inventoryHeight = 0;                    // Inventory icon bar pos
 	_status.inventoryObjId  = -1;                   // Inventory object selected (none)
 	_status.routeIndex      = -1;                   // Hero not following a route
-	_status.go_for          = GO_SPACE;             // Hero walking to space
+	_status.go_for          = kRouteSpace;          // Hero walking to space
 	_status.go_id           = -1;                   // Hero not walking to anything
 
 // Strangerke - Suppress as related to playback
@@ -960,31 +956,29 @@ void HugoEngine::initStatus() {
 
 /**
 * Initialize default config values.  Must be done before Initialize().
-* Reset needed to save config.cx,cy which get splatted during OnFileNew()
 */
-void HugoEngine::initConfig(inst_t action) {
-	debugC(1, kDebugEngine, "initConfig(%d)", action);
+void HugoEngine::initConfig() {
+	debugC(1, kDebugEngine, "initConfig()");
 
-	switch (action) {
-	case INSTALL:
-		_config.musicFl = true;                     // Music state initially on
-		_config.soundFl = true;                     // Sound state initially on
-		_config.turboFl = false;                    // Turbo state initially off
-		initPlaylist(_config.playlist);             // Initialize default tune playlist
-		_file->readBootFile();                      // Read startup structure
-		break;
-	case RESET:
-		// Find first tune and play it
-		for (int16 i = 0; i < MAX_TUNES; i++) {
-			if (_config.playlist[i]) {
-				_sound->playMusic(i);
-				break;
-			}
+	_config.musicFl = true;                            // Music state initially on
+	_config.soundFl = true;                            // Sound state initially on
+	_config.turboFl = false;                           // Turbo state initially off
+	initPlaylist(_config.playlist);                    // Initialize default tune playlist
+	_file->readBootFile();                             // Read startup structure
+}
+
+/**
+* Reset config parts. Currently only reset music played based on playlist
+*/
+void HugoEngine::resetConfig() {
+	debugC(1, kDebugEngine, "resetConfig()");
+
+	// Find first tune and play it
+	for (int16 i = 0; i < kMaxTunes; i++) {
+		if (_config.playlist[i]) {
+			_sound->playMusic(i);
+			break;
 		}
-		break;
-	case RESTORE:
-		warning("Unhandled action RESTORE");
-		break;
 	}
 }
 
@@ -1051,16 +1045,15 @@ void HugoEngine::readScreenFiles(int screenNum) {
 	debugC(1, kDebugEngine, "readScreenFiles(%d)", screenNum);
 
 	_file->readBackground(screenNum);               // Scenery file
-	memcpy(_screen->getBackBuffer(), _screen->getFrontBuffer(), sizeof(_screen->getFrontBuffer()));// Make a copy
-	_file->readOverlay(screenNum, _boundary, BOUNDARY); // Boundary file
-	_file->readOverlay(screenNum, _overlay, OVERLAY);   // Overlay file
-	_file->readOverlay(screenNum, _ovlBase, OVLBASE);   // Overlay base file
+	memcpy(_screen->getBackBuffer(), _screen->getFrontBuffer(), sizeof(_screen->getFrontBuffer())); // Make a copy
+	_file->readOverlay(screenNum, _boundary, kOvlBoundary); // Boundary file
+	_file->readOverlay(screenNum, _overlay, kOvlOverlay);   // Overlay file
+	_file->readOverlay(screenNum, _ovlBase, kOvlBase);      // Overlay base file
 
 	// Suppress a boundary used in H3 DOS in 'Crash' screen, which blocks
 	// pathfinding and is useless.
 	if ((screenNum == 0) && (_gameVariant == kGameVariantH3Dos))
 		clearScreenBoundary(50, 311, 152);
-
 }
 
 /**
@@ -1088,7 +1081,7 @@ int HugoEngine::deltaX(int x1, int x2, int vx, int y) {
 	if (vx == 0)
 		return 0 ;                                  // Object stationary
 
-	y *= XBYTES;                                    // Offset into boundary file
+	y *= kCompLineSize;                             // Offset into boundary file
 	if (vx > 0) {
 		// Moving to right
 		for (int i = x1 >> 3; i <= (x2 + vx) >> 3; i++) {// Search by byte
@@ -1129,7 +1122,7 @@ int HugoEngine::deltaY(int x1, int x2, int vy, int y) {
 	int inc = (vy > 0) ? 1 : -1;
 	for (int j = y + inc; j != (y + vy + inc); j += inc) { //Search by byte
 		for (int i = x1 >> 3; i <= x2 >> 3; i++) {
-			int b = _boundary[j * XBYTES + i] | _objBound[j * XBYTES + i];
+			int b = _boundary[j * kCompLineSize + i] | _objBound[j * kCompLineSize + i];
 			if (b != 0) {                           // Any bit set
 				// Make sure boundary bits fall on line segment
 				if (i == (x2 >> 3))                 // Adjust right end
@@ -1151,7 +1144,7 @@ void HugoEngine::storeBoundary(int x1, int x2, int y) {
 	debugC(5, kDebugEngine, "storeBoundary(%d, %d, %d)", x1, x2, y);
 
 	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
-		byte *b = &_objBound[y * XBYTES + i];       // get boundary byte
+		byte *b = &_objBound[y * kCompLineSize + i];// get boundary byte
 		if (i == x2 >> 3)                           // Adjust right end
 			*b |= 0xff << ((i << 3) + 7 - x2);
 		else if (i == x1 >> 3)                      // Adjust left end
@@ -1168,7 +1161,7 @@ void HugoEngine::clearBoundary(int x1, int x2, int y) {
 	debugC(5, kDebugEngine, "clearBoundary(%d, %d, %d)", x1, x2, y);
 
 	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
-		byte *b = &_objBound[y * XBYTES + i];       // get boundary byte
+		byte *b = &_objBound[y * kCompLineSize + i];// get boundary byte
 		if (i == x2 >> 3)                           // Adjust right end
 			*b &= ~(0xff << ((i << 3) + 7 - x2));
 		else if (i == x1 >> 3)                      // Adjust left end
@@ -1186,7 +1179,7 @@ void HugoEngine::clearScreenBoundary(int x1, int x2, int y) {
 	debugC(5, kDebugEngine, "clearScreenBoundary(%d, %d, %d)", x1, x2, y);
 
 	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
-		byte *b = &_boundary[y * XBYTES + i];       // get boundary byte
+		byte *b = &_boundary[y * kCompLineSize + i];// get boundary byte
 		if (i == x2 >> 3)                           // Adjust right end
 			*b &= ~(0xff << ((i << 3) + 7 - x2));
 		else if (i == x1 >> 3)                      // Adjust left end
@@ -1207,7 +1200,7 @@ char *HugoEngine::useBG(char *name) {
 	for (int i = 0; p[i].verbIndex != 0; i++) {
 		if ((name == _arrayNouns[p[i].nounIndex][0] &&
 		     p[i].verbIndex != _look) &&
-		    ((p[i].roomState == DONT_CARE) || (p[i].roomState == _screenStates[*_screen_p])))
+		    ((p[i].roomState == kStateDontCare) || (p[i].roomState == _screenStates[*_screen_p])))
 			return _arrayVerbs[p[i].verbIndex][0];
 	}
 
@@ -1267,7 +1260,7 @@ void HugoEngine::boundaryCollision(object_t *obj) {
 		// If object's radius is infinity, use a closer value
 		int8 radius = obj->radius;
 		if (radius < 0)
-			radius = DX * 2;
+			radius = kStepDx * 2;
 		if ((abs(dx) <= radius) && (abs(dy) <= radius))
 			_scheduler->insertActionList(obj->actIndex);
 	}
@@ -1292,9 +1285,9 @@ void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 
 	if (!_boot.registered)
-		Utils::Box(BOX_ANY, "%s", _textEngine[kEsAdvertise]);
-	Utils::Box(BOX_ANY, "%s\n%s", _episode, COPYRIGHT);
-	_status.viewState = V_EXIT;
+		Utils::Box(kBoxAny, "%s", _textEngine[kEsAdvertise]);
+	Utils::Box(kBoxAny, "%s\n%s", _episode, COPYRIGHT);
+	_status.viewState = kViewExit;
 }
 
 bool HugoEngine::canLoadGameStateCurrently() {
@@ -1302,11 +1295,11 @@ bool HugoEngine::canLoadGameStateCurrently() {
 }
 
 bool HugoEngine::canSaveGameStateCurrently() {
-	return (_status.viewState == V_PLAY);
+	return (_status.viewState == kViewPlay);
 }
 
 int8 HugoEngine::getTPS() {
-	return ((_config.turboFl) ? TURBO_TPS : _normalTPS);
+	return ((_config.turboFl) ? kTurboTps : _normalTPS);
 }
 
 void HugoEngine::syncSoundSettings() {

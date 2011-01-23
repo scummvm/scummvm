@@ -34,9 +34,14 @@
 #define HUGO_DISPLAY_H
 
 namespace Hugo {
-#define shapeSize 24
-
 enum overlayState_t {UNDEF, FG, BG};                // Overlay state
+
+static const int kShapeSize = 24;
+static const int kFontLength = 128;                 // Number of chars in font
+static const int kFontSize = 1200;                  // Max size of font data
+static const int kNumFonts = 3;                     // Number of dib fonts
+static const int kCenter = -1;                      // Used to center text in x
+
 struct rect_t {                                     // Rectangle used in Display list
 	int16 x;                                        // Position in dib
 	int16 y;                                        // Position in dib
@@ -137,19 +142,22 @@ public:
 protected:
 	HugoEngine *_vm;
 
-	bool fontLoadedFl[NUM_FONTS];
+	static const int kRectListSize = 16;            // Size of add/restore rect lists
+	static const int kBlitListSize = kRectListSize * 2; // Size of dirty rect blit list
+
+	bool fontLoadedFl[kNumFonts];
 
 	// Fonts used in dib (non-GDI)
-	byte *_arrayFont[NUM_FONTS];
+	byte *_arrayFont[kNumFonts];
 	byte  _fnt;                                     // Current font number
-	byte  _fontdata[NUM_FONTS][FONTSIZE];           // Font data
-	byte *_font[NUM_FONTS][FONT_LEN];               // Ptrs to each char
+	byte  _fontdata[kNumFonts][kFontSize];          // Font data
+	byte *_font[kNumFonts][kFontLength];            // Ptrs to each char
 	byte *_mainPalette;
-	int16 _arrayFontSize[NUM_FONTS];
+	int16 _arrayFontSize[kNumFonts];
 
 private:
 	byte     *_curPalette;
-	byte      _iconImage[INV_DX * INV_DY];
+	byte      _iconImage[kInvDx * kInvDy];
 	byte      _paletteSize;
 
 	icondib_t _iconBuffer;                          // Inventory icon DIB

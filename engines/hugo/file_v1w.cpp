@@ -64,15 +64,15 @@ void FileManager_v1w::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 
 	uint32 i = 0;
 	switch (overlayType) {
-	case BOUNDARY:
+	case kOvlBoundary:
 		_sceneryArchive1.seek(sceneBlock.b_off, SEEK_SET);
 		i = sceneBlock.b_len;
 		break;
-	case OVERLAY:
+	case kOvlOverlay:
 		_sceneryArchive1.seek(sceneBlock.o_off, SEEK_SET);
 		i = sceneBlock.o_len;
 		break;
-	case OVLBASE:
+	case kOvlBase:
 		_sceneryArchive1.seek(sceneBlock.ob_off, SEEK_SET);
 		i = sceneBlock.ob_len;
 		break;
@@ -81,11 +81,11 @@ void FileManager_v1w::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 		break;
 	}
 	if (i == 0) {
-		for (i = 0; i < OVL_SIZE; i++)
+		for (i = 0; i < kOvlSize; i++)
 			image[i] = 0;
 		return;
 	}
-	_sceneryArchive1.read(tmpImage, OVL_SIZE);
+	_sceneryArchive1.read(tmpImage, kOvlSize);
 }
 
 } // End of namespace Hugo

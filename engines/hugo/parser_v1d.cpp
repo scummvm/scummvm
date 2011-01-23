@@ -66,7 +66,7 @@ char *Parser_v1d::findNextNoun(char *noun) {
 	}
 	for (int i = currNounIndex + 1; _vm->_arrayNouns[i]; i++) {
 		for (int j = 0; strlen(_vm->_arrayNouns[i][j]); j++) {
-			if (strstr(_line, _vm->_arrayNouns[i][j]))
+			if (strstr(_vm->_line, _vm->_arrayNouns[i][j]))
 				return _vm->_arrayNouns[i][0];
 		}
 	}
@@ -94,7 +94,7 @@ bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) {
 		return false;
 	}
 
-	if (obj->cycling == INVISIBLE) {
+	if (obj->cycling == kCycleInvisible) {
 		if (obj->seqNumb) {                         // There is an image
 			strcpy(comment, _vm->_textParser[kCmtAny5]);
 			return false;
@@ -150,25 +150,25 @@ bool Parser_v1d::isGenericVerb(char *word, object_t *obj) {
 	// Following is equivalent to switch, but couldn't do one
 	if (word == _vm->_arrayVerbs[_vm->_look][0]) {
 		if ((LOOK & obj->genericCmd) == LOOK)
-			Utils::Box(BOX_ANY, "%s", _vm->_textData[obj->dataIndex]);
+			Utils::Box(kBoxAny, "%s", _vm->_textData[obj->dataIndex]);
 		else
-			Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBUnusual_1d]);
+			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBUnusual_1d]);
 	} else if (word == _vm->_arrayVerbs[_vm->_take][0]) {
 		if (obj->carriedFl)
-			Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBHave]);
+			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBHave]);
 		else if ((TAKE & obj->genericCmd) == TAKE)
 			takeObject(obj);
 		else if (!obj->verbOnlyFl)                  // Make sure not taking object in context!
-			Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBNoUse]);
+			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBNoUse]);
 		else
 			return false;
 	} else if (word == _vm->_arrayVerbs[_vm->_drop][0]) {
 		if (!obj->carriedFl)
-			Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBDontHave]);
+			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBDontHave]);
 		else if ((DROP & obj->genericCmd) == DROP)
 			dropObject(obj);
 		else
-			Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBNeed]);
+			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBNeed]);
 	} else {                                        // It was not a generic cmd
 		return false;
 	}
@@ -205,22 +205,22 @@ bool Parser_v1d::isObjectVerb(char *word, object_t *obj) {
 		uint16 *reqs = _vm->_arrayReqs[cmnd->reqIndex]; // ptr to list of required objects
 		for (i = 0; reqs[i]; i++) {                 // for each obj
 			if (!_vm->_object->isCarrying(reqs[i])) {
-				Utils::Box(BOX_ANY, "%s", _vm->_textData[cmnd->textDataNoCarryIndex]);
+				Utils::Box(kBoxAny, "%s", _vm->_textData[cmnd->textDataNoCarryIndex]);
 				return true;
 			}
 		}
 	}
 
 	// Required objects are present, now check state is correct
-	if ((obj->state != cmnd->reqState) && (cmnd->reqState != DONT_CARE)){
-		Utils::Box(BOX_ANY, "%s", _vm->_textData[cmnd->textDataWrongIndex]);
+	if ((obj->state != cmnd->reqState) && (cmnd->reqState != kStateDontCare)){
+		Utils::Box(kBoxAny, "%s", _vm->_textData[cmnd->textDataWrongIndex]);
 		return true;
 	}
 
 	// Everything checked.  Change the state and carry out any actions
-	if (cmnd->reqState != DONT_CARE)                // Don't change new state if required state didn't care
+	if (cmnd->reqState != kStateDontCare)           // Don't change new state if required state didn't care
 		obj->state = cmnd->newState;
-	Utils::Box(BOX_ANY, "%s", _vm->_textData[cmnd->textDataDoneIndex]);
+	Utils::Box(kBoxAny, "%s", _vm->_textData[cmnd->textDataDoneIndex]);
 	_vm->_scheduler->insertActionList(cmnd->actIndex);
 	// Special case if verb is Take or Drop.  Assume additional generic actions
 	if ((word == _vm->_arrayVerbs[_vm->_take][0]) || (word == _vm->_arrayVerbs[_vm->_drop][0]))
@@ -240,7 +240,7 @@ bool Parser_v1d::isBackgroundWord(char *noun, char *verb, objectList_t obj) {
 
 	for (int i = 0; obj[i].verbIndex; i++) {
 		if ((verb == _vm->_arrayVerbs[obj[i].verbIndex][0]) && (noun == _vm->_arrayNouns[obj[i].nounIndex][0])) {
-			Utils::Box(BOX_ANY, "%s", _vm->_file->fetchString(obj[i].commentIndex));
+			Utils::Box(kBoxAny, "%s", _vm->_file->fetchString(obj[i].commentIndex));
 			return true;
 		}
 	}
@@ -255,11 +255,11 @@ void Parser_v1d::takeObject(object_t *obj) {
 
 	obj->carriedFl = true;
 	if (obj->seqNumb)                               // Don't change if no image to display
-		obj->cycling = ALMOST_INVISIBLE;
+		obj->cycling = kCycleAlmostInvisible;
 
 	_vm->adjustScore(obj->objValue);
 
-	Utils::Box(BOX_ANY, TAKE_TEXT, _vm->_arrayNouns[obj->nounIndex][TAKE_NAME]);
+	Utils::Box(kBoxAny, TAKE_TEXT, _vm->_arrayNouns[obj->nounIndex][TAKE_NAME]);
 }
 
 /**
@@ -271,11 +271,11 @@ void Parser_v1d::dropObject(object_t *obj) {
 	obj->carriedFl = false;
 	obj->screenIndex = *_vm->_screen_p;
 	if (obj->seqNumb)                               // Don't change if no image to display
-		obj->cycling = NOT_CYCLING;
+		obj->cycling = kCycleNotCycling;
 	obj->x = _vm->_hero->x - 1;
 	obj->y = _vm->_hero->y + _vm->_hero->currImagePtr->y2 - 1;
 	_vm->adjustScore(-obj->objValue);
-	Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBOk]);
+	Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBOk]);
 }
 
 /**
@@ -290,7 +290,7 @@ bool Parser_v1d::isCatchallVerb(bool testNounFl, char *noun, char *verb, objectL
 
 	for (int i = 0; obj[i].verbIndex; i++) {
 		if ((verb == _vm->_arrayVerbs[obj[i].verbIndex][0]) && ((noun == _vm->_arrayNouns[obj[i].nounIndex][0]) || (obj[i].nounIndex == 0))) {
-			Utils::Box(BOX_ANY, "%s", _vm->_file->fetchString(obj[i].commentIndex));
+			Utils::Box(kBoxAny, "%s", _vm->_file->fetchString(obj[i].commentIndex));
 			return true;
 		}
 	}
@@ -306,13 +306,13 @@ void Parser_v1d::lineHandler() {
 	status_t &gameStatus = _vm->getGameStatus();
 
 	// Toggle God Mode
-	if (!strncmp(_line, "PPG", 3)) {
-		_vm->_sound->playSound(!_vm->_soundTest, BOTH_CHANNELS, HIGH_PRI);
+	if (!strncmp(_vm->_line, "PPG", 3)) {
+		_vm->_sound->playSound(!_vm->_soundTest, kSoundPriorityHigh);
 		gameStatus.godModeFl = !gameStatus.godModeFl;
 		return;
 	}
 
-	Utils::strlwr(_line);                           // Convert to lower case
+	Utils::strlwr(_vm->_line);                      // Convert to lower case
 
 	// God Mode cheat commands:
 	// goto <screen>                                Takes hero to named screen
@@ -321,9 +321,9 @@ void Parser_v1d::lineHandler() {
 	// find <object name>                           Takes hero to screen containing named object
 	if (gameStatus.godModeFl) {
 		// Special code to allow me to go straight to any screen
-		if (strstr(_line, "goto")) {
+		if (strstr(_vm->_line, "goto")) {
 			for (int i = 0; i < _vm->_numScreens; i++) {
-				if (!scumm_stricmp(&_line[strlen("goto") + 1], _vm->_screenNames[i])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("goto") + 1], _vm->_screenNames[i])) {
 					_vm->_scheduler->newScreen(i);
 					return;
 				}
@@ -331,7 +331,7 @@ void Parser_v1d::lineHandler() {
 		}
 
 		// Special code to allow me to get objects from anywhere
-		if (strstr(_line, "fetch all")) {
+		if (strstr(_vm->_line, "fetch all")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
 				if (_vm->_object->_objects[i].genericCmd & TAKE)
 					takeObject(&_vm->_object->_objects[i]);
@@ -339,9 +339,9 @@ void Parser_v1d::lineHandler() {
 			return;
 		}
 
-		if (strstr(_line, "fetch")) {
+		if (strstr(_vm->_line, "fetch")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
 					takeObject(&_vm->_object->_objects[i]);
 					return;
 				}
@@ -349,9 +349,9 @@ void Parser_v1d::lineHandler() {
 		}
 
 		// Special code to allow me to goto objects
-		if (strstr(_line, "find")) {
+		if (strstr(_vm->_line, "find")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
 					_vm->_scheduler->newScreen(_vm->_object->_objects[i].screenIndex);
 					return;
 				}
@@ -359,14 +359,14 @@ void Parser_v1d::lineHandler() {
 		}
 	}
 
-	if (!strcmp("exit", _line) || strstr(_line, "quit")) {
-		if (Utils::Box(BOX_YESNO, "%s", _vm->_textParser[kTBExit_1d]) != 0)
+	if (!strcmp("exit", _vm->_line) || strstr(_vm->_line, "quit")) {
+		if (Utils::Box(kBoxYesNo, "%s", _vm->_textParser[kTBExit_1d]) != 0)
 			_vm->endGame();
 		return;
 	}
 
 	// SAVE/RESTORE
-	if (!strcmp("save", _line)) {
+	if (!strcmp("save", _vm->_line)) {
 		if (gameStatus.gameOverFl)
 			Utils::gameOverMsg();
 		else
@@ -374,17 +374,17 @@ void Parser_v1d::lineHandler() {
 		return;
 	}
 
-	if (!strcmp("restore", _line)) {
+	if (!strcmp("restore", _vm->_line)) {
 		_vm->_file->restoreGame(-1);
 		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-		gameStatus.viewState = V_PLAY;
+		gameStatus.viewState = kViewPlay;
 		return;
 	}
 
-	if (*_line == '\0')                             // Empty line
+	if (*_vm->_line == '\0')                        // Empty line
 		return;
 
-	if (strspn(_line, " ") == strlen(_line))        // Nothing but spaces!
+	if (strspn(_vm->_line, " ") == strlen(_vm->_line)) // Nothing but spaces!
 		return;
 
 	if (gameStatus.gameOverFl) {                    // No commands allowed!
@@ -395,7 +395,7 @@ void Parser_v1d::lineHandler() {
 	// Find the first verb in the line
 	char *verb = findVerb();
 	char *noun = 0;                                 // Noun not found yet
-	char farComment[XBYTES * 5] = "";               // hold 5 line comment if object not nearby
+	char farComment[kCompLineSize * 5] = "";        // hold 5 line comment if object not nearby
 
 	if (verb) {                                     // OK, verb found.  Try to match with object
 		do {
@@ -415,16 +415,16 @@ void Parser_v1d::lineHandler() {
 	}
 	noun = findNextNoun(noun);
 	if (*farComment != '\0')                        // An object matched but not near enough
-		Utils::Box(BOX_ANY, "%s", farComment);
+		Utils::Box(kBoxAny, "%s", farComment);
 	else if (!isCatchallVerb(true, noun, verb, _vm->_catchallList) &&
 		     !isCatchallVerb(false, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])  &&
 		     !isCatchallVerb(false, noun, verb, _vm->_catchallList))
-		Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBEh_1d]);
+		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBEh_1d]);
 }
 
 void Parser_v1d::showInventory() {
 	status_t &gameStatus = _vm->getGameStatus();
-	if (gameStatus.viewState == V_PLAY) {
+	if (gameStatus.viewState == kViewPlay) {
 		if (gameStatus.gameOverFl)
 			Utils::gameOverMsg();
 		else

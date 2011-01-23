@@ -34,7 +34,6 @@
 
 #include "hugo/hugo.h"
 #include "hugo/file.h"
-#include "hugo/global.h"
 #include "hugo/display.h"
 #include "hugo/util.h"
 
@@ -127,15 +126,15 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 
 	if (screenNum < 20) {
 		switch (overlayType) {
-		case BOUNDARY:
+		case kOvlBoundary:
 			_sceneryArchive1.seek(sceneBlock.b_off, SEEK_SET);
 			i = sceneBlock.b_len;
 			break;
-		case OVERLAY:
+		case kOvlOverlay:
 			_sceneryArchive1.seek(sceneBlock.o_off, SEEK_SET);
 			i = sceneBlock.o_len;
 			break;
-		case OVLBASE:
+		case kOvlBase:
 			_sceneryArchive1.seek(sceneBlock.ob_off, SEEK_SET);
 			i = sceneBlock.ob_len;
 			break;
@@ -144,7 +143,7 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 			break;
 		}
 		if (i == 0) {
-			for (i = 0; i < OVL_SIZE; i++)
+			for (i = 0; i < kOvlSize; i++)
 				image[i] = 0;
 			return;
 		}
@@ -164,18 +163,18 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 				for (i = 0; i < (byte)(-data + 1); i++, k++)
 					*tmpImage++ = j;
 			}
-		} while (k < OVL_SIZE);
+		} while (k < kOvlSize);
 	} else {
 		switch (overlayType) {
-		case BOUNDARY:
+		case kOvlBoundary:
 			_sceneryArchive2.seek(sceneBlock.b_off, SEEK_SET);
 			i = sceneBlock.b_len;
 			break;
-		case OVERLAY:
+		case kOvlOverlay:
 			_sceneryArchive2.seek(sceneBlock.o_off, SEEK_SET);
 			i = sceneBlock.o_len;
 			break;
-		case OVLBASE:
+		case kOvlBase:
 			_sceneryArchive2.seek(sceneBlock.ob_off, SEEK_SET);
 			i = sceneBlock.ob_len;
 			break;
@@ -184,7 +183,7 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 			break;
 		}
 		if (i == 0) {
-			for (i = 0; i < OVL_SIZE; i++)
+			for (i = 0; i < kOvlSize; i++)
 				image[i] = 0;
 			return;
 		}
@@ -204,7 +203,7 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 				for (i = 0; i < (byte)(-data + 1); i++, k++)
 					*tmpImage++ = j;
 			}
-		} while (k < OVL_SIZE);
+		} while (k < kOvlSize);
 	}
 }
 } // End of namespace Hugo

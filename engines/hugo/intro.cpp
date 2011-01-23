@@ -108,7 +108,7 @@ bool intro_v1d::introPlay() {
 			} else {
 				// Workaround: SCRIPT.FON doesn't load properly at the moment
 				_vm->_screen->loadFont(2);
-				_vm->_screen->writeStr(CENTER, 20, buffer, _TMAGENTA);
+				_vm->_screen->writeStr(kCenter, 20, buffer, _TMAGENTA);
 			}
 
 			// TROMAN, size 30-24
@@ -293,19 +293,19 @@ bool intro_v3d::introPlay() {
 		return true;
 
 	if (introTicks < _vm->getIntroSize()) {
-		font.drawString(&surf, ".", _vm->_introX[introTicks], _vm->_introY[introTicks] - DIBOFF_Y, 320, _TBRIGHTWHITE);
+		font.drawString(&surf, ".", _vm->_introX[introTicks], _vm->_introY[introTicks] - kDibOffY, 320, _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();
 
 		// Text boxes at various times
 		switch (introTicks) {
 		case 4:
-			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro1]);
+			Utils::Box(kBoxOk, "%s", _vm->_textIntro[kIntro1]);
 			break;
 		case 9:
-			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro2]);
+			Utils::Box(kBoxOk, "%s", _vm->_textIntro[kIntro2]);
 			break;
 		case 35:
-			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro3]);
+			Utils::Box(kBoxOk, "%s", _vm->_textIntro[kIntro3]);
 			break;
 		}
 	}
@@ -320,7 +320,7 @@ intro_v1w::~intro_v1w() {
 }
 
 void intro_v1w::preNewGame() {
-	_vm->getGameStatus().viewState = V_INTROINIT;
+	_vm->getGameStatus().viewState = kViewIntroInit;
 }
 
 void intro_v1w::introInit() {
@@ -386,19 +386,19 @@ bool intro_v3w::introPlay() {
 
 	if (introTicks < _vm->getIntroSize()) {
 		// Scale viewport x_intro,y_intro to screen (offsetting y)
-		_vm->_screen->writeStr(_vm->_introX[introTicks], _vm->_introY[introTicks] - DIBOFF_Y, "x", _TBRIGHTWHITE);
+		_vm->_screen->writeStr(_vm->_introX[introTicks], _vm->_introY[introTicks] - kDibOffY, "x", _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();
 
 		// Text boxes at various times
 		switch (introTicks) {
 		case 4:
-			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro1]);
+			Utils::Box(kBoxOk, "%s", _vm->_textIntro[kIntro1]);
 			break;
 		case 9:
-			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro2]);
+			Utils::Box(kBoxOk, "%s", _vm->_textIntro[kIntro2]);
 			break;
 		case 35:
-			Utils::Box(BOX_OK, "%s", _vm->_textIntro[kIntro3]);
+			Utils::Box(kBoxOk, "%s", _vm->_textIntro[kIntro3]);
 			break;
 		}
 	}

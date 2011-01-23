@@ -37,7 +37,6 @@
 #include "hugo/hugo.h"
 #include "hugo/game.h"
 #include "hugo/route.h"
-#include "hugo/global.h"
 #include "hugo/object.h"
 
 namespace Hugo {
@@ -99,7 +98,7 @@ void Route::setWalk(uint16 direction) {
 	static uint16 oldDirection = 0;                 // Last direction char
 	object_t *obj = _vm->_hero;                     // Pointer to hero object
 
-	if (_vm->getGameStatus().storyModeFl || obj->pathType != USER) // Make sure user has control
+	if (_vm->getGameStatus().storyModeFl || obj->pathType != kPathUser) // Make sure user has control
 		return;
 
 	if (!obj->vx && !obj->vy)
@@ -112,53 +111,53 @@ void Route::setWalk(uint16 direction) {
 		switch (direction) {                        // And set correct velocity
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_KP8:
-			obj->vy = -DY;
+			obj->vy = -kStepDy;
 			break;
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_KP2:
-			obj->vy =  DY;
+			obj->vy =  kStepDy;
 			break;
 		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_KP4:
-			obj->vx = -DX;
+			obj->vx = -kStepDx;
 			break;
 		case Common::KEYCODE_RIGHT:
 		case Common::KEYCODE_KP6:
-			obj->vx =  DX;
+			obj->vx =  kStepDx;
 			break;
 		case Common::KEYCODE_HOME:
 		case Common::KEYCODE_KP7:
-			obj->vx = -DX;
+			obj->vx = -kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to DY
-			obj->vy = -DY / 2;
+			obj->vy = -kStepDy / 2;
 			break;
 		case Common::KEYCODE_END:
 		case Common::KEYCODE_KP1:
-			obj->vx = -DX;
+			obj->vx = -kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
-			obj->vy =  DY / 2;
+			obj->vy =  kStepDy / 2;
 			break;
 		case Common::KEYCODE_PAGEUP:
 		case Common::KEYCODE_KP9:
-			obj->vx =  DX;
+			obj->vx =  kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
-			obj->vy = -DY / 2;
+			obj->vy = -kStepDy / 2;
 			break;
 		case Common::KEYCODE_PAGEDOWN:
 		case Common::KEYCODE_KP3:
-			obj->vx =  DX;
+			obj->vx =  kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to DY
-			obj->vy =  DY / 2;
+			obj->vy =  kStepDy / 2;
 			break;
 		}
 		oldDirection = direction;
-		obj->cycling = CYCLE_FORWARD;
+		obj->cycling = kCycleForward;
 	} else {
 		// Same key twice - halt hero
 		obj->vy = 0;
 		obj->vx = 0;
 		oldDirection = 0;
-		obj->cycling = NOT_CYCLING;
+		obj->cycling = kCycleNotCycling;
 	}
 }
 
@@ -196,7 +195,7 @@ void Route::segment(int16 x, int16 y) {
 			break;
 		}
 	}
-	for (x2 = x + 1; x2 < XPIX; x2++) {
+	for (x2 = x + 1; x2 < kXPix; x2++) {
 		if (p[x2] == 0) {
 			p[x2] = kMapFill;
 		} else {
@@ -215,7 +214,7 @@ void Route::segment(int16 x, int16 y) {
 		_routeFoundFl = true;
 
 	// Bounds check y in case no boundary around screen
-	if (y <= 0 || y >= YPIX - 1)
+	if (y <= 0 || y >= kYPix - 1)
 		return;
 
 	if (_vm->_hero->x < x1) {
@@ -231,7 +230,7 @@ void Route::segment(int16 x, int16 y) {
 			if (_boundaryMap[y + 1][x] == 0)
 				segment(x, y + 1);
 		}
-	} else if (_vm->_hero->x + HERO_MAX_WIDTH > x2) {
+	} else if (_vm->_hero->x + kHeroMaxWidth > x2) {
 		// Hero x not in segment, search x1..x2
 		// Find all segments above current
 		for (x = x2; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x >= x1; x--) {
@@ -313,7 +312,7 @@ bool Route::findRoute(int16 cx, int16 cy) {
 	_fullStackFl = false;                           // Stack not exhausted
 	_fullSegmentFl  = false;                        // Segments not exhausted
 	_segmentNumb = 0;                               // Segment index
-	_heroWidth = HERO_MIN_WIDTH;                    // Minimum width of hero
+	_heroWidth = kHeroMinWidth;                     // Minimum width of hero
 	_destY = cy;                                    // Destination coords
 	_destX = cx;                                    // Destination coords
 
@@ -325,21 +324,21 @@ bool Route::findRoute(int16 cx, int16 cy) {
 	object_t  *obj;                                 // Ptr to object
 	int i;
 	for (i = 1, obj = &_vm->_object->_objects[i]; i < _vm->_object->_numObj; i++, obj++) {
-		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling != INVISIBLE) && (obj->priority == FLOATING))
+		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling != kCycleInvisible) && (obj->priority == kPriorityFloating))
 			_vm->storeBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
 	}
 
 	// Combine objbound and boundary bitmaps to local byte map
-	for (int16 y = 0; y < YPIX; y++) {
-		for (int16 x = 0; x < XBYTES; x++) {
+	for (int16 y = 0; y < kYPix; y++) {
+		for (int16 x = 0; x < kCompLineSize; x++) {
 			for (i = 0; i < 8; i++)
-				_boundaryMap[y][x * 8 + i] = ((_vm->getObjectBoundaryOverlay()[y * XBYTES + x] | _vm->getBoundaryOverlay()[y * XBYTES + x]) & (0x80 >> i)) ? kMapBound : 0;
+				_boundaryMap[y][x * 8 + i] = ((_vm->getObjectBoundaryOverlay()[y * kCompLineSize + x] | _vm->getBoundaryOverlay()[y * kCompLineSize + x]) & (0x80 >> i)) ? kMapBound : 0;
 		}
 	}
 
 	// Clear all object baselines from objbound
 	for (i = 0, obj = _vm->_object->_objects; i < _vm->_object->_numObj; i++, obj++) {
-		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling != INVISIBLE) && (obj->priority == FLOATING))
+		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling != kCycleInvisible) && (obj->priority == kPriorityFloating))
 			_vm->clearBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
 	}
 
@@ -385,7 +384,7 @@ bool Route::findRoute(int16 cx, int16 cy) {
 				int16 x2 = MIN(_segment[j - 1].x2, seg_p->x2);
 
 				// If room, add a little offset to reduce staircase effect
-				int16 dx = HERO_MAX_WIDTH >> 1;
+				int16 dx = kHeroMaxWidth >> 1;
 				if (x2 - x1 < _heroWidth + dx)
 					dx = 0;
 
@@ -425,22 +424,22 @@ void Route::processRoute() {
 	Point *routeNode = &_route[gameStatus.routeIndex];
 
 	// Arrived at node?
-	if (abs(herox - routeNode->x) < DX + 1 && abs(heroy - routeNode->y) < DY) {
-		// DX too low
+	if (abs(herox - routeNode->x) < kStepDx + 1 && abs(heroy - routeNode->y) < kStepDy) {
+		// kStepDx too low
 		// Close enough - position hero exactly
 		_vm->_hero->x = _vm->_hero->oldx = routeNode->x - _vm->_hero->currImagePtr->x1;
 		_vm->_hero->y = _vm->_hero->oldy = routeNode->y - _vm->_hero->currImagePtr->y2;
 		_vm->_hero->vx = _vm->_hero->vy = 0;
-		_vm->_hero->cycling = NOT_CYCLING;
+		_vm->_hero->cycling = kCycleNotCycling;
 
 		// Arrived at final node?
 		if (--gameStatus.routeIndex < 0) {
 			// See why we walked here
 			switch (gameStatus.go_for) {
-			case GO_EXIT:                           // Walked to an exit, proceed into it
+			case kRouteExit:                        // Walked to an exit, proceed into it
 				setWalk(_vm->_hotspots[gameStatus.go_id].direction);
 				break;
-			case GO_LOOK:                           // Look at an object
+			case kRouteLook:                        // Look at an object
 				if (turnedFl) {
 					_vm->_object->lookObject(&_vm->_object->_objects[gameStatus.go_id]);
 					turnedFl = false;
@@ -450,7 +449,7 @@ void Route::processRoute() {
 					turnedFl = true;
 				}
 				break;
-			case GO_GET:                            // Get (or use) an object
+			case kRouteGet:                         // Get (or use) an object
 				if (turnedFl) {
 					_vm->_object->useObject(gameStatus.go_id);
 					turnedFl = false;
@@ -491,20 +490,20 @@ bool Route::startRoute(go_t go_for, int16 id, int16 cx, int16 cy) {
 	debugC(1, kDebugRoute, "startRoute(%d, %d, %d, %d)", go_for, id, cx, cy);
 
 	// Don't attempt to walk if user does not have control
-	if (_vm->_hero->pathType != USER)
+	if (_vm->_hero->pathType != kPathUser)
 		return false;
 
 	status_t &gameStatus = _vm->getGameStatus();
 	// if inventory showing, make it go away
-	if (gameStatus.inventoryState != I_OFF)
-		gameStatus.inventoryState = I_UP;
+	if (gameStatus.inventoryState != kInventoryOff)
+		gameStatus.inventoryState = kInventoryUp;
 
 	gameStatus.go_for = go_for;                     // Purpose of trip
 	gameStatus.go_id  = id;                         // Index of exit/object
 
 	// Adjust destination to center hero if walking to cursor
-	if (gameStatus.go_for == GO_SPACE)
-		cx -= HERO_MIN_WIDTH / 2;
+	if (gameStatus.go_for == kRouteSpace)
+		cx -= kHeroMinWidth / 2;
 
 	bool foundFl = false;                           // TRUE if route found ok
 	if ((foundFl = findRoute(cx, cy))) {            // Found a route?

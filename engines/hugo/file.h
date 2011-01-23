@@ -35,25 +35,21 @@
 
 // TODO get rid of those defines
 #define HELPFILE "help.dat"
+#define BOOTFILE "HUGO.BSF"                         // Name of boot structure file
 #define EOP '#'                                     // Marks end of a page in help file
 
-struct PCC_header_t {                               // Structure of PCX file header
-	byte   mfctr, vers, enc, bpx;
-	uint16  x1, y1, x2, y2;                         // bounding box
-	uint16  xres, yres;
-	byte   palette[3 * NUM_COLORS];                 // EGA color palette
-	byte   vmode, planes;
-	uint16 bytesPerLine;                            // Bytes per line
-	byte   fill2[60];
-};                                                  // Header of a PCC file
-
 namespace Hugo {
+
+
+/**
+* Enumerate overlay file types
+*/
+enum ovl_t {kOvlBoundary, kOvlOverlay, kOvlBase};
 
 class FileManager {
 public:
 	FileManager(HugoEngine *vm);
 	virtual ~FileManager();
-
 
 	bool     fileExists(char *filename);
 	sound_pt getSound(int16 sound, uint16 *size);
@@ -76,14 +72,33 @@ public:
 
 protected:
 	HugoEngine *_vm;
+	static const int kMaxUifs = 32;                 // Max possible uif items in hdr
+	static const int kMaxSounds = 64;               // Max number of sounds
+	static const int kRepeatMask = 0xC0;            // Top 2 bits mean a repeat code
+	static const int kLengthMask = 0x3F;            // Lower 6 bits are length
+
+	/**
+	* Structure of scenery file lookup entry
+	*/
+	struct sceneBlock_t {
+		uint32 scene_off;
+		uint32 scene_len;
+		uint32 b_off;
+		uint32 b_len;
+		uint32 o_off;
+		uint32 o_len;
+		uint32 ob_off;
+		uint32 ob_len;
+	};
 
 	Common::File _stringArchive;                    // Handle for string file
 	Common::File _sceneryArchive1;                  // Handle for scenery file
 	Common::File _objectsArchive;                   // Handle for objects file
 
 	seq_t *readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool firstFl, const char *name);
-private:
+	const char *FileManager::getBootCypher();
 
+private:
 	byte *convertPCC(byte *p, uint16 y, uint16 bpl, image_pt data_p);
 	uif_hdr_t *getUIFHeader(uif_t id);
 

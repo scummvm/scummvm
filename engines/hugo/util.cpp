@@ -89,7 +89,7 @@ void Utils::reverseByte(byte *data) {
 }
 
 char *Utils::Box(box_t dismiss, const char *s, ...) {
-	static char buffer[MAX_STRLEN + 1];             // Format text into this
+	static char buffer[kMaxStrLength + 1];          // Format text into this
 
 	if (!s)
 		return 0;                                   // NULL strings catered for
@@ -97,7 +97,7 @@ char *Utils::Box(box_t dismiss, const char *s, ...) {
 	if (s[0] == '\0')
 		return 0;
 
-	if (strlen(s) > MAX_STRLEN - 100) {             // Test length
+	if (strlen(s) > kMaxStrLength - 100) {          // Test length
 		warning("String too long: '%s'", s);
 		return 0;
 	}
@@ -111,25 +111,29 @@ char *Utils::Box(box_t dismiss, const char *s, ...) {
 		return 0;
 
 	switch(dismiss) {
-	case BOX_ANY:
-	case BOX_OK: {
+	case kBoxAny:
+	case kBoxOk: {
 		GUI::MessageDialog dialog(buffer, "OK");
 		dialog.runModal();
 		break;
 		}
-	case BOX_YESNO: {
+	case kBoxYesNo: {
 		GUI::MessageDialog dialog(buffer, "YES", "NO");
 		if (dialog.runModal() == GUI::kMessageOK)
 			return buffer;
 		return 0;
 		break;
 		}
-	case BOX_PROMPT:
+	case kBoxPrompt: {
+		// TODO: Some boxes (i.e. the combination code for the shed), needs to return an input.
 		warning("Box: unhandled BOX_PROMPT");
 		int boxTime = strlen(buffer) * 30;
 		GUI::TimedMessageDialog dialog(buffer, MAX(1500, boxTime));
 		dialog.runModal();
-	// TODO: Some boxes (i.e. the combination code for the shed), needs to return an input.
+		break;
+		}
+	default:
+		error("Unknown BOX Type %d", dismiss);
 	}
 
 	return buffer;
@@ -139,7 +143,7 @@ char *Utils::Box(box_t dismiss, const char *s, ...) {
  * Print options for user when dead
  */
 void Utils::gameOverMsg(void) {
-	Utils::Box(BOX_OK, "%s", HugoEngine::get()._textUtil[kGameOver]);
+	Utils::Box(kBoxOk, "%s", HugoEngine::get()._textUtil[kGameOver]);
 }
 
 char *Utils::strlwr(char *buffer) {

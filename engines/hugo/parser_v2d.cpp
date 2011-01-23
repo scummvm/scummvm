@@ -59,13 +59,13 @@ void Parser_v2d::lineHandler() {
 	status_t &gameStatus = _vm->getGameStatus();
 
 	// Toggle God Mode
-	if (!strncmp(_line, "PPG", 3)) {
-		_vm->_sound->playSound(!_vm->_soundTest, BOTH_CHANNELS, HIGH_PRI);
+	if (!strncmp(_vm->_line, "PPG", 3)) {
+		_vm->_sound->playSound(!_vm->_soundTest, kSoundPriorityHigh);
 		gameStatus.godModeFl = !gameStatus.godModeFl;
 		return;
 	}
 
-	Utils::strlwr(_line);                           // Convert to lower case
+	Utils::strlwr(_vm->_line);                      // Convert to lower case
 
 	// God Mode cheat commands:
 	// goto <screen>                                Takes hero to named screen
@@ -74,9 +74,9 @@ void Parser_v2d::lineHandler() {
 	// find <object name>                           Takes hero to screen containing named object
 	if (gameStatus.godModeFl) {
 		// Special code to allow me to go straight to any screen
-		if (strstr(_line, "goto")) {
+		if (strstr(_vm->_line, "goto")) {
 			for (int i = 0; i < _vm->_numScreens; i++) {
-				if (!scumm_stricmp(&_line[strlen("goto") + 1], _vm->_screenNames[i])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("goto") + 1], _vm->_screenNames[i])) {
 					_vm->_scheduler->newScreen(i);
 					return;
 				}
@@ -84,7 +84,7 @@ void Parser_v2d::lineHandler() {
 		}
 
 		// Special code to allow me to get objects from anywhere
-		if (strstr(_line, "fetch all")) {
+		if (strstr(_vm->_line, "fetch all")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
 				if (_vm->_object->_objects[i].genericCmd & TAKE)
 					takeObject(&_vm->_object->_objects[i]);
@@ -92,9 +92,9 @@ void Parser_v2d::lineHandler() {
 			return;
 		}
 
-		if (strstr(_line, "fetch")) {
+		if (strstr(_vm->_line, "fetch")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
 					takeObject(&_vm->_object->_objects[i]);
 					return;
 				}
@@ -102,9 +102,9 @@ void Parser_v2d::lineHandler() {
 		}
 
 		// Special code to allow me to goto objects
-		if (strstr(_line, "find")) {
+		if (strstr(_vm->_line, "find")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
 					_vm->_scheduler->newScreen(_vm->_object->_objects[i].screenIndex);
 					return;
 				}
@@ -112,16 +112,16 @@ void Parser_v2d::lineHandler() {
 		}
 	}
 
-	if (!strcmp("exit", _line) || strstr(_line, "quit")) {
-		if (Utils::Box(BOX_YESNO, "%s", _vm->_textParser[kTBExit_1d]) != 0)
+	if (!strcmp("exit", _vm->_line) || strstr(_vm->_line, "quit")) {
+		if (Utils::Box(kBoxYesNo, "%s", _vm->_textParser[kTBExit_1d]) != 0)
 			_vm->endGame();
 		else
 			return;
 	}
 
 	// SAVE/RESTORE
-	if (!strcmp("save", _line)) {
-		_config.soundFl = false;
+	if (!strcmp("save", _vm->_line)) {
+		_vm->_config.soundFl = false;
 		if (gameStatus.gameOverFl)
 			Utils::gameOverMsg();
 		else
@@ -129,18 +129,18 @@ void Parser_v2d::lineHandler() {
 		return;
 	}
 
-	if (!strcmp("restore", _line)) {
-		_config.soundFl = false;
+	if (!strcmp("restore", _vm->_line)) {
+		_vm->_config.soundFl = false;
 		_vm->_file->restoreGame(-1);
 		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-		gameStatus.viewState = V_PLAY;
+		gameStatus.viewState = kViewPlay;
 		return;
 	}
 
-	if (*_line == '\0')                             // Empty line
+	if (*_vm->_line == '\0')                        // Empty line
 		return;
 
-	if (strspn(_line, " ") == strlen(_line))        // Nothing but spaces!
+	if (strspn(_vm->_line, " ") == strlen(_vm->_line)) // Nothing but spaces!
 		return;
 
 	if (gameStatus.gameOverFl) {                    // No commands allowed!
@@ -151,7 +151,7 @@ void Parser_v2d::lineHandler() {
 	// Find the first verb in the line
 	char *verb = findVerb();
 	char *noun = 0;                                 // Noun not found yet
-	char farComment[XBYTES * 5] = "";               // hold 5 line comment if object not nearby
+	char farComment[kCompLineSize * 5] = "";        // hold 5 line comment if object not nearby
 
 	if (verb) {                                     // OK, verb found.  Try to match with object
 		do {
@@ -176,16 +176,16 @@ void Parser_v2d::lineHandler() {
 		&& !isCatchallVerb(false, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])
 		&& !isCatchallVerb(false, noun, verb, _vm->_catchallList)) {
 		if (*farComment != '\0') {                  // An object matched but not near enough
-			Utils::Box(BOX_ANY, "%s", farComment);
+			Utils::Box(kBoxAny, "%s", farComment);
 		} else if (_maze.enabledFl && (verb == _vm->_arrayVerbs[_vm->_look][0])) {
-			Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBMaze]);
+			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBMaze]);
 			_vm->_object->showTakeables();
 		} else if (verb && noun) {                  // A combination I didn't think of
-			Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBNoUse_2d]);
+			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBNoUse_2d]);
 		} else if (verb || noun) {
-			Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBNoun]);
+			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBNoun]);
 		} else {
-			Utils::Box(BOX_ANY, "%s", _vm->_textParser[kTBEh_2d]);
+			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBEh_2d]);
 		}
 	}
 }

@@ -33,10 +33,9 @@
 #include "common/system.h"
 #include "common/random.h"
 
-#include "hugo/game.h"
 #include "hugo/hugo.h"
+#include "hugo/game.h"
 #include "hugo/object.h"
-#include "hugo/global.h"
 #include "hugo/display.h"
 #include "hugo/file.h"
 #include "hugo/route.h"
@@ -99,17 +98,17 @@ void ObjectHandler::useObject(int16 objId) {
 	if (_vm->getGameStatus().inventoryObjId == -1) {
 		// Get or use objid directly
 		if ((obj->genericCmd & TAKE) || obj->objValue)  // Get collectible item
-			sprintf(_line, "%s %s", _vm->_arrayVerbs[_vm->_take][0], _vm->_arrayNouns[obj->nounIndex][0]);
+			sprintf(_vm->_line, "%s %s", _vm->_arrayVerbs[_vm->_take][0], _vm->_arrayNouns[obj->nounIndex][0]);
 		else if (obj->cmdIndex != 0)                // Use non-collectible item if able
-			sprintf(_line, "%s %s", _vm->_arrayVerbs[_vm->_cmdList[obj->cmdIndex][0].verbIndex][0], _vm->_arrayNouns[obj->nounIndex][0]);
+			sprintf(_vm->_line, "%s %s", _vm->_arrayVerbs[_vm->_cmdList[obj->cmdIndex][0].verbIndex][0], _vm->_arrayNouns[obj->nounIndex][0]);
 		else if ((verb = _vm->useBG(_vm->_arrayNouns[obj->nounIndex][0])) != 0)
-			sprintf(_line, "%s %s", verb, _vm->_arrayNouns[obj->nounIndex][0]);
+			sprintf(_vm->_line, "%s %s", verb, _vm->_arrayNouns[obj->nounIndex][0]);
 		else
 			return;                                 // Can't use object directly
 	} else {
 		// Use status.objid on objid
 		// Default to first cmd verb
-		sprintf(_line, "%s %s %s", _vm->_arrayVerbs[_vm->_cmdList[_objects[_vm->getGameStatus().inventoryObjId].cmdIndex][0].verbIndex][0],
+		sprintf(_vm->_line, "%s %s %s", _vm->_arrayVerbs[_vm->_cmdList[_objects[_vm->getGameStatus().inventoryObjId].cmdIndex][0].verbIndex][0],
 			                       _vm->_arrayNouns[_objects[_vm->getGameStatus().inventoryObjId].nounIndex][0],
 			                       _vm->_arrayNouns[obj->nounIndex][0]);
 
@@ -122,7 +121,7 @@ void ObjectHandler::useObject(int16 objId) {
 				for (target_t *target = use->targets; target->nounIndex != 0; target++)
 					if (target->nounIndex == obj->nounIndex) {
 						foundFl = true;
-						sprintf(_line, "%s %s %s", _vm->_arrayVerbs[target->verbIndex][0],
+						sprintf(_vm->_line, "%s %s %s", _vm->_arrayVerbs[target->verbIndex][0],
 							                       _vm->_arrayNouns[_objects[_vm->getGameStatus().inventoryObjId].nounIndex][0],
 							                       _vm->_arrayNouns[obj->nounIndex][0]);
 					}
@@ -130,17 +129,17 @@ void ObjectHandler::useObject(int16 objId) {
 				// No valid use of objects found, print failure string
 				if (!foundFl) {
 					// Deselect dragged icon if inventory not active
-					if (_vm->getGameStatus().inventoryState != I_ACTIVE)
+					if (_vm->getGameStatus().inventoryState != kInventoryActive)
 						_vm->_screen->resetInventoryObjId();
-					Utils::Box(BOX_ANY, "%s", _vm->_textData[use->dataIndex]);
+					Utils::Box(kBoxAny, "%s", _vm->_textData[use->dataIndex]);
 					return;
 				}
 			}
 		}
 	}
 
-	if (_vm->getGameStatus().inventoryState == I_ACTIVE) // If inventory active, remove it
-		_vm->getGameStatus().inventoryState = I_UP;
+	if (_vm->getGameStatus().inventoryState == kInventoryActive) // If inventory active, remove it
+		_vm->getGameStatus().inventoryState = kInventoryUp;
 
 	_vm->_screen->resetInventoryObjId();
 
@@ -163,7 +162,7 @@ int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 		if (obj->screenIndex == *_vm->_screen_p && (obj->genericCmd || obj->objValue || obj->cmdIndex)) {
 			seq_t *curImage = obj->currImagePtr;
 			// Object must have a visible image...
-			if (curImage != 0 && obj->cycling != INVISIBLE) {
+			if (curImage != 0 && obj->cycling != kCycleInvisible) {
 				// If cursor inside object
 				if (x >= (uint16)obj->x && x <= obj->x + curImage->x2 && y >= (uint16)obj->y && y <= obj->y + curImage->y2) {
 					// If object is closest so far
@@ -256,16 +255,16 @@ int ObjectHandler::y2comp(const void *a, const void *b) {
 		// Why does qsort try the same indexes?
 		return 0;
 
-	if (p1->priority == BACKGROUND)
+	if (p1->priority == kPriorityBackground)
 		return -1;
 
-	if (p2->priority == BACKGROUND)
+	if (p2->priority == kPriorityBackground)
 		return 1;
 
-	if (p1->priority == FOREGROUND)
+	if (p1->priority == kPriorityForeground)
 		return 1;
 
-	if (p2->priority == FOREGROUND)
+	if (p2->priority == kPriorityForeground)
 		return -1;
 
 	int ay2 = p1->y + p1->currImagePtr->y2;
@@ -295,10 +294,10 @@ void ObjectHandler::showTakeables() {
 
 	for (int j = 0; j < _numObj; j++) {
 		object_t *obj = &_objects[j];
-		if ((obj->cycling != INVISIBLE) &&
+		if ((obj->cycling != kCycleInvisible) &&
 		    (obj->screenIndex == *_vm->_screen_p) &&
 		    (((TAKE & obj->genericCmd) == TAKE) || obj->objValue)) {
-			Utils::Box(BOX_ANY, "You can also see:\n%s.", _vm->_arrayNouns[obj->nounIndex][LOOK_NAME]);
+			Utils::Box(kBoxAny, "You can also see:\n%s.", _vm->_arrayNouns[obj->nounIndex][LOOK_NAME]);
 		}
 	}
 }
@@ -314,14 +313,14 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 
 	bool foundFl = true;
 	// Try left rear corner
-	for (int16 x = *destx = obj->x + curImage->x1; x < *destx + HERO_MAX_WIDTH; x++) {
+	for (int16 x = *destx = obj->x + curImage->x1; x < *destx + kHeroMaxWidth; x++) {
 		if (BOUND(x, y))
 			foundFl = false;
 	}
 
 	if (!foundFl) {                                 // Try right rear corner
 		foundFl = true;
-		for (int16 x = *destx = obj->x + curImage->x2 - HERO_MAX_WIDTH + 1; x <= obj->x + (int16)curImage->x2; x++) {
+		for (int16 x = *destx = obj->x + curImage->x2 - kHeroMaxWidth + 1; x <= obj->x + (int16)curImage->x2; x++) {
 			if (BOUND(x, y))
 				foundFl = false;
 		}
@@ -330,7 +329,7 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 	if (!foundFl) {                                 // Try left front corner
 		foundFl = true;
 		y += 2;
-		for (int16 x = *destx = obj->x + curImage->x1; x < *destx + HERO_MAX_WIDTH; x++) {
+		for (int16 x = *destx = obj->x + curImage->x1; x < *destx + kHeroMaxWidth; x++) {
 			if (BOUND(x, y))
 				foundFl = false;
 		}
@@ -338,7 +337,7 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 
 	if (!foundFl) {                                 // Try right rear corner
 		foundFl = true;
-		for (int16 x = *destx = obj->x + curImage->x2 - HERO_MAX_WIDTH + 1; x <= obj->x + (int16)curImage->x2; x++) {
+		for (int16 x = *destx = obj->x + curImage->x2 - kHeroMaxWidth + 1; x <= obj->x + (int16)curImage->x2; x++) {
 			if (BOUND(x, y))
 				foundFl = false;
 		}
@@ -472,7 +471,7 @@ void ObjectHandler::loadObjectArr(Common::File &in) {
 * number
 */
 void ObjectHandler::setCarriedScreen(int screenNum) {
-	for (int i = HERO + 1; i < _numObj; i++) {      // Any others
+	for (int i = kHeroIndex + 1; i < _numObj; i++) {// Any others
 		if (isCarried(i))                           // being carried
 			_objects[i].screenIndex = screenNum;
 	}

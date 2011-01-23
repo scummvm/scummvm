@@ -38,7 +38,6 @@
 
 #include "hugo/hugo.h"
 #include "hugo/file.h"
-#include "hugo/global.h"
 #include "hugo/schedule.h"
 #include "hugo/display.h"
 #include "hugo/util.h"
@@ -124,13 +123,13 @@ seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool
 
 	// Process the image data, converting to 8-bit DIB format
 	uint16 y = 0;                                   // Current line index
-	byte  pline[XPIX];                              // Hold 4 planes of data
+	byte  pline[kXPix];                             // Hold 4 planes of data
 	byte  *p = pline;                               // Ptr to above
 	while (y < seqPtr->lines) {
 		byte c = f.readByte();
-		if ((c & REP_MASK) == REP_MASK) {
+		if ((c & kRepeatMask) == kRepeatMask) {
 			byte d = f.readByte();                  // Read data byte
-			for (int i = 0; i < (c & LEN_MASK); i++) {
+			for (int i = 0; i < (c & kLengthMask); i++) {
 				*p++ = d;
 				if ((uint16)(p - pline) == bytesPerLine4)
 					p = convertPCC(pline, y++, PCC_header.bytesPerLine, imagePtr);
@@ -228,13 +227,13 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 
 	// Set the current image sequence to first or last
 	switch (objPtr->cycling) {
-	case INVISIBLE:                                 // (May become visible later)
-	case ALMOST_INVISIBLE:
-	case NOT_CYCLING:
-	case CYCLE_FORWARD:
+	case kCycleInvisible:                           // (May become visible later)
+	case kCycleAlmostInvisible:
+	case kCycleNotCycling:
+	case kCycleForward:
 		objPtr->currImagePtr = objPtr->seqList[0].seqPtr;
 		break;
-	case CYCLE_BACKWARD:
+	case kCycleBackward:
 		objPtr->currImagePtr = seqPtr;
 		break;
 	default:
@@ -265,7 +264,7 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 
 	// If this is the first call, read the lookup table
 	static bool has_read_header = false;
-	static sound_hdr_t s_hdr[MAX_SOUNDS];           // Sound lookup table
+	static sound_hdr_t s_hdr[kMaxSounds];           // Sound lookup table
 
 	if (!has_read_header) {
 		if (fp.read(s_hdr, sizeof(s_hdr)) != sizeof(s_hdr))
@@ -460,8 +459,8 @@ bool FileManager::restoreGame(int16 slot) {
 	in->skip(6);                                    // Skip date & time
 
 	// If hero image is currently swapped, swap it back before restore
-	if (_vm->_heroImage != HERO)
-		_vm->_object->swapImages(HERO, _vm->_heroImage);
+	if (_vm->_heroImage != kHeroIndex)
+		_vm->_object->swapImages(kHeroIndex, _vm->_heroImage);
 
 	_vm->_object->restoreObjects(in);
 
@@ -469,8 +468,8 @@ bool FileManager::restoreGame(int16 slot) {
 
 	// If hero swapped in saved game, swap it
 	byte heroImg = _vm->_heroImage;
-	if (heroImg != HERO)
-		_vm->_object->swapImages(HERO, _vm->_heroImage);
+	if (heroImg != kHeroIndex)
+		_vm->_object->swapImages(kHeroIndex, _vm->_heroImage);
 	_vm->_heroImage = heroImg;
 
 	status_t &gameStatus = _vm->getGameStatus();
@@ -518,6 +517,7 @@ bool FileManager::restoreGame(int16 slot) {
 */
 void FileManager::printBootText() {
 	debugC(1, kDebugFile, "printBootText");
+	static const char *cypher = getBootCypher();
 
 	Common::File ofp;
 	if (!ofp.open(BOOTFILE)) {
@@ -541,10 +541,10 @@ void FileManager::printBootText() {
 		// Decrypt the exit text, using CRYPT substring
 		int i;
 		for (i = 0; i < _boot.exit_len; i++)
-			buf[i] ^= CRYPT[i % strlen(CRYPT)];
+			buf[i] ^= cypher[i % strlen(cypher)];
 
 		buf[i] = '\0';
-		Utils::Box(BOX_OK, "%s", buf);
+		Utils::Box(kBoxOk, "%s", buf);
 	}
 
 	free(buf);
@@ -557,6 +557,7 @@ void FileManager::printBootText() {
 */
 void FileManager::readBootFile() {
 	debugC(1, kDebugFile, "readBootFile");
+	static const char *cypher = getBootCypher();
 
 	Common::File ofp;
 	if (!ofp.open(BOOTFILE)) {
@@ -583,7 +584,7 @@ void FileManager::readBootFile() {
 	byte checksum = 0;
 	for (uint32 i = 0; i < sizeof(_boot); i++) {
 		checksum ^= p[i];
-		p[i] ^= CRYPT[i % strlen(CRYPT)];
+		p[i] ^= cypher[i % strlen(cypher)];
 	}
 	ofp.close();
 
@@ -598,7 +599,7 @@ uif_hdr_t *FileManager::getUIFHeader(uif_t id) {
 	debugC(1, kDebugFile, "getUIFHeader(%d)", id);
 
 	static bool firstFl = true;
-	static uif_hdr_t UIFHeader[MAX_UIFS];           // Lookup for uif fonts/images
+	static uif_hdr_t UIFHeader[kMaxUifs];           // Lookup for uif fonts/images
 
 	// Initialize offset lookup if not read yet
 	if (firstFl) {
@@ -611,7 +612,7 @@ uif_hdr_t *FileManager::getUIFHeader(uif_t id) {
 		if (ip.size() < (int32)sizeof(UIFHeader))
 			error("Wrong file format: %s", UIF_FILE);
 
-		for (int i = 0; i < MAX_UIFS; ++i) {
+		for (int i = 0; i < kMaxUifs; ++i) {
 			UIFHeader[i].size = ip.readUint16LE();
 			UIFHeader[i].offset = ip.readUint32LE();
 		}
@@ -661,5 +662,8 @@ void FileManager::readUIFImages() {
 	readUIFItem(UIF_IMAGES, _vm->_screen->getGUIBuffer());   // Read all uif images
 }
 
+const char *FileManager::getBootCypher() {
+	return "Copyright 1992, David P Gray, Gray Design Associates";
+}
 } // End of namespace Hugo
 

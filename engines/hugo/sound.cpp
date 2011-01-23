@@ -49,7 +49,7 @@ MidiPlayer::MidiPlayer(MidiDriver *driver)
 	: _driver(driver), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _paused(false), _masterVolume(0) {
 	assert(_driver);
 	memset(_channelsTable, 0, sizeof(_channelsTable));
-	for (int i = 0; i < NUM_CHANNELS; i++) {
+	for (int i = 0; i < kNumbChannels; i++) {
 		_channelsVolume[i] = 127;
 	}
 }
@@ -94,7 +94,7 @@ void MidiPlayer::stop() {
 void MidiPlayer::pause(bool p) {
 	_paused = p;
 
-	for (int i = 0; i < NUM_CHANNELS; ++i) {
+	for (int i = 0; i < kNumbChannels; ++i) {
 		if (_channelsTable[i]) {
 			_channelsTable[i]->volume(_paused ? 0 : _channelsVolume[i] * _masterVolume / 255);
 		}
@@ -131,7 +131,7 @@ void MidiPlayer::setVolume(int volume) {
 	debugC(3, kDebugMusic, "MidiPlayer::setVolume");
 	_masterVolume = CLIP(volume, 0, 255);
 	_mutex.lock();
-	for (int i = 0; i < NUM_CHANNELS; ++i) {
+	for (int i = 0; i < kNumbChannels; ++i) {
 		if (_channelsTable[i]) {
 			_channelsTable[i]->volume(_channelsVolume[i] * _masterVolume / 255);
 		}
@@ -268,16 +268,16 @@ void SoundHandler::stopMusic() {
 * Turn music on and off
 */
 void SoundHandler::toggleMusic() {
-	_config.musicFl = !_config.musicFl;
+	_vm->_config.musicFl = !_vm->_config.musicFl;
 
-	_midiPlayer->pause(!_config.musicFl);
+	_midiPlayer->pause(!_vm->_config.musicFl);
 }
 
 /**
 * Turn digitized sound on and off
 */
 void SoundHandler::toggleSound() {
-	_config.soundFl = !_config.soundFl;
+	_vm->_config.soundFl = !_vm->_config.soundFl;
 }
 
 void SoundHandler::playMIDI(sound_pt seq_p, uint16 size) {
@@ -291,7 +291,7 @@ void SoundHandler::playMusic(int16 tune) {
 	sound_pt seqPtr;                                // Sequence data from file
 	uint16 size;                                    // Size of sequence data
 
-	if (_config.musicFl) {
+	if (_vm->_config.musicFl) {
 		_vm->getGameStatus().song = tune;
 		seqPtr = _vm->_file->getSound(tune, &size);
 		playMIDI(seqPtr, size);
@@ -303,14 +303,14 @@ void SoundHandler::playMusic(int16 tune) {
 * Produce various sound effects on supplied stereo channel(s)
 * Override currently playing sound only if lower or same priority
 */
-void SoundHandler::playSound(int16 sound, stereo_t channel, byte priority) {
+void SoundHandler::playSound(int16 sound, byte priority) {
 	// uint32 dwVolume;                             // Left, right volume of sound
 	sound_pt sound_p;                               // Sound data
 	uint16 size;                                    // Size of data
 	static byte curPriority = 0;                    // Priority of currently playing sound
 
 	// Sound disabled
-	if (!_config.soundFl || !_vm->_mixer->isReady())
+	if (!_vm->_config.soundFl || !_vm->_mixer->isReady())
 		return;
 
 	syncVolume();
@@ -386,7 +386,7 @@ void SoundHandler::pcspkr_player() {
 	uint16 count;                                   // Value to set timer chip to for note
 	bool   cmd_note;
 
-	if (!_config.soundFl || !_vm->_mixer->isReady())
+	if (!_vm->_config.soundFl || !_vm->_mixer->isReady())
 		return;                                     // Poo!  User doesn't want sound!
 
 	if (!DOSSongPtr)
@@ -469,6 +469,8 @@ void SoundHandler::pcspkr_player() {
 		pcspkrTimer = pcspkrNoteDuration;
 		DOSSongPtr++;
 		break;
+	default:
+		warning("pcspkr_player() - Unhandled note");
 	}
 }
 
