@@ -397,9 +397,25 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_CSTIME,
-		GF_HASMIDI,
+		0,
 		0
 	},
+
+	{
+		{
+			"cstime",
+			"Demo",
+			AD_ENTRY1("iface.mhk", "5c1203712a16513bd158dc3c1b6cebd7"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_CSTIME,
+		GF_DEMO,
+		0
+	},
+
 
 	{
 		{
