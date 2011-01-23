@@ -39,8 +39,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "BITMAP"
-
 BitmapResource::BitmapResource(const Common::String &filename, Image *pImage) :
 	_valid(false),
 	_pImage(pImage),

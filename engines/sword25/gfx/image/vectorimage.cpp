@@ -44,8 +44,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "VECTORIMAGE"
-
 #define BEZSMOOTHNESS 0.5
 
 // -----------------------------------------------------------------------------
@@ -234,21 +232,21 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, co
 	if (signature[0] != 'F' ||
 	        signature[1] != 'W' ||
 	        signature[2] != 'S') {
-		BS_LOG_ERRORLN("File is not a valid SWF-file");
+		error("File is not a valid SWF-file");
 		return;
 	}
 
 	// Versionsangabe überprüfen
 	uint32 version = bs.getByte();
 	if (version > MAX_ACCEPTED_FLASH_VERSION) {
-		BS_LOG_ERRORLN("File is of version %d. Highest accepted version is %d.", version, MAX_ACCEPTED_FLASH_VERSION);
+		error("File is of version %d. Highest accepted version is %d.", version, MAX_ACCEPTED_FLASH_VERSION);
 		return;
 	}
 
 	// Dateigröße auslesen und mit der tatsächlichen Größe vergleichen
 	uint32 storedFileSize = bs.getUInt32();
 	if (storedFileSize != fileSize) {
-		BS_LOG_ERRORLN("File is not a valid SWF-file");
+		error("File is not a valid SWF-file");
 		return;
 	}
 
@@ -582,7 +580,7 @@ bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBit
 // -----------------------------------------------------------------------------
 
 bool VectorImage::fill(const Common::Rect *pFillRect, uint color) {
-	BS_LOG_ERRORLN("Fill() is not supported.");
+	error("Fill() is not supported.");
 	return false;
 }
 
@@ -590,14 +588,14 @@ bool VectorImage::fill(const Common::Rect *pFillRect, uint color) {
 // -----------------------------------------------------------------------------
 
 uint VectorImage::getPixel(int x, int y) {
-	BS_LOG_ERRORLN("GetPixel() is not supported. Returning black.");
+	error("GetPixel() is not supported. Returning black.");
 	return 0;
 }
 
 // -----------------------------------------------------------------------------
 
 bool VectorImage::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
-	BS_LOG_ERRORLN("SetContent() is not supported.");
+	error("SetContent() is not supported.");
 	return 0;
 }
 

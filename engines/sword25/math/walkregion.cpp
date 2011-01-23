@@ -38,8 +38,6 @@
 #include "sword25/math/walkregion.h"
 #include "sword25/math/line.h"
 
-#define BS_LOG_PREFIX "WALKREGION"
-
 namespace Sword25 {
 
 static const int Infinity = 0x7fffffff;
@@ -285,7 +283,7 @@ bool WalkRegion::checkAndPrepareStartAndEnd(Vertex &start, Vertex &end) const {
 
 		// Check to make sure the point is really in the region. If not, stop with an error
 		if (!isPointInRegion(newStart)) {
-			BS_LOG_ERRORLN("Constructed startpoint ((%d,%d) from (%d,%d)) is not inside the region.",
+			error("Constructed startpoint ((%d,%d) from (%d,%d)) is not inside the region.",
 			               newStart.x, newStart.y,
 			               start.x, start.y);
 			return false;
@@ -301,7 +299,7 @@ bool WalkRegion::checkAndPrepareStartAndEnd(Vertex &start, Vertex &end) const {
 
 		// Make sure that the determined point is really within the region
 		if (!isPointInRegion(newEnd)) {
-			BS_LOG_ERRORLN("Constructed endpoint ((%d,%d) from (%d,%d)) is not inside the region.",
+			error("Constructed endpoint ((%d,%d) from (%d,%d)) is not inside the region.",
 			               newEnd.x, newEnd.y,
 			               end.x, end.y);
 			return false;

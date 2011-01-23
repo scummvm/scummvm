@@ -36,8 +36,6 @@
 #include "sword25/script/luabindhelper.h"
 #include "sword25/script/luascript.h"
 
-#define BS_LOG_PREFIX "LUABINDHELPER"
-
 namespace {
 const char *METATABLES_TABLE_NAME = "__METATABLES";
 const char *PERMANENTS_TABLE_NAME = "Permanents";

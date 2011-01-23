@@ -38,8 +38,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "BITMAP"
-
 Bitmap::Bitmap(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle) :
 	RenderObject(parentPtr, type, handle),
 	_modulationColor(0xffffffff),
@@ -54,7 +52,7 @@ Bitmap::~Bitmap() {
 
 void Bitmap::setAlpha(int alpha) {
 	if (!isAlphaAllowed()) {
-		BS_LOG_WARNINGLN("Tried to set alpha value on a bitmap that does not support alpha blending. Call was ignored.");
+		warning("Tried to set alpha value on a bitmap that does not support alpha blending. Call was ignored.");
 		return;
 	}
 
@@ -64,7 +62,7 @@ void Bitmap::setAlpha(int alpha) {
 			alpha = 0;
 		if (alpha > 255)
 			alpha = 255;
-		BS_LOG_WARNINGLN("Tried to set an invalid alpha value (%d) on a bitmap. Value was changed to %d.", oldAlpha, alpha);
+		warning("Tried to set an invalid alpha value (%d) on a bitmap. Value was changed to %d.", oldAlpha, alpha);
 
 		return;
 	}
@@ -78,7 +76,7 @@ void Bitmap::setAlpha(int alpha) {
 
 void Bitmap::setModulationColor(uint modulationColor) {
 	if (!isColorModulationAllowed()) {
-		BS_LOG_WARNINGLN("Tried to set modulation color of a bitmap that does not support color modulation. Call was ignored.");
+		warning("Tried to set modulation color of a bitmap that does not support color modulation. Call was ignored.");
 		return;
 	}
 
@@ -96,12 +94,12 @@ void Bitmap::setScaleFactor(float scaleFactor) {
 
 void Bitmap::setScaleFactorX(float scaleFactorX) {
 	if (!isScalingAllowed()) {
-		BS_LOG_WARNINGLN("Tried to set scale factor of a bitmap that does not support scaling. Call was ignored.");
+		warning("Tried to set scale factor of a bitmap that does not support scaling. Call was ignored.");
 		return;
 	}
 
 	if (scaleFactorX < 0) {
-		BS_LOG_WARNINGLN("Tried to set scale factor of a bitmap to a negative value. Call was ignored.");
+		warning("Tried to set scale factor of a bitmap to a negative value. Call was ignored.");
 		return;
 	}
 
@@ -118,12 +116,12 @@ void Bitmap::setScaleFactorX(float scaleFactorX) {
 
 void Bitmap::setScaleFactorY(float scaleFactorY) {
 	if (!isScalingAllowed()) {
-		BS_LOG_WARNINGLN("Tried to set scale factor of a bitmap that does not support scaling. Call was ignored.");
+		warning("Tried to set scale factor of a bitmap that does not support scaling. Call was ignored.");
 		return;
 	}
 
 	if (scaleFactorY < 0) {
-		BS_LOG_WARNINGLN("Tried to set scale factor of a bitmap to a negative value. Call was ignored.");
+		warning("Tried to set scale factor of a bitmap to a negative value. Call was ignored.");
 		return;
 	}
 

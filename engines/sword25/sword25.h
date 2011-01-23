@@ -31,7 +31,6 @@
 #include "common/util.h"
 #include "engines/engine.h"
 
-#include "sword25/kernel/log.h"
 #include "sword25/console.h"
 
 struct ADGameDescription;
@@ -52,7 +51,8 @@ enum {
 
 enum {
 	kDebugScript = 1 << 0,
-	kDebugSound = 1 << 1
+	kDebugSound = 1 << 1,
+	kDebugResource = 1 << 2
 };
 
 enum GameFlags {

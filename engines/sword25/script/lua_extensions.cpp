@@ -47,7 +47,6 @@ static int warning(lua_State *L) {
 	lua_pushstring(L, "WARNING - ");
 	lua_pushvalue(L, 1);
 	lua_concat(L, 3);
-	BS_Log::log("%s\n", luaL_checkstring(L, -1));
 	lua_pop(L, 1);
 
 #ifdef DEBUG

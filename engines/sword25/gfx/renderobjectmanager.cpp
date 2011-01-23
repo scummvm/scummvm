@@ -46,8 +46,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "RENDEROBJECTMANAGER"
-
 RenderObjectManager::RenderObjectManager(int width, int height, int framebufferCount) :
 	_frameStarted(false) {
 	// Wurzel des BS_RenderObject-Baumes erzeugen.

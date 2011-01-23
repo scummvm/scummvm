@@ -46,8 +46,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "TEXT"
-
 namespace {
 const uint AUTO_WRAP_THRESHOLD_DEFAULT = 300;
 }
@@ -79,7 +77,7 @@ bool Text::setFont(const Common::String &font) {
 		forceRefresh();
 		return true;
 	} else {
-		BS_LOG_ERRORLN("Could not precache font \"%s\". Font probably does not exist.", font.c_str());
+		error("Could not precache font \"%s\". Font probably does not exist.", font.c_str());
 		return false;
 	}
 
@@ -136,11 +134,11 @@ bool Text::doRender() {
 	{
 		Resource *pResource = rmPtr->requestResource(fontPtr->getCharactermapFileName());
 		if (!pResource) {
-			BS_LOG_ERRORLN("Could not request resource \"%s\".", fontPtr->getCharactermapFileName().c_str());
+			warning("Could not request resource \"%s\".", fontPtr->getCharactermapFileName().c_str());
 			return false;
 		}
 		if (pResource->getType() != Resource::TYPE_BITMAP) {
-			BS_LOG_ERRORLN("Requested resource \"%s\" is not a bitmap.", fontPtr->getCharactermapFileName().c_str());
+			error("Requested resource \"%s\" is not a bitmap.", fontPtr->getCharactermapFileName().c_str());
 			return false;
 		}
 
@@ -198,11 +196,11 @@ FontResource *Text::lockFontResource() {
 	{
 		Resource *resourcePtr = rmPtr->requestResource(_font);
 		if (!resourcePtr) {
-			BS_LOG_ERRORLN("Could not request resource \"%s\".", _font.c_str());
+			warning("Could not request resource \"%s\".", _font.c_str());
 			return NULL;
 		}
 		if (resourcePtr->getType() != Resource::TYPE_FONT) {
-			BS_LOG_ERRORLN("Requested resource \"%s\" is not a font.", _font.c_str());
+			error("Requested resource \"%s\" is not a font.", _font.c_str());
 			return NULL;
 		}
 

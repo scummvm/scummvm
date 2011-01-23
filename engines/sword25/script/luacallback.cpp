@@ -42,8 +42,6 @@ const char *CALLBACKTABLE_NAME = "__CALLBACKS";
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "LUA"
-
 LuaCallback::LuaCallback(lua_State *L) {
 	// Create callback table
 	lua_newtable(L);
@@ -122,7 +120,7 @@ void LuaCallback::invokeCallbackFunctions(lua_State *L, uint objectHandle) {
 			// Lua_pcall the function and the parameters pop themselves from the stack
 			if (lua_pcall(L, argumentCount, 0, 0) != 0) {
 				// An error has occurred
-				BS_LOG_ERRORLN("An error occured executing a callback function: %s", lua_tostring(L, -1));
+				error("An error occured executing a callback function: %s", lua_tostring(L, -1));
 
 				// Pop error message from the stack
 				lua_pop(L, 1);

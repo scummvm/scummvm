@@ -42,9 +42,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "PNGLOADER"
-
-
 /**
  * Load a NULL-terminated string from the given stream.
  */

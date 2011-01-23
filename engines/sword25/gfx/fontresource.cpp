@@ -32,8 +32,6 @@
  *
  */
 
-#define BS_LOG_PREFIX "FONTRESOURCE"
-
 #include "sword25/kernel/kernel.h"
 #include "sword25/package/packagemanager.h"
 
@@ -61,7 +59,7 @@ FontResource::FontResource(Kernel *pKernel, const Common::String &fileName) :
 	uint fileSize;
 	char *xmlData = pPackage->getXmlFile(getFileName(), &fileSize);
 	if (!xmlData) {
-		BS_LOG_ERRORLN("Could not read \"%s\".", getFileName().c_str());
+		error("Could not read \"%s\".", getFileName().c_str());
 		return;
 	}
 
@@ -79,13 +77,13 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 	Common::String bitmapFilename = node->values["bitmap"];
 
 	if (!parseIntegerKey(node->values["lineheight"], 1, &_lineHeight)) {
-		BS_LOG_WARNINGLN("Illegal or missing lineheight attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
+		warning("Illegal or missing lineheight attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
 		                 getFileName().c_str(), DEFAULT_LINEHEIGHT);
 		_lineHeight = DEFAULT_LINEHEIGHT;
 	}
 
 	if (!parseIntegerKey(node->values["gap"], 1, &_gapWidth)) {
-		BS_LOG_WARNINGLN("Illegal or missing gap attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
+		warning("Illegal or missing gap attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
 		                 getFileName().c_str(), DEFAULT_GAPWIDTH);
 		_gapWidth = DEFAULT_GAPWIDTH;
 	}
@@ -98,13 +96,13 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 	// Get the full path and filename for the bitmap resource
 	_bitmapFileName = pPackage->getAbsolutePath(bitmapFilename);
 	if (_bitmapFileName == "") {
-		BS_LOG_ERRORLN("Image file \"%s\" was specified in <font> tag of \"%s\" but could not be found.",
+		error("Image file \"%s\" was specified in <font> tag of \"%s\" but could not be found.",
 		               _bitmapFileName.c_str(), getFileName().c_str());
 	}
 
 	// Pre-cache the resource
 	if (!_pKernel->getResourceManager()->precacheResource(_bitmapFileName)) {
-		BS_LOG_ERRORLN("Could not precache \"%s\".", _bitmapFileName.c_str());
+		error("Could not precache \"%s\".", _bitmapFileName.c_str());
 	}
 
 	return true;

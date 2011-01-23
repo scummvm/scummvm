@@ -32,8 +32,6 @@
  *
  */
 
-#define BS_LOG_PREFIX "ANIMATIONTEMPLATEREGISTRY"
-
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/gfx/animationtemplateregistry.h"
@@ -44,11 +42,11 @@ DECLARE_SINGLETON(Sword25::AnimationTemplateRegistry);
 namespace Sword25 {
 
 void AnimationTemplateRegistry::logErrorLn(const char *message) const {
-	BS_LOG_ERRORLN(message);
+	error(message);
 }
 
 void AnimationTemplateRegistry::logWarningLn(const char *message) const {
-	BS_LOG_WARNINGLN(message);
+	warning(message);
 }
 
 bool AnimationTemplateRegistry::persist(OutputPersistenceBlock &writer) {

@@ -46,8 +46,6 @@
 #include "sword25/script/script.h"
 #include <zlib.h>
 
-#define BS_LOG_PREFIX "PERSISTENCESERVICE"
-
 namespace Sword25 {
 
 //static const char *SAVEGAME_EXTENSION = ".b25s";
@@ -215,7 +213,7 @@ namespace {
 bool checkslotID(uint slotID) {
 	// Überprüfen, ob die Slot-ID zulässig ist.
 	if (slotID >= SLOT_COUNT) {
-		BS_LOG_ERRORLN("Tried to access an invalid slot (%d). Only slot ids from 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
+		error("Tried to access an invalid slot (%d). Only slot ids from 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
 		return false;
 	} else {
 		return true;
@@ -255,7 +253,7 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 
 	// Überprüfen, ob die Slot-ID zulässig ist.
 	if (slotID >= SLOT_COUNT) {
-		BS_LOG_ERRORLN("Tried to save to an invalid slot (%d). Only slot ids form 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
+		error("Tried to save to an invalid slot (%d). Only slot ids form 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
 		return false;
 	}
 
@@ -327,7 +325,7 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 
 		delete[] buffer;
 	} else {
-		BS_LOG_WARNINGLN("The screenshot file \"%s\" does not exist. Savegame is written without a screenshot.", filename.c_str());
+		warning("The screenshot file \"%s\" does not exist. Savegame is written without a screenshot.", filename.c_str());
 	}
 
 	file->finalize();
@@ -347,7 +345,7 @@ bool PersistenceService::loadGame(uint slotID) {
 
 	// Überprüfen, ob die Slot-ID zulässig ist.
 	if (slotID >= SLOT_COUNT) {
-		BS_LOG_ERRORLN("Tried to load from an invalid slot (%d). Only slot ids form 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
+		error("Tried to load from an invalid slot (%d). Only slot ids form 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
 		return false;
 	}
 
@@ -355,7 +353,7 @@ bool PersistenceService::loadGame(uint slotID) {
 
 	// Überprüfen, ob der Slot belegt ist.
 	if (!curSavegameInfo.isOccupied) {
-		BS_LOG_ERRORLN("Tried to load from an empty slot (%d).", slotID);
+		error("Tried to load from an empty slot (%d).", slotID);
 		return false;
 	}
 
@@ -364,7 +362,7 @@ bool PersistenceService::loadGame(uint slotID) {
 	// da sich die Versions-ID bei jeder Codeänderung mitändert.
 #ifndef DEBUG
 	if (!curSavegameInfo.isCompatible) {
-		BS_LOG_ERRORLN("Tried to load a savegame (%d) that is not compatible with this engine version.", slotID);
+		error("Tried to load a savegame (%d) that is not compatible with this engine version.", slotID);
 		return false;
 	}
 #endif
@@ -377,7 +375,7 @@ bool PersistenceService::loadGame(uint slotID) {
 	file->seek(curSavegameInfo.gamedataOffset);
 	file->read(reinterpret_cast<char *>(&compressedDataBuffer[0]), curSavegameInfo.gamedataLength);
 	if (file->err()) {
-		BS_LOG_ERRORLN("Unable to load the gamedata from the savegame file \"%s\".", curSavegameInfo.filename.c_str());
+		error("Unable to load the gamedata from the savegame file \"%s\".", curSavegameInfo.filename.c_str());
 		delete[] compressedDataBuffer;
 		delete[] uncompressedDataBuffer;
 		return false;
@@ -387,7 +385,7 @@ bool PersistenceService::loadGame(uint slotID) {
 	uLongf uncompressedBufferSize = curSavegameInfo.gamedataUncompressedLength;
 	if (uncompress(reinterpret_cast<Bytef *>(&uncompressedDataBuffer[0]), &uncompressedBufferSize,
 	               reinterpret_cast<Bytef *>(&compressedDataBuffer[0]), curSavegameInfo.gamedataLength) != Z_OK) {
-		BS_LOG_ERRORLN("Unable to decompress the gamedata from savegame file \"%s\".", curSavegameInfo.filename.c_str());
+		error("Unable to decompress the gamedata from savegame file \"%s\".", curSavegameInfo.filename.c_str());
 		delete[] uncompressedDataBuffer;
 		delete[] compressedDataBuffer;
 		delete file;
@@ -410,7 +408,7 @@ bool PersistenceService::loadGame(uint slotID) {
 	delete file;
 
 	if (!success) {
-		BS_LOG_ERRORLN("Unable to unpersist the gamedata from savegame file \"%s\".", curSavegameInfo.filename.c_str());
+		error("Unable to unpersist the gamedata from savegame file \"%s\".", curSavegameInfo.filename.c_str());
 		return false;
 	}
 

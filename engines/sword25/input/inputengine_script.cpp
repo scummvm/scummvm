@@ -42,8 +42,6 @@
 
 #include "sword25/input/inputengine.h"
 
-#define BS_LOG_PREFIX "INPUTENGINE"
-
 namespace Sword25 {
 
 static void theCharacterCallback(int character);

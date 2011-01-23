@@ -32,8 +32,6 @@
  *
  */
 
-#define BS_LOG_PREFIX "INPUTPERSISTENCEBLOCK"
-
 #include "sword25/kernel/inputpersistenceblock.h"
 
 namespace Sword25 {
@@ -46,7 +44,7 @@ InputPersistenceBlock::InputPersistenceBlock(const void *data, uint dataLength) 
 
 InputPersistenceBlock::~InputPersistenceBlock() {
 	if (_iter != _data.end())
-		BS_LOG_WARNINGLN("Persistence block was not read to the end.");
+		warning("Persistence block was not read to the end.");
 }
 
 void InputPersistenceBlock::read(int16 &value) {
@@ -131,7 +129,7 @@ bool InputPersistenceBlock::checkBlockSize(int size) {
 		return true;
 	} else {
 		_errorState = END_OF_DATA;
-		BS_LOG_ERRORLN("Unexpected end of persistence block.");
+		error("Unexpected end of persistence block.");
 		return false;
 	}
 }
@@ -144,7 +142,7 @@ bool InputPersistenceBlock::checkMarker(byte marker) {
 		return true;
 	} else {
 		_errorState = OUT_OF_SYNC;
-		BS_LOG_ERRORLN("Wrong type marker found in persistence block.");
+		error("Wrong type marker found in persistence block.");
 		return false;
 	}
 }

@@ -40,8 +40,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "ANIMATIONRESOURCE"
-
 namespace {
 const int   DEFAULT_FPS = 10;
 const int   MIN_FPS     = 1;
@@ -67,7 +65,7 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 	uint fileSize;
 	char *xmlData = _pPackage->getXmlFile(getFileName(), &fileSize);
 	if (!xmlData) {
-		BS_LOG_ERRORLN("Could not read \"%s\".", getFileName().c_str());
+		error("Could not read \"%s\".", getFileName().c_str());
 		return; 
 	}
 
@@ -84,19 +82,19 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 
 	// Give an error message if there weren't any frames specified
 	if (_frames.empty()) {
-		BS_LOG_ERRORLN("\"%s\" does not have any frames.", getFileName().c_str());
+		error("\"%s\" does not have any frames.", getFileName().c_str());
 		return;
 	}
 
 	// Pre-cache all the frames
 	if (!precacheAllFrames()) {
-		BS_LOG_ERRORLN("Could not precache all frames of \"%s\".", getFileName().c_str());
+		error("Could not precache all frames of \"%s\".", getFileName().c_str());
 		return;
 	}
 
 	// Post processing to compute animation features
 	if (!computeFeatures()) {
-		BS_LOG_ERRORLN("Could not determine the features of \"%s\".", getFileName().c_str());
+		error("Could not determine the features of \"%s\".", getFileName().c_str());
 		return;
 	}
 
@@ -130,7 +128,7 @@ bool AnimationResource::parserCallback_animation(ParserNode *node) {
 	} else if (strcmp(loopTypeString, "jojo") == 0) {
 		_animationType = Animation::AT_JOJO;
 	} else {
-		BS_LOG_WARNINGLN("Illegal type value (\"%s\") in <animation> tag in \"%s\". Assuming default (\"loop\").",
+		warning("Illegal type value (\"%s\") in <animation> tag in \"%s\". Assuming default (\"loop\").",
 				loopTypeString, getFileName().c_str());
 		_animationType = Animation::AT_LOOP;
 	}
@@ -147,12 +145,12 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 
 	const char *fileString = node->values["file"].c_str();
 	if (!fileString) {
-		BS_LOG_ERRORLN("<frame> tag without file attribute occurred in \"%s\".", getFileName().c_str());
+		error("<frame> tag without file attribute occurred in \"%s\".", getFileName().c_str());
 		return false;
 	}
 	frame.fileName = _pPackage->getAbsolutePath(fileString);
 	if (frame.fileName.empty()) {
-		BS_LOG_ERRORLN("Could not create absolute path for file specified in <frame> tag in \"%s\": \"%s\".", 
+		error("Could not create absolute path for file specified in <frame> tag in \"%s\": \"%s\".", 
 			getFileName().c_str(), fileString);
 		return false;
 	}
@@ -165,25 +163,25 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 	const char *hotspotyString = node->values["hotspoty"].c_str();
 	if ((!hotspotxString && hotspotyString) ||
 	        (hotspotxString && !hotspotyString))
-		BS_LOG_WARNINGLN("%s attribute occurred without %s attribute in <frame> tag in \"%s\". Assuming default (\"0\").",
+		warning("%s attribute occurred without %s attribute in <frame> tag in \"%s\". Assuming default (\"0\").",
 		                 hotspotxString ? "hotspotx" : "hotspoty",
 		                 !hotspotyString ? "hotspoty" : "hotspotx",
 		                 getFileName().c_str());
 
 	frame.hotspotX = 0;
 	if (hotspotxString && !parseIntegerKey(hotspotxString, 1, &frame.hotspotX))
-		BS_LOG_WARNINGLN("Illegal hotspotx value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
+		warning("Illegal hotspotx value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
 		                 hotspotxString, getFileName().c_str(), frame.hotspotX);
 
 	frame.hotspotY = 0;
 	if (hotspotyString && !parseIntegerKey(hotspotyString, 1, &frame.hotspotY))
-		BS_LOG_WARNINGLN("Illegal hotspoty value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
+		warning("Illegal hotspoty value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
 		                 hotspotyString, getFileName().c_str(), frame.hotspotY);
 
 	Common::String flipVString = node->values["flipv"];
 	if (!flipVString.empty()) {
 		if (!parseBooleanKey(flipVString, frame.flipV)) {
-			BS_LOG_WARNINGLN("Illegal flipv value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
+			warning("Illegal flipv value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
 			                 flipVString.c_str(), getFileName().c_str());
 			frame.flipV = false;
 		}
@@ -193,7 +191,7 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 	Common::String flipHString = node->values["fliph"];
 	if (!flipHString.empty()) {
 		if (!parseBooleanKey(flipVString, frame.flipV)) {
-			BS_LOG_WARNINGLN("Illegal fliph value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
+			warning("Illegal fliph value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
 			                 flipHString.c_str(), getFileName().c_str());
 			frame.flipH = false;
 		}
@@ -211,7 +209,7 @@ bool AnimationResource::precacheAllFrames() const {
 	Common::Array<Frame>::const_iterator iter = _frames.begin();
 	for (; iter != _frames.end(); ++iter) {
 		if (!Kernel::getInstance()->getResourceManager()->precacheResource((*iter).fileName)) {
-			BS_LOG_ERRORLN("Could not precache \"%s\".", (*iter).fileName.c_str());
+			error("Could not precache \"%s\".", (*iter).fileName.c_str());
 			return false;
 		}
 	}
@@ -232,7 +230,7 @@ bool AnimationResource::computeFeatures() {
 	for (; iter != _frames.end(); ++iter) {
 		BitmapResource *pBitmap;
 		if (!(pBitmap = static_cast<BitmapResource *>(Kernel::getInstance()->getResourceManager()->requestResource((*iter).fileName)))) {
-			BS_LOG_ERRORLN("Could not request \"%s\".", (*iter).fileName.c_str());
+			error("Could not request \"%s\".", (*iter).fileName.c_str());
 			return false;
 		}
 

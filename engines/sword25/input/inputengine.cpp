@@ -32,12 +32,12 @@
  *
  */
 
-#define BS_LOG_PREFIX "INPUTENGINE"
-
 #include "common/algorithm.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/util.h"
+
+#include "sword25/sword25.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/kernel/outputpersistenceblock.h"
@@ -70,9 +70,9 @@ InputEngine::InputEngine(Kernel *pKernel) :
 	_rightMouseState[1] = false;
 
 	if (!registerScriptBindings())
-		BS_LOG_ERRORLN("Script bindings could not be registered.");
+		error("Script bindings could not be registered.");
 	else
-		BS_LOGLN("Script bindings registered.");
+		debugC(kDebugScript, "Script bindings registered.");
 }
 
 InputEngine::~InputEngine() {

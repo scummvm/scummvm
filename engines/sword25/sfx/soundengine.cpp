@@ -32,8 +32,6 @@
  *
  */
 
-#define BS_LOG_PREFIX "SOUNDENGINE"
-
 #include "sword25/sword25.h"
 #include "sword25/sfx/soundengine.h"
 #include "sword25/package/packagemanager.h"
@@ -57,9 +55,9 @@ private:
 
 SoundEngine::SoundEngine(Kernel *pKernel) : ResourceService(pKernel) {
 	if (!registerScriptBindings())
-		BS_LOG_ERRORLN("Script bindings could not be registered.");
+		error("Script bindings could not be registered.");
 	else
-		BS_LOGLN("Script bindings registered.");
+		debugC(kDebugSound, "Script bindings registered.");
 
 	_mixer = g_system->getMixer();
 

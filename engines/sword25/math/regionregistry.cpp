@@ -32,8 +32,6 @@
  *
  */
 
-#define BS_LOG_PREFIX "REGIONREGISTRY"
-
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/math/regionregistry.h"
@@ -44,11 +42,11 @@ DECLARE_SINGLETON(Sword25::RegionRegistry);
 namespace Sword25 {
 
 void RegionRegistry::logErrorLn(const char *message) const {
-	BS_LOG_ERRORLN(message);
+	error(message);
 }
 
 void RegionRegistry::logWarningLn(const char *message) const {
-	BS_LOG_WARNINGLN(message);
+	warning(message);
 }
 
 bool RegionRegistry::persist(OutputPersistenceBlock &writer) {

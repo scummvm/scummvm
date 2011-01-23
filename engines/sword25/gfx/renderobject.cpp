@@ -51,8 +51,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "RENDEROBJECT"
-
 RenderObject::RenderObject(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle) :
 	_managerPtr(0),
 	_parentPtr(parentPtr),
@@ -90,7 +88,7 @@ RenderObject::RenderObject(RenderObjectPtr<RenderObject> parentPtr, TYPES type, 
 		_parentPtr->addObject(this->getHandle());
 	} else {
 		if (getType() != TYPE_ROOT) {
-			BS_LOG_ERRORLN("Tried to create a non-root render object and has no parent. All non-root render objects have to have a parent.");
+			error("Tried to create a non-root render object and has no parent. All non-root render objects have to have a parent.");
 			return;
 		}
 	}
@@ -226,7 +224,7 @@ void RenderObject::deleteAllChildren() {
 
 bool RenderObject::addObject(RenderObjectPtr<RenderObject> pObject) {
 	if (!pObject.isValid()) {
-		BS_LOG_ERRORLN("Tried to add a null object to a renderobject.");
+		error("Tried to add a null object to a renderobject.");
 		return false;
 	}
 
@@ -249,7 +247,7 @@ bool RenderObject::detatchChildren(RenderObjectPtr<RenderObject> pObject) {
 			return true;
 		}
 
-	BS_LOG_ERRORLN("Tried to detach children from a render object that isn't its parent.");
+	error("Tried to detach children from a render object that isn't its parent.");
 	return false;
 }
 
@@ -289,7 +287,7 @@ void RenderObject::setY(int y) {
 
 void RenderObject::setZ(int z) {
 	if (z < 0)
-		BS_LOG_ERRORLN("Tried to set a negative Z value (%d).", z);
+		error("Tried to set a negative Z value (%d).", z);
 	else
 		_z = z;
 }
@@ -500,7 +498,7 @@ RenderObjectPtr<RenderObject> RenderObject::recreatePersistedRenderObject(InputP
 		break;
 
 	default:
-		BS_LOG_ERRORLN("Cannot recreate render object of unknown type %d.", type);
+		error("Cannot recreate render object of unknown type %d.", type);
 	}
 
 	return result;

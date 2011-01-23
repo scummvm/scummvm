@@ -39,8 +39,6 @@
 #include "sword25/math/walkregion.h"
 #include "sword25/math/regionregistry.h"
 
-#define BS_LOG_PREFIX "REGION"
-
 namespace Sword25 {
 
 Region::Region() : _valid(false), _type(RT_REGION) {
@@ -261,7 +259,7 @@ Vertex Region::findClosestRegionPoint(const Vertex &point) const {
 			}
 		}
 
-		BS_LOG_WARNINGLN("Clostest vertex forced because edgepoint was outside region.");
+		warning("Clostest vertex forced because edgepoint was outside region.");
 		return closestVertex;
 	}
 }

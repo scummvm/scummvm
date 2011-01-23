@@ -50,8 +50,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "GRAPHICENGINE"
-
 static bool animationDeleteCallback(uint Data);
 static bool animationActionCallback(uint Data);
 static bool animationLoopPointCallback(uint Data);

@@ -32,10 +32,9 @@
  *
  */
 
-#define BS_LOG_PREFIX "GRAPHICENGINE"
-
 #include "common/system.h"
 
+#include "sword25/sword25.h"	// for kDebugScript
 #include "sword25/gfx/bitmapresource.h"
 #include "sword25/gfx/animationresource.h"
 #include "sword25/gfx/fontresource.h"
@@ -79,9 +78,9 @@ GraphicEngine::GraphicEngine(Kernel *pKernel) :
 	_frameTimeSamples.resize(FRAMETIME_SAMPLE_COUNT);
 
 	if (!registerScriptBindings())
-		BS_LOG_ERRORLN("Script bindings could not be registered.");
+		error("Script bindings could not be registered.");
 	else
-		BS_LOGLN("Script bindings registered.");
+		debugC(kDebugScript, "Script bindings registered.");
 }
 
 GraphicEngine::~GraphicEngine() {
@@ -94,13 +93,13 @@ GraphicEngine::~GraphicEngine() {
 bool GraphicEngine::init(int width, int height, int bitDepth, int backbufferCount, bool isWindowed_) {
 	// Warnung ausgeben, wenn eine nicht unterstützte Bittiefe gewählt wurde.
 	if (bitDepth != BIT_DEPTH) {
-		BS_LOG_WARNINGLN("Can't use a bit depth of %d (not supported). Falling back to %d.", bitDepth, BIT_DEPTH);
+		warning("Can't use a bit depth of %d (not supported). Falling back to %d.", bitDepth, BIT_DEPTH);
 		_bitDepth = BIT_DEPTH;
 	}
 
 	// Warnung ausgeben, wenn nicht genau ein Backbuffer gewählt wurde.
 	if (backbufferCount != BACKBUFFER_COUNT) {
-		BS_LOG_WARNINGLN("Can't use %d backbuffers (not supported). Falling back to %d.", backbufferCount, BACKBUFFER_COUNT);
+		warning("Can't use %d backbuffers (not supported). Falling back to %d.", backbufferCount, BACKBUFFER_COUNT);
 		backbufferCount = BACKBUFFER_COUNT;
 	}
 
@@ -311,7 +310,7 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 		uint fileSize;
 		pFileData = pPackage->getFile(filename, &fileSize);
 		if (!pFileData) {
-			BS_LOG_ERRORLN("File \"%s\" could not be loaded.", filename.c_str());
+			error("File \"%s\" could not be loaded.", filename.c_str());
 			return 0;
 		}
 
@@ -356,7 +355,7 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 		}
 	}
 
-	BS_LOG_ERRORLN("Service cannot load \"%s\".", filename.c_str());
+	error("Service cannot load \"%s\".", filename.c_str());
 	return 0;
 }
 

@@ -32,6 +32,7 @@
  *
  */
 
+#include "sword25/sword25.h"	// for kDebugScript
 #include "sword25/fmv/movieplayer.h"
 #include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/panel.h"
@@ -43,16 +44,14 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "MOVIEPLAYER"
-
 #define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
 
 #ifdef USE_THEORADEC
 MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel), _decoder(g_system->getMixer()) {
 	if (!registerScriptBindings())
-		BS_LOG_ERRORLN("Script bindings could not be registered.");
+		error("Script bindings could not be registered.");
 	else
-		BS_LOGLN("Script bindings registered.");
+		debugC(kDebugScript, "Script bindings registered.");
 }
 
 MoviePlayer::~MoviePlayer() {
@@ -70,7 +69,7 @@ bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 #if INDIRECTRENDERING
 	_outputBitmap = pGfx->getMainPanel()->addDynamicBitmap(_decoder.getWidth(), _decoder.getHeight());
 	if (!_outputBitmap.isValid()) {
-		BS_LOG_ERRORLN("Output bitmap for movie playback could not be created.");
+		error("Output bitmap for movie playback could not be created.");
 		return false;
 	}
 
@@ -177,7 +176,7 @@ double MoviePlayer::getTime() {
 
 MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel) {
 	if (!registerScriptBindings())
-		BS_LOG_ERRORLN("Script bindings could not be registered.");
+		error("Script bindings could not be registered.");
 	else
 		BS_LOGLN("Script bindings registered.");
 }

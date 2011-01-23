@@ -48,11 +48,10 @@
 // Global constants
 #define DEBUG
 
-#define BS_ACTIVATE_LOGGING // When defined, logging is activated
-
-// Engine Includes
-#include "sword25/kernel/log.h"
-
+// Includes
+#include "common/array.h"
+#include "common/file.h"
+#include "sword25/kernel/common.h"
 #include "common/debug.h"
 
 #define BS_ASSERT(EXP) assert(EXP)

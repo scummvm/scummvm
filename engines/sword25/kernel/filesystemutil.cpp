@@ -41,8 +41,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "FILESYSTEMUTIL"
-
 Common::String FileSystemUtil::getUserdataDirectory() {
 	// FIXME: This code is a hack which bypasses the savefile API,
 	// and should eventually be removed.

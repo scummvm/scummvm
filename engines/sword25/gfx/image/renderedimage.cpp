@@ -44,8 +44,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "RENDEREDIMAGE"
-
 // -----------------------------------------------------------------------------
 // CONSTRUCTION / DESTRUCTION
 // -----------------------------------------------------------------------------
@@ -66,21 +64,21 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	uint fileSize;
 	pFileData = pPackage->getFile(filename, &fileSize);
 	if (!pFileData) {
-		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", filename.c_str());
+		error("File \"%s\" could not be loaded.", filename.c_str());
 		return;
 	}
 
 	// Bildeigenschaften bestimmen
 	int pitch;
 	if (!PNGLoader::imageProperties(pFileData, fileSize, _width, _height)) {
-		BS_LOG_ERRORLN("Could not read image properties.");
+		error("Could not read image properties.");
 		delete[] pFileData;
 		return;
 	}
 
 	// Das Bild dekomprimieren
 	if (!PNGLoader::decodeImage(pFileData, fileSize, _data, _width, _height, pitch)) {
-		BS_LOG_ERRORLN("Could not decode image.");
+		error("Could not decode image.");
 		delete[] pFileData;
 		return;
 	}
@@ -129,7 +127,7 @@ RenderedImage::~RenderedImage() {
 // -----------------------------------------------------------------------------
 
 bool RenderedImage::fill(const Common::Rect *pFillRect, uint color) {
-	BS_LOG_ERRORLN("Fill() is not supported.");
+	error("Fill() is not supported.");
 	return false;
 }
 
@@ -138,7 +136,7 @@ bool RenderedImage::fill(const Common::Rect *pFillRect, uint color) {
 bool RenderedImage::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
 	// Überprüfen, ob PixelData ausreichend viele Pixel enthält um ein Bild der Größe Width * Height zu erzeugen
 	if (size < static_cast<uint>(_width * _height * 4)) {
-		BS_LOG_ERRORLN("PixelData vector is too small to define a 32 bit %dx%d image.", _width, _height);
+		error("PixelData vector is too small to define a 32 bit %dx%d image.", _width, _height);
 		return false;
 	}
 
@@ -162,7 +160,7 @@ void RenderedImage::replaceContent(byte *pixeldata, int width, int height) {
 // -----------------------------------------------------------------------------
 
 uint RenderedImage::getPixel(int x, int y) {
-	BS_LOG_ERRORLN("GetPixel() is not supported. Returning black.");
+	error("GetPixel() is not supported. Returning black.");
 	return 0;
 }
 

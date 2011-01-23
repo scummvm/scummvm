@@ -48,8 +48,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "ANIMATION"
-
 Animation::Animation(RenderObjectPtr<RenderObject> parentPtr, const Common::String &fileName) :
 	TimedRenderObject(parentPtr, RenderObject::TYPE_ANIMATION) {
 	// Das BS_RenderObject konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
@@ -102,7 +100,7 @@ void Animation::initializeAnimationResource(const Common::String &fileName) {
 	if (resourcePtr && resourcePtr->getType() == Resource::TYPE_ANIMATION)
 		_animationResourcePtr = static_cast<AnimationResource *>(resourcePtr);
 	else {
-		BS_LOG_ERRORLN("The resource \"%s\" could not be requested. The Animation can't be created.", fileName.c_str());
+		error("The resource \"%s\" could not be requested. The Animation can't be created.", fileName.c_str());
 		return;
 	}
 
@@ -164,7 +162,7 @@ void Animation::setFrame(uint nr) {
 	BS_ASSERT(animationDescriptionPtr);
 
 	if (nr >= animationDescriptionPtr->getFrameCount()) {
-		BS_LOG_ERRORLN("Tried to set animation to illegal frame (%d). Value must be between 0 and %d.",
+		error("Tried to set animation to illegal frame (%d). Value must be between 0 and %d.",
 		               nr, animationDescriptionPtr->getFrameCount());
 		return;
 	}
@@ -326,7 +324,7 @@ bool Animation::lockAllFrames() {
 		BS_ASSERT(animationDescriptionPtr);
 		for (uint i = 0; i < animationDescriptionPtr->getFrameCount(); ++i) {
 			if (!Kernel::getInstance()->getResourceManager()->requestResource(animationDescriptionPtr->getFrame(i).fileName)) {
-				BS_LOG_ERRORLN("Could not lock all animation frames.");
+				error("Could not lock all animation frames.");
 				return false;
 			}
 		}
@@ -344,7 +342,7 @@ bool Animation::unlockAllFrames() {
 		for (uint i = 0; i < animationDescriptionPtr->getFrameCount(); ++i) {
 			Resource *pResource;
 			if (!(pResource = Kernel::getInstance()->getResourceManager()->requestResource(animationDescriptionPtr->getFrame(i).fileName))) {
-				BS_LOG_ERRORLN("Could not unlock all animation frames.");
+				error("Could not unlock all animation frames.");
 				return false;
 			}
 
@@ -419,7 +417,7 @@ void Animation::setAlpha(int alpha) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
 	if (!animationDescriptionPtr->isAlphaAllowed()) {
-		BS_LOG_WARNINGLN("Tried to set alpha value on an animation that does not support alpha. Call was ignored.");
+		warning("Tried to set alpha value on an animation that does not support alpha. Call was ignored.");
 		return;
 	}
 
@@ -434,7 +432,7 @@ void Animation::setModulationColor(uint modulationColor) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
 	if (!animationDescriptionPtr->isColorModulationAllowed()) {
-		BS_LOG_WARNINGLN("Tried to set modulation color on an animation that does not support color modulation. Call was ignored");
+		warning("Tried to set modulation color on an animation that does not support color modulation. Call was ignored");
 		return;
 	}
 
@@ -454,7 +452,7 @@ void Animation::setScaleFactorX(float scaleFactorX) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
 	if (!animationDescriptionPtr->isScalingAllowed()) {
-		BS_LOG_WARNINGLN("Tried to set x scale factor on an animation that does not support scaling. Call was ignored");
+		warning("Tried to set x scale factor on an animation that does not support scaling. Call was ignored");
 		return;
 	}
 
@@ -471,7 +469,7 @@ void Animation::setScaleFactorY(float scaleFactorY) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
 	if (!animationDescriptionPtr->isScalingAllowed()) {
-		BS_LOG_WARNINGLN("Tried to set y scale factor on an animation that does not support scaling. Call was ignored");
+		warning("Tried to set y scale factor on an animation that does not support scaling. Call was ignored");
 		return;
 	}
 

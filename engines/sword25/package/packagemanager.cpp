@@ -32,14 +32,13 @@
  *
  */
 
-#define BS_LOG_PREFIX "PACKAGEMANAGER"
-
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
 #include "common/unzip.h"
+#include "sword25/sword25.h"	// for kDebugScript
 #include "sword25/kernel/filesystemutil.h"
 #include "sword25/package/packagemanager.h"
 
@@ -62,9 +61,9 @@ PackageManager::PackageManager(Kernel *pKernel) : Service(pKernel),
 	_currentDirectory(PATH_SEPARATOR),
 	_rootFolder(ConfMan.get("path")) {
 	if (!registerScriptBindings())
-		BS_LOG_ERRORLN("Script bindings could not be registered.");
+		error("Script bindings could not be registered.");
 	else
-		BS_LOGLN("Script bindings registered.");
+		debugC(kDebugScript, "Script bindings registered.");
 }
 
 PackageManager::~PackageManager() {
@@ -106,10 +105,10 @@ bool PackageManager::loadPackage(const Common::String &fileName, const Common::S
 
 	Common::Archive *zipFile = Common::makeZipArchive(fileName);
 	if (zipFile == NULL) {
-		BS_LOG_ERRORLN("Unable to mount file \"%s\" to \"%s\"", fileName.c_str(), mountPosition.c_str());
+		error("Unable to mount file \"%s\" to \"%s\"", fileName.c_str(), mountPosition.c_str());
 		return false;
 	} else {
-		BS_LOGLN("Package '%s' mounted as '%s'.", fileName.c_str(), mountPosition.c_str());
+		debugC(kDebugResource, "Package '%s' mounted as '%s'.", fileName.c_str(), mountPosition.c_str());
 		Common::ArchiveMemberList files;
 		zipFile->listMembers(files);
 		debug(3, "Capacity %d", files.size());
@@ -127,10 +126,10 @@ bool PackageManager::loadDirectoryAsPackage(const Common::String &directoryName,
 	Common::FSNode directory(directoryName);
 	Common::Archive *folderArchive = new Common::FSDirectory(directory, 6);
 	if (!directory.exists() || (folderArchive == NULL)) {
-		BS_LOG_ERRORLN("Unable to mount directory \"%s\" to \"%s\".", directoryName.c_str(), mountPosition.c_str());
+		error("Unable to mount directory \"%s\" to \"%s\".", directoryName.c_str(), mountPosition.c_str());
 		return false;
 	} else {
-		BS_LOGLN("Directory '%s' mounted as '%s'.", directoryName.c_str(), mountPosition.c_str());
+		debugC(kDebugResource, "Directory '%s' mounted as '%s'.", directoryName.c_str(), mountPosition.c_str());
 
 		Common::ArchiveMemberList files;
 		folderArchive->listMembers(files);
@@ -152,7 +151,7 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 		Common::InSaveFile *file = sfm->openForLoading(
 			FileSystemUtil::getPathFilename(fileName));
 		if (!file) {
-			BS_LOG_ERRORLN("Could not load savegame \"%s\".", fileName.c_str());
+			error("Could not load savegame \"%s\".", fileName.c_str());
 			return 0;
 		}
 

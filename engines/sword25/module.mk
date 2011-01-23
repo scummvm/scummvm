@@ -38,7 +38,6 @@ MODULE_OBJS := \
 	kernel/inputpersistenceblock.o \
 	kernel/kernel.o \
 	kernel/kernel_script.o \
-	kernel/log.o \
 	kernel/outputpersistenceblock.o \
 	kernel/persistenceservice.o \
 	kernel/resmanager.o \

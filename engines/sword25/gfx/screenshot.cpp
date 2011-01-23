@@ -35,8 +35,6 @@
 // Disable symbol overrides so that we can use png.h
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#define BS_LOG_PREFIX "SCREENSHOT"
-
 #include "common/memstream.h"
 #include "sword25/gfx/screenshot.h"
 #include "sword25/kernel/filesystemutil.h"
@@ -130,7 +128,7 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 
 	// The source image must be 800x600.
 	if (data->w != 800 || data->h != 600 || data->bytesPerPixel != 4) {
-		BS_LOG_ERRORLN("The sreenshot dimensions have to be 800x600 in order to be saved as a thumbnail.");
+		error("The sreenshot dimensions have to be 800x600 in order to be saved as a thumbnail.");
 		return false;
 	}
 

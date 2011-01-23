@@ -38,9 +38,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "SWIMAGE"
-
-
 SWImage::SWImage(const Common::String &filename, bool &result) :
 	_imageDataPtr(0),
 	_width(0),
@@ -55,21 +52,21 @@ SWImage::SWImage(const Common::String &filename, bool &result) :
 	uint fileSize;
 	pFileData = pPackage->getFile(filename, &fileSize);
 	if (!pFileData) {
-		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", filename.c_str());
+		error("File \"%s\" could not be loaded.", filename.c_str());
 		return;
 	}
 
 	// Bildeigenschaften bestimmen
 	int pitch;
 	if (!PNGLoader::imageProperties(pFileData, fileSize, _width, _height)) {
-		BS_LOG_ERRORLN("Could not read image properties.");
+		error("Could not read image properties.");
 		return;
 	}
 
 	// Das Bild dekomprimieren
 	byte *pUncompressedData;
 	if (!PNGLoader::decodeImage(pFileData, fileSize, pUncompressedData, _width, _height, pitch)) {
-		BS_LOG_ERRORLN("Could not decode image.");
+		error("Could not decode image.");
 		return;
 	}
 
@@ -92,17 +89,17 @@ bool SWImage::blit(int posX, int posY,
                       Common::Rect *pPartRect,
                       uint color,
                       int width, int height) {
-	BS_LOG_ERRORLN("Blit() is not supported.");
+	error("Blit() is not supported.");
 	return false;
 }
 
 bool SWImage::fill(const Common::Rect *pFillRect, uint color) {
-	BS_LOG_ERRORLN("Fill() is not supported.");
+	error("Fill() is not supported.");
 	return false;
 }
 
 bool SWImage::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
-	BS_LOG_ERRORLN("SetContent() is not supported.");
+	error("SetContent() is not supported.");
 	return false;
 }
 

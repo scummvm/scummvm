@@ -32,8 +32,6 @@
  *
  */
 
-#define BS_LOG_PREFIX "LUA"
-
 #include "common/array.h"
 #include "common/debug-channels.h"
 
@@ -66,7 +64,7 @@ LuaScriptEngine::~LuaScriptEngine() {
 
 namespace {
 int panicCB(lua_State *L) {
-	BS_LOG_ERRORLN("Lua panic. Error message: %s", lua_isnil(L, -1) ? "" : lua_tostring(L, -1));
+	error("Lua panic. Error message: %s", lua_isnil(L, -1) ? "" : lua_tostring(L, -1));
 	return 0;
 }
 
@@ -82,7 +80,7 @@ bool LuaScriptEngine::init() {
 	// Lua-State initialisation, as well as standard libaries initialisation
 	_state = luaL_newstate();
 	if (!_state || ! registerStandardLibs() || !registerStandardLibExtensions()) {
-		BS_LOG_ERRORLN("Lua could not be initialized.");
+		error("Lua could not be initialized.");
 		return false;
 	}
 
@@ -100,7 +98,7 @@ bool LuaScriptEngine::init() {
 	// Compile the code
 	if (luaL_loadbuffer(_state, errorHandlerCode, strlen(errorHandlerCode), "PCALL ERRORHANDLER") != 0) {
 		// An error occurred, so dislay the reason and exit
-		BS_LOG_ERRORLN("Couldn't compile luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
+		error("Couldn't compile luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
 		lua_pop(_state, 1);
 
 		return false;
@@ -108,7 +106,7 @@ bool LuaScriptEngine::init() {
 	// Running the code, the error handler function sets the top of the stack
 	if (lua_pcall(_state, 0, 1, 0) != 0) {
 		// An error occurred, so dislay the reason and exit
-		BS_LOG_ERRORLN("Couldn't prepare luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
+		error("Couldn't prepare luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
 		lua_pop(_state, 1);
 
 		return false;
@@ -135,7 +133,7 @@ bool LuaScriptEngine::init() {
 			lua_sethook(_state, debugHook, mask, 0);
 	}
 
-	BS_LOGLN("Lua initialized.");
+	debugC(kDebugScript, "Lua initialized.");
 
 	return true;
 }
@@ -154,7 +152,7 @@ bool LuaScriptEngine::executeFile(const Common::String &fileName) {
 	uint fileSize;
 	byte *fileData = pPackage->getFile(fileName, &fileSize);
 	if (!fileData) {
-		BS_LOG_ERRORLN("Couldn't read \"%s\".", fileName.c_str());
+		error("Couldn't read \"%s\".", fileName.c_str());
 #ifdef DEBUG
 		BS_ASSERT(__startStackDepth == lua_gettop(_state));
 #endif
@@ -211,7 +209,7 @@ bool LuaScriptEngine::registerStandardLibs() {
 bool LuaScriptEngine::executeBuffer(const byte *data, uint size, const Common::String &name) const {
 	// Compile buffer
 	if (luaL_loadbuffer(_state, (const char *)data, size, name.c_str()) != 0) {
-		BS_LOG_ERRORLN("Couldn't compile \"%s\":\n%s", name.c_str(), lua_tostring(_state, -1));
+		error("Couldn't compile \"%s\":\n%s", name.c_str(), lua_tostring(_state, -1));
 		lua_pop(_state, 1);
 
 		return false;
@@ -223,7 +221,7 @@ bool LuaScriptEngine::executeBuffer(const byte *data, uint size, const Common::S
 
 	// Run buffer contents
 	if (lua_pcall(_state, 0, 0, -2) != 0) {
-		BS_LOG_ERRORLN("An error occured while executing \"%s\":\n%s.",
+		error("An error occured while executing \"%s\":\n%s.",
 		               name.c_str(),
 		               lua_tostring(_state, -1));
 		lua_pop(_state, 2);

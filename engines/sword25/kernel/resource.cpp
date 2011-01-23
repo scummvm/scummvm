@@ -38,8 +38,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "RESOURCE"
-
 Resource::Resource(const Common::String &fileName, RESOURCE_TYPES type) :
 	_type(type),
 	_refCount(0) {
@@ -53,7 +51,7 @@ void Resource::release() {
 	if (_refCount) {
 		--_refCount;
 	} else
-		BS_LOG_WARNINGLN("Released unlocked resource \"%s\".", _fileName.c_str());
+		warning("Released unlocked resource \"%s\".", _fileName.c_str());
 }
 
 } // End of namespace Sword25

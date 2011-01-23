@@ -38,14 +38,12 @@ DECLARE_SINGLETON(Sword25::RenderObjectRegistry);
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "RENDEROBJECTREGISTRY"
-
 void RenderObjectRegistry::logErrorLn(const char *message) const {
-	BS_LOG_ERRORLN(message);
+	error(message);
 }
 
 void RenderObjectRegistry::logWarningLn(const char *message) const {
-	BS_LOG_WARNINGLN(message);
+	warning(message);
 }
 
 } // End of namespace Sword25

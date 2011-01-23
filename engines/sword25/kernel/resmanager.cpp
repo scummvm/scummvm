@@ -32,15 +32,13 @@
  *
  */
 
+#include "sword25/sword25.h"	// for kDebugResource
 #include "sword25/kernel/resmanager.h"
-
 #include "sword25/kernel/resource.h"
 #include "sword25/kernel/resservice.h"
 #include "sword25/package/packagemanager.h"
 
 namespace Sword25 {
-
-#define BS_LOG_PREFIX "RESOURCEMANAGER"
 
 ResourceManager::~ResourceManager() {
 	// Clear all unlocked resources
@@ -49,7 +47,7 @@ ResourceManager::~ResourceManager() {
 	// All remaining resources are not released, so print warnings and release
 	Common::List<Resource *>::iterator iter = _resources.begin();
 	for (; iter != _resources.end(); ++iter) {
-		BS_LOG_WARNINGLN("Resource \"%s\" was not released.", (*iter)->getFileName().c_str());
+		warning("Resource \"%s\" was not released.", (*iter)->getFileName().c_str());
 
 		// Set the lock count to zero
 		while ((*iter)->getLockCount() > 0) {
@@ -68,7 +66,7 @@ ResourceManager::~ResourceManager() {
  */
 bool ResourceManager::registerResourceService(ResourceService *pService) {
 	if (!pService) {
-		BS_LOG_ERRORLN("Can't register NULL resource service.");
+		error("Can't register NULL resource service.");
 		return false;
 	}
 
@@ -136,7 +134,7 @@ Resource *ResourceManager::requestResource(const Common::String &fileName) {
 
 	// The resource was not found, therefore, must not be loaded yet
 	if (_logCacheMiss)
-		BS_LOG_WARNINGLN("\"%s\" was not precached.", uniqueFileName.c_str());
+		warning("\"%s\" was not precached.", uniqueFileName.c_str());
 
 	Resource *pResource = loadResource(uniqueFileName);
 	if (pResource) {
@@ -163,7 +161,7 @@ bool ResourceManager::precacheResource(const Common::String &fileName, bool forc
 
 	if (forceReload && resourcePtr) {
 		if (resourcePtr->getLockCount()) {
-			BS_LOG_ERRORLN("Could not force precaching of \"%s\". The resource is locked.", fileName.c_str());
+			error("Could not force precaching of \"%s\". The resource is locked.", fileName.c_str());
 			return false;
 		} else {
 			deleteResource(resourcePtr);
@@ -172,7 +170,8 @@ bool ResourceManager::precacheResource(const Common::String &fileName, bool forc
 	}
 
 	if (!resourcePtr && loadResource(uniqueFileName) == NULL) {
-		BS_LOG_ERRORLN("Could not precache \"%s\",", fileName.c_str());
+		// This isn't fatal - e.g. it can happen when loading saved games
+		debugC(kDebugResource, "Could not precache \"%s\",", fileName.c_str());
 		return false;
 	}
 
@@ -208,7 +207,7 @@ Resource *ResourceManager::loadResource(const Common::String &fileName) {
 			// Load the resource
 			Resource *pResource = _resourceServices[i]->loadResource(fileName);
 			if (!pResource) {
-				BS_LOG_ERRORLN("Responsible service could not load resource \"%s\".", fileName.c_str());
+				error("Responsible service could not load resource \"%s\".", fileName.c_str());
 				return NULL;
 			}
 
@@ -223,7 +222,8 @@ Resource *ResourceManager::loadResource(const Common::String &fileName) {
 		}
 	}
 
-	BS_LOG_ERRORLN("Could not find a service that can load \"%s\".", fileName.c_str());
+	// This isn't fatal - e.g. it can happen when loading saved games
+	debugC(kDebugResource, "Could not find a service that can load \"%s\".", fileName.c_str());
 	return NULL;
 }
 
@@ -235,14 +235,14 @@ Common::String ResourceManager::getUniqueFileName(const Common::String &fileName
 	// Get a pointer to the package manager
 	PackageManager *pPackage = (PackageManager *)_kernelPtr->getPackage();
 	if (!pPackage) {
-		BS_LOG_ERRORLN("Could not get package manager.");
+		error("Could not get package manager.");
 		return Common::String();
 	}
 
 	// Absoluten Pfad der Datei bekommen und somit die Eindeutigkeit des Dateinamens sicherstellen
 	Common::String uniquefileName = pPackage->getAbsolutePath(fileName);
 	if (uniquefileName.empty())
-		BS_LOG_ERRORLN("Could not create absolute file name for \"%s\".", fileName.c_str());
+		error("Could not create absolute file name for \"%s\".", fileName.c_str());
 
 	return uniquefileName;
 }
@@ -284,7 +284,7 @@ Resource *ResourceManager::getResource(const Common::String &uniquefileName) con
 void ResourceManager::dumpLockedResources() {
 	for (Common::List<Resource *>::iterator iter = _resources.begin(); iter != _resources.end(); ++iter) {
 		if ((*iter)->getLockCount() > 0) {
-			BS_LOGLN("%s", (*iter)->getFileName().c_str());
+			debugC(kDebugResource, "%s", (*iter)->getFileName().c_str());
 		}
 	}
 }

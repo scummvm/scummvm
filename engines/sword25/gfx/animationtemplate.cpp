@@ -32,8 +32,6 @@
  *
  */
 
-#define BS_LOG_PREFIX "ANIMATIONTEMPLATE"
-
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/resource.h"
 #include "sword25/kernel/outputpersistenceblock.h"
@@ -128,7 +126,7 @@ AnimationResource *AnimationTemplate::requestSourceAnimation(const Common::Strin
 	ResourceManager *RMPtr = Kernel::getInstance()->getResourceManager();
 	Resource *resourcePtr;
 	if (NULL == (resourcePtr = RMPtr->requestResource(sourceAnimation)) || resourcePtr->getType() != Resource::TYPE_ANIMATION) {
-		BS_LOG_ERRORLN("The resource \"%s\" could not be requested or is has an invalid type. The animation template can't be created.", sourceAnimation.c_str());
+		error("The resource \"%s\" could not be requested or is has an invalid type. The animation template can't be created.", sourceAnimation.c_str());
 		return 0;
 	}
 	return static_cast<AnimationResource *>(resourcePtr);
@@ -158,7 +156,7 @@ void AnimationTemplate::setFrame(int destIndex, int srcIndex) {
 
 bool AnimationTemplate::validateSourceIndex(uint index) const {
 	if (index > _sourceAnimationPtr->getFrameCount()) {
-		BS_LOG_WARNINGLN("Tried to insert a frame (\"%d\") that does not exist in the source animation (\"%s\"). Ignoring call.",
+		warning("Tried to insert a frame (\"%d\") that does not exist in the source animation (\"%s\"). Ignoring call.",
 		                 index, _sourceAnimationPtr->getFileName().c_str());
 		return false;
 	} else
@@ -167,7 +165,7 @@ bool AnimationTemplate::validateSourceIndex(uint index) const {
 
 bool AnimationTemplate::validateDestIndex(uint index) const {
 	if (index > _frames.size()) {
-		BS_LOG_WARNINGLN("Tried to change a nonexistent frame (\"%d\") in a template animation. Ignoring call.",
+		warning("Tried to change a nonexistent frame (\"%d\") in a template animation. Ignoring call.",
 		                 index);
 		return false;
 	} else

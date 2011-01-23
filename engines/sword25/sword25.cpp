@@ -49,8 +49,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "MAIN"
-
 const char *const PACKAGE_MANAGER = "archiveFS";
 const char *const DEFAULT_SCRIPT_FILE = "/system/boot.lua";
 
@@ -96,7 +94,7 @@ Common::Error Sword25Engine::appStart() {
 
 	// Kernel initialization
 	if (!Kernel::getInstance()->getInitSuccess()) {
-		BS_LOG_ERRORLN("Kernel initialization failed.");
+		error("Kernel initialization failed.");
 		return Common::kUnknownError;
 	}
 
@@ -113,7 +111,7 @@ Common::Error Sword25Engine::appStart() {
 	// Pass the command line to the script engine.
 	ScriptEngine *scriptPtr = Kernel::getInstance()->getScript();
 	if (!scriptPtr) {
-		BS_LOG_ERRORLN("Script intialization failed.");
+		error("Script intialization failed.");
 		return Common::kUnknownError;
 	}
 
@@ -142,9 +140,6 @@ bool Sword25Engine::appEnd() {
 	AnimationTemplateRegistry::destroy();
 	RenderObjectRegistry::destroy();
 	RegionRegistry::destroy();
-
-	// Free the log file if it was used
-	BS_Log::closeLog();
 
 	return true;
 }

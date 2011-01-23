@@ -41,8 +41,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "PANEL"
-
 Panel::Panel(RenderObjectPtr<RenderObject> parentPtr, int width, int height, uint color) :
 	RenderObject(parentPtr, RenderObject::TYPE_PANEL),
 	_color(color) {
@@ -52,12 +50,12 @@ Panel::Panel(RenderObjectPtr<RenderObject> parentPtr, int width, int height, uin
 	_height = height;
 
 	if (_width < 0) {
-		BS_LOG_ERRORLN("Tried to initialise a panel with an invalid width (%d).", _width);
+		error("Tried to initialise a panel with an invalid width (%d).", _width);
 		return;
 	}
 
 	if (_height < 0) {
-		BS_LOG_ERRORLN("Tried to initialise a panel with an invalid height (%d).", _height);
+		error("Tried to initialise a panel with an invalid height (%d).", _height);
 		return;
 	}
 

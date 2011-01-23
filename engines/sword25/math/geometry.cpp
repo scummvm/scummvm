@@ -32,17 +32,16 @@
  *
  */
 
+#include "sword25/sword25.h"	// for kDebugScript
 #include "sword25/math/geometry.h"
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "GEOMETRY"
-
 Geometry::Geometry(Kernel *pKernel) : Service(pKernel) {
 	if (!registerScriptBindings())
-		BS_LOG_ERRORLN("Script bindings could not be registered.");
+		error("Script bindings could not be registered.");
 	else
-		BS_LOGLN("Script bindings registered.");
+		debugC(kDebugScript, "Script bindings registered.");
 }
 
 

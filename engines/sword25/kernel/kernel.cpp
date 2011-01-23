@@ -33,6 +33,8 @@
  */
 
 #include "common/system.h"
+
+#include "sword25/sword25.h"	// for kDebugScript
 #include "sword25/gfx/graphicengine.h"
 #include "sword25/fmv/movieplayer.h"
 #include "sword25/input/inputengine.h"
@@ -44,8 +46,6 @@
 #include "sword25/sfx/soundengine.h"
 
 namespace Sword25 {
-
-#define BS_LOG_PREFIX "KERNEL"
 
 Kernel *Kernel::_instance = 0;
 
@@ -60,8 +60,6 @@ Kernel::Kernel() :
 	_fmv(0)
 	{
 
-	// Log that the kernel is beign created
-	BS_LOGLN("created.");
 	_instance = this;
 
 	// Create the resource manager
@@ -76,11 +74,11 @@ Kernel::Kernel() :
 
 	// Register kernel script bindings
 	if (!registerScriptBindings()) {
-		BS_LOG_ERRORLN("Script bindings could not be registered.");
+		error("Script bindings could not be registered.");
 		_initSuccess = false;
 		return;
 	}
-	BS_LOGLN("Script bindings registered.");
+	debugC(kDebugScript, "Script bindings registered.");
 
 	_input = new InputEngine(this);
 	assert(_input);
@@ -133,8 +131,6 @@ Kernel::~Kernel() {
 
 	// Resource-Manager freigeben
 	delete _resourceManager;
-
-	BS_LOGLN("destroyed.");
 }
 
 /**

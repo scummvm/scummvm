@@ -32,8 +32,6 @@
  *
  */
 
-#define BS_LOG_PREFIX "OUTPUTPERSISTENCEBLOCK"
-
 #include "sword25/kernel/outputpersistenceblock.h"
 
 namespace {

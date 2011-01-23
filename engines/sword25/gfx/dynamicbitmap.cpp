@@ -39,8 +39,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "DYNAMICBITMAP"
-
 DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> parentPtr, uint width, uint height) :
 	Bitmap(parentPtr, TYPE_DYNAMICBITMAP) {
 	// Das BS_Bitmap konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
@@ -124,7 +122,7 @@ bool DynamicBitmap::persist(OutputPersistenceBlock &writer) {
 
 	// Bilddaten werden nicht gespeichert. Dies ist auch nicht weiter von bedeutung, da BS_DynamicBitmap nur vom Videoplayer benutzt wird.
 	// Während ein Video abläuft kann niemals gespeichert werden. BS_DynamicBitmap kann nur der Vollständigkeit halber persistiert werden.
-	BS_LOG_WARNINGLN("Persisting a BS_DynamicBitmap. Bitmap content is not persisted.");
+	warning("Persisting a BS_DynamicBitmap. Bitmap content is not persisted.");
 
 	result &= RenderObject::persistChildren(writer);
 
@@ -140,7 +138,7 @@ bool DynamicBitmap::unpersist(InputPersistenceBlock &reader) {
 	result &= createRenderedImage(_width, _height);
 
 	// Bilddaten werden nicht gespeichert (s.o.).
-	BS_LOG_WARNINGLN("Unpersisting a BS_DynamicBitmap. Bitmap contents are missing.");
+	warning("Unpersisting a BS_DynamicBitmap. Bitmap contents are missing.");
 
 	// Bild mit durchsichtigen Bilddaten initialisieren.
 	byte *transparentImageData = (byte *)calloc(_width * _height * 4, 1);

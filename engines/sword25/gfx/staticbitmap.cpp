@@ -40,8 +40,6 @@
 
 namespace Sword25 {
 
-#define BS_LOG_PREFIX "STATICBITMAP"
-
 StaticBitmap::StaticBitmap(RenderObjectPtr<RenderObject> parentPtr, const Common::String &filename) :
 	Bitmap(parentPtr, TYPE_STATICBITMAP) {
 	// Das BS_Bitmap konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
@@ -60,11 +58,11 @@ bool StaticBitmap::initBitmapResource(const Common::String &filename) {
 	// Bild-Resource laden
 	Resource *resourcePtr = Kernel::getInstance()->getResourceManager()->requestResource(filename);
 	if (!resourcePtr) {
-		BS_LOG_ERRORLN("Could not request resource \"%s\".", filename.c_str());
+		warning("Could not request resource \"%s\".", filename.c_str());
 		return false;
 	}
 	if (resourcePtr->getType() != Resource::TYPE_BITMAP) {
-		BS_LOG_ERRORLN("Requested resource \"%s\" is not a bitmap.", filename.c_str());
+		error("Requested resource \"%s\" is not a bitmap.", filename.c_str());
 		return false;
 	}
 
@@ -130,7 +128,7 @@ uint StaticBitmap::getPixel(int x, int y) const {
 }
 
 bool StaticBitmap::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
-	BS_LOG_ERRORLN("SetContent() ist not supported with this object.");
+	error("SetContent() ist not supported with this object.");
 	return false;
 }
 
