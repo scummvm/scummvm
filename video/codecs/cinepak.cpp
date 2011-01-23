@@ -23,7 +23,7 @@
  *
  */
 
-#include "graphics/video/codecs/cinepak.h"
+#include "video/codecs/cinepak.h"
 
 #include "common/system.h"
 

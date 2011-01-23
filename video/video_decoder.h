@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GRAPHICS_VIDEO_DECODER_H
-#define GRAPHICS_VIDEO_DECODER_H
+#ifndef VIDEO_DECODER_H
+#define VIDEO_DECODER_H
 
 #include "common/events.h"
 #include "common/list.h"

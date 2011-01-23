@@ -23,11 +23,11 @@
  *
  */
 
-#ifndef GRAPHICS_AVI_PLAYER_H
-#define GRAPHICS_AVI_PLAYER_H
+#ifndef VIDEO_AVI_PLAYER_H
+#define VIDEO_AVI_PLAYER_H
 
-#include "graphics/video/video_decoder.h"
-#include "graphics/video/codecs/codec.h"
+#include "video/video_decoder.h"
+#include "video/codecs/codec.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 

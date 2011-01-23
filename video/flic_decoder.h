@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef GRAPHICS_VIDEO_FLICDECODER_H
-#define GRAPHICS_VIDEO_FLICDECODER_H
+#ifndef VIDEO_FLICDECODER_H
+#define VIDEO_FLICDECODER_H
 
-#include "graphics/video/video_decoder.h"
+#include "video/video_decoder.h"
 #include "common/list.h"
 #include "common/rect.h"
 

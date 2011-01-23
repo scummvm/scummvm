@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef GRAPHICS_VIDEO_SMK_PLAYER_H
-#define GRAPHICS_VIDEO_SMK_PLAYER_H
+#ifndef VIDEO_SMK_PLAYER_H
+#define VIDEO_SMK_PLAYER_H
 
-#include "graphics/video/video_decoder.h"
+#include "video/video_decoder.h"
 #include "sound/mixer.h"
 
 namespace Audio {

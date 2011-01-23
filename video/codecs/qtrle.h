@@ -23,11 +23,11 @@
  *
  */
 
-#ifndef GRAPHICS_VIDEO_QTRLE_H
-#define GRAPHICS_VIDEO_QTRLE_H
+#ifndef VIDEO_CODECS_QTRLE_H
+#define VIDEO_CODECS_QTRLE_H
 
 #include "graphics/pixelformat.h"
-#include "graphics/video/codecs/codec.h"
+#include "video/codecs/codec.h"
 
 namespace Graphics {
 

@@ -26,7 +26,7 @@
 #include "common/system.h"
 #include "graphics/conversion.h" // For YUV2RGB
 
-#include "graphics/video/codecs/mjpeg.h"
+#include "video/codecs/mjpeg.h"
 
 namespace Graphics {
 

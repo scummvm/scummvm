@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GRAPHICS_QDM2DATA_H
-#define GRAPHICS_QDM2DATA_H
+#ifndef VIDEO_CODECS_QDM2DATA_H
+#define VIDEO_CODECS_QDM2DATA_H
 
 #include "common/scummsys.h"
 

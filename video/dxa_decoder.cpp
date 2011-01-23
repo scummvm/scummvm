@@ -30,7 +30,7 @@
 #include "common/stream.h"
 #include "common/util.h"
 
-#include "graphics/video/dxa_decoder.h"
+#include "video/dxa_decoder.h"
 
 #ifdef USE_ZLIB
   #include "common/zlib.h"

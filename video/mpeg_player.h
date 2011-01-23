@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GRAPHICS_VIDEO_MPEG_PLAYER_H
-#define GRAPHICS_VIDEO_MPEG_PLAYER_H
+#ifndef VIDEO_MPEG_PLAYER_H
+#define VIDEO_MPEG_PLAYER_H
 
 #include "common/scummsys.h"
 #include "graphics/pixelformat.h"

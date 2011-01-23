@@ -28,9 +28,9 @@
 #ifndef SWORD2_ANIMATION_H
 #define SWORD2_ANIMATION_H
 
-#include "graphics/video/dxa_decoder.h"
-#include "graphics/video/smk_decoder.h"
-#include "graphics/video/video_decoder.h"
+#include "video/dxa_decoder.h"
+#include "video/smk_decoder.h"
+#include "video/video_decoder.h"
 #include "sound/mixer.h"
 
 #include "sword2/screen.h"

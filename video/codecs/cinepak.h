@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GRAPHICS_CINEPAK_H
-#define GRAPHICS_CINEPAK_H
+#ifndef VIDEO_CODECS_CINEPAK_H
+#define VIDEO_CODECS_CINEPAK_H
 
 #include "common/scummsys.h"
 #include "common/stream.h"
@@ -32,7 +32,7 @@
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 
-#include "graphics/video/codecs/codec.h"
+#include "video/codecs/codec.h"
 
 namespace Graphics {
 

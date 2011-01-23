@@ -23,12 +23,12 @@
  *
  */
 
-#ifndef GRAPHICS_MJPEG_H
-#define GRAPHICS_MJPEG_H
+#ifndef VIDEO_CODECS_MJPEG_H
+#define VIDEO_CODECS_MJPEG_H
 
 #include "common/scummsys.h"
 
-#include "graphics/video/codecs/codec.h"
+#include "video/codecs/codec.h"
 #include "graphics/jpeg.h"
 #include "graphics/pixelformat.h"
 

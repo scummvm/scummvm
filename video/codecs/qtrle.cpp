@@ -26,7 +26,7 @@
 // QuickTime RLE Decoder
 // Based off ffmpeg's QuickTime RLE decoder (written by Mike Melanson)
 
-#include "graphics/video/codecs/qtrle.h"
+#include "video/codecs/qtrle.h"
 
 #include "common/scummsys.h"
 #include "common/stream.h"

@@ -23,7 +23,7 @@
  *
  */
 
-#include "graphics/video/video_decoder.h"
+#include "video/video_decoder.h"
 
 #include "common/file.h"
 #include "common/system.h"

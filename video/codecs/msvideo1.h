@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef GRAPHICS_MSVIDEO1_H
-#define GRAPHICS_MSVIDEO1_H
+#ifndef VIDEO_CODECS_MSVIDEO1_H
+#define VIDEO_CODECS_MSVIDEO1_H
 
-#include "graphics/video/codecs/codec.h"
+#include "video/codecs/codec.h"
 
 namespace Graphics {
 

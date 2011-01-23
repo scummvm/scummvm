@@ -31,7 +31,7 @@
 // Seek function by Gael Chardon gael.dev@4now.net
 //
 
-#include "graphics/video/qt_decoder.h"
+#include "video/qt_decoder.h"
 
 #include "common/debug.h"
 #include "common/endian.h"
@@ -43,15 +43,15 @@
 // Audio codecs
 #include "sound/decoders/adpcm.h"
 #include "sound/decoders/raw.h"
-#include "graphics/video/codecs/qdm2.h"
+#include "video/codecs/qdm2.h"
 
 // Video codecs
-#include "graphics/video/codecs/cinepak.h"
-#include "graphics/video/codecs/mjpeg.h"
-#include "graphics/video/codecs/qtrle.h"
-#include "graphics/video/codecs/rpza.h"
-#include "graphics/video/codecs/smc.h"
-#include "graphics/video/codecs/cdtoons.h"
+#include "video/codecs/cinepak.h"
+#include "video/codecs/mjpeg.h"
+#include "video/codecs/qtrle.h"
+#include "video/codecs/rpza.h"
+#include "video/codecs/smc.h"
+#include "video/codecs/cdtoons.h"
 
 namespace Graphics {
 

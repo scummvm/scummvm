@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef GRAPHICS_VIDEO_DXA_PLAYER_H
-#define GRAPHICS_VIDEO_DXA_PLAYER_H
+#ifndef VIDEO_DXA_DECODER_H
+#define VIDEO_DXA_DECODER_H
 
-#include "graphics/video/video_decoder.h"
+#include "video/video_decoder.h"
 
 namespace Graphics {
 

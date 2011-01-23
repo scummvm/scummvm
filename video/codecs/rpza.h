@@ -23,11 +23,11 @@
  *
  */
 
-#ifndef GRAPHICS_VIDEO_RPZA_H
-#define GRAPHICS_VIDEO_RPZA_H
+#ifndef VIDEO_CODECS_RPZA_H
+#define VIDEO_CODECS_RPZA_H
 
 #include "graphics/pixelformat.h"
-#include "graphics/video/codecs/codec.h"
+#include "video/codecs/codec.h"
 
 namespace Graphics {
 

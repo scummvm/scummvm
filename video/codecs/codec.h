@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GRAPHICS_CODEC_H
-#define GRAPHICS_CODEC_H
+#ifndef VIDEO_CODECS_CODEC_H
+#define VIDEO_CODECS_CODEC_H
 
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"

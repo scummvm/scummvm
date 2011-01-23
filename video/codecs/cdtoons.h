@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef GRAPHICS_VIDEO_CDTOONS_H
-#define GRAPHICS_VIDEO_CDTOONS_H
+#ifndef VIDEO_CODECS_CDTOONS_H
+#define VIDEO_CODECS_CDTOONS_H
 
-#include "graphics/video/codecs/codec.h"
+#include "video/codecs/codec.h"
 
 #include "common/hashmap.h"
 

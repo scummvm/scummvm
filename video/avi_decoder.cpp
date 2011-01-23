@@ -31,18 +31,18 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
-#include "graphics/video/avi_decoder.h"
+#include "video/avi_decoder.h"
 
 // Audio Codecs
 #include "sound/decoders/adpcm.h"
 #include "sound/decoders/raw.h"
 
 // Video Codecs
-#include "graphics/video/codecs/cinepak.h"
-#include "graphics/video/codecs/indeo3.h"
-#include "graphics/video/codecs/msvideo1.h"
-#include "graphics/video/codecs/msrle.h"
-#include "graphics/video/codecs/truemotion1.h"
+#include "video/codecs/cinepak.h"
+#include "video/codecs/indeo3.h"
+#include "video/codecs/msvideo1.h"
+#include "video/codecs/msrle.h"
+#include "video/codecs/truemotion1.h"
 
 namespace Graphics {
 

@@ -40,7 +40,7 @@
 
 #include "graphics/conversion.h"
 
-#include "graphics/video/codecs/indeo3.h"
+#include "video/codecs/indeo3.h"
 
 namespace Graphics {
 

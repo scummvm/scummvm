@@ -30,14 +30,14 @@
 
 #else
 
-#ifndef GRAPHICS_VIDEO_COKTELDECODER_H
-#define GRAPHICS_VIDEO_COKTELDECODER_H
+#ifndef VIDEO_COKTELDECODER_H
+#define VIDEO_COKTELDECODER_H
 
 #include "common/list.h"
 #include "common/array.h"
 #include "common/rect.h"
 
-#include "graphics/video/video_decoder.h"
+#include "video/video_decoder.h"
 
 #include "sound/mixer.h"
 
@@ -515,6 +515,6 @@ private:
 
 } // End of namespace Graphics
 
-#endif // GRAPHICS_VIDEO_COKTELDECODER_H
+#endif // VIDEO_COKTELDECODER_H
 
 #endif // Engine and dynamic plugins guard

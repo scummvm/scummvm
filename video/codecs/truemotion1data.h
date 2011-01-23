@@ -26,8 +26,8 @@
 // Based on the TrueMotion 1 decoder by Alex Beregszaszi & Mike Melanson in FFmpeg
 // These tables were originally part of VpVision from On2
 
-#ifndef GRAPHICS_TRUEMOTION1DATA_H
-#define GRAPHICS_TRUEMOTION1DATA_H
+#ifndef VIDEO_CODECS_TRUEMOTION1DATA_H
+#define VIDEO_CODECS_TRUEMOTION1DATA_H
 
 #include "common/scummsys.h"
 

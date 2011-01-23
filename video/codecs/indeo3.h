@@ -34,10 +34,10 @@
  * written, produced, and directed by Alan Smithee
  */
 
-#ifndef GRAPHICS_INDEO3_H
-#define GRAPHICS_INDEO3_H
+#ifndef VIDEO_CODECS_INDEO3_H
+#define VIDEO_CODECS_INDEO3_H
 
-#include "graphics/video/codecs/codec.h"
+#include "video/codecs/codec.h"
 
 namespace Graphics {
 
@@ -89,6 +89,6 @@ private:
 
 } // End of namespace Graphics
 
-#endif // GRAPHICS_INDEO3_H
+#endif // VIDEO_CODECS_INDEO3_H
 
 #endif // USE_INDEO3

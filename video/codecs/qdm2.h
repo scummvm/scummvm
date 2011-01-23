@@ -26,8 +26,8 @@
 // Only compile if Mohawk is enabled or if we're building dynamic modules
 #if defined(ENABLE_MOHAWK) || defined(DYNAMIC_MODULES)
 
-#ifndef GRAPHICS_QDM2_H
-#define GRAPHICS_QDM2_H
+#ifndef VIDEO_CODECS_QDM2_H
+#define VIDEO_CODECS_QDM2_H
 
 namespace Common {
 	class SeekableReadStream;
@@ -50,5 +50,5 @@ Audio::AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::S
 
 } // End of namespace Graphics
 
-#endif // GRAPHICS_QDM2_H
+#endif // VIDEO_CODECS_QDM2_H
 #endif // Mohawk/Plugins guard

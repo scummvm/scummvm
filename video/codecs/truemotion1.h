@@ -28,10 +28,10 @@
 // Only compile if SCI32 is enabled or if we're building dynamic modules
 #if defined(ENABLE_SCI32) || defined(DYNAMIC_MODULES)
 
-#ifndef GRAPHICS_TRUEMOTION1_H
-#define GRAPHICS_TRUEMOTION1_H
+#ifndef VIDEO_CODECS_TRUEMOTION1_H
+#define VIDEO_CODECS_TRUEMOTION1_H
  
-#include "graphics/video/codecs/codec.h"
+#include "video/codecs/codec.h"
 
 namespace Graphics {
 
@@ -102,5 +102,5 @@ private:
 
 } // End of namespace Graphics
 
-#endif // GRAPHICS_TRUEMOTION1_H
+#endif // VIDEO_CODECS_TRUEMOTION1_H
 #endif // SCI32/Plugins guard

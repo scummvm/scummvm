@@ -25,7 +25,7 @@
 
  // Based off ffmpeg's RPZA decoder
 
-#include "graphics/video/codecs/rpza.h"
+#include "video/codecs/rpza.h"
 
 #include "common/system.h"
 #include "common/stream.h"

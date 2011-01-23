@@ -25,12 +25,12 @@
 
 #include "common/scummsys.h"
 
-#include "graphics/video/coktel_decoder.h"
+#include "video/coktel_decoder.h"
 
-#include "graphics/video/codecs/codec.h"
-#include "graphics/video/codecs/indeo3.h"
+#include "video/codecs/codec.h"
+#include "video/codecs/indeo3.h"
 
-#ifdef GRAPHICS_VIDEO_COKTELDECODER_H
+#ifdef VIDEO_COKTELDECODER_H
 
 #include "sound/audiostream.h"
 #include "sound/decoders/raw.h"
@@ -2754,4 +2754,4 @@ bool VMDDecoder::isPaletted() const {
 
 } // End of namespace Graphics
 
-#endif // GRAPHICS_VIDEO_COKTELDECODER_H
+#endif // VIDEO_COKTELDECODER_H

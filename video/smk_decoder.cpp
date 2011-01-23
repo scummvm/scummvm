@@ -27,7 +27,7 @@
 // and the FFmpeg Smacker decoder (libavcodec/smacker.c), revision 16143
 // http://git.ffmpeg.org/?p=ffmpeg;a=blob;f=libavcodec/smacker.c;hb=b8437a00a2f14d4a437346455d624241d726128e
 
-#include "graphics/video/smk_decoder.h"
+#include "video/smk_decoder.h"
 
 #include "common/archive.h"
 #include "common/endian.h"

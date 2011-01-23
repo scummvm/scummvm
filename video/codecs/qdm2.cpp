@@ -26,12 +26,12 @@
 // Based off ffmpeg's QDM2 decoder
 
 #include "common/scummsys.h"
-#include "graphics/video/codecs/qdm2.h"
+#include "video/codecs/qdm2.h"
 
 #ifdef GRAPHICS_QDM2_H
 
 #include "sound/audiostream.h"
-#include "graphics/video/codecs/qdm2data.h"
+#include "video/codecs/qdm2data.h"
 
 #include "common/array.h"
 #include "common/stream.h"

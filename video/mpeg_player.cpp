@@ -86,7 +86,7 @@
 // BASIS, AND BROWN UNIVERSITY HAS NO OBLIGATION TO PROVIDE MAINTENANCE,
 // SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-#include "graphics/video/mpeg_player.h"
+#include "video/mpeg_player.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"
