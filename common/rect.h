@@ -43,6 +43,18 @@ struct Point {
 	Point(int16 x1, int16 y1) : x(x1), y(y1) {}
 	bool operator==(const Point &p) const { return x == p.x && y == p.y; }
 	bool operator!=(const Point &p) const { return x != p.x || y != p.y; }
+	Point operator+(const Point &delta) const {	return Point(x + delta.x, y + delta.y);	}
+	Point operator-(const Point &delta) const {	return Point(x - delta.x, y - delta.y);	}
+
+	void operator+=(const Point &delta) {
+		x += delta.x;
+		y += delta.y;
+	}
+
+	void operator-=(const Point &delta) {
+		x -= delta.x;
+		y -= delta.y;
+	}
 
 	/**
 	 * Return the square of the distance between this point and the point p.
