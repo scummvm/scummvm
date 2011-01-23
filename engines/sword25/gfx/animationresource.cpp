@@ -170,12 +170,12 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 
 	frame.hotspotX = 0;
 	if (hotspotxString && !parseIntegerKey(hotspotxString, 1, &frame.hotspotX))
-		warning("Illegal hotspotx value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
+		warning("Illegal hotspotx value (\"%s\") in frame tag in \"%s\". Assuming default (\"%d\").",
 		                 hotspotxString, getFileName().c_str(), frame.hotspotX);
 
 	frame.hotspotY = 0;
 	if (hotspotyString && !parseIntegerKey(hotspotyString, 1, &frame.hotspotY))
-		warning("Illegal hotspoty value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
+		warning("Illegal hotspoty value (\"%s\") in frame tag in \"%s\". Assuming default (\"%d\").",
 		                 hotspotyString, getFileName().c_str(), frame.hotspotY);
 
 	Common::String flipVString = node->values["flipv"];
