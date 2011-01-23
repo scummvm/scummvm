@@ -145,6 +145,10 @@ protected:
 	static const int kRectListSize = 16;            // Size of add/restore rect lists
 	static const int kBlitListSize = kRectListSize * 2; // Size of dirty rect blit list
 
+	inline bool isInX(int16 x, rect_t *rect);
+	inline bool isInY(int16 y, rect_t *rect);
+	inline bool isOverlaping(rect_t *rectA, rect_t *rectB);
+
 	bool fontLoadedFl[kNumFonts];
 
 	// Fonts used in dib (non-GDI)

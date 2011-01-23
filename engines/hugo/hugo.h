@@ -405,6 +405,9 @@ public:
 		return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 	}
 
+	const char *getCopyrightString() { return "Copyright 1989-1997 David P Gray, All Rights Reserved."; }
+
+
 	FileManager *_file;
 	Scheduler *_scheduler;
 	Screen *_screen;

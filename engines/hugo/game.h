@@ -42,34 +42,8 @@ class SeekableReadStream;
 
 namespace Hugo {
 
-// WARNING!!
-// Type "PPG" in the game to enter cheat mode.
-
-#define COPYRIGHT   "Copyright 1989-1997 David P Gray, All Rights Reserved."
-
-// Started code on 04/01/95
-// VER "1.0"  // 10/01/95 Initial Release
-// VER "1.1"  // 10/06/95 Restore system volume levels on exit
-// VER "v1.2" // 10/12/95 Added "background music" checkbox in volume dlg
-// VER "v1.3" // 10/23/95 Support game 1 as shareware
-// VER "v1.4" // 12/06/95 Faster graphics, logical palette
-// VER "v1.5" // 10/07/97 Added order form, new web site
-
 // Game specific equates
-#define TAKE_TEXT      "Picked up the %s ok."
-
-// Only for non-database
-#define BKGEXT         ".PCX"                       // Extension of background files
-#define OBJEXT         ".PIX"                       // Extension of object picture files
-
-// Name scenery and objects picture databases
-#define OBJECTS_FILE   "objects.dat"
-#define STRING_FILE    "strings.dat"
-#define SOUND_FILE     "sounds.dat"
-
-// User interface database (Windows Only)
-// This file contains, between others, the bitmaps of the fonts used in the application
-#define UIF_FILE   "uif.dat"
+#define TAKE_TEXT   "Picked up the %s ok."
 
 enum {LOOK_NAME = 1, TAKE_NAME};                    // Index of name used in showing takeables and in confirming take
 

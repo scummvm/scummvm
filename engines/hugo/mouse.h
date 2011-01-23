@@ -43,7 +43,7 @@ public:
 private:
 	HugoEngine *_vm;
 
-	#define CURSOR_NOCHAR  '~'                          // Don't show name of object under cursor
+	static const char kCursorNochar = '~';              // Don't show name of object under cursor
 
 	static const int kExitHotspot = -4;                 // Cursor over Exit hotspot
 	static const int kCursorNameIndex = 2;              // Index of name used under cursor

@@ -33,14 +33,7 @@
 #ifndef HUGO_FILE_H
 #define HUGO_FILE_H
 
-// TODO get rid of those defines
-#define HELPFILE "help.dat"
-#define BOOTFILE "HUGO.BSF"                         // Name of boot structure file
-#define EOP '#'                                     // Marks end of a page in help file
-
 namespace Hugo {
-
-
 /**
 * Enumerate overlay file types
 */
@@ -60,6 +53,14 @@ public:
 	void     readUIFItem(int16 id, byte *buf);
 	bool     restoreGame(int16 slot);
 	bool     saveGame(int16 slot, Common::String descrip);
+
+	// Name scenery and objects picture databases
+	const char *getBootFilename()    { return "HUGO.BSF";    }
+	const char *getObjectFilename()  { return "objects.dat"; }
+	const char *getSceneryFilename() { return "scenery.dat"; }
+	const char *getSoundFilename()   { return "sounds.dat";  }
+	const char *getStringFilename()  { return "strings.dat"; }
+	const char *getUifFilename()     { return "uif.dat";     }
 
 	virtual void openDatabaseFiles() = 0;
 	virtual void closeDatabaseFiles() = 0;

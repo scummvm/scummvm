@@ -110,7 +110,7 @@ char *FileManager_v1d::fetchString(int index) {
 */
 void FileManager_v1d::instructions() {
 	Common::File f;
-	if (!f.open(HELPFILE)) {
+	if (!f.open("help.dat")) {
 		warning("help.dat not found");
 		return;
 	}
@@ -123,7 +123,7 @@ void FileManager_v1d::instructions() {
 		wrkLine++;
 		do {
 			f.read(wrkLine, 1);
-		} while (*wrkLine++ != EOP);
+		} while (*wrkLine++ != '#');                // '#' is EOP
 		wrkLine[-2] = '\0';                         // Remove EOP and previous CR
 		Utils::Box(kBoxAny, "%s", line);
 		wrkLine = line;

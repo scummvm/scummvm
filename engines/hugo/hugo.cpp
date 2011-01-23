@@ -1286,7 +1286,7 @@ void HugoEngine::endGame() {
 
 	if (!_boot.registered)
 		Utils::Box(kBoxAny, "%s", _textEngine[kEsAdvertise]);
-	Utils::Box(kBoxAny, "%s\n%s", _episode, COPYRIGHT);
+	Utils::Box(kBoxAny, "%s\n%s", _episode, getCopyrightString());
 	_status.viewState = kViewExit;
 }
 

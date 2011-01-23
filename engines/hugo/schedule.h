@@ -37,8 +37,6 @@
 
 namespace Hugo {
 
-#define SIGN(X)       ((X < 0) ? -1 : 1)
-
 struct act0 {                                       // Type 0 - Schedule
 	action_t actType;                               // The type of action
 	int      timer;                                 // Time to set off the action

@@ -35,8 +35,6 @@
 
 #include "common/file.h"
 
-#define BOUND(X, Y)     ((_vm->getBoundaryOverlay()[Y * kCompLineSize + X / 8] & (0x80 >> X % 8)) != 0)  // Boundary bit set
-
 namespace Hugo {
 
 class ObjectHandler {
@@ -101,6 +99,10 @@ protected:
 	uint16     _objCount;
 
 	void restoreSeq(object_t *obj);
+
+	inline bool checkBoundary(int16 x, int16 y);
+	template <typename T> 
+	inline int sign(T a) { if ( a < 0) return -1; else return 1; }
 };
 
 class ObjectHandler_v1d : public ObjectHandler {

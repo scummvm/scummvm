@@ -261,7 +261,7 @@ void MouseHandler::mouseHandler() {
 			// Display object name next to cursor (unless CURSOR_NOCHAR)
 			// Note test for swapped hero name
 			char *name = _vm->_arrayNouns[_vm->_object->_objects[(objId == kHeroIndex) ? _vm->_heroImage : objId].nounIndex][kCursorNameIndex];
-			if (name[0] != CURSOR_NOCHAR)
+			if (name[0] != kCursorNochar)
 				cursorText(name, cx, cy, U_FONT8, _TBRIGHTWHITE);
 
 			// Process right click over object in view or iconbar

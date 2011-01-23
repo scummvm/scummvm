@@ -314,14 +314,14 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 	bool foundFl = true;
 	// Try left rear corner
 	for (int16 x = *destx = obj->x + curImage->x1; x < *destx + kHeroMaxWidth; x++) {
-		if (BOUND(x, y))
+		if (checkBoundary(x, y))
 			foundFl = false;
 	}
 
 	if (!foundFl) {                                 // Try right rear corner
 		foundFl = true;
 		for (int16 x = *destx = obj->x + curImage->x2 - kHeroMaxWidth + 1; x <= obj->x + (int16)curImage->x2; x++) {
-			if (BOUND(x, y))
+			if (checkBoundary(x, y))
 				foundFl = false;
 		}
 	}
@@ -330,7 +330,7 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 		foundFl = true;
 		y += 2;
 		for (int16 x = *destx = obj->x + curImage->x1; x < *destx + kHeroMaxWidth; x++) {
-			if (BOUND(x, y))
+			if (checkBoundary(x, y))
 				foundFl = false;
 		}
 	}
@@ -338,7 +338,7 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 	if (!foundFl) {                                 // Try right rear corner
 		foundFl = true;
 		for (int16 x = *destx = obj->x + curImage->x2 - kHeroMaxWidth + 1; x <= obj->x + (int16)curImage->x2; x++) {
-			if (BOUND(x, y))
+			if (checkBoundary(x, y))
 				foundFl = false;
 		}
 	}
@@ -573,7 +573,7 @@ int ObjectHandler::calcMaxScore() {
 	int score = 0;
 	for (int i = 0; i < _numObj; i++)
 		score += _objects[i].objValue;
-	return(score);
+	return score;
 }
 
 /**
@@ -584,6 +584,11 @@ void ObjectHandler::readObjectImages() {
 
 	for (int i = 0; i < _numObj; i++)
 		_vm->_file->readImage(i, &_objects[i]);
+}
+
+bool ObjectHandler::checkBoundary(int16 x, int16 y) {
+	// Check if Boundary bit set
+	return (_vm->getBoundaryOverlay()[y * kCompLineSize + x / 8] & (0x80 >> x % 8)) != 0;
 }
 
 } // End of namespace Hugo

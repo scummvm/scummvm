@@ -51,12 +51,12 @@ FileManager_v2d::~FileManager_v2d() {
 void FileManager_v2d::openDatabaseFiles() {
 	debugC(1, kDebugFile, "openDatabaseFiles");
 
-	if (!_stringArchive.open(STRING_FILE))
-		error("File not found: %s", STRING_FILE);
-	if (!_sceneryArchive1.open("scenery.dat"))
-		error("File not found: scenery.dat");
-	if (!_objectsArchive.open(OBJECTS_FILE))
-		error("File not found: %s", OBJECTS_FILE);
+	if (!_stringArchive.open(getStringFilename()))
+		error("File not found: %s", getStringFilename());
+	if (!_sceneryArchive1.open(getSceneryFilename()))
+		error("File not found: %s", getSceneryFilename());
+	if (!_objectsArchive.open(getObjectFilename()))
+		error("File not found: %s", getObjectFilename());
 }
 
 /**

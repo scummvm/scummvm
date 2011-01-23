@@ -41,11 +41,6 @@
 #include "hugo/util.h"
 
 namespace Hugo {
-
-#define INX(X, B) (X >= B->x && X <= B->x + B->dx)
-#define INY(Y, B) (Y >= B->y && Y <= B->y + B->dy)
-#define OVERLAP(A, B) ((INX(A->x, B) || INX(A->x + A->dx, B) || INX(B->x, A) || INX(B->x + B->dx, A)) && (INY(A->y, B) || INY(A->y + A->dy, B) || INY(B->y, A) || INY(B->y + B->dy, A)))
-
 Screen::Screen(HugoEngine *vm) : _vm(vm), _mainPalette(0), _curPalette(0) {
 	for (int i = 0; i < kNumFonts; i++) {
 		_arrayFont[i] = 0;
@@ -264,7 +259,7 @@ int16 Screen::mergeLists(rect_t *list, rect_t *blist, int16 len, int16 blen, int
 		rect_t *bp = blist;
 		for (int16 b = 0; b < blen; b++, bp++) {
 			if (bp->dx)                             // blist entry used
-				if (OVERLAP(list, bp))
+				if (isOverlaping(list, bp))
 					coalesce[c++] = b;
 		}
 
@@ -592,6 +587,19 @@ void Screen::hideCursor() {
 	CursorMan.showMouse(false);
 }
 
+bool Screen::isInX(int16 x, rect_t *rect) {
+	return (x >= rect->x) && (x <= rect->x + rect->dx);
+}
+
+bool Screen::isInY(int16 y, rect_t *rect) {
+	return (y >= rect->y) && (y <= rect->y + rect->dy);
+}
+
+bool Screen::isOverlaping(rect_t *rectA, rect_t *rectB) {
+	return (isInX(rectA->x, rectB) || isInX(rectA->x + rectA->dx, rectB) || isInX(rectB->x, rectA) || isInX(rectB->x + rectB->dx, rectA)) && 
+		   (isInY(rectA->y, rectB) || isInY(rectA->y + rectA->dy, rectB) || isInY(rectB->y, rectA) || isInY(rectB->y + rectB->dy, rectA));
+}
+
 Screen_v1d::Screen_v1d(HugoEngine *vm) : Screen(vm) {
 }
 
@@ -698,5 +706,6 @@ void Screen_v1w::loadFontArr(Common::File &in) {
 			in.readByte();
 	}
 }
+
 } // End of namespace Hugo
 

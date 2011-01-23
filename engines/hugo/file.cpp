@@ -170,10 +170,10 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 		_objectsArchive.seek(objBlock.objOffset, SEEK_SET);
 	} else {
 		char *buf = (char *) malloc(2048 + 1);      // Buffer for file access
-		strcat(strcat(strcpy(buf, _vm->_picDir), _vm->_arrayNouns[objPtr->nounIndex][0]), OBJEXT);
+		strcat(strcat(strcpy(buf, _vm->_picDir), _vm->_arrayNouns[objPtr->nounIndex][0]), ".PIX");
 		if (!_objectsArchive.open(buf)) {
-			warning("File %s not found, trying again with %s%s", buf, _vm->_arrayNouns[objPtr->nounIndex][0], OBJEXT);
-			strcat(strcpy(buf, _vm->_arrayNouns[objPtr->nounIndex][0]), OBJEXT);
+			warning("File %s not found, trying again with %s%s", buf, _vm->_arrayNouns[objPtr->nounIndex][0], ".PIX");
+			strcat(strcpy(buf, _vm->_arrayNouns[objPtr->nounIndex][0]), ".PIX");
 			if (!_objectsArchive.open(buf))
 				error("File not found: %s", buf);
 		}
@@ -257,8 +257,8 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 
 	// Open sounds file
 	Common::File fp;                                // Handle to SOUND_FILE
-	if (!fp.open(SOUND_FILE)) {
-		warning("Hugo Error: File not found %s", SOUND_FILE);
+	if (!fp.open(getSoundFilename())) {
+		warning("Hugo Error: File not found %s", getSoundFilename());
 		return 0;
 	}
 
@@ -268,13 +268,13 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 
 	if (!has_read_header) {
 		if (fp.read(s_hdr, sizeof(s_hdr)) != sizeof(s_hdr))
-			error("Wrong sound file format: %s", SOUND_FILE);
+			error("Wrong sound file format");
 		has_read_header = true;
 	}
 
 	*size = s_hdr[sound].size;
 	if (*size == 0)
-		error("Wrong sound file format or missing sound %d: %s", sound, SOUND_FILE);
+		error("Wrong sound file format or missing sound %d", sound);
 
 	// Allocate memory for sound or music, if possible
 	sound_pt soundPtr = (byte *)malloc(s_hdr[sound].size); // Ptr to sound data
@@ -283,7 +283,7 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 	// Seek to data and read it
 	fp.seek(s_hdr[sound].offset, SEEK_SET);
 	if (fp.read(soundPtr, s_hdr[sound].size) != s_hdr[sound].size)
-		error("File not found: %s", SOUND_FILE);
+		error("Wrong sound file format");
 
 	fp.close();
 
@@ -516,11 +516,11 @@ bool FileManager::restoreGame(int16 slot) {
 * Read the encrypted text from the boot file and print it
 */
 void FileManager::printBootText() {
-	debugC(1, kDebugFile, "printBootText");
+	debugC(1, kDebugFile, "printBootText()");
 	static const char *cypher = getBootCypher();
 
 	Common::File ofp;
-	if (!ofp.open(BOOTFILE)) {
+	if (!ofp.open(getBootFilename())) {
 		if (_vm->_gameVariant == kGameVariantH1Dos) {
 			//TODO initialize properly _boot structure
 			warning("printBootText - Skipping as H1 Dos may be a freeware");
@@ -556,11 +556,11 @@ void FileManager::printBootText() {
 * file checksum is bad.  De-crypts structure while checking checksum
 */
 void FileManager::readBootFile() {
-	debugC(1, kDebugFile, "readBootFile");
+	debugC(1, kDebugFile, "readBootFile()");
 	static const char *cypher = getBootCypher();
 
 	Common::File ofp;
-	if (!ofp.open(BOOTFILE)) {
+	if (!ofp.open(getBootFilename())) {
 		if (_vm->_gameVariant == kGameVariantH1Dos) {
 			//TODO initialize properly _boot structure
 			warning("readBootFile - Skipping as H1 Dos may be a freeware");
@@ -594,6 +594,8 @@ void FileManager::readBootFile() {
 
 /**
 * Returns address of uif_hdr[id], reading it in if first call
+* This file contains, between others, the bitmaps of the fonts used in the application
+* UIF means User interface database (Windows Only)
 */
 uif_hdr_t *FileManager::getUIFHeader(uif_t id) {
 	debugC(1, kDebugFile, "getUIFHeader(%d)", id);
@@ -606,11 +608,11 @@ uif_hdr_t *FileManager::getUIFHeader(uif_t id) {
 		firstFl = false;
 		// Open unbuffered to do far read
 		Common::File ip;                            // Image data file
-		if (!ip.open(UIF_FILE))
-			error("File not found: %s", UIF_FILE);
+		if (!ip.open(getUifFilename()))
+			error("File not found: %s", getUifFilename());
 
 		if (ip.size() < (int32)sizeof(UIFHeader))
-			error("Wrong file format: %s", UIF_FILE);
+			error("Wrong UIF file format");
 
 		for (int i = 0; i < kMaxUifs; ++i) {
 			UIFHeader[i].size = ip.readUint16LE();
@@ -630,8 +632,8 @@ void FileManager::readUIFItem(int16 id, byte *buf) {
 
 	// Open uif file to read data
 	Common::File ip;                                // UIF_FILE handle
-	if (!ip.open(UIF_FILE))
-		error("File not found: %s", UIF_FILE);
+	if (!ip.open(getUifFilename()))
+		error("File not found: %s", getUifFilename());
 
 	// Seek to data
 	uif_hdr_t *UIFHeaderPtr = getUIFHeader((uif_t)id);
@@ -641,12 +643,12 @@ void FileManager::readUIFItem(int16 id, byte *buf) {
 	seq_t *dummySeq;                                // Dummy seq_t for image data
 	switch (id) {
 	case UIF_IMAGES:                                // Read uif images file
-		dummySeq = readPCX(ip, 0, buf, true, UIF_FILE);
+		dummySeq = readPCX(ip, 0, buf, true, getUifFilename());
 		free(dummySeq);
 		break;
 	default:                                        // Read file data into supplied array
 		if (ip.read(buf, UIFHeaderPtr->size) != UIFHeaderPtr->size)
-			error("Wrong file format: %s", UIF_FILE);
+			error("Wrong UIF file format");
 		break;
 	}
 
@@ -657,7 +659,7 @@ void FileManager::readUIFItem(int16 id, byte *buf) {
 * Read the uif image file (inventory icons)
 */
 void FileManager::readUIFImages() {
-	debugC(1, kDebugFile, "readUIFImages");
+	debugC(1, kDebugFile, "readUIFImages()");
 
 	readUIFItem(UIF_IMAGES, _vm->_screen->getGUIBuffer());   // Read all uif images
 }

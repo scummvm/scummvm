@@ -81,14 +81,14 @@ void FileManager_v3d::readBackground(int screenIndex) {
 void FileManager_v3d::openDatabaseFiles() {
 	debugC(1, kDebugFile, "openDatabaseFiles");
 
-	if (!_stringArchive.open(STRING_FILE))
-		error("File not found: %s", STRING_FILE);
+	if (!_stringArchive.open(getStringFilename()))
+		error("File not found: %s", getStringFilename());
 	if (!_sceneryArchive1.open("scenery1.dat"))
 		error("File not found: scenery1.dat");
 	if (!_sceneryArchive2.open("scenery2.dat"))
 		error("File not found: scenery2.dat");
-	if (!_objectsArchive.open(OBJECTS_FILE))
-		error("File not found: %s", OBJECTS_FILE);
+	if (!_objectsArchive.open(getObjectFilename()))
+		error("File not found: %s", getObjectFilename());
 }
 
 /**

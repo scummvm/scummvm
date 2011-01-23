@@ -93,7 +93,7 @@ bool intro_v1d::introPlay() {
 				strcpy(buffer, "Shareware Version");
 
 			font.drawString(&surf, buffer, 0, 163, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
-			font.drawString(&surf, COPYRIGHT, 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			font.drawString(&surf, _vm->getCopyrightString(), 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 
 			if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
 				sprintf(buffer, "Distributed by %s.", _boot.distrib);
@@ -219,9 +219,9 @@ void intro_v2d::introInit() {
 		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
 
 	if (_boot.registered)
-		sprintf(buffer, "%s  Registered Version", COPYRIGHT);
+		sprintf(buffer, "%s  Registered Version", _vm->getCopyrightString());
 	else
-		sprintf(buffer, "%s  Shareware Version", COPYRIGHT);
+		sprintf(buffer, "%s  Shareware Version", _vm->getCopyrightString());
 
 	font.drawString(&surf, buffer, 0, 186, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 
@@ -259,9 +259,9 @@ void intro_v3d::introInit() {
 
 	char buffer[128];
 	if (_boot.registered)
-		sprintf(buffer, "%s  Registered Version", COPYRIGHT);
+		sprintf(buffer, "%s  Registered Version", _vm->getCopyrightString());
 	else
-		sprintf(buffer,"%s  Shareware Version", COPYRIGHT);
+		sprintf(buffer,"%s  Shareware Version", _vm->getCopyrightString());
 
 	// TROMAN, size 10-5
 	if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
