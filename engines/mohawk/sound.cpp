@@ -259,8 +259,8 @@ void Sound::playSLST(uint16 index, uint16 card) {
 
 	delete slstStream;
 
-	// No matching records, assume we need to stop all SLST's
-	stopAllSLST();
+	// If we have no matching entries, we do nothing and just let
+	// the previous ambient sounds continue.
 }
 
 void Sound::playSLST(SLSTRecord slstRecord) {
