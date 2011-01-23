@@ -52,7 +52,7 @@ class Special;
 class Speech;
 class Sound;
 class Text;
-class Video;
+class VideoPlayer;
 class WorldStats;
 
 struct ActionArea;

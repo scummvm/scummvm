@@ -79,7 +79,7 @@ class Special;
 class Speech;
 class Sound;
 class Text;
-class Video;
+class VideoPlayer;
 
 class AsylumEngine: public Engine, public Common::Serializable {
 protected:
@@ -159,7 +159,7 @@ public:
 	Speech          *speech()    { return _speech; }
 	Sound           *sound()     { return _sound; }
 	Text            *text()      { return _text; }
-	Video           *video()     { return _video; }
+	VideoPlayer     *video()     { return _video; }
 
 	SharedData      *data()       { return &_data; }
 	PuzzleData      *puzzleData() { return &_puzzleData; }
@@ -239,7 +239,7 @@ private:
 	Speech          *_speech;
 	Sound           *_sound;
 	Text            *_text;
-	Video           *_video;
+	VideoPlayer     *_video;
 
 	// Current EventHandler class instance
 	EventHandler *_handler;
