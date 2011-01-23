@@ -39,11 +39,11 @@ DECLARE_SINGLETON(Sword25::RenderObjectRegistry);
 namespace Sword25 {
 
 void RenderObjectRegistry::logErrorLn(const char *message) const {
-	error(message);
+	error("%s", message);
 }
 
 void RenderObjectRegistry::logWarningLn(const char *message) const {
-	warning(message);
+	warning("%s", message);
 }
 
 } // End of namespace Sword25
