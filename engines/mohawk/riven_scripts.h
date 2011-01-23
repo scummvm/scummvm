@@ -96,7 +96,7 @@ private:
 	DECLARE_OPCODE(mohawkSwitch);
 	DECLARE_OPCODE(enableHotspot);
 	DECLARE_OPCODE(disableHotspot);
-	DECLARE_OPCODE(clearSLST);
+	DECLARE_OPCODE(stopSound);
 	DECLARE_OPCODE(changeCursor);
 	DECLARE_OPCODE(delay);
 	DECLARE_OPCODE(runExternalCommand);

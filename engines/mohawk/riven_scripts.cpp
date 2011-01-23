@@ -107,7 +107,7 @@ void RivenScript::setupOpcodes() {
 		OPCODE(disableHotspot),
 		OPCODE(empty),						// Empty
 		// 0x0C (12 decimal)
-		OPCODE(clearSLST),
+		OPCODE(stopSound),
 		OPCODE(changeCursor),
 		OPCODE(delay),
 		OPCODE(empty),						// Empty
@@ -392,10 +392,19 @@ void RivenScript::disableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 	}
 }
 
-// Command 12: clear slst records (flags)
-void RivenScript::clearSLST(uint16 op, uint16 argc, uint16 *argv) {
-	warning ("STUB: clearSLST: Fade Out = %s, Fade In = %s", ((argv[0] & 1) != 0) ? "Yes" : "No", ((argv[0] & 2) != 0) ? "Yes" : "No");
-	//_vm->_sound->clearAllSLST();
+// Command 12: stop sounds (flags)
+void RivenScript::stopSound(uint16 op, uint16 argc, uint16 *argv) {
+	// The argument is a bitflag for the setting.
+	// bit 0 is normal sound stopping (unused)
+	// bit 1 is ambient sound stopping
+	// Having no flags set means clear all
+
+	// TODO: Enable this once empty SLST entries are properly handled
+	//if (argv[0] & 2 || argv[0] == 0)
+	//	_vm->_sound->stopAllSLST();
+
+	if (argv[0] & 1)
+		warning("Unhandled stopSound() flag");
 }
 
 // Command 13: set mouse cursor (cursor_id)
