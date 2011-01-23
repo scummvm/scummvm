@@ -114,20 +114,6 @@ public:
 	bool isCCW() const;
 
 	/**
-	 * Checks whether the polygon is convex.
-	 * @return                  Returns true if the polygon is convex. Returns false if the polygon is concave.
-	 * @remark                  This method only returns a meaningful result if the polygon has at least three Vertecies.
-	 */
-	bool isConvex() const;
-
-	/**
-	 * Checks whether the polygon is concave.
-	 * @return                  Returns true if the polygon is concave. Returns false if the polygon is convex.
-	 * @remark                  This method only returns a meaningful result if the polygon has at least three Vertecies.
-	 */
-	bool isConcave() const;
-
-	/**
 	 * Checks whether a point is inside the polygon
 	 * @param Vertex            A Vertex with the co-ordinates of the point to be tested.
 	 * @param BorderBelongsToPolygon    Specifies whether the edge of the polygon should be considered
@@ -200,7 +186,6 @@ public:
 
 private:
 	bool _isCW;
-	bool _isConvex;
 	Vertex _centroid;
 
 	/**
@@ -216,12 +201,6 @@ private:
 	bool computeIsCW() const;
 
 	/**
-	 * Determines whether the polygon is convex or concave.
-	 * @return                  Returns true if the polygon is convex, otherwise false.
-	 */
-	bool computeIsConvex() const;
-
-	/**
 	 * Calculates the cross product of three Vertecies
 	 * @param V1                The first Vertex
 	 * @param V2                The second Vertex
@@ -230,19 +209,6 @@ private:
 	 * @todo                    This method would be better as a method of the BS_Vertex class
 	 */
 	int crossProduct(const Vertex &v1, const Vertex &v2, const Vertex &v3) const;
-
-	/**
-	 * Computes the scalar product of two vectors spanning three vertecies
-	 *
-	 * The vectors are spanned by V2->V1 and V2->V3
-	 *
-	 * @param V1                The first Vertex
-	 * @param V2                The second Vertex
-	 * @param V3                The third Vertex
-	 * @return                  Returns the dot product of the three Vertecies.
-	 * @todo                    This method would be better as a method of the BS_Vertex class
-	 */
-	int dotProduct(const Vertex &v1, const Vertex &v2, const Vertex &v3) const;
 
 	/**
 	 * Checks whether the polygon is self-intersecting

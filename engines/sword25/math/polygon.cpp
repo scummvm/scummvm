@@ -91,7 +91,6 @@ bool Polygon::init(int vertexCount_, const Vertex *vertices_) {
 
 	// Calculate properties of the polygon
 	_isCW = computeIsCW();
-	_isConvex = computeIsConvex();
 	_centroid = computeCentroid();
 
 	return true;
@@ -103,11 +102,6 @@ bool Polygon::init(int vertexCount_, const Vertex *vertices_) {
 bool Polygon::isCW() const {
 	return _isCW;
 }
-
-bool Polygon::isCCW() const {
-	return !isCW();
-}
-
 bool Polygon::computeIsCW() const {
 	if (vertexCount) {
 		// Find the vertex on extreme bottom right
@@ -147,51 +141,6 @@ int Polygon::findLRVertexIndex() const {
 
 	return -1;
 }
-
-// Testing for Convex / Concave
-// ------------------------
-
-bool Polygon::isConvex() const {
-	return _isConvex;
-}
-
-bool Polygon::isConcave() const {
-	return !isConvex();
-}
-
-bool Polygon::computeIsConvex() const {
-	// Polygons with three or less vertices can only be convex
-	if (vertexCount <= 3) return true;
-
-	// All angles in the polygon computed will have the same direction sign if the polygon is convex
-	int flag = 0;
-	for (int i = 0; i < vertexCount; i++) {
-		// Determine the next two vertecies to check
-		int j = (i + 1) % vertexCount;
-		int k = (i + 2) % vertexCount;
-
-		// Calculate the cross product of the three vertecies
-		int cross = crossProduct(vertices[i], vertices[j], vertices[k]);
-
-		// The lower two bits of the flag represent the following:
-		// 0: negative angle occurred
-		// 1: positive angle occurred
-
-		// The sign of the current angle is recorded in Flag
-		if (cross < 0)
-			flag |= 1;
-		else if (cross > 0)
-			flag |= 2;
-
-		// If flag is 3, there are both positive and negative angles; so the polygon is concave
-		if (flag == 3)
-			return false;
-	}
-
-	// Polygon is convex
-	return true;
-}
-
 // Make a determine vertex order
 // -----------------------------
 
@@ -199,12 +148,6 @@ void Polygon::ensureCWOrder() {
 	if (!isCW())
 		reverseVertexOrder();
 }
-
-void Polygon::ensureCCWOrder() {
-	if (!isCCW())
-		reverseVertexOrder();
-}
-
 // Reverse the order of vertecies
 // ------------------------------
 
@@ -227,15 +170,6 @@ int Polygon::crossProduct(const Vertex &v1, const Vertex &v2, const Vertex &v3) 
 	return (v2.x - v1.x) * (v3.y - v2.y) -
 	       (v2.y - v1.y) * (v3.x - v2.x);
 }
-
-// Scalar Product
-// --------------
-
-int Polygon::dotProduct(const Vertex &v1, const Vertex &v2, const Vertex &v3) const {
-	return (v1.x - v2.x) * (v3.x - v2.x) +
-	       (v1.y - v2.y) * (v3.x - v2.y);
-}
-
 // Check for self-intersections
 // ----------------------------
 
