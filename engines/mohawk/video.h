@@ -57,7 +57,7 @@ struct VideoEntry {
 
 	// Identification
 	Common::String filename; // External video files
-	uint16 id;               // Internal Mohawk files
+	int id;                  // Internal Mohawk files
 
 	// Helper functions
 	Video::SeekableVideoDecoder *operator->() const { assert(video); return video; } // TODO: Remove this eventually

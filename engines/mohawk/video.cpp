@@ -41,7 +41,7 @@ void VideoEntry::clear() {
 	start = Video::VideoTimestamp(0);
 	end = Video::VideoTimestamp(0xFFFFFFFF); // Largest possible, there is an endOfVideo() check anyway
 	filename.clear();
-	id = 0;
+	id = -1;
 }
 
 bool VideoEntry::endOfVideo() {
