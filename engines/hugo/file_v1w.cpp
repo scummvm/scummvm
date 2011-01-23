@@ -81,8 +81,8 @@ void FileManager_v1w::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 		break;
 	}
 	if (i == 0) {
-		for (i = 0; i < kOvlSize; i++)
-			image[i] = 0;
+		for (int idx = 0; idx < kOvlSize; idx++)
+			image[idx] = 0;
 		return;
 	}
 	_sceneryArchive1.read(tmpImage, kOvlSize);

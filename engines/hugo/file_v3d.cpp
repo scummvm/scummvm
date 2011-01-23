@@ -143,8 +143,8 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 			break;
 		}
 		if (i == 0) {
-			for (i = 0; i < kOvlSize; i++)
-				image[i] = 0;
+			for (int idx = 0; idx < kOvlSize; idx++)
+				image[idx] = 0;
 			return;
 		}
 
@@ -183,8 +183,8 @@ void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 			break;
 		}
 		if (i == 0) {
-			for (i = 0; i < kOvlSize; i++)
-				image[i] = 0;
+			for (int idx = 0; idx < kOvlSize; idx++)
+				image[idx] = 0;
 			return;
 		}
 
