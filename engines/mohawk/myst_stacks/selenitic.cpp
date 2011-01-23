@@ -972,8 +972,8 @@ void MystScriptParser_Selenitic::soundReceiverUpdateSound() {
 }
 
 uint16 MystScriptParser_Selenitic::soundReceiverCurrentSound(uint16 source, uint16 position) {
-	uint16 solution;
-	bool sourceEnabled;
+	uint16 solution = 0;
+	bool sourceEnabled = false;
 	soundReceiverSolution(source, solution, sourceEnabled);
 
 	uint16 soundIdGood = 0;
