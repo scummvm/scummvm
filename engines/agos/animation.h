@@ -28,8 +28,8 @@
 #ifndef AGOS_ANIMATION_H
 #define AGOS_ANIMATION_H
 
-#include "graphics/video/dxa_decoder.h"
-#include "graphics/video/smk_decoder.h"
+#include "video/dxa_decoder.h"
+#include "video/smk_decoder.h"
 #include "sound/mixer.h"
 
 namespace AGOS {

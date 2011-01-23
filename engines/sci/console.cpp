@@ -49,10 +49,10 @@
 
 #include "sci/parser/vocabulary.h"
 
-#include "graphics/video/avi_decoder.h"
+#include "video/avi_decoder.h"
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
-#include "graphics/video/coktel_decoder.h"
+#include "video/coktel_decoder.h"
 #endif
 
 #include "common/file.h"

@@ -30,7 +30,7 @@
 
 #ifdef USE_THEORADEC
 
-#include "graphics/video/video_decoder.h"
+#include "video/video_decoder.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 

@@ -33,7 +33,7 @@
 #include "common/random.h"
 #include "common/stream.h"
 
-#include "graphics/video/flic_decoder.h"
+#include "video/flic_decoder.h"
 
 #include "sound/mixer.h"
 

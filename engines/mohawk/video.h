@@ -28,7 +28,7 @@
 
 #include "common/array.h"
 #include "graphics/pixelformat.h"
-#include "graphics/video/video_decoder.h"
+#include "video/video_decoder.h"
 
 namespace Mohawk {
 

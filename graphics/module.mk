@@ -23,25 +23,6 @@ MODULE_OBJS := \
 	thumbnail.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
-	video/avi_decoder.o \
-	video/coktel_decoder.o \
-	video/dxa_decoder.o \
-	video/flic_decoder.o \
-	video/mpeg_player.o \
-	video/qt_decoder.o \
-	video/smk_decoder.o \
-	video/video_decoder.o \
-	video/codecs/cdtoons.o \
-	video/codecs/cinepak.o \
-	video/codecs/indeo3.o \
-	video/codecs/mjpeg.o \
-	video/codecs/msrle.o \
-	video/codecs/msvideo1.o \
-	video/codecs/qdm2.o \
-	video/codecs/qtrle.o \
-	video/codecs/rpza.o \
-	video/codecs/smc.o \
-	video/codecs/truemotion1.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \

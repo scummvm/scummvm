@@ -30,11 +30,11 @@
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
 #include "graphics/cursorman.h"
-#include "graphics/video/avi_decoder.h"
-#include "graphics/video/qt_decoder.h"
+#include "video/avi_decoder.h"
+#include "video/qt_decoder.h"
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
-#include "graphics/video/coktel_decoder.h"
+#include "video/coktel_decoder.h"
 #endif
 
 namespace Sci {

@@ -28,7 +28,7 @@
 #include "mohawk/video.h"
 
 #include "common/events.h"
-#include "graphics/video/qt_decoder.h"
+#include "video/qt_decoder.h"
 
 namespace Mohawk {
 

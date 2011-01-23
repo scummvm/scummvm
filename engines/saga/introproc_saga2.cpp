@@ -33,7 +33,7 @@
 
 #include "sound/mixer.h"
 #include "graphics/surface.h"
-#include "graphics/video/smk_decoder.h"
+#include "video/smk_decoder.h"
 
 namespace Saga {
 

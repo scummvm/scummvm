@@ -26,7 +26,7 @@
 #ifndef SEQ_DECODER_H
 #define SEQ_DECODER_H
 
-#include "graphics/video/video_decoder.h"
+#include "video/video_decoder.h"
 
 namespace Sci {
 

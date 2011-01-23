@@ -26,7 +26,7 @@
 #if !defined(SCUMM_HE_ANIMATION_H) && defined(ENABLE_HE)
 #define SCUMM_HE_ANIMATION_H
 
-#include "graphics/video/smk_decoder.h"
+#include "video/smk_decoder.h"
 
 #include "sound/mixer.h"
 
