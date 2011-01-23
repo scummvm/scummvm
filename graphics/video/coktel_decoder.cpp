@@ -83,6 +83,9 @@ bool CoktelDecoder::evaluateSeekFrame(int32 &frame, int whence) const {
 void CoktelDecoder::setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp) {
 	freeSurface();
 
+	if (!hasVideo())
+		return;
+
 	// Sanity checks
 	assert((width > 0) && (height > 0));
 	assert(bpp == getPixelFormat().bytesPerPixel);
@@ -117,6 +120,9 @@ bool CoktelDecoder::hasSurface() {
 
 void CoktelDecoder::createSurface() {
 	if (hasSurface())
+		return;
+
+	if (!hasVideo())
 		return;
 
 	if ((_width > 0) && (_height > 0))
