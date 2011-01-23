@@ -37,8 +37,8 @@ namespace Common {
 namespace Graphics {
 
 /**
- *
  * Decoder for FLIC videos.
+ *
  * Video decoder used in engines:
  *  - tucker
  */

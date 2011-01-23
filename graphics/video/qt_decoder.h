@@ -51,7 +51,13 @@ namespace Common {
 
 namespace Graphics {
 
-
+/**
+ * Decoder for QuickTime videos.
+ *
+ * Video decoder used in engines:
+ *  - mohawk
+ *  - sci
+ */
 class QuickTimeDecoder : public SeekableVideoDecoder {
 public:
 	QuickTimeDecoder();

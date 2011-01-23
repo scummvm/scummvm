@@ -50,6 +50,7 @@ class BigHuffmanTree;
  *  - scumm (he)
  *  - sword1
  *  - sword2
+ *  - toon
  */
 class SmackerDecoder : public FixedRateVideoDecoder {
 public:

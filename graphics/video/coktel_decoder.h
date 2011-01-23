@@ -49,6 +49,13 @@ namespace Graphics {
 
 class Codec;
 
+/**
+ * Decoder for Coktel videos.
+ *
+ * Video decoder used in engines:
+ *  - gob
+ *  - sci
+ */
 class CoktelDecoder : public FixedRateVideoDecoder {
 public:
 	struct State {

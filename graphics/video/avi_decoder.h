@@ -162,6 +162,12 @@ struct AVIStreamHeader {
 	Common::Rect frame;
 };
 
+/**
+ * Decoder for AVI videos.
+ *
+ * Video decoder used in engines:
+ *  - sci
+ */
 class AviDecoder : public FixedRateVideoDecoder {
 public:
 	AviDecoder(Audio::Mixer *mixer,
