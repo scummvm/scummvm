@@ -148,7 +148,7 @@ public:
 	void playSLST(SLSTRecord slstRecord);
 	void pauseSLST();
 	void resumeSLST();
-	void stopAllSLST();
+	void stopAllSLST(bool fade = false);
 	static byte convertRivenVolume(uint16 volume);
 
 private:

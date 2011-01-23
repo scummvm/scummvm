@@ -394,14 +394,21 @@ void RivenScript::disableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 12: stop sounds (flags)
 void RivenScript::stopSound(uint16 op, uint16 argc, uint16 *argv) {
+	// WORKAROUND: The Play Riven/Visit Riven/Start New Game buttons
+	// in the main menu call this function to stop ambient sounds
+	// after the change stack call to Temple Island. However, this
+	// would cause all ambient sounds not to play. An alternative
+	// fix would be to stop all scripts on a stack change, but this
+	// does fine for now.
+	if (_vm->getCurStack() == tspit && (_vm->getCurCardRMAP() == 0x6e9a || _vm->getCurCardRMAP() == 0xfeeb))
+		return;
+
 	// The argument is a bitflag for the setting.
 	// bit 0 is normal sound stopping (unused)
 	// bit 1 is ambient sound stopping
 	// Having no flags set means clear all
-
-	// TODO: Enable this once empty SLST entries are properly handled
-	//if (argv[0] & 2 || argv[0] == 0)
-	//	_vm->_sound->stopAllSLST();
+	if (argv[0] & 2 || argv[0] == 0)
+		_vm->_sound->stopAllSLST();
 
 	if (argv[0] & 1)
 		warning("Unhandled stopSound() flag");
@@ -521,7 +528,8 @@ void RivenScript::unk_36(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 37: fade ambient sounds
 void RivenScript::fadeAmbientSounds(uint16 op, uint16 argc, uint16 *argv) {
-	warning("STUB: fadeAmbientSounds()");
+	// Similar to stopSound(), but does fading
+	_vm->_sound->stopAllSLST(true);
 }
 
 // Command 38: Play a movie with extra parameters (movie id, delay high, delay low, record type, record id)

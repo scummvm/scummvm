@@ -291,8 +291,9 @@ void Sound::playSLST(SLSTRecord slstRecord) {
 	}
 }
 
-void Sound::stopAllSLST() {
+void Sound::stopAllSLST(bool fade) {
 	for (uint16 i = 0; i < _currentSLSTSounds.size(); i++) {
+		// TODO: Fade out, if requested
 		_vm->_mixer->stopHandle(*_currentSLSTSounds[i].handle);
 		delete _currentSLSTSounds[i].handle;
 	}
@@ -326,7 +327,7 @@ void Sound::playSLSTSound(uint16 id, bool fade, bool loop, uint16 volume, int16 
 }
 
 void Sound::stopSLSTSound(uint16 index, bool fade) {
-	// TODO: Fade out, mixer needs to be extended to get volume on a handle
+	// TODO: Fade out, if requested
 	_vm->_mixer->stopHandle(*_currentSLSTSounds[index].handle);
 	delete _currentSLSTSounds[index].handle;
 	_currentSLSTSounds.remove_at(index);
