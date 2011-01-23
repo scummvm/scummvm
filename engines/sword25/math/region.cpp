@@ -248,10 +248,10 @@ Vertex Region::findClosestRegionPoint(const Vertex &point) const {
 
 		// If no point could be found that way that lies within the region, find the next point
 		closestVertex = polygon.vertices[0];
-		int shortestVertexDistance2 = polygon.vertices[0].distance2(point);
+		int shortestVertexDistance2 = polygon.vertices[0].sqrDist(point);
 		{
 			for (int i = 1; i < polygon.vertexCount; i++) {
-				int curDistance2 = polygon.vertices[i].distance2(point);
+				int curDistance2 = polygon.vertices[i].sqrDist(point);
 				if (curDistance2 < shortestVertexDistance2) {
 					closestVertex = polygon.vertices[i];
 					shortestVertexDistance2 = curDistance2;
