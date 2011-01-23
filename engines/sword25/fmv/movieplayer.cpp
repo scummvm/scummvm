@@ -178,7 +178,7 @@ MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel) {
 	if (!registerScriptBindings())
 		error("Script bindings could not be registered.");
 	else
-		BS_LOGLN("Script bindings registered.");
+		debugC(kDebugScript, "Script bindings registered.");
 }
 
 MoviePlayer::~MoviePlayer() {
