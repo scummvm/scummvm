@@ -999,6 +999,7 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 	createModuleList(setup.srcDir + "/gui", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/sound", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/sound/softsynth/mt32", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/video", setup.defines, in, ex);
 
 	// Resource files
 	in.push_back(setup.srcDir + "/icons/scummvm.ico");
