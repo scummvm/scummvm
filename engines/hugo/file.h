@@ -96,7 +96,7 @@ protected:
 	Common::File _objectsArchive;                   // Handle for objects file
 
 	seq_t *readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool firstFl, const char *name);
-	const char *FileManager::getBootCypher();
+	const char *getBootCypher();
 
 private:
 	byte *convertPCC(byte *p, uint16 y, uint16 bpl, image_pt data_p);
