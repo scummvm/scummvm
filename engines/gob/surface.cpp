@@ -362,9 +362,11 @@ void Surface::blitScaled(const Surface &from, int16 left, int16 top, int16 right
 
 	uint16 dWidth  = (uint16) floor((_width  / scale).toDouble());
 	uint16 dHeight = (uint16) floor((_height / scale).toDouble());
+	 int16 clipX   = ( int16) floor((x       / scale).toDouble());
+	 int16 clipY   = ( int16) floor((y       / scale).toDouble());
 
 	// Clip
-	if (!clipBlitRect(left, top, right, bottom, x, y, dWidth, dHeight, from._width, from._height))
+	if (!clipBlitRect(left, top, right, bottom, clipX, clipY, dWidth, dHeight, from._width, from._height))
 		return;
 
 	// Area to actually copy
