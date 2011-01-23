@@ -39,9 +39,10 @@
 #include "sword25/fmv/theora_decoder.h"
 
 #ifdef USE_THEORADEC
-#include "sword25/fmv/yuvtorgba.h"
 #include "common/system.h"
+#include "graphics/conversion.h"
 #include "sound/decoders/raw.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
@@ -344,7 +345,7 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 		// if there's pending, decoded audio, grab it
 		if ((ret = vorbis_synthesis_pcmout(&_vorbisDSP, &pcm)) > 0) {
 			int count = _audiobufFill / 2;
-			int maxsamples = (AUDIOFD_FRAGSIZE - _audiobufFill) / 2 / _vorbisInfo.channels;
+			int maxsamples = ((AUDIOFD_FRAGSIZE - _audiobufFill) / _vorbisInfo.channels) >> 1;
 			for (i = 0; i < ret && i < maxsamples; i++)
 				for (j = 0; j < _vorbisInfo.channels; j++) {
 					int val = CLIP((int)rint(pcm[j][i] * 32767.f), -32768, 32767);
@@ -352,7 +353,7 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 				}
 
 			vorbis_synthesis_read(&_vorbisDSP, i);
-			_audiobufFill += i * _vorbisInfo.channels * 2;
+			_audiobufFill += (i * _vorbisInfo.channels) << 1;
 
 			if (_audiobufFill == AUDIOFD_FRAGSIZE)
 				_audiobufReady = true;
@@ -430,19 +431,8 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 		th_decode_ycbcr_out(_theoraDecode, yuv);
 
 		// Convert YUV data to RGB data
-		YUVtoBGRA::translate(yuv, _theoraInfo, (byte *)_surface->getBasePtr(0, 0), _surface->pitch * _surface->h);
+		translateYUVtoRGBA(yuv, _theoraInfo, (byte *)_surface->getBasePtr(0, 0), _surface->pitch * _surface->h);
 		
-		switch (_theoraInfo.pixel_fmt) {
-		case TH_PF_420:
-			break;
-		case TH_PF_422:
-			break;
-		case TH_PF_444:
-			break;
-		default:
-			break;
-		}
-
 		_videobufReady = false;
 	}
 
@@ -494,6 +484,60 @@ uint32 TheoraDecoder::getElapsedTime() const {
 
 Audio::QueuingAudioStream *TheoraDecoder::createAudioStream() {
 	return Audio::makeQueuingAudioStream(_vorbisInfo.rate, _vorbisInfo.channels);
+}
+
+	void TheoraDecoder::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer, const th_info &theoraInfo, byte *pixelData, int pixelsSize) {
+
+	// Width and height of all buffers have to be divisible by 2.
+	assert((YUVBuffer[0].width & 1)   == 0);
+	assert((YUVBuffer[0].height & 1)  == 0);
+	assert((YUVBuffer[1].width & 1)   == 0);
+	assert((YUVBuffer[2].width & 1)  == 0);
+
+	// UV images have to have a quarter of the Y image resolution
+	assert(YUVBuffer[1].width  == YUVBuffer[0].width >> 1);
+	assert(YUVBuffer[2].width  == YUVBuffer[0].width >> 1);
+	assert(YUVBuffer[1].height == YUVBuffer[0].height >> 1);
+	assert(YUVBuffer[2].height == YUVBuffer[0].height >> 1);
+
+	const byte *ySrc0 = YUVBuffer[0].data;
+	const byte *ySrc1 = YUVBuffer[0].data + YUVBuffer[0].stride;
+	const byte *uSrc  = YUVBuffer[1].data;
+	const byte *vSrc  = YUVBuffer[2].data;
+	byte *dst0  = &pixelData[0];
+	byte *dst1  = &pixelData[0] + (YUVBuffer[0].width << 2);
+
+	for (int h = 0; h < YUVBuffer[0].height / 2; ++h) {
+		for (int w = 0; w < YUVBuffer[0].width / 2; ++w) {
+			byte r, g, b;
+			int u = *uSrc++;
+			int v = *vSrc++;
+			int y;
+
+			for (int i = 0; i < 2; i++) {
+				y = *ySrc0++;		
+				Graphics::YUV2RGB(y, u, v, r, g, b);
+				*dst0++ = b;
+				*dst0++ = g;
+				*dst0++ = r;
+				*dst0++ = 255;
+
+				y = *ySrc1++;
+				Graphics::YUV2RGB(y, u, v, r, g, b);
+				*dst1++ = b;
+				*dst1++ = g;
+				*dst1++ = r;
+				*dst1++ = 255;
+			}
+		}
+
+		dst0  += YUVBuffer[0].width << 2;
+		dst1  += YUVBuffer[0].width << 2;
+		ySrc0 += (YUVBuffer[0].stride << 1) - YUVBuffer[0].width;
+		ySrc1 += (YUVBuffer[0].stride << 1) - YUVBuffer[0].width;
+		uSrc  += YUVBuffer[1].stride - YUVBuffer[1].width;
+		vSrc  += YUVBuffer[2].stride - YUVBuffer[2].width;
+	}
 }
 
 } // End of namespace Sword25

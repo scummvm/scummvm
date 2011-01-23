@@ -94,7 +94,6 @@ MODULE_OBJS := \
 ifdef USE_THEORADEC
 MODULE_OBJS += \
 	fmv/theora_decoder.o \
-	fmv/yuvtorgba.o
 endif
 
 # This module can be built as a plugin

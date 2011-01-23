@@ -105,6 +105,7 @@ private:
 	void queuePage(ogg_page *page);
 	int bufferData();
 	Audio::QueuingAudioStream *createAudioStream();
+	void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer, const th_info &theoraInfo, byte *pixelData, int pixelsSize);
 
 private:
 	Common::SeekableReadStream *_fileStream;
