@@ -373,6 +373,7 @@ void GobEngine::pauseEngineIntern(bool pause) {
 			_inter->_soundEndTimeKey += duration;
 	}
 
+	_vidPlayer->pauseAll(pause);
 	_mixer->pauseAll(pause);
 }
 

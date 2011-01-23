@@ -113,6 +113,9 @@ public:
 	void closeLiveSound();
 	void closeAll();
 
+	void pauseVideo(int slot, bool pause);
+	void pauseAll(bool pause);
+
 	bool play(int slot, Properties &properties);
 	void waitEndFrame(int slot, bool onlySound = false);
 

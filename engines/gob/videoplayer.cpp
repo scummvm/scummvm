@@ -238,6 +238,19 @@ void VideoPlayer::closeAll() {
 		closeVideo(i);
 }
 
+void VideoPlayer::pauseVideo(int slot, bool pause) {
+	Video *video = getVideoBySlot(slot);
+	if (!video || !video->decoder)
+		return;
+
+	video->decoder->pauseVideo(pause);
+}
+
+void VideoPlayer::pauseAll(bool pause) {
+	for (int i = 0; i < kVideoSlotCount; i++)
+		pauseVideo(i, pause);
+}
+
 bool VideoPlayer::play(int slot, Properties &properties) {
 	Video *video = getVideoBySlot(slot);
 	if (!video)
