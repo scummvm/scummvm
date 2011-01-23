@@ -153,7 +153,7 @@ Common::Error AsylumEngine::run() {
 	_special   = new Special(this);
 	_speech    = new Speech(this);
 	_text      = new Text(this);
-	_video     = new Video(this, _mixer);
+	_video     = new VideoPlayer(this, _mixer);
 	initPuzzles();
 
 	// Init tables

@@ -35,7 +35,7 @@
 #include "common/list.h"
 
 #include "graphics/surface.h"
-#include "graphics/video/smk_decoder.h"
+#include "video/smk_decoder.h"
 
 #include "sound/mixer.h"
 
@@ -52,10 +52,10 @@ struct VideoSubtitle {
 	ResourceId resourceId;
 };
 
-class Video : public EventHandler {
+class VideoPlayer : public EventHandler {
 public:
-	Video(AsylumEngine *engine, Audio::Mixer *mixer);
-	virtual ~Video();
+	VideoPlayer(AsylumEngine *engine, Audio::Mixer *mixer);
+	virtual ~VideoPlayer();
 
 	/**
 	 * Plays a video. 
@@ -77,7 +77,7 @@ public:
 private:
 	AsylumEngine *_vm;
 
-	Graphics::SmackerDecoder *_smkDecoder;
+	Video::SmackerDecoder *_smkDecoder;
 	Common::Array<VideoSubtitle> _subtitles;	
 
 	int32 _currentMovie;

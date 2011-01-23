@@ -39,12 +39,12 @@
 
 namespace Asylum {
 
-Video::Video(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine),
+VideoPlayer::VideoPlayer(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine),
 	_currentMovie(0), _subtitleIndex(0), _subtitleCounter(0), _previousFont(kResourceNone), _done(false) {
-	_smkDecoder = new Graphics::SmackerDecoder(mixer);
+	_smkDecoder = new Video::SmackerDecoder(mixer);
 }
 
-Video::~Video() {
+VideoPlayer::~VideoPlayer() {
 	delete _smkDecoder;
 
 	// Zero-out passed pointers
@@ -54,7 +54,7 @@ Video::~Video() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handler
 //////////////////////////////////////////////////////////////////////////
-bool Video::handleEvent(const AsylumEvent &evt) {
+bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 	switch ((uint32)evt.type) {
 	default:
 		break;
@@ -113,7 +113,7 @@ bool Video::handleEvent(const AsylumEvent &evt) {
 //////////////////////////////////////////////////////////////////////////
 // Playing
 //////////////////////////////////////////////////////////////////////////
-void Video::play(int32 videoNumber, EventHandler *handler) {
+void VideoPlayer::play(int32 videoNumber, EventHandler *handler) {
 	getSaveLoad()->setMovieViewed(videoNumber);
 	_currentMovie = videoNumber;
 
@@ -133,7 +133,7 @@ void Video::play(int32 videoNumber, EventHandler *handler) {
 	_vm->switchEventHandler(handler);
 }
 
-void Video::play(Common::String filename, bool showSubtitles) {
+void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 	if (!_smkDecoder->loadFile(filename))
 		error("[Video::playVideo] Invalid video index (%d)", _currentMovie);
 
@@ -199,14 +199,14 @@ void Video::play(Common::String filename, bool showSubtitles) {
 	_subtitles.clear();
 }
 
-void Video::setupPalette() {
+void VideoPlayer::setupPalette() {
 	_smkDecoder->setSystemPalette();
 
 	warning("[Video::setupPalette] Video palette setup not implemented!");
 	//getScreen()->setupPalette(0, 0, 0);
 }
 
-void Video::loadSubtitles() {	
+void VideoPlayer::loadSubtitles() {	
 	char movieToken[10];
 	sprintf(movieToken, "[MOV%03d]", _currentMovie);
 

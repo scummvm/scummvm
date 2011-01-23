@@ -36,7 +36,7 @@ namespace Asylum {
 class AsylumEngine;
 class Screen;
 class Sound;
-class Video;
+class VideoPlayer;
 class Cursor;
 class GraphicResource;
 struct GraphicQueueItem;
