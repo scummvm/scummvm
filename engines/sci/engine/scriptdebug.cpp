@@ -70,7 +70,7 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 	const byte *scr;
 	int scr_size;
 	reg_t retval = make_reg(pos.segment, pos.offset + 1);
-	uint16 param_value;
+	uint16 param_value = 0xffff; // Suppress GCC warning by setting default value, chose value as invalid to getKernelName etc. 
 	int i = 0;
 	Kernel *kernel = g_sci->getKernel();
 
