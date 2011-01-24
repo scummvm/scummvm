@@ -154,7 +154,11 @@ void PrisonerEngine::updateInventoryItems() {
 				_screen->drawAnimationElement(inventoryAnimationResource,
 					_currInventoryItemSlotBaseIndex + 1, x, 41, 0);
 				drawTextEx(0, -1, 398, 479, inventoryItem->name);
-				// TODO: Warp mouse
+				// Warp mouse
+				if (_inventoryWarpMouse) {
+					_system->warpMouse(x + 20, 61);
+					_inventoryWarpMouse = false;
+				}
 			} else {
 				_screen->drawAnimationElement(inventoryAnimationResource,
 					_currInventoryItemSlotBaseIndex, x, 41, 0);
@@ -195,7 +199,7 @@ void PrisonerEngine::handleInventoryInput() {
 	inpSetWaitRelease(true);
 
 	_currInventoryItemSlotBaseIndex = _inventoryItemSlotBaseIndex;
-	_clickBoxes.clear(); // NOIMPL: resetClickBoxes();
+	_clickBoxes.clear();
 
 	if (_inventoryItemCursor != -1) {
 		_selectedInventoryItemIndex = _inventoryItemCursor;
@@ -215,6 +219,7 @@ void PrisonerEngine::handleInventoryInput() {
 		if (flag) {
 			if (_mouseY >= 82) {
 				_inventoryBarFlag = true;
+				debug("break");
 				break;
 			}
 		} else {
@@ -308,6 +313,8 @@ void PrisonerEngine::handleInventoryInput() {
 	restoreScreen(backedupScreen);
 
 	updateScreen(true, -1, -1);
+
+	debug("inv done");
 
 }
 

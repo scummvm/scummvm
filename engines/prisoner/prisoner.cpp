@@ -218,6 +218,7 @@ Common::Error PrisonerEngine::run() {
 	/* Inventory init */
 	_inventoryBarEnabled = false;
 	_inventoryBarFlag = false;
+	_inventoryWarpMouse = false;
 
 	_cameraFocusActor = false;
 	_cameraFollowsActorIndex = -1;
@@ -636,8 +637,9 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 	if (_inventoryBarEnabled && _updateDirtyRectsFlag) {
 		if (_inventoryBarFlag &&
 			(_currMouseCursor == kCursorDefault || _currMouseCursor == kCursorItem) &&
-			(y - _cameraY < 82 /*TODO: Flag?*/) &&
+			(y - _cameraY < 82 || _inventoryWarpMouse) &&
 			_inventoryItemsCount > 0) {
+			debug("inv!");
 			handleInventoryInput();
 			return 0;
 		} else if (y - _cameraY >= 82)
