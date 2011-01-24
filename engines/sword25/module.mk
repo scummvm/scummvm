@@ -21,7 +21,6 @@ MODULE_OBJS := \
 	gfx/panel.o \
 	gfx/renderobject.o \
 	gfx/renderobjectmanager.o \
-	gfx/renderobjectregistry.o \
 	gfx/screenshot.o \
 	gfx/staticbitmap.o \
 	gfx/text.o \

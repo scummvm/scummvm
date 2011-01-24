@@ -47,11 +47,10 @@ class RenderObject;
 class RenderObjectRegistry :
 			public ObjectRegistry<RenderObject>,
 			public Common::Singleton<RenderObjectRegistry> {
-private:
-	virtual void logErrorLn(const char *message) const;
-	virtual void logWarningLn(const char *message) const;
 };
 
 } // End of namespace Sword25
+
+DECLARE_SINGLETON(Sword25::RenderObjectRegistry);
 
 #endif

@@ -50,14 +50,14 @@ public:
 	uint registerObject(T *objectPtr) {
 		// Null-Pointer können nicht registriert werden.
 		if (objectPtr == 0) {
-			logErrorLn("Cannot register a null pointer.");
+			error("Cannot register a null pointer.");
 			return 0;
 		}
 
 		// Falls das Objekt bereits registriert wurde, wird eine Warnung ausgeben und das Handle zurückgeben.
 		uint handle = findHandleByPtr(objectPtr);
 		if (handle != 0) {
-			logWarningLn("Tried to register a object that was already registered.");
+			warning("Tried to register a object that was already registered.");
 			return handle;
 		}
 		// Ansonsten wird das Objekt in beide Maps eingetragen und das neue Handle zurückgeben.
@@ -72,19 +72,19 @@ public:
 	uint registerObject(T *objectPtr, uint handle) {
 		// Null-Pointer und Null-Handle können nicht registriert werden.
 		if (objectPtr == 0 || handle == 0) {
-			logErrorLn("Cannot register a null pointer or a null handle.");
+			error("Cannot register a null pointer or a null handle.");
 			return 0;
 		}
 
 		// Falls das Objekt bereits registriert wurde, wird ein Fehler ausgegeben und 0 zurückgeben.
 		uint handleTest = findHandleByPtr(objectPtr);
 		if (handleTest != 0) {
-			logErrorLn("Tried to register a object that was already registered.");
+			error("Tried to register a object that was already registered.");
 			return 0;
 		}
 		// Falls das Handle bereits vergeben ist, wird ein Fehler ausgegeben und 0 zurückgegeben.
 		else if (findPtrByHandle(handle) != 0) {
-			logErrorLn("Tried to register a handle that is already taken.");
+			error("Tried to register a handle that is already taken.");
 			return 0;
 		}
 		// Ansonsten wird das Objekt in beide Maps eingetragen und das gewünschte Handle zurückgeben.
@@ -109,7 +109,7 @@ public:
 			_handle2PtrMap.erase(findHandleByPtr(objectPtr));
 			_ptr2HandleMap.erase(objectPtr);
 		} else {
-			logWarningLn("Tried to remove a object that was not registered.");
+			warning("Tried to remove a object that was not registered.");
 		}
 	}
 
@@ -163,9 +163,6 @@ protected:
 		// Handle zurückgeben, oder, falls keines gefunden wurde, 0 zurückgeben.
 		return (it != _ptr2HandleMap.end()) ? it->_value : 0;
 	}
-
-	virtual void logErrorLn(const char *message) const = 0;
-	virtual void logWarningLn(const char *message) const = 0;
 };
 
 } // End of namespace Sword25

@@ -52,10 +52,6 @@ class RegionRegistry :
 public:
 	virtual bool persist(OutputPersistenceBlock &writer);
 	virtual bool unpersist(InputPersistenceBlock &reader);
-
-private:
-	virtual void logErrorLn(const char *message) const;
-	virtual void logWarningLn(const char *message) const;
 };
 
 } // End of namespace Sword25

@@ -41,14 +41,6 @@ DECLARE_SINGLETON(Sword25::AnimationTemplateRegistry);
 
 namespace Sword25 {
 
-void AnimationTemplateRegistry::logErrorLn(const char *message) const {
-	error("%s", message);
-}
-
-void AnimationTemplateRegistry::logWarningLn(const char *message) const {
-	warning("%s", message);
-}
-
 bool AnimationTemplateRegistry::persist(OutputPersistenceBlock &writer) {
 	bool result = true;
 

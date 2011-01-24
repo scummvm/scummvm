@@ -41,14 +41,6 @@ DECLARE_SINGLETON(Sword25::RegionRegistry);
 
 namespace Sword25 {
 
-void RegionRegistry::logErrorLn(const char *message) const {
-	error("%s", message);
-}
-
-void RegionRegistry::logWarningLn(const char *message) const {
-	warning("%s", message);
-}
-
 bool RegionRegistry::persist(OutputPersistenceBlock &writer) {
 	bool result = true;
 
