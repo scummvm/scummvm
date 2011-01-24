@@ -1110,7 +1110,15 @@ void PathBuffer::free() {
 }
 
 byte PathBuffer::getValue(uint16 x, uint16 y) const {
-	byte m = data[(x >> 3) + y * internalWidth];
+	byte m = 0;
+	if (data) {
+		uint index = (x >> 3) + y * internalWidth;
+		if (index < size)
+			m = data[index];
+		else
+			warning("PathBuffer::getValue(x: %d, y: %d) outside of data buffer of size %d", x, y, size);
+	} else
+		warning("PathBuffer::getValue() attempted to use NULL data buffer");
 	uint bit = bigEndian ? (x & 7) : (7 - (x & 7));
 	return ((1 << bit) & m) >> bit;
 }
