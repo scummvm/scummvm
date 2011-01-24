@@ -57,6 +57,22 @@ void CodeBlocksProvider::createWorkspace(const BuildSetup &setup) {
 	             "</CodeBlocks_workspace_file>";
 }
 
+// HACK We need to pre-process library names
+//      since the MSVC and mingw precompiled
+//      librarie have different names :(
+std::string processLibraryName(std::string name) {
+	// Remove "_static" in lib name
+	size_t pos = name.find("_static");
+	if (pos != std::string::npos)
+		return name.replace(pos, 7, "");
+
+	// Replace "zlib" by "libz"
+	if (name == "zlib")
+		return "libz";
+
+	return name;
+}
+
 void CodeBlocksProvider::createProjectFile(const std::string &name, const std::string &, const BuildSetup &setup, const std::string &moduleDir,
                                            const StringList &includeList, const StringList &excludeList) {
 
@@ -78,7 +94,7 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		std::string libraries;
 
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
-			libraries += *i + ".a;";
+			libraries += processLibraryName(*i) + ".a;";
 
 		project << "\t\t\t<Target title=\"default\">\n"
 		           "\t\t\t\t<Option output=\"scummvm\\scummvm\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
@@ -97,6 +113,7 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		writeDefines(setup.defines, project);
 
 		project << "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)include\" />\n"
+		           "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)include\\SDL\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\engines\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\common\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\" />\n"
@@ -107,7 +124,7 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		project << "\t\t\t\t<Linker>\n";
 
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
-			project << "\t\t\t\t\t<Add library=\"" << *i << "\" />\n";
+			project << "\t\t\t\t\t<Add library=\"" << processLibraryName(*i) << "\" />\n";
 
 		for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
 			if (i->first == "scummvm")
@@ -117,6 +134,7 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		}
 
 		project << "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)lib\\mingw\" />\n"
+		           "\t\t\t\t\t<Add directory=\"$(SCUMMVM_LIBS)lib\" />\n"
 		           "\t\t\t\t</Linker>\n";
 
 		//////////////////////////////////////////////////////////////////////////
