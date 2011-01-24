@@ -320,6 +320,8 @@ void MohawkEngine_Riven::initVars() {
 	*getVar("ocage") = 1;
 	*getVar("jbeetle") = 1;
 	*getVar("tdl") = 1;
+	*getVar("bmagcar") = 1;
+	*getVar("gnmagcar") = 1;
 
 	// Randomize the telescope combination
 	uint32 *teleCombo = getVar("tcorrectorder");
