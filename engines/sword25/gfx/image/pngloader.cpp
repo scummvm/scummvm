@@ -131,7 +131,11 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&unc
 	png_read_info(png_ptr, info_ptr);
 
 	// PNG Informationen auslesen
-	png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&width, (png_uint_32 *)&height, &bitDepth, &colorType, &interlaceType, NULL, NULL);
+
+	png_uint_32 w, h;
+	png_get_IHDR(png_ptr, info_ptr, &w, &h, &bitDepth, &colorType, &interlaceType, NULL, NULL);
+	width = w;
+	height = h;
 
 	// Pitch des Ausgabebildes berechnen
 	pitch = GraphicEngine::calcPitch(GraphicEngine::CF_ARGB32, width);
@@ -163,7 +167,9 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&unc
 
 	// Nachdem die Transformationen registriert wurden, werden die Bilddaten erneut eingelesen
 	png_read_update_info(png_ptr, info_ptr);
-	png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&width, (png_uint_32 *)&height, &bitDepth, &colorType, NULL, NULL, NULL);
+	png_get_IHDR(png_ptr, info_ptr, &w, &h, &bitDepth, &colorType, NULL, NULL, NULL);
+	width = w;
+	height = h;
 
 	if (interlaceType == PNG_INTERLACE_NONE) {
 		// PNGs without interlacing can simply be read row by row.
@@ -235,7 +241,11 @@ bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, int &w
 	// PNG Informationen auslesen
 	int bitDepth;
 	int colorType;
-	png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&width, (png_uint_32 *)&height, &bitDepth, &colorType, NULL, NULL, NULL);
+	png_uint_32 w, h;
+	png_get_IHDR(png_ptr, info_ptr, &w, &h, &bitDepth, &colorType, NULL, NULL, NULL);
+
+	width = w;
+	height = h;
 
 	// Die Strukturen freigeben
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
