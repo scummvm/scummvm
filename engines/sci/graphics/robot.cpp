@@ -205,7 +205,7 @@ void GfxRobot::getFrameOffsets() {
 	for (int i = 1; i < _frameCount + 1; ++i) 
 		_imageStart[i] = _imageStart[i - 1] + audioEnd[i - 1];
 	for (int i = 0; i < _frameCount; ++i)
-		_audioStart[i] = _imageStart[i] + videoEnd[i - 1];
+		_audioStart[i] = _imageStart[i] + videoEnd[i];
 	for (int i = 0; i < _frameCount; ++i)
 		_audioLen[i] = _imageStart[i + 1] - _audioStart[i];
 
