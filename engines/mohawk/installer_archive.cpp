@@ -40,6 +40,11 @@ InstallerArchive::~InstallerArchive() {
 	close();
 }
 
+struct DirectoryEntry {
+	uint16 fileCount;
+	Common::String name;
+};
+
 bool InstallerArchive::open(const Common::String &filename) {
 	close();
 
@@ -64,29 +69,58 @@ bool InstallerArchive::open(const Common::String &filename) {
 	uint16 fileCount = _stream->readUint16LE();
 	debug(2, "File count = %d", fileCount);
 
-	for (uint16 i = 0; i < fileCount; i++) {
-		FileEntry entry;
+	_stream->skip(9);
 
-		_stream->skip(12); // Unknown
+	Common::Array<DirectoryEntry> directories;
 
-		entry.uncompressedSize = _stream->readUint32LE();
-		entry.compressedSize = _stream->readUint32LE();
-		entry.offset = _stream->readUint32LE();
+	for (uint16 i = 0; i < fileCount;) {
+		uint16 dirFileCount = _stream->readUint16LE();
 
-		_stream->skip(14); // Unknown
+		if (dirFileCount == 0) {
+			// We've found a file
+			FileEntry entry;
 
-		byte nameLength = _stream->readByte();
-		Common::String name;
-		while (nameLength--)
-			name += _stream->readByte();
+			_stream->skip(1); // Unknown
 
-		_stream->skip(4);  // Unknown
+			entry.uncompressedSize = _stream->readUint32LE();
+			entry.compressedSize = _stream->readUint32LE();
+			entry.offset = _stream->readUint32LE();
 
-		_map[name] = entry;
+			_stream->skip(14); // Unknown
 
-		debug(3, "Found file '%s' at 0x%08x (Comp: 0x%08x, Uncomp: 0x%08x)", name.c_str(),
-				entry.offset, entry.compressedSize, entry.uncompressedSize);
+			byte nameLength = _stream->readByte();
+			Common::String name;
+			while (nameLength--)
+				name += _stream->readByte();
+
+			_stream->skip(13); // Unknown
+
+			_map[name] = entry;
+			i++;
+
+			debug(3, "Found file '%s' at 0x%08x (Comp: 0x%08x, Uncomp: 0x%08x)", name.c_str(),
+					entry.offset, entry.compressedSize, entry.uncompressedSize);
+		} else {
+			// We've found a directory
+			DirectoryEntry dirEntry;
+
+			dirEntry.fileCount = dirFileCount;
+			/* uint16 entrySize = */ _stream->readUint16LE();
+
+			uint16 nameLength = _stream->readUint16LE();
+			while (nameLength--)
+				dirEntry.name += _stream->readByte();
+
+			directories.push_back(dirEntry);
+
+			_stream->skip(5);  // Unknown
+
+			debug(3, "Ignoring directory '%s'", dirEntry.name.c_str());
+		}
 	}
+
+	// TODO: Handle files in directories
+	// Per directory found follows DirectoryEntry::fileCount files
 
 	return true;
 }
