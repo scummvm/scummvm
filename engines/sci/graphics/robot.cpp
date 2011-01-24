@@ -125,9 +125,7 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 }
 
 void GfxRobot::setPalette() {
-	byte *paletteData = (_hasSound && _audioSize > 14) ? 
-		_resourceData + 60 + 14 + _audioSize : 
-		_resourceData + 60;
+	byte *paletteData = _resourceData + _palOffset;
 	uint16 paletteSize = READ_LE_UINT16(_resourceData + 16);
 
 	Palette resourcePal;
