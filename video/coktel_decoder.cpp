@@ -1377,7 +1377,10 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 
 		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0)) {
 			// Directly uncompress onto the video surface
-			deLZ77((byte *)_surface.pixels + (_y * _surface.pitch), dataPtr, dataSize,
+			int offsetX = rect.left * _surface.bytesPerPixel;
+			int offsetY = (_y + rect.top) * _surface.pitch;
+
+			deLZ77((byte *)_surface.pixels + offsetX + offsetY, dataPtr, dataSize,
 					_surface.w * _surface.h * _surface.bytesPerPixel);
 			return true;
 		}
@@ -2241,7 +2244,10 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 
 		if ((type == 2) && (rect.width() == _surface.w) && (_x == 0) && (_blitMode == 0)) {
 			// Directly uncompress onto the video surface
-			deLZ77((byte *)_surface.pixels + (_y * _surface.pitch), dataPtr, dataSize,
+			int offsetX = rect.left * _surface.bytesPerPixel;
+			int offsetY = (_y + rect.top) * _surface.pitch;
+
+			deLZ77((byte *)_surface.pixels + offsetX + offsetY, dataPtr, dataSize,
 					_surface.w * _surface.h * _surface.bytesPerPixel);
 			return true;
 		}
