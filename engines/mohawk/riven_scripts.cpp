@@ -380,6 +380,9 @@ void RivenScript::enableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 			_vm->_hotspots[i].enabled = true;
 		}
 	}
+
+	// Recheck our current hotspot because it may have now changed
+	_vm->updateCurrentHotspot();
 }
 
 // Command 10: disable hotspot (blst_id)
@@ -390,6 +393,9 @@ void RivenScript::disableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 			_vm->_hotspots[i].enabled = false;
 		}
 	}
+
+	// Recheck our current hotspot because it may have now changed
+	_vm->updateCurrentHotspot();
 }
 
 // Command 12: stop sounds (flags)
@@ -589,6 +595,9 @@ void RivenScript::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
 	}
 
 	delete blst;
+
+	// Recheck our current hotspot because it may have now changed
+	_vm->updateCurrentHotspot();
 }
 
 // Command 44: activate FLST record (information on which SFXE resource this card should use)

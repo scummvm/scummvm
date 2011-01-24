@@ -376,8 +376,7 @@ void MohawkEngine_Riven::refreshCard() {
 	}
 
 	// Now we need to redraw the cursor if necessary and handle mouse over scripts
-	_curHotspot = -1;
-	checkHotspotChange();
+	updateCurrentHotspot();
 }
 
 void MohawkEngine_Riven::loadCard(uint16 id) {
@@ -494,6 +493,11 @@ void MohawkEngine_Riven::checkHotspotChange() {
 		_curHotspot = -1;
 		_cursor->setCursor(kRivenMainCursor);
 	}
+}
+
+void MohawkEngine_Riven::updateCurrentHotspot() {
+	_curHotspot = -1;
+	checkHotspotChange();
 }
 
 Common::String MohawkEngine_Riven::getHotspotName(uint16 hotspot) {

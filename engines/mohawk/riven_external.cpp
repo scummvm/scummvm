@@ -1796,8 +1796,7 @@ void RivenExternal::xschool280_playwhark(uint16 argc, uint16 *argv) {
 	_vm->_hotspots[3].enabled = !_vm->_hotspots[3].enabled;
 
 	// Update the cursor
-	_vm->_curHotspot = -1;
-	_vm->checkHotspotChange();
+	_vm->updateCurrentHotspot();
 }
 
 void RivenExternal::xjatboundary(uint16 argc, uint16 *argv) {
@@ -2460,8 +2459,7 @@ void RivenExternal::xtakeit(uint16 argc, uint16 *argv) {
 	// Check the new hotspots and refresh everything
 	*marble = 0;
 	setMarbleHotspots();
-	_vm->_curHotspot = -1;
-	_vm->checkHotspotChange();
+	_vm->updateCurrentHotspot();
 	_vm->_gfx->updateScreen();
 }
 
