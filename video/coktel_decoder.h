@@ -105,6 +105,7 @@ public:
 
 	void enableSound();
 	void disableSound();
+	void finishSound();
 
 	virtual void colorModeChanged();
 
@@ -453,6 +454,7 @@ private:
 	byte   _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
 	uint32 _soundHeaderSize;
 	uint32 _soundDataSize;
+	uint32 _soundLastFilledFrame;
 	AudioFormat _audioFormat;
 
 	// Video properties

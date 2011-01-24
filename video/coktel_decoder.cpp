@@ -220,6 +220,14 @@ void CoktelDecoder::disableSound() {
 	_audioStream = 0;
 }
 
+void CoktelDecoder::finishSound() {
+	if (!_audioStream)
+		return;
+
+	_audioStream->finish();
+	_soundStage = kSoundFinished;
+}
+
 void CoktelDecoder::colorModeChanged() {
 }
 
@@ -1531,9 +1539,10 @@ VMDDecoder::VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 	_stream(0), _version(0), _flags(0), _frameInfoOffset(0), _partsPerFrame(0), _frames(0),
 	_soundFlags(0), _soundFreq(0), _soundSliceSize(0), _soundSlicesCount(0),
 	_soundBytesPerSample(0), _soundStereo(0), _soundHeaderSize(0), _soundDataSize(0),
-	_audioFormat(kAudioFormat8bitRaw), _hasVideo(false), _videoCodec(0),
-	_blitMode(0), _bytesPerPixel(0), _firstFramePos(0), _videoBufferSize(0),
-	_externalCodec(false), _codec(0), _subtitle(-1), _isPaletted(true) {
+	_soundLastFilledFrame(0), _audioFormat(kAudioFormat8bitRaw),
+	_hasVideo(false), _videoCodec(0), _blitMode(0), _bytesPerPixel(0),
+	_firstFramePos(0), _videoBufferSize(0), _externalCodec(false), _codec(0),
+	_subtitle(-1), _isPaletted(true) {
 
 	_videoBuffer   [0] = 0;
 	_videoBuffer   [1] = 0;
@@ -1896,6 +1905,7 @@ bool VMDDecoder::readFrameTable(int &numFiles) {
 		_frames[i].offset = _stream->readUint32LE();
 	}
 
+	_soundLastFilledFrame = 0;
 	for (uint16 i = 0; i < _frameCount; i++) {
 		bool separator = false;
 
@@ -1909,6 +1919,9 @@ bool VMDDecoder::readFrameTable(int &numFiles) {
 
 				_frames[i].parts[j].flags = _stream->readByte();
 				_stream->skip(9); // Unknown
+
+				if (_frames[i].parts[j].flags != 3)
+					_soundLastFilledFrame = i;
 
 			} else if (_frames[i].parts[j].type == kPartTypeVideo) {
 
@@ -2006,15 +2019,16 @@ void VMDDecoder::close() {
 	_partsPerFrame   = 0;
 	_frames          = 0;
 
-	_soundFlags          = 0;
-	_soundFreq           = 0;
-	_soundSliceSize      = 0;
-	_soundSlicesCount    = 0;
-	_soundBytesPerSample = 0;
-	_soundStereo         = 0;
-	_soundHeaderSize     = 0;
-	_soundDataSize       = 0;
-	_audioFormat         = kAudioFormat8bitRaw;
+	_soundFlags           = 0;
+	_soundFreq            = 0;
+	_soundSliceSize       = 0;
+	_soundSlicesCount     = 0;
+	_soundBytesPerSample  = 0;
+	_soundStereo          = 0;
+	_soundHeaderSize      = 0;
+	_soundDataSize        = 0;
+	_soundLastFilledFrame = 0;
+	_audioFormat          = kAudioFormat8bitRaw;
 
 	_hasVideo      = false;
 	_videoCodec    = 0;
@@ -2101,7 +2115,8 @@ void VMDDecoder::processFrame() {
 				// Empty sound slice
 
 				if (_soundEnabled) {
-					emptySoundSlice(_soundDataSize * _soundBytesPerSample);
+					if ((uint32)_curFrame < _soundLastFilledFrame)
+						emptySoundSlice(_soundDataSize * _soundBytesPerSample);
 
 					if (_soundStage == kSoundLoaded)
 						startSound = true;
