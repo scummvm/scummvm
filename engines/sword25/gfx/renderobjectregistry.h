@@ -51,6 +51,4 @@ class RenderObjectRegistry :
 
 } // End of namespace Sword25
 
-DECLARE_SINGLETON(Sword25::RenderObjectRegistry);
-
 #endif

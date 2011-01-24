@@ -45,6 +45,7 @@
 
 #include "sword25/gfx/animationtemplateregistry.h"	// Needed so we can destroy the singleton
 #include "sword25/gfx/renderobjectregistry.h"		// Needed so we can destroy the singleton
+DECLARE_SINGLETON(Sword25::RenderObjectRegistry);
 #include "sword25/math/regionregistry.h"			// Needed so we can destroy the singleton
 
 namespace Sword25 {
