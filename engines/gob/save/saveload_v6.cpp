@@ -160,7 +160,7 @@ SaveLoad_v6::SaveFile SaveLoad_v6::_saveFiles[] = {
 	{  "cata3.057", kSaveModeSave,   0, "extra save" }, // Slot 57
 	{  "cata3.058", kSaveModeSave,   0, "extra save" }, // Slot 58
 	{  "cata3.059", kSaveModeSave,   0, "extra save" }, // Slot 59
-	{  "intro.0xx", kSaveModeIgnore, 0, 0            },
+	{  "intro.0xx", kSaveModeSave,   0, "temp sprite"}, // Autosave sprite
 	{  "intro.000", kSaveModeSave,   0, "temp sprite"}, // Slot 00
 	{  "intro.001", kSaveModeSave,   0, "temp sprite"}, // Slot 01
 	{  "intro.002", kSaveModeSave,   0, "temp sprite"}, // Slot 02
@@ -696,6 +696,73 @@ bool SaveLoad_v6::AutoHandler::save(int16 dataVar, int32 size, int32 offset) {
 }
 
 
+SaveLoad_v6::AutoSpriteHandler::File::File(GobEngine *vm, const Common::String &base) :
+	SlotFileStatic(vm, base, "asp") {
+}
+
+SaveLoad_v6::AutoSpriteHandler::File::~File() {
+}
+
+
+SaveLoad_v6::AutoSpriteHandler::AutoSpriteHandler(GobEngine *vm,
+		const Common::String &target) : TempSpriteHandler(vm), _file(vm, target) {
+
+}
+
+SaveLoad_v6::AutoSpriteHandler::~AutoSpriteHandler() {
+}
+
+int32 SaveLoad_v6::AutoSpriteHandler::getSize() {
+	Common::InSaveFile *file = _file.openRead();
+	if (!file)
+		return -1;
+
+	delete file;
+	return 1;
+}
+
+bool SaveLoad_v6::AutoSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
+	if (offset != 0) {
+		warning("Invalid autosprite saving procedure (%d, %d, %d)", dataVar, size, offset);
+		return false;
+	}
+
+	if (!TempSpriteHandler::create(624, 272, true))
+		return false;
+
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	SaveReader reader(1, 0, fileName);
+	if (!reader.load())
+		return false;
+
+	if (!reader.readPart(0, _sprite))
+		return false;
+
+	return TempSpriteHandler::load(dataVar, size, offset);
+}
+
+bool SaveLoad_v6::AutoSpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
+	if (!TempSpriteHandler::save(dataVar, size, offset))
+		return false;
+
+	if (offset != 0) {
+		warning("Invalid autosprite saving procedure (%d, %d, %d)", dataVar, size, offset);
+		return false;
+	}
+
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	SaveWriter writer(1, 0, fileName);
+
+	return writer.writePart(0, _sprite);
+}
+
+
 SaveLoad_v6::TempHandler::TempHandler(GobEngine *vm) : SaveHandler(vm),
 	_empty(true), _size(0), _data(0) {
 }
@@ -781,9 +848,10 @@ bool SaveLoad_v6::ExtraHandler::save(int16 dataVar, int32 size, int32 offset) {
 SaveLoad_v6::SaveLoad_v6(GobEngine *vm, const char *targetName) :
 		SaveLoad(vm) {
 
-	_spriteHandler = new SpriteHandler(vm);
-	_gameHandler   = new GameHandler(vm, targetName, *_spriteHandler);
-	_autoHandler   = new AutoHandler(vm, targetName);
+	_spriteHandler     = new SpriteHandler(vm);
+	_gameHandler       = new GameHandler(vm, targetName, *_spriteHandler);
+	_autoHandler       = new AutoHandler(vm, targetName);
+	_autoSpriteHandler = new AutoSpriteHandler(vm, targetName);
 
 	_tmpHandler[0] = new TempHandler(vm);
 	_tmpHandler[1] = new TempHandler(vm);
@@ -801,6 +869,8 @@ SaveLoad_v6::SaveLoad_v6(GobEngine *vm, const char *targetName) :
 		_saveFiles[69 + i].handler =
 			_extraHandler[60 + i] = new ExtraHandler(_vm, *_gameHandler, 3, i);
 
+	_saveFiles[129].handler = _autoSpriteHandler;
+
 	for (int i = 0; i < 60; i++)
 		_saveFiles[130 + i].handler = _spriteHandler;
 }
@@ -811,6 +881,7 @@ SaveLoad_v6::~SaveLoad_v6() {
 
 	delete _tmpHandler[0];
 	delete _tmpHandler[1];
+	delete _autoSpriteHandler;
 	delete _autoHandler;
 	delete _gameHandler;
 	delete _spriteHandler;

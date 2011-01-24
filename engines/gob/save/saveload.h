@@ -680,6 +680,26 @@ protected:
 		File _file;
 	};
 
+	/** Handles the autosave temp sprite. */
+	class AutoSpriteHandler : public TempSpriteHandler {
+	public:
+		AutoSpriteHandler(GobEngine *vm, const Common::String &target);
+		~AutoSpriteHandler();
+
+		int32 getSize();
+		bool load(int16 dataVar, int32 size, int32 offset);
+		bool save(int16 dataVar, int32 size, int32 offset);
+
+	private:
+		class File : public SlotFileStatic {
+		public:
+			File(GobEngine *vm, const Common::String &base);
+			~File();
+		};
+
+		File _file;
+	};
+
 	/** Handles the temporary saves. */
 	class TempHandler : public SaveHandler {
 	public:
@@ -717,11 +737,12 @@ protected:
 
 	static SaveFile _saveFiles[];
 
-	SpriteHandler *_spriteHandler;
-	GameHandler   *_gameHandler;
-	AutoHandler   *_autoHandler;
-	TempHandler   *_tmpHandler[2];
-	ExtraHandler  *_extraHandler[120];
+	SpriteHandler     *_spriteHandler;
+	GameHandler       *_gameHandler;
+	AutoHandler       *_autoHandler;
+	AutoSpriteHandler *_autoSpriteHandler;
+	TempHandler       *_tmpHandler[2];
+	ExtraHandler      *_extraHandler[120];
 
 	SaveHandler *getHandler(const char *fileName) const;
 	const char *getDescription(const char *fileName) const;
