@@ -260,7 +260,9 @@ Graphics::Surface *GraphicEngine::getScreenshot() {
 Resource *GraphicEngine::loadResource(const Common::String &filename) {
 	assert(canLoadResource(filename));
 
-	// Load image for "software buffer" (FIXME: Whatever that means?)
+	// Load image for "software buffer". These are images used to dynamically
+	// add shadows to actors (e.g. when George walks under the shadow of a
+	// a building)
 	if (filename.hasSuffix("_s.png")) {
 		bool result = false;
 		SWImage *pImage = new SWImage(filename, result);
