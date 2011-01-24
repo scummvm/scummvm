@@ -12,7 +12,6 @@ MODULE_OBJS := \
 	gfx/animationtemplate.o \
 	gfx/animationtemplateregistry.o \
 	gfx/bitmap.o \
-	gfx/bitmapresource.o \
 	gfx/dynamicbitmap.o \
 	gfx/fontresource.o \
 	gfx/framecounter.o \
@@ -41,7 +40,6 @@ MODULE_OBJS := \
 	kernel/persistenceservice.o \
 	kernel/resmanager.o \
 	kernel/resource.o \
-	math/geometry.o \
 	math/geometry_script.o \
 	math/polygon.o \
 	math/region.o \

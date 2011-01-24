@@ -44,7 +44,11 @@ class Kernel;
 
 class Geometry : public Service {
 public:
-	Geometry(Kernel *pKernel);
+	Geometry(Kernel *pKernel) : Service(pKernel) {
+		if (!registerScriptBindings())
+			error("Script bindings could not be registered.");
+	}
+
 	virtual ~Geometry() {}
 
 private:

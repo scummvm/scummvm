@@ -59,14 +59,15 @@ public:
 		FLIP_VH = FLIP_H | FLIP_V
 	};
 
-	BitmapResource(const Common::String &filename, Image *pImage);
-	virtual ~BitmapResource();
+	BitmapResource(const Common::String &filename, Image *pImage) :
+					_pImage(pImage), Resource(filename, Resource::TYPE_BITMAP) {}
+	virtual ~BitmapResource() { delete _pImage; }
 
 	/**
 	    @brief Gibt zurück, ob das Objekt einen gültigen Zustand hat.
 	*/
 	bool isValid() const {
-		return _valid;
+		return (_pImage != 0);
 	}
 
 	/**
@@ -156,7 +157,9 @@ public:
 	    @remark Diese Methode sollte auf keine Fall benutzt werden um größere Teile des Bildes zu lesen, da sie sehr langsam ist. Sie ist
 	            eher dafür gedacht einzelne Pixel des Bildes auszulesen.
 	*/
-	uint getPixel(int x, int y) const;
+	uint getPixel(int x, int y) const {
+		return _pImage->getPixel(x, y);
+	}
 
 	//@{
 	/** @name Auskunfts-Methoden */
@@ -204,7 +207,6 @@ public:
 
 private:
 	Image *_pImage;
-	bool _valid;
 };
 
 } // End of namespace Sword25
