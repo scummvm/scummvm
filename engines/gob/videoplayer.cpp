@@ -251,6 +251,25 @@ void VideoPlayer::pauseAll(bool pause) {
 		pauseVideo(i, pause);
 }
 
+void VideoPlayer::finishVideoSound(int slot) {
+	Video *video = getVideoBySlot(slot);
+	if (!video || !video->decoder)
+		return;
+
+	video->decoder->finishSound();
+}
+
+void VideoPlayer::waitSoundEnd(int slot) {
+	Video *video = getVideoBySlot(slot);
+	if (!video || !video->decoder)
+		return;
+
+	video->decoder->finishSound();
+
+	while(video->decoder->isSoundPlaying())
+		_vm->_util->longDelay(1);
+}
+
 bool VideoPlayer::play(int slot, Properties &properties) {
 	Video *video = getVideoBySlot(slot);
 	if (!video)
