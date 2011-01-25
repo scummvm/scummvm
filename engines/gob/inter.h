@@ -31,6 +31,7 @@
 
 #include "gob/goblin.h"
 #include "gob/variables.h"
+#include "gob/iniconfig.h"
 
 namespace Gob {
 
@@ -604,7 +605,7 @@ protected:
 	void o7_loadLBM();
 	void o7_draw0x93();
 	void o7_getINIValue();
-	void o7_draw0xA2();
+	void o7_setINIValue();
 	void o7_draw0xA4();
 	void o7_opendBase();
 	void o7_draw0xC5();
@@ -613,8 +614,13 @@ protected:
 	void o7_oemToANSI(OpGobParams &params);
 
 private:
+	INIConfig _inis;
+
 	void storeValue(uint16 index, uint16 type, uint32 value);
 	void storeValue(uint32 value);
+
+	void storeString(uint16 index, uint16 type, const char *value);
+	void storeString(const char *value);
 };
 
 } // End of namespace Gob

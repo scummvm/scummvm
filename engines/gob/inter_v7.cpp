@@ -57,7 +57,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x90, o7_loadLBM);
 	OPCODEDRAW(0x93, o7_draw0x93);
 	OPCODEDRAW(0xA1, o7_getINIValue);
-	OPCODEDRAW(0xA2, o7_draw0xA2);
+	OPCODEDRAW(0xA2, o7_setINIValue);
 	OPCODEDRAW(0xA4, o7_draw0xA4);
 	OPCODEDRAW(0xC4, o7_opendBase);
 	OPCODEDRAW(0xC5, o7_draw0xC5);
@@ -206,7 +206,15 @@ void Inter_v7::o7_draw0x93() {
 
 void Inter_v7::o7_getINIValue() {
 	_vm->_game->_script->evalExpr(0);
-	Common::String file = _vm->_game->_script->getResultStr();
+
+	Common::String file;
+	if (!strncmp(_vm->_game->_script->getResultStr(), "<ME>", 4))
+		file = _vm->_game->_script->getResultStr() + 4;
+	else if (!strncmp(_vm->_game->_script->getResultStr(), "<ALLCD>", 7))
+		file = _vm->_game->_script->getResultStr() + 7;
+	else
+		file = _vm->_game->_script->getResultStr();
+
 	_vm->_game->_script->evalExpr(0);
 	Common::String section = _vm->_game->_script->getResultStr();
 	_vm->_game->_script->evalExpr(0);
@@ -214,53 +222,31 @@ void Inter_v7::o7_getINIValue() {
 	_vm->_game->_script->evalExpr(0);
 	Common::String def = _vm->_game->_script->getResultStr();
 
-	uint16 type;
-	int16 varIndex = _vm->_game->_script->readVarIndex(0, &type);
+	Common::String value;
+	_inis.getValue(value, file, section, key, def);
 
-	warning("Addy Stub: Get INI value, \"%s\":\"%s\":\"%s\" (\"%s\")",
-		file.c_str(), section.c_str(), key.c_str(), def.c_str());
-
-	if (type == TYPE_VAR_STR) {
-		char *str = GET_VARO_STR(varIndex);
-
-		strncpy(str, def.c_str(), _vm->_global->_inter_animDataSize);
-		str[_vm->_global->_inter_animDataSize - 1] = '\0';
-
-	} else if (type == TYPE_IMM_INT8) {
-
-		strcpy(GET_VARO_STR(varIndex), def.c_str());
-
-	} else if (type == TYPE_VAR_INT32) {
-
-		char str[256];
-
-		Common::strlcpy(str, def.c_str(), 256);
-
-		WRITE_VARO_UINT32(varIndex, atoi(str));
-
-	} else if (type == TYPE_VAR_INT16) {
-
-		char str[256];
-
-		Common::strlcpy(str, def.c_str(), 256);
-
-		WRITE_VARO_UINT16(varIndex, atoi(str));
-	}
-
+	storeString(value.c_str());
 }
 
-void Inter_v7::o7_draw0xA2() {
+void Inter_v7::o7_setINIValue() {
 	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String str1 = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String str2 = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String str3 = _vm->_game->_script->getResultStr();
 
-	warning("Addy Stub Draw 0xA2: \"%s\", \"%s\", \"%s\", \"%s\"",
-			str0.c_str(), str1.c_str(), str2.c_str(), str3.c_str());
+	Common::String file;
+	if (!strncmp(_vm->_game->_script->getResultStr(), "<ME>", 4))
+		file = _vm->_game->_script->getResultStr() + 4;
+	else if (!strncmp(_vm->_game->_script->getResultStr(), "<ALLCD>", 7))
+		file = _vm->_game->_script->getResultStr() + 7;
+	else
+		file = _vm->_game->_script->getResultStr();
+
+	_vm->_game->_script->evalExpr(0);
+	Common::String section = _vm->_game->_script->getResultStr();
+	_vm->_game->_script->evalExpr(0);
+	Common::String key = _vm->_game->_script->getResultStr();
+	_vm->_game->_script->evalExpr(0);
+	Common::String value = _vm->_game->_script->getResultStr();
+
+	_inis.setValue(file, section, key, value);
 }
 
 void Inter_v7::o7_draw0xA4() {
@@ -305,6 +291,10 @@ void Inter_v7::o7_draw0xC6() {
 			str0.c_str(), str1.c_str(), str2.c_str(), str3.c_str(), index0);
 }
 
+void Inter_v7::o7_oemToANSI(OpGobParams &params) {
+	_vm->_game->_script->skip(2);
+}
+
 void Inter_v7::storeValue(uint16 index, uint16 type, uint32 value) {
 	switch (type) {
 	case OP_ARRAY_INT8:
@@ -330,8 +320,32 @@ void Inter_v7::storeValue(uint32 value) {
 	storeValue(index, type, value);
 }
 
-void Inter_v7::o7_oemToANSI(OpGobParams &params) {
-	_vm->_game->_script->skip(2);
+void Inter_v7::storeString(uint16 index, uint16 type, const char *value) {
+	if (type == TYPE_VAR_STR) {
+		char *str = GET_VARO_STR(index);
+
+		strncpy(str, value, _vm->_global->_inter_animDataSize);
+		str[_vm->_global->_inter_animDataSize - 1] = '\0';
+
+	} else if (type == TYPE_IMM_INT8) {
+
+		strcpy(GET_VARO_STR(index), value);
+
+	} else if (type == TYPE_VAR_INT32) {
+
+		WRITE_VARO_UINT32(index, atoi(value));
+
+	} else if (type == TYPE_VAR_INT16) {
+
+		WRITE_VARO_UINT16(index, atoi(value));
+	}
+}
+
+void Inter_v7::storeString(const char *value) {
+	uint16 type;
+	int16 varIndex = _vm->_game->_script->readVarIndex(0, &type);
+
+	storeString(varIndex, type, value);
 }
 
 } // End of namespace Gob
