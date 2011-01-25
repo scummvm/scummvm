@@ -610,6 +610,8 @@ protected:
 	void o7_draw0xC5();
 	void o7_draw0xC6();
 
+	void o7_oemToANSI(OpGobParams &params);
+
 private:
 	void storeValue(uint16 index, uint16 type, uint32 value);
 	void storeValue(uint32 value);

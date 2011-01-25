@@ -69,6 +69,8 @@ void Inter_v7::setupOpcodesFunc() {
 
 void Inter_v7::setupOpcodesGob() {
 	Inter_Playtoons::setupOpcodesGob();
+
+	OPCODEGOB(420, o7_oemToANSI);
 }
 
 void Inter_v7::o7_draw0x0C() {
@@ -311,6 +313,10 @@ void Inter_v7::storeValue(uint32 value) {
 	uint16 index = _vm->_game->_script->readVarIndex(0, &type);
 
 	storeValue(index, type, value);
+}
+
+void Inter_v7::o7_oemToANSI(OpGobParams &params) {
+	_vm->_game->_script->skip(2);
 }
 
 } // End of namespace Gob
