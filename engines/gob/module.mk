@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	goblin_v3.o \
 	goblin_v4.o \
 	hotspots.o \
+	iniconfig.o \
 	init.o \
 	init_v1.o \
 	init_v2.o \
