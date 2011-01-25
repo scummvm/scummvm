@@ -583,6 +583,32 @@ protected:
 	void oPlaytoons_openItk();
 };
 
+class Inter_v7 : public Inter_Playtoons {
+public:
+	Inter_v7(GobEngine *vm);
+	virtual ~Inter_v7() {}
+
+protected:
+	virtual void setupOpcodesDraw();
+	virtual void setupOpcodesFunc();
+	virtual void setupOpcodesGob();
+
+	void o7_draw0x0D();
+	void o7_draw0x44();
+	void o7_draw0x45();
+	void o7_draw0x57();
+	void o7_draw0x89();
+	void o7_draw0x8A();
+	void o7_draw0x8C();
+	void o7_draw0x90();
+	void o7_draw0x93();
+	void o7_draw0xA1();
+	void o7_draw0xA2();
+	void o7_draw0xA4();
+	void o7_draw0xC4();
+	void o7_draw0xC6();
+};
+
 } // End of namespace Gob
 
 #endif // GOB_INTER_H

@@ -546,7 +546,7 @@ bool GobEngine::initGameParts() {
 	case kGameTypeAdi2:
 		_init     = new Init_v2(this);
 		_video    = new Video_v6(this);
-		_inter    = new Inter_Playtoons(this);
+		_inter    = new Inter_v7(this);
 		_mult     = new Mult_v2(this);
 		_draw     = new Draw_v2(this);
 		_map      = new Map_v2(this);

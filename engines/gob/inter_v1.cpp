@@ -1215,6 +1215,9 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		WRITE_VAR(59, 4000);
 
 	switch (cmd) {
+	case -1:
+		break;
+
 	case 0:
 		_vm->_draw->_showCursor &= ~2;
 		_vm->_util->longDelay(1);

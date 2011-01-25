@@ -38,6 +38,7 @@ MODULE_OBJS := \
 	inter_v4.o \
 	inter_v5.o \
 	inter_v6.o \
+	inter_v7.o \
 	map.o \
 	map_v1.o \
 	map_v2.o \

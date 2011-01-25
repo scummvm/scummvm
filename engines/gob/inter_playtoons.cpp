@@ -237,6 +237,10 @@ bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", file + 3, file);
 		file += 3;
 	}
+	if (strncmp(file, "<STK>", 5) == 0) {
+		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", file + 5, file);
+		file += 5;
+	}
 
 	// WORKAROUND: In the Playtoons stick files found in german Addy 4, some paths are hardcoded
 	if ((backSlash = strrchr(file, '\\'))) {

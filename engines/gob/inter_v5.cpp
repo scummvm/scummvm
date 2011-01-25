@@ -130,6 +130,9 @@ void Inter_v5::o5_initScreen() {
 	width = _vm->_game->_script->readValExpr();
 	height = _vm->_game->_script->readValExpr();
 
+	if (videoMode == 0)
+		videoMode = 0x14;
+
 	_vm->_video->clearScreen();
 
 	if (videoMode == 0x13) {
