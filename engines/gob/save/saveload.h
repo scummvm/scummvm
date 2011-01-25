@@ -815,6 +815,38 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
+/** Save/Load class for Playtoons. */
+class SaveLoad_v7: public SaveLoad {
+public:
+	static const uint32 kChildrenCount = 16;
+
+	SaveLoad_v7(GobEngine *vm, const char *targetName);
+	virtual ~SaveLoad_v7();
+
+	SaveMode getSaveMode(const char *fileName) const;
+
+protected:
+	struct SaveFile {
+		const char *sourceName;
+		SaveMode mode;
+		SaveHandler *handler;
+		const char *description;
+	};
+
+	static SaveFile _saveFiles[];
+
+	TempSpriteHandler *_faceHandler[kChildrenCount];
+	FakeFileHandler   *_childrenHandler;
+	FakeFileHandler   *_debilHandler;
+	FakeFileHandler   *_configHandler;
+
+	SaveHandler *getHandler(const char *fileName) const;
+	const char *getDescription(const char *fileName) const;
+
+	const SaveFile *getSaveFile(const char *fileName) const;
+	SaveFile *getSaveFile(const char *fileName);
+};
+
 } // End of namespace Gob
 
 #endif // GOB_SAVE_SAVELOAD_H

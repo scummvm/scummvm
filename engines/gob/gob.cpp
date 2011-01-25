@@ -552,7 +552,7 @@ bool GobEngine::initGameParts() {
 		_map      = new Map_v2(this);
 		_goblin   = new Goblin_v4(this);
 		_scenery  = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_Playtoons(this, _targetName.c_str());
+		_saveLoad = new SaveLoad_v7(this, _targetName.c_str());
 		break;
 
 	case kGameTypeAdibou1:
