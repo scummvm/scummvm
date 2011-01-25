@@ -26,6 +26,7 @@
 #include "common/endian.h"
 
 #include "gob/gob.h"
+#include "gob/global.h"
 #include "gob/inter.h"
 #include "gob/game.h"
 #include "gob/script.h"
@@ -54,7 +55,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
 	OPCODEDRAW(0x90, o7_loadLBM);
 	OPCODEDRAW(0x93, o7_draw0x93);
-	OPCODEDRAW(0xA1, o7_draw0xA1);
+	OPCODEDRAW(0xA1, o7_getINIValue);
 	OPCODEDRAW(0xA2, o7_draw0xA2);
 	OPCODEDRAW(0xA4, o7_draw0xA4);
 	OPCODEDRAW(0xC4, o7_opendBase);
@@ -186,20 +187,49 @@ void Inter_v7::o7_draw0x93() {
 	warning("Addy Stub Draw 0x93: %d", expr0);
 }
 
-void Inter_v7::o7_draw0xA1() {
+void Inter_v7::o7_getINIValue() {
 	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
+	Common::String file = _vm->_game->_script->getResultStr();
 	_vm->_game->_script->evalExpr(0);
-	Common::String str1 = _vm->_game->_script->getResultStr();
+	Common::String section = _vm->_game->_script->getResultStr();
 	_vm->_game->_script->evalExpr(0);
-	Common::String str2 = _vm->_game->_script->getResultStr();
+	Common::String key = _vm->_game->_script->getResultStr();
 	_vm->_game->_script->evalExpr(0);
-	Common::String str3 = _vm->_game->_script->getResultStr();
+	Common::String def = _vm->_game->_script->getResultStr();
 
-	int16 index0 = _vm->_game->_script->readVarIndex();
+	uint16 type;
+	int16 varIndex = _vm->_game->_script->readVarIndex(0, &type);
 
-	warning("Addy Stub Draw 0xA1: \"%s\", \"%s\", \"%s\", \"%s\", %d",
-			str0.c_str(), str1.c_str(), str2.c_str(), str3.c_str(), index0);
+	warning("Addy Stub: Get INI value, \"%s\":\"%s\":\"%s\" (\"%s\")",
+		file.c_str(), section.c_str(), key.c_str(), def.c_str());
+
+	if (type == TYPE_VAR_STR) {
+		char *str = GET_VARO_STR(varIndex);
+
+		strncpy(str, def.c_str(), _vm->_global->_inter_animDataSize);
+		str[_vm->_global->_inter_animDataSize - 1] = '\0';
+
+	} else if (type == TYPE_IMM_INT8) {
+
+		strcpy(GET_VARO_STR(varIndex), def.c_str());
+
+	} else if (type == TYPE_VAR_INT32) {
+
+		char str[256];
+
+		Common::strlcpy(str, def.c_str(), 256);
+
+		WRITE_VARO_UINT32(varIndex, atoi(str));
+
+	} else if (type == TYPE_VAR_INT16) {
+
+		char str[256];
+
+		Common::strlcpy(str, def.c_str(), 256);
+
+		WRITE_VARO_UINT16(varIndex, atoi(str));
+	}
+
 }
 
 void Inter_v7::o7_draw0xA2() {
