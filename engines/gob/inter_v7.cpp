@@ -46,7 +46,7 @@ void Inter_v7::setupOpcodesDraw() {
 
 	OPCODEDRAW(0x0C, o7_draw0x0C);
 	OPCODEDRAW(0x0D, o7_draw0x0D);
-	OPCODEDRAW(0x44, o7_draw0x44);
+	OPCODEDRAW(0x44, o7_displayWarning);
 	OPCODEDRAW(0x45, o7_draw0x45);
 	OPCODEDRAW(0x57, o7_draw0x57);
 	OPCODEDRAW(0x89, o7_draw0x89);
@@ -83,20 +83,19 @@ void Inter_v7::o7_draw0x0D() {
 	warning("Addy Stub Draw 0x0D: \"%s\", %d", str0.c_str(), expr0);
 }
 
-void Inter_v7::o7_draw0x44() {
+void Inter_v7::o7_displayWarning() {
 	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
+	Common::String caption = _vm->_game->_script->getResultStr();
 	_vm->_game->_script->evalExpr(0);
-	Common::String str1 = _vm->_game->_script->getResultStr();
+	Common::String text = _vm->_game->_script->getResultStr();
 	_vm->_game->_script->evalExpr(0);
-	Common::String str2 = _vm->_game->_script->getResultStr();
+	Common::String source = _vm->_game->_script->getResultStr();
 	_vm->_game->_script->evalExpr(0);
-	Common::String str3 = _vm->_game->_script->getResultStr();
+	Common::String msg =  _vm->_game->_script->getResultStr();
 	_vm->_game->_script->evalExpr(0);
-	Common::String str4 = _vm->_game->_script->getResultStr();
+	Common::String param = _vm->_game->_script->getResultStr();
 
-	warning("Addy Stub Draw 0x44: \"%s\", \"%s\", \"%s\", \"%s\", \"%s\"",
-			str0.c_str(), str1.c_str(), str2.c_str(), str3.c_str(), str4.c_str());
+	warning("%s: %s (%s)", source.c_str(), msg.c_str(), param.c_str());
 }
 
 void Inter_v7::o7_draw0x45() {

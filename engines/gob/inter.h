@@ -595,7 +595,7 @@ protected:
 
 	void o7_draw0x0C();
 	void o7_draw0x0D();
-	void o7_draw0x44();
+	void o7_displayWarning();
 	void o7_draw0x45();
 	void o7_draw0x57();
 	void o7_draw0x89();
