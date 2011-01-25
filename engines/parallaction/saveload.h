@@ -23,7 +23,6 @@
  *
  */
 
-
 #ifndef PARALLACTION_SAVELOAD_H
 #define PARALLACTION_SAVELOAD_H
 
@@ -31,9 +30,7 @@ namespace Parallaction {
 
 struct Character;
 
-
 class SaveLoad {
-
 protected:
 	Common::SaveFileManager	*_saveFileMan;
 	Common::String _saveFilePrefix;
@@ -60,7 +57,6 @@ public:
 };
 
 class SaveLoad_ns : public SaveLoad {
-
 	Parallaction_ns *_vm;
 
 protected:
@@ -78,7 +74,6 @@ public:
 };
 
 class SaveLoad_br : public SaveLoad {
-
 	Parallaction_br *_vm;
 	virtual void doLoadGame(uint16 slot);
 	virtual void doSaveGame(uint16 slot, const char* name);
@@ -89,7 +84,6 @@ public:
 	virtual void getGamePartProgress(bool *complete, int size);
 	virtual void setPartComplete(const char *part);
 };
-
 
 } // namespace Parallaction
 

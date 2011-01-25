@@ -36,7 +36,6 @@
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
-
 /* Nippon Safes savefiles are called 'nippon.000' to 'nippon.099'.
  *
  * A special savefile named 'nippon.999' holds information on whether the user completed one or more parts of the game.
@@ -46,7 +45,6 @@
 #define SPECIAL_SAVESLOT	999
 
 namespace Parallaction {
-
 
 Common::String SaveLoad::genSaveFileName(uint slot) {
 	assert(slot < NUM_SAVESLOTS || slot == SPECIAL_SAVESLOT);
@@ -67,9 +65,7 @@ Common::OutSaveFile *SaveLoad::getOutSaveFile(uint slot) {
 	return _saveFileMan->openForSaving(name);
 }
 
-
 void SaveLoad_ns::doLoadGame(uint16 slot) {
-
 	_vm->cleanupGame();
 
 	Common::InSaveFile *f = getInSaveFile(slot);
@@ -130,13 +126,9 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	char tmp[PATH_LEN];
 	sprintf(tmp, "%s.%s" , location.c_str(), character.c_str());
 	_vm->scheduleLocationSwitch(tmp);
-
-	return;
 }
 
-
 void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
-
 	Common::OutSaveFile *f = getOutSaveFile(slot);
 	if (f == 0) {
 		char buf[32];
@@ -187,14 +179,9 @@ void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 	}
 
 	delete f;
-
-	return;
 }
 
-
-
 int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const Common::String &caption, const Common::String &button) {
-
 	GUI::SaveLoadChooser slc(caption, button);
 	slc.setSaveMode(saveMode);
 
@@ -214,8 +201,6 @@ int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const 
 	return idx;
 }
 
-
-
 bool SaveLoad::loadGame() {
 	Common::String null;
 	int _di = selectSaveFile(null, false, "Load file", "Load");
@@ -231,7 +216,6 @@ bool SaveLoad::loadGame() {
 	return true;
 }
 
-
 bool SaveLoad::saveGame() {
 	Common::String saveName;
 	int slot = selectSaveFile(saveName, true, "Save file", "Save");
@@ -246,7 +230,6 @@ bool SaveLoad::saveGame() {
 
 	return true;
 }
-
 
 bool SaveLoad_ns::saveGame() {
 	// NOTE: shouldn't this check be done before, so that the
@@ -279,8 +262,6 @@ void SaveLoad_ns::setPartComplete(const char *part) {
 		outFile->finalize();
 		delete outFile;
 	}
-
-	return;
 }
 
 void SaveLoad_ns::getGamePartProgress(bool *complete, int size) {
@@ -353,19 +334,14 @@ void SaveLoad_ns::renameOldSavefiles() {
 
 	GUI::MessageDialog dialog1(msg);
 	dialog1.runModal();
-
-	return;
 }
-
 
 void SaveLoad_br::doLoadGame(uint16 slot) {
 	// TODO: implement loadgame
-	return;
 }
 
 void SaveLoad_br::doSaveGame(uint16 slot, const char* name) {
 	// TODO: implement savegame
-	return;
 }
 
 void SaveLoad_br::getGamePartProgress(bool *complete, int size) {
