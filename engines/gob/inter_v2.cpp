@@ -395,6 +395,8 @@ void Inter_v2::o2_initMult() {
 }
 
 void Inter_v2::o2_loadMultObject() {
+	assert(_vm->_mult->_objects);
+
 	int16 val;
 	int16 objIndex;
 	int16 animation;
