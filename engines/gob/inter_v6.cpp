@@ -124,6 +124,13 @@ void Inter_v6::o6_playVmdOrMusic() {
 			props.x, props.y, props.startFrame, props.lastFrame,
 			props.palCmd, props.palStart, props.palEnd, props.flags);
 
+	// WORKAROUND: When taking the music sheet from Dr. Dramish's car,
+	//             the video that lets the sheet vanish is missing. We'll
+	//             play the one where the sheet is already gone instead.
+	if (!strcmp(fileName, "MXRAMPART") &&
+	    !scumm_stricmp(_vm->_game->_curTotFile, "EMAM2013.TOT"))
+		strcpy(fileName, "PLCOFDR2");
+
 	if (!strcmp(fileName, "RIEN")) {
 		_vm->_vidPlayer->closeAll();
 		return;
