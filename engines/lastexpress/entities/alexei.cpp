@@ -1552,7 +1552,7 @@ IMPLEMENT_FUNCTION(39, Alexei, function39)
 		break;
 
 	case kActionExitCompartment:
-		if (!params->param2 && !params->param2)
+		if (!params->param1 && !params->param2)
 			getEntities()->drawSequenceLeft(kEntityAlexei, "306F");
 		break;
 

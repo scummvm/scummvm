@@ -246,7 +246,7 @@ void SoundManager::setupEntry(SoundEntry *entry, Common::String name, FlagType f
 }
 
 void SoundManager::setEntryType(SoundEntry *entry, FlagType flag) {
-	switch (flag & kFlagType7) {
+	switch (flag & kFlagType9) {
 	default:
 	case kFlagNone:
 		entry->type = _currentType;
