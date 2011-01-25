@@ -594,7 +594,7 @@ protected:
 	virtual void setupOpcodesGob();
 
 	void o7_draw0x0C();
-	void o7_draw0x0D();
+	void o7_loadCursor();
 	void o7_displayWarning();
 	void o7_draw0x45();
 	void o7_draw0x57();

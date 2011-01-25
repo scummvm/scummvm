@@ -46,7 +46,7 @@ void Inter_v7::setupOpcodesDraw() {
 	Inter_Playtoons::setupOpcodesDraw();
 
 	OPCODEDRAW(0x0C, o7_draw0x0C);
-	OPCODEDRAW(0x0D, o7_draw0x0D);
+	OPCODEDRAW(0x0D, o7_loadCursor);
 	OPCODEDRAW(0x44, o7_displayWarning);
 	OPCODEDRAW(0x45, o7_draw0x45);
 	OPCODEDRAW(0x57, o7_draw0x57);
@@ -77,13 +77,13 @@ void Inter_v7::o7_draw0x0C() {
 	WRITE_VAR(17, 0);
 }
 
-void Inter_v7::o7_draw0x0D() {
+void Inter_v7::o7_loadCursor() {
+	int16 cursorIndex = _vm->_game->_script->readValExpr();
+
 	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
+	Common::String cursorFile = _vm->_game->_script->getResultStr();
 
-	int16 expr0 = _vm->_game->_script->readValExpr();
-
-	warning("Addy Stub Draw 0x0D: \"%s\", %d", str0.c_str(), expr0);
+	warning("Addy Stub: Load cursor \"%s\" to %d", cursorFile.c_str(), cursorIndex);
 }
 
 void Inter_v7::o7_displayWarning() {
