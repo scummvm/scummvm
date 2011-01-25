@@ -286,7 +286,7 @@ void Animation::play() {
 		g_engine->_system->delayMillis(20);
 
 		// Handle right-click to interrupt animations
-		Common::Event ev;
+		Common::Event ev = Common::Event();
 		while (g_engine->getEventManager()->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_RBUTTONUP) {
 				// Stop audio

@@ -119,8 +119,11 @@ SoundManager::SoundManager(LastExpressEngine *engine) : _engine(engine), _state(
 SoundManager::~SoundManager() {
 	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i)
 		SAFE_DELETE(*i);
-
 	_cache.clear();
+
+	for (Common::List<SubtitleEntry *>::iterator i = _subtitles.begin(); i != _subtitles.end(); ++i)
+		SAFE_DELETE(*i);
+	_subtitles.clear();
 
 	_currentSubtitle = NULL;
 
