@@ -224,9 +224,9 @@ void Object::initSelectorsSci3(const byte *buf) {
 	}
 
 	_variables.resize(properties);
-	uint16 *propertyIds = (uint16 *) malloc(sizeof(uint16) * properties);
-//	uint16 *methodOffsets = (uint16 *) malloc(sizeof(uint16) * 2 * methods);
-	uint16 *propertyOffsets = (uint16 *) malloc(sizeof(uint16) * properties);
+	uint16 *propertyIds = (uint16 *)malloc(sizeof(uint16) * properties);
+//	uint16 *methodOffsets = (uint16 *)malloc(sizeof(uint16) * 2 * methods);
+	uint16 *propertyOffsets = (uint16 *)malloc(sizeof(uint16) * properties);
 	int propertyCounter = 0;
 	int methodCounter = 0;
 
@@ -257,7 +257,9 @@ void Object::initSelectorsSci3(const byte *buf) {
 					_baseMethod.push_back(value + READ_SCI11ENDIAN_UINT32(buf));
 //					methodOffsets[methodCounter] = (seeker + bit * 2) - buf;
 					++methodCounter;
-				} else /* Undefined selector */ {};
+				} else {
+					// Undefined selector
+				}
 				       
 			}
 		}
