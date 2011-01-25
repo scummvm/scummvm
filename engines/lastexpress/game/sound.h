@@ -69,6 +69,7 @@
 
 */
 
+#include "lastexpress/data/snd.h"
 #include "lastexpress/data/subtitle.h"
 
 #include "lastexpress/shared.h"
@@ -83,7 +84,6 @@
 namespace LastExpress {
 
 class LastExpressEngine;
-class StreamedSound;
 class SubtitleManager;
 
 class SoundManager : Common::Serializable {
@@ -197,7 +197,7 @@ public:
 	SoundManager::FlagType getSoundFlag(EntityIndex index) const;
 
 	// Debug
-	void stopAllSound() const;
+	void stopAllSound();
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &ser);
@@ -271,7 +271,8 @@ private:
 		//int next; // offset to the next structure in the list (not used)
 		SubtitleEntry *subtitle;
 
-		bool isStreamed; // TEMPORARY
+		// Sound stream
+		StreamedSound *soundStream;
 
 		SoundEntry() {
 			status.status = 0;
@@ -292,15 +293,15 @@ private:
 
 			subtitle = NULL;
 
-			isStreamed = false;
+			soundStream = NULL;
 		}
 
 		~SoundEntry() {
 			// Entries that have been queued would have their streamed disposed automatically
-			if (!isStreamed)
+			if (!soundStream)
 				SAFE_DELETE(stream);
 
-			//delete subtitle;
+			delete soundStream;
 		}
 	};
 
@@ -327,9 +328,6 @@ private:
 	// State flag
 	int _state;
 	SoundType _currentType;
-
-	// Sound stream
-	StreamedSound *_soundStream;
 
 	Common::Mutex _mutex;
 

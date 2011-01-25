@@ -25,8 +25,6 @@
 
 #include "lastexpress/game/sound.h"
 
-#include "lastexpress/data/snd.h"
-
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
@@ -106,8 +104,6 @@ static const SoundManager::FlagType soundFlags[32] = {
 };
 
 SoundManager::SoundManager(LastExpressEngine *engine) : _engine(engine), _state(0), _currentType(kSoundType16), _flag(0) {
-	_soundStream = new StreamedSound();
-
 	// Initialize unknown data
 	_data0 = 0;
 	_data1 = 0;
@@ -125,8 +121,6 @@ SoundManager::~SoundManager() {
 		SAFE_DELETE(*i);
 
 	_cache.clear();
-
-	SAFE_DELETE(_soundStream);
 
 	_currentSubtitle = NULL;
 
@@ -146,11 +140,11 @@ void SoundManager::handleTimer() {
 			SAFE_DELETE(*i);
 			i = _cache.reverse_erase(i);
 			continue;
-		} else if (!entry->isStreamed) {
-			entry->isStreamed = true;
+		} else if (!entry->soundStream) {
+			entry->soundStream = new StreamedSound();
 
 			// TODO: stream any sound in the queue after filtering
-			_soundStream->load(entry->stream);
+			entry->soundStream->load(entry->stream);
 		}
 	}
 }
@@ -367,8 +361,12 @@ void SoundManager::resetEntry(SoundEntry *entry) {
 	entry->entity = kEntityPlayer;
 
 	if (entry->stream) {
-		if (!entry->isStreamed)
+		if (!entry->soundStream) {
 			SAFE_DELETE(entry->stream);
+		} else {
+			entry->soundStream->stop();
+			SAFE_DELETE(entry->soundStream);
+		}
 
 		entry->stream = NULL;
 	}
@@ -1882,8 +1880,11 @@ void SoundManager::playLoopingSound() {
 	warning("SoundManager::playLoopingSound: not implemented!");
 }
 
-void SoundManager::stopAllSound() const {
-	_soundStream->stop();
+void SoundManager::stopAllSound() {
+	Common::StackLock locker(_mutex);
+
+	for (Common::List<SoundEntry *>::iterator i = _cache.begin(); i != _cache.end(); ++i)
+		(*i)->soundStream->stop();
 }
 
 } // End of namespace LastExpress
