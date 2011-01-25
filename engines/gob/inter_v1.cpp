@@ -1762,6 +1762,12 @@ bool Inter_v1::o1_freeFont(OpFuncParams &params) {
 	int16 index;
 
 	index = _vm->_game->_script->readInt16();
+
+	if (index >= Draw::kFontCount) {
+		warning("o1_freeFont(): Index %d > count %d", index, Draw::kFontCount);
+		return false;
+	}
+
 	delete _vm->_draw->_fonts[index];
 	_vm->_draw->_fonts[index] = 0;
 	return false;
