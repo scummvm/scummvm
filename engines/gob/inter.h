@@ -599,7 +599,7 @@ protected:
 	void o7_draw0x45();
 	void o7_intToString();
 	void o7_draw0x89();
-	void o7_draw0x8A();
+	void o7_findFile();
 	void o7_getSystemProperty();
 	void o7_loadLBM();
 	void o7_draw0x93();

@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/archive.h"
 
 #include "gob/gob.h"
 #include "gob/global.h"
@@ -51,7 +52,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x45, o7_draw0x45);
 	OPCODEDRAW(0x57, o7_intToString);
 	OPCODEDRAW(0x89, o7_draw0x89);
-	OPCODEDRAW(0x8A, o7_draw0x8A);
+	OPCODEDRAW(0x8A, o7_findFile);
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
 	OPCODEDRAW(0x90, o7_loadLBM);
 	OPCODEDRAW(0x93, o7_draw0x93);
@@ -128,14 +129,28 @@ void Inter_v7::o7_draw0x89() {
 	warning("Addy Stub Draw 0x89: \"%s\", \"%s\", %d", str0.c_str(), str1.c_str(), index0);
 }
 
-void Inter_v7::o7_draw0x8A() {
+void Inter_v7::o7_findFile() {
 	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
+	const char *file = _vm->_game->_script->getResultStr();
+	uint16 pathIndex = _vm->_game->_script->readVarIndex();
 
-	int16 index0 = _vm->_game->_script->readVarIndex();
-	int16 index1 = _vm->_game->_script->readVarIndex();
+	if (!strncmp(file, "<ME>", 4))
+		file += 4;
+	if (!strncmp(file, "<ALLCD>", 7))
+		file += 7;
 
-	warning("Addy Stub Draw 0x8A: \"%s\", %d, %d", str0.c_str(), index0, index1);
+	Common::ArchiveMemberList files;
+
+	SearchMan.listMatchingMembers(files, file);
+
+	if (files.empty()) {
+		GET_VARO_STR(pathIndex)[0] = '\0';
+		storeValue(0);
+		return;
+	}
+
+	strcpy(GET_VARO_STR(pathIndex), files.front()->getName().c_str());
+	storeValue(1);
 }
 
 void Inter_v7::o7_getSystemProperty() {
