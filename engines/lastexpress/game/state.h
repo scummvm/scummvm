@@ -570,6 +570,8 @@ public:
 		bool shouldRedraw;
 		bool shouldDrawEggOrHourGlass;
 
+		int32 nis;
+
 		Flags() {
 			flag_0 = false;
 			flag_3 = false;
@@ -588,6 +590,8 @@ public:
 
 			shouldRedraw = false;
 			shouldDrawEggOrHourGlass = false;
+
+			nis = 0;
 		}
 
 		/**
@@ -603,6 +607,7 @@ public:
 			ret += Common::String::format("IsGameRunning: %02d\n", isGameRunning);
 			ret += Common::String::format("Mouse: RightClick:%02d  - LeftClick:%02d\n", mouseRightClick, mouseLeftClick);
 			ret += Common::String::format("Entities: 0:%02d  -  1:%02d\n", flag_entities_0, flag_entities_1);
+			ret += Common::String::format("NIS: %d  -  1:%02d\n", nis);
 
 			return ret;
 		}

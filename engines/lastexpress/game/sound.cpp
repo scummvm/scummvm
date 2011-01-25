@@ -26,7 +26,6 @@
 #include "lastexpress/game/sound.h"
 
 #include "lastexpress/data/snd.h"
-#include "lastexpress/data/subtitle.h"
 
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
@@ -36,6 +35,7 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/helpers.h"
+#include "lastexpress/graphics.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
@@ -115,6 +115,9 @@ SoundManager::SoundManager(LastExpressEngine *engine) : _engine(engine), _state(
 
 	memset(&_buffer, 0, sizeof(_buffer));
 	memset(&_lastWarning, 0, sizeof(_lastWarning));
+
+	_drawSubtitles = 0;
+	_currentSubtitle = NULL;
 }
 
 SoundManager::~SoundManager() {
@@ -124,6 +127,8 @@ SoundManager::~SoundManager() {
 	_cache.clear();
 
 	SAFE_DELETE(_soundStream);
+
+	_currentSubtitle = NULL;
 
 	// Zero passed pointers
 	_engine = NULL;
@@ -383,7 +388,7 @@ void SoundManager::removeEntry(SoundEntry *entry) {
 	// removeFromCache(entry);
 
 	if (entry->subtitle) {
-		drawSubtitles(entry->subtitle);
+		drawSubtitle(entry->subtitle);
 		SAFE_DELETE(entry->subtitle);
 	}
 
@@ -622,7 +627,7 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, FlagType flag
 		while (filename.size() > 4)
 			filename.deleteLastChar();
 
-		showSubtitles(entry, filename);
+		showSubtitle(entry, filename);
 		updateEntryState(entry);
 	}
 
@@ -772,7 +777,7 @@ void SoundManager::playSteam(CityIndex index) {
 	// Get the new sound entry and show subtitles
 	SoundEntry *entry = getEntry(kSoundType1);
 	if (entry)
-		showSubtitles(entry, cities[index]);
+		showSubtitle(entry, cities[index]);
 }
 
 void SoundManager::playFightSound(byte action, byte a4) {
@@ -1745,16 +1750,129 @@ SoundManager::FlagType SoundManager::getSoundFlag(EntityIndex entity) const {
 // Subtitles
 //////////////////////////////////////////////////////////////////////////
 void SoundManager::updateSubtitles() {
-	// TODO: Add mutex ?
-	//warning("SoundManager::updateSubtitles: not implemented!");
+	Common::StackLock locker(_mutex);
+
+	uint32 index = 0;
+	SubtitleEntry *subtitle = NULL;
+
+	for (Common::List<SubtitleEntry *>::iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
+		uint32 current_index = 0;
+		SoundEntry *soundEntry = (*i)->sound;
+		SoundStatus status = (SoundStatus)soundEntry->status.status;
+
+		if (!(status & kSoundStatus_40)
+		 || status & 0x180
+		 || soundEntry->time <= 0
+		 || (status & 0x1F) < 6
+		 || ((getFlags()->nis & 0x8000) && soundEntry->field_4C < 90)) {
+			 current_index = 0;
+		} else {
+			current_index = soundEntry->field_4C + (status & 0x1F);
+
+			if (_currentSubtitle = (*i))
+				current_index += 4;
+		}
+
+		if (index < current_index) {
+			index = current_index;
+			subtitle = (*i);
+		}
+	}
+
+	if (_currentSubtitle == subtitle) {
+		if (subtitle)
+			setupSubtitleAndDraw(subtitle);
+
+		return;
+	}
+
+	if (_drawSubtitles & 1)
+		drawSubtitleOnScreen(subtitle);
+
+	if (subtitle) {
+		loadSubtitleData(subtitle);
+		setupSubtitleAndDraw(subtitle);
+	}
 }
 
-void SoundManager::showSubtitles(SoundEntry *entry, Common::String filename) {
-	warning("SoundManager::showSubtitles: not implemented!");
+void SoundManager::showSubtitle(SoundEntry *entry, Common::String filename) {
+	entry->subtitle = loadSubtitle(filename, entry);
+
+	if (entry->subtitle->status.status2 & 4) {
+		drawSubtitle(entry->subtitle);
+		SAFE_DELETE(entry->subtitle);
+	} else {
+		entry->status.status |= kSoundStatus_20000;
+	}
 }
 
-void SoundManager::drawSubtitles(SubtitleManager *subtitle) {
-	warning("SoundManager::drawSubtitles: not implemented!");
+SoundManager::SubtitleEntry *SoundManager::loadSubtitle(Common::String filename, SoundEntry *soundEntry) {
+	SubtitleEntry *entry = new SubtitleEntry();
+	_subtitles.push_back(entry);
+
+	// Set sound entry and filename
+	entry->filename = filename + ".SBE";
+	entry->sound = soundEntry;
+
+	// Load subtitle data
+	if (_engine->getResourceManager()->hasFile(filename)) {
+		if (_drawSubtitles & 2)
+			return entry;
+
+		loadSubtitleData(entry);
+	} else {
+		entry->status.status = kSoundStatus_400;
+	}
+
+	return entry;
+}
+
+void SoundManager::loadSubtitleData(SubtitleEntry * entry) {
+	entry->data = new SubtitleManager(_engine->getFont());
+	entry->data->load(getArchive(entry->filename));
+
+	_drawSubtitles |= 2;
+	_currentSubtitle = entry;
+}
+
+void SoundManager::setupSubtitleAndDraw(SubtitleEntry *subtitle) {
+	if (!subtitle->data) {
+		subtitle->data = new SubtitleManager(_engine->getFont());
+		subtitle->data->load(getArchive(subtitle->filename));
+	}
+
+	if (subtitle->data->getMaxTime() > subtitle->sound->time) {
+		subtitle->status.status = kSoundStatus_400;
+	} else {
+		subtitle->data->setTime(subtitle->sound->time);
+
+		if (_drawSubtitles & 1)
+			drawSubtitleOnScreen(subtitle);
+	}
+
+	_currentSubtitle = subtitle;
+}
+
+void SoundManager::drawSubtitle(SubtitleEntry *subtitle) {
+	// Remove subtitle from queue
+	_subtitles.remove(subtitle);
+
+	if (subtitle == _currentSubtitle) {
+		drawSubtitleOnScreen(subtitle);
+
+		_currentSubtitle = NULL;
+		_drawSubtitles = 0;
+	}
+}
+
+void SoundManager::drawSubtitleOnScreen(SubtitleEntry *subtitle) {
+	_drawSubtitles &= ~1;
+
+	if (subtitle->data == NULL)
+		return;
+
+	if (_drawSubtitles & 1)
+		_engine->getGraphicsManager()->draw(subtitle->data, GraphicsManager::kBackgroundOverlay);
 }
 
 //////////////////////////////////////////////////////////////////////////

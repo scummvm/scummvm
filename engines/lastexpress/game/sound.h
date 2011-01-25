@@ -69,6 +69,8 @@
 
 */
 
+#include "lastexpress/data/subtitle.h"
+
 #include "lastexpress/shared.h"
 
 #include "lastexpress/helpers.h"
@@ -206,9 +208,12 @@ private:
 
 	enum SoundStatus {
 		kSoundStatus_20       = 0x20,
+		kSoundStatus_40       = 0x40,
 		kSoundStatusRemoved   = 0x200,
+		kSoundStatus_400      = 0x400,
 
 		kSoundStatus_8000     = 0x8000,
+		kSoundStatus_20000    = 0x20000,
 		kSoundStatus_100000   = 0x100000,
 		kSoundStatus_40000000 = 0x40000000,
 
@@ -238,6 +243,8 @@ private:
 		}
 	};
 
+	struct SubtitleEntry;
+
 	struct SoundEntry {
 		SoundStatusUnion status;
 		SoundType type;    // int
@@ -262,7 +269,7 @@ private:
 		Common::String name1; //char[16];
 		Common::String name2; //char[16];
 		//int next; // offset to the next structure in the list (not used)
-		SubtitleManager *subtitle;
+		SubtitleEntry *subtitle;
 
 		bool isStreamed; // TEMPORARY
 
@@ -294,6 +301,23 @@ private:
 				SAFE_DELETE(stream);
 
 			//delete subtitle;
+		}
+	};
+
+	struct SubtitleEntry {
+		Common::String filename;
+		SoundStatusUnion status;
+		SoundEntry *sound;
+		SubtitleManager *data;
+
+		SubtitleEntry() {
+			status.status = 0;
+			sound = NULL;
+			data = NULL;
+		}
+
+		~SubtitleEntry() {
+			SAFE_DELETE(data);
 		}
 	};
 
@@ -343,8 +367,15 @@ private:
 	void removeEntry(SoundEntry *entry);
 
 	// Subtitles
-	void showSubtitles(SoundEntry *entry, Common::String filename);
-	void drawSubtitles(SubtitleManager *subtitle);
+	int _drawSubtitles;
+	Common::List<SubtitleEntry *> _subtitles;
+	SubtitleEntry *_currentSubtitle;
+	void showSubtitle(SoundEntry *entry, Common::String filename);
+	SubtitleEntry *loadSubtitle(Common::String filename, SoundEntry *soundEntry);
+	void loadSubtitleData(SubtitleEntry * entry);
+	void setupSubtitleAndDraw(SubtitleEntry *subtitle);
+	void drawSubtitle(SubtitleEntry *subtitle);
+	void drawSubtitleOnScreen(SubtitleEntry *subtitle);
 
 	// Sound filter
 	void applyFilter(SoundEntry *entry, SoundBuffer buffer);
