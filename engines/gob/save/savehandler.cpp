@@ -489,4 +489,48 @@ bool NotesHandler::save(int16 dataVar, int32 size, int32 offset) {
 	return writer.writePart(0, &vars);
 }
 
+
+FakeFileHandler::FakeFileHandler(GobEngine *vm) : SaveHandler(vm) {
+}
+
+FakeFileHandler::~FakeFileHandler() {
+}
+
+int32 FakeFileHandler::getSize() {
+	if (_data.empty())
+		return -1;
+
+	return _data.size();
+}
+
+bool FakeFileHandler::load(int16 dataVar, int32 size, int32 offset) {
+	if (size <= 0)
+		return false;
+
+	if ((uint32)(offset + size) > _data.size())
+		return false;
+
+	_vm->_inter->_variables->copyFrom(dataVar, &_data[0] + offset, size);
+
+	return true;
+}
+
+bool FakeFileHandler::save(int16 dataVar, int32 size, int32 offset) {
+	if (size <= 0)
+		return false;
+
+	if ((uint32)(offset + size) > _data.size())
+		_data.resize(offset + size);
+
+	_vm->_inter->_variables->copyTo(dataVar, &_data[0] + offset, size);
+
+	return true;
+}
+
+bool FakeFileHandler::deleteFile() {
+	_data.clear();
+
+	return true;
+}
+
 } // End of namespace Gob

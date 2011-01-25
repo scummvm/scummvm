@@ -27,7 +27,9 @@
 #define GOB_SAVE_SAVEHANDLER_H
 
 #include "common/savefile.h"
-#include "engines/gob/video.h"	// for SurfacePtr
+#include "common/array.h"
+
+#include "engines/gob/video.h" // for SurfacePtr
 
 namespace Gob {
 
@@ -178,6 +180,22 @@ private:
 	uint32 _notesSize;
 	File *_file;
 	SavePartVars *_notes;
+};
+
+/** A handler that behaves like a file but keeps the contents in memory. */
+class FakeFileHandler : public SaveHandler {
+public:
+	FakeFileHandler(GobEngine *vm);
+	~FakeFileHandler();
+
+	int32 getSize();
+	bool load(int16 dataVar, int32 size, int32 offset);
+	bool save(int16 dataVar, int32 size, int32 offset);
+
+	bool deleteFile();
+
+private:
+	Common::Array<byte> _data;
 };
 
 } // End of namespace Gob
