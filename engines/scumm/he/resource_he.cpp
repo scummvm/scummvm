@@ -4,6 +4,10 @@
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
+ * Parts of this code are heavily based on:
+ * icoutils - A set of programs dealing with MS Windows icons and cursors.
+ * Copyright (C) 1998-2001 Oskar Liljeblad
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
