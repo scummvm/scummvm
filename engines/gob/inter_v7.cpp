@@ -49,7 +49,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x0D, o7_loadCursor);
 	OPCODEDRAW(0x44, o7_displayWarning);
 	OPCODEDRAW(0x45, o7_draw0x45);
-	OPCODEDRAW(0x57, o7_draw0x57);
+	OPCODEDRAW(0x57, o7_intToString);
 	OPCODEDRAW(0x89, o7_draw0x89);
 	OPCODEDRAW(0x8A, o7_draw0x8A);
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
@@ -110,11 +110,11 @@ void Inter_v7::o7_draw0x45() {
 	warning("Addy Stub Draw 0x45: \"%s\", \"%s\"", str0.c_str(), str1.c_str());
 }
 
-void Inter_v7::o7_draw0x57() {
-	int16 index0 = _vm->_game->_script->readVarIndex();
-	int16 index1 = _vm->_game->_script->readVarIndex();
+void Inter_v7::o7_intToString() {
+	uint16 valueIndex = _vm->_game->_script->readVarIndex();
+	uint16 destIndex  = _vm->_game->_script->readVarIndex();
 
-	warning("Addy Stub Draw 0x57: %d, %d", index0, index1);
+	sprintf(GET_VARO_STR(destIndex), "%d", READ_VARO_UINT32(valueIndex));
 }
 
 void Inter_v7::o7_draw0x89() {

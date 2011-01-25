@@ -597,7 +597,7 @@ protected:
 	void o7_loadCursor();
 	void o7_displayWarning();
 	void o7_draw0x45();
-	void o7_draw0x57();
+	void o7_intToString();
 	void o7_draw0x89();
 	void o7_draw0x8A();
 	void o7_getSystemProperty();
