@@ -243,10 +243,10 @@ IMPLEMENT_FUNCTION(10, Francois, function10)
 		if (getObjects()->get(kObjectCompartmentD).location == kObjectLocation2) {
 			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 			setCallback(1);
-			setup_enterExitCompartment("605Bd", kObjectCompartmentD);
+			setup_enterExitCompartment2("605Bd", kObjectCompartmentD);
 		} else {
 			setCallback(2);
-			setup_enterExitCompartment("605Dd", kObjectCompartmentD);
+			setup_enterExitCompartment2("605Dd", kObjectCompartmentD);
 		}
 		break;
 
