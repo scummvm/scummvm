@@ -1779,15 +1779,6 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 			entry->newUnknown, entry->newMode, entry->newPage, entry->newSubpage);
 		size -= 8;
 	}
-	if (entry->event == kLBEventNotified) {
-		if (size < 4)
-			error("not enough bytes (%d) in kLBEventNotified, opcode 0x%04x", size, entry->opcode);
-		entry->matchFrom = stream->readUint16();
-		entry->matchNotify = stream->readUint16();
-		debug(4, "kLBEventNotified: unknowns %04x, %04x",
-			entry->matchFrom, entry->matchNotify);
-		size -= 4;
-	}
 	if (entry->opcode == kLBOpSendExpression) {
 		if (size < 4)
 			error("not enough bytes (%d) in kLBOpSendExpression, event 0x%04x", size, entry->event);
@@ -1814,7 +1805,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 		if (msgId != kLBCommand)
 			error("expected a command in script entry, got 0x%04x", msgId);
 
-		if (msgLen != size && !conditionTag)
+		if (msgLen != size - (entry->event == kLBEventNotified ? 4 : 0) && !conditionTag)
 			error("script entry msgLen %d is not equal to size %d", msgLen, size);
 
 		Common::String command = _vm->readString(stream);
@@ -1826,6 +1817,15 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 
 		entry->command = command;
 		debug(4, "script entry command '%s'", command.c_str());
+	}
+	if (entry->event == kLBEventNotified) {
+		if (size < 4)
+			error("not enough bytes (%d) in kLBEventNotified, opcode 0x%04x", size, entry->opcode);
+		entry->matchFrom = stream->readUint16();
+		entry->matchNotify = stream->readUint16();
+		debug(4, "kLBEventNotified: unknowns %04x, %04x",
+			entry->matchFrom, entry->matchNotify);
+		size -= 4;
 	}
 
 	if (isSubentry) {
