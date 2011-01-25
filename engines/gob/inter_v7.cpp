@@ -29,6 +29,7 @@
 #include "gob/inter.h"
 #include "gob/game.h"
 #include "gob/script.h"
+#include "gob/expression.h"
 
 namespace Gob {
 
@@ -50,7 +51,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x57, o7_draw0x57);
 	OPCODEDRAW(0x89, o7_draw0x89);
 	OPCODEDRAW(0x8A, o7_draw0x8A);
-	OPCODEDRAW(0x8C, o7_draw0x8C);
+	OPCODEDRAW(0x8C, o7_getSystemProperty);
 	OPCODEDRAW(0x90, o7_draw0x90);
 	OPCODEDRAW(0x93, o7_draw0x93);
 	OPCODEDRAW(0xA1, o7_draw0xA1);
@@ -135,13 +136,30 @@ void Inter_v7::o7_draw0x8A() {
 	warning("Addy Stub Draw 0x8A: \"%s\", %d, %d", str0.c_str(), index0, index1);
 }
 
-void Inter_v7::o7_draw0x8C() {
+void Inter_v7::o7_getSystemProperty() {
 	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
 
-	int16 index0 = _vm->_game->_script->readVarIndex();
+	if (!scumm_stricmp(_vm->_game->_script->getResultStr(), "TotalPhys")) {
+		// HACK
+		storeValue(1000000);
+		return;
+	}
 
-	warning("Addy Stub Draw 0x8C: \"%s\", %d", str0.c_str(), index0);
+	if (!scumm_stricmp(_vm->_game->_script->getResultStr(), "AvailPhys")) {
+		// HACK
+		storeValue(1000000);
+		return;
+	}
+
+	if (!scumm_stricmp(_vm->_game->_script->getResultStr(), "TimeGMT")) {
+		renewTimeInVars();
+		storeValue(0);
+		return;
+	}
+
+	warning("Inter_v7::o7_getSystemProperty(): Unknown property \"%s\"",
+			_vm->_game->_script->getResultStr());
+	storeValue(0);
 }
 
 void Inter_v7::o7_draw0x90() {
@@ -237,6 +255,31 @@ void Inter_v7::o7_draw0xC6() {
 
 	warning("Addy Stub Draw 0xC6: \"%s\", \"%s\", \"%s\", \"%s\", %d",
 			str0.c_str(), str1.c_str(), str2.c_str(), str3.c_str(), index0);
+}
+
+void Inter_v7::storeValue(uint16 index, uint16 type, uint32 value) {
+	switch (type) {
+	case OP_ARRAY_INT8:
+	case TYPE_VAR_INT8:
+		WRITE_VARO_UINT8(index, value);
+		break;
+
+	case TYPE_VAR_INT16:
+	case TYPE_VAR_INT32_AS_INT16:
+	case TYPE_ARRAY_INT16:
+		WRITE_VARO_UINT16(index, value);
+		break;
+
+	default:
+		WRITE_VARO_UINT32(index, value);
+	}
+}
+
+void Inter_v7::storeValue(uint32 value) {
+	uint16 type;
+	uint16 index = _vm->_game->_script->readVarIndex(0, &type);
+
+	storeValue(index, type, value);
 }
 
 } // End of namespace Gob

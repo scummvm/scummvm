@@ -600,7 +600,7 @@ protected:
 	void o7_draw0x57();
 	void o7_draw0x89();
 	void o7_draw0x8A();
-	void o7_draw0x8C();
+	void o7_getSystemProperty();
 	void o7_draw0x90();
 	void o7_draw0x93();
 	void o7_draw0xA1();
@@ -609,6 +609,10 @@ protected:
 	void o7_draw0xC4();
 	void o7_draw0xC5();
 	void o7_draw0xC6();
+
+private:
+	void storeValue(uint16 index, uint16 type, uint32 value);
+	void storeValue(uint32 value);
 };
 
 } // End of namespace Gob
