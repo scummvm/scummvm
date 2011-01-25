@@ -346,7 +346,7 @@ Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, Common
 
 	Common::String ret(str);
 
-	delete str;
+	delete[] str;
 
 	return ret;
 }
