@@ -593,6 +593,7 @@ protected:
 	virtual void setupOpcodesFunc();
 	virtual void setupOpcodesGob();
 
+	void o7_draw0x0C();
 	void o7_draw0x0D();
 	void o7_draw0x44();
 	void o7_draw0x45();
@@ -606,6 +607,7 @@ protected:
 	void o7_draw0xA2();
 	void o7_draw0xA4();
 	void o7_draw0xC4();
+	void o7_draw0xC5();
 	void o7_draw0xC6();
 };
 

@@ -43,6 +43,7 @@ Inter_v7::Inter_v7(GobEngine *vm) : Inter_Playtoons(vm) {
 void Inter_v7::setupOpcodesDraw() {
 	Inter_Playtoons::setupOpcodesDraw();
 
+	OPCODEDRAW(0x0C, o7_draw0x0C);
 	OPCODEDRAW(0x0D, o7_draw0x0D);
 	OPCODEDRAW(0x44, o7_draw0x44);
 	OPCODEDRAW(0x45, o7_draw0x45);
@@ -56,6 +57,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0xA2, o7_draw0xA2);
 	OPCODEDRAW(0xA4, o7_draw0xA4);
 	OPCODEDRAW(0xC4, o7_draw0xC4);
+	OPCODEDRAW(0xC5, o7_draw0xC5);
 	OPCODEDRAW(0xC6, o7_draw0xC6);
 }
 
@@ -65,6 +67,10 @@ void Inter_v7::setupOpcodesFunc() {
 
 void Inter_v7::setupOpcodesGob() {
 	Inter_Playtoons::setupOpcodesGob();
+}
+
+void Inter_v7::o7_draw0x0C() {
+	WRITE_VAR(17, 0);
 }
 
 void Inter_v7::o7_draw0x0D() {
@@ -208,6 +214,13 @@ void Inter_v7::o7_draw0xC4() {
 	Common::String str1 = _vm->_game->_script->getResultStr();
 
 	warning("Addy Stub Draw 0xC4: \"%s\", \"%s\"", str0.c_str(), str1.c_str());
+}
+
+void Inter_v7::o7_draw0xC5() {
+	_vm->_game->_script->evalExpr(0);
+	Common::String str0 = _vm->_game->_script->getResultStr();
+
+	warning("Addy Stub Draw 0xC5: \"%s\"", str0.c_str());
 }
 
 void Inter_v7::o7_draw0xC6() {
