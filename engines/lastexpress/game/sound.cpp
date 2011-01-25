@@ -1767,7 +1767,7 @@ void SoundManager::updateSubtitles() {
 		} else {
 			current_index = soundEntry->field_4C + (status & 0x1F);
 
-			if (_currentSubtitle = (*i))
+			if (_currentSubtitle == (*i))
 				current_index += 4;
 		}
 
