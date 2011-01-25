@@ -604,6 +604,7 @@ protected:
 	void o7_getSystemProperty();
 	void o7_loadLBM();
 	void o7_draw0x93();
+	void o7_zeroVar();
 	void o7_getINIValue();
 	void o7_setINIValue();
 	void o7_draw0xA4();

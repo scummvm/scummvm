@@ -56,6 +56,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
 	OPCODEDRAW(0x90, o7_loadLBM);
 	OPCODEDRAW(0x93, o7_draw0x93);
+	OPCODEDRAW(0x95, o7_zeroVar);
 	OPCODEDRAW(0xA1, o7_getINIValue);
 	OPCODEDRAW(0xA2, o7_setINIValue);
 	OPCODEDRAW(0xA4, o7_draw0xA4);
@@ -124,9 +125,18 @@ void Inter_v7::o7_draw0x89() {
 	_vm->_game->_script->evalExpr(0);
 	Common::String str1 = _vm->_game->_script->getResultStr();
 
-	int16 index0 = _vm->_game->_script->readVarIndex();
+	warning("Addy Stub Draw 0x89: \"%s\", \"%s\"", str0.c_str(), str1.c_str());
 
-	warning("Addy Stub Draw 0x89: \"%s\", \"%s\", %d", str0.c_str(), str1.c_str(), index0);
+	Common::ArchiveMemberList files;
+
+	SearchMan.listMatchingMembers(files, str0);
+
+	if (files.empty()) {
+		storeValue(0);
+		return;
+	}
+
+	storeValue(1);
 }
 
 void Inter_v7::o7_findFile() {
@@ -202,6 +212,12 @@ void Inter_v7::o7_draw0x93() {
 	uint32 expr0 = _vm->_game->_script->readValExpr();
 
 	warning("Addy Stub Draw 0x93: %d", expr0);
+}
+
+void Inter_v7::o7_zeroVar() {
+	uint16 index = _vm->_game->_script->readVarIndex();
+
+	WRITE_VARO_UINT32(index, 0);
 }
 
 void Inter_v7::o7_getINIValue() {
