@@ -2029,7 +2029,8 @@ void Menu::clickAudioOptions() {
 
 	if (cursor.x < 360 || cursor.x > (360 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1431))) || cursor.y < 360 || cursor.y > (360 + 24)) {
 		int32 volumeIndex = 0;
-		int32 *volume = NULL;
+		int32 defaultVolume = 0;
+		int32 *volume = &defaultVolume;
 		bool found = false;
 
 		for (;;) {

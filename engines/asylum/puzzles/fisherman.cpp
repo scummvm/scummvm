@@ -109,7 +109,7 @@ bool PuzzleFisherman::update(const AsylumEvent &evt)  {
 	getScreen()->draw(getWorld()->graphicResourceIds[38]);
 
 	// Draw 7 graphics
-	for (uint32 i = 0; i < 7; i++) {
+	for (uint32 i = 0; i < 6; i++) {
 		if (_state[i])
 			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40 + i], 0, puzzleFishermanPolygons[i], 0, 0, 1);
 	}
@@ -154,7 +154,7 @@ bool PuzzleFisherman::mouseLeftDown(const AsylumEvent &evt) {
 	if (!_dword_45A130)
 		return false;
 
-	for (uint32 i = 0; i < 7; i++) {
+	for (uint32 i = 0; i < 6; i++) {
 		if (hitTest(&puzzleFishermanPolygons[i * 4 + 7], evt.mouse)) {
 			if (!_state[i]) {
 				getSound()->playSound(getWorld()->graphicResourceIds[9], false, Config.sfxVolume - 10);

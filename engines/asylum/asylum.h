@@ -243,7 +243,7 @@ private:
 
 	// Current EventHandler class instance
 	EventHandler *_handler;
-	Puzzle *_puzzles[16];
+	Puzzle *_puzzles[17];
 
 	// Game data
 	PuzzleData _puzzleData;
