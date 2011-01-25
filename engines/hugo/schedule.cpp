@@ -42,6 +42,7 @@
 #include "hugo/object.h"
 #include "hugo/sound.h"
 #include "hugo/parser.h"
+#include "hugo/text.h"
 
 namespace Hugo {
 
@@ -161,9 +162,9 @@ void Scheduler::newScreen(int screenIndex) {
 	// Make sure the background file exists!
 	if (!_vm->isPacked()) {
 		char line[32];
-		if (!_vm->_file->fileExists(strcat(strncat(strcpy(line, _vm->_picDir), _vm->_screenNames[screenIndex], kFilenameLength), ".PCX")) &&
-		    !_vm->_file->fileExists(strcat(strcpy(line, _vm->_screenNames[screenIndex]), ".ART"))) {
-				error("Unable to find background file for %s", _vm->_screenNames[screenIndex]);
+		if (!_vm->_file->fileExists(strcat(strncat(strcpy(line, _vm->_picDir), _vm->_text->getScreenNames(screenIndex), kFilenameLength), ".PCX")) &&
+		    !_vm->_file->fileExists(strcat(strcpy(line, _vm->_text->getScreenNames(screenIndex)), ".ART"))) {
+				error("Unable to find background file for %s", _vm->_text->getScreenNames(screenIndex));
 			return;
 		}
 	}
@@ -1156,7 +1157,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		_vm->_screen->remapPal(action->a35.oldColorIndex, action->a35.newColorIndex);
 		break;
 	case COND_NOUN:                                 // act36: Conditional on noun mentioned
-		if (_vm->_parser->isWordPresent(_vm->_arrayNouns[action->a36.nounIndex]))
+		if (_vm->_parser->isWordPresent(_vm->_text->getNounArray(action->a36.nounIndex)))
 			insertActionList(action->a36.actPassIndex);
 		else
 			insertActionList(action->a36.actFailIndex);
@@ -1189,7 +1190,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			insertActionList(action->a41.actFailIndex);
 		break;
 	case TEXT_TAKE:                                 // act42: Text box with "take" message
-		Utils::Box(kBoxAny, TAKE_TEXT, _vm->_arrayNouns[_vm->_object->_objects[action->a42.objIndex].nounIndex][TAKE_NAME]);
+		Utils::Box(kBoxAny, TAKE_TEXT, _vm->_text->getNoun(_vm->_object->_objects[action->a42.objIndex].nounIndex, TAKE_NAME));
 		break;
 	case YESNO:                                     // act43: Prompt user for Yes or No
 		if (Utils::Box(kBoxYesNo, "%s", _vm->_file->fetchString(action->a43.promptIndex)) != 0)
@@ -1226,7 +1227,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		break;
 	case OLD_SONG:
 		// Replaces ACT26 for DOS games.
-		_vm->_sound->DOSSongPtr = _vm->_textData[action->a49.songIndex];
+		_vm->_sound->DOSSongPtr = _vm->_text->getTextData(action->a49.songIndex);
 		break;
 	default:
 		error("An error has occurred: %s", "doAction");

@@ -41,6 +41,7 @@
 #include "hugo/util.h"
 #include "hugo/sound.h"
 #include "hugo/object.h"
+#include "hugo/text.h"
 
 namespace Hugo {
 
@@ -59,15 +60,15 @@ char *Parser_v1d::findNextNoun(char *noun) {
 
 	int currNounIndex = -1;
 	if (noun) {                                        // If noun not NULL, find index
-		for (currNounIndex = 0; _vm->_arrayNouns[currNounIndex]; currNounIndex++) {
-			if (noun == _vm->_arrayNouns[currNounIndex][0])
+		for (currNounIndex = 0; _vm->_text->getNounArray(currNounIndex); currNounIndex++) {
+			if (noun == _vm->_text->getNoun(currNounIndex, 0))
 				break;
 		}
 	}
-	for (int i = currNounIndex + 1; _vm->_arrayNouns[i]; i++) {
-		for (int j = 0; strlen(_vm->_arrayNouns[i][j]); j++) {
-			if (strstr(_vm->_line, _vm->_arrayNouns[i][j]))
-				return _vm->_arrayNouns[i][0];
+	for (int i = currNounIndex + 1; _vm->_text->getNounArray(i); i++) {
+		for (int j = 0; strlen(_vm->_text->getNoun(i, j)); j++) {
+			if (strstr(_vm->_line, _vm->_text->getNoun(i, j)))
+				return _vm->_text->getNoun(i, 0);
 		}
 	}
 	return 0;
@@ -84,19 +85,19 @@ bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) {
 
 	if (!noun && !obj->verbOnlyFl) {                // No noun specified & object not context senesitive
 		return false;
-	} else if (noun && (noun != _vm->_arrayNouns[obj->nounIndex][0])) { // Noun specified & not same as object
+	} else if (noun && (noun != _vm->_text->getNoun(obj->nounIndex, 0))) { // Noun specified & not same as object
 		return false;
 	} else if (obj->carriedFl) {                    // Object is being carried
 		return true;
 	} else if (obj->screenIndex != *_vm->_screen_p) { // Not in same screen
 		if (obj->objValue)
-			strcpy (comment, _vm->_textParser[kCmtAny4]);
+			strcpy (comment, _vm->_text->getTextParser(kCmtAny4));
 		return false;
 	}
 
 	if (obj->cycling == kCycleInvisible) {
 		if (obj->seqNumb) {                         // There is an image
-			strcpy(comment, _vm->_textParser[kCmtAny5]);
+			strcpy(comment, _vm->_text->getTextParser(kCmtAny5));
 			return false;
 		} else {                                    // No image, assume visible
 			if ((obj->radius < 0) ||
@@ -107,10 +108,10 @@ bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) {
 				// User is either not close enough (stationary, valueless objects)
 				// or is not carrying it (small, portable objects of value)
 				if (noun) {                         // Don't say unless object specified
-					if (obj->objValue && (verb != _vm->_arrayVerbs[_vm->_take][0]))
-						strcpy(comment, _vm->_textParser[kCmtAny4]);
+					if (obj->objValue && (verb != _vm->_text->getVerb(_vm->_take, 0)))
+						strcpy(comment, _vm->_text->getTextParser(kCmtAny4));
 					else
-						strcpy(comment, _vm->_textParser[kCmtClose]);
+						strcpy(comment, _vm->_text->getTextParser(kCmtClose));
 					}
 				return false;
 			}
@@ -125,10 +126,10 @@ bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) {
 		// User is either not close enough (stationary, valueless objects)
 		// or is not carrying it (small, portable objects of value)
 		if (noun) {                                 // Don't say unless object specified
-			if (obj->objValue && (verb != _vm->_arrayVerbs[_vm->_take][0]))
-				strcpy(comment, _vm->_textParser[kCmtAny4]);
+			if (obj->objValue && (verb != _vm->_text->getVerb(_vm->_take, 0)))
+				strcpy(comment, _vm->_text->getTextParser(kCmtAny4));
 			else
-				strcpy(comment, _vm->_textParser[kCmtClose]);
+				strcpy(comment, _vm->_text->getTextParser(kCmtClose));
 		}
 		return false;
 	}
@@ -148,27 +149,27 @@ bool Parser_v1d::isGenericVerb(char *word, object_t *obj) {
 		return false;
 
 	// Following is equivalent to switch, but couldn't do one
-	if (word == _vm->_arrayVerbs[_vm->_look][0]) {
+	if (word == _vm->_text->getVerb(_vm->_look, 0)) {
 		if ((LOOK & obj->genericCmd) == LOOK)
-			Utils::Box(kBoxAny, "%s", _vm->_textData[obj->dataIndex]);
+			Utils::Box(kBoxAny, "%s", _vm->_text->getTextData(obj->dataIndex));
 		else
-			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBUnusual_1d]);
-	} else if (word == _vm->_arrayVerbs[_vm->_take][0]) {
+			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBUnusual_1d));
+	} else if (word == _vm->_text->getVerb(_vm->_take, 0)) {
 		if (obj->carriedFl)
-			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBHave]);
+			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBHave));
 		else if ((TAKE & obj->genericCmd) == TAKE)
 			takeObject(obj);
 		else if (!obj->verbOnlyFl)                  // Make sure not taking object in context!
-			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBNoUse]);
+			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBNoUse));
 		else
 			return false;
-	} else if (word == _vm->_arrayVerbs[_vm->_drop][0]) {
+	} else if (word == _vm->_text->getVerb(_vm->_drop, 0)) {
 		if (!obj->carriedFl)
-			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBDontHave]);
+			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBDontHave));
 		else if ((DROP & obj->genericCmd) == DROP)
 			dropObject(obj);
 		else
-			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBNeed]);
+			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBNeed));
 	} else {                                        // It was not a generic cmd
 		return false;
 	}
@@ -192,7 +193,7 @@ bool Parser_v1d::isObjectVerb(char *word, object_t *obj) {
 
 	int i;
 	for (i = 0; _vm->_cmdList[cmdIndex][i].verbIndex != 0; i++) { // For each cmd
-		if (!strcmp(word, _vm->_arrayVerbs[_vm->_cmdList[cmdIndex][i].verbIndex][0])) // Is this verb catered for?
+		if (!strcmp(word, _vm->_text->getVerb(_vm->_cmdList[cmdIndex][i].verbIndex, 0))) // Is this verb catered for?
 			break;
 	}
 
@@ -205,7 +206,7 @@ bool Parser_v1d::isObjectVerb(char *word, object_t *obj) {
 		uint16 *reqs = _vm->_arrayReqs[cmnd->reqIndex]; // ptr to list of required objects
 		for (i = 0; reqs[i]; i++) {                 // for each obj
 			if (!_vm->_object->isCarrying(reqs[i])) {
-				Utils::Box(kBoxAny, "%s", _vm->_textData[cmnd->textDataNoCarryIndex]);
+				Utils::Box(kBoxAny, "%s", _vm->_text->getTextData(cmnd->textDataNoCarryIndex));
 				return true;
 			}
 		}
@@ -213,17 +214,17 @@ bool Parser_v1d::isObjectVerb(char *word, object_t *obj) {
 
 	// Required objects are present, now check state is correct
 	if ((obj->state != cmnd->reqState) && (cmnd->reqState != kStateDontCare)){
-		Utils::Box(kBoxAny, "%s", _vm->_textData[cmnd->textDataWrongIndex]);
+		Utils::Box(kBoxAny, "%s", _vm->_text->getTextData(cmnd->textDataWrongIndex));
 		return true;
 	}
 
 	// Everything checked.  Change the state and carry out any actions
 	if (cmnd->reqState != kStateDontCare)           // Don't change new state if required state didn't care
 		obj->state = cmnd->newState;
-	Utils::Box(kBoxAny, "%s", _vm->_textData[cmnd->textDataDoneIndex]);
+	Utils::Box(kBoxAny, "%s", _vm->_text->getTextData(cmnd->textDataDoneIndex));
 	_vm->_scheduler->insertActionList(cmnd->actIndex);
 	// Special case if verb is Take or Drop.  Assume additional generic actions
-	if ((word == _vm->_arrayVerbs[_vm->_take][0]) || (word == _vm->_arrayVerbs[_vm->_drop][0]))
+	if ((word == _vm->_text->getVerb(_vm->_take, 0)) || (word == _vm->_text->getVerb(_vm->_drop, 0)))
 		isGenericVerb(word, obj);
 	return true;
 }
@@ -239,7 +240,7 @@ bool Parser_v1d::isBackgroundWord(char *noun, char *verb, objectList_t obj) {
 		return false;
 
 	for (int i = 0; obj[i].verbIndex; i++) {
-		if ((verb == _vm->_arrayVerbs[obj[i].verbIndex][0]) && (noun == _vm->_arrayNouns[obj[i].nounIndex][0])) {
+		if ((verb == _vm->_text->getVerb(obj[i].verbIndex, 0)) && (noun == _vm->_text->getNoun(obj[i].nounIndex, 0))) {
 			Utils::Box(kBoxAny, "%s", _vm->_file->fetchString(obj[i].commentIndex));
 			return true;
 		}
@@ -259,7 +260,7 @@ void Parser_v1d::takeObject(object_t *obj) {
 
 	_vm->adjustScore(obj->objValue);
 
-	Utils::Box(kBoxAny, TAKE_TEXT, _vm->_arrayNouns[obj->nounIndex][TAKE_NAME]);
+	Utils::Box(kBoxAny, TAKE_TEXT, _vm->_text->getNoun(obj->nounIndex, TAKE_NAME));
 }
 
 /**
@@ -275,7 +276,7 @@ void Parser_v1d::dropObject(object_t *obj) {
 	obj->x = _vm->_hero->x - 1;
 	obj->y = _vm->_hero->y + _vm->_hero->currImagePtr->y2 - 1;
 	_vm->adjustScore(-obj->objValue);
-	Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBOk]);
+	Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBOk));
 }
 
 /**
@@ -289,7 +290,7 @@ bool Parser_v1d::isCatchallVerb(bool testNounFl, char *noun, char *verb, objectL
 		return false;
 
 	for (int i = 0; obj[i].verbIndex; i++) {
-		if ((verb == _vm->_arrayVerbs[obj[i].verbIndex][0]) && ((noun == _vm->_arrayNouns[obj[i].nounIndex][0]) || (obj[i].nounIndex == 0))) {
+		if ((verb == _vm->_text->getVerb(obj[i].verbIndex, 0)) && ((noun == _vm->_text->getNoun(obj[i].nounIndex, 0)) || (obj[i].nounIndex == 0))) {
 			Utils::Box(kBoxAny, "%s", _vm->_file->fetchString(obj[i].commentIndex));
 			return true;
 		}
@@ -323,7 +324,7 @@ void Parser_v1d::lineHandler() {
 		// Special code to allow me to go straight to any screen
 		if (strstr(_vm->_line, "goto")) {
 			for (int i = 0; i < _vm->_numScreens; i++) {
-				if (!scumm_stricmp(&_vm->_line[strlen("goto") + 1], _vm->_screenNames[i])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("goto") + 1], _vm->_text->getScreenNames(i))) {
 					_vm->_scheduler->newScreen(i);
 					return;
 				}
@@ -341,7 +342,7 @@ void Parser_v1d::lineHandler() {
 
 		if (strstr(_vm->_line, "fetch")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_vm->_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("fetch") + 1], _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 0))) {
 					takeObject(&_vm->_object->_objects[i]);
 					return;
 				}
@@ -351,7 +352,7 @@ void Parser_v1d::lineHandler() {
 		// Special code to allow me to goto objects
 		if (strstr(_vm->_line, "find")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_vm->_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("find") + 1], _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 0))) {
 					_vm->_scheduler->newScreen(_vm->_object->_objects[i].screenIndex);
 					return;
 				}
@@ -360,7 +361,7 @@ void Parser_v1d::lineHandler() {
 	}
 
 	if (!strcmp("exit", _vm->_line) || strstr(_vm->_line, "quit")) {
-		if (Utils::Box(kBoxYesNo, "%s", _vm->_textParser[kTBExit_1d]) != 0)
+		if (Utils::Box(kBoxYesNo, "%s", _vm->_text->getTextParser(kTBExit_1d)) != 0)
 			_vm->endGame();
 		return;
 	}
@@ -419,7 +420,7 @@ void Parser_v1d::lineHandler() {
 	else if (!isCatchallVerb(true, noun, verb, _vm->_catchallList) &&
 		     !isCatchallVerb(false, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])  &&
 		     !isCatchallVerb(false, noun, verb, _vm->_catchallList))
-		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBEh_1d]);
+		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBEh_1d));
 }
 
 void Parser_v1d::showInventory() {

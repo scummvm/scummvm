@@ -41,6 +41,7 @@
 #include "hugo/util.h"
 #include "hugo/sound.h"
 #include "hugo/object.h"
+#include "hugo/text.h"
 
 namespace Hugo {
 
@@ -76,7 +77,7 @@ void Parser_v2d::lineHandler() {
 		// Special code to allow me to go straight to any screen
 		if (strstr(_vm->_line, "goto")) {
 			for (int i = 0; i < _vm->_numScreens; i++) {
-				if (!scumm_stricmp(&_vm->_line[strlen("goto") + 1], _vm->_screenNames[i])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("goto") + 1], _vm->_text->getScreenNames(i))) {
 					_vm->_scheduler->newScreen(i);
 					return;
 				}
@@ -94,7 +95,7 @@ void Parser_v2d::lineHandler() {
 
 		if (strstr(_vm->_line, "fetch")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_vm->_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("fetch") + 1], _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 0))) {
 					takeObject(&_vm->_object->_objects[i]);
 					return;
 				}
@@ -104,7 +105,7 @@ void Parser_v2d::lineHandler() {
 		// Special code to allow me to goto objects
 		if (strstr(_vm->_line, "find")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_vm->_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("find") + 1], _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 0))) {
 					_vm->_scheduler->newScreen(_vm->_object->_objects[i].screenIndex);
 					return;
 				}
@@ -113,7 +114,7 @@ void Parser_v2d::lineHandler() {
 	}
 
 	if (!strcmp("exit", _vm->_line) || strstr(_vm->_line, "quit")) {
-		if (Utils::Box(kBoxYesNo, "%s", _vm->_textParser[kTBExit_1d]) != 0)
+		if (Utils::Box(kBoxYesNo, "%s", _vm->_text->getTextParser(kTBExit_1d)) != 0)
 			_vm->endGame();
 		else
 			return;
@@ -177,15 +178,15 @@ void Parser_v2d::lineHandler() {
 		&& !isCatchallVerb(false, noun, verb, _vm->_catchallList)) {
 		if (*farComment != '\0') {                  // An object matched but not near enough
 			Utils::Box(kBoxAny, "%s", farComment);
-		} else if (_maze.enabledFl && (verb == _vm->_arrayVerbs[_vm->_look][0])) {
-			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBMaze]);
+		} else if (_maze.enabledFl && (verb == _vm->_text->getVerb(_vm->_look, 0))) {
+			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBMaze));
 			_vm->_object->showTakeables();
 		} else if (verb && noun) {                  // A combination I didn't think of
-			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBNoUse_2d]);
+			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBNoUse_2d));
 		} else if (verb || noun) {
-			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBNoun]);
+			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBNoun));
 		} else {
-			Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBEh_2d]);
+			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBEh_2d));
 		}
 	}
 }

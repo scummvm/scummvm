@@ -37,6 +37,7 @@
 #include "hugo/hugo.h"
 #include "hugo/util.h"
 #include "hugo/sound.h"
+#include "hugo/text.h"
 
 namespace Hugo {
 
@@ -143,7 +144,7 @@ char *Utils::Box(box_t dismiss, const char *s, ...) {
  * Print options for user when dead
  */
 void Utils::gameOverMsg(void) {
-	Utils::Box(kBoxOk, "%s", HugoEngine::get()._textUtil[kGameOver]);
+	Utils::Box(kBoxOk, "%s", HugoEngine::get()._text->getTextUtil(kGameOver));
 }
 
 char *Utils::strlwr(char *buffer) {

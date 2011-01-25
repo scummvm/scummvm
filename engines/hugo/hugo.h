@@ -36,7 +36,7 @@
 #include "hugo/file.h"
 
 #define HUGO_DAT_VER_MAJ 0                          // 1 byte
-#define HUGO_DAT_VER_MIN 40                         // 1 byte
+#define HUGO_DAT_VER_MIN 41                         // 1 byte
 #define DATAALIGNMENT    4
 
 namespace Common {
@@ -246,7 +246,7 @@ class Route;
 class SoundHandler;
 class IntroHandler;
 class ObjectHandler;
-
+class TextHandler;
 
 class HugoEngine : public Engine {
 public:
@@ -272,16 +272,6 @@ public:
 	byte  *_introX;
 	byte  *_introY;
 	byte  *_screenStates;
-	char  **_textData;
-	char  **_stringtData;
-	char  **_screenNames;
-	char  **_textEngine;
-	char  **_textIntro;
-	char  **_textMouse;
-	char  **_textParser;
-	char  **_textUtil;
-	char  ***_arrayNouns;
-	char  ***_arrayVerbs;
 	command_t _line;                                // Line of user text input
 	config_t  _config;                              // User's config
 	uint16    **_arrayReqs;
@@ -418,6 +408,7 @@ public:
 	SoundHandler *_sound;
 	IntroHandler *_intro;
 	ObjectHandler *_object;
+	TextHandler *_text;
 
 	TopMenu *_topMenu;
 
@@ -457,13 +448,8 @@ private:
 	int _score;                                     // Holds current score
 	int _maxscore;                                  // Holds maximum score
 
-	char **loadTextsVariante(Common::File &in, uint16 *arraySize);
-	char ***loadTextsArray(Common::File &in);
-	char **loadTexts(Common::File &in);
-
 	uint16 **loadLongArray(Common::File &in);
 
-	void freeTexts(char **ptr);
 	void initPlaylist(bool playlist[kMaxTunes]);
 	void initConfig();
 	void initialize();

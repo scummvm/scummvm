@@ -43,6 +43,7 @@
 #include "hugo/route.h"
 #include "hugo/util.h"
 #include "hugo/object.h"
+#include "hugo/text.h"
 
 namespace Hugo {
 
@@ -129,7 +130,7 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 				if (_vm->_hero->cycling == kCycleInvisible) // If invisible do
 					_vm->_object->useObject(objId); // immediate use
 				else
-					Utils::Box(kBoxAny, "%s", _vm->_textMouse[kMsNoWayText]);      // Can't get there
+					Utils::Box(kBoxAny, "%s", _vm->_text->getTextMouse(kMsNoWayText)); // Can't get there
 			}
 			break;
 		}
@@ -183,7 +184,7 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 				else if (_vm->_hotspots[i].direction == Common::KEYCODE_LEFT)
 					x += kHeroMaxWidth;
 				if (!_vm->_route->startRoute(kRouteExit, i, x, y))
-					Utils::Box(kBoxAny, "%s", _vm->_textMouse[kMsNoWayText]); // Can't get there
+					Utils::Box(kBoxAny, "%s", _vm->_text->getTextMouse(kMsNoWayText)); // Can't get there
 			}
 
 			// Get rid of any attached icon
@@ -213,7 +214,7 @@ void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
 					if (_vm->_hero->cycling == kCycleInvisible) // If invisible do
 						_vm->_object->lookObject(obj);          // immediate decription
 					else
-						Utils::Box(kBoxAny, "%s", _vm->_textMouse[kMsNoWayText]);  // Can't get there
+						Utils::Box(kBoxAny, "%s", _vm->_text->getTextMouse(kMsNoWayText));  // Can't get there
 				}
 				break;
 			}
@@ -260,7 +261,7 @@ void MouseHandler::mouseHandler() {
 		if (objId >= 0) {                           // Got a match
 			// Display object name next to cursor (unless CURSOR_NOCHAR)
 			// Note test for swapped hero name
-			char *name = _vm->_arrayNouns[_vm->_object->_objects[(objId == kHeroIndex) ? _vm->_heroImage : objId].nounIndex][kCursorNameIndex];
+			char *name = _vm->_text->getNoun(_vm->_object->_objects[(objId == kHeroIndex) ? _vm->_heroImage : objId].nounIndex, kCursorNameIndex);
 			if (name[0] != kCursorNochar)
 				cursorText(name, cx, cy, U_FONT8, _TBRIGHTWHITE);
 
@@ -274,7 +275,7 @@ void MouseHandler::mouseHandler() {
 			int i = findExit(cx, cy);
 			if (i != -1 && _vm->_hotspots[i].viewx >= 0) {
 				objId = kExitHotspot;
-				cursorText(_vm->_textMouse[kMsExit], cx, cy, U_FONT8, _TBRIGHTWHITE);
+				cursorText(_vm->_text->getTextMouse(kMsExit), cx, cy, U_FONT8, _TBRIGHTWHITE);
 			}
 		}
 	}

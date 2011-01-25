@@ -97,6 +97,12 @@ int main(int argc, char *argv[]) {
 	// game versions/variantes
 	writeUint16BE(outFile, NUM_VARIANTE);
 
+	// Write palette
+	writeUint16BE(outFile, SIZE_PAL_ARRAY);
+	for (i = 0; i < SIZE_PAL_ARRAY; i++) {
+		writeByte(outFile, _palette[i]);
+	}
+
 	// Write textData
 	// textData_1w
 	nbrElem = sizeof(textData_1w) / sizeof(char *);
@@ -304,12 +310,6 @@ int main(int argc, char *argv[]) {
 	nbrElem = sizeof(screenNames_3d) / sizeof(char *);
 	writeTextArray(outFile, screenNames_3d, nbrElem);
 
-	// Write palette
-	writeUint16BE(outFile, SIZE_PAL_ARRAY);
-	for (i = 0; i < SIZE_PAL_ARRAY; i++) {
-		writeByte(outFile, _palette[i]);
-	}
-
 	// Write textEngine
 	writeTextArray(outFile, textEngine, NUM_ENGINE_TEXT);
 
@@ -320,6 +320,20 @@ int main(int argc, char *argv[]) {
 	writeTextArray(outFile, textIntro_dummy, NUM_INTRO_TEXT_DUMMY);
 	writeTextArray(outFile, textIntro_dummy, NUM_INTRO_TEXT_DUMMY);
 	writeTextArray(outFile, textIntro_v3, NUM_INTRO_TEXT_V3);
+
+	// Write textMouse
+	writeTextArray(outFile, textMouse, NUM_MOUSE_TEXT);
+
+	// Write textParser
+	writeTextArray(outFile, textParser, NUM_PARSER_TEXT);
+
+	// Write textUtil
+	writeTextArray(outFile, textUtil_v1w, NUM_UTIL_TEXT);
+	writeTextArray(outFile, textUtil_v1w, NUM_UTIL_TEXT);
+	writeTextArray(outFile, textUtil_v1w, NUM_UTIL_TEXT);
+	writeTextArray(outFile, textUtil_v1d, NUM_UTIL_TEXT);
+	writeTextArray(outFile, textUtil_v1d, NUM_UTIL_TEXT);
+	writeTextArray(outFile, textUtil_v1d, NUM_UTIL_TEXT);
 
 	// Write x_intro and y_intro
 	writeUint16BE(outFile, NUM_INTRO_TICK_DUMMY);
@@ -357,20 +371,6 @@ int main(int argc, char *argv[]) {
 		writeByte(outFile, x_intro_v3[i]);
 		writeByte(outFile, y_intro_v3[i]);
 	}
-
-	// Write textMouse
-	writeTextArray(outFile, textMouse, NUM_MOUSE_TEXT);
-
-	// Write textParser
-	writeTextArray(outFile, textParser, NUM_PARSER_TEXT);
-
-	// Write textUtil
-	writeTextArray(outFile, textUtil_v1w, NUM_UTIL_TEXT);
-	writeTextArray(outFile, textUtil_v1w, NUM_UTIL_TEXT);
-	writeTextArray(outFile, textUtil_v1w, NUM_UTIL_TEXT);
-	writeTextArray(outFile, textUtil_v1d, NUM_UTIL_TEXT);
-	writeTextArray(outFile, textUtil_v1d, NUM_UTIL_TEXT);
-	writeTextArray(outFile, textUtil_v1d, NUM_UTIL_TEXT);
 
 	// arrayReqs_1w
 	nbrElem = sizeof(arrayReqs_1w) / sizeof(uint16 *);

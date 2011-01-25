@@ -44,6 +44,7 @@
 #include "hugo/util.h"
 #include "hugo/sound.h"
 #include "hugo/object.h"
+#include "hugo/text.h"
 
 namespace Hugo {
 Parser_v1w::Parser_v1w(HugoEngine *vm) : Parser_v3d(vm) {
@@ -78,7 +79,7 @@ void Parser_v1w::lineHandler() {
 		// Special code to allow me to go straight to any screen
 		if (strstr(_vm->_line, "goto")) {
 			for (int i = 0; i < _vm->_numScreens; i++) {
-				if (!scumm_stricmp(&_vm->_line[strlen("goto") + 1], _vm->_screenNames[i])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("goto") + 1], _vm->_text->getScreenNames(i))) {
 					_vm->_scheduler->newScreen(i);
 					return;
 				}
@@ -96,7 +97,7 @@ void Parser_v1w::lineHandler() {
 
 		if (strstr(_vm->_line, "fetch")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_vm->_line[strlen("fetch") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("fetch") + 1], _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 0))) {
 					takeObject(&_vm->_object->_objects[i]);
 					return;
 				}
@@ -106,7 +107,7 @@ void Parser_v1w::lineHandler() {
 		// Special code to allow me to goto objects
 		if (strstr(_vm->_line, "find")) {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
-				if (!scumm_stricmp(&_vm->_line[strlen("find") + 1], _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][0])) {
+				if (!scumm_stricmp(&_vm->_line[strlen("find") + 1], _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 0))) {
 					_vm->_scheduler->newScreen(_vm->_object->_objects[i].screenIndex);
 					return;
 				}
@@ -117,7 +118,7 @@ void Parser_v1w::lineHandler() {
 	// Special meta commands
 	// EXIT/QUIT
 	if (!strcmp("exit", _vm->_line) || strstr(_vm->_line, "quit")) {
-		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBExit]);
+		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBExit));
 		return;
 	}
 
@@ -151,7 +152,7 @@ void Parser_v1w::lineHandler() {
 	// Test for nearby objects referenced explicitly
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		object_t *obj = &_vm->_object->_objects[i];
-		if (isWordPresent(_vm->_arrayNouns[obj->nounIndex])) {
+		if (isWordPresent(_vm->_text->getNounArray(obj->nounIndex))) {
 			if (isObjectVerb(obj, farComment) || isGenericVerb(obj, farComment))
 				return;
 		}
@@ -187,17 +188,17 @@ void Parser_v1w::lineHandler() {
 	// Nothing matches.  Report recognition success to user.
 	char *verb = findVerb();
 	char *noun = findNoun();
-	if (verb == _vm->_arrayVerbs[_vm->_look][0] && _maze.enabledFl) {
-		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBMaze]);
+	if (verb == _vm->_text->getVerb(_vm->_look, 0) && _maze.enabledFl) {
+		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBMaze));
 		_vm->_object->showTakeables();
 	} else if (verb && noun) {                      // A combination I didn't think of
-		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBNoPoint]);
+		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBNoPoint));
 	} else if (noun) {
-		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBNoun]);
+		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBNoun));
 	} else if (verb) {
-		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBVerb]);
+		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBVerb));
 	} else {
-		Utils::Box(kBoxAny, "%s", _vm->_textParser[kTBEh]);
+		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBEh));
 	}
 }
 

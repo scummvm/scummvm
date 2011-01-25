@@ -37,6 +37,7 @@
 #include "hugo/util.h"
 #include "hugo/display.h"
 #include "hugo/sound.h"
+#include "hugo/text.h"
 
 namespace Hugo {
 
@@ -299,13 +300,13 @@ bool intro_v3d::introPlay() {
 		// Text boxes at various times
 		switch (introTicks) {
 		case 4:
-			Utils::Box(kBoxOk, "%s", _vm->_textIntro[kIntro1]);
+			Utils::Box(kBoxOk, "%s", _vm->_text->getTextIntro(kIntro1));
 			break;
 		case 9:
-			Utils::Box(kBoxOk, "%s", _vm->_textIntro[kIntro2]);
+			Utils::Box(kBoxOk, "%s", _vm->_text->getTextIntro(kIntro2));
 			break;
 		case 35:
-			Utils::Box(kBoxOk, "%s", _vm->_textIntro[kIntro3]);
+			Utils::Box(kBoxOk, "%s", _vm->_text->getTextIntro(kIntro3));
 			break;
 		}
 	}
@@ -392,13 +393,13 @@ bool intro_v3w::introPlay() {
 		// Text boxes at various times
 		switch (introTicks) {
 		case 4:
-			Utils::Box(kBoxOk, "%s", _vm->_textIntro[kIntro1]);
+			Utils::Box(kBoxOk, "%s", _vm->_text->getTextIntro(kIntro1));
 			break;
 		case 9:
-			Utils::Box(kBoxOk, "%s", _vm->_textIntro[kIntro2]);
+			Utils::Box(kBoxOk, "%s", _vm->_text->getTextIntro(kIntro2));
 			break;
 		case 35:
-			Utils::Box(kBoxOk, "%s", _vm->_textIntro[kIntro3]);
+			Utils::Box(kBoxOk, "%s", _vm->_text->getTextIntro(kIntro3));
 			break;
 		}
 	}

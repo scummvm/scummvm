@@ -42,6 +42,7 @@
 #include "hugo/route.h"
 #include "hugo/sound.h"
 #include "hugo/object.h"
+#include "hugo/text.h"
 
 namespace Hugo {
 
@@ -304,10 +305,10 @@ bool Parser::isWordPresent(char **wordArr) {
 char *Parser::findNoun() {
 	debugC(1, kDebugParser, "findNoun()");
 
-	for (int i = 0; _vm->_arrayNouns[i]; i++) {
-		for (int j = 0; strlen(_vm->_arrayNouns[i][j]); j++) {
-			if (strstr(_vm->_line, _vm->_arrayNouns[i][j]))
-				return _vm->_arrayNouns[i][0];
+	for (int i = 0; _vm->_text->getNounArray(i); i++) {
+		for (int j = 0; strlen(_vm->_text->getNoun(i, j)); j++) {
+			if (strstr(_vm->_line, _vm->_text->getNoun(i, j)))
+				return _vm->_text->getNoun(i, 0);
 		}
 	}
 	return 0;
@@ -319,10 +320,10 @@ char *Parser::findNoun() {
 char *Parser::findVerb() {
 	debugC(1, kDebugParser, "findVerb()");
 
-	for (int i = 0; _vm->_arrayVerbs[i]; i++) {
-		for (int j = 0; strlen(_vm->_arrayVerbs[i][j]); j++) {
-			if (strstr(_vm->_line, _vm->_arrayVerbs[i][j]))
-				return _vm->_arrayVerbs[i][0];
+	for (int i = 0; _vm->_text->getVerbArray(i); i++) {
+		for (int j = 0; strlen(_vm->_text->getVerb(i, j)); j++) {
+			if (strstr(_vm->_line, _vm->_text->getVerb(i, j)))
+				return _vm->_text->getVerb(i, 0);
 		}
 	}
 	return 0;
@@ -338,7 +339,7 @@ void Parser::showDosInventory() {
 
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Find widths of 2 columns
 		if (_vm->_object->isCarried(i)) {
-			uint16 len = strlen(_vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][1]);
+			uint16 len = strlen(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 1));
 			if (index++ & 1)                        // Right hand column
 				len2 = (len > len2) ? len : len2;
 			else
@@ -347,24 +348,24 @@ void Parser::showDosInventory() {
 	}
 	len1 += 1;                                      // For gap between columns
 
-	if (len1 + len2 < (uint16)strlen(_vm->_textParser[kTBOutro]))
-		len1 = strlen(_vm->_textParser[kTBOutro]);
+	if (len1 + len2 < (uint16)strlen(_vm->_text->getTextParser(kTBOutro)))
+		len1 = strlen(_vm->_text->getTextParser(kTBOutro));
 
 	char buffer[kCompLineSize * kMaxTextRows] = "\0";
-	strncat(buffer, blanks, (len1 + len2 - strlen(_vm->_textParser[kTBIntro])) / 2);
-	strcat(strcat(buffer, _vm->_textParser[kTBIntro]), "\n");
+	strncat(buffer, blanks, (len1 + len2 - strlen(_vm->_text->getTextParser(kTBIntro))) / 2);
+	strcat(strcat(buffer, _vm->_text->getTextParser(kTBIntro)), "\n");
 	index = 0;
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Assign strings
 		if (_vm->_object->isCarried(i)) {
 			if (index++ & 1)
-				strcat(strcat(buffer, _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][1]), "\n");
+				strcat(strcat(buffer, _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 1)), "\n");
 			else
-				strncat(strcat(buffer, _vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][1]), blanks, len1 - strlen(_vm->_arrayNouns[_vm->_object->_objects[i].nounIndex][1]));
+				strncat(strcat(buffer, _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 1)), blanks, len1 - strlen(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 1)));
 		}
 	}
 	if (index & 1)
 		strcat(buffer, "\n");
-	strcat(buffer, _vm->_textParser[kTBOutro]);
+	strcat(buffer, _vm->_text->getTextParser(kTBOutro));
 
 	Utils::Box(kBoxAny, "%s", buffer);
 }

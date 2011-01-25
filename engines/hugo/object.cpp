@@ -42,6 +42,7 @@
 #include "hugo/util.h"
 #include "hugo/parser.h"
 #include "hugo/schedule.h"
+#include "hugo/text.h"
 
 namespace Hugo {
 
@@ -98,19 +99,19 @@ void ObjectHandler::useObject(int16 objId) {
 	if (_vm->getGameStatus().inventoryObjId == -1) {
 		// Get or use objid directly
 		if ((obj->genericCmd & TAKE) || obj->objValue)  // Get collectible item
-			sprintf(_vm->_line, "%s %s", _vm->_arrayVerbs[_vm->_take][0], _vm->_arrayNouns[obj->nounIndex][0]);
+			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_take, 0), _vm->_text->getNoun(obj->nounIndex, 0));
 		else if (obj->cmdIndex != 0)                // Use non-collectible item if able
-			sprintf(_vm->_line, "%s %s", _vm->_arrayVerbs[_vm->_cmdList[obj->cmdIndex][0].verbIndex][0], _vm->_arrayNouns[obj->nounIndex][0]);
-		else if ((verb = _vm->useBG(_vm->_arrayNouns[obj->nounIndex][0])) != 0)
-			sprintf(_vm->_line, "%s %s", verb, _vm->_arrayNouns[obj->nounIndex][0]);
+			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_cmdList[obj->cmdIndex][0].verbIndex, 0), _vm->_text->getNoun(obj->nounIndex, 0));
+		else if ((verb = _vm->useBG(_vm->_text->getNoun(obj->nounIndex, 0))) != 0)
+			sprintf(_vm->_line, "%s %s", verb, _vm->_text->getNoun(obj->nounIndex, 0));
 		else
 			return;                                 // Can't use object directly
 	} else {
 		// Use status.objid on objid
 		// Default to first cmd verb
-		sprintf(_vm->_line, "%s %s %s", _vm->_arrayVerbs[_vm->_cmdList[_objects[_vm->getGameStatus().inventoryObjId].cmdIndex][0].verbIndex][0],
-			                       _vm->_arrayNouns[_objects[_vm->getGameStatus().inventoryObjId].nounIndex][0],
-			                       _vm->_arrayNouns[obj->nounIndex][0]);
+		sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(_vm->_cmdList[_objects[_vm->getGameStatus().inventoryObjId].cmdIndex][0].verbIndex, 0),
+			                       _vm->_text->getNoun(_objects[_vm->getGameStatus().inventoryObjId].nounIndex, 0),
+			                       _vm->_text->getNoun(obj->nounIndex, 0));
 
 		// Check valid use of objects and override verb if necessary
 		for (uses_t *use = _vm->_uses; use->objId != _numObj; use++) {
@@ -121,9 +122,9 @@ void ObjectHandler::useObject(int16 objId) {
 				for (target_t *target = use->targets; target->nounIndex != 0; target++)
 					if (target->nounIndex == obj->nounIndex) {
 						foundFl = true;
-						sprintf(_vm->_line, "%s %s %s", _vm->_arrayVerbs[target->verbIndex][0],
-							                       _vm->_arrayNouns[_objects[_vm->getGameStatus().inventoryObjId].nounIndex][0],
-							                       _vm->_arrayNouns[obj->nounIndex][0]);
+						sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(target->verbIndex, 0),
+							                       _vm->_text->getNoun(_objects[_vm->getGameStatus().inventoryObjId].nounIndex, 0),
+							                       _vm->_text->getNoun(obj->nounIndex, 0));
 					}
 
 				// No valid use of objects found, print failure string
@@ -131,7 +132,7 @@ void ObjectHandler::useObject(int16 objId) {
 					// Deselect dragged icon if inventory not active
 					if (_vm->getGameStatus().inventoryState != kInventoryActive)
 						_vm->_screen->resetInventoryObjId();
-					Utils::Box(kBoxAny, "%s", _vm->_textData[use->dataIndex]);
+					Utils::Box(kBoxAny, "%s", _vm->_text->getTextData(use->dataIndex));
 					return;
 				}
 			}
@@ -200,7 +201,7 @@ void ObjectHandler::lookObject(object_t *obj) {
 		// Hero swapped - look at other
 		obj = &_objects[_vm->_heroImage];
 
-	_vm->_parser->command("%s %s", _vm->_arrayVerbs[_vm->_look][0], _vm->_arrayNouns[obj->nounIndex][0]);
+	_vm->_parser->command("%s %s", _vm->_text->getVerb(_vm->_look, 0), _vm->_text->getNoun(obj->nounIndex, 0));
 }
 
 /**
@@ -297,7 +298,7 @@ void ObjectHandler::showTakeables() {
 		if ((obj->cycling != kCycleInvisible) &&
 		    (obj->screenIndex == *_vm->_screen_p) &&
 		    (((TAKE & obj->genericCmd) == TAKE) || obj->objValue)) {
-			Utils::Box(kBoxAny, "You can also see:\n%s.", _vm->_arrayNouns[obj->nounIndex][LOOK_NAME]);
+			Utils::Box(kBoxAny, "You can also see:\n%s.", _vm->_text->getNoun(obj->nounIndex, LOOK_NAME));
 		}
 	}
 }

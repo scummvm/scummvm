@@ -42,6 +42,7 @@
 #include "hugo/sound.h"
 #include "hugo/intro.h"
 #include "hugo/object.h"
+#include "hugo/text.h"
 
 #include "engines/util.h"
 
@@ -58,9 +59,8 @@ maze_t      _maze;                              // Default to not in maze
 hugo_boot_t _boot;                              // Boot info structure file
 
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd), _mouseX(0), _mouseY(0),
-	_textData(0), _stringtData(0), _screenNames(0), _textEngine(0), _textIntro(0), _textMouse(0), _textParser(0), _textUtil(0),
-	_arrayNouns(0), _arrayVerbs(0), _arrayReqs(0), _hotspots(0), _invent(0), _uses(0), _catchallList(0), _backgroundObjects(0),
-	_points(0), _cmdList(0), _screenActs(0), _hero(0), _heroImage(0), _defltTunes(0), _introX(0), _introY(0), _maxInvent(0), _numBonuses(0),
+	_arrayReqs(0), _hotspots(0), _invent(0), _uses(0), _catchallList(0), _backgroundObjects(0),	_points(0), _cmdList(0), 
+	_screenActs(0), _hero(0), _heroImage(0), _defltTunes(0), _introX(0), _introY(0), _maxInvent(0), _numBonuses(0),
 	_numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0), _screenStates(0), _score(0), _maxscore(0),
 	_backgroundObjectsSize(0), _screenActsSize(0), _usesSize(0)
 
@@ -84,30 +84,11 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 HugoEngine::~HugoEngine() {
 	shutdown();
 
-	freeTexts(_textData);
-	freeTexts(_stringtData);
-
-	if (_arrayNouns) {
-		for (int i = 0; _arrayNouns[i]; i++)
-			freeTexts(_arrayNouns[i]);
-		free(_arrayNouns);
-	}
-
-	if (_arrayVerbs) {
-		for (int i = 0; _arrayVerbs[i]; i++)
-			freeTexts(_arrayVerbs[i]);
-		free(_arrayVerbs);
-	}
-
-	freeTexts(_screenNames);
 	_screen->freePalette();
-	freeTexts(_textEngine);
-	freeTexts(_textIntro);
+	_text->freeAllTexts();
+
 	free(_introX);
 	free(_introY);
-	freeTexts(_textMouse);
-	freeTexts(_textParser);
-	freeTexts(_textUtil);
 
 	if (_arrayReqs) {
 		for (int i = 0; _arrayReqs[i] != 0; i++)
@@ -192,6 +173,7 @@ Common::Error HugoEngine::run() {
 	_inventory = new InventoryHandler(this);
 	_route = new Route(this);
 	_sound = new SoundHandler(this);
+	_text = new TextHandler(this);
 
 	_topMenu = new TopMenu(this);
 
@@ -426,29 +408,9 @@ bool HugoEngine::loadHugoDat() {
 
 	_numVariant = in.readUint16BE();
 
-	// Read textData
-	_textData = loadTextsVariante(in, 0);
-
-	// Read stringtData
-	// Only Hugo 1 DOS should use this array
-	_stringtData = loadTextsVariante(in, 0);
-
-	// Read arrayNouns
-	_arrayNouns = loadTextsArray(in);
-
-	// Read arrayVerbs
-	_arrayVerbs = loadTextsArray(in);
-
-	// Read screenNames
-	_screenNames = loadTextsVariante(in, &_numScreens);
-
 	_screen->loadPalette(in);
 
-	// Read textEngine
-	_textEngine = loadTexts(in);
-
-	// Read textIntro
-	_textIntro = loadTextsVariante(in, 0);
+	_text->loadAllTexts(in);
 
 	// Read x_intro and y_intro
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
@@ -468,15 +430,6 @@ bool HugoEngine::loadHugoDat() {
 			}
 		}
 	}
-
-	// Read textMouse
-	_textMouse = loadTexts(in);
-
-	// Read textParser
-	_textParser = loadTexts(in);
-
-	// Read textUtil
-	_textUtil = loadTextsVariante(in, 0);
 
 	// Read _arrayReqs
 	_arrayReqs = loadLongArray(in);
@@ -757,49 +710,6 @@ bool HugoEngine::loadHugoDat() {
 	return true;
 }
 
-char **HugoEngine::loadTextsVariante(Common::File &in, uint16 *arraySize) {
-	int  numTexts;
-	int  entryLen;
-	int  len;
-	char **res = 0;
-	char *pos = 0;
-	char *posBck = 0;
-
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numTexts = in.readUint16BE();
-		entryLen = in.readUint16BE();
-		pos = (char *)malloc(entryLen);
-		if (varnt == _gameVariant) {
-			if (arraySize)
-				*arraySize = numTexts;
-			res = (char **)malloc(sizeof(char *) * numTexts);
-			res[0] = pos;
-			in.read(res[0], entryLen);
-			res[0] += DATAALIGNMENT;
-		} else {
-			in.read(pos, entryLen);
-			posBck = pos;
-		}
-
-		pos += DATAALIGNMENT;
-
-		for (int i = 1; i < numTexts; i++) {
-			pos -= 2;
-
-			len = READ_BE_UINT16(pos);
-			pos += 2 + len;
-
-			if (varnt == _gameVariant)
-				res[i] = pos;
-		}
-
-		if (varnt != _gameVariant)
-			free(posBck);
-	}
-
-	return res;
-}
-
 uint16 **HugoEngine::loadLongArray(Common::File &in) {
 	uint16 **resArray = 0;
 
@@ -823,82 +733,6 @@ uint16 **HugoEngine::loadLongArray(Common::File &in) {
 		}
 	}
 	return resArray;
-}
-
-char ***HugoEngine::loadTextsArray(Common::File &in) {
-	char ***resArray = 0;
-	uint16 arraySize;
-
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		arraySize = in.readUint16BE();
-		if (varnt == _gameVariant) {
-			resArray = (char ***)malloc(sizeof(char **) * (arraySize + 1));
-			resArray[arraySize] = 0;
-		}
-		for (int i = 0; i < arraySize; i++) {
-			int numTexts = in.readUint16BE();
-			int entryLen = in.readUint16BE();
-			char *pos = (char *)malloc(entryLen);
-			char *posBck = 0;
-			char **res = 0;
-			if (varnt == _gameVariant) {
-				res = (char **)malloc(sizeof(char *) * numTexts);
-				res[0] = pos;
-				in.read(res[0], entryLen);
-				res[0] += DATAALIGNMENT;
-			} else {
-				in.read(pos, entryLen);
-				posBck = pos;
-			}
-
-			pos += DATAALIGNMENT;
-
-			for (int j = 0; j < numTexts; j++) {
-				if (varnt == _gameVariant)
-					res[j] = pos;
-
-				pos -= 2;
-				int len = READ_BE_UINT16(pos);
-				pos += 2 + len;
-			}
-
-			if (varnt == _gameVariant)
-				resArray[i] = res;
-			else
-				free(posBck);
-		}
-	}
-
-	return resArray;
-}
-
-char **HugoEngine::loadTexts(Common::File &in) {
-	int numTexts = in.readUint16BE();
-	char **res = (char **)malloc(sizeof(char *) * numTexts);
-	int entryLen = in.readUint16BE();
-	char *pos = (char *)malloc(entryLen);
-
-	in.read(pos, entryLen);
-
-	pos += DATAALIGNMENT;
-	res[0] = pos;
-
-	for (int i = 1; i < numTexts; i++) {
-		pos -= 2;
-		int len = READ_BE_UINT16(pos);
-		pos += 2 + len;
-		res[i] = pos;
-	}
-
-	return res;
-}
-
-void HugoEngine::freeTexts(char **ptr) {
-	if (!ptr)
-		return;
-
-	free(*ptr - DATAALIGNMENT);
-	free(ptr);
 }
 
 /**
@@ -1198,10 +1032,10 @@ char *HugoEngine::useBG(char *name) {
 
 	objectList_t p = _backgroundObjects[*_screen_p];
 	for (int i = 0; p[i].verbIndex != 0; i++) {
-		if ((name == _arrayNouns[p[i].nounIndex][0] &&
+		if ((name == _text->getNoun(p[i].nounIndex, 0) &&
 		     p[i].verbIndex != _look) &&
 		    ((p[i].roomState == kStateDontCare) || (p[i].roomState == _screenStates[*_screen_p])))
-			return _arrayVerbs[p[i].verbIndex][0];
+			return _text->getVerb(p[i].verbIndex, 0);
 	}
 
 	return 0;
@@ -1285,7 +1119,7 @@ void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 
 	if (!_boot.registered)
-		Utils::Box(kBoxAny, "%s", _textEngine[kEsAdvertise]);
+		Utils::Box(kBoxAny, "%s", _text->getTextEngine(kEsAdvertise));
 	Utils::Box(kBoxAny, "%s\n%s", _episode, getCopyrightString());
 	_status.viewState = kViewExit;
 }

@@ -28,6 +28,7 @@ MODULE_OBJS := \
 	route.o \
 	schedule.o \
 	sound.o \
+	text.o \
 	util.o
 
 # This module can be built as a plugin

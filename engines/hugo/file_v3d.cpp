@@ -35,6 +35,7 @@
 #include "hugo/hugo.h"
 #include "hugo/file.h"
 #include "hugo/display.h"
+#include "hugo/text.h"
 #include "hugo/util.h"
 
 namespace Hugo {
@@ -66,11 +67,11 @@ void FileManager_v3d::readBackground(int screenIndex) {
 	if (screenIndex < 20) {
 		_sceneryArchive1.seek(sceneBlock.scene_off, SEEK_SET);
 		// Read the image into dummy seq and static dib_a
-		dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_screenNames[screenIndex]);
+		dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
 	} else {
 		_sceneryArchive2.seek(sceneBlock.scene_off, SEEK_SET);
 		// Read the image into dummy seq and static dib_a
-		dummySeq = readPCX(_sceneryArchive2, 0, _vm->_screen->getFrontBuffer(), true, _vm->_screenNames[screenIndex]);
+		dummySeq = readPCX(_sceneryArchive2, 0, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
 	}
 	free(dummySeq);
 }

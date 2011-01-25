@@ -35,6 +35,7 @@
 #include "hugo/hugo.h"
 #include "hugo/file.h"
 #include "hugo/display.h"
+#include "hugo/text.h"
 #include "hugo/util.h"
 
 namespace Hugo {
@@ -61,7 +62,7 @@ void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 	const char *ovl_ext[] = {".b", ".o", ".ob"};
 	char *buf = (char *) malloc(2048 + 1);          // Buffer for file access
 
-	strcat(strcpy(buf, _vm->_screenNames[screenNum]), ovl_ext[overlayType]);
+	strcat(strcpy(buf, _vm->_text->getScreenNames(screenNum)), ovl_ext[overlayType]);
 
 	if (!fileExists(buf)) {
 		for (int i = 0; i < kOvlSize; i++)
@@ -87,12 +88,12 @@ void FileManager_v1d::readBackground(int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
 	char *buf = (char *) malloc(2048 + 1);          // Buffer for file access
-	strcat(strcpy(buf, _vm->_screenNames[screenIndex]), ".ART");
+	strcat(strcpy(buf, _vm->_text->getScreenNames(screenIndex)), ".ART");
 	if (!_sceneryArchive1.open(buf))
 		error("File not found: %s", buf);
 	// Read the image into dummy seq and static dib_a
 	seq_t *dummySeq;                                // Image sequence structure for Read_pcx
-	dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_screenNames[screenIndex]);
+	dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
 	free(dummySeq);
 	_sceneryArchive1.close();
 	free(buf);
@@ -101,7 +102,7 @@ void FileManager_v1d::readBackground(int screenIndex) {
 char *FileManager_v1d::fetchString(int index) {
 	debugC(1, kDebugFile, "fetchString(%d)", index);
 
-	return _vm->_stringtData[index];
+	return _vm->_text->getStringtData(index);
 }
 
 /**

@@ -42,6 +42,7 @@
 #include "hugo/display.h"
 #include "hugo/util.h"
 #include "hugo/object.h"
+#include "hugo/text.h"
 
 namespace Hugo {
 FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
@@ -170,10 +171,10 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 		_objectsArchive.seek(objBlock.objOffset, SEEK_SET);
 	} else {
 		char *buf = (char *) malloc(2048 + 1);      // Buffer for file access
-		strcat(strcat(strcpy(buf, _vm->_picDir), _vm->_arrayNouns[objPtr->nounIndex][0]), ".PIX");
+		strcat(strcat(strcpy(buf, _vm->_picDir), _vm->_text->getNoun(objPtr->nounIndex, 0)), ".PIX");
 		if (!_objectsArchive.open(buf)) {
-			warning("File %s not found, trying again with %s%s", buf, _vm->_arrayNouns[objPtr->nounIndex][0], ".PIX");
-			strcat(strcpy(buf, _vm->_arrayNouns[objPtr->nounIndex][0]), ".PIX");
+			warning("File %s not found, trying again with %s%s", buf, _vm->_text->getNoun(objPtr->nounIndex, 0), ".PIX");
+			strcat(strcpy(buf, _vm->_text->getNoun(objPtr->nounIndex, 0)), ".PIX");
 			if (!_objectsArchive.open(buf))
 				error("File not found: %s", buf);
 		}
@@ -188,12 +189,12 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 		for (int k = 0; k < objPtr->seqList[j].imageNbr; k++) { // each image
 			if (k == 0) {                           // First image
 				// Read this image - allocate both seq and image memory
-				seqPtr = readPCX(_objectsArchive, 0, 0, firstFl, _vm->_arrayNouns[objPtr->nounIndex][0]);
+				seqPtr = readPCX(_objectsArchive, 0, 0, firstFl, _vm->_text->getNoun(objPtr->nounIndex, 0));
 				objPtr->seqList[j].seqPtr = seqPtr;
 				firstFl = false;
 			} else {                                // Subsequent image
 				// Read this image - allocate both seq and image memory
-				seqPtr->nextSeqPtr = readPCX(_objectsArchive, 0, 0, firstFl, _vm->_arrayNouns[objPtr->nounIndex][0]);
+				seqPtr->nextSeqPtr = readPCX(_objectsArchive, 0, 0, firstFl, _vm->_text->getNoun(objPtr->nounIndex, 0));
 				seqPtr = seqPtr->nextSeqPtr;
 			}
 

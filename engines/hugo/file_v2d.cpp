@@ -36,6 +36,7 @@
 #include "hugo/file.h"
 #include "hugo/schedule.h"
 #include "hugo/display.h"
+#include "hugo/text.h"
 #include "hugo/util.h"
 
 namespace Hugo {
@@ -92,7 +93,7 @@ void FileManager_v2d::readBackground(int screenIndex) {
 
 	// Read the image into dummy seq and static dib_a
 	seq_t *dummySeq;                                // Image sequence structure for Read_pcx
-	dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_screenNames[screenIndex]);
+	dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
 	free(dummySeq);
 }
 
