@@ -57,7 +57,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0xA1, o7_draw0xA1);
 	OPCODEDRAW(0xA2, o7_draw0xA2);
 	OPCODEDRAW(0xA4, o7_draw0xA4);
-	OPCODEDRAW(0xC4, o7_draw0xC4);
+	OPCODEDRAW(0xC4, o7_opendBase);
 	OPCODEDRAW(0xC5, o7_draw0xC5);
 	OPCODEDRAW(0xC6, o7_draw0xC6);
 }
@@ -224,13 +224,13 @@ void Inter_v7::o7_draw0xA4() {
 	warning("Addy Stub Draw 0xA4: \"%s\", %d, %d", str0.c_str(), expr0, expr1);
 }
 
-void Inter_v7::o7_draw0xC4() {
+void Inter_v7::o7_opendBase() {
 	_vm->_game->_script->evalExpr(0);
 	Common::String str0 = _vm->_game->_script->getResultStr();
 	_vm->_game->_script->evalExpr(0);
 	Common::String str1 = _vm->_game->_script->getResultStr();
 
-	warning("Addy Stub Draw 0xC4: \"%s\", \"%s\"", str0.c_str(), str1.c_str());
+	warning("Addy Stub: Open dBase file \"%s.dbf\" (%s)", str0.c_str(), str1.c_str());
 }
 
 void Inter_v7::o7_draw0xC5() {
