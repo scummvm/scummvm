@@ -607,7 +607,7 @@ public:
 			ret += Common::String::format("IsGameRunning: %02d\n", isGameRunning);
 			ret += Common::String::format("Mouse: RightClick:%02d  - LeftClick:%02d\n", mouseRightClick, mouseLeftClick);
 			ret += Common::String::format("Entities: 0:%02d  -  1:%02d\n", flag_entities_0, flag_entities_1);
-			ret += Common::String::format("NIS: %d  -  1:%02d\n", nis);
+			ret += Common::String::format("NIS: %d\n", nis);
 
 			return ret;
 		}
