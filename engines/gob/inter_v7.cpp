@@ -52,7 +52,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x89, o7_draw0x89);
 	OPCODEDRAW(0x8A, o7_draw0x8A);
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
-	OPCODEDRAW(0x90, o7_draw0x90);
+	OPCODEDRAW(0x90, o7_loadLBM);
 	OPCODEDRAW(0x93, o7_draw0x93);
 	OPCODEDRAW(0xA1, o7_draw0xA1);
 	OPCODEDRAW(0xA2, o7_draw0xA2);
@@ -161,21 +161,23 @@ void Inter_v7::o7_getSystemProperty() {
 	storeValue(0);
 }
 
-void Inter_v7::o7_draw0x90() {
+void Inter_v7::o7_loadLBM() {
 	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
+	Common::String file = _vm->_game->_script->getResultStr();
+	if (!file.contains('.'))
+		file += ".LBM";
 
-	int16 expr0 = _vm->_game->_script->readValExpr();
-	int16 expr1 = _vm->_game->_script->readValExpr();
-	int16 expr2 = _vm->_game->_script->readValExpr();
-	int16 expr3 = _vm->_game->_script->readValExpr();
-	int16 expr4 = _vm->_game->_script->readValExpr();
-	int16 expr5 = _vm->_game->_script->readValExpr();
-	int16 expr6 = _vm->_game->_script->readValExpr();
-	int16 expr7 = _vm->_game->_script->readValExpr();
+	int16 spriteIndex = _vm->_game->_script->readValExpr();
+	int16 left        = _vm->_game->_script->readValExpr();
+	int16 top         = _vm->_game->_script->readValExpr();
+	int16 width       = _vm->_game->_script->readValExpr();
+	int16 height      = _vm->_game->_script->readValExpr();
+	int16 x           = _vm->_game->_script->readValExpr();
+	int16 y           = _vm->_game->_script->readValExpr();
+	int16 transp      = _vm->_game->_script->readValExpr();
 
-	warning("Addy Stub Draw 0x90: \"%s\", %d, %d, %d, %d, %d, %d, %d, %d",
-			str0.c_str(), expr0, expr1, expr2, expr3, expr4, expr5, expr6, expr7);
+	warning("Addy Stub: Load LBM \"%s\", sprite %d, %dx%d+%d+%d @ %d+%d (%d)",
+			file.c_str(), spriteIndex, width, height, left, top, x, y, transp);
 }
 
 void Inter_v7::o7_draw0x93() {

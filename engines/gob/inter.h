@@ -601,7 +601,7 @@ protected:
 	void o7_draw0x89();
 	void o7_draw0x8A();
 	void o7_getSystemProperty();
-	void o7_draw0x90();
+	void o7_loadLBM();
 	void o7_draw0x93();
 	void o7_draw0xA1();
 	void o7_draw0xA2();
