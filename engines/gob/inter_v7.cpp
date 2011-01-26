@@ -55,7 +55,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x8A, o7_findFile);
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
 	OPCODEDRAW(0x90, o7_loadLBM);
-	OPCODEDRAW(0x93, o7_draw0x93);
+	OPCODEDRAW(0x93, o7_setVolume);
 	OPCODEDRAW(0x95, o7_zeroVar);
 	OPCODEDRAW(0xA1, o7_getINIValue);
 	OPCODEDRAW(0xA2, o7_setINIValue);
@@ -208,10 +208,10 @@ void Inter_v7::o7_loadLBM() {
 			file.c_str(), spriteIndex, width, height, left, top, x, y, transp);
 }
 
-void Inter_v7::o7_draw0x93() {
-	uint32 expr0 = _vm->_game->_script->readValExpr();
+void Inter_v7::o7_setVolume() {
+	uint32 volume = _vm->_game->_script->readValExpr();
 
-	warning("Addy Stub Draw 0x93: %d", expr0);
+	warning("Addy Stub: Set volume %d (0 - 100)", volume);
 }
 
 void Inter_v7::o7_zeroVar() {
