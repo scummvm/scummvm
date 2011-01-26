@@ -359,7 +359,7 @@ void SoundManager::loadSoundData(SoundEntry *entry, Common::String name) {
 	}
 }
 
-void SoundManager::resetEntry(SoundEntry *entry) {
+void SoundManager::resetEntry(SoundEntry *entry) const {
 	entry->status.status |= kSoundStatusRemoved;
 	entry->entity = kEntityPlayer;
 
@@ -1763,7 +1763,7 @@ void SoundManager::updateSubtitles() {
 
 		if (!(status & kSoundStatus_40)
 		 || status & 0x180
-		 || soundEntry->time <= 0
+		 || soundEntry->time == 0
 		 || (status & 0x1F) < 6
 		 || ((getFlags()->nis & 0x8000) && soundEntry->field_4C < 90)) {
 			 current_index = 0;
@@ -1845,7 +1845,7 @@ void SoundManager::setupSubtitleAndDraw(SubtitleEntry *subtitle) {
 	if (subtitle->data->getMaxTime() > subtitle->sound->time) {
 		subtitle->status.status = kSoundStatus_400;
 	} else {
-		subtitle->data->setTime(subtitle->sound->time);
+		subtitle->data->setTime((uint16)subtitle->sound->time);
 
 		if (_drawSubtitles & 1)
 			drawSubtitleOnScreen(subtitle);
@@ -1867,6 +1867,9 @@ void SoundManager::drawSubtitle(SubtitleEntry *subtitle) {
 }
 
 void SoundManager::drawSubtitleOnScreen(SubtitleEntry *subtitle) {
+	if (!subtitle)
+		error("SoundManager::drawSubtitleOnScreen: Invalid subtitle entry!");
+
 	_drawSubtitles &= ~1;
 
 	if (subtitle->data == NULL)

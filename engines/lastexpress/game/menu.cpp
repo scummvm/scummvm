@@ -180,7 +180,7 @@ static const struct {
 //////////////////////////////////////////////////////////////////////////
 class Clock {
 public:
-	Clock(LastExpressEngine *engine);
+	explicit Clock(LastExpressEngine *engine);
 	~Clock();
 
 	void draw(uint32 time);
@@ -271,7 +271,7 @@ void Clock::draw(uint32 time) {
 //////////////////////////////////////////////////////////////////////////
 class TrainLine {
 public:
-	TrainLine(LastExpressEngine *engine);
+	explicit TrainLine(LastExpressEngine *engine);
 	~TrainLine();
 
 	void draw(uint32 time);
@@ -1454,13 +1454,13 @@ void Menu::adjustTime() {
 
 	if (_currentTime < _time) {
 		timeDelta *= 900;
-		_time -= timeDelta.toInt();
+		_time -= (uint)timeDelta.toInt();
 
 		if (_currentTime > _time)
 			_time = _currentTime;
 	} else {
 		timeDelta *= 900;
-		_time += timeDelta.toInt();
+		_time += (uint)timeDelta.toInt();
 
 		if (_currentTime < _time)
 			_time = _currentTime;

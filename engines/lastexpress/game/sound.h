@@ -361,7 +361,7 @@ private:
 
 	void updateEntry(SoundEntry *entry, uint value) const;
 	void updateEntryState(SoundEntry *entry) const ;
-	void resetEntry(SoundEntry *entry);
+	void resetEntry(SoundEntry *entry) const;
 	void removeEntry(SoundEntry *entry);
 
 	// Subtitles

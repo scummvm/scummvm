@@ -63,7 +63,7 @@ SaveLoad::SaveLoad(LastExpressEngine *engine) : _engine(engine), _savegame(NULL)
 SaveLoad::~SaveLoad() {
 	clear(true);
 
-	//Zero passed pointers
+	// Zero passed pointers
 	_engine = NULL;
 }
 
@@ -191,6 +191,9 @@ void SaveLoad::clear(bool clearStream) {
 
 // Load game
 void SaveLoad::loadGame(GameId id) {
+	if (!_savegame)
+		error("SaveLoad::loadGame: No savegame stream present!");
+
 	// Rewind current savegame
 	_savegame->seek(0);
 
@@ -200,6 +203,9 @@ void SaveLoad::loadGame(GameId id) {
 		debugC(2, kLastExpressDebugSavegame, "SaveLoad::saveGame - Cannot load main header: %s", getFilename(getMenu()->getGameId()).c_str());
 		return;
 	}
+
+	if (!_savegame)
+		error("SaveLoad::loadGame: No savegame stream present!");
 
 	// Load the last entry
 	_savegame->seek(header.offsetEntry);
@@ -419,6 +425,9 @@ void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, b
 	if (!type || !entity || !val)
 		error("SaveLoad::readEntry: Invalid parameters passed!");
 
+	if (!_savegame)
+		error("SaveLoad::readEntry: No savegame stream present!");
+
 	// Load entry header
 	SavegameEntryHeader entry;
 	Common::Serializer ser(_savegame, NULL);
@@ -452,7 +461,7 @@ void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, b
 	getProgress().chapter = entry.chapter;
 
 	// Skip padding
-	uint32 offset = _savegame->pos() - originalPosition;
+	uint32 offset = (uint32)_savegame->pos() - originalPosition;
 	if (offset & 0xF) {
 		_savegame->seek((~offset & 0xF) + 1, SEEK_SET);
 	}
