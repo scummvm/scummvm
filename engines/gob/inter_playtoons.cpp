@@ -241,6 +241,10 @@ bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", file + 4, file);
 		file += 4;
 	}
+	if (strncmp(file, "<CD>", 4) == 0) {
+		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", file + 4, file);
+		file += 4;
+	}
 	if (strncmp(file, "<STK>", 5) == 0) {
 		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", file + 5, file);
 		file += 5;
