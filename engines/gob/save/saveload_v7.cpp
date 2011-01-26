@@ -31,6 +31,7 @@
 namespace Gob {
 
 SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
+	// Addy Junior Base
 	{"visage01.inf", kSaveModeSave, 0, "face"         }, // Child 01
 	{"visage02.inf", kSaveModeSave, 0, "face"         }, // Child 02
 	{"visage03.inf", kSaveModeSave, 0, "face"         }, // Child 03
@@ -49,7 +50,18 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"visage16.inf", kSaveModeSave, 0, "face"         }, // Child 16
 	{  "enfant.inf", kSaveModeSave, 0, "children"     },
 	{   "debil.tmp", kSaveModeSave, 0, 0              },
-	{  "config.inf", kSaveModeSave, 0, "configuration"}
+	{  "config.inf", kSaveModeSave, 0, "configuration"},
+	// Addy 4 Grundschule
+	{ "premier.dep", kSaveModeSave, 0, 0              },
+	{ "quitter.dep", kSaveModeSave, 0, 0              },
+	{   "appel.dep", kSaveModeSave, 0, 0              },
+	{  "parole.dep", kSaveModeSave, 0, 0              },
+	{    "ado4.inf", kSaveModeSave, 0, 0              },
+	{"mcurrent.inf", kSaveModeSave, 0, 0              },
+	{   "perso.dep", kSaveModeSave, 0, 0              },
+	{ "nouveau.dep", kSaveModeSave, 0, 0              },
+	{     "adi.tmp", kSaveModeSave, 0, 0              },
+	{     "adi.inf", kSaveModeSave, 0, 0              }
 };
 
 
@@ -62,9 +74,15 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 	_saveFiles[16].handler = _childrenHandler = new FakeFileHandler(_vm);
 	_saveFiles[17].handler = _debilHandler    = new FakeFileHandler(_vm);
 	_saveFiles[18].handler = _configHandler   = new FakeFileHandler(_vm);
+
+	for (int i = 0; i < 10; i++)
+		_saveFiles[19 + i].handler = _addy4GrundschuleHandler[i] = new FakeFileHandler(_vm);
 }
 
 SaveLoad_v7::~SaveLoad_v7() {
+	for (int i = 0; i < 10; i++)
+		delete _addy4GrundschuleHandler[i];
+
 	delete _configHandler;
 	delete _debilHandler;
 	delete _childrenHandler;
