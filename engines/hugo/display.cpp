@@ -93,7 +93,7 @@ void Screen::moveImage(image_pt srcImage, int16 x1, int16 y1, int16 dx, int16 dy
 }
 
 void Screen::displayBackground() {
-	debugC(1, kDebugDisplay, "displayBackground");
+	debugC(1, kDebugDisplay, "displayBackground()");
 
 	g_system->copyRectToScreen(_frontBuffer, 320, 0, 0, 320, 200);
 }
@@ -131,7 +131,7 @@ void Screen::remapPal(uint16 oldIndex, uint16 newIndex) {
 * Saves the current palette in a savegame
 */
 void Screen::savePal(Common::WriteStream *f) {
-	debugC(1, kDebugDisplay, "savePal");
+	debugC(1, kDebugDisplay, "savePal()");
 
 	for (int i = 0; i < _paletteSize; i++)
 		f->writeByte(_curPalette[i]);
@@ -141,7 +141,7 @@ void Screen::savePal(Common::WriteStream *f) {
 * Restore the current palette from a savegame
 */
 void Screen::restorePal(Common::SeekableReadStream *f) {
-	debugC(1, kDebugDisplay, "restorePal");
+	debugC(1, kDebugDisplay, "restorePal()");
 
 	byte pal[4];
 
@@ -175,7 +175,7 @@ void Screen::setBackgroundColor(long color) {
 * base bit set (in which case the object is foreground).
 */
 overlayState_t Screen::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
-	debugC(4, kDebugDisplay, "findOvl");
+	debugC(4, kDebugDisplay, "findOvl()");
 
 	for (; y < seq_p->lines; y++) {              // Each line in object
 		image_pt ovb_p = _vm->getBaseBoundaryOverlay() + ((uint16)(dst_p - _frontBuffer) >> 3);  // Ptr into overlay bits
@@ -229,7 +229,7 @@ void Screen::displayFrame(int sx, int sy, seq_t *seq, bool foreFl) {
 * Merge rectangles A,B leaving result in B
 */
 void Screen::merge(rect_t *rectA, rect_t *rectB) {
-	debugC(6, kDebugDisplay, "merge");
+	debugC(6, kDebugDisplay, "merge()");
 
 	int16 xa = rectA->x + rectA->dx;                // Find x2,y2 for each rectangle
 	int16 xb = rectB->x + rectB->dx;
@@ -249,7 +249,7 @@ void Screen::merge(rect_t *rectA, rect_t *rectB) {
 * have holes, in which case dx = 0.  Returns used length of blist.
 */
 int16 Screen::mergeLists(rect_t *list, rect_t *blist, int16 len, int16 blen, int16 bmax) {
-	debugC(4, kDebugDisplay, "mergeLists");
+	debugC(4, kDebugDisplay, "mergeLists()");
 
 	int16   coalesce[kBlitListSize];                // List of overlapping rects
 	// Process the list
@@ -287,7 +287,7 @@ int16 Screen::mergeLists(rect_t *list, rect_t *blist, int16 len, int16 blen, int
 * Trailing args are int16 x,y,dx,dy for the D_ADD operation
 */
 void Screen::displayList(dupdate_t update, ...) {
-	debugC(6, kDebugDisplay, "displayList");
+	debugC(6, kDebugDisplay, "displayList()");
 
 	static int16  addIndex, restoreIndex;           // Index into add/restore lists
 	static rect_t restoreList[kRectListSize];       // The restore list
@@ -376,7 +376,7 @@ void Screen::writeChr(int sx, int sy, byte color, char *local_fontdata) {
 * Returns height of characters in current font
 */
 int16 Screen::fontHeight() {
-	debugC(2, kDebugDisplay, "fontHeight");
+	debugC(2, kDebugDisplay, "fontHeight()");
 
 	static int16 height[kNumFonts] = {5, 7, 8};
 	return height[_fnt - kFirstFont];
@@ -454,7 +454,7 @@ void Screen::userHelp() {
 }
 
 void Screen::drawStatusText() {
-	debugC(4, kDebugDisplay, "drawStatusText");
+	debugC(4, kDebugDisplay, "drawStatusText()");
 
 	loadFont(U_FONT8);
 	uint16 sdx = stringLength(_vm->_statusLine);
@@ -645,7 +645,7 @@ void Screen_v1d::loadFont(int16 fontId) {
 /**
 * Load fonts from Hugo.dat
 * These fonts are a workaround to avoid handling TTF fonts used by DOS versions
-* TODO: Properly handle the vector based font files (win31)
+* TODO: Get rid of this function when the win1 fonts are supported
 */
 void Screen_v1d::loadFontArr(Common::File &in) {
 	for (int i = 0; i < kNumFonts; i++) {

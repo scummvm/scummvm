@@ -908,7 +908,6 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
 	}
 
 	f->write(saveEventArr, sizeof(saveEventArr));
-	warning("TODO: serialize saveEventArr");
 }
 
 /** 
