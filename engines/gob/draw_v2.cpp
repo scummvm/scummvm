@@ -788,12 +788,12 @@ void Draw_v2::spriteOperation(int16 operation) {
 		left = _destSpriteX;
 
 		if ((_fontIndex >= 4) || (_fontToSprite[_fontIndex].sprite == -1)) {
-			Font *font = _fonts[_fontIndex];
-			if (!font) {
+			if ((_fontIndex >= kFontCount) || !_fonts[_fontIndex]) {
 				warning("Trying to print \"%s\" with undefined font %d", _textToPrint, _fontIndex);
 				break;
 			}
 
+			Font *font = _fonts[_fontIndex];
 			if (font->isMonospaced()) {
 				if (((int8) _textToPrint[0]) == -1) {
 					_vm->validateLanguage();

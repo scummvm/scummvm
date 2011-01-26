@@ -1746,10 +1746,8 @@ bool Inter_v1::o1_blitCursor(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_loadFont(OpFuncParams &params) {
-	int16 index;
-
 	_vm->_game->_script->evalExpr(0);
-	index = _vm->_game->_script->readInt16();
+	uint16 index = _vm->_game->_script->readInt16();
 
 	_vm->_draw->animateCursor(4);
 

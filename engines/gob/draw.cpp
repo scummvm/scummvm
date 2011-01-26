@@ -371,10 +371,15 @@ void Draw::adjustCoords(char adjust, int16 *coord1, int16 *coord2) {
 	}
 }
 
-int Draw::stringLength(const char *str, int16 fontIndex) {
+int Draw::stringLength(const char *str, uint16 fontIndex) {
 	static const int8 japaneseExtraCharLen[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-	if ((fontIndex < 0) || (fontIndex > 7) || !_fonts[fontIndex])
+	if (fontIndex >= kFontCount) {
+		warning("Draw::stringLength(): Font %d > Count %d", fontIndex, kFontCount);
+		return 0;
+	}
+
+	if (!_fonts[fontIndex])
 		return 0;
 
 	Font &font = *_fonts[fontIndex];
@@ -442,6 +447,14 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 	if (str[0] == '\0')
 		return;
 
+	if (fontIndex >= kFontCount) {
+		warning("Draw::printTextCentered(): Font %d > Count %d", fontIndex, kFontCount);
+		return;
+	}
+
+	if (!_fonts[fontIndex])
+		return;
+
 	_transparency = 1;
 	_destSpriteX = left;
 	_destSpriteY = top;
@@ -502,6 +515,14 @@ void Draw::oPlaytoons_sub_F_1B(uint16 id, int16 left, int16 top, int16 right, in
 	}
 
 	strcpy(paramStr, tmpStr);
+
+	if (fontIndex >= kFontCount) {
+		warning("Draw::oPlaytoons_sub_F_1B(): Font %d > Count %d", fontIndex, kFontCount);
+		return;
+	}
+
+	if (!_fonts[fontIndex])
+		return;
 
 	if (*paramStr) {
 		_transparency = 1;
@@ -673,9 +694,11 @@ Font *Draw::loadFont(const char *path) const {
 	return new Font(data);
 }
 
-bool Draw::loadFont(int fontIndex, const char *path) {
-	if ((fontIndex < 0) || (fontIndex >= kFontCount))
+bool Draw::loadFont(uint16 fontIndex, const char *path) {
+	if (fontIndex >= kFontCount) {
+		warning("Draw::loadFont(): Font %d > Count %d (\"%s\")", fontIndex, kFontCount, path);
 		return false;
+	}
 
 	delete _fonts[fontIndex];
 

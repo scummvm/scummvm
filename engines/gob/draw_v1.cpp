@@ -247,8 +247,7 @@ void Draw_v1::printTotText(int16 id) {
 		if (*ptr != 0xBA) {
 			_letterToPrint = (char) *ptr;
 			spriteOperation(DRAW_DRAWLETTER);
-			_destSpriteX +=
-			    _fonts[_fontIndex]->getCharWidth();
+			_destSpriteX += _fonts[_fontIndex]->getCharWidth();
 			ptr++;
 		} else {
 			cmd = ptrEnd[17] & 0x7F;
@@ -401,12 +400,12 @@ void Draw_v1::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_PRINTTEXT:
-		font = _fonts[_fontIndex];
-		if (!font) {
+		if ((_fontIndex >= kFontCount) || !_fonts[_fontIndex]) {
 			warning("Trying to print \"%s\" with undefined font %d", _textToPrint, _fontIndex);
 			break;
 		}
 
+		font = _fonts[_fontIndex];
 		len = strlen(_textToPrint);
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 				_destSpriteX + len * font->getCharWidth() - 1,
@@ -453,12 +452,12 @@ void Draw_v1::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_DRAWLETTER:
-		font = _fonts[_fontIndex];
-		if (!font) {
+		if ((_fontIndex >= kFontCount) || !_fonts[_fontIndex]) {
 			warning("Trying to print \'%c\' with undefined font %d", _letterToPrint, _fontIndex);
 			break;
 		}
 
+		font = _fonts[_fontIndex];
 		if (_fontToSprite[_fontIndex].sprite == -1) {
 			dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 					_destSpriteX + font->getCharWidth()  - 1,

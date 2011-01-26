@@ -71,7 +71,7 @@ public:
 
 	int16 _renderFlags;
 
-	int16 _fontIndex;
+	uint16 _fontIndex;
 	int16 _spriteLeft;
 	int16 _spriteTop;
 	int16 _spriteRight;
@@ -184,7 +184,7 @@ public:
 	void adjustCoords(char adjust, uint16 *coord1, uint16 *coord2) {
 		adjustCoords(adjust, (int16 *)coord1, (int16 *)coord2);
 	}
-	int stringLength(const char *str, int16 fontIndex);
+	int stringLength(const char *str, uint16 fontIndex);
 	void drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
 			int16 transp, Surface &dest, const Font &font);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
@@ -198,7 +198,7 @@ public:
 	void wobble(Surface &surfDesc);
 
 	Font *loadFont(const char *path) const;
-	bool loadFont(int fontIndex, const char *path);
+	bool loadFont(uint16 fontIndex, const char *path);
 
 	virtual void initScreen() = 0;
 	virtual void closeScreen() = 0;
