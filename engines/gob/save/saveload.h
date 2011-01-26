@@ -839,6 +839,7 @@ protected:
 	FakeFileHandler   *_childrenHandler;
 	FakeFileHandler   *_debilHandler;
 	FakeFileHandler   *_configHandler;
+	FakeFileHandler   *_addy4BaseHandler[2];
 	FakeFileHandler   *_addy4GrundschuleHandler[11];
 
 	SaveHandler *getHandler(const char *fileName) const;

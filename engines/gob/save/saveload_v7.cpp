@@ -51,6 +51,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{  "enfant.inf", kSaveModeSave, 0, "children"     },
 	{   "debil.tmp", kSaveModeSave, 0, 0              },
 	{  "config.inf", kSaveModeSave, 0, "configuration"},
+// Addy 4 Base
+	{"config00.inf", kSaveModeSave, 0, 0              },
+	{"statev00.inf", kSaveModeSave, 0, 0              },
 	// Addy 4 Grundschule
 	{ "premier.dep", kSaveModeSave, 0, 0              },
 	{ "quitter.dep", kSaveModeSave, 0, 0              },
@@ -76,13 +79,19 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 	_saveFiles[17].handler = _debilHandler    = new FakeFileHandler(_vm);
 	_saveFiles[18].handler = _configHandler   = new FakeFileHandler(_vm);
 
+	for (int i = 0; i < 2; i++)
+		_saveFiles[19 + i].handler = _addy4BaseHandler[i] = new FakeFileHandler(_vm);
+
 	for (int i = 0; i < 11; i++)
-		_saveFiles[19 + i].handler = _addy4GrundschuleHandler[i] = new FakeFileHandler(_vm);
+		_saveFiles[21 + i].handler = _addy4GrundschuleHandler[i] = new FakeFileHandler(_vm);
 }
 
 SaveLoad_v7::~SaveLoad_v7() {
 	for (int i = 0; i < 11; i++)
 		delete _addy4GrundschuleHandler[i];
+
+	for (int i = 0; i < 2; i++)
+		delete _addy4BaseHandler[i];
 
 	delete _configHandler;
 	delete _debilHandler;
