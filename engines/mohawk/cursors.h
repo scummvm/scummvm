@@ -66,6 +66,7 @@ enum {
 	kRivenHideCursor = 9000
 };
 
+class MohawkArchive;
 class MohawkEngine;
 class MohawkEngine_Myst;
 class MystBitmap;
@@ -83,6 +84,9 @@ public:
 protected:
 	// Handles the Mac version of the xor/and map cursor
 	void decodeMacXorCursor(Common::SeekableReadStream *stream, byte *cursor);
+
+	// Set a tCUR resource as the current cursor
+	void setStandardCursor(Common::SeekableReadStream *stream);
 };
 
 // The default Mohawk cursor manager
@@ -150,6 +154,19 @@ public:
 
 private:
 	Common::MacResManager *_resFork;
+};
+
+// The cursor manager for Living Books v2+ games
+// Handles custom generated cursors in addition to tCUR resources
+class LivingBooksCursorManager_v2 : public CursorManager {
+public:
+	LivingBooksCursorManager_v2();
+	~LivingBooksCursorManager_v2();
+
+	void setCursor(uint16 id);
+
+private:
+	MohawkArchive *_sysArchive;
 };
 
 } // End of namespace Mohawk

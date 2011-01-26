@@ -103,11 +103,10 @@ void CursorManager::decodeMacXorCursor(Common::SeekableReadStream *stream, byte 
 	}
 }
 
-void DefaultCursorManager::setCursor(uint16 id) {
+void CursorManager::setStandardCursor(Common::SeekableReadStream *stream) {
 	// The Broderbund devs decided to rip off the Mac format, it seems.
 	// However, they reversed the x/y hotspot. That makes it totally different!!!!
-
-	Common::SeekableReadStream *stream = _vm->getResource(_tag, id);
+	assert(stream);
 
 	byte cursorBitmap[16 * 16];
 	decodeMacXorCursor(stream, cursorBitmap);
@@ -118,6 +117,10 @@ void DefaultCursorManager::setCursor(uint16 id) {
 	CursorMan.replaceCursorPalette(s_bwPalette, 1, 2);
 
 	delete stream;
+}
+
+void DefaultCursorManager::setCursor(uint16 id) {
+	setStandardCursor(_vm->getResource(_tag, id));
 }
 
 MystCursorManager::MystCursorManager(MohawkEngine_Myst *vm) : _vm(vm) {
@@ -347,6 +350,28 @@ void MacCursorManager::setCursor(uint16 id) {
 	CursorMan.replaceCursorPalette(s_bwPalette, 1, 2);
 
 	delete stream;
+}
+
+LivingBooksCursorManager_v2::LivingBooksCursorManager_v2() {
+	// Try to open the system archive if we have it
+	_sysArchive = new MohawkArchive();
+
+	if (!_sysArchive->open("system.mhk")) {
+		delete _sysArchive;
+		_sysArchive = 0;
+	}
+}
+
+LivingBooksCursorManager_v2::~LivingBooksCursorManager_v2() {
+	delete _sysArchive;
+}
+
+void LivingBooksCursorManager_v2::setCursor(uint16 id) {
+	if (_sysArchive && _sysArchive->hasResource(ID_TCUR, id)) {
+		setStandardCursor(_sysArchive->getResource(ID_TCUR, id));
+	} else {
+		// TODO: Handle generated cursors
+	}
 }
 
 } // End of namespace Mohawk

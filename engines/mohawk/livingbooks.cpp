@@ -116,7 +116,9 @@ Common::Error MohawkEngine_LivingBooks::run() {
 
 	_gfx = new LBGraphics(this, _screenWidth, _screenHeight);
 
-	if (getPlatform() == Common::kPlatformMacintosh)
+	if (getGameType() != GType_LIVINGBOOKSV1)
+		_cursor = new LivingBooksCursorManager_v2();
+	else if (getPlatform() == Common::kPlatformMacintosh)
 		_cursor = new MacCursorManager(getAppName());
 	else
 		_cursor = new NECursorManager(getAppName());

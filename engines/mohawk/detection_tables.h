@@ -610,7 +610,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV2,
 		0,
-		"GREEN.EXE"
+		0
 	},
 
 	// 32-bit version of the previous entry
@@ -626,7 +626,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV2,
 		0,
-		"GREEN32.EXE"
+		0
 	},
 
 	{
@@ -641,7 +641,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV2,
 		0,
-		"Green Eggs and Ham"
+		0
 	},
 
 	{
@@ -656,7 +656,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV2,
 		0,
-		"ABC.EXE"
+		0
 	},
 
 	// 32-bit version of the previous entry
@@ -672,7 +672,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV2,
 		0,
-		"ABC32.EXE"
+		0
 	},
 
 	{
@@ -1005,7 +1005,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV2,
 		0,
-		"RACE.EXE"
+		0
 	},
 
 	// 32-bit version of the previous entry
@@ -1021,7 +1021,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV2,
 		0,
-		"RACE32.EXE"
+		0
 	},
 
 	{
