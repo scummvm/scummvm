@@ -61,7 +61,8 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{   "perso.dep", kSaveModeSave, 0, 0              },
 	{ "nouveau.dep", kSaveModeSave, 0, 0              },
 	{     "adi.tmp", kSaveModeSave, 0, 0              },
-	{     "adi.inf", kSaveModeSave, 0, 0              }
+	{     "adi.inf", kSaveModeSave, 0, 0              },
+	{    "adi4.tmp", kSaveModeSave, 0, 0              }
 };
 
 
@@ -75,12 +76,12 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 	_saveFiles[17].handler = _debilHandler    = new FakeFileHandler(_vm);
 	_saveFiles[18].handler = _configHandler   = new FakeFileHandler(_vm);
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 11; i++)
 		_saveFiles[19 + i].handler = _addy4GrundschuleHandler[i] = new FakeFileHandler(_vm);
 }
 
 SaveLoad_v7::~SaveLoad_v7() {
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 11; i++)
 		delete _addy4GrundschuleHandler[i];
 
 	delete _configHandler;
