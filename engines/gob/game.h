@@ -37,7 +37,7 @@ class Hotspots;
 
 class Environments {
 public:
-	static const uint8 kEnvironmentCount = 5;
+	static const uint8 kEnvironmentCount = 20;
 
 	Environments(GobEngine *vm);
 	~Environments();
@@ -48,7 +48,7 @@ public:
 	const char *getTotFile(uint8 env) const;
 
 	bool has(Variables *variables, uint8 startEnv = 0, int16 except = -1) const;
-	bool has(Script *script      , uint8 startEnv = 0, int16 except = -1) const;
+	bool has(Script    *script   , uint8 startEnv = 0, int16 except = -1) const;
 	bool has(Resources *resources, uint8 startEnv = 0, int16 except = -1) const;
 
 	void clear();
@@ -65,7 +65,7 @@ private:
 
 	GobEngine *_vm;
 
-	Environment *_environments;
+	Environment _environments[kEnvironmentCount];
 };
 
 class Game {

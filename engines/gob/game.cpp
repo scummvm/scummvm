@@ -44,8 +44,6 @@
 namespace Gob {
 
 Environments::Environments(GobEngine *vm) : _vm(vm) {
-	_environments = new Environment[kEnvironmentCount];
-
 	for (uint i = 0; i < kEnvironmentCount; i++) {
 		Environment &e = _environments[i];
 
@@ -60,8 +58,6 @@ Environments::Environments(GobEngine *vm) : _vm(vm) {
 
 Environments::~Environments() {
 	clear();
-
-	delete[] _environments;
 }
 
 void Environments::clear() {
@@ -565,7 +561,7 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 		warning("Urban Stub: Game::totSub(), flags == %d", flags);
 
 	if (_numEnvironments >= Environments::kEnvironmentCount)
-		return;
+		error("Game::totSub(): Environments overflow");
 
 	_environments->set(_numEnvironments);
 
