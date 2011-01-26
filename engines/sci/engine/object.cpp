@@ -244,11 +244,15 @@ void Object::initSelectorsSci3(const byte *buf) {
 			for (int bit = 2; bit < 32; ++bit) {
 				int value = READ_SCI11ENDIAN_UINT16(seeker + bit * 2);
 				if (typeMask & (1 << bit)) { // Property
-// We really shouldn't be doing endianness conversion here;
-// instead, propertyIds should be converted to a Common::Array, like _baseMethod already is
-// This interim solution fixes playing SCI3 PC games on Big Endian platforms
-// but would likely fail with Mac versions of the same games...
-					propertyIds[propertyCounter] = TO_LE_16(groupBaseId + bit);
+
+					// FIXME: We really shouldn't be doing endianness
+					// conversion here; instead, propertyIds should be converted
+					// to a Common::Array, like _baseMethod already is
+					// This interim solution fixes playing SCI3 PC games
+					// on Big Endian platforms
+
+					WRITE_SCI11ENDIAN_UINT16(&propertyIds[propertyCounter],
+					                         groupBaseId + bit);
 					_variables[propertyCounter] = make_reg(0, value);
 					propertyOffsets[propertyCounter] = (seeker + bit * 2) - buf;
 					++propertyCounter;
