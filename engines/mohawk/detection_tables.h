@@ -1086,6 +1086,36 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"catinthehat",
+			"",
+			AD_ENTRY1("Outline", "0b5ab6dd7c08cf23066efa709fa48bbc"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	{
+		{
+			"catinthehat",
+			"",
+			AD_ENTRY1("BookOutline", "e139903eee98f0b0c3f39247a23b8f10"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	{
+		{
 			"rugrats",
 			"",
 			AD_ENTRY1("outline", "525be248363fe27d50d750632c1e759e"),

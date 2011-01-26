@@ -118,6 +118,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"arthurrace", "Arthur's Reading Race"},
 	{"arthurbday", "Arthur's Birthday"},
 	{"lilmonster", "Little Monster at School"},
+	{"catinthehat", "The Cat in the Hat"},
 	{"rugrats", "Rugrats Adventure Game"},
 	{0, 0}
 };
