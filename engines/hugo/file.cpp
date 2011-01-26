@@ -390,6 +390,9 @@ bool FileManager::saveGame(int16 slot, Common::String descrip) {
 	// Now save current time and all current events in event queue
 	_vm->_scheduler->saveEvents(out);
 
+	// Now save current actions
+	_vm->_scheduler->saveActions(out);
+
 	// Save palette table
 	_vm->_screen->savePal(out);
 
@@ -494,6 +497,9 @@ bool FileManager::restoreGame(int16 slot) {
 
 	// Now restore time of the save and the event queue
 	_vm->_scheduler->restoreEvents(in);
+
+	// Now restore actions
+	_vm->_scheduler->restoreActions(in);
 
 	// Restore palette and change it if necessary
 	_vm->_screen->restorePal(in);

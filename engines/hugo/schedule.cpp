@@ -47,6 +47,7 @@
 namespace Hugo {
 
 Scheduler::Scheduler(HugoEngine *vm) : _vm(vm), _actListArr(0) {
+	memset(_events, 0, sizeof(_events));
 }
 
 Scheduler::~Scheduler() {
@@ -896,12 +897,91 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
 	for (int16 i = 0; i < kMaxEvents; i++) {
 		event_t *wrkEvent = &_events[i];
 		saveEventArr[i] = *wrkEvent;
+
+ 		// fix up action pointer (to do better)
+		int16 index, subElem;
+		findAction(saveEventArr[i].action, &index, &subElem);
+		saveEventArr[i].action = (act*)((index << 16)| subElem);
+
 		saveEventArr[i].prevEvent = (wrkEvent->prevEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->prevEvent - _events);
 		saveEventArr[i].nextEvent = (wrkEvent->nextEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->nextEvent - _events);
 	}
 
 	f->write(saveEventArr, sizeof(saveEventArr));
 	warning("TODO: serialize saveEventArr");
+}
+
+/** 
+* Restore the action data from file with handle f
+*/
+
+void Scheduler::restoreActions(Common::SeekableReadStream *f) {
+
+	for (int i = 0; i < _actListArrSize; i++) {
+	
+		// read all the sub elems
+		int j = 0;
+		do {
+
+			// handle special case for a3, keep list pointer
+			int* responsePtr = 0;
+			if (_actListArr[i][j].a3.actType == PROMPT) {
+				responsePtr = _actListArr[i][j].a3.responsePtr;
+			}
+
+			f->read(&_actListArr[i][j], sizeof(act));
+
+			// handle special case for a3, reset list pointer
+			if (_actListArr[i][j].a3.actType == PROMPT) {
+				_actListArr[i][j].a3.responsePtr = responsePtr;
+			}
+			j++;
+		} while (_actListArr[i][j-1].a0.actType != ANULL);
+	}
+}
+
+/*
+* Save the action data in the file with handle f
+*/
+
+void Scheduler::saveActions(Common::WriteStream* f) {
+	for (int i = 0; i < _actListArrSize; i++) {
+		// write all the sub elems data
+
+		int j = 0;
+		do {
+			f->write(&_actListArr[i][j], sizeof(act));
+			j++;
+		} while (_actListArr[i][j-1].a0.actType != ANULL);
+	}
+}
+
+/*
+* Find the index in the action list to be able to serialize the action to save game
+*/
+
+void Scheduler::findAction(act* action, int16* index, int16* subElem) {
+	
+	assert(index && subElem);
+	if (!action) {
+		*index = -1;
+		*subElem = -1;
+		return;
+	}
+
+	for (int i = 0; i < _actListArrSize; i++) {
+		int j = 0;
+		do {
+			if (action == &_actListArr[i][j]) {
+				*index = i;
+				*subElem = j;
+				return;
+			}
+			j++;
+		} while (_actListArr[i][j-1].a0.actType != ANULL);
+	}
+	// action not found ??
+	assert(0);
 }
 
 /**
@@ -923,6 +1003,13 @@ void Scheduler::restoreEvents(Common::SeekableReadStream *f) {
 	for (int i = 0; i < kMaxEvents; i++) {
 		wrkEvent = &savedEvents[i];
 		_events[i] = *wrkEvent;
+		// fix up action pointer (to do better)
+		int32 val = (size_t)_events[i].action;
+		if ((val & 0xffff) == 0xffff) {
+			_events[i].action = 0;
+		} else {
+			_events[i].action = (act*)&_actListArr[val >> 16][val & 0xffff];
+		}
 		_events[i].prevEvent = (wrkEvent->prevEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->prevEvent ];
 		_events[i].nextEvent = (wrkEvent->nextEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->nextEvent ];
 	}

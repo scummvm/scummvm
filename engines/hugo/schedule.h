@@ -471,6 +471,10 @@ public:
 	void saveEvents(Common::WriteStream *f);
 	void waitForRefresh(void);
 
+	void findAction(act* action, int16* index, int16* subElem);
+	void saveActions(Common::WriteStream* f);
+	void restoreActions(Common::SeekableReadStream *f);
+
 protected:
 	HugoEngine *_vm;
 	static const int kFilenameLength = 12;              // Max length of a DOS file name
