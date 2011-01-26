@@ -495,8 +495,6 @@ protected:
 
 	virtual uint32 getTicks() = 0;
 
-	virtual void delEventType(action_t actTypeDel) = 0;
-	virtual void delQueue(event_t *curEvent) = 0;
 	virtual void promptAction(act *action) = 0;
 
 	event_t *doAction(event_t *curEvent);
@@ -505,6 +503,8 @@ protected:
 	uint32 getDosTicks(bool updateFl);
 	uint32 getWinTicks();
 
+	void delEventType(action_t actTypeDel);
+	void delQueue(event_t *curEvent);
 	void insertAction(act *action);
 };
 
@@ -521,8 +521,6 @@ protected:
 
 	virtual uint32 getTicks();
 
-	virtual void delEventType(action_t actTypeDel);
-	virtual void delQueue(event_t *curEvent);
 	virtual void promptAction(act *action);
 };
 
@@ -536,8 +534,6 @@ public:
 protected:
 	virtual const char *getCypher();
 	
-	void delEventType(action_t actTypeDel);
-	void delQueue(event_t *curEvent);
 	void promptAction(act *action);
 };
 

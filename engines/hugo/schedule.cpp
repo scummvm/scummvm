@@ -1330,6 +1330,52 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 	}
 }
 
+/**
+* Delete an event structure (i.e. return it to the free list)
+* Historical note:  Originally event p was assumed to be at head of queue
+* (i.e. earliest) since all events were deleted in order when proceeding to
+* a new screen.  To delete an event from the middle of the queue, the action
+* was overwritten to be ANULL.  With the advent of GLOBAL events, delQueue
+* was modified to allow deletes anywhere in the list, and the DEL_EVENT
+* action was modified to perform the actual delete.
+*/
+void Scheduler::delQueue(event_t *curEvent) {
+	debugC(4, kDebugSchedule, "delQueue()");
+
+	if (curEvent == _headEvent) {                   // If p was the head ptr
+		_headEvent = curEvent->nextEvent;           // then make new head_p
+	} else {                                        // Unlink p
+		curEvent->prevEvent->nextEvent = curEvent->nextEvent;
+		if (curEvent->nextEvent)
+			curEvent->nextEvent->prevEvent = curEvent->prevEvent;
+		else
+			_tailEvent = curEvent->prevEvent;
+	}
+
+	if (_headEvent)
+		_headEvent->prevEvent = 0;                  // Mark end of list
+	else
+		_tailEvent = 0;                             // Empty queue
+
+	curEvent->nextEvent = _freeEvent;               // Return p to free list
+	if (_freeEvent)                                 // Special case, if free list was empty
+		_freeEvent->prevEvent = curEvent;
+	_freeEvent = curEvent;
+}
+
+void Scheduler::delEventType(action_t actTypeDel) {
+	// Note: actions are not deleted here, simply turned into NOPs!
+	event_t *wrkEvent = _headEvent;                 // The earliest event
+	event_t *saveEvent;
+
+	while (wrkEvent) {                              // While events found in list
+		saveEvent = wrkEvent->nextEvent;
+		if (wrkEvent->action->a20.actType == actTypeDel)
+			delQueue(wrkEvent);
+		wrkEvent = saveEvent;
+	}
+}
+
 Scheduler_v1d::Scheduler_v1d(HugoEngine *vm) : Scheduler(vm) {
 }
 
@@ -1345,29 +1391,6 @@ uint32 Scheduler_v1d::getTicks() {
 }
 
 /**
-* Delete an event structure (i.e. return it to the free list)
-* Note that event is assumed at head of queue (i.e. earliest).  To delete
-* an event from the middle of the queue, merely overwrite its action type
-* to be ANULL
-*/
-void Scheduler_v1d::delQueue(event_t *curEvent) {
-	debugC(4, kDebugSchedule, "delQueue()");
-
-	if (curEvent == _headEvent)                     // If p was the head ptr
-		_headEvent = curEvent->nextEvent;           // then make new head_p
-
-	if (_headEvent)
-		_headEvent->prevEvent = 0;                  // Mark end of list
-	else
-		_tailEvent = 0;                             // Empty queue
-
-	curEvent->nextEvent = _freeEvent;               // Return p to free list
-	if (_freeEvent)                                 // Special case, if free list was empty
-		_freeEvent->prevEvent = curEvent;
-	_freeEvent = curEvent;
-}
-
-/**
 * This is the scheduler which runs every tick.  It examines the event queue
 * for any events whose time has come.  It dequeues these events and performs
 * the action associated with the event, returning it to the free queue
@@ -1380,16 +1403,6 @@ void Scheduler_v1d::runScheduler() {
 
 	while (curEvent && (curEvent->time <= ticker))  // While mature events found
 		curEvent = doAction(curEvent);              // Perform the action (returns next_p)
-}
-
-void Scheduler_v1d::delEventType(action_t actTypeDel) {
-	// Note: actions are not deleted here, simply turned into NOPs!
-	event_t *wrkEvent = _headEvent;                 // The earliest event
-	while (wrkEvent) {                              // While events found in list
-		if (wrkEvent->action->a20.actType == actTypeDel)
-			wrkEvent->action->a20.actType = ANULL;
-		wrkEvent = wrkEvent->nextEvent;
-	}
 }
 
 void Scheduler_v1d::promptAction(act *action) {
@@ -1440,52 +1453,6 @@ Scheduler_v2d::~Scheduler_v2d() {
 
 const char *Scheduler_v2d::getCypher() {
 	return "Copyright 1991, Gray Design Associates";
-}
-
-/**
-* Delete an event structure (i.e. return it to the free list)
-* Historical note:  Originally event p was assumed to be at head of queue
-* (i.e. earliest) since all events were deleted in order when proceeding to
-* a new screen.  To delete an event from the middle of the queue, the action
-* was overwritten to be ANULL.  With the advent of GLOBAL events, delQueue
-* was modified to allow deletes anywhere in the list, and the DEL_EVENT
-* action was modified to perform the actual delete.
-*/
-void Scheduler_v2d::delQueue(event_t *curEvent) {
-	debugC(4, kDebugSchedule, "delQueue()");
-
-	if (curEvent == _headEvent) {                   // If p was the head ptr
-		_headEvent = curEvent->nextEvent;           // then make new head_p
-	} else {                                        // Unlink p
-		curEvent->prevEvent->nextEvent = curEvent->nextEvent;
-		if (curEvent->nextEvent)
-			curEvent->nextEvent->prevEvent = curEvent->prevEvent;
-		else
-			_tailEvent = curEvent->prevEvent;
-	}
-
-	if (_headEvent)
-		_headEvent->prevEvent = 0;                  // Mark end of list
-	else
-		_tailEvent = 0;                             // Empty queue
-
-	curEvent->nextEvent = _freeEvent;               // Return p to free list
-	if (_freeEvent)                                 // Special case, if free list was empty
-		_freeEvent->prevEvent = curEvent;
-	_freeEvent = curEvent;
-}
-
-void Scheduler_v2d::delEventType(action_t actTypeDel) {
-	// Note: actions are not deleted here, simply turned into NOPs!
-	event_t *wrkEvent = _headEvent;                 // The earliest event
-	event_t *saveEvent;
-
-	while (wrkEvent) {                              // While events found in list
-		saveEvent = wrkEvent->nextEvent;
-		if (wrkEvent->action->a20.actType == actTypeDel)
-			delQueue(wrkEvent);
-		wrkEvent = saveEvent;
-	}
 }
 
 void Scheduler_v2d::promptAction(act *action) {
