@@ -118,7 +118,8 @@ void Parser_v1w::lineHandler() {
 	// Special meta commands
 	// EXIT/QUIT
 	if (!strcmp("exit", _vm->_line) || strstr(_vm->_line, "quit")) {
-		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBExit));
+		if (Utils::Box(kBoxYesNo, "%s", _vm->_text->getTextParser(kTBExit_1d)) != 0)
+			_vm->endGame();
 		return;
 	}
 
