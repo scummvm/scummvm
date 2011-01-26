@@ -227,7 +227,11 @@ void Video::setSize(bool defaultTo1XScaler) {
 
 void Video::retrace(bool mouse) {
 	if (mouse)
-		CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
+		if ((_vm->getGameType() != kGameTypeAdibou2) &&
+		    (_vm->getGameType() != kGameTypeAdi2) &&
+		    (_vm->getGameType() != kGameTypeAdi4))
+			CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
+
 	if (_vm->_global->_primarySurfDesc) {
 		int screenX = _screenDeltaX;
 		int screenY = _screenDeltaY;

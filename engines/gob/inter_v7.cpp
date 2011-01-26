@@ -26,6 +26,8 @@
 #include "common/endian.h"
 #include "common/archive.h"
 
+#include "graphics/cursorman.h"
+
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/inter.h"
@@ -86,6 +88,22 @@ void Inter_v7::o7_loadCursor() {
 	Common::String cursorFile = _vm->_game->_script->getResultStr();
 
 	warning("Addy Stub: Load cursor \"%s\" to %d", cursorFile.c_str(), cursorIndex);
+
+	byte cursor[9];
+	byte palette[6];
+
+	cursor[0] = 0; cursor[1] = 0; cursor[2] = 0;
+	cursor[3] = 0; cursor[4] = 1; cursor[5] = 0;
+	cursor[6] = 0; cursor[7] = 0; cursor[8] = 0;
+
+	palette[0] =   0; palette[1] =   0; palette[2] =   0;
+	palette[3] = 255; palette[4] = 255; palette[5] = 255;
+
+	CursorMan.pushCursorPalette(palette, 0, 2);
+	CursorMan.disableCursorPalette(false);
+	CursorMan.replaceCursor(cursor, 3, 3, 1, 1, 255);
+
+	CursorMan.showMouse(true);
 }
 
 void Inter_v7::o7_displayWarning() {
