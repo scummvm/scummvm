@@ -45,7 +45,7 @@ namespace Gob {
 
 class Draw {
 public:
-	static const int kFontCount      =  8;
+	static const int kFontCount      = 16;
 	static const int kFrontSurface   = 20;
 	static const int kBackSurface    = 21;
 	static const int kAnimSurface    = 22;
