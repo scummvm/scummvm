@@ -365,7 +365,12 @@ void Game::playTot(int16 skipPlay) {
 	} else {
 		_vm->_inter->initControlVars(0);
 		_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
-		_script->seek(_script->getFunctionOffset(skipPlay + 1));
+
+		if (skipPlay > 13) {
+			warning("Addy: skipPlay = %d", skipPlay);
+			_script->skip(skipPlay);
+		} else
+			_script->seek(_script->getFunctionOffset(skipPlay + 1));
 
 		_vm->_inter->callSub(2);
 
