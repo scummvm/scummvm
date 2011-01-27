@@ -59,7 +59,6 @@ static const GameSettings drasculaSettings[] = {
 };
 
 DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-
 	_charMap = 0;
 	_itemLocations = 0;
 	_polX = 0;
@@ -100,6 +99,8 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "drascula");
+
+	_console = 0;
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)

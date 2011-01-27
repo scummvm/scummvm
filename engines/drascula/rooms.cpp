@@ -140,6 +140,18 @@ void DrasculaEngine::setupRoomsTable() {
 }
 
 void DrasculaEngine::freeRoomsTable() {
+	for (uint32 i = 0; i < _roomHandlers->roomParsers.size(); i++)
+		delete _roomHandlers->roomParsers[i];
+	_roomHandlers->roomParsers.clear();
+
+	for (uint32 i = 0; i < _roomHandlers->roomPreupdaters.size(); i++)
+		delete _roomHandlers->roomPreupdaters[i];
+	_roomHandlers->roomPreupdaters.clear();
+
+	for (uint32 i = 0; i < _roomHandlers->roomUpdaters.size(); i++)
+		delete _roomHandlers->roomUpdaters[i];
+	_roomHandlers->roomUpdaters.clear();
+
 	delete _roomHandlers;
 	_roomHandlers = 0;
 }

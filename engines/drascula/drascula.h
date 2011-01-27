@@ -265,7 +265,6 @@ public:
 
 private:
 	bool _fallBack;
-
 };
 
 class TextResourceParser {
