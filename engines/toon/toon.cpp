@@ -180,27 +180,27 @@ void ToonEngine::parseInput() {
 	while (_event->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYUP:
-			if (event.kbd.ascii == 27 || event.kbd.ascii == 32) {
+			if ((event.kbd.ascii == 27 || event.kbd.ascii == 32) && !event.kbd.flags) {
 				_audioManager->stopCurrentVoice();
 			}
-			if (event.kbd.keycode == Common::KEYCODE_F5) {
+			if (event.kbd.keycode == Common::KEYCODE_F5 && !event.kbd.flags) {
 				if(canSaveGameStateCurrently())
 					saveGame(-1, Common::String());
 			}
-			if (event.kbd.keycode == Common::KEYCODE_F6) {
+			if (event.kbd.keycode == Common::KEYCODE_F6 && !event.kbd.flags) {
 				if(canLoadGameStateCurrently())
 					loadGame(-1);
 			}
-			if (event.kbd.ascii == 't') {
+			if (event.kbd.ascii == 't' && !event.kbd.flags) {
 				_showConversationText = !_showConversationText;
 			}
-			if (event.kbd.ascii == 'm') {
+			if (event.kbd.ascii == 'm' && !event.kbd.flags) {
 				_audioManager->muteMusic(!_audioManager->isMusicMuted());
 			}
-			if (event.kbd.ascii == 'd') {
+			if (event.kbd.ascii == 'd' && !event.kbd.flags) {
 				_audioManager->muteVoice(!_audioManager->isVoiceMuted());
 			}
-			if (event.kbd.ascii == 's') {
+			if (event.kbd.ascii == 's' && !event.kbd.flags) {
 				_audioManager->muteSfx(!_audioManager->isSfxMuted());
 			}
 
