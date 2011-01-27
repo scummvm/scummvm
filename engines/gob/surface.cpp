@@ -40,12 +40,17 @@ static void plotPixel(int x, int y, int color, void *data) {
 }
 
 
-Pixel::Pixel(byte *vidMem, uint8 bpp) : _vidMem(vidMem), _bpp(bpp) {
+Pixel::Pixel(byte *vidMem, uint8 bpp, byte *min, byte *max) :
+	_vidMem(vidMem), _bpp(bpp), _min(min), _max(max) {
+
 	assert((_bpp == 1) || (_bpp == 2));
+	assert(_vidMem >= _min);
+	assert(_vidMem <  _max);
 }
 
 Pixel &Pixel::operator++() {
 	_vidMem += _bpp;
+
 	return *this;
 }
 
@@ -77,6 +82,9 @@ Pixel &Pixel::operator-=(int x) {
 }
 
 uint32 Pixel::get() const {
+	assert(_vidMem >= _min);
+	assert(_vidMem <  _max);
+
 	if (_bpp == 1)
 		return *((byte *) _vidMem);
 	if (_bpp == 2)
@@ -86,6 +94,9 @@ uint32 Pixel::get() const {
 }
 
 void Pixel::set(uint32 p) {
+	assert(_vidMem >= _min);
+	assert(_vidMem <  _max);
+
 	if (_bpp == 1)
 		*((byte *) _vidMem) = (byte) p;
 	if (_bpp == 2)
@@ -93,9 +104,14 @@ void Pixel::set(uint32 p) {
 }
 
 
-ConstPixel::ConstPixel(const byte *vidMem, uint8 bpp) : _vidMem(vidMem), _bpp(bpp) {
+ConstPixel::ConstPixel(const byte *vidMem, uint8 bpp, const byte *min, const byte *max) :
+	_vidMem(vidMem), _bpp(bpp), _min(min), _max(max) {
+
 	assert((_bpp == 1) || (_bpp == 2));
+	assert(_vidMem >= _min);
+	assert(_vidMem <  _max);
 }
+
 
 ConstPixel &ConstPixel::operator++() {
 	_vidMem += _bpp;
@@ -130,6 +146,9 @@ ConstPixel &ConstPixel::operator-=(int x) {
 }
 
 uint32 ConstPixel::get() const {
+	assert(_vidMem >= _min);
+	assert(_vidMem <  _max);
+
 	if (_bpp == 1)
 		return *((const byte *) _vidMem);
 	if (_bpp == 2)
@@ -213,13 +232,13 @@ const byte *Surface::getData(uint16 x, uint16 y) const {
 Pixel Surface::get(uint16 x, uint16 y) {
 	byte *vidMem = getData(x, y);
 
-	return Pixel(vidMem, _bpp);
+	return Pixel(vidMem, _bpp, _vidMem, _vidMem + _height * _width * _bpp);
 }
 
 ConstPixel Surface::get(uint16 x, uint16 y) const {
 	const byte *vidMem = getData(x, y);
 
-	return ConstPixel(vidMem, _bpp);
+	return ConstPixel(vidMem, _bpp, _vidMem, _vidMem + _height * _width * _bpp);
 }
 
 bool Surface::clipBlitRect(int16 &left, int16 &top, int16 &right, int16 &bottom, int16 &x, int16 &y,

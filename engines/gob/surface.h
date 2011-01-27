@@ -35,7 +35,7 @@ namespace Gob {
 /** An iterator over a surface's image data, automatically handles different color depths. */
 class Pixel {
 public:
-	Pixel(byte *vidMem, uint8 bpp);
+	Pixel(byte *vidMem, uint8 bpp, byte *min, byte *max);
 
 	Pixel &operator++();
 	Pixel operator++(int x);
@@ -51,13 +51,14 @@ public:
 
 private:
 	byte *_vidMem;
+	byte *_min, *_max;
 	uint8 _bpp;
 };
 
 /** A const iterator over a surface's image data, automatically handles different color depths. */
 class ConstPixel {
 public:
-	ConstPixel(const byte *vidMem, uint8 bpp);
+	ConstPixel(const byte *vidMem, uint8 bpp, const byte *min, const byte *max);
 
 	ConstPixel &operator++();
 	ConstPixel operator++(int x);
@@ -72,6 +73,7 @@ public:
 
 private:
 	const byte *_vidMem;
+	const byte *_min, *_max;
 	uint8 _bpp;
 };
 
