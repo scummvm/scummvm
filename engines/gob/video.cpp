@@ -110,17 +110,20 @@ void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
 
 	nWidth >>= 3;
 
-	for (int i = 0; i < _itemHeight; i++) {
+	for (int i = 0; (i < _itemHeight) && dst.isValid(); i++) {
 		int width = _itemWidth;
 
 		for (int k = 0; k < nWidth; k++) {
 
 			data = *src++;
 			for (int j = 0; j < MIN(8, width); j++) {
-				if (data & 0x80)
-					dst.set(color1);
-				else if (!transp)
-					dst.set(color2);
+
+				if (dst.isValid()) {
+					if (data & 0x80)
+						dst.set(color1);
+					else if (!transp)
+						dst.set(color2);
+				}
 
 				dst++;
 				data <<= 1;
