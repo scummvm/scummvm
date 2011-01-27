@@ -30,7 +30,8 @@
 namespace Hugo {
 
 TextHandler::TextHandler(HugoEngine *vm) : _vm(vm), _textData(0), _stringtData(0), 
-	_textEngine(0), _textIntro(0), _textMouse(0), _textParser(0), _textUtil(0), _screenNames(0) {
+	_textEngine(0), _textIntro(0), _textMouse(0), _textParser(0), _textUtil(0), 
+	_screenNames(0), _arrayNouns(0), _arrayVerbs(0) {
 }
 
 TextHandler::~TextHandler() {
