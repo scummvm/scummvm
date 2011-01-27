@@ -275,13 +275,13 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	}
 
 #if defined(MACOSX)
-	// On Macintosh', Cmd-Q quits
+	// On Macintosh, Cmd-Q quits
 	if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
 #elif defined(UNIX)
-	// On other unices, Control-Q quits
+	// On other *nix systems, Control-Q quits
 	if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
 		event.type = Common::EVENT_QUIT;
 		return true;
@@ -294,6 +294,7 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	}
 #endif
 
+	// Ctrl-u toggles mute
 	if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'u') {
 		event.type = Common::EVENT_MUTE;
 		return true;
@@ -313,12 +314,45 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (remapKey(ev, event))
 		return true;
 
+	SDLMod mod = SDL_GetModState();
+
+	// Check if this is an event handled by handleKeyDown(), and stop if it is
+
+	// Check if the Ctrl key is down, so that we can trap cases where the
+	// user has the Ctrl key down, and has just released a special key
+	if (mod & KMOD_CTRL) {
+		if (ev.key.keysym.sym == 'm' ||	// Ctrl-m toggles mouse capture
+#if defined(MACOSX)
+			// Meta - Q, handled below
+#elif defined(UNIX)
+			ev.key.keysym.sym == 'q' ||	// On other *nix systems, Control-Q quits
+#else
+			ev.key.keysym.sym == 'z' ||	// Ctrl-z quit
+#endif
+			ev.key.keysym.sym == 'u')	// Ctrl-u toggles mute
+			return false;
+	}
+
+	// Same for other keys (Meta and Alt)
+#if defined(MACOSX)
+	if ((mod & KMOD_META) && ev.key.keysym.sym == 'q')
+		return false;	// On Macintosh, Cmd-Q quits
+#elif defined(UNIX)
+	// Control Q has already been handled above
+#else
+	if ((mod & KMOD_ALT) && ev.key.keysym.sym == 'x')
+		return false;	// Alt-x quit
+#endif
+
+	// If we reached here, this isn't an event handled by handleKeyDown(), thus
+	// continue normally
+
 	event.type = Common::EVENT_KEYUP;
 	event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 	event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
 	// Ctrl-Alt-<key> will change the GFX mode
-	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
+	SDLModToOSystemKeyFlags(mod, event);
 
 	// Set the scroll lock sticky flag
 	if (_scrollLock)
