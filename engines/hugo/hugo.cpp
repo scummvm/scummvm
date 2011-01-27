@@ -272,17 +272,11 @@ Common::Error HugoEngine::run() {
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 				break;
-			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_LBUTTONUP:
 				_status.leftButtonFl = true;
 				break;
-			case Common::EVENT_LBUTTONUP:
-				_status.leftButtonFl = false;
-				break;
-			case Common::EVENT_RBUTTONDOWN:
-				_status.rightButtonFl = true;
-				break;
 			case Common::EVENT_RBUTTONUP:
-				_status.rightButtonFl = false;
+				_status.rightButtonFl = true;
 				break;
 			case Common::EVENT_QUIT:
 				_status.doQuitFl = true;

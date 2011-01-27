@@ -96,7 +96,7 @@ int16 MouseHandler::findExit(int16 cx, int16 cy) {
 * Process a mouse right click at coord cx, cy over object objid
 */
 void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
-	debugC(1, kDebugMouse, "Process_rclick(%d, %d, %d)", objId, cx, cy);
+	debugC(1, kDebugMouse, "ProcessRightClick(%d, %d, %d)", objId, cx, cy);
 
 	status_t &gameStatus = _vm->getGameStatus();
 
@@ -145,7 +145,7 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 * 5.  Exit - walk to exit hotspot
 */
 void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
-	debugC(1, kDebugMouse, "Process_lclick(%d, %d, %d)", objId, cx, cy);
+	debugC(1, kDebugMouse, "ProcessLeftClick(%d, %d, %d)", objId, cx, cy);
 
 	int16 i, x, y;
 	object_t *obj;
