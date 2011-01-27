@@ -147,9 +147,7 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 }
 
 void VideoManager::delayUntilMovieEnds(VideoHandle videoHandle) {
-	bool continuePlaying = true;
-
-	while (!_videoStreams[videoHandle].endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
+	while (!_videoStreams[videoHandle].endOfVideo() && !_vm->shouldQuit()) {
 		if (updateMovies())
 			_vm->_system->updateScreen();
 
@@ -213,7 +211,7 @@ bool VideoManager::updateMovies() {
 		}
 
 		// Check if we need to draw a frame
-		if (_videoStreams[i]->needsUpdate()) {
+		if (!_videoStreams[i]->isPaused() && _videoStreams[i]->needsUpdate()) {
 			const Graphics::Surface *frame = _videoStreams[i]->decodeNextFrame();
 			Graphics::Surface *convertedFrame = 0;
 
@@ -525,6 +523,11 @@ void VideoManager::seekToFrame(VideoHandle handle, uint32 frame) {
 void VideoManager::setVideoLooping(VideoHandle handle, bool loop) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle].loop = loop;
+}
+
+void VideoManager::pauseMovie(VideoHandle handle, bool pause) {
+	assert(handle != NULL_VID_HANDLE);
+	_videoStreams[handle]->pauseVideo(pause);
 }
 
 } // End of namespace Mohawk

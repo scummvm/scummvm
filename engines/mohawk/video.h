@@ -111,6 +111,7 @@ public:
 	void setVideoLooping(VideoHandle handle, bool loop);
 	void waitUntilMovieEnds(VideoHandle videoHandle);
 	void delayUntilMovieEnds(VideoHandle videoHandle);
+	void pauseMovie(VideoHandle videoHandle, bool pause);
 
 private:
 	MohawkEngine *_vm;
