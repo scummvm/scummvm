@@ -1144,6 +1144,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{
+		{
+			"lbsampler",
+			"",
+			AD_ENTRY1("outline", "d239506f969ff68fa886f084082e9158"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
 
