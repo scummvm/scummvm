@@ -257,6 +257,9 @@ void Map_v2::findNearestToDest(Mult::Mult_Object *obj) {
 }
 
 void Map_v2::optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) {
+	if (!_wayPoints)
+		return;
+
 	if (obj->nearestWayPoint < obj->nearestDest) {
 
 		for (int i = obj->nearestWayPoint; i <= obj->nearestDest; i++) {

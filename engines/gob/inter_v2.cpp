@@ -597,6 +597,7 @@ void Inter_v2::o2_totSub() {
 		strcpy(totFile, "EMAP2011");
 
 	flags = _vm->_game->_script->readByte();
+
 	_vm->_game->totSub(flags, totFile);
 }
 
@@ -693,7 +694,7 @@ void Inter_v2::o2_setGoblinState() {
 	Mult::Mult_AnimData &objAnim = *(obj.pAnimData);
 
 	objAnim.stateType = type;
-	if (!obj.goblinStates[state])
+	if (!obj.goblinStates || !obj.goblinStates[state])
 		return;
 
 	Scenery::AnimLayer *animLayer;

@@ -562,13 +562,18 @@ void Game::start() {
 void Game::totSub(int8 flags, const char *newTotFile) {
 	int8 curBackupPos;
 
-	if ((flags == 16) || (flags == 17))
-		warning("Urban Stub: Game::totSub(), flags == %d", flags);
+	if ((flags == 16) || (flags == 17)) {
+		// Prefetch tot data + delete prefetched data
+		return;
+	}
 
 	if (_numEnvironments >= Environments::kEnvironmentCount)
 		error("Game::totSub(): Environments overflow");
 
 	_environments->set(_numEnvironments);
+
+	if (flags == 18)
+		warning("Game::totSub(): Backup media");
 
 	curBackupPos = _curEnvironment;
 	_numEnvironments++;
@@ -578,9 +583,9 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 	_resources = new Resources(_vm);
 
 	if (flags & 0x80)
-		warning("Urban Stub: Game::totSub(), flags & 0x80");
+		warning("Addy Stub: Game::totSub(), flags & 0x80");
 
-	if (flags & 1)
+	if (flags & 5)
 		_vm->_inter->_variables = 0;
 
 	Common::strlcpy(_curTotFile, newTotFile, 10);
@@ -591,9 +596,10 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 		return;
 	}
 
-	_hotspots->push(0, true);
+	if (!(flags & 0x20))
+		_hotspots->push(0, true);
 
-	if (flags & 2)
+	if ((flags == 18) || (flags & 0x06))
 		playTot(-1);
 	else
 		playTot(0);
@@ -601,18 +607,21 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 	if (_vm->_inter->_terminate != 2)
 		_vm->_inter->_terminate = 0;
 
-	_hotspots->clear();
-	_hotspots->pop();
-
-	if ((flags & 1) && _vm->_inter->_variables) {
-		_vm->_inter->delocateVars();
+	if (!(flags & 0x20)) {
+		_hotspots->clear();
+		_hotspots->pop();
 	}
+
+	if ((flags & 5) && _vm->_inter->_variables)
+		_vm->_inter->delocateVars();
 
 	clearUnusedEnvironment();
 
 	_numEnvironments--;
 	_curEnvironment = curBackupPos;
 	_environments->get(_numEnvironments);
+
+	_vm->_global->_inter_animDataSize = _script->getAnimDataSize();
 }
 
 void Game::switchTotSub(int16 index, int16 skipPlay) {

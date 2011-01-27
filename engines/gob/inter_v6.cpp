@@ -80,7 +80,7 @@ void Inter_v6::o6_totSub() {
 
 	length = _vm->_game->_script->readByte();
 	if ((length & 0x7F) > 13)
-		error("Length in o2_totSub is greater than 13 (%d)", length);
+		error("Length in o6_totSub is greater than 13 (%d)", length);
 
 	if (length & 0x80) {
 		_vm->_game->_script->evalExpr(0);
