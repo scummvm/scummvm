@@ -599,6 +599,7 @@ protected:
 	void o7_displayWarning();
 	void o7_draw0x45();
 	void o7_intToString();
+	void o7_draw0x59();
 	void o7_draw0x89();
 	void o7_findFile();
 	void o7_getSystemProperty();
