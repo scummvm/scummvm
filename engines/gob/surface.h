@@ -49,6 +49,8 @@ public:
 	uint32 get() const;
 	void set(uint32 p);
 
+	bool isValid() const;
+
 private:
 	byte *_vidMem;
 	byte *_min, *_max;
@@ -70,6 +72,8 @@ public:
 	ConstPixel &operator-=(int x);
 
 	uint32 get() const;
+
+	bool isValid() const;
 
 private:
 	const byte *_vidMem;

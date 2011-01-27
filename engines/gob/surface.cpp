@@ -103,6 +103,10 @@ void Pixel::set(uint32 p) {
 		*((uint16 *) _vidMem) = (uint16) p;
 }
 
+bool Pixel::isValid() const {
+	return (_vidMem >= _min) && (_vidMem < _max);
+}
+
 
 ConstPixel::ConstPixel(const byte *vidMem, uint8 bpp, const byte *min, const byte *max) :
 	_vidMem(vidMem), _bpp(bpp), _min(min), _max(max) {
@@ -155,6 +159,10 @@ uint32 ConstPixel::get() const {
 		return *((const uint16 *) _vidMem);
 
 	return 0;
+}
+
+bool ConstPixel::isValid() const {
+	return (_vidMem >= _min) && (_vidMem < _max);
 }
 
 
