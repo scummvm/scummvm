@@ -895,10 +895,6 @@ void AGOSEngine::setupGame() {
 }
 
 AGOSEngine::~AGOSEngine() {
-	// In Simon 2, this gets deleted along with _sound further down
-	if (getGameType() != GType_SIMON2)
-		delete _gameFile;
-
 	_midi.close();
 	delete _driver;
 
@@ -925,14 +921,20 @@ AGOSEngine::~AGOSEngine() {
 	free(_textMem);
 	free(_xtblList);
 
+	if (_backGroundBuf)
+		_backGroundBuf->free();
 	delete _backGroundBuf;
 	delete _backBuf;
 	free(_planarBuf);
 	delete _scaleBuf;
 	free(_zoneBuffers);
 
-	free(_window4BackScn);
-	free(_window6BackScn);
+	if (_window4BackScn)
+		_window4BackScn->free();
+	delete _window4BackScn;
+	if (_window6BackScn)
+		_window6BackScn->free();
+	delete _window6BackScn;
 
 	free(_firstTimeStruct);
 	free(_pendingDeleteTimeEvent);
@@ -949,6 +951,7 @@ AGOSEngine::~AGOSEngine() {
 
 	delete _debugger;
 	delete _sound;
+	delete _gameFile;
 }
 
 GUI::Debugger *AGOSEngine::getDebugger() {
