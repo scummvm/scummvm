@@ -262,19 +262,8 @@ Common::Error SciEngine::run() {
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 
 	// Patch in our save/restore code, so that dialogs are replaced
-	patchGameSaveRestore(segMan);
-
-	if (_gameDescription->flags & ADGF_ADDENGLISH) {
-		// if game is multilingual
-		Common::Language selectedLanguage = Common::parseLanguage(ConfMan.get("language"));
-		if (selectedLanguage == Common::EN_ANY) {
-			// and english was selected as language
-			if (SELECTOR(printLang) != -1) // set text language to english
-				writeSelectorValue(segMan, _gameObjectAddress, SELECTOR(printLang), 1);
-			if (SELECTOR(parseLang) != -1) // and set parser language to english as well
-				writeSelectorValue(segMan, _gameObjectAddress, SELECTOR(parseLang), 1);
-		}
-	}
+	patchGameSaveRestore();
+	setLauncherLanguage();
 
 	// Check whether loading a savestate was requested
 	int directSaveSlotLoading = ConfMan.getInt("save_slot");
@@ -434,7 +423,8 @@ static byte patchGameRestoreSave[] = {
 	0x48,              // ret
 };
 
-void SciEngine::patchGameSaveRestore(SegManager *segMan) {
+void SciEngine::patchGameSaveRestore() {
+	SegManager *segMan = _gamestate->_segMan;
 	const Object *gameObject = segMan->getObject(_gameObjectAddress);
 	const uint16 gameMethodCount = gameObject->getMethodCount();
 	const Object *gameSuperObject = segMan->getObject(_gameSuperClassAddress);
@@ -680,7 +670,8 @@ void SciEngine::runGame() {
 			_gamestate->_segMan->resetSegMan();
 			initGame();
 			initStackBaseWithSelector(SELECTOR(play));
-			patchGameSaveRestore(_gamestate->_segMan);
+			patchGameSaveRestore();
+			setLauncherLanguage();
 			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTART;
 			if (_gfxMenu)
 				_gfxMenu->reset();
@@ -689,7 +680,8 @@ void SciEngine::runGame() {
 			_gamestate->abortScriptProcessing = kAbortNone;
 			_gamestate->_executionStack.clear();
 			initStackBaseWithSelector(SELECTOR(replay));
-			patchGameSaveRestore(_gamestate->_segMan);
+			patchGameSaveRestore();
+			setLauncherLanguage();
 			_gamestate->shrinkStackToBase();
 			_gamestate->abortScriptProcessing = kAbortNone;
 
@@ -796,6 +788,19 @@ int SciEngine::inQfGImportRoom() const {
 		return 4;
 	}
 	return 0;
+}
+
+void SciEngine::setLauncherLanguage() {
+	if (_gameDescription->flags & ADGF_ADDENGLISH) {
+		// If game is multilingual
+		if (Common::parseLanguage(ConfMan.get("language")) == Common::EN_ANY) {
+			// and English was selected as language
+			if (SELECTOR(printLang) != -1) // set text language to English
+				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(printLang), K_LANG_ENGLISH);
+			if (SELECTOR(parseLang) != -1) // and set parser language to English as well
+				writeSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(parseLang), K_LANG_ENGLISH);
+		}
+	}
 }
 
 void SciEngine::pauseEngineIntern(bool pause) {

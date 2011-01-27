@@ -268,7 +268,7 @@ public:
 	bool checkExportBreakpoint(uint16 script, uint16 pubfunct);
 	bool checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector);
 
-	void patchGameSaveRestore(SegManager *segMan);
+	void patchGameSaveRestore();
 
 public:
 
@@ -352,6 +352,7 @@ private:
 	void initStackBaseWithSelector(Selector selector);
 
 	bool gameHasFanMadePatch();
+	void setLauncherLanguage();
 
 	const ADGameDescription *_gameDescription;
 	const SciGameId _gameId;
