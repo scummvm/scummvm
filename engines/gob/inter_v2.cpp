@@ -1099,6 +1099,10 @@ bool Inter_v2::o2_printText(OpFuncParams &params) {
 	_vm->_draw->_textToPrint = buf;
 	_vm->_draw->_transparency = 0;
 
+	SurfacePtr surface = _vm->_draw->_spritesArray[_vm->_draw->_destSurface];
+	uint16 destWidth  = surface ? surface->getWidth()  : 0;
+	uint16 destHeight = surface ? surface->getHeight() : 0;
+
 	if (_vm->_draw->_backColor == 16) {
 		_vm->_draw->_backColor = 0;
 		_vm->_draw->_transparency = 1;
@@ -1142,7 +1146,10 @@ bool Inter_v2::o2_printText(OpFuncParams &params) {
 		} else
 			buf[i] = 0;
 
-		_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
+		if ((_vm->_draw->_destSpriteX < destWidth) &&
+		    (_vm->_draw->_destSpriteY < destHeight))
+			_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
+
 	} while (_vm->_game->_script->peekByte() != 200);
 
 	_vm->_game->_script->skip(1);
