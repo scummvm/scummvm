@@ -924,8 +924,12 @@ AGOSEngine::~AGOSEngine() {
 	if (_backGroundBuf)
 		_backGroundBuf->free();
 	delete _backGroundBuf;
+	if (_backBuf)
+		_backBuf->free();
 	delete _backBuf;
 	free(_planarBuf);
+	if (_scaleBuf)
+		_scaleBuf->free();
 	delete _scaleBuf;
 	free(_zoneBuffers);
 
