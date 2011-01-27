@@ -245,31 +245,29 @@ public:
 
 	/* 14 Stoneship Specific Variables :
 	    0 = Light State
-	    1 = Unknown #1
-	    2 = Unknown #2
-	    3 = Water Pump State
-	    4 = Lighthouse Trapdoor State
-	    5 = Lighthouse Chest Water State
-	    6 = Lighthouse Chest Valve State
-	    7 = Lighthouse Chest Open State
-	    8 = Lighthouse Trapdoor Key State
-	    9 = Lighthouse Generator Power Level(?)
-	   10 = Lighthouse Generator Power...?
-	   11 = Lighthouse Generator Power Good
-	   12 = Lighthouse Generator Power #1?
-	   13 = Lighthouse Generator Power #2?
+	    1 = Secret side door opened
+	    2 = Water Pump State
+	    3 = Lighthouse Trapdoor State
+	    4 = Lighthouse Chest Water State
+	    5 = Lighthouse Chest Valve State
+	    6 = Lighthouse Chest Open State
+	    7 = Lighthouse Trapdoor Key State
+	    8 = Lighthouse Battery Duration
+	    9 = Lighthouse Battery Power Good
+	   10 = Lighthouse Battery Depletion Time
 	*/
 	struct Stoneship {
-		uint16 lightState;
-		uint16 u0;
-		uint16 u1;
+		uint32 lightState;
+		uint16 sideDoorOpened;
 		uint16 pumpState;
 		uint16 trapdoorState;
 		uint16 chestWaterState;
 		uint16 chestValveState;
 		uint16 chestOpenState;
 		uint16 trapdoorKeyState;
-		uint16 generatorPowerLevel[5];
+		uint32 generatorDuration;
+		uint16 generatorPowerAvailable;
+		uint32 generatorDepletionTime;
 	} _stoneship;
 
 private:

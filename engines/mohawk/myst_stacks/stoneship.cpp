@@ -38,6 +38,9 @@ namespace Mohawk {
 MystScriptParser_Stoneship::MystScriptParser_Stoneship(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_stoneship) {
 	setupOpcodes();
+
+	_state.generatorDepletionTime = 0;
+	_state.generatorDuration = 0;
 }
 
 MystScriptParser_Stoneship::~MystScriptParser_Stoneship() {
@@ -47,17 +50,20 @@ MystScriptParser_Stoneship::~MystScriptParser_Stoneship() {
 
 void MystScriptParser_Stoneship::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, opcode_100);
+	OPCODE(100, o_pumpTurnOff);
 	OPCODE(101, opcode_101);
 	OPCODE(102, opcode_102);
 	OPCODE(103, opcode_103);
 	OPCODE(104, opcode_104);
+	OPCODE(108, o_generatorStart);
+	OPCODE(109, NOP);
+	OPCODE(110, o_generatorStop);
 	OPCODE(111, opcode_111);
 	OPCODE(112, opcode_112);
 	OPCODE(116, opcode_116);
-	OPCODE(117, opcode_117);
-	OPCODE(118, opcode_118);
-	OPCODE(119, opcode_119);
+	OPCODE(117, o_chestValveVideos);
+	OPCODE(118, o_chestDropKey);
+	OPCODE(119, o_trapLockOpen);
 	OPCODE(120, opcode_120);
 	OPCODE(125, opcode_125);
 
@@ -69,7 +75,7 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 	OPCODE(204, opcode_204);
 	OPCODE(205, opcode_205);
 	OPCODE(206, opcode_206);
-	OPCODE(207, opcode_207);
+	OPCODE(207, o_chest_init);
 	OPCODE(208, opcode_208);
 	OPCODE(209, opcode_209);
 	OPCODE(210, opcode_210);
@@ -81,12 +87,17 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 #undef OPCODE
 
 void MystScriptParser_Stoneship::disablePersistentScripts() {
+	_batteryCharging = false;
+
 	opcode_200_disable();
 	opcode_201_disable();
 	opcode_209_disable();
 }
 
 void MystScriptParser_Stoneship::runPersistentScripts() {
+	if (_batteryCharging)
+		chargeBattery_run();
+
 	opcode_200_run();
 	opcode_201_run();
 	opcode_209_run();
@@ -94,52 +105,78 @@ void MystScriptParser_Stoneship::runPersistentScripts() {
 
 uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
 	switch(var) {
-//case 0: // Water Drained From Lighthouse / Right Button Of Pump
-//	return 0; // Water Present / Button Dark
-//	return 1; // Water Drained / Button Lit & Released
-//	return 2; // Button Lit & Depressed
-//case 1: // Water Drained From Tunnels To Brothers' Rooms / Middle Button Of Pump
-//	return 0; // Water Present / Button Dark
-//	return 1; // Water Drained / Button Lit & Released
-//	return 2; // Button Lit & Depressed
-//case 2: // Water Drained From Ship Cabin Tunnel / Left Button Of Pump
-//	return 0; // Water Present / Button Dark
-//	return 1; // Water Drained / Button Lit & Released
-//	return 2; // Button Lit & Depressed
-//case 3: // Lighthouse Chest Floating(?)
-//	return 0;
-//	return 1;
-//case 4: // Lighthouse State - Close Up
-//	return 0; // Flooded
-//	return 1; // Drained
-//	return 2; // Flooded, Chest Floating
-//case 5: // Lighthouse Trapdoor State
-//	return 0; // Closed, No Lock
-//	return 1; // Open
-//	return 2; // Closed, Lock
-//case 7:
-//	return;
-//case 11:
-//	return;
-//case 12:
-//	return;
-//case 13: // State Of Tunnels To Brothers' Rooms - Close Up
-//	return 0; Dark, Flooded
-//	return 1; Dark, Drained
-//	return 2; Lit, Flooded
-//	return 3; Lit, Drained
-//case 14: // State Of Tunnels To Brothers' Rooms - Far
-//	return 0; // Lights Off
-//	return 1; // Lights On
-//	return 2; // Lights Off
-//case 16: // Ship Chamber Light State
-//	return 0; // Off
-//	return 1; // On
+	case 0: // Water Drained From Lighthouse / Right Button Of Pump
+		return _state.pumpState == 4;
+	case 1: // Water Drained From Tunnels To Brothers' Rooms / Middle Button Of Pump
+		return _state.pumpState == 2;
+	case 2: // Water Drained From Ship Cabin Tunnel / Left Button Of Pump
+		return _state.pumpState == 1;
+	case 3: // Lighthouse Chest Floating
+		return _state.pumpState != 4 && !_state.chestValveState && !_state.chestWaterState;
+	case 4: // Lighthouse State - Close Up
+		if (_state.pumpState == 4) {
+			return 1; // Drained
+		} else {
+			if (_state.chestValveState || _state.chestWaterState)
+				return 0; // Flooded
+			else
+				return 2; // Flooded, Chest Floating
+		}
+	case 5: // Lighthouse Trapdoor State
+		return _state.trapdoorState;
+	case 6: // Chest valve state
+		return _state.chestValveState;
+	case 7: // Lighthouse Chest Unlocked
+		return _state.chestOpenState;
+	case 8: // Lighthouse Chest Key Position
+		return _state.trapdoorKeyState;
+	case 11: // Lighthouse Key State
+		if (_state.chestOpenState) {
+			if (_state.trapdoorKeyState == 1)
+				return 1;
+			else if (_state.trapdoorKeyState == 2)
+				return 2;
+			else
+				return 3;
+		} else {
+			return 0;
+		}
+	case 12: // Trapdoor can be unlocked
+		return _state.trapdoorKeyState == 1 && _state.trapdoorState == 2;
+	case 13: // State Of Tunnels To Brothers' Rooms - Close Up
+		if (_state.generatorPowerAvailable == 0) {
+			if (_state.pumpState != 2)
+				return 0; // Dark, Flooded
+			else
+				return 1; // Dark, Drained
+		} else {
+			if (_state.pumpState != 2)
+				return 2; // Lit, Flooded
+			else
+				return 3; // Lit, Drained
+		}
+	case 14: // State Of Tunnels lights To Brothers' Rooms - Far
+		return _state.generatorPowerAvailable;
+	case 16: // Ship Chamber Light State
+		return _state.lightState;
 //case 20: // Ship Chamber Table/Book State
 //	return 0;
 //	return 1;
-//case 28: // Telescope Angle Position
-//	return;
+	case 28: // Telescope Angle Position
+		return 0;
+	case 30: // Light State in Tunnel to Compass Rose Room
+		if (_state.generatorPowerAvailable == 1) {
+			if (_state.lightState)
+				return 0;
+			else
+				return 1;
+		} else {
+			return 2;
+		}
+	case 31:
+		return batteryRemainingCharge() >= 10;
+	case 32: // Lighthouse Lamp Room Battery Pack Meter Level
+		return 0;
 //case 36: // Ship Chamber Door State
 //	return 0; // Closed
 //	return 1; // Open, Light Off
@@ -151,6 +188,42 @@ uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
 
 void MystScriptParser_Stoneship::toggleVar(uint16 var) {
 	switch(var) {
+	case 0: // Water Drained From Lighthouse / Right Button Of Pump
+		if (_state.pumpState == 4)
+			_state.pumpState = 0;
+		else
+			_state.pumpState = 4;
+		break;
+	case 1: // Water Drained From Tunnels To Brothers' Rooms / Middle Button Of Pump
+		if (_state.pumpState == 2)
+			_state.pumpState = 0;
+		else
+			_state.pumpState = 2;
+		break;
+	case 2: // Water Drained From Ship Cabin Tunnel / Left Button Of Pump
+		if (_state.pumpState == 1)
+			_state.pumpState = 0;
+		else
+			_state.pumpState = 1;
+		break;
+	case 6: // Chest valve state
+		_state.chestValveState = (_state.chestValveState + 1) % 2;
+		break;
+	case 8:  // Lighthouse Chest Key Position
+		if (_state.trapdoorKeyState) {
+			if (_state.trapdoorKeyState == 1)
+				_state.trapdoorKeyState = 2;
+			else
+				_state.trapdoorKeyState = 1;
+		}
+		break;
+	case 10: // Chest water state
+		_state.chestWaterState = 0;
+		break;
+	case 11:
+		if (_state.chestOpenState)
+			_state.trapdoorKeyState = _state.trapdoorKeyState != 1;
+		break;
 	default:
 		MystScriptParser::toggleVar(var);
 		break;
@@ -161,6 +234,16 @@ bool MystScriptParser_Stoneship::setVarValue(uint16 var, uint16 value) {
 	bool refresh = false;
 
 	switch (var) {
+	case 5: // Lighthouse Trapdoor State
+		_state.trapdoorState = value;
+		break;
+	case 7:
+		if (_state.chestOpenState != value)
+			_state.chestOpenState = value;
+		break;
+	case 8: // Lighthouse Chest Key Position
+		_state.trapdoorKeyState = value;
+		break;
 	default:
 		refresh = MystScriptParser::setVarValue(var, value);
 		break;
@@ -169,16 +252,34 @@ bool MystScriptParser_Stoneship::setVarValue(uint16 var, uint16 value) {
 	return refresh;
 }
 
-void MystScriptParser_Stoneship::opcode_100(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used for Cards 2185 (Water Pump)
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_pumpTurnOff(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Turn off previous pump selection", op);
 
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Unknown Function", op);
+	if (_state.pumpState) {
+		uint16 buttonVar = 0;
 
-		// TODO: Called when Water Pump Button is pressed? Animation?
-	} else
-		unknown(op, var, argc, argv);
+		switch (_state.pumpState) {
+		case 1:
+			buttonVar = 2;
+			break;
+		case 2:
+			buttonVar = 1;
+			break;
+		case 4:
+			buttonVar = 0;
+			break;
+		default:
+			warning("Incorrect pump state");
+		}
+
+		for (uint i = 0; i < _vm->_resources.size(); i++) {
+			MystResource *resource = _vm->_resources[i];
+			if (resource->type == kMystConditionalImage && resource->getType8Var() == buttonVar) {
+				static_cast<MystResourceType8 *>(resource)->drawConditionalDataToScreen(0, true);
+				break;
+			}
+		}
+	}
 }
 
 void MystScriptParser_Stoneship::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -256,6 +357,73 @@ void MystScriptParser_Stoneship::opcode_104(uint16 op, uint16 var, uint16 argc, 
 		unknown(op, var, argc, argv);
 }
 
+void MystScriptParser_Stoneship::o_generatorStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Generator start", op);
+
+	MystResourceType11 *handle = static_cast<MystResourceType11 *>(_invokingResource);
+
+	uint16 soundId = handle->getList1(0);
+	if (soundId)
+		_vm->_sound->replaceSoundMyst(soundId);
+
+	if (_state.generatorDuration)
+		_state.generatorDuration -= _vm->_system->getMillis() - _state.generatorDepletionTime;
+
+	// Start charging the battery
+	_batteryCharging = true;
+	_batteryNextTime = _vm->_system->getMillis() + 1000;
+
+	// Start handle movie
+	MystResourceType6 *movie = static_cast<MystResourceType6 *>(handle->getSubResource(0));
+	movie->playMovie();
+
+	soundId = handle->getList2(0);
+	if (soundId)
+		_vm->_sound->replaceSoundMyst(soundId, Audio::Mixer::kMaxChannelVolume, true);
+}
+
+void MystScriptParser_Stoneship::o_generatorStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Generator stop", op);
+
+	_batteryCharging = false;
+
+	if (_state.generatorDuration) {
+		// Clip battery power
+		if (_state.generatorDuration > 600000)
+			_state.generatorDuration = 600000;
+
+		// Start depleting power
+		_state.generatorDepletionTime = _vm->_system->getMillis() + _state.generatorDuration;
+		_state.generatorPowerAvailable = 1;
+		_batteryDepleting = true;
+	}
+
+	// Pause handle movie
+	MystResourceType11 *handle = static_cast<MystResourceType11 *>(_invokingResource);
+	MystResourceType6 *movie = static_cast<MystResourceType6 *>(handle->getSubResource(0));
+	movie->pauseMovie(true);
+
+	uint16 soundId = handle->getList3(0);
+	if (soundId)
+		_vm->_sound->replaceSoundMyst(soundId);
+}
+
+void MystScriptParser_Stoneship::chargeBattery_run() {
+	uint32 time = _vm->_system->getMillis();
+
+	if (time > _batteryNextTime) {
+		_batteryNextTime = time + 1000;
+		_state.generatorDuration += 30000;
+	}
+}
+
+uint16 MystScriptParser_Stoneship::batteryRemainingCharge() {
+	if (_state.generatorDepletionTime) {
+		return (_state.generatorDepletionTime - _vm->_system->getMillis()) / 7500;
+	} else {
+		return 0;
+	}
+}
 
 void MystScriptParser_Stoneship::opcode_111(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
@@ -321,40 +489,70 @@ void MystScriptParser_Stoneship::opcode_116(uint16 op, uint16 var, uint16 argc, 
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Stoneship::opcode_117(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Chest valve videos", op);
 
-	if (argc == 0) {
-		// Used on Card 2132 (Chest at Bottom of Lighthouse)
-		// Called when Valve Hotspot Clicked.
-		// TODO: Fill in Function to play right section of movie
-		//       based on valve state and water in chest..
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("ligspig", kStoneshipStack), 97, 267);
-	} else
-		unknown(op, var, argc, argv);
+	Common::String movie = _vm->wrapMovieFilename("ligspig", kStoneshipStack);
+
+	_vm->_sound->playSound(2132);
+
+	if (_state.chestValveState) {
+		// Valve closing
+		VideoHandle valve = _vm->_video->playMovie(movie, 97, 267);
+		_vm->_video->setVideoBounds(valve, Video::VideoTimestamp(0, 600), Video::VideoTimestamp(350, 600));
+		_vm->_video->waitUntilMovieEnds(valve);
+	} else if (_state.chestWaterState) {
+		// Valve opening, spilling water
+		VideoHandle valve = _vm->_video->playMovie(movie, 97, 267);
+		_vm->_video->setVideoBounds(valve, Video::VideoTimestamp(350, 600), Video::VideoTimestamp(650, 600));
+		_vm->_video->waitUntilMovieEnds(valve);
+
+		_vm->_sound->playSound(3132);
+
+		for (uint i = 0; i < 25; i++) {
+			valve = _vm->_video->playMovie(movie, 97, 267);
+			_vm->_video->setVideoBounds(valve, Video::VideoTimestamp(650, 600), Video::VideoTimestamp(750, 600));
+			_vm->_video->waitUntilMovieEnds(valve);
+		}
+
+		_vm->_sound->resumeBackgroundMyst();
+	} else {
+		// Valve opening
+		// TODO: Play backwards
+		VideoHandle valve = _vm->_video->playMovie(movie, 97, 267);
+		_vm->_video->setVideoBounds(valve, Video::VideoTimestamp(0, 600), Video::VideoTimestamp(350, 600));
+		_vm->_video->waitUntilMovieEnds(valve);
+	}
 }
 
-void MystScriptParser_Stoneship::opcode_118(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 0) {
-		// Used on Card 2126 (Lighthouse Looking Along Plank)
-		// Called when Exit Resource is clicked
+void MystScriptParser_Stoneship::o_chestDropKey(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: drop chest key", op);
 
-		// TODO: Implement Function...
-		// If holding Key to Lamp Room Trapdoor, drop to bottom of
-		// Lighthouse...
-	} else
-		unknown(op, var, argc, argv);
+	// If holding Key to Lamp Room Trapdoor, drop to bottom of
+	// Lighthouse...
+	if (_state.trapdoorKeyState == 1) {
+		_vm->setMainCursor(_savedCursorId);
+		_state.trapdoorKeyState = 2;
+	}
 }
 
-void MystScriptParser_Stoneship::opcode_119(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_trapLockOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Trap lock open video", op);
 
-	if (argc == 0) {
-		// Used on Card 2143 (Lighthouse Trapdoor)
-		// Called when Lock Hotspot Clicked while holding key.
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("openloc", kStoneshipStack), 187, 72);
-	} else
-		unknown(op, var, argc, argv);
+	Common::String movie = _vm->wrapMovieFilename("openloc", kStoneshipStack);
+
+	VideoHandle lock = _vm->_video->playMovie(movie, 187, 71);
+	_vm->_video->setVideoBounds(lock, Video::VideoTimestamp(0, 600), Video::VideoTimestamp(750, 600));
+	_vm->_video->waitUntilMovieEnds(lock);
+
+	_vm->_sound->playSound(2143);
+
+	lock = _vm->_video->playMovie(movie, 187, 71);
+	_vm->_video->setVideoBounds(lock, Video::VideoTimestamp(750, 600), Video::VideoTimestamp(10000, 600));
+	_vm->_video->waitUntilMovieEnds(lock);
+
+	if (_state.pumpState != 4)
+		_vm->_sound->playSound(4143);
 }
 
 void MystScriptParser_Stoneship::opcode_120(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -552,12 +750,10 @@ void MystScriptParser_Stoneship::opcode_206(uint16 op, uint16 var, uint16 argc, 
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Stoneship::opcode_207(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_chest_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Chest init", op);
 
-	// Used for Card 2138 (Lighthouse Key/Chest Animation Logic)
-	// TODO: Fill in function
-	warning("TODO: Opcode 207 Lighthouse Key/Chest Animation Logic");
+	_state.chestOpenState = 0;
 }
 
 void MystScriptParser_Stoneship::opcode_208(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

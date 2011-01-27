@@ -273,24 +273,21 @@ void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 	// Stoneship
 
 	if (isME) {
-		s.syncAsUint16LE(_stoneship.lightState);
-		s.syncAsUint16LE(_stoneship.u0);
-		s.syncAsUint16LE(_stoneship.u1);
+		s.syncAsUint32LE(_stoneship.lightState);
 	} else {
 		s.syncAsByte(_stoneship.lightState);
-		s.syncAsByte(_stoneship.u0);
-		s.syncAsByte(_stoneship.u1);
 	}
 
+	s.syncAsUint16LE(_stoneship.sideDoorOpened);
 	s.syncAsUint16LE(_stoneship.pumpState);
 	s.syncAsUint16LE(_stoneship.trapdoorState);
 	s.syncAsUint16LE(_stoneship.chestWaterState);
 	s.syncAsUint16LE(_stoneship.chestValveState);
 	s.syncAsUint16LE(_stoneship.chestOpenState);
 	s.syncAsUint16LE(_stoneship.trapdoorKeyState);
-
-	for (int i = 0; i < 5; i++)
-		s.syncAsUint16LE(_stoneship.generatorPowerLevel[i]);
+	s.syncAsUint32LE(_stoneship.generatorDuration);
+	s.syncAsUint16LE(_stoneship.generatorPowerAvailable);
+	s.syncAsUint32LE(_stoneship.generatorDepletionTime);
 
 	// D'ni
 	s.syncAsUint16LE(_globals.ending);

@@ -58,17 +58,19 @@ private:
 	void opcode_209_run();
 	void opcode_209_disable();
 
-	DECLARE_OPCODE(opcode_100);
+	DECLARE_OPCODE(o_pumpTurnOff);
 	DECLARE_OPCODE(opcode_101);
 	DECLARE_OPCODE(opcode_102);
 	DECLARE_OPCODE(opcode_103);
 	DECLARE_OPCODE(opcode_104);
+	DECLARE_OPCODE(o_generatorStart);
+	DECLARE_OPCODE(o_generatorStop);
 	DECLARE_OPCODE(opcode_111);
 	DECLARE_OPCODE(opcode_112);
 	DECLARE_OPCODE(opcode_116);
-	DECLARE_OPCODE(opcode_117);
-	DECLARE_OPCODE(opcode_118);
-	DECLARE_OPCODE(opcode_119);
+	DECLARE_OPCODE(o_chestValveVideos);
+	DECLARE_OPCODE(o_chestDropKey);
+	DECLARE_OPCODE(o_trapLockOpen);
 	DECLARE_OPCODE(opcode_120);
 	DECLARE_OPCODE(opcode_125);
 
@@ -79,14 +81,22 @@ private:
 	DECLARE_OPCODE(opcode_204);
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
-	DECLARE_OPCODE(opcode_207);
+	DECLARE_OPCODE(o_chest_init);
 	DECLARE_OPCODE(opcode_208);
 	DECLARE_OPCODE(opcode_209);
 	DECLARE_OPCODE(opcode_210);
 
 	DECLARE_OPCODE(opcode_300);
 
+	void chargeBattery_run();
+
 	MystGameState::Stoneship &_state;
+
+	bool _batteryCharging;
+	bool _batteryDepleting;
+	uint32 _batteryNextTime;
+
+	uint16 batteryRemainingCharge();
 };
 
 }

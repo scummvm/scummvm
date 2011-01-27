@@ -109,6 +109,7 @@ public:
 	void handleCardChange();
 	bool isPlaying();
 	void setBlocking(bool blocking) { _playBlocking = blocking; }
+	void pauseMovie(bool pause);
 
 protected:
 	static Common::String convertMystVideoName(Common::String name);

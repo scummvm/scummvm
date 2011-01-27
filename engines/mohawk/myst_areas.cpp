@@ -211,6 +211,9 @@ VideoHandle MystResourceType6::playMovie() {
 		} else {
 			handle = _vm->_video->playMovie(_videoFile, _left, _top, _loop);
 		}
+	} else {
+		// Resume the video
+		_vm->_video->pauseMovie(handle, false);
 	}
 
 	return handle;
@@ -224,6 +227,12 @@ void MystResourceType6::handleCardChange() {
 bool MystResourceType6::isPlaying() {
 	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
 	return handle != NULL_VID_HANDLE && !_vm->_video->endOfVideo(handle);
+}
+
+void MystResourceType6::pauseMovie(bool pause) {
+	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+	if (handle != NULL_VID_HANDLE && !_vm->_video->endOfVideo(handle))
+		_vm->_video->pauseMovie(handle, pause);
 }
 
 MystResourceType7::MystResourceType7(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {
