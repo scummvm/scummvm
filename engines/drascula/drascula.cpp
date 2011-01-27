@@ -1041,25 +1041,22 @@ char **DrasculaEngine::loadTexts(Common::File &in) {
 
 	for (int lang = 0; lang < _numLangs; lang++) {
 		entryLen = in.readUint16BE();
-		pos = (char *)malloc(entryLen);
 		if (lang == _lang) {
-			res[0] = pos;
-			in.read(res[0], entryLen);
-		} else {
+			pos = (char *)malloc(entryLen);
 			in.read(pos, entryLen);
-		}
+			res[0] = pos;
+			pos += DATAALIGNMENT;
 
-		pos += DATAALIGNMENT;
+			for (int i = 1; i < numTexts; i++) {
+				pos -= 2;
 
-		for (int i = 1; i < numTexts; i++) {
-			pos -= 2;
+				len = READ_BE_UINT16(pos);
+				pos += 2 + len;
 
-			len = READ_BE_UINT16(pos);
-			pos += 2 + len;
-
-			if (lang == _lang)
 				res[i] = pos;
-		}
+			}
+		} else
+			in.seek(entryLen, SEEK_CUR);
 	}
 
 	return res;
