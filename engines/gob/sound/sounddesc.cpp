@@ -53,6 +53,19 @@ SoundDesc::~SoundDesc() {
 	free();
 }
 
+void SoundDesc::swap(SoundDesc &desc) {
+	SWAP(_repCount  , desc._repCount);
+	SWAP(_frequency , desc._frequency);
+	SWAP(_flag      , desc._flag);
+	SWAP(_id        , desc._id);
+	SWAP(_mixerFlags, desc._mixerFlags);
+	SWAP(_resource  , desc._resource);
+	SWAP(_data      , desc._data);
+	SWAP(_dataPtr   , desc._dataPtr);
+	SWAP(_size      , desc._size);
+	SWAP(_type      , desc._type);
+}
+
 void SoundDesc::set(SoundType type, byte *data, uint32 dSize) {
 	free();
 
