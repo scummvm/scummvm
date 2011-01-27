@@ -27,6 +27,8 @@
 #define GOB_GAME_H
 
 #include "gob/util.h"
+#include "gob/video.h"
+#include "gob/sound/sounddesc.h"
 
 namespace Gob {
 
@@ -53,6 +55,10 @@ public:
 
 	void clear();
 
+	bool setMedia(uint8 env);
+	bool getMedia(uint8 env);
+	bool clearMedia(uint8 env);
+
 private:
 	struct Environment {
 		int32      cursorHotspotX;
@@ -63,9 +69,16 @@ private:
 		Resources *resources;
 	};
 
+	struct Media {
+		SurfacePtr sprites[10];
+		SoundDesc  sounds[10];
+		Font      *fonts[17];
+	};
+
 	GobEngine *_vm;
 
 	Environment _environments[kEnvironmentCount];
+	Media       _media[kEnvironmentCount];
 };
 
 class Game {
