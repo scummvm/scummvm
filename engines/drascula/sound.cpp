@@ -55,7 +55,7 @@ void DrasculaEngine::volumeControls() {
 	setCursor(kCursorCrosshair);
 	showCursor();
 
-	for (;;) {
+	while (!shouldQuit()) {
 		int masterVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16), 0, 15);
 		int voiceVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 16), 0, 15);
 		int musicVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16), 0, 15);
@@ -146,7 +146,7 @@ void DrasculaEngine::stopSound() {
 
 void DrasculaEngine::MusicFadeout() {
 	int org_vol = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
-	for (;;) {
+	while (!shouldQuit()) {
 		int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 		vol -= 10;
 			if (vol < 0)

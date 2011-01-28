@@ -417,7 +417,7 @@ void DrasculaEngine::screenSaver() {
 	xr = mouseX;
 	yr = mouseY;
 
-	for (;;) {
+	while (!shouldQuit()) {
 		// efecto(bgSurface);
 
 		memcpy(copia, bgSurface, 64000);
@@ -497,7 +497,7 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 	Common::SeekableReadStream *stream = _archives.open(filefli);
 	LastFrame = _system->getMillis();
 
-	while (playFrameSSN(stream) && (!term_int)) {
+	while (playFrameSSN(stream) && (!term_int) && !shouldQuit()) {
 		if (getScan() == Common::KEYCODE_ESCAPE)
 			term_int = 1;
 	}
@@ -650,7 +650,5 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 
 	return ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE));
 }
-
-
 
 } // End of namespace Drascula

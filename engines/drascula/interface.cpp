@@ -99,7 +99,7 @@ bool DrasculaEngine::confirmExit() {
 	updateScreen();
 
 	delay(100);
-	for (;;) {
+	while (!shouldQuit()) {
 		key = getScan();
 		if (key != 0)
 			break;
@@ -153,7 +153,7 @@ void DrasculaEngine::enterName() {
 	int v = 0, h = 0;
 	char select2[23];
 	strcpy(select2, "                      ");
-	for (;;) {
+	while (!shouldQuit()) {
 		select2[v] = '-';
 		copyBackground(115, 14, 115, 14, 176, 9, bgSurface, screenSurface);
 		print_abc(select2, 117, 15);

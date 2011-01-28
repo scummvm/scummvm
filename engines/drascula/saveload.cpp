@@ -64,7 +64,7 @@ bool DrasculaEngine::saveLoadScreen() {
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	setCursor(kCursorCrosshair);
 
-	for (;;) {
+	while (!shouldQuit()) {
 		y = 27;
 		copyBackground();
 		for (n = 0; n < NUM_SAVES; n++) {

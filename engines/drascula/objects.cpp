@@ -75,7 +75,7 @@ void DrasculaEngine::gotoObject(int pointX, int pointY) {
 	roomY = pointY;
 	startWalking();
 
-	for (;;) {
+	while (!shouldQuit()) {
 		updateRoom();
 		updateScreen();
 		updateEvents();

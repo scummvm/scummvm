@@ -156,6 +156,11 @@ DrasculaEngine::~DrasculaEngine() {
 	freeTexts(_textd1);
 }
 
+bool DrasculaEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL);
+}
+
 Common::Error DrasculaEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200, false);
@@ -198,7 +203,7 @@ Common::Error DrasculaEngine::run() {
 
 	checkCD();
 
-	for (;;) {
+	while (!shouldQuit()) {
 		int i;
 		takeObject = 0;
 		_menuBar = false;
@@ -452,7 +457,7 @@ bool DrasculaEngine::runCurrentChapter() {
 
 	showCursor();
 
-	while (1) {
+	while (!shouldQuit()) {
 		if (characterMoved == 0) {
 			stepX = STEP_X;
 			stepY = STEP_Y;
@@ -636,8 +641,9 @@ bool DrasculaEngine::runCurrentChapter() {
 
 		if (currentChapter != 3)
 			framesWithoutAction++;
-
 	}
+
+	return false;
 }
 
 
@@ -771,11 +777,6 @@ void DrasculaEngine::updateEvents() {
 			break;
 		case Common::EVENT_RBUTTONUP:
 			rightMouseButton = 1;
-			break;
-		case Common::EVENT_QUIT:
-			// TODO
-			endChapter();
-			_system->quit();
 			break;
 		default:
 			break;

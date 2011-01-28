@@ -450,7 +450,7 @@ void DrasculaEngine::placeVonBraun(int pointX) {
 	trackVonBraun = (pointX < vonBraunX) ? 0 : 1;
 	vonBraunHasMoved = 1;
 
-	for (;;) {
+	while (!shouldQuit()) {
 		updateEvents();
 		updateRoom();
 		updateScreen();
