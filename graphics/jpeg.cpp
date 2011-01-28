@@ -33,6 +33,10 @@
 
 namespace Graphics {
 
+#ifndef M_SQRT2
+#define M_SQRT2         1.41421356237309504880  /* sqrt(2) */
+#endif  /* M_SQRT2 */
+
 // Order used to traverse the quantization tables
 static const uint8 _zigZagOrder[64] = {
 	0,   1,  8, 16,  9,  2,  3, 10,
@@ -43,6 +47,17 @@ static const uint8 _zigZagOrder[64] = {
 	29, 22, 15, 23, 30, 37, 44, 51,
 	58, 59, 52, 45, 38, 31, 39, 46,
 	53, 60, 61, 54, 47, 55, 62, 63
+};
+
+static const float _cosine32[32] = {
+	 1.000000000000000,  0.980785280403230,  0.923879532511287,  0.831469612302545,
+	 0.707106781186548,  0.555570233019602,  0.382683432365090,  0.195090322016128,
+	 0.000000000000000, -0.195090322016128, -0.382683432365090, -0.555570233019602,
+	-0.707106781186547, -0.831469612302545, -0.923879532511287, -0.980785280403230,
+	-1.000000000000000, -0.980785280403230, -0.923879532511287, -0.831469612302545,
+	-0.707106781186548, -0.555570233019602, -0.382683432365090, -0.195090322016129,
+	-0.000000000000000,  0.195090322016128,  0.382683432365090,  0.555570233019602,
+	 0.707106781186547,  0.831469612302545,  0.923879532511287,  0.980785280403230
 };
 
 JPEG::JPEG() :
@@ -59,15 +74,6 @@ JPEG::JPEG() :
 		_huff[i].values = NULL;
 		_huff[i].sizes = NULL;
 		_huff[i].codes = NULL;
-	}
-
-	// Initialize sqrt_2 and cosine lookups
-	_sqrt_2 = sqrt(2.0f);
-	debug(2, "JPEG: _sqrt_2: %f", _sqrt_2);
-
-	for(byte i = 0; i < 32; i++) {
-		_cosine_32[i] = cos(i * PI / 16);
-		debug(2, "JPEG: _cosine_32[%d]: %f", i, _cosine_32[i]);
 	}
 }
 
@@ -504,13 +510,13 @@ bool JPEG::readMCU(uint16 xMCU, uint16 yMCU) {
 float JPEG::idct(int x, int y, int weight, int fx, int fy) {
 	byte vx_in = ((int32)((2 * x) + 1) * fx) % 32;
 	byte vy_in = ((int32)((2 * y) + 1) * fy) % 32;
-	float ret = (float)weight * _cosine_32[vx_in] * _cosine_32[vy_in];
+	float ret = (float)weight * _cosine32[vx_in] * _cosine32[vy_in];
 
 	if (fx == 0)
-		ret /= _sqrt_2;
+		ret /= M_SQRT2;
 
 	if (fy == 0)
-		ret /= _sqrt_2;
+		ret /= M_SQRT2;
 
 	return ret;
 }

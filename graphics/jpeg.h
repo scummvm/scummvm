@@ -118,8 +118,6 @@ private:
 	uint8 _bitsData;
 	uint8 _bitsNumber;
 
-	float _sqrt_2;
-	float _cosine_32[32];
 	// Discrete Cosine Transformation
 	float idct(int x, int y, int weight, int fx, int fy);
 };
