@@ -72,7 +72,6 @@ GraphicEngine::GraphicEngine(Kernel *pKernel) :
 	_lastFrameDuration(0),
 	_timerActive(true),
 	_frameTimeSampleSlot(0),
-	_repaintedPixels(0),
 	_thumbnail(NULL),
 	ResourceService(pKernel) {
 	_frameTimeSamples.resize(FRAMETIME_SAMPLE_COUNT);
@@ -182,9 +181,6 @@ bool GraphicEngine::endFrame() {
 
 		_debugLines.clear();
 	}
-
-	// Framecounter aktualisieren
-	_FPSCounter.update();
 
 	return true;
 }

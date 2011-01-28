@@ -52,7 +52,6 @@
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resservice.h"
 #include "sword25/kernel/persistable.h"
-#include "sword25/gfx/framecounter.h"
 #include "sword25/gfx/renderobjectptr.h"
 #include "sword25/math/vertex.h"
 
@@ -266,15 +265,6 @@ public:
 	 */
 	bool fill(const Common::Rect *fillRectPtr = 0, uint color = BS_RGB(0, 0, 0));
 
-	// Debugging Methods
-
-	int getFPSCount() const {
-		return _FPSCounter.getFPS();
-	}
-	int getRepaintedPixels() const {
-		return _repaintedPixels;
-	}
-
 	Graphics::Surface _backSurface;
 	Graphics::Surface *getSurface() { return &_backSurface; }
 
@@ -341,12 +331,6 @@ protected:
 	Common::Rect _screenRect;
 	int _bitDepth;
 	bool _windowed;
-
-	// Debugging Variables
-	// -------------------
-	Framecounter _FPSCounter;
-
-	uint _repaintedPixels;
 
 	/**
 	 * Calculates the time since the last frame beginning has passed.

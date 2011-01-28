@@ -14,7 +14,6 @@ MODULE_OBJS := \
 	gfx/bitmap.o \
 	gfx/dynamicbitmap.o \
 	gfx/fontresource.o \
-	gfx/framecounter.o \
 	gfx/graphicengine.o \
 	gfx/graphicengine_script.o \
 	gfx/panel.o \

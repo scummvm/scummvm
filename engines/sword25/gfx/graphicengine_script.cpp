@@ -346,7 +346,8 @@ static int isWindowed(lua_State *L) {
 static int getFPSCount(lua_State *L) {
 	GraphicEngine *pGE = getGE();
 
-	lua_pushnumber(L, pGE->getFPSCount());
+	// Used in a debug function
+	lua_pushnumber(L, 0);
 
 	return 1;
 }
@@ -395,7 +396,8 @@ static int saveThumbnailScreenshot(lua_State *L) {
 
 static int getRepaintedPixels(lua_State *L) {
 	GraphicEngine *pGE = getGE();
-	lua_pushnumber(L, static_cast<lua_Number>(pGE->getRepaintedPixels()));
+	// Used in a debug function.
+	lua_pushnumber(L, 0);
 	return 1;
 }
 

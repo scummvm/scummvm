@@ -53,7 +53,6 @@ public:
 
 	virtual ~ResourceService() {}
 
-
 	/**
 	 * Loads a resource
 	 * @return      Returns the resource if successful, otherwise NULL
