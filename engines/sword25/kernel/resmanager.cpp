@@ -125,6 +125,9 @@ Resource *ResourceManager::requestResource(const Common::String &fileName) {
 	// If the resource is found, it will be placed at the head of the resource list and returned
 	{
 		Resource *pResource = getResource(uniqueFileName);
+		if (!pResource)
+			pResource = loadResource(uniqueFileName);
+
 		if (pResource) {
 			moveToFront(pResource);
 			(pResource)->addReference();
@@ -144,6 +147,8 @@ Resource *ResourceManager::requestResource(const Common::String &fileName) {
 
 	return NULL;
 }
+
+#ifdef PRECACHE_RESOURCES
 
 /**
  * Loads a resource into the cache
@@ -177,6 +182,8 @@ bool ResourceManager::precacheResource(const Common::String &fileName, bool forc
 
 	return true;
 }
+
+#endif
 
 /**
  * Moves a resource to the top of the resource list
@@ -296,6 +303,7 @@ void ResourceManager::dumpLockedResources() {
  * the whole game engine may still use more memory than any amount specified.
  */
 void ResourceManager::setMaxMemoryUsage(uint maxMemoryUsage) {
+	// TODO: Game scripts set this to 256000000. Set it to a more conservative value
 	_maxMemoryUsage = maxMemoryUsage;
 	deleteResourcesIfNecessary();
 }

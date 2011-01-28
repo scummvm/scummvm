@@ -39,6 +39,7 @@
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/resmanager.h"	// for PRECACHE_RESOURCES
 #include "sword25/gfx/fontresource.h"
 #include "sword25/gfx/bitmapresource.h"
 
@@ -70,7 +71,9 @@ Text::Text(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPt
 }
 
 bool Text::setFont(const Common::String &font) {
-	// Font precachen.
+	// Load font
+
+#ifdef PRECACHE_RESOURCES
 	if (getResourceManager()->precacheResource(font)) {
 		_font = font;
 		updateFormat();
@@ -80,6 +83,13 @@ bool Text::setFont(const Common::String &font) {
 		error("Could not precache font \"%s\". Font probably does not exist.", font.c_str());
 		return false;
 	}
+#else
+	getResourceManager()->requestResource(font);
+	_font = font;
+	updateFormat();
+	forceRefresh();
+	return true;
+#endif
 
 }
 

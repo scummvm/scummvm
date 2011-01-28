@@ -43,6 +43,8 @@
 
 namespace Sword25 {
 
+//#define PRECACHE_RESOURCES
+
 class ResourceService;
 class Resource;
 class Kernel;
@@ -57,6 +59,7 @@ public:
 	 */
 	Resource *requestResource(const Common::String &fileName);
 
+#ifdef PRECACHE_RESOURCES
 	/**
 	 * Loads a resource into the cache
 	 * @param FileName      The filename of the resource to be cached
@@ -64,6 +67,7 @@ public:
 	 * This is useful for files that may have changed in the interim
 	 */
 	bool precacheResource(const Common::String &fileName, bool forceReload = false);
+#endif
 
 	/**
 	 * Registers a RegisterResourceService. This method is the constructor of

@@ -374,7 +374,11 @@ static int precacheResource(lua_State *L) {
 	ResourceManager *pResource = pKernel->getResourceManager();
 	assert(pResource);
 
+#ifdef PRECACHE_RESOURCES
 	lua_pushbooleancpp(L, pResource->precacheResource(luaL_checkstring(L, 1)));
+#else
+	lua_pushbooleancpp(L, true);
+#endif
 
 	return 1;
 }
@@ -385,7 +389,11 @@ static int forcePrecacheResource(lua_State *L) {
 	ResourceManager *pResource = pKernel->getResourceManager();
 	assert(pResource);
 
+#ifdef PRECACHE_RESOURCES
 	lua_pushbooleancpp(L, pResource->precacheResource(luaL_checkstring(L, 1), true));
+#else
+	lua_pushbooleancpp(L, true);
+#endif
 
 	return 1;
 }

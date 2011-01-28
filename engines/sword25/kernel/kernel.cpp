@@ -155,6 +155,8 @@ uint Kernel::getMilliTicks() {
  * Returns how much memory is being used
  */
 size_t Kernel::getUsedMemory() {
+	// TODO: Actually monitor how much memory is being used, so that the game
+	// doesn't keep allocating resources without ever deleting them.
 	return 0;
 }
 

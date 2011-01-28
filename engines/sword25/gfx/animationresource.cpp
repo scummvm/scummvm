@@ -35,6 +35,7 @@
 #include "sword25/gfx/animationresource.h"
 
 #include "sword25/kernel/kernel.h"
+#include "sword25/kernel/resmanager.h" // for PRECACHE_RESOURCES
 #include "sword25/package/packagemanager.h"
 #include "sword25/gfx/bitmapresource.h"
 
@@ -208,10 +209,14 @@ AnimationResource::~AnimationResource() {
 bool AnimationResource::precacheAllFrames() const {
 	Common::Array<Frame>::const_iterator iter = _frames.begin();
 	for (; iter != _frames.end(); ++iter) {
+#ifdef PRECACHE_RESOURCES
 		if (!Kernel::getInstance()->getResourceManager()->precacheResource((*iter).fileName)) {
 			error("Could not precache \"%s\".", (*iter).fileName.c_str());
 			return false;
 		}
+#else
+		Kernel::getInstance()->getResourceManager()->requestResource((*iter).fileName);
+#endif
 	}
 
 	return true;

@@ -33,6 +33,7 @@
  */
 
 #include "sword25/kernel/kernel.h"
+#include "sword25/kernel/resmanager.h" // for PRECACHE_RESOURCES
 #include "sword25/package/packagemanager.h"
 
 #include "sword25/gfx/fontresource.h"
@@ -100,10 +101,14 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 		               _bitmapFileName.c_str(), getFileName().c_str());
 	}
 
+#ifdef PRECACHE_RESOURCES
 	// Pre-cache the resource
 	if (!_pKernel->getResourceManager()->precacheResource(_bitmapFileName)) {
 		error("Could not precache \"%s\".", _bitmapFileName.c_str());
 	}
+#else
+	_pKernel->getResourceManager()->requestResource(_bitmapFileName);
+#endif
 
 	return true;
 }
