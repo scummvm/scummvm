@@ -252,8 +252,13 @@ void DialogueManager::nextAnswer() {
 	}
 
 	if (!_q->_answers[0]->_text.compareToIgnoreCase("NULL")) {
-		_answerId = 0;
-		_state = NEXT_QUESTION;
+		addVisibleAnswers(_q);
+		if (_numVisAnswers) {
+			_answerId = _visAnswers[0]._index;
+			_state = NEXT_QUESTION;
+		} else {
+			_state = DIALOGUE_OVER;
+		}
 		return;
 	}
 
