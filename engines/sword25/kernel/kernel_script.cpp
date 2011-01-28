@@ -168,7 +168,9 @@ static int getSubversionRevision(lua_State *L) {
 }
 
 static int getUsedMemory(lua_State *L) {
-	lua_pushnumber(L, Kernel::getInstance()->getUsedMemory());
+	// It doesn't really matter what this call returns,
+	// as it's used in a debug function.
+	lua_pushnumber(L, 0);
 	return 1;
 }
 
@@ -404,7 +406,9 @@ static int getMaxMemoryUsage(lua_State *L) {
 	ResourceManager *pResource = pKernel->getResourceManager();
 	assert(pResource);
 
-	lua_pushnumber(L, pResource->getMaxMemoryUsage());
+	// This is used for debugging, so it doesn't really matter.
+	// The default value set by the scripts is 256000000 bytes
+	lua_pushnumber(L, 256000000);
 
 	return 1;
 }
@@ -415,7 +419,8 @@ static int setMaxMemoryUsage(lua_State *L) {
 	ResourceManager *pResource = pKernel->getResourceManager();
 	assert(pResource);
 
-	pResource->setMaxMemoryUsage(static_cast<uint>(lua_tonumber(L, 1)));
+	// This call is ignored, we set a limit on the number of
+	// simultaneous resources loaded instead.
 
 	return 0;
 }
@@ -437,7 +442,8 @@ static int isLogCacheMiss(lua_State *L) {
 	ResourceManager *pResource = pKernel->getResourceManager();
 	assert(pResource);
 
-	lua_pushbooleancpp(L, pResource->isLogCacheMiss());
+	// This isn't used in any script
+	lua_pushbooleancpp(L, false);
 
 	return 1;
 }
@@ -448,7 +454,7 @@ static int setLogCacheMiss(lua_State *L) {
 	ResourceManager *pResource = pKernel->getResourceManager();
 	assert(pResource);
 
-	pResource->setLogCacheMiss(lua_tobooleancpp(L, 1));
+	// This isn't used in any script
 
 	return 0;
 }

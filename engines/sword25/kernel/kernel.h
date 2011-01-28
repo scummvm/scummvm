@@ -93,10 +93,6 @@ public:
 		return _resourceManager;
 	}
 	/**
-	 * Returns how much memory is being used
-	 */
-	size_t getUsedMemory();
-	/**
 	 * Returns a random number
 	 * @param Min       The minimum allowed value
 	 * @param Max       The maximum allowed value

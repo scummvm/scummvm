@@ -40,6 +40,11 @@
 
 namespace Sword25 {
 
+// Sets the amount of resources that are simultaneously loaded.
+// This needs to be a relatively high number, as all the animation
+// frames in each scene are loaded as separate resources.
+#define SWORD25_RESOURCECACHE_MAX 100
+
 ResourceManager::~ResourceManager() {
 	// Clear all unlocked resources
 	emptyCache();
@@ -80,7 +85,7 @@ bool ResourceManager::registerResourceService(ResourceService *pService) {
  */
 void ResourceManager::deleteResourcesIfNecessary() {
 	// If enough memory is available, or no resources are loaded, then the function can immediately end
-	if (_kernelPtr->getUsedMemory() < _maxMemoryUsage || _resources.empty())
+	if (_resources.size() < SWORD25_RESOURCECACHE_MAX)
 		return;
 
 	// Keep deleting resources until the memory usage of the process falls below the set maximum limit.
@@ -93,7 +98,7 @@ void ResourceManager::deleteResourcesIfNecessary() {
 		// The resource may be released only if it isn't locked
 		if ((*iter)->getLockCount() == 0)
 			iter = deleteResource(*iter);
-	} while (iter != _resources.begin() && _kernelPtr->getUsedMemory() > _maxMemoryUsage);
+	} while (iter != _resources.begin() && _resources.size() >= SWORD25_RESOURCECACHE_MAX);
 }
 
 /**
@@ -134,10 +139,6 @@ Resource *ResourceManager::requestResource(const Common::String &fileName) {
 			return pResource;
 		}
 	}
-
-	// The resource was not found, therefore, must not be loaded yet
-	if (_logCacheMiss)
-		warning("\"%s\" was not precached.", uniqueFileName.c_str());
 
 	Resource *pResource = loadResource(uniqueFileName);
 	if (pResource) {
@@ -294,18 +295,6 @@ void ResourceManager::dumpLockedResources() {
 			debugC(kDebugResource, "%s", (*iter)->getFileName().c_str());
 		}
 	}
-}
-
-/**
- * Specifies the maximum amount of memory the engine is allowed to use.
- * If this value is exceeded, resources will be unloaded to make room. This value is meant
- * as a guideline, and not as a fixed boundary. It is not guaranteed not to be exceeded;
- * the whole game engine may still use more memory than any amount specified.
- */
-void ResourceManager::setMaxMemoryUsage(uint maxMemoryUsage) {
-	// TODO: Game scripts set this to 256000000. Set it to a more conservative value
-	_maxMemoryUsage = maxMemoryUsage;
-	deleteResourcesIfNecessary();
 }
 
 } // End of namespace Sword25

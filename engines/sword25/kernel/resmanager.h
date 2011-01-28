@@ -82,37 +82,6 @@ public:
 	void emptyCache();
 
 	/**
-	 * Returns the maximum memory the kernel has used
-	 */
-	int getMaxMemoryUsage() const {
-		return _maxMemoryUsage;
-	}
-
-	/**
-	 * Specifies the maximum amount of memory the engine is allowed to use.
-	 * If this value is exceeded, resources will be unloaded to make room. This value is meant
-	 * as a guideline, and not as a fixed boundary. It is not guaranteed not to be exceeded;
-	 * the whole game engine may still use more memory than any amount specified.
-	 */
-	void setMaxMemoryUsage(uint maxMemoryUsage);
-
-	/**
-	 * Specifies whether a warning is written to the log when a cache miss occurs.
-	 * THe default value is "false".
-	 */
-	bool isLogCacheMiss() const {
-		return _logCacheMiss;
-	}
-
-	/**
-	 * Sets whether warnings are written to the log if a cache miss occurs.
-	 * @param Flag      If "true", then future warnings will be logged
-	 */
-	void setLogCacheMiss(bool flag) {
-		_logCacheMiss = flag;
-	}
-
-	/**
 	 * Writes the names of all currently locked resources to the log file
 	 */
 	void dumpLockedResources();
@@ -123,9 +92,7 @@ private:
 	 * Only the BS_Kernel class can generate copies this class. Thus, the constructor is private
 	 */
 	ResourceManager(Kernel *pKernel) :
-		_kernelPtr(pKernel),
-		_maxMemoryUsage(100000000),
-		_logCacheMiss(false)
+		_kernelPtr(pKernel)
 	{}
 	virtual ~ResourceManager();
 
@@ -166,12 +133,10 @@ private:
 	void deleteResourcesIfNecessary();
 
 	Kernel *_kernelPtr;
-	uint _maxMemoryUsage;
 	Common::Array<ResourceService *> _resourceServices;
 	Common::List<Resource *> _resources;
 	typedef Common::HashMap<Common::String, Resource *> ResMap;
 	ResMap _resourceHashMap;
-	bool _logCacheMiss;
 };
 
 } // End of namespace Sword25
