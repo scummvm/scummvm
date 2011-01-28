@@ -910,7 +910,7 @@ void MystScriptParser::o_soundWaitStop(uint16 op, uint16 var, uint16 argc, uint1
 }
 
 void MystScriptParser::o_quit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	_vm->_system->quit();
+	_vm->quitGame();
 }
 
 } // End of namespace Mohawk

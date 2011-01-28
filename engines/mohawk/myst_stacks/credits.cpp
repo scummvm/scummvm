@@ -68,7 +68,7 @@ void MystScriptParser_Credits::runPersistentScripts() {
 
 		// After the 6th image has shown, it's time to quit
 		if (_curImage == 7)
-			_vm->_system->quit();
+			_vm->quitGame();
 
 		// Draw next image
 		_vm->drawCardBackground();
