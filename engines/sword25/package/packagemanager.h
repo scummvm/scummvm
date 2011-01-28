@@ -161,7 +161,7 @@ public:
 	 * If the path could not be determined, an empty string is returned.
 	 * @remark              For cutting path elements '\' is used rather than '/' elements.
 	 */
-	Common::String getCurrentDirectory();
+	Common::String getCurrentDirectory() { return _currentDirectory; }
 	/**
 	 * Changes the current directory.
 	 * @param Directory     The path to the new directory. The path can be relative.

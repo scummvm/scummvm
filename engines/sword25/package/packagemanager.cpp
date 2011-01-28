@@ -199,10 +199,6 @@ Common::SeekableReadStream *PackageManager::getStream(const Common::String &file
 	return in;
 }
 
-Common::String PackageManager::getCurrentDirectory() {
-	return _currentDirectory;
-}
-
 bool PackageManager::changeDirectory(const Common::String &directory) {
 	// Get the path elements for the file
 	_currentDirectory = normalizePath(directory, _currentDirectory);

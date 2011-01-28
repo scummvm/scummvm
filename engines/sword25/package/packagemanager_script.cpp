@@ -65,44 +65,6 @@ static int loadDirectoryAsPackage(lua_State *L) {
 	return 1;
 }
 
-static int getCurrentDirectory(lua_State *L) {
-	PackageManager *pPM = getPM();
-
-	lua_pushstring(L, pPM->getCurrentDirectory().c_str());
-
-	return 1;
-}
-
-static int changeDirectory(lua_State *L) {
-	PackageManager *pPM = getPM();
-
-	lua_pushbooleancpp(L, pPM->changeDirectory(luaL_checkstring(L, 1)));
-
-	return 1;
-}
-
-static int getAbsolutePath(lua_State *L) {
-	PackageManager *pPM = getPM();
-
-	lua_pushstring(L, pPM->getAbsolutePath(luaL_checkstring(L, 1)).c_str());
-
-	return 1;
-}
-
-static int getFileSize(lua_State *L) {
-	// This function apparently is not used by the game scripts
-	lua_pushnumber(L, 0);
-
-	return 1;
-}
-
-static int getFileType(lua_State *L) {
-	// This function apparently is not used by the game scripts
-	lua_pushnumber(L, 0);
-
-	return 1;
-}
-
 static void splitSearchPath(const Common::String &path, Common::String &directory, Common::String &filter) {
 	// Scan backwards for a trailing slash
 	const char *sPath = path.c_str();
@@ -177,16 +139,22 @@ static int fileExists(lua_State *L) {
 	return 1;
 }
 
+// Marks a function that should never be used
+static int dummyFuncError(lua_State *L) {
+	error("Dummy function invoked by LUA");
+	return 1;
+}
+
 static const char *PACKAGE_LIBRARY_NAME = "Package";
 
 static const luaL_reg PACKAGE_FUNCTIONS[] = {
 	{"LoadPackage", loadPackage},
 	{"LoadDirectoryAsPackage", loadDirectoryAsPackage},
-	{"GetCurrentDirectory", getCurrentDirectory},
-	{"ChangeDirectory", changeDirectory},
-	{"GetAbsolutePath", getAbsolutePath},
-	{"GetFileSize", getFileSize},
-	{"GetFileType", getFileType},
+	{"GetCurrentDirectory", dummyFuncError},
+	{"ChangeDirectory", dummyFuncError},
+	{"GetAbsolutePath", dummyFuncError},
+	{"GetFileSize", dummyFuncError},
+	{"GetFileType", dummyFuncError},
 	{"FindFiles", findFiles},
 	{"FindDirectories", findDirectories},
 	{"GetFileAsString", getFileAsString},

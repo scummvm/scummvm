@@ -77,13 +77,6 @@ public:
 
 	/**
 	 * @param Filename      The path to a file.
-	 * @return              Returns the size of the specified file. If the size could not be
-	 * determined, or the file does not exist, returns -1
-	 */
-	static int32 getFileSize(const Common::String &filename);
-
-	/**
-	 * @param Filename      The path to a file.
 	 * @return              Returns true if the file exists.
 	 */
 	static bool fileExists(const Common::String &filename);
