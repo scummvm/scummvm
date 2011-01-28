@@ -38,7 +38,7 @@ Console::~Console() {
 
 bool Console::Cmd_Room(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: changeCard <card>\n");
+		DebugPrintf("Usage: room <number>\n");
 		return true;
 	}
 
