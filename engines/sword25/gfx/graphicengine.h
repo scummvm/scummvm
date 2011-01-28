@@ -117,9 +117,8 @@ public:
 	 * @param Height            The height of the output buffer in pixels. The default value is 600
 	 * @param BitDepth          The bit depth of the desired output buffer in bits. The default value is 16
 	 * @param BackbufferCount   The number of back buffers to be created. The default value is 2
-	 * @param Windowed          Indicates whether the engine is to run in windowed mode.
 	 */
-	bool init(int width = 800, int height = 600, int bitDepth = 16, int backbufferCount = 2, bool windowed = false);
+	bool init(int width = 800, int height = 600, int bitDepth = 16, int backbufferCount = 2);
 
 	/**
 	 * Begins rendering a new frame.
@@ -137,20 +136,6 @@ public:
 	 * This should only be called once for a given previous call to #StartFrame.
 	*/
 	bool endFrame();
-
-	// Debug methods
-
-	/**
-	 * Draws a line in the frame buffer
-	 *
-	 * This method must be called between calls to StartFrame() and EndFrame(), and is intended only for debugging
-	 * purposes. The line will only appear for a single frame. If the line is to be shown permanently, it must be
-	 * called for every frame.
-	* @param Start      The starting point of the line
-	* @param End        The ending point of the line
-	* @param Color      The color of the line. The default is BS_RGB (255,255,255) (White)
-	*/
-	void drawDebugLine(const Vertex &start, const Vertex &end, uint color = BS_RGB(255, 255, 255));
 
 	/**
 	 * Creates a thumbnail with the dimensions of 200x125. This will not include the top and bottom of the screen..
@@ -248,13 +233,6 @@ public:
 	bool getVsync() const;
 
 	/**
-	 * Returns true if the engine is running in Windowed mode.
-	 */
-	bool isWindowed() {
-		return _windowed;
-	}
-
-	/**
 	 * Fills a rectangular area of the frame buffer with a color.
 	 * Notes: It is possible to create transparent rectangles by passing a color with an Alpha value of 255.
 	 * @param FillRectPtr   Pointer to a Common::Rect, which specifies the section of the frame buffer to be filled.
@@ -330,7 +308,6 @@ protected:
 	int _height;
 	Common::Rect _screenRect;
 	int _bitDepth;
-	bool _windowed;
 
 	/**
 	 * Calculates the time since the last frame beginning has passed.
@@ -367,8 +344,6 @@ private:
 		Vertex _end;
 		uint _color;
 	};
-
-	Common::Array<DebugLine> _debugLines;
 };
 
 } // End of namespace Sword25

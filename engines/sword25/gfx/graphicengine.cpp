@@ -67,7 +67,6 @@ GraphicEngine::GraphicEngine(Kernel *pKernel) :
 	_width(0),
 	_height(0),
 	_bitDepth(0),
-	_windowed(0),
 	_lastTimeStamp((uint) -1), // max. BS_INT64 um beim ersten Aufruf von _UpdateLastFrameDuration() einen Reset zu erzwingen
 	_lastFrameDuration(0),
 	_timerActive(true),
@@ -89,7 +88,7 @@ GraphicEngine::~GraphicEngine() {
 	delete _thumbnail;
 }
 
-bool GraphicEngine::init(int width, int height, int bitDepth, int backbufferCount, bool isWindowed_) {
+bool GraphicEngine::init(int width, int height, int bitDepth, int backbufferCount) {
 	// Warnung ausgeben, wenn eine nicht unterstützte Bittiefe gewählt wurde.
 	if (bitDepth != BIT_DEPTH) {
 		warning("Can't use a bit depth of %d (not supported). Falling back to %d.", bitDepth, BIT_DEPTH);
@@ -106,7 +105,6 @@ bool GraphicEngine::init(int width, int height, int bitDepth, int backbufferCoun
 	_width = width;
 	_height = height;
 	_bitDepth = bitDepth;
-	_windowed = isWindowed_;
 	_screenRect.left = 0;
 	_screenRect.top = 0;
 	_screenRect.right = _width;
@@ -155,32 +153,6 @@ bool GraphicEngine::endFrame() {
 	}
 
 	g_system->updateScreen();
-
-	// Debug-Lines zeichnen
-	if (!_debugLines.empty()) {
-#if 0
-		glEnable(GL_LINE_SMOOTH);
-		glBegin(GL_LINES);
-
-		Common::Array<DebugLine>::const_iterator iter = m_DebugLines.begin();
-		for (; iter != m_DebugLines.end(); ++iter) {
-			const uint &Color = (*iter).Color;
-			const BS_Vertex &Start = (*iter).Start;
-			const BS_Vertex &End = (*iter).End;
-
-			glColor4ub((Color >> 16) & 0xff, (Color >> 8) & 0xff, Color & 0xff, Color >> 24);
-			glVertex2d(Start.X, Start.Y);
-			glVertex2d(End.X, End.Y);
-		}
-
-		glEnd();
-		glDisable(GL_LINE_SMOOTH);
-#endif
-
-		warning("STUB: Drawing debug lines");
-
-		_debugLines.clear();
-	}
 
 	return true;
 }
@@ -365,15 +337,6 @@ bool GraphicEngine::canLoadResource(const Common::String &filename) {
 		filename.hasSuffix("_fnt.xml") ||
 		filename.hasSuffix(".swf") ||
 		filename.hasSuffix(".b25s");
-}
-
-
-// -----------------------------------------------------------------------------
-// DEBUGGING
-// -----------------------------------------------------------------------------
-
-void GraphicEngine::drawDebugLine(const Vertex &start, const Vertex &end, uint color) {
-	_debugLines.push_back(DebugLine(start, end, color));
 }
 
 void  GraphicEngine::updateLastFrameDuration() {
