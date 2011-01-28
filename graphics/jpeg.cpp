@@ -46,7 +46,7 @@ static const uint8 _zigZagOrder[64] = {
 };
 
 JPEG::JPEG() :
-	_str(NULL), _w(0), _h(0), _numComp(0), _components(NULL), _numScanComp(0),
+	_stream(NULL), _w(0), _h(0), _numComp(0), _components(NULL), _numScanComp(0),
 	_scanComp(NULL), _currentComp(NULL) {
 
 	// Initialize the quantization tables
@@ -108,7 +108,7 @@ Surface *JPEG::getSurface(const PixelFormat &format) {
 
 void JPEG::reset() {
 	// Reset member variables
-	_str = NULL;
+	_stream = NULL;
 	_w = _h = 0;
 
 	// Free the components
@@ -137,16 +137,16 @@ void JPEG::reset() {
 	}
 }
 
-bool JPEG::read(Common::SeekableReadStream *str) {
+bool JPEG::read(Common::SeekableReadStream *stream) {
 	// Reset member variables and tables from previous reads
 	reset();
 
 	// Save the input stream
-	_str = str;
+	_stream = stream;
 
 	bool ok = true;
 	bool done = false;
-	while (!_str->eos() && ok && !done) {
+	while (!_stream->eos() && ok && !done) {
 		// Read the marker
 
 		// WORKAROUND: While each and every JPEG file should end with
@@ -158,10 +158,10 @@ bool JPEG::read(Common::SeekableReadStream *str) {
 		// Apparently, the customary workaround is to insert a fake
 		// EOI tag.
 
-		uint16 marker = _str->readByte();
+		uint16 marker = _stream->readByte();
 		bool fakeEOI = false;
 
-		if (_str->eos()) {
+		if (_stream->eos()) {
 			fakeEOI = true;
 			marker = 0xFF;
 		}
@@ -172,10 +172,10 @@ bool JPEG::read(Common::SeekableReadStream *str) {
 			break;
 		}
 
-		while (marker == 0xFF && !_str->eos())
-			marker = _str->readByte();
+		while (marker == 0xFF && !_stream->eos())
+			marker = _stream->readByte();
 
-		if (_str->eos()) {
+		if (_stream->eos()) {
 			fakeEOI = true;
 			marker = 0xD9;
 		}
@@ -206,12 +206,12 @@ bool JPEG::read(Common::SeekableReadStream *str) {
 			ok = readJFIF();
 			break;
 		case 0xFE: // Comment
-			_str->seek(_str->readUint16BE() - 2, SEEK_CUR);
+			_stream->seek(_stream->readUint16BE() - 2, SEEK_CUR);
 			break;
 		default: { // Unknown marker
-			uint16 size = _str->readUint16BE();
+			uint16 size = _stream->readUint16BE();
 			warning("JPEG: Unknown marker %02X, skipping %d bytes", marker, size - 2);
-			_str->seek(size - 2, SEEK_CUR);
+			_stream->seek(size - 2, SEEK_CUR);
 		}
 		}
 	}
@@ -219,26 +219,26 @@ bool JPEG::read(Common::SeekableReadStream *str) {
 }
 
 bool JPEG::readJFIF() {
-	uint16 length = _str->readUint16BE();
-	uint32 tag = _str->readUint32BE();
+	uint16 length = _stream->readUint16BE();
+	uint32 tag = _stream->readUint32BE();
 	if (tag != MKID_BE('JFIF')) {
 		warning("JPEG::readJFIF() tag mismatch");
 		return false;
 	}
-	if (_str->readByte() != 0)  { // NULL
+	if (_stream->readByte() != 0)  { // NULL
 		warning("JPEG::readJFIF() NULL mismatch");
 		return false;
 	}
-	byte majorVersion = _str->readByte();
-	byte minorVersion = _str->readByte();
+	byte majorVersion = _stream->readByte();
+	byte minorVersion = _stream->readByte();
 	if(majorVersion != 1 || minorVersion != 1)
 		warning("JPEG::readJFIF() Non-v1.1 JPEGs may not be handled correctly");
-	/* byte densityUnits = */ _str->readByte();
-	/* uint16 xDensity = */ _str->readUint16BE();
-	/* uint16 yDensity = */ _str->readUint16BE();
-	byte thumbW = _str->readByte();
-	byte thumbH = _str->readByte();
-	_str->seek(thumbW * thumbH * 3, SEEK_CUR); // Ignore thumbnail
+	/* byte densityUnits = */ _stream->readByte();
+	/* uint16 xDensity = */ _stream->readUint16BE();
+	/* uint16 yDensity = */ _stream->readUint16BE();
+	byte thumbW = _stream->readByte();
+	byte thumbH = _stream->readByte();
+	_stream->seek(thumbW * thumbH * 3, SEEK_CUR); // Ignore thumbnail
 	if (length != (thumbW * thumbH * 3) + 16) {
 		warning("JPEG::readJFIF() length mismatch");
 		return false;
@@ -249,21 +249,21 @@ bool JPEG::readJFIF() {
 // Marker 0xC0 (Start Of Frame, Baseline DCT)
 bool JPEG::readSOF0() {
 	debug(5, "JPEG: readSOF0");
-	uint16 size = _str->readUint16BE();
+	uint16 size = _stream->readUint16BE();
 
 	// Read the sample precision
-	uint8 precision = _str->readByte();
+	uint8 precision = _stream->readByte();
 	if (precision != 8) {
 		warning("JPEG: Just 8 bit precision supported at the moment");
 		return false;
 	}
 
 	// Image size
-	_h = _str->readUint16BE();
-	_w = _str->readUint16BE();
+	_h = _stream->readUint16BE();
+	_w = _stream->readUint16BE();
 
 	// Number of components
-	_numComp = _str->readByte();
+	_numComp = _stream->readByte();
 	if (size != 8 + 3 * _numComp) {
 		warning("JPEG: Invalid number of components");
 		return false;
@@ -275,11 +275,11 @@ bool JPEG::readSOF0() {
 
 	// Read the components details
 	for (int c = 0; c < _numComp; c++) {
-		_components[c].id = _str->readByte();
-		_components[c].factorH = _str->readByte();
+		_components[c].id = _stream->readByte();
+		_components[c].factorH = _stream->readByte();
 		_components[c].factorV = _components[c].factorH & 0xF;
 		_components[c].factorH >>= 4;
-		_components[c].quantTableSelector = _str->readByte();
+		_components[c].quantTableSelector = _stream->readByte();
 	}
 
 	return true;
@@ -288,12 +288,12 @@ bool JPEG::readSOF0() {
 // Marker 0xC4 (Define Huffman Tables)
 bool JPEG::readDHT() {
 	debug(5, "JPEG: readDHT");
-	uint16 size = _str->readUint16BE() - 2;
-	uint32 pos = _str->pos();
+	uint16 size = _stream->readUint16BE() - 2;
+	uint32 pos = _stream->pos();
 
-	while ((uint32)_str->pos() < (size + pos)) {
+	while ((uint32)_stream->pos() < (size + pos)) {
 		// Read the table type and id
-		uint8 tableId = _str->readByte();
+		uint8 tableId = _stream->readByte();
 		uint8 tableType = tableId >> 4; // type 0: DC, 1: AC
 		tableId &= 0xF;
 		uint8 tableNum = (tableId << 1) + tableType;
@@ -307,7 +307,7 @@ bool JPEG::readDHT() {
 		uint8 numValues[16];
 		_huff[tableNum].count = 0;
 		for (int len = 0; len < 16; len++) {
-			numValues[len] = _str->readByte();
+			numValues[len] = _stream->readByte();
 			_huff[tableNum].count += numValues[len];
 		}
 
@@ -320,7 +320,7 @@ bool JPEG::readDHT() {
 		int cur = 0;
 		for (int len = 0; len < 16; len++) {
 			for (int i = 0; i < numValues[len]; i++) {
-				_huff[tableNum].values[cur] = _str->readByte();
+				_huff[tableNum].values[cur] = _stream->readByte();
 				_huff[tableNum].sizes[cur] = len + 1;
 				cur++;
 			}
@@ -350,10 +350,10 @@ bool JPEG::readDHT() {
 // Marker 0xDA (Start Of Scan)
 bool JPEG::readSOS() {
 	debug(5, "JPEG: readSOS");
-	uint16 size = _str->readUint16BE();
+	uint16 size = _stream->readUint16BE();
 
 	// Number of scan components
-	_numScanComp = _str->readByte();
+	_numScanComp = _stream->readByte();
 	if (size != 6 + 2 * _numScanComp) {
 		warning("JPEG: Invalid number of components");
 		return false;
@@ -370,7 +370,7 @@ bool JPEG::readSOS() {
 	// Component-specification parameters
 	for (int c = 0; c < _numScanComp; c++) {
 		// Read the desired component id
-		uint8 id = _str->readByte();
+		uint8 id = _stream->readByte();
 
 		// Search the component with the specified id
 		bool found = false;
@@ -390,7 +390,7 @@ bool JPEG::readSOS() {
 		}
 
 		// Read the entropy table selectors
-		_scanComp[c]->DCentropyTableSelector = _str->readByte();
+		_scanComp[c]->DCentropyTableSelector = _stream->readByte();
 		_scanComp[c]->ACentropyTableSelector = _scanComp[c]->DCentropyTableSelector & 0xF;
 		_scanComp[c]->DCentropyTableSelector >>= 4;
 
@@ -406,19 +406,19 @@ bool JPEG::readSOS() {
 	}
 
 	// Start of spectral selection
-	if (_str->readByte() != 0) {
+	if (_stream->readByte() != 0) {
 		warning("JPEG: Progressive scanning not supported");
 		return false;
 	}
 
 	// End of spectral selection
-	if (_str->readByte() != 63) {
+	if (_stream->readByte() != 63) {
 		warning("JPEG: Progressive scanning not supported");
 		return false;
 	}
 
 	// Successive approximation parameters
-	if (_str->readByte() != 0) {
+	if (_stream->readByte() != 0) {
 		warning("JPEG: Progressive scanning not supported");
 		return false;
 	}
@@ -459,12 +459,12 @@ bool JPEG::readSOS() {
 // Marker 0xDB (Define Quantization Tables)
 bool JPEG::readDQT() {
 	debug(5, "JPEG: readDQT");
-	uint16 size = _str->readUint16BE() - 2;
-	uint32 pos = _str->pos();
+	uint16 size = _stream->readUint16BE() - 2;
+	uint32 pos = _stream->pos();
 
-	while ((uint32)_str->pos() < (pos + size)) {
+	while ((uint32)_stream->pos() < (pos + size)) {
 		// Read the table precision and id
-		uint8 tableId = _str->readByte();
+		uint8 tableId = _stream->readByte();
 		bool highPrecision = (tableId & 0xF0) != 0;
 
 		// Validate the table id
@@ -480,7 +480,7 @@ bool JPEG::readDQT() {
 
 		// Read the table (stored in Zig-Zag order)
 		for (int i = 0; i < 64; i++)
-			_quant[tableId][i] = highPrecision ? _str->readUint16BE() : _str->readByte();
+			_quant[tableId][i] = highPrecision ? _stream->readUint16BE() : _stream->readByte();
 	}
 
 	return true;
@@ -682,12 +682,12 @@ uint8 JPEG::readHuff(uint8 table) {
 uint8 JPEG::readBit() {
 	// Read a whole byte if necessary
 	if (_bitsNumber == 0) {
-		_bitsData = _str->readByte();
+		_bitsData = _stream->readByte();
 		_bitsNumber = 8;
 
 		// Detect markers
 		if (_bitsData == 0xFF) {
-			uint8 byte2 = _str->readByte();
+			uint8 byte2 = _stream->readByte();
 
 			// A stuffed 0 validates the previous byte
 			if (byte2 != 0) {

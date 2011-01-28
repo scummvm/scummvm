@@ -55,7 +55,7 @@ public:
 private:
 	void reset();
 
-	Common::SeekableReadStream *_str;
+	Common::SeekableReadStream *_stream;
 	uint16 _w, _h;
 
 	// Image components
@@ -74,7 +74,9 @@ private:
 
 		// Result image for this component
 		Surface surface;
-	} *_components;
+	};
+	
+	Component *_components;
 
 	// Scan components
 	uint8 _numScanComp;
