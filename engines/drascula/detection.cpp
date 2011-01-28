@@ -30,7 +30,6 @@
 
 #include "drascula/drascula.h"
 
-
 namespace Drascula {
 
 struct DrasculaGameDescription {
@@ -49,8 +48,10 @@ void DrasculaEngine::loadArchives() {
 	const ADGameFileDescription *ag;
 
 	if (getFeatures() & GF_PACKED) {
-		for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++)
-			_archives.registerArchive(ag->fileName, ag->fileType);
+		for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++) {
+			if (!_archives.hasArchive(ag->fileName))
+				_archives.registerArchive(ag->fileName, ag->fileType);
+		}
 	}
 
 	_archives.enableFallback(true);
@@ -63,13 +64,11 @@ static const PlainGameDescriptor drasculaGames[] = {
 	{0, 0}
 };
 
-
 namespace Drascula {
 
 using Common::GUIO_NONE;
 
 static const DrasculaGameDescription gameDescriptions[] = {
-
 	{
 		// Drascula English version
 		{
