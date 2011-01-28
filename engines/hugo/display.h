@@ -97,6 +97,7 @@ public:
 	void     displayFrame(int sx, int sy, seq_t *seq, bool foreFl);
 	void     displayList(dupdate_t update, ...);
 	void     displayRect(int16 x, int16 y, int16 dx, int16 dy);
+	void     drawHotspots();
 	void     drawRectangle(bool filledFl, int16 x1, int16 y1, int16 x2, int16 y2, int color);
 	void     drawShape(int x, int y, int color1, int color2);
 	void     drawStatusText();

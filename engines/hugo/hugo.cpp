@@ -254,6 +254,8 @@ Common::Error HugoEngine::run() {
 	_status.doQuitFl = false;
 
 	while (!_status.doQuitFl) {
+		_screen->drawHotspots();
+
 		g_system->updateScreen();
 		_sound->pcspkr_player();
 		runMachine();
@@ -287,7 +289,6 @@ Common::Error HugoEngine::run() {
 		}
 		_mouse->mouseHandler();                     // Mouse activity - adds to display list
 		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
-
 		_status.doQuitFl |= shouldQuit();           // update game quit flag
 	}
 	return Common::kNoError;

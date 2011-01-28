@@ -486,7 +486,9 @@ void Screen::drawShape(int x, int y, int color1, int color2) {
 		}
 	}
 }
-
+/**
+* Display rectangle (filles or empty)
+*/
 void Screen::drawRectangle(bool filledFl, int16 x1, int16 y1, int16 x2, int16 y2, int color) {
 	assert(x1 <= x2);
 	assert(y1 <= y2);
@@ -496,10 +498,18 @@ void Screen::drawRectangle(bool filledFl, int16 x1, int16 y1, int16 x2, int16 y2
 			for (int j = x1; j < x2; j++) {
 				_backBuffer[320 * i + j] = color;
 				_frontBuffer[320 * i + j] = color;
+				_backBufferBackup[320 * i + j] = color;
 			}
 		}
 	} else {
-		warning("STUB: drawRectangle()");
+		for (int i = y1; i < y2; i++) {
+			_frontBuffer[320 * i + x1] = color;
+			_frontBuffer[320 * i + x2] = color;
+		}
+		for (int i = x1; i < x2; i++) {
+			_frontBuffer[320 * y1 + i] = color;
+			_frontBuffer[320 * y2 + i] = color;
+		}
 	}
 }
 
@@ -595,9 +605,27 @@ bool Screen::isInY(int16 y, rect_t *rect) {
 	return (y >= rect->y) && (y <= rect->y + rect->dy);
 }
 
+/**
+* Check if two rectangles are over lapping
+*/
 bool Screen::isOverlaping(rect_t *rectA, rect_t *rectB) {
 	return (isInX(rectA->x, rectB) || isInX(rectA->x + rectA->dx, rectB) || isInX(rectB->x, rectA) || isInX(rectB->x + rectB->dx, rectA)) && 
 		   (isInY(rectA->y, rectB) || isInY(rectA->y + rectA->dy, rectB) || isInY(rectB->y, rectA) || isInY(rectB->y + rectB->dy, rectA));
+}
+
+/**
+* Display exit hotspots in God Mode
+*/
+void Screen::drawHotspots() {
+	if (!_vm->getGameStatus().godModeFl)
+		return;
+
+	for (int i = 0; _vm->_hotspots[i].screenIndex >= 0; i++) {
+		hotspot_t *hotspot = &_vm->_hotspots[i];
+		if (hotspot->screenIndex == _vm->_hero->screenIndex)
+			drawRectangle(false, hotspot->x1, hotspot->y1, hotspot->x2, hotspot->y2, _TLIGHTRED);
+	}
+	g_system->copyRectToScreen(_frontBuffer, 320, 0, 0, 320, 200);
 }
 
 Screen_v1d::Screen_v1d(HugoEngine *vm) : Screen(vm) {
