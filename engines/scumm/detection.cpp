@@ -102,7 +102,7 @@ Common::String ScummEngine::generateFilename(const int room) const {
 				case 2:
 					id = 'b';
 					// Special cases for Blue's games, which share common (b) files
-					if (_game.id == GID_BIRTHDAY)
+					if (_game.id == GID_BIRTHDAY && !(_game.features & GF_DEMO))
 						strcpy(buf, "Blue'sBirthday.(b)");
 					else if (_game.id == GID_TREASUREHUNT)
 						strcpy(buf, "Blue'sTreasureHunt.(b)");
