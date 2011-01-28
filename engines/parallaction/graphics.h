@@ -409,10 +409,10 @@ public:
 	virtual ~BalloonManager() { }
 
 	virtual void reset() = 0;
-	virtual int setLocationBalloon(const char *text, bool endGame) = 0;
-	virtual int setDialogueBalloon(const char *text, uint16 winding, TextColor textColor) = 0;
-	virtual int setSingleBalloon(const char *text, uint16 x, uint16 y, uint16 winding, TextColor textColor) = 0;
-	virtual void setBalloonText(uint id, const char *text, TextColor textColor) = 0;
+	virtual int setLocationBalloon(const Common::String &text, bool endGame) = 0;
+	virtual int setDialogueBalloon(const Common::String &text, uint16 winding, TextColor textColor) = 0;
+	virtual int setSingleBalloon(const Common::String &text, uint16 x, uint16 y, uint16 winding, TextColor textColor) = 0;
+	virtual void setBalloonText(uint id, const Common::String &text, TextColor textColor) = 0;
 	virtual int hitTestDialogueBalloon(int x, int y) = 0;
 };
 

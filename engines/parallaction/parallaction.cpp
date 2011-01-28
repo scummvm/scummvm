@@ -253,7 +253,7 @@ void Parallaction::showSlide(const char *name, int x, int y) {
 }
 
 void Parallaction::showLocationComment(const Common::String &text, bool end) {
-	_balloonMan->setLocationBalloon(text.c_str(), end);
+	_balloonMan->setLocationBalloon(text, end);
 }
 
 void Parallaction::runGameFrame(int event) {
@@ -505,18 +505,18 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 			}
 
 			_gfx->setHalfbriteMode(true);
-			_balloonMan->setSingleBalloon(data->_examineText.c_str(), 0, 90, 0, BalloonManager::kNormalColor);
+			_balloonMan->setSingleBalloon(data->_examineText, 0, 90, 0, BalloonManager::kNormalColor);
 			Common::Rect r;
 			data->_gfxobj->getRect(0, r);
 			_gfx->setItem(data->_gfxobj, 140, (_screenHeight - r.height())/2);
 			_gfx->setItem(_char._head, 100, 152);
 		} else {
-			_balloonMan->setSingleBalloon(data->_examineText.c_str(), 140, 10, 0, BalloonManager::kNormalColor);
+			_balloonMan->setSingleBalloon(data->_examineText, 140, 10, 0, BalloonManager::kNormalColor);
 			_gfx->setItem(_char._talk, 190, 80);
 		}
 	} else
 	if (_gameType == GType_BRA) {
-		_balloonMan->setSingleBalloon(data->_examineText.c_str(), 0, 0, 1, BalloonManager::kNormalColor);
+		_balloonMan->setSingleBalloon(data->_examineText, 0, 0, 1, BalloonManager::kNormalColor);
 		_gfx->setItem(_char._talk, 10, 80);
 	}
 
