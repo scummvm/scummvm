@@ -717,6 +717,7 @@ Surface *JPEG::getComponent(uint c) {
 		if (_components[i].id == c) // We found the desired component
 			return &_components[i].surface;
 
+	error("JPEG::getComponent: No component %d present", c);
 	return NULL;
 }
 
