@@ -39,7 +39,6 @@
 
 namespace Common {
 
-
 #define ARJ_UCHAR_MAX 255
 #define ARJ_CHAR_BIT 8
 
@@ -64,7 +63,6 @@ namespace Common {
 
 #define ARJ_CTABLESIZE 4096
 #define ARJ_PTABLESIZE 256
-
 
 // these struct represents a file inside an Arj archive
 struct ArjHeader {
@@ -150,7 +148,6 @@ private:
 	uint16 _blocksize;
 };
 
-
 #define HEADER_ID     0xEA60
 #define HEADER_ID_HI    0xEA
 #define HEADER_ID_LO    0x60
@@ -164,9 +161,7 @@ private:
 #define PBIT		 5
 #define TBIT		 5
 
-//
 // Source for CRC32::init, CRC32::checksum : crc32.c
-//
 class CRC32 {
 	static uint32 	_table[256];
 	static bool _initialized;
@@ -207,11 +202,7 @@ public:
 bool CRC32::_initialized = false;
 uint32 CRC32::_table[256];
 
-
-//
 // Source for findHeader and readHeader: arj_arcv.c
-//
-
 int32 findHeader(SeekableReadStream &stream) {
 	long end_pos, tmp_pos;
 	int id;
@@ -320,13 +311,7 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 	return head;
 }
 
-
-
-
-//
 // Source for init_getbits: arj_file.c (decode_start_stub)
-//
-
 void ArjDecoder::init_getbits() {
 	_bitbuf = 0;
 	_bytebuf = 0;
@@ -334,10 +319,7 @@ void ArjDecoder::init_getbits() {
 	fillbuf(ARJ_CHAR_BIT * 2);
 }
 
-//
 // Source for fillbuf, getbits: decode.c
-//
-
 void ArjDecoder::fillbuf(int n) {
 	while (_bitcount < n) {
 		_bitbuf = (_bitbuf << _bitcount) | (_bytebuf >> (8 - _bitcount));
@@ -364,12 +346,8 @@ uint16 ArjDecoder::getbits(int n) {
 	return rc;
 }
 
-
-
-//
 // Huffman decode routines
 // Source: decode.c
-//
 
 // Creates a table for decoding
 void ArjDecoder::make_table(int nchar, byte *bitlen, int tablebits, uint16 *table, int tablesize) {
@@ -718,7 +696,6 @@ void ArjDecoder::decode_f(int32 origsize) {
 typedef HashMap<String, ArjHeader*, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjHeadersMap;
 
 class ArjArchive : public Common::Archive {
-
 	ArjHeadersMap _headers;
 	Common::String _arjFilename;
 
@@ -748,11 +725,13 @@ ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
 		return;
 	}
 
-	arjFile.seek(firstHeaderOffset, SEEK_SET);
-	if (readHeader(arjFile) == NULL)
-		return;
+	ArjHeader *header = NULL;
 
-	ArjHeader *header;
+	arjFile.seek(firstHeaderOffset, SEEK_SET);
+	if ((header = readHeader(arjFile)) == NULL)
+		return;
+	delete header;
+
 	while ((header = readHeader(arjFile)) != NULL) {
 		_headers[header->filename] = header;
 		arjFile.seek(header->compSize, SEEK_CUR);
@@ -762,12 +741,12 @@ ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
 }
 
 ArjArchive::~ArjArchive() {
+	debug(0, "ArjArchive Destructor Called");
 	ArjHeadersMap::iterator it = _headers.begin();
 	for ( ; it != _headers.end(); ++it) {
 		delete it->_value;
 	}
 }
-
 
 bool ArjArchive::hasFile(const String &name) {
 	return _headers.contains(name);
@@ -802,7 +781,6 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) co
 	Common::File archiveFile;
 	archiveFile.open(_arjFilename);
 	archiveFile.seek(hdr->pos, SEEK_SET);
-
 
 	// TODO: It would be good if ArjFile could decompress files in a streaming
 	// mode, so it would not need to pre-allocate the entire output.

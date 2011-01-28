@@ -23,6 +23,12 @@
  *
  */
 
+/**
+ * @file
+ * ARJ decompressor used in engines:
+ * - drascula
+ */
+
 #ifndef COMMON_UNARJ_H
 #define COMMON_UNARJ_H
 
