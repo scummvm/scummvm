@@ -32,9 +32,6 @@ ArchiveMan::ArchiveMan() {
 	_fallBack = false;
 }
 
-ArchiveMan::~ArchiveMan() {
-}
-
 void ArchiveMan::registerArchive(const Common::String &filename, int priority) {
 	add(filename, Common::makeArjArchive(filename), priority);
 }
@@ -46,9 +43,6 @@ Common::SeekableReadStream *ArchiveMan::open(const Common::String &filename) {
 
 	return createReadStreamForMember(filename);
 }
-
-
-
 
 TextResourceParser::TextResourceParser(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose) :
 	_stream(stream), _dispose(dispose) {

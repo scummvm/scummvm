@@ -255,7 +255,6 @@ struct CharInfo {
 class ArchiveMan : public Common::SearchSet {
 public:
 	ArchiveMan();
-	~ArchiveMan();
 
 	void enableFallback(bool val) { _fallBack = val; }
 
@@ -318,7 +317,7 @@ struct RoomHandlers;
 
 class Console;
 
-class DrasculaEngine : public ::Engine {
+class DrasculaEngine : public Engine {
 protected:
 	// Engine APIs
 	virtual Common::Error run();
