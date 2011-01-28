@@ -93,6 +93,8 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 
 	_color = 0;
 	blinking = 0;
+	mouseX = 0;
+	mouseY = 0;
 	leftMouseButton = 0;
 	rightMouseButton = 0;
 	*textName = 0;
