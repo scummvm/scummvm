@@ -51,31 +51,27 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
-	void opcode_200_run();
-	void opcode_200_disable();
-	void opcode_201_run();
-	void opcode_201_disable();
-	void opcode_209_run();
-	void opcode_209_disable();
-
 	DECLARE_OPCODE(o_pumpTurnOff);
 	DECLARE_OPCODE(o_brotherDoorOpen);
 	DECLARE_OPCODE(o_cabinBookMovie);
-	DECLARE_OPCODE(opcode_103);
-	DECLARE_OPCODE(opcode_104);
+	DECLARE_OPCODE(o_drawerOpenSirius);
+	DECLARE_OPCODE(o_drawerClose);
 	DECLARE_OPCODE(o_generatorStart);
 	DECLARE_OPCODE(o_generatorStop);
-	DECLARE_OPCODE(opcode_111);
-	DECLARE_OPCODE(opcode_112);
+	DECLARE_OPCODE(o_drawerOpenAchenar);
+	DECLARE_OPCODE(o_hologramPlayback);
+	DECLARE_OPCODE(o_hologramSelectionStart);
+	DECLARE_OPCODE(o_hologramSelectionMove);
+	DECLARE_OPCODE(o_hologramSelectionStop);
 	DECLARE_OPCODE(o_compassButton);
 	DECLARE_OPCODE(o_chestValveVideos);
 	DECLARE_OPCODE(o_chestDropKey);
 	DECLARE_OPCODE(o_trapLockOpen);
 	DECLARE_OPCODE(o_sideDoorsMovies);
-	DECLARE_OPCODE(opcode_125);
+	DECLARE_OPCODE(o_drawerCloseOpened);
 
-	DECLARE_OPCODE(opcode_200);
-	DECLARE_OPCODE(opcode_201);
+	DECLARE_OPCODE(o_hologramDisplay_init);
+	DECLARE_OPCODE(o_hologramSelection_init);
 	DECLARE_OPCODE(opcode_202);
 	DECLARE_OPCODE(opcode_203);
 	DECLARE_OPCODE(opcode_204);
@@ -83,7 +79,7 @@ private:
 	DECLARE_OPCODE(opcode_206);
 	DECLARE_OPCODE(o_chest_init);
 	DECLARE_OPCODE(opcode_208);
-	DECLARE_OPCODE(opcode_209);
+	DECLARE_OPCODE(o_achenarDrawers_init);
 	DECLARE_OPCODE(opcode_210);
 
 	DECLARE_OPCODE(opcode_300);
@@ -98,7 +94,18 @@ private:
 
 	uint16 _cabinMystBookPresent; // 64
 
+	uint16 _siriusDrawerDrugsOpen; // 72
+
 	uint16 _brotherDoorOpen; // 76
+
+	uint16 _chestDrawersOpen; // 78
+	uint16 _chestAchenarBottomDrawerClosed; // 144
+	void drawerClose(uint16 drawer);
+
+	uint16 _hologramTurnedOn; // 80
+	MystResourceType6 *_hologramDisplay; // 84
+	MystResourceType6 *_hologramSelection; // 88
+	uint16 _hologramDisplayPos;
 
 	uint16 batteryRemainingCharge();
 };

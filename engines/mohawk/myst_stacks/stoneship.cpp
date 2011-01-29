@@ -43,6 +43,19 @@ MystScriptParser_Stoneship::MystScriptParser_Stoneship(MohawkEngine_Myst *vm) :
 	_state.generatorDepletionTime = 0;
 	_state.generatorDuration = 0;
 	_cabinMystBookPresent = 0;
+	_siriusDrawerDrugsOpen = 0;
+	_chestDrawersOpen = 0;
+	_chestAchenarBottomDrawerClosed = 1;
+
+	// Drop key
+	if (_state.trapdoorKeyState == 1)
+		_state.trapdoorKeyState = 2;
+
+	// Power is not available when loading
+//	if (_state.sideDoorOpened)
+//		_state.generatorPowerAvailable = 2;
+//	else
+//		_state.generatorPowerAvailable = 0;
 }
 
 MystScriptParser_Stoneship::~MystScriptParser_Stoneship() {
@@ -55,23 +68,26 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 	OPCODE(100, o_pumpTurnOff);
 	OPCODE(101, o_brotherDoorOpen);
 	OPCODE(102, o_cabinBookMovie);
-	OPCODE(103, opcode_103);
-	OPCODE(104, opcode_104);
+	OPCODE(103, o_drawerOpenSirius);
+	OPCODE(104, o_drawerClose);
 	OPCODE(108, o_generatorStart);
 	OPCODE(109, NOP);
 	OPCODE(110, o_generatorStop);
-	OPCODE(111, opcode_111);
-	OPCODE(112, opcode_112);
+	OPCODE(111, o_drawerOpenAchenar);
+	OPCODE(112, o_hologramPlayback);
+	OPCODE(113, o_hologramSelectionStart);
+	OPCODE(114, o_hologramSelectionMove);
+	OPCODE(115, o_hologramSelectionStop);
 	OPCODE(116, o_compassButton);
 	OPCODE(117, o_chestValveVideos);
 	OPCODE(118, o_chestDropKey);
 	OPCODE(119, o_trapLockOpen);
 	OPCODE(120, o_sideDoorsMovies);
-	OPCODE(125, opcode_125);
+	OPCODE(125, o_drawerCloseOpened);
 
 	// "Init" Opcodes
-	OPCODE(200, opcode_200);
-	OPCODE(201, opcode_201);
+	OPCODE(200, o_hologramDisplay_init);
+	OPCODE(201, o_hologramSelection_init);
 	OPCODE(202, opcode_202);
 	OPCODE(203, opcode_203);
 	OPCODE(204, opcode_204);
@@ -79,7 +95,7 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 	OPCODE(206, opcode_206);
 	OPCODE(207, o_chest_init);
 	OPCODE(208, opcode_208);
-	OPCODE(209, opcode_209);
+	OPCODE(209, o_achenarDrawers_init);
 	OPCODE(210, opcode_210);
 
 	// "Exit" Opcodes
@@ -90,19 +106,11 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 
 void MystScriptParser_Stoneship::disablePersistentScripts() {
 	_batteryCharging = false;
-
-	opcode_200_disable();
-	opcode_201_disable();
-	opcode_209_disable();
 }
 
 void MystScriptParser_Stoneship::runPersistentScripts() {
 	if (_batteryCharging)
 		chargeBattery_run();
-
-	opcode_200_run();
-	opcode_201_run();
-	opcode_209_run();
 }
 
 uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
@@ -166,6 +174,8 @@ uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
 			return 0;
 	case 16: // Ship Chamber Light State
 		return _state.lightState;
+	case 17: // Sirrus' Room Drawer with Drugs Open
+		return _siriusDrawerDrugsOpen;
 	case 18: // Brother Room Door Open
 		return _brotherDoorOpen;
 	case 19: // Brother Room Door State
@@ -179,8 +189,12 @@ uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
 		}
 	case 20: // Ship Chamber Table/Book State
 		return _cabinMystBookPresent;
+	case 21: // Brothers Rooms' Chest Of Drawers Drawer State
+		return _chestDrawersOpen;
 	case 28: // Telescope Angle Position
 		return 0;
+	case 29: // Achenar's Room Rose/Skull Hologram Button Lit
+		return _hologramTurnedOn;
 	case 30: // Light State in Tunnel to Compass Rose Room
 		if (_state.generatorPowerAvailable == 1) {
 			if (_state.lightState)
@@ -199,6 +213,13 @@ uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
 			return 2;
 		else
 			return _state.generatorPowerAvailable == 1;
+	case 34: // Achenar's Room Drawer with Torn Note Closed
+		return _chestAchenarBottomDrawerClosed;
+	case 35: // Sirrus' Room Drawer #4 (Bottom) Open and Red Page State
+		if (_chestDrawersOpen == 4)
+			return getVar(102);
+		else
+			return 2;
 	case 36: // Ship Chamber Door State
 		if (_tempVar) {
 			if (_state.lightState)
@@ -208,6 +229,10 @@ uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
 		} else {
 			return 0; // Closed
 		}
+	case 102: // Red page
+		return !(_globals.redPagesInBook & 8) && (_globals.heldPage != 10);
+	case 103: // Blue page
+		return !(_globals.bluePagesInBook & 8) && (_globals.heldPage != 4);
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -254,6 +279,25 @@ void MystScriptParser_Stoneship::toggleVar(uint16 var) {
 	case 20: // Ship Chamber Table/Book State
 		_cabinMystBookPresent = (_cabinMystBookPresent + 1) % 2;
 		break;
+	case 29: // Achenar's Room Rose/Skull Hologram Button Lit
+		_hologramTurnedOn = (_hologramTurnedOn + 1) % 2;
+		break;
+	case 102: // Red page
+		if (!(_globals.redPagesInBook & 8)) {
+			if (_globals.heldPage == 10)
+				_globals.heldPage = 0;
+			else
+				_globals.heldPage = 10;
+		}
+		break;
+	case 103: // Blue page
+		if (!(_globals.bluePagesInBook & 8)) {
+			if (_globals.heldPage == 4)
+				_globals.heldPage = 0;
+			else
+				_globals.heldPage = 4;
+		}
+		break;
 	default:
 		MystScriptParser::toggleVar(var);
 		break;
@@ -282,11 +326,29 @@ bool MystScriptParser_Stoneship::setVarValue(uint16 var, uint16 value) {
 			refresh = true;
 		}
 		break;
+	case 17: // Sirrus' Room Drawer with Drugs Open
+		if (_siriusDrawerDrugsOpen != value) {
+			_siriusDrawerDrugsOpen = value;
+			refresh = true;
+		}
+		break;
 	case 18: // Brother Room Door Open
 		if (_brotherDoorOpen != value) {
 			_brotherDoorOpen = value;
 			refresh = true;
 		}
+		break;
+	case 21: // Brothers Rooms' Chest Of Drawers Drawer State
+		if (_chestDrawersOpen != value) {
+			_chestDrawersOpen = value;
+			refresh = true;
+		}
+		break;
+	case 29: // Achenar's Room Rose/Skull Hologram Button Lit
+		_hologramTurnedOn = value;
+		break;
+	case 34: // Achenar's Room Drawer with Torn Note Closed
+		_chestAchenarBottomDrawerClosed = value;
 		break;
 	default:
 		refresh = MystScriptParser::setVarValue(var, value);
@@ -345,36 +407,27 @@ void MystScriptParser_Stoneship::o_cabinBookMovie(uint16 op, uint16 var, uint16 
 	_vm->_video->waitUntilMovieEnds(book);
 }
 
-void MystScriptParser_Stoneship::opcode_103(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_drawerOpenSirius(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Open drawer", op);
 
-	if (argc == 1) {
-		// Used on Card 2197 (Sirrus' Room Drawers)
-		debugC(kDebugScript, "Opcode %d: Unknown", op);
+	MystResourceType8 *drawer = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
 
-		uint16 u0 = argv[0];
+	if (drawer->getType8Var() == 35) {
+		drawer->drawConditionalDataToScreen(getVar(102), 0);
+	} else {
+		drawer->drawConditionalDataToScreen(0, 0);
+	}
 
-		debugC(kDebugScript, "\tu0: %d", u0);
-		// TODO: Fill in Logic...
-	} else
-		unknown(op, var, argc, argv);
+	uint16 transition = 5;
+	if (argc == 2 && argv[1])
+		transition = 11;
+
+	_vm->_gfx->runTransition(transition, drawer->getRect(), 25, 5);
 }
 
-void MystScriptParser_Stoneship::opcode_104(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used for Card 2004 (Achenar's Room Drawers)
-	// Used for Closeup of Torn Note?
-	if (argc == 1) {
-		debugC(kDebugScript, "Opcode %d: Unknown Function", op);
-
-		uint16 u0 = argv[0];
-		debugC(kDebugScript, "\tu0: %d", u0);
-
-		// TODO: Fill in Function...
-		// Does u0 correspond to a resource Id? Enable? Disable?
-		// Similar to Opcode 111 (Stoneship Version).. But does this also
-		// draw closeup image of note / change to closeup card?
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Stoneship::o_drawerClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Close drawer", op);
+	drawerClose(argv[0]);
 }
 
 void MystScriptParser_Stoneship::o_generatorStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -445,44 +498,71 @@ uint16 MystScriptParser_Stoneship::batteryRemainingCharge() {
 	}
 }
 
-void MystScriptParser_Stoneship::opcode_111(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_drawerOpenAchenar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Open drawer", op);
 
-	if (argc == 1) {
-		// Used for Card 2004 (Achenar's Room Drawers)
-		// Used by Drawers Hotspots...
-
-		debugC(kDebugScript, "Opcode %d: Unknown Function", op);
-
-		uint16 u0 = argv[0];
-		debugC(kDebugScript, "\tu0: %d", u0);
-
-		// TODO: Fill in Function...
-		// Does u0 correspond to a resource Id? Enable? Disable?
-	} else
-		unknown(op, var, argc, argv);
+	MystResourceType8 *drawer = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
+	drawer->drawConditionalDataToScreen(0, 0);
+	_vm->_gfx->runTransition(5, drawer->getRect(), 25, 5);
 }
 
-void MystScriptParser_Stoneship::opcode_112(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void MystScriptParser_Stoneship::o_hologramPlayback(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 2013 (Achenar's Rose-Skull Hologram)
-	if (argc == 3) {
-		debugC(kDebugScript, "Opcode %d: Rose-Skull Hologram Playback", op);
+	debugC(kDebugScript, "Opcode %d: Rose-Skull Hologram Playback", op);
 
-		uint16 varValue = _vm->_varStore->getVar(var);
+	uint16 startPoint = argv[0];
+	uint16 endPoint = argv[1];
+	// uint16 direction = argv[2];
 
-		debugC(kDebugScript, "\tVar: %d = %d", var, varValue);
+	_hologramDisplay->setBlocking(false);
+	VideoHandle displayMovie = _hologramDisplay->playMovie();
 
-		uint16 startPoint = argv[0];
-		uint16 endPoint = argv[1];
-		uint16 u0 = argv[2];
+	if (_hologramTurnedOn) {
+		if (_hologramDisplayPos)
+			endPoint = _hologramDisplayPos;
+		_vm->_video->setVideoBounds(displayMovie, Video::VideoTimestamp(startPoint, 600), Video::VideoTimestamp(endPoint, 600));
+	} else {
+		_vm->_video->setVideoBounds(displayMovie, Video::VideoTimestamp(startPoint, 600), Video::VideoTimestamp(endPoint, 600));
+	}
 
-		debugC(kDebugScript, "\tstartPoint: %d", startPoint);
-		debugC(kDebugScript, "\tendPoint: %d", endPoint);
-		debugC(kDebugScript, "\tu0: %d", u0);
+	_vm->_video->delayUntilMovieEnds(displayMovie);
+}
 
-		// TODO: Fill in Function...
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Stoneship::o_hologramSelectionStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Hologram start move", op);
+	//_vm->_cursor->setCursor(0);
+}
+
+void MystScriptParser_Stoneship::o_hologramSelectionMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Hologram move", op);
+
+	MystResourceType11 *handle = static_cast<MystResourceType11 *>(_invokingResource);
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+
+	if (handle->getRect().contains(mouse)) {
+		int16 position = mouse.x - 143;
+		position = CLIP<int16>(position, 0, 242);
+
+		// Draw handle movie frame
+		uint16 selectionPos = position * 1500 / 243;
+
+		VideoHandle handleMovie = _hologramSelection->playMovie();
+		_vm->_video->setVideoBounds(handleMovie, Video::VideoTimestamp(selectionPos, 600), Video::VideoTimestamp(selectionPos, 600));
+
+		_hologramDisplayPos = position * 1450 / 243 + 350;
+
+		// Draw display movie frame
+		if (_hologramTurnedOn) {
+			_hologramDisplay->setBlocking(false);
+			VideoHandle displayMovie = _hologramDisplay->playMovie();
+			_vm->_video->setVideoBounds(displayMovie, Video::VideoTimestamp(_hologramDisplayPos, 600), Video::VideoTimestamp(_hologramDisplayPos, 600));
+		}
+	}
+}
+
+void MystScriptParser_Stoneship::o_hologramSelectionStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Hologram stop move", op);
+	_vm->checkCursorHints();
 }
 
 void MystScriptParser_Stoneship::o_compassButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -609,65 +689,33 @@ void MystScriptParser_Stoneship::o_sideDoorsMovies(uint16 op, uint16 var, uint16
 	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser_Stoneship::opcode_125(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 1) {
-		// Used on Card 2197 (Sirrus' Room Drawers)
-		debugC(kDebugScript, "Opcode %d: Unknown uses Var %d", op, var);
+void MystScriptParser_Stoneship::o_drawerCloseOpened(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Close open drawer", op);
 
-		uint16 u0 = argv[0];
-
-		debugC(kDebugScript, "\tu0: %d", u0);
-		// TODO: Fill in Logic...
-	} else
-		unknown(op, var, argc, argv);
+	uint16 drawerOpen = getVar(var);
+	if (drawerOpen)
+		drawerClose(argv[0] + drawerOpen - 1);
 }
 
-static struct {
-	bool enabled;
-} g_opcode200Parameters;
+void MystScriptParser_Stoneship::drawerClose(uint16 drawer) {
+	_chestDrawersOpen = 0;
+	_vm->drawCardBackground();
+	_vm->drawResourceImages();
 
-void MystScriptParser_Stoneship::opcode_200_run() {
-	// Used for Card 2013 (Achenar's Rose-Skull Hologram)
-
-	// TODO: Implement Function...
+	MystResource *res = _vm->_resources[drawer];
+	_vm->_gfx->runTransition(6, res->getRect(), 25, 5);
 }
 
-void MystScriptParser_Stoneship::opcode_200_disable() {
-	g_opcode200Parameters.enabled = false;
+void MystScriptParser_Stoneship::o_hologramDisplay_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Hologram display init", op);
+	_hologramDisplay = static_cast<MystResourceType6 *>(_invokingResource);
+
+	_hologramDisplayPos = 0;
 }
 
-void MystScriptParser_Stoneship::opcode_200(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 2013 (Achenar's Rose-Skull Hologram)
-	if (argc == 0)
-		g_opcode200Parameters.enabled = true;
-	else
-		unknown(op, var, argc, argv);
-}
-
-static struct {
-	bool enabled;
-} g_opcode201Parameters;
-
-void MystScriptParser_Stoneship::opcode_201_run() {
-	// Used for Card 2013 (Achenar's Rose-Skull Hologram)
-
-	// TODO: Fill in Function...
-}
-
-void MystScriptParser_Stoneship::opcode_201_disable() {
-	g_opcode201Parameters.enabled = false;
-}
-
-void MystScriptParser_Stoneship::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 2013 (Achenar's Rose-Skull Hologram)
-	if (argc == 0)
-		g_opcode201Parameters.enabled = true;
-	else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Stoneship::o_hologramSelection_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Hologram selection init", op);
+	_hologramSelection = static_cast<MystResourceType6 *>(_invokingResource);
 }
 
 void MystScriptParser_Stoneship::opcode_202(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -794,47 +842,22 @@ void MystScriptParser_Stoneship::opcode_208(uint16 op, uint16 var, uint16 argc, 
 		unknown(op, var, argc, argv);
 }
 
-static struct {
-	uint16 u0[5];
-	uint16 u1[5];
-	uint16 stateVar;
-
-	bool enabled;
-} g_opcode209Parameters;
-
-void MystScriptParser_Stoneship::opcode_209_run(void) {
-	// Used for Card 2004 (Achenar's Room Drawers)
-
-	// TODO: Implement Function...
-	// Swap Open Drawers?
-}
-
-void MystScriptParser_Stoneship::opcode_209_disable(void) {
-	g_opcode209Parameters.enabled = false;
-}
-
-void MystScriptParser_Stoneship::opcode_209(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_achenarDrawers_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Achenar's Room Drawers Init", op);
 
 	// Used for Card 2004 (Achenar's Room Drawers)
-	if (argc == 11) {
-		g_opcode209Parameters.u0[0] = argv[0];
-		g_opcode209Parameters.u0[1] = argv[1];
-		g_opcode209Parameters.u0[2] = argv[2];
-		g_opcode209Parameters.u0[3] = argv[3];
-		g_opcode209Parameters.u0[4] = argv[4];
-
-		g_opcode209Parameters.u1[0] = argv[5];
-		g_opcode209Parameters.u1[1] = argv[6];
-		g_opcode209Parameters.u1[2] = argv[7];
-		g_opcode209Parameters.u1[3] = argv[8];
-		g_opcode209Parameters.u1[4] = argv[9];
-
-		g_opcode209Parameters.stateVar = argv[10];
-
-		g_opcode209Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
+	if (!_chestAchenarBottomDrawerClosed) {
+		uint16 count1 = argv[0];
+		for (uint16 i = 0; i < count1; i++) {
+			debugC(kDebugScript, "Disable hotspot index %d", argv[i + 1]);
+			_vm->setResourceEnabled(argv[i + 1], false);
+		}
+		uint16 count2 = argv[count1 + 1];
+		for (uint16 i = 0; i < count2; i++) {
+			debugC(kDebugScript, "Enable hotspot index %d", argv[i + count1 + 2]);
+			_vm->setResourceEnabled(argv[i + count1 + 2], true);
+		}
+	}
 }
 
 void MystScriptParser_Stoneship::opcode_210(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
