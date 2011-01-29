@@ -321,7 +321,7 @@ void Game::prepareStart() {
 	_startTimeKey = _vm->_util->getTimeKey();
 }
 
-void Game::playTot(int16 skipPlay) {
+void Game::playTot(int16 function) {
 	char savedTotName[20];
 	int16 *oldCaptureCounter;
 	int16 *oldBreakFrom;
@@ -341,12 +341,12 @@ void Game::playTot(int16 skipPlay) {
 	_vm->_scenery->_pCaptureCounter = &captureCounter;
 	strcpy(savedTotName, _curTotFile);
 
-	if (skipPlay <= 0) {
+	if (function <= 0) {
 		while (!_vm->shouldQuit()) {
 			if (_vm->_inter->_variables)
 				_vm->_draw->animateCursor(4);
 
-			if (skipPlay != -1) {
+			if (function != -1) {
 				_vm->_inter->initControlVars(1);
 
 				for (int i = 0; i < 4; i++) {
@@ -377,9 +377,9 @@ void Game::playTot(int16 skipPlay) {
 			if ((_curTotFile[0] == 0) && (!_script->isLoaded()))
 				break;
 
-			if (skipPlay == -2) {
+			if (function == -2) {
 				_vm->_vidPlayer->closeVideo();
-				skipPlay = 0;
+				function = 0;
 			}
 
 			if (!_script->load(_curTotFile)) {
@@ -423,7 +423,7 @@ void Game::playTot(int16 skipPlay) {
 			for (int i = 0; i < *_vm->_scenery->_pCaptureCounter; i++)
 				capturePop(0);
 
-			if (skipPlay != -1) {
+			if (function != -1) {
 				_vm->_goblin->freeObjects();
 
 				_vm->_sound->blasterStop(0);
@@ -449,11 +449,11 @@ void Game::playTot(int16 skipPlay) {
 		_vm->_inter->initControlVars(0);
 		_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
 
-		if (skipPlay > 13) {
-			warning("Addy: skipPlay = %d", skipPlay);
-			_script->skip(skipPlay);
+		if (function > 13) {
+			warning("Addy: function = %d", function);
+			_script->skip(function);
 		} else
-			_script->seek(_script->getFunctionOffset(skipPlay + 1));
+			_script->seek(_script->getFunctionOffset(function + 1));
 
 		_vm->_inter->callSub(2);
 
@@ -641,7 +641,7 @@ void Game::start() {
 	_vm->_draw->_scummvmCursor.reset();
 }
 
-// flagbits: 0 = freeInterVariables, 1 = skipPlay
+// flagbits: 0 = freeInterVariables, 1 = function -1
 void Game::totSub(int8 flags, const char *newTotFile) {
 	int8 curBackupPos;
 
@@ -714,7 +714,7 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 	_vm->_global->_inter_animDataSize = _script->getAnimDataSize();
 }
 
-void Game::switchTotSub(int16 index, int16 skipPlay) {
+void Game::switchTotSub(int16 index, int16 function) {
 	int16 backupedCount;
 	int16 curBackupPos;
 
@@ -727,7 +727,7 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 
 	// WORKAROUND: Some versions don't make the MOVEMENT menu item unselectable
 	// in the dreamland screen, resulting in a crash when it's clicked.
-	if ((_vm->getGameType() == kGameTypeGob2) && (index == -1) && (skipPlay == 7) &&
+	if ((_vm->getGameType() == kGameTypeGob2) && (index == -1) && (function == 7) &&
 	    !scumm_stricmp(_environments->getTotFile(newPos), "gob06.tot"))
 		return;
 
@@ -750,7 +750,7 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 	}
 
 	_hotspots->push(0, true);
-	playTot(skipPlay);
+	playTot(function);
 
 	if (_vm->_inter->_terminate != 2)
 		_vm->_inter->_terminate = 0;

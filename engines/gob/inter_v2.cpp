@@ -603,12 +603,12 @@ void Inter_v2::o2_totSub() {
 
 void Inter_v2::o2_switchTotSub() {
 	int16 index;
-	int16 skipPlay;
+	int16 function;
 
 	index = _vm->_game->_script->readInt16();
-	skipPlay = _vm->_game->_script->readInt16();
+	function = _vm->_game->_script->readInt16();
 
-	_vm->_game->switchTotSub(index, skipPlay);
+	_vm->_game->switchTotSub(index, function);
 }
 
 void Inter_v2::o2_pushVars() {

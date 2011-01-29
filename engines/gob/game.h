@@ -108,7 +108,7 @@ public:
 
 	void prepareStart();
 
-	void playTot(int16 skipPlay);
+	void playTot(int16 function);
 
 	void capturePush(int16 left, int16 top, int16 width, int16 height);
 	void capturePop(char doDraw);
@@ -123,7 +123,7 @@ public:
 	void start();
 
 	void totSub(int8 flags, const char *newTotFile);
-	void switchTotSub(int16 index, int16 skipPlay);
+	void switchTotSub(int16 index, int16 function);
 
 protected:
 	char _tempStr[256];
