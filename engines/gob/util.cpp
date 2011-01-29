@@ -518,6 +518,23 @@ void Util::deleteList(List *list) {
 	delete list;
 }
 
+char *Util::setExtension(char *str, const char *ext) {
+	char *dot = strrchr(str, '.');
+	if (dot)
+		*dot = '\0';
+
+	strcat(str, ext);
+	return str;
+}
+
+Common::String Util::setExtension(const Common::String &str, const Common::String &ext) {
+	const char *dot = strrchr(str.c_str(), '.');
+	if (dot)
+		return Common::String(str.c_str(), dot - str.c_str()) + ext;
+
+	return str + ext;
+}
+
 /* NOT IMPLEMENTED */
 void Util::checkJoystick() {
 	_vm->_global->_useJoystick = 0;
