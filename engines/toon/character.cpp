@@ -58,6 +58,7 @@ Character::Character(ToonEngine *vm) : _vm(vm) {
 	_animSpecialDefaultId = 0;
 	_currentPathNodeCount = 0;
 	_currentPathNode = 0;
+	_currentWalkStamp = 0;
 	_visible = true;
 	_speed = 150;   // 150 = nominal drew speed
 	_lastWalkTime = 0;
@@ -192,6 +193,10 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 
 		_flags |= 0x1;
 
+		_currentWalkStamp++;
+
+		int32 localWalkStamp = _currentWalkStamp;
+
 		if (_blockingWalk) {
 			while ((_x != newPosX || _y != newPosY) && _currentPathNode < _currentPathNodeCount && !_vm->shouldQuitGame()) {
 				if (_currentPathNode < _currentPathNodeCount - 4) {
@@ -226,6 +231,11 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 				setPosition(_x, _y);
 
 				_vm->doFrame();
+				if (_currentWalkStamp != localWalkStamp) {
+					// another walkTo was started in doFrame, we need to cancel this one.
+					return false;
+				}
+
 			}
 			playStandingAnim();
 			_flags &= ~0x1;
@@ -238,8 +248,6 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 		}
 	}
 
-	//_vm->getPathFinding()->findClosestWalkingPoint(newPosX, newPosY, &_x, &_y, _x, _y);
-	//setPosition(_x,_y);
 	return true;
 }
 

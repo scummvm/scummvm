@@ -146,6 +146,7 @@ protected:
 	int32 _currentPathY[4096];
 	int32 _currentPathNodeCount;
 	int32 _currentPathNode;
+	int32 _currentWalkStamp;
 };
 
 } // End of namespace Toon
