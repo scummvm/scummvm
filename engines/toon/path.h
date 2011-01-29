@@ -64,6 +64,7 @@ public:
 	bool isWalkable(int32 x, int32 y);
 	bool isLikelyWalkable(int32 x, int32 y);
 	bool lineIsWalkable(int32 x, int32 y, int32 x2, int32 y2);
+	bool walkLine(int32 x, int32 y, int32 x2, int32 y2);
 	void init(Picture *mask);
 
 	void resetBlockingRects();

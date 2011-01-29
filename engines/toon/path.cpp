@@ -209,8 +209,40 @@ int32 PathFinding::findClosestWalkingPoint(int32 xx, int32 yy, int32 *fxx, int32
 	}
 }
 
-bool PathFinding::lineIsWalkable(int32 x, int32 y, int32 x2, int32 y2) {
+bool PathFinding::walkLine(int32 x, int32 y, int32 x2, int32 y2) {
+	uint32 bx = x << 16;
+	int32 dx = x2 - x;
+	uint32 by = y << 16;
+	int32 dy = y2 - y;
+	uint32 adx = abs(dx);
+	uint32 ady = abs(dy);
+	int32 t = 0;
+	if (adx <= ady)
+		t = ady;
+	else
+		t = adx;
 
+	int32 cdx = (dx << 16) / t;
+	int32 cdy = (dy << 16) / t;
+
+	int32 i = t;
+	_gridPathCount = 0;
+	while (i) {
+		_tempPathX[i] = bx >> 16;
+		_tempPathY[i] = by >> 16;
+		_gridPathCount++;
+		bx += cdx;
+		by += cdy;
+		i--;
+	}
+
+	_tempPathX[0] = x2;
+	_tempPathY[0] = y2;
+
+	return true;
+}
+
+bool PathFinding::lineIsWalkable(int32 x, int32 y, int32 x2, int32 y2) {
 	uint32 bx = x << 16;
 	int32 dx = x2 - x;
 	uint32 by = y << 16;
@@ -228,7 +260,7 @@ bool PathFinding::lineIsWalkable(int32 x, int32 y, int32 x2, int32 y2) {
 
 	int32 i = t;
 	while (i) {
-		if(!isWalkable(bx >> 16, by >> 16))
+		if (!isWalkable(bx >> 16, by >> 16))
 			return false;
 		bx += cdx;
 		by += cdy;
@@ -251,8 +283,12 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	}
 
 	// first test direct line
-	//if(lineIsWalkable(x,y,destx,desty))
+	if (lineIsWalkable(x,y,destx,desty)) {
+		walkLine(x,y,destx,desty);
+		return true;
+	}
 
+	// no direct line, we use the standard A* algorithm
 	memset(_gridTemp , 0, _width * _height * sizeof(int32));
 	_heap->clear();
 	int32 curX = x;
@@ -277,7 +313,7 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 		for (int32 px = startX; px <= endX; px++) {
 			for (int py = startY; py <= endY; py++) {
 				if (px != curX || py != curY) {
-					wei = abs(px - curX) + abs(py - curY);
+					wei = ((abs(px - curX) + abs(py - curY)));
 
 					int32 curPNode = px + py * _width;
 					if (isWalkable(px, py)) { // walkable ?

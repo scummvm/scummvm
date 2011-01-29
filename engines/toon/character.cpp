@@ -175,6 +175,8 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 
 		int32 localFinalX = _finalX;
 		int32 localFinalY = _finalY;
+		int32 smoothDx = 0;
+		int32 smoothDy = 0;
 
 		for (int32 a = 0; a < _vm->getPathFinding()->getPathNodeCount(); a++) {
 			_currentPathX[a] = _vm->getPathFinding()->getPathNodeX(a);
@@ -192,15 +194,24 @@ bool Character::walkTo(int32 newPosX, int32 newPosY) {
 
 		if (_blockingWalk) {
 			while ((_x != newPosX || _y != newPosY) && _currentPathNode < _currentPathNodeCount && !_vm->shouldQuitGame()) {
-				if (_currentPathNode < _currentPathNodeCount - 10) {
-					int32 delta = MIN<int32>(10, _currentPathNodeCount - _currentPathNode);
+				if (_currentPathNode < _currentPathNodeCount - 4) {
+					int32 delta = MIN<int32>(4, _currentPathNodeCount - _currentPathNode);
+
 					int32 dx = _currentPathX[_currentPathNode+delta] - _x;
 					int32 dy = _currentPathY[_currentPathNode+delta] - _y;
-					setFacing(getFacingFromDirection(dx, dy));
+
+					// smooth the facing computation. It prevents some ugly flickering from happening
+					if (!smoothDx && !smoothDy) {
+						smoothDx = dx;
+						smoothDy = dy;
+					} else {
+						smoothDx = (dx + smoothDx * 3) / 4;
+						smoothDy = (dy + smoothDy * 3) / 4;
+					}
+
+					setFacing(getFacingFromDirection(smoothDx, smoothDy));
 					playWalkAnim(0, 0);
 				}
-
-				
 
 				// in 1/1000 pixels
 				_numPixelToWalk += _speed * (_vm->getSystem()->getMillis() - _lastWalkTime) * _scale / 1024;
@@ -994,6 +1005,12 @@ bool Character::loadShadowAnimation(Common::String animName) {
 	return true;
 }
 
+void Character::plotPath(Graphics::Surface& surface) {
+	for (int i = 0; i < _currentPathNodeCount; i++) {
+		 *(byte*)surface.getBasePtr(_currentPathX[i], _currentPathY[i]) = ( i < _currentPathNode);
+	}
+}
+
 void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 	debugC(3, kDebugCharacter, "playAnim(%d, unused, %d)", animId, flags);
 
@@ -1029,8 +1046,11 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 		// make the talker busy
 		_flags |= 1;
 
+		// old special anim was talking anim ? in this case we don't wait for the character to be ready
+		bool wasTalkAnim = _specialAnim && strstr(_specialAnim->_name, "TLK");
+
 		// wait for the character to be ready
-		while (_animScriptId != -1 && _animationInstance && _animationInstance->getFrame() > 0 && (_specialAnim && _animationInstance->getAnimation() != _specialAnim)) {
+		while (_animScriptId != -1 && _animationInstance && _animationInstance->getFrame() > 0 && !wasTalkAnim && (_specialAnim && _animationInstance->getAnimation() != _specialAnim)) {
 			_vm->simpleUpdate(false);
 		}
 	}

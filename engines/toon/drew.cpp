@@ -33,6 +33,7 @@ CharacterDrew::CharacterDrew(ToonEngine *vm) : Character(vm) {
 	_animationInstance = vm->getAnimationManager()->createNewInstance(kAnimationCharacter);
 	_animationInstance->setUseMask(true);
 	vm->getAnimationManager()->addInstance(_animationInstance);
+	_currentScale = 1024;
 }
 
 CharacterDrew::~CharacterDrew() {
@@ -104,6 +105,15 @@ void CharacterDrew::playWalkAnim(int32 start, int32 end) {
 void CharacterDrew::update(int32 timeIncrement) {
 	debugC(5, kDebugCharacter, "update(%d)", timeIncrement);
 	Character::update(timeIncrement);
+	if (_currentScale > _scale) {
+		_scale += timeIncrement * 2;
+		if (_scale > _currentScale)
+			_scale = _currentScale;
+	} else if (_currentScale < _scale) {
+		_scale -= timeIncrement * 2;
+		if (_scale < _currentScale) 
+			_scale = _currentScale;
+	}
 	setPosition(_x, _y);
 
 }
@@ -113,6 +123,12 @@ int32 CharacterDrew::getRandomIdleAnim() {
 
 	static const int32 idle[] = { 6, 9, 10, 11, 12 };
 	return idle[_vm->randRange(0, 4)];
+}
+
+void CharacterDrew::resetScale()
+{
+	_scale = _currentScale;
+	setPosition(_x, _y);
 }
 } // End of namespace Toon
 

@@ -40,9 +40,13 @@ public:
 	bool setupPalette();
 	void playStandingAnim();
 	void setPosition(int32 x, int32 y);
+	void resetScale();
 	void update(int32 timeIncrement);
 	void playWalkAnim(int32 start, int32 end);
 	int32 getRandomIdleAnim();
+protected:
+	int32 _currentScale;
+
 };
 
 } // End of namespace Toon

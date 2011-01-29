@@ -386,7 +386,8 @@ void ToonEngine::render() {
 	drawConversationLine();
 	drawConversationIcons();
 	drawSack();
-	//drawPalette();
+	//drawPalette();						// used to debug the current palette
+	//_drew->plotPath(*_mainSurface);		// used to debug path finding
 
 #if 0
 	char test[256];
@@ -1058,6 +1059,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	_gameState->_mouseState = -1;
 	_mouseButton = 0;
 	_lastMouseButton = 0x3;
+
 
 	// load package
 	strcpy(temp, createRoomFilename(Common::String::format("%s.pak", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
