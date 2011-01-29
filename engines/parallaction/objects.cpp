@@ -258,6 +258,10 @@ Answer::Answer() {
 	_hasCounterCondition = false;
 }
 
+bool Answer::textIsNull() {
+	return (_text.equalsIgnoreCase("NULL"));
+}
+	
 Question::Question(const Common::String &name) : _name(name), _mood(0) {
 	memset(_answers, 0, sizeof(_answers));
 }
@@ -268,6 +272,10 @@ Question::~Question() {
 	}
 }
 
+bool Question::textIsNull() {
+	return (_text.equalsIgnoreCase("NULL"));
+}
+	
 Instruction::Instruction() {
 	_index = 0;
 	_flags = 0;

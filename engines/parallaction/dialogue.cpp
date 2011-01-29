@@ -214,7 +214,7 @@ void DialogueManager::displayAnswers() {
 }
 
 int16 DialogueManager::selectAnswer1() {
-	if (!_visAnswers[0]._a->_text.compareToIgnoreCase("null")) {
+	if (_visAnswers[0]._a->textIsNull()) {
 		return _visAnswers[0]._index;
 	}
 
@@ -250,7 +250,7 @@ int16 DialogueManager::selectAnswerN() {
 }
 
 bool DialogueManager::displayQuestion() {
-	if (!_q->_text.compareToIgnoreCase("NULL")) return false;
+	if (_q->textIsNull()) return false;
 
 	_vm->_balloonMan->setSingleBalloon(_q->_text, _ballonPos._questionBalloon.x, _ballonPos._questionBalloon.y, _q->_mood & 0x10, BalloonManager::kNormalColor);
 	_faceId = _vm->_gfx->setItem(_questioner, _ballonPos._questionChar.x, _ballonPos._questionChar.y);
@@ -283,7 +283,7 @@ void DialogueManager::nextAnswer() {
 		return;
 	}
 	
-	if (!_visAnswers[0]._a->_text.compareToIgnoreCase("NULL")) {
+	if (_visAnswers[0]._a->textIsNull()) {
 		// if the first answer is null (it's implied that it's the 
 		// only one because we already called addVisibleAnswers),
 		// then jump to the next question

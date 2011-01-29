@@ -163,6 +163,7 @@ struct Answer {
 	int	_counterOp;
 
 	Answer();
+	bool textIsNull();
 };
 
 struct Question {
@@ -173,6 +174,7 @@ struct Question {
 
 	Question(const Common::String &name);
 	~Question();
+	bool textIsNull();
 };
 
 struct Dialogue {
