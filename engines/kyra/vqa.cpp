@@ -106,6 +106,9 @@ uint32 VQAMovie::readTag() {
 
 	uint32 tag = _file->readUint32BE();
 
+	if (_file->eos())
+		return 0;
+
 	if (!(tag & 0xFF000000)) {
 		tag = (tag << 8) | _file->readByte();
 	}
