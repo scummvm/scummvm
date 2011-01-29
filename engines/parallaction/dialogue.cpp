@@ -175,6 +175,8 @@ void DialogueManager::transitionToState(DialogueState newState) {
 						debug("  A%02i: %s", i, _visAnswers[i]._a->_text.c_str());
 					}
 					break;
+				default:
+					break;
 			}
 		}
 	}
