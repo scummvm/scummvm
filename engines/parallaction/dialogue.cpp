@@ -110,7 +110,7 @@ protected:
 	void transitionToState(DialogueState newState);
 	
 	bool displayQuestion();
-	bool displayAnswers();
+	void displayAnswers();
 	bool testAnswerFlags(Answer *a);
 	virtual void addVisibleAnswers(Question *q) = 0;
 	virtual int16 selectAnswer() = 0;
@@ -187,12 +187,7 @@ bool DialogueManager::testAnswerFlags(Answer *a) {
 	return ((a->_yesFlags & flags) == a->_yesFlags) && ((a->_noFlags & ~flags) == a->_noFlags);
 }
 
-bool DialogueManager::displayAnswers() {
-
-	addVisibleAnswers(_q);
-	if (_numVisAnswers == 0) {
-		return false;
-	}
+void DialogueManager::displayAnswers() {
 
 	// create balloons
 	int id;
@@ -216,8 +211,6 @@ bool DialogueManager::displayAnswers() {
 
 	_faceId = _vm->_gfx->setItem(_answerer, _ballonPos._answerChar.x, _ballonPos._answerChar.y);
 	_vm->_gfx->setItemFrame(_faceId, mood);
-
-	return true;
 }
 
 int16 DialogueManager::selectAnswer1() {
@@ -282,18 +275,24 @@ void DialogueManager::nextAnswer() {
 	}
 
 	// try and check if there are any suitable answers, 
-	// given the current game state
+	// given the current game state.
 	addVisibleAnswers(_q);
 	if (!_numVisAnswers) {
+		// if there are no answers, then chicken out
 		transitionToState(DIALOGUE_OVER);
 		return;
 	}
 	
 	if (!_visAnswers[0]._a->_text.compareToIgnoreCase("NULL")) {
+		// if the first answer is null (it's implied that it's the 
+		// only one because we already called addVisibleAnswers),
+		// then jump to the next question
 		_answerId = _visAnswers[0]._index;
 		transitionToState(NEXT_QUESTION);
 	} else {
-		transitionToState(displayAnswers() ? RUN_ANSWER : DIALOGUE_OVER);
+		// at this point we are sure there are non-null answers to show
+		displayAnswers();
+		transitionToState(RUN_ANSWER);
 	}
 }
 
