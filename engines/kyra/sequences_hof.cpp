@@ -2455,8 +2455,10 @@ void KyraEngine_HoF::seq_printCreditsString(uint16 strIndex, int x, int y, const
 
 void KyraEngine_HoF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width, WSAMovie_v2 *wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos) {
 	int dur = int(strlen(_sequenceStrings[strIndex])) * (_flags.isTalkie ? 7 : 15);
-	int entry = textEnabled() ? seq_setTextEntry(strIndex, x, y, dur, width) : strIndex;
-	_activeText[entry].textcolor = textColor;
+	if (textEnabled()) {
+		int entry = seq_setTextEntry(strIndex, x, y, dur, width);
+		_activeText[entry].textcolor = textColor;
+	}
 	_seqWsaChatTimeout = _system->getMillis() + dur * _tickLength;
 	int curframe = firstframe;
 
