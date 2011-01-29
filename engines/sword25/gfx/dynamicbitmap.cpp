@@ -41,8 +41,9 @@ namespace Sword25 {
 
 DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> parentPtr, uint width, uint height) :
 	Bitmap(parentPtr, TYPE_DYNAMICBITMAP) {
-	// Das BS_Bitmap konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
-	if (!_initSuccess) return;
+	// The BS_BITMAP could not be created, so stop.
+	if (!_initSuccess)
+		return;
 
 	_initSuccess = createRenderedImage(width, height);
 }
@@ -53,7 +54,6 @@ DynamicBitmap::DynamicBitmap(InputPersistenceBlock &reader, RenderObjectPtr<Rend
 }
 
 bool DynamicBitmap::createRenderedImage(uint width, uint height) {
-	// RenderedImage mit den gewünschten Maßen erstellen
 	bool result = false;
 	_image.reset(new RenderedImage(width, height, result));
 
@@ -74,11 +74,11 @@ uint DynamicBitmap::getPixel(int x, int y) const {
 }
 
 bool DynamicBitmap::doRender() {
-	// Framebufferobjekt holen
+	// Get the frame buffer object
 	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
 	assert(pGfx);
 
-	// Bitmap zeichnen
+	// Draw the bitmap
 	bool result;
 	if (_scaleFactorX == 1.0f && _scaleFactorY == 1.0f) {
 		result = _image->blit(_absoluteX, _absoluteY,
@@ -120,8 +120,8 @@ bool DynamicBitmap::persist(OutputPersistenceBlock &writer) {
 
 	result &= Bitmap::persist(writer);
 
-	// Bilddaten werden nicht gespeichert. Dies ist auch nicht weiter von bedeutung, da BS_DynamicBitmap nur vom Videoplayer benutzt wird.
-	// Während ein Video abläuft kann niemals gespeichert werden. BS_DynamicBitmap kann nur der Vollständigkeit halber persistiert werden.
+	// Image data is not saved. This is not important, since BS_DynamicBitmap is only used by the video player.
+	// A video cannot be saved while it's being played. Only the state of a BS_DynamicBitmap can be persisted.
 	warning("Persisting a BS_DynamicBitmap. Bitmap content is not persisted.");
 
 	result &= RenderObject::persistChildren(writer);
@@ -133,14 +133,11 @@ bool DynamicBitmap::unpersist(InputPersistenceBlock &reader) {
 	bool result = true;
 
 	result &= Bitmap::unpersist(reader);
-
-	// Ein RenderedImage mit den gespeicherten Maßen erstellen.
 	result &= createRenderedImage(_width, _height);
 
-	// Bilddaten werden nicht gespeichert (s.o.).
 	warning("Unpersisting a BS_DynamicBitmap. Bitmap contents are missing.");
 
-	// Bild mit durchsichtigen Bilddaten initialisieren.
+	// Initialize a transparent image.
 	byte *transparentImageData = (byte *)calloc(_width * _height * 4, 1);
 	_image->setContent(transparentImageData, _width * _height);
 	free(transparentImageData);
