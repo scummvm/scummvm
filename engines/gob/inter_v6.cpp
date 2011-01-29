@@ -128,7 +128,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	//             the video that lets the sheet vanish is missing. We'll
 	//             play the one where the sheet is already gone instead.
 	if (!strcmp(fileName, "MXRAMPART") &&
-	    !scumm_stricmp(_vm->_game->_curTotFile, "EMAM2013.TOT"))
+	    _vm->_game->_curTotFile.equalsIgnoreCase("avt005.tot"))
 		strcpy(fileName, "PLCOFDR2");
 
 	if (!strcmp(fileName, "RIEN")) {

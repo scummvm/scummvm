@@ -148,7 +148,7 @@ void Init::initGame() {
 	if (_vm->_dataIO->hasFile(_vm->_startTot)) {
 		_vm->_inter->allocateVars(Script::getVariablesCount(_vm->_startTot.c_str(), _vm));
 
-		strcpy(_vm->_game->_curTotFile, _vm->_startTot.c_str());
+		_vm->_game->_curTotFile = _vm->_startTot;
 
 		_vm->_sound->cdTest(1, "GOB");
 		_vm->_sound->cdLoadLIC("gob.lic");

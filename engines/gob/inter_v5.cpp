@@ -253,7 +253,7 @@ void Inter_v5::o5_istrlen(OpFuncParams &params) {
 
 void Inter_v5::o5_spaceShooter(OpGobParams &params) {
 	warning("Dynasty Stub: Space shooter: %d, %d, %s",
-			params.extraData, params.paramCount, _vm->_game->_curTotFile);
+			params.extraData, params.paramCount, _vm->_game->_curTotFile.c_str());
 
 	if (params.paramCount < 4) {
 		warning("Space shooter variable counter < 4");

@@ -258,23 +258,23 @@ void Inter::funcBlock(int16 retFlag) {
 			int addr = _vm->_game->_script->pos();
 
 			if ((startaddr == 0x18B4 && addr == 0x1A7F && // Zombie, EGA
-				 !scumm_stricmp(_vm->_game->_curTotFile, "avt005.tot")) ||
-			  (startaddr == 0x188D && addr == 0x1A58 && // Zombie, Mac
-				 !scumm_stricmp(_vm->_game->_curTotFile, "avt005.tot")) ||
-				(startaddr == 0x1299 && addr == 0x139A && // Dungeon
-				 !scumm_stricmp(_vm->_game->_curTotFile, "avt006.tot")) ||
-				(startaddr == 0x11C0 && addr == 0x12C9 && // Cauldron, EGA
-				 !scumm_stricmp(_vm->_game->_curTotFile, "avt012.tot")) ||
-				(startaddr == 0x11C8 && addr == 0x1341 && // Cauldron, Mac
-				 !scumm_stricmp(_vm->_game->_curTotFile, "avt012.tot")) ||
-				(startaddr == 0x09F2 && addr == 0x0AF3 && // Statue
-				 !scumm_stricmp(_vm->_game->_curTotFile, "avt016.tot")) ||
-				(startaddr == 0x0B92 && addr == 0x0C93 && // Castle
-				 !scumm_stricmp(_vm->_game->_curTotFile, "avt019.tot")) ||
-				(startaddr == 0x17D9 && addr == 0x18DA && // Finale, EGA
-				 !scumm_stricmp(_vm->_game->_curTotFile, "avt022.tot")) ||
-				(startaddr == 0x17E9 && addr == 0x19A8 && // Finale, Mac
-				 !scumm_stricmp(_vm->_game->_curTotFile, "avt022.tot"))) {
+			     _vm->_game->_curTotFile.equalsIgnoreCase("avt005.tot")) ||
+			    (startaddr == 0x188D && addr == 0x1A58 && // Zombie, Mac
+			     _vm->_game->_curTotFile.equalsIgnoreCase("avt005.tot")) ||
+			    (startaddr == 0x1299 && addr == 0x139A && // Dungeon
+			     _vm->_game->_curTotFile.equalsIgnoreCase("avt006.tot")) ||
+			    (startaddr == 0x11C0 && addr == 0x12C9 && // Cauldron, EGA
+			     _vm->_game->_curTotFile.equalsIgnoreCase("avt012.tot")) ||
+			    (startaddr == 0x11C8 && addr == 0x1341 && // Cauldron, Mac
+			     _vm->_game->_curTotFile.equalsIgnoreCase("avt012.tot")) ||
+			    (startaddr == 0x09F2 && addr == 0x0AF3 && // Statue
+			     _vm->_game->_curTotFile.equalsIgnoreCase("avt016.tot")) ||
+			    (startaddr == 0x0B92 && addr == 0x0C93 && // Castle
+			     _vm->_game->_curTotFile.equalsIgnoreCase("avt019.tot")) ||
+			    (startaddr == 0x17D9 && addr == 0x18DA && // Finale, EGA
+			     _vm->_game->_curTotFile.equalsIgnoreCase("avt022.tot")) ||
+			    (startaddr == 0x17E9 && addr == 0x19A8 && // Finale, Mac
+			     _vm->_game->_curTotFile.equalsIgnoreCase("avt022.tot"))) {
 
 				_vm->_util->longDelay(5000);
 			}
@@ -285,7 +285,7 @@ void Inter::funcBlock(int16 retFlag) {
 		// of Fascination have a too short delay between the storage room and the lab.
 		// We manually add it here.
 		if ((_vm->getGameType() == kGameTypeFascination) &&
-			!scumm_stricmp(_vm->_game->_curTotFile, "PLANQUE.tot")) {
+			_vm->_game->_curTotFile.equalsIgnoreCase("PLANQUE.tot")) {
 				int addr = _vm->_game->_script->pos();
 				if ((startaddr == 0x0202 && addr == 0x0330) || // Before Lab, Amiga & Atari, English
 					(startaddr == 0x023D && addr == 0x032D) || // Before Lab, PC floppy, German
@@ -301,11 +301,11 @@ void Inter::funcBlock(int16 retFlag) {
 		// A VGA version has some broken code in its scripts, this workaround skips the corrupted parts.
 		if (_vm->getGameType() == kGameTypeFascination) {
 			int addr = _vm->_game->_script->pos();
-			if ((startaddr == 0x212D) && (addr == 0x290E) && (cmd == 0x90) && !scumm_stricmp(_vm->_game->_curTotFile, "INTRO1.tot")) {
+			if ((startaddr == 0x212D) && (addr == 0x290E) && (cmd == 0x90) && _vm->_game->_curTotFile.equalsIgnoreCase("INTRO1.tot")) {
 				_vm->_game->_script->skip(2);
 				cmd = _vm->_game->_script->readByte();
 			}
-			if ((startaddr == 0x207D) && (addr == 0x22CE) && (cmd == 0x90) && !scumm_stricmp(_vm->_game->_curTotFile, "INTRO2.tot")) {
+			if ((startaddr == 0x207D) && (addr == 0x22CE) && (cmd == 0x90) && _vm->_game->_curTotFile.equalsIgnoreCase("INTRO2.tot")) {
 				_vm->_game->_script->skip(2);
 				cmd = _vm->_game->_script->readByte();
 			}

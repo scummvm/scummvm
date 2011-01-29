@@ -53,7 +53,6 @@ Environments::Environments(GobEngine *vm) : _vm(vm) {
 		e.variables      = 0;
 		e.script         = 0;
 		e.resources      = 0;
-		e.curTotFile[0]  = '\0';
 
 		for (int j = 0; j < 17; j++)
 			m.fonts[j] = 0;
@@ -112,7 +111,7 @@ void Environments::set(uint8 env) {
 	e.script         = _vm->_game->_script;
 	e.resources      = _vm->_game->_resources;
 	e.variables      = _vm->_inter->_variables;
-	strncpy(e.curTotFile, _vm->_game->_curTotFile, 14);
+	e.totFile        = _vm->_game->_curTotFile;
 }
 
 void Environments::get(uint8 env) const {
@@ -126,14 +125,13 @@ void Environments::get(uint8 env) const {
 	_vm->_game->_script            = e.script;
 	_vm->_game->_resources         = e.resources;
 	_vm->_inter->_variables        = e.variables;
-	strncpy(_vm->_game->_curTotFile, e.curTotFile, 14);
+	_vm->_game->_curTotFile        = e.totFile;
 }
 
-const char *Environments::getTotFile(uint8 env) const {
-	if (env >= kEnvironmentCount)
-		return "";
+const Common::String &Environments::getTotFile(uint8 env) const {
+	assert(env < kEnvironmentCount);
 
-	return _environments[env].curTotFile;
+	return _environments[env].totFile;
 }
 
 bool Environments::has(Variables *variables, uint8 startEnv, int16 except) const {
@@ -252,9 +250,6 @@ bool Environments::getMedia(uint8 env) {
 Game::Game(GobEngine *vm) : _vm(vm) {
 	_captureCount = 0;
 
-	_curTotFile[0] = 0;
-	_totToLoad[0] = 0;
-
 	_startTimeKey = 0;
 	_mouseButtons = kMouseButtonsNone;
 
@@ -322,24 +317,20 @@ void Game::prepareStart() {
 }
 
 void Game::playTot(int16 function) {
-	char savedTotName[20];
-	int16 *oldCaptureCounter;
-	int16 *oldBreakFrom;
-	int16 *oldNestLevel;
-	int16 captureCounter = 0;
-	int16 breakFrom;
-	int16 nestLevel;
-
-	oldNestLevel = _vm->_inter->_nestLevel;
-	oldBreakFrom = _vm->_inter->_breakFromLevel;
-	oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
+	int16 *oldNestLevel      = _vm->_inter->_nestLevel;
+	int16 *oldBreakFrom      = _vm->_inter->_breakFromLevel;
+	int16 *oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
 
 	_script->push();
 
-	_vm->_inter->_nestLevel = &nestLevel;
-	_vm->_inter->_breakFromLevel = &breakFrom;
+	int16 captureCounter = 0;
+	int16 breakFrom;
+	int16 nestLevel;
+	_vm->_inter->_nestLevel         = &nestLevel;
+	_vm->_inter->_breakFromLevel    = &breakFrom;
 	_vm->_scenery->_pCaptureCounter = &captureCounter;
-	strcpy(savedTotName, _curTotFile);
+
+	Common::String oldTotFile;
 
 	if (function <= 0) {
 		while (!_vm->shouldQuit()) {
@@ -372,9 +363,9 @@ void Game::playTot(int16 function) {
 				_vm->_inter->initControlVars(0);
 
 			_vm->_draw->_cursorHotspotXVar = -1;
-			_totToLoad[0] = 0;
+			_totToLoad.clear();
 
-			if ((_curTotFile[0] == 0) && (!_script->isLoaded()))
+			if ((_curTotFile.empty()) && (!_script->isLoaded()))
 				break;
 
 			if (function == -2) {
@@ -411,7 +402,7 @@ void Game::playTot(int16 function) {
 
 			_vm->_inter->callSub(2);
 
-			if (_totToLoad[0] != 0)
+			if (!_totToLoad.empty())
 				_vm->_inter->_terminate = 0;
 
 			_vm->_draw->blitInvalidated();
@@ -439,10 +430,10 @@ void Game::playTot(int16 function) {
 
 			_vm->_draw->closeAllWin();
 
-			if (_totToLoad[0] == 0)
+			if (_totToLoad.empty())
 				break;
 
-			Common::strlcpy(_curTotFile, _totToLoad, 14);
+			_curTotFile = _totToLoad;
 
 		}
 	} else {
@@ -461,10 +452,10 @@ void Game::playTot(int16 function) {
 			_vm->_inter->_terminate = 2;
 	}
 
-	Common::strlcpy(_curTotFile, savedTotName, 14);
+	_curTotFile = oldTotFile;
 
-	_vm->_inter->_nestLevel = oldNestLevel;
-	_vm->_inter->_breakFromLevel = oldBreakFrom;
+	_vm->_inter->_nestLevel         = oldNestLevel;
+	_vm->_inter->_breakFromLevel    = oldBreakFrom;
 	_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
 
 	_script->pop();
@@ -642,7 +633,7 @@ void Game::start() {
 }
 
 // flagbits: 0 = freeInterVariables, 1 = function -1
-void Game::totSub(int8 flags, const char *newTotFile) {
+void Game::totSub(int8 flags, const Common::String &totFile) {
 	int8 curBackupPos;
 
 	if ((flags == 16) || (flags == 17)) {
@@ -673,8 +664,7 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 	if (flags & 5)
 		_vm->_inter->_variables = 0;
 
-	Common::strlcpy(_curTotFile, newTotFile, 10);
-	strcat(_curTotFile, ".TOT");
+	_curTotFile = totFile + ".TOT";
 
 	if (_vm->_inter->_terminate != 0) {
 		clearUnusedEnvironment();
@@ -728,7 +718,7 @@ void Game::switchTotSub(int16 index, int16 function) {
 	// WORKAROUND: Some versions don't make the MOVEMENT menu item unselectable
 	// in the dreamland screen, resulting in a crash when it's clicked.
 	if ((_vm->getGameType() == kGameTypeGob2) && (index == -1) && (function == 7) &&
-	    !scumm_stricmp(_environments->getTotFile(newPos), "gob06.tot"))
+	     _environments->getTotFile(newPos).equalsIgnoreCase("gob06.tot"))
 		return;
 
 	curBackupPos = _curEnvironment;

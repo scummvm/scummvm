@@ -26,6 +26,8 @@
 #ifndef GOB_GAME_H
 #define GOB_GAME_H
 
+#include "common/str.h"
+
 #include "gob/util.h"
 #include "gob/video.h"
 #include "gob/sound/sounddesc.h"
@@ -47,7 +49,7 @@ public:
 	void set(uint8 env);
 	void get(uint8 env) const;
 
-	const char *getTotFile(uint8 env) const;
+	const Common::String &getTotFile(uint8 env) const;
 
 	bool has(Variables *variables, uint8 startEnv = 0, int16 except = -1) const;
 	bool has(Script    *script   , uint8 startEnv = 0, int16 except = -1) const;
@@ -61,12 +63,12 @@ public:
 
 private:
 	struct Environment {
-		int32      cursorHotspotX;
-		int32      cursorHotspotY;
-		char       curTotFile[14];
-		Variables *variables;
-		Script    *script;
-		Resources *resources;
+		int32          cursorHotspotX;
+		int32          cursorHotspotY;
+		Common::String totFile;
+		Variables     *variables;
+		Script        *script;
+		Resources     *resources;
 	};
 
 	struct Media {
@@ -87,8 +89,8 @@ public:
 	Resources *_resources;
 	Hotspots  *_hotspots;
 
-	char _curTotFile[14];
-	char _totToLoad[20];
+	Common::String _curTotFile;
+	Common::String _totToLoad;
 
 	int32 _startTimeKey;
 	MouseButtons _mouseButtons;
@@ -122,7 +124,7 @@ public:
 			MouseButtons *pButtons = 0, char handleMouse = 0);
 	void start();
 
-	void totSub(int8 flags, const char *newTotFile);
+	void totSub(int8 flags, const Common::String &totFile);
 	void switchTotSub(int16 index, int16 function);
 
 protected:

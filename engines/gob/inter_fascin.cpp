@@ -133,12 +133,12 @@ void Inter_Fascination::oFascin_repeatUntil(OpFuncParams &params) {
 		flag = _vm->_game->_script->evalBoolResult();
 
 		// WORKAROUND: The script of the PC version of Fascination, when the protection check
-		// fails, writes on purpose everywhere in the memory in order to hang the computer. 
+		// fails, writes on purpose everywhere in the memory in order to hang the computer.
 		// This results in a crash in Scummvm. This workaround avoids that crash.
 		if (_vm->getPlatform() == Common::kPlatformPC) {
-			if ((!scumm_stricmp(_vm->_game->_curTotFile, "INTRO1.TOT") && (blockPos == 3533)) ||
-				(!scumm_stricmp(_vm->_game->_curTotFile, "INTRO2.TOT") && (blockPos == 3519)) ||
-				(!scumm_stricmp(_vm->_game->_curTotFile, "INTRO2.TOT") && (blockPos == 3265)))  //PC Hebrew
+			if ((_vm->_game->_curTotFile.equalsIgnoreCase("INTRO1.TOT") && (blockPos == 3533)) ||
+			    (_vm->_game->_curTotFile.equalsIgnoreCase("INTRO2.TOT") && (blockPos == 3519)) ||
+			    (_vm->_game->_curTotFile.equalsIgnoreCase("INTRO2.TOT") && (blockPos == 3265)))  //PC Hebrew
 				_terminate = 1;
 		}
 	} while (!flag && !_break && !_terminate && !_vm->shouldQuit());

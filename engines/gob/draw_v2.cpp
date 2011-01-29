@@ -196,7 +196,7 @@ void Draw_v2::printTotText(int16 id) {
 	// WORKAROUND: In the scripts of some Gobliins 2 versions, the dialog text IDs
 	// for Fingus and the mayor are swapped.
 	if ((_vm->getGameType() == kGameTypeGob2) && !_vm->isCD() &&
-	    (!scumm_stricmp(_vm->_game->_curTotFile, "gob07.tot"))) {
+	    _vm->_game->_curTotFile.equalsIgnoreCase("gob07.tot")) {
 
 		if (id == 24) {
 			if (_mayorWorkaroundStatus == 1) {

@@ -657,7 +657,7 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 	uint16 offset = _vm->_game->_script->readUint16();
 
 	debugC(5, kDebugGameFlow, "tot = \"%s\", offset = %d",
-			_vm->_game->_curTotFile, offset);
+			_vm->_game->_curTotFile.c_str(), offset);
 
 	if (offset < 128) {
 		warning("Inter_v1::o1_callSub(): Offset %d points into the header. "
@@ -666,14 +666,14 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 	}
 
 	// Skipping the copy protection screen in Gobliiins
-	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob1) && (offset == 3905)
-			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot.c_str())) {
+	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob1) && (offset == 3905) &&
+	    _vm->_game->_curTotFile.equalsIgnoreCase(_vm->_startTot)) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return;
 	}
 	// Skipping the copy protection screen in Gobliins 2
-	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob2) && (offset == 1746)
-			&& !scumm_stricmp(_vm->_game->_curTotFile, "intro0.tot")) {
+	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob2) && (offset == 1746) &&
+	    _vm->_game->_curTotFile.equalsIgnoreCase("intro0.tot")) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return;
 	}
@@ -809,7 +809,7 @@ void Inter_v1::o1_if(OpFuncParams &params) {
 
 	// WORKAROUND: Gob1 goblin stuck on reload bugs present in original - bugs #3018918 and 3065914
 	if ((_vm->getGameType() == kGameTypeGob1) && (_vm->_game->_script->pos() == 2933) &&
-			!scumm_stricmp(_vm->_game->_curTotFile, "inter.tot") && VAR(285) != 0) {
+			_vm->_game->_curTotFile.equalsIgnoreCase("inter.tot") && VAR(285) != 0) {
 		warning("Workaround for Gob1 Goblin Stuck On Reload Bug applied...");
 		// VAR(59) actually locks goblin movement, but these variables trigger this in the script.
 		WRITE_VAR(285, 0);
@@ -888,7 +888,7 @@ void Inter_v1::o1_loadSpriteToPos(OpFuncParams &params) {
 
 	// WORKAROUND: The EGA version of Gobliiins 1 has an invalid expression there
 	if (_vm->isEGA() && (_vm->_game->_script->pos() == 1398) &&
-			!scumm_stricmp(_vm->_game->_curTotFile, "intro.tot")) {
+			_vm->_game->_curTotFile.equalsIgnoreCase("intro.tot")) {
 
 		_vm->_draw->_destSpriteY = 0;
 		_vm->_game->_script->skip(1);
@@ -958,27 +958,19 @@ void Inter_v1::o1_printText(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_loadTot(OpFuncParams &params) {
-	char buf[20];
-	int8 size;
-
 	if ((_vm->_game->_script->peekByte() & 0x80) != 0) {
 		_vm->_game->_script->skip(1);
 		_vm->_game->_script->evalExpr(0);
-		Common::strlcpy(buf, _vm->_game->_script->getResultStr(), 16);
+		_vm->_game->_totToLoad = _vm->_game->_script->getResultStr();
 	} else {
-		size = _vm->_game->_script->readInt8();
-		memcpy(buf, _vm->_game->_script->readString(size), size);
-		buf[size] = '\0';
+		uint8 size = _vm->_game->_script->readInt8();
+		_vm->_game->_totToLoad = Common::String(_vm->_game->_script->readString(size), size);
 	}
 
-//	if (_vm->getGameType() == kGameTypeGeisha)
-//		strcat(buf, ".0ot");
-//	else
-	strcat(buf, ".tot");
+	_vm->_game->_totToLoad += ".tot";
 
 	if (_terminate != 2)
 		_terminate = 1;
-	strcpy(_vm->_game->_totToLoad, buf);
 }
 
 void Inter_v1::o1_palLoad(OpFuncParams &params) {
@@ -1199,7 +1191,7 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	// the counting, too.
 	if ((_vm->getGameType() == kGameTypeWeen) && (VAR(59) < 4000) &&
 	    (_vm->_game->_script->pos() == 729) &&
-	    !scumm_stricmp(_vm->_game->_curTotFile, "intro5.tot"))
+	    _vm->_game->_curTotFile.equalsIgnoreCase("intro5.tot"))
 		WRITE_VAR(59, 4000);
 
 	switch (cmd) {
