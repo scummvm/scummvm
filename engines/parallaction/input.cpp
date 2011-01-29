@@ -25,6 +25,7 @@
 
 #include "common/events.h"
 #include "common/system.h"
+#include "graphics/cursorman.h"
 
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
@@ -444,11 +445,11 @@ void Input::setMouseState(MouseTriState state) {
 	switch (_mouseState) {
 	case MOUSE_ENABLED_HIDE:
 	case MOUSE_DISABLED:
-		_vm->_system->showMouse(false);
+		CursorMan.showMouse(false);
 		break;
 
 	case MOUSE_ENABLED_SHOW:
-		_vm->_system->showMouse(true);
+		CursorMan.showMouse(true);
 		break;
 	}
 }
@@ -519,14 +520,14 @@ void Input::setArrowCursor() {
 		// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
 		stopHovering();
 		_activeItem._id = 0;
-		_vm->_system->setMouseCursor(_mouseArrow->getData(0), MOUSEARROW_WIDTH_NS, MOUSEARROW_HEIGHT_NS, 0, 0, 0);
+		CursorMan.replaceCursor(_mouseArrow->getData(0), MOUSEARROW_WIDTH_NS, MOUSEARROW_HEIGHT_NS, 0, 0, 0);
 		break;
 
 	case GType_BRA: {
 		Common::Rect r;
 		_mouseArrow->getRect(0, r);
-		_vm->_system->setMouseCursor(_mouseArrow->getData(0), r.width(), r.height(), 0, 0, 0);
-		_vm->_system->showMouse(true);
+		CursorMan.replaceCursor(_mouseArrow->getData(0), r.width(), r.height(), 0, 0, 0);
+		CursorMan.showMouse(true);
 		_activeItem._id = 0;
 		break;
 	}
@@ -545,7 +546,7 @@ void Input::setInventoryCursor(ItemName name) {
 		byte *v8 = _comboArrow->getData(0);
 		// FIXME: destination offseting is not clear
 		_vm->_inventoryRenderer->drawItem(name, v8 + 7 * MOUSECOMBO_WIDTH_NS + 7, MOUSECOMBO_WIDTH_NS);
-		_vm->_system->setMouseCursor(v8, MOUSECOMBO_WIDTH_NS, MOUSECOMBO_HEIGHT_NS, 0, 0, 0);
+		CursorMan.replaceCursor(v8, MOUSECOMBO_WIDTH_NS, MOUSECOMBO_HEIGHT_NS, 0, 0, 0);
 		break;
 	}
 
@@ -555,7 +556,7 @@ void Input::setInventoryCursor(ItemName name) {
 		memcpy(dst, src, _comboArrow->getSize(0));
 		// FIXME: destination offseting is not clear
 		_vm->_inventoryRenderer->drawItem(name, dst + _mouseComboProps_BR._yOffset * _mouseComboProps_BR._width + _mouseComboProps_BR._xOffset, _mouseComboProps_BR._width);
-		_vm->_system->setMouseCursor(dst, _mouseComboProps_BR._width, _mouseComboProps_BR._height, 0, 0, 0);
+		CursorMan.replaceCursor(dst, _mouseComboProps_BR._width, _mouseComboProps_BR._height, 0, 0, 0);
 		break;
 	}
 
