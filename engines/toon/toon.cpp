@@ -472,7 +472,7 @@ void ToonEngine::doMagnifierEffect() {
 void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 	// render cursor last
 	if (!_gameState->_mouseHidden) {
-		if (_cursorAnimationInstance->getFrame() == 7) // magnifier icon needs a special effect
+		if (_cursorAnimationInstance->getFrame() == 7 && _cursorAnimationInstance->getAnimation() == _cursorAnimation) // magnifier icon needs a special effect
 			doMagnifierEffect();
 		_cursorAnimationInstance->setPosition(_mouseX - 40 + state()->_currentScrollValue - _cursorOffsetX, _mouseY - 40 - _cursorOffsetY, 0, false);
 		_cursorAnimationInstance->render();
