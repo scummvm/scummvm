@@ -402,6 +402,11 @@ void ToonEngine::render() {
 	}
 #endif
 
+	if (_needPaletteFlush) {
+		flushPalette(false);
+		_needPaletteFlush = false;
+	}
+
 	if (_firstFrame) {
 		copyToVirtualScreen(false);
 		fadeIn(5);
@@ -544,6 +549,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 	Picture *mainmenuPicture = new Picture(this);
 	mainmenuPicture->loadPicture("TITLESCR.CPS", true);
 	mainmenuPicture->setupPalette();
+	flushPalette(false);
 
 	MainMenuEntry entries[MAINMENU_ENTRYCOUNT];
 
@@ -894,8 +900,13 @@ ToonEngine::~ToonEngine() {
 	delete _console;
 }
 
-void ToonEngine::flushPalette() {
+void ToonEngine::flushPalette(bool deferFlushToNextRender) {
 
+	if (deferFlushToNextRender) {
+		_needPaletteFlush = true;
+		return;
+	}
+	_needPaletteFlush = false;
 	uint8 vmpalette[1024];
 	for (int32 i = 0; i < 256; i++) {
 		vmpalette[i*4+0] = _finalPalette[i*3+0];
@@ -907,14 +918,7 @@ void ToonEngine::flushPalette() {
 }
 void ToonEngine::setPaletteEntries(uint8 *palette, int32 offset, int32 num) {
 	memcpy(_finalPalette + offset * 3, palette, num * 3);
-	uint8 vmpalette[1024];
-	for (int32 i = 0; i < num; i++) {
-		vmpalette[i*4+0] = palette[i*3+0];
-		vmpalette[i*4+1] = palette[i*3+1];
-		vmpalette[i*4+2] = palette[i*3+2];
-		vmpalette[i*4+3] = 0;
-	}
-	_system->setPalette(vmpalette, offset, num);
+	flushPalette();
 }
 
 void ToonEngine::simpleUpdate(bool waitCharacterToTalk) {
@@ -1753,14 +1757,17 @@ void ToonEngine::fadeIn(int32 numFrames) {
 }
 
 void ToonEngine::fadeOut(int32 numFrames) {
-	for (int32 f = 0; f < numFrames; f++) {
 
+	uint8 oldpalette[1024];
+	_system->grabPalette(oldpalette, 0, 256);
+
+	for (int32 f = 0; f < numFrames; f++) {
 		uint8 vmpalette[1024];
 		for (int32 i = 0; i < 256; i++) {
-			vmpalette[i*4+0] = (numFrames - f - 1) * _finalPalette[i*3+0] / (numFrames - 1);
-			vmpalette[i*4+1] = (numFrames - f - 1) * _finalPalette[i*3+1] / (numFrames - 1);
-			vmpalette[i*4+2] = (numFrames - f - 1) * _finalPalette[i*3+2] / (numFrames - 1);
-			vmpalette[i*4+3] = (numFrames - f - 1);
+			vmpalette[i*4+0] = (numFrames - f - 1) * oldpalette[i*4+0] / (numFrames - 1);
+			vmpalette[i*4+1] = (numFrames - f - 1) * oldpalette[i*4+1] / (numFrames - 1);
+			vmpalette[i*4+2] = (numFrames - f - 1) * oldpalette[i*4+2] / (numFrames - 1);
+			vmpalette[i*4+3] = 255;
 		}
 		_system->setPalette(vmpalette, 0, 256);
 		_system->updateScreen();
@@ -3204,6 +3211,20 @@ bool ToonEngine::loadGame(int32 slot) {
 		delete[] buf;
 	}
 	delete loadFile;
+
+	// setup correct palette if we are in a closeup/cutaway or not.
+	if (_gameState->_inCloseUp) {
+		_gameState->_inCloseUp = false;
+		flipScreens();
+	} else if (_gameState->_inCutaway) {
+		_currentCutaway->setupPalette();
+		setupGeneralPalette();
+	} else {
+		_currentPicture->setupPalette();
+		setupGeneralPalette();
+	}
+	flushPalette();
+
 	return true;
 }
 

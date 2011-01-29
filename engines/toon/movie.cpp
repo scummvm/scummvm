@@ -87,7 +87,7 @@ void Movie::play(Common::String video, int32 flags) {
 		_vm->getAudioManager()->setMusicVolume(0);
 	_decoder->loadFile(video.c_str(), flags);
 	playVideo();
-	_vm->flushPalette();
+	_vm->flushPalette(false);
 	if (flags & 1)
 		_vm->getAudioManager()->setMusicVolume(_vm->getAudioManager()->isMusicMuted() ? 0 : 255);
 	_decoder->close();

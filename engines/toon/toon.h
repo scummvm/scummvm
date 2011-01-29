@@ -115,7 +115,7 @@ public:
 	void unloadToonDat();
 	void setPaletteEntries(uint8 *palette, int32 offset, int32 num);
 	void fixPaletteEntries(uint8 *palette, int num);
-	void flushPalette();
+	void flushPalette(bool deferFlushToNextRender = true);
 	void parseInput();
 	void initChapter();
 	void initFonts();
@@ -425,6 +425,7 @@ protected:
 	bool _firstFrame;
 	bool _isDemo;
 	bool _showConversationText;
+	bool _needPaletteFlush;
 private:
 	ToonConsole *_console;
 };
