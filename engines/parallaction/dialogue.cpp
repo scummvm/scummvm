@@ -24,6 +24,7 @@
  */
 
 #include "common/events.h"
+#include "common/debug-channels.h"
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
@@ -161,6 +162,19 @@ void DialogueManager::transitionToState(DialogueState newState) {
 	
 	if (_state != newState) {
 		debugC(3, kDebugDialogue, "DialogueManager moved to state '%s'", dialogueStates[newState]);
+
+		if (DebugMan.isDebugChannelEnabled(kDebugDialogue) && gDebugLevel == 9) {			
+			switch (newState) {
+				case RUN_QUESTION:
+					debug("  Q  : %s", _q->_text.c_str());
+					break;
+				case RUN_ANSWER:
+					for (int i = 0; i < _numVisAnswers; ++i) {
+						debug("  A%02i: %s", i, _visAnswers[i]._a->_text.c_str());
+					}
+					break;
+			}
+		}
 	}
 
 	_state = newState;
