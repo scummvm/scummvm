@@ -39,6 +39,7 @@
 #include "hugo/display.h"
 #include "hugo/inventory.h"
 #include "hugo/util.h"
+#include "hugo/object.h"
 
 namespace Hugo {
 Screen::Screen(HugoEngine *vm) : _vm(vm), _mainPalette(0), _curPalette(0) {
@@ -494,19 +495,19 @@ void Screen::drawRectangle(bool filledFl, int16 x1, int16 y1, int16 x2, int16 y2
 	assert(y1 <= y2);
 
 	if (filledFl) {
-		for (int i = y1; i < y2; i++) {
-			for (int j = x1; j < x2; j++) {
+		for (int i = y1; i <= CLIP<int16>(y2, 0, 200); i++) {
+			for (int j = x1; j <= CLIP<int16>(x2, 0, 320); j++) {
 				_backBuffer[320 * i + j] = color;
 				_frontBuffer[320 * i + j] = color;
 				_backBufferBackup[320 * i + j] = color;
 			}
 		}
 	} else {
-		for (int i = y1; i < y2; i++) {
+		for (int i = y1; i <= CLIP<int16>(y2, 0, 200); i++) {
 			_frontBuffer[320 * i + x1] = color;
 			_frontBuffer[320 * i + x2] = color;
 		}
-		for (int i = x1; i < x2; i++) {
+		for (int i = x1; i < CLIP<int16>(x2, 0, 320); i++) {
 			_frontBuffer[320 * y1 + i] = color;
 			_frontBuffer[320 * y2 + i] = color;
 		}
@@ -614,7 +615,10 @@ bool Screen::isOverlaping(rect_t *rectA, rect_t *rectB) {
 }
 
 /**
-* Display exit hotspots in God Mode
+* Display exit hotspots in God Mode ('PPG')
+* Light Red   = Exit hotspots
+* Light Green = Visible objects
+* White       = Fixed objects, parts of background
 */
 void Screen::drawHotspots() {
 	if (!_vm->getGameStatus().godModeFl)
@@ -624,6 +628,17 @@ void Screen::drawHotspots() {
 		hotspot_t *hotspot = &_vm->_hotspots[i];
 		if (hotspot->screenIndex == _vm->_hero->screenIndex)
 			drawRectangle(false, hotspot->x1, hotspot->y1, hotspot->x2, hotspot->y2, _TLIGHTRED);
+	}
+
+	for (int i = 0; i < _vm->_object->_numObj; i++) {
+		object_t *obj = &_vm->_object->_objects[i]; // Get pointer to object
+		if (obj->screenIndex == *_vm->_screen_p) {
+			if ((obj->currImagePtr != 0) && (obj->cycling != kCycleInvisible))
+				drawRectangle(false, obj->x + obj->currImagePtr->x1, obj->y + obj->currImagePtr->y1, 
+				                     obj->x + obj->currImagePtr->x2, obj->y + obj->currImagePtr->y2, _TLIGHTGREEN);
+			else if ((obj->currImagePtr == 0) && (obj->vxPath != 0) && !obj->carriedFl)
+				drawRectangle(false, obj->oldx, obj->oldy, obj->oldx + obj->vxPath, obj->oldy + obj->vyPath, _TBRIGHTWHITE);
+		}
 	}
 	g_system->copyRectToScreen(_frontBuffer, 320, 0, 0, 320, 200);
 }
