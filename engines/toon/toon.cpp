@@ -178,29 +178,31 @@ void ToonEngine::parseInput() {
 
 	Common::Event event;
 	while (_event->pollEvent(event)) {
+
+		bool hasModifier = event.kbd.hasFlags(Common::KBD_ALT|Common::KBD_CTRL|Common::KBD_SHIFT);
 		switch (event.type) {
 		case Common::EVENT_KEYUP:
-			if ((event.kbd.ascii == 27 || event.kbd.ascii == 32) && !event.kbd.flags) {
+			if ((event.kbd.ascii == 27 || event.kbd.ascii == 32) && !hasModifier) {
 				_audioManager->stopCurrentVoice();
 			}
-			if (event.kbd.keycode == Common::KEYCODE_F5 && !event.kbd.flags) {
+			if (event.kbd.keycode == Common::KEYCODE_F5 && !hasModifier) {
 				if(canSaveGameStateCurrently())
 					saveGame(-1, Common::String());
 			}
-			if (event.kbd.keycode == Common::KEYCODE_F6 && !event.kbd.flags) {
+			if (event.kbd.keycode == Common::KEYCODE_F6 && !hasModifier) {
 				if(canLoadGameStateCurrently())
 					loadGame(-1);
 			}
-			if (event.kbd.ascii == 't' && !event.kbd.flags) {
+			if (event.kbd.ascii == 't' && !hasModifier) {
 				_showConversationText = !_showConversationText;
 			}
-			if (event.kbd.ascii == 'm' && !event.kbd.flags) {
+			if (event.kbd.ascii == 'm' && !hasModifier) {
 				_audioManager->muteMusic(!_audioManager->isMusicMuted());
 			}
-			if (event.kbd.ascii == 'd' && !event.kbd.flags) {
+			if (event.kbd.ascii == 'd' && !hasModifier) {
 				_audioManager->muteVoice(!_audioManager->isVoiceMuted());
 			}
-			if (event.kbd.ascii == 's' && !event.kbd.flags) {
+			if (event.kbd.ascii == 's' && !hasModifier) {
 				_audioManager->muteSfx(!_audioManager->isSfxMuted());
 			}
 
@@ -217,7 +219,6 @@ void ToonEngine::parseInput() {
 						char buf[256];
 						snprintf(buf, 256, "Could not quick save into slot #%d", slotNum);
 						GUI::MessageDialog dialog2(buf, "OK", 0);
-						//warning("%s", buf);
 						dialog2.runModal();
 
 					}
@@ -248,19 +249,6 @@ void ToonEngine::parseInput() {
 				}
 			}
 			break;
-// Strangerke - Commented (not used)
-//		case Common::EVENT_LBUTTONDOWN:
-//			break;
-//		case Common::EVENT_RBUTTONDOWN:
-//			break;
-//		case Common::EVENT_LBUTTONUP:
-//			break;
-//		case Common::EVENT_RBUTTONUP:
-//			break;
-//		case Common::EVENT_WHEELUP:
-//			break;
-//		case Common::EVENT_WHEELDOWN:
-//			break;
 		default:
 			break;
 		}
