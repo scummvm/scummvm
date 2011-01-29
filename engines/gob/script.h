@@ -85,7 +85,7 @@ public:
 
 	// Higher-level expression parsing functions
 	char evalExpr(int16 *pRes);
-	bool evalBoolResult();
+	bool evalBool();
 
 	// Accessing the result of expressions
 	int32 getResultInt() const;

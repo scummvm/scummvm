@@ -308,7 +308,7 @@ char Script::evalExpr(int16 *pRes) {
 	return type;
 }
 
-bool Script::evalBoolResult() {
+bool Script::evalBool() {
 	byte type;
 
 	_expression->printExpr(99);

@@ -130,7 +130,7 @@ void Inter_Fascination::oFascin_repeatUntil(OpFuncParams &params) {
 
 		_vm->_game->_script->seek(blockPos + size + 1);
 
-		flag = _vm->_game->_script->evalBoolResult();
+		flag = _vm->_game->_script->evalBool();
 
 		// WORKAROUND: The script of the PC version of Fascination, when the protection check
 		// fails, writes on purpose everywhere in the memory in order to hang the computer.

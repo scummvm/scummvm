@@ -755,7 +755,7 @@ void Inter_v1::o1_repeatUntil(OpFuncParams &params) {
 
 		_vm->_game->_script->seek(blockPos + size + 1);
 
-		flag = _vm->_game->_script->evalBoolResult();
+		flag = _vm->_game->_script->evalBool();
 	} while (!flag && !_break && !_terminate && !_vm->shouldQuit());
 
 	_nestLevel[0]--;
@@ -774,7 +774,7 @@ void Inter_v1::o1_whileDo(OpFuncParams &params) {
 	do {
 		uint32 startPos = _vm->_game->_script->pos();
 
-		flag = _vm->_game->_script->evalBoolResult();
+		flag = _vm->_game->_script->evalBool();
 
 		if (_terminate)
 			return;
@@ -815,7 +815,7 @@ void Inter_v1::o1_if(OpFuncParams &params) {
 		WRITE_VAR(285, 0);
 	}
 
-	boolRes = _vm->_game->_script->evalBoolResult();
+	boolRes = _vm->_game->_script->evalBool();
 	if (boolRes) {
 		if ((params.counter == params.cmdCount) && (params.retFlag == 2)) {
 			params.doReturn = true;
