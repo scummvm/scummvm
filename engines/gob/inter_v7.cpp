@@ -166,13 +166,9 @@ void Inter_v7::o7_draw0x89() {
 }
 
 void Inter_v7::o7_findFile() {
-	const char *file = _vm->_game->_script->evalString();
-	uint16 pathIndex = _vm->_game->_script->readVarIndex();
+	Common::String file = getFile(_vm->_game->_script->evalString());
 
-	if (!strncmp(file, "<ME>", 4))
-		file += 4;
-	if (!strncmp(file, "<ALLCD>", 7))
-		file += 7;
+	uint16 pathIndex = _vm->_game->_script->readVarIndex();
 
 	Common::ArchiveMemberList files;
 
@@ -243,11 +239,7 @@ void Inter_v7::o7_zeroVar() {
 }
 
 void Inter_v7::o7_getINIValue() {
-	const char *file = _vm->_game->_script->evalString();
-	if (!strncmp(file, "<ME>", 4))
-		file += 4;
-	else if (!strncmp(file, "<ALLCD>", 7))
-		file += 7;
+	Common::String file = getFile(_vm->_game->_script->evalString());
 
 	Common::String section = _vm->_game->_script->evalString();
 	Common::String key     = _vm->_game->_script->evalString();
@@ -260,11 +252,7 @@ void Inter_v7::o7_getINIValue() {
 }
 
 void Inter_v7::o7_setINIValue() {
-	const char *file = _vm->_game->_script->evalString();
-	if (!strncmp(file, "<ME>", 4))
-		file += 4;
-	else if (!strncmp(file, "<ALLCD>", 7))
-		file += 7;
+	Common::String file = getFile(_vm->_game->_script->evalString());
 
 	Common::String section = _vm->_game->_script->evalString();
 	Common::String key     = _vm->_game->_script->evalString();

@@ -210,47 +210,20 @@ void Inter_Playtoons::oPlaytoons_freeSprite(OpFuncParams &params) {
 }
 
 void Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
-	const char *file = _vm->_game->_script->evalString();
+	Common::String file = getFile(_vm->_game->_script->evalString());
 
 	uint16 varOff = _vm->_game->_script->readVarIndex();
 
-	// WORKAROUND: In Playtoons games, some files are read on CD (and only on CD).
-	// In this case, "@:\" is replaced by the CD drive letter.
-	// As the files are copied on the HDD, those characters are skipped.
-	if (strncmp(file, "@:\\", 3) == 0) {
-		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", file + 3, file);
-		file += 3;
-	}
-	if (strncmp(file, "<ME>", 4) == 0) {
-		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", file + 4, file);
-		file += 4;
-	}
-	if (strncmp(file, "<CD>", 4) == 0) {
-		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", file + 4, file);
-		file += 4;
-	}
-	if (strncmp(file, "<STK>", 5) == 0) {
-		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", file + 5, file);
-		file += 5;
-	}
-
-	// WORKAROUND: In the Playtoons stick files found in german Addy 4, some paths are hardcoded
-	const char *backSlash = strrchr(file, '\\');
-	if (backSlash) {
-		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", backSlash + 1, file);
-		file = backSlash + 1;
-	}
-
 	int32 size   = -1;
 	int16 handle = 1;
-	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
 	if (mode == SaveLoad::kSaveModeNone) {
 		size = _vm->_dataIO->fileSize(file);
 		if (size == -1)
-			warning("File \"%s\" not found", file);
+			warning("File \"%s\" not found", file.c_str());
 
 	} else if (mode == SaveLoad::kSaveModeSave)
-		size = _vm->_saveLoad->getSize(file);
+		size = _vm->_saveLoad->getSize(file.c_str());
 	else if (mode == SaveLoad::kSaveModeExists)
 		size = 23;
 
@@ -258,37 +231,29 @@ void Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 		handle = -1;
 
 	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d",
-			file, size);
+			file.c_str(), size);
 
 	WRITE_VAR_OFFSET(varOff, handle);
 	WRITE_VAR(16, (uint32) size);
 }
 
 void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
-	const char *file = _vm->_game->_script->evalString();
+	Common::String file = getFile(_vm->_game->_script->evalString());
 
 	uint16 dataVar = _vm->_game->_script->readVarIndex();
 	int32  size    = _vm->_game->_script->readValExpr();
 	int32  offset  = _vm->_game->_script->evalInt();
 	int32  retSize = 0;
 
-	// WORKAROUND: In Playtoons games, some files are read on CD (and only on CD).
-	// In this case, "@:\" is replaced by the CD drive letter.
-	// As the files are copied on the HDD, those characters are skipped.
-	if (strncmp(file, "@:\\", 3) == 0) {
-		debugC(2, kDebugFileIO, "oPlaytoons_readData: \"%s\" instead of \"%s\"", file + 3, file);
-		file += 3;
-	}
-
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
-			file, dataVar, size, offset);
+			file.c_str(), dataVar, size, offset);
 
-	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
 	if (mode == SaveLoad::kSaveModeSave) {
 
 		WRITE_VAR(1, 1);
 
-		if (!_vm->_saveLoad->load(file, dataVar, size, offset)) {
+		if (!_vm->_saveLoad->load(file.c_str(), dataVar, size, offset)) {
 			GUI::MessageDialog dialog("Failed to load game state from file.");
 			dialog.runModal();
 		} else
@@ -300,8 +265,7 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 		return;
 
 	if (size < 0) {
-		warning("Attempted to read a raw sprite from file \"%s\"",
-				file);
+		warning("Attempted to read a raw sprite from file \"%s\"", file.c_str());
 		return;
 	} else if (size == 0) {
 		dataVar = 0;
@@ -323,7 +287,7 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 	_vm->_draw->animateCursor(4);
 	if (offset > stream->size()) {
 		warning("oPlaytoons_readData: File \"%s\", Offset (%d) > file size (%d)",
-				file, offset, stream->size());
+				file.c_str(), offset, stream->size());
 		delete stream;
 		return;
 	}
@@ -408,21 +372,36 @@ void Inter_Playtoons::oPlaytoons_copyFile() {
 }
 
 void Inter_Playtoons::oPlaytoons_openItk() {
-	const char *fileName  = _vm->_game->_script->evalString();
-	const char *backSlash = strrchr(fileName, '\\');
-
-	Common::String file;
-	if (backSlash) {
-		debugC(2, kDebugFileIO, "Opening ITK file \"%s\" instead of \"%s\"",
-				backSlash + 1, fileName);
-		file = backSlash + 1;
-	} else
-		file = fileName;
-
+	Common::String file = getFile(_vm->_game->_script->evalString());
 	if (!file.contains('.'))
 		file += ".ITK";
 
 	_vm->_dataIO->openArchive(file, false);
+}
+
+Common::String Inter_Playtoons::getFile(const char *path) {
+	const char *orig = path;
+
+	if      (!strncmp(path, "@:\\", 3))
+		path += 3;
+	else if (!strncmp(path, "<ME>", 4))
+		path += 4;
+	else if (!strncmp(path, "<CD>", 4))
+		path += 4;
+	else if (!strncmp(path, "<STK>", 5))
+		path += 5;
+	else if (!strncmp(path, "<ALLCD>", 7))
+		path += 7;
+
+	const char *backslash = strrchr(path, '\\');
+	if (backslash)
+		path = backslash + 1;
+
+	if (orig != path)
+		debugC(2, kDebugFileIO, "Inter_Playtoons::getFile(): Evaluating path"
+				"\"%s\" to \"%s\"", orig, path);
+
+	return path;
 }
 
 } // End of namespace Gob

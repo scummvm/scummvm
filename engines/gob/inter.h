@@ -583,6 +583,8 @@ protected:
 	void oPlaytoons_CD_25();
 	void oPlaytoons_copyFile();
 	void oPlaytoons_openItk();
+
+	Common::String getFile(const char *path);
 };
 
 class Inter_v7 : public Inter_Playtoons {
