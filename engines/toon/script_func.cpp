@@ -243,6 +243,7 @@ int32 ScriptFunc::sys_Cmd_Dummy(EMCState *state) {
 
 int32 ScriptFunc::sys_Cmd_Change_Actor_X_And_Y(EMCState *state) {
 	_vm->getDrew()->forcePosition(stackPos(0), stackPos(1));
+	//_vm->getDrew()->resetScale();
 	return 0;
 }
 
@@ -755,7 +756,7 @@ int32 ScriptFunc::sys_Cmd_Query_Speech(EMCState *state) {
 
 int32 ScriptFunc::sys_Cmd_Enter_New_Scene(EMCState *state) {
 	_vm->exitScene();
-	_vm->getDrew()->setFacing(stackPos(1));
+	_vm->getDrew()->forceFacing(stackPos(1));
 	_vm->loadScene(stackPos(0));
 	_vm->setSceneAnimationScriptUpdate(false);
 
