@@ -281,18 +281,20 @@ void DialogueManager::nextAnswer() {
 		return;
 	}
 
-	if (!_q->_answers[0]->_text.compareToIgnoreCase("NULL")) {
-		addVisibleAnswers(_q);
-		if (_numVisAnswers) {
-			_answerId = _visAnswers[0]._index;
-			transitionToState(NEXT_QUESTION);
-		} else {
-			transitionToState(DIALOGUE_OVER);
-		}
+	// try and check if there are any suitable answers, 
+	// given the current game state
+	addVisibleAnswers(_q);
+	if (!_numVisAnswers) {
+		transitionToState(DIALOGUE_OVER);
 		return;
 	}
-
-	transitionToState(displayAnswers() ? RUN_ANSWER : DIALOGUE_OVER);
+	
+	if (!_visAnswers[0]._a->_text.compareToIgnoreCase("NULL")) {
+		_answerId = _visAnswers[0]._index;
+		transitionToState(NEXT_QUESTION);
+	} else {
+		transitionToState(displayAnswers() ? RUN_ANSWER : DIALOGUE_OVER);
+	}
 }
 
 void DialogueManager::runAnswer() {
