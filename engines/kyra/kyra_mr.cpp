@@ -121,6 +121,7 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_curDlgChapter = _curDlgIndex = _curDlgLang = -1;
 	_isStartupDialog = 0;
 	_stringBuffer = 0;
+	_menu = 0;
 	_menuAnim = 0;
 	_dialogSceneAnim = _dialogSceneScript = -1;
 	memset(&_dialogScriptData, 0, sizeof(_dialogScriptData));
@@ -153,11 +154,10 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 }
 
 KyraEngine_MR::~KyraEngine_MR() {
+	uninitMainMenu();
+
 	delete _screen;
 	delete _soundDigital;
-
-	delete _menuAnim;
-	_menuAnim = 0;
 
 	delete[] _itemBuffer1;
 	delete[] _itemBuffer2;

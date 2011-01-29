@@ -165,6 +165,7 @@ private:
 	void initMainMenu();
 	void uninitMainMenu();
 
+	MainMenu *_menu;
 	WSAMovie_v2 *_menuAnim;
 
 	// timer

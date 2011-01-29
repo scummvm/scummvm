@@ -293,6 +293,8 @@ protected:
 	void seq_scrollPage(int bottom, int top);
 	void seq_showStarcraftLogo();
 
+	MainMenu *_menu;
+
 	void seq_init();
 	void seq_uninit();
 

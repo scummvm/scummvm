@@ -74,8 +74,6 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 
 	_pauseStart = 0;
 
-	_menu = 0;
-
 	_lang = 0;
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 	if (lang == _flags.fanLang && _flags.replacedLang != Common::UNK_LANG)
@@ -119,9 +117,6 @@ KyraEngine_v2::~KyraEngine_v2() {
 	delete[] _sceneList;
 
 	_emc->unload(&_sceneScriptData);
-
-	delete _menu;
-	_menu = 0;
 
 	delete[] _animObjects;
 
