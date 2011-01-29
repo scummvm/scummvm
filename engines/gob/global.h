@@ -132,7 +132,6 @@ public:
 	int16 _debugFlag;
 	int16 _inVM;
 
-	byte *_inter_execPtr;
 	int16 _inter_animDataSize;
 
 	int16 _inter_mouseX;
