@@ -131,20 +131,26 @@ void Inter_v7::o7_intToString() {
 }
 
 void Inter_v7::o7_callFunction() {
-	Common::String str0 = _vm->_game->_script->evalString();
-	Common::String str1 = _vm->_game->_script->evalString();
+	Common::String tot      = _vm->_game->_script->evalString();
+	Common::String function = _vm->_game->_script->evalString();
 
-	int16 expr0 = _vm->_game->_script->readValExpr();
+	int16 param = _vm->_game->_script->readValExpr();
 
-	warning("Addy Stub: Call function: \"%s\", \"%s\", %d", str0.c_str(), str1.c_str(), expr0);
+	if (!tot.contains('.'))
+		tot += ".TOT";
+
+	_vm->_game->callFunction(tot, function, param);
 }
 
 void Inter_v7::o7_loadFunctions() {
-	Common::String str0 = _vm->_game->_script->evalString();
+	Common::String tot = _vm->_game->_script->evalString();
 
-	int16 expr0 = _vm->_game->_script->readValExpr();
+	int16 flags = _vm->_game->_script->readValExpr();
 
-	warning("Addy Stub: Load functions: \"%s\", %d", str0.c_str(), expr0);
+	if (!tot.contains('.'))
+		tot += ".TOT";
+
+	_vm->_game->loadFunctions(tot, flags);
 }
 
 void Inter_v7::o7_draw0x89() {

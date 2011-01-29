@@ -247,7 +247,205 @@ bool Environments::getMedia(uint8 env) {
 }
 
 
-Game::Game(GobEngine *vm) : _vm(vm), _environments(_vm) {
+TotFunctions::TotFunctions(GobEngine *vm) : _vm(vm) {
+	for (uint8 i = 0; i < kTotCount; i++) {
+		_tots[i].script    = 0;
+		_tots[i].resources = 0;
+	}
+}
+
+TotFunctions::~TotFunctions() {
+	for (uint8 i = 0; i < kTotCount; i++)
+		freeTot(_tots[i]);
+}
+
+bool TotFunctions::loadTot(Tot &tot, const Common::String &file) {
+	tot.script    = new Script(_vm);
+	tot.resources = new Resources(_vm);
+
+	if (!tot.script->load(file) || !tot.resources->load(file)) {
+		freeTot(tot);
+		return false;
+	}
+
+	return true;
+}
+
+void TotFunctions::freeTot(Tot &tot) {
+	delete tot.script;
+	delete tot.resources;
+
+	tot.script    = 0;
+	tot.resources = 0;
+
+	tot.file.clear();
+	tot.functions.clear();
+}
+
+bool TotFunctions::loadIDE(Tot &tot) {
+	// Mapping file of function names -> function numbers/offsets
+	Common::String ideFile = Util::setExtension(tot.file, ".IDE");
+	Common::SeekableReadStream *ide = _vm->_dataIO->getFile(ideFile);
+	if (!ide)
+		// No mapping file => No named functions
+		return true;
+
+	char buffer[17];
+
+	uint32 count = ide->readUint16LE();
+	for (uint32 i = 0; i < count; i++) {
+		Function function;
+
+		function.type = ide->readByte();
+
+		ide->read(buffer, 17);
+		buffer[16] = '\0';
+
+		function.name = buffer;
+
+		ide->skip(2); // Unknown;
+		function.offset = ide->readUint16LE();
+		ide->skip(2); // Unknown;
+
+		if ((function.type != 0x47) && (function.type != 0x67))
+			continue;
+
+		tot.script->seek(function.offset);
+
+		if (tot.script->readByte() != 1) {
+			warning("TotFunctions::loadIDE(): IDE corrupt");
+			return false;
+		}
+
+		debugC(5, kDebugGameFlow, "Function 0x%02X: \"%s\"", function.type,
+				function.name.c_str());
+		tot.functions.push_back(function);
+	}
+
+	tot.script->seek(0);
+	return true;
+}
+
+int TotFunctions::find(const Common::String &totFile) const {
+	for (int i = 0; i < kTotCount; i++)
+		if (_tots[i].file.equalsIgnoreCase(totFile))
+			return i;
+
+	return -1;
+}
+
+int TotFunctions::findFree() const {
+	for (int i = 0; i < kTotCount; i++)
+		if (_tots[i].file.empty())
+			return i;
+
+	return -1;
+}
+
+bool TotFunctions::load(const Common::String &totFile) {
+	if (find(totFile) >= 0) {
+		warning("TotFunctions::load(): \"%s\" already loaded", totFile.c_str());
+		return false;
+	}
+
+	int index = findFree();
+	if (index < 0) {
+		warning("TotFunctions::load(): No free space for \"%s\"", totFile.c_str());
+		return false;
+	}
+
+	Tot &tot = _tots[index];
+	if (!loadTot(tot, totFile))
+		return false;
+
+	tot.file = totFile;
+
+	if (!loadIDE(tot)) {
+		freeTot(tot);
+		return false;
+	}
+
+	return true;
+}
+
+bool TotFunctions::unload(const Common::String &totFile) {
+	int index = find(totFile);
+	if (index < 0) {
+		warning("TotFunctions::unload(): \"%s\" not loaded", totFile.c_str());
+		return false;
+	}
+
+	Tot &tot = _tots[index];
+
+	if (_vm->_game->_script == tot.script)
+		_vm->_game->_script = 0;
+	if (_vm->_game->_resources == tot.resources)
+		_vm->_game->_resources = 0;
+
+	freeTot(tot);
+
+	return true;
+}
+
+bool TotFunctions::call(const Common::String &totFile,
+		const Common::String &function) const {
+
+	int index = find(totFile);
+	if (index < 0) {
+		warning("TotFunctions::call(): No such TOT \"%s\"", totFile.c_str());
+		return false;
+	}
+
+	const Tot &tot = _tots[index];
+
+	uint16 offset = 0;
+	Common::List<Function>::const_iterator it;
+	for (it = tot.functions.begin(); it != tot.functions.end(); ++it) {
+		if (it->name.equalsIgnoreCase(function)) {
+			offset = it->offset;
+			break;
+		}
+	}
+
+	if (offset == 0) {
+		warning("TotFunctions::call(): No such function \"%s\" in \"%s\"",
+				function.c_str(), totFile.c_str());
+		return false;
+	}
+
+	return call(tot, offset);
+}
+
+bool TotFunctions::call(const Common::String &totFile, uint16 offset) const {
+	int index = find(totFile);
+	if (index < 0) {
+		warning("TotFunctions::call(): No such TOT \"%s\"", totFile.c_str());
+		return false;
+	}
+
+	return call(_tots[index], offset);
+}
+
+bool TotFunctions::call(const Tot &tot, uint16 offset) const {
+	Script        *script     = _vm->_game->_script;
+	Resources     *resources  = _vm->_game->_resources;
+	Common::String curtotFile = _vm->_game->_curTotFile;
+
+	_vm->_game->_script     = tot.script;
+	_vm->_game->_resources  = tot.resources;
+	_vm->_game->_curTotFile = tot.file;
+
+	_vm->_game->playTot(offset);
+
+	_vm->_game->_script     = script;
+	_vm->_game->_resources  = resources;
+	_vm->_game->_curTotFile = curtotFile;
+
+	return true;
+}
+
+
+Game::Game(GobEngine *vm) : _vm(vm), _environments(_vm), _totFunctions(_vm) {
 	_captureCount = 0;
 
 	_startTimeKey = 0;
@@ -438,10 +636,9 @@ void Game::playTot(int16 function) {
 		_vm->_inter->initControlVars(0);
 		_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
 
-		if (function > 13) {
-			warning("Addy: function = %d", function);
-			_script->skip(function);
-		} else
+		if (function > 13)
+			_script->seek(function);
+		else
 			_script->seek(_script->getFunctionOffset(function + 1));
 
 		_vm->_inter->callSub(2);
@@ -761,6 +958,44 @@ void Game::clearUnusedEnvironment() {
 		delete _resources;
 		_resources = 0;
 	}
+}
+
+bool Game::loadFunctions(const Common::String &tot, uint16 flags) {
+	if ((flags & 0xFFFE) != 0) {
+		warning("Game::loadFunctions(): Unknown flags 0x%04X", flags);
+		return false;
+	}
+
+	bool unload = (flags & 0x1) != 0;
+
+	if (unload) {
+		debugC(4, kDebugGameFlow, "Unloading function for \"%s\"", tot.c_str());
+		return _totFunctions.unload(tot);
+	}
+
+	debugC(4, kDebugGameFlow, "Loading function for \"%s\"", tot.c_str());
+	return _totFunctions.load(tot);
+}
+
+bool Game::callFunction(const Common::String &tot, const Common::String &function,
+		int16 param) {
+
+	if (param != 0) {
+		warning("Game::callFunction(): param != 0 (%d)", param);
+		return false;
+	}
+
+	debugC(4, kDebugGameFlow, "Calling function \"%s\":\"%s\"",
+			tot.c_str(), function.c_str());
+
+	uint16 offset = atoi(function.c_str());
+	if (offset != 0)
+		return _totFunctions.call(tot, offset);
+
+	if (function.size() > 16)
+		return _totFunctions.call(tot, Common::String(function.c_str(), 16));
+
+	return _totFunctions.call(tot, function);
 }
 
 } // End of namespace Gob

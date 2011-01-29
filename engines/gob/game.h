@@ -83,6 +83,51 @@ private:
 	Media       _media[kEnvironmentCount];
 };
 
+class TotFunctions {
+public:
+	TotFunctions(GobEngine *vm);
+	~TotFunctions();
+
+	int find(const Common::String &totFile) const;
+
+	bool load(const Common::String &totFile);
+	bool unload(const Common::String &totFile);
+
+	bool call(const Common::String &totFile, const Common::String &function) const;
+	bool call(const Common::String &totFile, uint16 offset) const;
+
+private:
+	static const uint8 kTotCount = 100;
+
+	struct Function {
+		Common::String name;
+		byte type;
+		uint16 offset;
+	};
+
+	struct Tot {
+		Common::String file;
+
+		Common::List<Function> functions;
+
+		Script    *script;
+		Resources *resources;
+	};
+
+	GobEngine *_vm;
+
+	Tot _tots[kTotCount];
+
+	bool loadTot(Tot &tot, const Common::String &file);
+	void freeTot(Tot &tot);
+
+	bool loadIDE(Tot &tot);
+
+	int findFree() const;
+
+	bool call(const Tot &tot, uint16 offset) const;
+};
+
 class Game {
 public:
 	Script    *_script;
@@ -127,6 +172,9 @@ public:
 	void totSub(int8 flags, const Common::String &totFile);
 	void switchTotSub(int16 index, int16 function);
 
+	bool loadFunctions(const Common::String &tot, uint16 flags);
+	bool callFunction(const Common::String &tot, const Common::String &function, int16 param);
+
 protected:
 	GobEngine *_vm;
 
@@ -140,6 +188,8 @@ protected:
 	int8 _curEnvironment;
 	int8 _numEnvironments;
 	Environments _environments;
+
+	TotFunctions _totFunctions;
 
 	void clearUnusedEnvironment();
 };
