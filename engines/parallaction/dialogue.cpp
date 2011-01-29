@@ -53,15 +53,7 @@ struct BalloonPositions {
 
 
 class DialogueManager {
-
-	enum {
-		RUN_QUESTION,
-		RUN_ANSWER,
-		NEXT_QUESTION,
-		NEXT_ANSWER,
-		DIALOGUE_OVER
-	} _state;
-
+	
 	Parallaction	*_vm;
 	Dialogue		*_dialogue;
 
@@ -105,6 +97,17 @@ public:
 	CommandList *_cmdList;
 
 protected:
+	enum DialogueState {
+		DIALOGUE_START,
+		RUN_QUESTION,
+		RUN_ANSWER,
+		NEXT_QUESTION,
+		NEXT_ANSWER,
+		DIALOGUE_OVER
+	} _state;
+	
+	void transitionToState(DialogueState newState);
+	
 	bool displayQuestion();
 	bool displayAnswers();
 	bool testAnswerFlags(Answer *a);
@@ -134,7 +137,8 @@ DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
 void DialogueManager::start() {
 	assert(_dialogue);
 	_q = _dialogue->_questions[0];
-	_state = displayQuestion() ? RUN_QUESTION : NEXT_ANSWER;
+	_state = DIALOGUE_START;
+	transitionToState(displayQuestion() ? RUN_QUESTION : NEXT_ANSWER);
 }
 
 
@@ -145,7 +149,23 @@ DialogueManager::~DialogueManager() {
 	_z.reset();
 }
 
+void DialogueManager::transitionToState(DialogueState newState) {
+	static const char *dialogueStates[] = {
+		"start",
+		"runquestion",
+		"runanswer",
+		"nextquestion",
+		"nextanswer",
+		"over"
+	};
+	
+	if (_state != newState) {
+		debugC(3, kDebugDialogue, "DialogueManager moved to state '%s'", dialogueStates[newState]);
+	}
 
+	_state = newState;
+}
+											
 bool DialogueManager::testAnswerFlags(Answer *a) {
 	uint32 flags = _vm->getLocationFlags();
 	if (a->_yesFlags & kFlagsGlobal)
@@ -233,21 +253,17 @@ bool DialogueManager::displayQuestion() {
 }
 
 void DialogueManager::runQuestion() {
-	debugC(9, kDebugDialogue, "runQuestion\n");
-
 	if (_mouseButtons == kMouseLeftUp) {
 		_vm->_gfx->freeDialogueObjects();
-		_state = NEXT_ANSWER;
+		transitionToState(NEXT_ANSWER);
 	}
 
 }
 
 
 void DialogueManager::nextAnswer() {
-	debugC(9, kDebugDialogue, "nextAnswer\n");
-
 	if (_q->_answers[0] == NULL) {
-		_state = DIALOGUE_OVER;
+		transitionToState(DIALOGUE_OVER);
 		return;
 	}
 
@@ -255,35 +271,31 @@ void DialogueManager::nextAnswer() {
 		addVisibleAnswers(_q);
 		if (_numVisAnswers) {
 			_answerId = _visAnswers[0]._index;
-			_state = NEXT_QUESTION;
+			transitionToState(NEXT_QUESTION);
 		} else {
-			_state = DIALOGUE_OVER;
+			transitionToState(DIALOGUE_OVER);
 		}
 		return;
 	}
 
-	_state = displayAnswers() ? RUN_ANSWER : DIALOGUE_OVER;
+	transitionToState(displayAnswers() ? RUN_ANSWER : DIALOGUE_OVER);
 }
 
 void DialogueManager::runAnswer() {
-	debugC(9, kDebugDialogue, "runAnswer\n");
-
 	_answerId = selectAnswer();
 	if (_answerId != -1) {
 		_cmdList = &_q->_answers[_answerId]->_commands;
 		_vm->_gfx->freeDialogueObjects();
-		_state = NEXT_QUESTION;
+		transitionToState(NEXT_QUESTION);
 	}
 }
 
 void DialogueManager::nextQuestion() {
-	debugC(9, kDebugDialogue, "nextQuestion\n");
-
 	_q = _dialogue->findQuestion(_q->_answers[_answerId]->_followingName);
 	if (_q == 0) {
-		_state = DIALOGUE_OVER;
+		transitionToState(DIALOGUE_OVER);
 	} else {
-		_state = displayQuestion() ? RUN_QUESTION : NEXT_ANSWER;
+		transitionToState(displayQuestion() ? RUN_QUESTION : NEXT_ANSWER);
 	}
 }
 
@@ -508,7 +520,7 @@ void Parallaction::runDialogueFrame() {
 	if (_input->_inputMode != Input::kInputModeDialogue) {
 		return;
 	}
-
+	
 	_dialogueMan->run();
 
 	if (_dialogueMan->isOver()) {
