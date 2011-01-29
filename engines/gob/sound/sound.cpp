@@ -508,11 +508,11 @@ void Sound::blasterWaitEndPlay(bool interruptible, bool stopComp) {
 	_blaster->stopSound(0);
 }
 
-void Sound::cdLoadLIC(const char *fname) {
+void Sound::cdLoadLIC(const Common::String &fname) {
 	if (!_cdrom)
 		return;
 
-	debugC(1, kDebugSound, "CDROM: Loading LIC \"%s\"", fname);
+	debugC(1, kDebugSound, "CDROM: Loading LIC \"%s\"", fname.c_str());
 
 	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(fname);
 	if (!stream)
@@ -592,17 +592,17 @@ void Sound::cdPlayMultMusic() {
 		}
 }
 
-void Sound::cdPlay(const char *trackName) {
+void Sound::cdPlay(const Common::String &trackName) {
 	if (!_cdrom)
 		return;
-	debugC(1, kDebugSound, "CDROM: Playing track \"%s\"", trackName);
+	debugC(1, kDebugSound, "CDROM: Playing track \"%s\"", trackName.c_str());
 
 // WORKAROUND - In Fascination CD, in the storage room, a track has the wrong
 // name in the scripts, and therefore doesn't play. This fixes the problem.
-	if ((_vm->getGameType() == kGameTypeFascination) && !scumm_stricmp(trackName, "boscle"))
+	if ((_vm->getGameType() == kGameTypeFascination) && trackName.equalsIgnoreCase("boscle"))
 		_cdrom->startTrack("bosscle");
 	else
-		_cdrom->startTrack(trackName);
+		_cdrom->startTrack(trackName.c_str());
 }
 
 void Sound::cdStop() {

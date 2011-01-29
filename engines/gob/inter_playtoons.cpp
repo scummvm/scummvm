@@ -210,19 +210,9 @@ void Inter_Playtoons::oPlaytoons_freeSprite(OpFuncParams &params) {
 }
 
 void Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
-	int16 handle;
-	uint16 varOff;
-	int32 size;
-	char *backSlash;
-	SaveLoad::SaveMode mode;
+	const char *file = _vm->_game->_script->evalString();
 
-	_vm->_game->_script->evalExpr(0);
-	varOff = _vm->_game->_script->readVarIndex();
-
-	size = -1;
-	handle = 1;
-
-	char *file = _vm->_game->_script->getResultStr();
+	uint16 varOff = _vm->_game->_script->readVarIndex();
 
 	// WORKAROUND: In Playtoons games, some files are read on CD (and only on CD).
 	// In this case, "@:\" is replaced by the CD drive letter.
@@ -245,12 +235,15 @@ void Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 	}
 
 	// WORKAROUND: In the Playtoons stick files found in german Addy 4, some paths are hardcoded
-	if ((backSlash = strrchr(file, '\\'))) {
+	const char *backSlash = strrchr(file, '\\');
+	if (backSlash) {
 		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", backSlash + 1, file);
 		file = backSlash + 1;
 	}
 
-	mode = _vm->_saveLoad->getSaveMode(file);
+	int32 size   = -1;
+	int16 handle = 1;
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
 	if (mode == SaveLoad::kSaveModeNone) {
 		size = _vm->_dataIO->fileSize(file);
 		if (size == -1)
@@ -272,21 +265,12 @@ void Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 }
 
 void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
-	int32 retSize;
-	int32 size;
-	int32 offset;
-	uint16 dataVar;
-	byte *buf;
-	SaveLoad::SaveMode mode;
+	const char *file = _vm->_game->_script->evalString();
 
-	_vm->_game->_script->evalExpr(0);
-	dataVar = _vm->_game->_script->readVarIndex();
-	size = _vm->_game->_script->readValExpr();
-	_vm->_game->_script->evalExpr(0);
-	offset = _vm->_game->_script->getResultInt();
-	retSize = 0;
-
-	char *file = _vm->_game->_script->getResultStr();
+	uint16 dataVar = _vm->_game->_script->readVarIndex();
+	int32  size    = _vm->_game->_script->readValExpr();
+	int32  offset  = _vm->_game->_script->evalInt();
+	int32  retSize = 0;
 
 	// WORKAROUND: In Playtoons games, some files are read on CD (and only on CD).
 	// In this case, "@:\" is replaced by the CD drive letter.
@@ -299,7 +283,7 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
 			file, dataVar, size, offset);
 
-	mode = _vm->_saveLoad->getSaveMode(file);
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
 	if (mode == SaveLoad::kSaveModeSave) {
 
 		WRITE_VAR(1, 1);
@@ -324,7 +308,7 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 		size = _vm->_game->_script->getVariablesCount() * 4;
 	}
 
-	buf = _variables->getAddressOff8(dataVar);
+	byte *buf = _variables->getAddressOff8(dataVar);
 
 	if (file[0] == 0) {
 		WRITE_VAR(1, size);
@@ -417,36 +401,28 @@ void Inter_Playtoons::oPlaytoons_CD_25() {
 }
 
 void Inter_Playtoons::oPlaytoons_copyFile() {
-	char fileName1[128];
-	char fileName2[128];
+	Common::String file1 = _vm->_game->_script->evalString();
+	Common::String file2 = _vm->_game->_script->evalString();
 
-	_vm->_game->_script->evalExpr(0);
-	Common::strlcpy(fileName1, _vm->_game->_script->getResultStr(), 128);
-	_vm->_game->_script->evalExpr(0);
-	Common::strlcpy(fileName2, _vm->_game->_script->getResultStr(), 128);
-
-	warning("Playtoons Stub: copy file from \"%s\" to \"%s\"", fileName1, fileName2);
+	warning("Playtoons Stub: copy file from \"%s\" to \"%s\"", file1.c_str(), file2.c_str());
 }
 
 void Inter_Playtoons::oPlaytoons_openItk() {
-	char fileName[128];
-	char *backSlash;
+	const char *fileName  = _vm->_game->_script->evalString();
+	const char *backSlash = strrchr(fileName, '\\');
 
-	_vm->_game->_script->evalExpr(0);
-	Common::strlcpy(fileName, _vm->_game->_script->getResultStr(), 124);
-
-	if (!strchr(fileName, '.'))
-		strcat(fileName, ".ITK");
-
-	// Workaround for Bambou : In the script, the path is hardcoded (!!)
-	if ((backSlash = strrchr(fileName, '\\'))) {
-		debugC(2, kDebugFileIO, "Opening ITK file \"%s\" instead of \"%s\"", backSlash + 1, fileName);
-		_vm->_dataIO->openArchive(backSlash + 1, false);
+	Common::String file;
+	if (backSlash) {
+		debugC(2, kDebugFileIO, "Opening ITK file \"%s\" instead of \"%s\"",
+				backSlash + 1, fileName);
+		file = backSlash + 1;
 	} else
-		_vm->_dataIO->openArchive(fileName, false);
-	// All the other checks are meant to verify (if not found at the first try)
-	// if the file is present on the CD or not. As everything is supposed to
-	// be copied, those checks are skipped
+		file = fileName;
+
+	if (!file.contains('.'))
+		file += ".ITK";
+
+	_vm->_dataIO->openArchive(file, false);
 }
 
 } // End of namespace Gob

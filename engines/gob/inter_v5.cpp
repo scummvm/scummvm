@@ -100,8 +100,7 @@ void Inter_v5::setupOpcodesGob() {
 }
 
 void Inter_v5::o5_deleteFile() {
-	_vm->_game->_script->evalExpr(0);
-	char *file = _vm->_game->_script->getResultStr();
+	const char *file =_vm->_game->_script->evalString();
 
 	debugC(2, kDebugFileIO, "Delete file \"%s\"", file);
 

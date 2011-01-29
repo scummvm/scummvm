@@ -73,26 +73,18 @@ void Inter_v6::setupOpcodesGob() {
 }
 
 void Inter_v6::o6_totSub() {
-	char totFile[14];
-	byte length;
-	int flags;
-	int i;
-
-	length = _vm->_game->_script->readByte();
+	uint8 length = _vm->_game->_script->readByte();
 	if ((length & 0x7F) > 13)
 		error("Length in o6_totSub is greater than 13 (%d)", length);
 
-	if (length & 0x80) {
-		_vm->_game->_script->evalExpr(0);
-		strcpy(totFile, _vm->_game->_script->getResultStr());
-	} else {
-		for (i = 0; i < length; i++)
-			totFile[i] = _vm->_game->_script->readChar();
-		totFile[i] = 0;
-	}
+	Common::String totFile;
+	if (length & 0x80)
+		totFile = _vm->_game->_script->evalString();
+	else
+		for (uint8 i = 0; i < length; i++)
+			totFile += _vm->_game->_script->readChar();
 
-	flags = _vm->_game->_script->readByte();
-
+	uint8 flags = _vm->_game->_script->readByte();
 	if (flags & 0x40)
 		warning("Urban Stub: o6_totSub(), flags & 0x40");
 
@@ -100,11 +92,7 @@ void Inter_v6::o6_totSub() {
 }
 
 void Inter_v6::o6_playVmdOrMusic() {
-	char fileName[128];
-	bool close;
-
-	_vm->_game->_script->evalExpr(0);
-	Common::strlcpy(fileName, _vm->_game->_script->getResultStr(), 128);
+	Common::String file = _vm->_game->_script->evalString();
 
 	VideoPlayer::Properties props;
 
@@ -120,22 +108,22 @@ void Inter_v6::o6_playVmdOrMusic() {
 	props.forceSeek  = true;
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", fileName,
+			"paletteCmd %d (%d - %d), flags %X", file.c_str(),
 			props.x, props.y, props.startFrame, props.lastFrame,
 			props.palCmd, props.palStart, props.palEnd, props.flags);
 
 	// WORKAROUND: When taking the music sheet from Dr. Dramish's car,
 	//             the video that lets the sheet vanish is missing. We'll
 	//             play the one where the sheet is already gone instead.
-	if (!strcmp(fileName, "MXRAMPART") && _vm->isCurrentTot("avt005.tot"))
-		strcpy(fileName, "PLCOFDR2");
+	if (_vm->isCurrentTot("avt005.tot") && file.equalsIgnoreCase("MXRAMPART"))
+		file = "PLCOFDR2";
 
-	if (!strcmp(fileName, "RIEN")) {
+	if (file == "RIEN") {
 		_vm->_vidPlayer->closeAll();
 		return;
 	}
 
-	close = false;
+	bool close = false;
 	if (props.lastFrame == -1) {
 		close = true;
 	} else if (props.lastFrame == -5) {
@@ -149,16 +137,16 @@ void Inter_v6::o6_playVmdOrMusic() {
 //		warning("Urban/Playtoons Stub: Video/Music command -6 (flush cache)");
 		return;
 	} else if ((props.lastFrame == -8) || (props.lastFrame == -9)) {
-		if (!strchr(fileName, '.'))
-			strcat(fileName, ".WA8");
+		if (!file.contains('.'))
+			file += ".WA8";
 
-		probe16bitMusic(fileName);
+		probe16bitMusic(file);
 
 		if (props.lastFrame == -9)
 			debugC(0, kDebugVideo, "Urban/Playtoons Stub: Delayed music stop?");
 
 		_vm->_sound->bgStop();
-		_vm->_sound->bgPlay(fileName, SOUND_WAV);
+		_vm->_sound->bgPlay(file.c_str(), SOUND_WAV);
 		return;
 	} else if (props.lastFrame <= -10) {
 		_vm->_vidPlayer->closeVideo();
@@ -167,7 +155,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 			props.loop = true;
 
 	} else if (props.lastFrame < 0) {
-		warning("Urban/Playtoons Stub: Unknown Video/Music command: %d, %s", props.lastFrame, fileName);
+		warning("Urban/Playtoons Stub: Unknown Video/Music command: %d, %s", props.lastFrame, file.c_str());
 		return;
 	}
 
@@ -184,7 +172,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 		primary = false;
 
 	int slot = 0;
-	if ((fileName[0] != 0) && ((slot = _vm->_vidPlayer->openVideo(primary, fileName, props)) < 0)) {
+	if (!file.empty() && ((slot = _vm->_vidPlayer->openVideo(primary, file, props)) < 0)) {
 		WRITE_VAR(11, (uint32) -1);
 		return;
 	}
@@ -392,11 +380,10 @@ void Inter_v6::o6_fillRect(OpFuncParams &params) {
 	_vm->_draw->_spriteRight = _vm->_game->_script->readValExpr();
 	_vm->_draw->_spriteBottom = _vm->_game->_script->readValExpr();
 
-	_vm->_game->_script->evalExpr(0);
+	uint32 patternColor = _vm->_game->_script->evalInt();
 
-	_vm->_draw->_backColor = _vm->_game->_script->getResultInt() & 0xFFFF;
-
-	_vm->_draw->_pattern = _vm->_game->_script->getResultInt() >> 16;
+	_vm->_draw->_backColor = patternColor & 0xFFFF;
+	_vm->_draw->_pattern   = patternColor >> 16;
 
 	if (_vm->_draw->_pattern != 0)
 		warning("Urban Stub: o6_fillRect(), _pattern = %d", _vm->_draw->_pattern);
@@ -421,21 +408,16 @@ void Inter_v6::o6_fillRect(OpFuncParams &params) {
 	_vm->_draw->spriteOperation(DRAW_FILLRECT);
 }
 
-void Inter_v6::probe16bitMusic(char *fileName) {
-	int len = strlen(fileName);
-
-	if (len < 4)
+void Inter_v6::probe16bitMusic(Common::String &fileName) {
+	if (!fileName[fileName.size() - 1] != '8')
 		return;
 
-	if (scumm_stricmp(fileName + len - 4, ".WA8"))
-		return;
-
-	fileName[len - 1] = 'V';
+	fileName.setChar('V', fileName.size() - 1);
 
 	if (_vm->_dataIO->hasFile(fileName))
 		return;
 
-	fileName[len - 1] = '8';
+	fileName.setChar('8', fileName.size() - 1);
 }
 
 } // End of namespace Gob

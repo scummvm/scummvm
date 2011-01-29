@@ -114,13 +114,13 @@ public:
 
 
 	// CD-ROM
-	void cdLoadLIC(const char *fname);
+	void cdLoadLIC(const Common::String &fname);
 	void cdUnloadLIC();
 
 	void cdPlayBgMusic();
 	void cdPlayMultMusic();
 
-	void cdPlay(const char *trackName);
+	void cdPlay(const Common::String &);
 	void cdStop();
 
 	bool cdIsPlaying() const;

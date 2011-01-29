@@ -84,8 +84,11 @@ public:
 	void  skipExpr(char stopToken);
 
 	// Higher-level expression parsing functions
-	char evalExpr(int16 *pRes);
-	bool evalBool();
+	char  evalExpr(int16 *pRes);
+	bool  evalBool();
+	int32 evalInt();
+
+	const char *evalString();
 
 	// Accessing the result of expressions
 	int32 getResultInt() const;

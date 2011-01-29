@@ -612,9 +612,8 @@ void Inter_v1::o1_loadCurLayer() {
 }
 
 void Inter_v1::o1_playCDTrack() {
-	_vm->_game->_script->evalExpr(0);
 	_vm->_sound->adlibPlayBgMusic(); // Mac version
-	_vm->_sound->cdPlay(_vm->_game->_script->getResultStr()); // PC CD version
+	_vm->_sound->cdPlay(_vm->_game->_script->evalString()); // PC CD version
 }
 
 void Inter_v1::o1_getCDTrackPos() {
@@ -960,8 +959,7 @@ void Inter_v1::o1_printText(OpFuncParams &params) {
 void Inter_v1::o1_loadTot(OpFuncParams &params) {
 	if ((_vm->_game->_script->peekByte() & 0x80) != 0) {
 		_vm->_game->_script->skip(1);
-		_vm->_game->_script->evalExpr(0);
-		_vm->_game->_totToLoad = _vm->_game->_script->getResultStr();
+		_vm->_game->_totToLoad = _vm->_game->_script->evalString();
 	} else {
 		uint8 size = _vm->_game->_script->readInt8();
 		_vm->_game->_totToLoad = Common::String(_vm->_game->_script->readString(size), size);
@@ -1585,13 +1583,11 @@ void Inter_v1::o1_getFreeMem(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_checkData(OpFuncParams &params) {
-	int16 varOff;
+	const char *file   = _vm->_game->_script->evalString();
+	      int16 varOff = _vm->_game->_script->readVarIndex();
 
-	_vm->_game->_script->evalExpr(0);
-	varOff = _vm->_game->_script->readVarIndex();
-
-	if (!_vm->_dataIO->hasFile(_vm->_game->_script->getResultStr())) {
-		warning("File \"%s\" not found", _vm->_game->_script->getResultStr());
+	if (!_vm->_dataIO->hasFile(file)) {
+		warning("File \"%s\" not found", file);
 		WRITE_VAR_OFFSET(varOff, (uint32) -1);
 	} else
 		WRITE_VAR_OFFSET(varOff, 50); // "handle" between 50 and 128 = in archive
@@ -1683,12 +1679,11 @@ void Inter_v1::o1_blitCursor(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_loadFont(OpFuncParams &params) {
-	_vm->_game->_script->evalExpr(0);
-	uint16 index = _vm->_game->_script->readInt16();
+	const char  *font  = _vm->_game->_script->evalString();
+	      uint16 index = _vm->_game->_script->readInt16();
 
 	_vm->_draw->animateCursor(4);
-
-	_vm->_draw->loadFont(index, _vm->_game->_script->getResultStr());
+	_vm->_draw->loadFont(index, font);
 }
 
 void Inter_v1::o1_freeFont(OpFuncParams &params) {
@@ -1706,20 +1701,15 @@ void Inter_v1::o1_freeFont(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_readData(OpFuncParams &params) {
-	int16 retSize;
-	int16 size;
-	int16 dataVar;
-	int16 offset;
-
-	_vm->_game->_script->evalExpr(0);
-	dataVar = _vm->_game->_script->readVarIndex();
-	size = _vm->_game->_script->readValExpr();
-	offset = _vm->_game->_script->readValExpr();
-	retSize = 0;
+	const char *file    = _vm->_game->_script->evalString();
+	      int16 dataVar = _vm->_game->_script->readVarIndex();
+	      int16 size    = _vm->_game->_script->readValExpr();
+	      int16 offset  = _vm->_game->_script->readValExpr();
+	      int16 retSize = 0;
 
 	WRITE_VAR(1, 1);
 
-	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(_vm->_game->_script->getResultStr());
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(file);
 	if (!stream)
 		return;
 
@@ -1741,28 +1731,25 @@ void Inter_v1::o1_readData(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_writeData(OpFuncParams &params) {
-	int16 offset;
-	int16 size;
-	int16 dataVar;
-
 	// This writes into a file. It's not portable and isn't needed anyway
 	// (Gobliiins 1 doesn't use save file), so we just warn should it be
 	// called regardless.
 
-	_vm->_game->_script->evalExpr(0);
-	dataVar = _vm->_game->_script->readVarIndex();
-	size = _vm->_game->_script->readValExpr();
-	offset = _vm->_game->_script->readValExpr();
+	const char *file = _vm->_game->_script->evalString();
 
-	warning("Attempted to write to file \"%s\"", _vm->_game->_script->getResultStr());
+	int16 dataVar = _vm->_game->_script->readVarIndex();
+	int16 size    = _vm->_game->_script->readValExpr();
+	int16 offset  = _vm->_game->_script->readValExpr();
+
+	warning("Attempted to write to file \"%s\" (%d, %d, %d)", file, dataVar, size, offset);
 	WRITE_VAR(1, 0);
 }
 
 void Inter_v1::o1_manageDataFile(OpFuncParams &params) {
-	_vm->_game->_script->evalExpr(0);
+	Common::String file = _vm->_game->_script->evalString();
 
-	if (_vm->_game->_script->getResultStr()[0] != 0)
-		_vm->_dataIO->openArchive(_vm->_game->_script->getResultStr(), true);
+	if (!file.empty())
+		_vm->_dataIO->openArchive(file, true);
 	else
 		_vm->_dataIO->closeArchive(true);
 }

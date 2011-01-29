@@ -513,8 +513,7 @@ void Inter_v2::o2_playCDTrack() {
 	if (!(_vm->_draw->_renderFlags & RENDERFLAG_NOBLITINVALIDATED))
 		_vm->_draw->blitInvalidated();
 
-	_vm->_game->_script->evalExpr(0);
-	_vm->_sound->cdPlay(_vm->_game->_script->getResultStr());
+	_vm->_sound->cdPlay(_vm->_game->_script->evalString());
 }
 
 void Inter_v2::o2_waitCDTrackEnd() {
@@ -529,13 +528,10 @@ void Inter_v2::o2_stopCD() {
 }
 
 void Inter_v2::o2_readLIC() {
-	char path[40];
+	Common::String file = _vm->_game->_script->evalString();
+	file += ".LIC";
 
-	_vm->_game->_script->evalExpr(0);
-	Common::strlcpy(path, _vm->_game->_script->getResultStr(), 36);
-	strcat(path, ".LIC");
-
-	_vm->_sound->cdLoadLIC(path);
+	_vm->_sound->cdLoadLIC(file.c_str());
 }
 
 void Inter_v2::o2_freeLIC() {
@@ -569,34 +565,27 @@ void Inter_v2::o2_loadFontToSprite() {
 }
 
 void Inter_v2::o2_totSub() {
-	char totFile[14];
-	byte length;
-	int flags;
-	int i;
-
-	length = _vm->_game->_script->readByte();
+	uint8 length = _vm->_game->_script->readByte();
 	if ((length & 0x7F) > 13)
 		error("Length in o2_totSub is greater than 13 (%d)", length);
 
-	if (length & 0x80) {
-		_vm->_game->_script->evalExpr(0);
-		strcpy(totFile, _vm->_game->_script->getResultStr());
-	} else {
-		for (i = 0; i < length; i++)
-			totFile[i] = _vm->_game->_script->readChar();
-		totFile[i] = 0;
-	}
+	Common::String totFile;
+	if (length & 0x80)
+		totFile = _vm->_game->_script->evalString();
+	else
+		for (uint8 i = 0; i < length; i++)
+			totFile += _vm->_game->_script->readChar();
 
 	// WORKAROUND: There is a race condition in the script when opening the notepad
-	if (!scumm_stricmp(totFile, "edit"))
+	if (!totFile.equalsIgnoreCase("edit"))
 		_vm->_util->forceMouseUp();
 
 	// WORKAROUND: For some reason, the variable indicating which TOT to load next
 	// is overwritten in the guard house card game in Woodruff
-	if ((_vm->getGameType() == kGameTypeWoodruff) && !scumm_stricmp(totFile, "6"))
-		strcpy(totFile, "EMAP2011");
+	if ((_vm->getGameType() == kGameTypeWoodruff) && (totFile == "6"))
+		totFile = "EMAP2011";
 
-	flags = _vm->_game->_script->readByte();
+	uint8 flags = _vm->_game->_script->readByte();
 
 	_vm->_game->totSub(flags, totFile);
 }
@@ -947,14 +936,9 @@ void Inter_v2::o2_setScrollOffset() {
 }
 
 void Inter_v2::o2_playImd() {
-	char imd[128];
-	bool close;
-
-	_vm->_game->_script->evalExpr(0);
-	_vm->_game->_script->getResultStr()[8] = 0;
-	Common::strlcpy(imd, _vm->_game->_script->getResultStr(), 128);
-
 	VideoPlayer::Properties props;
+
+	Common::String imd = Common::String(_vm->_game->_script->evalString(), 8);
 
 	props.x          = _vm->_game->_script->readValExpr();
 	props.y          = _vm->_game->_script->readValExpr();
@@ -967,12 +951,12 @@ void Inter_v2::o2_playImd() {
 	props.palCmd     = 1 << (props.flags & 0x3F);
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", imd,
+			"paletteCmd %d (%d - %d), flags %X", imd.c_str(),
 			props.x, props.y, props.startFrame, props.lastFrame,
 			props.palCmd, props.palStart, props.palEnd, props.flags);
 
 	int slot = 0;
-	if (imd[0] != 0) {
+	if (!imd.empty()) {
 		_vm->_vidPlayer->evaluateFlags(props);
 		if ((slot = _vm->_vidPlayer->openVideo(true, imd, props)) < 0) {
 			WRITE_VAR(11, (uint32) -1);
@@ -980,7 +964,7 @@ void Inter_v2::o2_playImd() {
 		}
 	}
 
-	close = (props.lastFrame == -1);
+	bool close = (props.lastFrame == -1);
 	if (props.startFrame == -2) {
 		props.startFrame = 0;
 		props.lastFrame  = 0;
@@ -995,36 +979,29 @@ void Inter_v2::o2_playImd() {
 }
 
 void Inter_v2::o2_getImdInfo() {
-	int16 varX, varY;
-	int16 varFrames;
-	int16 varWidth, varHeight;
+	Common::String imd = _vm->_game->_script->evalString();
 
-	_vm->_game->_script->evalExpr(0);
-	varX      = _vm->_game->_script->readVarIndex();
-	varY      = _vm->_game->_script->readVarIndex();
-	varFrames = _vm->_game->_script->readVarIndex();
-	varWidth  = _vm->_game->_script->readVarIndex();
-	varHeight = _vm->_game->_script->readVarIndex();
+	int16 varX      = _vm->_game->_script->readVarIndex();
+	int16 varY      = _vm->_game->_script->readVarIndex();
+	int16 varFrames = _vm->_game->_script->readVarIndex();
+	int16 varWidth  = _vm->_game->_script->readVarIndex();
+	int16 varHeight = _vm->_game->_script->readVarIndex();
 
 	// WORKAROUND: The nut rolling animation in the administration center
 	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
 	if ((_vm->getGameType() == kGameTypeWoodruff) &&
-			(!scumm_stricmp(_vm->_game->_script->getResultStr(), "noixroule")))
-		strcpy(_vm->_game->_script->getResultStr(), "noixroul");
+	    imd.equalsIgnoreCase("noixroule"))
+		imd = "noixroul";
 
-	_vm->_vidPlayer->writeVideoInfo(_vm->_game->_script->getResultStr(), varX, varY,
-			varFrames, varWidth, varHeight);
+	_vm->_vidPlayer->writeVideoInfo(imd, varX, varY, varFrames, varWidth, varHeight);
 }
 
 void Inter_v2::o2_openItk() {
-	char fileName[32];
+	Common::String file = _vm->_game->_script->evalString();
+	if (!file.contains('.'))
+		file += ".ITK";
 
-	_vm->_game->_script->evalExpr(0);
-	Common::strlcpy(fileName, _vm->_game->_script->getResultStr(), 28);
-	if (!strchr(fileName, '.'))
-		strcat(fileName, ".ITK");
-
-	_vm->_dataIO->openArchive(fileName, false);
+	_vm->_dataIO->openArchive(file, false);
 }
 
 void Inter_v2::o2_closeItk() {
@@ -1263,62 +1240,45 @@ void Inter_v2::o2_getFreeMem(OpFuncParams &params) {
 }
 
 void Inter_v2::o2_checkData(OpFuncParams &params) {
-	int16 varOff;
-	int32 size;
-	SaveLoad::SaveMode mode;
-
-	_vm->_game->_script->evalExpr(0);
-	varOff = _vm->_game->_script->readVarIndex();
-
-	size = -1;
-
-	char *file = _vm->_game->_script->getResultStr();
+	Common::String file = _vm->_game->_script->evalString();
+	int16 varOff = _vm->_game->_script->readVarIndex();
 
 	// WORKAROUND: For some reason, the variable indicating which TOT to load next
 	// is overwritten in the guard house card game in Woodruff.
-	if ((_vm->getGameType() == kGameTypeWoodruff) && !scumm_stricmp(file, "6.TOT"))
-		strcpy(file, "EMAP2011.TOT");
+	if ((_vm->getGameType() == kGameTypeWoodruff) && file.equalsIgnoreCase("6.tot"))
+		file = "EMAP2011.TOT";
 
-	mode = _vm->_saveLoad->getSaveMode(file);
+	int32 size = -1;
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
 	if (mode == SaveLoad::kSaveModeNone) {
 
 		size = _vm->_dataIO->fileSize(file);
 		if (size == -1)
-			warning("File \"%s\" not found", file);
+			warning("File \"%s\" not found", file.c_str());
 
 	} else if (mode == SaveLoad::kSaveModeSave)
-		size = _vm->_saveLoad->getSize(file);
+		size = _vm->_saveLoad->getSize(file.c_str());
 	else if (mode == SaveLoad::kSaveModeExists)
 		size = 23;
 
-	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d",
-			file, size);
+	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d", file.c_str(), size);
 
 	WRITE_VAR_OFFSET(varOff, (size == -1) ? -1 : 50);
 	WRITE_VAR(16, (uint32) size);
 }
 
 void Inter_v2::o2_readData(OpFuncParams &params) {
-	int32 retSize;
-	int32 size;
-	int32 offset;
-	int16 dataVar;
-	byte *buf;
-	SaveLoad::SaveMode mode;
+	const char *file = _vm->_game->_script->evalString();
 
-	_vm->_game->_script->evalExpr(0);
-	dataVar = _vm->_game->_script->readVarIndex();
-	size = _vm->_game->_script->readValExpr();
-	_vm->_game->_script->evalExpr(0);
-	offset = _vm->_game->_script->getResultInt();
-	retSize = 0;
-
-	char *file = _vm->_game->_script->getResultStr();
+	uint16 dataVar = _vm->_game->_script->readVarIndex();
+	int32  size    = _vm->_game->_script->readValExpr();
+	int32  offset  = _vm->_game->_script->evalInt();
+	int32  retSize = 0;
 
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
 			file, dataVar, size, offset);
 
-	mode = _vm->_saveLoad->getSaveMode(file);
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
 	if (mode == SaveLoad::kSaveModeSave) {
 
 		WRITE_VAR(1, 1);
@@ -1345,7 +1305,7 @@ void Inter_v2::o2_readData(OpFuncParams &params) {
 		size = _vm->_game->_script->getVariablesCount() * 4;
 	}
 
-	buf = _variables->getAddressOff8(dataVar);
+	byte *buf = _variables->getAddressOff8(dataVar);
 
 	if (file[0] == 0) {
 		WRITE_VAR(1, size);
@@ -1379,25 +1339,18 @@ void Inter_v2::o2_readData(OpFuncParams &params) {
 }
 
 void Inter_v2::o2_writeData(OpFuncParams &params) {
-	int32 offset;
-	int32 size;
-	int16 dataVar;
-	SaveLoad::SaveMode mode;
+	const char *file = _vm->_game->_script->evalString();
 
-	_vm->_game->_script->evalExpr(0);
-	dataVar = _vm->_game->_script->readVarIndex();
-	size = _vm->_game->_script->readValExpr();
-	_vm->_game->_script->evalExpr(0);
-	offset = _vm->_game->_script->getResultInt();
-
-	char *file = _vm->_game->_script->getResultStr();
+	int16 dataVar = _vm->_game->_script->readVarIndex();
+	int32 size    = _vm->_game->_script->readValExpr();
+	int32 offset  = _vm->_game->_script->evalInt();
 
 	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",
 			file, dataVar, size, offset);
 
 	WRITE_VAR(1, 1);
 
-	mode = _vm->_saveLoad->getSaveMode(file);
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
 	if (mode == SaveLoad::kSaveModeSave) {
 
 		if (!_vm->_saveLoad->save(file, dataVar, size, offset)) {

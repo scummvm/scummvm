@@ -84,10 +84,8 @@ void Inter_v7::o7_draw0x0C() {
 }
 
 void Inter_v7::o7_loadCursor() {
-	int16 cursorIndex = _vm->_game->_script->readValExpr();
-
-	_vm->_game->_script->evalExpr(0);
-	Common::String cursorFile = _vm->_game->_script->getResultStr();
+	int16          cursorIndex = _vm->_game->_script->readValExpr();
+	Common::String cursorFile  = _vm->_game->_script->evalString();
 
 	warning("Addy Stub: Load cursor \"%s\" to %d", cursorFile.c_str(), cursorIndex);
 
@@ -109,25 +107,18 @@ void Inter_v7::o7_loadCursor() {
 }
 
 void Inter_v7::o7_displayWarning() {
-	_vm->_game->_script->evalExpr(0);
-	Common::String caption = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String text = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String source = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String msg =  _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String param = _vm->_game->_script->getResultStr();
+	Common::String caption = _vm->_game->_script->evalString();
+	Common::String text    = _vm->_game->_script->evalString();
+	Common::String source  = _vm->_game->_script->evalString();
+	Common::String msg     = _vm->_game->_script->evalString();
+	Common::String param   = _vm->_game->_script->evalString();
 
 	warning("%s: %s (%s)", source.c_str(), msg.c_str(), param.c_str());
 }
 
 void Inter_v7::o7_draw0x45() {
-	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String str1 = _vm->_game->_script->getResultStr();
+	Common::String str0 = _vm->_game->_script->evalString();
+	Common::String str1 = _vm->_game->_script->evalString();
 
 	warning("Addy Stub Draw 0x45: \"%s\", \"%s\"", str0.c_str(), str1.c_str());
 }
@@ -140,10 +131,8 @@ void Inter_v7::o7_intToString() {
 }
 
 void Inter_v7::o7_callGroup() {
-	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String str1 = _vm->_game->_script->getResultStr();
+	Common::String str0 = _vm->_game->_script->evalString();
+	Common::String str1 = _vm->_game->_script->evalString();
 
 	int16 expr0 = _vm->_game->_script->readValExpr();
 
@@ -151,8 +140,7 @@ void Inter_v7::o7_callGroup() {
 }
 
 void Inter_v7::o7_loadGroups() {
-	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
+	Common::String str0 = _vm->_game->_script->evalString();
 
 	int16 expr0 = _vm->_game->_script->readValExpr();
 
@@ -160,10 +148,8 @@ void Inter_v7::o7_loadGroups() {
 }
 
 void Inter_v7::o7_draw0x89() {
-	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String str1 = _vm->_game->_script->getResultStr();
+	Common::String str0 = _vm->_game->_script->evalString();
+	Common::String str1 = _vm->_game->_script->evalString();
 
 	warning("Addy Stub Draw 0x89: \"%s\", \"%s\"", str0.c_str(), str1.c_str());
 
@@ -180,8 +166,7 @@ void Inter_v7::o7_draw0x89() {
 }
 
 void Inter_v7::o7_findFile() {
-	_vm->_game->_script->evalExpr(0);
-	const char *file = _vm->_game->_script->getResultStr();
+	const char *file = _vm->_game->_script->evalString();
 	uint16 pathIndex = _vm->_game->_script->readVarIndex();
 
 	if (!strncmp(file, "<ME>", 4))
@@ -204,34 +189,31 @@ void Inter_v7::o7_findFile() {
 }
 
 void Inter_v7::o7_getSystemProperty() {
-	_vm->_game->_script->evalExpr(0);
-
-	if (!scumm_stricmp(_vm->_game->_script->getResultStr(), "TotalPhys")) {
+	const char *property = _vm->_game->_script->evalString();
+	if (!scumm_stricmp(property, "TotalPhys")) {
 		// HACK
 		storeValue(1000000);
 		return;
 	}
 
-	if (!scumm_stricmp(_vm->_game->_script->getResultStr(), "AvailPhys")) {
+	if (!scumm_stricmp(property, "AvailPhys")) {
 		// HACK
 		storeValue(1000000);
 		return;
 	}
 
-	if (!scumm_stricmp(_vm->_game->_script->getResultStr(), "TimeGMT")) {
+	if (!scumm_stricmp(property, "TimeGMT")) {
 		renewTimeInVars();
 		storeValue(0);
 		return;
 	}
 
-	warning("Inter_v7::o7_getSystemProperty(): Unknown property \"%s\"",
-			_vm->_game->_script->getResultStr());
+	warning("Inter_v7::o7_getSystemProperty(): Unknown property \"%s\"", property);
 	storeValue(0);
 }
 
 void Inter_v7::o7_loadLBM() {
-	_vm->_game->_script->evalExpr(0);
-	Common::String file = _vm->_game->_script->getResultStr();
+	Common::String file = _vm->_game->_script->evalString();
 	if (!file.contains('.'))
 		file += ".LBM";
 
@@ -261,22 +243,15 @@ void Inter_v7::o7_zeroVar() {
 }
 
 void Inter_v7::o7_getINIValue() {
-	_vm->_game->_script->evalExpr(0);
+	const char *file = _vm->_game->_script->evalString();
+	if (!strncmp(file, "<ME>", 4))
+		file += 4;
+	else if (!strncmp(file, "<ALLCD>", 7))
+		file += 7;
 
-	Common::String file;
-	if (!strncmp(_vm->_game->_script->getResultStr(), "<ME>", 4))
-		file = _vm->_game->_script->getResultStr() + 4;
-	else if (!strncmp(_vm->_game->_script->getResultStr(), "<ALLCD>", 7))
-		file = _vm->_game->_script->getResultStr() + 7;
-	else
-		file = _vm->_game->_script->getResultStr();
-
-	_vm->_game->_script->evalExpr(0);
-	Common::String section = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String key = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String def = _vm->_game->_script->getResultStr();
+	Common::String section = _vm->_game->_script->evalString();
+	Common::String key     = _vm->_game->_script->evalString();
+	Common::String def     = _vm->_game->_script->evalString();
 
 	Common::String value;
 	_inis.getValue(value, file, section, key, def);
@@ -285,29 +260,21 @@ void Inter_v7::o7_getINIValue() {
 }
 
 void Inter_v7::o7_setINIValue() {
-	_vm->_game->_script->evalExpr(0);
+	const char *file = _vm->_game->_script->evalString();
+	if (!strncmp(file, "<ME>", 4))
+		file += 4;
+	else if (!strncmp(file, "<ALLCD>", 7))
+		file += 7;
 
-	Common::String file;
-	if (!strncmp(_vm->_game->_script->getResultStr(), "<ME>", 4))
-		file = _vm->_game->_script->getResultStr() + 4;
-	else if (!strncmp(_vm->_game->_script->getResultStr(), "<ALLCD>", 7))
-		file = _vm->_game->_script->getResultStr() + 7;
-	else
-		file = _vm->_game->_script->getResultStr();
-
-	_vm->_game->_script->evalExpr(0);
-	Common::String section = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String key = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String value = _vm->_game->_script->getResultStr();
+	Common::String section = _vm->_game->_script->evalString();
+	Common::String key     = _vm->_game->_script->evalString();
+	Common::String value   = _vm->_game->_script->evalString();
 
 	_inis.setValue(file, section, key, value);
 }
 
 void Inter_v7::o7_draw0xA4() {
-	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
+	Common::String str0 = _vm->_game->_script->evalString();
 
 	int16 expr0 = _vm->_game->_script->readValExpr();
 	int16 expr1 = _vm->_game->_script->readValExpr();
@@ -316,30 +283,23 @@ void Inter_v7::o7_draw0xA4() {
 }
 
 void Inter_v7::o7_opendBase() {
-	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String str1 = _vm->_game->_script->getResultStr();
+	Common::String str0 = _vm->_game->_script->evalString();
+	Common::String str1 = _vm->_game->_script->evalString();
 
 	warning("Addy Stub: Open dBase file \"%s.dbf\" (%s)", str0.c_str(), str1.c_str());
 }
 
 void Inter_v7::o7_draw0xC5() {
-	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
+	Common::String str0 = _vm->_game->_script->evalString();
 
 	warning("Addy Stub Draw 0xC5: \"%s\"", str0.c_str());
 }
 
 void Inter_v7::o7_draw0xC6() {
-	_vm->_game->_script->evalExpr(0);
-	Common::String str0 = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String str1 = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String str2 = _vm->_game->_script->getResultStr();
-	_vm->_game->_script->evalExpr(0);
-	Common::String str3 = _vm->_game->_script->getResultStr();
+	Common::String str0 = _vm->_game->_script->evalString();
+	Common::String str1 = _vm->_game->_script->evalString();
+	Common::String str2 = _vm->_game->_script->evalString();
+	Common::String str3 = _vm->_game->_script->evalString();
 
 	int16 index0 = _vm->_game->_script->readVarIndex();
 

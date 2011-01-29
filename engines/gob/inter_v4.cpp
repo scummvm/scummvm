@@ -141,17 +141,12 @@ void Inter_v4::o4_initScreen() {
 }
 
 void Inter_v4::o4_playVmdOrMusic() {
-	char fileName[128];
-	bool close;
-
-	_vm->_game->_script->evalExpr(0);
-	Common::strlcpy(fileName, _vm->_game->_script->getResultStr(), 128);
+	Common::String file = _vm->_game->_script->evalString();
 
 	// WORKAROUND: The nut rolling animation in the administration center
 	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
-	if ((_vm->getGameType() == kGameTypeWoodruff) &&
-			(!scumm_stricmp(fileName, "noixroule")))
-		strcpy(fileName, "noixroul");
+	if ((_vm->getGameType() == kGameTypeWoodruff) && file.equalsIgnoreCase("noixroule"))
+		file = "noixroul";
 
 	VideoPlayer::Properties props;
 
@@ -166,11 +161,11 @@ void Inter_v4::o4_playVmdOrMusic() {
 	props.palCmd     = 1 << (props.flags & 0x3F);
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", fileName,
+			"paletteCmd %d (%d - %d), flags %X", file.c_str(),
 			props.x, props.y, props.startFrame, props.lastFrame,
 			props.palCmd, props.palStart, props.palEnd, props.flags);
 
-	close = false;
+	bool close = false;
 	if (props.lastFrame == -1) {
 		close = true;
 	} else if (props.lastFrame == -2) {
@@ -187,7 +182,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 		uint32 x = props.x;
 		uint32 y = props.y;
 
-		int slot = _vm->_vidPlayer->openVideo(false, fileName, props);
+		int slot = _vm->_vidPlayer->openVideo(false, file, props);
 
 		_vm->_mult->_objects[props.startFrame].videoSlot = slot + 1;
 
@@ -201,7 +196,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 
 		return;
 	} else if (props.lastFrame == -4) {
-		warning("Woodruff Stub: Video/Music command -4: Play background video %s", fileName);
+		warning("Woodruff Stub: Video/Music command -4: Play background video %s", file.c_str());
 		return;
 	} else if (props.lastFrame == -5) {
 		_vm->_sound->bgStop();
@@ -211,15 +206,15 @@ void Inter_v4::o4_playVmdOrMusic() {
 	} else if (props.lastFrame == -7) {
 		return;
 	} else if (props.lastFrame == -8) {
-		warning("Woodruff Stub: Video/Music command -8: Play background video %s", fileName);
+		warning("Woodruff Stub: Video/Music command -8: Play background video %s", file.c_str());
 		return;
 	} else if (props.lastFrame == -9) {
 		_vm->_sound->bgStop();
 		_vm->_sound->bgSetPlayMode(BackgroundAtmosphere::kPlayModeRandom);
-		_vm->_sound->bgPlay(fileName, "SND", SOUND_SND, props.palStart);
+		_vm->_sound->bgPlay(file.c_str(), "SND", SOUND_SND, props.palStart);
 		return;
 	} else if (props.lastFrame < 0) {
-		warning("Unknown Video/Music command: %d, %s", props.lastFrame, fileName);
+		warning("Unknown Video/Music command: %d, %s", props.lastFrame, file.c_str());
 		return;
 	}
 
@@ -232,7 +227,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 	_vm->_vidPlayer->evaluateFlags(props);
 
 	int slot = 0;
-	if ((fileName[0] != 0) && ((slot = _vm->_vidPlayer->openVideo(true, fileName, props)) < 0)) {
+	if (!file.empty() && ((slot = _vm->_vidPlayer->openVideo(true, file, props)) < 0)) {
 		WRITE_VAR(11, (uint32) -1);
 		return;
 	}

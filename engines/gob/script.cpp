@@ -321,6 +321,16 @@ bool Script::evalBool() {
 		return false;
 }
 
+int32 Script::evalInt() {
+	evalExpr(0);
+	return getResultInt();
+}
+
+const char *Script::evalString() {
+	evalExpr(0);
+	return getResultStr();
+}
+
 int32 Script::getResultInt() const {
 	return _expression->getResultInt();
 }

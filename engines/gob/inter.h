@@ -558,7 +558,7 @@ protected:
 	void o6_removeHotspot(OpFuncParams &params);
 	void o6_fillRect(OpFuncParams &params);
 
-	void probe16bitMusic(char *fileName);
+	void probe16bitMusic(Common::String &fileName);
 };
 
 class Inter_Playtoons : public Inter_v6 {
