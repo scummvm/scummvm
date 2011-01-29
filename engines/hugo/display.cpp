@@ -106,9 +106,9 @@ void Screen::displayRect(int16 x, int16 y, int16 dx, int16 dy) {
 	debugC(3, kDebugDisplay, "displayRect(%d, %d, %d, %d)", x, y, dx, dy);
 
 	int16 xClip, yClip;
-	xClip = CLIP<int16>(x, 0, 320);
-	yClip = CLIP<int16>(y, 0, 200);
-	g_system->copyRectToScreen(&_frontBuffer[x + y * 320], 320, xClip, yClip, CLIP<int16>(dx, 0, 320 - x), CLIP<int16>(dy, 0, 200 - y));
+	xClip = CLIP<int16>(x, 0, 319);
+	yClip = CLIP<int16>(y, 0, 199);
+	g_system->copyRectToScreen(&_frontBuffer[xClip + yClip * 320], 320, xClip, yClip, CLIP<int16>(dx, 0, 319 - xClip), CLIP<int16>(dy, 0, 199 - yClip));
 }
 
 /**
@@ -493,21 +493,20 @@ void Screen::drawShape(int x, int y, int color1, int color2) {
 void Screen::drawRectangle(bool filledFl, int16 x1, int16 y1, int16 x2, int16 y2, int color) {
 	assert(x1 <= x2);
 	assert(y1 <= y2);
+	int16 x2Clip = CLIP<int16>(x2, 0, 320);
+	int16 y2Clip = CLIP<int16>(y2, 0, 200);
 
 	if (filledFl) {
-		for (int i = y1; i <= CLIP<int16>(y2, 0, 200); i++) {
-			for (int j = x1; j <= CLIP<int16>(x2, 0, 320); j++) {
-				_backBuffer[320 * i + j] = color;
+		for (int i = y1; i < y2Clip; i++) {
+			for (int j = x1; j < x2Clip; j++)
 				_frontBuffer[320 * i + j] = color;
-				_backBufferBackup[320 * i + j] = color;
-			}
 		}
 	} else {
-		for (int i = y1; i <= CLIP<int16>(y2, 0, 200); i++) {
+		for (int i = y1; i < y2Clip; i++) {
 			_frontBuffer[320 * i + x1] = color;
 			_frontBuffer[320 * i + x2] = color;
 		}
-		for (int i = x1; i < CLIP<int16>(x2, 0, 320); i++) {
+		for (int i = x1; i < x2Clip; i++) {
 			_frontBuffer[320 * y1 + i] = color;
 			_frontBuffer[320 * y2 + i] = color;
 		}

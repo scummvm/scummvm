@@ -33,6 +33,10 @@
 #include "common/system.h"
 #include "common/events.h"
 
+#include "common/random.h"
+#include "common/EventRecorder.h"
+#include "common/debug-channels.h"
+
 #include "hugo/hugo.h"
 #include "hugo/display.h"
 #include "hugo/parser.h"
@@ -131,6 +135,37 @@ void Parser::keyHandler(Common::Event event) {
 	status_t &gameStatus = _vm->getGameStatus();
 	uint16 nChar = event.kbd.keycode;
 
+	if ((event.kbd.hasFlags(Common::KBD_ALT)) || (event.kbd.hasFlags(Common::KBD_SCRL)))
+		return;
+
+	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+		switch (nChar) {
+		case Common::KEYCODE_d:
+			_vm->getDebugger()->attach();
+			_vm->getDebugger()->onFrame();
+			break;
+		case Common::KEYCODE_l:
+			_vm->_file->restoreGame(-1);
+			_vm->_scheduler->restoreScreen(*_vm->_screen_p);
+			gameStatus.viewState = kViewPlay;
+			break;
+		case Common::KEYCODE_n:
+			warning("STUB: CTRL-N (WIN) - New Game");
+			break;
+		case Common::KEYCODE_s:
+			if (gameStatus.viewState == kViewPlay) {
+				if (gameStatus.gameOverFl)
+					Utils::gameOverMsg();
+				else
+					_vm->_file->saveGame(-1, Common::String());
+			}
+			break;
+		default:
+			break;
+		}
+		return;
+	}
+
 	// Process key down event - called from OnKeyDown()
 	switch (nChar) {                                // Set various toggle states
 	case Common::KEYCODE_ESCAPE:                    // Escape key, may want to QUIT
@@ -196,61 +231,6 @@ void Parser::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_F9:                        // Boss button
 		warning("STUB: F9 (DOS) - BossKey");
-		break;
-	case Common::KEYCODE_l:
-		if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-			_vm->_file->restoreGame(-1);
-			_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-			gameStatus.viewState = kViewPlay;
-		} else {
-			if (!gameStatus.storyModeFl) {          // Keyboard disabled
-				// Add printable keys to ring buffer
-				uint16 bnext = _putIndex + 1;
-				if (bnext >= sizeof(_ringBuffer))
-					bnext = 0;
-				if (bnext != _getIndex) {
-					_ringBuffer[_putIndex] = event.kbd.ascii;
-					_putIndex = bnext;
-				}
-			}
-		}
-		break;
-	case Common::KEYCODE_n:
-		if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-			warning("STUB: CTRL-N (WIN) - New Game");
-		} else {
-			if (!gameStatus.storyModeFl) {          // Keyboard disabled
-				// Add printable keys to ring buffer
-				uint16 bnext = _putIndex + 1;
-				if (bnext >= sizeof(_ringBuffer))
-					bnext = 0;
-				if (bnext != _getIndex) {
-					_ringBuffer[_putIndex] = event.kbd.ascii;
-					_putIndex = bnext;
-				}
-			}
-		}
-		break;
-	case Common::KEYCODE_s:
-		if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-			if (gameStatus.viewState == kViewPlay) {
-				if (gameStatus.gameOverFl)
-					Utils::gameOverMsg();
-				else
-					_vm->_file->saveGame(-1, Common::String());
-			}
-		} else {
-			if (!gameStatus.storyModeFl) {          // Keyboard disabled
-				// Add printable keys to ring buffer
-				uint16 bnext = _putIndex + 1;
-				if (bnext >= sizeof(_ringBuffer))
-					bnext = 0;
-				if (bnext != _getIndex) {
-					_ringBuffer[_putIndex] = event.kbd.ascii;
-					_putIndex = bnext;
-				}
-			}
-		}
 		break;
 	default:                                        // Any other key
 		if (!gameStatus.storyModeFl) {              // Keyboard disabled

@@ -264,10 +264,6 @@ Common::Error HugoEngine::run() {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
-					this->getDebugger()->attach();
-					this->getDebugger()->onFrame();
-				}
 				_parser->keyHandler(event);
 				break;
 			case Common::EVENT_MOUSEMOVE:
