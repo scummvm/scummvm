@@ -256,6 +256,15 @@ int32 ScriptFunc::sys_Cmd_Draw_Actor_Standing(EMCState *state) {
 
 	int32 arg1 = stackPos(0);
 	int32 arg2 = stackPos(1);
+	int32 arg3 = stackPos(2);
+
+	// WORKAROUND: In scene 19 (transformed barn), Drew disappears when it shouldn't. It seems like a script bug
+	//				even if the game works correctly at this point
+	//				We need a special case for it then.
+	if (_vm->state()->_currentScene == 19 && arg3 == 1 && arg1 < 0) {
+		arg1 = 1;
+	}
+
 
 	if (arg2 > -1)
 		_vm->getDrew()->forceFacing(arg2);
@@ -266,7 +275,6 @@ int32 ScriptFunc::sys_Cmd_Draw_Actor_Standing(EMCState *state) {
 		_vm->getDrew()->setVisible(true);
 		_vm->getDrew()->playStandingAnim();
 	}
-
 	return 0;
 }
 
@@ -900,7 +908,6 @@ int32 ScriptFunc::sys_Cmd_Set_Scene_Anim_Wait(EMCState *state) {
 
 	if (sceneId >= 0 && sceneId < 40) {
 		int32 nextTicks = waitTicks + _vm->getSceneAnimationScript(sceneId)->_lastTimer;
-		//debugC(0,0xff, "sw : assigining %d to lasttimer of %d (current tick %d old milli %d) ",nextTicks, sceneId , _vm->getSystem()->getMillis(), _vm->getOldMilli());
 		if (nextTicks < _vm->getOldMilli())
 			_vm->getSceneAnimationScript(sceneId)->_lastTimer = _vm->getOldMilli() + waitTicks;
 		else
@@ -1012,6 +1019,10 @@ int32 ScriptFunc::sys_Cmd_Draw_Scene_Anim_WSA_Frame(EMCState *state) {
 		else if (animId == 9) {
 			_vm->pauseSceneAnimationScript(_vm->getCurrentUpdatingSceneAnimation(), 6);
 		}
+	}
+
+	if (_vm->state()->_currentScene == 19 && _vm->getCurrentUpdatingSceneAnimation() == 0 ) {
+		_vm->pauseSceneAnimationScript(_vm->getCurrentUpdatingSceneAnimation(), 6);
 	}
 
 	if (_vm->state()->_currentScene == 29) {
