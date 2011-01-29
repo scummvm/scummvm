@@ -349,7 +349,7 @@ void VideoPlayer::waitEndFrame(int slot, bool onlySound) {
 	if (!onlySound || video->decoder->hasSound()) {
 		uint32 waitTime = video->decoder->getTimeToNextFrame();
 		if (!video->decoder->hasSound())
-			waitTime = video->decoder->getStaticTimeToNextFrame();;
+			waitTime = video->decoder->getStaticTimeToNextFrame();
 
 		_vm->_util->delay(waitTime);
 	}
