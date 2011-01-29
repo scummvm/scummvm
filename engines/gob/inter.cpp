@@ -79,22 +79,15 @@ void Inter::executeOpcodeDraw(byte i) {
 		warning("unimplemented opcodeDraw: %d [0x%X]", i, i);
 }
 
-bool Inter::executeOpcodeFunc(byte i, byte j, OpFuncParams &params) {
+void Inter::executeOpcodeFunc(byte i, byte j, OpFuncParams &params) {
 	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%X.0x%X] (%s)",
 			i, j, i, j, getDescOpcodeFunc(i, j));
 
-	if ((i > 4) || (j > 15)) {
-		warning("unimplemented opcodeFunc: %d.%d [0x%X.0x%X]", i, j, i, j);
-		return false;
-	}
-
-	i = i * 16 + j;
-	if (_opcodesFunc[i].proc && _opcodesFunc[i].proc->isValid())
-		return (*_opcodesFunc[i].proc)(params);
+	int n = i * 16 + j;
+	if ((i <= 4) && (j <= 15) && _opcodesFunc[n].proc && _opcodesFunc[n].proc->isValid())
+		(*_opcodesFunc[n].proc)(params);
 	else
 		warning("unimplemented opcodeFunc: %d.%d [0x%X.0x%X]", i, j, i, j);
-
-	return false;
 }
 
 void Inter::executeOpcodeGob(int i, OpGobParams &params) {
@@ -329,7 +322,10 @@ void Inter::funcBlock(int16 retFlag) {
 		if (cmd2 == 0)
 			cmd >>= 4;
 
-		if (executeOpcodeFunc(cmd2, cmd, params))
+		params.doReturn = false;
+		executeOpcodeFunc(cmd2, cmd, params);
+
+		if (params.doReturn)
 			return;
 
 		if (_vm->shouldQuit())
@@ -346,7 +342,6 @@ void Inter::funcBlock(int16 retFlag) {
 	} while (params.counter != params.cmdCount);
 
 	_vm->_game->_script->setFinished(true);
-	return;
 }
 
 void Inter::callSub(int16 retFlag) {

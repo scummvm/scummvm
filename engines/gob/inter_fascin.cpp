@@ -114,7 +114,7 @@ void Inter_Fascination::setupOpcodesGob() {
 	OPCODEGOB(1002, o2_stopProtracker);
 }
 
-bool Inter_Fascination::oFascin_repeatUntil(OpFuncParams &params) {
+void Inter_Fascination::oFascin_repeatUntil(OpFuncParams &params) {
 	int16 size;
 	bool flag;
 
@@ -149,10 +149,9 @@ bool Inter_Fascination::oFascin_repeatUntil(OpFuncParams &params) {
 		_break = false;
 		*_breakFromLevel = -1;
 	}
-	return false;
 }
 
-bool Inter_Fascination::oFascin_assign(OpFuncParams &params) {
+void Inter_Fascination::oFascin_assign(OpFuncParams &params) {
 	byte destType = _vm->_game->_script->peekByte();
 	int16 dest = _vm->_game->_script->readVarIndex();
 
@@ -195,11 +194,9 @@ bool Inter_Fascination::oFascin_assign(OpFuncParams &params) {
 			break;
 		}
 	}
-
-	return false;
 }
 
-bool Inter_Fascination::oFascin_copySprite(OpFuncParams &params) {
+void Inter_Fascination::oFascin_copySprite(OpFuncParams &params) {
 	_vm->_draw->_sourceSurface = _vm->_game->_script->readInt16();
 	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
 	_vm->_draw->_spriteLeft = _vm->_game->_script->readValExpr();
@@ -213,7 +210,6 @@ bool Inter_Fascination::oFascin_copySprite(OpFuncParams &params) {
 	_vm->_draw->_transparency = _vm->_game->_script->readInt16();
 
 	_vm->_draw->spriteOperation(DRAW_BLITSURF);
-	return false;
 }
 
 void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {

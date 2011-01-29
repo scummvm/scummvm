@@ -653,7 +653,7 @@ void Inter_v1::o1_freeFontToSprite() {
 	_vm->_draw->_fontToSprite[i].height = -1;
 }
 
-bool Inter_v1::o1_callSub(OpFuncParams &params) {
+void Inter_v1::o1_callSub(OpFuncParams &params) {
 	uint16 offset = _vm->_game->_script->readUint16();
 
 	debugC(5, kDebugGameFlow, "tot = \"%s\", offset = %d",
@@ -662,51 +662,49 @@ bool Inter_v1::o1_callSub(OpFuncParams &params) {
 	if (offset < 128) {
 		warning("Inter_v1::o1_callSub(): Offset %d points into the header. "
 				"Skipping call", offset);
-		return false;
+		return;
 	}
 
 	// Skipping the copy protection screen in Gobliiins
 	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob1) && (offset == 3905)
 			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot.c_str())) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
-		return false;
+		return;
 	}
 	// Skipping the copy protection screen in Gobliins 2
 	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob2) && (offset == 1746)
 			&& !scumm_stricmp(_vm->_game->_curTotFile, "intro0.tot")) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
-		return false;
+		return;
 	}
 
 	_vm->_game->_script->call(offset);
 
 	if ((params.counter == params.cmdCount) && (params.retFlag == 2)) {
 		_vm->_game->_script->pop(false);
-		return true;
+		params.doReturn = true;
+		return;
 	}
 
 	callSub(2);
 
 	_vm->_game->_script->pop();
-
-	return false;
 }
 
-bool Inter_v1::o1_printTotText(OpFuncParams &params) {
+void Inter_v1::o1_printTotText(OpFuncParams &params) {
 	_vm->_draw->printTotText(_vm->_game->_script->readInt16());
-	return false;
 }
 
-bool Inter_v1::o1_loadCursor(OpFuncParams &params) {
+void Inter_v1::o1_loadCursor(OpFuncParams &params) {
 	int16 id    = _vm->_game->_script->readInt16();
 	int8  index = _vm->_game->_script->readInt8();
 
 	if ((index * _vm->_draw->_cursorWidth) >= _vm->_draw->_cursorSprites->getWidth())
-		return false;
+		return;
 
 	Resource *resource = _vm->_game->_resources->getResource(id);
 	if (!resource)
-		return false;
+		return;
 
 	_vm->_draw->_cursorSprites->fillRect(index * _vm->_draw->_cursorWidth, 0,
 			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
@@ -718,10 +716,9 @@ bool Inter_v1::o1_loadCursor(OpFuncParams &params) {
 	_vm->_draw->_cursorAnimLow[index] = 0;
 
 	delete resource;
-	return false;
 }
 
-bool Inter_v1::o1_switch(OpFuncParams &params) {
+void Inter_v1::o1_switch(OpFuncParams &params) {
 	uint32 offset;
 
 	checkSwitchTable(offset);
@@ -733,17 +730,16 @@ bool Inter_v1::o1_switch(OpFuncParams &params) {
 
 	if ((params.counter == params.cmdCount) && (params.retFlag == 2)) {
 		_vm->_game->_script->pop(false);
-		return true;
+		params.doReturn = true;
+		return;
 	}
 
 	funcBlock(0);
 
 	_vm->_game->_script->pop();
-
-	return false;
 }
 
-bool Inter_v1::o1_repeatUntil(OpFuncParams &params) {
+void Inter_v1::o1_repeatUntil(OpFuncParams &params) {
 	int16 size;
 	bool flag;
 
@@ -768,10 +764,9 @@ bool Inter_v1::o1_repeatUntil(OpFuncParams &params) {
 		_break = false;
 		*_breakFromLevel = -1;
 	}
-	return false;
 }
 
-bool Inter_v1::o1_whileDo(OpFuncParams &params) {
+void Inter_v1::o1_whileDo(OpFuncParams &params) {
 	bool flag;
 	int16 size;
 
@@ -782,7 +777,7 @@ bool Inter_v1::o1_whileDo(OpFuncParams &params) {
 		flag = _vm->_game->_script->evalBoolResult();
 
 		if (_terminate)
-			return false;
+			return;
 
 		uint32 blockPos = _vm->_game->_script->pos();
 
@@ -806,10 +801,9 @@ bool Inter_v1::o1_whileDo(OpFuncParams &params) {
 		_break = false;
 		*_breakFromLevel = -1;
 	}
-	return false;
 }
 
-bool Inter_v1::o1_if(OpFuncParams &params) {
+void Inter_v1::o1_if(OpFuncParams &params) {
 	byte cmd;
 	bool boolRes;
 
@@ -823,8 +817,10 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 
 	boolRes = _vm->_game->_script->evalBoolResult();
 	if (boolRes) {
-		if ((params.counter == params.cmdCount) && (params.retFlag == 2))
-			return true;
+		if ((params.counter == params.cmdCount) && (params.retFlag == 2)) {
+			params.doReturn = true;
+			return;
+		}
 
 		_vm->_game->_script->push();
 		funcBlock(0);
@@ -836,7 +832,7 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 
 		cmd = _vm->_game->_script->readByte() >> 4;
 		if (cmd != 12)
-			return false;
+			return;
 
 		_vm->_game->_script->skip(_vm->_game->_script->peekUint16(2) + 2);
 	} else {
@@ -846,10 +842,12 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 
 		cmd = _vm->_game->_script->readByte() >> 4;
 		if (cmd != 12)
-			return false;
+			return;
 
-		if ((params.counter == params.cmdCount) && (params.retFlag == 2))
-			return true;
+		if ((params.counter == params.cmdCount) && (params.retFlag == 2)) {
+			params.doReturn = true;
+			return;
+		}
 
 		_vm->_game->_script->push();
 		funcBlock(0);
@@ -857,10 +855,9 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 
 		_vm->_game->_script->skip(_vm->_game->_script->peekUint16(2) + 2);
 	}
-	return false;
 }
 
-bool Inter_v1::o1_assign(OpFuncParams &params) {
+void Inter_v1::o1_assign(OpFuncParams &params) {
 	byte destType = _vm->_game->_script->peekByte();
 	int16 dest = _vm->_game->_script->readVarIndex();
 
@@ -882,10 +879,9 @@ bool Inter_v1::o1_assign(OpFuncParams &params) {
 		break;
 
 	}
-	return false;
 }
 
-bool Inter_v1::o1_loadSpriteToPos(OpFuncParams &params) {
+void Inter_v1::o1_loadSpriteToPos(OpFuncParams &params) {
 	_vm->_draw->_spriteLeft = _vm->_game->_script->readInt16();
 
 	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
@@ -908,11 +904,9 @@ bool Inter_v1::o1_loadSpriteToPos(OpFuncParams &params) {
 	_vm->_game->_script->skip(2);
 
 	_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
-
-	return false;
 }
 
-bool Inter_v1::o1_printText(OpFuncParams &params) {
+void Inter_v1::o1_printText(OpFuncParams &params) {
 	char buf[60];
 	int i;
 
@@ -961,11 +955,9 @@ bool Inter_v1::o1_printText(OpFuncParams &params) {
 	} while (_vm->_game->_script->peekByte() != 200);
 
 	_vm->_game->_script->skip(1);
-
-	return false;
 }
 
-bool Inter_v1::o1_loadTot(OpFuncParams &params) {
+void Inter_v1::o1_loadTot(OpFuncParams &params) {
 	char buf[20];
 	int8 size;
 
@@ -987,11 +979,9 @@ bool Inter_v1::o1_loadTot(OpFuncParams &params) {
 	if (_terminate != 2)
 		_terminate = 1;
 	strcpy(_vm->_game->_totToLoad, buf);
-
-	return false;
 }
 
-bool Inter_v1::o1_palLoad(OpFuncParams &params) {
+void Inter_v1::o1_palLoad(OpFuncParams &params) {
 	int index1, index2;
 	int16 id;
 	byte cmd;
@@ -1003,7 +993,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 		if ((_vm->_global->_fakeVideoMode < 0x32) ||
 				(_vm->_global->_fakeVideoMode > 0x63)) {
 			_vm->_game->_script->skip(48);
-			return false;
+			return;
 		}
 		break;
 
@@ -1011,55 +1001,55 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 		if ((_vm->_global->_fakeVideoMode != 5) &&
 				(_vm->_global->_fakeVideoMode != 7)) {
 			_vm->_game->_script->skip(18);
-			return false;
+			return;
 		}
 		break;
 
 	case 50:
 		if (_vm->_global->_colorCount == 256) {
 			_vm->_game->_script->skip(16);
-			return false;
+			return;
 		}
 		break;
 
 	case 51:
 		if (_vm->_global->_fakeVideoMode < 0x64) {
 			_vm->_game->_script->skip(2);
-			return false;
+			return;
 		}
 		break;
 
 	case 52:
 		if (_vm->_global->_colorCount == 256) {
 			_vm->_game->_script->skip(48);
-			return false;
+			return;
 		}
 		break;
 
 	case 53:
 		if (_vm->_global->_colorCount != 256) {
 			_vm->_game->_script->skip(2);
-			return false;
+			return;
 		}
 		break;
 
 	case 54:
 		if (_vm->_global->_fakeVideoMode < 0x13) {
-			return false;
+			return;
 		}
 		break;
 
 	case 61:
 		if (_vm->_global->_fakeVideoMode < 0x13) {
 			_vm->_game->_script->skip(4);
-			return false;
+			return;
 		}
 		break;
 	}
 
 	if ((cmd & 0x7F) == 0x30) {
 		_vm->_game->_script->skip(48);
-		return false;
+		return;
 	}
 
 	_vm->_draw->_applyPal = !(cmd & 0x80);
@@ -1078,7 +1068,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 			_vm->_draw->_frontSurface->clear();
 			_vm->_draw->_noInvalidated57 = true;
 			_vm->_game->_script->skip(48);
-			return false;
+			return;
 		}
 		_vm->_draw->_noInvalidated57 = false;
 
@@ -1105,7 +1095,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 
 		_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;
 		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
-		return false;
+		return;
 	}
 
 	switch (cmd) {
@@ -1157,7 +1147,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 		if (_vm->_draw->_applyPal) {
 			_vm->_draw->_applyPal = false;
 			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
-			return false;
+			return;
 		}
 		break;
 	}
@@ -1169,22 +1159,20 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 		if (_vm->_global->_videoMode < 0x13) {
 			_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, 0, 0);
-			return false;
+			return;
 		}
 		if ((_vm->_global->_videoMode < 0x32) ||
 				(_vm->_global->_videoMode >= 0x64)) {
 			_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, 0, 0);
-			return false;
+			return;
 		}
 		_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaSmallPalette;
 		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, 0, 0);
 	}
-
-	return false;
 }
 
-bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
+void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	static uint32 lastCalled = 0;
 	int16 cmd;
 	int16 key;
@@ -1252,11 +1240,9 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 			_vm->_util->longDelay(cmd);
 		break;
 	}
-
-	return false;
 }
 
-bool Inter_v1::o1_capturePush(OpFuncParams &params) {
+void Inter_v1::o1_capturePush(OpFuncParams &params) {
 	int16 left, top;
 	int16 width, height;
 
@@ -1266,78 +1252,68 @@ bool Inter_v1::o1_capturePush(OpFuncParams &params) {
 	height = _vm->_game->_script->readValExpr();
 
 	if ((width < 0) || (height < 0))
-		return false;
+		return;
 
 	_vm->_game->capturePush(left, top, width, height);
 	(*_vm->_scenery->_pCaptureCounter)++;
-	return false;
 }
 
-bool Inter_v1::o1_capturePop(OpFuncParams &params) {
+void Inter_v1::o1_capturePop(OpFuncParams &params) {
 	if (*_vm->_scenery->_pCaptureCounter != 0) {
 		(*_vm->_scenery->_pCaptureCounter)--;
 		_vm->_game->capturePop(1);
 	}
-	return false;
 }
 
-bool Inter_v1::o1_animPalInit(OpFuncParams &params) {
+void Inter_v1::o1_animPalInit(OpFuncParams &params) {
 	_animPalDir[0] = _vm->_game->_script->readInt16();
 	_animPalLowIndex[0] = _vm->_game->_script->readValExpr();
 	_animPalHighIndex[0] = _vm->_game->_script->readValExpr();
-	return false;
 }
 
-bool Inter_v1::o1_drawOperations(OpFuncParams &params) {
+void Inter_v1::o1_drawOperations(OpFuncParams &params) {
 	byte cmd;
 
 	cmd = _vm->_game->_script->readByte();
 
 	executeOpcodeDraw(cmd);
-
-	return false;
 }
 
-bool Inter_v1::o1_setcmdCount(OpFuncParams &params) {
+void Inter_v1::o1_setcmdCount(OpFuncParams &params) {
 	params.cmdCount = _vm->_game->_script->readByte();
 	params.counter = 0;
-	return false;
 }
 
-bool Inter_v1::o1_return(OpFuncParams &params) {
+void Inter_v1::o1_return(OpFuncParams &params) {
 	if (params.retFlag != 2)
 		_break = true;
 
 	_vm->_game->_script->setFinished(true);
-	return true;
+	params.doReturn = true;
 }
 
-bool Inter_v1::o1_renewTimeInVars(OpFuncParams &params) {
+void Inter_v1::o1_renewTimeInVars(OpFuncParams &params) {
 	renewTimeInVars();
-	return false;
 }
 
-bool Inter_v1::o1_speakerOn(OpFuncParams &params) {
+void Inter_v1::o1_speakerOn(OpFuncParams &params) {
 	_vm->_sound->speakerOn(_vm->_game->_script->readValExpr(), -1);
-	return false;
 }
 
-bool Inter_v1::o1_speakerOff(OpFuncParams &params) {
+void Inter_v1::o1_speakerOff(OpFuncParams &params) {
 	_vm->_sound->speakerOff();
-	return false;
 }
 
-bool Inter_v1::o1_putPixel(OpFuncParams &params) {
+void Inter_v1::o1_putPixel(OpFuncParams &params) {
 	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
 
 	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
 	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
 	_vm->_draw->_frontColor = _vm->_game->_script->readValExpr();
 	_vm->_draw->spriteOperation(DRAW_PUTPIXEL);
-	return false;
 }
 
-bool Inter_v1::o1_goblinFunc(OpFuncParams &params) {
+void Inter_v1::o1_goblinFunc(OpFuncParams &params) {
 	OpGobParams gobParams;
 	bool objDescSet = false;
 	int16 cmd;
@@ -1385,14 +1361,12 @@ bool Inter_v1::o1_goblinFunc(OpFuncParams &params) {
 */
 
 	if ((cmd < 40) && objDescSet && !gobParams.objDesc)
-		return false;
+		return;
 
 	executeOpcodeGob(cmd, gobParams);
-
-	return false;
 }
 
-bool Inter_v1::o1_createSprite(OpFuncParams &params) {
+void Inter_v1::o1_createSprite(OpFuncParams &params) {
 	int16 index;
 	int16 width, height;
 	int16 flag;
@@ -1409,32 +1383,31 @@ bool Inter_v1::o1_createSprite(OpFuncParams &params) {
 
 	flag = _vm->_game->_script->readInt16();
 	_vm->_draw->initSpriteSurf(index, width, height, flag ? 2 : 0);
-
-	return false;
 }
 
-bool Inter_v1::o1_freeSprite(OpFuncParams &params) {
+void Inter_v1::o1_freeSprite(OpFuncParams &params) {
 	_vm->_draw->freeSprite(_vm->_game->_script->readInt16());
-	return false;
 }
 
-bool Inter_v1::o1_returnTo(OpFuncParams &params) {
+void Inter_v1::o1_returnTo(OpFuncParams &params) {
 	if (params.retFlag == 1) {
 		_break = true;
 		_vm->_game->_script->setFinished(true);
-		return true;
+		params.doReturn = true;
+		return;
 	}
 
 	if (*_nestLevel == 0)
-		return false;
+		return;
 
 	*_breakFromLevel = *_nestLevel;
 	_break = true;
 	_vm->_game->_script->setFinished(true);
-	return true;
+
+	params.doReturn = true;
 }
 
-bool Inter_v1::o1_loadSpriteContent(OpFuncParams &params) {
+void Inter_v1::o1_loadSpriteContent(OpFuncParams &params) {
 	_vm->_draw->_spriteLeft = _vm->_game->_script->readInt16();
 	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
 	_vm->_draw->_transparency = _vm->_game->_script->readInt16();
@@ -1442,10 +1415,9 @@ bool Inter_v1::o1_loadSpriteContent(OpFuncParams &params) {
 	_vm->_draw->_destSpriteY = 0;
 
 	_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
-	return false;
 }
 
-bool Inter_v1::o1_copySprite(OpFuncParams &params) {
+void Inter_v1::o1_copySprite(OpFuncParams &params) {
 	if (_vm->_game->_script->peekByte(1) == 0)
 		_vm->_draw->_sourceSurface = _vm->_game->_script->readInt16();
 	else
@@ -1467,10 +1439,9 @@ bool Inter_v1::o1_copySprite(OpFuncParams &params) {
 	_vm->_draw->_transparency = _vm->_game->_script->readInt16();
 
 	_vm->_draw->spriteOperation(DRAW_BLITSURF);
-	return false;
 }
 
-bool Inter_v1::o1_fillRect(OpFuncParams &params) {
+void Inter_v1::o1_fillRect(OpFuncParams &params) {
 	int16 destSurf;
 
 	_vm->_draw->_destSurface = destSurf = _vm->_game->_script->readInt16();
@@ -1483,7 +1454,7 @@ bool Inter_v1::o1_fillRect(OpFuncParams &params) {
 	_vm->_draw->_backColor = _vm->_game->_script->readValExpr();
 
 	if (!_vm->_draw->_spritesArray[(destSurf >= 100) ? (destSurf - 80) : destSurf])
-		return false;
+		return;
 
 	if (_vm->_draw->_spriteRight < 0) {
 		_vm->_draw->_destSpriteX += _vm->_draw->_spriteRight - 1;
@@ -1495,10 +1466,9 @@ bool Inter_v1::o1_fillRect(OpFuncParams &params) {
 	}
 
 	_vm->_draw->spriteOperation(DRAW_FILLRECT);
-	return false;
 }
 
-bool Inter_v1::o1_drawLine(OpFuncParams &params) {
+void Inter_v1::o1_drawLine(OpFuncParams &params) {
 	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
 
 	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
@@ -1508,10 +1478,9 @@ bool Inter_v1::o1_drawLine(OpFuncParams &params) {
 
 	_vm->_draw->_frontColor = _vm->_game->_script->readValExpr();
 	_vm->_draw->spriteOperation(DRAW_DRAWLINE);
-	return false;
 }
 
-bool Inter_v1::o1_strToLong(OpFuncParams &params) {
+void Inter_v1::o1_strToLong(OpFuncParams &params) {
 	char str[20];
 	int16 strVar;
 	int16 destVar;
@@ -1523,26 +1492,23 @@ bool Inter_v1::o1_strToLong(OpFuncParams &params) {
 
 	destVar = _vm->_game->_script->readVarIndex();
 	WRITE_VAR_OFFSET(destVar, res);
-	return false;
 }
 
-bool Inter_v1::o1_invalidate(OpFuncParams &params) {
+void Inter_v1::o1_invalidate(OpFuncParams &params) {
 	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
 	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
 	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
 	_vm->_draw->_spriteRight = _vm->_game->_script->readValExpr();
 	_vm->_draw->_frontColor = _vm->_game->_script->readValExpr();
 	_vm->_draw->spriteOperation(DRAW_INVALIDATE);
-	return false;
 }
 
-bool Inter_v1::o1_setBackDelta(OpFuncParams &params) {
+void Inter_v1::o1_setBackDelta(OpFuncParams &params) {
 	_vm->_draw->_backDeltaX = _vm->_game->_script->readValExpr();
 	_vm->_draw->_backDeltaY = _vm->_game->_script->readValExpr();
-	return false;
 }
 
-bool Inter_v1::o1_playSound(OpFuncParams &params) {
+void Inter_v1::o1_playSound(OpFuncParams &params) {
 	int16 frequency;
 	int16 freq2;
 	int16 repCount;
@@ -1557,11 +1523,11 @@ bool Inter_v1::o1_playSound(OpFuncParams &params) {
 
 	_soundEndTimeKey = 0;
 	if (!sample || sample->empty())
-		return false;
+		return;
 
 	if (repCount < 0) {
 		if (_vm->_global->_soundFlags < 2)
-			return false;
+			return;
 
 		repCount = -repCount;
 		_soundEndTimeKey = _vm->_util->getTimeKey();
@@ -1581,34 +1547,28 @@ bool Inter_v1::o1_playSound(OpFuncParams &params) {
 		_vm->_sound->blasterStop(0);
 		_vm->_sound->blasterPlay(sample, repCount - 1, frequency);
 	}
-
-	return false;
 }
 
-bool Inter_v1::o1_stopSound(OpFuncParams &params) {
+void Inter_v1::o1_stopSound(OpFuncParams &params) {
 	_vm->_sound->adlibStop();
 	_vm->_sound->blasterStop(_vm->_game->_script->readValExpr());
 
 	_soundEndTimeKey = 0;
-	return false;
 }
 
-bool Inter_v1::o1_loadSound(OpFuncParams &params) {
+void Inter_v1::o1_loadSound(OpFuncParams &params) {
 	loadSound(-1);
-	return false;
 }
 
-bool Inter_v1::o1_freeSoundSlot(OpFuncParams &params) {
+void Inter_v1::o1_freeSoundSlot(OpFuncParams &params) {
 	_vm->_game->freeSoundSlot(-1);
-	return false;
 }
 
-bool Inter_v1::o1_waitEndPlay(OpFuncParams &params) {
+void Inter_v1::o1_waitEndPlay(OpFuncParams &params) {
 	_vm->_sound->blasterWaitEndPlay();
-	return false;
 }
 
-bool Inter_v1::o1_playComposition(OpFuncParams &params) {
+void Inter_v1::o1_playComposition(OpFuncParams &params) {
 	int16 composition[50];
 	int16 dataVar;
 	int16 freqVal;
@@ -1619,10 +1579,9 @@ bool Inter_v1::o1_playComposition(OpFuncParams &params) {
 		composition[i] = (int16) VAR_OFFSET(dataVar + i * 4);
 
 	_vm->_sound->blasterPlayComposition(composition, freqVal);
-	return false;
 }
 
-bool Inter_v1::o1_getFreeMem(OpFuncParams &params) {
+void Inter_v1::o1_getFreeMem(OpFuncParams &params) {
 	int16 freeVar;
 	int16 maxFreeVar;
 
@@ -1632,10 +1591,9 @@ bool Inter_v1::o1_getFreeMem(OpFuncParams &params) {
 	// HACK
 	WRITE_VAR_OFFSET(freeVar, 1000000);
 	WRITE_VAR_OFFSET(maxFreeVar, 1000000);
-	return false;
 }
 
-bool Inter_v1::o1_checkData(OpFuncParams &params) {
+void Inter_v1::o1_checkData(OpFuncParams &params) {
 	int16 varOff;
 
 	_vm->_game->_script->evalExpr(0);
@@ -1646,19 +1604,16 @@ bool Inter_v1::o1_checkData(OpFuncParams &params) {
 		WRITE_VAR_OFFSET(varOff, (uint32) -1);
 	} else
 		WRITE_VAR_OFFSET(varOff, 50); // "handle" between 50 and 128 = in archive
-
-	return false;
 }
 
-bool Inter_v1::o1_cleanupStr(OpFuncParams &params) {
+void Inter_v1::o1_cleanupStr(OpFuncParams &params) {
 	int16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
 	_vm->_util->cleanupStr(GET_VARO_FSTR(strVar));
-	return false;
 }
 
-bool Inter_v1::o1_insertStr(OpFuncParams &params) {
+void Inter_v1::o1_insertStr(OpFuncParams &params) {
 	int16 pos;
 	int16 strVar;
 
@@ -1668,10 +1623,9 @@ bool Inter_v1::o1_insertStr(OpFuncParams &params) {
 
 	char *str = GET_VARO_FSTR(strVar);
 	_vm->_util->insertStr(_vm->_game->_script->getResultStr(), str, pos);
-	return false;
 }
 
-bool Inter_v1::o1_cutStr(OpFuncParams &params) {
+void Inter_v1::o1_cutStr(OpFuncParams &params) {
 	int16 strVar;
 	int16 pos;
 	int16 size;
@@ -1680,10 +1634,9 @@ bool Inter_v1::o1_cutStr(OpFuncParams &params) {
 	pos = _vm->_game->_script->readValExpr();
 	size = _vm->_game->_script->readValExpr();
 	_vm->_util->cutFromStr(GET_VARO_STR(strVar), pos, size);
-	return false;
 }
 
-bool Inter_v1::o1_strstr(OpFuncParams &params) {
+void Inter_v1::o1_strstr(OpFuncParams &params) {
 	int16 strVar;
 	int16 resVar;
 	int16 pos;
@@ -1695,10 +1648,9 @@ bool Inter_v1::o1_strstr(OpFuncParams &params) {
 	char *res = strstr(GET_VARO_STR(strVar), _vm->_game->_script->getResultStr());
 	pos = res ? (res - (GET_VARO_STR(strVar))) : -1;
 	WRITE_VAR_OFFSET(resVar, pos);
-	return false;
 }
 
-bool Inter_v1::o1_istrlen(OpFuncParams &params) {
+void Inter_v1::o1_istrlen(OpFuncParams &params) {
 	int16 len;
 	int16 strVar;
 
@@ -1707,10 +1659,9 @@ bool Inter_v1::o1_istrlen(OpFuncParams &params) {
 	strVar = _vm->_game->_script->readVarIndex();
 
 	WRITE_VAR_OFFSET(strVar, len);
-	return false;
 }
 
-bool Inter_v1::o1_setMousePos(OpFuncParams &params) {
+void Inter_v1::o1_setMousePos(OpFuncParams &params) {
 	_vm->_global->_inter_mouseX = _vm->_game->_script->readValExpr();
 	_vm->_global->_inter_mouseY = _vm->_game->_script->readValExpr();
 	_vm->_global->_inter_mouseX -= _vm->_video->_scrollOffsetX;
@@ -1718,60 +1669,52 @@ bool Inter_v1::o1_setMousePos(OpFuncParams &params) {
 	if (_vm->_global->_useMouse != 0)
 		_vm->_util->setMousePos(_vm->_global->_inter_mouseX,
 				_vm->_global->_inter_mouseY);
-	return false;
 }
 
-bool Inter_v1::o1_setFrameRate(OpFuncParams &params) {
+void Inter_v1::o1_setFrameRate(OpFuncParams &params) {
 	_vm->_util->setFrameRate(_vm->_game->_script->readValExpr());
-	return false;
 }
 
-bool Inter_v1::o1_animatePalette(OpFuncParams &params) {
+void Inter_v1::o1_animatePalette(OpFuncParams &params) {
 	_vm->_draw->blitInvalidated();
 	_vm->_util->waitEndFrame();
 	animPalette();
 	storeKey(_vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
 		&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0));
-	return false;
 }
 
-bool Inter_v1::o1_animateCursor(OpFuncParams &params) {
+void Inter_v1::o1_animateCursor(OpFuncParams &params) {
 	_vm->_draw->animateCursor(1);
-	return false;
 }
 
-bool Inter_v1::o1_blitCursor(OpFuncParams &params) {
+void Inter_v1::o1_blitCursor(OpFuncParams &params) {
 	_vm->_draw->blitCursor();
-	return false;
 }
 
-bool Inter_v1::o1_loadFont(OpFuncParams &params) {
+void Inter_v1::o1_loadFont(OpFuncParams &params) {
 	_vm->_game->_script->evalExpr(0);
 	uint16 index = _vm->_game->_script->readInt16();
 
 	_vm->_draw->animateCursor(4);
 
 	_vm->_draw->loadFont(index, _vm->_game->_script->getResultStr());
-
-	return false;
 }
 
-bool Inter_v1::o1_freeFont(OpFuncParams &params) {
+void Inter_v1::o1_freeFont(OpFuncParams &params) {
 	int16 index;
 
 	index = _vm->_game->_script->readInt16();
 
 	if (index >= Draw::kFontCount) {
 		warning("o1_freeFont(): Index %d > count %d", index, Draw::kFontCount);
-		return false;
+		return;
 	}
 
 	delete _vm->_draw->_fonts[index];
 	_vm->_draw->_fonts[index] = 0;
-	return false;
 }
 
-bool Inter_v1::o1_readData(OpFuncParams &params) {
+void Inter_v1::o1_readData(OpFuncParams &params) {
 	int16 retSize;
 	int16 size;
 	int16 dataVar;
@@ -1787,7 +1730,7 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 
 	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(_vm->_game->_script->getResultStr());
 	if (!stream)
-		return false;
+		return;
 
 	_vm->_draw->animateCursor(4);
 	if (offset < 0)
@@ -1804,11 +1747,9 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 		WRITE_VAR(1, 0);
 
 	delete stream;
-
-	return false;
 }
 
-bool Inter_v1::o1_writeData(OpFuncParams &params) {
+void Inter_v1::o1_writeData(OpFuncParams &params) {
 	int16 offset;
 	int16 size;
 	int16 dataVar;
@@ -1824,18 +1765,15 @@ bool Inter_v1::o1_writeData(OpFuncParams &params) {
 
 	warning("Attempted to write to file \"%s\"", _vm->_game->_script->getResultStr());
 	WRITE_VAR(1, 0);
-
-	return false;
 }
 
-bool Inter_v1::o1_manageDataFile(OpFuncParams &params) {
+void Inter_v1::o1_manageDataFile(OpFuncParams &params) {
 	_vm->_game->_script->evalExpr(0);
 
 	if (_vm->_game->_script->getResultStr()[0] != 0)
 		_vm->_dataIO->openArchive(_vm->_game->_script->getResultStr(), true);
 	else
 		_vm->_dataIO->closeArchive(true);
-	return false;
 }
 
 void Inter_v1::o1_setState(OpGobParams &params) {

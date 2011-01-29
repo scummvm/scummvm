@@ -53,14 +53,13 @@ void Inter_Inca2::setupOpcodesFunc() {
 void Inter_Inca2::setupOpcodesGob() {
 }
 
-bool Inter_Inca2::oInca2_spaceShooter(OpFuncParams &params) {
+void Inter_Inca2::oInca2_spaceShooter(OpFuncParams &params) {
 	// TODO: Not yet implemented. We'll pretend we won the match for now
 	_vm->_game->_script->skip(4);
 	uint16 resVar = _vm->_game->_script->readUint16();
 	_vm->_game->_script->skip(4);
 
 	WRITE_VAR(resVar, 1);
-	return false;
 }
 
 } // End of namespace Gob

@@ -96,7 +96,7 @@ void Inter_Playtoons::setupOpcodesFunc() {
 void Inter_Playtoons::setupOpcodesGob() {
 }
 
-bool Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
+void Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 	char buf[60];
 	int i;
 	int16 oldTransparency;
@@ -178,16 +178,13 @@ bool Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 	} while (_vm->_game->_script->peekByte() != 200);
 
 	_vm->_game->_script->skip(1);
-
-	return false;
 }
 
-bool Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
+void Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
 	_vm->_game->_hotspots->oPlaytoons_F_1B();
-	return false;
 }
 
-bool Inter_Playtoons::oPlaytoons_putPixel(OpFuncParams &params) {
+void Inter_Playtoons::oPlaytoons_putPixel(OpFuncParams &params) {
 	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
 
 	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
@@ -201,21 +198,18 @@ bool Inter_Playtoons::oPlaytoons_putPixel(OpFuncParams &params) {
 	_vm->_draw->_pattern = _vm->_game->_script->getResultInt()>>16;
 
 	_vm->_draw->spriteOperation(DRAW_PUTPIXEL);
-
-	return false;
 }
 
-bool Inter_Playtoons::oPlaytoons_freeSprite(OpFuncParams &params) {
+void Inter_Playtoons::oPlaytoons_freeSprite(OpFuncParams &params) {
 	int16 index;
 	if (_vm->_game->_script->peekByte(1) == 0)
 		index = _vm->_game->_script->readInt16();
 	else
 		index = _vm->_game->_script->readValExpr();
 	_vm->_draw->freeSprite(index);
-	return false;
 }
 
-bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
+void Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 	int16 handle;
 	uint16 varOff;
 	int32 size;
@@ -275,11 +269,9 @@ bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 
 	WRITE_VAR_OFFSET(varOff, handle);
 	WRITE_VAR(16, (uint32) size);
-
-	return false;
 }
 
-bool Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
+void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 	int32 retSize;
 	int32 size;
 	int32 offset;
@@ -318,15 +310,15 @@ bool Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 		} else
 			WRITE_VAR(1, 0);
 
-		return false;
+		return;
 
 	} else if (mode == SaveLoad::kSaveModeIgnore)
-		return false;
+		return;
 
 	if (size < 0) {
 		warning("Attempted to read a raw sprite from file \"%s\"",
 				file);
-		return false ;
+		return;
 	} else if (size == 0) {
 		dataVar = 0;
 		size = _vm->_game->_script->getVariablesCount() * 4;
@@ -336,20 +328,20 @@ bool Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 
 	if (file[0] == 0) {
 		WRITE_VAR(1, size);
-		return false;
+		return;
 	}
 
 	WRITE_VAR(1, 1);
 	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(file);
 	if (!stream)
-		return false;
+		return;
 
 	_vm->_draw->animateCursor(4);
 	if (offset > stream->size()) {
 		warning("oPlaytoons_readData: File \"%s\", Offset (%d) > file size (%d)",
 				file, offset, stream->size());
 		delete stream;
-		return false;
+		return;
 	}
 
 	if (offset < 0)
@@ -370,7 +362,6 @@ bool Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 		WRITE_VAR(1, 0);
 
 	delete stream;
-	return false;
 }
 
 void Inter_Playtoons::oPlaytoons_getObjAnimSize() {

@@ -204,7 +204,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 
 }
 
-bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
+void Inter_v6::o6_loadCursor(OpFuncParams &params) {
 	int16 id = _vm->_game->_script->readInt16();
 
 	if ((id == -1) || (id == -2)) {
@@ -228,7 +228,7 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 		int vmdSlot = _vm->_vidPlayer->openVideo(false, file, props);
 		if (vmdSlot == -1) {
 			warning("Can't open video \"%s\" as cursor", file);
-			return false;
+			return;
 		}
 
 		int16 framesCount = _vm->_vidPlayer->getFrameCount(vmdSlot);
@@ -250,17 +250,17 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 		_vm->_draw->_cursorAnimHigh[index] = framesCount + start - 1;
 		_vm->_draw->_cursorAnimDelays[index] = 10;
 
-		return false;
+		return;
 	}
 
 	int8 index = _vm->_game->_script->readInt8();
 
 	if ((index * _vm->_draw->_cursorWidth) >= _vm->_draw->_cursorSprites->getWidth())
-		return false;
+		return;
 
 	Resource *resource = _vm->_game->_resources->getResource((uint16) id);
 	if (!resource)
-		return false;
+		return;
 
 	_vm->_draw->_cursorSprites->fillRect(index * _vm->_draw->_cursorWidth, 0,
 			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
@@ -272,10 +272,9 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 	_vm->_draw->_cursorAnimLow[index] = 0;
 
 	delete resource;
-	return false;
 }
 
-bool Inter_v6::o6_assign(OpFuncParams &params) {
+void Inter_v6::o6_assign(OpFuncParams &params) {
 	uint16 size, destType;
 	uint16 dest = _vm->_game->_script->readVarIndex(&size, &destType);
 
@@ -293,7 +292,7 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 
 		_vm->_game->_script->evalExpr(&src);
 
-		return false;
+		return;
 	}
 
 	byte loopCount;
@@ -310,7 +309,7 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 			dest += n;
 		}
 
-		return false;
+		return;
 
 	} else if (_vm->_game->_script->peekByte() == 99) {
 		_vm->_game->_script->skip(1);
@@ -351,11 +350,9 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 			break;
 		}
 	}
-
-	return false;
 }
 
-bool Inter_v6::o6_removeHotspot(OpFuncParams &params) {
+void Inter_v6::o6_removeHotspot(OpFuncParams &params) {
 	int16 id;
 	uint8 stateType1    = Hotspots::kStateFilledDisabled | Hotspots::kStateType1;
 	uint8 stateType2    = Hotspots::kStateFilledDisabled | Hotspots::kStateType2;
@@ -384,11 +381,9 @@ bool Inter_v6::o6_removeHotspot(OpFuncParams &params) {
 		_vm->_game->_hotspots->remove((stateType2 << 12) + id);
 		break;
 	}
-
-	return false;
 }
 
-bool Inter_v6::o6_fillRect(OpFuncParams &params) {
+void Inter_v6::o6_fillRect(OpFuncParams &params) {
 	int16 destSurf;
 
 	_vm->_draw->_destSurface = destSurf = _vm->_game->_script->readInt16();
@@ -418,14 +413,13 @@ bool Inter_v6::o6_fillRect(OpFuncParams &params) {
 
 	if (destSurf & 0x80) {
 		warning("Urban Stub: o6_fillRect(), destSurf & 0x80");
-		return false;
+		return;
 	}
 
 	if (!_vm->_draw->_spritesArray[(destSurf > 100) ? (destSurf - 80) : destSurf])
-		return false;
+		return;
 
 	_vm->_draw->spriteOperation(DRAW_FILLRECT);
-	return false;
 }
 
 void Inter_v6::probe16bitMusic(char *fileName) {

@@ -1037,7 +1037,7 @@ void Inter_v2::o2_setImdFrontSurf() {
 void Inter_v2::o2_resetImdFrontSurf() {
 }
 
-bool Inter_v2::o2_assign(OpFuncParams &params) {
+void Inter_v2::o2_assign(OpFuncParams &params) {
 	byte destType = _vm->_game->_script->peekByte();
 	int16 dest = _vm->_game->_script->readVarIndex();
 
@@ -1081,11 +1081,9 @@ bool Inter_v2::o2_assign(OpFuncParams &params) {
 			break;
 		}
 	}
-
-	return false;
 }
 
-bool Inter_v2::o2_printText(OpFuncParams &params) {
+void Inter_v2::o2_printText(OpFuncParams &params) {
 	char buf[60];
 	int i;
 
@@ -1153,11 +1151,9 @@ bool Inter_v2::o2_printText(OpFuncParams &params) {
 	} while (_vm->_game->_script->peekByte() != 200);
 
 	_vm->_game->_script->skip(1);
-
-	return false;
 }
 
-bool Inter_v2::o2_animPalInit(OpFuncParams &params) {
+void Inter_v2::o2_animPalInit(OpFuncParams &params) {
 	int16 index;
 
 	index = _vm->_game->_script->readInt16();
@@ -1176,10 +1172,9 @@ bool Inter_v2::o2_animPalInit(OpFuncParams &params) {
 		_animPalHighIndex[index] = _vm->_game->_script->readValExpr();
 		_animPalDir[index] = -1;
 	}
-	return false;
 }
 
-bool Inter_v2::o2_addHotspot(OpFuncParams &params) {
+void Inter_v2::o2_addHotspot(OpFuncParams &params) {
 	int16 id       = _vm->_game->_script->readValExpr();
 	uint16 funcPos = _vm->_game->_script->pos();
 	int16 left     = _vm->_game->_script->readValExpr();
@@ -1209,11 +1204,9 @@ bool Inter_v2::o2_addHotspot(OpFuncParams &params) {
 	else
 		index = _vm->_game->_hotspots->add(0xE000 + id, left, top,
 				left + width - 1, top + height - 1, flags, key, 0, 0, funcPos);
-
-	return false;
 }
 
-bool Inter_v2::o2_removeHotspot(OpFuncParams &params) {
+void Inter_v2::o2_removeHotspot(OpFuncParams &params) {
 	int16 id = _vm->_game->_script->readValExpr();
 	uint8 stateType1 = Hotspots::kStateFilledDisabled | Hotspots::kStateType1;
 	uint8 stateType2 = Hotspots::kStateFilledDisabled | Hotspots::kStateType2;
@@ -1224,11 +1217,9 @@ bool Inter_v2::o2_removeHotspot(OpFuncParams &params) {
 		_vm->_game->_hotspots->removeState(stateType2);
 	else
 		_vm->_game->_hotspots->remove((stateType2 << 12) + id);
-
-	return false;
 }
 
-bool Inter_v2::o2_goblinFunc(OpFuncParams &params) {
+void Inter_v2::o2_goblinFunc(OpFuncParams &params) {
 	OpGobParams gobParams;
 	int16 cmd;
 
@@ -1239,10 +1230,9 @@ bool Inter_v2::o2_goblinFunc(OpFuncParams &params) {
 
 	if (cmd != 101)
 		executeOpcodeGob(cmd, gobParams);
-	return false;
 }
 
-bool Inter_v2::o2_stopSound(OpFuncParams &params) {
+void Inter_v2::o2_stopSound(OpFuncParams &params) {
 	int16 expr;
 
 	expr = _vm->_game->_script->readValExpr();
@@ -1253,15 +1243,13 @@ bool Inter_v2::o2_stopSound(OpFuncParams &params) {
 		_vm->_sound->blasterStop(expr);
 
 	_soundEndTimeKey = 0;
-	return false;
 }
 
-bool Inter_v2::o2_loadSound(OpFuncParams &params) {
+void Inter_v2::o2_loadSound(OpFuncParams &params) {
 	loadSound(0);
-	return false;
 }
 
-bool Inter_v2::o2_getFreeMem(OpFuncParams &params) {
+void Inter_v2::o2_getFreeMem(OpFuncParams &params) {
 	uint16 freeVar;
 	uint16 maxFreeVar;
 
@@ -1272,10 +1260,9 @@ bool Inter_v2::o2_getFreeMem(OpFuncParams &params) {
 	WRITE_VAR_OFFSET(freeVar   , 1000000);
 	WRITE_VAR_OFFSET(maxFreeVar, 1000000);
 	WRITE_VAR(16, _vm->_game->_script->getVariablesCount() * 4);
-	return false;
 }
 
-bool Inter_v2::o2_checkData(OpFuncParams &params) {
+void Inter_v2::o2_checkData(OpFuncParams &params) {
 	int16 varOff;
 	int32 size;
 	SaveLoad::SaveMode mode;
@@ -1309,11 +1296,9 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 
 	WRITE_VAR_OFFSET(varOff, (size == -1) ? -1 : 50);
 	WRITE_VAR(16, (uint32) size);
-
-	return false;
 }
 
-bool Inter_v2::o2_readData(OpFuncParams &params) {
+void Inter_v2::o2_readData(OpFuncParams &params) {
 	int32 retSize;
 	int32 size;
 	int32 offset;
@@ -1346,15 +1331,15 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 		} else
 			WRITE_VAR(1, 0);
 
-		return false;
+		return;
 
 	} else if (mode == SaveLoad::kSaveModeIgnore)
-		return false;
+		return;
 
 	if (size < 0) {
 		warning("Attempted to read a raw sprite from file \"%s\"",
 				file);
-		return false ;
+		return;
 	} else if (size == 0) {
 		dataVar = 0;
 		size = _vm->_game->_script->getVariablesCount() * 4;
@@ -1364,13 +1349,13 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 
 	if (file[0] == 0) {
 		WRITE_VAR(1, size);
-		return false;
+		return;
 	}
 
 	WRITE_VAR(1, 1);
 	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(file);
 	if (!stream)
-		return false;
+		return;
 
 	_vm->_draw->animateCursor(4);
 	if (offset < 0)
@@ -1391,10 +1376,9 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 		WRITE_VAR(1, 0);
 
 	delete stream;
-	return false;
 }
 
-bool Inter_v2::o2_writeData(OpFuncParams &params) {
+void Inter_v2::o2_writeData(OpFuncParams &params) {
 	int32 offset;
 	int32 size;
 	int16 dataVar;
@@ -1425,11 +1409,9 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 			WRITE_VAR(1, 0);
 
 	} else if (mode == SaveLoad::kSaveModeIgnore)
-		return false;
+		return;
 	else if (mode == SaveLoad::kSaveModeNone)
 		warning("Attempted to write to file \"%s\"", file);
-
-	return false;
 }
 
 void Inter_v2::o2_loadInfogramesIns(OpGobParams &params) {

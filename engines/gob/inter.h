@@ -39,11 +39,11 @@ namespace Gob {
 // to save a bit of memory used by opcode names in the Gob engine.
 #ifndef REDUCE_MEMORY_USAGE
 	#define _OPCODEDRAW(ver, x)  setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), #x)
-	#define _OPCODEFUNC(ver, x)  setProc(new Common::Functor1Mem<OpFuncParams &, bool, ver>(this, &ver::x), #x)
+	#define _OPCODEFUNC(ver, x)  setProc(new Common::Functor1Mem<OpFuncParams &, void, ver>(this, &ver::x), #x)
 	#define _OPCODEGOB(ver, x)   setProc(new Common::Functor1Mem<OpGobParams &, void, ver>(this, &ver::x), #x)
 #else
 	#define _OPCODEDRAW(ver, x)  setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), "")
-	#define _OPCODEFUNC(ver, x)  setProc(new Common::Functor1Mem<OpFuncParams &, bool, ver>(this, &ver::x), "")
+	#define _OPCODEFUNC(ver, x)  setProc(new Common::Functor1Mem<OpFuncParams &, void, ver>(this, &ver::x), "")
 	#define _OPCODEGOB(ver, x)   setProc(new Common::Functor1Mem<OpGobParams &, void, ver>(this, &ver::x), "")
 #endif
 
@@ -52,13 +52,14 @@ namespace Gob {
 #define CLEAROPCODEGOB(i)  _opcodesGob.erase(i)
 
 typedef Common::Functor0<void> OpcodeDraw;
-typedef Common::Functor1<struct OpFuncParams &, bool> OpcodeFunc;
+typedef Common::Functor1<struct OpFuncParams &, void> OpcodeFunc;
 typedef Common::Functor1<struct OpGobParams &, void> OpcodeGob;
 
 struct OpFuncParams {
 	byte cmdCount;
 	byte counter;
 	int16 retFlag;
+	bool doReturn;
 };
 struct OpGobParams {
 	int16 extraData;
@@ -138,7 +139,7 @@ protected:
 	GobEngine *_vm;
 
 	void executeOpcodeDraw(byte i);
-	bool executeOpcodeFunc(byte i, byte j, OpFuncParams &params);
+	void executeOpcodeFunc(byte i, byte j, OpFuncParams &params);
 	void executeOpcodeGob(int i, OpGobParams &params);
 
 	const char *getDescOpcodeDraw(byte i);
@@ -152,7 +153,7 @@ protected:
 	virtual void checkSwitchTable(uint32 &offset) = 0;
 
 	void o_drawNOP() {}
-	bool o_funcNOP(OpFuncParams &params) { return false; }
+	void o_funcNOP(OpFuncParams &params) {}
 	void o_gobNOP(OpGobParams &params) {}
 };
 
@@ -196,63 +197,63 @@ protected:
 	void o1_stopCD();
 	void o1_loadFontToSprite();
 	void o1_freeFontToSprite();
-	bool o1_callSub(OpFuncParams &params);
-	bool o1_printTotText(OpFuncParams &params);
-	bool o1_loadCursor(OpFuncParams &params);
-	bool o1_switch (OpFuncParams &params);
-	bool o1_repeatUntil(OpFuncParams &params);
-	bool o1_whileDo(OpFuncParams &params);
-	bool o1_if(OpFuncParams &params);
-	bool o1_assign(OpFuncParams &params);
-	bool o1_loadSpriteToPos(OpFuncParams &params);
-	bool o1_printText(OpFuncParams &params);
-	bool o1_loadTot(OpFuncParams &params);
-	bool o1_palLoad(OpFuncParams &params);
-	bool o1_keyFunc(OpFuncParams &params);
-	bool o1_capturePush(OpFuncParams &params);
-	bool o1_capturePop(OpFuncParams &params);
-	bool o1_animPalInit(OpFuncParams &params);
-	bool o1_drawOperations(OpFuncParams &params);
-	bool o1_setcmdCount(OpFuncParams &params);
-	bool o1_return(OpFuncParams &params);
-	bool o1_renewTimeInVars(OpFuncParams &params);
-	bool o1_speakerOn(OpFuncParams &params);
-	bool o1_speakerOff(OpFuncParams &params);
-	bool o1_putPixel(OpFuncParams &params);
-	bool o1_goblinFunc(OpFuncParams &params);
-	bool o1_createSprite(OpFuncParams &params);
-	bool o1_freeSprite(OpFuncParams &params);
-	bool o1_returnTo(OpFuncParams &params);
-	bool o1_loadSpriteContent(OpFuncParams &params);
-	bool o1_copySprite(OpFuncParams &params);
-	bool o1_fillRect(OpFuncParams &params);
-	bool o1_drawLine(OpFuncParams &params);
-	bool o1_strToLong(OpFuncParams &params);
-	bool o1_invalidate(OpFuncParams &params);
-	bool o1_setBackDelta(OpFuncParams &params);
-	bool o1_playSound(OpFuncParams &params);
-	bool o1_stopSound(OpFuncParams &params);
-	bool o1_loadSound(OpFuncParams &params);
-	bool o1_freeSoundSlot(OpFuncParams &params);
-	bool o1_waitEndPlay(OpFuncParams &params);
-	bool o1_playComposition(OpFuncParams &params);
-	bool o1_getFreeMem(OpFuncParams &params);
-	bool o1_checkData(OpFuncParams &params);
-	bool o1_cleanupStr(OpFuncParams &params);
-	bool o1_insertStr(OpFuncParams &params);
-	bool o1_cutStr(OpFuncParams &params);
-	bool o1_strstr(OpFuncParams &params);
-	bool o1_istrlen(OpFuncParams &params);
-	bool o1_setMousePos(OpFuncParams &params);
-	bool o1_setFrameRate(OpFuncParams &params);
-	bool o1_animatePalette(OpFuncParams &params);
-	bool o1_animateCursor(OpFuncParams &params);
-	bool o1_blitCursor(OpFuncParams &params);
-	bool o1_loadFont(OpFuncParams &params);
-	bool o1_freeFont(OpFuncParams &params);
-	bool o1_readData(OpFuncParams &params);
-	bool o1_writeData(OpFuncParams &params);
-	bool o1_manageDataFile(OpFuncParams &params);
+	void o1_callSub(OpFuncParams &params);
+	void o1_printTotText(OpFuncParams &params);
+	void o1_loadCursor(OpFuncParams &params);
+	void o1_switch (OpFuncParams &params);
+	void o1_repeatUntil(OpFuncParams &params);
+	void o1_whileDo(OpFuncParams &params);
+	void o1_if(OpFuncParams &params);
+	void o1_assign(OpFuncParams &params);
+	void o1_loadSpriteToPos(OpFuncParams &params);
+	void o1_printText(OpFuncParams &params);
+	void o1_loadTot(OpFuncParams &params);
+	void o1_palLoad(OpFuncParams &params);
+	void o1_keyFunc(OpFuncParams &params);
+	void o1_capturePush(OpFuncParams &params);
+	void o1_capturePop(OpFuncParams &params);
+	void o1_animPalInit(OpFuncParams &params);
+	void o1_drawOperations(OpFuncParams &params);
+	void o1_setcmdCount(OpFuncParams &params);
+	void o1_return(OpFuncParams &params);
+	void o1_renewTimeInVars(OpFuncParams &params);
+	void o1_speakerOn(OpFuncParams &params);
+	void o1_speakerOff(OpFuncParams &params);
+	void o1_putPixel(OpFuncParams &params);
+	void o1_goblinFunc(OpFuncParams &params);
+	void o1_createSprite(OpFuncParams &params);
+	void o1_freeSprite(OpFuncParams &params);
+	void o1_returnTo(OpFuncParams &params);
+	void o1_loadSpriteContent(OpFuncParams &params);
+	void o1_copySprite(OpFuncParams &params);
+	void o1_fillRect(OpFuncParams &params);
+	void o1_drawLine(OpFuncParams &params);
+	void o1_strToLong(OpFuncParams &params);
+	void o1_invalidate(OpFuncParams &params);
+	void o1_setBackDelta(OpFuncParams &params);
+	void o1_playSound(OpFuncParams &params);
+	void o1_stopSound(OpFuncParams &params);
+	void o1_loadSound(OpFuncParams &params);
+	void o1_freeSoundSlot(OpFuncParams &params);
+	void o1_waitEndPlay(OpFuncParams &params);
+	void o1_playComposition(OpFuncParams &params);
+	void o1_getFreeMem(OpFuncParams &params);
+	void o1_checkData(OpFuncParams &params);
+	void o1_cleanupStr(OpFuncParams &params);
+	void o1_insertStr(OpFuncParams &params);
+	void o1_cutStr(OpFuncParams &params);
+	void o1_strstr(OpFuncParams &params);
+	void o1_istrlen(OpFuncParams &params);
+	void o1_setMousePos(OpFuncParams &params);
+	void o1_setFrameRate(OpFuncParams &params);
+	void o1_animatePalette(OpFuncParams &params);
+	void o1_animateCursor(OpFuncParams &params);
+	void o1_blitCursor(OpFuncParams &params);
+	void o1_loadFont(OpFuncParams &params);
+	void o1_freeFont(OpFuncParams &params);
+	void o1_readData(OpFuncParams &params);
+	void o1_writeData(OpFuncParams &params);
+	void o1_manageDataFile(OpFuncParams &params);
 	void o1_setState(OpGobParams &params);
 	void o1_setCurFrame(OpGobParams &params);
 	void o1_setNextState(OpGobParams &params);
@@ -377,18 +378,18 @@ protected:
 	void o2_closeItk();
 	void o2_setImdFrontSurf();
 	void o2_resetImdFrontSurf();
-	bool o2_assign(OpFuncParams &params);
-	bool o2_printText(OpFuncParams &params);
-	bool o2_animPalInit(OpFuncParams &params);
-	bool o2_addHotspot(OpFuncParams &params);
-	bool o2_removeHotspot(OpFuncParams &params);
-	bool o2_goblinFunc(OpFuncParams &params);
-	bool o2_stopSound(OpFuncParams &params);
-	bool o2_loadSound(OpFuncParams &params);
-	bool o2_getFreeMem(OpFuncParams &params);
-	bool o2_checkData(OpFuncParams &params);
-	bool o2_readData(OpFuncParams &params);
-	bool o2_writeData(OpFuncParams &params);
+	void o2_assign(OpFuncParams &params);
+	void o2_printText(OpFuncParams &params);
+	void o2_animPalInit(OpFuncParams &params);
+	void o2_addHotspot(OpFuncParams &params);
+	void o2_removeHotspot(OpFuncParams &params);
+	void o2_goblinFunc(OpFuncParams &params);
+	void o2_stopSound(OpFuncParams &params);
+	void o2_loadSound(OpFuncParams &params);
+	void o2_getFreeMem(OpFuncParams &params);
+	void o2_checkData(OpFuncParams &params);
+	void o2_readData(OpFuncParams &params);
+	void o2_writeData(OpFuncParams &params);
 	void o2_loadInfogramesIns(OpGobParams &params);
 	void o2_playInfogrames(OpGobParams &params);
 	void o2_startInfogrames(OpGobParams &params);
@@ -432,10 +433,10 @@ protected:
 
 	void oFascin_playProtracker(OpGobParams &params);
 
-	bool oFascin_repeatUntil(OpFuncParams &params);
-	bool oFascin_assign(OpFuncParams &params);
-	bool oFascin_copySprite(OpFuncParams &params);
-	bool oFascin_keyFunc(OpFuncParams &params);
+	void oFascin_repeatUntil(OpFuncParams &params);
+	void oFascin_assign(OpFuncParams &params);
+	void oFascin_copySprite(OpFuncParams &params);
+	void oFascin_keyFunc(OpFuncParams &params);
 
 	void oFascin_playTirb(OpGobParams &params);
 	void oFascin_playTira(OpGobParams &params);
@@ -469,8 +470,8 @@ protected:
 	virtual void setupOpcodesFunc();
 	virtual void setupOpcodesGob();
 
-	bool o3_getTotTextItemPart(OpFuncParams &params);
-	bool o3_copySprite(OpFuncParams &params);
+	void o3_getTotTextItemPart(OpFuncParams &params);
+	void o3_copySprite(OpFuncParams &params);
 
 	void o3_wobble(OpGobParams &params);
 };
@@ -485,7 +486,7 @@ protected:
 	virtual void setupOpcodesFunc();
 	virtual void setupOpcodesGob();
 
-	bool oInca2_spaceShooter(OpFuncParams &params);
+	void oInca2_spaceShooter(OpFuncParams &params);
 };
 
 class Inter_v4 : public Inter_v3 {
@@ -517,7 +518,7 @@ protected:
 	void o5_deleteFile();
 	void o5_initScreen();
 
-	bool o5_istrlen(OpFuncParams &params);
+	void o5_istrlen(OpFuncParams &params);
 
 	void o5_spaceShooter(OpGobParams &params);
 	void o5_getSystemCDSpeed(OpGobParams &params);
@@ -552,10 +553,10 @@ protected:
 	void o6_totSub();
 	void o6_playVmdOrMusic();
 
-	bool o6_loadCursor(OpFuncParams &params);
-	bool o6_assign(OpFuncParams &params);
-	bool o6_removeHotspot(OpFuncParams &params);
-	bool o6_fillRect(OpFuncParams &params);
+	void o6_loadCursor(OpFuncParams &params);
+	void o6_assign(OpFuncParams &params);
+	void o6_removeHotspot(OpFuncParams &params);
+	void o6_fillRect(OpFuncParams &params);
 
 	void probe16bitMusic(char *fileName);
 };
@@ -570,12 +571,12 @@ protected:
 	virtual void setupOpcodesFunc();
 	virtual void setupOpcodesGob();
 
-	bool oPlaytoons_printText(OpFuncParams &params);
-	bool oPlaytoons_F_1B(OpFuncParams &params);
-	bool oPlaytoons_putPixel(OpFuncParams &params);
-	bool oPlaytoons_freeSprite(OpFuncParams &params);
-	bool oPlaytoons_checkData(OpFuncParams &params);
-	bool oPlaytoons_readData(OpFuncParams &params);
+	void oPlaytoons_printText(OpFuncParams &params);
+	void oPlaytoons_F_1B(OpFuncParams &params);
+	void oPlaytoons_putPixel(OpFuncParams &params);
+	void oPlaytoons_freeSprite(OpFuncParams &params);
+	void oPlaytoons_checkData(OpFuncParams &params);
+	void oPlaytoons_readData(OpFuncParams &params);
 
 	void oPlaytoons_getObjAnimSize();
 	void oPlaytoons_CD_20_23();

@@ -219,7 +219,7 @@ void Inter_v5::o5_initScreen() {
 	}
 }
 
-bool Inter_v5::o5_istrlen(OpFuncParams &params) {
+void Inter_v5::o5_istrlen(OpFuncParams &params) {
 	int16 strVar1, strVar2;
 	int16 len;
 	uint16 type;
@@ -249,8 +249,6 @@ bool Inter_v5::o5_istrlen(OpFuncParams &params) {
 	}
 
 	writeVar(strVar2, type, (int32) len);
-
-	return false;
 }
 
 void Inter_v5::o5_spaceShooter(OpGobParams &params) {
