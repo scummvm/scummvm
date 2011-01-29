@@ -200,11 +200,11 @@ void DialogueManager::displayAnswers() {
 
 	int mood = 0;
 	if (_numVisAnswers == 1) {
-		mood = _visAnswers[0]._a->_mood & 0xF;
+		mood = _visAnswers[0]._a->speakerMood();
 		_vm->_balloonMan->setBalloonText(_visAnswers[0]._balloon, _visAnswers[0]._a->_text, BalloonManager::kNormalColor);
 	} else
 	if (_numVisAnswers > 1) {
-		mood = _visAnswers[0]._a->_mood & 0xF;
+		mood = _visAnswers[0]._a->speakerMood();
 		_oldSelection = -1;
 		_selection = 0;
 	}
@@ -236,7 +236,7 @@ int16 DialogueManager::selectAnswerN() {
 
 		if (_selection != -1) {
 			_vm->_balloonMan->setBalloonText(_visAnswers[_selection]._balloon, _visAnswers[_selection]._a->_text, BalloonManager::kSelectedColor);
-			_vm->_gfx->setItemFrame(_faceId, _visAnswers[_selection]._a->_mood & 0xF);
+			_vm->_gfx->setItemFrame(_faceId, _visAnswers[_selection]._a->speakerMood());
 		}
 	}
 
@@ -252,9 +252,9 @@ int16 DialogueManager::selectAnswerN() {
 bool DialogueManager::displayQuestion() {
 	if (_q->textIsNull()) return false;
 
-	_vm->_balloonMan->setSingleBalloon(_q->_text, _ballonPos._questionBalloon.x, _ballonPos._questionBalloon.y, _q->_mood & 0x10, BalloonManager::kNormalColor);
+	_vm->_balloonMan->setSingleBalloon(_q->_text, _ballonPos._questionBalloon.x, _ballonPos._questionBalloon.y, _q->balloonWinding(), BalloonManager::kNormalColor);
 	_faceId = _vm->_gfx->setItem(_questioner, _ballonPos._questionChar.x, _ballonPos._questionChar.y);
-	_vm->_gfx->setItemFrame(_faceId, _q->_mood & 0xF);
+	_vm->_gfx->setItemFrame(_faceId, _q->speakerMood());
 
 	return true;
 }

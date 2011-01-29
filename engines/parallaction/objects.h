@@ -164,6 +164,7 @@ struct Answer {
 
 	Answer();
 	bool textIsNull();
+	int speakerMood();
 };
 
 struct Question {
@@ -175,6 +176,8 @@ struct Question {
 	Question(const Common::String &name);
 	~Question();
 	bool textIsNull();
+	int speakerMood();
+	int balloonWinding();
 };
 
 struct Dialogue {
