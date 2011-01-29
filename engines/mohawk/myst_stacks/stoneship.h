@@ -59,19 +59,19 @@ private:
 	void opcode_209_disable();
 
 	DECLARE_OPCODE(o_pumpTurnOff);
-	DECLARE_OPCODE(opcode_101);
-	DECLARE_OPCODE(opcode_102);
+	DECLARE_OPCODE(o_brotherDoorOpen);
+	DECLARE_OPCODE(o_cabinBookMovie);
 	DECLARE_OPCODE(opcode_103);
 	DECLARE_OPCODE(opcode_104);
 	DECLARE_OPCODE(o_generatorStart);
 	DECLARE_OPCODE(o_generatorStop);
 	DECLARE_OPCODE(opcode_111);
 	DECLARE_OPCODE(opcode_112);
-	DECLARE_OPCODE(opcode_116);
+	DECLARE_OPCODE(o_compassButton);
 	DECLARE_OPCODE(o_chestValveVideos);
 	DECLARE_OPCODE(o_chestDropKey);
 	DECLARE_OPCODE(o_trapLockOpen);
-	DECLARE_OPCODE(opcode_120);
+	DECLARE_OPCODE(o_sideDoorsMovies);
 	DECLARE_OPCODE(opcode_125);
 
 	DECLARE_OPCODE(opcode_200);
@@ -95,6 +95,10 @@ private:
 	bool _batteryCharging;
 	bool _batteryDepleting;
 	uint32 _batteryNextTime;
+
+	uint16 _cabinMystBookPresent; // 64
+
+	uint16 _brotherDoorOpen; // 76
 
 	uint16 batteryRemainingCharge();
 };

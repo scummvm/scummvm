@@ -23,6 +23,7 @@
  *
  */
 
+#include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
@@ -41,6 +42,7 @@ MystScriptParser_Stoneship::MystScriptParser_Stoneship(MohawkEngine_Myst *vm) :
 
 	_state.generatorDepletionTime = 0;
 	_state.generatorDuration = 0;
+	_cabinMystBookPresent = 0;
 }
 
 MystScriptParser_Stoneship::~MystScriptParser_Stoneship() {
@@ -51,8 +53,8 @@ MystScriptParser_Stoneship::~MystScriptParser_Stoneship() {
 void MystScriptParser_Stoneship::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, o_pumpTurnOff);
-	OPCODE(101, opcode_101);
-	OPCODE(102, opcode_102);
+	OPCODE(101, o_brotherDoorOpen);
+	OPCODE(102, o_cabinBookMovie);
 	OPCODE(103, opcode_103);
 	OPCODE(104, opcode_104);
 	OPCODE(108, o_generatorStart);
@@ -60,11 +62,11 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 	OPCODE(110, o_generatorStop);
 	OPCODE(111, opcode_111);
 	OPCODE(112, opcode_112);
-	OPCODE(116, opcode_116);
+	OPCODE(116, o_compassButton);
 	OPCODE(117, o_chestValveVideos);
 	OPCODE(118, o_chestDropKey);
 	OPCODE(119, o_trapLockOpen);
-	OPCODE(120, opcode_120);
+	OPCODE(120, o_sideDoorsMovies);
 	OPCODE(125, opcode_125);
 
 	// "Init" Opcodes
@@ -157,11 +159,26 @@ uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
 		}
 	case 14: // State Of Tunnels lights To Brothers' Rooms - Far
 		return _state.generatorPowerAvailable;
+	case 15: // Side Door in Tunnels To Brother's Rooms Open
+		if (_state.generatorPowerAvailable == 1)
+			return _state.sideDoorOpened;
+		else
+			return 0;
 	case 16: // Ship Chamber Light State
 		return _state.lightState;
-//case 20: // Ship Chamber Table/Book State
-//	return 0;
-//	return 1;
+	case 18: // Brother Room Door Open
+		return _brotherDoorOpen;
+	case 19: // Brother Room Door State
+		if (_brotherDoorOpen) {
+			if (_state.lightState)
+				return 2; // Open, Light On
+			else
+				return 1; // Open, Light Off
+		} else {
+			return 0; // Closed
+		}
+	case 20: // Ship Chamber Table/Book State
+		return _cabinMystBookPresent;
 	case 28: // Telescope Angle Position
 		return 0;
 	case 30: // Light State in Tunnel to Compass Rose Room
@@ -173,14 +190,24 @@ uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
 		} else {
 			return 2;
 		}
-	case 31:
+	case 31: // Lighthouse Lamp Room Battery Pack Indicator Light
 		return batteryRemainingCharge() >= 10;
 	case 32: // Lighthouse Lamp Room Battery Pack Meter Level
 		return 0;
-//case 36: // Ship Chamber Door State
-//	return 0; // Closed
-//	return 1; // Open, Light Off
-//	return 2; // Open, Light On
+	case 33: // State of Side Door in Tunnels to Compass Rose Room
+		if (_state.sideDoorOpened)
+			return 2;
+		else
+			return _state.generatorPowerAvailable == 1;
+	case 36: // Ship Chamber Door State
+		if (_tempVar) {
+			if (_state.lightState)
+				return 2; // Open, Light On
+			else
+				return 1; // Open, Light Off
+		} else {
+			return 0; // Closed
+		}
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -224,6 +251,9 @@ void MystScriptParser_Stoneship::toggleVar(uint16 var) {
 		if (_state.chestOpenState)
 			_state.trapdoorKeyState = _state.trapdoorKeyState != 1;
 		break;
+	case 20: // Ship Chamber Table/Book State
+		_cabinMystBookPresent = (_cabinMystBookPresent + 1) % 2;
+		break;
 	default:
 		MystScriptParser::toggleVar(var);
 		break;
@@ -243,6 +273,20 @@ bool MystScriptParser_Stoneship::setVarValue(uint16 var, uint16 value) {
 		break;
 	case 8: // Lighthouse Chest Key Position
 		_state.trapdoorKeyState = value;
+		break;
+	case 15: // Side Door in Tunnels To Brother's Rooms Open
+		if (_state.sideDoorOpened != value) {
+			if (!value && _state.generatorPowerAvailable == 2)
+				_state.generatorPowerAvailable = 0;
+			_state.sideDoorOpened = value;
+			refresh = true;
+		}
+		break;
+	case 18: // Brother Room Door Open
+		if (_brotherDoorOpen != value) {
+			_brotherDoorOpen = value;
+			refresh = true;
+		}
 		break;
 	default:
 		refresh = MystScriptParser::setVarValue(var, value);
@@ -282,47 +326,23 @@ void MystScriptParser_Stoneship::o_pumpTurnOff(uint16 op, uint16 var, uint16 arg
 	}
 }
 
-void MystScriptParser_Stoneship::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_brotherDoorOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Open brother door", op);
 
-	if (argc == 6) {
-		// Used by Door Buttons to Brothers' Rooms
-		// Cards 2294, 2255
-		Common::Rect u0_rect = Common::Rect(argv[0], argv[1], argv[2], argv[3]);
-		uint16 u1 = argv[3];
-		uint16 u2 = argv[2];
-
-		debugC(kDebugScript, "Opcode %d: Unknown", op);
-		debugC(kDebugScript, "u0_rect.left: %d", u0_rect.left);
-		debugC(kDebugScript, "u0_rect.top: %d", u0_rect.top);
-		debugC(kDebugScript, "u0_rect.right: %d", u0_rect.right);
-		debugC(kDebugScript, "u0_rect.bottom: %d", u0_rect.bottom);
-		debugC(kDebugScript, "u1: %d", u1);
-		debugC(kDebugScript, "u2: %d", u2);
-
-		// TODO: Fill in logic...
-	} else
-		unknown(op, var, argc, argv);
+	_brotherDoorOpen = 1;
+	_vm->redrawArea(19, 0);
+	animatedUpdate(argc, argv, 5);
 }
 
-void MystScriptParser_Stoneship::opcode_102(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_cabinBookMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Play Book Room Movie", op);
 
-	if (argc == 2) {
-		debugC(kDebugScript, "Opcode %d: Play Book Room Movie", op);
+	uint16 startTime = argv[0];
+	uint16 endTime = argv[1];
 
-		uint16 startTime = argv[0];
-		uint16 endTime = argv[1];
-
-		debugC(kDebugScript, "\tstartTime: %d", startTime);
-		debugC(kDebugScript, "\tendTime: %d", endTime);
-
-		warning("TODO: Opcode %d Movie Time Index %d to %d", op, startTime, endTime);
-		// TODO: Need version of playMovie blocking which allows selection
-		//       of start and finish points.
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("bkroom", kStoneshipStack), 159, 99);
-	} else
-		unknown(op, var, argc, argv);
+	VideoHandle book = _vm->_video->playMovie(_vm->wrapMovieFilename("bkroom", kStoneshipStack), 159, 99);
+	_vm->_video->setVideoBounds(book, Video::VideoTimestamp(startTime, 600), Video::VideoTimestamp(endTime, 600));
+	_vm->_video->waitUntilMovieEnds(book);
 }
 
 void MystScriptParser_Stoneship::opcode_103(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -465,28 +485,26 @@ void MystScriptParser_Stoneship::opcode_112(uint16 op, uint16 var, uint16 argc, 
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Stoneship::opcode_116(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_compassButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Compass rose button pressed", op);
+	// Used on Card 2111 (Compass Rose)
+	// Called when Button Clicked.
+	uint16 correctButton = argv[0];
 
-	if (argc == 1) {
-		// Used on Card 2111 (Compass Rose)
-		// Called when Button Clicked.
-		uint16 correctButton = argv[0];
+	if (correctButton) {
+		// Correct Button -> Light On Logic
+		_state.lightState = 1;
+	} else {
+		// Wrong Button -> Power Failure Logic
+		_state.generatorPowerAvailable = 2;
+		_state.lightState = 0;
+		_state.generatorDepletionTime = 0;
+		_state.generatorDepletionTime = 0;
 
-		if (correctButton) {
-			// Correct Button -> Light On Logic
-			// TODO: Deal with if main power on?
-			_vm->_varStore->setVar(16, 1);
-			_vm->_varStore->setVar(30, 0);
-		} else {
-			// Wrong Button -> Power Failure Logic
-			// TODO: Fill in Alarm
-			_vm->_varStore->setVar(16, 0);
-			_vm->_varStore->setVar(30, 2);
-			_vm->_varStore->setVar(33, 0);
-		}
-	} else
-		unknown(op, var, argc, argv);
+		_batteryDepleting = false;
+	}
+
+	o_redrawCard(op, var, argc, argv);
 }
 
 void MystScriptParser_Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -555,39 +573,40 @@ void MystScriptParser_Stoneship::o_trapLockOpen(uint16 op, uint16 var, uint16 ar
 		_vm->_sound->playSound(4143);
 }
 
-void MystScriptParser_Stoneship::opcode_120(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_sideDoorsMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	// Used for Cards 2285, 2289, 2247, 2251 (Side Doors in Tunnels Down To Brothers Rooms)
+	uint16 movieId = argv[0];
 
-	if (argc == 1) {
-		// Used for Cards 2285, 2289, 2247, 2251 (Side Doors in Tunnels Down To Brothers Rooms)
-		uint16 movieId = argv[0];
+	debugC(kDebugScript, "Opcode %d: Play Side Door Movies", op);
+	debugC(kDebugScript, "\tmovieId: %d", movieId);
 
-		debugC(kDebugScript, "Opcode %d: Play Side Door Movies", op);
-		debugC(kDebugScript, "\tmovieId: %d", movieId);
+	_vm->_cursor->hideCursor();
+	_vm->_sound->pauseBackgroundMyst();
 
-		switch (movieId) {
-		case 0:
-			// Card 2251
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tunaup", kStoneshipStack), 149, 161);
-			break;
-		case 1:
-			// Card 2247
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tunadown", kStoneshipStack), 218, 150);
-			break;
-		case 2:
-			// Card 2289
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tuncup", kStoneshipStack), 259, 161);
-			break;
-		case 3:
-			// Card 2285
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tuncdown", kStoneshipStack), 166, 150);
-			break;
-		default:
-			warning("Opcode 120 MovieId Out Of Range");
-			break;
-		}
-	} else
-		unknown(op, var, argc, argv);
+	switch (movieId) {
+	case 0:
+		// Card 2251
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tunaup", kStoneshipStack), 149, 161);
+		break;
+	case 1:
+		// Card 2247
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tunadown", kStoneshipStack), 218, 150);
+		break;
+	case 2:
+		// Card 2289
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tuncup", kStoneshipStack), 259, 161);
+		break;
+	case 3:
+		// Card 2285
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tuncdown", kStoneshipStack), 166, 150);
+		break;
+	default:
+		warning("Opcode 120 MovieId Out Of Range");
+		break;
+	}
+
+	_vm->_sound->resumeBackgroundMyst();
+	_vm->_cursor->showCursor();
 }
 
 void MystScriptParser_Stoneship::opcode_125(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
