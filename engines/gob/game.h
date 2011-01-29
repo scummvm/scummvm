@@ -128,6 +128,8 @@ public:
 	void switchTotSub(int16 index, int16 function);
 
 protected:
+	GobEngine *_vm;
+
 	char _tempStr[256];
 
 	// Capture
@@ -137,9 +139,7 @@ protected:
 	// For totSub()
 	int8 _curEnvironment;
 	int8 _numEnvironments;
-	Environments *_environments;
-
-	GobEngine *_vm;
+	Environments _environments;
 
 	void clearUnusedEnvironment();
 };

@@ -247,7 +247,7 @@ bool Environments::getMedia(uint8 env) {
 }
 
 
-Game::Game(GobEngine *vm) : _vm(vm) {
+Game::Game(GobEngine *vm) : _vm(vm), _environments(_vm) {
 	_captureCount = 0;
 
 	_startTimeKey = 0;
@@ -267,14 +267,12 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_numEnvironments = 0;
 	_curEnvironment = 0;
 
-	_environments = new Environments(_vm);
-	_script       = new Script(_vm);
-	_resources    = new Resources(_vm);
-	_hotspots     = new Hotspots(_vm);
+	_script    = new Script(_vm);
+	_resources = new Resources(_vm);
+	_hotspots  = new Hotspots(_vm);
 }
 
 Game::~Game() {
-	delete _environments;
 	delete _script;
 	delete _resources;
 	delete _hotspots;
@@ -644,11 +642,11 @@ void Game::totSub(int8 flags, const Common::String &totFile) {
 	if (_numEnvironments >= Environments::kEnvironmentCount)
 		error("Game::totSub(): Environments overflow");
 
-	_environments->set(_numEnvironments);
+	_environments.set(_numEnvironments);
 
 	if (flags == 18) {
 		warning("Backuping media to %d", _numEnvironments);
-		_environments->setMedia(_numEnvironments);
+		_environments.setMedia(_numEnvironments);
 	}
 
 	curBackupPos = _curEnvironment;
@@ -694,11 +692,11 @@ void Game::totSub(int8 flags, const Common::String &totFile) {
 
 	_numEnvironments--;
 	_curEnvironment = curBackupPos;
-	_environments->get(_numEnvironments);
+	_environments.get(_numEnvironments);
 
 	if (flags == 18) {
 		warning("Restoring media from %d", _numEnvironments);
-		_environments->getMedia(_numEnvironments);
+		_environments.getMedia(_numEnvironments);
 	}
 
 	_vm->_global->_inter_animDataSize = _script->getAnimDataSize();
@@ -718,13 +716,13 @@ void Game::switchTotSub(int16 index, int16 function) {
 	// WORKAROUND: Some versions don't make the MOVEMENT menu item unselectable
 	// in the dreamland screen, resulting in a crash when it's clicked.
 	if ((_vm->getGameType() == kGameTypeGob2) && (index == -1) && (function == 7) &&
-	     _environments->getTotFile(newPos).equalsIgnoreCase("gob06.tot"))
+	     _environments.getTotFile(newPos).equalsIgnoreCase("gob06.tot"))
 		return;
 
 	curBackupPos = _curEnvironment;
 	backupedCount = _numEnvironments;
 	if (_curEnvironment == _numEnvironments)
-		_environments->set(_numEnvironments++);
+		_environments.set(_numEnvironments++);
 
 	_curEnvironment -= index;
 	if (index >= 0)
@@ -732,7 +730,7 @@ void Game::switchTotSub(int16 index, int16 function) {
 
 	clearUnusedEnvironment();
 
-	_environments->get(_curEnvironment);
+	_environments.get(_curEnvironment);
 
 	if (_vm->_inter->_terminate != 0) {
 		clearUnusedEnvironment();
@@ -751,15 +749,15 @@ void Game::switchTotSub(int16 index, int16 function) {
 
 	_curEnvironment = curBackupPos;
 	_numEnvironments = backupedCount;
-	_environments->get(_curEnvironment);
+	_environments.get(_curEnvironment);
 }
 
 void Game::clearUnusedEnvironment() {
-	if (!_environments->has(_script)) {
+	if (!_environments.has(_script)) {
 		delete _script;
 		_script = 0;
 	}
-	if (!_environments->has(_resources)) {
+	if (!_environments.has(_resources)) {
 		delete _resources;
 		_resources = 0;
 	}
