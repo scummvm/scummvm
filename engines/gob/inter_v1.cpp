@@ -667,13 +667,13 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 
 	// Skipping the copy protection screen in Gobliiins
 	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob1) && (offset == 3905) &&
-	    _vm->_game->_curTotFile.equalsIgnoreCase(_vm->_startTot)) {
+	    _vm->isCurrentTot(_vm->_startTot)) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return;
 	}
 	// Skipping the copy protection screen in Gobliins 2
 	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob2) && (offset == 1746) &&
-	    _vm->_game->_curTotFile.equalsIgnoreCase("intro0.tot")) {
+	    _vm->isCurrentTot("intro0.tot")) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return;
 	}
@@ -809,7 +809,7 @@ void Inter_v1::o1_if(OpFuncParams &params) {
 
 	// WORKAROUND: Gob1 goblin stuck on reload bugs present in original - bugs #3018918 and 3065914
 	if ((_vm->getGameType() == kGameTypeGob1) && (_vm->_game->_script->pos() == 2933) &&
-			_vm->_game->_curTotFile.equalsIgnoreCase("inter.tot") && VAR(285) != 0) {
+			_vm->isCurrentTot("inter.tot") && VAR(285) != 0) {
 		warning("Workaround for Gob1 Goblin Stuck On Reload Bug applied...");
 		// VAR(59) actually locks goblin movement, but these variables trigger this in the script.
 		WRITE_VAR(285, 0);
@@ -888,7 +888,7 @@ void Inter_v1::o1_loadSpriteToPos(OpFuncParams &params) {
 
 	// WORKAROUND: The EGA version of Gobliiins 1 has an invalid expression there
 	if (_vm->isEGA() && (_vm->_game->_script->pos() == 1398) &&
-			_vm->_game->_curTotFile.equalsIgnoreCase("intro.tot")) {
+			_vm->isCurrentTot("intro.tot")) {
 
 		_vm->_draw->_destSpriteY = 0;
 		_vm->_game->_script->skip(1);
@@ -1190,8 +1190,7 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	// to become 5000. We deliberately slow down busy-waiting, so we shorten
 	// the counting, too.
 	if ((_vm->getGameType() == kGameTypeWeen) && (VAR(59) < 4000) &&
-	    (_vm->_game->_script->pos() == 729) &&
-	    _vm->_game->_curTotFile.equalsIgnoreCase("intro5.tot"))
+	    (_vm->_game->_script->pos() == 729) && _vm->isCurrentTot("intro5.tot"))
 		WRITE_VAR(59, 4000);
 
 	switch (cmd) {

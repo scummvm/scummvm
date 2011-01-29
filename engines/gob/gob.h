@@ -231,6 +231,8 @@ public:
 	bool isTrueColor() const;
 	bool isDemo() const;
 
+	bool isCurrentTot(const Common::String &tot) const;
+
 	void setTrueColor(bool trueColor);
 
 	GUI::Debugger *getDebugger() { return _console; }

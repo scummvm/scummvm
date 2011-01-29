@@ -153,7 +153,7 @@ void Util::processInput(bool scroll) {
 		// WORKAROUND:
 		// Force a check of the mouse in order to fix the sofa bug. This apply only for Gob3, and only
 		// in the impacted TOT file so that the second screen animation is not broken.
-		if ((_vm->getGameType() == kGameTypeGob3) && _vm->_game->_curTotFile.equalsIgnoreCase("EMAP1008.TOT"))
+		if ((_vm->getGameType() == kGameTypeGob3) && _vm->isCurrentTot("EMAP1008.TOT"))
 			_vm->_game->evaluateScroll();
 	}
 }

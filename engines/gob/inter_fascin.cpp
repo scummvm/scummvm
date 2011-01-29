@@ -136,9 +136,9 @@ void Inter_Fascination::oFascin_repeatUntil(OpFuncParams &params) {
 		// fails, writes on purpose everywhere in the memory in order to hang the computer.
 		// This results in a crash in Scummvm. This workaround avoids that crash.
 		if (_vm->getPlatform() == Common::kPlatformPC) {
-			if ((_vm->_game->_curTotFile.equalsIgnoreCase("INTRO1.TOT") && (blockPos == 3533)) ||
-			    (_vm->_game->_curTotFile.equalsIgnoreCase("INTRO2.TOT") && (blockPos == 3519)) ||
-			    (_vm->_game->_curTotFile.equalsIgnoreCase("INTRO2.TOT") && (blockPos == 3265)))  //PC Hebrew
+			if (((blockPos == 3533) && _vm->isCurrentTot("INTRO1.TOT")) ||
+			    ((blockPos == 3519) && _vm->isCurrentTot("INTRO2.TOT")) ||
+			    ((blockPos == 3265) && _vm->isCurrentTot("INTRO2.TOT")))  //PC Hebrew
 				_terminate = 1;
 		}
 	} while (!flag && !_break && !_terminate && !_vm->shouldQuit());

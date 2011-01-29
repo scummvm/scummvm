@@ -562,10 +562,8 @@ void Sound::cdPlayBgMusic() {
 	};
 
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
-		if (_vm->_game->_curTotFile.equalsIgnoreCase(tracks[i][0])) {
-			debugC(1, kDebugSound, "CDROM: Playing background music \"%s\" (\"%s\")",
-					tracks[i][1], _vm->_game->_curTotFile.c_str());
-
+		if (_vm->isCurrentTot(tracks[i][0])) {
+			debugC(1, kDebugSound, "CDROM: Playing background music \"%s\" (\"%s\")", tracks[i][1], tracks[i][0]);
 			_cdrom->startTrack(tracks[i][1]);
 			break;
 		}
@@ -587,10 +585,8 @@ void Sound::cdPlayMultMusic() {
 	// Default to "ang?" for other languages (including EN_USA)
 	int language = _vm->_global->_language <= 4 ? _vm->_global->_language : 2;
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
-		if (_vm->_game->_curTotFile.equalsIgnoreCase(tracks[i][0])) {
-			debugC(1, kDebugSound, "CDROM: Playing mult music \"%s\" (\"%s\")",
-					tracks[i][language + 1], _vm->_game->_curTotFile.c_str());
-
+		if (_vm->isCurrentTot(tracks[i][0])) {
+			debugC(1, kDebugSound, "CDROM: Playing mult music \"%s\" (\"%s\")", tracks[i][language + 1], tracks[i][0]);
 			_cdrom->startTrack(tracks[i][language + 1]);
 			break;
 		}

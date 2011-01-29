@@ -127,8 +127,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	// WORKAROUND: When taking the music sheet from Dr. Dramish's car,
 	//             the video that lets the sheet vanish is missing. We'll
 	//             play the one where the sheet is already gone instead.
-	if (!strcmp(fileName, "MXRAMPART") &&
-	    _vm->_game->_curTotFile.equalsIgnoreCase("avt005.tot"))
+	if (!strcmp(fileName, "MXRAMPART") && _vm->isCurrentTot("avt005.tot"))
 		strcpy(fileName, "PLCOFDR2");
 
 	if (!strcmp(fileName, "RIEN")) {

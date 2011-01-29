@@ -242,6 +242,10 @@ bool GobEngine::isDemo() const {
 	return (isSCNDemo() || isBATDemo());
 }
 
+bool GobEngine::isCurrentTot(const Common::String &tot) const {
+	return _game->_curTotFile.equalsIgnoreCase(tot);
+}
+
 const Graphics::PixelFormat &GobEngine::getPixelFormat() const {
 	return _pixelFormat;
 }
