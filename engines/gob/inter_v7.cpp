@@ -53,8 +53,8 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x44, o7_displayWarning);
 	OPCODEDRAW(0x45, o7_draw0x45);
 	OPCODEDRAW(0x57, o7_intToString);
-	OPCODEDRAW(0x59, o7_callGroup);
-	OPCODEDRAW(0x5A, o7_loadGroups);
+	OPCODEDRAW(0x59, o7_callFunction);
+	OPCODEDRAW(0x5A, o7_loadFunctions);
 	OPCODEDRAW(0x89, o7_draw0x89);
 	OPCODEDRAW(0x8A, o7_findFile);
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
@@ -130,21 +130,21 @@ void Inter_v7::o7_intToString() {
 	sprintf(GET_VARO_STR(destIndex), "%d", READ_VARO_UINT32(valueIndex));
 }
 
-void Inter_v7::o7_callGroup() {
+void Inter_v7::o7_callFunction() {
 	Common::String str0 = _vm->_game->_script->evalString();
 	Common::String str1 = _vm->_game->_script->evalString();
 
 	int16 expr0 = _vm->_game->_script->readValExpr();
 
-	warning("Addy Stub: Call group: \"%s\", \"%s\", %d", str0.c_str(), str1.c_str(), expr0);
+	warning("Addy Stub: Call function: \"%s\", \"%s\", %d", str0.c_str(), str1.c_str(), expr0);
 }
 
-void Inter_v7::o7_loadGroups() {
+void Inter_v7::o7_loadFunctions() {
 	Common::String str0 = _vm->_game->_script->evalString();
 
 	int16 expr0 = _vm->_game->_script->readValExpr();
 
-	warning("Addy Stub: Load groups: \"%s\", %d", str0.c_str(), expr0);
+	warning("Addy Stub: Load functions: \"%s\", %d", str0.c_str(), expr0);
 }
 
 void Inter_v7::o7_draw0x89() {
