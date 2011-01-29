@@ -107,6 +107,8 @@ protected:
 		DIALOGUE_OVER
 	} _state;
 	
+	static const int NO_ANSWER_SELECTED = -1;
+
 	void transitionToState(DialogueState newState);
 	
 	bool displayQuestion();
@@ -205,7 +207,7 @@ void DialogueManager::displayAnswers() {
 	} else
 	if (_numVisAnswers > 1) {
 		mood = _visAnswers[0]._a->speakerMood();
-		_oldSelection = -1;
+		_oldSelection = NO_ANSWER_SELECTED;
 		_selection = 0;
 	}
 
@@ -222,7 +224,7 @@ int16 DialogueManager::selectAnswer1() {
 		return _visAnswers[0]._index;
 	}
 
-	return -1;
+	return NO_ANSWER_SELECTED;
 }
 
 int16 DialogueManager::selectAnswerN() {
@@ -230,11 +232,11 @@ int16 DialogueManager::selectAnswerN() {
 	_selection = _vm->_balloonMan->hitTestDialogueBalloon(_mousePos.x, _mousePos.y);
 
 	if (_selection != _oldSelection) {
-		if (_oldSelection != -1) {
+		if (_oldSelection != NO_ANSWER_SELECTED) {
 			_vm->_balloonMan->setBalloonText(_visAnswers[_oldSelection]._balloon, _visAnswers[_oldSelection]._a->_text, BalloonManager::kUnselectedColor);
 		}
 
-		if (_selection != -1) {
+		if (_selection != NO_ANSWER_SELECTED) {
 			_vm->_balloonMan->setBalloonText(_visAnswers[_selection]._balloon, _visAnswers[_selection]._a->_text, BalloonManager::kSelectedColor);
 			_vm->_gfx->setItemFrame(_faceId, _visAnswers[_selection]._a->speakerMood());
 		}
@@ -242,11 +244,11 @@ int16 DialogueManager::selectAnswerN() {
 
 	_oldSelection = _selection;
 
-	if ((_mouseButtons == kMouseLeftUp) && (_selection != -1)) {
+	if ((_mouseButtons == kMouseLeftUp) && (_selection != NO_ANSWER_SELECTED)) {
 		return _visAnswers[_selection]._index;
 	}
 
-	return -1;
+	return NO_ANSWER_SELECTED;
 }
 
 bool DialogueManager::displayQuestion() {
@@ -298,7 +300,7 @@ void DialogueManager::nextAnswer() {
 
 void DialogueManager::runAnswer() {
 	_answerId = selectAnswer();
-	if (_answerId != -1) {
+	if (_answerId != NO_ANSWER_SELECTED) {
 		_cmdList = &_q->_answers[_answerId]->_commands;
 		_vm->_gfx->freeDialogueObjects();
 		transitionToState(NEXT_QUESTION);
@@ -396,7 +398,7 @@ protected:
 			}
 		}
 
-		return -1;
+		return NO_ANSWER_SELECTED;
 	}
 
 public:
@@ -432,7 +434,7 @@ public:
 	}
 
 	virtual int16 selectAnswer() {
-		int ans = -1;
+		int ans = NO_ANSWER_SELECTED;
 		if (_askPassword) {
 			ans = askPassword();
 		} else
@@ -481,7 +483,7 @@ public:
 	}
 
 	virtual int16 selectAnswer() {
-		int16 ans = -1;
+		int16 ans = NO_ANSWER_SELECTED;
 		if (_numVisAnswers == 1) {
 			ans = selectAnswer1();
 		} else {
