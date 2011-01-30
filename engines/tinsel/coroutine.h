@@ -184,7 +184,7 @@ public:
  * Stop the currently running coroutine.
  */
 #define CORO_KILL_SELF() \
-		do { if (&coroParam != &nullContext) { coroParam->_sleep = -1; } return; } while (0)
+		do { if (&coroParam != &nullContext) { coroParam->_sleep = 0; } return; } while (0)
 
 
 /**
