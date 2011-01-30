@@ -184,8 +184,6 @@ MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableRead
 	if (_top < 0)
 		_top = 0;
 
-	if (_direction != 1)
-		warning("Type 6 _u0 != 1");
 	if (_u3 != 0)
 		warning("Type 6 _u3 != 0");
 
@@ -202,6 +200,9 @@ MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableRead
 VideoHandle MystResourceType6::playMovie() {
 	// Check if the video is already running
 	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+
+	if (_direction != 1)
+		warning("Playing QT movies backwards is not implemented");
 
 	// If the video is not running, play it
 	if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle)) {
