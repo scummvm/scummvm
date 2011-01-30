@@ -337,6 +337,30 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 	return true;
 }
 
+void RenderedImage::copyDirectly(int posX, int posY) {
+	byte *data = _data;
+	int w = _width;
+	int h = _height;
+
+	// Handle off-screen clipping
+	if (posY < 0) {
+		h = MAX(0, (int)_height - -posY);
+		data = (byte *)_data + _width * -posY;
+		posY = 0;
+	}
+
+	if (posX < 0) {
+		w = MAX(0, (int)_width - -posX);
+		data = (byte *)_data + (-posX * 4);
+		posX = 0;
+	}
+
+	w = CLIP((int)w, 0, (int)MAX((int)_backSurface->w - posX, 0));
+	h = CLIP((int)h, 0, (int)MAX((int)_backSurface->h - posY, 0));
+
+	g_system->copyRectToScreen(data, _backSurface->pitch, posX, posY, w, h);
+}
+
 /**
  * Scales a passed surface, creating a new surface with the result
  * @param srcImage		Source image to scale

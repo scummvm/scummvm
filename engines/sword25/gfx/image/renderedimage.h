@@ -72,6 +72,8 @@ public:
 		return GraphicEngine::CF_ARGB32;
 	}
 
+	void copyDirectly(int posX, int posY);
+
 	virtual bool blit(int posX = 0, int posY = 0,
 	                  int flipping = Image::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
@@ -105,6 +107,7 @@ public:
 	}
 
 	static Graphics::Surface *scale(const Graphics::Surface &srcImage, int xSize, int ySize);
+
 private:
 	byte *_data;
 	int  _width;

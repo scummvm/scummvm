@@ -81,10 +81,27 @@ bool DynamicBitmap::doRender() {
 	// Draw the bitmap
 	bool result;
 	if (_scaleFactorX == 1.0f && _scaleFactorY == 1.0f) {
+#if 1
+		// This is what the game does originally, which can be
+		// a bit slow when drawing videos, but it's not the main
+		// bottleneck.
 		result = _image->blit(_absoluteX, _absoluteY,
 		                       (_flipV ? BitmapResource::FLIP_V : 0) |
 		                       (_flipH ? BitmapResource::FLIP_H : 0),
 		                       0, _modulationColor, -1, -1);
+#else
+		// WIP: A bit faster code
+
+		// We don't need to check for transparency when drawing
+		// videos, thus just copy the buffer contents directly.
+		// This messes up the fire animation in the menu, for
+		// some odd reason. It also makes the video colors a
+		// bit lighter, resulting in a visible black border
+		// around the typed letters in the intro (which are
+		// drawn over a black border)
+		_image->copyDirectly(_absoluteX, _absoluteY);
+#endif
+		return true;
 	} else {
 		result = _image->blit(_absoluteX, _absoluteY,
 		                       (_flipV ? BitmapResource::FLIP_V : 0) |
