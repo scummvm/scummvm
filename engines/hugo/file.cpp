@@ -175,7 +175,7 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 		if (!_objectsArchive.open(buf)) {
 			buf = Common::String(_vm->_text->getNoun(objPtr->nounIndex, 0)) + Common::String(".PIX");
 			if (!_objectsArchive.open(buf))
-				error("File not found: %s", buf);
+				error("File not found: %s", buf.c_str());
 		}
 	}
 
