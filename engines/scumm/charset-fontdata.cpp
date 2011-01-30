@@ -603,7 +603,7 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 		}
 	}
 	debugN("\n");
-	_vm->_system->quit();
+	_vm->quitGame();
 #endif
 }
 
