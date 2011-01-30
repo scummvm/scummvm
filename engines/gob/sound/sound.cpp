@@ -61,7 +61,8 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 		_cdrom = new CDROM;
 	if (_vm->getGameType() == kGameTypeWoodruff)
 		_bgatmos = new BackgroundAtmosphere(*_vm->_mixer);
-	if (_vm->getGameType() == kGameTypeUrban) {
+	if ((_vm->getGameType() == kGameTypeUrban) ||
+	    (_vm->getGameType() == kGameTypeAdibou2)) {
 		_bgatmos = new BackgroundAtmosphere(*_vm->_mixer);
 		_bgatmos->setShadable(false);
 	}
