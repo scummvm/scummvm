@@ -1820,6 +1820,10 @@ int32 ToonEngine::getScaleAtPoint(int32 x, int32 y) {
 	if (!_currentMask)
 		return 1024;
 
+	// clamp values
+	x = MIN(1279, MAX(0, x));
+	y = MIN(399, MAX(0, y));
+
 	int32 maskData = _currentMask->getData(x, y) & 0x1f;
 	return _roomScaleData[maskData+2] * 1024 / 100;
 }
@@ -1827,6 +1831,10 @@ int32 ToonEngine::getScaleAtPoint(int32 x, int32 y) {
 int32 ToonEngine::getLayerAtPoint(int32 x, int32 y) {
 	if (!_currentMask)
 		return 0;
+
+	// clamp values
+	x = MIN(1279, MAX(0, x));
+	y = MIN(399, MAX(0, y));
 
 	int32 maskData = _currentMask->getData(x, y) & 0x1f;
 	return _roomScaleData[maskData+130] << 5;
