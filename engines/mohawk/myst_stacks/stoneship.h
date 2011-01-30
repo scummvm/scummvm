@@ -56,6 +56,9 @@ private:
 	DECLARE_OPCODE(o_cabinBookMovie);
 	DECLARE_OPCODE(o_drawerOpenSirius);
 	DECLARE_OPCODE(o_drawerClose);
+	DECLARE_OPCODE(o_telescopeStart);
+	DECLARE_OPCODE(o_telescopeMove);
+	DECLARE_OPCODE(o_telescopeStop);
 	DECLARE_OPCODE(o_generatorStart);
 	DECLARE_OPCODE(o_generatorStop);
 	DECLARE_OPCODE(o_drawerOpenAchenar);
@@ -80,11 +83,9 @@ private:
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
 	DECLARE_OPCODE(o_chest_init);
-	DECLARE_OPCODE(opcode_208);
+	DECLARE_OPCODE(o_telescope_init);
 	DECLARE_OPCODE(o_achenarDrawers_init);
 	DECLARE_OPCODE(o_cloudOrb_init);
-
-	DECLARE_OPCODE(opcode_300);
 
 	void chargeBattery_run();
 
@@ -108,6 +109,17 @@ private:
 	MystResourceType6 *_hologramDisplay; // 84
 	MystResourceType6 *_hologramSelection; // 88
 	uint16 _hologramDisplayPos;
+
+	uint16 _telescopePosition; // 112
+	uint16 _telescopePanorama;
+	uint16 _telescopeOldMouse;
+	uint16 _telescopeLighthouseOff; // 130
+	uint16 _telescopeLighthouseOn; // 128
+	bool _telescopeLighthouseState; // 124
+	bool _telescopeRunning;
+	uint32 _telescopeNexTime;
+	void telescope_run();
+	void telescopeLighthouseDraw();
 
 	MystResourceType6 *_cloudOrbMovie; // 136
 	uint16 _cloudOrbSound; // 140

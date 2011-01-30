@@ -70,6 +70,9 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 	OPCODE(102, o_cabinBookMovie);
 	OPCODE(103, o_drawerOpenSirius);
 	OPCODE(104, o_drawerClose);
+	OPCODE(105, o_telescopeStart);
+	OPCODE(106, o_telescopeMove);
+	OPCODE(107, o_telescopeStop);
 	OPCODE(108, o_generatorStart);
 	OPCODE(109, NOP);
 	OPCODE(110, o_generatorStop);
@@ -96,23 +99,27 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 	OPCODE(205, opcode_205);
 	OPCODE(206, opcode_206);
 	OPCODE(207, o_chest_init);
-	OPCODE(208, opcode_208);
+	OPCODE(208, o_telescope_init);
 	OPCODE(209, o_achenarDrawers_init);
 	OPCODE(210, o_cloudOrb_init);
 
 	// "Exit" Opcodes
-	OPCODE(300, opcode_300);
+	OPCODE(300, NOP);
 }
 
 #undef OPCODE
 
 void MystScriptParser_Stoneship::disablePersistentScripts() {
 	_batteryCharging = false;
+	_telescopeRunning = false;
 }
 
 void MystScriptParser_Stoneship::runPersistentScripts() {
 	if (_batteryCharging)
 		chargeBattery_run();
+
+	if (_telescopeRunning)
+		telescope_run();
 }
 
 uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
@@ -430,6 +437,35 @@ void MystScriptParser_Stoneship::o_drawerOpenSirius(uint16 op, uint16 var, uint1
 void MystScriptParser_Stoneship::o_drawerClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Close drawer", op);
 	drawerClose(argv[0]);
+}
+
+void MystScriptParser_Stoneship::o_telescopeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+	_telescopeOldMouse = mouse.x;
+	_vm->_cursor->setCursor(700);
+}
+
+void MystScriptParser_Stoneship::o_telescopeMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Telescope move", op);
+
+	MystResourceType11 *display = static_cast<MystResourceType11 *>(_invokingResource);
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+
+	// Compute telescope position
+	_telescopePosition = (_telescopePosition - (mouse.x - _telescopeOldMouse) / 2 + 3240) % 3240;
+	_telescopeOldMouse = mouse.x;
+
+	// Copy image to screen
+    Common::Rect src = Common::Rect(_telescopePosition, 0, _telescopePosition + 112, 112);
+    _vm->_gfx->copyImageSectionToScreen(_telescopePanorama, src, display->getRect());
+
+    // Draw lighthouse
+    telescopeLighthouseDraw();
+    _vm->_system->updateScreen();
+}
+
+void MystScriptParser_Stoneship::o_telescopeStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	_vm->checkCursorHints();
 }
 
 void MystScriptParser_Stoneship::o_generatorStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -840,23 +876,53 @@ void MystScriptParser_Stoneship::o_chest_init(uint16 op, uint16 var, uint16 argc
 	_state.chestOpenState = 0;
 }
 
-void MystScriptParser_Stoneship::opcode_208(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_telescope_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Telescope init", op);
 
 	// Used in Card 2218 (Telescope view)
-	if (argc == 3) {
-		debugC(kDebugScript, "Opcode %d: Telescope View", op);
-		uint16 imagePanorama = argv[0];
-		uint16 imageLighthouseOff = argv[1];
-		uint16 imageLighthouseOn = argv[2];
+	_telescopePanorama = argv[0];
+	_telescopeLighthouseOff = argv[1];
+	_telescopeLighthouseOn = argv[2];
+	_telescopePosition = 0;
 
-		debugC(kDebugScript, "Image (Panorama): %d", imagePanorama);
-		debugC(kDebugScript, "Image (Lighthouse Off): %d", imageLighthouseOff);
-		debugC(kDebugScript, "Image (Lighthouse On): %d", imageLighthouseOn);
+	_telescopeRunning = true;
+	_telescopeLighthouseState = false;
+	_telescopeNexTime = _vm->_system->getMillis() + 1000;
+}
 
-		// TODO: Fill in Logic.
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Stoneship::telescope_run() {
+	uint32 time = _vm->_system->getMillis();
+
+	if (time > _telescopeNexTime) {
+
+		_telescopeNexTime = time + 1000;
+		_telescopeLighthouseState = !_telescopeLighthouseState;
+
+		telescopeLighthouseDraw();
+		_vm->_system->updateScreen();
+	}
+}
+
+void MystScriptParser_Stoneship::telescopeLighthouseDraw() {
+	if (_telescopePosition > 1137 && _telescopePosition < 1294) {
+		uint16 imageId = _telescopeLighthouseOff;
+
+		if (_state.generatorPowerAvailable == 1 && _telescopeLighthouseState)
+			imageId = _telescopeLighthouseOn;
+
+		Common::Rect src(1205, 0, 1205 + 131, 112);
+		src.clip(Common::Rect(_telescopePosition, 0, _telescopePosition + 112, 112));
+		src.translate(-1205, 0);
+		src.clip(131, 112);
+
+		Common::Rect dest(_telescopePosition, 0, _telescopePosition + 112, 112);
+		dest.clip(Common::Rect(1205, 0, 1205 + 131, 112));
+		dest.translate(-_telescopePosition, 0);
+		dest.clip(112, 112);
+		dest.translate(222, 112);
+
+		_vm->_gfx->copyImageSectionToScreen(imageId, src, dest);
+	}
 }
 
 void MystScriptParser_Stoneship::o_achenarDrawers_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -883,12 +949,6 @@ void MystScriptParser_Stoneship::o_cloudOrb_init(uint16 op, uint16 var, uint16 a
 	_cloudOrbMovie = static_cast<MystResourceType6 *>(_invokingResource);
 	_cloudOrbSound = argv[0];
 	_cloudOrbStopSound = argv[1];
-}
-
-void MystScriptParser_Stoneship::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used in Card 2218 (Telescope view)
-	varUnusedCheck(op, var);
-	// TODO: Fill in Logic. Clearing Variable for View?
 }
 
 } // End of namespace Mohawk
