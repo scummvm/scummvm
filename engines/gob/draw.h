@@ -30,8 +30,6 @@
 
 namespace Gob {
 
-#define SPRITES_COUNT 100
-
 #define RENDERFLAG_NOINVALIDATE      0x0001
 #define RENDERFLAG_CAPTUREPUSH       0x0002
 #define RENDERFLAG_COLLISIONS        0x0004
@@ -45,12 +43,13 @@ namespace Gob {
 
 class Draw {
 public:
-	static const int kFontCount      = 16;
-	static const int kFrontSurface   = 20;
-	static const int kBackSurface    = 21;
-	static const int kAnimSurface    = 22;
-	static const int kCursorSurface  = 23;
-	static const int kCaptureSurface = 30;
+	static const int kSpritesCount   = 100;
+	static const int kFontCount      =  16;
+	static const int kFrontSurface   =  20;
+	static const int kBackSurface    =  21;
+	static const int kAnimSurface    =  22;
+	static const int kCursorSurface  =  23;
+	static const int kCaptureSurface =  30;
 
 	struct FontToSprite {
 		int8 sprite;
