@@ -366,8 +366,16 @@ void Inter_Playtoons::oPlaytoons_CD_25() {
 }
 
 void Inter_Playtoons::oPlaytoons_copyFile() {
-	Common::String file1 = _vm->_game->_script->evalString();
-	Common::String file2 = _vm->_game->_script->evalString();
+	Common::String path1 = _vm->_game->_script->evalString();
+	Common::String path2 = _vm->_game->_script->evalString();
+
+	Common::String file1 = getFile(path1.c_str());
+	Common::String file2 = getFile(path2.c_str());
+
+	if (file1.equalsIgnoreCase(file2)) {
+		warning("oPlaytoons_copyFile(): \"%s\" == \"%s\"", path1.c_str(), path2.c_str());
+		return;
+	}
 
 	warning("Playtoons Stub: copy file from \"%s\" to \"%s\"", file1.c_str(), file2.c_str());
 }
