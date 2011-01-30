@@ -384,6 +384,7 @@ void MystScriptParser::o_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16
 
 	// Trigger resource 6 movie overriding play direction
 	MystResourceType6 *resource = static_cast<MystResourceType6 *>(_invokingResource);
+	resource->setDirection(direction);
 	resource->playMovie();
 
 	// TODO: If movie has sound, resume background music

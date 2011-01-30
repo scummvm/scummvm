@@ -173,7 +173,7 @@ MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableRead
 	_left = rlstStream->readSint16LE() % 10000;
 	_top = rlstStream->readSint16LE() % 10000;
 	_playOnCardChange = rlstStream->readUint16LE();
-	_direction = rlstStream->readUint16LE();
+	_direction = rlstStream->readSint16LE();
 	_playBlocking = rlstStream->readUint16LE();
 	_loop = rlstStream->readUint16LE();
 	_u3 = rlstStream->readUint16LE();

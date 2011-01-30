@@ -108,6 +108,7 @@ public:
 	VideoHandle playMovie();
 	void handleCardChange();
 	bool isPlaying();
+	void setDirection(int16 direction) { _direction = direction; }
 	void setBlocking(bool blocking) { _playBlocking = blocking; }
 	void pauseMovie(bool pause);
 
@@ -117,7 +118,7 @@ protected:
 	int16 _left;
 	int16 _top;
 	uint16 _loop;
-	uint16 _direction; // 1 => forward, -1 => backwards
+	int16 _direction; // 1 => forward, -1 => backwards
 	uint16 _playBlocking;
 	uint16 _playOnCardChange;
 	uint16 _u3;
