@@ -607,6 +607,7 @@ protected:
 	void o7_intToString();
 	void o7_callFunction();
 	void o7_loadFunctions();
+	void o7_playVmdOrMusic();
 	void o7_draw0x89();
 	void o7_findFile();
 	void o7_getSystemProperty();

@@ -34,6 +34,8 @@
 #include "gob/game.h"
 #include "gob/script.h"
 #include "gob/expression.h"
+#include "gob/videoplayer.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -55,6 +57,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x57, o7_intToString);
 	OPCODEDRAW(0x59, o7_callFunction);
 	OPCODEDRAW(0x5A, o7_loadFunctions);
+	OPCODEDRAW(0x83, o7_playVmdOrMusic);
 	OPCODEDRAW(0x89, o7_draw0x89);
 	OPCODEDRAW(0x8A, o7_findFile);
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
@@ -153,6 +156,134 @@ void Inter_v7::o7_loadFunctions() {
 	_vm->_game->loadFunctions(tot, flags);
 }
 
+void Inter_v7::o7_playVmdOrMusic() {
+	Common::String file = _vm->_game->_script->evalString();
+
+	VideoPlayer::Properties props;
+
+	props.x          = _vm->_game->_script->readValExpr();
+	props.y          = _vm->_game->_script->readValExpr();
+	props.startFrame = _vm->_game->_script->readValExpr();
+	props.lastFrame  = _vm->_game->_script->readValExpr();
+	props.breakKey   = _vm->_game->_script->readValExpr();
+	props.flags      = _vm->_game->_script->readValExpr();
+	props.palStart   = _vm->_game->_script->readValExpr();
+	props.palEnd     = _vm->_game->_script->readValExpr();
+	props.palCmd     = 1 << (props.flags & 0x3F);
+	props.forceSeek  = true;
+
+	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
+			"paletteCmd %d (%d - %d), flags %X", file.c_str(),
+			props.x, props.y, props.startFrame, props.lastFrame,
+			props.palCmd, props.palStart, props.palEnd, props.flags);
+
+	if (file == "RIEN") {
+		_vm->_vidPlayer->closeAll();
+		return;
+	}
+
+	bool close = false;
+	if (props.lastFrame == -1) {
+		close = true;
+	} else if (props.lastFrame == -3) {
+
+		if (file.empty()) {
+			_vm->_vidPlayer->closeVideo(_vm->_mult->_objects[props.startFrame].videoSlot - 1);
+			_vm->_mult->_objects[props.startFrame].videoSlot = 0;
+			return;
+		}
+
+		props.flags  = VideoPlayer::kFlagOtherSurface;
+		props.sprite = -1;
+
+		_vm->_mult->_objects[props.startFrame].pAnimData->animation = -props.startFrame - 1;
+
+		if (_vm->_mult->_objects[props.startFrame].videoSlot > 0)
+			_vm->_vidPlayer->closeVideo(_vm->_mult->_objects[props.startFrame].videoSlot - 1);
+
+		uint32 x = props.x;
+		uint32 y = props.y;
+
+		int slot = _vm->_vidPlayer->openVideo(false, file, props);
+
+		_vm->_mult->_objects[props.startFrame].videoSlot = slot + 1;
+
+		if (x == 0xFFFFFFFF) {
+			*_vm->_mult->_objects[props.startFrame].pPosX = _vm->_vidPlayer->getDefaultX(slot);
+			*_vm->_mult->_objects[props.startFrame].pPosY = _vm->_vidPlayer->getDefaultY(slot);
+		} else {
+			*_vm->_mult->_objects[props.startFrame].pPosX = x;
+			*_vm->_mult->_objects[props.startFrame].pPosY = y;
+		}
+
+		return;
+	} else if (props.lastFrame == -4) {
+		warning("Woodruff Stub: Video/Music command -4: Play background video %s", file.c_str());
+		return;
+	} else if (props.lastFrame == -5) {
+//		warning("Urban/Playtoons Stub: Stop without delay");
+		_vm->_sound->bgStop();
+		return;
+	} else if (props.lastFrame == -6) {
+//		warning("Urban/Playtoons Stub: Video/Music command -6 (cache video)");
+		return;
+	} else if (props.lastFrame == -7) {
+//		warning("Urban/Playtoons Stub: Video/Music command -6 (flush cache)");
+		return;
+	} else if ((props.lastFrame == -8) || (props.lastFrame == -9)) {
+		if (!file.contains('.'))
+			file += ".WA8";
+
+		probe16bitMusic(file);
+
+		if (props.lastFrame == -9)
+			debugC(0, kDebugVideo, "Urban/Playtoons Stub: Delayed music stop?");
+
+		_vm->_sound->bgStop();
+		_vm->_sound->bgPlay(file.c_str(), SOUND_WAV);
+		return;
+	} else if (props.lastFrame <= -10) {
+		_vm->_vidPlayer->closeVideo();
+
+		if (!(props.flags & VideoPlayer::kFlagNoVideo))
+			props.loop = true;
+
+	} else if (props.lastFrame < 0) {
+		warning("Urban/Playtoons Stub: Unknown Video/Music command: %d, %s", props.lastFrame, file.c_str());
+		return;
+	}
+
+	if (props.startFrame == -2) {
+		props.startFrame = 0;
+		props.lastFrame  = -1;
+		props.noBlock    = true;
+	}
+
+	_vm->_vidPlayer->evaluateFlags(props);
+
+	bool primary = true;
+	if (props.noBlock && (props.flags & VideoPlayer::kFlagNoVideo))
+		primary = false;
+
+	int slot = 0;
+	if (!file.empty() && ((slot = _vm->_vidPlayer->openVideo(primary, file, props)) < 0)) {
+		WRITE_VAR(11, (uint32) -1);
+		return;
+	}
+
+	if (props.hasSound)
+		_vm->_vidPlayer->closeLiveSound();
+
+	if (props.startFrame >= 0)
+		_vm->_vidPlayer->play(slot, props);
+
+	if (close && !props.noBlock) {
+		if (!props.canceled)
+			_vm->_vidPlayer->waitSoundEnd(slot);
+		_vm->_vidPlayer->closeVideo(slot);
+	}
+
+}
 void Inter_v7::o7_draw0x89() {
 	Common::String str0 = _vm->_game->_script->evalString();
 	Common::String str1 = _vm->_game->_script->evalString();
