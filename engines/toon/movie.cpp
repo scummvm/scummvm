@@ -44,7 +44,7 @@ bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename, int forc
 	_lowRes = false;
 
 	if (Video::SmackerDecoder::loadFile(filename)) {
-		if (forcedflags & 0x10 || _surface->h == 200) {
+		if (_surface->h == 200) {
 			if (_surface) {
 				_surface->free();
 				delete _surface;
@@ -119,7 +119,7 @@ bool Movie::playVideo() {
 
 		Common::Event event;
 		while (_vm->getSystem()->getEventManager()->pollEvent(event))
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP) {
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
 				return false;
 			}
 

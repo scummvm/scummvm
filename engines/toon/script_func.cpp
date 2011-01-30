@@ -321,8 +321,6 @@ int32 ScriptFunc::sys_Cmd_Play_Flic(EMCState *state) {
 	else
 		strcpy(name, _vm->createRoomFilename(GetText(0, state)).c_str());
 
-// Strangerke - Commented (not used)
-//	int32 Flags = stackPos(1);
 	int32 stopMusic = stackPos(2);
 	_vm->getMoviePlayer()->play(name, stopMusic);
 	return 0;
