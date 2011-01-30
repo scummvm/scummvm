@@ -453,7 +453,6 @@ int32 ScriptFunc::sys_Cmd_Set_Actor_RGB_Modifiers(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Init_Conversation_AP(EMCState *state) {
-	debugC(0, 0xfff, "init_conversation_ap %d %d %d %d", stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	_vm->initCharacter(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	return 0;
 }
@@ -464,7 +463,13 @@ int32 ScriptFunc::sys_Cmd_Actor_Talks(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Say_Lines(EMCState *state) {
-	//_vm->sayLines(2, 1440);
+	
+	// WORKAROUND: In the scene 4 (Castle), if you click twice on the closed door, Drew disappears
+	//				the script makes him disappear for the custom animation and not reappear.
+	if (_vm->state()->_currentScene == 4 && stackPos(1) == 562) {
+		_vm->getDrew()->setVisible(true);
+	}
+
 	_vm->sayLines(stackPos(0), stackPos(1));
 	return 0;
 }

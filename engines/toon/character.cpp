@@ -91,6 +91,11 @@ void Character::setFacing(int32 facing) {
 	if (facing == _facing)
 		return;
 
+	if (!_visible) {
+		_facing = facing;
+		return;
+	}
+
 	if (_blockingWalk) {
 		_flags |= 2;
 
@@ -340,7 +345,7 @@ void Character::stopSpecialAnim() {
 	_animFlags = 0;
 	_flags &= ~1;
 	_flags &= ~4;
-	
+
 	if (needStandingAnim) {
 		playStandingAnim();
 	}
