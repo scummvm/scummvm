@@ -175,6 +175,7 @@ void Parser_v1w::lineHandler() {
 		return;
 	if (isCatchallVerb(_vm->_backgroundObjects[*_vm->_screen_p]))
 		return;
+
 	if (isBackgroundWord(_vm->_catchallList))
 		return;
 	if (isCatchallVerb(_vm->_catchallList))

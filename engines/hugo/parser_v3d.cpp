@@ -118,8 +118,7 @@ void Parser_v3d::lineHandler() {
 	if (!strcmp("exit", _vm->_line) || strstr(_vm->_line, "quit")) {
 		if (Utils::Box(kBoxYesNo, "%s", _vm->_text->getTextParser(kTBExit_1d)) != 0)
 			_vm->endGame();
-		else
-			return;
+		return;
 	}
 
 	// SAVE/RESTORE
@@ -179,6 +178,7 @@ void Parser_v3d::lineHandler() {
 		return;
 	if (isCatchallVerb(_vm->_backgroundObjects[*_vm->_screen_p]))
 		return;
+
 	if (isBackgroundWord(_vm->_catchallList))
 		return;
 	if (isCatchallVerb(_vm->_catchallList))
@@ -416,6 +416,9 @@ void Parser_v3d::dropObject(object_t *obj) {
 bool Parser_v3d::isCatchallVerb(objectList_t obj) {
 	debugC(1, kDebugParser, "isCatchallVerb(object_list_t obj)");
 
+	if (_maze.enabledFl)
+		return false;
+
 	for (int i = 0; obj[i].verbIndex != 0; i++) {
 		if (isWordPresent(_vm->_text->getVerbArray(obj[i].verbIndex)) && obj[i].nounIndex == 0 &&
 		   (!obj[i].matchFl || !findNoun()) &&
@@ -440,6 +443,9 @@ bool Parser_v3d::isCatchallVerb(objectList_t obj) {
 */
 bool Parser_v3d::isBackgroundWord(objectList_t obj) {
 	debugC(1, kDebugParser, "isBackgroundWord(object_list_t obj)");
+
+	if (_maze.enabledFl)
+		return false;
 
 	for (int i = 0; obj[i].verbIndex != 0; i++) {
 		if (isWordPresent(_vm->_text->getVerbArray(obj[i].verbIndex)) &&
