@@ -409,7 +409,7 @@ void Inter_v6::o6_fillRect(OpFuncParams &params) {
 }
 
 void Inter_v6::probe16bitMusic(Common::String &fileName) {
-	if (!fileName[fileName.size() - 1] != '8')
+	if (fileName[fileName.size() - 1] != '8')
 		return;
 
 	fileName.setChar('V', fileName.size() - 1);
