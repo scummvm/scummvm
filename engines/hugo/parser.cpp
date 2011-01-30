@@ -319,7 +319,8 @@ void Parser::showDosInventory() {
 
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Find widths of 2 columns
 		if (_vm->_object->isCarried(i)) {
-			uint16 len = strlen(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 1));
+			uint16 len = strlen(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2));
+			printf("%s %d\n", _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2), strlen(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2)));
 			if (index++ & 1)                        // Right hand column
 				len2 = (len > len2) ? len : len2;
 			else
@@ -331,23 +332,24 @@ void Parser::showDosInventory() {
 	if (len1 + len2 < (uint16)strlen(_vm->_text->getTextParser(kTBOutro)))
 		len1 = strlen(_vm->_text->getTextParser(kTBOutro));
 
-	char buffer[kCompLineSize * kMaxTextRows] = "\0";
-	strncat(buffer, blanks, (len1 + len2 - strlen(_vm->_text->getTextParser(kTBIntro))) / 2);
-	strcat(strcat(buffer, _vm->_text->getTextParser(kTBIntro)), "\n");
+	Common::String buffer;
+	assert(len1 + len2 - strlen(_vm->_text->getTextParser(kTBIntro)) / 2 < strlen(blanks));
+	buffer = Common::String(blanks, (len1 + len2 - strlen(_vm->_text->getTextParser(kTBIntro))) / 2);
+
+	buffer += Common::String(_vm->_text->getTextParser(kTBIntro)) + Common::String("\n");
 	index = 0;
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Assign strings
 		if (_vm->_object->isCarried(i)) {
 			if (index++ & 1)
-				strcat(strcat(buffer, _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 1)), "\n");
+				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2)) + Common::String("\n");
 			else
-				strncat(strcat(buffer, _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 1)), blanks, len1 - strlen(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 1)));
+				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2)) + Common::String(blanks, len1 - strlen(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2)));
 		}
 	}
 	if (index & 1)
-		strcat(buffer, "\n");
-	strcat(buffer, _vm->_text->getTextParser(kTBOutro));
-
-	Utils::Box(kBoxAny, "%s", buffer);
+		buffer += Common::String("\n");
+	buffer += Common::String(_vm->_text->getTextParser(kTBOutro));
+	Utils::Box(kBoxAny, "%s", buffer.c_str());
 }
 
 } // End of namespace Hugo

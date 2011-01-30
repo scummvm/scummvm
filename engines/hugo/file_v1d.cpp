@@ -60,25 +60,22 @@ void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	const char *ovl_ext[] = {".b", ".o", ".ob"};
-	char *buf = (char *) malloc(2048 + 1);          // Buffer for file access
-
-	strcat(strcpy(buf, _vm->_text->getScreenNames(screenNum)), ovl_ext[overlayType]);
+	Common::String buf = Common::String(_vm->_text->getScreenNames(screenNum)) + Common::String(ovl_ext[overlayType]);
 
 	if (!fileExists(buf)) {
 		for (int i = 0; i < kOvlSize; i++)
 			image[i] = 0;
-		warning("File not found: %s", buf);
+		warning("File not found: %s", buf.c_str());
 		return;
 	}
 
 	if (!_sceneryArchive1.open(buf))
-		error("File not found: %s", buf);
+		error("File not found: %s", buf.c_str());
 
 	image_pt tmpImage = image;                      // temp ptr to overlay file
 
 	_sceneryArchive1.read(tmpImage, kOvlSize);
 	_sceneryArchive1.close();
-	free(buf);
 }
 
 /**
@@ -87,16 +84,15 @@ void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 void FileManager_v1d::readBackground(int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
-	char *buf = (char *) malloc(2048 + 1);          // Buffer for file access
-	strcat(strcpy(buf, _vm->_text->getScreenNames(screenIndex)), ".ART");
+	Common::String buf;
+	buf = Common::String(_vm->_text->getScreenNames(screenIndex)) + Common::String(".ART");
 	if (!_sceneryArchive1.open(buf))
-		error("File not found: %s", buf);
+		error("File not found: %s", buf.c_str());
 	// Read the image into dummy seq and static dib_a
 	seq_t *dummySeq;                                // Image sequence structure for Read_pcx
 	dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
 	free(dummySeq);
 	_sceneryArchive1.close();
-	free(buf);
 }
 
 char *FileManager_v1d::fetchString(int index) {

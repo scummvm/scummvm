@@ -44,7 +44,7 @@ public:
 	FileManager(HugoEngine *vm);
 	virtual ~FileManager();
 
-	bool     fileExists(char *filename);
+	bool     fileExists(Common::String filename);
 	sound_pt getSound(int16 sound, uint16 *size);
 
 	void     readBootFile();

@@ -170,15 +170,13 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 
 		_objectsArchive.seek(objBlock.objOffset, SEEK_SET);
 	} else {
-		char *buf = (char *) malloc(2048 + 1);      // Buffer for file access
-		strcat(strcat(strcpy(buf, _vm->_picDir), _vm->_text->getNoun(objPtr->nounIndex, 0)), ".PIX");
+		Common::String buf;
+		buf = _vm->_picDir + Common::String(_vm->_text->getNoun(objPtr->nounIndex, 0)) + Common::String(".PIX");
 		if (!_objectsArchive.open(buf)) {
-			warning("File %s not found, trying again with %s%s", buf, _vm->_text->getNoun(objPtr->nounIndex, 0), ".PIX");
-			strcat(strcpy(buf, _vm->_text->getNoun(objPtr->nounIndex, 0)), ".PIX");
+			buf = Common::String(_vm->_text->getNoun(objPtr->nounIndex, 0)) + Common::String(".PIX");
 			if (!_objectsArchive.open(buf))
 				error("File not found: %s", buf);
 		}
-		free(buf);
 	}
 
 	bool  firstFl = true;                           // Initializes pcx read function
@@ -294,7 +292,7 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 /**
 * Return whether file exists or not
 */
-bool FileManager::fileExists(char *filename) {
+bool FileManager::fileExists(Common::String filename) {
 	Common::File f;
 	return(f.exists(filename));
 }

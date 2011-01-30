@@ -297,7 +297,7 @@ public:
 	Common::RandomSource *_rnd;
 
 	const char *_episode;
-	const char *_picDir;
+	Common::String _picDir;
 
 	Common::String _saveFilename;
 
