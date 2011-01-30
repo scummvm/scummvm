@@ -24,7 +24,8 @@
  */
 
 /*
- * Source is based on the player example from libvorbis package
+ * Source is based on the player example from libvorbis package,
+ * available at: http://svn.xiph.org/trunk/theora/examples/player_example.c
  *
  * THIS FILE IS PART OF THE OggTheora SOFTWARE CODEC SOURCE CODE.
  * USE, DISTRIBUTION AND REPRODUCTION OF THIS LIBRARY SOURCE IS
@@ -69,7 +70,7 @@ TheoraDecoder::TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundT
 	ogg_sync_init(&_oggSync);
 
 	_curFrame = 0;
-	_audiobuf = (ogg_int16_t *)calloc(AUDIOFD_FRAGSIZE, sizeof(ogg_int16_t));
+	_audiobuf = (ogg_int16_t *)malloc(AUDIOFD_FRAGSIZE * sizeof(ogg_int16_t));
 
 	reset();
 }
@@ -333,8 +334,6 @@ void TheoraDecoder::close() {
 const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	int i, j;
 
-//	_stateFlag = false; // playback has not begun
-
 	// we want a video and audio frame ready to go at all times.  If
 	// we have to buffer incoming, buffer the compressed data (ie, let
 	// ogg do the buffering)
@@ -358,10 +357,12 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 			if (_audiobufFill == AUDIOFD_FRAGSIZE)
 				_audiobufReady = true;
 
+#if ENABLE_THEORA_SEEKING
 			if (_vorbisDSP.granulepos >= 0)
 				_audiobufGranulePos = _vorbisDSP.granulepos - ret + i;
 			else
 				_audiobufGranulePos += i;
+#endif
 		} else {
 
 			// no pending audio; is there a pending packet to decode?
@@ -382,6 +383,8 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 				th_decode_ctl(_theoraDecode, TH_DECCTL_SET_PPLEVEL, &_ppLevel, sizeof(_ppLevel));
 				_ppInc = 0;
 			}
+
+#if ENABLE_THEORA_SEEKING
 			// HACK: This should be set after a seek or a gap, but we might not have
 			// a granulepos for the first packet (we only have them for the last
 			// packet on a page), so we just set it as often as we get it.
@@ -391,10 +394,13 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 			if (_oggPacket.granulepos >= 0) {
 				th_decode_ctl(_theoraDecode, TH_DECCTL_SET_GRANPOS, &_oggPacket.granulepos, sizeof(_oggPacket.granulepos));
 			}
+
 			if (th_decode_packetin(_theoraDecode, &_oggPacket, &_videobufGranulePos) == 0) {
 				_videobufTime = th_granule_time(_theoraDecode, _videobufGranulePos);
+#else
+			if (th_decode_packetin(_theoraDecode, &_oggPacket, NULL) == 0) {
+#endif
 				_curFrame++;
-
 				_videobufReady = true;
 			}
 		} else
@@ -419,7 +425,7 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 
 		// The audio mixer is now responsible for the old audio buffer.
 		// We need to create a new one.
-		_audiobuf = (ogg_int16_t *)calloc(AUDIOFD_FRAGSIZE, sizeof(ogg_int16_t));
+		_audiobuf = (ogg_int16_t *)malloc(AUDIOFD_FRAGSIZE * sizeof(ogg_int16_t));
 		_audiobufFill = 0;
 		_audiobufReady = false;
 	}
@@ -431,7 +437,7 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 		th_decode_ycbcr_out(_theoraDecode, yuv);
 
 		// Convert YUV data to RGB data
-		translateYUVtoRGBA(yuv, _theoraInfo, (byte *)_surface->getBasePtr(0, 0), _surface->pitch * _surface->h);
+		translateYUVtoRGBA(yuv, (byte *)_surface->getBasePtr(0, 0));
 		
 		_videobufReady = false;
 	}
@@ -456,12 +462,15 @@ void TheoraDecoder::reset() {
 		_fileStream->seek(0);
 
 	_videobufReady = false;
+
+#if ENABLE_THEORA_SEEKING
 	_videobufGranulePos = -1;
+	_audiobufGranulePos = 0;
 	_videobufTime = 0;
+#endif
 
 	_audiobufFill = 0;
 	_audiobufReady = false;
-	_audiobufGranulePos = 0;
 
 	_curFrame = 0;
 
@@ -486,57 +495,67 @@ Audio::QueuingAudioStream *TheoraDecoder::createAudioStream() {
 	return Audio::makeQueuingAudioStream(_vorbisInfo.rate, _vorbisInfo.channels);
 }
 
-	void TheoraDecoder::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer, const th_info &theoraInfo, byte *pixelData, int pixelsSize) {
+static void convertYUVtoBGRA(int y, int u, int v, byte *dst) {
+	byte r, g, b;
+	Graphics::YUV2RGB(y, u, v, r, g, b);
+	*(dst + 0) = b;
+	*(dst + 1) = g;
+	*(dst + 2) = r;
+	*(dst + 3) = 0xFF;
+}
 
+enum TheoraYUVBuffers {
+	kBufferY = 0,
+	kBufferU = 1,
+	kBufferV = 2
+};
+
+void TheoraDecoder::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer, byte *pixelData) {
 	// Width and height of all buffers have to be divisible by 2.
-	assert((YUVBuffer[0].width & 1)   == 0);
-	assert((YUVBuffer[0].height & 1)  == 0);
-	assert((YUVBuffer[1].width & 1)   == 0);
-	assert((YUVBuffer[2].width & 1)  == 0);
+	assert((YUVBuffer[kBufferY].width & 1)   == 0);
+	assert((YUVBuffer[kBufferY].height & 1)  == 0);
+	assert((YUVBuffer[kBufferU].width & 1)   == 0);
+	assert((YUVBuffer[kBufferV].width & 1)   == 0);
 
 	// UV images have to have a quarter of the Y image resolution
-	assert(YUVBuffer[1].width  == YUVBuffer[0].width >> 1);
-	assert(YUVBuffer[2].width  == YUVBuffer[0].width >> 1);
-	assert(YUVBuffer[1].height == YUVBuffer[0].height >> 1);
-	assert(YUVBuffer[2].height == YUVBuffer[0].height >> 1);
+	assert(YUVBuffer[kBufferU].width  == YUVBuffer[kBufferY].width  >> 1);
+	assert(YUVBuffer[kBufferV].width  == YUVBuffer[kBufferY].width  >> 1);
+	assert(YUVBuffer[kBufferU].height == YUVBuffer[kBufferY].height >> 1);
+	assert(YUVBuffer[kBufferV].height == YUVBuffer[kBufferY].height >> 1);
 
-	const byte *ySrc0 = YUVBuffer[0].data;
-	const byte *ySrc1 = YUVBuffer[0].data + YUVBuffer[0].stride;
-	const byte *uSrc  = YUVBuffer[1].data;
-	const byte *vSrc  = YUVBuffer[2].data;
-	byte *dst0  = &pixelData[0];
-	byte *dst1  = &pixelData[0] + (YUVBuffer[0].width << 2);
+	const byte *ySrc = YUVBuffer[kBufferY].data;
+	const byte *uSrc = YUVBuffer[kBufferU].data;
+	const byte *vSrc = YUVBuffer[kBufferV].data;
+	byte *dst  = pixelData;
+	int u = 0, v = 0;
 
-	for (int h = 0; h < YUVBuffer[0].height / 2; ++h) {
-		for (int w = 0; w < YUVBuffer[0].width / 2; ++w) {
-			byte r, g, b;
-			int u = *uSrc++;
-			int v = *vSrc++;
-			int y;
+	const int blockSize = YUVBuffer[kBufferY].width << 2;
+	const int halfHeight = YUVBuffer[kBufferY].height >> 1;
+	const int halfWidth = YUVBuffer[kBufferY].width >> 1;
+	const int yStep = (YUVBuffer[kBufferY].stride << 1) - YUVBuffer[kBufferY].width;
+	// The UV step is usually 0, since in most cases stride == width.
+	// The asserts at the top ensure that the U and V steps are equal
+	// (and they must always be equal)
+	const int uvStep = YUVBuffer[kBufferU].stride - YUVBuffer[kBufferU].width;
+	const int stride = YUVBuffer[kBufferY].stride;
 
-			for (int i = 0; i < 2; i++) {
-				y = *ySrc0++;		
-				Graphics::YUV2RGB(y, u, v, r, g, b);
-				*dst0++ = b;
-				*dst0++ = g;
-				*dst0++ = r;
-				*dst0++ = 255;
+	for (int h = 0; h < halfHeight; ++h) {
+		for (int w = 0; w < halfWidth; ++w) {
+			u = *uSrc++;
+			v = *vSrc++;
 
-				y = *ySrc1++;
-				Graphics::YUV2RGB(y, u, v, r, g, b);
-				*dst1++ = b;
-				*dst1++ = g;
-				*dst1++ = r;
-				*dst1++ = 255;
+			for (int i = 0; i <= 1; i++) {
+				convertYUVtoBGRA(*ySrc, u, v, dst);
+				convertYUVtoBGRA(*(ySrc + stride), u, v, dst + blockSize);
+				ySrc++;
+				dst += 4;	// BGRA
 			}
 		}
 
-		dst0  += YUVBuffer[0].width << 2;
-		dst1  += YUVBuffer[0].width << 2;
-		ySrc0 += (YUVBuffer[0].stride << 1) - YUVBuffer[0].width;
-		ySrc1 += (YUVBuffer[0].stride << 1) - YUVBuffer[0].width;
-		uSrc  += YUVBuffer[1].stride - YUVBuffer[1].width;
-		vSrc  += YUVBuffer[2].stride - YUVBuffer[2].width;
+		dst   += blockSize;
+		ySrc  += yStep;
+		uSrc  += uvStep;
+		vSrc  += uvStep;
 	}
 }
 

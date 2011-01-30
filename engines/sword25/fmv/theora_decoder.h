@@ -41,6 +41,8 @@ namespace Common {
 class SeekableReadStream;
 }
 
+//#define ENABLE_THEORA_SEEKING		// enables the extra calculations used for video seeking
+
 namespace Sword25 {
 
 /**
@@ -105,7 +107,7 @@ private:
 	void queuePage(ogg_page *page);
 	int bufferData();
 	Audio::QueuingAudioStream *createAudioStream();
-	void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer, const th_info &theoraInfo, byte *pixelData, int pixelsSize);
+	void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer, byte *pixelData);
 
 private:
 	Common::SeekableReadStream *_fileStream;
@@ -142,14 +144,17 @@ private:
 
 	// single frame video buffering
 	bool _videobufReady;
-	ogg_int64_t  _videobufGranulePos;
-	double _videobufTime;
 
 	// single audio fragment audio buffering
 	int _audiobufFill;
 	bool _audiobufReady;
 	ogg_int16_t *_audiobuf;
+
+#if ENABLE_THEORA_SEEKING
+	double _videobufTime;
+	ogg_int64_t  _videobufGranulePos;
 	ogg_int64_t  _audiobufGranulePos; // time position of last sample
+#endif
 };
 
 } // End of namespace Sword25
