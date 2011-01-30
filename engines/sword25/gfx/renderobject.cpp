@@ -486,7 +486,9 @@ RenderObjectPtr<RenderObject> RenderObject::recreatePersistedRenderObject(InputP
 		break;
 
 	case TYPE_DYNAMICBITMAP:
-		result = (new DynamicBitmap(reader, this->getHandle(), handle))->getHandle();
+		// Videos are not normally saved: this probably indicates a bug, thus die here.
+		//result = (new DynamicBitmap(reader, this->getHandle(), handle))->getHandle();
+		error("Request to recreate a video. This is either a corrupted saved game, or a bug");
 		break;
 
 	case TYPE_TEXT:

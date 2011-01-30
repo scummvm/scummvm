@@ -133,6 +133,7 @@ bool DynamicBitmap::isSetContentAllowed() const {
 }
 
 bool DynamicBitmap::persist(OutputPersistenceBlock &writer) {
+#if 0
 	bool result = true;
 
 	result &= Bitmap::persist(writer);
@@ -144,9 +145,15 @@ bool DynamicBitmap::persist(OutputPersistenceBlock &writer) {
 	result &= RenderObject::persistChildren(writer);
 
 	return result;
+#endif
+
+	error("Request to persist a dynamic bitmap (video) - probably a bug");
+
+	return true;
 }
 
 bool DynamicBitmap::unpersist(InputPersistenceBlock &reader) {
+#if 0
 	bool result = true;
 
 	result &= Bitmap::unpersist(reader);
@@ -162,6 +169,9 @@ bool DynamicBitmap::unpersist(InputPersistenceBlock &reader) {
 	result &= RenderObject::unpersistChildren(reader);
 
 	return reader.isGood() && result;
+#endif
+
+	error("Request to unpersist a dynamic bitmap (video) - probably a corrupted saved game or a bug");
 }
 
 } // End of namespace Sword25
