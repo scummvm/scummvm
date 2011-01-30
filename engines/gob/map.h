@@ -80,6 +80,8 @@ public:
 	int16 _destX;
 	int16 _destY;
 
+	bool _mapUnknownBool;
+
 	ItemPos _itemPoses[40];
 	char _sourceFile[15];
 
@@ -142,8 +144,6 @@ protected:
 	int16 _tilesHeight;
 
 	bool _bigTiles;
-
-	bool _mapUnknownBool;
 
 	int16 _passWidth;
 	int8 *_passMap; // [y * _mapWidth + x], getPass(x, y);

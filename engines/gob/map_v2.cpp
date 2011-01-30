@@ -74,15 +74,21 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 				for (int i = 0; i < _mapWidth * _mapHeight; i++)
 					WRITE_VARO_UINT8(var + i, 0x00);
 				break;
-			case 65533:
-				warning("Map_v2::loadMapObjects(): ID == 65533");
+			case 65533: {
+				int index = READ_VARO_UINT16(var);
+				// _vm->_mult->_objects[index].field_6E = 0;
+				// _vm->_mult->_objects[index].field_6A = variables;
+				warning("Map_v2::loadMapObjects(): ID == 65533 (%d)", index);
 				break;
+			}
 			case 65534:
-				_tilesWidth = READ_VARO_UINT8(var);
-				_tilesHeight = READ_VARO_UINT8(var + 1);
-				_mapWidth = READ_VARO_UINT8(var + 2);
-				_mapHeight = READ_VARO_UINT8(var + 3);
+				_tilesWidth     = READ_VARO_UINT8(var);
+				_tilesHeight    = READ_VARO_UINT8(var + 1);
+				_mapWidth       = READ_VARO_UINT8(var + 2);
+				_mapHeight      = READ_VARO_UINT8(var + 3);
 				_mapUnknownBool = READ_VARO_UINT8(var + 4) ? true : false;
+				if (_mapUnknownBool)
+					warning("Map_v2::loadMapObjects(): _mapUnknownBool == true");
 				break;
 			case 65535:
 				_passMap = (int8 *)_vm->_inter->_variables->getAddressOff8(var);

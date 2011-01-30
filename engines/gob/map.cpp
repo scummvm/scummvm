@@ -47,6 +47,8 @@ Map::Map(GobEngine *vm) : _vm(vm) {
 
 	_bigTiles = false;
 
+	_mapUnknownBool = false;
+
 	_wayPointCount = 0;
 	_wayPoints = 0;
 

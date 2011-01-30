@@ -37,6 +37,7 @@
 #include "gob/goblin.h"
 #include "gob/inter.h"
 #include "gob/scenery.h"
+#include "gob/map.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
 
@@ -715,8 +716,10 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	if (animData.animType == 4) {
 		animData.frame = 0;
 		animData.isPaused = 1;
-		if (animData.animation < 0)
-			warning("Woodruff Stub: AnimType 4, animation: %d", animData.animation);
+		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
+			_vm->_vidPlayer->closeVideo(animObj.videoSlot - 1);
+			animObj.videoSlot = 0;
+		}
 		return;
 	}
 
@@ -826,6 +829,10 @@ void Mult_v2::animate() {
 		Mult_Object &animObj = _objects[i];
 		Mult_AnimData &animData = *(animObj.pAnimData);
 
+		if (_vm->_map->_mapUnknownBool) {
+			// TODO!
+		}
+
 		animData.intersected = 200;
 		if (animData.isStatic != 2) {
 			if ((animData.isStatic == 0) || (animObj.lastLeft != -1)) {
@@ -842,10 +849,10 @@ void Mult_v2::animate() {
 		Mult_AnimData &animData = *(animObj.pAnimData);
 
 		animObj.needRedraw = 0;
-		animObj.newTop = 1000;
-		animObj.newLeft = 1000;
-		animObj.newBottom = 0;
-		animObj.newRight = 0;
+		animObj.newTop     = 1000;
+		animObj.newLeft    = 1000;
+		animObj.newBottom  = 0;
+		animObj.newRight   = 0;
 
 		if (animData.isStatic == 2)
 			continue;

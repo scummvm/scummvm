@@ -597,7 +597,9 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 	int16 destX;
 	int16 destY;
 
-	if ((_vm->getGameType() == kGameTypeWoodruff) && (animation < 0)) {
+	if ((animation < 0) &&
+	    ((_vm->getGameType() == kGameTypeWoodruff) ||
+	     (_vm->getGameType() == kGameTypeAdibou2))) {
 		// Object video
 
 		if (flags & 1) { // Do capture
