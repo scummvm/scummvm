@@ -3118,22 +3118,15 @@ bool ToonEngine::loadGame(int32 slot) {
 		_sceneAnimations[i].load(this, loadFile);
 	}
 
-	_gameState->_timerTimeout[0] += timerDiff;
-	_gameState->_timerTimeout[1] += timerDiff;
-
-	/*
-	int32 diff = _conversationData - _gameState->_conversationData;
-
-	for (int32 i = 0; i < 60; i++) {
-		if (_gameState->_conversationState[i]._enable) {
-			// we have to fix up our pointers...
-			for (int32 a = 0; a < 10; a++) {
-				if (_gameState->_conversationState[i].state[a]._data4)
-					_gameState->_conversationState[i].state[a]._data4 = (int16 *)_gameState->_conversationState[i].state[a]._data4 + diff;
-			}
+	// scene animations have to be added in reverse order in animation manager to preserve the z order
+	for (int32 i = 63; i >= 0; i--) {
+		if (_sceneAnimations[i]._active && _sceneAnimations[i]._animInstance) {
+			_animationManager->addInstance(_sceneAnimations[i]._animInstance);
 		}
 	}
-	*/
+
+	_gameState->_timerTimeout[0] += timerDiff;
+	_gameState->_timerTimeout[1] += timerDiff;
 
 	_gameState->_conversationData = _conversationData;
 	_firstFrame = true;
@@ -4689,8 +4682,12 @@ void SceneAnimation::load(ToonEngine *vm, Common::ReadStream *stream) {
 	if (stream->readByte() == 1) {
 		_animInstance = vm->getAnimationManager()->createNewInstance(kAnimationScene);
 		_animInstance->load(stream);
-		vm->getAnimationManager()->addInstance(_animInstance);
+		// we add them at the end of loading in reverse order
+		//vm->getAnimationManager()->addInstance(_animInstance);
 		_originalAnimInstance = _animInstance;
+	} else {
+		_animInstance = NULL;
+		_originalAnimInstance = NULL;
 	}
 
 	// load animation if any

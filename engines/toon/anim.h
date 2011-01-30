@@ -161,9 +161,11 @@ public:
 	AnimationInstance *createNewInstance(AnimationInstanceType type);
 	void addInstance(AnimationInstance *instance);
 	void removeInstance(AnimationInstance *instance);
+	void updateInstance(AnimationInstance* instance); 
 	void removeAllInstances(AnimationInstanceType type);
 	void render();
 	void update(int32 timeIncrement);
+	bool hasInstance(AnimationInstance* instance);
 
 protected:
 	ToonEngine *_vm;

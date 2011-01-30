@@ -604,6 +604,8 @@ void AnimationInstance::setZ(int32 z, bool relative) {
 
 void AnimationInstance::setLayerZ(int32 z) {
 	_layerZ = z;
+	if (_vm->getAnimationManager()->hasInstance(this)) 
+		_vm->getAnimationManager()->updateInstance(this);
 }
 
 int32 AnimationInstance::getLayerZ() const {
@@ -678,8 +680,44 @@ void AnimationInstance::reset() {
 AnimationManager::AnimationManager(ToonEngine *vm) : _vm(vm) {
 }
 
+bool AnimationManager::hasInstance(AnimationInstance* instance) {
+	for (uint32 i = 0; i < _instances.size(); i++) {
+		if(_instances[i] == instance) 
+			return true;
+	}
+	return false;
+}
+
+void AnimationManager::updateInstance(AnimationInstance* instance) {
+	// simply remove and readd the instance in the ordered list
+	removeInstance(instance);
+	addInstance(instance);
+}
+
 void AnimationManager::addInstance(AnimationInstance *instance) {
-	_instances.push_back(instance);
+
+	// if the instance already exists, we skip the add
+	for (uint32 i = 0; i < _instances.size(); i++) {
+		if(_instances[i] == instance) 
+			return;
+	}
+	
+	int found = -1;
+		
+	// here we now do an ordered insert (closer to the original game)
+	for (uint32 i = 0; i < _instances.size(); i++) {
+		if (_instances[i]->getLayerZ() >= instance->getLayerZ()) {
+			found = i;
+			break;
+		}
+	}
+
+	if ( found == -1 ) {
+		_instances.push_back(instance);
+	} else {
+		_instances.insert_at(found, instance);
+	}
+	
 }
 
 void AnimationManager::removeInstance(AnimationInstance *instance) {
@@ -712,23 +750,6 @@ void AnimationManager::update(int32 timeIncrement) {
 
 void AnimationManager::render() {
 	debugC(5, kDebugAnim, "render()");
-	// sort the instance by layer z
-	// bubble sort (replace by faster afterwards)
-	bool changed = true;
-	while (changed) {
-		changed = false;
-		for (uint32 i = 0; i < _instances.size() - 1; i++) {
-			if ((_instances[i]->getLayerZ() > _instances[i + 1]->getLayerZ()) ||
-			    ((_instances[i]->getLayerZ() == _instances[i + 1]->getLayerZ()) &&
-			    (_instances[i]->getId() < _instances[i+1]->getId()))) {
-				AnimationInstance *instance = _instances[i];
-				_instances[i] = _instances[i + 1];
-				_instances[i + 1] = instance;
-				changed = true;
-			}
-		}
-	}
-
 	for (uint32 i = 0; i < _instances.size(); i++) {
 		if (_instances[i]->getVisible())
 			_instances[i]->render();
