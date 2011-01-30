@@ -106,7 +106,7 @@ enum {
 	kLBAnimOpWaitForSound = 0xb,
 	kLBAnimOpReleaseSound = 0xc,
 	kLBAnimOpResetSound = 0xd,
-	kLBAnimOpUnknownE = 0xe,
+	kLBAnimOpSetTempoDiv = 0xe,
 	kLBAnimOpDelay = 0xf
 };
 

@@ -1258,17 +1258,23 @@ NodeState LBAnimationNode::update(bool seeking) {
 			break;
 
 		case kLBAnimOpSetTempo:
-		case kLBAnimOpUnknownE: // TODO: complete guesswork, not in 1.x
+		case kLBAnimOpSetTempoDiv:
 			{
 			assert(entry.size == 2);
 			uint16 tempo = (int16)READ_BE_UINT16(entry.data);
 
-			debug(4, "3: SetTempo(%d)", tempo);
-			if (entry.opcode == kLBAnimOpUnknownE) {
-				debug(4, "(beware, stupid OpUnknownE guesswork)");
+			// TODO: LB 3 uses fixed-point here.
+			if (entry.opcode == kLBAnimOpSetTempo) {
+				debug(4, "3: SetTempo(%d)", tempo);
+				// TODO: LB 3 uses (tempo * 1000) / 60, while
+				// the original divides the system time by 16.
+				_parent->setTempo(tempo * 16);
+			} else {
+				// LB 3.0+ only.
+				debug(4, "E: SetTempoDiv(%d)", tempo);
+				_parent->setTempo(1000 / tempo);
 			}
 
-			_parent->setTempo(tempo);
 			}
 			break;
 
@@ -1516,12 +1522,12 @@ bool LBAnimation::update() {
 	if (!_running)
 		return false;
 
-	if (_vm->_system->getMillis() / 16 <= _lastTime + (uint32)_tempo)
+	if (_vm->_system->getMillis() <= _lastTime + (uint32)_tempo)
 		return false;
 
 	// the second check is to try 'catching up' with lagged animations, might be crazy
-	if (_lastTime == 0 || (_vm->_system->getMillis() / 16) > _lastTime + (uint32)(_tempo * 2))
-		_lastTime = _vm->_system->getMillis() / 16;
+	if (_lastTime == 0 || (_vm->_system->getMillis()) > _lastTime + (uint32)(_tempo * 2))
+		_lastTime = _vm->_system->getMillis();
 	else
 		_lastTime += _tempo;
 
