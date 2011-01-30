@@ -585,6 +585,9 @@ protected:
 	void oPlaytoons_openItk();
 
 	Common::String getFile(const char *path);
+
+private:
+	bool readSprite(const Common::String &file, int32 dataVar, int32 size, int32 offset);
 };
 
 class Inter_v7 : public Inter_Playtoons {

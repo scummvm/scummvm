@@ -265,7 +265,8 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 		return;
 
 	if (size < 0) {
-		warning("Attempted to read a raw sprite from file \"%s\"", file.c_str());
+		if (readSprite(file, dataVar, size, offset))
+			WRITE_VAR(1, 0);
 		return;
 	} else if (size == 0) {
 		dataVar = 0;
@@ -402,6 +403,52 @@ Common::String Inter_Playtoons::getFile(const char *path) {
 				"\"%s\" to \"%s\"", orig, path);
 
 	return path;
+}
+
+bool Inter_Playtoons::readSprite(const Common::String &file, int32 dataVar,
+		int32 size, int32 offset) {
+
+	bool palette = false;
+	if (size < -1000) {
+		palette = true;
+		size += 1000;
+	}
+
+	int index = -size - 1;
+	if ((index < 0) || (index >= Draw::kSpritesCount) || !_vm->_draw->_spritesArray[index]) {
+		warning("No such sprite");
+		return false;
+	}
+
+	SurfacePtr sprite = _vm->_draw->_spritesArray[index];
+	if (sprite->getBPP() != 1) {
+		warning("bpp != 1");
+		return false;
+	}
+
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(file);
+	if (!stream) {
+		warning("No such file \"%s\"", file.c_str());
+		return false;
+	}
+
+	int32 spriteSize = sprite->getWidth() * sprite->getHeight();
+	int32 dataSize   = stream->size();
+
+	if (palette)
+		dataSize -= 768;
+
+	int32 readSize = MIN(spriteSize, dataSize);
+	if (readSize <= 0)
+		return true;
+
+	stream->read(sprite->getData(), readSize);
+
+	if (palette)
+		stream->read((byte *)_vm->_global->_pPaletteDesc->vgaPal, 768);
+
+	delete stream;
+	return true;
 }
 
 } // End of namespace Gob
