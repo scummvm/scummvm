@@ -55,6 +55,8 @@ Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_updatePalette = false;
 	_psxCache.decodedBackground = NULL;
 	_psxCache.extPlxCache = NULL;
+	_oldScrollX = 0;
+	_oldScrollY = 0;
 }
 
 Screen::~Screen() {
