@@ -240,6 +240,7 @@ public:
 
 	void clear(bool shrinkArray = 0);
 
+	void erase(iterator entry);
 	void erase(const Key &key);
 
 	uint size() const { return _size; }
@@ -588,6 +589,23 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::setVal(const Key &key, const Val &v
 	uint ctr = lookupAndCreateIfMissing(key);
 	assert(_storage[ctr] != NULL);
 	_storage[ctr]->_value = val;
+}
+
+template<class Key, class Val, class HashFunc, class EqualFunc>
+void HashMap<Key, Val, HashFunc, EqualFunc>::erase(iterator entry) {
+	// Check whether we have a valid iterator
+	assert(entry._hashmap == this);
+	const uint ctr = entry._idx;
+	assert(ctr <= _mask);
+	Node * const node = _storage[ctr];
+	assert(node != NULL);
+	assert(node != HASHMAP_DUMMY_NODE);
+
+	// If we remove a key, we replace it with a dummy node.
+	freeNode(node);
+	_storage[ctr] = HASHMAP_DUMMY_NODE;
+	_size--;
+	_deleted++;
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>

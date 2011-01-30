@@ -71,6 +71,35 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(container.empty());
 	}
 
+	void test_add_remove_iterator() {
+		Common::HashMap<int, int> container;
+		container[0] = 17;
+		container[1] = 33;
+		container[2] = 45;
+		container[3] = 12;
+		container[4] = 96;
+		TS_ASSERT(container.contains(1));
+		container.erase(container.find(1));
+		TS_ASSERT(!container.contains(1));
+		container[1] = 42;
+		TS_ASSERT(container.contains(1));
+		container.erase(container.find(0));
+		TS_ASSERT(!container.empty());
+		container.erase(container.find(1));
+		TS_ASSERT(!container.empty());
+		container.erase(container.find(2));
+		TS_ASSERT(!container.empty());
+		container.erase(container.find(3));
+		TS_ASSERT(!container.empty());
+		container.erase(container.find(4));
+		TS_ASSERT(container.empty());
+		container[1] = 33;
+		TS_ASSERT(container.contains(1));
+		TS_ASSERT(!container.empty());
+		container.erase(container.find(1));
+		TS_ASSERT(container.empty());
+	}
+
 	void test_lookup() {
 		Common::HashMap<int, int> container;
 		container[0] = 17;
