@@ -83,6 +83,8 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 	OPCODE(118, o_chestDropKey);
 	OPCODE(119, o_trapLockOpen);
 	OPCODE(120, o_sideDoorsMovies);
+	OPCODE(121, o_cloudOrbEnter);
+	OPCODE(122, o_cloudOrbLeave);
 	OPCODE(125, o_drawerCloseOpened);
 
 	// "Init" Opcodes
@@ -96,7 +98,7 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 	OPCODE(207, o_chest_init);
 	OPCODE(208, opcode_208);
 	OPCODE(209, o_achenarDrawers_init);
-	OPCODE(210, opcode_210);
+	OPCODE(210, o_cloudOrb_init);
 
 	// "Exit" Opcodes
 	OPCODE(300, opcode_300);
@@ -689,6 +691,21 @@ void MystScriptParser_Stoneship::o_sideDoorsMovies(uint16 op, uint16 var, uint16
 	_vm->_cursor->showCursor();
 }
 
+void MystScriptParser_Stoneship::o_cloudOrbEnter(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Cloud orb enter", op);
+
+	_vm->_sound->replaceSoundMyst(_cloudOrbSound, Audio::Mixer::kMaxChannelVolume, true);
+	_cloudOrbMovie->playMovie();
+}
+
+void MystScriptParser_Stoneship::o_cloudOrbLeave(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Cloud orb leave", op);
+
+	_cloudOrbMovie->pauseMovie(true);
+	_vm->_sound->replaceSoundMyst(_cloudOrbStopSound);
+	_vm->_gfx->runTransition(5, _invokingResource->getRect(), 4, 0);
+}
+
 void MystScriptParser_Stoneship::o_drawerCloseOpened(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Close open drawer", op);
 
@@ -860,21 +877,12 @@ void MystScriptParser_Stoneship::o_achenarDrawers_init(uint16 op, uint16 var, ui
 	}
 }
 
-void MystScriptParser_Stoneship::opcode_210(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_cloudOrb_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Cloud orb init", op);
 
-	// Used in Cards 2205 and 2207 (Cloud Orbs in Sirrus' Room)
-	if (argc == 2) {
-		uint16 soundId = argv[0];
-		uint16 soundIdStopping = argv[1];
-
-		// TODO: Work Out Function i.e. control Var etc.
-		if (false) {
-			_vm->_sound->replaceSoundMyst(soundId);
-			_vm->_sound->replaceSoundMyst(soundIdStopping);
-		}
-	} else
-		unknown(op, var, argc, argv);
+	_cloudOrbMovie = static_cast<MystResourceType6 *>(_invokingResource);
+	_cloudOrbSound = argv[0];
+	_cloudOrbStopSound = argv[1];
 }
 
 void MystScriptParser_Stoneship::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

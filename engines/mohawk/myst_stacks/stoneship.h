@@ -68,6 +68,8 @@ private:
 	DECLARE_OPCODE(o_chestDropKey);
 	DECLARE_OPCODE(o_trapLockOpen);
 	DECLARE_OPCODE(o_sideDoorsMovies);
+	DECLARE_OPCODE(o_cloudOrbEnter);
+	DECLARE_OPCODE(o_cloudOrbLeave);
 	DECLARE_OPCODE(o_drawerCloseOpened);
 
 	DECLARE_OPCODE(o_hologramDisplay_init);
@@ -80,7 +82,7 @@ private:
 	DECLARE_OPCODE(o_chest_init);
 	DECLARE_OPCODE(opcode_208);
 	DECLARE_OPCODE(o_achenarDrawers_init);
-	DECLARE_OPCODE(opcode_210);
+	DECLARE_OPCODE(o_cloudOrb_init);
 
 	DECLARE_OPCODE(opcode_300);
 
@@ -106,6 +108,10 @@ private:
 	MystResourceType6 *_hologramDisplay; // 84
 	MystResourceType6 *_hologramSelection; // 88
 	uint16 _hologramDisplayPos;
+
+	MystResourceType6 *_cloudOrbMovie; // 136
+	uint16 _cloudOrbSound; // 140
+	uint16 _cloudOrbStopSound; // 142
 
 	uint16 batteryRemainingCharge();
 };
