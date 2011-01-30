@@ -40,8 +40,6 @@
 #include "sword25/package/packagemanager.h"
 #include "sword25/sfx/soundengine.h"
 
-#define INDIRECTRENDERING 1
-
 namespace Sword25 {
 
 #define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
@@ -63,17 +61,16 @@ bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(filename);
 	_decoder.load(in);
 
-	// Ausgabebitmap erstellen
 	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
 
-#if INDIRECTRENDERING
+#ifdef THEORA_INDIRECT_RENDERING
 	_outputBitmap = pGfx->getMainPanel()->addDynamicBitmap(_decoder.getWidth(), _decoder.getHeight());
 	if (!_outputBitmap.isValid()) {
 		error("Output bitmap for movie playback could not be created.");
 		return false;
 	}
 
-	// Skalierung des Ausgabebitmaps berechnen, so dass es möglichst viel Bildschirmfläche einnimmt.
+	// Compute the scaling of the output bitmap, so that it takes up the most space
 	float screenToVideoWidth = (float)pGfx->getDisplayWidth() / (float)_outputBitmap->getWidth();
 	float screenToVideoHeight = (float)pGfx->getDisplayHeight() / (float)_outputBitmap->getHeight();
 	float scaleFactor = MIN(screenToVideoWidth, screenToVideoHeight);
@@ -82,11 +79,9 @@ bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 		scaleFactor = 1.0f;
 
 	_outputBitmap->setScaleFactor(scaleFactor);
-
-	// Z-Wert setzen
 	_outputBitmap->setZ(z);
 
-	// Ausgabebitmap auf dem Bildschirm zentrieren
+	// Center bitmap on screen
 	_outputBitmap->setX((pGfx->getDisplayWidth() - _outputBitmap->getWidth()) / 2);
 	_outputBitmap->setY((pGfx->getDisplayHeight() - _outputBitmap->getHeight()) / 2);
 #else
@@ -128,7 +123,7 @@ void MoviePlayer::update() {
 			// Transfer the next frame
 			assert(s->bytesPerPixel == 4);
 
-#if INDIRECTRENDERING
+#ifdef THEORA_INDIRECT_RENDERING
 			byte *frameData = (byte *)s->getBasePtr(0, 0);
 			_outputBitmap->setContent(frameData, s->pitch * s->h, 0, s->pitch);
 #else
@@ -204,7 +199,7 @@ void MoviePlayer::update() {
 }
 
 bool MoviePlayer::isMovieLoaded() {
-	return true;
+	return false;
 }
 
 bool MoviePlayer::isPaused() {

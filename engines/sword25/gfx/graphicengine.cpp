@@ -51,6 +51,8 @@
 
 #include "sword25/gfx/graphicengine.h"
 
+#include "sword25/fmv/movieplayer.h"
+
 #include "sword25/util/lua/lua.h"
 #include "sword25/util/lua/lauxlib.h"
 enum {
@@ -140,10 +142,16 @@ bool GraphicEngine::startFrame(bool updateAll) {
 }
 
 bool GraphicEngine::endFrame() {
-	// Scene zeichnen
+#ifndef THEORA_INDIRECT_RENDERING
+	if (Kernel::getInstance()->getFMV()->isMovieLoaded())
+		return true;
+#endif
+
 	_renderObjectManagerPtr->render();
 
-	// FIXME: The frame buffer surface is only used as the base for creating thumbnails when saving the
+	// FIXME: The following hack doesn't really work (all the thumbnails are empty)
+#if 0
+	// HACK: The frame buffer surface is only used as the base for creating thumbnails when saving the
 	// game, since the _backSurface is blanked. Currently I'm doing a slightly hacky check and only
 	// copying the back surface if line 50 (the first line after the interface area) is non-blank
 	if (READ_LE_UINT32((byte *)_backSurface.pixels + (_backSurface.pitch * 50)) & 0xffffff) {
@@ -151,6 +159,7 @@ bool GraphicEngine::endFrame() {
 		Common::copy((byte *)_backSurface.pixels, (byte *)_backSurface.pixels + 
 			(_backSurface.pitch * _backSurface.h), (byte *)_frameBuffer.pixels); 
 	}
+#endif
 
 	g_system->updateScreen();
 

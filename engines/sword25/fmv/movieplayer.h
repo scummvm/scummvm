@@ -45,6 +45,8 @@
 #include "sword25/fmv/theora_decoder.h"
 #endif
 
+#define THEORA_INDIRECT_RENDERING
+
 namespace Sword25 {
 
 class MoviePlayer : public Service {
