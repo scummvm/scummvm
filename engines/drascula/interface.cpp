@@ -91,7 +91,7 @@ void DrasculaEngine::selectVerb(int verb) {
 }
 
 bool DrasculaEngine::confirmExit() {
-	byte key;
+	byte key = 0;
 
 	color_abc(kColorRed);
 	updateRoom();
