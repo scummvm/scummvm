@@ -58,7 +58,7 @@ private:
 	int8   _itemHeight;
 	uint8  _startItem;
 	uint8  _endItem;
-	int8   _itemSize;
+	uint8  _itemSize;
 	int8   _bitWidth;
 
 	uint16 getCharCount() const;
