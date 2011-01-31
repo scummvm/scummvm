@@ -612,7 +612,7 @@ protected:
 	void o7_draw0x89();
 	void o7_findFile();
 	void o7_getSystemProperty();
-	void o7_loadLBM();
+	void o7_loadImage();
 	void o7_setVolume();
 	void o7_zeroVar();
 	void o7_getINIValue();

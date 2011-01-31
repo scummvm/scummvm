@@ -61,7 +61,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x89, o7_draw0x89);
 	OPCODEDRAW(0x8A, o7_findFile);
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
-	OPCODEDRAW(0x90, o7_loadLBM);
+	OPCODEDRAW(0x90, o7_loadImage);
 	OPCODEDRAW(0x93, o7_setVolume);
 	OPCODEDRAW(0x95, o7_zeroVar);
 	OPCODEDRAW(0xA1, o7_getINIValue);
@@ -350,10 +350,10 @@ void Inter_v7::o7_getSystemProperty() {
 	storeValue(0);
 }
 
-void Inter_v7::o7_loadLBM() {
+void Inter_v7::o7_loadImage() {
 	Common::String file = _vm->_game->_script->evalString();
 	if (!file.contains('.'))
-		file += ".LBM";
+		file += ".TGA";
 
 	int16 spriteIndex = _vm->_game->_script->readValExpr();
 	int16 left        = _vm->_game->_script->readValExpr();
@@ -364,7 +364,9 @@ void Inter_v7::o7_loadLBM() {
 	int16 y           = _vm->_game->_script->readValExpr();
 	int16 transp      = _vm->_game->_script->readValExpr();
 
-	warning("Addy Stub: Load LBM \"%s\", sprite %d, %dx%d+%d+%d @ %d+%d (%d)",
+	// Supported formats: TGA, LBM, BRC, BMP or JPEG
+
+	warning("Addy Stub: Load image \"%s\", sprite %d, %dx%d+%d+%d @ %d+%d (%d)",
 			file.c_str(), spriteIndex, width, height, left, top, x, y, transp);
 }
 
