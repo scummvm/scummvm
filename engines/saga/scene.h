@@ -140,8 +140,7 @@ struct SceneEntry {
 	uint16 facing;
 };
 
-class SceneEntryList : public Common::Array<SceneEntry> {
-};
+typedef Common::Array<SceneEntry> SceneEntryList;
 
 struct SceneImage {
 	bool loaded;

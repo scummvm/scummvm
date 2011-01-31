@@ -44,10 +44,7 @@ struct SpriteInfo {
 	}
 };
 
-class SpriteList : public Common::Array<SpriteInfo> {
-//	int spriteListResourceId;
-};
-
+typedef Common::Array<SpriteInfo> SpriteList;
 
 class Sprite {
 public:

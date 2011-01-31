@@ -129,8 +129,7 @@ struct EntryPoint {
 	uint16 offset;
 };
 
-class VoiceLUT : public Common::Array<uint16> {
-};
+typedef Common::Array<uint16> VoiceLUT;
 
 struct ModuleData {
 	bool loaded;			// is it loaded or not?
