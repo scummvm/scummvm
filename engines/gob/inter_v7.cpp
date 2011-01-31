@@ -68,8 +68,8 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0xA2, o7_setINIValue);
 	OPCODEDRAW(0xA4, o7_draw0xA4);
 	OPCODEDRAW(0xC4, o7_opendBase);
-	OPCODEDRAW(0xC5, o7_draw0xC5);
-	OPCODEDRAW(0xC6, o7_draw0xC6);
+	OPCODEDRAW(0xC5, o7_closedBase);
+	OPCODEDRAW(0xC6, o7_getDBString);
 }
 
 void Inter_v7::setupOpcodesFunc() {
@@ -408,28 +408,36 @@ void Inter_v7::o7_draw0xA4() {
 }
 
 void Inter_v7::o7_opendBase() {
-	Common::String str0 = _vm->_game->_script->evalString();
-	Common::String str1 = _vm->_game->_script->evalString();
+	Common::String dbFile = _vm->_game->_script->evalString();
+	Common::String id     = _vm->_game->_script->evalString();
 
-	warning("Addy Stub: Open dBase file \"%s.dbf\" (%s)", str0.c_str(), str1.c_str());
+	dbFile += ".DBF";
+
+	warning("Addy Stub: Open dBase \"%s\" (\"%s\")", id.c_str(), dbFile.c_str());
+
+	WRITE_VAR(27, 0); // Failure
 }
 
-void Inter_v7::o7_draw0xC5() {
-	Common::String str0 = _vm->_game->_script->evalString();
+void Inter_v7::o7_closedBase() {
+	Common::String id = _vm->_game->_script->evalString();
 
-	warning("Addy Stub Draw 0xC5: \"%s\"", str0.c_str());
+	warning("Addy Stub: Close dBase \"%s\"", id.c_str());
+
+	WRITE_VAR(27, 0); // Failure
 }
 
-void Inter_v7::o7_draw0xC6() {
-	Common::String str0 = _vm->_game->_script->evalString();
-	Common::String str1 = _vm->_game->_script->evalString();
-	Common::String str2 = _vm->_game->_script->evalString();
-	Common::String str3 = _vm->_game->_script->evalString();
+void Inter_v7::o7_getDBString() {
+	Common::String id      = _vm->_game->_script->evalString();
+	Common::String group   = _vm->_game->_script->evalString();
+	Common::String section = _vm->_game->_script->evalString();
+	Common::String keyword = _vm->_game->_script->evalString();
 
-	int16 index0 = _vm->_game->_script->readVarIndex();
+	uint16 varIndex = _vm->_game->_script->readVarIndex();
 
-	warning("Addy Stub Draw 0xC6: \"%s\", \"%s\", \"%s\", \"%s\", %d",
-			str0.c_str(), str1.c_str(), str2.c_str(), str3.c_str(), index0);
+	warning("Addy Stub: Get DB string: \"%s\", \"%s\", \"%s\", \"%s\", %d",
+			id.c_str(), group.c_str(), section.c_str(), keyword.c_str(), varIndex);
+
+	WRITE_VAR(27, 0); // Failure
 }
 
 void Inter_v7::o7_oemToANSI(OpGobParams &params) {

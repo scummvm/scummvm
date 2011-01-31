@@ -618,8 +618,8 @@ protected:
 	void o7_setINIValue();
 	void o7_draw0xA4();
 	void o7_opendBase();
-	void o7_draw0xC5();
-	void o7_draw0xC6();
+	void o7_closedBase();
+	void o7_getDBString();
 
 	void o7_oemToANSI(OpGobParams &params);
 
