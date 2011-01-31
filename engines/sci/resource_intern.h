@@ -177,9 +177,6 @@ public:
  * Reads SCI1.1+ resources from a Mac resource fork.
  */
 class MacResourceForkResourceSource : public ResourceSource {
-protected:
-	Common::MacResManager *_macResMan;
-
 public:
 	MacResourceForkResourceSource(const Common::String &name, int volNum);
 	~MacResourceForkResourceSource();
@@ -187,6 +184,12 @@ public:
 	virtual void scanSource(ResourceManager *resMan);
 
 	virtual void loadResource(ResourceManager *resMan, Resource *res);
+
+protected:
+	Common::MacResManager *_macResMan;
+
+	bool isCompressableResource(ResourceType type) const;
+	void decompressResource(Common::SeekableReadStream *stream, Resource *resource) const;
 };
 
 #ifdef ENABLE_SCI32

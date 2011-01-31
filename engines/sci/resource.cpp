@@ -393,13 +393,119 @@ void MacResourceForkResourceSource::loadResource(ResourceManager *resMan, Resour
 	if (!stream)
 		error("Could not get Mac resource fork resource: %s %d", getResourceTypeName(res->getType()), res->getNumber());
 
-	int error = res->decompress(resMan->getVolVersion(), stream);
-	if (error) {
-		warning("Error %d occurred while reading %s from Mac resource file: %s",
-				error, res->_id.toString().c_str(), sci_error_types[error]);
-		res->unalloc();
-	}
+	decompressResource(stream, res);
 }
+
+bool MacResourceForkResourceSource::isCompressableResource(ResourceType type) const {
+	// Any types that were not originally an SCI format are not compressed, it seems.
+	// (Audio being Mac snd resources here)
+	return type != kResourceTypeMacPict && type != kResourceTypeAudio &&
+			type != kResourceTypeMacIconBarPictN && type != kResourceTypeMacIconBarPictS;
+}
+
+#define OUTPUT_LITERAL() \
+	while (literalLength--) \
+		*ptr++ = stream->readByte();
+
+#define OUTPUT_COPY() \
+	while (copyLength--) { \
+		byte value = ptr[-offset]; \
+		*ptr++ = value; \
+	}
+
+void MacResourceForkResourceSource::decompressResource(Common::SeekableReadStream *stream, Resource *resource) const {	
+	// KQ6 Mac is the only game not compressed. It's not worth writing a
+	// heuristic just for that game. Also, skip over any resource that cannot
+	// be compressed.
+	bool canBeCompressed = !(g_sci && g_sci->getGameId() == GID_KQ6) && isCompressableResource(resource->_id.getType()); 
+	uint32 uncompressedSize = 0;
+
+	// Get the uncompressed size from the end of the resource
+	if (canBeCompressed && stream->size() > 4) {
+		stream->seek(stream->size() - 4);
+		uncompressedSize = stream->readUint32BE();
+		stream->seek(0);
+	}
+
+	if (uncompressedSize == 0) {
+		// Not compressed
+		resource->size = stream->size();
+
+		// Cut out the 'non-compressed marker' (four zeroes) at the end
+		if (canBeCompressed)
+			resource->size -= 4;
+
+		resource->data = new byte[resource->size];
+		stream->read(resource->data, resource->size);
+	} else {
+		// Decompress
+		resource->size = uncompressedSize;
+		resource->data = new byte[uncompressedSize];
+
+		byte *ptr = resource->data;
+
+		while (stream->pos() < stream->size()) {
+			byte code = stream->readByte();
+
+			int literalLength = 0, offset = 0, copyLength = 0;
+			byte extraByte1 = 0, extraByte2 = 0;
+
+			if (code == 0xFF) {
+				// End of stream marker
+				break;
+			}
+
+			switch (code & 0xC0) {
+			case 0x80:
+				// Copy chunk expanded
+				extraByte1 = stream->readByte();
+				extraByte2 = stream->readByte();
+ 
+				literalLength = extraByte2 & 3;
+
+				OUTPUT_LITERAL()
+
+				offset = ((code & 0x3f) | ((extraByte1 & 0xe0) << 1) | ((extraByte2 & 0xfc) << 7)) + 1;
+				copyLength = (extraByte1 & 0x1f) + 3;
+
+				OUTPUT_COPY()
+				break;
+			case 0xC0:
+				// Literal chunk
+				if (code >= 0xD0) {
+					// These codes cannot be used
+					if (code == 0xD0 || code > 0xD3)
+						error("Bad Mac compression code %02x", code);
+
+					literalLength = code & 3;
+				} else
+					literalLength = (code & 0xf) * 4 + 4;
+
+				OUTPUT_LITERAL()
+				break;
+			default:
+				// Copy chunk
+				extraByte1 = stream->readByte();
+
+				literalLength = (extraByte1 >> 3) & 0x3;
+
+				OUTPUT_LITERAL()
+
+				offset = (code + ((extraByte1 & 0xE0) << 2)) + 1;
+				copyLength = (extraByte1 & 0x7) + 3;
+
+				OUTPUT_COPY()
+				break;
+			}
+		}
+	}
+
+	resource->_status = kResStatusAllocated;
+	delete stream;
+}
+
+#undef OUTPUT_LITERAL
+#undef OUTPUT_COPY
 
 Common::SeekableReadStream *ResourceSource::getVolumeFile(ResourceManager *resMan, Resource *res) {
 	Common::SeekableReadStream *fileStream = resMan->getVolumeFile(this);
@@ -2082,10 +2188,8 @@ void ResourceManager::detectSciVersion() {
 		// TODO: Decide between SCI2 and SCI2.1
 		if (Common::File::exists("resource.cfg"))
 			s_sciVersion = SCI_VERSION_1_1;
-		else if (Common::File::exists("Patches"))
-			s_sciVersion = SCI_VERSION_2_1;
 		else
-			s_sciVersion = SCI_VERSION_2;
+			s_sciVersion = SCI_VERSION_2_1;
 		return;
 	}
 
