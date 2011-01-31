@@ -68,7 +68,7 @@ bool dBase::load(Common::SeekableReadStream &stream) {
 	while (!stream.eos() && !stream.err() && (stream.readByte() != 0x0D)) {
 		Field field;
 
-		stream.skip(-1);
+		stream.seek(-1, SEEK_CUR);
 
 		field.name = readString(stream, 11);
 		field.type = (Type) stream.readByte();
