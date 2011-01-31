@@ -447,9 +447,12 @@ void Draw_v2::printTotText(int16 id) {
 				}
 			}
 
-			rectLeft = _fonts[_fontIndex]->getCharWidth();
+			rectLeft = 0;
+			for (int i = 0; i < strPosBak; i++)
+				rectLeft += _fonts[_fontIndex]->getCharWidth(str[i]);
+
 			adjustCoords(1, &rectLeft, 0);
-			offX += strPosBak * rectLeft;
+			offX += rectLeft;
 			strPos = 0;
 			strPos2 = -1;
 			memset(mask, 0, 80);
