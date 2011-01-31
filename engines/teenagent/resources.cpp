@@ -63,19 +63,20 @@ quick note on varia resources:
 */
 
 bool Resources::loadArchives(const ADGameDescription *gd) {
-	Common::File dat_file;
-	if (!dat_file.open("teenagent.dat")) {
+	Common::File *dat_file = new Common::File();
+	if (!dat_file->open("teenagent.dat")) {
+		delete dat_file;
 		Common::String errorMessage = "You're missing the 'teenagent.dat' file. Get it from the ScummVM website";
 		GUIErrorMessage(errorMessage);
 		warning("%s", errorMessage.c_str());
 		return false;
 	}
-	Common::SeekableReadStream *dat = Common::wrapCompressedReadStream(&dat_file);
+	Common::SeekableReadStream *dat = Common::wrapCompressedReadStream(dat_file);
 	cseg.read(dat, 0xb3b0);
 	dseg.read(dat, 0xe790);
 	eseg.read(dat, 0x8be2);
 
-	dat_file.close();
+	delete dat;
 
 	{
 		FilePack varia;
