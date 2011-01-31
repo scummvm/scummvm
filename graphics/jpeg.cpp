@@ -49,7 +49,7 @@ static const uint8 _zigZagOrder[64] = {
 	53, 60, 61, 54, 47, 55, 62, 63
 };
 
-static const float _cosine32[32] = {
+static const double _cosine32[32] = {
 	 1.000000000000000,  0.980785280403230,  0.923879532511287,  0.831469612302545,
 	 0.707106781186548,  0.555570233019602,  0.382683432365090,  0.195090322016128,
 	 0.000000000000000, -0.195090322016128, -0.382683432365090, -0.555570233019602,
@@ -513,10 +513,10 @@ float JPEG::idct(int x, int y, int weight, int fx, int fy) {
 	float ret = (float)weight * _cosine32[vx_in] * _cosine32[vy_in];
 
 	if (fx == 0)
-		ret /= M_SQRT2;
+		ret /= (float)M_SQRT2;
 
 	if (fy == 0)
-		ret /= M_SQRT2;
+		ret /= (float)M_SQRT2;
 
 	return ret;
 }
