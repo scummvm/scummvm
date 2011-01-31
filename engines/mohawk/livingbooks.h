@@ -298,6 +298,9 @@ public:
 	void seek(uint16 pos);
 	void stop();
 
+	void playSound(uint16 resourceId);
+	bool soundPlaying(uint16 resourceId);
+
 	bool transparentAt(int x, int y);
 
 	void setTempo(uint16 tempo);
@@ -318,6 +321,7 @@ protected:
 	Common::Array<LBAnimationNode *> _nodes;
 
 	uint16 _tempo;
+	uint16 _currentSound;
 	uint32 _lastTime, _currentFrame;
 	bool _running;
 

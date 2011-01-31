@@ -1233,13 +1233,13 @@ NodeState LBAnimationNode::update(bool seeking) {
 				if (seeking)
 					break;
 				debug(4, "a: PlaySound(%0d)", soundResourceId);
-				_vm->_sound->playSound(soundResourceId);
+				_parent->playSound(soundResourceId);
 				break;
 			case kLBAnimOpWaitForSound:
 				if (seeking)
 					break;
 				debug(4, "b: WaitForSound(%0d)", soundResourceId);
-				if (!_vm->_sound->isPlaying(soundResourceId))
+				if (!_parent->soundPlaying(soundResourceId))
 					break;
 				_currentEntry--;
 				return kLBNodeWaiting;
@@ -1454,6 +1454,7 @@ LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, 
 		_nodes.push_back(new LBAnimationNode(_vm, this, scriptIDs[i]));
 
 	_currentFrame = 0;
+	_currentSound = 0xffff;
 	_running = false;
 	_tempo = 1;
 }
@@ -1461,6 +1462,8 @@ LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, 
 LBAnimation::~LBAnimation() {
 	for (uint32 i = 0; i < _nodes.size(); i++)
 		delete _nodes[i];
+	if (_currentSound != 0xffff)
+		_vm->_sound->stopSound(_currentSound);
 }
 
 void LBAnimation::loadShape(uint16 resourceId) {
@@ -1531,6 +1534,10 @@ bool LBAnimation::update() {
 	else
 		_lastTime += _tempo;
 
+	if (_currentSound != 0xffff && !_vm->_sound->isPlaying(_currentSound)) {
+		_currentSound = 0xffff;
+	}
+
 	NodeState state = kLBNodeDone;
 	for (uint32 i = 0; i < _nodes.size(); i++) {
 		NodeState s = _nodes[i]->update();
@@ -1547,8 +1554,10 @@ bool LBAnimation::update() {
 	if (state == kLBNodeRunning) {
 		_currentFrame++;
 	} else if (state == kLBNodeDone) {
-		_running = false;
-		return true;
+		if (_currentSound == 0xffff) {
+			_running = false;
+			return true;
+		}
 	}
 
 	return false;
@@ -1583,6 +1592,19 @@ void LBAnimation::seek(uint16 pos) {
 
 void LBAnimation::stop() {
 	_running = false;
+	if (_currentSound != 0xffff) {
+		_vm->_sound->stopSound(_currentSound);
+		_currentSound = 0xffff;
+	}
+}
+
+void LBAnimation::playSound(uint16 resourceId) {
+	_currentSound = resourceId;
+	_vm->_sound->playSound(_currentSound);
+}
+
+bool LBAnimation::soundPlaying(uint16 resourceId) {
+	return _currentSound == resourceId && _vm->_sound->isPlaying(_currentSound);
 }
 
 bool LBAnimation::transparentAt(int x, int y) {
