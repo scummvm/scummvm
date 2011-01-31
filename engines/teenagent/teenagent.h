@@ -55,6 +55,7 @@ public:
 	enum Action { kActionNone, kActionExamine, kActionUse };
 
 	TeenAgentEngine(OSystem *system, const ADGameDescription *gd);
+	~TeenAgentEngine();
 
 	virtual Common::Error run();
 	virtual Common::Error loadGameState(int slot);

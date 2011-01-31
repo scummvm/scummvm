@@ -50,6 +50,14 @@ namespace TeenAgent {
 
 TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), action(kActionNone), _gameDescription(gd) {
 	music = new MusicPlayer();
+
+	console = 0;
+}
+
+TeenAgentEngine::~TeenAgentEngine() {
+	delete music;
+
+	delete console;
 }
 
 bool TeenAgentEngine::trySelectedObject() {
@@ -458,13 +466,10 @@ Common::Error TeenAgentEngine::run() {
 	Common::EventManager *_event = _system->getEventManager();
 
 	initGraphics(320, 200, false);
-
-	scene = new Scene;
-	inventory = new Inventory;
 	console = new Console(this);
 
-	scene->init(this, _system);
-	inventory->init(this);
+	scene = new Scene(this, _system);
+	inventory = new Inventory(this);
 
 	init();
 

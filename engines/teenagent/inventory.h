@@ -38,7 +38,9 @@ class TeenAgentEngine;
 
 class Inventory {
 public:
-	void init(TeenAgentEngine *engine);
+	Inventory(TeenAgentEngine *engine);
+	~Inventory();
+
 	void render(Graphics::Surface *surface, int delta);
 
 	void clear();

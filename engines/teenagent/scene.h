@@ -125,11 +125,11 @@ struct SceneEvent {
 
 class Scene {
 public:
+	Scene(TeenAgentEngine *engine, OSystem *system);
+	~Scene();
+
 	bool intro;
 
-	Scene();
-
-	void init(TeenAgentEngine *engine, OSystem *system);
 	void init(int id, const Common::Point &pos);
 	bool render(bool tick_game, bool tick_mark, uint32 message_delta);
 	int getId() const { return _id; }

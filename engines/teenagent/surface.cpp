@@ -32,6 +32,10 @@ namespace TeenAgent {
 Surface::Surface() : x(0), y(0) {
 }
 
+Surface::~Surface() {
+	free();
+}
+
 void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	//debug(0, "load()");
 	free();

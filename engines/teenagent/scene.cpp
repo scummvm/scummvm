@@ -37,13 +37,49 @@
 
 namespace TeenAgent {
 
-Scene::Scene() : intro(false), _engine(NULL),
-		_system(NULL),
-		_id(0), ons(0),
+Scene::Scene(TeenAgentEngine *engine, OSystem *system) : intro(false), _id(0), ons(0),
 		orientation(kActorRight), actor_talking(false),
 		message_timer(0), message_first_frame(0), message_last_frame(0), message_animation(NULL),
-		current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0),
-		_fade_timer(0), _idle_timer(0) {}
+		current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0), _idle_timer(0) {
+	_engine = engine;
+	_system = system;
+
+	_fade_timer = 0;
+	on_enabled = true;
+
+	memset(palette, 0, sizeof(palette));
+	background.pixels = 0;
+
+	FilePack varia;
+	varia.open("varia.res");
+
+	Common::ScopedPtr<Common::SeekableReadStream> s(varia.getStream(1));
+	if (!s)
+		error("invalid resource data");
+
+	teenagent.load(s, Animation::kTypeVaria);
+	if (teenagent.empty())
+		error("invalid mark animation");
+
+	s.reset(varia.getStream(2));
+	if (!s)
+		error("invalid resource data");
+
+	teenagent_idle.load(s, Animation::kTypeVaria);
+	if (teenagent_idle.empty())
+		error("invalid mark animation");
+
+	varia.close();
+	loadObjectData();
+}
+
+Scene::~Scene() {
+	if (background.pixels)
+		background.free();
+
+	delete[] ons;
+	ons = 0;
+}
 
 void Scene::warp(const Common::Point &_point, byte o) {
 	Common::Point point(_point);
@@ -200,39 +236,6 @@ void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 	orientation = orient;
 }
 
-
-void Scene::init(TeenAgentEngine *engine, OSystem *system) {
-	_engine = engine;
-	_system = system;
-
-	_fade_timer = 0;
-	on_enabled = true;
-
-	memset(palette, 0, sizeof(palette));
-
-	FilePack varia;
-	varia.open("varia.res");
-
-	Common::ScopedPtr<Common::SeekableReadStream> s(varia.getStream(1));
-	if (!s)
-		error("invalid resource data");
-
-	teenagent.load(s, Animation::kTypeVaria);
-	if (teenagent.empty())
-		error("invalid mark animation");
-
-	s.reset(varia.getStream(2));
-	if (!s)
-		error("invalid resource data");
-
-	teenagent_idle.load(s, Animation::kTypeVaria);
-	if (teenagent_idle.empty())
-		error("invalid mark animation");
-
-	varia.close();
-	loadObjectData();
-}
-
 void Scene::loadObjectData() {
 	Resources *res = Resources::instance();
 
@@ -299,8 +302,6 @@ Object *Scene::findObject(const Common::Point &point) {
 	}
 	return NULL;
 }
-
-
 
 byte *Scene::getOns(int id) {
 	Resources *res = Resources::instance();
@@ -464,7 +465,6 @@ byte Scene::peekFlagEvent(uint16 addr) const {
 	}
 	return Resources::instance()->dseg.get_byte(addr);
 }
-
 
 void Scene::push(const SceneEvent &event) {
 	//debug(0, "push");
@@ -1244,7 +1244,6 @@ uint Scene::messageDuration(const Common::String &str) {
 	//debug(0, "delay = %u, delta: %u", delay, delay_delta);
 	return delay * 10;
 }
-
 
 void Scene::displayMessage(const Common::String &str, byte color, const Common::Point &pos) {
 	//assert(!str.empty());

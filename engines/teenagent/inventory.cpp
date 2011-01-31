@@ -33,7 +33,7 @@
 
 namespace TeenAgent {
 
-void Inventory::init(TeenAgentEngine *engine) {
+Inventory::Inventory(TeenAgentEngine *engine) {
 	_engine = engine;
 	_active = false;
 
@@ -84,6 +84,10 @@ void Inventory::init(TeenAgentEngine *engine) {
 
 	varia.close();
 	hovered_obj = selected_obj = NULL;
+}
+
+Inventory::~Inventory() {
+	delete[] items;
 }
 
 bool Inventory::has(byte item) const {
