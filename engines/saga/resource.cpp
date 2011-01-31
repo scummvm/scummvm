@@ -83,7 +83,7 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 			resourceData = &_table[i];
 			resourceData->offset = contextOffset + readS1.readUint32();
 			resourceData->size = readS1.readUint32();
-			//sanity check
+			// Sanity check
 			if ((resourceData->offset > (uint)_fileSize) || (resourceData->size > contextSize)) {
 				result = false;
 				break;
@@ -103,15 +103,12 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 	uint32 subjectResourceId;
 	uint32 patchResourceId;
 	ResourceData *subjectResourceData;
-	bool isMacBinary;
 
-	if (_fileName == NULL) { // IHNM special case
+	if (_fileName == NULL) // IHNM special case
 		return true;
-	}
 
-	if (!_file.open(_fileName)) {
+	if (!_file.open(_fileName))
 		return false;
-	}
 
 	_fileSize = _file.size();
 	_isBigEndian = vm->isBigEndian();
@@ -119,20 +116,25 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 	if (_fileType & GAME_SWAPENDIAN)
 		_isBigEndian = !_isBigEndian;
 
-	isMacBinary = (_fileType & GAME_MACBINARY) > 0;
-	_fileType &= ~GAME_MACBINARY;
-
-	if (!isMacBinary) {
-		if (!loadRes(0, _fileSize)) {
-			return false;
-		}
-	} else {
-		if (!loadMac()) {
-			return false;
+	if (_fileType & GAME_MACBINARY) {
+		// Special case for the MacBinary packed files in the old Mac ITE
+		// release. There are no patch files in this case.
+		if (!(_fileType & GAME_MUSICFILE_GM)) {
+			// Find the actual size, as there may be padded data in the end.
+			_file.seek(83);
+			uint32 macDataSize = _file.readSint32BE();
+			// Skip the MacBinary headers, and read the resource data.
+			return loadRes(MAC_BINARY_HEADER_SIZE, macDataSize);
+		} else {
+			// Unpack MacBinady packed MIDI files
+			return loadMacMIDI();
 		}
 	}
 
-	//process internal patch files
+	if (!loadRes(0, _fileSize))
+		return false;
+
+	// Process internal patch files
 	if (_fileType & GAME_PATCHFILE) {
 		subjectResourceType = ~GAME_PATCHFILE & _fileType;
 		subjectContext = resource->getContext((GameFileTypes)subjectResourceType);
@@ -155,7 +157,7 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 		}
 	}
 
-	//process external patch files
+	// Process external patch files
 	for (patchDescription = vm->getPatchDescriptions(); patchDescription && patchDescription->fileName; ++patchDescription) {
 		if ((patchDescription->fileType & _fileType) != 0) {
 			if (patchDescription->resourceId < _table.size()) {

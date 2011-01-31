@@ -84,22 +84,6 @@ class ResourceDataArray : public Common::Array<ResourceData> {
 
 class ResourceContext {
 friend class Resource;
-protected:
-	const char *_fileName;
-	uint16 _fileType;
-	bool _isCompressed;
-	int _serial;					// IHNM speech files
-
-	bool _isBigEndian;
-	ResourceDataArray _table;
-	Common::File _file;
-	int32 _fileSize;
-
-	bool load(SagaEngine *_vm, Resource *resource);
-	bool loadResV1(uint32 contextOffset, uint32 contextSize);
-
-	virtual bool loadMac() = 0;
-	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) = 0;
 public:
 
 	ResourceContext():
@@ -172,6 +156,22 @@ public:
 		}
 		return -1;
 	}
+protected:
+	const char *_fileName;
+	uint16 _fileType;
+	bool _isCompressed;
+	int _serial;					// IHNM speech files
+
+	bool _isBigEndian;
+	ResourceDataArray _table;
+	Common::File _file;
+	int32 _fileSize;
+
+	bool load(SagaEngine *_vm, Resource *resource);
+	bool loadResV1(uint32 contextOffset, uint32 contextSize);
+
+	virtual bool loadMacMIDI() = 0;
+	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) = 0;
 };
 
 class ResourceContextList : public Common::List<ResourceContext*> {
@@ -228,7 +228,7 @@ public:
 // ITE
 class ResourceContext_RSC: public ResourceContext {
 protected:
-	virtual bool loadMac();
+	virtual bool loadMacMIDI();
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
 		return loadResV1(contextOffset, contextSize);
 	}
@@ -237,7 +237,9 @@ protected:
 class Resource_RSC : public Resource {
 public:
 	Resource_RSC(SagaEngine *vm) : Resource(vm) {}
-	virtual uint32 convertResourceId(uint32 resourceId);
+	virtual uint32 convertResourceId(uint32 resourceId) {
+		return _vm->isMacResources() ? resourceId - 2 : resourceId;
+	}
 	virtual void loadGlobalResources(int chapter, int actorsEntrance) {}
 	virtual MetaResource* getMetaResource() {
 		MetaResource *dummy = 0;
@@ -253,20 +255,16 @@ protected:
 // IHNM
 class ResourceContext_RES: public ResourceContext {
 protected:
-	virtual bool loadMac() {
-		return false;
-	}
+	virtual bool loadMacMIDI() { return false; }
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
 		return loadResV1(0, contextSize);
 	}
 };
 
-//TODO: move load routines from sndres
+// TODO: move load routines from sndres
 class VoiceResourceContext_RES: public ResourceContext {
 protected:
-	virtual bool loadMac() {
-		return false;
-	}
+	virtual bool loadMacMIDI() { return false; }
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
 		return false;
 	}
@@ -298,9 +296,7 @@ class ResourceContext_HRS: public ResourceContext {
 protected:
 	ResourceDataArray _categories;
 
-	virtual bool loadMac() {
-		return false;
-	}
+	virtual bool loadMacMIDI() { return false; }
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
 		return loadResV2(contextSize);
 	}
