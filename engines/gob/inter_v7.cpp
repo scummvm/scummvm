@@ -406,12 +406,14 @@ void Inter_v7::o7_setINIValue() {
 }
 
 void Inter_v7::o7_draw0xA4() {
-	Common::String str0 = _vm->_game->_script->evalString();
+	Common::String file = _vm->_game->_script->evalString();
+	if (!file.contains('.'))
+		file += ".LBM";
 
 	int16 expr0 = _vm->_game->_script->readValExpr();
 	int16 expr1 = _vm->_game->_script->readValExpr();
 
-	warning("Addy Stub Draw 0xA4: \"%s\", %d, %d", str0.c_str(), expr0, expr1);
+	warning("Addy Stub Draw 0xA4: \"%s\", %d, %d", file.c_str(), expr0, expr1);
 }
 
 void Inter_v7::o7_opendBase() {
