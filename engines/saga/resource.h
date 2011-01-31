@@ -28,6 +28,7 @@
 #ifndef SAGA_RESOURCE_H
 #define SAGA_RESOURCE_H
 
+#include "common/array.h"
 #include "common/file.h"
 #include "common/list.h"
 
@@ -38,6 +39,9 @@ namespace Saga {
 #define RSC_TABLEENTRY_SIZE 8
 
 #define RSC_MIN_FILESIZE (RSC_TABLEINFO_SIZE + RSC_TABLEENTRY_SIZE + 1)
+
+class SagaEngine;
+class ByteArray;
 
 struct PatchData {
 	Common::File *_patchFile;
