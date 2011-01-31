@@ -79,7 +79,7 @@ struct ResourceData {
 	}
 };
 
-typedef public Common::Array<ResourceData> ResourceDataArray;
+typedef Common::Array<ResourceData> ResourceDataArray;
 
 class ResourceContext {
 friend class Resource;
