@@ -53,7 +53,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x0C, o7_draw0x0C);
 	OPCODEDRAW(0x0D, o7_loadCursor);
 	OPCODEDRAW(0x44, o7_displayWarning);
-	OPCODEDRAW(0x45, o7_draw0x45);
+	OPCODEDRAW(0x45, o7_logString);
 	OPCODEDRAW(0x57, o7_intToString);
 	OPCODEDRAW(0x59, o7_callFunction);
 	OPCODEDRAW(0x5A, o7_loadFunctions);
@@ -119,11 +119,16 @@ void Inter_v7::o7_displayWarning() {
 	warning("%s: %s (%s)", source.c_str(), msg.c_str(), param.c_str());
 }
 
-void Inter_v7::o7_draw0x45() {
+void Inter_v7::o7_logString() {
 	Common::String str0 = _vm->_game->_script->evalString();
 	Common::String str1 = _vm->_game->_script->evalString();
 
-	warning("Addy Stub Draw 0x45: \"%s\", \"%s\"", str0.c_str(), str1.c_str());
+	TimeDate t;
+	_vm->_system->getTimeAndDate(t);
+
+	debug(1, "%-9s%04d-%02d-%02dT%02d:%02d:%02d --> %s", str0.c_str(),
+			t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
+			t.tm_hour, t.tm_min, t.tm_sec, str1.c_str());
 }
 
 void Inter_v7::o7_intToString() {
