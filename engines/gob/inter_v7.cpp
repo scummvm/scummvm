@@ -418,12 +418,11 @@ void Inter_v7::o7_opendBase() {
 
 	dbFile += ".DBF";
 
+	_databases.setLanguage(_vm->_language);
 	if (!_databases.open(id, dbFile)) {
 		WRITE_VAR(27, 0); // Failure
 		return;
 	}
-
-	_databases.setLanguage(_vm->_language);
 
 	WRITE_VAR(27, 1); // Success
 }
