@@ -32,6 +32,7 @@
 #include "gob/goblin.h"
 #include "gob/variables.h"
 #include "gob/iniconfig.h"
+#include "gob/databases.h"
 
 namespace Gob {
 
@@ -625,6 +626,7 @@ protected:
 
 private:
 	INIConfig _inis;
+	Databases _databases;
 
 	void storeValue(uint16 index, uint16 type, uint32 value);
 	void storeValue(uint32 value);

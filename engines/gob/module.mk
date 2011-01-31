@@ -3,6 +3,8 @@ MODULE := engines/gob
 MODULE_OBJS := \
 	console.o \
 	dataio.o \
+	databases.o \
+	dbase.o \
 	detection.o \
 	draw.o \
 	draw_v1.o \

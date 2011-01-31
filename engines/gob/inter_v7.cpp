@@ -413,17 +413,23 @@ void Inter_v7::o7_opendBase() {
 
 	dbFile += ".DBF";
 
-	warning("Addy Stub: Open dBase \"%s\" (\"%s\")", id.c_str(), dbFile.c_str());
+	if (!_databases.open(id, dbFile)) {
+		WRITE_VAR(27, 0); // Failure
+		return;
+	}
 
-	WRITE_VAR(27, 0); // Failure
+	_databases.setLanguage(_vm->_language);
+
+	WRITE_VAR(27, 1); // Success
 }
 
 void Inter_v7::o7_closedBase() {
 	Common::String id = _vm->_game->_script->evalString();
 
-	warning("Addy Stub: Close dBase \"%s\"", id.c_str());
-
-	WRITE_VAR(27, 0); // Failure
+	if (_databases.close(id))
+		WRITE_VAR(27, 1); // Success
+	else
+		WRITE_VAR(27, 0); // Failure
 }
 
 void Inter_v7::o7_getDBString() {
@@ -432,12 +438,15 @@ void Inter_v7::o7_getDBString() {
 	Common::String section = _vm->_game->_script->evalString();
 	Common::String keyword = _vm->_game->_script->evalString();
 
-	uint16 varIndex = _vm->_game->_script->readVarIndex();
+	Common::String result;
+	if (!_databases.getString(id, group, section, keyword, result)) {
+		WRITE_VAR(27, 0); // Failure
+		storeString("");
+		return;
+	}
 
-	warning("Addy Stub: Get DB string: \"%s\", \"%s\", \"%s\", \"%s\", %d",
-			id.c_str(), group.c_str(), section.c_str(), keyword.c_str(), varIndex);
-
-	WRITE_VAR(27, 0); // Failure
+	storeString(result.c_str());
+	WRITE_VAR(27, 1); // Success
 }
 
 void Inter_v7::o7_oemToANSI(OpGobParams &params) {
@@ -470,23 +479,40 @@ void Inter_v7::storeValue(uint32 value) {
 }
 
 void Inter_v7::storeString(uint16 index, uint16 type, const char *value) {
-	if (type == TYPE_VAR_STR) {
-		char *str = GET_VARO_STR(index);
+	uint32 maxLength = _vm->_global->_inter_animDataSize * 4 - 1;
+	char  *str       = GET_VARO_STR(index);
 
-		strncpy(str, value, _vm->_global->_inter_animDataSize);
-		str[_vm->_global->_inter_animDataSize - 1] = '\0';
+	switch (type) {
+	case TYPE_VAR_STR:
+		if (strlen(value) > maxLength)
+			warning("Inter_v7::storeString(): String too long");
 
-	} else if (type == TYPE_IMM_INT8) {
+		Common::strlcpy(str, value, maxLength);
+		break;
 
-		strcpy(GET_VARO_STR(index), value);
+	case TYPE_IMM_INT8:
+	case TYPE_VAR_INT8:
+		strcpy(str, value);
+		break;
 
-	} else if (type == TYPE_VAR_INT32) {
+	case TYPE_ARRAY_INT8:
+		WRITE_VARO_UINT8(index, atoi(value));
+		break;
 
-		WRITE_VARO_UINT32(index, atoi(value));
-
-	} else if (type == TYPE_VAR_INT16) {
-
+	case TYPE_VAR_INT16:
+	case TYPE_VAR_INT32_AS_INT16:
+	case TYPE_ARRAY_INT16:
 		WRITE_VARO_UINT16(index, atoi(value));
+		break;
+
+	case TYPE_VAR_INT32:
+	case TYPE_ARRAY_INT32:
+		WRITE_VARO_UINT32(index, atoi(value));
+		break;
+
+	default:
+		warning("Inter_v7::storeString(): Requested to store a string into type %d", type);
+		break;
 	}
 }
 
