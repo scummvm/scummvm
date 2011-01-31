@@ -524,6 +524,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"carmentq",
+			"",
+			AD_ENTRY1("Outline.txt", "67abce5dcda969c23f367a98c90439bc"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV5,
+		0,
+		0
+	},
+
+	{
+		{
 			"maggiesfa",
 			"",
 			AD_ENTRY1("Outline", "b7dc6e65fa9e80784a5bb8b557aa37c4"),
@@ -608,7 +623,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV2,
+		GType_LIVINGBOOKSV3,
 		0,
 		0
 	},
@@ -624,7 +639,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV2,
+		GType_LIVINGBOOKSV3,
 		0,
 		0
 	},
@@ -639,7 +654,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV2,
+		GType_LIVINGBOOKSV3,
 		0,
 		0
 	},
@@ -1003,7 +1018,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV2,
+		GType_LIVINGBOOKSV3,
 		0,
 		0
 	},
@@ -1019,7 +1034,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV2,
+		GType_LIVINGBOOKSV3,
 		0,
 		0
 	},
@@ -1124,7 +1139,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV3,
+		GType_LIVINGBOOKSV4,
 		0,
 		0,
 	},
@@ -1139,7 +1154,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV3,
+		GType_LIVINGBOOKSV4,
 		0,
 		0,
 	},

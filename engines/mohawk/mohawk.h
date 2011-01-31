@@ -62,7 +62,9 @@ enum MohawkGameType {
 	GType_CSUSA,
 	GType_LIVINGBOOKSV1,
 	GType_LIVINGBOOKSV2,
-	GType_LIVINGBOOKSV3
+	GType_LIVINGBOOKSV3,
+	GType_LIVINGBOOKSV4,
+	GType_LIVINGBOOKSV5
 };
 
 enum MohawkGameFeatures {

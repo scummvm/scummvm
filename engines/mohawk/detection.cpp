@@ -103,6 +103,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"cstime", "Where in Time is Carmen Sandiego?"},
 	{"csworld", "Where in the World is Carmen Sandiego?"},
 	{"csamtrak", "Where in America is Carmen Sandiego? (The Great Amtrak Train Adventure)"},
+	{"carmentq", "Carmen Sandiego's ThinkQuick Challenge"},
 	{"maggiesfa", "Maggie's Farmyard Adventure"},
 	{"jamesmath", "James Discovers/Explores Math"},
 	{"treehouse", "The Treehouse"},
@@ -131,6 +132,7 @@ static const char *directoryGlobs[] = {
 	"assets1",
 	"data",
 	"program",
+	"95instal",
 	"Rugrats Adventure Game",
 	0
 };
@@ -232,6 +234,8 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		case Mohawk::GType_LIVINGBOOKSV1:
 		case Mohawk::GType_LIVINGBOOKSV2:
 		case Mohawk::GType_LIVINGBOOKSV3:
+		case Mohawk::GType_LIVINGBOOKSV4:
+		case Mohawk::GType_LIVINGBOOKSV5:
 			*engine = new Mohawk::MohawkEngine_LivingBooks(syst, gd);
 			break;
 		case Mohawk::GType_CSTIME:

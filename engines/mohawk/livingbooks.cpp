@@ -86,8 +86,13 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 	g_eventRec.registerRandomSource(*_rnd, "livingbooks");
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	// Rugrats
 	SearchMan.addSubDirectoryMatching(gameDataDir, "program");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Rugrats Adventure Game");
+	// CarmenTQ
+	const Common::FSNode CTQPath = gameDataDir.getChild("95instal");
+	if (CTQPath.exists())
+		SearchMan.addDirectory(CTQPath.getPath(), CTQPath, 0, 4);
 }
 
 MohawkEngine_LivingBooks::~MohawkEngine_LivingBooks() {
