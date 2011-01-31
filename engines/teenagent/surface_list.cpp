@@ -30,6 +30,10 @@ namespace TeenAgent {
 
 SurfaceList::SurfaceList() : surfaces(NULL), surfaces_n(0) {}
 
+SurfaceList::~SurfaceList() {
+	free();
+}
+
 void SurfaceList::load(Common::SeekableReadStream *stream, Type type, int sub_hack) {
 	free();
 
