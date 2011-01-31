@@ -51,7 +51,7 @@ bool dBase::load(Common::SeekableReadStream &stream) {
 	_hasMemo = (_version & 0x80) != 0;
 
 	_lastUpdate.tm_year = stream.readByte();
-	_lastUpdate.tm_mon  = stream.readByte();
+	_lastUpdate.tm_mon  = stream.readByte() - 1;
 	_lastUpdate.tm_mday = stream.readByte();
 	_lastUpdate.tm_hour = 0;
 	_lastUpdate.tm_min  = 0;
