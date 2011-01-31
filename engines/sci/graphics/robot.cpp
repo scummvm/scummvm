@@ -61,7 +61,8 @@ namespace Sci {
 
 #ifdef ENABLE_SCI32
 GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette)
-	: _resMan(resMan), _screen(screen), _palette(palette) {
+	: _resMan(resMan), _screen(screen), _palette(palette), _resourceData(0),
+	  _imageStart(0), _audioStart(0), _audioLen(0) {
 	_resourceId = -1;
 	_x = _y = 0;
 }
