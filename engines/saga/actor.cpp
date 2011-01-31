@@ -277,10 +277,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			actor->_location.y = ITE_ActorTable[i].y;
 			actor->_location.z = ITE_ActorTable[i].z;
 
-			actor->_disabled = !loadActorResources(actor);
-			if (actor->_disabled) {
-				warning("Disabling actor Id=%d index=%d", actor->_id, actor->_index);
-			}
+			loadActorResources(actor);
 		}
 		_objs.resize(ITE_OBJECTCOUNT);
 		i = 0;
@@ -335,29 +332,11 @@ void Actor::loadFrameList(int frameListResourceId, ActorFrameSequences &frames) 
 	}
 }
 
-bool Actor::loadActorResources(ActorData *actor) {
-	bool gotSomething = false;
-
+void Actor::loadActorResources(ActorData *actor) {
 	if (actor->_frameListResourceId) {
 		loadFrameList(actor->_frameListResourceId, actor->_framesContainer);
 		actor->_frames = &actor->_framesContainer;
-
-		gotSomething = true;
-	} else {
-		// It's normal for some actors to have no frames
-		//warning("Frame List ID = 0 for actor index %d", actor->_index);
-
-		//if (_vm->getGameId() == GID_ITE)
-		return true;
 	}
-
-	if (actor->_spriteListResourceId) {
-		gotSomething = true;
-	} else {
-		warning("Sprite List ID = 0 for actor index %d", actor->_index);
-	}
-
-	return gotSomething;
 }
 
 void Actor::loadActorSpriteList(ActorData *actor) {
@@ -612,9 +591,6 @@ ObjectData *Actor::getObj(uint16 objId) {
 
 	obj = &_objs[objIdToIndex(objId)];
 
-	if (obj->_disabled)
-		error("Actor::getObj disabled objId 0x%X", objId);
-
 	return obj;
 }
 
@@ -634,9 +610,6 @@ ActorData *Actor::getActor(uint16 actorId) {
 	}
 
 	actor = &_actors[actorIdToIndex(actorId)];
-
-	if (actor->_disabled)
-		error("Actor::getActor disabled actorId 0x%X", actorId);
 
 	return actor;
 }
@@ -704,8 +677,6 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 	static ActorFrameRange def = {0, 0};
 
 	actor = getActor(actorId);
-	if (actor->_disabled)
-		error("Actor::getActorFrameRange Wrong actorId 0x%X", actorId);
 
 	if ((actor->_facingDirection < kDirUp) || (actor->_facingDirection > kDirUpLeft))
 		error("Actor::getActorFrameRange Wrong direction 0x%X actorId 0x%X", actor->_facingDirection, actorId);
@@ -1026,9 +997,6 @@ void Actor::createDrawOrderList() {
 	}
 
 	for (ObjectDataArray::iterator obj = _objs.begin(); obj != _objs.end(); ++obj) {
-		if (obj->_disabled)
-			continue;
-
 		if (obj->_sceneNumber != _vm->_scene->currentSceneNumber())
 			 continue;
 

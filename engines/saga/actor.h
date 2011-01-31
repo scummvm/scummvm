@@ -287,7 +287,6 @@ struct Location {
 class CommonObjectData {
 public:
 //constant
-	bool _disabled;					// disabled in init section
 	int32 _index;					// index in local array
 	uint16 _id;						// object id
 	int32 _scriptEntrypointNumber;	// script entrypoint number
@@ -327,7 +326,6 @@ public:
 	}
 	
 	CommonObjectData() {
-		_disabled = false;
 		_index = 0;
 		_id = 0;
 		_scriptEntrypointNumber = 0;
@@ -550,7 +548,7 @@ public:
 
 protected:
 	friend class Script;
-	bool loadActorResources(ActorData *actor);
+	void loadActorResources(ActorData *actor);
 	void loadFrameList(int frameListResourceId, ActorFrameSequences &frames);
 private:
 	void stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped);

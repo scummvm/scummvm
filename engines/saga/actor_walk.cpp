@@ -198,9 +198,6 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
 		actor->_inScene = false;
 		actor->_spriteList.clear();
-		if (actor->_disabled) {
-			continue;
-		}
 		if ((actor->_flags & (kProtagonist | kFollower)) || (actor->_index == 0)) {
 			if (actor->_flags & kProtagonist) {
 				actor->_finalTarget = actor->_location;
