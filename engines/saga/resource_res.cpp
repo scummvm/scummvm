@@ -50,8 +50,6 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	_vm->_script->_globalVoiceLUT.clear();
 
-	// TODO: close chapter context, or rather reassign it in our case
-
 	ResourceContext *resourceContext;
 	ResourceContext *soundContext;
 	uint i;

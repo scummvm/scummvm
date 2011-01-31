@@ -117,7 +117,7 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 			// Skip the MacBinary headers, and read the resource data.
 			return loadRes(MAC_BINARY_HEADER_SIZE, macDataSize);
 		} else {
-			// Unpack MacBinady packed MIDI files
+			// Unpack MacBinary packed MIDI files
 			return loadMacMIDI();
 		}
 	}
@@ -127,9 +127,9 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 
 	processPatches(resource, vm->getPatchDescriptions());
 
-	// Close the file if it's part of a series of files
+	// Close the file if it's part of a series of files.
 	// This prevents having all voice files open in IHNM for no reason, as each chapter uses
-	// a different voice file
+	// a different voice file.
 	if (_serial > 0)
 		_file.close();
 
