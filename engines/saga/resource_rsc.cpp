@@ -84,4 +84,31 @@ bool ResourceContext_RSC::loadMacMIDI() {
 	return true;
 }
 
+void ResourceContext_RSC::processPatches(Resource *resource, const GamePatchDescription *patchFiles) {
+	const GamePatchDescription *patchDescription;
+	ResourceData *resourceData;
+
+	// Process external patch files
+	for (patchDescription = patchFiles; patchDescription && patchDescription->fileName; ++patchDescription) {
+		if ((patchDescription->fileType & _fileType) != 0) {
+			if (patchDescription->resourceId < _table.size()) {
+				resourceData = &_table[patchDescription->resourceId];
+				// Check if we've already found a patch for this resource. One is enough.
+				if (!resourceData->patchData) {
+					resourceData->patchData = new PatchData(patchDescription->fileName);
+					if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
+						resourceData->offset = 0;
+						resourceData->size = resourceData->patchData->_patchFile->size();
+						// The patched ITE file is in memory, so close the patch file
+						resourceData->patchData->_patchFile->close();
+					} else {
+						delete resourceData->patchData;
+						resourceData->patchData = NULL;
+					}
+				}
+			}
+		}
+	}
+}
+
 } // End of namespace Saga

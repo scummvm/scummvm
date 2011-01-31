@@ -204,6 +204,39 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->_spiritualBarometer = 0;
 	_vm->_scene->setChapterNumber(chapter);
 }
+
+void ResourceContext_RES::processPatches(Resource *resource, const GamePatchDescription *patchFiles) {
+	uint16 subjectResourceType;
+	ResourceContext *subjectContext;
+	uint32 subjectResourceId;
+	uint32 patchResourceId;
+	ResourceData *subjectResourceData;
+	ResourceData *resourceData;
+
+	// Process internal patch files
+	if (_fileType & GAME_PATCHFILE) {
+		subjectResourceType = ~GAME_PATCHFILE & _fileType;
+		subjectContext = resource->getContext((GameFileTypes)subjectResourceType);
+		if (subjectContext == NULL) {
+			error("ResourceContext::load() Subject context not found");
+		}
+		ByteArray tableBuffer;
+
+		resource->loadResource(this, _table.size() - 1, tableBuffer);
+
+		ByteArrayReadStreamEndian readS2(tableBuffer, _isBigEndian);
+		for (uint32 i = 0; i < tableBuffer.size() / 8; i++) {
+			subjectResourceId = readS2.readUint32();
+			patchResourceId = readS2.readUint32();
+			subjectResourceData = subjectContext->getResourceData(subjectResourceId);
+			resourceData = getResourceData(patchResourceId);
+			subjectResourceData->patchData = new PatchData(&_file, _fileName);
+			subjectResourceData->offset = resourceData->offset;
+			subjectResourceData->size = resourceData->size;
+		}
+	}
+}
+
 #endif
 
 } // End of namespace Saga

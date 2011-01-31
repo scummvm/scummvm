@@ -95,15 +95,6 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 }
 
 bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
-	size_t i;
-	const GamePatchDescription *patchDescription;
-	ResourceData *resourceData;
-	uint16 subjectResourceType;
-	ResourceContext *subjectContext;
-	uint32 subjectResourceId;
-	uint32 patchResourceId;
-	ResourceData *subjectResourceData;
-
 	if (_fileName == NULL) // IHNM special case
 		return true;
 
@@ -134,53 +125,7 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 	if (!loadRes(0, _fileSize))
 		return false;
 
-	// Process internal patch files
-	if (_fileType & GAME_PATCHFILE) {
-		subjectResourceType = ~GAME_PATCHFILE & _fileType;
-		subjectContext = resource->getContext((GameFileTypes)subjectResourceType);
-		if (subjectContext == NULL) {
-			error("ResourceContext::load() Subject context not found");
-		}
-		ByteArray tableBuffer;
-
-		resource->loadResource(this, _table.size() - 1, tableBuffer);
-
-		ByteArrayReadStreamEndian readS2(tableBuffer, _isBigEndian);
-		for (i = 0; i < tableBuffer.size() / 8; i++) {
-			subjectResourceId = readS2.readUint32();
-			patchResourceId = readS2.readUint32();
-			subjectResourceData = subjectContext->getResourceData(subjectResourceId);
-			resourceData = getResourceData(patchResourceId);
-			subjectResourceData->patchData = new PatchData(&_file, _fileName);
-			subjectResourceData->offset = resourceData->offset;
-			subjectResourceData->size = resourceData->size;
-		}
-	}
-
-	// Process external patch files
-	for (patchDescription = vm->getPatchDescriptions(); patchDescription && patchDescription->fileName; ++patchDescription) {
-		if ((patchDescription->fileType & _fileType) != 0) {
-			if (patchDescription->resourceId < _table.size()) {
-				resourceData = &_table[patchDescription->resourceId];
-				// Check if we've already found a patch for this resource. One is enough.
-				if (!resourceData->patchData) {
-					resourceData->patchData = new PatchData(patchDescription->fileName);
-					if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
-						resourceData->offset = 0;
-						resourceData->size = resourceData->patchData->_patchFile->size();
-						// ITE uses several patch files which are loaded and then not needed
-						// anymore (as they're in memory), so close them here. IHNM uses only
-						// 1 patch file, which is reused, so don't close it
-						if (vm->getGameId() == GID_ITE)
-							resourceData->patchData->_patchFile->close();
-					} else {
-						delete resourceData->patchData;
-						resourceData->patchData = NULL;
-					}
-				}
-			}
-		}
-	}
+	processPatches(resource, vm->getPatchDescriptions());
 
 	// Close the file if it's part of a series of files
 	// This prevents having all voice files open in IHNM for no reason, as each chapter uses

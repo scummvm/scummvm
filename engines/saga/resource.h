@@ -79,8 +79,7 @@ struct ResourceData {
 	}
 };
 
-class ResourceDataArray : public Common::Array<ResourceData> {
-};
+typedef public Common::Array<ResourceData> ResourceDataArray;
 
 class ResourceContext {
 friend class Resource;
@@ -92,32 +91,14 @@ public:
 		_fileSize(0) {
 	}
 
-	virtual ~ResourceContext() {
-	}
+	virtual ~ResourceContext() { }
 
-	bool isCompressed() const {
-		return _isCompressed;
-	}
-
-	uint16 fileType() const {
-		return _fileType;
-	}
-
-	int32 fileSize() const {
-		return _fileSize;
-	}
-
-	int serial() const {
-		return _serial;
-	}
-
-	bool isBigEndian() const {
-		return _isBigEndian;
-	}
-
-	const char * fileName() const {
-		return _fileName;
-	}
+	bool isCompressed() const {	return _isCompressed; }
+	uint16 fileType() const { return _fileType; }
+	int32 fileSize() const { return _fileSize; }
+	int serial() const { return _serial; }
+	bool isBigEndian() const { return _isBigEndian; }
+	const char * fileName() const {	return _fileName; }
 
 	Common::File *getFile(ResourceData *resourceData) {
 		Common::File *file;
@@ -170,12 +151,12 @@ protected:
 	bool load(SagaEngine *_vm, Resource *resource);
 	bool loadResV1(uint32 contextOffset, uint32 contextSize);
 
-	virtual bool loadMacMIDI() = 0;
+	virtual bool loadMacMIDI() { return false; }
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) = 0;
+	virtual void processPatches(Resource *resource, const GamePatchDescription *patchFiles) { }
 };
 
-class ResourceContextList : public Common::List<ResourceContext*> {
-};
+typedef Common::List<ResourceContext*> ResourceContextList;
 
 struct MetaResource {
 	int16 sceneIndex;
@@ -212,6 +193,7 @@ public:
 	virtual void loadGlobalResources(int chapter, int actorsEntrance) = 0;
 
 	ResourceContext *getContext(uint16 fileType, int serial = 0);
+	virtual MetaResource* getMetaResource() = 0;
 protected:
 	SagaEngine *_vm;
 	ResourceContextList _contexts;
@@ -221,8 +203,6 @@ protected:
 
 	void addContext(const char *fileName, uint16 fileType, bool isCompressed = false, int serial = 0);
 	virtual ResourceContext *createContext() = 0;
-public:
-	virtual MetaResource* getMetaResource() = 0;
 };
 
 // ITE
@@ -232,6 +212,7 @@ protected:
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
 		return loadResV1(contextOffset, contextSize);
 	}
+	virtual void processPatches(Resource *resource, const GamePatchDescription *patchFiles);
 };
 
 class Resource_RSC : public Resource {
@@ -255,16 +236,16 @@ protected:
 // IHNM
 class ResourceContext_RES: public ResourceContext {
 protected:
-	virtual bool loadMacMIDI() { return false; }
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
 		return loadResV1(0, contextSize);
 	}
+
+	virtual void processPatches(Resource *resource, const GamePatchDescription *patchFiles);
 };
 
 // TODO: move load routines from sndres
 class VoiceResourceContext_RES: public ResourceContext {
 protected:
-	virtual bool loadMacMIDI() { return false; }
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
 		return false;
 	}
@@ -296,7 +277,6 @@ class ResourceContext_HRS: public ResourceContext {
 protected:
 	ResourceDataArray _categories;
 
-	virtual bool loadMacMIDI() { return false; }
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
 		return loadResV2(contextSize);
 	}
