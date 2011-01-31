@@ -320,7 +320,6 @@ void Parser::showDosInventory() {
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Find widths of 2 columns
 		if (_vm->_object->isCarried(i)) {
 			uint16 len = strlen(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2));
-			printf("%s %d\n", _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2), strlen(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2)));
 			if (index++ & 1)                        // Right hand column
 				len2 = (len > len2) ? len : len2;
 			else
@@ -336,18 +335,18 @@ void Parser::showDosInventory() {
 	assert(len1 + len2 - strlen(_vm->_text->getTextParser(kTBIntro)) / 2 < strlen(blanks));
 	buffer = Common::String(blanks, (len1 + len2 - strlen(_vm->_text->getTextParser(kTBIntro))) / 2);
 
-	buffer += Common::String(_vm->_text->getTextParser(kTBIntro)) + Common::String("\n");
+	buffer += Common::String(_vm->_text->getTextParser(kTBIntro)) + "\n";
 	index = 0;
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Assign strings
 		if (_vm->_object->isCarried(i)) {
 			if (index++ & 1)
-				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2)) + Common::String("\n");
+				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2)) + "\n";
 			else
 				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2)) + Common::String(blanks, len1 - strlen(_vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2)));
 		}
 	}
 	if (index & 1)
-		buffer += Common::String("\n");
+		buffer += "\n";
 	buffer += Common::String(_vm->_text->getTextParser(kTBOutro));
 	Utils::Box(kBoxAny, "%s", buffer.c_str());
 }

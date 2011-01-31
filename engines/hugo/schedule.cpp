@@ -163,8 +163,8 @@ void Scheduler::newScreen(int screenIndex) {
 	// Make sure the background file exists!
 	if (!_vm->isPacked()) {
 		Common::String filename = Common::String(_vm->_text->getScreenNames(screenIndex));
-		if (!_vm->_file->fileExists(_vm->_picDir + filename + Common::String(".PCX")) &&
-			!_vm->_file->fileExists(filename + Common::String(".ART"))) {
+		if (!_vm->_file->fileExists(_vm->_picDir + filename + ".PCX") &&
+			!_vm->_file->fileExists(filename + ".ART")) {
 				error("Unable to find background file for %s", filename.c_str());
 			return;
 		}

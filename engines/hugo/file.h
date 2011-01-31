@@ -44,7 +44,7 @@ public:
 	FileManager(HugoEngine *vm);
 	virtual ~FileManager();
 
-	bool     fileExists(Common::String filename);
+	bool     fileExists(const Common::String filename) const;
 	sound_pt getSound(int16 sound, uint16 *size);
 
 	void     readBootFile();
@@ -52,7 +52,7 @@ public:
 	void     readUIFImages();
 	void     readUIFItem(int16 id, byte *buf);
 	bool     restoreGame(int16 slot);
-	bool     saveGame(int16 slot, Common::String descrip);
+	bool     saveGame(int16 slot, const Common::String descrip);
 
 	// Name scenery and objects picture databases
 	const char *getBootFilename()    { return "HUGO.BSF";    }

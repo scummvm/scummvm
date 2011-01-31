@@ -171,9 +171,9 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 		_objectsArchive.seek(objBlock.objOffset, SEEK_SET);
 	} else {
 		Common::String buf;
-		buf = _vm->_picDir + Common::String(_vm->_text->getNoun(objPtr->nounIndex, 0)) + Common::String(".PIX");
+		buf = _vm->_picDir + Common::String(_vm->_text->getNoun(objPtr->nounIndex, 0)) + ".PIX";
 		if (!_objectsArchive.open(buf)) {
-			buf = Common::String(_vm->_text->getNoun(objPtr->nounIndex, 0)) + Common::String(".PIX");
+			buf = Common::String(_vm->_text->getNoun(objPtr->nounIndex, 0)) + ".PIX";
 			if (!_objectsArchive.open(buf))
 				error("File not found: %s", buf.c_str());
 		}
@@ -292,7 +292,7 @@ sound_pt FileManager::getSound(int16 sound, uint16 *size) {
 /**
 * Return whether file exists or not
 */
-bool FileManager::fileExists(Common::String filename) {
+bool FileManager::fileExists(const Common::String filename) const {
 	Common::File f;
 	return(f.exists(filename));
 }
@@ -300,7 +300,7 @@ bool FileManager::fileExists(Common::String filename) {
 /**
 * Save game to supplied slot
 */
-bool FileManager::saveGame(int16 slot, Common::String descrip) {
+bool FileManager::saveGame(int16 slot, const Common::String descrip) {
 	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip.c_str());
 
 	const EnginePlugin *plugin = NULL;

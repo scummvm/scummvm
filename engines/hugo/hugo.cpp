@@ -826,27 +826,27 @@ void HugoEngine::initialize() {
 	switch (_gameVariant) {
 	case kGameVariantH1Dos:
 		_episode = "\"Hugo's House of Horrors\"";
-		_picDir = Common::String("");
+		_picDir = "";
 		break;
 	case kGameVariantH2Dos:
 		_episode = "\"Hugo II: Whodunit?\"";
-		_picDir = Common::String("");
+		_picDir = "";
 		break;
 	case kGameVariantH3Dos:
 		_episode = "\"Hugo III: Jungle of Doom\"";
-		_picDir = Common::String("pictures/");
+		_picDir = "pictures/";
 		break;
 	case kGameVariantH1Win:
 		_episode = "\"Hugo's Horrific Adventure\"";
-		_picDir = Common::String("hugo1/");
+		_picDir = "hugo1/";
 		break;
 	case kGameVariantH2Win:
 		_episode = "\"Hugo's Mystery Adventure\"";
-		_picDir = Common::String("hugo2/");
+		_picDir = "hugo2/";
 		break;
 	case kGameVariantH3Win:
 		_episode = "\"Hugo's Amazon Adventure\"";
-		_picDir = Common::String("hugo3/");
+		_picDir = "hugo3/";
 		break;
 	default:
 		error("Unknown game");

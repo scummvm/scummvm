@@ -85,7 +85,7 @@ void FileManager_v1d::readBackground(int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
 	Common::String buf;
-	buf = Common::String(_vm->_text->getScreenNames(screenIndex)) + Common::String(".ART");
+	buf = Common::String(_vm->_text->getScreenNames(screenIndex)) + ".ART";
 	if (!_sceneryArchive1.open(buf))
 		error("File not found: %s", buf.c_str());
 	// Read the image into dummy seq and static dib_a
