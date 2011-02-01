@@ -1176,6 +1176,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"lbsampler",
+			"",
+			AD_ENTRY1("BookOutline", "6dd1c0606f1db3b71207121b4370e487"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
+	{
+		{
 			"bearfight",
 			"",
 			AD_ENTRY1("FIGHT.512", "f6e6c77a216c400a69388c94a11766d2"),
