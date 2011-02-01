@@ -1781,7 +1781,8 @@ static const MacResTag macResTagMap[] = {
 	{ MKID_BE('IBIN'), kResourceTypeMacIconBarPictN },
 	{ MKID_BE('IBIS'), kResourceTypeMacIconBarPictS },
 	{ MKID_BE('PICT'), kResourceTypeMacPict },
-	{ MKID_BE('SYN '), kResourceTypeSync }
+	{ MKID_BE('SYN '), kResourceTypeSync },
+	{ MKID_BE('SYNC'), kResourceTypeSync }
 };
 
 static Common::Array<uint32> resTypeToMacTags(ResourceType type) {
