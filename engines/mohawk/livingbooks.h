@@ -228,6 +228,8 @@ struct LBScriptEntry {
 	LBScriptEntry();
 	~LBScriptEntry();
 
+	uint16 state;
+
 	uint16 type;
 	uint16 event;
 	uint16 opcode;

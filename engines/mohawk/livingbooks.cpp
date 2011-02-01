@@ -1640,6 +1640,7 @@ uint16 LBAnimation::getParentId() {
 }
 
 LBScriptEntry::LBScriptEntry() {
+	state = 0;
 	argvParam = NULL;
 	argvTarget = NULL;
 }
@@ -1747,6 +1748,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 
 	if (type == kLBMsgListScript && entry->opcode == kLBOpRunSubentries) {
 		debug(4, "%d script subentries:", entry->param);
+		entry->argc = 0;
 		for (uint i = 0; i < entry->param; i++) {
 			LBScriptEntry *subentry = parseScriptEntry(type, size, stream, true);
 			entry->subentries.push_back(subentry);
@@ -2313,19 +2315,56 @@ void LBItem::runScript(uint event, uint16 data, uint16 from) {
 }
 
 void LBItem::runScriptEntry(LBScriptEntry *entry) {
-	if (entry->param != 0xffff) {
-		// TODO: if param is 1/2/3..
-		warning("Ignoring script entry (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x)",
-			entry->type, entry->event, entry->opcode, entry->param);
+	if (entry->state == 0xffff)
 		return;
-	}
 
+	uint start = 0;
 	uint count = entry->argc;
 	// zero targets = apply to self
 	if (!count)
 		count = 1;
 
-	for (uint n = 0; n < count; n++) {
+	switch (entry->param) {
+	case 0xfffe:
+		// Run once (disable self after run).
+		entry->state = 0xffff;
+		break;
+	case 0xffff:
+		break;
+	case 0:
+	case 1:
+	case 2:
+		start = entry->state;
+		entry->state++;
+		if (entry->state >= count) {
+			switch (entry->param) {
+			case 0:
+				// Disable..
+				entry->state = 0xffff;
+				return;
+			case 1:
+				// Stay at the end.
+				entry->state = count - 1;
+				break;
+			case 2:
+				// Loop.
+				entry->state = 0;
+				break;
+			}
+		}
+		count = 1;
+		break;
+	case 3:
+		// Pick random target.
+		start = _vm->_rnd->getRandomNumberRng(0, count);
+		count = 1;
+		break;
+	default:
+		warning("Weird param for script entry (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x)",
+			entry->type, entry->event, entry->opcode, entry->param);
+	}
+
+	for (uint n = start; n < count; n++) {
 		LBItem *target;
 
 		debug(2, "Script run: type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x",
