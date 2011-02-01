@@ -449,12 +449,24 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 			literalPtr = _resourceData + celInfo->offsetLiteral;
 			if (celInfo->offsetRLE) {
 				if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1) {
+					// KQ6 uses byte lengths, all others use uint16
+					// The SCI devs must have quickly realized that a max of 255 pixels wide
+					// was not very good for 320 or 640 width games.
+					bool hasByteLengths = (g_sci->getGameId() == GID_KQ6);
+
 					// compression for SCI1.1+ Mac
 					while (pixelNo < pixelCount) {
 						uint32 pixelLine = pixelNo;
-						runLength = *rlePtr++;
-						pixelNo += runLength;
-						runLength = *rlePtr++;
+		
+						if (hasByteLengths) {
+							pixelNo += *rlePtr++;
+							runLength = *rlePtr++;
+						} else {
+							pixelNo += READ_BE_UINT16(rlePtr);
+							runLength = READ_BE_UINT16(rlePtr + 2);
+							rlePtr += 4;
+						}
+
 						while (runLength-- && pixelNo < pixelCount) {
 							outPtr[pixelNo] = *literalPtr++;
 							if (outPtr[pixelNo] == 255)
