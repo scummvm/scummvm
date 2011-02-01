@@ -1204,6 +1204,36 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Bears Get in a Fight"
 	},
 
+	{
+		{
+			"arthurcomp",
+			"",
+			AD_ENTRY1("OUTLINE", "dec4d1a05449f81b6012706932658326"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV4,
+		0,
+		0
+	},
+
+	{
+		{
+			"arthurcomp",
+			"",
+			AD_ENTRY1("BookOutline", "87bf1f9113340ce1c6c880932e815882"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV4,
+		0,
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
 
