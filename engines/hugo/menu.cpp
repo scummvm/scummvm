@@ -23,14 +23,16 @@
  *
  */
 
+#include "common/substream.h"
+#include "graphics/imagedec.h"
+#include "gui/gui-manager.h"
+
 #include "hugo/hugo.h"
 #include "hugo/display.h"
 #include "hugo/parser.h"
 #include "hugo/schedule.h"
 #include "hugo/sound.h"
 #include "hugo/util.h"
-#include "graphics/imagedec.h"
-#include "common/substream.h"
 
 namespace Hugo {
 
@@ -188,12 +190,22 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 		_vm->_file->instructions();
 		break;
 	case kCmdMusic:
-		close();
 		_vm->_sound->toggleMusic();
+		_musicButton->setGfx(arrayBmp[4 * kMenuMusic + (g_system->getOverlayWidth() > 320 ? 2 : 1) - 1 + ((_vm->_config.musicFl) ? 0 : 2)]);
+		_musicButton->draw();
+		g_gui.theme()->updateScreen();
+		g_system->updateScreen();
+		g_system->delayMillis(500);
+		close();
 		break;
 	case kCmdSoundFX:
-		close();
 		_vm->_sound->toggleSound();
+		reflowLayout();
+		_soundFXButton->draw();
+		g_gui.theme()->updateScreen();
+		g_system->updateScreen();
+		g_system->delayMillis(500);
+		close();
 		break;
 	case kCmdLoad:
 		close();
@@ -215,8 +227,13 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 		_vm->getGameStatus().recallFl = true;
 		break;
 	case kCmdTurbo:
-		close();
 		_vm->_parser->switchTurbo();
+		reflowLayout();
+		_turboButton->draw();
+		g_gui.theme()->updateScreen();
+		g_system->updateScreen();
+		g_system->delayMillis(500);
+		close();
 		break;
 	case kCmdLook:
 		close();
