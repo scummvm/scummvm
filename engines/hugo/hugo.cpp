@@ -257,7 +257,6 @@ Common::Error HugoEngine::run() {
 		_screen->drawHotspots();
 
 		g_system->updateScreen();
-		_sound->pcspkr_player();
 		runMachine();
 		// Handle input
 		Common::Event event;
@@ -298,6 +297,8 @@ void HugoEngine::initMachine() {
 	_object->readObjectImages();                    // Read all object images
 	if (_platform == Common::kPlatformWindows)
 		_file->readUIFImages();                     // Read all uif images (only in Win versions)
+	
+	_sound->initPcspkrPlayer();
 }
 
 /**

@@ -239,6 +239,7 @@ SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
 }
 
 SoundHandler::~SoundHandler() {
+	_vm->getTimerManager()->removeTimerProc(&loopPlayer);
 	_vm->_mixer->stopHandle(_speakerHandle);
 	delete _speakerStream;
 	delete _midiPlayer;
@@ -371,6 +372,10 @@ void SoundHandler::checkMusic() {
 	}
 }
 
+void SoundHandler::loopPlayer(void *refCon) {
+	((SoundHandler*)refCon)->pcspkr_player();
+}
+
 /**
 * Decrement last note's timer and see if time to play next note yet.
 * If so, interpret next note in string and play it.  Update ptr to string
@@ -383,6 +388,9 @@ void SoundHandler::pcspkr_player() {
 	static uint16 pcspkrNotes[8] =  {1352, 1205, 2274, 2026, 1805, 1704, 1518}; // The 3rd octave note counts A..G
 	static uint16 pcspkrSharps[8] = {1279, 1171, 2150, 1916, 1755, 1611, 1435}; // The sharps, A# to B#
 	static uint16 pcspkrFlats[8] =  {1435, 1279, 2342, 2150, 1916, 1755, 1611}; // The flats, Ab to Bb
+
+	_vm->getTimerManager()->removeTimerProc(&loopPlayer);
+	_vm->getTimerManager()->installTimerProc(&loopPlayer, 1000000 / 9, this);
 
 	uint16 count;                                   // Value to set timer chip to for note
 	bool   cmd_note;
@@ -481,6 +489,10 @@ void SoundHandler::loadIntroSong(Common::File &in) {
 		if (varnt == _vm->_gameVariant)
 			DOSIntroSong = _vm->_text->getTextData(numBuf);
 	}
+}
+
+void SoundHandler::initPcspkrPlayer() {
+	_vm->getTimerManager()->installTimerProc(&loopPlayer, 1000000 / 9, this);
 }
 
 } // End of namespace Hugo

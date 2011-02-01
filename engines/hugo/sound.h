@@ -102,6 +102,7 @@ public:
 	void toggleMusic();
 	void toggleSound();
 	void setMusicVolume();
+	static void loopPlayer(void *refCon);
 	void pcspkr_player();
 	void playMusic(int16 tune);
 	void playSound(int16 sound, byte priority);
@@ -109,7 +110,7 @@ public:
 	void syncVolume();
 	void checkMusic();
 	void loadIntroSong(Common::File &in);
-
+	void initPcspkrPlayer();
 private:
 	HugoEngine *_vm;
 	Audio::SoundHandle _soundHandle;
