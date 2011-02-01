@@ -3272,10 +3272,6 @@ LBAnimationItem::LBAnimationItem(MohawkEngine_LivingBooks *vm, Common::Rect rect
 }
 
 LBAnimationItem::~LBAnimationItem() {
-	// TODO: handle this properly
-	if (_running)
-		_vm->_sound->stopSound();
-
 	delete _anim;
 }
 
@@ -3286,9 +3282,6 @@ void LBAnimationItem::setEnabled(bool enabled) {
 		else if (!_neverEnabled && !enabled && _enabled && _globalEnabled)
 			if (_running) {
 				_anim->stop();
-
-				// TODO: handle this properly
-				_vm->_sound->stopSound();
 			}
 	}
 
@@ -3341,9 +3334,6 @@ void LBAnimationItem::stop() {
 		_anim->stop();
 		seek(0xFFFF);
 	}
-
-	// TODO: handle this properly
-	_vm->_sound->stopSound();
 
 	_running = false;
 
