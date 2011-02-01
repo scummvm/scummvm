@@ -311,7 +311,7 @@ void LBCode::runCodeNotifyCommand(LBItem *src, uint32 &offset) {
 	offset++;
 
 	switch (commandType) {
-	case 0x3:
+	case kLBNotifyChangePage:
 		{
 		debugN("goto");
 		Common::Array<LBValue> params = readParams(src, offset);
@@ -329,6 +329,27 @@ void LBCode::runCodeNotifyCommand(LBItem *src, uint32 &offset) {
 		default:
 			error("incorrect number of parameters (%d) to goto", params.size());
 		}
+		}
+		break;
+
+	case kLBNotifyGoToControls:
+	case kLBNotifyGotoQuit:
+		{
+		debugN(commandType == kLBNotifyGoToControls ? "gotocontrol" : "gotoquit");
+		Common::Array<LBValue> params = readParams(src, offset);
+		if (params.size() != 0)
+			error("incorrect number of parameters (%d) to notify", params.size());
+		_vm->addNotifyEvent(NotifyEvent(commandType, 0));
+		}
+		break;
+
+	case kLBNotifyIntroDone:
+		{
+		debugN("startphasemain");
+		Common::Array<LBValue> params = readParams(src, offset);
+		if (params.size() != 0)
+			error("incorrect number of parameters (%d) to startphasemain", params.size());
+		_vm->addNotifyEvent(NotifyEvent(kLBNotifyIntroDone, 1));
 		}
 		break;
 
