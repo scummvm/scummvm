@@ -317,7 +317,7 @@ int32 ScriptFunc::sys_Cmd_Play_Flic(EMCState *state) {
 
 	// workaround for the video of the beginning
 	if (strstr(GetText(0, state), "209"))
-		sprintf(name, "misc/%s", GetText(0, state));
+		sprintf(name, "%s", GetText(0, state));
 	else
 		strcpy(name, _vm->createRoomFilename(GetText(0, state)).c_str());
 

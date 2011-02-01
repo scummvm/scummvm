@@ -227,7 +227,7 @@ void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 fram
 	uint8 *curRow = (uint8 *)surface.pixels;
 	uint8 *curRowMask = mask->getDataPtr();
 
-	if (strstr(_name, "shadow")) {
+	if (strstr(_name, "SHADOW")) {
 		for (int y = yy1; y < yy2; y++) {
 			for (int x = xx1; x < xx2; x++) {
 				if (x < 0 || x >= 1280 || y < 0 || y >= 400)

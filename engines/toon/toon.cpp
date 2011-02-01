@@ -97,15 +97,18 @@ void ToonEngine::init() {
 	_firstFrame = false;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "misc");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MISC");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "ACT1");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "ACT2");
+
 
 	syncSoundSettings();
 
 	_pathFinding = new PathFinding(this);
 
-	resources()->openPackage("misc/local.pak", true);
-	resources()->openPackage("misc/onetime.pak", true);
-	resources()->openPackage("misc/drew.pak", true);
+	resources()->openPackage("LOCAL.PAK", true);
+	resources()->openPackage("ONETIME.PAK", true);
+	resources()->openPackage("DREW.PAK", true);
 
 	for (int32 i = 0; i < 32; i++)
 		_characters[i] = NULL;
@@ -116,15 +119,15 @@ void ToonEngine::init() {
 	_flux = _characters[1];
 
 	// preload walk anim for flux and drew
-	_drew->loadWalkAnimation("stndwalk.caf");
+	_drew->loadWalkAnimation("STNDWALK.CAF");
 	_drew->setupPalette();
-	_drew->loadShadowAnimation("shadow.caf");
+	_drew->loadShadowAnimation("SHADOW.CAF");
 
-	_flux->loadWalkAnimation("fxstwalk.caf");
-	_flux->loadShadowAnimation("shadow.caf");
+	_flux->loadWalkAnimation("FXSTWALK.CAF");
+	_flux->loadShadowAnimation("SHADOW.CAF");
 
-	loadAdditionalPalette("universe.pal", 3);
-	loadAdditionalPalette("flux.pal", 4);
+	loadAdditionalPalette("UNIVERSE.PAL", 3);
+	loadAdditionalPalette("FLUX.PAL", 4);
 	setupGeneralPalette();
 
 	_script_func = new ScriptFunc(this);
@@ -140,20 +143,20 @@ void ToonEngine::init() {
 	initFonts();
 
 	_dialogIcons = new Animation(this);
-	_dialogIcons->loadAnimation("dialogue.caf");
+	_dialogIcons->loadAnimation("DIALOGUE.CAF");
 
 	_inventoryIcons = new Animation(this);
-	_inventoryIcons->loadAnimation("inventry.caf");
+	_inventoryIcons->loadAnimation("INVENTRY.CAF");
 
 	_inventoryIconSlots = new Animation(this);
-	_inventoryIconSlots->loadAnimation("iconslot.caf");
+	_inventoryIconSlots->loadAnimation("ICONSLOT.CAF");
 
 	_genericTexts = new TextResource(this);
-	_genericTexts->loadTextResource("generic.tre");
+	_genericTexts->loadTextResource("GENERIC.TRE");
 
 	_audioManager = new AudioManager(this, _mixer);
-	_audioManager->loadAudioPack(0, "generic.svi", "misc/generic.svl");
-	_audioManager->loadAudioPack(2, "generic.sei", "generic.sel");
+	_audioManager->loadAudioPack(0, "GENERIC.SVI", "GENERIC.SVL");
+	_audioManager->loadAudioPack(2, "GENERIC.SEI", "GENERIC.SEL");
 
 	_lastMouseButton = 0;
 	_mouseButton = 0;
@@ -580,10 +583,15 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 		clickRelease = false;
 
 		if (!musicPlaying) {
-			mainmenuMusicFile = resources()->openFile("misc/BR091013.MUS");
-			mainmenuMusic = new AudioStreamInstance(_audioManager, _mixer, mainmenuMusicFile, true);
-			mainmenuMusic->play(false);
-			musicPlaying = true;
+			mainmenuMusicFile = resources()->openFile("BR091013.MUS");
+			if (mainmenuMusicFile) {
+				mainmenuMusic = new AudioStreamInstance(_audioManager, _mixer, mainmenuMusicFile, true);
+				mainmenuMusic->play(false);
+				musicPlaying = true;
+			}
+			else {
+				musicPlaying = false;
+			}
 		}
 
 		while (!clickRelease) {
@@ -662,9 +670,9 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 			break;
 		case MAINMENUHOTSPOT_INTRO:
 			// Play intro movies
-			getMoviePlayer()->play("MISC/209_1M.SMK", 0x10);
-			getMoviePlayer()->play("MISC/209_2M.SMK", 0x10);
-			getMoviePlayer()->play("MISC/209_3M.SMK", 0x10);
+			getMoviePlayer()->play("209_1M.SMK", 0x10);
+			getMoviePlayer()->play("209_2M.SMK", 0x10);
+			getMoviePlayer()->play("209_3M.SMK", 0x10);
 			break;
 		case MAINMENUHOTSPOT_LOADGAME:
 			doExit = loadGame(-1);
@@ -673,7 +681,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 			break;
 		case MAINMENUHOTSPOT_CREDITS:
 			// Play credits movie
-			getMoviePlayer()->play("MISC/CREDITS.SMK", 0x0);
+			getMoviePlayer()->play("CREDITS.SMK", 0x0);
 			break;
 		case MAINMENUHOTSPOT_QUIT:
 			exitGame = true;
@@ -710,7 +718,7 @@ Common::Error ToonEngine::run() {
 	if (!loadedGame) {
 
 		// play producer intro
-		getMoviePlayer()->play("MISC/VIELOGOM.SMK", 0x10);
+		getMoviePlayer()->play("VIELOGOM.SMK", 0x10);
 
 		// show mainmenu
 		if (!showMainmenu(loadedGame)) {
@@ -724,8 +732,6 @@ Common::Error ToonEngine::run() {
 		newGame();
 	}
 
-// Strangerke - Commented (not used)
-//	int32 oldTimer = _system->getMillis();
 	while (!_shouldQuit && _gameState->_currentScene != -1)
 		doFrame();
 	return Common::kNoError;
@@ -1066,44 +1072,44 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 
 
 	// load package
-	strcpy(temp, createRoomFilename(Common::String::format("%s.pak", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
+	strcpy(temp, createRoomFilename(Common::String::format("%s.PAK", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
 	resources()->openPackage(temp, true);
 
 	strcpy(temp, state()->_locations[SceneId]._name);
-	strcat(temp, ".npp");
+	strcat(temp, ".NPP");
 	loadAdditionalPalette(temp, 0);
 
 	strcpy(temp, state()->_locations[SceneId]._name);
-	strcat(temp, ".np2");
+	strcat(temp, ".NP2");
 	loadAdditionalPalette(temp, 1);
 
 	strcpy(temp, state()->_locations[SceneId]._name);
-	strcat(temp, ".cup");
+	strcat(temp, ".CUP");
 	loadAdditionalPalette(temp, 2);
 
 	// load artwork
 	strcpy(temp, state()->_locations[SceneId]._name);
-	strcat(temp, ".cps");
+	strcat(temp, ".CPS");
 	delete _currentPicture;
 	_currentPicture = new Picture(this);
 	_currentPicture->loadPicture(temp);
 	_currentPicture->setupPalette();
 
 	strcpy(temp, state()->_locations[SceneId]._name);
-	strcat(temp, ".msc");
+	strcat(temp, ".MSC");
 	delete _currentMask;
 	_currentMask = new Picture(this);
 	if (_currentMask->loadPicture(temp))
 		_pathFinding->init(_currentMask);
 
 	strcpy(temp, state()->_locations[SceneId]._name);
-	strcat(temp, ".tre");
+	strcat(temp, ".TRE");
 	delete _roomTexts;
 	_roomTexts = new TextResource(this);
 	_roomTexts->loadTextResource(temp);
 
 	strcpy(temp, state()->_locations[SceneId]._name);
-	strcat(temp, ".dat");
+	strcat(temp, ".DAT");
 	uint32 fileSize;
 	uint8 *sceneData = resources()->getFileData(temp, &fileSize);
 	if (sceneData) {
@@ -1113,20 +1119,20 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	}
 
 	strcpy(temp, state()->_locations[SceneId]._name);
-	strcat(temp, ".svi");
-	strcpy(temp2, createRoomFilename(Common::String::format("%s.svl", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
+	strcat(temp, ".SVI");
+	strcpy(temp2, createRoomFilename(Common::String::format("%s.SVL", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
 	_audioManager->loadAudioPack(1, temp, temp2);
 	strcpy(temp, state()->_locations[SceneId]._name);
 	strcpy(temp2, state()->_locations[SceneId]._name);
-	strcat(temp, ".sei");
-	strcat(temp2, ".sel");
+	strcat(temp, ".SEI");
+	strcat(temp2, ".SEL");
 	_audioManager->loadAudioPack(3, temp, temp2);
 
 	strcpy(temp, state()->_locations[SceneId]._name);
-	strcat(temp, ".ric");
+	strcat(temp, ".RIC");
 	if (state()->_locations[SceneId]._flags & 0x40) {
 		strcpy(temp2, state()->_locations[SceneId]._cutaway);
-		strcat(temp2, ".ric");
+		strcat(temp2, ".RIC");
 	} else {
 		strcpy(temp2, "");
 	}
@@ -1134,7 +1140,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	restoreRifFlags(_gameState->_currentScene);
 
 	strcpy(temp, state()->_locations[SceneId]._name);
-	strcat(temp, ".cnv");
+	strcat(temp, ".CNV");
 	uint32 convfileSize;
 	uint8 *convData = resources()->getFileData(temp, &convfileSize);
 	if (convData) {
@@ -1145,7 +1151,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 
 	// load script
 	strcpy(temp, state()->_locations[SceneId]._name);
-	strcat(temp, ".emc");
+	strcat(temp, ".EMC");
 
 	_oldTimer = _system->getMillis();
 	_oldTimer2 = _oldTimer;
@@ -1174,14 +1180,6 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 			_sceneAnimationScripts[i]._frozenForConversation = false;
 		}
 	}
-
-	// launch mus
-#if 0
-	SoundManager.StopMusic();
-	SoundManager.UnloadMusic();
-	SoundManager.LoadMusic(GameLocations[Scene].name, GameLocations[Scene].mus);
-	SoundManager.PlayMusic();
-#endif
 
 	playRoomMusic();
 
@@ -1778,10 +1776,10 @@ void ToonEngine::fadeOut(int32 numFrames) {
 void ToonEngine::initFonts() {
 	_fontRenderer = new FontRenderer(this);
 	_fontToon = new Animation(this);
-	_fontToon->loadAnimation("misc/toonfont.caf");
+	_fontToon->loadAnimation("TOONFONT.CAF");
 
 	_fontEZ = new Animation(this);
-	_fontEZ->loadAnimation("misc/ezfont.caf");
+	_fontEZ->loadAnimation("EZFONT.CAF");
 }
 
 void ToonEngine::drawInfoLine() {
