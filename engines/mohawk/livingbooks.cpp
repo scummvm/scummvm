@@ -391,6 +391,17 @@ void MohawkEngine_LivingBooks::updatePage() {
 			case 1:
 				debug(2, "updatePage() for control page 1 (menu)");
 
+				if (_poetryMode) {
+					for (uint16 i = 0; i < _numPages; i++) {
+						item = getItemById(1000 + i);
+						if (item)
+							item->setVisible(_curSelectedPage == i + 1);
+						item = getItemById(1100 + i);
+						if (item)
+							item->setVisible(_curSelectedPage == i + 1);
+					}
+				}
+
 				for (uint16 i = 0; i < _numLanguages; i++) {
 					item = getItemById(100 + i);
 					if (item)
