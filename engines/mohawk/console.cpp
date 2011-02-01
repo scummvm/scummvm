@@ -694,11 +694,11 @@ bool LivingBooksConsole::Cmd_DrawImage(int argc, const char **argv) {
 
 bool LivingBooksConsole::Cmd_ChangePage(int argc, const char **argv) {
 	if (argc == 1) {
-		DebugPrintf("Usage: changePage <page>\n");
+		DebugPrintf("Usage: changePage <page> [<mode>]\n");
 		return true;
 	}
 
-	if (_vm->tryLoadPageStart(_vm->getCurMode(), atoi(argv[1])))
+	if (_vm->tryLoadPageStart(argc == 2 ? _vm->getCurMode() : (LBMode)atoi(argv[2]), atoi(argv[1])))
 		return false;
 	DebugPrintf("no such page %d\n", atoi(argv[1]));
 	return true;
