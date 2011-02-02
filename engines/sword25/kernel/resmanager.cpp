@@ -43,7 +43,11 @@ namespace Sword25 {
 // Sets the amount of resources that are simultaneously loaded.
 // This needs to be a relatively high number, as all the animation
 // frames in each scene are loaded as separate resources.
-#define SWORD25_RESOURCECACHE_MAX 100
+#define SWORD25_RESOURCECACHE_MIN 200
+// The maximum number of loaded resources. If more than these resources
+// are loaded, the resource manager will start purging resources till it
+// hits the minimum limit above
+#define SWORD25_RESOURCECACHE_MAX 300
 
 ResourceManager::~ResourceManager() {
 	// Clear all unlocked resources
@@ -89,7 +93,7 @@ void ResourceManager::deleteResourcesIfNecessary() {
 		return;
 
 	// Keep deleting resources until the memory usage of the process falls below the set maximum limit.
-	// The list is processed backwards in order to first release those resources who have been
+	// The list is processed backwards in order to first release those resources that have been
 	// not been accessed for the longest
 	Common::List<Resource *>::iterator iter = _resources.end();
 	do {
@@ -98,7 +102,20 @@ void ResourceManager::deleteResourcesIfNecessary() {
 		// The resource may be released only if it isn't locked
 		if ((*iter)->getLockCount() == 0)
 			iter = deleteResource(*iter);
-	} while (iter != _resources.begin() && _resources.size() >= SWORD25_RESOURCECACHE_MAX);
+	} while (iter != _resources.begin() && _resources.size() >= SWORD25_RESOURCECACHE_MIN);
+
+	// Are we still above the minimum? If yes, then start releasing locked resources
+	iter = _resources.end();
+	do {
+		--iter;
+
+		// Forcibly unlock the resource
+		while ((*iter)->getLockCount() > 0) {
+			(*iter)->release();
+		};
+
+		iter = deleteResource(*iter);
+	} while (iter != _resources.begin() && _resources.size() >= SWORD25_RESOURCECACHE_MIN);
 }
 
 /**
