@@ -35,10 +35,8 @@
 
 // PNG decoder, based on the W3C specs:
 // http://www.w3.org/TR/PNG/
-// and lodePNG:
+// Parts of the code have been adapted from LodePNG, by Lode Vandevenne:
 // http://members.gamedev.net/lode/projects/LodePNG/
-// and the ysflight PNG decoder:
-// http://homepage3.nifty.com/ysflight/pngdecoder/pngdecodere.html
 
 // All the numbers are BE: http://www.w3.org/TR/PNG/#7Integers-and-byte-order
 
