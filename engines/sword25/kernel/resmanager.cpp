@@ -43,11 +43,12 @@ namespace Sword25 {
 // Sets the amount of resources that are simultaneously loaded.
 // This needs to be a relatively high number, as all the animation
 // frames in each scene are loaded as separate resources.
-#define SWORD25_RESOURCECACHE_MIN 200
+// Also, George's walk states are all loaded here (150 files)
+#define SWORD25_RESOURCECACHE_MIN 400
 // The maximum number of loaded resources. If more than these resources
 // are loaded, the resource manager will start purging resources till it
 // hits the minimum limit above
-#define SWORD25_RESOURCECACHE_MAX 300
+#define SWORD25_RESOURCECACHE_MAX 500
 
 ResourceManager::~ResourceManager() {
 	// Clear all unlocked resources
@@ -105,16 +106,29 @@ void ResourceManager::deleteResourcesIfNecessary() {
 	} while (iter != _resources.begin() && _resources.size() >= SWORD25_RESOURCECACHE_MIN);
 
 	// Are we still above the minimum? If yes, then start releasing locked resources
+	// FIXME: This code shouldn't be needed at all, but it seems like there is a bug
+	// in the resource lock code, and resources are not unlocked when changing rooms.
+	// Only image/animation resources are unlocked forcibly, thus this shouldn't have
+	// any impact on the game itself.
+	if (_resources.size() <= SWORD25_RESOURCECACHE_MIN)
+		return;
+
 	iter = _resources.end();
 	do {
 		--iter;
 
-		// Forcibly unlock the resource
-		while ((*iter)->getLockCount() > 0) {
-			(*iter)->release();
-		};
+		// Only unlock image/animation resources
+		if ((*iter)->getFileName().hasSuffix(".swf") ||
+			(*iter)->getFileName().hasSuffix(".png")) {
 
-		iter = deleteResource(*iter);
+			warning("Forcibly unlocking %s", (*iter)->getFileName().c_str());
+
+			// Forcibly unlock the resource
+			while ((*iter)->getLockCount() > 0)
+				(*iter)->release();
+
+			iter = deleteResource(*iter);
+		}
 	} while (iter != _resources.begin() && _resources.size() >= SWORD25_RESOURCECACHE_MIN);
 }
 
@@ -145,21 +159,12 @@ Resource *ResourceManager::requestResource(const Common::String &fileName) {
 
 	// Determine whether the resource is already loaded
 	// If the resource is found, it will be placed at the head of the resource list and returned
-	{
-		Resource *pResource = getResource(uniqueFileName);
-		if (!pResource)
-			pResource = loadResource(uniqueFileName);
-
-		if (pResource) {
-			moveToFront(pResource);
-			(pResource)->addReference();
-			return pResource;
-		}
-	}
-
-	Resource *pResource = loadResource(uniqueFileName);
+	Resource *pResource = getResource(uniqueFileName);
+	if (!pResource)
+		pResource = loadResource(uniqueFileName);
 	if (pResource) {
-		pResource->addReference();
+		moveToFront(pResource);
+		(pResource)->addReference();
 		return pResource;
 	}
 
