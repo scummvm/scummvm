@@ -442,7 +442,38 @@ void Inter_v7::o7_loadLBMPalette() {
 	if (startIndex > stopIndex)
 		SWAP(startIndex, stopIndex);
 
-	warning("Addy Stub: Load LBM palette: \"%s\", %d-%d", file.c_str(), startIndex, stopIndex);
+	Common::SeekableReadStream *lbmFile = _vm->_dataIO->getFile(file);
+	if (!lbmFile) {
+		warning("o7_loadLBMPalette(): No such file \"%s\"", file.c_str());
+		return;
+	}
+
+	ImageType type = Surface::identifyImage(*lbmFile);
+	if (type != kImageTypeLBM) {
+		warning("o7_loadLBMPalette(): \"%s\" is no LBM", file.c_str());
+		return;
+	}
+
+	byte palette[768];
+
+	LBMLoader lbm(*lbmFile);
+	if (!lbm.loadPalette(palette)) {
+		warning("o7_loadLBMPalette(): Failed reading palette from LBM \"%s\"", file.c_str());
+		return;
+	}
+
+	memset(palette      , 0x00, 3);
+	memset(palette + 765, 0xFF, 3);
+	for (int i = 0; i < 768; i++)
+		palette[i] >>= 2;
+
+	int16 count = stopIndex - startIndex + 1;
+
+	startIndex *= 3;
+	count      *= 3;
+
+	memcpy((char *)_vm->_draw->_vgaPalette + startIndex, palette + startIndex, count);
+	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 }
 
 void Inter_v7::o7_opendBase() {
