@@ -819,19 +819,19 @@ ImageType Surface::identifyImage(Common::SeekableReadStream &stream) {
 	if ((stream.size() - startPos) < 17)
 		return kImageTypeNone;
 
-	char buffer[4];
-	if (!stream.read(buffer, 4))
+	char buffer[10];
+	if (!stream.read(buffer, 10))
 		return kImageTypeNone;
 
 	stream.seek(startPos);
 
-	if (!strncmp(buffer, "FORM", 4))
+	if (!strncmp(buffer    , "FORM", 4))
 		return kImageTypeLBM;
-	if (!strncmp(buffer, "JFIF", 4))
+	if (!strncmp(buffer + 6, "JFIF", 4))
 		return kImageTypeJPEG;
-	if (!strncmp(buffer, "BRC" , 3))
+	if (!strncmp(buffer    , "BRC" , 3))
 		return kImageTypeBRC;
-	if (!strncmp(buffer, "BM"  , 2))
+	if (!strncmp(buffer    , "BM"  , 2))
 		return kImageTypeBMP;
 
 	// Try to determine if it's maybe a TGA
