@@ -151,37 +151,37 @@ int16 GfxPicture::getSci32celCount() {
 
 int16 GfxPicture::getSci32celY(int16 celNo) {
 	byte *inbuffer = _resource->data;
-	int header_size = READ_LE_UINT16(inbuffer);
+	int header_size = READ_SCI11ENDIAN_UINT16(inbuffer);
 	int cel_headerPos = header_size + 42 * celNo;
-	return READ_LE_UINT16(inbuffer + cel_headerPos + 40);
+	return READ_SCI11ENDIAN_UINT16(inbuffer + cel_headerPos + 40);
 }
 
 int16 GfxPicture::getSci32celX(int16 celNo) {
 	byte *inbuffer = _resource->data;
-	int header_size = READ_LE_UINT16(inbuffer);
+	int header_size = READ_SCI11ENDIAN_UINT16(inbuffer);
 	int cel_headerPos = header_size + 42 * celNo;
-	return READ_LE_UINT16(inbuffer + cel_headerPos + 38);
+	return READ_SCI11ENDIAN_UINT16(inbuffer + cel_headerPos + 38);
 }
 
 int16 GfxPicture::getSci32celWidth(int16 celNo) {
 	byte *inbuffer = _resource->data;
-	int header_size = READ_LE_UINT16(inbuffer);
+	int header_size = READ_SCI11ENDIAN_UINT16(inbuffer);
 	int cel_headerPos = header_size + 42 * celNo;
-	return READ_LE_UINT16(inbuffer + cel_headerPos + 0);
+	return READ_SCI11ENDIAN_UINT16(inbuffer + cel_headerPos + 0);
 }
 
 int16 GfxPicture::getSci32celPriority(int16 celNo) {
 	byte *inbuffer = _resource->data;
-	int header_size = READ_LE_UINT16(inbuffer);
+	int header_size = READ_SCI11ENDIAN_UINT16(inbuffer);
 	int cel_headerPos = header_size + 42 * celNo;
-	return READ_LE_UINT16(inbuffer + cel_headerPos + 36);
+	return READ_SCI11ENDIAN_UINT16(inbuffer + cel_headerPos + 36);
 }
 
 void GfxPicture::drawSci32Vga(int16 celNo, int16 drawX, int16 drawY, int16 pictureX, bool mirrored) {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
-	int header_size = READ_LE_UINT16(inbuffer);
-	int palette_data_ptr = READ_LE_UINT16(inbuffer + 6);
+	int header_size = READ_SCI11ENDIAN_UINT16(inbuffer);
+	int palette_data_ptr = READ_SCI11ENDIAN_UINT16(inbuffer + 6);
 //	int celCount = inbuffer[2];
 	int cel_headerPos = header_size;
 	int cel_RlePos, cel_LiteralPos;
@@ -211,11 +211,11 @@ void GfxPicture::drawSci32Vga(int16 celNo, int16 drawX, int16 drawY, int16 pictu
 	if (mirrored) {
 		// switch around relativeXpos
 		Common::Rect displayArea = _coordAdjuster->pictureGetDisplayArea();
-		drawX = displayArea.width() - drawX - READ_LE_UINT16(inbuffer + cel_headerPos + 0);
+		drawX = displayArea.width() - drawX - READ_SCI11ENDIAN_UINT16(inbuffer + cel_headerPos + 0);
 	}
 
-	cel_RlePos = READ_LE_UINT32(inbuffer + cel_headerPos + 24);
-	cel_LiteralPos = READ_LE_UINT32(inbuffer + cel_headerPos + 28);
+	cel_RlePos = READ_SCI11ENDIAN_UINT32(inbuffer + cel_headerPos + 24);
+	cel_LiteralPos = READ_SCI11ENDIAN_UINT32(inbuffer + cel_headerPos + 28);
 
 	drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, drawX, drawY, pictureX);
 	cel_headerPos += 42;
@@ -228,8 +228,6 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	byte *headerPtr = inbuffer + headerPos;
 	byte *rlePtr = inbuffer + rlePos;
 	byte *literalPtr = inbuffer + literalPos;
-	uint16 width = READ_LE_UINT16(headerPtr + 0);
-	uint16 height = READ_LE_UINT16(headerPtr + 2);
 	int16 displaceX, displaceY;
 	byte priority = _addToFlag ? _priority : 0;
 	byte clearColor;
@@ -237,10 +235,14 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	byte curByte, runLength;
 	int16 y, lastY, x, leftX, rightX;
 	int pixelNr, pixelCount;
+	uint16 width, height;
 
 #ifdef ENABLE_SCI32
 	if (_resourceType != SCI_PICTURE_TYPE_SCI32) {
 #endif
+		// Width/height here are always LE, even in Mac versions
+		width = READ_LE_UINT16(headerPtr + 0);
+		height = READ_LE_UINT16(headerPtr + 2);
 		displaceX = (signed char)headerPtr[4];
 		displaceY = (unsigned char)headerPtr[5];
 		if (_resourceType == SCI_PICTURE_TYPE_SCI11) {
@@ -251,8 +253,10 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		}
 #ifdef ENABLE_SCI32
 	} else {
-		displaceX = READ_LE_UINT16(headerPtr + 4); // probably signed?!?
-		displaceY = READ_LE_UINT16(headerPtr + 6); // probably signed?!?
+		width = READ_SCI11ENDIAN_UINT16(headerPtr + 0);
+		height = READ_SCI11ENDIAN_UINT16(headerPtr + 2);
+		displaceX = READ_SCI11ENDIAN_UINT16(headerPtr + 4); // probably signed?!?
+		displaceY = READ_SCI11ENDIAN_UINT16(headerPtr + 6); // probably signed?!?
 		clearColor = headerPtr[8];
 		if (headerPtr[9] == 0)
 			compression = false;
