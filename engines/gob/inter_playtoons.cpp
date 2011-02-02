@@ -427,7 +427,7 @@ bool Inter_Playtoons::readSprite(Common::String file, int32 dataVar,
 	}
 
 	int index = -size - 1;
-	if ((index < 0) || (index >= Draw::kSpritesCount) || !_vm->_draw->_spritesArray[index]) {
+	if ((index < 0) || (index >= Draw::kSpriteCount) || !_vm->_draw->_spritesArray[index]) {
 		warning("No such sprite");
 		return false;
 	}

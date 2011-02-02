@@ -258,7 +258,7 @@ bool TempSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
 
 	// Index sane?
 	int index = getIndex(size);
-	if ((index < 0) || (index >= Draw::kSpritesCount))
+	if ((index < 0) || (index >= Draw::kSpriteCount))
 		return false;
 
 	SurfacePtr sprite = _vm->_draw->_spritesArray[index];
@@ -333,7 +333,7 @@ SurfacePtr TempSpriteHandler::createSprite(int16 dataVar, int32 size, int32 offs
 
 	// Index sane?
 	int index = getIndex(size);
-	if ((index < 0) || (index >= Draw::kSpritesCount))
+	if ((index < 0) || (index >= Draw::kSpriteCount))
 		return sprt;
 
 	// Sprite exists?

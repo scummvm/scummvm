@@ -67,7 +67,7 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	for (int i = 0; i < kFontCount; i++)
 		_fonts[i] = 0;
 
-	_spritesArray.resize(kSpritesCount);
+	_spritesArray.resize(kSpriteCount);
 
 	_invalidatedCount = 0;
 	for (int i = 0; i < 30; i++) {
@@ -332,7 +332,7 @@ void Draw::initSpriteSurf(int16 index, int16 width, int16 height,
 }
 
 void Draw::freeSprite(int16 index) {
-	assert(index < kSpritesCount);
+	assert(index < kSpriteCount);
 
 	_spritesArray[index].reset();
 

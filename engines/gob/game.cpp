@@ -822,7 +822,7 @@ void Game::start() {
 
 	_vm->_draw->closeScreen();
 
-	for (int i = 0; i < Draw::kSpritesCount; i++)
+	for (int i = 0; i < Draw::kSpriteCount; i++)
 		_vm->_draw->freeSprite(i);
 	_vm->_draw->_scummvmCursor.reset();
 }
