@@ -82,7 +82,7 @@ void Inter_v7::setupOpcodesGob() {
 	Inter_Playtoons::setupOpcodesGob();
 
 	OPCODEGOB(420, o7_oemToANSI);
-	OPCODEGOB(513, o7_oemToANSI);
+	OPCODEGOB(513, o7_gob0x201);
 }
 
 void Inter_v7::o7_draw0x0C() {
