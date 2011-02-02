@@ -44,7 +44,7 @@ Draw_v1::Draw_v1(GobEngine *vm) : Draw(vm) {
 }
 
 void Draw_v1::initScreen() {
-	_backSurface  = _vm->_video->initSurfDesc(320, 200, 0);
+	_backSurface  = _vm->_video->initSurfDesc(320, 200);
 	_frontSurface = _vm->_global->_primarySurfDesc;
 
 	_cursorSprites = _vm->_video->initSurfDesc(32, 16, 2);

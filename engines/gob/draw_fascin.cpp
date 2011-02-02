@@ -485,7 +485,7 @@ void Draw_Fascination::drawWin(int16 fct) {
 	}
 
 	if (found) {
-		tempSrf = _vm->_video->initSurfDesc(width - left + 1, height - top + 1, 0);
+		tempSrf = _vm->_video->initSurfDesc(width - left + 1, height - top + 1);
 		tempSrf->blit(*_backSurface, left, top, width, height, 0, 0);
 
 		int max = 0;
@@ -739,7 +739,7 @@ int16 Draw_Fascination::openWin(int16 id) {
 	_fascinWin[id].width  = VAR((_winVarArrayWidth  / 4) + id);
 	_fascinWin[id].height = VAR((_winVarArrayHeight / 4) + id);
 
-	_fascinWin[id].savedSurface = _vm->_video->initSurfDesc(_winMaxWidth + 7, _winMaxHeight, 0);
+	_fascinWin[id].savedSurface = _vm->_video->initSurfDesc(_winMaxWidth + 7, _winMaxHeight);
 
 	saveWin(id);
 	WRITE_VAR((_winVarArrayStatus / 4) + id, VAR((_winVarArrayStatus / 4) + id) & 0xFFFFFFFE);
@@ -961,7 +961,7 @@ void Draw_Fascination::activeWin(int16 id) {
 			}
 		}
 
-		tempSrf = _vm->_video->initSurfDesc(_winMaxWidth + 7, _winMaxHeight, 0);
+		tempSrf = _vm->_video->initSurfDesc(_winMaxWidth + 7, _winMaxHeight);
 		tempSrf->blit(*_backSurface,
 								 _fascinWin[id].left, _fascinWin[id].top,
 								 _fascinWin[id].left + _fascinWin[id].width  - 1,

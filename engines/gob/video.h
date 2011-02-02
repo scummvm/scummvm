@@ -108,7 +108,7 @@ public:
 	int16 _screenDeltaY;
 
 	void initPrimary(int16 mode);
-	SurfacePtr initSurfDesc(int16 width, int16 height, int16 flags);
+	SurfacePtr initSurfDesc(int16 width, int16 height, int16 flags = 0);
 
 	void setSize(bool defaultTo1XScaler);
 
