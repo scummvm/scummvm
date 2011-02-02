@@ -611,6 +611,7 @@ protected:
 	void o7_playVmdOrMusic();
 	void o7_draw0x89();
 	void o7_findFile();
+	void o7_findCDFile();
 	void o7_getSystemProperty();
 	void o7_loadImage();
 	void o7_setVolume();
@@ -634,6 +635,8 @@ private:
 
 	void storeString(uint16 index, uint16 type, const char *value);
 	void storeString(const char *value);
+
+	Common::String findFile(const Common::String &mask);
 };
 
 } // End of namespace Gob

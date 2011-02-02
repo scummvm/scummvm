@@ -61,6 +61,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x83, o7_playVmdOrMusic);
 	OPCODEDRAW(0x89, o7_draw0x89);
 	OPCODEDRAW(0x8A, o7_findFile);
+	OPCODEDRAW(0x8B, o7_findCDFile);
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
 	OPCODEDRAW(0x90, o7_loadImage);
 	OPCODEDRAW(0x93, o7_setVolume);
@@ -297,11 +298,7 @@ void Inter_v7::o7_draw0x89() {
 
 	warning("Addy Stub Draw 0x89: \"%s\", \"%s\"", str0.c_str(), str1.c_str());
 
-	Common::ArchiveMemberList files;
-
-	SearchMan.listMatchingMembers(files, str0);
-
-	if (files.empty()) {
+	if (findFile(str0).empty()) {
 		storeValue(0);
 		return;
 	}
@@ -310,22 +307,18 @@ void Inter_v7::o7_draw0x89() {
 }
 
 void Inter_v7::o7_findFile() {
-	Common::String file = getFile(_vm->_game->_script->evalString());
+	Common::String file = findFile(getFile(_vm->_game->_script->evalString()));
 
-	uint16 pathIndex = _vm->_game->_script->readVarIndex();
+	storeString(file.c_str());
+	storeValue(file.empty() ? 0 : 1);
+}
 
-	Common::ArchiveMemberList files;
+void Inter_v7::o7_findCDFile() {
+	Common::String mask = getFile(GET_VARO_STR(_vm->_game->_script->readVarIndex()));
+	Common::String file = findFile(mask);
 
-	SearchMan.listMatchingMembers(files, file);
-
-	if (files.empty()) {
-		GET_VARO_STR(pathIndex)[0] = '\0';
-		storeValue(0);
-		return;
-	}
-
-	strcpy(GET_VARO_STR(pathIndex), files.front()->getName().c_str());
-	storeValue(1);
+	warning("Addy Stub: Find CD file \"%s\"", mask.c_str());
+	storeValue(0);
 }
 
 void Inter_v7::o7_getSystemProperty() {
@@ -587,7 +580,7 @@ void Inter_v7::storeString(uint16 index, uint16 type, const char *value) {
 
 void Inter_v7::storeString(const char *value) {
 	uint16 type;
-	int16 varIndex = _vm->_game->_script->readVarIndex(0, &type);
+	uint16 varIndex = _vm->_game->_script->readVarIndex(0, &type);
 
 	storeString(varIndex, type, value);
 }
@@ -596,6 +589,17 @@ void Inter_v7::o7_gob0x201(OpGobParams &params) {
 	uint16 varIndex = _vm->_game->_script->readUint16();
 
 	WRITE_VAR(varIndex, 1);
+}
+
+Common::String Inter_v7::findFile(const Common::String &mask) {
+	Common::ArchiveMemberList files;
+
+	SearchMan.listMatchingMembers(files, mask);
+
+	if (files.empty())
+		return "";
+
+	return files.front()->getName();
 }
 
 } // End of namespace Gob
