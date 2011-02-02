@@ -113,9 +113,9 @@ void MusicPlayer::send(uint32 b) {
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
 	}
 	else if ((b & 0xFFF0) == 0x007BB0) {
-		//Only respond to All Notes Off if this channel
-		//has currently been allocated
-		if (_channel[b & 0x0F])
+		// Only respond to All Notes Off if this channel
+		// has currently been allocated
+		if (!_channel[b & 0x0F])
 			return;
 	}
 
@@ -165,6 +165,7 @@ void MusicPlayer::playXMIDI(GenericResource *midiResource, MusicFlags flags) {
 		parser->setMidiDriver(this);
 		parser->setTimerRate(getBaseTempo());
 		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+		parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
 
 		_parser = parser;
 

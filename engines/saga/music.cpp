@@ -184,6 +184,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_parser->setMidiDriver(_driver);
 	_parser->setTimerRate(_driver->getBaseTempo());
 	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+	_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
 
 	_digitalMusic = false;
 }

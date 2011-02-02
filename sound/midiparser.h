@@ -281,7 +281,7 @@ protected:
 	bool   _autoLoop;       ///< For lightweight clients that don't provide their own flow control.
 	bool   _smartJump;      ///< Support smart expiration of hanging notes when jumping
 	bool   _centerPitchWheelOnUnload;  ///< Center the pitch wheels when unloading a song
-
+	bool   _sendSustainOffOnNotesOff;   ///< Send a sustain off on a notes off event, stopping hanging notes
 	byte  *_tracks[120];    ///< Multi-track MIDI formats are supported, up to 120 tracks.
 	byte   _num_tracks;     ///< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
 	byte   _active_track;   ///< Keeps track of the currently active track, in multi-track formats.
@@ -361,7 +361,13 @@ public:
 		 * Center the pitch wheels when unloading music in preparation
 		 * for the next piece of music.
 		 */
-		mpCenterPitchWheelOnUnload = 4
+		mpCenterPitchWheelOnUnload = 4,
+
+		/**
+		 * Sends a sustain off event when a notes off event is triggered.
+		 * Stops hanging notes.
+		 */
+		 mpSendSustainOffOnNotesOff = 5
 	};
 
 public:

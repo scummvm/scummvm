@@ -43,6 +43,7 @@ _psec_per_tick(5208), // 500000 / 96
 _autoLoop(false),
 _smartJump(false),
 _centerPitchWheelOnUnload(false),
+_sendSustainOffOnNotesOff(false),
 _num_tracks(0),
 _active_track(255),
 _abort_parse(0) {
@@ -63,6 +64,9 @@ void MidiParser::property(int prop, int value) {
 		break;
 	case mpCenterPitchWheelOnUnload:
 		_centerPitchWheelOnUnload = (value != 0);
+		break;
+	case mpSendSustainOffOnNotesOff:
+		_sendSustainOffOnNotesOff = (value != 0);
 		break;
 	}
 }
@@ -281,7 +285,8 @@ void MidiParser::allNotesOff() {
 
 	for (i = 0; i < 16; ++i) {
 		sendToDriver(0xB0 | i, 0x7b, 0); // All notes off
-		sendToDriver(0xB0 | i, 0x40, 0); // Also send a sustain off event (bug #3116608)
+		if (_sendSustainOffOnNotesOff)
+			sendToDriver(0xB0 | i, 0x40, 0); // Also send a sustain off event (bug #3116608)
 	}
 
 	memset(_active_notes, 0, sizeof(_active_notes));

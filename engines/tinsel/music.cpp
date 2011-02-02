@@ -466,9 +466,9 @@ void MidiMusicPlayer::send(uint32 b) {
 		volume = volume * _masterVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
 	} else if ((b & 0xFFF0) == 0x007BB0) {
-		//Only respond to All Notes Off if this channel
-		//has currently been allocated
-		if (_channel[b & 0x0F])
+		// Only respond to All Notes Off if this channel
+		// has currently been allocated
+		if (!_channel[b & 0x0F])
 			return;
 	}
 
@@ -533,6 +533,7 @@ void MidiMusicPlayer::playXMIDI(byte *midiData, uint32 size, bool loop) {
 		parser->setMidiDriver(this);
 		parser->setTimerRate(getBaseTempo());
 		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+		parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
 
 		_parser = parser;
 
