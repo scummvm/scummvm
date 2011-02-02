@@ -51,6 +51,7 @@ private:
 	void getFrameRect(int frame, Common::Rect &rect); // Not sure what to use this for yet
 	int getFrameScale(int frame); // Scale factor (multiplied by 100). More like custom height, but why use a percentage for it?
 	void setPalette();
+	void freeData();
 
 	ResourceManager *_resMan;
 	GfxScreen *_screen;

@@ -68,10 +68,7 @@ GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palet
 }
 
 GfxRobot::~GfxRobot() {
-	delete[] _resourceData;
-	delete[] _imageStart;
-	delete[] _audioStart;
-	delete[] _audioLen;
+	freeData();
 }
 
 void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
@@ -174,6 +171,7 @@ void GfxRobot::drawNextFrame() {
 	if (_curFrame == _frameCount) {
 		// End of robot video, restore palette
 		g_system->setPalette(_savedPal, 0, 256);
+		freeData();
 		_resourceId = -1;
 	}
 }
@@ -302,7 +300,13 @@ void GfxRobot::playAudio() {
 	}
 }
 
-	
+void GfxRobot::freeData()
+{
+	delete[] _resourceData; _resourceData = 0;
+	delete[] _imageStart; _imageStart = 0;
+	delete[] _audioStart; _audioStart = 0;
+	delete[] _audioLen; _audioLen = 0;
+}	
 #endif
 
 } // End of namespace Sci
