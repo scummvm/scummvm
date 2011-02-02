@@ -375,7 +375,7 @@ void VideoPlayer::updateLive(int slot, bool force) {
 		if (!video->properties.loop) {
 			if (!(video->properties.flags & kFlagNoVideo))
 				WRITE_VAR_OFFSET(212, (uint32)-1);
-			_vm->_vidPlayer->closeVideo();
+			_vm->_vidPlayer->closeVideo(slot);
 			return;
 		} else {
 			video->decoder->seek(0, SEEK_SET, true);
