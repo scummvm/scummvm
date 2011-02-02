@@ -53,6 +53,12 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 #endif
 	}
 
+#ifdef ENABLE_SCI32
+	// GK1 Mac uses a 640x480 resolution too
+	if (g_sci->getGameId() == GID_GK1 && g_sci->getPlatform() == Common::kPlatformMacintosh)
+		_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
+#endif
+
 	if (_resMan->detectHires()) {
 		_width = 640;
 		_height = 480;
