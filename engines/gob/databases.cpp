@@ -29,7 +29,7 @@
 
 namespace Gob {
 
-Databases::Databases() : _language(Common::UNK_LANG) {
+Databases::Databases() {
 }
 
 Databases::~Databases() {
