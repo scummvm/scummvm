@@ -617,7 +617,7 @@ protected:
 	void o7_zeroVar();
 	void o7_getINIValue();
 	void o7_setINIValue();
-	void o7_draw0xA4();
+	void o7_loadLBMPalette();
 	void o7_opendBase();
 	void o7_closedBase();
 	void o7_getDBString();

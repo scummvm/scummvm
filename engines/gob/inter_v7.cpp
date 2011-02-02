@@ -67,7 +67,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x95, o7_zeroVar);
 	OPCODEDRAW(0xA1, o7_getINIValue);
 	OPCODEDRAW(0xA2, o7_setINIValue);
-	OPCODEDRAW(0xA4, o7_draw0xA4);
+	OPCODEDRAW(0xA4, o7_loadLBMPalette);
 	OPCODEDRAW(0xC4, o7_opendBase);
 	OPCODEDRAW(0xC5, o7_closedBase);
 	OPCODEDRAW(0xC6, o7_getDBString);
@@ -431,15 +431,18 @@ void Inter_v7::o7_setINIValue() {
 	_inis.setValue(file, section, key, value);
 }
 
-void Inter_v7::o7_draw0xA4() {
+void Inter_v7::o7_loadLBMPalette() {
 	Common::String file = _vm->_game->_script->evalString();
 	if (!file.contains('.'))
 		file += ".LBM";
 
-	int16 expr0 = _vm->_game->_script->readValExpr();
-	int16 expr1 = _vm->_game->_script->readValExpr();
+	int16 startIndex = CLIP<int16>(_vm->_game->_script->readValExpr(), 0, 255);
+	int16 stopIndex  = CLIP<int16>(_vm->_game->_script->readValExpr(), 0, 255);
 
-	warning("Addy Stub Draw 0xA4: \"%s\", %d, %d", file.c_str(), expr0, expr1);
+	if (startIndex > stopIndex)
+		SWAP(startIndex, stopIndex);
+
+	warning("Addy Stub: Load LBM palette: \"%s\", %d-%d", file.c_str(), startIndex, stopIndex);
 }
 
 void Inter_v7::o7_opendBase() {
