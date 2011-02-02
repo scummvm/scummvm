@@ -111,7 +111,7 @@ protected:
 	bool _cursorPaletteDisabled;
 	bool _dirtyPalette;
 
-	int _cursorWidth, _cursorHeight;
+	uint _cursorWidth, _cursorHeight;
 	int _cursorKeycolor;
 
 	uint16	_overlayHeight, _overlayWidth;
