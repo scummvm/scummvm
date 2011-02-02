@@ -472,8 +472,8 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	int16* mouseBuf = (int16*)malloc(bufferSize);
 	memset(mouseBuf, 0, bufferSize);
 
-	for (int x = 0; x < w; ++x) {
-		for (int y = 0; y < h; ++y) {
+	for (uint x = 0; x < w; ++x) {
+		for (uint y = 0; y < h; ++y) {
 			byte color = buf[y * w + x];
 			if (color != keycolor)
 				mouseBuf[y * texWidth + x] = _palette[color] | 0x1;
