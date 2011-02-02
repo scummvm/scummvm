@@ -439,7 +439,7 @@ bool MacResourceForkResourceSource::isCompressableResource(ResourceType type) co
 	return type != kResourceTypeMacPict && type != kResourceTypeAudio &&
 			type != kResourceTypeMacIconBarPictN && type != kResourceTypeMacIconBarPictS &&
 			type != kResourceTypeAudio36 && type != kResourceTypeSync &&
-			type != kResourceTypeSync36;
+			type != kResourceTypeSync36 && type != kResourceTypeCursor;
 }
 
 #define OUTPUT_LITERAL() \
