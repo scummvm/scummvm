@@ -446,22 +446,17 @@ void GfxFrameout::kernelFrameout() {
 
 //				warning("view %s %04x:%04x", _segMan->getObjectName(itemEntry->object), PRINT_REG(itemEntry->object));
 
-				switch (getSciVersion()) {
-				case SCI_VERSION_2:
-					if (view->isSci2Hires()) {
-						int16 dummyX = 0;
-						_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
-						_screen->adjustToUpscaledCoordinates(itemEntry->z, dummyX);
-					}
-					break;
-				case SCI_VERSION_2_1:
+
+				if (view->isSci2Hires()) {
+					int16 dummyX = 0;
+					_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
+					_screen->adjustToUpscaledCoordinates(itemEntry->z, dummyX);
+				} else if (getSciVersion() == SCI_VERSION_2_1) {
 					itemEntry->y = (itemEntry->y * _screen->getHeight()) / scriptsRunningHeight;
 					itemEntry->x = (itemEntry->x * _screen->getWidth()) / scriptsRunningWidth;
 					itemEntry->z = (itemEntry->z * _screen->getHeight()) / scriptsRunningHeight;
-					break;
-				default:
-					break;
 				}
+
 				// Adjust according to current scroll position
 				itemEntry->x -= it->planeOffsetX;
 
@@ -487,22 +482,17 @@ void GfxFrameout::kernelFrameout() {
 					Common::Rect nsRect = itemEntry->celRect;
 					// Translate back to actual coordinate within scrollable plane
 					nsRect.translate(it->planeOffsetX, 0);
-					switch (getSciVersion()) {
-					case SCI_VERSION_2:
-						if (view->isSci2Hires()) {
-							_screen->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
-							_screen->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
-						}
-						break;
-					case SCI_VERSION_2_1:
+
+					if (view->isSci2Hires()) {
+						_screen->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
+						_screen->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
+					} else if (getSciVersion() == SCI_VERSION_2_1) {
 						nsRect.top = (nsRect.top * scriptsRunningHeight) / _screen->getHeight();
 						nsRect.left = (nsRect.left * scriptsRunningWidth) / _screen->getWidth();
 						nsRect.bottom = (nsRect.bottom * scriptsRunningHeight) / _screen->getHeight();
 						nsRect.right = (nsRect.right * scriptsRunningWidth) / _screen->getWidth();
-						break;
-					default:
-						break;
 					}
+
 					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsLeft), nsRect.left);
 					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsTop), nsRect.top);
 					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsRight), nsRect.right);

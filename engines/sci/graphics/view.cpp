@@ -281,25 +281,14 @@ void GfxView::initData(GuiResourceId resourceId) {
 		}
 #ifdef ENABLE_SCI32
 		// adjust width/height returned to scripts
-		switch (getSciVersion()) {
-		case SCI_VERSION_2:
-			if (_isSci2Hires) {
-				for (loopNo = 0; loopNo < _loopCount; loopNo++) {
-					for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++) {
-						_screen->adjustBackUpscaledCoordinates(_loop[loopNo].cel[celNo].scriptWidth, _loop[loopNo].cel[celNo].scriptHeight);
-					}
-				}
-			}
-			break;
-
-		case SCI_VERSION_2_1:
-			for (loopNo = 0; loopNo < _loopCount; loopNo++) {
-				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++) {
+		if (_isSci2Hires) {
+			for (loopNo = 0; loopNo < _loopCount; loopNo++)
+				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++)
+					_screen->adjustBackUpscaledCoordinates(_loop[loopNo].cel[celNo].scriptWidth, _loop[loopNo].cel[celNo].scriptHeight);
+		} else if (getSciVersion() == SCI_VERSION_2_1) {
+			for (loopNo = 0; loopNo < _loopCount; loopNo++)
+				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++)
 					_coordAdjuster->fromDisplayToScript(_loop[loopNo].cel[celNo].scriptHeight, _loop[loopNo].cel[celNo].scriptWidth);
-				}
-			}
-		default:
-			break;
 		}
 #endif
 		break;

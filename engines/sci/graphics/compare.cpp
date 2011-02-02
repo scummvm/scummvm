@@ -133,36 +133,21 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	view = _cache->getView(viewId);
 
 #ifdef ENABLE_SCI32
-	switch (getSciVersion()) {
-	case SCI_VERSION_2:
-		if (view->isSci2Hires())
-			_screen->adjustToUpscaledCoordinates(y, x);
-		break;
-	case SCI_VERSION_2_1:
+	if (view->isSci2Hires())
+		_screen->adjustToUpscaledCoordinates(y, x);
+	else if (getSciVersion() == SCI_VERSION_2_1)
 		_coordAdjuster->fromScriptToDisplay(y, x);
-		break;
-	default:
-		break;
-	}
 #endif
 
 	view->getCelRect(loopNo, celNo, x, y, z, celRect);
 
 #ifdef ENABLE_SCI32
-	switch (getSciVersion()) {
-	case SCI_VERSION_2:
-		if (view->isSci2Hires()) {
-			_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
-			_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
-		}
-		break;
-	case SCI_VERSION_2_1: {
+	if (view->isSci2Hires()) {
+		_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
+		_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
+	} else if (getSciVersion() == SCI_VERSION_2_1) {
 		_coordAdjuster->fromDisplayToScript(celRect.top, celRect.left);
 		_coordAdjuster->fromDisplayToScript(celRect.bottom, celRect.right);
-		break;
-	}
-	default:
-		break;
 	}
 #endif
 
