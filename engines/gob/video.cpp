@@ -185,20 +185,18 @@ void Video::initPrimary(int16 mode) {
 	_vm->_global->_oldMode = mode;
 
 	if (mode != 3) {
-		initSurfDesc(mode, _surfWidth, _surfHeight, PRIMARY_SURFACE);
+		initSurfDesc(_surfWidth, _surfHeight, PRIMARY_SURFACE);
 
 		if (!_vm->_global->_dontSetPalette)
 			Video::setFullPalette(_vm->_global->_pPaletteDesc);
 	}
 }
 
-SurfacePtr Video::initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags) {
+SurfacePtr Video::initSurfDesc(int16 width, int16 height, int16 flags) {
 	SurfacePtr descPtr;
 
 	if (flags & PRIMARY_SURFACE)
 		assert((width == _surfWidth) && (height == _surfHeight));
-
-	_vm->validateVideoMode(vidMode);
 
 	if (flags & PRIMARY_SURFACE) {
 		_vm->_global->_primaryWidth = width;

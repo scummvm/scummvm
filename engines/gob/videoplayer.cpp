@@ -158,8 +158,7 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 
 			if (ownSurf) {
 				_vm->_draw->_spritesArray[properties.sprite] =
-					_vm->_video->initSurfDesc(_vm->_global->_videoMode,
-					                          screenSize ? _vm->_width  : video->decoder->getWidth(),
+					_vm->_video->initSurfDesc(screenSize ? _vm->_width  : video->decoder->getWidth(),
 					                          screenSize ? _vm->_height : video->decoder->getHeight(), 0);
 			}
 

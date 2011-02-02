@@ -59,8 +59,7 @@ void Draw_v2::initScreen() {
 		initSpriteSurf(kCursorSurface, 32, 16, 2);
 		_cursorSpritesBack = _spritesArray[kCursorSurface];
 		_cursorSprites = _cursorSpritesBack;
-		_scummvmCursor =
-			_vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, SCUMMVM_CURSOR);
+		_scummvmCursor = _vm->_video->initSurfDesc(16, 16, SCUMMVM_CURSOR);
 	}
 
 	_spritesArray[kFrontSurface] = _frontSurface;

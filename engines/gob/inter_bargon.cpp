@@ -125,7 +125,7 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 	int16 comp[5] = { 0, 1, 2, 3, -1 };
 	static const char *sndFiles[] = {"1INTROII.snd", "2INTROII.snd", "1INTRO3.snd", "2INTRO3.snd"};
 
-	surface = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, 0);
+	surface = _vm->_video->initSurfDesc(320, 200, 0);
 	_vm->_video->drawPackedSprite("2ille.ims", *surface);
 	_vm->_draw->_frontSurface->blit(*surface, 0, 0, 319, 199, 0, 0);
 	_vm->_video->drawPackedSprite("2ille4.ims", *surface);

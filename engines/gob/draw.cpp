@@ -327,8 +327,7 @@ void Draw::dirtiedRect(SurfacePtr surface,
 void Draw::initSpriteSurf(int16 index, int16 width, int16 height,
 		int16 flags) {
 
-	_spritesArray[index] =
-		_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
+	_spritesArray[index] = _vm->_video->initSurfDesc(width, height, flags);
 	_spritesArray[index]->clear();
 }
 

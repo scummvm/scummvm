@@ -351,9 +351,8 @@ void Inter_v1::o1_initCursor() {
 		_vm->_draw->_cursorSprites = _vm->_draw->_cursorSpritesBack;
 
 		_vm->_draw->_scummvmCursor =
-			_vm->_video->initSurfDesc(_vm->_global->_videoMode,
-					_vm->_draw->_cursorWidth, _vm->_draw->_cursorHeight,
-					SCUMMVM_CURSOR);
+			_vm->_video->initSurfDesc(_vm->_draw->_cursorWidth,
+					_vm->_draw->_cursorHeight, SCUMMVM_CURSOR);
 
 		for (int i = 0; i < 40; i++) {
 			_vm->_draw->_cursorAnimLow[i] = -1;

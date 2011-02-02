@@ -316,8 +316,7 @@ void Mult_v1::playMultInit() {
 			multObj.lastBottom = -1;
 		}
 
-		_animSurf = _vm->_video->initSurfDesc(_vm->_global->_videoMode,
-				320, 200, 0);
+		_animSurf = _vm->_video->initSurfDesc(320, 200, 0);
 		_vm->_draw->_spritesArray[Draw::kAnimSurface] = _animSurf;
 
 		_animSurf->blit(*_vm->_draw->_backSurface, 0, 0, 319, 199, 0, 0);
