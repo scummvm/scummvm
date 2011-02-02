@@ -45,14 +45,14 @@ public:
 	virtual ~FileManager();
 
 	bool     fileExists(const Common::String filename) const;
-	sound_pt getSound(int16 sound, uint16 *size);
+	sound_pt getSound(const int16 sound, uint16 *size);
 
 	void     readBootFile();
-	void     readImage(int objNum, object_t *objPtr);
+	void     readImage(const int objNum, object_t *objPtr);
 	void     readUIFImages();
-	void     readUIFItem(int16 id, byte *buf);
-	bool     restoreGame(int16 slot);
-	bool     saveGame(int16 slot, const Common::String descrip);
+	void     readUIFItem(const int16 id, byte *buf);
+	bool     restoreGame(const int16 slot);
+	bool     saveGame(const int16 slot, const Common::String descrip);
 
 	// Name scenery and objects picture databases
 	const char *getBootFilename()    { return "HUGO.BSF";    }
@@ -64,12 +64,12 @@ public:
 
 	virtual void openDatabaseFiles() = 0;
 	virtual void closeDatabaseFiles() = 0;
-	virtual void instructions() = 0;
+	virtual void instructions() const = 0;
 
-	virtual void readBackground(int screenIndex) = 0;
-	virtual void readOverlay(int screenNum, image_pt image, ovl_t overlayType) = 0;
+	virtual void readBackground(const int screenIndex) = 0;
+	virtual void readOverlay(const int screenNum, image_pt image, ovl_t overlayType) = 0;
 
-	virtual char *fetchString(int index) = 0;
+	virtual char *fetchString(const int index) = 0;
 
 protected:
 	HugoEngine *_vm;
@@ -96,12 +96,12 @@ protected:
 	Common::File _sceneryArchive1;                  // Handle for scenery file
 	Common::File _objectsArchive;                   // Handle for objects file
 
-	seq_t *readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool firstFl, const char *name);
-	const char *getBootCypher();
+	seq_t *readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, const bool firstFl, const char *name);
+	const char *getBootCypher() const;
 
 private:
-	byte *convertPCC(byte *p, uint16 y, uint16 bpl, image_pt data_p);
-	uif_hdr_t *getUIFHeader(uif_t id);
+	byte *convertPCC(byte *p, const uint16 y, const uint16 bpl, image_pt dataPtr) const;
+	uif_hdr_t *getUIFHeader(const uif_t id);
 
 //Strangerke : Not used?
 	void     printBootText();
@@ -113,11 +113,11 @@ public:
 	~FileManager_v1d();
 
 	virtual void closeDatabaseFiles();
-	virtual void instructions();
+	virtual void instructions() const;
 	virtual void openDatabaseFiles();
-	virtual void readBackground(int screenIndex);
-	virtual void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
-	virtual char *fetchString(int index);
+	virtual void readBackground(const int screenIndex);
+	virtual void readOverlay(const int screenNum, image_pt image, ovl_t overlayType);
+	virtual char *fetchString(const int index);
 };
 
 class FileManager_v2d : public FileManager_v1d {
@@ -127,9 +127,9 @@ public:
 
 	virtual void closeDatabaseFiles();
 	virtual void openDatabaseFiles();
-	virtual void readBackground(int screenIndex);
-	virtual void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
-	char *fetchString(int index);
+	virtual void readBackground(const int screenIndex);
+	virtual void readOverlay(const int screenNum, image_pt image, ovl_t overlayType);
+	char *fetchString(const int index);
 };
 
 class FileManager_v3d : public FileManager_v2d {
@@ -139,8 +139,8 @@ public:
 
 	void closeDatabaseFiles();
 	void openDatabaseFiles();
-	void readBackground(int screenIndex);
-	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
+	void readBackground(const int screenIndex);
+	void readOverlay(const int screenNum, image_pt image, ovl_t overlayType);
 private:
 	Common::File _sceneryArchive2;                  // Handle for scenery file
 };
@@ -150,7 +150,7 @@ public:
 	FileManager_v2w(HugoEngine *vm);
 	~FileManager_v2w();
 
-	void instructions();
+	void instructions() const;
 };
 
 class FileManager_v1w : public FileManager_v2w {
@@ -158,7 +158,7 @@ public:
 	FileManager_v1w(HugoEngine *vm);
 	~FileManager_v1w();
 
-	void readOverlay(int screenNum, image_pt image, ovl_t overlayType);
+	void readOverlay(const int screenNum, image_pt image, ovl_t overlayType);
 };
 
 } // End of namespace Hugo

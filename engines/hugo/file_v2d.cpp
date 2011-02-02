@@ -74,7 +74,7 @@ void FileManager_v2d::closeDatabaseFiles() {
 /**
 * Read a PCX image into dib_a
 */
-void FileManager_v2d::readBackground(int screenIndex) {
+void FileManager_v2d::readBackground(const int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
 	_sceneryArchive1.seek((uint32) screenIndex * sizeof(sceneBlock_t), SEEK_SET);
@@ -100,7 +100,7 @@ void FileManager_v2d::readBackground(int screenIndex) {
 /**
 * Open and read in an overlay file, close file
 */
-void FileManager_v2d::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
+void FileManager_v2d::readOverlay(const int screenNum, image_pt image, ovl_t overlayType) {
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	image_pt tmpImage = image;                  // temp ptr to overlay file
@@ -161,7 +161,7 @@ void FileManager_v2d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 /**
 * Fetch string from file, decode and return ptr to string in memory
 */
-char *FileManager_v2d::fetchString(int index) {
+char *FileManager_v2d::fetchString(const int index) {
 	debugC(1, kDebugFile, "fetchString(%d)", index);
 	static char buffer[kMaxBoxChar];
 

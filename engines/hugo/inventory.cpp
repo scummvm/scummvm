@@ -56,7 +56,7 @@ InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm) {
 * scrollFl is TRUE if scroll arrows required
 * firstObjId is index of first (scrolled) inventory object to display
 */
-void InventoryHandler::constructInventory(int16 imageTotNumb, int displayNumb, bool scrollFl, int16 firstObjId) {
+void InventoryHandler::constructInventory(const int16 imageTotNumb, int displayNumb, const bool scrollFl, int16 firstObjId) {
 	debugC(1, kDebugInventory, "constructInventory(%d, %d, %d, %d)", imageTotNumb, displayNumb, (scrollFl) ? 0 : 1, firstObjId);
 
 	// Clear out icon buffer
@@ -97,7 +97,7 @@ void InventoryHandler::constructInventory(int16 imageTotNumb, int displayNumb, b
 * Process required action for inventory
 * Returns objId under cursor (or -1) for INV_GET
 */
-int16 InventoryHandler::processInventory(invact_t action, ...) {
+int16 InventoryHandler::processInventory(const invact_t action, ...) {
 	debugC(1, kDebugInventory, "processInventory(invact_t action, ...)");
 
 	static int16 firstIconId = 0;                   // Index of first icon to display

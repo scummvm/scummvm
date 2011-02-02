@@ -204,7 +204,7 @@ void Parser_v1w::lineHandler() {
 	}
 }
 
-void Parser_v1w::showInventory() {
+void Parser_v1w::showInventory() const {
 	status_t &gameStatus = _vm->getGameStatus();
 	if (gameStatus.gameOverFl) {
 		Utils::gameOverMsg();

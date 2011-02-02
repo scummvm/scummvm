@@ -46,7 +46,7 @@ FileManager_v1w::~FileManager_v1w() {
 /**
 * Open and read in an overlay file, close file
 */
-void FileManager_v1w::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
+void FileManager_v1w::readOverlay(const int screenNum, image_pt image, ovl_t overlayType) {
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	image_pt tmpImage = image;                      // temp ptr to overlay file

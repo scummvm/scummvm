@@ -55,10 +55,10 @@ private:
 		kMsExit      = 1
 	};
 
-	void  cursorText(char *buffer, int16 cx, int16 cy, uif_t fontId, int16 color);
-	int16 findExit(int16 cx, int16 cy);
-	void  processRightClick(int16 objId, int16 cx, int16 cy);
-	void  processLeftClick(int16 objId, int16 cx, int16 cy);
+	void  cursorText(const char *buffer, const int16 cx, const int16 cy, const uif_t fontId, const int16 color);
+	int16 findExit(const int16 cx, const int16 cy);
+	void  processRightClick(const int16 objId, const int16 cx, const int16 cy);
+	void  processLeftClick(const int16 objId, const int16 cx, const int16 cy);
 };
 
 } // End of namespace Hugo

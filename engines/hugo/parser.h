@@ -47,7 +47,7 @@ public:
 	Parser(HugoEngine *vm);
 	virtual ~Parser();
 
-	bool isWordPresent(char **wordArr);
+	bool isWordPresent(char **wordArr) const;
 
 	void charHandler();
 	void command(const char *format, ...);
@@ -55,14 +55,14 @@ public:
 	void switchTurbo();
 
 	virtual void lineHandler() = 0;
-	virtual void showInventory() = 0;
+	virtual void showInventory() const = 0;
 
 protected:
 	HugoEngine *_vm;
 
-	char *findNoun();
-	char *findVerb();
-	void  showDosInventory();
+	char *findNoun() const;
+	char *findVerb() const;
+	void  showDosInventory() const;
 
 	bool   _checkDoubleF1Fl;                        // Flag used to display user help or instructions
 	uint16 _getIndex;                               // Index into ring buffer
@@ -79,18 +79,18 @@ public:
 	~Parser_v1d();
 
 	virtual void lineHandler();
-	virtual void showInventory();
+	virtual void showInventory() const;
 
 protected:
 	virtual void  dropObject(object_t *obj);
-	virtual bool  isBackgroundWord(char *noun, char *verb, objectList_t obj);
-	virtual bool  isCatchallVerb(bool testNounFl, char *noun, char *verb, objectList_t obj);
+	virtual bool  isBackgroundWord(char *noun, char *verb, objectList_t obj) const;
+	virtual bool  isCatchallVerb(bool testNounFl, char *noun, char *verb, objectList_t obj) const;
 	virtual bool  isGenericVerb(char *word, object_t *obj);
-	virtual bool  isNear(char *verb, char *noun, object_t *obj, char *comment);
+	virtual bool  isNear(char *verb, char *noun, object_t *obj, char *comment) const;
 	virtual bool  isObjectVerb(char *word, object_t *obj);
 	virtual void  takeObject(object_t *obj);
 
-	char *findNextNoun(char *noun);
+	char *findNextNoun(char *noun) const;
 };
 
 class Parser_v2d : public Parser_v1d {
@@ -109,10 +109,10 @@ public:
 	virtual void lineHandler();
 protected:
 	void  dropObject(object_t *obj);
-	bool  isBackgroundWord(objectList_t obj);
-	bool  isCatchallVerb(objectList_t obj);
+	bool  isBackgroundWord(objectList_t obj) const;
+	bool  isCatchallVerb(objectList_t obj) const;
 	bool  isGenericVerb(object_t *obj, char *comment);
-	bool  isNear(object_t *obj, char *verb, char *comment);
+	bool  isNear(object_t *obj, char *verb, char *comment) const;
 	bool  isObjectVerb(object_t *obj, char *comment);
 	void  takeObject(object_t *obj);
 };
@@ -122,7 +122,7 @@ public:
 	Parser_v1w(HugoEngine *vm);
 	~Parser_v1w();
 
-	virtual void showInventory();
+	virtual void showInventory() const;
 
 	void  lineHandler();
 };

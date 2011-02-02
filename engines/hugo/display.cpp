@@ -76,7 +76,7 @@ void Screen::initDisplay() {
 /**
 * Move an image from source to destination
 */
-void Screen::moveImage(image_pt srcImage, int16 x1, int16 y1, int16 dx, int16 dy, int16 width1, image_pt dstImage, int16 x2, int16 y2, int16 width2) {
+void Screen::moveImage(image_pt srcImage, const int16 x1, const int16 y1, const int16 dx, int16 dy, const int16 width1, image_pt dstImage, const int16 x2, const int16 y2, const int16 width2) {
 	debugC(3, kDebugDisplay, "moveImage(srcImage, %d, %d, %d, %d, %d, dstImage, %d, %d, %d)", x1, y1, dx, dy, width1, x2, y2, width2);
 
 	int16 wrap_src = width1 - dx;                   // Wrap to next src row
@@ -102,7 +102,7 @@ void Screen::displayBackground() {
 /**
 * Blit the supplied rectangle from _frontBuffer to the screen
 */
-void Screen::displayRect(int16 x, int16 y, int16 dx, int16 dy) {
+void Screen::displayRect(const int16 x, const int16 y, const int16 dx, const int16 dy) {
 	debugC(3, kDebugDisplay, "displayRect(%d, %d, %d, %d)", x, y, dx, dy);
 
 	int16 xClip, yClip;
@@ -115,7 +115,7 @@ void Screen::displayRect(int16 x, int16 y, int16 dx, int16 dy) {
 * Change a color by remapping supplied palette index with new index in main palette.
 * Alse save the new color in the current palette.
 */
-void Screen::remapPal(uint16 oldIndex, uint16 newIndex) {
+void Screen::remapPal(const uint16 oldIndex, const uint16 newIndex) {
 	debugC(1, kDebugDisplay, "Remap_pal(%d, %d)", oldIndex, newIndex);
 
 	byte pal[4];
@@ -131,7 +131,7 @@ void Screen::remapPal(uint16 oldIndex, uint16 newIndex) {
 /**
 * Saves the current palette in a savegame
 */
-void Screen::savePal(Common::WriteStream *f) {
+void Screen::savePal(Common::WriteStream *f) const {
 	debugC(1, kDebugDisplay, "savePal()");
 
 	for (int i = 0; i < _paletteSize; i++)
@@ -164,8 +164,8 @@ void Screen::restorePal(Common::SeekableReadStream *f) {
 * This implementation gives the same result than the DOS version.
 * It wasn't implemented in the Win version
 */
-void Screen::setBackgroundColor(long color) {
-	debugC(1, kDebugDisplay, "setBackgroundColor(%ld)", color);
+void Screen::setBackgroundColor(const uint16 color) {
+	debugC(1, kDebugDisplay, "setBackgroundColor(%d)", color);
 
 	remapPal(0, color);
 }
@@ -192,7 +192,7 @@ overlayState_t Screen::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
 * Merge an object frame into _frontBuffer at sx, sy and update rectangle list.
 * If fore TRUE, force object above any overlay
 */
-void Screen::displayFrame(int sx, int sy, seq_t *seq, bool foreFl) {
+void Screen::displayFrame(const int sx, const int sy, seq_t *seq, const bool foreFl) {
 	debugC(3, kDebugDisplay, "displayFrame(%d, %d, seq, %d)", sx, sy, (foreFl) ? 1 : 0);
 
 	image_pt image = seq->imagePtr;                 // Ptr to object image data
@@ -229,7 +229,7 @@ void Screen::displayFrame(int sx, int sy, seq_t *seq, bool foreFl) {
 /**
 * Merge rectangles A,B leaving result in B
 */
-void Screen::merge(rect_t *rectA, rect_t *rectB) {
+void Screen::merge(const rect_t *rectA, rect_t *rectB) {
 	debugC(6, kDebugDisplay, "merge()");
 
 	int16 xa = rectA->x + rectA->dx;                // Find x2,y2 for each rectangle
@@ -249,7 +249,7 @@ void Screen::merge(rect_t *rectA, rect_t *rectB) {
 * of blist.  bmax is the max size of the blist.  Note that blist can
 * have holes, in which case dx = 0.  Returns used length of blist.
 */
-int16 Screen::mergeLists(rect_t *list, rect_t *blist, int16 len, int16 blen, int16 bmax) {
+int16 Screen::mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 blen) {
 	debugC(4, kDebugDisplay, "mergeLists()");
 
 	int16   coalesce[kBlitListSize];                // List of overlapping rects
@@ -327,8 +327,8 @@ void Screen::displayList(dupdate_t update, ...) {
 		}
 
 		// Coalesce restore-list, add-list into combined blit-list
-		blitLength = mergeLists(restoreList, blistList, restoreIndex, blitLength, kBlitListSize);
-		blitLength = mergeLists(addList, blistList, addIndex,  blitLength, kBlitListSize);
+		blitLength = mergeLists(restoreList, blistList, restoreIndex, blitLength);
+		blitLength = mergeLists(addList, blistList, addIndex,  blitLength);
 
 		// Blit the combined blit-list
 		for (restoreIndex = 0, p = blistList; restoreIndex < blitLength; restoreIndex++, p++) {
@@ -354,7 +354,7 @@ void Screen::displayList(dupdate_t update, ...) {
 * *(fontdata+1) = Font Width (pixels)
 * *(fontdata+x) = Font Bitmap (monochrome)
 */
-void Screen::writeChr(int sx, int sy, byte color, char *local_fontdata) {
+void Screen::writeChr(const int sx, const int sy, const byte color, const char *local_fontdata){
 	debugC(2, kDebugDisplay, "writeChr(%d, %d, %d, %d)", sx, sy, color, local_fontdata[0]);
 
 	byte height = local_fontdata[0];
@@ -386,10 +386,10 @@ int16 Screen::fontHeight() {
 /**
 * Returns length of supplied string in pixels
 */
-int16 Screen::stringLength(const char *s) {
+int16 Screen::stringLength(const char *s) const {
 	debugC(2, kDebugDisplay, "stringLength(%s)", s);
 
-	byte **fontArr = _font[_fnt];
+	byte *const*fontArr = _font[_fnt];
 	int16 sum = 0;
 	for (; *s; s++)
 		sum += *(fontArr[(uint)*s] + 1) + 1;
@@ -400,7 +400,7 @@ int16 Screen::stringLength(const char *s) {
 /**
 * Return x which would center supplied string
 */
-int16 Screen::center(const char *s) {
+int16 Screen::center(const char *s) const {
 	debugC(1, kDebugDisplay, "center(%s)", s);
 
 	return (int16)((kXPix - stringLength(s)) >> 1);
@@ -410,13 +410,13 @@ int16 Screen::center(const char *s) {
 * Write string at sx,sy in supplied color in current font
 * If sx == CENTER, center it
 */
-void Screen::writeStr(int16 sx, int16 sy, const char *s, byte color) {
+void Screen::writeStr(int16 sx, const int16 sy, const char *s, const byte color) {
 	debugC(2, kDebugDisplay, "writeStr(%d, %d, %s, %d)", sx, sy, s, color);
 
 	if (sx == kCenter)
 		sx = center(s);
 
-	byte **font = _font[_fnt];
+	byte *const*font = _font[_fnt];
 	for (; *s; s++) {
 		writeChr(sx, sy, color, (char *)font[(uint)*s]);
 		sx += *(font[(uint)*s] + 1) + 1;
@@ -426,7 +426,7 @@ void Screen::writeStr(int16 sx, int16 sy, const char *s, byte color) {
 /**
 * Shadowed version of writestr
 */
-void Screen::shadowStr(int16 sx, int16 sy, const char *s, byte color) {
+void Screen::shadowStr(int16 sx, const int16 sy, const char *s, const byte color) {
 	debugC(1, kDebugDisplay, "shadowStr(%d, %d, %s, %d)", sx, sy, s, color);
 
 	if (sx == kCenter)
@@ -440,7 +440,7 @@ void Screen::shadowStr(int16 sx, int16 sy, const char *s, byte color) {
 * Introduce user to the game. In the original games, it was only
 * present in the DOS versions
 */
-void Screen::userHelp() {
+void Screen::userHelp() const {
 	Utils::Box(kBoxAny , "%s",
 	           "F1  - Press F1 again\n"
 	           "      for instructions\n"
@@ -473,7 +473,7 @@ void Screen::drawStatusText() {
 	displayList(kDisplayAdd, posX, posY, sdx, sdy);
 }
 
-void Screen::drawShape(int x, int y, int color1, int color2) {
+void Screen::drawShape(const int x, const int y, const int color1, const int color2) {
 	for (int i = 0; i < kShapeSize; i++) {
 		for (int j = 0; j < i; j++) {
 			_backBuffer[320 * (y + i) + (x + kShapeSize + j - i)] = color1;
@@ -490,7 +490,7 @@ void Screen::drawShape(int x, int y, int color1, int color2) {
 /**
 * Display rectangle (filles or empty)
 */
-void Screen::drawRectangle(bool filledFl, int16 x1, int16 y1, int16 x2, int16 y2, int color) {
+void Screen::drawRectangle(const bool filledFl, const int16 x1, const int16 y1, const int16 x2, const int16 y2, const int color) {
 	assert(x1 <= x2);
 	assert(y1 <= y2);
 	int16 x2Clip = CLIP<int16>(x2, 0, 320);
@@ -555,15 +555,15 @@ void Screen::freeFonts() {
 	}
 }
 
-void Screen::selectInventoryObjId(int16 objId) {
+void Screen::selectInventoryObjId(const int16 objId) {
 
 	status_t &gameStatus = _vm->getGameStatus();
 
 	gameStatus.inventoryObjId = objId;              // Select new object
 
 	// Find index of icon
-	int16 iconId;                                   // Find index of dragged icon
-	for (iconId = 0; iconId < _vm->_maxInvent; iconId++) {
+	int16 iconId = 0;                               // Find index of dragged icon
+	for (; iconId < _vm->_maxInvent; iconId++) {
 		if (gameStatus.inventoryObjId == _vm->_invent[iconId])
 			break;
 	}
@@ -597,18 +597,18 @@ void Screen::hideCursor() {
 	CursorMan.showMouse(false);
 }
 
-bool Screen::isInX(int16 x, rect_t *rect) {
+bool Screen::isInX(const int16 x, const rect_t *rect) const {
 	return (x >= rect->x) && (x <= rect->x + rect->dx);
 }
 
-bool Screen::isInY(int16 y, rect_t *rect) {
+bool Screen::isInY(const int16 y, const rect_t *rect) const {
 	return (y >= rect->y) && (y <= rect->y + rect->dy);
 }
 
 /**
 * Check if two rectangles are over lapping
 */
-bool Screen::isOverlaping(rect_t *rectA, rect_t *rectB) {
+bool Screen::isOverlaping(const rect_t *rectA, const rect_t *rectB) const {
 	return (isInX(rectA->x, rectB) || isInX(rectA->x + rectA->dx, rectB) || isInX(rectB->x, rectA) || isInX(rectB->x + rectB->dx, rectA)) && 
 		   (isInY(rectA->y, rectB) || isInY(rectA->y + rectA->dy, rectB) || isInY(rectB->y, rectA) || isInY(rectB->y + rectB->dy, rectA));
 }
@@ -653,7 +653,7 @@ Screen_v1d::~Screen_v1d() {
 * TODO: This uses hardcoded fonts in hugo.dat, it should be replaced
 *       by a proper implementation of .FON files
 */
-void Screen_v1d::loadFont(int16 fontId) {
+void Screen_v1d::loadFont(const int16 fontId) {
 	debugC(2, kDebugDisplay, "loadFont(%d)", fontId);
 
 	assert(fontId < kNumFonts);
@@ -708,7 +708,7 @@ Screen_v1w::~Screen_v1w() {
 /**
 * Load font file, construct font ptrs and reverse data bytes
 */
-void Screen_v1w::loadFont(int16 fontId) {
+void Screen_v1w::loadFont(const int16 fontId) {
 	debugC(2, kDebugDisplay, "loadFont(%d)", fontId);
 
 	_fnt = fontId - kFirstFont;                     // Set current font number

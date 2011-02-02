@@ -56,7 +56,7 @@ void FileManager_v1d::closeDatabaseFiles() {
 /**
 * Open and read in an overlay file, close file
 */
-void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
+void FileManager_v1d::readOverlay(const int screenNum, image_pt image, const ovl_t overlayType) {
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	const char *ovl_ext[] = {".b", ".o", ".ob"};
@@ -81,7 +81,7 @@ void FileManager_v1d::readOverlay(int screenNum, image_pt image, ovl_t overlayTy
 /**
 * Read a PCX image into dib_a
 */
-void FileManager_v1d::readBackground(int screenIndex) {
+void FileManager_v1d::readBackground(const int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
 	Common::String buf;
@@ -95,7 +95,7 @@ void FileManager_v1d::readBackground(int screenIndex) {
 	_sceneryArchive1.close();
 }
 
-char *FileManager_v1d::fetchString(int index) {
+char *FileManager_v1d::fetchString(const int index) {
 	debugC(1, kDebugFile, "fetchString(%d)", index);
 
 	return _vm->_text->getStringtData(index);
@@ -105,7 +105,7 @@ char *FileManager_v1d::fetchString(int index) {
 * Simple instructions given when F1 pressed twice in a row
 * Only in DOS versions
 */
-void FileManager_v1d::instructions() {
+void FileManager_v1d::instructions() const {
 	Common::File f;
 	if (!f.open("help.dat")) {
 		warning("help.dat not found");

@@ -48,7 +48,7 @@ FileManager_v3d::~FileManager_v3d() {
 /**
 * Read a PCX image into dib_a
 */
-void FileManager_v3d::readBackground(int screenIndex) {
+void FileManager_v3d::readBackground(const int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
 	_sceneryArchive1.seek((uint32) screenIndex * sizeof(sceneBlock_t), SEEK_SET);
@@ -107,7 +107,7 @@ void FileManager_v3d::closeDatabaseFiles() {
 /**
 * Open and read in an overlay file, close file
 */
-void FileManager_v3d::readOverlay(int screenNum, image_pt image, ovl_t overlayType) {
+void FileManager_v3d::readOverlay(const int screenNum, image_pt image, ovl_t overlayType) {
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	image_pt     tmpImage = image;                  // temp ptr to overlay file

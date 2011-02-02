@@ -305,7 +305,7 @@ void SoundHandler::playMusic(int16 tune) {
 * Produce various sound effects on supplied stereo channel(s)
 * Override currently playing sound only if lower or same priority
 */
-void SoundHandler::playSound(int16 sound, byte priority) {
+void SoundHandler::playSound(int16 sound, const byte priority) {
 	// uint32 dwVolume;                             // Left, right volume of sound
 	sound_pt sound_p;                               // Sound data
 	uint16 size;                                    // Size of data
@@ -316,14 +316,6 @@ void SoundHandler::playSound(int16 sound, byte priority) {
 		return;
 
 	syncVolume();
-
-	//
-	// See if last wave still playing - if so, check priority
-	// if (waveOutUnprepareHeader(hwav, lphdr, sizeof(WAVEHDR)) == WAVERR_STILLPLAYING)
-	//    if (priority < curPriority)                 // Don't override unless priority >= current
-	//       return;
-	//    else
-	//       Stop_sound();
 	curPriority = priority;
 
 	// Get sound data

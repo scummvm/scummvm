@@ -43,7 +43,7 @@ class InventoryHandler {
 public:
 	InventoryHandler(HugoEngine *vm);
 
-	int16 processInventory(invact_t action, ...);
+	int16 processInventory(const invact_t action, ...);
 	void runInventory();
 
 private:
@@ -51,7 +51,7 @@ private:
 
 	static const int kStepDy = 8;                   // Pixels per step movement
 
-	void constructInventory(int16 imageTotNumb, int displayNumb, bool scrollFl, int16 firstObjId);
+	void constructInventory(const int16 imageTotNumb, int displayNumb, const bool scrollFl, int16 firstObjId);
 };
 
 } // End of namespace Hugo

@@ -867,7 +867,7 @@ void HugoEngine::shutdown() {
 /**
 * Read scenery, overlay files for given screen number
 */
-void HugoEngine::readScreenFiles(int screenNum) {
+void HugoEngine::readScreenFiles(const int screenNum) {
 	debugC(1, kDebugEngine, "readScreenFiles(%d)", screenNum);
 
 	_file->readBackground(screenNum);               // Scenery file
@@ -886,7 +886,7 @@ void HugoEngine::readScreenFiles(int screenNum) {
 * Return maximum allowed movement (from zero to vx) such that object does
 * not cross a boundary (either background or another object)
 */
-int HugoEngine::deltaX(int x1, int x2, int vx, int y) {
+int HugoEngine::deltaX(const int x1, const int x2, const int vx, int y) const {
 // Explanation of algorithm:  The boundaries are drawn as contiguous
 // lines 1 pixel wide.  Since DX,DY are not necessarily 1, we must
 // detect boundary crossing.  If vx positive, examine each pixel from
@@ -939,7 +939,7 @@ int HugoEngine::deltaX(int x1, int x2, int vx, int y) {
 * bytes at end of line segment; must only count boundary bits falling on
 * line segment.
 */
-int HugoEngine::deltaY(int x1, int x2, int vy, int y) {
+int HugoEngine::deltaY(const int x1, const int x2, const int vy, const int y) const {
 	debugC(3, kDebugEngine, "deltaY(%d, %d, %d, %d)", x1, x2, vy, y);
 
 	if (vy == 0)
@@ -966,7 +966,7 @@ int HugoEngine::deltaY(int x1, int x2, int vy, int y) {
 /**
 * Store a horizontal line segment in the object boundary file
 */
-void HugoEngine::storeBoundary(int x1, int x2, int y) {
+void HugoEngine::storeBoundary(const int x1, const int x2, const int y) {
 	debugC(5, kDebugEngine, "storeBoundary(%d, %d, %d)", x1, x2, y);
 
 	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
@@ -983,7 +983,7 @@ void HugoEngine::storeBoundary(int x1, int x2, int y) {
 /**
 * Clear a horizontal line segment in the object boundary file
 */
-void HugoEngine::clearBoundary(int x1, int x2, int y) {
+void HugoEngine::clearBoundary(const int x1, const int x2, const int y) {
 	debugC(5, kDebugEngine, "clearBoundary(%d, %d, %d)", x1, x2, y);
 
 	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
@@ -1001,7 +1001,7 @@ void HugoEngine::clearBoundary(int x1, int x2, int y) {
 * Clear a horizontal line segment in the screen boundary file
 * Used to fix some data issues
 */
-void HugoEngine::clearScreenBoundary(int x1, int x2, int y) {
+void HugoEngine::clearScreenBoundary(const int x1, const int x2, const int y) {
 	debugC(5, kDebugEngine, "clearScreenBoundary(%d, %d, %d)", x1, x2, y);
 
 	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
@@ -1019,7 +1019,7 @@ void HugoEngine::clearScreenBoundary(int x1, int x2, int y) {
 * Search background command list for this screen for supplied object.
 * Return first associated verb (not "look") or 0 if none found.
 */
-char *HugoEngine::useBG(char *name) {
+char *HugoEngine::useBG(const char *name) {
 	debugC(1, kDebugEngine, "useBG(%s)", name);
 
 	objectList_t p = _backgroundObjects[*_screen_p];
@@ -1036,7 +1036,7 @@ char *HugoEngine::useBG(char *name) {
 /**
 * Add action lists for this screen to event queue
 */
-void HugoEngine::screenActions(int screenNum) {
+void HugoEngine::screenActions(const int screenNum) {
 	debugC(1, kDebugEngine, "screenActions(%d)", screenNum);
 
 	uint16 *screenAct = _screenActs[screenNum];
@@ -1049,7 +1049,7 @@ void HugoEngine::screenActions(int screenNum) {
 /**
 * Set the new screen number into the hero object and any carried objects
 */
-void HugoEngine::setNewScreen(int screenNum) {
+void HugoEngine::setNewScreen(const int screenNum) {
 	debugC(1, kDebugEngine, "setNewScreen(%d)", screenNum);
 
 	*_screen_p = screenNum;                         // HERO object
@@ -1116,15 +1116,15 @@ void HugoEngine::endGame() {
 	_status.viewState = kViewExit;
 }
 
-bool HugoEngine::canLoadGameStateCurrently() {
+bool HugoEngine::canLoadGameStateCurrently() const {
 	return true;
 }
 
-bool HugoEngine::canSaveGameStateCurrently() {
+bool HugoEngine::canSaveGameStateCurrently() const {
 	return (_status.viewState == kViewPlay);
 }
 
-int8 HugoEngine::getTPS() {
+int8 HugoEngine::getTPS() const {
 	return ((_config.turboFl) ? kTurboTps : _normalTPS);
 }
 

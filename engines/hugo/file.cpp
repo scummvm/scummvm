@@ -55,7 +55,7 @@ FileManager::~FileManager() {
 * Convert 4 planes (RGBI) data to 8-bit DIB format
 * Return original plane data ptr
 */
-byte *FileManager::convertPCC(byte *p, uint16 y, uint16 bpl, image_pt dataPtr) {
+byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, image_pt dataPtr) const{
 	debugC(2, kDebugFile, "convertPCC(byte *p, %d, %d, image_pt data_p)", y, bpl);
 
 	dataPtr += y * bpl * 8;                         // Point to correct DIB line
@@ -75,7 +75,7 @@ byte *FileManager::convertPCC(byte *p, uint16 y, uint16 bpl, image_pt dataPtr) {
 * allocate space if NULL.  Name used for errors.  Returns address of seq_p
 * Set first TRUE to initialize b_index (i.e. not reading a sequential image in file).
 */
-seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool firstFl, const char *name) {
+seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, const bool firstFl, const char *name) {
 	debugC(1, kDebugFile, "readPCX(..., %s)", name);
 
 	// Read in the PCC header and check consistency
@@ -115,9 +115,9 @@ seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool
 	uint16 size = seqPtr->lines * seqPtr->bytesPerLine8;
 
 	// Allocate memory for image data if NULL
-	if (imagePtr == 0) {
+	if (imagePtr == 0)
 		imagePtr = (byte *)malloc((size_t) size);
-	}
+
 	assert(imagePtr);
 
 	seqPtr->imagePtr = imagePtr;
@@ -147,7 +147,7 @@ seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, bool
 /**
 * Read object file of PCC images into object supplied
 */
-void FileManager::readImage(int objNum, object_t *objPtr) {
+void FileManager::readImage(const int objNum, object_t *objPtr) {
 	debugC(1, kDebugFile, "readImage(%d, object_t *objPtr)", objNum);
 
 	/**
@@ -247,7 +247,7 @@ void FileManager::readImage(int objNum, object_t *objPtr) {
 * Read sound (or music) file data.  Call with SILENCE to free-up
 * any allocated memory.  Also returns size of data
 */
-sound_pt FileManager::getSound(int16 sound, uint16 *size) {
+sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 	debugC(1, kDebugFile, "getSound(%d)", sound);
 
 	// No more to do if SILENCE (called for cleanup purposes)
@@ -300,7 +300,7 @@ bool FileManager::fileExists(const Common::String filename) const {
 /**
 * Save game to supplied slot
 */
-bool FileManager::saveGame(int16 slot, const Common::String descrip) {
+bool FileManager::saveGame(const int16 slot, const Common::String descrip) {
 	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip.c_str());
 
 	const EnginePlugin *plugin = NULL;
@@ -415,7 +415,7 @@ bool FileManager::saveGame(int16 slot, const Common::String descrip) {
 /**
 * Restore game from supplied slot number
 */
-bool FileManager::restoreGame(int16 slot) {
+bool FileManager::restoreGame(const int16 slot) {
 	debugC(1, kDebugFile, "restoreGame(%d)", slot);
 
 	const EnginePlugin *plugin = NULL;
@@ -602,7 +602,7 @@ void FileManager::readBootFile() {
 * This file contains, between others, the bitmaps of the fonts used in the application
 * UIF means User interface database (Windows Only)
 */
-uif_hdr_t *FileManager::getUIFHeader(uif_t id) {
+uif_hdr_t *FileManager::getUIFHeader(const uif_t id) {
 	debugC(1, kDebugFile, "getUIFHeader(%d)", id);
 
 	static bool firstFl = true;
@@ -632,7 +632,7 @@ uif_hdr_t *FileManager::getUIFHeader(uif_t id) {
 /**
 * Read uif item into supplied buffer.
 */
-void FileManager::readUIFItem(int16 id, byte *buf) {
+void FileManager::readUIFItem(const int16 id, byte *buf) {
 	debugC(1, kDebugFile, "readUIFItem(%d, ...)", id);
 
 	// Open uif file to read data
@@ -669,7 +669,7 @@ void FileManager::readUIFImages() {
 	readUIFItem(UIF_IMAGES, _vm->_screen->getGUIBuffer());   // Read all uif images
 }
 
-const char *FileManager::getBootCypher() {
+const char *FileManager::getBootCypher() const {
 	return "Copyright 1992, David P Gray, Gray Design Associates";
 }
 } // End of namespace Hugo

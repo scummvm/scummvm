@@ -318,29 +318,29 @@ public:
 		return *s_Engine;
 	}
 
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
+	bool canLoadGameStateCurrently() const;
+	bool canSaveGameStateCurrently() const;
 	bool loadHugoDat();
 
-	char *useBG(char *name);
+	char *useBG(const char *name);
 
-	int  deltaX(int x1, int x2, int vx, int y);
-	int  deltaY(int x1, int x2, int vy, int y);
+	int  deltaX(const int x1, const int x2, const int vx, int y) const;
+	int  deltaY(const int x1, const int x2, const int vy, const int y) const;
 
-	int8 getTPS();
+	int8 getTPS() const;
 
 	void initGame(const HugoGameDescription *gd);
 	void initGamePart(const HugoGameDescription *gd);
 	void boundaryCollision(object_t *obj);
-	void clearBoundary(int x1, int x2, int y);
-	void clearScreenBoundary(int x1, int x2, int y);
+	void clearBoundary(const int x1, const int x2, const int y);
+	void clearScreenBoundary(const int x1, const int x2, const int y);
 	void endGame();
 	void initStatus();
-	void readScreenFiles(int screen);
-	void screenActions(int screen);
-	void setNewScreen(int screen);
+	void readScreenFiles(const int screen);
+	void screenActions(const int screen);
+	void setNewScreen(const int screen);
 	void shutdown();
-	void storeBoundary(int x1, int x2, int y);
+	void storeBoundary(const int x1, const int x2, const int y);
 	void syncSoundSettings();
 
 	int getMouseX() const {
@@ -368,16 +368,16 @@ public:
 	int getScore() const {
 		return _score;
 	}
-	void setScore(int newScore) {
+	void setScore(const int newScore) {
 		_score = newScore;
 	}
-	void adjustScore(int adjustment) {
+	void adjustScore(const int adjustment) {
 		_score += adjustment;
 	}
 	int getMaxScore() const {
 		return _maxscore;
 	}
-	void setMaxScore(int newScore) {
+	void setMaxScore(const int newScore) {
 		_maxscore = newScore;
 	}
 	byte getIntroSize() {
@@ -395,7 +395,7 @@ public:
 		return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 	}
 
-	const char *getCopyrightString() { return "Copyright 1989-1997 David P Gray, All Rights Reserved."; }
+	const char *getCopyrightString() const { return "Copyright 1989-1997 David P Gray, All Rights Reserved."; }
 
 
 	FileManager *_file;

@@ -53,7 +53,7 @@ MouseHandler::MouseHandler(HugoEngine *vm) : _vm(vm) {
 /**
 * Shadow-blit supplied string into dib_a at cx,cy and add to display list
 */
-void MouseHandler::cursorText(char *buffer, int16 cx, int16 cy, uif_t fontId, int16 color) {
+void MouseHandler::cursorText(const char *buffer, const int16 cx, const int16 cy, const uif_t fontId, const int16 color) {
 	debugC(1, kDebugMouse, "cursorText(%s, %d, %d, %d, %d)", buffer, cx, cy, fontId, color);
 
 	_vm->_screen->loadFont(fontId);
@@ -79,7 +79,7 @@ void MouseHandler::cursorText(char *buffer, int16 cx, int16 cy, uif_t fontId, in
 * Find the exit hotspot containing cx, cy.
 * Return hotspot index or -1 if not found.
 */
-int16 MouseHandler::findExit(int16 cx, int16 cy) {
+int16 MouseHandler::findExit(const int16 cx, const int16 cy) {
 	debugC(2, kDebugMouse, "findExit(%d, %d)", cx, cy);
 
 	int i = 0;
@@ -95,7 +95,7 @@ int16 MouseHandler::findExit(int16 cx, int16 cy) {
 /**
 * Process a mouse right click at coord cx, cy over object objid
 */
-void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
+void MouseHandler::processRightClick(const int16 objId, const int16 cx, const int16 cy) {
 	debugC(1, kDebugMouse, "ProcessRightClick(%d, %d, %d)", objId, cx, cy);
 
 	status_t &gameStatus = _vm->getGameStatus();
@@ -144,7 +144,7 @@ void MouseHandler::processRightClick(int16 objId, int16 cx, int16 cy) {
 * 4.  Nothing - attempt to walk there
 * 5.  Exit - walk to exit hotspot
 */
-void MouseHandler::processLeftClick(int16 objId, int16 cx, int16 cy) {
+void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int16 cy) {
 	debugC(1, kDebugMouse, "ProcessLeftClick(%d, %d, %d)", objId, cx, cy);
 
 	int16 i, x, y;

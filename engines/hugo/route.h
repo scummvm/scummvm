@@ -50,9 +50,9 @@ public:
 	Route(HugoEngine *vm);
 
 	void processRoute();
-	bool startRoute(go_t go_for, int16 id, int16 cx, int16 cy);
-	void setDirection(uint16 keyCode);
-	void setWalk(uint16 direction);
+	bool startRoute(const go_t go_for, const int16 id, int16 cx, int16 cy);
+	void setDirection(const uint16 keyCode);
+	void setWalk(const uint16 direction);
 
 private:
 	HugoEngine *_vm;
@@ -75,7 +75,7 @@ private:
 	bool  _fullSegmentFl;                           // Segments exhausted
 
 	void segment(int16 x, int16 y);
-	bool findRoute(int16 cx, int16 cy);
+	bool findRoute(const int16 cx, const int16 cy);
 	Point *newNode();
 };
 

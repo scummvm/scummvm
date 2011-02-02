@@ -91,7 +91,7 @@ public:
 	virtual void loadFontArr(Common::File &in) = 0;
 
 	int16    fontHeight();
-	int16    stringLength(const char *s);
+	int16    stringLength(const char *s) const;
 
 	void     displayBackground();
 	void     displayFrame(int sx, int sy, seq_t *seq, bool foreFl);
@@ -111,14 +111,14 @@ public:
 	void     remapPal(uint16 oldIndex, uint16 newIndex);
 	void     resetInventoryObjId();
 	void     restorePal(Common::SeekableReadStream *f);
-	void     savePal(Common::WriteStream *f);
-	void     setBackgroundColor(long color);
+	void     savePal(Common::WriteStream *f) const;
+	void     setBackgroundColor(const uint16 color);
 	void     setCursorPal();
 	void     selectInventoryObjId(int16 objId);
-	void     shadowStr(int16 sx, int16 sy, const char *s, byte color);
+	void     shadowStr(int16 sx, const int16 sy, const char *s, const byte color);
 	void     showCursor();
-	void     userHelp();
-	void     writeStr(int16 sx, int16 sy, const char *s, byte color);
+	void     userHelp() const;
+	void     writeStr(int16 sx, const int16 sy, const char *s, const byte color);
 
 	icondib_t &getIconBuffer() {
 		return _iconBuffer;
@@ -146,9 +146,9 @@ protected:
 	static const int kRectListSize = 16;            // Size of add/restore rect lists
 	static const int kBlitListSize = kRectListSize * 2; // Size of dirty rect blit list
 
-	inline bool isInX(int16 x, rect_t *rect);
-	inline bool isInY(int16 y, rect_t *rect);
-	inline bool isOverlaping(rect_t *rectA, rect_t *rectB);
+	inline bool isInX(const int16 x, const rect_t *rect) const;
+	inline bool isInY(const int16 y, const rect_t *rect) const;
+	inline bool isOverlaping(const rect_t *rectA, const rect_t *rectB) const;
 
 	bool fontLoadedFl[kNumFonts];
 
@@ -167,8 +167,8 @@ private:
 
 	icondib_t _iconBuffer;                          // Inventory icon DIB
 
-	int16 mergeLists(rect_t *list, rect_t *blist, int16 len, int16 blen, int16 bmax);
-	int16 center(const char *s);
+	int16 mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 blen);
+	int16 center(const char *s) const;
 
 	overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y);
 
@@ -178,8 +178,8 @@ private:
 	viewdib_t _backBufferBackup;                    // Backup _backBuffer during inventory
 
 	void createPal();
-	void merge(rect_t *rectA, rect_t *rectB);
-	void writeChr(int sx, int sy, byte color, char *local_fontdata);
+	void merge(const rect_t *rectA, rect_t *rectB);
+	void writeChr(const int sx, const int sy, const byte color, const char *local_fontdata);
 };
 
 class Screen_v1d : public Screen {

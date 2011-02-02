@@ -47,7 +47,7 @@ public:
 
 	bool isPlaying() { return _isPlaying; }
 
-	int getVolume() const { return _masterVolume; }
+	int getVolume() { return _masterVolume; }
 
 	void adjustVolume(int diff);
 	void pause(bool p);
@@ -105,7 +105,7 @@ public:
 	static void loopPlayer(void *refCon);
 	void pcspkr_player();
 	void playMusic(int16 tune);
-	void playSound(int16 sound, byte priority);
+	void playSound(int16 sound, const byte priority);
 	void initSound();
 	void syncVolume();
 	void checkMusic();

@@ -366,7 +366,7 @@ void ObjectHandler_v1d::swapImages(int objIndex1, int objIndex2) {
 	_vm->_heroImage = (_vm->_heroImage == kHeroIndex) ? objIndex2 : kHeroIndex;
 }
 
-void ObjectHandler_v1d::homeIn(int objIndex1, int objIndex2, int8 objDx, int8 objDy) {
+void ObjectHandler_v1d::homeIn(int objIndex1, const int objIndex2, const int8 objDx, const int8 objDy) {
 	// object obj1 will home in on object obj2
 	object_t *obj1 = &_objects[objIndex1];
 	object_t *obj2 = &_objects[objIndex2];

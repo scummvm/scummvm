@@ -46,7 +46,7 @@ Route::Route(HugoEngine *vm) : _vm(vm) {
 /**
 * Face hero in new direction, based on cursor key input by user.
 */
-void Route::setDirection(uint16 keyCode) {
+void Route::setDirection(const uint16 keyCode) {
 	debugC(1, kDebugRoute, "setDirection(%d)", keyCode);
 
 	object_t *obj = _vm->_hero;                     // Pointer to hero object
@@ -92,7 +92,7 @@ void Route::setDirection(uint16 keyCode) {
 * Set hero walking, based on cursor key input by user.
 * Hitting same key twice will stop hero.
 */
-void Route::setWalk(uint16 direction) {
+void Route::setWalk(const uint16 direction) {
 	debugC(1, kDebugRoute, "setWalk(%d)", direction);
 
 	static uint16 oldDirection = 0;                 // Last direction char
@@ -304,7 +304,7 @@ Point *Route::newNode() {
 * 2.  Construct list of segments segment[] from hero to destination
 * 3.  Compress to shortest route in route[]
 */
-bool Route::findRoute(int16 cx, int16 cy) {
+bool Route::findRoute(const int16 cx, const int16 cy) {
 	debugC(1, kDebugRoute, "findRoute(%d, %d)", cx, cy);
 
 	// Initialize for search
@@ -486,7 +486,7 @@ void Route::processRoute() {
 * go_for is the purpose, id indexes the exit or object to walk to
 * Returns FALSE if route not found
 */
-bool Route::startRoute(go_t go_for, int16 id, int16 cx, int16 cy) {
+bool Route::startRoute(const go_t go_for, const int16 id, int16 cx, int16 cy) {
 	debugC(1, kDebugRoute, "startRoute(%d, %d, %d, %d)", go_for, id, cx, cy);
 
 	// Don't attempt to walk if user does not have control

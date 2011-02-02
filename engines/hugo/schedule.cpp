@@ -90,7 +90,7 @@ event_t *Scheduler::getQueue() {
 /**
 * Call Insert_action for each action in the list supplied
 */
-void Scheduler::insertActionList(uint16 actIndex) {
+void Scheduler::insertActionList(const uint16 actIndex) {
 	debugC(1, kDebugSchedule, "insertActionList(%d)", actIndex);
 
 	if (_actListArr[actIndex]) {
@@ -102,7 +102,7 @@ void Scheduler::insertActionList(uint16 actIndex) {
 /**
 * Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
 */
-uint32 Scheduler::getWinTicks() {
+uint32 Scheduler::getWinTicks() const {
 	debugC(5, kDebugSchedule, "getWinTicks()");
 
 	return _vm->getGameStatus().tick;
@@ -114,7 +114,7 @@ uint32 Scheduler::getWinTicks() {
 * Note that this is real time unless a processing cycle takes longer than
 * a real tick, in which case the system tick is simply incremented
 */
-uint32 Scheduler::getDosTicks(bool updateFl) {
+uint32 Scheduler::getDosTicks(const bool updateFl) {
 	debugC(5, kDebugSchedule, "getDosTicks(%s)", (updateFl) ? "TRUE" : "FALSE");
 
 	static  uint32 tick = 0;                        // Current system time in ticks
@@ -140,7 +140,7 @@ uint32 Scheduler::getDosTicks(bool updateFl) {
 /**
 * Add indecated bonus to score if not added already
 */
-void Scheduler::processBonus(int bonusIndex) {
+void Scheduler::processBonus(const int bonusIndex) {
 	debugC(1, kDebugSchedule, "processBonus(%d)", bonusIndex);
 
 	if (!_vm->_points[bonusIndex].scoredFl) {
@@ -157,7 +157,7 @@ void Scheduler::processBonus(int bonusIndex) {
 * 4. Schedule action list for new screen
 * 5. Initialise prompt line and status line
 */
-void Scheduler::newScreen(int screenIndex) {
+void Scheduler::newScreen(const int screenIndex) {
 	debugC(1, kDebugSchedule, "newScreen(%d)", screenIndex);
 
 	// Make sure the background file exists!
@@ -199,7 +199,7 @@ void Scheduler::newScreen(int screenIndex) {
 * 2. Read in the screen files for the new screen
 * 3. Initialise prompt line and status line
 */
-void Scheduler::restoreScreen(int screenIndex) {
+void Scheduler::restoreScreen(const int screenIndex) {
 	debugC(1, kDebugSchedule, "restoreScreen(%d)", screenIndex);
 
 	// 1. Set the new screen in the hero object and any being carried
@@ -218,7 +218,7 @@ void Scheduler::restoreScreen(int screenIndex) {
 * at their own speed, not waiting here, but free running.
 * Note: DOS Versions only
 */
-void Scheduler::waitForRefresh(void) {
+void Scheduler::waitForRefresh() {
 	debugC(5, kDebugSchedule, "waitForRefresh()");
 
 	static uint32 timeout = 0;
@@ -837,7 +837,7 @@ void Scheduler::freeActListArr() {
 * Maze mode is enabled.  Check to see whether hero has crossed the maze
 * bounding box, if so, go to the next room
 */
-void Scheduler::processMaze(int x1, int x2, int y1, int y2) {
+void Scheduler::processMaze(const int x1, const int x2, const int y1, const int y2) {
 	debugC(1, kDebugSchedule, "processMaze");
 
 	status_t &gameStatus = _vm->getGameStatus();
@@ -943,7 +943,7 @@ void Scheduler::restoreActions(Common::SeekableReadStream *f) {
 * Save the action data in the file with handle f
 */
 
-void Scheduler::saveActions(Common::WriteStream* f) {
+void Scheduler::saveActions(Common::WriteStream* f) const {
 	for (int i = 0; i < _actListArrSize; i++) {
 		// write all the sub elems data
 
@@ -1362,7 +1362,7 @@ void Scheduler::delQueue(event_t *curEvent) {
 	_freeEvent = curEvent;
 }
 
-void Scheduler::delEventType(action_t actTypeDel) {
+void Scheduler::delEventType(const action_t actTypeDel) {
 	// Note: actions are not deleted here, simply turned into NOPs!
 	event_t *wrkEvent = _headEvent;                 // The earliest event
 	event_t *saveEvent;
@@ -1381,7 +1381,7 @@ Scheduler_v1d::Scheduler_v1d(HugoEngine *vm) : Scheduler(vm) {
 Scheduler_v1d::~Scheduler_v1d() {
 }
 
-const char *Scheduler_v1d::getCypher() {
+const char *Scheduler_v1d::getCypher() const {
 	return "Copyright (c) 1990, Gray Design Associates";
 }
 
@@ -1450,7 +1450,7 @@ Scheduler_v2d::Scheduler_v2d(HugoEngine *vm) : Scheduler_v1d(vm) {
 Scheduler_v2d::~Scheduler_v2d() {
 }
 
-const char *Scheduler_v2d::getCypher() {
+const char *Scheduler_v2d::getCypher() const {
 	return "Copyright 1991, Gray Design Associates";
 }
 
@@ -1500,7 +1500,7 @@ Scheduler_v3d::Scheduler_v3d(HugoEngine *vm) : Scheduler_v2d(vm) {
 Scheduler_v3d::~Scheduler_v3d() {
 }
 
-const char *Scheduler_v3d::getCypher() {
+const char *Scheduler_v3d::getCypher() const {
 	return "Copyright 1992, Gray Design Associates";
 }
 

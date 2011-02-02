@@ -319,7 +319,7 @@ bool Parser_v3d::isGenericVerb(object_t *obj, char *comment) {
 * If radius is -1, treat radius as infinity
 * Verb is included to determine correct comment if not near
 */
-bool Parser_v3d::isNear(object_t *obj, char *verb, char *comment) {
+bool Parser_v3d::isNear(object_t *obj, char *verb, char *comment) const {
 	debugC(1, kDebugParser, "isNear(object_t *obj, %s, %s)", verb, comment);
 
 	if (obj->carriedFl)                             // Object is being carried
@@ -413,7 +413,7 @@ void Parser_v3d::dropObject(object_t *obj) {
 * Note that if the background command list has match set TRUE then do not
 * print text if there are any recognizable nouns in the command line
 */
-bool Parser_v3d::isCatchallVerb(objectList_t obj) {
+bool Parser_v3d::isCatchallVerb(objectList_t obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(object_list_t obj)");
 
 	if (_maze.enabledFl)
@@ -441,7 +441,7 @@ bool Parser_v3d::isCatchallVerb(objectList_t obj) {
 * Search for matching verb/noun pairs in background command list
 * Print text for possible background object.  Return TRUE if match found
 */
-bool Parser_v3d::isBackgroundWord(objectList_t obj) {
+bool Parser_v3d::isBackgroundWord(objectList_t obj) const {
 	debugC(1, kDebugParser, "isBackgroundWord(object_list_t obj)");
 
 	if (_maze.enabledFl)

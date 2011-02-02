@@ -267,7 +267,7 @@ void Parser::command(const char *format, ...) {
 /**
 * Locate any member of object name list appearing in command line
 */
-bool Parser::isWordPresent(char **wordArr) {
+bool Parser::isWordPresent(char **wordArr) const {
 	debugC(1, kDebugParser, "isWordPresent(%s)", wordArr[0]);
 
 	if (wordArr != 0) {
@@ -282,7 +282,7 @@ bool Parser::isWordPresent(char **wordArr) {
 /**
 * Locate word in list of nouns and return ptr to first string in noun list
 */
-char *Parser::findNoun() {
+char *Parser::findNoun() const {
 	debugC(1, kDebugParser, "findNoun()");
 
 	for (int i = 0; _vm->_text->getNounArray(i); i++) {
@@ -297,7 +297,7 @@ char *Parser::findNoun() {
 /**
 * Locate word in list of verbs and return ptr to first string in verb list
 */
-char *Parser::findVerb() {
+char *Parser::findVerb() const {
 	debugC(1, kDebugParser, "findVerb()");
 
 	for (int i = 0; _vm->_text->getVerbArray(i); i++) {
@@ -312,7 +312,7 @@ char *Parser::findVerb() {
 /**
 * Show user all objects being carried in a variable width 2 column format
 */
-void Parser::showDosInventory() {
+void Parser::showDosInventory() const {
 	debugC(1, kDebugParser, "showDosInventory()");
 	static const char *blanks = "                                        ";
 	uint16 index = 0, len1 = 0, len2 = 0;

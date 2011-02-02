@@ -45,7 +45,7 @@ public:
 	object_t  *_objects;
 	uint16    _numObj;
 
-	virtual void homeIn(int objIndex1, int objIndex2, int8 objDx, int8 objDy) = 0;
+	virtual void homeIn(const int objIndex1, const int objIndex2, const int8 objDx, const int8 objDy) = 0;
 	virtual void moveObjects() = 0;
 	virtual void updateImages() = 0;
 	virtual void swapImages(int objIndex1, int objIndex2) = 0;
@@ -110,7 +110,7 @@ public:
 	ObjectHandler_v1d(HugoEngine *vm);
 	virtual ~ObjectHandler_v1d();
 
-	virtual void homeIn(int objIndex1, int objIndex2, int8 objDx, int8 objDy);
+	virtual void homeIn(const int objIndex1, const int objIndex2, const int8 objDx, const int8 objDy);
 	virtual void moveObjects();
 	virtual void updateImages();
 	virtual void swapImages(int objIndex1, int objIndex2);
@@ -124,7 +124,7 @@ public:
 	virtual void moveObjects();
 	virtual void updateImages();
 
-	void homeIn(int objIndex1, int objIndex2, int8 objDx, int8 objDy);
+	void homeIn(const int objIndex1, const int objIndex2, const int8 objDx, const int8 objDy);
 };
 
 class ObjectHandler_v3d : public ObjectHandler_v2d {

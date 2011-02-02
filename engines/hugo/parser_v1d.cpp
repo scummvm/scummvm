@@ -55,7 +55,7 @@ Parser_v1d::~Parser_v1d() {
 * Locate word in list of nouns and return ptr to string in noun list
 * If n is NULL, start at beginning of list, else with n
 */
-char *Parser_v1d::findNextNoun(char *noun) {
+char *Parser_v1d::findNextNoun(char *noun) const {
 	debugC(1, kDebugParser, "findNextNoun(%s)", noun);
 
 	int currNounIndex = -1;
@@ -80,7 +80,7 @@ char *Parser_v1d::findNextNoun(char *noun) {
 * If object not near, return suitable string; may be similar object closer
 * If radius is -1, treat radius as infinity
 */
-bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) {
+bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) const {
 	debugC(1, kDebugParser, "isNear(%s, %s, obj, %s)", verb, noun, comment);
 
 	if (!noun && !obj->verbOnlyFl) {                // No noun specified & object not context senesitive
@@ -233,7 +233,7 @@ bool Parser_v1d::isObjectVerb(char *word, object_t *obj) {
 * Print text for possible background object.  Return TRUE if match found
 * Only match if both verb and noun found.  Test_ca will match verb-only
 */
-bool Parser_v1d::isBackgroundWord(char *noun, char *verb, objectList_t obj) {
+bool Parser_v1d::isBackgroundWord(char *noun, char *verb, objectList_t obj) const {
 	debugC(1, kDebugParser, "isBackgroundWord(%s, %s, object_list_t obj)", noun, verb);
 
 	if (!noun)
@@ -283,7 +283,7 @@ void Parser_v1d::dropObject(object_t *obj) {
 * Print text for possible background object.  Return TRUE if match found
 * If test_noun TRUE, must have a noun given
 */
-bool Parser_v1d::isCatchallVerb(bool testNounFl, char *noun, char *verb, objectList_t obj) {
+bool Parser_v1d::isCatchallVerb(bool testNounFl, char *noun, char *verb, objectList_t obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(%d, %s, %s, object_list_t obj)", (testNounFl) ? 1 : 0, noun, verb);
 
 	if (_maze.enabledFl)
@@ -426,7 +426,7 @@ void Parser_v1d::lineHandler() {
 		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBEh_1d));
 }
 
-void Parser_v1d::showInventory() {
+void Parser_v1d::showInventory() const {
 	status_t &gameStatus = _vm->getGameStatus();
 	if (gameStatus.viewState == kViewPlay) {
 		if (gameStatus.gameOverFl)

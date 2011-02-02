@@ -460,19 +460,19 @@ public:
 
 	void freeActListArr();
 	void initEventQueue();
-	void insertActionList(uint16 actIndex);
+	void insertActionList(const uint16 actIndex);
 	void loadActListArr(Common::File &in);
 	void loadAlNewscrIndex(Common::File &in);
-	void newScreen(int screenIndex);
-	void processBonus(int bonusIndex);
-	void processMaze(int x1, int x2, int y1, int y2);
-	void restoreScreen(int screenIndex);
+	void newScreen(const int screenIndex);
+	void processBonus(const int bonusIndex);
+	void processMaze(const int x1, const int x2, const int y1, const int y2);
+	void restoreScreen(const int screenIndex);
 	void restoreEvents(Common::SeekableReadStream *f);
 	void saveEvents(Common::WriteStream *f);
-	void waitForRefresh(void);
+	void waitForRefresh();
 
 	void findAction(act* action, int16* index, int16* subElem);
-	void saveActions(Common::WriteStream* f);
+	void saveActions(Common::WriteStream* f) const;
 	void restoreActions(Common::SeekableReadStream *f);
 
 protected:
@@ -491,7 +491,7 @@ protected:
 
 	act    **_actListArr;
 
-	virtual const char *getCypher() = 0;
+	virtual const char *getCypher() const = 0;
 
 	virtual uint32 getTicks() = 0;
 
@@ -500,10 +500,10 @@ protected:
 	event_t *doAction(event_t *curEvent);
 	event_t *getQueue();
 
-	uint32 getDosTicks(bool updateFl);
-	uint32 getWinTicks();
+	uint32 getDosTicks(const bool updateFl);
+	uint32 getWinTicks() const;
 
-	void delEventType(action_t actTypeDel);
+	void delEventType(const action_t actTypeDel);
 	void delQueue(event_t *curEvent);
 	void insertAction(act *action);
 };
@@ -517,7 +517,7 @@ public:
 	virtual void runScheduler();
 
 protected:
-	virtual const char *getCypher();
+	virtual const char *getCypher() const;
 
 	virtual uint32 getTicks();
 
@@ -532,7 +532,7 @@ public:
 	void decodeString(char *line);
 
 protected:
-	virtual const char *getCypher();
+	virtual const char *getCypher() const;
 	
 	void promptAction(act *action);
 };
@@ -543,7 +543,7 @@ public:
 	~Scheduler_v3d();
 
 protected:
-	const char *getCypher();
+	const char *getCypher() const;
 };
 
 class Scheduler_v1w : public Scheduler_v3d {
