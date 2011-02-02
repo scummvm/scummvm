@@ -598,6 +598,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// NewRoom - 1 integer parameter, the current room number
 	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
 	// SetHotRectangles - used by Phantasmagoria 1
+	// SetFontRes - used by GK1 Mac to use high-res Mac fonts
 #endif
 
 	{ NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
