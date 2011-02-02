@@ -232,7 +232,7 @@ bool VideoManager::updateMovies() {
 
 						for (uint16 j = 0; j < frame->h; j++) {
 							for (uint16 k = 0; k < frame->w; k++) {
-								byte palIndex = *((byte *)frame->getBasePtr(k, j));
+								byte palIndex = *((const byte *)frame->getBasePtr(k, j));
 								byte r = palette[palIndex * 3];
 								byte g = palette[palIndex * 3 + 1];
 								byte b = palette[palIndex * 3 + 2];
