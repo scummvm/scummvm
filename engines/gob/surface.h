@@ -29,6 +29,9 @@
 #include "common/scummsys.h"
 #include "common/ptr.h"
 #include "common/rational.h"
+#include "common/iff_container.h"
+
+#include "graphics/iff.h"
 
 namespace Common {
 	class SeekableReadStream;
@@ -43,6 +46,31 @@ enum ImageType {
 	kImageTypeBRC,
 	kImageTypeBMP,
 	kImageTypeJPEG
+};
+
+class LBMLoader {
+public:
+	LBMLoader(Common::SeekableReadStream &stream);
+
+	bool loadHeader (Graphics::BMHD &header);
+	bool loadPalette(byte *palette);
+	bool loadImage  (byte *image);
+
+private:
+	Common::IFFParser _parser;
+
+	bool _hasHeader;
+
+	Graphics::ILBMDecoder _decoder;
+
+	byte *_palette;
+	byte *_image;
+
+	bool callbackHeader (Common::IFFChunk &chunk);
+	bool callbackPalette(Common::IFFChunk &chunk);
+	bool callbackImage  (Common::IFFChunk &chunk);
+
+	bool readHeader();
 };
 
 /** An iterator over a surface's image data, automatically handles different color depths. */
