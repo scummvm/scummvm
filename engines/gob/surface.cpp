@@ -26,6 +26,7 @@
 #include "gob/surface.h"
 
 #include "common/system.h"
+#include "common/stream.h"
 #include "common/util.h"
 #include "common/frac.h"
 
@@ -679,6 +680,104 @@ void Surface::blitToScreen(uint16 left, uint16 top, uint16 right, uint16 bottom,
 	const byte *src = getData(left, top);
 
 	g_system->copyRectToScreen(src, _width * _bpp, x, y, width, height);
+}
+
+bool Surface::loadImage(Common::SeekableReadStream &stream) {
+	ImageType type = identifyImage(stream);
+	if (type == kImageTypeNone)
+		return false;
+
+	return loadImage(stream, type);
+}
+
+bool Surface::loadImage(Common::SeekableReadStream &stream, ImageType type) {
+	if (type == kImageTypeNone)
+		return false;
+
+	switch (type) {
+	case kImageTypeTGA:
+		return loadTGA(stream);
+	case kImageTypeLBM:
+		return loadLBM(stream);
+	case kImageTypeBRC:
+		return loadBRC(stream);
+	case kImageTypeBMP:
+		return loadBMP(stream);
+	case kImageTypeJPEG:
+		return loadJPEG(stream);
+
+	default:
+		warning("Surface::loadImage(): Unknown image type: %d", (int) type);
+		return false;
+	}
+
+	return false;
+}
+
+ImageType Surface::identifyImage(Common::SeekableReadStream &stream) {
+	uint32 startPos = stream.pos();
+
+	if ((stream.size() - startPos) < 17)
+		return kImageTypeNone;
+
+	char buffer[4];
+	if (!stream.read(buffer, 4))
+		return kImageTypeNone;
+
+	stream.seek(startPos);
+
+	if (!strncmp(buffer, "FORM", 4))
+		return kImageTypeLBM;
+	if (!strncmp(buffer, "JFIF", 4))
+		return kImageTypeJPEG;
+	if (!strncmp(buffer, "BRC" , 3))
+		return kImageTypeBRC;
+	if (!strncmp(buffer, "BM"  , 2))
+		return kImageTypeBMP;
+
+	// Try to determine if it's maybe a TGA
+
+	stream.skip(12);
+	uint16 width  = stream.readUint16LE();
+	uint16 height = stream.readUint16LE();
+	uint8  bpp    = stream.readByte();
+
+	// Check width, height and bpp for sane values
+	if ((width == 0) || (height == 0) || (bpp == 0))
+		return kImageTypeNone;
+	if ((width > 800) || (height > 600))
+		return kImageTypeNone;
+	if ((bpp != 8) && (bpp != 16) && (bpp != 24) && (bpp != 32))
+		return kImageTypeNone;
+
+	// This might be a TGA
+	return kImageTypeTGA;
+}
+
+
+bool Surface::loadTGA(Common::SeekableReadStream &stream) {
+	warning("TODO: Surface::loadTGA()");
+	return false;
+}
+
+bool Surface::loadLBM(Common::SeekableReadStream &stream) {
+	warning("TODO: Surface::loadLBM()");
+	return false;
+}
+
+bool Surface::loadBRC(Common::SeekableReadStream &stream) {
+	warning("TODO: Surface::loadBRC()");
+	return false;
+}
+
+bool Surface::loadBMP(Common::SeekableReadStream &stream) {
+	warning("TODO: Surface::loadBMP()");
+	return false;
+}
+
+bool Surface::loadJPEG(Common::SeekableReadStream &stream) {
+	warning("TODO: Surface::loadJPEG()");
+	return false;
 }
 
 } // End of namespace Gob

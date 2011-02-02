@@ -30,6 +30,7 @@
 
 #include "gob/gob.h"
 #include "gob/global.h"
+#include "gob/dataio.h"
 #include "gob/inter.h"
 #include "gob/game.h"
 #include "gob/script.h"
@@ -364,10 +365,35 @@ void Inter_v7::o7_loadImage() {
 	int16 y           = _vm->_game->_script->readValExpr();
 	int16 transp      = _vm->_game->_script->readValExpr();
 
-	// Supported formats: TGA, LBM, BRC, BMP or JPEG
+	if (spriteIndex > 100)
+		spriteIndex -= 80;
 
-	warning("Addy Stub: Load image \"%s\", sprite %d, %dx%d+%d+%d @ %d+%d (%d)",
-			file.c_str(), spriteIndex, width, height, left, top, x, y, transp);
+	if ((spriteIndex < 0) || (spriteIndex >= Draw::kSpriteCount)) {
+		warning("o7_loadImage(): Sprite %d out of range", spriteIndex);
+		return;
+	}
+
+	SurfacePtr destSprite = _vm->_draw->_spritesArray[spriteIndex];
+	if (!destSprite) {
+		warning("o7_loadImage(): Sprite %d does not exist", spriteIndex);
+		return;
+	}
+
+	Common::SeekableReadStream *imageFile = _vm->_dataIO->getFile(file);
+	if (!imageFile) {
+		warning("o7_loadImage(): No such file \"%s\"", file.c_str());
+		return;
+	}
+
+	SurfacePtr image = _vm->_video->initSurfDesc(1, 1);
+	if (!image->loadImage(*imageFile)) {
+		warning("o7_loadImage(): Failed to load image \"%s\"", file.c_str());
+		return;
+	}
+
+	int16 right  = left + width  - 1;
+	int16 bottom = top  + height - 1;
+	destSprite->blit(*image, left, top, right, bottom, x, y, transp);
 }
 
 void Inter_v7::o7_setVolume() {

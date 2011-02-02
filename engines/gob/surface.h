@@ -30,7 +30,20 @@
 #include "common/ptr.h"
 #include "common/rational.h"
 
+namespace Common {
+	class SeekableReadStream;
+}
+
 namespace Gob {
+
+enum ImageType {
+	kImageTypeNone = -1,
+	kImageTypeTGA  =  0,
+	kImageTypeLBM,
+	kImageTypeBRC,
+	kImageTypeBMP,
+	kImageTypeJPEG
+};
 
 /** An iterator over a surface's image data, automatically handles different color depths. */
 class Pixel {
@@ -123,6 +136,11 @@ public:
 
 	void blitToScreen(uint16 left, uint16 top, uint16 right, uint16 bottom, uint16 x, uint16 y) const;
 
+	bool loadImage(Common::SeekableReadStream &stream);
+	bool loadImage(Common::SeekableReadStream &stream, ImageType type);
+
+	static ImageType identifyImage(Common::SeekableReadStream &stream);
+
 private:
 	uint16 _width;
 	uint16 _height;
@@ -133,6 +151,12 @@ private:
 
 	static bool clipBlitRect(int16 &left, int16 &top, int16 &right, int16 &bottom, int16 &x, int16 &y,
 	                         uint16 dWidth, uint16 dHeight, uint16 sWidth, uint16 sHeight);
+
+	bool loadTGA (Common::SeekableReadStream &stream);
+	bool loadLBM (Common::SeekableReadStream &stream);
+	bool loadBRC (Common::SeekableReadStream &stream);
+	bool loadBMP (Common::SeekableReadStream &stream);
+	bool loadJPEG(Common::SeekableReadStream &stream);
 };
 
 typedef Common::SharedPtr<Surface> SurfacePtr;
