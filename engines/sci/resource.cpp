@@ -438,7 +438,8 @@ bool MacResourceForkResourceSource::isCompressableResource(ResourceType type) co
 	// (Audio/36 being Mac snd resources here)
 	return type != kResourceTypeMacPict && type != kResourceTypeAudio &&
 			type != kResourceTypeMacIconBarPictN && type != kResourceTypeMacIconBarPictS &&
-			type != kResourceTypeAudio36;
+			type != kResourceTypeAudio36 && type != kResourceTypeSync &&
+			type != kResourceTypeSync36;
 }
 
 #define OUTPUT_LITERAL() \

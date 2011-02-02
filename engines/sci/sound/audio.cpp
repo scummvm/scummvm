@@ -401,12 +401,12 @@ void AudioPlayer::setSoundSync(ResourceId id, reg_t syncObjAddr, SegManager *seg
 void AudioPlayer::doSoundSync(reg_t syncObjAddr, SegManager *segMan) {
 	if (_syncResource && (_syncOffset < _syncResource->size - 1)) {
 		int16 syncCue = -1;
-		int16 syncTime = (int16)READ_LE_UINT16(_syncResource->data + _syncOffset);
+		int16 syncTime = (int16)READ_SCI11ENDIAN_UINT16(_syncResource->data + _syncOffset);
 
 		_syncOffset += 2;
 
 		if ((syncTime != -1) && (_syncOffset < _syncResource->size - 1)) {
-			syncCue = (int16)READ_LE_UINT16(_syncResource->data + _syncOffset);
+			syncCue = (int16)READ_SCI11ENDIAN_UINT16(_syncResource->data + _syncOffset);
 			_syncOffset += 2;
 		}
 
