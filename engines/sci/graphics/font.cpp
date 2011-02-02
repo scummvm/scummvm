@@ -45,12 +45,12 @@ GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *scr
 	}
 	_resourceData = _resource->data;
 
-	_numChars = READ_LE_UINT16(_resourceData + 2);
-	_fontHeight = READ_LE_UINT16(_resourceData + 4);
+	_numChars = READ_SCI32ENDIAN_UINT16(_resourceData + 2);
+	_fontHeight = READ_SCI32ENDIAN_UINT16(_resourceData + 4);
 	_chars = new Charinfo[_numChars];
 	// filling info for every char
 	for (int16 i = 0; i < _numChars; i++) {
-		_chars[i].offset = READ_LE_UINT16(_resourceData + 6 + i * 2);
+		_chars[i].offset = READ_SCI32ENDIAN_UINT16(_resourceData + 6 + i * 2);
 		_chars[i].w = _resourceData[_chars[i].offset];
 		_chars[i].h = _resourceData[_chars[i].offset + 1];
 	}

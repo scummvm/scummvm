@@ -36,6 +36,10 @@ uint16 READ_SCI11ENDIAN_UINT16(const void *ptr);
 uint32 READ_SCI11ENDIAN_UINT32(const void *ptr);
 void WRITE_SCI11ENDIAN_UINT16(void *ptr, uint16 val);
 
+// Wrappers for reading integer values in resources that are
+// LE in SCI1.1 Mac, but BE in SCI32 Mac
+uint16 READ_SCI32ENDIAN_UINT16(const void *ptr);
+
 } // End of namespace Sci
 
 #endif
