@@ -383,24 +383,62 @@ void PatchResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 
 static Common::Array<uint32> resTypeToMacTags(ResourceType type);
 
-void MacResourceForkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
-	Common::SeekableReadStream *stream = 0;
-	Common::Array<uint32> tagArray = resTypeToMacTags(res->getType());
+static Common::String intToBase36(uint32 number, int minChar) {
+	// Convert from an integer to a base36 string
+	Common::String string;
 
-	for (uint32 i = 0; i < tagArray.size() && !stream; i++)
-		stream = _macResMan->getResource(tagArray[i], res->getNumber());
+	while (minChar--) {
+		int character = number % 36;
+		string = ((character < 10) ? (character + '0') : (character + 'A' - 10)) + string;
+		number /= 36;
+	}
+
+	return string;
+}
+
+static Common::String constructPatchNameBase36(ResourceId resId) {
+	// Convert from a resource ID to a base36 patch name
+	Common::String output;
+
+	output += (resId.getType() == kResourceTypeAudio36) ? '@' : '#'; // Identifier
+	output += intToBase36(resId.getNumber(), 3);                     // Map
+	output += intToBase36(resId.getTuple() >> 24, 2);                // Noun
+	output += intToBase36((resId.getTuple() >> 16) & 0xff, 2);       // Verb
+	output += '.';                                                   // Separator
+	output += intToBase36((resId.getTuple() >> 8) & 0xff, 2);        // Cond
+	output += intToBase36(resId.getTuple() & 0xff, 1);               // Seq
+
+	assert(output.size() == 12); // We should always get 12 characters in the end
+	return output;
+}
+
+void MacResourceForkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
+	ResourceType type = res->getType();
+	Common::SeekableReadStream *stream = 0;
+
+	if (type == kResourceTypeAudio36 || type == kResourceTypeSync36) {
+		// Handle audio36/sync36, convert back to audio/sync
+		stream = _macResMan->getResource(constructPatchNameBase36(res->_id));
+	} else {
+		// Plain resource handling
+		Common::Array<uint32> tagArray = resTypeToMacTags(type);
+
+		for (uint32 i = 0; i < tagArray.size() && !stream; i++)
+			stream = _macResMan->getResource(tagArray[i], res->getNumber());
+	}
 
 	if (!stream)
-		error("Could not get Mac resource fork resource: %s %d", getResourceTypeName(res->getType()), res->getNumber());
+		error("Could not get Mac resource fork resource: %s", res->_id.toString().c_str());
 
 	decompressResource(stream, res);
 }
 
 bool MacResourceForkResourceSource::isCompressableResource(ResourceType type) const {
 	// Any types that were not originally an SCI format are not compressed, it seems.
-	// (Audio being Mac snd resources here)
+	// (Audio/36 being Mac snd resources here)
 	return type != kResourceTypeMacPict && type != kResourceTypeAudio &&
-			type != kResourceTypeMacIconBarPictN && type != kResourceTypeMacIconBarPictS;
+			type != kResourceTypeMacIconBarPictN && type != kResourceTypeMacIconBarPictS &&
+			type != kResourceTypeAudio36;
 }
 
 #define OUTPUT_LITERAL() \
@@ -1464,6 +1502,21 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->getLocationName().c_str());
 }
 
+static ResourceId convertPatchNameBase36(ResourceType type, const Common::String &filename) {
+	// The base36 encoded resource contains the following:
+	// uint16 resourceId, byte noun, byte verb, byte cond, byte seq
+
+	// Skip patch type character
+	uint16 resourceNr = strtol(Common::String(filename.c_str() + 1, 3).c_str(), 0, 36); // 3 characters
+	uint16 noun = strtol(Common::String(filename.c_str() + 4, 2).c_str(), 0, 36);       // 2 characters
+	uint16 verb = strtol(Common::String(filename.c_str() + 6, 2).c_str(), 0, 36);       // 2 characters
+	// Skip '.'
+	uint16 cond = strtol(Common::String(filename.c_str() + 9, 2).c_str(), 0, 36);       // 2 characters
+	uint16 seq = strtol(Common::String(filename.c_str() + 11, 1).c_str(), 0, 36);       // 1 character
+
+	return ResourceId(type, resourceNr, noun, verb, cond, seq);
+}
+
 void ResourceManager::readResourcePatchesBase36() {
 	// The base36 encoded audio36 and sync36 resources use a different naming scheme, because they
 	// cannot be described with a single resource number, but are a result of a
@@ -1495,55 +1548,39 @@ void ResourceManager::readResourcePatchesBase36() {
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			name = (*x)->getName();
 
-			inputName = (*x)->getName();
-			inputName.toUppercase();
-			inputName.deleteChar(0);	// delete the first character (type)
-			inputName.deleteChar(7);	// delete the dot
+			ResourceId resource36 = convertPatchNameBase36((ResourceType)i, name);
+			
+			/*
+			if (i == kResourceTypeAudio36)
+				debug("audio36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), resource36.tuple, resource36.toString().c_str());
+			else
+				debug("sync36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), resource36.tuple, resource36.toString().c_str());
+			*/
 
-			// The base36 encoded resource contains the following:
-			// uint16 resourceId, byte noun, byte verb, byte cond, byte seq
-			uint16 resourceNr = strtol(Common::String(inputName.c_str(), 3).c_str(), 0, 36); // 3 characters
-			uint16 noun = strtol(Common::String(inputName.c_str() + 3, 2).c_str(), 0, 36);   // 2 characters
-			uint16 verb = strtol(Common::String(inputName.c_str() + 5, 2).c_str(), 0, 36);   // 2 characters
-			uint16 cond = strtol(Common::String(inputName.c_str() + 7, 2).c_str(), 0, 36);   // 2 characters
-			uint16 seq = strtol(Common::String(inputName.c_str() + 9, 1).c_str(), 0, 36);    // 1 character
+			// Make sure that the audio patch is a valid resource
+			if (i == kResourceTypeAudio36) {
+				Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
+				uint32 tag = stream->readUint32BE();
 
-			// Check, if we got valid results
-			if ((noun <= 255) && (verb <= 255) && (cond <= 255) && (seq <= 255)) {
-				ResourceId resource36((ResourceType)i, resourceNr, noun, verb, cond, seq);
-
-				/*
-				if (i == kResourceTypeAudio36)
-					debug("audio36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), resource36.tuple, resource36.toString().c_str());
-				else
-					debug("sync36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), resource36.tuple, resource36.toString().c_str());
-				*/
-
-				// Make sure that the audio patch is a valid resource
-				if (i == kResourceTypeAudio36) {
-					Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
-					uint32 tag = stream->readUint32BE();
-
-					if (tag == MKID_BE('RIFF') || tag == MKID_BE('FORM')) {
-						delete stream;
-						processWavePatch(resource36, name);
-						continue;
-					}
-
-					// Check for SOL as well
-					tag = (tag << 16) | stream->readUint16BE();
-					
-					if (tag != MKID_BE('SOL\0')) {
-						delete stream;
-						continue;
-					}
-
+				if (tag == MKID_BE('RIFF') || tag == MKID_BE('FORM')) {
 					delete stream;
+					processWavePatch(resource36, name);
+					continue;
 				}
 
-				psrcPatch = new PatchResourceSource(name);
-				processPatch(psrcPatch, (ResourceType)i, resourceNr, resource36.getTuple());
+				// Check for SOL as well
+				tag = (tag << 16) | stream->readUint16BE();
+					
+				if (tag != MKID_BE('SOL\0')) {
+					delete stream;
+					continue;
+				}
+
+				delete stream;
 			}
+
+			psrcPatch = new PatchResourceSource(name);
+			processPatch(psrcPatch, (ResourceType)i, resource36.getNumber(), resource36.getTuple());
 		}
 	}
 }
@@ -1827,7 +1864,30 @@ void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
 			uint32 fileSize = stream->size();
 			delete stream;
 
-			ResourceId resId = ResourceId(type, idArray[j]);
+			ResourceId resId;
+
+			// Check to see if we've got a base36 encoded resource name
+			if (type == kResourceTypeAudio) {
+				Common::String resourceName = _macResMan->getResName(tagArray[i], idArray[j]);
+
+				// If we have a file name on an audio resource, we've got an audio36
+				// resource. Parse the file name to get the id.
+				if (!resourceName.empty() && !resourceName.contains("AUD"))
+					resId = convertPatchNameBase36(kResourceTypeAudio36, resourceName);
+				else
+					resId = ResourceId(type, idArray[j]);
+			} else if (type == kResourceTypeSync) {
+				Common::String resourceName = _macResMan->getResName(tagArray[i], idArray[j]);
+
+				// Same as with audio36 above
+				if (!resourceName.empty() && !resourceName.contains("SYN"))
+					resId = convertPatchNameBase36(kResourceTypeSync36, resourceName);
+				else
+					resId = ResourceId(type, idArray[j]);
+			} else {
+				// Otherwise, we're just going with the id that was given
+				resId = ResourceId(type, idArray[j]);
+			}
 
 			// Overwrite Resource instance. Resource forks may contain patches.
 			resMan->updateResource(resId, this, fileSize);
