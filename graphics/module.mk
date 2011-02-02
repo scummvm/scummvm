@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	imagedec.o \
 	jpeg.o \
 	pict.o \
+	png.o \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail_intern.o \

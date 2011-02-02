@@ -32,13 +32,23 @@
  *
  */
 
+// Define to use ScummVM's PNG decoder, instead of libpng
+#define USE_INTERNAL_PNG_DECODER
+
+#ifndef USE_INTERNAL_PNG_DECODER
 // Disable symbol overrides so that we can use png.h
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#endif
 
 #include "common/memstream.h"
 #include "sword25/gfx/image/image.h"
 #include "sword25/gfx/image/pngloader.h"
+#ifndef USE_INTERNAL_PNG_DECODER
 #include <png.h>
+#else
+#include "graphics/pixelformat.h"
+#include "graphics/png.h"
+#endif
 
 namespace Sword25 {
 
@@ -87,6 +97,7 @@ static uint findEmbeddedPNG(const byte *fileDataPtr, uint fileSize) {
 	return static_cast<uint>(stream.pos() + compressedGamedataSize);
 }
 
+#ifndef USE_INTERNAL_PNG_DECODER
 static void png_user_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
 	const byte **ref = (const byte **)png_get_io_ptr(png_ptr);
 	memcpy(data, *ref, length);
@@ -96,9 +107,10 @@ static void png_user_read_data(png_structp png_ptr, png_bytep data, png_size_t l
 static bool doIsCorrectImageFormat(const byte *fileDataPtr, uint fileSize) {
 	return (fileSize > 8) && png_check_sig(const_cast<byte *>(fileDataPtr), 8);
 }
-
+#endif
 
 bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&uncompressedDataPtr, int &width, int &height, int &pitch) {
+#ifndef USE_INTERNAL_PNG_DECODER
 	png_structp png_ptr = NULL;
 	png_infop   info_ptr = NULL;
 
@@ -202,7 +214,25 @@ bool PNGLoader::doDecodeImage(const byte *fileDataPtr, uint fileSize, byte *&unc
 
 	// Destroy libpng structures
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+#else
+	Common::MemoryReadStream *fileStr = new Common::MemoryReadStream(fileDataPtr, fileSize, DisposeAfterUse::NO);
+	Graphics::PNG *png = new Graphics::PNG();
+	if (!png->read(fileStr))	// the fileStr pointer, and thus pFileData will be deleted after this is done
+		error("Error while reading PNG image");	
 
+	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+	Graphics::Surface *pngSurface = png->getSurface(format);
+
+	width = pngSurface->w;
+	height = pngSurface->h;
+	uncompressedDataPtr = new byte[pngSurface->pitch * pngSurface->h];
+	memcpy(uncompressedDataPtr, (byte *)pngSurface->pixels, pngSurface->pitch * pngSurface->h);
+	pngSurface->free();
+
+	delete pngSurface;
+	delete png;
+
+#endif
 	// Signal success
 	return true;
 }
@@ -213,6 +243,7 @@ bool PNGLoader::decodeImage(const byte *fileDataPtr, uint fileSize, byte *&uncom
 }
 
 bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, int &width, int &height) {
+#ifndef USE_INTERNAL_PNG_DECODER
 	// Check for valid PNG signature
 	if (!doIsCorrectImageFormat(fileDataPtr, fileSize))
 		return false;
@@ -249,7 +280,9 @@ bool PNGLoader::doImageProperties(const byte *fileDataPtr, uint fileSize, int &w
 
 	// Die Strukturen freigeben
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-
+#else
+	// We don't need to read the image properties here...
+#endif
 	return true;
 
 }
