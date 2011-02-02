@@ -145,7 +145,7 @@ private:
 	PNGHeader _header;
 
 	byte _palette[256 * 4];	// RGBA
-	byte _paletteEntries;
+	uint16 _paletteEntries;
 	uint16 _transparentColor[3];
 	bool _transparentColorSpecified;
 

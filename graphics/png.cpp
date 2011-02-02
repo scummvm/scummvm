@@ -441,7 +441,7 @@ byte PNG::getNumColorChannels() {
 }
 
 void PNG::readPaletteChunk() {
-	for (byte i = 0; i < _paletteEntries; i++) {
+	for (uint16 i = 0; i < _paletteEntries; i++) {
 		_palette[i * 4 + 0] = _stream->readByte();	// R
 		_palette[i * 4 + 1] = _stream->readByte();	// G
 		_palette[i * 4 + 2] = _stream->readByte();	// B
