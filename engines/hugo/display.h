@@ -90,16 +90,16 @@ public:
 	virtual void loadFont(int16 fontId) = 0;
 	virtual void loadFontArr(Common::File &in) = 0;
 
-	int16    fontHeight();
+	int16    fontHeight() const;
 	int16    stringLength(const char *s) const;
 
 	void     displayBackground();
-	void     displayFrame(int sx, int sy, seq_t *seq, bool foreFl);
+	void     displayFrame(const int sx, const int sy, seq_t *seq, const bool foreFl);
 	void     displayList(dupdate_t update, ...);
-	void     displayRect(int16 x, int16 y, int16 dx, int16 dy);
+	void     displayRect(const int16 x, const int16 y, const int16 dx, const int16 dy);
 	void     drawHotspots();
-	void     drawRectangle(bool filledFl, int16 x1, int16 y1, int16 x2, int16 y2, int color);
-	void     drawShape(int x, int y, int color1, int color2);
+	void     drawRectangle(const bool filledFl, const int16 x1, const int16 y1, const int16 x2, const int16 y2, const int color);
+	void     drawShape(const int x, const int y, const int color1, const int color2);
 	void     drawStatusText();
 	void     freeFonts();
 	void     freePalette();
@@ -107,14 +107,14 @@ public:
 	void     initDisplay();
 	void     initNewScreenDisplay();
 	void     loadPalette(Common::File &in);
-	void     moveImage(image_pt srcImage, int16 x1, int16 y1, int16 dx, int16 dy, int16 width1, image_pt dstImage, int16 x2, int16 y2, int16 width2);
+	void     moveImage(image_pt srcImage, const int16 x1, const int16 y1, const int16 dx, int16 dy, const int16 width1, image_pt dstImage, const int16 x2, const int16 y2, const int16 width2);
 	void     remapPal(uint16 oldIndex, uint16 newIndex);
 	void     resetInventoryObjId();
 	void     restorePal(Common::SeekableReadStream *f);
 	void     savePal(Common::WriteStream *f) const;
 	void     setBackgroundColor(const uint16 color);
 	void     setCursorPal();
-	void     selectInventoryObjId(int16 objId);
+	void     selectInventoryObjId(const int16 objId);
 	void     shadowStr(int16 sx, const int16 sy, const char *s, const byte color);
 	void     showCursor();
 	void     userHelp() const;
@@ -174,8 +174,15 @@ private:
 
 	viewdib_t _frontBuffer;
 	viewdib_t _backBuffer;
-	viewdib_t _GUIBuffer;                           // User interface images
-	viewdib_t _backBufferBackup;                    // Backup _backBuffer during inventory
+	viewdib_t _GUIBuffer;                              // User interface images
+	viewdib_t _backBufferBackup;                       // Backup _backBuffer during inventory
+
+	// Formerly static variables used by displayList()
+	int16  _dlAddIndex, _dlRestoreIndex;               // Index into add/restore lists
+	rect_t _dlRestoreList[kRectListSize];              // The restore list
+	rect_t _dlAddList[kRectListSize];                  // The add list
+	rect_t _dlBlistList[kBlitListSize];                // The blit list
+	//
 
 	void createPal();
 	void merge(const rect_t *rectA, rect_t *rectB);

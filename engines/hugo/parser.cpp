@@ -52,6 +52,10 @@ namespace Hugo {
 
 Parser::Parser(HugoEngine *vm) :
 	_vm(vm), _putIndex(0), _getIndex(0), _checkDoubleF1Fl(false) {
+	_cmdLineIndex = 0;
+	_cmdLineTick = 0;
+	_cmdLineCursor = '_';
+	_cmdLine[0] = '\0';
 }
 
 Parser::~Parser() {
@@ -68,11 +72,7 @@ void Parser::switchTurbo() {
 void Parser::charHandler() {
 	debugC(4, kDebugParser, "charHandler");
 
-	static int16  lineIndex = 0;                    // Index into line
-	static uint32 tick = 0;                         // For flashing cursor
-	static char   cursor = '_';
-	static        command_t cmdLine;                // Build command line
-	status_t     &gameStatus = _vm->getGameStatus();
+	status_t &gameStatus = _vm->getGameStatus();
 
 	// Check for one or more characters in ring buffer
 	while (_getIndex != _putIndex) {
@@ -82,44 +82,44 @@ void Parser::charHandler() {
 
 		switch (c) {
 		case Common::KEYCODE_BACKSPACE:             // Rubout key
-			if (lineIndex)
-				cmdLine[--lineIndex] = '\0';
+			if (_cmdLineIndex)
+				_cmdLine[--_cmdLineIndex] = '\0';
 			break;
 		case Common::KEYCODE_RETURN:                // EOL, pass line to line handler
-			if (lineIndex && (_vm->_hero->pathType != kPathQuiet)) {
+			if (_cmdLineIndex && (_vm->_hero->pathType != kPathQuiet)) {
 				// Remove inventory bar if active
 				if (gameStatus.inventoryState == kInventoryActive)
 					gameStatus.inventoryState = kInventoryUp;
 				// Call Line handler and reset line
-				command(cmdLine);
-				cmdLine[lineIndex = 0] = '\0';
+				command(_cmdLine);
+				_cmdLine[_cmdLineIndex = 0] = '\0';
 			}
 			break;
 		default:                                    // Normal text key, add to line
-			if (lineIndex >= kMaxLineSize) {
+			if (_cmdLineIndex >= kMaxLineSize) {
 				//MessageBeep(MB_ICONASTERISK);
 				warning("STUB: MessageBeep() - Command line too long");
 			} else if (isprint(c)) {
-				cmdLine[lineIndex++] = c;
-				cmdLine[lineIndex] = '\0';
+				_cmdLine[_cmdLineIndex++] = c;
+				_cmdLine[_cmdLineIndex] = '\0';
 			}
 			break;
 		}
 	}
 
 	// See if time to blink cursor, set cursor character
-	if ((tick++ % (_vm->getTPS() / kBlinksPerSec)) == 0)
-		cursor = (cursor == '_') ? ' ' : '_';
+	if ((_cmdLineTick++ % (_vm->getTPS() / kBlinksPerSec)) == 0)
+		_cmdLineCursor = (_cmdLineCursor == '_') ? ' ' : '_';
 
 	// See if recall button pressed
 	if (gameStatus.recallFl) {
 		// Copy previous line to current cmdline
 		gameStatus.recallFl = false;
-		strcpy(cmdLine, _vm->_line);
-		lineIndex = strlen(cmdLine);
+		strcpy(_cmdLine, _vm->_line);
+		_cmdLineIndex = strlen(_cmdLine);
 	}
 
-	sprintf(_vm->_statusLine, ">%s%c", cmdLine, cursor);
+	sprintf(_vm->_statusLine, ">%s%c", _cmdLine, _cmdLineCursor);
 	sprintf(_vm->_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_vm->_config.turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_vm->_config.soundFl) ? "On" : "Off");
 
 	// See if "look" button pressed

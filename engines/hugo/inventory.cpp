@@ -47,6 +47,7 @@ namespace Hugo {
 static const int kMaxDisp = (kXPix / kInvDx);       // Max icons displayable
 
 InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm) {
+	_firstIconId = 0;
 }
 
 /**
@@ -100,8 +101,6 @@ void InventoryHandler::constructInventory(const int16 imageTotNumb, int displayN
 int16 InventoryHandler::processInventory(const invact_t action, ...) {
 	debugC(1, kDebugInventory, "processInventory(invact_t action, ...)");
 
-	static int16 firstIconId = 0;                   // Index of first icon to display
-
 	int16 imageNumb;                                // Total number of inventory items
 	int displayNumb;                                // Total number displayed/carried
 	// Compute total number and number displayed, i.e. number carried
@@ -118,15 +117,15 @@ int16 InventoryHandler::processInventory(const invact_t action, ...) {
 
 	switch (action) {
 	case kInventoryActionInit:                      // Initialize inventory display
-		constructInventory(imageNumb, displayNumb, scrollFl, firstIconId);
+		constructInventory(imageNumb, displayNumb, scrollFl, _firstIconId);
 		break;
 	case kInventoryActionLeft:                      // Scroll left by one icon
-		firstIconId = MAX(0, firstIconId - 1);
-		constructInventory(imageNumb, displayNumb, scrollFl, firstIconId);
+		_firstIconId = MAX(0, _firstIconId - 1);
+		constructInventory(imageNumb, displayNumb, scrollFl, _firstIconId);
 		break;
 	case kInventoryActionRight:                     // Scroll right by one icon
-		firstIconId = MIN(displayNumb, firstIconId + 1);
-		constructInventory(imageNumb, displayNumb, scrollFl, firstIconId);
+		_firstIconId = MIN(displayNumb, _firstIconId + 1);
+		constructInventory(imageNumb, displayNumb, scrollFl, _firstIconId);
 		break;
 	case kInventoryActionGet:                       // Return object id under cursor
 		// Get cursor position from variable argument list
@@ -145,7 +144,7 @@ int16 InventoryHandler::processInventory(const invact_t action, ...) {
 					if (i == kMaxDisp - 1)          // Right scroll button
 						objId = kRightArrow;
 					else                            // Adjust for scroll
-						i += firstIconId - 1;       // i is icon index
+						i += _firstIconId - 1;      // i is icon index
 				}
 			}
 

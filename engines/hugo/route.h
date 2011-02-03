@@ -62,6 +62,8 @@ private:
 	static const int kMaxSeg = 256;                 // Maximum number of segments
 	static const int kMaxNodes = 256;               // Maximum nodes in route
 
+	uint16 _oldWalkDirection;                       // Last direction char
+
 	byte _boundaryMap[kYPix][kXPix];                // Boundary byte map
 	segment_t _segment[kMaxSeg];                    // List of points in fill-path
 	Point _route[kMaxNodes];                        // List of nodes in route (global)

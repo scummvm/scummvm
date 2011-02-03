@@ -46,6 +46,8 @@
 
 namespace Hugo {
 FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
+	has_read_header = false;
+	firstUIFFl = true; 
 }
 
 FileManager::~FileManager() {
@@ -55,7 +57,7 @@ FileManager::~FileManager() {
 * Convert 4 planes (RGBI) data to 8-bit DIB format
 * Return original plane data ptr
 */
-byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, image_pt dataPtr) const{
+byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, image_pt dataPtr) const {
 	debugC(2, kDebugFile, "convertPCC(byte *p, %d, %d, image_pt data_p)", y, bpl);
 
 	dataPtr += y * bpl * 8;                         // Point to correct DIB line
@@ -79,7 +81,6 @@ seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, cons
 	debugC(1, kDebugFile, "readPCX(..., %s)", name);
 
 	// Read in the PCC header and check consistency
-	static PCC_header_t PCC_header;
 	PCC_header.mfctr = f.readByte();
 	PCC_header.vers = f.readByte();
 	PCC_header.enc = f.readByte();
@@ -179,7 +180,7 @@ void FileManager::readImage(const int objNum, object_t *objPtr) {
 		}
 	}
 
-	bool  firstFl = true;                           // Initializes pcx read function
+	bool  firstImgFl = true;                        // Initializes pcx read function
 	seq_t *seqPtr = 0;                              // Ptr to sequence structure
 
 	// Now read the images into an images list
@@ -187,12 +188,12 @@ void FileManager::readImage(const int objNum, object_t *objPtr) {
 		for (int k = 0; k < objPtr->seqList[j].imageNbr; k++) { // each image
 			if (k == 0) {                           // First image
 				// Read this image - allocate both seq and image memory
-				seqPtr = readPCX(_objectsArchive, 0, 0, firstFl, _vm->_text->getNoun(objPtr->nounIndex, 0));
+				seqPtr = readPCX(_objectsArchive, 0, 0, firstImgFl, _vm->_text->getNoun(objPtr->nounIndex, 0));
 				objPtr->seqList[j].seqPtr = seqPtr;
-				firstFl = false;
+				firstImgFl = false;
 			} else {                                // Subsequent image
 				// Read this image - allocate both seq and image memory
-				seqPtr->nextSeqPtr = readPCX(_objectsArchive, 0, 0, firstFl, _vm->_text->getNoun(objPtr->nounIndex, 0));
+				seqPtr->nextSeqPtr = readPCX(_objectsArchive, 0, 0, firstImgFl, _vm->_text->getNoun(objPtr->nounIndex, 0));
 				seqPtr = seqPtr->nextSeqPtr;
 			}
 
@@ -260,10 +261,6 @@ sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 		warning("Hugo Error: File not found %s", getSoundFilename());
 		return 0;
 	}
-
-	// If this is the first call, read the lookup table
-	static bool has_read_header = false;
-	static sound_hdr_t s_hdr[kMaxSounds];           // Sound lookup table
 
 	if (!has_read_header) {
 		if (fp.read(s_hdr, sizeof(s_hdr)) != sizeof(s_hdr))
@@ -605,12 +602,9 @@ void FileManager::readBootFile() {
 uif_hdr_t *FileManager::getUIFHeader(const uif_t id) {
 	debugC(1, kDebugFile, "getUIFHeader(%d)", id);
 
-	static bool firstFl = true;
-	static uif_hdr_t UIFHeader[kMaxUifs];           // Lookup for uif fonts/images
-
 	// Initialize offset lookup if not read yet
-	if (firstFl) {
-		firstFl = false;
+	if (firstUIFFl) {
+		firstUIFFl = false;
 		// Open unbuffered to do far read
 		Common::File ip;                            // Image data file
 		if (!ip.open(getUifFilename()))

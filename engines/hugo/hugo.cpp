@@ -62,8 +62,7 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_arrayReqs(0), _hotspots(0), _invent(0), _uses(0), _catchallList(0), _backgroundObjects(0),	_points(0), _cmdList(0), 
 	_screenActs(0), _hero(0), _heroImage(0), _defltTunes(0), _introX(0), _introY(0), _maxInvent(0), _numBonuses(0),
 	_numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0), _screenStates(0), _score(0), _maxscore(0),
-	_backgroundObjectsSize(0), _screenActsSize(0), _usesSize(0)
-
+	_backgroundObjectsSize(0), _screenActsSize(0), _usesSize(0), _lastTime(0), _curTime(0)
 {
 	_system = syst;
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
@@ -305,9 +304,6 @@ void HugoEngine::initMachine() {
 * Hugo game state machine - called during onIdle
 */
 void HugoEngine::runMachine() {
-	static uint32 lastTime;
-	uint32 curTime;
-
 	status_t &gameStatus = getGameStatus();
 	// Don't process if we're in a textbox
 	if (gameStatus.textBoxFl)
@@ -317,13 +313,13 @@ void HugoEngine::runMachine() {
 	if (gameStatus.gameOverFl)
 		return;
 
-	curTime = g_system->getMillis();
+	_curTime = g_system->getMillis();
 	// Process machine once every tick
-	while (curTime - lastTime < (uint32)(1000 / getTPS())) {
+	while (_curTime - _lastTime < (uint32)(1000 / getTPS())) {
 		g_system->delayMillis(5);
-		curTime = g_system->getMillis();
+		_curTime = g_system->getMillis();
 	}
-	lastTime = curTime;
+	_lastTime = _curTime;
 
 	switch (gameStatus.viewState) {
 	case kViewIdle:                                 // Not processing state machine

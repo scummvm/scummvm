@@ -177,8 +177,6 @@ void ObjectHandler_v1d::updateImages() {
 void ObjectHandler_v1d::moveObjects() {
 	debugC(4, kDebugObject, "moveObjects");
 
-	static int dxOld;                               // previous direction for CHASEing
-
 	// Added to DOS version in order to handle mouse properly
 	// If route mode enabled, do special route processing
 	if (_vm->getGameStatus().routeIndex >= 0)
@@ -208,13 +206,13 @@ void ObjectHandler_v1d::moveObjects() {
 				// Set first image in sequence (if multi-seq object)
 				if (obj->seqNumb == 4) {
 					if (!obj->vx) {                 // Got 4 directions
-						if (obj->vx != dxOld) {     // vx just stopped
+						if (obj->vx != obj->oldvx) {// vx just stopped
 							if (dy > 0)
 								obj->currImagePtr = obj->seqList[DOWN].seqPtr;
 							else
 								obj->currImagePtr = obj->seqList[_UP].seqPtr;
 						}
-					} else if (obj->vx != dxOld) {
+					} else if (obj->vx != obj->oldvx) {
 						if (dx > 0)
 							obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
 						else
@@ -229,7 +227,8 @@ void ObjectHandler_v1d::moveObjects() {
 					obj->cycling = kCycleNotCycling;
 					_vm->boundaryCollision(obj);    // Must have got hero!
 				}
-				dxOld = obj->vx;
+				obj->oldvx = obj->vx;
+				obj->oldvy = obj->vy;
 				currImage = obj->currImagePtr;      // Get (new) ptr to current image
 				break;
 				}
@@ -241,13 +240,13 @@ void ObjectHandler_v1d::moveObjects() {
 					// Set first image in sequence (if multi-seq object)
 					if (obj->seqNumb > 1) {
 						if (!obj->vx && (obj->seqNumb > 2)) {
-							if (obj->vx != dxOld) {  // vx just stopped
+							if (obj->vx != obj->oldvx) { // vx just stopped
 								if (obj->vy > 0)
 									obj->currImagePtr = obj->seqList[DOWN].seqPtr;
 								else
 									obj->currImagePtr = obj->seqList[_UP].seqPtr;
 							}
-						} else if (obj->vx != dxOld) {
+						} else if (obj->vx != obj->oldvx) {
 							if (obj->vx > 0)
 								obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
 							else
@@ -259,7 +258,8 @@ void ObjectHandler_v1d::moveObjects() {
 						else
 							obj->cycling = kCycleNotCycling;
 					}
-					dxOld = obj->vx;
+					obj->oldvx = obj->vx;
+					obj->oldvy = obj->vy;
 					currImage = obj->currImagePtr;  // Get (new) ptr to current image
 				}
 				break;

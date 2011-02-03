@@ -47,12 +47,16 @@
 namespace Hugo {
 
 MidiPlayer::MidiPlayer(MidiDriver *driver)
-	: _driver(driver), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _paused(false), _masterVolume(0) {
+	: _driver(driver), _parser(0), _midiData(0) {
 	assert(_driver);
 	memset(_channelsTable, 0, sizeof(_channelsTable));
 	for (int i = 0; i < kNumbChannels; i++) {
 		_channelsVolume[i] = 127;
 	}
+	_isLooping = false;
+	_isPlaying = false;
+	_paused = false;
+	_masterVolume = 0; 
 }
 
 MidiPlayer::~MidiPlayer() {
@@ -236,6 +240,10 @@ SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
 						_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	DOSSongPtr = 0;
+	curPriority = 0;
+	pcspkrTimer = 0;
+	pcspkrOctave = 3;
+	pcspkrNoteDuration = 2;	
 }
 
 SoundHandler::~SoundHandler() {
@@ -309,7 +317,6 @@ void SoundHandler::playSound(int16 sound, const byte priority) {
 	// uint32 dwVolume;                             // Left, right volume of sound
 	sound_pt sound_p;                               // Sound data
 	uint16 size;                                    // Size of data
-	static byte curPriority = 0;                    // Priority of currently playing sound
 
 	// Sound disabled
 	if (!_vm->_config.soundFl || !_vm->_mixer->isReady())
@@ -374,12 +381,9 @@ void SoundHandler::loopPlayer(void *refCon) {
 * Timer: >0 - song still going, 0 - Stop note, -1 - Set next note
 */
 void SoundHandler::pcspkr_player() {
-	static int8 pcspkrTimer = 0;                    // Timer (ticks) for note being played
-	static int8 pcspkrOctave = 3;                   // Current octave 1..7
-	static int8 pcspkrNoteDuration = 2;             // Current length of note (ticks)
-	static uint16 pcspkrNotes[8] =  {1352, 1205, 2274, 2026, 1805, 1704, 1518}; // The 3rd octave note counts A..G
-	static uint16 pcspkrSharps[8] = {1279, 1171, 2150, 1916, 1755, 1611, 1435}; // The sharps, A# to B#
-	static uint16 pcspkrFlats[8] =  {1435, 1279, 2342, 2150, 1916, 1755, 1611}; // The flats, Ab to Bb
+	static const uint16 pcspkrNotes[8] =  {1352, 1205, 2274, 2026, 1805, 1704, 1518}; // The 3rd octave note counts A..G
+	static const uint16 pcspkrSharps[8] = {1279, 1171, 2150, 1916, 1755, 1611, 1435}; // The sharps, A# to B#
+	static const uint16 pcspkrFlats[8] =  {1435, 1279, 2342, 2150, 1916, 1755, 1611}; // The flats, Ab to Bb
 
 	_vm->getTimerManager()->removeTimerProc(&loopPlayer);
 	_vm->getTimerManager()->installTimerProc(&loopPlayer, 1000000 / 9, this);

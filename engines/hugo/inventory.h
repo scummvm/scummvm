@@ -50,6 +50,8 @@ private:
 	HugoEngine *_vm;
 
 	static const int kStepDy = 8;                   // Pixels per step movement
+	
+	int16 _firstIconId;                             // Index of first icon to display
 
 	void constructInventory(const int16 imageTotNumb, int displayNumb, const bool scrollFl, int16 firstObjId);
 };

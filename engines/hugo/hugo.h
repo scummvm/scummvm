@@ -82,20 +82,9 @@ static const int kRightArrow = -3;                  // Cursor over Right arrow i
 static const int kMaxPath = 256;                    // Max length of a full path name
 static const int kHeroMaxWidth = 24;                // Maximum width of hero
 static const int kHeroMinWidth = 16;                // Minimum width of hero
-static const int kNumColors = 16;                   // Num colors to save in palette
 
 typedef char fpath_t[kMaxPath];                     // File path
 typedef char command_t[kMaxLineSize + 8];           // Command line (+spare for prompt,cursor)
-
-struct PCC_header_t {                               // Structure of PCX file header
-	byte   mfctr, vers, enc, bpx;
-	uint16  x1, y1, x2, y2;                         // bounding box
-	uint16  xres, yres;
-	byte   palette[3 * kNumColors];                 // EGA color palette
-	byte   vmode, planes;
-	uint16 bytesPerLine;                            // Bytes per line
-	byte   fill2[60];
-};                                                  // Header of a PCC file
 
 struct config_t {                                   // User's config (saved)
 	bool musicFl;                                   // State of Music button/menu item
@@ -424,6 +413,8 @@ private:
 	int _mouseY;
 	byte _introXSize;
 	status_t _status;                               // Game status structure
+	uint32 _lastTime;
+	uint32 _curTime;
 
 	static HugoEngine *s_Engine;
 

@@ -77,6 +77,8 @@ public:
 	void preNewGame();
 	void introInit();
 	bool introPlay();
+private:
+	int _introState;
 };
 
 class intro_v2w : public IntroHandler {

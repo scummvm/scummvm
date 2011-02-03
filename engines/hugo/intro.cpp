@@ -57,6 +57,7 @@ void intro_v1d::preNewGame() {
 }
 
 void intro_v1d::introInit() {
+	_introState = 0;
 	introTicks = 0;
 	surf.w = 320;
 	surf.h = 200;
@@ -66,14 +67,13 @@ void intro_v1d::introInit() {
 }
 
 bool intro_v1d::introPlay() {
-	static int state = 0;
 	byte introSize = _vm->getIntroSize();
 
 	if (_vm->getGameStatus().skipIntroFl)
 		return true;
 
 	if (introTicks < introSize) {
-		switch (state++) {
+		switch (_introState++) {
 		case 0:
 			_vm->_screen->drawRectangle(true, 0, 0, 319, 199, _TMAGENTA);
 			_vm->_screen->drawRectangle(true, 10, 10, 309, 189, _TBLACK);

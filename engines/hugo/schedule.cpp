@@ -46,7 +46,7 @@
 
 namespace Hugo {
 
-Scheduler::Scheduler(HugoEngine *vm) : _vm(vm), _actListArr(0) {
+Scheduler::Scheduler(HugoEngine *vm) : _vm(vm), _actListArr(0), _curTick(0), _oldTime(0), _refreshTimeout(0) {
 	memset(_events, 0, sizeof(_events));
 }
 
@@ -117,24 +117,21 @@ uint32 Scheduler::getWinTicks() const {
 uint32 Scheduler::getDosTicks(const bool updateFl) {
 	debugC(5, kDebugSchedule, "getDosTicks(%s)", (updateFl) ? "TRUE" : "FALSE");
 
-	static  uint32 tick = 0;                        // Current system time in ticks
-	static  uint32 t_old = 0;                       // The previous wall time in ticks
-
 	uint32 t_now;                                   // Current wall time in ticks
 
 	if (!updateFl)
-		return(tick);
+		return(_curTick);
 
-	if (t_old == 0)
-		t_old = (uint32) floor((double) (g_system->getMillis() * _vm->getTPS() / 1000));
+	if (_oldTime == 0)
+		_oldTime = (uint32) floor((double) (g_system->getMillis() * _vm->getTPS() / 1000));
 	// Calculate current wall time in ticks
 	t_now = g_system->getMillis() * _vm->getTPS() / 1000	;
 
-	if ((t_now - t_old) > 0) {
-		t_old = t_now;
-		tick++;
+	if ((t_now - _oldTime) > 0) {
+		_oldTime = t_now;
+		_curTick++;
 	}
-	return(tick);
+	return(_curTick);
 }
 
 /**
@@ -221,15 +218,14 @@ void Scheduler::restoreScreen(const int screenIndex) {
 void Scheduler::waitForRefresh() {
 	debugC(5, kDebugSchedule, "waitForRefresh()");
 
-	static uint32 timeout = 0;
 	uint32 t;
 
-	if (timeout == 0)
-		timeout = getDosTicks(true);
+	if (_refreshTimeout == 0)
+		_refreshTimeout = getDosTicks(true);
 
-	while ((t = getDosTicks(true)) < timeout)
+	while ((t = getDosTicks(true)) < _refreshTimeout)
 		;
-	timeout = ++t;
+	_refreshTimeout = ++t;
 }
 
 /**

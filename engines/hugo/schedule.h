@@ -477,17 +477,21 @@ public:
 
 protected:
 	HugoEngine *_vm;
-	static const int kFilenameLength = 12;              // Max length of a DOS file name
-	static const int kMaxEvents = 50;                   // Max events in event queue
-	static const int kShiftSize = 8;                    // Place hero this far inside bounding box
+	static const int kFilenameLength = 12;          // Max length of a DOS file name
+	static const int kMaxEvents = 50;               // Max events in event queue
+	static const int kShiftSize = 8;                // Place hero this far inside bounding box
 
 	uint16   _actListArrSize;
 	uint16   _alNewscrIndex;
 
-	event_t *_freeEvent;                                // Free list of event structures
-	event_t *_headEvent;                                // Head of list (earliest time)
-	event_t *_tailEvent;                                // Tail of list (latest time)
-	event_t  _events[kMaxEvents];                       // Statically declare event structures
+	uint32 _curTick;                                // Current system time in ticks
+	uint32 _oldTime;                                // The previous wall time in ticks
+	uint32 _refreshTimeout;
+
+	event_t *_freeEvent;                            // Free list of event structures
+	event_t *_headEvent;                            // Head of list (earliest time)
+	event_t *_tailEvent;                            // Tail of list (latest time)
+	event_t  _events[kMaxEvents];                   // Statically declare event structures
 
 	act    **_actListArr;
 
@@ -518,9 +522,7 @@ public:
 
 protected:
 	virtual const char *getCypher() const;
-
 	virtual uint32 getTicks();
-
 	virtual void promptAction(act *action);
 };
 

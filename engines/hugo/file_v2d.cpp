@@ -41,9 +41,11 @@
 
 namespace Hugo {
 FileManager_v2d::FileManager_v2d(HugoEngine *vm) : FileManager_v1d(vm) {
+	_fetchStringBuf = (char *)malloc(kMaxBoxChar);
 }
 
 FileManager_v2d::~FileManager_v2d() {
+	free(_fetchStringBuf);
 }
 
 /**
@@ -163,7 +165,6 @@ void FileManager_v2d::readOverlay(const int screenNum, image_pt image, ovl_t ove
 */
 char *FileManager_v2d::fetchString(const int index) {
 	debugC(1, kDebugFile, "fetchString(%d)", index);
-	static char buffer[kMaxBoxChar];
 
 	// Get offset to string[index] (and next for length calculation)
 	_stringArchive.seek((uint32)index * sizeof(uint32), SEEK_SET);
@@ -179,13 +180,13 @@ char *FileManager_v2d::fetchString(const int index) {
 
 	// Position to string and read it into gen purpose _textBoxBuffer
 	_stringArchive.seek(off1, SEEK_SET);
-	if (_stringArchive.read(buffer, (uint16)(off2 - off1)) == 0)
+	if (_stringArchive.read(_fetchStringBuf, (uint16)(off2 - off1)) == 0)
 		error("An error has occurred: fetchString");
 
 	// Null terminate, decode and return it
-	buffer[off2-off1] = '\0';
-	_vm->_scheduler->decodeString(buffer);
-	return buffer;
+	_fetchStringBuf[off2-off1] = '\0';
+	_vm->_scheduler->decodeString(_fetchStringBuf);
+	return _fetchStringBuf;
 }
 } // End of namespace Hugo
 

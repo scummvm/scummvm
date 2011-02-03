@@ -55,12 +55,12 @@ public:
 	bool     saveGame(const int16 slot, const Common::String descrip);
 
 	// Name scenery and objects picture databases
-	const char *getBootFilename()    { return "HUGO.BSF";    }
-	const char *getObjectFilename()  { return "objects.dat"; }
-	const char *getSceneryFilename() { return "scenery.dat"; }
-	const char *getSoundFilename()   { return "sounds.dat";  }
-	const char *getStringFilename()  { return "strings.dat"; }
-	const char *getUifFilename()     { return "uif.dat";     }
+	const char *getBootFilename() const    { return "HUGO.BSF";    }
+	const char *getObjectFilename() const  { return "objects.dat"; }
+	const char *getSceneryFilename() const { return "scenery.dat"; }
+	const char *getSoundFilename() const   { return "sounds.dat";  }
+	const char *getStringFilename() const  { return "strings.dat"; }
+	const char *getUifFilename() const     { return "uif.dat";     }
 
 	virtual void openDatabaseFiles() = 0;
 	virtual void closeDatabaseFiles() = 0;
@@ -92,12 +92,33 @@ protected:
 		uint32 ob_len;
 	};
 
+	static const int kNumColors = 16;               // Num colors to save in palette
+
+	struct PCC_header_t {                           // Structure of PCX file header
+		byte   mfctr, vers, enc, bpx;
+		uint16  x1, y1, x2, y2;                     // bounding box
+		uint16  xres, yres;
+		byte   palette[3 * kNumColors];             // EGA color palette
+		byte   vmode, planes;
+		uint16 bytesPerLine;                        // Bytes per line
+		byte   fill2[60];
+	};                                              // Header of a PCC file
+
+	bool firstUIFFl;
+	uif_hdr_t UIFHeader[kMaxUifs];                  // Lookup for uif fonts/images
+
 	Common::File _stringArchive;                    // Handle for string file
 	Common::File _sceneryArchive1;                  // Handle for scenery file
 	Common::File _objectsArchive;                   // Handle for objects file
 
+	PCC_header_t PCC_header;
+
 	seq_t *readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, const bool firstFl, const char *name);
 	const char *getBootCypher() const;
+
+	// If this is the first call, read the lookup table
+	bool has_read_header;
+	sound_hdr_t s_hdr[kMaxSounds];                  // Sound lookup table
 
 private:
 	byte *convertPCC(byte *p, const uint16 y, const uint16 bpl, image_pt dataPtr) const;
@@ -130,6 +151,8 @@ public:
 	virtual void readBackground(const int screenIndex);
 	virtual void readOverlay(const int screenNum, image_pt image, ovl_t overlayType);
 	char *fetchString(const int index);
+private:
+	char *_fetchStringBuf;
 };
 
 class FileManager_v3d : public FileManager_v2d {

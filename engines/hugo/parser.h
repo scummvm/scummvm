@@ -60,6 +60,11 @@ public:
 protected:
 	HugoEngine *_vm;
 
+	int16     _cmdLineIndex;                        // Index into line
+	uint32    _cmdLineTick;                         // For flashing cursor
+	char      _cmdLineCursor;
+	command_t _cmdLine;                             // Build command line
+
 	char *findNoun() const;
 	char *findVerb() const;
 	void  showDosInventory() const;

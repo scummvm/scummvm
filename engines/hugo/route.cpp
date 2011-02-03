@@ -41,6 +41,7 @@
 
 namespace Hugo {
 Route::Route(HugoEngine *vm) : _vm(vm) {
+	_oldWalkDirection = 0;
 }
 
 /**
@@ -95,16 +96,15 @@ void Route::setDirection(const uint16 keyCode) {
 void Route::setWalk(const uint16 direction) {
 	debugC(1, kDebugRoute, "setWalk(%d)", direction);
 
-	static uint16 oldDirection = 0;                 // Last direction char
 	object_t *obj = _vm->_hero;                     // Pointer to hero object
 
 	if (_vm->getGameStatus().storyModeFl || obj->pathType != kPathUser) // Make sure user has control
 		return;
 
 	if (!obj->vx && !obj->vy)
-		oldDirection = 0;                           // Fix for consistant restarts
+		_oldWalkDirection = 0;                      // Fix for consistant restarts
 
-	if (direction != oldDirection) {
+	if (direction != _oldWalkDirection) {
 		// Direction has changed
 		setDirection(direction);                    // Face new direction
 		obj->vx = obj->vy = 0;
@@ -150,13 +150,13 @@ void Route::setWalk(const uint16 direction) {
 			obj->vy =  kStepDy / 2;
 			break;
 		}
-		oldDirection = direction;
+		_oldWalkDirection = direction;
 		obj->cycling = kCycleForward;
 	} else {
 		// Same key twice - halt hero
 		obj->vy = 0;
 		obj->vx = 0;
-		oldDirection = 0;
+		_oldWalkDirection = 0;
 		obj->cycling = kCycleNotCycling;
 	}
 }

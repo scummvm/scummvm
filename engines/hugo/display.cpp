@@ -42,10 +42,30 @@
 #include "hugo/object.h"
 
 namespace Hugo {
-Screen::Screen(HugoEngine *vm) : _vm(vm), _mainPalette(0), _curPalette(0) {
+Screen::Screen(HugoEngine *vm) : _vm(vm) {
+	_mainPalette = 0;
+	_curPalette = 0;
 	for (int i = 0; i < kNumFonts; i++) {
 		_arrayFont[i] = 0;
 		fontLoadedFl[i] = false;
+	}
+	for (int i = 0; i < kBlitListSize; i++) {
+		_dlBlistList[i].x = 0;
+		_dlBlistList[i].y = 0;
+		_dlBlistList[i].dx = 0;
+		_dlBlistList[i].dy = 0;
+	}
+	for (int i = 0; i < kRectListSize; i++) {
+		_dlRestoreList[i].x = 0;
+		_dlRestoreList[i].y = 0;
+		_dlRestoreList[i].dx = 0;
+		_dlRestoreList[i].dy = 0;
+	}
+	for (int i = 0; i < kRectListSize; i++) {
+		_dlAddList[i].x = 0;
+		_dlAddList[i].y = 0;
+		_dlAddList[i].dx = 0;
+		_dlAddList[i].dy = 0;
 	}
 }
 
@@ -58,7 +78,7 @@ Screen::~Screen() {
 void Screen::createPal() {
 	debugC(1, kDebugDisplay, "createPal");
 
-	g_system->setPalette(_mainPalette, 0, kNumColors);
+	g_system->setPalette(_mainPalette, 0, _paletteSize / 4);
 }
 
 void Screen::setCursorPal() {
@@ -290,32 +310,28 @@ int16 Screen::mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 ble
 void Screen::displayList(dupdate_t update, ...) {
 	debugC(6, kDebugDisplay, "displayList()");
 
-	static int16  addIndex, restoreIndex;           // Index into add/restore lists
-	static rect_t restoreList[kRectListSize];       // The restore list
-	static rect_t addList[kRectListSize];           // The add list
-	static rect_t blistList[kBlitListSize];         // The blit list
 	int16         blitLength = 0;                   // Length of blit list
 	va_list       marker;                           // Args used for D_ADD operation
 	rect_t       *p;                                // Ptr to dlist entry
 
 	switch (update) {
 	case kDisplayInit:                              // Init lists, restore whole screen
-		addIndex = restoreIndex = 0;
+		_dlAddIndex = _dlRestoreIndex = 0;
 		memcpy(_frontBuffer, _backBuffer, sizeof(_frontBuffer));
 		break;
 	case kDisplayAdd:                               // Add a rectangle to list
-		if (addIndex >= kRectListSize) {
+		if (_dlAddIndex >= kRectListSize) {
 			warning("Display list exceeded");
 			return;
 		}
 		va_start(marker, update);                   // Initialize variable arguments
-		p = &addList[addIndex];
+		p = &_dlAddList[_dlAddIndex];
 		p->x  = va_arg(marker, int);                // x
 		p->y  = va_arg(marker, int);                // y
 		p->dx = va_arg(marker, int);                // dx
 		p->dy = va_arg(marker, int);                // dy
 		va_end(marker);                             // Reset variable arguments
-		addIndex++;
+		_dlAddIndex++;
 		break;
 	case kDisplayDisplay:                           // Display whole list
 		// Don't blit if newscreen just loaded because _frontBuffer will
@@ -327,22 +343,22 @@ void Screen::displayList(dupdate_t update, ...) {
 		}
 
 		// Coalesce restore-list, add-list into combined blit-list
-		blitLength = mergeLists(restoreList, blistList, restoreIndex, blitLength);
-		blitLength = mergeLists(addList, blistList, addIndex,  blitLength);
+		blitLength = mergeLists(_dlRestoreList, _dlBlistList, _dlRestoreIndex, blitLength);
+		blitLength = mergeLists(_dlAddList, _dlBlistList, _dlAddIndex, blitLength);
 
 		// Blit the combined blit-list
-		for (restoreIndex = 0, p = blistList; restoreIndex < blitLength; restoreIndex++, p++) {
+		for (_dlRestoreIndex = 0, p = _dlBlistList; _dlRestoreIndex < blitLength; _dlRestoreIndex++, p++) {
 			if (p->dx)                              // Marks a used entry
 				displayRect(p->x, p->y, p->dx, p->dy);
 		}
 		break;
 	case kDisplayRestore:                           // Restore each rectangle
-		for (restoreIndex = 0, p = addList; restoreIndex < addIndex; restoreIndex++, p++) {
+		for (_dlRestoreIndex = 0, p = _dlAddList; _dlRestoreIndex < _dlAddIndex; _dlRestoreIndex++, p++) {
 			// Restoring from _backBuffer to _frontBuffer
-			restoreList[restoreIndex] = *p;         // Copy add-list to restore-list
+			_dlRestoreList[_dlRestoreIndex] = *p;   // Copy add-list to restore-list
 			moveImage(_backBuffer, p->x, p->y, p->dx, p->dy, kXPix, _frontBuffer, p->x, p->y, kXPix);
 		}
-		addIndex = 0;                               // Reset add-list
+		_dlAddIndex = 0;                            // Reset add-list
 		break;
 	}
 }
@@ -376,10 +392,10 @@ void Screen::writeChr(const int sx, const int sy, const byte color, const char *
 /**
 * Returns height of characters in current font
 */
-int16 Screen::fontHeight() {
+int16 Screen::fontHeight() const {
 	debugC(2, kDebugDisplay, "fontHeight()");
 
-	static int16 height[kNumFonts] = {5, 7, 8};
+	static const int16 height[kNumFonts] = {5, 7, 8};
 	return height[_fnt - kFirstFont];
 }
 
