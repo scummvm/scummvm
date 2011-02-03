@@ -1873,7 +1873,7 @@ void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
 
 				// If we have a file name on an audio resource, we've got an audio36
 				// resource. Parse the file name to get the id.
-				if (!resourceName.empty() && !resourceName.contains("AUD"))
+				if (!resourceName.empty() && resourceName[0] == '@')
 					resId = convertPatchNameBase36(kResourceTypeAudio36, resourceName);
 				else
 					resId = ResourceId(type, idArray[j]);
@@ -1881,7 +1881,7 @@ void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
 				Common::String resourceName = _macResMan->getResName(tagArray[i], idArray[j]);
 
 				// Same as with audio36 above
-				if (!resourceName.empty() && !resourceName.contains("SYN"))
+				if (!resourceName.empty() && resourceName[0] == '#')
 					resId = convertPatchNameBase36(kResourceTypeSync36, resourceName);
 				else
 					resId = ResourceId(type, idArray[j]);
