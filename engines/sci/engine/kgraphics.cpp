@@ -1414,14 +1414,17 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 		case 1:	// LSL6 hires (startup)
 			// TODO
 			return NULL_REG;	// an integer is expected
-		case 4: {	// start
-				int id = argv[1].toUint16();
-				warning("kRobot(start), id %d", id);
+		case 4: {	// start - we don't really have a use for this one
+				//int id = argv[1].toUint16();
+				//warning("kRobot(start), id %d", id);
 			}
+			break;
+		case 7:	// unknown, called e.g. by Phantasmagoria
+			warning("kRobot(%d)", subop);
 			break;
 		case 8: // sync
 			robot->drawNextFrame();
-			// Sync
+			// Signal the engine scripts that the video is done
 			if (robot->getCurFrame() ==  robot->getFrameCount())
 				writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
 			break;

@@ -46,10 +46,13 @@ public:
 private:
 	void initData(GuiResourceId resourceId);
 	void getFrameOffsets();
-	byte *assembleVideoFrame(int frame);
-	void getFrameDimensions(int frame, int &width, int &height);
-	void getFrameRect(int frame, Common::Rect &rect); // Not sure what to use this for yet
-	int getFrameScale(int frame); // Scale factor (multiplied by 100). More like custom height, but why use a percentage for it?
+	void assembleVideoFrame(uint16 frame);
+	void getFrameDimensions(uint16 frame, uint16 &width, uint16 &height);
+#if 0
+	// Unused
+	Common::Rect getFrameRect(uint16 frame);
+#endif
+	byte getFrameScale(uint16 frame); // Scale factor (multiplied by 100). More like custom height, but why use a percentage for it?
 	void setPalette();
 	void freeData();
 
@@ -61,6 +64,7 @@ private:
 	byte *_resourceData;
 	byte _savedPal[256 * 4];
 
+	byte _version;	// robot version
 	uint16 _x;
 	uint16 _y;
 	//uint16 _width;
@@ -74,6 +78,9 @@ private:
 	uint32 *_audioStart;
 	uint32 *_audioLen;
 	uint16 _curFrame;
+
+	byte *_outputBuffer;
+	uint32 _outputBufferSize;
 };
 #endif
 
