@@ -136,6 +136,33 @@ public:
 	}
 };
 
+#ifdef ENABLE_SCI32
+// SCI32 Mac decided to add an extra byte (currently unknown in meaning) between
+// the talker and the string...
+class MessageReaderV4_MacSCI32 : public MessageReader {
+public:
+	MessageReaderV4_MacSCI32(byte *data, uint size) : MessageReader(data, size, 10, 12) { }
+
+	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
+		const byte *recordPtr = _data + _headerSize;
+
+		for (uint i = 0; i < _messageCount; i++) {
+			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)
+				&& (recordPtr[2] == tuple.cond) && (recordPtr[3] == tuple.seq)) {
+				record.tuple = tuple;
+				record.refTuple = MessageTuple(recordPtr[8], recordPtr[9], recordPtr[10]);
+				record.talker = recordPtr[4];
+				record.string = (const char *)_data + READ_BE_UINT16(recordPtr + 6);
+				return true;
+			}
+			recordPtr += _recordSize;
+		}
+
+		return false;
+	}
+};
+#endif
+
 bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &record) {
 	Resource *res = g_sci->getResMan()->findResource(ResourceId(kResourceTypeMessage, stack.getModule()), 0);
 
@@ -157,8 +184,12 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 	case 4:
 #ifdef ENABLE_SCI32
 	case 5: // v5 seems to be compatible with v4
+		// SCI32 Mac is different than SCI32 DOS/Win here
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1)
+			reader = new MessageReaderV4_MacSCI32(res->data, res->size);
+		else
 #endif
-		reader = new MessageReaderV4(res->data, res->size);
+			reader = new MessageReaderV4(res->data, res->size);
 		break;
 	default:
 		error("Message: unsupported resource version %d", version);
