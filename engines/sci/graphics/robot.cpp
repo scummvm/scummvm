@@ -94,10 +94,11 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 		return;
 	}
 
-	// There are several versions of robot files, ranging from 3 to 5. Version
-	// 5 is the version of the majority of the robot files. PQ:SWAT is the only
-	// game that uses robots of a different version (version 4), but there are
-	// no known examples of other robot versions.
+	// There are several versions of robot files, ranging from 3 to 6.
+	// v3: no known examples
+	// v4: PQ:SWAT
+	// v5: SCI2.1 and SCI3 games
+	// v6: SCI3 games
 	_version = _resourceData[6];
 
 	// Currently, we only support robot version 5. Robot version 
@@ -127,16 +128,18 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 		// uses this, thus error out so that we find out where this is used
 		error("Unknown robot version: %d", _version);
 		break;
-	case 4:
-		// TODO: Add support for this version (used in PQ:SWAT)
+	case 4:	// used in PQ:SWAT
+		// Unsupported
+		// TODO: Add support for this version
 		warning("TODO: add support for v4 robot videos");
 		_curFrame = _frameCount;	// jump to the last frame
 		return;
-	case 5:
-		// Supported, the most well-known and used version in SCI2.1
+	case 5:	// used in most SCI2.1 games
+		// Supported
 		break;
-	case 6:
-		// Introduced in SCI3
+	case 6:	// introduced in SCI3
+		// Unsupported
+		// TODO: Add support for this version
 		warning("TODO: add support for v6 robot videos");
 		_curFrame = _frameCount;	// jump to the last frame
 		break;
