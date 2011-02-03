@@ -76,6 +76,11 @@ void SegManager::resetSegMan() {
 	_nodesSegId = 0;
 	_hunksSegId = 0;
 
+#ifdef ENABLE_SCI32
+	_arraysSegId = 0;
+	_stringSegId = 0;
+#endif
+
 	// Reinitialize class table
 	_classTable.clear();
 	createClassTable();
