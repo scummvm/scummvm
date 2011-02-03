@@ -111,6 +111,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	_picNotValid = 0;
 	_picNotValidSci11 = 0;
 	_unditherState = true;
+	_fontIsUpscaled = false;
 
 	if (_resMan->isVGA() || (_resMan->isAmiga32color())) {
 		// It is not 100% accurate to set white to be 255 for Amiga 32-color
@@ -231,18 +232,23 @@ void GfxScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority,
  *  Sierra SCI didn't do this
  */
 void GfxScreen::putFontPixel(int startingY, int x, int y, byte color) {
-	int offset = (startingY + y) * _width + x;
-
-	_visualScreen[offset] = color;
-	if (!_upscaledHires) {
-		_displayScreen[offset] = color;
+	if (_fontIsUpscaled) {
+		// Do not scale ourselves, but put it on the display directly
+		putPixelOnDisplay(x, y + startingY, color);
 	} else {
-		int displayOffset = (_upscaledMapping[startingY] + y * 2) * _displayWidth + x * 2;
-		_displayScreen[displayOffset] = color;
-		_displayScreen[displayOffset + 1] = color;
-		displayOffset += _displayWidth;
-		_displayScreen[displayOffset] = color;
-		_displayScreen[displayOffset + 1] = color;
+		int offset = (startingY + y) * _width + x;
+
+		_visualScreen[offset] = color;
+		if (!_upscaledHires) {
+			_displayScreen[offset] = color;
+		} else {
+			int displayOffset = (_upscaledMapping[startingY] + y * 2) * _displayWidth + x * 2;
+			_displayScreen[displayOffset] = color;
+			_displayScreen[displayOffset + 1] = color;
+			displayOffset += _displayWidth;
+			_displayScreen[displayOffset] = color;
+			_displayScreen[displayOffset + 1] = color;
+		}
 	}
 }
 

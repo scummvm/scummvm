@@ -79,8 +79,13 @@ byte *GfxFontFromResource::getCharData(uint16 chr) {
 }
 
 void GfxFontFromResource::draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
-	int charWidth = MIN<int>(getCharWidth(chr), _screen->getWidth() - left);
-	int charHeight = MIN<int>(getCharHeight(chr), _screen->getHeight() - top);
+	// Make sure we're comparing against the correct dimensions
+	// If the font we're drawing is already upscaled, make sure we use the full screen width/height
+	uint16 screenWidth = _screen->fontIsUpscaled() ? _screen->getDisplayWidth() : _screen->getWidth();
+	uint16 screenHeight = _screen->fontIsUpscaled() ? _screen->getDisplayHeight() : _screen->getHeight();
+
+	int charWidth = MIN<int>(getCharWidth(chr), screenWidth - left);
+	int charHeight = MIN<int>(getCharHeight(chr), screenHeight - top);
 	byte b = 0, mask = 0xFF;
 	int y = 0;
 	int16 greyedTop = top;

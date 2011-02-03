@@ -551,16 +551,25 @@ void GfxFrameout::kernelFrameout() {
 					itemEntry->y = ((itemEntry->y * _screen->getHeight()) / scriptsRunningHeight);
 					itemEntry->x = ((itemEntry->x * _screen->getWidth()) / scriptsRunningWidth);
 
-					uint16 curX = itemEntry->x + it->planeRect.left;
+					uint16 startX = itemEntry->x + it->planeRect.left;
 					uint16 curY = itemEntry->y + it->planeRect.top;
 					const char *txt = text.c_str();
 					uint16 w = it->planeRect.width() >= 20 ? it->planeRect.width() : _screen->getWidth() - 10;
 					int16 charCount;
 
+					// Upscale the coordinates/width if the fonts are already upscaled
+					if (_screen->fontIsUpscaled()) {
+						startX = startX * _screen->getDisplayWidth() / _screen->getWidth();
+						curY = curY * _screen->getDisplayHeight() / _screen->getHeight();
+						w  = w * _screen->getDisplayWidth() / _screen->getWidth();
+					}
+
 					while (*txt) {
 						charCount = GetLongest(txt, w, font);
 						if (charCount == 0)
 							break;
+
+						uint16 curX = startX;
 
 						for (int i = 0; i < charCount; i++) {
 							unsigned char curChar = txt[i];
@@ -568,7 +577,6 @@ void GfxFrameout::kernelFrameout() {
 							curX += font->getCharWidth(curChar);
 						}
 
-						curX = itemEntry->x + it->planeRect.left;
 						curY += font->getHeight();
 						txt += charCount;
 						while (*txt == ' ')

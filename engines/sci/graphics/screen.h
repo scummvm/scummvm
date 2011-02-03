@@ -127,6 +127,9 @@ public:
 	int16 kernelPicNotValid(int16 newPicNotValid);
 	void kernelShakeScreen(uint16 shakeCount, uint16 direction);
 
+	void setFontIsUpscaled(bool isUpscaled) { _fontIsUpscaled = isUpscaled; }
+	bool fontIsUpscaled() const { return _fontIsUpscaled; }
+
 private:
 	uint16 _width;
 	uint16 _height;
@@ -177,6 +180,10 @@ private:
 	// This here holds a translation for vertical coordinates between native
 	// (visual) and actual (display) screen.
 	int _upscaledMapping[SCI_SCREEN_UPSCALEDMAXHEIGHT + 1];
+
+	// This defines whether or not the font we're drawing is already scaled
+	// to the screen size (and we therefore should not upscale it ourselves).
+	bool _fontIsUpscaled;
 };
 
 } // End of namespace Sci
