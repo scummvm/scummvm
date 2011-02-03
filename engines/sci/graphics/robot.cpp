@@ -68,11 +68,7 @@ GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palet
 }
 
 GfxRobot::~GfxRobot() {
-	delete[] _resourceData;
-	delete[] _imageStart;
-	delete[] _audioStart;
-	delete[] _audioLen;
-	delete[] _outputBuffer;
+	freeData();
 }
 
 void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
@@ -137,7 +133,12 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 		_curFrame = _frameCount;	// jump to the last frame
 		return;
 	case 5:
-		// Supported, the most well-known and used version
+		// Supported, the most well-known and used version in SCI2.1
+		break;
+	case 6:
+		// Introduced in SCI3
+		warning("TODO: add support for v6 robot videos");
+		_curFrame = _frameCount;	// jump to the last frame
 		break;
 	default:
 		// Unsupported, error out so that we find out where this is used
@@ -240,8 +241,7 @@ void GfxRobot::drawNextFrame() {
 		// End of robot video, restore palette
 		g_system->setPalette(_savedPal, 0, 256);
 		_resourceId = -1;
-		delete[] _outputBuffer;
-		_outputBuffer = 0;
+		freeData();
 	}
 }
 
@@ -347,6 +347,7 @@ void GfxRobot::freeData() {
 	delete[] _imageStart; _imageStart = 0;
 	delete[] _audioStart; _audioStart = 0;
 	delete[] _audioLen; _audioLen = 0;
+	delete[] _outputBuffer; _outputBuffer = 0;
 }	
 
 #endif
