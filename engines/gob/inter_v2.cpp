@@ -938,7 +938,9 @@ void Inter_v2::o2_setScrollOffset() {
 void Inter_v2::o2_playImd() {
 	VideoPlayer::Properties props;
 
-	Common::String imd = Common::String(_vm->_game->_script->evalString(), 8);
+	Common::String imd = _vm->_game->_script->evalString();
+	if (imd.size() > 8)
+		imd = Common::String(imd.c_str(), 8);
 
 	props.x          = _vm->_game->_script->readValExpr();
 	props.y          = _vm->_game->_script->readValExpr();
