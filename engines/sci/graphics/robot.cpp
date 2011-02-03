@@ -141,7 +141,6 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 		// Unsupported
 		// TODO: Add support for this version
 		warning("TODO: add support for v6 robot videos");
-		_curFrame = _frameCount;	// jump to the last frame
 		break;
 	default:
 		// Unsupported, error out so that we find out where this is used
@@ -159,13 +158,28 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 void GfxRobot::getFrameOffsets() {
 	int *audioEnd = new int[_frameCount];
 	int *videoEnd = new int[_frameCount];
+	uint32 frameDataOffset;
 
-	for (int i = 0; i < _frameCount; ++i) {
-		videoEnd[i] = READ_LE_UINT16(_resourceData + _palOffset + 1200 + i * 2);
-		audioEnd[i] = READ_LE_UINT16(_resourceData + _palOffset + 1200 + _frameCount * 2 + i * 2);
+	switch (_version) {
+	case 5:
+		for (int i = 0; i < _frameCount; ++i) {
+			videoEnd[i] = READ_LE_UINT16(_resourceData + _palOffset + 1200 + i * 2);
+			audioEnd[i] = READ_LE_UINT16(_resourceData + _palOffset + 1200 + _frameCount * 2 + i * 2);
+		}
+ 		frameDataOffset = _palOffset + 0x4b0 + 0x400 + 0x200 + _frameCount * 4;
+		break;
+	case 6:
+		for (int i = 0; i < _frameCount; ++i) {
+			videoEnd[i] = READ_LE_UINT32(_resourceData + _palOffset + 1200 + i * 4);
+			audioEnd[i] = READ_LE_UINT32(_resourceData + _palOffset + 1200 + _frameCount * 4 + i * 4);
+		}
+ 		frameDataOffset = _palOffset + 0x4b0 + 0x400 + 0x200 + _frameCount * 8;
+		break;
+	default:
+		error("Can't yet handle index table for robot version %d", _version);
+		return;
 	}
 
-	uint32 frameDataOffset = _palOffset + 0x4b0 + 0x400 + 0x200 + _frameCount * 4;
 	
 	// Pad to nearest 2 kilobytes
 	if (frameDataOffset & 0x7ff)
@@ -250,8 +264,6 @@ void GfxRobot::drawNextFrame() {
 
 void GfxRobot::assembleVideoFrame(uint16 frame) {
 	byte *videoData = _resourceData + _imageStart[frame];
-	uint16 frameWidth = READ_LE_UINT16(videoData + 4);
-	uint16 frameHeight = READ_LE_UINT16(videoData + 6);
 	uint16 frameFragments = READ_LE_UINT16(videoData + 18);
 
 	uint32 decompressedSize = 0;
@@ -268,7 +280,10 @@ void GfxRobot::assembleVideoFrame(uint16 frame) {
 		videoData += 10 + fragmentCompressed;
 	}
 
-	assert(decompressedSize == (uint32)(frameWidth * frameHeight) * getFrameScale(frame) / 100);
+	// Causes assertions in various places, such as Lighthouse/Demo 693.RBT
+	// uint16 frameWidth = READ_LE_UINT16(_resourceData + _imageStart[frame] + 4);
+	// uint16 frameHeight = READ_LE_UINT16(_resourceData + _imageStart[frame] + 6);
+	// assert(decompressedSize == (uint32)(frameWidth * frameHeight) * getFrameScale(frame) / 100);
 	
 	// Reallocate the output buffer, if its size has changed
 	if (decompressedSize != _outputBufferSize) {
