@@ -1625,17 +1625,29 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
-	// This defines the resolution that the fonts are supposed to be displayed in.
-	// This is used in early SCI2.1 games, but doesn't really have a purpose
-	// except to notify that GK1 Mac is using higher resolution fonts and should
-	// not be scaled. Saying that the GK2 demo and KQ7 v1.4 have 640x480 fonts
-	// is pretty much a no-brainer. You can see why this was removed for SCI2.1
-	// middle. This is not called in the low-res SCI2.1 early games either.
+	// TODO: This defines the resolution that the fonts are supposed to be displayed
+	// in. Currently, this is only used for showing high-res fonts in GK1 Mac, but
+	// should be extended to handle other font resolutions such as those 
+	
 	int xResolution = argv[0].toUint16();
 	//int yResolution = argv[1].toUint16();
 
 	g_sci->_gfxScreen->setFontIsUpscaled(xResolution == 640 &&
 			g_sci->_gfxScreen->getUpscaledHires() != GFX_SCREEN_UPSCALED_DISABLED);
+
+	return s->r_acc;
+}
+
+reg_t kFont(EngineState *s, int argc, reg_t *argv) {
+	// Handle font settings for SCI2.1
+
+	switch (argv[0].toUint16()) {
+	case 1:
+		// Set font resolution
+		return kSetFontRes(s, argc - 1, argv + 1);
+	default:
+		warning("kFont: unknown subop %d", argv[0].toUint16());
+	}
 
 	return s->r_acc;
 }

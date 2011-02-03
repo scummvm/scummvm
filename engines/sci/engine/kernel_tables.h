@@ -548,6 +548,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(SetLanguage),       SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(SetFontRes),        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+	{ MAP_CALL(Font),              SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 
@@ -590,7 +591,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	// Bitmap
 	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
-	// Font
 	// AddLine - used by Torin's Passage to highlight the chapter buttons
 	// DeleteLine - used by Torin's Passage to delete the highlight from the chapter buttons
 	// UpdateLine - used by LSL6
