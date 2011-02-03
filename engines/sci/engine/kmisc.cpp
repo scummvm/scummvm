@@ -340,6 +340,12 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 
 // kIconBar is really a subop of kPlatform for SCI1.1 Mac
 reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
+	// QFG1 Mac calls this function to load the Mac icon bar (of which
+	// the resources do exist), but the game completely ignores it and
+	// uses the standard icon bar for the game. We do the same.
+	if (!g_sci->hasMacIconBar())
+		return NULL_REG;
+
 	// TODO...
 
 	if (argv[0].toUint16() == 4 && argv[1].toUint16() == 0) {
