@@ -316,20 +316,54 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 	int16 objIndex;
 	uint16 readVar[4];
-	uint8 i;
+	uint16 types[4];
 	Mult::Mult_AnimData animData;
 
 	_vm->_game->_script->evalExpr(&objIndex);
 
-	for (i = 0; i < 4; i++)
-		readVar[i] = _vm->_game->_script->readVarIndex();
+	for (int i = 0; i < 4; i++)
+		readVar[i] = _vm->_game->_script->readVarIndex(0, &types[0]);
 
 	if (objIndex == -1) {
 		warning("oPlaytoons_getObjAnimSize case -1 not implemented");
 		return;
 	}
+
 	if (objIndex == -2) {
-		warning("oPlaytoons_getObjAnimSize case -2 not implemented");
+		bool doBreak = false;
+		for (int i = 0; i < 3; i++)
+			storeValue(readVar[i], types[i], -1);
+
+		for (int i = readValue(readVar[3], types[3]); i < _vm->_mult->_objCount; i++) {
+			if (_vm->_mult->_objects[i].pAnimData->isStatic != 0)
+				continue;
+
+			byte *data = (byte *)_vm->_mult->_objects[i].pAnimData;
+
+			for (int j = 1; j < 39; j += 2) {
+				int32 value1 = READ_VARO_UINT32(readVar[3] +  j      * 4);
+				int32 value2 = READ_VARO_UINT32(readVar[3] + (j + 1) * 4);
+				if (value1 == -1) {
+					doBreak = true;
+					break;
+				}
+
+				if (value1 >= 0) {
+					if ((int8)data[value1] != value2)
+						break;
+				} else {
+					if ((int8)data[-value1] == value2)
+						break;
+				}
+
+			}
+
+			if (doBreak) {
+				storeValue(readVar[0], types[0], i);
+				break;
+			}
+		}
+
 		return;
 	}
 
