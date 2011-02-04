@@ -34,12 +34,35 @@ enum MenuOption {
 	kMenuWhat = 0,
 	kMenuMusic,
 	kMenuSoundFX,
-	kMenuLoad,
 	kMenuSave,
+	kMenuLoad,
 	kMenuRecall,
 	kMenuTurbo,
 	kMenuLook,
 	kMenuInventory
+};
+
+enum {
+	kMenuWidth = 320,
+	kMenuHeight = 24,
+	kMenuX = 5,
+	kMenuY = 1,
+	kButtonWidth = 20,
+	kButtonHeight = 20,
+	kButtonPad = 1,
+	kButtonSpace = 5
+};
+
+enum {
+	kCmdWhat = 'WHAT',
+	kCmdMusic = 'MUZK',
+	kCmdSoundFX = 'SOUN',
+	kCmdSave = 'SAVE',
+	kCmdLoad = 'LOAD',
+	kCmdRecall = 'RECL',
+	kCmdTurbo = 'TURB',
+	kCmdLook = 'LOOK',
+	kCmdInvent = 'INVT'
 };
 
 class TopMenu : public GUI::Dialog {

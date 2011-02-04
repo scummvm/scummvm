@@ -36,29 +36,6 @@
 
 namespace Hugo {
 
-enum {
-	kMenuWidth = 320,
-	kMenuHeight = 24,
-	kMenuX = 5,
-	kMenuY = 1,
-	kButtonWidth = 20,
-	kButtonHeight = 20,
-	kButtonPad = 1,
-	kButtonSpace = 5
-};
-
-enum {
-	kCmdWhat = 'WHAT',
-	kCmdMusic = 'MUZK',
-	kCmdSoundFX = 'SOUN',
-	kCmdLoad = 'LOAD',
-	kCmdSave = 'SAVE',
-	kCmdRecall = 'RECL',
-	kCmdTurbo = 'TURB',
-	kCmdLook = 'LOOK',
-	kCmdInvent = 'INVT'
-};
-
 TopMenu::TopMenu(HugoEngine *vm) : Dialog(0, 0, kMenuWidth, kMenuHeight), arrayBmp(0), arraySize(0),
 	_vm(vm) {
 	init();
@@ -81,8 +58,8 @@ void TopMenu::init() {
 	_whatButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "What is it?", kCmdWhat);
 	_musicButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Music", kCmdMusic);
 	_soundFXButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Sound FX", kCmdSoundFX);
-	_loadButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Load game", kCmdLoad);
 	_saveButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Save game", kCmdSave);
+	_loadButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Load game", kCmdLoad);
 	_recallButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Recall last command", kCmdRecall);
 	_turboButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Turbo", kCmdTurbo);
 	_lookButton = new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight, "Description of the scene", kCmdLook);
@@ -110,10 +87,10 @@ void TopMenu::reflowLayout() {
 
 	x += kButtonSpace;
 
-	_loadButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
+	_saveButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
 	x += kButtonWidth + kButtonPad;
 
-	_saveButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
+	_loadButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
 	x += kButtonWidth + kButtonPad;
 
 	x += kButtonSpace;
@@ -136,8 +113,8 @@ void TopMenu::reflowLayout() {
 	_whatButton->setGfx(arrayBmp[4 * kMenuWhat + scale - 1]);
 	_musicButton->setGfx(arrayBmp[4 * kMenuMusic + scale - 1 + ((_vm->_config.musicFl) ? 0 : 2)]);
 	_soundFXButton->setGfx(arrayBmp[4 * kMenuSoundFX + scale - 1 + ((_vm->_config.soundFl) ? 0 : 2)]);
-	_loadButton->setGfx(arrayBmp[4 * kMenuLoad + scale - 1]);
 	_saveButton->setGfx(arrayBmp[4 * kMenuSave + scale - 1]);
+	_loadButton->setGfx(arrayBmp[4 * kMenuLoad + scale - 1]);
 	_recallButton->setGfx(arrayBmp[4 * kMenuRecall + scale - 1]);
 	_turboButton->setGfx(arrayBmp[4 * kMenuTurbo + scale - 1 + ((_vm->_config.turboFl) ? 0 : 2)]);
 	_lookButton->setGfx(arrayBmp[4 * kMenuLook + scale - 1]);
@@ -207,12 +184,6 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 		g_system->delayMillis(500);
 		close();
 		break;
-	case kCmdLoad:
-		close();
-		_vm->_file->restoreGame(-1);
-		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
-		_vm->getGameStatus().viewState = kViewPlay;
-		break;
 	case kCmdSave:
 		close();
 		if (_vm->getGameStatus().viewState == kViewPlay) {
@@ -221,6 +192,12 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 			else
 				_vm->_file->saveGame(-1, Common::String());
 		}
+		break;
+	case kCmdLoad:
+		close();
+		_vm->_file->restoreGame(-1);
+		_vm->_scheduler->restoreScreen(*_vm->_screen_p);
+		_vm->getGameStatus().viewState = kViewPlay;
 		break;
 	case kCmdRecall:
 		close();
