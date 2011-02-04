@@ -64,18 +64,23 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{
 		{
 			"t7g", "",
-			AD_ENTRY1s("T7GMac", "a139540fa2be2247005ccf888b7231e3", 1830783),
+			AD_ENTRY1s("T7GMac", "acdc4a58dd3f007f65e99b99d78e0bce", 1814029),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM
 		},
 		kGroovieT7G, 0
 	},
 
+#if 0
+	// These entries should now be identical to the first T7G Mac entry after
+	// changing the app to only use the data part of the resource fork. They
+	// are left disabled here as a reference.
+
 	// The 7th Guest Mac English (Aztec single disc)
 	{
 		{
 			"t7g", "",
-			AD_ENTRY1s("T7GMac", "acdc4a58dd3f007f65e99b99d78e0bce", 1814029),
+			AD_ENTRY1s("T7GMac", "6bdee8d0f9eef6d58d02fcd7deec3fb2", 1830783),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM
 		},
@@ -92,6 +97,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		},
 		kGroovieT7G, 0
 	},
+#endif
 
 	// The 7th Guest DOS Russian (Akella)
 	{
