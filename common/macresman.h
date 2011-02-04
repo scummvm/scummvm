@@ -134,10 +134,10 @@ public:
 	String getResName(uint32 typeID, uint16 resID) const;
 
 	/**
-	 * Get the size of the resource fork
-	 * @return The size of the resource fork
+	 * Get the size of the data portion of the resource fork
+	 * @return The size of the data portion of the resource fork
 	 */
-	uint32 getResForkSize() const;
+	uint32 getResForkDataSize() const;
 
 	/**
 	 * Calculate the MD5 checksum of the resource fork

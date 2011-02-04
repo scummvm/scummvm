@@ -681,10 +681,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Gabriel Knight - English Macintosh
 	{"gk1", "", {
-		{"Data1", 0, "7a89c96365a4da5d3b3efdc3a94bab3e", 5831362},
-		{"Data2", 0, "db70638e972c3706e4dc9e01ef3a30ea", 6696048},
-		{"Data3", 0, "d740126293aea176c4f8a6c71634cff4", 3683997},
-		{"Data4", 0, "f6cbf2605f618ce035bed162d66b2b8a", 3233086},
+		{"Data1", 0, "044d3bcd7e5b5bb0393d954ade8053fe", 5814918},
+		{"Data2", 0, "99a0c63febf9e44e12a00f99c00eae0f", 6685352},
+		{"Data3", 0, "f25068b408b09275d8b698866462f578", 3677599},
+		{"Data4", 0, "1cceebbe411b26c860a74f91c337fdf3", 3230086},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NONE },
 
@@ -892,8 +892,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Hoyle 4 (Hoyle Classic Card Games) - English Macintosh Floppy
 	// VERSION file reports "2.0"
 	{"hoyle4", "", {
-		{"Data1", 0, "afad082944d36ce4d2a9e646efc49da1", 7731536},
-		{"Data2", 0, "615ed2efe969f845cd8f0686af0b06f2", 1543825},
+		{"Data1", 0, "99575fae4579540a314bbedd72d51e8c", 7682887},
+		{"Data2", 0, "7d4bf5bdf3c02edbf35cb8471c84ec13", 1539134},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NOSPEECH	},
 
@@ -1400,8 +1400,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// King's Quest 6 - English Macintosh Floppy
 	// VERSION file reports "1.0"
 	{"kq6", "", {
-		{"Data1", 0, "f3c38a33c94293b8ff0337c1090a4973", 3916479},
-		{"Data2", 0, "b255edf327d7b366dce816b7debf3b94", 15046256},
+		{"Data1", 0, "a183fc0c22fcbd9be4c8800d974b5599", 3892124},
+		{"Data2", 0, "b3722460dfd3097a1fbaf99a21ad8ea5", 15031272},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NOSPEECH	},
 
@@ -2750,8 +2750,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Quest for Glory 1 VGA Remake - English Macintosh Floppy
 	// VERSION file reports "2.0"
 	{"qfg1vga", "VGA", {
-		{"Data1", 0, "14f26bc75f24bb1ecc94532df17b5371", 1768155},
-		{"Data2", 0, "a7aee8bd46fc9cef7fd3bea93ef173e0", 6586422},
+		{"Data1", 0, "106527ff8756e4e1a795d63d23e8b833", 1752358},
+		{"Data2", 0, "5cdd92033231159c6e9c71d43e9f194d", 6574746},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NOSPEECH	},
 

@@ -75,7 +75,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{
 		{
 			"t7g", "",
-			AD_ENTRY1s("T7GMac", "6bdee8d0f9eef6d58d02fcd7deec3fb2", 1830783),
+			AD_ENTRY1s("T7GMac", "acdc4a58dd3f007f65e99b99d78e0bce", 1814029),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM
 		},

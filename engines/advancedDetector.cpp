@@ -460,7 +460,7 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 				if (macResMan->open(parent, fname)) {
 					tmp.md5 = macResMan->computeResForkMD5AsString(params.md5Bytes);
-					tmp.size = macResMan->getResForkSize();
+					tmp.size = macResMan->getResForkDataSize();
 					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
 					filesSizeMD5[fname] = tmp;
 				}
