@@ -360,7 +360,7 @@ void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 	if (objIndex == -2) {
 		bool doBreak = false;
 		for (int i = 0; i < 3; i++)
-			storeValue(readVar[i], types[i], -1);
+			storeValue(readVar[i], types[i], (uint32) -1);
 
 		for (int i = readValue(readVar[3], types[3]); i < _vm->_mult->_objCount; i++) {
 			if (_vm->_mult->_objects[i].pAnimData->isStatic != 0)
