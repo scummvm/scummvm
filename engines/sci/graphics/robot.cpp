@@ -64,7 +64,7 @@ namespace Sci {
 
 GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette)
 	: _resMan(resMan), _screen(screen), _palette(palette), _outputBuffer(0),
-	_outputBufferSize(0), _audioStream(0) {
+	_outputBufferSize(0), _audioStream(0), _frameTotalSize(0) {
 	_resourceId = -1;
 	_x = _y = 0;
 }
