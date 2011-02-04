@@ -156,6 +156,12 @@ protected:
 	void o_drawNOP() {}
 	void o_funcNOP(OpFuncParams &params) {}
 	void o_gobNOP(OpGobParams &params) {}
+
+	void storeValue(uint16 index, uint16 type, uint32 value);
+	void storeValue(uint32 value);
+
+	void storeString(uint16 index, uint16 type, const char *value);
+	void storeString(const char *value);
 };
 
 class Inter_v1 : public Inter {
@@ -629,12 +635,6 @@ protected:
 private:
 	INIConfig _inis;
 	Databases _databases;
-
-	void storeValue(uint16 index, uint16 type, uint32 value);
-	void storeValue(uint32 value);
-
-	void storeString(uint16 index, uint16 type, const char *value);
-	void storeString(const char *value);
 
 	Common::String findFile(const Common::String &mask);
 };

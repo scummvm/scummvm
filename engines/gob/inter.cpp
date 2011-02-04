@@ -365,4 +365,74 @@ void Inter::delocateVars() {
 	_variables = 0;
 }
 
+void Inter::storeValue(uint16 index, uint16 type, uint32 value) {
+	switch (type) {
+	case OP_ARRAY_INT8:
+	case TYPE_VAR_INT8:
+		WRITE_VARO_UINT8(index, value);
+		break;
+
+	case TYPE_VAR_INT16:
+	case TYPE_VAR_INT32_AS_INT16:
+	case TYPE_ARRAY_INT16:
+		WRITE_VARO_UINT16(index, value);
+		break;
+
+	default:
+		WRITE_VARO_UINT32(index, value);
+	}
+}
+
+void Inter::storeValue(uint32 value) {
+	uint16 type;
+	uint16 index = _vm->_game->_script->readVarIndex(0, &type);
+
+	storeValue(index, type, value);
+}
+
+void Inter::storeString(uint16 index, uint16 type, const char *value) {
+	uint32 maxLength = _vm->_global->_inter_animDataSize * 4 - 1;
+	char  *str       = GET_VARO_STR(index);
+
+	switch (type) {
+	case TYPE_VAR_STR:
+		if (strlen(value) > maxLength)
+			warning("Inter_v7::storeString(): String too long");
+
+		Common::strlcpy(str, value, maxLength);
+		break;
+
+	case TYPE_IMM_INT8:
+	case TYPE_VAR_INT8:
+		strcpy(str, value);
+		break;
+
+	case TYPE_ARRAY_INT8:
+		WRITE_VARO_UINT8(index, atoi(value));
+		break;
+
+	case TYPE_VAR_INT16:
+	case TYPE_VAR_INT32_AS_INT16:
+	case TYPE_ARRAY_INT16:
+		WRITE_VARO_UINT16(index, atoi(value));
+		break;
+
+	case TYPE_VAR_INT32:
+	case TYPE_ARRAY_INT32:
+		WRITE_VARO_UINT32(index, atoi(value));
+		break;
+
+	default:
+		warning("Inter_v7::storeString(): Requested to store a string into type %d", type);
+		break;
+	}
+}
+
+void Inter::storeString(const char *value) {
+	uint16 type;
+	uint16 varIndex = _vm->_game->_script->readVarIndex(0, &type);
+
+	storeString(varIndex, type, value);
+}
+
 } // End of namespace Gob
