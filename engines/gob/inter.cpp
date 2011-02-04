@@ -435,4 +435,24 @@ void Inter::storeString(const char *value) {
 	storeString(varIndex, type, value);
 }
 
+uint32 Inter::readValue(uint16 index, uint16 type) {
+	switch (type) {
+	case TYPE_IMM_INT8:
+	case TYPE_VAR_INT8:
+	case TYPE_ARRAY_INT8:
+		return (uint32)(((int32)((int8)READ_VARO_UINT8(index))));
+		break;
+
+	case TYPE_VAR_INT16:
+	case TYPE_VAR_INT32_AS_INT16:
+	case TYPE_ARRAY_INT16:
+		return (uint32)(((int32)((int16)READ_VARO_UINT16(index))));
+
+	default:
+		return READ_VARO_UINT32(index);
+	}
+
+	return 0;
+}
+
 } // End of namespace Gob

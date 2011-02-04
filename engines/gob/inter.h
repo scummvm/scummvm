@@ -162,6 +162,8 @@ protected:
 
 	void storeString(uint16 index, uint16 type, const char *value);
 	void storeString(const char *value);
+
+	uint32 readValue(uint16 index, uint16 type);
 };
 
 class Inter_v1 : public Inter {
