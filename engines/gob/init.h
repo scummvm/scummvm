@@ -26,6 +26,7 @@
 #ifndef GOB_INIT_H
 #define GOB_INIT_H
 
+#include "gob/gob.h"
 #include "gob/video.h"
 
 namespace Gob {
@@ -99,6 +100,15 @@ public:
 	void updateConfig();
 	void initGame();
 };
+
+class Init_v7 : public Init_v2 {
+public:
+	Init_v7(GobEngine *vm);
+	~Init_v7();
+
+	void initGame();
+};
+
 } // End of namespace Gob
 
 #endif // GOB_INIT_H
