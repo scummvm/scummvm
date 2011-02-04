@@ -210,7 +210,7 @@ void ToonEngine::parseInput() {
 			}
 
 			if (event.kbd.flags & Common::KBD_ALT) {
-				int32 slotNum = event.kbd.ascii - '0';
+				int slotNum = event.kbd.ascii - '0';
 				if (slotNum >= 0 && slotNum <= 9 && canSaveGameStateCurrently()) {
 					if (saveGame(slotNum, Common::String())) {
 						// ok
@@ -229,7 +229,7 @@ void ToonEngine::parseInput() {
 			}
 
 			if (event.kbd.flags & Common::KBD_CTRL) {
-				int32 slotNum = event.kbd.ascii - '0';
+				int slotNum = event.kbd.ascii - '0';
 				if (slotNum >= 0 && slotNum <= 9 && canLoadGameStateCurrently()) {
 					if (loadGame(slotNum)) {
 						// ok
@@ -369,7 +369,7 @@ void ToonEngine::update(int32 timeIncrement) {
 
 void ToonEngine::updateTimer(int32 timeIncrement) {
 	if (_gameState->_gameTimer > 0) {
-		debugC(0, 0xfff, "updateTimer(%d)", timeIncrement);
+		debugC(0, 0xfff, "updateTimer(%d)", (int)timeIncrement);
 		_gameState->_gameTimer -= timeIncrement;
 		if (_gameState->_gameTimer < 0)
 			_gameState->_gameTimer = 0;
@@ -1819,8 +1819,8 @@ int32 ToonEngine::getScaleAtPoint(int32 x, int32 y) {
 		return 1024;
 
 	// clamp values
-	x = MIN(1279, MAX(0, x));
-	y = MIN(399, MAX(0, y));
+	x = MIN<int32>(1279, MAX<int32>(0, x));
+	y = MIN<int32>(399, MAX<int32>(0, y));
 
 	int32 maskData = _currentMask->getData(x, y) & 0x1f;
 	return _roomScaleData[maskData+2] * 1024 / 100;
@@ -1831,8 +1831,8 @@ int32 ToonEngine::getLayerAtPoint(int32 x, int32 y) {
 		return 0;
 
 	// clamp values
-	x = MIN(1279, MAX(0, x));
-	y = MIN(399, MAX(0, y));
+	x = MIN<int32>(1279, MAX<int32>(0, x));
+	y = MIN<int32>(399, MAX<int32>(0, y));
 
 	int32 maskData = _currentMask->getData(x, y) & 0x1f;
 	return _roomScaleData[maskData+130] << 5;
@@ -2088,7 +2088,7 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 			character->stopSpecialAnim();
 	}
 
-	debugC(0, 0xfff, "Talker = %d (num participants : %d) will say '%s'", talkerId , numParticipants, myLine);
+	debugC(0, 0xfff, "Talker = %d (num participants : %d) will say '%s'", (int)talkerId , (int)numParticipants, myLine);
 
 
 	getTextPosition(talkerId, &_currentTextLineX, &_currentTextLineY);
@@ -2974,7 +2974,7 @@ bool ToonEngine::saveGame(int32 slot, Common::String saveGameDesc) {
 		if (!saveGameDesc.empty()) {
 			savegameDescription = saveGameDesc;
 		} else {
-			savegameDescription = Common::String::format("Quick save #%d", slot);
+			savegameDescription = Common::String::format("Quick save #%d", (int)slot);
 		}
 	}
 
