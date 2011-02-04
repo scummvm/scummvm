@@ -587,6 +587,7 @@ protected:
 	void oPlaytoons_checkData(OpFuncParams &params);
 	void oPlaytoons_readData(OpFuncParams &params);
 
+	void oPlaytoons_loadMultObject();
 	void oPlaytoons_getObjAnimSize();
 	void oPlaytoons_CD_20_23();
 	void oPlaytoons_CD_25();

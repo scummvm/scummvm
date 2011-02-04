@@ -73,6 +73,7 @@ void Inter_Playtoons::setupOpcodesDraw() {
 	CLEAROPCODEDRAW(0x22);
 	CLEAROPCODEDRAW(0x24);
 
+	OPCODEDRAW(0x17, oPlaytoons_loadMultObject);
 	OPCODEDRAW(0x19, oPlaytoons_getObjAnimSize);
 	OPCODEDRAW(0x20, oPlaytoons_CD_20_23);
 	OPCODEDRAW(0x23, oPlaytoons_CD_20_23);
@@ -311,6 +312,33 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 		WRITE_VAR(1, 0);
 
 	delete stream;
+}
+
+void Inter_Playtoons::oPlaytoons_loadMultObject() {
+	assert(_vm->_mult->_objects);
+
+	uint16 objIndex = _vm->_game->_script->readValExpr();
+
+	debugC(4, kDebugGameFlow, "Loading mult object %d", objIndex);
+
+	Mult::Mult_Object &obj = _vm->_mult->_objects[objIndex];
+	Mult::Mult_AnimData &objAnim = *(obj.pAnimData);
+
+	*obj.pPosX = _vm->_game->_script->readValExpr();
+	*obj.pPosY = _vm->_game->_script->readValExpr();
+
+	byte *multData = (byte *) &objAnim;
+	for (int i = 0; i < 11; i++) {
+		if (_vm->_game->_script->peekByte() != 99)
+			multData[i] = _vm->_game->_script->readValExpr();
+		else
+			_vm->_game->_script->skip(1);
+	}
+
+	if (((int32)*obj.pPosX != -1234) || ((int32)*obj.pPosY == -4321))
+		return;
+
+	warning("Stub: oPlaytoons_loadMultObject: pPosX == -1234, pPosY == -4321");
 }
 
 void Inter_Playtoons::oPlaytoons_getObjAnimSize() {

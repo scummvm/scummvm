@@ -397,21 +397,17 @@ void Inter_v2::o2_initMult() {
 void Inter_v2::o2_loadMultObject() {
 	assert(_vm->_mult->_objects);
 
-	int16 val;
-	int16 objIndex;
-	int16 animation;
-	int16 layer;
-	byte *multData;
-
-	objIndex = _vm->_game->_script->readValExpr();
-	val = _vm->_game->_script->readValExpr();
-	*_vm->_mult->_objects[objIndex].pPosX = val;
-	val = _vm->_game->_script->readValExpr();
-	*_vm->_mult->_objects[objIndex].pPosY = val;
+	uint16 objIndex = _vm->_game->_script->readValExpr();
 
 	debugC(4, kDebugGameFlow, "Loading mult object %d", objIndex);
 
-	multData = (byte *)_vm->_mult->_objects[objIndex].pAnimData;
+	Mult::Mult_Object &obj = _vm->_mult->_objects[objIndex];
+	Mult::Mult_AnimData &objAnim = *(obj.pAnimData);
+
+	*obj.pPosX = _vm->_game->_script->readValExpr();
+	*obj.pPosY = _vm->_game->_script->readValExpr();
+
+	byte *multData = (byte *) &objAnim;
 	for (int i = 0; i < 11; i++) {
 		if (_vm->_game->_script->peekByte() != 99)
 			multData[i] = _vm->_game->_script->readValExpr();
@@ -419,33 +415,32 @@ void Inter_v2::o2_loadMultObject() {
 			_vm->_game->_script->skip(1);
 	}
 
-	Mult::Mult_Object &obj = _vm->_mult->_objects[objIndex];
-	Mult::Mult_AnimData &objAnim = *(obj.pAnimData);
-
 	if ((objAnim.animType == 100) && (objIndex < _vm->_goblin->_gobsCount)) {
 
-		val = *(obj.pPosX) % 256;
-		obj.destX = val;
-		obj.gobDestX = val;
-		obj.goblinX = val;
+		uint8 posX   = *(obj.pPosX) % 256;
+		obj.destX    = posX;
+		obj.gobDestX = posX;
+		obj.goblinX  = posX;
 
-		val = *(obj.pPosY) % 256;
-		obj.destY = val;
-		obj.gobDestY = val;
-		obj.goblinY = val;
+		uint8 posY   = *(obj.pPosY) % 256;
+		obj.destY    = posY;
+		obj.gobDestY = posY;
+		obj.goblinY  = posY;
 
 		*(obj.pPosX) *= _vm->_map->getTilesWidth();
 
-		layer = objAnim.layer;
-		animation = obj.goblinStates[layer][0].animation;
-		objAnim.framesLeft = objAnim.maxFrame;
-		objAnim.nextState = -1;
-		objAnim.newState = -1;
+		int16 layer     = objAnim.layer;
+		int16 animation = obj.goblinStates[layer][0].animation;
+
+		objAnim.framesLeft    = objAnim.maxFrame;
+		objAnim.nextState     = -1;
+		objAnim.newState      = -1;
 		objAnim.pathExistence = 0;
-		objAnim.isBusy = 0;
-		objAnim.state = layer;
-		objAnim.layer = obj.goblinStates[objAnim.state][0].layer;
-		objAnim.animation = animation;
+		objAnim.isBusy        = 0;
+		objAnim.state         = layer;
+		objAnim.layer         = obj.goblinStates[objAnim.state][0].layer;
+		objAnim.animation     = animation;
+
 		_vm->_scenery->updateAnim(layer, 0, animation, 0,
 				*(obj.pPosX), *(obj.pPosY), 0);
 
@@ -460,12 +455,13 @@ void Inter_v2::o2_loadMultObject() {
 
 	} else if ((objAnim.animType == 101) && (objIndex < _vm->_goblin->_gobsCount)) {
 
-		layer = objAnim.layer;
-		animation = obj.goblinStates[layer][0].animation;
+		int16 layer = objAnim.layer;
+		int16 animation = obj.goblinStates[layer][0].animation;
+
 		objAnim.nextState = -1;
-		objAnim.newState = -1;
-		objAnim.state = layer;
-		objAnim.layer = obj.goblinStates[objAnim.state][0].layer;
+		objAnim.newState  = -1;
+		objAnim.state     = layer;
+		objAnim.layer     = obj.goblinStates[objAnim.state][0].layer;
 		objAnim.animation = animation;
 
 		if ((*(obj.pPosX) == 1000) && (*(obj.pPosY) == 1000)) {
@@ -485,11 +481,11 @@ void Inter_v2::o2_loadMultObject() {
 			if (obj.videoSlot > 0)
 				_vm->_vidPlayer->closeVideo(obj.videoSlot - 1);
 
-			obj.videoSlot = 0;
-			obj.lastLeft = -1;
-			obj.lastTop = -1;
+			obj.videoSlot  = 0;
+			obj.lastLeft   = -1;
+			obj.lastTop    = -1;
 			obj.lastBottom = -1;
-			obj.lastRight = -1;
+			obj.lastRight  = -1;
 		}
 
 	}
