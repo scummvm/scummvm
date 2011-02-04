@@ -243,18 +243,9 @@ static byte *readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size,
 	return buffer;
 }
 
-// FIXME: This doesn't work correctly yet, perhaps there are differences in the
-// way the audio in robot files is handled
-Audio::RewindableAudioStream *AudioPlayer::getRobotAudioStream(byte *buffer) {
-	const uint16 rbtHeaderSize = 19;	// TODO: is this right?
-	const uint16 rbtAudioRate = 22050;	// Seems to be hardcoded for all Robot videos
-	byte audioFlags = *(buffer + 6);
+byte *AudioPlayer::getDecodedRobotAudioFrame(Common::SeekableReadStream *str, uint32 encodedSize) {
 	byte flags = 0;
-	uint32 audioSize = READ_LE_UINT16(buffer + 15) - rbtHeaderSize;
-
-	Common::MemoryReadStream dataStream(buffer + rbtHeaderSize - 1, audioSize, DisposeAfterUse::NO);
-	byte *data = readSOLAudio(&dataStream, audioSize, audioFlags, flags);
-	return Audio::makeRawStream(data, audioSize, rbtAudioRate, flags);
+	return readSOLAudio(str, encodedSize, 0, flags);
 }
 
 Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 volume, int *sampleLen) {

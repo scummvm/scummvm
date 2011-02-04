@@ -1423,7 +1423,7 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 			warning("kRobot(%d)", subop);
 			break;
 		case 8: // sync
-			robot->drawNextFrame();
+			robot->processNextFrame();
 			// Signal the engine scripts that the video is done
 			if (robot->getCurFrame() ==  robot->getFrameCount())
 				writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);

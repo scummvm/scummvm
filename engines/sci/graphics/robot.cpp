@@ -40,7 +40,8 @@
 
 #include "common/file.h"
 #include "common/system.h"
-#include "common/memstream.h"
+#include "common/stream.h"
+#include "common/substream.h"
 
 namespace Sci {
 
@@ -60,9 +61,10 @@ namespace Sci {
 // around the screen and go behind other objects. (...)
 
 #ifdef ENABLE_SCI32
+
 GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette)
-	: _resMan(resMan), _screen(screen), _palette(palette), _resourceData(0),
-	  _imageStart(0), _audioStart(0), _audioLen(0), _outputBuffer(0), _outputBufferSize(0) {
+	: _resMan(resMan), _screen(screen), _palette(palette), _outputBuffer(0),
+	_outputBufferSize(0), _audioStream(0) {
 	_resourceId = -1;
 	_x = _y = 0;
 }
@@ -72,151 +74,91 @@ GfxRobot::~GfxRobot() {
 }
 
 void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
-	char fileName[10];
-	uint32 fileSize;
-
-	//	resourceId = 1305;	// debug
-
 	_resourceId = resourceId;
+	//_resourceId = 1305;	// debug
 	_x = x;
 	_y = y;
 	_curFrame = 0;
+
+	char fileName[10];
 	sprintf(fileName, "%d.rbt", _resourceId);
 
-	Common::File robotFile;
-	if (robotFile.open(fileName)) {
-		_resourceData = new byte[robotFile.size()];
-		robotFile.read(_resourceData, robotFile.size());
-		fileSize = robotFile.size();
-		robotFile.close();
-	} else {
+	if (!_robotFile.open(fileName)) {
 		warning("Unable to open robot file %s", fileName);
 		return;
 	}
+
+	readHeaderChunk();
 
 	// There are several versions of robot files, ranging from 3 to 6.
 	// v3: no known examples
 	// v4: PQ:SWAT
 	// v5: SCI2.1 and SCI3 games
 	// v6: SCI3 games
-	_version = _resourceData[6];
-
-	// Currently, we only support robot version 5. Robot version 
-	_frameCount = READ_LE_UINT16(_resourceData + 14);
-
-	// There is another value in the header, at offset 0x12, which
-	// equals this value plus 14 (audio header size) in the cases
-	// I've seen so far. Dunno which one to use, really.
-	_audioSize = READ_LE_UINT16(_resourceData + 60);
-
-	//_frameSize = READ_LE_UINT32(_resourceData + 34);
-	_hasSound = (_resourceData[25] != 0);
-
-	_palOffset = 60;
-
-	// Some robot files have sound, which doesn't start from frame 0
-	// (e.g. Phantasmagoria, robot 1305)
-	// Yes, strangely, the word at offset 10 is non-zero if it DOESN'T have a preload
-	// in that case, the word is equal to that value which would otherwise be stored
-	// in the audio header (i.e. _audioSize above)
-	if (_hasSound && READ_LE_UINT16(_resourceData + 10) == 0)
-		_palOffset += READ_LE_UINT32(_resourceData + 60) + 14;
-
-	switch (_version) {
-	case 3:
-		// Unsupported, and there doesn't seem to be any game that actually
-		// uses this, thus error out so that we find out where this is used
-		error("Unknown robot version: %d", _version);
-		break;
+	switch (_header.version) {
 	case 4:	// used in PQ:SWAT
 		// Unsupported
-		// TODO: Add support for this version
 		warning("TODO: add support for v4 robot videos");
-		_curFrame = _frameCount;	// jump to the last frame
+		_curFrame = _header.frameCount;	// jump to the last frame
 		return;
-	case 5:	// used in most SCI2.1 games
+	case 5:	// used in most SCI2.1 games and in some SCI3 robots
+	case 6:	// used in SCI3 games
 		// Supported
-		break;
-	case 6:	// introduced in SCI3
-		// Unsupported
-		// TODO: Add support for this version
-		warning("TODO: add support for v6 robot videos");
 		break;
 	default:
 		// Unsupported, error out so that we find out where this is used
-		error("Unknown robot version: %d", _version);
+		error("Unknown robot version: %d", _header.version);
 	}
 
-	getFrameOffsets();
-	assert(_imageStart[_frameCount] == fileSize);
-
-	setPalette();
-
-	debug("Robot %d, %d frames, sound: %s\n", resourceId, _frameCount, _hasSound ? "yes" : "no");
-}
-
-void GfxRobot::getFrameOffsets() {
-	int *audioEnd = new int[_frameCount];
-	int *videoEnd = new int[_frameCount];
-	uint32 frameDataOffset;
-
-	switch (_version) {
-	case 5:
-		for (int i = 0; i < _frameCount; ++i) {
-			videoEnd[i] = READ_LE_UINT16(_resourceData + _palOffset + 1200 + i * 2);
-			audioEnd[i] = READ_LE_UINT16(_resourceData + _palOffset + 1200 + _frameCount * 2 + i * 2);
-		}
- 		frameDataOffset = _palOffset + 0x4b0 + 0x400 + 0x200 + _frameCount * 4;
-		break;
-	case 6:
-		for (int i = 0; i < _frameCount; ++i) {
-			videoEnd[i] = READ_LE_UINT32(_resourceData + _palOffset + 1200 + i * 4);
-			audioEnd[i] = READ_LE_UINT32(_resourceData + _palOffset + 1200 + _frameCount * 4 + i * 4);
-		}
- 		frameDataOffset = _palOffset + 0x4b0 + 0x400 + 0x200 + _frameCount * 8;
-		break;
-	default:
-		error("Can't yet handle index table for robot version %d", _version);
-		return;
+	_frameTotalSize = new uint32[_header.frameCount];
+#if 0
+	if (_header.hasSound) {
+		_audioStream = Audio::makeQueuingAudioStream(22050, true);
+		g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_audioHandle, _audioStream);
 	}
+#endif
 
-	
-	// Pad to nearest 2 kilobytes
-	if (frameDataOffset & 0x7ff)
-		frameDataOffset = (frameDataOffset & ~0x7ff) + 0x800;
+	readPaletteChunk();
+	readFrameSizesChunk();
 
-	_imageStart = new uint32[_frameCount + 1];
-	_audioStart = new uint32[_frameCount];
-	_audioLen = new uint32[_frameCount];
-
-	_imageStart[0] = frameDataOffset;
-
-	// Plus one so we can assert on this in the calling routine
-	// The last one should point to end-of-file, unless I'm misunderstanding something
-	for (int i = 1; i < _frameCount + 1; ++i) 
-		_imageStart[i] = _imageStart[i - 1] + audioEnd[i - 1];
-	for (int i = 0; i < _frameCount; ++i)
-		_audioStart[i] = _imageStart[i] + videoEnd[i];
-	for (int i = 0; i < _frameCount; ++i)
-		_audioLen[i] = _imageStart[i + 1] - _audioStart[i];
-
-	delete[] audioEnd;
-	delete[] videoEnd;
+	debug("Robot %d, %d frames, sound: %s\n", resourceId, _header.frameCount, _header.hasSound ? "yes" : "no");
 }
 
-void GfxRobot::setPalette() {
-	byte *paletteData = _resourceData + _palOffset;
-	uint16 paletteSize = READ_LE_UINT16(_resourceData + 16);
+void GfxRobot::readHeaderChunk() {
+	// Header (60 bytes)
+	_robotFile.skip(6);
+	_header.version = _robotFile.readUint16LE();
+	_robotFile.skip(2);
+	_header.audioSilenceSize = _robotFile.readUint16LE();
+	_robotFile.skip(2);
+	_header.frameCount = _robotFile.readUint16LE();
+	_header.paletteDataSize = _robotFile.readUint16LE();
+	_robotFile.skip(7);
+	_header.hasSound = _robotFile.readByte();
+	_robotFile.skip(34);
 
+	// Some robot files have sound, which doesn't start from frame 0
+	// (e.g. Phantasmagoria, robot 1305). In this case, there won't
+	// be audio silence in the header, but there will be an extra audio
+	// preload chunk before the palette chunk. Skip past it and its 
+	// 14-byte header.
+	if (_header.hasSound && !_header.audioSilenceSize) {
+		// The header is 14 bytes: the chunk size + 10 more
+		uint32 preloadChunkSize = _robotFile.readUint32LE();
+		_robotFile.skip(preloadChunkSize + 10);
+	}
+}
+
+void GfxRobot::readPaletteChunk() {
+	byte *paletteChunk = new byte[_header.paletteDataSize];
+	_robotFile.read(paletteChunk, _header.paletteDataSize);
+	int startIndex = READ_LE_UINT16(paletteChunk + 25);
+	int colorCount = READ_LE_UINT16(paletteChunk + 29);
 	Palette resourcePal;
+	_palette->createFromData(paletteChunk, _header.paletteDataSize, &resourcePal);
+	delete[] paletteChunk;
 
 	byte robotPal[256 * 4];
-	int startIndex = READ_LE_UINT16(paletteData + 25);
-	int colorCount = READ_LE_UINT16(paletteData + 29);
-
-	warning("%d palette entries starting at %d", colorCount, startIndex);
-	
-	_palette->createFromData(paletteData, paletteSize, &resourcePal);
 
 	for (int i = 0; i < 256; ++i) {
 		_savedPal[i * 4 + 0] = _palette->_sysPalette.colors[i].r;
@@ -238,23 +180,106 @@ void GfxRobot::setPalette() {
 	g_system->setPalette(robotPal, 0, 256);
 }
 
-void GfxRobot::drawNextFrame() {
-	uint16 width, height;
 
+void GfxRobot::readFrameSizesChunk() {
+	switch (_header.version) {
+	case 5:		// sizes are 16-bit integers
+		// Skip table with frame image sizes, as we don't need it
+		_robotFile.skip(_header.frameCount * 2);
+		for (int i = 0; i < _header.frameCount; ++i)
+			_frameTotalSize[i] = _robotFile.readUint16LE();
+		break;
+	case 6:		// sizes are 32-bit integers
+		// Skip table with frame image sizes, as we don't need it
+		_robotFile.skip(_header.frameCount * 4);
+		for (int i = 0; i < _header.frameCount; ++i)
+			_frameTotalSize[i] = _robotFile.readUint32LE();
+		break;
+	default:
+		error("Can't yet handle index table for robot version %d", _header.version);
+	}
+
+	_robotFile.skip(1024 + 512);	// Skip unknown tables 1 and 2
+
+	// Pad to nearest 2 kilobytes
+	uint32 curPos = _robotFile.pos();
+	if (curPos & 0x7ff) {
+		curPos = (curPos & ~0x7ff) + 2048;
+		_robotFile.seek(curPos);
+	}
+}
+
+void GfxRobot::processNextFrame() {
 	// Make sure that we haven't reached the end of the video already
-	if (_curFrame == _frameCount)
+	if (_curFrame == _header.frameCount)
 		return;
 
-	assembleVideoFrame(_curFrame);
-	getFrameDimensions(_curFrame, width, height);
+	// Read frame header (24 bytes)
+	_robotFile.skip(3);
+	byte frameScale = _robotFile.readByte();
+	uint16 frameWidth = _robotFile.readUint16LE();
+	uint16 frameHeight = _robotFile.readUint16LE();
+	_robotFile.skip(8);		// x, y, width and height of the frame
+	uint16 compressedSize = _robotFile.readUint16LE();
+	uint16 frameFragments = _robotFile.readUint16LE();
+	_robotFile.skip(4);		// unknown
+
+	uint32 decompressedSize = frameWidth * (frameHeight * frameScale / 100);
+
+	// Reallocate the output buffer, if its size has increased
+	if (decompressedSize > _outputBufferSize) {
+		delete[] _outputBuffer;
+		_outputBuffer = new byte[decompressedSize];
+	}
 	
-	g_system->copyRectToScreen(_outputBuffer, width, _x, _y, width, height * getFrameScale(_curFrame) / 100);
+	_outputBufferSize = decompressedSize;
+
+	DecompressorLZS lzs;
+	byte *outPtr = _outputBuffer;
+
+	for (uint16 i = 0; i < frameFragments; ++i) {
+		uint32 compressedFragmentSize = _robotFile.readUint32LE();
+		uint32 decompressedFragmentSize = _robotFile.readUint32LE();
+		uint16 compressionType = _robotFile.readUint16LE();
+
+		if (compressionType == 0) {
+			Common::SeekableSubReadStream fragmentStream(&_robotFile, _robotFile.pos(), _robotFile.pos() + compressedFragmentSize);
+			lzs.unpack(&fragmentStream, outPtr, compressedFragmentSize, decompressedFragmentSize);
+		} else if (compressionType == 2) {	// untested
+			_robotFile.read(outPtr, compressedFragmentSize);
+		} else {
+			error("Unknown frame compression found: %d", compressionType);
+		}
+
+		outPtr += decompressedFragmentSize;
+	}
+
+	uint32 audioChunkSize = _frameTotalSize[_curFrame] - (24 + compressedSize);
+
+	// TODO: Audio
+#if 0
+	// Queue the next audio frame
+	if (_header.hasSound) {
+		uint16 decodedSize = _robotFile.readUint16LE();
+		_robotFile.skip(2);	// skip audio buffer position
+
+		byte *audioFrame = g_sci->_audio->getDecodedRobotAudioFrame(&_robotFile, audioChunkSize - 4);
+		_audioStream->queueBuffer(audioFrame, decodedSize, DisposeAfterUse::NO, Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO);
+	} else {
+		_robotFile.skip(audioChunkSize);
+	}
+#else
+	_robotFile.skip(audioChunkSize);
+#endif
+
+	// Show frame
+	g_system->copyRectToScreen(_outputBuffer, frameWidth, _x, _y, frameWidth, frameHeight * frameScale / 100);
 	g_system->updateScreen();
 	g_system->delayMillis(100);
 
 	_curFrame++;
 
-	if (_curFrame == _frameCount) {
+	if (_curFrame == _header.frameCount) {
 		// End of robot video, restore palette
 		g_system->setPalette(_savedPal, 0, 256);
 		_resourceId = -1;
@@ -262,110 +287,17 @@ void GfxRobot::drawNextFrame() {
 	}
 }
 
-void GfxRobot::assembleVideoFrame(uint16 frame) {
-	byte *videoData = _resourceData + _imageStart[frame];
-	uint16 frameFragments = READ_LE_UINT16(videoData + 18);
-
-	uint32 decompressedSize = 0;
-
-	DecompressorLZS lzs;
-
-	videoData = _resourceData + _imageStart[frame] + 24;
-	
-	for (int i = 0; i < frameFragments; ++i) {
-		uint32 fragmentCompressed = READ_LE_UINT32(videoData);
-		uint32 fragmentUncompressed = READ_LE_UINT32(videoData + 4);
-
-		decompressedSize += fragmentUncompressed;
-		videoData += 10 + fragmentCompressed;
-	}
-
-	// Causes assertions in various places, such as Lighthouse/Demo 693.RBT
-	// uint16 frameWidth = READ_LE_UINT16(_resourceData + _imageStart[frame] + 4);
-	// uint16 frameHeight = READ_LE_UINT16(_resourceData + _imageStart[frame] + 6);
-	// assert(decompressedSize == (uint32)(frameWidth * frameHeight) * getFrameScale(frame) / 100);
-	
-	// Reallocate the output buffer, if its size has changed
-	if (decompressedSize != _outputBufferSize) {
-		delete[] _outputBuffer;
-		_outputBuffer = new byte[decompressedSize];
-	}
-
-	_outputBufferSize = decompressedSize;
-
-	uint32 assemblePtr = 0;
-
-	videoData = _resourceData + _imageStart[frame] + 24;
-
-	for (int i = 0; i < frameFragments; ++i) {
-		uint32 fragmentCompressed = READ_LE_UINT32(videoData);
-		uint32 fragmentUncompressed = READ_LE_UINT32(videoData + 4);
-		uint16 compressionType = READ_LE_UINT16(videoData + 8);
-
-		switch (compressionType) {
-		case 0: {
-			Common::MemoryReadStream compressedFrame(videoData + 10, fragmentCompressed, DisposeAfterUse::NO);
-
-			lzs.unpack(&compressedFrame, _outputBuffer + assemblePtr, fragmentCompressed, fragmentUncompressed);
-			assemblePtr += fragmentUncompressed;
-			break;
-		}
-		case 2: // Untested
-			memcpy(_outputBuffer + assemblePtr, videoData + 10, fragmentCompressed);
-			assemblePtr += fragmentUncompressed;
-			break;
-		}
-		
-		videoData += 10 + fragmentCompressed;
-	}
-
-	assert(assemblePtr == decompressedSize);
-
-	//	FILE *f = fopen("/tmp/flap", "w");
-	//      fwrite(_outputBuffer, 1, decompressedSize, f);
-	//      fclose(f);
-	//      exit(1);
-}
-
-void GfxRobot::getFrameDimensions(uint16 frame, uint16 &width, uint16 &height) {
-	byte *videoData = _resourceData + _imageStart[frame];
-
-	width = READ_LE_UINT16(videoData + 4);
-	height = READ_LE_UINT16(videoData + 6);
-}
-
-#if 0
-Common::Rect GfxRobot::getFrameRect(uint16 frame) {
-	byte *videoData = _resourceData + _imageStart[frame];
-
-	uint16 x = READ_LE_UINT16(videoData + 8);
-	uint16 y = READ_LE_UINT16(videoData + 10);
-	uint16 w = READ_LE_UINT16(videoData + 12);
-	uint16 h = READ_LE_UINT16(videoData + 14);
-
-	return Common::Rect(x, y, x + w, y + h); 
-}
-#endif
-
-byte GfxRobot::getFrameScale(uint16 frame) {
-	byte *videoData = _resourceData + _imageStart[frame];
-	return videoData[3];
-}
-
-void GfxRobot::playAudio() {
-	if (_hasSound) {
-		Audio::SoundHandle _audioHandle;
-		Audio::AudioStream *audioStream = g_sci->_audio->getRobotAudioStream(_resourceData);
-		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
-	}
-}
-
 void GfxRobot::freeData() {
-	delete[] _resourceData; _resourceData = 0;
-	delete[] _imageStart; _imageStart = 0;
-	delete[] _audioStart; _audioStart = 0;
-	delete[] _audioLen; _audioLen = 0;
+#if 0
+	if (_header.hasSound) {
+		g_system->getMixer()->stopHandle(_audioHandle);
+		//delete _audioStream; _audioStream = 0;
+	}
+#endif
+	delete[] _frameTotalSize; _frameTotalSize = 0;
 	delete[] _outputBuffer; _outputBuffer = 0;
+	_outputBufferSize = 0;
+	_robotFile.close();
 }	
 
 #endif

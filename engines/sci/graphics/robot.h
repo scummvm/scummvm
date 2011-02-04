@@ -26,34 +26,46 @@
 #ifndef SCI_GRAPHICS_ROBOT_H
 #define SCI_GRAPHICS_ROBOT_H
 
+#include "common/file.h"
+
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+#include "sound/decoders/raw.h"
+
 namespace Sci {
 
-#define ROBOT_FILE_STARTOFDATA 58
-
 #ifdef ENABLE_SCI32
+
+struct RobotHeader {
+	// 6 bytes, identifier bytes
+	uint16 version;
+	// 2 bytes, unknown
+	uint16 audioSilenceSize;
+	// 2 bytes, unknown
+	uint16 frameCount;
+	uint16 paletteDataSize;
+	// 6 bytes, unknown
+	byte hasSound;
+	// 35 bytes, unknown
+};
+
 class GfxRobot {
 public:
 	GfxRobot(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette);
 	~GfxRobot();
 
 	void init(GuiResourceId resourceId, uint16 x, uint16 y);
-	void drawNextFrame();
+	void processNextFrame();
 	uint16 getCurFrame() { return _curFrame; }
-	uint16 getFrameCount() { return _frameCount; }
+	uint16 getFrameCount() { return _header.frameCount; }
 	bool isPlaying() { return _resourceId != -1; }
 	void playAudio();
 
 private:
-	void initData(GuiResourceId resourceId);
-	void getFrameOffsets();
-	void assembleVideoFrame(uint16 frame);
-	void getFrameDimensions(uint16 frame, uint16 &width, uint16 &height);
-#if 0
-	// Unused
-	Common::Rect getFrameRect(uint16 frame);
-#endif
-	byte getFrameScale(uint16 frame); // Scale factor (multiplied by 100). More like custom height, but why use a percentage for it?
-	void setPalette();
+	void readHeaderChunk();
+	void readPaletteChunk();
+	void readFrameSizesChunk();
+
 	void freeData();
 
 	ResourceManager *_resMan;
@@ -61,23 +73,18 @@ private:
 	GfxPalette *_palette;
 
 	GuiResourceId _resourceId;
-	byte *_resourceData;
 	byte _savedPal[256 * 4];
 
-	byte _version;	// robot version
+	Common::File _robotFile;
+	Audio::QueuingAudioStream *_audioStream;
+	Audio::SoundHandle _audioHandle;
+
+	RobotHeader _header;
+
 	uint16 _x;
 	uint16 _y;
-	//uint16 _width;
-	//uint16 _height;
-	uint16 _frameCount;
-	uint32 _frameSize; // is width * height (pixelCount)
-	uint16 _audioSize;
-	bool _hasSound;
-	uint32 _palOffset;
-	uint32 *_imageStart;
-	uint32 *_audioStart;
-	uint32 *_audioLen;
 	uint16 _curFrame;
+	uint32 *_frameTotalSize;
 
 	byte *_outputBuffer;
 	uint32 _outputBufferSize;
