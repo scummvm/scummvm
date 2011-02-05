@@ -146,6 +146,7 @@ HugoEngine::~HugoEngine() {
 	delete _intro;
 	delete _scheduler;
 	delete _file;
+	delete _text;
 
 	DebugMan.clearAllDebugChannels();
 	delete _console;
@@ -319,6 +320,7 @@ void HugoEngine::runMachine() {
 		g_system->delayMillis(5);
 		_curTime = g_system->getMillis();
 	}
+
 	_lastTime = _curTime;
 
 	switch (gameStatus.viewState) {
