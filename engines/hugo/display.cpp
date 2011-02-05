@@ -45,6 +45,9 @@ namespace Hugo {
 Screen::Screen(HugoEngine *vm) : _vm(vm) {
 	_mainPalette = 0;
 	_curPalette = 0;
+	_dlAddIndex = 0;
+	_dlRestoreIndex = 0;
+
 	for (int i = 0; i < kNumFonts; i++) {
 		_arrayFont[i] = 0;
 		fontLoadedFl[i] = false;
@@ -56,16 +59,14 @@ Screen::Screen(HugoEngine *vm) : _vm(vm) {
 		_dlBlistList[i].dy = 0;
 	}
 	for (int i = 0; i < kRectListSize; i++) {
-		_dlRestoreList[i].x = 0;
-		_dlRestoreList[i].y = 0;
-		_dlRestoreList[i].dx = 0;
-		_dlRestoreList[i].dy = 0;
-	}
-	for (int i = 0; i < kRectListSize; i++) {
 		_dlAddList[i].x = 0;
 		_dlAddList[i].y = 0;
 		_dlAddList[i].dx = 0;
 		_dlAddList[i].dy = 0;
+		_dlRestoreList[i].x = 0;
+		_dlRestoreList[i].y = 0;
+		_dlRestoreList[i].dx = 0;
+		_dlRestoreList[i].dy = 0;
 	}
 }
 

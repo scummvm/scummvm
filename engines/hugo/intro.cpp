@@ -64,6 +64,7 @@ void intro_v1d::introInit() {
 	surf.pixels = _vm->_screen->getFrontBuffer();
 	surf.pitch = 320;
 	surf.bytesPerPixel = 1;
+	_vm->_screen->displayList(kDisplayInit);
 }
 
 bool intro_v1d::introPlay() {
@@ -206,6 +207,7 @@ void intro_v2d::preNewGame() {
 }
 
 void intro_v2d::introInit() {
+	_vm->_screen->displayList(kDisplayInit);
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
 	surf.w = 320;
 	surf.h = 200;
@@ -251,6 +253,7 @@ void intro_v3d::preNewGame() {
 }
 
 void intro_v3d::introInit() {
+	_vm->_screen->displayList(kDisplayInit);
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
 	surf.w = 320;
 	surf.h = 200;
@@ -365,9 +368,8 @@ void intro_v3w::preNewGame() {
 * Hugo 3 - show map and set up for introPlay()
 */
 void intro_v3w::introInit() {
-
+	_vm->_screen->displayList(kDisplayInit);
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
-
 	_vm->_screen->displayBackground();
 	g_system->updateScreen();
 	g_system->delayMillis(3000);
