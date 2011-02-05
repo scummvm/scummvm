@@ -2327,6 +2327,22 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Phantasmagoria - English Macintosh
+	// NOTE: This only contains disc 1 files (as well as the two persistent files:
+	// Data1 and Data13. Other discs have conflicting names :\
+	{"phantasmagoria", "", {
+		{"Data1", 0, "0fcb42802f49edb5af60532bd7b60c4f", 14705669},
+		{"Data2", 0, "d52f612058ec78e300385df3336a4ba2", 14516712},
+		{"Data3", 0, "d6880c00d2c700c213ab76a3c39e60fc", 15612610},
+		{"Data4", 0, "9037f5d3a37d0ee23146d9830726b058", 9794705},
+		{"Data5", 0, "4b944fc79d180966c1088f7ecf7ae4d1", 13638812},
+		{"Data6", 0, "647b1a826dbbb64884e0ae1bc59c8abb", 13846162},
+		{"Data7", 0, "932a3aaf1eb650735a9e3a290ce249fb", 3626460},
+		// Data8-12 are empty
+		{"Data13", 0, "6d2c450fca19a69b5af74ed5b03c0a17", 14923328},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NONE },
+
 #ifdef ENABLE_SCI3_GAMES
 	// Phantasmagoria 2 - English Windows (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "001.0.06"
