@@ -106,6 +106,14 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 		// Supported
 		break;
 	default:
+		// Even the robots have the be byte swapped for the Mac version...
+		if (SWAP_BYTES_16(_header.version) == 5 && g_sci->getPlatform() == Common::kPlatformMacintosh) {
+			warning("Unsupported Mac Robot file");
+			_curFrame = _header.frameCount; // Jump to the last frame
+			_robotFile.close();
+			return;
+		}
+
 		// Unsupported, error out so that we find out where this is used
 		error("Unknown robot version: %d", _header.version);
 	}
