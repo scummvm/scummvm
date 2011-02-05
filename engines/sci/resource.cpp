@@ -2375,10 +2375,10 @@ bool ResourceManager::detectHires() {
 		Resource *res = findResource(ResourceId(kResourceTypePic, i), 0);
 
 		if (res) {
-			if (READ_LE_UINT16(res->data) == 0x0e) {
+			if (READ_SCI11ENDIAN_UINT16(res->data) == 0x0e) {
 				// SCI32 picture
-				uint16 width = READ_LE_UINT16(res->data + 10);
-				uint16 height = READ_LE_UINT16(res->data + 12);
+				uint16 width = READ_SCI11ENDIAN_UINT16(res->data + 10);
+				uint16 height = READ_SCI11ENDIAN_UINT16(res->data + 12);
 				// Surely lowres (e.g. QFG4CD)
 				if ((width == 320) && ((height == 190) || (height == 200)))
 					return false;
