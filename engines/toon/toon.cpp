@@ -419,13 +419,13 @@ void ToonEngine::render() {
 		copyToVirtualScreen(true);
 	}
 
-	// add a little sleep here if needed.
+	// add a little sleep here
 	int32 newMillis = (int32)_system->getMillis();
-	if (newMillis - _lastRenderTime  < _tickLength) {
-		int32 sleepMs = _tickLength - (newMillis - _lastRenderTime);
-		assert(sleepMs >= 0);
-		_system->delayMillis(sleepMs);
-	}
+	int32 sleepMs = 1; // Minimum delay to allow thread scheduling
+	if ((newMillis - _lastRenderTime)  < _tickLength)
+		sleepMs = _tickLength - (newMillis - _lastRenderTime);
+	assert(sleepMs >= 0);
+	_system->delayMillis(sleepMs);
 	_lastRenderTime = _system->getMillis();
 }
 
