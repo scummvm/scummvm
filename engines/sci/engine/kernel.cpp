@@ -111,6 +111,11 @@ void Kernel::loadSelectorNames() {
 	Resource *r = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), 0);
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
+	// Starting with KQ7, Mac versions have a BE name table. GK1 Mac and earlier (and all
+	// other platforms) always use LE.
+	bool isBE = (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1
+			&& g_sci->getGameId() != GID_GK1);
+
 	if (!r) { // No such resource?
 		// Check if we have a table for this game
 		// Some demos do not have a selector table
@@ -130,11 +135,11 @@ void Kernel::loadSelectorNames() {
 		return;
 	}
 
-	int count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
+	int count = isBE ? READ_BE_UINT16(r->data) : READ_LE_UINT16(r->data) + 1; // Counter is slightly off
 
 	for (int i = 0; i < count; i++) {
-		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
-		int len = READ_LE_UINT16(r->data + offset);
+		int offset = isBE ? READ_BE_UINT16(r->data + 2 + i * 2) : READ_LE_UINT16(r->data + 2 + i * 2);
+		int len = isBE ? READ_BE_UINT16(r->data + offset) : READ_LE_UINT16(r->data + offset);
 
 		Common::String tmp((const char *)r->data + offset + 2, len);
 		_selectorNames.push_back(tmp);
