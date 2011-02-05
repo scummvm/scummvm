@@ -2329,7 +2329,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Phantasmagoria - English Macintosh
 	// NOTE: This only contains disc 1 files (as well as the two persistent files:
-	// Data1 and Data13. Other discs have conflicting names :\
+	// Data1 and Data13. Other discs have conflicting names :(
 	{"phantasmagoria", "", {
 		{"Data1", 0, "0fcb42802f49edb5af60532bd7b60c4f", 14705669},
 		{"Data2", 0, "d52f612058ec78e300385df3336a4ba2", 14516712},
