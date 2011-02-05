@@ -421,8 +421,8 @@ void ToonEngine::render() {
 
 	// add a little sleep here if needed.
 	int32 newMillis = (int32)_system->getMillis();
-	if(newMillis - _lastRenderTime  < _tickLength) {
-		int32 sleepMs = _tickLength - ( _system->getMillis() - _lastRenderTime );
+	if (newMillis - _lastRenderTime  < _tickLength) {
+		int32 sleepMs = _tickLength - (newMillis - _lastRenderTime);
 		assert(sleepMs >= 0);
 		_system->delayMillis(sleepMs);
 	}
