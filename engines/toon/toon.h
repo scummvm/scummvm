@@ -407,6 +407,7 @@ protected:
 
 	int32 _oldTimer;
 	int32 _oldTimer2;
+	int32 _lastRenderTime;
 
 	Movie *_moviePlayer;
 
