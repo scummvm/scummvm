@@ -679,14 +679,8 @@ int ResourceManager::addAppropriateSources() {
 			Common::String filename = (*x)->getName();
 			addSource(new MacResourceForkResourceSource(filename, atoi(filename.c_str() + 4)));
 		}
-#ifdef ENABLE_SCI32
-		// Mac SCI32 games have extra folders for patches
-		addPatchDir("Robot Folder");
-		addPatchDir("Sound Folder");
-		addPatchDir("Voices Folder");
-		addPatchDir("Voices");
-		//addPatchDir("VMD Folder");
 
+#ifdef ENABLE_SCI32
 		// There can also be a "Patches" resource fork with patches
 		if (Common::File::exists("Patches"))
 			addSource(new MacResourceForkResourceSource("Patches", 100));

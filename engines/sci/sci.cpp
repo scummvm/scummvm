@@ -134,6 +134,11 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");	// VMD movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "vmd");	// VMD movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "duk");	// Duck movie files in Phantasmagoria 2
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Robot Folder"); // Mac robot files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Sound Folder"); // Mac audio files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices Folder"); // Mac audio36 files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices"); // Mac audio36 files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "VMD Folder"); // Mac VMD files
 
 	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
 	// is for the demo of Phantasmagoria, included in the disk
