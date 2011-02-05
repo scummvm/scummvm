@@ -181,7 +181,7 @@ void GfxPicture::drawSci32Vga(int16 celNo, int16 drawX, int16 drawY, int16 pictu
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
 	int header_size = READ_SCI11ENDIAN_UINT16(inbuffer);
-	int palette_data_ptr = READ_SCI11ENDIAN_UINT16(inbuffer + 6);
+	int palette_data_ptr = READ_SCI11ENDIAN_UINT32(inbuffer + 6);
 //	int celCount = inbuffer[2];
 	int cel_headerPos = header_size;
 	int cel_RlePos, cel_LiteralPos;
