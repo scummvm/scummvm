@@ -1276,17 +1276,15 @@ void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,
 void OSystem_Android::logMessage(LogMessageType::Type type, const char *message) {
 	switch (type) {
 	case LogMessageType::kDebug:
-		BaseBackend::logMessage(type, message);
+		__android_log_write(ANDROID_LOG_DEBUG, LOG_TAG, message);
 		break;
 
 	case LogMessageType::kWarning:
-		__android_log_write(ANDROID_LOG_WARN, "ScummVM", message);
+		__android_log_write(ANDROID_LOG_WARN, LOG_TAG, message);
 		break;
 
 	case LogMessageType::kError:
-		// FIXME: From the name it looks like this will also quit the program.
-		// This shouldn't do that though.
-		__android_log_assert("Fatal error", "ScummVM", "%s", message);
+		__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, message);
 		break;
 	}
 }

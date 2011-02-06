@@ -33,7 +33,7 @@ import java.util.LinkedHashMap;
 // use the Java versions of most EGL functions :(
 
 public class ScummVM implements SurfaceHolder.Callback {
-	private final static String LOG_TAG = "ScummVM.java";
+	protected final static String LOG_TAG = "ScummVM";
 
 	private final int AUDIO_FRAME_SIZE = 2 * 2;	 // bytes. 16bit audio * stereo
 	public static class AudioSetupException extends Exception {}
@@ -106,8 +106,7 @@ public class ScummVM implements SurfaceHolder.Callback {
 		try {
 			surfaceLock.acquire();
 		} catch (InterruptedException e) {
-			Log.e(this.toString(),
-				  "Interrupted while waiting for surface lock", e);
+			Log.e(LOG_TAG, "Interrupted while waiting for surface lock", e);
 		}
 	}
 
@@ -151,8 +150,7 @@ public class ScummVM implements SurfaceHolder.Callback {
 			if (value[0] == EGL10.EGL_NONE)
 				Log.d(LOG_TAG, entry.getKey() + ": NONE");
 			else
-				Log.d(LOG_TAG, String.format("%s: %d",
-											 entry.getKey(), value[0]));
+				Log.d(LOG_TAG, String.format("%s: %d", entry.getKey(), value[0]));
 		}
 	}
 
@@ -174,8 +172,7 @@ public class ScummVM implements SurfaceHolder.Callback {
 							num_config);
 
 		if (false) {
-			Log.d(LOG_TAG,
-				  String.format("Found %d EGL configurations.", numConfigs));
+			Log.d(LOG_TAG, String.format("Found %d EGL configurations.", numConfigs));
 			for (EGLConfig config : configs)
 				dumpEglConfig(config);
 		}
@@ -184,8 +181,7 @@ public class ScummVM implements SurfaceHolder.Callback {
 		// devices so we have to filter/rank the configs again ourselves.
 		eglConfig = chooseEglConfig(configs);
 		if (false) {
-			Log.d(LOG_TAG,
-				  String.format("Chose EGL config from %d possibilities.", numConfigs));
+			Log.d(LOG_TAG, String.format("Chose EGL config from %d possibilities.", numConfigs));
 			dumpEglConfig(eglConfig);
 		}
 
@@ -199,6 +195,7 @@ public class ScummVM implements SurfaceHolder.Callback {
 		int best = 0;
 		int bestScore = -1;
 		int[] value = new int[1];
+
 		for (int i = 0; i < configs.length; i++) {
 			EGLConfig config = configs[i];
 			int score = 10000;
@@ -255,7 +252,7 @@ public class ScummVM implements SurfaceHolder.Callback {
 		eglSurface = egl.eglCreateWindowSurface(eglDisplay, eglConfig,
 												nativeSurface, null);
 		if (eglSurface == EGL10.EGL_NO_SURFACE)
-			Log.e(LOG_TAG,  "CreateWindowSurface failed!");
+			Log.e(LOG_TAG, "CreateWindowSurface failed!");
 		egl.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
 
 		GL10 gl = (GL10)eglContext.getGL();
@@ -396,7 +393,7 @@ public class ScummVM implements SurfaceHolder.Callback {
 					offset += ret;
 				}
 			} catch (InterruptedException e) {
-				Log.e(this.toString(), "Audio thread interrupted", e);
+				Log.e(LOG_TAG, "Audio thread interrupted", e);
 			}
 		}
 	}

@@ -44,7 +44,7 @@
 #define TEXSUBIMAGE_IS_EXPENSIVE 0
 
 #undef LOG_TAG
-#define LOG_TAG "ScummVM-video"
+#define LOG_TAG "ScummVM"
 
 #if 0
 #define ENTER(args...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, args)
