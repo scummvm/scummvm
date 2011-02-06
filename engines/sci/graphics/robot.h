@@ -39,14 +39,15 @@ namespace Sci {
 struct RobotHeader {
 	// 6 bytes, identifier bytes
 	uint16 version;
-	// 2 bytes, unknown
+	uint16 audioChunkSize;
 	uint16 audioSilenceSize;
 	// 2 bytes, unknown
 	uint16 frameCount;
 	uint16 paletteDataSize;
-	// 6 bytes, unknown
+	uint16 unkChunkDataSize;
+	// 5 bytes, unknown
 	byte hasSound;
-	// 35 bytes, unknown
+	// 34 bytes, unknown
 };
 
 class GfxRobot {
@@ -72,7 +73,6 @@ private:
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 
-	GuiResourceId _resourceId;
 	byte _savedPal[256 * 4];
 
 	Common::File _robotFile;
@@ -81,6 +81,7 @@ private:
 
 	RobotHeader _header;
 
+	GuiResourceId _resourceId;
 	uint16 _x;
 	uint16 _y;
 	uint16 _curFrame;

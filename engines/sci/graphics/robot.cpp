@@ -45,6 +45,19 @@
 
 namespace Sci {
 
+// TODO:
+// - v4 robot support (used in PQ:SQUAT)
+// - Mac robot files (BE)
+// - Positioning
+// - Proper handling of frame scaling - scaled frames look squashed
+//   (probably because both dimensions should be scaled)
+// - Timing - the arbitrary 100ms delay between each frame is not quite right
+// - Proper handling of sound chunks in some cases, so that the frame size
+//   table can be ignored (it's only used to determine the correct sound chunk
+//   size at the moment, cause it can be wrong in some cases)
+// - Fix audio "hiccups" - probably data that shouldn't be in the audio frames
+
+
 // Some non technical information on robot files, from an interview with
 // Greg Tomko-Pavia of Sierra On-Line
 // Taken from http://anthonylarme.tripod.com/phantas/phintgtp.html
@@ -100,6 +113,7 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 		// Unsupported
 		warning("TODO: add support for v4 robot videos");
 		_curFrame = _header.frameCount;	// jump to the last frame
+		_robotFile.close();
 		return;
 	case 5:	// used in most SCI2.1 games and in some SCI3 robots
 	case 6:	// used in SCI3 games
@@ -119,12 +133,11 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 	}
 
 	_frameTotalSize = new uint32[_header.frameCount];
-#if 0
+
 	if (_header.hasSound) {
-		_audioStream = Audio::makeQueuingAudioStream(22050, true);
+		_audioStream = Audio::makeQueuingAudioStream(11025, false);
 		g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_audioHandle, _audioStream);
 	}
-#endif
 
 	readPaletteChunk();
 	readFrameSizesChunk();
@@ -136,25 +149,22 @@ void GfxRobot::readHeaderChunk() {
 	// Header (60 bytes)
 	_robotFile.skip(6);
 	_header.version = _robotFile.readUint16LE();
-	_robotFile.skip(2);
+	_header.audioChunkSize = _robotFile.readUint16LE();
 	_header.audioSilenceSize = _robotFile.readUint16LE();
 	_robotFile.skip(2);
 	_header.frameCount = _robotFile.readUint16LE();
 	_header.paletteDataSize = _robotFile.readUint16LE();
-	_robotFile.skip(7);
+	_header.unkChunkDataSize = _robotFile.readUint16LE();
+	_robotFile.skip(5);
 	_header.hasSound = _robotFile.readByte();
 	_robotFile.skip(34);
 
-	// Some robot files have sound, which doesn't start from frame 0
-	// (e.g. Phantasmagoria, robot 1305). In this case, there won't
-	// be audio silence in the header, but there will be an extra audio
-	// preload chunk before the palette chunk. Skip past it and its 
-	// 14-byte header.
-	if (_header.hasSound && !_header.audioSilenceSize) {
-		// The header is 14 bytes: the chunk size + 10 more
-		uint32 preloadChunkSize = _robotFile.readUint32LE();
-		_robotFile.skip(preloadChunkSize + 10);
-	}
+	// Some videos (e.g. robot 1305 in Phantasmagoria and
+	// robot 184 in Lighthouse) have an unknown chunk before
+	// the palette chunk (probably used for sound preloading).
+	// Skip it here.
+	if (_header.unkChunkDataSize)
+		_robotFile.skip(_header.unkChunkDataSize);
 }
 
 void GfxRobot::readPaletteChunk() {
@@ -162,6 +172,8 @@ void GfxRobot::readPaletteChunk() {
 	_robotFile.read(paletteChunk, _header.paletteDataSize);
 	int startIndex = READ_LE_UINT16(paletteChunk + 25);
 	int colorCount = READ_LE_UINT16(paletteChunk + 29);
+	if (colorCount > 256)
+		error("Invalid color count: %d", colorCount);
 	Palette resourcePal;
 	_palette->createFromData(paletteChunk, _header.paletteDataSize, &resourcePal);
 	delete[] paletteChunk;
@@ -190,6 +202,20 @@ void GfxRobot::readPaletteChunk() {
 
 
 void GfxRobot::readFrameSizesChunk() {
+	// The robot video file contains 2 tables, with one entry for each frame:
+	// - A table containing the size of the image in each video frame
+	// - A table containing the total size of each video frame.
+	// In v5 robots, the tables contain 16-bit integers, whereas in v6 robots,
+	// they contain 32-bit integers.
+
+	// TODO: The table reading code can probably be removed once the
+	// audio chunk size is figured out (check the TODO inside processNextFrame())
+#if 0
+	// We don't need any of the two tables to play the video, so we ignore
+	// both of them.
+	uint16 wordSize = _header.version == 6 ? 4 : 2;
+	_robotFile.skip(_header.frameCount * wordSize * 2);
+#else
 	switch (_header.version) {
 	case 5:		// sizes are 16-bit integers
 		// Skip table with frame image sizes, as we don't need it
@@ -206,8 +232,10 @@ void GfxRobot::readFrameSizesChunk() {
 	default:
 		error("Can't yet handle index table for robot version %d", _header.version);
 	}
+#endif
 
-	_robotFile.skip(1024 + 512);	// Skip unknown tables 1 and 2
+	// 2 more unknown tables
+	_robotFile.skip(1024 + 512);
 
 	// Pad to nearest 2 kilobytes
 	uint32 curPos = _robotFile.pos();
@@ -222,7 +250,7 @@ void GfxRobot::processNextFrame() {
 	if (_curFrame == _header.frameCount)
 		return;
 
-	// Read frame header (24 bytes)
+	// Read frame image header (24 bytes)
 	_robotFile.skip(3);
 	byte frameScale = _robotFile.readByte();
 	uint16 frameWidth = _robotFile.readUint16LE();
@@ -264,26 +292,31 @@ void GfxRobot::processNextFrame() {
 
 	uint32 audioChunkSize = _frameTotalSize[_curFrame] - (24 + compressedSize);
 
-	// TODO: Audio
+// TODO: The audio chunk size below is usually correct, but there are some
+// exceptions (e.g. robot 4902 in Phantasmagoria, towards its end)
 #if 0
-	// Queue the next audio frame
-	if (_header.hasSound) {
-		uint16 decodedSize = _robotFile.readUint16LE();
-		_robotFile.skip(2);	// skip audio buffer position
+	// Read frame audio header (14 bytes)
+	_robotFile.skip(2);	// buffer position
+	_robotFile.skip(2);	// unknown (usually 1)
+	_robotFile.skip(2);/*uint16 audioChunkSize = _robotFile.readUint16LE() + 8;*/
+	_robotFile.skip(2);
+#endif
 
-		byte *audioFrame = g_sci->_audio->getDecodedRobotAudioFrame(&_robotFile, audioChunkSize - 4);
-		_audioStream->queueBuffer(audioFrame, decodedSize, DisposeAfterUse::NO, Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO);
+	// Queue the next audio frame
+	// FIXME: For some reason, there are audio hiccups/gaps
+	if (_header.hasSound) {
+		_robotFile.skip(8);	// header
+		_audioStream->queueBuffer(g_sci->_audio->getDecodedRobotAudioFrame(&_robotFile, audioChunkSize - 8), 
+									(audioChunkSize - 8) * 2, DisposeAfterUse::NO, 
+									Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 	} else {
 		_robotFile.skip(audioChunkSize);
 	}
-#else
-	_robotFile.skip(audioChunkSize);
-#endif
 
 	// Show frame
 	g_system->copyRectToScreen(_outputBuffer, frameWidth, _x, _y, frameWidth, frameHeight * frameScale / 100);
 	g_system->updateScreen();
-	g_system->delayMillis(100);
+	g_system->delayMillis(100);	// TODO: This isn't quite right
 
 	_curFrame++;
 
@@ -296,12 +329,10 @@ void GfxRobot::processNextFrame() {
 }
 
 void GfxRobot::freeData() {
-#if 0
 	if (_header.hasSound) {
 		g_system->getMixer()->stopHandle(_audioHandle);
 		//delete _audioStream; _audioStream = 0;
 	}
-#endif
 	delete[] _frameTotalSize; _frameTotalSize = 0;
 	delete[] _outputBuffer; _outputBuffer = 0;
 	_outputBufferSize = 0;
