@@ -223,70 +223,6 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 	delete cursorHotspot;
 }
 
-void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
-	// See http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-402.html
-	// for more information.
-
-	// View 998 seems to be a fake resource used to call for Mac cursor resources.
-	// For other resources, they're still in the views, so use them.
-	if (viewNum != 998) {
-		kernelSetView(viewNum, loopNum, celNum, hotspot);
-		return;
-	}
-
-	// TODO: What about the 2000 resources? Inventory items? How to handle?
-	// Update: Perhaps these are handled like the Windows cursors in KQ6?
-	// TODO: 1000 + celNum won't work for GK1
-
-	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeCursor, 1000 + celNum), false);
-
-	if (!resource) {
-		warning("Mac cursor %d not found", 1000 + celNum);
-		return;
-	}
-
-	assert(resource);
-
-	if (resource->size == 32 * 2 + 4) {
-		// Mac CURS cursor
-		byte *cursorBitmap = new byte[16 * 16];
-		byte *data = resource->data;
-
-		// Get B&W data
-		for (byte i = 0; i < 32; i++) {
-			byte imageByte = *data++;
-			for (byte b = 0; b < 8; b++)
-				cursorBitmap[i * 8 + b] = (byte)((imageByte & (0x80 >> b)) > 0 ? 0x00 : 0xFF);
-		}
-
-		// Apply mask data
-		for (byte i = 0; i < 32; i++) {
-			byte imageByte = *data++;
-			for (byte b = 0; b < 8; b++)
-				if ((imageByte & (0x80 >> b)) == 0)
-					cursorBitmap[i * 8 + b] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR; // Doesn't matter, just is transparent
-		}
-
-		uint16 hotspotX = READ_BE_UINT16(data);
-		uint16 hotspotY = READ_BE_UINT16(data + 2);
-
-		CursorMan.replaceCursor(cursorBitmap, 16, 16, hotspotX, hotspotY, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
-
-		delete[] cursorBitmap;
-	} else {
-		// Mac crsr cursor
-		byte *cursorBitmap, *palette;
-		int width, height, hotspotX, hotspotY, palSize, keycolor;
-		Common::MacResManager::convertCrsrCursor(resource->data, resource->size, &cursorBitmap, &width, &height, &hotspotX, &hotspotY, &keycolor, true, &palette, &palSize);
-		CursorMan.replaceCursor(cursorBitmap, width, height, hotspotX, hotspotY, keycolor);
-		CursorMan.replaceCursorPalette(palette, 0, palSize);
-		free(cursorBitmap);
-		free(palette);
-	}
-
-	kernelShow();
-}
-
 // this list contains all mandatory set cursor changes, that need special handling
 //  ffs. GfxCursor::setPosition (below)
 //    Game,            newPosition, validRect
@@ -487,6 +423,99 @@ void GfxCursor::kernelMoveCursor(Common::Point pos) {
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
 	_event->getSciEvent(SCI_EVENT_PEEK);
+}
+
+void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
+	// Here we try to map the view number onto the cursor. What they did was keep the
+	// kSetCursor calls the same, but perform remapping on the cursors. They also took
+	// it a step further and added a new kPlatform sub-subop that handles remapping
+	// automatically. 
+
+	if (_macCursorRemap.empty()) {
+		// The scripts have given us no remapping, so let's try to do this manually.
+		// First try and see if the view resource exists. If it does, we're just using
+		// that cursor (QFG1/Hoyle4 do not use Mac cursors, although they have them).
+		if (_resMan->testResource(ResourceId(kResourceTypeView, viewNum))) {
+			CursorMan.disableCursorPalette(true);
+			kernelSetView(viewNum, loopNum, celNum, hotspot);
+			return;
+		}
+
+		// KQ6 seems to use this mapping for its cursors
+		viewNum = loopNum * 1000 + celNum;
+	} else {
+		// If we do have the list, we'll be using a remap based on what the
+		// scripts have given us.
+		for (uint32 i = 0; i < _macCursorRemap.size(); i++) {
+			if (viewNum == _macCursorRemap[i]) {
+				viewNum = (i + 1) * 0x100 + loopNum * 0x10 + celNum;
+				break;
+			}
+
+			if (i == _macCursorRemap.size())
+				error("Unmatched Mac cursor %d", viewNum);
+		}
+	}
+
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeCursor, viewNum), false);
+
+	if (!resource) {
+		warning("Mac cursor %d not found", viewNum);
+		return;
+	}
+
+	CursorMan.disableCursorPalette(false);
+
+	assert(resource);
+
+	if (resource->size == 32 * 2 + 4) {
+		// Mac CURS cursor
+		// See http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-402.html
+		// for more information.
+		byte *cursorBitmap = new byte[16 * 16];
+		byte *data = resource->data;
+
+		// Get B&W data
+		for (byte i = 0; i < 32; i++) {
+			byte imageByte = *data++;
+			for (byte b = 0; b < 8; b++)
+				cursorBitmap[i * 8 + b] = (byte)((imageByte & (0x80 >> b)) > 0 ? 1 : 2);
+		}
+
+		// Apply mask data
+		for (byte i = 0; i < 32; i++) {
+			byte imageByte = *data++;
+			for (byte b = 0; b < 8; b++)
+				if ((imageByte & (0x80 >> b)) == 0)
+					cursorBitmap[i * 8 + b] = 0; // Doesn't matter, just is transparent
+		}
+
+		uint16 hotspotX = READ_BE_UINT16(data);
+		uint16 hotspotY = READ_BE_UINT16(data + 2);
+
+		static const byte cursorPalette[] = { 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x00 };
+
+		CursorMan.replaceCursor(cursorBitmap, 16, 16, hotspotX, hotspotY, 0);
+		CursorMan.replaceCursorPalette(cursorPalette, 1, 2);
+
+		delete[] cursorBitmap;
+	} else {
+		// Mac crsr cursor
+		byte *cursorBitmap, *palette;
+		int width, height, hotspotX, hotspotY, palSize, keycolor;
+		Common::MacResManager::convertCrsrCursor(resource->data, resource->size, &cursorBitmap, &width, &height, &hotspotX, &hotspotY, &keycolor, true, &palette, &palSize);
+		CursorMan.replaceCursor(cursorBitmap, width, height, hotspotX, hotspotY, keycolor);
+		CursorMan.replaceCursorPalette(palette, 0, palSize);
+		free(cursorBitmap);
+		free(palette);
+	}
+
+	kernelShow();
+}
+
+void GfxCursor::setMacCursorRemapList(int cursorCount, reg_t *cursors) {
+	for (int i = 0; i < cursorCount; i++)
+		_macCursorRemap.push_back(cursors[i].toUint16());
 }
 
 } // End of namespace Sci

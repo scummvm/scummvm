@@ -31,6 +31,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
+#include "sci/graphics/cursor.h"
 #include "sci/graphics/maciconbar.h"
 #include "sci/console.h"
 
@@ -338,28 +339,6 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// kIconBar is really a subop of kPlatform for SCI1.1 Mac
-reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
-	// QFG1 Mac calls this function to load the Mac icon bar (of which
-	// the resources do exist), but the game completely ignores it and
-	// uses the standard icon bar for the game. We do the same.
-	if (!g_sci->hasMacIconBar())
-		return NULL_REG;
-
-	// TODO...
-
-	if (argv[0].toUint16() == 4 && argv[1].toUint16() == 0) {
-		for (int i = 0; i < argv[2].toUint16(); i++)
-			g_sci->_gfxMacIconBar->addIcon(argv[i + 3]);
-
-		g_sci->_gfxMacIconBar->drawIcons();		
-	}
-
-	// Other calls seem to handle selecting/deselecting them
-
-	return NULL_REG;
-}
-
 #ifdef ENABLE_SCI32
 reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	Common::String setting = s->_segMan->getString(argv[0]);
@@ -370,6 +349,67 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	return argv[1];
 }
 #endif
+
+// kIconBar is really a subop of kMacPlatform for SCI1.1 Mac
+reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
+	// Mac versions use their own tertiary platform functions
+	// to handle the outside-of-the-screen icon bar.
+
+	// QFG1 Mac calls this function to load the Mac icon bar (of which
+	// the resources do exist), but the game completely ignores it and
+	// uses the standard icon bar for the game. We do the same.
+	if (!g_sci->hasMacIconBar())
+		return NULL_REG;
+
+	switch (argv[0].toUint16()) {
+	case 0:
+		// Add the icons
+		for (int i = 0; i < argv[1].toUint16(); i++)
+			g_sci->_gfxMacIconBar->addIcon(argv[i + 2]);
+
+		g_sci->_gfxMacIconBar->drawIcons();
+		break;
+	case 2:
+	case 3:
+	case 4:
+		// TODO: Other calls seem to handle selecting/deselecting them
+		break;
+	default:
+		warning("Unknown kIconBar subop %d", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
+// kMacPlatform is really a subop of kPlatform for SCI1.1+ Mac
+reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
+	// Mac versions use their own secondary platform functions
+	// to do various things. Why didn't they just declare a new
+	// kernel function?
+
+	switch (argv[0].toUint16()) {
+	case 0:
+		// Set Mac cursor remap
+		g_sci->_gfxCursor->setMacCursorRemapList(argc - 1, argv + 1);
+		break;
+	case 1:
+		// Unknown
+		break;
+	case 2:
+		// Unknown
+		break;
+	case 3:
+		// Unknown
+		break;
+	case 4:
+		// Handle icon bar code
+		return kIconBar(s, argc - 1, argv + 1);
+	default:
+		warning("Unknown kMacPlatform subop %d", argv[0].toUint16());
+	}
+
+	return s->r_acc;
+}
 
 enum kSciPlatforms {
 	kSciPlatformDOS = 1,
@@ -415,8 +455,8 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		warning("STUB: kPlatform(CDCheck)");
 		break;
 	case kPlatformUnk0:
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() == SCI_VERSION_1_1)
-			return kIconBar(s, argc - 1, argv + 1);
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1 && argc > 1)
+			return kMacPlatform(s, argc - 1, argv + 1);
 		// Otherwise, fall through
 	case kPlatformGetPlatform:
 		return make_reg(0, (isWindows) ? kSciPlatformWindows : kSciPlatformDOS);

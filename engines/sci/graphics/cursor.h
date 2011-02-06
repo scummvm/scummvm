@@ -26,6 +26,7 @@
 #ifndef SCI_GRAPHICS_CURSOR_H
 #define SCI_GRAPHICS_CURSOR_H
 
+#include "common/array.h"
 #include "common/hashmap.h"
 
 namespace Sci {
@@ -85,6 +86,8 @@ public:
 	void kernelSetPos(Common::Point pos);
 	void kernelMoveCursor(Common::Point pos);
 
+	void setMacCursorRemapList(int cursorCount, reg_t *cursors);
+
 private:
 	void purgeCache();
 
@@ -119,6 +122,9 @@ private:
 	// graphics, like SSCI did. These look very ugly, which is why
 	// they aren't enabled by default.
 	bool _useOriginalKQ6WinCursors;
+
+	// Mac versions of games use a remap list to remap their cursors
+	Common::Array<uint16> _macCursorRemap;
 };
 
 } // End of namespace Sci
