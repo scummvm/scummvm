@@ -52,23 +52,23 @@ namespace Parallaction {
  * 5 stop
  * 6 pause
  * 7 set channel volume
- * 8 set byte_11C5A (boolean flag for ??)
- * 9 toggle fade
- * 10 set volume
+ * 8 set fade in flag
+ * 9 set fade out flag
+ * 10 set global volume
  * 11 shutdown
- * 12 get status
- * 13 set byte_11C4D (used for fade??)
- * 14 get volume
- * 15 get X??
- * 16 get fade flag
+ * 12 get status (stopped, playing, paused)
+ * 13 set fade volume change rate
+ * 14 get global volume
+ * 15 get fade in flag
+ * 16 get fade out flag
  * 17 set tempo
  * 18 get tempo
- * 19 set Y??
+ * 19 get fade volume change rate
  * 20 get looping flag
- * 21 toggle looping flag
+ * 21 set looping flag
  * 22 get version??
  * 23 get version??
- * 24 get busy flag
+ * 24 get busy flag (dsp has pending data)
  */
 
 class MidiParser_MSC : public MidiParser {
