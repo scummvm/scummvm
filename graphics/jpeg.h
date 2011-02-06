@@ -118,8 +118,8 @@ private:
 	uint8 _bitsData;
 	uint8 _bitsNumber;
 
-	// Discrete Cosine Transformation
-	float idct(int x, int y, int weight, int fx, int fy);
+	// Inverse Discrete Cosine Transformation
+	void idct8x8(float dst[64], const int16 src[64]);
 };
 
 } // End of Graphics namespace
