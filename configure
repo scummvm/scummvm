@@ -979,7 +979,7 @@ case $_host in
 android)
 	_host_os=android
 	_host_cpu=arm
-	_host_alias=arm-oe-linux-androideabi
+	_host_alias=arm-linux-androideabi
 	;;
 arm-riscos)
 	_host_os=riscos
@@ -1206,6 +1206,10 @@ case $_host_os in
 android)
 	if test -z "$ANDROID_SDK"; then
 		echo "Please set ANDROID_SDK in your environment. export ANDROID_SDK=<path to Android SDK>"
+		exit 1
+	fi
+	if test -z "$ANDROID_NDK"; then
+		echo "Please set ANDROID_NDK in your environment. export ANDROID_NDK=<path to Android NDK>"
 		exit 1
 	fi
 	;;
@@ -1500,7 +1504,13 @@ case $_host_os in
 		add_line_to_config_mk 'AMIGAOS = 1'
 		;;
 	android)
-		CXXFLAGS="$CXXFLAGS -Os -msoft-float -mtune=xscale -march=armv5te -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5TE__"
+		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
+		CXXFLAGS="$CXXFLAGS -Os -mandroid -msoft-float -mthumb-interwork"
+		CXXFLAGS="$CXXFLAGS -march=armv5te -mtune=xscale"
+		# supress 'mangling of 'va_list' has changed in GCC 4.4'
+		CXXFLAGS="$CXXFLAGS -Wno-psabi"
+		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
+		LDFLAGS="$LDFLAGS -mandroid -mthumb-interwork"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_unix=yes
 		_seq_midi=no
@@ -1649,9 +1659,13 @@ if test -n "$_host"; then
 	echo "Cross-compiling to $_host"
 	case "$_host" in
 		android)
-			DEFINES="$DEFINES -DANDROID -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DANDROID -DANDROID_BACKEND"
 			_unix=yes
 			_need_memalign=yes
+			# we link a .so as default
+			LDFLAGS="$LDFLAGS -shared -Wl,-Bsymbolic,--no-undefined"
+			HOSTEXEPRE=lib
+			HOSTEXEEXT=.so
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
@@ -1659,6 +1673,7 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			_backend="android"
 			_port_mk="backends/platform/android/android.mk"
+			_build_scalers=no
 			_seq_midi=no
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
@@ -2135,6 +2150,32 @@ _def_plugin="/* -> plugins disabled */"
 if test "$_dynamic_modules" = yes ; then
 	echo_n "Checking whether building plugins is supported... "
 	case $_host_os in
+	android)
+_def_plugin='
+#define PLUGIN_PREFIX	"lib"
+#define PLUGIN_SUFFIX	".so"
+'
+# Work around an Android 2.0+ run-time linker bug:
+# The linker doesn't actually look in previously
+# loaded libraries when trying to resolve symbols -
+# effectively turning all dlopen(RTLD_GLOBAL) calls
+# into dlopen(RTLD_LOCAL).  It *does* look in
+# DT_NEEDED libraries, so the workaround is to add an
+# (otherwise unnecessary) dependency from plugins back
+# to the main libscummvm.so.
+_mak_plugins='
+DYNAMIC_MODULES := 1
+PLUGIN_PREFIX := lib
+PLUGIN_SUFFIX := .so
+PLUGIN_EXTRA_DEPS = libscummvm.so
+CXXFLAGS        += -DDYNAMIC_MODULES
+CXXFLAGS        += -fpic
+PLUGIN_LDFLAGS  += $(LDFLAGS) -L. -lscummvm
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
+LIBS            += -ldl
+'
+		;;
 	darwin*)
 _def_plugin='
 #define PLUGIN_PREFIX	""
@@ -2217,7 +2258,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 LIBS            += -ldl
 '
 		;;
-	linux*|android)
+	linux*)
 _def_plugin='
 #define PLUGIN_PREFIX	"lib"
 #define PLUGIN_SUFFIX	".so"
@@ -2928,20 +2969,9 @@ case $_backend in
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -lstdc++ -llog -lGLESv1_CM"
-		DEFINES="$DEFINES -D__ANDROID__ -DANDROID_BACKEND -DREDUCE_MEMORY_USAGE"
-		add_line_to_config_mk 'PLUGIN_LDFLAGS += $(LDFLAGS) -Wl,-shared,-Bsymbolic'
-
-		# Work around an Android 2.0+ run-time linker bug:
-		# The linker doesn't actually look in previously
-		# loaded libraries when trying to resolve symbols -
-		# effectively turning all dlopen(RTLD_GLOBAL) calls
-		# into dlopen(RTLD_LOCAL).  It *does* look in
-		# DT_NEEDED libraries, so the workaround is to add an
-		# (otherwise unnecessary) dependency from plugins back
-		# to the main libscummvm.so.
-		add_line_to_config_mk 'PLUGIN_LDFLAGS += -Lbuild.tmp -lscummvm'
-		add_line_to_config_mk 'PLUGIN_EXTRA_DEPS += build.tmp/libscummvm.so'
+		LIBS="-Wl,-Bstatic $static_libs"
+		LIBS="$LIBS -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
+		DEFINES="$DEFINES -D__ANDROID__ -DREDUCE_MEMORY_USAGE"
 		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
