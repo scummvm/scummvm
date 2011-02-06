@@ -1659,7 +1659,6 @@ if test -n "$_host"; then
 	echo "Cross-compiling to $_host"
 	case "$_host" in
 		android)
-			DEFINES="$DEFINES -DANDROID -DANDROID_BACKEND"
 			_unix=yes
 			_need_memalign=yes
 			# we link a .so as default

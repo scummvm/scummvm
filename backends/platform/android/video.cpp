@@ -23,6 +23,8 @@
  *
  */
 
+#if defined(__ANDROID__)
+
 #include "base/main.h"
 #include "graphics/surface.h"
 
@@ -352,3 +354,6 @@ void GLESPaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h)
 
 	GLESTexture::drawTexture(x, y, w, h);
 }
+
+#endif
+

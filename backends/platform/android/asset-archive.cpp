@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(ANDROID)
+#if defined(__ANDROID__)
 
 #include <jni.h>
 

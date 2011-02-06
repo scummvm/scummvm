@@ -23,13 +23,13 @@
  *
  */
 
+#if defined(__ANDROID__)
+
 #include "backends/base-backend.h"
 #include "base/main.h"
 #include "graphics/surface.h"
 
 #include "backends/platform/android/video.h"
-
-#if defined(ANDROID_BACKEND)
 
 #include <jni.h>
 
