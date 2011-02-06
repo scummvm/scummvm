@@ -98,11 +98,10 @@ public class ScummVM implements SurfaceHolder.Callback {
 	public void surfaceChanged(SurfaceHolder holder, int format,
 							   int width, int height) {
 		// Disabled while I debug GL problems
-		//pushEvent(new Event(Event.EVENT_SCREEN_CHANGED));
+		pushEvent(new Event(Event.EVENT_SCREEN_CHANGED));
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		pushEvent(new Event(Event.EVENT_SCREEN_CHANGED));
 		try {
 			surfaceLock.acquire();
 		} catch (InterruptedException e) {

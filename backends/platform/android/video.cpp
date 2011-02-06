@@ -135,7 +135,14 @@ GLESTexture::~GLESTexture() {
 }
 
 void GLESTexture::reinitGL() {
+	glDeleteTextures(1, &_texture_name);
 	glGenTextures(1, &_texture_name);
+
+	// bypass allocBuffer() shortcut to reinit the texture properly
+	_texture_width = 0;
+	_texture_height = 0;
+
+	allocBuffer(_surface.w, _surface.h);
 	setDirty();
 }
 
