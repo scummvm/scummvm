@@ -1184,6 +1184,7 @@ fi
 # Determine extension used for executables
 #
 get_system_exe_extension $_host_os
+HOSTEXEPRE=
 HOSTEXEEXT=$_exeext
 
 #
@@ -3222,6 +3223,7 @@ STATICLIBPATH=$_staticlibpath
 BACKEND := $_backend
 MODULES += $MODULES
 MODULE_DIRS += $MODULE_DIRS
+EXEPRE := $HOSTEXEPRE
 EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
