@@ -234,7 +234,7 @@ public:
 
 	// VideoDecoder interface
 
-	bool load(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
 	bool isVideoLoaded() const;
@@ -267,7 +267,7 @@ public:
 
 	// VideoDecoder interface
 
-	bool load(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
 	bool isVideoLoaded() const;
@@ -371,7 +371,7 @@ public:
 
 	// VideoDecoder interface
 
-	bool load(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
 	bool isVideoLoaded() const;

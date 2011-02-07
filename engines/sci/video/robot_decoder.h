@@ -57,7 +57,7 @@ public:
 	RobotDecoder(Audio::Mixer *mixer, bool isBigEndian);
 	virtual ~RobotDecoder();
 
-	bool load(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream);
 	bool load(GuiResourceId id);
 	void close();
 

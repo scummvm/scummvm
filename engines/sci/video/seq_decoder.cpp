@@ -56,7 +56,7 @@ SeqDecoder::~SeqDecoder() {
 	close();
 }
 
-bool SeqDecoder::load(Common::SeekableReadStream *stream) {
+bool SeqDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	_fileStream = stream;

@@ -370,7 +370,7 @@ uint32 SmackerDecoder::getElapsedTime() const {
 	return VideoDecoder::getElapsedTime();
 }
 
-bool SmackerDecoder::load(Common::SeekableReadStream *stream) {
+bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	_fileStream = stream;

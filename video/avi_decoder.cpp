@@ -234,7 +234,7 @@ void AviDecoder::handleStreamHeader() {
 	_fileStream->seek(startPos + strfSize);
 }
 
-bool AviDecoder::load(Common::SeekableReadStream *stream) {
+bool AviDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	_fileStream = stream;

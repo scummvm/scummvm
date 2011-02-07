@@ -60,7 +60,7 @@ public:
 	 * Load a video file
 	 * @param stream  the stream to load
 	 */
-	bool load(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 	void reset();
 

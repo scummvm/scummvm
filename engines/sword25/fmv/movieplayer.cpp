@@ -59,7 +59,7 @@ MoviePlayer::~MoviePlayer() {
 bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 	// Get the file and load it into the decoder
 	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(filename);
-	_decoder.load(in);
+	_decoder.loadStream(in);
 
 	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
 

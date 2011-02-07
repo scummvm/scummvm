@@ -665,7 +665,7 @@ bool PreIMDDecoder::seek(int32 frame, int whence, bool restart) {
 	return true;
 }
 
-bool PreIMDDecoder::load(Common::SeekableReadStream *stream) {
+bool PreIMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 	// Since PreIMDs don't have any width and height values stored,
 	// we need them to be specified in the constructor
 	assert((_width > 0) && (_height > 0));
@@ -921,7 +921,7 @@ void IMDDecoder::setXY(uint16 x, uint16 y) {
 		_y = y;
 }
 
-bool IMDDecoder::load(Common::SeekableReadStream *stream) {
+bool IMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	_stream = stream;
@@ -933,7 +933,7 @@ bool IMDDecoder::load(Common::SeekableReadStream *stream) {
 
 	// Version checking
 	if ((handle != 0) || (_version < 2)) {
-		warning("IMDDecoder::load(): Version incorrect (%d, 0x%X)", handle, _version);
+		warning("IMDDecoder::loadStream(): Version incorrect (%d, 0x%X)", handle, _version);
 		close();
 		return false;
 	}
@@ -1660,7 +1660,7 @@ void VMDDecoder::colorModeChanged() {
 	openExternalCodec();
 }
 
-bool VMDDecoder::load(Common::SeekableReadStream *stream) {
+bool VMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	_stream = stream;
@@ -1677,12 +1677,12 @@ bool VMDDecoder::load(Common::SeekableReadStream *stream) {
 	// Version checking
 	if (headerLength == 50) {
 		// Newer version, used in Addy 5 upwards
-		warning("VMDDecoder::load(): TODO: Addy 5 videos");
+		warning("VMDDecoder::loadStream(): TODO: Addy 5 videos");
 	} else if (headerLength == 814) {
 		// Old version
 		_features |= kFeaturesPalette;
 	} else {
-		warning("VMDDecoder::load(): Version incorrect (%d, %d, %d)", headerLength, handle, _version);
+		warning("VMDDecoder::loadStream(): Version incorrect (%d, %d, %d)", headerLength, handle, _version);
 		close();
 		return false;
 	}
@@ -1710,7 +1710,7 @@ bool VMDDecoder::load(Common::SeekableReadStream *stream) {
 		_bytesPerPixel = handle + 1;
 
 	if (_bytesPerPixel > 3) {
-		warning("VMDDecoder::load(): Requested %d bytes per pixel (%d, %d, %d)",
+		warning("VMDDecoder::loadStream(): Requested %d bytes per pixel (%d, %d, %d)",
 				_bytesPerPixel, headerLength, handle, _version);
 		close();
 		return false;

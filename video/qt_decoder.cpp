@@ -452,7 +452,7 @@ bool QuickTimeDecoder::loadFile(const Common::String &filename) {
 	return true;
 }
 
-bool QuickTimeDecoder::load(Common::SeekableReadStream *stream) {
+bool QuickTimeDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_fd = stream;
 	_foundMOOV = false;
 	_numStreams = 0;

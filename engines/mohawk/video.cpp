@@ -384,7 +384,7 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	// Otherwise, create a new entry
 	Video::QuickTimeDecoder *decoder = new Video::QuickTimeDecoder();
 	decoder->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
-	decoder->load(_vm->getResource(ID_TMOV, id));
+	decoder->loadStream(_vm->getResource(ID_TMOV, id));
 
 	VideoEntry entry;
 	entry.clear();
@@ -429,7 +429,7 @@ VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint
 		return NULL_VID_HANDLE;
 	}
 	
-	entry->load(file);
+	entry->loadStream(file);
 	
 	// Search for any deleted videos so we can take a formerly used slot
 	for (uint32 i = 0; i < _videoStreams.size(); i++)

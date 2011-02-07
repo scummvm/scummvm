@@ -41,7 +41,7 @@ FlicDecoder::~FlicDecoder() {
 	close();
 }
 
-bool FlicDecoder::load(Common::SeekableReadStream *stream) {
+bool FlicDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	_fileStream = stream;

@@ -99,7 +99,7 @@ int TheoraDecoder::bufferData() {
 	return bytes;
 }
 
-bool TheoraDecoder::load(Common::SeekableReadStream *stream) {
+bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	_fileStream = stream;

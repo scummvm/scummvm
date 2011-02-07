@@ -97,10 +97,10 @@ bool RobotDecoder::load(GuiResourceId id) {
 		return false;
 	}
 
-	return load(stream);
+	return loadStream(stream);
 }
 
-bool RobotDecoder::load(Common::SeekableReadStream *stream) {
+bool RobotDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	_fileStream = new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), _isBigEndian, DisposeAfterUse::YES);

@@ -842,7 +842,7 @@ Common::String VideoPlayer::findFile(const Common::String &file, Properties &pro
 		return 0;
 	}
 
-	if (!video->load(stream)) {
+	if (!video->loadStream(stream)) {
 		delete video;
 		return 0;
 	}

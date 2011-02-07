@@ -67,7 +67,7 @@ DXADecoder::~DXADecoder() {
 	close();
 }
 
-bool DXADecoder::load(Common::SeekableReadStream *stream) {
+bool DXADecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	_fileStream = stream;

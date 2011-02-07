@@ -58,7 +58,7 @@ public:
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
 	virtual ~SmackerDecoder();
 
-	bool load(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
 	bool isVideoLoaded() const { return _fileStream != 0; }
