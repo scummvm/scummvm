@@ -26,11 +26,14 @@
 #ifndef SCI_GRAPHICS_PALETTE_H
 #define SCI_GRAPHICS_PALETTE_H
 
+#include "common/array.h"
 #include "sci/graphics/helpers.h"
 
 namespace Sci {
 
-class Screen;
+class ResourceManager;
+class GfxScreen;
+
 /**
  * Palette class, handles palette operations like changing intensity, setting up the palette, merging different palettes
  */
