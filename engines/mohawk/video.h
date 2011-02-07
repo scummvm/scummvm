@@ -53,7 +53,7 @@ struct VideoEntry {
 	uint16 y;
 	bool loop;
 	bool enabled;
-	Video::VideoTimestamp start, end;
+	Audio::Timestamp start, end;
 
 	// Identification
 	Common::String filename; // External video files
@@ -105,8 +105,8 @@ public:
 	uint32 getFrameCount(VideoHandle handle);
 	uint32 getElapsedTime(VideoHandle handle);
 	bool endOfVideo(VideoHandle handle);
-	void setVideoBounds(VideoHandle handle, Video::VideoTimestamp start, Video::VideoTimestamp end);
-	void seekToTime(VideoHandle handle, Video::VideoTimestamp time);
+	void setVideoBounds(VideoHandle handle, Audio::Timestamp start, Audio::Timestamp end);
+	void seekToTime(VideoHandle handle, Audio::Timestamp time);
 	void seekToFrame(VideoHandle handle, uint32 frame);
 	void setVideoLooping(VideoHandle handle, bool loop);
 	void waitUntilMovieEnds(VideoHandle videoHandle);

@@ -412,7 +412,7 @@ void MystScriptParser_Stoneship::o_cabinBookMovie(uint16 op, uint16 var, uint16 
 	uint16 endTime = argv[1];
 
 	VideoHandle book = _vm->_video->playMovie(_vm->wrapMovieFilename("bkroom", kStoneshipStack), 159, 99);
-	_vm->_video->setVideoBounds(book, Video::VideoTimestamp(startTime, 600), Video::VideoTimestamp(endTime, 600));
+	_vm->_video->setVideoBounds(book, Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
 	_vm->_video->waitUntilMovieEnds(book);
 }
 
@@ -558,9 +558,9 @@ void MystScriptParser_Stoneship::o_hologramPlayback(uint16 op, uint16 var, uint1
 	if (_hologramTurnedOn) {
 		if (_hologramDisplayPos)
 			endPoint = _hologramDisplayPos;
-		_vm->_video->setVideoBounds(displayMovie, Video::VideoTimestamp(startPoint, 600), Video::VideoTimestamp(endPoint, 600));
+		_vm->_video->setVideoBounds(displayMovie, Audio::Timestamp(0, startPoint, 600), Audio::Timestamp(0, endPoint, 600));
 	} else {
-		_vm->_video->setVideoBounds(displayMovie, Video::VideoTimestamp(startPoint, 600), Video::VideoTimestamp(endPoint, 600));
+		_vm->_video->setVideoBounds(displayMovie, Audio::Timestamp(0, startPoint, 600), Audio::Timestamp(0, endPoint, 600));
 	}
 
 	_vm->_video->delayUntilMovieEnds(displayMovie);
@@ -585,7 +585,7 @@ void MystScriptParser_Stoneship::o_hologramSelectionMove(uint16 op, uint16 var, 
 		uint16 selectionPos = position * 1500 / 243;
 
 		VideoHandle handleMovie = _hologramSelection->playMovie();
-		_vm->_video->setVideoBounds(handleMovie, Video::VideoTimestamp(selectionPos, 600), Video::VideoTimestamp(selectionPos, 600));
+		_vm->_video->setVideoBounds(handleMovie, Audio::Timestamp(0, selectionPos, 600), Audio::Timestamp(0, selectionPos, 600));
 
 		_hologramDisplayPos = position * 1450 / 243 + 350;
 
@@ -593,7 +593,7 @@ void MystScriptParser_Stoneship::o_hologramSelectionMove(uint16 op, uint16 var, 
 		if (_hologramTurnedOn) {
 			_hologramDisplay->setBlocking(false);
 			VideoHandle displayMovie = _hologramDisplay->playMovie();
-			_vm->_video->setVideoBounds(displayMovie, Video::VideoTimestamp(_hologramDisplayPos, 600), Video::VideoTimestamp(_hologramDisplayPos, 600));
+			_vm->_video->setVideoBounds(displayMovie, Audio::Timestamp(0, _hologramDisplayPos, 600), Audio::Timestamp(0, _hologramDisplayPos, 600));
 		}
 	}
 }
@@ -635,19 +635,19 @@ void MystScriptParser_Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint1
 	if (_state.chestValveState) {
 		// Valve closing
 		VideoHandle valve = _vm->_video->playMovie(movie, 97, 267);
-		_vm->_video->setVideoBounds(valve, Video::VideoTimestamp(0, 600), Video::VideoTimestamp(350, 600));
+		_vm->_video->setVideoBounds(valve, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 350, 600));
 		_vm->_video->waitUntilMovieEnds(valve);
 	} else if (_state.chestWaterState) {
 		// Valve opening, spilling water
 		VideoHandle valve = _vm->_video->playMovie(movie, 97, 267);
-		_vm->_video->setVideoBounds(valve, Video::VideoTimestamp(350, 600), Video::VideoTimestamp(650, 600));
+		_vm->_video->setVideoBounds(valve, Audio::Timestamp(0, 350, 600), Audio::Timestamp(0, 650, 600));
 		_vm->_video->waitUntilMovieEnds(valve);
 
 		_vm->_sound->playSound(3132);
 
 		for (uint i = 0; i < 25; i++) {
 			valve = _vm->_video->playMovie(movie, 97, 267);
-			_vm->_video->setVideoBounds(valve, Video::VideoTimestamp(650, 600), Video::VideoTimestamp(750, 600));
+			_vm->_video->setVideoBounds(valve, Audio::Timestamp(0, 650, 600), Audio::Timestamp(0, 750, 600));
 			_vm->_video->waitUntilMovieEnds(valve);
 		}
 
@@ -656,7 +656,7 @@ void MystScriptParser_Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint1
 		// Valve opening
 		// TODO: Play backwards
 		VideoHandle valve = _vm->_video->playMovie(movie, 97, 267);
-		_vm->_video->setVideoBounds(valve, Video::VideoTimestamp(0, 600), Video::VideoTimestamp(350, 600));
+		_vm->_video->setVideoBounds(valve, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 350, 600));
 		_vm->_video->waitUntilMovieEnds(valve);
 	}
 }
@@ -678,13 +678,13 @@ void MystScriptParser_Stoneship::o_trapLockOpen(uint16 op, uint16 var, uint16 ar
 	Common::String movie = _vm->wrapMovieFilename("openloc", kStoneshipStack);
 
 	VideoHandle lock = _vm->_video->playMovie(movie, 187, 71);
-	_vm->_video->setVideoBounds(lock, Video::VideoTimestamp(0, 600), Video::VideoTimestamp(750, 600));
+	_vm->_video->setVideoBounds(lock, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 750, 600));
 	_vm->_video->waitUntilMovieEnds(lock);
 
 	_vm->_sound->playSound(2143);
 
 	lock = _vm->_video->playMovie(movie, 187, 71);
-	_vm->_video->setVideoBounds(lock, Video::VideoTimestamp(750, 600), Video::VideoTimestamp(10000, 600));
+	_vm->_video->setVideoBounds(lock, Audio::Timestamp(0, 750, 600), Audio::Timestamp(0, 10000, 600));
 	_vm->_video->waitUntilMovieEnds(lock);
 
 	if (_state.pumpState != 4)

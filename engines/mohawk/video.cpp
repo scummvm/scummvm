@@ -38,14 +38,14 @@ void VideoEntry::clear() {
 	y = 0;
 	loop = false;
 	enabled = false;
-	start = Video::VideoTimestamp(0);
-	end = Video::VideoTimestamp(0xFFFFFFFF); // Largest possible, there is an endOfVideo() check anyway
+	start = Audio::Timestamp(0, 1);
+	end = Audio::Timestamp(0xFFFFFFFF, 1); // Largest possible, there is an endOfVideo() check anyway
 	filename.clear();
 	id = -1;
 }
 
 bool VideoEntry::endOfVideo() {
-	return !video || video->endOfVideo() || video->getElapsedTime() >= end.getUnitsInScale(1000);
+	return !video || video->endOfVideo() || video->getElapsedTime() >= (uint)end.msecs();
 }
 
 VideoManager::VideoManager(MohawkEngine* vm) : _vm(vm) {
@@ -503,14 +503,14 @@ bool VideoManager::isVideoPlaying() {
 	return false;
 }
 
-void VideoManager::setVideoBounds(VideoHandle handle, Video::VideoTimestamp start, Video::VideoTimestamp end) {
+void VideoManager::setVideoBounds(VideoHandle handle, Audio::Timestamp start, Audio::Timestamp end) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle].start = start;
 	_videoStreams[handle].end = end;
 	_videoStreams[handle]->seekToTime(start);
 }
 
-void VideoManager::seekToTime(VideoHandle handle, Video::VideoTimestamp time) {
+void VideoManager::seekToTime(VideoHandle handle, Audio::Timestamp time) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle]->seekToTime(time);
 }

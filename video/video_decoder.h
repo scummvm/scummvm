@@ -33,6 +33,9 @@
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 
+#include "sound/timestamp.h"	// TODO: Move this to common/ ?
+
+
 namespace Common {
 	class SeekableReadStream;
 }
@@ -239,38 +242,6 @@ public:
 };
 
 /**
- * A simple video timestamp that holds time according to a specific scale.
- *
- * The scale is in terms of 1/x. For example, if you set units to 1 and the scale to 
- * 1000, the timestamp will hold the value of 1/1000s or 1ms.
- */
-class VideoTimestamp {
-public:
-	VideoTimestamp();
-	VideoTimestamp(uint units, uint scale = 1000);
-
-	/**
-	 * Get the units in terms of _scale
-	 */
-	uint getUnits() const { return _units; }
-
-	/**
-	 * Get the scale of this timestamp
-	 */
-	uint getScale() const { return _scale; }
-
-	/**
-	 * Get the value of the units in terms of the specified scale
-	 */
-	uint getUnitsInScale(uint scale) const;
-
-	// TODO: Simple comparisons (<, <=, >, >=, ==, !=)
-
-private:
-	uint _units, _scale;
-};
-
-/**
  * A VideoDecoder that can seek to a frame or point in time.
  */
 class SeekableVideoDecoder : public virtual RewindableVideoDecoder {
@@ -289,14 +260,12 @@ public:
 	 * frame. In other words, there is *no* subframe accuracy. This may change in a
 	 * later revision of the API.
 	 */
-	virtual void seekToTime(VideoTimestamp time) = 0;
+	virtual void seekToTime(Audio::Timestamp time) = 0;
 
 	/**
 	 * Seek to the specified time (in ms).
-	 *
-	 * @see seekToTime(VideoTimestamp)
 	 */
-	void seekToTime(uint32 time) { seekToTime(VideoTimestamp(time)); }
+	void seekToTime(uint32 msecs) { seekToTime(Audio::Timestamp(msecs, 1000)); }
 
 	/**
 	 * Implementation of RewindableVideoDecoder::rewind().

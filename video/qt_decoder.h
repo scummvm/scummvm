@@ -121,7 +121,7 @@ public:
 
 	// SeekableVideoDecoder API
 	void seekToFrame(uint32 frame);
-	void seekToTime(VideoTimestamp time);
+	void seekToTime(Audio::Timestamp time);
 
 private:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
@@ -239,7 +239,7 @@ private:
 	int8 _audioStreamIndex;
 	uint _curAudioChunk;
 	Audio::SoundHandle _audHandle;
-	VideoTimestamp _audioStartOffset;
+	Audio::Timestamp _audioStartOffset;
 
 	Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
 	Codec *findDefaultVideoCodec() const;

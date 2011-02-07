@@ -177,26 +177,27 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 	}
 
 	// Adjust the video starting point
-	_startTime = g_system->getMillis() - Video::VideoTimestamp(_nextFrameStartTime, _streams[_videoStreamIndex]->time_scale).getUnitsInScale(1000);
+	const Audio::Timestamp curVideoTime(0, _nextFrameStartTime, _streams[_videoStreamIndex]->time_scale);
+	_startTime = g_system->getMillis() - curVideoTime.msecs();
 	resetPauseStartTime();
 
 	// Adjust the audio starting point
 	if (_audioStreamIndex >= 0) {
-		_audioStartOffset = VideoTimestamp(_nextFrameStartTime, _streams[_videoStreamIndex]->time_scale);
+		_audioStartOffset = curVideoTime;
 
 		// Re-create the audio stream
 		STSDEntry *entry = &_streams[_audioStreamIndex]->stsdEntries[0];
 		_audStream = Audio::makeQueuingAudioStream(entry->sampleRate, entry->channels == 2);
 
 		// First, we need to track down what audio sample we need
-		uint32 curTime = 0;
+		Audio::Timestamp curAudioTime(0, _streams[_audioStreamIndex]->time_scale);
 		uint sample = 0;
 		bool done = false;
 		for (int32 i = 0; i < _streams[_audioStreamIndex]->stts_count && !done; i++) {
 			for (int32 j = 0; j < _streams[_audioStreamIndex]->stts_data[i].count; j++) {
-				curTime += _streams[_audioStreamIndex]->stts_data[i].duration;
+				curAudioTime = curAudioTime.addFrames(_streams[_audioStreamIndex]->stts_data[i].duration);
 
-				if (curTime > Video::VideoTimestamp(_nextFrameStartTime, _streams[_videoStreamIndex]->time_scale).getUnitsInScale(_streams[_audioStreamIndex]->time_scale)) {
+				if (curAudioTime > curVideoTime) {
 					done = true;
 					break;
 				}
@@ -241,23 +242,20 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 	}
 }
 
-void QuickTimeDecoder::seekToTime(VideoTimestamp time) {
+void QuickTimeDecoder::seekToTime(Audio::Timestamp time) {
 	// TODO: Audio-only seeking (or really, have QuickTime sounds)
 	if (_videoStreamIndex < 0)
 		error("Audio-only seeking not supported");
 
-	// Convert to the local time scale
-	uint32 localTime = time.getUnitsInScale(_streams[_videoStreamIndex]->time_scale);
-
 	// Try to find the last frame that should have been decoded
 	uint32 frame = 0;
-	uint32 totalDuration = 0;
+	Audio::Timestamp totalDuration(0, _streams[_videoStreamIndex]->time_scale);
 	bool done = false;
 
 	for (int32 i = 0; i < _streams[_videoStreamIndex]->stts_count && !done; i++) {
 		for (int32 j = 0; j < _streams[_videoStreamIndex]->stts_data[i].count; j++) {
-			totalDuration += _streams[_videoStreamIndex]->stts_data[i].duration;
-			if (localTime < totalDuration) {
+			totalDuration = totalDuration.addFrames(_streams[_videoStreamIndex]->stts_data[i].duration);
+			if (totalDuration > time) {
 				done = true;
 				break;
 			}
@@ -394,7 +392,7 @@ bool QuickTimeDecoder::endOfVideo() const {
 
 uint32 QuickTimeDecoder::getElapsedTime() const {
 	if (_audStream)
-		return g_system->getMixer()->getSoundElapsedTime(_audHandle) + _audioStartOffset.getUnitsInScale(1000);
+		return g_system->getMixer()->getSoundElapsedTime(_audHandle) + _audioStartOffset.msecs();
 
 	return VideoDecoder::getElapsedTime();
 }
@@ -515,7 +513,7 @@ void QuickTimeDecoder::init() {
 			startAudio();
 		}
 
-		_audioStartOffset = VideoTimestamp(0);
+		_audioStartOffset = Audio::Timestamp(0);
 	}
 
 	// Initialize video, if present

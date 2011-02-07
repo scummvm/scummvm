@@ -79,7 +79,7 @@ public:
 	 * @param msecs     starting time in milliseconds
 	 * @param framerate number of frames per second (must be > 0)
 	 */
-	Timestamp(uint msecs, uint framerate);
+	Timestamp(uint msecs = 0, uint framerate = 1);
 
 	/**
 	 * Set up a timestamp with a given time, frames and framerate.
