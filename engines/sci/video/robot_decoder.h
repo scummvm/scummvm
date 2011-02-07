@@ -78,7 +78,7 @@ protected:
 
 private:
 	void readHeaderChunk();
-	void readPaletteChunk();
+	void readPaletteChunk(uint16 chunkSize);
 	void readFrameSizesChunk();
 
 	void freeData();

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SEQ_DECODER_H
-#define SEQ_DECODER_H
+#ifndef SCI_VIDEO_SEQ_DECODER_H
+#define SCI_VIDEO_SEQ_DECODER_H
 
 #include "video/video_decoder.h"
 
@@ -61,6 +61,7 @@ private:
 		SEQ_SCREEN_HEIGHT = 200
 	};
 
+	void readPaletteChunk(uint16 chunkSize);
 	bool decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey);
 
 	uint16 _width, _height;

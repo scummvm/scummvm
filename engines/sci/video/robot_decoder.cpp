@@ -69,6 +69,11 @@ namespace Sci {
 
 #ifdef ENABLE_SCI32
 
+enum robotPalTypes {
+	kRobotPalVariable = 0,
+	kRobotPalConstant = 1
+};
+
 RobotDecoder::RobotDecoder(Audio::Mixer *mixer, bool isBigEndian) {
 	_surface = 0;
 	_fileStream = 0;
@@ -116,7 +121,7 @@ bool RobotDecoder::load(Common::SeekableReadStream *stream) {
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_audioHandle, _audioStream);
 	}
 
-	readPaletteChunk();
+	readPaletteChunk(_header.paletteDataSize);
 	readFrameSizesChunk();
 	return true;
 }
@@ -143,11 +148,12 @@ void RobotDecoder::readHeaderChunk() {
 		_fileStream->skip(_header.unkChunkDataSize);
 }
 
-void RobotDecoder::readPaletteChunk() {
-	byte *paletteData = new byte[_header.paletteDataSize];
-	_fileStream->read(paletteData, _header.paletteDataSize);
+void RobotDecoder::readPaletteChunk(uint16 chunkSize) {
+	byte *paletteData = new byte[chunkSize];
+	_fileStream->read(paletteData, chunkSize);
 
 	// SCI1.1 palette
+	byte palFormat = paletteData[32];
 	uint16 palColorStart = READ_SCI11ENDIAN_UINT16(paletteData + 25);
 	uint16 palColorCount = READ_SCI11ENDIAN_UINT16(paletteData + 29);
 
@@ -155,6 +161,8 @@ void RobotDecoder::readPaletteChunk() {
 	memset(_palette, 0, 256 * 3);
 
 	for (uint16 colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
+		if (palFormat == kRobotPalVariable)
+			palOffset++;
 		_palette[colorNo * 3 + 0] = paletteData[palOffset++];
 		_palette[colorNo * 3 + 1] = paletteData[palOffset++];
 		_palette[colorNo * 3 + 2] = paletteData[palOffset++];

@@ -66,10 +66,15 @@ bool SeqDecoder::load(Common::SeekableReadStream *stream) {
 	_frameCount = _fileStream->readUint16LE();
 
 	// Set palette
-	int paletteSize = _fileStream->readUint32LE();
+	int paletteChunkSize = _fileStream->readUint32LE();
+	readPaletteChunk(paletteChunkSize);
 
-	byte *paletteData = new byte[paletteSize];
-	_fileStream->read(paletteData, paletteSize);
+	return true;
+}
+
+void SeqDecoder::readPaletteChunk(uint16 chunkSize) {
+	byte *paletteData = new byte[chunkSize];
+	_fileStream->read(paletteData, chunkSize);
 
 	// SCI1.1 palette
 	byte palFormat = paletteData[32];
@@ -89,7 +94,6 @@ bool SeqDecoder::load(Common::SeekableReadStream *stream) {
 
 	_dirtyPalette = true;
 	delete[] paletteData;
-	return true;
 }
 
 void SeqDecoder::close() {
