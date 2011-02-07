@@ -228,7 +228,7 @@ private:
 };
 
 /**
- * A VideoDecoder that can rewound back to the beginning.
+ * A VideoDecoder that can be rewound back to the beginning.
  */
 class RewindableVideoDecoder : public virtual VideoDecoder {
 public:
