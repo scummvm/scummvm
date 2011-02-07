@@ -684,7 +684,7 @@ void MohawkEngine_Riven::runLoadDialog() {
 	const EnginePlugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
 
-	int slot = slc.runModal(plugin, ConfMan.getActiveDomainName());
+	int slot = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 	if (slot >= 0)
 		loadGameState(slot);
 

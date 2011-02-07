@@ -79,7 +79,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 SaveLoadChooser::~SaveLoadChooser() {
 }
 
-int SaveLoadChooser::runModal(const EnginePlugin *plugin, const String &target) {
+int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target) {
 	if (_gfxWidget)
 		_gfxWidget->setGfx(0);
 

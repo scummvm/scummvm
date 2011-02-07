@@ -934,7 +934,7 @@ void LauncherDialog::loadGame(int item) {
 	if (plugin) {
 		if ((*plugin)->hasFeature(MetaEngine::kSupportsListSaves) &&
 			(*plugin)->hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
-			int slot = _loadDialog->runModal(plugin, target);
+			int slot = _loadDialog->runModalWithPluginAndTarget(plugin, target);
 			if (slot >= 0) {
 				ConfMan.setActiveDomain(_domains[item]);
 				ConfMan.setInt("save_slot", slot, Common::ConfigManager::kTransientDomain);

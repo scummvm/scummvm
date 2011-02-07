@@ -307,8 +307,8 @@ public:
 		return *s_Engine;
 	}
 
-	bool canLoadGameStateCurrently() const;
-	bool canSaveGameStateCurrently() const;
+	virtual bool canLoadGameStateCurrently();
+	virtual bool canSaveGameStateCurrently();
 	bool loadHugoDat();
 
 	char *useBG(const char *name);

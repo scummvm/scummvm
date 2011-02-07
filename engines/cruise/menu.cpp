@@ -218,7 +218,7 @@ static void handleSaveLoad(bool saveFlag) {
 		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
 
 	dialog->setSaveMode(saveFlag);
-	int slot = dialog->runModal(plugin, ConfMan.getActiveDomainName());
+	int slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 
 	if (slot >= 0) {
 		if (!saveFlag)

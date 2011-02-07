@@ -2976,7 +2976,7 @@ bool ToonEngine::saveGame(int32 slot, Common::String saveGameDesc) {
 	if (slot == -1) {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save");
 		dialog->setSaveMode(true);
-		savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
+		savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 		savegameDescription = dialog->getResultString();
 		delete dialog;
 	} else {
@@ -3074,7 +3074,7 @@ bool ToonEngine::loadGame(int32 slot) {
 	if (slot == -1) {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
 		dialog->setSaveMode(false);
-		savegameId = dialog->runModal(plugin, ConfMan.getActiveDomainName());
+		savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 		delete dialog;
 	} else {
 		savegameId = slot;

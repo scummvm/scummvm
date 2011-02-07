@@ -192,7 +192,7 @@ int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const 
 	const EnginePlugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
 
-	int idx = slc.runModal(plugin, ConfMan.getActiveDomainName());
+	int idx = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 	if (idx >= 0) {
 		selectedName = slc.getResultString();
 		slc.close();

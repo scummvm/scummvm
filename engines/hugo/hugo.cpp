@@ -1114,11 +1114,11 @@ void HugoEngine::endGame() {
 	_status.viewState = kViewExit;
 }
 
-bool HugoEngine::canLoadGameStateCurrently() const {
+bool HugoEngine::canLoadGameStateCurrently() {
 	return true;
 }
 
-bool HugoEngine::canSaveGameStateCurrently() const {
+bool HugoEngine::canSaveGameStateCurrently() {
 	return (_status.viewState == kViewPlay);
 }
 

@@ -224,7 +224,7 @@ void MainMenuDialog::save() {
 	const EnginePlugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
 
-	int slot = _saveDialog->runModal(plugin, ConfMan.getActiveDomainName());
+	int slot = _saveDialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 
 	if (slot >= 0) {
 		Common::String result(_saveDialog->getResultString());
@@ -247,7 +247,7 @@ void MainMenuDialog::load() {
 	const EnginePlugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
 
-	int slot = _loadDialog->runModal(plugin, ConfMan.getActiveDomainName());
+	int slot = _loadDialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 
 	if (slot >= 0) {
 		// FIXME: For now we just ignore the return
