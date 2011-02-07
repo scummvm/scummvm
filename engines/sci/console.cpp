@@ -53,6 +53,7 @@
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
 #include "video/coktel_decoder.h"
+#include "sci/video/robot_decoder.h"
 #endif
 
 #include "common/file.h"
@@ -119,9 +120,6 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("set_palette",		WRAP_METHOD(Console, cmdSetPalette));
 	DCmd_Register("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
 	DCmd_Register("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
-#ifdef ENABLE_SCI32
-	DCmd_Register("draw_robot",			WRAP_METHOD(Console, cmdDrawRobot));
-#endif
 	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
 	DCmd_Register("pic_visualize",		WRAP_METHOD(Console, cmdPicVisualize));
 	DCmd_Register("play_video",         WRAP_METHOD(Console, cmdPlayVideo));
@@ -243,16 +241,16 @@ void Console::postEnter() {
 #ifdef ENABLE_SCI32
 		} else if (_videoFile.hasSuffix(".vmd")) {
 			videoDecoder = new Video::VMDDecoder(g_system->getMixer());
-#endif
+		} else if (_videoFile.hasSuffix(".rbt")) {
+			videoDecoder = new RobotDecoder(g_system->getMixer(), _engine->getPlatform() == Common::kPlatformMacintosh);
 		} else if (_videoFile.hasSuffix(".duk")) {
-#ifdef ENABLE_SCI32
 			duckMode = true;
-			videoDecoder = new Video::AviDecoder(g_system->getMixer());
-#else
-			warning("Duck videos require SCI32 support compiled in");
+			videoDecoder = new Video::AviDecoder(g_system->getMixer());	
 #endif
 		} else if (_videoFile.hasSuffix(".avi")) {
 			videoDecoder = new Video::AviDecoder(g_system->getMixer());
+		} else {
+			warning("Unrecognized video type");
 		}
 
 		if (videoDecoder && videoDecoder->loadFile(_videoFile)) {
@@ -1509,27 +1507,6 @@ bool Console::cmdDrawCel(int argc, const char **argv) {
 	return true;
 }
 
-#ifdef ENABLE_SCI32
-bool Console::cmdDrawRobot(int argc, const char **argv) {
-	if (argc < 2) {
-		DebugPrintf("Draws frames from a robot resource\n");
-		DebugPrintf("Usage: %s <resourceId>\n", argv[0]);
-		DebugPrintf("where <resourceId> is the id of the robot resource to draw\n");
-		return true;
-	}
-
-	uint16 resourceId = atoi(argv[1]);
-
-	if (_engine->_gfxPaint32) {
-		_engine->_gfxPaint32->debugDrawRobot(resourceId);
-	} else {
-		DebugPrintf("command not available in non-sci32 games");
-	}
-	return true;
-}
-
-#endif
-
 bool Console::cmdUndither(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Enable/disable undithering.\n");
@@ -1569,7 +1546,7 @@ bool Console::cmdPicVisualize(int argc, const char **argv) {
 
 bool Console::cmdPlayVideo(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Plays a SEQ, AVI, DUK or VMD video.\n");
+		DebugPrintf("Plays a SEQ, AVI, VMD, RBT or DUK video.\n");
 		DebugPrintf("Usage: %s <video file name> <delay>\n", argv[0]);
 		DebugPrintf("The video file name should include the extension\n");
 		DebugPrintf("Delay is only used in SEQ videos and is measured in ticks (default: 10)\n");
@@ -1579,7 +1556,8 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	Common::String filename = argv[1];
 	filename.toLowercase();
 
-	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi") || filename.hasSuffix(".vmd") || filename.hasSuffix(".duk")) {
+	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi") || filename.hasSuffix(".vmd") || 
+		filename.hasSuffix(".rbt") || filename.hasSuffix(".duk")) {
 		_videoFile = filename;
 		_videoFrameDelay = (argc == 2) ? 10 : atoi(argv[2]);
 		return Cmd_Exit(0, 0);

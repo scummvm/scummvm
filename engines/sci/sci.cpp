@@ -66,8 +66,8 @@
 #include "sci/graphics/transitions.h"
 
 #ifdef ENABLE_SCI32
-#include "sci/graphics/robot.h"
 #include "sci/graphics/frameout.h"
+#include "sci/video/robot_decoder.h"
 #endif
 
 namespace Sci {
@@ -151,7 +151,7 @@ SciEngine::~SciEngine() {
 	DebugMan.clearAllDebugChannels();
 
 #ifdef ENABLE_SCI32
-	delete _gfxRobot;
+	delete _robotDecoder;
 	delete _gfxFrameout;
 #endif
 	delete _gfxMenu;
@@ -582,7 +582,7 @@ void SciEngine::initGraphics() {
 	_gfxText16 = 0;
 	_gfxTransitions = 0;
 #ifdef ENABLE_SCI32
-	_gfxRobot = 0;
+	_robotDecoder = 0;
 	_gfxFrameout = 0;
 	_gfxPaint32 = 0;
 #endif
@@ -611,7 +611,7 @@ void SciEngine::initGraphics() {
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _kernel, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxPaint32 = new GfxPaint32(_resMan, _gamestate->_segMan, _kernel, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette);
 		_gfxPaint = _gfxPaint32;
-		_gfxRobot = new GfxRobot(_resMan, _gfxScreen, _gfxPalette);
+		_robotDecoder = new RobotDecoder(g_system->getMixer(), getPlatform() == Common::kPlatformMacintosh);
 		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
 	} else {
 #endif

@@ -40,8 +40,8 @@
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/picture.h"
-#include "sci/graphics/robot.h"
 #include "sci/graphics/frameout.h"
+#include "sci/video/robot_decoder.h"
 
 namespace Sci {
 
@@ -339,8 +339,38 @@ static int16 GetLongest(const char *text, int16 maxWidth, GfxFont *font) {
 }
 
 void GfxFrameout::kernelFrameout() {
-	if (g_sci->_gfxRobot->isPlaying())
+	if (g_sci->_robotDecoder->isVideoLoaded()) {
+		bool skipVideo = false;
+		RobotDecoder *videoDecoder = g_sci->_robotDecoder;
+		uint16 x = videoDecoder->getPos().x;
+		uint16 y = videoDecoder->getPos().y;
+
+		if (videoDecoder->hasDirtyPalette())
+			videoDecoder->setSystemPalette();
+
+		while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
+			if (videoDecoder->needsUpdate()) {
+				const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+				if (frame) {
+					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+
+					if (videoDecoder->hasDirtyPalette())
+						videoDecoder->setSystemPalette();
+
+					g_system->updateScreen();
+				}
+			}
+
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+					skipVideo = true;
+			}
+
+			g_system->delayMillis(10);
+		}
 		return;
+	}
 
 	_palette->palVaryUpdate();
 

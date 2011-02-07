@@ -48,12 +48,12 @@
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
-#include "sci/graphics/robot.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/frameout.h"
+#include "sci/video/robot_decoder.h"
 #endif
 
 namespace Sci {
@@ -1398,7 +1398,6 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 
 	int16 subop = argv[0].toUint16();
-	GfxRobot *robot = g_sci->_gfxRobot;
 
 	switch (subop) {
 		case 0: { // init
@@ -1408,7 +1407,8 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 			int16 x = argv[4].toUint16();
 			int16 y = argv[5].toUint16();
 			warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
-			robot->init(id, x, y);
+			g_sci->_robotDecoder->load(id);
+			g_sci->_robotDecoder->setPos(x, y);
 			}
 			break;
 		case 1:	// LSL6 hires (startup)
@@ -1423,10 +1423,13 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 			warning("kRobot(%d)", subop);
 			break;
 		case 8: // sync
-			robot->processNextFrame();
-			// Signal the engine scripts that the video is done
-			if (robot->getCurFrame() ==  robot->getFrameCount())
+			if ((uint32)g_sci->_robotDecoder->getCurFrame() !=  g_sci->_robotDecoder->getFrameCount() - 1) {
+				writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);
+			} else {
+				g_sci->_robotDecoder->close();
+				// Signal the engine scripts that the video is done
 				writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
+			}
 			break;
 		default:
 			warning("kRobot(%d)", subop);

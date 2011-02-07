@@ -77,7 +77,7 @@ class GfxTransitions;
 
 #ifdef ENABLE_SCI32
 class SciGui32;
-class GfxRobot;
+class RobotDecoder;
 class GfxFrameout;
 #endif
 
@@ -313,7 +313,7 @@ public:
 	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
 
 #ifdef ENABLE_SCI32
-	GfxRobot *_gfxRobot;
+	RobotDecoder *_robotDecoder;
 	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
 #endif
 

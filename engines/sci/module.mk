@@ -79,7 +79,7 @@ ifdef ENABLE_SCI32
 MODULE_OBJS += \
 	graphics/frameout.o \
 	graphics/paint32.o \
-	graphics/robot.o
+	video/robot_decoder.o
 endif
 
 # This module can be built as a plugin

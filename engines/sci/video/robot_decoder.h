@@ -23,16 +23,16 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_ROBOT_H
-#define SCI_GRAPHICS_ROBOT_H
+#ifndef SCI_VIDEO_ROBOT_DECODER_H
+#define SCI_VIDEO_ROBOT_DECODER_H
 
+#include "common/rational.h"
+#include "common/rect.h"
+#include "common/stream.h"
+#include "common/substream.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "sound/decoders/raw.h"
-
-namespace Common {
-	class SeekableSubReadStreamEndian;
-}
+#include "video/video_decoder.h"
 
 namespace Sci {
 
@@ -52,17 +52,29 @@ struct RobotHeader {
 	// 34 bytes, unknown
 };
 
-class GfxRobot {
+class RobotDecoder : public Video::FixedRateVideoDecoder {
 public:
-	GfxRobot(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette);
-	~GfxRobot();
+	RobotDecoder(Audio::Mixer *mixer, bool isBigEndian);
+	virtual ~RobotDecoder();
 
-	void init(GuiResourceId resourceId, uint16 x, uint16 y);
-	void processNextFrame();
-	uint16 getCurFrame() { return _curFrame; }
-	uint16 getFrameCount() { return _header.frameCount; }
-	bool isPlaying() { return _robotFile != 0; }
-	void playAudio();
+	bool load(Common::SeekableReadStream *stream);
+	bool load(GuiResourceId id);
+	void close();
+
+	bool isVideoLoaded() const { return _fileStream != 0; }
+	uint16 getWidth() const { assert(_surface); return _surface->w; }
+	uint16 getHeight() const { assert(_surface); return _surface->h; }
+	uint16 getPitch() const { assert(_surface); return _surface->pitch; }
+	uint32 getFrameCount() const { return _header.frameCount; }
+	const Graphics::Surface *decodeNextFrame();
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
+	const byte *getPalette() { _dirtyPalette = false; return _palette; }
+	bool hasDirtyPalette() const { return _dirtyPalette; }
+	void setPos(uint16 x, uint16 y) { _pos = Common::Point(x, y); }
+	Common::Point getPos() const { return _pos; }
+
+protected:
+	Common::Rational getFrameRate() const { return Common::Rational(60, 10); }
 
 private:
 	void readHeaderChunk();
@@ -71,25 +83,19 @@ private:
 
 	void freeData();
 
-	ResourceManager *_resMan;
-	GfxScreen *_screen;
-	GfxPalette *_palette;
+	RobotHeader _header;
+	Common::Point _pos;
+	bool _isBigEndian;
 
-	byte _savedPal[256 * 4];
+	Common::SeekableSubReadStreamEndian *_fileStream;
 
-	Common::SeekableSubReadStreamEndian *_robotFile;
+	uint32 *_frameTotalSize;
+	byte _palette[256 * 3];
+	bool _dirtyPalette;
+	Graphics::Surface *_surface;
 	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
-
-	RobotHeader _header;
-
-	uint16 _x;
-	uint16 _y;
-	uint16 _curFrame;
-	uint32 *_frameTotalSize;
-
-	byte *_outputBuffer;
-	uint32 _outputBufferSize;
+	Audio::Mixer *_mixer;
 };
 #endif
 

@@ -48,8 +48,6 @@ public:
 	void kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle);
 	void kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
 
-	void debugDrawRobot(GuiResourceId robotId);
-
 private:
 	ResourceManager *_resMan;
 	SegManager *_segMan;

@@ -51,12 +51,15 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	uint16 screenWidth = g_system->getWidth();
 	uint16 screenHeight = g_system->getHeight();
 	bool isVMD = videoState.fileName.hasSuffix(".vmd");
+	bool isRobot = videoState.fileName.hasSuffix(".rbt");
 
-	if (screenWidth == 640 && width <= 320 && height <= 240 && ((videoState.flags & kDoubled) || !isVMD)) {
-		width *= 2;
-		height *= 2;
-		pitch *= 2;
-		scaleBuffer = new byte[width * height * bytesPerPixel];
+	if (!isRobot) {
+		if (screenWidth == 640 && width <= 320 && height <= 240 && ((videoState.flags & kDoubled) || !isVMD)) {
+			width *= 2;
+			height *= 2;
+			pitch *= 2;
+			scaleBuffer = new byte[width * height * bytesPerPixel];
+		}
 	}
 
 	uint16 x, y; 
@@ -73,8 +76,13 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 			y = (screenHeight - height) / 2;
 		}
 	} else {
-		x = (screenWidth - width) / 2;
-		y = (screenHeight - height) / 2;
+		if (!isRobot) {
+			x = (screenWidth - width) / 2;
+			y = (screenHeight - height) / 2;
+		} else {
+			x = 0;
+			y = 0;
+		}
 	}
 	bool skipVideo = false;
 
@@ -84,13 +92,18 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+
 			if (frame) {
 				if (scaleBuffer) {
 					// TODO: Probably should do aspect ratio correction in e.g. GK1 Windows 
 					g_sci->_gfxScreen->scale2x((byte *)frame->pixels, scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
 					g_system->copyRectToScreen(scaleBuffer, pitch, x, y, width, height);
-				} else
-					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, width, height);
+				} else {
+					if (!isRobot)
+						g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, width, height);
+					else	// Frames in robot videos have different dimensions
+						g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+				}
 
 				if (videoDecoder->hasDirtyPalette())
 					videoDecoder->setSystemPalette();
