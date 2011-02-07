@@ -103,19 +103,11 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 
 	// There are several versions of robot files, ranging from 3 to 6.
 	// v3: no known examples
-	// v4: PQ:SWAT
+	// v4: PQ:SWAT demo
 	// v5: SCI2.1 and SCI3 games
 	// v6: SCI3 games
-	switch (_header.version) {
-	case 4:	// used in PQ:SWAT
-	case 5:	// used in most SCI2.1 games and in some SCI3 robots
-	case 6:	// used in SCI3 games
-		// Supported
-		break;
-	default:
-		// Unsupported, error out so that we find out where this is used
+	if (_header.version < 4 || _header.version > 6)
 		error("Unknown robot version: %d", _header.version);
-	}
 
 	_frameTotalSize = new uint32[_header.frameCount];
 
