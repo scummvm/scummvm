@@ -213,7 +213,7 @@ void Screen::setPalette(byte *rgbPalette) const {
 		palette[i * 4 + 3] = 0;
 	}
 
-	_vm->_system->setPalette(palette, 0, 256);
+	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
 }
 
 void Screen::setPaletteGamma(ResourceId id) {
