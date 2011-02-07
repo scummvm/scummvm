@@ -119,7 +119,7 @@ protected:
 	byte *_frameTypes;
 	byte *_frameData;
 	// The RGB palette
-	byte *_palette;
+	byte _palette[3 * 256];
 	bool _dirtyPalette;
 
 	Common::Rational _frameRate;

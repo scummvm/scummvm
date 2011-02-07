@@ -485,7 +485,6 @@ bool SmackerDecoder::load(Common::SeekableReadStream *stream) {
 	// Height needs to be doubled if we have flags (Y-interlaced or Y-doubled)
 	_surface->create(width, height * (_header.flags ? 2 : 1), 1);
 
-	_palette = (byte *)malloc(3 * 256);
 	memset(_palette, 0, 3 * 256);
 	return true;
 }
@@ -519,7 +518,6 @@ void SmackerDecoder::close() {
 
 	delete[] _frameSizes;
 	delete[] _frameTypes;
-	free(_palette);
 
 	reset();
 }
@@ -858,8 +856,8 @@ void SmackerDecoder::unpackPalette() {
 	uint32 len = 4 * _fileStream->readByte();
 
 	byte *chunk = (byte *)malloc(len);
-	_fileStream->read(&chunk[0], len);
-	byte *p = &chunk[0];
+	_fileStream->read(chunk, len);
+	byte *p = chunk;
 
 	byte oldPalette[3*256];
 	memcpy(oldPalette, _palette, 3 * 256);
