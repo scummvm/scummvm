@@ -29,10 +29,9 @@
 #include "common/system.h"
 #include "common/timer.h"
 #include "common/savefile.h"
-#include "backends/events/default/default-events.h"
-#include "backends/audiocd/default/default-audiocd.h"
-#include "backends/mutex/null/null-mutex.h"
-#include "backends/graphics/null/null-graphics.h"
+
+class GraphicsManager;
+class MutexManager;
 
 /**
  * Base class for modular backends.

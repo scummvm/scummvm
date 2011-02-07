@@ -24,7 +24,13 @@
  */
 
 #include "backends/modular-backend.h"
+
 #include "backends/fs/fs-factory.h"
+#include "backends/events/default/default-events.h"
+#include "backends/audiocd/default/default-audiocd.h"
+#include "backends/mutex/null/null-mutex.h"
+#include "backends/graphics/null/null-graphics.h"
+
 #include "gui/message.h"
 
 ModularBackend::ModularBackend()

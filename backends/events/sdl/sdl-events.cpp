@@ -29,6 +29,7 @@
 
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
+#include "backends/graphics/graphics.h"
 #include "common/config-manager.h"
 
 // FIXME move joystick defines out and replace with confile file options
