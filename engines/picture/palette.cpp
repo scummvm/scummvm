@@ -48,13 +48,13 @@ void Palette::setFullPalette(byte *palette) {
 		colors[i * 4 + 2] = palette[i * 3 + 2] << 2;
 		colors[i * 4 + 3] = 255;
 	}
-	_vm->_system->setPalette((const byte *)colors, 0, 256);
+	_vm->_system->getPaletteManager()->setPalette((const byte *)colors, 0, 256);
 	_vm->_system->updateScreen();
 }
 
 void Palette::getFullPalette(byte *palette) {
 	byte colors[1024];
-	_vm->_system->grabPalette(colors, 0, 256);
+	_vm->_system->getPaletteManager()->grabPalette(colors, 0, 256);
 	for (int i = 0; i < 256; i++) {
 		palette[i * 3 + 0] = colors[i * 4 + 0] >> 2;
 		palette[i * 3 + 1] = colors[i * 4 + 1] >> 2;
@@ -72,7 +72,7 @@ void Palette::setDeltaPalette(byte *palette, byte mask, char deltaValue, int16 c
 
 	count++;
 
-	_vm->_system->grabPalette(colors, 0, 256);
+	_vm->_system->getPaletteManager()->grabPalette(colors, 0, 256);
 
 	deltaValue *= -1;
 
@@ -88,7 +88,7 @@ void Palette::setDeltaPalette(byte *palette, byte mask, char deltaValue, int16 c
 	
 	debug(0, "startIndex = %d; colorCount = %d", startIndex, colorCount);
 
-	_vm->_system->setPalette((const byte *)colors, 0, 256);
+	_vm->_system->getPaletteManager()->setPalette((const byte *)colors, 0, 256);
 
 }
 
