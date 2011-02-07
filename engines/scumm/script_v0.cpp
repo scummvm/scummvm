@@ -664,7 +664,7 @@ void ScummEngine_v0::o_loadRoomWithEgo() {
 
 	_fullRedraw = true;
 
-	resetSentence();
+	resetSentence(false);
 
 	if (x >= 0 && y >= 0) {
 		a->startWalkActor(x, y, -1);
@@ -934,7 +934,7 @@ void ScummEngine_v0::o_cutscene() {
 	setUserState(15);
 
 	_sentenceNum = 0;
-	resetSentence();
+	resetSentence(false);
 
 	vm.cutScenePtr[0] = 0;
 }

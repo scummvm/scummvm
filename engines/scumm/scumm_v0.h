@@ -95,7 +95,7 @@ protected:
 
 	virtual int getActiveObject();
 
-	virtual void resetSentence(bool walking = false);
+	virtual void resetSentence(bool walking);
 
 	virtual bool areBoxesNeighbours(int box1nr, int box2nr);
 

@@ -93,7 +93,7 @@ protected:
 	void setStateCommon(byte type);
 	void clearStateCommon(byte type);
 
-	virtual void resetSentence();
+	virtual void resetSentence(bool walking);
 	void setUserState(byte state);
 
 	virtual void handleMouseOver(bool updateInventory);

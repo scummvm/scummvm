@@ -546,7 +546,7 @@ void ScummEngine_v8::setupScummVars() {
 #endif
 
 void ScummEngine_v0::resetScummVars() {
-	resetSentence();
+	resetSentence(false);
 
 	VAR(VAR_EGO) = 3;
 

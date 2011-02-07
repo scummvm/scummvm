@@ -852,7 +852,7 @@ bool ScummEngine_v0::verbObtain(int obj, int objIndex) {
 				if (whereIsObject(obj) == WIO_INVENTORY)
 					_activeInventory = obj;
 				else
-					resetSentence();
+					resetSentence(false);
 
 				_v0ObjectInInventory = false;
 			}
@@ -889,7 +889,7 @@ bool ScummEngine_v0::verbExec() {
 	int entry = (_currentMode != 0 && _currentMode != 1) ? _activeVerb : 15;
 
 	if ((!_activeInvExecute && _activeObject && getObjectIndex(_activeObject) == -1)) {
-		resetSentence();
+		resetSentence(false);
 		return false;
 	}
 
@@ -940,7 +940,7 @@ bool ScummEngine_v0::verbExec() {
 		runObject(_activeInventory , 3);
 		_v0ObjectInInventory = false;
 
-		resetSentence();
+		resetSentence(false);
 		return false;
 	}
 
@@ -951,7 +951,7 @@ bool ScummEngine_v0::verbExec() {
 		_v0ObjectIndex = false;
 		_verbExecuting = false;
 
-		resetSentence();
+		resetSentence(false);
 		return false;
 	}
 
@@ -965,7 +965,7 @@ bool ScummEngine_v0::verbExec() {
 		if ((_currentMode == 3 || _currentMode == 2) && _activeVerb == 13)
 			return false;
 
-		resetSentence();
+		resetSentence(false);
 		return false;
 	}
 
@@ -982,7 +982,7 @@ bool ScummEngine_v0::verbExec() {
 			return false;
 		}
 
-		resetSentence();
+		resetSentence(false);
 		return false;
 	}
 
@@ -1025,7 +1025,7 @@ bool ScummEngine_v0::verbExec() {
 		return false;
 	}
 
-	resetSentence();
+	resetSentence(false);
 
 	return false;
 }
@@ -1175,7 +1175,7 @@ void ScummEngine_v0::checkExecVerbs() {
 			// Clicked on nothing, walk here?
 			if (!over && !act && _activeVerb == 13 && !obj && _currentMode != 0) {
 				// Clear all selected
-				resetSentence();
+				resetSentence(false);
 
 				// 0xB31
 				VAR(6) = _virtualMouse.x / V12_X_MULTIPLIER;
@@ -1206,7 +1206,7 @@ void ScummEngine_v0::checkExecVerbs() {
 			if (_activeVerb != over) {
 				_activeVerb = over;
 				if (_activeVerb == 13) {
-					resetSentence();
+					resetSentence(false);
 				}
 				return;
 			}
