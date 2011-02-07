@@ -494,10 +494,15 @@ void SmackerDecoder::close() {
 	if (!_fileStream)
 		return;
 
-	if (_audioStarted && _audioStream) {
-		_mixer->stopHandle(_audioHandle);
+	if (_audioStream) {
+		if (_audioStarted) {
+			// The mixer will delete the stream.
+			_mixer->stopHandle(_audioHandle);
+			_audioStarted = false;
+		} else {
+			delete _audioStream;
+		}
 		_audioStream = 0;
-		_audioStarted = false;
 	}
 
 	delete _fileStream;
