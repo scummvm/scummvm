@@ -268,7 +268,7 @@ void MuxPlayer::handlePalette(uint32 chunkSize) {
 		colors[i * 4 + 2] = _palette[i * 3 + 2];
 		colors[i * 4 + 3] = 0;
 	}
-	_vm->_system->setPalette(colors, 0, 256);
+	_vm->_system->getPaletteManager()->setPalette(colors, 0, 256);
 
 }
 
