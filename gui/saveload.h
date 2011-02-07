@@ -33,7 +33,7 @@ namespace GUI {
 class ListWidget;
 class GraphicsWidget;
 
-class SaveLoadChooser : public GUI::Dialog {
+class SaveLoadChooser : GUI::Dialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
 protected:
