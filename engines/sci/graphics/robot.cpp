@@ -46,7 +46,6 @@
 namespace Sci {
 
 // TODO:
-// - v4 robot support (used in PQ:SWAT)
 // - Positioning
 // - Proper handling of frame scaling - scaled frames look squashed
 //   (probably because both dimensions should be scaled)
@@ -109,11 +108,6 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 	// v6: SCI3 games
 	switch (_header.version) {
 	case 4:	// used in PQ:SWAT
-		// Unsupported
-		warning("TODO: add support for v4 robot videos");
-		_curFrame = _header.frameCount;	// jump to the last frame
-		freeData();
-		return;
 	case 5:	// used in most SCI2.1 games and in some SCI3 robots
 	case 6:	// used in SCI3 games
 		// Supported
@@ -211,6 +205,7 @@ void GfxRobot::readFrameSizesChunk() {
 	_robotFile->skip(_header.frameCount * wordSize * 2);
 #else
 	switch (_header.version) {
+	case 4:
 	case 5:		// sizes are 16-bit integers
 		// Skip table with frame image sizes, as we don't need it
 		_robotFile->skip(_header.frameCount * 2);
@@ -263,23 +258,30 @@ void GfxRobot::processNextFrame() {
 	_outputBufferSize = decompressedSize;
 
 	DecompressorLZS lzs;
-	byte *outPtr = _outputBuffer;
 
-	for (uint16 i = 0; i < frameFragments; ++i) {
-		uint32 compressedFragmentSize = _robotFile->readUint32();
-		uint32 decompressedFragmentSize = _robotFile->readUint32();
-		uint16 compressionType = _robotFile->readUint16();
+	if (_header.version == 4) {
+		// v4 has just the one fragment, it seems, and ignores the fragment count
+		Common::SeekableSubReadStream fragmentStream(_robotFile, _robotFile->pos(), _robotFile->pos() + compressedSize);
+		lzs.unpack(&fragmentStream, _outputBuffer, compressedSize, decompressedSize);
+	} else {
+		byte *outPtr = _outputBuffer;
 
-		if (compressionType == 0) {
-			Common::SeekableSubReadStream fragmentStream(_robotFile, _robotFile->pos(), _robotFile->pos() + compressedFragmentSize);
-			lzs.unpack(&fragmentStream, outPtr, compressedFragmentSize, decompressedFragmentSize);
-		} else if (compressionType == 2) {	// untested
-			_robotFile->read(outPtr, compressedFragmentSize);
-		} else {
-			error("Unknown frame compression found: %d", compressionType);
+		for (uint16 i = 0; i < frameFragments; ++i) {
+			uint32 compressedFragmentSize = _robotFile->readUint32();
+			uint32 decompressedFragmentSize = _robotFile->readUint32();
+			uint16 compressionType = _robotFile->readUint16();
+
+			if (compressionType == 0) {
+				Common::SeekableSubReadStream fragmentStream(_robotFile, _robotFile->pos(), _robotFile->pos() + compressedFragmentSize);
+				lzs.unpack(&fragmentStream, outPtr, compressedFragmentSize, decompressedFragmentSize);
+			} else if (compressionType == 2) {	// untested
+				_robotFile->read(outPtr, compressedFragmentSize);
+			} else {
+				error("Unknown frame compression found: %d", compressionType);
+			}
+
+			outPtr += decompressedFragmentSize;
 		}
-
-		outPtr += decompressedFragmentSize;
 	}
 
 	uint32 audioChunkSize = _frameTotalSize[_curFrame] - (24 + compressedSize);
