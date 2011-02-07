@@ -101,16 +101,18 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 	int colorNo = 0;
 
 	memset(paletteOut, 0, sizeof(Palette));
+
 	// Setup 1:1 mapping
-	for (colorNo = 0; colorNo < 256; colorNo++) {
+	for (colorNo = 0; colorNo < 256; colorNo++)
 		paletteOut->mapping[colorNo] = colorNo;
-	}
+
 	if (bytesLeft < 37) {
 		// This happens when loading palette of picture 0 in sq5 - the resource is broken and doesn't contain a full
 		//  palette
 		debugC(kDebugLevelResMan, "GfxPalette::createFromData() - not enough bytes in resource (%d), expected palette header", bytesLeft);
 		return;
 	}
+
 	// palette formats in here are not really version exclusive, we can not use sci-version to differentiate between them
 	//  they were just called that way, because they started appearing in sci1.1 for example
 	if ((data[0] == 0 && data[1] == 1) || (data[0] == 0 && data[1] == 0 && READ_SCI11ENDIAN_UINT16(data + 29) == 0)) {
@@ -123,8 +125,10 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 		// SCI1.1 palette
 		palFormat = data[32];
 		palOffset = 37;
-		palColorStart = READ_SCI11ENDIAN_UINT16(data + 25); palColorCount = READ_SCI11ENDIAN_UINT16(data + 29);
+		palColorStart = data[25];
+		palColorCount = READ_SCI11ENDIAN_UINT16(data + 29);
 	}
+
 	switch (palFormat) {
 		case SCI_PAL_FORMAT_CONSTANT:
 			// Check, if enough bytes left
@@ -132,6 +136,7 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 				warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette colors");
 				return;
 			}
+
 			for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
 				paletteOut->colors[colorNo].used = 1;
 				paletteOut->colors[colorNo].r = data[palOffset++];
@@ -144,6 +149,7 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 				warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette colors");
 				return;
 			}
+
 			for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
 				paletteOut->colors[colorNo].used = data[palOffset++];
 				paletteOut->colors[colorNo].r = data[palOffset++];
