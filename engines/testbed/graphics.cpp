@@ -44,7 +44,7 @@ GFXTestSuite::GFXTestSuite() {
 	// Initialize color palettes
 	// The fourth field is for alpha channel which is unused
 	// Assuming 8bpp as of now
-	g_system->setPalette(_palette, 0, 3);
+	g_system->getPaletteManager()->setPalette(_palette, 0, 3);
 
 	// Init Mouse Palette (White-black-yellow)
 	GFXtests::initMousePalette();
@@ -88,7 +88,7 @@ void GFXTestSuite::setCustomColor(uint r, uint g, uint b) {
 	_palette[absIndx + 1] = 173;
 	_palette[absIndx + 2] = 255;
 	_palette[absIndx + 3] = 47;
-	g_system->setPalette(_palette, 0, 256);
+	g_system->getPaletteManager()->setPalette(_palette, 0, 256);
 }
 
 // Helper functions used by GFX tests
@@ -982,7 +982,7 @@ TestExitStatus GFXtests::paletteRotation() {
 	}
 
 	// Initialize this palette.
-	g_system->setPalette(palette, 0, 256);
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	// Draw 256 Rectangles, each 1 pixel wide and 10 pixels long
 	// one for 0-255 color range other for 0-127-255 range
@@ -1020,7 +1020,7 @@ TestExitStatus GFXtests::paletteRotation() {
 		rotatePalette(palette, 256);
 
 		g_system->delayMillis(10);
-		g_system->setPalette(palette, 0, 256);
+		g_system->getPaletteManager()->setPalette(palette, 0, 256);
 		g_system->updateScreen();
 	}
 

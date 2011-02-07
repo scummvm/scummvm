@@ -282,7 +282,7 @@ void gfxModuleData_updatePalette() {
 			paletteRGBA[i * 4 + 2] = lpalette[i].B;
 			paletteRGBA[i * 4 + 3] = 0xFF;
 		}
-		g_system->setPalette(paletteRGBA + palDirtyMin*4, palDirtyMin, palDirtyMax - palDirtyMin + 1);
+		g_system->getPaletteManager()->setPalette(paletteRGBA + palDirtyMin*4, palDirtyMin, palDirtyMax - palDirtyMin + 1);
 		palDirtyMin = 256;
 		palDirtyMax = -1;
 	}

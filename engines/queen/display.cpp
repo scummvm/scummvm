@@ -167,7 +167,7 @@ void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 		tempPal[4 * i + 2] = *pal++;
 		tempPal[4 * i + 3] = 0;
 	}
-	_system->setPalette(tempPal, start, numColors);
+	_system->getPaletteManager()->setPalette(tempPal, start, numColors);
 	if (updateScreen) {
 		_vm->input()->delay(20);
 	}

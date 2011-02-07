@@ -806,7 +806,7 @@ void GfxMgr::initPalette(const uint8 *p, uint colorCount, uint fromBits, uint to
 }
 
 void GfxMgr::gfxSetPalette() {
-	g_system->setPalette(_palette, 0, 256);
+	g_system->getPaletteManager()->setPalette(_palette, 0, 256);
 }
 
 //Gets AGIPAL Data

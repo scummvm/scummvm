@@ -96,7 +96,7 @@ ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 		}
 #endif // DITHER
 
-		_syst->setPalette(pal, 0, 256);
+		_syst->getPaletteManager()->setPalette(pal, 0, 256);
 	}
 }
 

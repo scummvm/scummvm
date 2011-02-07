@@ -1798,7 +1798,7 @@ void TuckerEngine::execData3PreUpdate_locationNum29() {
 			scrollPal[i * 4 + 1] = g[i + d];
 			scrollPal[i * 4 + 2] = b[i + d];
 		}
-		_system->setPalette(scrollPal, 118, 5);
+		_system->getPaletteManager()->setPalette(scrollPal, 118, 5);
 		if (_flagsTable[143] == 1) {
 			_locationObjectsTable[2].xPos = 999;
 			_locationObjectsTable[3].xPos = 187;

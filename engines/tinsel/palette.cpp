@@ -165,7 +165,7 @@ void PalettesToVideoDAC() {
 		}
 
 		// update the system palette
-		g_system->setPalette((const byte *)pColours, pDACtail->destDACindex, pDACtail->numColours);
+		g_system->getPaletteManager()->setPalette((const byte *)pColours, pDACtail->destDACindex, pDACtail->numColours);
 
 		// update tail pointer
 		pDACtail++;

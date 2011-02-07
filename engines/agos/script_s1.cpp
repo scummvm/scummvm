@@ -580,7 +580,7 @@ void AGOSEngine_Simon1::os1_specialFade() {
 		paletteFadeOut(_currentPalette, 32, 8);
 		paletteFadeOut(_currentPalette + 4 * 48, 144, 8);
 		paletteFadeOut(_currentPalette + 4 * 208, 48, 8);
-		_system->setPalette(_currentPalette, 0, 256);
+		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
 		delay(5);
 	}
 

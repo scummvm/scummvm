@@ -69,7 +69,7 @@ class DCCDManager : public DefaultAudioCDManager {
   void updateCD();
 };
 
-class OSystem_Dreamcast : private DCHardware, public BaseBackend, public FilesystemFactory {
+class OSystem_Dreamcast : private DCHardware, public BaseBackend, public PaletteManager, public FilesystemFactory {
 
  public:
   OSystem_Dreamcast();
@@ -98,8 +98,13 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   int getGraphicsMode() const;
 
   // Set colors of the palette
+  PaletteManager *getPaletteManager() { return this; }
+protected:
+	// PaletteManager API
   void setPalette(const byte *colors, uint start, uint num);
   void grabPalette(byte *colors, uint start, uint num);
+
+public:
 
   // Determine the pixel format currently in use for screen rendering.
   Graphics::PixelFormat getScreenFormat() const;

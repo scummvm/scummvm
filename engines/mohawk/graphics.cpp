@@ -147,7 +147,7 @@ void GraphicsManager::setPalette(uint16 id) {
 
 	delete tpalStream;
 
-	getVM()->_system->setPalette(palette, colorStart, colorCount);
+	getVM()->_system->getPaletteManager()->setPalette(palette, colorStart, colorCount);
 	delete[] palette;
 }
 
@@ -1016,7 +1016,7 @@ void LBGraphics::setPalette(uint16 id) {
 
 		delete ctblStream;
 
-		_vm->_system->setPalette(palette, 0, colorCount);
+		_vm->_system->getPaletteManager()->setPalette(palette, 0, colorCount);
 		delete[] palette;
 	} else {
 		GraphicsManager::setPalette(id);

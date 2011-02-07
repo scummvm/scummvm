@@ -301,7 +301,7 @@ bool TeenAgentEngine::showCDLogo() {
 		palette[idx + 1] *= 4;
 		palette[idx + 2] *= 4;
 	}
-	_system->setPalette(palette, 0, 0x100);
+	_system->getPaletteManager()->setPalette(palette, 0, 0x100);
 	_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
 	_system->updateScreen();
 
@@ -338,7 +338,7 @@ bool TeenAgentEngine::showLogo() {
 		palette[idx + 1] *= 4;
 		palette[idx + 2] *= 4;
 	}
-	_system->setPalette(palette, 0, 0x100);
+	_system->getPaletteManager()->setPalette(palette, 0, 0x100);
 
 	uint n = logo.fileCount();
 	for(uint f = 0; f < 4; ++f)
@@ -386,7 +386,7 @@ bool TeenAgentEngine::showMetropolis() {
 		}
 	}
 
-	_system->setPalette(palette, 0, 0x100);
+	_system->getPaletteManager()->setPalette(palette, 0, 0x100);
 
 	byte varia_6[21760], varia_9[18302];
 	varia.read(6, varia_6, sizeof(varia_6));

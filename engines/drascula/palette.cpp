@@ -74,7 +74,7 @@ void DrasculaEngine::setPalette(byte *PalBuf) {
 		pal[i * 4 + 2] = PalBuf[i * 3 + 2] * 4;
 		pal[i * 4 + 3] = 0;
 	}
-	_system->setPalette(pal, 0, 256);
+	_system->getPaletteManager()->setPalette(pal, 0, 256);
 	_system->updateScreen();
 }
 

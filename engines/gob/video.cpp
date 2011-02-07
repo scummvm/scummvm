@@ -355,7 +355,7 @@ void Video::setPalElem(int16 index, char red, char green, char blue,
 	setPalColor(pal, red, green, blue);
 
 	if (_vm->getPixelFormat().bytesPerPixel == 1)
-		g_system->setPalette(pal, index, 1);
+		g_system->getPaletteManager()->setPalette(pal, index, 1);
 }
 
 void Video::setPalette(PalDesc *palDesc) {
@@ -369,7 +369,7 @@ void Video::setPalette(PalDesc *palDesc) {
 		setPalColor(pal + i * 4, palDesc->vgaPal[i]);
 
 	if (_vm->getPixelFormat().bytesPerPixel == 1)
-		g_system->setPalette(pal, 0, numcolors);
+		g_system->getPaletteManager()->setPalette(pal, 0, numcolors);
 }
 
 void Video::setFullPalette(PalDesc *palDesc) {
@@ -385,7 +385,7 @@ void Video::setFullPalette(PalDesc *palDesc) {
 		}
 
 		if (_vm->getPixelFormat().bytesPerPixel == 1)
-			g_system->setPalette(pal, 0, 256);
+			g_system->getPaletteManager()->setPalette(pal, 0, 256);
 	} else
 		Video::setPalette(palDesc);
 }

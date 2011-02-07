@@ -44,7 +44,7 @@ Screen::Screen(OSystem &system): _system(system),
 		_palette(new Palette(GAME_PALETTE_RESOURCE_ID, RGB64)) {
 	int_disk = this;
 	_screen->empty();
-	_system.setPalette(_palette->data(), 0, GAME_COLOURS);
+	_system.getPaletteManager()->setPalette(_palette->data(), 0, GAME_COLOURS);
 }
 
 Screen::~Screen() {
@@ -57,13 +57,13 @@ Screen::~Screen() {
 
 void Screen::setPaletteEmpty(int numEntries) {
 	Palette emptyPalette(numEntries, NULL, RGB64);
-	_system.setPalette(emptyPalette.data(), 0, numEntries);
+	_system.getPaletteManager()->setPalette(emptyPalette.data(), 0, numEntries);
 	_palette->copyFrom(&emptyPalette);
 /*
 	delete _palette;
 	_palette = new Palette();
 
-	_system.setPalette(_palette->data(), 0, numEntries);
+	_system.getPaletteManager()->setPalette(_palette->data(), 0, numEntries);
 */
 	_system.updateScreen();
 }
@@ -73,7 +73,7 @@ void Screen::setPaletteEmpty(int numEntries) {
 
 void Screen::setPalette(Palette *p) {
 	_palette->copyFrom(p);
-	_system.setPalette(_palette->data(), 0, GAME_COLOURS);
+	_system.getPaletteManager()->setPalette(_palette->data(), 0, GAME_COLOURS);
 	_system.updateScreen();
 }
 
@@ -82,7 +82,7 @@ void Screen::setPalette(Palette *p) {
 
 void Screen::setPalette(Palette *p, uint16 start, uint16 num) {
 	_palette->palette()->copyFrom(p->palette(), start * 4, start * 4, num * 4);
-	_system.setPalette(_palette->data(), start, num);
+	_system.getPaletteManager()->setPalette(_palette->data(), start, num);
 	_system.updateScreen();
 }
 
@@ -114,7 +114,7 @@ void Screen::paletteFadeIn(Palette *p) {
 		}
 
 		if (changed) {
-			_system.setPalette(_palette->data(), 0, p->numEntries());
+			_system.getPaletteManager()->setPalette(_palette->data(), 0, p->numEntries());
 			_system.updateScreen();
 			_system.delayMillis(20);
 			while (events.pollEvent())
@@ -147,7 +147,7 @@ void Screen::paletteFadeOut(int numEntries) {
 		}
 
 		if (changed) {
-			_system.setPalette(_palette->data(), 0, numEntries);
+			_system.getPaletteManager()->setPalette(_palette->data(), 0, numEntries);
 			_system.updateScreen();
 			_system.delayMillis(20);
 			while (events.pollEvent())

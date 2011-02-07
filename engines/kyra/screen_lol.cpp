@@ -801,7 +801,7 @@ void Screen_LoL::copyColor(int dstColorIndex, int srcColorIndex) {
 	ci[2] = (d[2] << 2) | (d[2] & 3);
 	ci[3] = 0;
 
-	_system->setPalette(ci, dstColorIndex, 1);
+	_system->getPaletteManager()->setPalette(ci, dstColorIndex, 1);
 }
 
 bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedTicks, uint32 totalTicks) {

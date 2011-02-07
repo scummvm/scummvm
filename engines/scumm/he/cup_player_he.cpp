@@ -127,7 +127,7 @@ void CUP_Player::copyRectToScreen(const Common::Rect &r) {
 
 void CUP_Player::updateScreen() {
 	if (_paletteChanged) {
-		_system->setPalette(_paletteData, 0, 256);
+		_system->getPaletteManager()->setPalette(_paletteData, 0, 256);
 		_paletteChanged = false;
 	}
 	_system->updateScreen();

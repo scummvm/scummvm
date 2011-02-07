@@ -273,11 +273,11 @@ void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 }
 
 int16 OSystem_PSP::getOverlayWidth() {
-	return (int16) _overlay.getWidth();
+	return (int16)_overlay.getWidth();
 }
 
 int16 OSystem_PSP::getOverlayHeight() {
-	return (int16) _overlay.getHeight();
+	return (int16)_overlay.getHeight();
 }
 
 void OSystem_PSP::grabPalette(byte *colors, uint start, uint num) {

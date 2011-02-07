@@ -30,11 +30,13 @@
 #include "common/noncopyable.h"
 #include "common/keyboard.h"
 
+#include "graphics/palette.h"
+
 /**
  * Abstract class for graphics manager. Subclasses
  * implement the real functionality.
  */
-class GraphicsManager : Common::NonCopyable {
+class GraphicsManager : public PaletteManager {
 public:
 	virtual ~GraphicsManager() {}
 

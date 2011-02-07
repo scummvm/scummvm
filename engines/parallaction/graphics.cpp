@@ -225,7 +225,7 @@ void Gfx::setPalette(Palette pal) {
 	byte sysPal[256*4];
 
 	uint n = pal.fillRGBA(sysPal);
-	_vm->_system->setPalette(sysPal, 0, n);
+	_vm->_system->getPaletteManager()->setPalette(sysPal, 0, n);
 }
 
 void Gfx::setBlackPalette() {

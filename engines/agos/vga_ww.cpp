@@ -224,7 +224,7 @@ void AGOSEngine::vc62_fastFadeOut() {
 
 		for (i = fadeCount; i != 0; --i) {
 			paletteFadeOut(_currentPalette, _fastFadeCount, fadeSize);
-			_system->setPalette(_currentPalette, 0, _fastFadeCount);
+			_system->getPaletteManager()->setPalette(_currentPalette, 0, _fastFadeCount);
 			delay(5);
 		}
 

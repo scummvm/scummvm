@@ -1185,7 +1185,7 @@ void Scene::setPalette(unsigned mul) {
 			p[i * 4 + c] = (unsigned)palette[i * 3 + c] * mul;
 	}
 
-	_system->setPalette(p, 0, 256);
+	_system->getPaletteManager()->setPalette(p, 0, 256);
 }
 
 Object *Scene::getObject(int id, int scene_id) {

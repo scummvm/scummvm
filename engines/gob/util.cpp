@@ -325,7 +325,7 @@ void Util::clearPalette() {
 	if (_vm->_global->_setAllPalette) {
 		if (_vm->getPixelFormat().bytesPerPixel == 1) {
 			memset(colors, 0, 1024);
-			g_system->setPalette(colors, 0, 256);
+			g_system->getPaletteManager()->setPalette(colors, 0, 256);
 		}
 
 		return;

@@ -60,7 +60,7 @@ void VideoDecoder::setSystemPalette() {
 		sysPalette[i * 4 + 3] = 0;
 	}
 
-	g_system->setPalette(sysPalette, 0, 256);
+	g_system->getPaletteManager()->setPalette(sysPalette, 0, 256);
 	delete[] sysPalette;
 }
 

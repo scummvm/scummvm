@@ -44,7 +44,7 @@
 #include "backends/timer/psp/timer.h"
 #include "backends/platform/psp/thread.h"
 
-class OSystem_PSP : public BaseBackend {
+class OSystem_PSP : public BaseBackend, public PaletteManager {
 private:
 
 	Common::SaveFileManager *_savefile;
@@ -94,8 +94,12 @@ public:
 	int16 getHeight();
 
 	// Palette related
+	PaletteManager *getPaletteManager() { return this; }
+protected:
+	// PaletteManager API
 	void setPalette(const byte *colors, uint start, uint num);
 	void grabPalette(byte *colors, uint start, uint num);
+public:
 	void setCursorPalette(const byte *colors, uint start, uint num);
 	void disableCursorPalette(bool disable);
 

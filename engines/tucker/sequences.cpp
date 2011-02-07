@@ -550,7 +550,7 @@ void AnimationSequencePlayer::mainLoop() {
 			updateSounds();
 		}
 		_system->copyRectToScreen(_offscreenBuffer, kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
-		_system->setPalette(_animationPalette, 0, 256);
+		_system->getPaletteManager()->setPalette(_animationPalette, 0, 256);
 		_system->updateScreen();
 		syncTime();
 	} while (_seqNum != 1);
@@ -691,7 +691,7 @@ void AnimationSequencePlayer::fadeInPalette() {
 					fadeColors = true;
 				}
 			}
-			_system->setPalette(paletteBuffer, 0, 256);
+			_system->getPaletteManager()->setPalette(paletteBuffer, 0, 256);
 			_system->updateScreen();
 		}
 		_system->delayMillis(1000 / 60);
@@ -712,7 +712,7 @@ void AnimationSequencePlayer::fadeOutPalette() {
 					fadeColors = true;
 				}
 			}
-			_system->setPalette(paletteBuffer, 0, 256);
+			_system->getPaletteManager()->setPalette(paletteBuffer, 0, 256);
 			_system->updateScreen();
 		}
 		_system->delayMillis(1000 / 60);

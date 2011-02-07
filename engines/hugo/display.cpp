@@ -79,7 +79,7 @@ Screen::~Screen() {
 void Screen::createPal() {
 	debugC(1, kDebugDisplay, "createPal");
 
-	g_system->setPalette(_mainPalette, 0, _paletteSize / 4);
+	g_system->getPaletteManager()->setPalette(_mainPalette, 0, _paletteSize / 4);
 }
 
 void Screen::setCursorPal() {
@@ -146,7 +146,7 @@ void Screen::remapPal(const uint16 oldIndex, const uint16 newIndex) {
 	pal[2] = _curPalette[4 * oldIndex + 2] = _mainPalette[newIndex * 4 + 2];
 	pal[3] = _curPalette[4 * oldIndex + 3] = _mainPalette[newIndex * 4 + 3];
 
-	g_system->setPalette(pal, oldIndex, 1);
+	g_system->getPaletteManager()->setPalette(pal, oldIndex, 1);
 }
 
 /**
@@ -175,7 +175,7 @@ void Screen::restorePal(Common::SeekableReadStream *f) {
 		pal[1] = _curPalette[i * 4 + 1];
 		pal[2] = _curPalette[i * 4 + 2];
 		pal[3] = _curPalette[i * 4 + 3];
-		g_system->setPalette(pal, i, 1);
+		g_system->getPaletteManager()->setPalette(pal, i, 1);
 	}
 }
 

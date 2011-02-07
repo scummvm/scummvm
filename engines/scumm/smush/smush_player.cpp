@@ -1229,7 +1229,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 				*p++ = 0;
 			}
 
-			_vm->_system->setPalette(palette_colors, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
+			_vm->_system->getPaletteManager()->setPalette(palette_colors, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
 
 			_palDirtyMax = -1;
 			_palDirtyMin = 256;

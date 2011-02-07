@@ -31,6 +31,7 @@
 #include "common/rect.h"
 #include "common/list.h" // For OSystem::getSupportedFormats()
 
+#include "graphics/palette.h" // for PaletteManager
 #include "graphics/pixelformat.h"
 
 namespace Audio {
@@ -54,6 +55,7 @@ namespace Common {
 
 class AudioCDManager;
 class FilesystemFactory;
+class PaletteManager;
 
 /**
  * A structure describing time and date. This is a clone of struct tm
@@ -517,66 +519,10 @@ public:
 	virtual int16 getWidth() = 0;
 
 	/**
-	 * Replace the specified range of the palette with new colors.
-	 * The palette entries from 'start' till (start+num-1) will be replaced - so
-	 * a full palette update is accomplished via start=0, num=256.
-	 *
-	 * The palette data is specified in interleaved RGBA format. That is, the
-	 * first byte of the memory block 'colors' points at is the red component
-	 * of the first new color; the second byte the green component of the first
-	 * new color; the third byte the blue component, the last byte to the alpha
-	 * (transparency) value. Then the second color starts, and so on. So memory
-	 * looks like this: R1-G1-B1-A1-R2-G2-B2-A2-R3-...
-	 *
-	 * @param colors	the new palette data, in interleaved RGBA format
-	 * @param start		the first palette entry to be updated
-	 * @param num		the number of palette entries to be updated
-	 *
-	 * @note It is an error if start+num exceeds 256, behaviour is undefined
-	 *       in that case (the backend may ignore it silently or assert).
-	 * @note It is an error if this function gets called when the pixel format
-	 *       in use (the return value of getScreenFormat) has more than one
-	 *       byte per pixel.
-	 * @note The alpha value is not actually used, and future revisions of this
-	 *       API are probably going to remove it.
-	 *
-	 * @see getScreenFormat
+	 * Return the palette manager singleton. For more information, refer
+	 * to the PaletteManager documentation.
 	 */
-	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
-
-	/**
-	 * Grabs a specified part of the currently active palette.
-	 * The format is the same as for setPalette.
-	 *
-	 * This should return exactly the same RGB data as was setup via previous
-	 * setPalette calls.
-	 *
-	 * For example, for every valid value of start and num of the following
-	 * code:
-	 *
-	 * byte origPal[num*4];
-	 * // Setup origPal's data however you like
-	 * g_system->setPalette(origPal, start, num);
-	 * byte obtainedPal[num*4];
-	 * g_system->grabPalette(obtainedPal, start, num);
-	 *
-	 * the following should be true:
-	 *
-	 * For each i < num : memcmp(&origPal[i*4], &obtainedPal[i*4], 3) == 0
-	 * (i is an uint here)
-	 *
-	 * @see setPalette
-	 * @param colors	the palette data, in interleaved RGBA format
-	 * @param start		the first platte entry to be read
-	 * @param num		the number of palette entries to be read
-	 *
-	 * @note It is an error if this function gets called when the pixel format
-	 *       in use (the return value of getScreenFormat) has more than one
-	 *       byte per pixel.
-	 *
-	 * @see getScreenFormat
-	 */
-	virtual void grabPalette(byte *colors, uint start, uint num) = 0;
+	virtual PaletteManager *getPaletteManager() = 0;
 
 	/**
 	 * Blit a bitmap to the virtual screen.
@@ -1079,7 +1025,7 @@ public:
 	 *
 	 * For information about POSIX locales read here:
 	 * http://en.wikipedia.org/wiki/Locale#POSIX-type_platforms
-	 * 
+	 *
 	 * The default implementation returns "en_US".
 	 *
 	 * @return locale of the system

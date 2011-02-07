@@ -256,7 +256,7 @@ void Control::askForCd() {
 	}
 	palOut[0] = palOut[1] = palOut[2] = palOut[3] = 0;
 	_resMan->resClose(SR_PALETTE);
-	_system->setPalette(palOut, 0, 256);
+	_system->getPaletteManager()->setPalette(palOut, 0, 256);
 	free(palOut);
 
 	char fName[10];
@@ -326,7 +326,7 @@ uint8 Control::runPanel() {
 	}
 	palOut[0] = palOut[1] = palOut[2] = palOut[3] = 0;
 	_resMan->resClose(SR_PALETTE);
-	_system->setPalette(palOut, 0, 256);
+	_system->getPaletteManager()->setPalette(palOut, 0, 256);
 	free(palOut);
 	uint8 mode = 0, newMode = BUTTON_MAIN_PANEL;
 	bool fullRefresh = false;

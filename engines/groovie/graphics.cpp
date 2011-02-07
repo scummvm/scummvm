@@ -124,7 +124,7 @@ void GraphicsMan::fadeOut() {
 	_fadeStartTime = _vm->_system->getMillis();
 
 	// Get the current palette
-	_vm->_system->grabPalette(_paletteFull, 0, 256);
+	_vm->_system->getPaletteManager()->grabPalette(_paletteFull, 0, 256);
 
 	// Set the current fading
 	_fading = 2;
@@ -159,7 +159,7 @@ void GraphicsMan::applyFading(int step) {
 	}
 
 	// Set the screen palette
-	_vm->_system->setPalette(newpal, 0, 256);
+	_vm->_system->getPaletteManager()->setPalette(newpal, 0, 256);
 
 	// Request a screen update
 	change();

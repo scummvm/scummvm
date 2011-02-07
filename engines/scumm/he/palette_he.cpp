@@ -394,7 +394,7 @@ void ScummEngine_v99he::updatePalette() {
 		*p++ = 0;
 	}
 
-	_system->setPalette(palette_colors, _palDirtyMin, num);
+	_system->getPaletteManager()->setPalette(palette_colors, _palDirtyMin, num);
 
 	_palDirtyMax = -1;
 	_palDirtyMin = 256;

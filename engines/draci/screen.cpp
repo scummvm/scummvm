@@ -75,7 +75,7 @@ void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
 		_palette[i] <<= 2;
 	}
 
-	_vm->_system->setPalette(_palette, start, num);
+	_vm->_system->getPaletteManager()->setPalette(_palette, start, num);
 }
 
 void Screen::interpolatePalettes(const byte *first, const byte *second, uint16 start, uint16 num, int index, int number) {
@@ -97,7 +97,7 @@ void Screen::interpolatePalettes(const byte *first, const byte *second, uint16 s
 		_palette[i] <<= 2;
 	}
 
-	_vm->_system->setPalette(_palette, start, num);
+	_vm->_system->getPaletteManager()->setPalette(_palette, start, num);
 }
 
 int Screen::interpolate(int first, int second, int index, int number) {

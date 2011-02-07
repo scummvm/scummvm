@@ -159,7 +159,7 @@ public:
 	/** The original color format in which this palette was loaded. */
 	const Graphics::PixelFormat &colorFormat() const;
 
-	/** Sets current palette to global OSystem's palette using g_system->setPalette. */
+	/** Sets current palette to global OSystem's palette using g_system->getPaletteManager()->setPalette. */
 	void setGlobalOSystemPalette() const;
 
 	/** Get the color at the given palette index. */

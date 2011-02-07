@@ -227,7 +227,7 @@ void Screen::setRGBPalette(byte *palRGB, int start, int count) {
 		_screenPalette[i * 4 + 3] = 0;
 	}
 
-	_vm->_system->setPalette(_screenPalette, start, count);
+	_vm->_system->getPaletteManager()->setPalette(_screenPalette, start, count);
 }
 
 uint16 Screen::updateChannel(uint16 channelIndex) {

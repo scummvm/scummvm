@@ -563,7 +563,7 @@ void VDXPlayer::setPalette(uint8 *palette) {
 		palBuf[(i * 4) + 2] = palette[(i * 3) + 2];
 		palBuf[(i * 4) + 3] = 0;
 	}
-	_syst->setPalette(palBuf, 0, 256);
+	_syst->getPaletteManager()->setPalette(palBuf, 0, 256);
 }
 
 } // End of Groovie namespace

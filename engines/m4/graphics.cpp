@@ -1031,17 +1031,17 @@ Palette::Palette(MadsM4Engine *vm) : _vm(vm) {
 }
 
 void Palette::setPalette(const byte *colors, uint start, uint num) {
-	g_system->setPalette(colors, start, num);
+	g_system->getPaletteManager()->setPalette(colors, start, num);
 	reset();
 }
 
 void Palette::setPalette(const RGB8 *colors, uint start, uint num) {
-	g_system->setPalette((const byte *)colors, start, num);
+	g_system->getPaletteManager()->setPalette((const byte *)colors, start, num);
 	reset();
 }
 
 void Palette::grabPalette(byte *colors, uint start, uint num) {
-	g_system->grabPalette(colors, start, num);
+	g_system->getPaletteManager()->grabPalette(colors, start, num);
 }
 
 void Palette::setEntry(uint index, uint8 r, uint8 g, uint8 b) {
@@ -1050,7 +1050,7 @@ void Palette::setEntry(uint index, uint8 r, uint8 g, uint8 b) {
 	c.g = g;
 	c.b = b;
 	c.u = 255;
-	g_system->setPalette((const byte *)&c, index, 1);
+	g_system->getPaletteManager()->setPalette((const byte *)&c, index, 1);
 }
 
 uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, RGB8 *paletteData) {
@@ -1060,7 +1060,7 @@ uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, RGB8 *paletteData) {
 	int Rdiff, Gdiff, Bdiff;
 
 	if (paletteData == NULL) {
-		g_system->grabPalette((byte *)palData, 0, 256);
+		g_system->getPaletteManager()->grabPalette((byte *)palData, 0, 256);
 		paletteData = &palData[0];
 	}
 
@@ -1080,7 +1080,7 @@ uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, RGB8 *paletteData) {
 
 void Palette::reset() {
 	RGB8 palData[256];
-	g_system->grabPalette((byte *)palData, 0, 256);
+	g_system->getPaletteManager()->grabPalette((byte *)palData, 0, 256);
 
 	BLACK = palIndexFromRgb(0, 0, 0, palData);
 	BLUE = palIndexFromRgb(0, 0, 255, palData);
@@ -1260,7 +1260,7 @@ void Palette::addRange(RGBList *list) {
 	RGB8 *data = list->data();
 	byte *palIndexes = list->palIndexes();
 	RGB8 palData[256];
-	g_system->grabPalette((byte *)&palData[0], 0, 256);
+	g_system->getPaletteManager()->grabPalette((byte *)&palData[0], 0, 256);
 	bool paletteChanged = false;
 
 	for (int colIndex = 0; colIndex < list->size(); ++colIndex) {
@@ -1300,7 +1300,7 @@ void Palette::addRange(RGBList *list) {
 	}
 
 	if (paletteChanged) {
-		g_system->setPalette((byte *)&palData[0], 0, 256);
+		g_system->getPaletteManager()->setPalette((byte *)&palData[0], 0, 256);
 		reset();
 	}
 }

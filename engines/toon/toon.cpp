@@ -930,7 +930,7 @@ void ToonEngine::flushPalette(bool deferFlushToNextRender) {
 		vmpalette[i*4+2] = _finalPalette[i*3+2];
 		vmpalette[i*4+3] = 0;
 	}
-	_system->setPalette(vmpalette, 0, 256);
+	_system->getPaletteManager()->setPalette(vmpalette, 0, 256);
 }
 void ToonEngine::setPaletteEntries(uint8 *palette, int32 offset, int32 num) {
 	memcpy(_finalPalette + offset * 3, palette, num * 3);
@@ -1758,7 +1758,7 @@ void ToonEngine::fadeIn(int32 numFrames) {
 			vmpalette[i*4+2] = f * _finalPalette[i*3+2] / (numFrames - 1);
 			vmpalette[i*4+3] = 0;
 		}
-		_system->setPalette(vmpalette, 0, 256);
+		_system->getPaletteManager()->setPalette(vmpalette, 0, 256);
 		_system->updateScreen();
 		_system->delayMillis(_tickLength);
 	}
@@ -1767,7 +1767,7 @@ void ToonEngine::fadeIn(int32 numFrames) {
 void ToonEngine::fadeOut(int32 numFrames) {
 
 	uint8 oldpalette[1024];
-	_system->grabPalette(oldpalette, 0, 256);
+	_system->getPaletteManager()->grabPalette(oldpalette, 0, 256);
 
 	for (int32 f = 0; f < numFrames; f++) {
 		uint8 vmpalette[1024];
@@ -1777,7 +1777,7 @@ void ToonEngine::fadeOut(int32 numFrames) {
 			vmpalette[i*4+2] = (numFrames - f - 1) * oldpalette[i*4+2] / (numFrames - 1);
 			vmpalette[i*4+3] = 255;
 		}
-		_system->setPalette(vmpalette, 0, 256);
+		_system->getPaletteManager()->setPalette(vmpalette, 0, 256);
 		_system->updateScreen();
 		_system->delayMillis(_tickLength);
 	}

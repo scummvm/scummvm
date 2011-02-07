@@ -54,7 +54,7 @@ namespace Audio {
 	class MixerImpl;
 };
 
-class OSystem_PS2 : public BaseBackend {
+class OSystem_PS2 : public BaseBackend, public PaletteManager {
 public:
 	OSystem_PS2(const char *elfPath);
 	virtual ~OSystem_PS2(void);
@@ -64,10 +64,16 @@ public:
 
 	virtual int16 getHeight(void);
 	virtual int16 getWidth(void);
+
+	virtual PaletteManager *getPaletteManager() { return this; }
+protected:
+	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);
+	virtual void grabPalette(byte *colors, uint start, uint num);
+public:
+
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual void setShakePos(int shakeOffset);
-	virtual void grabPalette(byte *colors, uint start, uint num);
 	virtual bool grabRawScreen(Graphics::Surface *surf);
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();

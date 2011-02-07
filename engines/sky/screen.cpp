@@ -83,7 +83,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	}
 
 	//set the palette
-	_system->setPalette(tmpPal, 0, VGA_COLOURS);
+	_system->getPaletteManager()->setPalette(tmpPal, 0, VGA_COLOURS);
 	_currentPalette = 0;
 
 	_seqInfo.framesLeft = 0;
@@ -110,7 +110,7 @@ void Screen::setFocusRectangle(const Common::Rect& rect) {
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
 void Screen::setPalette(uint8 *pal) {
 	convertPalette(pal, _palette);
-	_system->setPalette(_palette, 0, GAME_COLOURS);
+	_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLOURS);
 	_system->updateScreen();
 }
 
@@ -123,7 +123,7 @@ void Screen::setPaletteEndian(uint8 *pal) {
 #else
 	convertPalette(pal, _palette);
 #endif
-	_system->setPalette(_palette, 0, GAME_COLOURS);
+	_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLOURS);
 	_system->updateScreen();
 }
 
@@ -135,7 +135,7 @@ void Screen::halvePalette() {
 		halfPalette[(cnt << 2) | 2] = _palette[(cnt << 2) | 2] >> 1;
 		halfPalette[(cnt << 2) | 3] = 0;
 	}
-	_system->setPalette(halfPalette, 0, GAME_COLOURS);
+	_system->getPaletteManager()->setPalette(halfPalette, 0, GAME_COLOURS);
 }
 
 void Screen::setPalette(uint16 fileNum) {
@@ -249,7 +249,7 @@ void Screen::fnFadeDown(uint32 scroll) {
 		for (uint8 cnt = 0; cnt < 32; cnt++) {
 			delayTime += 20;
 			palette_fadedown_helper((uint32 *)_palette, GAME_COLOURS);
-			_system->setPalette(_palette, 0, GAME_COLOURS);
+			_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLOURS);
 			_system->updateScreen();
 			int32 waitTime = (int32)delayTime - _system->getMillis();
 			if (waitTime < 0)
@@ -308,7 +308,7 @@ void Screen::paletteFadeUp(uint8 *pal) {
 			_palette[(colCnt << 2) | 1] = (tmpPal[(colCnt << 2) | 1] * cnt) >> 5;
 			_palette[(colCnt << 2) | 2] = (tmpPal[(colCnt << 2) | 2] * cnt) >> 5;
 		}
-		_system->setPalette(_palette, 0, GAME_COLOURS);
+		_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLOURS);
 		_system->updateScreen();
 		int32 waitTime = (int32)delayTime - _system->getMillis();
 		if (waitTime < 0)

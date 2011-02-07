@@ -132,12 +132,8 @@ int16 ModularBackend::getWidth() {
 	return _graphicsManager->getWidth();
 }
 
-void ModularBackend::setPalette(const byte *colors, uint start, uint num) {
-	_graphicsManager->setPalette(colors, start, num);
-}
-
-void ModularBackend::grabPalette(byte *colors, uint start, uint num) {
-	_graphicsManager->grabPalette(colors, start, num);
+PaletteManager *ModularBackend::getPaletteManager() {
+	return _graphicsManager;
 }
 
 void ModularBackend::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {

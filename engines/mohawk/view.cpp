@@ -431,7 +431,7 @@ void View::setColors(Common::SeekableReadStream *tpalStream) {
 	}
 
 	// TODO: copy into temporary buffer
-	_vm->_system->setPalette(palette, colorStart, colorCount);
+	_vm->_system->getPaletteManager()->setPalette(palette, colorStart, colorCount);
 	delete[] palette;
 
 	// original does pdLightenUp here..

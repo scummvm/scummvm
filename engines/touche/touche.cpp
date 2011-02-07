@@ -3259,7 +3259,7 @@ void ToucheEngine::setPalette(int firstColor, int colorCount, int rScale, int gS
 
 		pal[i * 4 + 3] = 0;
 	}
-	_system->setPalette(&pal[firstColor * 4], firstColor, colorCount);
+	_system->getPaletteManager()->setPalette(&pal[firstColor * 4], firstColor, colorCount);
 }
 
 void ToucheEngine::updateScreenArea(int x, int y, int w, int h) {
@@ -3294,7 +3294,7 @@ void ToucheEngine::updateDirtyScreenAreas() {
 }
 
 void ToucheEngine::updatePalette() {
-	_system->setPalette(_paletteBuffer, 0, 256);
+	_system->getPaletteManager()->setPalette(_paletteBuffer, 0, 256);
 }
 
 bool ToucheEngine::canLoadGameStateCurrently() {

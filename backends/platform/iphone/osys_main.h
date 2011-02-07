@@ -51,7 +51,7 @@ typedef struct AQCallbackStruct {
     AudioStreamBasicDescription dataFormat;
 } AQCallbackStruct;
 
-class OSystem_IPHONE : public BaseBackend {
+class OSystem_IPHONE : public BaseBackend, public PaletteManager {
 protected:
 
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[];
@@ -132,8 +132,14 @@ public:
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
+
+	virtual PaletteManager *getPaletteManager() { return this; }
+protected:
+	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);
 	virtual void grabPalette(byte *colors, uint start, uint num);
+
+public:
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual void updateScreen();
 	virtual Graphics::Surface *lockScreen();

@@ -455,7 +455,7 @@ void Screen_LoK_16::set16ColorPalette(const uint8 *pal) {
 		palette[i * 4 + 3] = 0;
 	}
 
-	_system->setPalette(palette, 0, 16);
+	_system->getPaletteManager()->setPalette(palette, 0, 16);
 }
 
 } // End of namespace Kyra

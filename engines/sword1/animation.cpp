@@ -176,7 +176,7 @@ void MoviePlayer::play() {
 
 	byte pal[4 * 256];
 	memset(pal, 0, sizeof(pal));
-	_system->setPalette(pal, 0, 256);
+	_system->getPaletteManager()->setPalette(pal, 0, 256);
 }
 
 void MoviePlayer::performPostProcessing(byte *screen) {

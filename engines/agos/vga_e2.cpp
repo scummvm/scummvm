@@ -373,7 +373,7 @@ void AGOSEngine::fullFade() {
 			srcPal += 3;
 			dstPal += 4;
 		}
-		_system->setPalette(_currentPalette, 0, 256);
+		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
 		delay(5);
 	}
 }
@@ -395,7 +395,7 @@ void AGOSEngine::vc56_fullScreen() {
 
 void AGOSEngine::vc57_blackPalette() {
 	memset(_currentPalette, 0, sizeof(_currentPalette));
-	_system->setPalette(_currentPalette, 0, 256);
+	_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
 }
 
 void AGOSEngine::vc58_checkCodeWheel() {

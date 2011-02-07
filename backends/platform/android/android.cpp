@@ -153,7 +153,7 @@ static void checkGlError(const char* file, int line) {
 #define CHECK_GL_ERROR() do {} while (false)
 #endif
 
-class OSystem_Android : public BaseBackend {
+class OSystem_Android : public BaseBackend, public PaletteManager {
 private:
 	jobject _back_ptr;	// back pointer to (java) peer instance
 	jmethodID MID_displayMessageOnOSD;
@@ -238,8 +238,14 @@ public:
 	virtual int getScreenChangeID() const { return _screen_changeid; }
 	virtual int16 getHeight();
 	virtual int16 getWidth();
+
+	virtual PaletteManager *getPaletteManager() { return this; }
+protected:
+	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);
 	virtual void grabPalette(byte *colors, uint start, uint num);
+
+public:
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual void updateScreen();
 	virtual Graphics::Surface *lockScreen();

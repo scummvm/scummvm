@@ -69,7 +69,7 @@ protected:
 class Overlay : public DefaultDisplayClient {
 public:
 	Overlay() {}
-	~Overlay() { }
+	~Overlay() {}
 
 	void init();
 	bool allocate();

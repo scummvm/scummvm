@@ -322,7 +322,7 @@ void WoodScript::update() {
 	{
 		// FIXME: This should be done when a new palette is set
 		byte palette[1024];
-		g_system->grabPalette(palette, 0, 256);
+		g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 		for (int i = 0; i < 256; i++) {
 			_mainPalette[i].r = palette[i * 4 + 0];
 			_mainPalette[i].g = palette[i * 4 + 1];

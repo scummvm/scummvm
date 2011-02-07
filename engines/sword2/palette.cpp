@@ -293,7 +293,7 @@ void Screen::setSystemPalette(const byte *colors, uint start, uint num) {
 	} else
 		palette = colors;
 
-	_vm->_system->setPalette(palette, start, num);
+	_vm->_system->getPaletteManager()->setPalette(palette, start, num);
 }
 
 } // End of namespace Sword2

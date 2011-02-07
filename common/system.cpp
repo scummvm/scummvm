@@ -93,4 +93,3 @@ void OSystem::logMessage(LogMessageType::Type type, const char *message) {
 Common::String OSystem::getSystemLanguage() const {
 	return "en_US";
 }
-

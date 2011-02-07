@@ -26,7 +26,7 @@
 #include "cine/cine.h"
 #include "cine/various.h"
 #include "cine/pal.h"
-#include "common/system.h" // For g_system->setPalette
+#include "common/system.h" // For g_system->getPaletteManager()->setPalette
 
 namespace Cine {
 
@@ -196,9 +196,9 @@ void Palette::setGlobalOSystemPalette() const {
 		for (uint i = 0; i < 16 * 4; ++i)
 			buf[16 * 4 + i] = buf[i] >> 1;
 
-		g_system->setPalette(buf, 0, colorCount() * 2);
+		g_system->getPaletteManager()->setPalette(buf, 0, colorCount() * 2);
 	} else {
-		g_system->setPalette(buf, 0, colorCount());
+		g_system->getPaletteManager()->setPalette(buf, 0, colorCount());
 	}
 }
 

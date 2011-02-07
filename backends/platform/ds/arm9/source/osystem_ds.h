@@ -37,7 +37,7 @@
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
 
-class OSystem_DS : public BaseBackend {
+class OSystem_DS : public BaseBackend, public PaletteManager {
 protected:
 
 	int eventNum;
@@ -92,8 +92,14 @@ public:
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
+
+	virtual PaletteManager *getPaletteManager() { return this; }
+protected:
+	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(unsigned char *colors, uint start, uint num);
+	virtual void grabPalette(byte *colors, uint start, uint num);
+
+public:
 	void restoreHardwarePalette();
 
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);

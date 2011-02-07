@@ -154,14 +154,14 @@ void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
 		_fadingStep = 1;
 		_fadingDirection = FADE_UP;
 		memset(_currentPalette, 0, 256 * 4);
-		_system->setPalette(_currentPalette, 0, 256);
+		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
 	} else
-		_system->setPalette(_targetPalette + 4 * start, start, length);
+		_system->getPaletteManager()->setPalette(_targetPalette + 4 * start, start, length);
 }
 
 void Screen::fullRefresh() {
 	_fullRefresh = true;
-	_system->setPalette(_targetPalette, 0, 256);
+	_system->getPaletteManager()->setPalette(_targetPalette, 0, 256);
 }
 
 bool Screen::stillFading() {
@@ -197,7 +197,7 @@ void Screen::updateScreen() {
 	}
 	if (_fadingStep) {
 		fadePalette();
-		_system->setPalette(_currentPalette, 0, 256);
+		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
 	}
 
 	uint16 scrlX = (uint16)Logic::_scriptVars[SCROLL_OFFSET_X];

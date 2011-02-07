@@ -320,7 +320,7 @@ int MidiDriver_MT32::open() {
 			171, 0, 0, 0	// fill
 		};
 
-		g_system->setPalette(dummy_palette, 0, 3);
+		g_system->getPaletteManager()->setPalette(dummy_palette, 0, 3);
 	}
 
 	_initialising = true;

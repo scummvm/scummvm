@@ -223,11 +223,11 @@ void ScummEngine::resetPalette() {
 				_townsClearLayerFlag = 0;
 #ifdef USE_RGB_COLOR
 			else if (_game.id == GID_LOOM)
-				towns_setTextPaletteFromPtr(tableTownsLoomPalette); 
+				towns_setTextPaletteFromPtr(tableTownsLoomPalette);
 			else if (_game.version == 3)
 				towns_setTextPaletteFromPtr(tableTownsV3Palette);
 #endif
-			
+
 			_townsScreen->toggleLayers(_townsActiveLayerFlags);
 #endif // DISABLE_TOWNS_DUAL_LAYER_MODE
 		}
@@ -1133,7 +1133,7 @@ void ScummEngine::updatePalette() {
 #endif
 #endif
 
-	_system->setPalette(palette_colors, first, num);	
+	_system->getPaletteManager()->setPalette(palette_colors, first, num);
 }
 
 } // End of namespace Scumm

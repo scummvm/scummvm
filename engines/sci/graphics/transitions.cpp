@@ -309,7 +309,7 @@ void GfxTransitions::fadeOut() {
 	//  several pictures (e.g. qfg3 demo/intro), so the fading looked weird
 	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 256 : 255;
 
-	g_system->grabPalette(oldPalette, 0, 256);
+	g_system->getPaletteManager()->grabPalette(oldPalette, 0, 256);
 
 	for (stepNr = 100; stepNr >= 0; stepNr -= 10) {
 		for (colorNr = 1; colorNr < tillColorNr; colorNr++){
@@ -317,7 +317,7 @@ void GfxTransitions::fadeOut() {
 			workPalette[colorNr * 4 + 1] = oldPalette[colorNr * 4 + 1] * stepNr / 100;
 			workPalette[colorNr * 4 + 2] = oldPalette[colorNr * 4 + 2] * stepNr / 100;
 		}
-		g_system->setPalette(workPalette + 4, 1, 254);
+		g_system->getPaletteManager()->setPalette(workPalette + 4, 1, 254);
 		g_sci->getEngineState()->wait(2);
 	}
 }

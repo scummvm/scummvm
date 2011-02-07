@@ -90,7 +90,7 @@ void MoviePlayer::play() {
 		uint8 palette[1024];
 		memset(palette, 0, sizeof(palette));
 		_vm->clearSurfaces();
-		_vm->_system->setPalette(palette, 0, 256);
+		_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
 	}
 
 	_vm->fillBackGroundFromBack();

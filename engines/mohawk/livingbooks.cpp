@@ -3018,7 +3018,7 @@ void LBPaletteItem::update() {
 
 			// TODO: actual fading-in
 			if (_visible && _globalVisible) {
-				_vm->_system->setPalette(_palette + _drawStart * 4, _drawStart, _drawCount);
+				_vm->_system->getPaletteManager()->setPalette(_palette + _drawStart * 4, _drawStart, _drawCount);
 				_vm->_needsRedraw = true;
 			}
 		}
@@ -3130,9 +3130,9 @@ void LBLiveTextItem::paletteUpdate(uint16 word, bool on) {
 	}
 
 	if (on) {
-		_vm->_system->setPalette(_highlightColor, _paletteIndex + word, 1);
+		_vm->_system->getPaletteManager()->setPalette(_highlightColor, _paletteIndex + word, 1);
 	} else {
-		_vm->_system->setPalette(_foregroundColor, _paletteIndex + word, 1);
+		_vm->_system->getPaletteManager()->setPalette(_foregroundColor, _paletteIndex + word, 1);
 	}
 }
 

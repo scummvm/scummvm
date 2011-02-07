@@ -216,7 +216,7 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
 		memset(&_currentPal[255 * 4], 0, 4);
 
-	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
+	_system->getPaletteManager()->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
 
 void Gfx::setPaletteColor(int n, int r, int g, int b) {
@@ -243,7 +243,7 @@ void Gfx::setPaletteColor(int n, int r, int g, int b) {
 	}
 
 	if (update)
-		_system->setPalette(_currentPal, n, 1);
+		_system->getPaletteManager()->setPalette(_currentPal, n, 1);
 }
 
 void Gfx::getCurrentPal(PalEntry *src_pal) {
@@ -325,7 +325,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
 		memset(&_currentPal[255 * 4], 0, 4);
 
-	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
+	_system->getPaletteManager()->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
 
 void Gfx::blackToPal(PalEntry *srcPal, double percent) {
@@ -392,7 +392,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
 		memset(&_currentPal[255 * 4], 0, 4);
 
-	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
+	_system->getPaletteManager()->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
 
 #ifdef ENABLE_IHNM
@@ -455,7 +455,7 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 	// Color 0 should always be black in IHNM
 	memset(&fadePal[0 * 4], 0, 4);
 
-	_system->setPalette(&fadePal[start * 4], start, numColors);
+	_system->getPaletteManager()->setPalette(&fadePal[start * 4], start, numColors);
 }
 
 #endif

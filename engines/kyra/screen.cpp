@@ -145,7 +145,7 @@ bool Screen::init() {
 			palette[i * 4 + 2] = ((i >> 0) & 1) * 0xFF;
 			palette[i * 4 + 3] = 0;
 
-			_system->setPalette(palette, 16, 8);
+			_system->getPaletteManager()->setPalette(palette, 16, 8);
 		}
 	}
 
@@ -181,7 +181,7 @@ bool Screen::enableScreenDebug(bool enable) {
 
 void Screen::setResolution() {
 	byte palette[4*256];
-	_system->grabPalette(palette, 0, 256);
+	_system->getPaletteManager()->grabPalette(palette, 0, 256);
 
 	int width = 320, height = 200;
 	bool defaultTo1xScaler = false;
@@ -203,7 +203,7 @@ void Screen::setResolution() {
 
 	initGraphics(width, height, defaultTo1xScaler);
 
-	_system->setPalette(palette, 0, 256);
+	_system->getPaletteManager()->setPalette(palette, 0, 256);
 }
 
 void Screen::updateScreen() {
@@ -711,7 +711,7 @@ void Screen::setScreenPalette(const Palette &pal) {
 	}
 
 	_paletteChanged = true;
-	_system->setPalette(screenPal, 0, pal.getNumColors());
+	_system->getPaletteManager()->setPalette(screenPal, 0, pal.getNumColors());
 }
 
 void Screen::enableInterfacePalette(bool e) {
@@ -747,7 +747,7 @@ void Screen::setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b) 
 	}
 
 	_paletteChanged = true;
-	_system->setPalette(screenPal, 32, pal.getNumColors());
+	_system->getPaletteManager()->setPalette(screenPal, 32, pal.getNumColors());
 }
 
 void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {

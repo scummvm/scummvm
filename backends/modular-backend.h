@@ -87,8 +87,7 @@ public:
 
 	virtual int16 getHeight();
 	virtual int16 getWidth();
-	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num);
+	virtual PaletteManager *getPaletteManager();
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();

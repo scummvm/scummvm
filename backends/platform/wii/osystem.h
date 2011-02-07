@@ -54,7 +54,7 @@ extern void wii_memstats(void);
 }
 #endif
 
-class OSystem_Wii : public BaseBackend {
+class OSystem_Wii : public BaseBackend, public PaletteManager {
 private:
 	s64 _startup_time;
 
@@ -164,8 +164,12 @@ public:
 							const Graphics::PixelFormat *format);
 	virtual int16 getWidth();
 	virtual int16 getHeight();
+
+	virtual PaletteManager *getPaletteManager() { return this; }
+protected:
 	virtual void setPalette(const byte *colors, uint start, uint num);
 	virtual void grabPalette(byte *colors, uint start, uint num);
+public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 	virtual void disableCursorPalette(bool disable);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y,
