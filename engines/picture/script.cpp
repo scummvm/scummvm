@@ -25,6 +25,8 @@
 
 // TODO: Clean up game variable handling and move it to PictureEngine
 
+#include "graphics/cursorman.h"
+
 #include "picture/picture.h"
 #include "picture/animation.h"
 #include "picture/menu.h"
@@ -610,7 +612,7 @@ void ScriptInterpreter::setGameVar(uint variable, int16 value) {
 	switch (variable) {
 		case 0:
 			_vm->_mouseDisabled = value;
-			_vm->_system->showMouse(value == 0);
+			CursorMan.showMouse(value == 0);
 			break;
 		case 3:
 			_vm->_mouseButton = value;
@@ -1064,7 +1066,7 @@ void ScriptInterpreter::sfRunOptionsScreen() {
 	_vm->_palette->setDeltaPalette(_vm->_palette->getMainPalette(), 7, 0, 31, 224);
 	_vm->_screen->finishTalkTextItems();
 	_vm->_screen->clearSprites();
-	_vm->_system->showMouse(true);
+	CursorMan.showMouse(true);
 	_vm->_menuSystem->run();
 	_vm->_keyState.reset();
 	_switchLocalDataNear = true;
