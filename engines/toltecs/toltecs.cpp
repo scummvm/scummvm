@@ -141,7 +141,7 @@ Common::Error ToltecsEngine::run() {
 
 	syncSoundSettings();
 
-	_system->showMouse(true);
+	CursorMan.showMouse(true);
 
 	setupSysStrings();
 
