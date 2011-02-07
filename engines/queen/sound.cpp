@@ -89,7 +89,7 @@ public:
 	bool endOfData() const {
 		return _stream->endOfData();
 	}
-	bool endOfStream() {
+	bool endOfStream() const {
 		return _stream->endOfStream();
 	}
 	int getRate() const {
