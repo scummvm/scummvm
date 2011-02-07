@@ -50,7 +50,7 @@ bool ToonstruckSmackerDecoder::loadFile(const Common::String &filename, int forc
 				delete _surface;
 			}
 			_surface = new Graphics::Surface();
-			_surface->create(640, 400, 1);		
+			_surface->create(640, 400, 1);
 			_header.flags = 4;
 		}
 
@@ -81,12 +81,15 @@ void Movie::init() const {
 
 void Movie::play(Common::String video, int32 flags) {
 	debugC(1, kDebugMovie, "play(%s, %d)", video.c_str(), flags);
+	bool isFirstIntroVideo = false;
+	if (video == "209_1M.SMK")
+		isFirstIntroVideo = true;
 
 	_playing = true;
 	if (flags & 1)
 		_vm->getAudioManager()->setMusicVolume(0);
 	_decoder->loadFile(video.c_str(), flags);
-	playVideo();
+	playVideo(isFirstIntroVideo);
 	_vm->flushPalette(false);
 	if (flags & 1)
 		_vm->getAudioManager()->setMusicVolume(_vm->getAudioManager()->isMusicMuted() ? 0 : 255);
@@ -94,8 +97,8 @@ void Movie::play(Common::String video, int32 flags) {
 	_playing = false;
 }
 
-bool Movie::playVideo() {
-	debugC(1, kDebugMovie, "playVideo()");
+bool Movie::playVideo(bool isFirstIntroVideo) {
+	debugC(1, kDebugMovie, "playVideo(isFirstIntroVideo: %d)", isFirstIntroVideo);
 
 	while (!_vm->shouldQuit() && !_decoder->endOfVideo()) {
 		if (_decoder->needsUpdate()) {
@@ -111,6 +114,18 @@ bool Movie::playVideo() {
 					_vm->getSystem()->unlockScreen();
 				} else {
 					_vm->getSystem()->copyRectToScreen((byte *)frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
+
+					// WORKAROUND: There is an encoding glitch in the first intro video. This hides this using the adjacent pixels.
+					if (isFirstIntroVideo) {
+						int32 currentFrame = _decoder->getCurFrame();
+						if (currentFrame >= 956 && currentFrame <= 1038) {
+							debugC(1, kDebugMovie, "Triggered workaround for glitch in first intro video...");
+							_vm->getSystem()->copyRectToScreen((const byte *)frame->getBasePtr(frame->w-188, 123), frame->pitch, frame->w-188, 124, 188, 1);
+							_vm->getSystem()->copyRectToScreen((const byte *)frame->getBasePtr(frame->w-188, 126), frame->pitch, frame->w-188, 125, 188, 1);
+							_vm->getSystem()->copyRectToScreen((const byte *)frame->getBasePtr(0, 125), frame->pitch, 0, 126, 64, 1);
+							_vm->getSystem()->copyRectToScreen((const byte *)frame->getBasePtr(0, 128), frame->pitch, 0, 127, 64, 1);
+						}
+					}
 				}
 			}
 			_decoder->setSystemPalette();
