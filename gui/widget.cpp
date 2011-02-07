@@ -215,7 +215,7 @@ uint8 Widget::parseHotkey(const Common::String &label) {
 Common::String Widget::cleanupHotkey(const Common::String &label) {
 	Common::String res;
 
-	for (uint i = 0; i < label.size() ; i++)
+	for (uint i = 0; i < label.size(); i++)
 		if (label[i] != '~')
 			res = res + label[i];
 

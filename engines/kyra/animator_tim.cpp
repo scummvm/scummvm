@@ -208,7 +208,7 @@ void TimAnimator::playPart(int animIndex, int firstFrame, int lastFrame, int del
 	Animation *anim = &_animations[animIndex];
 
 	int step = (lastFrame >= firstFrame) ? 1 : -1;
-	for (int i = firstFrame; i != (lastFrame + step) ; i += step) {
+	for (int i = firstFrame; i != (lastFrame + step); i += step) {
 		uint32 next = _system->getMillis() + delay * _vm->_tickLength;
 		if (anim->wsaCopyParams & 0x4000) {
 			_screen->copyRegion(112, 0, 112, 0, 176, 120, 6, 2);

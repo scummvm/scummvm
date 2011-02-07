@@ -1323,7 +1323,8 @@ void addSeqListElement(uint16 objIdx, int16 param1, int16 param2, int16 frame, i
 	Common::List<SeqListElement>::iterator it;
 	SeqListElement tmp;
 
-	for (it = g_cine->_seqList.begin(); it != g_cine->_seqList.end() && it->varE < param7; ++it) ;
+	for (it = g_cine->_seqList.begin(); it != g_cine->_seqList.end() && it->varE < param7; ++it)
+		;
 
 	tmp.objIdx = objIdx;
 	tmp.var4 = param1;

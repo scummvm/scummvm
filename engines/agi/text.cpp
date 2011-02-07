@@ -560,7 +560,7 @@ char *AgiEngine::agiSprintf(const char *s) {
 					// remove all leading 0
 					// don't remove the 3rd zero if 000
 					for (i = 0; z[i] == '0' && i < 14; i++)
-					    ;
+						;
 				} else {
 					i = 15 - i;
 				}

@@ -1400,7 +1400,7 @@ int LoLEngine::olol_characterSkillTest(EMCState *script){
 	int m = 0;
 	int c = 0;
 
-	for	(int i = 0; i < n ; i++) {
+	for	(int i = 0; i < n; i++) {
 		int v = _characters[i].skillModifiers[skill] + _characters[i].skillLevels[skill] + 25;
 		if (v > m) {
 			m = v;

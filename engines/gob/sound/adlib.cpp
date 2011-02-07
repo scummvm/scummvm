@@ -736,7 +736,7 @@ void MDYPlayer::setVoices() {
 	_tbrStart = READ_LE_UINT16(timbrePtr);
 
 	timbrePtr += 2;
-	for (int i = 0; i < _tbrCount ; i++)
+	for (int i = 0; i < _tbrCount; i++)
 		setVoice(i, i, true);
 }
 

@@ -233,7 +233,8 @@ bool LureEngine::loadGame(uint8 slotNumber) {
 	}
 
 	// Read in and discard the savegame caption
-	while (f->readByte() != 0) ;
+	while (f->readByte() != 0)
+		;
 
 	// Load in the data
 	Resources::getReference().loadFromStream(f);

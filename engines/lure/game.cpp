@@ -228,7 +228,8 @@ void Game::execute() {
 					case Common::KEYCODE_KP_MINUS:
 						if (_debugFlag) {
 							if (roomNum == 1) roomNum = 55;
-							while (res.getRoom(--roomNum) == NULL) ;
+							while (res.getRoom(--roomNum) == NULL)
+								;
 							room.setRoomNumber(roomNum);
 						}
 						break;

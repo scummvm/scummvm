@@ -577,8 +577,9 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 			case kStatusDialogue:
 				handleDialogueLoop();
 				break;
-			case kStatusGate: ;
+			case kStatusGate:
 				// cannot happen when isCursonOn; added for completeness
+				break;
 			}
 		}
 

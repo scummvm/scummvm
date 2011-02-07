@@ -277,7 +277,8 @@ int TeenAgentEngine::skipEvents() const {
 		case Common::EVENT_KEYDOWN:
 		if (event.kbd.ascii)
 			return 1;
-		default: ;
+		default:
+			break;
 		}
 	}
 	return 0;

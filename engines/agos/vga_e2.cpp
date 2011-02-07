@@ -360,7 +360,7 @@ void AGOSEngine::fullFade() {
 	for (c = 64; c != 0; c --) {
 		srcPal = _curVgaFile2 + 32;
 		dstPal = _currentPalette;
-		for (p = 768; p !=0 ; p -= 3) {
+		for (p = 768; p !=0; p -= 3) {
 			uint8 r = srcPal[0] * 4;
 			if (dstPal[0] != r)
 				dstPal[0] += 4;

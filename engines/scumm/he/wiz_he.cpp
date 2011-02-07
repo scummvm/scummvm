@@ -2342,7 +2342,7 @@ void Wiz::remapWizImagePal(const WizParameters *params) {
 	const uint8 *index = params->remapIndex;
 	uint8 *iwiz = _vm->getResourceAddress(rtImage, params->img.resNum);
 	assert(iwiz);
-	uint8 *rmap = _vm->findWrappedBlock(MKID_BE('RMAP'), iwiz, st, 0) ;
+	uint8 *rmap = _vm->findWrappedBlock(MKID_BE('RMAP'), iwiz, st, 0);
 	assert(rmap);
 	WRITE_BE_UINT32(rmap, 0x01234567);
 	while (num--) {

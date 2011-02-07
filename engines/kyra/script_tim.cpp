@@ -906,7 +906,7 @@ TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, 
 	#undef COMMAND_UNIMPL
 	#undef COMMAND
 
-	_commands = commandProcs ;
+	_commands = commandProcs;
 	_commandsSize = ARRAYSIZE(commandProcs);
 
 	_screen = engine->_screen;

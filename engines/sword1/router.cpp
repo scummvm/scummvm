@@ -783,7 +783,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 				stepCount += 1;
 				step += 1;
 				module += 1;
-			} while ( module < moduleEnd) ;
+			} while ( module < moduleEnd);
 			stepX = _modX[_modularPath[p].dir];
 			stepY = _modY[_modularPath[p].dir];
 			errorX = _modularPath[p].x -	moduleX;
@@ -1238,7 +1238,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 					stepCount += 1;
 					module += 1;
 					step += 1;
-				} while ( module < moduleEnd) ;
+				} while ( module < moduleEnd);
 				errorX = _modularPath[p].x -	moduleX;
 				errorX = errorX * _modX[_modularPath[p].dir];
 				errorY = _modularPath[p].y -	moduleY;
@@ -1951,8 +1951,8 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 	//ResClose(megaObject->o_mega_resource);			// mouse wiggle
 	_resMan->resClose(megaObject->o_mega_resource);
 
-	_diagonalx =  _modX[3] ;//36
-	_diagonaly =  _modY[3] ;//8
+	_diagonalx =  _modX[3]; //36
+	_diagonaly =  _modY[3]; //8
 
 // mega data ready
 

@@ -1292,7 +1292,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 			obSpeech.setCommand(0);
 			obSpeech.setWaitState(1);
-			return IR_REPEAT ;
+			return IR_REPEAT;
 		case INS_sort:
 			fnSortSprite(params);		// ob_graphic
 

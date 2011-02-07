@@ -313,7 +313,7 @@ void Mouse::animate() {
 
 void Mouse::fnNoHuman() {
 	if (Logic::_scriptVars[MOUSE_STATUS] & 2) // locked, can't do anything
-		return ;
+		return;
 	Logic::_scriptVars[MOUSE_STATUS] = 0; // off & unlocked
 	setLuggage(0, 0);
 	setPointer(0, 0);
@@ -321,7 +321,7 @@ void Mouse::fnNoHuman() {
 
 void Mouse::fnAddHuman() {
 	if (Logic::_scriptVars[MOUSE_STATUS] & 2) // locked, can't do anything
-		return ;
+		return;
 	Logic::_scriptVars[MOUSE_STATUS] = 1;
 	Logic::_scriptVars[SPECIAL_ITEM] = 0;
 	_getOff = SCR_std_off;

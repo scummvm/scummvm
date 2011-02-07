@@ -778,7 +778,7 @@ void AGOSEngine::drawVertImage(VC10_state *state) {
 }
 
 void AGOSEngine::drawVertImageUncompressed(VC10_state *state) {
-	assert ((state->flags & kDFCompressed) == 0) ;
+	assert((state->flags & kDFCompressed) == 0);
 
 	const byte *src;
 	byte *dst;
@@ -804,7 +804,7 @@ void AGOSEngine::drawVertImageUncompressed(VC10_state *state) {
 }
 
 void AGOSEngine::drawVertImageCompressed(VC10_state *state) {
-	assert (state->flags & kDFCompressed) ;
+	assert(state->flags & kDFCompressed);
 	uint w, h;
 
 	state->x_skip *= 4;				/* reached */

@@ -304,7 +304,7 @@ void ScummEngine_v4::updateIQPoints() {
 	// merge episode and series IQ strings and calculate series IQ
 	seriesIQ = 0;
 	// iterate over puzzles
-	for (int i = 0; i < NUM_PUZZLES ; ++i) {
+	for (int i = 0; i < NUM_PUZZLES; ++i) {
 		byte puzzleIQ = seriesIQString[i];
 		// if puzzle is solved copy points to episode string
 		if (puzzleIQ > 0)

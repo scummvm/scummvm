@@ -179,8 +179,8 @@ public:
 	Common::String getSavegameName(int nr);
 	bool loadGame(int32 slot);
 	bool saveGame(int32 slot, Common::String saveGameDesc);
-	void fadeIn(int32 numFrames) ;
-	void fadeOut(int32 numFrames) ;
+	void fadeIn(int32 numFrames);
+	void fadeOut(int32 numFrames);
 	void initCharacter(int32 characterId, int32 animScriptId, int32 animToPlayId, int32 sceneAnimationId);
 	int32 handleInventoryOnFlux(int32 itemId);
 	int32 handleInventoryOnInventory(int32 itemDest, int32 itemSrc);

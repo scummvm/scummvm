@@ -903,7 +903,7 @@ int HugoEngine::deltaX(const int x1, const int x2, const int vx, int y) const {
 	debugC(3, kDebugEngine, "deltaX(%d, %d, %d, %d)", x1, x2, vx, y);
 
 	if (vx == 0)
-		return 0 ;                                  // Object stationary
+		return 0;                                  // Object stationary
 
 	y *= kCompLineSize;                             // Offset into boundary file
 	if (vx > 0) {

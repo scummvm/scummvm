@@ -1315,7 +1315,7 @@ int KyraEngine_MR::loadLanguageFile(const char *file, uint8 *&buffer) {
 	Common::strlcpy(nBuf, file, sizeof(nBuf));
 	buffer = _res->fileData(appendLanguage(nBuf, _lang, sizeof(nBuf)), &size);
 
-	return buffer ? size : 0 ;
+	return buffer ? size : 0;
 }
 
 uint8 *KyraEngine_MR::getTableEntry(uint8 *buffer, int id) {

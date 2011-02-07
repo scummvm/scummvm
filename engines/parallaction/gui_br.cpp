@@ -250,7 +250,8 @@ public:
 
 		bool complete[3];
 		_vm->_saveLoad->getGamePartProgress(complete, 3);
-		for (i = 0; i < 3 && complete[i]; i++, _availItems++) ;
+		for (i = 0; i < 3 && complete[i]; i++, _availItems++)
+			;
 
 		if (_vm->getPlatform() == Common::kPlatformAmiga) {
 			_menuStrings = _menuStringsAmiga;

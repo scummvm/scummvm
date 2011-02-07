@@ -241,7 +241,7 @@ const char *Win32ResExtractor::res_type_string_to_id(const char *type) {
 	if (type == NULL)
 		return NULL;
 
-	for (c = 0 ; c < (int)RES_TYPE_COUNT ; c++) {
+	for (c = 0; c < (int)RES_TYPE_COUNT; c++) {
 		if (res_types[c] != NULL && !scumm_stricmp(type, res_types[c]))
 			return res_type_ids[c];
 	}
@@ -355,7 +355,7 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 	/* calculate total size of output file */
 	RETURN_IF_BAD_POINTER(NULL, icondir->count);
 	skipped = 0;
-	for (c = 0 ; c < FROM_LE_16(icondir->count) ; c++) {
+	for (c = 0; c < FROM_LE_16(icondir->count); c++) {
 		int level;
 		int iconsize;
 		char name[14];
@@ -411,7 +411,7 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 
 	/* transfer each cursor/icon: Win32CursorIconDirEntry and data */
 	skipped = 0;
-	for (c = 0 ; c < FROM_LE_16(icondir->count) ; c++) {
+	for (c = 0; c < FROM_LE_16(icondir->count); c++) {
 		int level;
 		char name[14];
 		WinResource *fwr;
@@ -585,7 +585,7 @@ bool Win32ResExtractor::decode_pe_resource_id(WinLibrary *fi, WinResource *wr, u
 		RETURN_IF_BAD_OFFSET(false, &mem[1], sizeof(uint16) * len);
 
 		len = MIN(FROM_LE_16(mem[0]), (uint16)WINRES_ID_MAXLEN);
-		for (c = 0 ; c < len ; c++)
+		for (c = 0; c < len; c++)
 			wr->id[c] = FROM_LE_16(mem[c+1]) & 0x00FF;
 		wr->id[len] = '\0';
 		wr->numeric_id = false;
@@ -629,7 +629,7 @@ Win32ResExtractor::WinResource *Win32ResExtractor::list_pe_resources(WinLibrary 
 	wr = (WinResource *)malloc(sizeof(WinResource) * rescnt);
 
 	/* fill in the WinResource's */
-	for (c = 0 ; c < rescnt ; c++) {
+	for (c = 0; c < rescnt; c++) {
 		RETURN_IF_BAD_POINTER(NULL, dirent[c]);
 		wr[c].this_ = pe_res;
 		wr[c].level = level;
@@ -708,7 +708,7 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 
 		/* we don't need to do OFFSET checking for the sections.
 		 * calc_vma_size has already done that */
-		for (d = pe_header->file_header.number_of_sections - 1; d >= 0 ; d--) {
+		for (d = pe_header->file_header.number_of_sections - 1; d >= 0; d--) {
 			Win32ImageSectionHeader *pe_sec = PE_SECTIONS(fi->memory) + d;
 
 			if (pe_sec->characteristics & IMAGE_SCN_CNT_UNINITIALIZED_DATA)
@@ -765,7 +765,7 @@ int Win32ResExtractor::calc_vma_size(WinLibrary *fi) {
 
 	seg = PE_SECTIONS(fi->memory);
 	RETURN_IF_BAD_POINTER(-1, *seg);
-	for (c = 0 ; c < segcount ; c++) {
+	for (c = 0; c < segcount; c++) {
 		RETURN_IF_BAD_POINTER(0, *seg);
 		fix_win32_image_section_header(seg);
 
@@ -786,7 +786,7 @@ Win32ResExtractor::WinResource *Win32ResExtractor::find_with_resource_array(WinL
 	if (wr == NULL)
 		return NULL;
 
-	for (c = 0 ; c < rescnt ; c++) {
+	for (c = 0; c < rescnt; c++) {
 		if (compare_resource_id(&wr[c], id)) {
 			/* duplicate WinResource and return it */
 			return_wr = (WinResource *)malloc(sizeof(WinResource));

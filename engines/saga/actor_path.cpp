@@ -464,7 +464,7 @@ void Actor::removeNodes() {
 	// directly reached from the first node. If we find any, skip directly
 	// from the first node to that node (by marking all nodes in between as
 	// empty).
-	for (i = _pathNodeList.size() - 2; i > 1 ; i--) {
+	for (i = _pathNodeList.size() - 2; i > 1; i--) {
 		if (_pathNodeList[i].point.x == PATH_NODE_EMPTY) {
 			continue;
 		}

@@ -130,7 +130,7 @@ void Sound::checkSpeechFileEndianness() {
 			else
 				size /= 2;
 			int16 prev_be_value = (int16)SWAP_BYTES_16(*((uint16*)(data)));
-			for (uint32 i = 1 ; i < size ; ++i) {
+			for (uint32 i = 1; i < size; ++i) {
 				le_diff_sum += fabs((double)(data[i] - data[i-1]));
 				int16 be_value = (int16)SWAP_BYTES_16(*((uint16*)(data + i)));
 				be_diff_sum += fabs((double)(be_value - prev_be_value));
@@ -209,7 +209,7 @@ void Sound::fnStopFx(int32 fxNo) {
 			if (cnt != _endOfQueue-1)
 				_fxQueue[cnt] = _fxQueue[_endOfQueue-1];
 			_endOfQueue--;
-			return ;
+			return;
 		}
 	debug(8, "fnStopFx: id not found in queue");
 }

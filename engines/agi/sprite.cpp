@@ -103,7 +103,7 @@ void SpritesMgr::blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, 
 		uint8 *p1;
 		// Yes, get effective priority going down
 		for (p1 = p; p1 < end && (epr = *p1 & 0xf0) < 0x30; p1 += width)
-		    ;
+			;
 		if (p1 >= end)
 			epr = 0x40;
 	} else {

@@ -785,7 +785,7 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 	if (size > pos && ((0x100 * *(data + pos) + *(data + pos + 1)) == 0xdcba)) {
 		debugC(kDebugLevelSound, "\n[MT32-to-GM] Mapping percussion..");
 
-		for (i = 0; i < 64 ; i++) {
+		for (i = 0; i < 64; i++) {
 			number = *(data + pos + 4 * i + 2);
 			byte ins = i + 24;
 

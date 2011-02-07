@@ -760,7 +760,7 @@ void Screen::drawPsxFullShrinkedSprite(uint8 *sprData, uint16 sprX, uint16 sprY,
 	uint8 *dest = _screenBuf + (sprY * _scrnSizeX) + sprX;
 
 	for (uint16 cnty = 0; cnty < sprHeight; cnty++) {
-		for (uint16 cntx = 0; cntx < sprWidth ; cntx++)
+		for (uint16 cntx = 0; cntx < sprWidth; cntx++)
 			if (sprData[cntx]) {
 				dest[cntx * 3] = sprData[cntx]; //In these sprites we need to double vertical lines too...
 				dest[cntx * 3 + 1] = sprData[cntx];

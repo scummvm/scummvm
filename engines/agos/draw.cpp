@@ -879,7 +879,7 @@ void AGOSEngine::slowFadeIn() {
 		src = _displayPalette;
 		dst = _currentPalette;
 
-		for (p = _fastFadeInFlag; p !=0 ; p -= 3) {
+		for (p = _fastFadeInFlag; p !=0; p -= 3) {
 			if (src[0] >= c)
 				dst[0] += 4;
 			if (src[1] >= c)

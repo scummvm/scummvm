@@ -490,7 +490,7 @@ void MainMenu::updateAnimation() {
 			_nextUpdate = now + _anim.delay * _vm->tickLength();
 
 			_anim.anim->displayFrame(_animIntern.curFrame, 0, 0, 0, 0, 0, 0);
-			_animIntern.curFrame += _animIntern.direction ;
+			_animIntern.curFrame += _animIntern.direction;
 			if (_animIntern.curFrame < _anim.startFrame) {
 				_animIntern.curFrame = _anim.startFrame;
 				_animIntern.direction = 1;

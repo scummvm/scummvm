@@ -191,7 +191,7 @@ void Puzzle::showPieces() {
 	SpriteList *spriteList;
 	_vm->_actor->getSpriteParams(puzzle, frameNumber, spriteList);
 
-	for (int j = PUZZLE_PIECES - 1 ; j >= 0; j--) {
+	for (int j = PUZZLE_PIECES - 1; j >= 0; j--) {
 		int num = _piecePriority[j];
 
 		if (_puzzlePiece != num) {
@@ -350,9 +350,9 @@ void Puzzle::dropPiece(Point mousePt) {
 		spI = &((*spriteList)[_puzzlePiece]);
 
 		if (newx + spI->width > boxw)
-			newx = boxw - spI->width ;
+			newx = boxw - spI->width;
 		if (newy + spI->height > boxh)
-			newy = boxh - spI->height ;
+			newy = boxh - spI->height;
 
 		int x1 = ((newx - PUZZLE_X_OFFSET) & ~7) + PUZZLE_X_OFFSET;
 		int y1 = ((newy - PUZZLE_Y_OFFSET) & ~7) + PUZZLE_Y_OFFSET;

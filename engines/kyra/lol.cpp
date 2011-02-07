@@ -3687,7 +3687,7 @@ void LoLEngine::applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker,
 		if ((flags & 0x3f) == 2 || skill)
 			return;
 
-		for (int i = 0; i < 3 ; i++) {
+		for (int i = 0; i < 3; i++) {
 			itm = _characters[attacker].items[i];
 			if (!itm)
 				continue;

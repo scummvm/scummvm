@@ -219,8 +219,8 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 				break;
 			default:
 				warning("oPlaytoons_spriteOperation: operation DRAW_DRAWLINE, draw %d lines", (_pattern & 0xFF) * (_pattern & 0xFF));
-				for (int16 i = 0; i <= _pattern ; i++)
-					for (int16 j = 0; j <= _pattern ; j++)
+				for (int16 i = 0; i <= _pattern; i++)
+					for (int16 j = 0; j <= _pattern; j++)
 						_spritesArray[_destSurface]->drawLine(
 								_destSpriteX  - (_pattern / 2) + i,
 								_destSpriteY  - (_pattern / 2) + j,

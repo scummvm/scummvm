@@ -425,7 +425,7 @@ bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 	DebugPrintf("|num |  x |  y |width|height|state|fl|   cls   |\n");
 	DebugPrintf("+----+----+----+-----+------+-----+--+---------+\n");
 
-	for (i = 1; i < _vm->_numLocalObjects ; i++) {
+	for (i = 1; i < _vm->_numLocalObjects; i++) {
 		o = &(_vm->_objs[i]);
 		if (o->obj_nr == 0)
 			continue;

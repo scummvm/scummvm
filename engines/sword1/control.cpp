@@ -122,7 +122,7 @@ ControlButton::ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, uint8 f
 	_width = (_width > SCREEN_WIDTH) ? SCREEN_WIDTH : _width;
 	_height = _resMan->getUint16(tmp->height);
 	if ((x == 0) && (y == 0)) { // center the frame (used for panels);
-		_x = (((640 - _width) / 2) < 0)? 0 : ((640 - _width) / 2) ;
+		_x = (((640 - _width) / 2) < 0)? 0 : ((640 - _width) / 2);
 		_y = (((480 - _height) / 2) < 0)? 0 : ((480 - _height) / 2);
 	}
 	_dstBuf = screenBuf + _y * SCREEN_WIDTH + _x;

@@ -3122,7 +3122,7 @@ StripTable *GdiV2::generateStripTable(const byte *src, int width, int height, St
 
 	// Decode the graphics strips, and memorize the run/color values
 	// as well as the byte offset.
-	for (x = 0 ; x < width; x++) {
+	for (x = 0; x < width; x++) {
 
 		if ((x % 8) == 0) {
 			assert(x / 8 < 160);

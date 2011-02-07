@@ -381,7 +381,7 @@ int AGOSEngine::wordMatch(Item *item, int16 a, int16 n) {
 	if (a == -1 && n == item->noun)
 		return 1;
 	if (a == item->adjective && n == item->noun)
-		return 1 ;
+		return 1;
 
 	return 0;
 }

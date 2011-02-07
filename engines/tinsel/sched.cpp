@@ -288,7 +288,8 @@ void Scheduler::giveWay(PPROCESS pReSchedProc) {
 	PPROCESS pEnd;
 
 	// Find the last process in the list.
-	for (pEnd = pCurrent; pEnd->pNext != NULL; pEnd = pEnd->pNext) ;
+	for (pEnd = pCurrent; pEnd->pNext != NULL; pEnd = pEnd->pNext)
+		;
 	assert(pEnd->pNext == NULL);
 
 

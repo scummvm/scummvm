@@ -141,7 +141,8 @@ void Mouse::waitForRelease() {
 	LureEngine &engine = LureEngine::getReference();
 
 	do {
-		while (e.pollEvent() && !engine.shouldQuit()) ;
+		while (e.pollEvent() && !engine.shouldQuit())
+			;
 		g_system->delayMillis(20);
 	} while (!engine.shouldQuit() && (lButton() || rButton() || mButton()));
 }

@@ -2705,7 +2705,7 @@ void Interface::mapPanelShow() {
 
 	_vm->_gfx->getCurrentPal(_mapSavedPal);
 
-	for (i = 0; i < 6 ; i++) {
+	for (i = 0; i < 6; i++) {
 		_vm->_gfx->palToBlack(_mapSavedPal, 0.2 * i);
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);
@@ -2728,7 +2728,7 @@ void Interface::mapPanelShow() {
 	_vm->_gfx->drawRegion(rect, image.getBuffer());
 
 	// Evil Evil
-	for (i = 0; i < 6 ; i++) {
+	for (i = 0; i < 6; i++) {
 		_vm->_gfx->blackToPal(cPal, 0.2 * i);
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);
@@ -2746,7 +2746,7 @@ void Interface::mapPanelClean() {
 
 	_vm->_gfx->getCurrentPal(pal);
 
-	for (i = 0; i < 6 ; i++) {
+	for (i = 0; i < 6; i++) {
 		_vm->_gfx->palToBlack(pal, 0.2 * i);
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);
@@ -2758,7 +2758,7 @@ void Interface::mapPanelClean() {
 	_vm->_gfx->showCursor(true);
 	_vm->_render->drawScene();
 
-	for (i = 0; i < 6 ; i++) {
+	for (i = 0; i < 6; i++) {
 		_vm->_gfx->blackToPal(_mapSavedPal, 0.2 * i);
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);

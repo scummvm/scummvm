@@ -306,7 +306,7 @@ void Music::startMusic(int32 tuneId, int32 loopFlag) {
 		/* The handle will load the music file now. It can take a while, so unlock
 		   the mutex before, to have the soundthread playing normally.
 		   As the corresponding _converter is NULL, the handle will be ignored by the playing thread */
-		if (SwordEngine::isPsx()) { ;
+		if (SwordEngine::isPsx()) {
 			if (_handles[newStream].playPSX(tuneId, loopFlag != 0)) {
 				_mutex.lock();
 				_converter[newStream] = Audio::makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);

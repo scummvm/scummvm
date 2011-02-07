@@ -299,7 +299,7 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 	bool paletteChanged = false;
 
 	// colors 0 (black) and 255 (white) are not affected by merging
-	for (i = 1 ; i < 255; i++) {
+	for (i = 1; i < 255; i++) {
 		if (!newPalette->colors[i].used)// color is not used - so skip it
 			continue;
 		// forced palette merging or dest color is not used yet

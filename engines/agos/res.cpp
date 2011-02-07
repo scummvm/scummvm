@@ -716,7 +716,7 @@ static void transferLoop(uint8 *dataOut, int &outIndex, uint32 destVal, int max)
 	assert(outIndex > max - 1);
 	byte *pDest = dataOut + outIndex;
 
-	 for (int i = 0; (i <= max) && (outIndex > 0) ; ++i) {
+	 for (int i = 0; (i <= max) && (outIndex > 0); ++i) {
 		pDest = dataOut + --outIndex;
 		*pDest = pDest[destVal];
 	 }

@@ -631,7 +631,7 @@ void DimPartPalette(SCNHANDLE hDimPal, int startColour, int length, int brightne
 	if (startColour + length > pPalQ->numColours)
 		error("DimPartPalette(): colour overrun");
 
-	for (iColour = startColour ; iColour < startColour + length; iColour++) {
+	for (iColour = startColour; iColour < startColour + length; iColour++) {
 		pPalQ->palRGB[iColour] = DimColour(pDimPal->palRGB[iColour], brightness);
 	}
 

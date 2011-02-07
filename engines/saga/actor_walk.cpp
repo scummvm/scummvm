@@ -992,7 +992,7 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 						} else if (pointFrom.y > anotherActorScreenPosition.y) {
 							testBox.bottom = pointFrom.y - 1;
 						} else {
-							testBox.top = pointFrom.y + 1 ;
+							testBox.top = pointFrom.y + 1;
 						}
 					}
 
