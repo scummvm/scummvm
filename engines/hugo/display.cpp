@@ -281,7 +281,7 @@ int16 Screen::mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 ble
 		rect_t *bp = blist;
 		for (int16 b = 0; b < blen; b++, bp++) {
 			if (bp->dx)                             // blist entry used
-				if (isOverlaping(list, bp))
+				if (isOverlapping(list, bp))
 					coalesce[c++] = b;
 		}
 
@@ -623,9 +623,9 @@ bool Screen::isInY(const int16 y, const rect_t *rect) const {
 }
 
 /**
-* Check if two rectangles are over lapping
+* Check if two rectangles are overlapping
 */
-bool Screen::isOverlaping(const rect_t *rectA, const rect_t *rectB) const {
+bool Screen::isOverlapping(const rect_t *rectA, const rect_t *rectB) const {
 	return (isInX(rectA->x, rectB) || isInX(rectA->x + rectA->dx, rectB) || isInX(rectB->x, rectA) || isInX(rectB->x + rectB->dx, rectA)) && 
 		   (isInY(rectA->y, rectB) || isInY(rectA->y + rectA->dy, rectB) || isInY(rectB->y, rectA) || isInY(rectB->y + rectB->dy, rectA));
 }

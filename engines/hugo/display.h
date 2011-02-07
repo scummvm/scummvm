@@ -148,7 +148,7 @@ protected:
 
 	inline bool isInX(const int16 x, const rect_t *rect) const;
 	inline bool isInY(const int16 y, const rect_t *rect) const;
-	inline bool isOverlaping(const rect_t *rectA, const rect_t *rectB) const;
+	inline bool isOverlapping(const rect_t *rectA, const rect_t *rectB) const;
 
 	bool fontLoadedFl[kNumFonts];
 
