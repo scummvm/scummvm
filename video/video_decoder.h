@@ -40,7 +40,7 @@ namespace Common {
 namespace Video {
 
 /**
- * Implementation of a generic video decoder
+ * Generic interface for video decoder classes.
  */
 class VideoDecoder {
 public:
@@ -48,105 +48,124 @@ public:
 	virtual ~VideoDecoder() {}
 
 	/**
-	 * Returns the width of the video
-	 * @return the width of the video
+	 * Load a video from a file with the given name.
+	 *
+	 * A default implementation using loadStream is provided.
+	 *
+	 * @param filename	the filename to load
+	 * @return whether loading the file succeeded
+	 */
+	virtual bool loadFile(const Common::String &filename);
+
+	/**
+	 * Load a video from a generic read stream. The ownership of the
+	 * stream object transfers to this VideoDecoder instance, which is
+	 * hence also responsible for eventually deleting it.
+	 * @param stream  the stream to load
+	 * @return whether loading the stream succeeded
+	 */
+	virtual bool loadStream(Common::SeekableReadStream *stream) = 0;
+
+	/**
+	 * Close the active video stream and free any associated resources.
+	 */
+	virtual void close() = 0;
+
+	/**
+	 * Returns if a video stream is currently loaded or not.
+	 */
+	virtual bool isVideoLoaded() const = 0;
+
+
+
+	/**
+	 * Returns the width of the video's frames.
+	 * @return the width of the video's frames
 	 */
 	virtual uint16 getWidth() const = 0;
 
 	/**
-	 * Returns the height of the video
-	 * @return the height of the video
+	 * Returns the height of the video's frames.
+	 * @return the height of the video's frames
 	 */
 	virtual uint16 getHeight() const = 0;
 
 	/**
-	 * Returns the current frame number of the video
+	 * Get the pixel format of the currently loaded video.
+	 */
+	virtual Graphics::PixelFormat getPixelFormat() const = 0;
+
+	/**
+	 * Get the palette for the video in RGBA format (if 8bpp or less).
+	 */
+	virtual const byte *getPalette() { return 0; }
+
+	/**
+	 * Returns if the palette is dirty or not.
+	 */
+	virtual bool hasDirtyPalette() const { return false; }
+
+	/**
+	 * Set the current palette to the system palette.
+	 */
+	void setSystemPalette();
+
+	/**
+	 * Returns the current frame number of the video.
 	 * @return the last frame decoded by the video
 	 */
 	virtual int32 getCurFrame() const { return _curFrame; }
 
 	/**
-	 * Returns the amount of frames in the video
-	 * @return the amount of frames in the video
+	 * Returns the number of frames in the video.
+	 * @return the number of frames in the video
 	 */
 	virtual uint32 getFrameCount() const = 0;
 
 	/**
-	 * Returns the time (in ms) that the video has been running
+	 * Returns the time (in ms) that the video has been running.
+	 * This is based on the "wall clock" time as determined by
+	 * OSystem::getMillis, and takes pausing the video into account.
+	 *
+	 * As such, it can differ from what multiplying getCurFrame() by
+	 * some constant would yield, e.g. for a video with non-constant
+	 * frame rate.
 	 */
 	virtual uint32 getElapsedTime() const;
 
 	/**
-	 * Returns whether a frame should be decoded or not
-	 * @return whether a frame should be decoded or not
+	 * Return the time (in ms) until the next frame should be displayed.
+	 */
+	virtual uint32 getTimeToNextFrame() const = 0;
+
+	/**
+	 * Check whether a new frame should be decoded, i.e. because enough
+	 * time has elapsed since the last frame was decoded.
+	 * @return whether a new frame should be decoded or not
 	 */
 	virtual bool needsUpdate() const;
 
 	/**
-	 * Load a video file
-	 * @param filename	the filename to load
-	 */
-	virtual bool loadFile(const Common::String &filename);
-
-	/**
-	 * Load a video file
-	 * @param stream  the stream to load
-	 */
-	virtual bool loadStream(Common::SeekableReadStream *stream) = 0;
-
-	/**
-	 * Close a video file
-	 */
-	virtual void close() = 0;
-
-	/**
-	 * Returns if a video file is loaded or not
-	 */
-	virtual bool isVideoLoaded() const = 0;
-
-	/**
-	 * Decode the next frame and return the frame's surface
-	 * @note the return surface should *not* be freed
+	 * Decode the next frame into a surface and return the latter.
+	 * @return a surface containing the decoded frame, or 0
+	 * @note Ownership of the returned surface stays with the VideoDecoder,
+	 *       hence the caller must *not* free it.
 	 * @note this may return 0, in which case the last frame should be kept on screen
 	 */
 	virtual const Graphics::Surface *decodeNextFrame() = 0;
 
 	/**
-	 * Get the pixel format of the video
-	 */
-	virtual Graphics::PixelFormat getPixelFormat() const = 0;
-
-	/**
-	 * Get the palette for the video in RGB format (if 8bpp or less)
-	 */
-	virtual const byte *getPalette() { return 0; }
-
-	/**
-	 * Returns if the palette is dirty or not
-	 */
-	virtual bool hasDirtyPalette() const { return false; }
-
-	/**
-	 * Returns if the video is finished or not
+	 * Returns if the video has finished playing or not.
+	 * @return true if the video has finished playing or if none is loaded, false otherwise
 	 */
 	virtual bool endOfVideo() const;
-
-	/**
-	 * Set the current palette to the system palette
-	 */
-	void setSystemPalette();
-
-	/**
-	 * Return the time until the next frame (in ms)
-	 */
-	virtual uint32 getTimeToNextFrame() const = 0;
 
 	/**
 	 * Pause or resume the video. This should stop/resume any audio playback
 	 * and other stuff. The initial pause time is kept so that any timing
 	 * variables can be updated appropriately.
 	 *
-	 * This is a convenience tracker which automatically keeps track on how
+	 * This is a convenience method which automatically keeps track on how
 	 * often the video has been paused, ensuring that after pausing an video
 	 * e.g. twice, it has to be unpaused twice before actuallying resuming.
 	 *
@@ -198,7 +217,7 @@ public:
 
 protected:
 	/**
-	 * Return the frame rate in frames per second
+	 * Return the frame rate in frames per second.
 	 * This returns a Rational because videos can have rates that are not integers and
 	 * there are some videos with frame rates < 1.
 	 */
@@ -209,7 +228,7 @@ private:
 };
 
 /**
- * A VideoDecoder that can rewind back to the beginning.
+ * A VideoDecoder that can rewound back to the beginning.
  */
 class RewindableVideoDecoder : public virtual VideoDecoder {
 public:
@@ -257,13 +276,13 @@ private:
 class SeekableVideoDecoder : public virtual RewindableVideoDecoder {
 public:
 	/**
-	 * Seek to the frame specified
-	 * If seekToFrame(0) is called, frame 0 will be decoded next in decodeNextFrame()
+	 * Seek to the specified frame.
+	 * If seekToFrame(0) is called, frame 0 will be decoded next in decodeNextFrame().
 	 */
 	virtual void seekToFrame(uint32 frame) = 0;
 
 	/**
-	 * Seek to the time specified
+	 * Seek to the specified time.
 	 *
 	 * This will round to the previous frame showing. If the time would happen to
 	 * land while a frame is showing, this function will seek to the beginning of that
@@ -273,14 +292,14 @@ public:
 	virtual void seekToTime(VideoTimestamp time) = 0;
 
 	/**
-	 * Seek to the frame specified (in ms)
+	 * Seek to the specified time (in ms).
 	 *
-	 * See seekToTime(VideoTimestamp)
+	 * @see seekToTime(VideoTimestamp)
 	 */
 	void seekToTime(uint32 time) { seekToTime(VideoTimestamp(time)); }
 
 	/**
-	 * Implementation of RewindableVideoDecoder::rewind()
+	 * Implementation of RewindableVideoDecoder::rewind().
 	 */
 	virtual void rewind() { seekToTime(0); }
 };
