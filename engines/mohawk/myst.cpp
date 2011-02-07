@@ -1147,7 +1147,17 @@ void MohawkEngine_Myst::loadResources() {
 }
 
 void MohawkEngine_Myst::runLoadDialog() {
-	runDialog(*_loadDialog);
+	const Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	pauseEngine(true);
+	int slot = _loadDialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	if (slot >= 0) {
+		// TODO
+	}
+	pauseEngine(false);
 }
 
 Common::Error MohawkEngine_Myst::loadGameState(int slot) {

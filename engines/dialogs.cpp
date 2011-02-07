@@ -219,7 +219,7 @@ void MainMenuDialog::reflowLayout() {
 }
 
 void MainMenuDialog::save() {
-	Common::String gameId = ConfMan.get("gameid");
+	const Common::String gameId = ConfMan.get("gameid");
 
 	const EnginePlugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
@@ -242,7 +242,7 @@ void MainMenuDialog::save() {
 }
 
 void MainMenuDialog::load() {
-	Common::String gameId = ConfMan.get("gameid");
+	const Common::String gameId = ConfMan.get("gameid");
 
 	const EnginePlugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
