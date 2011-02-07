@@ -26,11 +26,13 @@
 #ifndef SCI_GRAPHICS_ROBOT_H
 #define SCI_GRAPHICS_ROBOT_H
 
-#include "common/file.h"
-
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/decoders/raw.h"
+
+namespace Common {
+	class SeekableSubReadStreamEndian;
+}
 
 namespace Sci {
 
@@ -59,7 +61,7 @@ public:
 	void processNextFrame();
 	uint16 getCurFrame() { return _curFrame; }
 	uint16 getFrameCount() { return _header.frameCount; }
-	bool isPlaying() { return _resourceId != -1; }
+	bool isPlaying() { return _robotFile != 0; }
 	void playAudio();
 
 private:
@@ -75,13 +77,12 @@ private:
 
 	byte _savedPal[256 * 4];
 
-	Common::File _robotFile;
+	Common::SeekableSubReadStreamEndian *_robotFile;
 	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
 
 	RobotHeader _header;
 
-	GuiResourceId _resourceId;
 	uint16 _x;
 	uint16 _y;
 	uint16 _curFrame;

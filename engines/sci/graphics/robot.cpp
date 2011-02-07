@@ -38,7 +38,7 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
-#include "common/file.h"
+#include "common/archive.h"
 #include "common/system.h"
 #include "common/stream.h"
 #include "common/substream.h"
@@ -46,8 +46,7 @@
 namespace Sci {
 
 // TODO:
-// - v4 robot support (used in PQ:SQUAT)
-// - Mac robot files (BE)
+// - v4 robot support (used in PQ:SWAT)
 // - Positioning
 // - Proper handling of frame scaling - scaled frames look squashed
 //   (probably because both dimensions should be scaled)
@@ -77,8 +76,7 @@ namespace Sci {
 
 GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette)
 	: _resMan(resMan), _screen(screen), _palette(palette), _outputBuffer(0),
-	_outputBufferSize(0), _audioStream(0), _frameTotalSize(0) {
-	_resourceId = -1;
+	_outputBufferSize(0), _audioStream(0), _frameTotalSize(0), _robotFile(0) {
 	_x = _y = 0;
 }
 
@@ -87,19 +85,20 @@ GfxRobot::~GfxRobot() {
 }
 
 void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
-	_resourceId = resourceId;
-	//_resourceId = 1305;	// debug
 	_x = x;
 	_y = y;
 	_curFrame = 0;
 
-	char fileName[10];
-	sprintf(fileName, "%d.rbt", _resourceId);
+	Common::String fileName = Common::String::format("%d.rbt", resourceId);
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fileName);
 
-	if (!_robotFile.open(fileName)) {
-		warning("Unable to open robot file %s", fileName);
+	if (!stream) {
+		warning("Unable to open robot file %s", fileName.c_str());
 		return;
 	}
+
+	_robotFile = new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(),
+			g_sci->getPlatform() == Common::kPlatformMacintosh, DisposeAfterUse::YES);
 
 	readHeaderChunk();
 
@@ -113,21 +112,13 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 		// Unsupported
 		warning("TODO: add support for v4 robot videos");
 		_curFrame = _header.frameCount;	// jump to the last frame
-		_robotFile.close();
+		freeData();
 		return;
 	case 5:	// used in most SCI2.1 games and in some SCI3 robots
 	case 6:	// used in SCI3 games
 		// Supported
 		break;
 	default:
-		// Even the robots have the be byte swapped for the Mac version...
-		if (SWAP_BYTES_16(_header.version) == 5 && g_sci->getPlatform() == Common::kPlatformMacintosh) {
-			warning("Unsupported Mac Robot file");
-			_curFrame = _header.frameCount; // Jump to the last frame
-			_robotFile.close();
-			return;
-		}
-
 		// Unsupported, error out so that we find out where this is used
 		error("Unknown robot version: %d", _header.version);
 	}
@@ -147,33 +138,36 @@ void GfxRobot::init(GuiResourceId resourceId, uint16 x, uint16 y) {
 
 void GfxRobot::readHeaderChunk() {
 	// Header (60 bytes)
-	_robotFile.skip(6);
-	_header.version = _robotFile.readUint16LE();
-	_header.audioChunkSize = _robotFile.readUint16LE();
-	_header.audioSilenceSize = _robotFile.readUint16LE();
-	_robotFile.skip(2);
-	_header.frameCount = _robotFile.readUint16LE();
-	_header.paletteDataSize = _robotFile.readUint16LE();
-	_header.unkChunkDataSize = _robotFile.readUint16LE();
-	_robotFile.skip(5);
-	_header.hasSound = _robotFile.readByte();
-	_robotFile.skip(34);
+	_robotFile->skip(6);
+	_header.version = _robotFile->readUint16();
+	_header.audioChunkSize = _robotFile->readUint16();
+	_header.audioSilenceSize = _robotFile->readUint16();
+	_robotFile->skip(2);
+	_header.frameCount = _robotFile->readUint16();
+	_header.paletteDataSize = _robotFile->readUint16();
+	_header.unkChunkDataSize = _robotFile->readUint16();
+	_robotFile->skip(5);
+	_header.hasSound = _robotFile->readByte();
+	_robotFile->skip(34);
 
 	// Some videos (e.g. robot 1305 in Phantasmagoria and
 	// robot 184 in Lighthouse) have an unknown chunk before
 	// the palette chunk (probably used for sound preloading).
 	// Skip it here.
 	if (_header.unkChunkDataSize)
-		_robotFile.skip(_header.unkChunkDataSize);
+		_robotFile->skip(_header.unkChunkDataSize);
 }
 
 void GfxRobot::readPaletteChunk() {
 	byte *paletteChunk = new byte[_header.paletteDataSize];
-	_robotFile.read(paletteChunk, _header.paletteDataSize);
-	int startIndex = READ_LE_UINT16(paletteChunk + 25);
-	int colorCount = READ_LE_UINT16(paletteChunk + 29);
+	_robotFile->read(paletteChunk, _header.paletteDataSize);
+
+	int startIndex = paletteChunk[25];
+	int colorCount = READ_SCI11ENDIAN_UINT16(paletteChunk + 29);
+
 	if (colorCount > 256)
 		error("Invalid color count: %d", colorCount);
+
 	Palette resourcePal;
 	_palette->createFromData(paletteChunk, _header.paletteDataSize, &resourcePal);
 	delete[] paletteChunk;
@@ -214,20 +208,20 @@ void GfxRobot::readFrameSizesChunk() {
 	// We don't need any of the two tables to play the video, so we ignore
 	// both of them.
 	uint16 wordSize = _header.version == 6 ? 4 : 2;
-	_robotFile.skip(_header.frameCount * wordSize * 2);
+	_robotFile->skip(_header.frameCount * wordSize * 2);
 #else
 	switch (_header.version) {
 	case 5:		// sizes are 16-bit integers
 		// Skip table with frame image sizes, as we don't need it
-		_robotFile.skip(_header.frameCount * 2);
+		_robotFile->skip(_header.frameCount * 2);
 		for (int i = 0; i < _header.frameCount; ++i)
-			_frameTotalSize[i] = _robotFile.readUint16LE();
+			_frameTotalSize[i] = _robotFile->readUint16();
 		break;
 	case 6:		// sizes are 32-bit integers
 		// Skip table with frame image sizes, as we don't need it
-		_robotFile.skip(_header.frameCount * 4);
+		_robotFile->skip(_header.frameCount * 4);
 		for (int i = 0; i < _header.frameCount; ++i)
-			_frameTotalSize[i] = _robotFile.readUint32LE();
+			_frameTotalSize[i] = _robotFile->readUint32();
 		break;
 	default:
 		error("Can't yet handle index table for robot version %d", _header.version);
@@ -235,14 +229,12 @@ void GfxRobot::readFrameSizesChunk() {
 #endif
 
 	// 2 more unknown tables
-	_robotFile.skip(1024 + 512);
+	_robotFile->skip(1024 + 512);
 
 	// Pad to nearest 2 kilobytes
-	uint32 curPos = _robotFile.pos();
-	if (curPos & 0x7ff) {
-		curPos = (curPos & ~0x7ff) + 2048;
-		_robotFile.seek(curPos);
-	}
+	uint32 curPos = _robotFile->pos();
+	if (curPos & 0x7ff)
+		_robotFile->seek((curPos & ~0x7ff) + 2048);
 }
 
 void GfxRobot::processNextFrame() {
@@ -251,14 +243,14 @@ void GfxRobot::processNextFrame() {
 		return;
 
 	// Read frame image header (24 bytes)
-	_robotFile.skip(3);
-	byte frameScale = _robotFile.readByte();
-	uint16 frameWidth = _robotFile.readUint16LE();
-	uint16 frameHeight = _robotFile.readUint16LE();
-	_robotFile.skip(8);		// x, y, width and height of the frame
-	uint16 compressedSize = _robotFile.readUint16LE();
-	uint16 frameFragments = _robotFile.readUint16LE();
-	_robotFile.skip(4);		// unknown
+	_robotFile->skip(3);
+	byte frameScale = _robotFile->readByte();
+	uint16 frameWidth = _robotFile->readUint16();
+	uint16 frameHeight = _robotFile->readUint16();
+	_robotFile->skip(8); // x, y, width and height of the frame
+	uint16 compressedSize = _robotFile->readUint16();
+	uint16 frameFragments = _robotFile->readUint16();
+	_robotFile->skip(4); // unknown
 
 	uint32 decompressedSize = frameWidth * (frameHeight * frameScale / 100);
 
@@ -274,15 +266,15 @@ void GfxRobot::processNextFrame() {
 	byte *outPtr = _outputBuffer;
 
 	for (uint16 i = 0; i < frameFragments; ++i) {
-		uint32 compressedFragmentSize = _robotFile.readUint32LE();
-		uint32 decompressedFragmentSize = _robotFile.readUint32LE();
-		uint16 compressionType = _robotFile.readUint16LE();
+		uint32 compressedFragmentSize = _robotFile->readUint32();
+		uint32 decompressedFragmentSize = _robotFile->readUint32();
+		uint16 compressionType = _robotFile->readUint16();
 
 		if (compressionType == 0) {
-			Common::SeekableSubReadStream fragmentStream(&_robotFile, _robotFile.pos(), _robotFile.pos() + compressedFragmentSize);
+			Common::SeekableSubReadStream fragmentStream(_robotFile, _robotFile->pos(), _robotFile->pos() + compressedFragmentSize);
 			lzs.unpack(&fragmentStream, outPtr, compressedFragmentSize, decompressedFragmentSize);
 		} else if (compressionType == 2) {	// untested
-			_robotFile.read(outPtr, compressedFragmentSize);
+			_robotFile->read(outPtr, compressedFragmentSize);
 		} else {
 			error("Unknown frame compression found: %d", compressionType);
 		}
@@ -296,21 +288,21 @@ void GfxRobot::processNextFrame() {
 // exceptions (e.g. robot 4902 in Phantasmagoria, towards its end)
 #if 0
 	// Read frame audio header (14 bytes)
-	_robotFile.skip(2);	// buffer position
-	_robotFile.skip(2);	// unknown (usually 1)
-	_robotFile.skip(2);/*uint16 audioChunkSize = _robotFile.readUint16LE() + 8;*/
-	_robotFile.skip(2);
+	_robotFile->skip(2); // buffer position
+	_robotFile->skip(2); // unknown (usually 1)
+	_robotFile->skip(2); /*uint16 audioChunkSize = _robotFile->readUint16() + 8;*/
+	_robotFile->skip(2);
 #endif
 
 	// Queue the next audio frame
 	// FIXME: For some reason, there are audio hiccups/gaps
 	if (_header.hasSound) {
-		_robotFile.skip(8);	// header
-		_audioStream->queueBuffer(g_sci->_audio->getDecodedRobotAudioFrame(&_robotFile, audioChunkSize - 8), 
+		_robotFile->skip(8);	// header
+		_audioStream->queueBuffer(g_sci->_audio->getDecodedRobotAudioFrame(_robotFile, audioChunkSize - 8), 
 									(audioChunkSize - 8) * 2, DisposeAfterUse::NO, 
 									Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 	} else {
-		_robotFile.skip(audioChunkSize);
+		_robotFile->skip(audioChunkSize);
 	}
 
 	// Show frame
@@ -323,7 +315,6 @@ void GfxRobot::processNextFrame() {
 	if (_curFrame == _header.frameCount) {
 		// End of robot video, restore palette
 		g_system->setPalette(_savedPal, 0, 256);
-		_resourceId = -1;
 		freeData();
 	}
 }
@@ -336,7 +327,7 @@ void GfxRobot::freeData() {
 	delete[] _frameTotalSize; _frameTotalSize = 0;
 	delete[] _outputBuffer; _outputBuffer = 0;
 	_outputBufferSize = 0;
-	_robotFile.close();
+	delete _robotFile; _robotFile = 0;
 }	
 
 #endif
