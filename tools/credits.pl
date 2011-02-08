@@ -62,6 +62,7 @@ sub html_entities_to_ascii {
 	# For now we hardcode these mappings
 	# &aacute;  -> a
 	# &eacute;  -> e
+	# &igrave;  -> i
 	# &oacute;  -> o
 	# &oslash;  -> o
 	# &ouml;    -> o / oe
@@ -73,6 +74,7 @@ sub html_entities_to_ascii {
 	# &Scaron;  -> S
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
+	$text =~ s/&igrave;/i/g;
 	$text =~ s/&oacute;/o/g;
 	$text =~ s/&oslash;/o/g;
 	$text =~ s/&#322;/l/g;
@@ -97,6 +99,7 @@ sub html_entities_to_cpp {
 	# The numerical values are octal!
 	$text =~ s/&aacute;/\\341/g;
 	$text =~ s/&eacute;/\\351/g;
+	$text =~ s/&igrave;/\\354/g;
 	$text =~ s/&oacute;/\\363/g;
 	$text =~ s/&oslash;/\\370/g;
 	$text =~ s/&#322;/l/g;
@@ -113,13 +116,16 @@ sub html_entities_to_cpp {
 }
 
 # Convert HTML entities to RTF codes
+# This is using the Mac OS Roman encoding
 sub html_entities_to_rtf {
 	my $text = shift;
 
 	$text =~ s/&aacute;/\\'87/g;
 	$text =~ s/&eacute;/\\'8e/g;
+	$text =~ s/&igrave;/\\'93/g;
 	$text =~ s/&oacute;/\\'97/g;
 	$text =~ s/&oslash;/\\'bf/g;
+	$text =~ s/&aring;/\\'8c/g;
 	# The following numerical values are octal!
 	$text =~ s/&#322;/\\uc0\\u322 /g;
 	$text =~ s/&Scaron;/\\uc0\\u540 /g;
@@ -140,8 +146,10 @@ sub html_entities_to_tex {
 
 	$text =~ s/&aacute;/\\'a/g;
 	$text =~ s/&eacute;/\\'e/g;
+	$text =~ s/&igrave;/\\`\\i/g;
 	$text =~ s/&oacute;/\\'o/g;
 	$text =~ s/&oslash;/{\\o}/g;
+	$text =~ s/&aring;/\\aa /g;
 	$text =~ s/&#322;/{\\l}/g;
 	$text =~ s/&Scaron;/{\\v S}/g;
 
@@ -890,6 +898,9 @@ begin_credits("Credits");
 		end_persons();
 		begin_section("Catalan");
 			add_person("Jordi Vilalta Prat", "jvprat", "");
+		end_section();
+		begin_section("Czech");
+			add_person("Zbyn&igrave;k Schwarz", "", "");
 		end_section();
 		begin_section("Danish");
 			add_person("Steffen Nyeland", "", "");
