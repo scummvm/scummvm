@@ -43,6 +43,11 @@ class InventoryHandler {
 public:
 	InventoryHandler(HugoEngine *vm);
 
+	void     setInventoryObjId(int16 objId)    { _inventoryObjId = objId; }
+	int16    getInventoryObjId()               { return _inventoryObjId;  }
+	void     setInventoryState(istate_t state) { _inventoryState = state; }
+	istate_t getInventoryState()               { return _inventoryState;  }
+
 	int16 processInventory(const invact_t action, ...);
 	void runInventory();
 
@@ -51,7 +56,10 @@ private:
 
 	static const int kStepDy = 8;                   // Pixels per step movement
 	
-	int16 _firstIconId;                             // Index of first icon to display
+	int16    _firstIconId;                          // Index of first icon to display
+	istate_t _inventoryState;                       // Inventory icon bar state
+	int16    _inventoryHeight;                      // Inventory icon bar height
+	int16    _inventoryObjId;                       // Inventory object selected, or -1
 
 	void constructInventory(const int16 imageTotNumb, int displayNumb, const bool scrollFl, int16 firstObjId);
 };

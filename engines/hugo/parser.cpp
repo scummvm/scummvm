@@ -47,6 +47,7 @@
 #include "hugo/sound.h"
 #include "hugo/object.h"
 #include "hugo/text.h"
+#include "hugo/inventory.h"
 
 namespace Hugo {
 
@@ -88,8 +89,8 @@ void Parser::charHandler() {
 		case Common::KEYCODE_RETURN:                // EOL, pass line to line handler
 			if (_cmdLineIndex && (_vm->_hero->pathType != kPathQuiet)) {
 				// Remove inventory bar if active
-				if (gameStatus.inventoryState == kInventoryActive)
-					gameStatus.inventoryState = kInventoryUp;
+				if (_vm->_inventory->getInventoryState() == kInventoryActive)
+					_vm->_inventory->setInventoryState(kInventoryUp);
 				// Call Line handler and reset line
 				command(_cmdLine);
 				_cmdLine[_cmdLineIndex = 0] = '\0';
@@ -172,8 +173,8 @@ void Parser::keyHandler(Common::Event event) {
 		if (gameStatus.viewState == kViewIntro)
 			gameStatus.skipIntroFl = true;
 		else {
-			if (gameStatus.inventoryState == kInventoryActive) // Remove inventory, if displayed
-				gameStatus.inventoryState = kInventoryUp;
+			if (_vm->_inventory->getInventoryState() == kInventoryActive) // Remove inventory, if displayed
+				_vm->_inventory->setInventoryState(kInventoryUp);
 			_vm->_screen->resetInventoryObjId();
 		}
 		break;
@@ -193,7 +194,7 @@ void Parser::keyHandler(Common::Event event) {
 	case Common::KEYCODE_KP6:
 	case Common::KEYCODE_KP8:
 	case Common::KEYCODE_KP2:
-		gameStatus.routeIndex = -1;                 // Stop any automatic route
+		_vm->_route->resetRoute();                  // Stop any automatic route
 		_vm->_route->setWalk(nChar);                // Direction of hero travel
 		break;
 	case Common::KEYCODE_F1:                        // User Help (DOS)

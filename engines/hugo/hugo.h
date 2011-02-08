@@ -83,7 +83,6 @@ static const int kMaxPath = 256;                    // Max length of a full path
 static const int kHeroMaxWidth = 24;                // Maximum width of hero
 static const int kHeroMinWidth = 16;                // Minimum width of hero
 
-typedef char fpath_t[kMaxPath];                     // File path
 typedef char command_t[kMaxLineSize + 8];           // Command line (+spare for prompt,cursor)
 
 struct config_t {                                   // User's config (saved)
@@ -181,38 +180,31 @@ struct HugoGameDescription;
 struct status_t {                                   // Game status (not saved)
 	bool     storyModeFl;                           // Game is telling story - no commands
 	bool     gameOverFl;                            // Game is over - hero knobbled
-	bool     demoFl;                                // Game is in demo mode
 	bool     textBoxFl;                             // Game is (halted) in text box
 	bool     lookFl;                                // Toolbar "look" button pressed
 	bool     recallFl;                              // Toolbar "recall" button pressed
-	bool     leftButtonFl;                          // Left mouse button pressed
-	bool     rightButtonFl;                         // Right button pressed
 	bool     newScreenFl;                           // New screen just loaded in dib_a
-	bool     jumpExitFl;                            // Allowed to jump to a screen exit
 	bool     godModeFl;                             // Allow DEBUG features in live version
-	bool     helpFl;                                // Calling WinHelp (don't disable music)
 	bool     doQuitFl;
 	bool     skipIntroFl;
 	uint32   tick;                                  // Current time in ticks
 	vstate_t viewState;                             // View state machine
-	istate_t inventoryState;                        // Inventory icon bar state
-	int16    inventoryHeight;                       // Inventory icon bar height
-	int16    inventoryObjId;                        // Inventory object selected, or -1
-	int16    routeIndex;                            // Index into route list, or -1
-	go_t     go_for;                                // Purpose of an automatic route
-	int16    go_id;                                 // Index of exit of object walking to
-	fpath_t  path;                                  // Alternate path for saved files
 	int16    song;                                  // Current song
-	int16    cx, cy;                                // Cursor position (dib coords)
 
 // Strangerke - Suppress as related to playback
 //	bool     playbackFl;                            // Game is in playback mode
 //	bool     recordFl;                              // Game is in record mode
 // Strangerke - Not used ?
+//	bool     helpFl;                                // Calling WinHelp (don't disable music)
 //	bool     mmtimeFl;                              // Multimedia timer supported
+//	bool     demoFl;                                // Game is in demo mode
 //	int16    screenWidth;                           // Desktop screen width
-//	uint32   saveTick;                              // Time of last save in ticks
 //	int16    saveSlot;                              // Current slot to save/restore game
+//	int16    cx, cy;                                // Cursor position (dib coords)
+//	uint32   saveTick;                              // Time of last save in ticks
+//
+//	typedef char fpath_t[kMaxPath];                 // File path
+//	fpath_t  path;                                  // Alternate path for saved files
 };
 
 /**
@@ -332,13 +324,6 @@ public:
 	void storeBoundary(const int x1, const int x2, const int y);
 	void syncSoundSettings();
 
-	int getMouseX() const {
-		return _mouseX;
-	}
-	int getMouseY() const {
-		return _mouseY;
-	}
-
 	overlay_t &getBoundaryOverlay() {
 		return _boundary;
 	}
@@ -409,8 +394,6 @@ protected:
 private:
 	static const int kTurboTps = 16;                // This many in turbo mode
 
-	int _mouseX;
-	int _mouseY;
 	byte _introXSize;
 	status_t _status;                               // Game status structure
 	uint32 _lastTime;

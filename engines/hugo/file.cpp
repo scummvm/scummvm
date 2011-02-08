@@ -43,6 +43,7 @@
 #include "hugo/util.h"
 #include "hugo/object.h"
 #include "hugo/text.h"
+#include "hugo/mouse.h"
 
 namespace Hugo {
 FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
@@ -367,7 +368,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String descrip) {
 	out->writeByte((gameStatus.storyModeFl) ? 1 : 0);
 
 	// Save jumpexit mode
-	out->writeByte((gameStatus.jumpExitFl) ? 1 : 0);
+	out->writeByte((_vm->_mouse->getJumpExitFl()) ? 1 : 0);
 
 	// Save gameover status
 	out->writeByte((gameStatus.gameOverFl) ? 1 : 0);
@@ -477,7 +478,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	_vm->setScore(score);
 
 	gameStatus.storyModeFl = (in->readByte() == 1);
-	gameStatus.jumpExitFl = (in->readByte() == 1);
+	_vm->_mouse->setJumpExitFl(in->readByte() == 1);
 	gameStatus.gameOverFl = (in->readByte() == 1);
 	for (int i = 0; i < _vm->_numScreens; i++)
 		_vm->_screenStates[i] = in->readByte();

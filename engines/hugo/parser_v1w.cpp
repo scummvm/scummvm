@@ -45,6 +45,7 @@
 #include "hugo/sound.h"
 #include "hugo/object.h"
 #include "hugo/text.h"
+#include "hugo/inventory.h"
 
 namespace Hugo {
 Parser_v1w::Parser_v1w(HugoEngine *vm) : Parser_v3d(vm) {
@@ -206,13 +207,14 @@ void Parser_v1w::lineHandler() {
 
 void Parser_v1w::showInventory() const {
 	status_t &gameStatus = _vm->getGameStatus();
+	istate_t inventState = _vm->_inventory->getInventoryState();
 	if (gameStatus.gameOverFl) {
 		Utils::gameOverMsg();
-	} else if ((gameStatus.inventoryState == kInventoryOff) && (gameStatus.viewState == kViewPlay)) {
-		gameStatus.inventoryState = kInventoryDown;
+	} else if ((inventState == kInventoryOff) && (gameStatus.viewState == kViewPlay)) {
+		_vm->_inventory->setInventoryState(kInventoryDown);
 		gameStatus.viewState = kViewInvent;
-	} else if (gameStatus.inventoryState == kInventoryActive) {
-		gameStatus.inventoryState = kInventoryUp;
+	} else if (inventState == kInventoryActive) {
+		_vm->_inventory->setInventoryState(kInventoryUp);
 		gameStatus.viewState = kViewInvent;
 	}
 }

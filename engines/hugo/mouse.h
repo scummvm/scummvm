@@ -37,23 +37,39 @@ namespace Hugo {
 class MouseHandler {
 public:
 	MouseHandler(HugoEngine *vm);
-
 	void mouseHandler();
+
+	void resetLeftButton()      { _leftButtonFl  = false; }
+	void resetRightButton()     { _rightButtonFl = false; }
+	void setLeftButton()        { _leftButtonFl  = true;  }
+	void setRightButton()       { _rightButtonFl = true;  }
+	void setJumpExitFl(bool fl) { _jumpExitFl = fl;       }
+	void setMouseX(int x)       { _mouseX = x;            }
+	void setMouseY(int y)       { _mouseY = y;            }
+
+	bool getJumpExitFl()  const { return _jumpExitFl;     }
+	int  getMouseX()      const { return _mouseX;         }
+	int  getMouseY()      const { return _mouseY;         }
 
 private:
 	HugoEngine *_vm;
 
 	static const char kCursorNochar = '~';              // Don't show name of object under cursor
-
-	static const int kExitHotspot = -4;                 // Cursor over Exit hotspot
-	static const int kCursorNameIndex = 2;              // Index of name used under cursor
-	static const int kCursorNameOffX = 10;              // Cursor offset to name string
-	static const int kCursorNameOffY = -2;              // Cursor offset to name string
+	static const int  kExitHotspot = -4;                // Cursor over Exit hotspot
+	static const int  kCursorNameIndex = 2;             // Index of name used under cursor
+	static const int  kCursorNameOffX = 10;             // Cursor offset to name string
+	static const int  kCursorNameOffY = -2;             // Cursor offset to name string
 
 	enum seqTextMouse {
 		kMsNoWayText = 0,
 		kMsExit      = 1
 	};
+
+	bool  _leftButtonFl;                                // Left mouse button pressed
+	bool  _rightButtonFl;                               // Right button pressed
+	int   _mouseX;
+	int   _mouseY;
+	bool  _jumpExitFl;                                  // Allowed to jump to a screen exit
 
 	void  cursorText(const char *buffer, const int16 cx, const int16 cy, const uif_t fontId, const int16 color);
 	int16 findExit(const int16 cx, const int16 cy);

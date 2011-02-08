@@ -574,14 +574,12 @@ void Screen::freeFonts() {
 
 void Screen::selectInventoryObjId(const int16 objId) {
 
-	status_t &gameStatus = _vm->getGameStatus();
-
-	gameStatus.inventoryObjId = objId;              // Select new object
+	_vm->_inventory->setInventoryObjId(objId);      // Select new object
 
 	// Find index of icon
 	int16 iconId = 0;                               // Find index of dragged icon
 	for (; iconId < _vm->_maxInvent; iconId++) {
-		if (gameStatus.inventoryObjId == _vm->_invent[iconId])
+		if (objId == _vm->_invent[iconId])
 			break;
 	}
 
@@ -602,7 +600,7 @@ void Screen::selectInventoryObjId(const int16 objId) {
 }
 
 void Screen::resetInventoryObjId() {
-	_vm->getGameStatus().inventoryObjId = -1;       // Unselect object
+	_vm->_inventory->setInventoryObjId(-1);         // Unselect object
 	CursorMan.replaceCursor(stdMouseCursor, stdMouseCursorWidth, stdMouseCursorHeight, 1, 1, 1);
 }
 

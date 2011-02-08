@@ -48,6 +48,9 @@ static const int kMaxDisp = (kXPix / kInvDx);       // Max icons displayable
 
 InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm) {
 	_firstIconId = 0;
+	_inventoryState  = kInventoryOff;               // Inventory icon bar state
+	_inventoryHeight = 0;                           // Inventory icon bar pos
+	_inventoryObjId  = -1;                          // Inventory object selected (none)
 }
 
 /**
@@ -173,47 +176,47 @@ void InventoryHandler::runInventory() {
 
 	debugC(1, kDebugInventory, "runInventory");
 
-	switch (gameStatus.inventoryState) {
+	switch (_inventoryState) {
 	case kInventoryOff:                             // Icon bar off screen
 		break;
 	case kInventoryUp:                              // Icon bar moving up
-		gameStatus.inventoryHeight -= kStepDy;      // Move the icon bar up
-		if (gameStatus.inventoryHeight <= 0)        // Limit travel
-			gameStatus.inventoryHeight = 0;
+		_inventoryHeight -= kStepDy;                // Move the icon bar up
+		if (_inventoryHeight <= 0)                  // Limit travel
+			_inventoryHeight = 0;
 
 		// Move visible portion to _frontBuffer, restore uncovered portion, display results
-		_vm->_screen->moveImage(_vm->_screen->getIconBuffer(), 0, 0, kXPix, gameStatus.inventoryHeight, kXPix, _vm->_screen->getFrontBuffer(), 0, kDibOffY, kXPix);
-		_vm->_screen->moveImage(_vm->_screen->getBackBufferBackup(), 0, gameStatus.inventoryHeight + kDibOffY, kXPix, kStepDy, kXPix, _vm->_screen->getFrontBuffer(), 0, gameStatus.inventoryHeight + kDibOffY, kXPix);
-		_vm->_screen->displayRect(0, kDibOffY, kXPix, gameStatus.inventoryHeight + kStepDy);
+		_vm->_screen->moveImage(_vm->_screen->getIconBuffer(), 0, 0, kXPix, _inventoryHeight, kXPix, _vm->_screen->getFrontBuffer(), 0, kDibOffY, kXPix);
+		_vm->_screen->moveImage(_vm->_screen->getBackBufferBackup(), 0, _inventoryHeight + kDibOffY, kXPix, kStepDy, kXPix, _vm->_screen->getFrontBuffer(), 0, _inventoryHeight + kDibOffY, kXPix);
+		_vm->_screen->displayRect(0, kDibOffY, kXPix, _inventoryHeight + kStepDy);
 
-		if (gameStatus.inventoryHeight == 0) {      // Finished moving up?
+		if (_inventoryHeight == 0) {                // Finished moving up?
 			// Yes, restore dibs and exit back to game state machine
 			_vm->_screen->moveImage(_vm->_screen->getBackBufferBackup(), 0, 0, kXPix, kYPix, kXPix, _vm->_screen->getBackBuffer(), 0, 0, kXPix);
 			_vm->_screen->moveImage(_vm->_screen->getBackBuffer(), 0, 0, kXPix, kYPix, kXPix, _vm->_screen->getFrontBuffer(), 0, 0, kXPix);
 			_vm->_object->updateImages();           // Add objects back into display list for restore
-			gameStatus.inventoryState = kInventoryOff;
+			_inventoryState = kInventoryOff;
 			gameStatus.viewState = kViewPlay;
 		}
 		break;
 	case kInventoryDown:                            // Icon bar moving down
 		// If this is the first step, initialize dib_i
 		// and get any icon/text out of _frontBuffer
-		if (gameStatus.inventoryHeight == 0) {
+		if (_inventoryHeight == 0) {
 			processInventory(kInventoryActionInit); // Initialize dib_i
 			_vm->_screen->displayList(kDisplayRestore); // Restore _frontBuffer
 			_vm->_object->updateImages();           // Rebuild _frontBuffer without icons/text
 			_vm->_screen->displayList(kDisplayDisplay); // Blit display list to screen
 		}
 
-		gameStatus.inventoryHeight += kStepDy;      // Move the icon bar down
-		if (gameStatus.inventoryHeight > kInvDy)    // Limit travel
-			gameStatus.inventoryHeight = kInvDy;
+		_inventoryHeight += kStepDy;                // Move the icon bar down
+		if (_inventoryHeight > kInvDy)              // Limit travel
+			_inventoryHeight = kInvDy;
 
 		// Move visible portion to _frontBuffer, display results
-		_vm->_screen->moveImage(_vm->_screen->getIconBuffer(), 0, 0, kXPix, gameStatus.inventoryHeight, kXPix, _vm->_screen->getFrontBuffer(), 0, kDibOffY, kXPix);
-		_vm->_screen->displayRect(0, kDibOffY, kXPix, gameStatus.inventoryHeight);
+		_vm->_screen->moveImage(_vm->_screen->getIconBuffer(), 0, 0, kXPix, _inventoryHeight, kXPix, _vm->_screen->getFrontBuffer(), 0, kDibOffY, kXPix);
+		_vm->_screen->displayRect(0, kDibOffY, kXPix, _inventoryHeight);
 
-		if (gameStatus.inventoryHeight == kInvDy) { // Finished moving down?
+		if (_inventoryHeight == kInvDy) {           // Finished moving down?
 			// Yes, prepare view dibs for special inventory display since
 			// we can't refresh objects while icon bar overlayed...
 			// 1. Save backing store _backBuffer in temporary dib_c
@@ -222,7 +225,7 @@ void InventoryHandler::runInventory() {
 			_vm->_screen->moveImage(_vm->_screen->getBackBuffer(), 0, 0, kXPix, kYPix, kXPix, _vm->_screen->getBackBufferBackup(), 0, 0, kXPix);
 			_vm->_screen->moveImage(_vm->_screen->getFrontBuffer(), 0, 0, kXPix, kYPix, kXPix, _vm->_screen->getBackBuffer(), 0, 0, kXPix);
 			_vm->_screen->displayList(kDisplayInit);
-			gameStatus.inventoryState = kInventoryActive;
+			_inventoryState = kInventoryActive;
 		}
 		break;
 	case kInventoryActive:                          // Inventory active

@@ -48,6 +48,11 @@
 namespace Hugo {
 
 MouseHandler::MouseHandler(HugoEngine *vm) : _vm(vm) {
+	_leftButtonFl  = false;
+	_rightButtonFl = false;
+	_jumpExitFl = false;                            // Can't jump to a screen exit
+	_mouseX = kXPix / 2;
+	_mouseY = kYPix / 2;
 }
 
 /**
@@ -64,7 +69,7 @@ void MouseHandler::cursorText(const char *buffer, const int16 cx, const int16 cy
 	int16 sx, sy;
 	if (cx < kXPix / 2) {
 		sx = cx + kCursorNameOffX;
-		sy = (_vm->getGameStatus().inventoryObjId == -1) ? cy + kCursorNameOffY : cy + kCursorNameOffY - (_vm->_screen->fontHeight() + 1);
+		sy = (_vm->_inventory->getInventoryObjId() == -1) ? cy + kCursorNameOffY : cy + kCursorNameOffY - (_vm->_screen->fontHeight() + 1);
 	} else {
 		sx = cx - sdx - kCursorNameOffX / 2;
 		sy = cy + kCursorNameOffY;
@@ -103,12 +108,13 @@ void MouseHandler::processRightClick(const int16 objId, const int16 cx, const in
 	if (gameStatus.storyModeFl || _vm->_hero->pathType == kPathQuiet) // Make sure user has control
 		return;
 
+	int16 inventObjId = _vm->_inventory->getInventoryObjId();
 	bool foundFl = false;                           // TRUE if route found to object
 	// Check if this was over iconbar
-	if ((gameStatus.inventoryState == kInventoryActive) && (cy < kInvDy + kDibOffY)) { // Clicked over iconbar object
-		if (gameStatus.inventoryObjId == -1)
+	if ((_vm->_inventory->getInventoryState() == kInventoryActive) && (cy < kInvDy + kDibOffY)) { // Clicked over iconbar object
+		if (inventObjId == -1)
 			_vm->_screen->selectInventoryObjId(objId);
-		else if (gameStatus.inventoryObjId == objId)
+		else if (inventObjId == objId)
 			_vm->_screen->resetInventoryObjId();
 		else
 			_vm->_object->useObject(objId);         // Use status.objid on object
@@ -173,10 +179,10 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 		y = _vm->_hotspots[i].viewy;
 		if (x >= 0) {                               // Hotspot refers to an exit
 			// Special case of immediate exit
-			if (gameStatus.jumpExitFl) {
+			if (_jumpExitFl) {
 				// Get rid of iconbar if necessary
-				if (gameStatus.inventoryState != kInventoryOff)
-					gameStatus.inventoryState = kInventoryUp;
+				if (_vm->_inventory->getInventoryState() != kInventoryOff)
+					_vm->_inventory->setInventoryState(kInventoryUp);
 				_vm->_scheduler->insertActionList(_vm->_hotspots[i].actIndex);
 			} else {    // Set up route to exit spot
 				if (_vm->_hotspots[i].direction == Common::KEYCODE_RIGHT)
@@ -195,7 +201,7 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 		obj = &_vm->_object->_objects[objId];
 
 		// Over iconbar - immediate description
-		if ((gameStatus.inventoryState == kInventoryActive) && (cy < kInvDy + kDibOffY)) {
+		if ((_vm->_inventory->getInventoryState() == kInventoryActive) && (cy < kInvDy + kDibOffY)) {
 			_vm->_object->lookObject(obj);
 		} else {
 			bool foundFl = false;                   // TRUE if route found to object
@@ -230,15 +236,15 @@ void MouseHandler::mouseHandler() {
 	debugC(2, kDebugMouse, "mouseHandler");
 
 	status_t &gameStatus = _vm->getGameStatus();
-
-	if ((gameStatus.viewState != kViewPlay) && (gameStatus.inventoryState != kInventoryActive))
+	istate_t inventState = _vm->_inventory->getInventoryState();
+	if ((gameStatus.viewState != kViewPlay) && (inventState != kInventoryActive))
 		return;
 
-	int16 cx = _vm->getMouseX();
-	int16 cy = _vm->getMouseY();
+	int16 cx = getMouseX();
+	int16 cy = getMouseY();
 
-	gameStatus.cx = cx;                             // Save cursor coords
-	gameStatus.cy = cy;
+//	gameStatus.cx = cx;                             // Save cursor coords
+//	gameStatus.cy = cy;
 
 	// Don't process if outside client area
 	if ((cx < 0) || (cx > kXPix) || (cy < kDibOffY) || (cy > kViewSizeY + kDibOffY))
@@ -246,7 +252,7 @@ void MouseHandler::mouseHandler() {
 
 	int16 objId = -1;                               // Current source object
 	// Process cursor over an object or icon
-	if (gameStatus.inventoryState == kInventoryActive) { // Check inventory icon bar first
+	if (inventState == kInventoryActive) { // Check inventory icon bar first
 		objId = _vm->_inventory->processInventory(kInventoryActionGet, cx, cy);
 	} else {
 		if (cy < 5 && cy > 0) {
@@ -266,7 +272,7 @@ void MouseHandler::mouseHandler() {
 				cursorText(name, cx, cy, U_FONT8, _TBRIGHTWHITE);
 
 			// Process right click over object in view or iconbar
-			if (gameStatus.rightButtonFl)
+			if (_rightButtonFl)
 				processRightClick(objId, cx, cy);
 		}
 
@@ -280,12 +286,12 @@ void MouseHandler::mouseHandler() {
 		}
 	}
 	// Left click over icon, object or to move somewhere
-	if (gameStatus.leftButtonFl)
+	if (_leftButtonFl)
 		processLeftClick(objId, cx, cy);
 
 	// Clear mouse click states
-	gameStatus.leftButtonFl = false;
-	gameStatus.rightButtonFl = false;
+	resetLeftButton();
+	resetRightButton();
 }
 
 } // End of namespace Hugo

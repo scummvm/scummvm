@@ -178,9 +178,8 @@ void ObjectHandler_v1d::moveObjects() {
 	debugC(4, kDebugObject, "moveObjects");
 
 	// Added to DOS version in order to handle mouse properly
-	// If route mode enabled, do special route processing
-	if (_vm->getGameStatus().routeIndex >= 0)
-		_vm->_route->processRoute();
+	// Do special route processing
+	_vm->_route->processRoute();
 
 	// Perform any adjustments to velocity based on special path types
 	// and store all (visible) object baselines into the boundary file.

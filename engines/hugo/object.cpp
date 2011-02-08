@@ -43,6 +43,7 @@
 #include "hugo/parser.h"
 #include "hugo/schedule.h"
 #include "hugo/text.h"
+#include "hugo/inventory.h"
 
 namespace Hugo {
 
@@ -95,8 +96,9 @@ void ObjectHandler::useObject(int16 objId) {
 	debugC(1, kDebugObject, "useObject(%d)", objId);
 
 	char *verb;                                     // Background verb to use directly
+	int16 inventObjId = _vm->_inventory->getInventoryObjId();
 	object_t *obj = &_objects[objId];               // Ptr to object
-	if (_vm->getGameStatus().inventoryObjId == -1) {
+	if (inventObjId == -1) {
 		// Get or use objid directly
 		if ((obj->genericCmd & TAKE) || obj->objValue)  // Get collectible item
 			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_take, 0), _vm->_text->getNoun(obj->nounIndex, 0));
@@ -109,13 +111,13 @@ void ObjectHandler::useObject(int16 objId) {
 	} else {
 		// Use status.objid on objid
 		// Default to first cmd verb
-		sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(_vm->_cmdList[_objects[_vm->getGameStatus().inventoryObjId].cmdIndex][0].verbIndex, 0),
-			                       _vm->_text->getNoun(_objects[_vm->getGameStatus().inventoryObjId].nounIndex, 0),
+		sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(_vm->_cmdList[_objects[inventObjId].cmdIndex][0].verbIndex, 0),
+			                       _vm->_text->getNoun(_objects[inventObjId].nounIndex, 0),
 			                       _vm->_text->getNoun(obj->nounIndex, 0));
 
 		// Check valid use of objects and override verb if necessary
 		for (uses_t *use = _vm->_uses; use->objId != _numObj; use++) {
-			if (_vm->getGameStatus().inventoryObjId == use->objId) {
+			if (inventObjId == use->objId) {
 				// Look for secondary object, if found use matching verb
 				bool foundFl = false;
 				
@@ -123,14 +125,14 @@ void ObjectHandler::useObject(int16 objId) {
 					if (target->nounIndex == obj->nounIndex) {
 						foundFl = true;
 						sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(target->verbIndex, 0),
-							                       _vm->_text->getNoun(_objects[_vm->getGameStatus().inventoryObjId].nounIndex, 0),
+							                       _vm->_text->getNoun(_objects[inventObjId].nounIndex, 0),
 							                       _vm->_text->getNoun(obj->nounIndex, 0));
 					}
 
 				// No valid use of objects found, print failure string
 				if (!foundFl) {
 					// Deselect dragged icon if inventory not active
-					if (_vm->getGameStatus().inventoryState != kInventoryActive)
+					if (_vm->_inventory->getInventoryState() != kInventoryActive)
 						_vm->_screen->resetInventoryObjId();
 					Utils::Box(kBoxAny, "%s", _vm->_text->getTextData(use->dataIndex));
 					return;
@@ -139,8 +141,8 @@ void ObjectHandler::useObject(int16 objId) {
 		}
 	}
 
-	if (_vm->getGameStatus().inventoryState == kInventoryActive) // If inventory active, remove it
-		_vm->getGameStatus().inventoryState = kInventoryUp;
+	if (_vm->_inventory->getInventoryState() == kInventoryActive) // If inventory active, remove it
+		_vm->_inventory->setInventoryState(kInventoryUp);
 
 	_vm->_screen->resetInventoryObjId();
 

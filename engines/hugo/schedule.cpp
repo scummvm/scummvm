@@ -43,6 +43,8 @@
 #include "hugo/sound.h"
 #include "hugo/parser.h"
 #include "hugo/text.h"
+#include "hugo/route.h"
+#include "hugo/mouse.h"
 
 namespace Hugo {
 
@@ -836,35 +838,33 @@ void Scheduler::freeActListArr() {
 void Scheduler::processMaze(const int x1, const int x2, const int y1, const int y2) {
 	debugC(1, kDebugSchedule, "processMaze");
 
-	status_t &gameStatus = _vm->getGameStatus();
-
 	if (x1 < _maze.x1) {
 		// Exit west
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p - 1;
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x2 - kShiftSize - (x2 - x1);
 		_actListArr[_alNewscrIndex][0].a2.y = _vm->_hero->y;
-		gameStatus.routeIndex = -1;
+		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
 	} else if (x2 > _maze.x2) {
 		// Exit east
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p + 1;
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x1 + kShiftSize;
 		_actListArr[_alNewscrIndex][0].a2.y = _vm->_hero->y;
-		gameStatus.routeIndex = -1;
+		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
 	} else if (y1 < _maze.y1 - kShiftSize) {
 		// Exit north
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p - _maze.size;
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x3;
 		_actListArr[_alNewscrIndex][0].a2.y = _maze.y2 - kShiftSize - (y2 - y1);
-		gameStatus.routeIndex = -1;
+		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
 	} else if (y2 > _maze.y2 - kShiftSize / 2) {
 		// Exit south
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p + _maze.size;
 		_actListArr[_alNewscrIndex][0].a2.x = _maze.x4;
 		_actListArr[_alNewscrIndex][0].a2.y = _maze.y1 + kShiftSize;
-		gameStatus.routeIndex = -1;
+		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
 	}
 }
@@ -1259,7 +1259,8 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		gameStatus.storyModeFl = action->a39.storyModeFl;
 
 		// End the game after story if this is special vendor demo mode
-		if (gameStatus.demoFl && action->a39.storyModeFl == false)
+//		if (gameStatus.demoFl && action->a39.storyModeFl == false)
+		if (action->a39.storyModeFl == false)
 			_vm->endGame();
 		break;
 	case WARN:                                      // act40: Text box (CF TEXT)
@@ -1281,10 +1282,10 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			insertActionList(action->a43.actNoIndex);
 		break;
 	case STOP_ROUTE:                                // act44: Stop any route in progress
-		gameStatus.routeIndex = -1;
+		_vm->_route->resetRoute();
 		break;
 	case COND_ROUTE:                                // act45: Conditional on route in progress
-		if (gameStatus.routeIndex >= action->a45.routeIndex)
+		if (_vm->_route->getRouteIndex() >= action->a45.routeIndex)
 			insertActionList(action->a45.actPassIndex);
 		else
 			insertActionList(action->a45.actFailIndex);
@@ -1293,7 +1294,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		// This is to allow left click on exit to get there immediately
 		// For example the plane crash in Hugo2 where hero is invisible
 		// Couldn't use INVISIBLE flag since conflicts with boat in Hugo1
-		gameStatus.jumpExitFl = action->a46.jumpExitFl;
+		_vm->_mouse->setJumpExitFl(action->a46.jumpExitFl);
 		break;
 	case INIT_VIEW:                                 // act47: Init object.viewx, viewy, dir
 		_vm->_object->_objects[action->a47.objIndex].viewx = action->a47.viewx;

@@ -58,7 +58,7 @@ overlay_t HugoEngine::_objBound;
 maze_t      _maze;                              // Default to not in maze 
 hugo_boot_t _boot;                              // Boot info structure file
 
-HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd), _mouseX(0), _mouseY(0),
+HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd),
 	_arrayReqs(0), _hotspots(0), _invent(0), _uses(0), _catchallList(0), _backgroundObjects(0),	_points(0), _cmdList(0), 
 	_screenActs(0), _hero(0), _heroImage(0), _defltTunes(0), _introX(0), _introY(0), _maxInvent(0), _numBonuses(0),
 	_numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0), _screenStates(0), _score(0), _maxscore(0),
@@ -266,14 +266,14 @@ Common::Error HugoEngine::run() {
 				_parser->keyHandler(event);
 				break;
 			case Common::EVENT_MOUSEMOVE:
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
+				_mouse->setMouseX(event.mouse.x);
+				_mouse->setMouseY(event.mouse.y);
 				break;
 			case Common::EVENT_LBUTTONUP:
-				_status.leftButtonFl = true;
+				_mouse->setLeftButton();
 				break;
 			case Common::EVENT_RBUTTONUP:
-				_status.rightButtonFl = true;
+				_mouse->setRightButton();
 				break;
 			case Common::EVENT_QUIT:
 				_status.doQuitFl = true;
@@ -374,14 +374,12 @@ bool HugoEngine::loadHugoDat() {
 	}
 
 	// Read header
-	char buf[256];
+	char buf[4];
 	in.read(buf, 4);
-	buf[4] = '\0';
 
-	if (strcmp(buf, "HUGO")) {
+	if (memcmp(buf, "HUGO", 4)) {
 		Common::String errorMessage = "File 'hugo.dat' is corrupt. Get it from the ScummVM website";
 		GUIErrorMessage(errorMessage);
-		warning("%s", errorMessage.c_str());
 		return false;
 	}
 
@@ -389,17 +387,13 @@ bool HugoEngine::loadHugoDat() {
 	int minVer = in.readByte();
 
 	if ((majVer != HUGO_DAT_VER_MAJ) || (minVer != HUGO_DAT_VER_MIN)) {
-		snprintf(buf, 256, "File 'hugo.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from the ScummVM website", HUGO_DAT_VER_MAJ, HUGO_DAT_VER_MIN, majVer, minVer);
-		GUIErrorMessage(buf);
-		warning("%s", buf);
-
+		Common::String errorMessage = Common::String::format("File 'hugo.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from the ScummVM website", HUGO_DAT_VER_MAJ, HUGO_DAT_VER_MIN, majVer, minVer);
+		GUIErrorMessage(errorMessage);
 		return false;
 	}
 
 	_numVariant = in.readUint16BE();
-
 	_screen->loadPalette(in);
-
 	_text->loadAllTexts(in);
 
 	// Read x_intro and y_intro
@@ -524,7 +518,7 @@ bool HugoEngine::loadHugoDat() {
 		}
 	}
 
-// Read _background_objects
+	// Read _background_objects
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
@@ -744,35 +738,26 @@ void HugoEngine::initStatus() {
 	debugC(1, kDebugEngine, "initStatus");
 	_status.storyModeFl   = false;                  // Not in story mode
 	_status.gameOverFl    = false;                  // Hero not knobbled yet
-	_status.demoFl        = false;                  // Not demo mode
 	_status.textBoxFl     = false;                  // Not processing a text box
 	_status.lookFl        = false;                  // Toolbar "look" button
 	_status.recallFl      = false;                  // Toolbar "recall" button
-	_status.leftButtonFl  = false;                  // Left mouse button pressed
-	_status.rightButtonFl = false;                  // Right mouse button pressed
 	_status.newScreenFl   = false;                  // Screen not just loaded
-	_status.jumpExitFl    = false;                  // Can't jump to a screen exit
 	_status.godModeFl     = false;                  // No special cheats allowed
-	_status.helpFl        = false;                  // Not calling WinHelp()
 	_status.doQuitFl      = false;
 	_status.skipIntroFl   = false;
-	_status.path[0]       = 0;                      // Path to write files
 
 	// Initialize every start of new game
 	_status.tick            = 0;                    // Tick count
 	_status.viewState       = kViewIdle;            // View state
-	_status.inventoryState  = kInventoryOff;        // Inventory icon bar state
-	_status.inventoryHeight = 0;                    // Inventory icon bar pos
-	_status.inventoryObjId  = -1;                   // Inventory object selected (none)
-	_status.routeIndex      = -1;                   // Hero not following a route
-	_status.go_for          = kRouteSpace;          // Hero walking to space
-	_status.go_id           = -1;                   // Hero not walking to anything
 
 // Strangerke - Suppress as related to playback
 //	_status.recordFl      = false;                  // Not record mode
 //	_status.playbackFl    = false;                  // Not playback mode
 // Strangerke - Not used ?
 //	_status.mmtime        = false;                  // Multimedia timer support
+//	_status.helpFl        = false;                  // Not calling WinHelp()
+//	_status.demoFl        = false;                  // Not demo mode
+//	_status.path[0]       = 0;                      // Path to write files
 //	_status.screenWidth   = 0;                      // Desktop screen width
 //	_status.saveTick      = 0;                      // Time of last save
 //	_status.saveSlot      = 0;                      // Slot to save/restore game

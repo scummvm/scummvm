@@ -38,10 +38,14 @@
 #include "hugo/game.h"
 #include "hugo/route.h"
 #include "hugo/object.h"
+#include "hugo/inventory.h"
 
 namespace Hugo {
 Route::Route(HugoEngine *vm) : _vm(vm) {
 	_oldWalkDirection = 0;
+	_routeIndex       = -1;                         // Hero not following a route
+	_go_for           = kRouteSpace;                // Hero walking to space
+	_go_id            = -1;                         // Hero not walking to anything
 }
 
 /**
@@ -417,11 +421,13 @@ void Route::processRoute() {
 
 	static bool turnedFl = false;                   // Used to get extra cylce for turning
 
+	if (_routeIndex < 0)
+		return;
+
 	// Current hero position
 	int16 herox = _vm->_hero->x + _vm->_hero->currImagePtr->x1;
 	int16 heroy = _vm->_hero->y + _vm->_hero->currImagePtr->y2;
-	status_t &gameStatus = _vm->getGameStatus();
-	Point *routeNode = &_route[gameStatus.routeIndex];
+	Point *routeNode = &_route[_routeIndex];
 
 	// Arrived at node?
 	if (abs(herox - routeNode->x) < kStepDx + 1 && abs(heroy - routeNode->y) < kStepDy) {
@@ -433,29 +439,29 @@ void Route::processRoute() {
 		_vm->_hero->cycling = kCycleNotCycling;
 
 		// Arrived at final node?
-		if (--gameStatus.routeIndex < 0) {
+		if (--_routeIndex < 0) {
 			// See why we walked here
-			switch (gameStatus.go_for) {
+			switch (_go_for) {
 			case kRouteExit:                        // Walked to an exit, proceed into it
-				setWalk(_vm->_hotspots[gameStatus.go_id].direction);
+				setWalk(_vm->_hotspots[_go_id].direction);
 				break;
 			case kRouteLook:                        // Look at an object
 				if (turnedFl) {
-					_vm->_object->lookObject(&_vm->_object->_objects[gameStatus.go_id]);
+					_vm->_object->lookObject(&_vm->_object->_objects[_go_id]);
 					turnedFl = false;
 				} else {
-					setDirection(_vm->_object->_objects[gameStatus.go_id].direction);
-					gameStatus.routeIndex++;        // Come round again
+					setDirection(_vm->_object->_objects[_go_id].direction);
+					_routeIndex++;                  // Come round again
 					turnedFl = true;
 				}
 				break;
 			case kRouteGet:                         // Get (or use) an object
 				if (turnedFl) {
-					_vm->_object->useObject(gameStatus.go_id);
+					_vm->_object->useObject(_go_id);
 					turnedFl = false;
 				} else {
-					setDirection(_vm->_object->_objects[gameStatus.go_id].direction);
-					gameStatus.routeIndex++;        // Come round again
+					setDirection(_vm->_object->_objects[_go_id].direction);
+					_routeIndex++;                  // Come round again
 					turnedFl = true;
 				}
 				break;
@@ -493,21 +499,20 @@ bool Route::startRoute(const go_t go_for, const int16 id, int16 cx, int16 cy) {
 	if (_vm->_hero->pathType != kPathUser)
 		return false;
 
-	status_t &gameStatus = _vm->getGameStatus();
 	// if inventory showing, make it go away
-	if (gameStatus.inventoryState != kInventoryOff)
-		gameStatus.inventoryState = kInventoryUp;
+	if (_vm->_inventory->getInventoryState() != kInventoryOff)
+		_vm->_inventory->setInventoryState(kInventoryUp);
 
-	gameStatus.go_for = go_for;                     // Purpose of trip
-	gameStatus.go_id  = id;                         // Index of exit/object
+	_go_for = go_for;                               // Purpose of trip
+	_go_id  = id;                                   // Index of exit/object
 
 	// Adjust destination to center hero if walking to cursor
-	if (gameStatus.go_for == kRouteSpace)
+	if (_go_for == kRouteSpace)
 		cx -= kHeroMinWidth / 2;
 
 	bool foundFl = false;                           // TRUE if route found ok
 	if ((foundFl = findRoute(cx, cy))) {            // Found a route?
-		gameStatus.routeIndex = _routeListIndex;    // Node index
+		_routeIndex = _routeListIndex;              // Node index
 		_vm->_hero->vx = _vm->_hero->vy = 0;        // Stop manual motion
 	}
 
