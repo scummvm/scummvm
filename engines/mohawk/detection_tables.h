@@ -1192,6 +1192,36 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"lbsampler",
+			"v2",
+			AD_ENTRY1("SAMPLER.LB", "6c77cba7326f975645d55fd17ad02d92"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	{
+		{
+			"lbsampler",
+			"v2",
+			AD_ENTRY1("BookOutline", "48985306013164b128981883045f2c43"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1, // v2 Mac games are really still v1
+		0,
+		"Living Books Sampler"
+	},
+
+	{
+		{
+			"lbsampler",
 			"v3",
 			AD_ENTRY1("outline", "d239506f969ff68fa886f084082e9158"),
 			Common::EN_ANY,
