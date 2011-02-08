@@ -62,9 +62,8 @@ public:
 	void close();
 
 	bool isVideoLoaded() const { return _fileStream != 0; }
-	uint16 getWidth() const { assert(_surface); return _surface->w; }
-	uint16 getHeight() const { assert(_surface); return _surface->h; }
-	uint16 getPitch() const { assert(_surface); return _surface->pitch; }
+	uint16 getWidth() const { return _width; }
+	uint16 getHeight() const { return _height; }
 	uint32 getFrameCount() const { return _header.frameCount; }
 	const Graphics::Surface *decodeNextFrame();
 	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
@@ -80,6 +79,7 @@ private:
 	void readHeaderChunk();
 	void readPaletteChunk(uint16 chunkSize);
 	void readFrameSizesChunk();
+	void calculateVideoDimensions();
 
 	void freeData();
 
@@ -89,6 +89,8 @@ private:
 
 	Common::SeekableSubReadStreamEndian *_fileStream;
 
+	uint16 _width;
+	uint16 _height;
 	uint32 *_frameTotalSize;
 	byte _palette[256 * 3];
 	bool _dirtyPalette;

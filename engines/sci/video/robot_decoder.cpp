@@ -76,6 +76,8 @@ enum robotPalTypes {
 
 RobotDecoder::RobotDecoder(Audio::Mixer *mixer, bool isBigEndian) {
 	_surface = 0;
+	_width = 0;
+	_height = 0;
 	_fileStream = 0;
 	_audioStream = 0;
 	_dirtyPalette = false;
@@ -123,6 +125,9 @@ bool RobotDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	readPaletteChunk(_header.paletteDataSize);
 	readFrameSizesChunk();
+	calculateVideoDimensions();
+	_surface->create(_width, _height, 1);
+
 	return true;
 }
 
@@ -218,31 +223,56 @@ void RobotDecoder::readFrameSizesChunk() {
 		_fileStream->seek((curPos & ~0x7ff) + 2048);
 }
 
+void RobotDecoder::calculateVideoDimensions() {
+	// This is an O(n) operation, as each frame has a different size.
+	// We need to know the actual frame size to have a constant video size.
+	uint32 pos = _fileStream->pos();
+	
+	for (uint32 curFrame = 0; curFrame < _header.frameCount; curFrame++) {
+		_fileStream->skip(4);
+		uint16 frameWidth = _fileStream->readUint16();
+		uint16 frameHeight = _fileStream->readUint16();
+		if (frameWidth > _width)
+			_width = frameWidth;
+		if (frameHeight > _height)
+			_height = frameHeight;
+		_fileStream->skip(_frameTotalSize[curFrame] - 8);
+	}
+
+	_fileStream->seek(pos);
+}
+
 const Graphics::Surface *RobotDecoder::decodeNextFrame() {
 	// Read frame image header (24 bytes)
 	_fileStream->skip(3);
 	byte frameScale = _fileStream->readByte();
 	uint16 frameWidth = _fileStream->readUint16();
 	uint16 frameHeight = _fileStream->readUint16();
-	_fileStream->skip(8); // x, y, width and height of the frame
+	_fileStream->skip(4); // unknown, almost always 0
+	uint16 frameX = _fileStream->readUint16();
+	uint16 frameY = _fileStream->readUint16();
 	uint16 compressedSize = _fileStream->readUint16();
 	uint16 frameFragments = _fileStream->readUint16();
 	_fileStream->skip(4); // unknown
-
 	uint32 decompressedSize = frameWidth * frameHeight * frameScale / 100;
-	_surface->free();
-	_surface->create(frameWidth, frameHeight, 1);
-	_surface->w = frameWidth * frameScale / 100;
+	// FIXME: A frame's height + position can go off limits... why? With the
+	// following, we cut the contents to fit the frame
+	uint16 scaledHeight = CLIP<uint16>(decompressedSize / frameWidth, 0, _height - frameY);
+	// FIXME: Same goes for the frame's width + position. In this case, we
+	// modify the position to fit the contents on screen.
+	if (frameWidth + frameX > _width)
+		frameX = _width - frameWidth;
+	assert (frameWidth + frameX <= _width && scaledHeight + frameY <= _height);
 
 	DecompressorLZS lzs;
+	byte *decompressedFrame = new byte[decompressedSize];
+	byte *outPtr = decompressedFrame;
 
 	if (_header.version == 4) {
 		// v4 has just the one fragment, it seems, and ignores the fragment count
 		Common::SeekableSubReadStream fragmentStream(_fileStream, _fileStream->pos(), _fileStream->pos() + compressedSize);
-		lzs.unpack(&fragmentStream, (byte *)_surface->pixels, compressedSize, decompressedSize);
+		lzs.unpack(&fragmentStream, outPtr, compressedSize, decompressedSize);
 	} else {
-		byte *outPtr = (byte *)_surface->pixels;
-
 		for (uint16 i = 0; i < frameFragments; ++i) {
 			uint32 compressedFragmentSize = _fileStream->readUint32();
 			uint32 decompressedFragmentSize = _fileStream->readUint32();
@@ -260,6 +290,24 @@ const Graphics::Surface *RobotDecoder::decodeNextFrame() {
 			outPtr += decompressedFragmentSize;
 		}
 	}
+
+	// Copy over the decompressed frame
+	byte *inFrame = decompressedFrame;
+	byte *outFrame = (byte *)_surface->pixels;
+
+	// Black out the surface
+	memset(outFrame, 0, _width * _height);
+
+	// Move to the correct y coordinate
+	outFrame += _width * frameY;
+
+	for (uint16 y = 0; y < scaledHeight; y++) {
+		memcpy(outFrame + frameX, inFrame, frameWidth);
+		inFrame += frameWidth;
+		outFrame += _width;
+	}
+
+	delete[] decompressedFrame;
 
 	// +1 because we start with frame number -1
 	uint32 audioChunkSize = _frameTotalSize[_curFrame + 1] - (24 + compressedSize);

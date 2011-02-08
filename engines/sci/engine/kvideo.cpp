@@ -51,15 +51,12 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	uint16 screenWidth = g_system->getWidth();
 	uint16 screenHeight = g_system->getHeight();
 	bool isVMD = videoState.fileName.hasSuffix(".vmd");
-	bool isRobot = videoState.fileName.hasSuffix(".rbt");
 
-	if (!isRobot) {
-		if (screenWidth == 640 && width <= 320 && height <= 240 && ((videoState.flags & kDoubled) || !isVMD)) {
-			width *= 2;
-			height *= 2;
-			pitch *= 2;
-			scaleBuffer = new byte[width * height * bytesPerPixel];
-		}
+	if (screenWidth == 640 && width <= 320 && height <= 240 && ((videoState.flags & kDoubled) || !isVMD)) {
+		width *= 2;
+		height *= 2;
+		pitch *= 2;
+		scaleBuffer = new byte[width * height * bytesPerPixel];
 	}
 
 	uint16 x, y; 
@@ -76,13 +73,8 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 			y = (screenHeight - height) / 2;
 		}
 	} else {
-		if (!isRobot) {
 			x = (screenWidth - width) / 2;
 			y = (screenHeight - height) / 2;
-		} else {
-			x = 0;
-			y = 0;
-		}
 	}
 	bool skipVideo = false;
 
@@ -99,10 +91,7 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 					g_sci->_gfxScreen->scale2x((byte *)frame->pixels, scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
 					g_system->copyRectToScreen(scaleBuffer, pitch, x, y, width, height);
 				} else {
-					if (!isRobot)
-						g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, width, height);
-					else	// Frames in robot videos have different dimensions
-						g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, width, height);
 				}
 
 				if (videoDecoder->hasDirtyPalette())
