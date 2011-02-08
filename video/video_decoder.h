@@ -99,7 +99,7 @@ public:
 	virtual Graphics::PixelFormat getPixelFormat() const = 0;
 
 	/**
-	 * Get the palette for the video in RGBA format (if 8bpp or less).
+	 * Get the palette for the video in RGB format (if 8bpp or less).
 	 */
 	virtual const byte *getPalette() { return 0; }
 
