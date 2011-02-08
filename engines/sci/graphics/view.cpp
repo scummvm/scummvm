@@ -269,15 +269,6 @@ void GfxView::initData(GuiResourceId resourceId) {
 				cel->offsetRLE = READ_SCI11ENDIAN_UINT32(celData + 24);
 				cel->offsetLiteral = READ_SCI11ENDIAN_UINT32(celData + 28);
 
-				// Swap 0 and 0xff for Mac SCI1.1+ games
-				// See unpackCel() for more info
-				if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
-					if (cel->clearKey == 0)
-						cel->clearKey = 0xff;
-					else if (cel->clearKey == 0xff)
-						cel->clearKey = 0;
-				}
-
 				// GK1-hires content is actually uncompressed, we need to swap both so that we process it as such
 				if ((cel->offsetRLE) && (!cel->offsetLiteral))
 					SWAP(cel->offsetRLE, cel->offsetLiteral);
@@ -403,7 +394,24 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 		//  over pixels to automatically have them transparent
 		// Also some RLE compressed cels are possibly ending with the last
 		// non-transparent pixel (is this even possible with the current code?)
-		memset(outPtr, _loop[loopNo].cel[celNo].clearKey, pixelCount);
+		byte clearColor = _loop[loopNo].cel[celNo].clearKey;
+
+		// Since Mac OS required palette index 0 to be white and 0xff to be black, the
+		// Mac SCI devs decided that rather than change scripts and various pieces of
+		// code, that they would just put a little snippet of code to swap these colors
+		// in various places around the SCI codebase. We figured that it would be less
+		// hacky to swap pixels instead and run the Mac games with a PC palette.
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+			// clearColor is based on PC palette, but the literal data is not.
+			// We flip clearColor here to make it match the literal data. All
+			// these pixels will be flipped back again below.
+			if (clearColor == 0)
+				clearColor = 0xff;
+			else if (clearColor == 0xff)
+				clearColor = 0;
+		}
+
+		memset(outPtr, clearColor, pixelCount);
 
 		rlePtr = _resourceData + celInfo->offsetRLE;
 		if (!celInfo->offsetLiteral) { // no additional literal data
@@ -498,21 +506,13 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 			}
 		}
 
-		// Swap 0 and 0xff for Mac SCI1.1+ games
-		// Since Mac OS required that palette index 0 to be white and 0xff to be black,
-		// the Mac SCI devs decided that rather than change scripts and various pieces of
-		// code, that they would just put this little snippet of code in various places
-		// around the SCI codebase. We figured that it would be less hacky to swap pixels
-		// instead of fill color and transparency color, etc. We don't swap the one that
-		// is transparent here because we swapped clearKey earlier.
+		// Swap 0 and 0xff pixels for Mac SCI1.1+ games (see above)
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1) {
 			for (uint32 i = 0; i < pixelCount; i++) {
-				if (outPtr[i] != _loop[loopNo].cel[celNo].clearKey) {
-					if (outPtr[i] == 0)
-						outPtr[i] = 0xff;
-					else if (outPtr[i] == 0xff)
-						outPtr[i] = 0;
-				}
+				if (outPtr[i] == 0)
+					outPtr[i] = 0xff;
+				else if (outPtr[i] == 0xff)
+					outPtr[i] = 0;
 			}
 		}
 	}
