@@ -582,6 +582,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NONE	},
 
+	// Freddy Pharkas - English Macintosh
+	{"freddypharkas", "", {
+		{"Data1", 0, "ef7cbd62727989818f1cfae69c9fd61d", 3038492},
+		{"Data2", 0, "2424b418f7d52c385cea4701f529c69a", 4721732},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NOSPEECH	},
+
 	// Fun Seeker's Guide - English DOS
 	// SCI interpreter version 0.000.506
 	{"funseeker", "", {

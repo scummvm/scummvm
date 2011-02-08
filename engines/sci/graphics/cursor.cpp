@@ -432,17 +432,21 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	// automatically. 
 
 	if (_macCursorRemap.empty()) {
-		// The scripts have given us no remapping, so let's try to do this manually.
-		// First try and see if the view resource exists. If it does, we're just using
-		// that cursor (QFG1/Hoyle4 do not use Mac cursors, although they have them).
-		if (_resMan->testResource(ResourceId(kResourceTypeView, viewNum))) {
-			CursorMan.disableCursorPalette(true);
-			kernelSetView(viewNum, loopNum, celNum, hotspot);
-			return;
+		// QFG1/Freddy use a straight viewNum->cursor ID mapping
+		if (g_sci->getGameId() != GID_QFG1VGA && g_sci->getGameId() != GID_FREDDYPHARKAS) {
+			// The scripts have given us no remapping, so let's try to do this manually.
+			// First try and see if the view resource exists. If it does, we're just using
+			// that cursor (Hoyle4 does not use Mac cursors, although it has them).
+			if (_resMan->testResource(ResourceId(kResourceTypeView, viewNum))) {
+				CursorMan.disableCursorPalette(true);
+				kernelSetView(viewNum, loopNum, celNum, hotspot);
+				return;
+			} else if (g_sci->getGameId() == GID_KQ6) {
+				// KQ6 seems to use this mapping for its cursors
+				viewNum = loopNum * 1000 + celNum;
+			} else
+				error("Unknown Mac cursor %d", viewNum);
 		}
-
-		// KQ6 seems to use this mapping for its cursors
-		viewNum = loopNum * 1000 + celNum;
 	} else {
 		// If we do have the list, we'll be using a remap based on what the
 		// scripts have given us.

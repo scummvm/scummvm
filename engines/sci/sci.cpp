@@ -756,7 +756,8 @@ bool SciEngine::isCD() const {
 }
 
 bool SciEngine::hasMacIconBar() const {
-	return _resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1 && getGameId() == GID_KQ6;
+	return _resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1 &&
+			(getGameId() == GID_KQ6 || getGameId() == GID_FREDDYPHARKAS);
 }
 
 Common::String SciEngine::getSavegameName(int nr) const {
