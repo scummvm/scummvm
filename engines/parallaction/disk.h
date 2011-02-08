@@ -185,8 +185,8 @@ protected:
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
 	Common::SeekableReadStream *tryOpenFile(const char* name);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
-	void loadMask(BackgroundInfo& info, const char *name);
-	void loadPath(BackgroundInfo& info, const char *name);
+	void loadMask_internal(BackgroundInfo& info, const char *name);
+	void loadPath_internal(BackgroundInfo& info, const char *name);
 	void loadBackground(BackgroundInfo& info, const char *name);
 	void buildMask(byte* buf);
 

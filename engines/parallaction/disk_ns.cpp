@@ -935,8 +935,8 @@ void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
 	}
 }
 
-void AmigaDisk_ns::loadMask(BackgroundInfo& info, const char *name) {
-	debugC(5, kDebugDisk, "AmigaDisk_ns::loadMask(%s)", name);
+void AmigaDisk_ns::loadMask_internal(BackgroundInfo& info, const char *name) {
+	debugC(5, kDebugDisk, "AmigaDisk_ns::loadMask_internal(%s)", name);
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.mask", name);
@@ -962,7 +962,7 @@ void AmigaDisk_ns::loadMask(BackgroundInfo& info, const char *name) {
 	info._mask = loader._maskBuffer;
 }
 
-void AmigaDisk_ns::loadPath(BackgroundInfo& info, const char *name) {
+void AmigaDisk_ns::loadPath_internal(BackgroundInfo& info, const char *name) {
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.path", name);
@@ -987,11 +987,11 @@ void AmigaDisk_ns::loadScenery(BackgroundInfo& info, const char* background, con
 	loadBackground(info, filename);
 
 	if (mask == 0) {
-		loadMask(info, background);
-		loadPath(info, background);
+		loadMask_internal(info, background);
+		loadPath_internal(info, background);
 	} else {
-		loadMask(info, mask);
-		loadPath(info, mask);
+		loadMask_internal(info, mask);
+		loadPath_internal(info, mask);
 	}
 
 	return;
