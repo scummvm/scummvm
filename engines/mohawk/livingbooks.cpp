@@ -232,7 +232,11 @@ void MohawkEngine_LivingBooks::loadBookInfo(const Common::String &filename) {
 	// nColors is here too, but it's always 256 anyway...
 
 	// this is 1 in The New Kid on the Block, changes the hardcoded UI
-	_poetryMode = (getIntFromConfig("BookInfo", "poetry") == 1);
+	// v2 games changed the flag name to fPoetry
+	if (getGameType() == GType_LIVINGBOOKSV1)
+		_poetryMode = (getIntFromConfig("BookInfo", "poetry") == 1);
+	else
+		_poetryMode = (getIntFromConfig("BookInfo", "fPoetry") == 1);
 
 	// The later Living Books games add some more options:
 	//     - fNeedPalette                (always true?)
