@@ -109,7 +109,8 @@ public:
 	virtual bool hasDirtyPalette() const { return false; }
 
 	/**
-	 * Set the current palette to the system palette.
+	 * Set the system palette to the palette returned by getPalette.
+	 * @see getPalette
 	 */
 	void setSystemPalette();
 
