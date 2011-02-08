@@ -154,7 +154,7 @@ void RobotDecoder::readPaletteChunk(uint16 chunkSize) {
 
 	// SCI1.1 palette
 	byte palFormat = paletteData[32];
-	uint16 palColorStart = READ_SCI11ENDIAN_UINT16(paletteData + 25);
+	uint16 palColorStart = paletteData[25];
 	uint16 palColorCount = READ_SCI11ENDIAN_UINT16(paletteData + 29);
 
 	int palOffset = 37;
