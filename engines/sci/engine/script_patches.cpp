@@ -1256,7 +1256,7 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 					foundOffset = findSignature(signatureTable, scriptData, scriptSize);
 					if (foundOffset != -1) {
 						// found, so apply the patch
-						warning("matched and patched %s on script %d offset %d", signatureTable->description, scriptNr, foundOffset);
+						debugC(kDebugLevelScripts, "matched and patched %s on script %d offset %d", signatureTable->description, scriptNr, foundOffset);
 						applyPatch(signatureTable->patch, scriptData, scriptSize, foundOffset);
 					}
 					applyCount--;
