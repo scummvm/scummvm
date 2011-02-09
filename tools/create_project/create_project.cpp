@@ -997,8 +997,8 @@ void ProjectProvider::createProject(const BuildSetup &setup) {
 	createModuleList(setup.srcDir + "/engines", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/graphics", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/gui", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/sound", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/sound/softsynth/mt32", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/audio", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/video", setup.defines, in, ex);
 
 	// Resource files
