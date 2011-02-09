@@ -37,9 +37,7 @@ namespace AGOS {
 class AGOSEngine_Feeble;
 
 class MoviePlayer {
-	friend class MoviePlayerDXA;
-	friend class MoviePlayerSMK;
-
+protected:
 	AGOSEngine_Feeble *_vm;
 
 	Audio::Mixer *_mixer;
@@ -68,7 +66,7 @@ public:
 	virtual void nextFrame() = 0;
 	virtual void stopVideo() = 0;
 
-private:
+protected:
 	virtual void handleNextFrame();
 	virtual bool processFrame() = 0;
 	virtual void startSound() {}
