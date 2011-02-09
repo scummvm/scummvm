@@ -77,9 +77,9 @@ private:
 
 	DECLARE_OPCODE(o_hologramDisplay_init);
 	DECLARE_OPCODE(o_hologramSelection_init);
-	DECLARE_OPCODE(opcode_202);
+	DECLARE_OPCODE(o_battery_init);
 	DECLARE_OPCODE(opcode_203);
-	DECLARE_OPCODE(opcode_204);
+	DECLARE_OPCODE(o_batteryGauge_init);
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
 	DECLARE_OPCODE(o_chest_init);
@@ -88,12 +88,19 @@ private:
 	DECLARE_OPCODE(o_cloudOrb_init);
 
 	void chargeBattery_run();
+	void batteryDeplete_run();
 
 	MystGameState::Stoneship &_state;
 
 	bool _batteryCharging;
 	bool _batteryDepleting;
 	uint32 _batteryNextTime;
+
+	bool _batteryGaugeRunning;
+	uint16 _batteryLastCharge; // 92
+	MystResourceType8 *_batteryGauge; // 96
+	void batteryGaugeUpdate();
+	void batteryGauge_run();
 
 	uint16 _cabinMystBookPresent; // 64
 

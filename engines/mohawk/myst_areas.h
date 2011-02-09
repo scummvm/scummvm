@@ -70,7 +70,8 @@ public:
 	bool contains(Common::Point point) { return _rect.contains(point); }
 	virtual void drawDataToScreen() {}
 	virtual void handleCardChange() {}
-	virtual Common::Rect getRect() { return _rect; }
+	Common::Rect getRect() { return _rect; }
+	void setRect(const Common::Rect &rect) { _rect = rect; }
 	bool isEnabled();
 	void setEnabled(bool enabled);
 	bool isDrawSubimages() { return _flags & kMystSubimageEnableFlag; }

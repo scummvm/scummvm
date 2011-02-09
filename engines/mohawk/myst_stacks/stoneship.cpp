@@ -93,9 +93,9 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 	// "Init" Opcodes
 	OPCODE(200, o_hologramDisplay_init);
 	OPCODE(201, o_hologramSelection_init);
-	OPCODE(202, opcode_202);
+	OPCODE(202, o_battery_init);
 	OPCODE(203, opcode_203);
-	OPCODE(204, opcode_204);
+	OPCODE(204, o_batteryGauge_init);
 	OPCODE(205, opcode_205);
 	OPCODE(206, opcode_206);
 	OPCODE(207, o_chest_init);
@@ -111,6 +111,8 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 
 void MystScriptParser_Stoneship::disablePersistentScripts() {
 	_batteryCharging = false;
+	_batteryDepleting = false;
+	_batteryGaugeRunning = false;
 	_telescopeRunning = false;
 }
 
@@ -120,6 +122,12 @@ void MystScriptParser_Stoneship::runPersistentScripts() {
 
 	if (_telescopeRunning)
 		telescope_run();
+
+	if (_batteryGaugeRunning)
+		batteryGauge_run();
+
+	if (_batteryDepleting)
+		batteryDeplete_run();
 }
 
 uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
@@ -481,6 +489,7 @@ void MystScriptParser_Stoneship::o_generatorStart(uint16 op, uint16 var, uint16 
 		_state.generatorDuration -= _vm->_system->getMillis() - _state.generatorDepletionTime;
 
 	// Start charging the battery
+	_batteryDepleting = false;
 	_batteryCharging = true;
 	_batteryNextTime = _vm->_system->getMillis() + 1000;
 
@@ -507,6 +516,7 @@ void MystScriptParser_Stoneship::o_generatorStop(uint16 op, uint16 var, uint16 a
 		_state.generatorDepletionTime = _vm->_system->getMillis() + _state.generatorDuration;
 		_state.generatorPowerAvailable = 1;
 		_batteryDepleting = true;
+		_batteryNextTime = _vm->_system->getMillis() + 60000;
 	}
 
 	// Pause handle movie
@@ -529,10 +539,33 @@ void MystScriptParser_Stoneship::chargeBattery_run() {
 }
 
 uint16 MystScriptParser_Stoneship::batteryRemainingCharge() {
-	if (_state.generatorDepletionTime) {
-		return (_state.generatorDepletionTime - _vm->_system->getMillis()) / 7500;
+	uint32 time = _vm->_system->getMillis();
+
+	if (_state.generatorDepletionTime > time) {
+		return (_state.generatorDepletionTime - time) / 7500;
 	} else {
 		return 0;
+	}
+}
+
+void MystScriptParser_Stoneship::batteryDeplete_run() {
+	uint32 time = _vm->_system->getMillis();
+
+	if (time > _batteryNextTime) {
+		if (_state.generatorDuration > 60000) {
+			_state.generatorDuration -= 60000;
+			_batteryNextTime = time + 60000;
+		} else { // Battery depleted
+			_state.generatorDuration = 0;
+			_state.generatorDepletionTime = 0;
+
+			if (_state.sideDoorOpened)
+				_state.generatorPowerAvailable = 2;
+			else
+				_state.generatorPowerAvailable = 0;
+
+			_batteryDepleting = false;
+		}
 	}
 }
 
@@ -771,13 +804,27 @@ void MystScriptParser_Stoneship::o_hologramSelection_init(uint16 op, uint16 var,
 	_hologramSelection = static_cast<MystResourceType6 *>(_invokingResource);
 }
 
-void MystScriptParser_Stoneship::opcode_202(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::batteryGaugeUpdate() {
+	uint16 charge = 0;
 
+	if (_state.generatorDepletionTime) {
+		charge = batteryRemainingCharge();
+	}
+
+	Common::Rect rect = _batteryGauge->getRect();
+
+	rect.top = rect.bottom - charge;
+
+	_batteryGauge->setRect(rect);
+}
+
+void MystScriptParser_Stoneship::o_battery_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 2160 (Lighthouse Battery Pack Closeup)
-	// TODO: Implement Code...
-	// Not Sure of Purpose - Update of Light / Discharge?
-	unknown(op, var, argc, argv);
+	debugC(kDebugScript, "Opcode %d: Battery init", op);
+
+	_batteryGauge = static_cast<MystResourceType8 *>(_invokingResource);
+
+	batteryGaugeUpdate();
 }
 
 void MystScriptParser_Stoneship::opcode_203(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -813,16 +860,26 @@ void MystScriptParser_Stoneship::opcode_203(uint16 op, uint16 var, uint16 argc, 
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Stoneship::opcode_204(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_batteryGauge_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Battery gauge init", op);
+	_batteryLastCharge = batteryRemainingCharge();
+	_batteryGaugeRunning = true;
+}
 
-	// Used for Card 2160 (Lighthouse Battery Pack Closeup)
-	if (argc == 0) {
-		// TODO: Implement Code For Battery Meter Level
-		// Overwrite _vm->_resources[1]->_subImages[0].rect.bottom 1 to 80
-		// Add accessor functions for this...
-	} else
-		unknown(op, var, argc, argv);
+void MystScriptParser_Stoneship::batteryGauge_run() {
+	uint16 batteryCharge = batteryRemainingCharge();
+
+	if (batteryCharge != _batteryLastCharge) {
+		batteryGaugeUpdate();
+
+		_batteryLastCharge = batteryCharge;
+
+		// Redraw card
+		_vm->drawCardBackground();
+		_vm->drawResourceImages();
+		_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
+		_vm->_system->updateScreen();
+	}
 }
 
 void MystScriptParser_Stoneship::opcode_205(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
