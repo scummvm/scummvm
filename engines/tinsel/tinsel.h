@@ -34,8 +34,8 @@
 #include "common/random.h"
 #include "common/util.h"
 
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 #include "engines/engine.h"
 #include "tinsel/debugger.h"

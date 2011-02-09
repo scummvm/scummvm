@@ -29,7 +29,7 @@
 #include "common/str.h"
 #include "common/file.h"
 #include "common/list.h"
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Common {
 class Archive;

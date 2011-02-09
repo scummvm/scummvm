@@ -37,7 +37,7 @@
 #include "backends/timer/default/default-timer.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
-#include "sound/mixer_intern.h"
+#include "audio/mixer_intern.h"
 
 #ifdef __cplusplus
 extern "C" {

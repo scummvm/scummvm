@@ -29,7 +29,7 @@
 #include "common/util.h"
 #include "common/mutex.h"
 
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 class MidiParser;
 

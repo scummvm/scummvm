@@ -40,7 +40,7 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 #include "made/made.h"
 #include "made/database.h"

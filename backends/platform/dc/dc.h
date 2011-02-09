@@ -30,7 +30,7 @@
 #include "backends/timer/default/default-timer.h"
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
-#include "sound/mixer_intern.h"
+#include "audio/mixer_intern.h"
 
 #define NUM_BUFFERS 4
 #define SOUND_BUFFER_SHIFT 3

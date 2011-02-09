@@ -34,7 +34,7 @@
 #include "common/file.h"
 #include "common/config-manager.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Tinsel {
 

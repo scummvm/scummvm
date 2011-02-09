@@ -31,7 +31,7 @@
 #include "scumm/saveload.h"
 #include "scumm/scumm.h"
 
-#include "sound/midiparser.h"
+#include "audio/midiparser.h"
 
 namespace Scumm {
 

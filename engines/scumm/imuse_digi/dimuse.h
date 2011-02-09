@@ -34,8 +34,8 @@
 #include "scumm/music.h"
 #include "scumm/sound.h"
 
-#include "sound/mixer.h"
-#include "sound/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
 
 namespace Scumm {
 

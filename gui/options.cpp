@@ -39,10 +39,10 @@
 
 #include "graphics/scaler.h"
 
-#include "sound/mididrv.h"
-#include "sound/musicplugin.h"
-#include "sound/mixer.h"
-#include "sound/fmopl.h"
+#include "audio/mididrv.h"
+#include "audio/musicplugin.h"
+#include "audio/mixer.h"
+#include "audio/fmopl.h"
 
 namespace GUI {
 

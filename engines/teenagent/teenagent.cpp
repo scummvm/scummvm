@@ -33,8 +33,8 @@
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 
-#include "sound/mixer.h"
-#include "sound/decoders/raw.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/thumbnail.h"

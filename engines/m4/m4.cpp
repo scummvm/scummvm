@@ -61,7 +61,7 @@
 #include "common/debug-channels.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 namespace M4 {
 

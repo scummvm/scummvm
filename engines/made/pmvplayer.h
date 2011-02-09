@@ -31,8 +31,8 @@
 #include "common/file.h"
 #include "common/endian.h"
 #include "graphics/surface.h"
-#include "sound/mixer.h"
-#include "sound/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
 
 #include "made/graphics.h"
 #include "made/sound.h"

@@ -26,10 +26,10 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 
-#include "sound/decoders/flac.h"
-#include "sound/decoders/voc.h"
-#include "sound/decoders/vorbis.h"
-#include "sound/decoders/mp3.h"
+#include "audio/decoders/flac.h"
+#include "audio/decoders/voc.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/mp3.h"
 
 #include "scumm/scumm.h"
 #include "scumm/util.h"

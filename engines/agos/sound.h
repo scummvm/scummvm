@@ -26,8 +26,8 @@
 #ifndef AGOS_SOUND_H
 #define AGOS_SOUND_H
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "agos/intern.h"
 #include "common/str.h"
 

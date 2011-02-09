@@ -26,7 +26,7 @@
 #ifndef AGI_SOUND_COCO3_H
 #define AGI_SOUND_COCO3_H
 
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
 namespace Agi {
 

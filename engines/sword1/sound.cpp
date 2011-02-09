@@ -37,13 +37,13 @@
 #include "sword1/logic.h"
 #include "sword1/sword1.h"
 
-#include "sound/audiostream.h"
-#include "sound/decoders/flac.h"
-#include "sound/decoders/mp3.h"
-#include "sound/decoders/raw.h"
-#include "sound/decoders/vorbis.h"
-#include "sound/decoders/wave.h"
-#include "sound/decoders/vag.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/flac.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/wave.h"
+#include "audio/decoders/vag.h"
 
 namespace Sword1 {
 

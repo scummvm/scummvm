@@ -29,8 +29,8 @@
 #include "common/serializer.h"
 #include "common/mutex.h"
 
-#include "sound/mixer.h"
-#include "sound/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
 
 #include "sci/sci.h"
 #include "sci/resource.h"

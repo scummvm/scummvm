@@ -33,7 +33,7 @@
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 
-#include "sound/timestamp.h"	// TODO: Move this to common/ ?
+#include "audio/timestamp.h"	// TODO: Move this to common/ ?
 
 
 namespace Common {

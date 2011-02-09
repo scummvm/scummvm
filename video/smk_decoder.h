@@ -27,7 +27,7 @@
 #define VIDEO_SMK_PLAYER_H
 
 #include "video/video_decoder.h"
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Audio {
 	class QueuingAudioStream;

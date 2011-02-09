@@ -33,10 +33,10 @@
 #ifndef HUGO_SOUND_H
 #define HUGO_SOUND_H
 
-#include "sound/mixer.h"
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
-#include "sound/softsynth/pcspk.h"
+#include "audio/mixer.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
+#include "audio/softsynth/pcspk.h"
 
 namespace Hugo {
 

@@ -52,8 +52,8 @@
 #include "sword25/kernel/resservice.h"
 #include "sword25/kernel/persistable.h"
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace Sword25 {
 

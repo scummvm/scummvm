@@ -29,7 +29,7 @@
 #include "kyra/lol.h"
 #include "kyra/resource.h"
 
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
 namespace Kyra {
 

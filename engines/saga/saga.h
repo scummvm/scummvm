@@ -31,7 +31,7 @@
 #include "common/array.h"
 #include "common/random.h"
 #include "common/memstream.h"
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 #include "saga/gfx.h"
 

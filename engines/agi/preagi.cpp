@@ -27,7 +27,7 @@
 #include "common/debug-channels.h"
 #include "common/random.h"
 
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 #include "agi/preagi.h"
 #include "agi/graphics.h"

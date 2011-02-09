@@ -30,7 +30,7 @@
 
 #include "video/dxa_decoder.h"
 #include "video/smk_decoder.h"
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace AGOS {
 

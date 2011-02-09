@@ -27,12 +27,12 @@ MODULES += \
 	engines \
 	video \
 	graphics \
-	sound \
+	audio \
 	common \
 	po
 
 ifdef USE_MT32EMU
-MODULES += sound/softsynth/mt32
+MODULES += audio/softsynth/mt32
 endif
 
 ######################################################################

@@ -26,7 +26,7 @@
 #ifndef AGI_SOUND_H
 #define AGI_SOUND_H
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Agi {
 

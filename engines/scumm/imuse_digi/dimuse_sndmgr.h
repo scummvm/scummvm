@@ -27,7 +27,7 @@
 
 
 #include "common/scummsys.h"
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 
 namespace Scumm {

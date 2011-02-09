@@ -37,12 +37,12 @@
 #include "common/substream.h"
 #include "common/system.h"
 
-#include "sound/decoders/mp3.h"
-#include "sound/decoders/vorbis.h"
-#include "sound/decoders/flac.h"
-#include "sound/decoders/wave.h"
-#include "sound/decoders/vag.h"
-#include "sound/rate.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/flac.h"
+#include "audio/decoders/wave.h"
+#include "audio/decoders/vag.h"
+#include "audio/rate.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"

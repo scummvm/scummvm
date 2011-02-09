@@ -32,7 +32,7 @@
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/endian.h"
-#include "sound/midiparser.h"
+#include "audio/midiparser.h"
 
 DECLARE_SINGLETON(Lure::SoundManager);
 

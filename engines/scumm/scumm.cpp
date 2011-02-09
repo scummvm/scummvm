@@ -77,7 +77,7 @@
 
 #include "backends/audiocd/audiocd.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 using Common::File;
 

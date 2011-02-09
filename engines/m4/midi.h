@@ -28,8 +28,8 @@
 #ifndef M4_MIDI_H
 #define M4_MIDI_H
 
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
 #include "common/mutex.h"
 
 namespace M4 {

@@ -27,7 +27,7 @@
 #define AGI_SOUND_2GS_H
 
 #include "common/frac.h"
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
 namespace Agi {
 

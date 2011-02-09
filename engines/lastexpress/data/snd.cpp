@@ -30,8 +30,8 @@
 
 #include "lastexpress/debug.h"
 
-#include "sound/decoders/adpcm.h"
-#include "sound/audiostream.h"
+#include "audio/decoders/adpcm.h"
+#include "audio/audiostream.h"
 #include "common/memstream.h"
 
 namespace LastExpress {

@@ -28,8 +28,8 @@
 
 #include "common/scummsys.h"
 #include "scumm/music.h"
-#include "sound/mixer.h"
-#include "sound/mods/tfmx.h"
+#include "audio/mixer.h"
+#include "audio/mods/tfmx.h"
 
 class Mixer;
 

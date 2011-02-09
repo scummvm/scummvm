@@ -32,8 +32,8 @@
 
 #ifdef VIDEO_COKTELDECODER_H
 
-#include "sound/audiostream.h"
-#include "sound/decoders/raw.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 #include "common/memstream.h"
 
 static const uint32 kVideoCodecIndeo3 = MKID_BE('iv32');

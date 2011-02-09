@@ -29,7 +29,7 @@
 #if defined(USE_NULL_DRIVER)
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
-#include "sound/mixer_intern.h"
+#include "audio/mixer_intern.h"
 #include "common/scummsys.h"
 
 /*

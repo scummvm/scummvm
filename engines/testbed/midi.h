@@ -26,7 +26,7 @@
 #define TESTBED_MIDI_H
 
 #include "common/stream.h"
-#include "sound/midiparser.h"
+#include "audio/midiparser.h"
 #include "testbed/testsuite.h"
 
 // This file can be used as template for header files of other newer testsuites.

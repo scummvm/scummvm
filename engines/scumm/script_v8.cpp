@@ -39,7 +39,7 @@
 #include "scumm/verbs.h"
 #include "scumm/smush/smush_player.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Scumm {
 

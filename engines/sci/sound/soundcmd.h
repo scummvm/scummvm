@@ -27,7 +27,7 @@
 #define SCI_SOUNDCMD_H
 
 #include "common/list.h"
-#include "sound/mididrv.h"	// for MusicType
+#include "audio/mididrv.h"	// for MusicType
 #include "sci/engine/state.h"
 
 namespace Sci {

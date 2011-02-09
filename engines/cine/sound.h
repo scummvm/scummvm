@@ -27,7 +27,7 @@
 #define CINE_SOUND_H_
 
 #include "common/util.h"
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Audio {
 	class AudioStream;

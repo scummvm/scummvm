@@ -32,7 +32,7 @@
 #include "base/plugins.h"
 #include "common/config-manager.h"
 #include "common/md5.h"
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"

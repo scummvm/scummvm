@@ -37,7 +37,7 @@
 
 #include "engines/util.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 #include "drascula/drascula.h"
 #include "drascula/console.h"

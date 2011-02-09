@@ -27,11 +27,11 @@
 #include "kyra/resource.h"
 #include "kyra/kyra_mr.h"
 
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
-#include "sound/decoders/mp3.h"
-#include "sound/decoders/vorbis.h"
-#include "sound/decoders/flac.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/flac.h"
 
 namespace Kyra {
 

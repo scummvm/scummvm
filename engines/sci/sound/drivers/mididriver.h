@@ -27,7 +27,7 @@
 #define SCI_SFX_SOFTSEQ_MIDIDRIVER_H
 
 #include "sci/sci.h"
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 #include "common/error.h"
 
 namespace Sci {

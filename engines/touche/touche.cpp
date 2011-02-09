@@ -34,7 +34,7 @@
 
 #include "engines/util.h"
 #include "graphics/cursorman.h"
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 #include "touche/midi.h"
 #include "touche/touche.h"

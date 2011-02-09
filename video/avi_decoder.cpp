@@ -28,14 +28,14 @@
 #include "common/stream.h"
 #include "common/events.h"
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 #include "video/avi_decoder.h"
 
 // Audio Codecs
-#include "sound/decoders/adpcm.h"
-#include "sound/decoders/raw.h"
+#include "audio/decoders/adpcm.h"
+#include "audio/decoders/raw.h"
 
 // Video Codecs
 #include "video/codecs/cinepak.h"

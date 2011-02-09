@@ -39,9 +39,9 @@
 
 #include "graphics/surface.h"
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
-#include "sound/decoders/voc.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/voc.h"
 
 #include "engines/engine.h"
 

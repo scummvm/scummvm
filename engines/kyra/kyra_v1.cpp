@@ -27,8 +27,8 @@
 #include "common/debug-channels.h"
 #include "common/EventRecorder.h"
 
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 #include "kyra/kyra_v1.h"
 #include "kyra/sound_intern.h"

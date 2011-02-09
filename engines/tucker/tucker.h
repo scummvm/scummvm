@@ -35,7 +35,7 @@
 
 #include "video/flic_decoder.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 #include "engines/engine.h"
 

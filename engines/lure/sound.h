@@ -32,8 +32,8 @@
 
 #include "common/singleton.h"
 #include "common/ptr.h"
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 class MidiParser;
 

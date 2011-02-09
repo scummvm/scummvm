@@ -36,12 +36,12 @@
 #include "draci/draci.h"
 #include "draci/game.h"
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
-#include "sound/decoders/raw.h"
-#include "sound/decoders/mp3.h"
-#include "sound/decoders/vorbis.h"
-#include "sound/decoders/flac.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/flac.h"
 
 namespace Draci {
 

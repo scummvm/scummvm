@@ -31,7 +31,7 @@
 #include "sci/sound/audio.h"
 #include "sci/sound/soundcmd.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Sci {
 

@@ -31,8 +31,8 @@
 
 #include "common/endian.h"
 #include "common/util.h"
-#include "sound/musicplugin.h"
-#include "sound/mpu401.h"
+#include "audio/musicplugin.h"
+#include "audio/mpu401.h"
 
 #include <proto/camd.h>
 #include <proto/exec.h>

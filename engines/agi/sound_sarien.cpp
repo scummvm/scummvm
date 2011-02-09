@@ -29,7 +29,7 @@
 #include "common/random.h"
 #include "common/str-array.h"
 
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 #include "agi/agi.h"
 

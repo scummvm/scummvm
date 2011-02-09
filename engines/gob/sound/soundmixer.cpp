@@ -26,7 +26,7 @@
 #include "gob/sound/soundmixer.h"
 #include "gob/sound/sounddesc.h"
 
-#include "sound/decoders/raw.h"
+#include "audio/decoders/raw.h"
 
 namespace Gob {
 

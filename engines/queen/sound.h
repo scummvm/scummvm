@@ -27,8 +27,8 @@
 #define QUEEN_SOUND_H
 
 #include "common/util.h"
-#include "sound/mixer.h"
-#include "sound/mods/rjp1.h"
+#include "audio/mixer.h"
+#include "audio/mods/rjp1.h"
 #include "queen/defs.h"
 
 namespace Common {

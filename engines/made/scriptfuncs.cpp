@@ -29,7 +29,7 @@
 
 #include "backends/audiocd/audiocd.h"
 #include "graphics/cursorman.h"
-#include "sound/softsynth/pcspk.h"
+#include "audio/softsynth/pcspk.h"
 
 #include "made/made.h"
 #include "made/resource.h"

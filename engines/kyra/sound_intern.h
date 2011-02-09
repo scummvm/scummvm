@@ -31,11 +31,11 @@
 
 #include "common/mutex.h"
 
-#include "sound/softsynth/fmtowns_pc98/towns_pc98_driver.h"
-#include "sound/softsynth/fmtowns_pc98/towns_euphony.h"
+#include "audio/softsynth/fmtowns_pc98/towns_pc98_driver.h"
+#include "audio/softsynth/fmtowns_pc98/towns_euphony.h"
 
-#include "sound/softsynth/emumidi.h"
-#include "sound/midiparser.h"
+#include "audio/softsynth/emumidi.h"
+#include "audio/midiparser.h"
 
 namespace Audio {
 class PCSpeaker;

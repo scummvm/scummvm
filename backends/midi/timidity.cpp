@@ -44,8 +44,8 @@
 #include "common/util.h"
 #include "common/endian.h"
 #include "common/str.h"
-#include "sound/musicplugin.h"
-#include "sound/mpu401.h"
+#include "audio/musicplugin.h"
+#include "audio/mpu401.h"
 
 #include <fcntl.h>
 #include <unistd.h>

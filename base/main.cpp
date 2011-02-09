@@ -54,8 +54,8 @@
 #include "gui/message.h"
 #include "gui/error.h"
 
-#include "sound/mididrv.h"
-#include "sound/musicplugin.h"  /* for music manager */
+#include "audio/mididrv.h"
+#include "audio/musicplugin.h"  /* for music manager */
 
 #include "backends/keymapper/keymapper.h"
 

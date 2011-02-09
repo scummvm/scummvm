@@ -38,15 +38,15 @@
 
 #include "backends/audiocd/audiocd.h"
 
-#include "sound/decoders/adpcm.h"
-#include "sound/decoders/flac.h"
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
-#include "sound/decoders/mp3.h"
-#include "sound/decoders/raw.h"
-#include "sound/decoders/voc.h"
-#include "sound/decoders/vorbis.h"
-#include "sound/decoders/wave.h"
+#include "audio/decoders/adpcm.h"
+#include "audio/decoders/flac.h"
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/voc.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/wave.h"
 
 namespace Scumm {
 

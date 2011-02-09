@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "sound/softsynth/pcspk.h"
+#include "audio/softsynth/pcspk.h"
 
 #include "backends/audiocd/audiocd.h"
 

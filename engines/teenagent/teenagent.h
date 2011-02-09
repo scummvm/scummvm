@@ -29,8 +29,8 @@
 #include "teenagent/pack.h"
 #include "teenagent/resources.h"
 #include "teenagent/inventory.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "common/random.h"
 
 struct ADGameDescription;

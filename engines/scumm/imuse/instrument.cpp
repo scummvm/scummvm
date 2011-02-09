@@ -26,7 +26,7 @@
 #include "scumm/scumm.h"
 #include "scumm/saveload.h"
 #include "scumm/imuse/instrument.h"
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 namespace Scumm {
 

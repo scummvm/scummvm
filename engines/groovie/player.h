@@ -27,7 +27,7 @@
 #define GROOVIE_PLAYER_H
 
 #include "common/system.h"
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
 namespace Groovie {
 

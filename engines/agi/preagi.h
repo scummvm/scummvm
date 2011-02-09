@@ -29,7 +29,7 @@
 #include "agi/agi.h"
 #include "agi/preagi_common.h"
 
-#include "sound/softsynth/pcspk.h"
+#include "audio/softsynth/pcspk.h"
 
 namespace Agi {
 

@@ -42,8 +42,8 @@
 
 #include "common/config-manager.h"
 #include "common/util.h"
-#include "sound/musicplugin.h"
-#include "sound/mpu401.h"
+#include "audio/musicplugin.h"
+#include "audio/mpu401.h"
 
 #include <CoreServices/CoreServices.h>
 #include <AudioToolbox/AUGraph.h>

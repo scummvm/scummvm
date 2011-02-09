@@ -30,7 +30,7 @@
 #include "common/file.h"
 #include "common/file.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 #include "tinsel/dw.h"
 #include "tinsel/tinsel.h"

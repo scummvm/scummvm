@@ -28,7 +28,7 @@
 
 #include "sci/resource.h"
 #include "sci/sound/music.h"
-#include "sound/midiparser.h"
+#include "audio/midiparser.h"
 
 /*
  Sound drivers info: (from driver cmd0)

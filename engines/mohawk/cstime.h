@@ -33,7 +33,7 @@
 #include "common/random.h"
 #include "common/list.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Mohawk {
 

@@ -27,10 +27,10 @@
 
 #include "common/stream.h"
 
-#include "sound/mixer.h"
-#include "sound/midiparser.h"
-#include "sound/mods/protracker.h"
-#include "sound/decoders/raw.h"
+#include "audio/mixer.h"
+#include "audio/midiparser.h"
+#include "audio/mods/protracker.h"
+#include "audio/decoders/raw.h"
 
 #include "parallaction/sound.h"
 #include "parallaction/parallaction.h"

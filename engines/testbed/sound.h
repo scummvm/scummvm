@@ -26,7 +26,7 @@
 #define TESTBED_SOUND_H
 
 #include "gui/dialog.h"
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 #include "testbed/config.h"
 #include "testbed/testsuite.h"
 

@@ -25,7 +25,7 @@
 
 #include <common/scummsys.h>
 #include "engines/engine.h"
-#include "sound/mixer_intern.h"
+#include "audio/mixer_intern.h"
 #include "dc.h"
 
 EXTERN_C void *memcpy4s(void *s1, const void *s2, unsigned int n);

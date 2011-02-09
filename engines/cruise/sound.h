@@ -26,9 +26,9 @@
 #ifndef CRUISE_SOUND_H
 #define CRUISE_SOUND_H
 
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
-#include "sound/mixer.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
+#include "audio/mixer.h"
 
 #include "common/config-manager.h"
 #include "common/serializer.h"

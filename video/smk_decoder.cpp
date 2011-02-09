@@ -35,9 +35,9 @@
 #include "common/stream.h"
 #include "common/system.h"
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
-#include "sound/decoders/raw.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 
 namespace Video {
 

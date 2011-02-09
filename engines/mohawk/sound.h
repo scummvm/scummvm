@@ -29,11 +29,11 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-#include "sound/audiostream.h"
-#include "sound/decoders/adpcm.h"
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/adpcm.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
+#include "audio/mixer.h"
 
 #include "mohawk/mohawk.h"
 #include "mohawk/resource.h"

@@ -28,7 +28,7 @@
 #include "sky/sky.h"
 #include "common/util.h"
 #include "common/endian.h"
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 namespace Sky {
 

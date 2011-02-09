@@ -28,8 +28,8 @@
 
 #include "gui/message.h"
 
-#include "sound/mixer.h"
-#include "sound/mods/infogrames.h"
+#include "audio/mixer.h"
+#include "audio/mods/infogrames.h"
 
 #include "gob/gob.h"
 #include "gob/inter.h"

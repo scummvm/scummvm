@@ -24,7 +24,7 @@
  */
 
 #include "backends/audiocd/default/default-audiocd.h"
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 #include "common/system.h"
 
 DefaultAudioCDManager::DefaultAudioCDManager() {

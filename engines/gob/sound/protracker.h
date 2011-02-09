@@ -26,8 +26,8 @@
 #ifndef GOB_SOUND_PROTRACKER_H
 #define GOB_SOUND_PROTRACKER_H
 
-#include "sound/mixer.h"
-#include "sound/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
 
 namespace Gob {
 

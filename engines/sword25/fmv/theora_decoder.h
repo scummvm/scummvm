@@ -31,8 +31,8 @@
 #ifdef USE_THEORADEC
 
 #include "video/video_decoder.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 #include <theora/theoradec.h>
 #include <vorbis/codec.h>

@@ -42,7 +42,7 @@
 #include "scumm/detection.h"
 #include "scumm/script.h"
 
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 #ifdef __DS__
 /* This disables the dual layer mode which is used in FM-Towns versions

@@ -25,7 +25,7 @@
 
 #include "sci/sound/drivers/mididriver.h"
 
-#include "sound/softsynth/emumidi.h"
+#include "audio/softsynth/emumidi.h"
 
 namespace Sci {
 

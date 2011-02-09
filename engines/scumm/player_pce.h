@@ -28,8 +28,8 @@
 
 #include "common/scummsys.h"
 #include "scumm/music.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 // PCE sound engine is only used by Loom, which requires 16bit color support
 #ifdef USE_RGB_COLOR

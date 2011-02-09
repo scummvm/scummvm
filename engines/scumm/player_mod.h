@@ -27,8 +27,8 @@
 #define SCUMM_PLAYER_MOD_H
 
 #include "scumm/scumm.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace Audio {
 	class RateConverter;

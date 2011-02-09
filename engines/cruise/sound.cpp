@@ -30,9 +30,9 @@
 #include "cruise/sound.h"
 #include "cruise/volume.h"
 
-#include "sound/audiostream.h"
-#include "sound/fmopl.h"
-#include "sound/mods/soundfx.h"
+#include "audio/audiostream.h"
+#include "audio/fmopl.h"
+#include "audio/mods/soundfx.h"
 
 namespace Cruise {
 

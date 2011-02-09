@@ -26,8 +26,8 @@
 #define SCUMM_SOUND_H
 
 #include "common/scummsys.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "scumm/saveload.h"
 
 namespace Audio {

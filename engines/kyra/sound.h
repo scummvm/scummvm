@@ -31,7 +31,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Audio {
 class AudioStream;

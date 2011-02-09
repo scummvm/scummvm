@@ -28,7 +28,7 @@
 
 #include "engines/engine.h"
 #include "common/rect.h"
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/util.h"

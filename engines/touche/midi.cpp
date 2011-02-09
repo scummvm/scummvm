@@ -26,7 +26,7 @@
 #include "common/config-manager.h"
 #include "common/stream.h"
 
-#include "sound/midiparser.h"
+#include "audio/midiparser.h"
 
 #include "touche/midi.h"
 

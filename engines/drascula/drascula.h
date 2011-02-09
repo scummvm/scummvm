@@ -38,7 +38,7 @@
 #include "common/system.h"
 #include "common/util.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 #include "engines/engine.h"
 

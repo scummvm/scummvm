@@ -26,8 +26,8 @@
 #ifndef GOB_SOUND_INFOGRAMES_H
 #define GOB_SOUND_INFOGRAMES_H
 
-#include "sound/mixer.h"
-#include "sound/mods/infogrames.h"
+#include "audio/mixer.h"
+#include "audio/mods/infogrames.h"
 
 namespace Gob {
 

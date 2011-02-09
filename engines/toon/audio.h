@@ -26,8 +26,8 @@
 #ifndef TOON_AUDIO_H
 #define TOON_AUDIO_H
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "toon/toon.h"
 
 namespace Toon {

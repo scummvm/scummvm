@@ -39,7 +39,7 @@
 #include "graphics/colormasks.h"
 #include "graphics/pixelformat.h"
 
-#include "sound/mixer_intern.h"
+#include "audio/mixer_intern.h"
 
 #include <libn64.h>
 #include <n64utils.h>

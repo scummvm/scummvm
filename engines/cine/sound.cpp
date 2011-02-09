@@ -30,10 +30,10 @@
 #include "cine/cine.h"
 #include "cine/sound.h"
 
-#include "sound/audiostream.h"
-#include "sound/fmopl.h"
-#include "sound/decoders/raw.h"
-#include "sound/mods/soundfx.h"
+#include "audio/audiostream.h"
+#include "audio/fmopl.h"
+#include "audio/decoders/raw.h"
+#include "audio/mods/soundfx.h"
 
 namespace Cine {
 

@@ -49,10 +49,10 @@
 
 #include "scumm/insane/insane.h"
 
-#include "sound/mixer.h"
-#include "sound/decoders/mp3.h"
-#include "sound/decoders/raw.h"
-#include "sound/decoders/vorbis.h"
+#include "audio/mixer.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/vorbis.h"
 
 #include "common/zlib.h"
 

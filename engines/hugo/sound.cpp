@@ -35,8 +35,8 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
-#include "sound/decoders/raw.h"
-#include "sound/audiostream.h"
+#include "audio/decoders/raw.h"
+#include "audio/audiostream.h"
 
 #include "hugo/hugo.h"
 #include "hugo/game.h"

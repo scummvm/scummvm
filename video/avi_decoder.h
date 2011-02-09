@@ -28,8 +28,8 @@
 
 #include "video/video_decoder.h"
 #include "video/codecs/codec.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace Video {
 

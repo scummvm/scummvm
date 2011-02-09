@@ -25,9 +25,9 @@
 
 
 #include "scumm/player_mod.h"
-#include "sound/mixer.h"
-#include "sound/rate.h"
-#include "sound/decoders/raw.h"
+#include "audio/mixer.h"
+#include "audio/rate.h"
+#include "audio/decoders/raw.h"
 
 namespace Scumm {
 

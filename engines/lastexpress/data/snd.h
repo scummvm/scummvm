@@ -39,7 +39,7 @@
 	    byte {x}     - IMA ADPCM sample codes
 */
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Audio {
 	class AudioStream;

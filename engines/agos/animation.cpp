@@ -39,8 +39,8 @@
 #include "agos/intern.h"
 #include "agos/agos.h"
 
-#include "sound/audiostream.h"
-#include "sound/decoders/wave.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
 
 #include "gui/message.h"
 

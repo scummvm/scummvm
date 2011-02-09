@@ -33,7 +33,7 @@
 #include "gbampsave.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
-#include "sound/mixer_intern.h"
+#include "audio/mixer_intern.h"
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
 

@@ -32,8 +32,8 @@
 
 #include "backends/audiocd/audiocd.h"
 
-#include "sound/audiostream.h"
-#include "sound/decoders/raw.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 
 #include "common/util.h"
 

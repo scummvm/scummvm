@@ -27,9 +27,9 @@
 #define SKY_MUSIC_ADLIBMUSIC_H
 
 #include "sky/music/musicbase.h"
-#include "sound/audiostream.h"
-#include "sound/fmopl.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/fmopl.h"
+#include "audio/mixer.h"
 
 namespace Sky {
 

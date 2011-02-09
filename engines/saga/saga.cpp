@@ -30,7 +30,7 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 #include "saga/saga.h"
 

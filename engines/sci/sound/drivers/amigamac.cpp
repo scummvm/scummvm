@@ -23,7 +23,7 @@
  *
  */
 
-#include "sound/softsynth/emumidi.h"
+#include "audio/softsynth/emumidi.h"
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/resource.h"
 

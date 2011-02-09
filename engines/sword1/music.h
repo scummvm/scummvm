@@ -29,9 +29,9 @@
 #include "common/scummsys.h"
 #include "common/mutex.h"
 #include "common/file.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
-#include "sound/rate.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/rate.h"
 
 namespace Sword1 {
 

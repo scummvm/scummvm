@@ -35,7 +35,7 @@
 #include "common/scummsys.h"
 #include "common/stream.h"
 
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
 namespace Saga {
 

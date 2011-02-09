@@ -5,8 +5,8 @@
 #
 ######################################################################
 
-TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/sound/*.h
-TEST_LIBS    := sound/libsound.a common/libcommon.a
+TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/audio/*.h
+TEST_LIBS    := audio/libaudio.a common/libcommon.a
 
 #
 TEST_FLAGS   := --runner=StdioPrinter

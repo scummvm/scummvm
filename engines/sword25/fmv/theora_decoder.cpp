@@ -42,7 +42,7 @@
 #ifdef USE_THEORADEC
 #include "common/system.h"
 #include "graphics/conversion.h"
-#include "sound/decoders/raw.h"
+#include "audio/decoders/raw.h"
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {

@@ -28,7 +28,7 @@
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
 
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
 namespace Scumm {
 

@@ -159,7 +159,7 @@ msgstr ""
 
 #: gui/launcher.cpp:191 gui/launcher.cpp:205 gui/options.cpp:80
 #: gui/options.cpp:646 gui/options.cpp:656 gui/options.cpp:1087
-#: sound/null.cpp:42
+#: audio/null.cpp:42
 msgid "<default>"
 msgstr "<за умовчанням>"
 
@@ -1769,51 +1769,51 @@ msgstr "Відновити гру: "
 msgid "Restore"
 msgstr "Відновити"
 
-#: sound/fmopl.cpp:51
+#: audio/fmopl.cpp:51
 msgid "MAME OPL emulator"
 msgstr "Емулятор MAME OPL:"
 
-#: sound/fmopl.cpp:53
+#: audio/fmopl.cpp:53
 msgid "DOSBox OPL emulator"
 msgstr "Емулятор DOSBox OPL"
 
-#: sound/null.h:45
+#: audio/null.h:45
 msgid "No music"
 msgstr "Без музики"
 
-#: sound/mods/paula.cpp:192
+#: audio/mods/paula.cpp:192
 msgid "Amiga Audio Emulator"
 msgstr "Аміга Аудіо Емулятор"
 
-#: sound/softsynth/adlib.cpp:1590
+#: audio/softsynth/adlib.cpp:1590
 msgid "AdLib Emulator"
 msgstr "Емулятор AdLib"
 
-#: sound/softsynth/appleiigs.cpp:36
+#: audio/softsynth/appleiigs.cpp:36
 msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS Емулятор (НЕ РЕАЛІЗОВАНО)"
 
-#: sound/softsynth/sid.cpp:1434
+#: audio/softsynth/sid.cpp:1434
 msgid "C64 Audio Emulator"
 msgstr "C64 Аудіо Емулятор"
 
-#: sound/softsynth/mt32.cpp:327
+#: audio/softsynth/mt32.cpp:327
 msgid "Initialising MT-32 Emulator"
 msgstr "Настроюю емулятор MT-32"
 
-#: sound/softsynth/mt32.cpp:541
+#: audio/softsynth/mt32.cpp:541
 msgid "MT-32 Emulator"
 msgstr "Емулятор MT-32"
 
-#: sound/softsynth/pcspk.cpp:142
+#: audio/softsynth/pcspk.cpp:142
 msgid "PC Speaker Emulator"
 msgstr "Емулятор PC спікера"
 
-#: sound/softsynth/pcspk.cpp:161
+#: audio/softsynth/pcspk.cpp:161
 msgid "IBM PCjr Emulator"
 msgstr "Емулятор IBM PCjr"
 
-#: sound/softsynth/ym2612.cpp:762
+#: audio/softsynth/ym2612.cpp:762
 msgid "FM Towns Emulator"
 msgstr "Емулятор FM Towns"
 

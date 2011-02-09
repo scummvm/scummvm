@@ -28,7 +28,7 @@
 #include "engines/engine.h"
 #include "scumm/player_sid.h"
 #include "scumm/scumm.h"
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Scumm {
 

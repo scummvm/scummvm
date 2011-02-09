@@ -31,7 +31,7 @@
 #include "common/util.h"
 
 #include "graphics/surface.h"
-#include "sound/decoders/raw.h"
+#include "audio/decoders/raw.h"
 
 #include "sci/resource.h"
 #include "sci/util.h"

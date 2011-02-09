@@ -26,8 +26,8 @@
 #ifndef GOB_SOUND_PCSPEAKER_H
 #define GOB_SOUND_PCSPEAKER_H
 
-#include "sound/mixer.h"
-#include "sound/softsynth/pcspk.h"
+#include "audio/mixer.h"
+#include "audio/softsynth/pcspk.h"
 
 namespace Gob {
 

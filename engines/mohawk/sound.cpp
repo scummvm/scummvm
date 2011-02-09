@@ -27,11 +27,11 @@
 
 #include "common/util.h"
 
-#include "sound/musicplugin.h"
-#include "sound/audiostream.h"
-#include "sound/decoders/mp3.h"
-#include "sound/decoders/raw.h"
-#include "sound/decoders/wave.h"
+#include "audio/musicplugin.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/wave.h"
 
 namespace Mohawk {
 

@@ -27,7 +27,7 @@
 #include "iphone_common.h"
 #include "backends/base-backend.h"
 #include "common/events.h"
-#include "sound/mixer_intern.h"
+#include "audio/mixer_intern.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "graphics/colormasks.h"
 

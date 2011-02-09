@@ -34,7 +34,7 @@
 #include <common/memstream.h>
 
 #include "backends/plugins/dc/dc-provider.h"
-#include "sound/mixer_intern.h"
+#include "audio/mixer_intern.h"
 
 
 Icon icon;

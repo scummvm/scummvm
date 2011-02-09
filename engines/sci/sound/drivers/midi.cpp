@@ -29,8 +29,8 @@
 #include "common/file.h"
 #include "common/memstream.h"
 
-#include "sound/fmopl.h"
-#include "sound/softsynth/emumidi.h"
+#include "audio/fmopl.h"
+#include "audio/softsynth/emumidi.h"
 
 #include "sci/resource.h"
 #include "sci/engine/features.h"

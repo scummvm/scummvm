@@ -25,9 +25,9 @@
 
 #include "scumm/player_v2cms.h"
 #include "scumm/scumm.h"
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
-#include "sound/softsynth/cms.h"
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
+#include "audio/softsynth/cms.h"
 
 namespace Scumm {
 

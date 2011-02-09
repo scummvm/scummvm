@@ -29,7 +29,7 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse/instrument.h"
 #include "scumm/saveload.h"
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 class MidiParser;
 class OSystem;

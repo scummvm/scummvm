@@ -37,8 +37,8 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "common/config-manager.h"
-#include "sound/musicplugin.h"
-#include "sound/mpu401.h"
+#include "audio/musicplugin.h"
+#include "audio/mpu401.h"
 
 #include <dmedia/midi.h>
 #include <sys/types.h>

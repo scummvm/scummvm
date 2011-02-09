@@ -26,8 +26,8 @@
 #ifndef AGOS_MIDI_H
 #define AGOS_MIDI_H
 
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
 #include "common/mutex.h"
 
 namespace Common {

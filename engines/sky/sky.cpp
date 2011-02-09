@@ -44,8 +44,8 @@
 #include "sky/text.h"
 #include "sky/compact.h"
 
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 #include "engines/util.h"
 

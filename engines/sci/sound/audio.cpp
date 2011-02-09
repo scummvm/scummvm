@@ -35,14 +35,14 @@
 #include "common/memstream.h"
 #include "common/system.h"
 
-#include "sound/audiostream.h"
-#include "sound/decoders/aiff.h"
-#include "sound/decoders/flac.h"
-#include "sound/decoders/mac_snd.h"
-#include "sound/decoders/mp3.h"
-#include "sound/decoders/raw.h"
-#include "sound/decoders/vorbis.h"
-#include "sound/decoders/wave.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/aiff.h"
+#include "audio/decoders/flac.h"
+#include "audio/decoders/mac_snd.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/wave.h"
 
 namespace Sci {
 

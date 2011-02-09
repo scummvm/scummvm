@@ -23,10 +23,10 @@
  *
  */
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
-#include "sound/decoders/raw.h"
-#include "sound/decoders/voc.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/voc.h"
 
 #include "common/config-manager.h"
 

@@ -29,8 +29,8 @@
 #include "common/scummsys.h"
 #include "common/mutex.h"
 #include "scumm/music.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace Scumm {
 

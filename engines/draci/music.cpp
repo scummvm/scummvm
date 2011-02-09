@@ -25,9 +25,9 @@
 
 // MIDI and digital music class
 
-#include "sound/audiostream.h"
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
+#include "audio/audiostream.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 

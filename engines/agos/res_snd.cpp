@@ -33,9 +33,9 @@
 
 #include "backends/audiocd/audiocd.h"
 
-#include "sound/audiostream.h"
-#include "sound/mididrv.h"
-#include "sound/mods/protracker.h"
+#include "audio/audiostream.h"
+#include "audio/mididrv.h"
+#include "audio/mods/protracker.h"
 
 namespace AGOS {
 

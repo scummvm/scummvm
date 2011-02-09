@@ -45,9 +45,9 @@
 #include "kyra/resource.h"
 #include "kyra/sound_intern.h"
 
-#include "sound/mixer.h"
-#include "sound/fmopl.h"
-#include "sound/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/fmopl.h"
+#include "audio/audiostream.h"
 
 // Basic AdLib Programming:
 // http://www.gamedev.net/reference/articles/article446.asp

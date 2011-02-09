@@ -27,7 +27,7 @@
 #define BACKENDS_AUDIOCD_DEFAULT_H
 
 #include "backends/audiocd/audiocd.h"
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 /**
  * The default audio cd manager. Implements emulation of audio cd playback.

@@ -23,15 +23,15 @@
  *
  */
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 #include "common/stream.h"
 #include "common/util.h"
 
-#include "sound/mixer.h"
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
-#include "sound/mods/protracker.h"
-#include "sound/decoders/raw.h"
+#include "audio/mixer.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
+#include "audio/mods/protracker.h"
+#include "audio/decoders/raw.h"
 
 #include "parallaction/disk.h"
 #include "parallaction/parallaction.h"

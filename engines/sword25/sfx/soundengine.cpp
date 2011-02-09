@@ -37,7 +37,7 @@
 #include "sword25/package/packagemanager.h"
 #include "sword25/kernel/resource.h"
 
-#include "sound/decoders/vorbis.h"
+#include "audio/decoders/vorbis.h"
 
 namespace Sword25 {
 

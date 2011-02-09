@@ -27,10 +27,10 @@
 
 // MIDI and digital music class
 
-#include "sound/audiostream.h"
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
-#include "sound/decoders/adpcm.h"
+#include "audio/audiostream.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
+#include "audio/decoders/adpcm.h"
 
 #include "backends/audiocd/audiocd.h"
 

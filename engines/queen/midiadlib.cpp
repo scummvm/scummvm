@@ -25,8 +25,8 @@
 
 #include "common/endian.h"
 
-#include "sound/fmopl.h"
-#include "sound/softsynth/emumidi.h"
+#include "audio/fmopl.h"
+#include "audio/softsynth/emumidi.h"
 
 namespace Queen {
 

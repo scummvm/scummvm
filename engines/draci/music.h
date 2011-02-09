@@ -28,8 +28,8 @@
 #ifndef DRACI_MUSIC_H
 #define DRACI_MUSIC_H
 
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
 #include "common/mutex.h"
 
 namespace Draci {

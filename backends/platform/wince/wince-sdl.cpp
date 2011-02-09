@@ -40,8 +40,8 @@
 #include "base/main.h"
 #include "base/plugins.h"
 
-#include "sound/mixer_intern.h"
-#include "sound/fmopl.h"
+#include "audio/mixer_intern.h"
+#include "audio/fmopl.h"
 
 #include "backends/timer/default/default-timer.h"
 

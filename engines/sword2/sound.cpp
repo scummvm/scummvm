@@ -48,8 +48,8 @@
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 
-#include "sound/decoders/wave.h"
-#include "sound/decoders/vag.h"
+#include "audio/decoders/wave.h"
+#include "audio/decoders/vag.h"
 
 #define Debug_Printf _vm->_debugger->DebugPrintf
 

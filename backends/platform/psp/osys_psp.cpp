@@ -42,7 +42,7 @@
 #include "backends/saves/psp/psp-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "graphics/surface.h"
-#include "sound/mixer_intern.h"
+#include "audio/mixer_intern.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */

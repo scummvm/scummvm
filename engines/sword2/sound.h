@@ -39,8 +39,8 @@
 #define SWORD2_SOUND_H
 
 #include "common/file.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 // Max number of sound fx
 #define MAXMUS 2

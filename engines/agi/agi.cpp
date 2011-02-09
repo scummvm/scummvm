@@ -40,8 +40,8 @@
 
 #include "graphics/cursorman.h"
 
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 #include "agi/agi.h"
 #include "agi/graphics.h"

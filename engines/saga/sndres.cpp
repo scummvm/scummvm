@@ -34,12 +34,12 @@
 
 #include "common/file.h"
 
-#include "sound/audiostream.h"
-#include "sound/decoders/adpcm.h"
-#include "sound/decoders/aiff.h"
-#include "sound/decoders/raw.h"
-#include "sound/decoders/voc.h"
-#include "sound/decoders/wave.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/adpcm.h"
+#include "audio/decoders/aiff.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/voc.h"
+#include "audio/decoders/wave.h"
 #ifdef ENABLE_SAGA2
 #include "saga/shorten.h"
 #endif

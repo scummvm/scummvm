@@ -28,8 +28,8 @@
 #ifndef MADE_MUSIC_H
 #define MADE_MUSIC_H
 
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
 #include "common/mutex.h"
 
 #include "made/resource.h"

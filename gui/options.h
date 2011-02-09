@@ -27,7 +27,7 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
-#include "sound/musicplugin.h"
+#include "audio/musicplugin.h"
 
 #ifdef SMALL_SCREEN_DEVICE
 #include "gui/KeysDialog.h"

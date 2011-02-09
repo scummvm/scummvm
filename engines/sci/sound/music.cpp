@@ -23,8 +23,8 @@
  *
  */
 
-#include "sound/audiostream.h"
-#include "sound/decoders/raw.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 #include "common/config-manager.h"
 
 #include "sci/sci.h"

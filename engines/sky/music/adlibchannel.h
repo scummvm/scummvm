@@ -27,7 +27,7 @@
 #define SKY_MUSIC_ADLIBCHANNEL_H
 
 #include "sky/music/musicbase.h"
-#include "sound/fmopl.h"
+#include "audio/fmopl.h"
 
 namespace Sky {
 

@@ -34,8 +34,8 @@
 // winnt.h defines ARRAYSIZE, but we want our own one...
 #undef ARRAYSIZE
 
-#include "sound/musicplugin.h"
-#include "sound/mpu401.h"
+#include "audio/musicplugin.h"
+#include "audio/mpu401.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 

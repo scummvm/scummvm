@@ -30,8 +30,8 @@
 #include "common/rect.h"
 #include "common/stream.h"
 #include "common/substream.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "video/video_decoder.h"
 
 namespace Sci {

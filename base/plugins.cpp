@@ -622,7 +622,7 @@ const EnginePlugin::List &EngineManager::getPlugins() const {
 
 // Music plugins
 
-#include "sound/musicplugin.h"
+#include "audio/musicplugin.h"
 
 DECLARE_SINGLETON(MusicManager);
 

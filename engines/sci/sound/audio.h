@@ -28,7 +28,7 @@
 #define SCI_AUDIO_H
 
 #include "sci/engine/vm_types.h"
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Audio {
 class RewindableAudioStream;

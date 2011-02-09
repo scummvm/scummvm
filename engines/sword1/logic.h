@@ -31,7 +31,7 @@
 #include "sword1/objectman.h"
 #include "common/util.h"
 #include "common/random.h"
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Sword1 {
 

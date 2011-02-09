@@ -32,7 +32,7 @@
 
 #include "common/array.h"
 
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
 #include "sword1/screen.h"
 #include "sword1/sound.h"

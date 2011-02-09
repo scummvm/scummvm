@@ -44,7 +44,7 @@
 #include "scumm/he/sprite_he.h"
 #include "scumm/verbs.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 #include "backends/audiocd/audiocd.h"
 

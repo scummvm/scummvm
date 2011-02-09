@@ -32,7 +32,7 @@
 #include "queen/resource.h"
 #include "queen/sound.h"
 
-#include "sound/midiparser.h"
+#include "audio/midiparser.h"
 
 
 namespace Queen {

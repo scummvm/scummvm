@@ -42,9 +42,9 @@
 #if defined __MINT__
 
 #include <osbind.h>
-#include "sound/mpu401.h"
+#include "audio/mpu401.h"
 #include "common/util.h"
-#include "sound/musicplugin.h"
+#include "audio/musicplugin.h"
 
 class MidiDriver_STMIDI : public MidiDriver_MPU401 {
 public:

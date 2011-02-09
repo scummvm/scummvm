@@ -57,7 +57,7 @@
 #include "graphics/surface.h"
 #include "graphics/font.h"
 #include "backends/timer/default/default-timer.h"
-#include "sound/mixer_intern.h"
+#include "audio/mixer_intern.h"
 #include "common/events.h"
 #include "backends/platform/ps2/ps2debug.h"
 #include "backends/fs/ps2/ps2-fs-factory.h"

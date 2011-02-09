@@ -30,7 +30,7 @@
 
 #ifdef GRAPHICS_QDM2_H
 
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 #include "video/codecs/qdm2data.h"
 
 #include "common/array.h"

@@ -31,7 +31,7 @@
 #include "common/config-manager.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
-#include "sound/midiparser.h"
+#include "audio/midiparser.h"
 
 namespace Groovie {
 

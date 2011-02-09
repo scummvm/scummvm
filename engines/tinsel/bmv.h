@@ -29,8 +29,8 @@
 
 #include "common/file.h"
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 #include "tinsel/coroutine.h"
 #include "tinsel/object.h"

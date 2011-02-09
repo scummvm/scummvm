@@ -28,10 +28,10 @@
 #ifndef TINSEL_MUSIC_H
 #define TINSEL_MUSIC_H
 
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "common/mutex.h"
 
 namespace Tinsel {

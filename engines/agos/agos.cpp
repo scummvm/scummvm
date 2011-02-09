@@ -41,8 +41,8 @@
 
 #include "graphics/surface.h"
 
-#include "sound/mididrv.h"
-#include "sound/mods/protracker.h"
+#include "audio/mididrv.h"
+#include "audio/mods/protracker.h"
 
 namespace AGOS {
 

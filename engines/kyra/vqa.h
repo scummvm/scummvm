@@ -28,7 +28,7 @@
 
 #include "common/scummsys.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 class OSystem;
 

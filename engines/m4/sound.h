@@ -30,10 +30,10 @@
 
 #include "common/file.h"
 #include "common/array.h"
-#include "sound/mixer.h"
-#include "sound/decoders/mp3.h"
-#include "sound/decoders/vorbis.h"
-#include "sound/decoders/flac.h"
+#include "audio/mixer.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/flac.h"
 
 namespace M4 {
 

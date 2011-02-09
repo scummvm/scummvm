@@ -49,7 +49,7 @@
 
 #include "graphics/cursorman.h"
 
-#include "sound/mididrv.h"
+#include "audio/mididrv.h"
 
 
 using Common::ConfigManager;

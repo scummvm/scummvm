@@ -29,8 +29,8 @@
 #include "groovie/lzss.h"
 
 #include "common/debug-channels.h"
-#include "sound/mixer.h"
-#include "sound/decoders/raw.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 
 #define TILE_SIZE 4			// Size of each tile on the image: only ever seen 4 so far
 #define VDX_IDENT 0x9267	// 37479

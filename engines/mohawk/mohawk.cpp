@@ -38,7 +38,7 @@
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Mohawk {
 

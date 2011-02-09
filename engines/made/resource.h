@@ -31,7 +31,7 @@
 #include "common/stream.h"
 #include "common/hashmap.h"
 #include "graphics/surface.h"
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
 #include "made/sound.h"
 

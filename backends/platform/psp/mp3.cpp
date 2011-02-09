@@ -30,7 +30,7 @@
 #include "common/singleton.h"
 #include "common/mutex.h"
 
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
 #include <pspaudiocodec.h>
 #include <psputility_modules.h>

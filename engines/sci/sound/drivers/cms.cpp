@@ -25,9 +25,9 @@
 
 #include "sci/sound/drivers/mididriver.h"
 
-#include "sound/softsynth/emumidi.h"
-#include "sound/softsynth/cms.h"
-#include "sound/mixer.h"
+#include "audio/softsynth/emumidi.h"
+#include "audio/softsynth/cms.h"
+#include "audio/mixer.h"
 
 #include "sci/resource.h"
 

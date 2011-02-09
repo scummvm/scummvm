@@ -26,7 +26,7 @@
 #include "made/pmvplayer.h"
 #include "made/screen.h"
 
-#include "sound/decoders/raw.h"
+#include "audio/decoders/raw.h"
 
 namespace Made {
 
