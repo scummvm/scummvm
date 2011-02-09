@@ -38,8 +38,8 @@
 
 #include "engines/util.h"
 
-#include "sound/mididrv.h"
-#include "sound/mixer.h"
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 #include "prisoner/prisoner.h"
 #include "prisoner/kroarchive.h"

@@ -28,9 +28,9 @@
 #include "common/stream.h"
 #include "common/zlib.h"
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
-#include "sound/decoders/wave.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/wave.h"
 
 #include "prisoner/resource.h"
 

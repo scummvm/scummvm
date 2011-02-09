@@ -33,7 +33,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 #include "graphics/surface.h"
 

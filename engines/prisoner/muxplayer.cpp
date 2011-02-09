@@ -31,8 +31,8 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
-#include "sound/mixer.h"
-#include "sound/decoders/raw.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 
 #include "prisoner/prisoner.h"
 #include "prisoner/muxplayer.h"

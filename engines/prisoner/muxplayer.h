@@ -27,7 +27,7 @@
 #define PRISONER_MUXPLAYER_H
 
 #include "common/file.h"
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
 class OSystem;
 

@@ -34,7 +34,7 @@
 
 #include "graphics/thumbnail.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 #include "prisoner/prisoner.h"
 #include "prisoner/path.h"
