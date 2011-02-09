@@ -34,10 +34,11 @@
 #include "common/system.h"
 #include "common/list.h"
 
-#include "graphics/surface.h"
-#include "video/smk_decoder.h"
+#include "audio/mixer.h"
 
-#include "sound/mixer.h"
+#include "graphics/surface.h"
+
+#include "video/smk_decoder.h"
 
 namespace Asylum {
 
@@ -58,10 +59,10 @@ public:
 	virtual ~VideoPlayer();
 
 	/**
-	 * Plays a video. 
+	 * Plays a video.
 	 *
-	 * @param videoNumber 	   The video number. 
-	 * @param handler          The previous event handler. 
+	 * @param videoNumber 	   The video number.
+	 * @param handler          The previous event handler.
 	 */
 	void play(int32 videoNumber, EventHandler *handler);
 
@@ -78,7 +79,7 @@ private:
 	AsylumEngine *_vm;
 
 	Video::SmackerDecoder *_smkDecoder;
-	Common::Array<VideoSubtitle> _subtitles;	
+	Common::Array<VideoSubtitle> _subtitles;
 
 	int32 _currentMovie;
 	int32 _subtitleIndex;
@@ -86,17 +87,17 @@ private:
 	ResourceId _previousFont;
 	bool _done;
 
-	
+
 	/**
-	 * Plays the given file. 
+	 * Plays the given file.
 	 *
-	 * @param filename 		Filename of the file. 
-	 * @param showSubtitles true to show, false to hide the subtitles. 
+	 * @param filename 		Filename of the file.
+	 * @param showSubtitles true to show, false to hide the subtitles.
 	 */
 	void play(Common::String filename, bool showSubtitles);
 
 	/**
-	 * Sets up the palette. 
+	 * Sets up the palette.
 	 */
 	void setupPalette();
 

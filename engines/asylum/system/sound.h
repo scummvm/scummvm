@@ -32,7 +32,7 @@
 
 #include "common/array.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 namespace Asylum {
 
