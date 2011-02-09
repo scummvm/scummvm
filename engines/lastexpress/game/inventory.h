@@ -110,19 +110,19 @@ public:
 	// UI Control
 	void show();
 	void blinkEgg(bool enabled);
-	void showHourGlass() const;
-	void setPortrait(InventoryItem item) const;
-	void drawEgg() const;
+	void showHourGlass();
+	void setPortrait(InventoryItem item);
+	void drawEgg();
 	void drawBlinkingEgg();
 
 	// Handle inventory UI events.
-	bool handleMouseEvent(const Common::Event &ev);
+	void handleMouseEvent(const Common::Event &ev);
 
 	// State
-	bool isMagnifierInUse() { return _flagUseMagnifier; }
+	bool isMagnifierInUse() { return _useMagnifier; }
 	bool isFlag1() { return _flag1; }
 	bool isFlag2() { return _flag2; }
-	bool isEggHighlighted() { return _flagEggHightlighted; }
+	bool isEggHighlighted() { return _eggHightlighted; }
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s);
@@ -150,13 +150,13 @@ private:
 	bool _blinkingEgg;
 	uint32 _blinkingTime;
 	uint32 _blinkingInterval;
-	uint32 _blinkingBrightness;
+	uint16 _blinkingBrightness;
 
 	// Flags
-	bool _flagUseMagnifier;
+	bool _useMagnifier;
 	bool _flag1;
 	bool _flag2;
-	bool _flagEggHightlighted;
+	bool _eggHightlighted;
 
 	Scene *_itemScene;
 
@@ -173,6 +173,8 @@ private:
 	Common::Rect getItemRect(int16 index) const;
 
 	bool isItemSceneParameter(InventoryItem item) const;
+
+	void drawItem(CursorStyle id, uint16 x, uint16 y, uint16 brighnessIndex = -1);
 };
 
 } // End of namespace LastExpress

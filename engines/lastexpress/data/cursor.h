@@ -54,13 +54,13 @@ public:
 	Icon(CursorStyle style);
 
 	void setPosition(int16 x, int16 y);
-	void setBrightness(uint brightness);
+	void setBrightness(int16 brightnessIndex);
 	Common::Rect draw(Graphics::Surface *surface);
 
 private:
 	CursorStyle _style;
 	int16 _x, _y;
-	uint8 _brightness;
+	int16 _brightnessIndex;
 };
 
 class Cursor {

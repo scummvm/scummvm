@@ -108,7 +108,7 @@ void Fight::eventMouse(const Common::Event &ev) {
 		if (_handleTimer) {
 			// Timer expired => show with full brightness
 			if (!getGlobalTimer())
-				getInventory()->drawEgg();
+				getInventory()->drawBlinkingEgg();
 
 			_handleTimer = false;
 		}
@@ -136,7 +136,7 @@ void Fight::eventMouse(const Common::Event &ev) {
 		if (!_handleTimer) {
 			// Timer expired => show with full brightness
 			if (!getGlobalTimer())
-				getInventory()->drawEgg();
+				getInventory()->drawBlinkingEgg();
 
 			_handleTimer = true;
 		}

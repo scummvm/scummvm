@@ -33,6 +33,8 @@
 
 namespace LastExpress {
 
+uint16 brigthnessData[4] = { 0, 0x7BDE, 0x739C, 0x6318 };
+
 Cursor::Cursor() : _current(kCursorMAX) {
 	memset(&_cursors, 0, sizeof(_cursors));
 }
@@ -105,17 +107,17 @@ const uint16 *Cursor::getCursorImage(CursorStyle style) const {
 }
 
 
-Icon::Icon(CursorStyle style) : _style(style), _x(0), _y(0), _brightness(100) {}
+Icon::Icon(CursorStyle style) : _style(style), _x(0), _y(0), _brightnessIndex(-1) {}
 
 void Icon::setPosition(int16 x, int16 y) {
 	_x = x;
 	_y = y;
 }
 
-void Icon::setBrightness(uint brightness) {
-	assert(brightness <= 100);
+void Icon::setBrightness(int16 brightnessIndex) {
+	assert(brightnessIndex < ARRAYSIZE(brigthnessData));
 
-	_brightness = (uint8)brightness;
+	_brightnessIndex = brightnessIndex;
 }
 
 Common::Rect Icon::draw(Graphics::Surface *surface) {
@@ -127,11 +129,12 @@ Common::Rect Icon::draw(Graphics::Surface *surface) {
 	for (int j = 0; j < 32; j++) {
 		uint16 *s = (uint16 *)surface->getBasePtr(_x, _y + j);
 		for (int i = 0; i < 32; i++) {
-			if (_brightness == 100)
+
+			// Adjust brightness
+			if (_brightnessIndex == -1)
 				*s = *image;
 			else
-				// HACK change color to show highlight
-				*s = (*image & 0x739C) >> 1;
+				*s = (*image & brigthnessData[_brightnessIndex]) >> _brightnessIndex;
 
 			// Update the image and surface pointers
 			image++;

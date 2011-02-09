@@ -211,6 +211,7 @@ bool LastExpressEngine::handleEvents() {
 			// Closing the GMM
 
 		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONDOWN:
 			getGameLogic()->getGameState()->getGameFlags()->mouseLeftClick = true;
 
 			// Adjust frameInterval flag
@@ -223,6 +224,7 @@ bool LastExpressEngine::handleEvents() {
 			break;
 
 		case Common::EVENT_RBUTTONUP:
+		case Common::EVENT_RBUTTONDOWN:
 			getGameLogic()->getGameState()->getGameFlags()->mouseRightClick = true;
 			if (_eventMouse && _eventMouse->isValid())
 				(*_eventMouse)(ev);
