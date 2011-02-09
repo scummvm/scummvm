@@ -148,9 +148,8 @@ void MidiDriver_SEQ::send(uint32 b) {
 		warning("MidiDriver_SEQ::send: unknown : %08x", (int)b);
 		break;
 	}
-	ssize_t out = write(device, buf, position);
-	if (out == -1)
-		warning("MidiDriver_SEQ::send: write failed (errno %d)", errno);
+	if (write(device, buf, position) == -1)
+		warning("MidiDriver_SEQ::send: write failed (%s)", strerror(errno));
 }
 
 void MidiDriver_SEQ::sysEx(const byte *msg, uint16 length) {
@@ -175,9 +174,8 @@ void MidiDriver_SEQ::sysEx(const byte *msg, uint16 length) {
 	buf[position++] = _device_num;
 	buf[position++] = 0;
 
-	ssize_t out = write(device, buf, position);
-	if (out == -1)
-		warning("MidiDriver_SEQ::sysEx: write failed (errno %d)", errno);
+	if (write(device, buf, position) == -1)
+		warning("MidiDriver_SEQ::send: write failed (%s)", strerror(errno));
 }
 
 

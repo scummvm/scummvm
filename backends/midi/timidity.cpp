@@ -337,7 +337,11 @@ char *MidiDriver_TIMIDITY::timidity_ctl_command(const char *fmt, ...) {
 			buff[len++] = '\n';
 
 		/* write command to control socket */
-		write(_control_fd, buff, len);
+		if (write(_control_fd, buff, len) == -1) {
+			warning("TiMidity: CONTROL WRITE FAILED (%s)", strerror(errno));
+			// TODO: Disable output?
+			//close_all();
+		}
 	}
 
 	while (1) {
