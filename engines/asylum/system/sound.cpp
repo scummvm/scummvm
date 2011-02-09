@@ -37,9 +37,9 @@
 
 #include "common/memstream.h"
 
-#include "sound/audiostream.h"
-#include "sound/decoders/adpcm.h"
-#include "sound/decoders/wave.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/adpcm.h"
+#include "audio/decoders/wave.h"
 
 namespace Asylum {
 
