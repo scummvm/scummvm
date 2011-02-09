@@ -31,48 +31,55 @@
 namespace Audio {
 
 /**
- * Timestamps allow measuring times with a sub-millisecond granularity,
- * and without rounding losses. This is achieved by measuring frames
- * instead of milliseconds: Specify an initial time in milliseconds
- * plus framerate (in frames per second).
+ * Timestamps allow specifying points in time and measuring time intervals
+ * with a sub-millisecond granularity.
+ *
+ * When dealing with audio and video decoding, it is often necessary to
+ * measure time (intervals) in terms of frames, relative to a fixed
+ * frame rate (that is, a fixed number of frames per seconds). For
+ * example, in a typical video there are 24 frames per second, and in a
+ * typical sound there are 44100 frames (i.e. samples for mono sound
+ * and pairs of samples for stereo) per second.
+ *
+ * At the same time, the system clock provided by ScummVM measures time
+ * in milliseconds. For syncing purposes and other reasons, it is often
+ * necessary to convert between and compare time measures given on the
+ * one hand as a frame count, and on the other hand as a number of
+ * milliseconds.
+ *
+ * If handled carelessly, this can introduce rounding errors that
+ * quickly accumulate, resulting in user noticeable disturbance, such as
+ * audio and video running out of sync. E.g. a typical approach is to
+ * measure all time in milliseconds. But with a frame rate of 24 frames
+ * per second, one frame is 41.66666... milliseconds long. On the other
+ * hand, if measuring in frames, then similar rounding issue occur when
+ * converting from milliseconds to frames.
+ *
+ * One solution is to use floating point arithmetic to compute with
+ * fractional frames resp. (milli)seconds. This has other undesirable
+ * side effects; foremost, some platforms ScummVM runs on still have
+ * only limited (and slow) floating point support.
+ *
+ * This class provides an alternate solution: It stores time in terms of
+ * frames, but with a twist: Client code can specify arbitrary
+ * (integral) framerates; but internally, Timestamp modifies the
+ * framerate to be a multiple of 1000. This way, both numbers of frames
+ * (relative to the original framerate) as well as milliseconds can be
+ * represented as integers. This change is completely hidden from the
+ * user, however.
+ *
+ * A Timestamp can be converted to a frame count or milliseconds at
+ * virtually no cost. Likewise, it is posible to compute the difference
+ * between two Timestamps in milliseconds or number of frames.
+ * Timestamps can be easily compared using regular comparison operators,
+ * resulting in nicely readable code; this is even possible for
+ * timestamps that are specified using different framerates.
+ * Client code can modify Timestamps by adding a number of frames
+ * to it, or adding a number of milliseconds. Adding negative amounts is
+ * also allowed, and a Timestamp can even represent a "negative time"
+ * (mainly useful when using the Timestamp to store a time interval).
  */
 class Timestamp {
-protected:
-	/**
-	 * The seconds part of this timestamp.
-	 * The total time in seconds represented by this timestamp can be
-	 * computed as follows:
-	 *   _secs + (double)_numFrames / _framerate
-	 */
-	int _secs;
-
-	/**
-	 * The number of frames which together with _secs encodes
-	 * the timestamp. The total number of frames represented
-	 * by this timestamp is computed as follows:
-	 *   _numFrames + _secs * _framerate
-	 *
-	 * This is always a value greater or equal to zero.
-	 * The only reason this is an int and not an uint is to
-	 * allow intermediate negative values.
-	 */
-	int _numFrames;
-
-	/**
-	 * The internal framerate, i.e. the number of frames per second.
-	 * This is computed as the least common multiple of the framerate
-	 * specified by the client code, and 1000.
-	 * This way, we ensure that we can store both frames and
-	 * milliseconds without any rounding losses.
-	 */
-	uint _framerate;
-
-	/**
-	 * Factor by which the original framerate specified by the client
-	 * code was multipled to obtain the internal _framerate value.
-	 */
-	uint _framerateFactor;
-
 public:
 	/**
 	 * Set up a timestamp with a given time and framerate.
@@ -182,7 +189,6 @@ public:
 	inline uint framerate() const { return _framerate / _framerateFactor; }
 
 protected:
-
 	/**
 	 * Compare this timestamp to another one and return
 	 * a value similar to strcmp.
@@ -199,6 +205,44 @@ protected:
 	 * Add another timestamp to this one and normalize the result.
 	 */
 	void addIntern(const Timestamp &ts);
+
+protected:
+	/**
+	 * The seconds part of this timestamp.
+	 * The total time in seconds represented by this timestamp can be
+	 * computed as follows:
+	 *   _secs + (double)_numFrames / _framerate
+	 */
+	int _secs;
+
+	/**
+	 * The number of frames which together with _secs encodes the
+	 * timestamp. The total number of *internal* frames represented
+	 * by this timestamp can be computed as follows:
+	 *   _numFrames + _secs * _framerate
+	 * To obtain the number of frames with respect to the original
+	 * framerate, this value has to be divided by _framerateFactor.
+	 *
+	 * This is always a value greater or equal to zero.
+	 * The only reason this is an int and not an uint is to
+	 * allow intermediate negative values.
+	 */
+	int _numFrames;
+
+	/**
+	 * The internal framerate, i.e. the number of frames per second.
+	 * This is computed as the least common multiple of the framerate
+	 * specified by the client code, and 1000.
+	 * This way, we ensure that we can store both frames and
+	 * milliseconds without any rounding losses.
+	 */
+	uint _framerate;
+
+	/**
+	 * Factor by which the original framerate specified by the client
+	 * code was multipled to obtain the internal _framerate value.
+	 */
+	uint _framerateFactor;
 };
 
 
