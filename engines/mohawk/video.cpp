@@ -515,11 +515,6 @@ void VideoManager::seekToTime(VideoHandle handle, Audio::Timestamp time) {
 	_videoStreams[handle]->seekToTime(time);
 }
 
-void VideoManager::seekToFrame(VideoHandle handle, uint32 frame) {
-	assert(handle != NULL_VID_HANDLE);
-	_videoStreams[handle]->seekToFrame(frame);
-}
-
 void VideoManager::setVideoLooping(VideoHandle handle, bool loop) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle].loop = loop;

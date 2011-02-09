@@ -107,7 +107,6 @@ public:
 	bool endOfVideo(VideoHandle handle);
 	void setVideoBounds(VideoHandle handle, Audio::Timestamp start, Audio::Timestamp end);
 	void seekToTime(VideoHandle handle, Audio::Timestamp time);
-	void seekToFrame(VideoHandle handle, uint32 frame);
 	void setVideoLooping(VideoHandle handle, bool loop);
 	void waitUntilMovieEnds(VideoHandle videoHandle);
 	void delayUntilMovieEnds(VideoHandle videoHandle);

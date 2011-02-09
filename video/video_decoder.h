@@ -248,12 +248,6 @@ public:
 class SeekableVideoDecoder : public virtual RewindableVideoDecoder {
 public:
 	/**
-	 * Seek to the specified frame.
-	 * If seekToFrame(0) is called, frame 0 will be decoded next in decodeNextFrame().
-	 */
-	virtual void seekToFrame(uint32 frame) = 0;
-
-	/**
 	 * Seek to the specified time.
 	 *
 	 * This will round to the previous frame showing. If the time would happen to
