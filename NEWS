@@ -42,9 +42,35 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Leak fixes in Nippon Safes Amiga.
 
  SCI:
-   - Improved support for non-English versions of games.
-   - Police Quest 2 Intro now plays at correct speed.
+   - Added a CMS music driver for SCI1 - SCI1.1 games.
+   - Added an option to toggle undithering from the ScummVM GUI.
+   - Added several previously missing parts of the game state in saved games,
+     such as game played time, script created windows, the script string heap
+     and information related to the text parser in old EGA games.
+   - Added support for magnifier cursors.
+   - Added support for the keypad +/- keys.
+   - Added support for the alternative General MIDI tracks in the Windows CD
+     versions of Eco Quest, Jones in the Fast Lane, King's Quest 5 and Space
+     Quest 4.
+   - Added support for the alternative Windows cursors in the Windows version
+     of King's Quest 6.
+   - Added support for simultaneous speech and subtitles in the CD versions of
+     Space Quest 4 and Freddy Pharkas.
    - Corrected resource loading leaks.
+   - Corrected several problems and issues in the Skate-O-Rama rooms in Space
+     Quest 4.
+   - Corrected several issues in Hoyle Classic Card Games.
+   - Fixed several graphical glitches.
+   - Fixed several script bugs.
+   - Fixed several pathfinding related issues and lockups.
+   - Fixed several music related glitches and possible lockups.
+   - Fixed possible problems and lockups in the character import screens of
+     Quest for Glory 2 and 3.
+   - Function keys now work correctly when the numlock key is on.
+   - Improved support for fanmade game scripts.
+   - Improved support for non-English versions of games.
+   - Made several enhancements and fixes related to MT-32 music (e.g. reverb).
+   - Music is no longer out of tune when loading saved games.
 
  SCUMM:
    - Improved support for FM-TOWNS versions of games.
