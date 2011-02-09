@@ -32,7 +32,7 @@
 
 #include "engines/util.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/animation.h"

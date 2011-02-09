@@ -21,9 +21,9 @@
  *
  */
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
-#include "sound/decoders/raw.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/resource.h"

@@ -24,7 +24,7 @@
 #ifndef TOLTECS_SOUND_H
 #define TOLTECS_SOUND_H
 
-#include "sound/mixer.h"	// for Audio::SoundHandle
+#include "audio/mixer.h"	// for Audio::SoundHandle
 
 #include "toltecs/toltecs.h"
 
