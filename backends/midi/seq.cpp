@@ -41,6 +41,7 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
 
 ////////////////////////////////////////
 //
@@ -85,7 +86,7 @@ int MidiDriver_SEQ::open() {
 		device_name = dev_seq;
 	}
 
-	device = (::open((device_name), O_RDWR, 0));
+	device = ::open((device_name), O_RDWR, 0);
 
 	if ((device_name == NULL) || (device < 0)) {
 		if (device_name == NULL)
@@ -147,10 +148,12 @@ void MidiDriver_SEQ::send(uint32 b) {
 		warning("MidiDriver_SEQ::send: unknown : %08x", (int)b);
 		break;
 	}
-	write(device, buf, position);
+	ssize_t out = write(device, buf, position);
+	if (out == -1)
+		warning("MidiDriver_SEQ::send: write failed (errno %d)", errno);
 }
 
-void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
+void MidiDriver_SEQ::sysEx(const byte *msg, uint16 length) {
 	unsigned char buf [266*4];
 	int position = 0;
 	const byte *chr = msg;
@@ -172,7 +175,9 @@ void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
 	buf[position++] = _device_num;
 	buf[position++] = 0;
 
-	write(device, buf, position);
+	ssize_t out = write(device, buf, position);
+	if (out == -1)
+		warning("MidiDriver_SEQ::sysEx: write failed (errno %d)", errno);
 }
 
 
