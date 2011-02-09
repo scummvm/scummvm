@@ -126,11 +126,17 @@ public:
 	// unary minus
 	Timestamp operator-() const;
 
+	/**
+	 * Compute the sum of two timestamps. This is only
+	 * allowed if they use the same framerate.
+	 */
 	Timestamp operator+(const Timestamp &ts) const;
-	Timestamp operator-(const Timestamp &ts) const;
 
-//	Timestamp &operator+=(const Timestamp &ts);
-//	Timestamp &operator-=(const Timestamp &ts);
+	/**
+	 * Compute the difference between two timestamps. This is only
+	 * allowed if they use the same framerate.
+	 */
+	Timestamp operator-(const Timestamp &ts) const;
 
 	/**
 	 * Computes the number of frames between this timestamp and ts.

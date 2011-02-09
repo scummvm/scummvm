@@ -148,21 +148,9 @@ Timestamp Timestamp::addMsecs(int ms) const {
 }
 
 void Timestamp::addIntern(const Timestamp &ts) {
+	assert(_framerate == ts._framerate);
 	_secs += ts._secs;
-
-	if (_framerate == ts._framerate) {
-		_numFrames += ts._numFrames;
-	} else {
-		// We need to multiply by the quotient of the two framerates.
-		// We cancel the GCD in this fraction to reduce the risk of
-		// overflows.
-		const uint g = Common::gcd(_framerate, ts._framerate);
-		const uint p = _framerate / g;
-		const uint q = ts._framerate / g;
-
-		_framerate *= q;
-		_numFrames = _numFrames * q + ts._numFrames * p;
-	}
+	_numFrames += ts._numFrames;
 
 	normalize();
 }
@@ -186,24 +174,6 @@ Timestamp Timestamp::operator-(const Timestamp &ts) const {
 	result.addIntern(-ts);
 	return result;
 }
-
-/*
-Timestamp &Timestamp::operator+=(const Timestamp &ts) {
-	addIntern(ts);
-	return *this;
-}
-
-Timestamp &Timestamp::operator-=(const Timestamp &ts) {
-	addIntern(-ts);
-	return *this;
-}
-*/
-
-/*
-int Timestamp::frameDiff(const Timestamp &ts) const {
-	return (*this - ts).totalNumberOfFrames();
-}
-*/
 
 int Timestamp::frameDiff(const Timestamp &ts) const {
 
