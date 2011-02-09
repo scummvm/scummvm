@@ -6,22 +6,60 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Backyard Baseball 2001.
    - Added support for Urban Runner.
    - Added support for Playtoons: Bambou le Sauveur de la Jungle.
+   - Added support for Toonstruck.
 
  General
    - Added Danish translation.
    - Added Norwegian Bokmaal translation.
    - Added Norwegian Nynorsk translation.
+   - Added Debug Console to Cine, Draci, Gob, MADE, Sword1, Touche and 
+     Tucker Engines.
+   - Closed significant memory leaks. RTL should now be more usuable.
+
+ AGOS:
+   - Closed memory leaks in Simon 2 and Feeble Files.
+
+ Cine:
+   - Corrected memory leaks and invalid memory accesses.
+     Future Wars should be more stable.
+   - Operation Stealth is now completable, though significant
+     graphical glitches remain so not official supported.
 
  Drascula:
    - Added German and French subtitles in the Von Braun cutscene (#3069981:
      no subtitles in scene with "von Braun").
    - Improved French translation of the game.
+   - Return To Launcher now supported.
+
+ Gob:
+   - Fixed "Goblin Stuck On Reload" bugs affecting Gobliiins.
+
+ Kyra:
+   - Closed memory leaks.
+
+ Parallaction:
+   - Corrected issue which could cause crash at engine exit.
+   - Leak fixes in Nippon Safes Amiga.
 
  SCI:
    - Improved support for non-English versions of games.
+   - Police Quest 2 Intro now plays at correct speed.
+   - Corrected resource loading leaks.
 
  SCUMM:
    - Improved support for FM-TOWNS versions of games.
+
+ Teenagent:
+   - Closed memory leaks.
+
+ Tinsel:
+   - Closed memory leaks in Coroutines.
+
+ Touche:
+   - Corrected memory leaks and minor issues.
+
+ SDL:
+   - Closed memory leaks in Mouse Surfaces.
 
  PSP:
    - Added image viewer.
