@@ -3230,9 +3230,25 @@ void MystScriptParser_Myst::libraryBookcaseTransform_run(void) {
 		_libraryBookcaseChanged = false;
 		_libraryBookcaseMoving = false;
 
+		_vm->_cursor->hideCursor();
+
 		// Play transform sound and video
 		_vm->_sound->replaceSoundMyst(_libraryBookcaseSoundId);
 		_libraryBookcaseMovie->playMovie();
+
+		if (_state.libraryBookcaseDoor) {
+			_vm->_gfx->copyImageSectionToBackBuffer(11179, Common::Rect(0, 0, 106, 81), Common::Rect(0, 72, 106, 153));
+			_vm->_gfx->runTransition(6, Common::Rect(0, 72, 106, 153), 5, 10);
+			_vm->_sound->playSoundBlocking(7348);
+			_vm->_sound->replaceBackgroundMyst(4348, 16384);
+		} else {
+			_vm->_gfx->copyImageSectionToBackBuffer(11178, Common::Rect(0, 0, 107, 67), Common::Rect(437, 84, 544, 151));
+			_vm->_gfx->copyBackBufferToScreen(Common::Rect(437, 84, 544, 151));
+			_vm->_sound->playSoundBlocking(7348);
+			_vm->_sound->replaceBackgroundMyst(4334, 16384);
+		}
+
+		_vm->_cursor->showCursor();
 	}
 }
 
