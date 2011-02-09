@@ -223,6 +223,9 @@ void Logic::eventMouse(const Common::Event &ev) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Handle standard actions
+	if (getInventory()->isFlag1() || getInventory()->isFlag2() || getInventory()->isEggHighlighted())
+		_engine->getCursor()->setStyle(kCursorNormal);
+
 	if (hotspotHandled || getInventory()->isFlag1() || getInventory()->isFlag2() || getInventory()->isEggHighlighted())
 		return;
 
