@@ -34,7 +34,7 @@
 
 #include "engines/util.h"
 
-#include "sound/mixer.h"
+#include "audio/mixer.h"
 
 #include "picture/picture.h"
 #include "picture/animation.h"

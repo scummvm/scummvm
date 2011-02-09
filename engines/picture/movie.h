@@ -26,8 +26,8 @@
 #ifndef PICTURE_MOVIE_H
 #define PICTURE_MOVIE_H
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"	// for Audio::SoundHandle
+#include "audio/audiostream.h"
+#include "audio/mixer.h"	// for Audio::SoundHandle
 
 namespace Picture {
 
