@@ -1849,16 +1849,6 @@ void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
 		Common::MacResIDArray idArray = _macResMan->getResIDArray(tagArray[i]);
 
 		for (uint32 j = 0; j < idArray.size(); j++) {
-			// Get the size of the file
-			Common::SeekableReadStream *stream = _macResMan->getResource(tagArray[i], idArray[j]);
-
-			// Some IBIS resources have a size of 0, so we skip them
-			if (!stream)
-				continue;
-
-			uint32 fileSize = stream->size();
-			delete stream;
-
 			ResourceId resId;
 
 			// Check to see if we've got a base36 encoded resource name
@@ -1885,7 +1875,8 @@ void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
 			}
 
 			// Overwrite Resource instance. Resource forks may contain patches.
-			resMan->updateResource(resId, this, fileSize);
+			// The size will be filled in later by decompressResource()
+			resMan->updateResource(resId, this, 0);
 		}
 	}
 }
@@ -1953,15 +1944,6 @@ int Resource::readResourceInfo(ResVersion volVersion, Common::SeekableReadStream
 		szPacked = file->readUint16LE();
 		szUnpacked = file->readUint16LE();
 		wCompression = file->readUint16LE();
-		break;
-	case kResVersionSci11Mac:
-		// Doesn't store this data in the resource. Fortunately,
-		// we already have this data.
-		type = getType();
-		number = getNumber();
-		szPacked = file->size();
-		szUnpacked = file->size();
-		wCompression = 0;
 		break;
 #ifdef ENABLE_SCI32
 	case kResVersionSci2:
