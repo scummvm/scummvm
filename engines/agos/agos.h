@@ -35,9 +35,6 @@
 #include "common/stack.h"
 #include "common/util.h"
 
-#ifdef ENABLE_AGOS2
-#include "agos/animation.h"
-#endif
 #include "agos/midi.h"
 #include "agos/sound.h"
 #include "agos/vga.h"
@@ -60,6 +57,10 @@ namespace AGOS {
 uint fileReadItemID(Common::SeekableReadStream *in);
 
 #define CHECK_BOUNDS(x, y) assert((uint)(x) < ARRAYSIZE(y))
+
+#ifdef ENABLE_AGOS2
+class MoviePlayer;
+#endif
 
 struct Child;
 struct SubObject;

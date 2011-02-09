@@ -26,6 +26,7 @@
 
 
 #include "agos/agos.h"
+#include "agos/animation.h"
 #include "agos/debugger.h"
 #include "agos/intern.h"
 

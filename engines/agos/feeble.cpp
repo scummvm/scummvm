@@ -31,6 +31,7 @@
 
 #include "agos/intern.h"
 #include "agos/agos.h"
+#include "agos/animation.h"
 
 namespace AGOS {
 
