@@ -170,11 +170,11 @@ private:
 	void open();
 	void close();
 	void examine(InventoryItem item);
-	Common::Rect getItemRect(int16 index) const;
+	void drawHighlight();
 
 	bool isItemSceneParameter(InventoryItem item) const;
 
-	void drawItem(CursorStyle id, uint16 x, uint16 y, uint16 brighnessIndex = -1);
+	void drawItem(CursorStyle id, uint16 x, uint16 y, int16 brighnessIndex = -1);
 };
 
 } // End of namespace LastExpress
