@@ -77,8 +77,8 @@ MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSys
 }
 
 MoviePlayer::~MoviePlayer() {
-	delete _decoder;
 	delete _bgSoundHandle;
+	delete _decoder;
 }
 
 /**
@@ -318,7 +318,7 @@ uint32 DXADecoderWithSound::getElapsedTime() const {
 	if (_mixer->isSoundHandleActive(*_bgSoundHandle))
 		return _mixer->getSoundElapsedTime(*_bgSoundHandle);
 
-	return VideoDecoder::getElapsedTime();
+	return DXADecoder::getElapsedTime();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

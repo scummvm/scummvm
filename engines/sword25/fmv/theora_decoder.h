@@ -75,7 +75,7 @@ public:
 		return _fileStream != 0;
 	}
 	bool isPaused() const {
-		return (VideoDecoder::isPaused() || !isVideoLoaded());
+		return (FixedRateVideoDecoder::isPaused() || !isVideoLoaded());
 	}
 
 	uint16 getWidth() const {

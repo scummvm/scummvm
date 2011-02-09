@@ -59,7 +59,7 @@ namespace Video {
 // QuickTimeDecoder
 ////////////////////////////////////////////
 
-QuickTimeDecoder::QuickTimeDecoder() : VideoDecoder() {
+QuickTimeDecoder::QuickTimeDecoder() {
 	_audStream = NULL;
 	_beginOffset = 0;
 	_curFrame = -1;
@@ -387,14 +387,14 @@ const Graphics::Surface *QuickTimeDecoder::scaleSurface(const Graphics::Surface 
 }
 
 bool QuickTimeDecoder::endOfVideo() const {
-	return (!_audStream || _audStream->endOfData()) && (!findDefaultVideoCodec() || VideoDecoder::endOfVideo());
+	return (!_audStream || _audStream->endOfData()) && (!findDefaultVideoCodec() || SeekableVideoDecoder::endOfVideo());
 }
 
 uint32 QuickTimeDecoder::getElapsedTime() const {
 	if (_audStream)
 		return g_system->getMixer()->getSoundElapsedTime(_audHandle) + _audioStartOffset.msecs();
 
-	return VideoDecoder::getElapsedTime();
+	return SeekableVideoDecoder::getElapsedTime();
 }
 
 uint32 QuickTimeDecoder::getTimeToNextFrame() const {
@@ -1253,7 +1253,7 @@ void QuickTimeDecoder::close() {
 	// The audio stream is deleted automatically
 	_audStream = NULL;
 
-	VideoDecoder::reset();
+	SeekableVideoDecoder::reset();
 }
 
 Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket(uint32 &descId) {

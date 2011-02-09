@@ -280,7 +280,7 @@ const Graphics::Surface *FlicDecoder::decodeNextFrame() {
 }
 
 void FlicDecoder::reset() {
-	VideoDecoder::reset();
+	FixedRateVideoDecoder::reset();
 	if (_fileStream)
 		_fileStream->seek(_offsetFrame1);
 }

@@ -456,7 +456,7 @@ const Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 }
 
 void TheoraDecoder::reset() {
-	VideoDecoder::reset();
+	FixedRateVideoDecoder::reset();
 
 	if (_fileStream)
 		_fileStream->seek(0);
@@ -488,7 +488,7 @@ uint32 TheoraDecoder::getElapsedTime() const {
 	if (_audStream && _mixer)
 		return _mixer->getSoundElapsedTime(*_audHandle);
 
-	return VideoDecoder::getElapsedTime();
+	return FixedRateVideoDecoder::getElapsedTime();
 }
 
 Audio::QueuingAudioStream *TheoraDecoder::createAudioStream() {
