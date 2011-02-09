@@ -86,6 +86,22 @@ public:
 		TS_ASSERT_EQUALS(r1 - 1, Common::Rational(-1, 2));
 	}
 
+	void test_add_sub2() {
+		// Make sure cancelation works correctly
+		const Common::Rational r0(4, 15);	// = 8 / 30
+		const Common::Rational r1(1, 6);	// = 5 / 30
+
+		TS_ASSERT_EQUALS(r0 + r1, Common::Rational(13, 30));
+		TS_ASSERT_EQUALS(r1 + r0, Common::Rational(13, 30));
+		TS_ASSERT_EQUALS(r0 - r1, Common::Rational(1, 10));
+		TS_ASSERT_EQUALS(r1 - r0, Common::Rational(-1, 10));
+
+		TS_ASSERT_EQUALS(1 + r1, Common::Rational(7, 6));
+		TS_ASSERT_EQUALS(r1 + 1, Common::Rational(7, 6));
+		TS_ASSERT_EQUALS(1 - r1, Common::Rational(5, 6));
+		TS_ASSERT_EQUALS(r1 - 1, Common::Rational(-5, 6));
+	}
+
 	void test_mul() {
 		const Common::Rational r0(6, 3);
 		const Common::Rational r1(1, 2);
