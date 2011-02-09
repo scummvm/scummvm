@@ -1,0 +1,42 @@
+Index: configure
+===================================================================
+--- configure	(revision 55813)
++++ configure	(working copy)
+@@ -97,6 +97,7 @@
+ add_engine made "MADE" yes
+ add_engine mohawk "Mohawk" no
+ add_engine parallaction "Parallaction" yes
++add_engine picture "Picture" no
+ add_engine queen "Flight of the Amazon Queen" yes
+ add_engine saga "SAGA" yes "ihnm saga2"
+ add_engine ihnm "IHNM" yes
+Index: engines/engines.mk
+===================================================================
+--- engines/engines.mk	(revision 55813)
++++ engines/engines.mk	(working copy)
+@@ -104,6 +104,11 @@
+ MODULES += engines/parallaction
+ endif
+ 
++ifdef ENABLE_PICTURE
++DEFINES += -DENABLE_PICTURE=$(ENABLE_PICTURE)
++MODULES += engines/picture
++endif
++
+ ifdef ENABLE_QUEEN
+ DEFINES += -DENABLE_QUEEN=$(ENABLE_QUEEN)
+ MODULES += engines/queen
+Index: base/plugins.cpp
+===================================================================
+--- base/plugins.cpp	(revision 55813)
++++ base/plugins.cpp	(working copy)
+@@ -139,6 +139,9 @@
+ 		#if PLUGIN_ENABLED_STATIC(PARALLACTION)
+ 		LINK_PLUGIN(PARALLACTION)
+ 		#endif
++		#if PLUGIN_ENABLED_STATIC(PICTURE)
++		LINK_PLUGIN(PICTURE)
++		#endif
+ 		#if PLUGIN_ENABLED_STATIC(QUEEN)
+ 		LINK_PLUGIN(QUEEN)
+ 		#endif
