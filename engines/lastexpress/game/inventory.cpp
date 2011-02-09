@@ -43,9 +43,9 @@
 
 namespace LastExpress {
 
-Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem(kItemNone), _highlightedItem(kItemNone), _opened(false), _visible(false),
+Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem(kItemNone), _highlightedItem(kItemNone), _itemsShown(0),
 	_showingHourGlass(false), _blinkingEgg(false), _blinkingTime(0), _blinkingInterval(_defaultBlinkingInterval), _blinkingBrightness(1),
-	_useMagnifier(false), _flag1(false), _flag2(false), _eggHightlighted(false), _itemScene(NULL) {
+	_useMagnifier(false), _flag1(false), _isOpened(false), _eggHightlighted(false), _itemScene(NULL) {
 
 	_inventoryRect = Common::Rect(0, 0, 32, 32);
 	_menuRect = Common::Rect(608, 448, 640, 480);
@@ -160,11 +160,12 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 		if (ev.type == Common::EVENT_LBUTTONDOWN) {
 			_eggHightlighted = false;
 			_flag1 = false;
-			_flag2 = false;
+			_isOpened = false;
 
 			getSound()->playSoundWithSubtitles("LIB039.SND", SoundManager::kFlagMenuClock, kEntityPlayer);
 
 			getMenu()->show(true, kSavegameTypeIndex, 0);
+
 		} else if (ev.type == Common::EVENT_RBUTTONDOWN) {
 			if (getGlobalTimer()) {
 				if (getSound()->isBuffered("TIMER"))
@@ -174,6 +175,51 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			}
 		}
 	}
+
+	// Selected item
+	if (ev.mouse.x >= 32) {
+		// TODO
+
+		return;
+	}
+
+	// Opened inventory
+	if (ev.mouse.y >= 32) {
+		// TODO
+
+		return;
+	}
+
+	//
+	if (!getProgress().field_84
+	 && getEntityData(kEntityPlayer)->location != kLocationOutsideTrain
+	 && getProgress().field_18 != 4
+	 && (_selectedItem == kItemNone || get(_selectedItem)->manualSelect || getState()->sceneUseBackup)) {
+
+		// Draw inventory contents when clicking on portrait
+		if (ev.type == Common::EVENT_LBUTTONDOWN) {
+			open();
+			return;
+		}
+
+		if (!_flag1 && !_isOpened) {
+			drawItem((CursorStyle)getProgress().portrait, 0, 0);
+			_flag1 = true;
+		} else if (!_isOpened || (ev.type == Common::EVENT_LBUTTONDOWN || ev.type == Common::EVENT_LBUTTONUP)) {
+			// Do nothing
+		} else if (_isOpened) {
+			close();
+
+			// Select item
+
+			// Examine item
+
+			_flag1 = true;
+		}
+
+		// Draw highlighted item
+	}
+
 
 	//
 	//// If clicked, show the menu
@@ -193,104 +239,104 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 	//	}
 	//}
 
-	// Portrait (inventory)
-	if (_inventoryRect.contains(ev.mouse)) {
-		//insideInventory = true;
-		_engine->getCursor()->setStyle(kCursorNormal);
+	//// Portrait (inventory)
+	//if (_inventoryRect.contains(ev.mouse)) {
+	//	//insideInventory = true;
+	//	_engine->getCursor()->setStyle(kCursorNormal);
 
-		// If clicked, show pressed state and display inventory
-		if (ev.type == Common::EVENT_LBUTTONUP) {
-			open();
-		} else {
-			// Highlight if needed
-			if (_highlightedItem != (InventoryItem)getProgress().portrait && !_opened) {
-				_highlightedItem = (InventoryItem)getProgress().portrait;
-				drawItem((CursorStyle)getProgress().portrait, 0, 0);
+	//	// If clicked, show pressed state and display inventory
+	//	if (ev.type == Common::EVENT_LBUTTONUP) {
+	//		open();
+	//	} else {
+	//		// Highlight if needed
+	//		if (_highlightedItem != (InventoryItem)getProgress().portrait && !_opened) {
+	//			_highlightedItem = (InventoryItem)getProgress().portrait;
+	//			drawItem((CursorStyle)getProgress().portrait, 0, 0);
 
-				askForRedraw();
-			}
-		}
-	} else {
-		// remove highlight if needed
-		if (_highlightedItem == (InventoryItem)getProgress().portrait && !_opened) {
-			drawItem((CursorStyle)getProgress().portrait, 0, 0);
-			_highlightedItem = kItemNone;
-			askForRedraw();
-		}
-	}
+	//			askForRedraw();
+	//		}
+	//	}
+	//} else {
+	//	// remove highlight if needed
+	//	if (_highlightedItem == (InventoryItem)getProgress().portrait && !_opened) {
+	//		drawItem((CursorStyle)getProgress().portrait, 0, 0);
+	//		_highlightedItem = kItemNone;
+	//		askForRedraw();
+	//	}
+	//}
 
-	// If the inventory is open, check all items rect to see if we need to highlight one / handle click
-	if (_opened) {
+	//// If the inventory is open, check all items rect to see if we need to highlight one / handle click
+	//if (_opened) {
 
-		// Always show normal cursor when the inventory is opened
-		//insideInventory = true;
-		_engine->getCursor()->setStyle(kCursorNormal);
+	//	// Always show normal cursor when the inventory is opened
+	//	//insideInventory = true;
+	//	_engine->getCursor()->setStyle(kCursorNormal);
 
-		bool selected = false;
+	//	bool selected = false;
 
-		// Iterate over items
-		int16 y = 44;
-		for (int i = 1; i < 32; i++) {
-			if (!hasItem((InventoryItem)i))
-				continue;
+	//	// Iterate over items
+	//	int16 y = 44;
+	//	for (int i = 1; i < 32; i++) {
+	//		if (!hasItem((InventoryItem)i))
+	//			continue;
 
-			if (Common::Rect(0, y, 32, 32 + y).contains(ev.mouse)) {
+	//		if (Common::Rect(0, y, 32, 32 + y).contains(ev.mouse)) {
 
-				// If released with an item highlighted, show this item
-				if (ev.type == Common::EVENT_LBUTTONUP) {
-					if (_entries[i].isSelectable) {
-						selected = true;
-						_selectedItem = (InventoryItem)i;
-						drawItem(get(_selectedItem)->cursor, 44, 0);
-					}
+	//			// If released with an item highlighted, show this item
+	//			if (ev.type == Common::EVENT_LBUTTONUP) {
+	//				if (_entries[i].isSelectable) {
+	//					selected = true;
+	//					_selectedItem = (InventoryItem)i;
+	//					drawItem(get(_selectedItem)->cursor, 44, 0);
+	//				}
 
-					examine((InventoryItem)i);
-					break;
-				} else {
-					if (_highlightedItem != i) {
-						drawItem(_entries[i].cursor, 0, y);
-						_highlightedItem = (InventoryItem)i;
-						askForRedraw();
-					}
-				}
-			} else {
-				// Remove highlight if necessary
-				if (_highlightedItem == i) {
-					drawItem(_entries[i].cursor, 0, y);
-					_highlightedItem = kItemNone;
-					askForRedraw();
-				}
-			}
+	//				examine((InventoryItem)i);
+	//				break;
+	//			} else {
+	//				if (_highlightedItem != i) {
+	//					drawItem(_entries[i].cursor, 0, y);
+	//					_highlightedItem = (InventoryItem)i;
+	//					askForRedraw();
+	//				}
+	//			}
+	//		} else {
+	//			// Remove highlight if necessary
+	//			if (_highlightedItem == i) {
+	//				drawItem(_entries[i].cursor, 0, y);
+	//				_highlightedItem = kItemNone;
+	//				askForRedraw();
+	//			}
+	//		}
 
-			y += 40;
-		}
+	//		y += 40;
+	//	}
 
-		// Right button is released: we need to close the inventory
-		if (ev.type == Common::EVENT_LBUTTONUP) {
+	//	// Right button is released: we need to close the inventory
+	//	if (ev.type == Common::EVENT_LBUTTONUP) {
 
-			// Not on a selectable item: unselect the current item
-			if (!selected)
-				unselectItem();
+	//		// Not on a selectable item: unselect the current item
+	//		if (!selected)
+	//			unselectItem();
 
-			close();
-		}
-	}
+	//		close();
+	//	}
+	//}
 
-	// Selected item
-	if (_selectedItem != kItemNone && _selectedRect.contains(ev.mouse)) {
-		//insideInventory = true;
+	//// Selected item
+	//if (_selectedItem != kItemNone && _selectedRect.contains(ev.mouse)) {
+	//	//insideInventory = true;
 
-		// Show magnifier icon
-		_engine->getCursor()->setStyle(kCursorMagnifier);
+	//	// Show magnifier icon
+	//	_engine->getCursor()->setStyle(kCursorMagnifier);
 
-		if (ev.type == Common::EVENT_LBUTTONUP) {
-			examine(_selectedItem);
-		}
-	}
+	//	if (ev.type == Common::EVENT_LBUTTONUP) {
+	//		examine(_selectedItem);
+	//	}
+	//}
 
-	// If the egg is blinking, refresh
-	if (_blinkingEgg)
-		drawEgg();
+	//// If the egg is blinking, refresh
+	//if (_blinkingEgg)
+	//	drawEgg();
 
 	// Restore cursor
 	//if (!insideInventory)
@@ -581,18 +627,24 @@ void Inventory::drawItem(CursorStyle id, uint16 x, uint16 y, uint16 brightnessIn
 
 // Close inventory: clear items and reset icon
 void Inventory::open() {
-	_opened = true;
+	_flag1 = false;
+	_isOpened = true;
 
-	// Show selected state
+	// Draw highlighted portrait
 	drawItem((CursorStyle)(getProgress().portrait + 1), 0, 0);
 
-	uint16 y = 44;
+	// Draw at most 11 items in the inventory
+	_itemsShown = 0;
+	for (int i = 1; i < ARRAYSIZE(_entries); i++) {
+		if (!_entries[i].isPresent)
+			continue;
 
-	// Iterate over items
-	for (uint i = 1; i < 32; i++) {
-		if (_entries[i].isPresent) {
-			drawItem(_entries[i].cursor, 0, y);
-			y += 40;
+		if (!_entries[i].manualSelect)
+			continue;
+
+		if (_itemsShown < 11) {
+			drawItem(_entries[i].cursor, 0, 40 * _itemsShown + 44, 1);
+			++_itemsShown;
 		}
 	}
 
@@ -601,20 +653,15 @@ void Inventory::open() {
 
 // Close inventory: clear items and reset icon
 void Inventory::close() {
-	_opened = false;
+	_isOpened = false;
 
 	// Fallback to unselected state
 	drawItem((CursorStyle)getProgress().portrait, 0, 0);
 
-	// Erase rectangle for all inventory items
-	int count = 0;
-	for (uint i = 1; i < 32; i++) {
-		if (_entries[i].isPresent) {
-			count++;
-		}
-	}
+	// Erase rectangle for inventory items shown
+	_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(0, 44, 32, (int16)(44 + 40 * _itemsShown)));
 
-	_engine->getGraphicsManager()->clear(GraphicsManager::kBackgroundInventory, Common::Rect(0, 44, 32, (int16)(44 + 44 * count)));
+	_itemsShown = 0;
 
 	askForRedraw();
 }

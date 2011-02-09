@@ -121,7 +121,7 @@ public:
 	// State
 	bool isMagnifierInUse() { return _useMagnifier; }
 	bool isFlag1() { return _flag1; }
-	bool isFlag2() { return _flag2; }
+	bool isOpened() { return _isOpened; }
 	bool isEggHighlighted() { return _eggHightlighted; }
 
 	// Serializable
@@ -143,8 +143,8 @@ private:
 	InventoryEntry _entries[32];
 	InventoryItem _selectedItem;
 	InventoryItem _highlightedItem;
-	bool _opened;
-	bool _visible;
+
+	uint32 _itemsShown;
 
 	bool _showingHourGlass;
 	bool _blinkingEgg;
@@ -155,7 +155,7 @@ private:
 	// Flags
 	bool _useMagnifier;
 	bool _flag1;
-	bool _flag2;
+	bool _isOpened;
 	bool _eggHightlighted;
 
 	Scene *_itemScene;
