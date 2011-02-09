@@ -254,7 +254,9 @@ const char *SegManager::getObjectName(reg_t pos) {
 	if (nameReg.isNull())
 		return "<no name>";
 
-	const char *name = derefString(nameReg);
+	const char *name = 0;
+	if (nameReg.segment)
+		name  = derefString(nameReg);
 	if (!name)
 		return "<invalid name>";
 
