@@ -14,7 +14,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added Norwegian Nynorsk translation.
    - Added Debug Console to Cine, Draci, Gob, MADE, Sword1, Touche and 
      Tucker Engines.
-   - Closed significant memory leaks. RTL should now be more usuable.
+   - Closed significant memory leaks. RTL should now be more usable.
 
  AGOS:
    - Closed memory leaks in Simon 2 and Feeble Files.
