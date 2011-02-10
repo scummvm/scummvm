@@ -37,7 +37,7 @@ namespace Sci {
 enum ResSourceType {
 	kSourceDirectory = 0,
 	kSourcePatch,			// External resource patches
-	kSourceVolume,			// Game resources (inside resource.* or ressci.*)
+	kSourceVolume,			// Game resources (resource.* or ressci.*)
 	kSourceExtMap,			// Non-audio resource maps
 	kSourceIntMap,			// SCI1.1 and later audio resource maps
 	kSourceAudioVolume,		// Audio resources - resource.sfx / resource.aud
