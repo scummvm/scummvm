@@ -860,7 +860,7 @@ void KyraEngine_MR::randomSceneChat() {
 	processDialog(vocHighIndex, vocHighBase, 0);
 }
 
-void KyraEngine_MR::runDialog(int dlgIndex, int funcNum) {
+void KyraEngine_MR::doDialog(int dlgIndex, int funcNum) {
 	switch (_currentChapter-2) {
 	case 0:
 		dlgIndex -= 34;

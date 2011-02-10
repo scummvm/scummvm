@@ -946,9 +946,9 @@ int KyraEngine_MR::o3_runActorScript(EMCState *script) {
 	return 0;
 }
 
-int KyraEngine_MR::o3_runDialog(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_runDialog(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	runDialog(stackPos(0), stackPos(1));
+int KyraEngine_MR::o3_doDialog(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_doDialog(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	doDialog(stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -1293,7 +1293,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	// 0x74
 	Opcode(o3_runActorScript);
-	Opcode(o3_runDialog);
+	Opcode(o3_doDialog);
 	Opcode(o2_randomSceneChat);
 	Opcode(o2_setDlgIndex);
 	// 0x78

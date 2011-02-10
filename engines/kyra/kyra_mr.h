@@ -473,7 +473,7 @@ private:
 	int o3d_delay(EMCState *script);
 
 	void randomSceneChat();
-	void runDialog(int dlgIndex, int funcNum);
+	void doDialog(int dlgIndex, int funcNum);
 
 	// conscience
 	bool _badConscienceShown;
@@ -644,7 +644,7 @@ private:
 	int o3_defineSceneAnim(EMCState *script);
 	int o3_updateSceneAnim(EMCState *script);
 	int o3_runActorScript(EMCState *script);
-	int o3_runDialog(EMCState *script);
+	int o3_doDialog(EMCState *script);
 	int o3_setConversationState(EMCState *script);
 	int o3_getConversationState(EMCState *script);
 	int o3_changeChapter(EMCState *script);
