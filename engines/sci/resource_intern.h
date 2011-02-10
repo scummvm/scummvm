@@ -35,16 +35,16 @@ namespace Common {
 namespace Sci {
 
 enum ResSourceType {
-	kSourceDirectory = 0,
-	kSourcePatch,			// External resource patches
-	kSourceVolume,			// Game resources (resource.* or ressci.*)
-	kSourceExtMap,			// Non-audio resource maps
-	kSourceIntMap,			// SCI1.1 and later audio resource maps
-	kSourceAudioVolume,		// Audio resources - resource.sfx / resource.aud
-	kSourceExtAudioMap,		// SCI1 audio resource maps
-	kSourceWave,			// External WAVE files, patched in as sound resources
-	kSourceMacResourceFork,	// Mac SCI1.1 and later resource forks
-	kSourceChunk			// Script chunk resources (*.chk)
+	kSourceDirectory = 0,	///< Directories containing game resources/patches
+	kSourcePatch,			///< External resource patches
+	kSourceVolume,			///< Game resources (resource.* or ressci.*)
+	kSourceExtMap,			///< Non-audio resource maps
+	kSourceIntMap,			///< SCI1.1 and later audio resource maps
+	kSourceAudioVolume,		///< Audio resources - resource.sfx / resource.aud
+	kSourceExtAudioMap,		///< SCI1 audio resource maps
+	kSourceWave,			///< External WAVE files, patched in as sound resources
+	kSourceMacResourceFork,	///< Mac SCI1.1 and later resource forks
+	kSourceChunk			///< Script chunk resources (*.chk)
 };
 
 
