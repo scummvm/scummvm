@@ -878,6 +878,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 				readMt32Patch(res->data, res->size);
 			}
 		} else {
+			// Early SCI0 games have the sound bank embedded in the MT-32 driver
 			readMt32DrvData();
 		}
 	} else {
@@ -940,6 +941,8 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 					}
 				}
 			} else {
+				// Early SCI0 games have the sound bank embedded in the MT-32 driver
+
 				// No MT-32 patch present, try to read from MT32.DRV
 				Common::File f;
 

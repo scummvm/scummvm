@@ -486,6 +486,11 @@ int MidiPlayer_Fb01::open(ResourceManager *resMan) {
 	if (res) {
 		sendBanks(res->data, res->size);
 	} else {
+		// Early SCI0 games have the sound bank embedded in the IMF driver.
+		// Note that these games didn't actually support the FB-01 as a device,
+		// but the IMF, which is the same device on an ISA card. Check:
+		// http://wiki.vintage-computer.com/index.php/IBM_Music_feature_card
+
 		warning("FB-01 patch file not found, attempting to load sound bank from IMF.DRV");
 		// Try to load sound bank from IMF.DRV
 		Common::File f;
