@@ -640,20 +640,23 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String filename = g_sci->getSavegameName(savegameId);
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::OutSaveFile *out;
-	if (!(out = saveFileMan->openForSaving(filename))) {
+
+	out = saveFileMan->openForSaving(filename);
+	if (!out) {
 		warning("Error opening savegame \"%s\" for writing", filename.c_str());
 	} else {
 		if (!gamestate_save(s, out, game_description.c_str(), version.c_str())) {
 			warning("Saving the game failed");
 		} else {
-			out->finalize();
-			if (out->err()) {
-				warning("Writing the savegame failed");
-			} else {
-				s->r_acc = TRUE_REG; // success
-			}
-			delete out;
+			s->r_acc = TRUE_REG; // save successful
 		}
+
+		out->finalize();
+		if (out->err()) {
+			warning("Writing the savegame failed");
+			s->r_acc = NULL_REG; // write failure
+		}
+		delete out;
 	}
 
 	return s->r_acc;
@@ -706,7 +709,9 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 		Common::String filename = g_sci->getSavegameName(savegameId);
 		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename))) {
+
+		in = saveFileMan->openForLoading(filename);
+		if (in) {
 			// found a savegame file
 
 			gamestate_restore(s, in);
@@ -764,9 +769,9 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	// SQ4 floppy attempts to update the savegame index file sq4sg.dir when
-	// deleting saved games. We don't use an index file for saving or
-	// loading, so just stop the game from modifying the file here in order
-	// to avoid having it saved in the ScummVM save directory.
+	// deleting saved games. We don't use an index file for saving or loading,
+	// so just stop the game from modifying the file here in order to avoid
+	// having it saved in the ScummVM save directory.
 	if (name == "sq4sg.dir") {
 		debugC(kDebugLevelFile, "Not opening unused file sq4sg.dir");
 		return SIGNAL_REG;
@@ -781,8 +786,9 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 
 	// QFG import rooms get a virtual filelisting instead of an actual one
 	if (g_sci->inQfGImportRoom()) {
-		// we need to find out what the user actually selected, "savedHeroes" is already destroyed
-		//  when we get here. That's why we need to remember selection via kDrawControl
+		// We need to find out what the user actually selected, "savedHeroes" is
+		// already destroyed when we get here. That's why we need to remember
+		// selection via kDrawControl.
 		name = s->_dirseeker.getVirtualFilename(s->_chosenQfGImportItem);
 		unwrapFilename = false;
 	}
@@ -1032,19 +1038,20 @@ reg_t kFileIOFindNext(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 
-	// Check for regular file
-	bool exists = Common::File::exists(name);
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	const Common::String wrappedName = g_sci->wrapFilename(name);
+	bool exists = false;
 
+	// Check for regular file
+	exists = Common::File::exists(name);
+
+	// Check for a savegame with the name
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	if (!exists)
 		exists = !saveFileMan->listSavefiles(name).empty();
 
+	// Try searching for the file prepending "target-"
+	const Common::String wrappedName = g_sci->wrapFilename(name);
 	if (!exists) {
-		// Try searching for the file prepending target-
-		Common::SeekableReadStream *inFile = saveFileMan->openForLoading(wrappedName);
-		exists = (inFile != 0);
-		delete inFile;
+		exists = !saveFileMan->listSavefiles(wrappedName).empty();
 	}
 
 	// Special case for non-English versions of LSL5: The English version of
@@ -1063,8 +1070,8 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 		for (int i = 0; i < 10; i++)
 			outFile->writeByte(defaultContent[i]);
 		outFile->finalize();
+		exists = !outFile->err();	// check whether we managed to create the file.
 		delete outFile;
-		exists = true;
 	}
 
 	debugC(kDebugLevelFile, "kFileIO(fileExists) %s -> %d", name.c_str(), exists);
