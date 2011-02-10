@@ -328,6 +328,7 @@ public:
 
 	void setAudioLanguage(int language);
 	int getAudioLanguage() const;
+	void changeAudioDirectory(Common::String path);
 	bool isGMTrackIncluded();
 	bool isVGA() const { return (_viewType == kViewVga) || (_viewType == kViewVga11); }
 	bool isAmiga32color() const { return _viewType == kViewAmiga; }

@@ -318,7 +318,7 @@ bool Resource::loadPatch(Common::SeekableReadStream *file) {
 bool Resource::loadFromPatchFile() {
 	Common::File file;
 	const Common::String &filename = _source->getLocationName();
-	if (file.open(filename) == false) {
+	if (!file.open(filename)) {
 		warning("Failed to open patch file %s", filename.c_str());
 		unalloc();
 		return false;
@@ -737,28 +737,6 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 	// to add a patch directory or message.map here
 
 	return 1;
-}
-
-bool ResourceManager::addAudioSources() {
-	Common::List<ResourceId> *resources = listResources(kResourceTypeMap);
-	Common::List<ResourceId>::iterator itr = resources->begin();
-
-	while (itr != resources->end()) {
-		ResourceSource *src = addSource(new IntMapResourceSource("MAP", itr->getNumber()));
-
-		if ((itr->getNumber() == 65535) && Common::File::exists("RESOURCE.SFX"))
-			addSource(new AudioVolumeResourceSource(this, "RESOURCE.SFX", src, 0));
-		else if (Common::File::exists("RESOURCE.AUD"))
-			addSource(new AudioVolumeResourceSource(this, "RESOURCE.AUD", src, 0));
-		else
-			return false;
-
-		++itr;
-	}
-
-	delete resources;
-
-	return true;
 }
 
 void ResourceManager::addScriptChunkSources() {

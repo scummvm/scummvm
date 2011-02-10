@@ -893,4 +893,67 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 		delete fileStream;
 }
 
+bool ResourceManager::addAudioSources() {
+	Common::List<ResourceId> *resources = listResources(kResourceTypeMap);
+	Common::List<ResourceId>::iterator itr = resources->begin();
+
+	while (itr != resources->end()) {
+		ResourceSource *src = addSource(new IntMapResourceSource("MAP", itr->getNumber()));
+
+		if ((itr->getNumber() == 65535) && Common::File::exists("RESOURCE.SFX"))
+			addSource(new AudioVolumeResourceSource(this, "RESOURCE.SFX", src, 0));
+		else if (Common::File::exists("RESOURCE.AUD"))
+			addSource(new AudioVolumeResourceSource(this, "RESOURCE.AUD", src, 0));
+		else
+			return false;
+
+		++itr;
+	}
+
+	delete resources;
+
+	return true;
+}
+
+void ResourceManager::changeAudioDirectory(Common::String path) {
+	// Remove all of the audio map resource sources, as well as the audio resource sources
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+		ResourceSource *source = *it;
+		ResSourceType sourceType = source->getSourceType();
+
+		// Remove the resource source, if it's an audio map or an audio file
+		if (sourceType == kSourceIntMap || sourceType == kSourceAudioVolume) {
+			// Don't remove 65535.map (the SFX map) or resource.sfx
+			if (source->_volumeNumber == 65535 || source->getLocationName() == "RESOURCE.SFX")
+				continue;
+
+			it = _sources.erase(it);
+			delete source;
+		}
+	}
+
+	// Now, readd the audio resource sources
+	Common::String mapName = "MAP";
+	Common::String audioResourceName = "RESOURCE.AUD";
+	if (!path.empty()) {
+		mapName = Common::String::format("%s/MAP", path.c_str());
+		audioResourceName = Common::String::format("%s/RESOURCE.AUD", path.c_str());
+	}
+
+	Common::List<ResourceId> *resources = listResources(kResourceTypeMap);
+	for (Common::List<ResourceId>::iterator it = resources->begin(); it != resources->end(); ++it) {
+		// Don't readd 65535.map or resource.sfx
+		if ((it->getNumber() == 65535))
+			continue;
+
+		ResourceSource *src = addSource(new IntMapResourceSource(mapName, it->getNumber()));
+		addSource(new AudioVolumeResourceSource(this, audioResourceName, src, 0));
+	}
+
+	delete resources;
+
+	// Rescan the newly added resources
+	scanNewSources();
+}
+
 } // End of namespace Sci

@@ -284,10 +284,10 @@ reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv) {
 	// the audio language between English and Spanish.
 	// Basically, it instructs the interpreter to switch the audio resources
 	// (resource.aud and associated map files) and load them from the "Spanish"
-	// subdirectory instead. Therefore, this is only needed for the Spanish 
-	// version, and it needs support at the resource manager level.
-	Common::String languageFolder = s->_segMan->getString(argv[0]);
-	warning("SetLanguage: set audio resource folder to '%s'", languageFolder.c_str());
+	// subdirectory instead.
+	Common::String audioDirectory = s->_segMan->getString(argv[0]);
+	//warning("SetLanguage: set audio resource directory to '%s'", audioDirectory.c_str());
+	g_sci->getResMan()->changeAudioDirectory(audioDirectory);
 
 	return s->r_acc;
 }
