@@ -36,15 +36,15 @@ namespace Sci {
 
 enum ResSourceType {
 	kSourceDirectory = 0,
-	kSourcePatch,
-	kSourceVolume,
-	kSourceExtMap,
-	kSourceIntMap,
-	kSourceAudioVolume,
-	kSourceExtAudioMap,
-	kSourceWave,
-	kSourceMacResourceFork,
-	kSourceChunk
+	kSourcePatch,			// External resource patches
+	kSourceVolume,			// Game resources (inside resource.* or ressci.*)
+	kSourceExtMap,			// Non-audio resource maps
+	kSourceIntMap,			// SCI1.1 and later audio resource maps
+	kSourceAudioVolume,		// Audio resources - resource.sfx / resource.aud
+	kSourceExtAudioMap,		// SCI1 audio resource maps
+	kSourceWave,			// External WAVE files, patched in as sound resources
+	kSourceMacResourceFork,	// Mac SCI1.1 and later resource forks
+	kSourceChunk			// Script chunk resources (*.chk)
 };
 
 
