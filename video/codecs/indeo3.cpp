@@ -564,6 +564,16 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 										lp2++;
 										break;
 									case 1:
+										if (correction_type_sp[0][*buf1] != 1) {
+											// both correction types must be DYAD. If it's not the case
+											// we have an incorrect data and we should skip the rest.
+											// This occurs in some Urban Runner videos, and produced a glitch.
+											// The glitch is not visible anymore if we skip this part of the frame.
+											// The old Y values are then used.
+											// This is also the behavior of the codec in the original game.
+											//warning("Glitch");
+											return;
+										}
 										res = ((FROM_LE_16(((uint16 *)(ref_lp))[0]) >> 1) + correction_lp[lp2 & 0x01][*buf1]) << 1;
 										((uint16 *)cur_lp)[0] = FROM_LE_16(res);
 										res = ((FROM_LE_16(((uint16 *)(ref_lp))[1]) >> 1) + correction_lp[lp2 & 0x01][k]) << 1;
@@ -616,6 +626,12 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 											rle_v3 = 1;
 										}
 									case 6:
+										if (lp2 > 0) {
+											//This case can't happen either.
+											//If it occurs, it must happen on the first line.
+											//warning("Glitch");
+											return;
+										}
 										if (ref_vectors != NULL) {
 											for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
 												cur_lp[j] = ref_lp[j];
@@ -805,6 +821,11 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 											break;
 
 										case 1:
+											if (correction_type_sp[lp2 & 0x01][*buf1] != 1) {
+												//See the mode 0/1
+												//warning("Glitch");
+												return;
+											}
 											cur_lp[width_tbl[1]] = FROM_LE_32(((FROM_LE_32(lv1) >> 1) + correctionloworder_lp[lp2 & 0x01][*buf1]) << 1);
 											cur_lp[width_tbl[1]+1] = FROM_LE_32(((FROM_LE_32(lv2) >> 1) + correctionloworder_lp[lp2 & 0x01][k]) << 1);
 											if (lp2 > 0 || strip->ypos != 0 || flag1 == 0) {
@@ -1056,6 +1077,12 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 										break;
 
 									case 1:
+										if (correction_type_sp[lp2 & 0x01][*buf1] != 1) {
+											// See mode 0/1
+											//warning("Glitch");
+											return;
+										}
+
 										lv1 = (uint16)(correction_lp[lp2 & 0x01][*buf1++]);
 										lv2 = (uint16)(correction_lp[lp2 & 0x01][k]);
 										res = (uint16)(((FROM_LE_16(((uint16 *)ref_lp)[0]) >> 1) + lv1) << 1);
@@ -1137,6 +1164,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 					// FIXME: I've seen case 13 happen in Urban
 					// Runner. Perhaps it uses a more recent form of
 					// Indeo 3? There appears to have been several.
+					// -> This should not happen anymore with the other skipping for bad data.
 					warning("Indeo3Decoder::decodeChunk: Unknown case %d", k);
 					return;
 			}
