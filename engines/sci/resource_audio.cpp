@@ -824,4 +824,73 @@ byte SoundResource::getInitialVoiceCount(byte channel) {
 		return data[channel * 2];
 }
 
+void WaveResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
+	Common::SeekableReadStream *fileStream = getVolumeFile(resMan, res);
+	if (!fileStream)
+		return;
+
+	fileStream->seek(res->_fileOffset, SEEK_SET);
+	res->loadFromWaveFile(fileStream);
+	if (_resourceFile)
+		delete fileStream;
+}
+
+void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
+	Common::SeekableReadStream *fileStream = getVolumeFile(resMan, res);
+	if (!fileStream)
+		return;
+
+	if (_audioCompressionType) {
+		// this file is compressed, so lookup our offset in the offset-translation table and get the new offset
+		//  also calculate the compressed size by using the next offset
+		int32 *mappingTable = _audioCompressionOffsetMapping;
+		int32 compressedOffset = 0;
+
+		do {
+			if (*mappingTable == res->_fileOffset) {
+				mappingTable++;
+				compressedOffset = *mappingTable;
+				// Go to next compressed offset and use that to calculate size of compressed sample
+				switch (res->getType()) {
+				case kResourceTypeSync:
+				case kResourceTypeSync36:
+					// we should already have a (valid) size
+					break;
+				default:
+					mappingTable += 2;
+					res->size = *mappingTable - compressedOffset;
+				}
+				break;
+			}
+			mappingTable += 2;
+		} while (*mappingTable);
+
+		if (!compressedOffset)
+			error("could not translate offset to compressed offset in audio volume");
+		fileStream->seek(compressedOffset, SEEK_SET);
+
+		switch (res->getType()) {
+		case kResourceTypeAudio:
+		case kResourceTypeAudio36:
+			// Directly read the stream, compressed audio wont have resource type id and header size for SCI1.1
+			res->loadFromAudioVolumeSCI1(fileStream);
+			if (_resourceFile)
+				delete fileStream;
+			return;
+		default:
+			break;
+		}
+	} else {
+		// original file, directly seek to given offset and get SCI1/SCI1.1 audio resource
+		fileStream->seek(res->_fileOffset, SEEK_SET);
+	}
+	if (getSciVersion() < SCI_VERSION_1_1)
+		res->loadFromAudioVolumeSCI1(fileStream);
+	else
+		res->loadFromAudioVolumeSCI11(fileStream);
+
+	if (_resourceFile)
+		delete fileStream;
+}
+
 } // End of namespace Sci
