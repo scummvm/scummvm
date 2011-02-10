@@ -48,6 +48,13 @@ ifeq "$(HAVE_CLANG)" "1"
 	CXXFLAGS+= -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants
 endif
 
+ifeq "$(HAVE_ICC)" "1"
+	# Disable some warnings:
+	#  161: unrecognized #pragma
+	# 1899: multicharacter character literal (potential portability problem)
+	CXXFLAGS+= -diag-disable 161,1899
+endif
+
 # Warn if global constructors are used. Only available in GCC with LLVM backend
 # (and maybe clang?), hence off by default.
 #CXXFLAGS+= -Wglobal-constructors

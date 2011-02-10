@@ -1299,6 +1299,21 @@ LD=$CXX
 #
 echocheck "compiler version"
 
+# We first check whether we have an Intel compiler here, since the Intel compiler
+# can also fake itself as an gcc (to ease compatibility with common Linux etc.
+# programs).
+have_icc=no
+cc_check_define __INTEL_COMPILER && have_icc=yes
+
+if test "$have_icc" = yes; then
+	add_line_to_config_mk 'HAVE_ICC = 1'
+
+	# Make ICC error our on unknown command line options instead of printing
+	# a warning. This is for example required to make the -Wglobal-destructors
+	# detection work correctly.
+	CXXFLAGS="$CXXFLAGS -diag-error 10006,10148"
+fi
+
 have_gcc=no
 cc_check_define __GNUC__ && have_gcc=yes
 
@@ -1320,6 +1335,11 @@ if test "$have_gcc" = yes; then
 		cxx_version="$cxx_version, bad"
 		cxx_verc_fail=yes
 	fi
+elif test "$have_icc" = yes; then
+	cxx_version="`( $CXX -dumpversion ) 2>/dev/null`"
+	_cxx_major="`echo "${cxx_version}" | sed -ne 's/\([0-9][0-9]*\)\..*/\1/gp'`"
+	_cxx_minor="`echo "${cxx_version}" | sed -ne 's/[0-9][0-9]*\.\([0-9][0-9]*\)/\1/gp'`"
+	cxx_version="ICC $cxx_version, ok"
 else
 	# TODO: Big scary warning about unsupported compilers
 	cxx_version=`( $CXX -version ) 2>&1`
@@ -3057,6 +3077,8 @@ if test "$have_gcc" = yes ; then
 	else
 		CXXFLAGS="$CXXFLAGS -Wconversion"
 	fi;
+elif test "$have_icc" = yes ; then
+	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 fi;
 
 # Some platforms use certain GNU extensions in header files
@@ -3064,7 +3086,10 @@ case $_host_os in
 android | gamecube | psp | wii)
 	;;
 *)
-	CXXFLAGS="$CXXFLAGS -pedantic"
+	# ICC does not support pedantic
+	if test "$have_icc" = no ; then
+		CXXFLAGS="$CXXFLAGS -pedantic"
+	fi
 	;;
 esac
 
