@@ -52,6 +52,7 @@ const SciWorkaroundEntry opcodeGeWorkarounds[] = {
 	{ GID_HOYLE1,           5,  213,  0,                   "", "export 0",       -1,    0, { WORKAROUND_FAKE,   1 } }, // happens sometimes during cribbage - bug #3038433
 	{ GID_MOTHERGOOSE256,   4,  998,  0,               "door", "setCel",         -1,    0, { WORKAROUND_FAKE,   1 } }, // after giving the king his pipe back, listening to his song and leaving the castle - bug #3051475
 	{ GID_PQ3,             31,   31,  0,              "rm031", "init",           -1,    0, { WORKAROUND_FAKE,   1 } }, // pq3 english: when exiting the car, while morales is making phonecalls - bug #3037565
+	{ GID_MOTHERGOOSEHIRES,90,   90,  0,      "newGameButton", "select",         -1,    0, { WORKAROUND_FAKE,   0 } }, // MUMG Deluxe, when selecting "New Game" in the main menu. It tries to compare an integer with a list. Needs to return false for the game to continue.
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
