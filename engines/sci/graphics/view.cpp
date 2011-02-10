@@ -401,7 +401,7 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 		// code, that they would just put a little snippet of code to swap these colors
 		// in various places around the SCI codebase. We figured that it would be less
 		// hacky to swap pixels instead and run the Mac games with a PC palette.
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1) {
 			// clearColor is based on PC palette, but the literal data is not.
 			// We flip clearColor here to make it match the literal data. All
 			// these pixels will be flipped back again below.
