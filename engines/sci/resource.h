@@ -435,7 +435,8 @@ protected:
 	 */
 	void scanNewSources();
 
-	int addInternalSources();
+	bool addAudioSources();
+	void addScriptChunkSources();
 	void freeResourceSources();
 
 	/**

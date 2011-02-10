@@ -739,7 +739,7 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 	return 1;
 }
 
-int ResourceManager::addInternalSources() {
+bool ResourceManager::addAudioSources() {
 	Common::List<ResourceId> *resources = listResources(kResourceTypeMap);
 	Common::List<ResourceId>::iterator itr = resources->begin();
 
@@ -751,20 +751,24 @@ int ResourceManager::addInternalSources() {
 		else if (Common::File::exists("RESOURCE.AUD"))
 			addSource(new AudioVolumeResourceSource(this, "RESOURCE.AUD", src, 0));
 		else
-			return 0;
+			return false;
 
 		++itr;
 	}
 
 	delete resources;
 
+	return true;
+}
+
+void ResourceManager::addScriptChunkSources() {
 #ifdef ENABLE_SCI32
 	if (_mapVersion >= kResVersionSci2) {
 		// If we have no scripts, but chunk 0 is present, open up the chunk
 		// to try to get to any scripts in there. The Lighthouse SCI2.1 demo
 		// does exactly this.
 
-		resources = listResources(kResourceTypeScript);
+		Common::List<ResourceId> *resources = listResources(kResourceTypeScript);
 
 		if (resources->empty() && testResource(ResourceId(kResourceTypeChunk, 0)))
 			addResourcesFromChunk(0);
@@ -772,8 +776,6 @@ int ResourceManager::addInternalSources() {
 		delete resources;
 	}
 #endif
-
-	return 1;
 }
 
 void ResourceManager::scanNewSources() {
@@ -943,13 +945,14 @@ void ResourceManager::init(bool initFromFallbackDetector) {
 	scanNewSources();
 
 	if (!initFromFallbackDetector) {
-		if (!addInternalSources()) {
+		if (!addAudioSources()) {
 			// FIXME: This error message is not always correct.
 			// OTOH, it is nice to be able to detect missing files/sources
-			// So we should definitely fix addInternalSources so this error
+			// So we should definitely fix addAudioSources so this error
 			// only pops up when necessary. Disabling for now.
 			//error("Somehow I can't seem to find the sound files I need (RESOURCE.AUD/RESOURCE.SFX), aborting");
 		}
+		addScriptChunkSources();
 		scanNewSources();
 	}
 
