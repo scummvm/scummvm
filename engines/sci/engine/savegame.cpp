@@ -125,16 +125,14 @@ void syncWithSerializer(Common::Serializer &s, synonym_t &obj) {
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
-	if (s.isLoading())
+	if (s.isLoading()) {
 		resetSegMan();
 
-	s.skip(4, VER(14), VER(18));		// OBSOLETE: Used to be _exportsAreWide
-
-	if (s.isLoading()) {
 		// Reset _scriptSegMap, to be restored below
 		_scriptSegMap.clear();
 	}
 
+	s.skip(4, VER(14), VER(18));		// OBSOLETE: Used to be _exportsAreWide
 
 	uint sync_heap_size = _heap.size();
 	s.syncAsUint32LE(sync_heap_size);
@@ -180,25 +178,25 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		// Let the object sync custom data
 		mobj->saveLoadWithSerializer(s);
 
-		// If we are saving a script, save its string heap space too
-		if (s.isSaving() && type == SEG_TYPE_SCRIPT)
-			((Script *)mobj)->syncStringHeap(s);
-	
-		// If we are loading a script, perform some extra steps
-		if (s.isLoading() && type == SEG_TYPE_SCRIPT) {
+
+		if (type == SEG_TYPE_SCRIPT && s.getVersion() >= 28) {
 			Script *scr = (Script *)mobj;
-			// Hook the script up in the script->segment map
-			_scriptSegMap[scr->getScriptNumber()] = i;
 
-			// Now, load the script itself
-			scr->load(g_sci->getResMan());
+			// If we are loading a script, perform some extra steps
+			if (s.isLoading()) {
+				// Hook the script up in the script->segment map
+				_scriptSegMap[scr->getScriptNumber()] = i;
 
-			for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it)
-				it->_value.syncBaseObject(scr->getBuf(it->_value.getPos().offset));
+				// Now, load the script itself
+				scr->load(g_sci->getResMan());
 
-			// Load the script's string heap
-			if (s.getVersion() >= 28)
-				scr->syncStringHeap(s);
+				for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it)
+					it->_value.syncBaseObject(scr->getBuf(it->_value.getPos().offset));
+
+			}
+
+			// Sync the script's string heap
+			scr->syncStringHeap(s);
 		}
 	}
 
@@ -344,15 +342,14 @@ void syncWithSerializer(Common::Serializer &s, Table<SciArray<reg_t> >::Entry &o
 
 	byte type = 0;
 	uint32 size = 0;
-	
+
 	if (s.isSaving()) {
 		type = (byte)obj.getType();
 		size = obj.getSize();
-		s.syncAsByte(type);
-		s.syncAsUint32LE(size);
-	} else {
-		s.syncAsByte(type);
-		s.syncAsUint32LE(size);
+	}
+	s.syncAsByte(type);
+	s.syncAsUint32LE(size);
+	if (s.isLoading()) {
 		obj.setType((int8)type);
 
 		// HACK: Skip arrays that have a negative type
@@ -364,7 +361,7 @@ void syncWithSerializer(Common::Serializer &s, Table<SciArray<reg_t> >::Entry &o
 
 	for (uint32 i = 0; i < size; i++) {
 		reg_t value;
-		
+
 		if (s.isSaving())
 			value = obj.getValue(i);
 
@@ -380,7 +377,7 @@ void syncWithSerializer(Common::Serializer &s, Table<SciString>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
 	uint32 size = 0;
-	
+
 	if (s.isSaving()) {
 		size = obj.getSize();
 		s.syncAsUint32LE(size);
@@ -391,7 +388,7 @@ void syncWithSerializer(Common::Serializer &s, Table<SciString>::Entry &obj) {
 
 	for (uint32 i = 0; i < size; i++) {
 		char value = 0;
-		
+
 		if (s.isSaving())
 			value = obj.getValue(i);
 
