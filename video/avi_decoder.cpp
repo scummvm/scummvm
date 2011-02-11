@@ -348,7 +348,8 @@ const Graphics::Surface *AviDecoder::decodeNextFrame() {
 		queueAudioBuffer(chunkSize);
 		_fileStream->skip(chunkSize & 1); // Alignment
 	} else if (getStreamType(nextTag) == 'dc' || getStreamType(nextTag) == 'id' ||
-	           getStreamType(nextTag) == 'AM' || getStreamType(nextTag) == '32') {
+	           getStreamType(nextTag) == 'AM' || getStreamType(nextTag) == '32' ||
+			   getStreamType(nextTag) == 'iv') {
 		// Compressed Frame
 		_curFrame++;
 		uint32 chunkSize = _fileStream->readUint32LE();
