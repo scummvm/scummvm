@@ -80,7 +80,7 @@ char *Parser_v1d::findNextNoun(char *noun) const {
 * If object not near, return suitable string; may be similar object closer
 * If radius is -1, treat radius as infinity
 */
-bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) const {
+bool Parser_v1d::isNear_v1(char *verb, char *noun, object_t *obj, char *comment) const {
 	debugC(1, kDebugParser, "isNear(%s, %s, obj, %s)", verb, noun, comment);
 
 	if (!noun && !obj->verbOnlyFl) {                // No noun specified & object not context senesitive
@@ -142,7 +142,7 @@ bool Parser_v1d::isNear(char *verb, char *noun, object_t *obj, char *comment) co
 * say_ok needed for special case of take/drop which may be handled not only
 * here but also in a cmd_list with a donestr string simultaneously
 */
-bool Parser_v1d::isGenericVerb(char *word, object_t *obj) {
+bool Parser_v1d::isGenericVerb_v1(char *word, object_t *obj) {
 	debugC(1, kDebugParser, "isGenericVerb(%s, object_t *obj)", word);
 
 	if (!obj->genericCmd)
@@ -183,7 +183,7 @@ bool Parser_v1d::isGenericVerb(char *word, object_t *obj) {
 * and if it passes, perform the actions in the action list.  If the verb
 * is catered for, return TRUE
 */
-bool Parser_v1d::isObjectVerb(char *word, object_t *obj) {
+bool Parser_v1d::isObjectVerb_v1(char *word, object_t *obj) {
 	debugC(1, kDebugParser, "isObjectVerb(%s, object_t *obj)", word);
 
 	// First, find matching verb in cmd list
@@ -225,7 +225,7 @@ bool Parser_v1d::isObjectVerb(char *word, object_t *obj) {
 	_vm->_scheduler->insertActionList(cmnd->actIndex);
 	// Special case if verb is Take or Drop.  Assume additional generic actions
 	if ((word == _vm->_text->getVerb(_vm->_take, 0)) || (word == _vm->_text->getVerb(_vm->_drop, 0)))
-		isGenericVerb(word, obj);
+		isGenericVerb_v1(word, obj);
 	return true;
 }
 
@@ -233,7 +233,7 @@ bool Parser_v1d::isObjectVerb(char *word, object_t *obj) {
 * Print text for possible background object.  Return TRUE if match found
 * Only match if both verb and noun found.  Test_ca will match verb-only
 */
-bool Parser_v1d::isBackgroundWord(char *noun, char *verb, objectList_t obj) const {
+bool Parser_v1d::isBackgroundWord_v1(char *noun, char *verb, objectList_t obj) const {
 	debugC(1, kDebugParser, "isBackgroundWord(%s, %s, object_list_t obj)", noun, verb);
 
 	if (!noun)
@@ -283,7 +283,7 @@ void Parser_v1d::dropObject(object_t *obj) {
 * Print text for possible background object.  Return TRUE if match found
 * If test_noun TRUE, must have a noun given
 */
-bool Parser_v1d::isCatchallVerb(bool testNounFl, char *noun, char *verb, objectList_t obj) const {
+bool Parser_v1d::isCatchallVerb_v1(bool testNounFl, char *noun, char *verb, objectList_t obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(%d, %s, %s, object_list_t obj)", (testNounFl) ? 1 : 0, noun, verb);
 
 	if (_maze.enabledFl)
@@ -407,22 +407,22 @@ void Parser_v1d::lineHandler() {
 			// Must try at least once for objects allowing verb-context
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
 				object_t *obj = &_vm->_object->_objects[i];
-				if (isNear(verb, noun, obj, farComment)) {
-					if (isObjectVerb(verb, obj)     // Foreground object
-					 || isGenericVerb(verb, obj))   // Common action type
+				if (isNear_v1(verb, noun, obj, farComment)) {
+					if (isObjectVerb_v1(verb, obj)  // Foreground object
+					 || isGenericVerb_v1(verb, obj))// Common action type
 						return;
 				}
 			}
-			if ((*farComment == '\0') && isBackgroundWord(noun, verb, _vm->_backgroundObjects[*_vm->_screen_p]))
+			if ((*farComment == '\0') && isBackgroundWord_v1(noun, verb, _vm->_backgroundObjects[*_vm->_screen_p]))
 				return;
 		} while (noun);
 	}
 	noun = findNextNoun(noun);
 	if (*farComment != '\0')                        // An object matched but not near enough
 		Utils::Box(kBoxAny, "%s", farComment);
-	else if (!isCatchallVerb(true, noun, verb, _vm->_catchallList) &&
-		     !isCatchallVerb(false, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])  &&
-		     !isCatchallVerb(false, noun, verb, _vm->_catchallList))
+	else if (!isCatchallVerb_v1(true, noun, verb, _vm->_catchallList) &&
+		     !isCatchallVerb_v1(false, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])  &&
+		     !isCatchallVerb_v1(false, noun, verb, _vm->_catchallList))
 		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBEh_1d));
 }
 

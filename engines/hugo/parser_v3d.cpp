@@ -157,7 +157,7 @@ void Parser_v3d::lineHandler() {
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		object_t *obj = &_vm->_object->_objects[i];
 		if (isWordPresent(_vm->_text->getNounArray(obj->nounIndex))) {
-			if (isObjectVerb(obj, farComment) || isGenericVerb(obj, farComment))
+			if (isObjectVerb_v3(obj, farComment) || isGenericVerb_v3(obj, farComment))
 				return;
 		}
 	}
@@ -168,20 +168,20 @@ void Parser_v3d::lineHandler() {
 		object_t *obj = &_vm->_object->_objects[i];
 		if (obj->verbOnlyFl) {
 			char contextComment[kCompLineSize * 5] = ""; // Unused comment for context objects
-			if (isObjectVerb(obj, contextComment) || isGenericVerb(obj, contextComment))
+			if (isObjectVerb_v3(obj, contextComment) || isGenericVerb_v3(obj, contextComment))
 				return;
 		}
 	}
 
 	// No objects match command line, try background and catchall commands
-	if (isBackgroundWord(_vm->_backgroundObjects[*_vm->_screen_p]))
+	if (isBackgroundWord_v3(_vm->_backgroundObjects[*_vm->_screen_p]))
 		return;
-	if (isCatchallVerb(_vm->_backgroundObjects[*_vm->_screen_p]))
+	if (isCatchallVerb_v3(_vm->_backgroundObjects[*_vm->_screen_p]))
 		return;
 
-	if (isBackgroundWord(_vm->_catchallList))
+	if (isBackgroundWord_v3(_vm->_catchallList))
 		return;
-	if (isCatchallVerb(_vm->_catchallList))
+	if (isCatchallVerb_v3(_vm->_catchallList))
 		return;
 
 	// If a not-near comment was generated, print it
@@ -210,7 +210,7 @@ void Parser_v3d::lineHandler() {
 * If it does, and the object is near and passes the tests in the command
 * list then carry out the actions in the action list and return TRUE
 */
-bool Parser_v3d::isObjectVerb(object_t *obj, char *comment) {
+bool Parser_v3d::isObjectVerb_v3(object_t *obj, char *comment) {
 	debugC(1, kDebugParser, "isObjectVerb(object_t *obj, %s)", comment);
 
 	// First, find matching verb in cmd list
@@ -229,7 +229,7 @@ bool Parser_v3d::isObjectVerb(object_t *obj, char *comment) {
 
 	// Verb match found.  Check if object is Near
 	char *verb = *_vm->_text->getVerbArray(_vm->_cmdList[cmdIndex][i].verbIndex);
-	if (!isNear(obj, verb, comment))
+	if (!isNear_v3(obj, verb, comment))
 		return false;
 
 	// Check all required objects are being carried
@@ -258,21 +258,21 @@ bool Parser_v3d::isObjectVerb(object_t *obj, char *comment) {
 
 	// See if any additional generic actions
 	if ((verb == _vm->_text->getVerb(_vm->_look, 0)) || (verb == _vm->_text->getVerb(_vm->_take, 0)) || (verb == _vm->_text->getVerb(_vm->_drop, 0)))
-		isGenericVerb(obj, comment);
+		isGenericVerb_v3(obj, comment);
 	return true;
 }
 
 /**
 * Test whether command line contains one of the generic actions
 */
-bool Parser_v3d::isGenericVerb(object_t *obj, char *comment) {
+bool Parser_v3d::isGenericVerb_v3(object_t *obj, char *comment) {
 	debugC(1, kDebugParser, "isGenericVerb(object_t *obj, %s)", comment);
 
 	if (!obj->genericCmd)
 		return false;
 
 	// Following is equivalent to switch, but couldn't do one
-	if (isWordPresent(_vm->_text->getVerbArray(_vm->_look)) && isNear(obj, _vm->_text->getVerb(_vm->_look, 0), comment)) {
+	if (isWordPresent(_vm->_text->getVerbArray(_vm->_look)) && isNear_v3(obj, _vm->_text->getVerb(_vm->_look, 0), comment)) {
 		// Test state-dependent look before general look
 		if ((obj->genericCmd & LOOK_S) == LOOK_S) {
 			Utils::Box(kBoxAny, "%s", _vm->_text->getTextData(obj->stateDataIndex[obj->state]));
@@ -286,7 +286,7 @@ bool Parser_v3d::isGenericVerb(object_t *obj, char *comment) {
 				Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBUnusual));
 			}
 		}
-	} else if (isWordPresent(_vm->_text->getVerbArray(_vm->_take)) && isNear(obj, _vm->_text->getVerb(_vm->_take, 0), comment)) {
+	} else if (isWordPresent(_vm->_text->getVerbArray(_vm->_take)) && isNear_v3(obj, _vm->_text->getVerb(_vm->_take, 0), comment)) {
 		if (obj->carriedFl)
 			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBHave));
 		else if ((TAKE & obj->genericCmd) == TAKE)
@@ -319,7 +319,7 @@ bool Parser_v3d::isGenericVerb(object_t *obj, char *comment) {
 * If radius is -1, treat radius as infinity
 * Verb is included to determine correct comment if not near
 */
-bool Parser_v3d::isNear(object_t *obj, char *verb, char *comment) const {
+bool Parser_v3d::isNear_v3(object_t *obj, char *verb, char *comment) const {
 	debugC(1, kDebugParser, "isNear(object_t *obj, %s, %s)", verb, comment);
 
 	if (obj->carriedFl)                             // Object is being carried
@@ -413,7 +413,7 @@ void Parser_v3d::dropObject(object_t *obj) {
 * Note that if the background command list has match set TRUE then do not
 * print text if there are any recognizable nouns in the command line
 */
-bool Parser_v3d::isCatchallVerb(objectList_t obj) const {
+bool Parser_v3d::isCatchallVerb_v3(objectList_t obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(object_list_t obj)");
 
 	if (_maze.enabledFl)
@@ -441,7 +441,7 @@ bool Parser_v3d::isCatchallVerb(objectList_t obj) const {
 * Search for matching verb/noun pairs in background command list
 * Print text for possible background object.  Return TRUE if match found
 */
-bool Parser_v3d::isBackgroundWord(objectList_t obj) const {
+bool Parser_v3d::isBackgroundWord_v3(objectList_t obj) const {
 	debugC(1, kDebugParser, "isBackgroundWord(object_list_t obj)");
 
 	if (_maze.enabledFl)

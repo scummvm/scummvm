@@ -159,22 +159,22 @@ void Parser_v2d::lineHandler() {
 			// Must try at least once for objects allowing verb-context
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
 				object_t *obj = &_vm->_object->_objects[i];
-				if (isNear(verb, noun, obj, farComment)) {
-					if (isObjectVerb(verb, obj)     // Foreground object
-					 || isGenericVerb(verb, obj))   // Common action type
+				if (isNear_v1(verb, noun, obj, farComment)) {
+					if (isObjectVerb_v1(verb, obj)  // Foreground object
+					 || isGenericVerb_v1(verb, obj))// Common action type
 						return;
 				}
 			}
-			if ((*farComment != '\0') && isBackgroundWord(noun, verb, _vm->_backgroundObjects[*_vm->_screen_p]))
+			if ((*farComment != '\0') && isBackgroundWord_v1(noun, verb, _vm->_backgroundObjects[*_vm->_screen_p]))
 				return;
 		} while (noun);
 	}
 
 	noun = findNextNoun(noun);
-	if (   !isCatchallVerb(true, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])
-		&& !isCatchallVerb(true, noun, verb, _vm->_catchallList)
-		&& !isCatchallVerb(false, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])
-		&& !isCatchallVerb(false, noun, verb, _vm->_catchallList)) {
+	if (   !isCatchallVerb_v1(true, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])
+		&& !isCatchallVerb_v1(true, noun, verb, _vm->_catchallList)
+		&& !isCatchallVerb_v1(false, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])
+		&& !isCatchallVerb_v1(false, noun, verb, _vm->_catchallList)) {
 		if (*farComment != '\0') {                  // An object matched but not near enough
 			Utils::Box(kBoxAny, "%s", farComment);
 		} else if (_maze.enabledFl && (verb == _vm->_text->getVerb(_vm->_look, 0))) {

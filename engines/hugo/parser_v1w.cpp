@@ -155,7 +155,7 @@ void Parser_v1w::lineHandler() {
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		object_t *obj = &_vm->_object->_objects[i];
 		if (isWordPresent(_vm->_text->getNounArray(obj->nounIndex))) {
-			if (isObjectVerb(obj, farComment) || isGenericVerb(obj, farComment))
+			if (isObjectVerb_v3(obj, farComment) || isGenericVerb_v3(obj, farComment))
 				return;
 		}
 	}
@@ -166,20 +166,20 @@ void Parser_v1w::lineHandler() {
 		object_t *obj = &_vm->_object->_objects[i];
 		if (obj->verbOnlyFl) {
 			char contextComment[kCompLineSize * 5] = ""; // Unused comment for context objects
-			if (isObjectVerb(obj, contextComment) || isGenericVerb(obj, contextComment))
+			if (isObjectVerb_v3(obj, contextComment) || isGenericVerb_v3(obj, contextComment))
 				return;
 		}
 	}
 
 	// No objects match command line, try background and catchall commands
-	if (isBackgroundWord(_vm->_backgroundObjects[*_vm->_screen_p]))
+	if (isBackgroundWord_v3(_vm->_backgroundObjects[*_vm->_screen_p]))
 		return;
-	if (isCatchallVerb(_vm->_backgroundObjects[*_vm->_screen_p]))
+	if (isCatchallVerb_v3(_vm->_backgroundObjects[*_vm->_screen_p]))
 		return;
 
-	if (isBackgroundWord(_vm->_catchallList))
+	if (isBackgroundWord_v3(_vm->_catchallList))
 		return;
-	if (isCatchallVerb(_vm->_catchallList))
+	if (isCatchallVerb_v3(_vm->_catchallList))
 		return;
 
 	// If a not-near comment was generated, print it
