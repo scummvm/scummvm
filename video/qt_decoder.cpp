@@ -209,7 +209,7 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 		// Now to track down what chunk it's in
 		_curAudioChunk = 0;
 		uint32 totalSamples = 0;
-		for (uint32 i = 0; i < _streams[_audioStreamIndex]->sample_to_chunk_sz; i++, _curAudioChunk++) {			
+		for (uint32 i = 0; i < _streams[_audioStreamIndex]->chunk_count; i++, _curAudioChunk++) {
 			int sampleToChunkIndex = -1;
 
 			for (uint32 j = 0; j < _streams[_audioStreamIndex]->sample_to_chunk_sz; j++)
