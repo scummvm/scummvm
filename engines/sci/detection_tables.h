@@ -701,7 +701,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "e0effce11c4908f4b91838741716c83d", 1351},
 		{"resource.000", 0, "d04cfc7f04b6f74d13025378be49ec2b", 4640330},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NOSPEECH	},
 
 	// Gabriel Knight 2 - English DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.1"
