@@ -1257,11 +1257,6 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		// This is similar to the QUIET path mode, except that it is
 		// independant of it and it additionally disables the ">" prompt
 		gameStatus.storyModeFl = action->a39.storyModeFl;
-
-		// End the game after story if this is special vendor demo mode
-//		if (gameStatus.demoFl && action->a39.storyModeFl == false)
-		if (action->a39.storyModeFl == false)
-			_vm->endGame();
 		break;
 	case WARN:                                      // act40: Text box (CF TEXT)
 		Utils::Box(kBoxOk, "%s", _vm->_file->fetchString(action->a40.stringIndex));
