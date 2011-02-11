@@ -55,8 +55,8 @@ Parser_v1w::~Parser_v1w() {
 }
 
 /**
-* Parse the user's line of text input.  Generate events as necessary
-*/
+ * Parse the user's line of text input.  Generate events as necessary
+ */
 void Parser_v1w::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
 

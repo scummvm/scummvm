@@ -55,9 +55,9 @@ FileManager::~FileManager() {
 }
 
 /**
-* Convert 4 planes (RGBI) data to 8-bit DIB format
-* Return original plane data ptr
-*/
+ * Convert 4 planes (RGBI) data to 8-bit DIB format
+ * Return original plane data ptr
+ */
 byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, image_pt dataPtr) const {
 	debugC(2, kDebugFile, "convertPCC(byte *p, %d, %d, image_pt data_p)", y, bpl);
 
@@ -74,10 +74,10 @@ byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, image_p
 }
 
 /**
-* Read a pcx file of length len.  Use supplied seq_p and image_p or
-* allocate space if NULL.  Name used for errors.  Returns address of seq_p
-* Set first TRUE to initialize b_index (i.e. not reading a sequential image in file).
-*/
+ * Read a pcx file of length len.  Use supplied seq_p and image_p or
+ * allocate space if NULL.  Name used for errors.  Returns address of seq_p
+ * Set first TRUE to initialize b_index (i.e. not reading a sequential image in file).
+ */
 seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, const bool firstFl, const char *name) {
 	debugC(1, kDebugFile, "readPCX(..., %s)", name);
 
@@ -147,14 +147,14 @@ seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, cons
 }
 
 /**
-* Read object file of PCC images into object supplied
-*/
+ * Read object file of PCC images into object supplied
+ */
 void FileManager::readImage(const int objNum, object_t *objPtr) {
 	debugC(1, kDebugFile, "readImage(%d, object_t *objPtr)", objNum);
 
 	/**
-	* Structure of object file lookup entry
-	*/
+	 * Structure of object file lookup entry
+	 */
 	struct objBlock_t {
 		uint32 objOffset;
 		uint32 objLength;
@@ -246,9 +246,9 @@ void FileManager::readImage(const int objNum, object_t *objPtr) {
 }
 
 /**
-* Read sound (or music) file data.  Call with SILENCE to free-up
-* any allocated memory.  Also returns size of data
-*/
+ * Read sound (or music) file data.  Call with SILENCE to free-up
+ * any allocated memory.  Also returns size of data
+ */
 sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 	debugC(1, kDebugFile, "getSound(%d)", sound);
 
@@ -288,16 +288,16 @@ sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 }
 
 /**
-* Return whether file exists or not
-*/
+ * Return whether file exists or not
+ */
 bool FileManager::fileExists(const Common::String filename) const {
 	Common::File f;
 	return(f.exists(filename));
 }
 
 /**
-* Save game to supplied slot
-*/
+ * Save game to supplied slot
+ */
 bool FileManager::saveGame(const int16 slot, const Common::String descrip) {
 	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip.c_str());
 
@@ -411,8 +411,8 @@ bool FileManager::saveGame(const int16 slot, const Common::String descrip) {
 }
 
 /**
-* Restore game from supplied slot number
-*/
+ * Restore game from supplied slot number
+ */
 bool FileManager::restoreGame(const int16 slot) {
 	debugC(1, kDebugFile, "restoreGame(%d)", slot);
 
@@ -516,8 +516,8 @@ bool FileManager::restoreGame(const int16 slot) {
 }
 
 /**
-* Read the encrypted text from the boot file and print it
-*/
+ * Read the encrypted text from the boot file and print it
+ */
 void FileManager::printBootText() {
 	debugC(1, kDebugFile, "printBootText()");
 	static const char *cypher = getBootCypher();
@@ -555,9 +555,9 @@ void FileManager::printBootText() {
 }
 
 /**
-* Reads boot file for program environment.  Fatal error if not there or
-* file checksum is bad.  De-crypts structure while checking checksum
-*/
+ * Reads boot file for program environment.  Fatal error if not there or
+ * file checksum is bad.  De-crypts structure while checking checksum
+ */
 void FileManager::readBootFile() {
 	debugC(1, kDebugFile, "readBootFile()");
 	static const char *cypher = getBootCypher();
@@ -596,10 +596,10 @@ void FileManager::readBootFile() {
 }
 
 /**
-* Returns address of uif_hdr[id], reading it in if first call
-* This file contains, between others, the bitmaps of the fonts used in the application
-* UIF means User interface database (Windows Only)
-*/
+ * Returns address of uif_hdr[id], reading it in if first call
+ * This file contains, between others, the bitmaps of the fonts used in the application
+ * UIF means User interface database (Windows Only)
+ */
 uif_hdr_t *FileManager::getUIFHeader(const uif_t id) {
 	debugC(1, kDebugFile, "getUIFHeader(%d)", id);
 
@@ -625,8 +625,8 @@ uif_hdr_t *FileManager::getUIFHeader(const uif_t id) {
 }
 
 /**
-* Read uif item into supplied buffer.
-*/
+ * Read uif item into supplied buffer.
+ */
 void FileManager::readUIFItem(const int16 id, byte *buf) {
 	debugC(1, kDebugFile, "readUIFItem(%d, ...)", id);
 
@@ -656,8 +656,8 @@ void FileManager::readUIFItem(const int16 id, byte *buf) {
 }
 
 /**
-* Read the uif image file (inventory icons)
-*/
+ * Read the uif image file (inventory icons)
+ */
 void FileManager::readUIFImages() {
 	debugC(1, kDebugFile, "readUIFImages()");
 

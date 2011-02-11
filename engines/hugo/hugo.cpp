@@ -297,8 +297,8 @@ void HugoEngine::initMachine() {
 }
 
 /**
-* Hugo game state machine - called during onIdle
-*/
+ * Hugo game state machine - called during onIdle
+ */
 void HugoEngine::runMachine() {
 	status_t &gameStatus = getGameStatus();
 	// Don't process if we're in a textbox
@@ -355,8 +355,8 @@ void HugoEngine::runMachine() {
 }
 
 /**
-* Loads Hugo.dat file, which contains all the hardcoded data in the original executables
-*/
+ * Loads Hugo.dat file, which contains all the hardcoded data in the original executables
+ */
 bool HugoEngine::loadHugoDat() {
 	Common::File in;
 	in.open("hugo.dat");
@@ -715,8 +715,8 @@ uint16 **HugoEngine::loadLongArray(Common::File &in) {
 }
 
 /**
-* Sets the playlist to be the default tune selection
-*/
+ * Sets the playlist to be the default tune selection
+ */
 void HugoEngine::initPlaylist(bool playlist[kMaxTunes]) {
 	debugC(1, kDebugEngine, "initPlaylist");
 
@@ -727,8 +727,8 @@ void HugoEngine::initPlaylist(bool playlist[kMaxTunes]) {
 }
 
 /**
-* Initialize the dynamic game status
-*/
+ * Initialize the dynamic game status
+ */
 void HugoEngine::initStatus() {
 	debugC(1, kDebugEngine, "initStatus");
 	_status.storyModeFl   = false;                  // Not in story mode
@@ -759,8 +759,8 @@ void HugoEngine::initStatus() {
 }
 
 /**
-* Initialize default config values.  Must be done before Initialize().
-*/
+ * Initialize default config values.  Must be done before Initialize().
+ */
 void HugoEngine::initConfig() {
 	debugC(1, kDebugEngine, "initConfig()");
 
@@ -772,8 +772,8 @@ void HugoEngine::initConfig() {
 }
 
 /**
-* Reset config parts. Currently only reset music played based on playlist
-*/
+ * Reset config parts. Currently only reset music played based on playlist
+ */
 void HugoEngine::resetConfig() {
 	debugC(1, kDebugEngine, "resetConfig()");
 
@@ -833,8 +833,8 @@ void HugoEngine::initialize() {
 }
 
 /**
-* Restore all resources before termination
-*/
+ * Restore all resources before termination
+ */
 void HugoEngine::shutdown() {
 	debugC(1, kDebugEngine, "shutdown");
 
@@ -843,8 +843,8 @@ void HugoEngine::shutdown() {
 }
 
 /**
-* Read scenery, overlay files for given screen number
-*/
+ * Read scenery, overlay files for given screen number
+ */
 void HugoEngine::readScreenFiles(const int screenNum) {
 	debugC(1, kDebugEngine, "readScreenFiles(%d)", screenNum);
 
@@ -861,9 +861,9 @@ void HugoEngine::readScreenFiles(const int screenNum) {
 }
 
 /**
-* Search background command list for this screen for supplied object.
-* Return first associated verb (not "look") or 0 if none found.
-*/
+ * Search background command list for this screen for supplied object.
+ * Return first associated verb (not "look") or 0 if none found.
+ */
 char *HugoEngine::useBG(const char *name) {
 	debugC(1, kDebugEngine, "useBG(%s)", name);
 
@@ -879,8 +879,8 @@ char *HugoEngine::useBG(const char *name) {
 }
 
 /**
-* Add action lists for this screen to event queue
-*/
+ * Add action lists for this screen to event queue
+ */
 void HugoEngine::screenActions(const int screenNum) {
 	debugC(1, kDebugEngine, "screenActions(%d)", screenNum);
 
@@ -892,8 +892,8 @@ void HugoEngine::screenActions(const int screenNum) {
 }
 
 /**
-* Set the new screen number into the hero object and any carried objects
-*/
+ * Set the new screen number into the hero object and any carried objects
+ */
 void HugoEngine::setNewScreen(const int screenNum) {
 	debugC(1, kDebugEngine, "setNewScreen(%d)", screenNum);
 
@@ -902,8 +902,8 @@ void HugoEngine::setNewScreen(const int screenNum) {
 }
 
 /**
-* Add up all the object values and all the bonus points
-*/
+ * Add up all the object values and all the bonus points
+ */
 void HugoEngine::calcMaxScore() {
 	debugC(1, kDebugEngine, "calcMaxScore");
 
@@ -914,8 +914,8 @@ void HugoEngine::calcMaxScore() {
 }
 
 /**
-* Exit game, advertise trilogy, show copyright
-*/
+ * Exit game, advertise trilogy, show copyright
+ */
 void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 

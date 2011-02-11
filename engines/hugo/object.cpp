@@ -60,8 +60,8 @@ ObjectHandler::~ObjectHandler() {
 }
 
 /**
-* Save sequence number and image number in given object
-*/
+ * Save sequence number and image number in given object
+ */
 void ObjectHandler::saveSeq(object_t *obj) {
 	debugC(1, kDebugObject, "saveSeq");
 
@@ -81,8 +81,8 @@ void ObjectHandler::saveSeq(object_t *obj) {
 }
 
 /**
-* Set up cur_seq_p from stored sequence and image number in object
-*/
+ * Set up cur_seq_p from stored sequence and image number in object
+ */
 void ObjectHandler::restoreSeq(object_t *obj) {
 	debugC(1, kDebugObject, "restoreSeq");
 
@@ -93,9 +93,9 @@ void ObjectHandler::restoreSeq(object_t *obj) {
 }
 
 /**
-* If status.objid = -1, pick up objid, else use status.objid on objid,
-* if objid can't be picked up, use it directly
-*/
+ * If status.objid = -1, pick up objid, else use status.objid on objid,
+ * if objid can't be picked up, use it directly
+ */
 void ObjectHandler::useObject(int16 objId) {
 	debugC(1, kDebugObject, "useObject(%d)", objId);
 
@@ -154,9 +154,9 @@ void ObjectHandler::useObject(int16 objId) {
 }
 
 /**
-* Return object index of the topmost object under the cursor, or -1 if none
-* Objects are filtered if not "useful"
-*/
+ * Return object index of the topmost object under the cursor, or -1 if none
+ * Objects are filtered if not "useful"
+ */
 int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 	debugC(3, kDebugObject, "findObject(%d, %d)", x, y);
 
@@ -197,9 +197,9 @@ int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 }
 
 /**
-* Issue "Look at <object>" command
-* Note special case of swapped hero image
-*/
+ * Issue "Look at <object>" command
+ * Note special case of swapped hero image
+ */
 void ObjectHandler::lookObject(object_t *obj) {
 	debugC(1, kDebugObject, "lookObject");
 
@@ -211,8 +211,8 @@ void ObjectHandler::lookObject(object_t *obj) {
 }
 
 /**
-* Free all object images
-*/
+ * Free all object images
+ */
 void ObjectHandler::freeObjects() {
 	debugC(1, kDebugObject, "freeObjects");
 
@@ -248,10 +248,10 @@ void ObjectHandler::freeObjects() {
 }
 
 /**
-* Compare function for the quicksort.  The sort is to order the objects in
-* increasing vertical position, using y+y2 as the baseline
-* Returns -1 if ay2 < by2 else 1 if ay2 > by2 else 0
-*/
+ * Compare function for the quicksort.  The sort is to order the objects in
+ * increasing vertical position, using y+y2 as the baseline
+ * Returns -1 if ay2 < by2 else 1 if ay2 > by2 else 0
+ */
 int ObjectHandler::y2comp(const void *a, const void *b) {
 	debugC(6, kDebugObject, "y2comp");
 
@@ -281,8 +281,8 @@ int ObjectHandler::y2comp(const void *a, const void *b) {
 }
 
 /**
-* Return TRUE if object being carried by hero
-*/
+ * Return TRUE if object being carried by hero
+ */
 bool ObjectHandler::isCarrying(uint16 wordIndex) {
 	debugC(1, kDebugObject, "isCarrying(%d)", wordIndex);
 
@@ -294,8 +294,8 @@ bool ObjectHandler::isCarrying(uint16 wordIndex) {
 }
 
 /**
-* Describe any takeable objects visible in this screen
-*/
+ * Describe any takeable objects visible in this screen
+ */
 void ObjectHandler::showTakeables() {
 	debugC(1, kDebugObject, "showTakeables");
 
@@ -310,8 +310,8 @@ void ObjectHandler::showTakeables() {
 }
 
 /**
-* Find a clear space around supplied object that hero can walk to
-*/
+ * Find a clear space around supplied object that hero can walk to
+ */
 bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 	debugC(1, kDebugObject, "findObjectSpace(obj, %d, %d)", *destx, *desty);
 
@@ -355,8 +355,8 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 }
 
 /**
-* Free ObjectArr (before exiting)
-*/
+ * Free ObjectArr (before exiting)
+ */
 void ObjectHandler::freeObjectArr() {
 	for(int16 i = 0; i < _objCount; i++) {
 		free(_objects[i].stateDataIndex);
@@ -367,8 +367,8 @@ void ObjectHandler::freeObjectArr() {
 }
 
 /**
-* Load ObjectArr from Hugo.dat
-*/
+ * Load ObjectArr from Hugo.dat
+ */
 void ObjectHandler::loadObjectArr(Common::File &in) {
 	debugC(6, kDebugObject, "loadObject(&in)");
 
@@ -474,9 +474,9 @@ void ObjectHandler::loadObjectArr(Common::File &in) {
 }
 
 /**
-* Set the screenindex property of the carried objets to the given screen
-* number
-*/
+ * Set the screenindex property of the carried objets to the given screen
+ * number
+ */
 void ObjectHandler::setCarriedScreen(int screenNum) {
 	for (int i = kHeroIndex + 1; i < _numObj; i++) {// Any others
 		if (isCarried(i))                           // being carried
@@ -485,8 +485,8 @@ void ObjectHandler::setCarriedScreen(int screenNum) {
 }
 
 /**
-* Load _numObj from Hugo.dat
-*/
+ * Load _numObj from Hugo.dat
+ */
 void ObjectHandler::loadNumObj(Common::File &in) {
 	int numElem;
 
@@ -498,8 +498,8 @@ void ObjectHandler::loadNumObj(Common::File &in) {
 }
 
 /**
-* Restore all sequences
-*/
+ * Restore all sequences
+ */
 void ObjectHandler::restoreAllSeq() {
 	// Restore ptrs to currently loaded objects
 	for (int i = 0; i < _numObj; i++)
@@ -507,8 +507,8 @@ void ObjectHandler::restoreAllSeq() {
 }
 
 /**
-* Save objects
-*/
+ * Save objects
+ */
 void ObjectHandler::saveObjects(Common::WriteStream *out) {
 	for (int i = 0; i < _numObj; i++) {
 		// Save where curr_seq_p is pointing to
@@ -542,8 +542,8 @@ void ObjectHandler::saveObjects(Common::WriteStream *out) {
 }
 
 /**
-* Restore objects
-*/
+ * Restore objects
+ */
 void ObjectHandler::restoreObjects(Common::SeekableReadStream *in) {
 	for (int i = 0; i < _numObj; i++) {
 		_objects[i].pathType = (path_t) in->readByte();
@@ -574,8 +574,8 @@ void ObjectHandler::restoreObjects(Common::SeekableReadStream *in) {
 }
 
 /**
-* Compute max object score
-*/
+ * Compute max object score
+ */
 int ObjectHandler::calcMaxScore() {
 	int score = 0;
 	for (int i = 0; i < _numObj; i++)
@@ -584,8 +584,8 @@ int ObjectHandler::calcMaxScore() {
 }
 
 /**
-* Read Object images
-*/
+ * Read Object images
+ */
 void ObjectHandler::readObjectImages() {
 	debugC(1, kDebugObject, "readObjectImages");
 
@@ -599,9 +599,9 @@ bool ObjectHandler::checkBoundary(int16 x, int16 y) {
 }
 
 /**
-* Return maximum allowed movement (from zero to vx) such that object does
-* not cross a boundary (either background or another object)
-*/
+ * Return maximum allowed movement (from zero to vx) such that object does
+ * not cross a boundary (either background or another object)
+ */
 int ObjectHandler::deltaX(const int x1, const int x2, const int vx, int y) const {
 // Explanation of algorithm:  The boundaries are drawn as contiguous
 // lines 1 pixel wide.  Since DX,DY are not necessarily 1, we must
@@ -651,10 +651,10 @@ int ObjectHandler::deltaX(const int x1, const int x2, const int vx, int y) const
 }
 
 /**
-* Similar to Delta_x, but for movement in y direction.  Special case of
-* bytes at end of line segment; must only count boundary bits falling on
-* line segment.
-*/
+ * Similar to Delta_x, but for movement in y direction.  Special case of
+ * bytes at end of line segment; must only count boundary bits falling on
+ * line segment.
+ */
 int ObjectHandler::deltaY(const int x1, const int x2, const int vy, const int y) const {
 	debugC(3, kDebugEngine, "deltaY(%d, %d, %d, %d)", x1, x2, vy, y);
 
@@ -680,8 +680,8 @@ int ObjectHandler::deltaY(const int x1, const int x2, const int vy, const int y)
 }
 
 /**
-* Store a horizontal line segment in the object boundary file
-*/
+ * Store a horizontal line segment in the object boundary file
+ */
 void ObjectHandler::storeBoundary(const int x1, const int x2, const int y) {
 	debugC(5, kDebugEngine, "storeBoundary(%d, %d, %d)", x1, x2, y);
 
@@ -697,8 +697,8 @@ void ObjectHandler::storeBoundary(const int x1, const int x2, const int y) {
 }
 
 /**
-* Clear a horizontal line segment in the object boundary file
-*/
+ * Clear a horizontal line segment in the object boundary file
+ */
 void ObjectHandler::clearBoundary(const int x1, const int x2, const int y) {
 	debugC(5, kDebugEngine, "clearBoundary(%d, %d, %d)", x1, x2, y);
 
@@ -714,9 +714,9 @@ void ObjectHandler::clearBoundary(const int x1, const int x2, const int y) {
 }
 
 /**
-* Clear a horizontal line segment in the screen boundary file
-* Used to fix some data issues
-*/
+ * Clear a horizontal line segment in the screen boundary file
+ * Used to fix some data issues
+ */
 void ObjectHandler::clearScreenBoundary(const int x1, const int x2, const int y) {
 	debugC(5, kDebugEngine, "clearScreenBoundary(%d, %d, %d)", x1, x2, y);
 
@@ -732,8 +732,8 @@ void ObjectHandler::clearScreenBoundary(const int x1, const int x2, const int y)
 }
 
 /**
-* An object has collided with a boundary. See if any actions are required
-*/
+ * An object has collided with a boundary. See if any actions are required
+ */
 void ObjectHandler::boundaryCollision(object_t *obj) {
 	debugC(1, kDebugEngine, "boundaryCollision");
 

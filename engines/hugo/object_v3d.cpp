@@ -52,9 +52,9 @@ ObjectHandler_v3d::~ObjectHandler_v3d() {
 }
 
 /**
-* Update all object positions.  Process object 'local' events
-* including boundary events and collisions
-*/
+ * Update all object positions.  Process object 'local' events
+ * including boundary events and collisions
+ */
 void ObjectHandler_v3d::moveObjects() {
 	debugC(4, kDebugObject, "moveObjects");
 
@@ -242,10 +242,10 @@ void ObjectHandler_v3d::moveObjects() {
 }
 
 /**
-* Swap all the images of one object with another.  Set hero_image (we make
-* the assumption for now that the first obj is always the HERO) to the object
-* number of the swapped image
-*/
+ * Swap all the images of one object with another.  Set hero_image (we make
+ * the assumption for now that the first obj is always the HERO) to the object
+ * number of the swapped image
+ */
 void ObjectHandler_v3d::swapImages(int objIndex1, int objIndex2) {
 	debugC(1, kDebugObject, "swapImages(%d, %d)", objIndex1, objIndex2);
 

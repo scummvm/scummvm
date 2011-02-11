@@ -52,8 +52,8 @@ Parser_v3d::~Parser_v3d() {
 }
 
 /**
-* Parse the user's line of text input.  Generate events as necessary
-*/
+ * Parse the user's line of text input.  Generate events as necessary
+ */
 void Parser_v3d::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
 
@@ -206,10 +206,10 @@ void Parser_v3d::lineHandler() {
 }
 
 /**
-* Test whether command line contains a verb allowed by this object.
-* If it does, and the object is near and passes the tests in the command
-* list then carry out the actions in the action list and return TRUE
-*/
+ * Test whether command line contains a verb allowed by this object.
+ * If it does, and the object is near and passes the tests in the command
+ * list then carry out the actions in the action list and return TRUE
+ */
 bool Parser_v3d::isObjectVerb_v3(object_t *obj, char *comment) {
 	debugC(1, kDebugParser, "isObjectVerb(object_t *obj, %s)", comment);
 
@@ -263,8 +263,8 @@ bool Parser_v3d::isObjectVerb_v3(object_t *obj, char *comment) {
 }
 
 /**
-* Test whether command line contains one of the generic actions
-*/
+ * Test whether command line contains one of the generic actions
+ */
 bool Parser_v3d::isGenericVerb_v3(object_t *obj, char *comment) {
 	debugC(1, kDebugParser, "isGenericVerb(object_t *obj, %s)", comment);
 
@@ -314,11 +314,11 @@ bool Parser_v3d::isGenericVerb_v3(object_t *obj, char *comment) {
 }
 
 /**
-* Test whether hero is close to object.  Return TRUE or FALSE
-* If object not near, return suitable comment; may be another object close
-* If radius is -1, treat radius as infinity
-* Verb is included to determine correct comment if not near
-*/
+ * Test whether hero is close to object.  Return TRUE or FALSE
+ * If object not near, return suitable comment; may be another object close
+ * If radius is -1, treat radius as infinity
+ * Verb is included to determine correct comment if not near
+ */
 bool Parser_v3d::isNear_v3(object_t *obj, char *verb, char *comment) const {
 	debugC(1, kDebugParser, "isNear(object_t *obj, %s, %s)", verb, comment);
 
@@ -372,8 +372,8 @@ bool Parser_v3d::isNear_v3(object_t *obj, char *verb, char *comment) const {
 }
 
 /**
-* Do all things necessary to carry an object
-*/
+ * Do all things necessary to carry an object
+ */
 void Parser_v3d::takeObject(object_t *obj) {
 	debugC(1, kDebugParser, "takeObject(object_t *obj)");
 
@@ -389,8 +389,8 @@ void Parser_v3d::takeObject(object_t *obj) {
 }
 
 /**
-* Do all necessary things to drop an object
-*/
+ * Do all necessary things to drop an object
+ */
 void Parser_v3d::dropObject(object_t *obj) {
 	debugC(1, kDebugParser, "dropObject(object_t *obj)");
 
@@ -408,11 +408,11 @@ void Parser_v3d::dropObject(object_t *obj) {
 }
 
 /**
-* Search for matching verbs in background command list.
-* Noun is not required.  Return TRUE if match found
-* Note that if the background command list has match set TRUE then do not
-* print text if there are any recognizable nouns in the command line
-*/
+ * Search for matching verbs in background command list.
+ * Noun is not required.  Return TRUE if match found
+ * Note that if the background command list has match set TRUE then do not
+ * print text if there are any recognizable nouns in the command line
+ */
 bool Parser_v3d::isCatchallVerb_v3(objectList_t obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(object_list_t obj)");
 
@@ -438,9 +438,9 @@ bool Parser_v3d::isCatchallVerb_v3(objectList_t obj) const {
 }
 
 /**
-* Search for matching verb/noun pairs in background command list
-* Print text for possible background object.  Return TRUE if match found
-*/
+ * Search for matching verb/noun pairs in background command list
+ * Print text for possible background object.  Return TRUE if match found
+ */
 bool Parser_v3d::isBackgroundWord_v3(objectList_t obj) const {
 	debugC(1, kDebugParser, "isBackgroundWord(object_list_t obj)");
 

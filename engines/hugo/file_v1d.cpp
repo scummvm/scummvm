@@ -54,8 +54,8 @@ void FileManager_v1d::closeDatabaseFiles() {
 }
 
 /**
-* Open and read in an overlay file, close file
-*/
+ * Open and read in an overlay file, close file
+ */
 void FileManager_v1d::readOverlay(const int screenNum, image_pt image, const ovl_t overlayType) {
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
@@ -79,8 +79,8 @@ void FileManager_v1d::readOverlay(const int screenNum, image_pt image, const ovl
 }
 
 /**
-* Read a PCX image into dib_a
-*/
+ * Read a PCX image into dib_a
+ */
 void FileManager_v1d::readBackground(const int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
@@ -102,9 +102,9 @@ char *FileManager_v1d::fetchString(const int index) {
 }
 
 /**
-* Simple instructions given when F1 pressed twice in a row
-* Only in DOS versions
-*/
+ * Simple instructions given when F1 pressed twice in a row
+ * Only in DOS versions
+ */
 void FileManager_v1d::instructions() const {
 	Common::File f;
 	if (!f.open("help.dat")) {

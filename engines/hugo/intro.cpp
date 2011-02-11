@@ -289,9 +289,9 @@ void intro_v3d::introInit() {
 }
 
 /**
-* Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
-* Called every tick.  Returns TRUE when complete
-*/
+ * Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
+ * Called every tick.  Returns TRUE when complete
+ */
 bool intro_v3d::introPlay() {
 	if (_vm->getGameStatus().skipIntroFl)
 		return true;
@@ -365,8 +365,8 @@ void intro_v3w::preNewGame() {
 }
 
 /**
-* Hugo 3 - show map and set up for introPlay()
-*/
+ * Hugo 3 - show map and set up for introPlay()
+ */
 void intro_v3w::introInit() {
 	_vm->_screen->displayList(kDisplayInit);
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
@@ -380,9 +380,9 @@ void intro_v3w::introInit() {
 }
 
 /**
-* Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
-* Called every tick.  Returns TRUE when complete
-*/
+ * Hugo 3 - Preamble screen before going into game.  Draws path of Hugo's plane.
+ * Called every tick.  Returns TRUE when complete
+ */
 bool intro_v3w::introPlay() {
 	if (_vm->getGameStatus().skipIntroFl)
 		return true;

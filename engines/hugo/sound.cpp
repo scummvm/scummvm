@@ -254,29 +254,29 @@ SoundHandler::~SoundHandler() {
 }
 
 /**
-* Set the FM music volume from config.mvolume (0..100%)
-*/
+ * Set the FM music volume from config.mvolume (0..100%)
+ */
 void SoundHandler::setMusicVolume() {
 	_midiPlayer->syncVolume();
 }
 
 /**
-* Stop any sound that might be playing
-*/
+ * Stop any sound that might be playing
+ */
 void SoundHandler::stopSound() {
 	_vm->_mixer->stopAll();
 }
 
 /**
-* Stop any tune that might be playing
-*/
+ * Stop any tune that might be playing
+ */
 void SoundHandler::stopMusic() {
 	_midiPlayer->stop();
 }
 
 /**
-* Turn music on and off
-*/
+ * Turn music on and off
+ */
 void SoundHandler::toggleMusic() {
 	_vm->_config.musicFl = !_vm->_config.musicFl;
 
@@ -284,8 +284,8 @@ void SoundHandler::toggleMusic() {
 }
 
 /**
-* Turn digitized sound on and off
-*/
+ * Turn digitized sound on and off
+ */
 void SoundHandler::toggleSound() {
 	_vm->_config.soundFl = !_vm->_config.soundFl;
 }
@@ -295,8 +295,8 @@ void SoundHandler::playMIDI(sound_pt seq_p, uint16 size) {
 }
 
 /**
-* Read a tune sequence from the sound database and start playing it
-*/
+ * Read a tune sequence from the sound database and start playing it
+ */
 void SoundHandler::playMusic(int16 tune) {
 	sound_pt seqPtr;                                // Sequence data from file
 	uint16 size;                                    // Size of sequence data
@@ -310,9 +310,9 @@ void SoundHandler::playMusic(int16 tune) {
 }
 
 /**
-* Produce various sound effects on supplied stereo channel(s)
-* Override currently playing sound only if lower or same priority
-*/
+ * Produce various sound effects on supplied stereo channel(s)
+ * Override currently playing sound only if lower or same priority
+ */
 void SoundHandler::playSound(int16 sound, const byte priority) {
 	// uint32 dwVolume;                             // Left, right volume of sound
 	sound_pt sound_p;                               // Sound data
@@ -334,8 +334,8 @@ void SoundHandler::playSound(int16 sound, const byte priority) {
 }
 
 /**
-* Initialize for MCI sound and midi
-*/
+ * Initialize for MCI sound and midi
+ */
 void SoundHandler::initSound() {
 	_midiPlayer->open();
 }
@@ -353,9 +353,9 @@ void SoundHandler::syncVolume() {
 }
 
 /**
-* Check if music is still playing.
-* If not, select the next track in the playlist and play it
-*/
+ * Check if music is still playing.
+ * If not, select the next track in the playlist and play it
+ */
 void SoundHandler::checkMusic() {
 	if (_midiPlayer->isPlaying())
 		return;
@@ -376,10 +376,10 @@ void SoundHandler::loopPlayer(void *refCon) {
 }
 
 /**
-* Decrement last note's timer and see if time to play next note yet.
-* If so, interpret next note in string and play it.  Update ptr to string
-* Timer: >0 - song still going, 0 - Stop note, -1 - Set next note
-*/
+ * Decrement last note's timer and see if time to play next note yet.
+ * If so, interpret next note in string and play it.  Update ptr to string
+ * Timer: >0 - song still going, 0 - Stop note, -1 - Set next note
+ */
 void SoundHandler::pcspkr_player() {
 	static const uint16 pcspkrNotes[8] =  {1352, 1205, 2274, 2026, 1805, 1704, 1518}; // The 3rd octave note counts A..G
 	static const uint16 pcspkrSharps[8] = {1279, 1171, 2150, 1916, 1755, 1611, 1435}; // The sharps, A# to B#

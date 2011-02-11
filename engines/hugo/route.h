@@ -36,8 +36,8 @@
 namespace Hugo {
 
 /**
-* Purpose of an automatic route
-*/
+ * Purpose of an automatic route
+ */
 enum go_t {kRouteSpace, kRouteExit, kRouteLook, kRouteGet};
 
 struct Point {

@@ -56,8 +56,8 @@ Scheduler::~Scheduler() {
 }
 
 /**
-* Initialise the timer event queue
-*/
+ * Initialise the timer event queue
+ */
 void Scheduler::initEventQueue() {
 	debugC(1, kDebugSchedule, "initEventQueue");
 
@@ -76,8 +76,8 @@ void Scheduler::initEventQueue() {
 }
 
 /**
-* Return a ptr to an event structure from the free list
-*/
+ * Return a ptr to an event structure from the free list
+ */
 event_t *Scheduler::getQueue() {
 	debugC(4, kDebugSchedule, "getQueue");
 
@@ -90,8 +90,8 @@ event_t *Scheduler::getQueue() {
 }
 
 /**
-* Call Insert_action for each action in the list supplied
-*/
+ * Call Insert_action for each action in the list supplied
+ */
 void Scheduler::insertActionList(const uint16 actIndex) {
 	debugC(1, kDebugSchedule, "insertActionList(%d)", actIndex);
 
@@ -102,8 +102,8 @@ void Scheduler::insertActionList(const uint16 actIndex) {
 }
 
 /**
-* Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
-*/
+ * Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
+ */
 uint32 Scheduler::getWinTicks() const {
 	debugC(5, kDebugSchedule, "getWinTicks()");
 
@@ -111,11 +111,11 @@ uint32 Scheduler::getWinTicks() const {
 }
 
 /**
-* Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
-* If update FALSE, simply return last known time
-* Note that this is real time unless a processing cycle takes longer than
-* a real tick, in which case the system tick is simply incremented
-*/
+ * Return system time in ticks.  A tick is 1/TICKS_PER_SEC mS
+ * If update FALSE, simply return last known time
+ * Note that this is real time unless a processing cycle takes longer than
+ * a real tick, in which case the system tick is simply incremented
+ */
 uint32 Scheduler::getDosTicks(const bool updateFl) {
 	debugC(5, kDebugSchedule, "getDosTicks(%s)", (updateFl) ? "TRUE" : "FALSE");
 
@@ -137,8 +137,8 @@ uint32 Scheduler::getDosTicks(const bool updateFl) {
 }
 
 /**
-* Add indecated bonus to score if not added already
-*/
+ * Add indecated bonus to score if not added already
+ */
 void Scheduler::processBonus(const int bonusIndex) {
 	debugC(1, kDebugSchedule, "processBonus(%d)", bonusIndex);
 
@@ -149,13 +149,13 @@ void Scheduler::processBonus(const int bonusIndex) {
 }
 
 /**
-* Transition to a new screen as follows:
-* 1. Clear out all non-global events from event list.
-* 2. Set the new screen (in the hero object and any carried objects)
-* 3. Read in the screen files for the new screen
-* 4. Schedule action list for new screen
-* 5. Initialise prompt line and status line
-*/
+ * Transition to a new screen as follows:
+ * 1. Clear out all non-global events from event list.
+ * 2. Set the new screen (in the hero object and any carried objects)
+ * 3. Read in the screen files for the new screen
+ * 4. Schedule action list for new screen
+ * 5. Initialise prompt line and status line
+ */
 void Scheduler::newScreen(const int screenIndex) {
 	debugC(1, kDebugSchedule, "newScreen(%d)", screenIndex);
 
@@ -193,11 +193,11 @@ void Scheduler::newScreen(const int screenIndex) {
 }
 
 /**
-* Transition to a new screen as follows:
-* 1. Set the new screen (in the hero object and any carried objects)
-* 2. Read in the screen files for the new screen
-* 3. Initialise prompt line and status line
-*/
+ * Transition to a new screen as follows:
+ * 1. Set the new screen (in the hero object and any carried objects)
+ * 2. Read in the screen files for the new screen
+ * 3. Initialise prompt line and status line
+ */
 void Scheduler::restoreScreen(const int screenIndex) {
 	debugC(1, kDebugSchedule, "restoreScreen(%d)", screenIndex);
 
@@ -212,11 +212,11 @@ void Scheduler::restoreScreen(const int screenIndex) {
 }
 
 /**
-* Wait (if necessary) for next synchronizing tick
-* Slow machines won't make it by the end of tick, so will just plod on
-* at their own speed, not waiting here, but free running.
-* Note: DOS Versions only
-*/
+ * Wait (if necessary) for next synchronizing tick
+ * Slow machines won't make it by the end of tick, so will just plod on
+ * at their own speed, not waiting here, but free running.
+ * Note: DOS Versions only
+ */
 void Scheduler::waitForRefresh() {
 	debugC(5, kDebugSchedule, "waitForRefresh()");
 
@@ -231,8 +231,8 @@ void Scheduler::waitForRefresh() {
 }
 
 /**
-* Read kALnewscr used by maze (Hugo 2)
-*/
+ * Read kALnewscr used by maze (Hugo 2)
+ */
 void Scheduler::loadAlNewscrIndex(Common::File &in) {
 	debugC(6, kDebugSchedule, "loadAlNewscrIndex(&in)");
 
@@ -245,8 +245,8 @@ void Scheduler::loadAlNewscrIndex(Common::File &in) {
 }
 
 /**
-* Load actListArr from Hugo.dat
-*/
+ * Load actListArr from Hugo.dat
+ */
 void Scheduler::loadActListArr(Common::File &in) {
 	debugC(6, kDebugSchedule, "loadActListArr(&in)");
 
@@ -832,9 +832,9 @@ void Scheduler::freeActListArr() {
 }
 
 /**
-* Maze mode is enabled.  Check to see whether hero has crossed the maze
-* bounding box, if so, go to the next room
-*/
+ * Maze mode is enabled.  Check to see whether hero has crossed the maze
+ * bounding box, if so, go to the next room
+ */
 void Scheduler::processMaze(const int x1, const int x2, const int y1, const int y2) {
 	debugC(1, kDebugSchedule, "processMaze");
 
@@ -870,11 +870,11 @@ void Scheduler::processMaze(const int x1, const int x2, const int y1, const int 
 }
 
 /**
-* Write the event queue to the file with handle f
-* Note that we convert all the event structure ptrs to indexes
-* using -1 for NULL.  We can't convert the action ptrs to indexes
-* so we save address of first dummy action ptr to compare on restore.
-*/
+ * Write the event queue to the file with handle f
+ * Note that we convert all the event structure ptrs to indexes
+ * using -1 for NULL.  We can't convert the action ptrs to indexes
+ * so we save address of first dummy action ptr to compare on restore.
+ */
 void Scheduler::saveEvents(Common::WriteStream *f) {
 	debugC(1, kDebugSchedule, "saveEvents()");
 
@@ -907,8 +907,8 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
 }
 
 /** 
-* Restore the action data from file with handle f
-*/
+ * Restore the action data from file with handle f
+ */
 
 void Scheduler::restoreActions(Common::SeekableReadStream *f) {
 
@@ -980,8 +980,8 @@ void Scheduler::findAction(act* action, int16* index, int16* subElem) {
 }
 
 /**
-* Restore the event list from file with handle f
-*/
+ * Restore the event list from file with handle f
+ */
 void Scheduler::restoreEvents(Common::SeekableReadStream *f) {
 	debugC(1, kDebugSchedule, "restoreEvents");
 
@@ -1022,9 +1022,9 @@ void Scheduler::restoreEvents(Common::SeekableReadStream *f) {
 }
 
 /**
-* Insert the action pointed to by p into the timer event queue
-* The queue goes from head (earliest) to tail (latest) timewise
-*/
+ * Insert the action pointed to by p into the timer event queue
+ * The queue goes from head (earliest) to tail (latest) timewise
+ */
 void Scheduler::insertAction(act *action) {
 	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
 
@@ -1074,10 +1074,10 @@ void Scheduler::insertAction(act *action) {
 }
 
 /**
-* This function performs the action in the event structure pointed to by p
-* It dequeues the event and returns it to the free list.  It returns a ptr
-* to the next action in the list, except special case of NEW_SCREEN
-*/
+ * This function performs the action in the event structure pointed to by p
+ * It dequeues the event and returns it to the free list.  It returns a ptr
+ * to the next action in the list, except special case of NEW_SCREEN
+ */
 event_t *Scheduler::doAction(event_t *curEvent) {
 	debugC(1, kDebugSchedule, "doAction - Event action type : %d", curEvent->action->a0.actType);
 
@@ -1322,14 +1322,14 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 }
 
 /**
-* Delete an event structure (i.e. return it to the free list)
-* Historical note:  Originally event p was assumed to be at head of queue
-* (i.e. earliest) since all events were deleted in order when proceeding to
-* a new screen.  To delete an event from the middle of the queue, the action
-* was overwritten to be ANULL.  With the advent of GLOBAL events, delQueue
-* was modified to allow deletes anywhere in the list, and the DEL_EVENT
-* action was modified to perform the actual delete.
-*/
+ * Delete an event structure (i.e. return it to the free list)
+ * Historical note:  Originally event p was assumed to be at head of queue
+ * (i.e. earliest) since all events were deleted in order when proceeding to
+ * a new screen.  To delete an event from the middle of the queue, the action
+ * was overwritten to be ANULL.  With the advent of GLOBAL events, delQueue
+ * was modified to allow deletes anywhere in the list, and the DEL_EVENT
+ * action was modified to perform the actual delete.
+ */
 void Scheduler::delQueue(event_t *curEvent) {
 	debugC(4, kDebugSchedule, "delQueue()");
 
@@ -1382,10 +1382,10 @@ uint32 Scheduler_v1d::getTicks() {
 }
 
 /**
-* This is the scheduler which runs every tick.  It examines the event queue
-* for any events whose time has come.  It dequeues these events and performs
-* the action associated with the event, returning it to the free queue
-*/
+ * This is the scheduler which runs every tick.  It examines the event queue
+ * for any events whose time has come.  It dequeues these events and performs
+ * the action associated with the event, returning it to the free queue
+ */
 void Scheduler_v1d::runScheduler() {
 	debugC(6, kDebugSchedule, "runScheduler");
 
@@ -1422,8 +1422,8 @@ void Scheduler_v1d::promptAction(act *action) {
 }
 
 /**
-* Decode a response to a prompt
-*/
+ * Decode a response to a prompt
+ */
 void Scheduler_v1d::decodeString(char *line) {
 	debugC(1, kDebugSchedule, "decodeString(%s)", line);
 
@@ -1474,8 +1474,8 @@ void Scheduler_v2d::promptAction(act *action) {
 }
 
 /**
-* Decode a string
-*/
+ * Decode a string
+ */
 void Scheduler_v2d::decodeString(char *line) {
 	debugC(1, kDebugSchedule, "decodeString(%s)", line);
 
@@ -1507,10 +1507,10 @@ uint32 Scheduler_v1w::getTicks() {
 }
 
 /**
-* This is the scheduler which runs every tick.  It examines the event queue
-* for any events whose time has come.  It dequeues these events and performs
-* the action associated with the event, returning it to the free queue
-*/
+ * This is the scheduler which runs every tick.  It examines the event queue
+ * for any events whose time has come.  It dequeues these events and performs
+ * the action associated with the event, returning it to the free queue
+ */
 void Scheduler_v1w::runScheduler() {
 	debugC(6, kDebugSchedule, "runScheduler");
 

@@ -62,20 +62,20 @@ enum uif_t {U_FONT5, U_FONT6, U_FONT8, UIF_IMAGES, NUM_UIF_ITEMS};
 static const int kFirstFont = U_FONT5;
 
 /**
-* Enumerate ways of cycling a sequence of frames
-*/
+ * Enumerate ways of cycling a sequence of frames
+ */
 enum cycle_t {kCycleInvisible, kCycleAlmostInvisible, kCycleNotCycling, kCycleForward, kCycleBackward};
 
 /**
-* Enumerate sequence index matching direction of travel
-*/
+ * Enumerate sequence index matching direction of travel
+ */
 enum {RIGHT, LEFT, DOWN, _UP};
 
 enum font_t {LARGE_ROMAN, MED_ROMAN, NUM_GDI_FONTS, INIT_FONTS, DEL_FONTS};
 
 /**
-* Enumerate the different path types for an object
-*/
+ * Enumerate the different path types for an object
+ */
 enum path_t {
 	kPathUser,                                      // User has control of object via cursor keys
 	kPathAuto,                                      // Computer has control, controlled by action lists
@@ -87,8 +87,8 @@ enum path_t {
 };
 
 /**
-* Following defines the action types and action list
-*/
+ * Following defines the action types and action list
+ */
 enum action_t {                                     // Parameters:
 	ANULL              = 0xff,                      // Special NOP used to 'delete' events in DEL_EVENTS
 	ASCHEDULE          = 0,                         //  0 - Ptr to action list to be rescheduled
@@ -158,22 +158,22 @@ struct uif_hdr_t {                                  // UIF font/image look up
 };
 
 /**
-* Game specific type definitions
-*/
+ * Game specific type definitions
+ */
 typedef byte *image_pt;                             // ptr to an object image (sprite)
 typedef byte *sound_pt;                             // ptr to sound (or music) data
 
 /**
-* Following are points for achieving certain actions.
-*/
+ * Following are points for achieving certain actions.
+ */
 struct point_t {
 	byte score;                                     // The value of the point
 	bool scoredFl;                                  // Whether scored yet
 };
 
 /**
-* Structure for initializing maze processing
-*/
+ * Structure for initializing maze processing
+ */
 struct maze_t {
 	bool enabledFl;                                 // TRUE when maze processing enabled
 	byte size;                                      // Size of (square) maze matrix
@@ -183,8 +183,8 @@ struct maze_t {
 };
 
 /**
-* The following determines how a verb is acted on, for an object
-*/
+ * The following determines how a verb is acted on, for an object
+ */
 struct cmd {
 	uint16 verbIndex;                               // the verb
 	uint16 reqIndex;                                // ptr to list of required objects
@@ -197,9 +197,9 @@ struct cmd {
 };
 
 /**
-* The following is a linked list of images in an animation sequence
-* The image data is in 8-bit DIB format, i.e. 1 byte = 1 pixel
-*/
+ * The following is a linked list of images in an animation sequence
+ * The image data is in 8-bit DIB format, i.e. 1 byte = 1 pixel
+ */
 struct seq_t {                                      // Linked list of images
 	byte   *imagePtr;                               // ptr to image
 	uint16  bytesPerLine8;                          // bytes per line (8bits)
@@ -209,19 +209,19 @@ struct seq_t {                                      // Linked list of images
 };
 
 /**
-* The following is an array of structures of above sequences
-*/
+ * The following is an array of structures of above sequences
+ */
 struct seqList_t {
 	uint16 imageNbr;                                // Number of images in sequence
 	seq_t *seqPtr;                                  // Ptr to sequence structure
 };
 
 /**
-* Following is structure of verbs and nouns for 'background' objects
-* These are objects that appear in the various screens, but nothing
-* interesting ever happens with them.  Rather than just be dumb and say
-* "don't understand" we produce an interesting msg to keep user sane.
-*/
+ * Following is structure of verbs and nouns for 'background' objects
+ * These are objects that appear in the various screens, but nothing
+ * interesting ever happens with them.  Rather than just be dumb and say
+ * "don't understand" we produce an interesting msg to keep user sane.
+ */
 struct background_t {
 	uint16 verbIndex;
 	uint16 nounIndex;
@@ -258,8 +258,8 @@ struct sound_hdr_t {                                // Sound file lookup entry
 static const int kMaxSeqNumb = 4;                   // Number of sequences of images in object
 
 /**
-* Following is definition of object attributes
-*/
+ * Following is definition of object attributes
+ */
 struct object_t {
 	uint16     nounIndex;                           // String identifying object
 	uint16     dataIndex;                           // String describing the object

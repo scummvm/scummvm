@@ -52,8 +52,8 @@ Parser_v2d::~Parser_v2d() {
 }
 
 /**
-* Parse the user's line of text input.  Generate events as necessary
-*/
+ * Parse the user's line of text input.  Generate events as necessary
+ */
 void Parser_v2d::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
 

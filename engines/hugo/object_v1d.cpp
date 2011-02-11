@@ -52,11 +52,11 @@ ObjectHandler_v1d::~ObjectHandler_v1d() {
 }
 
 /**
-* Draw all objects on screen as follows:
-* 1. Sort 'FLOATING' objects in order of y2 (base of object)
-* 2. Display new object frames/positions in dib
-* Finally, cycle any animating objects to next frame
-*/
+ * Draw all objects on screen as follows:
+ * 1. Sort 'FLOATING' objects in order of y2 (base of object)
+ * 2. Display new object frames/positions in dib
+ * Finally, cycle any animating objects to next frame
+ */
 void ObjectHandler_v1d::updateImages() {
 	debugC(5, kDebugObject, "updateImages");
 
@@ -171,9 +171,9 @@ void ObjectHandler_v1d::updateImages() {
 }
 
 /**
-* Update all object positions.  Process object 'local' events
-* including boundary events and collisions
-*/
+ * Update all object positions.  Process object 'local' events
+ * including boundary events and collisions
+ */
 void ObjectHandler_v1d::moveObjects() {
 	debugC(4, kDebugObject, "moveObjects");
 
@@ -347,10 +347,10 @@ void ObjectHandler_v1d::moveObjects() {
 }
 
 /**
-* Swap all the images of one object with another.  Set hero_image (we make
-* the assumption for now that the first obj is always the HERO) to the object
-* number of the swapped image
-*/
+ * Swap all the images of one object with another.  Set hero_image (we make
+ * the assumption for now that the first obj is always the HERO) to the object
+ * number of the swapped image
+ */
 void ObjectHandler_v1d::swapImages(int objIndex1, int objIndex2) {
 	debugC(1, kDebugObject, "swapImages(%d, %d)", objIndex1, objIndex2);
 

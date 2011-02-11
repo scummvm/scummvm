@@ -42,6 +42,37 @@
 #include "hugo/object.h"
 
 namespace Hugo {
+/**
+ * A black and white Windows-style arrow cursor (12x20).
+ * 0 = Black (#000000 in 24-bit RGB).
+ * 1 = Transparent.
+ * 15 = White (#FFFFFF in 24-bit RGB).
+ * This cursor comes from Mohawk engine.
+ */
+static const byte stdMouseCursor[] = {
+	0, 0,  1,  1,  1,  1,  1,  1,  1,  1,  1, 1,
+	0, 15, 0,  1,  1,  1,  1,  1,  1,  1,  1, 1,
+	0, 15, 15, 0,  1,  1,  1,  1,  1,  1,  1, 1,
+	0, 15, 15, 15, 0,  1,  1,  1,  1,  1,  1, 1,
+	0, 15, 15, 15, 15, 0,  1,  1,  1,  1,  1, 1,
+	0, 15, 15, 15, 15, 15, 0,  1,  1,  1,  1, 1,
+	0, 15, 15, 15, 15, 15, 15, 0,  1,  1,  1, 1,
+	0, 15, 15, 15, 15, 15, 15, 15, 0,  1,  1, 1,
+	0, 15, 15, 15, 15, 15, 15, 15, 15, 0,  1, 1,
+	0, 15, 15, 15, 15, 15, 15, 15, 15, 15, 0, 1,
+	0, 15, 15, 15, 15, 15, 15, 0,  0,  0,  0, 0,
+	0, 15, 15, 15, 0,  15, 15, 0,  1,  1,  1, 1,
+	0, 15, 15, 0,  0,  15, 15, 0,  1,  1,  1, 1,
+	0, 15, 0,  1,  0,  0,  15, 15, 0,  1,  1, 1,
+	0, 0,  1,  1,  1,  0,  15, 15, 0,  1,  1, 1,
+	0, 1,  1,  1,  1,  1,  0,  15, 15, 0,  1, 1,
+	1, 1,  1,  1,  1,  1,  0,  15, 15, 0,  1, 1,
+	1, 1,  1,  1,  1,  1,  1,  0,  15, 15, 0, 1,
+	1, 1,  1,  1,  1,  1,  1,  0,  15, 15, 0, 1,
+	1, 1,  1,  1,  1,  1,  1,  1,  0,  0,  1, 1
+};
+
+
 Screen::Screen(HugoEngine *vm) : _vm(vm) {
 	_mainPalette = 0;
 	_curPalette = 0;
@@ -74,8 +105,8 @@ Screen::~Screen() {
 }
 
 /**
-* Replace the palette by the main palette
-*/
+ * Replace the palette by the main palette
+ */
 void Screen::createPal() {
 	debugC(1, kDebugDisplay, "createPal");
 
@@ -87,16 +118,16 @@ void Screen::setCursorPal() {
 }
 
 /**
-* Create logical palette
-*/
+ * Create logical palette
+ */
 void Screen::initDisplay() {
 	debugC(1, kDebugDisplay, "initDisplay");
 	createPal();
 }
 
 /**
-* Move an image from source to destination
-*/
+ * Move an image from source to destination
+ */
 void Screen::moveImage(image_pt srcImage, const int16 x1, const int16 y1, const int16 dx, int16 dy, const int16 width1, image_pt dstImage, const int16 x2, const int16 y2, const int16 width2) {
 	debugC(3, kDebugDisplay, "moveImage(srcImage, %d, %d, %d, %d, %d, dstImage, %d, %d, %d)", x1, y1, dx, dy, width1, x2, y2, width2);
 
@@ -121,8 +152,8 @@ void Screen::displayBackground() {
 }
 
 /**
-* Blit the supplied rectangle from _frontBuffer to the screen
-*/
+ * Blit the supplied rectangle from _frontBuffer to the screen
+ */
 void Screen::displayRect(const int16 x, const int16 y, const int16 dx, const int16 dy) {
 	debugC(3, kDebugDisplay, "displayRect(%d, %d, %d, %d)", x, y, dx, dy);
 
@@ -133,9 +164,9 @@ void Screen::displayRect(const int16 x, const int16 y, const int16 dx, const int
 }
 
 /**
-* Change a color by remapping supplied palette index with new index in main palette.
-* Alse save the new color in the current palette.
-*/
+ * Change a color by remapping supplied palette index with new index in main palette.
+ * Alse save the new color in the current palette.
+ */
 void Screen::remapPal(const uint16 oldIndex, const uint16 newIndex) {
 	debugC(1, kDebugDisplay, "Remap_pal(%d, %d)", oldIndex, newIndex);
 
@@ -150,8 +181,8 @@ void Screen::remapPal(const uint16 oldIndex, const uint16 newIndex) {
 }
 
 /**
-* Saves the current palette in a savegame
-*/
+ * Saves the current palette in a savegame
+ */
 void Screen::savePal(Common::WriteStream *f) const {
 	debugC(1, kDebugDisplay, "savePal()");
 
@@ -160,8 +191,8 @@ void Screen::savePal(Common::WriteStream *f) const {
 }
 
 /**
-* Restore the current palette from a savegame
-*/
+ * Restore the current palette from a savegame
+ */
 void Screen::restorePal(Common::SeekableReadStream *f) {
 	debugC(1, kDebugDisplay, "restorePal()");
 
@@ -181,10 +212,10 @@ void Screen::restorePal(Common::SeekableReadStream *f) {
 
 
 /**
-* Set the new background color.
-* This implementation gives the same result than the DOS version.
-* It wasn't implemented in the Win version
-*/
+ * Set the new background color.
+ * This implementation gives the same result than the DOS version.
+ * It wasn't implemented in the Win version
+ */
 void Screen::setBackgroundColor(const uint16 color) {
 	debugC(1, kDebugDisplay, "setBackgroundColor(%d)", color);
 
@@ -192,10 +223,10 @@ void Screen::setBackgroundColor(const uint16 color) {
 }
 
 /**
-* Return the overlay state (Foreground/Background) of the currently
-* processed object by looking down the current column for an overlay
-* base bit set (in which case the object is foreground).
-*/
+ * Return the overlay state (Foreground/Background) of the currently
+ * processed object by looking down the current column for an overlay
+ * base bit set (in which case the object is foreground).
+ */
 overlayState_t Screen::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
 	debugC(4, kDebugDisplay, "findOvl()");
 
@@ -210,9 +241,9 @@ overlayState_t Screen::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
 }
 
 /**
-* Merge an object frame into _frontBuffer at sx, sy and update rectangle list.
-* If fore TRUE, force object above any overlay
-*/
+ * Merge an object frame into _frontBuffer at sx, sy and update rectangle list.
+ * If fore TRUE, force object above any overlay
+ */
 void Screen::displayFrame(const int sx, const int sy, seq_t *seq, const bool foreFl) {
 	debugC(3, kDebugDisplay, "displayFrame(%d, %d, seq, %d)", sx, sy, (foreFl) ? 1 : 0);
 
@@ -246,8 +277,8 @@ void Screen::displayFrame(const int sx, const int sy, seq_t *seq, const bool for
 }
 
 /**
-* Merge rectangles A,B leaving result in B
-*/
+ * Merge rectangles A,B leaving result in B
+ */
 void Screen::merge(const rect_t *rectA, rect_t *rectB) {
 	debugC(6, kDebugDisplay, "merge()");
 
@@ -263,11 +294,11 @@ void Screen::merge(const rect_t *rectA, rect_t *rectB) {
 }
 
 /**
-* Coalesce the rectangles in the restore/add list into one unified
-* blist.  len is the sizes of alist or rlist.  blen is current length
-* of blist.  bmax is the max size of the blist.  Note that blist can
-* have holes, in which case dx = 0.  Returns used length of blist.
-*/
+ * Coalesce the rectangles in the restore/add list into one unified
+ * blist.  len is the sizes of alist or rlist.  blen is current length
+ * of blist.  bmax is the max size of the blist.  Note that blist can
+ * have holes, in which case dx = 0.  Returns used length of blist.
+ */
 int16 Screen::mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 blen) {
 	debugC(4, kDebugDisplay, "mergeLists()");
 
@@ -303,9 +334,9 @@ int16 Screen::mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 ble
 }
 
 /**
-* Process the display list
-* Trailing args are int16 x,y,dx,dy for the D_ADD operation
-*/
+ * Process the display list
+ * Trailing args are int16 x,y,dx,dy for the D_ADD operation
+ */
 void Screen::displayList(dupdate_t update, ...) {
 	debugC(6, kDebugDisplay, "displayList()");
 
@@ -363,12 +394,12 @@ void Screen::displayList(dupdate_t update, ...) {
 }
 
 /**
-* Write supplied character (font data) at sx,sy in supplied color
-* Font data as follows:
-* *(fontdata+1) = Font Height (pixels)
-* *(fontdata+1) = Font Width (pixels)
-* *(fontdata+x) = Font Bitmap (monochrome)
-*/
+ * Write supplied character (font data) at sx,sy in supplied color
+ * Font data as follows:
+ * *(fontdata+1) = Font Height (pixels)
+ * *(fontdata+1) = Font Width (pixels)
+ * *(fontdata+x) = Font Bitmap (monochrome)
+ */
 void Screen::writeChr(const int sx, const int sy, const byte color, const char *local_fontdata){
 	debugC(2, kDebugDisplay, "writeChr(%d, %d, %d, %d)", sx, sy, color, local_fontdata[0]);
 
@@ -389,8 +420,8 @@ void Screen::writeChr(const int sx, const int sy, const byte color, const char *
 }
 
 /**
-* Returns height of characters in current font
-*/
+ * Returns height of characters in current font
+ */
 int16 Screen::fontHeight() const {
 	debugC(2, kDebugDisplay, "fontHeight()");
 
@@ -399,8 +430,8 @@ int16 Screen::fontHeight() const {
 }
 
 /**
-* Returns length of supplied string in pixels
-*/
+ * Returns length of supplied string in pixels
+ */
 int16 Screen::stringLength(const char *s) const {
 	debugC(2, kDebugDisplay, "stringLength(%s)", s);
 
@@ -413,8 +444,8 @@ int16 Screen::stringLength(const char *s) const {
 }
 
 /**
-* Return x which would center supplied string
-*/
+ * Return x which would center supplied string
+ */
 int16 Screen::center(const char *s) const {
 	debugC(1, kDebugDisplay, "center(%s)", s);
 
@@ -422,9 +453,9 @@ int16 Screen::center(const char *s) const {
 }
 
 /**
-* Write string at sx,sy in supplied color in current font
-* If sx == CENTER, center it
-*/
+ * Write string at sx,sy in supplied color in current font
+ * If sx == CENTER, center it
+ */
 void Screen::writeStr(int16 sx, const int16 sy, const char *s, const byte color) {
 	debugC(2, kDebugDisplay, "writeStr(%d, %d, %s, %d)", sx, sy, s, color);
 
@@ -439,8 +470,8 @@ void Screen::writeStr(int16 sx, const int16 sy, const char *s, const byte color)
 }
 
 /**
-* Shadowed version of writestr
-*/
+ * Shadowed version of writestr
+ */
 void Screen::shadowStr(int16 sx, const int16 sy, const char *s, const byte color) {
 	debugC(1, kDebugDisplay, "shadowStr(%d, %d, %s, %d)", sx, sy, s, color);
 
@@ -452,9 +483,9 @@ void Screen::shadowStr(int16 sx, const int16 sy, const char *s, const byte color
 }
 
 /**
-* Introduce user to the game. In the original games, it was only
-* present in the DOS versions
-*/
+ * Introduce user to the game. In the original games, it was only
+ * present in the DOS versions
+ */
 void Screen::userHelp() const {
 	Utils::Box(kBoxAny , "%s",
 	           "F1  - Press F1 again\n"
@@ -503,8 +534,8 @@ void Screen::drawShape(const int x, const int y, const int color1, const int col
 	}
 }
 /**
-* Display rectangle (filles or empty)
-*/
+ * Display rectangle (filles or empty)
+ */
 void Screen::drawRectangle(const bool filledFl, const int16 x1, const int16 y1, const int16 x2, const int16 y2, const int color) {
 	assert(x1 <= x2);
 	assert(y1 <= y2);
@@ -529,8 +560,8 @@ void Screen::drawRectangle(const bool filledFl, const int16 x1, const int16 y1, 
 }
 
 /**
-* Initialize screen components and display results
-*/
+ * Initialize screen components and display results
+ */
 void Screen::initNewScreenDisplay() {
 	displayList(kDisplayInit);
 	setBackgroundColor(_TBLACK);
@@ -541,8 +572,8 @@ void Screen::initNewScreenDisplay() {
 }
 
 /**
-* Load palette from Hugo.dat
-*/
+ * Load palette from Hugo.dat
+ */
 void Screen::loadPalette(Common::File &in) {
 	// Read palette
 	_paletteSize = in.readUint16BE();
@@ -553,16 +584,16 @@ void Screen::loadPalette(Common::File &in) {
 }
 
 /**
-* Free main and current palettes
-*/
+ * Free main and current palettes
+ */
 void Screen::freePalette() {
 	free(_curPalette);
 	free(_mainPalette);
 }
 
 /**
-* Free fonts
-*/
+ * Free fonts
+ */
 void Screen::freeFonts() {
 	for (int i = 0; i < kNumFonts; i++) {
 		if (_arrayFont[i])
@@ -619,19 +650,19 @@ bool Screen::isInY(const int16 y, const rect_t *rect) const {
 }
 
 /**
-* Check if two rectangles are overlapping
-*/
+ * Check if two rectangles are overlapping
+ */
 bool Screen::isOverlapping(const rect_t *rectA, const rect_t *rectB) const {
 	return (isInX(rectA->x, rectB) || isInX(rectA->x + rectA->dx, rectB) || isInX(rectB->x, rectA) || isInX(rectB->x + rectB->dx, rectA)) && 
 		   (isInY(rectA->y, rectB) || isInY(rectA->y + rectA->dy, rectB) || isInY(rectB->y, rectA) || isInY(rectB->y + rectB->dy, rectA));
 }
 
 /**
-* Display exit hotspots in God Mode ('PPG')
-* Light Red   = Exit hotspots
-* Light Green = Visible objects
-* White       = Fixed objects, parts of background
-*/
+ * Display exit hotspots in God Mode ('PPG')
+ * Light Red   = Exit hotspots
+ * Light Green = Visible objects
+ * White       = Fixed objects, parts of background
+ */
 void Screen::drawHotspots() {
 	if (!_vm->getGameStatus().godModeFl)
 		return;
@@ -662,10 +693,10 @@ Screen_v1d::~Screen_v1d() {
 }
 
 /**
-* Load font file, construct font ptrs and reverse data bytes
-* TODO: This uses hardcoded fonts in hugo.dat, it should be replaced
-*       by a proper implementation of .FON files
-*/
+ * Load font file, construct font ptrs and reverse data bytes
+ * TODO: This uses hardcoded fonts in hugo.dat, it should be replaced
+ *       by a proper implementation of .FON files
+ */
 void Screen_v1d::loadFont(const int16 fontId) {
 	debugC(2, kDebugDisplay, "loadFont(%d)", fontId);
 
@@ -698,10 +729,10 @@ void Screen_v1d::loadFont(const int16 fontId) {
 }
 
 /**
-* Load fonts from Hugo.dat
-* These fonts are a workaround to avoid handling TTF fonts used by DOS versions
-* TODO: Get rid of this function when the win1 fonts are supported
-*/
+ * Load fonts from Hugo.dat
+ * These fonts are a workaround to avoid handling TTF fonts used by DOS versions
+ * TODO: Get rid of this function when the win1 fonts are supported
+ */
 void Screen_v1d::loadFontArr(Common::File &in) {
 	for (int i = 0; i < kNumFonts; i++) {
 		_arrayFontSize[i] = in.readUint16BE();
@@ -719,8 +750,8 @@ Screen_v1w::~Screen_v1w() {
 }
 
 /**
-* Load font file, construct font ptrs and reverse data bytes
-*/
+ * Load font file, construct font ptrs and reverse data bytes
+ */
 void Screen_v1w::loadFont(const int16 fontId) {
 	debugC(2, kDebugDisplay, "loadFont(%d)", fontId);
 
@@ -752,8 +783,8 @@ void Screen_v1w::loadFont(const int16 fontId) {
 }
 
 /**
-* Skips the fonts used by the DOS versions
-*/
+ * Skips the fonts used by the DOS versions
+ */
 void Screen_v1w::loadFontArr(Common::File &in) {
 	for (int i = 0; i < kNumFonts; i++) {
 		uint16 numElem = in.readUint16BE();

@@ -35,8 +35,8 @@
 namespace Hugo {
 
 /**
-* Actions for Process_inventory()
-*/
+ * Actions for Process_inventory()
+ */
 enum invact_t {kInventoryActionInit, kInventoryActionLeft, kInventoryActionRight, kInventoryActionGet};
 
 class InventoryHandler {

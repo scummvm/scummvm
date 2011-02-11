@@ -35,8 +35,8 @@
 
 namespace Hugo {
 /**
-* Enumerate overlay file types
-*/
+ * Enumerate overlay file types
+ */
 enum ovl_t {kOvlBoundary, kOvlOverlay, kOvlBase};
 
 class FileManager {
@@ -79,8 +79,8 @@ protected:
 	static const int kLengthMask = 0x3F;            // Lower 6 bits are length
 
 	/**
-	* Structure of scenery file lookup entry
-	*/
+	 * Structure of scenery file lookup entry
+	 */
 	struct sceneBlock_t {
 		uint32 scene_off;
 		uint32 scene_len;

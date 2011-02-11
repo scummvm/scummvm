@@ -52,9 +52,9 @@ Parser_v1d::~Parser_v1d() {
 }
 
 /**
-* Locate word in list of nouns and return ptr to string in noun list
-* If n is NULL, start at beginning of list, else with n
-*/
+ * Locate word in list of nouns and return ptr to string in noun list
+ * If n is NULL, start at beginning of list, else with n
+ */
 char *Parser_v1d::findNextNoun(char *noun) const {
 	debugC(1, kDebugParser, "findNextNoun(%s)", noun);
 
@@ -75,11 +75,11 @@ char *Parser_v1d::findNextNoun(char *noun) const {
 }
 
 /**
-* Test whether hero is close to object.  Return TRUE or FALSE
-* If no noun specified, check context flag in object before other tests.
-* If object not near, return suitable string; may be similar object closer
-* If radius is -1, treat radius as infinity
-*/
+ * Test whether hero is close to object.  Return TRUE or FALSE
+ * If no noun specified, check context flag in object before other tests.
+ * If object not near, return suitable string; may be similar object closer
+ * If radius is -1, treat radius as infinity
+ */
 bool Parser_v1d::isNear_v1(char *verb, char *noun, object_t *obj, char *comment) const {
 	debugC(1, kDebugParser, "isNear(%s, %s, obj, %s)", verb, noun, comment);
 
@@ -138,10 +138,10 @@ bool Parser_v1d::isNear_v1(char *verb, char *noun, object_t *obj, char *comment)
 }
 
 /**
-* Test whether supplied verb is one of the common variety for this object
-* say_ok needed for special case of take/drop which may be handled not only
-* here but also in a cmd_list with a donestr string simultaneously
-*/
+ * Test whether supplied verb is one of the common variety for this object
+ * say_ok needed for special case of take/drop which may be handled not only
+ * here but also in a cmd_list with a donestr string simultaneously
+ */
 bool Parser_v1d::isGenericVerb_v1(char *word, object_t *obj) {
 	debugC(1, kDebugParser, "isGenericVerb(%s, object_t *obj)", word);
 
@@ -178,11 +178,11 @@ bool Parser_v1d::isGenericVerb_v1(char *word, object_t *obj) {
 }
 
 /**
-* Test whether supplied verb is included in the list of allowed verbs for
-* this object.  If it is, then perform the tests on it from the cmd list
-* and if it passes, perform the actions in the action list.  If the verb
-* is catered for, return TRUE
-*/
+ * Test whether supplied verb is included in the list of allowed verbs for
+ * this object.  If it is, then perform the tests on it from the cmd list
+ * and if it passes, perform the actions in the action list.  If the verb
+ * is catered for, return TRUE
+ */
 bool Parser_v1d::isObjectVerb_v1(char *word, object_t *obj) {
 	debugC(1, kDebugParser, "isObjectVerb(%s, object_t *obj)", word);
 
@@ -230,9 +230,9 @@ bool Parser_v1d::isObjectVerb_v1(char *word, object_t *obj) {
 }
 
 /**
-* Print text for possible background object.  Return TRUE if match found
-* Only match if both verb and noun found.  Test_ca will match verb-only
-*/
+ * Print text for possible background object.  Return TRUE if match found
+ * Only match if both verb and noun found.  Test_ca will match verb-only
+ */
 bool Parser_v1d::isBackgroundWord_v1(char *noun, char *verb, objectList_t obj) const {
 	debugC(1, kDebugParser, "isBackgroundWord(%s, %s, object_list_t obj)", noun, verb);
 
@@ -249,8 +249,8 @@ bool Parser_v1d::isBackgroundWord_v1(char *noun, char *verb, objectList_t obj) c
 }
 
 /**
-* Do all things necessary to carry an object
-*/
+ * Do all things necessary to carry an object
+ */
 void Parser_v1d::takeObject(object_t *obj) {
 	debugC(1, kDebugParser, "takeObject(object_t *obj)");
 
@@ -264,8 +264,8 @@ void Parser_v1d::takeObject(object_t *obj) {
 }
 
 /**
-* Do all necessary things to drop an object
-*/
+ * Do all necessary things to drop an object
+ */
 void Parser_v1d::dropObject(object_t *obj) {
 	debugC(1, kDebugParser, "dropObject(object_t *obj)");
 
@@ -280,9 +280,9 @@ void Parser_v1d::dropObject(object_t *obj) {
 }
 
 /**
-* Print text for possible background object.  Return TRUE if match found
-* If test_noun TRUE, must have a noun given
-*/
+ * Print text for possible background object.  Return TRUE if match found
+ * If test_noun TRUE, must have a noun given
+ */
 bool Parser_v1d::isCatchallVerb_v1(bool testNounFl, char *noun, char *verb, objectList_t obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(%d, %s, %s, object_list_t obj)", (testNounFl) ? 1 : 0, noun, verb);
 
@@ -302,8 +302,8 @@ bool Parser_v1d::isCatchallVerb_v1(bool testNounFl, char *noun, char *verb, obje
 }
 
 /**
-* Parse the user's line of text input.  Generate events as necessary
-*/
+ * Parse the user's line of text input.  Generate events as necessary
+ */
 void Parser_v1d::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
 

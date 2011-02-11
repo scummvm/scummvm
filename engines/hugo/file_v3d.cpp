@@ -46,8 +46,8 @@ FileManager_v3d::~FileManager_v3d() {
 }
 
 /**
-* Read a PCX image into dib_a
-*/
+ * Read a PCX image into dib_a
+ */
 void FileManager_v3d::readBackground(const int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
@@ -77,8 +77,8 @@ void FileManager_v3d::readBackground(const int screenIndex) {
 }
 
 /**
-* Open "database" file (packed files)
-*/
+ * Open "database" file (packed files)
+ */
 void FileManager_v3d::openDatabaseFiles() {
 	debugC(1, kDebugFile, "openDatabaseFiles");
 
@@ -93,8 +93,8 @@ void FileManager_v3d::openDatabaseFiles() {
 }
 
 /**
-* Close "Database" files
-*/
+ * Close "Database" files
+ */
 void FileManager_v3d::closeDatabaseFiles() {
 	debugC(1, kDebugFile, "closeDatabaseFiles");
 
@@ -105,8 +105,8 @@ void FileManager_v3d::closeDatabaseFiles() {
 }
 
 /**
-* Open and read in an overlay file, close file
-*/
+ * Open and read in an overlay file, close file
+ */
 void FileManager_v3d::readOverlay(const int screenNum, image_pt image, ovl_t overlayType) {
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 

@@ -54,12 +54,12 @@ InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm) {
 }
 
 /**
-* Construct the inventory scrollbar in dib_i
-* imageTotNumb is total number of inventory icons
-* displayNumb is number requested for display
-* scrollFl is TRUE if scroll arrows required
-* firstObjId is index of first (scrolled) inventory object to display
-*/
+ * Construct the inventory scrollbar in dib_i
+ * imageTotNumb is total number of inventory icons
+ * displayNumb is number requested for display
+ * scrollFl is TRUE if scroll arrows required
+ * firstObjId is index of first (scrolled) inventory object to display
+ */
 void InventoryHandler::constructInventory(const int16 imageTotNumb, int displayNumb, const bool scrollFl, int16 firstObjId) {
 	debugC(1, kDebugInventory, "constructInventory(%d, %d, %d, %d)", imageTotNumb, displayNumb, (scrollFl) ? 0 : 1, firstObjId);
 
@@ -98,9 +98,9 @@ void InventoryHandler::constructInventory(const int16 imageTotNumb, int displayN
 }
 
 /**
-* Process required action for inventory
-* Returns objId under cursor (or -1) for INV_GET
-*/
+ * Process required action for inventory
+ * Returns objId under cursor (or -1) for INV_GET
+ */
 int16 InventoryHandler::processInventory(const invact_t action, ...) {
 	debugC(1, kDebugInventory, "processInventory(invact_t action, ...)");
 
@@ -169,8 +169,8 @@ int16 InventoryHandler::processInventory(const invact_t action, ...) {
 }
 
 /**
-* Process inventory state machine
-*/
+ * Process inventory state machine
+ */
 void InventoryHandler::runInventory() {
 	status_t &gameStatus = _vm->getGameStatus();
 

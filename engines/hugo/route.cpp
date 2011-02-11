@@ -49,8 +49,8 @@ Route::Route(HugoEngine *vm) : _vm(vm) {
 }
 
 /**
-* Face hero in new direction, based on cursor key input by user.
-*/
+ * Face hero in new direction, based on cursor key input by user.
+ */
 void Route::setDirection(const uint16 keyCode) {
 	debugC(1, kDebugRoute, "setDirection(%d)", keyCode);
 
@@ -94,9 +94,9 @@ void Route::setDirection(const uint16 keyCode) {
 }
 
 /**
-* Set hero walking, based on cursor key input by user.
-* Hitting same key twice will stop hero.
-*/
+ * Set hero walking, based on cursor key input by user.
+ * Hitting same key twice will stop hero.
+ */
 void Route::setWalk(const uint16 direction) {
 	debugC(1, kDebugRoute, "setWalk(%d)", direction);
 
@@ -166,17 +166,17 @@ void Route::setWalk(const uint16 direction) {
 }
 
 /**
-* Recursive algorithm!  Searches from hero to dest_x, dest_y
-* Find horizontal line segment about supplied point and recursively
-* find line segments for each point above and below that segment.
-* When destination point found in segment, start surfacing and leave
-* a trail in segment[] from destination back to hero.
-*
-* Note:  there is a bug which allows a route through a 1-pixel high
-* narrow gap if between 2 segments wide enough for hero.  To work
-* around this, make sure any narrow gaps are 2 or more pixels high.
-* An example of this was the blocking guard in Hugo1/Dead-End.
-*/
+ * Recursive algorithm!  Searches from hero to dest_x, dest_y
+ * Find horizontal line segment about supplied point and recursively
+ * find line segments for each point above and below that segment.
+ * When destination point found in segment, start surfacing and leave
+ * a trail in segment[] from destination back to hero.
+ *
+ * Note:  there is a bug which allows a route through a 1-pixel high
+ * narrow gap if between 2 segments wide enough for hero.  To work
+ * around this, make sure any narrow gaps are 2 or more pixels high.
+ * An example of this was the blocking guard in Hugo1/Dead-End.
+ */
 void Route::segment(int16 x, int16 y) {
 	debugC(1, kDebugRoute, "segment(%d, %d)", x, y);
 
@@ -288,9 +288,9 @@ void Route::segment(int16 x, int16 y) {
 }
 
 /**
-* Create and return ptr to new node.  Initialize with previous node.
-* Returns 0 if MAX_NODES exceeded
-*/
+ * Create and return ptr to new node.  Initialize with previous node.
+ * Returns 0 if MAX_NODES exceeded
+ */
 Point *Route::newNode() {
 	debugC(1, kDebugRoute, "newNode");
 
@@ -303,11 +303,11 @@ Point *Route::newNode() {
 }
 
 /**
-* Construct route to cx, cy.  Return TRUE if successful.
-* 1.  Copy boundary bitmap to local byte map (include object bases)
-* 2.  Construct list of segments segment[] from hero to destination
-* 3.  Compress to shortest route in route[]
-*/
+ * Construct route to cx, cy.  Return TRUE if successful.
+ * 1.  Copy boundary bitmap to local byte map (include object bases)
+ * 2.  Construct list of segments segment[] from hero to destination
+ * 3.  Compress to shortest route in route[]
+ */
 bool Route::findRoute(const int16 cx, const int16 cy) {
 	debugC(1, kDebugRoute, "findRoute(%d, %d)", cx, cy);
 
@@ -415,8 +415,8 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 }
 
 /**
-* Process hero in route mode - called from Move_objects()
-*/
+ * Process hero in route mode - called from Move_objects()
+ */
 void Route::processRoute() {
 	debugC(1, kDebugRoute, "processRoute");
 
@@ -489,10 +489,10 @@ void Route::processRoute() {
 }
 
 /**
-* Start a new route from hero to cx, cy
-* go_for is the purpose, id indexes the exit or object to walk to
-* Returns FALSE if route not found
-*/
+ * Start a new route from hero to cx, cy
+ * go_for is the purpose, id indexes the exit or object to walk to
+ * Returns FALSE if route not found
+ */
 bool Route::startRoute(const go_t go_for, const int16 id, int16 cx, int16 cy) {
 	debugC(1, kDebugRoute, "startRoute(%d, %d, %d, %d)", go_for, id, cx, cy);
 

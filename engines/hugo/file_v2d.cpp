@@ -49,8 +49,8 @@ FileManager_v2d::~FileManager_v2d() {
 }
 
 /**
-* Open "database" file (packed files)
-*/
+ * Open "database" file (packed files)
+ */
 void FileManager_v2d::openDatabaseFiles() {
 	debugC(1, kDebugFile, "openDatabaseFiles");
 
@@ -63,8 +63,8 @@ void FileManager_v2d::openDatabaseFiles() {
 }
 
 /**
-* Close "Database" files
-*/
+ * Close "Database" files
+ */
 void FileManager_v2d::closeDatabaseFiles() {
 	debugC(1, kDebugFile, "closeDatabaseFiles");
 
@@ -74,8 +74,8 @@ void FileManager_v2d::closeDatabaseFiles() {
 }
 
 /**
-* Read a PCX image into dib_a
-*/
+ * Read a PCX image into dib_a
+ */
 void FileManager_v2d::readBackground(const int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
@@ -100,8 +100,8 @@ void FileManager_v2d::readBackground(const int screenIndex) {
 }
 
 /**
-* Open and read in an overlay file, close file
-*/
+ * Open and read in an overlay file, close file
+ */
 void FileManager_v2d::readOverlay(const int screenNum, image_pt image, ovl_t overlayType) {
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
@@ -161,8 +161,8 @@ void FileManager_v2d::readOverlay(const int screenNum, image_pt image, ovl_t ove
 }
 
 /**
-* Fetch string from file, decode and return ptr to string in memory
-*/
+ * Fetch string from file, decode and return ptr to string in memory
+ */
 char *FileManager_v2d::fetchString(const int index) {
 	debugC(1, kDebugFile, "fetchString(%d)", index);
 

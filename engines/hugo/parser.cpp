@@ -67,9 +67,9 @@ void Parser::switchTurbo() {
 }
 
 /**
-* Add any new chars to line buffer and display them.
-* If CR pressed, pass line to LineHandler()
-*/
+ * Add any new chars to line buffer and display them.
+ * If CR pressed, pass line to LineHandler()
+ */
 void Parser::charHandler() {
 	debugC(4, kDebugParser, "charHandler");
 
@@ -251,9 +251,9 @@ void Parser::keyHandler(Common::Event event) {
 }
 
 /**
-* Perform an immediate command.  Takes parameters a la sprintf
-* Assumes final string will not overrun line[] length
-*/
+ * Perform an immediate command.  Takes parameters a la sprintf
+ * Assumes final string will not overrun line[] length
+ */
 void Parser::command(const char *format, ...) {
 	debugC(1, kDebugParser, "Command(%s, ...)", format);
 
@@ -266,8 +266,8 @@ void Parser::command(const char *format, ...) {
 }
 
 /**
-* Locate any member of object name list appearing in command line
-*/
+ * Locate any member of object name list appearing in command line
+ */
 bool Parser::isWordPresent(char **wordArr) const {
 	debugC(1, kDebugParser, "isWordPresent(%s)", wordArr[0]);
 
@@ -281,8 +281,8 @@ bool Parser::isWordPresent(char **wordArr) const {
 }
 
 /**
-* Locate word in list of nouns and return ptr to first string in noun list
-*/
+ * Locate word in list of nouns and return ptr to first string in noun list
+ */
 char *Parser::findNoun() const {
 	debugC(1, kDebugParser, "findNoun()");
 
@@ -296,8 +296,8 @@ char *Parser::findNoun() const {
 }
 
 /**
-* Locate word in list of verbs and return ptr to first string in verb list
-*/
+ * Locate word in list of verbs and return ptr to first string in verb list
+ */
 char *Parser::findVerb() const {
 	debugC(1, kDebugParser, "findVerb()");
 
@@ -311,8 +311,8 @@ char *Parser::findVerb() const {
 }
 
 /**
-* Show user all objects being carried in a variable width 2 column format
-*/
+ * Show user all objects being carried in a variable width 2 column format
+ */
 void Parser::showDosInventory() const {
 	debugC(1, kDebugParser, "showDosInventory()");
 	static const char *blanks = "                                        ";

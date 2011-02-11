@@ -126,39 +126,39 @@ enum HugoDebugChannels {
 };
 
 /**
-* Ways to dismiss a text/prompt box
-*/
+ * Ways to dismiss a text/prompt box
+ */
 enum box_t {kBoxAny, kBoxOk, kBoxPrompt, kBoxYesNo};
 
 /**
-* Inventory icon bar states
-*/
+ * Inventory icon bar states
+ */
 enum istate_t {kInventoryOff, kInventoryUp, kInventoryDown, kInventoryActive};
 
 /**
-* Game view state machine
-*/
+ * Game view state machine
+ */
 enum vstate_t {kViewIdle, kViewIntroInit, kViewIntro, kViewPlay, kViewInvent, kViewExit};
 
 /**
-* Enumerate whether object is foreground, background or 'floating'
-* If floating, HERO can collide with it and fore/back ground is determined
-* by relative y-coord of object base.  This is the general case.
-* If fore or background, no collisions can take place and object is either
-* behind or in front of all others, although can still be hidden by the
-* the overlay plane.  OVEROVL means the object is FLOATING (to other
-* objects) but is never hidden by the overlay plane
-*/
+ * Enumerate whether object is foreground, background or 'floating'
+ * If floating, HERO can collide with it and fore/back ground is determined
+ * by relative y-coord of object base.  This is the general case.
+ * If fore or background, no collisions can take place and object is either
+ * behind or in front of all others, although can still be hidden by the
+ * the overlay plane.  OVEROVL means the object is FLOATING (to other
+ * objects) but is never hidden by the overlay plane
+ */
 enum {kPriorityForeground, kPriorityBackground, kPriorityFloating, kPriorityOverOverlay};
 
 /**
-* Display list functions
-*/
+ * Display list functions
+ */
 enum dupdate_t {kDisplayInit, kDisplayAdd, kDisplayDisplay, kDisplayRestore};
 
 /**
-* Priority for sound effect
-*/
+ * Priority for sound effect
+ */
 enum priority_t {kSoundPriorityLow, kSoundPriorityMedium, kSoundPriorityHigh};
 
 enum HugoGameFeatures {
@@ -203,8 +203,8 @@ struct status_t {                                   // Game status (not saved)
 };
 
 /**
-* Structure to define an EXIT or other collision-activated hotspot
-*/
+ * Structure to define an EXIT or other collision-activated hotspot
+ */
 struct hotspot_t {
 	int        screenIndex;                         // Screen in which hotspot appears
 	int        x1, y1, x2, y2;                      // Bounding box of hotspot
