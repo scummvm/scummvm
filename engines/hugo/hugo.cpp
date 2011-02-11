@@ -50,11 +50,6 @@ namespace Hugo {
 
 HugoEngine *HugoEngine::s_Engine = 0;
 
-overlay_t HugoEngine::_boundary;
-overlay_t HugoEngine::_overlay;
-overlay_t HugoEngine::_ovlBase;
-overlay_t HugoEngine::_objBound;
-
 maze_t      _maze;                              // Default to not in maze 
 hugo_boot_t _boot;                              // Boot info structure file
 
@@ -855,147 +850,14 @@ void HugoEngine::readScreenFiles(const int screenNum) {
 
 	_file->readBackground(screenNum);               // Scenery file
 	memcpy(_screen->getBackBuffer(), _screen->getFrontBuffer(), sizeof(_screen->getFrontBuffer())); // Make a copy
-	_file->readOverlay(screenNum, _boundary, kOvlBoundary); // Boundary file
-	_file->readOverlay(screenNum, _overlay, kOvlOverlay);   // Overlay file
-	_file->readOverlay(screenNum, _ovlBase, kOvlBase);      // Overlay base file
+	_file->readOverlay(screenNum, _object->_boundary, kOvlBoundary); // Boundary file
+	_file->readOverlay(screenNum, _object->_overlay, kOvlOverlay);   // Overlay file
+	_file->readOverlay(screenNum, _object->_ovlBase, kOvlBase);      // Overlay base file
 
 	// Suppress a boundary used in H3 DOS in 'Crash' screen, which blocks
 	// pathfinding and is useless.
 	if ((screenNum == 0) && (_gameVariant == kGameVariantH3Dos))
-		clearScreenBoundary(50, 311, 152);
-}
-
-/**
-* Return maximum allowed movement (from zero to vx) such that object does
-* not cross a boundary (either background or another object)
-*/
-int HugoEngine::deltaX(const int x1, const int x2, const int vx, int y) const {
-// Explanation of algorithm:  The boundaries are drawn as contiguous
-// lines 1 pixel wide.  Since DX,DY are not necessarily 1, we must
-// detect boundary crossing.  If vx positive, examine each pixel from
-// x1 old to x2 new, else x2 old to x1 new, both at the y2 line.
-// If vx zero, no need to check.  If vy non-zero then examine each
-// pixel on the line segment x1 to x2 from y old to y new.
-// Fix from Hugo I v1.5:
-// Note the diff is munged in the return statement to cater for a special
-// cases arising from differences in image widths from one sequence to
-// another.  The problem occurs reversing direction at a wall where the
-// new image intersects before the object can move away.  This is cured
-// by comparing the intersection with half the object width pos. If the
-// intersection is in the other half wrt the intended direction, use the
-// desired vx, else use the computed delta.  i.e. believe the desired vx
-
-	debugC(3, kDebugEngine, "deltaX(%d, %d, %d, %d)", x1, x2, vx, y);
-
-	if (vx == 0)
-		return 0;                                  // Object stationary
-
-	y *= kCompLineSize;                             // Offset into boundary file
-	if (vx > 0) {
-		// Moving to right
-		for (int i = x1 >> 3; i <= (x2 + vx) >> 3; i++) {// Search by byte
-			int b = Utils::firstBit((byte)(_boundary[y + i] | _objBound[y + i]));
-			if (b < 8) {   // b is index or 8
-				// Compute x of boundary and test if intersection
-				b += i << 3;
-				if ((b >= x1) && (b <= x2 + vx))
-					return (b < x1 + ((x2 - x1) >> 1)) ? vx : b - x2 - 1; // return dx
-			}
-		}
-	} else {
-		// Moving to left
-		for (int i = x2 >> 3; i >= (x1 + vx) >> 3; i--) {// Search by byte
-			int b = Utils::lastBit((byte)(_boundary[y + i] | _objBound[y + i]));
-			if (b < 8) {    // b is index or 8
-				// Compute x of boundary and test if intersection
-				b += i << 3;
-				if ((b >= x1 + vx) && (b <= x2))
-					return (b > x1 + ((x2 - x1) >> 1)) ? vx : b - x1 + 1; // return dx
-			}
-		}
-	}
-	return vx;
-}
-
-/**
-* Similar to Delta_x, but for movement in y direction.  Special case of
-* bytes at end of line segment; must only count boundary bits falling on
-* line segment.
-*/
-int HugoEngine::deltaY(const int x1, const int x2, const int vy, const int y) const {
-	debugC(3, kDebugEngine, "deltaY(%d, %d, %d, %d)", x1, x2, vy, y);
-
-	if (vy == 0)
-		return 0;                                   // Object stationary
-
-	int inc = (vy > 0) ? 1 : -1;
-	for (int j = y + inc; j != (y + vy + inc); j += inc) { //Search by byte
-		for (int i = x1 >> 3; i <= x2 >> 3; i++) {
-			int b = _boundary[j * kCompLineSize + i] | _objBound[j * kCompLineSize + i];
-			if (b != 0) {                           // Any bit set
-				// Make sure boundary bits fall on line segment
-				if (i == (x2 >> 3))                 // Adjust right end
-					b &= 0xff << ((i << 3) + 7 - x2);
-				else if (i == (x1 >> 3))            // Adjust left end
-					b &= 0xff >> (x1 - (i << 3));
-				if (b)
-					return j - y - inc;
-			}
-		}
-	}
-	return vy;
-}
-
-/**
-* Store a horizontal line segment in the object boundary file
-*/
-void HugoEngine::storeBoundary(const int x1, const int x2, const int y) {
-	debugC(5, kDebugEngine, "storeBoundary(%d, %d, %d)", x1, x2, y);
-
-	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
-		byte *b = &_objBound[y * kCompLineSize + i];// get boundary byte
-		if (i == x2 >> 3)                           // Adjust right end
-			*b |= 0xff << ((i << 3) + 7 - x2);
-		else if (i == x1 >> 3)                      // Adjust left end
-			*b |= 0xff >> (x1 - (i << 3));
-		else
-			*b = 0xff;
-	}
-}
-
-/**
-* Clear a horizontal line segment in the object boundary file
-*/
-void HugoEngine::clearBoundary(const int x1, const int x2, const int y) {
-	debugC(5, kDebugEngine, "clearBoundary(%d, %d, %d)", x1, x2, y);
-
-	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
-		byte *b = &_objBound[y * kCompLineSize + i];// get boundary byte
-		if (i == x2 >> 3)                           // Adjust right end
-			*b &= ~(0xff << ((i << 3) + 7 - x2));
-		else if (i == x1 >> 3)                      // Adjust left end
-			*b &= ~(0xff >> (x1 - (i << 3)));
-		else
-			*b = 0;
-	}
-}
-
-/**
-* Clear a horizontal line segment in the screen boundary file
-* Used to fix some data issues
-*/
-void HugoEngine::clearScreenBoundary(const int x1, const int x2, const int y) {
-	debugC(5, kDebugEngine, "clearScreenBoundary(%d, %d, %d)", x1, x2, y);
-
-	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
-		byte *b = &_boundary[y * kCompLineSize + i];// get boundary byte
-		if (i == x2 >> 3)                           // Adjust right end
-			*b &= ~(0xff << ((i << 3) + 7 - x2));
-		else if (i == x1 >> 3)                      // Adjust left end
-			*b &= ~(0xff >> (x1 - (i << 3)));
-		else
-			*b = 0;
-	}
+		_object->clearScreenBoundary(50, 311, 152);
 }
 
 /**
@@ -1037,42 +899,6 @@ void HugoEngine::setNewScreen(const int screenNum) {
 
 	*_screen_p = screenNum;                         // HERO object
 	_object->setCarriedScreen(screenNum);           // Carried objects
-}
-
-/**
-* An object has collided with a boundary. See if any actions are required
-*/
-void HugoEngine::boundaryCollision(object_t *obj) {
-	debugC(1, kDebugEngine, "boundaryCollision");
-
-	if (obj == _hero) {
-		// Hotspots only relevant to HERO
-		int x;
-		if (obj->vx > 0)
-			x = obj->x + obj->currImagePtr->x2;
-		else
-			x = obj->x + obj->currImagePtr->x1;
-		int y = obj->y + obj->currImagePtr->y2;
-
-		for (int i = 0; _hotspots[i].screenIndex >= 0; i++) {
-			hotspot_t *hotspot = &_hotspots[i];
-			if (hotspot->screenIndex == obj->screenIndex)
-				if ((x >= hotspot->x1) && (x <= hotspot->x2) && (y >= hotspot->y1) && (y <= hotspot->y2)) {
-					_scheduler->insertActionList(hotspot->actIndex);
-					break;
-				}
-		}
-	} else {
-		// Check whether an object collided with HERO
-		int dx = _hero->x + _hero->currImagePtr->x1 - obj->x - obj->currImagePtr->x1;
-		int dy = _hero->y + _hero->currImagePtr->y2 - obj->y - obj->currImagePtr->y2;
-		// If object's radius is infinity, use a closer value
-		int8 radius = obj->radius;
-		if (radius < 0)
-			radius = kStepDx * 2;
-		if ((abs(dx) <= radius) && (abs(dy) <= radius))
-			_scheduler->insertActionList(obj->actIndex);
-	}
 }
 
 /**

@@ -50,6 +50,10 @@ namespace Hugo {
 ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0) {
 	_numObj = 0;
 	_objCount = 0;
+	memset(_objBound, '\0', sizeof(overlay_t));
+	memset(_boundary, '\0', sizeof(overlay_t));
+	memset(_overlay,  '\0', sizeof(overlay_t));
+	memset(_ovlBase,  '\0', sizeof(overlay_t));
 }
 
 ObjectHandler::~ObjectHandler() {
@@ -591,7 +595,176 @@ void ObjectHandler::readObjectImages() {
 
 bool ObjectHandler::checkBoundary(int16 x, int16 y) {
 	// Check if Boundary bit set
-	return (_vm->getBoundaryOverlay()[y * kCompLineSize + x / 8] & (0x80 >> x % 8)) != 0;
+	return (_boundary[y * kCompLineSize + x / 8] & (0x80 >> x % 8)) != 0;
+}
+
+/**
+* Return maximum allowed movement (from zero to vx) such that object does
+* not cross a boundary (either background or another object)
+*/
+int ObjectHandler::deltaX(const int x1, const int x2, const int vx, int y) const {
+// Explanation of algorithm:  The boundaries are drawn as contiguous
+// lines 1 pixel wide.  Since DX,DY are not necessarily 1, we must
+// detect boundary crossing.  If vx positive, examine each pixel from
+// x1 old to x2 new, else x2 old to x1 new, both at the y2 line.
+// If vx zero, no need to check.  If vy non-zero then examine each
+// pixel on the line segment x1 to x2 from y old to y new.
+// Fix from Hugo I v1.5:
+// Note the diff is munged in the return statement to cater for a special
+// cases arising from differences in image widths from one sequence to
+// another.  The problem occurs reversing direction at a wall where the
+// new image intersects before the object can move away.  This is cured
+// by comparing the intersection with half the object width pos. If the
+// intersection is in the other half wrt the intended direction, use the
+// desired vx, else use the computed delta.  i.e. believe the desired vx
+
+	debugC(3, kDebugEngine, "deltaX(%d, %d, %d, %d)", x1, x2, vx, y);
+
+	if (vx == 0)
+		return 0;                                  // Object stationary
+
+	y *= kCompLineSize;                             // Offset into boundary file
+	if (vx > 0) {
+		// Moving to right
+		for (int i = x1 >> 3; i <= (x2 + vx) >> 3; i++) {// Search by byte
+			int b = Utils::firstBit((byte)(_boundary[y + i] | _objBound[y + i]));
+			if (b < 8) {   // b is index or 8
+				// Compute x of boundary and test if intersection
+				b += i << 3;
+				if ((b >= x1) && (b <= x2 + vx))
+					return (b < x1 + ((x2 - x1) >> 1)) ? vx : b - x2 - 1; // return dx
+			}
+		}
+	} else {
+		// Moving to left
+		for (int i = x2 >> 3; i >= (x1 + vx) >> 3; i--) {// Search by byte
+			int b = Utils::lastBit((byte)(_boundary[y + i] | _objBound[y + i]));
+			if (b < 8) {    // b is index or 8
+				// Compute x of boundary and test if intersection
+				b += i << 3;
+				if ((b >= x1 + vx) && (b <= x2))
+					return (b > x1 + ((x2 - x1) >> 1)) ? vx : b - x1 + 1; // return dx
+			}
+		}
+	}
+	return vx;
+}
+
+/**
+* Similar to Delta_x, but for movement in y direction.  Special case of
+* bytes at end of line segment; must only count boundary bits falling on
+* line segment.
+*/
+int ObjectHandler::deltaY(const int x1, const int x2, const int vy, const int y) const {
+	debugC(3, kDebugEngine, "deltaY(%d, %d, %d, %d)", x1, x2, vy, y);
+
+	if (vy == 0)
+		return 0;                                   // Object stationary
+
+	int inc = (vy > 0) ? 1 : -1;
+	for (int j = y + inc; j != (y + vy + inc); j += inc) { //Search by byte
+		for (int i = x1 >> 3; i <= x2 >> 3; i++) {
+			int b = _boundary[j * kCompLineSize + i] | _objBound[j * kCompLineSize + i];
+			if (b != 0) {                           // Any bit set
+				// Make sure boundary bits fall on line segment
+				if (i == (x2 >> 3))                 // Adjust right end
+					b &= 0xff << ((i << 3) + 7 - x2);
+				else if (i == (x1 >> 3))            // Adjust left end
+					b &= 0xff >> (x1 - (i << 3));
+				if (b)
+					return j - y - inc;
+			}
+		}
+	}
+	return vy;
+}
+
+/**
+* Store a horizontal line segment in the object boundary file
+*/
+void ObjectHandler::storeBoundary(const int x1, const int x2, const int y) {
+	debugC(5, kDebugEngine, "storeBoundary(%d, %d, %d)", x1, x2, y);
+
+	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
+		byte *b = &_objBound[y * kCompLineSize + i];// get boundary byte
+		if (i == x2 >> 3)                           // Adjust right end
+			*b |= 0xff << ((i << 3) + 7 - x2);
+		else if (i == x1 >> 3)                      // Adjust left end
+			*b |= 0xff >> (x1 - (i << 3));
+		else
+			*b = 0xff;
+	}
+}
+
+/**
+* Clear a horizontal line segment in the object boundary file
+*/
+void ObjectHandler::clearBoundary(const int x1, const int x2, const int y) {
+	debugC(5, kDebugEngine, "clearBoundary(%d, %d, %d)", x1, x2, y);
+
+	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
+		byte *b = &_objBound[y * kCompLineSize + i];// get boundary byte
+		if (i == x2 >> 3)                           // Adjust right end
+			*b &= ~(0xff << ((i << 3) + 7 - x2));
+		else if (i == x1 >> 3)                      // Adjust left end
+			*b &= ~(0xff >> (x1 - (i << 3)));
+		else
+			*b = 0;
+	}
+}
+
+/**
+* Clear a horizontal line segment in the screen boundary file
+* Used to fix some data issues
+*/
+void ObjectHandler::clearScreenBoundary(const int x1, const int x2, const int y) {
+	debugC(5, kDebugEngine, "clearScreenBoundary(%d, %d, %d)", x1, x2, y);
+
+	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
+		byte *b = &_boundary[y * kCompLineSize + i];// get boundary byte
+		if (i == x2 >> 3)                           // Adjust right end
+			*b &= ~(0xff << ((i << 3) + 7 - x2));
+		else if (i == x1 >> 3)                      // Adjust left end
+			*b &= ~(0xff >> (x1 - (i << 3)));
+		else
+			*b = 0;
+	}
+}
+
+/**
+* An object has collided with a boundary. See if any actions are required
+*/
+void ObjectHandler::boundaryCollision(object_t *obj) {
+	debugC(1, kDebugEngine, "boundaryCollision");
+
+	if (obj == _vm->_hero) {
+		// Hotspots only relevant to HERO
+		int x;
+		if (obj->vx > 0)
+			x = obj->x + obj->currImagePtr->x2;
+		else
+			x = obj->x + obj->currImagePtr->x1;
+		int y = obj->y + obj->currImagePtr->y2;
+
+		for (int i = 0; _vm->_hotspots[i].screenIndex >= 0; i++) {
+			hotspot_t *hotspot = &_vm->_hotspots[i];
+			if (hotspot->screenIndex == obj->screenIndex)
+				if ((x >= hotspot->x1) && (x <= hotspot->x2) && (y >= hotspot->y1) && (y <= hotspot->y2)) {
+					_vm->_scheduler->insertActionList(hotspot->actIndex);
+					break;
+				}
+		}
+	} else {
+		// Check whether an object collided with HERO
+		int dx = _vm->_hero->x + _vm->_hero->currImagePtr->x1 - obj->x - obj->currImagePtr->x1;
+		int dy = _vm->_hero->y + _vm->_hero->currImagePtr->y2 - obj->y - obj->currImagePtr->y2;
+		// If object's radius is infinity, use a closer value
+		int8 radius = obj->radius;
+		if (radius < 0)
+			radius = kStepDx * 2;
+		if ((abs(dx) <= radius) && (abs(dy) <= radius))
+			_vm->_scheduler->insertActionList(obj->actIndex);
+	}
 }
 
 } // End of namespace Hugo

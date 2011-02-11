@@ -42,8 +42,25 @@ public:
 	ObjectHandler(HugoEngine *vm);
 	virtual ~ObjectHandler();
 
+	overlay_t _objBound;
+	overlay_t _boundary;                            // Boundary overlay file
+	overlay_t _overlay;                             // First overlay file
+	overlay_t _ovlBase;                             // First overlay base file
+
 	object_t  *_objects;
 	uint16    _numObj;
+
+	byte getBoundaryOverlay(uint16 index) const { return _boundary[index]; }
+	byte getObjectBoundary(uint16 index)  const { return _objBound[index]; }
+	byte getBaseBoundary(uint16 index)    const { return _ovlBase[index];  }
+	byte getFirstOverlay(uint16 index)    const { return _overlay[index];  }
+
+	int  deltaX(const int x1, const int x2, const int vx, int y) const;
+	int  deltaY(const int x1, const int x2, const int vy, const int y) const;
+	void boundaryCollision(object_t *obj);
+	void clearBoundary(const int x1, const int x2, const int y);
+	void clearScreenBoundary(const int x1, const int x2, const int y);
+	void storeBoundary(const int x1, const int x2, const int y);
 
 	virtual void homeIn(const int objIndex1, const int objIndex2, const int8 objDx, const int8 objDy) = 0;
 	virtual void moveObjects() = 0;

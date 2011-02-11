@@ -34,13 +34,7 @@
 #define HUGO_DISPLAY_H
 
 namespace Hugo {
-enum overlayState_t {UNDEF, FG, BG};                // Overlay state
-
-static const int kShapeSize = 24;
-static const int kFontLength = 128;                 // Number of chars in font
-static const int kFontSize = 1200;                  // Max size of font data
-static const int kNumFonts = 3;                     // Number of dib fonts
-static const int kCenter = -1;                      // Used to center text in x
+enum overlayState_t {kOvlUndef, kOvlForeground, kOvlBackground}; // Overlay state
 
 struct rect_t {                                     // Rectangle used in Display list
 	int16 x;                                        // Position in dib
@@ -49,6 +43,8 @@ struct rect_t {                                     // Rectangle used in Display
 	int16 dy;                                       // height
 };
 
+static const int kCenter = -1;                      // Used to center text in x
+
 /**
  * A black and white Windows-style arrow cursor (12x20).
  * 0 = Black (#000000 in 24-bit RGB).
@@ -56,7 +52,6 @@ struct rect_t {                                     // Rectangle used in Display
  * 15 = White (#FFFFFF in 24-bit RGB).
  * This cursor comes from Mohawk engine.
  */
-
 static const byte stdMouseCursor[] = {
 	0, 0,  1,  1,  1,  1,  1,  1,  1,  1,  1, 1,
 	0, 15, 0,  1,  1,  1,  1,  1,  1,  1,  1, 1,
@@ -79,8 +74,6 @@ static const byte stdMouseCursor[] = {
 	1, 1,  1,  1,  1,  1,  1,  0,  15, 15, 0, 1,
 	1, 1,  1,  1,  1,  1,  1,  1,  0,  0,  1, 1
 };
-static const byte stdMouseCursorHeight = 20;
-static const byte stdMouseCursorWidth = 12;
 
 class Screen {
 public:
@@ -145,6 +138,12 @@ protected:
 
 	static const int kRectListSize = 16;            // Size of add/restore rect lists
 	static const int kBlitListSize = kRectListSize * 2; // Size of dirty rect blit list
+	static const int kShapeSize = 24;
+	static const int kFontLength = 128;             // Number of chars in font
+	static const int kFontSize = 1200;              // Max size of font data
+	static const int kNumFonts = 3;                 // Number of dib fonts
+	static const byte stdMouseCursorHeight = 20;
+	static const byte stdMouseCursorWidth = 12;
 
 	inline bool isInX(const int16 x, const rect_t *rect) const;
 	inline bool isInY(const int16 y, const rect_t *rect) const;

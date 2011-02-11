@@ -199,14 +199,14 @@ void Screen::setBackgroundColor(const uint16 color) {
 overlayState_t Screen::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
 	debugC(4, kDebugDisplay, "findOvl()");
 
-	for (; y < seq_p->lines; y++) {              // Each line in object
-		image_pt ovb_p = _vm->getBaseBoundaryOverlay() + ((uint16)(dst_p - _frontBuffer) >> 3);  // Ptr into overlay bits
-		if (*ovb_p & (0x80 >> ((uint16)(dst_p - _frontBuffer) & 7))) // Overlay bit is set
-			return FG;                              // Found a bit - must be foreground
+	for (; y < seq_p->lines; y++) {                 // Each line in object
+		byte ovb = _vm->_object->getBaseBoundary((uint16)(dst_p - _frontBuffer) >> 3); // Ptr into overlay bits
+		if (ovb & (0x80 >> ((uint16)(dst_p - _frontBuffer) & 7))) // Overlay bit is set
+			return kOvlForeground;                  // Found a bit - must be foreground
 		dst_p += kXPix;
 	}
 
-	return BG;                                      // No bits set, must be background
+	return kOvlBackground;                          // No bits set, must be background
 }
 
 /**
@@ -218,19 +218,17 @@ void Screen::displayFrame(const int sx, const int sy, seq_t *seq, const bool for
 
 	image_pt image = seq->imagePtr;                 // Ptr to object image data
 	image_pt subFrontBuffer = &_frontBuffer[sy * kXPix + sx]; // Ptr to offset in _frontBuffer
-	image_pt overlay = &_vm->getFirstOverlay()[(sy * kXPix + sx) >> 3]; // Ptr to overlay data
 	int16 frontBufferwrap = kXPix - seq->x2 - 1;     // Wraps dest_p after each line
 	int16 imageWrap = seq->bytesPerLine8 - seq->x2 - 1;
-
-	overlayState_t overlayState = UNDEF;            // Overlay state of object
+	overlayState_t overlayState = kOvlUndef;        // Overlay state of object
 	for (uint16 y = 0; y < seq->lines; y++) {       // Each line in object
 		for (uint16 x = 0; x <= seq->x2; x++) {
 			if (*image) {                           // Non-transparent
-				overlay = _vm->getFirstOverlay() + ((uint16)(subFrontBuffer - _frontBuffer) >> 3);       // Ptr into overlay bits
-				if (*overlay & (0x80 >> ((uint16)(subFrontBuffer - _frontBuffer) & 7))) {   // Overlay bit is set
-					if (overlayState == UNDEF)      // Overlay defined yet?
+				byte ovlBound = _vm->_object->getFirstOverlay((uint16)(subFrontBuffer - _frontBuffer) >> 3); // Ptr into overlay bits
+				if (ovlBound & (0x80 >> ((uint16)(subFrontBuffer - _frontBuffer) & 7))) { // Overlay bit is set
+					if (overlayState == kOvlUndef)  // Overlay defined yet?
 						overlayState = findOvl(seq, subFrontBuffer, y);// No, find it.
-					if (foreFl || overlayState == FG)   // Object foreground
+					if (foreFl || overlayState == kOvlForeground) // Object foreground
 						*subFrontBuffer = *image;   // Copy pixel
 				} else {                            // No overlay
 					*subFrontBuffer = *image;       // Copy pixel

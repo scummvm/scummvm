@@ -44,9 +44,9 @@ public:
 	InventoryHandler(HugoEngine *vm);
 
 	void     setInventoryObjId(int16 objId)    { _inventoryObjId = objId; }
-	int16    getInventoryObjId()               { return _inventoryObjId;  }
 	void     setInventoryState(istate_t state) { _inventoryState = state; }
-	istate_t getInventoryState()               { return _inventoryState;  }
+	int16    getInventoryObjId() const         { return _inventoryObjId;  }
+	istate_t getInventoryState() const         { return _inventoryState;  }
 
 	int16 processInventory(const invact_t action, ...);
 	void runInventory();

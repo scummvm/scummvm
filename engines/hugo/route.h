@@ -35,6 +35,11 @@
 
 namespace Hugo {
 
+/**
+* Purpose of an automatic route
+*/
+enum go_t {kRouteSpace, kRouteExit, kRouteLook, kRouteGet};
+
 struct Point {
 	int x;
 	int y;
@@ -49,8 +54,8 @@ class Route {
 public:
 	Route(HugoEngine *vm);
 
-	void resetRoute()     {_routeIndex = -1; }
-	int16 getRouteIndex() {return _routeIndex; }
+	void  resetRoute()          {_routeIndex = -1;   }
+	int16 getRouteIndex() const {return _routeIndex; }
 
 	void processRoute();
 	bool startRoute(const go_t go_for, const int16 id, int16 cx, int16 cy);

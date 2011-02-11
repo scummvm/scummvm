@@ -141,11 +141,6 @@ enum istate_t {kInventoryOff, kInventoryUp, kInventoryDown, kInventoryActive};
 enum vstate_t {kViewIdle, kViewIntroInit, kViewIntro, kViewPlay, kViewInvent, kViewExit};
 
 /**
-* Purpose of an automatic route
-*/
-enum go_t {kRouteSpace, kRouteExit, kRouteLook, kRouteGet};
-
-/**
 * Enumerate whether object is foreground, background or 'floating'
 * If floating, HERO can collide with it and fore/back ground is determined
 * by relative y-coord of object base.  This is the general case.
@@ -305,37 +300,18 @@ public:
 
 	char *useBG(const char *name);
 
-	int  deltaX(const int x1, const int x2, const int vx, int y) const;
-	int  deltaY(const int x1, const int x2, const int vy, const int y) const;
-
 	int8 getTPS() const;
 
 	void initGame(const HugoGameDescription *gd);
 	void initGamePart(const HugoGameDescription *gd);
-	void boundaryCollision(object_t *obj);
-	void clearBoundary(const int x1, const int x2, const int y);
-	void clearScreenBoundary(const int x1, const int x2, const int y);
 	void endGame();
 	void initStatus();
 	void readScreenFiles(const int screen);
 	void screenActions(const int screen);
 	void setNewScreen(const int screen);
 	void shutdown();
-	void storeBoundary(const int x1, const int x2, const int y);
 	void syncSoundSettings();
 
-	overlay_t &getBoundaryOverlay() {
-		return _boundary;
-	}
-	overlay_t &getObjectBoundaryOverlay() {
-		return _objBound;
-	}
-	overlay_t &getBaseBoundaryOverlay() {
-		return _ovlBase;
-	}
-	overlay_t &getFirstOverlay() {
-		return _overlay;
-	}
 	status_t &getGameStatus() {
 		return _status;
 	}
@@ -406,14 +382,6 @@ private:
 // The following are bit plane display overlays which mark travel boundaries,
 // foreground stationary objects and baselines for those objects (used to
 // determine foreground/background wrt moving objects)
-
-// Vinterstum: These shouldn't be static, but we get weird pathfinding issues (and Valgrind warnings) without.
-// Needs more investigation. Alignment issues?
-
-	static overlay_t _boundary;                     // Boundary overlay file
-	static overlay_t _overlay;                      // First overlay file
-	static overlay_t _ovlBase;                      // First overlay base file
-	static overlay_t _objBound;                     // Boundary file marks object baselines
 
 	GameType _gameType;
 	Common::Platform _platform;

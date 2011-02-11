@@ -329,21 +329,22 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 	int i;
 	for (i = 1, obj = &_vm->_object->_objects[i]; i < _vm->_object->_numObj; i++, obj++) {
 		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling != kCycleInvisible) && (obj->priority == kPriorityFloating))
-			_vm->storeBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
+			_vm->_object->storeBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
 	}
 
 	// Combine objbound and boundary bitmaps to local byte map
-	for (int16 y = 0; y < kYPix; y++) {
-		for (int16 x = 0; x < kCompLineSize; x++) {
+	for (uint16 y = 0; y < kYPix; y++) {
+		for (uint16 x = 0; x < kCompLineSize; x++) {
+			uint16 boundIdx = y * kCompLineSize + x;
 			for (i = 0; i < 8; i++)
-				_boundaryMap[y][x * 8 + i] = ((_vm->getObjectBoundaryOverlay()[y * kCompLineSize + x] | _vm->getBoundaryOverlay()[y * kCompLineSize + x]) & (0x80 >> i)) ? kMapBound : 0;
+				_boundaryMap[y][x * 8 + i] = ((_vm->_object->getObjectBoundary(boundIdx) | _vm->_object->getBoundaryOverlay(boundIdx)) & (0x80 >> i)) ? kMapBound : 0;
 		}
 	}
 
 	// Clear all object baselines from objbound
 	for (i = 0, obj = _vm->_object->_objects; i < _vm->_object->_numObj; i++, obj++) {
 		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling != kCycleInvisible) && (obj->priority == kPriorityFloating))
-			_vm->clearBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
+			_vm->_object->clearBoundary(obj->oldx + obj->currImagePtr->x1, obj->oldx + obj->currImagePtr->x2, obj->oldy + obj->currImagePtr->y2);
 	}
 
 	// Search from hero to destination

@@ -120,7 +120,7 @@ void ObjectHandler_v3d::moveObjects() {
 					obj->cycling = kCycleForward;
 				} else {
 					obj->cycling = kCycleNotCycling;
-					_vm->boundaryCollision(obj);    // Must have got hero!
+					boundaryCollision(obj);         // Must have got hero!
 				}
 				obj->oldvx = obj->vx;
 				obj->oldvy = obj->vy;
@@ -162,7 +162,7 @@ void ObjectHandler_v3d::moveObjects() {
 			}
 			// Store boundaries
 			if ((obj->cycling > kCycleAlmostInvisible) && (obj->priority == kPriorityFloating))
-				_vm->storeBoundary(obj->x + currImage->x1, obj->x + currImage->x2, obj->y + currImage->y2);
+				storeBoundary(obj->x + currImage->x1, obj->x + currImage->x2, obj->y + currImage->y2);
 		}
 	}
 
@@ -182,25 +182,25 @@ void ObjectHandler_v3d::moveObjects() {
 			int y2 = obj->y + currImage->y2;        // Bottom edge
 
 			if ((obj->cycling > kCycleAlmostInvisible) && (obj->priority == kPriorityFloating))
-				_vm->clearBoundary(x1, x2, y2);     // Clear our own boundary
+				clearBoundary(x1, x2, y2);          // Clear our own boundary
 
 			// Allowable motion wrt boundary
-			int dx = _vm->deltaX(x1, x2, obj->vx, y2);
+			int dx = deltaX(x1, x2, obj->vx, y2);
 			if (dx != obj->vx) {
 				// An object boundary collision!
-				_vm->boundaryCollision(obj);
+				boundaryCollision(obj);
 				obj->vx = 0;
 			}
 
-			int dy = _vm->deltaY(x1, x2, obj->vy, y2);
+			int dy = deltaY(x1, x2, obj->vy, y2);
 			if (dy != obj->vy) {
 				// An object boundary collision!
-				_vm->boundaryCollision(obj);
+				boundaryCollision(obj);
 				obj->vy = 0;
 			}
 
 			if ((obj->cycling > kCycleAlmostInvisible) && (obj->priority == kPriorityFloating))
-				_vm->storeBoundary(x1, x2, y2);     // Re-store our own boundary
+				storeBoundary(x1, x2, y2);          // Re-store our own boundary
 
 			obj->x += dx;                           // Update object position
 			obj->y += dy;
@@ -225,7 +225,7 @@ void ObjectHandler_v3d::moveObjects() {
 		object_t *obj = &_objects[i];               // Get pointer to object
 		seq_t *currImage = obj->currImagePtr;       // Get ptr to current image
 		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling > kCycleAlmostInvisible) && (obj->priority == kPriorityFloating))
-			_vm->clearBoundary(obj->oldx + currImage->x1, obj->oldx + currImage->x2, obj->oldy + currImage->y2);
+			clearBoundary(obj->oldx + currImage->x1, obj->oldx + currImage->x2, obj->oldy + currImage->y2);
 	}
 
 	// If maze mode is enabled, do special maze processing
