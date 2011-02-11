@@ -1722,7 +1722,7 @@ void ToonEngine::exitScene() {
 	_currentTextLineCharacterId = 0;
 
 	char temp[256];
-	strcpy(temp, createRoomFilename(Common::String::format("%s.pak", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
+	strcpy(temp, createRoomFilename(Common::String::format("%s.PAK", _gameState->_locations[_gameState->_currentScene]._name).c_str()).c_str());
 	resources()->closePackage(temp);
 
 
