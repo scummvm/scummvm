@@ -28,7 +28,7 @@
 #include "common/scummsys.h"
 #include "video/codecs/qdm2.h"
 
-#ifdef GRAPHICS_QDM2_H
+#ifdef VIDEO_CODECS_QDM2_H
 
 #include "audio/audiostream.h"
 #include "video/codecs/qdm2data.h"
