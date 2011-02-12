@@ -115,7 +115,7 @@ HugoEngine::~HugoEngine() {
 		free(_cmdList);
 	}
 
-	if (_cmdList) {
+	if (_screenActs) {
 		for (int i = 0; i < _screenActsSize; i++)
 			free(_screenActs[i]);
 		free(_screenActs);
