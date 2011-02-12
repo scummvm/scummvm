@@ -55,7 +55,7 @@ void MystScriptParser_Mechanical::setupOpcodes() {
 	OPCODE(122, opcode_122);
 	OPCODE(123, opcode_123);
 	OPCODE(124, opcode_124);
-	OPCODE(125, opcode_125);
+	OPCODE(125, o_mystStaircaseMovie);
 	OPCODE(126, opcode_126);
 	OPCODE(127, opcode_127);
 	OPCODE(128, opcode_128);
@@ -292,15 +292,10 @@ void MystScriptParser_Mechanical::opcode_124(uint16 op, uint16 var, uint16 argc,
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Mechanical::opcode_125(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc == 0) {
-		// Used on Card 6267 (Code Lock)
-		// Called by Red Execute Button...
-		debugC(kDebugScript, "Opcode %d: Code Lock Execute...", op);
+void MystScriptParser_Mechanical::o_mystStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Myst book staircase video", op);
 
-		// TODO: Fill in Logic For Code Lock...
-	} else
-		unknown(op, var, argc, argv);
+	_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("sstairs", kMechanicalStack), 199, 108);
 }
 
 void MystScriptParser_Mechanical::opcode_126(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

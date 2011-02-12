@@ -74,7 +74,7 @@ private:
 	DECLARE_OPCODE(opcode_122);
 	DECLARE_OPCODE(opcode_123);
 	DECLARE_OPCODE(opcode_124);
-	DECLARE_OPCODE(opcode_125);
+	DECLARE_OPCODE(o_mystStaircaseMovie);
 	DECLARE_OPCODE(opcode_126);
 	DECLARE_OPCODE(opcode_127);
 	DECLARE_OPCODE(opcode_128);
