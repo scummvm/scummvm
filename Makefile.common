@@ -163,17 +163,19 @@ VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
 
 
 ######################################################################
-# Get Subversion's working copy information
+# Get git's working copy information
 ######################################################################
 
-ifneq ($(shell svn info $(srcdir) 1>/dev/null 2>&1 || echo "error"),error)
-SVNROOT := $(srcdir)
+ifneq ($(shell cd $(srcdir); git rev-parse --verify HEAD 1>/dev/null 2>&1 || echo "error"),error)
+GITROOT := $(srcdir)
 ifeq ($(origin VER_REV), undefined)
+# Are there uncommitted changes? (describe --dirty is only available since 1.6.6)
+VER_DIRTY := $(shell cd $(srcdir); git update-index --refresh --unmerged 1>/dev/null 2>&1; git diff-index --quiet HEAD || echo "-dirty")
 # Get the working copy base revision
-VER_REV := $(shell LANG=C svn info $(SVNROOT) | grep "^Revision" | cut -d ' ' -f 2)
+VER_REV := $(shell cd $(srcdir); git describe --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
 endif
 else
-SVNROOT := https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/
+GITROOT := git://github.com/scummvm/scummvm.git
 endif
 
 # Define the Subversion revision if available, either autodetected or
@@ -186,11 +188,11 @@ endif
 # Distribution settings
 ######################################################################
 
-ifeq ($(VER_EXTRA),svn)
+ifeq ($(VER_EXTRA),git)
 ifeq ($(origin VER_REV), undefined)
 DISTVERSION = $(shell date '+%Y-%m-%d')
 else
-DISTVERSION = svn$(VER_REV)
+DISTVERSION = git$(VER_REV)
 endif
 else
 DISTVERSION = $(VERSION)
@@ -200,6 +202,7 @@ DISTNAME := scummvm-$(DISTVERSION)
 DISTDIR := dist
 VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
+# TODO git via $(GITROOT)
 $(VERFILE): $(srcdir)/base/internal_version.h
 	@$(RM_REC) $(DISTDIR)
 	@$(MKDIR) $(DISTDIR)
