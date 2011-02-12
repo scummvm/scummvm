@@ -792,7 +792,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 
 	if (!scumm_stricmp(argv[2], "all")) {
 		resNumber = 0;
-		resMax = 999;
+		resMax = 65535;
 	} else {
 		resNumber = resMax = atoi(argv[2]);
 	}
