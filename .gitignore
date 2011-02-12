@@ -1,4 +1,6 @@
 *~
+.*.swp
+.*.swo
 *.o
 lib*.a
 .deps
