@@ -38,6 +38,8 @@ namespace Mohawk {
 MystScriptParser_Mechanical::MystScriptParser_Mechanical(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_mechanical) {
 	setupOpcodes();
+
+	_mystStaircaseState = false;
 }
 
 MystScriptParser_Mechanical::~MystScriptParser_Mechanical() {
@@ -102,16 +104,15 @@ void MystScriptParser_Mechanical::runPersistentScripts() {
 
 uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
 	switch(var) {
-	case 0: // Sirrus's Secret Panel State
+	case 0: // Sirrus's Secret Panel State2
 		return _state.sirrusPanelState;
 	case 1: // Achenar's Secret Panel State
 		return _state.achenarPanelState;
 //	case 3: // Sirrus's Secret Room Crate State
 //		return 0;
 //		return 1;
-//	case 4: // Myst Book Room Staircase State
-//		return 0; // Staircase Up
-//		return 1; // Staircase Down
+	case 4: // Myst Book Room Staircase State
+		return _mystStaircaseState;
 //	case 5: // Fortress Position
 //		return 0; // Island with Code Lock
 //		return 1; // Island with Last Two Symbols of Code
@@ -136,10 +137,14 @@ uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
 //		return 3;
 //		return 4;
 //		return 5;
-//	case 15: // Code Lock Execute Button State(?)
-//		return 0;
-//		return 1;
-//		return 2;
+	case 15: // Code Lock Execute Button Script
+		if (_mystStaircaseState)
+			return 0;
+		else if (_state.codeShape[0] == 2 && _state.codeShape[1] == 8
+				&& _state.codeShape[2] == 5 && _state.codeShape[3] == 1)
+			return 1;
+		else
+			return 2;
 	case 16: // Code Lock Shape #1 - Left
 	case 17: // Code Lock Shape #2
 	case 18: // Code Lock Shape #3
@@ -171,8 +176,8 @@ void MystScriptParser_Mechanical::toggleVar(uint16 var) {
 	switch(var) {
 //	case 3: // Sirrus's Secret Room Crate State
 //		temp ^= 1;
-//	case 4: // Code Lock Puzzle Correct / Myst Book Room Staircase State
-//		temp ^= 1;
+	case 4: // Myst Book Room Staircase State
+		_mystStaircaseState ^= 1;
 	case 10: // Fortress Staircase State
 		_state.staircaseState ^= 1;
 	case 16: // Code Lock Shape #1 - Left
