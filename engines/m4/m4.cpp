@@ -42,7 +42,6 @@
 #include "m4/woodscript.h"
 #include "m4/actor.h"
 #include "m4/sound.h"
-#include "m4/rails.h"
 #include "m4/script.h"
 #include "m4/compression.h"
 #include "m4/animation.h"

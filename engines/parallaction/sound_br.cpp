@@ -23,7 +23,6 @@
  *
  */
 
-#include "audio/mixer.h"
 #include "common/stream.h"
 #include "common/util.h"
 

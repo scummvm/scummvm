@@ -40,7 +40,7 @@
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/debug-channels.h"
+#include "common/debug-channels.h" /* for debug manager */
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/file.h"
@@ -48,7 +48,6 @@
 #include "common/system.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
-#include "common/debug-channels.h" /* for debug manager */
 
 #include "gui/gui-manager.h"
 #include "gui/message.h"
