@@ -40,6 +40,8 @@ MystScriptParser_Stoneship::MystScriptParser_Stoneship(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_stoneship) {
 	setupOpcodes();
 
+	_tunnelRunning = false;
+
 	_state.generatorDepletionTime = 0;
 	_state.generatorDuration = 0;
 	_cabinMystBookPresent = 0;
@@ -52,10 +54,10 @@ MystScriptParser_Stoneship::MystScriptParser_Stoneship(MohawkEngine_Myst *vm) :
 		_state.trapdoorKeyState = 2;
 
 	// Power is not available when loading
-//	if (_state.sideDoorOpened)
-//		_state.generatorPowerAvailable = 2;
-//	else
-//		_state.generatorPowerAvailable = 0;
+	if (_state.sideDoorOpened)
+		_state.generatorPowerAvailable = 2;
+	else
+		_state.generatorPowerAvailable = 0;
 }
 
 MystScriptParser_Stoneship::~MystScriptParser_Stoneship() {
@@ -94,10 +96,10 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 	OPCODE(200, o_hologramDisplay_init);
 	OPCODE(201, o_hologramSelection_init);
 	OPCODE(202, o_battery_init);
-	OPCODE(203, opcode_203);
+	OPCODE(203, o_tunnelEnter_init);
 	OPCODE(204, o_batteryGauge_init);
-	OPCODE(205, opcode_205);
-	OPCODE(206, opcode_206);
+	OPCODE(205, o_tunnel_init);
+	OPCODE(206, o_tunnelLeave_init);
 	OPCODE(207, o_chest_init);
 	OPCODE(208, o_telescope_init);
 	OPCODE(209, o_achenarDrawers_init);
@@ -128,6 +130,9 @@ void MystScriptParser_Stoneship::runPersistentScripts() {
 
 	if (_batteryDepleting)
 		batteryDeplete_run();
+
+	if (_tunnelRunning)
+		tunnel_run();
 }
 
 uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
@@ -171,7 +176,7 @@ uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
 	case 12: // Trapdoor can be unlocked
 		return _state.trapdoorKeyState == 1 && _state.trapdoorState == 2;
 	case 13: // State Of Tunnels To Brothers' Rooms - Close Up
-		if (_state.generatorPowerAvailable == 0) {
+		if (_state.generatorPowerAvailable != 1) {
 			if (_state.pumpState != 2)
 				return 0; // Dark, Flooded
 			else
@@ -827,37 +832,13 @@ void MystScriptParser_Stoneship::o_battery_init(uint16 op, uint16 var, uint16 ar
 	batteryGaugeUpdate();
 }
 
-void MystScriptParser_Stoneship::opcode_203(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_tunnelEnter_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Tunnel enter", op);
 
-	// Used for all/most Cards in Tunnels Down To Brothers Rooms
+	o_tunnel_init(op, var, argc, argv);
 
-	// TODO: Duplicate or similar function to Opcode 203?
-	if (argc == 2 || argc == 4) {
-		debugC(kDebugScript, "Opcode %d: %d Arguments", op, argc);
-
-		uint16 imageIdDarkDoorOpen = 0;
-		uint16 imageIdDarkDoorClosed = 0;
-		uint16 u0 = argv[0];
-		uint16 soundIdAlarm = argv[argc - 1];
-
-		if (argc == 4) {
-			imageIdDarkDoorOpen = argv[1];
-			imageIdDarkDoorClosed = argv[2];
-		}
-
-		debugC(kDebugScript, "\tu0: %d", u0);
-
-		if (argc == 4) {
-			debugC(kDebugScript, "\timageIdDarkDoorOpen: %d", imageIdDarkDoorOpen);
-			debugC(kDebugScript, "\tsoundIdDarkDoorClosed: %d", imageIdDarkDoorClosed);
-		}
-
-		debugC(kDebugScript, "\tsoundIdAlarm: %d", soundIdAlarm);
-
-		// TODO: Fill in Correct Function for Lights
-	} else
-		unknown(op, var, argc, argv);
+	_tunnelRunning = true;
+	_tunnelNextTime = _vm->_system->getMillis() + 1500;
 }
 
 void MystScriptParser_Stoneship::o_batteryGauge_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -882,49 +863,50 @@ void MystScriptParser_Stoneship::batteryGauge_run() {
 	}
 }
 
-void MystScriptParser_Stoneship::opcode_205(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::o_tunnel_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+		debugC(kDebugScript, "Opcode %d: Tunnel card init", op);
 
-	// Used on Cards 2322, 2285 (Tunnels Down To Brothers Rooms)
+		_tunnelImagesCount = argv[0];
 
-	// TODO: Duplicate or similar function to Opcode 203?
-	if (argc == 2 || argc == 4) {
-		debugC(kDebugScript, "Opcode %d: %d Arguments", op, argc);
+		assert(_tunnelImagesCount <= 2 && "Too many images");
 
-		uint16 imageIdDoorOpen = 0;
-		uint16 imageIdDoorClosed = 0;
-
-		uint16 u0 = argv[0];
-		if (argc == 4) {
-			imageIdDoorOpen = argv[1];
-			imageIdDoorClosed = argv[2];
+		for (uint i = 0; i < _tunnelImagesCount; i++) {
+			_tunnelImages[i] = argv[i + 1];
 		}
 
-		uint16 soundIdAlarm = argv[argc - 1];
+		_tunnelAlarmSound = argv[argc - 1];
 
-		debugC(kDebugScript, "\tu0: %d", u0);
-
-		if (argc == 4) {
-			debugC(kDebugScript, "\timageIdDoorOpen: %d", imageIdDoorOpen);
-			debugC(kDebugScript, "\tsoundIdDoorClosed: %d", imageIdDoorClosed);
-		}
-
-		debugC(kDebugScript, "\tsoundIdAlarm: %d", soundIdAlarm);
-
-		// TODO: Fill in Correct Function for Lights
-	} else
-		unknown(op, var, argc, argv);
+		debugC(kDebugScript, "\timage count: %d", _tunnelImagesCount);
+		debugC(kDebugScript, "\tsoundIdAlarm: %d", _tunnelAlarmSound);
 }
 
-void MystScriptParser_Stoneship::opcode_206(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Stoneship::tunnel_run() {
+	uint32 time = _vm->_system->getMillis();
 
-	// Used for Cards 2272 and 2234 (Facing Out of Door)
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Unknown, %d Arguments", op, argc);
-		// TODO: Function Unknown...
-	} else
-		unknown(op, var, argc, argv);
+	if (time > _tunnelNextTime) {
+		_tunnelNextTime = time + 1500;
+		if (_state.generatorPowerAvailable == 2) {
+			// Draw tunnel black
+			if (_tunnelImagesCount) {
+				_vm->_gfx->copyImageToScreen(_tunnelImages[1], Common::Rect(544, 333));
+				_vm->_system->updateScreen();
+			}
+
+			_vm->_sound->replaceSoundMyst(_tunnelAlarmSound);
+
+			// Draw tunnel dark
+			if (_tunnelImagesCount) {
+				_vm->_gfx->copyImageToScreen(_tunnelImages[0], Common::Rect(544, 333));
+				_vm->_system->updateScreen();
+			}
+		}
+	}
+}
+
+void MystScriptParser_Stoneship::o_tunnelLeave_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Tunnel leave", op);
+
+	_tunnelRunning = false;
 }
 
 void MystScriptParser_Stoneship::o_chest_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

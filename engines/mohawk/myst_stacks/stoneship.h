@@ -78,10 +78,10 @@ private:
 	DECLARE_OPCODE(o_hologramDisplay_init);
 	DECLARE_OPCODE(o_hologramSelection_init);
 	DECLARE_OPCODE(o_battery_init);
-	DECLARE_OPCODE(opcode_203);
+	DECLARE_OPCODE(o_tunnelEnter_init);
 	DECLARE_OPCODE(o_batteryGauge_init);
-	DECLARE_OPCODE(opcode_205);
-	DECLARE_OPCODE(opcode_206);
+	DECLARE_OPCODE(o_tunnel_init);
+	DECLARE_OPCODE(o_tunnelLeave_init);
 	DECLARE_OPCODE(o_chest_init);
 	DECLARE_OPCODE(o_telescope_init);
 	DECLARE_OPCODE(o_achenarDrawers_init);
@@ -116,6 +116,13 @@ private:
 	MystResourceType6 *_hologramDisplay; // 84
 	MystResourceType6 *_hologramSelection; // 88
 	uint16 _hologramDisplayPos;
+
+	bool _tunnelRunning;
+	uint32 _tunnelNextTime;
+	uint16 _tunnelAlarmSound; // 100
+	uint16 _tunnelImagesCount; // 22
+	uint16 _tunnelImages[2]; // 32
+	void tunnel_run();
 
 	uint16 _telescopePosition; // 112
 	uint16 _telescopePanorama;
