@@ -15,6 +15,7 @@ lib*.a
 /*.dSYM
 /MT32_CONTROL.ROM
 /MT32_PCM.ROM
+/ScummVM.app
 
 /backends/platform/android/org/inodes/gus/scummvm/R.java
 /backends/platform/android/org/inodes/gus/scummvm/Manifest.java
