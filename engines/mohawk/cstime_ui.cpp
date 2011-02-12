@@ -1259,7 +1259,7 @@ CSTimeBook::~CSTimeBook() {
 
 void CSTimeBook::drawSmallBook() {
 	if (!_smallBookFeature) {
-		_smallBookFeature = _vm->getView()->installViewFeature(101, kFeatureSortStatic | kFeatureNewNoLoop, NULL);;
+		_smallBookFeature = _vm->getView()->installViewFeature(101, kFeatureSortStatic | kFeatureNewNoLoop, NULL);
 	} else {
 		_smallBookFeature->resetFeature(false, NULL, 0);
 	}
