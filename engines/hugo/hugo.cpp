@@ -416,32 +416,24 @@ bool HugoEngine::loadHugoDat() {
 	// Read _hotspots
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		int numRows = in.readUint16BE();
-		if (varnt == _gameVariant) {
-			_hotspots = (hotspot_t *)malloc(sizeof(hotspot_t) * numRows);
-			for (int i = 0; i < numRows; i++) {
-				_hotspots[i].screenIndex = in.readSint16BE();
-				_hotspots[i].x1 = in.readSint16BE();
-				_hotspots[i].y1 = in.readSint16BE();
-				_hotspots[i].x2 = in.readSint16BE();
-				_hotspots[i].y2 = in.readSint16BE();
-				_hotspots[i].actIndex = in.readUint16BE();
-				_hotspots[i].viewx = in.readSint16BE();
-				_hotspots[i].viewy = in.readSint16BE();
-				_hotspots[i].direction = in.readSint16BE();
-			}
-		} else {
-			for (int i = 0; i < numRows; i++) {
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readUint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-			}
+		hotspot_t *wrkHotspots = (hotspot_t *)malloc(sizeof(hotspot_t) * numRows);
+
+		for (int i = 0; i < numRows; i++) {
+			wrkHotspots[i].screenIndex = in.readSint16BE();
+			wrkHotspots[i].x1 = in.readSint16BE();
+			wrkHotspots[i].y1 = in.readSint16BE();
+			wrkHotspots[i].x2 = in.readSint16BE();
+			wrkHotspots[i].y2 = in.readSint16BE();
+			wrkHotspots[i].actIndex = in.readUint16BE();
+			wrkHotspots[i].viewx = in.readSint16BE();
+			wrkHotspots[i].viewy = in.readSint16BE();
+			wrkHotspots[i].direction = in.readSint16BE();
 		}
+
+		if (varnt == _gameVariant)
+			_hotspots = wrkHotspots;
+		else
+			free(wrkHotspots);
 	}
 
 	int numElem, numSubElem;
@@ -462,87 +454,75 @@ bool HugoEngine::loadHugoDat() {
 	//Read _uses
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
+		uses_t *wrkUses = (uses_t *)malloc(sizeof(uses_t) * numElem);
+
+		for (int i = 0; i < numElem; i++) {
+			wrkUses[i].objId = in.readSint16BE();
+			wrkUses[i].dataIndex = in.readUint16BE();
+			numSubElem = in.readUint16BE();
+			wrkUses[i].targets = (target_t *)malloc(sizeof(target_t) * numSubElem);
+			for (int j = 0; j < numSubElem; j++) {
+				wrkUses[i].targets[j].nounIndex = in.readUint16BE();
+				wrkUses[i].targets[j].verbIndex = in.readUint16BE();
+			}
+		}
+
 		if (varnt == _gameVariant) {
 			_usesSize = numElem;
-			_uses = (uses_t *)malloc(sizeof(uses_t) * numElem);
-			for (int i = 0; i < numElem; i++) {
-				_uses[i].objId = in.readSint16BE();
-				_uses[i].dataIndex = in.readUint16BE();
-				numSubElem = in.readUint16BE();
-				_uses[i].targets = (target_t *)malloc(sizeof(target_t) * numSubElem);
-				for (int j = 0; j < numSubElem; j++) {
-					_uses[i].targets[j].nounIndex = in.readUint16BE();
-					_uses[i].targets[j].verbIndex = in.readUint16BE();
-				}
-			}
+			_uses = wrkUses;
 		} else {
-			for (int i = 0; i < numElem; i++) {
-				in.readSint16BE();
-				in.readUint16BE();
-				numSubElem = in.readUint16BE();
-				for (int j = 0; j < numSubElem; j++) {
-					in.readUint16BE();
-					in.readUint16BE();
-				}
-			}
+			for (int i = 0; i < numElem; i++)
+				free(wrkUses[i].targets);
+			free(wrkUses);
 		}
 	}
 
 	//Read _catchallList
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
-		if (varnt == _gameVariant) {
-			_catchallList = (background_t *)malloc(sizeof(background_t) * numElem);
-			for (int i = 0; i < numElem; i++) {
-				_catchallList[i].verbIndex = in.readUint16BE();
-				_catchallList[i].nounIndex = in.readUint16BE();
-				_catchallList[i].commentIndex = in.readSint16BE();
-				_catchallList[i].matchFl = (in.readByte() != 0);
-				_catchallList[i].roomState = in.readByte();
-				_catchallList[i].bonusIndex = in.readByte();
-			}
-		} else {
-			for (int i = 0; i < numElem; i++) {
-				in.readUint16BE();
-				in.readUint16BE();
-				in.readSint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-			}
+		background_t *wrkCatchallList = (background_t *)malloc(sizeof(background_t) * numElem);
+
+		for (int i = 0; i < numElem; i++) {
+			wrkCatchallList[i].verbIndex = in.readUint16BE();
+			wrkCatchallList[i].nounIndex = in.readUint16BE();
+			wrkCatchallList[i].commentIndex = in.readSint16BE();
+			wrkCatchallList[i].matchFl = (in.readByte() != 0);
+			wrkCatchallList[i].roomState = in.readByte();
+			wrkCatchallList[i].bonusIndex = in.readByte();
 		}
+
+		if (varnt == _gameVariant)
+			_catchallList = wrkCatchallList;
+		else
+			free(wrkCatchallList);
 	}
 
 	// Read _background_objects
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
+
+		background_t **wrkBackgroundObjects = (background_t **)malloc(sizeof(background_t *) * numElem);
+
+		for (int i = 0; i < numElem; i++) {
+			numSubElem = in.readUint16BE();
+			wrkBackgroundObjects[i] = (background_t *)malloc(sizeof(background_t) * numSubElem);
+			for (int j = 0; j < numSubElem; j++) {
+				wrkBackgroundObjects[i][j].verbIndex = in.readUint16BE();
+				wrkBackgroundObjects[i][j].nounIndex = in.readUint16BE();
+				wrkBackgroundObjects[i][j].commentIndex = in.readSint16BE();
+				wrkBackgroundObjects[i][j].matchFl = (in.readByte() != 0);
+				wrkBackgroundObjects[i][j].roomState = in.readByte();
+				wrkBackgroundObjects[i][j].bonusIndex = in.readByte();
+			}
+		}
+
 		if (varnt == _gameVariant) {
 			_backgroundObjectsSize = numElem;
-			_backgroundObjects = (background_t **)malloc(sizeof(background_t *) * _backgroundObjectsSize);
-			for (int i = 0; i < _backgroundObjectsSize; i++) {
-				numSubElem = in.readUint16BE();
-				_backgroundObjects[i] = (background_t *)malloc(sizeof(background_t) * numSubElem);
-				for (int j = 0; j < numSubElem; j++) {
-					_backgroundObjects[i][j].verbIndex = in.readUint16BE();
-					_backgroundObjects[i][j].nounIndex = in.readUint16BE();
-					_backgroundObjects[i][j].commentIndex = in.readSint16BE();
-					_backgroundObjects[i][j].matchFl = (in.readByte() != 0);
-					_backgroundObjects[i][j].roomState = in.readByte();
-					_backgroundObjects[i][j].bonusIndex = in.readByte();
-				}
-			}
+			_backgroundObjects = wrkBackgroundObjects;
 		} else {
-			for (int i = 0; i < numElem; i++) {
-				numSubElem = in.readUint16BE();
-				for (int j = 0; j < numSubElem; j++) {
-					in.readUint16BE();
-					in.readUint16BE();
-					in.readSint16BE();
-					in.readByte();
-					in.readByte();
-					in.readByte();
-				}
-			}
+			for (int i = 0; i < numElem; i++)
+				free(wrkBackgroundObjects[i]);
+			free(wrkBackgroundObjects);
 		}
 	}
 
@@ -602,28 +582,28 @@ bool HugoEngine::loadHugoDat() {
 	// Read _screenActs
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		numElem = in.readUint16BE();
-		if (varnt == _gameVariant) {
-			_screenActsSize = numElem;
-			_screenActs = (uint16 **)malloc(sizeof(uint16 *) * _screenActsSize);
-			for (int i = 0; i < _screenActsSize; i++) {
-				numSubElem = in.readUint16BE();
-				if (numSubElem == 0) {
-					_screenActs[i] = 0;
-				} else {
-					_screenActs[i] = (uint16 *)malloc(sizeof(uint16) * numSubElem);
-					for (int j = 0; j < numSubElem; j++)
-						_screenActs[i][j] = in.readUint16BE();
-				}
-			}
-		} else {
-			for (int i = 0; i < numElem; i++) {
-				numSubElem = in.readUint16BE();
+
+		uint16 **wrkScreenActs = (uint16 **)malloc(sizeof(uint16 *) * numElem);
+		for (int i = 0; i < numElem; i++) {
+			numSubElem = in.readUint16BE();
+			if (numSubElem == 0) {
+				wrkScreenActs[i] = 0;
+			} else {
+				wrkScreenActs[i] = (uint16 *)malloc(sizeof(uint16) * numSubElem);
 				for (int j = 0; j < numSubElem; j++)
-					in.readUint16BE();
+					wrkScreenActs[i][j] = in.readUint16BE();
 			}
 		}
-	}
 
+		if (varnt == _gameVariant) {
+			_screenActsSize = numElem;
+			_screenActs = wrkScreenActs;
+		} else {
+			for (int i = 0; i < numElem; i++)
+				free(wrkScreenActs[i]);
+			free(wrkScreenActs);
+		}
+	}
 	_object->loadObjectArr(in);
 
 	_hero = &_object->_objects[kHeroIndex];         // This always points to hero
