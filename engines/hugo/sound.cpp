@@ -479,7 +479,7 @@ void SoundHandler::pcspkr_player() {
 	}
 }
 
-void SoundHandler::loadIntroSong(Common::File &in) {
+void SoundHandler::loadIntroSong(Common::ReadStream &in) {
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numBuf = in.readUint16BE();
 		if (varnt == _vm->_gameVariant)

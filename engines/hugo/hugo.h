@@ -385,7 +385,7 @@ private:
 	int _score;                                     // Holds current score
 	int _maxscore;                                  // Holds maximum score
 
-	uint16 **loadLongArray(Common::File &in);
+	uint16 **loadLongArray(Common::ReadStream &in);
 
 	void initPlaylist(bool playlist[kMaxTunes]);
 	void initConfig();

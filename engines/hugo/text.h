@@ -45,7 +45,7 @@ public:
 	char **getNounArray(int idx1) { return _arrayNouns[idx1]; }
 	char **getVerbArray(int idx1) { return _arrayVerbs[idx1]; }
 
-	void loadAllTexts(Common::File &in);
+	void loadAllTexts(Common::ReadStream &in);
 	void freeAllTexts();
 
 private:
@@ -63,9 +63,9 @@ private:
 	char  **_textParser;
 	char  **_textUtil;
 
-	char ***loadTextsArray(Common::File &in);
-	char  **loadTextsVariante(Common::File &in, uint16 *arraySize);
-	char  **loadTexts(Common::File &in);
+	char ***loadTextsArray(Common::ReadStream &in);
+	char  **loadTextsVariante(Common::ReadStream &in, uint16 *arraySize);
+	char  **loadTexts(Common::ReadStream &in);
 
 	void    freeTexts(char **ptr);
 

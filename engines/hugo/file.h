@@ -112,7 +112,7 @@ protected:
 
 	PCC_header_t PCC_header;
 
-	seq_t *readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, const bool firstFl, const char *name);
+	seq_t *readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr, const bool firstFl, const char *name);
 	const char *getBootCypher() const;
 
 	// If this is the first call, read the lookup table

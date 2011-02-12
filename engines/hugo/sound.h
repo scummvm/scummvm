@@ -113,7 +113,7 @@ public:
 	void initSound();
 	void syncVolume();
 	void checkMusic();
-	void loadIntroSong(Common::File &in);
+	void loadIntroSong(Common::ReadStream &in);
 	void initPcspkrPlayer();
 protected:
 	byte curPriority;                               // Priority of currently playing sound

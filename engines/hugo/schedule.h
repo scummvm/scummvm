@@ -461,19 +461,19 @@ public:
 	void freeActListArr();
 	void initEventQueue();
 	void insertActionList(const uint16 actIndex);
-	void loadActListArr(Common::File &in);
-	void loadAlNewscrIndex(Common::File &in);
+	void loadActListArr(Common::ReadStream &in);
+	void loadAlNewscrIndex(Common::ReadStream &in);
 	void newScreen(const int screenIndex);
 	void processBonus(const int bonusIndex);
 	void processMaze(const int x1, const int x2, const int y1, const int y2);
 	void restoreScreen(const int screenIndex);
-	void restoreEvents(Common::SeekableReadStream *f);
+	void restoreEvents(Common::ReadStream *f);
 	void saveEvents(Common::WriteStream *f);
 	void waitForRefresh();
 
 	void findAction(act* action, int16* index, int16* subElem);
 	void saveActions(Common::WriteStream* f) const;
-	void restoreActions(Common::SeekableReadStream *f);
+	void restoreActions(Common::ReadStream *f);
 
 protected:
 	HugoEngine *_vm;

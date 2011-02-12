@@ -369,7 +369,7 @@ void ObjectHandler::freeObjectArr() {
 /**
  * Load ObjectArr from Hugo.dat
  */
-void ObjectHandler::loadObjectArr(Common::File &in) {
+void ObjectHandler::loadObjectArr(Common::ReadStream &in) {
 	debugC(6, kDebugObject, "loadObject(&in)");
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
@@ -487,7 +487,7 @@ void ObjectHandler::setCarriedScreen(int screenNum) {
 /**
  * Load _numObj from Hugo.dat
  */
-void ObjectHandler::loadNumObj(Common::File &in) {
+void ObjectHandler::loadNumObj(Common::ReadStream &in) {
 	int numElem;
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {

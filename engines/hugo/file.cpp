@@ -78,7 +78,7 @@ byte *FileManager::convertPCC(byte *p, const uint16 y, const uint16 bpl, image_p
  * allocate space if NULL.  Name used for errors.  Returns address of seq_p
  * Set first TRUE to initialize b_index (i.e. not reading a sequential image in file).
  */
-seq_t *FileManager::readPCX(Common::File &f, seq_t *seqPtr, byte *imagePtr, const bool firstFl, const char *name) {
+seq_t *FileManager::readPCX(Common::ReadStream &f, seq_t *seqPtr, byte *imagePtr, const bool firstFl, const char *name) {
 	debugC(1, kDebugFile, "readPCX(..., %s)", name);
 
 	// Read in the PCC header and check consistency

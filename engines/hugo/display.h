@@ -52,7 +52,7 @@ public:
 	virtual ~Screen();
 
 	virtual void loadFont(int16 fontId) = 0;
-	virtual void loadFontArr(Common::File &in) = 0;
+	virtual void loadFontArr(Common::ReadStream &in) = 0;
 
 	int16    fontHeight() const;
 	int16    stringLength(const char *s) const;
@@ -70,7 +70,7 @@ public:
 	void     hideCursor();
 	void     initDisplay();
 	void     initNewScreenDisplay();
-	void     loadPalette(Common::File &in);
+	void     loadPalette(Common::ReadStream &in);
 	void     moveImage(image_pt srcImage, const int16 x1, const int16 y1, const int16 dx, int16 dy, const int16 width1, image_pt dstImage, const int16 x2, const int16 y2, const int16 width2);
 	void     remapPal(uint16 oldIndex, uint16 newIndex);
 	void     resetInventoryObjId();
@@ -165,7 +165,7 @@ public:
 	~Screen_v1d();
 
 	void loadFont(int16 fontId);
-	void loadFontArr(Common::File &in);
+	void loadFontArr(Common::ReadStream &in);
 };
 
 class Screen_v1w : public Screen {
@@ -174,7 +174,7 @@ public:
 	~Screen_v1w();
 
 	void loadFont(int16 fontId);
-	void loadFontArr(Common::File &in);
+	void loadFontArr(Common::ReadStream &in);
 };
 
 } // End of namespace Hugo

@@ -121,7 +121,7 @@ void TopMenu::reflowLayout() {
 	_inventButton->setGfx(arrayBmp[4 * kMenuInventory + scale - 1]);
 }
 
-void TopMenu::loadBmpArr(Common::File &in) {
+void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 	arraySize = in.readUint16BE();
 
 	delete arrayBmp;

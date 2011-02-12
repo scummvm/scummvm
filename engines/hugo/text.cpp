@@ -37,7 +37,7 @@ TextHandler::TextHandler(HugoEngine *vm) : _vm(vm), _textData(0), _stringtData(0
 TextHandler::~TextHandler() {
 }
 
-char **TextHandler::loadTextsVariante(Common::File &in, uint16 *arraySize) {
+char **TextHandler::loadTextsVariante(Common::ReadStream &in, uint16 *arraySize) {
 	int  numTexts;
 	int  entryLen;
 	int  len;
@@ -80,7 +80,7 @@ char **TextHandler::loadTextsVariante(Common::File &in, uint16 *arraySize) {
 	return res;
 }
 
-char ***TextHandler::loadTextsArray(Common::File &in) {
+char ***TextHandler::loadTextsArray(Common::ReadStream &in) {
 	char ***resArray = 0;
 	uint16 arraySize;
 
@@ -127,7 +127,7 @@ char ***TextHandler::loadTextsArray(Common::File &in) {
 	return resArray;
 }
 
-char **TextHandler::loadTexts(Common::File &in) {
+char **TextHandler::loadTexts(Common::ReadStream &in) {
 	int numTexts = in.readUint16BE();
 	char **res = (char **)malloc(sizeof(char *) * numTexts);
 	int entryLen = in.readUint16BE();
@@ -148,7 +148,7 @@ char **TextHandler::loadTexts(Common::File &in) {
 	return res;
 }
 
-void TextHandler::loadAllTexts(Common::File &in) {
+void TextHandler::loadAllTexts(Common::ReadStream &in) {
 	// Read textData
 	_textData = loadTextsVariante(in, 0);
 

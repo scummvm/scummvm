@@ -574,7 +574,7 @@ void Screen::initNewScreenDisplay() {
 /**
  * Load palette from Hugo.dat
  */
-void Screen::loadPalette(Common::File &in) {
+void Screen::loadPalette(Common::ReadStream &in) {
 	// Read palette
 	_paletteSize = in.readUint16BE();
 	_mainPalette = (byte *)malloc(sizeof(byte) * _paletteSize);
@@ -733,7 +733,7 @@ void Screen_v1d::loadFont(const int16 fontId) {
  * These fonts are a workaround to avoid handling TTF fonts used by DOS versions
  * TODO: Get rid of this function when the win1 fonts are supported
  */
-void Screen_v1d::loadFontArr(Common::File &in) {
+void Screen_v1d::loadFontArr(Common::ReadStream &in) {
 	for (int i = 0; i < kNumFonts; i++) {
 		_arrayFontSize[i] = in.readUint16BE();
 		_arrayFont[i] = (byte *)malloc(sizeof(byte) * _arrayFontSize[i]);
@@ -785,7 +785,7 @@ void Screen_v1w::loadFont(const int16 fontId) {
 /**
  * Skips the fonts used by the DOS versions
  */
-void Screen_v1w::loadFontArr(Common::File &in) {
+void Screen_v1w::loadFontArr(Common::ReadStream &in) {
 	for (int i = 0; i < kNumFonts; i++) {
 		uint16 numElem = in.readUint16BE();
 		for (int j = 0; j < numElem; j++)

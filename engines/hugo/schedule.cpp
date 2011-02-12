@@ -233,7 +233,7 @@ void Scheduler::waitForRefresh() {
 /**
  * Read kALnewscr used by maze (Hugo 2)
  */
-void Scheduler::loadAlNewscrIndex(Common::File &in) {
+void Scheduler::loadAlNewscrIndex(Common::ReadStream &in) {
 	debugC(6, kDebugSchedule, "loadAlNewscrIndex(&in)");
 
 	int numElem;
@@ -247,7 +247,7 @@ void Scheduler::loadAlNewscrIndex(Common::File &in) {
 /**
  * Load actListArr from Hugo.dat
  */
-void Scheduler::loadActListArr(Common::File &in) {
+void Scheduler::loadActListArr(Common::ReadStream &in) {
 	debugC(6, kDebugSchedule, "loadActListArr(&in)");
 
 	int numElem, numSubElem, numSubAct;
@@ -910,7 +910,7 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
  * Restore the action data from file with handle f
  */
 
-void Scheduler::restoreActions(Common::SeekableReadStream *f) {
+void Scheduler::restoreActions(Common::ReadStream *f) {
 
 	for (int i = 0; i < _actListArrSize; i++) {
 	
@@ -982,7 +982,7 @@ void Scheduler::findAction(act* action, int16* index, int16* subElem) {
 /**
  * Restore the event list from file with handle f
  */
-void Scheduler::restoreEvents(Common::SeekableReadStream *f) {
+void Scheduler::restoreEvents(Common::ReadStream *f) {
 	debugC(1, kDebugSchedule, "restoreEvents");
 
 	event_t  savedEvents[kMaxEvents];               // Convert event ptrs to indexes

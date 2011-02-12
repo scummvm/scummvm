@@ -689,7 +689,7 @@ bool HugoEngine::loadHugoDat() {
 	return true;
 }
 
-uint16 **HugoEngine::loadLongArray(Common::File &in) {
+uint16 **HugoEngine::loadLongArray(Common::ReadStream &in) {
 	uint16 **resArray = 0;
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
