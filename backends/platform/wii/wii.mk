@@ -30,7 +30,7 @@ ifeq ($(GAMECUBE),1)
 else
 	$(STRIP) $(EXECUTABLE) -o wiidist/scummvm/boot.elf
 	$(CP) $(srcdir)/dists/wii/icon.png wiidist/scummvm/
-	sed "s/@REVISION@/$(VER_SVNREV)/;s/@TIMESTAMP@/`date +%Y%m%d%H%M%S`/" < $(srcdir)/dists/wii/meta.xml > wiidist/scummvm/meta.xml
+	sed "s/@REVISION@/$(VER_REV)/;s/@TIMESTAMP@/`date +%Y%m%d%H%M%S`/" < $(srcdir)/dists/wii/meta.xml > wiidist/scummvm/meta.xml
 endif
 ifeq ($(DYNAMIC_MODULES),1)
 	$(MKDIR) wiidist/scummvm/plugins

@@ -168,9 +168,9 @@ VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
 
 ifneq ($(shell svn info $(srcdir) 1>/dev/null 2>&1 || echo "error"),error)
 SVNROOT := $(srcdir)
-ifeq ($(origin VER_SVNREV), undefined)
+ifeq ($(origin VER_REV), undefined)
 # Get the working copy base revision
-VER_SVNREV := $(shell LANG=C svn info $(SVNROOT) | grep "^Revision" | cut -d ' ' -f 2)
+VER_REV := $(shell LANG=C svn info $(SVNROOT) | grep "^Revision" | cut -d ' ' -f 2)
 endif
 else
 SVNROOT := https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/
@@ -178,8 +178,8 @@ endif
 
 # Define the Subversion revision if available, either autodetected or
 # specified by the user, but only for base/version.cpp.
-ifneq ($(origin VER_SVNREV), undefined)
-base/version.o: CXXFLAGS:=$(CXXFLAGS) -DSCUMMVM_SVN_REVISION=\"$(VER_SVNREV)\"
+ifneq ($(origin VER_REV), undefined)
+base/version.o: CXXFLAGS:=$(CXXFLAGS) -DSCUMMVM_REVISION=\"$(VER_REV)\"
 endif
 
 ######################################################################
@@ -187,10 +187,10 @@ endif
 ######################################################################
 
 ifeq ($(VER_EXTRA),svn)
-ifeq ($(origin VER_SVNREV), undefined)
+ifeq ($(origin VER_REV), undefined)
 DISTVERSION = $(shell date '+%Y-%m-%d')
 else
-DISTVERSION = svn$(VER_SVNREV)
+DISTVERSION = svn$(VER_REV)
 endif
 else
 DISTVERSION = $(VERSION)
@@ -204,10 +204,10 @@ $(VERFILE): $(srcdir)/base/internal_version.h
 	@$(RM_REC) $(DISTDIR)
 	@$(MKDIR) $(DISTDIR)
 	svn export $(SVNROOT) $(DISTDIR)/$(DISTNAME)
-ifneq ($(origin VER_SVNREV), undefined)
+ifneq ($(origin VER_REV), undefined)
 	@# Use the current SVN revision as a default for the snapshot sources
 	@svn cat $(SVNROOT)/base/internal_version.h | sed -e \
-		"s/^#define SCUMMVM_SVN_REVISION$$/#define SCUMMVM_SVN_REVISION \"$(VER_SVNREV)\"/g" \
+		"s/^#define SCUMMVM_REVISION$$/#define SCUMMVM_REVISION \"$(VER_REV)\"/g" \
 		> $(VERFILE)
 endif
 

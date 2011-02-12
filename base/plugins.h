@@ -73,7 +73,7 @@ enum PluginType {
 };
 
 // TODO: Make the engine API version depend on ScummVM's version
-// because of the backlinking (posibly from the SVN revision)
+// because of the backlinking (posibly from the checkout revision)
 #define PLUGIN_TYPE_ENGINE_VERSION 1
 #define PLUGIN_TYPE_MUSIC_VERSION 1
 
