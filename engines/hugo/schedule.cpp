@@ -1427,10 +1427,11 @@ void Scheduler_v1d::promptAction(act *action) {
 void Scheduler_v1d::decodeString(char *line) {
 	debugC(1, kDebugSchedule, "decodeString(%s)", line);
 
-	static const char *cypher = getCypher();
+	static const Common::String cypher = getCypher();
 
-	for(uint16 i = 0; i < strlen(line); i++) {
-		line[i] = (line[i] + cypher[i]) % '~';
+	uint16 linelength = strlen(line);
+	for(uint16 i = 0; i < linelength; i++) {
+		line[i] = (line[i] + cypher.c_str()[i % cypher.size()]) % '~';
 		if (line[i] < ' ')
 			line[i] += ' ';
 	}
@@ -1479,10 +1480,11 @@ void Scheduler_v2d::promptAction(act *action) {
 void Scheduler_v2d::decodeString(char *line) {
 	debugC(1, kDebugSchedule, "decodeString(%s)", line);
 
-	static const char *cypher = getCypher();
+	static const Common::String cypher = getCypher();
 
-	for (uint16 i = 0; i < strlen(line); i++)
-		line[i] -= cypher[i % strlen(cypher)];
+	int16 lineLength = strlen(line);
+	for (uint16 i = 0; i < lineLength; i++)
+		line[i] -= cypher.c_str()[i % cypher.size()];
 	debugC(1, kDebugSchedule, "result : %s", line);
 }
 
