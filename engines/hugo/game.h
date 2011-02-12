@@ -150,7 +150,7 @@ struct hugo_boot_t {                                // Common HUGO boot file
 	char pbswitch[8];                               // Playback switch string
 	char distrib[32];                               // Distributor branding string
 	uint16 exit_len;                                // Length of exit text (next in file)
-};
+} PACKED_STRUCT;
 
 struct uif_hdr_t {                                  // UIF font/image look up
 	uint16  size;                                   // Size of uif item

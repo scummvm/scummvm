@@ -65,8 +65,8 @@ protected:
 	char      _cmdLineCursor;
 	command_t _cmdLine;                             // Build command line
 
-	char *findNoun() const;
-	char *findVerb() const;
+	const char *findNoun() const;
+	const char *findVerb() const;
 	void  showDosInventory() const;
 
 	bool   _checkDoubleF1Fl;                        // Flag used to display user help or instructions
@@ -90,12 +90,12 @@ protected:
 	virtual void  dropObject(object_t *obj);
 	virtual void  takeObject(object_t *obj);
 
-	char *findNextNoun(char *noun) const;
-	bool  isBackgroundWord_v1(char *noun, char *verb, objectList_t obj) const;
-	bool  isCatchallVerb_v1(bool testNounFl, char *noun, char *verb, objectList_t obj) const;
-	bool  isGenericVerb_v1(char *word, object_t *obj);
-	bool  isNear_v1(char *verb, char *noun, object_t *obj, char *comment) const;
-	bool  isObjectVerb_v1(char *word, object_t *obj);
+	const char *findNextNoun(const char *noun) const;
+	bool  isBackgroundWord_v1(const char *noun, const char *verb, objectList_t obj) const;
+	bool  isCatchallVerb_v1(bool testNounFl, const char *noun, const char *verb, objectList_t obj) const;
+	bool  isGenericVerb_v1(const char *word, object_t *obj);
+	bool  isNear_v1(const char *verb, const char *noun, object_t *obj, char *comment) const;
+	bool  isObjectVerb_v1(const char *word, object_t *obj);
 };
 
 class Parser_v2d : public Parser_v1d {
@@ -117,7 +117,7 @@ protected:
 	bool  isBackgroundWord_v3(objectList_t obj) const;
 	bool  isCatchallVerb_v3(objectList_t obj) const;
 	bool  isGenericVerb_v3(object_t *obj, char *comment);
-	bool  isNear_v3(object_t *obj, char *verb, char *comment) const;
+	bool  isNear_v3(object_t *obj, const char *verb, char *comment) const;
 	bool  isObjectVerb_v3(object_t *obj, char *comment);
 	void  takeObject(object_t *obj);
 };

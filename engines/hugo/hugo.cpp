@@ -864,7 +864,7 @@ void HugoEngine::readScreenFiles(const int screenNum) {
  * Search background command list for this screen for supplied object.
  * Return first associated verb (not "look") or 0 if none found.
  */
-char *HugoEngine::useBG(const char *name) {
+const char *HugoEngine::useBG(const char *name) {
 	debugC(1, kDebugEngine, "useBG(%s)", name);
 
 	objectList_t p = _backgroundObjects[*_screen_p];
@@ -942,6 +942,11 @@ void HugoEngine::syncSoundSettings() {
 
 	_sound->syncVolume();
 }
+
+Common::String HugoEngine::getSavegameFilename(int slot) {
+	return _targetName + Common::String::format("-%02d.SAV", slot);
+}
+
 
 
 } // End of namespace Hugo

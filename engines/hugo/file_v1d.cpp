@@ -62,7 +62,7 @@ void FileManager_v1d::readOverlay(const int screenNum, image_pt image, const ovl
 	const char *ovl_ext[] = {".b", ".o", ".ob"};
 	Common::String buf = Common::String(_vm->_text->getScreenNames(screenNum)) + Common::String(ovl_ext[overlayType]);
 
-	if (!fileExists(buf)) {
+	if (!Common::File::exists(buf)) {
 		for (int i = 0; i < kOvlSize; i++)
 			image[i] = 0;
 		warning("File not found: %s", buf.c_str());
@@ -95,7 +95,7 @@ void FileManager_v1d::readBackground(const int screenIndex) {
 	_sceneryArchive1.close();
 }
 
-char *FileManager_v1d::fetchString(const int index) {
+const char *FileManager_v1d::fetchString(const int index) {
 	debugC(1, kDebugFile, "fetchString(%d)", index);
 
 	return _vm->_text->getStringtData(index);

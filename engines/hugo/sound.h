@@ -100,8 +100,8 @@ public:
 	int8 pcspkrOctave;                              // Current octave 1..7
 	int8 pcspkrNoteDuration;                        // Current length of note (ticks)
 
-	char *DOSSongPtr;
-	char *DOSIntroSong;
+	const char *DOSSongPtr;
+	const char *DOSIntroSong;
 
 	void toggleMusic();
 	void toggleSound();

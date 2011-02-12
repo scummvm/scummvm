@@ -99,7 +99,7 @@ void ObjectHandler::restoreSeq(object_t *obj) {
 void ObjectHandler::useObject(int16 objId) {
 	debugC(1, kDebugObject, "useObject(%d)", objId);
 
-	char *verb;                                     // Background verb to use directly
+	const char *verb;                               // Background verb to use directly
 	int16 inventObjId = _vm->_inventory->getInventoryObjId();
 	object_t *obj = &_objects[objId];               // Ptr to object
 	if (inventObjId == -1) {

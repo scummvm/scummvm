@@ -163,7 +163,7 @@ void FileManager_v2d::readOverlay(const int screenNum, image_pt image, ovl_t ove
 /**
  * Fetch string from file, decode and return ptr to string in memory
  */
-char *FileManager_v2d::fetchString(const int index) {
+const char *FileManager_v2d::fetchString(const int index) {
 	debugC(1, kDebugFile, "fetchString(%d)", index);
 
 	// Get offset to string[index] (and next for length calculation)

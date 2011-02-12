@@ -39,17 +39,17 @@ enum seqTextUtil {
 	kGameOver = 0
 };
 
+namespace Utils {
 static const int kMaxStrLength = 1024;
 
-namespace Utils {
-int      firstBit(byte data);
-int      lastBit(byte data);
+int   firstBit(byte data);
+int   lastBit(byte data);
 
-void     gameOverMsg();
-void     reverseByte(byte *data);
+void  gameOverMsg();
+void  reverseByte(byte *data);
 
-char    *Box(box_t, const char *, ...) GCC_PRINTF(2, 3);
-char    *strlwr(char *buffer);
+char *Box(box_t, const char *, ...) GCC_PRINTF(2, 3);
+char *strlwr(char *buffer);
 }
 
 } // End of namespace Hugo

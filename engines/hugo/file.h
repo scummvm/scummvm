@@ -44,7 +44,6 @@ public:
 	FileManager(HugoEngine *vm);
 	virtual ~FileManager();
 
-	bool     fileExists(const Common::String filename) const;
 	sound_pt getSound(const int16 sound, uint16 *size);
 
 	void     readBootFile();
@@ -52,15 +51,15 @@ public:
 	void     readUIFImages();
 	void     readUIFItem(const int16 id, byte *buf);
 	bool     restoreGame(const int16 slot);
-	bool     saveGame(const int16 slot, const Common::String descrip);
+	bool     saveGame(const int16 slot, const Common::String &descrip);
 
 	// Name scenery and objects picture databases
-	const char *getBootFilename() const    { return "HUGO.BSF";    }
-	const char *getObjectFilename() const  { return "objects.dat"; }
+	const char *getBootFilename()    const { return "HUGO.BSF";    }
+	const char *getObjectFilename()  const { return "objects.dat"; }
 	const char *getSceneryFilename() const { return "scenery.dat"; }
-	const char *getSoundFilename() const   { return "sounds.dat";  }
-	const char *getStringFilename() const  { return "strings.dat"; }
-	const char *getUifFilename() const     { return "uif.dat";     }
+	const char *getSoundFilename()   const { return "sounds.dat";  }
+	const char *getStringFilename()  const { return "strings.dat"; }
+	const char *getUifFilename()     const { return "uif.dat";     }
 
 	virtual void openDatabaseFiles() = 0;
 	virtual void closeDatabaseFiles() = 0;
@@ -69,7 +68,7 @@ public:
 	virtual void readBackground(const int screenIndex) = 0;
 	virtual void readOverlay(const int screenNum, image_pt image, ovl_t overlayType) = 0;
 
-	virtual char *fetchString(const int index) = 0;
+	virtual const char *fetchString(const int index) = 0;
 
 protected:
 	HugoEngine *_vm;
@@ -138,7 +137,7 @@ public:
 	virtual void openDatabaseFiles();
 	virtual void readBackground(const int screenIndex);
 	virtual void readOverlay(const int screenNum, image_pt image, ovl_t overlayType);
-	virtual char *fetchString(const int index);
+	virtual const char *fetchString(const int index);
 };
 
 class FileManager_v2d : public FileManager_v1d {
@@ -150,7 +149,7 @@ public:
 	virtual void openDatabaseFiles();
 	virtual void readBackground(const int screenIndex);
 	virtual void readOverlay(const int screenNum, image_pt image, ovl_t overlayType);
-	char *fetchString(const int index);
+	const   char *fetchString(const int index);
 private:
 	char *_fetchStringBuf;
 };

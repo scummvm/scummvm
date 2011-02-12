@@ -283,7 +283,7 @@ bool Parser::isWordPresent(char **wordArr) const {
 /**
  * Locate word in list of nouns and return ptr to first string in noun list
  */
-char *Parser::findNoun() const {
+const char *Parser::findNoun() const {
 	debugC(1, kDebugParser, "findNoun()");
 
 	for (int i = 0; _vm->_text->getNounArray(i); i++) {
@@ -298,7 +298,7 @@ char *Parser::findNoun() const {
 /**
  * Locate word in list of verbs and return ptr to first string in verb list
  */
-char *Parser::findVerb() const {
+const char *Parser::findVerb() const {
 	debugC(1, kDebugParser, "findVerb()");
 
 	for (int i = 0; _vm->_text->getVerbArray(i); i++) {

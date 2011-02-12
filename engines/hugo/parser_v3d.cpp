@@ -191,8 +191,8 @@ void Parser_v3d::lineHandler() {
 	}
 
 	// Nothing matches.  Report recognition success to user.
-	char *verb = findVerb();
-	char *noun = findNoun();
+	const char *verb = findVerb();
+	const char *noun = findNoun();
 
 	if (verb && noun) {                             // A combination I didn't think of
 		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBNoPoint));
@@ -319,7 +319,7 @@ bool Parser_v3d::isGenericVerb_v3(object_t *obj, char *comment) {
  * If radius is -1, treat radius as infinity
  * Verb is included to determine correct comment if not near
  */
-bool Parser_v3d::isNear_v3(object_t *obj, char *verb, char *comment) const {
+bool Parser_v3d::isNear_v3(object_t *obj, const char *verb, char *comment) const {
 	debugC(1, kDebugParser, "isNear(object_t *obj, %s, %s)", verb, comment);
 
 	if (obj->carriedFl)                             // Object is being carried

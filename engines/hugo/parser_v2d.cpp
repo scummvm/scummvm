@@ -149,8 +149,8 @@ void Parser_v2d::lineHandler() {
 	}
 
 	// Find the first verb in the line
-	char *verb = findVerb();
-	char *noun = 0;                                 // Noun not found yet
+	const char *verb = findVerb();
+	const char *noun = 0;                           // Noun not found yet
 	char farComment[kCompLineSize * 5] = "";        // hold 5 line comment if object not nearby
 
 	if (verb) {                                     // OK, verb found.  Try to match with object

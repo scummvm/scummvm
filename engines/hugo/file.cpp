@@ -288,17 +288,9 @@ sound_pt FileManager::getSound(const int16 sound, uint16 *size) {
 }
 
 /**
- * Return whether file exists or not
- */
-bool FileManager::fileExists(const Common::String filename) const {
-	Common::File f;
-	return(f.exists(filename));
-}
-
-/**
  * Save game to supplied slot
  */
-bool FileManager::saveGame(const int16 slot, const Common::String descrip) {
+bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	debugC(1, kDebugFile, "saveGame(%d, %s)", slot, descrip.c_str());
 
 	const EnginePlugin *plugin = NULL;
@@ -324,7 +316,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String descrip) {
 	if (savegameId < 0)                             // dialog aborted
 		return false;
 
-	Common::String savegameFile = Common::String::format(_vm->_saveFilename.c_str(), savegameId);
+	Common::String savegameFile = _vm->getSavegameFilename(savegameId);
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::OutSaveFile *out = saveMan->openForSaving(savegameFile);
 
@@ -432,7 +424,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	if (savegameId < 0)                             // dialog aborted
 		return false;
 
-	Common::String savegameFile = Common::String::format(_vm->_saveFilename.c_str(), savegameId);
+	Common::String savegameFile = _vm->getSavegameFilename(savegameId);
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *in = saveMan->openForLoading(savegameFile);
 

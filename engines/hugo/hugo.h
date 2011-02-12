@@ -275,8 +275,6 @@ public:
 	const char *_episode;
 	Common::String _picDir;
 
-	Common::String _saveFilename;
-
 	command_t _statusLine;
 	command_t _scoreLine;
 
@@ -298,7 +296,7 @@ public:
 	virtual bool canSaveGameStateCurrently();
 	bool loadHugoDat();
 
-	char *useBG(const char *name);
+	const char *useBG(const char *name);
 
 	int8 getTPS() const;
 
@@ -347,6 +345,7 @@ public:
 
 	const char *getCopyrightString() const { return "Copyright 1989-1997 David P Gray, All Rights Reserved."; }
 
+	Common::String getSavegameFilename(int slot);
 
 	FileManager *_file;
 	Scheduler *_scheduler;
@@ -378,10 +377,6 @@ private:
 	static HugoEngine *s_Engine;
 
 	HugoConsole *_console;
-
-// The following are bit plane display overlays which mark travel boundaries,
-// foreground stationary objects and baselines for those objects (used to
-// determine foreground/background wrt moving objects)
 
 	GameType _gameType;
 	Common::Platform _platform;

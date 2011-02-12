@@ -267,7 +267,7 @@ void MouseHandler::mouseHandler() {
 		if (objId >= 0) {                           // Got a match
 			// Display object name next to cursor (unless CURSOR_NOCHAR)
 			// Note test for swapped hero name
-			char *name = _vm->_text->getNoun(_vm->_object->_objects[(objId == kHeroIndex) ? _vm->_heroImage : objId].nounIndex, kCursorNameIndex);
+			const char *name = _vm->_text->getNoun(_vm->_object->_objects[(objId == kHeroIndex) ? _vm->_heroImage : objId].nounIndex, kCursorNameIndex);
 			if (name[0] != kCursorNochar)
 				cursorText(name, cx, cy, U_FONT8, _TBRIGHTWHITE);
 

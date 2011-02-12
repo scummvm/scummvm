@@ -32,17 +32,17 @@ public:
 	TextHandler(HugoEngine *vm);
 	~TextHandler();
 
-	char  *getScreenNames(int screenIndex) { return _screenNames[screenIndex]; }
-	char  *getTextData(int textIndex) { return _textData[textIndex]; }
-	char  *getStringtData(int stringIndex) { return _stringtData[stringIndex]; }
-	char  *getTextEngine(int engineIndex) { return _textEngine[engineIndex]; }
-	char  *getTextIntro(int introIndex) { return _textIntro[introIndex]; }
-	char  *getTextMouse(int mouseIndex) { return _textMouse[mouseIndex]; }
-	char  *getTextParser(int parserIndex) { return _textParser[parserIndex]; }
-	char  *getTextUtil(int utilIndex) { return _textUtil[utilIndex]; }
-	char  *getNoun(int idx1, int idx2) { return _arrayNouns[idx1][idx2]; }
+	const char  *getNoun(int idx1, int idx2) const     { return _arrayNouns[idx1][idx2];   }
+	const char  *getScreenNames(int screenIndex) const { return _screenNames[screenIndex]; }
+	const char  *getStringtData(int stringIndex) const { return _stringtData[stringIndex]; }
+	const char  *getTextData(int textIndex) const      { return _textData[textIndex];      }
+	const char  *getTextEngine(int engineIndex) const  { return _textEngine[engineIndex];  }
+	const char  *getTextIntro(int introIndex) const    { return _textIntro[introIndex];    }
+	const char  *getTextMouse(int mouseIndex) const    { return _textMouse[mouseIndex];    }
+	const char  *getTextParser(int parserIndex) const  { return _textParser[parserIndex];  }
+	const char  *getTextUtil(int utilIndex) const      { return _textUtil[utilIndex];      }
+	const char  *getVerb(int idx1, int idx2) const     { return _arrayVerbs[idx1][idx2];   }
 	char **getNounArray(int idx1) { return _arrayNouns[idx1]; }
-	char  *getVerb(int idx1, int idx2) { return _arrayVerbs[idx1][idx2]; }
 	char **getVerbArray(int idx1) { return _arrayVerbs[idx1]; }
 
 	void loadAllTexts(Common::File &in);

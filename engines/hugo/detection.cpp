@@ -317,9 +317,6 @@ void HugoEngine::initGame(const HugoGameDescription *gd) {
 	_platform = gd->desc.platform;
 	_packedFl = (getFeatures() & GF_PACKED);
 	_gameVariant = _gameType - 1 + ((_platform == Common::kPlatformWindows) ? 0 : 3);
-
-	// Generate filename
-	_saveFilename = _targetName + "-%02d.SAV";
 }
 
 } // End of namespace Hugo
