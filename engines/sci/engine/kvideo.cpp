@@ -50,6 +50,8 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	uint16 pitch = videoDecoder->getWidth() * bytesPerPixel;
 	uint16 screenWidth = g_system->getWidth();
 	uint16 screenHeight = g_system->getHeight();
+
+	videoState.fileName.toLowercase();
 	bool isVMD = videoState.fileName.hasSuffix(".vmd");
 
 	if (screenWidth == 640 && width <= 320 && height <= 240 && ((videoState.flags & kDoubled) || !isVMD)) {
@@ -73,9 +75,10 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 			y = (screenHeight - height) / 2;
 		}
 	} else {
-			x = (screenWidth - width) / 2;
-			y = (screenHeight - height) / 2;
+		x = (screenWidth - width) / 2;
+		y = (screenHeight - height) / 2;
 	}
+
 	bool skipVideo = false;
 
 	if (videoDecoder->hasDirtyPalette())
