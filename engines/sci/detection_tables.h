@@ -740,6 +740,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::FR_FRA, Common::kPlatformPC, 0,
 		GUIO_NOSPEECH	},
 
+	// Gabriel Knight 2 - English Macintosh
+	// NOTE: This only contains disc 1 files (as well as the persistent file:
+	// Data1. Other discs have conflicting names :(
+	{"gk2", "", {
+		{"Data1", 0, "81cb3b4461af845efc59450a74b49fe6", 693041},
+		{"Data2", 0, "69a05445a7c8c2da06d8f5a70200974d", 16774575},
+		{"Data3", 0, "256309284f6447aaa5028103753e7e78", 15451830},
+		{"Data4", 0, "8b843c62eb53136a855d6e0087e3cb0d", 5889553},
+		{"Data5", 0, "f9fcf9ab2eb13b2125c33a1cda03a093", 14349984},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NONE },
+
 #endif // ENABLE_SCI32
 
 	// Hoyle 1 - English DOS (supplied by ssburnout in bug report #3049193)
