@@ -58,12 +58,12 @@ void MystScriptParser_Mechanical::setupOpcodes() {
 	OPCODE(124, opcode_124);
 	OPCODE(125, o_mystStaircaseMovie);
 	OPCODE(126, opcode_126);
-	OPCODE(127, opcode_127);
-	OPCODE(128, opcode_128);
-	OPCODE(129, opcode_129);
-	OPCODE(130, opcode_130);
-	OPCODE(131, opcode_131);
-	OPCODE(132, opcode_132);
+	OPCODE(127, o_crystalEnterYellow);
+	OPCODE(128, o_crystalLeaveYellow);
+	OPCODE(129, o_crystalEnterGreen);
+	OPCODE(130, o_crystalLeaveGreen);
+	OPCODE(131, o_crystalEnterRed);
+	OPCODE(132, o_crystalLeaveRed);
 
 	// "Init" Opcodes
 	OPCODE(200, opcode_200);
@@ -155,15 +155,12 @@ uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
 	case 18: // Code Lock Shape #3
 	case 19: // Code Lock Shape #4 - Right
 		return _state.codeShape[var - 16];
-//	case 20: // Crystal Lit Flag - Yellow
-//		return 0;
-//		return 1;
-//	case 21: // Crystal Lit Flag - Green
-//		return 0;
-//		return 1;
-//	case 22: // Crystal Lit Flag - Red
-//		return 0;
-//		return 1;
+	case 20: // Crystal Lit Flag - Yellow
+		return _crystalLit == 3;
+	case 21: // Crystal Lit Flag - Green
+		return _crystalLit == 1;
+	case 22: // Crystal Lit Flag - Red
+		return _crystalLit == 2;
 	case 102: // Red page
 		return !(_globals.redPagesInBook & 4) && (_globals.heldPage != 9);
 	case 103: // Blue page
@@ -324,64 +321,46 @@ void MystScriptParser_Mechanical::opcode_126(uint16 op, uint16 var, uint16 argc,
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Mechanical::opcode_127(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Mechanical::o_crystalEnterYellow(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Crystal enter", op);
 
-	if (argc == 0) {
-		// Used for Mech Card 6226 (3 Crystals)
-		_vm->_varStore->setVar(20, 1);
-	} else
-		unknown(op, var, argc, argv);
+	_crystalLit = 3;
+	_vm->redrawArea(20);
 }
 
-void MystScriptParser_Mechanical::opcode_128(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Mechanical::o_crystalEnterGreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Crystal enter", op);
 
-	if (argc == 0) {
-		// Used for Mech Card 6226 (3 Crystals)
-		_vm->_varStore->setVar(20, 0);
-	} else
-		unknown(op, var, argc, argv);
+	_crystalLit = 1;
+	_vm->redrawArea(21);
 }
 
-void MystScriptParser_Mechanical::opcode_129(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Mechanical::o_crystalEnterRed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Crystal enter", op);
 
-	if (argc == 0) {
-		// Used for Mech Card 6226 (3 Crystals)
-		_vm->_varStore->setVar(21, 1);
-	} else
-		unknown(op, var, argc, argv);
+	_crystalLit = 2;
+	_vm->redrawArea(22);
 }
 
-void MystScriptParser_Mechanical::opcode_130(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Mechanical::o_crystalLeaveYellow(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Crystal leave", op);
 
-	if (argc == 0) {
-		// Used for Mech Card 6226 (3 Crystals)
-		_vm->_varStore->setVar(21, 0);
-	} else
-		unknown(op, var, argc, argv);
+	_crystalLit = 0;
+	_vm->redrawArea(20);
 }
 
-void MystScriptParser_Mechanical::opcode_131(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Mechanical::o_crystalLeaveGreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Crystal leave", op);
 
-	if (argc == 0) {
-		// Used for Mech Card 6226 (3 Crystals)
-		_vm->_varStore->setVar(22, 1);
-	} else
-		unknown(op, var, argc, argv);
+	_crystalLit = 0;
+	_vm->redrawArea(21);
 }
 
-void MystScriptParser_Mechanical::opcode_132(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Mechanical::o_crystalLeaveRed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Crystal leave", op);
 
-	if (argc == 0) {
-		// Used for Mech Card 6226 (3 Crystals)
-		_vm->_varStore->setVar(22, 0);
-	} else
-		unknown(op, var, argc, argv);
+	_crystalLit = 0;
+	_vm->redrawArea(22);
 }
 
 static struct {

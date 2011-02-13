@@ -76,12 +76,12 @@ private:
 	DECLARE_OPCODE(opcode_124);
 	DECLARE_OPCODE(o_mystStaircaseMovie);
 	DECLARE_OPCODE(opcode_126);
-	DECLARE_OPCODE(opcode_127);
-	DECLARE_OPCODE(opcode_128);
-	DECLARE_OPCODE(opcode_129);
-	DECLARE_OPCODE(opcode_130);
-	DECLARE_OPCODE(opcode_131);
-	DECLARE_OPCODE(opcode_132);
+	DECLARE_OPCODE(o_crystalEnterYellow);
+	DECLARE_OPCODE(o_crystalEnterGreen);
+	DECLARE_OPCODE(o_crystalEnterRed);
+	DECLARE_OPCODE(o_crystalLeaveYellow);
+	DECLARE_OPCODE(o_crystalLeaveGreen);
+	DECLARE_OPCODE(o_crystalLeaveRed);
 
 	DECLARE_OPCODE(opcode_200);
 	DECLARE_OPCODE(opcode_201);
@@ -99,6 +99,8 @@ private:
 	bool _mystStaircaseState; // 76
 
 	uint16 _fortressPosition; // 82
+
+	uint16 _crystalLit; // 130
 };
 
 } // End of namespace Mohawk
