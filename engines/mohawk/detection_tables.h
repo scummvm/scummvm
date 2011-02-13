@@ -1219,6 +1219,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// While this entry has a v2 interpreter, it still has v1 data
 	{
 		{
 			"lbsampler",
@@ -1229,7 +1230,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV1, // v2 Mac games are really still v1
+		GType_LIVINGBOOKSV1,
 		0,
 		"Living Books Sampler"
 	},
