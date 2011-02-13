@@ -51,7 +51,7 @@ MystScriptParser_Mechanical::~MystScriptParser_Mechanical() {
 void MystScriptParser_Mechanical::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(104, opcode_104);
-	OPCODE(105, opcode_105);
+	OPCODE(105, o_fortressStaircaseMovie);
 	OPCODE(121, opcode_121);
 	OPCODE(122, opcode_122);
 	OPCODE(123, opcode_123);
@@ -231,20 +231,18 @@ void MystScriptParser_Mechanical::opcode_104(uint16 op, uint16 var, uint16 argc,
 
 }
 
-void MystScriptParser_Mechanical::opcode_105(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Mechanical::o_fortressStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Play Stairs Movement Movie", op);
 
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Play Stairs Movement Movie", op);
+	VideoHandle staircase = _vm->_video->playMovie(_vm->wrapMovieFilename("hhstairs", kMechanicalStack), 174, 222);
 
-		if (_vm->_varStore->getVar(10)) {
-			// TODO: Play Movie from 0 to 1/2 way...
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("hhstairs", kMechanicalStack), 174, 222);
-		} else {
-			// TODO: Play Movie from 1/2 way to end...
-			_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("hhstairs", kMechanicalStack), 174, 222);
-		}
+	if (_state.staircaseState) {
+		_vm->_video->setVideoBounds(staircase, Audio::Timestamp(0, 840, 600), Audio::Timestamp(0, 1680, 600));
+	} else {
+		_vm->_video->setVideoBounds(staircase, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 840, 600));
 	}
+
+	_vm->_video->waitUntilMovieEnds(staircase);
 }
 
 

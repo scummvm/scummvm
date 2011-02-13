@@ -69,7 +69,7 @@ private:
 	void opcode_209_disable();
 
 	DECLARE_OPCODE(opcode_104);
-	DECLARE_OPCODE(opcode_105);
+	DECLARE_OPCODE(o_fortressStaircaseMovie);
 	DECLARE_OPCODE(opcode_121);
 	DECLARE_OPCODE(opcode_122);
 	DECLARE_OPCODE(opcode_123);
