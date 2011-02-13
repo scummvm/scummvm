@@ -140,7 +140,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			initGraphics(screenWidth, screenHeight, screenWidth > 320, NULL);
 
 			if (g_system->getScreenFormat().bytesPerPixel == 1) {
-				error("This video requires >8bpp color to be displayed, but could not switch to RGB color mode");
+				warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode");
 				return NULL_REG;
 			}
 
@@ -180,6 +180,19 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			Common::String filename = s->_segMan->getString(argv[1]);
 			videoDecoder = new Video::AviDecoder(g_system->getMixer());
 
+			if (filename.equalsIgnoreCase("gk2a.avi")) {
+				// HACK: Switch to 16bpp graphics for Indeo3.
+				// The only known movie to do use this codec is the GK2 demo trailer
+				// If another video turns up that uses Indeo, we may have to add a better
+				// check.
+				initGraphics(screenWidth, screenHeight, screenWidth > 320, NULL);
+
+				if (g_system->getScreenFormat().bytesPerPixel == 1) {
+					warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode");
+					return NULL_REG;
+				}
+			}
+
 			if (!videoDecoder->loadFile(filename.c_str())) {
 				warning("Failed to open movie file %s", filename.c_str());
 				delete videoDecoder;
@@ -195,7 +208,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	if (videoDecoder) {
 		playVideo(videoDecoder, s->_videoState);
 
-		// HACK: Switch back to 8bpp if we played a QuickTime video.
+		// HACK: Switch back to 8bpp if we played a true color video.
 		// We also won't be copying the screen to the SCI screen...
 		if (g_system->getScreenFormat().bytesPerPixel != 1)
 			initGraphics(screenWidth, screenHeight, screenWidth > 320);
