@@ -795,11 +795,10 @@ void Screen_LoL::copyColor(int dstColorIndex, int srcColorIndex) {
 	uint8 *d = _screenPalette->getData() + dstColorIndex * 3;
 	memcpy(d, s, 3);
 
-	uint8 ci[4];
+	uint8 ci[3];
 	ci[0] = (d[0] << 2) | (d[0] & 3);
 	ci[1] = (d[1] << 2) | (d[1] & 3);
 	ci[2] = (d[2] << 2) | (d[2] & 3);
-	ci[3] = 0;
 
 	_system->getPaletteManager()->setPalette(ci, dstColorIndex, 1);
 }
