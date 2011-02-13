@@ -236,10 +236,8 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 	case 0:	// init
 		s->_videoState.reset();
 		s->_videoState.fileName = s->_segMan->derefString(argv[1]);
-		// TODO: argv[2] (usually null). When it exists, it points to an "Event" object,
-		// that holds no data initially (e.g. in the intro of Phantasmagoria 1 demo).
-		// Perhaps it's meant for syncing
-		if (argv[2] != NULL_REG)
+
+		if (argc > 2 && argv[2] != NULL_REG)
 			warning("kPlayVMD: third parameter isn't 0 (it's %04x:%04x - %s)", PRINT_REG(argv[2]), s->_segMan->getObjectName(argv[2]));
 		break;
 	case 1:
