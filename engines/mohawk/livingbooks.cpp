@@ -55,7 +55,7 @@ Common::Rect MohawkEngine_LivingBooks::readRect(Common::SeekableSubReadStreamEnd
 	Common::Rect rect;
 
 	// the V1 mac games have their rects in QuickDraw order
-	if (getGameType() == GType_LIVINGBOOKSV1 && getPlatform() == Common::kPlatformMacintosh) {
+	if (isPreMohawk() && getPlatform() == Common::kPlatformMacintosh) {
 		rect.top = stream->readSint16();
 		rect.left = stream->readSint16();
 		rect.bottom = stream->readSint16();
@@ -685,7 +685,12 @@ Common::String MohawkEngine_LivingBooks::convertWinFileName(const Common::String
 }
 
 MohawkArchive *MohawkEngine_LivingBooks::createMohawkArchive() const {
-	return (getGameType() == GType_LIVINGBOOKSV1) ? new LivingBooksArchive_v1() : new MohawkArchive();
+	return isPreMohawk() ? new LivingBooksArchive_v1() : new MohawkArchive();
+}
+
+bool MohawkEngine_LivingBooks::isPreMohawk() const {
+	return getGameType() == GType_LIVINGBOOKSV1
+		|| (getGameType() == GType_LIVINGBOOKSV2 && getPlatform() == Common::kPlatformMacintosh);
 }
 
 void MohawkEngine_LivingBooks::addNotifyEvent(NotifyEvent event) {
@@ -1195,7 +1200,7 @@ void LBAnimationNode::draw(const Common::Rect &_bounds) {
 
 	uint16 resourceId = _parent->getResource(_currentCel - 1);
 
-	if (_vm->getGameType() != GType_LIVINGBOOKSV1) {
+	if (!_vm->isPreMohawk()) {
 		Common::Point offset = _parent->getOffset(_currentCel - 1);
 		xOffset -= offset.x;
 		yOffset -= offset.y;
@@ -1391,7 +1396,7 @@ bool LBAnimationNode::transparentAt(int x, int y) {
 
 	uint16 resourceId = _parent->getResource(_currentCel - 1);
 
-	if (_vm->getGameType() != GType_LIVINGBOOKSV1) {
+	if (!_vm->isPreMohawk()) {
 		Common::Point offset = _parent->getOffset(_currentCel - 1);
 		x += offset.x;
 		y += offset.y;
@@ -1492,7 +1497,7 @@ void LBAnimation::loadShape(uint16 resourceId) {
 
 	Common::SeekableSubReadStreamEndian *shapeStream = _vm->wrapStreamEndian(ID_SHP, resourceId);
 
-	if (_vm->getGameType() == GType_LIVINGBOOKSV1) {
+	if (_vm->isPreMohawk()) {
 		if (shapeStream->size() < 6)
 			error("V1 SHP Record size too short (%d)", shapeStream->size());
 

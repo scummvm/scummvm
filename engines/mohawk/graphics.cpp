@@ -956,7 +956,7 @@ void RivenGraphics::drawExtrasImage(uint16 id, Common::Rect dstRect) {
 }
 
 LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height) : GraphicsManager(), _vm(vm) {
-	_bmpDecoder = (_vm->getGameType() == GType_LIVINGBOOKSV1) ? new OldMohawkBitmap() : new MohawkBitmap();
+	_bmpDecoder = _vm->isPreMohawk() ? new OldMohawkBitmap() : new MohawkBitmap();
 
 	initGraphics(width, height, true);
 }
@@ -966,7 +966,7 @@ LBGraphics::~LBGraphics() {
 }
 
 MohawkSurface *LBGraphics::decodeImage(uint16 id) {
-	if (_vm->getGameType() == GType_LIVINGBOOKSV1)
+	if (_vm->isPreMohawk())
 		return _bmpDecoder->decodeImage(_vm->wrapStreamEndian(ID_BMAP, id));
 
 	return _bmpDecoder->decodeImage(_vm->getResource(ID_TBMP, id));
@@ -1002,7 +1002,7 @@ bool LBGraphics::imageIsTransparentAt(uint16 image, bool useOffsets, int x, int 
 void LBGraphics::setPalette(uint16 id) {
 	// Old Living Books games use the old CTBL-style palette format while newer
 	// games use the better tPAL format which can store partial palettes.
-	if (_vm->getGameType() == GType_LIVINGBOOKSV1) {
+	if (_vm->isPreMohawk()) {
 		Common::SeekableSubReadStreamEndian *ctblStream = _vm->wrapStreamEndian(ID_CTBL, id);
 		uint16 colorCount = ctblStream->readUint16();
 		byte *palette = new byte[colorCount * 4];

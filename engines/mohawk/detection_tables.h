@@ -690,9 +690,6 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// FIXME: Mac version of Dr. Seuss's ABC uses V1 archive format, but has
-	//        V2 script format. Currently the engine aborts after the "A--B--C" intro with:
-	//        failed to read script entry correctly (8 bytes left): type 0x0067, event 0x0004, opcode 0x0006, param 0x0001!
 	{
 		{
 			"seussabc",
@@ -703,7 +700,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV1,
+		GType_LIVINGBOOKSV2,
 		0,
 		0
 	},

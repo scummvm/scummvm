@@ -589,6 +589,7 @@ public:
 	void queueDelayedEvent(DelayedEvent event);
 
 	bool isBigEndian() const { return getGameType() != GType_LIVINGBOOKSV1 || getPlatform() == Common::kPlatformMacintosh; }
+	bool isPreMohawk() const;
 
 	LBMode getCurMode() { return _curMode; }
 
