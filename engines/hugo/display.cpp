@@ -111,10 +111,24 @@ Screen::~Screen() {
 void Screen::createPal() {
 	debugC(1, kDebugDisplay, "createPal");
 
-	g_system->getPaletteManager()->setPalette(_mainPalette, 0, _paletteSize / 4);
+	byte pal[3 * 256];
+	for (uint i = 0; i < _paletteSize; ++i) {
+		pal[3 * i + 0] = _mainPalette[4 * i + 0];
+		pal[3 * i + 1] = _mainPalette[4 * i + 1];
+		pal[3 * i + 2] = _mainPalette[4 * i + 2];
+	}
+
+	g_system->getPaletteManager()->setPalette(pal, 0, _paletteSize / 4);
 }
 
 void Screen::setCursorPal() {
+	byte pal[3 * 256];
+	for (uint i = 0; i < _paletteSize; ++i) {
+		pal[3 * i + 0] = _curPalette[4 * i + 0];
+		pal[3 * i + 1] = _curPalette[4 * i + 1];
+		pal[3 * i + 2] = _curPalette[4 * i + 2];
+	}
+
 	CursorMan.replaceCursorPalette(_curPalette, 0, _paletteSize / 4);
 }
 
@@ -171,12 +185,12 @@ void Screen::displayRect(const int16 x, const int16 y, const int16 dx, const int
 void Screen::remapPal(const uint16 oldIndex, const uint16 newIndex) {
 	debugC(1, kDebugDisplay, "Remap_pal(%d, %d)", oldIndex, newIndex);
 
-	byte pal[4];
+	byte pal[3];
 
 	pal[0] = _curPalette[4 * oldIndex + 0] = _mainPalette[newIndex * 4 + 0];
 	pal[1] = _curPalette[4 * oldIndex + 1] = _mainPalette[newIndex * 4 + 1];
 	pal[2] = _curPalette[4 * oldIndex + 2] = _mainPalette[newIndex * 4 + 2];
-	pal[3] = _curPalette[4 * oldIndex + 3] = _mainPalette[newIndex * 4 + 3];
+	//pal[3] = _curPalette[4 * oldIndex + 3] = _mainPalette[newIndex * 4 + 3];
 
 	g_system->getPaletteManager()->setPalette(pal, oldIndex, 1);
 }
@@ -197,7 +211,7 @@ void Screen::savePal(Common::WriteStream *f) const {
 void Screen::restorePal(Common::SeekableReadStream *f) {
 	debugC(1, kDebugDisplay, "restorePal()");
 
-	byte pal[4];
+	byte pal[3];
 
 	for (int i = 0; i < _paletteSize; i++)
 		_curPalette[i] = f->readByte();
@@ -206,7 +220,7 @@ void Screen::restorePal(Common::SeekableReadStream *f) {
 		pal[0] = _curPalette[i * 4 + 0];
 		pal[1] = _curPalette[i * 4 + 1];
 		pal[2] = _curPalette[i * 4 + 2];
-		pal[3] = _curPalette[i * 4 + 3];
+		//pal[3] = _curPalette[i * 4 + 3];
 		g_system->getPaletteManager()->setPalette(pal, i, 1);
 	}
 }
