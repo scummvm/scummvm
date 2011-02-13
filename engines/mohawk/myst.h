@@ -29,7 +29,6 @@
 #include "mohawk/console.h"
 #include "mohawk/mohawk.h"
 #include "mohawk/resource_cache.h"
-#include "mohawk/myst_vars.h"
 #include "mohawk/myst_scripts.h"
 
 #include "common/random.h"
@@ -168,8 +167,6 @@ public:
 	void checkCursorHints();
 	MystResource *updateCurrentResource();
 	bool skippableWait(uint32 duration);
-
-	MystVar *_varStore;
 
 	bool _tweaksEnabled;
 	bool _needsUpdate;

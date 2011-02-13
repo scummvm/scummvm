@@ -233,13 +233,12 @@ uint16 MystScriptParser::getVar(uint16 var) {
 		return _globals.ending;
 	default:
 		warning("Unimplemented var getter 0x%02x (%d)", var, var);
-		return _vm->_varStore->getVar(var);
+		return 0;
 	}
 }
 
 void MystScriptParser::toggleVar(uint16 var) {
 	warning("Unimplemented var toggle 0x%02x (%d)", var, var);
-	_vm->_varStore->setVar(var, (_vm->_varStore->getVar(var) + 1) % 2);
 }
 
 bool MystScriptParser::setVarValue(uint16 var, uint16 value) {
@@ -248,7 +247,6 @@ bool MystScriptParser::setVarValue(uint16 var, uint16 value) {
 			_tempVar = value;
 	} else {
 		warning("Unimplemented var setter 0x%02x (%d)", var, var);
-		_vm->_varStore->setVar(var, value);
 	}
 
 	return false;
