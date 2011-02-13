@@ -66,6 +66,7 @@ private:
 	void opcode_209_run();
 	void opcode_209_disable();
 
+	DECLARE_OPCODE(o_throneEnablePassage);
 	DECLARE_OPCODE(opcode_104);
 	DECLARE_OPCODE(o_fortressStaircaseMovie);
 	DECLARE_OPCODE(opcode_121);

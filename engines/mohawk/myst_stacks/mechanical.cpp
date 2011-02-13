@@ -50,6 +50,7 @@ MystScriptParser_Mechanical::~MystScriptParser_Mechanical() {
 
 void MystScriptParser_Mechanical::setupOpcodes() {
 	// "Stack-Specific" Opcodes
+	OPCODE(100, o_throneEnablePassage);
 	OPCODE(104, opcode_104);
 	OPCODE(105, o_fortressStaircaseMovie);
 	OPCODE(121, opcode_121);
@@ -170,6 +171,10 @@ uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
 
 void MystScriptParser_Mechanical::toggleVar(uint16 var) {
 	switch(var) {
+	case 0: // Sirrus's Secret Panel State
+		_state.sirrusPanelState ^= 1;
+	case 1: // Achenar's Secret Panel State
+		_state.achenarPanelState ^= 1;
 	case 3: // Achenar's Secret Room Crate State
 		_state.achenarCrateOpened ^= 1;
 	case 4: // Myst Book Room Staircase State
@@ -214,6 +219,12 @@ bool MystScriptParser_Mechanical::setVarValue(uint16 var, uint16 value) {
 	}
 
 	return refresh;
+}
+
+void MystScriptParser_Mechanical::o_throneEnablePassage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Enable throne passage", op);
+
+	_vm->_resources[argv[0]]->setEnabled(getVar(var));
 }
 
 void MystScriptParser_Mechanical::opcode_104(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
