@@ -51,7 +51,7 @@ MystScriptParser_Mechanical::~MystScriptParser_Mechanical() {
 void MystScriptParser_Mechanical::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, o_throneEnablePassage);
-	OPCODE(104, opcode_104);
+	OPCODE(104, o_snakeBoxTrigger);
 	OPCODE(105, o_fortressStaircaseMovie);
 	OPCODE(121, opcode_121);
 	OPCODE(122, opcode_122);
@@ -70,7 +70,7 @@ void MystScriptParser_Mechanical::setupOpcodes() {
 	OPCODE(200, o_throne_init);
 	OPCODE(201, opcode_201);
 	OPCODE(202, opcode_202);
-	OPCODE(203, opcode_203);
+	OPCODE(203, o_snakeBox_init);
 	OPCODE(204, opcode_204);
 	OPCODE(205, opcode_205);
 	OPCODE(206, opcode_206);
@@ -85,7 +85,6 @@ void MystScriptParser_Mechanical::setupOpcodes() {
 void MystScriptParser_Mechanical::disablePersistentScripts() {
 	opcode_201_disable();
 	opcode_202_disable();
-	opcode_203_disable();
 	opcode_204_disable();
 	opcode_205_disable();
 	opcode_206_disable();
@@ -95,7 +94,6 @@ void MystScriptParser_Mechanical::disablePersistentScripts() {
 void MystScriptParser_Mechanical::runPersistentScripts() {
 	opcode_201_run();
 	opcode_202_run();
-	opcode_203_run();
 	opcode_204_run();
 	opcode_205_run();
 	opcode_206_run();
@@ -227,17 +225,11 @@ void MystScriptParser_Mechanical::o_throneEnablePassage(uint16 op, uint16 var, u
 	_vm->_resources[argv[0]]->setEnabled(getVar(var));
 }
 
-void MystScriptParser_Mechanical::opcode_104(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void MystScriptParser_Mechanical::o_snakeBoxTrigger(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Trigger Playing Of Snake Movie", op);
 
 	// Used on Mechanical Card 6043 (Weapons Rack with Snake Box)
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Trigger Playing Of Snake Movie", op);
-
-		// TODO: Trigger Type 6 To Play Snake Movie.. Resource #3 on card.
-	} else
-		unknown(op, var, argc, argv);
-
+	_snakeBox->playMovie();
 }
 
 void MystScriptParser_Mechanical::o_fortressStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -437,29 +429,10 @@ void MystScriptParser_Mechanical::opcode_202(uint16 op, uint16 var, uint16 argc,
 		unknown(op, var, argc, argv);
 }
 
-static struct {
-	bool enabled;
-} g_opcode203Parameters;
+void MystScriptParser_Mechanical::o_snakeBox_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Snake box init", op);
 
-void MystScriptParser_Mechanical::opcode_203_run() {
-	if (g_opcode203Parameters.enabled) {
-		// Used for Card 6043 (Weapons Rack with Snake Box)
-		// TODO: Fill in Logic for Snake Box...
-	}
-}
-
-void MystScriptParser_Mechanical::opcode_203_disable() {
-	g_opcode203Parameters.enabled = false;
-}
-
-void MystScriptParser_Mechanical::opcode_203(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 6043 (Weapons Rack with Snake Box)
-	if (argc == 0)
-		g_opcode203Parameters.enabled = true;
-	else
-		unknown(op, var, argc, argv);
+	_snakeBox = static_cast<MystResourceType6 *>(_invokingResource);
 }
 
 static struct {

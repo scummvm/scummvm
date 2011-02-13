@@ -55,8 +55,6 @@ private:
 	void opcode_201_disable();
 	void opcode_202_run();
 	void opcode_202_disable();
-	void opcode_203_run();
-	void opcode_203_disable();
 	void opcode_204_run();
 	void opcode_204_disable();
 	void opcode_205_run();
@@ -67,7 +65,7 @@ private:
 	void opcode_209_disable();
 
 	DECLARE_OPCODE(o_throneEnablePassage);
-	DECLARE_OPCODE(opcode_104);
+	DECLARE_OPCODE(o_snakeBoxTrigger);
 	DECLARE_OPCODE(o_fortressStaircaseMovie);
 	DECLARE_OPCODE(opcode_121);
 	DECLARE_OPCODE(opcode_122);
@@ -85,7 +83,7 @@ private:
 	DECLARE_OPCODE(o_throne_init);
 	DECLARE_OPCODE(opcode_201);
 	DECLARE_OPCODE(opcode_202);
-	DECLARE_OPCODE(opcode_203);
+	DECLARE_OPCODE(o_snakeBox_init);
 	DECLARE_OPCODE(opcode_204);
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
@@ -100,6 +98,8 @@ private:
 	uint16 _fortressPosition; // 82
 
 	uint16 _crystalLit; // 130
+
+	MystResourceType6 *_snakeBox; // 156
 };
 
 } // End of namespace Mohawk
