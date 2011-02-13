@@ -68,7 +68,7 @@ void MystScriptParser_Mechanical::setupOpcodes() {
 
 	// "Init" Opcodes
 	OPCODE(200, o_throne_init);
-	OPCODE(201, opcode_201);
+	OPCODE(201, o_fortressStaircase_init);
 	OPCODE(202, opcode_202);
 	OPCODE(203, o_snakeBox_init);
 	OPCODE(204, opcode_204);
@@ -83,7 +83,6 @@ void MystScriptParser_Mechanical::setupOpcodes() {
 #undef OPCODE
 
 void MystScriptParser_Mechanical::disablePersistentScripts() {
-	opcode_201_disable();
 	opcode_202_disable();
 	opcode_204_disable();
 	opcode_205_disable();
@@ -92,7 +91,6 @@ void MystScriptParser_Mechanical::disablePersistentScripts() {
 }
 
 void MystScriptParser_Mechanical::runPersistentScripts() {
-	opcode_201_run();
 	opcode_202_run();
 	opcode_204_run();
 	opcode_205_run();
@@ -369,43 +367,12 @@ void MystScriptParser_Mechanical::o_throne_init(uint16 op, uint16 var, uint16 ar
 	_invokingResource->setEnabled(getVar(var));
 }
 
-static struct {
-	uint16 u0;
-	uint16 u1;
-	uint16 u2;
+void MystScriptParser_Mechanical::o_fortressStaircase_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Staircase init", op);
 
-	bool enabled;
-} g_opcode201Parameters;
-
-void MystScriptParser_Mechanical::opcode_201_run() {
-	// Used for Card 6159 (Facing Corridor to Fortress Elevator)
-
-	// g_opcode201Parameters.u0
-	// g_opcode201Parameters.u1
-	// g_opcode201Parameters.u2
-
-	// TODO: Fill in Function...
-}
-
-void MystScriptParser_Mechanical::opcode_201_disable() {
-	g_opcode201Parameters.enabled = false;
-	g_opcode201Parameters.u0 = 0;
-	g_opcode201Parameters.u1 = 0;
-	g_opcode201Parameters.u2 = 0;
-}
-
-void MystScriptParser_Mechanical::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 6159 (Facing Corridor to Fortress Elevator)
-	if (argc == 3) {
-		g_opcode201Parameters.u0 = argv[0];
-		g_opcode201Parameters.u1 = argv[1];
-		g_opcode201Parameters.u2 = argv[2];
-
-		g_opcode201Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
+	_vm->_resources[argv[0]]->setEnabled(!_state.staircaseState);
+	_vm->_resources[argv[1]]->setEnabled(!_state.staircaseState);
+	_vm->_resources[argv[2]]->setEnabled(_state.staircaseState);
 }
 
 static struct {
