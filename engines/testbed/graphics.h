@@ -86,7 +86,7 @@ private:
 	 * 2 (R:255, G:255, B:255) your customized color (by default white) (kColorCustom)
 	 * The remaining values are zero
 	 */
-	static byte _palette[256 * 4];
+	static byte _palette[256 * 3];
 };
 
 } // End of namespace Testbed

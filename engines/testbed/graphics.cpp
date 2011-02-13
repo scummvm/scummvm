@@ -38,7 +38,7 @@
 
 namespace Testbed {
 
-byte GFXTestSuite::_palette[256 * 4] = {0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0};
+byte GFXTestSuite::_palette[256 * 3] = {0, 0, 0, 255, 255, 255, 255, 255, 255};
 
 GFXTestSuite::GFXTestSuite() {
 	// Initialize color palettes
@@ -79,12 +79,12 @@ GFXTestSuite::GFXTestSuite() {
 }
 
 void GFXTestSuite::setCustomColor(uint r, uint g, uint b) {
-	_palette[8] = r;
-	_palette[9] = g;
-	_palette[10] = b;
+	_palette[6] = r;
+	_palette[7] = g;
+	_palette[8] = b;
 
 	// Set colorNum kColorSpecial with a special color.
-	int absIndx = kColorSpecial * 4;
+	int absIndx = kColorSpecial * 3;
 	_palette[absIndx + 1] = 173;
 	_palette[absIndx + 2] = 255;
 	_palette[absIndx + 3] = 47;
@@ -94,12 +94,12 @@ void GFXTestSuite::setCustomColor(uint r, uint g, uint b) {
 // Helper functions used by GFX tests
 
 void GFXtests::initMousePalette() {
-	byte palette[3 * 4]; // Black, white and yellow
+	byte palette[3 * 3]; // Black, white and yellow
 
 	palette[0] = palette[1] = palette[2] = 0;
-	palette[4] = palette[5] = palette[6] = 255;
-	palette[8] = palette[9] = 255;
-	palette[10] = 0;
+	palette[3] = palette[4] = palette[5] = 255;
+	palette[6] = palette[7] = 255;
+	palette[8] = 0;
 
 	CursorMan.replaceCursorPalette(palette, 0, 3);
 }
@@ -968,14 +968,14 @@ TestExitStatus GFXtests::paletteRotation() {
 	Testsuite::clearEntireScreen();
 
 	// Use 256 colors
-	byte palette[256 * 4] = {0};
+	byte palette[256 * 3] = {0};
 
 	int r, g, b;
 	int colIndx;
 
 	for (int i = 0; i < 256; i++) {
 		HSVtoRGB(r, g, b, i, 1, 1);
-		colIndx = i * 4;
+		colIndx = i * 3;
 		palette[colIndx] = r;
 		palette[colIndx + 1] = g;
 		palette[colIndx + 2] = b;
