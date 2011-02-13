@@ -1792,11 +1792,11 @@ void TuckerEngine::execData3PreUpdate_locationNum29() {
 			_updateLocationFadePaletteCounter = 0;
 		}
 		const int d = _updateLocationFadePaletteCounter / 2;
-		uint8 scrollPal[5 * 4];
+		uint8 scrollPal[5 * 3];
 		for (int i = 0; i < 5; ++i) {
-			scrollPal[i * 4]     = r[i + d];
-			scrollPal[i * 4 + 1] = g[i + d];
-			scrollPal[i * 4 + 2] = b[i + d];
+			scrollPal[i * 3]     = r[i + d];
+			scrollPal[i * 3 + 1] = g[i + d];
+			scrollPal[i * 3 + 2] = b[i + d];
 		}
 		_system->getPaletteManager()->setPalette(scrollPal, 118, 5);
 		if (_flagsTable[143] == 1) {

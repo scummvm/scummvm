@@ -678,14 +678,14 @@ void AnimationSequencePlayer::updateSounds() {
 }
 
 void AnimationSequencePlayer::fadeInPalette() {
-	uint8 paletteBuffer[256 * 4];
+	uint8 paletteBuffer[256 * 3];
 	memset(paletteBuffer, 0, sizeof(paletteBuffer));
 	bool fadeColors = true;
 	for (int step = 0; step < 64; ++step) {
 		if (fadeColors) {
 			fadeColors = false;
-			for (int i = 0; i < 1024; ++i) {
-				if ((i & 3) != 3 && paletteBuffer[i] < _animationPalette[i]) {
+			for (int i = 0; i < 3*256; ++i) {
+				if (paletteBuffer[i] < _animationPalette[i]) {
 					const int color = paletteBuffer[i] + 4;
 					paletteBuffer[i] = MIN<int>(color, _animationPalette[i]);
 					fadeColors = true;
@@ -699,14 +699,14 @@ void AnimationSequencePlayer::fadeInPalette() {
 }
 
 void AnimationSequencePlayer::fadeOutPalette() {
-	uint8 paletteBuffer[256 * 4];
-	memcpy(paletteBuffer, _animationPalette, 1024);
+	uint8 paletteBuffer[256 * 3];
+	memcpy(paletteBuffer, _animationPalette, 3*256);
 	bool fadeColors = true;
 	for (int step = 0; step < 64; ++step) {
 		if (fadeColors) {
 			fadeColors = false;
-			for (int i = 0; i < 1024; ++i) {
-				if ((i & 3) != 3 && paletteBuffer[i] > 0) {
+			for (int i = 0; i < 3*256; ++i) {
+				if (paletteBuffer[i] > 0) {
 					const int color = paletteBuffer[i] - 4;
 					paletteBuffer[i] = MAX<int>(0, color);
 					fadeColors = true;
@@ -742,13 +742,7 @@ uint8 *AnimationSequencePlayer::loadPicture(const char *fileName) {
 }
 
 void AnimationSequencePlayer::getRGBPalette(int index) {
-	const byte *rgbPalette = _flicPlayer[index].getPalette();
-	for (int i = 0; i < 256; i++) {
-		_animationPalette[i * 4 + 0] = rgbPalette[i * 3 + 0];
-		_animationPalette[i * 4 + 1] = rgbPalette[i * 3 + 1];
-		_animationPalette[i * 4 + 2] = rgbPalette[i * 3 + 2];
-		_animationPalette[i * 4 + 3] = 0;
-	}
+	memcpy(_animationPalette, _flicPlayer[index].getPalette(), 3 * 256);
 }
 
 void AnimationSequencePlayer::openAnimation(int index, const char *fileName) {
@@ -828,9 +822,7 @@ void AnimationSequencePlayer::displayLoadingScreen() {
 	if (f.open("graphics/loading.pic")) {
 		fadeOutPalette();
 		f.seek(32);
-		for (int i = 0; i < 1024; i += 4) {
-			f.read(_animationPalette + i, 3);
-		}
+		f.read(_animationPalette, 3 * 256);
 		f.read(_offscreenBuffer, 64000);
 		_system->copyRectToScreen(_offscreenBuffer, 320, 0, 0, kScreenWidth, kScreenHeight);
 		fadeInPalette();
@@ -847,12 +839,7 @@ void AnimationSequencePlayer::initPicPart4() {
 void AnimationSequencePlayer::drawPicPart4() {
 	static const uint8 offsets[] = { 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
 	if (_updateScreenIndex == -1) {
-		for (int i = 0; i < 256; ++i) {
-			if (memcmp(_animationPalette + i * 4, _picBufPtr + 32 + i * 3, 3) != 0) {
-				memcpy(_animationPalette + i * 4, _picBufPtr + 32 + i * 3, 3);
-				_animationPalette[i * 4 + 3] = 0;
-			}
-		}
+		memcpy(_animationPalette, _picBufPtr + 32, 3 * 256);
 	}
 	if (_updateScreenCounter == 0) {
 		static const uint8 counter[] = { 1, 2, 3, 4, 5, 35, 5, 4, 3, 2, 1 };

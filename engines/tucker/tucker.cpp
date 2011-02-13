@@ -942,12 +942,12 @@ void TuckerEngine::updateFlagsForCharPosition() {
 }
 
 void TuckerEngine::fadeOutPalette(int colorsCount) {
-	uint8 pal[256 * 4];
+	uint8 pal[256 * 3];
 	_system->getPaletteManager()->grabPalette(pal, 0, colorsCount);
 	for (int color = 0; color < colorsCount; ++color) {
 		for (int i = 0; i < 3; ++i) {
-			const int c = int(pal[color * 4 + i]) + kFadePaletteStep * 4;
-			pal[color * 4 + i] = MIN<int>(c, _currentPalette[color * 3 + i]);
+			const int c = int(pal[color * 3 + i]) + kFadePaletteStep * 3;
+			pal[color * 3 + i] = MIN<int>(c, _currentPalette[color * 3 + i]);
 		}
 	}
 	_system->getPaletteManager()->setPalette(pal, 0, colorsCount);
@@ -956,12 +956,12 @@ void TuckerEngine::fadeOutPalette(int colorsCount) {
 }
 
 void TuckerEngine::fadeInPalette(int colorsCount) {
-	uint8 pal[256 * 4];
+	uint8 pal[256 * 3];
 	_system->getPaletteManager()->grabPalette(pal, 0, colorsCount);
 	for (int color = 0; color < colorsCount; ++color) {
 		for (int i = 0; i < 3; ++i) {
-			const int c = int(pal[color * 4 + i]) - kFadePaletteStep * 4;
-			pal[color * 4 + i] = MAX<int>(c, 0);
+			const int c = int(pal[color * 3 + i]) - kFadePaletteStep * 3;
+			pal[color * 3 + i] = MAX<int>(c, 0);
 		}
 	}
 	_system->getPaletteManager()->setPalette(pal, 0, colorsCount);
@@ -980,7 +980,7 @@ void TuckerEngine::fadePaletteColor(int color, int step) {
 }
 
 void TuckerEngine::setBlackPalette() {
-	uint8 pal[256 * 4];
+	uint8 pal[256 * 3];
 	memset(pal, 0, sizeof(pal));
 	_system->getPaletteManager()->setPalette(pal, 0, 256);
 }
