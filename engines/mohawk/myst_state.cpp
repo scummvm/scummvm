@@ -227,12 +227,12 @@ void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 	s.syncAsUint16LE(_channelwood.holoprojectorSelection);
 	s.syncAsUint16LE(_channelwood.stairsUpperDoorState);
 
-	if (isME)
-		s.skip(4);
-	else
-		s.skip(1);
-
 	// Mechanical
+
+	if (isME)
+		s.syncAsUint32LE(_mechanical.achenarCrateOpened);
+	else
+		s.syncAsByte(_mechanical.achenarCrateOpened);
 
 	s.syncAsUint16LE(_mechanical.achenarPanelState);
 	s.syncAsUint16LE(_mechanical.sirrusPanelState);
