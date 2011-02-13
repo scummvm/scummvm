@@ -318,13 +318,13 @@ void Util::forceMouseUp(bool onlyWhenSynced) {
 
 void Util::clearPalette() {
 	int16 i;
-	byte colors[1024];
+	byte colors[768];
 
 	_vm->validateVideoMode(_vm->_global->_videoMode);
 
 	if (_vm->_global->_setAllPalette) {
 		if (_vm->getPixelFormat().bytesPerPixel == 1) {
-			memset(colors, 0, 1024);
+			memset(colors, 0, sizeof(colors));
 			g_system->getPaletteManager()->setPalette(colors, 0, 256);
 		}
 
