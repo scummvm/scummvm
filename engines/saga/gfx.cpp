@@ -201,20 +201,19 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 		numcolors = 248;
 	}
 
-	for (i = 0, ppal = &_currentPal[from * 4]; i < numcolors; i++, ppal += 4) {
+	for (i = 0, ppal = &_currentPal[from * 3]; i < numcolors; i++, ppal += 3) {
 		ppal[0] = _globalPalette[i].red = pal[i].red;
 		ppal[1] = _globalPalette[i].green = pal[i].green;
 		ppal[2] = _globalPalette[i].blue = pal[i].blue;
-		ppal[3] = 0;
 	}
 
 	// Color 0 should always be black in IHNM
 	if (_vm->getGameId() == GID_IHNM)
-		memset(&_currentPal[0 * 4], 0, 4);
+		memset(&_currentPal[0 * 3], 0, 3);
 
 	// Make 256th color black. See bug #1256368
 	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
-		memset(&_currentPal[255 * 4], 0, 4);
+		memset(&_currentPal[255 * 3], 0, 3);
 
 	_system->getPaletteManager()->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
@@ -225,20 +224,16 @@ void Gfx::setPaletteColor(int n, int r, int g, int b) {
 	// This function may get called a lot. To avoid forcing full-screen
 	// updates, only update the palette if the color actually changes.
 
-	if (_currentPal[4 * n + 0] != r) {
-		_currentPal[4 * n + 0] = _globalPalette[n].red = r;
+	if (_currentPal[3 * n + 0] != r) {
+		_currentPal[3 * n + 0] = _globalPalette[n].red = r;
 		update = true;
 	}
-	if (_currentPal[4 * n + 1] != g) {
-		_currentPal[4 * n + 1] = _globalPalette[n].green = g;
+	if (_currentPal[3 * n + 1] != g) {
+		_currentPal[3 * n + 1] = _globalPalette[n].green = g;
 		update = true;
 	}
-	if (_currentPal[4 * n + 2] != b) {
-		_currentPal[4 * n + 2] = _globalPalette[n].blue = b;
-		update = true;
-	}
-	if (_currentPal[4 * n + 3] != 0) {
-		_currentPal[4 * n + 3] = 0;
+	if (_currentPal[3 * n + 2] != b) {
+		_currentPal[3 * n + 2] = _globalPalette[n].blue = b;
 		update = true;
 	}
 
@@ -250,7 +245,7 @@ void Gfx::getCurrentPal(PalEntry *src_pal) {
 	int i;
 	byte *ppal;
 
-	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 3) {
 		src_pal[i].red = ppal[0];
 		src_pal[i].green = ppal[1];
 		src_pal[i].blue = ppal[2];
@@ -285,7 +280,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 	fpercent = 1.0 - fpercent;
 
 	// Use the correct percentage change per frame for each palette entry
-	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 3) {
 		if (i < from || i >= from + numcolors)
 			palE = &_globalPalette[i];
 		else
@@ -314,16 +309,15 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 		} else {
 			ppal[2] = (byte) new_entry;
 		}
-		ppal[3] = 0;
 	}
 
 	// Color 0 should always be black in IHNM
 	if (_vm->getGameId() == GID_IHNM)
-		memset(&_currentPal[0 * 4], 0, 4);
+		memset(&_currentPal[0 * 3], 0, 3);
 
 	// Make 256th color black. See bug #1256368
 	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
-		memset(&_currentPal[255 * 4], 0, 4);
+		memset(&_currentPal[255 * 3], 0, 3);
 
 	_system->getPaletteManager()->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
@@ -352,7 +346,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	fpercent = percent * percent;
 
 	// Use the correct percentage change per frame for each palette entry
-	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 3) {
 		if (i < from || i >= from + numcolors)
 			palE = &_globalPalette[i];
 		else
@@ -381,16 +375,15 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 		} else {
 			ppal[2] = (byte) new_entry;
 		}
-		ppal[3] = 0;
 	}
 
 	// Color 0 should always be black in IHNM
 	if (_vm->getGameId() == GID_IHNM)
-		memset(&_currentPal[0 * 4], 0, 4);
+		memset(&_currentPal[0 * 3], 0, 3);
 
 	// Make 256th color black. See bug #1256368
 	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
-		memset(&_currentPal[255 * 4], 0, 4);
+		memset(&_currentPal[255 * 3], 0, 3);
 
 	_system->getPaletteManager()->setPalette(_currentPal, 0, PAL_ENTRIES);
 }

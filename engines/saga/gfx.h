@@ -224,7 +224,7 @@ public:
 
 private:
 	Surface _backBuffer;
-	byte _currentPal[PAL_ENTRIES * 4];
+	byte _currentPal[PAL_ENTRIES * 3];
 	OSystem *_system;
 	SagaEngine *_vm;
 
