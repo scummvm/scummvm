@@ -599,6 +599,10 @@ void MystScriptParser::o_copyBackBufferToScreen(uint16 op, uint16 var, uint16 ar
 void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	uint16 imageId = argv[0];
 
+	// WORKAROUND wrong image id in mechanical staircase
+	if (imageId == 7158)
+		imageId = 7178;
+
 	Common::Rect srcRect = Common::Rect(argv[1], argv[2], argv[3], argv[4]);
 
 	Common::Rect dstRect = Common::Rect(argv[5], argv[6], 544, 333);
