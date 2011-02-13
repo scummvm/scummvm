@@ -66,7 +66,7 @@ void MystScriptParser_Mechanical::setupOpcodes() {
 	OPCODE(132, o_crystalLeaveRed);
 
 	// "Init" Opcodes
-	OPCODE(200, opcode_200);
+	OPCODE(200, o_throne_init);
 	OPCODE(201, opcode_201);
 	OPCODE(202, opcode_202);
 	OPCODE(203, opcode_203);
@@ -82,7 +82,6 @@ void MystScriptParser_Mechanical::setupOpcodes() {
 #undef OPCODE
 
 void MystScriptParser_Mechanical::disablePersistentScripts() {
-	opcode_200_disable();
 	opcode_201_disable();
 	opcode_202_disable();
 	opcode_203_disable();
@@ -93,7 +92,6 @@ void MystScriptParser_Mechanical::disablePersistentScripts() {
 }
 
 void MystScriptParser_Mechanical::runPersistentScripts() {
-	opcode_200_run();
 	opcode_201_run();
 	opcode_202_run();
 	opcode_203_run();
@@ -361,32 +359,11 @@ void MystScriptParser_Mechanical::o_crystalLeaveRed(uint16 op, uint16 var, uint1
 	_vm->redrawArea(22);
 }
 
-static struct {
-	bool enabled;
-	uint16 var;
-} g_opcode200Parameters;
-
-void MystScriptParser_Mechanical::opcode_200_run() {
+void MystScriptParser_Mechanical::o_throne_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Card 6238 (Sirrus' Throne) and Card 6027 (Achenar's Throne)
-	// g_opcode200Parameters.var == 0 for Achenar
-	// g_opcode200Parameters.var == 1 for Sirrus
+	debugC(kDebugScript, "Opcode %d: Brother throne init", op);
 
-	// TODO: Fill in Function...
-	// Variable indicates that this is related to Secret Panel State
-}
-
-void MystScriptParser_Mechanical::opcode_200_disable() {
-	g_opcode200Parameters.enabled = false;
-	g_opcode200Parameters.var = 0;
-}
-
-void MystScriptParser_Mechanical::opcode_200(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 6238 (Sirrus' Throne) and Card 6027 (Achenar's Throne)
-	if (argc == 0) {
-		g_opcode200Parameters.var = var;
-		g_opcode200Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
+	_invokingResource->setEnabled(getVar(var));
 }
 
 static struct {

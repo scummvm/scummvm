@@ -51,8 +51,6 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
-	void opcode_200_run();
-	void opcode_200_disable();
 	void opcode_201_run();
 	void opcode_201_disable();
 	void opcode_202_run();
@@ -83,7 +81,7 @@ private:
 	DECLARE_OPCODE(o_crystalLeaveGreen);
 	DECLARE_OPCODE(o_crystalLeaveRed);
 
-	DECLARE_OPCODE(opcode_200);
+	DECLARE_OPCODE(o_throne_init);
 	DECLARE_OPCODE(opcode_201);
 	DECLARE_OPCODE(opcode_202);
 	DECLARE_OPCODE(opcode_203);
