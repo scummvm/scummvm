@@ -160,26 +160,24 @@ void Palette::fadeTo(const Palette& target, uint step) {
 	return;
 }
 
-uint Palette::fillRGBA(byte *rgba) {
+uint Palette::fillRGB(byte *rgb) {
 
 	byte r, g, b;
-	byte *hbPal = rgba + _colors * 4;
+	byte *hbPal = rgb + _colors * 4;
 
 	for (uint32 i = 0; i < _colors; i++) {
 		r = (_data[i*3]   << 2) | (_data[i*3]   >> 4);
 		g = (_data[i*3+1] << 2) | (_data[i*3+1] >> 4);
 		b = (_data[i*3+2] << 2) | (_data[i*3+2] >> 4);
 
-		rgba[i*4]   = r;
-		rgba[i*4+1] = g;
-		rgba[i*4+2] = b;
-		rgba[i*4+3] = 0;
+		rgb[i*3]   = r;
+		rgb[i*3+1] = g;
+		rgb[i*3+2] = b;
 
 		if (_hb) {
-			hbPal[i*4]   = r >> 1;
-			hbPal[i*4+1] = g >> 1;
-			hbPal[i*4+2] = b >> 1;
-			hbPal[i*4+3] = 0;
+			hbPal[i*3]   = r >> 1;
+			hbPal[i*3+1] = g >> 1;
+			hbPal[i*3+2] = b >> 1;
 		}
 
 	}
@@ -222,9 +220,9 @@ void Palette::rotate(uint first, uint last, bool forward) {
 
 
 void Gfx::setPalette(Palette pal) {
-	byte sysPal[256*4];
+	byte sysPal[256*3];
 
-	uint n = pal.fillRGBA(sysPal);
+	uint n = pal.fillRGB(sysPal);
 	_vm->_system->getPaletteManager()->setPalette(sysPal, 0, n);
 }
 
