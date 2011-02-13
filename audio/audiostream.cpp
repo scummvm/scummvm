@@ -228,8 +228,8 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 SubSeekableAudioStream::SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse)
     : _parent(parent), _disposeAfterUse(disposeAfterUse),
       _start(convertTimeToStreamPos(start, getRate(), isStereo())),
-       _pos(0, getRate() * (isStereo() ? 2 : 1)),
-      _length(convertTimeToStreamPos(end - start, getRate(), isStereo())) {
+      _pos(0, getRate() * (isStereo() ? 2 : 1)),
+      _length(convertTimeToStreamPos(end, getRate(), isStereo()) - _start) {
 
 	assert(_length.totalNumberOfFrames() % (isStereo() ? 2 : 1) == 0);
 	_parent->seek(_start);
