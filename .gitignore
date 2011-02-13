@@ -1,3 +1,4 @@
+
 *~
 .*.swp
 .*.swo
@@ -66,17 +67,17 @@ lib*.a
 /dists/iphone/scummvm.xcodeproj/*.mode1v3
 /dists/iphone/scummvm.xcodeproj/*.pbxuser
 
-/dists/msvc8/*_Debug
-/dists/msvc8/*_Release
-/dists/msvc8/*.suo
-/dists/msvc8/*.ncb
-/dists/msvc8/*.user
+/dists/msvc8/[Dd]ebug*/
+/dists/msvc8/[Rr]elease*/
+/dists/msvc8/*.lib
 
-/dists/msvc9/*_Debug
-/dists/msvc9/*_Release
-/dists/msvc9/*.suo
-/dists/msvc9/*.ncb
-/dists/msvc9/*.user
+/dists/msvc9/[Dd]ebug*/
+/dists/msvc9/[Rr]elease*/
+/dists/msvc9/*.lib
+
+/dists/msvc10/[Dd]ebug*/
+/dists/msvc10/[Rr]elease*/
+/dists/msvc10/*.lib
 
 /doc/*.aux
 /doc/*.dvi
@@ -105,3 +106,28 @@ lib*.a
 /tools/qtable/qtable
 /tools/skycpt/skycpt
 
+#ignore thumbnails created by windows
+Thumbs.db
+#Ignore files build by Visual Studio
+*.obj
+*.exe
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+*.sbr
+obj/
+_ReSharper*/
+[Tt]est[Rr]esult*
+*.vcproj
+*.sln
+*.vsprops
