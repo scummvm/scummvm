@@ -40,6 +40,7 @@ MystScriptParser_Mechanical::MystScriptParser_Mechanical(MohawkEngine_Myst *vm) 
 	setupOpcodes();
 
 	_mystStaircaseState = false;
+	_fortressPosition = 0;
 }
 
 MystScriptParser_Mechanical::~MystScriptParser_Mechanical() {
@@ -104,23 +105,27 @@ void MystScriptParser_Mechanical::runPersistentScripts() {
 
 uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
 	switch(var) {
-	case 0: // Sirrus's Secret Panel State2
+	case 0: // Sirrus's Secret Panel State
 		return _state.sirrusPanelState;
 	case 1: // Achenar's Secret Panel State
 		return _state.achenarPanelState;
-//	case 3: // Sirrus's Secret Room Crate State
-//		return 0;
-//		return 1;
+	case 2: // Achenar's Secret Room Crate Lid Open and Blue Page Present
+		if (_state.achenarCrateOpened) {
+			if (_globals.bluePagesInBook & 4 || _globals.heldPage == 3)
+				return 2;
+			else
+				return 3;
+		} else {
+			return _globals.bluePagesInBook & 4 || _globals.heldPage == 3;
+		}
+	case 3: // Achenar's Secret Room Crate State
+		return _state.achenarCrateOpened;
 	case 4: // Myst Book Room Staircase State
 		return _mystStaircaseState;
-//	case 5: // Fortress Position
-//		return 0; // Island with Code Lock
-//		return 1; // Island with Last Two Symbols of Code
-//		return 2; // Island with First Two Symbols of Code
-//		return 3; // No Island
-//	case 6: // Fortress Position - Big Cog Visible Through Doorway
-//		return 0;
-//		return 1;
+	case 5: // Fortress Position
+		return _fortressPosition;
+	case 6: // Fortress Position - Big Cog Visible Through Doorway
+		return _fortressPosition == 0;
 	case 7: // Fortress Elevator Open
 		if (_state.elevatorRotation == 4)
 			return 1; // Open
@@ -159,14 +164,10 @@ uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
 //	case 22: // Crystal Lit Flag - Red
 //		return 0;
 //		return 1;
-//	case 102: // Red Page Present In Age
-//		globals.heldPage and redPagesInBook?
-//		return 0; // Page Not Present
-//		return 1; // Page Present
-//	case 103: // Blue Page Present In Age
-//		globals.heldPage and bluePagesInBook?
-//		return 0; // Page Not Present
-//		return 1; // Page Present
+	case 102: // Red page
+		return !(_globals.redPagesInBook & 4) && (_globals.heldPage != 9);
+	case 103: // Blue page
+		return !(_globals.bluePagesInBook & 4) && (_globals.heldPage != 3);
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -174,8 +175,8 @@ uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
 
 void MystScriptParser_Mechanical::toggleVar(uint16 var) {
 	switch(var) {
-//	case 3: // Sirrus's Secret Room Crate State
-//		temp ^= 1;
+	case 3: // Achenar's Secret Room Crate State
+		_state.achenarCrateOpened ^= 1;
 	case 4: // Myst Book Room Staircase State
 		_mystStaircaseState ^= 1;
 	case 10: // Fortress Staircase State
@@ -186,10 +187,22 @@ void MystScriptParser_Mechanical::toggleVar(uint16 var) {
 	case 19: // Code Lock Shape #4 - Right
 		_state.codeShape[var - 16] = (_state.codeShape[var - 16] + 1) % 10;
 		break;
-//	case 102: // Red Page Grab/Release
-//		globals.heldPage?
-//	case 103: // Blue Page Grab/Release
-//		globals.heldPage?
+	case 102: // Red page
+		if (!(_globals.redPagesInBook & 4)) {
+			if (_globals.heldPage == 9)
+				_globals.heldPage = 0;
+			else
+				_globals.heldPage = 9;
+		}
+		break;
+	case 103: // Blue page
+		if (!(_globals.bluePagesInBook & 4)) {
+			if (_globals.heldPage == 3)
+				_globals.heldPage = 0;
+			else
+				_globals.heldPage = 3;
+		}
+		break;
 	default:
 		MystScriptParser::toggleVar(var);
 		break;

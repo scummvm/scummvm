@@ -97,6 +97,8 @@ private:
 	MystGameState::Mechanical &_state;
 
 	bool _mystStaircaseState; // 76
+
+	uint16 _fortressPosition; // 82
 };
 
 } // End of namespace Mohawk
