@@ -923,14 +923,7 @@ void ToonEngine::flushPalette(bool deferFlushToNextRender) {
 		return;
 	}
 	_needPaletteFlush = false;
-	uint8 vmpalette[1024];
-	for (int32 i = 0; i < 256; i++) {
-		vmpalette[i*4+0] = _finalPalette[i*3+0];
-		vmpalette[i*4+1] = _finalPalette[i*3+1];
-		vmpalette[i*4+2] = _finalPalette[i*3+2];
-		vmpalette[i*4+3] = 0;
-	}
-	_system->getPaletteManager()->setPalette(vmpalette, 0, 256);
+	_system->getPaletteManager()->setPalette(_finalPalette, 0, 256);
 }
 void ToonEngine::setPaletteEntries(uint8 *palette, int32 offset, int32 num) {
 	memcpy(_finalPalette + offset * 3, palette, num * 3);
@@ -1751,12 +1744,11 @@ void ToonEngine::flipScreens() {
 void ToonEngine::fadeIn(int32 numFrames) {
 	for (int32 f = 0; f < numFrames; f++) {
 
-		uint8 vmpalette[1024];
+		uint8 vmpalette[3 * 256];
 		for (int32 i = 0; i < 256; i++) {
-			vmpalette[i*4+0] = f * _finalPalette[i*3+0] / (numFrames - 1);
-			vmpalette[i*4+1] = f * _finalPalette[i*3+1] / (numFrames - 1);
-			vmpalette[i*4+2] = f * _finalPalette[i*3+2] / (numFrames - 1);
-			vmpalette[i*4+3] = 0;
+			vmpalette[i*3+0] = f * _finalPalette[i*3+0] / (numFrames - 1);
+			vmpalette[i*3+1] = f * _finalPalette[i*3+1] / (numFrames - 1);
+			vmpalette[i*3+2] = f * _finalPalette[i*3+2] / (numFrames - 1);
 		}
 		_system->getPaletteManager()->setPalette(vmpalette, 0, 256);
 		_system->updateScreen();
@@ -1766,16 +1758,15 @@ void ToonEngine::fadeIn(int32 numFrames) {
 
 void ToonEngine::fadeOut(int32 numFrames) {
 
-	uint8 oldpalette[1024];
+	uint8 oldpalette[3 * 256];
 	_system->getPaletteManager()->grabPalette(oldpalette, 0, 256);
 
 	for (int32 f = 0; f < numFrames; f++) {
-		uint8 vmpalette[1024];
+		uint8 vmpalette[3 * 256];
 		for (int32 i = 0; i < 256; i++) {
-			vmpalette[i*4+0] = (numFrames - f - 1) * oldpalette[i*4+0] / (numFrames - 1);
-			vmpalette[i*4+1] = (numFrames - f - 1) * oldpalette[i*4+1] / (numFrames - 1);
-			vmpalette[i*4+2] = (numFrames - f - 1) * oldpalette[i*4+2] / (numFrames - 1);
-			vmpalette[i*4+3] = 255;
+			vmpalette[i*3+0] = (numFrames - f - 1) * oldpalette[i*3+0] / (numFrames - 1);
+			vmpalette[i*3+1] = (numFrames - f - 1) * oldpalette[i*3+1] / (numFrames - 1);
+			vmpalette[i*3+2] = (numFrames - f - 1) * oldpalette[i*3+2] / (numFrames - 1);
 		}
 		_system->getPaletteManager()->setPalette(vmpalette, 0, 256);
 		_system->updateScreen();
