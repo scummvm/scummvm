@@ -53,46 +53,37 @@ ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	_prevBuf = new Graphics::Surface();
 
 	if (_vm->_mode8bit) {
-		byte pal[256 * 4];
+		byte pal[256 * 3];
 #ifdef DITHER
-		byte pal3[256 * 3];
 		// Initialize to a black palette
-		for (int i = 0; i < 256 * 3; i++) {
-			pal3[i] = 0;
-		}
+		memset(pal, 0, 256 * 3);
 
 		// Build a basic color palette
 		for (int r = 0; r < 4; r++) {
 			for (int g = 0; g < 4; g++) {
 				for (int b = 0; b < 4; b++) {
 					byte col = (r << 4) | (g << 2) | (b << 0);
-					pal3[3 * col + 0] = r << 6;
-					pal3[3 * col + 1] = g << 6;
-					pal3[3 * col + 2] = b << 6;
+					pal[3 * col + 0] = r << 6;
+					pal[3 * col + 1] = g << 6;
+					pal[3 * col + 2] = b << 6;
 				}
 			}
 		}
 
 		// Initialize the dithering algorithm
 		_paletteLookup = new Graphics::PaletteLUT(8, Graphics::PaletteLUT::kPaletteYUV);
-		_paletteLookup->setPalette(pal3, Graphics::PaletteLUT::kPaletteRGB, 8);
+		_paletteLookup->setPalette(pal, Graphics::PaletteLUT::kPaletteRGB, 8);
 		for (int i = 0; (i < 64) && !_vm->shouldQuit(); i++) {
 			debug("Groovie::ROQ: Building palette table: %02d/63", i);
 			_paletteLookup->buildNext();
 		}
 
-		// Prepare the palette to show
-		for (int i = 0; i < 256; i++) {
-			pal[(i * 4) + 0] = pal3[(i * 3) + 0];
-			pal[(i * 4) + 1] = pal3[(i * 3) + 1];
-			pal[(i * 4) + 2] = pal3[(i * 3) + 2];
-		}
 #else // !DITHER
 		// Set a grayscale palette
 		for (int i = 0; i < 256; i++) {
-			pal[(i * 4) + 0] = i;
-			pal[(i * 4) + 1] = i;
-			pal[(i * 4) + 2] = i;
+			pal[(i * 3) + 0] = i;
+			pal[(i * 3) + 1] = i;
+			pal[(i * 3) + 2] = i;
 		}
 #endif // DITHER
 

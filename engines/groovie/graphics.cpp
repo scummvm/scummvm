@@ -106,11 +106,7 @@ void GraphicsMan::fadeIn(byte *pal) {
 	_fadeStartTime = _vm->_system->getMillis();
 
 	// Copy the target palette
-	for (int i = 0; i < 256; i++) {
-		_paletteFull[(i * 4) + 0] = pal[(i * 3) + 0];
-		_paletteFull[(i * 4) + 1] = pal[(i * 3) + 1];
-		_paletteFull[(i * 4) + 2] = pal[(i * 3) + 2];
-	}
+	memcpy(_paletteFull, pal, 3*256);
 
 	// Set the current fading
 	_fading = 1;
@@ -151,11 +147,11 @@ void GraphicsMan::applyFading(int step) {
 	}
 
 	// Calculate the new palette
-	byte newpal[256 * 4];
+	byte newpal[256 * 3];
 	for (int i = 0; i < 256; i++) {
-		newpal[(i * 4) + 0] = (_paletteFull[(i * 4) + 0] * factorR) / 256;
-		newpal[(i * 4) + 1] = (_paletteFull[(i * 4) + 1] * factorG) / 256;
-		newpal[(i * 4) + 2] = (_paletteFull[(i * 4) + 2] * factorB) / 256;
+		newpal[(i * 3) + 0] = (_paletteFull[(i * 3) + 0] * factorR) / 256;
+		newpal[(i * 3) + 1] = (_paletteFull[(i * 3) + 1] * factorG) / 256;
+		newpal[(i * 3) + 2] = (_paletteFull[(i * 3) + 2] * factorB) / 256;
 	}
 
 	// Set the screen palette

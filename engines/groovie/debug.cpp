@@ -137,11 +137,11 @@ bool Debugger::cmd_playref(int argc, const char **argv) {
 
 bool Debugger::cmd_dumppal(int argc, const char **argv) {
 	uint16 i;
-	byte palettedump[256 * 4];
+	byte palettedump[256 * 3];
 	_vm->_system->getPaletteManager()->grabPalette(palettedump, 0, 256);
 
 	for (i = 0; i < 256; i++) {
-		DebugPrintf("%3d: %3d,%3d,%3d,%3d\n", i, palettedump[(i * 4)], palettedump[(i * 4) + 1], palettedump[(i * 4) + 2], palettedump[(i * 4) + 3]);
+		DebugPrintf("%3d: %3d,%3d,%3d\n", i, palettedump[(i * 3)], palettedump[(i * 3) + 1], palettedump[(i * 3) + 2]);
 	}
 	return true;
 }
