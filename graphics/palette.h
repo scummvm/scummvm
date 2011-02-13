@@ -46,12 +46,12 @@ public:
 	 * The palette entries from 'start' till (start+num-1) will be replaced - so
 	 * a full palette update is accomplished via start=0, num=256.
 	 *
-	 * The palette data is specified in interleaved RGBA format. That is, the
+	 * The palette data is specified in interleaved RGB format. That is, the
 	 * first byte of the memory block 'colors' points at is the red component
 	 * of the first new color; the second byte the green component of the first
 	 * new color; the third byte the blue component, the last byte to the alpha
 	 * (transparency) value. Then the second color starts, and so on. So memory
-	 * looks like this: R1-G1-B1-A1-R2-G2-B2-A2-R3-...
+	 * looks like this: R1-G1-B1-R2-G2-B2-R3-...
 	 *
 	 * @param colors	the new palette data, in interleaved RGBA format
 	 * @param start		the first palette entry to be updated
@@ -79,16 +79,15 @@ public:
 	 * For example, for every valid value of start and num of the following
 	 * code:
 	 *
-	 * byte origPal[num*4];
+	 * byte origPal[num*3];
 	 * // Setup origPal's data however you like
 	 * g_system->setPalette(origPal, start, num);
-	 * byte obtainedPal[num*4];
+	 * byte obtainedPal[num*3];
 	 * g_system->grabPalette(obtainedPal, start, num);
 	 *
 	 * the following should be true:
 	 *
-	 * For each i < num : memcmp(&origPal[i*4], &obtainedPal[i*4], 3) == 0
-	 * (i is an uint here)
+	 * memcmp(origPal, obtainedPal, num*3) == 0
 	 *
 	 * @see setPalette
 	 * @param colors	the palette data, in interleaved RGBA format
