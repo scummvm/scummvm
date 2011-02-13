@@ -661,7 +661,7 @@ protected:
 	byte *_cursor;
 	bool _needPaletteUpdates;
 	uint _cursorWidth, _cursorHeight;
-	byte _cursorPal[4*MAX_CURS_COLORS];
+	byte _cursorPal[3*MAX_CURS_COLORS];
 	byte _cursorPalSize;
 };
 
