@@ -88,6 +88,12 @@ public:
 	virtual void saveLoadWithSerializer(Common::Serializer &s);
 	void palVarySaveLoadPalette(Common::Serializer &s, Palette *palette);
 
+#ifdef ENABLE_SCI32
+	bool loadClut(uint16 clutId);
+	byte matchClutColor(uint16 color);
+	void unloadClut();
+#endif
+
 private:
 	void palVaryInit();
 	void palVaryInstallTimer();
@@ -113,6 +119,10 @@ private:
 	uint16 _palVaryTicks;
 	int _palVaryPaused;
 	int _palVarySignal;
+	
+#ifdef ENABLE_SCI32
+	byte *_clutTable;
+#endif
 };
 
 } // End of namespace Sci

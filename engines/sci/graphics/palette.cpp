@@ -69,11 +69,19 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 	_useMerging = useMerging;
 
 	palVaryInit();
+	
+#ifdef ENABLE_SCI32
+	_clutTable = 0;
+#endif
 }
 
 GfxPalette::~GfxPalette() {
 	if (_palVaryResourceId != -1)
 		palVaryRemoveTimer();
+
+#ifdef ENABLE_SCI32
+	unloadClut();
+#endif
 }
 
 bool GfxPalette::isMerging() {
@@ -786,5 +794,58 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 		_sysPaletteChanged = false;
 	}
 }
+
+#ifdef ENABLE_SCI32
+
+bool GfxPalette::loadClut(uint16 clutId) {
+	// loadClut() will load a color lookup table from a clu file and set
+	// the palette found in the file. This is to be used with Phantasmagoria 2.
+
+	unloadClut();
+
+	Common::String filename = Common::String::format("%d.clu", clutId);
+	Common::File clut;
+
+	if (!clut.open(filename) || clut.size() != 0x10000 + 236 * 3)
+		return false;
+
+	// Read in the lookup table
+	// It maps each RGB565 color to a palette index
+	_clutTable = new byte[0x10000];
+	clut.read(_clutTable, 0x10000);
+
+	Palette pal;
+	memset(&pal, 0, sizeof(Palette));
+
+	// Setup 1:1 mapping
+	for (int i = 0; i < 256; i++)
+		pal.mapping[i] = i;
+
+	// Now load in the palette
+	for (int i = 1; i <= 236; i++) {
+		pal.colors[i].used = 1;
+		pal.colors[i].r = clut.readByte();
+		pal.colors[i].g = clut.readByte();
+		pal.colors[i].b = clut.readByte();
+	}
+
+	set(&pal, true);
+	setOnScreen();
+	return true;
+}
+
+byte GfxPalette::matchClutColor(uint16 color) {
+	// Match a color in RGB565 format to a palette index based on the loaded CLUT
+	assert(_clutTable);
+	return _clutTable[color];
+}
+
+void GfxPalette::unloadClut() {
+	// This will only unload the actual table, but not reset any palette
+	delete[] _clutTable;
+	_clutTable = 0;
+}
+ 
+#endif
 
 } // End of namespace Sci
