@@ -32,7 +32,6 @@ namespace Made {
 
 Screen::Screen(MadeEngine *vm) : _vm(vm) {
 
-	_screenPalette = new byte[256 * 4];
 	_palette = new byte[768];
 	_newPalette = new byte[768];
 
@@ -95,7 +94,6 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 
 Screen::~Screen() {
 
-	delete[] _screenPalette;
 	delete[] _palette;
 	delete[] _newPalette;
 
@@ -220,14 +218,7 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 }
 
 void Screen::setRGBPalette(byte *palRGB, int start, int count) {
-	for (int i = 0; i < count; i++) {
-		_screenPalette[i * 4 + 0] = palRGB[i * 3 + 0];
-		_screenPalette[i * 4 + 1] = palRGB[i * 3 + 1];
-		_screenPalette[i * 4 + 2] = palRGB[i * 3 + 2];
-		_screenPalette[i * 4 + 3] = 0;
-	}
-
-	_vm->_system->getPaletteManager()->setPalette(_screenPalette, start, count);
+	_vm->_system->getPaletteManager()->setPalette(palRGB + start * 3, start, count);
 }
 
 uint16 Screen::updateChannel(uint16 channelIndex) {
