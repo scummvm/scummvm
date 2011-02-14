@@ -127,9 +127,19 @@ Thumbs.db
 *.ilk
 *.log
 *.sbr
+*.sdf
+*.opensdf
 obj/
 _ReSharper*/
 [Tt]est[Rr]esult*
 *.vcproj
 *.sln
 *.vsprops
+*.props
+*.vcxproj*
+*.bat
+*.tss
+
+#Ignore default Visual Studio build folders
+[Dd]ebug/
+[Rr]elease/
