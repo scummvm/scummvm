@@ -144,17 +144,15 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		SegmentType type = (s.isSaving() && mobj) ? mobj->getType() : SEG_TYPE_INVALID;
 		s.syncAsUint32LE(type);
 
-		// If we were saving and mobj == 0, or if we are loading and this is an
-		// entry marked as empty -> skip to next
-		if (type == SEG_TYPE_INVALID)
+		if (type == SEG_TYPE_HUNK) {
+			// Don't save or load HunkTable segments
 			continue;
-
-		// Don't save or load HunkTable segments
-		if (type == SEG_TYPE_HUNK)
+		} else if (type == SEG_TYPE_INVALID) {
+			// If we were saving and mobj == 0, or if we are loading and this is an
+			// entry marked as empty -> skip to next
 			continue;
-
-		// Don't save or load the obsolete system string segments
-		if (type == 5) {
+		} else if (type == 5) {
+			// Don't save or load the obsolete system string segments
 			if (s.isSaving()) {
 				continue;
 			} else {
@@ -169,6 +167,15 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 				continue;
 			}
 		}
+#ifdef ENABLE_SCI32
+		else if (type == SEG_TYPE_ARRAY) {
+			// Set the correct segment for SCI32 arrays
+			_arraysSegId = i;
+		} else if (type == SEG_TYPE_STRING) {
+			// Set the correct segment for SCI32 strings
+			_stringSegId = i;
+		}
+#endif
 
 		if (s.isLoading())
 			mobj = SegmentObj::createSegmentObj(type);
@@ -177,7 +184,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		// Let the object sync custom data
 		mobj->saveLoadWithSerializer(s);
-
 
 		if (type == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
