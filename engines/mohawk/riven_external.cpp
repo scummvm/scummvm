@@ -686,7 +686,7 @@ void RivenExternal::xaexittomain(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xblabopenbook(uint16 argc, uint16 *argv) {
 	// Get the variable
-	uint32 page = *_vm->getVar("blabbook");
+	uint32 page = *_vm->getVar("blabpage");
 
 	// Draw the image of the page based on the blabbook variable
 	_vm->_gfx->drawPLST(page);
@@ -718,7 +718,7 @@ void RivenExternal::xblabopenbook(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xblabbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
-	uint32 *page = _vm->getVar("blabbook");
+	uint32 *page = _vm->getVar("blabpage");
 
 	// Decrement the page if it's not the first page
 	if (*page == 1)
@@ -735,7 +735,7 @@ void RivenExternal::xblabbookprevpage(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
-	uint32 *page = _vm->getVar("blabbook");
+	uint32 *page = _vm->getVar("blabpage");
 
 	// Increment the page if it's not the last page
 	if (*page == 22)
