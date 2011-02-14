@@ -44,6 +44,7 @@
 #include "hugo/schedule.h"
 #include "hugo/text.h"
 #include "hugo/inventory.h"
+#include "hugo/mouse.h"
 
 namespace Hugo {
 
@@ -746,14 +747,10 @@ void ObjectHandler::boundaryCollision(object_t *obj) {
 			x = obj->x + obj->currImagePtr->x1;
 		int y = obj->y + obj->currImagePtr->y2;
 
-		for (int i = 0; _vm->_hotspots[i].screenIndex >= 0; i++) {
-			hotspot_t *hotspot = &_vm->_hotspots[i];
-			if (hotspot->screenIndex == obj->screenIndex)
-				if ((x >= hotspot->x1) && (x <= hotspot->x2) && (y >= hotspot->y1) && (y <= hotspot->y2)) {
-					_vm->_scheduler->insertActionList(hotspot->actIndex);
-					break;
-				}
-		}
+		int16 index = _vm->_mouse->findExit(x, y, obj->screenIndex);
+		if (index >= 0)
+			_vm->_scheduler->insertActionList(_vm->_mouse->getHotspotActIndex(index));
+
 	} else {
 		// Check whether an object collided with HERO
 		int dx = _vm->_hero->x + _vm->_hero->currImagePtr->x1 - obj->x - obj->currImagePtr->x1;

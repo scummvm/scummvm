@@ -54,7 +54,7 @@ maze_t      _maze;                              // Default to not in maze
 hugo_boot_t _boot;                              // Boot info structure file
 
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd),
-	_arrayReqs(0), _hotspots(0), _invent(0), _uses(0), _catchallList(0), _backgroundObjects(0),	_points(0), _cmdList(0), 
+	_arrayReqs(0), _invent(0), _uses(0), _catchallList(0), _backgroundObjects(0),	_points(0), _cmdList(0), 
 	_screenActs(0), _hero(0), _heroImage(0), _defltTunes(0), _introX(0), _introY(0), _maxInvent(0), _numBonuses(0),
 	_numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0), _screenStates(0), _score(0), _maxscore(0),
 	_backgroundObjectsSize(0), _screenActsSize(0), _usesSize(0), _lastTime(0), _curTime(0)
@@ -90,7 +90,7 @@ HugoEngine::~HugoEngine() {
 		free(_arrayReqs);
 	}
 
-	free(_hotspots);
+	_mouse->freeHotspots();
 	free(_invent);
 
 	if (_uses) {
@@ -249,7 +249,7 @@ Common::Error HugoEngine::run() {
 	_status.doQuitFl = false;
 
 	while (!_status.doQuitFl) {
-		_screen->drawHotspots();
+		_screen->drawBoundaries();
 
 		g_system->updateScreen();
 		runMachine();
@@ -413,28 +413,7 @@ bool HugoEngine::loadHugoDat() {
 	// Read _arrayReqs
 	_arrayReqs = loadLongArray(in);
 
-	// Read _hotspots
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		int numRows = in.readUint16BE();
-		hotspot_t *wrkHotspots = (hotspot_t *)malloc(sizeof(hotspot_t) * numRows);
-
-		for (int i = 0; i < numRows; i++) {
-			wrkHotspots[i].screenIndex = in.readSint16BE();
-			wrkHotspots[i].x1 = in.readSint16BE();
-			wrkHotspots[i].y1 = in.readSint16BE();
-			wrkHotspots[i].x2 = in.readSint16BE();
-			wrkHotspots[i].y2 = in.readSint16BE();
-			wrkHotspots[i].actIndex = in.readUint16BE();
-			wrkHotspots[i].viewx = in.readSint16BE();
-			wrkHotspots[i].viewy = in.readSint16BE();
-			wrkHotspots[i].direction = in.readSint16BE();
-		}
-
-		if (varnt == _gameVariant)
-			_hotspots = wrkHotspots;
-		else
-			free(wrkHotspots);
-	}
+	_mouse->loadHotspots(in);
 
 	int numElem, numSubElem;
 	//Read _invent

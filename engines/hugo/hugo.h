@@ -251,7 +251,6 @@ public:
 	command_t _line;                                // Line of user text input
 	config_t  _config;                              // User's config
 	uint16    **_arrayReqs;
-	hotspot_t *_hotspots;
 	int16     *_invent;
 	uses_t    *_uses;
 	uint16     _usesSize;

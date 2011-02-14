@@ -40,6 +40,7 @@
 #include "hugo/inventory.h"
 #include "hugo/util.h"
 #include "hugo/object.h"
+#include "hugo/mouse.h"
 
 namespace Hugo {
 /**
@@ -658,20 +659,16 @@ bool Screen::isOverlapping(const rect_t *rectA, const rect_t *rectB) const {
 }
 
 /**
- * Display exit hotspots in God Mode ('PPG')
+ * Display active boundaries in God Mode ('PPG')
  * Light Red   = Exit hotspots
  * Light Green = Visible objects
  * White       = Fixed objects, parts of background
  */
-void Screen::drawHotspots() {
+void Screen::drawBoundaries() {
 	if (!_vm->getGameStatus().godModeFl)
 		return;
 
-	for (int i = 0; _vm->_hotspots[i].screenIndex >= 0; i++) {
-		hotspot_t *hotspot = &_vm->_hotspots[i];
-		if (hotspot->screenIndex == _vm->_hero->screenIndex)
-			drawRectangle(false, hotspot->x1, hotspot->y1, hotspot->x2, hotspot->y2, _TLIGHTRED);
-	}
+	_vm->_mouse->drawHotspots();
 
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		object_t *obj = &_vm->_object->_objects[i]; // Get pointer to object
