@@ -75,6 +75,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  SCUMM:
    - Improved support for FM-TOWNS versions of games.
 
+ Sky:
+   - Fixed crashes on sequences for several backends
+     (e.g. OpenGL, including Android)
+
  Teenagent:
    - Closed memory leaks.
 
