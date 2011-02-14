@@ -102,10 +102,14 @@ static jfieldID FID_ScummVM_nativeScummVM;
 static jmethodID MID_Object_wait;
 
 JNIEnv* JNU_GetEnv() {
-	JNIEnv* env;
-	bool version_unsupported =
-		cached_jvm->GetEnv((void**)&env, JNI_VERSION_1_2);
-	assert(! version_unsupported);
+	JNIEnv* env = 0;
+
+	jint res = cached_jvm->GetEnv((void**)&env, JNI_VERSION_1_2);
+	if (res != JNI_OK) {
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "GetEnv() failed: %d", res);
+		abort();
+	}
+
 	return env;
 }
 
@@ -453,6 +457,14 @@ void* OSystem_Android::timerThreadFunc(void* arg) {
 	OSystem_Android* system = (OSystem_Android*)arg;
 	DefaultTimerManager* timer = (DefaultTimerManager*)(system->_timer);
 
+	JNIEnv *env = 0;
+	jint res = cached_jvm->AttachCurrentThread(&env, 0);
+
+	if (res != JNI_OK) {
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "AttachCurrentThread() failed: %d", res);
+		abort();
+	}
+
 	struct timespec tv;
 	tv.tv_sec = 0;
 	tv.tv_nsec = 100 * 1000 * 1000;	// 100ms
@@ -460,6 +472,13 @@ void* OSystem_Android::timerThreadFunc(void* arg) {
 	while (!system->_timer_thread_exit) {
 		timer->handler();
 		nanosleep(&tv, NULL);
+	}
+
+	res = cached_jvm->DetachCurrentThread();
+
+	if (res != JNI_OK) {
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "DetachCurrentThread() failed: %d", res);
+		abort();
 	}
 
 	return NULL;
