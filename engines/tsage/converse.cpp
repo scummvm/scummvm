@@ -836,7 +836,8 @@ void Speaker::proc12(Action *action) {
 }
 
 void Speaker::setText(const Common::String &msg) {
-//	_objectList.draw();
+	_globals->_sceneObjects->draw();
+
 	_sceneText._colour1 = _colour1;
 	_sceneText._colour2 = _colour2;
 	_sceneText._colour3 = _colour3;
