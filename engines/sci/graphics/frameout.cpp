@@ -584,6 +584,11 @@ void GfxFrameout::kernelFrameout() {
 					uint16 startX = itemEntry->x + it->planeRect.left;
 					uint16 curY = itemEntry->y + it->planeRect.top;
 					const char *txt = text.c_str();
+					// HACK. The plane sometimes doesn't contain the correct width. This
+					// hack breaks the dialog options when speaking with Grace, but it's
+					// the best we got up to now.
+					// TODO: Remove this, and figure out why the plane in question isn't
+					// initialized correctly (its width is 0).
 					uint16 w = it->planeRect.width() >= 20 ? it->planeRect.width() : _screen->getWidth() - 10;
 					int16 charCount;
 
