@@ -80,6 +80,7 @@ State::State(void) {
 
 	_showConversationIcons = false;
 
+	_inMenu = false;
 	_inCloseUp = false;
 	_inConversation = false;
 
