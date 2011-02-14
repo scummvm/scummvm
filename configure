@@ -111,6 +111,7 @@ add_engine teenagent "Teen Agent" yes
 add_engine testbed "TestBed: the Testing framework" no
 add_engine tinsel "Tinsel" yes
 add_engine toon "Toonstruck" yes
+add_engine tsage "Ringworld: Revenge Of The Patriarch" no
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 add_engine tucker "Bud Tucker in Double Trouble" yes
 
