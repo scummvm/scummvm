@@ -179,7 +179,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		mobj->saveLoadWithSerializer(s);
 
 
-		if (type == SEG_TYPE_SCRIPT && s.getVersion() >= 28) {
+		if (type == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
 
 			// If we are loading a script, perform some extra steps
@@ -196,7 +196,8 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 			}
 
 			// Sync the script's string heap
-			scr->syncStringHeap(s);
+			if (s.getVersion() >= 28)
+				scr->syncStringHeap(s);
 		}
 	}
 
