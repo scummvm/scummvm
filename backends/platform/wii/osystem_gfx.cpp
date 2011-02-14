@@ -333,16 +333,19 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 
 	gfx_tex_flush_palette(&_texGame);
 
+	s = colors;
+	d = _cursorPalette;
+
+	for (uint i = 0; i < num; ++i) {
+		d[start + i] = Graphics::ARGBToColor<Graphics::ColorMasks<3444> >(0xff, s[0], s[1], s[2]);
+		s += 4;
+	}
+
 	if (_cursorPaletteDisabled) {
 		assert(_texMouse.palette);
 
-		s = colors;
-		d = _texMouse.palette;
-
-		for (uint i = 0; i < num; ++i) {
-			d[start + i] = Graphics::ARGBToColor<Graphics::ColorMasks<3444> >(0xff, s[0], s[1], s[2]);
-			s += 4;
-		}
+		memcpy((u8 *)_texMouse.palette + start * 2,
+			(u8 *)_cursorPalette + start * 2, num * 2);
 
 		_cursorPaletteDirty = true;
 	}
