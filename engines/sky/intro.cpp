@@ -644,6 +644,7 @@ Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *t
 Intro::~Intro() {
 	if (_skyScreen->sequenceRunning())
 		_skyScreen->stopSequence();
+
 	free(_textBuf);
 	free(_saveBuf);
 	free(_bgBuf);
@@ -658,6 +659,7 @@ bool Intro::doIntro(bool floppyIntro) {
 
 	if (!escDelay(3000))
 		return false;
+
 	if (floppyIntro)
 		_skyMusic->startMusic(1);
 
@@ -817,6 +819,7 @@ bool Intro::floppyScrollFlirt() {
 
 bool Intro::commandFlirt(uint16 *&data) {
 	_skyScreen->startSequence(*data++);
+
 	while ((*data != COMMANDEND) || _skyScreen->sequenceRunning()) {
 		while ((_skyScreen->seqFramesLeft() < *data)) {
 			data++;
@@ -844,11 +847,13 @@ bool Intro::commandFlirt(uint16 *&data) {
 				error("Unknown FLIRT command %X", command);
 			}
 		}
+
 		if (!escDelay(50)) {
 			_skyScreen->stopSequence();
 			return false;
 		}
 	}
+
 	data++; // move pointer over "COMMANDEND"
 	return true;
 }
@@ -893,6 +898,7 @@ void Intro::restoreScreen() {
 bool Intro::escDelay(uint32 msecs) {
 	Common::EventManager *eventMan = _system->getEventManager();
 	Common::Event event;
+
 	if (_relDelay == 0) // first call, init with system time
 		_relDelay = (int32)_system->getMillis();
 
@@ -911,11 +917,13 @@ bool Intro::escDelay(uint32 msecs) {
 		nDelay = _relDelay - _system->getMillis();
 		if (nDelay < 0)
 			nDelay = 0;
-		else if (nDelay > 40)
-			nDelay = 40;
+		else if (nDelay > 10)
+			nDelay = 10;
 		_system->delayMillis(nDelay);
+		_skyScreen->processSequence();
 		_system->updateScreen();
-	} while (nDelay == 40);
+	} while (nDelay == 10);
+
 	return true;
 }
 

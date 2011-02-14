@@ -75,6 +75,7 @@ public:
 	void startSequenceItem(uint16 itemNum);
 	void stopSequence();
 	bool sequenceRunning() { return _seqInfo.running; }
+	void processSequence();
 	void waitForSequence();
 	uint32 seqFramesLeft() { return _seqInfo.framesLeft; }
 	uint8 *giveCurrent() { return _currentScreen; }
@@ -105,14 +106,13 @@ private:
 	uint32 _currentPalette;
 	uint8 _seqGrid[20 * 12];
 
-	bool volatile _gotTick;
-	void waitForTimer();
-	void processSequence();
+	void waitForTick();
 
 	uint8 *_gameGrid;
 	uint8 *_currentScreen;
 	uint8 *_scrollScreen;
 	struct {
+		uint32 nextFrame;
 		uint32 framesLeft;
 		uint32 delay;
 		uint8 *seqData;

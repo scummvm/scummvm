@@ -86,7 +86,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	_system->getPaletteManager()->setPalette(tmpPal, 0, VGA_COLOURS);
 	_currentPalette = 0;
 
-	_seqInfo.framesLeft = 0;
+	_seqInfo.nextFrame = _seqInfo.framesLeft = 0;
 	_seqInfo.seqData = _seqInfo.seqDataPos = NULL;
 	_seqInfo.running = false;
 }
@@ -348,7 +348,7 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 				scrOldPtr += GAME_SCREEN_WIDTH;
 			}
 			showScreen(_scrollScreen);
-			waitForTimer();
+			waitForTick();
 		}
 		showScreen(_currentScreen);
 	} else if (scroll == 321) {	// scroll right (going left)
@@ -364,7 +364,7 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 				scrOldPtr += GAME_SCREEN_WIDTH;
 			}
 			showScreen(_scrollScreen);
-			waitForTimer();
+			waitForTick();
 		}
 		showScreen(_currentScreen);
 	}
@@ -374,11 +374,39 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 	}
 }
 
-void Screen::waitForTimer() {
+void Screen::waitForTick() {
+	uint32 start = _system->getMillis();
+	uint32 end = start + 20 - (start % 20);
+	uint32 remain;
+
 	Common::EventManager *eventMan = _system->getEventManager();
-	_gotTick = false;
-	while (!_gotTick) {
-		Common::Event event;
+	Common::Event event;
+
+	while (true) {
+		start = _system->getMillis();
+
+		if (start >= end)
+			return;
+
+		while (eventMan->pollEvent(event))
+			;
+
+		remain = end - start;
+		if (remain < 10) {
+			_system->delayMillis(remain);
+			return;
+		}
+
+		_system->delayMillis(10);
+	}
+}
+
+void Screen::waitForSequence() {
+	Common::EventManager *eventMan = _system->getEventManager();
+	Common::Event event;
+
+	while (_seqInfo.running) {
+		processSequence();
 
 		_system->delayMillis(10);
 		while (eventMan->pollEvent(event))
@@ -386,25 +414,9 @@ void Screen::waitForTimer() {
 	}
 }
 
-void Screen::waitForSequence() {
-	Common::EventManager *eventMan = _system->getEventManager();
-	while (_seqInfo.running) {
-		Common::Event event;
-
-		_system->delayMillis(20);
-		while (eventMan->pollEvent(event))
-			;
-	}
-}
-
-void Screen::handleTimer() {
-	_gotTick = true;
-	if (_seqInfo.running)
-		processSequence();
-}
-
 void Screen::startSequence(uint16 fileNum) {
 	_seqInfo.seqData = _skyDisk->loadFile(fileNum);
+	_seqInfo.nextFrame = _system->getMillis();
 	_seqInfo.framesLeft = _seqInfo.seqData[0];
 	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
 	_seqInfo.delay = SEQ_DELAY;
@@ -414,6 +426,7 @@ void Screen::startSequence(uint16 fileNum) {
 
 void Screen::startSequenceItem(uint16 itemNum) {
 	_seqInfo.seqData = (uint8 *)SkyEngine::fetchItem(itemNum);
+	_seqInfo.nextFrame = _system->getMillis();
 	_seqInfo.framesLeft = _seqInfo.seqData[0] - 1;
 	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
 	_seqInfo.delay = SEQ_DELAY;
@@ -423,20 +436,28 @@ void Screen::startSequenceItem(uint16 itemNum) {
 
 void Screen::stopSequence() {
 	_seqInfo.running = false;
-	waitForTimer();
-	waitForTimer();
-	_seqInfo.framesLeft = 0;
+	waitForTick();
+	waitForTick();
+	_seqInfo.nextFrame = _seqInfo.framesLeft = 0;
 	free(_seqInfo.seqData);
 	_seqInfo.seqData = _seqInfo.seqDataPos = NULL;
 }
 
 void Screen::processSequence() {
-	uint32 screenPos = 0;
+	if (!_seqInfo.running)
+		return;
+
+	if (_system->getMillis() < _seqInfo.nextFrame)
+		return;
 
 	_seqInfo.delay--;
 	if (_seqInfo.delay == 0) {
 		_seqInfo.delay = SEQ_DELAY;
+		_seqInfo.nextFrame += 20 * SEQ_DELAY;
+
 		memset(_seqGrid, 0, 12 * 20);
+
+		uint32 screenPos = 0;
 
 		uint8 nrToSkip, nrToDo, cnt;
 		do {
@@ -445,6 +466,7 @@ void Screen::processSequence() {
 				_seqInfo.seqDataPos++;
 				screenPos += nrToSkip;
 			} while (nrToSkip == 0xFF);
+
 			do {
 				nrToDo = _seqInfo.seqDataPos[0];
 				_seqInfo.seqDataPos++;

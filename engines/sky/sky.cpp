@@ -84,8 +84,6 @@ SkyEngine::SkyEngine(OSystem *syst)
 }
 
 SkyEngine::~SkyEngine() {
-	_timer->removeTimerProc(&timerHandler);
-
 	delete _skyLogic;
 	delete _skySound;
 	delete _skyMusic;
@@ -207,6 +205,7 @@ Common::Error SkyEngine::go() {
 		}
 
 		_skyLogic->engine();
+		_skyScreen->processSequence();
 		_skyScreen->recreate();
 		_skyScreen->spriteEngine();
 		if (_debugger->showGrid()) {
@@ -300,9 +299,6 @@ Common::Error SkyEngine::init() {
 	_skyLogic = new Logic(_skyCompact, _skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound);
 	_skyMouse->useLogicInstance(_skyLogic);
 
-	// initialize timer *after* _skyScreen has been initialized.
-	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
-
 	_skyControl = new Control(_saveFileMan, _skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _skyCompact, _system);
 	_skyLogic->useControlInstance(_skyControl);
 
@@ -384,14 +380,6 @@ void SkyEngine::loadFixedItems() {
 
 void *SkyEngine::fetchItem(uint32 num) {
 	return _itemList[num];
-}
-
-void SkyEngine::timerHandler(void *refCon) {
-	((SkyEngine *)refCon)->gotTimerTick();
-}
-
-void SkyEngine::gotTimerTick() {
-	_skyScreen->handleTimer();
 }
 
 void SkyEngine::delay(int32 amount) {

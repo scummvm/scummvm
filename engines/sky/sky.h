@@ -121,8 +121,6 @@ protected:
 	void initItemList();
 
 	void initVirgin();
-	static void timerHandler(void *ptr);
-	void gotTimerTick();
 	void loadFixedItems();
 };
 
