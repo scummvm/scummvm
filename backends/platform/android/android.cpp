@@ -73,12 +73,20 @@
 #undef JNIEXPORT
 #define JNIEXPORT __attribute__ ((visibility("default")))
 
-// This replaces the bionic libc assert message with something that
+// This replaces the bionic libc assert functions with something that
 // actually prints the assertion failure before aborting.
-extern "C"
-void __assert(const char *file, int line, const char *expr) {
-	__android_log_assert(expr, LOG_TAG, "%s:%d: Assertion failure: %s",
-						 file, line, expr);
+extern "C" {
+	void __assert(const char *file, int line, const char *expr) {
+		__android_log_assert(expr, LOG_TAG,
+							"Assertion failure: '%s' in %s:%d",
+							 expr, file, line);
+	}
+
+	void __assert2(const char *file, int line, const char *func, const char *expr) {
+		__android_log_assert(expr, LOG_TAG,
+							"Assertion failure: '%s' in %s:%d (%s)",
+							 expr, file, line, func);
+	}
 }
 
 static JavaVM *cached_jvm;
