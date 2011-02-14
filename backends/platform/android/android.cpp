@@ -679,26 +679,12 @@ void OSystem_Android::setPalette(const byte* colors, uint start, uint num) {
 	if (!_use_mouse_palette)
 		_setCursorPalette(colors, start, num);
 
-	byte* palette = _game_texture->palette() + start*3;
-	do {
-		for (int i = 0; i < 3; ++i)
-			palette[i] = colors[i];
-		palette += 3;
-		colors += 4;
-	} while (--num);
+	memcpy(_game_texture->palette() + start * 3, colors, num * 3);
 }
 
 void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
 	ENTER("grabPalette(%p, %u, %u)", colors, start, num);
-	const byte* palette = _game_texture->palette_const() + start*3;
-	do {
-		for (int i = 0; i < 3; ++i)
-			colors[i] = palette[i];
-		colors[3] = 0xff;  // alpha
-
-		palette += 3;
-		colors += 4;
-	} while (--num);
+	memcpy(colors, _game_texture->palette() + start * 3, num * 3);
 }
 
 void OSystem_Android::copyRectToScreen(const byte *buf, int pitch,
@@ -934,13 +920,16 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 	// Update palette alpha based on keycolor
 	byte* palette = _mouse_texture->palette();
-	int i = 256;
+
+	uint i = 256;
 	do {
 		palette[3] = 0xff;
 		palette += 4;
 	} while (--i);
+
 	palette = _mouse_texture->palette();
-	palette[keycolor*4 + 3] = 0x00;
+	palette[keycolor * 4 + 3] = 0;
+
 	_mouse_texture->updateBuffer(0, 0, w, h, buf, w);
 
 	_mouse_hotspot = Common::Point(hotspotX, hotspotY);
@@ -949,14 +938,15 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 void OSystem_Android::_setCursorPalette(const byte *colors,
 					uint start, uint num) {
-	byte* palette = _mouse_texture->palette() + start*4;
+	byte* palette = _mouse_texture->palette() + start * 4;
+
 	do {
 		for (int i = 0; i < 3; ++i)
 			palette[i] = colors[i];
 		// Leave alpha untouched to preserve keycolor
 
 		palette += 4;
-		colors += 4;
+		colors += 3;
 	} while (--num);
 }
 
