@@ -532,12 +532,12 @@ void PlayerMover::setDest(const Common::Point &destPos) {
 	setup(_routeList[0]);
 }
 
-#define BREAK_LIST_SIZE 20
+#define REGION_LIST_SIZE 20
 
 void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Common::Point destPos, RouteEnds routeEnds) {
 	List<int> regionIndexes;
 	RouteEnds tempRouteEnds;
-	int routeRegions[BREAK_LIST_SIZE];
+	int routeRegions[REGION_LIST_SIZE];
 	Common::Point objPos;
 
 	// Get the region the source is in
@@ -604,7 +604,7 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 		_globals->_walkRegions._field18[1]._pt1 = destPos;
 		_globals->_walkRegions._field18[1]._pt2 = destPos;
 
-		int tempList[20];
+		int tempList[REGION_LIST_SIZE];
 		tempList[0] = 0;
 		int endIndex = 0;
 		int idx = 1;
@@ -614,7 +614,7 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 			int breakEntry2 = routeRegions[idx + 1];
 
 			int listIndex = 0; 
-			while (_globals->_walkRegions._idxList[_globals->_walkRegions[breakEntry]._idxListIndex + listIndex] ==
+			while (_globals->_walkRegions._idxList[_globals->_walkRegions[breakEntry]._idxListIndex + listIndex] !=
 					breakEntry2)
 				++listIndex;
 
@@ -842,12 +842,12 @@ void PlayerMover::checkMovement2(const Common::Point &srcPos, const Common::Poin
 }
 
 int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
-	int tempList[BREAK_LIST_SIZE];
+	int tempList[REGION_LIST_SIZE];
 	v = 0;
 	for (int idx = 0; idx <= *routeList; ++idx)
 		tempList[idx] = routeList[idx];
 
-	if (*routeList == BREAK_LIST_SIZE)
+	if (*routeList == REGION_LIST_SIZE)
 		// Sequence too long
 		return 32000;
 
