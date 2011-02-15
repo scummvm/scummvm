@@ -355,8 +355,8 @@ void Screen::buildDisplay() {
  */
 
 void Screen::displayMsg(byte *text, int time) {
-	byte pal[256 * 4];
-	byte oldPal[256 * 4];
+	byte pal[256 * 3];
+	byte oldPal[256 * 3];
 
 	debug(2, "DisplayMsg: %s", text);
 
@@ -402,9 +402,9 @@ void Screen::displayMsg(byte *text, int time) {
 	memcpy(oldPal, _palette, sizeof(oldPal));
 	memset(pal, 0, sizeof(pal));
 
-	pal[187 * 4 + 0] = 255;
-	pal[187 * 4 + 1] = 255;
-	pal[187 * 4 + 2] = 255;
+	pal[187 * 3 + 0] = 255;
+	pal[187 * 3 + 1] = 255;
+	pal[187 * 3 + 2] = 255;
 
 	setPalette(0, 256, pal, RDPAL_FADE);
 	fadeUp();
@@ -926,17 +926,16 @@ void Screen::rollCredits() {
 	uint16 logoWidth = 0;
 	uint16 logoHeight = 0;
 	byte *logoData = NULL;
-	byte palette[256 * 4];
+	byte palette[256 * 3];
 
 	if (f.open("credits.bmp")) {
 		logoWidth = f.readUint16LE();
 		logoHeight = f.readUint16LE();
 
 		for (i = 0; i < 256; i++) {
-			palette[i * 4 + 0] = f.readByte() << 2;
-			palette[i * 4 + 1] = f.readByte() << 2;
-			palette[i * 4 + 2] = f.readByte() << 2;
-			palette[i * 4 + 3] = 0;
+			palette[i * 3 + 0] = f.readByte() << 2;
+			palette[i * 3 + 1] = f.readByte() << 2;
+			palette[i * 3 + 2] = f.readByte() << 2;
 		}
 
 		logoData = (byte *)malloc(logoWidth * logoHeight);
@@ -946,10 +945,9 @@ void Screen::rollCredits() {
 	} else {
 		warning("Can't find credits.bmp");
 		memset(palette, 0, sizeof(palette));
-		palette[14 * 4 + 0] = 252;
-		palette[14 * 4 + 1] = 252;
-		palette[14 * 4 + 2] = 252;
-		palette[14 * 4 + 3] = 0;
+		palette[14 * 3 + 0] = 252;
+		palette[14 * 3 + 1] = 252;
+		palette[14 * 3 + 2] = 252;
 	}
 
 	setPalette(0, 256, palette, RDPAL_INSTANT);
@@ -1235,7 +1233,8 @@ void Screen::splashScreen() {
 	initialiseBackgroundLayer(NULL);
 	initialiseBackgroundLayer(NULL);
 
-	setPalette(0, 256, _vm->fetchPalette(bgfile), RDPAL_FADE);
+	_vm->fetchPalette(bgfile, _palette);
+	setPalette(0, 256, _palette, RDPAL_FADE);
 	renderParallax(_vm->fetchBackgroundLayer(bgfile), 2);
 
 	closeBackgroundLayer();

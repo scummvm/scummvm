@@ -319,7 +319,7 @@ bool Debugger::Cmd_Starts(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Start(int argc, const char **argv) {
-	uint8 pal[4] = { 255, 255, 255, 0 };
+	uint8 pal[3] = { 255, 255, 255 };
 
 	if (argc != 2) {
 		DebugPrintf("Usage: %s number\n", argv[0]);
