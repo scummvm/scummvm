@@ -131,6 +131,7 @@ Thumbs.db
 *.opensdf
 obj/
 _ReSharper*/
+ipch/
 [Tt]est[Rr]esult*
 *.vcproj
 *.sln
