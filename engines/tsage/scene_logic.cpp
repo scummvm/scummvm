@@ -1788,7 +1788,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.postInit();
 	_globals->_player.setVisage(0);
 	_globals->_player.animate(ANIM_MODE_1, NULL);
-	_globals->_player.setObjectWrapper(NULL);
+	_globals->_player.setObjectWrapper(new SceneObjectWrapper());
 	_globals->_player._canWalk = false;
 	_globals->_player.changeZoom(75);
 	_globals->_player._moveDiff.y = 3;
