@@ -47,6 +47,10 @@
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
 
+#ifdef ENABLE_SCI32
+#include "sci/graphics/frameout.h"
+#endif
+
 namespace Sci {
 
 
@@ -130,6 +134,13 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		// Reset _scriptSegMap, to be restored below
 		_scriptSegMap.clear();
+
+#ifdef ENABLE_SCI32
+		// Clear any planes/screen items currently showing so they
+		// don't show up after the load.
+		if (getSciVersion() >= SCI_VERSION_2)
+			g_sci->_gfxFrameout->clear();
+#endif
 	}
 
 	s.skip(4, VER(14), VER(18));		// OBSOLETE: Used to be _exportsAreWide
@@ -166,16 +177,15 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 				_heap[i] = NULL;	// set as freed
 				continue;
 			}
-		}
 #ifdef ENABLE_SCI32
-		else if (type == SEG_TYPE_ARRAY) {
+		} else if (type == SEG_TYPE_ARRAY) {
 			// Set the correct segment for SCI32 arrays
 			_arraysSegId = i;
 		} else if (type == SEG_TYPE_STRING) {
 			// Set the correct segment for SCI32 strings
 			_stringSegId = i;
-		}
 #endif
+		}
 
 		if (s.isLoading())
 			mobj = SegmentObj::createSegmentObj(type);

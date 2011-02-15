@@ -58,6 +58,12 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 GfxFrameout::~GfxFrameout() {
 }
 
+void GfxFrameout::clear() {
+	_screenItems.clear();
+	_planes.clear();
+	_planePictures.clear();
+}
+
 void GfxFrameout::kernelAddPlane(reg_t object) {
 	PlaneEntry newPlane;
 

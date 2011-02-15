@@ -28,6 +28,8 @@
 
 namespace Sci {
 
+class GfxPicture;
+
 struct PlaneEntry {
 	reg_t object;
 	uint16 priority;
@@ -99,6 +101,7 @@ public:
 
 	void addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX);
 	void deletePlanePictures(reg_t object);
+	void clear();
 
 private:
 	SegManager *_segMan;
