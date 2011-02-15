@@ -33,6 +33,7 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
 // NOTE: Credits Start Card is 10000
 
@@ -97,4 +98,5 @@ void MystScriptParser_Credits::o_runCredits(uint16 op, uint16 var, uint16 argc, 
 	_startTime = _vm->_system->getMillis();
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

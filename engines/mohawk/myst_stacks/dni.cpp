@@ -32,6 +32,7 @@
 #include "mohawk/myst_stacks/dni.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
 MystScriptParser_Dni::MystScriptParser_Dni(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm) {
@@ -194,4 +195,5 @@ void MystScriptParser_Dni::o_atrus_init(uint16 op, uint16 var, uint16 argc, uint
 	_atrusRunning = true;
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

@@ -32,10 +32,12 @@
 
 namespace Mohawk {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
-
 class MohawkEngine_Myst;
 struct MystScriptEntry;
+
+namespace MystStacks {
+
+#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
 class MystScriptParser_Demo : public MystScriptParser_Intro {
 public:
@@ -59,6 +61,7 @@ private:
 	bool _enabled201;
 };
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk
 
 #undef DECLARE_OPCODE

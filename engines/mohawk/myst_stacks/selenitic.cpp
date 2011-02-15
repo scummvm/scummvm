@@ -35,6 +35,7 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
 MystScriptParser_Selenitic::MystScriptParser_Selenitic(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_selenitic) {
@@ -1723,4 +1724,5 @@ const uint8 MystScriptParser_Selenitic::_mazeRunnerVideos[300][4] = {
 	{0, 0, 0, 0}
 };
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

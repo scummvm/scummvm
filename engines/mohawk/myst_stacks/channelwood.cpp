@@ -35,6 +35,7 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
 MystScriptParser_Channelwood::MystScriptParser_Channelwood(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_channelwood) {
@@ -738,4 +739,5 @@ void MystScriptParser_Channelwood::o_drawer_init(uint16 op, uint16 var, uint16 a
 	_siriusDrawerState = 0;
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

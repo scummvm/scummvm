@@ -33,8 +33,7 @@
 #include "gui/message.h"
 
 namespace Mohawk {
-
-// NOTE: Credits Start Card is 10000
+namespace MystStacks {
 
 MystScriptParser_Slides::MystScriptParser_Slides(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
@@ -81,4 +80,5 @@ void MystScriptParser_Slides::o_setCardSwap(uint16 op, uint16 var, uint16 argc, 
 		unknown(op, var, argc, argv);
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

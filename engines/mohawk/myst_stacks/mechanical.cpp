@@ -34,6 +34,7 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
 MystScriptParser_Mechanical::MystScriptParser_Mechanical(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_mechanical) {
@@ -537,4 +538,5 @@ void MystScriptParser_Mechanical::opcode_300(uint16 op, uint16 var, uint16 argc,
 	// TODO: Fill in Logic. Clearing Variable for View?
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

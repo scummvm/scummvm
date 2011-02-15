@@ -33,6 +33,7 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
 MystScriptParser_Preview::MystScriptParser_Preview(MohawkEngine_Myst *vm) : MystScriptParser_Myst(vm) {
 	setupOpcodes();
@@ -135,4 +136,5 @@ void MystScriptParser_Preview::opcode_299(uint16 op, uint16 var, uint16 argc, ui
 	// can change the Myst Library to Red..
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

@@ -29,6 +29,7 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
 MystScriptParser_Demo::MystScriptParser_Demo(MohawkEngine_Myst *vm) : MystScriptParser_Intro(vm) {
 	setupOpcodes();
@@ -123,4 +124,5 @@ void MystScriptParser_Demo::opcode_300(uint16 op, uint16 var, uint16 argc, uint1
 	// TODO: Fill in Function...
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

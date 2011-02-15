@@ -417,45 +417,45 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	switch (_curStack) {
 	case kChannelwoodStack:
 		_gameState->_globals.currentAge = 4;
-		_scriptParser = new MystScriptParser_Channelwood(this);
+		_scriptParser = new MystStacks::MystScriptParser_Channelwood(this);
 		break;
 	case kCreditsStack:
-		_scriptParser = new MystScriptParser_Credits(this);
+		_scriptParser = new MystStacks::MystScriptParser_Credits(this);
 		break;
 	case kDemoStack:
-		_scriptParser = new MystScriptParser_Demo(this);
+		_scriptParser = new MystStacks::MystScriptParser_Demo(this);
 		break;
 	case kDniStack:
 		_gameState->_globals.currentAge = 6;
-		_scriptParser = new MystScriptParser_Dni(this);
+		_scriptParser = new MystStacks::MystScriptParser_Dni(this);
 		break;
 	case kIntroStack:
-		_scriptParser = new MystScriptParser_Intro(this);
+		_scriptParser = new MystStacks::MystScriptParser_Intro(this);
 		break;
 	case kMakingOfStack:
-		_scriptParser = new MystScriptParser_MakingOf(this);
+		_scriptParser = new MystStacks::MystScriptParser_MakingOf(this);
 		break;
 	case kMechanicalStack:
 		_gameState->_globals.currentAge = 3;
-		_scriptParser = new MystScriptParser_Mechanical(this);
+		_scriptParser = new MystStacks::MystScriptParser_Mechanical(this);
 		break;
 	case kMystStack:
 		_gameState->_globals.currentAge = 2;
-		_scriptParser = new MystScriptParser_Myst(this);
+		_scriptParser = new MystStacks::MystScriptParser_Myst(this);
 		break;
 	case kDemoPreviewStack:
-		_scriptParser = new MystScriptParser_Preview(this);
+		_scriptParser = new MystStacks::MystScriptParser_Preview(this);
 		break;
 	case kSeleniticStack:
 		_gameState->_globals.currentAge = 0;
-		_scriptParser = new MystScriptParser_Selenitic(this);
+		_scriptParser = new MystStacks::MystScriptParser_Selenitic(this);
 		break;
 	case kDemoSlidesStack:
-		_scriptParser = new MystScriptParser_Slides(this);
+		_scriptParser = new MystStacks::MystScriptParser_Slides(this);
 		break;
 	case kStoneshipStack:
 		_gameState->_globals.currentAge = 1;
-		_scriptParser = new MystScriptParser_Stoneship(this);
+		_scriptParser = new MystStacks::MystScriptParser_Stoneship(this);
 		break;
 	default:
 		error("Unknown Myst stack");

@@ -34,6 +34,7 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
 MystScriptParser_Intro::MystScriptParser_Intro(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
@@ -183,4 +184,5 @@ void MystScriptParser_Intro::o_mystLinkBook_init(uint16 op, uint16 var, uint16 a
 	_linkBookRunning = true;
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

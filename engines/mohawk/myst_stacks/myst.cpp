@@ -37,8 +37,7 @@
 #include "gui/message.h"
 
 namespace Mohawk {
-
-// NOTE: Credits Start Card is 10000
+namespace MystStacks {
 
 MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(_vm->_gameState->_myst) {
@@ -3646,4 +3645,5 @@ void MystScriptParser_Myst::o_generatorControlRoom_exit(uint16 op, uint16 var, u
 	_generatorVoltage = _state.generatorVoltage;
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

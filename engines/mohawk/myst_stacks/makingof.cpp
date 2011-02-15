@@ -33,6 +33,7 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
 MystScriptParser_MakingOf::MystScriptParser_MakingOf(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
@@ -56,4 +57,5 @@ void MystScriptParser_MakingOf::disablePersistentScripts() {
 void MystScriptParser_MakingOf::runPersistentScripts() {
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

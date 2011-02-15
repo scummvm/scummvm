@@ -35,6 +35,7 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
 MystScriptParser_Stoneship::MystScriptParser_Stoneship(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_stoneship) {
@@ -990,4 +991,5 @@ void MystScriptParser_Stoneship::o_cloudOrb_init(uint16 op, uint16 var, uint16 a
 	_cloudOrbStopSound = argv[1];
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk
