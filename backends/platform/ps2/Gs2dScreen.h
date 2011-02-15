@@ -65,9 +65,9 @@ public:
 	void unlockScreen();
 
 	void copyScreenRect(const uint8 *buf, int pitch, int x, int y, int w, int h);
-	void setPalette(const uint32 *pal, uint8 start, uint16 num);
+	void setPalette(const uint8 *pal, uint8 start, uint16 num);
 	void updateScreen(void);
-	void grabPalette(uint32 *pal, uint8 start, uint16 num);
+	void grabPalette(uint8 *pal, uint8 start, uint16 num);
 	void grabScreen(Graphics::Surface *surf);
 	//- overlay routines
 	void copyOverlayRect(const uint16 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h);
