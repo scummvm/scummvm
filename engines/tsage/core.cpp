@@ -1727,7 +1727,7 @@ void SceneObject::setVisage(int visage) {
 
 void SceneObject::setObjectWrapper(SceneObjectWrapper *objWrapper) {
 	if (_objectWrapper)
-		delete _objectWrapper;
+		_objectWrapper->remove();
 	_objectWrapper = objWrapper;
 	if (objWrapper)
 		objWrapper->setSceneObject(this);
@@ -1735,7 +1735,7 @@ void SceneObject::setObjectWrapper(SceneObjectWrapper *objWrapper) {
 
 void SceneObject::addMover(ObjectMover *mover, ...) {
 	if (_mover) 
-		delete _mover;
+		_mover->remove();
 	_mover = mover;
 
 	if (mover) {
