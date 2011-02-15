@@ -56,6 +56,32 @@ struct reg_t {
 	int16 toSint16() const {
 		return (int16) offset;
 	}
+
+	uint16 requireUint16() const {
+		if (isNumber())
+			return toUint16();
+		else
+			// The results of this are likely unpredictable... It most likely
+			// means that a kernel function is returning something wrong. If
+			// such an error occurs, we usually need to find the last kernel
+			// function called and check its return value.
+			error("[VM] Attempt to read unsigned arithmetic value from non-zero segment %04x. Offset: %04x", segment, offset);
+	}
+
+	int16 requireSint16() const {
+		if (isNumber())
+			return toSint16();
+		else
+			// The results of this are likely unpredictable... It most likely
+			// means that a kernel function is returning something wrong. If
+			// such an error occurs, we usually need to find the last kernel
+			// function called and check its return value.
+			error("[VM] Attempt to read signed arithmetic value from non-zero segment %04x. Offset: %04x", segment, offset);
+	}
+
+	bool isNumber() const {
+		return !segment;
+	}
 };
 
 static inline reg_t make_reg(SegmentId segment, uint16 offset) {

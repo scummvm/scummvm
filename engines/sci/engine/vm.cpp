@@ -131,21 +131,6 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 	return 0;
 }
 
-static int validate_arithmetic(reg_t reg) {
-	if (reg.segment) {
-		// The results of this are likely unpredictable... It most likely means that a kernel function is returning something wrong.
-		// If such an error occurs, we usually need to find the last kernel function called and check its return value.
-		error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]. Address: %04x:%04x", reg.segment, PRINT_REG(reg));
-		return 0;
-	}
-
-	return reg.offset;
-}
-
-static int signed_validate_arithmetic(reg_t reg) {
-	return (int16)validate_arithmetic(reg);
-}
-
 static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index) {
 	const char *names[4] = {"global", "local", "temp", "param"};
 
@@ -173,20 +158,6 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 		return false;
 	}
 
-	return true;
-}
-
-static bool validate_unsignedInteger(reg_t reg, uint16 &integer) {
-	if (reg.segment)
-		return false;
-	integer = reg.offset;
-	return true;
-}
-
-static bool validate_signedInteger(reg_t reg, int16 &integer) {
-	if (reg.segment)
-		return false;
-	integer = (int16)reg.offset;
 	return true;
 }
 
@@ -427,12 +398,12 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
 
 	while (framesize > 0) {
-		selector = validate_arithmetic(*argp++);
-		argc = validate_arithmetic(*argp);
+		selector = argp->requireUint16();
+		argp++;
+		argc = argp->requireUint16();
 
-		if (argc > 0x800) { // More arguments than the stack could possibly accomodate for
+		if (argc > 0x800)	// More arguments than the stack could possibly accomodate for
 			error("send_selector(): More than 0x800 arguments to function call");
-		}
 
 #ifdef VM_DEBUG_SEND
 		debugN("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
@@ -1014,8 +985,8 @@ void run_vm(EngineState *s) {
 
 		case op_bnot: { // 0x00 (00)
 			// Binary not
-			int16 value;
-			if (validate_signedInteger(s->r_acc, value))
+			int16 value = s->r_acc.toSint16();
+			if (s->r_acc.isNumber())
 				s->r_acc = make_reg(0, 0xffff ^ value);
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, NULL_REG);
@@ -1087,8 +1058,9 @@ void run_vm(EngineState *s) {
 
 		case op_mul: { // 0x03 (03)
 			r_temp = POP32();
-			int16 value1, value2;
-			if (validate_signedInteger(s->r_acc, value1) && validate_signedInteger(r_temp, value2))
+			int16 value1 = s->r_acc.toSint16();
+			int16 value2 = r_temp.toSint16();
+			if (s->r_acc.isNumber() && r_temp.isNumber())
 				s->r_acc = make_reg(0, value1 * value2);
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeMulWorkarounds, s->r_acc, r_temp);
@@ -1097,8 +1069,9 @@ void run_vm(EngineState *s) {
 
 		case op_div: { // 0x04 (04)
 			r_temp = POP32();
-			int16 divisor, dividend;
-			if (validate_signedInteger(s->r_acc, divisor) && validate_signedInteger(r_temp, dividend))
+			int16 divisor = s->r_acc.toSint16();
+			int16 dividend = r_temp.toSint16();
+			if (s->r_acc.isNumber() && r_temp.isNumber())
 				s->r_acc = make_reg(0, (divisor != 0 ? dividend / divisor : 0));
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeDivWorkarounds, s->r_acc, r_temp);
@@ -1109,8 +1082,9 @@ void run_vm(EngineState *s) {
 			r_temp = POP32();
 
 			if (getSciVersion() <= SCI_VERSION_0_LATE) {
-				uint16 modulo, value;
-				if (validate_unsignedInteger(s->r_acc, modulo) && validate_unsignedInteger(r_temp, value))
+				uint16 modulo = s->r_acc.toUint16();
+				uint16 value = r_temp.toUint16();
+				if (s->r_acc.isNumber() && r_temp.isNumber())
 					s->r_acc = make_reg(0, (modulo != 0 ? value % modulo : 0));
 				else
 					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
@@ -1121,8 +1095,10 @@ void run_vm(EngineState *s) {
 				// for simplicity's sake and use the new code for SCI01 and newer
 				// games. Fixes the battlecruiser mini game in SQ5 (room 850),
 				// bug #3035755
-				int16 modulo, value, result;
-				if (validate_signedInteger(s->r_acc, modulo) && validate_signedInteger(r_temp, value)) {
+				int16 modulo = s->r_acc.toSint16();
+				int16 value = r_temp.toSint16();
+				int16 result;
+				if (s->r_acc.isNumber() && r_temp.isNumber()) {
 					modulo = ABS(modulo);
 					result = (modulo != 0 ? value % modulo : 0);
 					if (result < 0)
@@ -1137,8 +1113,9 @@ void run_vm(EngineState *s) {
 		case op_shr: { // 0x06 (06)
 			// Shift right logical
 			r_temp = POP32();
-			uint16 value, shiftCount;
-			if (validate_unsignedInteger(r_temp, value) && validate_unsignedInteger(s->r_acc, shiftCount))
+			uint16 value = r_temp.toUint16();
+			uint16 shiftCount = s->r_acc.toUint16();
+			if (r_temp.isNumber() && s->r_acc.isNumber())
 				s->r_acc = make_reg(0, value >> shiftCount);
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
@@ -1148,8 +1125,9 @@ void run_vm(EngineState *s) {
 		case op_shl: { // 0x07 (07)
 			// Shift left logical
 			r_temp = POP32();
-			uint16 value, shiftCount;
-			if (validate_unsignedInteger(r_temp, value) && validate_unsignedInteger(s->r_acc, shiftCount))
+			uint16 value = r_temp.toUint16();
+			uint16 shiftCount = s->r_acc.toUint16();
+			if (r_temp.isNumber() && s->r_acc.isNumber())
 				s->r_acc = make_reg(0, value << shiftCount);
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
@@ -1158,8 +1136,9 @@ void run_vm(EngineState *s) {
 
 		case op_xor: { // 0x08 (08)
 			r_temp = POP32();
-			uint16 value1, value2;
-			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
+			uint16 value1 = r_temp.toUint16();
+			uint16 value2 = s->r_acc.toUint16();
+			if (r_temp.isNumber() && s->r_acc.isNumber())
 				s->r_acc = make_reg(0, value1 ^ value2);
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
@@ -1168,8 +1147,9 @@ void run_vm(EngineState *s) {
 
 		case op_and: { // 0x09 (09)
 			r_temp = POP32();
-			uint16 value1, value2;
-			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
+			uint16 value1 = r_temp.toUint16();
+			uint16 value2 = s->r_acc.toUint16();
+			if (r_temp.isNumber() && s->r_acc.isNumber())
 				s->r_acc = make_reg(0, value1 & value2);
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeAndWorkarounds, r_temp, s->r_acc);
@@ -1178,8 +1158,9 @@ void run_vm(EngineState *s) {
 
 		case op_or: { // 0x0a (10)
 			r_temp = POP32();
-			uint16 value1, value2;
-			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
+			uint16 value1 = r_temp.toUint16();
+			uint16 value2 = s->r_acc.toUint16();
+			if (r_temp.isNumber() && s->r_acc.isNumber())
 				s->r_acc = make_reg(0, value1 | value2);
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeOrWorkarounds, r_temp, s->r_acc);
@@ -1187,8 +1168,8 @@ void run_vm(EngineState *s) {
 		}
 
 		case op_neg: { // 0x0b (11)
-			int16 value;
-			if (validate_signedInteger(s->r_acc, value))
+			int16 value = s->r_acc.toSint16();
+			if (s->r_acc.isNumber())
 				s->r_acc = make_reg(0, -value);
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, NULL_REG);
@@ -1232,8 +1213,9 @@ void run_vm(EngineState *s) {
 				// Happens in SQ1, room 28, when throwing the water at Orat
 				s->r_acc = make_reg(0, 1);
 			} else {
-				int16 compare1, compare2;
-				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+				int16 compare1 = r_temp.toSint16();
+				int16 compare2 = s->r_acc.toSint16();
+				if (r_temp.isNumber() && s->r_acc.isNumber())
 					s->r_acc = make_reg(0, compare1 > compare2);
 				else
 					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
@@ -1249,8 +1231,9 @@ void run_vm(EngineState *s) {
 					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
 			} else {
-				int16 compare1, compare2;
-				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+				int16 compare1 = r_temp.toSint16();
+				int16 compare2 = s->r_acc.toSint16();
+				if (r_temp.isNumber() && s->r_acc.isNumber())
 					s->r_acc = make_reg(0, compare1 >= compare2);
 				else
 					s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeGeWorkarounds, r_temp, s->r_acc);
@@ -1272,8 +1255,9 @@ void run_vm(EngineState *s) {
 				// Happens in SQ1, room 58, when giving id-card to robot
 				s->r_acc = make_reg(0, 1);
 			} else {
-				int16 compare1, compare2;
-				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+				int16 compare1 = r_temp.toSint16();
+				int16 compare2 = s->r_acc.toSint16();
+				if (r_temp.isNumber() && s->r_acc.isNumber())
 					s->r_acc = make_reg(0, compare1 < compare2);
 				else
 					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
@@ -1289,8 +1273,9 @@ void run_vm(EngineState *s) {
 					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
 			} else {
-				int16 compare1, compare2;
-				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+				int16 compare1 = r_temp.toSint16();
+				int16 compare2 = s->r_acc.toSint16();
+				if (r_temp.isNumber() && s->r_acc.isNumber())
 					s->r_acc = make_reg(0, compare1 <= compare2);
 				else
 					s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeLeWorkarounds, r_temp, s->r_acc);
@@ -1317,8 +1302,9 @@ void run_vm(EngineState *s) {
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
 			else {
-				uint16 compare1, compare2;
-				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+				uint16 compare1 = r_temp.toUint16();
+				uint16 compare2 = s->r_acc.toUint16();
+				if (r_temp.isNumber() && s->r_acc.isNumber())
 					s->r_acc = make_reg(0, compare1 > compare2);
 				else
 					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
@@ -1336,8 +1322,9 @@ void run_vm(EngineState *s) {
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
 			else {
-				uint16 compare1, compare2;
-				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+				uint16 compare1 = r_temp.toUint16();
+				uint16 compare2 = s->r_acc.toUint16();
+				if (r_temp.isNumber() && s->r_acc.isNumber())
 					s->r_acc = make_reg(0, compare1 >= compare2);
 				else
 					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
@@ -1356,8 +1343,9 @@ void run_vm(EngineState *s) {
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
 			else {
-				uint16 compare1, compare2;
-				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+				uint16 compare1 = r_temp.toUint16();
+				uint16 compare2 = s->r_acc.toUint16();
+				if (r_temp.isNumber() && s->r_acc.isNumber())
 					s->r_acc = make_reg(0, compare1 < compare2);
 				else
 					s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeUltWorkarounds, r_temp, s->r_acc);
@@ -1375,8 +1363,9 @@ void run_vm(EngineState *s) {
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
 			else {
-				uint16 compare1, compare2;
-				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+				uint16 compare1 = r_temp.toUint16();
+				uint16 compare2 = s->r_acc.toUint16();
+				if (r_temp.isNumber() && s->r_acc.isNumber())
 					s->r_acc = make_reg(0, compare1 <= compare2);
 				else
 					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
@@ -1446,7 +1435,7 @@ void run_vm(EngineState *s) {
 			xs_new = add_exec_stack_entry(s->_executionStack, make_reg(s->xs->addr.pc.segment,
 											localCallOffset),
 											s->xs->sp, s->xs->objp,
-											(validate_arithmetic(*call_base)) + s->restAdjust,
+											(call_base->requireUint16()) + s->restAdjust,
 											call_base, NULL_SELECTOR, -1, localCallOffset, s->xs->objp,
 											s->_executionStack.size()-1, s->xs->local_segment);
 			s->restAdjust = 0; // Used up the &rest adjustment
@@ -1466,7 +1455,7 @@ void run_vm(EngineState *s) {
 			if (!oldScriptHeader)
 				s->xs->sp -= s->restAdjust;
 
-			int argc = validate_arithmetic(s->xs->sp[0]);
+			int argc = s->xs->sp[0].requireUint16();
 
 			if (!oldScriptHeader)
 				argc += s->restAdjust;
@@ -1663,7 +1652,7 @@ void run_vm(EngineState *s) {
 			r_temp.offset = s->variables[var_number] - s->variablesBase[var_number];
 
 			if (temp & 0x08)  // Add accumulator offset if requested
-				r_temp.offset += signed_validate_arithmetic(s->r_acc);
+				r_temp.offset += s->r_acc.requireSint16();
 
 			r_temp.offset += opparams[1];  // Add index
 			r_temp.offset *= 2; // variables are 16 bit
@@ -1710,8 +1699,8 @@ void run_vm(EngineState *s) {
 		case op_ipToa: { // 0x35 (53)
 			// Increment Property and copy To Accumulator
 			reg_t &opProperty = validate_property(s, obj, opparams[0]);
-			uint16 valueProperty;
-			if (validate_unsignedInteger(opProperty, valueProperty))
+			uint16 valueProperty = opProperty.toUint16();
+			if (opProperty.isNumber())
 				s->r_acc = make_reg(0, valueProperty + 1);
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG);
@@ -1722,8 +1711,8 @@ void run_vm(EngineState *s) {
 		case op_dpToa: { // 0x36 (54)
 			// Decrement Property and copy To Accumulator
 			reg_t &opProperty = validate_property(s, obj, opparams[0]);
-			uint16 valueProperty;
-			if (validate_unsignedInteger(opProperty, valueProperty))
+			uint16 valueProperty = opProperty.toUint16();
+			if (opProperty.isNumber())
 				s->r_acc = make_reg(0, valueProperty - 1);
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeDptoaWorkarounds, opProperty, NULL_REG);
@@ -1734,8 +1723,8 @@ void run_vm(EngineState *s) {
 		case op_ipTos: { // 0x37 (55)
 			// Increment Property and push to Stack
 			reg_t &opProperty = validate_property(s, obj, opparams[0]);
-			uint16 valueProperty;
-			if (validate_unsignedInteger(opProperty, valueProperty))
+			uint16 valueProperty = opProperty.toUint16();
+			if (opProperty.isNumber())
 				valueProperty++;
 			else
 				valueProperty = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG).offset;
@@ -1747,8 +1736,8 @@ void run_vm(EngineState *s) {
 		case op_dpTos: { // 0x38 (56)
 			// Decrement Property and push to Stack
 			reg_t &opProperty = validate_property(s, obj, opparams[0]);
-			uint16 valueProperty;
-			if (validate_unsignedInteger(opProperty, valueProperty))
+			uint16 valueProperty = opProperty.toUint16();
+			if (opProperty.isNumber())
 				valueProperty--;
 			else
 				valueProperty = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG).offset;
@@ -1871,8 +1860,8 @@ void run_vm(EngineState *s) {
 			// Load global, local, temp or param variable into the accumulator,
 			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			int16 value;
-			if (!validate_signedInteger(s->r_acc, value))
+			int16 value = s->r_acc.toSint16();
+			if (!s->r_acc.isNumber())
 				value = arithmetic_lookForWorkaround(opcode, opcodeLaiWorkarounds, s->r_acc, NULL_REG).offset;
 			var_number = opparams[0] + value;
 			s->r_acc = READ_VAR(var_type, var_number);
@@ -1886,8 +1875,8 @@ void run_vm(EngineState *s) {
 			// Load global, local, temp or param variable into the stack,
 			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			int16 value;
-			if (!validate_signedInteger(s->r_acc, value))
+			int16 value = s->r_acc.toSint16();
+			if (!s->r_acc.isNumber())
 				value = arithmetic_lookForWorkaround(opcode, opcodeLsiWorkarounds, s->r_acc, NULL_REG).offset;
 			var_number = opparams[0] + value;
 			PUSH32(READ_VAR(var_type, var_number));
@@ -1925,7 +1914,7 @@ void run_vm(EngineState *s) {
 			// of sense otherwise, with acc being used for two things
 			// simultaneously...
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
+			var_number = opparams[0] + s->r_acc.requireSint16();
 			s->r_acc = POP32();
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
@@ -1937,7 +1926,7 @@ void run_vm(EngineState *s) {
 			// Save the stack into the global, local, temp or param variable,
 			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
+			var_number = opparams[0] + s->r_acc.requireSint16();
 			WRITE_VAR(var_type, var_number, POP32());
 			break;
 
@@ -1983,7 +1972,7 @@ void run_vm(EngineState *s) {
 			// Increment the global, local, temp or param variable and save it
 			// to the accumulator, using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
+			var_number = opparams[0] + s->r_acc.requireSint16();
 			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
@@ -2000,7 +1989,7 @@ void run_vm(EngineState *s) {
 			// Increment the global, local, temp or param variable and save it
 			// to the stack, using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
+			var_number = opparams[0] + s->r_acc.requireSint16();
 			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
@@ -2053,7 +2042,7 @@ void run_vm(EngineState *s) {
 			// Decrement the global, local, temp or param variable and save it
 			// to the accumulator, using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
+			var_number = opparams[0] + s->r_acc.requireSint16();
 			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
@@ -2070,7 +2059,7 @@ void run_vm(EngineState *s) {
 			// Decrement the global, local, temp or param variable and save it
 			// to the stack, using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
+			var_number = opparams[0] + s->r_acc.requireSint16();
 			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
