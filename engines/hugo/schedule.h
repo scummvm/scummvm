@@ -458,17 +458,27 @@ public:
 	virtual void decodeString(char *line) = 0;
 	virtual void runScheduler() = 0;
 
+	void freePoints() { free(_points); }
+
+	int16 calcMaxPoints() const;
+
 	void freeActListArr();
+	void freeScreenAct();
 	void initEventQueue();
 	void insertActionList(const uint16 actIndex);
 	void loadActListArr(Common::ReadStream &in);
 	void loadAlNewscrIndex(Common::ReadStream &in);
+	void loadPoints(Common::ReadStream &in);
+	void loadScreenAct(Common::ReadStream &in);
 	void newScreen(const int screenIndex);
 	void processBonus(const int bonusIndex);
 	void processMaze(const int x1, const int x2, const int y1, const int y2);
 	void restoreScreen(const int screenIndex);
 	void restoreEvents(Common::ReadStream *f);
+	void restorePoints(Common::ReadStream *in);
 	void saveEvents(Common::WriteStream *f);
+	void savePoints(Common::WriteStream *out);
+	void screenActions(const int screenNum);
 	void waitForRefresh();
 
 	void findAction(act* action, int16* index, int16* subElem);
@@ -483,6 +493,11 @@ protected:
 
 	uint16   _actListArrSize;
 	uint16   _alNewscrIndex;
+	uint16   _screenActsSize;
+	uint16 **_screenActs;
+
+	byte     _numBonuses;
+	point_t *_points;
 
 	uint32 _curTick;                                // Current system time in ticks
 	uint32 _oldTime;                                // The previous wall time in ticks

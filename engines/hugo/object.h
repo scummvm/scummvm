@@ -73,7 +73,9 @@ public:
 	int   calcMaxScore();
 	int16 findObject(uint16 x, uint16 y);
 	void freeObjects();
+	void freeObjectUses();
 	void loadObjectArr(Common::ReadStream &in);
+	void loadObjectUses(Common::ReadStream &in);
 	void freeObjectArr();
 	void loadNumObj(Common::ReadStream &in);
 	void lookObject(object_t *obj);
@@ -114,6 +116,8 @@ protected:
 	static const int kMaxObjNumb = 128;             // Used in Update_images()
 
 	uint16     _objCount;
+	uses_t    *_uses;
+	uint16     _usesSize;
 
 	void restoreSeq(object_t *obj);
 

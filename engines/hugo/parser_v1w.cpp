@@ -172,14 +172,14 @@ void Parser_v1w::lineHandler() {
 	}
 
 	// No objects match command line, try background and catchall commands
-	if (isBackgroundWord_v3(_vm->_backgroundObjects[*_vm->_screen_p]))
+	if (isBackgroundWord_v3(_backgroundObjects[*_vm->_screen_p]))
 		return;
-	if (isCatchallVerb_v3(_vm->_backgroundObjects[*_vm->_screen_p]))
+	if (isCatchallVerb_v3(_backgroundObjects[*_vm->_screen_p]))
 		return;
 
-	if (isBackgroundWord_v3(_vm->_catchallList))
+	if (isBackgroundWord_v3(_catchallList))
 		return;
-	if (isCatchallVerb_v3(_vm->_catchallList))
+	if (isCatchallVerb_v3(_catchallList))
 		return;
 
 	// If a not-near comment was generated, print it

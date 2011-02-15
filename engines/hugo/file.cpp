@@ -369,11 +369,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	for (int i = 0; i < _vm->_numScreens; i++)
 		out->writeByte(_vm->_screenStates[i]);
 
-	// Save points table
-	for (int i = 0; i < _vm->_numBonuses; i++) {
-		out->writeByte(_vm->_points[i].score);
-		out->writeByte((_vm->_points[i].scoredFl) ? 1 : 0);
-	}
+	_vm->_scheduler->savePoints(out);
 
 	// Now save current time and all current events in event queue
 	_vm->_scheduler->saveEvents(out);
@@ -475,12 +471,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	for (int i = 0; i < _vm->_numScreens; i++)
 		_vm->_screenStates[i] = in->readByte();
 
-	// Restore points table
-	for (int i = 0; i < _vm->_numBonuses; i++) {
-		_vm->_points[i].score = in->readByte();
-		_vm->_points[i].scoredFl = (in->readByte() == 1);
-	}
-
+	_vm->_scheduler->restorePoints(in);
 	_vm->_object->restoreAllSeq();
 
 	// Now restore time of the save and the event queue

@@ -165,16 +165,16 @@ void Parser_v2d::lineHandler() {
 						return;
 				}
 			}
-			if ((*farComment != '\0') && isBackgroundWord_v1(noun, verb, _vm->_backgroundObjects[*_vm->_screen_p]))
+			if ((*farComment != '\0') && isBackgroundWord_v1(noun, verb, _backgroundObjects[*_vm->_screen_p]))
 				return;
 		} while (noun);
 	}
 
 	noun = findNextNoun(noun);
-	if (   !isCatchallVerb_v1(true, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])
-		&& !isCatchallVerb_v1(true, noun, verb, _vm->_catchallList)
-		&& !isCatchallVerb_v1(false, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])
-		&& !isCatchallVerb_v1(false, noun, verb, _vm->_catchallList)) {
+	if (   !isCatchallVerb_v1(true, noun, verb, _backgroundObjects[*_vm->_screen_p])
+		&& !isCatchallVerb_v1(true, noun, verb, _catchallList)
+		&& !isCatchallVerb_v1(false, noun, verb, _backgroundObjects[*_vm->_screen_p])
+		&& !isCatchallVerb_v1(false, noun, verb, _catchallList)) {
 		if (*farComment != '\0') {                  // An object matched but not near enough
 			Utils::Box(kBoxAny, "%s", farComment);
 		} else if (_maze.enabledFl && (verb == _vm->_text->getVerb(_vm->_look, 0))) {

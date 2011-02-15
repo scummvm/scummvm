@@ -51,15 +51,165 @@
 
 namespace Hugo {
 
-Parser::Parser(HugoEngine *vm) :
-	_vm(vm), _putIndex(0), _getIndex(0), _checkDoubleF1Fl(false) {
+Parser::Parser(HugoEngine *vm) : _vm(vm), _putIndex(0), _getIndex(0), _arrayReqs(0), _catchallList(0), _backgroundObjects(0), _cmdList(0) {
 	_cmdLineIndex = 0;
 	_cmdLineTick = 0;
 	_cmdLineCursor = '_';
 	_cmdLine[0] = '\0';
+	_cmdListSize = 0;
+	_checkDoubleF1Fl = false;
+	_backgroundObjectsSize = 0;
 }
 
 Parser::~Parser() {
+}
+
+/**
+ * Read _cmdList from Hugo.dat
+ */
+void Parser::loadCmdList(Common::ReadStream &in) {
+	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
+		uint16 numElem = in.readUint16BE();
+		if (varnt == _vm->_gameVariant) {
+			_cmdListSize = numElem;
+			_cmdList = (cmd **)malloc(sizeof(cmd *) * _cmdListSize);
+			for (int i = 0; i < _cmdListSize; i++) {
+				uint16 numSubElem = in.readUint16BE();
+				_cmdList[i] = (cmd *)malloc(sizeof(cmd) * numSubElem);
+				for (int j = 0; j < numSubElem; j++) {
+					_cmdList[i][j].verbIndex = in.readUint16BE();
+					_cmdList[i][j].reqIndex = in.readUint16BE();
+					_cmdList[i][j].textDataNoCarryIndex = in.readUint16BE();
+					_cmdList[i][j].reqState = in.readByte();
+					_cmdList[i][j].newState = in.readByte();
+					_cmdList[i][j].textDataWrongIndex = in.readUint16BE();
+					_cmdList[i][j].textDataDoneIndex = in.readUint16BE();
+					_cmdList[i][j].actIndex = in.readUint16BE();
+				}
+			}
+		} else {
+			for (int i = 0; i < numElem; i++) {
+				uint16 numSubElem = in.readUint16BE();
+				for (int j = 0; j < numSubElem; j++) {
+					in.readUint16BE();
+					in.readUint16BE();
+					in.readUint16BE();
+					in.readByte();
+					in.readByte();
+					in.readUint16BE();
+					in.readUint16BE();
+					in.readUint16BE();
+				}
+			}
+		}
+	}
+}
+
+void Parser::freeCmdList() {
+	if (_cmdList) {
+		for (int i = 0; i < _cmdListSize; i++)
+			free(_cmdList[i]);
+		free(_cmdList);
+	}
+}
+
+/**
+ * Read _backgrounObjects from Hugo.dat
+ */
+void Parser::loadBackgroundObjects(Common::ReadStream &in) {
+	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
+		uint16 numElem = in.readUint16BE();
+
+		background_t **wrkBackgroundObjects = (background_t **)malloc(sizeof(background_t *) * numElem);
+
+		for (int i = 0; i < numElem; i++) {
+			uint16 numSubElem = in.readUint16BE();
+			wrkBackgroundObjects[i] = (background_t *)malloc(sizeof(background_t) * numSubElem);
+			for (int j = 0; j < numSubElem; j++) {
+				wrkBackgroundObjects[i][j].verbIndex = in.readUint16BE();
+				wrkBackgroundObjects[i][j].nounIndex = in.readUint16BE();
+				wrkBackgroundObjects[i][j].commentIndex = in.readSint16BE();
+				wrkBackgroundObjects[i][j].matchFl = (in.readByte() != 0);
+				wrkBackgroundObjects[i][j].roomState = in.readByte();
+				wrkBackgroundObjects[i][j].bonusIndex = in.readByte();
+			}
+		}
+
+		if (varnt == _vm->_gameVariant) {
+			_backgroundObjectsSize = numElem;
+			_backgroundObjects = wrkBackgroundObjects;
+		} else {
+			for (int i = 0; i < numElem; i++)
+				free(wrkBackgroundObjects[i]);
+			free(wrkBackgroundObjects);
+		}
+	}
+}
+
+void Parser::freeBackgroundObjects() {
+	if (_backgroundObjects) {
+		for (int i = 0; i < _backgroundObjectsSize; i++)
+			free(_backgroundObjects[i]);
+		free(_backgroundObjects);
+	}
+}
+
+/**
+ * Read _catchallList from Hugo.dat
+ */
+void Parser::loadCatchallList(Common::ReadStream &in) {
+	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
+		uint16 numElem = in.readUint16BE();
+		background_t *wrkCatchallList = (background_t *)malloc(sizeof(background_t) * numElem);
+
+		for (int i = 0; i < numElem; i++) {
+			wrkCatchallList[i].verbIndex = in.readUint16BE();
+			wrkCatchallList[i].nounIndex = in.readUint16BE();
+			wrkCatchallList[i].commentIndex = in.readSint16BE();
+			wrkCatchallList[i].matchFl = (in.readByte() != 0);
+			wrkCatchallList[i].roomState = in.readByte();
+			wrkCatchallList[i].bonusIndex = in.readByte();
+		}
+
+		if (varnt == _vm->_gameVariant)
+			_catchallList = wrkCatchallList;
+		else
+			free(wrkCatchallList);
+	}
+}
+
+void Parser::freeCatchallList() {
+	free(_catchallList);
+}
+
+void Parser::loadArrayReqs(Common::ReadStream &in) {
+	_arrayReqs = _vm->loadLongArray(in);
+}
+
+/**
+ * Search background command list for this screen for supplied object.
+ * Return first associated verb (not "look") or 0 if none found.
+ */
+const char *Parser::useBG(const char *name) {
+	debugC(1, kDebugEngine, "useBG(%s)", name);
+
+	objectList_t p = _backgroundObjects[*_vm->_screen_p];
+	for (int i = 0; p[i].verbIndex != 0; i++) {
+		if ((name == _vm->_text->getNoun(p[i].nounIndex, 0) &&
+		     p[i].verbIndex != _vm->_look) &&
+		    ((p[i].roomState == kStateDontCare) || (p[i].roomState == _vm->_screenStates[*_vm->_screen_p])))
+			return _vm->_text->getVerb(p[i].verbIndex, 0);
+	}
+
+	return 0;
+}
+
+void Parser::freeArrayReqs() {
+	if (_arrayReqs) {
+		for (int i = 0; _arrayReqs[i] != 0; i++)
+			free(_arrayReqs[i]);
+		free(_arrayReqs);
+	}
 }
 
 void Parser::switchTurbo() {

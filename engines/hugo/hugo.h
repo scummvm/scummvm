@@ -233,8 +233,6 @@ public:
 
 	byte   _numVariant;
 	byte   _gameVariant;
-	byte   _maxInvent;
-	byte   _numBonuses;
 	int8   _soundSilence;
 	int8   _soundTest;
 	int8   _tunesNbr;
@@ -245,23 +243,9 @@ public:
 	byte  *_screen_p;
 	byte  _heroImage;
 
-	byte  *_introX;
-	byte  *_introY;
 	byte  *_screenStates;
 	command_t _line;                                // Line of user text input
 	config_t  _config;                              // User's config
-	uint16    **_arrayReqs;
-	int16     *_invent;
-	uses_t    *_uses;
-	uint16     _usesSize;
-	background_t *_catchallList;
-	background_t **_backgroundObjects;
-	uint16    _backgroundObjectsSize;
-	point_t   *_points;
-	cmd       **_cmdList;
-	uint16    _cmdListSize;
-	uint16    **_screenActs;
-	uint16    _screenActsSize;
 	int16     *_defltTunes;
 	uint16    _look;
 	uint16    _take;
@@ -295,8 +279,6 @@ public:
 	virtual bool canSaveGameStateCurrently();
 	bool loadHugoDat();
 
-	const char *useBG(const char *name);
-
 	int8 getTPS() const;
 
 	void initGame(const HugoGameDescription *gd);
@@ -304,7 +286,6 @@ public:
 	void endGame();
 	void initStatus();
 	void readScreenFiles(const int screen);
-	void screenActions(const int screen);
 	void setNewScreen(const int screen);
 	void shutdown();
 	void syncSoundSettings();
@@ -327,9 +308,6 @@ public:
 	void setMaxScore(const int newScore) {
 		_maxscore = newScore;
 	}
-	byte getIntroSize() {
-		return _introXSize;
-	}
 	Common::Error saveGameState(int slot, const char *desc) {
 		return (_file->saveGame(slot, desc) ? Common::kWritingFailed : Common::kNoError);
 	}
@@ -345,6 +323,7 @@ public:
 	const char *getCopyrightString() const { return "Copyright 1989-1997 David P Gray, All Rights Reserved."; }
 
 	Common::String getSavegameFilename(int slot);
+	uint16 **loadLongArray(Common::ReadStream &in);
 
 	FileManager *_file;
 	Scheduler *_scheduler;
@@ -357,7 +336,6 @@ public:
 	IntroHandler *_intro;
 	ObjectHandler *_object;
 	TextHandler *_text;
-
 	TopMenu *_topMenu;
 
 protected:
@@ -368,7 +346,6 @@ protected:
 private:
 	static const int kTurboTps = 16;                // This many in turbo mode
 
-	byte _introXSize;
 	status_t _status;                               // Game status structure
 	uint32 _lastTime;
 	uint32 _curTime;
@@ -383,8 +360,6 @@ private:
 
 	int _score;                                     // Holds current score
 	int _maxscore;                                  // Holds maximum score
-
-	uint16 **loadLongArray(Common::ReadStream &in);
 
 	void initPlaylist(bool playlist[kMaxTunes]);
 	void initConfig();
