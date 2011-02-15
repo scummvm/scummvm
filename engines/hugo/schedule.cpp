@@ -57,6 +57,10 @@ Scheduler::Scheduler(HugoEngine *vm) : _vm(vm), _actListArr(0), _curTick(0), _ol
 Scheduler::~Scheduler() {
 }
 
+void Scheduler::initCypher() {
+	_cypher = getCypher();
+}
+
 /**
  * Initialise the timer event queue
  */
@@ -840,21 +844,6 @@ void Scheduler::loadActListArr(Common::ReadStream &in) {
 	}
 }
 
-void Scheduler::freeActListArr() {
-	debugC(6, kDebugSchedule, "freeActListArr()");
-
-	if (_actListArr) {
-		for (int i = 0; i < _actListArrSize; i++) {
-			for (int j = 0; _actListArr[i][j].a0.actType != ANULL; j++) {
-				if (_actListArr[i][j].a0.actType == PROMPT)
-					free(_actListArr[i][j].a3.responsePtr);
-			}
-			free(_actListArr[i]);
-		}
-		free(_actListArr);
-	}
-}
-
 /**
  * Read _screenActs
  */
@@ -885,11 +874,26 @@ void Scheduler::loadScreenAct(Common::ReadStream &in) {
 	}
 }
 
-void Scheduler::freeScreenAct() {
+void Scheduler::freeScheduler() {
+	debugC(6, kDebugSchedule, "freeActListArr()");
+
+	free(_points);
+
 	if (_screenActs) {
 		for (int i = 0; i < _screenActsSize; i++)
 			free(_screenActs[i]);
 		free(_screenActs);
+	}
+
+	if (_actListArr) {
+		for (int i = 0; i < _actListArrSize; i++) {
+			for (int j = 0; _actListArr[i][j].a0.actType != ANULL; j++) {
+				if (_actListArr[i][j].a0.actType == PROMPT)
+					free(_actListArr[i][j].a3.responsePtr);
+			}
+			free(_actListArr[i]);
+		}
+		free(_actListArr);
 	}
 }
 
@@ -1020,7 +1024,6 @@ int16 Scheduler::calcMaxPoints() const {
 /*
 * Save the action data in the file with handle f
 */
-
 void Scheduler::saveActions(Common::WriteStream* f) const {
 	for (int i = 0; i < _actListArrSize; i++) {
 		// write all the sub elems data
@@ -1059,6 +1062,27 @@ void Scheduler::findAction(act* action, int16* index, int16* subElem) {
 	}
 	// action not found ??
 	assert(0);
+}
+
+void Scheduler::saveSchedulerData(Common::WriteStream *out) {
+	savePoints(out);
+
+	// Now save current time and all current events in event queue
+	saveEvents(out);
+
+	// Now save current actions
+	saveActions(out);
+}
+
+void Scheduler::restoreSchedulerData(Common::ReadStream *in) {
+	restorePoints(in);
+	_vm->_object->restoreAllSeq();
+
+	// Now restore time of the save and the event queue
+	restoreEvents(in);
+
+	// Now restore actions
+	restoreActions(in);
 }
 
 /**
@@ -1455,7 +1479,7 @@ void Scheduler::delEventType(const action_t actTypeDel) {
 /**
  * Save the points table
  */
-void Scheduler::savePoints(Common::WriteStream *out) {
+void Scheduler::savePoints(Common::WriteStream *out) const {
 	for (int i = 0; i < _numBonuses; i++) {
 		out->writeByte(_points[i].score);
 		out->writeByte((_points[i].scoredFl) ? 1 : 0);
@@ -1533,11 +1557,9 @@ void Scheduler_v1d::promptAction(act *action) {
 void Scheduler_v1d::decodeString(char *line) {
 	debugC(1, kDebugSchedule, "decodeString(%s)", line);
 
-	static const Common::String cypher = getCypher();
-
 	uint16 linelength = strlen(line);
 	for(uint16 i = 0; i < linelength; i++) {
-		line[i] = (line[i] + cypher.c_str()[i % cypher.size()]) % '~';
+		line[i] = (line[i] + _cypher.c_str()[i % _cypher.size()]) % '~';
 		if (line[i] < ' ')
 			line[i] += ' ';
 	}
@@ -1586,11 +1608,10 @@ void Scheduler_v2d::promptAction(act *action) {
 void Scheduler_v2d::decodeString(char *line) {
 	debugC(1, kDebugSchedule, "decodeString(%s)", line);
 
-	static const Common::String cypher = getCypher();
-
 	int16 lineLength = strlen(line);
 	for (uint16 i = 0; i < lineLength; i++)
-		line[i] -= cypher.c_str()[i % cypher.size()];
+		line[i] -= _cypher.c_str()[i % _cypher.size()];
+
 	debugC(1, kDebugSchedule, "result : %s", line);
 }
 

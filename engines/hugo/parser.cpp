@@ -105,14 +105,6 @@ void Parser::loadCmdList(Common::ReadStream &in) {
 	}
 }
 
-void Parser::freeCmdList() {
-	if (_cmdList) {
-		for (int i = 0; i < _cmdListSize; i++)
-			free(_cmdList[i]);
-		free(_cmdList);
-	}
-}
-
 /**
  * Read _backgrounObjects from Hugo.dat
  */
@@ -146,14 +138,6 @@ void Parser::loadBackgroundObjects(Common::ReadStream &in) {
 	}
 }
 
-void Parser::freeBackgroundObjects() {
-	if (_backgroundObjects) {
-		for (int i = 0; i < _backgroundObjectsSize; i++)
-			free(_backgroundObjects[i]);
-		free(_backgroundObjects);
-	}
-}
-
 /**
  * Read _catchallList from Hugo.dat
  */
@@ -178,10 +162,6 @@ void Parser::loadCatchallList(Common::ReadStream &in) {
 	}
 }
 
-void Parser::freeCatchallList() {
-	free(_catchallList);
-}
-
 void Parser::loadArrayReqs(Common::ReadStream &in) {
 	_arrayReqs = _vm->loadLongArray(in);
 }
@@ -204,11 +184,25 @@ const char *Parser::useBG(const char *name) {
 	return 0;
 }
 
-void Parser::freeArrayReqs() {
+void Parser::freeParser() {
 	if (_arrayReqs) {
 		for (int i = 0; _arrayReqs[i] != 0; i++)
 			free(_arrayReqs[i]);
 		free(_arrayReqs);
+	}
+
+	free(_catchallList);
+
+	if (_backgroundObjects) {
+		for (int i = 0; i < _backgroundObjectsSize; i++)
+			free(_backgroundObjects[i]);
+		free(_backgroundObjects);
+	}
+
+	if (_cmdList) {
+		for (int i = 0; i < _cmdListSize; i++)
+			free(_cmdList[i]);
+		free(_cmdList);
 	}
 }
 

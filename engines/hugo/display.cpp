@@ -585,17 +585,12 @@ void Screen::loadPalette(Common::ReadStream &in) {
 }
 
 /**
- * Free main and current palettes
+ * Free fonts, main and current palettes
  */
-void Screen::freePalette() {
+void Screen::freeScreen() {
 	free(_curPalette);
 	free(_mainPalette);
-}
 
-/**
- * Free fonts
- */
-void Screen::freeFonts() {
 	for (int i = 0; i < kNumFonts; i++) {
 		if (_arrayFont[i])
 			free(_arrayFont[i]);

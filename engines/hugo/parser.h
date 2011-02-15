@@ -53,10 +53,7 @@ public:
 	
 	void charHandler();
 	void command(const char *format, ...);
-	void freeArrayReqs();
-	void freeBackgroundObjects();
-	void freeCatchallList();
-	void freeCmdList();
+	void freeParser();
 	void keyHandler(Common::Event event);
 	void loadArrayReqs(Common::ReadStream &in);
 	void loadBackgroundObjects(Common::ReadStream &in);

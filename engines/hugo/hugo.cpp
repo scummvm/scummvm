@@ -74,30 +74,22 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 }
 
 HugoEngine::~HugoEngine() {
-	shutdown();
+	_file->closeDatabaseFiles();
 
-	_screen->freePalette();
-	_text->freeAllTexts();
 	_intro->freeIntroData();
-	_parser->freeArrayReqs();
-	_mouse->freeHotspots();
 	_inventory->freeInvent();
-	_object->freeObjectUses();
-	_parser->freeCatchallList();
-	_parser->freeBackgroundObjects();
-	_scheduler->freePoints();
-	_parser->freeCmdList();
-	_scheduler->freeScreenAct();
-	_object->freeObjectArr();
-	_scheduler->freeActListArr();
+	_mouse->freeHotspots();
+	_object->freeObjects();
+	_parser->freeParser();
+	_scheduler->freeScheduler();
+	_screen->freeScreen();
+	_text->freeAllTexts();
 
 	free(_defltTunes);
 	free(_screenStates);
 
-	_screen->freeFonts();
 
 	delete _topMenu;
-
 	delete _object;
 	delete _sound;
 	delete _route;
@@ -203,11 +195,12 @@ Common::Error HugoEngine::run() {
 	_screen->setCursorPal();
 	_screen->resetInventoryObjId();
 
+	_scheduler->initCypher();
+
 	initStatus();                                   // Initialize game status
 	initConfig();                                   // Initialize user's config
 	initialize();
 	resetConfig();                                  // Reset user's config
-
 	initMachine();
 
 	// Start the state machine
@@ -574,16 +567,6 @@ void HugoEngine::initialize() {
 	default:
 		error("Unknown game");
 	}
-}
-
-/**
- * Restore all resources before termination
- */
-void HugoEngine::shutdown() {
-	debugC(1, kDebugEngine, "shutdown");
-
-	_file->closeDatabaseFiles();
-	_object->freeObjects();
 }
 
 /**

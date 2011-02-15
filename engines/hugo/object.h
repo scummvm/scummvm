@@ -73,10 +73,8 @@ public:
 	int   calcMaxScore();
 	int16 findObject(uint16 x, uint16 y);
 	void freeObjects();
-	void freeObjectUses();
 	void loadObjectArr(Common::ReadStream &in);
 	void loadObjectUses(Common::ReadStream &in);
-	void freeObjectArr();
 	void loadNumObj(Common::ReadStream &in);
 	void lookObject(object_t *obj);
 	void readObjectImages();

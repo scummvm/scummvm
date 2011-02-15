@@ -213,52 +213,54 @@ void ObjectHandler::lookObject(object_t *obj) {
 }
 
 /**
- * Free all object images
+ * Free all object images, uses and ObjArr (before exiting)
  */
 void ObjectHandler::freeObjects() {
 	debugC(1, kDebugObject, "freeObjects");
 
-	// Nothing to do if not allocated yet
-	if (_vm->_hero == 0 || _vm->_hero->seqList[0].seqPtr == 0)
-		return;
-
-	// Free all sequence lists and image data
-	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];
-		for (int j = 0; j < obj->seqNumb; j++) {
-			seq_t *seq = obj->seqList[j].seqPtr;
-			seq_t *next;
-			if (seq == 0) // Failure during database load
-				break;
-			if (seq->imagePtr != 0) {
-				free(seq->imagePtr);
-				seq->imagePtr = 0;
-			}
-			seq = seq->nextSeqPtr;
-			while (seq != obj->seqList[j].seqPtr) {
+	if (_vm->_hero != 0 && _vm->_hero->seqList[0].seqPtr != 0) {
+		// Free all sequence lists and image data
+		for (int16 i = 0; i < _numObj; i++) {
+			object_t *obj = &_objects[i];
+			for (int16 j = 0; j < obj->seqNumb; j++) {
+				seq_t *seq = obj->seqList[j].seqPtr;
+				seq_t *next;
+				if (seq == 0) // Failure during database load
+					break;
 				if (seq->imagePtr != 0) {
 					free(seq->imagePtr);
 					seq->imagePtr = 0;
 				}
-				next = seq->nextSeqPtr;
+				seq = seq->nextSeqPtr;
+				while (seq != obj->seqList[j].seqPtr) {
+					if (seq->imagePtr != 0) {
+						free(seq->imagePtr);
+						seq->imagePtr = 0;
+					}
+					next = seq->nextSeqPtr;
+					free(seq);
+					seq = next;
+				}
 				free(seq);
-				seq = next;
 			}
-			free(seq);
 		}
 	}
-}
 
-/**
- * Free all object uses
- */
-void ObjectHandler::freeObjectUses() {
 	if (_uses) {
-		for (int i = 0; i < _usesSize; i++)
+		for (int16 i = 0; i < _usesSize; i++)
 			free(_uses[i].targets);
 		free(_uses);
 	}
+
+	for(int16 i = 0; i < _objCount; i++) {
+		free(_objects[i].stateDataIndex);
+		_objects[i].stateDataIndex = 0;
+	}
+
+	free(_objects);
+	_objects = 0;
 }
+
 /**
  * Compare function for the quicksort.  The sort is to order the objects in
  * increasing vertical position, using y+y2 as the baseline
@@ -364,18 +366,6 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 
 	*desty = y;
 	return foundFl;
-}
-
-/**
- * Free ObjectArr (before exiting)
- */
-void ObjectHandler::freeObjectArr() {
-	for(int16 i = 0; i < _objCount; i++) {
-		free(_objects[i].stateDataIndex);
-		_objects[i].stateDataIndex = 0;
-	}
-	free(_objects);
-	_objects = 0;
 }
 
 /**
