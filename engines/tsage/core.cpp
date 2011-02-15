@@ -537,7 +537,7 @@ void PlayerMover::setDest(const Common::Point &destPos) {
 void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Common::Point destPos, RouteEnds routeEnds) {
 	List<int> regionIndexes;
 	RouteEnds tempRouteEnds;
-	int breakList[BREAK_LIST_SIZE];
+	int routeRegions[BREAK_LIST_SIZE];
 	Common::Point objPos;
 
 	// Get the region the source is in
@@ -547,8 +547,8 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 	}
 
 	// Main loop for building up the path
-	breakList[0] = 0;
-	while (!breakList[0]) {
+	routeRegions[0] = 0;
+	while (!routeRegions[0]) {
 		// Check the destination region
 		int destRegion = _globals->_walkRegions.indexOf(destPos, &regionIndexes);
 
@@ -592,9 +592,9 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 		}
 
 		int var6;
-		proc1(breakList, srcRegion, destRegion, var6);
+		proc1(routeRegions, srcRegion, destRegion, var6);
 
-		if (!breakList[0]) {
+		if (!routeRegions[0]) {
 			regionIndexes.push_back(destRegion);
 			continue;
 		}
@@ -610,8 +610,8 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 		int idx = 1;
 	
 		do {
-			int breakEntry = breakList[idx];
-			int breakEntry2 = breakList[idx + 1];
+			int breakEntry = routeRegions[idx];
+			int breakEntry2 = routeRegions[idx + 1];
 
 			int listIndex = 0; 
 			while (_globals->_walkRegions._idxList[_globals->_walkRegions[breakEntry]._idxListIndex + listIndex] ==
@@ -622,7 +622,7 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 				+ listIndex];
 			
 			++endIndex;
-		} while (breakList[++idx] != destRegion);
+		} while (routeRegions[++idx] != destRegion);
 
 		tempList[idx] = 1;
 		idx = 0;
@@ -852,8 +852,9 @@ int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
 		return 32000;
 
 	int regionIndex;
-	for (regionIndex = 1; regionIndex < *tempList; ++regionIndex) {
+	for (regionIndex = 1; regionIndex <= *tempList; ++regionIndex) {
 		if (routeList[regionIndex] == srcRegion)
+			// Current path returns to original source region, so don't allow it
 			return 32000;
 	}
 
@@ -863,8 +864,8 @@ int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
 		// No route 
 		distance = 0;
 	} else {
-		WalkRegion &region = _globals->_walkRegions[regionIndex];
-		distance = findDistance(region._pt, srcWalkRegion._pt);
+		WalkRegion &region = _globals->_walkRegions[routeList[*routeList]];
+		distance = findDistance(srcWalkRegion._pt, region._pt);
 	}
 
 	tempList[++*tempList] = srcRegion;
@@ -891,15 +892,14 @@ int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
 		}
 
 		int resultOffset = 31990;
-		while ((_globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + foundIndex] != 0) && (v == 0)) {
-			int newDistance = proc1(tempList, _globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + foundIndex], 
-				destRegion, v);
+		while (((currDest = _globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + foundIndex]) != 0) && (v == 0)) {
+			int newDistance = proc1(tempList, currDest, destRegion, v);
 			
 			if ((newDistance <= resultOffset) || v) {
 				routeList[0] = newIndex - 1;
 				
 				for (int i = newIndex; i <= tempList[0]; ++i) {
-					routeList[idx] = tempList[i];
+					routeList[i] = tempList[i];
 					++routeList[0];
 				}
 
