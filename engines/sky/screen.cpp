@@ -383,13 +383,13 @@ void Screen::waitForTick() {
 	Common::Event event;
 
 	while (true) {
+		while (eventMan->pollEvent(event))
+			;
+
 		start = _system->getMillis();
 
 		if (start >= end)
 			return;
-
-		while (eventMan->pollEvent(event))
-			;
 
 		remain = end - start;
 		if (remain < 10) {
@@ -408,7 +408,7 @@ void Screen::waitForSequence() {
 	while (_seqInfo.running) {
 		processSequence();
 
-		_system->delayMillis(10);
+		_system->delayMillis(20);
 		while (eventMan->pollEvent(event))
 			;
 	}
@@ -416,20 +416,18 @@ void Screen::waitForSequence() {
 
 void Screen::startSequence(uint16 fileNum) {
 	_seqInfo.seqData = _skyDisk->loadFile(fileNum);
-	_seqInfo.nextFrame = _system->getMillis();
+	_seqInfo.nextFrame = _system->getMillis() + 60;
 	_seqInfo.framesLeft = _seqInfo.seqData[0];
 	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
-	_seqInfo.delay = SEQ_DELAY;
 	_seqInfo.running = true;
 	_seqInfo.runningItem = false;
 }
 
 void Screen::startSequenceItem(uint16 itemNum) {
 	_seqInfo.seqData = (uint8 *)SkyEngine::fetchItem(itemNum);
-	_seqInfo.nextFrame = _system->getMillis();
+	_seqInfo.nextFrame = _system->getMillis() + 60;
 	_seqInfo.framesLeft = _seqInfo.seqData[0] - 1;
 	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
-	_seqInfo.delay = SEQ_DELAY;
 	_seqInfo.running = true;
 	_seqInfo.runningItem = true;
 }
@@ -450,75 +448,72 @@ void Screen::processSequence() {
 	if (_system->getMillis() < _seqInfo.nextFrame)
 		return;
 
-	_seqInfo.delay--;
-	if (_seqInfo.delay == 0) {
-		_seqInfo.delay = SEQ_DELAY;
-		_seqInfo.nextFrame += 20 * SEQ_DELAY;
+	_seqInfo.nextFrame += 60;
 
-		memset(_seqGrid, 0, 12 * 20);
+	memset(_seqGrid, 0, 12 * 20);
 
-		uint32 screenPos = 0;
+	uint32 screenPos = 0;
 
-		uint8 nrToSkip, nrToDo, cnt;
+	uint8 nrToSkip, nrToDo, cnt;
+	do {
 		do {
-			do {
-				nrToSkip = _seqInfo.seqDataPos[0];
-				_seqInfo.seqDataPos++;
-				screenPos += nrToSkip;
-			} while (nrToSkip == 0xFF);
+			nrToSkip = _seqInfo.seqDataPos[0];
+			_seqInfo.seqDataPos++;
+			screenPos += nrToSkip;
+		} while (nrToSkip == 0xFF);
 
-			do {
-				nrToDo = _seqInfo.seqDataPos[0];
-				_seqInfo.seqDataPos++;
+		do {
+			nrToDo = _seqInfo.seqDataPos[0];
+			_seqInfo.seqDataPos++;
 
-				uint8 gridSta = (uint8)((screenPos / (GAME_SCREEN_WIDTH * 16))*20 + ((screenPos % GAME_SCREEN_WIDTH) >> 4));
-				uint8 gridEnd = (uint8)(((screenPos+nrToDo) / (GAME_SCREEN_WIDTH * 16))*20 + (((screenPos+nrToDo) % GAME_SCREEN_WIDTH) >> 4));
-				gridSta = MIN(gridSta, (uint8)(12 * 20 - 1));
-				gridEnd = MIN(gridEnd, (uint8)(12 * 20 - 1));
-				if (gridEnd >= gridSta)
-					for (cnt = gridSta; cnt <= gridEnd; cnt++)
-						_seqGrid[cnt] = 1;
-				else {
-					for (cnt = gridSta; cnt < (gridSta / 20 + 1) * 20; cnt++)
-						_seqGrid[cnt] = 1;
-					for (cnt = (gridEnd / 20) * 20; cnt <= gridEnd; cnt++)
-						_seqGrid[cnt] = 1;
-				}
-
-				for (cnt = 0; cnt < nrToDo; cnt++) {
-					_currentScreen[screenPos] = _seqInfo.seqDataPos[0];
-					_seqInfo.seqDataPos++;
-					screenPos++;
-				}
-			} while (nrToDo == 0xFF);
-		} while (screenPos < (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT));
-		uint8 *gridPtr = _seqGrid; uint8 *scrPtr = _currentScreen; uint8 *rectPtr = NULL;
-		uint8 rectWid = 0, rectX = 0, rectY = 0;
-		for (uint8 cnty = 0; cnty < 12; cnty++) {
-			for (uint8 cntx = 0; cntx < 20; cntx++) {
-				if (*gridPtr) {
-					if (!rectWid) {
-						rectX = cntx;
-						rectY = cnty;
-						rectPtr = scrPtr;
-					}
-					rectWid++;
-				} else if (rectWid) {
-					_system->copyRectToScreen(rectPtr, GAME_SCREEN_WIDTH, rectX << 4, rectY << 4, rectWid << 4, 16);
-					rectWid = 0;
-				}
-				scrPtr += 16;
-				gridPtr++;
+			uint8 gridSta = (uint8)((screenPos / (GAME_SCREEN_WIDTH * 16))*20 + ((screenPos % GAME_SCREEN_WIDTH) >> 4));
+			uint8 gridEnd = (uint8)(((screenPos+nrToDo) / (GAME_SCREEN_WIDTH * 16))*20 + (((screenPos+nrToDo) % GAME_SCREEN_WIDTH) >> 4));
+			gridSta = MIN(gridSta, (uint8)(12 * 20 - 1));
+			gridEnd = MIN(gridEnd, (uint8)(12 * 20 - 1));
+			if (gridEnd >= gridSta)
+				for (cnt = gridSta; cnt <= gridEnd; cnt++)
+					_seqGrid[cnt] = 1;
+			else {
+				for (cnt = gridSta; cnt < (gridSta / 20 + 1) * 20; cnt++)
+					_seqGrid[cnt] = 1;
+				for (cnt = (gridEnd / 20) * 20; cnt <= gridEnd; cnt++)
+					_seqGrid[cnt] = 1;
 			}
-			if (rectWid) {
+
+			for (cnt = 0; cnt < nrToDo; cnt++) {
+				_currentScreen[screenPos] = _seqInfo.seqDataPos[0];
+				_seqInfo.seqDataPos++;
+				screenPos++;
+			}
+		} while (nrToDo == 0xFF);
+	} while (screenPos < (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT));
+	uint8 *gridPtr = _seqGrid; uint8 *scrPtr = _currentScreen; uint8 *rectPtr = NULL;
+	uint8 rectWid = 0, rectX = 0, rectY = 0;
+	for (uint8 cnty = 0; cnty < 12; cnty++) {
+		for (uint8 cntx = 0; cntx < 20; cntx++) {
+			if (*gridPtr) {
+				if (!rectWid) {
+					rectX = cntx;
+					rectY = cnty;
+					rectPtr = scrPtr;
+				}
+				rectWid++;
+			} else if (rectWid) {
 				_system->copyRectToScreen(rectPtr, GAME_SCREEN_WIDTH, rectX << 4, rectY << 4, rectWid << 4, 16);
 				rectWid = 0;
 			}
-			scrPtr += 15 * GAME_SCREEN_WIDTH;
+			scrPtr += 16;
+			gridPtr++;
 		}
-		_system->updateScreen();
-		_seqInfo.framesLeft--;
+		if (rectWid) {
+			_system->copyRectToScreen(rectPtr, GAME_SCREEN_WIDTH, rectX << 4, rectY << 4, rectWid << 4, 16);
+			rectWid = 0;
+		}
+		scrPtr += 15 * GAME_SCREEN_WIDTH;
 	}
+	_system->updateScreen();
+	_seqInfo.framesLeft--;
+
 	if (_seqInfo.framesLeft == 0) {
 		_seqInfo.running = false;
 		if (!_seqInfo.runningItem)

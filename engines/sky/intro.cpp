@@ -918,12 +918,14 @@ bool Intro::escDelay(uint32 msecs) {
 		nDelay = _relDelay - _system->getMillis();
 		if (nDelay < 0)
 			nDelay = 0;
-		else if (nDelay > 10)
-			nDelay = 10;
+		else if (nDelay > 20)
+			nDelay = 20;
+
 		_system->delayMillis(nDelay);
+
 		_skyScreen->processSequence();
 		_system->updateScreen();
-	} while (nDelay == 10);
+	} while (nDelay == 20);
 
 	return true;
 }
