@@ -2736,7 +2736,7 @@ void Region::uniteLine(int yp, LineSliceSet &sliceSet) {
 
 	// Check whether to expand the left/bounds bounds
 	if (destSet.items[0].xs < _bounds.left)
-		destSet.items[0].xs = _bounds.left;
+		_bounds.left = destSet.items[0].xs;
 	if (destSet.items[destSet.items.size() - 1].xe > _bounds.right)
 		_bounds.right = destSet.items[destSet.items.size() - 1].xe;
 }
