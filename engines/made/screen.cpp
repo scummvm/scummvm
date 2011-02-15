@@ -218,7 +218,7 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 }
 
 void Screen::setRGBPalette(byte *palRGB, int start, int count) {
-	_vm->_system->getPaletteManager()->setPalette(palRGB + start * 3, start, count);
+	_vm->_system->getPaletteManager()->setPalette(palRGB, start, count);
 }
 
 uint16 Screen::updateChannel(uint16 channelIndex) {
