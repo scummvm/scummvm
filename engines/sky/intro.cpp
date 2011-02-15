@@ -647,6 +647,7 @@ Intro::~Intro() {
 
 	free(_textBuf);
 	free(_saveBuf);
+	_mixer->stopID(SOUND_BG);
 	free(_bgBuf);
 }
 
