@@ -331,6 +331,9 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 
 	gfx_tex_flush_palette(&_texGame);
 
+	s = colors;
+	d = _cursorPalette;
+
 	for (uint i = 0; i < num; ++i, s += 3) {
 		d[start + i] = Graphics::ARGBToColor<Graphics::ColorMasks<3444> >(0xff, s[0], s[1], s[2]);
 	}
