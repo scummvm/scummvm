@@ -110,7 +110,7 @@ void Palette::setPartial(const byte *colors, uint32 start, uint32 num, bool supp
 		for (uint32 i = 0; i < num; ++i) {
 			byte alphaVal = supportsAlpha ? src[3] : 0xFF;
 			*palette = (uint16)_pixelFormat.rgbaToColor(src[0], src[1], src[2], alphaVal);
-			src += 4;
+			src += 3;
 			palette++;
 		}
 	} else if (_pixelFormat.bitsPerPixel == 32) {
@@ -120,7 +120,7 @@ void Palette::setPartial(const byte *colors, uint32 start, uint32 num, bool supp
 		for (uint32 i = 0; i < num; ++i) {
 			byte alphaVal = supportsAlpha ? src[3] : 0xFF;
 			*palette = _pixelFormat.rgbaToColor(src[0], src[1], src[2], alphaVal);
-			src += 4;
+			src += 3;
 			palette++;
 		}
 	}
@@ -214,7 +214,6 @@ void Palette::getPartial(byte *colors, uint start, uint num) {
 			*colors++ = (byte)r;
 			*colors++ = (byte)g;
 			*colors++ = (byte)b;
-			*colors++ = (byte)a;
 			palette++;
 		}
 	} else if (_pixelFormat.bitsPerPixel == 32) {
@@ -227,7 +226,6 @@ void Palette::getPartial(byte *colors, uint start, uint num) {
 			*colors++ = (byte)r;
 			*colors++ = (byte)g;
 			*colors++ = (byte)b;
-			*colors++ = (byte)a;
 			palette++;
 		}
 	}
