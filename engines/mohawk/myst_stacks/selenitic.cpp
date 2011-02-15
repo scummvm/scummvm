@@ -35,8 +35,9 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
-MystScriptParser_Selenitic::MystScriptParser_Selenitic(MohawkEngine_Myst *vm) :
+Selenitic::Selenitic(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_selenitic) {
 	setupOpcodes();
 	_invokingResource = NULL;
@@ -44,12 +45,12 @@ MystScriptParser_Selenitic::MystScriptParser_Selenitic(MohawkEngine_Myst *vm) :
 	_mazeRunnerDirection = 8;
 }
 
-MystScriptParser_Selenitic::~MystScriptParser_Selenitic() {
+Selenitic::~Selenitic() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Selenitic::x, #x))
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Selenitic::x, #x))
 
-void MystScriptParser_Selenitic::setupOpcodes() {
+void Selenitic::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, o_mazeRunnerMove);
 	OPCODE(101, o_mazeRunnerSoundRepeat);
@@ -82,16 +83,16 @@ void MystScriptParser_Selenitic::setupOpcodes() {
 
 #undef OPCODE
 
-void MystScriptParser_Selenitic::disablePersistentScripts() {
+void Selenitic::disablePersistentScripts() {
 	_soundReceiverRunning = false;
 }
 
-void MystScriptParser_Selenitic::runPersistentScripts() {
+void Selenitic::runPersistentScripts() {
 	if (_soundReceiverRunning)
 		soundReceiver_run();
 }
 
-uint16 MystScriptParser_Selenitic::getVar(uint16 var) {
+uint16 Selenitic::getVar(uint16 var) {
 	switch(var) {
 	case 0: // Sound receiver emitters enabled
 		return _state.emitterEnabledWind;
@@ -166,7 +167,7 @@ uint16 MystScriptParser_Selenitic::getVar(uint16 var) {
 	}
 }
 
-void MystScriptParser_Selenitic::toggleVar(uint16 var) {
+void Selenitic::toggleVar(uint16 var) {
 	switch(var) {
 	case 0: // Sound receiver emitters enabled
 		_state.emitterEnabledWind = (_state.emitterEnabledWind + 1) % 2;
@@ -211,7 +212,7 @@ void MystScriptParser_Selenitic::toggleVar(uint16 var) {
 	}
 }
 
-bool MystScriptParser_Selenitic::setVarValue(uint16 var, uint16 value) {
+bool Selenitic::setVarValue(uint16 var, uint16 value) {
 	bool refresh = false;
 
 	switch (var) {
@@ -283,7 +284,7 @@ bool MystScriptParser_Selenitic::setVarValue(uint16 var, uint16 value) {
 	return refresh;
 }
 
-void MystScriptParser_Selenitic::o_mazeRunnerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	uint16 oldPosition = _mazeRunnerPosition;
 	uint16 move = var;
 
@@ -304,7 +305,7 @@ void MystScriptParser_Selenitic::o_mazeRunnerMove(uint16 op, uint16 var, uint16 
 	}
 }
 
-void MystScriptParser_Selenitic::mazeRunnerBacktrack(uint16 &oldPosition) {
+void Selenitic::mazeRunnerBacktrack(uint16 &oldPosition) {
 	if (oldPosition == 289)
 		_mazeRunnerDirection = 3;
 
@@ -365,7 +366,7 @@ void MystScriptParser_Selenitic::mazeRunnerBacktrack(uint16 &oldPosition) {
 	}
 }
 
-void MystScriptParser_Selenitic::mazeRunnerPlayVideo(uint16 video, uint16 pos) {
+void Selenitic::mazeRunnerPlayVideo(uint16 video, uint16 pos) {
 	Common::String file;
 
 	switch (video) {
@@ -486,7 +487,7 @@ void MystScriptParser_Selenitic::mazeRunnerPlayVideo(uint16 video, uint16 pos) {
 	}
 }
 
-void MystScriptParser_Selenitic::mazeRunnerUpdateCompass() {
+void Selenitic::mazeRunnerUpdateCompass() {
 	if (_mazeRunnerPosition == 288 || _mazeRunnerPosition == 289)
 		_mazeRunnerDirection = 8;
 	else
@@ -495,12 +496,12 @@ void MystScriptParser_Selenitic::mazeRunnerUpdateCompass() {
 	_mazeRunnerCompass->drawConditionalDataToScreen(_mazeRunnerDirection);
 }
 
-bool MystScriptParser_Selenitic::mazeRunnerForwardAllowed(uint16 position) {
+bool Selenitic::mazeRunnerForwardAllowed(uint16 position) {
 	uint16 move = _mazeRunnerVideos[position][1];
 	return move == 6 || move == 7;
 }
 
-void MystScriptParser_Selenitic::mazeRunnerPlaySoundHelp() {
+void Selenitic::mazeRunnerPlaySoundHelp() {
 	uint16 soundId = 0;
 
 	_mazeRunnerLight->drawConditionalDataToScreen(1);
@@ -564,14 +565,14 @@ void MystScriptParser_Selenitic::mazeRunnerPlaySoundHelp() {
 	_mazeRunnerLight->drawConditionalDataToScreen(0);
 }
 
-void MystScriptParser_Selenitic::o_mazeRunnerSoundRepeat(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerSoundRepeat(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	mazeRunnerPlaySoundHelp();
 }
 
 /**
  * Sound receiver sigma button
  */
-void MystScriptParser_Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound receiver sigma button", op);
 
 	_vm->_cursor->hideCursor();
@@ -623,7 +624,7 @@ void MystScriptParser_Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uin
 /**
  * Sound receiver right button
  */
-void MystScriptParser_Selenitic::o_soundReceiverRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_soundReceiverRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound receiver right", op);
 
 	soundReceiverLeftRight(1);
@@ -632,13 +633,13 @@ void MystScriptParser_Selenitic::o_soundReceiverRight(uint16 op, uint16 var, uin
 /**
  * Sound receiver left button
  */
-void MystScriptParser_Selenitic::o_soundReceiverLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_soundReceiverLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound receiver left", op);
 
 	soundReceiverLeftRight(2);
 }
 
-void MystScriptParser_Selenitic::soundReceiverLeftRight(uint direction) {
+void Selenitic::soundReceiverLeftRight(uint direction) {
 
 	if (_soundReceiverSigmaPressed) {
 		_soundReceiverSigmaButton->drawConditionalDataToScreen(0);
@@ -659,7 +660,7 @@ void MystScriptParser_Selenitic::soundReceiverLeftRight(uint direction) {
 	soundReceiverUpdate();
 }
 
-void MystScriptParser_Selenitic::soundReceiverUpdate() {
+void Selenitic::soundReceiverUpdate() {
 	if (_soundReceiverDirection == 1)
 		*_soundReceiverPosition = ((*_soundReceiverPosition) + _soundReceiverSpeed) % 3600;
 	else if (_soundReceiverDirection == 2)
@@ -668,7 +669,7 @@ void MystScriptParser_Selenitic::soundReceiverUpdate() {
 	soundReceiverDrawView();
 }
 
-void MystScriptParser_Selenitic::soundReceiverDrawView() {
+void Selenitic::soundReceiverDrawView() {
 	uint32 left = ((*_soundReceiverPosition) * 1800) / 3600;
 
 	_soundReceiverViewer->_subImages->rect.left = left;
@@ -679,7 +680,7 @@ void MystScriptParser_Selenitic::soundReceiverDrawView() {
 	soundReceiverDrawAngle();
 }
 
-void MystScriptParser_Selenitic::soundReceiverDrawAngle() {
+void Selenitic::soundReceiverDrawAngle() {
 	_vm->redrawResource(_soundReceiverAngle1);
 	_vm->redrawResource(_soundReceiverAngle2);
 	_vm->redrawResource(_soundReceiverAngle3);
@@ -689,7 +690,7 @@ void MystScriptParser_Selenitic::soundReceiverDrawAngle() {
 /**
  * Sound receiver source selection buttons
  */
-void MystScriptParser_Selenitic::o_soundReceiverSource(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_soundReceiverSource(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound receiver source", op);
 
 	if (_soundReceiverSigmaPressed) {
@@ -723,7 +724,7 @@ void MystScriptParser_Selenitic::o_soundReceiverSource(uint16 op, uint16 var, ui
 	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser_Selenitic::o_mazeRunnerDoorButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerDoorButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Selenitic Maze Runner Exit Logic
 	uint16 cardIdExit = argv[0];
 	uint16 cardIdEntry = argv[1];
@@ -739,13 +740,13 @@ void MystScriptParser_Selenitic::o_mazeRunnerDoorButton(uint16 op, uint16 var, u
 	}
 }
 
-void MystScriptParser_Selenitic::o_soundReceiverUpdateSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_soundReceiverUpdateSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound receiver update sound", op);
 
 	soundReceiverUpdateSound();
 }
 
-uint16 MystScriptParser_Selenitic::soundLockCurrentSound(uint16 position, bool pixels) {
+uint16 Selenitic::soundLockCurrentSound(uint16 position, bool pixels) {
 	if ((pixels && position < 96) || (!pixels && position == 0))
 		return 289;
 	else if ((pixels && position < 108) || (!pixels && position == 1))
@@ -770,7 +771,7 @@ uint16 MystScriptParser_Selenitic::soundLockCurrentSound(uint16 position, bool p
 	return 0;
 }
 
-MystResourceType10 *MystScriptParser_Selenitic::soundLockSliderFromVar(uint16 var) {
+MystResourceType10 *Selenitic::soundLockSliderFromVar(uint16 var) {
 	switch (var) {
 	case 20:
 		return _soundLockSlider1;
@@ -787,7 +788,7 @@ MystResourceType10 *MystScriptParser_Selenitic::soundLockSliderFromVar(uint16 va
 	return 0;
 }
 
-void MystScriptParser_Selenitic::o_soundLockMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_soundLockMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound lock move", op);
 
 	MystResourceType10 *slider = soundLockSliderFromVar(var);
@@ -799,7 +800,7 @@ void MystScriptParser_Selenitic::o_soundLockMove(uint16 op, uint16 var, uint16 a
 	}
 }
 
-void MystScriptParser_Selenitic::o_soundLockStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_soundLockStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound lock start move", op);
 
 	MystResourceType10 *slider = soundLockSliderFromVar(var);
@@ -811,7 +812,7 @@ void MystScriptParser_Selenitic::o_soundLockStartMove(uint16 op, uint16 var, uin
 	_vm->_sound->replaceSoundMyst(_soundLockSoundId, Audio::Mixer::kMaxChannelVolume, true);
 }
 
-void MystScriptParser_Selenitic::o_soundLockEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_soundLockEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound lock end move", op);
 
 	MystResourceType10 *slider = soundLockSliderFromVar(var);
@@ -855,7 +856,7 @@ void MystScriptParser_Selenitic::o_soundLockEndMove(uint16 op, uint16 var, uint1
 	_vm->_sound->resumeBackgroundMyst();
 }
 
-void MystScriptParser_Selenitic::soundLockCheckSolution(MystResourceType10 *slider, uint16 value, uint16 solution, bool &solved) {
+void Selenitic::soundLockCheckSolution(MystResourceType10 *slider, uint16 value, uint16 solution, bool &solved) {
 	slider->drawConditionalDataToScreen(2);
 	_vm->_sound->replaceSoundMyst(soundLockCurrentSound(value / 12, false));
 	_vm->_system->delayMillis(1500);
@@ -867,7 +868,7 @@ void MystScriptParser_Selenitic::soundLockCheckSolution(MystResourceType10 *slid
 	_vm->_sound->stopSound();
 }
 
-void MystScriptParser_Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound lock button", op);
 
 	bool solved = true;
@@ -905,7 +906,7 @@ void MystScriptParser_Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16
 	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser_Selenitic::o_soundReceiverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_soundReceiverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound receiver end move", op);
 
 	uint16 oldDirection = _soundReceiverDirection;
@@ -922,19 +923,19 @@ void MystScriptParser_Selenitic::o_soundReceiverEndMove(uint16 op, uint16 var, u
 	}
 }
 
-void MystScriptParser_Selenitic::o_mazeRunnerCompass_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerCompass_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_mazeRunnerCompass = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
-void MystScriptParser_Selenitic::o_mazeRunnerWindow_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerWindow_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_mazeRunnerWindow = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
-void MystScriptParser_Selenitic::o_mazeRunnerLight_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerLight_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_mazeRunnerLight = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
-void MystScriptParser_Selenitic::soundReceiver_run() {
+void Selenitic::soundReceiver_run() {
 	if (_soundReceiverStartTime) {
 		if (_soundReceiverDirection) {
 			uint32 currentTime = _vm->_system->getMillis();
@@ -952,7 +953,7 @@ void MystScriptParser_Selenitic::soundReceiver_run() {
 	}
 }
 
-void MystScriptParser_Selenitic::soundReceiverIncreaseSpeed() {
+void Selenitic::soundReceiverIncreaseSpeed() {
 	switch (_soundReceiverSpeed) {
 	case 1:
 		_soundReceiverSpeed = 10;
@@ -966,12 +967,12 @@ void MystScriptParser_Selenitic::soundReceiverIncreaseSpeed() {
 	}
 }
 
-void MystScriptParser_Selenitic::soundReceiverUpdateSound() {
+void Selenitic::soundReceiverUpdateSound() {
 	uint16 soundId = soundReceiverCurrentSound(_state.soundReceiverCurrentSource, *_soundReceiverPosition);
 	_vm->_sound->replaceSoundMyst(soundId);
 }
 
-uint16 MystScriptParser_Selenitic::soundReceiverCurrentSound(uint16 source, uint16 position) {
+uint16 Selenitic::soundReceiverCurrentSound(uint16 source, uint16 position) {
 	uint16 solution = 0;
 	bool sourceEnabled = false;
 	soundReceiverSolution(source, solution, sourceEnabled);
@@ -1022,7 +1023,7 @@ uint16 MystScriptParser_Selenitic::soundReceiverCurrentSound(uint16 source, uint
 	return soundId;
 }
 
-void MystScriptParser_Selenitic::soundReceiverSolution(uint16 source, uint16 &solution, bool &enabled) {
+void Selenitic::soundReceiverSolution(uint16 source, uint16 &solution, bool &enabled) {
 	switch (source) {
 	case 0:
 		enabled = _state.emitterEnabledWater;
@@ -1047,7 +1048,7 @@ void MystScriptParser_Selenitic::soundReceiverSolution(uint16 source, uint16 &so
 	}
 }
 
-void MystScriptParser_Selenitic::o_soundReceiver_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_soundReceiver_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound receiver init", op);
 
 	// Used for Card 1245 (Sound Receiver)
@@ -1074,7 +1075,7 @@ void MystScriptParser_Selenitic::o_soundReceiver_init(uint16 op, uint16 var, uin
 	_soundReceiverSigmaPressed = false;
 }
 
-void MystScriptParser_Selenitic::o_soundLock_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_soundLock_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sound lock init", op);
 
 	for (uint i = 0; i < _vm->_resources.size(); i++) {
@@ -1109,15 +1110,15 @@ void MystScriptParser_Selenitic::o_soundLock_init(uint16 op, uint16 var, uint16 
 	_soundLockSoundId = 0;
 }
 
-void MystScriptParser_Selenitic::o_mazeRunnerRight_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerRight_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_mazeRunnerRightButton = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
-void MystScriptParser_Selenitic::o_mazeRunnerLeft_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerLeft_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_mazeRunnerLeftButton = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
-const uint16 MystScriptParser_Selenitic::_mazeRunnerMap[300][4] = {
+const uint16 Selenitic::_mazeRunnerMap[300][4] = {
 	{8, 7, 1, 288},
 	{1, 0, 2, 288},
 	{2, 1, 3, 288},
@@ -1420,7 +1421,7 @@ const uint16 MystScriptParser_Selenitic::_mazeRunnerMap[300][4] = {
 	{ 0, 0, 0, 0}
 };
 
-const uint8 MystScriptParser_Selenitic::_mazeRunnerVideos[300][4] = {
+const uint8 Selenitic::_mazeRunnerVideos[300][4] = {
 	{3, 6, 10, 17},
 	{0, 5, 8, 17},
 	{0, 4, 8, 17},
@@ -1723,4 +1724,5 @@ const uint8 MystScriptParser_Selenitic::_mazeRunnerVideos[300][4] = {
 	{0, 0, 0, 0}
 };
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

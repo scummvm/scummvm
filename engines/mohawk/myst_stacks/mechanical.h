@@ -32,15 +32,16 @@
 
 namespace Mohawk {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
-
-class MohawkEngine_Myst;
 struct MystScriptEntry;
 
-class MystScriptParser_Mechanical : public MystScriptParser {
+namespace MystStacks {
+
+#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+
+class Mechanical : public MystScriptParser {
 public:
-	MystScriptParser_Mechanical(MohawkEngine_Myst *vm);
-	~MystScriptParser_Mechanical();
+	Mechanical(MohawkEngine_Myst *vm);
+	~Mechanical();
 
 	void disablePersistentScripts();
 	void runPersistentScripts();
@@ -51,14 +52,8 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
-	void opcode_200_run();
-	void opcode_200_disable();
-	void opcode_201_run();
-	void opcode_201_disable();
 	void opcode_202_run();
 	void opcode_202_disable();
-	void opcode_203_run();
-	void opcode_203_disable();
 	void opcode_204_run();
 	void opcode_204_disable();
 	void opcode_205_run();
@@ -68,7 +63,8 @@ private:
 	void opcode_209_run();
 	void opcode_209_disable();
 
-	DECLARE_OPCODE(opcode_104);
+	DECLARE_OPCODE(o_throneEnablePassage);
+	DECLARE_OPCODE(o_snakeBoxTrigger);
 	DECLARE_OPCODE(o_fortressStaircaseMovie);
 	DECLARE_OPCODE(opcode_121);
 	DECLARE_OPCODE(opcode_122);
@@ -83,10 +79,10 @@ private:
 	DECLARE_OPCODE(o_crystalLeaveGreen);
 	DECLARE_OPCODE(o_crystalLeaveRed);
 
-	DECLARE_OPCODE(opcode_200);
-	DECLARE_OPCODE(opcode_201);
+	DECLARE_OPCODE(o_throne_init);
+	DECLARE_OPCODE(o_fortressStaircase_init);
 	DECLARE_OPCODE(opcode_202);
-	DECLARE_OPCODE(opcode_203);
+	DECLARE_OPCODE(o_snakeBox_init);
 	DECLARE_OPCODE(opcode_204);
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
@@ -101,8 +97,11 @@ private:
 	uint16 _fortressPosition; // 82
 
 	uint16 _crystalLit; // 130
+
+	MystResourceType6 *_snakeBox; // 156
 };
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk
 
 #undef DECLARE_OPCODE

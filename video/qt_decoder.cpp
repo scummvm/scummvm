@@ -820,19 +820,25 @@ int QuickTimeDecoder::readTKHD(MOVatom atom) {
 
 // edit list atom
 int QuickTimeDecoder::readELST(MOVatom atom) {
+	MOVStreamContext *st = _streams[_numStreams - 1];
+
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
-	uint32 editCount = _streams[_numStreams - 1]->edit_count = _fd->readUint32BE();	 // entries
 
-	for (uint32 i = 0; i < editCount; i++){
-		_fd->readUint32BE(); // Track duration
-		_fd->readUint32BE(); // Media time
-		_fd->readUint32BE(); // Media rate
+	st->editCount = _fd->readUint32BE();
+	st->editList = new EditListEntry[st->editCount];
+
+	debug(2, "Track %d edit list count: %d", _numStreams - 1, st->editCount);
+
+	for (uint32 i = 0; i < st->editCount; i++){
+		st->editList[i].trackDuration = _fd->readUint32BE();
+		st->editList[i].mediaTime = _fd->readSint32BE();
+		st->editList[i].mediaRate = Common::Rational(_fd->readUint32BE(), 0x10000);
+		debugN(3, "\tDuration = %d, Media Time = %d, ", st->editList[i].trackDuration, st->editList[i].mediaTime);
+		st->editList[i].mediaRate.debugPrint(3, "Media Rate =");
 	}
 
-	debug(0, "track[%i].edit_count = %i", _numStreams - 1, _streams[_numStreams - 1]->edit_count);
-
-	if (editCount != 1)
+	if (st->editCount != 1)
 		warning("Multiple edit list entries. Things may go awry");
 
 	return 0;
@@ -863,7 +869,7 @@ int QuickTimeDecoder::readHDLR(MOVatom atom) {
 	else if (type == MKID_BE('soun'))
 		st->codec_type = CODEC_TYPE_AUDIO;
 
-	_fd->readUint32BE(); // component  manufacture
+	_fd->readUint32BE(); // component manufacture
 	_fd->readUint32BE(); // component flags
 	_fd->readUint32BE(); // component flags mask
 
@@ -1465,12 +1471,30 @@ QuickTimeDecoder::STSDEntry::~STSDEntry() {
 }
 
 QuickTimeDecoder::MOVStreamContext::MOVStreamContext() {
-	// FIXME: Setting all members to 0 via memset is a hack -- it works
-	// because the only non-POD member of MOVStreamContext is of type
-	// Common::Rational, and that luckily has no virtual methods nor
-	// does it keep internal pointers or anything like that. But watch
-	// out if you ever extend MOVStreamContext!
-	memset(this, 0, sizeof(MOVStreamContext));
+	chunk_count = 0;
+	chunk_offsets = 0;
+	stts_count = 0;
+	stts_data = 0;
+	sample_to_chunk_sz = 0;
+	sample_to_chunk = 0;
+	sample_size = 0;
+	sample_count = 0;
+	sample_sizes = 0;
+	keyframe_count = 0;
+	keyframes = 0;
+	time_scale = 0;
+	time_rate = 0;
+	width = 0;
+	height = 0;
+	codec_type = CODEC_TYPE_MOV_OTHER;
+	stsdEntryCount = 0;
+	stsdEntries = 0;
+	editCount = 0;
+	editList = 0;
+	extradata = 0;
+	nb_frames = 0;
+	duration = 0;
+	start_time = 0;
 }
 
 QuickTimeDecoder::MOVStreamContext::~MOVStreamContext() {
@@ -1480,6 +1504,7 @@ QuickTimeDecoder::MOVStreamContext::~MOVStreamContext() {
 	delete[] sample_sizes;
 	delete[] keyframes;
 	delete[] stsdEntries;
+	delete[] editList;
 	delete extradata;
 }
 

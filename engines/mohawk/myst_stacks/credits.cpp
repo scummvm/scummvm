@@ -33,19 +33,20 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
 // NOTE: Credits Start Card is 10000
 
-MystScriptParser_Credits::MystScriptParser_Credits(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
+Credits::Credits(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
 }
 
-MystScriptParser_Credits::~MystScriptParser_Credits() {
+Credits::~Credits() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Credits::x, #x))
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Credits::x, #x))
 
-void MystScriptParser_Credits::setupOpcodes() {
+void Credits::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, o_quit);
 
@@ -55,11 +56,11 @@ void MystScriptParser_Credits::setupOpcodes() {
 
 #undef OPCODE
 
-void MystScriptParser_Credits::disablePersistentScripts() {
+void Credits::disablePersistentScripts() {
 	_creditsRunning = false;
 }
 
-void MystScriptParser_Credits::runPersistentScripts() {
+void Credits::runPersistentScripts() {
 	if (!_creditsRunning)
 		return;
 
@@ -79,7 +80,7 @@ void MystScriptParser_Credits::runPersistentScripts() {
 	}
 }
 
-uint16 MystScriptParser_Credits::getVar(uint16 var) {
+uint16 Credits::getVar(uint16 var) {
 	switch(var) {
 	case 0: // Credits Image Control
 		return _curImage;
@@ -90,11 +91,12 @@ uint16 MystScriptParser_Credits::getVar(uint16 var) {
 	}
 }
 
-void MystScriptParser_Credits::o_runCredits(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Credits::o_runCredits(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Activate the credits
 	_creditsRunning = true;
 	_curImage = 0;
 	_startTime = _vm->_system->getMillis();
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

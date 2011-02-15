@@ -33,27 +33,29 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
-MystScriptParser_MakingOf::MystScriptParser_MakingOf(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
+MakingOf::MakingOf(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
 }
 
-MystScriptParser_MakingOf::~MystScriptParser_MakingOf() {
+MakingOf::~MakingOf() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_MakingOf::x, #x))
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MakingOf::x, #x))
 
-void MystScriptParser_MakingOf::setupOpcodes() {
+void MakingOf::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, o_quit);
 }
 
 #undef OPCODE
 
-void MystScriptParser_MakingOf::disablePersistentScripts() {
+void MakingOf::disablePersistentScripts() {
 }
 
-void MystScriptParser_MakingOf::runPersistentScripts() {
+void MakingOf::runPersistentScripts() {
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

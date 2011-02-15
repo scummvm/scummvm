@@ -34,8 +34,9 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
-MystScriptParser_Mechanical::MystScriptParser_Mechanical(MohawkEngine_Myst *vm) :
+Mechanical::Mechanical(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_mechanical) {
 	setupOpcodes();
 
@@ -43,14 +44,15 @@ MystScriptParser_Mechanical::MystScriptParser_Mechanical(MohawkEngine_Myst *vm) 
 	_fortressPosition = 0;
 }
 
-MystScriptParser_Mechanical::~MystScriptParser_Mechanical() {
+Mechanical::~Mechanical() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Mechanical::x, #x))
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Mechanical::x, #x))
 
-void MystScriptParser_Mechanical::setupOpcodes() {
+void Mechanical::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(104, opcode_104);
+	OPCODE(100, o_throneEnablePassage);
+	OPCODE(104, o_snakeBoxTrigger);
 	OPCODE(105, o_fortressStaircaseMovie);
 	OPCODE(121, opcode_121);
 	OPCODE(122, opcode_122);
@@ -66,10 +68,10 @@ void MystScriptParser_Mechanical::setupOpcodes() {
 	OPCODE(132, o_crystalLeaveRed);
 
 	// "Init" Opcodes
-	OPCODE(200, opcode_200);
-	OPCODE(201, opcode_201);
+	OPCODE(200, o_throne_init);
+	OPCODE(201, o_fortressStaircase_init);
 	OPCODE(202, opcode_202);
-	OPCODE(203, opcode_203);
+	OPCODE(203, o_snakeBox_init);
 	OPCODE(204, opcode_204);
 	OPCODE(205, opcode_205);
 	OPCODE(206, opcode_206);
@@ -81,29 +83,23 @@ void MystScriptParser_Mechanical::setupOpcodes() {
 
 #undef OPCODE
 
-void MystScriptParser_Mechanical::disablePersistentScripts() {
-	opcode_200_disable();
-	opcode_201_disable();
+void Mechanical::disablePersistentScripts() {
 	opcode_202_disable();
-	opcode_203_disable();
 	opcode_204_disable();
 	opcode_205_disable();
 	opcode_206_disable();
 	opcode_209_disable();
 }
 
-void MystScriptParser_Mechanical::runPersistentScripts() {
-	opcode_200_run();
-	opcode_201_run();
+void Mechanical::runPersistentScripts() {
 	opcode_202_run();
-	opcode_203_run();
 	opcode_204_run();
 	opcode_205_run();
 	opcode_206_run();
 	opcode_209_run();
 }
 
-uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
+uint16 Mechanical::getVar(uint16 var) {
 	switch(var) {
 	case 0: // Sirrus's Secret Panel State
 		return _state.sirrusPanelState;
@@ -170,8 +166,12 @@ uint16 MystScriptParser_Mechanical::getVar(uint16 var) {
 	}
 }
 
-void MystScriptParser_Mechanical::toggleVar(uint16 var) {
+void Mechanical::toggleVar(uint16 var) {
 	switch(var) {
+	case 0: // Sirrus's Secret Panel State
+		_state.sirrusPanelState ^= 1;
+	case 1: // Achenar's Secret Panel State
+		_state.achenarPanelState ^= 1;
 	case 3: // Achenar's Secret Room Crate State
 		_state.achenarCrateOpened ^= 1;
 	case 4: // Myst Book Room Staircase State
@@ -206,7 +206,7 @@ void MystScriptParser_Mechanical::toggleVar(uint16 var) {
 	}
 }
 
-bool MystScriptParser_Mechanical::setVarValue(uint16 var, uint16 value) {
+bool Mechanical::setVarValue(uint16 var, uint16 value) {
 	bool refresh = false;
 
 	switch (var) {
@@ -218,20 +218,20 @@ bool MystScriptParser_Mechanical::setVarValue(uint16 var, uint16 value) {
 	return refresh;
 }
 
-void MystScriptParser_Mechanical::opcode_104(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Mechanical::o_throneEnablePassage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Enable throne passage", op);
 
-	// Used on Mechanical Card 6043 (Weapons Rack with Snake Box)
-	if (argc == 0) {
-		debugC(kDebugScript, "Opcode %d: Trigger Playing Of Snake Movie", op);
-
-		// TODO: Trigger Type 6 To Play Snake Movie.. Resource #3 on card.
-	} else
-		unknown(op, var, argc, argv);
-
+	_vm->_resources[argv[0]]->setEnabled(getVar(var));
 }
 
-void MystScriptParser_Mechanical::o_fortressStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_snakeBoxTrigger(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Trigger Playing Of Snake Movie", op);
+
+	// Used on Mechanical Card 6043 (Weapons Rack with Snake Box)
+	_snakeBox->playMovie();
+}
+
+void Mechanical::o_fortressStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Play Stairs Movement Movie", op);
 
 	VideoHandle staircase = _vm->_video->playMovie(_vm->wrapMovieFilename("hhstairs", kMechanicalStack), 174, 222);
@@ -246,7 +246,7 @@ void MystScriptParser_Mechanical::o_fortressStaircaseMovie(uint16 op, uint16 var
 }
 
 
-void MystScriptParser_Mechanical::opcode_121(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::opcode_121(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 2) {
@@ -261,7 +261,7 @@ void MystScriptParser_Mechanical::opcode_121(uint16 op, uint16 var, uint16 argc,
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Mechanical::opcode_122(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::opcode_122(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (argc == 0) {
 		// Used on Card 6120 (Elevator)
 		// Called when Exit Midde Button Pressed
@@ -271,7 +271,7 @@ void MystScriptParser_Mechanical::opcode_122(uint16 op, uint16 var, uint16 argc,
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Mechanical::opcode_123(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::opcode_123(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 2) {
@@ -288,7 +288,7 @@ void MystScriptParser_Mechanical::opcode_123(uint16 op, uint16 var, uint16 argc,
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Mechanical::opcode_124(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::opcode_124(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 0) {
@@ -300,13 +300,13 @@ void MystScriptParser_Mechanical::opcode_124(uint16 op, uint16 var, uint16 argc,
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Mechanical::o_mystStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_mystStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Myst book staircase video", op);
 
 	_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("sstairs", kMechanicalStack), 199, 108);
 }
 
-void MystScriptParser_Mechanical::opcode_126(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::opcode_126(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 0) {
@@ -319,129 +319,77 @@ void MystScriptParser_Mechanical::opcode_126(uint16 op, uint16 var, uint16 argc,
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Mechanical::o_crystalEnterYellow(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_crystalEnterYellow(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Crystal enter", op);
 
 	_crystalLit = 3;
 	_vm->redrawArea(20);
 }
 
-void MystScriptParser_Mechanical::o_crystalEnterGreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_crystalEnterGreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Crystal enter", op);
 
 	_crystalLit = 1;
 	_vm->redrawArea(21);
 }
 
-void MystScriptParser_Mechanical::o_crystalEnterRed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_crystalEnterRed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Crystal enter", op);
 
 	_crystalLit = 2;
 	_vm->redrawArea(22);
 }
 
-void MystScriptParser_Mechanical::o_crystalLeaveYellow(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_crystalLeaveYellow(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Crystal leave", op);
 
 	_crystalLit = 0;
 	_vm->redrawArea(20);
 }
 
-void MystScriptParser_Mechanical::o_crystalLeaveGreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_crystalLeaveGreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Crystal leave", op);
 
 	_crystalLit = 0;
 	_vm->redrawArea(21);
 }
 
-void MystScriptParser_Mechanical::o_crystalLeaveRed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_crystalLeaveRed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Crystal leave", op);
 
 	_crystalLit = 0;
 	_vm->redrawArea(22);
 }
 
-static struct {
-	bool enabled;
-	uint16 var;
-} g_opcode200Parameters;
-
-void MystScriptParser_Mechanical::opcode_200_run() {
+void Mechanical::o_throne_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Card 6238 (Sirrus' Throne) and Card 6027 (Achenar's Throne)
-	// g_opcode200Parameters.var == 0 for Achenar
-	// g_opcode200Parameters.var == 1 for Sirrus
+	debugC(kDebugScript, "Opcode %d: Brother throne init", op);
 
-	// TODO: Fill in Function...
-	// Variable indicates that this is related to Secret Panel State
+	_invokingResource->setEnabled(getVar(var));
 }
 
-void MystScriptParser_Mechanical::opcode_200_disable() {
-	g_opcode200Parameters.enabled = false;
-	g_opcode200Parameters.var = 0;
-}
+void Mechanical::o_fortressStaircase_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Staircase init", op);
 
-void MystScriptParser_Mechanical::opcode_200(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 6238 (Sirrus' Throne) and Card 6027 (Achenar's Throne)
-	if (argc == 0) {
-		g_opcode200Parameters.var = var;
-		g_opcode200Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
-}
-
-static struct {
-	uint16 u0;
-	uint16 u1;
-	uint16 u2;
-
-	bool enabled;
-} g_opcode201Parameters;
-
-void MystScriptParser_Mechanical::opcode_201_run() {
-	// Used for Card 6159 (Facing Corridor to Fortress Elevator)
-
-	// g_opcode201Parameters.u0
-	// g_opcode201Parameters.u1
-	// g_opcode201Parameters.u2
-
-	// TODO: Fill in Function...
-}
-
-void MystScriptParser_Mechanical::opcode_201_disable() {
-	g_opcode201Parameters.enabled = false;
-	g_opcode201Parameters.u0 = 0;
-	g_opcode201Parameters.u1 = 0;
-	g_opcode201Parameters.u2 = 0;
-}
-
-void MystScriptParser_Mechanical::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 6159 (Facing Corridor to Fortress Elevator)
-	if (argc == 3) {
-		g_opcode201Parameters.u0 = argv[0];
-		g_opcode201Parameters.u1 = argv[1];
-		g_opcode201Parameters.u2 = argv[2];
-
-		g_opcode201Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
+	_vm->_resources[argv[0]]->setEnabled(!_state.staircaseState);
+	_vm->_resources[argv[1]]->setEnabled(!_state.staircaseState);
+	_vm->_resources[argv[2]]->setEnabled(_state.staircaseState);
 }
 
 static struct {
 	bool enabled;
 } g_opcode202Parameters;
 
-void MystScriptParser_Mechanical::opcode_202_run() {
+void Mechanical::opcode_202_run() {
 	// Used for Card 6220 (Sirrus' Mechanical Bird)
 	// TODO: Fill in Function
 }
 
-void MystScriptParser_Mechanical::opcode_202_disable() {
+void Mechanical::opcode_202_disable() {
 	g_opcode202Parameters.enabled = false;
 }
 
-void MystScriptParser_Mechanical::opcode_202(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::opcode_202(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 6220 (Sirrus' Mechanical Bird)
 	if (argc == 0)
 		g_opcode202Parameters.enabled = true;
@@ -449,29 +397,10 @@ void MystScriptParser_Mechanical::opcode_202(uint16 op, uint16 var, uint16 argc,
 		unknown(op, var, argc, argv);
 }
 
-static struct {
-	bool enabled;
-} g_opcode203Parameters;
+void Mechanical::o_snakeBox_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Snake box init", op);
 
-void MystScriptParser_Mechanical::opcode_203_run() {
-	if (g_opcode203Parameters.enabled) {
-		// Used for Card 6043 (Weapons Rack with Snake Box)
-		// TODO: Fill in Logic for Snake Box...
-	}
-}
-
-void MystScriptParser_Mechanical::opcode_203_disable() {
-	g_opcode203Parameters.enabled = false;
-}
-
-void MystScriptParser_Mechanical::opcode_203(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 6043 (Weapons Rack with Snake Box)
-	if (argc == 0)
-		g_opcode203Parameters.enabled = true;
-	else
-		unknown(op, var, argc, argv);
+	_snakeBox = static_cast<MystResourceType6 *>(_invokingResource);
 }
 
 static struct {
@@ -479,7 +408,7 @@ static struct {
 	uint16 soundId;
 } g_opcode204Parameters;
 
-void MystScriptParser_Mechanical::opcode_204_run() {
+void Mechanical::opcode_204_run() {
 	if (g_opcode204Parameters.enabled) {
 		// TODO: Fill in Logic.
 		// Var 12 holds Large Cog Position in range 0 to 5
@@ -491,11 +420,11 @@ void MystScriptParser_Mechanical::opcode_204_run() {
 	}
 }
 
-void MystScriptParser_Mechanical::opcode_204_disable() {
+void Mechanical::opcode_204_disable() {
 	g_opcode204Parameters.enabled = false;
 }
 
-void MystScriptParser_Mechanical::opcode_204(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::opcode_204(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used for Card 6180 (Lower Elevator Puzzle)
@@ -512,17 +441,17 @@ static struct {
 	bool enabled;
 } g_opcode205Parameters;
 
-void MystScriptParser_Mechanical::opcode_205_run() {
+void Mechanical::opcode_205_run() {
 	// Used for Card 6156 (Fortress Rotation Controls)
 	// TODO: Fill in function...
 	// g_opcode205Parameters.soundIdPosition[4]
 }
 
-void MystScriptParser_Mechanical::opcode_205_disable() {
+void Mechanical::opcode_205_disable() {
 	g_opcode205Parameters.enabled = false;
 }
 
-void MystScriptParser_Mechanical::opcode_205(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::opcode_205(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used for Card 6156 (Fortress Rotation Controls)
@@ -545,7 +474,7 @@ static struct {
 	bool enabled;
 } g_opcode206Parameters;
 
-void MystScriptParser_Mechanical::opcode_206_run() {
+void Mechanical::opcode_206_run() {
 	if (g_opcode206Parameters.enabled) {
 		// Used for Card 6044 (Fortress Rotation Simulator)
 
@@ -556,11 +485,11 @@ void MystScriptParser_Mechanical::opcode_206_run() {
 	}
 }
 
-void MystScriptParser_Mechanical::opcode_206_disable() {
+void Mechanical::opcode_206_disable() {
 	g_opcode206Parameters.enabled = false;
 }
 
-void MystScriptParser_Mechanical::opcode_206(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::opcode_206(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used for Card 6044 (Fortress Rotation Simulator)
@@ -582,18 +511,18 @@ static struct {
 	bool enabled;
 } g_opcode209Parameters;
 
-void MystScriptParser_Mechanical::opcode_209_run() {
+void Mechanical::opcode_209_run() {
 	// Used for Card 6044 (Fortress Rotation Simulator)
 
 	// TODO: Implement Function For Secret Panel State as
 	//       per Opcode 200 function (Mechanical)
 }
 
-void MystScriptParser_Mechanical::opcode_209_disable() {
+void Mechanical::opcode_209_disable() {
 	g_opcode209Parameters.enabled = false;
 }
 
-void MystScriptParser_Mechanical::opcode_209(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::opcode_209(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used for Card 6044 (Fortress Rotation Simulator)
@@ -603,10 +532,11 @@ void MystScriptParser_Mechanical::opcode_209(uint16 op, uint16 var, uint16 argc,
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Mechanical::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used in Card 6156 (Fortress Elevator View)
 	varUnusedCheck(op, var);
 	// TODO: Fill in Logic. Clearing Variable for View?
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

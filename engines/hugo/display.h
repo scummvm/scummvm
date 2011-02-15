@@ -65,8 +65,7 @@ public:
 	void     drawRectangle(const bool filledFl, const int16 x1, const int16 y1, const int16 x2, const int16 y2, const int color);
 	void     drawShape(const int x, const int y, const int color1, const int color2);
 	void     drawStatusText();
-	void     freeFonts();
-	void     freePalette();
+	void     freeScreen();
 	void     hideCursor();
 	void     initDisplay();
 	void     initNewScreenDisplay();

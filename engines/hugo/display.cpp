@@ -599,17 +599,12 @@ void Screen::loadPalette(Common::ReadStream &in) {
 }
 
 /**
- * Free main and current palettes
+ * Free fonts, main and current palettes
  */
-void Screen::freePalette() {
+void Screen::freeScreen() {
 	free(_curPalette);
 	free(_mainPalette);
-}
 
-/**
- * Free fonts
- */
-void Screen::freeFonts() {
 	for (int i = 0; i < kNumFonts; i++) {
 		if (_arrayFont[i])
 			free(_arrayFont[i]);
@@ -621,11 +616,7 @@ void Screen::selectInventoryObjId(const int16 objId) {
 	_vm->_inventory->setInventoryObjId(objId);      // Select new object
 
 	// Find index of icon
-	int16 iconId = 0;                               // Find index of dragged icon
-	for (; iconId < _vm->_maxInvent; iconId++) {
-		if (objId == _vm->_invent[iconId])
-			break;
-	}
+	int16 iconId = _vm->_inventory->findIconId(objId);
 
 	// Compute source coordinates in dib_u
 	int16 ux = (iconId + kArrowNumb) * kInvDx % kXPix;

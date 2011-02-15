@@ -37,10 +37,9 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
-// NOTE: Credits Start Card is 10000
-
-MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) :
+Myst::Myst(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(_vm->_gameState->_myst) {
 	setupOpcodes();
 
@@ -62,12 +61,12 @@ MystScriptParser_Myst::MystScriptParser_Myst(MohawkEngine_Myst *vm) :
 	_state.treeLastMoveTime = _vm->_system->getMillis();
 }
 
-MystScriptParser_Myst::~MystScriptParser_Myst() {
+Myst::~Myst() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Myst::x, #x))
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Myst::x, #x))
 
-void MystScriptParser_Myst::setupOpcodes() {
+void Myst::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, NOP);
 	OPCODE(101, o_libraryBookPageTurnLeft);
@@ -211,7 +210,7 @@ void MystScriptParser_Myst::setupOpcodes() {
 
 #undef OPCODE
 
-void MystScriptParser_Myst::disablePersistentScripts() {
+void Myst::disablePersistentScripts() {
 	_libraryBookcaseMoving = false;
 	_generatorControlRoomRunning = false;
 	_libraryCombinationBookPagesTurning = false;
@@ -235,7 +234,7 @@ void MystScriptParser_Myst::disablePersistentScripts() {
 	_gullsFlying3 = false;
 }
 
-void MystScriptParser_Myst::runPersistentScripts() {
+void Myst::runPersistentScripts() {
 	if (_towerRotationMapRunning)
 		towerRotationMap_run();
 
@@ -306,7 +305,7 @@ void MystScriptParser_Myst::runPersistentScripts() {
 		gullsFly3_run();
 }
 
-uint16 MystScriptParser_Myst::getVar(uint16 var) {
+uint16 Myst::getVar(uint16 var) {
 	switch(var) {
 	case 0: // Myst Library Bookcase Closed
 		return _state.libraryBookcaseDoor;
@@ -630,7 +629,7 @@ uint16 MystScriptParser_Myst::getVar(uint16 var) {
 	}
 }
 
-void MystScriptParser_Myst::toggleVar(uint16 var) {
+void Myst::toggleVar(uint16 var) {
 	switch(var) {
 	case 2: // Marker Switch Near Cabin
 		_state.cabinMarkerSwitch = (_state.cabinMarkerSwitch + 1) % 2;
@@ -720,7 +719,7 @@ void MystScriptParser_Myst::toggleVar(uint16 var) {
 	}
 }
 
-bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
+bool Myst::setVarValue(uint16 var, uint16 value) {
 	bool refresh = false;
 
 	switch (var) {
@@ -775,7 +774,7 @@ bool MystScriptParser_Myst::setVarValue(uint16 var, uint16 value) {
 	return refresh;
 }
 
-uint16 MystScriptParser_Myst::bookCountPages(uint16 var) {
+uint16 Myst::bookCountPages(uint16 var) {
 	uint16 pages = 0;
 	uint16 cnt = 0;
 
@@ -808,7 +807,7 @@ uint16 MystScriptParser_Myst::bookCountPages(uint16 var) {
 	return cnt;
 }
 
-void MystScriptParser_Myst::o_libraryBookPageTurnLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_libraryBookPageTurnLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Turn book page left", op);
 
 	if (_libraryBookPage - 1 >= 0) {
@@ -826,7 +825,7 @@ void MystScriptParser_Myst::o_libraryBookPageTurnLeft(uint16 op, uint16 var, uin
 	}
 }
 
-void MystScriptParser_Myst::o_libraryBookPageTurnRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_libraryBookPageTurnRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Turn book page right", op);
 
 	if (_libraryBookPage + 1 < _libraryBookNumPages) {
@@ -844,7 +843,7 @@ void MystScriptParser_Myst::o_libraryBookPageTurnRight(uint16 op, uint16 var, ui
 	}
 }
 
-void MystScriptParser_Myst::o_fireplaceToggleButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_fireplaceToggleButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Myst Card 4162 (Fireplace Grid)
 	debugC(kDebugScript, "Opcode %d: Fireplace grid toggle button", op);
 
@@ -873,7 +872,7 @@ void MystScriptParser_Myst::o_fireplaceToggleButton(uint16 op, uint16 var, uint1
 	}
 }
 
-void MystScriptParser_Myst::o_fireplaceRotation(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_fireplaceRotation(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Myst Card 4162 and 4166 (Fireplace Puzzle Rotation Movies)
 	uint16 movieNum = argv[0];
 	debugC(kDebugScript, "Opcode %d: Play Fireplace Puzzle Rotation Movies", op);
@@ -885,7 +884,7 @@ void MystScriptParser_Myst::o_fireplaceRotation(uint16 op, uint16 var, uint16 ar
 		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("fpin", kMystStack), 167, 4);
 }
 
-void MystScriptParser_Myst::o_courtyardBoxesCheckSolution(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_courtyardBoxesCheckSolution(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	uint16 soundId = argv[0];
 
 	debugC(kDebugScript, "Opcode %d: Ship Puzzle Logic", op);
@@ -905,7 +904,7 @@ void MystScriptParser_Myst::o_courtyardBoxesCheckSolution(uint16 op, uint16 var,
 	}
 }
 
-void MystScriptParser_Myst::o_towerRotationStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_towerRotationStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_towerRotationBlinkLabel = false;
 	_towerRotationMapClicked = true;
 	_towerRotationSpeed = 0;
@@ -920,7 +919,7 @@ void MystScriptParser_Myst::o_towerRotationStart(uint16 op, uint16 var, uint16 a
 	_vm->_sound->replaceSoundMyst(5378, Audio::Mixer::kMaxChannelVolume, true);
 }
 
-void MystScriptParser_Myst::o_towerRotationEnd(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_towerRotationEnd(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_towerRotationMapClicked = false;
 
 	// Set angle value to expected value
@@ -948,7 +947,7 @@ void MystScriptParser_Myst::o_towerRotationEnd(uint16 op, uint16 var, uint16 arg
 	_towerRotationBlinkLabelCount = 0;
 }
 
-void MystScriptParser_Myst::o_imagerChangeSelection(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_imagerChangeSelection(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Dock imager change selection", op);
 
 	if (_imagerValidationStep != 10) {
@@ -974,7 +973,7 @@ void MystScriptParser_Myst::o_imagerChangeSelection(uint16 op, uint16 var, uint1
 	}
 }
 
-void MystScriptParser_Myst::o_dockVaultOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_dockVaultOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Myst 4143 (Dock near Marker Switch)
 	uint16 soundId = argv[0];
 	uint16 delay = argv[1];
@@ -1003,7 +1002,7 @@ void MystScriptParser_Myst::o_dockVaultOpen(uint16 op, uint16 var, uint16 argc, 
 	}
 }
 
-void MystScriptParser_Myst::o_dockVaultClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_dockVaultClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Myst 4143 (Dock near Marker Switch)
 	uint16 soundId = argv[0];
 	uint16 delay = argv[1];
@@ -1030,7 +1029,7 @@ void MystScriptParser_Myst::o_dockVaultClose(uint16 op, uint16 var, uint16 argc,
 	}
 }
 
-void MystScriptParser_Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	uint16 cardIdLose = argv[0];
 	uint16 cardIdBookCover = argv[1];
 	uint16 soundIdAddPage = argv[2];
@@ -1117,7 +1116,7 @@ void MystScriptParser_Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, u
 	}
 }
 
-void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Card 4006 (Clock Tower Time Controls)
 	uint16 soundId = argv[0];
 
@@ -1153,7 +1152,7 @@ void MystScriptParser_Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 a
 	}
 }
 
-void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Imager play button", op);
 
 	uint16 video = getVar(51);
@@ -1232,7 +1231,7 @@ void MystScriptParser_Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 arg
 	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser_Myst::o_imagerEraseButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_imagerEraseButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Imager erase button", op);
 
 	_imagerRedButton = static_cast<MystResourceType8 *>(_invokingResource->_parent);
@@ -1279,7 +1278,7 @@ void MystScriptParser_Myst::o_imagerEraseButton(uint16 op, uint16 var, uint16 ar
 	}
 }
 
-void MystScriptParser_Myst::imagerValidation_run() {
+void Myst::imagerValidation_run() {
 	uint32 time = _vm->_system->getMillis();
 
 	if (time > _startTime) {
@@ -1307,7 +1306,7 @@ void MystScriptParser_Myst::imagerValidation_run() {
 	}
 }
 
-void MystScriptParser_Myst::o_towerElevatorAnimation(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_towerElevatorAnimation(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Tower elevator animation", op);
 
 	_treeStopped = true;
@@ -1332,7 +1331,7 @@ void MystScriptParser_Myst::o_towerElevatorAnimation(uint16 op, uint16 var, uint
 	_treeStopped = false;
 }
 
-void MystScriptParser_Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generator button pressed", op);
 
 	MystResource *button = _invokingResource->_parent;
@@ -1374,13 +1373,13 @@ void MystScriptParser_Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint
 		_state.generatorBreakers = _vm->_rnd->getRandomNumberRng(1, 2);
 }
 
-void MystScriptParser_Myst::generatorRedrawRocket() {
+void Myst::generatorRedrawRocket() {
 	_vm->redrawArea(64);
 	_vm->redrawArea(65);
 	_vm->redrawArea(97);
 }
 
-void MystScriptParser_Myst::generatorButtonValue(MystResource *button, uint16 &mask, uint16 &value) {
+void Myst::generatorButtonValue(MystResource *button, uint16 &mask, uint16 &value) {
 	switch (button->getType8Var()) {
 	case 52: // Generator Switch #1
 		mask = 1;
@@ -1425,7 +1424,7 @@ void MystScriptParser_Myst::generatorButtonValue(MystResource *button, uint16 &m
 	}
 }
 
-void MystScriptParser_Myst::o_cabinSafeChangeDigit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_cabinSafeChangeDigit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Cabin safe change digit", op);
 
 	uint16 d1 = _state.cabinSafeCombination / 100;
@@ -1444,7 +1443,7 @@ void MystScriptParser_Myst::o_cabinSafeChangeDigit(uint16 op, uint16 var, uint16
 	_vm->redrawArea(var);
 }
 
-void MystScriptParser_Myst::o_cabinSafeHandleStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_cabinSafeHandleStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Cabin safe handle start move", op);
 
 	// Used on Card 4100
@@ -1454,7 +1453,7 @@ void MystScriptParser_Myst::o_cabinSafeHandleStartMove(uint16 op, uint16 var, ui
 	_tempVar = 0;
 }
 
-void MystScriptParser_Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Cabin safe handle move", op);
 
 	// Used on Card 4100
@@ -1484,7 +1483,7 @@ void MystScriptParser_Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 
 	}
 }
 
-void MystScriptParser_Myst::o_cabinSafeHandleEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_cabinSafeHandleEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Cabin safe handle end move", op);
 
 	// Used on Card 4100
@@ -1493,7 +1492,7 @@ void MystScriptParser_Myst::o_cabinSafeHandleEndMove(uint16 op, uint16 var, uint
 	_vm->checkCursorHints();
 }
 
-void MystScriptParser_Myst::o_observatoryMonthChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryMonthChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Observatory month change start", op);
 
 	_vm->_sound->pauseBackgroundMyst();
@@ -1528,7 +1527,7 @@ void MystScriptParser_Myst::o_observatoryMonthChangeStart(uint16 op, uint16 var,
 	_observatoryMonthChanging = true;
 }
 
-void MystScriptParser_Myst::observatoryIncrementMonth(int16 increment) {
+void Myst::observatoryIncrementMonth(int16 increment) {
 	int16 newMonth = _state.observatoryMonthSetting + increment;
 
 	if (newMonth >= 0 && newMonth <= 11) {
@@ -1547,12 +1546,12 @@ void MystScriptParser_Myst::observatoryIncrementMonth(int16 increment) {
 	_vm->_sound->replaceSoundMyst(8500);
 }
 
-void MystScriptParser_Myst::observatoryMonthChange_run() {
+void Myst::observatoryMonthChange_run() {
 	if (_startTime + 500 < _vm->_system->getMillis())
 		observatoryIncrementMonth(_observatoryIncrement);
 }
 
-void MystScriptParser_Myst::o_observatoryDayChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryDayChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Observatory day change start", op);
 
 	_vm->_sound->pauseBackgroundMyst();
@@ -1587,7 +1586,7 @@ void MystScriptParser_Myst::o_observatoryDayChangeStart(uint16 op, uint16 var, u
 	_observatoryDayChanging = true;
 }
 
-void MystScriptParser_Myst::observatoryIncrementDay(int16 increment) {
+void Myst::observatoryIncrementDay(int16 increment) {
 	int16 newDay = _state.observatoryDaySetting + increment;
 
 	if (newDay >= 1 && newDay <= 31) {
@@ -1607,12 +1606,12 @@ void MystScriptParser_Myst::observatoryIncrementDay(int16 increment) {
 	_vm->_sound->replaceSoundMyst(8500);
 }
 
-void MystScriptParser_Myst::observatoryDayChange_run() {
+void Myst::observatoryDayChange_run() {
 	if (_startTime + 500 < _vm->_system->getMillis())
 		observatoryIncrementDay(_observatoryIncrement);
 }
 
-void MystScriptParser_Myst::o_observatoryYearChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryYearChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Observatory year change start", op);
 
 	_vm->_sound->pauseBackgroundMyst();
@@ -1639,7 +1638,7 @@ void MystScriptParser_Myst::o_observatoryYearChangeStart(uint16 op, uint16 var, 
 	_observatoryYearChanging = true;
 }
 
-void MystScriptParser_Myst::observatoryIncrementYear(int16 increment) {
+void Myst::observatoryIncrementYear(int16 increment) {
 	int16 newYear = _state.observatoryYearSetting + increment;
 
 	if (newYear >= 0 && newYear <= 9999) {
@@ -1661,12 +1660,12 @@ void MystScriptParser_Myst::observatoryIncrementYear(int16 increment) {
 	_vm->_sound->replaceSoundMyst(8500);
 }
 
-void MystScriptParser_Myst::observatoryYearChange_run() {
+void Myst::observatoryYearChange_run() {
 	if (_startTime + 500 < _vm->_system->getMillis())
 		observatoryIncrementYear(_observatoryIncrement);
 }
 
-void MystScriptParser_Myst::o_observatoryTimeChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryTimeChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Observatory time change start", op);
 
 	_vm->_sound->pauseBackgroundMyst();
@@ -1693,7 +1692,7 @@ void MystScriptParser_Myst::o_observatoryTimeChangeStart(uint16 op, uint16 var, 
 	_observatoryTimeChanging = true;
 }
 
-void MystScriptParser_Myst::observatoryIncrementTime(int16 increment) {
+void Myst::observatoryIncrementTime(int16 increment) {
 	int16 newTime = _state.observatoryTimeSetting + increment;
 
 	if (newTime >= 0 && newTime <= 1439) {
@@ -1720,12 +1719,12 @@ void MystScriptParser_Myst::observatoryIncrementTime(int16 increment) {
 	_vm->_sound->replaceSoundMyst(8500);
 }
 
-void MystScriptParser_Myst::observatoryTimeChange_run() {
+void Myst::observatoryTimeChange_run() {
 	if (_startTime + 500 < _vm->_system->getMillis())
 		observatoryIncrementTime(_observatoryIncrement);
 }
 
-void MystScriptParser_Myst::o_observatoryGoButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryGoButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Observatory go button", op);
 
 	// Setting not at target
@@ -1759,31 +1758,31 @@ void MystScriptParser_Myst::o_observatoryGoButton(uint16 op, uint16 var, uint16 
 	}
 }
 
-void MystScriptParser_Myst::o_observatoryMonthSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryMonthSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Month slider move", op);
 
 	observatoryUpdateMonth();
 }
 
-void MystScriptParser_Myst::o_observatoryDaySliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryDaySliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Day slider move", op);
 
 	observatoryUpdateDay();
 }
 
-void MystScriptParser_Myst::o_observatoryYearSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryYearSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Year slider move", op);
 
 	observatoryUpdateYear();
 }
 
-void MystScriptParser_Myst::o_observatoryTimeSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryTimeSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Time slider move", op);
 
 	observatoryUpdateTime();
 }
 
-void MystScriptParser_Myst::o_circuitBreakerStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_circuitBreakerStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Circuit breaker start move", op);
 
 	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
@@ -1792,7 +1791,7 @@ void MystScriptParser_Myst::o_circuitBreakerStartMove(uint16 op, uint16 var, uin
 	_tempVar = 0;
 }
 
-void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Circuit breaker move", op);
 
 	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
@@ -1843,7 +1842,7 @@ void MystScriptParser_Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 a
 	}
 }
 
-void MystScriptParser_Myst::o_circuitBreakerEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_circuitBreakerEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Circuit breaker end move", op);
 
 	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
@@ -1851,7 +1850,7 @@ void MystScriptParser_Myst::o_circuitBreakerEndMove(uint16 op, uint16 var, uint1
 	_vm->checkCursorHints();
 }
 
-void MystScriptParser_Myst::o_boilerIncreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_boilerIncreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Boiler increase pressure start", op);
 
 	_treeStopped = true;
@@ -1861,7 +1860,7 @@ void MystScriptParser_Myst::o_boilerIncreasePressureStart(uint16 op, uint16 var,
 	_boilerPressureIncreasing = true;
 }
 
-void MystScriptParser_Myst::o_boilerLightPilot(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_boilerLightPilot(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Boiler light pilot", op);
 
 	// Match is lit
@@ -1882,7 +1881,7 @@ void MystScriptParser_Myst::o_boilerLightPilot(uint16 op, uint16 var, uint16 arg
 	}
 }
 
-void MystScriptParser_Myst::o_boilerIncreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_boilerIncreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Boiler increase pressure stop", op);
 
 	_treeStopped = false;
@@ -1898,7 +1897,7 @@ void MystScriptParser_Myst::o_boilerIncreasePressureStop(uint16 op, uint16 var, 
 		_vm->_sound->replaceBackgroundMyst(4098, _state.cabinValvePosition << 10);
 }
 
-void MystScriptParser_Myst::boilerPressureIncrease_run() {
+void Myst::boilerPressureIncrease_run() {
 	// Allow increasing pressure if sound has stopped
 	if (!_vm->_sound->isPlaying(5098) && _state.cabinValvePosition < 25) {
 		_state.cabinValvePosition++;
@@ -1922,7 +1921,7 @@ void MystScriptParser_Myst::boilerPressureIncrease_run() {
 	}
 }
 
-void MystScriptParser_Myst::boilerPressureDecrease_run() {
+void Myst::boilerPressureDecrease_run() {
 	// Allow decreasing pressure if sound has stopped
 	if (!_vm->_sound->isPlaying(5098) && _state.cabinValvePosition > 0) {
 		_state.cabinValvePosition--;
@@ -1941,7 +1940,7 @@ void MystScriptParser_Myst::boilerPressureDecrease_run() {
 	}
 }
 
-void MystScriptParser_Myst::o_boilerDecreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_boilerDecreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Boiler decrease pressure start", op);
 
 	_treeStopped = true;
@@ -1950,7 +1949,7 @@ void MystScriptParser_Myst::o_boilerDecreasePressureStart(uint16 op, uint16 var,
 	_boilerPressureDecreasing = true;
 }
 
-void MystScriptParser_Myst::o_boilerDecreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_boilerDecreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Boiler decrease pressure stop", op);
 
 	_treeStopped = false;
@@ -1968,14 +1967,14 @@ void MystScriptParser_Myst::o_boilerDecreasePressureStop(uint16 op, uint16 var, 
 	}
 }
 
-void MystScriptParser_Myst::o_basementIncreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_basementIncreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Basement increase pressure start", op);
 
 	_treeStopped = true;
 	_basementPressureIncreasing = true;
 }
 
-void MystScriptParser_Myst::o_basementIncreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_basementIncreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Basement increase pressure stop", op);
 
 	_treeStopped = false;
@@ -1983,7 +1982,7 @@ void MystScriptParser_Myst::o_basementIncreasePressureStop(uint16 op, uint16 var
 	_state.treeLastMoveTime = _vm->_system->getMillis();
 }
 
-void MystScriptParser_Myst::basementPressureIncrease_run() {
+void Myst::basementPressureIncrease_run() {
 	// Allow increasing pressure if sound has stopped
 	if (!_vm->_sound->isPlaying(4642) && _state.cabinValvePosition < 25) {
 		_state.cabinValvePosition++;
@@ -1996,7 +1995,7 @@ void MystScriptParser_Myst::basementPressureIncrease_run() {
 	}
 }
 
-void MystScriptParser_Myst::basementPressureDecrease_run() {
+void Myst::basementPressureDecrease_run() {
 	// Allow decreasing pressure if sound has stopped
 	if (!_vm->_sound->isPlaying(4642) && _state.cabinValvePosition > 0) {
 		_state.cabinValvePosition--;
@@ -2009,14 +2008,14 @@ void MystScriptParser_Myst::basementPressureDecrease_run() {
 	}
 }
 
-void MystScriptParser_Myst::o_basementDecreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_basementDecreasePressureStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Basement decrease pressure start", op);
 
 	_treeStopped = true;
 	_basementPressureDecreasing = true;
 }
 
-void MystScriptParser_Myst::o_basementDecreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_basementDecreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Basement decrease pressure stop", op);
 
 	_treeStopped = false;
@@ -2024,7 +2023,7 @@ void MystScriptParser_Myst::o_basementDecreasePressureStop(uint16 op, uint16 var
 	_state.treeLastMoveTime = _vm->_system->getMillis();
 }
 
-void MystScriptParser_Myst::tree_run() {
+void Myst::tree_run() {
 	uint16 pressure;
 	if (_state.cabinPilotLightLit)
 		pressure = _state.cabinValvePosition;
@@ -2073,7 +2072,7 @@ void MystScriptParser_Myst::tree_run() {
 	}
 }
 
-void MystScriptParser_Myst::treeSetAlcoveAccessible() {
+void Myst::treeSetAlcoveAccessible() {
 	if (_treeAlcove) {
 		// Make alcove accessible if the tree is in the correct position
 		_treeAlcove->setEnabled(_state.treePosition >= _treeMinAccessiblePosition
@@ -2081,14 +2080,14 @@ void MystScriptParser_Myst::treeSetAlcoveAccessible() {
 	}
 }
 
-uint32 MystScriptParser_Myst::treeNextMoveDelay(uint16 pressure) {
+uint32 Myst::treeNextMoveDelay(uint16 pressure) {
 	if (pressure >= 12)
 		return 25000 * (13 - (pressure - 12)) / 12 + 3000;
 	else
 		return 25000 * pressure / 13 + 3000;
 }
 
-void MystScriptParser_Myst::o_rocketSoundSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_rocketSoundSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket slider start move", op);
 
 	_rocketSliderSound = 0;
@@ -2097,13 +2096,13 @@ void MystScriptParser_Myst::o_rocketSoundSliderStartMove(uint16 op, uint16 var, 
 	rocketSliderMove();
 }
 
-void MystScriptParser_Myst::o_rocketSoundSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_rocketSoundSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket slider move", op);
 
 	rocketSliderMove();
 }
 
-void MystScriptParser_Myst::o_rocketSoundSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_rocketSoundSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket slider end move", op);
 
 	_vm->checkCursorHints();
@@ -2125,7 +2124,7 @@ void MystScriptParser_Myst::o_rocketSoundSliderEndMove(uint16 op, uint16 var, ui
 	_vm->_sound->resumeBackgroundMyst();
 }
 
-void MystScriptParser_Myst::rocketSliderMove() {
+void Myst::rocketSliderMove() {
 	MystResourceType10 *slider = static_cast<MystResourceType10 *>(_invokingResource);
 
 	if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
@@ -2137,11 +2136,11 @@ void MystScriptParser_Myst::rocketSliderMove() {
 	}
 }
 
-uint16 MystScriptParser_Myst::rocketSliderGetSound(uint16 pos) {
+uint16 Myst::rocketSliderGetSound(uint16 pos) {
 	return (uint16)(9530 + (pos - 216) * 35.0 * 0.01639344262295082);
 }
 
-void MystScriptParser_Myst::rocketCheckSolution() {
+void Myst::rocketCheckSolution() {
 	_vm->_cursor->hideCursor();
 
 	uint16 soundId;
@@ -2211,7 +2210,7 @@ void MystScriptParser_Myst::rocketCheckSolution() {
 	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser_Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket piano start move", op);
 
 	MystResourceType11 *key = static_cast<MystResourceType11 *>(_invokingResource);
@@ -2234,7 +2233,7 @@ void MystScriptParser_Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 arg
 	}
 }
 
-void MystScriptParser_Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket piano move", op);
 
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
@@ -2280,7 +2279,7 @@ void MystScriptParser_Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc
 	_vm->_system->updateScreen();
 }
 
-void MystScriptParser_Myst::o_rocketPianoStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_rocketPianoStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket piano end move", op);
 
 	MystResourceType8 *key = static_cast<MystResourceType8 *>(_invokingResource);
@@ -2298,7 +2297,7 @@ void MystScriptParser_Myst::o_rocketPianoStop(uint16 op, uint16 var, uint16 argc
 	_vm->_sound->resumeBackgroundMyst();
 }
 
-void MystScriptParser_Myst::o_rocketLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_rocketLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket lever start move", op);
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
@@ -2308,7 +2307,7 @@ void MystScriptParser_Myst::o_rocketLeverStartMove(uint16 op, uint16 var, uint16
 	lever->drawFrame(0);
 }
 
-void MystScriptParser_Myst::o_rocketOpenBook(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_rocketOpenBook(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket open link book", op);
 
 	// Flyby movie
@@ -2318,7 +2317,7 @@ void MystScriptParser_Myst::o_rocketOpenBook(uint16 op, uint16 var, uint16 argc,
 	_tempVar = 2;
 }
 
-void MystScriptParser_Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket lever move", op);
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
@@ -2347,7 +2346,7 @@ void MystScriptParser_Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc
 	_rocketLeverPosition = step;
 }
 
-void MystScriptParser_Myst::o_rocketLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_rocketLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket lever end move", op);
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
@@ -2357,7 +2356,7 @@ void MystScriptParser_Myst::o_rocketLeverEndMove(uint16 op, uint16 var, uint16 a
 	lever->drawFrame(0);
 }
 
-void MystScriptParser_Myst::o_cabinLeave(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_cabinLeave(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Leave cabin", op);
 
 	// If match is lit, put out
@@ -2369,7 +2368,7 @@ void MystScriptParser_Myst::o_cabinLeave(uint16 op, uint16 var, uint16 argc, uin
 	}
 }
 
-void MystScriptParser_Myst::o_treePressureReleaseStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_treePressureReleaseStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Tree pressure release start", op);
 
 	Common::Rect src = Common::Rect(0, 0, 49, 86);
@@ -2386,7 +2385,7 @@ void MystScriptParser_Myst::o_treePressureReleaseStart(uint16 op, uint16 var, ui
 	}
 }
 
-void MystScriptParser_Myst::o_treePressureReleaseStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_treePressureReleaseStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Tree pressure release stop", op);
 
 	Common::Rect rect = Common::Rect(78, 46, 127, 132);
@@ -2397,7 +2396,7 @@ void MystScriptParser_Myst::o_treePressureReleaseStop(uint16 op, uint16 var, uin
 	_treeMinPosition = 0;
 }
 
-void MystScriptParser_Myst::o_observatoryMonthSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryMonthSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Month slider start move", op);
 
 	_vm->_cursor->setCursor(700);
@@ -2406,7 +2405,7 @@ void MystScriptParser_Myst::o_observatoryMonthSliderStartMove(uint16 op, uint16 
 	observatoryUpdateMonth();
 }
 
-void MystScriptParser_Myst::o_observatoryMonthSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryMonthSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Month slider end move", op);
 
 	_vm->checkCursorHints();
@@ -2415,7 +2414,7 @@ void MystScriptParser_Myst::o_observatoryMonthSliderEndMove(uint16 op, uint16 va
 	observatoryUpdateMonth();
 }
 
-void MystScriptParser_Myst::observatoryUpdateMonth() {
+void Myst::observatoryUpdateMonth() {
 	int16 month = (_observatoryMonthSlider->_pos.y - 94) / 8;
 
 	if (month != _state.observatoryMonthSetting) {
@@ -2428,7 +2427,7 @@ void MystScriptParser_Myst::observatoryUpdateMonth() {
 	}
 }
 
-void MystScriptParser_Myst::o_observatoryDaySliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryDaySliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Day slider start move", op);
 
 	_vm->_cursor->setCursor(700);
@@ -2437,7 +2436,7 @@ void MystScriptParser_Myst::o_observatoryDaySliderStartMove(uint16 op, uint16 va
 	observatoryUpdateDay();
 }
 
-void MystScriptParser_Myst::o_observatoryDaySliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryDaySliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Day slider end move", op);
 
 	_vm->checkCursorHints();
@@ -2446,7 +2445,7 @@ void MystScriptParser_Myst::o_observatoryDaySliderEndMove(uint16 op, uint16 var,
 	observatoryUpdateDay();
 }
 
-void MystScriptParser_Myst::observatoryUpdateDay() {
+void Myst::observatoryUpdateDay() {
 	int16 day = (_observatoryDaySlider->_pos.y - 94) * 30 / 94 + 1;
 
 	if (day != _state.observatoryDaySetting) {
@@ -2460,7 +2459,7 @@ void MystScriptParser_Myst::observatoryUpdateDay() {
 	}
 }
 
-void MystScriptParser_Myst::o_observatoryYearSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryYearSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Year slider start move", op);
 
 	_vm->_cursor->setCursor(700);
@@ -2469,7 +2468,7 @@ void MystScriptParser_Myst::o_observatoryYearSliderStartMove(uint16 op, uint16 v
 	observatoryUpdateYear();
 }
 
-void MystScriptParser_Myst::o_observatoryYearSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryYearSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Year slider end move", op);
 
 	_vm->checkCursorHints();
@@ -2478,7 +2477,7 @@ void MystScriptParser_Myst::o_observatoryYearSliderEndMove(uint16 op, uint16 var
 	observatoryUpdateYear();
 }
 
-void MystScriptParser_Myst::observatoryUpdateYear() {
+void Myst::observatoryUpdateYear() {
 	int16 year = (_observatoryYearSlider->_pos.y - 94) * 9999 / 94;
 
 	if (year != _state.observatoryYearSetting) {
@@ -2494,7 +2493,7 @@ void MystScriptParser_Myst::observatoryUpdateYear() {
 	}
 }
 
-void MystScriptParser_Myst::o_observatoryTimeSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryTimeSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Time slider start move", op);
 
 	_vm->_cursor->setCursor(700);
@@ -2503,7 +2502,7 @@ void MystScriptParser_Myst::o_observatoryTimeSliderStartMove(uint16 op, uint16 v
 	observatoryUpdateTime();
 }
 
-void MystScriptParser_Myst::o_observatoryTimeSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryTimeSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Time slider end move", op);
 
 	_vm->checkCursorHints();
@@ -2512,7 +2511,7 @@ void MystScriptParser_Myst::o_observatoryTimeSliderEndMove(uint16 op, uint16 var
 	observatoryUpdateTime();
 }
 
-void MystScriptParser_Myst::observatoryUpdateTime() {
+void Myst::observatoryUpdateTime() {
 	int16 time = (_observatoryTimeSlider->_pos.y - 94) * 1439 / 94;
 
 	if (time != _state.observatoryTimeSetting) {
@@ -2532,12 +2531,12 @@ void MystScriptParser_Myst::observatoryUpdateTime() {
 	}
 }
 
-void MystScriptParser_Myst::o_libraryCombinationBookStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_libraryCombinationBookStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Combination book stop turning pages", op);
 	_libraryCombinationBookPagesTurning = false;
 }
 
-void MystScriptParser_Myst::o_cabinMatchLight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_cabinMatchLight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (!_cabinMatchState) {
 		_vm->_sound->replaceSoundMyst(4103);
 
@@ -2552,7 +2551,7 @@ void MystScriptParser_Myst::o_cabinMatchLight(uint16 op, uint16 var, uint16 argc
 	}
 }
 
-void MystScriptParser_Myst::matchBurn_run() {
+void Myst::matchBurn_run() {
 	uint32 time = _vm->_system->getMillis();
 
 	if (time > _matchGoOutTime) {
@@ -2576,41 +2575,41 @@ void MystScriptParser_Myst::matchBurn_run() {
 	}
 }
 
-void MystScriptParser_Myst::o_courtyardBoxEnter(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_courtyardBoxEnter(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Mouse enters courtyard box", op);
 	_tempVar = 1;
 	_vm->_sound->playSound(_courtyardBoxSound);
 	_vm->redrawArea(var);
 }
 
-void MystScriptParser_Myst::o_courtyardBoxLeave(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_courtyardBoxLeave(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Mouse leaves courtyard box", op);
 	_tempVar = 0;
 	_vm->redrawArea(var);
 }
 
-void MystScriptParser_Myst::o_clockMinuteWheelStartTurn(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_clockMinuteWheelStartTurn(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Card 4006
 	debugC(kDebugScript, "Opcode %d: Minute wheel start turn", op);
 
 	clockWheelStartTurn(2);
 }
 
-void MystScriptParser_Myst::o_clockWheelEndTurn(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_clockWheelEndTurn(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Card 4006
 	debugC(kDebugScript, "Opcode %d: Wheel end turn", op);
 
 	_clockTurningWheel = 0;
 }
 
-void MystScriptParser_Myst::o_clockHourWheelStartTurn(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_clockHourWheelStartTurn(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Card 4006
 	debugC(kDebugScript, "Opcode %d: Hour wheel start turn", op);
 
 	clockWheelStartTurn(1);
 }
 
-void MystScriptParser_Myst::clockWheel_run() {
+void Myst::clockWheel_run() {
 	// Turn wheel one step each second
 	uint32 time = _vm->_system->getMillis();
 
@@ -2626,7 +2625,7 @@ void MystScriptParser_Myst::clockWheel_run() {
 	}
 }
 
-void MystScriptParser_Myst::clockWheelStartTurn(uint16 wheel) {
+void Myst::clockWheelStartTurn(uint16 wheel) {
 	MystResourceType11 *resource = static_cast<MystResourceType11 *>(_invokingResource);
 	uint16 soundId = resource->getList1(0);
 
@@ -2646,7 +2645,7 @@ void MystScriptParser_Myst::clockWheelStartTurn(uint16 wheel) {
 	_startTime = _vm->_system->getMillis();
 }
 
-void MystScriptParser_Myst::clockWheelTurn(uint16 var) {
+void Myst::clockWheelTurn(uint16 var) {
 	if (var == 38) {
 		// Hours
 		_state.clockTowerHourPosition = (_state.clockTowerHourPosition + 1) % 12;
@@ -2656,7 +2655,7 @@ void MystScriptParser_Myst::clockWheelTurn(uint16 var) {
 	}
 }
 
-void MystScriptParser_Myst::o_libraryCombinationBookStartRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_libraryCombinationBookStartRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Combination book start turning pages right", op);
 
 	_tempVar = 0;
@@ -2665,7 +2664,7 @@ void MystScriptParser_Myst::o_libraryCombinationBookStartRight(uint16 op, uint16
 	_libraryCombinationBookPagesTurning = true;
 }
 
-void MystScriptParser_Myst::o_libraryCombinationBookStartLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_libraryCombinationBookStartLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Combination book start turning pages left", op);
 
 	_tempVar = 0;
@@ -2674,7 +2673,7 @@ void MystScriptParser_Myst::o_libraryCombinationBookStartLeft(uint16 op, uint16 
 	_libraryCombinationBookPagesTurning = true;
 }
 
-void MystScriptParser_Myst::libraryCombinationBookTurnLeft() {
+void Myst::libraryCombinationBookTurnLeft() {
 	// Turn page left
 	if (_libraryBookPage - 1 >= 0) {
 		_tempVar--;
@@ -2700,7 +2699,7 @@ void MystScriptParser_Myst::libraryCombinationBookTurnLeft() {
 	}
 }
 
-void MystScriptParser_Myst::libraryCombinationBookTurnRight() {
+void Myst::libraryCombinationBookTurnRight() {
 	// Turn page right
 	if (_libraryBookPage + 1 < _libraryBookNumPages) {
 		_tempVar++;
@@ -2726,7 +2725,7 @@ void MystScriptParser_Myst::libraryCombinationBookTurnRight() {
 	}
 }
 
-void MystScriptParser_Myst::libraryCombinationBook_run() {
+void Myst::libraryCombinationBook_run() {
 	uint32 time = _vm->_system->getMillis();
 	if (time >= _startTime + 500) {
 		if (_tempVar > 0) {
@@ -2739,7 +2738,7 @@ void MystScriptParser_Myst::libraryCombinationBook_run() {
 	}
 }
 
-void MystScriptParser_Myst::o_observatoryChangeSettingStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatoryChangeSettingStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Observatory change setting stop", op);
 
 	// Stop persistent scripts
@@ -2758,7 +2757,7 @@ void MystScriptParser_Myst::o_observatoryChangeSettingStop(uint16 op, uint16 var
 	_vm->_sound->resumeBackgroundMyst();
 }
 
-void MystScriptParser_Myst::o_dockVaultForceClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_dockVaultForceClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Myst 4143 (Dock near Marker Switch)
 	uint16 soundId = argv[0];
 	uint16 delay = argv[1];
@@ -2782,12 +2781,12 @@ void MystScriptParser_Myst::o_dockVaultForceClose(uint16 op, uint16 var, uint16 
 	}
 }
 
-void MystScriptParser_Myst::o_imagerEraseStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_imagerEraseStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Imager stop erase", op);
 	_imagerValidationRunning = false;
 }
 
-void MystScriptParser_Myst::o_clockLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_clockLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock lever start move", op);
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
 	lever->drawFrame(0);
@@ -2796,7 +2795,7 @@ void MystScriptParser_Myst::o_clockLeverStartMove(uint16 op, uint16 var, uint16 
 	_clockLeverPulled = false;
 }
 
-void MystScriptParser_Myst::o_clockLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_clockLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock left lever move", op);
 
 	if (!_clockLeverPulled) {
@@ -2822,7 +2821,7 @@ void MystScriptParser_Myst::o_clockLeverMove(uint16 op, uint16 var, uint16 argc,
 	}
 }
 
-void MystScriptParser_Myst::clockGearForwardOneStep(uint16 gear) {
+void Myst::clockGearForwardOneStep(uint16 gear) {
 	static const uint16 startTime[] = { 0, 324, 618 };
 	static const uint16 endTime[] = { 324, 618, 950 };
 	static const char *videos[] = { "cl1wg1", "cl1wg2", "cl1wg3" };
@@ -2840,7 +2839,7 @@ void MystScriptParser_Myst::clockGearForwardOneStep(uint16 gear) {
 			Audio::Timestamp(0, endTime[gearPosition], 600));
 }
 
-void MystScriptParser_Myst::clockWeightDownOneStep() {
+void Myst::clockWeightDownOneStep() {
 	// Set video bounds
 	_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
 	_vm->_video->setVideoBounds(_clockWeightVideo,
@@ -2851,7 +2850,7 @@ void MystScriptParser_Myst::clockWeightDownOneStep() {
 	_clockWeightPosition += 246;
 }
 
-void MystScriptParser_Myst::clockGears_run() {
+void Myst::clockGears_run() {
 	if (!_vm->_video->isVideoPlaying() && _clockWeightPosition < 2214) {
 		_clockMiddleGearMovedAlone = true;
 		_vm->_sound->replaceSoundMyst(5113);
@@ -2860,7 +2859,7 @@ void MystScriptParser_Myst::clockGears_run() {
 	}
 }
 
-void MystScriptParser_Myst::o_clockLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_clockLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock lever end move", op);
 	static const char *videos[] = { "cl1wg1", "cl1wg2", "cl1wg3", "cl1wlfch" };
 
@@ -2887,7 +2886,7 @@ void MystScriptParser_Myst::o_clockLeverEndMove(uint16 op, uint16 var, uint16 ar
 	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser_Myst::clockGearsCheckSolution() {
+void Myst::clockGearsCheckSolution() {
 	if (_clockGearsPositions[0] == 2
 			&& _clockGearsPositions[1] == 2
 			&& _clockGearsPositions[2] == 1
@@ -2915,7 +2914,7 @@ void MystScriptParser_Myst::clockGearsCheckSolution() {
 	}
 }
 
-void MystScriptParser_Myst::o_clockResetLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_clockResetLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock reset lever start move", op);
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
@@ -2923,7 +2922,7 @@ void MystScriptParser_Myst::o_clockResetLeverStartMove(uint16 op, uint16 var, ui
 	_vm->_cursor->setCursor(700);
 }
 
-void MystScriptParser_Myst::o_clockResetLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_clockResetLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock reset lever move", op);
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
@@ -2933,7 +2932,7 @@ void MystScriptParser_Myst::o_clockResetLeverMove(uint16 op, uint16 var, uint16 
 		clockReset();
 }
 
-void MystScriptParser_Myst::clockReset() {
+void Myst::clockReset() {
 	static const char *videos[] = { "cl1wg1", "cl1wg2", "cl1wg3", "cl1wlfch" };
 
 	_vm->_cursor->hideCursor();
@@ -2971,7 +2970,7 @@ void MystScriptParser_Myst::clockReset() {
 	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser_Myst::clockResetWeight() {
+void Myst::clockResetWeight() {
 	// Set video bounds, weight going up
 	if (!(_vm->getFeatures() & GF_ME)) {
 		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
@@ -2987,7 +2986,7 @@ void MystScriptParser_Myst::clockResetWeight() {
 	_clockWeightPosition = 0;
 }
 
-void MystScriptParser_Myst::clockResetGear(uint16 gear) {
+void Myst::clockResetGear(uint16 gear) {
 	static const uint16 time[] = { 324, 618, 950 };
 	static const char *videos[] = { "cl1wg1", "cl1wg2", "cl1wg3" };
 	static const uint16 x[] = { 224, 224, 224 };
@@ -3006,7 +3005,7 @@ void MystScriptParser_Myst::clockResetGear(uint16 gear) {
 	_clockGearsPositions[gear] = 3;
 }
 
-void MystScriptParser_Myst::o_clockResetLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_clockResetLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock reset lever end move", op);
 
 	// Get current lever frame
@@ -3017,7 +3016,7 @@ void MystScriptParser_Myst::o_clockResetLeverEndMove(uint16 op, uint16 var, uint
 	_vm->checkCursorHints();
 }
 
-void MystScriptParser_Myst::o_libraryBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_libraryBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_libraryBookPage = 0;
 	_libraryBookNumPages = argv[0];
 	_libraryBookBaseImage = argv[1];
@@ -3025,13 +3024,13 @@ void MystScriptParser_Myst::o_libraryBook_init(uint16 op, uint16 var, uint16 arg
 	_libraryBookSound2 = argv[3];
 }
 
-void MystScriptParser_Myst::o_courtyardBox_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_courtyardBox_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Courtyard box init", op);
 
 	_courtyardBoxSound = argv[0];
 }
 
-void MystScriptParser_Myst::towerRotationMap_run() {
+void Myst::towerRotationMap_run() {
 	if (!_towerRotationMapInitialized) {
 		_towerRotationMapInitialized = true;
 		_vm->_sound->replaceSoundMyst(4378);
@@ -3072,7 +3071,7 @@ void MystScriptParser_Myst::towerRotationMap_run() {
 	}
 }
 
-void MystScriptParser_Myst::o_towerRotationMap_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_towerRotationMap_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_towerRotationMapRunning = true;
 	_towerRotationMapTower = static_cast<MystResourceType11 *>(_invokingResource);
 	_towerRotationMapLabel = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
@@ -3081,7 +3080,7 @@ void MystScriptParser_Myst::o_towerRotationMap_init(uint16 op, uint16 var, uint1
 	_towerRotationMapClicked = false;
 }
 
-void MystScriptParser_Myst::towerRotationDrawBuildings() {
+void Myst::towerRotationDrawBuildings() {
 	// Draw library
 	_vm->redrawArea(304, false);
 
@@ -3092,7 +3091,7 @@ void MystScriptParser_Myst::towerRotationDrawBuildings() {
 	}
 }
 
-uint16 MystScriptParser_Myst::towerRotationMapComputeAngle() {
+uint16 Myst::towerRotationMapComputeAngle() {
 	_towerRotationSpeed++;
 	if (_towerRotationSpeed >= 7)
 		_towerRotationSpeed = 7;
@@ -3128,7 +3127,7 @@ uint16 MystScriptParser_Myst::towerRotationMapComputeAngle() {
 	return angle;
 }
 
-Common::Point MystScriptParser_Myst::towerRotationMapComputeCoords(const Common::Point &center, uint16 angle) {
+Common::Point Myst::towerRotationMapComputeCoords(const Common::Point &center, uint16 angle) {
 	Common::Point end;
 
 	// Polar to rect coords
@@ -3139,7 +3138,7 @@ Common::Point MystScriptParser_Myst::towerRotationMapComputeCoords(const Common:
 	return end;
 }
 
-void MystScriptParser_Myst::towerRotationMapDrawLine(const Common::Point &center, const Common::Point &end) {
+void Myst::towerRotationMapDrawLine(const Common::Point &center, const Common::Point &end) {
 	Graphics::PixelFormat pf = _vm->_system->getScreenFormat();
 	uint32 color = 0;
 
@@ -3174,27 +3173,27 @@ void MystScriptParser_Myst::towerRotationMapDrawLine(const Common::Point &center
 	_vm->_system->updateScreen();
 }
 
-void MystScriptParser_Myst::towerRotationMapRotate() {
+void Myst::towerRotationMapRotate() {
 	const Common::Point center = Common::Point(383, 124);
 	uint16 angle = towerRotationMapComputeAngle();
 	Common::Point end = towerRotationMapComputeCoords(center, angle);
 	towerRotationMapDrawLine(center, end);
 }
 
-void MystScriptParser_Myst::o_forechamberDoor_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_forechamberDoor_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 4138 (Dock Forechamber Door)
 	// Set forechamber door to closed
 	_tempVar = 0;
 }
 
-void MystScriptParser_Myst::o_shipAccess_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_shipAccess_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Enable acces to the ship
 	if (_state.shipFloating) {
 		_invokingResource->setEnabled(true);
 	}
 }
 
-void MystScriptParser_Myst::o_butterflies_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_butterflies_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Butterflies movie init", op);
 
 	// Used for Card 4256 (Butterfly Movie Activation)
@@ -3206,7 +3205,7 @@ void MystScriptParser_Myst::o_butterflies_init(uint16 op, uint16 var, uint16 arg
 	}
 }
 
-void MystScriptParser_Myst::o_imager_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_imager_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Imager init", op);
 	debugC(kDebugScript, "Var: %d", var);
 
@@ -3215,7 +3214,7 @@ void MystScriptParser_Myst::o_imager_init(uint16 op, uint16 var, uint16 argc, ui
 	_imagerRunning = true;
 }
 
-void MystScriptParser_Myst::imager_run() {
+void Myst::imager_run() {
 	_imagerRunning = false;
 
 	if (_state.imagerActive && _state.imagerSelection == 67) {
@@ -3225,7 +3224,7 @@ void MystScriptParser_Myst::imager_run() {
 	}
 }
 
-void MystScriptParser_Myst::libraryBookcaseTransform_run(void) {
+void Myst::libraryBookcaseTransform_run(void) {
 	if (_libraryBookcaseChanged) {
 		_libraryBookcaseChanged = false;
 		_libraryBookcaseMoving = false;
@@ -3252,7 +3251,7 @@ void MystScriptParser_Myst::libraryBookcaseTransform_run(void) {
 	}
 }
 
-void MystScriptParser_Myst::o_libraryBookcaseTransform_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_libraryBookcaseTransform_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (_libraryBookcaseChanged) {
 		MystResourceType7 *resource = static_cast<MystResourceType7 *>(_invokingResource);
 		_libraryBookcaseMovie = static_cast<MystResourceType6 *>(resource->getSubResource(getVar(0)));
@@ -3261,7 +3260,7 @@ void MystScriptParser_Myst::o_libraryBookcaseTransform_init(uint16 op, uint16 va
 	}
 }
 
-void MystScriptParser_Myst::generatorControlRoom_run(void) {
+void Myst::generatorControlRoom_run(void) {
 	if (_generatorVoltage == _state.generatorVoltage) {
 		generatorRedrawRocket();
 	} else {
@@ -3278,14 +3277,14 @@ void MystScriptParser_Myst::generatorControlRoom_run(void) {
 	}
 }
 
-void MystScriptParser_Myst::o_generatorControlRoom_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_generatorControlRoom_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generator control room init", op);
 
 	_generatorVoltage = _state.generatorVoltage;
 	_generatorControlRoomRunning = true;
 }
 
-void MystScriptParser_Myst::o_fireplace_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_fireplace_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Fireplace grid init", op);
 
 	// Clear fireplace grid
@@ -3293,7 +3292,7 @@ void MystScriptParser_Myst::o_fireplace_init(uint16 op, uint16 var, uint16 argc,
 		_fireplaceLines[i] = 0;
 }
 
-void MystScriptParser_Myst::o_clockGears_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_clockGears_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 4113 (Clock Tower Cog Puzzle)
 	debugC(kDebugScript, "Opcode %d: Gears puzzle init", op);
 
@@ -3311,7 +3310,7 @@ void MystScriptParser_Myst::o_clockGears_init(uint16 op, uint16 var, uint16 argc
 	}
 }
 
-void MystScriptParser_Myst::o_gulls1_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_gulls1_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Gulls init", op);
 
 	if (!_state.shipFloating) {
@@ -3320,7 +3319,7 @@ void MystScriptParser_Myst::o_gulls1_init(uint16 op, uint16 var, uint16 argc, ui
 	}
 }
 
-void MystScriptParser_Myst::gullsFly1_run() {
+void Myst::gullsFly1_run() {
 	static const char* gulls[] = { "birds1", "birds2", "birds3" };
 	uint32 time = _vm->_system->getMillis();
 
@@ -3340,7 +3339,7 @@ void MystScriptParser_Myst::gullsFly1_run() {
 	}
 }
 
-void MystScriptParser_Myst::o_observatory_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_observatory_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Stellar observatory init", op);
 
 	_tempVar = 0;
@@ -3370,13 +3369,13 @@ void MystScriptParser_Myst::o_observatory_init(uint16 op, uint16 var, uint16 arg
 	_observatoryRunning = true;
 }
 
-bool MystScriptParser_Myst::observatoryIsDDMMYYYY2400() {
+bool Myst::observatoryIsDDMMYYYY2400() {
 	// TODO: Auto-detect based on the month rect position
 	return !(_vm->getFeatures() & GF_ME) && (_vm->getLanguage() == Common::FR_FRA
 			|| _vm->getLanguage() == Common::DE_DEU);
 }
 
-void MystScriptParser_Myst::observatoryUpdateVisualizer(uint16 x, uint16 y) {
+void Myst::observatoryUpdateVisualizer(uint16 x, uint16 y) {
 	Common::Rect &visu0 = _observatoryVisualizer->_subImages[0].rect;
 	Common::Rect &visu1 = _observatoryVisualizer->_subImages[1].rect;
 
@@ -3391,7 +3390,7 @@ void MystScriptParser_Myst::observatoryUpdateVisualizer(uint16 x, uint16 y) {
 	visu1.bottom = visu0.bottom;
 }
 
-void MystScriptParser_Myst::observatorySetTargetToSetting() {
+void Myst::observatorySetTargetToSetting() {
 	uint32 visuX = _state.observatoryTimeSetting * 7 / 25;
 	uint32 visuY = 250 * _state.observatoryYearSetting
 			+ 65 * (_state.observatoryMonthSetting + 1)
@@ -3405,7 +3404,7 @@ void MystScriptParser_Myst::observatorySetTargetToSetting() {
 	_state.observatoryTimeTarget = _state.observatoryTimeSetting;
 }
 
-void MystScriptParser_Myst::observatory_run() {
+void Myst::observatory_run() {
 	if (_observatoryNotInitialized) {
 		_observatoryNotInitialized = false;
 
@@ -3463,7 +3462,7 @@ void MystScriptParser_Myst::observatory_run() {
 	}
 }
 
-void MystScriptParser_Myst::o_gulls2_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_gulls2_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Gulls init", op);
 
 	if (!_state.shipFloating) {
@@ -3472,7 +3471,7 @@ void MystScriptParser_Myst::o_gulls2_init(uint16 op, uint16 var, uint16 argc, ui
 	}
 }
 
-void MystScriptParser_Myst::gullsFly2_run() {
+void Myst::gullsFly2_run() {
 	static const char* gulls[] = { "birds1", "birds2", "birds3" };
 	uint32 time = _vm->_system->getMillis();
 
@@ -3486,13 +3485,13 @@ void MystScriptParser_Myst::gullsFly2_run() {
 	}
 }
 
-void MystScriptParser_Myst::o_treeCard_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_treeCard_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Enter tree card", op);
 
 	_tree = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
-void MystScriptParser_Myst::o_treeEntry_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_treeEntry_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Enter tree card with entry", op);
 
 	_treeAlcove = static_cast<MystResourceType5 *>(_invokingResource);
@@ -3502,7 +3501,7 @@ void MystScriptParser_Myst::o_treeEntry_init(uint16 op, uint16 var, uint16 argc,
 	treeSetAlcoveAccessible();
 }
 
-void MystScriptParser_Myst::opcode_218(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::opcode_218(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used for Card 4097 (Cabin Boiler)
@@ -3520,7 +3519,7 @@ void MystScriptParser_Myst::opcode_218(uint16 op, uint16 var, uint16 argc, uint1
 	}
 }
 
-void MystScriptParser_Myst::o_rocketSliders_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_rocketSliders_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket sliders init", op);
 
 	_rocketSlider1 = static_cast<MystResourceType10 *>(_vm->_resources[argv[0]]);
@@ -3541,12 +3540,12 @@ void MystScriptParser_Myst::o_rocketSliders_init(uint16 op, uint16 var, uint16 a
 	_rocketSlider5->setPosition(_state.rocketSliderPosition[4]);
 }
 
-void MystScriptParser_Myst::o_rocketLinkVideo_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_rocketLinkVideo_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket link video init", op);
 	_tempVar = 0;
 }
 
-void MystScriptParser_Myst::o_greenBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_greenBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 4168 (Green Book Movies)
 	debugC(kDebugScript, "Opcode %d: Green book init", op);
 
@@ -3554,7 +3553,7 @@ void MystScriptParser_Myst::o_greenBook_init(uint16 op, uint16 var, uint16 argc,
 	_tempVar = 1;
 }
 
-void MystScriptParser_Myst::greenBook_run() {
+void Myst::greenBook_run() {
 	uint loopStart = 0;
 	uint loopEnd = 0;
 	Common::String file;
@@ -3589,7 +3588,7 @@ void MystScriptParser_Myst::greenBook_run() {
 	}
 }
 
-void MystScriptParser_Myst::o_gulls3_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_gulls3_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Gulls init", op);
 
 	if (!_state.shipFloating) {
@@ -3598,7 +3597,7 @@ void MystScriptParser_Myst::o_gulls3_init(uint16 op, uint16 var, uint16 argc, ui
 	}
 }
 
-void MystScriptParser_Myst::gullsFly3_run() {
+void Myst::gullsFly3_run() {
 	static const char* gulls[] = { "birds1", "birds2", "birds3" };
 	uint32 time = _vm->_system->getMillis();
 
@@ -3614,7 +3613,7 @@ void MystScriptParser_Myst::gullsFly3_run() {
 	}
 }
 
-void MystScriptParser_Myst::o_bookAddSpecialPage_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_bookAddSpecialPage_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Book Exit Function", op);
 
 	uint16 numPages = bookCountPages(var);
@@ -3628,22 +3627,23 @@ void MystScriptParser_Myst::o_bookAddSpecialPage_exit(uint16 op, uint16 var, uin
 	}
 }
 
-void MystScriptParser_Myst::o_treeCard_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_treeCard_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Exit tree card", op);
 
 	_tree = 0;
 }
 
-void MystScriptParser_Myst::o_treeEntry_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_treeEntry_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Exit tree card with entry", op);
 
 	_treeAlcove = 0;
 }
 
-void MystScriptParser_Myst::o_generatorControlRoom_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Myst::o_generatorControlRoom_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generator room exit", op);
 
 	_generatorVoltage = _state.generatorVoltage;
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

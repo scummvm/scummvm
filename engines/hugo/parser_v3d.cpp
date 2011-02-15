@@ -174,14 +174,14 @@ void Parser_v3d::lineHandler() {
 	}
 
 	// No objects match command line, try background and catchall commands
-	if (isBackgroundWord_v3(_vm->_backgroundObjects[*_vm->_screen_p]))
+	if (isBackgroundWord_v3(_backgroundObjects[*_vm->_screen_p]))
 		return;
-	if (isCatchallVerb_v3(_vm->_backgroundObjects[*_vm->_screen_p]))
+	if (isCatchallVerb_v3(_backgroundObjects[*_vm->_screen_p]))
 		return;
 
-	if (isBackgroundWord_v3(_vm->_catchallList))
+	if (isBackgroundWord_v3(_catchallList))
 		return;
-	if (isCatchallVerb_v3(_vm->_catchallList))
+	if (isCatchallVerb_v3(_catchallList))
 		return;
 
 	// If a not-near comment was generated, print it
@@ -219,23 +219,23 @@ bool Parser_v3d::isObjectVerb_v3(object_t *obj, char *comment) {
 		return false;
 
 	int i;
-	for (i = 0; _vm->_cmdList[cmdIndex][i].verbIndex != 0; i++) {                 // For each cmd
-		if (isWordPresent(_vm->_text->getVerbArray(_vm->_cmdList[cmdIndex][i].verbIndex)))        // Was this verb used?
+	for (i = 0; _cmdList[cmdIndex][i].verbIndex != 0; i++) {                           // For each cmd
+		if (isWordPresent(_vm->_text->getVerbArray(_cmdList[cmdIndex][i].verbIndex)))  // Was this verb used?
 			break;
 	}
 
-	if (_vm->_cmdList[cmdIndex][i].verbIndex == 0)   // No verbs used.
+	if (_cmdList[cmdIndex][i].verbIndex == 0)       // No verbs used.
 		return false;
 
 	// Verb match found.  Check if object is Near
-	char *verb = *_vm->_text->getVerbArray(_vm->_cmdList[cmdIndex][i].verbIndex);
+	char *verb = *_vm->_text->getVerbArray(_cmdList[cmdIndex][i].verbIndex);
 	if (!isNear_v3(obj, verb, comment))
 		return false;
 
 	// Check all required objects are being carried
-	cmd *cmnd = &_vm->_cmdList[cmdIndex][i];         // ptr to struct cmd
+	cmd *cmnd = &_cmdList[cmdIndex][i];             // ptr to struct cmd
 	if (cmnd->reqIndex) {                           // At least 1 thing in list
-		uint16 *reqs = _vm->_arrayReqs[cmnd->reqIndex];      // ptr to list of required objects
+		uint16 *reqs = _arrayReqs[cmnd->reqIndex];  // ptr to list of required objects
 		for (i = 0; reqs[i]; i++) {                 // for each obj
 			if (!_vm->_object->isCarrying(reqs[i])) {
 				Utils::Box(kBoxAny, "%s", _vm->_text->getTextData(cmnd->textDataNoCarryIndex));

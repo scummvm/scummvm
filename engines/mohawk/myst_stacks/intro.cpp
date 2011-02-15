@@ -34,17 +34,18 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
-MystScriptParser_Intro::MystScriptParser_Intro(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
+Intro::Intro(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
 }
 
-MystScriptParser_Intro::~MystScriptParser_Intro() {
+Intro::~Intro() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Intro::x, #x))
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Intro::x, #x))
 
-void MystScriptParser_Intro::setupOpcodes() {
+void Intro::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, o_useLinkBook);
 
@@ -58,12 +59,12 @@ void MystScriptParser_Intro::setupOpcodes() {
 
 #undef OPCODE
 
-void MystScriptParser_Intro::disablePersistentScripts() {
+void Intro::disablePersistentScripts() {
 	_introMoviesRunning = false;
 	_linkBookRunning = false;
 }
 
-void MystScriptParser_Intro::runPersistentScripts() {
+void Intro::runPersistentScripts() {
 	if (_introMoviesRunning)
 		introMovies_run();
 
@@ -71,7 +72,7 @@ void MystScriptParser_Intro::runPersistentScripts() {
 		mystLinkBook_run();
 }
 
-uint16 MystScriptParser_Intro::getVar(uint16 var) {
+uint16 Intro::getVar(uint16 var) {
 	switch(var) {
 	case 0:
 		if (_globals.currentAge == 9 || _globals.currentAge == 10)
@@ -83,7 +84,7 @@ uint16 MystScriptParser_Intro::getVar(uint16 var) {
 	}
 }
 
-void MystScriptParser_Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Hard coded SoundId valid only for Intro Stack.
 	// Other stacks use Opcode 40, which takes SoundId values as arguments.
 	const uint16 soundIdLinkSrc = 5;
@@ -96,7 +97,7 @@ void MystScriptParser_Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, u
 	_vm->changeToStack(_stackMap[_globals.currentAge], _startCard[_globals.currentAge], soundIdLinkSrc, soundIdLinkDst[_globals.currentAge]);
 }
 
-void MystScriptParser_Intro::introMovies_run() {
+void Intro::introMovies_run() {
 	// Play Intro Movies
 	// This is all quite messy...
 
@@ -156,12 +157,12 @@ void MystScriptParser_Intro::introMovies_run() {
 	}
 }
 
-void MystScriptParser_Intro::o_playIntroMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Intro::o_playIntroMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_introMoviesRunning = true;
 	_introStep = 0;
 }
 
-void MystScriptParser_Intro::mystLinkBook_run() {
+void Intro::mystLinkBook_run() {
 	if (_startTime == 1) {
 		_startTime = 0;
 
@@ -175,7 +176,7 @@ void MystScriptParser_Intro::mystLinkBook_run() {
 	}
 }
 
-void MystScriptParser_Intro::o_mystLinkBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Intro::o_mystLinkBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Myst link book init", op);
 
 	_linkBookMovie = static_cast<MystResourceType6 *>(_invokingResource);
@@ -183,4 +184,5 @@ void MystScriptParser_Intro::o_mystLinkBook_init(uint16 op, uint16 var, uint16 a
 	_linkBookRunning = true;
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

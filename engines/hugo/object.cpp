@@ -48,9 +48,10 @@
 
 namespace Hugo {
 
-ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0) {
+ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0), _uses(0) {
 	_numObj = 0;
 	_objCount = 0;
+	_usesSize = 0;
 	memset(_objBound, '\0', sizeof(overlay_t));
 	memset(_boundary, '\0', sizeof(overlay_t));
 	memset(_overlay,  '\0', sizeof(overlay_t));
@@ -108,20 +109,20 @@ void ObjectHandler::useObject(int16 objId) {
 		if ((obj->genericCmd & TAKE) || obj->objValue)  // Get collectible item
 			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_take, 0), _vm->_text->getNoun(obj->nounIndex, 0));
 		else if (obj->cmdIndex != 0)                // Use non-collectible item if able
-			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_cmdList[obj->cmdIndex][0].verbIndex, 0), _vm->_text->getNoun(obj->nounIndex, 0));
-		else if ((verb = _vm->useBG(_vm->_text->getNoun(obj->nounIndex, 0))) != 0)
+			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(obj->cmdIndex), 0), _vm->_text->getNoun(obj->nounIndex, 0));
+		else if ((verb = _vm->_parser->useBG(_vm->_text->getNoun(obj->nounIndex, 0))) != 0)
 			sprintf(_vm->_line, "%s %s", verb, _vm->_text->getNoun(obj->nounIndex, 0));
 		else
 			return;                                 // Can't use object directly
 	} else {
 		// Use status.objid on objid
 		// Default to first cmd verb
-		sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(_vm->_cmdList[_objects[inventObjId].cmdIndex][0].verbIndex, 0),
+		sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(_objects[inventObjId].cmdIndex), 0),
 			                       _vm->_text->getNoun(_objects[inventObjId].nounIndex, 0),
 			                       _vm->_text->getNoun(obj->nounIndex, 0));
 
 		// Check valid use of objects and override verb if necessary
-		for (uses_t *use = _vm->_uses; use->objId != _numObj; use++) {
+		for (uses_t *use = _uses; use->objId != _numObj; use++) {
 			if (inventObjId == use->objId) {
 				// Look for secondary object, if found use matching verb
 				bool foundFl = false;
@@ -212,40 +213,52 @@ void ObjectHandler::lookObject(object_t *obj) {
 }
 
 /**
- * Free all object images
+ * Free all object images, uses and ObjArr (before exiting)
  */
 void ObjectHandler::freeObjects() {
 	debugC(1, kDebugObject, "freeObjects");
 
-	// Nothing to do if not allocated yet
-	if (_vm->_hero == 0 || _vm->_hero->seqList[0].seqPtr == 0)
-		return;
-
-	// Free all sequence lists and image data
-	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];
-		for (int j = 0; j < obj->seqNumb; j++) {
-			seq_t *seq = obj->seqList[j].seqPtr;
-			seq_t *next;
-			if (seq == 0) // Failure during database load
-				break;
-			if (seq->imagePtr != 0) {
-				free(seq->imagePtr);
-				seq->imagePtr = 0;
-			}
-			seq = seq->nextSeqPtr;
-			while (seq != obj->seqList[j].seqPtr) {
+	if (_vm->_hero != 0 && _vm->_hero->seqList[0].seqPtr != 0) {
+		// Free all sequence lists and image data
+		for (int16 i = 0; i < _numObj; i++) {
+			object_t *obj = &_objects[i];
+			for (int16 j = 0; j < obj->seqNumb; j++) {
+				seq_t *seq = obj->seqList[j].seqPtr;
+				seq_t *next;
+				if (seq == 0) // Failure during database load
+					break;
 				if (seq->imagePtr != 0) {
 					free(seq->imagePtr);
 					seq->imagePtr = 0;
 				}
-				next = seq->nextSeqPtr;
+				seq = seq->nextSeqPtr;
+				while (seq != obj->seqList[j].seqPtr) {
+					if (seq->imagePtr != 0) {
+						free(seq->imagePtr);
+						seq->imagePtr = 0;
+					}
+					next = seq->nextSeqPtr;
+					free(seq);
+					seq = next;
+				}
 				free(seq);
-				seq = next;
 			}
-			free(seq);
 		}
 	}
+
+	if (_uses) {
+		for (int16 i = 0; i < _usesSize; i++)
+			free(_uses[i].targets);
+		free(_uses);
+	}
+
+	for(int16 i = 0; i < _objCount; i++) {
+		free(_objects[i].stateDataIndex);
+		_objects[i].stateDataIndex = 0;
+	}
+
+	free(_objects);
+	_objects = 0;
 }
 
 /**
@@ -356,15 +369,34 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 }
 
 /**
- * Free ObjectArr (before exiting)
+ * Load _uses from Hugo.dat
  */
-void ObjectHandler::freeObjectArr() {
-	for(int16 i = 0; i < _objCount; i++) {
-		free(_objects[i].stateDataIndex);
-		_objects[i].stateDataIndex = 0;
+void ObjectHandler::loadObjectUses(Common::ReadStream &in) {
+	//Read _uses
+	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
+		uint16 numElem = in.readUint16BE();
+		uses_t *wrkUses = (uses_t *)malloc(sizeof(uses_t) * numElem);
+
+		for (int i = 0; i < numElem; i++) {
+			wrkUses[i].objId = in.readSint16BE();
+			wrkUses[i].dataIndex = in.readUint16BE();
+			uint16 numSubElem = in.readUint16BE();
+			wrkUses[i].targets = (target_t *)malloc(sizeof(target_t) * numSubElem);
+			for (int j = 0; j < numSubElem; j++) {
+				wrkUses[i].targets[j].nounIndex = in.readUint16BE();
+				wrkUses[i].targets[j].verbIndex = in.readUint16BE();
+			}
+		}
+
+		if (varnt == _vm->_gameVariant) {
+			_usesSize = numElem;
+			_uses = wrkUses;
+		} else {
+			for (int i = 0; i < numElem; i++)
+				free(wrkUses[i].targets);
+			free(wrkUses);
+		}
 	}
-	free(_objects);
-	_objects = 0;
 }
 
 /**

@@ -1156,7 +1156,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV4,
 		0,
-		0,
+		0
 	},
 
 	{
@@ -1171,7 +1171,25 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV4,
 		0,
+		0
+	},
+
+	// Rugrats Adventure Game
+	// French Windows
+	// From Strangerke
+	{
+		{
+			"rugrats",
+			"",
+			AD_ENTRY1("outline", "36225e0b4986a80135cfdd9643cc7030"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV4,
 		0,
+		0
 	},
 
 	{

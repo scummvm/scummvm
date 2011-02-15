@@ -32,15 +32,16 @@
 
 namespace Mohawk {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
-
-class MohawkEngine_Myst;
 struct MystScriptEntry;
 
-class MystScriptParser_Credits : public MystScriptParser {
+namespace MystStacks {
+
+#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+
+class Credits : public MystScriptParser {
 public:
-	MystScriptParser_Credits(MohawkEngine_Myst *vm);
-	~MystScriptParser_Credits();
+	Credits(MohawkEngine_Myst *vm);
+	~Credits();
 
 	void disablePersistentScripts();
 	void runPersistentScripts();
@@ -55,6 +56,7 @@ private:
 	uint16 _curImage; // 56
 };
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk
 
 #undef DECLARE_OPCODE

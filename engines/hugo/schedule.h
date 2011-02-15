@@ -458,31 +458,40 @@ public:
 	virtual void decodeString(char *line) = 0;
 	virtual void runScheduler() = 0;
 
-	void freeActListArr();
+	int16 calcMaxPoints() const;
+
+	void freeScheduler();
+	void initCypher();
 	void initEventQueue();
 	void insertActionList(const uint16 actIndex);
 	void loadActListArr(Common::ReadStream &in);
 	void loadAlNewscrIndex(Common::ReadStream &in);
+	void loadPoints(Common::ReadStream &in);
+	void loadScreenAct(Common::ReadStream &in);
 	void newScreen(const int screenIndex);
 	void processBonus(const int bonusIndex);
 	void processMaze(const int x1, const int x2, const int y1, const int y2);
+	void restoreSchedulerData(Common::ReadStream *in);
 	void restoreScreen(const int screenIndex);
-	void restoreEvents(Common::ReadStream *f);
-	void saveEvents(Common::WriteStream *f);
+	void saveSchedulerData(Common::WriteStream *out);
 	void waitForRefresh();
 
 	void findAction(act* action, int16* index, int16* subElem);
-	void saveActions(Common::WriteStream* f) const;
-	void restoreActions(Common::ReadStream *f);
-
 protected:
 	HugoEngine *_vm;
 	static const int kFilenameLength = 12;          // Max length of a DOS file name
 	static const int kMaxEvents = 50;               // Max events in event queue
 	static const int kShiftSize = 8;                // Place hero this far inside bounding box
 
+	Common::String _cypher;
+
 	uint16   _actListArrSize;
 	uint16   _alNewscrIndex;
+	uint16   _screenActsSize;
+	uint16 **_screenActs;
+
+	byte     _numBonuses;
+	point_t *_points;
 
 	uint32 _curTick;                                // Current system time in ticks
 	uint32 _oldTime;                                // The previous wall time in ticks
@@ -510,6 +519,14 @@ protected:
 	void delEventType(const action_t actTypeDel);
 	void delQueue(event_t *curEvent);
 	void insertAction(act *action);
+	void restoreActions(Common::ReadStream *f);
+	void restoreEvents(Common::ReadStream *f);
+	void restorePoints(Common::ReadStream *in);
+	void saveActions(Common::WriteStream* f) const;
+	void saveEvents(Common::WriteStream *f);
+	void savePoints(Common::WriteStream *out) const;
+	void screenActions(const int screenNum);
+
 };
 
 class Scheduler_v1d : public Scheduler {

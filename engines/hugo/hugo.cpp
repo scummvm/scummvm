@@ -54,10 +54,8 @@ maze_t      _maze;                              // Default to not in maze
 hugo_boot_t _boot;                              // Boot info structure file
 
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd),
-	_arrayReqs(0), _invent(0), _uses(0), _catchallList(0), _backgroundObjects(0),	_points(0), _cmdList(0), 
-	_screenActs(0), _hero(0), _heroImage(0), _defltTunes(0), _introX(0), _introY(0), _maxInvent(0), _numBonuses(0),
-	_numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0), _screenStates(0), _score(0), _maxscore(0),
-	_backgroundObjectsSize(0), _screenActsSize(0), _usesSize(0), _lastTime(0), _curTime(0)
+	_hero(0), _heroImage(0), _defltTunes(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0),
+	_screenStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0)
 {
 	_system = syst;
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
@@ -76,61 +74,22 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 }
 
 HugoEngine::~HugoEngine() {
-	shutdown();
+	_file->closeDatabaseFiles();
 
-	_screen->freePalette();
-	_text->freeAllTexts();
-
-	free(_introX);
-	free(_introY);
-
-	if (_arrayReqs) {
-		for (int i = 0; _arrayReqs[i] != 0; i++)
-			free(_arrayReqs[i]);
-		free(_arrayReqs);
-	}
-
+	_intro->freeIntroData();
+	_inventory->freeInvent();
 	_mouse->freeHotspots();
-	free(_invent);
-
-	if (_uses) {
-		for (int i = 0; i < _usesSize; i++)
-			free(_uses[i].targets);
-		free(_uses);
-	}
-
-	free(_catchallList);
-
-	if (_backgroundObjects) {
-		for (int i = 0; i < _backgroundObjectsSize; i++)
-			free(_backgroundObjects[i]);
-		free(_backgroundObjects);
-	}
-
-	free(_points);
-
-	if (_cmdList) {
-		for (int i = 0; i < _cmdListSize; i++)
-			free(_cmdList[i]);
-		free(_cmdList);
-	}
-
-	if (_screenActs) {
-		for (int i = 0; i < _screenActsSize; i++)
-			free(_screenActs[i]);
-		free(_screenActs);
-	}
-
-	_object->freeObjectArr();
-	_scheduler->freeActListArr();
+	_object->freeObjects();
+	_parser->freeParser();
+	_scheduler->freeScheduler();
+	_screen->freeScreen();
+	_text->freeAllTexts();
 
 	free(_defltTunes);
 	free(_screenStates);
 
-	_screen->freeFonts();
 
 	delete _topMenu;
-
 	delete _object;
 	delete _sound;
 	delete _route;
@@ -236,11 +195,12 @@ Common::Error HugoEngine::run() {
 	_screen->setCursorPal();
 	_screen->resetInventoryObjId();
 
+	_scheduler->initCypher();
+
 	initStatus();                                   // Initialize game status
 	initConfig();                                   // Initialize user's config
 	initialize();
 	resetConfig();                                  // Reset user's config
-
 	initMachine();
 
 	// Start the state machine
@@ -388,207 +348,23 @@ bool HugoEngine::loadHugoDat() {
 	}
 
 	_numVariant = in.readUint16BE();
+
 	_screen->loadPalette(in);
 	_text->loadAllTexts(in);
-
-	// Read x_intro and y_intro
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		int numRows = in.readUint16BE();
-		if (varnt == _gameVariant) {
-			_introXSize = numRows;
-			_introX = (byte *)malloc(sizeof(byte) * _introXSize);
-			_introY = (byte *)malloc(sizeof(byte) * _introXSize);
-			for (int i = 0; i < _introXSize; i++) {
-				_introX[i] = in.readByte();
-				_introY[i] = in.readByte();
-			}
-		} else {
-			for (int i = 0; i < numRows; i++) {
-				in.readByte();
-				in.readByte();
-			}
-		}
-	}
-
-	// Read _arrayReqs
-	_arrayReqs = loadLongArray(in);
-
+	_intro->loadIntroData(in);
+	_parser->loadArrayReqs(in);
 	_mouse->loadHotspots(in);
-
-	int numElem, numSubElem;
-	//Read _invent
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numElem = in.readUint16BE();
-		if (varnt == _gameVariant) {
-			_maxInvent = numElem;
-			_invent = (int16 *)malloc(sizeof(int16) * numElem);
-			for (int i = 0; i < numElem; i++)
-				_invent[i] = in.readSint16BE();
-		} else {
-			for (int i = 0; i < numElem; i++)
-				in.readSint16BE();
-		}
-	}
-
-	//Read _uses
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numElem = in.readUint16BE();
-		uses_t *wrkUses = (uses_t *)malloc(sizeof(uses_t) * numElem);
-
-		for (int i = 0; i < numElem; i++) {
-			wrkUses[i].objId = in.readSint16BE();
-			wrkUses[i].dataIndex = in.readUint16BE();
-			numSubElem = in.readUint16BE();
-			wrkUses[i].targets = (target_t *)malloc(sizeof(target_t) * numSubElem);
-			for (int j = 0; j < numSubElem; j++) {
-				wrkUses[i].targets[j].nounIndex = in.readUint16BE();
-				wrkUses[i].targets[j].verbIndex = in.readUint16BE();
-			}
-		}
-
-		if (varnt == _gameVariant) {
-			_usesSize = numElem;
-			_uses = wrkUses;
-		} else {
-			for (int i = 0; i < numElem; i++)
-				free(wrkUses[i].targets);
-			free(wrkUses);
-		}
-	}
-
-	//Read _catchallList
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numElem = in.readUint16BE();
-		background_t *wrkCatchallList = (background_t *)malloc(sizeof(background_t) * numElem);
-
-		for (int i = 0; i < numElem; i++) {
-			wrkCatchallList[i].verbIndex = in.readUint16BE();
-			wrkCatchallList[i].nounIndex = in.readUint16BE();
-			wrkCatchallList[i].commentIndex = in.readSint16BE();
-			wrkCatchallList[i].matchFl = (in.readByte() != 0);
-			wrkCatchallList[i].roomState = in.readByte();
-			wrkCatchallList[i].bonusIndex = in.readByte();
-		}
-
-		if (varnt == _gameVariant)
-			_catchallList = wrkCatchallList;
-		else
-			free(wrkCatchallList);
-	}
-
-	// Read _background_objects
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numElem = in.readUint16BE();
-
-		background_t **wrkBackgroundObjects = (background_t **)malloc(sizeof(background_t *) * numElem);
-
-		for (int i = 0; i < numElem; i++) {
-			numSubElem = in.readUint16BE();
-			wrkBackgroundObjects[i] = (background_t *)malloc(sizeof(background_t) * numSubElem);
-			for (int j = 0; j < numSubElem; j++) {
-				wrkBackgroundObjects[i][j].verbIndex = in.readUint16BE();
-				wrkBackgroundObjects[i][j].nounIndex = in.readUint16BE();
-				wrkBackgroundObjects[i][j].commentIndex = in.readSint16BE();
-				wrkBackgroundObjects[i][j].matchFl = (in.readByte() != 0);
-				wrkBackgroundObjects[i][j].roomState = in.readByte();
-				wrkBackgroundObjects[i][j].bonusIndex = in.readByte();
-			}
-		}
-
-		if (varnt == _gameVariant) {
-			_backgroundObjectsSize = numElem;
-			_backgroundObjects = wrkBackgroundObjects;
-		} else {
-			for (int i = 0; i < numElem; i++)
-				free(wrkBackgroundObjects[i]);
-			free(wrkBackgroundObjects);
-		}
-	}
-
-	// Read _points
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numElem = in.readUint16BE();
-		if (varnt == _gameVariant) {
-			_numBonuses = numElem;
-			_points = (point_t *)malloc(sizeof(point_t) * _numBonuses);
-			for (int i = 0; i < _numBonuses; i++) {
-				_points[i].score = in.readByte();
-				_points[i].scoredFl = false;
-			}
-		} else {
-			for (int i = 0; i < numElem; i++)
-				in.readByte();
-		}
-	}
-
-	// Read _cmdList
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numElem = in.readUint16BE();
-		if (varnt == _gameVariant) {
-			_cmdListSize = numElem;
-			_cmdList = (cmd **)malloc(sizeof(cmd *) * _cmdListSize);
-			for (int i = 0; i < _cmdListSize; i++) {
-				numSubElem = in.readUint16BE();
-				_cmdList[i] = (cmd *)malloc(sizeof(cmd) * numSubElem);
-				for (int j = 0; j < numSubElem; j++) {
-					_cmdList[i][j].verbIndex = in.readUint16BE();
-					_cmdList[i][j].reqIndex = in.readUint16BE();
-					_cmdList[i][j].textDataNoCarryIndex = in.readUint16BE();
-					_cmdList[i][j].reqState = in.readByte();
-					_cmdList[i][j].newState = in.readByte();
-					_cmdList[i][j].textDataWrongIndex = in.readUint16BE();
-					_cmdList[i][j].textDataDoneIndex = in.readUint16BE();
-					_cmdList[i][j].actIndex = in.readUint16BE();
-				}
-			}
-		} else {
-			for (int i = 0; i < numElem; i++) {
-				numSubElem = in.readUint16BE();
-				for (int j = 0; j < numSubElem; j++) {
-					in.readUint16BE();
-					in.readUint16BE();
-					in.readUint16BE();
-					in.readByte();
-					in.readByte();
-					in.readUint16BE();
-					in.readUint16BE();
-					in.readUint16BE();
-				}
-			}
-		}
-	}
-
-	// Read _screenActs
-	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numElem = in.readUint16BE();
-
-		uint16 **wrkScreenActs = (uint16 **)malloc(sizeof(uint16 *) * numElem);
-		for (int i = 0; i < numElem; i++) {
-			numSubElem = in.readUint16BE();
-			if (numSubElem == 0) {
-				wrkScreenActs[i] = 0;
-			} else {
-				wrkScreenActs[i] = (uint16 *)malloc(sizeof(uint16) * numSubElem);
-				for (int j = 0; j < numSubElem; j++)
-					wrkScreenActs[i][j] = in.readUint16BE();
-			}
-		}
-
-		if (varnt == _gameVariant) {
-			_screenActsSize = numElem;
-			_screenActs = wrkScreenActs;
-		} else {
-			for (int i = 0; i < numElem; i++)
-				free(wrkScreenActs[i]);
-			free(wrkScreenActs);
-		}
-	}
+	_inventory->loadInvent(in);
+	_object->loadObjectUses(in);
+	_parser->loadCatchallList(in);
+	_parser->loadBackgroundObjects(in);
+	_scheduler->loadPoints(in);
+	_parser->loadCmdList(in);
+	_scheduler->loadScreenAct(in);
 	_object->loadObjectArr(in);
-
 	_hero = &_object->_objects[kHeroIndex];         // This always points to hero
 	_screen_p = &(_object->_objects[kHeroIndex].screenIndex); // Current screen is hero's
 	_heroImage = kHeroIndex;                        // Current in use hero image
-
 	_scheduler->loadActListArr(in);
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
@@ -602,6 +378,8 @@ bool HugoEngine::loadHugoDat() {
 			in.readSByte();
 		}
 	}
+
+	int numElem;
 
 	//Read _defltTunes
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
@@ -792,16 +570,6 @@ void HugoEngine::initialize() {
 }
 
 /**
- * Restore all resources before termination
- */
-void HugoEngine::shutdown() {
-	debugC(1, kDebugEngine, "shutdown");
-
-	_file->closeDatabaseFiles();
-	_object->freeObjects();
-}
-
-/**
  * Read scenery, overlay files for given screen number
  */
 void HugoEngine::readScreenFiles(const int screenNum) {
@@ -820,37 +588,6 @@ void HugoEngine::readScreenFiles(const int screenNum) {
 }
 
 /**
- * Search background command list for this screen for supplied object.
- * Return first associated verb (not "look") or 0 if none found.
- */
-const char *HugoEngine::useBG(const char *name) {
-	debugC(1, kDebugEngine, "useBG(%s)", name);
-
-	objectList_t p = _backgroundObjects[*_screen_p];
-	for (int i = 0; p[i].verbIndex != 0; i++) {
-		if ((name == _text->getNoun(p[i].nounIndex, 0) &&
-		     p[i].verbIndex != _look) &&
-		    ((p[i].roomState == kStateDontCare) || (p[i].roomState == _screenStates[*_screen_p])))
-			return _text->getVerb(p[i].verbIndex, 0);
-	}
-
-	return 0;
-}
-
-/**
- * Add action lists for this screen to event queue
- */
-void HugoEngine::screenActions(const int screenNum) {
-	debugC(1, kDebugEngine, "screenActions(%d)", screenNum);
-
-	uint16 *screenAct = _screenActs[screenNum];
-	if (screenAct) {
-		for (int i = 0; screenAct[i]; i++)
-			_scheduler->insertActionList(screenAct[i]);
-	}
-}
-
-/**
  * Set the new screen number into the hero object and any carried objects
  */
 void HugoEngine::setNewScreen(const int screenNum) {
@@ -866,10 +603,7 @@ void HugoEngine::setNewScreen(const int screenNum) {
 void HugoEngine::calcMaxScore() {
 	debugC(1, kDebugEngine, "calcMaxScore");
 
-	_maxscore = _object->calcMaxScore();
-
-	for (int i = 0; i < _numBonuses; i++)
-		_maxscore += _points[i].score;
+	_maxscore = _object->calcMaxScore() + _scheduler->calcMaxPoints();
 }
 
 /**

@@ -36,29 +36,9 @@
 namespace Sci {
 
 EventManager::EventManager(bool fontIsExtended) : _fontIsExtended(fontIsExtended), _modifierStates(0) {
-
-	if (getSciVersion() >= SCI_VERSION_1_MIDDLE) {
-		_usesNewKeyboardDirectionType = true;
-	} else if (getSciVersion() <= SCI_VERSION_01) {
-		_usesNewKeyboardDirectionType = false;
-	} else {
-		// they changed this somewhere inbetween SCI1EGA/EARLY
-		_usesNewKeyboardDirectionType = false;
-
-		// We are looking if script 933 exists, that one has the PseudoMouse class in it that handles it
-		//  The good thing is that PseudoMouse seems to only exists in games that use the new method
-		if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 933)))
-			_usesNewKeyboardDirectionType = true;
-		// Checking the keyboard driver size in here would also be a valid method, but the driver is only available
-		//  in PC versions of the game
-	}
 }
 
 EventManager::~EventManager() {
-}
-
-bool EventManager::getUsesNewKeyboardDirectionType() {
-	return _usesNewKeyboardDirectionType;
 }
 
 struct ScancodeRow {

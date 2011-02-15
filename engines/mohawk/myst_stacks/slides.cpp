@@ -33,19 +33,18 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
-// NOTE: Credits Start Card is 10000
-
-MystScriptParser_Slides::MystScriptParser_Slides(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
+Slides::Slides(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
 }
 
-MystScriptParser_Slides::~MystScriptParser_Slides() {
+Slides::~Slides() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Slides::x, #x))
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Slides::x, #x))
 
-void MystScriptParser_Slides::setupOpcodes() {
+void Slides::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, o_returnToMenu);
 
@@ -55,11 +54,11 @@ void MystScriptParser_Slides::setupOpcodes() {
 
 #undef OPCODE
 
-void MystScriptParser_Slides::disablePersistentScripts() {
+void Slides::disablePersistentScripts() {
 	_cardSwapEnabled = false;
 }
 
-void MystScriptParser_Slides::runPersistentScripts() {
+void Slides::runPersistentScripts() {
 	if (_cardSwapEnabled) {
 		// Used on Cards...
 		if (_vm->_system->getMillis() - _lastCardTime >= 2 * 1000)
@@ -67,11 +66,11 @@ void MystScriptParser_Slides::runPersistentScripts() {
 	}
 }
 
-void MystScriptParser_Slides::o_returnToMenu(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Slides::o_returnToMenu(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_vm->changeToStack(kDemoStack, 2001, 0, 0);
 }
 
-void MystScriptParser_Slides::o_setCardSwap(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Slides::o_setCardSwap(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Cards...
 	if (argc == 1) {
 		_nextCardID = argv[0];
@@ -81,4 +80,5 @@ void MystScriptParser_Slides::o_setCardSwap(uint16 op, uint16 var, uint16 argc, 
 		unknown(op, var, argc, argv);
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

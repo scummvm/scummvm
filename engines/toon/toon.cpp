@@ -185,7 +185,7 @@ void ToonEngine::parseInput() {
 
 		bool hasModifier = event.kbd.hasFlags(Common::KBD_ALT|Common::KBD_CTRL|Common::KBD_SHIFT);
 		switch (event.type) {
-		case Common::EVENT_KEYUP:
+		case Common::EVENT_KEYDOWN:
 			if ((event.kbd.ascii == 27 || event.kbd.ascii == 32) && !hasModifier) {
 				_audioManager->stopCurrentVoice();
 			}
@@ -588,6 +588,8 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 	AudioStreamInstance *mainmenuMusic = NULL;
 	bool musicPlaying = false;
 
+	_gameState->_inMenu = true;
+
 	while (!doExit) {
 		clickingOn = MAINMENUHOTSPOT_NONE;
 		clickRelease = false;
@@ -699,6 +701,8 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 			break;
 		}
 	}
+
+	_gameState->_inMenu = false;
 
 	//delete mainmenuMusic;
 	for (int entryNr = 0; entryNr < MAINMENU_ENTRYCOUNT; entryNr++)
@@ -2947,11 +2951,11 @@ void ToonEngine::pauseEngineIntern(bool pause) {
 }
 
 bool ToonEngine::canSaveGameStateCurrently() {
-	return !_gameState->_inInventory && !_gameState->_inConversation && !_gameState->_inCutaway && !_gameState->_mouseHidden && !_moviePlayer->isPlaying();
+	return !_gameState->_inMenu && !_gameState->_inInventory && !_gameState->_inConversation && !_gameState->_inCutaway && !_gameState->_mouseHidden && !_moviePlayer->isPlaying();
 }
 
 bool ToonEngine::canLoadGameStateCurrently() {
-	return !_gameState->_inInventory && !_gameState->_inConversation && !_gameState->_inCutaway && !_gameState->_mouseHidden && !_moviePlayer->isPlaying();
+	return !_gameState->_inMenu && !_gameState->_inInventory && !_gameState->_inConversation && !_gameState->_inCutaway && !_gameState->_mouseHidden && !_moviePlayer->isPlaying();
 }
 
 Common::String ToonEngine::getSavegameName(int nr) {

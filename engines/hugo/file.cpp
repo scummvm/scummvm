@@ -369,18 +369,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	for (int i = 0; i < _vm->_numScreens; i++)
 		out->writeByte(_vm->_screenStates[i]);
 
-	// Save points table
-	for (int i = 0; i < _vm->_numBonuses; i++) {
-		out->writeByte(_vm->_points[i].score);
-		out->writeByte((_vm->_points[i].scoredFl) ? 1 : 0);
-	}
-
-	// Now save current time and all current events in event queue
-	_vm->_scheduler->saveEvents(out);
-
-	// Now save current actions
-	_vm->_scheduler->saveActions(out);
-
+	_vm->_scheduler->saveSchedulerData(out);
 	// Save palette table
 	_vm->_screen->savePal(out);
 
@@ -475,19 +464,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	for (int i = 0; i < _vm->_numScreens; i++)
 		_vm->_screenStates[i] = in->readByte();
 
-	// Restore points table
-	for (int i = 0; i < _vm->_numBonuses; i++) {
-		_vm->_points[i].score = in->readByte();
-		_vm->_points[i].scoredFl = (in->readByte() == 1);
-	}
-
-	_vm->_object->restoreAllSeq();
-
-	// Now restore time of the save and the event queue
-	_vm->_scheduler->restoreEvents(in);
-
-	// Now restore actions
-	_vm->_scheduler->restoreActions(in);
+	_vm->_scheduler->restoreSchedulerData(in);
 
 	// Restore palette and change it if necessary
 	_vm->_screen->restorePal(in);

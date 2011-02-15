@@ -48,11 +48,19 @@ public:
 	virtual ~Parser();
 
 	bool isWordPresent(char **wordArr) const;
-
+	
+	uint16 getCmdDefaultVerbIdx(const uint16 index) const { return _cmdList[index][0].verbIndex; }
+	
 	void charHandler();
 	void command(const char *format, ...);
+	void freeParser();
 	void keyHandler(Common::Event event);
+	void loadArrayReqs(Common::ReadStream &in);
+	void loadBackgroundObjects(Common::ReadStream &in);
+	void loadCatchallList(Common::ReadStream &in);
+	void loadCmdList(Common::ReadStream &in);
 	void switchTurbo();
+	const char *useBG(const char *name);
 
 	virtual void lineHandler() = 0;
 	virtual void showInventory() const = 0;
@@ -64,6 +72,13 @@ protected:
 	uint32    _cmdLineTick;                         // For flashing cursor
 	char      _cmdLineCursor;
 	command_t _cmdLine;                             // Build command line
+	uint16    _backgroundObjectsSize;
+	uint16    _cmdListSize;
+
+	uint16       **_arrayReqs;
+	background_t **_backgroundObjects;
+	background_t  *_catchallList;
+	cmd          **_cmdList;
 
 	const char *findNoun() const;
 	const char *findVerb() const;

@@ -149,6 +149,12 @@ private:
 		uint32 id;
 	};
 
+	struct EditListEntry {
+		uint32 trackDuration;
+		int32 mediaTime;
+		Common::Rational mediaRate;
+	};
+
 	struct STSDEntry {
 		STSDEntry();
 		~STSDEntry();
@@ -183,7 +189,6 @@ private:
 		uint32 *chunk_offsets;
 		int stts_count;
 		MOVstts *stts_data;
-		int edit_count; /* number of 'edit' (elst atom) */
 		uint32 sample_to_chunk_sz;
 		MOVstsc *sample_to_chunk;
 		uint32 sample_size;
@@ -200,6 +205,9 @@ private:
 
 		uint32 stsdEntryCount;
 		STSDEntry *stsdEntries;
+
+		uint32 editCount;
+		EditListEntry *editList;
 
 		Common::SeekableReadStream *extradata;
 

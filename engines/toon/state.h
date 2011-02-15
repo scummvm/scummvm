@@ -62,6 +62,7 @@ public:
 	int16 _confiscatedInventory[35];
 	int32 _numInventoryItems;
 	int32 _numConfiscatedInventoryItems;
+	bool _inMenu;
 	bool _inCloseUp;
 	bool _inCutaway;
 	bool _inConversation;

@@ -38,8 +38,6 @@
 
 namespace Sci {
 
-#define SCI_VARIABLE_GAME_SPEED 3
-
 reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	int mask = argv[0].toUint16();
 	reg_t obj = argv[1];
@@ -188,57 +186,42 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+struct KeyDirMapping {
+	uint16 key;
+	uint16 direction;
+};
+
+const KeyDirMapping keyToDirMap[] = {
+	{ SCI_KEY_HOME,   8 }, { SCI_KEY_UP,     1 }, { SCI_KEY_PGUP,   2 },
+	{ SCI_KEY_LEFT,   7 }, { SCI_KEY_CENTER, 0 }, { SCI_KEY_RIGHT,  3 },
+	{ SCI_KEY_END,    6 }, { SCI_KEY_DOWN,   5 }, { SCI_KEY_PGDOWN, 4 },
+};
+
 reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	SegManager *segMan = s->_segMan;
 
 	if (readSelectorValue(segMan, obj, SELECTOR(type)) == SCI_EVENT_KEYBOARD) { // Keyboard
-		int mover = -1;
-		switch (readSelectorValue(segMan, obj, SELECTOR(message))) {
-		case SCI_KEY_HOME:
-			mover = 8;
-			break;
-		case SCI_KEY_UP:
-			mover = 1;
-			break;
-		case SCI_KEY_PGUP:
-			mover = 2;
-			break;
-		case SCI_KEY_LEFT:
-			mover = 7;
-			break;
-		case SCI_KEY_CENTER:
-		case 76:
-			mover = 0;
-			break;
-		case SCI_KEY_RIGHT:
-			mover = 3;
-			break;
-		case SCI_KEY_END:
-			mover = 6;
-			break;
-		case SCI_KEY_DOWN:
-			mover = 5;
-			break;
-		case SCI_KEY_PGDOWN:
-			mover = 4;
-			break;
-		default:
-			break;
+		uint16 message = readSelectorValue(segMan, obj, SELECTOR(message));
+		uint16 eventType = SCI_EVENT_DIRECTION;
+		// Check if the game is using cursor views. These games allowed control
+		// of the mouse cursor via the keyboard controls (the so called
+		// "PseudoMouse" functionality in script 933).
+		if (g_sci->_features->detectSetCursorType() == SCI_VERSION_1_1)
+			eventType |= SCI_EVENT_KEYBOARD;
+
+		for (int i = 0; i < 9; i++) {
+			if (keyToDirMap[i].key == message) {
+				writeSelectorValue(segMan, obj, SELECTOR(type), eventType);
+				writeSelectorValue(segMan, obj, SELECTOR(message), keyToDirMap[i].direction);
+				return TRUE_REG;	// direction mapped
+			}
 		}
 
-		if (mover >= 0) {
-			if (g_sci->getEventManager()->getUsesNewKeyboardDirectionType())
-				writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_KEYBOARD | SCI_EVENT_DIRECTION);
-			else
-				writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_DIRECTION);
-			writeSelectorValue(segMan, obj, SELECTOR(message), mover);
-			return make_reg(0, 1);
-		} else
-			return NULL_REG;
+		return NULL_REG;	// unknown direction
 	}
 
-	return s->r_acc;
+	return s->r_acc;	// no keyboard event to map, leave accumulator unchanged
 }
 
 reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {

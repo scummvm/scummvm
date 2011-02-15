@@ -74,7 +74,7 @@ public:
 	int16 findObject(uint16 x, uint16 y);
 	void freeObjects();
 	void loadObjectArr(Common::ReadStream &in);
-	void freeObjectArr();
+	void loadObjectUses(Common::ReadStream &in);
 	void loadNumObj(Common::ReadStream &in);
 	void lookObject(object_t *obj);
 	void readObjectImages();
@@ -114,6 +114,8 @@ protected:
 	static const int kMaxObjNumb = 128;             // Used in Update_images()
 
 	uint16     _objCount;
+	uses_t    *_uses;
+	uint16     _usesSize;
 
 	void restoreSeq(object_t *obj);
 
