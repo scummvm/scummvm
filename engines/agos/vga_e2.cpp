@@ -115,7 +115,7 @@ void AGOSEngine::setPaletteSlot(uint16 srcOffs, uint8 dstOffs) {
 	byte *offs, *palptr, *src;
 	uint16 num;
 
-	palptr = _displayPalette + dstOffs * 64;
+	palptr = _displayPalette + dstOffs * 3 * 16;
 	offs = _curVgaFile1 + READ_BE_UINT16(_curVgaFile1 + 6);
 	src = offs + srcOffs * 32;
 	num = 16;
@@ -125,9 +125,8 @@ void AGOSEngine::setPaletteSlot(uint16 srcOffs, uint8 dstOffs) {
 		palptr[0] = ((color & 0xf00) >> 8) * 32;
 		palptr[1] = ((color & 0x0f0) >> 4) * 32;
 		palptr[2] = ((color & 0x00f) >> 0) * 32;
-		palptr[3] = 0;
 
-		palptr += 4;
+		palptr += 3;
 		src += 2;
 	} while (--num);
 
@@ -371,7 +370,7 @@ void AGOSEngine::fullFade() {
 			if (dstPal[2] != b)
 				dstPal[2] += 4;
 			srcPal += 3;
-			dstPal += 4;
+			dstPal += 3;
 		}
 		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
 		delay(5);

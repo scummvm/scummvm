@@ -87,7 +87,7 @@ void MoviePlayer::play() {
 	if (_vm->getBitFlag(41)) {
 		_vm->fillBackFromFront();
 	} else {
-		uint8 palette[1024];
+		uint8 palette[768];
 		memset(palette, 0, sizeof(palette));
 		_vm->clearSurfaces();
 		_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);

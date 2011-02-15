@@ -112,7 +112,7 @@ void AGOSEngine_Simon1::vc22_setPalette() {
 		num = a == 0 ? 32 : 16;
 		palSize = 96;
 
-		palptr = &_displayPalette[(a * 64)];
+		palptr = &_displayPalette[(a * 3 * 16)];
 	}
 
 	offs = _curVgaFile1 + 6;
@@ -122,22 +122,20 @@ void AGOSEngine_Simon1::vc22_setPalette() {
 		palptr[0] = src[0] * 4;
 		palptr[1] = src[1] * 4;
 		palptr[2] = src[2] * 4;
-		palptr[3] = 0;
 
-		palptr += 4;
+		palptr += 3;
 		src += 3;
 	} while (--num);
 
 	if (getFeatures() & GF_32COLOR) {
 		// Custom palette used for verb area
-		palptr = &_displayPalette[(13 * 64)];
+		palptr = &_displayPalette[(13 * 3 * 16)];
 		for (uint8 c = 0; c < 32; c++) {
 			palptr[0] = customPalette[c * 3 + 0];
 			palptr[1] = customPalette[c * 3 + 1];
 			palptr[2] = customPalette[c * 3 + 2];
-			palptr[3] = 0;
 
-			palptr += 4;
+			palptr += 3;
 		};
 	}
 
