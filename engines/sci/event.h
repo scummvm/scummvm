@@ -116,7 +116,6 @@ public:
 
 	void updateScreen();
 	SciEvent getSciEvent(unsigned int mask);
-	bool getUsesNewKeyboardDirectionType();
 
 private:
 	SciEvent getScummVMEvent();
@@ -124,8 +123,6 @@ private:
 	const bool _fontIsExtended;
 	int _modifierStates;
 	Common::List<SciEvent> _events;
-
-	bool _usesNewKeyboardDirectionType;
 };
 
 } // End of namespace Sci
