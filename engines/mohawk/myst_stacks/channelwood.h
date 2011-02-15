@@ -32,17 +32,16 @@
 
 namespace Mohawk {
 
-class MohawkEngine_Myst;
 struct MystScriptEntry;
 
 namespace MystStacks {
 
 #define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
-class MystScriptParser_Channelwood : public MystScriptParser {
+class Channelwood : public MystScriptParser {
 public:
-	MystScriptParser_Channelwood(MohawkEngine_Myst *vm);
-	~MystScriptParser_Channelwood();
+	Channelwood(MohawkEngine_Myst *vm);
+	~Channelwood();
 
 	void disablePersistentScripts();
 	void runPersistentScripts();

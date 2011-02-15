@@ -32,7 +32,6 @@
 
 namespace Mohawk {
 
-class MohawkEngine_Myst;
 class MystResourceType8;
 struct MystScriptEntry;
 
@@ -40,10 +39,10 @@ namespace MystStacks {
 
 #define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
-class MystScriptParser_Selenitic : public MystScriptParser {
+class Selenitic : public MystScriptParser {
 public:
-	MystScriptParser_Selenitic(MohawkEngine_Myst *vm);
-	~MystScriptParser_Selenitic();
+	Selenitic(MohawkEngine_Myst *vm);
+	~Selenitic();
 
 	void disablePersistentScripts();
 	void runPersistentScripts();

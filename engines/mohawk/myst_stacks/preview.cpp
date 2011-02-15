@@ -35,24 +35,24 @@
 namespace Mohawk {
 namespace MystStacks {
 
-MystScriptParser_Preview::MystScriptParser_Preview(MohawkEngine_Myst *vm) : MystScriptParser_Myst(vm) {
+Preview::Preview(MohawkEngine_Myst *vm) : Myst(vm) {
 	setupOpcodes();
 }
 
-MystScriptParser_Preview::~MystScriptParser_Preview() {
+Preview::~Preview() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Preview::x, #x))
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Preview::x, #x))
 
 #define OVERRIDE_OPCODE(opcode, x) \
 	for (uint32 i = 0; i < _opcodes.size(); i++) \
 		if (_opcodes[i]->op == opcode) { \
-			_opcodes[i]->proc = (OpcodeProcMyst) &MystScriptParser_Preview::x; \
+			_opcodes[i]->proc = (OpcodeProcMyst) &Preview::x; \
 			_opcodes[i]->desc = #x; \
 			break; \
 		}
 
-void MystScriptParser_Preview::setupOpcodes() {
+void Preview::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OVERRIDE_OPCODE(196, opcode_196);
 	OVERRIDE_OPCODE(197, opcode_197);
@@ -67,7 +67,7 @@ void MystScriptParser_Preview::setupOpcodes() {
 #undef OPCODE
 #undef OVERRIDE_OPCODE
 
-void MystScriptParser_Preview::opcode_196(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::opcode_196(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used on Card ...
@@ -75,7 +75,7 @@ void MystScriptParser_Preview::opcode_196(uint16 op, uint16 var, uint16 argc, ui
 	// Voice Over and Card Advance?
 }
 
-void MystScriptParser_Preview::opcode_197(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::opcode_197(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used on Card ...
@@ -84,7 +84,7 @@ void MystScriptParser_Preview::opcode_197(uint16 op, uint16 var, uint16 argc, ui
 }
 
 // TODO: Merge with Opcode 42?
-void MystScriptParser_Preview::opcode_198(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::opcode_198(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	if (argc == 0) {
@@ -95,7 +95,7 @@ void MystScriptParser_Preview::opcode_198(uint16 op, uint16 var, uint16 argc, ui
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Preview::opcode_199(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::opcode_199(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used on Card ...
@@ -103,7 +103,7 @@ void MystScriptParser_Preview::opcode_199(uint16 op, uint16 var, uint16 argc, ui
 	// Voice Over and Card Advance?
 }
 
-void MystScriptParser_Preview::opcode_298(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::opcode_298(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used for Card 3000 (Closed Myst Book)
@@ -126,7 +126,7 @@ void MystScriptParser_Preview::opcode_298(uint16 op, uint16 var, uint16 argc, ui
 	}
 }
 
-void MystScriptParser_Preview::opcode_299(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::opcode_299(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used for Card 3002 (Myst Island Overview)

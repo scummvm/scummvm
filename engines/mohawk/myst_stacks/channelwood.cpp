@@ -37,17 +37,17 @@
 namespace Mohawk {
 namespace MystStacks {
 
-MystScriptParser_Channelwood::MystScriptParser_Channelwood(MohawkEngine_Myst *vm) :
+Channelwood::Channelwood(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_channelwood) {
 	setupOpcodes();
 }
 
-MystScriptParser_Channelwood::~MystScriptParser_Channelwood() {
+Channelwood::~Channelwood() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Channelwood::x, #x))
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Channelwood::x, #x))
 
-void MystScriptParser_Channelwood::setupOpcodes() {
+void Channelwood::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, o_bridgeToggle);
 	OPCODE(101, o_pipeExtend);
@@ -90,15 +90,15 @@ void MystScriptParser_Channelwood::setupOpcodes() {
 
 #undef OPCODE
 
-void MystScriptParser_Channelwood::disablePersistentScripts() {
+void Channelwood::disablePersistentScripts() {
 
 }
 
-void MystScriptParser_Channelwood::runPersistentScripts() {
+void Channelwood::runPersistentScripts() {
 
 }
 
-uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
+uint16 Channelwood::getVar(uint16 var) {
 	switch(var) {
 	case 1: // Water Pump Bridge Raised
 		return _state.waterPumpBridgeState;
@@ -187,7 +187,7 @@ uint16 MystScriptParser_Channelwood::getVar(uint16 var) {
 	}
 }
 
-void MystScriptParser_Channelwood::toggleVar(uint16 var) {
+void Channelwood::toggleVar(uint16 var) {
 	switch(var) {
 	case 1: // Water Pump Bridge Raised
 		_state.waterPumpBridgeState ^= 1;
@@ -220,7 +220,7 @@ void MystScriptParser_Channelwood::toggleVar(uint16 var) {
 	}
 }
 
-bool MystScriptParser_Channelwood::setVarValue(uint16 var, uint16 value) {
+bool Channelwood::setVarValue(uint16 var, uint16 value) {
 	bool refresh = false;
 
 	switch (var) {
@@ -271,7 +271,7 @@ bool MystScriptParser_Channelwood::setVarValue(uint16 var, uint16 value) {
 	return refresh;
 }
 
-bool MystScriptParser_Channelwood::pipeChangeValve(bool open, uint16 mask) {
+bool Channelwood::pipeChangeValve(bool open, uint16 mask) {
 	if (open) {
 		if (!(_state.waterValveStates & mask)) {
 			_state.waterValveStates |= mask;
@@ -287,7 +287,7 @@ bool MystScriptParser_Channelwood::pipeChangeValve(bool open, uint16 mask) {
 	return false;
 }
 
-void MystScriptParser_Channelwood::o_bridgeToggle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_bridgeToggle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Bridge rise / skink video", op);
 
 	VideoHandle bridge = _vm->_video->playMovie(_vm->wrapMovieFilename("bridge", kChannelwoodStack), 292, 203);
@@ -301,7 +301,7 @@ void MystScriptParser_Channelwood::o_bridgeToggle(uint16 op, uint16 var, uint16 
 	_vm->_video->waitUntilMovieEnds(bridge);
 }
 
-void MystScriptParser_Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Play Pipe Movie and Sound", op);
 
 	uint16 soundId = argv[0];
@@ -320,7 +320,7 @@ void MystScriptParser_Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 ar
 	_vm->_sound->resumeBackgroundMyst();
 }
 
-void MystScriptParser_Channelwood::o_drawImageChangeCardAndVolume(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_drawImageChangeCardAndVolume(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Draw Full Screen Image, Change Card, and change volume", op);
 
 	uint16 imageId = argv[0];
@@ -341,7 +341,7 @@ void MystScriptParser_Channelwood::o_drawImageChangeCardAndVolume(uint16 op, uin
 }
 
 
-void MystScriptParser_Channelwood::o_waterTankValveOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_waterTankValveOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Do Water Tank Valve Open Animation", op);
 	Common::Rect rect = _invokingResource->getRect();
 
@@ -355,7 +355,7 @@ void MystScriptParser_Channelwood::o_waterTankValveOpen(uint16 op, uint16 var, u
 	pipeChangeValve(true, 0x80);
 }
 
-void MystScriptParser_Channelwood::o_leverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_leverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generic lever start move", op);
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
@@ -364,7 +364,7 @@ void MystScriptParser_Channelwood::o_leverStartMove(uint16 op, uint16 var, uint1
 	_leverPulled = false;
 }
 
-void MystScriptParser_Channelwood::o_leverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_leverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generic lever move", op);
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
@@ -379,7 +379,7 @@ void MystScriptParser_Channelwood::o_leverMove(uint16 op, uint16 var, uint16 arg
 	}
 }
 
-void MystScriptParser_Channelwood::o_leverMoveFail(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_leverMoveFail(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generic lever move", op);
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
@@ -396,7 +396,7 @@ void MystScriptParser_Channelwood::o_leverMoveFail(uint16 op, uint16 var, uint16
 	}
 }
 
-void MystScriptParser_Channelwood::o_leverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_leverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generic lever end move", op);
 
 	// Get current lever frame
@@ -412,12 +412,12 @@ void MystScriptParser_Channelwood::o_leverEndMove(uint16 op, uint16 var, uint16 
 	_vm->checkCursorHints();
 }
 
-void MystScriptParser_Channelwood::o_leverEndMoveResumeBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_leverEndMoveResumeBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_vm->_sound->resumeBackgroundMyst();
 	o_leverEndMove(op, var, argc, argv);
 }
 
-void MystScriptParser_Channelwood::o_leverEndMoveWithSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_leverEndMoveWithSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	o_leverEndMove(op, var, argc, argv);
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
@@ -426,20 +426,20 @@ void MystScriptParser_Channelwood::o_leverEndMoveWithSound(uint16 op, uint16 var
 		_vm->_sound->replaceSoundMyst(soundId);
 }
 
-void MystScriptParser_Channelwood::o_leverElev3StartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_leverElev3StartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_vm->_gfx->copyImageToScreen(3970, Common::Rect(544, 333));
 	_vm->_system->updateScreen();
 	o_leverStartMove(op, var, argc, argv);
 }
 
-void MystScriptParser_Channelwood::o_leverElev3EndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_leverElev3EndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	o_leverEndMove(op, var, argc, argv);
 	_vm->_gfx->copyImageToScreen(3265, Common::Rect(544, 333));
 	_vm->_system->updateScreen();
 	_vm->_sound->replaceSoundMyst(5265);
 }
 
-void MystScriptParser_Channelwood::o_pumpLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_pumpLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Pump lever move", op);
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
@@ -453,7 +453,7 @@ void MystScriptParser_Channelwood::o_pumpLeverMove(uint16 op, uint16 var, uint16
 	}
 }
 
-void MystScriptParser_Channelwood::o_pumpLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_pumpLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	o_leverEndMove(op, var, argc, argv);
 
 	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
@@ -462,7 +462,7 @@ void MystScriptParser_Channelwood::o_pumpLeverEndMove(uint16 op, uint16 var, uin
 		_vm->_sound->replaceBackgroundMyst(soundId, 36864);
 }
 
-void MystScriptParser_Channelwood::o_stairsDoorToggle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_stairsDoorToggle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Play stairs door video", op);
 
 	MystResourceType6 *movie = static_cast<MystResourceType6 *>(_invokingResource);
@@ -475,7 +475,7 @@ void MystScriptParser_Channelwood::o_stairsDoorToggle(uint16 op, uint16 var, uin
 	}
 }
 
-void MystScriptParser_Channelwood::o_valveHandleMove1(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_valveHandleMove1(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move", op);
 
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
@@ -491,7 +491,7 @@ void MystScriptParser_Channelwood::o_valveHandleMove1(uint16 op, uint16 var, uin
 	}
 }
 
-void MystScriptParser_Channelwood::o_valveHandleMoveStart1(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_valveHandleMoveStart1(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move start", op);
 
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
@@ -503,7 +503,7 @@ void MystScriptParser_Channelwood::o_valveHandleMoveStart1(uint16 op, uint16 var
 	o_valveHandleMove1(op, var, argc, argv);
 }
 
-void MystScriptParser_Channelwood::o_valveHandleMoveStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_valveHandleMoveStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move stop", op);
 
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
@@ -526,7 +526,7 @@ void MystScriptParser_Channelwood::o_valveHandleMoveStop(uint16 op, uint16 var, 
 	_vm->checkCursorHints();
 }
 
-void MystScriptParser_Channelwood::o_valveHandleMove2(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_valveHandleMove2(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move", op);
 
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
@@ -542,7 +542,7 @@ void MystScriptParser_Channelwood::o_valveHandleMove2(uint16 op, uint16 var, uin
 	}
 }
 
-void MystScriptParser_Channelwood::o_valveHandleMoveStart2(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_valveHandleMoveStart2(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move start", op);
 
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
@@ -554,7 +554,7 @@ void MystScriptParser_Channelwood::o_valveHandleMoveStart2(uint16 op, uint16 var
 	o_valveHandleMove2(op, var, argc, argv);
 }
 
-void MystScriptParser_Channelwood::o_valveHandleMove3(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_valveHandleMove3(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move", op);
 
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
@@ -570,7 +570,7 @@ void MystScriptParser_Channelwood::o_valveHandleMove3(uint16 op, uint16 var, uin
 	}
 }
 
-void MystScriptParser_Channelwood::o_valveHandleMoveStart3(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_valveHandleMoveStart3(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move start", op);
 
 	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
@@ -582,7 +582,7 @@ void MystScriptParser_Channelwood::o_valveHandleMoveStart3(uint16 op, uint16 var
 	o_valveHandleMove3(op, var, argc, argv);
 }
 
-void MystScriptParser_Channelwood::o_hologramMonitor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_hologramMonitor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hologram monitor", op);
 
 	// Used on Card 3012 (Temple Hologram Monitor)
@@ -614,7 +614,7 @@ void MystScriptParser_Channelwood::o_hologramMonitor(uint16 op, uint16 var, uint
 	}
 }
 
-void MystScriptParser_Channelwood::o_drawerOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_drawerOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Open Sirius drawer", op);
 
 	_siriusDrawerState = 1;
@@ -622,7 +622,7 @@ void MystScriptParser_Channelwood::o_drawerOpen(uint16 op, uint16 var, uint16 ar
 	_vm->redrawArea(102, false);
 }
 
-void MystScriptParser_Channelwood::o_hologramTemple(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_hologramTemple(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Temple hologram", op);
 
 	_vm->_sound->pauseBackgroundMyst();
@@ -649,14 +649,14 @@ void MystScriptParser_Channelwood::o_hologramTemple(uint16 op, uint16 var, uint1
 	_vm->_sound->resumeBackgroundMyst();
 }
 
-void MystScriptParser_Channelwood::o_executeMouseUp(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_executeMouseUp(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Execute mouse up", op);
 
 	MystResourceType5 *resource = static_cast<MystResourceType5 *>(_vm->_resources[argv[0]]);
 	resource->handleMouseUp();
 }
 
-void MystScriptParser_Channelwood::o_waterTankValveClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_waterTankValveClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Do Water Tank Valve Close Animation", op);
 	Common::Rect rect = _invokingResource->getRect();
 
@@ -670,7 +670,7 @@ void MystScriptParser_Channelwood::o_waterTankValveClose(uint16 op, uint16 var, 
 	pipeChangeValve(false, 0x80);
 }
 
-void MystScriptParser_Channelwood::o_elevatorMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_elevatorMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used by Card 3262 (Elevator)
 	debugC(kDebugScript, "Opcode %d: Elevator movie", op);
 
@@ -715,7 +715,7 @@ void MystScriptParser_Channelwood::o_elevatorMovies(uint16 op, uint16 var, uint1
 	_vm->_sound->resumeBackgroundMyst();
 }
 
-void MystScriptParser_Channelwood::o_soundReplace(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_soundReplace(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Play sound if not already playing", op);
 
 	uint16 soundId = argv[0];
@@ -724,17 +724,17 @@ void MystScriptParser_Channelwood::o_soundReplace(uint16 op, uint16 var, uint16 
 	_vm->_sound->replaceSoundMyst(soundId);
 }
 
-void MystScriptParser_Channelwood::o_lever_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_lever_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generic lever init", op);
 	_leverAction = static_cast<MystResourceType5 *>(_invokingResource);
 }
 
-void MystScriptParser_Channelwood::o_pipeValve_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_pipeValve_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Water valve init", op);
 	_valveVar = var;
 }
 
-void MystScriptParser_Channelwood::o_drawer_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Channelwood::o_drawer_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Sirius's drawer init", op);
 	_siriusDrawerState = 0;
 }
