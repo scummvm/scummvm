@@ -630,9 +630,9 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 			int var10 = tempList[listIndex];
 			int var12 = tempList[listIndex + 1];
 
-			if (!sub_F8E5(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[var12]._pt1,
+			if (sub_F8E5(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[var12]._pt1,
 					_globals->_walkRegions._field18[var10]._pt1, _globals->_walkRegions._field18[var10]._pt2) &&
-				!sub_F8E5(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[var12]._pt2,
+				sub_F8E5(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[var12]._pt2,
 					_globals->_walkRegions._field18[var10]._pt1, _globals->_walkRegions._field18[var10]._pt2))
 				continue;
 
@@ -668,7 +668,7 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 		}
 
 		// Add in the route entry
-		*routeList++ = _globals->_walkRegions._field18[idx]._pt1;
+		*routeList++ = _globals->_walkRegions._field18[1]._pt1;
 	}
 
 	// Mark the end of the path
