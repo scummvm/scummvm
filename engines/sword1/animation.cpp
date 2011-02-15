@@ -174,7 +174,7 @@ void MoviePlayer::play() {
 	// previous location would be momentarily drawn, before switching to
 	// the new one. Work around this by setting the palette to black.
 
-	byte pal[4 * 256];
+	byte pal[3 * 256];
 	memset(pal, 0, sizeof(pal));
 	_system->getPaletteManager()->setPalette(pal, 0, 256);
 }
