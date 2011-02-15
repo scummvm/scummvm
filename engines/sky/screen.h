@@ -45,8 +45,7 @@ struct DataFileHeader;
 
 #define SCROLL_JUMP		16
 #define VGA_COLOURS		256
-#define GAME_COLOURS	240
-#define SEQ_DELAY		3
+#define GAME_COLOURS		240
 
 #define FORE 1
 #define BACK 0
@@ -114,7 +113,6 @@ private:
 	struct {
 		uint32 nextFrame;
 		uint32 framesLeft;
-		uint32 delay;
 		uint8 *seqData;
 		uint8 *seqDataPos;
 		volatile bool running;
