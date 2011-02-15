@@ -880,8 +880,9 @@ int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
 	} else {
 		int foundIndex = 0;
 		int idx = 0; 
-		while (_globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + idx]) {
-			if (_globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + idx] == destRegion) {
+		int currDest;
+		while ((currDest = _globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + idx]) != 0) {
+			if (currDest == destRegion) {
 				foundIndex = idx;
 				break;
 			}
@@ -2949,6 +2950,13 @@ void WRField18::load(byte *data) {
 }
 
 /*--------------------------------------------------------------------------*/
+
+void WalkRegions::clear() {
+	_regionList.clear();
+	_field18.clear();
+	_idxList.clear();
+	_idxList2.clear();
+}
 
 void WalkRegions::load(int sceneNum) {
 	clear();

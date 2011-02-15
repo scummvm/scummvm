@@ -765,10 +765,7 @@ public:
 public:
 	WalkRegions() { _resNum = -1; }
 
-	void clear() {
-		_regionList.clear();
-		_field18.clear();
-	}
+	void clear();
 	void load(int sceneNum);
 	int indexOf(const Common::Point &pt, List<int> *indexList = NULL);
 	WalkRegion &operator[](int idx) {
