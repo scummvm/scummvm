@@ -45,11 +45,15 @@ public:
 
 	void     setInventoryObjId(int16 objId)    { _inventoryObjId = objId; }
 	void     setInventoryState(istate_t state) { _inventoryState = state; }
+	void     freeInvent()                      { free(_invent);           }
+
 	int16    getInventoryObjId() const         { return _inventoryObjId;  }
 	istate_t getInventoryState() const         { return _inventoryState;  }
 
+	int16 findIconId(int16 objId);
+	void  loadInvent(Common::ReadStream &in);
 	int16 processInventory(const invact_t action, ...);
-	void runInventory();
+	void  runInventory();
 
 private:
 	HugoEngine *_vm;
@@ -57,9 +61,11 @@ private:
 	static const int kStepDy = 8;                   // Pixels per step movement
 	
 	int16    _firstIconId;                          // Index of first icon to display
+	int16   *_invent;
 	istate_t _inventoryState;                       // Inventory icon bar state
 	int16    _inventoryHeight;                      // Inventory icon bar height
 	int16    _inventoryObjId;                       // Inventory object selected, or -1
+	byte     _maxInvent;
 
 	void constructInventory(const int16 imageTotNumb, int displayNumb, const bool scrollFl, int16 firstObjId);
 };

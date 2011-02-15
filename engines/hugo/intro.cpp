@@ -41,10 +41,39 @@
 
 namespace Hugo {
 
-IntroHandler::IntroHandler(HugoEngine *vm) : _vm(vm) {
+IntroHandler::IntroHandler(HugoEngine *vm) : _vm(vm), _introX(0), _introY(0) {
+	_introXSize = 0;
 }
 
 IntroHandler::~IntroHandler() {
+}
+
+/**
+ * Read _introX and _introY from hugo.dat
+ */
+void IntroHandler::loadIntroData(Common::ReadStream &in) {
+	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
+		int numRows = in.readUint16BE();
+		if (varnt == _vm->_gameVariant) {
+			_introXSize = numRows;
+			_introX = (byte *)malloc(sizeof(byte) * _introXSize);
+			_introY = (byte *)malloc(sizeof(byte) * _introXSize);
+			for (int i = 0; i < _introXSize; i++) {
+				_introX[i] = in.readByte();
+				_introY[i] = in.readByte();
+			}
+		} else {
+			for (int i = 0; i < numRows; i++) {
+				in.readByte();
+				in.readByte();
+			}
+		}
+	}
+}
+
+void IntroHandler::freeIntroData() {
+	free(_introX);
+	free(_introY);
 }
 
 intro_v1d::intro_v1d(HugoEngine *vm) : IntroHandler(vm) {
@@ -68,7 +97,7 @@ void intro_v1d::introInit() {
 }
 
 bool intro_v1d::introPlay() {
-	byte introSize = _vm->getIntroSize();
+	byte introSize = getIntroSize();
 
 	if (_vm->getGameStatus().skipIntroFl)
 		return true;
@@ -296,8 +325,8 @@ bool intro_v3d::introPlay() {
 	if (_vm->getGameStatus().skipIntroFl)
 		return true;
 
-	if (introTicks < _vm->getIntroSize()) {
-		font.drawString(&surf, ".", _vm->_introX[introTicks], _vm->_introY[introTicks] - kDibOffY, 320, _TBRIGHTWHITE);
+	if (introTicks < getIntroSize()) {
+		font.drawString(&surf, ".", _introX[introTicks], _introY[introTicks] - kDibOffY, 320, _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();
 
 		// Text boxes at various times
@@ -314,7 +343,7 @@ bool intro_v3d::introPlay() {
 		}
 	}
 
-	return (++introTicks >= _vm->getIntroSize());
+	return (++introTicks >= getIntroSize());
 }
 
 intro_v1w::intro_v1w(HugoEngine *vm) : IntroHandler(vm) {
@@ -387,9 +416,9 @@ bool intro_v3w::introPlay() {
 	if (_vm->getGameStatus().skipIntroFl)
 		return true;
 
-	if (introTicks < _vm->getIntroSize()) {
+	if (introTicks < getIntroSize()) {
 		// Scale viewport x_intro,y_intro to screen (offsetting y)
-		_vm->_screen->writeStr(_vm->_introX[introTicks], _vm->_introY[introTicks] - kDibOffY, "x", _TBRIGHTWHITE);
+		_vm->_screen->writeStr(_introX[introTicks], _introY[introTicks] - kDibOffY, "x", _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();
 
 		// Text boxes at various times
@@ -406,6 +435,6 @@ bool intro_v3w::introPlay() {
 		}
 	}
 
-	return (++introTicks >= _vm->getIntroSize());
+	return (++introTicks >= getIntroSize());
 }
 } // End of namespace Hugo

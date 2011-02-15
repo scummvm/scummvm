@@ -48,8 +48,10 @@
 
 namespace Hugo {
 
-Scheduler::Scheduler(HugoEngine *vm) : _vm(vm), _actListArr(0), _curTick(0), _oldTime(0), _refreshTimeout(0) {
+Scheduler::Scheduler(HugoEngine *vm) : _vm(vm), _actListArr(0), _curTick(0), _oldTime(0), _refreshTimeout(0), _points(0), _screenActs(0) {
 	memset(_events, 0, sizeof(_events));
+	_numBonuses = 0;
+	_screenActsSize = 0;
 }
 
 Scheduler::~Scheduler() {
@@ -142,9 +144,9 @@ uint32 Scheduler::getDosTicks(const bool updateFl) {
 void Scheduler::processBonus(const int bonusIndex) {
 	debugC(1, kDebugSchedule, "processBonus(%d)", bonusIndex);
 
-	if (!_vm->_points[bonusIndex].scoredFl) {
-		_vm->adjustScore(_vm->_points[bonusIndex].score);
-		_vm->_points[bonusIndex].scoredFl = true;
+	if (!_points[bonusIndex].scoredFl) {
+		_vm->adjustScore(_points[bonusIndex].score);
+		_points[bonusIndex].scoredFl = true;
 	}
 }
 
@@ -186,7 +188,7 @@ void Scheduler::newScreen(const int screenIndex) {
 	_vm->readScreenFiles(screenIndex);
 
 	// 4. Schedule action list for this screen
-	_vm->screenActions(screenIndex);
+	_vm->_scheduler->screenActions(screenIndex);
 
 	// 5. Initialise prompt line and status line
 	_vm->_screen->initNewScreenDisplay();
@@ -241,6 +243,28 @@ void Scheduler::loadAlNewscrIndex(Common::ReadStream &in) {
 		numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant)
 			_alNewscrIndex = numElem;
+	}
+}
+
+/**
+ * Load Points from Hugo.dat
+ */
+void Scheduler::loadPoints(Common::ReadStream &in) {
+	debugC(6, kDebugSchedule, "loadPoints(&in)");
+
+	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
+		uint16 numElem = in.readUint16BE();
+		if (varnt == _vm->_gameVariant) {
+			_numBonuses = numElem;
+			_points = (point_t *)malloc(sizeof(point_t) * _numBonuses);
+			for (int i = 0; i < _numBonuses; i++) {
+				_points[i].score = in.readByte();
+				_points[i].scoredFl = false;
+			}
+		} else {
+			for (int i = 0; i < numElem; i++)
+				in.readByte();
+		}
 	}
 }
 
@@ -832,6 +856,57 @@ void Scheduler::freeActListArr() {
 }
 
 /**
+ * Read _screenActs
+ */
+void Scheduler::loadScreenAct(Common::ReadStream &in) {
+	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
+		uint16 numElem = in.readUint16BE();
+
+		uint16 **wrkScreenActs = (uint16 **)malloc(sizeof(uint16 *) * numElem);
+		for (int i = 0; i < numElem; i++) {
+			uint16 numSubElem = in.readUint16BE();
+			if (numSubElem == 0) {
+				wrkScreenActs[i] = 0;
+			} else {
+				wrkScreenActs[i] = (uint16 *)malloc(sizeof(uint16) * numSubElem);
+				for (int j = 0; j < numSubElem; j++)
+					wrkScreenActs[i][j] = in.readUint16BE();
+			}
+		}
+
+		if (varnt == _vm->_gameVariant) {
+			_screenActsSize = numElem;
+			_screenActs = wrkScreenActs;
+		} else {
+			for (int i = 0; i < numElem; i++)
+				free(wrkScreenActs[i]);
+			free(wrkScreenActs);
+		}
+	}
+}
+
+void Scheduler::freeScreenAct() {
+	if (_screenActs) {
+		for (int i = 0; i < _screenActsSize; i++)
+			free(_screenActs[i]);
+		free(_screenActs);
+	}
+}
+
+/**
+ * Add action lists for this screen to event queue
+ */
+void Scheduler::screenActions(const int screenNum) {
+	debugC(1, kDebugEngine, "screenActions(%d)", screenNum);
+
+	uint16 *screenAct = _screenActs[screenNum];
+	if (screenAct) {
+		for (int i = 0; screenAct[i]; i++)
+			insertActionList(screenAct[i]);
+	}
+}
+
+/**
  * Maze mode is enabled.  Check to see whether hero has crossed the maze
  * bounding box, if so, go to the next room
  */
@@ -933,6 +1008,13 @@ void Scheduler::restoreActions(Common::ReadStream *f) {
 			j++;
 		} while (_actListArr[i][j-1].a0.actType != ANULL);
 	}
+}
+
+int16 Scheduler::calcMaxPoints() const {
+	int16 tmpScore = 0;
+	for (int i = 0; i < _numBonuses; i++)
+		tmpScore += _points[i].score;
+	return tmpScore;
 }
 
 /*
@@ -1262,7 +1344,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		Utils::Box(kBoxOk, "%s", _vm->_file->fetchString(action->a40.stringIndex));
 		break;
 	case COND_BONUS:                                // act41: Perform action if got bonus
-		if (_vm->_points[action->a41.BonusIndex].scoredFl)
+		if (_points[action->a41.BonusIndex].scoredFl)
 			insertActionList(action->a41.actPassIndex);
 		else
 			insertActionList(action->a41.actFailIndex);
@@ -1354,6 +1436,9 @@ void Scheduler::delQueue(event_t *curEvent) {
 	_freeEvent = curEvent;
 }
 
+/**
+ * Delete all the active events of a given type
+ */
 void Scheduler::delEventType(const action_t actTypeDel) {
 	// Note: actions are not deleted here, simply turned into NOPs!
 	event_t *wrkEvent = _headEvent;                 // The earliest event
@@ -1364,6 +1449,27 @@ void Scheduler::delEventType(const action_t actTypeDel) {
 		if (wrkEvent->action->a20.actType == actTypeDel)
 			delQueue(wrkEvent);
 		wrkEvent = saveEvent;
+	}
+}
+
+/**
+ * Save the points table
+ */
+void Scheduler::savePoints(Common::WriteStream *out) {
+	for (int i = 0; i < _numBonuses; i++) {
+		out->writeByte(_points[i].score);
+		out->writeByte((_points[i].scoredFl) ? 1 : 0);
+	}
+}
+
+/**
+ * Restore the points table
+ */
+void Scheduler::restorePoints(Common::ReadStream *in) {
+	// Restore points table
+	for (int i = 0; i < _numBonuses; i++) {
+		_points[i].score = in->readByte();
+		_points[i].scoredFl = (in->readByte() == 1);
 	}
 }
 
