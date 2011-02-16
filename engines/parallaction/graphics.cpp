@@ -163,7 +163,7 @@ void Palette::fadeTo(const Palette& target, uint step) {
 uint Palette::fillRGB(byte *rgb) {
 
 	byte r, g, b;
-	byte *hbPal = rgb + _colors * 4;
+	byte *hbPal = rgb + _colors * 3;
 
 	for (uint32 i = 0; i < _colors; i++) {
 		r = (_data[i*3]   << 2) | (_data[i*3]   >> 4);
