@@ -594,6 +594,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.animate(ANIM_MODE_1, NULL);
 
 		_sceneObject2.postInit();
+		_sceneObject2.setVisage(20);
 		_sceneObject2.setPosition(Common::Point(400, 69));
 		_sceneObject2.animate(ANIM_MODE_1, NULL);
 		
