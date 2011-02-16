@@ -124,6 +124,7 @@ enum ResVersion {
 	kResVersionUnknown,
 	kResVersionSci0Sci1Early,
 	kResVersionSci1Middle,
+	kResVersionKQ5FMT,
 	kResVersionSci1Late,
 	kResVersionSci11,
 	kResVersionSci11Mac,

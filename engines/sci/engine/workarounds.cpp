@@ -357,6 +357,7 @@ const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
 	{ GID_KQ5,            -1,   981,  0,           "myWindow",     "dispose",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing any dialog box, accidental additional parameter specified - bug #3036331
 	{ GID_KQ5,            -1,   995,  0,               "invW",        "doit",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing the inventory window, accidental additional parameter specified
 	{ GID_KQ5,            -1,   995,  0,                   "",    "export 0",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when opening the gem pouch, accidental additional parameter specified - bug #3039395
+	{ GID_KQ5,            -1,   403,  0,          "KQ5Window",     "dispose",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the FM Towns version when closing any dialog box, accidental additional parameter specified
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
