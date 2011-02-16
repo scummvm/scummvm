@@ -54,8 +54,9 @@ public:
 	 * @param len  number of sample *pairs*. So a value of
 	 *             10 means that the buffer contains twice 10 sample, each
 	 *             16 bits, for a total of 40 bytes.
+	 * @return number of sample pairs processed (which can still be silence!)
 	 */
-	void mix(int16 *data, uint len);
+	int mix(int16 *data, uint len);
 
 	/**
 	 * Queries whether the channel is still playing or not.
@@ -257,7 +258,7 @@ void MixerImpl::playStream(
 	insertChannel(handle, chan);
 }
 
-void MixerImpl::mixCallback(byte *samples, uint len) {
+int MixerImpl::mixCallback(byte *samples, uint len) {
 	assert(samples);
 
 	Common::StackLock lock(_mutex);
@@ -272,14 +273,21 @@ void MixerImpl::mixCallback(byte *samples, uint len) {
 	memset(buf, 0, 2 * len * sizeof(int16));
 
 	// mix all channels
+	int res = 0, tmp;
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i]) {
 			if (_channels[i]->isFinished()) {
 				delete _channels[i];
 				_channels[i] = 0;
-			} else if (!_channels[i]->isPaused())
-				_channels[i]->mix(buf, len);
+			} else if (!_channels[i]->isPaused()) {
+				tmp = _channels[i]->mix(buf, len);
+
+				if (tmp > res)
+					res = tmp;
+			}
 		}
+
+	return res;
 }
 
 void MixerImpl::stopAll() {
@@ -538,19 +546,23 @@ Timestamp Channel::getElapsedTime() {
 	return ts;
 }
 
-void Channel::mix(int16 *data, uint len) {
+int Channel::mix(int16 *data, uint len) {
 	assert(_stream);
+
+	int res = 0;
 
 	if (_stream->endOfData()) {
 		// TODO: call drain method
 	} else {
 		assert(_converter);
-
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis();
 		_pauseTime = 0;
-		_samplesDecoded += _converter->flow(*_stream, data, len, _volL, _volR);
+		res = _converter->flow(*_stream, data, len, _volL, _volR);
+		_samplesDecoded += res;
 	}
+
+	return res;
 }
 
 } // End of namespace Audio
