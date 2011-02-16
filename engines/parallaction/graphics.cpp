@@ -152,9 +152,9 @@ void Palette::fadeTo(const Palette& target, uint step) {
 		if (_data[i] == target._data[i]) continue;
 
 		if (_data[i] < target._data[i])
-			_data[i] = CLIP(_data[i] + step, (uint)0, (uint)target._data[i]);
+			_data[i] = CLIP(_data[i] + (int)step, (int)0, (int)target._data[i]);
 		else
-			_data[i] = CLIP(_data[i] - step, (uint)target._data[i], (uint)255);
+			_data[i] = CLIP(_data[i] - (int)step, (int)target._data[i], (int)255);
 	}
 
 	return;
