@@ -2118,8 +2118,8 @@ void SceneObject::reposition() {
  */
 void SceneObject::draw() {
 	Rect destRect = _bounds;
-	destRect.translate(_globals->_sceneManager._scene->_sceneBounds.left, 
-		_globals->_sceneManager._scene->_sceneBounds.top);
+	destRect.translate(-_globals->_sceneManager._scene->_sceneBounds.left, 
+		-_globals->_sceneManager._scene->_sceneBounds.top);
 	Region *priorityRegion = _globals->_sceneManager._scene->_priorities.find(_priority);
 	GfxSurface frame = getFrame();
 	_globals->gfxManager().copyFrom(frame, destRect, priorityRegion); 
