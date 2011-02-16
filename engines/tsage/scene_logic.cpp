@@ -42,7 +42,7 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 30: return new Scene30();
 	// Chmeee Home
 	case 40: return new Scene40();
-	// By Speeders
+	// By Flycycles
 	case 50: return new Scene50();
 	// Title screen
 	case 1000: return new Scene1000();
@@ -1590,7 +1590,7 @@ void Scene40::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 50 - By Speeders
+ * Scene 50 - By Flycycles
  *
  *--------------------------------------------------------------------------*/
 
@@ -1819,7 +1819,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	_object4.setPosition(Common::Point(295, 144));
 	_object4.setPriority2(178);
 
-	_globals->_sceneItems.addItems(&_object3, &_object4, NULL);
+	_globals->_sceneItems.addItems(&_object2, &_object3, &_object4, NULL);
 
 	if (!_globals->getFlag(101)) {
 		_globals->_player.disableControl();
@@ -1835,10 +1835,35 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 		}
 	}
 
-	_globals->_sceneItems.addItems(&_item4, &_item5, NULL);
 	_item0.setBounds(Rect(200, 0, 320, 200));
-	_globals->_sceneItems.push_back(&_item0);
-	_rect1 = Rect(80, 108, 160, 112);
+	_globals->_sceneItems.addItems(&_item3, &_item4, &_item5, &_item0, NULL);
+	_doorwayRect = Rect(80, 108, 160, 112);
+}
+
+void Scene50::signal() {
+	switch (_sceneMode) {
+	case 51:
+		_globals->_sceneManager.changeScene(60);
+		break;
+	case 55:
+		_globals->_sceneManager.changeScene(40);
+		break;
+	case 52:
+	case 54:
+		_globals->_player.enableControl();
+		break;
+	}
+}
+
+void Scene50::dispatch() {
+	if ((_sceneMode != 55) && _doorwayRect.contains(_globals->_player._position)) {
+		// Player in house doorway, start player moving to within
+		_globals->_player.disableControl();
+		_sceneMode = 55;
+		Common::Point pt(89, 111);
+		NpcMover *mover = new NpcMover();
+		_globals->_player.addMover(mover, &pt, this);
+	}
 }
 
 /*--------------------------------------------------------------------------

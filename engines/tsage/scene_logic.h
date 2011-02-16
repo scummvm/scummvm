@@ -341,7 +341,7 @@ public:
 	Scene50_Object2 _object2;
 	Scene50_Object3 _object3;
 	Scene50_Object4 _object4;
-	Rect _rect1;
+	Rect _doorwayRect;
 	SpeakerSText _speakerSText;
 	SpeakerQText _speakerQText;
 	DisplayHotspot _item0, _item1, _item2;
@@ -349,6 +349,8 @@ public:
 
 	Scene50();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
 };
 
 class Scene1000: public Scene {
