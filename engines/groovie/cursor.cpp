@@ -227,11 +227,7 @@ byte *GrvCursorMan_t7g::loadImage(Common::SeekableReadStream &file) {
 
 byte *GrvCursorMan_t7g::loadPalette(Common::SeekableReadStream &file) {
 	byte *palette = new byte[3 * 32];
-	for (uint8 colournum = 0; colournum < 32; colournum++) {
-		palette[colournum * 3 + 0] = file.readByte();
-		palette[colournum * 3 + 1] = file.readByte();
-		palette[colournum * 3 + 2] = file.readByte();
-	}
+	file.read(palette, 3 * 32);
 	return palette;
 }
 

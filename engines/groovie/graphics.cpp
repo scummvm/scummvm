@@ -106,7 +106,7 @@ void GraphicsMan::fadeIn(byte *pal) {
 	_fadeStartTime = _vm->_system->getMillis();
 
 	// Copy the target palette
-	memcpy(_paletteFull, pal, 3*256);
+	memcpy(_paletteFull, pal, 3 * 256);
 
 	// Set the current fading
 	_fading = 1;
