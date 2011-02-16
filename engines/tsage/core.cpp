@@ -907,6 +907,7 @@ int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
 			}
 
 			tempList[0] = newIndex;
+			++foundIndex;
 		}
 
 		v = 0;
