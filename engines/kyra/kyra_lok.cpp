@@ -819,6 +819,11 @@ void KyraEngine_LoK::updateMousePointer(bool forceUpdate) {
 		newY = 4;
 	}
 
+	if (_updateHandItemCursor) {
+		_updateHandItemCursor = false;
+		setHandItem(_itemInHand);
+	}
+
 	if ((newMouseState && _mouseState != newMouseState) || (newMouseState && forceUpdate)) {
 		_mouseState = newMouseState;
 		_screen->hideMouse();

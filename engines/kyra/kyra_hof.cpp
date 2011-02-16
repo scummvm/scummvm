@@ -504,6 +504,11 @@ void KyraEngine_HoF::runLoop() {
 		int inputFlag = checkInput(_buttonList, true);
 		removeInputTop();
 
+		if (_updateHandItemCursor) {
+			_updateHandItemCursor = false;
+			setHandItem(_itemInHand);
+		}
+
 		update();
 
 		if (inputFlag == 198 || inputFlag == 199) {

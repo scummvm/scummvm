@@ -931,6 +931,11 @@ void LoLEngine::runLoop() {
 		checkFloatingPointerRegions();
 		gui_updateInput();
 
+		if (_updateHandItemCursor) {
+			_updateHandItemCursor = false;
+			setHandItem(_itemInHand);
+		}
+
 		update();
 
 		if (_sceneUpdateRequired)

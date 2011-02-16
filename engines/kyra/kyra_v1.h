@@ -343,6 +343,9 @@ protected:
 	virtual void setHandItem(Item item) = 0;
 	virtual void removeHandItem() = 0;
 
+	void setDelayedCursorUpdate() { _updateHandItemCursor = true; }
+	bool _updateHandItemCursor;
+
 	// game flags
 	uint8 _flagsTable[100]; // TODO: check this value
 

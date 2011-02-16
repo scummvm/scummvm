@@ -966,6 +966,11 @@ void KyraEngine_MR::runLoop() {
 		int inputFlag = checkInput(_mainButtonList, true);
 		removeInputTop();
 
+		if (_updateHandItemCursor) {
+			_updateHandItemCursor = false;
+			setHandItem(_itemInHand);
+		}
+
 		update();
 		_timer->update();
 
