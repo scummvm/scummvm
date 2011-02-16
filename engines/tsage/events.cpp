@@ -139,8 +139,6 @@ void EventsClass::setCursor(CursorType cursorType) {
 	
 	if (cursorType != CURSOR_ARROW)
 		_currentCursor = cursorType;
-	if (!CursorMan.isVisible())
-		showCursor();
 
 	const byte *cursor;
 	bool delFlag = true;
