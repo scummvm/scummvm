@@ -108,7 +108,7 @@ void SequenceManager::signal() {
 			continueFlag = false;
 			break;
 		case 1:
-			_sceneObject->animate(ANIM_MODE_NONE);
+			_sceneObject->animate(ANIM_MODE_1, NULL);
 			break;
 		case 2:
 			_sceneObject->animate(ANIM_MODE_2, NULL);
@@ -296,7 +296,7 @@ void SequenceManager::process(Event &event) {
 		// Remove the text item
 		_sceneText.remove();
 	} else {
-		Action::remove();
+		Action::process(event);
 	}
 }
 
