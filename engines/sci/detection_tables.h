@@ -2274,7 +2274,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NOSPEECH	},
 
 	// Mixed-Up Mother Goose - FM-Towns (supplied by abevi in bug report #3038720)
-	{"mothergoose", "", {
+	{"mothergoose256", "", {
 		{"resource.map", 0, "b11e971ccd2040bebba59dfb409a08ef", 5772},
 		{"resource.001", 0, "d49625d9b8005ec01c852f8322a82867", 4330713},
 		AD_LISTEND},
