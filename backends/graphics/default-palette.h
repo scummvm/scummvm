@@ -38,7 +38,7 @@
  */
 class DefaultPaletteManager : public PaletteManager {
 protected:
-	byte _palette[4 * 256];
+	byte _palette[3 * 256];
 
 	/**
 	 * Subclasses should only implement this method and none of the others.
@@ -51,12 +51,12 @@ protected:
 public:
 	void setPalette(const byte *colors, uint start, uint num) {
 		assert(start + num <= 256);
-		memcpy(_palette + 4 * start, colors, 4 * num);
+		memcpy(_palette + 3 * start, colors, 3 * num);
 		setPaletteIntern(colors, start, num);
 	}
 	void grabPalette(byte *colors, uint start, uint num) {
 		assert(start + num <= 256);
-		memcpy(colors, _palette + 4 * start, 4 * num);
+		memcpy(colors, _palette + 3 * start, 3 * num);
 	}
 };
 
