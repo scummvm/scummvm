@@ -66,7 +66,7 @@ class SkyCompact;
 
 class SkyEngine : public Engine {
 protected:
-	Common::KeyState _keyPressed;
+	Common::KeyboardEvent _keyPressed;
 
 	Sound *_skySound;
 	Disk *_skyDisk;

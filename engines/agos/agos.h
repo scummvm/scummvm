@@ -29,7 +29,7 @@
 #include "engines/engine.h"
 
 #include "common/array.h"
-#include "common/keyboard.h"
+#include "common/events.h"
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/stack.h"
@@ -247,7 +247,7 @@ protected:
 
 	const GameSpecificSettings *gss;
 
-	Common::KeyState _keyPressed;
+	Common::KeyboardEvent _keyPressed;
 
 	Common::File *_gameFile;
 

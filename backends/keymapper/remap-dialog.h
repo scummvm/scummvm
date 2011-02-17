@@ -47,8 +47,8 @@ public:
 	virtual void close();
 	virtual void reflowLayout();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleKeyDown(Common::KeyState state);
-	virtual void handleKeyUp(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyboardEvent state);
+	virtual void handleKeyUp(Common::KeyboardEvent state);
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleTickle();
 

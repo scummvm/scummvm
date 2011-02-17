@@ -104,7 +104,7 @@ protected:
 	virtual void setupOpcodes();
 
 	virtual void scummLoop_handleActors();
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	virtual void processKeyboard(Common::KeyboardEvent lastKeyHit);
 
 	virtual void setupScummVars();
 	virtual void decodeParseString(int a, int b);

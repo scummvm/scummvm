@@ -69,7 +69,7 @@ protected:
 
 	virtual void saveOrLoad(Serializer *s);
 
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	virtual void processKeyboard(Common::KeyboardEvent lastKeyHit);
 
 	virtual void readIndexFile();
 	void readClassicIndexFile();	// V1

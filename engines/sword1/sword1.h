@@ -130,7 +130,7 @@ private:
 
 	Common::Point _mouseCoord;
 	uint16 _mouseState;
-	Common::KeyState _keyPressed;
+	Common::KeyboardEvent _keyPressed;
 
 	ResMan		*_resMan;
 	ObjectMan	*_objectMan;

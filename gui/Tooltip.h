@@ -41,8 +41,8 @@ protected:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) { close(); }
 	virtual void handleMouseUp(int x, int y, int button, int clickCount) { close(); }
 	virtual void handleMouseWheel(int x, int y, int direction) { close(); }
-	virtual void handleKeyDown(Common::KeyState state) { close(); }
-	virtual void handleKeyUp(Common::KeyState state) { close(); }
+	virtual void handleKeyDown(Common::KeyboardEvent state) { close(); }
+	virtual void handleKeyUp(Common::KeyboardEvent state) { close(); }
 	virtual void handleMouseMoved(int x, int y, int button) { close(); }
 
 	int _maxWidth;

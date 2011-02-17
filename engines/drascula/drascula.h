@@ -467,7 +467,7 @@ public:
 	int leftMouseButton;
 	int rightMouseButton;
 
-	Common::KeyState _keyBuffer[KEYBUFSIZE];
+	Common::KeyboardEvent _keyBuffer[KEYBUFSIZE];
 	int _keyBufferHead;
 	int _keyBufferTail;
 
@@ -493,7 +493,7 @@ public:
 	bool verify1();
 	bool verify2();
 	Common::KeyCode getScan();
-	void addKeyToBuffer(Common::KeyState& key);
+	void addKeyToBuffer(Common::KeyboardEvent& key);
 	void flushKeyBuffer();
 	void selectVerb(int);
 	void updateVolume(Audio::Mixer::SoundType soundType, int prevVolume);

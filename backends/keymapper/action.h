@@ -72,7 +72,7 @@ public:
 		events.push_back(evt);
 	}
 
-	void addKeyEvent(const KeyState &ks) {
+	void addKeyEvent(const KeyboardEvent &ks) {
 		Event evt;
 
 		evt.type = EVENT_KEYDOWN;

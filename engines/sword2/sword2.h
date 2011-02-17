@@ -89,7 +89,7 @@ struct MouseEvent {
 
 struct KeyboardEvent {
 	bool pending;
-	Common::KeyState kbd;
+	Common::KeyboardEvent kbd;
 };
 
 struct StartUp {

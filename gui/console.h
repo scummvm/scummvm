@@ -139,7 +139,7 @@ public:
 	void handleTickle();
 	void reflowLayout();
 	void handleMouseWheel(int x, int y, int direction);
-	void handleKeyDown(Common::KeyState state);
+	void handleKeyDown(Common::KeyboardEvent state);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	int printFormat(int dummy, const char *format, ...) GCC_PRINTF(3, 4);
@@ -177,7 +177,7 @@ protected:
 	void updateScrollBuffer();
 	void scrollToCurrent();
 
-	void defaultKeyDownHandler(Common::KeyState &state);
+	void defaultKeyDownHandler(Common::KeyboardEvent &state);
 
 	// Line editing
 	void specialKeys(int keycode);

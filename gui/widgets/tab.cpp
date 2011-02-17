@@ -228,7 +228,7 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	}
 }
 
-bool TabWidget::handleKeyDown(Common::KeyState state) {
+bool TabWidget::handleKeyDown(Common::KeyboardEvent state) {
 	// TODO: maybe there should be a way to switch between tabs
 	// using the keyboard? E.g. Alt-Shift-Left/Right-Arrow or something
 	// like that.

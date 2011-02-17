@@ -57,7 +57,7 @@ public:
 		close();
 	}
 
-	virtual void handleKeyDown(Common::KeyState state) {
+	virtual void handleKeyDown(Common::KeyboardEvent state) {
 		setResult(state.ascii);
 		close();
 	}
@@ -68,7 +68,7 @@ public:
 class PauseDialog : public InfoDialog {
 public:
 	PauseDialog(MohawkEngine* vm, const Common::String &message);
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyboardEvent state);
 };
 
 class MystOptionsDialog : public GUI::OptionsDialog {

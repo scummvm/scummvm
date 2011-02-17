@@ -133,7 +133,7 @@ private:
 	bool saveToFile();
 	bool restoreFromFile();
 	bool keyAccepted(uint16 ascii);
-	void handleSaveKey(Common::KeyState kbd);
+	void handleSaveKey(Common::KeyboardEvent kbd);
 
 	void renderVolumeBar(uint8 id, uint8 volL, uint8 volR);
 	uint16 getTextWidth(const uint8 *str);
@@ -155,7 +155,7 @@ private:
 	Sound *_sound;
 	uint8 *_font, *_redFont;
 	uint8 *_screenBuf;
-	Common::KeyState _keyPressed;
+	Common::KeyboardEvent _keyPressed;
 	void delay(uint32 msecs);
 	Common::Point _mouseCoord;
 	uint16 _mouseState;

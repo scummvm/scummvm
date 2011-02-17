@@ -482,7 +482,7 @@ void Interface::setMode(int mode) {
 	_vm->_render->setFullRefresh(true);
 }
 
-bool Interface::processAscii(Common::KeyState keystate) {
+bool Interface::processAscii(Common::KeyboardEvent keystate) {
 	// TODO: Checking for Esc and Enter below is a bit hackish, and
 	// probably only works with the English version. Maybe we should
 	// add a flag to the button so it can indicate if it's the default
@@ -1130,7 +1130,7 @@ void Interface::setLoad(PanelButton *panelButton) {
 	}
 }
 
-void Interface::processStatusTextInput(Common::KeyState keystate) {
+void Interface::processStatusTextInput(Common::KeyboardEvent keystate) {
 
 	switch (keystate.keycode) {
 	case Common::KEYCODE_ESCAPE:
@@ -1161,7 +1161,7 @@ void Interface::processStatusTextInput(Common::KeyState keystate) {
 	setStatusText(_statusTextInputString);
 }
 
-bool Interface::processTextInput(Common::KeyState keystate) {
+bool Interface::processTextInput(Common::KeyboardEvent keystate) {
 	char ch[2];
 	char tempString[SAVE_TITLE_SIZE];
 	uint tempWidth;

@@ -762,7 +762,7 @@ bool Control::keyAccepted(uint16 ascii) {
 		return false;
 }
 
-void Control::handleSaveKey(Common::KeyState kbd) {
+void Control::handleSaveKey(Common::KeyboardEvent kbd) {
 	if (_selectedSavegame < 255) {
 		uint8 len = _saveNames[_selectedSavegame].size();
 		if ((kbd.keycode == Common::KEYCODE_BACKSPACE) && len)  // backspace

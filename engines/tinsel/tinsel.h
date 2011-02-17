@@ -121,7 +121,7 @@ enum TinselKeyDirection {
 	MSK_DIRECTION = MSK_LEFT | MSK_RIGHT | MSK_UP | MSK_DOWN
 };
 
-typedef bool (*KEYFPTR)(const Common::KeyState &);
+typedef bool (*KEYFPTR)(const Common::KeyboardEvent &);
 
 #define	SCREEN_WIDTH	(_vm->screen().w)	// PC screen dimensions
 #define	SCREEN_HEIGHT	(_vm->screen().h)
@@ -153,7 +153,7 @@ extern TinselEngine *_vm;
 
 class TinselEngine : public Engine {
 	int _gameId;
-	Common::KeyState _keyPressed;
+	Common::KeyboardEvent _keyPressed;
 	Common::RandomSource _random;
 	Graphics::Surface _screenSurface;
 	Common::Point _mousePos;

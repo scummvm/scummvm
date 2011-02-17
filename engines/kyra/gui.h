@@ -208,7 +208,7 @@ protected:
 	int getNextSavegameSlot();
 
 	uint32 _lastScreenUpdate;
-	Common::KeyState _keyPressed;
+	Common::KeyboardEvent _keyPressed;
 	void checkTextfieldInput();
 };
 

@@ -256,7 +256,7 @@ void ConsoleDialog::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 }
 
-void ConsoleDialog::handleKeyDown(Common::KeyState state) {
+void ConsoleDialog::handleKeyDown(Common::KeyboardEvent state) {
 	int i;
 
 	if (_slideMode != kNoSlideMode)
@@ -479,7 +479,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 	}
 }
 
-void ConsoleDialog::defaultKeyDownHandler(Common::KeyState &state) {
+void ConsoleDialog::defaultKeyDownHandler(Common::KeyboardEvent &state) {
 	if (state.ascii == '~' || state.ascii == '#') {
 		slideUpAndClose();
 	} else if (state.hasFlags(Common::KBD_CTRL)) {

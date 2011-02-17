@@ -28,7 +28,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/str-array.h"
-#include "common/keyboard.h"
+#include "common/events.h"
 #include "graphics/surface.h"
 #include "gui/object.h"
 #include "gui/ThemeEngine.h"
@@ -119,8 +119,8 @@ public:
 	virtual void handleMouseLeft(int button) {}
 	virtual void handleMouseMoved(int x, int y, int button) {}
 	virtual void handleMouseWheel(int x, int y, int direction) {}
-	virtual bool handleKeyDown(Common::KeyState state) { return false; }	// Return true if the event was handled
-	virtual bool handleKeyUp(Common::KeyState state) { return false; }	// Return true if the event was handled
+	virtual bool handleKeyDown(Common::KeyboardEvent state) { return false; }	// Return true if the event was handled
+	virtual bool handleKeyUp(Common::KeyboardEvent state) { return false; }	// Return true if the event was handled
 	virtual void handleTickle() {}
 
 	void draw();

@@ -957,7 +957,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	return clickRes;
 }
 
-void Control::handleKeyPress(Common::KeyState kbd, Common::String &textBuf) {
+void Control::handleKeyPress(Common::KeyboardEvent kbd, Common::String &textBuf) {
 	if (kbd.keycode == Common::KEYCODE_BACKSPACE) { // backspace
 		if (textBuf.size() > 0)
 			textBuf.deleteLastChar();

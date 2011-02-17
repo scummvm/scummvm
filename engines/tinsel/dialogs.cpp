@@ -1528,7 +1528,7 @@ static void InvLoadGame() {
  * Returns true if the string was altered.
  */
 #ifndef JAPAN
-static bool UpdateString(const Common::KeyState &kbd) {
+static bool UpdateString(const Common::KeyboardEvent &kbd) {
 	int	cpos;
 
 	if (!cd.editableRgroup)
@@ -1563,7 +1563,7 @@ static bool UpdateString(const Common::KeyState &kbd) {
 /**
  * Keystrokes get sent here when load/save screen is up.
  */
-static bool InvKeyIn(const Common::KeyState &kbd) {
+static bool InvKeyIn(const Common::KeyboardEvent &kbd) {
 	if (kbd.keycode == Common::KEYCODE_PAGEUP ||
 	    kbd.keycode == Common::KEYCODE_PAGEDOWN ||
 	    kbd.keycode == Common::KEYCODE_HOME ||
@@ -1594,7 +1594,9 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
 				GetTagFontHandle(), 0);
 			if (MultiRightmost(iconArray[HL3]) > MAX_NAME_RIGHT) {
 				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), iconArray[HL3]);
-				UpdateString(Common::KeyState(Common::KEYCODE_BACKSPACE));
+				Common::KeyboardEvent evtBackspace;
+				evtBackspace.init(Common::KEYCODE_BACKSPACE);
+				UpdateString(evtBackspace);
 				iconArray[HL3] = ObjectTextOut(
 					GetPlayfieldList(FIELD_STATUS), sedit, 0,
 					InvD[ino].inventoryX + cd.box[cd.selBox].xpos + 2,

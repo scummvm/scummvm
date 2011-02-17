@@ -39,8 +39,8 @@ public:
 	KeysDialog(const Common::String &title = _("Choose an action to map"));
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleKeyUp(Common::KeyState state);
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyUp(Common::KeyboardEvent state);
+	virtual void handleKeyDown(Common::KeyboardEvent state);
 
 protected:
 

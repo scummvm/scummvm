@@ -85,7 +85,7 @@ void EditableWidget::handleTickle() {
 	}
 }
 
-bool EditableWidget::handleKeyDown(Common::KeyState state) {
+bool EditableWidget::handleKeyDown(Common::KeyboardEvent state) {
 	bool handled = true;
 	bool dirty = false;
 	bool forcecaret = false;
@@ -208,7 +208,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	return handled;
 }
 
-void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty, bool &forcecaret, bool &handled) {
+void EditableWidget::defaultKeyDownHandler(Common::KeyboardEvent &state, bool &dirty, bool &forcecaret, bool &handled) {
 	if (state.ascii < 256 && tryInsertChar((byte)state.ascii, _caretPos)) {
 		_caretPos++;
 		dirty = true;

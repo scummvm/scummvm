@@ -70,7 +70,7 @@ protected:
 
 	virtual int getObjectIdFromOBIM(const byte *obim);
 
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	virtual void processKeyboard(Common::KeyboardEvent lastKeyHit);
 
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 

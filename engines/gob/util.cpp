@@ -167,7 +167,7 @@ bool Util::keyBufferEmpty() {
 	return (_keyBufferHead == _keyBufferTail);
 }
 
-void Util::addKeyToBuffer(const Common::KeyState &key) {
+void Util::addKeyToBuffer(const Common::KeyboardEvent &key) {
 	if ((_keyBufferHead + 1) % KEYBUFSIZE == _keyBufferTail) {
 		warning("key buffer overflow");
 		return;
@@ -177,7 +177,7 @@ void Util::addKeyToBuffer(const Common::KeyState &key) {
 	_keyBufferHead = (_keyBufferHead + 1) % KEYBUFSIZE;
 }
 
-bool Util::getKeyFromBuffer(Common::KeyState &key) {
+bool Util::getKeyFromBuffer(Common::KeyboardEvent &key) {
 	if (_keyBufferHead == _keyBufferTail) return false;
 
 	key = _keyBuffer[_keyBufferTail];
@@ -186,7 +186,7 @@ bool Util::getKeyFromBuffer(Common::KeyState &key) {
 	return true;
 }
 
-int16 Util::translateKey(const Common::KeyState &key) {
+int16 Util::translateKey(const Common::KeyboardEvent &key) {
 	static struct keyS {
 		int16 from;
 		int16 to;
@@ -228,7 +228,7 @@ int16 Util::translateKey(const Common::KeyState &key) {
 }
 
 int16 Util::getKey() {
-	Common::KeyState key;
+	Common::KeyboardEvent key;
 
 	while (!getKeyFromBuffer(key)) {
 		processInput();
@@ -240,7 +240,7 @@ int16 Util::getKey() {
 }
 
 int16 Util::checkKey() {
-	Common::KeyState key;
+	Common::KeyboardEvent key;
 
 	getKeyFromBuffer(key);
 
@@ -248,7 +248,7 @@ int16 Util::checkKey() {
 }
 
 bool Util::checkKey(int16 &key) {
-	Common::KeyState keyS;
+	Common::KeyboardEvent keyS;
 
 	if (!getKeyFromBuffer(keyS))
 		return false;

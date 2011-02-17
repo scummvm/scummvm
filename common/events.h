@@ -77,12 +77,69 @@ enum CustomEventMessage {
 	MESSAGE_PREDICTIVE_DIALOG = 1    ///< The backend requests the agi engine's predictive dialog to be shown
 };
 
-struct CustomEvent {
-	CustomEventMessage message;
-	uint32 param1;
-	uint32 param2;
+/**
+ * Keyboard status
+ */
+struct KeyboardEvent {
+	/**
+	 * Abstract key code (will be the same for any given key regardless
+	 * of modifiers being held at the same time.
+	 */
+	KeyCode keycode;
 
-	CustomEvent() : message(MESSAGE_INVALID), param1(0), param2(0) {}
+	/**
+	 * ASCII-value of the pressed key (if any).
+	 * This depends on modifiers, i.e. pressing the 'A' key results in
+	 * different values here depending on the status of shift, alt and
+	 * caps lock.
+	 */
+	uint16 ascii;
+
+	/**
+	 * Status of the modifier keys. Bits are set in this for each
+	 * pressed modifier.
+	 * We distinguish 'non-sticky' and 'sticky' modifiers flags. The former
+	 * are only set while certain keys (ctrl, alt, shift) are pressed by the
+	 * user; the latter (num lock, caps lock, scroll lock) are activated when
+	 * certain keys are pressed and released; and deactivated when that key
+	 * is pressed and released a second time.
+	 *
+	 * @see KBD_CTRL, KBD_ALT, KBD_SHIFT, KBD_NUM, KBD_CAPS, KBD_SCRL
+	 */
+	byte flags;
+
+	void init(KeyCode kc = KEYCODE_INVALID) {
+		keycode = kc;
+		ascii = (uint16)kc;
+		flags = 0;
+	}
+
+	void init(KeyCode kc, uint16 asc, byte f = 0) {
+		keycode = kc;
+		ascii = asc;
+		flags = f;
+	}
+
+	void reset() {
+		keycode = KEYCODE_INVALID;
+		ascii = flags = 0;
+	}
+
+	/**
+	 * Check whether the non-sticky flags are *exactly* as specified by f.
+	 * This ignores the sticky flags (KBD_NUM, KBD_CAPS, KBD_SCRL).
+	 * If you just want to check whether a modifier flag is set, just bit-and
+	 * the flag. E.g. to check whether the control key modifier is set,
+	 * you can write
+	 *    if (event.flags & KBD_CTRL) { ... }
+	 */
+	bool hasFlags(byte f) const {
+		return f == (flags & ~(KBD_NUM|KBD_CAPS|KBD_SCRL));
+	}
+
+	bool operator ==(const KeyboardEvent &x) const {
+		return keycode == x.keycode && ascii == x.ascii && flags == x.flags;
+	}
 };
 
 struct MouseEvent {
@@ -92,6 +149,14 @@ struct MouseEvent {
 	Common::Point getPoint() const {
 		return Common::Point(x, y);
 	}
+};
+
+struct CustomEvent {
+	CustomEventMessage message;
+	uint32 param1;
+	uint32 param2;
+
+	CustomEvent() : message(MESSAGE_INVALID), param1(0), param2(0) {}
 };
 
 
@@ -134,7 +199,7 @@ struct Event {
 	  * Keyboard data; only valid for keyboard events (EVENT_KEYDOWN and
 	  * EVENT_KEYUP). For all other event types, content is undefined.
 	  */
-	KeyState kbd;
+	KeyboardEvent kbd;
 	/**
 	 * The mouse coordinates, in virtual screen coordinates. Only valid
 	 * for mouse events.

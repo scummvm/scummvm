@@ -282,7 +282,7 @@ static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop) {
 	return match;
 }
 
-bool ListWidget::handleKeyDown(Common::KeyState state) {
+bool ListWidget::handleKeyDown(Common::KeyboardEvent state) {
 	bool handled = true;
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
@@ -442,7 +442,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 	return handled;
 }
 
-bool ListWidget::handleKeyUp(Common::KeyState state) {
+bool ListWidget::handleKeyUp(Common::KeyboardEvent state) {
 	if (state.keycode == _currentKeyDown)
 		_currentKeyDown = 0;
 	return true;

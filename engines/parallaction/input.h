@@ -26,7 +26,7 @@
 #ifndef PARALLACTION_INPUT_H
 #define PARALLACTION_INPUT_H
 
-#include "common/keyboard.h"
+#include "common/events.h"
 
 #include "parallaction/objects.h"
 #include "parallaction/inventory.h"
@@ -51,7 +51,7 @@ class Input {
 	int		updateGameInput();
 
 	bool		_hasKeyPressEvent;
-	Common::KeyState _keyPressed;
+	Common::KeyboardEvent _keyPressed;
 
 	bool		_hasDelayedAction;  // actived when the character needs to move before taking an action
 	ZonePtr		_delayedActionZone;

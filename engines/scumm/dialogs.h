@@ -87,7 +87,7 @@ public:
 		setResult(0);
 		close();
 	}
-	virtual void handleKeyDown(Common::KeyState state) {
+	virtual void handleKeyDown(Common::KeyboardEvent state) {
 		setResult(state.ascii);
 		close();
 	}
@@ -107,7 +107,7 @@ protected:
 class PauseDialog : public InfoDialog {
 public:
 	PauseDialog(ScummEngine *scumm, int res);
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyboardEvent state);
 };
 
 /**
@@ -117,7 +117,7 @@ public:
 class ConfirmDialog : public InfoDialog {
 public:
 	ConfirmDialog(ScummEngine *scumm, int res);
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyboardEvent state);
 
 protected:
 	char _yesKey, _noKey;
@@ -137,7 +137,7 @@ public:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		close();
 	}
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyboardEvent state);
 
 	virtual void reflowLayout();
 
@@ -166,7 +166,7 @@ public:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		close();
 	}
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyboardEvent state);
 protected:
 	int _value;
 	uint32 _timer;
@@ -178,13 +178,13 @@ protected:
 class Indy3IQPointsDialog : public InfoDialog {
 public:
 	Indy3IQPointsDialog(ScummEngine *scumm, char* text);
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyboardEvent state);
 };
 
 class DebugInputDialog : public InfoDialog {
 public:
 	DebugInputDialog(ScummEngine *scumm, char* text);
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyboardEvent state);
 	bool done;
 	Common::String buffer;
 	Common::String mainText;

@@ -733,7 +733,7 @@ Common::KeyCode DrasculaEngine::getScan() {
 	return key;
 }
 
-void DrasculaEngine::addKeyToBuffer(Common::KeyState& key) {
+void DrasculaEngine::addKeyToBuffer(Common::KeyboardEvent& key) {
 	if ((_keyBufferHead + 1) % KEYBUFSIZE == _keyBufferTail) {
 		warning("key buffer overflow");
 		return;

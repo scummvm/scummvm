@@ -225,7 +225,7 @@ private:
 	uint16 saveRestorePanel(bool allowSave);
 	void setUpGameSprites(const Common::StringArray &saveGameNames, DataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame);
 	void showSprites(DataFileHeader **nameSprites, bool allowSave);
-	void handleKeyPress(Common::KeyState kbd, Common::String &textBuf);
+	void handleKeyPress(Common::KeyboardEvent kbd, Common::String &textBuf);
 
 	uint32 prepareSaveData(uint8 *destBuf);
 
@@ -246,7 +246,7 @@ private:
 	Sound *_skySound;
 	OSystem *_system;
 	bool _mouseClicked;
-	Common::KeyState _keyPressed;
+	Common::KeyboardEvent _keyPressed;
 	int _mouseWheel;
 
 	struct {

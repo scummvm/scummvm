@@ -58,7 +58,7 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseWheel(int x, int y, int direction);	// Scroll through entries with scroll wheel
 	void handleMouseMoved(int x, int y, int button);	// Redraw selections depending on mouse position
-	void handleKeyDown(Common::KeyState state);	// Scroll through entries with arrow keys etc.
+	void handleKeyDown(Common::KeyboardEvent state);	// Scroll through entries with arrow keys etc.
 
 protected:
 	void drawMenuEntry(int entry, bool hilite);
@@ -210,7 +210,7 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 	setSelection(item);
 }
 
-void PopUpDialog::handleKeyDown(Common::KeyState state) {
+void PopUpDialog::handleKeyDown(Common::KeyboardEvent state) {
 	if (state.keycode == Common::KEYCODE_ESCAPE) {
 		// Don't change the previous selection
 		setResult(-1);

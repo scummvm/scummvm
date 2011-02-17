@@ -531,7 +531,7 @@ protected:
 
 	void waitForTimer(int msec_delay);
 	virtual void processInput();
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	virtual void processKeyboard(Common::KeyboardEvent lastKeyHit);
 	virtual void clearClickedStatus();
 
 	// Cursor/palette
@@ -633,7 +633,7 @@ public:
 	Common::String generateFilename(const int room) const;
 
 protected:
-	Common::KeyState _keyPressed;
+	Common::KeyboardEvent _keyPressed;
 	bool _keyDownMap[512]; // FIXME - 512 is a guess. it's max(kbd.ascii)
 
 	Common::Point _mouse;

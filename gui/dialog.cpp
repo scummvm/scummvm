@@ -218,7 +218,7 @@ void Dialog::handleMouseWheel(int x, int y, int direction) {
 		w->handleMouseWheel(x, y, direction);
 }
 
-void Dialog::handleKeyDown(Common::KeyState state) {
+void Dialog::handleKeyDown(Common::KeyboardEvent state) {
 	if (_focusedWidget) {
 		if (_focusedWidget->handleKeyDown(state))
 			return;
@@ -249,7 +249,7 @@ void Dialog::handleKeyDown(Common::KeyState state) {
 	// TODO: tab/shift-tab should focus the next/previous focusable widget
 }
 
-void Dialog::handleKeyUp(Common::KeyState state) {
+void Dialog::handleKeyUp(Common::KeyboardEvent state) {
 	// Focused widget receives keyup events
 	if (_focusedWidget)
 		_focusedWidget->handleKeyUp(state);

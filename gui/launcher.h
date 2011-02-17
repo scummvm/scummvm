@@ -47,8 +47,8 @@ public:
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-	virtual void handleKeyDown(Common::KeyState state);
-	virtual void handleKeyUp(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyboardEvent state);
+	virtual void handleKeyUp(Common::KeyboardEvent state);
 
 protected:
 	EditTextWidget  *_searchWidget;

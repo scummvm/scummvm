@@ -231,14 +231,14 @@ void RemapDialog::stopRemapping() {
 	_keymapper->setEnabled(true);
 }
 
-void RemapDialog::handleKeyDown(Common::KeyState state) {
+void RemapDialog::handleKeyDown(Common::KeyboardEvent state) {
 	if (_activeRemapAction)
 		return;
 
 	GUI::Dialog::handleKeyDown(state);
 }
 
-void RemapDialog::handleKeyUp(Common::KeyState state) {
+void RemapDialog::handleKeyUp(Common::KeyboardEvent state) {
 	if (_activeRemapAction) {
 		const HardwareKey *hwkey = _keymapper->findHardwareKey(state);
 

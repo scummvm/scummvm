@@ -204,12 +204,12 @@ void ScummEngine::parseEvent(Common::Event event) {
 	// See bug report #1193185 for details.
 	case Common::EVENT_WHEELDOWN:
 		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
-			_keyPressed = Common::KeyState(Common::KEYCODE_7, 55);	// '7'
+			_keyPressed.init(Common::KEYCODE_7, 55);	// '7'
 		break;
 
 	case Common::EVENT_WHEELUP:
 		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
-			_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
+			_keyPressed.init(Common::KEYCODE_6, 54);	// '6'
 		break;
 
 	default:
@@ -271,7 +271,7 @@ void ScummEngine_v7::processInput() {
 #endif
 
 void ScummEngine::processInput() {
-	Common::KeyState lastKeyHit = _keyPressed;
+	Common::KeyboardEvent lastKeyHit = _keyPressed;
 	_keyPressed.reset();
 
 	//
@@ -308,14 +308,14 @@ void ScummEngine::processInput() {
 		// the behaviour of the original engine where pressing both
 		// mouse buttons also skips the current cutscene.
 		_mouseAndKeyboardStat = 0;
-		lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
+		lastKeyHit.init(Common::KEYCODE_ESCAPE);
 	} else if ((_rightBtnPressed & msClicked) && (_game.version <= 3 && _game.id != GID_LOOM)) {
 		// Pressing right mouse button is treated as if you pressed
 		// the cutscene exit key (ESC) in V0-V3 games. That mimicks
 		// the behaviour of the original engine where pressing right
 		// mouse button also skips the current cutscene.
 		_mouseAndKeyboardStat = 0;
-		lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
+		lastKeyHit.init(Common::KEYCODE_ESCAPE);
 	} else if (_leftBtnPressed & msClicked) {
 		_mouseAndKeyboardStat = MBS_LEFT_CLICK;
 	} else if (_rightBtnPressed & msClicked) {
@@ -339,9 +339,9 @@ void ScummEngine::processInput() {
 	if (lastKeyHit.ascii == KEY_ALL_SKIP) {
 		// Skip talk
 		if (VAR_TALKSTOP_KEY != 0xFF && _talkDelay > 0) {
-			lastKeyHit = Common::KeyState(Common::KEYCODE_PERIOD);
+			lastKeyHit = Common::KeyboardEvent(Common::KEYCODE_PERIOD);
 		} else {
-			lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
+			lastKeyHit = Common::KeyboardEvent(Common::KEYCODE_ESCAPE);
 		}
 	}
 #endif
@@ -353,15 +353,15 @@ void ScummEngine::processInput() {
 }
 
 #ifdef ENABLE_SCUMM_7_8
-void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
+void ScummEngine_v8::processKeyboard(Common::KeyboardEvent lastKeyHit) {
 	// F1 (the trigger for the original save/load dialog) is mapped to F5
 	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.hasFlags(0)) {
-		lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
+		lastKeyHit.init(Common::KEYCODE_F5, 319);
 	}
 
 	// Alt-F5 should bring up the original save/load dialog, so map it to F1.
 	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
-		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
+		lastKeyHit.init(Common::KEYCODE_F1, 315);
 	}
 
 	// If a key script was specified (a V8 feature), and it's trigger
@@ -375,7 +375,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 	ScummEngine_v7::processKeyboard(lastKeyHit);
 }
 
-void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
+void ScummEngine_v7::processKeyboard(Common::KeyboardEvent lastKeyHit) {
 	const bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
 
 	// VAR_VERSION_KEY (usually ctrl-v) is used in COMI, Dig and FT to trigger
@@ -407,7 +407,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 }
 #endif
 
-void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
+void ScummEngine_v6::processKeyboard(Common::KeyboardEvent lastKeyHit) {
 	if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 		SubtitleSettingsDialog dialog(this, _voiceMode);
 		_voiceMode = runDialog(dialog);
@@ -437,7 +437,7 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 	ScummEngine::processKeyboard(lastKeyHit);
 }
 
-void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
+void ScummEngine_v2::processKeyboard(Common::KeyboardEvent lastKeyHit) {
 	// Fall back to default behavior
 	ScummEngine::processKeyboard(lastKeyHit);
 
@@ -462,7 +462,7 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 	}
 }
 
-void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
+void ScummEngine_v3::processKeyboard(Common::KeyboardEvent lastKeyHit) {
 	// Fall back to default behavior
 	ScummEngine::processKeyboard(lastKeyHit);
 
@@ -485,7 +485,7 @@ void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
 	}
 }
 
-void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
+void ScummEngine::processKeyboard(Common::KeyboardEvent lastKeyHit) {
 	// Enable the following five special keys conditionally:
 	bool restartKeyEnabled = (VAR_RESTART_KEY == 0xFF || VAR(VAR_RESTART_KEY) != 0);
 	bool pauseKeyEnabled = (VAR_PAUSE_KEY == 0xFF || VAR(VAR_PAUSE_KEY) != 0);

@@ -66,7 +66,7 @@ public:
 	virtual const String &getEditString() const		{ return _editString; }
 
 	virtual void handleTickle();
-	virtual bool handleKeyDown(Common::KeyState state);
+	virtual bool handleKeyDown(Common::KeyboardEvent state);
 
 	virtual void reflowLayout();
 
@@ -82,7 +82,7 @@ protected:
 	bool adjustOffset();
 	void makeCaretVisible();
 
-	void defaultKeyDownHandler(Common::KeyState &state, bool &dirty, bool &forcecaret, bool &handled);
+	void defaultKeyDownHandler(Common::KeyboardEvent &state, bool &dirty, bool &forcecaret, bool &handled);
 
 	void setFontStyle(ThemeEngine::FontStyle font) { _font = font; }
 

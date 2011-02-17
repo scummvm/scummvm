@@ -46,7 +46,7 @@ protected:
 	virtual void readRoomsOffsets();
 	virtual void loadCharset(int no);
 
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	virtual void processKeyboard(Common::KeyboardEvent lastKeyHit);
 
 	/* Version 3 script opcodes */
 	void o3_setBoxFlags();

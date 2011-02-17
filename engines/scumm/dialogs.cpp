@@ -462,7 +462,7 @@ PauseDialog::PauseDialog(ScummEngine *scumm, int res)
 	: InfoDialog(scumm, res) {
 }
 
-void PauseDialog::handleKeyDown(Common::KeyState state) {
+void PauseDialog::handleKeyDown(Common::KeyboardEvent state) {
 	if (state.ascii == ' ')  // Close pause dialog if space key is pressed
 		close();
 	else
@@ -484,7 +484,7 @@ ConfirmDialog::ConfirmDialog(ScummEngine *scumm, int res)
 	}
 }
 
-void ConfirmDialog::handleKeyDown(Common::KeyState state) {
+void ConfirmDialog::handleKeyDown(Common::KeyboardEvent state) {
 	if (state.keycode == Common::KEYCODE_n || state.ascii == _noKey) {
 		setResult(0);
 		close();
@@ -535,7 +535,7 @@ void ValueDisplayDialog::reflowLayout() {
 	_h = height;
 }
 
-void ValueDisplayDialog::handleKeyDown(Common::KeyState state) {
+void ValueDisplayDialog::handleKeyDown(Common::KeyboardEvent state) {
 	if (state.ascii == _incKey || state.ascii == _decKey) {
 		if (state.ascii == _incKey && _value < _max)
 			_value++;
@@ -567,7 +567,7 @@ void SubtitleSettingsDialog::handleTickle() {
 		close();
 }
 
-void SubtitleSettingsDialog::handleKeyDown(Common::KeyState state) {
+void SubtitleSettingsDialog::handleKeyDown(Common::KeyboardEvent state) {
 	if (state.keycode == Common::KEYCODE_t && state.hasFlags(Common::KBD_CTRL)) {
 		cycleValue();
 
@@ -607,7 +607,7 @@ Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char* text)
 	: InfoDialog(scumm, text) {
 }
 
-void Indy3IQPointsDialog::handleKeyDown(Common::KeyState state) {
+void Indy3IQPointsDialog::handleKeyDown(Common::KeyboardEvent state) {
 	if (state.ascii == 'i')
 		close();
 	else
@@ -620,7 +620,7 @@ DebugInputDialog::DebugInputDialog(ScummEngine *scumm, char* text)
 	done = 0;
 }
 
-void DebugInputDialog::handleKeyDown(Common::KeyState state) {
+void DebugInputDialog::handleKeyDown(Common::KeyboardEvent state) {
 	if (state.keycode == Common::KEYCODE_BACKSPACE && buffer.size() > 0) {
 		buffer.deleteLastChar();
 		Common::String total = mainText + ' ' + buffer;
