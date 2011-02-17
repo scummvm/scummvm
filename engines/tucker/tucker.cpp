@@ -1921,7 +1921,9 @@ void TuckerEngine::drawSprite(int num) {
 			Graphics::decodeRLE_248(dstPtr, srcPtr, srcW, srcH, 0, s->yMaxBackground, s->flipX != 0);
 			break;
 		}
-		addDirtyRect(xPos, srcY, srcW, srcH);
+		const int xR = srcX + (s->gfxBackgroundOffset % 640);
+		const int yR = srcY + (s->gfxBackgroundOffset / 640);
+		addDirtyRect(xR, yR, srcW, srcH);
 	}
 }
 

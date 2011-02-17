@@ -676,7 +676,7 @@ void TuckerEngine::execData3PostUpdate_locationNum8() {
 
 void TuckerEngine::updateSprite_locationNum9_0(int i) {
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
-		_spritesTable[0].needUpdate = 1;
+		_spritesTable[i].needUpdate = 1;
 		_spritesTable[i].state = 3;
 	} else if (_updateLocationCounter2 > 0 || getRandomNumber() > 30000) {
 		_spritesTable[i].state = 1;
