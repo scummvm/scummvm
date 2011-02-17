@@ -144,7 +144,8 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				GUI::Key &key = GUI::Actions::Instance()->getKeyAction(loop);
 				// if key code is pause, then change event to interactive or just fall through
 				if (key.keycode() == SDLK_PAUSE) {
-					event.type = Common::EVENT_PREDICTIVE_DIALOG;
+					event.type = Common::EVENT_CUSTOM;
+					event.custom.message = Common::MESSAGE_PREDICTIVE_DIALOG;
 					return true;
 					}
 				}

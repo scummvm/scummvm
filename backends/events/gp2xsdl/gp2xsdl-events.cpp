@@ -185,7 +185,7 @@ Combos:
 GP2X_BUTTON_VOLUP &	GP2X_BUTTON_VOLDOWN		0 (For Monkey 2 CP) or Virtual Keyboard if enabled
 GP2X_BUTTON_L &	GP2X_BUTTON_SELECT			Common::EVENT_QUIT (Calls Sync() to make sure SD is flushed)
 GP2X_BUTTON_L &	GP2X_BUTTON_MENU			Common::EVENT_MAINMENU (ScummVM Global Main Menu)
-GP2X_BUTTON_L &	GP2X_BUTTON_A				Common::EVENT_PREDICTIVE_DIALOG for predictive text entry box (AGI games)
+GP2X_BUTTON_L &	GP2X_BUTTON_A				Custom event of type Common::MESSAGE_PREDICTIVE_DIALOG for predictive text entry box (AGI games)
 GP2X_BUTTON_L &	GP2X_BUTTON_Y				Toggles setZoomOnMouse() for larger then 320*240 games to scale to the point + raduis. (GP2X only)
 */
 
@@ -265,7 +265,8 @@ bool GP2XSdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event
 	case BUTTON_A:
 		event.type = Common::EVENT_KEYDOWN;
 		if (BUTTON_STATE_L == true) {
-			event.type = Common::EVENT_PREDICTIVE_DIALOG;
+			event.type = Common::EVENT_CUSTOM;
+			event.custom.message = Common::MESSAGE_PREDICTIVE_DIALOG;
 		} else {
 		event.kbd.keycode = Common::KEYCODE_PERIOD;
 		event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
@@ -441,7 +442,7 @@ bool GP2XSdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event
 			_km.x_down_count = 0;
 		}
 #endif
- 
+
 	} else if (ev.jaxis.axis == JOY_YAXIS) {
 #ifndef JOY_INVERT_Y
 		axis = -axis;

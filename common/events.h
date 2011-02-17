@@ -68,24 +68,21 @@ enum EventType {
 
 	EVENT_QUIT = 10,
 	EVENT_SCREEN_CHANGED = 11,
-	/**
-	 * The backend requests the agi engine's predictive dialog to be shown.
-	 * TODO: Fingolfin suggests that it would be of better value to expand
-	 * on this notion by generalizing its use. For example the backend could
-	 * use events to ask for the save game dialog or to pause the engine.
-	 * An associated enumerated type can accomplish this.
-	 **/
-	EVENT_PREDICTIVE_DIALOG = 12,
 
 	EVENT_CUSTOM = 18
 };
 
+enum CustomEventMessage {
+	MESSAGE_INVALID           = 0,
+	MESSAGE_PREDICTIVE_DIALOG = 1    ///< The backend requests the agi engine's predictive dialog to be shown
+};
+
 struct CustomEvent {
-	uint32 message;
+	CustomEventMessage message;
 	uint32 param1;
 	uint32 param2;
 
-	CustomEvent() : message(0), param1(0), param2(0) {}
+	CustomEvent() : message(MESSAGE_INVALID), param1(0), param2(0) {}
 };
 
 /**
