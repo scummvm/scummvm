@@ -660,7 +660,7 @@ void TuckerEngine::execData3PostUpdate_locationNum8() {
 				_locationBackgroundGfxBuf[offset + 640 * j + i] = colorsTable[(j - 1) * 3  + i + 1];
 			}
 		}
-		addDirtyRect(_updateLocationXPosTable2[0] - 1, _updateLocationYPosTable2[0] + 1, 3, 4);
+		addDirtyRect(_updateLocationXPosTable2[0] - 1, _updateLocationYPosTable2[0], 3, 4);
 		_updateLocationYPosTable2[0] += 2;
 		if (_updateLocationYPosTable2[0] > 120) {
 			_updateLocationYPosTable2[0] = 0;
