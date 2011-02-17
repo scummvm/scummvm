@@ -556,13 +556,7 @@ void TuckerEngine::mainLoop() {
 		if (_inputKeys[kInputKeyToggleTextSpeech]) {
 			_inputKeys[kInputKeyToggleTextSpeech] = false;
 			if ((_gameFlags & kGameFlagNoSubtitles) == 0) {
-				if (_displaySpeechText) {
-					_displaySpeechText = false;
-//					kDefaultCharSpeechSoundCounter = 1;
-				} else {
-					_displaySpeechText = true;
-//					kDefaultCharSpeechSoundCounter = 70;
-				}
+				_displaySpeechText = !_displaySpeechText;
 				ConfMan.setBool("subtitles", _displaySpeechText);
 			}
 		}
@@ -2889,7 +2883,11 @@ void TuckerEngine::updateCharSpeechSound(bool displayText) {
 	if (_charSpeechSoundCounter == 0) {
 		return;
 	}
-	--_charSpeechSoundCounter;
+	if (_displaySpeechText) {
+		_charSpeechSoundCounter = 0;
+	} else {
+		--_charSpeechSoundCounter;
+	}
 	if (_charSpeechSoundCounter == 0) {
 		_charSpeechSoundCounter = isSpeechSoundPlaying() ? 1 : 0;
 		if (_charSpeechSoundCounter == 0) {
