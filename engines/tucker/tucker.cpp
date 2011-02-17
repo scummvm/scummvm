@@ -952,7 +952,6 @@ void TuckerEngine::fadeOutPalette(int colorsCount) {
 	}
 	_system->getPaletteManager()->setPalette(pal, 0, colorsCount);
 	_system->updateScreen();
-	waitForTimer(1);
 }
 
 void TuckerEngine::fadeInPalette(int colorsCount) {
@@ -966,7 +965,6 @@ void TuckerEngine::fadeInPalette(int colorsCount) {
 	}
 	_system->getPaletteManager()->setPalette(pal, 0, colorsCount);
 	_system->updateScreen();
-	waitForTimer(1);
 }
 
 void TuckerEngine::fadePaletteColor(int color, int step) {
