@@ -129,7 +129,7 @@ void Logic::eventMouse(const Common::Event &ev) {
 	}
 
 	// Update coordinates
-	getGameState()->setCoordinates(ev.mouse);
+	getGameState()->setCoordinates(ev.mouse.getPoint());
 
 	// Handle inventory
 	getInventory()->handleMouseEvent(ev);
@@ -196,7 +196,7 @@ void Logic::eventMouse(const Common::Event &ev) {
 	}
 
 	// Handle entity item case
-	EntityIndex entityIndex = getEntities()->canInteractWith(ev.mouse);
+	EntityIndex entityIndex = getEntities()->canInteractWith(ev.mouse.getPoint());
 	if (entityIndex
 	 && !getInventory()->isFlag1()
 	 && !getInventory()->isOpened()
@@ -247,7 +247,7 @@ void Logic::eventMouse(const Common::Event &ev) {
 	Scene *scene = getScenes()->get(getState()->scene);
 
 	for (Common::Array<SceneHotspot *>::iterator it = scene->getHotspots()->begin(); it != scene->getHotspots()->end(); ++it) {
-		if (!(*it)->isInside(ev.mouse))
+		if (!(*it)->isInside(ev.mouse.getPoint()))
 			continue;
 
 		if ((*it)->location < location)

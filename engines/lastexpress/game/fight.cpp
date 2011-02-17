@@ -117,7 +117,7 @@ void Fight::eventMouse(const Common::Event &ev) {
 		Scene *scene = getScenes()->get(getState()->scene);
 		SceneHotspot *hotspot = NULL;
 
-		if (!scene->checkHotSpot(ev.mouse, &hotspot)) {
+		if (!scene->checkHotSpot(ev.mouse.getPoint(), &hotspot)) {
 			_engine->getCursor()->setStyle(kCursorNormal);
 		} else {
 			_engine->getCursor()->setStyle((CursorStyle)hotspot->cursor);
@@ -178,7 +178,7 @@ void Fight::handleTick(const Common::Event &ev, bool isProcessing) {
 		return;
 
 	SceneHotspot *hotspot = NULL;
-	if (!getScenes()->get(getState()->scene)->checkHotSpot(ev.mouse, &hotspot) || !CALL_FUNCTION1(_data->player, canInteract, (FightAction)hotspot->action)) {
+	if (!getScenes()->get(getState()->scene)->checkHotSpot(ev.mouse.getPoint(), &hotspot) || !CALL_FUNCTION1(_data->player, canInteract, (FightAction)hotspot->action)) {
 		_engine->getCursor()->setStyle(kCursorNormal);
 	} else {
 		_engine->getCursor()->setStyle((CursorStyle)hotspot->cursor);

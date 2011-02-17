@@ -60,7 +60,7 @@ Inventory::Inventory(TeenAgentEngine *engine) {
 	for (byte i = 0; i < offsets; ++i) {
 		offset[i] = READ_LE_UINT16(items + i * 2 + 1);
 	}
-	offset[92] = items_size; 
+	offset[92] = items_size;
 
 	Resources *res = Resources::instance();
 	for (byte i = 0; i <= 92; ++i) {
@@ -167,17 +167,17 @@ bool Inventory::processEvent(const Common::Event &event) {
 		if (!_active) {
 			if (event.mouse.y < 5)
 				activate(true);
-			mouse = event.mouse;
+			mouse = event.mouse.getPoint();
 			return false;
 		}
 
 		if (event.mouse.x < 17 || event.mouse.x >= 303 || (event.mouse.y - mouse.y > 0 && event.mouse.y >= 153)) {
 			activate(false);
-			mouse = event.mouse;
+			mouse = event.mouse.getPoint();
 			return false;
 		}
 
-		mouse = event.mouse;
+		mouse = event.mouse.getPoint();
 		hovered_obj = NULL;
 
 		for (int i = 0; i < 24; ++i) {

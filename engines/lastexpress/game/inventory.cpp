@@ -136,7 +136,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 	_useMagnifier = false;
 
 	// Egg (menu)
-	if (!_menuRect.contains(ev.mouse)) {
+	if (!_menuRect.contains(ev.mouse.getPoint())) {
 		// Remove highlight if needed
 		if (_eggHightlighted) {
 			if (!getGlobalTimer()) {

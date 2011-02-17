@@ -885,7 +885,7 @@ bool Debugger::cmdBeetle(int argc, const char **argv) {
 						// Update cursor
 						CursorStyle style = kCursorNormal;
 						SceneHotspot *hotspot = NULL;
-						if (scene->checkHotSpot(ev.mouse, &hotspot)) {
+						if (scene->checkHotSpot(ev.mouse.getPoint(), &hotspot)) {
 							if (!action)
 								action = new Action(_engine);
 
@@ -900,7 +900,7 @@ bool Debugger::cmdBeetle(int argc, const char **argv) {
 					case Common::EVENT_LBUTTONUP:
 					case Common::EVENT_RBUTTONUP:
 						// Update coordinates
-						getLogic()->getGameState()->setCoordinates(ev.mouse);
+						getLogic()->getGameState()->setCoordinates(ev.mouse.getPoint());
 
 						if (beetle->catchBeetle())
 							playgame = false;

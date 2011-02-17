@@ -146,7 +146,7 @@ void Input::readInput() {
 	}
 
 	if (updateMousePos) {
-		setCursorPos(e.mouse);
+		setCursorPos(e.mouse.getPoint());
 	}
 
 	_vm->_debugger->onFrame();

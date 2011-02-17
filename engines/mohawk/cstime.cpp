@@ -110,16 +110,16 @@ void MohawkEngine_CSTime::update() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
-			_interface->mouseMove(event.mouse);
+			_interface->mouseMove(event.mouse.getPoint());
 			_needsUpdate = true;
 			break;
 
 		case Common::EVENT_LBUTTONUP:
-			_interface->mouseUp(event.mouse);
+			_interface->mouseUp(event.mouse.getPoint());
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
-			_interface->mouseDown(event.mouse);
+			_interface->mouseDown(event.mouse.getPoint());
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:

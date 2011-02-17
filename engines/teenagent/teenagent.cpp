@@ -205,7 +205,7 @@ void TeenAgentEngine::deinit() {
 
 Common::Error TeenAgentEngine::loadGameState(int slot) {
 	debug(0, "loading from slot %d", slot);
-	Common::ScopedPtr<Common::InSaveFile> 
+	Common::ScopedPtr<Common::InSaveFile>
 		in(_saveFileMan->openForLoading(Common::String::format("teenagent.%02d", slot)));
 	if (!in)
 		in.reset(_saveFileMan->openForLoading(Common::String::format("teenagent.%d", slot)));
@@ -518,7 +518,7 @@ Common::Error TeenAgentEngine::run() {
 			case Common::EVENT_LBUTTONDOWN:
 				if (scene->getId() < 0)
 					break;
-				examine(event.mouse, current_object);
+				examine(event.mouse.getPoint(), current_object);
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				//if (current_object)
@@ -540,7 +540,7 @@ Common::Error TeenAgentEngine::run() {
 				use(current_object);
 				break;
 			case Common::EVENT_MOUSEMOVE:
-				mouse = event.mouse;
+				mouse = event.mouse.getPoint();
 				break;
 			default:
 				;
@@ -962,10 +962,10 @@ void TeenAgentEngine::playSoundNow(byte id) {
 void TeenAgentEngine::setMusic(byte id) {
 	debug(0, "starting music %u", id);
 	Resources *res = Resources::instance();
-	
+
 	if (id != 1) //intro music
 		*res->dseg.ptr(0xDB90) = id;
-	
+
 	if (_gameDescription->flags & ADGF_CD) {
 		byte track2cd[] = {7, 2, 0, 9, 3, 6, 8, 10, 4, 5, 11};
 		if (id == 0 || id > 11 || track2cd[id - 1] == 0) {

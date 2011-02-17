@@ -134,17 +134,17 @@ int SagaEngine::processInput() {
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_leftMouseButtonPressed = true;
-			_interface->update(event.mouse, UPDATE_LEFTBUTTONCLICK);
+			_interface->update(event.mouse.getPoint(), UPDATE_LEFTBUTTONCLICK);
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 			_rightMouseButtonPressed = true;
-			_interface->update(event.mouse, UPDATE_RIGHTBUTTONCLICK);
+			_interface->update(event.mouse.getPoint(), UPDATE_RIGHTBUTTONCLICK);
 			break;
 		case Common::EVENT_WHEELUP:
-			_interface->update(event.mouse, UPDATE_WHEELUP);
+			_interface->update(event.mouse.getPoint(), UPDATE_WHEELUP);
 			break;
 		case Common::EVENT_WHEELDOWN:
-			_interface->update(event.mouse, UPDATE_WHEELDOWN);
+			_interface->update(event.mouse.getPoint(), UPDATE_WHEELDOWN);
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			break;

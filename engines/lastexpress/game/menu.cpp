@@ -447,7 +447,7 @@ void Menu::eventMouse(const Common::Event &ev) {
 	getFlags()->shouldRedraw = false;
 
 	// Update coordinates
-	setCoords(ev.mouse);
+	setCoords(ev.mouse.getPoint());
 	//_mouseFlags = (Common::EventType)(ev.type & Common::EVENT_LBUTTONUP);
 
 	if (_isShowingCredits) {
@@ -469,7 +469,7 @@ void Menu::eventMouse(const Common::Event &ev) {
 	} else {
 		// Check for hotspots
 		SceneHotspot *hotspot = NULL;
-		getScenes()->get(getState()->scene)->checkHotSpot(ev.mouse, &hotspot);
+		getScenes()->get(getState()->scene)->checkHotSpot(ev.mouse.getPoint(), &hotspot);
 
 		if (_lastHotspot != hotspot || ev.type == Common::EVENT_LBUTTONUP) {
 			_lastHotspot = hotspot;

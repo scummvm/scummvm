@@ -146,16 +146,16 @@ Common::Error MohawkEngine_LivingBooks::run() {
 
 			case Common::EVENT_LBUTTONUP:
 				if (_focus)
-					_focus->handleMouseUp(event.mouse);
+					_focus->handleMouseUp(event.mouse.getPoint());
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
 				for (uint16 i = 0; i < _items.size(); i++)
-					if (_items[i]->contains(event.mouse))
+					if (_items[i]->contains(event.mouse.getPoint()))
 						found = _items[i];
 
 				if (found)
-					found->handleMouseDown(event.mouse);
+					found->handleMouseDown(event.mouse.getPoint());
 				break;
 
 			case Common::EVENT_KEYDOWN:

@@ -1343,22 +1343,22 @@ void Control::delay(uint32 msecs) {
 				// to handle keyboard input
 				return;
 			case Common::EVENT_MOUSEMOVE:
-				_mouseCoord = event.mouse;
+				_mouseCoord = event.mouse.getPoint();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_mouseDown = true;
 				_mouseState |= BS1L_BUTTON_DOWN;
-				_mouseCoord = event.mouse;
+				_mouseCoord = event.mouse.getPoint();
 				break;
 			case Common::EVENT_LBUTTONUP:
 				_mouseDown = false;
 				_mouseState |= BS1L_BUTTON_UP;
-				_mouseCoord = event.mouse;
+				_mouseCoord = event.mouse.getPoint();
 				break;
 			case Common::EVENT_WHEELUP:
 				_mouseDown = false;
 				_mouseState |= BS1_WHEEL_UP;
-				_mouseCoord = event.mouse;
+				_mouseCoord = event.mouse.getPoint();
 				break;
 			case Common::EVENT_WHEELDOWN:
 				_mouseDown = false;

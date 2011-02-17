@@ -184,26 +184,26 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
-			_mousePos = event.mouse;
+			_mousePos = event.mouse.getPoint();
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
-			_mousePos = event.mouse;
+			_mousePos = event.mouse.getPoint();
 			_buttonState |= LBUTTON;
 			break;
 
 		case Common::EVENT_LBUTTONUP:
-			_mousePos = event.mouse;
+			_mousePos = event.mouse.getPoint();
 			_buttonState &= ~LBUTTON;
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
-			_mousePos = event.mouse;
+			_mousePos = event.mouse.getPoint();
 			_buttonState |= RBUTTON;
 			break;
 
 		case Common::EVENT_RBUTTONUP:
-			_mousePos = event.mouse;
+			_mousePos = event.mouse.getPoint();
 			_buttonState &= ~RBUTTON;
 			break;
 

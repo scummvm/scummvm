@@ -85,6 +85,16 @@ struct CustomEvent {
 	CustomEvent() : message(MESSAGE_INVALID), param1(0), param2(0) {}
 };
 
+struct MouseEvent {
+	int16 x;
+	int16 y;
+
+	Common::Point getPoint() const {
+		return Common::Point(x, y);
+	}
+};
+
+
 /**
  * Data structure for an event. A pointer to an instance of Event
  * can be passed to pollEvent.
@@ -131,7 +141,7 @@ struct Event {
 	 * Virtual screen coordinates means: the coordinate system of the
 	 * screen area as defined by the most recent call to initSize().
 	 */
-	Common::Point mouse;
+	MouseEvent mouse;
 	/**
 	 * The custom event data; only valid for EVENT_CUSTOM events
 	 */

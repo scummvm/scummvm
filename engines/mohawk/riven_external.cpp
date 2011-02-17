@@ -246,7 +246,7 @@ void RivenExternal::runCredits(uint16 video, uint32 delay) {
 				_vm->_gfx->updateCredits();
 			}
 		} else if (_vm->_video->updateMovies())
-			_vm->_system->updateScreen(); 
+			_vm->_system->updateScreen();
 
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event))
@@ -367,7 +367,7 @@ void RivenExternal::dragDomeSlider(uint16 soundId, uint16 resetSlidersHotspot, u
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
-				if (foundSlider < 24 && !(_sliderState & (1 << (23 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot + 1].rect.contains(event.mouse)) {
+				if (foundSlider < 24 && !(_sliderState & (1 << (23 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot + 1].rect.contains(event.mouse.getPoint())) {
 					// We've moved the slider right one space
 					_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
 					foundSlider++;
@@ -376,7 +376,7 @@ void RivenExternal::dragDomeSlider(uint16 soundId, uint16 resetSlidersHotspot, u
 					// Now play a click sound and redraw
 					_vm->_sound->playSound(soundId);
 					drawDomeSliders(startHotspot);
-				} else if (foundSlider > 0 && !(_sliderState & (1 << (25 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot - 1].rect.contains(event.mouse)) {
+				} else if (foundSlider > 0 && !(_sliderState & (1 << (25 - foundSlider))) && _vm->_hotspots[foundSlider + startHotspot - 1].rect.contains(event.mouse.getPoint())) {
 					// We've moved the slider left one space
 					_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
 					foundSlider--;
@@ -1910,7 +1910,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 		_vm->_cursor->setCursor(kRivenMainCursor);
 
 	_vm->_system->updateScreen();
-	
+
 	// OK, Gehn has opened the trap book and has asked us to go in. Let's watch
 	// and see what the player will do...
 	while (_vm->_video->getElapsedTime(video) < endTime && !_vm->shouldQuit()) {
@@ -2066,7 +2066,7 @@ void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 			curSound++;
 			soundTime = _vm->_system->getMillis();
 		}
-		
+
 		// Poll events just to check for quitting
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event)) {}
@@ -2333,7 +2333,7 @@ static Common::Rect generateMarbleGridRect(uint16 x, uint16 y) {
 }
 
 void RivenExternal::xt7500_checkmarbles(uint16 argc, uint16 *argv) {
-	// Set apower if the marbles are in their correct spot. 
+	// Set apower if the marbles are in their correct spot.
 
 	bool valid = true;
 	static const uint32 marbleFinalValues[] = { 1114121, 1441798, 0, 65552, 65558, 262146 };

@@ -721,23 +721,23 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 				_keyPressed = event.kbd;
 				break;
 			case Common::EVENT_MOUSEMOVE:
-				_mouseCoord = event.mouse;
+				_mouseCoord = event.mouse.getPoint();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_mouseState |= BS1L_BUTTON_DOWN;
-				_mouseCoord = event.mouse;
+				_mouseCoord = event.mouse.getPoint();
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				_mouseState |= BS1R_BUTTON_DOWN;
-				_mouseCoord = event.mouse;
+				_mouseCoord = event.mouse.getPoint();
 				break;
 			case Common::EVENT_LBUTTONUP:
 				_mouseState |= BS1L_BUTTON_UP;
-				_mouseCoord = event.mouse;
+				_mouseCoord = event.mouse.getPoint();
 				break;
 			case Common::EVENT_RBUTTONUP:
 				_mouseState |= BS1R_BUTTON_UP;
-				_mouseCoord = event.mouse;
+				_mouseCoord = event.mouse.getPoint();
 				break;
 			default:
 				break;

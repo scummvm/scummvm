@@ -227,7 +227,7 @@ void FightsManager::checkEvents() {
 			_keyDown = KS_UP;
 
 		} else if (events.type() == Common::EVENT_MOUSEMOVE) {
-			Common::Point mPos = events.event().mouse;
+			Common::Point mPos = events.event().mouse.getPoint();
 			if (mPos.x < rec.fwtrue_x - 12)
 				mouse.setCursorNum(CURSOR_LEFT_ARROW);
 			else if (mPos.x > rec.fwtrue_x + player->width())
