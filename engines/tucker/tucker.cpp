@@ -1749,6 +1749,8 @@ void TuckerEngine::drawCurrentSprite() {
 	if ((_locationNum == 17 || _locationNum == 18) && _currentSpriteAnimationFrame == 16) {
 		return;
 	}
+	// Workaround original game glitch: location 14 contains some colors from [0xE0-0xF8] in a walkable area (tracker item #3106542)
+	const bool color248Only = (_locationNum == 14);
 	SpriteFrame *chr = &_spriteFramesTable[_currentSpriteAnimationFrame];
 	int yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr->yOffset;
 	int xPos = _xPosCurrent;
@@ -1758,7 +1760,7 @@ void TuckerEngine::drawCurrentSprite() {
 		xPos -= chr->xSize + chr->xOffset - 14;
 	}
 	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr->sourceOffset, chr->xSize, chr->ySize,
-		chr->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0);
+		chr->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0, color248Only);
 	addDirtyRect(xPos, yPos, chr->xSize, chr->ySize);
 	if (_currentSpriteAnimationLength > 1) {
 		SpriteFrame *chr2 = &_spriteFramesTable[_currentSpriteAnimationFrame2];
@@ -1770,7 +1772,7 @@ void TuckerEngine::drawCurrentSprite() {
 			xPos -= chr2->xSize + chr2->xOffset - 14;
 		}
 		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr2->sourceOffset, chr2->xSize, chr2->ySize,
-			chr2->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0);
+			chr2->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0, color248Only);
 		addDirtyRect(xPos, yPos, chr2->xSize, chr2->ySize);
 	}
 }

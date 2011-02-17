@@ -112,7 +112,7 @@ void Graphics::decodeRLE_224(uint8 *dst, const uint8 *src, int w, int h) {
 	}
 }
 
-void Graphics::decodeRLE_248(uint8 *dst, const uint8 *src, int w, int h, int y1, int y2, bool xflip) {
+void Graphics::decodeRLE_248(uint8 *dst, const uint8 *src, int w, int h, int y1, int y2, bool xflip, bool color248Only) {
 	int code = 0;
 	int color = 0;
 	for (int y = 0; y < h; ++y) {
@@ -125,7 +125,7 @@ void Graphics::decodeRLE_248(uint8 *dst, const uint8 *src, int w, int h, int y1,
 				}
 			}
 			if (color != 0) {
-				if ((dst[offset] < 0xE0 || y + y1 < y2) && dst[offset] < 0xF8) {
+				if ((color248Only || dst[offset] < 0xE0 || y + y1 < y2) && dst[offset] < 0xF8) {
 					dst[offset] = color;
 				}
 			} else {
