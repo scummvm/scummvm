@@ -132,10 +132,12 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	if (g_sci->hasMacIconBar()) {
 		// For SCI1.1 Mac games with the custom icon bar, we need to expand the screen
 		// to accommodate for the icon bar. Of course, both KQ6 and QFG1 VGA differ in size.
+		// We add 2 to the height of the icon bar to add a buffer between the screen and the
+		// icon bar (as did the original interpreter).
 		if (g_sci->getGameId() == GID_KQ6)
-			initGraphics(_displayWidth, _displayHeight + 26, _displayWidth > 320);
+			initGraphics(_displayWidth, _displayHeight + 26 + 2, _displayWidth > 320);
 		else if (g_sci->getGameId() == GID_FREDDYPHARKAS)
-			initGraphics(_displayWidth, _displayHeight + 28, _displayWidth > 320);
+			initGraphics(_displayWidth, _displayHeight + 28 + 2, _displayWidth > 320);
 		else
 			error("Unknown SCI1.1 Mac game");
 	} else

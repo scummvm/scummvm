@@ -29,6 +29,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/maciconbar.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/screen.h"
 
 #include "common/memstream.h"
 #include "common/system.h"
@@ -58,7 +59,8 @@ void GfxMacIconBar::drawIcons() {
 		Graphics::Surface *surf = pict->decodeImage(stream, pal);
 		remapColors(surf, pal);
 
-		g_system->copyRectToScreen((byte *)surf->pixels, surf->pitch, lastX, 200, MIN<uint32>(surf->w, 320 - lastX), surf->h);
+		g_system->copyRectToScreen((byte *)surf->pixels, surf->pitch, lastX,
+				g_sci->_gfxScreen->getHeight() + 2, MIN<uint32>(surf->w, 320 - lastX), surf->h);
 
 		lastX += surf->w;
 		surf->free();
