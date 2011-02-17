@@ -582,7 +582,7 @@ void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int 
 
 void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
 	assert(colors);
-	
+
 	// Save the cursor palette
 	memcpy(_cursorPalette + start * 3, colors, num * 3);
 
@@ -1032,7 +1032,7 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 	if (_osdAlpha > 0) {
 		if (_requireOSDUpdate) {
 			// Update the texture
-			_osdTexture->updateBuffer(_osdSurface.pixels, _osdSurface.pitch, 0, 0, 
+			_osdTexture->updateBuffer(_osdSurface.pixels, _osdSurface.pitch, 0, 0,
 			                          _osdSurface.w, _osdSurface.h);
 			_requireOSDUpdate = false;
 		}
@@ -1249,7 +1249,7 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		if (!event.synthetic)
+		if (!event.mouse.synthetic)
 			setMousePos(event.mouse.x, event.mouse.y);
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
@@ -1259,13 +1259,13 @@ bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONUP:
 	case Common::EVENT_MBUTTONUP:
-		if (!event.synthetic) {
+		if (!event.mouse.synthetic) {
 			Common::Event newEvent(event);
-			newEvent.synthetic = true;
+			newEvent.mouse.synthetic = true;
 			adjustMousePosition(newEvent.mouse.x, newEvent.mouse.y);
 			g_system->getEventManager()->pushEvent(newEvent);
 		}
-		return !event.synthetic;
+		return !event.mouse.synthetic;
 
 	default:
 		break;
@@ -1277,7 +1277,7 @@ bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
 bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	int width = _videoMode.hardwareWidth;
 	int height = _videoMode.hardwareHeight;
-	
+
 	// Allocate memory for screenshot
 	uint8 *pixels = new uint8[width * height * 3];
 
@@ -1312,7 +1312,7 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	out.writeUint32LE(0);
 	out.writeUint32LE(0);
 	out.writeUint32LE(0);
-	out.writeUint32LE(0); 
+	out.writeUint32LE(0);
 
 	// Write pixel data to BMP
 	out.write(pixels, width * height * 3);

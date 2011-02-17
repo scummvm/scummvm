@@ -92,9 +92,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	}
 
 	if (result) {
-		event.synthetic = false;
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+			event.kbd.synthetic = false;
 			_modifierState = event.kbd.flags;
 			// init continuous event stream
 			_currentKeyDown.ascii = event.kbd.ascii;
@@ -176,6 +176,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			break;
 
 		case Common::EVENT_KEYUP:
+			event.kbd.synthetic = false;
 			_modifierState = event.kbd.flags;
 			if (event.kbd.keycode == _currentKeyDown.keycode) {
 				// Only stop firing events if it's the current key
@@ -184,25 +185,30 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
+			event.mouse.synthetic = false;
 			_mousePos = event.mouse.getPoint();
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
+			event.mouse.synthetic = false;
 			_mousePos = event.mouse.getPoint();
 			_buttonState |= LBUTTON;
 			break;
 
 		case Common::EVENT_LBUTTONUP:
+			event.mouse.synthetic = false;
 			_mousePos = event.mouse.getPoint();
 			_buttonState &= ~LBUTTON;
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
+			event.mouse.synthetic = false;
 			_mousePos = event.mouse.getPoint();
 			_buttonState |= RBUTTON;
 			break;
 
 		case Common::EVENT_RBUTTONUP:
+			event.mouse.synthetic = false;
 			_mousePos = event.mouse.getPoint();
 			_buttonState &= ~RBUTTON;
 			break;
@@ -261,7 +267,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		if (_currentKeyDown.keycode != 0 && _keyRepeatTime < time) {
 			// fire event
 			event.type = Common::EVENT_KEYDOWN;
-			event.synthetic = true;
+			event.kbd.synthetic = true;
 			event.kbd.ascii = _currentKeyDown.ascii;
 			event.kbd.keycode = (Common::KeyCode)_currentKeyDown.keycode;
 			event.kbd.flags = _currentKeyDown.flags;

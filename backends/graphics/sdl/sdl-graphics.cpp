@@ -2112,9 +2112,9 @@ bool SdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 }
 
 void SdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
-	if (!event.synthetic) {
+	if (!event.mouse.synthetic) {
 		Common::Event newEvent(event);
-		newEvent.synthetic = true;
+		newEvent.mouse.synthetic = true;
 		if (!_overlayVisible) {
 			newEvent.mouse.x /= _videoMode.scaleFactor;
 			newEvent.mouse.y /= _videoMode.scaleFactor;
@@ -2176,7 +2176,7 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	case Common::EVENT_KEYUP:
 		return isScalerHotkey(event);
 	case Common::EVENT_MOUSEMOVE:
-		if (event.synthetic)
+		if (event.mouse.synthetic)
 			setMousePos(event.mouse.x, event.mouse.y);
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
@@ -2187,7 +2187,7 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	case Common::EVENT_RBUTTONUP:
 	case Common::EVENT_MBUTTONUP:
 		adjustMouseEvent(event);
-		return !event.synthetic;
+		return !event.mouse.synthetic;
 
 	// HACK: Handle special SDL event
 	case OSystem_SDL::kSdlEventExpose:

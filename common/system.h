@@ -43,7 +43,7 @@ namespace Graphics {
 }
 
 namespace Common {
-	struct Event;
+	union Event;
 	class EventManager;
 	class SaveFileManager;
 	class SearchSet;

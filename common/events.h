@@ -77,10 +77,16 @@ enum CustomEventMessage {
 	MESSAGE_PREDICTIVE_DIALOG = 1    ///< The backend requests the agi engine's predictive dialog to be shown
 };
 
+struct BaseEvent {
+	EventType type;    ///< The type of the event
+};
+
 /**
- * Keyboard status
+ * Keyboard event (EVENT_KEYDOWN and EVENT_KEYUP).
  */
-struct KeyboardEvent {
+struct KeyboardEvent : public BaseEvent {
+	bool synthetic;    ///< Flag to indicate if the event is real or synthetic. E.g. keyboard repeat events are synthetic
+
 	/**
 	 * Abstract key code (will be the same for any given key regardless
 	 * of modifiers being held at the same time.
@@ -142,77 +148,52 @@ struct KeyboardEvent {
 	}
 };
 
-struct MouseEvent {
+/**
+ * The mouse event containing mouse coordinates, in virtual screen coordinates.
+ *
+ * Virtual screen coordinates means: the coordinate system of the
+ * screen area as defined by the most recent call to initSize().
+ */
+struct MouseEvent : public BaseEvent {
+	bool synthetic;    ///< Flag to indicate if the event is real or synthetic. E.g. keyboard repeat events are synthetic
+
 	int16 x;
 	int16 y;
+
+	void init() {
+		x = 0;
+		y = 0;
+	}
 
 	Common::Point getPoint() const {
 		return Common::Point(x, y);
 	}
 };
 
-struct CustomEvent {
+/**
+ * Custom event containing a specific message and two params
+ */
+struct CustomEvent : public BaseEvent {
 	CustomEventMessage message;
 	uint32 param1;
 	uint32 param2;
 
-	CustomEvent() : message(MESSAGE_INVALID), param1(0), param2(0) {}
+	void init() {
+		message = MESSAGE_INVALID;
+		param1 = 0;
+		param2 = 0;
+	}
 };
-
 
 /**
  * Data structure for an event. A pointer to an instance of Event
  * can be passed to pollEvent.
- * @todo Rework/document this structure. It should be made 100% clear which
- *       field is valid for which event type.
- *       Implementation wise, we might want to use the classic
- *       union-of-structs trick. It goes roughly like this:
- *       struct BasicEvent {
- *          EventType type;
- *       };
- *       struct MouseMovedEvent : BasicEvent {
- *          Common::Point pos;
- *       };
- *       struct MouseButtonEvent : MouseMovedEvent {
- *          int button;
- *       };
- *       struct KeyEvent : BasicEvent {
- *          ...
- *       };
- *       ...
- *       union Event {
- *          EventType type;
- *          MouseMovedEvent mouse;
- *          MouseButtonEvent button;
- *          KeyEvent key;
- *          ...
- *       };
  */
-struct Event {
-	/** The type of the event. */
+union Event {
 	EventType type;
-	/** Flag to indicate if the event is real or synthetic. E.g. keyboard
-	  * repeat events are synthetic.
-	  */
-	bool synthetic;
-	/**
-	  * Keyboard data; only valid for keyboard events (EVENT_KEYDOWN and
-	  * EVENT_KEYUP). For all other event types, content is undefined.
-	  */
 	KeyboardEvent kbd;
-	/**
-	 * The mouse coordinates, in virtual screen coordinates. Only valid
-	 * for mouse events.
-	 * Virtual screen coordinates means: the coordinate system of the
-	 * screen area as defined by the most recent call to initSize().
-	 */
 	MouseEvent mouse;
-	/**
-	 * The custom event data; only valid for EVENT_CUSTOM events
-	 */
 	CustomEvent custom;
-
-	Event() : type(EVENT_INVALID), synthetic(false) {}
 };
 
 /**
