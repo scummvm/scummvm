@@ -974,7 +974,7 @@ void TuckerEngine::updateSprite_locationNum14(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum14() {
-	if (_yPosCurrent >= 126)
+	if (_yPosCurrent >= 127)
 		return;
 
 	if (!isSoundPlaying(0)) {
@@ -1021,7 +1021,7 @@ void TuckerEngine::execData3PreUpdate_locationNum14() {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum14Helper1(int i) {
-	const int y = 1872; // FIXME: bug, 187/182 ?
+	const int y = 117 * 16;
 	if (_updateLocation14ObjNum[i] == 0) {
 		if (getRandomNumber() <= 30000) {
 			return;
@@ -1031,9 +1031,8 @@ void TuckerEngine::execData3PreUpdate_locationNum14Helper1(int i) {
 		_updateLocation14Step[i] = -55 - getRandomNumber() / 512;
 		_updateLocation14ObjNum[i] = 231;
 		_updateLocation14Delay[i] = 16 + getRandomNumber() / 2048;
-		// FIXME: bug, missing return ?
 	}
-	_updateLocation14Step[i] = 4;
+	_updateLocation14Step[i] += 4;
 	_updateLocationYPosTable2[i] += _updateLocation14Step[i];
 	if (_updateLocationYPosTable2[i] > y) {
 		_updateLocationYPosTable2[i] = y;
