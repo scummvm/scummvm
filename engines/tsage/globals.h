@@ -72,6 +72,7 @@ public:
 	int _stripNum;
 public:
 	Globals();
+	~Globals();
 
 	void reset();
 	void setFlag(int flagNum) {

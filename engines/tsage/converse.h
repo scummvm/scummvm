@@ -53,7 +53,7 @@ public:
 	int _objectIndex;
 	SceneObject *_sceneObject;
 	SceneObject *_objectList[6];
-	SoundHandler _SoundHandler;
+	SoundHandler _soundHandler;
 public:
 	SequenceManager();
 

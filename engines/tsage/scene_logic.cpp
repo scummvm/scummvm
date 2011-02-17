@@ -333,7 +333,7 @@ void Scene20::Scene20_Action1::signal() {
 		parent->_stripManager.start(20, this);
 		break;
 	case 2:
-		parent->_sound.proc1(this);
+		_globals->_soundHandler.proc1(this);
 		break;
 	case 3:
 		_globals->_sceneManager._FadeMode = FADEMODE_GRADUAL;
@@ -699,7 +699,7 @@ void Scene30::Scene30_beamAction::signal() {
 
 	case 2:
 		// Hide the beam and lower the player's hand
-		parent->_sound.startSound(10, 0, 127);
+		parent->_sound.startSound(10, NULL, 127);
 		_globals->_player.animate(ANIM_MODE_6, this);
 		parent->_beam.remove();
 		break;
@@ -723,14 +723,14 @@ void Scene30::Scene30_beamAction::signal() {
 
 	case 4:
 		// Open the door
-		parent->_sound.startSound(11, 0, 127);
+		parent->_sound.startSound(11, NULL, 127);
 		parent->_door.animate(ANIM_MODE_5, this);
 		break;
 
 	case 5:
 		// Run the Kzin's talk sequence
-		parent->_sound.startSound(13, 0, 127);
-		_globals->_soundHandler.startSound(12, 0, 127);
+		parent->_sound.startSound(13, NULL, 127);
+		_globals->_soundHandler.startSound(12, NULL, 127);
 		parent->_stripManager.start((parent->_sceneMode == 0) ? 30 : 37, this);
 		break;
 
@@ -802,12 +802,12 @@ void Scene30::Scene30_ringAction::signal() {
 	}
 
 	case 3:
-		parent->_sound.startSound(11, 0, 127);
+		parent->_sound.startSound(11, NULL, 127);
 		parent->_door.animate(ANIM_MODE_6, this);
 		break;
 
 	case 4: {
-		parent->_sound.startSound(13, 0, 127);
+		parent->_sound.startSound(13, NULL, 127);
 		NpcMover *kzinMover = new NpcMover();
 		Common::Point pt(354, 5);
 		parent->_kzin.addMover(kzinMover, &pt, this);

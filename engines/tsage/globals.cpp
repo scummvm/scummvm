@@ -63,6 +63,12 @@ Globals::Globals():
 	_sceneObjects_queue.push_front(_sceneObjects);
 
 	_stru_4642E = Common::Point(-1, -1);
+	_sceneListeners.push_back(&_soundHandler);
+	_sceneListeners.push_back(&_sequenceManager._soundHandler);
+}
+
+Globals::~Globals() {
+	_globals = NULL;
 }
 
 void Globals::reset() {
