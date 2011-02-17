@@ -75,7 +75,17 @@ enum EventType {
 	 * use events to ask for the save game dialog or to pause the engine.
 	 * An associated enumerated type can accomplish this.
 	 **/
-	EVENT_PREDICTIVE_DIALOG = 12
+	EVENT_PREDICTIVE_DIALOG = 12,
+
+	EVENT_CUSTOM = 18
+};
+
+struct CustomEvent {
+	uint32 message;
+	int32 param1;
+	int32 param2;
+
+	CustomEvent() : message(0), param1(0), param2(0) {}
 };
 
 /**
@@ -101,6 +111,10 @@ struct Event {
 	 * screen area as defined by the most recent call to initSize().
 	 */
 	Common::Point mouse;
+	/**
+	 * The custom event data; only valid for EVENT_CUSTOM events
+	 */
+	CustomEvent custom;
 
 	Event() : type(EVENT_INVALID), synthetic(false) {}
 };
