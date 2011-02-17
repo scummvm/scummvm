@@ -61,21 +61,23 @@ void AgiEngine::processEvents() {
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_PREDICTIVE_DIALOG:
-			if (_predictiveDialogRunning)
-				break;
-			if (predictiveDialog()) {
-				if (_game.inputMode == INPUT_NORMAL) {
-					strcpy((char *)_game.inputBuffer, _predictiveResult);
-					handleKeys(KEY_ENTER);
-				} else if (_game.inputMode == INPUT_GETSTRING) {
-					strcpy(_game.strings[_stringdata.str], _predictiveResult);
-					newInputMode(INPUT_NORMAL);
-					_gfx->printCharacter(_stringdata.x + strlen(_game.strings[_stringdata.str]) + 1,
-							_stringdata.y, ' ', _game.colorFg, _game.colorBg);
-				} else if (_game.inputMode == INPUT_NONE) {
-					for (int n = 0; _predictiveResult[n]; n++)
-						keyEnqueue(_predictiveResult[n]);
+		case Common::EVENT_CUSTOM:
+			if (event.custom.message == Common::MESSAGE_PREDICTIVE_DIALOG) {
+				if (_predictiveDialogRunning)
+					break;
+				if (predictiveDialog()) {
+					if (_game.inputMode == INPUT_NORMAL) {
+						strcpy((char *)_game.inputBuffer, _predictiveResult);
+						handleKeys(KEY_ENTER);
+					} else if (_game.inputMode == INPUT_GETSTRING) {
+						strcpy(_game.strings[_stringdata.str], _predictiveResult);
+						newInputMode(INPUT_NORMAL);
+						_gfx->printCharacter(_stringdata.x + strlen(_game.strings[_stringdata.str]) + 1,
+								_stringdata.y, ' ', _game.colorFg, _game.colorBg);
+					} else if (_game.inputMode == INPUT_NONE) {
+						for (int n = 0; _predictiveResult[n]; n++)
+							keyEnqueue(_predictiveResult[n]);
+					}
 				}
 			}
 			break;
