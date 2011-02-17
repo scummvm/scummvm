@@ -54,7 +54,7 @@ void Location::load(Common::ReadStream *stream) {
 }
 
 State::State(void) {
-	for (int32 i = 0; i < 64; i++) {
+	for (int32 i = 0; i < 256; i++) {
 		_locations[i]._visited = false;
 		_locations[i]._numSceneAnimations = 0;
 		_locations[i]._numRifBoxes = 0;
