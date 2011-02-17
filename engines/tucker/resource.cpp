@@ -393,16 +393,16 @@ void TuckerEngine::loadBudSpr(int startOffset) {
 			switch (_flagsTable[137]) {
 			case 0:
 				if ((_gameFlags & kGameFlagDemo) != 0) {
-					sprintf(filename, "budl00_%d.pcx", frame + 1);
+					snprintf(filename, sizeof(filename), "budl00_%d.pcx", frame + 1);
 				} else {
-					sprintf(filename, "bud_%d.pcx", frame + 1);
+					snprintf(filename, sizeof(filename), "bud_%d.pcx", frame + 1);
 				}
 				break;
 			case 1:
-				sprintf(filename, "peg_%d.pcx", frame + 1);
+				snprintf(filename, sizeof(filename), "peg_%d.pcx", frame + 1);
 				break;
 			default:
-				sprintf(filename, "mac_%d.pcx", frame + 1);
+				snprintf(filename, sizeof(filename), "mac_%d.pcx", frame + 1);
 				break;
 			}
 			loadImage(filename, _loadTempBuf, 0);
@@ -483,25 +483,25 @@ void TuckerEngine::loadLoc() {
 
 	int i = _locationWidthTable[_locationNum];
 	_locationHeight = (_locationNum < 73) ? 140 : 200;
-	sprintf(filename, (i == 1) ? "loc%02d.pcx" : "loc%02da.pcx", _locationNum);
+	snprintf(filename, sizeof(filename), (i == 1) ? "loc%02d.pcx" : "loc%02da.pcx", _locationNum);
 	copyLocBitmap(filename, 0, false);
 	Graphics::copyRect(_quadBackgroundGfxBuf, 320, _locationBackgroundGfxBuf, 640, 320, _locationHeight);
 	if (_locationHeight == 200) {
 		return;
 	}
-	sprintf(filename, (i != 2) ? "path%02d.pcx" : "path%02da.pcx", _locationNum);
+	snprintf(filename, sizeof(filename), (i != 2) ? "path%02d.pcx" : "path%02da.pcx", _locationNum);
 	copyLocBitmap(filename, 0, true);
 	if (i > 1) {
-		sprintf(filename, "loc%02db.pcx", _locationNum);
+		snprintf(filename, sizeof(filename), "loc%02db.pcx", _locationNum);
 		copyLocBitmap(filename, 320, false);
 		Graphics::copyRect(_quadBackgroundGfxBuf + 44800, 320, _locationBackgroundGfxBuf + 320, 640, 320, _locationHeight);
 		if (i == 2) {
-			sprintf(filename, "path%02db.pcx", _locationNum);
+			snprintf(filename, sizeof(filename), "path%02db.pcx", _locationNum);
 			copyLocBitmap(filename, 320, true);
 		}
 	}
 	if (i > 2) {
-		sprintf(filename, "loc%02dc.pcx", _locationNum);
+		snprintf(filename, sizeof(filename), "loc%02dc.pcx", _locationNum);
 		copyLocBitmap(filename, 0, false);
 		Graphics::copyRect(_quadBackgroundGfxBuf + 89600, 320, _locationBackgroundGfxBuf, 640, 320, 140);
 	}
@@ -510,7 +510,7 @@ void TuckerEngine::loadLoc() {
 		loadImage("rochpath.pcx", _loadLocBufPtr, 0);
 	}
 	if (i > 3) {
-		sprintf(filename, "loc%02dd.pcx", _locationNum);
+		snprintf(filename, sizeof(filename), "loc%02dd.pcx", _locationNum);
 		copyLocBitmap(filename, 0, false);
 		Graphics::copyRect(_quadBackgroundGfxBuf + 134400, 320, _locationBackgroundGfxBuf + 320, 640, 320, 140);
 	}
@@ -541,10 +541,10 @@ void TuckerEngine::loadObj() {
 	_currentPartNum = _partNum;
 
 	char filename[40];
-	sprintf(filename, "objtxt%d.c", _partNum);
+	snprintf(filename, sizeof(filename), "objtxt%d.c", _partNum);
 	free(_objTxtBuf);
 	_objTxtBuf = loadFile(filename, 0);
-	sprintf(filename, "pt%dtext.c", _partNum);
+	snprintf(filename, sizeof(filename), "pt%dtext.c", _partNum);
 	free(_ptTextBuf);
 	_ptTextBuf = loadFile(filename, 0);
 	_characterSpeechDataPtr = _ptTextBuf;
@@ -585,7 +585,7 @@ void TuckerEngine::loadData() {
 	int offset = 0;
 	for (int i = 0; i < count; ++i) {
 		char filename[40];
-		sprintf(filename, "scrobj%d%d.pcx", _partNum, i);
+		snprintf(filename, sizeof(filename), "scrobj%d%d.pcx", _partNum, i);
 		loadImage(filename, _loadTempBuf, 0);
 		offset = loadDataHelper(offset, i);
 	}
@@ -604,7 +604,7 @@ int TuckerEngine::loadDataHelper(int offset, int index) {
 
 void TuckerEngine::loadPanObj() {
 	char filename[40];
-	sprintf(filename, "panobjs%d.pcx", _partNum);
+	snprintf(filename, sizeof(filename), "panobjs%d.pcx", _partNum);
 	loadImage(filename, _loadTempBuf, 0);
 	int offset = 0;
 	for (int y = 0; y < 5; ++y) {
@@ -813,7 +813,7 @@ void TuckerEngine::loadSprA02_01() {
 	const int count = _sprA02LookupTable[_locationNum];
 	for (int i = 1; i < count + 1; ++i) {
 		char filename[40];
-		sprintf(filename, "sprites/a%02d_%02d.spr", _locationNum, i);
+		snprintf(filename, sizeof(filename), "sprites/a%02d_%02d.spr", _locationNum, i);
 		_sprA02Table[i] = loadFile(filename, 0);
 	}
 	_sprA02Table[0] = _sprA02Table[1];
@@ -832,7 +832,7 @@ void TuckerEngine::loadSprC02_01() {
 	const int count = _sprC02LookupTable[_locationNum];
 	for (int i = 1; i < count + 1; ++i) {
 		char filename[40];
-		sprintf(filename, "sprites/c%02d_%02d.spr", _locationNum, i);
+		snprintf(filename, sizeof(filename), "sprites/c%02d_%02d.spr", _locationNum, i);
 		_sprC02Table[i] = loadFile(filename, 0);
 	}
 	_sprC02Table[0] = _sprC02Table[1];

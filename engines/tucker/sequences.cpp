@@ -119,7 +119,7 @@ void TuckerEngine::handleCreditsSequence() {
 			char filename[40];
 			if (num == 6) {
 				for (int i = 0; i < 16; ++i) {
-					sprintf(filename, "cogs%04d.pcx", i + 1);
+					snprintf(filename, sizeof(filename), "cogs%04d.pcx", i + 1);
 					loadImage(filename, imgBuf + i * 64000, 2);
 				}
 			} else {

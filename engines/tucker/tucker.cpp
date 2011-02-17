@@ -668,8 +668,8 @@ void TuckerEngine::updateCursorPos(int x, int y) {
 
 void TuckerEngine::setCursorNum(int num) {
 	_cursorNum = num;
-	const int cursorW = 16;
-	const int cursorH = 16;
+	static const int cursorW = 16;
+	static const int cursorH = 16;
 	CursorMan.replaceCursor(_cursorGfxBuf + _cursorNum * 256, cursorW, cursorH, 1, 1, 0);
 }
 
@@ -1090,17 +1090,15 @@ void TuckerEngine::stopSounds() {
 }
 
 void TuckerEngine::playSounds() {
-	for (int i = 0; i < 29; ++i) {
-		if (i < _locationSoundsCount) {
-			if (_locationSoundsTable[i].type == 1 || _locationSoundsTable[i].type == 2 || _locationSoundsTable[i].type == 5 ||
-				(_locationSoundsTable[i].type == 7 && _flagsTable[_locationSoundsTable[i].flagNum] == _locationSoundsTable[i].flagValueStartFx)) {
-				startSound(_locationSoundsTable[i].offset, i, _locationSoundsTable[i].volume);
-			}
+	for (int i = 0; i < _locationSoundsCount; ++i) {
+		if (_locationSoundsTable[i].type == 1 || _locationSoundsTable[i].type == 2 || _locationSoundsTable[i].type == 5 ||
+			(_locationSoundsTable[i].type == 7 && _flagsTable[_locationSoundsTable[i].flagNum] == _locationSoundsTable[i].flagValueStartFx)) {
+			startSound(_locationSoundsTable[i].offset, i, _locationSoundsTable[i].volume);
 		}
-		if (i < _locationMusicsCount) {
-			if (_locationMusicsTable[i].flag > 0) {
-				startMusic(_locationMusicsTable[i].offset, i, _locationMusicsTable[i].volume);
-			}
+	}
+	for (int i = 0; i < _locationMusicsCount; ++i) {
+		if (_locationMusicsTable[i].flag > 0) {
+			startMusic(_locationMusicsTable[i].offset, i, _locationMusicsTable[i].volume);
 		}
 	}
 }
@@ -1422,7 +1420,6 @@ void TuckerEngine::redrawPanelOverBackground() {
 }
 
 void TuckerEngine::drawConversationTexts() {
-	int x = 0;
 	int y = 141;
 	int flag = 0;
 	for (int i = 0; i <  _conversationOptionsCount; ++i) {
@@ -1430,7 +1427,7 @@ void TuckerEngine::drawConversationTexts() {
 		if ((_mousePosY > y && _mousePosY < y + 11) || _nextTableToLoadIndex == i) {
 			color = 106;
 		}
-		drawSpeechText(x, y, _characterSpeechDataPtr, _instructionsActionsTable[i], color);
+		drawSpeechText(0, y, _characterSpeechDataPtr, _instructionsActionsTable[i], color);
 		if (_mousePosY > y && _mousePosY < _conversationOptionLinesCount * 10 + y + 1) {
 			_nextTableToLoadIndex = i;
 			flag = 1;
