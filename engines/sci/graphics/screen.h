@@ -106,9 +106,6 @@ public:
 	void bitsGetRect(byte *memoryPtr, Common::Rect *destRect);
 	void bitsRestore(byte *memoryPtr);
 
-	void getPalette(Palette *pal);
-	void setPalette(Palette *pal);
-
 	void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel = 1);
 
 	void adjustToUpscaledCoordinates(int16 &y, int16 &x);

@@ -56,6 +56,7 @@ public:
 	void getSys(Palette *pal);
 
 	void setOnScreen();
+	void copySysPaletteToScreen();
 
 	void drewPicture(GuiResourceId pictureId);
 
@@ -88,6 +89,9 @@ public:
 	virtual void saveLoadWithSerializer(Common::Serializer &s);
 	void palVarySaveLoadPalette(Common::Serializer &s, Palette *palette);
 
+	byte findMacIconBarColor(byte r, byte g, byte b);
+	bool colorIsFromMacClut(byte index);
+
 #ifdef ENABLE_SCI32
 	bool loadClut(uint16 clutId);
 	byte matchClutColor(uint16 color);
@@ -119,6 +123,9 @@ private:
 	uint16 _palVaryTicks;
 	int _palVaryPaused;
 	int _palVarySignal;
+
+	void loadMacIconBarPalette();
+	byte *_macClut;
 	
 #ifdef ENABLE_SCI32
 	byte *_clutTable;

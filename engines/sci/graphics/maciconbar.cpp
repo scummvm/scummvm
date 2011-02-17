@@ -81,11 +81,7 @@ void GfxMacIconBar::remapColors(Graphics::Surface *surf, byte *palette) {
 		byte g = palette[color * 4 + 1];
 		byte b = palette[color * 4 + 2];
 
-		// For black, make sure the index is 0
-		if (r == 0 && g == 0 && b == 0)
-			*pixels++ = 0;
-		else
-			*pixels++ = g_sci->_gfxPalette->kernelFindColor(r, g, b);
+		*pixels++ = g_sci->_gfxPalette->findMacIconBarColor(r, g, b);
 	}
 }
 

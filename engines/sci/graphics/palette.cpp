@@ -69,6 +69,9 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 	_useMerging = useMerging;
 
 	palVaryInit();
+
+	_macClut = 0;
+	loadMacIconBarPalette();
 	
 #ifdef ENABLE_SCI32
 	_clutTable = 0;
@@ -78,6 +81,8 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 GfxPalette::~GfxPalette() {
 	if (_palVaryResourceId != -1)
 		palVaryRemoveTimer();
+
+	delete[] _macClut;
 
 #ifdef ENABLE_SCI32
 	unloadClut();
@@ -171,39 +176,42 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 // Will try to set amiga palette by using "spal" file. If not found, we return false
 bool GfxPalette::setAmiga() {
 	Common::File file;
-	int curColor, byte1, byte2;
 
 	if (file.open("spal")) {
-		for (curColor = 0; curColor < 32; curColor++) {
-			byte1 = file.readByte();
-			byte2 = file.readByte();
-			if ((byte1 == EOF) || (byte2 == EOF))
+		for (int curColor = 0; curColor < 32; curColor++) {
+			byte byte1 = file.readByte();
+			byte byte2 = file.readByte();
+
+			if (file.eos())
 				error("Amiga palette file ends prematurely");
+
 			_sysPalette.colors[curColor].used = 1;
 			_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
 			_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
 			_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
 		}
-		file.close();
+
 		// Directly set the palette, because setOnScreen() wont do a thing for amiga
-		_screen->setPalette(&_sysPalette);
+		copySysPaletteToScreen();
 		return true;
 	}
+
 	return false;
 }
 
 // Called from picture class, some amiga sci1 games set half of the palette
 void GfxPalette::modifyAmigaPalette(byte *data) {
-	int16 curColor, curPos = 0;
-	byte byte1, byte2;
-	for (curColor = 0; curColor < 16; curColor++) {
-		byte1 = data[curPos++];
-		byte2 = data[curPos++];
+	int16 curPos = 0;
+
+	for (int curColor = 0; curColor < 16; curColor++) {
+		byte byte1 = data[curPos++];
+		byte byte2 = data[curPos++];
 		_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
 		_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
 		_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
 	}
-	_screen->setPalette(&_sysPalette);
+
+	copySysPaletteToScreen();
 }
 
 static byte blendColors(byte c1, byte c2) {
@@ -297,19 +305,20 @@ bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {
 			newPalette->mapping[i] = i;
 		}
 	}
+
 	// We don't update the timestamp for SCI1.1, it's only updated on kDrawPic calls
 	return paletteChanged;
 }
 
 bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 	uint16 res;
-	int i,j;
 	bool paletteChanged = false;
 
-	// colors 0 (black) and 255 (white) are not affected by merging
-	for (i = 1; i < 255; i++) {
-		if (!newPalette->colors[i].used)// color is not used - so skip it
+	for (int i = 1; i < 255; i++) {
+		// skip unused colors
+		if (!newPalette->colors[i].used)
 			continue;
+
 		// forced palette merging or dest color is not used yet
 		if (force || (!_sysPalette.colors[i].used)) {
 			_sysPalette.colors[i].used = newPalette->colors[i].used;
@@ -322,6 +331,7 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 			newPalette->mapping[i] = i;
 			continue;
 		}
+
 		// is the same color already at the same position? -> match it directly w/o lookup
 		//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
 		//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
@@ -329,14 +339,18 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 			newPalette->mapping[i] = i;
 			continue;
 		}
+
 		// check if exact color could be matched
 		res = matchColor(newPalette->colors[i].r, newPalette->colors[i].g, newPalette->colors[i].b);
 		if (res & 0x8000) { // exact match was found
 			newPalette->mapping[i] = res & 0xFF;
 			continue;
 		}
+
+		int j = 1;
+
 		// no exact match - see if there is an unused color
-		for (j = 1; j < 256; j++)
+		for (; j < 256; j++) {
 			if (!_sysPalette.colors[j].used) {
 				_sysPalette.colors[j].used = newPalette->colors[i].used;
 				_sysPalette.colors[j].r = newPalette->colors[i].r;
@@ -346,6 +360,8 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 				paletteChanged = true;
 				break;
 			}
+		}
+	
 		// if still no luck - set an approximate color
 		if (j == 256) {
 			newPalette->mapping[i] = res & 0xFF;
@@ -355,6 +371,7 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 
 	if (!forceRealMerge)
 		_sysPalette.timestamp = g_system->getMillis() * 60 / 1000;
+
 	return paletteChanged;
 }
 
@@ -404,11 +421,36 @@ void GfxPalette::setOnScreen() {
 	// We dont change palette at all times for amiga
 	if (_resMan->isAmiga32color())
 		return;
-	_screen->setPalette(&_sysPalette);
 
-	// Redraw the Mac SCI1.1 Icon bar every palette change
-	if (g_sci->_gfxMacIconBar)
-		g_sci->_gfxMacIconBar->drawIcons();
+	copySysPaletteToScreen();
+}
+
+static byte convertMacGammaToSCIGamma(int comp) {
+	return (byte)sqrt(comp * 255);
+}
+
+void GfxPalette::copySysPaletteToScreen() {
+	// just copy palette to system
+	byte bpal[4 * 256];
+
+	// Get current palette, update it and put back
+	g_system->getPaletteManager()->grabPalette(bpal, 0, 256);
+
+	for (int16 i = 0; i < 256; i++) {
+		if (colorIsFromMacClut(i)) {
+			// If we've got a Mac CLUT, override the SCI palette with its non-black colors
+			bpal[i * 4    ] = convertMacGammaToSCIGamma(_macClut[i * 3    ]);
+			bpal[i * 4 + 1] = convertMacGammaToSCIGamma(_macClut[i * 3 + 1]);
+			bpal[i * 4 + 2] = convertMacGammaToSCIGamma(_macClut[i * 3 + 2]);
+		} else if (_sysPalette.colors[i].used != 0) {
+			// Otherwise, copy to the screen
+			bpal[i * 4    ] = CLIP(_sysPalette.colors[i].r * _sysPalette.intensity[i] / 100, 0, 255);
+			bpal[i * 4 + 1] = CLIP(_sysPalette.colors[i].g * _sysPalette.intensity[i] / 100, 0, 255);
+			bpal[i * 4 + 2] = CLIP(_sysPalette.colors[i].b * _sysPalette.intensity[i] / 100, 0, 255);
+		}
+	}
+
+	g_system->getPaletteManager()->setPalette(bpal, 0, 256);
 }
 
 bool GfxPalette::kernelSetFromResource(GuiResourceId resourceId, bool force) {
@@ -420,6 +462,7 @@ bool GfxPalette::kernelSetFromResource(GuiResourceId resourceId, bool force) {
 		set(&palette, force);
 		return true;
 	}
+
 	return false;
 }
 
@@ -565,7 +608,16 @@ void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
 }
 
 void GfxPalette::kernelSyncScreenPalette() {
-	_screen->getPalette(&_sysPalette);
+	// just copy palette to system
+	byte bpal[4 * 256];
+
+	// Get current palette, update it and put back
+	g_system->getPaletteManager()->grabPalette(bpal, 0, 256);
+	for (int16 i = 1; i < 255; i++) {
+		_sysPalette.colors[i].r = bpal[i * 4];
+		_sysPalette.colors[i].g = bpal[i * 4 + 1];
+		_sysPalette.colors[i].b = bpal[i * 4 + 2];
+	}
 }
 
 // palVary
@@ -793,6 +845,64 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 		setOnScreen();
 		_sysPaletteChanged = false;
 	}
+}
+
+byte GfxPalette::findMacIconBarColor(byte r, byte g, byte b) {
+	// Find the best color for use with the Mac icon bar
+
+	// For black, always use 0
+	if (r == 0 && g == 0 && b == 0)
+		return 0;
+
+	byte found = 0xFF;
+	uint diff = 0xFFFFFFFF;
+
+	for (uint16 i = 1; i < 255; i++) {
+		int dr = _macClut[i * 3    ] - r;
+		int dg = _macClut[i * 3 + 1] - g;
+		int db = _macClut[i * 3 + 2] - b;
+
+		// Use the largest difference. This is what the Mac Palette Manager does.
+		uint cdiff = MAX<int>(ABS(dr), ABS(dg));
+		cdiff = MAX<int>(cdiff, ABS(db));
+
+		if (cdiff == 0)
+			return i;
+		else if (cdiff < diff) {
+			found = i;
+			diff = cdiff;
+		}
+	}
+
+	return found;
+}
+
+void GfxPalette::loadMacIconBarPalette() {
+	if (!g_sci->hasMacIconBar())
+		return;
+
+	Common::SeekableReadStream *clutStream = g_sci->getMacExecutable()->getResource(MKID_BE('clut'), 150);
+
+	if (!clutStream)
+		error("Could not find clut 150 for the Mac icon bar");
+
+	clutStream->readUint32BE(); // seed
+	clutStream->readUint16BE(); // flags
+	uint16 colorCount = clutStream->readUint16BE() + 1;
+	_macClut = new byte[colorCount * 3];
+
+	for (uint16 i = 0; i < colorCount; i++) {
+		clutStream->readUint16BE();
+		_macClut[i * 3    ] = clutStream->readUint16BE() >> 8;
+		_macClut[i * 3 + 1] = clutStream->readUint16BE() >> 8;
+		_macClut[i * 3 + 2] = clutStream->readUint16BE() >> 8;
+	}
+
+	delete clutStream;
+}
+
+bool GfxPalette::colorIsFromMacClut(byte index) {
+	return index != 0 && _macClut && (_macClut[index * 3] != 0 || _macClut[index * 3 + 1] != 0 || _macClut[index * 3 + 1] != 0);
 }
 
 #ifdef ENABLE_SCI32

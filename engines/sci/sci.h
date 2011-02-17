@@ -27,6 +27,7 @@
 #define SCI_H
 
 #include "engines/engine.h"
+#include "common/macresman.h"
 #include "common/util.h"
 #include "common/random.h"
 #include "sci/engine/vm_types.h"	// for Selector
@@ -323,6 +324,8 @@ public:
 
 	DebugState _debugState;
 
+	Common::MacResManager *getMacExecutable() { return &_macExecutable; }
+
 private:
 	/**
 	 * Initializes a SCI game
@@ -349,6 +352,11 @@ private:
 	 */
 	void exitGame();
 
+	/**
+	 * Loads the Mac executable for SCI1 games
+	 */
+	void loadMacExecutable();
+
 	void initStackBaseWithSelector(Selector selector);
 
 	bool gameHasFanMadePatch();
@@ -366,6 +374,7 @@ private:
 	reg_t _gameSuperClassAddress; // Address of the super class of the game object
 	Console *_console;
 	Common::RandomSource _rng;
+	Common::MacResManager _macExecutable;
 };
 
 

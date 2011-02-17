@@ -261,6 +261,9 @@ Common::Error SciEngine::run() {
 	syncSoundSettings();
 	syncIngameAudioOptions();
 
+	// Load our Mac executable here for icon bar palettes and high-res fonts
+	loadMacExecutable();
+
 	// Initialize all graphics related subsystems
 	initGraphics();
 
@@ -854,6 +857,36 @@ void SciEngine::syncIngameAudioOptions() {
 				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
 			}
 		}
+	}
+}
+
+void SciEngine::loadMacExecutable() {
+	if (getPlatform() != Common::kPlatformMacintosh || getSciVersion() < SCI_VERSION_1_EARLY || getSciVersion() > SCI_VERSION_1_1)
+		return;
+
+	Common::String filename;
+
+	switch (getGameId()) {
+	case GID_KQ6:
+		filename = "King's Quest VI";
+		break;
+	case GID_FREDDYPHARKAS:
+		filename = "Freddy Pharkas";
+		break;
+	default:
+		break;
+	}
+
+	if (filename.empty())
+		return;
+
+	if (!_macExecutable.open(filename) || !_macExecutable.hasResFork()) {
+		// KQ6/Freddy require the executable to load their icon bar palettes
+		if (hasMacIconBar())
+			error("Could not load Mac resource fork '%s'", filename.c_str());
+		
+		// TODO: Show some sort of warning dialog saying they can't get any
+		// high-res Mac fonts, when we get to that point ;)
 	}
 }
 

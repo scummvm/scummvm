@@ -509,34 +509,6 @@ void GfxScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 }
 
-void GfxScreen::getPalette(Palette *pal) {
-	// just copy palette to system
-	byte bpal[4 * 256];
-	// Get current palette, update it and put back
-	g_system->getPaletteManager()->grabPalette(bpal, 0, 256);
-	for (int16 i = 1; i < 255; i++) {
-		pal->colors[i].r = bpal[i * 4];
-		pal->colors[i].g = bpal[i * 4 + 1];
-		pal->colors[i].b = bpal[i * 4 + 2];
-	}
-}
-
-void GfxScreen::setPalette(Palette *pal) {
-	// just copy palette to system
-	byte bpal[4 * 256];
-	// Get current palette, update it and put back
-	g_system->getPaletteManager()->grabPalette(bpal, 0, 256);
-	for (int16 i = 0; i < 256; i++) {
-		if (!pal->colors[i].used)
-			continue;
-		bpal[i * 4] = CLIP(pal->colors[i].r * pal->intensity[i] / 100, 0, 255);
-		bpal[i * 4 + 1] = CLIP(pal->colors[i].g * pal->intensity[i] / 100, 0, 255);
-		bpal[i * 4 + 2] = CLIP(pal->colors[i].b * pal->intensity[i] / 100, 0, 255);
-		bpal[i * 4 + 3] = 100;
-	}
-	g_system->getPaletteManager()->setPalette(bpal, 0, 256);
-}
-
 void GfxScreen::setVerticalShakePos(uint16 shakePos) {
 	if (!_upscaledHires)
 		g_system->setShakePos(shakePos);
