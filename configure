@@ -1674,6 +1674,8 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/android/android.mk"
 			_build_scalers=no
 			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			_unix=yes
