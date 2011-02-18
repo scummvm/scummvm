@@ -109,7 +109,7 @@ void TopMenu::reflowLayout() {
 	_inventButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
 	x += kButtonWidth + kButtonPad;
 
-	// Set the graphics to the 'on' buttons, except for the variable ones 
+	// Set the graphics to the 'on' buttons, except for the variable ones
 	_whatButton->setGfx(arrayBmp[4 * kMenuWhat + scale - 1]);
 	_musicButton->setGfx(arrayBmp[4 * kMenuMusic + scale - 1 + ((_vm->_config.musicFl) ? 0 : 2)]);
 	_soundFXButton->setGfx(arrayBmp[4 * kMenuSoundFX + scale - 1 + ((_vm->_config.soundFl) ? 0 : 2)]);
@@ -129,7 +129,7 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 	for (int i = 0; i < arraySize; i++) {
 		uint16 bmpSize = in.readUint16BE();
 		uint32 filPos = in.pos();
-		Common::SeekableSubReadStream stream(&in, filPos, filPos + bmpSize); 
+		Common::SeekableSubReadStream stream(&in, filPos, filPos + bmpSize);
 		arrayBmp[i * 2] = Graphics::ImageDecoder::loadFile(stream, g_system->getOverlayFormat());
 		arrayBmp[i * 2 + 1] = new Graphics::Surface();
 		arrayBmp[i * 2 + 1]->create(arrayBmp[i * 2]->w * 2, arrayBmp[i * 2]->h * 2, arrayBmp[i * 2]->bytesPerPixel);

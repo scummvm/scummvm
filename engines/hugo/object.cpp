@@ -61,20 +61,20 @@ ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0), _uses(0) {
 ObjectHandler::~ObjectHandler() {
 }
 
-byte ObjectHandler::getBoundaryOverlay(uint16 index) const { 
-	return _boundary[index]; 
+byte ObjectHandler::getBoundaryOverlay(uint16 index) const {
+	return _boundary[index];
 }
 
-byte ObjectHandler::getObjectBoundary(uint16 index) const { 
-	return _objBound[index]; 
+byte ObjectHandler::getObjectBoundary(uint16 index) const {
+	return _objBound[index];
 }
 
-byte ObjectHandler::getBaseBoundary(uint16 index) const { 
-	return _ovlBase[index];  
+byte ObjectHandler::getBaseBoundary(uint16 index) const {
+	return _ovlBase[index];
 }
 
-byte ObjectHandler::getFirstOverlay(uint16 index) const { 
-	return _overlay[index];  
+byte ObjectHandler::getFirstOverlay(uint16 index) const {
+	return _overlay[index];
 }
 
 bool ObjectHandler::isCarried(int objIndex) const {

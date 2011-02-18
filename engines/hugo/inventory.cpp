@@ -54,24 +54,24 @@ InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm), _invent(0) {
 	_maxInvent = 0;
 }
 
-void InventoryHandler::setInventoryObjId(int16 objId) { 
-	_inventoryObjId = objId; 
+void InventoryHandler::setInventoryObjId(int16 objId) {
+	_inventoryObjId = objId;
 }
 
-void InventoryHandler::setInventoryState(istate_t state) { 
-	_inventoryState = state; 
+void InventoryHandler::setInventoryState(istate_t state) {
+	_inventoryState = state;
 }
 
-void InventoryHandler::freeInvent() { 
-	free(_invent);           
+void InventoryHandler::freeInvent() {
+	free(_invent);
 }
 
-int16 InventoryHandler::getInventoryObjId() const { 
-	return _inventoryObjId;  
+int16 InventoryHandler::getInventoryObjId() const {
+	return _inventoryObjId;
 }
 
-istate_t InventoryHandler::getInventoryState() const { 
-	return _inventoryState;  
+istate_t InventoryHandler::getInventoryState() const {
+	return _inventoryState;
 }
 
 /**

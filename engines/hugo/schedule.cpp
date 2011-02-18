@@ -133,7 +133,7 @@ uint32 Scheduler::getDosTicks(const bool updateFl) {
 	if (_oldTime == 0)
 		_oldTime = (uint32) floor((double) (g_system->getMillis() * _vm->getTPS() / 1000));
 	// Calculate current wall time in ticks
-	t_now = g_system->getMillis() * _vm->getTPS() / 1000	;
+	t_now = g_system->getMillis() * _vm->getTPS() / 1000;
 
 	if ((t_now - _oldTime) > 0) {
 		_oldTime = t_now;
@@ -574,7 +574,7 @@ void Scheduler::loadActListArr(Common::ReadStream &in) {
 				} else {
 					readAct(in, tmpAct);
 					if (tmpAct.a0.actType == PROMPT)
-						free(tmpAct.a3.responsePtr); 
+						free(tmpAct.a3.responsePtr);
 				}
 			}
 
@@ -725,7 +725,7 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
 	f->write(saveEventArr, sizeof(saveEventArr));
 }
 
-/** 
+/**
  * Restore the action data from file with handle f
  */
 

@@ -50,7 +50,7 @@ namespace Hugo {
 
 HugoEngine *HugoEngine::s_Engine = 0;
 
-maze_t      _maze;                              // Default to not in maze 
+maze_t      _maze;                              // Default to not in maze
 hugo_boot_t _boot;                              // Boot info structure file
 
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd),
@@ -107,8 +107,8 @@ HugoEngine::~HugoEngine() {
 	delete _rnd;
 }
 
-GUI::Debugger *HugoEngine::getDebugger() { 
-	return _console; 
+GUI::Debugger *HugoEngine::getDebugger() {
+	return _console;
 }
 
 status_t &HugoEngine::getGameStatus() {
@@ -147,8 +147,8 @@ bool HugoEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
-const char *HugoEngine::getCopyrightString() const { 
-	return "Copyright 1989-1997 David P Gray, All Rights Reserved."; 
+const char *HugoEngine::getCopyrightString() const {
+	return "Copyright 1989-1997 David P Gray, All Rights Reserved.";
 }
 
 GameType HugoEngine::getGameType() const {

@@ -56,35 +56,35 @@ MidiPlayer::MidiPlayer(MidiDriver *driver)
 	_isLooping = false;
 	_isPlaying = false;
 	_paused = false;
-	_masterVolume = 0; 
+	_masterVolume = 0;
 }
 
 MidiPlayer::~MidiPlayer() {
 	close();
 }
 
-bool MidiPlayer::isPlaying() const { 
-	return _isPlaying; 
+bool MidiPlayer::isPlaying() const {
+	return _isPlaying;
 }
 
-int MidiPlayer::getVolume() const { 
-	return _masterVolume; 
+int MidiPlayer::getVolume() const {
+	return _masterVolume;
 }
 
-void MidiPlayer::setLooping(bool loop) { 
-	_isLooping = loop; 
+void MidiPlayer::setLooping(bool loop) {
+	_isLooping = loop;
 }
 
-MidiChannel *MidiPlayer::allocateChannel() { 
-	return 0; 
+MidiChannel *MidiPlayer::allocateChannel() {
+	return 0;
 }
 
-MidiChannel *MidiPlayer::getPercussionChannel() { 
-	return 0; 
+MidiChannel *MidiPlayer::getPercussionChannel() {
+	return 0;
 }
 
-uint32 MidiPlayer::getBaseTempo() { 
-	return _driver ? _driver->getBaseTempo() : 0; 
+uint32 MidiPlayer::getBaseTempo() {
+	return _driver ? _driver->getBaseTempo() : 0;
 }
 
 void MidiPlayer::play(uint8 *stream, uint16 size) {
@@ -476,11 +476,11 @@ void SoundHandler::pcspkr_player() {
 	case 'G':
 		count = pcspkrNotes[*DOSSongPtr - 'A'];
 		switch (DOSSongPtr[1]) {                    // Check for sharp or flat (#, -)
-		case '#':   
+		case '#':
 			count = pcspkrSharps[*DOSSongPtr++ - 'A'];
 			break;
-		case 'b':   
-			count = pcspkrFlats[*DOSSongPtr++ - 'A']; 
+		case 'b':
+			count = pcspkrFlats[*DOSSongPtr++ - 'A'];
 			break;
 		default:
 			break;

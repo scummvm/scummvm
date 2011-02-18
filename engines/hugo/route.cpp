@@ -50,11 +50,11 @@ Route::Route(HugoEngine *vm) : _vm(vm) {
 }
 
 void Route::resetRoute() {
-	_routeIndex = -1;   
+	_routeIndex = -1;
 }
 
 int16 Route::getRouteIndex() const {
-	return _routeIndex; 
+	return _routeIndex;
 }
 
 /**

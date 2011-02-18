@@ -55,56 +55,56 @@ MouseHandler::MouseHandler(HugoEngine *vm) : _vm(vm) {
 	_mouseY = kYPix / 2;
 }
 
-void MouseHandler::resetLeftButton() { 
-	_leftButtonFl = false; 
+void MouseHandler::resetLeftButton() {
+	_leftButtonFl = false;
 }
 
-void MouseHandler::resetRightButton() { 
-	_rightButtonFl = false; 
+void MouseHandler::resetRightButton() {
+	_rightButtonFl = false;
 }
 
-void MouseHandler::setLeftButton() { 
-	_leftButtonFl = true;  
+void MouseHandler::setLeftButton() {
+	_leftButtonFl = true;
 }
 
-void MouseHandler::setRightButton() { 
-	_rightButtonFl = true;  
+void MouseHandler::setRightButton() {
+	_rightButtonFl = true;
 }
 
-void MouseHandler::setJumpExitFl(bool fl) { 
-	_jumpExitFl = fl;       
+void MouseHandler::setJumpExitFl(bool fl) {
+	_jumpExitFl = fl;
 }
 
-void MouseHandler::setMouseX(int x) { 
-	_mouseX = x;            
+void MouseHandler::setMouseX(int x) {
+	_mouseX = x;
 }
 
-void MouseHandler::setMouseY(int y) { 
-	_mouseY = y;            
+void MouseHandler::setMouseY(int y) {
+	_mouseY = y;
 }
 
-void MouseHandler::freeHotspots() { 
-	free(_hotspots);        
+void MouseHandler::freeHotspots() {
+	free(_hotspots);
 }
 
-bool MouseHandler::getJumpExitFl() const { 
-	return _jumpExitFl;     
+bool MouseHandler::getJumpExitFl() const {
+	return _jumpExitFl;
 }
 
-int MouseHandler::getMouseX() const { 
-	return _mouseX;         
+int MouseHandler::getMouseX() const {
+	return _mouseX;
 }
 
-int MouseHandler::getMouseY() const { 
-	return _mouseY;         
+int MouseHandler::getMouseY() const {
+	return _mouseY;
 }
 
-int16 MouseHandler::getDirection(const int16 hotspotId) const { 
-	return _hotspots[hotspotId].direction; 
+int16 MouseHandler::getDirection(const int16 hotspotId) const {
+	return _hotspots[hotspotId].direction;
 }
 
-int16 MouseHandler::getHotspotActIndex(const int16 hotspotId) const { 
-	return _hotspots[hotspotId].actIndex;  
+int16 MouseHandler::getHotspotActIndex(const int16 hotspotId) const {
+	return _hotspots[hotspotId].actIndex;
 }
 
 /**

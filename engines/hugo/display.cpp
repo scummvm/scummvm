@@ -665,7 +665,7 @@ bool Screen::isInY(const int16 y, const rect_t *rect) const {
  * Check if two rectangles are overlapping
  */
 bool Screen::isOverlapping(const rect_t *rectA, const rect_t *rectB) const {
-	return (isInX(rectA->x, rectB) || isInX(rectA->x + rectA->dx, rectB) || isInX(rectB->x, rectA) || isInX(rectB->x + rectB->dx, rectA)) && 
+	return (isInX(rectA->x, rectB) || isInX(rectA->x + rectA->dx, rectB) || isInX(rectB->x, rectA) || isInX(rectB->x + rectB->dx, rectA)) &&
 		   (isInY(rectA->y, rectB) || isInY(rectA->y + rectA->dy, rectB) || isInY(rectB->y, rectA) || isInY(rectB->y + rectB->dy, rectA));
 }
 
@@ -685,7 +685,7 @@ void Screen::drawBoundaries() {
 		object_t *obj = &_vm->_object->_objects[i]; // Get pointer to object
 		if (obj->screenIndex == *_vm->_screen_p) {
 			if ((obj->currImagePtr != 0) && (obj->cycling != kCycleInvisible))
-				drawRectangle(false, obj->x + obj->currImagePtr->x1, obj->y + obj->currImagePtr->y1, 
+				drawRectangle(false, obj->x + obj->currImagePtr->x1, obj->y + obj->currImagePtr->y1,
 				                     obj->x + obj->currImagePtr->x2, obj->y + obj->currImagePtr->y2, _TLIGHTGREEN);
 			else if ((obj->currImagePtr == 0) && (obj->vxPath != 0) && !obj->carriedFl)
 				drawRectangle(false, obj->oldx, obj->oldy, obj->oldx + obj->vxPath, obj->oldy + obj->vyPath, _TBRIGHTWHITE);
