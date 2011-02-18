@@ -101,10 +101,10 @@ static jfieldID FID_Event_mouse_relative;
 static jfieldID FID_ScummVM_nativeScummVM;
 static jmethodID MID_Object_wait;
 
-JNIEnv* JNU_GetEnv() {
-	JNIEnv* env = 0;
+JNIEnv *JNU_GetEnv() {
+	JNIEnv *env = 0;
 
-	jint res = cached_jvm->GetEnv((void**)&env, JNI_VERSION_1_2);
+	jint res = cached_jvm->GetEnv((void **)&env, JNI_VERSION_1_2);
 	if (res != JNI_OK) {
 		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "GetEnv() failed: %d", res);
 		abort();
