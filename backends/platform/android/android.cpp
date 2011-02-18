@@ -23,13 +23,13 @@
  *
  */
 
+#if defined(__ANDROID__)
+
 #include "backends/base-backend.h"
 #include "base/main.h"
 #include "graphics/surface.h"
 
 #include "backends/platform/android/video.h"
-
-#if defined(ANDROID_BACKEND)
 
 #include <jni.h>
 
@@ -73,12 +73,20 @@
 #undef JNIEXPORT
 #define JNIEXPORT __attribute__ ((visibility("default")))
 
-// This replaces the bionic libc assert message with something that
+// This replaces the bionic libc assert functions with something that
 // actually prints the assertion failure before aborting.
-extern "C"
-void __assert(const char *file, int line, const char *expr) {
-	__android_log_assert(expr, LOG_TAG, "%s:%d: Assertion failure: %s",
-						 file, line, expr);
+extern "C" {
+	void __assert(const char *file, int line, const char *expr) {
+		__android_log_assert(expr, LOG_TAG,
+							"Assertion failure: '%s' in %s:%d",
+							 expr, file, line);
+	}
+
+	void __assert2(const char *file, int line, const char *func, const char *expr) {
+		__android_log_assert(expr, LOG_TAG,
+							"Assertion failure: '%s' in %s:%d (%s)",
+							 expr, file, line, func);
+	}
 }
 
 static JavaVM *cached_jvm;
@@ -94,10 +102,14 @@ static jfieldID FID_ScummVM_nativeScummVM;
 static jmethodID MID_Object_wait;
 
 JNIEnv* JNU_GetEnv() {
-	JNIEnv* env;
-	bool version_unsupported =
-		cached_jvm->GetEnv((void**)&env, JNI_VERSION_1_2);
-	assert(! version_unsupported);
+	JNIEnv* env = 0;
+
+	jint res = cached_jvm->GetEnv((void**)&env, JNI_VERSION_1_2);
+	if (res != JNI_OK) {
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "GetEnv() failed: %d", res);
+		abort();
+	}
+
 	return env;
 }
 
@@ -445,6 +457,14 @@ void* OSystem_Android::timerThreadFunc(void* arg) {
 	OSystem_Android* system = (OSystem_Android*)arg;
 	DefaultTimerManager* timer = (DefaultTimerManager*)(system->_timer);
 
+	JNIEnv *env = 0;
+	jint res = cached_jvm->AttachCurrentThread(&env, 0);
+
+	if (res != JNI_OK) {
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "AttachCurrentThread() failed: %d", res);
+		abort();
+	}
+
 	struct timespec tv;
 	tv.tv_sec = 0;
 	tv.tv_nsec = 100 * 1000 * 1000;	// 100ms
@@ -452,6 +472,13 @@ void* OSystem_Android::timerThreadFunc(void* arg) {
 	while (!system->_timer_thread_exit) {
 		timer->handler();
 		nanosleep(&tv, NULL);
+	}
+
+	res = cached_jvm->DetachCurrentThread();
+
+	if (res != JNI_OK) {
+		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "DetachCurrentThread() failed: %d", res);
+		abort();
 	}
 
 	return NULL;
@@ -1276,17 +1303,15 @@ void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,
 void OSystem_Android::logMessage(LogMessageType::Type type, const char *message) {
 	switch (type) {
 	case LogMessageType::kDebug:
-		BaseBackend::logMessage(type, message);
+		__android_log_write(ANDROID_LOG_DEBUG, LOG_TAG, message);
 		break;
 
 	case LogMessageType::kWarning:
-		__android_log_write(ANDROID_LOG_WARN, "ScummVM", message);
+		__android_log_write(ANDROID_LOG_WARN, LOG_TAG, message);
 		break;
 
 	case LogMessageType::kError:
-		// FIXME: From the name it looks like this will also quit the program.
-		// This shouldn't do that though.
-		__android_log_assert("Fatal error", "ScummVM", "%s", message);
+		__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, message);
 		break;
 	}
 }

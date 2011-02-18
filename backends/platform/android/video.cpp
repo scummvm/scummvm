@@ -23,6 +23,8 @@
  *
  */
 
+#if defined(__ANDROID__)
+
 #include "base/main.h"
 #include "graphics/surface.h"
 
@@ -42,7 +44,7 @@
 #define TEXSUBIMAGE_IS_EXPENSIVE 0
 
 #undef LOG_TAG
-#define LOG_TAG "ScummVM-video"
+#define LOG_TAG "ScummVM"
 
 #if 0
 #define ENTER(args...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, args)
@@ -133,7 +135,14 @@ GLESTexture::~GLESTexture() {
 }
 
 void GLESTexture::reinitGL() {
+	glDeleteTextures(1, &_texture_name);
 	glGenTextures(1, &_texture_name);
+
+	// bypass allocBuffer() shortcut to reinit the texture properly
+	_texture_width = 0;
+	_texture_height = 0;
+
+	allocBuffer(_surface.w, _surface.h);
 	setDirty();
 }
 
@@ -352,3 +361,6 @@ void GLESPaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h)
 
 	GLESTexture::drawTexture(x, y, w, h);
 }
+
+#endif
+

@@ -22,9 +22,6 @@ lib*.a
 /.project
 /.cproject
 
-/backends/platform/android/org/inodes/gus/scummvm/R.java
-/backends/platform/android/org/inodes/gus/scummvm/Manifest.java
-
 /backends/platform/dc/gui
 /backends/platform/dc/graphics
 /backends/platform/dc/sound

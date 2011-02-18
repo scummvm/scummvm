@@ -73,7 +73,7 @@ public class ScummVMActivity extends Activity {
 
 		@Override
 		protected void displayMessageOnOSD(String msg) {
-			Log.i(this.toString(), "OSD: " + msg);
+			Log.i(LOG_TAG, "OSD: " + msg);
 			Toast.makeText(ScummVMActivity.this, msg, Toast.LENGTH_LONG).show();
 		}
 
@@ -137,6 +137,7 @@ public class ScummVMActivity extends Activity {
 		}
 
 		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
+		
 		main_surface.setOnTouchListener(new View.OnTouchListener() {
 				public boolean onTouch(View v, MotionEvent event) {
 					return onTouchEvent(event);
@@ -156,7 +157,7 @@ public class ScummVMActivity extends Activity {
 					try {
 						runScummVM();
 					} catch (Exception e) {
-						Log.e("ScummVM", "Fatal error in ScummVM thread", e);
+						Log.e(ScummVM.LOG_TAG, "Fatal error in ScummVM thread", e);
 						new AlertDialog.Builder(ScummVMActivity.this)
 							.setTitle("Error")
 							.setMessage(e.toString())
@@ -174,8 +175,7 @@ public class ScummVMActivity extends Activity {
 		try {
 			scummvm.waitUntilRunning();
 		} catch (InterruptedException e) {
-			Log.e(this.toString(),
-				  "Interrupted while waiting for ScummVM.initBackend", e);
+			Log.e(ScummVM.LOG_TAG, "Interrupted while waiting for ScummVM.initBackend", e);
 			finish();
 		}
 
@@ -190,7 +190,7 @@ public class ScummVMActivity extends Activity {
 			"--config=" + getFileStreamPath("scummvmrc").getPath(),
 			"--path=" + Environment.getExternalStorageDirectory().getPath(),
 			"--gui-theme=scummmodern",
-			"--savepath=" + getDir("saves", 0).getPath(),
+			"--savepath=" + getDir("saves", 0).getPath()
 		};
 
 		int ret = scummvm.scummVMMain(args);
@@ -226,8 +226,7 @@ public class ScummVMActivity extends Activity {
 			try {
 				scummvm_thread.join(1000);	// 1s timeout
 			} catch (InterruptedException e) {
-				Log.i(this.toString(),
-					  "Error while joining ScummVM thread", e);
+				Log.i(ScummVM.LOG_TAG, "Error while joining ScummVM thread", e);
 			}
 		}
 		super.onStop();

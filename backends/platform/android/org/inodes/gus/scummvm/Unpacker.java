@@ -34,7 +34,9 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
 
 public class Unpacker extends Activity {
-	private final static boolean PLUGINS_ENABLED = true;
+	protected final static String LOG_TAG = "ScummVM";
+	// TODO don't hardcode this
+	private final static boolean PLUGINS_ENABLED = false;
 	private final static String META_NEXT_ACTIVITY =
 		"org.inodes.gus.unpacker.nextActivity";
 	private ProgressBar mProgress;
@@ -88,11 +90,11 @@ public class Unpacker extends Activity {
 										  origIntent.getType());
 					//intent.fillIn(getIntent(), 0);
 					intent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-					Log.i(this.toString(),
+					Log.i(LOG_TAG,
 						  "Starting next activity with intent " + intent);
 					startActivity(intent);
 				} else {
-					Log.w(this.toString(),
+					Log.w(LOG_TAG,
 						  "Unable to extract a component name from " + nextActivity);
 				}
 			}
@@ -128,12 +130,12 @@ public class Unpacker extends Activity {
 							new ZipFile(context.getPackageResourcePath());
 						job = new UnpackJob(zipfile, new HashSet<String>(1));
 					} catch (PackageManager.NameNotFoundException e) {
-						Log.e(this.toString(), "Package " + pkg +
+						Log.e(LOG_TAG, "Package " + pkg +
 							  " not found", e);
 						continue;
 					} catch (IOException e) {
 						// FIXME: show some sort of GUI error dialog
-						Log.e(this.toString(),
+						Log.e(LOG_TAG,
 							  "Error opening ZIP for package " + pkg, e);
 						continue;
 					}
@@ -145,7 +147,7 @@ public class Unpacker extends Activity {
 			// Delete stale filenames from mUnpackDest
 			for (File file: mUnpackDest.listFiles()) {
 				if (!all_files.contains(file.getName())) {
-					Log.i(this.toString(),
+					Log.i(LOG_TAG,
 						  "Deleting stale cached file " + file);
 					file.delete();
 				}
@@ -177,14 +179,14 @@ public class Unpacker extends Activity {
 							progress += zipentry.getSize();
 						} else {
 							if (dest.exists())
-								Log.d(this.toString(),
+								Log.d(LOG_TAG,
 									  "Replacing " + dest.getPath() +
 									  " old.mtime=" + dest.lastModified() +
 									  " new.mtime=" + zipentry.getTime() +
 									  " old.size=" + dest.length() +
 									  " new.size=" + zipentry.getSize());
 							else
-								Log.i(this.toString(),
+								Log.i(LOG_TAG,
 									  "Extracting " + zipentry.getName() +
 									  " from " + zipfile.getName() +
 									  " to " + dest.getPath());
@@ -215,12 +217,12 @@ public class Unpacker extends Activity {
 					zipfile.close();
 				} catch (IOException e) {
 					// FIXME: show some sort of GUI error dialog
-					Log.e(this.toString(), "Error unpacking plugin", e);
+					Log.e(LOG_TAG, "Error unpacking plugin", e);
 				}
 			}
 
 			if (progress != total_size)
-				Log.d(this.toString(), "Ended with progress " + progress +
+				Log.d(LOG_TAG, "Ended with progress " + progress +
 					  " != total size " + total_size);
 
 			setResult(RESULT_OK);
@@ -234,7 +236,7 @@ public class Unpacker extends Activity {
 		public void onReceive(Context context, Intent intent) {
 			if (!intent.getAction()
 				.equals(ScummVMApplication.ACTION_PLUGIN_QUERY)) {
-				Log.e(this.toString(),
+				Log.e(LOG_TAG,
 					  "Received unexpected action " + intent.getAction());
 				return;
 			}
@@ -323,7 +325,7 @@ public class Unpacker extends Activity {
 													startActivityForResult(market_intent,
 																		   REQUEST_MARKET);
 												} catch (ActivityNotFoundException e) {
-													Log.e(this.toString(),
+													Log.e(LOG_TAG,
 														  "Error starting market", e);
 												}
 											}
@@ -351,7 +353,7 @@ public class Unpacker extends Activity {
 		switch (requestCode) {
 		case REQUEST_MARKET:
 			if (resultCode != RESULT_OK)
-				Log.w(this.toString(), "Market returned " + resultCode);
+				Log.w(LOG_TAG, "Market returned " + resultCode);
 			tryUnpack();
 			break;
 		}
@@ -363,7 +365,7 @@ public class Unpacker extends Activity {
 				.getActivityInfo(getComponentName(), PackageManager.GET_META_DATA);
 			return ai.metaData;
 		} catch (PackageManager.NameNotFoundException e) {
-			Log.w(this.toString(), "Unable to find my own meta-data", e);
+			Log.w(LOG_TAG, "Unable to find my own meta-data", e);
 			return new Bundle();
 		}
 	}
