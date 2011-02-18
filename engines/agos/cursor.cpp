@@ -781,8 +781,8 @@ void AGOSEngine_Simon1::initMouse() {
 }
 
 static const byte mouseCursorPalette[] = {
-	0x00, 0x00, 0x00, 0x00, // Black
-	0xFF, 0xFF, 0xFF, 0x00, // White
+	0x00, 0x00, 0x00, // Black
+	0xFF, 0xFF, 0xFF  // White
 };
 
 void AGOSEngine::initMouse() {
@@ -792,7 +792,7 @@ void AGOSEngine::initMouse() {
 
 	memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
 
-	CursorMan.replaceCursorPalette(mouseCursorPalette, 0, ARRAYSIZE(mouseCursorPalette) / 4);
+	CursorMan.replaceCursorPalette(mouseCursorPalette, 0, ARRAYSIZE(mouseCursorPalette) / 3);
 }
 
 void AGOSEngine::drawMousePointer() {
