@@ -65,75 +65,72 @@ Parser::~Parser() {
 }
 
 /**
- * Read _cmdList from Hugo.dat
+ * Read a cmd structure from Hugo.dat
+ */
+void Parser::readCmd(Common::ReadStream &in, cmd &curCmd) {
+	curCmd.verbIndex = in.readUint16BE();
+	curCmd.reqIndex = in.readUint16BE();
+	curCmd.textDataNoCarryIndex = in.readUint16BE();
+	curCmd.reqState = in.readByte();
+	curCmd.newState = in.readByte();
+	curCmd.textDataWrongIndex = in.readUint16BE();
+	curCmd.textDataDoneIndex = in.readUint16BE();
+	curCmd.actIndex = in.readUint16BE();
+}
+
+/**
+ * Load _cmdList from Hugo.dat
  */
 void Parser::loadCmdList(Common::ReadStream &in) {
+	cmd tmpCmd;
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
 			_cmdListSize = numElem;
 			_cmdList = (cmd **)malloc(sizeof(cmd *) * _cmdListSize);
-			for (int i = 0; i < _cmdListSize; i++) {
-				uint16 numSubElem = in.readUint16BE();
+		}
+
+		for (int16 i = 0; i < numElem; i++) {
+			uint16 numSubElem = in.readUint16BE();
+			if (varnt == _vm->_gameVariant)
 				_cmdList[i] = (cmd *)malloc(sizeof(cmd) * numSubElem);
-				for (int j = 0; j < numSubElem; j++) {
-					_cmdList[i][j].verbIndex = in.readUint16BE();
-					_cmdList[i][j].reqIndex = in.readUint16BE();
-					_cmdList[i][j].textDataNoCarryIndex = in.readUint16BE();
-					_cmdList[i][j].reqState = in.readByte();
-					_cmdList[i][j].newState = in.readByte();
-					_cmdList[i][j].textDataWrongIndex = in.readUint16BE();
-					_cmdList[i][j].textDataDoneIndex = in.readUint16BE();
-					_cmdList[i][j].actIndex = in.readUint16BE();
-				}
-			}
-		} else {
-			for (int i = 0; i < numElem; i++) {
-				uint16 numSubElem = in.readUint16BE();
-				for (int j = 0; j < numSubElem; j++) {
-					in.readUint16BE();
-					in.readUint16BE();
-					in.readUint16BE();
-					in.readByte();
-					in.readByte();
-					in.readUint16BE();
-					in.readUint16BE();
-					in.readUint16BE();
-				}
-			}
+			for (int16 j = 0; j < numSubElem; j++)
+				readCmd(in, (varnt == _vm->_gameVariant) ? _cmdList[i][j] : tmpCmd);
 		}
 	}
+}
+
+
+void Parser::readBG(Common::ReadStream &in, background_t &curBG) {
+	curBG.verbIndex = in.readUint16BE();
+	curBG.nounIndex = in.readUint16BE();
+	curBG.commentIndex = in.readSint16BE();
+	curBG.matchFl = (in.readByte() != 0);
+	curBG.roomState = in.readByte();
+	curBG.bonusIndex = in.readByte();
 }
 
 /**
  * Read _backgrounObjects from Hugo.dat
  */
 void Parser::loadBackgroundObjects(Common::ReadStream &in) {
+	background_t tmpBG;
+
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
 
-		background_t **wrkBackgroundObjects = (background_t **)malloc(sizeof(background_t *) * numElem);
+		if (varnt == _vm->_gameVariant) {
+			_backgroundObjectsSize = numElem;
+			_backgroundObjects = (background_t **)malloc(sizeof(background_t *) * numElem);
+		}
 
 		for (int i = 0; i < numElem; i++) {
 			uint16 numSubElem = in.readUint16BE();
-			wrkBackgroundObjects[i] = (background_t *)malloc(sizeof(background_t) * numSubElem);
-			for (int j = 0; j < numSubElem; j++) {
-				wrkBackgroundObjects[i][j].verbIndex = in.readUint16BE();
-				wrkBackgroundObjects[i][j].nounIndex = in.readUint16BE();
-				wrkBackgroundObjects[i][j].commentIndex = in.readSint16BE();
-				wrkBackgroundObjects[i][j].matchFl = (in.readByte() != 0);
-				wrkBackgroundObjects[i][j].roomState = in.readByte();
-				wrkBackgroundObjects[i][j].bonusIndex = in.readByte();
-			}
-		}
+			if (varnt == _vm->_gameVariant)
+				_backgroundObjects[i] = (background_t *)malloc(sizeof(background_t) * numSubElem);
 
-		if (varnt == _vm->_gameVariant) {
-			_backgroundObjectsSize = numElem;
-			_backgroundObjects = wrkBackgroundObjects;
-		} else {
-			for (int i = 0; i < numElem; i++)
-				free(wrkBackgroundObjects[i]);
-			free(wrkBackgroundObjects);
+			for (int j = 0; j < numSubElem; j++)
+				readBG(in, (varnt == _vm->_gameVariant) ? _backgroundObjects[i][j] : tmpBG);
 		}
 	}
 }
@@ -142,27 +139,21 @@ void Parser::loadBackgroundObjects(Common::ReadStream &in) {
  * Read _catchallList from Hugo.dat
  */
 void Parser::loadCatchallList(Common::ReadStream &in) {
+	background_t *wrkCatchallList = 0;
+	background_t tmpBG;
+
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
-		background_t *wrkCatchallList = (background_t *)malloc(sizeof(background_t) * numElem);
-
-		for (int i = 0; i < numElem; i++) {
-			wrkCatchallList[i].verbIndex = in.readUint16BE();
-			wrkCatchallList[i].nounIndex = in.readUint16BE();
-			wrkCatchallList[i].commentIndex = in.readSint16BE();
-			wrkCatchallList[i].matchFl = (in.readByte() != 0);
-			wrkCatchallList[i].roomState = in.readByte();
-			wrkCatchallList[i].bonusIndex = in.readByte();
-		}
 
 		if (varnt == _vm->_gameVariant)
-			_catchallList = wrkCatchallList;
-		else
-			free(wrkCatchallList);
+			_catchallList = wrkCatchallList = (background_t *)malloc(sizeof(background_t) * numElem);
+
+		for (int i = 0; i < numElem; i++)
+			readBG(in, (varnt == _vm->_gameVariant) ? wrkCatchallList[i] : tmpBG);
 	}
 }
 
-void Parser::loadArrayReqs(Common::ReadStream &in) {
+void Parser::loadArrayReqs(Common::SeekableReadStream &in) {
 	_arrayReqs = _vm->loadLongArray(in);
 }
 

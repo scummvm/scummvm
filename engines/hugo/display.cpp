@@ -194,7 +194,7 @@ void Screen::savePal(Common::WriteStream *f) const {
 /**
  * Restore the current palette from a savegame
  */
-void Screen::restorePal(Common::SeekableReadStream *f) {
+void Screen::restorePal(Common::ReadStream *f) {
 	debugC(1, kDebugDisplay, "restorePal()");
 
 	byte pal[4];

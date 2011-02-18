@@ -57,7 +57,7 @@ InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm), _invent(0) {
 /**
  * Read _invent from Hugo.dat
  */
-void InventoryHandler::loadInvent(Common::ReadStream &in) {
+void InventoryHandler::loadInvent(Common::SeekableReadStream &in) {
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		int16 numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
@@ -66,8 +66,7 @@ void InventoryHandler::loadInvent(Common::ReadStream &in) {
 			for (int i = 0; i < numElem; i++)
 				_invent[i] = in.readSint16BE();
 		} else {
-			for (int i = 0; i < numElem; i++)
-				in.readSint16BE();
+			in.skip(numElem * sizeof(int16));
 		}
 	}
 }

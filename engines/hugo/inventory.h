@@ -51,7 +51,7 @@ public:
 	istate_t getInventoryState() const         { return _inventoryState;  }
 
 	int16 findIconId(int16 objId);
-	void  loadInvent(Common::ReadStream &in);
+	void  loadInvent(Common::SeekableReadStream &in);
 	int16 processInventory(const invact_t action, ...);
 	void  runInventory();
 

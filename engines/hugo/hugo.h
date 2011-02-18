@@ -323,7 +323,7 @@ public:
 	const char *getCopyrightString() const { return "Copyright 1989-1997 David P Gray, All Rights Reserved."; }
 
 	Common::String getSavegameFilename(int slot);
-	uint16 **loadLongArray(Common::ReadStream &in);
+	uint16 **loadLongArray(Common::SeekableReadStream &in);
 
 	FileManager *_file;
 	Scheduler *_scheduler;

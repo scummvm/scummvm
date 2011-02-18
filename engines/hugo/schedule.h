@@ -466,11 +466,12 @@ public:
 	void insertActionList(const uint16 actIndex);
 	void loadActListArr(Common::ReadStream &in);
 	void loadAlNewscrIndex(Common::ReadStream &in);
-	void loadPoints(Common::ReadStream &in);
-	void loadScreenAct(Common::ReadStream &in);
+	void loadPoints(Common::SeekableReadStream &in);
+	void loadScreenAct(Common::SeekableReadStream &in);
 	void newScreen(const int screenIndex);
 	void processBonus(const int bonusIndex);
 	void processMaze(const int x1, const int x2, const int y1, const int y2);
+	void readAct(Common::ReadStream &in, act &curAct);
 	void restoreSchedulerData(Common::ReadStream *in);
 	void restoreScreen(const int screenIndex);
 	void saveSchedulerData(Common::WriteStream *out);

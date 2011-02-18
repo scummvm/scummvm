@@ -55,7 +55,7 @@ public:
 	void command(const char *format, ...);
 	void freeParser();
 	void keyHandler(Common::Event event);
-	void loadArrayReqs(Common::ReadStream &in);
+	void loadArrayReqs(Common::SeekableReadStream &in);
 	void loadBackgroundObjects(Common::ReadStream &in);
 	void loadCatchallList(Common::ReadStream &in);
 	void loadCmdList(Common::ReadStream &in);
@@ -82,6 +82,8 @@ protected:
 
 	const char *findNoun() const;
 	const char *findVerb() const;
+	void  readBG(Common::ReadStream &in, background_t &curBG);
+	void  readCmd(Common::ReadStream &in, cmd &curCmd);
 	void  showDosInventory() const;
 
 	bool   _checkDoubleF1Fl;                        // Flag used to display user help or instructions

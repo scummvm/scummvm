@@ -78,6 +78,8 @@ public:
 	void loadNumObj(Common::ReadStream &in);
 	void lookObject(object_t *obj);
 	void readObjectImages();
+	void readObject(Common::ReadStream &in, object_t &curObject);
+	void readUse(Common::ReadStream &in, uses_t &curUse);
 	void restoreAllSeq();
 	void restoreObjects(Common::SeekableReadStream *in);
 	void saveObjects(Common::WriteStream *out);

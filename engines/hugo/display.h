@@ -73,7 +73,7 @@ public:
 	void     moveImage(image_pt srcImage, const int16 x1, const int16 y1, const int16 dx, int16 dy, const int16 width1, image_pt dstImage, const int16 x2, const int16 y2, const int16 width2);
 	void     remapPal(uint16 oldIndex, uint16 newIndex);
 	void     resetInventoryObjId();
-	void     restorePal(Common::SeekableReadStream *f);
+	void     restorePal(Common::ReadStream *f);
 	void     savePal(Common::WriteStream *f) const;
 	void     setBackgroundColor(const uint16 color);
 	void     setCursorPal();

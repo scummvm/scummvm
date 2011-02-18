@@ -253,7 +253,7 @@ void Scheduler::loadAlNewscrIndex(Common::ReadStream &in) {
 /**
  * Load Points from Hugo.dat
  */
-void Scheduler::loadPoints(Common::ReadStream &in) {
+void Scheduler::loadPoints(Common::SeekableReadStream &in) {
 	debugC(6, kDebugSchedule, "loadPoints(&in)");
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
@@ -266,9 +266,285 @@ void Scheduler::loadPoints(Common::ReadStream &in) {
 				_points[i].scoredFl = false;
 			}
 		} else {
-			for (int i = 0; i < numElem; i++)
-				in.readByte();
+			in.skip(numElem);
 		}
+	}
+}
+
+void Scheduler::readAct(Common::ReadStream &in, act &curAct) {
+	uint16 numSubAct;
+
+	curAct.a0.actType = (action_t) in.readByte();
+	switch (curAct.a0.actType) {
+	case ANULL:              // -1
+		break;
+	case ASCHEDULE:          // 0
+		curAct.a0.timer = in.readSint16BE();
+		curAct.a0.actIndex = in.readUint16BE();
+		break;
+	case START_OBJ:          // 1
+		curAct.a1.timer = in.readSint16BE();
+		curAct.a1.objIndex = in.readSint16BE();
+		curAct.a1.cycleNumb = in.readSint16BE();
+		curAct.a1.cycle = (cycle_t) in.readByte();
+		break;
+	case INIT_OBJXY:         // 2
+		curAct.a2.timer = in.readSint16BE();
+		curAct.a2.objIndex = in.readSint16BE();
+		curAct.a2.x = in.readSint16BE();
+		curAct.a2.y = in.readSint16BE();
+		break;
+	case PROMPT:             // 3
+		curAct.a3.timer = in.readSint16BE();
+		curAct.a3.promptIndex = in.readSint16BE();
+		numSubAct = in.readUint16BE();
+		curAct.a3.responsePtr = (int *) malloc(sizeof(int) * numSubAct);
+		for (int k = 0; k < numSubAct; k++)
+			curAct.a3.responsePtr[k] = in.readSint16BE();
+		curAct.a3.actPassIndex = in.readUint16BE();
+		curAct.a3.actFailIndex = in.readUint16BE();
+		curAct.a3.encodedFl = (in.readByte() == 1) ? true : false;
+		break;
+	case BKGD_COLOR:         // 4
+		curAct.a4.timer = in.readSint16BE();
+		curAct.a4.newBackgroundColor = in.readUint32BE();
+		break;
+	case INIT_OBJVXY:        // 5
+		curAct.a5.timer = in.readSint16BE();
+		curAct.a5.objIndex = in.readSint16BE();
+		curAct.a5.vx = in.readSint16BE();
+		curAct.a5.vy = in.readSint16BE();
+		break;
+	case INIT_CARRY:         // 6
+		curAct.a6.timer = in.readSint16BE();
+		curAct.a6.objIndex = in.readSint16BE();
+		curAct.a6.carriedFl = (in.readByte() == 1) ? true : false;
+		break;
+	case INIT_HF_COORD:      // 7
+		curAct.a7.timer = in.readSint16BE();
+		curAct.a7.objIndex = in.readSint16BE();
+		break;
+	case NEW_SCREEN:         // 8
+		curAct.a8.timer = in.readSint16BE();
+		curAct.a8.screenIndex = in.readSint16BE();
+		break;
+	case INIT_OBJSTATE:      // 9
+		curAct.a9.timer = in.readSint16BE();
+		curAct.a9.objIndex = in.readSint16BE();
+		curAct.a9.newState = in.readByte();
+		break;
+	case INIT_PATH:          // 10
+		curAct.a10.timer = in.readSint16BE();
+		curAct.a10.objIndex = in.readSint16BE();
+		curAct.a10.newPathType = in.readSint16BE();
+		curAct.a10.vxPath = in.readByte();
+		curAct.a10.vyPath = in.readByte();
+		break;
+	case COND_R:             // 11
+		curAct.a11.timer = in.readSint16BE();
+		curAct.a11.objIndex = in.readSint16BE();
+		curAct.a11.stateReq = in.readByte();
+		curAct.a11.actPassIndex = in.readUint16BE();
+		curAct.a11.actFailIndex = in.readUint16BE();
+		break;
+	case TEXT:               // 12
+		curAct.a12.timer = in.readSint16BE();
+		curAct.a12.stringIndex = in.readSint16BE();
+		break;
+	case SWAP_IMAGES:        // 13
+		curAct.a13.timer = in.readSint16BE();
+		curAct.a13.objIndex1 = in.readSint16BE();
+		curAct.a13.objIndex2 = in.readSint16BE();
+		break;
+	case COND_SCR:           // 14
+		curAct.a14.timer = in.readSint16BE();
+		curAct.a14.objIndex = in.readSint16BE();
+		curAct.a14.screenReq = in.readSint16BE();
+		curAct.a14.actPassIndex = in.readUint16BE();
+		curAct.a14.actFailIndex = in.readUint16BE();
+		break;
+	case AUTOPILOT:          // 15
+		curAct.a15.timer = in.readSint16BE();
+		curAct.a15.objIndex1 = in.readSint16BE();
+		curAct.a15.objIndex2 = in.readSint16BE();
+		curAct.a15.dx = in.readByte();
+		curAct.a15.dy = in.readByte();
+		break;
+	case INIT_OBJ_SEQ:       // 16
+		curAct.a16.timer = in.readSint16BE();
+		curAct.a16.objIndex = in.readSint16BE();
+		curAct.a16.seqIndex = in.readSint16BE();
+		break;
+	case SET_STATE_BITS:     // 17
+		curAct.a17.timer = in.readSint16BE();
+		curAct.a17.objIndex = in.readSint16BE();
+		curAct.a17.stateMask = in.readSint16BE();
+		break;
+	case CLEAR_STATE_BITS:   // 18
+		curAct.a18.timer = in.readSint16BE();
+		curAct.a18.objIndex = in.readSint16BE();
+		curAct.a18.stateMask = in.readSint16BE();
+		break;
+	case TEST_STATE_BITS:    // 19
+		curAct.a19.timer = in.readSint16BE();
+		curAct.a19.objIndex = in.readSint16BE();
+		curAct.a19.stateMask = in.readSint16BE();
+		curAct.a19.actPassIndex = in.readUint16BE();
+		curAct.a19.actFailIndex = in.readUint16BE();
+		break;
+	case DEL_EVENTS:         // 20
+		curAct.a20.timer = in.readSint16BE();
+		curAct.a20.actTypeDel = (action_t) in.readByte();
+		break;
+	case GAMEOVER:           // 21
+		curAct.a21.timer = in.readSint16BE();
+		break;
+	case INIT_HH_COORD:      // 22
+		curAct.a22.timer = in.readSint16BE();
+		curAct.a22.objIndex = in.readSint16BE();
+		break;
+	case EXIT:               // 23
+		curAct.a23.timer = in.readSint16BE();
+		break;
+	case BONUS:              // 24
+		curAct.a24.timer = in.readSint16BE();
+		curAct.a24.pointIndex = in.readSint16BE();
+		break;
+	case COND_BOX:           // 25
+		curAct.a25.timer = in.readSint16BE();
+		curAct.a25.objIndex = in.readSint16BE();
+		curAct.a25.x1 = in.readSint16BE();
+		curAct.a25.y1 = in.readSint16BE();
+		curAct.a25.x2 = in.readSint16BE();
+		curAct.a25.y2 = in.readSint16BE();
+		curAct.a25.actPassIndex = in.readUint16BE();
+		curAct.a25.actFailIndex = in.readUint16BE();
+		break;
+	case SOUND:              // 26
+		curAct.a26.timer = in.readSint16BE();
+		curAct.a26.soundIndex = in.readSint16BE();
+		break;
+	case ADD_SCORE:          // 27
+		curAct.a27.timer = in.readSint16BE();
+		curAct.a27.objIndex = in.readSint16BE();
+		break;
+	case SUB_SCORE:          // 28
+		curAct.a28.timer = in.readSint16BE();
+		curAct.a28.objIndex = in.readSint16BE();
+		break;
+	case COND_CARRY:         // 29
+		curAct.a29.timer = in.readSint16BE();
+		curAct.a29.objIndex = in.readSint16BE();
+		curAct.a29.actPassIndex = in.readUint16BE();
+		curAct.a29.actFailIndex = in.readUint16BE();
+		break;
+	case INIT_MAZE:          // 30
+		curAct.a30.timer = in.readSint16BE();
+		curAct.a30.mazeSize = in.readByte();
+		curAct.a30.x1 = in.readSint16BE();
+		curAct.a30.y1 = in.readSint16BE();
+		curAct.a30.x2 = in.readSint16BE();
+		curAct.a30.y2 = in.readSint16BE();
+		curAct.a30.x3 = in.readSint16BE();
+		curAct.a30.x4 = in.readSint16BE();
+		curAct.a30.firstScreenIndex = in.readByte();
+		break;
+	case EXIT_MAZE:          // 31
+		curAct.a31.timer = in.readSint16BE();
+		break;
+	case INIT_PRIORITY:      // 32
+		curAct.a32.timer = in.readSint16BE();
+		curAct.a32.objIndex = in.readSint16BE();
+		curAct.a32.priority = in.readByte();
+		break;
+	case INIT_SCREEN:        // 33
+		curAct.a33.timer = in.readSint16BE();
+		curAct.a33.objIndex = in.readSint16BE();
+		curAct.a33.screenIndex = in.readSint16BE();
+		break;
+	case AGSCHEDULE:         // 34
+		curAct.a34.timer = in.readSint16BE();
+		curAct.a34.actIndex = in.readUint16BE();
+		break;
+	case REMAPPAL:           // 35
+		curAct.a35.timer = in.readSint16BE();
+		curAct.a35.oldColorIndex = in.readSint16BE();
+		curAct.a35.newColorIndex = in.readSint16BE();
+		break;
+	case COND_NOUN:          // 36
+		curAct.a36.timer = in.readSint16BE();
+		curAct.a36.nounIndex = in.readUint16BE();
+		curAct.a36.actPassIndex = in.readUint16BE();
+		curAct.a36.actFailIndex = in.readUint16BE();
+		break;
+	case SCREEN_STATE:       // 37
+		curAct.a37.timer = in.readSint16BE();
+		curAct.a37.screenIndex = in.readSint16BE();
+		curAct.a37.newState = in.readByte();
+		break;
+	case INIT_LIPS:          // 38
+		curAct.a38.timer = in.readSint16BE();
+		curAct.a38.lipsObjIndex = in.readSint16BE();
+		curAct.a38.objIndex = in.readSint16BE();
+		curAct.a38.dxLips = in.readByte();
+		curAct.a38.dyLips = in.readByte();
+		break;
+	case INIT_STORY_MODE:    // 39
+		curAct.a39.timer = in.readSint16BE();
+		curAct.a39.storyModeFl = (in.readByte() == 1);
+		break;
+	case WARN:               // 40
+		curAct.a40.timer = in.readSint16BE();
+		curAct.a40.stringIndex = in.readSint16BE();
+		break;
+	case COND_BONUS:         // 41
+		curAct.a41.timer = in.readSint16BE();
+		curAct.a41.BonusIndex = in.readSint16BE();
+		curAct.a41.actPassIndex = in.readUint16BE();
+		curAct.a41.actFailIndex = in.readUint16BE();
+		break;
+	case TEXT_TAKE:          // 42
+		curAct.a42.timer = in.readSint16BE();
+		curAct.a42.objIndex = in.readSint16BE();
+		break;
+	case YESNO:              // 43
+		curAct.a43.timer = in.readSint16BE();
+		curAct.a43.promptIndex = in.readSint16BE();
+		curAct.a43.actYesIndex = in.readUint16BE();
+		curAct.a43.actNoIndex = in.readUint16BE();
+		break;
+	case STOP_ROUTE:         // 44
+		curAct.a44.timer = in.readSint16BE();
+		break;
+	case COND_ROUTE:         // 45
+		curAct.a45.timer = in.readSint16BE();
+		curAct.a45.routeIndex = in.readSint16BE();
+		curAct.a45.actPassIndex = in.readUint16BE();
+		curAct.a45.actFailIndex = in.readUint16BE();
+		break;
+	case INIT_JUMPEXIT:      // 46
+		curAct.a46.timer = in.readSint16BE();
+		curAct.a46.jumpExitFl = (in.readByte() == 1);
+		break;
+	case INIT_VIEW:          // 47
+		curAct.a47.timer = in.readSint16BE();
+		curAct.a47.objIndex = in.readSint16BE();
+		curAct.a47.viewx = in.readSint16BE();
+		curAct.a47.viewy = in.readSint16BE();
+		curAct.a47.direction = in.readSint16BE();
+		break;
+	case INIT_OBJ_FRAME:     // 48
+		curAct.a48.timer = in.readSint16BE();
+		curAct.a48.objIndex = in.readSint16BE();
+		curAct.a48.seqIndex = in.readSint16BE();
+		curAct.a48.frameIndex = in.readSint16BE();
+		break;
+	case OLD_SONG:           //49
+		curAct.a49.timer = in.readSint16BE();
+		curAct.a49.songIndex = in.readUint16BE();
+		break;
+	default:
+		error("Engine - Unknown action type encountered: %d", curAct.a0.actType);
 	}
 }
 
@@ -278,598 +554,62 @@ void Scheduler::loadPoints(Common::ReadStream &in) {
 void Scheduler::loadActListArr(Common::ReadStream &in) {
 	debugC(6, kDebugSchedule, "loadActListArr(&in)");
 
-	int numElem, numSubElem, numSubAct;
+	act tmpAct;
+
+	int numElem, numSubElem;
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
 			_actListArrSize = numElem;
 			_actListArr = (act **)malloc(sizeof(act *) * _actListArrSize);
-			for (int i = 0; i < _actListArrSize; i++) {
-				numSubElem = in.readUint16BE();
+		}
+
+		for (int i = 0; i < numElem; i++) {
+			numSubElem = in.readUint16BE();
+			if (varnt == _vm->_gameVariant)
 				_actListArr[i] = (act *) malloc(sizeof(act) * (numSubElem + 1));
-				for (int j = 0; j < numSubElem; j++) {
-					_actListArr[i][j].a0.actType = (action_t) in.readByte();
-					switch (_actListArr[i][j].a0.actType) {
-					case ANULL:              // -1
-						break;
-					case ASCHEDULE:          // 0
-						_actListArr[i][j].a0.timer = in.readSint16BE();
-						_actListArr[i][j].a0.actIndex = in.readUint16BE();
-						break;
-					case START_OBJ:          // 1
-						_actListArr[i][j].a1.timer = in.readSint16BE();
-						_actListArr[i][j].a1.objIndex = in.readSint16BE();
-						_actListArr[i][j].a1.cycleNumb = in.readSint16BE();
-						_actListArr[i][j].a1.cycle = (cycle_t) in.readByte();
-						break;
-					case INIT_OBJXY:         // 2
-						_actListArr[i][j].a2.timer = in.readSint16BE();
-						_actListArr[i][j].a2.objIndex = in.readSint16BE();
-						_actListArr[i][j].a2.x = in.readSint16BE();
-						_actListArr[i][j].a2.y = in.readSint16BE();
-						break;
-					case PROMPT:             // 3
-						_actListArr[i][j].a3.timer = in.readSint16BE();
-						_actListArr[i][j].a3.promptIndex = in.readSint16BE();
-						numSubAct = in.readUint16BE();
-						_actListArr[i][j].a3.responsePtr = (int *) malloc(sizeof(int) * numSubAct);
-						for (int k = 0; k < numSubAct; k++)
-							_actListArr[i][j].a3.responsePtr[k] = in.readSint16BE();
-						_actListArr[i][j].a3.actPassIndex = in.readUint16BE();
-						_actListArr[i][j].a3.actFailIndex = in.readUint16BE();
-						_actListArr[i][j].a3.encodedFl = (in.readByte() == 1) ? true : false;
-						break;
-					case BKGD_COLOR:         // 4
-						_actListArr[i][j].a4.timer = in.readSint16BE();
-						_actListArr[i][j].a4.newBackgroundColor = in.readUint32BE();
-						break;
-					case INIT_OBJVXY:        // 5
-						_actListArr[i][j].a5.timer = in.readSint16BE();
-						_actListArr[i][j].a5.objIndex = in.readSint16BE();
-						_actListArr[i][j].a5.vx = in.readSint16BE();
-						_actListArr[i][j].a5.vy = in.readSint16BE();
-						break;
-					case INIT_CARRY:         // 6
-						_actListArr[i][j].a6.timer = in.readSint16BE();
-						_actListArr[i][j].a6.objIndex = in.readSint16BE();
-						_actListArr[i][j].a6.carriedFl = (in.readByte() == 1) ? true : false;
-						break;
-					case INIT_HF_COORD:      // 7
-						_actListArr[i][j].a7.timer = in.readSint16BE();
-						_actListArr[i][j].a7.objIndex = in.readSint16BE();
-						break;
-					case NEW_SCREEN:         // 8
-						_actListArr[i][j].a8.timer = in.readSint16BE();
-						_actListArr[i][j].a8.screenIndex = in.readSint16BE();
-						break;
-					case INIT_OBJSTATE:      // 9
-						_actListArr[i][j].a9.timer = in.readSint16BE();
-						_actListArr[i][j].a9.objIndex = in.readSint16BE();
-						_actListArr[i][j].a9.newState = in.readByte();
-						break;
-					case INIT_PATH:          // 10
-						_actListArr[i][j].a10.timer = in.readSint16BE();
-						_actListArr[i][j].a10.objIndex = in.readSint16BE();
-						_actListArr[i][j].a10.newPathType = in.readSint16BE();
-						_actListArr[i][j].a10.vxPath = in.readByte();
-						_actListArr[i][j].a10.vyPath = in.readByte();
-						break;
-					case COND_R:             // 11
-						_actListArr[i][j].a11.timer = in.readSint16BE();
-						_actListArr[i][j].a11.objIndex = in.readSint16BE();
-						_actListArr[i][j].a11.stateReq = in.readByte();
-						_actListArr[i][j].a11.actPassIndex = in.readUint16BE();
-						_actListArr[i][j].a11.actFailIndex = in.readUint16BE();
-						break;
-					case TEXT:               // 12
-						_actListArr[i][j].a12.timer = in.readSint16BE();
-						_actListArr[i][j].a12.stringIndex = in.readSint16BE();
-						break;
-					case SWAP_IMAGES:        // 13
-						_actListArr[i][j].a13.timer = in.readSint16BE();
-						_actListArr[i][j].a13.objIndex1 = in.readSint16BE();
-						_actListArr[i][j].a13.objIndex2 = in.readSint16BE();
-						break;
-					case COND_SCR:           // 14
-						_actListArr[i][j].a14.timer = in.readSint16BE();
-						_actListArr[i][j].a14.objIndex = in.readSint16BE();
-						_actListArr[i][j].a14.screenReq = in.readSint16BE();
-						_actListArr[i][j].a14.actPassIndex = in.readUint16BE();
-						_actListArr[i][j].a14.actFailIndex = in.readUint16BE();
-						break;
-					case AUTOPILOT:          // 15
-						_actListArr[i][j].a15.timer = in.readSint16BE();
-						_actListArr[i][j].a15.objIndex1 = in.readSint16BE();
-						_actListArr[i][j].a15.objIndex2 = in.readSint16BE();
-						_actListArr[i][j].a15.dx = in.readByte();
-						_actListArr[i][j].a15.dy = in.readByte();
-						break;
-					case INIT_OBJ_SEQ:       // 16
-						_actListArr[i][j].a16.timer = in.readSint16BE();
-						_actListArr[i][j].a16.objIndex = in.readSint16BE();
-						_actListArr[i][j].a16.seqIndex = in.readSint16BE();
-						break;
-					case SET_STATE_BITS:     // 17
-						_actListArr[i][j].a17.timer = in.readSint16BE();
-						_actListArr[i][j].a17.objIndex = in.readSint16BE();
-						_actListArr[i][j].a17.stateMask = in.readSint16BE();
-						break;
-					case CLEAR_STATE_BITS:   // 18
-						_actListArr[i][j].a18.timer = in.readSint16BE();
-						_actListArr[i][j].a18.objIndex = in.readSint16BE();
-						_actListArr[i][j].a18.stateMask = in.readSint16BE();
-						break;
-					case TEST_STATE_BITS:    // 19
-						_actListArr[i][j].a19.timer = in.readSint16BE();
-						_actListArr[i][j].a19.objIndex = in.readSint16BE();
-						_actListArr[i][j].a19.stateMask = in.readSint16BE();
-						_actListArr[i][j].a19.actPassIndex = in.readUint16BE();
-						_actListArr[i][j].a19.actFailIndex = in.readUint16BE();
-						break;
-					case DEL_EVENTS:         // 20
-						_actListArr[i][j].a20.timer = in.readSint16BE();
-						_actListArr[i][j].a20.actTypeDel = (action_t) in.readByte();
-						break;
-					case GAMEOVER:           // 21
-						_actListArr[i][j].a21.timer = in.readSint16BE();
-						break;
-					case INIT_HH_COORD:      // 22
-						_actListArr[i][j].a22.timer = in.readSint16BE();
-						_actListArr[i][j].a22.objIndex = in.readSint16BE();
-						break;
-					case EXIT:               // 23
-						_actListArr[i][j].a23.timer = in.readSint16BE();
-						break;
-					case BONUS:              // 24
-						_actListArr[i][j].a24.timer = in.readSint16BE();
-						_actListArr[i][j].a24.pointIndex = in.readSint16BE();
-						break;
-					case COND_BOX:           // 25
-						_actListArr[i][j].a25.timer = in.readSint16BE();
-						_actListArr[i][j].a25.objIndex = in.readSint16BE();
-						_actListArr[i][j].a25.x1 = in.readSint16BE();
-						_actListArr[i][j].a25.y1 = in.readSint16BE();
-						_actListArr[i][j].a25.x2 = in.readSint16BE();
-						_actListArr[i][j].a25.y2 = in.readSint16BE();
-						_actListArr[i][j].a25.actPassIndex = in.readUint16BE();
-						_actListArr[i][j].a25.actFailIndex = in.readUint16BE();
-						break;
-					case SOUND:              // 26
-						_actListArr[i][j].a26.timer = in.readSint16BE();
-						_actListArr[i][j].a26.soundIndex = in.readSint16BE();
-						break;
-					case ADD_SCORE:          // 27
-						_actListArr[i][j].a27.timer = in.readSint16BE();
-						_actListArr[i][j].a27.objIndex = in.readSint16BE();
-						break;
-					case SUB_SCORE:          // 28
-						_actListArr[i][j].a28.timer = in.readSint16BE();
-						_actListArr[i][j].a28.objIndex = in.readSint16BE();
-						break;
-					case COND_CARRY:         // 29
-						_actListArr[i][j].a29.timer = in.readSint16BE();
-						_actListArr[i][j].a29.objIndex = in.readSint16BE();
-						_actListArr[i][j].a29.actPassIndex = in.readUint16BE();
-						_actListArr[i][j].a29.actFailIndex = in.readUint16BE();
-						break;
-					case INIT_MAZE:          // 30
-						_actListArr[i][j].a30.timer = in.readSint16BE();
-						_actListArr[i][j].a30.mazeSize = in.readByte();
-						_actListArr[i][j].a30.x1 = in.readSint16BE();
-						_actListArr[i][j].a30.y1 = in.readSint16BE();
-						_actListArr[i][j].a30.x2 = in.readSint16BE();
-						_actListArr[i][j].a30.y2 = in.readSint16BE();
-						_actListArr[i][j].a30.x3 = in.readSint16BE();
-						_actListArr[i][j].a30.x4 = in.readSint16BE();
-						_actListArr[i][j].a30.firstScreenIndex = in.readByte();
-						break;
-					case EXIT_MAZE:          // 31
-						_actListArr[i][j].a31.timer = in.readSint16BE();
-						break;
-					case INIT_PRIORITY:      // 32
-						_actListArr[i][j].a32.timer = in.readSint16BE();
-						_actListArr[i][j].a32.objIndex = in.readSint16BE();
-						_actListArr[i][j].a32.priority = in.readByte();
-						break;
-					case INIT_SCREEN:        // 33
-						_actListArr[i][j].a33.timer = in.readSint16BE();
-						_actListArr[i][j].a33.objIndex = in.readSint16BE();
-						_actListArr[i][j].a33.screenIndex = in.readSint16BE();
-						break;
-					case AGSCHEDULE:         // 34
-						_actListArr[i][j].a34.timer = in.readSint16BE();
-						_actListArr[i][j].a34.actIndex = in.readUint16BE();
-						break;
-					case REMAPPAL:           // 35
-						_actListArr[i][j].a35.timer = in.readSint16BE();
-						_actListArr[i][j].a35.oldColorIndex = in.readSint16BE();
-						_actListArr[i][j].a35.newColorIndex = in.readSint16BE();
-						break;
-					case COND_NOUN:          // 36
-						_actListArr[i][j].a36.timer = in.readSint16BE();
-						_actListArr[i][j].a36.nounIndex = in.readUint16BE();
-						_actListArr[i][j].a36.actPassIndex = in.readUint16BE();
-						_actListArr[i][j].a36.actFailIndex = in.readUint16BE();
-						break;
-					case SCREEN_STATE:       // 37
-						_actListArr[i][j].a37.timer = in.readSint16BE();
-						_actListArr[i][j].a37.screenIndex = in.readSint16BE();
-						_actListArr[i][j].a37.newState = in.readByte();
-						break;
-					case INIT_LIPS:          // 38
-						_actListArr[i][j].a38.timer = in.readSint16BE();
-						_actListArr[i][j].a38.lipsObjIndex = in.readSint16BE();
-						_actListArr[i][j].a38.objIndex = in.readSint16BE();
-						_actListArr[i][j].a38.dxLips = in.readByte();
-						_actListArr[i][j].a38.dyLips = in.readByte();
-						break;
-					case INIT_STORY_MODE:    // 39
-						_actListArr[i][j].a39.timer = in.readSint16BE();
-						_actListArr[i][j].a39.storyModeFl = (in.readByte() == 1);
-						break;
-					case WARN:               // 40
-						_actListArr[i][j].a40.timer = in.readSint16BE();
-						_actListArr[i][j].a40.stringIndex = in.readSint16BE();
-						break;
-					case COND_BONUS:         // 41
-						_actListArr[i][j].a41.timer = in.readSint16BE();
-						_actListArr[i][j].a41.BonusIndex = in.readSint16BE();
-						_actListArr[i][j].a41.actPassIndex = in.readUint16BE();
-						_actListArr[i][j].a41.actFailIndex = in.readUint16BE();
-						break;
-					case TEXT_TAKE:          // 42
-						_actListArr[i][j].a42.timer = in.readSint16BE();
-						_actListArr[i][j].a42.objIndex = in.readSint16BE();
-						break;
-					case YESNO:              // 43
-						_actListArr[i][j].a43.timer = in.readSint16BE();
-						_actListArr[i][j].a43.promptIndex = in.readSint16BE();
-						_actListArr[i][j].a43.actYesIndex = in.readUint16BE();
-						_actListArr[i][j].a43.actNoIndex = in.readUint16BE();
-						break;
-					case STOP_ROUTE:         // 44
-						_actListArr[i][j].a44.timer = in.readSint16BE();
-						break;
-					case COND_ROUTE:         // 45
-						_actListArr[i][j].a45.timer = in.readSint16BE();
-						_actListArr[i][j].a45.routeIndex = in.readSint16BE();
-						_actListArr[i][j].a45.actPassIndex = in.readUint16BE();
-						_actListArr[i][j].a45.actFailIndex = in.readUint16BE();
-						break;
-					case INIT_JUMPEXIT:      // 46
-						_actListArr[i][j].a46.timer = in.readSint16BE();
-						_actListArr[i][j].a46.jumpExitFl = (in.readByte() == 1);
-						break;
-					case INIT_VIEW:          // 47
-						_actListArr[i][j].a47.timer = in.readSint16BE();
-						_actListArr[i][j].a47.objIndex = in.readSint16BE();
-						_actListArr[i][j].a47.viewx = in.readSint16BE();
-						_actListArr[i][j].a47.viewy = in.readSint16BE();
-						_actListArr[i][j].a47.direction = in.readSint16BE();
-						break;
-					case INIT_OBJ_FRAME:     // 48
-						_actListArr[i][j].a48.timer = in.readSint16BE();
-						_actListArr[i][j].a48.objIndex = in.readSint16BE();
-						_actListArr[i][j].a48.seqIndex = in.readSint16BE();
-						_actListArr[i][j].a48.frameIndex = in.readSint16BE();
-						break;
-					case OLD_SONG:           //49
-						_actListArr[i][j].a49.timer = in.readSint16BE();
-						_actListArr[i][j].a49.songIndex = in.readUint16BE();
-						break;
-					default:
-						error("Engine - Unknown action type encountered: %d", _actListArr[i][j].a0.actType);
-					}
+			for (int j = 0; j < numSubElem; j++) {
+				if (varnt == _vm->_gameVariant) {
+					readAct(in, _actListArr[i][j]);
+				} else {
+					readAct(in, tmpAct);
+					if (tmpAct.a0.actType == PROMPT)
+						free(tmpAct.a3.responsePtr); 
 				}
+			}
+
+			if (varnt == _vm->_gameVariant)
 				_actListArr[i][numSubElem].a0.actType = ANULL;
-			}
-		} else {
-			for (int i = 0; i < numElem; i++) {
-				numSubElem = in.readUint16BE();
-				for (int j = 0; j < numSubElem; j++) {
-					numSubAct = in.readByte();
-					switch (numSubAct) {
-					case ANULL:              // -1
-						break;
-					case ASCHEDULE:          // 0
-						in.readSint16BE();
-						in.readUint16BE();
-						break;
-					case START_OBJ:          // 1
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readByte();
-						break;
-					case INIT_OBJXY:         // 2
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case PROMPT:             // 3
-						in.readSint16BE();
-						in.readSint16BE();
-						numSubAct = in.readUint16BE();
-						for (int k = 0; k < numSubAct; k++)
-							in.readSint16BE();
-						in.readUint16BE();
-						in.readUint16BE();
-						in.readByte();
-						break;
-					case BKGD_COLOR:         // 4
-						in.readSint16BE();
-						in.readUint32BE();
-						break;
-					case INIT_OBJVXY:        // 5
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case INIT_CARRY:         // 6
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readByte();
-						break;
-					case INIT_HF_COORD:      // 7
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case NEW_SCREEN:         // 8
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case INIT_OBJSTATE:      // 9
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readByte();
-						break;
-					case INIT_PATH:          // 10
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readByte();
-						in.readByte();
-						break;
-					case COND_R:             // 11
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readByte();
-						in.readUint16BE();
-						in.readUint16BE();
-						break;
-					case TEXT:               // 12
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case SWAP_IMAGES:        // 13
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case COND_SCR:           // 14
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readUint16BE();
-						in.readUint16BE();
-						break;
-					case AUTOPILOT:          // 15
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readByte();
-						in.readByte();
-						break;
-					case INIT_OBJ_SEQ:       // 16
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case SET_STATE_BITS:     // 17
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case CLEAR_STATE_BITS:   // 18
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case TEST_STATE_BITS:    // 19
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readUint16BE();
-						in.readUint16BE();
-						break;
-					case DEL_EVENTS:         // 20
-						in.readSint16BE();
-						in.readByte();
-						break;
-					case GAMEOVER:           // 21
-						in.readSint16BE();
-						break;
-					case INIT_HH_COORD:      // 22
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case EXIT:               // 23
-						in.readSint16BE();
-						break;
-					case BONUS:              // 24
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case COND_BOX:           // 25
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readUint16BE();
-						in.readUint16BE();
-						break;
-					case SOUND:              // 26
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case ADD_SCORE:          // 27
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case SUB_SCORE:          // 28
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case COND_CARRY:         // 29
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readUint16BE();
-						in.readUint16BE();
-						break;
-					case INIT_MAZE:          // 30
-						in.readSint16BE();
-						in.readByte();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readByte();
-						break;
-					case EXIT_MAZE:          // 31
-						in.readSint16BE();
-						break;
-					case INIT_PRIORITY:      // 32
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readByte();
-						break;
-					case INIT_SCREEN:        // 33
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case AGSCHEDULE:         // 34
-						in.readSint16BE();
-						in.readUint16BE();
-						break;
-					case REMAPPAL:           // 35
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case COND_NOUN:          // 36
-						in.readSint16BE();
-						in.readUint16BE();
-						in.readUint16BE();
-						in.readUint16BE();
-						break;
-					case SCREEN_STATE:       // 37
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readByte();
-						break;
-					case INIT_LIPS:          // 38
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readByte();
-						in.readByte();
-						break;
-					case INIT_STORY_MODE:    // 39
-						in.readSint16BE();
-						in.readByte();
-						break;
-					case WARN:               // 40
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case COND_BONUS:         // 41
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readUint16BE();
-						in.readUint16BE();
-						break;
-					case TEXT_TAKE:          // 42
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case YESNO:              // 43
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readUint16BE();
-						in.readUint16BE();
-						break;
-					case STOP_ROUTE:         // 44
-						in.readSint16BE();
-						break;
-					case COND_ROUTE:         // 45
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readUint16BE();
-						in.readUint16BE();
-						break;
-					case INIT_JUMPEXIT:      // 46
-						in.readSint16BE();
-						in.readByte();
-						break;
-					case INIT_VIEW:          // 47
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case INIT_OBJ_FRAME:     // 48
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						in.readSint16BE();
-						break;
-					case OLD_SONG:           //49
-						in.readSint16BE();
-						in.readUint16BE();
-						break;
-					default:
-						error("Engine - Unknown action type encountered %d - variante %d pos %d.%d", numSubAct, varnt, i, j);
-					}
-				}
-			}
 		}
 	}
 }
 
+
 /**
  * Read _screenActs
  */
-void Scheduler::loadScreenAct(Common::ReadStream &in) {
+void Scheduler::loadScreenAct(Common::SeekableReadStream &in) {
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
 
-		uint16 **wrkScreenActs = (uint16 **)malloc(sizeof(uint16 *) * numElem);
-		for (int i = 0; i < numElem; i++) {
-			uint16 numSubElem = in.readUint16BE();
-			if (numSubElem == 0) {
-				wrkScreenActs[i] = 0;
-			} else {
-				wrkScreenActs[i] = (uint16 *)malloc(sizeof(uint16) * numSubElem);
-				for (int j = 0; j < numSubElem; j++)
-					wrkScreenActs[i][j] = in.readUint16BE();
-			}
-		}
-
 		if (varnt == _vm->_gameVariant) {
 			_screenActsSize = numElem;
-			_screenActs = wrkScreenActs;
+			_screenActs = (uint16 **)malloc(sizeof(uint16 *) * numElem);
+			for (int i = 0; i < numElem; i++) {
+				uint16 numSubElem = in.readUint16BE();
+				if (numSubElem == 0) {
+					_screenActs[i] = 0;
+				} else {
+					_screenActs[i] = (uint16 *)malloc(sizeof(uint16) * numSubElem);
+					for (int j = 0; j < numSubElem; j++)
+						_screenActs[i][j] = in.readUint16BE();
+				}
+			}
 		} else {
-			for (int i = 0; i < numElem; i++)
-				free(wrkScreenActs[i]);
-			free(wrkScreenActs);
+			for (int i = 0; i < numElem; i++) {
+				uint16 numSubElem = in.readUint16BE();
+				in.skip(numSubElem * sizeof(uint16));
+			}
 		}
 	}
 }

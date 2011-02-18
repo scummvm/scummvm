@@ -293,31 +293,31 @@ void MouseHandler::mouseHandler() {
 	resetRightButton();
 }
 
+void MouseHandler::readHotspot(Common::ReadStream &in, hotspot_t &hotspot) {
+	hotspot.screenIndex = in.readSint16BE();
+	hotspot.x1 = in.readSint16BE();
+	hotspot.y1 = in.readSint16BE();
+	hotspot.x2 = in.readSint16BE();
+	hotspot.y2 = in.readSint16BE();
+	hotspot.actIndex = in.readUint16BE();
+	hotspot.viewx = in.readSint16BE();
+	hotspot.viewy = in.readSint16BE();
+	hotspot.direction = in.readSint16BE();
+}
+
 /**
  * Load hotspots data from hugo.dat
  */
 void MouseHandler::loadHotspots(Common::ReadStream &in) {
-	// Read _hotspots
+	hotspot_t *wrkHotspots = 0;
+	hotspot_t tmp;
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		int numRows = in.readUint16BE();
-		hotspot_t *wrkHotspots = (hotspot_t *)malloc(sizeof(hotspot_t) * numRows);
-
-		for (int i = 0; i < numRows; i++) {
-			wrkHotspots[i].screenIndex = in.readSint16BE();
-			wrkHotspots[i].x1 = in.readSint16BE();
-			wrkHotspots[i].y1 = in.readSint16BE();
-			wrkHotspots[i].x2 = in.readSint16BE();
-			wrkHotspots[i].y2 = in.readSint16BE();
-			wrkHotspots[i].actIndex = in.readUint16BE();
-			wrkHotspots[i].viewx = in.readSint16BE();
-			wrkHotspots[i].viewy = in.readSint16BE();
-			wrkHotspots[i].direction = in.readSint16BE();
-		}
-
 		if (varnt == _vm->_gameVariant)
-			_hotspots = wrkHotspots;
-		else
-			free(wrkHotspots);
+			_hotspots = wrkHotspots = (hotspot_t *)malloc(sizeof(hotspot_t) * numRows);
+
+		for (int i = 0; i < numRows; i++)
+			readHotspot(in, (varnt == _vm->_gameVariant) ? wrkHotspots[i] : tmp);
 	}
 }
 

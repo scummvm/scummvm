@@ -83,6 +83,7 @@ private:
 	void  cursorText(const char *buffer, const int16 cx, const int16 cy, const uif_t fontId, const int16 color);
 	void  processRightClick(const int16 objId, const int16 cx, const int16 cy);
 	void  processLeftClick(const int16 objId, const int16 cx, const int16 cy);
+	void  readHotspot(Common::ReadStream &in, hotspot_t &hotspot);
 };
 
 } // End of namespace Hugo

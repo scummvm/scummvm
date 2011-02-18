@@ -51,7 +51,7 @@ IntroHandler::~IntroHandler() {
 /**
  * Read _introX and _introY from hugo.dat
  */
-void IntroHandler::loadIntroData(Common::ReadStream &in) {
+void IntroHandler::loadIntroData(Common::SeekableReadStream &in) {
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		int numRows = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
@@ -63,10 +63,7 @@ void IntroHandler::loadIntroData(Common::ReadStream &in) {
 				_introY[i] = in.readByte();
 			}
 		} else {
-			for (int i = 0; i < numRows; i++) {
-				in.readByte();
-				in.readByte();
-			}
+			in.skip(numRows * 2);
 		}
 	}
 }

@@ -55,7 +55,7 @@ public:
 	virtual bool introPlay() = 0;
 
 	void freeIntroData();
-	void loadIntroData(Common::ReadStream &in);
+	void loadIntroData(Common::SeekableReadStream &in);
 
 	byte getIntroSize() const { return _introXSize; }
 

@@ -42,8 +42,8 @@ public:
 	const char  *getTextParser(int parserIndex) const  { return _textParser[parserIndex];  }
 	const char  *getTextUtil(int utilIndex) const      { return _textUtil[utilIndex];      }
 	const char  *getVerb(int idx1, int idx2) const     { return _arrayVerbs[idx1][idx2];   }
-	char **getNounArray(int idx1) { return _arrayNouns[idx1]; }
-	char **getVerbArray(int idx1) { return _arrayVerbs[idx1]; }
+	char **getNounArray(int idx1) const { return _arrayNouns[idx1]; }
+	char **getVerbArray(int idx1) const { return _arrayVerbs[idx1]; }
 
 	void loadAllTexts(Common::ReadStream &in);
 	void freeAllTexts();

@@ -399,8 +399,7 @@ bool HugoEngine::loadHugoDat() {
 		numElem = in.readUint16BE();
 		if (varnt == _gameVariant) {
 			_screenStates = (byte *)malloc(sizeof(byte) * numElem);
-			for (int i = 0; i < numElem; i++)
-				_screenStates[i] = 0;
+			memset(_screenStates, 0, sizeof(_screenStates));
 		}
 	}
 
@@ -426,7 +425,7 @@ bool HugoEngine::loadHugoDat() {
 	return true;
 }
 
-uint16 **HugoEngine::loadLongArray(Common::ReadStream &in) {
+uint16 **HugoEngine::loadLongArray(Common::SeekableReadStream &in) {
 	uint16 **resArray = 0;
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
@@ -443,8 +442,7 @@ uint16 **HugoEngine::loadLongArray(Common::ReadStream &in) {
 					resRow[j] = in.readUint16BE();
 				resArray[i] = resRow;
 			} else {
-				for (int j = 0; j < numElems; j++)
-					in.readUint16BE();
+				in.skip(numElems * sizeof(uint16));
 			}
 		}
 	}
