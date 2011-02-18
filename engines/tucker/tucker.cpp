@@ -3088,6 +3088,11 @@ int TuckerEngine::readTableInstructionCode(int *index) {
 }
 
 int TuckerEngine::readTableInstructionParam(int len) {
+	// skip duplicated minus signs (bua,--1, c0a,--1, ...)
+	if (len >= 3 && memcmp(_tableInstructionsPtr, "--", 2) == 0) {
+		++_tableInstructionsPtr;
+		--len;
+	}
 	char *end = 0;
 	const int param = strtol((const char *)_tableInstructionsPtr, &end, 10);
 	if (end != (const char *)_tableInstructionsPtr + len) {
