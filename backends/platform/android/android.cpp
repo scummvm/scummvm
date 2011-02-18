@@ -128,7 +128,7 @@ static inline T scalef(T in, float numerator, float denominator) {
 }
 
 static inline GLfixed xdiv(int numerator, int denominator) {
-	assert(numerator < (1<<16));
+	assert(numerator < (1 << 16));
 	return (numerator << 16) / denominator;
 }
 
