@@ -181,6 +181,8 @@ private:
 	// This defines whether or not the font we're drawing is already scaled
 	// to the screen size (and we therefore should not upscale it ourselves).
 	bool _fontIsUpscaled;
+
+	uint16 getLowResScreenHeight();
 };
 
 } // End of namespace Sci

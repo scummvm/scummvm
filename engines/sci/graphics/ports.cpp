@@ -106,7 +106,10 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 		offTop = 26;
 		break;
 	default:
-		offTop = 10;
+		// For Mac games running with a height of 190, we do not have a menu bar
+		// so the top offset should be 0.
+		if (_screen->getHeight() == 190)
+			offTop = 0;
 		break;
 	}
 
@@ -574,10 +577,6 @@ void GfxPorts::clipLine(Common::Point &start, Common::Point &end) {
 void GfxPorts::priorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 	int16 y;
 	int32 bandSize;
-
-	// This code is for 320x200 games only
-	if (_screen->getHeight() != 200)
-		return;
 
 	if (bandCount != -1)
 		_priorityBandCount = bandCount;

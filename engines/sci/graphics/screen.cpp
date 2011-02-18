@@ -64,7 +64,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		_height = 480;
 	} else {
 		_width = 320;
-		_height = 200;
+		_height = getLowResScreenHeight();
 	}
 
 	// Japanese versions of games use hi-res font on upscaled version of the game.
@@ -715,6 +715,24 @@ int16 GfxScreen::kernelPicNotValid(int16 newPicNotValid) {
 	}
 
 	return oldPicNotValid;
+}
+
+uint16 GfxScreen::getLowResScreenHeight() {
+	// Some Mac SCI1/1.1 games only take up 190 rows and do not
+	// have the menu bar.
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+		switch (g_sci->getGameId()) {
+		case GID_FREDDYPHARKAS:
+		case GID_KQ5:
+		case GID_KQ6:
+			return 190;
+		default:
+			break;
+		}
+	}
+
+	// Everything else is 200
+	return 200;
 }
 
 } // End of namespace Sci
