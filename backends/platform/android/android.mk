@@ -169,5 +169,11 @@ androidtest: $(APK_MAIN) $(APK_PLUGINS)
 	done
 	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.inodes.gus.scummvm/.Unpacker
 
+# used by buildbot!
+androiddistdebug: all
+	$(MKDIR) debug
+	$(CP) $(APK_MAIN) $(APK_PLUGINS) debug/
+	for i in $(DIST_FILES_DOCS); do sed 's/$$/\r/' < $$i > debug/`basename $$i`.txt; done
+
 .PHONY: androidrelease androidtest
 
