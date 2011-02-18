@@ -45,7 +45,6 @@ static const int kMaxStrLength = 1024;
 int   firstBit(byte data);
 int   lastBit(byte data);
 
-void  gameOverMsg();
 void  reverseByte(byte *data);
 
 char *Box(box_t, const char *, ...) GCC_PRINTF(2, 3);

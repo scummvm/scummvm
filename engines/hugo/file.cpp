@@ -55,6 +55,33 @@ FileManager::~FileManager() {
 }
 
 /**
+ * Name scenery and objects picture databases
+ */
+const char *FileManager::getBootFilename() const { 
+	return "HUGO.BSF";
+}
+
+const char *FileManager::getObjectFilename() const { 
+	return "objects.dat"; 
+}
+
+const char *FileManager::getSceneryFilename() const { 
+	return "scenery.dat"; 
+}
+
+const char *FileManager::getSoundFilename() const { 
+	return "sounds.dat";  
+}
+
+const char *FileManager::getStringFilename() const { 
+	return "strings.dat"; 
+}
+
+const char *FileManager::getUifFilename() const { 
+	return "uif.dat";     
+}
+
+/**
  * Convert 4 planes (RGBI) data to 8-bit DIB format
  * Return original plane data ptr
  */

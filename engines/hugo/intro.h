@@ -57,7 +57,7 @@ public:
 	void freeIntroData();
 	void loadIntroData(Common::SeekableReadStream &in);
 
-	byte getIntroSize() const { return _introXSize; }
+	byte getIntroSize() const;
 
 protected:
 	HugoEngine *_vm;

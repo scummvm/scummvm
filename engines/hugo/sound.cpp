@@ -63,6 +63,30 @@ MidiPlayer::~MidiPlayer() {
 	close();
 }
 
+bool MidiPlayer::isPlaying() const { 
+	return _isPlaying; 
+}
+
+int MidiPlayer::getVolume() const { 
+	return _masterVolume; 
+}
+
+void MidiPlayer::setLooping(bool loop) { 
+	_isLooping = loop; 
+}
+
+MidiChannel *MidiPlayer::allocateChannel() { 
+	return 0; 
+}
+
+MidiChannel *MidiPlayer::getPercussionChannel() { 
+	return 0; 
+}
+
+uint32 MidiPlayer::getBaseTempo() { 
+	return _driver ? _driver->getBaseTempo() : 0; 
+}
+
 void MidiPlayer::play(uint8 *stream, uint16 size) {
 	debugC(3, kDebugMusic, "MidiPlayer::play");
 	if (!stream) {

@@ -49,7 +49,7 @@ public:
 
 	bool isWordPresent(char **wordArr) const;
 	
-	uint16 getCmdDefaultVerbIdx(const uint16 index) const { return _cmdList[index][0].verbIndex; }
+	uint16 getCmdDefaultVerbIdx(const uint16 index) const;
 	
 	void charHandler();
 	void command(const char *format, ...);

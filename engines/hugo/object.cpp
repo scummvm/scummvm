@@ -61,6 +61,41 @@ ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0), _uses(0) {
 ObjectHandler::~ObjectHandler() {
 }
 
+byte ObjectHandler::getBoundaryOverlay(uint16 index) const { 
+	return _boundary[index]; 
+}
+
+byte ObjectHandler::getObjectBoundary(uint16 index) const { 
+	return _objBound[index]; 
+}
+
+byte ObjectHandler::getBaseBoundary(uint16 index) const { 
+	return _ovlBase[index];  
+}
+
+byte ObjectHandler::getFirstOverlay(uint16 index) const { 
+	return _overlay[index];  
+}
+
+bool ObjectHandler::isCarried(int objIndex) const {
+	return _objects[objIndex].carriedFl;
+}
+
+void ObjectHandler::setCarry(int objIndex, bool val) {
+	_objects[objIndex].carriedFl = val;
+}
+
+void ObjectHandler::setVelocity(int objIndex, int8 vx, int8 vy) {
+	_objects[objIndex].vx = vx;
+	_objects[objIndex].vy = vy;
+}
+
+void ObjectHandler::setPath(int objIndex, path_t pathType, int16 vxPath, int16 vyPath) {
+	_objects[objIndex].pathType = pathType;
+	_objects[objIndex].vxPath = vxPath;
+	_objects[objIndex].vyPath = vyPath;
+}
+
 /**
  * Save sequence number and image number in given object
  */

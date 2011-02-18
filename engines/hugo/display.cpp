@@ -105,6 +105,26 @@ Screen::Screen(HugoEngine *vm) : _vm(vm) {
 Screen::~Screen() {
 }
 
+icondib_t &Screen::getIconBuffer() {
+	return _iconBuffer;
+}
+
+viewdib_t &Screen::getBackBuffer() {
+	return _backBuffer;
+}
+
+viewdib_t &Screen::getBackBufferBackup() {
+	return _backBufferBackup;
+}
+
+viewdib_t &Screen::getFrontBuffer() {
+	return _frontBuffer;
+}
+
+viewdib_t &Screen::getGUIBuffer() {
+	return _GUIBuffer;
+}
+
 /**
  * Replace the palette by the main palette
  */

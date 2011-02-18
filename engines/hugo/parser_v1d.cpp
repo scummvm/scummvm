@@ -372,7 +372,7 @@ void Parser_v1d::lineHandler() {
 	// SAVE/RESTORE
 	if (!strcmp("save", _vm->_line)) {
 		if (gameStatus.gameOverFl)
-			Utils::gameOverMsg();
+			_vm->gameOverMsg();
 		else
 			_vm->_file->saveGame(-1, Common::String());
 		return;
@@ -391,8 +391,9 @@ void Parser_v1d::lineHandler() {
 	if (strspn(_vm->_line, " ") == strlen(_vm->_line)) // Nothing but spaces!
 		return;
 
-	if (gameStatus.gameOverFl) {                    // No commands allowed!
-		Utils::gameOverMsg();
+	if (gameStatus.gameOverFl) {
+		// No commands allowed!
+		_vm->gameOverMsg();
 		return;
 	}
 
@@ -430,7 +431,7 @@ void Parser_v1d::showInventory() const {
 	status_t &gameStatus = _vm->getGameStatus();
 	if (gameStatus.viewState == kViewPlay) {
 		if (gameStatus.gameOverFl)
-			Utils::gameOverMsg();
+			_vm->gameOverMsg();
 		else
 			showDosInventory();
 	}

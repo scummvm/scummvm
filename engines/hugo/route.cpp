@@ -49,6 +49,14 @@ Route::Route(HugoEngine *vm) : _vm(vm) {
 	_routeObjId       = -1;                         // Hero not walking to anything
 }
 
+void Route::resetRoute() {
+	_routeIndex = -1;   
+}
+
+int16 Route::getRouteIndex() const {
+	return _routeIndex; 
+}
+
 /**
  * Face hero in new direction, based on cursor key input by user.
  */

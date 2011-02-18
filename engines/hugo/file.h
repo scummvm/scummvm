@@ -54,12 +54,12 @@ public:
 	bool     saveGame(const int16 slot, const Common::String &descrip);
 
 	// Name scenery and objects picture databases
-	const char *getBootFilename()    const { return "HUGO.BSF";    }
-	const char *getObjectFilename()  const { return "objects.dat"; }
-	const char *getSceneryFilename() const { return "scenery.dat"; }
-	const char *getSoundFilename()   const { return "sounds.dat";  }
-	const char *getStringFilename()  const { return "strings.dat"; }
-	const char *getUifFilename()     const { return "uif.dat";     }
+	const char *getBootFilename()    const;
+	const char *getObjectFilename()  const;
+	const char *getSceneryFilename() const;
+	const char *getSoundFilename()   const;
+	const char *getStringFilename()  const;
+	const char *getUifFilename()     const;
 
 	virtual void openDatabaseFiles() = 0;
 	virtual void closeDatabaseFiles() = 0;

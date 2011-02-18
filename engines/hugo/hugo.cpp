@@ -107,6 +107,50 @@ HugoEngine::~HugoEngine() {
 	delete _rnd;
 }
 
+GUI::Debugger *HugoEngine::getDebugger() { 
+	return _console; 
+}
+
+status_t &HugoEngine::getGameStatus() {
+	return _status;
+}
+
+int HugoEngine::getScore() const {
+	return _score;
+}
+
+void HugoEngine::setScore(const int newScore) {
+	_score = newScore;
+}
+
+void HugoEngine::adjustScore(const int adjustment) {
+	_score += adjustment;
+}
+
+int HugoEngine::getMaxScore() const {
+	return _maxscore;
+}
+
+void HugoEngine::setMaxScore(const int newScore) {
+	_maxscore = newScore;
+}
+
+Common::Error HugoEngine::saveGameState(int slot, const char *desc) {
+	return (_file->saveGame(slot, desc) ? Common::kWritingFailed : Common::kNoError);
+}
+
+Common::Error HugoEngine::loadGameState(int slot) {
+	return (_file->restoreGame(slot) ? Common::kReadingFailed : Common::kNoError);
+}
+
+bool HugoEngine::hasFeature(EngineFeature f) const {
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
+}
+
+const char *HugoEngine::getCopyrightString() const { 
+	return "Copyright 1989-1997 David P Gray, All Rights Reserved."; 
+}
+
 GameType HugoEngine::getGameType() const {
 	return _gameType;
 }
@@ -117,6 +161,13 @@ Common::Platform HugoEngine::getPlatform() const {
 
 bool HugoEngine::isPacked() const {
 	return _packedFl;
+}
+
+/**
+ * Print options for user when dead
+ */
+void HugoEngine::gameOverMsg() {
+	Utils::Box(kBoxOk, "%s", _text->getTextUtil(kGameOver));
 }
 
 Common::Error HugoEngine::run() {

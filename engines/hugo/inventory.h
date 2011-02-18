@@ -43,12 +43,12 @@ class InventoryHandler {
 public:
 	InventoryHandler(HugoEngine *vm);
 
-	void     setInventoryObjId(int16 objId)    { _inventoryObjId = objId; }
-	void     setInventoryState(istate_t state) { _inventoryState = state; }
-	void     freeInvent()                      { free(_invent);           }
+	void     setInventoryObjId(int16 objId);
+	void     setInventoryState(istate_t state);
+	void     freeInvent();
 
-	int16    getInventoryObjId() const         { return _inventoryObjId;  }
-	istate_t getInventoryState() const         { return _inventoryState;  }
+	int16    getInventoryObjId() const;
+	istate_t getInventoryState() const;
 
 	int16 findIconId(int16 objId);
 	void  loadInvent(Common::SeekableReadStream &in);

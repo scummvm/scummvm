@@ -125,7 +125,7 @@ void Parser_v3d::lineHandler() {
 	if (!strcmp("save", _vm->_line)) {
 		_vm->_config.soundFl = false;
 		if (gameStatus.gameOverFl)
-			Utils::gameOverMsg();
+			_vm->gameOverMsg();
 		else
 			_vm->_file->saveGame(-1, Common::String());
 		return;
@@ -147,7 +147,7 @@ void Parser_v3d::lineHandler() {
 
 	if (gameStatus.gameOverFl) {
 		// No commands allowed!
-		Utils::gameOverMsg();
+		_vm->gameOverMsg();
 		return;
 	}
 

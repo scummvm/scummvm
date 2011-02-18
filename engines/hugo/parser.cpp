@@ -64,6 +64,10 @@ Parser::Parser(HugoEngine *vm) : _vm(vm), _putIndex(0), _getIndex(0), _arrayReqs
 Parser::~Parser() {
 }
 
+uint16 Parser::getCmdDefaultVerbIdx(const uint16 index) const { 
+	return _cmdList[index][0].verbIndex; 
+}
+	
 /**
  * Read a cmd structure from Hugo.dat
  */
@@ -291,7 +295,7 @@ void Parser::keyHandler(Common::Event event) {
 		case Common::KEYCODE_s:
 			if (gameStatus.viewState == kViewPlay) {
 				if (gameStatus.gameOverFl)
-					Utils::gameOverMsg();
+					_vm->gameOverMsg();
 				else
 					_vm->_file->saveGame(-1, Common::String());
 			}
@@ -349,7 +353,7 @@ void Parser::keyHandler(Common::Event event) {
 	case Common::KEYCODE_F4:                        // Save game
 		if (gameStatus.viewState == kViewPlay) {
 			if (gameStatus.gameOverFl)
-				Utils::gameOverMsg();
+				_vm->gameOverMsg();
 			else
 				_vm->_file->saveGame(-1, Common::String());
 		}

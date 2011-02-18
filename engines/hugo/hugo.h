@@ -251,7 +251,7 @@ public:
 	uint16    _take;
 	uint16    _drop;
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger();
 
 	Common::RandomSource *_rnd;
 
@@ -284,43 +284,23 @@ public:
 	void initGame(const HugoGameDescription *gd);
 	void initGamePart(const HugoGameDescription *gd);
 	void endGame();
+	void gameOverMsg();
 	void initStatus();
 	void readScreenFiles(const int screen);
 	void setNewScreen(const int screen);
 	void shutdown();
 	void syncSoundSettings();
 
-	status_t &getGameStatus() {
-		return _status;
-	}
-	int getScore() const {
-		return _score;
-	}
-	void setScore(const int newScore) {
-		_score = newScore;
-	}
-	void adjustScore(const int adjustment) {
-		_score += adjustment;
-	}
-	int getMaxScore() const {
-		return _maxscore;
-	}
-	void setMaxScore(const int newScore) {
-		_maxscore = newScore;
-	}
-	Common::Error saveGameState(int slot, const char *desc) {
-		return (_file->saveGame(slot, desc) ? Common::kWritingFailed : Common::kNoError);
-	}
-
-	Common::Error loadGameState(int slot) {
-		return (_file->restoreGame(slot) ? Common::kReadingFailed : Common::kNoError);
-	}
-
-	bool hasFeature(EngineFeature f) const {
-		return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
-	}
-
-	const char *getCopyrightString() const { return "Copyright 1989-1997 David P Gray, All Rights Reserved."; }
+	status_t &getGameStatus();
+	int getScore() const;
+	void setScore(const int newScore);
+	void adjustScore(const int adjustment);
+	int getMaxScore() const;
+	void setMaxScore(const int newScore);
+	Common::Error saveGameState(int slot, const char *desc);
+	Common::Error loadGameState(int slot);
+	bool hasFeature(EngineFeature f) const;
+	const char *getCopyrightString() const;
 
 	Common::String getSavegameFilename(int slot);
 	uint16 **loadLongArray(Common::SeekableReadStream &in);

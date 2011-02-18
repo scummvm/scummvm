@@ -188,7 +188,7 @@ void TopMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 d
 		close();
 		if (_vm->getGameStatus().viewState == kViewPlay) {
 			if (_vm->getGameStatus().gameOverFl)
-				Utils::gameOverMsg();
+				_vm->gameOverMsg();
 			else
 				_vm->_file->saveGame(-1, Common::String());
 		}

@@ -83,25 +83,11 @@ public:
 	void     userHelp() const;
 	void     writeStr(int16 sx, const int16 sy, const char *s, const byte color);
 
-	icondib_t &getIconBuffer() {
-		return _iconBuffer;
-	}
-
-	viewdib_t &getBackBuffer() {
-		return _backBuffer;
-	}
-
-	viewdib_t &getBackBufferBackup() {
-		return _backBufferBackup;
-	}
-
-	viewdib_t &getFrontBuffer() {
-		return _frontBuffer;
-	}
-
-	viewdib_t &getGUIBuffer() {
-		return _GUIBuffer;
-	}
+	icondib_t &getIconBuffer();
+	viewdib_t &getBackBuffer();
+	viewdib_t &getBackBufferBackup();
+	viewdib_t &getFrontBuffer();
+	viewdib_t &getGUIBuffer();
 
 protected:
 	HugoEngine *_vm;

@@ -50,10 +50,10 @@ public:
 	object_t  *_objects;
 	uint16    _numObj;
 
-	byte getBoundaryOverlay(uint16 index) const { return _boundary[index]; }
-	byte getObjectBoundary(uint16 index)  const { return _objBound[index]; }
-	byte getBaseBoundary(uint16 index)    const { return _ovlBase[index];  }
-	byte getFirstOverlay(uint16 index)    const { return _overlay[index];  }
+	byte getBoundaryOverlay(uint16 index) const;
+	byte getObjectBoundary(uint16 index) const;
+	byte getBaseBoundary(uint16 index) const;
+	byte getFirstOverlay(uint16 index) const;
 
 	int  deltaX(const int x1, const int x2, const int vx, int y) const;
 	int  deltaY(const int x1, const int x2, const int vy, const int y) const;
@@ -90,24 +90,11 @@ public:
 
 	static int y2comp(const void *a, const void *b);
 
-	bool isCarried(int objIndex) {
-		return _objects[objIndex].carriedFl;
-	}
+	bool isCarried(int objIndex) const;
+	void setCarry(int objIndex, bool val);
+	void setVelocity(int objIndex, int8 vx, int8 vy);
+	void setPath(int objIndex, path_t pathType, int16 vxPath, int16 vyPath);
 
-	void setCarry(int objIndex, bool val) {
-		_objects[objIndex].carriedFl = val;
-	}
-
-	void setVelocity(int objIndex, int8 vx, int8 vy) {
-		_objects[objIndex].vx = vx;
-		_objects[objIndex].vy = vy;
-	}
-
-	void setPath(int objIndex, path_t pathType, int16 vxPath, int16 vyPath) {
-		_objects[objIndex].pathType = pathType;
-		_objects[objIndex].vxPath = vxPath;
-		_objects[objIndex].vyPath = vyPath;
-	}
 protected:
 	HugoEngine *_vm;
 

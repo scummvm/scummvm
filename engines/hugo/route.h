@@ -54,8 +54,8 @@ class Route {
 public:
 	Route(HugoEngine *vm);
 
-	void  resetRoute()          {_routeIndex = -1;   }
-	int16 getRouteIndex() const {return _routeIndex; }
+	void  resetRoute();
+	int16 getRouteIndex() const;
 
 	void processRoute();
 	bool startRoute(const go_t routeType, const int16 objId, int16 cx, int16 cy);

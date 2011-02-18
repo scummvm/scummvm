@@ -48,6 +48,10 @@ IntroHandler::IntroHandler(HugoEngine *vm) : _vm(vm), _introX(0), _introY(0) {
 IntroHandler::~IntroHandler() {
 }
 
+byte IntroHandler::getIntroSize() const { 
+	return _introXSize; 
+}
+
 /**
  * Read _introX and _introY from hugo.dat
  */

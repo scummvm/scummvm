@@ -145,7 +145,7 @@ void Parser_v1w::lineHandler() {
 
 	if (gameStatus.gameOverFl) {
 		// No commands allowed!
-		Utils::gameOverMsg();
+		_vm->gameOverMsg();
 		return;
 	}
 
@@ -209,7 +209,7 @@ void Parser_v1w::showInventory() const {
 	status_t &gameStatus = _vm->getGameStatus();
 	istate_t inventState = _vm->_inventory->getInventoryState();
 	if (gameStatus.gameOverFl) {
-		Utils::gameOverMsg();
+		_vm->gameOverMsg();
 	} else if ((inventState == kInventoryOff) && (gameStatus.viewState == kViewPlay)) {
 		_vm->_inventory->setInventoryState(kInventoryDown);
 		gameStatus.viewState = kViewInvent;
