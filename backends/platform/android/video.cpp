@@ -54,7 +54,7 @@
 
 #if 0
 #define CHECK_GL_ERROR() checkGlError(__FILE__, __LINE__)
-static const char* getGlErrStr(GLenum error) {
+static const char *getGlErrStr(GLenum error) {
 	switch (error) {
 	case GL_NO_ERROR:		   return "GL_NO_ERROR";
 	case GL_INVALID_ENUM:	   return "GL_INVALID_ENUM";
@@ -68,7 +68,7 @@ static const char* getGlErrStr(GLenum error) {
 	snprintf(buf, sizeof(buf), "(Unknown GL error code 0x%x)", error);
 	return buf;
 }
-static void checkGlError(const char* file, int line) {
+static void checkGlError(const char *file, int line) {
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR)
 		warning("%s:%d: GL error: %s", file, line, getGlErrStr(error));
@@ -84,7 +84,7 @@ static bool draw_tex_supported = false;
 #endif
 
 static inline GLfixed xdiv(int numerator, int denominator) {
-	assert(numerator < (1<<16));
+	assert(numerator < (1 << 16));
 	return (numerator << 16) / denominator;
 }
 
@@ -93,21 +93,27 @@ static T nextHigher2(T k) {
 	if (k == 0)
 		return 1;
 	--k;
-	for (uint i = 1; i < sizeof(T)*CHAR_BIT; i <<= 1)
+
+	for (uint i = 1; i < sizeof(T) * CHAR_BIT; i <<= 1)
 		k = k | k >> i;
+
 	return k + 1;
 }
 
 void GLESTexture::initGLExtensions() {
-	const char* ext_string =
-		reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+	const char *ext_string =
+		reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
+
 	__android_log_print(ANDROID_LOG_INFO, LOG_TAG,
-				"Extensions: %s", ext_string);
+						"Extensions: %s", ext_string);
+
 	Common::StringTokenizer tokenizer(ext_string, " ");
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
+
 		if (token == "GL_ARB_texture_non_power_of_two")
 			npot_supported = true;
+
 #ifdef GL_OES_draw_texture
 		if (token == "GL_OES_draw_texture")
 			draw_tex_supported = true;
@@ -121,11 +127,12 @@ GLESTexture::GLESTexture() :
 	_all_dirty(true)
 {
 	glGenTextures(1, &_texture_name);
+
 	// This all gets reset later in allocBuffer:
 	_surface.w = 0;
 	_surface.h = 0;
 	_surface.pitch = _texture_width;
-	_surface.pixels = NULL;
+	_surface.pixels = 0;
 	_surface.bytesPerPixel = 0;
 }
 
@@ -153,8 +160,8 @@ void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 	_surface.h = h;
 	_surface.bytesPerPixel = bpp;
 
+	// Already allocated a sufficiently large buffer?
 	if (w <= _texture_width && h <= _texture_height)
-		// Already allocated a sufficiently large buffer
 		return;
 
 	if (npot_supported) {
@@ -164,6 +171,7 @@ void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 		_texture_width = nextHigher2(_surface.w);
 		_texture_height = nextHigher2(_surface.h);
 	}
+
 	_surface.pitch = _texture_width * bpp;
 
 	// Allocate room for the texture now, but pixel data gets uploaded
@@ -178,14 +186,15 @@ void GLESTexture::allocBuffer(GLuint w, GLuint h) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	CHECK_GL_ERROR();
 	glTexImage2D(GL_TEXTURE_2D, 0, glFormat(),
-		     _texture_width, _texture_height,
-		     0, glFormat(), glType(), NULL);
+					_texture_width, _texture_height,
+					0, glFormat(), glType(), 0);
 	CHECK_GL_ERROR();
 }
 
 void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
-							   const void* buf, int pitch) {
+								const void *buf, int pitch) {
 	ENTER("updateBuffer(%u, %u, %u, %u, %p, %d)", x, y, w, h, buf, pitch);
+
 	glBindTexture(GL_TEXTURE_2D, _texture_name);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -202,20 +211,22 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 
 #if TEXSUBIMAGE_IS_EXPENSIVE
 		byte tmpbuf[w * h * bytesPerPixel()];
-		const byte* src = static_cast<const byte*>(buf);
-		byte* dst = tmpbuf;
+		const byte *src = static_cast<const byte *>(buf);
+		byte *dst = tmpbuf;
 		GLuint count = h;
+
 		do {
 			memcpy(dst, src, w * bytesPerPixel());
 			dst += w * bytesPerPixel();
 			src += pitch;
 		} while (--count);
+
 		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
 						glFormat(), glType(), tmpbuf);
 #else
 		// This version avoids the intermediate copy at the expense of
 		// repeat glTexSubImage2D calls.  On some devices this is worse.
-		const byte* src = static_cast<const byte*>(buf);
+		const byte *src = static_cast<const byte *>(buf);
 		do {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y,
 							w, 1, glFormat(), glType(), src);
@@ -241,9 +252,13 @@ void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 	// Still a work-in-progress - disabled for now.
 	if (false && draw_tex_supported && paletteSize() == 0) {
 		//glTexEnvx(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		const GLint crop[4] = {0, _surface.h, _surface.w, -_surface.h};
+		const GLint crop[4] = { 0, _surface.h, _surface.w, -_surface.h };
+
 		glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_CROP_RECT_OES, crop);
-		glColor4ub(0xff, 0xff, 0xff, 0xff);   // Android GLES bug?
+
+		// Android GLES bug?
+		glColor4ub(0xff, 0xff, 0xff, 0xff);
+
 		glDrawTexiOES(x, y, 0, w, h);
 	} else
 #endif
@@ -256,18 +271,20 @@ void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 			0, tex_height,
 			tex_width, tex_height,
 		};
+
 		glTexCoordPointer(2, GL_FIXED, 0, texcoords);
 
 		const GLshort vertices[] = {
-			x,	 y,
-			x+w, y,
-			x,	 y+h,
-			x+w, y+h,
+			x, y,
+			x + w, y,
+			x, y + h,
+			x + w, y + h,
 		};
+
 		glVertexPointer(2, GL_SHORT, 0, vertices);
 
 		assert(ARRAYSIZE(vertices) == ARRAYSIZE(texcoords));
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, ARRAYSIZE(vertices)/2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, ARRAYSIZE(vertices) / 2);
 	}
 
 	_all_dirty = false;
@@ -276,7 +293,7 @@ void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 
 GLESPaletteTexture::GLESPaletteTexture() :
 	GLESTexture(),
-	_texture(NULL)
+	_texture(0)
 {
 }
 
@@ -291,8 +308,8 @@ void GLESPaletteTexture::allocBuffer(GLuint w, GLuint h) {
 	_surface.h = h;
 	_surface.bytesPerPixel = bpp;
 
+	// Already allocated a sufficiently large buffer?
 	if (w <= _texture_width && h <= _texture_height)
-		// Already allocated a sufficiently large buffer
 		return;
 
 	if (npot_supported) {
@@ -306,12 +323,14 @@ void GLESPaletteTexture::allocBuffer(GLuint w, GLuint h) {
 
 	// Texture gets uploaded later (from drawTexture())
 
-	byte* new_buffer = new byte[paletteSize() +
+	byte *new_buffer = new byte[paletteSize() +
 		_texture_width * _texture_height * bytesPerPixel()];
 	if (_texture) {
-		memcpy(new_buffer, _texture, paletteSize()); // preserve palette
+		// preserve palette
+		memcpy(new_buffer, _texture, paletteSize());
 		delete[] _texture;
 	}
+
 	_texture = new_buffer;
 	_surface.pixels = _texture + paletteSize();
 }
@@ -323,12 +342,13 @@ void GLESPaletteTexture::fillBuffer(byte x) {
 }
 
 void GLESPaletteTexture::updateBuffer(GLuint x, GLuint y,
-									  GLuint w, GLuint h,
-									  const void* buf, int pitch) {
+										GLuint w, GLuint h,
+										const void *buf, int pitch) {
 	_all_dirty = true;
 
-	const byte* src = static_cast<const byte*>(buf);
-	byte* dst = static_cast<byte*>(_surface.getBasePtr(x, y));
+	const byte * src = static_cast<const byte *>(buf);
+	byte *dst = static_cast<byte *>(_surface.getBasePtr(x, y));
+
 	do {
 		memcpy(dst, src, w * bytesPerPixel());
 		dst += _surface.pitch;
@@ -339,9 +359,10 @@ void GLESPaletteTexture::updateBuffer(GLuint x, GLuint y,
 void GLESPaletteTexture::uploadTexture() const {
 	const size_t texture_size =
 		paletteSize() + _texture_width * _texture_height * bytesPerPixel();
+
 	glCompressedTexImage2D(GL_TEXTURE_2D, 0, glType(),
-						   _texture_width, _texture_height,
-						   0, texture_size, _texture);
+							_texture_width, _texture_height,
+							0, texture_size, _texture);
 	CHECK_GL_ERROR();
 }
 

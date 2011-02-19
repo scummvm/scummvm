@@ -78,14 +78,14 @@
 extern "C" {
 	void __assert(const char *file, int line, const char *expr) {
 		__android_log_assert(expr, LOG_TAG,
-							"Assertion failure: '%s' in %s:%d",
-							 expr, file, line);
+								"Assertion failure: '%s' in %s:%d",
+								 expr, file, line);
 	}
 
 	void __assert2(const char *file, int line, const char *func, const char *expr) {
 		__android_log_assert(expr, LOG_TAG,
-							"Assertion failure: '%s' in %s:%d (%s)",
-							 expr, file, line, func);
+								"Assertion failure: '%s' in %s:%d (%s)",
+								 expr, file, line, func);
 	}
 }
 
@@ -105,6 +105,7 @@ JNIEnv *JNU_GetEnv() {
 	JNIEnv *env = 0;
 
 	jint res = cached_jvm->GetEnv((void **)&env, JNI_VERSION_1_2);
+
 	if (res != JNI_OK) {
 		__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "GetEnv() failed: %d", res);
 		abort();
@@ -113,15 +114,17 @@ JNIEnv *JNU_GetEnv() {
 	return env;
 }
 
-static void JNU_ThrowByName(JNIEnv* env, const char* name, const char* msg) {
+static void JNU_ThrowByName(JNIEnv *env, const char *name, const char *msg) {
 	jclass cls = env->FindClass(name);
-	// if cls is NULL, an exception has already been thrown
-	if (cls != NULL)
+
+	// if cls is 0, an exception has already been thrown
+	if (cls != 0)
 		env->ThrowNew(cls, msg);
+
 	env->DeleteLocalRef(cls);
 }
 
-// floating point. use sparingly.
+// floating point. use sparingly
 template <class T>
 static inline T scalef(T in, float numerator, float denominator) {
 	return static_cast<float>(in) * numerator / denominator;
@@ -139,10 +142,9 @@ protected:
 };
 #endif
 
-
 #if 0
 #define CHECK_GL_ERROR() checkGlError(__FILE__, __LINE__)
-static const char* getGlErrStr(GLenum error) {
+static const char *getGlErrStr(GLenum error) {
 	switch (error) {
 	case GL_NO_ERROR:		   return "GL_NO_ERROR";
 	case GL_INVALID_ENUM:	   return "GL_INVALID_ENUM";
@@ -156,7 +158,7 @@ static const char* getGlErrStr(GLenum error) {
 	snprintf(buf, sizeof(buf), "(Unknown GL error code 0x%x)", error);
 	return buf;
 }
-static void checkGlError(const char* file, int line) {
+static void checkGlError(const char *file, int line) {
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR)
 		warning("%s:%d: GL error: %s", file, line, getGlErrStr(error));
@@ -167,7 +169,9 @@ static void checkGlError(const char* file, int line) {
 
 class OSystem_Android : public BaseBackend, public PaletteManager {
 private:
-	jobject _back_ptr;	// back pointer to (java) peer instance
+	// back pointer to (java) peer instance
+	jobject _back_ptr;
+
 	jmethodID MID_displayMessageOnOSD;
 	jmethodID MID_setWindowCaption;
 	jmethodID MID_initBackend;
@@ -186,16 +190,16 @@ private:
 	bool _force_redraw;
 
 	// Game layer
-	GLESPaletteTexture* _game_texture;
+	GLESPaletteTexture *_game_texture;
 	int _shake_offset;
 	Common::Rect _focus_rect;
 
 	// Overlay layer
-	GLES4444Texture* _overlay_texture;
+	GLES4444Texture *_overlay_texture;
 	bool _show_overlay;
 
 	// Mouse layer
-	GLESPaletteATexture* _mouse_texture;
+	GLESPaletteATexture *_mouse_texture;
 	Common::Point _mouse_hotspot;
 	int _mouse_targetscale;
 	bool _show_mouse;
@@ -206,7 +210,7 @@ private:
 
 	bool _timer_thread_exit;
 	pthread_t _timer_thread;
-	static void* timerThreadFunc(void* arg);
+	static void *timerThreadFunc(void *arg);
 
 	bool _enable_zoning;
 	bool _virtkeybd_on;
@@ -226,9 +230,9 @@ private:
 public:
 	OSystem_Android(jobject am);
 	virtual ~OSystem_Android();
-	bool initJavaHooks(JNIEnv* env, jobject self);
+	bool initJavaHooks(JNIEnv *env, jobject self);
 
-	static OSystem_Android* fromJavaObject(JNIEnv* env, jobject obj);
+	static OSystem_Android *fromJavaObject(JNIEnv *env, jobject obj);
 	virtual void initBackend();
 	void addPluginDirectories(Common::FSList &dirs) const;
 	void enableZoning(bool enable) { _enable_zoning = enable; }
@@ -246,12 +250,19 @@ public:
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height,
-				  const Graphics::PixelFormat *format);
-	virtual int getScreenChangeID() const { return _screen_changeid; }
+							const Graphics::PixelFormat *format);
+
+	virtual int getScreenChangeID() const {
+		return _screen_changeid;
+	}
+
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 
-	virtual PaletteManager *getPaletteManager() { return this; }
+	virtual PaletteManager *getPaletteManager() {
+		return this;
+	}
+
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);
@@ -274,18 +285,21 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
+
+	// RGBA 4444
 	virtual Graphics::PixelFormat getOverlayFormat() const {
-		// RGBA 4444
 		Graphics::PixelFormat format;
+
 		format.bytesPerPixel = 2;
 		format.rLoss = 8 - 4;
 		format.gLoss = 8 - 4;
 		format.bLoss = 8 - 4;
 		format.aLoss = 8 - 4;
-		format.rShift = 3*4;
-		format.gShift = 2*4;
-		format.bShift = 1*4;
-		format.aShift = 0*4;
+		format.rShift = 3 * 4;
+		format.gShift = 2 * 4;
+		format.bShift = 1 * 4;
+		format.aShift = 0 * 4;
+
 		return format;
 	}
 
@@ -321,49 +335,54 @@ public:
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 };
 
-OSystem_Android::OSystem_Android(jobject am)
-	: _back_ptr(0),
-	  _screen_changeid(0),
-	  _force_redraw(false),
-	  _game_texture(NULL),
-	  _overlay_texture(NULL),
-	  _mouse_texture(NULL),
-	  _use_mouse_palette(false),
-	  _show_mouse(false),
-	  _show_overlay(false),
-	  _enable_zoning(false),
-	  _savefile(0),
-	  _mixer(0),
-	  _timer(0),
-	  _fsFactory(new POSIXFilesystemFactory()),
-	  _asset_archive(new AndroidAssetArchive(am)),
-	  _shake_offset(0),
-	  _event_queue_lock(createMutex()) {
+OSystem_Android::OSystem_Android(jobject am) :
+	_back_ptr(0),
+	_screen_changeid(0),
+	_force_redraw(false),
+	_game_texture(0),
+	_overlay_texture(0),
+	_mouse_texture(0),
+	_use_mouse_palette(false),
+	_show_mouse(false),
+	_show_overlay(false),
+	_enable_zoning(false),
+	_savefile(0),
+	_mixer(0),
+	_timer(0),
+	_fsFactory(new POSIXFilesystemFactory()),
+	_asset_archive(new AndroidAssetArchive(am)),
+	_shake_offset(0),
+	_event_queue_lock(createMutex()) {
 }
 
 OSystem_Android::~OSystem_Android() {
 	ENTER("~OSystem_Android()");
+
 	delete _game_texture;
 	delete _overlay_texture;
 	delete _mouse_texture;
+
 	destroyScummVMSurface();
-	JNIEnv* env = JNU_GetEnv();
+
+	JNIEnv *env = JNU_GetEnv();
 	//env->DeleteWeakGlobalRef(_back_ptr);
 	env->DeleteGlobalRef(_back_ptr);
+
 	delete _savefile;
 	delete _mixer;
 	delete _timer;
 	delete _fsFactory;
 	delete _asset_archive;
+
 	deleteMutex(_event_queue_lock);
 }
 
-OSystem_Android* OSystem_Android::fromJavaObject(JNIEnv* env, jobject obj) {
+OSystem_Android *OSystem_Android::fromJavaObject(JNIEnv *env, jobject obj) {
 	jlong peer = env->GetLongField(obj, FID_ScummVM_nativeScummVM);
-	return (OSystem_Android*)peer;
+	return (OSystem_Android *)peer;
 }
 
-bool OSystem_Android::initJavaHooks(JNIEnv* env, jobject self) {
+bool OSystem_Android::initJavaHooks(JNIEnv *env, jobject self) {
 	// weak global ref to allow class to be unloaded
 	// ... except dalvik doesn't implement NewWeakGlobalRef (yet)
 	//_back_ptr = env->NewWeakGlobalRef(self);
@@ -373,7 +392,7 @@ bool OSystem_Android::initJavaHooks(JNIEnv* env, jobject self) {
 
 #define FIND_METHOD(name, signature) do {						\
 		MID_ ## name = env->GetMethodID(cls, #name, signature); \
-		if (MID_ ## name == NULL)								\
+		if (MID_ ## name == 0)									\
 			return false;										\
 	} while (0)
 
@@ -393,10 +412,11 @@ bool OSystem_Android::initJavaHooks(JNIEnv* env, jobject self) {
 	return true;
 }
 
-static void ScummVM_create(JNIEnv* env, jobject self, jobject am) {
-	OSystem_Android* cpp_obj = new OSystem_Android(am);
+static void ScummVM_create(JNIEnv *env, jobject self, jobject am) {
+	OSystem_Android *cpp_obj = new OSystem_Android(am);
+
+	// Exception already thrown by initJavaHooks?
 	if (!cpp_obj->initJavaHooks(env, self))
-		// Exception already thrown by initJavaHooks
 		return;
 
 	env->SetLongField(self, FID_ScummVM_nativeScummVM, (jlong)cpp_obj);
@@ -406,56 +426,69 @@ static void ScummVM_create(JNIEnv* env, jobject self, jobject am) {
 #endif
 }
 
-static void ScummVM_nativeDestroy(JNIEnv* env, jobject self) {
-	OSystem_Android* cpp_obj = OSystem_Android::fromJavaObject(env, self);
+static void ScummVM_nativeDestroy(JNIEnv *env, jobject self) {
+	OSystem_Android *cpp_obj = OSystem_Android::fromJavaObject(env, self);
 	delete cpp_obj;
 }
 
-static void ScummVM_audioMixCallback(JNIEnv* env, jobject self,
-									 jbyteArray jbuf) {
-	OSystem_Android* cpp_obj = OSystem_Android::fromJavaObject(env, self);
+static void ScummVM_audioMixCallback(JNIEnv *env, jobject self,
+										jbyteArray jbuf) {
+	OSystem_Android *cpp_obj = OSystem_Android::fromJavaObject(env, self);
 	jsize len = env->GetArrayLength(jbuf);
-	jbyte* buf = env->GetByteArrayElements(jbuf, NULL);
-	if (buf == NULL) {
+	jbyte *buf = env->GetByteArrayElements(jbuf, 0);
+
+	if (buf == 0) {
 		warning("Unable to get Java audio byte array. Skipping");
 		return;
 	}
-	Audio::MixerImpl* mixer =
-		static_cast<Audio::MixerImpl*>(cpp_obj->getMixer());
+
+	Audio::MixerImpl *mixer =
+		static_cast<Audio::MixerImpl *>(cpp_obj->getMixer());
 	assert(mixer);
-	mixer->mixCallback(reinterpret_cast<byte*>(buf), len);
+	mixer->mixCallback(reinterpret_cast<byte *>(buf), len);
+
 	env->ReleaseByteArrayElements(jbuf, buf, 0);
 }
 
-static void ScummVM_setConfManInt(JNIEnv* env, jclass cls,
-				  jstring key_obj, jint value) {
+static void ScummVM_setConfManInt(JNIEnv *env, jclass cls,
+									jstring key_obj, jint value) {
 	ENTER("setConfManInt(%p, %d)", key_obj, (int)value);
-	const char* key = env->GetStringUTFChars(key_obj, NULL);
-	if (key == NULL)
+
+	const char *key = env->GetStringUTFChars(key_obj, 0);
+
+	if (key == 0)
 		return;
+
 	ConfMan.setInt(key, value);
+
 	env->ReleaseStringUTFChars(key_obj, key);
 }
 
-static void ScummVM_setConfManString(JNIEnv* env, jclass cls, jstring key_obj,
-					 jstring value_obj) {
+static void ScummVM_setConfManString(JNIEnv *env, jclass cls, jstring key_obj,
+										jstring value_obj) {
 	ENTER("setConfManStr(%p, %p)", key_obj, value_obj);
-	const char* key = env->GetStringUTFChars(key_obj, NULL);
-	if (key == NULL)
+
+	const char *key = env->GetStringUTFChars(key_obj, 0);
+
+	if (key == 0)
 		return;
-	const char* value = env->GetStringUTFChars(value_obj, NULL);
-	if (value == NULL) {
+
+	const char *value = env->GetStringUTFChars(value_obj, 0);
+
+	if (value == 0) {
 		env->ReleaseStringUTFChars(key_obj, key);
 		return;
 	}
+
 	ConfMan.set(key, value);
+
 	env->ReleaseStringUTFChars(value_obj, value);
 	env->ReleaseStringUTFChars(key_obj, key);
 }
 
-void* OSystem_Android::timerThreadFunc(void* arg) {
-	OSystem_Android* system = (OSystem_Android*)arg;
-	DefaultTimerManager* timer = (DefaultTimerManager*)(system->_timer);
+void *OSystem_Android::timerThreadFunc(void *arg) {
+	OSystem_Android *system = (OSystem_Android *)arg;
+	DefaultTimerManager *timer = (DefaultTimerManager *)(system->_timer);
 
 	JNIEnv *env = 0;
 	jint res = cached_jvm->AttachCurrentThread(&env, 0);
@@ -471,7 +504,7 @@ void* OSystem_Android::timerThreadFunc(void* arg) {
 
 	while (!system->_timer_thread_exit) {
 		timer->handler();
-		nanosleep(&tv, NULL);
+		nanosleep(&tv, 0);
 	}
 
 	res = cached_jvm->DetachCurrentThread();
@@ -481,12 +514,13 @@ void* OSystem_Android::timerThreadFunc(void* arg) {
 		abort();
 	}
 
-	return NULL;
+	return 0;
 }
 
 void OSystem_Android::initBackend() {
 	ENTER("initBackend()");
-	JNIEnv* env = JNU_GetEnv();
+
+	JNIEnv *env = JNU_GetEnv();
 
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setInt("FM_medium_quality", true);
@@ -496,32 +530,37 @@ void OSystem_Android::initBackend() {
 	setupKeymapper();
 
 	// BUG: "transient" ConfMan settings get nuked by the options
-	// screen.	Passing the savepath in this way makes it stick
+	// screen. Passing the savepath in this way makes it stick
 	// (via ConfMan.registerDefault)
 	_savefile = new DefaultSaveFileManager(ConfMan.get("savepath"));
 	_timer = new DefaultTimerManager();
 
-	gettimeofday(&_startTime, NULL);
+	gettimeofday(&_startTime, 0);
 
 	jint sample_rate = env->CallIntMethod(_back_ptr, MID_audioSampleRate);
 	if (env->ExceptionCheck()) {
 		warning("Error finding audio sample rate - assuming 11025HZ");
+
 		env->ExceptionDescribe();
 		env->ExceptionClear();
+
 		sample_rate = 11025;
 	}
+
 	_mixer = new Audio::MixerImpl(this, sample_rate);
 	_mixer->setReady(true);
 
 	env->CallVoidMethod(_back_ptr, MID_initBackend);
+
 	if (env->ExceptionCheck()) {
 		error("Error in Java initBackend");
+
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	}
 
 	_timer_thread_exit = false;
-	pthread_create(&_timer_thread, NULL, timerThreadFunc, this);
+	pthread_create(&_timer_thread, 0, timerThreadFunc, this);
 
 	OSystem::initBackend();
 
@@ -530,30 +569,39 @@ void OSystem_Android::initBackend() {
 
 void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
 	ENTER("OSystem_Android::addPluginDirectories()");
-	JNIEnv* env = JNU_GetEnv();
+
+	JNIEnv *env = JNU_GetEnv();
 
 	jobjectArray array =
 		(jobjectArray)env->CallObjectMethod(_back_ptr, MID_getPluginDirectories);
 	if (env->ExceptionCheck()) {
 		warning("Error finding plugin directories");
+
 		env->ExceptionDescribe();
 		env->ExceptionClear();
+
 		return;
 	}
 
 	jsize size = env->GetArrayLength(array);
 	for (jsize i = 0; i < size; ++i) {
 		jstring path_obj = (jstring)env->GetObjectArrayElement(array, i);
-		if (path_obj == NULL)
+
+		if (path_obj == 0)
 			continue;
-		const char* path = env->GetStringUTFChars(path_obj, NULL);
-		if (path == NULL) {
+
+		const char *path = env->GetStringUTFChars(path_obj, 0);
+		if (path == 0) {
 			warning("Error getting string characters from plugin directory");
+
 			env->ExceptionClear();
 			env->DeleteLocalRef(path_obj);
+
 			continue;
 		}
+
 		dirs.push_back(Common::FSNode(path));
+
 		env->ReleaseStringUTFChars(path_obj, path);
 		env->DeleteLocalRef(path_obj);
 	}
@@ -561,12 +609,13 @@ void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
 
 bool OSystem_Android::hasFeature(Feature f) {
 	return (f == kFeatureCursorHasPalette ||
-		f == kFeatureVirtualKeyboard ||
-		f == kFeatureOverlaySupportsAlpha);
+			f == kFeatureVirtualKeyboard ||
+			f == kFeatureOverlaySupportsAlpha);
 }
 
 void OSystem_Android::setFeatureState(Feature f, bool enable) {
 	ENTER("setFeatureState(%d, %d)", f, enable);
+
 	switch (f) {
 	case kFeatureVirtualKeyboard:
 		_virtkeybd_on = enable;
@@ -586,11 +635,12 @@ bool OSystem_Android::getFeatureState(Feature f) {
 	}
 }
 
-const OSystem::GraphicsMode* OSystem_Android::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *OSystem_Android::getSupportedGraphicsModes() const {
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-		{"default", "Default", 1},
-		{0, 0, 0},
+		{ "default", "Default", 1 },
+		{ 0, 0, 0 },
 	};
+
 	return s_supportedGraphicsModes;
 }
 
@@ -615,13 +665,14 @@ int OSystem_Android::getGraphicsMode() const {
 
 void OSystem_Android::setupScummVMSurface() {
 	ENTER("setupScummVMSurface");
-	JNIEnv* env = JNU_GetEnv();
+
+	JNIEnv *env = JNU_GetEnv();
 	env->CallVoidMethod(_back_ptr, MID_setupScummVMSurface);
+
 	if (env->ExceptionCheck())
 		return;
 
 	// EGL set up with a new surface.  Initialise OpenGLES context.
-
 	GLESTexture::initGLExtensions();
 
 	// Turn off anything that looks like 3D ;)
@@ -630,6 +681,7 @@ void OSystem_Android::setupScummVMSurface() {
 	glDisable(GL_LIGHTING);
 	glDisable(GL_FOG);
 	glDisable(GL_DITHER);
+
 	glShadeModel(GL_FLAT);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
@@ -669,13 +721,13 @@ void OSystem_Android::setupScummVMSurface() {
 }
 
 void OSystem_Android::destroyScummVMSurface() {
-	JNIEnv* env = JNU_GetEnv();
+	JNIEnv *env = JNU_GetEnv();
 	env->CallVoidMethod(_back_ptr, MID_destroyScummVMSurface);
 	// Can't use OpenGLES functions after this
 }
 
 void OSystem_Android::initSize(uint width, uint height,
-							   const Graphics::PixelFormat *format) {
+								const Graphics::PixelFormat *format) {
 	ENTER("initSize(%d,%d,%p)", width, height, format);
 
 	_game_texture->allocBuffer(width, height);
@@ -700,16 +752,18 @@ int16 OSystem_Android::getWidth() {
 	return _game_texture->width();
 }
 
-void OSystem_Android::setPalette(const byte* colors, uint start, uint num) {
+void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 	ENTER("setPalette(%p, %u, %u)", colors, start, num);
 
 	if (!_use_mouse_palette)
 		_setCursorPalette(colors, start, num);
 
-	byte* palette = _game_texture->palette() + start*3;
+	byte *palette = _game_texture->palette() + start * 3;
+
 	do {
 		for (int i = 0; i < 3; ++i)
 			palette[i] = colors[i];
+
 		palette += 3;
 		colors += 4;
 	} while (--num);
@@ -717,11 +771,15 @@ void OSystem_Android::setPalette(const byte* colors, uint start, uint num) {
 
 void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
 	ENTER("grabPalette(%p, %u, %u)", colors, start, num);
-	const byte* palette = _game_texture->palette_const() + start*3;
+
+	const byte *palette = _game_texture->palette_const() + start * 3;
+
 	do {
 		for (int i = 0; i < 3; ++i)
 			colors[i] = palette[i];
-		colors[3] = 0xff;  // alpha
+
+		// alpha
+		colors[3] = 0xff;
 
 		palette += 3;
 		colors += 4;
@@ -729,9 +787,9 @@ void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OSystem_Android::copyRectToScreen(const byte *buf, int pitch,
-					   int x, int y, int w, int h) {
+										int x, int y, int w, int h) {
 	ENTER("copyRectToScreen(%p, %d, %d, %d, %d, %d)",
-		  buf, pitch, x, y, w, h);
+			buf, pitch, x, y, w, h);
 
 	_game_texture->updateBuffer(x, y, w, h, buf, pitch);
 }
@@ -740,9 +798,9 @@ void OSystem_Android::updateScreen() {
 	//ENTER("updateScreen()");
 
 	if (!_force_redraw &&
-		!_game_texture->dirty() &&
-		!_overlay_texture->dirty() &&
-		!_mouse_texture->dirty())
+			!_game_texture->dirty() &&
+			!_overlay_texture->dirty() &&
+			!_mouse_texture->dirty())
 		return;
 
 	_force_redraw = false;
@@ -750,9 +808,9 @@ void OSystem_Android::updateScreen() {
 	glPushMatrix();
 
 	if (_shake_offset != 0 ||
-		(!_focus_rect.isEmpty() &&
-		 !Common::Rect(_game_texture->width(),
-					   _game_texture->height()).contains(_focus_rect))) {
+			(!_focus_rect.isEmpty() &&
+			!Common::Rect(_game_texture->width(),
+							_game_texture->height()).contains(_focus_rect))) {
 		// These are the only cases where _game_texture doesn't
 		// cover the entire screen.
 		glClearColorx(0, 0, 0, 1 << 16);
@@ -764,18 +822,19 @@ void OSystem_Android::updateScreen() {
 
 	if (_focus_rect.isEmpty()) {
 		_game_texture->drawTexture(0, 0,
-								   _egl_surface_width, _egl_surface_height);
+									_egl_surface_width, _egl_surface_height);
 	} else {
 		glPushMatrix();
 		glScalex(xdiv(_egl_surface_width, _focus_rect.width()),
-				 xdiv(_egl_surface_height, _focus_rect.height()),
-				 1 << 16);
+					xdiv(_egl_surface_height, _focus_rect.height()),
+					1 << 16);
 		glTranslatex(-_focus_rect.left << 16, -_focus_rect.top << 16, 0);
 		glScalex(xdiv(_game_texture->width(), _egl_surface_width),
-				 xdiv(_game_texture->height(), _egl_surface_height),
-				 1 << 16);
+					xdiv(_game_texture->height(), _egl_surface_height),
+					1 << 16);
+
 		_game_texture->drawTexture(0, 0,
-								   _egl_surface_width, _egl_surface_height);
+									_egl_surface_width, _egl_surface_height);
 		glPopMatrix();
 	}
 
@@ -783,8 +842,8 @@ void OSystem_Android::updateScreen() {
 
 	if (_show_overlay) {
 		_overlay_texture->drawTexture(0, 0,
-									  _egl_surface_width,
-									  _egl_surface_height);
+										_egl_surface_width,
+										_egl_surface_height);
 		CHECK_GL_ERROR();
 	}
 
@@ -792,11 +851,12 @@ void OSystem_Android::updateScreen() {
 		glPushMatrix();
 
 		glTranslatex(-_mouse_hotspot.x << 16,
-					 -_mouse_hotspot.y << 16,
-					 0);
+						-_mouse_hotspot.y << 16,
+						0);
 
 		// Scale up ScummVM -> OpenGL (pixel) coordinates
 		int texwidth, texheight;
+
 		if (_show_overlay) {
 			texwidth = getOverlayWidth();
 			texheight = getOverlayHeight();
@@ -804,15 +864,16 @@ void OSystem_Android::updateScreen() {
 			texwidth = getWidth();
 			texheight = getHeight();
 		}
+
 		glScalex(xdiv(_egl_surface_width, texwidth),
-				 xdiv(_egl_surface_height, texheight),
-				 1 << 16);
+					xdiv(_egl_surface_height, texheight),
+					1 << 16);
 
 		// Note the extra half texel to position the mouse in
 		// the middle of the x,y square:
 		const Common::Point& mouse = getEventManager()->getMousePos();
 		glTranslatex((mouse.x << 16) | 1 << 15,
-					 (mouse.y << 16) | 1 << 15, 0);
+						(mouse.y << 16) | 1 << 15, 0);
 
 		// Mouse targetscale just seems to make the cursor way
 		// too big :/
@@ -828,7 +889,7 @@ void OSystem_Android::updateScreen() {
 
 	CHECK_GL_ERROR();
 
-	JNIEnv* env = JNU_GetEnv();
+	JNIEnv *env = JNU_GetEnv();
 	if (!env->CallBooleanMethod(_back_ptr, MID_swapBuffers)) {
 		// Context lost -> need to reinit GL
 		destroyScummVMSurface();
@@ -838,18 +899,22 @@ void OSystem_Android::updateScreen() {
 
 Graphics::Surface *OSystem_Android::lockScreen() {
 	ENTER("lockScreen()");
-	Graphics::Surface* surface = _game_texture->surface();
+
+	Graphics::Surface *surface = _game_texture->surface();
 	assert(surface->pixels);
+
 	return surface;
 }
 
 void OSystem_Android::unlockScreen() {
 	ENTER("unlockScreen()");
+
 	assert(_game_texture->dirty());
 }
 
 void OSystem_Android::setShakePos(int shake_offset) {
 	ENTER("setShakePos(%d)", shake_offset);
+
 	if (_shake_offset != shake_offset) {
 		_shake_offset = shake_offset;
 		_force_redraw = true;
@@ -858,13 +923,15 @@ void OSystem_Android::setShakePos(int shake_offset) {
 
 void OSystem_Android::fillScreen(uint32 col) {
 	ENTER("fillScreen(%u)", col);
+
 	assert(col < 256);
 	_game_texture->fillBuffer(col);
 }
 
 void OSystem_Android::setFocusRectangle(const Common::Rect& rect) {
 	ENTER("setFocusRectangle(%d,%d,%d,%d)",
-		  rect.left, rect.top, rect.right, rect.bottom);
+			rect.left, rect.top, rect.right, rect.bottom);
+
 	if (_enable_zoning) {
 		_focus_rect = rect;
 		_force_redraw = true;
@@ -873,6 +940,7 @@ void OSystem_Android::setFocusRectangle(const Common::Rect& rect) {
 
 void OSystem_Android::clearFocusRectangle() {
 	ENTER("clearFocusRectangle()");
+
 	if (_enable_zoning) {
 		_focus_rect = Common::Rect();
 		_force_redraw = true;
@@ -881,18 +949,21 @@ void OSystem_Android::clearFocusRectangle() {
 
 void OSystem_Android::showOverlay() {
 	ENTER("showOverlay()");
+
 	_show_overlay = true;
 	_force_redraw = true;
 }
 
 void OSystem_Android::hideOverlay() {
 	ENTER("hideOverlay()");
+
 	_show_overlay = false;
 	_force_redraw = true;
 }
 
 void OSystem_Android::clearOverlay() {
 	ENTER("clearOverlay()");
+
 	_overlay_texture->fillBuffer(0);
 
 	// Shouldn't need this, but works around a 'blank screen' bug on Nexus1
@@ -901,23 +972,29 @@ void OSystem_Android::clearOverlay() {
 
 void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
 	ENTER("grabOverlay(%p, %d)", buf, pitch);
+
 	// We support overlay alpha blending, so the pixel data here
 	// shouldn't actually be used.	Let's fill it with zeros, I'm sure
 	// it will be fine...
-	const Graphics::Surface* surface = _overlay_texture->surface_const();
+	const Graphics::Surface *surface = _overlay_texture->surface_const();
 	assert(surface->bytesPerPixel == sizeof(buf[0]));
+
 	int h = surface->h;
+
 	do {
 		memset(buf, 0, surface->w * sizeof(buf[0]));
-		buf += pitch;  // This 'pitch' is pixels not bytes
+
+		// This 'pitch' is pixels not bytes
+		buf += pitch;
 	} while (--h);
 }
 
 void OSystem_Android::copyRectToOverlay(const OverlayColor *buf, int pitch,
-					int x, int y, int w, int h) {
+										int x, int y, int w, int h) {
 	ENTER("copyRectToOverlay(%p, %d, %d, %d, %d, %d)",
-		 buf, pitch, x, y, w, h);
-	const Graphics::Surface* surface = _overlay_texture->surface_const();
+			buf, pitch, x, y, w, h);
+
+	const Graphics::Surface *surface = _overlay_texture->surface_const();
 	assert(surface->bytesPerPixel == sizeof(buf[0]));
 
 	// This 'pitch' is pixels not bytes
@@ -937,37 +1014,43 @@ int16 OSystem_Android::getOverlayWidth() {
 
 bool OSystem_Android::showMouse(bool visible) {
 	ENTER("showMouse(%d)", visible);
+
 	_show_mouse = visible;
+
 	return true;
 }
 
 void OSystem_Android::warpMouse(int x, int y) {
 	ENTER("warpMouse(%d, %d)", x, y);
+
 	// We use only the eventmanager's idea of the current mouse
 	// position, so there is nothing extra to do here.
 }
 
 void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
-					 int hotspotX, int hotspotY,
-					 uint32 keycolor, int cursorTargetScale,
-					 const Graphics::PixelFormat *format) {
+										int hotspotX, int hotspotY,
+										uint32 keycolor, int cursorTargetScale,
+										const Graphics::PixelFormat *format) {
 	ENTER("setMouseCursor(%p, %u, %u, %d, %d, %d, %d, %p)",
-		  buf, w, h, hotspotX, hotspotY, (int)keycolor, cursorTargetScale,
-		  format);
+			buf, w, h, hotspotX, hotspotY, (int)keycolor, cursorTargetScale,
+			format);
 
 	assert(keycolor < 256);
 
 	_mouse_texture->allocBuffer(w, h);
 
 	// Update palette alpha based on keycolor
-	byte* palette = _mouse_texture->palette();
+	byte *palette = _mouse_texture->palette();
 	int i = 256;
+
 	do {
 		palette[3] = 0xff;
 		palette += 4;
 	} while (--i);
+
 	palette = _mouse_texture->palette();
-	palette[keycolor*4 + 3] = 0x00;
+	palette[keycolor * 4 + 3] = 0x00;
+
 	_mouse_texture->updateBuffer(0, 0, w, h, buf, w);
 
 	_mouse_hotspot = Common::Point(hotspotX, hotspotY);
@@ -975,11 +1058,13 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 }
 
 void OSystem_Android::_setCursorPalette(const byte *colors,
-					uint start, uint num) {
-	byte* palette = _mouse_texture->palette() + start*4;
+										uint start, uint num) {
+	byte *palette = _mouse_texture->palette() + start * 4;
+
 	do {
 		for (int i = 0; i < 3; ++i)
 			palette[i] = colors[i];
+
 		// Leave alpha untouched to preserve keycolor
 
 		palette += 4;
@@ -988,14 +1073,16 @@ void OSystem_Android::_setCursorPalette(const byte *colors,
 }
 
 void OSystem_Android::setCursorPalette(const byte *colors,
-					   uint start, uint num) {
+										uint start, uint num) {
 	ENTER("setCursorPalette(%p, %u, %u)", colors, start, num);
+
 	_setCursorPalette(colors, start, num);
 	_use_mouse_palette = true;
 }
 
 void OSystem_Android::disableCursorPalette(bool disable) {
 	ENTER("disableCursorPalette(%d)", disable);
+
 	_use_mouse_palette = !disable;
 }
 
@@ -1006,17 +1093,19 @@ void OSystem_Android::setupKeymapper() {
 	Keymapper *mapper = getEventManager()->getKeymapper();
 
 	HardwareKeySet *keySet = new HardwareKeySet();
+
 	keySet->addHardwareKey(
 		new HardwareKey("n", KeyState(KEYCODE_n), "n (vk)",
 				kTriggerLeftKeyType,
 				kVirtualKeyboardActionType));
+
 	mapper->registerHardwareKeySet(keySet);
 
 	Keymap *globalMap = new Keymap("global");
 	Action *act;
 
 	act = new Action(globalMap, "VIRT", "Display keyboard",
-			 kVirtualKeyboardActionType);
+						kVirtualKeyboardActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
 
 	mapper->addGlobalKeymap(globalMap);
@@ -1027,11 +1116,14 @@ void OSystem_Android::setupKeymapper() {
 
 bool OSystem_Android::pollEvent(Common::Event &event) {
 	//ENTER("pollEvent()");
+
 	lockMutex(_event_queue_lock);
+
 	if (_event_queue.empty()) {
 		unlockMutex(_event_queue_lock);
 		return false;
 	}
+
 	event = _event_queue.pop();
 	unlockMutex(_event_queue_lock);
 
@@ -1048,26 +1140,27 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	case Common::EVENT_WHEELDOWN:
 	case Common::EVENT_MBUTTONDOWN:
 	case Common::EVENT_MBUTTONUP: {
-		if (event.kbd.flags == 1) { // relative mouse hack
+		// relative mouse hack
+		if (event.kbd.flags == 1) {
 			// Relative (trackball) mouse hack.
 			const Common::Point& mouse_pos =
 				getEventManager()->getMousePos();
 			event.mouse.x += mouse_pos.x;
 			event.mouse.y += mouse_pos.y;
 			event.mouse.x = CLIP(event.mouse.x, (int16)0, _show_overlay ?
-								 getOverlayWidth() : getWidth());
+									getOverlayWidth() : getWidth());
 			event.mouse.y = CLIP(event.mouse.y, (int16)0, _show_overlay ?
-								 getOverlayHeight() : getHeight());
+									getOverlayHeight() : getHeight());
 		} else {
 			// Touchscreen events need to be converted
 			// from device to game coords first.
-			const GLESTexture* tex = _show_overlay
-				? static_cast<GLESTexture*>(_overlay_texture)
-				: static_cast<GLESTexture*>(_game_texture);
+			const GLESTexture *tex = _show_overlay
+				? static_cast<GLESTexture *>(_overlay_texture)
+				: static_cast<GLESTexture *>(_game_texture);
 			event.mouse.x = scalef(event.mouse.x, tex->width(),
-								   _egl_surface_width);
+									_egl_surface_width);
 			event.mouse.y = scalef(event.mouse.y, tex->height(),
-								   _egl_surface_height);
+									_egl_surface_height);
 			event.mouse.x -= _shake_offset;
 		}
 		break;
@@ -1090,32 +1183,33 @@ void OSystem_Android::pushEvent(const Common::Event& event) {
 
 	// Try to combine multiple queued mouse move events
 	if (event.type == Common::EVENT_MOUSEMOVE &&
-		!_event_queue.empty() &&
-		_event_queue.back().type == Common::EVENT_MOUSEMOVE) {
-	  Common::Event tail = _event_queue.back();
-	  if (event.kbd.flags) {
-		// relative movement hack
-		tail.mouse.x += event.mouse.x;
-		tail.mouse.y += event.mouse.y;
-	  } else {
-		// absolute position
-		tail.kbd.flags = 0;	 // clear relative flag
-		tail.mouse.x = event.mouse.x;
-		tail.mouse.y = event.mouse.y;
-	  }
-	}
-	else
+			!_event_queue.empty() &&
+			_event_queue.back().type == Common::EVENT_MOUSEMOVE) {
+		Common::Event tail = _event_queue.back();
+		if (event.kbd.flags) {
+			// relative movement hack
+			tail.mouse.x += event.mouse.x;
+			tail.mouse.y += event.mouse.y;
+		} else {
+			// absolute position, clear relative flag
+			tail.kbd.flags = 0;
+			tail.mouse.x = event.mouse.x;
+			tail.mouse.y = event.mouse.y;
+		}
+	} else {
 	  _event_queue.push(event);
+	}
 
 	unlockMutex(_event_queue_lock);
 }
 
-static void ScummVM_pushEvent(JNIEnv* env, jobject self, jobject java_event) {
-	OSystem_Android* cpp_obj = OSystem_Android::fromJavaObject(env, self);
+static void ScummVM_pushEvent(JNIEnv *env, jobject self, jobject java_event) {
+	OSystem_Android *cpp_obj = OSystem_Android::fromJavaObject(env, self);
 
 	Common::Event event;
 	event.type = (Common::EventType)env->GetIntField(java_event,
-							 FID_Event_type);
+														FID_Event_type);
+
 	event.synthetic =
 		env->GetBooleanField(java_event, FID_Event_synthetic);
 
@@ -1157,7 +1251,9 @@ static void ScummVM_pushEvent(JNIEnv* env, jobject self, jobject java_event) {
 
 uint32 OSystem_Android::getMillis() {
 	timeval curTime;
-	gettimeofday(&curTime, NULL);
+
+	gettimeofday(&curTime, 0);
+
 	return (uint32)(((curTime.tv_sec - _startTime.tv_sec) * 1000) + \
 			((curTime.tv_usec - _startTime.tv_usec) / 1000));
 }
@@ -1172,26 +1268,31 @@ OSystem::MutexRef OSystem_Android::createMutex() {
 	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
 
 	pthread_mutex_t *mutex = new pthread_mutex_t;
+
 	if (pthread_mutex_init(mutex, &attr) != 0) {
 		warning("pthread_mutex_init() failed");
+
 		delete mutex;
-		return NULL;
+
+		return 0;
 	}
+
 	return (MutexRef)mutex;
 }
 
 void OSystem_Android::lockMutex(MutexRef mutex) {
-	if (pthread_mutex_lock((pthread_mutex_t*)mutex) != 0)
+	if (pthread_mutex_lock((pthread_mutex_t *)mutex) != 0)
 		warning("pthread_mutex_lock() failed");
 }
 
 void OSystem_Android::unlockMutex(MutexRef mutex) {
-	if (pthread_mutex_unlock((pthread_mutex_t*)mutex) != 0)
+	if (pthread_mutex_unlock((pthread_mutex_t *)mutex) != 0)
 		warning("pthread_mutex_unlock() failed");
 }
 
 void OSystem_Android::deleteMutex(MutexRef mutex) {
-	pthread_mutex_t* m = (pthread_mutex_t*)mutex;
+	pthread_mutex_t *m = (pthread_mutex_t *)mutex;
+
 	if (pthread_mutex_destroy(m) != 0)
 		warning("pthread_mutex_destroy() failed");
 	else
@@ -1202,41 +1303,54 @@ void OSystem_Android::quit() {
 	ENTER("quit()");
 
 	_timer_thread_exit = true;
-	pthread_join(_timer_thread, NULL);
+	pthread_join(_timer_thread, 0);
 }
 
 void OSystem_Android::setWindowCaption(const char *caption) {
 	ENTER("setWindowCaption(%s)", caption);
-	JNIEnv* env = JNU_GetEnv();
+
+	JNIEnv *env = JNU_GetEnv();
 	jstring java_caption = env->NewStringUTF(caption);
 	env->CallVoidMethod(_back_ptr, MID_setWindowCaption, java_caption);
+
 	if (env->ExceptionCheck()) {
 		warning("Failed to set window caption");
+
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	}
+
 	env->DeleteLocalRef(java_caption);
 }
 
 void OSystem_Android::displayMessageOnOSD(const char *msg) {
 	ENTER("displayMessageOnOSD(%s)", msg);
-	JNIEnv* env = JNU_GetEnv();
+
+	JNIEnv *env = JNU_GetEnv();
 	jstring java_msg = env->NewStringUTF(msg);
+
 	env->CallVoidMethod(_back_ptr, MID_displayMessageOnOSD, java_msg);
+
 	if (env->ExceptionCheck()) {
 		warning("Failed to display OSD message");
+
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	}
+
 	env->DeleteLocalRef(java_msg);
 }
 
 void OSystem_Android::showVirtualKeyboard(bool enable) {
 	ENTER("showVirtualKeyboard(%d)", enable);
-	JNIEnv* env = JNU_GetEnv();
+
+	JNIEnv *env = JNU_GetEnv();
+
 	env->CallVoidMethod(_back_ptr, MID_showVirtualKeyboard, enable);
+
 	if (env->ExceptionCheck()) {
 		error("Error trying to show virtual keyboard");
+
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	}
@@ -1259,7 +1373,8 @@ Common::TimerManager *OSystem_Android::getTimerManager() {
 
 void OSystem_Android::getTimeAndDate(TimeDate &td) const {
 	struct tm tm;
-	const time_t curTime = time(NULL);
+	const time_t curTime = time(0);
+
 	localtime_r(&curTime, &tm);
 	td.tm_sec = tm.tm_sec;
 	td.tm_min = tm.tm_min;
@@ -1274,28 +1389,33 @@ FilesystemFactory *OSystem_Android::getFilesystemFactory() {
 }
 
 void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,
-						int priority) {
+												int priority) {
 	s.add("ASSET", _asset_archive, priority, false);
 
-	JNIEnv* env = JNU_GetEnv();
+	JNIEnv *env = JNU_GetEnv();
 
 	jobjectArray array =
 		(jobjectArray)env->CallObjectMethod(_back_ptr, MID_getSysArchives);
+
 	if (env->ExceptionCheck()) {
 		warning("Error finding system archive path");
+
 		env->ExceptionDescribe();
 		env->ExceptionClear();
+
 		return;
 	}
 
 	jsize size = env->GetArrayLength(array);
 	for (jsize i = 0; i < size; ++i) {
 		jstring path_obj = (jstring)env->GetObjectArrayElement(array, i);
-		const char* path = env->GetStringUTFChars(path_obj, NULL);
-		if (path != NULL) {
+		const char *path = env->GetStringUTFChars(path_obj, 0);
+
+		if (path != 0) {
 			s.addDirectory(path, path, priority);
 			env->ReleaseStringUTFChars(path_obj, path);
 		}
+
 		env->DeleteLocalRef(path_obj);
 	}
 }
@@ -1316,8 +1436,8 @@ void OSystem_Android::logMessage(LogMessageType::Type type, const char *message)
 	}
 }
 
-static jint ScummVM_scummVMMain(JNIEnv* env, jobject self, jobjectArray args) {
-	OSystem_Android* cpp_obj = OSystem_Android::fromJavaObject(env, self);
+static jint ScummVM_scummVMMain(JNIEnv *env, jobject self, jobjectArray args) {
+	OSystem_Android *cpp_obj = OSystem_Android::fromJavaObject(env, self);
 
 	const int MAX_NARGS = 32;
 	int res = -1;
@@ -1325,42 +1445,58 @@ static jint ScummVM_scummVMMain(JNIEnv* env, jobject self, jobjectArray args) {
 	int argc = env->GetArrayLength(args);
 	if (argc > MAX_NARGS) {
 		JNU_ThrowByName(env, "java/lang/IllegalArgumentException",
-				"too many arguments");
+						"too many arguments");
 		return 0;
 	}
 
-	char* argv[MAX_NARGS];
-	int nargs;	// note use in cleanup loop below
+	char *argv[MAX_NARGS];
+
+	// note use in cleanup loop below
+	int nargs;
+
 	for (nargs = 0; nargs < argc; ++nargs) {
 		jstring arg = (jstring)env->GetObjectArrayElement(args, nargs);
-		if (arg == NULL) {
-			argv[nargs] = NULL;
+
+		if (arg == 0) {
+			argv[nargs] = 0;
 		} else {
-			const char* cstr = env->GetStringUTFChars(arg, NULL);
-			argv[nargs] = const_cast<char*>(cstr);
-			if (cstr == NULL)
-				goto cleanup;  // exception already thrown
+			const char *cstr = env->GetStringUTFChars(arg, 0);
+
+			argv[nargs] = const_cast<char *>(cstr);
+
+			// exception already thrown?
+			if (cstr == 0)
+				goto cleanup;
 		}
+
 		env->DeleteLocalRef(arg);
 	}
 
 	g_system = cpp_obj;
 	assert(g_system);
+
 	__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG,
-				"Entering scummvm_main with %d args", argc);
+						"Entering scummvm_main with %d args", argc);
+
 	res = scummvm_main(argc, argv);
+
 	__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "Exiting scummvm_main");
+
 	g_system->quit();
 
 cleanup:
 	nargs--;
+
 	for (int i = 0; i < nargs; ++i) {
-		if (argv[i] == NULL)
+		if (argv[i] == 0)
 			continue;
+
 		jstring arg = (jstring)env->GetObjectArrayElement(args, nargs);
-		if (arg == NULL)
-			// Exception already thrown
+
+		// Exception already thrown?
+		if (arg == 0)
 			return res;
+
 		env->ReleaseStringUTFChars(arg, argv[i]);
 		env->DeleteLocalRef(arg);
 	}
@@ -1370,93 +1506,105 @@ cleanup:
 
 #ifdef DYNAMIC_MODULES
 void AndroidPluginProvider::addCustomDirectories(Common::FSList &dirs) const {
-	OSystem_Android* g_system_android = (OSystem_Android*)g_system;
+	OSystem_Android *g_system_android = (OSystem_Android *)g_system;
 	g_system_android->addPluginDirectories(dirs);
 }
 #endif
 
-static void ScummVM_enableZoning(JNIEnv* env, jobject self, jboolean enable) {
-	OSystem_Android* cpp_obj = OSystem_Android::fromJavaObject(env, self);
+static void ScummVM_enableZoning(JNIEnv *env, jobject self, jboolean enable) {
+	OSystem_Android *cpp_obj = OSystem_Android::fromJavaObject(env, self);
 	cpp_obj->enableZoning(enable);
 }
 
-static void ScummVM_setSurfaceSize(JNIEnv* env, jobject self,
-								   jint width, jint height) {
-	OSystem_Android* cpp_obj = OSystem_Android::fromJavaObject(env, self);
+static void ScummVM_setSurfaceSize(JNIEnv *env, jobject self,
+									jint width, jint height) {
+	OSystem_Android *cpp_obj = OSystem_Android::fromJavaObject(env, self);
 	cpp_obj->setSurfaceSize(width, height);
 }
 
 const static JNINativeMethod gMethods[] = {
 	{ "create", "(Landroid/content/res/AssetManager;)V",
-	  (void*)ScummVM_create },
-	{ "nativeDestroy", "()V", (void*)ScummVM_nativeDestroy },
+		(void *)ScummVM_create },
+	{ "nativeDestroy", "()V",
+		(void *)ScummVM_nativeDestroy },
 	{ "scummVMMain", "([Ljava/lang/String;)I",
-	  (void*)ScummVM_scummVMMain },
+	 	(void *)ScummVM_scummVMMain },
 	{ "pushEvent", "(Lorg/inodes/gus/scummvm/Event;)V",
-	  (void*)ScummVM_pushEvent },
+		(void *)ScummVM_pushEvent },
 	{ "audioMixCallback", "([B)V",
-	  (void*)ScummVM_audioMixCallback },
+		(void *)ScummVM_audioMixCallback },
 	{ "setConfMan", "(Ljava/lang/String;I)V",
-	  (void*)ScummVM_setConfManInt },
+		(void *)ScummVM_setConfManInt },
 	{ "setConfMan", "(Ljava/lang/String;Ljava/lang/String;)V",
-	  (void*)ScummVM_setConfManString },
+		(void *)ScummVM_setConfManString },
 	{ "enableZoning", "(Z)V",
-	  (void*)ScummVM_enableZoning },
+		(void *)ScummVM_enableZoning },
 	{ "setSurfaceSize", "(II)V",
-	  (void*)ScummVM_setSurfaceSize },
+		(void *)ScummVM_setSurfaceSize },
 };
 
 JNIEXPORT jint JNICALL
-JNI_OnLoad(JavaVM* jvm, void* reserved) {
+JNI_OnLoad(JavaVM *jvm, void *reserved) {
 	cached_jvm = jvm;
 
-	JNIEnv* env;
-	if (jvm->GetEnv((void**)&env, JNI_VERSION_1_2))
+	JNIEnv *env;
+
+	if (jvm->GetEnv((void **)&env, JNI_VERSION_1_2))
 		return JNI_ERR;
 
 	jclass cls = env->FindClass("org/inodes/gus/scummvm/ScummVM");
-	if (cls == NULL)
+	if (cls == 0)
 		return JNI_ERR;
+
 	if (env->RegisterNatives(cls, gMethods, ARRAYSIZE(gMethods)) < 0)
 		return JNI_ERR;
 
 	FID_ScummVM_nativeScummVM = env->GetFieldID(cls, "nativeScummVM", "J");
-	if (FID_ScummVM_nativeScummVM == NULL)
+	if (FID_ScummVM_nativeScummVM == 0)
 		return JNI_ERR;
 
 	jclass event = env->FindClass("org/inodes/gus/scummvm/Event");
-	if (event == NULL)
+	if (event == 0)
 		return JNI_ERR;
+
 	FID_Event_type = env->GetFieldID(event, "type", "I");
-	if (FID_Event_type == NULL)
+	if (FID_Event_type == 0)
 		return JNI_ERR;
+
 	FID_Event_synthetic = env->GetFieldID(event, "synthetic", "Z");
-	if (FID_Event_synthetic == NULL)
+	if (FID_Event_synthetic == 0)
 		return JNI_ERR;
+
 	FID_Event_kbd_keycode = env->GetFieldID(event, "kbd_keycode", "I");
-	if (FID_Event_kbd_keycode == NULL)
+	if (FID_Event_kbd_keycode == 0)
 		return JNI_ERR;
+
 	FID_Event_kbd_ascii = env->GetFieldID(event, "kbd_ascii", "I");
-	if (FID_Event_kbd_ascii == NULL)
+	if (FID_Event_kbd_ascii == 0)
 		return JNI_ERR;
+
 	FID_Event_kbd_flags = env->GetFieldID(event, "kbd_flags", "I");
-	if (FID_Event_kbd_flags == NULL)
+	if (FID_Event_kbd_flags == 0)
 		return JNI_ERR;
+
 	FID_Event_mouse_x = env->GetFieldID(event, "mouse_x", "I");
-	if (FID_Event_mouse_x == NULL)
+	if (FID_Event_mouse_x == 0)
 		return JNI_ERR;
+
 	FID_Event_mouse_y = env->GetFieldID(event, "mouse_y", "I");
-	if (FID_Event_mouse_y == NULL)
+	if (FID_Event_mouse_y == 0)
 		return JNI_ERR;
+
 	FID_Event_mouse_relative = env->GetFieldID(event, "mouse_relative", "Z");
-	if (FID_Event_mouse_relative == NULL)
+	if (FID_Event_mouse_relative == 0)
 		return JNI_ERR;
 
 	cls = env->FindClass("java/lang/Object");
-	if (cls == NULL)
+	if (cls == 0)
 		return JNI_ERR;
+
 	MID_Object_wait = env->GetMethodID(cls, "wait", "()V");
-	if (MID_Object_wait == NULL)
+	if (MID_Object_wait == 0)
 		return JNI_ERR;
 
 	return JNI_VERSION_1_2;

@@ -38,7 +38,7 @@
 
 #include "backends/platform/android/asset-archive.h"
 
-extern JNIEnv* JNU_GetEnv();
+extern JNIEnv *JNU_GetEnv();
 
 // Must match android.content.res.AssetManager.ACCESS_*
 const jint ACCESS_UNKNOWN = 0;
@@ -47,23 +47,43 @@ const jint ACCESS_RANDOM = 1;
 // This might be useful to someone else.  Assumes markSupported() == true.
 class JavaInputStream : public Common::SeekableReadStream {
 public:
-	JavaInputStream(JNIEnv* env, jobject is);
+	JavaInputStream(JNIEnv *env, jobject is);
 	virtual ~JavaInputStream();
-	virtual bool eos() const { return _eos; }
-	virtual bool err() const { return _err; }
-	virtual void clearErr() { _eos = _err = false; }
+
+	virtual bool eos() const {
+		return _eos;
+	}
+
+	virtual bool err() const {
+		return _err;
+	}
+
+	virtual void clearErr() {
+		_eos = _err = false;
+	}
+
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
-	virtual int32 pos() const { return _pos; }
-	virtual int32 size() const { return _len; }
+
+	virtual int32 pos() const {
+		return _pos;
+	}
+
+	virtual int32 size() const {
+		return _len;
+	}
+
 	virtual bool seek(int32 offset, int whence = SEEK_SET);
+
 private:
-	void close(JNIEnv* env);
+	void close(JNIEnv *env);
+
 	jmethodID MID_mark;
 	jmethodID MID_available;
 	jmethodID MID_close;
 	jmethodID MID_read;
 	jmethodID MID_reset;
 	jmethodID MID_skip;
+
 	jobject _input_stream;
 	jsize _buflen;
 	jbyteArray _buf;
@@ -73,8 +93,10 @@ private:
 	bool _err;
 };
 
-JavaInputStream::JavaInputStream(JNIEnv* env, jobject is) :
-	_eos(false), _err(false), _pos(0)
+JavaInputStream::JavaInputStream(JNIEnv *env, jobject is) :
+	_eos(false),
+	_err(false),
+	_pos(0)
 {
 	_input_stream = env->NewGlobalRef(is);
 	_buflen = 8192;
@@ -97,53 +119,61 @@ JavaInputStream::JavaInputStream(JNIEnv* env, jobject is) :
 	// Mark start of stream, so we can reset back to it.
 	// readlimit is set to something bigger than anything we might
 	// want to seek within.
-	env->CallVoidMethod(_input_stream, MID_mark, 10*1024*1024);
+	env->CallVoidMethod(_input_stream, MID_mark, 10 * 1024 * 1024);
 	_len = env->CallIntMethod(_input_stream, MID_available);
 }
 
 JavaInputStream::~JavaInputStream() {
-	JNIEnv* env = JNU_GetEnv();
+	JNIEnv *env = JNU_GetEnv();
 	close(env);
+
 	env->DeleteGlobalRef(_buf);
 	env->DeleteGlobalRef(_input_stream);
 }
 
-void JavaInputStream::close(JNIEnv* env) {
+void JavaInputStream::close(JNIEnv *env) {
 	env->CallVoidMethod(_input_stream, MID_close);
+
 	if (env->ExceptionCheck())
 		env->ExceptionClear();
 }
 
 uint32 JavaInputStream::read(void *dataPtr, uint32 dataSize) {
-	JNIEnv* env = JNU_GetEnv();
+	JNIEnv *env = JNU_GetEnv();
 
 	if (_buflen < dataSize) {
 		_buflen = dataSize;
+	
 		env->DeleteGlobalRef(_buf);
 		_buf = static_cast<jbyteArray>(env->NewGlobalRef(env->NewByteArray(_buflen)));
 	}
 
 	jint ret = env->CallIntMethod(_input_stream, MID_read, _buf, 0, dataSize);
+
 	if (env->ExceptionCheck()) {
 		warning("Exception during JavaInputStream::read(%p, %d)",
 				dataPtr, dataSize);
+
 		env->ExceptionDescribe();
 		env->ExceptionClear();
+
 		_err = true;
 		ret = -1;
 	} else if (ret == -1) {
 		_eos = true;
 		ret = 0;
 	} else {
-		env->GetByteArrayRegion(_buf, 0, ret, static_cast<jbyte*>(dataPtr));
+		env->GetByteArrayRegion(_buf, 0, ret, static_cast<jbyte *>(dataPtr));
 		_pos += ret;
 	}
+
 	return ret;
 }
 
 bool JavaInputStream::seek(int32 offset, int whence) {
-	JNIEnv* env = JNU_GetEnv();
+	JNIEnv *env = JNU_GetEnv();
 	uint32 newpos;
+
 	switch (whence) {
 	case SEEK_SET:
 		newpos = offset;
@@ -165,36 +195,46 @@ bool JavaInputStream::seek(int32 offset, int whence) {
 	} else {
 		// Can't skip backwards, so jump back to start and skip from there.
 		env->CallVoidMethod(_input_stream, MID_reset);
+
 		if (env->ExceptionCheck()) {
 			warning("Failed to rewind to start of asset stream");
+
 			env->ExceptionDescribe();
 			env->ExceptionClear();
+
 			return false;
 		}
+
 		_pos = 0;
 		skip_bytes = newpos;
 	}
 
 	while (skip_bytes > 0) {
 		jlong ret = env->CallLongMethod(_input_stream, MID_skip, skip_bytes);
+
 		if (env->ExceptionCheck()) {
 			warning("Failed to skip %ld bytes into asset stream",
 					static_cast<long>(skip_bytes));
+
 			env->ExceptionDescribe();
 			env->ExceptionClear();
+
 			return false;
 		} else if (ret == 0) {
 			warning("InputStream->skip(%ld) didn't skip any bytes. Aborting seek.",
 					static_cast<long>(skip_bytes));
-			return false;  // No point looping forever...
+
+			// No point looping forever...
+			return false;
 		}
+
 		_pos += ret;
 		skip_bytes -= ret;
 	}
+
 	_eos = false;
 	return true;
 }
-
 
 // Must match android.content.res.AssetFileDescriptor.UNKNOWN_LENGTH
 const jlong UNKNOWN_LENGTH = -1;
@@ -203,17 +243,36 @@ const jlong UNKNOWN_LENGTH = -1;
 // worth optimising for.
 class AssetFdReadStream : public Common::SeekableReadStream {
 public:
-	AssetFdReadStream(JNIEnv* env, jobject assetfd);
+	AssetFdReadStream(JNIEnv *env, jobject assetfd);
 	virtual ~AssetFdReadStream();
-	virtual bool eos() const { return _eos; }
-	virtual bool err() const { return _err; }
-	virtual void clearErr() { _eos = _err = false; }
+
+	virtual bool eos() const {
+		return _eos;
+	}
+
+	virtual bool err() const {
+		return _err;
+	}
+
+	virtual void clearErr() {
+		_eos = _err = false;
+	}
+
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
-	virtual int32 pos() const { return _pos; }
-	virtual int32 size() const { return _declared_len; }
+
+	virtual int32 pos() const {
+		return _pos;
+	}
+
+	virtual int32 size() const {
+		return _declared_len;
+	}
+
 	virtual bool seek(int32 offset, int whence = SEEK_SET);
+
 private:
-	void close(JNIEnv* env);
+	void close(JNIEnv *env);
+
 	int _fd;
 	jmethodID MID_close;
 	jobject _assetfd;
@@ -224,8 +283,10 @@ private:
 	bool _err;
 };
 
-AssetFdReadStream::AssetFdReadStream(JNIEnv* env, jobject assetfd) :
-	_eos(false), _err(false), _pos(0)
+AssetFdReadStream::AssetFdReadStream(JNIEnv *env, jobject assetfd) :
+	_eos(false),
+	_err(false),
+	_pos(0)
 {
 	_assetfd = env->NewGlobalRef(assetfd);
 
@@ -248,17 +309,21 @@ AssetFdReadStream::AssetFdReadStream(JNIEnv* env, jobject assetfd) :
 	assert(MID_getFileDescriptor);
 	jobject javafd = env->CallObjectMethod(_assetfd, MID_getFileDescriptor);
 	assert(javafd);
+
 	jclass fd_cls = env->GetObjectClass(javafd);
 	jfieldID FID_descriptor = env->GetFieldID(fd_cls, "descriptor", "I");
 	assert(FID_descriptor);
+
 	_fd = env->GetIntField(javafd, FID_descriptor);
 }
 
 AssetFdReadStream::~AssetFdReadStream() {
-	JNIEnv* env = JNU_GetEnv();
+	JNIEnv *env = JNU_GetEnv();
 	env->CallVoidMethod(_assetfd, MID_close);
+
 	if (env->ExceptionCheck())
 		env->ExceptionClear();
+
 	env->DeleteGlobalRef(_assetfd);
 }
 
@@ -268,13 +333,16 @@ uint32 AssetFdReadStream::read(void *dataPtr, uint32 dataSize) {
 		if (dataSize > cap)
 			dataSize = cap;
 	}
+
 	int ret = ::read(_fd, dataPtr, dataSize);
+
 	if (ret == 0)
 		_eos = true;
 	else if (ret == -1)
 		_err = true;
 	else
 		_pos += ret;
+
 	return ret;
 }
 
@@ -282,42 +350,49 @@ bool AssetFdReadStream::seek(int32 offset, int whence) {
 	if (whence == SEEK_SET) {
 		if (_declared_len != UNKNOWN_LENGTH && offset > _declared_len)
 			offset = _declared_len;
+
 		offset += _start_off;
 	} else if (whence == SEEK_END && _declared_len != UNKNOWN_LENGTH) {
 		whence = SEEK_SET;
 		offset = _start_off + _declared_len + offset;
 	}
+
 	int ret = lseek(_fd, offset, whence);
+
 	if (ret == -1)
 		return false;
+
 	_pos = ret - _start_off;
 	_eos = false;
+
 	return true;
 }
 
 AndroidAssetArchive::AndroidAssetArchive(jobject am) {
-	JNIEnv* env = JNU_GetEnv();
+	JNIEnv *env = JNU_GetEnv();
 	_am = env->NewGlobalRef(am);
 
 	jclass cls = env->GetObjectClass(_am);
 	MID_open = env->GetMethodID(cls, "open",
 								"(Ljava/lang/String;I)Ljava/io/InputStream;");
 	assert(MID_open);
+
 	MID_openFd = env->GetMethodID(cls, "openFd",
-								  "(Ljava/lang/String;)Landroid/content/res/AssetFileDescriptor;");
+									"(Ljava/lang/String;)Landroid/content/res/AssetFileDescriptor;");
 	assert(MID_openFd);
+
 	MID_list = env->GetMethodID(cls, "list",
 								"(Ljava/lang/String;)[Ljava/lang/String;");
 	assert(MID_list);
 }
 
 AndroidAssetArchive::~AndroidAssetArchive() {
-	JNIEnv* env = JNU_GetEnv();
+	JNIEnv *env = JNU_GetEnv();
 	env->DeleteGlobalRef(_am);
 }
 
 bool AndroidAssetArchive::hasFile(const Common::String &name) {
-	JNIEnv* env = JNU_GetEnv();
+	JNIEnv *env = JNU_GetEnv();
 	jstring path = env->NewStringUTF(name.c_str());
 	jobject result = env->CallObjectMethod(_am, MID_open, path, ACCESS_UNKNOWN);
 	if (env->ExceptionCheck()) {
@@ -326,15 +401,18 @@ bool AndroidAssetArchive::hasFile(const Common::String &name) {
 		//env->ExceptionDescribe();
 		env->ExceptionClear();
 		env->DeleteLocalRef(path);
+
 		return false;
 	}
+
 	env->DeleteLocalRef(result);
 	env->DeleteLocalRef(path);
+
 	return true;
 }
 
 int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) {
-	JNIEnv* env = JNU_GetEnv();
+	JNIEnv *env = JNU_GetEnv();
 	Common::List<Common::String> dirlist;
 	dirlist.push_back("");
 
@@ -345,29 +423,36 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) {
 
 		jstring jpath = env->NewStringUTF(dir.c_str());
 		jobjectArray jpathlist = static_cast<jobjectArray>(env->CallObjectMethod(_am, MID_list, jpath));
+
 		if (env->ExceptionCheck()) {
 			warning("Error while calling AssetManager->list(%s). Ignoring.",
 					dir.c_str());
 			env->ExceptionDescribe();
 			env->ExceptionClear();
-			continue;  // May as well keep going ...
+
+			// May as well keep going ...
+			continue;
 		}
+
 		env->DeleteLocalRef(jpath);
 
 		for (jsize i = 0; i < env->GetArrayLength(jpathlist); ++i) {
 			jstring elem = (jstring)env->GetObjectArrayElement(jpathlist, i);
-			const char* p = env->GetStringUTFChars(elem, NULL);
+			const char *p = env->GetStringUTFChars(elem, 0);
 			Common::String thispath = dir;
+
 			if (!thispath.empty())
 				thispath += "/";
+
 			thispath += p;
 
 			// Assume files have a . in them, and directories don't
 			if (strchr(p, '.')) {
 				member_list.push_back(getMember(thispath));
 				++count;
-			} else
+			} else {
 				dirlist.push_back(thispath);
+			}
 
 			env->ReleaseStringUTFChars(elem, p);
 			env->DeleteLocalRef(elem);
@@ -384,14 +469,15 @@ Common::ArchiveMemberPtr AndroidAssetArchive::getMember(const Common::String &na
 }
 
 Common::SeekableReadStream *AndroidAssetArchive::createReadStreamForMember(const Common::String &path) const {
-	JNIEnv* env = JNU_GetEnv();
+	JNIEnv *env = JNU_GetEnv();
 	jstring jpath = env->NewStringUTF(path.c_str());
 
 	// Try openFd() first ...
 	jobject afd = env->CallObjectMethod(_am, MID_openFd, jpath);
+
 	if (env->ExceptionCheck())
 		env->ExceptionClear();
-	else if (afd != NULL) {
+	else if (afd != 0) {
 		// success :)
 		env->DeleteLocalRef(jpath);
 		return new AssetFdReadStream(env, afd);
@@ -399,13 +485,15 @@ Common::SeekableReadStream *AndroidAssetArchive::createReadStreamForMember(const
 
 	// ... and fallback to normal open() if that doesn't work
 	jobject is = env->CallObjectMethod(_am, MID_open, jpath, ACCESS_RANDOM);
+
 	if (env->ExceptionCheck()) {
 		// Assume FileNotFoundException
 		//warning("Error opening %s", path.c_str());
 		//env->ExceptionDescribe();
 		env->ExceptionClear();
 		env->DeleteLocalRef(jpath);
-		return NULL;
+
+		return 0;
 	}
 
 	return new JavaInputStream(env, is);

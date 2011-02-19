@@ -109,12 +109,12 @@ $(FILE_DEX_PLUGIN): $(CLASSES_PLUGIN)
 
 $(PATH_BUILD)/%/AndroidManifest.xml $(PATH_STAGE_PREFIX).%/res/values/strings.xml: $(PATH_DIST)/mkmanifest.pl $(srcdir)/configure $(PATH_DIST)/AndroidManifest.xml
 	$(PATH_DIST)/mkmanifest.pl --id=$* --configure=$(srcdir)/configure \
-	  --version-name=$(VERSION) \
-	  --version-code=$(ANDROID_PLUGIN_VERSIONCODE) \
-	  --stringres=$(PATH_STAGE_PREFIX).$*/res/values/strings.xml \
-	  --manifest=$(PATH_BUILD)/$*/AndroidManifest.xml \
-	  --master-manifest=$(PATH_DIST)/AndroidManifest.xml \
-	  --unpacklib=mylib/armeabi/lib$*.so
+		--version-name=$(VERSION) \
+		--version-code=$(ANDROID_PLUGIN_VERSIONCODE) \
+		--stringres=$(PATH_STAGE_PREFIX).$*/res/values/strings.xml \
+		--manifest=$(PATH_BUILD)/$*/AndroidManifest.xml \
+		--master-manifest=$(PATH_DIST)/AndroidManifest.xml \
+		--unpacklib=mylib/armeabi/lib$*.so
 
 $(PATH_STAGE_PREFIX).%/res/drawable/scummvm.png: $(PATH_RESOURCES)/drawable/scummvm.png
 	@$(MKDIR) -p $(@D)
@@ -165,7 +165,7 @@ androidrelease: $(addprefix release/, $(APK_MAIN) $(APK_PLUGINS))
 
 androidtest: $(APK_MAIN) $(APK_PLUGINS)
 	@set -e; for apk in $^; do \
-	  $(ADB) install -r $$apk; \
+		$(ADB) install -r $$apk; \
 	done
 	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.inodes.gus.scummvm/.Unpacker
 
@@ -173,7 +173,9 @@ androidtest: $(APK_MAIN) $(APK_PLUGINS)
 androiddistdebug: all
 	$(MKDIR) debug
 	$(CP) $(APK_MAIN) $(APK_PLUGINS) debug/
-	for i in $(DIST_FILES_DOCS); do sed 's/$$/\r/' < $$i > debug/`basename $$i`.txt; done
+	for i in $(DIST_FILES_DOCS); do \
+		sed 's/$$/\r/' < $$i > debug/`basename $$i`.txt; \
+	done
 
 .PHONY: androidrelease androidtest
 
