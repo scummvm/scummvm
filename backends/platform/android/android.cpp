@@ -809,7 +809,12 @@ void OSystem_Android::updateScreen() {
 		GLCALL(glPopMatrix());
 	}
 
+	int cs = _mouse_targetscale;
+
 	if (_show_overlay) {
+		// ugly, but the modern theme sets a wacko factor, only god knows why
+		cs = 1;
+
 		GLCALL(_overlay_texture->drawTexture(0, 0,
 												_egl_surface_width,
 												_egl_surface_height));
@@ -833,8 +838,8 @@ void OSystem_Android::updateScreen() {
 						xdiv(_egl_surface_height, texheight),
 						1 << 16));
 
-		GLCALL(glTranslatex(-_mouse_hotspot.x << 16,
-							-_mouse_hotspot.y << 16,
+		GLCALL(glTranslatex((-_mouse_hotspot.x * cs) << 16,
+							(-_mouse_hotspot.y * cs) << 16,
 							0));
 
 		// Note the extra half texel to position the mouse in
@@ -843,10 +848,7 @@ void OSystem_Android::updateScreen() {
 		GLCALL(glTranslatex((mouse.x << 16) | 1 << 15,
 							(mouse.y << 16) | 1 << 15, 0));
 
-		// Mouse targetscale just seems to make the cursor way
-		// too big :/
-		//GLCALL(glScalex(_mouse_targetscale << 16, _mouse_targetscale << 16,
-		//					1 << 16));
+		GLCALL(glScalex(cs << 16, cs << 16, 1 << 16));
 
 		_mouse_texture->drawTexture();
 
