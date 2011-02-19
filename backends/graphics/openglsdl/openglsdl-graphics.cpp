@@ -195,6 +195,18 @@ void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
 	int scaledX = x;
 	int scaledY = y;
 
+	int16 currentX = _cursorState.x;
+	int16 currentY = _cursorState.y;
+
+	adjustMousePosition(currentX, currentY);
+
+	// Do not adjust the real screen position, when the current game / overlay
+	// coordinates match the requested coordinates. This avoids a slight
+	// movement which might occur otherwise when the mouse is at a subpixel
+	// position.
+	if (x == currentX && y == currentY)
+		return;
+
 	if (_videoMode.mode == OpenGL::GFX_NORMAL) {
 		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
 			scaledX = scaledX * _videoMode.hardwareWidth / _videoMode.overlayWidth;
