@@ -185,16 +185,16 @@ const Graphics::PixelFormat &Palette::colorFormat() const {
 }
 
 void Palette::setGlobalOSystemPalette() const {
-	byte buf[256 * 4]; // Allocate space for the largest possible palette
+	byte buf[256 * 3]; // Allocate space for the largest possible palette
 	// The color format used by OSystem's setPalette-function:
-	save(buf, sizeof(buf), Graphics::PixelFormat(4, 8, 8, 8, 0, 0, 8, 16, 0), CINE_LITTLE_ENDIAN);
+	save(buf, sizeof(buf), Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0), CINE_LITTLE_ENDIAN);
 
 	if (g_cine->getPlatform() == Common::kPlatformAmiga && colorCount() == 16) {
 		// The Amiga version of Future Wars does use the upper 16 colors for a darkened
 		// game palette to allow transparent dialog boxes. To support that in our code
 		// we do calculate that palette over here and append it to the screen palette.
-		for (uint i = 0; i < 16 * 4; ++i)
-			buf[16 * 4 + i] = buf[i] >> 1;
+		for (uint i = 0; i < 16 * 3; ++i)
+			buf[16 * 3 + i] = buf[i] >> 1;
 
 		g_system->getPaletteManager()->setPalette(buf, 0, colorCount() * 2);
 	} else {

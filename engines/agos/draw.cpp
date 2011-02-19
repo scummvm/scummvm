@@ -779,8 +779,8 @@ void AGOSEngine::setMoveRect(uint16 x, uint16 y, uint16 width, uint16 height) {
 void AGOSEngine::displayScreen() {
 	if (_fastFadeInFlag == 0 && _paletteFlag == 1) {
 		_paletteFlag = 0;
-		if (memcmp(_displayPalette, _currentPalette, 1024)) {
-			memcpy(_currentPalette, _displayPalette, 1024);
+		if (memcmp(_displayPalette, _currentPalette, sizeof(_currentPalette))) {
+			memcpy(_currentPalette, _displayPalette, sizeof(_displayPalette));
 			_system->getPaletteManager()->setPalette(_displayPalette, 0, 256);
 		}
 	}
@@ -860,7 +860,7 @@ void AGOSEngine::fastFadeIn() {
 		slowFadeIn();
 	} else {
 		_paletteFlag = false;
-		memcpy(_currentPalette, _displayPalette, 1024);
+		memcpy(_currentPalette, _displayPalette, sizeof(_displayPalette));
 		_system->getPaletteManager()->setPalette(_displayPalette, 0, _fastFadeInFlag);
 		_fastFadeInFlag = 0;
 	}
@@ -879,15 +879,15 @@ void AGOSEngine::slowFadeIn() {
 		src = _displayPalette;
 		dst = _currentPalette;
 
-		for (p = _fastFadeInFlag; p !=0; p -= 3) {
+		for (p = _fastFadeInFlag; p != 0; p -= 3) {
 			if (src[0] >= c)
 				dst[0] += 4;
 			if (src[1] >= c)
 				dst[1] += 4;
 			if (src[2] >= c)
 				dst[2] += 4;
-			src += 4;
-			dst += 4;
+			src += 3;
+			dst += 3;
 		}
 		_system->getPaletteManager()->setPalette(_currentPalette, 0, _fastFadeCount);
 		delay(5);

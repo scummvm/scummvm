@@ -102,7 +102,7 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 
 	for (uint i = start; i < start + num; ++i) {
 		_palette[i] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(b[0], b[1], b[2]);
-		b += 4;
+		b += 3;
 	}
 
 	dirtyFullScreen();
@@ -114,8 +114,7 @@ void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
 
 	for (uint i = start; i < start + num; ++i) {
 		Graphics::colorToRGB<Graphics::ColorMasks<565> >(_palette[i], b[0], b[1], b[2]);
-		b[3] = 0xFF;
-		b += 4;
+		b += 3;
 	}
 }
 

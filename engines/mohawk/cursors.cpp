@@ -38,8 +38,8 @@
 namespace Mohawk {
 
 static const byte s_bwPalette[] = {
-	0x00, 0x00, 0x00,	0x00,	// Black
-	0xFF, 0xFF, 0xFF,	0x00	// White
+	0x00, 0x00, 0x00,	// Black
+	0xFF, 0xFF, 0xFF	// White
 };
 
 void CursorManager::showCursor() {
@@ -153,7 +153,16 @@ void MystCursorManager::setCursor(uint16 id) {
 	// Myst ME stores some cursors as 24bpp images instead of 8bpp
 	if (surface->bytesPerPixel == 1) {
 		CursorMan.replaceCursor((byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, 0);
-		CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
+
+		const byte *srcPal = mhkSurface->getPalette();
+		byte pal[3*256];
+		for (uint i = 0; i < 256; ++i) {
+			pal[i * 3 + 0] = srcPal[i * 4 + 0];
+			pal[i * 3 + 1] = srcPal[i * 4 + 1];
+			pal[i * 3 + 2] = srcPal[i * 4 + 2];
+		}
+
+		CursorMan.replaceCursorPalette(pal, 0, 256);
 	} else {
 		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 		CursorMan.replaceCursor((byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255), 1, &pixelFormat);
@@ -174,92 +183,92 @@ void RivenCursorManager::setCursor(uint16 id) {
 	case 1002:
 		// Zip Mode
 		CursorMan.replaceCursor(s_zipModeCursor, 16, 16, 8, 8, 0);
-		CursorMan.replaceCursorPalette(s_zipModeCursorPalette, 1, ARRAYSIZE(s_zipModeCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_zipModeCursorPalette, 1, ARRAYSIZE(s_zipModeCursorPalette) / 3);
 		break;
 	case 2003:
 		// Hand Over Object
 		CursorMan.replaceCursor(s_objectHandCursor, 16, 16, 8, 8, 0);
-		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 3);
 		break;
 	case 2004:
 		// Grabbing/Using Object
 		CursorMan.replaceCursor(s_grabbingHandCursor, 13, 13, 6, 6, 0);
-		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 3);
 		break;
 	case 3000:
 		// Standard Hand
 		CursorMan.replaceCursor(s_standardHandCursor, 15, 16, 6, 0, 0);
-		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 3);
 		break;
 	case 3001:
 		// Pointing Left
 		CursorMan.replaceCursor(s_pointingLeftCursor, 15, 13, 0, 3, 0);
-		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 3);
 		break;
 	case 3002:
 		// Pointing Right
 		CursorMan.replaceCursor(s_pointingRightCursor, 15, 13, 14, 3, 0);
-		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 3);
 		break;
 	case 3003:
 		// Pointing Down (Palm Up)
 		CursorMan.replaceCursor(s_pointingDownCursorPalmUp, 13, 16, 3, 15, 0);
-		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 3);
 		break;
 	case 3004:
 		// Pointing Up (Palm Up)
 		CursorMan.replaceCursor(s_pointingUpCursorPalmUp, 13, 16, 3, 0, 0);
-		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 3);
 		break;
 	case 3005:
 		// Pointing Left (Curved)
 		CursorMan.replaceCursor(s_pointingLeftCursorBent, 15, 13, 0, 5, 0);
-		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 3);
 		break;
 	case 3006:
 		// Pointing Right (Curved)
 		CursorMan.replaceCursor(s_pointingRightCursorBent, 15, 13, 14, 5, 0);
-		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 3);
 		break;
 	case 3007:
 		// Pointing Down (Palm Down)
 		CursorMan.replaceCursor(s_pointingDownCursorPalmDown, 15, 16, 7, 15, 0);
-		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_handCursorPalette, 1, ARRAYSIZE(s_handCursorPalette) / 3);
 		break;
 	case 4001:
 		// Red Marble
 		CursorMan.replaceCursor(s_redMarbleCursor, 12, 12, 5, 5, 0);
-		CursorMan.replaceCursorPalette(s_redMarbleCursorPalette, 1, ARRAYSIZE(s_redMarbleCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_redMarbleCursorPalette, 1, ARRAYSIZE(s_redMarbleCursorPalette) / 3);
 		break;
 	case 4002:
 		// Orange Marble
 		CursorMan.replaceCursor(s_orangeMarbleCursor, 12, 12, 5, 5, 0);
-		CursorMan.replaceCursorPalette(s_orangeMarbleCursorPalette, 1, ARRAYSIZE(s_orangeMarbleCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_orangeMarbleCursorPalette, 1, ARRAYSIZE(s_orangeMarbleCursorPalette) / 3);
 		break;
 	case 4003:
 		// Yellow Marble
 		CursorMan.replaceCursor(s_yellowMarbleCursor, 12, 12, 5, 5, 0);
-		CursorMan.replaceCursorPalette(s_yellowMarbleCursorPalette, 1, ARRAYSIZE(s_yellowMarbleCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_yellowMarbleCursorPalette, 1, ARRAYSIZE(s_yellowMarbleCursorPalette) / 3);
 		break;
 	case 4004:
 		// Green Marble
 		CursorMan.replaceCursor(s_greenMarbleCursor, 12, 12, 5, 5, 0);
-		CursorMan.replaceCursorPalette(s_greenMarbleCursorPalette, 1, ARRAYSIZE(s_greenMarbleCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_greenMarbleCursorPalette, 1, ARRAYSIZE(s_greenMarbleCursorPalette) / 3);
 		break;
 	case 4005:
 		// Blue Marble
 		CursorMan.replaceCursor(s_blueMarbleCursor, 12, 12, 5, 5, 0);
-		CursorMan.replaceCursorPalette(s_blueMarbleCursorPalette, 1, ARRAYSIZE(s_blueMarbleCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_blueMarbleCursorPalette, 1, ARRAYSIZE(s_blueMarbleCursorPalette) / 3);
 		break;
 	case 4006:
 		// Violet Marble
 		CursorMan.replaceCursor(s_violetMarbleCursor, 12, 12, 5, 5, 0);
-		CursorMan.replaceCursorPalette(s_violetMarbleCursorPalette, 1, ARRAYSIZE(s_violetMarbleCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_violetMarbleCursorPalette, 1, ARRAYSIZE(s_violetMarbleCursorPalette) / 3);
 		break;
 	case 5000:
 		// Pellet
 		CursorMan.replaceCursor(s_pelletCursor, 8, 8, 4, 4, 0);
-		CursorMan.replaceCursorPalette(s_pelletCursorPalette, 1, ARRAYSIZE(s_pelletCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(s_pelletCursorPalette, 1, ARRAYSIZE(s_pelletCursorPalette) / 3);
 		break;
 	case 9000:
 		// Hide Cursor
@@ -302,7 +311,16 @@ void NECursorManager::setCursor(uint16 id) {
 			if (cursors[i].id == id) {
 				Common::NECursor *cursor = cursors[i].cursors[0];
 				CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), 0);
-				CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
+
+				const byte *srcPal = cursor->getPalette();
+				byte pal[3 * 256];
+				for (uint j = 0; j < 256; ++j) {
+					pal[j * 3 + 0] = srcPal[j * 4 + 0];
+					pal[j * 3 + 1] = srcPal[j * 4 + 1];
+					pal[j * 3 + 2] = srcPal[j * 4 + 2];
+				}
+
+				CursorMan.replaceCursorPalette(pal, 0, 256);
 				return;
 			}
 		}

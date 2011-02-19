@@ -431,7 +431,7 @@ static byte convertMacGammaToSCIGamma(int comp) {
 
 void GfxPalette::copySysPaletteToScreen() {
 	// just copy palette to system
-	byte bpal[4 * 256];
+	byte bpal[3 * 256];
 
 	// Get current palette, update it and put back
 	g_system->getPaletteManager()->grabPalette(bpal, 0, 256);
@@ -439,14 +439,14 @@ void GfxPalette::copySysPaletteToScreen() {
 	for (int16 i = 0; i < 256; i++) {
 		if (colorIsFromMacClut(i)) {
 			// If we've got a Mac CLUT, override the SCI palette with its non-black colors
-			bpal[i * 4    ] = convertMacGammaToSCIGamma(_macClut[i * 3    ]);
-			bpal[i * 4 + 1] = convertMacGammaToSCIGamma(_macClut[i * 3 + 1]);
-			bpal[i * 4 + 2] = convertMacGammaToSCIGamma(_macClut[i * 3 + 2]);
+			bpal[i * 3    ] = convertMacGammaToSCIGamma(_macClut[i * 3    ]);
+			bpal[i * 3 + 1] = convertMacGammaToSCIGamma(_macClut[i * 3 + 1]);
+			bpal[i * 3 + 2] = convertMacGammaToSCIGamma(_macClut[i * 3 + 2]);
 		} else if (_sysPalette.colors[i].used != 0) {
 			// Otherwise, copy to the screen
-			bpal[i * 4    ] = CLIP(_sysPalette.colors[i].r * _sysPalette.intensity[i] / 100, 0, 255);
-			bpal[i * 4 + 1] = CLIP(_sysPalette.colors[i].g * _sysPalette.intensity[i] / 100, 0, 255);
-			bpal[i * 4 + 2] = CLIP(_sysPalette.colors[i].b * _sysPalette.intensity[i] / 100, 0, 255);
+			bpal[i * 3    ] = CLIP(_sysPalette.colors[i].r * _sysPalette.intensity[i] / 100, 0, 255);
+			bpal[i * 3 + 1] = CLIP(_sysPalette.colors[i].g * _sysPalette.intensity[i] / 100, 0, 255);
+			bpal[i * 3 + 2] = CLIP(_sysPalette.colors[i].b * _sysPalette.intensity[i] / 100, 0, 255);
 		}
 	}
 
@@ -609,14 +609,14 @@ void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
 
 void GfxPalette::kernelSyncScreenPalette() {
 	// just copy palette to system
-	byte bpal[4 * 256];
+	byte bpal[3 * 256];
 
 	// Get current palette, update it and put back
 	g_system->getPaletteManager()->grabPalette(bpal, 0, 256);
 	for (int16 i = 1; i < 255; i++) {
-		_sysPalette.colors[i].r = bpal[i * 4];
-		_sysPalette.colors[i].g = bpal[i * 4 + 1];
-		_sysPalette.colors[i].b = bpal[i * 4 + 2];
+		_sysPalette.colors[i].r = bpal[i * 3];
+		_sysPalette.colors[i].g = bpal[i * 3 + 1];
+		_sysPalette.colors[i].b = bpal[i * 3 + 2];
 	}
 }
 

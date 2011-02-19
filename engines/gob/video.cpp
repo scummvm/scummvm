@@ -345,7 +345,7 @@ void Video::drawPackedSprite(const char *path, Surface &dest, int width) {
 
 void Video::setPalElem(int16 index, char red, char green, char blue,
 		int16 unused, int16 vidMode) {
-	byte pal[4];
+	byte pal[3];
 
 	_vm->validateVideoMode(vidMode);
 
@@ -359,14 +359,14 @@ void Video::setPalElem(int16 index, char red, char green, char blue,
 }
 
 void Video::setPalette(PalDesc *palDesc) {
-	byte pal[1024];
+	byte pal[768];
 	int16 numcolors;
 
 	_vm->validateVideoMode(_vm->_global->_videoMode);
 
 	numcolors = _vm->_global->_setAllPalette ? 256 : 16;
 	for (int i = 0; i < numcolors; i++)
-		setPalColor(pal + i * 4, palDesc->vgaPal[i]);
+		setPalColor(pal + i * 3, palDesc->vgaPal[i]);
 
 	if (_vm->getPixelFormat().bytesPerPixel == 1)
 		g_system->getPaletteManager()->setPalette(pal, 0, numcolors);
@@ -374,14 +374,14 @@ void Video::setPalette(PalDesc *palDesc) {
 
 void Video::setFullPalette(PalDesc *palDesc) {
 	if (_vm->_global->_setAllPalette) {
-		byte pal[1024];
+		byte pal[768];
 		Color *colors = palDesc->vgaPal;
 
 		for (int i = 0; i < 256; i++) {
 			_vm->_global->_redPalette[i] = colors[i].red;
 			_vm->_global->_greenPalette[i] = colors[i].green;
 			_vm->_global->_bluePalette[i] = colors[i].blue;
-			setPalColor(pal + i * 4, colors[i]);
+			setPalColor(pal + i * 3, colors[i]);
 		}
 
 		if (_vm->getPixelFormat().bytesPerPixel == 1)

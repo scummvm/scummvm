@@ -113,8 +113,8 @@ OSystem_N64::OSystem_N64() {
 	// Clear palette array
 	_screenPalette = (uint16*)memalign(8, 256 * sizeof(uint16));
 #ifndef N64_EXTREME_MEMORY_SAVING
-	_screenExactPalette = (uint32*)memalign(8, 256 * sizeof(uint32));
-	memset(_screenExactPalette, 0, 256 * sizeof(uint32));
+	_screenExactPalette = (uint8*)memalign(8, 256 * 3);
+	memset(_screenExactPalette, 0, 256 * 3);
 #endif
 	memset(_screenPalette, 0, 256 * sizeof(uint16));
 	memset(_cursorPalette, 0, 256 * sizeof(uint16));
@@ -350,12 +350,13 @@ int16 OSystem_N64::getWidth() {
 }
 
 void OSystem_N64::setPalette(const byte *colors, uint start, uint num) {
+#ifndef N64_EXTREME_MEMORY_SAVING
+	memcpy(_screenExactPalette + start * 3, colors, num * 3);
+#endif
+
 	for (uint i = 0; i < num; ++i) {
 		_screenPalette[start + i] = colRGB888toBGR555(colors[2], colors[1], colors[0]);
-#ifndef N64_EXTREME_MEMORY_SAVING
-		_screenExactPalette[start + i] = *((uint32*)(colors));
-#endif
-		colors += 4;
+		colors += 3;
 	}
 
 	// If cursor uses the game palette, we need to rebuild the hicolor buffer
@@ -413,10 +414,9 @@ void OSystem_N64::grabPalette(byte *colors, uint start, uint num) {
 		*colors++ = ((color & 0x1F) << 3);
 		*colors++ = (((color >> 5) & 0x1F) << 3);
 		*colors++ = (((color >> 10) & 0x1F) << 3);
-		*colors++ = 0;
 	}
 #else
-	memcpy(colors, (uint8*)(_screenExactPalette + start), num * 4);
+	memcpy(colors, _screenExactPalette + start * 3, num * 3);
 #endif
 
 	return;
@@ -425,7 +425,7 @@ void OSystem_N64::grabPalette(byte *colors, uint start, uint num) {
 void OSystem_N64::setCursorPalette(const byte *colors, uint start, uint num) {
 	for (uint i = 0; i < num; ++i) {
 		_cursorPalette[start + i] = colRGB888toBGR555(colors[2], colors[1], colors[0]);
-		colors += 4;
+		colors += 3;
 	}
 
 	_cursorPaletteDisabled = false;

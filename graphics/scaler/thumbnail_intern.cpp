@@ -108,7 +108,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 
 	byte *palette = 0;
 	if (screenFormat.bytesPerPixel == 1) {
-		palette = new byte[256 * 4];
+		palette = new byte[256 * 3];
 		assert(palette);
 		g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 	}
@@ -118,9 +118,9 @@ static bool grabScreen565(Graphics::Surface *surf) {
 			byte r = 0, g = 0, b = 0;
 
 			if (screenFormat.bytesPerPixel == 1) {
-				r = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4];
-				g = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 1];
-				b = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 2];
+				r = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 3];
+				g = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 3 + 1];
+				b = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 3 + 2];
 			} else if (screenFormat.bytesPerPixel == 2) {
 				uint16 col = READ_UINT16(screen->getBasePtr(x, y));
 				screenFormat.colorToRGB(col, r, g, b);

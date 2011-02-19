@@ -298,9 +298,7 @@ void CUP_Player::handleSFXB(Common::SeekableReadStream &dataStream, uint32 dataS
 }
 
 void CUP_Player::handleRGBS(Common::SeekableReadStream &dataStream, uint32 dataSize) {
-	for (int i = 0; i < 256; i++) {
-		dataStream.read(&_paletteData[i * 4], 3);
-	}
+	dataStream.read(_paletteData, 256 * 3);
 	_paletteChanged = true;
 }
 

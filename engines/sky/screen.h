@@ -100,8 +100,8 @@ private:
 	OSystem *_system;
 	Disk *_skyDisk;
 	SkyCompact *_skyCompact;
-	static uint8 _top16Colours[16*3];
-	uint8 _palette[1024];
+	static uint8 _top16Colours[16 * 3];
+	uint8 _palette[VGA_COLOURS * 3];
 	uint32 _currentPalette;
 	uint8 _seqGrid[20 * 12];
 
@@ -121,7 +121,7 @@ private:
 
 	//- more regular screen.asm + layer.asm routines
 	void convertPalette(uint8 *inPal, uint8* outPal);
-	void palette_fadedown_helper(uint32 *pal, uint num);
+	void palette_fadedown_helper(uint8 *pal, uint num);
 
 	//- sprite.asm routines
 	// fixme: get rid of these globals

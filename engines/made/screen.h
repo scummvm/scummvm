@@ -200,7 +200,6 @@ protected:
 	bool _screenLock;
 	bool _paletteLock;
 
-	byte *_screenPalette;
 	byte *_palette, *_newPalette;
 	int _paletteColorCount, _oldPaletteColorCount;
 	bool _paletteInitialized, _needPalette;

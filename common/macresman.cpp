@@ -638,23 +638,21 @@ void MacResManager::convertCrsrCursor(byte *data, int datasize, byte **cursor, i
 	dis.readUint16BE(); // ctFlag
 	ctSize = dis.readUint16BE() + 1;
 
-	*palette = (byte *)malloc(ctSize * 4);
+	*palette = (byte *)malloc(ctSize * 3);
 
 	// Read just high byte of 16-bit color
 	for (int c = 0; c < ctSize; c++) {
 		// We just use indices 0..ctSize, so ignore color ID
 		dis.readUint16BE(); // colorID[c]
 
-		palette[0][c * 4 + 0] = dis.readByte();
+		palette[0][c * 3 + 0] = dis.readByte();
 		dis.readByte();
 
-		palette[0][c * 4 + 1] = dis.readByte();
+		palette[0][c * 3 + 1] = dis.readByte();
 		dis.readByte();
 
-		palette[0][c * 4 + 2] = dis.readByte();
+		palette[0][c * 3 + 2] = dis.readByte();
 		dis.readByte();
-
-		palette[0][c * 4 + 3] = 0;
 	}
 
 	*palSize = ctSize;

@@ -290,18 +290,12 @@ bool TeenAgentEngine::showCDLogo() {
 		return true;
 
 	byte bg[0xfa00];
-	byte palette[0x400];
+	byte palette[3*256];
 
 	cdlogo.read(bg, sizeof(bg));
-	memset(palette, 0, sizeof(palette));
-
-	for(uint c = 0; c < 0x100; ++c) {
-		uint idx = c * 4;
-		cdlogo.read(palette + idx, 3);
-		palette[idx] *= 4;
-		palette[idx + 1] *= 4;
-		palette[idx + 2] *= 4;
-	}
+	cdlogo.read(palette, sizeof(palette));
+	for (uint c = 0; c < 3*256; ++c)
+		palette[c] *= 4;
 	_system->getPaletteManager()->setPalette(palette, 0, 0x100);
 	_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
 	_system->updateScreen();
@@ -323,22 +317,16 @@ bool TeenAgentEngine::showLogo() {
 		return true;
 
 	byte bg[0xfa00];
-	byte palette[0x400];
+	byte palette[3*256];
 
 	Common::ScopedPtr<Common::SeekableReadStream> frame(logo.getStream(1));
 	if (!frame)
 		return true;
 
 	frame->read(bg, sizeof(bg));
-	memset(palette, 0, sizeof(palette));
-
-	for(uint c = 0; c < 0x100; ++c) {
-		uint idx = c * 4;
-		frame->read(palette + idx, 3);
-		palette[idx] *= 4;
-		palette[idx + 1] *= 4;
-		palette[idx + 2] *= 4;
-	}
+	frame->read(palette, sizeof(palette));
+	for (uint c = 0; c < 3*256; ++c)
+		palette[c] *= 4;
 	_system->getPaletteManager()->setPalette(palette, 0, 0x100);
 
 	uint n = logo.fileCount();
@@ -375,16 +363,12 @@ bool TeenAgentEngine::showMetropolis() {
 	FilePack varia;
 	varia.open("varia.res");
 
-	byte palette[0x400];
-	memset(palette, 0, sizeof(palette));
+	byte palette[3*256];
 	{
 		Common::ScopedPtr<Common::SeekableReadStream> s(varia.getStream(5));
-		for(uint c = 0; c < 0x400; c += 4) {
-			s->read(palette + c, 3);
+		s->read(palette, sizeof(palette));
+		for (uint c = 0; c < 3*256; ++c)
 			palette[c] *= 4;
-			palette[c + 1] *= 4;
-			palette[c + 2] *= 4;
-		}
 	}
 
 	_system->getPaletteManager()->setPalette(palette, 0, 0x100);

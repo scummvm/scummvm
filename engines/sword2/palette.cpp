@@ -53,7 +53,8 @@ void Screen::startNewPalette() {
 	if (!Sword2Engine::isPsx())
 		memcpy(_paletteMatch, _vm->fetchPaletteMatchTable(screenFile), PALTABLESIZE);
 
-	setPalette(0, 256, _vm->fetchPalette(screenFile), RDPAL_FADE);
+	_vm->fetchPalette(screenFile, _palette);
+	setPalette(0, 256, _palette, RDPAL_FADE);
 
 	// Indicating that it's a screen palette
 	_lastPaletteRes = 0;
@@ -110,12 +111,17 @@ void Screen::setFullPalette(int32 palRes) {
 		// palettes have a bright colour 0 although it should come out
 		// as black in the game!
 
-		pal[0] = 0;
-		pal[1] = 0;
-		pal[2] = 0;
-		pal[3] = 0;
+		_palette[0] = 0;
+		_palette[1] = 0;
+		_palette[2] = 0;
 
-		setPalette(0, 256, pal, RDPAL_INSTANT);
+		for (uint i = 4, j = 3; i < 4 * 256; i += 4, j += 3) {
+			_palette[j + 0] = pal[i + 0];
+			_palette[j + 1] = pal[i + 1];
+			_palette[j + 2] = pal[i + 2];
+		}
+
+		setPalette(0, 256, _palette, RDPAL_INSTANT);
 		_vm->_resman->closeResource(palRes);
 	} else {
 		if (_thisScreen.background_layer_id) {
@@ -126,7 +132,8 @@ void Screen::setFullPalette(int32 palRes) {
 			if (!Sword2Engine::isPsx())
 				memcpy(_paletteMatch, _vm->fetchPaletteMatchTable(data), PALTABLESIZE);
 
-			setPalette(0, 256, _vm->fetchPalette(data), RDPAL_INSTANT);
+			_vm->fetchPalette(data, _palette);
+			setPalette(0, 256, _palette, RDPAL_INSTANT);
 			_vm->_resman->closeResource(_thisScreen.background_layer_id);
 		} else
 			error("setFullPalette(0) called, but no current screen available");
@@ -162,7 +169,7 @@ uint8 Screen::quickMatch(uint8 r, uint8 g, uint8 b) {
 void Screen::setPalette(int16 startEntry, int16 noEntries, byte *colourTable, uint8 fadeNow) {
 	assert(noEntries > 0);
 
-	memcpy(&_palette[4 * startEntry], colourTable, noEntries * 4);
+	memmove(&_palette[3 * startEntry], colourTable, noEntries * 3);
 
 	if (fadeNow == RDPAL_INSTANT) {
 		setSystemPalette(_palette, startEntry, noEntries);
@@ -232,7 +239,7 @@ void Screen::waitForFade() {
 
 void Screen::fadeServer() {
 	static int32 previousTime = 0;
-	byte fadePalette[256 * 4];
+	byte fadePalette[256 * 3];
 	byte *newPalette = fadePalette;
 	int32 currentTime;
 	int16 fadeMultiplier;
@@ -257,9 +264,9 @@ void Screen::fadeServer() {
 		} else {
 			fadeMultiplier = (int16)(((int32)(currentTime - _fadeStartTime) * 256) / _fadeTotalTime);
 			for (i = 0; i < 256; i++) {
-				newPalette[i * 4 + 0] = (_palette[i * 4 + 0] * fadeMultiplier) >> 8;
-				newPalette[i * 4 + 1] = (_palette[i * 4 + 1] * fadeMultiplier) >> 8;
-				newPalette[i * 4 + 2] = (_palette[i * 4 + 2] * fadeMultiplier) >> 8;
+				newPalette[i * 3 + 0] = (_palette[i * 3 + 0] * fadeMultiplier) >> 8;
+				newPalette[i * 3 + 1] = (_palette[i * 3 + 1] * fadeMultiplier) >> 8;
+				newPalette[i * 3 + 2] = (_palette[i * 3 + 2] * fadeMultiplier) >> 8;
 			}
 		}
 	} else {
@@ -269,9 +276,9 @@ void Screen::fadeServer() {
 		} else {
 			fadeMultiplier = (int16)(((int32)(_fadeTotalTime - (currentTime - _fadeStartTime)) * 256) / _fadeTotalTime);
 			for (i = 0; i < 256; i++) {
-				newPalette[i * 4 + 0] = (_palette[i * 4 + 0] * fadeMultiplier) >> 8;
-				newPalette[i * 4 + 1] = (_palette[i * 4 + 1] * fadeMultiplier) >> 8;
-				newPalette[i * 4 + 2] = (_palette[i * 4 + 2] * fadeMultiplier) >> 8;
+				newPalette[i * 3 + 0] = (_palette[i * 3 + 0] * fadeMultiplier) >> 8;
+				newPalette[i * 3 + 1] = (_palette[i * 3 + 1] * fadeMultiplier) >> 8;
+				newPalette[i * 3 + 2] = (_palette[i * 3 + 2] * fadeMultiplier) >> 8;
 			}
 		}
 	}
@@ -284,9 +291,9 @@ void Screen::setSystemPalette(const byte *colors, uint start, uint num) {
 	const byte *palette;
 
 	if (_dimPalette) {
-		byte pal[256 * 4];
+		byte pal[256 * 3];
 
-		for (uint i = start * 4; i < 4 * (start + num); i++)
+		for (uint i = start * 3; i < 3 * (start + num); i++)
 			pal[i] = colors[i] / 2;
 
 		palette = pal;

@@ -52,8 +52,8 @@ static const MouseCursor mouseCursors[] = {
 CursorType currentCursor = CURSOR_NOMOUSE;
 
 static const byte cursorPalette[] = {
-	0, 0, 0, 0xff,
-	0xff, 0xff, 0xff, 0xff
+	0, 0, 0,
+	0xff, 0xff, 0xff
 };
 
 void changeCursor(CursorType eType) {

@@ -578,13 +578,13 @@ void AGOSEngine_Simon1::os1_specialFade() {
 
 	for (i = 32; i != 0; --i) {
 		paletteFadeOut(_currentPalette, 32, 8);
-		paletteFadeOut(_currentPalette + 4 * 48, 144, 8);
-		paletteFadeOut(_currentPalette + 4 * 208, 48, 8);
+		paletteFadeOut(_currentPalette + 3 * 48, 144, 8);
+		paletteFadeOut(_currentPalette + 3 * 208, 48, 8);
 		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
 		delay(5);
 	}
 
-	memcpy(_displayPalette, _currentPalette, 1024);
+	memcpy(_displayPalette, _currentPalette, sizeof(_currentPalette));
 }
 
 void AGOSEngine::scriptMouseOff() {

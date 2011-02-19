@@ -137,16 +137,15 @@ bool Screen::init() {
 	// We setup the PC98 text mode palette at [16, 24], since that will be used
 	// for KANJI characters in Lands of Lore.
 	if (_use16ColorMode && _vm->gameFlags().platform == Common::kPlatformPC98) {
-		uint8 palette[8 * 4];
+		uint8 palette[8 * 3];
 
 		for (int i = 0; i < 8; ++i) {
-			palette[i * 4 + 0] = ((i >> 1) & 1) * 0xFF;
-			palette[i * 4 + 1] = ((i >> 2) & 1) * 0xFF;
-			palette[i * 4 + 2] = ((i >> 0) & 1) * 0xFF;
-			palette[i * 4 + 3] = 0;
-
-			_system->getPaletteManager()->setPalette(palette, 16, 8);
+			palette[i * 3 + 0] = ((i >> 1) & 1) * 0xFF;
+			palette[i * 3 + 1] = ((i >> 2) & 1) * 0xFF;
+			palette[i * 3 + 2] = ((i >> 0) & 1) * 0xFF;
 		}
+
+		_system->getPaletteManager()->setPalette(palette, 16, 8);
 	}
 
 	_curDim = 0;
@@ -180,7 +179,7 @@ bool Screen::enableScreenDebug(bool enable) {
 }
 
 void Screen::setResolution() {
-	byte palette[4*256];
+	byte palette[3*256];
 	_system->getPaletteManager()->grabPalette(palette, 0, 256);
 
 	int width = 320, height = 200;
@@ -700,14 +699,13 @@ void Screen::getRealPalette(int num, uint8 *dst) {
 }
 
 void Screen::setScreenPalette(const Palette &pal) {
-	uint8 screenPal[256 * 4];
+	uint8 screenPal[256 * 3];
 	_screenPalette->copy(pal);
 
 	for (int i = 0; i < pal.getNumColors(); ++i) {
-		screenPal[4 * i + 0] = (pal[i * 3 + 0] * 0xFF) / 0x3F;
-		screenPal[4 * i + 1] = (pal[i * 3 + 1] * 0xFF) / 0x3F;
-		screenPal[4 * i + 2] = (pal[i * 3 + 2] * 0xFF) / 0x3F;
-		screenPal[4 * i + 3] = 0;
+		screenPal[3 * i + 0] = (pal[i * 3 + 0] * 0xFF) / 0x3F;
+		screenPal[3 * i + 1] = (pal[i * 3 + 1] * 0xFF) / 0x3F;
+		screenPal[3 * i + 2] = (pal[i * 3 + 2] * 0xFF) / 0x3F;
 	}
 
 	_paletteChanged = true;
@@ -729,19 +727,19 @@ void Screen::setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b) 
 	if (!_isAmiga)
 		return;
 
-	uint8 screenPal[32 * 4];
+	uint8 screenPal[32 * 3];
 
 	assert(32 <= pal.getNumColors());
 
 	for (int i = 0; i < pal.getNumColors(); ++i) {
 		if (i != 0x10) {
-			screenPal[4 * i + 0] = (pal[i * 3 + 0] * 0xFF) / 0x3F;
-			screenPal[4 * i + 1] = (pal[i * 3 + 1] * 0xFF) / 0x3F;
-			screenPal[4 * i + 2] = (pal[i * 3 + 2] * 0xFF) / 0x3F;
+			screenPal[3 * i + 0] = (pal[i * 3 + 0] * 0xFF) / 0x3F;
+			screenPal[3 * i + 1] = (pal[i * 3 + 1] * 0xFF) / 0x3F;
+			screenPal[3 * i + 2] = (pal[i * 3 + 2] * 0xFF) / 0x3F;
 		} else {
-			screenPal[4 * i + 0] = (r * 0xFF) / 0x3F;
-			screenPal[4 * i + 1] = (g * 0xFF) / 0x3F;
-			screenPal[4 * i + 2] = (b * 0xFF) / 0x3F;
+			screenPal[3 * i + 0] = (r * 0xFF) / 0x3F;
+			screenPal[3 * i + 1] = (g * 0xFF) / 0x3F;
+			screenPal[3 * i + 2] = (b * 0xFF) / 0x3F;
 		}
 		screenPal[4 * i + 3] = 0;
 	}

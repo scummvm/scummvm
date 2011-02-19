@@ -42,6 +42,8 @@ private:
 	Disk &_disk;
 	Surface *_screen;
 	Palette *_palette;
+
+	void setSystemPalette(Palette *p, uint16 start, uint16 num);
 public:
 	Screen(OSystem &system);
 	~Screen();

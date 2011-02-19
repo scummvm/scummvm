@@ -40,7 +40,7 @@ namespace Sword2 {
  * of the screen file.
  */
 
-byte *Sword2Engine::fetchPalette(byte *screenFile) {
+void Sword2Engine::fetchPalette(byte *screenFile, byte *palBuffer) {
 	byte *palette;
 
 	if (isPsx()) { // PSX version doesn't have a "MultiScreenHeader", instead there's a ScreenHeader and a tag
@@ -56,12 +56,15 @@ byte *Sword2Engine::fetchPalette(byte *screenFile) {
 	// palettes have a bright colour 0 it should come out as black in the
 	// game.
 
-	palette[0] = 0;
-	palette[1] = 0;
-	palette[2] = 0;
-	palette[3] = 0;
+	palBuffer[0] = 0;
+	palBuffer[1] = 0;
+	palBuffer[2] = 0;
 
-	return palette;
+	for (uint i = 4, j = 3; i < 4 * 256; i += 4, j += 3) {
+		palBuffer[j + 0] = palette[i + 0];
+		palBuffer[j + 1] = palette[i + 1];
+		palBuffer[j + 2] = palette[i + 2];
+	}
 }
 
 /**

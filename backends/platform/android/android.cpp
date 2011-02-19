@@ -749,32 +749,12 @@ void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 	if (!_use_mouse_palette)
 		_setCursorPalette(colors, start, num);
 
-	byte *palette = _game_texture->palette() + start * 3;
-
-	do {
-		for (int i = 0; i < 3; ++i)
-			palette[i] = colors[i];
-
-		palette += 3;
-		colors += 4;
-	} while (--num);
+	memcpy(_game_texture->palette() + start * 3, colors, num * 3);
 }
 
 void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
 	ENTER("%p, %u, %u", colors, start, num);
-
-	const byte *palette = _game_texture->palette_const() + start * 3;
-
-	do {
-		for (int i = 0; i < 3; ++i)
-			colors[i] = palette[i];
-
-		// alpha
-		colors[3] = 0xff;
-
-		palette += 3;
-		colors += 4;
-	} while (--num);
+	memcpy(colors, _game_texture->palette_const() + start * 3, num * 3);
 }
 
 void OSystem_Android::copyRectToScreen(const byte *buf, int pitch,
@@ -1051,7 +1031,7 @@ void OSystem_Android::_setCursorPalette(const byte *colors,
 		// Leave alpha untouched to preserve keycolor
 
 		palette += 4;
-		colors += 4;
+		colors += 3;
 	} while (--num);
 }
 

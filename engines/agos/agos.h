@@ -529,8 +529,8 @@ protected:
 	uint16 _PVCount1;
 	uint16 _GPVCount1;
 
-	uint8 _currentPalette[1024];
-	uint8 _displayPalette[1024];
+	uint8 _currentPalette[768];
+	uint8 _displayPalette[768];
 
 	byte *_planarBuf;
 	byte _videoBuf1[32000];

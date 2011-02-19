@@ -488,7 +488,7 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 		uint16 hotspotX = READ_BE_UINT16(data);
 		uint16 hotspotY = READ_BE_UINT16(data + 2);
 
-		static const byte cursorPalette[] = { 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x00 };
+		static const byte cursorPalette[] = { 0x00, 0x00, 0x00, 0xff, 0xff, 0xff };
 
 		CursorMan.replaceCursor(cursorBitmap, 16, 16, hotspotX, hotspotY, 0);
 		CursorMan.replaceCursorPalette(cursorPalette, 1, 2);

@@ -544,11 +544,11 @@ void OSystem_PS2::initSize(uint width, uint height, const Graphics::PixelFormat 
 }
 
 void OSystem_PS2::setPalette(const byte *colors, uint start, uint num) {
-	_screen->setPalette((const uint32*)colors, (uint8)start, (uint16)num);
+	_screen->setPalette(colors, (uint8)start, (uint16)num);
 }
 
 void OSystem_PS2::grabPalette(byte *colors, uint start, uint num) {
-	_screen->grabPalette((uint32*)colors, (uint8)start, (uint16)num);
+	_screen->grabPalette(colors, (uint8)start, (uint16)num);
 }
 
 void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {

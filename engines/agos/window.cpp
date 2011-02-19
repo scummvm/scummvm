@@ -151,13 +151,13 @@ void AGOSEngine::colorWindow(WindowBlock *window) {
 
 	if (getGameType() == GType_ELVIRA2 && window->y == 146) {
 		if (window->fillColor == 1) {
-			_displayPalette[33 * 4 + 0] = 48 * 4;
-			_displayPalette[33 * 4 + 1] = 40 * 4;
-			_displayPalette[33 * 4 + 2] = 32 * 4;
+			_displayPalette[33 * 3 + 0] = 48 * 4;
+			_displayPalette[33 * 3 + 1] = 40 * 4;
+			_displayPalette[33 * 3 + 2] = 32 * 4;
 		} else {
-			_displayPalette[33 * 4 + 0] = 56 * 4;
-			_displayPalette[33 * 4 + 1] = 56 * 4;
-			_displayPalette[33 * 4 + 2] = 40 * 4;
+			_displayPalette[33 * 3 + 0] = 56 * 4;
+			_displayPalette[33 * 3 + 1] = 56 * 4;
+			_displayPalette[33 * 3 + 2] = 40 * 4;
 		}
 
 		y--;

@@ -781,7 +781,7 @@ protected:
 	int _fullRedrawCounter;
 	int _menuRedrawCounter;
 	uint8 *_offscreenBuffer;
-	uint8 _paletteBuffer[256 * 4];
+	uint8 _paletteBuffer[256 * 3];
 	Common::Rect _dirtyRectsTable[NUM_DIRTY_RECTS];
 	int _dirtyRectsTableCount;
 

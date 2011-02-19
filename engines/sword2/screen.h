@@ -242,7 +242,7 @@ private:
 	uint16 _gridWide;
 	uint16 _gridDeep;
 
-	byte _palette[256 * 4];
+	byte _palette[256 * 3];
 	byte _paletteMatch[PALTABLESIZE];
 
 	uint8 _fadeStatus;

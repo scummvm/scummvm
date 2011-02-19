@@ -62,8 +62,8 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
 	_videoMode.antialiasing = false;
 
-	_gamePalette = (byte *)calloc(sizeof(byte) * 4, 256);
-	_cursorPalette = (byte *)calloc(sizeof(byte) * 4, 256);
+	_gamePalette = (byte *)calloc(sizeof(byte) * 3, 256);
+	_cursorPalette = (byte *)calloc(sizeof(byte) * 3, 256);
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {
@@ -314,7 +314,7 @@ void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num)
 #endif
 
 	// Save the screen palette
-	memcpy(_gamePalette + start * 4, colors, num * 4);
+	memcpy(_gamePalette + start * 3, colors, num * 3);
 
 	_screenNeedsRedraw = true;
 
@@ -330,7 +330,7 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
 #endif
 
 	// Copies current palette to buffer
-	memcpy(colors, _gamePalette + start * 4, num * 4);
+	memcpy(colors, _gamePalette + start * 3, num * 3);
 }
 
 void OpenGLGraphicsManager::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
@@ -580,7 +580,7 @@ void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uin
 	assert(colors);
 	
 	// Save the cursor palette
-	memcpy(_cursorPalette + start * 4, colors, num * 4);
+	memcpy(_cursorPalette + start * 3, colors, num * 3);
 
 	_cursorPaletteDisabled = false;
 	_cursorNeedsRedraw = true;
@@ -686,9 +686,9 @@ void OpenGLGraphicsManager::refreshGameScreen() {
 		byte *dst = surface;
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
-				dst[0] = _gamePalette[src[j] * 4];
-				dst[1] = _gamePalette[src[j] * 4 + 1];
-				dst[2] = _gamePalette[src[j] * 4 + 2];
+				dst[0] = _gamePalette[src[j] * 3];
+				dst[1] = _gamePalette[src[j] * 3 + 1];
+				dst[2] = _gamePalette[src[j] * 3 + 2];
 				dst += 3;
 			}
 			src += _screenData.pitch;
@@ -728,9 +728,9 @@ void OpenGLGraphicsManager::refreshOverlay() {
 		byte *dst = surface;
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
-				dst[0] = _gamePalette[src[j] * 4];
-				dst[1] = _gamePalette[src[j] * 4 + 1];
-				dst[2] = _gamePalette[src[j] * 4 + 2];
+				dst[0] = _gamePalette[src[j] * 3];
+				dst[1] = _gamePalette[src[j] * 3 + 1];
+				dst[2] = _gamePalette[src[j] * 3 + 2];
 				dst += 3;
 			}
 			src += _screenData.pitch;
@@ -772,9 +772,9 @@ void OpenGLGraphicsManager::refreshCursor() {
 		for (int i = 0; i < _cursorState.w * _cursorState.h; i++) {
 			// Check for keycolor
 			if (src[i] != _cursorKeyColor) {
-				dst[0] = palette[src[i] * 4];
-				dst[1] = palette[src[i] * 4 + 1];
-				dst[2] = palette[src[i] * 4 + 2];
+				dst[0] = palette[src[i] * 3];
+				dst[1] = palette[src[i] * 3 + 1];
+				dst[2] = palette[src[i] * 3 + 2];
 				dst[3] = 255;
 			}
 			dst += 4;

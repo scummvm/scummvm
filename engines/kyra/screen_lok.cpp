@@ -447,12 +447,11 @@ void Screen_LoK_16::mergeOverlay(int x, int y, int w, int h) {
 }
 
 void Screen_LoK_16::set16ColorPalette(const uint8 *pal) {
-	uint8 palette[16 * 4];
+	uint8 palette[16 * 3];
 	for (int i = 0; i < 16; ++i) {
-		palette[i * 4 + 0] = (pal[i * 3 + 0] * 0xFF) / 0x0F;
-		palette[i * 4 + 1] = (pal[i * 3 + 1] * 0xFF) / 0x0F;
-		palette[i * 4 + 2] = (pal[i * 3 + 2] * 0xFF) / 0x0F;
-		palette[i * 4 + 3] = 0;
+		palette[i * 3 + 0] = (pal[i * 3 + 0] * 0xFF) / 0x0F;
+		palette[i * 3 + 1] = (pal[i * 3 + 1] * 0xFF) / 0x0F;
+		palette[i * 3 + 2] = (pal[i * 3 + 2] * 0xFF) / 0x0F;
 	}
 
 	_system->getPaletteManager()->setPalette(palette, 0, 16);

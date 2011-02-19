@@ -799,9 +799,8 @@ void GfxMgr::initPalette(const uint8 *p, uint colorCount, uint fromBits, uint to
 	const uint destMax = (1 << toBits) - 1;
 	for (uint col = 0; col < colorCount; col++) {
 		for (uint comp = 0; comp < 3; comp++) { // Convert RGB components
-			_palette[col * 4 + comp] = (p[col * 3 + comp] * destMax) / srcMax;
+			_palette[col * 3 + comp] = (p[col * 3 + comp] * destMax) / srcMax;
 		}
-		_palette[col * 4 + 3] = 0; // Set alpha to zero
 	}
 }
 
@@ -931,8 +930,8 @@ static const byte appleIIgsMouseCursor[] = {
  * RGBA-palette for the black and white SCI and Apple IIGS arrow cursors.
  */
 static const byte sciMouseCursorPalette[] = {
-	0x00, 0x00, 0x00,	0x00, // Black
-	0xFF, 0xFF, 0xFF,	0x00  // White
+	0x00, 0x00, 0x00, // Black
+	0xFF, 0xFF, 0xFF  // White
 };
 
 /**
@@ -961,9 +960,9 @@ static const byte amigaMouseCursor[] = {
  * and the Amiga-style busy cursor.
  */
 static const byte amigaMouseCursorPalette[] = {
-	0x00, 0x00, 0x00,	0x00, // Black
-	0xDE, 0x20, 0x21,	0x00, // Red
-	0xFF, 0xCF, 0xAD,	0x00  // Light red
+	0x00, 0x00, 0x00, // Black
+	0xDE, 0x20, 0x21, // Red
+	0xFF, 0xCF, 0xAD  // Light red
 };
 
 /**
@@ -994,17 +993,17 @@ static const byte busyAmigaMouseCursor[] = {
 
 void GfxMgr::setCursor(bool amigaStyleCursor, bool busy) {
 	if (busy) {
-		CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 3);
 		CursorMan.replaceCursor(busyAmigaMouseCursor, 13, 16, 7, 8, 0);
 
 		return;
 	}
 
 	if (!amigaStyleCursor) {
-		CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 3);
 		CursorMan.replaceCursor(sciMouseCursor, 11, 16, 1, 1, 0);
 	} else { // amigaStyleCursor
-		CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 4);
+		CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 3);
 		CursorMan.replaceCursor(amigaMouseCursor, 8, 11, 1, 1, 0);
 	}
 }
@@ -1012,12 +1011,12 @@ void GfxMgr::setCursor(bool amigaStyleCursor, bool busy) {
 void GfxMgr::setCursorPalette(bool amigaStyleCursor) {
 	if (!amigaStyleCursor) {
 		if (_currentCursorPalette != 1) {
-			CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 4);
+			CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 3);
 			_currentCursorPalette = 1;
 		}
 	} else { // amigaStyleCursor
 		if (_currentCursorPalette != 2) {
-			CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 4);
+			CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 3);
 			_currentCursorPalette = 2;
 		}
 	}

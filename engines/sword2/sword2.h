@@ -206,7 +206,7 @@ public:
 	bool heldIsInInventory();
 #endif
 
-	byte *fetchPalette(byte *screenFile);
+	void fetchPalette(byte *screenFile, byte *palBuffer);
 	byte *fetchScreenHeader(byte *screenFile);
 	byte *fetchLayerHeader(byte *screenFile, uint16 layerNo);
 	byte *fetchShadingMask(byte *screenFile);

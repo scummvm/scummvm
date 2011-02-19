@@ -65,15 +65,12 @@ void DrasculaEngine::black() {
 }
 
 void DrasculaEngine::setPalette(byte *PalBuf) {
-	byte pal[256 * 4];
-	int i;
+	byte pal[256 * 3];
 
-	for (i = 0; i < 256; i++) {
-		pal[i * 4 + 0] = PalBuf[i * 3 + 0] * 4;
-		pal[i * 4 + 1] = PalBuf[i * 3 + 1] * 4;
-		pal[i * 4 + 2] = PalBuf[i * 3 + 2] * 4;
-		pal[i * 4 + 3] = 0;
+	for (int i = 0; i < 3 * 256; ++i) {
+		pal[i] = PalBuf[i] * 4;
 	}
+
 	_system->getPaletteManager()->setPalette(pal, 0, 256);
 	_system->updateScreen();
 }
