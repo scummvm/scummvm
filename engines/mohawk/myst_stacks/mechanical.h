@@ -68,7 +68,7 @@ private:
 	DECLARE_OPCODE(o_elevatorRotationStart);
 	DECLARE_OPCODE(o_elevatorRotationMove);
 	DECLARE_OPCODE(o_elevatorRotationStop);
-	DECLARE_OPCODE(opcode_121);
+	DECLARE_OPCODE(o_elevatorWindowMovie);
 	DECLARE_OPCODE(opcode_122);
 	DECLARE_OPCODE(opcode_123);
 	DECLARE_OPCODE(opcode_124);

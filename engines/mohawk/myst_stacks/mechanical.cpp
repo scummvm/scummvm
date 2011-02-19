@@ -58,7 +58,7 @@ void Mechanical::setupOpcodes() {
 	OPCODE(106, o_elevatorRotationStart);
 	OPCODE(107, o_elevatorRotationMove);
 	OPCODE(108, o_elevatorRotationStop);
-	OPCODE(121, opcode_121);
+	OPCODE(121, o_elevatorWindowMovie);
 	OPCODE(122, opcode_122);
 	OPCODE(123, opcode_123);
 	OPCODE(124, opcode_124);
@@ -326,19 +326,16 @@ void Mechanical::o_elevatorRotationStop(uint16 op, uint16 var, uint16 argc, uint
 	_vm->checkCursorHints();
 }
 
-void Mechanical::opcode_121(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Mechanical::o_elevatorWindowMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
-	if (argc == 2) {
-		uint16 startTime = argv[0];
-		uint16 endTime = argv[1];
+	uint16 startTime = argv[0];
+	uint16 endTime = argv[1];
 
-		warning("TODO: Opcode %d Movie Time Index %d to %d\n", op, startTime, endTime);
-		// TODO: Need version of playMovie blocking which allows selection
-		//       of start and finish points.
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("ewindow", kMechanicalStack), 253, 0);
-	} else
-		unknown(op, var, argc, argv);
+	debugC(kDebugScript, "Opcode %d Movie Time Index %d to %d", op, startTime, endTime);
+
+	VideoHandle window = _vm->_video->playMovie(_vm->wrapMovieFilename("ewindow", kMechanicalStack), 253, 0);
+	_vm->_video->setVideoBounds(window, Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
+	_vm->_video->waitUntilMovieEnds(window);
 }
 
 void Mechanical::opcode_122(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
