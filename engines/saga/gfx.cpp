@@ -413,10 +413,10 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 	if (from > to)
 		percent = 1.0 - percent;
 
-	byte fadePal[PAL_ENTRIES * 4];
+	byte fadePal[PAL_ENTRIES * 3];
 
 	// Use the correct percentage change per frame for each palette entry
-	for (i = start, ppal = fadePal + start * 4; i < start + numColors; i++, ppal += 4) {
+	for (i = start, ppal = fadePal + start * 3; i < start + numColors; i++, ppal += 3) {
 		palE = &srcPal[i];
 
 		new_entry = (int)(palE->red * percent);
@@ -442,13 +442,12 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 		} else {
 			ppal[2] = (byte) new_entry;
 		}
-		ppal[3] = 0;
 	}
 
 	// Color 0 should always be black in IHNM
-	memset(&fadePal[0 * 4], 0, 4);
+	memset(&fadePal[0 * 3], 0, 3);
 
-	_system->getPaletteManager()->setPalette(&fadePal[start * 4], start, numColors);
+	_system->getPaletteManager()->setPalette(&fadePal[start * 3], start, numColors);
 }
 
 #endif
