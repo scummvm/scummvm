@@ -2483,7 +2483,8 @@ void TuckerEngine::updateSprite_locationNum58(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum58() {
-	if (_flagsTable[190] < 3 && _xPosCurrent > 310) {
+	// workaround original game glitch #2872348: do not change position on location change
+	if (_nextLocationNum == 0 && _flagsTable[190] < 3 && _xPosCurrent > 310) {
 		_xPosCurrent = 310;
 		_panelLockedFlag = 0;
 	}
