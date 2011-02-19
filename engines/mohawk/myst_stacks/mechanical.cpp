@@ -23,6 +23,7 @@
  *
  */
 
+#include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
@@ -54,6 +55,9 @@ void Mechanical::setupOpcodes() {
 	OPCODE(100, o_throneEnablePassage);
 	OPCODE(104, o_snakeBoxTrigger);
 	OPCODE(105, o_fortressStaircaseMovie);
+	OPCODE(106, o_elevatorRotationStart);
+	OPCODE(107, o_elevatorRotationMove);
+	OPCODE(108, o_elevatorRotationStop);
 	OPCODE(121, opcode_121);
 	OPCODE(122, opcode_122);
 	OPCODE(123, opcode_123);
@@ -72,7 +76,7 @@ void Mechanical::setupOpcodes() {
 	OPCODE(201, o_fortressStaircase_init);
 	OPCODE(202, opcode_202);
 	OPCODE(203, o_snakeBox_init);
-	OPCODE(204, opcode_204);
+	OPCODE(204, o_elevatorRotation_init);
 	OPCODE(205, opcode_205);
 	OPCODE(206, opcode_206);
 	OPCODE(209, opcode_209);
@@ -85,7 +89,6 @@ void Mechanical::setupOpcodes() {
 
 void Mechanical::disablePersistentScripts() {
 	opcode_202_disable();
-	opcode_204_disable();
 	opcode_205_disable();
 	opcode_206_disable();
 	opcode_209_disable();
@@ -93,7 +96,10 @@ void Mechanical::disablePersistentScripts() {
 
 void Mechanical::runPersistentScripts() {
 	opcode_202_run();
-	opcode_204_run();
+
+	if (_elevatorRotationLeverMoving)
+		elevatorRotation_run();
+
 	opcode_205_run();
 	opcode_206_run();
 	opcode_209_run();
@@ -131,13 +137,8 @@ uint16 Mechanical::getVar(uint16 var) {
 		return _state.staircaseState;
 	case 11: // Fortress Elevator Rotation Position
 		return _state.elevatorRotation;
-//	case 12: // Fortress Elevator Rotation Cog Position
-//		return 0;
-//		return 1;
-//		return 2;
-//		return 3;
-//		return 4;
-//		return 5;
+	case 12: // Fortress Elevator Rotation Cog Position
+		return 5 - (uint16)(_elevatorRotationGearPosition + 0.5) % 6;
 	case 15: // Code Lock Execute Button Script
 		if (_mystStaircaseState)
 			return 0;
@@ -245,6 +246,85 @@ void Mechanical::o_fortressStaircaseMovie(uint16 op, uint16 var, uint16 argc, ui
 	_vm->_video->waitUntilMovieEnds(staircase);
 }
 
+void Mechanical::o_elevatorRotationStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Elevator rotation lever start", op);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	lever->drawFrame(0);
+
+	_elevatorRotationLeverMoving = true;
+	_elevatorRotationSpeed = 0;
+
+	_vm->_sound->stopBackgroundMyst();
+
+	_vm->_cursor->setCursor(700);
+}
+
+void Mechanical::o_elevatorRotationMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Elevator rotation lever move", op);
+
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Make the handle follow the mouse
+	int16 maxStep = lever->getNumFrames() - 1;
+	Common::Rect rect = lever->getRect();
+	int16 step = ((rect.bottom - mouse.y) * lever->getNumFrames()) / rect.height();
+	step = CLIP<int16>(step, 0, maxStep);
+
+	_elevatorRotationSpeed = step * 0.1;
+
+	// Draw current frame
+	lever->drawFrame(step);
+}
+
+void Mechanical::o_elevatorRotationStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Elevator rotation lever stop", op);
+
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Get current lever frame
+	int16 maxStep = lever->getNumFrames() - 1;
+	Common::Rect rect = lever->getRect();
+	int16 step = ((rect.bottom - mouse.y) * lever->getNumFrames()) / rect.height();
+	step = CLIP<int16>(step, 0, maxStep);
+
+	// Release lever
+	for (int i = step; i >= 0; i--) {
+		lever->drawFrame(i);
+		_vm->_system->delayMillis(10);
+	}
+
+	// Stop persistent script
+	_elevatorRotationLeverMoving = false;
+
+	float speed = _elevatorRotationSpeed * 10;
+
+	if (speed > 0) {
+
+		// Decrease speed
+		while (speed > 2) {
+			speed -= 0.5;
+
+			_elevatorRotationGearPosition += speed * 0.1;
+
+			if (_elevatorRotationGearPosition > 12)
+				break;
+
+			_vm->redrawArea(12);
+			_vm->_system->delayMillis(100);
+		}
+
+		// Increment position
+		_state.elevatorRotation = (_state.elevatorRotation + 1) % 10;
+
+		_vm->_sound->replaceSoundMyst(_elevatorRotationSoundId);
+		_vm->redrawArea(11);
+	}
+
+	_vm->checkCursorHints();
+}
 
 void Mechanical::opcode_121(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
@@ -403,36 +483,29 @@ void Mechanical::o_snakeBox_init(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	_snakeBox = static_cast<MystResourceType6 *>(_invokingResource);
 }
 
-static struct {
-	bool enabled;
-	uint16 soundId;
-} g_opcode204Parameters;
+void Mechanical::elevatorRotation_run() {
+	_vm->redrawArea(12);
 
-void Mechanical::opcode_204_run() {
-	if (g_opcode204Parameters.enabled) {
-		// TODO: Fill in Logic.
-		// Var 12 holds Large Cog Position in range 0 to 5
-		// - For animation
-		// Var 11 holds C position in range 0 to 9
-		// - 4 for Correct Answer
-		// C Movement Sound
-		//_vm->_sound->playSound(g_opcode204Parameters.soundId);
+	_elevatorRotationGearPosition += _elevatorRotationSpeed;
+
+	if (_elevatorRotationGearPosition > 12) {
+		uint16 position = (uint16)_elevatorRotationGearPosition;
+		_elevatorRotationGearPosition = _elevatorRotationGearPosition - position + position % 6;
+
+		_state.elevatorRotation = (_state.elevatorRotation + 1) % 10;
+
+		_vm->_sound->replaceSoundMyst(_elevatorRotationSoundId);
+		_vm->redrawArea(11);
+		_vm->_system->delayMillis(100);
 	}
 }
 
-void Mechanical::opcode_204_disable() {
-	g_opcode204Parameters.enabled = false;
-}
+void Mechanical::o_elevatorRotation_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Elevator rotation init", op);
 
-void Mechanical::opcode_204(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 6180 (Lower Elevator Puzzle)
-	if (argc == 1) {
-		g_opcode204Parameters.soundId = argv[0];
-		g_opcode204Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
+	_elevatorRotationSoundId = argv[0];
+	_elevatorRotationGearPosition = 0;
+	_elevatorRotationLeverMoving = false;
 }
 
 static struct {

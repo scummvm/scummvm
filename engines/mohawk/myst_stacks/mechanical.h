@@ -54,8 +54,7 @@ private:
 
 	void opcode_202_run();
 	void opcode_202_disable();
-	void opcode_204_run();
-	void opcode_204_disable();
+	void elevatorRotation_run();
 	void opcode_205_run();
 	void opcode_205_disable();
 	void opcode_206_run();
@@ -66,6 +65,9 @@ private:
 	DECLARE_OPCODE(o_throneEnablePassage);
 	DECLARE_OPCODE(o_snakeBoxTrigger);
 	DECLARE_OPCODE(o_fortressStaircaseMovie);
+	DECLARE_OPCODE(o_elevatorRotationStart);
+	DECLARE_OPCODE(o_elevatorRotationMove);
+	DECLARE_OPCODE(o_elevatorRotationStop);
 	DECLARE_OPCODE(opcode_121);
 	DECLARE_OPCODE(opcode_122);
 	DECLARE_OPCODE(opcode_123);
@@ -83,7 +85,7 @@ private:
 	DECLARE_OPCODE(o_fortressStaircase_init);
 	DECLARE_OPCODE(opcode_202);
 	DECLARE_OPCODE(o_snakeBox_init);
-	DECLARE_OPCODE(opcode_204);
+	DECLARE_OPCODE(o_elevatorRotation_init);
 	DECLARE_OPCODE(opcode_205);
 	DECLARE_OPCODE(opcode_206);
 	DECLARE_OPCODE(opcode_209);
@@ -95,6 +97,11 @@ private:
 	bool _mystStaircaseState; // 76
 
 	uint16 _fortressPosition; // 82
+
+	float _elevatorRotationSpeed; // 120
+	float _elevatorRotationGearPosition; // 124
+	uint16 _elevatorRotationSoundId; // 128
+	bool _elevatorRotationLeverMoving; // 184
 
 	uint16 _crystalLit; // 130
 
