@@ -1572,7 +1572,7 @@ void ResourceManager::readResourcePatches() {
 
 int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 	Common::SeekableReadStream *fileStream = 0;
-	ResourceType type;
+	ResourceType type = kResourceTypeInvalid;	// to silence a false positive in MSVC
 	uint16 number, id;
 	uint32 offset;
 
@@ -1611,7 +1611,6 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			break;
 
 		if (_mapVersion == kResVersionKQ5FMT) {
-			type = convertResType(id >> 11);	// FIXME: This is wrong!
 			number = id;
 		} else {
 			type = convertResType(id >> 11);
