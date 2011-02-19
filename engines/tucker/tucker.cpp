@@ -1973,12 +1973,10 @@ void TuckerEngine::drawInfoString() {
 	if (_actionRequiresTwoObjects) {
 		verbPreposition = (_actionVerb == 5) ? 12 : 11;
 		verbPrepositionWidth = getStringWidth(verbPreposition, infoStrBuf) + 4;
-		if (_gameLang == Common::FR_FRA || _gameLang == Common::DE_DEU) {
-			if ((_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition > 0) {
-				infoStringWidth = 0;
-				verbWidth = 0;
-				object1NameWidth = 0;
-			}
+		if (_gameLang != Common::EN_ANY && (_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition > 0) {
+			infoStringWidth = 0;
+			verbWidth = 0;
+			object1NameWidth = 0;
 		}
 		infoStringWidth += verbPrepositionWidth;
 		if (_actionObj2Num > 0 || _actionObj2Type > 0) {
@@ -1986,7 +1984,7 @@ void TuckerEngine::drawInfoString() {
 		}
 	}
 	const int xPos = 159 - infoStringWidth / 2;
-	if (verbPreposition == 0 || (_actionObj2Num == 0 && _actionObj2Type == 0)) {
+	if (_gameLang == Common::EN_ANY || (_actionObj2Num == 0 && _actionObj2Type == 0) || verbPreposition == 0) {
 		drawItemString(xPos, _actionVerb + 1, infoStrBuf);
 		if (_actionObj1Num > 0 || _actionObj1Type > 0) {
 			drawItemString(xPos + 4 + verbWidth, _actionObj1Num + 1, obj1StrBuf);
