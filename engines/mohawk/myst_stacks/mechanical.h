@@ -70,7 +70,7 @@ private:
 	DECLARE_OPCODE(o_elevatorRotationStop);
 	DECLARE_OPCODE(o_elevatorWindowMovie);
 	DECLARE_OPCODE(opcode_122);
-	DECLARE_OPCODE(opcode_123);
+	DECLARE_OPCODE(o_elevatorTopMovie);
 	DECLARE_OPCODE(opcode_124);
 	DECLARE_OPCODE(o_mystStaircaseMovie);
 	DECLARE_OPCODE(opcode_126);
@@ -97,6 +97,8 @@ private:
 	bool _mystStaircaseState; // 76
 
 	uint16 _fortressPosition; // 82
+
+	uint16 _elevatorGoingDown; // 112
 
 	float _elevatorRotationSpeed; // 120
 	float _elevatorRotationGearPosition; // 124

@@ -60,7 +60,7 @@ void Mechanical::setupOpcodes() {
 	OPCODE(108, o_elevatorRotationStop);
 	OPCODE(121, o_elevatorWindowMovie);
 	OPCODE(122, opcode_122);
-	OPCODE(123, opcode_123);
+	OPCODE(123, o_elevatorTopMovie);
 	OPCODE(124, opcode_124);
 	OPCODE(125, o_mystStaircaseMovie);
 	OPCODE(126, opcode_126);
@@ -139,6 +139,8 @@ uint16 Mechanical::getVar(uint16 var) {
 		return _state.elevatorRotation;
 	case 12: // Fortress Elevator Rotation Cog Position
 		return 5 - (uint16)(_elevatorRotationGearPosition + 0.5) % 6;
+	case 14: // Elevator going down when at top
+		return _elevatorGoingDown; // TODO add too late value (2)
 	case 15: // Code Lock Execute Button Script
 		if (_mystStaircaseState)
 			return 0;
@@ -211,6 +213,9 @@ bool Mechanical::setVarValue(uint16 var, uint16 value) {
 	bool refresh = false;
 
 	switch (var) {
+	case 14: // Elevator going down when at top
+		_elevatorGoingDown = value;
+		break;
 	default:
 		refresh = MystScriptParser::setVarValue(var, value);
 		break;
@@ -327,7 +332,6 @@ void Mechanical::o_elevatorRotationStop(uint16 op, uint16 var, uint16 argc, uint
 }
 
 void Mechanical::o_elevatorWindowMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-
 	uint16 startTime = argv[0];
 	uint16 endTime = argv[1];
 
@@ -348,21 +352,15 @@ void Mechanical::opcode_122(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 		unknown(op, var, argc, argv);
 }
 
-void Mechanical::opcode_123(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Mechanical::o_elevatorTopMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	uint16 startTime = argv[0];
+	uint16 endTime = argv[1];
 
-	if (argc == 2) {
-		// Used on Card 6154
-		uint16 start_time = argv[0];
-		uint16 end_time = argv[1];
+	debugC(kDebugScript, "Opcode %d Movie Time Index %d to %d", op, startTime, endTime);
 
-		warning("TODO: Opcode %d Movie Time Index %d to %d\n", op, start_time, end_time);
-		// TODO: Need version of playMovie blocking which allows selection
-		//       of start and finish points.
-		// TODO: Not 100% sure about movie position
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("hcelev", kMechanicalStack), 205, 40);
-	} else
-		unknown(op, var, argc, argv);
+	VideoHandle window = _vm->_video->playMovie(_vm->wrapMovieFilename("hcelev", kMechanicalStack), 206, 38);
+	_vm->_video->setVideoBounds(window, Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
+	_vm->_video->waitUntilMovieEnds(window);
 }
 
 void Mechanical::opcode_124(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
