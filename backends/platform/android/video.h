@@ -42,35 +42,40 @@ public:
 	virtual void reinitGL();
 	virtual void allocBuffer(GLuint width, GLuint height);
 
-	const Graphics::Surface *surface_const() const {
-		return &_surface;
-	}
-
-	GLuint width() const {
-		return _surface.w;
-	}
-
-	GLuint height() const {
-		return _surface.h;
-	}
-
-	GLuint texture_name() const {
-		return _texture_name;
-	}
-
-	bool dirty() const {
-		return _all_dirty || !_dirty_rect.isEmpty();
-	}
-
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
 								const void *buf, int pitch);
 	virtual void fillBuffer(byte x);
 
-	virtual void drawTexture() {
-		drawTexture(0, 0, _surface.w, _surface.h);
+	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
+
+	inline GLuint width() const {
+		return _surface.w;
 	}
 
-	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
+	inline GLuint height() const {
+		return _surface.h;
+	}
+
+	inline GLuint texture_name() const {
+		return _texture_name;
+	}
+
+	inline const Graphics::Surface *surface_const() const {
+		return &_surface;
+	}
+
+	inline Graphics::Surface *surface() {
+		setDirty();
+		return &_surface;
+	}
+
+	inline bool dirty() const {
+		return _all_dirty || !_dirty_rect.isEmpty();
+	}
+
+	inline void drawTexture() {
+		drawTexture(0, 0, _surface.w, _surface.h);
+	}
 
 protected:
 	virtual byte bytesPerPixel() const = 0;
@@ -81,12 +86,12 @@ protected:
 		return 0;
 	}
 
-	void setDirty() {
+	inline void setDirty() {
 		_all_dirty = true;
 		_dirty_rect = Common::Rect();
 	}
 
-	void setDirtyRect(const Common::Rect& r) {
+	inline void setDirtyRect(const Common::Rect& r) {
 		if (!_all_dirty) {
 			if (_dirty_rect.isEmpty())
 				_dirty_rect = r;
@@ -146,32 +151,22 @@ public:
 	virtual void allocBuffer(GLuint width, GLuint height);
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
 								const void *buf, int pitch);
+	virtual void fillBuffer(byte x);
 
-	Graphics::Surface *surface() {
-		setDirty();
-		return &_surface;
-	}
+	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
-	void *pixels() {
-		setDirty();
-		return _surface.pixels;
-	}
-
-	const byte *palette_const() const {
-		return _texture;
-	};
-
-	byte *palette() {
-		setDirty();
-		return _texture;
-	};
-
-	virtual void drawTexture() {
+	inline void drawTexture() {
 		drawTexture(0, 0, _surface.w, _surface.h);
 	}
 
-	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
-	virtual void fillBuffer(byte x);
+	inline const byte *palette_const() const {
+		return _texture;
+	};
+
+	inline byte *palette() {
+		setDirty();
+		return _texture;
+	};
 
 protected:
 	virtual byte bytesPerPixel() const {
@@ -190,7 +185,7 @@ protected:
 		return 256 * 3;
 	}
 
-	virtual void uploadTexture() const;
+	void uploadTexture() const;
 
 	byte *_texture;
 };
