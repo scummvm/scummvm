@@ -272,7 +272,14 @@ protected:
 
 	virtual void refreshCursor();
 	virtual void refreshCursorScale();
-	virtual void adjustMouseEvent(const Common::Event &event);
+	/**
+	 * Adjusts hardware screen coordinates to either overlay or game screen
+	 * coordinates depending on whether the overlay is visible or not.
+	 *
+	 * @param x X coordinate of the mouse position.
+	 * @param y Y coordinate of the mouse position.
+	 */
+	virtual void adjustMousePosition(int16 &x, int16 &y);
 	virtual void setMousePos(int x, int y);
 
 	//

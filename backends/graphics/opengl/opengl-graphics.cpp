@@ -1165,40 +1165,33 @@ uint OpenGLGraphicsManager::getAspectRatio() {
 		return _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
 }
 
-void OpenGLGraphicsManager::adjustMouseEvent(const Common::Event &event) {
-	if (!event.synthetic) {
-		Common::Event newEvent(event);
-		newEvent.synthetic = true;
+void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
+	if (_videoMode.mode == OpenGL::GFX_NORMAL) {
+		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
+			x = x * _videoMode.overlayWidth / _videoMode.hardwareWidth;
+		if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
+			y = y * _videoMode.overlayHeight / _videoMode.hardwareHeight;
 
-		if (_videoMode.mode == OpenGL::GFX_NORMAL) {
-			if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
-				newEvent.mouse.x = newEvent.mouse.x * _videoMode.overlayWidth / _videoMode.hardwareWidth;
-			if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
-				newEvent.mouse.y = newEvent.mouse.y * _videoMode.overlayHeight / _videoMode.hardwareHeight;
-
-			if (!_overlayVisible) {
-				newEvent.mouse.x /= _videoMode.scaleFactor;
-				newEvent.mouse.y /= _videoMode.scaleFactor;
-			}
-
-		} else {
-			newEvent.mouse.x -= _displayX;
-			newEvent.mouse.y -= _displayY;
-
-			if (_overlayVisible) {
-				if (_displayWidth != _videoMode.overlayWidth)
-					newEvent.mouse.x = newEvent.mouse.x * _videoMode.overlayWidth / _displayWidth;
-				if (_displayHeight != _videoMode.overlayHeight)
-					newEvent.mouse.y = newEvent.mouse.y * _videoMode.overlayHeight / _displayHeight;
-			} else {
-				if (_displayWidth != _videoMode.screenWidth)
-					newEvent.mouse.x = newEvent.mouse.x * _videoMode.screenWidth / _displayWidth;
-				if (_displayHeight != _videoMode.screenHeight)
-					newEvent.mouse.y = newEvent.mouse.y * _videoMode.screenHeight / _displayHeight;
-			}
+		if (!_overlayVisible) {
+			x /= _videoMode.scaleFactor;
+			y /= _videoMode.scaleFactor;
 		}
 
-		g_system->getEventManager()->pushEvent(newEvent);
+	} else {
+		x -= _displayX;
+		y -= _displayY;
+
+		if (_overlayVisible) {
+			if (_displayWidth != _videoMode.overlayWidth)
+				x = x * _videoMode.overlayWidth / _displayWidth;
+			if (_displayHeight != _videoMode.overlayHeight)
+				y = y * _videoMode.overlayHeight / _displayHeight;
+		} else {
+			if (_displayWidth != _videoMode.screenWidth)
+				x = x * _videoMode.screenWidth / _displayWidth;
+			if (_displayHeight != _videoMode.screenHeight)
+				y = y * _videoMode.screenHeight / _displayHeight;
+		}
 	}
 }
 
@@ -1215,7 +1208,12 @@ bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONUP:
 	case Common::EVENT_MBUTTONUP:
-		adjustMouseEvent(event);
+		if (!event.synthetic) {
+			Common::Event newEvent(event);
+			newEvent.synthetic = true;
+			adjustMousePosition(newEvent.mouse.x, newEvent.mouse.y);
+			g_system->getEventManager()->pushEvent(newEvent);
+		}
 		return !event.synthetic;
 
 	default:
