@@ -62,8 +62,6 @@ public:
 	 * @note It is an error if this function gets called when the pixel format
 	 *       in use (the return value of getScreenFormat) has more than one
 	 *       byte per pixel.
-	 * @note The alpha value is not actually used, and future revisions of this
-	 *       API are probably going to remove it.
 	 *
 	 * @see getScreenFormat
 	 */
