@@ -367,6 +367,17 @@ void Command::readCommandsFrom(byte *&ptr) {
 		memset(&_cmdObject[0], 0, sizeof(CmdObject));
 		for (i = 1; i <= _numCmdObject; i++) {
 			_cmdObject[i].readFromBE(ptr);
+
+			// WORKAROUND bug #1858081: Fix an off by one error in the object
+			// command 175. Object 309 should be copied to 308 (disabled).
+			//
+			// _objectData[307].name = -195
+			// _objectData[308].name = 50
+			// _objectData[309].name = -50
+
+			if (i == 175 && _cmdObject[i].id == 320 && _cmdObject[i].dstObj == 307 && _cmdObject[i].srcObj == 309) {
+				_cmdObject[i].dstObj = 308;
+			}
 		}
 	}
 
