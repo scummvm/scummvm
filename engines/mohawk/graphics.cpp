@@ -73,9 +73,9 @@ void MohawkSurface::convertToTrueColor() {
 	for (uint16 i = 0; i < _surface->h; i++) {
 		for (uint16 j = 0; j < _surface->w; j++) {
 			byte palIndex = *((byte *)_surface->pixels + i * _surface->pitch + j);
-			byte r = _palette[palIndex * 4];
-			byte g = _palette[palIndex * 4 + 1];
-			byte b = _palette[palIndex * 4 + 2];
+			byte r = _palette[palIndex * 3 + 0];
+			byte g = _palette[palIndex * 3 + 1];
+			byte b = _palette[palIndex * 3 + 2];
 			if (pixelFormat.bytesPerPixel == 2)
 				*((uint16 *)surface->getBasePtr(j, i)) = pixelFormat.RGBToColor(r, g, b);
 			else

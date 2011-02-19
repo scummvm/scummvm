@@ -153,16 +153,7 @@ void MystCursorManager::setCursor(uint16 id) {
 	// Myst ME stores some cursors as 24bpp images instead of 8bpp
 	if (surface->bytesPerPixel == 1) {
 		CursorMan.replaceCursor((byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, 0);
-
-		const byte *srcPal = mhkSurface->getPalette();
-		byte pal[3*256];
-		for (uint i = 0; i < 256; ++i) {
-			pal[i * 3 + 0] = srcPal[i * 4 + 0];
-			pal[i * 3 + 1] = srcPal[i * 4 + 1];
-			pal[i * 3 + 2] = srcPal[i * 4 + 2];
-		}
-
-		CursorMan.replaceCursorPalette(pal, 0, 256);
+		CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
 	} else {
 		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 		CursorMan.replaceCursor((byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255), 1, &pixelFormat);
@@ -311,16 +302,7 @@ void NECursorManager::setCursor(uint16 id) {
 			if (cursors[i].id == id) {
 				Common::NECursor *cursor = cursors[i].cursors[0];
 				CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), 0);
-
-				const byte *srcPal = cursor->getPalette();
-				byte pal[3 * 256];
-				for (uint j = 0; j < 256; ++j) {
-					pal[j * 3 + 0] = srcPal[j * 4 + 0];
-					pal[j * 3 + 1] = srcPal[j * 4 + 1];
-					pal[j * 3 + 2] = srcPal[j * 4 + 2];
-				}
-
-				CursorMan.replaceCursorPalette(pal, 0, 256);
+				CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
 				return;
 			}
 		}

@@ -80,13 +80,12 @@ void MohawkBitmap::decodeImageData(Common::SeekableReadStream *stream) {
 		_header.colorTable.tableSize = _data->readUint16BE();
 		_header.colorTable.rgbBits = _data->readByte();
 		_header.colorTable.colorCount = _data->readByte();
-		_header.colorTable.palette = (byte *)malloc(256 * 4);
+		_header.colorTable.palette = (byte *)malloc(256 * 3);
 
 		for (uint16 i = 0; i < 256; i++) {
-			_header.colorTable.palette[i * 4 + 2] = _data->readByte();
-			_header.colorTable.palette[i * 4 + 1] = _data->readByte();
-			_header.colorTable.palette[i * 4] = _data->readByte();
-			_header.colorTable.palette[i * 4 + 3] = 0;
+			_header.colorTable.palette[i * 3 + 2] = _data->readByte();
+			_header.colorTable.palette[i * 3 + 1] = _data->readByte();
+			_header.colorTable.palette[i * 3 + 0] = _data->readByte();
 		}
 	}
 
@@ -671,12 +670,12 @@ MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 	byte *palData = NULL;
 
 	if (_info.bitsPerPixel == 8) {
-		palData = (byte *)malloc(256 * 4);
+		palData = (byte *)malloc(256 * 3);
 		for (uint16 i = 0; i < _info.colorsUsed; i++) {
-			palData[i * 4 + 2] = bmpStream->readByte();
-			palData[i * 4 + 1] = bmpStream->readByte();
-			palData[i * 4] = bmpStream->readByte();
-			palData[i * 4 + 3] = bmpStream->readByte();
+			palData[i * 3 + 2] = bmpStream->readByte();
+			palData[i * 3 + 1] = bmpStream->readByte();
+			palData[i * 3 + 0] = bmpStream->readByte();
+			bmpStream->readByte();
 		}
 	}
 
