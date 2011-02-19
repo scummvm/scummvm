@@ -238,7 +238,7 @@ void Gfx::setPaletteColor(int n, int r, int g, int b) {
 	}
 
 	if (update)
-		_system->getPaletteManager()->setPalette(_currentPal, n, 1);
+		_system->getPaletteManager()->setPalette(_currentPal + n * 3, n, 1);
 }
 
 void Gfx::getCurrentPal(PalEntry *src_pal) {
