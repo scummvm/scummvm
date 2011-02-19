@@ -818,10 +818,6 @@ void OSystem_Android::updateScreen() {
 	if (_show_mouse) {
 		GLCALL(glPushMatrix());
 
-		GLCALL(glTranslatex(-_mouse_hotspot.x << 16,
-							-_mouse_hotspot.y << 16,
-							0));
-
 		// Scale up ScummVM -> OpenGL (pixel) coordinates
 		int texwidth, texheight;
 
@@ -836,6 +832,10 @@ void OSystem_Android::updateScreen() {
 		GLCALL(glScalex(xdiv(_egl_surface_width, texwidth),
 						xdiv(_egl_surface_height, texheight),
 						1 << 16));
+
+		GLCALL(glTranslatex(-_mouse_hotspot.x << 16,
+							-_mouse_hotspot.y << 16,
+							0));
 
 		// Note the extra half texel to position the mouse in
 		// the middle of the x,y square:
