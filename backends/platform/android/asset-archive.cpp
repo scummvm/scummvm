@@ -141,7 +141,7 @@ void JavaInputStream::close(JNIEnv *env) {
 uint32 JavaInputStream::read(void *dataPtr, uint32 dataSize) {
 	JNIEnv *env = JNU_GetEnv();
 
-	if (_buflen < dataSize) {
+	if (_buflen < jint(dataSize)) {
 		_buflen = dataSize;
 	
 		env->DeleteGlobalRef(_buf);
