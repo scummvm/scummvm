@@ -383,12 +383,14 @@ void TuckerEngine::loadPanel() {
 }
 
 void TuckerEngine::loadBudSpr(int startOffset) {
-	int endOffset = loadCTable01(0, startOffset);
+	int framesCount[20];
+	memset(framesCount, 0, sizeof(framesCount));
+	int endOffset = loadCTable01(0, startOffset, framesCount);
 	loadCTable02(0);
 	int frame = 0;
 	int spriteOffset = 0;
 	for (int i = startOffset; i < endOffset; ++i) {
-		if (_ctable01Table_sprite[frame] == i) {
+		if (framesCount[frame] == i) {
 			char filename[40];
 			switch (_flagsTable[137]) {
 			case 0:
@@ -414,7 +416,7 @@ void TuckerEngine::loadBudSpr(int startOffset) {
 	}
 }
 
-int TuckerEngine::loadCTable01(int index, int firstSpriteNum) {
+int TuckerEngine::loadCTable01(int index, int firstSpriteNum, int *framesCount) {
 	loadFile("ctable01.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf,  _fileLoadSize);
 	int lastSpriteNum = firstSpriteNum;
@@ -425,7 +427,7 @@ int TuckerEngine::loadCTable01(int index, int firstSpriteNum) {
 			if (x < 0) {
 				break;
 			} else if (x == 999) {
-				_ctable01Table_sprite[count] = lastSpriteNum;
+				framesCount[count] = lastSpriteNum;
 				++count;
 				continue;
 			}
@@ -444,7 +446,7 @@ int TuckerEngine::loadCTable01(int index, int firstSpriteNum) {
 			}
 		}
 	}
-	_ctable01Table_sprite[count] = -1;
+	framesCount[count] = -1;
 	return lastSpriteNum;
 }
 

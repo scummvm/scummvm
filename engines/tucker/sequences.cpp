@@ -110,7 +110,6 @@ void TuckerEngine::handleCreditsSequence() {
 		}
 		redrawScreen(0);
 		waitForTimer(3);
-		_timerCounter1 = 0;
 		counter4 = _timerCounter2 / 3;
 		if (counter4 == _creditsSequenceTimecounts[num]) {
 			_fadePaletteCounter = 0;

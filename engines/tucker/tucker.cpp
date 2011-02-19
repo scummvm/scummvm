@@ -127,7 +127,7 @@ void TuckerEngine::restart() {
 	_syncCounter = 0;
 	_lastFrameTime = _system->getMillis();
 	_mainLoopCounter1 = _mainLoopCounter2 = 0;
-	_timerCounter1 = _timerCounter2 = 0;
+	_timerCounter2 = 0;
 	_partNum = _currentPartNum = 0;
 	_locationNum = 0;
 	_nextLocationNum = ConfMan.getInt("boot_param");
@@ -273,7 +273,6 @@ void TuckerEngine::restart() {
 	_xPosCurrent = 160;
 	_characterSpeechDataPtr = 0;
 	_ptTextOffset = 0;
-	memset(_ctable01Table_sprite, 0, sizeof(_ctable01Table_sprite));
 	memset(_characterAnimationsTable, 0, sizeof(_characterAnimationsTable));
 	memset(_characterStateTable, 0, sizeof(_characterStateTable));
 	_backgroundSprOffset = 0;
@@ -589,13 +588,11 @@ void TuckerEngine::mainLoop() {
 void TuckerEngine::waitForTimer(int ticksCount) {
 	uint32 end = _lastFrameTime + ticksCount * 1000 / 46;
 	do {
-		++_timerCounter1;
 		parseEvents();
 		_system->delayMillis(10);
 		_lastFrameTime = _system->getMillis();
 	} while (!_fastMode && _lastFrameTime < end);
 	_timerCounter2 += ticksCount;
-	_timerCounter1 = 0;
 }
 
 void TuckerEngine::parseEvents() {
