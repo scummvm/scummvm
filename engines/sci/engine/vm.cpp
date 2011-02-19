@@ -759,13 +759,6 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		s->_executionStack.pop_back();
 }
 
-static void gcCountDown(EngineState *s) {
-	if (s->gcCountDown-- <= 0) {
-		s->gcCountDown = s->scriptGCInterval;
-		run_gc(s);
-	}
-}
-
 int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4]) {
 	uint offset = 0;
 	extOpcode = src[offset++]; // Get "extended" opcode (lower bit has special meaning)
@@ -1150,9 +1143,13 @@ void run_vm(EngineState *s) {
 		}
 
 		case op_callk: { // 0x21 (33)
-			// Call kernel function
-			gcCountDown(s);
+			// Run the garbage collector, if needed
+			if (s->gcCountDown-- <= 0) {
+				s->gcCountDown = s->scriptGCInterval;
+				run_gc(s);
+			}
 
+			// Call kernel function
 			s->xs->sp -= (opparams[1] >> 1) + 1;
 
 			bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
