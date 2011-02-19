@@ -1611,6 +1611,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			break;
 
 		if (_mapVersion == kResVersionKQ5FMT) {
+			type = convertResType(id >> 11);	// FIXME: This is wrong!
 			number = id;
 		} else {
 			type = convertResType(id >> 11);
