@@ -239,8 +239,7 @@ protected:
 	// Mouse
 	//
 	struct MousePos {
-		// The mouse position, using either virtual (game) or real
-		// (overlay) coordinates.
+		// The mouse position in hardware screen coordinates.
 		int16 x, y;
 
 		// The size and hotspot of the original cursor image.
