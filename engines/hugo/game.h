@@ -86,64 +86,6 @@ enum path_t {
 	kPathWander2                                    // Same as WANDER, except keeps cycling when stationary
 };
 
-/**
- * Following defines the action types and action list
- */
-enum action_t {                                     // Parameters:
-	ANULL              = 0xff,                      // Special NOP used to 'delete' events in DEL_EVENTS
-	ASCHEDULE          = 0,                         //  0 - Ptr to action list to be rescheduled
-	START_OBJ,                                      //  1 - Object number
-	INIT_OBJXY,                                     //  2 - Object number, x,y
-	PROMPT,                                         //  3 - index of prompt & response string, ptrs to action
-	                                                //      lists.  First if response matches, 2nd if not.
-	BKGD_COLOR,                                     //  4 - new background color
-	INIT_OBJVXY,                                    //  5 - Object number, vx, vy
-	INIT_CARRY,                                     //  6 - Object number, carried status
-	INIT_HF_COORD,                                  //  7 - Object number (gets hero's 'feet' coordinates)
-	NEW_SCREEN,                                     //  8 - New screen number
-	INIT_OBJSTATE,                                  //  9 - Object number, new object state
-	INIT_PATH,                                      // 10 - Object number, new path type
-	COND_R,                                         // 11 - Conditional on object state - req state, 2 act_lists
-	TEXT,                                           // 12 - Simple text box
-	SWAP_IMAGES,                                    // 13 - Swap 2 object images
-	COND_SCR,                                       // 14 - Conditional on current screen
-	AUTOPILOT,                                      // 15 - Set object to home in on another (stationary) object
-	INIT_OBJ_SEQ,                                   // 16 - Object number, sequence index to set curr_seq_p to
-	SET_STATE_BITS,                                 // 17 - Objnum, mask to OR with obj states word
-	CLEAR_STATE_BITS,                               // 18 - Objnum, mask to ~AND with obj states word
-	TEST_STATE_BITS,                                // 19 - Objnum, mask to test obj states word
-	DEL_EVENTS,                                     // 20 - Action type to delete all occurrences of
-	GAMEOVER,                                       // 21 - Disable hero & commands.  Game is over
-	INIT_HH_COORD,                                  // 22 - Object number (gets hero's actual coordinates)
-	EXIT,                                           // 23 - Exit game back to DOS
-	BONUS,                                          // 24 - Get score bonus for an action
-	COND_BOX,                                       // 25 - Conditional on object within bounding box
-	SOUND,                                          // 26 - Set currently playing sound
-	ADD_SCORE,                                      // 27 - Add object's value to current score
-	SUB_SCORE,                                      // 28 - Subtract object's value from current score
-	COND_CARRY,                                     // 29 - Conditional on carrying object
-	INIT_MAZE,                                      // 30 - Start special maze hotspot processing
-	EXIT_MAZE,                                      // 31 - Exit special maze processing
-	INIT_PRIORITY,                                  // 32 - Initialize fbg field
-	INIT_SCREEN,                                    // 33 - Initialise screen field of object
-	AGSCHEDULE,                                     // 34 - Global schedule - lasts over new screen
-	REMAPPAL,                                       // 35 - Remappe palette - palette index, color
-	COND_NOUN,                                      // 36 - Conditional on noun appearing in line
-	SCREEN_STATE,                                   // 37 - Set new screen state - used for comments
-	INIT_LIPS,                                      // 38 - Position lips object for supplied object
-	INIT_STORY_MODE,                                // 39 - Set story mode TRUE/FALSE (user can't type)
-	WARN,                                           // 40 - Same as TEXT but can't dismiss box by typing
-	COND_BONUS,                                     // 41 - Conditional on bonus having been scored
-	TEXT_TAKE,                                      // 42 - Issue text box with "take" info string
-	YESNO,                                          // 43 - Prompt user for Yes or No
-	STOP_ROUTE,                                     // 44 - Skip any route in progress (hero still walks)
-	COND_ROUTE,                                     // 45 - Conditional on route in progress
-	INIT_JUMPEXIT,                                  // 46 - Initialize status.jumpexit
-	INIT_VIEW,                                      // 47 - Initialize viewx, viewy, dir
-	INIT_OBJ_FRAME,                                 // 48 - Object number, seq,frame to set curr_seq_p to
-	OLD_SONG           = 49                         // Added by Strangerke - Set currently playing sound, old way: that is, using a string index instead of a reference in a file
-};
-
 struct hugo_boot_t {                                // Common HUGO boot file
 	char checksum;                                  // Checksum for boot structure (not exit text)
 	char registered;                                // TRUE if registered version, else FALSE
@@ -152,24 +94,11 @@ struct hugo_boot_t {                                // Common HUGO boot file
 	uint16 exit_len;                                // Length of exit text (next in file)
 } PACKED_STRUCT;
 
-struct uif_hdr_t {                                  // UIF font/image look up
-	uint16  size;                                   // Size of uif item
-	uint32  offset;                                 // Offset of item in file
-};
-
 /**
  * Game specific type definitions
  */
 typedef byte *image_pt;                             // ptr to an object image (sprite)
 typedef byte *sound_pt;                             // ptr to sound (or music) data
-
-/**
- * Following are points for achieving certain actions.
- */
-struct point_t {
-	byte score;                                     // The value of the point
-	bool scoredFl;                                  // Whether scored yet
-};
 
 /**
  * Structure for initializing maze processing
@@ -180,20 +109,6 @@ struct maze_t {
 	int  x1, y1, x2, y2;                            // maze hotspot bounding box
 	int  x3, x4;                                    // north, south x entry coordinates
 	byte firstScreenIndex;                          // index of first screen in maze
-};
-
-/**
- * The following determines how a verb is acted on, for an object
- */
-struct cmd {
-	uint16 verbIndex;                               // the verb
-	uint16 reqIndex;                                // ptr to list of required objects
-	uint16 textDataNoCarryIndex;                    // ptr to string if any of above not carried
-	byte   reqState;                                // required state for verb to be done
-	byte   newState;                                // new states if verb done
-	uint16 textDataWrongIndex;                      // ptr to string if wrong state
-	uint16 textDataDoneIndex;                       // ptr to string if verb done
-	uint16 actIndex;                                // Ptr to action list if verb done
 };
 
 /**
@@ -215,38 +130,6 @@ struct seqList_t {
 	uint16 imageNbr;                                // Number of images in sequence
 	seq_t *seqPtr;                                  // Ptr to sequence structure
 };
-
-/**
- * Following is structure of verbs and nouns for 'background' objects
- * These are objects that appear in the various screens, but nothing
- * interesting ever happens with them.  Rather than just be dumb and say
- * "don't understand" we produce an interesting msg to keep user sane.
- */
-struct background_t {
-	uint16 verbIndex;
-	uint16 nounIndex;
-	int    commentIndex;                            // Index of comment produced on match
-	bool   matchFl;                                 // TRUE if noun must match when present
-	byte   roomState;                               // "State" of room. Comments might differ.
-	byte   bonusIndex;                              // Index of bonus score (0 = no bonus)
-};
-
-typedef background_t *objectList_t;
-
-struct target_t {                                   // Secondary target for action
-	uint16 nounIndex;                               // Secondary object
-	uint16 verbIndex;                               // Action on secondary object
-};
-
-struct uses_t {                                     // Define uses of certain objects
-	int16     objId;                                // Primary object
-	uint16    dataIndex;                            // String if no secondary object matches
-	target_t *targets;                              // List of secondary targets
-};
-
-// Global externs
-extern maze_t      _maze;                           // Maze control structure
-extern hugo_boot_t _boot;                           // Boot info structure
 
 #include "common/pack-start.h"                      // START STRUCT PACKING
 struct sound_hdr_t {                                // Sound file lookup entry

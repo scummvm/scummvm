@@ -42,6 +42,37 @@ enum seqTextParser {
 	kCmtAny5,     kTBExit_1d, kTBEh_1d,   kTBEh_2d,      kTBNoUse_2d
 };
 
+/**
+ * The following determines how a verb is acted on, for an object
+ */
+struct cmd {
+	uint16 verbIndex;                               // the verb
+	uint16 reqIndex;                                // ptr to list of required objects
+	uint16 textDataNoCarryIndex;                    // ptr to string if any of above not carried
+	byte   reqState;                                // required state for verb to be done
+	byte   newState;                                // new states if verb done
+	uint16 textDataWrongIndex;                      // ptr to string if wrong state
+	uint16 textDataDoneIndex;                       // ptr to string if verb done
+	uint16 actIndex;                                // Ptr to action list if verb done
+};
+
+/**
+ * Following is structure of verbs and nouns for 'background' objects
+ * These are objects that appear in the various screens, but nothing
+ * interesting ever happens with them.  Rather than just be dumb and say
+ * "don't understand" we produce an interesting msg to keep user sane.
+ */
+struct background_t {
+	uint16 verbIndex;
+	uint16 nounIndex;
+	int    commentIndex;                            // Index of comment produced on match
+	bool   matchFl;                                 // TRUE if noun must match when present
+	byte   roomState;                               // "State" of room. Comments might differ.
+	byte   bonusIndex;                              // Index of bonus score (0 = no bonus)
+};
+
+typedef background_t *objectList_t;
+
 class Parser {
 public:
 	Parser(HugoEngine *vm);

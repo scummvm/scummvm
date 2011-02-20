@@ -251,6 +251,9 @@ public:
 	uint16    _take;
 	uint16    _drop;
 
+	maze_t      _maze;                              // Maze control structure
+	hugo_boot_t _boot;                              // Boot info structure
+
 	GUI::Debugger *getDebugger();
 
 	Common::RandomSource *_rnd;
@@ -269,7 +272,7 @@ public:
 	Common::Platform getPlatform() const;
 	bool isPacked() const;
 
-	// Temporary, until the engine is fully objectified.
+	// Used by the qsort function
 	static HugoEngine &get() {
 		assert(s_Engine != 0);
 		return *s_Engine;

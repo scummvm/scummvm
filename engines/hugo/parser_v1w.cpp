@@ -191,7 +191,7 @@ void Parser_v1w::lineHandler() {
 	// Nothing matches.  Report recognition success to user.
 	const char *verb = findVerb();
 	const char *noun = findNoun();
-	if (verb == _vm->_text->getVerb(_vm->_look, 0) && _maze.enabledFl) {
+	if (verb == _vm->_text->getVerb(_vm->_look, 0) && _vm->_maze.enabledFl) {
 		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBMaze));
 		_vm->_object->showTakeables();
 	} else if (verb && noun) {                      // A combination I didn't think of

@@ -178,7 +178,7 @@ void Parser_v2d::lineHandler() {
 		&& !isCatchallVerb_v1(false, noun, verb, _catchallList)) {
 		if (*farComment != '\0') {                  // An object matched but not near enough
 			Utils::Box(kBoxAny, "%s", farComment);
-		} else if (_maze.enabledFl && (verb == _vm->_text->getVerb(_vm->_look, 0))) {
+		} else if (_vm->_maze.enabledFl && (verb == _vm->_text->getVerb(_vm->_look, 0))) {
 			Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBMaze));
 			_vm->_object->showTakeables();
 		} else if (verb && noun) {                  // A combination I didn't think of

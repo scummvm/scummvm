@@ -37,6 +37,17 @@
 
 namespace Hugo {
 
+struct target_t {                                   // Secondary target for action
+	uint16 nounIndex;                               // Secondary object
+	uint16 verbIndex;                               // Action on secondary object
+};
+
+struct uses_t {                                     // Define uses of certain objects
+	int16     objId;                                // Primary object
+	uint16    dataIndex;                            // String if no secondary object matches
+	target_t *targets;                              // List of secondary targets
+};
+
 class ObjectHandler {
 public:
 	ObjectHandler(HugoEngine *vm);

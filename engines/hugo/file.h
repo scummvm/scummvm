@@ -39,6 +39,12 @@ namespace Hugo {
  */
 enum ovl_t {kOvlBoundary, kOvlOverlay, kOvlBase};
 
+struct uif_hdr_t {                                  // UIF font/image look up
+	uint16  size;                                   // Size of uif item
+	uint32  offset;                                 // Offset of item in file
+};
+
+
 class FileManager {
 public:
 	FileManager(HugoEngine *vm);
@@ -76,6 +82,7 @@ protected:
 	static const int kMaxSounds = 64;               // Max number of sounds
 	static const int kRepeatMask = 0xC0;            // Top 2 bits mean a repeat code
 	static const int kLengthMask = 0x3F;            // Lower 6 bits are length
+	static const int kNumColors = 16;               // Num colors to save in palette
 
 	/**
 	 * Structure of scenery file lookup entry
@@ -90,8 +97,6 @@ protected:
 		uint32 ob_off;
 		uint32 ob_len;
 	};
-
-	static const int kNumColors = 16;               // Num colors to save in palette
 
 	struct PCC_header_t {                           // Structure of PCX file header
 		byte   mfctr, vers, enc, bpx;

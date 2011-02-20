@@ -50,9 +50,6 @@ namespace Hugo {
 
 HugoEngine *HugoEngine::s_Engine = 0;
 
-maze_t      _maze;                              // Default to not in maze
-hugo_boot_t _boot;                              // Boot info structure file
-
 HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(syst), _gameDescription(gd),
 	_hero(0), _heroImage(0), _defltTunes(0), _numScreens(0), _tunesNbr(0), _soundSilence(0), _soundTest(0),
 	_screenStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0)

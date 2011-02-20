@@ -416,7 +416,7 @@ void Parser_v3d::dropObject(object_t *obj) {
 bool Parser_v3d::isCatchallVerb_v3(objectList_t obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(object_list_t obj)");
 
-	if (_maze.enabledFl)
+	if (_vm->_maze.enabledFl)
 		return false;
 
 	for (int i = 0; obj[i].verbIndex != 0; i++) {
@@ -444,7 +444,7 @@ bool Parser_v3d::isCatchallVerb_v3(objectList_t obj) const {
 bool Parser_v3d::isBackgroundWord_v3(objectList_t obj) const {
 	debugC(1, kDebugParser, "isBackgroundWord(object_list_t obj)");
 
-	if (_maze.enabledFl)
+	if (_vm->_maze.enabledFl)
 		return false;
 
 	for (int i = 0; obj[i].verbIndex != 0; i++) {

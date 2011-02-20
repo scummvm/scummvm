@@ -119,7 +119,7 @@ bool intro_v1d::introPlay() {
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
 
 			char buffer[80];
-			if (_boot.registered)
+			if (_vm->_boot.registered)
 				strcpy(buffer, "Registered Version");
 			else
 				strcpy(buffer, "Shareware Version");
@@ -127,8 +127,8 @@ bool intro_v1d::introPlay() {
 			font.drawString(&surf, buffer, 0, 163, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			font.drawString(&surf, _vm->getCopyrightString(), 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 
-			if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
-				sprintf(buffer, "Distributed by %s.", _boot.distrib);
+			if (scumm_stricmp(_vm->_boot.distrib, "David P. Gray")) {
+				sprintf(buffer, "Distributed by %s.", _vm->_boot.distrib);
 				font.drawString(&surf, buffer, 0, 75, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			}
 
@@ -251,16 +251,16 @@ void intro_v2d::introInit() {
 	if (!font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
 		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
 
-	if (_boot.registered)
+	if (_vm->_boot.registered)
 		sprintf(buffer, "%s  Registered Version", _vm->getCopyrightString());
 	else
 		sprintf(buffer, "%s  Shareware Version", _vm->getCopyrightString());
 
 	font.drawString(&surf, buffer, 0, 186, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 
-	if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
+	if (scumm_stricmp(_vm->_boot.distrib, "David P. Gray")) {
 		// TROMAN, size 10-5
-		sprintf(buffer, "Distributed by %s.", _boot.distrib);
+		sprintf(buffer, "Distributed by %s.", _vm->_boot.distrib);
 		font.drawString(&surf, buffer, 0, 1, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 	}
 
@@ -292,7 +292,7 @@ void intro_v3d::introInit() {
 	surf.bytesPerPixel = 1;
 
 	char buffer[128];
-	if (_boot.registered)
+	if (_vm->_boot.registered)
 		sprintf(buffer, "%s  Registered Version", _vm->getCopyrightString());
 	else
 		sprintf(buffer,"%s  Shareware Version", _vm->getCopyrightString());
@@ -303,8 +303,8 @@ void intro_v3d::introInit() {
 
 	font.drawString(&surf, buffer, 0, 190, 320, _TBROWN, Graphics::kTextAlignCenter);
 
-	if (scumm_stricmp(_boot.distrib, "David P. Gray")) {
-		sprintf(buffer, "Distributed by %s.", _boot.distrib);
+	if (scumm_stricmp(_vm->_boot.distrib, "David P. Gray")) {
+		sprintf(buffer, "Distributed by %s.", _vm->_boot.distrib);
 		font.drawString(&surf, buffer, 0, 0, 320, _TBROWN, Graphics::kTextAlignCenter);
 	}
 

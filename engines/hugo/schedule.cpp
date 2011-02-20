@@ -657,32 +657,32 @@ void Scheduler::screenActions(const int screenNum) {
 void Scheduler::processMaze(const int x1, const int x2, const int y1, const int y2) {
 	debugC(1, kDebugSchedule, "processMaze");
 
-	if (x1 < _maze.x1) {
+	if (x1 < _vm->_maze.x1) {
 		// Exit west
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p - 1;
-		_actListArr[_alNewscrIndex][0].a2.x = _maze.x2 - kShiftSize - (x2 - x1);
+		_actListArr[_alNewscrIndex][0].a2.x = _vm->_maze.x2 - kShiftSize - (x2 - x1);
 		_actListArr[_alNewscrIndex][0].a2.y = _vm->_hero->y;
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
-	} else if (x2 > _maze.x2) {
+	} else if (x2 > _vm->_maze.x2) {
 		// Exit east
 		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p + 1;
-		_actListArr[_alNewscrIndex][0].a2.x = _maze.x1 + kShiftSize;
+		_actListArr[_alNewscrIndex][0].a2.x = _vm->_maze.x1 + kShiftSize;
 		_actListArr[_alNewscrIndex][0].a2.y = _vm->_hero->y;
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
-	} else if (y1 < _maze.y1 - kShiftSize) {
+	} else if (y1 < _vm->_maze.y1 - kShiftSize) {
 		// Exit north
-		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p - _maze.size;
-		_actListArr[_alNewscrIndex][0].a2.x = _maze.x3;
-		_actListArr[_alNewscrIndex][0].a2.y = _maze.y2 - kShiftSize - (y2 - y1);
+		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p - _vm->_maze.size;
+		_actListArr[_alNewscrIndex][0].a2.x = _vm->_maze.x3;
+		_actListArr[_alNewscrIndex][0].a2.y = _vm->_maze.y2 - kShiftSize - (y2 - y1);
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
-	} else if (y2 > _maze.y2 - kShiftSize / 2) {
+	} else if (y2 > _vm->_maze.y2 - kShiftSize / 2) {
 		// Exit south
-		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p + _maze.size;
-		_actListArr[_alNewscrIndex][0].a2.x = _maze.x4;
-		_actListArr[_alNewscrIndex][0].a2.y = _maze.y1 + kShiftSize;
+		_actListArr[_alNewscrIndex][3].a8.screenIndex = *_vm->_screen_p + _vm->_maze.size;
+		_actListArr[_alNewscrIndex][0].a2.x = _vm->_maze.x4;
+		_actListArr[_alNewscrIndex][0].a2.y = _vm->_maze.y1 + kShiftSize;
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
 	}
@@ -1059,18 +1059,18 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 			insertActionList(action->a29.actFailIndex);
 		break;
 	case INIT_MAZE:                                 // act30: Enable and init maze structure
-		_maze.enabledFl = true;
-		_maze.size = action->a30.mazeSize;
-		_maze.x1 = action->a30.x1;
-		_maze.y1 = action->a30.y1;
-		_maze.x2 = action->a30.x2;
-		_maze.y2 = action->a30.y2;
-		_maze.x3 = action->a30.x3;
-		_maze.x4 = action->a30.x4;
-		_maze.firstScreenIndex = action->a30.firstScreenIndex;
+		_vm->_maze.enabledFl = true;
+		_vm->_maze.size = action->a30.mazeSize;
+		_vm->_maze.x1 = action->a30.x1;
+		_vm->_maze.y1 = action->a30.y1;
+		_vm->_maze.x2 = action->a30.x2;
+		_vm->_maze.y2 = action->a30.y2;
+		_vm->_maze.x3 = action->a30.x3;
+		_vm->_maze.x4 = action->a30.x4;
+		_vm->_maze.firstScreenIndex = action->a30.firstScreenIndex;
 		break;
 	case EXIT_MAZE:                                 // act31: Disable maze mode
-		_maze.enabledFl = false;
+		_vm->_maze.enabledFl = false;
 		break;
 	case INIT_PRIORITY:
 		_vm->_object->_objects[action->a32.objIndex].priority = action->a32.priority;
