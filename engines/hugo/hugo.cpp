@@ -398,22 +398,25 @@ bool HugoEngine::loadHugoDat() {
 	_numVariant = in.readUint16BE();
 
 	_screen->loadPalette(in);
+	_screen->loadFontArr(in);
 	_text->loadAllTexts(in);
 	_intro->loadIntroData(in);
 	_parser->loadArrayReqs(in);
+	_parser->loadCatchallList(in);
+	_parser->loadBackgroundObjects(in);
+	_parser->loadCmdList(in);
 	_mouse->loadHotspots(in);
 	_inventory->loadInvent(in);
 	_object->loadObjectUses(in);
-	_parser->loadCatchallList(in);
-	_parser->loadBackgroundObjects(in);
-	_scheduler->loadPoints(in);
-	_parser->loadCmdList(in);
-	_scheduler->loadScreenAct(in);
 	_object->loadObjectArr(in);
+	_object->loadNumObj(in);
+	_scheduler->loadPoints(in);
+	_scheduler->loadScreenAct(in);
+	_scheduler->loadActListArr(in);
+	_scheduler->loadAlNewscrIndex(in);
 	_hero = &_object->_objects[kHeroIndex];         // This always points to hero
 	_screen_p = &(_object->_objects[kHeroIndex].screenIndex); // Current screen is hero's
 	_heroImage = kHeroIndex;                        // Current in use hero image
-	_scheduler->loadActListArr(in);
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
 		if (varnt == _gameVariant) {
@@ -464,10 +467,7 @@ bool HugoEngine::loadHugoDat() {
 		}
 	}
 
-	_object->loadNumObj(in);
-	_scheduler->loadAlNewscrIndex(in);
 	_sound->loadIntroSong(in);
-	_screen->loadFontArr(in);
 	_topMenu->loadBmpArr(in);
 
 	return true;

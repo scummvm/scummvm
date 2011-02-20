@@ -103,6 +103,29 @@ int main(int argc, char *argv[]) {
 		writeByte(outFile, _palette[i]);
 	}
 
+	// The following fonts info have been added to avoid temporarly the .FON
+	// used in the DOS version
+	// font5
+	nbrElem = sizeof(font5) / sizeof(byte);
+	writeUint16BE(outFile, nbrElem);
+
+	for (int j = 0; j < nbrElem; j++)
+		writeByte(outFile, font5[j]);
+
+	// font6
+	nbrElem = sizeof(font6) / sizeof(byte);
+	writeUint16BE(outFile, nbrElem);
+
+	for (int j = 0; j < nbrElem; j++)
+		writeByte(outFile, font6[j]);
+
+	// font8
+	nbrElem = sizeof(font8) / sizeof(byte);
+	writeUint16BE(outFile, nbrElem);
+
+	for (int j = 0; j < nbrElem; j++)
+		writeByte(outFile, font8[j]);
+
 	// Write textData
 	// textData_1w
 	nbrElem = sizeof(textData_1w) / sizeof(char *);
@@ -396,6 +419,114 @@ int main(int argc, char *argv[]) {
 	nbrElem = sizeof(arrayReqs_3d) / sizeof(uint16 *);
 	writeUint16Array(outFile, arrayReqs_3d, nbrElem);
 
+	// catchall_1w
+	nbrElem = sizeof(catchall_1w) / sizeof(background_t);
+	writeBackgroundArray(outFile, catchall_1w, nbrElem);
+
+	// catchall_2w
+	nbrElem = sizeof(catchall_2w) / sizeof(background_t);
+	writeBackgroundArray(outFile, catchall_2w, nbrElem);
+
+	// catchall_3w
+	nbrElem = sizeof(catchall_3w) / sizeof(background_t);
+	writeBackgroundArray(outFile, catchall_3w, nbrElem);
+
+	// catchall_1d
+	nbrElem = sizeof(catchall_1d) / sizeof(background_t);
+	writeBackgroundArray(outFile, catchall_1d, nbrElem);
+
+	// catchall_2d
+	nbrElem = sizeof(catchall_2d) / sizeof(background_t);
+	writeBackgroundArray(outFile, catchall_2d, nbrElem);
+
+	// catchall_3d
+	nbrElem = sizeof(catchall_3d) / sizeof(background_t);
+	writeBackgroundArray(outFile, catchall_3d, nbrElem);
+
+	// backgroundList_1w
+	nbrElem = sizeof(backgroundList_1w) / sizeof(background_t *);
+	writeUint16BE(outFile, nbrElem);
+	for (int j = 0; j < nbrElem; j++) {
+		nbrSubElem = 1;
+		for (int k = 0; backgroundList_1w[j][k].verbIndex != 0; k++)
+			nbrSubElem ++;
+		writeBackgroundArray(outFile, backgroundList_1w[j], nbrSubElem);
+	}
+
+	// backgroundList_2w
+	nbrElem = sizeof(backgroundList_2w) / sizeof(background_t *);
+	writeUint16BE(outFile, nbrElem);
+	for (int j = 0; j < nbrElem; j++) {
+		nbrSubElem = 1;
+		for (int k = 0; backgroundList_2w[j][k].verbIndex != 0; k++)
+			nbrSubElem ++;
+		writeBackgroundArray(outFile, backgroundList_2w[j], nbrSubElem);
+	}
+
+	// backgroundList_3w
+	nbrElem = sizeof(backgroundList_3w) / sizeof(background_t *);
+	writeUint16BE(outFile, nbrElem);
+	for (int j = 0; j < nbrElem; j++) {
+		nbrSubElem = 1;
+		for (int k = 0; backgroundList_3w[j][k].verbIndex != 0; k++)
+			nbrSubElem ++;
+		writeBackgroundArray(outFile, backgroundList_3w[j], nbrSubElem);
+	}
+
+	// backgroundList_1d
+	nbrElem = sizeof(backgroundList_1d) / sizeof(background_t *);
+	writeUint16BE(outFile, nbrElem);
+	for (int j = 0; j < nbrElem; j++) {
+		nbrSubElem = 1;
+		for (int k = 0; backgroundList_1d[j][k].verbIndex != 0; k++)
+			nbrSubElem ++;
+		writeBackgroundArray(outFile, backgroundList_1d[j], nbrSubElem);
+	}
+
+	// backgroundList_2d
+	nbrElem = sizeof(backgroundList_2d) / sizeof(background_t *);
+	writeUint16BE(outFile, nbrElem);
+	for (int j = 0; j < nbrElem; j++) {
+		nbrSubElem = 1;
+		for (int k = 0; backgroundList_2d[j][k].verbIndex != 0; k++)
+			nbrSubElem ++;
+		writeBackgroundArray(outFile, backgroundList_2d[j], nbrSubElem);
+	}
+
+	// backgroundList_3d
+	nbrElem = sizeof(backgroundList_3d) / sizeof(background_t *);
+	writeUint16BE(outFile, nbrElem);
+	for (int j = 0; j < nbrElem; j++) {
+		nbrSubElem = 1;
+		for (int k = 0; backgroundList_3d[j][k].verbIndex != 0; k++)
+			nbrSubElem ++;
+		writeBackgroundArray(outFile, backgroundList_3d[j], nbrSubElem);
+	}
+
+	// cmdList_1w
+	nbrElem = sizeof(cmdList_1w) / sizeof(cmd **);
+	writeCmdArray(outFile, cmdList_1w, nbrElem);
+
+	// cmdList_2w
+	nbrElem = sizeof(cmdList_2w) / sizeof(cmd **);
+	writeCmdArray(outFile, cmdList_2w, nbrElem);
+
+	// cmdList_3w
+	nbrElem = sizeof(cmdList_3w) / sizeof(cmd **);
+	writeCmdArray(outFile, cmdList_3w, nbrElem);
+
+	// cmdList_1d
+	nbrElem = sizeof(cmdList_1d) / sizeof(cmd **);
+	writeCmdArray(outFile, cmdList_1d, nbrElem);
+
+	// cmdList_2d
+	nbrElem = sizeof(cmdList_2d) / sizeof(cmd **);
+	writeCmdArray(outFile, cmdList_2d, nbrElem);
+
+	// cmdList_3d
+	nbrElem = sizeof(cmdList_3d) / sizeof(cmd **);
+	writeCmdArray(outFile, cmdList_3d, nbrElem);
+
 	// hotspots_1w
 	nbrElem = sizeof(hotspots_1w) / sizeof(hotspot_t);
 	writeHotspot(outFile, hotspots_1w, nbrElem);
@@ -486,89 +617,37 @@ int main(int argc, char *argv[]) {
 	nbrElem = sizeof(uses_3d) / sizeof(uses_t);
 	writeUseArray(outFile, uses_3d, nbrElem);
 
-	// catchall_1w
-	nbrElem = sizeof(catchall_1w) / sizeof(background_t);
-	writeBackgroundArray(outFile, catchall_1w, nbrElem);
+	// objects_1w
+	nbrElem = sizeof(objects_1w) / sizeof(object_t);
+	writeObjectArray(outFile, objects_1w, nbrElem);
 
-	// catchall_2w
-	nbrElem = sizeof(catchall_2w) / sizeof(background_t);
-	writeBackgroundArray(outFile, catchall_2w, nbrElem);
+	// objects_2w
+	nbrElem = sizeof(objects_2w) / sizeof(object_t);
+	writeObjectArray(outFile, objects_2w, nbrElem);
 
-	// catchall_3w
-	nbrElem = sizeof(catchall_3w) / sizeof(background_t);
-	writeBackgroundArray(outFile, catchall_3w, nbrElem);
+	// objects_3w
+	nbrElem = sizeof(objects_3w) / sizeof(object_t);
+	writeObjectArray(outFile, objects_3w, nbrElem);
 
-	// catchall_1d
-	nbrElem = sizeof(catchall_1d) / sizeof(background_t);
-	writeBackgroundArray(outFile, catchall_1d, nbrElem);
+	// objects_1d
+	nbrElem = sizeof(objects_1d) / sizeof(object_t);
+	writeObjectArray(outFile, objects_1d, nbrElem);
 
-	// catchall_2d
-	nbrElem = sizeof(catchall_2d) / sizeof(background_t);
-	writeBackgroundArray(outFile, catchall_2d, nbrElem);
+	// objects_2d
+	nbrElem = sizeof(objects_2d) / sizeof(object_t);
+	writeObjectArray(outFile, objects_2d, nbrElem);
 
-	// catchall_3d
-	nbrElem = sizeof(catchall_3d) / sizeof(background_t);
-	writeBackgroundArray(outFile, catchall_3d, nbrElem);
+	// objects_3d
+	nbrElem = sizeof(objects_3d) / sizeof(object_t);
+	writeObjectArray(outFile, objects_3d, nbrElem);
 
-	// backgroundList_1w
-	nbrElem = sizeof(backgroundList_1w) / sizeof(background_t *);
-	writeUint16BE(outFile, nbrElem);
-	for (int j = 0; j < nbrElem; j++) {
-		nbrSubElem = 1;
-		for (int k = 0; backgroundList_1w[j][k].verbIndex != 0; k++)
-			nbrSubElem ++;
-		writeBackgroundArray(outFile, backgroundList_1w[j], nbrSubElem);
-	}
-
-	// backgroundList_2w
-	nbrElem = sizeof(backgroundList_2w) / sizeof(background_t *);
-	writeUint16BE(outFile, nbrElem);
-	for (int j = 0; j < nbrElem; j++) {
-		nbrSubElem = 1;
-		for (int k = 0; backgroundList_2w[j][k].verbIndex != 0; k++)
-			nbrSubElem ++;
-		writeBackgroundArray(outFile, backgroundList_2w[j], nbrSubElem);
-	}
-
-	// backgroundList_3w
-	nbrElem = sizeof(backgroundList_3w) / sizeof(background_t *);
-	writeUint16BE(outFile, nbrElem);
-	for (int j = 0; j < nbrElem; j++) {
-		nbrSubElem = 1;
-		for (int k = 0; backgroundList_3w[j][k].verbIndex != 0; k++)
-			nbrSubElem ++;
-		writeBackgroundArray(outFile, backgroundList_3w[j], nbrSubElem);
-	}
-
-	// backgroundList_1d
-	nbrElem = sizeof(backgroundList_1d) / sizeof(background_t *);
-	writeUint16BE(outFile, nbrElem);
-	for (int j = 0; j < nbrElem; j++) {
-		nbrSubElem = 1;
-		for (int k = 0; backgroundList_1d[j][k].verbIndex != 0; k++)
-			nbrSubElem ++;
-		writeBackgroundArray(outFile, backgroundList_1d[j], nbrSubElem);
-	}
-
-	// backgroundList_2d
-	nbrElem = sizeof(backgroundList_2d) / sizeof(background_t *);
-	writeUint16BE(outFile, nbrElem);
-	for (int j = 0; j < nbrElem; j++) {
-		nbrSubElem = 1;
-		for (int k = 0; backgroundList_2d[j][k].verbIndex != 0; k++)
-			nbrSubElem ++;
-		writeBackgroundArray(outFile, backgroundList_2d[j], nbrSubElem);
-	}
-
-	// backgroundList_3d
-	nbrElem = sizeof(backgroundList_3d) / sizeof(background_t *);
-	writeUint16BE(outFile, nbrElem);
-	for (int j = 0; j < nbrElem; j++) {
-		nbrSubElem = 1;
-		for (int k = 0; backgroundList_3d[j][k].verbIndex != 0; k++)
-			nbrSubElem ++;
-		writeBackgroundArray(outFile, backgroundList_3d[j], nbrSubElem);
-	}
+	// Save LASTOBJ
+	writeUint16BE(outFile, LASTOBJ_1w);
+	writeUint16BE(outFile, LASTOBJ_2w);
+	writeUint16BE(outFile, LASTOBJ_3w);
+	writeUint16BE(outFile, LASTOBJ_1d);   //(not set in original, as Hugo1 DOS doesn't use a DAT file to pack the screens)
+	writeUint16BE(outFile, LASTOBJ_2d);
+	writeUint16BE(outFile, LASTOBJ_3d);
 
 	// points_1w
 	nbrElem = sizeof(points_1w) / sizeof(byte);
@@ -612,30 +691,6 @@ int main(int argc, char *argv[]) {
 	for (int j = 0; j < nbrElem; j++)
 		writeByte(outFile, points_3d[j]);
 
-	// cmdList_1w
-	nbrElem = sizeof(cmdList_1w) / sizeof(cmd **);
-	writeCmdArray(outFile, cmdList_1w, nbrElem);
-
-	// cmdList_2w
-	nbrElem = sizeof(cmdList_2w) / sizeof(cmd **);
-	writeCmdArray(outFile, cmdList_2w, nbrElem);
-
-	// cmdList_3w
-	nbrElem = sizeof(cmdList_3w) / sizeof(cmd **);
-	writeCmdArray(outFile, cmdList_3w, nbrElem);
-
-	// cmdList_1d
-	nbrElem = sizeof(cmdList_1d) / sizeof(cmd **);
-	writeCmdArray(outFile, cmdList_1d, nbrElem);
-
-	// cmdList_2d
-	nbrElem = sizeof(cmdList_2d) / sizeof(cmd **);
-	writeCmdArray(outFile, cmdList_2d, nbrElem);
-
-	// cmdList_3d
-	nbrElem = sizeof(cmdList_3d) / sizeof(cmd **);
-	writeCmdArray(outFile, cmdList_3d, nbrElem);
-
 	// screenActs_1w
 	nbrElem = sizeof(screenActs_1w) / sizeof(uint16 *);
 	writeScreenActs(outFile, screenActs_1w, nbrElem);
@@ -659,30 +714,6 @@ int main(int argc, char *argv[]) {
 	// screenActs_3d
 	nbrElem = sizeof(screenActs_3d) / sizeof(uint16 *);
 	writeScreenActs(outFile, screenActs_3d, nbrElem);
-
-	// objects_1w
-	nbrElem = sizeof(objects_1w) / sizeof(object_t);
-	writeObjectArray(outFile, objects_1w, nbrElem);
-
-	// objects_2w
-	nbrElem = sizeof(objects_2w) / sizeof(object_t);
-	writeObjectArray(outFile, objects_2w, nbrElem);
-
-	// objects_3w
-	nbrElem = sizeof(objects_3w) / sizeof(object_t);
-	writeObjectArray(outFile, objects_3w, nbrElem);
-
-	// objects_1d
-	nbrElem = sizeof(objects_1d) / sizeof(object_t);
-	writeObjectArray(outFile, objects_1d, nbrElem);
-
-	// objects_2d
-	nbrElem = sizeof(objects_2d) / sizeof(object_t);
-	writeObjectArray(outFile, objects_2d, nbrElem);
-
-	// objects_3d
-	nbrElem = sizeof(objects_3d) / sizeof(object_t);
-	writeObjectArray(outFile, objects_3d, nbrElem);
 
 	// actlistArr_1w
 	nbrElem = sizeof(actListArr_1w) / sizeof(actList);
@@ -708,6 +739,14 @@ int main(int argc, char *argv[]) {
 	nbrElem = sizeof(actListArr_3d) / sizeof(actList);
 	writeActListArray(outFile, actListArr_3d, nbrElem);
 
+	// Maze ALnewscr
+	writeUint16BE(outFile, 0);
+	writeUint16BE(outFile, kALnewscr_2w);
+	writeUint16BE(outFile, 0);
+	writeUint16BE(outFile, 0);
+	writeUint16BE(outFile, kALnewscr_2d);
+	writeUint16BE(outFile, 0);
+	
 	writeSByte(outFile, NUM_TUNES_1w);
 	writeSByte(outFile, SILENCE_1w);
 	writeSByte(outFile, TEST_SOUND_1w);
@@ -808,22 +847,6 @@ int main(int argc, char *argv[]) {
 	writeUint16BE(outFile, kVTake_3d);
 	writeUint16BE(outFile, kVDrop_3d);
 
-	// Save LASTOBJ
-	writeUint16BE(outFile, LASTOBJ_1w);
-	writeUint16BE(outFile, LASTOBJ_2w);
-	writeUint16BE(outFile, LASTOBJ_3w);
-	writeUint16BE(outFile, LASTOBJ_1d);   //(not set in original, as Hugo1 DOS doesn't use a DAT file to pack the screens)
-	writeUint16BE(outFile, LASTOBJ_2d);
-	writeUint16BE(outFile, LASTOBJ_3d);
-
-	// Maze ALnewscr
-	writeUint16BE(outFile, 0);
-	writeUint16BE(outFile, kALnewscr_2w);
-	writeUint16BE(outFile, 0);
-	writeUint16BE(outFile, 0);
-	writeUint16BE(outFile, kALnewscr_2d);
-	writeUint16BE(outFile, 0);
-	
 	// DOS Intro music
 	// Win version do not use it
 	// H1 Dos doesn't have an intro
@@ -834,29 +857,6 @@ int main(int argc, char *argv[]) {
 	writeUint16BE(outFile, 0);
 	writeUint16BE(outFile, 0);
 	writeUint16BE(outFile, kDTsong11_3d);
-
-	// The following fonts info have been added to avoid temporarly the .FON
-	// used in the DOS version
-	// font5
-	nbrElem = sizeof(font5) / sizeof(byte);
-	writeUint16BE(outFile, nbrElem);
-
-	for (int j = 0; j < nbrElem; j++)
-		writeByte(outFile, font5[j]);
-
-	// font6
-	nbrElem = sizeof(font6) / sizeof(byte);
-	writeUint16BE(outFile, nbrElem);
-
-	for (int j = 0; j < nbrElem; j++)
-		writeByte(outFile, font6[j]);
-
-	// font8
-	nbrElem = sizeof(font8) / sizeof(byte);
-	writeUint16BE(outFile, nbrElem);
-
-	for (int j = 0; j < nbrElem; j++)
-		writeByte(outFile, font8[j]);
 
 	//bitmap images for menu
 	writeUint16BE(outFile, 18);

@@ -33,7 +33,7 @@
 #ifndef STATICDISPLAY_H
 #define STATICDISPLAY_H
 
-#define SIZE_PAL_ARRAY 64
+#define SIZE_PAL_ARRAY 3*16
 
 #if 1
 // Color table of standard 16 VGA colors
@@ -45,22 +45,22 @@
 
 
 byte _palette[SIZE_PAL_ARRAY] = {
-	0,   0,   0,  0,                                // BLACK
-	0,   0,   V1, 0,                                // BLUE
-	0,   V1,  0,  0,                                // GREEN
-	0,   V1,  V1, 0,                                // CYAN
-	V1,  0,   0,  0,                                // RED
-	V1,  0,   V1, 0,                                // MAGENTA
-	V1,  V3,  0,  0,                                // BROWN
-	V1,  V1,  V1, 0,                                // WHITE (LIGHT GRAY)
-	V3,  V3,  V3, 0,                                // GRAY  (DARK GRAY)
-	V4,  V4,  V2, 0,                                // LIGHTBLUE
-	V4,  V2,  V4, 0,                                // LIGHTGREEN
-	V4,  V2,  V2, 0,                                // LIGHTCYAN
-	V2,  V4,  V4, 0,                                // LIGHTRED
-	V2,  V4,  V2, 0,                                // LIGHTMAGENTA
-	V2,  V2,  V4, 0,                                // YELLOW
-	V2,  V2,  V2, 0                                 // BRIGHTWHITE
+	0,   0,   0,                                    // BLACK
+	0,   0,   V1,                                   // BLUE
+	0,   V1,  0,                                    // GREEN
+	0,   V1,  V1,                                   // CYAN
+	V1,  0,   0,                                    // RED
+	V1,  0,   V1,                                   // MAGENTA
+	V1,  V3,  0,                                    // BROWN
+	V1,  V1,  V1,                                   // WHITE (LIGHT GRAY)
+	V3,  V3,  V3,                                   // GRAY  (DARK GRAY)
+	V4,  V4,  V2,                                   // LIGHTBLUE
+	V4,  V2,  V4,                                   // LIGHTGREEN
+	V4,  V2,  V2,                                   // LIGHTCYAN
+	V2,  V4,  V4,                                   // LIGHTRED
+	V2,  V4,  V2,                                   // LIGHTMAGENTA
+	V2,  V2,  V4,                                   // YELLOW
+	V2,  V2,  V2                                    // BRIGHTWHITE
 };
 #else
 // Original paletter found in original exe. 
@@ -70,22 +70,22 @@ byte _palette[SIZE_PAL_ARRAY] = {
 #define C2 255                                      // High intensity value
 #define C3 127                                      // Special for Brown/Gray
 byte _palette[SIZE_PAL_ARRAY] = {
-	0,   0,   0,  0,                                // BLACK
-	0,   0,   C1, 0,                                // BLUE
-	0,   C1,  0,  0,                                // GREEN
-	0,   C1,  C1, 0,                                // CYAN
-	C1,  0,   0,  0,                                // RED
-	C1,  0,   C1, 0,                                // MAGENTA
-	C3,  C3,  0,  0,                                // BROWN
-	C1,  C1,  C1, 0,                                // WHITE (LIGHT GRAY)
-	C3,  C3,  C3, 0,                                // GRAY  (DARK GRAY)
-	0,   0,   C2, 0,                                // LIGHTBLUE
-	0,   C2,  0,  0,                                // LIGHTGREEN
-	0,   C2,  C2, 0,                                // LIGHTCYAN
-	C2,  0,   0,  0,                                // LIGHTRED
-	C2,  0,   C2, 0,                                // LIGHTMAGENTA
-	C2,  C2,  0,  0,                                // YELLOW
-	C2,  C2,  C2, 0                                 // BRIGHTWHITE
+	0,   0,   0,                                    // BLACK
+	0,   0,   C1,                                   // BLUE
+	0,   C1,  0,                                    // GREEN
+	0,   C1,  C1,                                   // CYAN
+	C1,  0,   0,                                    // RED
+	C1,  0,   C1,                                   // MAGENTA
+	C3,  C3,  0,                                    // BROWN
+	C1,  C1,  C1,                                   // WHITE (LIGHT GRAY)
+	C3,  C3,  C3,                                   // GRAY  (DARK GRAY)
+	0,   0,   C2,                                   // LIGHTBLUE
+	0,   C2,  0,                                    // LIGHTGREEN
+	0,   C2,  C2,                                   // LIGHTCYAN
+	C2,  0,   0,                                    // LIGHTRED
+	C2,  0,   C2,                                   // LIGHTMAGENTA
+	C2,  C2,  0,                                    // YELLOW
+	C2,  C2,  C2                                    // BRIGHTWHITE
 };
 #endif
 
