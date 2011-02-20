@@ -149,7 +149,7 @@ void Screen::setCursorPal() {
 		pal[3 * i + 2] = _curPalette[4 * i + 2];
 	}
 
-	CursorMan.replaceCursorPalette(_curPalette, 0, _paletteSize / 4);
+	CursorMan.replaceCursorPalette(pal, 0, _paletteSize / 4);
 }
 
 /**
