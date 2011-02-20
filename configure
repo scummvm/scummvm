@@ -97,6 +97,7 @@ add_engine m4 "M4/MADS" no
 add_engine made "MADE" yes
 add_engine mohawk "Mohawk" no
 add_engine parallaction "Parallaction" yes
+add_engine pegasus "The Journeyman Project: Pegasus Prime" no
 add_engine queen "Flight of the Amazon Queen" yes
 add_engine saga "SAGA" yes "ihnm saga2"
 add_engine ihnm "IHNM" yes
