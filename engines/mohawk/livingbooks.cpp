@@ -3142,6 +3142,11 @@ bool LBLiveTextItem::contains(Common::Point point) {
 void LBLiveTextItem::paletteUpdate(uint16 word, bool on) {
 	_vm->_needsRedraw = true;
 
+	// Sometimes the last phrase goes out-of-bounds, the original engine
+	// only checks the words which are valid in the palette updating code.
+	if (word >= _words.size())
+		return;
+
 	if (_resourceId) {
 		// with a resource, we draw a bitmap in draw() rather than changing the palette
 		return;
