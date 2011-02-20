@@ -346,12 +346,9 @@ void GfxView::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, C
 
 void GfxView::getCelSpecialHoyle4Rect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect &outRect) const {
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
-	int16 adjustY = y - celInfo->height + celInfo->displaceY + 1;
-	int16 adjustX = x - ((celInfo->width - 1) >> 1) + celInfo->displaceX;
-	outRect.top += adjustY;
-	outRect.bottom += adjustY;
-	outRect.left += adjustX;
-	outRect.right += adjustX;
+	int16 adjustY = y + celInfo->displaceY - celInfo->height + 1;
+	int16 adjustX = x + celInfo->displaceX - ((celInfo->width - 1) >> 1);
+	outRect.translate(adjustX, adjustY);
 }
 
 void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect &outRect) const {
@@ -655,10 +652,9 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 	const byte drawMask = (priority == 255) ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
 	int x, y;
 
-	if (_embeddedPal) {
+	if (_embeddedPal)
 		// Merge view palette in...
 		_palette->set(&_viewPalette, false);
-	}
 
 	const int16 width = MIN(clipRect.width(), celWidth);
 	const int16 height = MIN(clipRect.height(), celHeight);
@@ -679,7 +675,7 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 						// UpscaledHires means view is hires and is supposed to
 						// get drawn onto lowres screen.
 						// FIXME(?): we can't read priority directly with the
-						// hires coordinates. may not be needed at all in kq6
+						// hires coordinates. May not be needed at all in kq6
 						_screen->putPixelOnDisplay(x2, y2, palette->mapping[color]);
 					}
 				}
@@ -718,10 +714,9 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	int16 scaledWidth, scaledHeight;
 	int pixelNo, scaledPixel, scaledPixelNo, prevScaledPixelNo;
 
-	if (_embeddedPal) {
+	if (_embeddedPal)
 		// Merge view palette in...
 		_palette->set(&_viewPalette, false);
-	}
 
 	scaledWidth = (celInfo->width * scaleX) >> 7;
 	scaledHeight = (celInfo->height * scaleY) >> 7;
