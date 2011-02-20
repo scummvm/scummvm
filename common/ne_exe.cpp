@@ -38,7 +38,7 @@ NECursor::NECursor() {
 	_hotspotX = 0;
 	_hotspotY = 0;
 	_surface  = 0;
-	memset(_palette, 0, 256 * 4);
+	memset(_palette, 0, 256 * 3);
 }
 
 NECursor::~NECursor() {
@@ -121,16 +121,16 @@ bool NECursor::readCursor(SeekableReadStream &stream, uint32 count) {
 	height /= 2;
 
 	// Standard palette: transparent, black, white
+	_palette[6] = 0xff;
+	_palette[7] = 0xff;
 	_palette[8] = 0xff;
-	_palette[9] = 0xff;
-	_palette[10] = 0xff;
 
 	// Reading the palette
 	bitmap->seek(40);
 	for (uint32 i = 0 ; i < numColors; i++) {
-		_palette[(i + 1) * 4 + 2] = bitmap->readByte();
-		_palette[(i + 1) * 4 + 1] = bitmap->readByte();
-		_palette[(i + 1) * 4 + 0] = bitmap->readByte();
+		_palette[(i + 1) * 3 + 2] = bitmap->readByte();
+		_palette[(i + 1) * 3 + 1] = bitmap->readByte();
+		_palette[(i + 1) * 3 + 0] = bitmap->readByte();
 		bitmap->readByte();
 	}
 

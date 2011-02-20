@@ -63,7 +63,7 @@ public:
 
 private:
 	byte *_surface;
-	byte _palette[256 * 4];
+	byte _palette[256 * 3];
 
 	uint16 _width;    ///< The cursor's width.
 	uint16 _height;   ///< The cursor's height.
