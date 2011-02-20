@@ -44,7 +44,6 @@ static jfieldID FID_Event_mouse_x;
 static jfieldID FID_Event_mouse_y;
 static jfieldID FID_Event_mouse_relative;
 static jfieldID FID_ScummVM_nativeScummVM;
-static jmethodID MID_Object_wait;
 
 JNIEnv *JNU_GetEnv() {
 	JNIEnv *env = 0;
@@ -370,14 +369,6 @@ JNI_OnLoad(JavaVM *jvm, void *reserved) {
 
 	FID_Event_mouse_relative = env->GetFieldID(event, "mouse_relative", "Z");
 	if (FID_Event_mouse_relative == 0)
-		return JNI_ERR;
-
-	cls = env->FindClass("java/lang/Object");
-	if (cls == 0)
-		return JNI_ERR;
-
-	MID_Object_wait = env->GetMethodID(cls, "wait", "()V");
-	if (MID_Object_wait == 0)
 		return JNI_ERR;
 
 	return JNI_VERSION_1_2;
