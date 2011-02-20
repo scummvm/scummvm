@@ -47,7 +47,7 @@
 
 namespace Hugo {
 
-MouseHandler::MouseHandler(HugoEngine *vm) : _vm(vm) {
+MouseHandler::MouseHandler(HugoEngine *vm) : _vm(vm), _hotspots(0) {
 	_leftButtonFl  = false;
 	_rightButtonFl = false;
 	_jumpExitFl = false;                            // Can't jump to a screen exit
