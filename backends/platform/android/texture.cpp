@@ -33,8 +33,8 @@
 #include "common/util.h"
 #include "common/tokenizer.h"
 
+#include "backends/platform/android/texture.h"
 #include "backends/platform/android/android.h"
-#include "backends/platform/android/video.h"
 
 // Unfortunately, Android devices are too varied to make broad assumptions :/
 #define TEXSUBIMAGE_IS_EXPENSIVE 0

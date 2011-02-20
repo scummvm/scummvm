@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef _ANDROID_TEXTURE_H_
+#define _ANDROID_TEXTURE_H_
+
 #if defined(__ANDROID__)
 
 #include <GLES/gl.h>
@@ -207,3 +210,5 @@ protected:
 };
 
 #endif
+#endif
+
