@@ -3213,7 +3213,7 @@ void LBLiveTextItem::drawWord(uint word, uint yPos) {
 }
 
 void LBLiveTextItem::handleMouseDown(Common::Point pos) {
-	if (_neverEnabled || !_enabled || !_globalEnabled || _currentPhrase != 0xFFFF)
+	if (_neverEnabled || !_enabled || !_globalEnabled || _playing)
 		return LBItem::handleMouseDown(pos);
 
 	pos.x -= _rect.left;
@@ -3245,16 +3245,13 @@ bool LBLiveTextItem::togglePlaying(bool playing, bool restart) {
 	if (!playing)
 		return LBItem::togglePlaying(playing, restart);
 	if (_neverEnabled || !_enabled || !_globalEnabled)
-		return (_currentPhrase != 0xFFFF);
+		return _playing;
 
 	// TODO: handle this properly
 	_vm->_sound->stopSound();
 
 	_currentWord = 0xFFFF;
-
-	// some LiveText items don't have any phrases!
-	if (_phrases.size() > 0)
-		_currentPhrase = 0;
+	_currentPhrase = 0xFFFF;
 
 	return true;
 }
@@ -3266,7 +3263,7 @@ void LBLiveTextItem::stop() {
 }
 
 void LBLiveTextItem::notify(uint16 data, uint16 from) {
-	if (_neverEnabled || !_enabled || !_globalEnabled || _currentPhrase == 0xFFFF)
+	if (_neverEnabled || !_enabled || !_globalEnabled || !_playing)
 		return LBItem::notify(data, from);
 
 	if (_currentWord != 0xFFFF) {
