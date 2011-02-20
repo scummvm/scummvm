@@ -41,30 +41,28 @@ Palette::~Palette() {
 }
 
 void Palette::setFullPalette(byte *palette) {
-	byte colors[1024];
+	byte colors[768];
 	for (int i = 0; i < 256; i++) {
-		colors[i * 4 + 0] = palette[i * 3 + 0] << 2;
-		colors[i * 4 + 1] = palette[i * 3 + 1] << 2;
-		colors[i * 4 + 2] = palette[i * 3 + 2] << 2;
-		colors[i * 4 + 3] = 255;
+		colors[i * 3 + 0] = palette[i * 3 + 0] << 2;
+		colors[i * 3 + 1] = palette[i * 3 + 1] << 2;
+		colors[i * 3 + 2] = palette[i * 3 + 2] << 2;
 	}
 	_vm->_system->getPaletteManager()->setPalette((const byte *)colors, 0, 256);
 	_vm->_system->updateScreen();
 }
 
 void Palette::getFullPalette(byte *palette) {
-	byte colors[1024];
+	byte colors[768];
 	_vm->_system->getPaletteManager()->grabPalette(colors, 0, 256);
 	for (int i = 0; i < 256; i++) {
-		palette[i * 3 + 0] = colors[i * 4 + 0] >> 2;
-		palette[i * 3 + 1] = colors[i * 4 + 1] >> 2;
-		palette[i * 3 + 2] = colors[i * 4 + 2] >> 2;
+		palette[i * 3 + 0] = colors[i * 3 + 0] >> 2;
+		palette[i * 3 + 1] = colors[i * 3 + 1] >> 2;
+		palette[i * 3 + 2] = colors[i * 3 + 2] >> 2;
 	}
 }
 
 void Palette::setDeltaPalette(byte *palette, byte mask, char deltaValue, int16 count, int16 startIndex) {
-
-	byte colors[1024];
+	byte colors[768];
 
 	byte *palPtr = palette + startIndex * 3;
 	int16 index = startIndex, colorCount = count;
@@ -78,18 +76,17 @@ void Palette::setDeltaPalette(byte *palette, byte mask, char deltaValue, int16 c
 
 	while (count--) {
 		rgb = *palPtr++;
-		if (mask & 1) colors[index * 4 + 0] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
+		if (mask & 1) colors[index * 3 + 0] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
 		rgb = *palPtr++;
-		if (mask & 2) colors[index * 4 + 1] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
+		if (mask & 2) colors[index * 3 + 1] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
 		rgb = *palPtr++;
-		if (mask & 4) colors[index * 4 + 2] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
-	 	index++;
+		if (mask & 4) colors[index * 3 + 2] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
+		index++;
 	}
 	
 	debug(0, "startIndex = %d; colorCount = %d", startIndex, colorCount);
 
 	_vm->_system->getPaletteManager()->setPalette((const byte *)colors, 0, 256);
-
 }
 
 void Palette::loadAddPalette(uint resIndex, byte startIndex) {
