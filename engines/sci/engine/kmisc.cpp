@@ -366,8 +366,6 @@ reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 		for (int i = 0; i < argv[1].toUint16(); i++)
 			g_sci->_gfxMacIconBar->addIcon(argv[i + 2]);
 
-		g_sci->_gfxMacIconBar->drawIcons();
-
 		// TODO: Should return icon bar handle
 		// Said handle is then used by DisposeIconBar
 		break;
@@ -375,10 +373,12 @@ reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 		warning("kIconBar(Dispose)");
 		break;
 	case 2: // EnableIconBar (0xffff = all)
-		warning("kIconBar(Enable, %d)", argv[1].toUint16());
+		debug(0, "kIconBar(Enable, %d)", argv[1].toUint16());
+		g_sci->_gfxMacIconBar->setIconEnabled(argv[1].toUint16(), true);
 		break;
 	case 3: // DisableIconBar (0xffff = all)
-		warning("kIconBar(Disable, %d)", argv[1].toUint16());
+		debug(0, "kIconBar(Disable, %d)", argv[1].toUint16());
+		g_sci->_gfxMacIconBar->setIconEnabled(argv[1].toUint16(), false);
 		break;
 	case 4: // SetIconBarIcon
 		warning("kIconBar(SetIcon, %d, %d)", argv[1].toUint16(), argv[2].toUint16());
@@ -386,6 +386,8 @@ reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 	default:
 		error("Unknown kIconBar(%d)", argv[0].toUint16());
 	}
+
+	g_sci->_gfxMacIconBar->drawIcons();
 
 	return NULL_REG;
 }

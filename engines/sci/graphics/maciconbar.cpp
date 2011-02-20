@@ -63,6 +63,7 @@ void GfxMacIconBar::addIcon(reg_t obj) {
 	item.object = obj;
 	item.nonSelectedImage = createImage(iconIndex, false);
 	item.selectedImage = createImage(iconIndex, true);
+	item.enabled = true;
 
 	// Start after the main viewing window and add a two pixel buffer
 	uint16 y = g_sci->_gfxScreen->getHeight() + 2;
@@ -80,13 +81,67 @@ void GfxMacIconBar::addIcon(reg_t obj) {
 void GfxMacIconBar::drawIcons() {
 	// Draw the icons to the bottom of the screen
 
-	for (uint32 i = 0; i < _iconBarItems.size(); i++) {
-		Graphics::Surface *surface = _iconBarItems[i].nonSelectedImage;
+	for (uint32 i = 0; i < _iconBarItems.size(); i++)
+		redrawIcon(i);
+}
 
-		if (surface) {
-			g_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, _iconBarItems[i].rect.left,
-				_iconBarItems[i].rect.top, _iconBarItems[i].rect.width(), _iconBarItems[i].rect.height());
-		}
+void GfxMacIconBar::redrawIcon(uint16 iconIndex) {
+	if (iconIndex >= _iconBarItems.size())
+		return;
+
+	if (_iconBarItems[iconIndex].enabled)
+		drawEnabledImage(_iconBarItems[iconIndex].nonSelectedImage, _iconBarItems[iconIndex].rect);
+	else
+		drawDisabledImage(_iconBarItems[iconIndex].nonSelectedImage, _iconBarItems[iconIndex].rect);
+}
+
+void GfxMacIconBar::drawEnabledImage(Graphics::Surface *surface, const Common::Rect &rect) {
+	if (surface)
+		g_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, rect.left, rect.top, rect.width(), rect.height());
+}
+
+void GfxMacIconBar::drawDisabledImage(Graphics::Surface *surface, const Common::Rect &rect) {
+	if (!surface)
+		return;
+
+	// Add a black checkboard pattern to the image before copying it to the screen
+
+	Graphics::Surface newSurf;
+	newSurf.copyFrom(*surface);
+
+	for (int i = 0; i < newSurf.h; i++) {
+		int startX = rect.left & 3;
+
+		if ((i + rect.top) & 1)
+			startX += 2;
+
+		for (int j = startX; j < newSurf.w; j += 4)
+			*((byte *)newSurf.getBasePtr(j, i)) = 0;
+	}
+
+	g_system->copyRectToScreen((byte *)newSurf.pixels, newSurf.pitch, rect.left, rect.top, rect.width(), rect.height());
+	newSurf.free();
+}
+
+void GfxMacIconBar::drawSelectedImage(uint16 iconIndex) {
+	assert(iconIndex <= _iconBarItems.size());
+
+	// TODO
+}
+
+bool GfxMacIconBar::isIconEnabled(uint16 iconIndex) const {
+	if (iconIndex >= _iconBarItems.size())
+		return false;
+
+	return _iconBarItems[iconIndex].enabled;
+}
+
+void GfxMacIconBar::setIconEnabled(uint16 iconIndex, bool enabled) {
+	if (iconIndex == 0xffff) {
+		for (uint32 i = 0; i < _iconBarItems.size(); i++)
+			_iconBarItems[i].enabled = enabled;
+	} else if (iconIndex < _iconBarItems.size()) {
+		_iconBarItems[iconIndex].enabled = enabled;
 	}
 }
 

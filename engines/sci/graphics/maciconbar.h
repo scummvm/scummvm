@@ -43,6 +43,10 @@ public:
 
 	void addIcon(reg_t obj);
 	void drawIcons();
+	void redrawIcon(uint16 index);
+	void drawSelectedImage(uint16 index);
+	bool isIconEnabled(uint16 index) const;
+	void setIconEnabled(uint16 index, bool enabled);
 
 private:
 	struct IconBarItem {
@@ -50,6 +54,7 @@ private:
 		Graphics::Surface *nonSelectedImage;
 		Graphics::Surface *selectedImage;
 		Common::Rect rect;
+		bool enabled;
 	};
 
 	Common::Array<IconBarItem> _iconBarItems;
@@ -57,6 +62,9 @@ private:
 
 	Graphics::Surface *createImage(uint32 iconIndex, bool isSelected);
 	void remapColors(Graphics::Surface *surf, byte *palette);
+
+	void drawEnabledImage(Graphics::Surface *surface, const Common::Rect &rect);
+	void drawDisabledImage(Graphics::Surface *surface, const Common::Rect &rect);
 };
 
 } // End of namespace Sci
