@@ -3284,8 +3284,10 @@ void LBLiveTextItem::notify(uint16 data, uint16 from) {
 			}
 			_currentPhrase = i;
 			// TODO: not sure this is the correct logic
-			if (i == _phrases.size() - 1)
+			if (i == _phrases.size() - 1) {
 				_currentPhrase = 0xFFFF;
+				done(true);
+			}
 		} else if (_phrases[i].highlightEnd == data && _phrases[i].endId == from) {
 			debug(2, "Disabling phrase %d", i);
 			for (uint j = 0; j < _phrases[i].wordCount; j++) {
