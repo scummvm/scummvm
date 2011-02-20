@@ -53,7 +53,7 @@ public:
 	 * (transparency) value. Then the second color starts, and so on. So memory
 	 * looks like this: R1-G1-B1-R2-G2-B2-R3-...
 	 *
-	 * @param colors	the new palette data, in interleaved RGBA format
+	 * @param colors	the new palette data, in interleaved RGB format
 	 * @param start		the first palette entry to be updated
 	 * @param num		the number of palette entries to be updated
 	 *
@@ -88,7 +88,7 @@ public:
 	 * memcmp(origPal, obtainedPal, num*3) == 0
 	 *
 	 * @see setPalette
-	 * @param colors	the palette data, in interleaved RGBA format
+	 * @param colors	the palette data, in interleaved RGB format
 	 * @param start		the first platte entry to be read
 	 * @param num		the number of palette entries to be read
 	 *
