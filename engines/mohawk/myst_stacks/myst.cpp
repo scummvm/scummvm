@@ -47,6 +47,7 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	// when linking back to Myst in the library
 	_savedCardId = 4329;
 
+	_towerRotationBlinkLabel = false;
 	_libraryBookcaseChanged = false;
 	_dockVaultState = 0;
 	_cabinMatchState = 2;
