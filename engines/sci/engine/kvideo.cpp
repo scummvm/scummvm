@@ -48,8 +48,8 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	uint16 width = videoDecoder->getWidth();
 	uint16 height = videoDecoder->getHeight();
 	uint16 pitch = videoDecoder->getWidth() * bytesPerPixel;
-	uint16 screenWidth = g_system->getWidth();
-	uint16 screenHeight = g_system->getHeight();
+	uint16 screenWidth = g_sci->_gfxScreen->getDisplayWidth();
+	uint16 screenHeight = g_sci->_gfxScreen->getDisplayHeight();
 
 	videoState.fileName.toLowercase();
 	bool isVMD = videoState.fileName.hasSuffix(".vmd");
