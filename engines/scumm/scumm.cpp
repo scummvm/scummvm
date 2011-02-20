@@ -284,9 +284,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_16BitPalette = NULL;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	_townsScreen = 0;
-#endif
 	_cjkFont = 0;
 	_cjkChar = 0;
+#endif
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
@@ -637,8 +637,8 @@ ScummEngine::~ScummEngine() {
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	delete _townsScreen;
-#endif
 	delete _cjkFont;
+#endif
 
 	delete _debugger;
 

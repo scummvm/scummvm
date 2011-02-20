@@ -54,13 +54,14 @@ void ScummEngine::loadCJKFont() {
 	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 #ifdef DISABLE_TOWNS_DUAL_LAYER_MODE
 		error("FM-Towns Kanji font drawing requires dual graphics layer support which is disabled in this build");
-#endif
+#else
 		// use FM-TOWNS font rom, since game files don't have kanji font resources
 		_cjkFont = Graphics::FontSJIS::createFont(Common::kPlatformFMTowns);
 		if (!_cjkFont)
 			error("SCUMM::Font: Could not open file 'FMT_FNT.ROM'");
 		_textSurfaceMultiplier = 2;
 		_useCJKMode = true;
+#endif
 	} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) {
 		int numChar = 3418;
 		_2byteWidth = 12;
@@ -689,10 +690,12 @@ void CharsetRendererCommon::enableShadow(bool enable) {
 			_shadowMode = kNormalShadowMode;
 		}
 	} else {
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (_vm->_cjkFont) {
 			_vm->_cjkFont->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
 			_vm->_cjkFont->toggleFlippedMode(false);
 		}
+#endif
 		_shadowMode = kNoShadowMode;
 	}
 }
@@ -719,6 +722,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	if (chr == '@')
 		return;
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_vm->_useCJKMode && chr > 127) {
 		if (_vm->_game.platform == Common::kPlatformFMTowns) {
 			charPtr = 0;
@@ -729,7 +733,9 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 			height = _vm->_2byteHeight;
 			charPtr = _vm->get2byteCharPtr(chr);
 		}
-	} else {
+	} else
+#endif
+	{
 		charPtr = _fontPtr + chr * 8;
 		width = getCharWidth(chr);
 		height = 8;
@@ -772,14 +778,18 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		dst = vs->getPixels(_left, drawTop);
 		if (charPtr)
 			drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->bytesPerPixel);
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		else if (_vm->_cjkFont)
 			_vm->_cjkFont->drawChar(vs, chr, _left, drawTop, _color, _shadowColor);
+#endif
 	} else {
 		dst = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier);
 		if (charPtr)
 			drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.bytesPerPixel, (_vm->_textSurfaceMultiplier == 2 && !is2byte));
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		else if (_vm->_cjkFont)
 			_vm->_cjkFont->drawChar(_vm->_textSurface, chr, _left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier, _color, _shadowColor);
+#endif
 		if (is2byte)
 			origWidth /= _vm->_textSurfaceMultiplier;
 	}
@@ -805,10 +815,14 @@ void CharsetRendererV3::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 	int width, height;
 	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
 	if (is2byte) {
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (_vm->_game.platform == Common::kPlatformFMTowns) {
 			_vm->_cjkFont->drawChar(s, chr, x * _vm->_textSurfaceMultiplier, y * _vm->_textSurfaceMultiplier, _color, _shadowColor);
 			return;
-		} else {
+		}
+		else
+#endif
+		{
 			charPtr = _vm->get2byteCharPtr(chr);
 			width = _vm->_2byteWidth;
 			height = _vm->_2byteHeight;
@@ -922,9 +936,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 		origHeight = height = getFontHeight();
 		offsX = offsY = 0;
-	} else
-#endif	
-	if (_vm->_useCJKMode && (chr >= 128) && !noSjis) {
+	} else if (_vm->_useCJKMode && (chr >= 128) && !noSjis) {
 		enableShadow(true);
 		origWidth = width = _vm->_2byteWidth;
 		origHeight = height = _vm->_2byteHeight;
@@ -934,7 +946,9 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 			width++;
 			height++;
 		}
-	} else {
+	} else
+#endif	
+	{
 		uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
 		assert(charOffs < 0x14000);
 		if (!charOffs)
@@ -1076,9 +1090,12 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 			drawTop = _top - _vm->_screenTop;
 		}
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (!charPtr && _vm->_cjkFont) {
 			_vm->_cjkFont->drawChar(dstSurface, _vm->_cjkChar, _left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop) * _vm->_textSurfaceMultiplier, _vm->_townsCharsetColorMap[1], _shadowColor);
-		} else if (is2byte) {
+		} else
+#endif
+		if (is2byte) {
 			drawBits1(dstSurface, dstPtr, charPtr, drawTop, origWidth, origHeight, dstSurface.bytesPerPixel);
 		} else {
 			drawBitsN(dstSurface, dstPtr, charPtr, *_fontPtr, drawTop, origWidth, origHeight, _vm->_textSurfaceMultiplier == 2);
@@ -1129,10 +1146,13 @@ void CharsetRendererClassic::drawChar(int chr, Graphics::Surface &s, int x, int 
 
 	if (is2byte) {
 		enableShadow(true);
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (_vm->_game.platform == Common::kPlatformFMTowns) {
 			_vm->_cjkFont->drawChar(s, chr, x * _vm->_textSurfaceMultiplier, y * _vm->_textSurfaceMultiplier, _color, _shadowColor);
 			return;
-		} else {
+		} else
+#endif
+		{
 			charPtr = _vm->get2byteCharPtr(chr);
 			width = _vm->_2byteWidth;
 			height = _vm->_2byteHeight;
@@ -1170,7 +1190,6 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 	int color;
 	byte numbits, bits;
 
-	byte *dst2 = dst;
 	int pitch = s.pitch - width;
 
 	assert(bpp == 1 || bpp == 2 || bpp == 4 || bpp == 8);
@@ -1179,6 +1198,8 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 	byte *cmap = _vm->_charsetColorMap;
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	byte *dst2 = dst;
+
 	if (_vm->_game.platform == Common::kPlatformFMTowns)
 		cmap = _vm->_townsCharsetColorMap;
 	if (scale2x) {
