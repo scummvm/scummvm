@@ -2988,6 +2988,10 @@ void LBPaletteItem::readData(uint16 type, uint16 size, Common::SeekableSubReadSt
 		if (_drawStart + _drawCount > 256)
 			error("encountered palette trying to set more than 256 colors");
 		assert(size == 8 + _drawCount * 4);
+
+		// TODO: _drawCount is really more like _drawEnd, so once we're sure that
+		// there's really no use for the palette entries before _drawCount, we
+		// might want to just discard them here, at load time.
 		_palette = new byte[_drawCount * 3];
 		for (uint i = 0; i < _drawCount; i++) {
 			_palette[i*3 + 0] = stream->readByte();
@@ -3032,7 +3036,7 @@ void LBPaletteItem::update() {
 
 			// TODO: actual fading-in
 			if (_visible && _globalVisible) {
-				_vm->_system->getPaletteManager()->setPalette(_palette + _drawStart * 3, _drawStart, _drawCount);
+				_vm->_system->getPaletteManager()->setPalette(_palette + _drawStart * 3, _drawStart, _drawCount - _drawStart);
 				_vm->_needsRedraw = true;
 			}
 		}
