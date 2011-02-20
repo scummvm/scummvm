@@ -199,18 +199,17 @@ void Screen::setPalette(ResourceId id) {
 }
 
 void Screen::setPalette(byte *rgbPalette) const {
-	byte palette[256 * 4];
+	byte palette[256 * 3];
 	byte *p = rgbPalette;
 
 	// skip first color and set it to black always.
-	memset(palette, 0, 4);
+	memset(palette, 0, 3);
 	p += 3;
 
 	for (int32 i = 1; i < 256; i++) {
-		palette[i * 4 + 0] = (byte)(*p++ << 2);
-		palette[i * 4 + 1] = (byte)(*p++ << 2);
-		palette[i * 4 + 2] = (byte)(*p++ << 2);
-		palette[i * 4 + 3] = 0;
+		palette[i * 3 + 0] = (byte)(*p++ << 2);
+		palette[i * 3 + 1] = (byte)(*p++ << 2);
+		palette[i * 3 + 2] = (byte)(*p++ << 2);
 	}
 
 	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
