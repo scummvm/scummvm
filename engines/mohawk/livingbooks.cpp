@@ -1880,8 +1880,8 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 			error("not enough bytes (%d) in kLBEventNotified, opcode 0x%04x", size, entry->opcode);
 		entry->matchFrom = stream->readUint16();
 		entry->matchNotify = stream->readUint16();
-		debug(4, "kLBEventNotified: unknowns %04x, %04x",
-			entry->matchFrom, entry->matchNotify);
+		debug(4, "kLBEventNotified: matches %04x (from %04x)",
+			entry->matchNotify, entry->matchFrom);
 		size -= 4;
 	}
 
@@ -2289,7 +2289,7 @@ void LBItem::runScript(uint event, uint16 data, uint16 from) {
 			continue;
 
 		if (event == kLBEventNotified) {
-			if (entry->matchFrom != from || entry->matchNotify != data)
+			if ((entry->matchFrom && entry->matchFrom != from) || entry->matchNotify != data)
 				continue;
 		}
 
