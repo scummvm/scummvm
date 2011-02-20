@@ -70,7 +70,7 @@ private:
 	Common::Rect _imageRect;
 	PixelFormat _pixelFormat;
 	JPEG *_jpeg;
-	byte _palette[256 * 4];
+	byte _palette[256 * 3];
 	bool _isPaletted;
 	Graphics::Surface *_outputSurface;
 

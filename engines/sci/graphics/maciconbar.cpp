@@ -45,7 +45,7 @@ void GfxMacIconBar::addIcon(reg_t obj) {
 void GfxMacIconBar::drawIcons() {
 	// Draw the icons to the bottom of the screen
 
-	byte *pal = new byte[256 * 4];
+	byte *pal = new byte[256 * 3];
 	Graphics::PictDecoder *pict = new Graphics::PictDecoder(Graphics::PixelFormat::createFormatCLUT8());
 	uint32 lastX = 0;
 
@@ -79,9 +79,9 @@ void GfxMacIconBar::remapColors(Graphics::Surface *surf, byte *palette) {
 	for (uint16 i = 0; i < surf->w * surf->h; i++) {
 		byte color = *pixels;
 
-		byte r = palette[color * 4];
-		byte g = palette[color * 4 + 1];
-		byte b = palette[color * 4 + 2];
+		byte r = palette[color * 3];
+		byte g = palette[color * 3 + 1];
+		byte b = palette[color * 3 + 2];
 
 		*pixels++ = g_sci->_gfxPalette->findMacIconBarColor(r, g, b);
 	}

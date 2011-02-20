@@ -127,7 +127,7 @@ Surface *PictDecoder::decodeImage(Common::SeekableReadStream *stream, byte *pale
 
 	// If we got a palette throughout this nonsense, go and grab it
 	if (palette && _isPaletted)
-		memcpy(palette, _palette, 256 * 4);
+		memcpy(palette, _palette, 256 * 3);
 
 	return _outputSurface;
 }
@@ -180,9 +180,9 @@ void PictDecoder::decodeDirectBitsRect(Common::SeekableReadStream *stream, bool 
 
 		for (uint32 i = 0; i < colorCount; i++) {
 			stream->readUint16BE();
-			_palette[i * 4] = stream->readUint16BE() >> 8;
-			_palette[i * 4 + 1] = stream->readUint16BE() >> 8;
-			_palette[i * 4 + 2] = stream->readUint16BE() >> 8;
+			_palette[i * 3] = stream->readUint16BE() >> 8;
+			_palette[i * 3 + 1] = stream->readUint16BE() >> 8;
+			_palette[i * 3 + 2] = stream->readUint16BE() >> 8;
 		}
 	}
 
