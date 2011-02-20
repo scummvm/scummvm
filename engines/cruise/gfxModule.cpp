@@ -273,15 +273,15 @@ static void mergeClipRects() {
 }
 
 void gfxModuleData_updatePalette() {
-	byte paletteRGBA[256 * 3];
+	byte paletteRGB[256 * 3];
 
 	if (palDirtyMax != -1) {
 		for (int i = palDirtyMin; i <= palDirtyMax; i++) {
-			paletteRGBA[i * 3 + 0] = lpalette[i].R;
-			paletteRGBA[i * 3 + 1] = lpalette[i].G;
-			paletteRGBA[i * 3 + 2] = lpalette[i].B;
+			paletteRGB[i * 3 + 0] = lpalette[i].R;
+			paletteRGB[i * 3 + 1] = lpalette[i].G;
+			paletteRGB[i * 3 + 2] = lpalette[i].B;
 		}
-		g_system->getPaletteManager()->setPalette(paletteRGBA + palDirtyMin*3, palDirtyMin, palDirtyMax - palDirtyMin + 1);
+		g_system->getPaletteManager()->setPalette(paletteRGB + palDirtyMin*3, palDirtyMin, palDirtyMax - palDirtyMin + 1);
 		palDirtyMin = 256;
 		palDirtyMax = -1;
 	}
