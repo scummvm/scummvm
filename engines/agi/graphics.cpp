@@ -927,7 +927,7 @@ static const byte appleIIgsMouseCursor[] = {
 };
 
 /**
- * RGBA-palette for the black and white SCI and Apple IIGS arrow cursors.
+ * RGB-palette for the black and white SCI and Apple IIGS arrow cursors.
  */
 static const byte sciMouseCursorPalette[] = {
 	0x00, 0x00, 0x00, // Black
@@ -956,7 +956,7 @@ static const byte amigaMouseCursor[] = {
 };
 
 /**
- * RGBA-palette for the Amiga-style arrow cursor
+ * RGB-palette for the Amiga-style arrow cursor
  * and the Amiga-style busy cursor.
  */
 static const byte amigaMouseCursorPalette[] = {
