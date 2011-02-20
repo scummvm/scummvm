@@ -2272,7 +2272,7 @@ void LBItem::stop() {
 void LBItem::notify(uint16 data, uint16 from) {
 	if (_timingMode == kLBAutoSync) {
 		// TODO: is this correct?
-		if (_periodMin == from && _periodMax == data) {
+		if (_periodMin == data && _periodMax == from) {
 			debug(2, "Handling notify 0x%04x (from %d)", data, from);
 			setNextTime(0, 0);
 		}
