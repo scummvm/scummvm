@@ -118,7 +118,6 @@ void MuxPlayer::close() {
 }
 
 bool MuxPlayer::play() {
-
 	uint32 startTick;
 	bool aborted = false;
 
@@ -152,15 +151,12 @@ bool MuxPlayer::play() {
 				break;
 
 			aborted = _vm->handleMuxInput();
-
 		}
-
 	}
 
 	debug("Mux playback done.");
 
 	return !aborted;
-
 }
 
 void MuxPlayer::handleFrame() {
@@ -197,10 +193,7 @@ void MuxPlayer::handleFrame() {
 			debug("skipping unknown chunk %02X", chunkType);
 			_fd.seek(chunkSize, SEEK_CUR);
 		}
-
 	} while (chunkType != kEndOfChunk && chunkType != kEndOfFile);
-
-
 }
 
 void MuxPlayer::handleEndOfChunk(uint32 chunkSize) {
@@ -210,7 +203,6 @@ void MuxPlayer::handleEndOfChunk(uint32 chunkSize) {
 }
 
 void MuxPlayer::handleAudio(uint32 chunkSize) {
-
 	if (_stream) {
 		byte *data = new byte[chunkSize];
 		_fd.read(data, chunkSize);
@@ -218,7 +210,6 @@ void MuxPlayer::handleAudio(uint32 chunkSize) {
 	} else {
 		_fd.seek(chunkSize, SEEK_CUR);
 	}
-
 }
 
 void MuxPlayer::handleVideo(uint32 chunkSize) {
@@ -244,9 +235,9 @@ void MuxPlayer::handleVideo(uint32 chunkSize) {
 	if (flags & 4) {
 		byte *compBuffer = buffer;
 		buffer = new byte[bufSize1 + bufSize2];
-		debug("deompress...");
+		debug("decompress...");
 		decompress(compBuffer, buffer, chunkSize, bufSize1 + bufSize2);
-		debug("deompress ok");
+		debug("decompress ok");
 		delete[] compBuffer;
 	}
 
@@ -255,21 +246,11 @@ void MuxPlayer::handleVideo(uint32 chunkSize) {
 	debug("decodeFrame ok");
 
 	delete[] buffer;
-
 }
 
 void MuxPlayer::handlePalette(uint32 chunkSize) {
 	_fd.read(_palette, 768);
-
-	byte colors[1024];
-	for (int i = 0; i < 256; i++) {
-		colors[i * 4 + 0] = _palette[i * 3 + 0];
-		colors[i * 4 + 1] = _palette[i * 3 + 1];
-		colors[i * 4 + 2] = _palette[i * 3 + 2];
-		colors[i * 4 + 3] = 0;
-	}
-	_vm->_system->getPaletteManager()->setPalette(colors, 0, 256);
-
+	_vm->_system->getPaletteManager()->setPalette(_palette, 0, 256);
 }
 
 void MuxPlayer::decompress(byte *source, byte *dest, uint32 sourceSize, uint32 destSize) {
@@ -351,7 +332,6 @@ void MuxPlayer::decodeFrame(byte *buf1, byte *buf2, byte *dest, uint32 bufSize1,
 			dst += src.readByte();
 		}
 	}
-
 }
 
 } // End of namespace Prisoner

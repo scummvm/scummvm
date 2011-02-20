@@ -25,21 +25,12 @@ Screen::~Screen() {
 }
 
 void Screen::update() {
-
 	_vm->_system->copyRectToScreen((byte*)_workScreen->pixels, _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
 	_vm->_system->updateScreen();
-
 }
 
 void Screen::setPartialPalette(byte *palette, int start, int count) {
-	byte colors[1024];
-	for (int i = start; i < count; i++) {
-		colors[i * 4 + 0] = palette[i * 3 + 0];
-		colors[i * 4 + 1] = palette[i * 3 + 1];
-		colors[i * 4 + 2] = palette[i * 3 + 2];
-		colors[i * 4 + 3] = 0;
-	}
-	_vm->_system->getPaletteManager()->setPalette(colors, start, count);
+	_vm->_system->getPaletteManager()->setPalette(palette+(start*3), start, count);
 }
 
 void Screen::setFullPalette(byte *palette) {
@@ -98,7 +89,6 @@ void Screen::drawAnimationElement(AnimationResource *animation, int16 elementInd
 }
 
 void Screen::drawAnimationCommand(AnimationResource *animation, AnimationCommand *cmd, int16 x, int16 y, uint16 parentFlags) {
-
 	//debug(8, "Screen::drawAnimationCommand() cmd = %d; points = %d", cmd->cmd, cmd->points.size());
 
 	Common::Array<Common::Point> points;
@@ -156,7 +146,6 @@ int16 Screen::getTextWidth(FontResource *fontResource, const Common::String &tex
 }
 
 void Screen::drawChar(const FontChar *fontChar, const byte *fontCharData, int16 x, int16 y) {
-
 	byte *dest;
 	int startX = 0;
 	int startY = 0;
@@ -202,7 +191,6 @@ void Screen::drawChar(const FontChar *fontChar, const byte *fontCharData, int16 
 		fontCharData += fontChar->width;
 		dest += _workScreen->pitch;
 	}
-
 }
 
 void Screen::drawText(FontResource *fontResource, const Common::String &text, int16 x, int16 y) {
@@ -240,7 +228,6 @@ void Screen::setFontColorTable(byte index, byte color) {
 }
 
 void Screen::initPaletteTransTable(byte colorIncr) {
-
 	if (colorIncr == _pttColorIncr)
 		return;
 
@@ -254,11 +241,9 @@ void Screen::initPaletteTransTable(byte colorIncr) {
 		_pttTable2[i] = i - a;
 		m += colorIncr;
 	}
-
 }
 
 void Screen::buildPaletteTransTable(byte *sourcePalette, byte color) {
-
 	uint32 pttTable3[256], pttTable4[256], pttTable5[256];
 	byte *src = sourcePalette;
 
@@ -290,7 +275,6 @@ void Screen::buildPaletteTransTable(byte *sourcePalette, byte color) {
 		}
 		_paletteTransTable[i] = minColorIndex;
 	}
-
 }
 
 void Screen::drawTransparentRect(int16 x1, int16 y1, int16 x2, int16 y2) {
