@@ -95,10 +95,10 @@ Surface *PictDecoder::decodeImage(Common::SeekableReadStream *stream, byte *pale
 		} else if (opcode == 0x001E) { // DefHilite
 			// Ignore, Contains no Data
 		} else if (opcode == 0x0098) { // PackBitsRect
-			decodeDirectBitsRect(stream, _imageRect.width(), _imageRect.height(), true);
+			decodeDirectBitsRect(stream, true);
 			_isPaletted = true;
 		} else if (opcode == 0x009A) { // DirectBitsRect
-			decodeDirectBitsRect(stream, _imageRect.width(), _imageRect.height(), false);
+			decodeDirectBitsRect(stream, false);
 		} else if (opcode == 0x00A1) { // LongComment
 			stream->readUint16BE();
 			uint16 dataSize = stream->readUint16BE();
@@ -162,7 +162,7 @@ struct DirectBitsRectData {
 	uint16 mode;
 };
 
-void PictDecoder::decodeDirectBitsRect(Common::SeekableReadStream *stream, uint16 width, uint16 height, bool hasPalette) {
+void PictDecoder::decodeDirectBitsRect(Common::SeekableReadStream *stream, bool hasPalette) {
 	static const PixelFormat directBitsFormat16 = PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 
 	// Clear the palette
@@ -195,6 +195,9 @@ void PictDecoder::decodeDirectBitsRect(Common::SeekableReadStream *stream, uint1
 	directBitsData.dstRect.bottom = stream->readUint16BE();
 	directBitsData.dstRect.right = stream->readUint16BE();
 	directBitsData.mode = stream->readUint16BE();
+
+	uint16 width = directBitsData.srcRect.width();
+	uint16 height = directBitsData.srcRect.height();
 
 	byte bytesPerPixel = 0;
 

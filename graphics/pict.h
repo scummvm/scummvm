@@ -74,7 +74,7 @@ private:
 	bool _isPaletted;
 	Graphics::Surface *_outputSurface;
 
-	void decodeDirectBitsRect(Common::SeekableReadStream *stream, uint16 width, uint16 height, bool hasPalette);
+	void decodeDirectBitsRect(Common::SeekableReadStream *stream, bool hasPalette);
 	void decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data, byte bitsPerPixel, byte bytesPerPixel);
 	void decodeCompressedQuickTime(Common::SeekableReadStream *stream);
 	void outputPixelBuffer(byte *&out, byte value, byte bitsPerPixel);
