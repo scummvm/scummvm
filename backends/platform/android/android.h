@@ -78,6 +78,9 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLCALL(x) do { (x); } while (false)
 #endif
 
+// back pointer to (java) peer instance
+extern jobject back_ptr;
+
 extern JNIEnv *JNU_GetEnv();
 extern void JNU_AttachThread();
 extern void JNU_DetachThread();
@@ -94,9 +97,6 @@ protected:
 
 class OSystem_Android : public BaseBackend, public PaletteManager {
 private:
-	// back pointer to (java) peer instance
-	jobject _back_ptr;
-
 	jmethodID MID_displayMessageOnOSD;
 	jmethodID MID_setWindowCaption;
 	jmethodID MID_initBackend;
@@ -155,7 +155,7 @@ private:
 public:
 	OSystem_Android(jobject am);
 	virtual ~OSystem_Android();
-	bool initJavaHooks(JNIEnv *env, jobject self);
+	bool initJavaHooks(JNIEnv *env);
 
 	virtual void initBackend();
 	void addPluginDirectories(Common::FSList &dirs) const;

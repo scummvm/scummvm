@@ -34,7 +34,10 @@
 #undef JNIEXPORT
 #define JNIEXPORT __attribute__ ((visibility("default")))
 
+jobject back_ptr;
+
 static JavaVM *cached_jvm;
+
 static jfieldID FID_Event_type;
 static jfieldID FID_Event_synthetic;
 static jfieldID FID_Event_kbd_keycode;
@@ -93,8 +96,13 @@ static void ScummVM_create(JNIEnv *env, jobject self, jobject am) {
 	g_sys = new OSystem_Android(am);
 	assert(g_sys);
 
+	// weak global ref to allow class to be unloaded
+	// ... except dalvik implements NewWeakGlobalRef only on froyo
+	//back_ptr = env->NewWeakGlobalRef(self);
+	back_ptr = env->NewGlobalRef(self);
+
 	// Exception already thrown by initJavaHooks?
-	if (!g_sys->initJavaHooks(env, self))
+	if (!g_sys->initJavaHooks(env))
 		return;
 
 	env->SetLongField(self, FID_ScummVM_nativeScummVM, (jlong)g_sys);
@@ -109,6 +117,10 @@ static void ScummVM_nativeDestroy(JNIEnv *env, jobject self) {
 	g_system = 0;
 	g_sys = 0;
 	delete tmp;
+
+	// see above
+	//JNU_GetEnv()->DeleteWeakGlobalRef(back_ptr);
+	JNU_GetEnv()->DeleteGlobalRef(back_ptr);
 }
 
 static jint ScummVM_scummVMMain(JNIEnv *env, jobject self, jobjectArray args) {

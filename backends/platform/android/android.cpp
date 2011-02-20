@@ -101,7 +101,6 @@ static inline T scalef(T in, float numerator, float denominator) {
 OSystem_Android *g_sys = 0;
 
 OSystem_Android::OSystem_Android(jobject am) :
-	_back_ptr(0),
 	_screen_changeid(0),
 	_force_redraw(false),
 	_game_texture(0),
@@ -129,11 +128,6 @@ OSystem_Android::~OSystem_Android() {
 
 	destroyScummVMSurface();
 
-	JNIEnv *env = JNU_GetEnv();
-	// see below
-	//env->DeleteWeakGlobalRef(_back_ptr);
-	env->DeleteGlobalRef(_back_ptr);
-
 	delete _savefile;
 	delete _mixer;
 	delete _timer;
@@ -143,13 +137,8 @@ OSystem_Android::~OSystem_Android() {
 	deleteMutex(_event_queue_lock);
 }
 
-bool OSystem_Android::initJavaHooks(JNIEnv *env, jobject self) {
-	// weak global ref to allow class to be unloaded
-	// ... except dalvik implements NewWeakGlobalRef only on froyo
-	//_back_ptr = env->NewWeakGlobalRef(self);
-	_back_ptr = env->NewGlobalRef(self);
-
-	jclass cls = env->GetObjectClass(_back_ptr);
+bool OSystem_Android::initJavaHooks(JNIEnv *env) {
+	jclass cls = env->GetObjectClass(back_ptr);
 
 #define FIND_METHOD(name, signature) do {						\
 		MID_ ## name = env->GetMethodID(cls, #name, signature); \
@@ -213,7 +202,7 @@ void OSystem_Android::initBackend() {
 
 	gettimeofday(&_startTime, 0);
 
-	jint sample_rate = env->CallIntMethod(_back_ptr, MID_audioSampleRate);
+	jint sample_rate = env->CallIntMethod(back_ptr, MID_audioSampleRate);
 	if (env->ExceptionCheck()) {
 		warning("Error finding audio sample rate - assuming 11025HZ");
 
@@ -226,7 +215,7 @@ void OSystem_Android::initBackend() {
 	_mixer = new Audio::MixerImpl(this, sample_rate);
 	_mixer->setReady(true);
 
-	env->CallVoidMethod(_back_ptr, MID_initBackend);
+	env->CallVoidMethod(back_ptr, MID_initBackend);
 
 	if (env->ExceptionCheck()) {
 		error("Error in Java initBackend");
@@ -249,7 +238,7 @@ void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
 	JNIEnv *env = JNU_GetEnv();
 
 	jobjectArray array =
-		(jobjectArray)env->CallObjectMethod(_back_ptr, MID_getPluginDirectories);
+		(jobjectArray)env->CallObjectMethod(back_ptr, MID_getPluginDirectories);
 	if (env->ExceptionCheck()) {
 		warning("Error finding plugin directories");
 
@@ -490,7 +479,7 @@ void OSystem_Android::setWindowCaption(const char *caption) {
 
 	JNIEnv *env = JNU_GetEnv();
 	jstring java_caption = env->NewStringUTF(caption);
-	env->CallVoidMethod(_back_ptr, MID_setWindowCaption, java_caption);
+	env->CallVoidMethod(back_ptr, MID_setWindowCaption, java_caption);
 
 	if (env->ExceptionCheck()) {
 		warning("Failed to set window caption");
@@ -508,7 +497,7 @@ void OSystem_Android::displayMessageOnOSD(const char *msg) {
 	JNIEnv *env = JNU_GetEnv();
 	jstring java_msg = env->NewStringUTF(msg);
 
-	env->CallVoidMethod(_back_ptr, MID_displayMessageOnOSD, java_msg);
+	env->CallVoidMethod(back_ptr, MID_displayMessageOnOSD, java_msg);
 
 	if (env->ExceptionCheck()) {
 		warning("Failed to display OSD message");
@@ -525,7 +514,7 @@ void OSystem_Android::showVirtualKeyboard(bool enable) {
 
 	JNIEnv *env = JNU_GetEnv();
 
-	env->CallVoidMethod(_back_ptr, MID_showVirtualKeyboard, enable);
+	env->CallVoidMethod(back_ptr, MID_showVirtualKeyboard, enable);
 
 	if (env->ExceptionCheck()) {
 		error("Error trying to show virtual keyboard");
@@ -574,7 +563,7 @@ void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,
 	JNIEnv *env = JNU_GetEnv();
 
 	jobjectArray array =
-		(jobjectArray)env->CallObjectMethod(_back_ptr, MID_getSysArchives);
+		(jobjectArray)env->CallObjectMethod(back_ptr, MID_getSysArchives);
 
 	if (env->ExceptionCheck()) {
 		warning("Error finding system archive path");
