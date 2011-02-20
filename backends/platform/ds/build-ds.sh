@@ -1,4 +1,8 @@
 #!/bin/sh
+
+echo "FIXME: feature disabled in configure"
+exit 1
+
 #
 # build-ds.sh -- script for building a ds build with every usable dynamic engine plugin
 

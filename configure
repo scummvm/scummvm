@@ -1552,7 +1552,9 @@ case $_host_os in
 		if test "$_dynamic_modules" = no ; then
   			LDFLAGS="$LDFLAGS -Wl,--gc-sections"
  		else
-		        LDFLAGS="$LDFLAGS -Wl,--retain-symbols-file,ds.syms"
+				LDFLAGS="$LDFLAGS -Wl,--no-gc-sections"
+				# TODO automate this required 2 step linking phase
+				# LDFLAGS="$LDFLAGS -Wl,--retain-symbols-file,ds.syms"
 		fi
 		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libnds/lib"
 		LIBS="$LIBS -lnds9"
