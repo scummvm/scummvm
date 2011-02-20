@@ -9,6 +9,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Toonstruck.
 
  General
+   - Added support for loadable modules on platforms without a dynamic loader.
+     (GSoC Task)
    - Added Danish translation.
    - Added Norwegian Bokmaal translation.
    - Added Norwegian Nynorsk translation.
@@ -89,10 +91,21 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Corrected memory leaks and minor issues.
 
  SDL:
+   - Added support for OpenGL. (GSoC Task)
    - Closed memory leaks in Mouse Surfaces.
 
- PSP:
+ PSP port:
+   - Added support for loadable modules.
    - Added image viewer.
+
+ PS2 port:
+   - Added support for loadable modules.
+
+ Nintendo DS port:
+   - Added support for loadable modules.
+
+ Wii/GameCube port:
+   - Added support for loadable modules.
 
 1.2.1 (2010-12-19)
  General
