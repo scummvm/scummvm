@@ -206,7 +206,7 @@ void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint nu
 	}
 
 	Palette *pal = _cursorPaletteStack.top();
-	uint size = 4 * num;
+	uint size = 3 * num;
 
 	if (pal->_size < size) {
 		// Could not re-use the old buffer. Create a new one.
@@ -219,7 +219,7 @@ void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint nu
 	pal->_num = num;
 
 	if (num) {
-		memcpy(pal->_data, colors, 4 * num);
+		memcpy(pal->_data, colors, size);
 		g_system->setCursorPalette(pal->_data, pal->_start, pal->_num);
 	} else {
 		g_system->disableCursorPalette(true);
@@ -256,7 +256,7 @@ CursorManager::Cursor::~Cursor() {
 CursorManager::Palette::Palette(const byte *colors, uint start, uint num) {
 	_start = start;
 	_num = num;
-	_size = 4 * num;
+	_size = 3 * num;
 
 	if (num) {
 		_data = new byte[_size];
