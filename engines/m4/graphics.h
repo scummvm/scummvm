@@ -47,7 +47,7 @@ struct BGR8 {
 };
 
 struct RGB8 {
-	uint8 r, g, b, u;
+	uint8 r, g, b;
 };
 
 //later use ScummVM's Rect?
@@ -214,8 +214,8 @@ private:
 	MadsM4Engine *_vm;
 	bool _colorsChanged;
 	bool _fading_in_progress;
-	byte _originalPalette[256 * 4];
-	byte _fadedPalette[256 * 4];
+	byte _originalPalette[256 * 3];
+	byte _fadedPalette[256 * 3];
 	int _usageCount[256];
 
 	void reset();

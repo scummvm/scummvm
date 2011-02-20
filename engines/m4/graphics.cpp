@@ -795,7 +795,11 @@ void M4Surface::m4LoadBackground(Common::SeekableReadStream *source) {
 		palette[i].b = source->readByte() << 2;
 		palette[i].g = source->readByte() << 2;
 		palette[i].r = source->readByte() << 2;
-		palette[i].u = source->readByte() << 2;
+		// FIXME - Removed u field from RGB8 as the OSystem palette is now RGB.
+		//         If this is needed, then the system setPalette() call will need changing to skip this.
+		uint8 u = source->readByte() << 2;
+		if (u != 0)
+			debugC(1, kDebugGraphics, "Unused u field in Palette data non-zero: %d", u);
 
 		if ((blackIndex == 0) && !palette[i].r && !palette[i].g && !palette[i].b)
 			blackIndex = i;
@@ -1049,7 +1053,6 @@ void Palette::setEntry(uint index, uint8 r, uint8 g, uint8 b) {
 	c.r = r;
 	c.g = g;
 	c.b = b;
-	c.u = 255;
 	g_system->getPaletteManager()->setPalette((const byte *)&c, index, 1);
 }
 
