@@ -428,10 +428,8 @@ void MacResourceForkResourceSource::loadResource(ResourceManager *resMan, Resour
 			stream = _macResMan->getResource(tagArray[i], res->getNumber());
 	}
 
-	if (!stream)
-		error("Could not get Mac resource fork resource: %s", res->_id.toString().c_str());
-
-	decompressResource(stream, res);
+	if (stream)
+		decompressResource(stream, res);
 }
 
 bool MacResourceForkResourceSource::isCompressableResource(ResourceType type) const {
