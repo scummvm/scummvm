@@ -741,7 +741,6 @@ void Screen::setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b) 
 			screenPal[3 * i + 1] = (g * 0xFF) / 0x3F;
 			screenPal[3 * i + 2] = (b * 0xFF) / 0x3F;
 		}
-		screenPal[4 * i + 3] = 0;
 	}
 
 	_paletteChanged = true;
