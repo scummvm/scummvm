@@ -38,15 +38,24 @@ namespace Sci {
 
 class GfxMacIconBar {
 public:
-	GfxMacIconBar() {}
-	~GfxMacIconBar() {}
+	GfxMacIconBar();
+	~GfxMacIconBar();
 
 	void addIcon(reg_t obj);
 	void drawIcons();
 
 private:
-	Common::Array<reg_t> _iconBarObjects;
+	struct IconBarItem {
+		reg_t object;
+		Graphics::Surface *nonSelectedImage;
+		Graphics::Surface *selectedImage;
+		Common::Rect rect;
+	};
 
+	Common::Array<IconBarItem> _iconBarItems;
+	uint32 _lastX;
+
+	Graphics::Surface *createImage(uint32 iconIndex, bool isSelected);
 	void remapColors(Graphics::Surface *surf, byte *palette);
 };
 
