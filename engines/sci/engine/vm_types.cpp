@@ -117,15 +117,12 @@ reg_t reg_t::operator%(const reg_t right) const {
 	if (isNumber() && right.isNumber()) {
 		// Support for negative numbers was added in Iceman, and perhaps in 
 		// SCI0 0.000.685 and later. Theoretically, this wasn't really used
-		// in SCI0, so if we do find such a case, error out on purpose here,
-		// so that we address it properly, as the result is probably
-		// unpredictable. Such a case would indicate either a script bug, or
-		// a modulo on an unsigned integer larger than 32767. In any case,
-		// such a case should be investigated, instead of being silently
-		// accepted.
+		// in SCI0, so the result is probably unpredictable. Such a case 
+		// would indicate either a script bug, or a modulo on an unsigned
+		// integer larger than 32767. In any case, such a case should be
+		// investigated, instead of being silently accepted.
 		if (getSciVersion() <= SCI_VERSION_0_LATE && (toSint16() < 0 || right.toSint16() < 0))
-			error("Modulo of a negative number has been requested for SCI0. "
-				  "Please report this error to the ScummVM team");
+			warning("Modulo of a negative number has been requested for SCI0. This *could* lead to issues");
 		int16 value = toSint16();
 		int16 modulo = ABS(right.toSint16());
 		int16 result = (modulo != 0 ? value % modulo : 0);
