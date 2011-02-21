@@ -355,12 +355,12 @@ const uint16 freddypharkasPatchScoreDisposal[] = {
 };
 
 //  script 235 of freddy pharkas rm235::init and sEnterFrom500::changeState
-//   disable icon 7+8 of iconbar (CD only). When picking up the cannister after
+//   disable icon 7+8 of iconbar (CD only). When picking up the canister after
 //   placing it down, the scripts will disable all the other icons. This results
 //   in IconBar::disable doing endless loops even in sierra sci, because there
 //   is no enabled icon left. We remove disabling of icon 8 (which is help),
 //   this fixes the issue.
-const byte freddypharkasSignatureCannisterHang[] = {
+const byte freddypharkasSignatureCanisterHang[] = {
 	12,
 	0x38, 0xf1, 0x00, // pushi f1 (selector disable)
 	0x7a,             // push2
@@ -371,7 +371,7 @@ const byte freddypharkasSignatureCannisterHang[] = {
 	0
 };
 
-const uint16 freddypharkasPatchCannisterHang[] = {
+const uint16 freddypharkasPatchCanisterHang[] = {
 	PATCH_ADDTOOFFSET | +3,
 	0x78,             // push1
 	PATCH_ADDTOOFFSET | +2,
@@ -418,7 +418,7 @@ const uint16 freddypharkasPatchLadderEvent[] = {
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature freddypharkasSignatures[] = {
 	{      0, "CD: score early disposal",                    1, PATCH_MAGICDWORD(0x39, 0x0d, 0x43, 0x75),    -3, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
-	{    235, "CD: cannister pickup hang",                   3, PATCH_MAGICDWORD(0x39, 0x07, 0x39, 0x08),    -4, freddypharkasSignatureCannisterHang, freddypharkasPatchCannisterHang },
+	{    235, "CD: canister pickup hang",                   3, PATCH_MAGICDWORD(0x39, 0x07, 0x39, 0x08),    -4, freddypharkasSignatureCanisterHang, freddypharkasPatchCanisterHang },
 	{    320, "ladder event issue",                          2, PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
