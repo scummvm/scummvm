@@ -935,7 +935,7 @@ void run_vm(EngineState *s) {
 		byte extOpcode;
 		s->xs->addr.pc.offset += readPMachineInstruction(scr->getBuf() + s->xs->addr.pc.offset, extOpcode, opparams);
 		const byte opcode = extOpcode >> 1;
-		//debug("%s", opcodeNames[opcode]);
+		//debug("%s: %d, %d, %d, %d, acc = %04x:%04x", opcodeNames[opcode], opparams[0], opparams[1], opparams[2], opparams[3], PRINT_REG(s->r_acc));
 
 		switch (opcode) {
 
