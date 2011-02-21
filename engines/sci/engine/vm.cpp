@@ -961,28 +961,10 @@ void run_vm(EngineState *s) {
 			s->r_acc = POP32() / s->r_acc;
 			break;
 
-		case op_mod: { // 0x05 (05)
-			if (getSciVersion() <= SCI_VERSION_0_LATE) {
-				uint16 modulo = s->r_acc.requireUint16();
-				uint16 value = POP32().requireUint16();
-				uint16 result = (modulo != 0 ? value % modulo : 0);
-				s->r_acc = make_reg(0, result);
-			} else {
-				// In Iceman (and perhaps from SCI0 0.000.685 onwards in general),
-				// handling for negative numbers was added. Since Iceman doesn't
-				// seem to have issues with the older code, we exclude it for now
-				// for simplicity's sake and use the new code for SCI01 and newer
-				// games. Fixes the battlecruiser mini game in SQ5 (room 850),
-				// bug #3035755
-				int16 modulo = ABS(s->r_acc.requireSint16());
-				int16 value = POP32().requireSint16();
-				int16 result = (modulo != 0 ? value % modulo : 0);
-				if (result < 0)
-					result += modulo;
-				s->r_acc = make_reg(0, result);
-			}
+		case op_mod: // 0x05 (05)
+			// we check for division by 0 inside the custom reg_t modulo operator
+			s->r_acc = POP32() % s->r_acc;
 			break;
-		}
 
 		case op_shr: // 0x06 (06)
 			// Shift right logical

@@ -108,6 +108,7 @@ struct reg_t {
 	reg_t operator-(const reg_t right) const;
 	reg_t operator*(const reg_t right) const;
 	reg_t operator/(const reg_t right) const;
+	reg_t operator%(const reg_t right) const;
 	reg_t operator>>(const reg_t right) const;
 	reg_t operator<<(const reg_t right) const;
 
