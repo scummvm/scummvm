@@ -25,7 +25,7 @@ public class EditableSurfaceView extends SurfaceView {
 
 	@Override
 	public boolean onCheckIsTextEditor() {
-		return true;
+		return false;
 	}
 
 	private class MyInputConnection extends BaseInputConnection {
