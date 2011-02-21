@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
  
 #include "pegasus/graphics.h"
@@ -167,19 +164,16 @@ void GraphicsManager::setCursor(uint16 cursor) {
 	cicnStream->readUint16BE(); // always 0
 	uint16 colorCount = cicnStream->readUint16BE() + 1;
 	
-	byte *colors = (byte *)malloc(256 * 4);
+	byte *colors = new byte[256 * 3];;
 	for (uint16 i = 0; i < colorCount; i++) {
 		cicnStream->readUint16BE();
-		colors[i * 4] = cicnStream->readByte();
-		cicnStream->readByte();
-		colors[i * 4 + 1] = cicnStream->readByte();
-		cicnStream->readByte();
-		colors[i * 4 + 2] = cicnStream->readByte();
-		cicnStream->readByte();
+		colors[i * 3] = cicnStream->readUint16BE() >> 8;
+		colors[i * 3 + 1] = cicnStream->readUint16BE() >> 8;
+		colors[i * 3 + 2] = cicnStream->readUint16BE() >> 8;
 	}
 	
 	// PixMap data
-	byte *data = (byte *)malloc(pixMap.rowBytes * pixMap.bounds.height());
+	byte *data = new byte[pixMap.rowBytes * pixMap.bounds.height()];
 	cicnStream->read(data, pixMap.rowBytes * pixMap.bounds.height());
 	delete cicnStream;
 	
@@ -213,8 +207,8 @@ void GraphicsManager::setCursor(uint16 cursor) {
 	CursorMan.showMouse(true);
 	_vm->_system->updateScreen();
 
-	free(colors);
-	free(data);
+	delete[] colors;
+	delete[] data;
 }
 
 int GraphicsManager::getImageSlot(const Common::String &filename) {
