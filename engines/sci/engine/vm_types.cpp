@@ -246,14 +246,12 @@ bool reg_t::ltU(const reg_t right) const {
 }
 
 bool reg_t::pointerComparisonWithInteger(const reg_t right) const {
-	// SCI0/SCI1 scripts use this to check whether a
-	// parameter is a pointer or a far text
-	// reference. It is used e.g. by the standard library
-	// Print function to distinguish two ways of calling it:
+	// SCI0 - SCI1.1 scripts use this to check whether a parameter is a pointer
+	// or a far text reference. It is used e.g. by the standard library Print
+	// function to distinguish two ways of calling it:
 	//
 	// (Print "foo") // Pointer to a string
 	// (Print 420 5) // Reference to the fifth message in text resource 420
-
 	// It works because in those games, the maximum resource number is 999,
 	// so any parameter value above that threshold must be a pointer.
 	// PQ2 japanese compares pointers to 2000 to find out if its a pointer
@@ -263,8 +261,9 @@ bool reg_t::pointerComparisonWithInteger(const reg_t right) const {
 	// Hoyle 3, Pachisi, when any opponent is about to talk
 	// SQ1, room 28, when throwing water at the Orat
 	// SQ1, room 58, when giving the ID card to the robot
+	// QFG3, room 440, when talking to Uhura
 	// Thus we check for all integers <= 2000
-	return (isPointer() && right.isNumber() && right.offset <= 2000 && getSciVersion() <= SCI_VERSION_1_LATE);
+	return (isPointer() && right.isNumber() && right.offset <= 2000 && getSciVersion() <= SCI_VERSION_1_1);
 }
 
 } // End of namespace Sci
