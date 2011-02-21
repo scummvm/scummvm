@@ -427,7 +427,17 @@ static byte patchGameRestoreSave[] = {
 	0x76,              // push0
 	0x38, 0xff, 0xff,  // pushi -1
 	0x76,              // push0
-	0x43, 0xff, 0x06,  // call kRestoreGame/kSaveGame (will get fixed directly)
+	0x43, 0xff, 0x06,  // callk kRestoreGame/kSaveGame (will get fixed directly)
+	0x48,              // ret
+};
+
+// SCI2 version: Same as above, but the second parameter to callk is a word
+static byte patchGameRestoreSaveSci2[] = {
+	0x39, 0x03,        // pushi 03
+	0x76,              // push0
+	0x38, 0xff, 0xff,  // pushi -1
+	0x76,              // push0
+	0x43, 0xff, 0x06, 0x00, // callk kRestoreGame/kSaveGame (will get fixed directly)
 	0x48,              // ret
 };
 
@@ -446,8 +456,8 @@ void SciEngine::patchGameSaveRestore() {
 	const byte *scriptSavePtr = NULL;
 	byte kernelIdSave = 0;
 
-	// this feature is currently not supported on SCI32
-	if (getSciVersion() >= SCI_VERSION_2)
+	// This feature is currently not supported in SCI21 or SCI3
+	if (getSciVersion() >= SCI_VERSION_2_1)
 		return;
 
 	switch (_gameId) {
@@ -509,13 +519,21 @@ void SciEngine::patchGameSaveRestore() {
 	if (scriptRestorePtr) {
 		// Now patch in our code
 		byte *patchPtr = const_cast<byte *>(scriptRestorePtr);
-		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+		if (getSciVersion() <= SCI_VERSION_1_1)
+			memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+		else if (getSciVersion() == SCI_VERSION_2)
+			memcpy(patchPtr, patchGameRestoreSaveSci2, sizeof(patchGameRestoreSaveSci2));
+		// TODO: SCI21/SCI3
 		patchPtr[8] = kernelIdRestore;
 	}
 	if (scriptSavePtr) {
 		// Now patch in our code
 		byte *patchPtr = const_cast<byte *>(scriptSavePtr);
-		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+		if (getSciVersion() <= SCI_VERSION_1_1)
+			memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+		else if (getSciVersion() == SCI_VERSION_2)
+			memcpy(patchPtr, patchGameRestoreSaveSci2, sizeof(patchGameRestoreSaveSci2));
+		// TODO: SCI21/SCI3
 		patchPtr[8] = kernelIdSave;
 	}
 }
