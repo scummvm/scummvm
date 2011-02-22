@@ -201,6 +201,14 @@ void Rect::resize(const GfxSurface &surface, int xp, int yp, int percent) {
 }
 
 /**
+ * Expands the pane region to contain the specified Rect
+ */
+void Rect::expandPanes() {
+	_globals->_paneRegions[0].uniteRect(*this);
+	_globals->_paneRegions[1].uniteRect(*this);
+}
+
+/**
  * Serialises the given rect
  */
 void Rect::synchronise(Serialiser &s) {

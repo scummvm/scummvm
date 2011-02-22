@@ -127,7 +127,7 @@ Common::Error TSageEngine::saveGameState(int slot, const char *desc) {
  * @param slot		Slot number
  */
 Common::String TSageEngine::generateSaveName(int slot) {
-	return String::format("%s.%03d", _targetName.c_str(), slot);
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
 } // End of namespace tSage

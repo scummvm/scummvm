@@ -33,8 +33,6 @@
 #include "common/system.h"
 #include "graphics/surface.h"
 
-using namespace Common;
-
 namespace tSage {
 
 class GfxSurface;
@@ -52,8 +50,10 @@ public:
 	void collapse(int dx, int dy);
 	void centre(int dx, int dy);
 	void centre(const Rect &r);
+	void centre(const Common::Point &pt) { centre(pt.x, pt.y); }
 	void contain(const Rect &r);
 	void resize(const GfxSurface &surface, int xp, int yp, int percent);
+	void expandPanes();
 
 	virtual void synchronise(Serialiser &s);
 };

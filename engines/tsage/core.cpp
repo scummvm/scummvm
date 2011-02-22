@@ -2743,6 +2743,14 @@ void Region::uniteLine(int yp, LineSliceSet &sliceSet) {
 		_bounds.right = destSet.items[destSet.items.size() - 1].xe;
 }
 
+void Region::uniteRect(const Rect &rect) {
+	for (int yp = rect.top; yp < rect.bottom; ++yp) {
+		LineSliceSet sliceSet;
+		sliceSet.add(rect.left, rect.right);
+		uniteLine(yp, sliceSet);
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
 void SceneRegions::load(int sceneNum) {
@@ -3142,6 +3150,28 @@ Region *ScenePriorities::find(int priority) {
 
 /*--------------------------------------------------------------------------*/
 
+void FloatSet::add(double v1, double v2, double v3) {
+	_float1 += v1;
+	_float2 += v2;
+	_float3 += v3;
+}
+
+void FloatSet::proc1(double v) {
+	double diff = (cos(v) * _float1) - (sin(v) * _float2);
+	_float2 = (sin(v) * _float1) + (cos(v) * _float2);
+	_float1 = diff;
+}
+
+double FloatSet::sqrt(FloatSet &floatSet) {
+	double f1Diff = _float1 - floatSet._float1;
+	double f2Diff = _float2 - floatSet._float2;
+	double f3Diff = _float3 - floatSet._float3;
+
+	return ::sqrt(f1Diff * f1Diff + f2Diff * f2Diff + f3Diff * f3Diff);
+}
+
+/*--------------------------------------------------------------------------*/
+
 GameHandler::GameHandler(): EventHandler() { 
 	_nextWaitCtr = 1;
 	_waitCtr.setCtr(1);
@@ -3282,7 +3312,7 @@ void SceneHandler::process(Event &event) {
 
 		// Check for debugger
 		if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_d) &&
-			(event.kbd.flags & KBD_CTRL)) {
+			(event.kbd.flags & Common::KBD_CTRL)) {
 			// Attach to the debugger
 			_vm->_debugger->attach();
 			_vm->_debugger->onFrame();

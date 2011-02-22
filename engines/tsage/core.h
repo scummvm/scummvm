@@ -190,6 +190,11 @@ public:
 	void setDelay(int numFrames);
 };
 
+class Action2: public Action {
+public:
+	int _state;
+};
+
 class ObjectMover: public EventHandler {
 public:
 	Common::Point _destPosition;
@@ -277,6 +282,13 @@ public:
 	virtual Common::String getClassName() { return "PlayerMover"; }
 	virtual void startMove(SceneObject *sceneObj, va_list va);
 	virtual void endMove();
+};
+
+class PlayerMover2: public PlayerMover {
+public:
+	int _field7A;
+	int _field7E;
+	PlayerMover2(): PlayerMover() { _field7A = 0; }
 };
 
 /*--------------------------------------------------------------------------*/
@@ -524,6 +536,17 @@ public:
 	virtual void updateScreen();
 };
 
+class SceneObject2: public SceneObject {
+public:
+	int _state;
+
+	virtual void synchronise(Serialiser &s) {
+		SceneObject::synchronise(s);
+		s.syncAsSint16LE(_state);
+	}
+	virtual Common::String getClassName() { return "SceneObject2"; }
+};
+
 class SceneText: public SceneObject {
 public:
 	int _fontNumber;
@@ -606,7 +629,7 @@ public:
 	LineSliceSet sectPoints(int yp, const LineSliceSet &sliceSet);
 	void draw();
 	void uniteLine(int yp, LineSliceSet &sliceSet);
-
+	void uniteRect(const Rect &rect);
 
 	static LineSliceSet mergeSlices(const LineSliceSet &set1, const LineSliceSet &set2);
 };
@@ -800,6 +823,17 @@ public:
 		assert((idx >= 1) && (idx <= (int)_regionList.size()));
 		return _regionList[idx - 1];
 	}
+};
+
+/*--------------------------------------------------------------------------*/
+
+class FloatSet {
+public:
+	double _float1, _float2, _float3, _float4;
+
+	void add(double v1, double v2, double v3);
+	void proc1(double v);
+	double sqrt(FloatSet &floatSet);
 };
 
 /*--------------------------------------------------------------------------*/

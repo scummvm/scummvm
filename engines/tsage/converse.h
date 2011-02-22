@@ -31,7 +31,7 @@
 
 namespace tSage {
 
-class StripCallback: public EventHandler {
+class StripCallback: public Action {
 public:
 	virtual void stripCallback(int v) = 0;
 };
@@ -144,6 +144,13 @@ public:
 	virtual Common::String getClassName() { return "SpeakerQText"; }
 };
 
+class SpeakerMText: public ScreenSpeaker {
+public:
+	SpeakerMText();
+
+	virtual Common::String getClassName() { return "SpeakerMText"; }
+};
+
 class SpeakerAction: public Action {
 public:
 	virtual void signal();
@@ -222,7 +229,7 @@ public:
 		_highlightColour = highlightColour;
 	}
 	void setFontNumber(int fontNum) { _fontNumber = fontNum; }
-	int execute(const StringArray &choiceList);
+	int execute(const Common::StringArray &choiceList);
 
 	virtual void draw();
 };

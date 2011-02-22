@@ -380,7 +380,7 @@ ConversationChoiceDialog::ConversationChoiceDialog() {
 	_fontNumber = 1;
 }
 
-int ConversationChoiceDialog::execute(const StringArray &choiceList) {
+int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 	_gfxManager._font.setFontNumber(_fontNumber);
 
 	_bounds = Rect(20, 0, 20, 0);
@@ -478,7 +478,7 @@ void ConversationChoiceDialog::draw() {
 
 	// Loop through writing the conversation choices
 	for (uint idx = 0; idx < _choiceList.size(); ++idx) {
-		Common::String strNum = String::format("%d", idx + 1);
+		Common::String strNum = Common::String::format("%d", idx + 1);
 		
 		// Write the choice number
 		_gfxManager._font.setPosition(13, _choiceList[idx]._bounds.top);
@@ -668,7 +668,7 @@ void StripManager::signal() {
 
 	Obj44 &obj44 = _obj44List[_obj44Index];
 	_field2E8 = obj44._id;
-	StringArray choiceList;
+	Common::StringArray choiceList;
 
 	// Build up a list of script entries
 	int idx;
@@ -970,6 +970,16 @@ SpeakerSText::SpeakerSText(): ScreenSpeaker() {
 	_speakerName = "STEXT";
 	_colour1 = 13;
 	_textWidth = 240;
+	_textMode = ALIGN_CENTRE;
+	_hideObjects = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerMText::SpeakerMText() {
+	_speakerName = "MTEXT";
+	_colour1 = 11;
+	_textWidth = 160;
 	_textMode = ALIGN_CENTRE;
 	_hideObjects = false;
 }

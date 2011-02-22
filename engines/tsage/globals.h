@@ -70,6 +70,7 @@ public:
 	SequenceManager _sequenceManager;
 	Common::RandomSource _randomSource;
 	int _stripNum;
+	FloatSet _floatSet;
 public:
 	Globals();
 	~Globals();

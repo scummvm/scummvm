@@ -65,6 +65,19 @@ extern const char *INV_EMPTY_MSG;
 extern const char *START_PLAY_BTN_STRING;
 extern const char *INTRODUCTION_BTN_STRING;
 
+// Scene specific resources
+extern const char *SCENE60_EXIT_MSG;
+extern const char *SCENE6100_CAREFUL;
+extern const char *SCENE6100_TOUGHER;
+extern const char *SCENE6100_ONE_MORE_HIT;
+extern const char *SCENE6100_DOING_BEST;
+extern const char *SCENE6100_REPAIR;
+extern const char *SCENE6100_ROCKY_AREA;
+extern const char *SCENE6100_REPLY;
+extern const char *SCENE6100_TAKE_CONTROLS;
+extern const char *SCENE6100_SURPRISE;
+extern const char *SCENE6100_SWEAT;
+extern const char *SCENE6100_VERY_WELL;
 
 } // End of namespace tSage
 
