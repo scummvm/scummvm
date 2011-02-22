@@ -47,6 +47,10 @@ const reg_t NULL_REG = {0, 0};
 const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
 const reg_t TRUE_REG = {0, 1};
 //#define VM_DEBUG_SEND
+// Enable the define below to have the VM abort on cases where a conditional 
+// statement is followed by an unconditional jump (which will most likely lead
+// to an infinite loop). Aids in detecting script bugs such as #3040722.
+//#define ABORT_ON_INFINITE_LOOP
 
 #define SCI_XS_CALLEE_LOCALS ((SegmentId)-1)
 
@@ -871,6 +875,10 @@ void run_vm(EngineState *s) {
 
 	s->_executionStackPosChanged = true; // Force initialization
 
+#ifdef ABORT_ON_INFINITE_LOOP
+	byte prevOpcode = 0xFF;
+#endif
+
 	while (1) {
 		int var_type; // See description below
 		int var_number;
@@ -935,7 +943,22 @@ void run_vm(EngineState *s) {
 		byte extOpcode;
 		s->xs->addr.pc.offset += readPMachineInstruction(scr->getBuf() + s->xs->addr.pc.offset, extOpcode, opparams);
 		const byte opcode = extOpcode >> 1;
-		//debug("%s: %d, %d, %d, %d, acc = %04x:%04x", opcodeNames[opcode], opparams[0], opparams[1], opparams[2], opparams[3], PRINT_REG(s->r_acc));
+		//debug("%s: %d, %d, %d, %d, acc = %04x:%04x, script %d, local script %d", opcodeNames[opcode], opparams[0], opparams[1], opparams[2], opparams[3], PRINT_REG(s->r_acc), scr->getScriptNumber(), local_script->getScriptNumber());
+
+#ifdef ABORT_ON_INFINITE_LOOP
+		if (prevOpcode != 0xFF) {
+			if (prevOpcode == op_eq_  || prevOpcode == op_ne_  ||
+				prevOpcode == op_gt_  || prevOpcode == op_ge_  ||
+				prevOpcode == op_lt_  || prevOpcode == op_le_  ||
+				prevOpcode == op_ugt_ || prevOpcode == op_uge_ ||
+				prevOpcode == op_ult_ || prevOpcode == op_ule_) {
+				if (opcode == op_jmp)
+					error("Infinite loop detected in script %d", scr->getScriptNumber());
+			}
+		}
+
+		prevOpcode = opcode;
+#endif
 
 		switch (opcode) {
 
