@@ -122,6 +122,9 @@ public:
 	/** Return a list of languages for a given type and name. */
 	const Array<PEResourceID> getLangList(const PEResourceID &type, const PEResourceID &name) const;
 
+	/** Return a stream to the specified resource, taking the first language found (or 0 if non-existent). */
+	SeekableReadStream *getResource(const PEResourceID &type, const PEResourceID &name);
+
 	/** Return a stream to the specified resource (or 0 if non-existent). */
 	SeekableReadStream *getResource(const PEResourceID &type, const PEResourceID &name, const PEResourceID &lang);
 

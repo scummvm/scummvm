@@ -275,6 +275,17 @@ const Array<PEResourceID> PEResources::getLangList(const PEResourceID &type, con
 	return array;
 }
 
+SeekableReadStream *PEResources::getResource(const PEResourceID &type, const PEResourceID &name) {
+	Array<PEResourceID> langList = getLangList(type, name);
+
+	if (langList.empty())
+		return 0;
+
+	const Resource &resource = _resources[type][name][langList[0]];
+	_exe->seek(resource.offset);
+	return _exe->readStream(resource.size);
+}
+
 SeekableReadStream *PEResources::getResource(const PEResourceID &type, const PEResourceID &name, const PEResourceID &lang) {
 	if (!_exe || !_resources.contains(type))
 		return 0;
