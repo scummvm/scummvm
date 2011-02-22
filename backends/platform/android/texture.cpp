@@ -166,9 +166,11 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 			return;
 
 #if TEXSUBIMAGE_IS_EXPENSIVE
-		byte tmpbuf[w * h * bytesPerPixel()];
+		byte *tmp = new byte[w * h * bytesPerPixel()];
+		assert(tmp);
+
 		const byte *src = static_cast<const byte *>(buf);
-		byte *dst = tmpbuf;
+		byte *dst = tmp;
 		GLuint count = h;
 
 		do {
@@ -178,7 +180,9 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 		} while (--count);
 
 		GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
-								glFormat(), glType(), tmpbuf));
+								glFormat(), glType(), tmp));
+
+		delete[] tmp;
 #else
 		// This version avoids the intermediate copy at the expense of
 		// repeat glTexSubImage2D calls.  On some devices this is worse.
@@ -194,10 +198,15 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 }
 
 void GLESTexture::fillBuffer(byte x) {
-	int rowbytes = _surface.w * bytesPerPixel();
-	byte tmpbuf[_surface.h * rowbytes];
-	memset(tmpbuf, x, _surface.h * rowbytes);
-	updateBuffer(0, 0, _surface.w, _surface.h, tmpbuf, rowbytes);
+	uint rowbytes = _surface.w * bytesPerPixel();
+
+	byte *tmp = new byte[_surface.h * rowbytes];
+	assert(tmp);
+
+	memset(tmp, x, _surface.h * rowbytes);
+	updateBuffer(0, 0, _surface.w, _surface.h, tmp, rowbytes);
+
+	delete[] tmp;
 }
 
 void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
