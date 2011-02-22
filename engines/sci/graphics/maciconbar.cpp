@@ -110,10 +110,12 @@ void GfxMacIconBar::drawDisabledImage(Graphics::Surface *surface, const Common::
 	newSurf.copyFrom(*surface);
 
 	for (int i = 0; i < newSurf.h; i++) {
-		int startX = rect.left & 3;
+		// Start at the next four byte boundary
+		int startX = 3 - ((rect.left + 3) & 3);
 
+		// Start odd rows at two bytes past that (also properly aligned)
 		if ((i + rect.top) & 1)
-			startX += 2;
+			startX = (startX + 2) & 3;
 
 		for (int j = startX; j < newSurf.w; j += 4)
 			*((byte *)newSurf.getBasePtr(j, i)) = 0;
