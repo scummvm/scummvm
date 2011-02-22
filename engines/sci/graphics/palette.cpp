@@ -850,21 +850,16 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 byte GfxPalette::findMacIconBarColor(byte r, byte g, byte b) {
 	// Find the best color for use with the Mac icon bar
 
-	// For black, always use 0
-	if (r == 0 && g == 0 && b == 0)
-		return 0;
-
 	byte found = 0xFF;
 	uint diff = 0xFFFFFFFF;
 
-	for (uint16 i = 1; i < 255; i++) {
-		int dr = _macClut[i * 3    ] - r;
-		int dg = _macClut[i * 3 + 1] - g;
-		int db = _macClut[i * 3 + 2] - b;
+	for (uint16 i = 0; i < 256; i++) {
+		// Use the difference of the top 4 bits
+		int dr = (_macClut[i * 3    ] & 0xf0) - (r & 0xf0);
+		int dg = (_macClut[i * 3 + 1] & 0xf0) - (g & 0xf0);
+		int db = (_macClut[i * 3 + 2] & 0xf0) - (b & 0xf0);
 
-		// Use the largest difference. This is what the Mac Palette Manager does.
-		uint cdiff = MAX<int>(ABS(dr), ABS(dg));
-		cdiff = MAX<int>(cdiff, ABS(db));
+		uint cdiff = ABS(dr) + ABS(dg) + ABS(db);
 
 		if (cdiff == 0)
 			return i;
@@ -889,7 +884,9 @@ void GfxPalette::loadMacIconBarPalette() {
 	clutStream->readUint32BE(); // seed
 	clutStream->readUint16BE(); // flags
 	uint16 colorCount = clutStream->readUint16BE() + 1;
-	_macClut = new byte[colorCount * 3];
+	assert(colorCount == 256);
+
+	_macClut = new byte[256 * 3];
 
 	for (uint16 i = 0; i < colorCount; i++) {
 		clutStream->readUint16BE();
@@ -897,6 +894,19 @@ void GfxPalette::loadMacIconBarPalette() {
 		_macClut[i * 3 + 1] = clutStream->readUint16BE() >> 8;
 		_macClut[i * 3 + 2] = clutStream->readUint16BE() >> 8;
 	}
+
+	// Adjust bounds on the KQ6 palette
+	// We don't use all of it for the icon bar
+	if (g_sci->getGameId() == GID_KQ6)
+		memset(_macClut + 32 * 3, 0, (256 - 32) * 3);
+
+	// Force black/white
+	_macClut[0x00 * 3    ] = 0;
+	_macClut[0x00 * 3 + 1] = 0;
+	_macClut[0x00 * 3 + 2] = 0;
+	_macClut[0xff * 3    ] = 0xff;
+	_macClut[0xff * 3 + 1] = 0xff;
+	_macClut[0xff * 3 + 2] = 0xff;
 
 	delete clutStream;
 }
