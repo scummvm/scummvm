@@ -2588,13 +2588,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
 #ifdef ENABLE_SCI32
-	// Police Quest 4 - English DOS (from the Police Quest Collection)
+	// Police Quest 4 - English DOS CD (from the Police Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.100.000"
-	{"pq4", "", {
+	{"pq4", "CD", {
 		{"resource.map", 0, "379dfe80ed6bd16c47e4b950c4722eac", 11374},
 		{"resource.000", 0, "fd316a09b628b7032248139003369022", 18841068},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
 	// Police Quest 4 - English DOS
 	// SCI interpreter version 2.000.000 (a guess?)
@@ -2959,13 +2959,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
-	// Quest for Glory 4 - English DOS/Windows (from jvprat)
+	// Quest for Glory 4 CD - English DOS/Windows (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
-	{"qfg4", "", {
+	{"qfg4", "CD", {
 		{"resource.map", 0, "aba367f2102e81782d961b14fbe3d630", 10246},
 		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
 	// RAMA - English DOS/Windows Demo
 	// Executable scanning reports "2.100.002", VERSION file reports "000.000.008"
