@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	md5.o \
 	mutex.o \
 	ne_exe.o \
+	pe_exe.o \
 	random.o \
 	rational.o \
 	str.o \
