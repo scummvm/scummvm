@@ -40,8 +40,8 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 
+#include "backends/platform/android/jni.h"
 #include "backends/platform/android/android.h"
-#include "backends/platform/android/asset-archive.h"
 
 const char *android_log_tag = "ScummVM";
 
@@ -98,7 +98,7 @@ static inline T scalef(T in, float numerator, float denominator) {
 	return static_cast<float>(in) * numerator / denominator;
 }
 
-OSystem_Android::OSystem_Android(jobject am) :
+OSystem_Android::OSystem_Android() :
 	_screen_changeid(0),
 	_force_redraw(false),
 	_game_texture(0),
@@ -112,7 +112,6 @@ OSystem_Android::OSystem_Android(jobject am) :
 	_mixer(0),
 	_timer(0),
 	_fsFactory(new POSIXFilesystemFactory()),
-	_asset_archive(new AndroidAssetArchive(am)),
 	_shake_offset(0),
 	_event_queue_lock(createMutex()) {
 }
@@ -124,40 +123,14 @@ OSystem_Android::~OSystem_Android() {
 	delete _overlay_texture;
 	delete _mouse_texture;
 
-	destroyScummVMSurface();
+	JNI::destroySurface();
 
 	delete _savefile;
 	delete _mixer;
 	delete _timer;
 	delete _fsFactory;
-	delete _asset_archive;
 
 	deleteMutex(_event_queue_lock);
-}
-
-bool OSystem_Android::initJavaHooks(JNIEnv *env) {
-	jclass cls = env->GetObjectClass(back_ptr);
-
-#define FIND_METHOD(name, signature) do {						\
-		MID_ ## name = env->GetMethodID(cls, #name, signature); \
-		if (MID_ ## name == 0)									\
-			return false;										\
-	} while (0)
-
-	FIND_METHOD(setWindowCaption, "(Ljava/lang/String;)V");
-	FIND_METHOD(displayMessageOnOSD, "(Ljava/lang/String;)V");
-	FIND_METHOD(initBackend, "()V");
-	FIND_METHOD(audioSampleRate, "()I");
-	FIND_METHOD(showVirtualKeyboard, "(Z)V");
-	FIND_METHOD(getSysArchives, "()[Ljava/lang/String;");
-	FIND_METHOD(getPluginDirectories, "()[Ljava/lang/String;");
-	FIND_METHOD(setupScummVMSurface, "()V");
-	FIND_METHOD(destroyScummVMSurface, "()V");
-	FIND_METHOD(swapBuffers, "()Z");
-
-#undef FIND_METHOD
-
-	return true;
 }
 
 void *OSystem_Android::timerThreadFunc(void *arg) {
@@ -183,8 +156,6 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 void OSystem_Android::initBackend() {
 	ENTER();
 
-	JNIEnv *env = JNI::getEnv();
-
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setInt("FM_medium_quality", true);
 
@@ -200,74 +171,23 @@ void OSystem_Android::initBackend() {
 
 	gettimeofday(&_startTime, 0);
 
-	jint sample_rate = env->CallIntMethod(back_ptr, MID_audioSampleRate);
-	if (env->ExceptionCheck()) {
-		warning("Error finding audio sample rate - assuming 11025HZ");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-
-		sample_rate = 11025;
-	}
-
-	_mixer = new Audio::MixerImpl(this, sample_rate);
+	_mixer = new Audio::MixerImpl(this, JNI::getAudioSampleRate());
 	_mixer->setReady(true);
 
-	env->CallVoidMethod(back_ptr, MID_initBackend);
-
-	if (env->ExceptionCheck()) {
-		error("Error in Java initBackend");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
+	JNI::initBackend();
 
 	_timer_thread_exit = false;
 	pthread_create(&_timer_thread, 0, timerThreadFunc, this);
 
 	OSystem::initBackend();
 
-	setupScummVMSurface();
+	setupSurface();
 }
 
 void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
 	ENTER();
 
-	JNIEnv *env = JNI::getEnv();
-	jobjectArray array =
-		(jobjectArray)env->CallObjectMethod(back_ptr, MID_getPluginDirectories);
-
-	if (env->ExceptionCheck()) {
-		warning("Error finding plugin directories");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-
-		return;
-	}
-
-	jsize size = env->GetArrayLength(array);
-	for (jsize i = 0; i < size; ++i) {
-		jstring path_obj = (jstring)env->GetObjectArrayElement(array, i);
-
-		if (path_obj == 0)
-			continue;
-
-		const char *path = env->GetStringUTFChars(path_obj, 0);
-		if (path == 0) {
-			warning("Error getting string characters from plugin directory");
-
-			env->ExceptionClear();
-			env->DeleteLocalRef(path_obj);
-
-			continue;
-		}
-
-		dirs.push_back(Common::FSNode(path));
-
-		env->ReleaseStringUTFChars(path_obj, path);
-		env->DeleteLocalRef(path_obj);
-	}
+	JNI::getPluginDirectories(dirs);
 }
 
 bool OSystem_Android::hasFeature(Feature f) {
@@ -380,8 +300,8 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	case Common::EVENT_SCREEN_CHANGED:
 		debug("EVENT_SCREEN_CHANGED");
 		_screen_changeid++;
-		destroyScummVMSurface();
-		setupScummVMSurface();
+		JNI::destroySurface();
+		setupSurface();
 		break;
 	default:
 		break;
@@ -475,49 +395,19 @@ void OSystem_Android::quit() {
 void OSystem_Android::setWindowCaption(const char *caption) {
 	ENTER("%s", caption);
 
-	JNIEnv *env = JNI::getEnv();
-	jstring java_caption = env->NewStringUTF(caption);
-	env->CallVoidMethod(back_ptr, MID_setWindowCaption, java_caption);
-
-	if (env->ExceptionCheck()) {
-		warning("Failed to set window caption");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
-
-	env->DeleteLocalRef(java_caption);
+	JNI::setWindowCaption(caption);
 }
 
 void OSystem_Android::displayMessageOnOSD(const char *msg) {
 	ENTER("%s", msg);
 
-	JNIEnv *env = JNI::getEnv();
-	jstring java_msg = env->NewStringUTF(msg);
-	env->CallVoidMethod(back_ptr, MID_displayMessageOnOSD, java_msg);
-
-	if (env->ExceptionCheck()) {
-		warning("Failed to display OSD message");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
-
-	env->DeleteLocalRef(java_msg);
+	JNI::displayMessageOnOSD(msg);
 }
 
 void OSystem_Android::showVirtualKeyboard(bool enable) {
 	ENTER("%d", enable);
 
-	JNIEnv *env = JNI::getEnv();
-	env->CallVoidMethod(back_ptr, MID_showVirtualKeyboard, enable);
-
-	if (env->ExceptionCheck()) {
-		error("Error trying to show virtual keyboard");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
+	JNI::showVirtualKeyboard(enable);
 }
 
 Common::SaveFileManager *OSystem_Android::getSavefileManager() {
@@ -554,33 +444,9 @@ FilesystemFactory *OSystem_Android::getFilesystemFactory() {
 
 void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,
 												int priority) {
-	s.add("ASSET", _asset_archive, priority, false);
+	ENTER("");
 
-	JNIEnv *env = JNI::getEnv();
-	jobjectArray array =
-		(jobjectArray)env->CallObjectMethod(back_ptr, MID_getSysArchives);
-
-	if (env->ExceptionCheck()) {
-		warning("Error finding system archive path");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-
-		return;
-	}
-
-	jsize size = env->GetArrayLength(array);
-	for (jsize i = 0; i < size; ++i) {
-		jstring path_obj = (jstring)env->GetObjectArrayElement(array, i);
-		const char *path = env->GetStringUTFChars(path_obj, 0);
-
-		if (path != 0) {
-			s.addDirectory(path, path, priority);
-			env->ReleaseStringUTFChars(path_obj, path);
-		}
-
-		env->DeleteLocalRef(path_obj);
-	}
+	JNI::addSysArchivesToSearchSet(s, priority);
 }
 
 void OSystem_Android::logMessage(LogMessageType::Type type, const char *message) {

@@ -36,12 +36,10 @@
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 
-#include "backends/platform/android/jni.h"
 #include "backends/platform/android/texture.h"
 
 #include <pthread.h>
 
-#include <jni.h>
 #include <android/log.h>
 
 #include <GLES/gl.h>
@@ -79,9 +77,6 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLCALL(x) do { (x); } while (false)
 #endif
 
-// back pointer to (java) peer instance
-extern jobject back_ptr;
-
 #ifdef DYNAMIC_MODULES
 class AndroidPluginProvider : public POSIXPluginProvider {
 protected:
@@ -91,17 +86,6 @@ protected:
 
 class OSystem_Android : public BaseBackend, public PaletteManager {
 private:
-	jmethodID MID_displayMessageOnOSD;
-	jmethodID MID_setWindowCaption;
-	jmethodID MID_initBackend;
-	jmethodID MID_audioSampleRate;
-	jmethodID MID_showVirtualKeyboard;
-	jmethodID MID_getSysArchives;
-	jmethodID MID_getPluginDirectories;
-	jmethodID MID_setupScummVMSurface;
-	jmethodID MID_destroyScummVMSurface;
-	jmethodID MID_swapBuffers;
-
 	int _screen_changeid;
 	int _egl_surface_width;
 	int _egl_surface_height;
@@ -138,18 +122,15 @@ private:
 	Audio::MixerImpl *_mixer;
 	Common::TimerManager *_timer;
 	FilesystemFactory *_fsFactory;
-	Common::Archive *_asset_archive;
 	timeval _startTime;
 
-	void setupScummVMSurface();
-	void destroyScummVMSurface();
+	void setupSurface();
 	void setupKeymapper();
 	void _setCursorPalette(const byte *colors, uint start, uint num);
 
 public:
-	OSystem_Android(jobject am);
+	OSystem_Android();
 	virtual ~OSystem_Android();
-	bool initJavaHooks(JNIEnv *env);
 
 	virtual void initBackend();
 	void addPluginDirectories(Common::FSList &dirs) const;

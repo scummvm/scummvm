@@ -26,6 +26,7 @@
 #if defined(__ANDROID__)
 
 #include "backends/platform/android/android.h"
+#include "backends/platform/android/jni.h"
 
 static inline GLfixed xdiv(int numerator, int denominator) {
 	assert(numerator < (1 << 16));
@@ -47,11 +48,13 @@ int OSystem_Android::getDefaultGraphicsMode() const {
 
 bool OSystem_Android::setGraphicsMode(const char *mode) {
 	ENTER("%s", mode);
+
 	return true;
 }
 
 bool OSystem_Android::setGraphicsMode(int mode) {
 	ENTER("%d", mode);
+
 	return true;
 }
 
@@ -59,13 +62,10 @@ int OSystem_Android::getGraphicsMode() const {
 	return 1;
 }
 
-void OSystem_Android::setupScummVMSurface() {
+void OSystem_Android::setupSurface() {
 	ENTER();
 
-	JNIEnv *env = JNI::getEnv();
-	env->CallVoidMethod(back_ptr, MID_setupScummVMSurface);
-
-	if (env->ExceptionCheck())
+	if (!JNI::setupSurface())
 		return;
 
 	// EGL set up with a new surface.  Initialise OpenGLES context.
@@ -115,12 +115,6 @@ void OSystem_Android::setupScummVMSurface() {
 	clearFocusRectangle();
 }
 
-void OSystem_Android::destroyScummVMSurface() {
-	JNIEnv *env = JNI::getEnv();
-	env->CallVoidMethod(back_ptr, MID_destroyScummVMSurface);
-	// Can't use OpenGLES functions after this
-}
-
 void OSystem_Android::initSize(uint width, uint height,
 								const Graphics::PixelFormat *format) {
 	ENTER("%d, %d, %p", width, height, format);
@@ -158,6 +152,7 @@ void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 
 void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
 	ENTER("%p, %u, %u", colors, start, num);
+
 	memcpy(colors, _game_texture->palette_const() + start * 3, num * 3);
 }
 
@@ -261,11 +256,10 @@ void OSystem_Android::updateScreen() {
 
 	GLCALL(glPopMatrix());
 
-	JNIEnv *env = JNI::getEnv();
-	if (!env->CallBooleanMethod(back_ptr, MID_swapBuffers)) {
+	if (!JNI::swapBuffers()) {
 		// Context lost -> need to reinit GL
-		destroyScummVMSurface();
-		setupScummVMSurface();
+		JNI::destroySurface();
+		setupSurface();
 	}
 }
 

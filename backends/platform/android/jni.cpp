@@ -29,8 +29,8 @@
 #include "common/config-manager.h"
 
 #include "backends/platform/android/android.h"
-
-jobject back_ptr;
+#include "backends/platform/android/asset-archive.h"
+#include "backends/platform/android/jni.h"
 
 __attribute__ ((visibility("default")))
 jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
@@ -39,6 +39,8 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 
 JavaVM *JNI::_vm = 0;
 jobject JNI::_jobj = 0;
+
+Common::Archive *JNI::_asset_archive = 0;
 OSystem_Android *JNI::_system = 0;
 
 jfieldID JNI::_FID_Event_type = 0;
@@ -50,6 +52,17 @@ jfieldID JNI::_FID_Event_mouse_x = 0;
 jfieldID JNI::_FID_Event_mouse_y = 0;
 jfieldID JNI::_FID_Event_mouse_relative = 0;
 jfieldID JNI::_FID_ScummVM_nativeScummVM = 0;
+
+jmethodID JNI::_MID_displayMessageOnOSD = 0;
+jmethodID JNI::_MID_setWindowCaption = 0;
+jmethodID JNI::_MID_initBackend = 0;
+jmethodID JNI::_MID_audioSampleRate = 0;
+jmethodID JNI::_MID_showVirtualKeyboard = 0;
+jmethodID JNI::_MID_getSysArchives = 0;
+jmethodID JNI::_MID_getPluginDirectories = 0;
+jmethodID JNI::_MID_setupScummVMSurface = 0;
+jmethodID JNI::_MID_destroyScummVMSurface = 0;
+jmethodID JNI::_MID_swapBuffers = 0;
 
 const JNINativeMethod JNI::_natives[] = {
 	{ "create", "(Landroid/content/res/AssetManager;)V",
@@ -179,21 +192,192 @@ void JNI::throwByName(JNIEnv *env, const char *name, const char *msg) {
 	env->DeleteLocalRef(cls);
 }
 
+// calls to the dark side
+
+int JNI::getAudioSampleRate() {
+	JNIEnv *env = JNI::getEnv();
+
+	jint sample_rate = env->CallIntMethod(_jobj, _MID_audioSampleRate);
+
+	if (env->ExceptionCheck()) {
+		warning("Error finding audio sample rate - assuming 11025HZ");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return 11025;
+	}
+
+	return sample_rate;
+}
+
+void JNI::initBackend() {
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_jobj, _MID_initBackend);
+
+	if (env->ExceptionCheck()) {
+		error("Error in Java initBackend");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		// TODO now what?
+	}
+}
+
+void JNI::getPluginDirectories(Common::FSList &dirs) {
+	JNIEnv *env = JNI::getEnv();
+
+	jobjectArray array =
+		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getPluginDirectories);
+
+	if (env->ExceptionCheck()) {
+		warning("Error finding plugin directories");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return;
+	}
+
+	jsize size = env->GetArrayLength(array);
+	for (jsize i = 0; i < size; ++i) {
+		jstring path_obj = (jstring)env->GetObjectArrayElement(array, i);
+
+		if (path_obj == 0)
+			continue;
+
+		const char *path = env->GetStringUTFChars(path_obj, 0);
+
+		if (path == 0) {
+			warning("Error getting string characters from plugin directory");
+
+			env->ExceptionClear();
+			env->DeleteLocalRef(path_obj);
+
+			continue;
+		}
+
+		dirs.push_back(Common::FSNode(path));
+
+		env->ReleaseStringUTFChars(path_obj, path);
+		env->DeleteLocalRef(path_obj);
+	}
+}
+
+void JNI::setWindowCaption(const char *caption) {
+	JNIEnv *env = JNI::getEnv();
+	jstring java_caption = env->NewStringUTF(caption);
+
+	env->CallVoidMethod(_jobj, _MID_setWindowCaption, java_caption);
+
+	if (env->ExceptionCheck()) {
+		warning("Failed to set window caption");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+
+	env->DeleteLocalRef(java_caption);
+}
+
+void JNI::displayMessageOnOSD(const char *msg) {
+	JNIEnv *env = JNI::getEnv();
+	jstring java_msg = env->NewStringUTF(msg);
+
+	env->CallVoidMethod(_jobj, _MID_displayMessageOnOSD, java_msg);
+
+	if (env->ExceptionCheck()) {
+		warning("Failed to display OSD message");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+
+	env->DeleteLocalRef(java_msg);
+}
+
+void JNI::showVirtualKeyboard(bool enable) {
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_jobj, _MID_showVirtualKeyboard, enable);
+
+	if (env->ExceptionCheck()) {
+		error("Error trying to show virtual keyboard");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+}
+
+void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	JNIEnv *env = JNI::getEnv();
+
+	s.add("ASSET", _asset_archive, priority, false);
+
+	jobjectArray array =
+		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getSysArchives);
+
+	if (env->ExceptionCheck()) {
+		warning("Error finding system archive path");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return;
+	}
+
+	jsize size = env->GetArrayLength(array);
+	for (jsize i = 0; i < size; ++i) {
+		jstring path_obj = (jstring)env->GetObjectArrayElement(array, i);
+		const char *path = env->GetStringUTFChars(path_obj, 0);
+
+		if (path != 0) {
+			s.addDirectory(path, path, priority);
+			env->ReleaseStringUTFChars(path_obj, path);
+		}
+
+		env->DeleteLocalRef(path_obj);
+	}
+}
+
+// natives for the dark side
+
 void JNI::create(JNIEnv *env, jobject self, jobject am) {
 	assert(!_system);
 
-	_system = new OSystem_Android(am);
+	_asset_archive = new AndroidAssetArchive(am);
+	assert(_asset_archive);
+
+	_system = new OSystem_Android();
 	assert(_system);
 
 	// weak global ref to allow class to be unloaded
 	// ... except dalvik implements NewWeakGlobalRef only on froyo
 	//_jobj = env->NewWeakGlobalRef(self);
 	_jobj = env->NewGlobalRef(self);
-	back_ptr = _jobj;
 
-	// Exception already thrown by initJavaHooks?
-	if (!_system->initJavaHooks(env))
-		return;
+	jclass cls = env->GetObjectClass(_jobj);
+
+#define FIND_METHOD(name, signature) do {							\
+		_MID_ ## name = env->GetMethodID(cls, #name, signature);	\
+		if (_MID_ ## name == 0)										\
+			return;													\
+	} while (0)
+
+	FIND_METHOD(setWindowCaption, "(Ljava/lang/String;)V");
+	FIND_METHOD(displayMessageOnOSD, "(Ljava/lang/String;)V");
+	FIND_METHOD(initBackend, "()V");
+	FIND_METHOD(audioSampleRate, "()I");
+	FIND_METHOD(showVirtualKeyboard, "(Z)V");
+	FIND_METHOD(getSysArchives, "()[Ljava/lang/String;");
+	FIND_METHOD(getPluginDirectories, "()[Ljava/lang/String;");
+	FIND_METHOD(setupScummVMSurface, "()V");
+	FIND_METHOD(destroyScummVMSurface, "()V");
+	FIND_METHOD(swapBuffers, "()Z");
+
+#undef FIND_METHOD
 
 	env->SetLongField(self, _FID_ScummVM_nativeScummVM, (jlong)_system);
 
@@ -207,6 +391,9 @@ void JNI::destroy(JNIEnv *env, jobject self) {
 	g_system = 0;
 	_system = 0;
 	delete tmp;
+
+	delete _asset_archive;
+	_asset_archive = 0;
 
 	// see above
 	//JNI::getEnv()->DeleteWeakGlobalRef(_jobj);
