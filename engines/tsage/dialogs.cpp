@@ -73,6 +73,7 @@ int MessageDialog::show(const Common::String &message, const Common::String &btn
 	CursorType currentCursor = _globals->_events.getCursor();
 	if (currentCursor != CURSOR_ARROW)
 		_globals->_events.setCursor(CURSOR_ARROW);
+	_globals->_events.showCursor();
 
 	int result = show2(message, btn1Message, btn2Message);
 

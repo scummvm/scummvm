@@ -1292,6 +1292,13 @@ void Scene40::Scene40_Action8::signal() {
 		_globals->_player.setFrame(1);
 		_globals->_player.animate(ANIM_MODE_5, this);
 		break;
+	case 3:
+		_globals->_soundHandler.startSound(77, this);
+		break;
+	case 4:
+		_globals->_game.endGame(40, 45);
+		remove();
+		break;
 	}
 }
 
