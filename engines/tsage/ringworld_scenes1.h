@@ -23,49 +23,17 @@
  *
  */
 
-#ifndef TSAGE_SCENE_LOGIC_H
-#define TSAGE_SCENE_LOGIC_H
+#ifndef TSAGE_RINGWORLD_SCENES1_H
+#define TSAGE_RINGWORLD_SCENES1_H
 
 #include "common/scummsys.h"
+#include "tsage/ringworld_logic.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 
 namespace tSage {
-
-class SceneFactory {
-public:
-	static Scene *createScene(int sceneNumber);
-};
-
-class DisplayHotspot: public SceneHotspot {
-private:
-	Common::Array<int> _actions;
-	bool performAction(int action);
-public:
-	DisplayHotspot(int regionId, ...);
-
-	virtual void doAction(int action) { 
-		if (!performAction(action))
-			SceneHotspot::doAction(action);
-	}
-};
-
-class DisplayObject: public SceneObject {
-private:
-	Common::Array<int> _actions;
-	bool performAction(int action);
-public:
-	DisplayObject(int firstAction, ...);
-
-	virtual void doAction(int action) { 
-		if (!performAction(action))
-			SceneHotspot::doAction(action);
-	}
-};
-
-/*--------------------------------------------------------------------------*/
 
 class Scene10: public Scene {
 	/* Actions */

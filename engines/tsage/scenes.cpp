@@ -25,7 +25,7 @@
 
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
-#include "tsage/scene_logic.h"
+#include "tsage/ringworld_logic.h"
 #include "tsage/tsage.h"
 
 namespace tSage {

@@ -23,99 +23,12 @@
  *
  */
 
-#include "tsage/scene_logic.h"
+#include "tsage/ringworld_scenes1.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
 namespace tSage {
-
-Scene *SceneFactory::createScene(int sceneNumber) {
-	switch (sceneNumber) {
-	// Kziniti Palace (Introduction)
-	case 10: return new Scene10();
-	// Outer Space (Introduction)
-	case 15: return new Scene15();
-	// Cut-scenes for Ch'mee house in distance
-	case 20: return new Scene20();
-	// Outside Ch'mee residence
-	case 30: return new Scene30();
-	// Chmeee Home
-	case 40: return new Scene40();
-	// By Flycycles
-	case 50: return new Scene50();
-	// Flycycle controls
-	case 60: return new Scene60();
-	//
-	case 90: return new Scene90();
-	//
-	case 95: return new Scene95();
-	// Title screen
-	case 1000: return new Scene1000();
-	// Sunflower navigation sequence
-	case 6100: return new Scene6100();
-
-	default:
-		error("Unknown scene number - %d", sceneNumber);
-		break;
-	}
-}
-
-/*--------------------------------------------------------------------------*/
-
-DisplayHotspot::DisplayHotspot(int regionId, ...) {
-	_sceneRegionId = regionId;
-
-	// Load up the actions
-	va_list va;
-	va_start(va, regionId);
-
-	int param = va_arg(va, int);
-	while (param != LIST_END) {
-		_actions.push_back(param);
-		param = va_arg(va, int);
-	}
-
-	va_end(va);
-}
-
-bool DisplayHotspot::performAction(int action) {
-	for (uint i = 0; i < _actions.size(); i += 3) {
-		if (_actions[i] == action) {
-			display(_actions[i + 1], _actions[i + 2], SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/*--------------------------------------------------------------------------*/
-
-DisplayObject::DisplayObject(int firstAction, ...) {
-	// Load up the actions
-	va_list va;
-	va_start(va, firstAction);
-
-	int param = firstAction;
-	while (param != LIST_END) {
-		_actions.push_back(param);
-		param = va_arg(va, int);
-	}
-
-	va_end(va);
-}
-
-bool DisplayObject::performAction(int action) {
-	for (uint i = 0; i < _actions.size(); i += 3) {
-		if (_actions[i] == action) {
-			display(_actions[i + 1], _actions[i + 2], SET_WIDTH, 200, SET_EXT_BGCOLOUR, 7, LIST_END);
-			return true;
-		}
-	}
-
-	return false;
-}
 
 /*--------------------------------------------------------------------------
  * Scene 10 - Kziniti Palace (Introduction)
