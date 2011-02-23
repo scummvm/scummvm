@@ -622,6 +622,36 @@ const SciScriptSignature kq5Signatures[] = {
 };
 
 // ===========================================================================
+// When giving the milk bottle to one of the babies in the garden in KQ6 (room
+// 480), script 481 starts a looping baby cry sound. However, that particular
+// script also has an overriden check method (cryMusic::check). This method
+// explicitly restarts the sound, even if it's set to be looped, thus the same
+// sound is played twice, squelching all other sounds. We just rip the
+// unnecessary cryMusic::check method out, thereby stopping the sound from
+// constantly restarting (since it's being looped anyway), thus the normal
+// game speech can work while the baby cry sound is heard. Fixes bug #3034579.
+const byte kq6SignatureDuplicateBabyCry[] = {
+	10,
+	0x83, 0x00,         // lal 00
+    0x31, 0x1e,         // bnt 1e  [07f4]
+    0x78,               // push1
+    0x39, 0x04,         // pushi 04
+    0x43, 0x75, 0x02,   // callk DoAudio[75] 02
+	0
+};
+
+const uint16 kq6PatchDuplicateBabyCry[] = {
+	0x48,              // ret
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                 adjust
+const SciScriptSignature kq6Signatures[] = {
+	{    481, "duplicate baby cry",                          1, PATCH_MAGICDWORD(0x83, 0x00, 0x31, 0x1e),     0, kq6SignatureDuplicateBabyCry, kq6PatchDuplicateBabyCry },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // this is called on every death dialog. Problem is at least the german
 //  version of lsl6 gets title text that is far too long for the
 //  available temp space resulting in temp space corruption
@@ -1235,6 +1265,9 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 #endif
 	case GID_KQ5:
 		signatureTable = kq5Signatures;
+		break;
+	case GID_KQ6:
+		signatureTable = kq6Signatures;
 		break;
 	case GID_LAURABOW2:
 		signatureTable = laurabow2Signatures;
