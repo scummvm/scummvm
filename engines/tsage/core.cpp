@@ -2808,7 +2808,9 @@ void SoundHandler::dispatch() {
 	}
 
 	if (_field280 != -1) {
-		if (!_sound.proc3()) {
+		// FIXME: Hardcoded to only flag a sound ended if an action has been set
+		if (_action) {
+//		if (!_sound.proc3()) {
 			_field280 = -1;
 			if (_action) {
 				_action->signal();
