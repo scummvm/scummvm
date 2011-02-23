@@ -1889,7 +1889,7 @@ void CruiseEngine::mainLoop() {
 		// FIXME: I suspect that the original game does multiple script executions between game frames; the bug with
 		// Raoul appearing when looking at the book is being there are 3 script iterations separation between the
 		// scene being changed to the book, and the Raoul actor being frozen/disabled. This loop is a hack to ensure
-		// that when a background changes, a few extra script executions are done
+		// that does a few extra script executions for that scene
 		bool bgChanged;
 		int numIterations = 1;
 
@@ -1902,7 +1902,8 @@ void CruiseEngine::mainLoop() {
 			removeFinishedScripts(&relHead);
 			removeFinishedScripts(&procHead);
 
-			if (!bgChanged && backgroundChanged[masterScreen]) {
+			if (!bgChanged && backgroundChanged[masterScreen] &&
+					!strcmp(backgroundTable[0].name, "S06B.PI1")) {
 				bgChanged = true;
 				numIterations += 2;
 			}
