@@ -81,7 +81,7 @@ reg_t GfxCompare::canBeHereCheckRectList(reg_t checkObject, const Common::Rect &
 		curObject = curNode->value;
 		if (curObject != checkObject) {
 			signal = readSelectorValue(_segMan, curObject, SELECTOR(signal));
-			if ((signal & (kSignalIgnoreActor | kSignalRemoveView | kSignalNoUpdate)) == 0) {
+			if (!(signal & (kSignalIgnoreActor | kSignalRemoveView | kSignalNoUpdate))) {
 				curRect.left = readSelectorValue(_segMan, curObject, SELECTOR(brLeft));
 				curRect.top = readSelectorValue(_segMan, curObject, SELECTOR(brTop));
 				curRect.right = readSelectorValue(_segMan, curObject, SELECTOR(brRight));
