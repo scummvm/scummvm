@@ -52,7 +52,9 @@ public class ScummVMActivity extends Activity {
 			super(ScummVMActivity.this);
 
 			// Enable ScummVM zoning on 'small' screens.
-			enableZoning(usingSmallScreen());
+			// FIXME make this optional for the user
+			// disabled for now since it crops too much
+			//enableZoning(usingSmallScreen());
 		}
 
 		@Override
