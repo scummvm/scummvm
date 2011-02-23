@@ -114,8 +114,8 @@ public:
 	virtual void fillScreen(uint32 col);
 	virtual void updateScreen();
 	virtual void setShakePos(int shakeOffset);
-	virtual void setFocusRectangle(const Common::Rect& rect) {}
-	virtual void clearFocusRectangle() {}
+	virtual void setFocusRectangle(const Common::Rect& rect);
+	virtual void clearFocusRectangle();
 
 	virtual void showOverlay();
 	virtual void hideOverlay();

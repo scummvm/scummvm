@@ -1396,6 +1396,11 @@ void SdlGraphicsManager::setShakePos(int shake_pos) {
 	_newShakePos = shake_pos;
 }
 
+void SdlGraphicsManager::setFocusRectangle(const Common::Rect& rect) {
+}
+
+void SdlGraphicsManager::clearFocusRectangle() {
+}
 
 #pragma mark -
 #pragma mark --- Overlays ---
