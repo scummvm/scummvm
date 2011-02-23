@@ -36,6 +36,7 @@
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 
+#include "backends/platform/android/jni.h"
 #include "backends/platform/android/texture.h"
 
 #include <pthread.h>
@@ -80,13 +81,6 @@ extern void checkGlError(const char *expr, const char *file, int line);
 
 // back pointer to (java) peer instance
 extern jobject back_ptr;
-
-extern JNIEnv *JNU_GetEnv();
-extern void JNU_AttachThread();
-extern void JNU_DetachThread();
-
-class OSystem_Android;
-extern OSystem_Android *g_sys;
 
 #ifdef DYNAMIC_MODULES
 class AndroidPluginProvider : public POSIXPluginProvider {

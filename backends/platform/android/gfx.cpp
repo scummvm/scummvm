@@ -62,7 +62,7 @@ int OSystem_Android::getGraphicsMode() const {
 void OSystem_Android::setupScummVMSurface() {
 	ENTER();
 
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	env->CallVoidMethod(back_ptr, MID_setupScummVMSurface);
 
 	if (env->ExceptionCheck())
@@ -116,7 +116,7 @@ void OSystem_Android::setupScummVMSurface() {
 }
 
 void OSystem_Android::destroyScummVMSurface() {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	env->CallVoidMethod(back_ptr, MID_destroyScummVMSurface);
 	// Can't use OpenGLES functions after this
 }
@@ -261,7 +261,7 @@ void OSystem_Android::updateScreen() {
 
 	GLCALL(glPopMatrix());
 
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	if (!env->CallBooleanMethod(back_ptr, MID_swapBuffers)) {
 		// Context lost -> need to reinit GL
 		destroyScummVMSurface();

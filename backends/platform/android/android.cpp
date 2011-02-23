@@ -98,8 +98,6 @@ static inline T scalef(T in, float numerator, float denominator) {
 	return static_cast<float>(in) * numerator / denominator;
 }
 
-OSystem_Android *g_sys = 0;
-
 OSystem_Android::OSystem_Android(jobject am) :
 	_screen_changeid(0),
 	_force_redraw(false),
@@ -166,7 +164,7 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 	OSystem_Android *system = (OSystem_Android *)arg;
 	DefaultTimerManager *timer = (DefaultTimerManager *)(system->_timer);
 
-	JNU_AttachThread();
+	JNI::attachThread();
 
 	struct timespec tv;
 	tv.tv_sec = 0;
@@ -177,7 +175,7 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 		nanosleep(&tv, 0);
 	}
 
-	JNU_DetachThread();
+	JNI::detachThread();
 
 	return 0;
 }
@@ -185,7 +183,7 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 void OSystem_Android::initBackend() {
 	ENTER();
 
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setInt("FM_medium_quality", true);
@@ -235,10 +233,10 @@ void OSystem_Android::initBackend() {
 void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
 	ENTER();
 
-	JNIEnv *env = JNU_GetEnv();
-
+	JNIEnv *env = JNI::getEnv();
 	jobjectArray array =
 		(jobjectArray)env->CallObjectMethod(back_ptr, MID_getPluginDirectories);
+
 	if (env->ExceptionCheck()) {
 		warning("Error finding plugin directories");
 
@@ -477,7 +475,7 @@ void OSystem_Android::quit() {
 void OSystem_Android::setWindowCaption(const char *caption) {
 	ENTER("%s", caption);
 
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	jstring java_caption = env->NewStringUTF(caption);
 	env->CallVoidMethod(back_ptr, MID_setWindowCaption, java_caption);
 
@@ -494,9 +492,8 @@ void OSystem_Android::setWindowCaption(const char *caption) {
 void OSystem_Android::displayMessageOnOSD(const char *msg) {
 	ENTER("%s", msg);
 
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	jstring java_msg = env->NewStringUTF(msg);
-
 	env->CallVoidMethod(back_ptr, MID_displayMessageOnOSD, java_msg);
 
 	if (env->ExceptionCheck()) {
@@ -512,8 +509,7 @@ void OSystem_Android::displayMessageOnOSD(const char *msg) {
 void OSystem_Android::showVirtualKeyboard(bool enable) {
 	ENTER("%d", enable);
 
-	JNIEnv *env = JNU_GetEnv();
-
+	JNIEnv *env = JNI::getEnv();
 	env->CallVoidMethod(back_ptr, MID_showVirtualKeyboard, enable);
 
 	if (env->ExceptionCheck()) {
@@ -560,8 +556,7 @@ void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,
 												int priority) {
 	s.add("ASSET", _asset_archive, priority, false);
 
-	JNIEnv *env = JNU_GetEnv();
-
+	JNIEnv *env = JNI::getEnv();
 	jobjectArray array =
 		(jobjectArray)env->CallObjectMethod(back_ptr, MID_getSysArchives);
 
@@ -606,7 +601,7 @@ void OSystem_Android::logMessage(LogMessageType::Type type, const char *message)
 
 #ifdef DYNAMIC_MODULES
 void AndroidPluginProvider::addCustomDirectories(Common::FSList &dirs) const {
-	g_sys->addPluginDirectories(dirs);
+	((OSystem_Android *)g_system)->addPluginDirectories(dirs);
 }
 #endif
 

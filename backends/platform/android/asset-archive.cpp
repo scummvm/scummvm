@@ -36,9 +36,8 @@
 #include "common/archive.h"
 #include "common/debug.h"
 
+#include "backends/platform/android/jni.h"
 #include "backends/platform/android/asset-archive.h"
-
-extern JNIEnv *JNU_GetEnv();
 
 // Must match android.content.res.AssetManager.ACCESS_*
 const jint ACCESS_UNKNOWN = 0;
@@ -124,7 +123,7 @@ JavaInputStream::JavaInputStream(JNIEnv *env, jobject is) :
 }
 
 JavaInputStream::~JavaInputStream() {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	close(env);
 
 	env->DeleteGlobalRef(_buf);
@@ -139,7 +138,7 @@ void JavaInputStream::close(JNIEnv *env) {
 }
 
 uint32 JavaInputStream::read(void *dataPtr, uint32 dataSize) {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 
 	if (_buflen < jint(dataSize)) {
 		_buflen = dataSize;
@@ -171,7 +170,7 @@ uint32 JavaInputStream::read(void *dataPtr, uint32 dataSize) {
 }
 
 bool JavaInputStream::seek(int32 offset, int whence) {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	uint32 newpos;
 
 	switch (whence) {
@@ -318,7 +317,7 @@ AssetFdReadStream::AssetFdReadStream(JNIEnv *env, jobject assetfd) :
 }
 
 AssetFdReadStream::~AssetFdReadStream() {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	env->CallVoidMethod(_assetfd, MID_close);
 
 	if (env->ExceptionCheck())
@@ -369,7 +368,7 @@ bool AssetFdReadStream::seek(int32 offset, int whence) {
 }
 
 AndroidAssetArchive::AndroidAssetArchive(jobject am) {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	_am = env->NewGlobalRef(am);
 
 	jclass cls = env->GetObjectClass(_am);
@@ -387,12 +386,12 @@ AndroidAssetArchive::AndroidAssetArchive(jobject am) {
 }
 
 AndroidAssetArchive::~AndroidAssetArchive() {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	env->DeleteGlobalRef(_am);
 }
 
 bool AndroidAssetArchive::hasFile(const Common::String &name) {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	jstring path = env->NewStringUTF(name.c_str());
 	jobject result = env->CallObjectMethod(_am, MID_open, path, ACCESS_UNKNOWN);
 	if (env->ExceptionCheck()) {
@@ -412,7 +411,7 @@ bool AndroidAssetArchive::hasFile(const Common::String &name) {
 }
 
 int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	Common::List<Common::String> dirlist;
 	dirlist.push_back("");
 
@@ -469,7 +468,7 @@ Common::ArchiveMemberPtr AndroidAssetArchive::getMember(const Common::String &na
 }
 
 Common::SeekableReadStream *AndroidAssetArchive::createReadStreamForMember(const Common::String &path) const {
-	JNIEnv *env = JNU_GetEnv();
+	JNIEnv *env = JNI::getEnv();
 	jstring jpath = env->NewStringUTF(path.c_str());
 
 	// Try openFd() first ...

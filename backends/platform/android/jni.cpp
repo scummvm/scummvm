@@ -30,28 +30,116 @@
 
 #include "backends/platform/android/android.h"
 
-// Fix JNIEXPORT declaration to actually do something useful
-#undef JNIEXPORT
-#define JNIEXPORT __attribute__ ((visibility("default")))
-
 jobject back_ptr;
 
-static JavaVM *cached_jvm;
+__attribute__ ((visibility("default")))
+jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
+	return JNI::onLoad(vm);
+}
 
-static jfieldID FID_Event_type;
-static jfieldID FID_Event_synthetic;
-static jfieldID FID_Event_kbd_keycode;
-static jfieldID FID_Event_kbd_ascii;
-static jfieldID FID_Event_kbd_flags;
-static jfieldID FID_Event_mouse_x;
-static jfieldID FID_Event_mouse_y;
-static jfieldID FID_Event_mouse_relative;
-static jfieldID FID_ScummVM_nativeScummVM;
+JavaVM *JNI::_vm = 0;
+jobject JNI::_jobj = 0;
+OSystem_Android *JNI::_system = 0;
 
-JNIEnv *JNU_GetEnv() {
+jfieldID JNI::_FID_Event_type = 0;
+jfieldID JNI::_FID_Event_synthetic = 0;
+jfieldID JNI::_FID_Event_kbd_keycode = 0;
+jfieldID JNI::_FID_Event_kbd_ascii = 0;
+jfieldID JNI::_FID_Event_kbd_flags = 0;
+jfieldID JNI::_FID_Event_mouse_x = 0;
+jfieldID JNI::_FID_Event_mouse_y = 0;
+jfieldID JNI::_FID_Event_mouse_relative = 0;
+jfieldID JNI::_FID_ScummVM_nativeScummVM = 0;
+
+const JNINativeMethod JNI::_natives[] = {
+	{ "create", "(Landroid/content/res/AssetManager;)V",
+		(void *)JNI::create },
+	{ "nativeDestroy", "()V",
+		(void *)JNI::destroy },
+	{ "scummVMMain", "([Ljava/lang/String;)I",
+	 	(void *)JNI::main },
+	{ "pushEvent", "(Lorg/inodes/gus/scummvm/Event;)V",
+		(void *)JNI::pushEvent },
+	{ "audioMixCallback", "([B)V",
+		(void *)JNI::audioMixCallback },
+	{ "setConfMan", "(Ljava/lang/String;I)V",
+		(void *)JNI::setConfManInt },
+	{ "setConfMan", "(Ljava/lang/String;Ljava/lang/String;)V",
+		(void *)JNI::setConfManString },
+	{ "enableZoning", "(Z)V",
+		(void *)JNI::enableZoning },
+	{ "setSurfaceSize", "(II)V",
+		(void *)JNI::setSurfaceSize },
+};
+
+JNI::JNI() {
+}
+
+JNI::~JNI() {
+}
+
+jint JNI::onLoad(JavaVM *vm) {
+	_vm = vm;
+
+	JNIEnv *env;
+
+	if (_vm->GetEnv((void **)&env, JNI_VERSION_1_2))
+		return JNI_ERR;
+
+	jclass cls = env->FindClass("org/inodes/gus/scummvm/ScummVM");
+	if (cls == 0)
+		return JNI_ERR;
+
+	if (env->RegisterNatives(cls, _natives, ARRAYSIZE(_natives)) < 0)
+		return JNI_ERR;
+
+	_FID_ScummVM_nativeScummVM = env->GetFieldID(cls, "nativeScummVM", "J");
+	if (_FID_ScummVM_nativeScummVM == 0)
+		return JNI_ERR;
+
+	jclass event = env->FindClass("org/inodes/gus/scummvm/Event");
+	if (event == 0)
+		return JNI_ERR;
+
+	_FID_Event_type = env->GetFieldID(event, "type", "I");
+	if (_FID_Event_type == 0)
+		return JNI_ERR;
+
+	_FID_Event_synthetic = env->GetFieldID(event, "synthetic", "Z");
+	if (_FID_Event_synthetic == 0)
+		return JNI_ERR;
+
+	_FID_Event_kbd_keycode = env->GetFieldID(event, "kbd_keycode", "I");
+	if (_FID_Event_kbd_keycode == 0)
+		return JNI_ERR;
+
+	_FID_Event_kbd_ascii = env->GetFieldID(event, "kbd_ascii", "I");
+	if (_FID_Event_kbd_ascii == 0)
+		return JNI_ERR;
+
+	_FID_Event_kbd_flags = env->GetFieldID(event, "kbd_flags", "I");
+	if (_FID_Event_kbd_flags == 0)
+		return JNI_ERR;
+
+	_FID_Event_mouse_x = env->GetFieldID(event, "mouse_x", "I");
+	if (_FID_Event_mouse_x == 0)
+		return JNI_ERR;
+
+	_FID_Event_mouse_y = env->GetFieldID(event, "mouse_y", "I");
+	if (_FID_Event_mouse_y == 0)
+		return JNI_ERR;
+
+	_FID_Event_mouse_relative = env->GetFieldID(event, "mouse_relative", "Z");
+	if (_FID_Event_mouse_relative == 0)
+		return JNI_ERR;
+
+	return JNI_VERSION_1_2;
+}
+
+JNIEnv *JNI::getEnv() {
 	JNIEnv *env = 0;
 
-	jint res = cached_jvm->GetEnv((void **)&env, JNI_VERSION_1_2);
+	jint res = _vm->GetEnv((void **)&env, JNI_VERSION_1_2);
 
 	if (res != JNI_OK) {
 		LOGE("GetEnv() failed: %d", res);
@@ -61,9 +149,10 @@ JNIEnv *JNU_GetEnv() {
 	return env;
 }
 
-void JNU_AttachThread() {
+void JNI::attachThread() {
 	JNIEnv *env = 0;
-	jint res = cached_jvm->AttachCurrentThread(&env, 0);
+
+	jint res = _vm->AttachCurrentThread(&env, 0);
 
 	if (res != JNI_OK) {
 		LOGE("AttachCurrentThread() failed: %d", res);
@@ -71,8 +160,8 @@ void JNU_AttachThread() {
 	}
 }
 
-void JNU_DetachThread() {
-	jint res = cached_jvm->DetachCurrentThread();
+void JNI::detachThread() {
+	jint res = _vm->DetachCurrentThread();
 
 	if (res != JNI_OK) {
 		LOGE("DetachCurrentThread() failed: %d", res);
@@ -80,7 +169,7 @@ void JNU_DetachThread() {
 	}
 }
 
-static void JNU_ThrowByName(JNIEnv *env, const char *name, const char *msg) {
+void JNI::throwByName(JNIEnv *env, const char *name, const char *msg) {
 	jclass cls = env->FindClass(name);
 
 	// if cls is 0, an exception has already been thrown
@@ -90,49 +179,50 @@ static void JNU_ThrowByName(JNIEnv *env, const char *name, const char *msg) {
 	env->DeleteLocalRef(cls);
 }
 
-static void ScummVM_create(JNIEnv *env, jobject self, jobject am) {
-	assert(!g_system);
+void JNI::create(JNIEnv *env, jobject self, jobject am) {
+	assert(!_system);
 
-	g_sys = new OSystem_Android(am);
-	assert(g_sys);
+	_system = new OSystem_Android(am);
+	assert(_system);
 
 	// weak global ref to allow class to be unloaded
 	// ... except dalvik implements NewWeakGlobalRef only on froyo
-	//back_ptr = env->NewWeakGlobalRef(self);
-	back_ptr = env->NewGlobalRef(self);
+	//_jobj = env->NewWeakGlobalRef(self);
+	_jobj = env->NewGlobalRef(self);
+	back_ptr = _jobj;
 
 	// Exception already thrown by initJavaHooks?
-	if (!g_sys->initJavaHooks(env))
+	if (!_system->initJavaHooks(env))
 		return;
 
-	env->SetLongField(self, FID_ScummVM_nativeScummVM, (jlong)g_sys);
+	env->SetLongField(self, _FID_ScummVM_nativeScummVM, (jlong)_system);
 
-	g_system = g_sys;
+	g_system = _system;
 }
 
-static void ScummVM_nativeDestroy(JNIEnv *env, jobject self) {
-	assert(g_sys);
+void JNI::destroy(JNIEnv *env, jobject self) {
+	assert(_system);
 
-	OSystem_Android *tmp = g_sys;
+	OSystem_Android *tmp = _system;
 	g_system = 0;
-	g_sys = 0;
+	_system = 0;
 	delete tmp;
 
 	// see above
-	//JNU_GetEnv()->DeleteWeakGlobalRef(back_ptr);
-	JNU_GetEnv()->DeleteGlobalRef(back_ptr);
+	//JNI::getEnv()->DeleteWeakGlobalRef(_jobj);
+	JNI::getEnv()->DeleteGlobalRef(_jobj);
 }
 
-static jint ScummVM_scummVMMain(JNIEnv *env, jobject self, jobjectArray args) {
-	assert(g_sys);
+jint JNI::main(JNIEnv *env, jobject self, jobjectArray args) {
+	assert(_system);
 
 	const int MAX_NARGS = 32;
 	int res = -1;
 
 	int argc = env->GetArrayLength(args);
 	if (argc > MAX_NARGS) {
-		JNU_ThrowByName(env, "java/lang/IllegalArgumentException",
-						"too many arguments");
+		throwByName(env, "java/lang/IllegalArgumentException",
+					"too many arguments");
 		return 0;
 	}
 
@@ -169,7 +259,7 @@ static jint ScummVM_scummVMMain(JNIEnv *env, jobject self, jobjectArray args) {
 
 	LOGI("Exiting scummvm_main");
 
-	g_sys->quit();
+	_system->quit();
 
 cleanup:
 	nargs--;
@@ -191,25 +281,25 @@ cleanup:
 	return res;
 }
 
-static void ScummVM_pushEvent(JNIEnv *env, jobject self, jobject java_event) {
-	assert(g_sys);
+void JNI::pushEvent(JNIEnv *env, jobject self, jobject java_event) {
+	assert(_system);
 
 	Common::Event event;
 	event.type = (Common::EventType)env->GetIntField(java_event,
-														FID_Event_type);
+														_FID_Event_type);
 
 	event.synthetic =
-		env->GetBooleanField(java_event, FID_Event_synthetic);
+		env->GetBooleanField(java_event, _FID_Event_synthetic);
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 	case Common::EVENT_KEYUP:
 		event.kbd.keycode = (Common::KeyCode)env->GetIntField(
-			java_event, FID_Event_kbd_keycode);
+			java_event, _FID_Event_kbd_keycode);
 		event.kbd.ascii = static_cast<int>(env->GetIntField(
-			java_event, FID_Event_kbd_ascii));
+			java_event, _FID_Event_kbd_ascii));
 		event.kbd.flags = static_cast<int>(env->GetIntField(
-			java_event, FID_Event_kbd_flags));
+			java_event, _FID_Event_kbd_flags));
 		break;
 	case Common::EVENT_MOUSEMOVE:
 	case Common::EVENT_LBUTTONDOWN:
@@ -221,25 +311,24 @@ static void ScummVM_pushEvent(JNIEnv *env, jobject self, jobject java_event) {
 	case Common::EVENT_MBUTTONDOWN:
 	case Common::EVENT_MBUTTONUP:
 		event.mouse.x =
-			env->GetIntField(java_event, FID_Event_mouse_x);
+			env->GetIntField(java_event, _FID_Event_mouse_x);
 		event.mouse.y =
-			env->GetIntField(java_event, FID_Event_mouse_y);
+			env->GetIntField(java_event, _FID_Event_mouse_y);
 		// This is a terrible hack.	 We stash "relativeness"
 		// in the kbd.flags field until pollEvent() can work
 		// it out.
 		event.kbd.flags = env->GetBooleanField(
-			java_event, FID_Event_mouse_relative) ? 1 : 0;
+			java_event, _FID_Event_mouse_relative) ? 1 : 0;
 		break;
 	default:
 		break;
 	}
 
-	g_sys->pushEvent(event);
+	_system->pushEvent(event);
 }
 
-static void ScummVM_audioMixCallback(JNIEnv *env, jobject self,
-										jbyteArray jbuf) {
-	assert(g_sys);
+void JNI::audioMixCallback(JNIEnv *env, jobject self, jbyteArray jbuf) {
+	assert(_system);
 
 	jsize len = env->GetArrayLength(jbuf);
 	jbyte *buf = env->GetByteArrayElements(jbuf, 0);
@@ -250,15 +339,14 @@ static void ScummVM_audioMixCallback(JNIEnv *env, jobject self,
 	}
 
 	Audio::MixerImpl *mixer =
-		static_cast<Audio::MixerImpl *>(g_sys->getMixer());
+		static_cast<Audio::MixerImpl *>(_system->getMixer());
 	assert(mixer);
 	mixer->mixCallback(reinterpret_cast<byte *>(buf), len);
 
 	env->ReleaseByteArrayElements(jbuf, buf, 0);
 }
 
-static void ScummVM_setConfManInt(JNIEnv *env, jclass cls,
-									jstring key_obj, jint value) {
+void JNI::setConfManInt(JNIEnv *env, jclass cls, jstring key_obj, jint value) {
 	ENTER("%p, %d", key_obj, (int)value);
 
 	const char *key = env->GetStringUTFChars(key_obj, 0);
@@ -271,8 +359,8 @@ static void ScummVM_setConfManInt(JNIEnv *env, jclass cls,
 	env->ReleaseStringUTFChars(key_obj, key);
 }
 
-static void ScummVM_setConfManString(JNIEnv *env, jclass cls, jstring key_obj,
-										jstring value_obj) {
+void JNI::setConfManString(JNIEnv *env, jclass cls, jstring key_obj,
+							jstring value_obj) {
 	ENTER("%p, %p", key_obj, value_obj);
 
 	const char *key = env->GetStringUTFChars(key_obj, 0);
@@ -293,97 +381,16 @@ static void ScummVM_setConfManString(JNIEnv *env, jclass cls, jstring key_obj,
 	env->ReleaseStringUTFChars(key_obj, key);
 }
 
-static void ScummVM_enableZoning(JNIEnv *env, jobject self, jboolean enable) {
-	assert(g_sys);
+void JNI::enableZoning(JNIEnv *env, jobject self, jboolean enable) {
+	assert(_system);
 
-	g_sys->enableZoning(enable);
+	_system->enableZoning(enable);
 }
 
-static void ScummVM_setSurfaceSize(JNIEnv *env, jobject self,
-									jint width, jint height) {
-	assert(g_sys);
+void JNI::setSurfaceSize(JNIEnv *env, jobject self, jint width, jint height) {
+	assert(_system);
 
-	g_sys->setSurfaceSize(width, height);
-}
-
-const static JNINativeMethod gMethods[] = {
-	{ "create", "(Landroid/content/res/AssetManager;)V",
-		(void *)ScummVM_create },
-	{ "nativeDestroy", "()V",
-		(void *)ScummVM_nativeDestroy },
-	{ "scummVMMain", "([Ljava/lang/String;)I",
-	 	(void *)ScummVM_scummVMMain },
-	{ "pushEvent", "(Lorg/inodes/gus/scummvm/Event;)V",
-		(void *)ScummVM_pushEvent },
-	{ "audioMixCallback", "([B)V",
-		(void *)ScummVM_audioMixCallback },
-	{ "setConfMan", "(Ljava/lang/String;I)V",
-		(void *)ScummVM_setConfManInt },
-	{ "setConfMan", "(Ljava/lang/String;Ljava/lang/String;)V",
-		(void *)ScummVM_setConfManString },
-	{ "enableZoning", "(Z)V",
-		(void *)ScummVM_enableZoning },
-	{ "setSurfaceSize", "(II)V",
-		(void *)ScummVM_setSurfaceSize },
-};
-
-JNIEXPORT jint JNICALL
-JNI_OnLoad(JavaVM *jvm, void *reserved) {
-	cached_jvm = jvm;
-
-	JNIEnv *env;
-
-	if (jvm->GetEnv((void **)&env, JNI_VERSION_1_2))
-		return JNI_ERR;
-
-	jclass cls = env->FindClass("org/inodes/gus/scummvm/ScummVM");
-	if (cls == 0)
-		return JNI_ERR;
-
-	if (env->RegisterNatives(cls, gMethods, ARRAYSIZE(gMethods)) < 0)
-		return JNI_ERR;
-
-	FID_ScummVM_nativeScummVM = env->GetFieldID(cls, "nativeScummVM", "J");
-	if (FID_ScummVM_nativeScummVM == 0)
-		return JNI_ERR;
-
-	jclass event = env->FindClass("org/inodes/gus/scummvm/Event");
-	if (event == 0)
-		return JNI_ERR;
-
-	FID_Event_type = env->GetFieldID(event, "type", "I");
-	if (FID_Event_type == 0)
-		return JNI_ERR;
-
-	FID_Event_synthetic = env->GetFieldID(event, "synthetic", "Z");
-	if (FID_Event_synthetic == 0)
-		return JNI_ERR;
-
-	FID_Event_kbd_keycode = env->GetFieldID(event, "kbd_keycode", "I");
-	if (FID_Event_kbd_keycode == 0)
-		return JNI_ERR;
-
-	FID_Event_kbd_ascii = env->GetFieldID(event, "kbd_ascii", "I");
-	if (FID_Event_kbd_ascii == 0)
-		return JNI_ERR;
-
-	FID_Event_kbd_flags = env->GetFieldID(event, "kbd_flags", "I");
-	if (FID_Event_kbd_flags == 0)
-		return JNI_ERR;
-
-	FID_Event_mouse_x = env->GetFieldID(event, "mouse_x", "I");
-	if (FID_Event_mouse_x == 0)
-		return JNI_ERR;
-
-	FID_Event_mouse_y = env->GetFieldID(event, "mouse_y", "I");
-	if (FID_Event_mouse_y == 0)
-		return JNI_ERR;
-
-	FID_Event_mouse_relative = env->GetFieldID(event, "mouse_relative", "Z");
-	if (FID_Event_mouse_relative == 0)
-		return JNI_ERR;
-
-	return JNI_VERSION_1_2;
+	_system->setSurfaceSize(width, height);
 }
 
 #endif
