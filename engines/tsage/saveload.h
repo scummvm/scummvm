@@ -118,6 +118,12 @@ public:
 			Fn(*i);
 	}
 
+	void clear2() {
+		for (typename List<T>::iterator i = this->begin(); i != this->end(); ++i)
+			delete *i;
+		Common::List<T>::clear();
+	}
+
 	void synchronise(Serialiser &s) {
 		int entryCount;
 

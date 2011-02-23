@@ -1309,6 +1309,8 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 
 	_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface, 
 		bounds, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), NULL);
+	_globals->_events.showCursor();
+	tempPalette._listeners.clear2();
 }
 
 void ScenePalette::synchronise(Serialiser &s) {
