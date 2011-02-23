@@ -31,8 +31,8 @@
 #include "mohawk/riven_cursors.h"
 
 #include "common/macresman.h"
-#include "common/ne_exe.h"
 #include "common/system.h"
+#include "common/winexe_ne.h"
 #include "graphics/cursorman.h"
 
 namespace Mohawk {

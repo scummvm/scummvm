@@ -23,11 +23,12 @@
  *
  */
 
-#ifndef COMMON_NE_EXE_H
-#define COMMON_NE_EXE_H
+#ifndef COMMON_WINEXE_NE_H
+#define COMMON_WINEXE_NE_H
 
 #include "common/array.h"
 #include "common/list.h"
+#include "common/winexe.h"
 
 namespace Common {
 
@@ -74,38 +75,9 @@ private:
 	void clear();
 };
 
-class NEResourceID {
-public:
-	NEResourceID() { _idType = kIDTypeNull; }
-	NEResourceID(String x) { _idType = kIDTypeString; _name = x; }
-	NEResourceID(uint16 x) { _idType = kIDTypeNumerical; _id = x; }
-
-	NEResourceID &operator=(String string);
-	NEResourceID &operator=(uint16 x);
-
-	bool operator==(const String &x) const;
-	bool operator==(const uint16 &x) const;
-	bool operator==(const NEResourceID &x) const;
-
-	String getString() const;
-	uint16 getID() const;
-	String toString() const;
-
-private:
-	/** An ID Type. */
-	enum IDType {
-		kIDTypeNull,      ///< No type set
-		kIDTypeNumerical, ///< A numerical ID.
-		kIDTypeString     ///< A string ID.
-	} _idType;
-
-	String _name;         ///< The resource's string ID.
-	uint16 _id;           ///< The resource's numerical ID.
-};
-
 /** A New Executable cursor group. */
 struct NECursorGroup {
-	NEResourceID id;
+	WinResourceID id;
 	Array<NECursor *> cursors; ///< The cursors.
 };
 
@@ -161,15 +133,15 @@ public:
 	const Array<NECursorGroup> &getCursors() const;
 
 	/** Return a list of resources for a given type. */
-	const Array<NEResourceID> getIDList(uint16 type) const;
+	const Array<WinResourceID> getIDList(uint16 type) const;
 
 	/** Return a stream to the specified resource (or 0 if non-existent). */
-	SeekableReadStream *getResource(uint16 type, NEResourceID id);
+	SeekableReadStream *getResource(uint16 type, WinResourceID id);
 
 private:
 	/** A resource. */
 	struct Resource {
-		NEResourceID id;
+		WinResourceID id;
 
 		uint16 type; ///< Type of the resource.
 
@@ -200,7 +172,7 @@ private:
 	bool readCursor(NECursor &cursor, const Resource &resource, uint32 size);
 
 	/** Find a specific resource. */
-	const Resource *findResource(uint16 type, NEResourceID id) const;
+	const Resource *findResource(uint16 type, WinResourceID id) const;
 
 	/** Read a resource string. */
 	static String getResourceString(SeekableReadStream &exe, uint32 offset);
@@ -208,4 +180,4 @@ private:
 
 } // End of namespace Common
 
-#endif // COMMON_NE_EXE_H
+#endif

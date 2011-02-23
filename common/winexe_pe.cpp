@@ -26,64 +26,11 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/pe_exe.h"
 #include "common/str.h"
 #include "common/stream.h"
+#include "common/winexe_pe.h"
 
 namespace Common {
-
-PEResourceID &PEResourceID::operator=(String string) {
-	_name = string;
-	_idType = kIDTypeString;
-	return *this;
-}
-
-PEResourceID &PEResourceID::operator=(uint32 x) {
-	_id = x;
-	_idType = kIDTypeNumerical;
-	return *this;
-}
-
-bool PEResourceID::operator==(const String &x) const {
-	return _idType == kIDTypeString && _name.equalsIgnoreCase(x);
-}
-
-bool PEResourceID::operator==(const uint32 &x) const {
-	return _idType == kIDTypeNumerical && _id == x;
-}
-
-bool PEResourceID::operator==(const PEResourceID &x) const {
-	if (_idType != x._idType)
-		return false;
-	if (_idType == kIDTypeString)
-		return _name.equalsIgnoreCase(x._name);
-	if (_idType == kIDTypeNumerical)
-		return _id == x._id;
-	return true;
-}
-
-String PEResourceID::getString() const {
-	if (_idType != kIDTypeString)
-		return "";
-
-	return _name;
-}
-
-uint32 PEResourceID::getID() const {
-	if (_idType != kIDTypeNumerical)
-		return 0xffffffff;
-
-	return _idType;
-}
-
-String PEResourceID::toString() const {
-	if (_idType == kIDTypeString)
-		return _name;
-	else if (_idType == kIDTypeNumerical)
-		return String::format("%08x", _id);
-
-	return "";
-}
 
 PEResources::PEResources() {
 	_exe = 0;
@@ -179,7 +126,7 @@ void PEResources::parseResourceLevel(Section &section, uint32 offset, int level)
 	for (uint32 i = 0; i < namedEntryCount + intEntryCount; i++) {
 		uint32 value = _exe->readUint32LE();
 
-		PEResourceID id;
+		WinResourceID id;
 
 		if (value & 0x80000000) {
 			value &= 0x7fffffff;
@@ -230,8 +177,8 @@ void PEResources::parseResourceLevel(Section &section, uint32 offset, int level)
 	}
 }
 
-const Array<PEResourceID> PEResources::getTypeList() const {
-	Array<PEResourceID> array;
+const Array<WinResourceID> PEResources::getTypeList() const {
+	Array<WinResourceID> array;
 
 	if (!_exe)
 		return array;
@@ -242,8 +189,8 @@ const Array<PEResourceID> PEResources::getTypeList() const {
 	return array;
 }
 
-const Array<PEResourceID> PEResources::getNameList(const PEResourceID &type) const {
-	Array<PEResourceID> array;
+const Array<WinResourceID> PEResources::getNameList(const WinResourceID &type) const {
+	Array<WinResourceID> array;
 
 	if (!_exe || !_resources.contains(type))
 		return array;
@@ -256,8 +203,8 @@ const Array<PEResourceID> PEResources::getNameList(const PEResourceID &type) con
 	return array;
 }
 
-const Array<PEResourceID> PEResources::getLangList(const PEResourceID &type, const PEResourceID &name) const {
-	Array<PEResourceID> array;
+const Array<WinResourceID> PEResources::getLangList(const WinResourceID &type, const WinResourceID &name) const {
+	Array<WinResourceID> array;
 
 	if (!_exe || !_resources.contains(type))
 		return array;
@@ -275,8 +222,8 @@ const Array<PEResourceID> PEResources::getLangList(const PEResourceID &type, con
 	return array;
 }
 
-SeekableReadStream *PEResources::getResource(const PEResourceID &type, const PEResourceID &name) {
-	Array<PEResourceID> langList = getLangList(type, name);
+SeekableReadStream *PEResources::getResource(const WinResourceID &type, const WinResourceID &name) {
+	Array<WinResourceID> langList = getLangList(type, name);
 
 	if (langList.empty())
 		return 0;
@@ -286,7 +233,7 @@ SeekableReadStream *PEResources::getResource(const PEResourceID &type, const PER
 	return _exe->readStream(resource.size);
 }
 
-SeekableReadStream *PEResources::getResource(const PEResourceID &type, const PEResourceID &name, const PEResourceID &lang) {
+SeekableReadStream *PEResources::getResource(const WinResourceID &type, const WinResourceID &name, const WinResourceID &lang) {
 	if (!_exe || !_resources.contains(type))
 		return 0;
 

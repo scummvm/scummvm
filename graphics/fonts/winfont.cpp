@@ -23,8 +23,8 @@
  */
 
 #include "common/file.h"
-#include "common/ne_exe.h"
 #include "common/str.h"
+#include "common/winexe_ne.h"
 #include "graphics/fonts/winfont.h"
 
 namespace Graphics {

@@ -23,54 +23,17 @@
  *
  */
 
-#ifndef COMMON_PE_EXE_H
-#define COMMON_PE_EXE_H
+#ifndef COMMON_WINEXE_PE_H
+#define COMMON_WINEXE_PE_H
 
 #include "common/array.h"
 #include "common/hashmap.h"
-#include "common/hash-str.h"
+#include "common/winexe.h"
 
 namespace Common {
 
 class SeekableReadStream;
 class String;
-
-class PEResourceID {
-public:
-	PEResourceID() { _idType = kIDTypeNull; }
-	PEResourceID(String x) { _idType = kIDTypeString; _name = x; }
-	PEResourceID(uint32 x) { _idType = kIDTypeNumerical; _id = x; }
-
-	PEResourceID &operator=(String string);
-	PEResourceID &operator=(uint32 x);
-
-	bool operator==(const String &x) const;
-	bool operator==(const uint32 &x) const;
-	bool operator==(const PEResourceID &x) const;
-
-	String getString() const;
-	uint32 getID() const;
-	String toString() const;
-
-private:
-	/** An ID Type. */
-	enum IDType {
-		kIDTypeNull,      ///< No type set
-		kIDTypeNumerical, ///< A numerical ID.
-		kIDTypeString     ///< A string ID.
-	} _idType;
-
-	String _name;         ///< The resource's string ID.
-	uint32 _id;           ///< The resource's numerical ID.
-};
-
-struct PEResourceID_Hash {
-	uint operator()(const PEResourceID &id) const { return hashit(id.toString()); }
-};
-
-struct PEResourceID_EqualTo {
-	bool operator()(const PEResourceID &id1, const PEResourceID &id2) const { return id1 == id2; }
-};
 
 /** The default Windows PE resources. */
 enum PEResourceType {
@@ -114,19 +77,19 @@ public:
 	bool loadFromEXE(SeekableReadStream *stream);
 
 	/** Return a list of resource types. */
-	const Array<PEResourceID> getTypeList() const;
+	const Array<WinResourceID> getTypeList() const;
 
 	/** Return a list of names for a given type. */
-	const Array<PEResourceID> getNameList(const PEResourceID &type) const;
+	const Array<WinResourceID> getNameList(const WinResourceID &type) const;
 
 	/** Return a list of languages for a given type and name. */
-	const Array<PEResourceID> getLangList(const PEResourceID &type, const PEResourceID &name) const;
+	const Array<WinResourceID> getLangList(const WinResourceID &type, const WinResourceID &name) const;
 
 	/** Return a stream to the specified resource, taking the first language found (or 0 if non-existent). */
-	SeekableReadStream *getResource(const PEResourceID &type, const PEResourceID &name);
+	SeekableReadStream *getResource(const WinResourceID &type, const WinResourceID &name);
 
 	/** Return a stream to the specified resource (or 0 if non-existent). */
-	SeekableReadStream *getResource(const PEResourceID &type, const PEResourceID &name, const PEResourceID &lang);
+	SeekableReadStream *getResource(const WinResourceID &type, const WinResourceID &name, const WinResourceID &lang);
 
 private:
 	struct Section {
@@ -140,16 +103,16 @@ private:
 	SeekableReadStream *_exe;
 
 	void parseResourceLevel(Section &section, uint32 offset, int level);
-	PEResourceID _curType, _curName, _curLang;
+	WinResourceID _curType, _curName, _curLang;
 
 	struct Resource {
 		uint32 offset;
 		uint32 size;
 	};
 	
-	typedef HashMap<PEResourceID, Resource, PEResourceID_Hash, PEResourceID_EqualTo> LangMap;
-	typedef HashMap<PEResourceID,  LangMap, PEResourceID_Hash, PEResourceID_EqualTo> NameMap;
-	typedef HashMap<PEResourceID,  NameMap, PEResourceID_Hash, PEResourceID_EqualTo> TypeMap;
+	typedef HashMap<WinResourceID, Resource, WinResourceID_Hash, WinResourceID_EqualTo> LangMap;
+	typedef HashMap<WinResourceID,  LangMap, WinResourceID_Hash, WinResourceID_EqualTo> NameMap;
+	typedef HashMap<WinResourceID,  NameMap, WinResourceID_Hash, WinResourceID_EqualTo> TypeMap;
 
 	TypeMap _resources;
 };

@@ -31,7 +31,7 @@
 #define SCUMM_HE_RESOURCE_HE_H
 
 #include "common/macresman.h"
-#include "common/pe_exe.h"
+#include "common/winexe_pe.h"
 
 namespace Scumm {
 

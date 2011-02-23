@@ -26,9 +26,9 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/ne_exe.h"
 #include "common/str.h"
 #include "common/stream.h"
+#include "common/winexe_ne.h"
 
 namespace Common {
 
@@ -172,59 +172,6 @@ bool NECursor::readCursor(SeekableReadStream &stream, uint32 count) {
 
 void NECursor::clear() {
 	delete[] _surface; _surface = 0;
-}
-
-NEResourceID &NEResourceID::operator=(String string) {
-	_name = string;
-	_idType = kIDTypeString;
-	return *this;
-}
-
-NEResourceID &NEResourceID::operator=(uint16 x) {
-	_id = x;
-	_idType = kIDTypeNumerical;
-	return *this;
-}
-
-bool NEResourceID::operator==(const String &x) const {
-	return _idType == kIDTypeString && _name.equalsIgnoreCase(x);
-}
-
-bool NEResourceID::operator==(const uint16 &x) const {
-	return _idType == kIDTypeNumerical && _id == x;
-}
-
-bool NEResourceID::operator==(const NEResourceID &x) const {
-	if (_idType != x._idType)
-		return false;
-	if (_idType == kIDTypeString)
-		return _name.equalsIgnoreCase(x._name);
-	if (_idType == kIDTypeNumerical)
-		return _id == x._id;
-	return true;
-}
-
-String NEResourceID::getString() const {
-	if (_idType != kIDTypeString)
-		return "";
-
-	return _name;
-}
-
-uint16 NEResourceID::getID() const {
-	if (_idType != kIDTypeNumerical)
-		return 0xffff;
-
-	return _idType;
-}
-
-String NEResourceID::toString() const {
-	if (_idType == kIDTypeString)
-		return _name;
-	else if (_idType == kIDTypeNumerical)
-		return String::format("%04x", _id);
-
-	return "";
 }
 
 NEResources::NEResources() {
@@ -464,7 +411,7 @@ String NEResources::getResourceString(SeekableReadStream &exe, uint32 offset) {
 	return string;
 }
 
-const NEResources::Resource *NEResources::findResource(uint16 type, NEResourceID id) const {
+const NEResources::Resource *NEResources::findResource(uint16 type, WinResourceID id) const {
 	for (List<Resource>::const_iterator it = _resources.begin(); it != _resources.end(); ++it)
 		if (it->type == type && it->id == id)
 			return &*it;
@@ -472,7 +419,7 @@ const NEResources::Resource *NEResources::findResource(uint16 type, NEResourceID
 	return 0;
 }
 
-SeekableReadStream *NEResources::getResource(uint16 type, NEResourceID id) {
+SeekableReadStream *NEResources::getResource(uint16 type, WinResourceID id) {
 	const Resource *res = findResource(type, id);
 
 	if (!res)
@@ -482,8 +429,8 @@ SeekableReadStream *NEResources::getResource(uint16 type, NEResourceID id) {
 	return _exe->readStream(res->size);
 }
 
-const Array<NEResourceID> NEResources::getIDList(uint16 type) const {
-	Array<NEResourceID> idArray;
+const Array<WinResourceID> NEResources::getIDList(uint16 type) const {
+	Array<WinResourceID> idArray;
 
 	for (List<Resource>::const_iterator it = _resources.begin(); it != _resources.end(); ++it)
 		if (it->type == type)
