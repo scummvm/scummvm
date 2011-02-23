@@ -297,14 +297,14 @@ void GfxAnimate::applyGlobalScaling(AnimateList::iterator entry, GfxView *view) 
 }
 
 void GfxAnimate::setNsRect(GfxView *view, AnimateList::iterator it) {
-	bool setNsRect = true;
+	bool shouldSetNsRect = true;
 
 	// Create rect according to coordinates and given cel
 	if (it->scaleSignal & kScaleSignalDoScaling) {
 		view->getCelScaledRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->scaleX, it->scaleY, it->celRect);
 		// when being scaled, only set nsRect, if object will get drawn
 		if ((it->signal & kSignalHidden) && !(it->signal & kSignalAlwaysUpdate))
-			setNsRect = false;
+			shouldSetNsRect = false;
 	} else {
 		//  This special handling is not included in the other SCI1.1 interpreters and MUST NOT be
 		//  checked in those cases, otherwise we will break games (e.g. EcoQuest 2, room 200)
@@ -314,13 +314,13 @@ void GfxAnimate::setNsRect(GfxView *view, AnimateList::iterator it) {
 			it->celRect.right = readSelectorValue(_s->_segMan, it->object, SELECTOR(nsRight));
 			it->celRect.bottom = readSelectorValue(_s->_segMan, it->object, SELECTOR(nsBottom));
 			view->getCelSpecialHoyle4Rect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
-			setNsRect = false;
+			shouldSetNsRect = false;
 		} else {
 			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
 		}
 	}
 
-	if (setNsRect) {
+	if (shouldSetNsRect) {
 		writeSelectorValue(_s->_segMan, it->object, SELECTOR(nsLeft), it->celRect.left);
 		writeSelectorValue(_s->_segMan, it->object, SELECTOR(nsTop), it->celRect.top);
 		writeSelectorValue(_s->_segMan, it->object, SELECTOR(nsRight), it->celRect.right);
