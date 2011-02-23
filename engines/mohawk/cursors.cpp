@@ -301,7 +301,7 @@ void NECursorManager::setCursor(uint16 id) {
 		for (uint32 i = 0; i < cursors.size(); i++) {
 			if (cursors[i].id == id) {
 				Common::NECursor *cursor = cursors[i].cursors[0];
-				CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), 0);
+				CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
 				CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
 				return;
 			}

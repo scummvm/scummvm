@@ -38,6 +38,7 @@ NECursor::NECursor() {
 	_hotspotX = 0;
 	_hotspotY = 0;
 	_surface  = 0;
+	_keyColor = 0;
 	memset(_palette, 0, 256 * 3);
 }
 
@@ -59,6 +60,10 @@ uint16 NECursor::getHotspotX() const {
 
 uint16 NECursor::getHotspotY() const {
 	return _hotspotY;
+}
+
+byte NECursor::getKeyColor() const {
+	return _keyColor;
 }
 
 void NECursor::setDimensions(uint16 width, uint16 height) {
@@ -156,7 +161,7 @@ bool NECursor::readCursor(SeekableReadStream &stream, uint32 count) {
 					else
 						*rowDest = 1;
 				} else
-					*rowDest = 0;
+					*rowDest = _keyColor;
 			}
 		}
 

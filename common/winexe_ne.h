@@ -50,6 +50,8 @@ public:
 	uint16 getHotspotX() const;
 	/** Return the cursor's hotspot's y coordinate. */
 	uint16 getHotspotY() const;
+	/** Return the cursor's transparent key. */
+	byte getKeyColor() const;
 
 	const byte *getSurface() const { return _surface; }
 	const byte *getPalette() const { return _palette; }
@@ -70,6 +72,7 @@ private:
 	uint16 _height;   ///< The cursor's height.
 	uint16 _hotspotX; ///< The cursor's hotspot's x coordinate.
 	uint16 _hotspotY; ///< The cursor's hotspot's y coordinate.
+	byte   _keyColor; ///< The cursor's transparent key
 
 	/** Clear the cursor. */
 	void clear();
