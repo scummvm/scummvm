@@ -121,9 +121,22 @@ void OSystem_Android::initSize(uint width, uint height,
 
 	_game_texture->allocBuffer(width, height);
 
-	// Cap at 320x200 or the ScummVM themes abort :/
-	GLuint overlay_width = MIN(_egl_surface_width, 320);
-	GLuint overlay_height = MIN(_egl_surface_height, 200);
+	GLuint overlay_width = _egl_surface_width;
+	GLuint overlay_height = _egl_surface_height;
+
+	// the 'normal' theme layout uses a max height of 400 pixels. if the
+	// surface is too big we use only a quarter of the size so that the widgets
+	// don't get too small. if the surface height has less than 800 pixels, this
+	// enforces the 'lowres' layout, which will be scaled back up by factor 2x,
+	// but this looks way better than the 'normal' layout scaled by some
+	// calculated factors
+	if (overlay_height > 480) {
+		overlay_width /= 2;
+		overlay_height /= 2;
+	}
+
+	LOGI("overlay size is %ux%u", overlay_width, overlay_height);
+
 	_overlay_texture->allocBuffer(overlay_width, overlay_height);
 
 	// Don't know mouse size yet - it gets reallocated in
