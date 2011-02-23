@@ -352,7 +352,14 @@ void GfxAnimate::update() {
 				it->signal &= ~(kSignalViewUpdated | kSignalNoUpdate);
 		} else if (it->signal & kSignalStopUpdate) {
 			it->signal &= ~kSignalStopUpdate;
-			it->signal |= kSignalNoUpdate;
+			if (g_sci->getGameId() == GID_HOYLE3 && g_sci->isDemo()) {
+				// WORKAROUND: The demo of Hoyle 3 doesn't seem to set this
+				// flag in this case. Not setting this fixes a large number
+				// of incorrect animate entries being drawn on top of dialog
+				// boxes (bug #3036763)
+			} else {
+				it->signal |= kSignalNoUpdate;
+			}
 		}
 	}
 
