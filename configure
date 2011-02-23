@@ -1589,7 +1589,6 @@ case $_host_os in
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lnetwork for the timidity MIDI driver
 		LIBS="$LIBS -lnetwork"
-		CXXFLAGS="$CXXFLAGS -fhuge-objects"
 		_unix=yes
 		_seq_midi=no
 		;;
