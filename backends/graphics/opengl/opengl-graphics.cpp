@@ -1059,8 +1059,10 @@ void OpenGLGraphicsManager::initGL() {
 
 void OpenGLGraphicsManager::loadTextures() {
 #ifdef USE_RGB_COLOR
-	if (_transactionDetails.formatChanged && _gameTexture)
+	if (_transactionDetails.formatChanged && _gameTexture) {
 		delete _gameTexture;
+		_gameTexture = 0;
+	}
 #endif
 
 	uint gameScreenBPP = 0;
