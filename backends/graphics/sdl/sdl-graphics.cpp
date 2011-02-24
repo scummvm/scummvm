@@ -1166,25 +1166,25 @@ void SdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x, int
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 #ifdef USE_RGB_COLOR
-	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth * _screenFormat.bytesPerPixel + x * _screenFormat.bytesPerPixel;
-	if (_videoMode.screenWidth == w && pitch == w * _screenFormat.bytesPerPixel) {
-		memcpy(dst, src, h*w*_screenFormat.bytesPerPixel);
+	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x * _screenFormat.bytesPerPixel;
+	if (_videoMode.screenWidth == w && pitch == _screen->pitch) {
+		memcpy(dst, src, h*pitch);
 	} else {
 		do {
 			memcpy(dst, src, w * _screenFormat.bytesPerPixel);
 			src += pitch;
-			dst += _videoMode.screenWidth * _screenFormat.bytesPerPixel;
+			dst += _screen->pitch;
 		} while (--h);
 	}
 #else
-	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth + x;
-	if (_videoMode.screenWidth == pitch && pitch == w) {
+	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x;
+	if (_screen->pitch == pitch && pitch == w) {
 		memcpy(dst, src, h*w);
 	} else {
 		do {
 			memcpy(dst, src, w);
 			src += pitch;
-			dst += _videoMode.screenWidth;
+			dst += _screen->pitch;
 		} while (--h);
 	}
 #endif
