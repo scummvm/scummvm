@@ -251,6 +251,11 @@ const Graphics::Surface *RobotDecoder::decodeNextFrame() {
 	_fileStream->skip(4); // unknown, almost always 0
 	uint16 frameX = _fileStream->readUint16();
 	uint16 frameY = _fileStream->readUint16();
+	// TODO: In v4 robot files, frameX and frameY have a different meaning.
+	// Set them both to 0 for v4 for now, so that robots in PQ:SWAT show up
+	// correctly.
+	if (_header.version == 4)
+		frameX = frameY = 0;
 	uint16 compressedSize = _fileStream->readUint16();
 	uint16 frameFragments = _fileStream->readUint16();
 	_fileStream->skip(4); // unknown
