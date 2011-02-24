@@ -37,19 +37,19 @@ namespace tSage {
 
 class Scene10: public Scene {
 	/* Actions */
-	class Scene10_Action1: public Action {
+	class Action1: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene10_Action2: public Action {
+	class Action2: public Action {
 	public:
 		virtual void signal();
 	};
 public:
 	Speaker _speakerSText;
 	Speaker _speakerQText;
-	Scene10_Action1 _action1;
-	Scene10_Action2 _action2;
+	Action1 _action1;
+	Action2 _action2;
 	SceneObject _object1, _object2, _object3;
 	SceneObject _object4, _object5, _object6;
 
@@ -59,13 +59,13 @@ public:
 
 class Scene15: public Scene {
 	/* Actions */
-	class Scene15_Action1: public Action {
+	class Action1: public Action {
 	public:
 		virtual void signal();
 		virtual void dispatch();
 	};
 public:
-	Scene15_Action1 _action1;
+	Action1 _action1;
 	SceneObject _object1;
 	SoundHandler _soundHandler;
 
@@ -74,19 +74,19 @@ public:
 
 class Scene20: public Scene {
 	/* Actions */
-	class Scene20_Action1: public Action {
+	class Action1: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene20_Action2: public Action {
+	class Action2: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene20_Action3: public Action {
+	class Action3: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene20_Action4: public Action {
+	class Action4: public Action {
 	public:
 		virtual void signal();
 	};
@@ -94,10 +94,10 @@ public:
 	SequenceManager _sequenceManager;
 	SpeakerQText _speakerQText;
 	SpeakerGameText _speakerGameText;
-	Scene20_Action1 _action1;
-	Scene20_Action2 _action2;
-	Scene20_Action3 _action3;
-	Scene20_Action4 _action4;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
 	SceneObject _sceneObject1, _sceneObject2, _sceneObject3, _sceneObject4, _sceneObject5;
 	SoundHandler _sound;
 public:
@@ -111,7 +111,7 @@ public:
 class Scene30: public Scene {
 	/* Scene objects */
 	// Doorway beam sensor
-	class Scene30_beam: public SceneObject {
+	class BeamObject: public SceneObject {
 	public:
 		virtual void doAction(int action) {
 			if (action == OBJECT_SCANNER)
@@ -127,7 +127,7 @@ class Scene30: public Scene {
 	};
 
 	// Doorway object
-	class Scene30_door: public SceneObject {
+	class DoorObject: public SceneObject {
 	public:
 		virtual void doAction(int action) {
 			if (action == OBJECT_SCANNER)
@@ -142,25 +142,25 @@ class Scene30: public Scene {
 	};
 
 	// Kzin object
-	class Scene30_kzin: public SceneObject {
+	class KzinObject: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
 
 	/* Actions */
-	class Scene30_beamAction: public Action {
+	class BeamAction: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene30_kzinAction: public Action {
+	class KzinAction: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene30_ringAction: public Action {
+	class RingAction: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene30_talkAction: public Action {
+	class TalkAction: public Action {
 	public:
 		virtual void signal();
 	};
@@ -168,14 +168,14 @@ class Scene30: public Scene {
 public:
 	SoundHandler _sound;
 	DisplayHotspot _groundHotspot, _wallsHotspot, _courtyardHotspot, _treeHotspot;
-	Scene30_beam _beam;
-	Scene30_door _door;
-	Scene30_kzin _kzin;
+	BeamObject _beam;
+	DoorObject _door;
+	KzinObject _kzin;
 
-	Scene30_beamAction _beamAction;
-	Scene30_kzinAction _kzinAction;
-	Scene30_ringAction _ringAction;
-	Scene30_talkAction _talkAction;
+	BeamAction _beamAction;
+	KzinAction _kzinAction;
+	RingAction _ringAction;
+	TalkAction _talkAction;
 	SequenceManager _sequenceManager;
 
 	SpeakerSR _speakerSR;
@@ -192,59 +192,59 @@ public:
 
 class Scene40: public Scene {
 	/* Actions */
-	class Scene40_Action1: public Action {
+	class Action1: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene40_Action2: public Action {
+	class Action2: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene40_Action3: public Action {
+	class Action3: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene40_Action4: public Action {
+	class Action4: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene40_Action5: public Action {
+	class Action5: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene40_Action6: public Action {
+	class Action6: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene40_Action7: public Action {
+	class Action7: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene40_Action8: public Action {
+	class Action8: public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Objects */
-	class Scene40_DyingKzin: public SceneObject {
+	class DyingKzin: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene40_Assassin: public SceneObject {
+	class Assassin: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
 
 	/* Items */
-	class Scene40_Item2: public SceneItem {
+	class Item2: public SceneItem {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene40_Item6: public SceneItem {
+	class Item6: public SceneItem {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene40_Item8: public SceneItem {
+	class Item8: public SceneItem {
 	public:
 		virtual void doAction(int action);
 	};
@@ -256,22 +256,22 @@ public:
 	SpeakerSText _speakerSText;
 	SpeakerGameText _speakerGameText;
 	SoundHandler _soundHandler;
-	Scene40_Action1 _action1;
-	Scene40_Action2 _action2;
-	Scene40_Action3 _action3;
-	Scene40_Action4 _action4;
-	Scene40_Action5 _action5;
-	Scene40_Action6 _action6;
-	Scene40_Action7 _action7;
-	Scene40_Action8 _action8;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	Action7 _action7;
+	Action8 _action8;
 	SceneObject _object1, _object2, _object3;
-	Scene40_DyingKzin _dyingKzin;
-	Scene40_Assassin _assassin;
+	DyingKzin _dyingKzin;
+	Assassin _assassin;
 	SceneObject _doorway, _object7, _object8;
 	DisplayHotspot _item1;
-	Scene40_Item2 _item2;
+	Item2 _item2;
 	DisplayHotspot _item3, _item4, _item5;
-	Scene40_Item6 _item6;
+	Item6 _item6;
 	DisplayHotspot _item7, _item8;
 
 	Scene40();
@@ -282,46 +282,46 @@ public:
 
 class Scene50: public Scene {
 	/* Actions */
-	class Scene50_Action1: public Action {
+	class Action1: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene50_Action2: public Action {
+	class Action2: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene50_Action3: public Action {
+	class Action3: public Action {
 	public:
 		virtual void signal();
 	};
 	
 	/* Objects */
-	class Scene50_Object1: public SceneObject {
+	class Object1: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene50_Object2: public SceneObject {
+	class Object2: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene50_Object3: public SceneObject {
+	class Object3: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene50_Object4: public SceneObject {
+	class Object4: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
 
 public:
 	SequenceManager _sequenceManager;
-	Scene50_Action1 _action1;
-	Scene50_Action2 _action2;
-	Scene50_Action3 _action3;
-	Scene50_Object1 _object1;
-	Scene50_Object2 _object2;
-	Scene50_Object3 _object3;
-	Scene50_Object4 _object4;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Object1 _object1;
+	Object2 _object2;
+	Object3 _object3;
+	Object4 _object4;
 	Rect _doorwayRect;
 	SpeakerSText _speakerSText;
 	SpeakerQText _speakerQText;
@@ -335,35 +335,35 @@ public:
 };
 
 class Scene60: public Scene {	
-	class Scene60_Action1: public Action {
+	class Action1: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene60_Action2: public Action {
+	class Action2: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene60_Object2: public SceneObject {
+	class Object2: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene60_Object3: public SceneObject {
+	class Object3: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene60_Object4: public SceneObject {
+	class Object4: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene60_Object5: public SceneObject {
+	class Object5: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene60_Object6: public SceneObject {
+	class Object6: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene60_Object7: public SceneObject2 {
+	class Object7: public SceneObject2 {
 	public:
 		virtual void doAction(int action);
 	};
@@ -372,23 +372,23 @@ class Scene60: public Scene {
 		int _state;
 		virtual void synchronise(Serialiser &s);
 	};
-	class Scene60_Object8: public SceneObject2 {
+	class Object8: public SceneObject2 {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene60_Object9: public SceneObject {
+	class Object9: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene60_Item1: public SceneItem {
+	class Item1: public SceneItem {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene60_Item: public SceneItem {
+	class Item: public SceneItem {
 	public:
 		int _messageNum, _sceneMode;
 
-		Scene60_Item(int sceneRegionId, int messageNum, int sceneMode) {
+		Item(int sceneRegionId, int messageNum, int sceneMode) {
 			_sceneRegionId = sceneRegionId;
 			_messageNum = messageNum;
 			_sceneMode = sceneMode;
@@ -401,20 +401,20 @@ public:
 	SequenceManager _sequenceManager;
 	SpeakerQText _speakerQText;
 	SpeakerSText _speakerSText;
-	Scene60_Action1 _action1;
-	Scene60_Action2 _action2;
+	Action1 _action1;
+	Action2 _action2;
 	SceneObject _object1;
-	Scene60_Object2 _object2;
-	Scene60_Object3 _object3;
-	Scene60_Object4 _object4;
-	Scene60_Object5 _object5;
-	Scene60_Object6 _object6;
-	Scene60_Object7 _object7;
-	Scene60_Object8 _object8;
-	Scene60_Object9 _object9;
+	Object2 _object2;
+	Object3 _object3;
+	Object4 _object4;
+	Object5 _object5;
+	Object6 _object6;
+	Object7 _object7;
+	Object8 _object8;
+	Object9 _object9;
 	SceneObject _object10;
 	SceneItem _item1;
-	Scene60_Item _item2, _item3, _item4, _item5, _item6;
+	Item _item2, _item3, _item4, _item5, _item6;
 	SoundHandler _soundHandler1;
 	SoundHandler _soundHandler2;
 	SoundHandler _soundHandler3;
@@ -426,23 +426,23 @@ public:
 };
 
 class Scene90: public Scene {
-	class Scene90_Action1: public Action {
+	class Action1: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene90_Object1: public SceneObject {
+	class Object1: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene90_Object2: public SceneObject {
+	class Object2: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene90_Object3: public SceneObject {
+	class Object3: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
-	class Scene90_Object4: public SceneObject {
+	class Object4: public SceneObject {
 	public:
 		virtual void doAction(int action);
 	};
@@ -468,13 +468,13 @@ public:
 };
 
 class Scene95: public Scene {
-	class Scene95_Action1: public Action2 {
+	class Action1: public Action2 {
 	public:
 		virtual void signal();
 	};
 
 public:
-	Scene95_Action1 _action1;
+	Action1 _action1;
 	int _field326;
 	SceneObject _object1, _object2, _object3;
 	SoundHandler _soundHandler;
@@ -485,15 +485,15 @@ public:
 
 class Scene1000: public Scene {
 	/* Actions */
-	class Scene1000_Action1: public Action {
+	class Action1: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene1000_Action2: public Action {
+	class Action2: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene1000_Action3: public Action {
+	class Action3: public Action {
 	private:
 		void zoom(bool up);
 	public:
@@ -502,77 +502,77 @@ class Scene1000: public Scene {
 
 public:
 	SceneObject _object1, _object2, _object3, _object4;
-	Scene1000_Action1 _action1;
-	Scene1000_Action2 _action2;
-	Scene1000_Action3 _action3;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
 class Scene6100: public Scene {
 	/* Actions */
-	class Scene6100_Action1: public Action {
+	class Action1: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene6100_Action2: public Action {
+	class Action2: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene6100_Action3: public Action {
+	class Action3: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene6100_Action4: public Action {
+	class Action4: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene6100_Action5: public Action {
+	class Action5: public Action {
 	public:
 		virtual void dispatch();
 	};
-	class Scene6100_Action6: public Action {
+	class Action6: public Action {
 	public:
 		virtual void signal();
 	};
-	class Scene6100_Action7: public Action {
+	class Action7: public Action {
 	public:
 		virtual void signal();
 	};
 
 	/* Objects */
-	class Scene6100_Object: public SceneObject {
+	class Object: public SceneObject {
 	public:
 		FloatSet _floats;
 	};
 
 	/* Items */
-	class Scene6100_Item1: public SceneItem {
+	class Item1: public SceneItem {
 	public:
 		virtual void doAction(int action);
 	};
 
 public:
-	Scene6100_Action1 _action1;
-	Scene6100_Action2 _action2;
-	Scene6100_Action3 _action3;
-	Scene6100_Action4 _action4;
-	Scene6100_Action5 _action5;
-	Scene6100_Action6 _action6;
-	Scene6100_Action7 _action7;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	Action7 _action7;
 	SoundHandler _soundHandler;
 	Speaker _speaker1;
 	SpeakerQR _speakerQR;
 	SpeakerSL _speakerSL;
 	SceneObject _object1, _object2, _object3;
-	Scene6100_Object _object4, _object5, _object6;
-	Scene6100_Object _object7, _object8;
+	Object _object4, _object5, _object6;
+	Object _object7, _object8;
 	SceneText _sceneText;
 	SceneItem _item1;
 
 	int _field_30A, _field_30C, _field_30E, _field_310;
 	int _field_312, _field_314;
-	Scene6100_Object *_objList[4];
+	Object *_objList[4];
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	void showMessage(const Common::String &msg, int colour, Action *action);

@@ -35,7 +35,7 @@ namespace tSage {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene10::Scene10_Action1::signal() {
+void Scene10::Action1::signal() {
 	Scene10 *scene = (Scene10 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -110,7 +110,7 @@ void Scene10::Scene10_Action1::signal() {
 	}
 }
 
-void Scene10::Scene10_Action2::signal() {
+void Scene10::Action2::signal() {
 	Scene10 *scene = (Scene10 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -213,7 +213,7 @@ void Scene10::stripCallback(int v) {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene15::Scene15_Action1::signal() {
+void Scene15::Action1::signal() {
 	Scene15 *scene = (Scene15 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -245,7 +245,7 @@ void Scene15::Scene15_Action1::signal() {
 	}			
 }
 
-void Scene15::Scene15_Action1::dispatch() {
+void Scene15::Action1::dispatch() {
 	Scene15 *scene = (Scene15 *)_globals->_sceneManager._scene;
 
 	if (scene->_object1._position.y < 100)
@@ -268,7 +268,7 @@ void Scene15::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene20::Scene20_Action1::signal() {
+void Scene20::Action1::signal() {
 	Scene20 *scene = (Scene20 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -290,7 +290,7 @@ void Scene20::Scene20_Action1::signal() {
 	}
 }
 
-void Scene20::Scene20_Action2::signal() {
+void Scene20::Action2::signal() {
 	Scene20 *scene = (Scene20 *)_globals->_sceneManager._scene;
 	NpcMover *npcMover;
 
@@ -357,7 +357,7 @@ void Scene20::Scene20_Action2::signal() {
 	}
 }
 
-void Scene20::Scene20_Action3::signal() {
+void Scene20::Action3::signal() {
 	Scene20 *scene = (Scene20 *)_globals->_sceneManager._scene;
 	NpcMover *npcMover;
 
@@ -415,7 +415,7 @@ void Scene20::Scene20_Action3::signal() {
 	}
 }
 
-void Scene20::Scene20_Action4::signal() {
+void Scene20::Action4::signal() {
 	Scene20 *scene = (Scene20 *)_globals->_sceneManager._scene;
 	NpcMover *npcMover;
 
@@ -622,7 +622,7 @@ void Scene20::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene30::Scene30_beamAction::signal() {
+void Scene30::BeamAction::signal() {
 	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -700,7 +700,7 @@ void Scene30::Scene30_beamAction::signal() {
 	}
 }
 
-void Scene30::Scene30_kzinAction::signal() {
+void Scene30::KzinAction::signal() {
 	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -721,7 +721,7 @@ void Scene30::Scene30_kzinAction::signal() {
 	}
 }
 
-void Scene30::Scene30_ringAction::signal() {
+void Scene30::RingAction::signal() {
 	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -775,7 +775,7 @@ void Scene30::Scene30_ringAction::signal() {
 	}
 }
 
-void Scene30::Scene30_talkAction::signal() {
+void Scene30::TalkAction::signal() {
 	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -806,7 +806,7 @@ void Scene30::Scene30_talkAction::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene30::Scene30_kzin::doAction(int action) {
+void Scene30::KzinObject::doAction(int action) {
 	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -915,7 +915,7 @@ void Scene30::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene40::Scene40_Action1::signal() {
+void Scene40::Action1::signal() {
 	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1041,7 +1041,7 @@ void Scene40::Scene40_Action1::signal() {
 	}
 }
 
-void Scene40::Scene40_Action2::signal() {
+void Scene40::Action2::signal() {
 	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1124,7 +1124,7 @@ void Scene40::Scene40_Action2::signal() {
 	}
 }
 
-void Scene40::Scene40_Action3::signal() {
+void Scene40::Action3::signal() {
 	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1160,7 +1160,7 @@ void Scene40::Scene40_Action3::signal() {
 	}
 }
 
-void Scene40::Scene40_Action4::signal() {
+void Scene40::Action4::signal() {
 	switch (_actionIndex++) {
 	case 0: {
 		Common::Point pt(178, 190);
@@ -1175,7 +1175,7 @@ void Scene40::Scene40_Action4::signal() {
 	}
 }
 
-void Scene40::Scene40_Action5::signal() {
+void Scene40::Action5::signal() {
 	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1188,7 +1188,7 @@ void Scene40::Scene40_Action5::signal() {
 	}
 }
 
-void Scene40::Scene40_Action6::signal() {
+void Scene40::Action6::signal() {
 	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1224,7 +1224,7 @@ void Scene40::Scene40_Action6::signal() {
 	}
 }
 
-void Scene40::Scene40_Action7::signal() {
+void Scene40::Action7::signal() {
 	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1251,7 +1251,7 @@ void Scene40::Scene40_Action7::signal() {
 	}
 }
 
-void Scene40::Scene40_Action8::signal() {
+void Scene40::Action8::signal() {
 	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1304,7 +1304,7 @@ void Scene40::Scene40_Action8::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene40::Scene40_DyingKzin::doAction(int action) {
+void Scene40::DyingKzin::doAction(int action) {
 	switch (action) {
 	case OBJECT_STUNNER:
 		SceneItem::display2(40, 43);
@@ -1324,7 +1324,7 @@ void Scene40::Scene40_DyingKzin::doAction(int action) {
 	}
 }
 
-void Scene40::Scene40_Assassin::doAction(int action) {
+void Scene40::Assassin::doAction(int action) {
 	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1368,7 +1368,7 @@ void Scene40::Scene40_Assassin::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene40::Scene40_Item2::doAction(int action) {
+void Scene40::Item2::doAction(int action) {
 	switch (action) {
 	case CURSOR_CROSSHAIRS:
 		SceneItem::display2(40, 35);
@@ -1392,7 +1392,7 @@ void Scene40::Scene40_Item2::doAction(int action) {
 	}
 }
 
-void Scene40::Scene40_Item6::doAction(int action) {
+void Scene40::Item6::doAction(int action) {
 	switch (action) {
 	case CURSOR_CROSSHAIRS:
 		SceneItem::display2(40, 25);
@@ -1548,7 +1548,7 @@ void Scene40::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene50::Scene50_Action1::signal() {
+void Scene50::Action1::signal() {
 	Scene50 *scene = (Scene50 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1576,7 +1576,7 @@ void Scene50::Scene50_Action1::signal() {
 	}
 }
 
-void Scene50::Scene50_Action2::signal() {
+void Scene50::Action2::signal() {
 	Scene50 *scene = (Scene50 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1597,7 +1597,7 @@ void Scene50::Scene50_Action2::signal() {
 	}
 }
 
-void Scene50::Scene50_Action3::signal() {
+void Scene50::Action3::signal() {
 	switch (_actionIndex++) {
 	case 0: {
 		_globals->_player.disableControl();
@@ -1615,7 +1615,7 @@ void Scene50::Scene50_Action3::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene50::Scene50_Object1::doAction(int action) {
+void Scene50::Object1::doAction(int action) {
 	Scene50 *scene = (Scene50 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1642,7 +1642,7 @@ void Scene50::Scene50_Object1::doAction(int action) {
 	}
 }
 
-void Scene50::Scene50_Object2::doAction(int action) {
+void Scene50::Object2::doAction(int action) {
 	Scene50 *scene = (Scene50 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1666,7 +1666,7 @@ void Scene50::Scene50_Object2::doAction(int action) {
 	}
 }
 
-void Scene50::Scene50_Object3::doAction(int action) {
+void Scene50::Object3::doAction(int action) {
 	Scene50 *scene = (Scene50 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1694,7 +1694,7 @@ void Scene50::Scene50_Object3::doAction(int action) {
 	}
 }
 
-void Scene50::Scene50_Object4::doAction(int action) {
+void Scene50::Object4::doAction(int action) {
 	Scene50 *scene = (Scene50 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1825,7 +1825,7 @@ void Scene50::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene60::Scene60_Action1::signal() {
+void Scene60::Action1::signal() {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1957,7 +1957,7 @@ void Scene60::Scene60_Action1::signal() {
 	}
 }
 
-void Scene60::Scene60_Action2::signal() {
+void Scene60::Action2::signal() {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1976,7 +1976,7 @@ void Scene60::Scene60_Action2::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene60::Scene60_Object2::doAction(int action) {
+void Scene60::Object2::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -1994,7 +1994,7 @@ void Scene60::Scene60_Object2::doAction(int action) {
 	}
 }
 
-void Scene60::Scene60_Object3::doAction(int action) {
+void Scene60::Object3::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2011,7 +2011,7 @@ void Scene60::Scene60_Object3::doAction(int action) {
 	}	
 }
 
-void Scene60::Scene60_Object4::doAction(int action) {
+void Scene60::Object4::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2074,7 +2074,7 @@ void Scene60::Scene60_Object4::doAction(int action) {
 	}	
 }
 
-void Scene60::Scene60_Object5::doAction(int action) {
+void Scene60::Object5::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2087,7 +2087,7 @@ void Scene60::Scene60_Object5::doAction(int action) {
 	}	
 }
 
-void Scene60::Scene60_Object6::doAction(int action) {
+void Scene60::Object6::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2113,7 +2113,7 @@ void Scene60::SceneObject2::synchronise(Serialiser &s) {
 }
 
 
-void Scene60::Scene60_Object7::doAction(int action) {
+void Scene60::Object7::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2143,7 +2143,7 @@ void Scene60::Scene60_Object7::doAction(int action) {
 	}	
 }
 
-void Scene60::Scene60_Object8::doAction(int action) {
+void Scene60::Object8::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2173,7 +2173,7 @@ void Scene60::Scene60_Object8::doAction(int action) {
 	}	
 }
 
-void Scene60::Scene60_Object9::doAction(int action) {
+void Scene60::Object9::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -2188,7 +2188,7 @@ void Scene60::Scene60_Object9::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene60::Scene60_Item1::doAction(int action) {
+void Scene60::Item1::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2227,7 +2227,7 @@ void Scene60::Scene60_Item1::doAction(int action) {
 	}
 }
 
-void Scene60::Scene60_Item::doAction(int action) {
+void Scene60::Item::doAction(int action) {
 	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2403,7 +2403,7 @@ void Scene60::process(Event &event) {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene90::Scene90_Action1::signal() {
+void Scene90::Action1::signal() {
 	Scene90 *scene = (Scene90 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -2492,7 +2492,7 @@ void Scene90::Scene90_Action1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene90::Scene90_Object1::doAction(int action) {
+void Scene90::Object1::doAction(int action) {
 	Scene90 *scene = (Scene90 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2510,7 +2510,7 @@ void Scene90::Scene90_Object1::doAction(int action) {
 	}
 }
 
-void Scene90::Scene90_Object2::doAction(int action) {
+void Scene90::Object2::doAction(int action) {
 	Scene90 *scene = (Scene90 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2661,7 +2661,7 @@ void Scene90::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene95::Scene95_Action1::signal() {
+void Scene95::Action1::signal() {
 	Scene95 *scene = (Scene95 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -2802,7 +2802,7 @@ void Scene95::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene1000::Scene1000_Action1::signal() {
+void Scene1000::Action1::signal() {
 	Scene1000 *scene = (Scene1000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -2836,7 +2836,7 @@ void Scene1000::Scene1000_Action1::signal() {
 
 }
 
-void Scene1000::Scene1000_Action2::signal() {
+void Scene1000::Action2::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		_globals->_player.disableControl();
@@ -2856,7 +2856,7 @@ void Scene1000::Scene1000_Action2::signal() {
 	}
 }
 
-void Scene1000::Scene1000_Action3::signal() {
+void Scene1000::Action3::signal() {
 	Scene1000 *scene = (Scene1000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -2997,7 +2997,7 @@ void Scene1000::Scene1000_Action3::signal() {
 	}		
 }
 
-void Scene1000::Scene1000_Action3::zoom(bool up) {
+void Scene1000::Action3::zoom(bool up) {
 	Scene1000 *scene = (Scene1000 *)_globals->_sceneManager._scene;
 
 	if (up) {
@@ -3080,7 +3080,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene6100::Scene6100_Action1::signal() {
+void Scene6100::Action1::signal() {
 	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -3097,7 +3097,7 @@ void Scene6100::Scene6100_Action1::signal() {
 	}
 }
 
-void Scene6100::Scene6100_Action2::signal() {
+void Scene6100::Action2::signal() {
 	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -3114,7 +3114,7 @@ void Scene6100::Scene6100_Action2::signal() {
 	}
 }
 
-void Scene6100::Scene6100_Action3::signal() {
+void Scene6100::Action3::signal() {
 	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -3156,7 +3156,7 @@ void Scene6100::Scene6100_Action3::signal() {
 	}
 }
 
-void Scene6100::Scene6100_Action4::signal() {
+void Scene6100::Action4::signal() {
 	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -3173,7 +3173,7 @@ void Scene6100::Scene6100_Action4::signal() {
 	}
 }
 
-void Scene6100::Scene6100_Action5::dispatch() {
+void Scene6100::Action5::dispatch() {
 	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
 	FloatSet floatSet = _globals->_floatSet;
 	const double MULTIPLY_FACTOR = 0.01744;
@@ -3285,7 +3285,7 @@ void Scene6100::Scene6100_Action5::dispatch() {
 	}
 }
 
-void Scene6100::Scene6100_Action6::signal() {
+void Scene6100::Action6::signal() {
 	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -3323,7 +3323,7 @@ void Scene6100::Scene6100_Action6::signal() {
 	}		
 }
 
-void Scene6100::Scene6100_Action7::signal() {
+void Scene6100::Action7::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(30);
@@ -3340,7 +3340,7 @@ void Scene6100::Scene6100_Action7::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene6100::Scene6100_Item1::doAction(int action) {
+void Scene6100::Item1::doAction(int action) {
 	SceneItem::display2(4000, 0);
 }
 
