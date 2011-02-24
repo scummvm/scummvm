@@ -421,10 +421,9 @@ bool ThemeEngine::init() {
 }
 
 void ThemeEngine::clearAll() {
-	if (_initOk) {
-		_system->clearOverlay();
-		_system->grabOverlay((OverlayColor *)_screen.pixels, _screen.w);
-	}
+	if (_initOk)
+		memset(_screen.pixels, _overlayFormat.RGBToColor(0, 0, 0),
+				_screen.w * _screen.h * sizeof(uint16));
 }
 
 void ThemeEngine::refresh() {
