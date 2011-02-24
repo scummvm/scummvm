@@ -363,7 +363,7 @@ class Scene60: public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object7: public SceneObject2 {
+	class SlaveObject: public SceneObject2 {
 	public:
 		virtual void doAction(int action);
 	};
@@ -380,11 +380,11 @@ class Scene60: public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class Item1: public SceneItem {
+	class Item1: public SceneHotspot {
 	public:
 		virtual void doAction(int action);
 	};
-	class Item: public SceneItem {
+	class Item: public SceneHotspot {
 	public:
 		int _messageNum, _sceneMode;
 
@@ -409,11 +409,11 @@ public:
 	Object4 _object4;
 	Object5 _object5;
 	Object6 _object6;
-	Object7 _object7;
+	SlaveObject _slaveButton;
 	Object8 _object8;
 	Object9 _object9;
 	SceneObject _object10;
-	SceneItem _item1;
+	Item1 _item1;
 	Item _item2, _item3, _item4, _item5, _item6;
 	SoundHandler _soundHandler1;
 	SoundHandler _soundHandler2;

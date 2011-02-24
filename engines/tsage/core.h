@@ -395,7 +395,7 @@ public:
 	int _yDiff;
 	int _sceneRegionId;
 public:
-	SceneItem(): EventHandler() { _msg = "Feature"; _action = NULL; }
+	SceneItem(): EventHandler() { _msg = "Feature"; _action = NULL; _sceneRegionId = 0; }
 
 	virtual void synchronise(Serialiser &s);
 	virtual Common::String getClassName() { return "SceneItem"; }

@@ -1420,17 +1420,21 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 				break;
 			case SET_FONT:
 				// Set the font number
-				_globals->gfxManager()._font.setFontNumber(va_arg(va, int));
+				_globals->_sceneText._fontNumber = va_arg(va, int);
+				_globals->gfxManager()._font.setFontNumber(_globals->_sceneText._fontNumber);
 				break;
 			case SET_BG_COLOUR: {
 				// Set the background colour
 				int bgColour = va_arg(va, int);
 				_globals->gfxManager()._font._colours.background = bgColour;
+				if (!bgColour)
+					_globals->gfxManager().setFillFlag(false);
 				break;
 			}
 			case SET_FG_COLOUR:
 				// Set the foreground colour
-				_globals->gfxManager()._font._colours.foreground = va_arg(va, int);
+				_globals->_sceneText._colour1 = va_arg(va, int);
+				_globals->gfxManager()._font._colours.foreground = _globals->_sceneText._colour1;
 				break;
 			case SET_KEEP_ONSCREEN:
 				// Suppresses immediate display
@@ -2054,6 +2058,8 @@ void SceneObject::dispatch() {
 				} else {
 					animEnded();
 				}
+			} else {
+				setFrame(changeFrame());
 			}
 			
 			break;

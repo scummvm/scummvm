@@ -50,6 +50,7 @@ Globals::Globals():
 		_dialogCentre(160, 140),
 		_gfxManagerInstance(_screenSurface) {
 	reset();
+	_stripNum = 0;
 	_gfxFontNumber = 50;
 	_gfxColours.background = 53;
 	_gfxColours.foreground = 18;
