@@ -66,17 +66,12 @@ lib*.a
 /dists/iphone/scummvm.xcodeproj/*.mode1v3
 /dists/iphone/scummvm.xcodeproj/*.pbxuser
 
-/dists/msvc8/[Dd]ebug*/
-/dists/msvc8/[Rr]elease*/
-/dists/msvc8/*.lib
-
-/dists/msvc9/[Dd]ebug*/
-/dists/msvc9/[Rr]elease*/
-/dists/msvc9/*.lib
-
-/dists/msvc10/[Dd]ebug*/
-/dists/msvc10/[Rr]elease*/
-/dists/msvc10/*.lib
+/dists/msvc*/[Dd]ebug*/
+/dists/msvc*/[Rr]elease*/
+/dists/msvc*/*.lib
+/dists/msvc*/*.SAV
+/dists/msvc*/*.dat
+/dists/msvc*/*.dll
 
 /doc/*.aux
 /doc/*.dvi
