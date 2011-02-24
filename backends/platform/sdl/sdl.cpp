@@ -128,7 +128,6 @@ void OSystem_SDL::init() {
 #ifdef USE_OPENGL
 	// Setup a list with both SDL and OpenGL graphics modes
 	setupGraphicsModes();
-	_graphicsMode = _sdlModesCount;
 #endif
 }
 
@@ -149,11 +148,15 @@ void OSystem_SDL::initBackend() {
 			Common::String gfxMode(ConfMan.get("gfx_mode"));
 			bool use_opengl = false;
 			const OSystem::GraphicsMode *mode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
+			int i = 0;
 			while (mode->name) {
-				if (scumm_stricmp(mode->name, gfxMode.c_str()) == 0)
+				if (scumm_stricmp(mode->name, gfxMode.c_str()) == 0) {
+					_graphicsMode = i + _sdlModesCount;
 					use_opengl = true;
+				}
 
 				mode++;
+				++i;
 			}
 
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
