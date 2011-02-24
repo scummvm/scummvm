@@ -341,9 +341,9 @@ void OpenGLGraphicsManager::copyRectToScreen(const byte *buf, int pitch, int x, 
 
 	// Copy buffer data to game screen internal buffer
 	const byte *src = buf;
-	byte *dst = (byte *)_screenData.pixels + y * _screenData.pitch;
+	byte *dst = (byte *)_screenData.pixels + y * _screenData.pitch + x * _screenData.bytesPerPixel;
 	for (int i = 0; i < h; i++) {
-		memcpy(dst + x * _screenData.bytesPerPixel, src, w * _screenData.bytesPerPixel);
+		memcpy(dst, src, w * _screenData.bytesPerPixel);
 		src += pitch;
 		dst += _screenData.pitch;
 	}
@@ -1063,6 +1063,8 @@ void OpenGLGraphicsManager::loadTextures() {
 		delete _gameTexture;
 #endif
 
+	uint gameScreenBPP = 0;
+
 	if (!_gameTexture) {
 		byte bpp;
 		GLenum intformat;
@@ -1073,6 +1075,7 @@ void OpenGLGraphicsManager::loadTextures() {
 #else
 		getGLPixelFormat(Graphics::PixelFormat::createFormatCLUT8(), bpp, intformat, format, type);
 #endif
+		gameScreenBPP = bpp;
 		_gameTexture = new GLTexture(bpp, intformat, format, type);
 	} else
 		_gameTexture->refresh();
@@ -1118,6 +1121,14 @@ void OpenGLGraphicsManager::loadTextures() {
 	_screenNeedsRedraw = true;
 	_overlayNeedsRedraw = true;
 	_cursorNeedsRedraw = true;
+
+	// We need to setup a proper unpack alignment value here, else we will
+	// get problems with the texture updates, in case the surface data is
+	// not properly aligned.
+	// For now we use the gcd of the game screen format and 2, since 2 is
+	// the BPP value for the overlay and the OSD.
+	if (gameScreenBPP)
+		glPixelStorei(GL_UNPACK_ALIGNMENT, Common::gcd<uint>(gameScreenBPP, 2));
 
 #ifdef USE_OSD
 	if (!_osdTexture)
