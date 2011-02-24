@@ -445,9 +445,13 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 
 	if (musicSlot->fadeCompleted) {
 		musicSlot->fadeCompleted = false;
-		// We need signal for sci0 at least in iceman as well (room 14, fireworks)
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
+			// We need signal for sci0 at least in iceman as well (room 14, fireworks)
+			// Note: We should not set the signal here when fading is done in later
+			// games. This fixes the dialog boxes disappearing too quickly in the
+			// intro of Longbow (bug #3044844). It also fixes the music not fading out
+			// when the bandits leave the temple in KQ5 (bug #3037594).
+			writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 			processStopSound(obj, false);
 		} else {
 			if (musicSlot->stopAfterFading)
