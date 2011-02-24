@@ -280,7 +280,7 @@ public:
 	 *	It processes all the drawing queues and then copies dirty rects
 	 *	in the current Screen surface to the overlay.
 	 */
-	void updateScreen();
+	void updateScreen(bool render = true);
 
 
 	/** @name FONT MANAGEMENT METHODS */
