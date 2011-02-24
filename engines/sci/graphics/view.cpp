@@ -313,6 +313,24 @@ int16 GfxView::getHeight(int16 loopNo, int16 celNo) const {
 
 const CelInfo *GfxView::getCelInfo(int16 loopNo, int16 celNo) const {
 	assert(_loopCount);
+
+	// WORKAROUND for the EGA version of SQ1: View 506 is the portrait of the 
+	// skimmer buyer in room 41 in SQ1. Loop 0 is his face looking left (shown
+	// the first time Roger arrives in Ulence Flats) and loop 1 is his face
+	// looking right (shown the second time he appears, when he makes the
+	// second offer for the skimmer). In the VGA version, the first two loops
+	// have 2 cels, a valid one (cel 0) and an invalid one (cel 1). In the EGA 
+	// version, the cels in these two loops have been swapped. The game scripts,
+	// however seem to get confused by this situation, and when they check loop
+	// 1, cel 0 via kCelHigh and kCelWide regard it as invalid and never show
+	// it. We just swap the two cels here in the EGA version, making it behave
+	// like the VGA version, thus the game scripts show the correct loop. Fixes
+	// bug #3044500. Note that the same workaround is in getBitmap().
+	if (g_sci->getGameId() == GID_SQ1 && !_resMan->isVGA() && _resourceId == 506) {
+		if ((loopNo == 0 || loopNo == 1) && celNo == 0)
+			celNo = 1;
+	}
+
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return &_loop[loopNo].cel[celNo];
@@ -516,6 +534,13 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 }
 
 const byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
+	// WORKAROUND for the EGA version of SQ1, same as the one in getCelInfo().
+	// Check getCelInfo() above for more information.
+	if (g_sci->getGameId() == GID_SQ1 && !_resMan->isVGA() && _resourceId == 506) {
+		if ((loopNo == 0 || loopNo == 1) && celNo == 0)
+			celNo = 1;
+	}
+
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	if (_loop[loopNo].cel[celNo].rawBitmap)
