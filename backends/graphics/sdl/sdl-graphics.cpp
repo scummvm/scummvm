@@ -141,7 +141,11 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *sdlEventSource)
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
 	_screenIsLocked(false),
-	_graphicsMutex(0), _transactionMode(kTransactionNone) {
+	_graphicsMutex(0),
+#ifdef USE_SDL_DEBUG_FOCUSRECT
+	_enableFocusRect(false), _focusRect(),
+#endif
+	_transactionMode(kTransactionNone) {
 
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
@@ -1103,6 +1107,79 @@ void SdlGraphicsManager::internUpdateScreen() {
 			SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
 		}
 #endif
+
+#ifdef USE_SDL_DEBUG_FOCUSRECT
+		// We draw the focus rectangle on top of everything, to assure it's easily visible.
+		// Of course when the overlay is visible we do not show it, since it is only for game
+		// specific focus.
+		if (_enableFocusRect && !_overlayVisible) {
+			int y = _focusRect.top + _currentShakePos;
+			int h = 0;
+			int x = _focusRect.left * scale1;
+			int w = _focusRect.width() * scale1;
+
+			if (y < height) {
+				h = _focusRect.height();
+				if (h > height - y)
+					h = height - y;
+
+				y *= scale1;
+
+				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+					y = real2Aspect(y);
+
+				if (h > 0 && w > 0) {
+					SDL_LockSurface(_hwscreen);
+
+					// Use white as color for now.
+					Uint32 rectColor = SDL_MapRGB(_hwscreen->format, 0xFF, 0xFF, 0xFF);
+
+					// First draw the top and bottom lines
+					// then draw the left and right lines
+					if (_hwscreen->format->BytesPerPixel == 2) {
+						uint16 *top = (uint16 *)((byte *)_hwscreen->pixels + y * _hwscreen->pitch + x * 2);
+						uint16 *bottom = (uint16 *)((byte *)_hwscreen->pixels + (y + h) * _hwscreen->pitch + x * 2);
+						byte *left = ((byte *)_hwscreen->pixels + y * _hwscreen->pitch + x * 2);
+						byte *right = ((byte *)_hwscreen->pixels + y * _hwscreen->pitch + (x + w - 1) * 2);
+
+						while (w--) {
+							*top++ = rectColor;
+							*bottom++ = rectColor;
+						}
+
+						while (h--) {
+							*(uint16 *)left = rectColor;
+							*(uint16 *)right = rectColor;
+
+							left += _hwscreen->pitch;
+							right += _hwscreen->pitch;
+						}
+					} else if (_hwscreen->format->BytesPerPixel == 4) {
+						uint32 *top = (uint32 *)((byte *)_hwscreen->pixels + y * _hwscreen->pitch + x * 4);
+						uint32 *bottom = (uint32 *)((byte *)_hwscreen->pixels + (y + h) * _hwscreen->pitch + x * 4);
+						byte *left = ((byte *)_hwscreen->pixels + y * _hwscreen->pitch + x * 4);
+						byte *right = ((byte *)_hwscreen->pixels + y * _hwscreen->pitch + (x + w - 1) * 4);
+
+						while (w--) {
+							*top++ = rectColor;
+							*bottom++ = rectColor;
+						}
+
+						while (h--) {
+							*(uint32 *)left = rectColor;
+							*(uint32 *)right = rectColor;
+
+							left += _hwscreen->pitch;
+							right += _hwscreen->pitch;
+						}
+					}
+
+					SDL_UnlockSurface(_hwscreen);
+				}
+			}
+		}
+#endif
+
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
 	}
@@ -1396,10 +1473,29 @@ void SdlGraphicsManager::setShakePos(int shake_pos) {
 	_newShakePos = shake_pos;
 }
 
-void SdlGraphicsManager::setFocusRectangle(const Common::Rect& rect) {
+void SdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
+#ifdef USE_SDL_DEBUG_FOCUSRECT
+	_enableFocusRect = true;
+	_focusRect = rect;
+
+	// It's gross but we actually sometimes get rects, which are not inside the screen bounds,
+	// thus we need to clip the rect here...
+	_focusRect.clip(_videoMode.screenWidth, _videoMode.screenHeight);
+
+	// We just fake this as a dirty rect for now, to easily force an screen update whenever
+	// the rect changes.
+	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height());
+#endif
 }
 
 void SdlGraphicsManager::clearFocusRectangle() {
+#ifdef USE_SDL_DEBUG_FOCUSRECT
+	_enableFocusRect = false;
+
+	// We just fake this as a dirty rect for now, to easily force an screen update whenever
+	// the rect changes.
+	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height());
+#endif
 }
 
 #pragma mark -

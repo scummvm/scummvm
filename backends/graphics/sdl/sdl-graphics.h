@@ -35,6 +35,10 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
+#ifndef RELEASE_BUILD
+// Define this to allow for focus rectangle debugging
+#define USE_SDL_DEBUG_FOCUSRECT
+#endif
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 // Uncomment this to enable the 'on screen display' code.
@@ -300,6 +304,11 @@ protected:
 	 * when accessing the screen.
 	 */
 	OSystem::MutexRef _graphicsMutex;
+
+#ifdef USE_SDL_DEBUG_FOCUSRECT
+	bool _enableFocusRect;
+	Common::Rect _focusRect;
+#endif
 
 	virtual void addDirtyRect(int x, int y, int w, int h, bool realCoordinates = false);
 
