@@ -58,7 +58,7 @@ class RandomSource;
  */
 namespace Hugo {
 
-static const int kSavegameVersion = 3;
+static const int kSavegameVersion = 4;
 static const int kInvDx = 32;                       // Width of an inventory icon
 static const int kInvDy = 32;                       // Height of inventory icon
 static const int kMaxTunes = 16;                    // Max number of tunes
@@ -242,7 +242,6 @@ public:
 	object_t *_hero;
 	byte  *_screen_p;
 	byte  _heroImage;
-
 	byte  *_screenStates;
 	command_t _line;                                // Line of user text input
 	config_t  _config;                              // User's config

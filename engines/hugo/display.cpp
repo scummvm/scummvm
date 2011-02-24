@@ -214,10 +214,10 @@ void Screen::savePal(Common::WriteStream *f) const {
 void Screen::restorePal(Common::ReadStream *f) {
 	debugC(1, kDebugDisplay, "restorePal()");
 
-	for (int i = 0; i < _paletteSize; i++) {
+	for (int i = 0; i < _paletteSize; i++)
 		_curPalette[i] = f->readByte();
-		g_system->getPaletteManager()->setPalette(_curPalette, i, 1);
-	}
+
+	g_system->getPaletteManager()->setPalette(_curPalette, 0, _paletteSize / 3);
 }
 
 

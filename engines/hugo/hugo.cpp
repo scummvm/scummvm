@@ -28,6 +28,7 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/debug-channels.h"
+#include "common/config-manager.h"
 
 #include "hugo/hugo.h"
 #include "hugo/game.h"
@@ -253,14 +254,20 @@ Common::Error HugoEngine::run() {
 
 	// Start the state machine
 	_status.viewState = kViewIntroInit;
-
 	_status.doQuitFl = false;
+	int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
+	if (loadSlot >= 0) {
+		_status.skipIntroFl = true;
+		_file->restoreGame(loadSlot);
+		_scheduler->restoreScreen(*_screen_p);
+		_status.viewState = kViewPlay;
+	}
 
 	while (!_status.doQuitFl) {
 		_screen->drawBoundaries();
-
 		g_system->updateScreen();
 		runMachine();
+
 		// Handle input
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
@@ -285,6 +292,7 @@ Common::Error HugoEngine::run() {
 				break;
 			}
 		}
+	
 		_mouse->mouseHandler();                     // Mouse activity - adds to display list
 		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
 		_status.doQuitFl |= shouldQuit();           // update game quit flag
