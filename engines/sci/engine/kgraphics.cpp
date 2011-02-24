@@ -1220,12 +1220,19 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	case 2:	{ // remap by percent
-		// NOTE: This adjusts the alpha value of a specific color, and it operates on
-		// an RGBA palette
-		int16 color = argv[1].toSint16();	// this is subtracted from a maximum color value, and can be offset by 10
+		// This adjusts the alpha value of a specific color, and it operates on
+		// an RGBA palette. Since we're operating on an RGB palette, we just
+		// modify the color intensity instead
+		// TODO: From what I understand, palette remapping should be placed
+		// separately, so that it can be reset by case 0 above. Thus, we
+		// should adjust the functionality of the Palette class accordingly.
+		int16 color = argv[1].toSint16();
+		if (color >= 10)
+			color -= 10;
 		uint16 percent = argv[2].toUint16(); // 0 - 100
-		uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
-		warning("kRemapColors: RemapByPercent color %d by %d percent (unk3 = %d)", color, percent, unk3);
+		if (argc >= 4)
+			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
+		g_sci->_gfxPalette->kernelSetIntensity(color, 255, percent, false);
 		}
 		break;
 	case 3:	{ // remap to gray
