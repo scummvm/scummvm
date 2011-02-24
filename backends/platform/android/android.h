@@ -61,7 +61,7 @@ extern const char *android_log_tag;
 #ifdef ANDROID_DEBUG_ENTER
 #define ENTER(fmt, args...) LOGD("%s(" fmt ")", __FUNCTION__, ##args)
 #else
-#define ENTER(fmt, args...) /**/
+#define ENTER(fmt, args...) do {  } while (false)
 #endif
 
 #ifdef ANDROID_DEBUG_GL
@@ -73,8 +73,14 @@ extern void checkGlError(const char *expr, const char *file, int line);
 		checkGlError(#x, __FILE__, __LINE__); \
 	} while (false)
 
+#define GLTHREADCHECK \
+	do { \
+		assert(pthread_self() == _main_thread); \
+	} while (false)
+
 #else
 #define GLCALL(x) do { (x); } while (false)
+#define GLTHREADCHECK do {  } while (false)
 #endif
 
 #ifdef DYNAMIC_MODULES
@@ -110,6 +116,8 @@ private:
 
 	Common::Queue<Common::Event> _event_queue;
 	MutexRef _event_queue_lock;
+
+	pthread_t _main_thread;
 
 	bool _timer_thread_exit;
 	pthread_t _timer_thread;

@@ -156,6 +156,8 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 void OSystem_Android::initBackend() {
 	ENTER();
 
+	_main_thread = pthread_self();
+
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setInt("FM_medium_quality", true);
 
@@ -350,6 +352,7 @@ void OSystem_Android::delayMillis(uint msecs) {
 
 OSystem::MutexRef OSystem_Android::createMutex() {
 	pthread_mutexattr_t attr;
+
 	pthread_mutexattr_init(&attr);
 	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
 

@@ -119,6 +119,8 @@ void OSystem_Android::initSize(uint width, uint height,
 								const Graphics::PixelFormat *format) {
 	ENTER("%d, %d, %p", width, height, format);
 
+	GLTHREADCHECK;
+
 	_game_texture->allocBuffer(width, height);
 
 	GLuint overlay_width = _egl_surface_width;
@@ -157,6 +159,8 @@ int16 OSystem_Android::getWidth() {
 void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 	ENTER("%p, %u, %u", colors, start, num);
 
+	GLTHREADCHECK;
+
 	if (!_use_mouse_palette)
 		_setCursorPalette(colors, start, num);
 
@@ -166,6 +170,8 @@ void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
 	ENTER("%p, %u, %u", colors, start, num);
 
+	GLTHREADCHECK;
+
 	memcpy(colors, _game_texture->palette_const() + start * 3, num * 3);
 }
 
@@ -173,11 +179,15 @@ void OSystem_Android::copyRectToScreen(const byte *buf, int pitch,
 										int x, int y, int w, int h) {
 	ENTER("%p, %d, %d, %d, %d, %d", buf, pitch, x, y, w, h);
 
+	GLTHREADCHECK;
+
 	_game_texture->updateBuffer(x, y, w, h, buf, pitch);
 }
 
 void OSystem_Android::updateScreen() {
 	//ENTER();
+
+	GLTHREADCHECK;
 
 	if (!_force_redraw &&
 			!_game_texture->dirty() &&
@@ -279,6 +289,8 @@ void OSystem_Android::updateScreen() {
 Graphics::Surface *OSystem_Android::lockScreen() {
 	ENTER();
 
+	GLTHREADCHECK;
+
 	Graphics::Surface *surface = _game_texture->surface();
 	assert(surface->pixels);
 
@@ -287,6 +299,8 @@ Graphics::Surface *OSystem_Android::lockScreen() {
 
 void OSystem_Android::unlockScreen() {
 	ENTER();
+
+	GLTHREADCHECK;
 
 	assert(_game_texture->dirty());
 }
@@ -302,6 +316,8 @@ void OSystem_Android::setShakePos(int shake_offset) {
 
 void OSystem_Android::fillScreen(uint32 col) {
 	ENTER("%u", col);
+
+	GLTHREADCHECK;
 
 	assert(col < 256);
 	_game_texture->fillBuffer(col);
@@ -342,6 +358,8 @@ void OSystem_Android::hideOverlay() {
 void OSystem_Android::clearOverlay() {
 	ENTER();
 
+	GLTHREADCHECK;
+
 	_overlay_texture->fillBuffer(0);
 
 	// Shouldn't need this, but works around a 'blank screen' bug on Nexus1
@@ -350,6 +368,8 @@ void OSystem_Android::clearOverlay() {
 
 void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
 	ENTER("%p, %d", buf, pitch);
+
+	GLTHREADCHECK;
 
 	// We support overlay alpha blending, so the pixel data here
 	// shouldn't actually be used.	Let's fill it with zeros, I'm sure
@@ -370,6 +390,8 @@ void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
 void OSystem_Android::copyRectToOverlay(const OverlayColor *buf, int pitch,
 										int x, int y, int w, int h) {
 	ENTER("%p, %d, %d, %d, %d, %d", buf, pitch, x, y, w, h);
+
+	GLTHREADCHECK;
 
 	const Graphics::Surface *surface = _overlay_texture->surface_const();
 	assert(surface->bytesPerPixel == sizeof(buf[0]));
@@ -411,6 +433,8 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 	ENTER("%p, %u, %u, %d, %d, %u, %d, %p", buf, w, h, hotspotX, hotspotY,
 			keycolor, cursorTargetScale, format);
 
+	GLTHREADCHECK;
+
 	assert(keycolor < 256);
 
 	_mouse_texture->allocBuffer(w, h);
@@ -451,6 +475,8 @@ void OSystem_Android::_setCursorPalette(const byte *colors,
 void OSystem_Android::setCursorPalette(const byte *colors,
 										uint start, uint num) {
 	ENTER("%p, %u, %u", colors, start, num);
+
+	GLTHREADCHECK;
 
 	_setCursorPalette(colors, start, num);
 	_use_mouse_palette = true;
