@@ -306,6 +306,7 @@ protected:
 	OSystem::MutexRef _graphicsMutex;
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
+	bool _enableFocusRectDebugCode;
 	bool _enableFocusRect;
 	Common::Rect _focusRect;
 #endif

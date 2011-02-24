@@ -143,7 +143,7 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *sdlEventSource)
 	_screenIsLocked(false),
 	_graphicsMutex(0),
 #ifdef USE_SDL_DEBUG_FOCUSRECT
-	_enableFocusRect(false), _focusRect(),
+	_enableFocusRectDebugCode(false), _enableFocusRect(false), _focusRect(),
 #endif
 	_transactionMode(kTransactionNone) {
 
@@ -170,6 +170,11 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *sdlEventSource)
 		SDL_VideoInit("windib", 0);
 		sdlFlags ^= SDL_INIT_VIDEO;
 	}
+#endif
+
+#ifdef USE_SDL_DEBUG_FOCUSRECT
+	if (ConfMan.hasKey("use_sdl_debug_focusrect"))
+		_enableFocusRectDebugCode = ConfMan.getBool("use_sdl_debug_focusrect");
 #endif
 
 	SDL_ShowCursor(SDL_DISABLE);
@@ -1475,6 +1480,10 @@ void SdlGraphicsManager::setShakePos(int shake_pos) {
 
 void SdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
 #ifdef USE_SDL_DEBUG_FOCUSRECT
+	// Only enable focus rectangle debug code, when the user wants it
+	if (!_enableFocusRectDebugCode)
+		return;
+
 	_enableFocusRect = true;
 	_focusRect = rect;
 
@@ -1490,6 +1499,10 @@ void SdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
 
 void SdlGraphicsManager::clearFocusRectangle() {
 #ifdef USE_SDL_DEBUG_FOCUSRECT
+	// Only enable focus rectangle debug code, when the user wants it
+	if (!_enableFocusRectDebugCode)
+		return;
+
 	_enableFocusRect = false;
 
 	// We just fake this as a dirty rect for now, to easily force an screen update whenever
