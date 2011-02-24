@@ -362,8 +362,9 @@ void OSystem_Android::clearOverlay() {
 
 	_overlay_texture->fillBuffer(0);
 
+	// breaks more than it fixes, disabled for now
 	// Shouldn't need this, but works around a 'blank screen' bug on Nexus1
-	updateScreen();
+	//updateScreen();
 }
 
 void OSystem_Android::grabOverlay(OverlayColor *buf, int pitch) {
