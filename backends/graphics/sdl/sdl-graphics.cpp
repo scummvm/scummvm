@@ -1487,6 +1487,9 @@ void SdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
 	_enableFocusRect = true;
 	_focusRect = rect;
 
+	if (rect.left < 0 || rect.top < 0 || rect.right > _videoMode.screenWidth || rect.bottom > _videoMode.screenHeight)
+		warning("SdlGraphicsManager::setFocusRectangle: Got a rect which does not fit inside the screen bounds: %d,%d,%d,%d", rect.left, rect.top, rect.right, rect.bottom);
+
 	// It's gross but we actually sometimes get rects, which are not inside the screen bounds,
 	// thus we need to clip the rect here...
 	_focusRect.clip(_videoMode.screenWidth, _videoMode.screenHeight);
