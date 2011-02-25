@@ -136,6 +136,8 @@ int OpenGLGraphicsManager::getDefaultGraphicsMode() const {
 bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
 	assert(_transactionMode == kTransactionActive);
 
+	setScale(2);
+
 	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
 		return true;
 
