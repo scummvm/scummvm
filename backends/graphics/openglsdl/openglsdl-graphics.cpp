@@ -121,6 +121,7 @@ void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 #endif
 		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),	// RGB565
 		Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),	// RGB5551
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),	// RGBA4444
 #ifndef USE_GLES
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)   // ARGB4444
