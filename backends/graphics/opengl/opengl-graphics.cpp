@@ -754,6 +754,9 @@ void OpenGLGraphicsManager::refreshOverlay() {
 void OpenGLGraphicsManager::refreshCursor() {
 	_cursorNeedsRedraw = false;
 
+	// Allocate a texture big enough for cursor
+	_cursorTexture->allocBuffer(_cursorState.w, _cursorState.h);
+
 	if (_cursorFormat.bytesPerPixel == 1) {
 		// Create a temporary RGBA8888 surface
 		byte *surface = new byte[_cursorState.w * _cursorState.h * 4];
@@ -780,8 +783,46 @@ void OpenGLGraphicsManager::refreshCursor() {
 			dst += 4;
 		}
 
-		// Allocate a texture big enough for cursor
-		_cursorTexture->allocBuffer(_cursorState.w, _cursorState.h);
+		// Update the texture with new cursor
+		_cursorTexture->updateBuffer(surface, _cursorState.w * 4, 0, 0, _cursorState.w, _cursorState.h);
+
+		// Free the temp surface
+		delete[] surface;
+	} else {
+		// Create a temporary RGBA8888 surface
+		byte *surface = new byte[_cursorState.w * _cursorState.h * 4];
+		memset(surface, 0, _cursorState.w * _cursorState.h * 4);
+
+		// Convert the paletted cursor to RGBA8888
+		byte *dst = surface;
+
+		const bool gotNoAlpha = (_cursorFormat.aLoss == 8);
+
+		if (_cursorFormat.bytesPerPixel == 2) {
+			const uint16 *src = (uint16 *)_cursorData.pixels;
+			for (int i = 0; i < _cursorState.w * _cursorState.h; i++) {
+				// Check for keycolor
+				if (src[i] != _cursorKeyColor) {
+					_cursorFormat.colorToARGB(src[i], dst[3], dst[0], dst[1], dst[2]);
+
+					if (gotNoAlpha)
+						dst[3] = 255;
+				}
+				dst += 4;
+			}
+		} else if (_cursorFormat.bytesPerPixel == 4) {
+			const uint32 *src = (uint32 *)_cursorData.pixels;
+			for (int i = 0; i < _cursorState.w * _cursorState.h; i++) {
+				// Check for keycolor
+				if (src[i] != _cursorKeyColor) {
+					_cursorFormat.colorToARGB(src[i], dst[3], dst[0], dst[1], dst[2]);
+
+					if (gotNoAlpha)
+						dst[3] = 255;
+				}
+				dst += 4;
+			}
+		}
 
 		// Update the texture with new cursor
 		_cursorTexture->updateBuffer(surface, _cursorState.w * 4, 0, 0, _cursorState.w, _cursorState.h);
