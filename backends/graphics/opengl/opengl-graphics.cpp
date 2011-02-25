@@ -757,11 +757,14 @@ void OpenGLGraphicsManager::refreshCursor() {
 	// Allocate a texture big enough for cursor
 	_cursorTexture->allocBuffer(_cursorState.w, _cursorState.h);
 
-	if (_cursorFormat.bytesPerPixel == 1) {
-		// Create a temporary RGBA8888 surface
-		byte *surface = new byte[_cursorState.w * _cursorState.h * 4];
-		memset(surface, 0, _cursorState.w * _cursorState.h * 4);
+	// Create a temporary RGBA8888 surface
+	byte *surface = new byte[_cursorState.w * _cursorState.h * 4];
+	memset(surface, 0, _cursorState.w * _cursorState.h * 4);
 
+	byte *dst = surface;
+
+	// Convert the paletted cursor to RGBA8888
+	if (_cursorFormat.bytesPerPixel == 1) {
 		// Select palette
 		byte *palette;
 		if (_cursorPaletteDisabled)
@@ -771,7 +774,6 @@ void OpenGLGraphicsManager::refreshCursor() {
 
 		// Convert the paletted cursor to RGBA8888
 		const byte *src = (byte *)_cursorData.pixels;
-		byte *dst = surface;
 		for (int i = 0; i < _cursorState.w * _cursorState.h; i++) {
 			// Check for keycolor
 			if (src[i] != _cursorKeyColor) {
@@ -782,22 +784,10 @@ void OpenGLGraphicsManager::refreshCursor() {
 			}
 			dst += 4;
 		}
-
-		// Update the texture with new cursor
-		_cursorTexture->updateBuffer(surface, _cursorState.w * 4, 0, 0, _cursorState.w, _cursorState.h);
-
-		// Free the temp surface
-		delete[] surface;
 	} else {
-		// Create a temporary RGBA8888 surface
-		byte *surface = new byte[_cursorState.w * _cursorState.h * 4];
-		memset(surface, 0, _cursorState.w * _cursorState.h * 4);
-
-		// Convert the paletted cursor to RGBA8888
-		byte *dst = surface;
-
 		const bool gotNoAlpha = (_cursorFormat.aLoss == 8);
 
+		// Convert the RGB cursor to RGBA8888
 		if (_cursorFormat.bytesPerPixel == 2) {
 			const uint16 *src = (uint16 *)_cursorData.pixels;
 			for (int i = 0; i < _cursorState.w * _cursorState.h; i++) {
@@ -823,13 +813,13 @@ void OpenGLGraphicsManager::refreshCursor() {
 				dst += 4;
 			}
 		}
-
-		// Update the texture with new cursor
-		_cursorTexture->updateBuffer(surface, _cursorState.w * 4, 0, 0, _cursorState.w, _cursorState.h);
-
-		// Free the temp surface
-		delete[] surface;
 	}
+
+	// Update the texture with new cursor
+	_cursorTexture->updateBuffer(surface, _cursorState.w * 4, 0, 0, _cursorState.w, _cursorState.h);
+
+	// Free the temp surface
+	delete[] surface;
 }
 
 void OpenGLGraphicsManager::refreshCursorScale() {
