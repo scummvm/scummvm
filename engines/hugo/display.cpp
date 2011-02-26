@@ -233,24 +233,6 @@ void Screen::setBackgroundColor(const uint16 color) {
 }
 
 /**
- * Return the overlay state (Foreground/Background) of the currently
- * processed object by looking down the current column for an overlay
- * base bit set (in which case the object is foreground).
- */
-overlayState_t Screen::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
-	debugC(4, kDebugDisplay, "findOvl()");
-
-	for (; y < seq_p->lines; y++) {                 // Each line in object
-		byte ovb = _vm->_object->getBaseBoundary((uint16)(dst_p - _frontBuffer) >> 3); // Ptr into overlay bits
-		if (ovb & (0x80 >> ((uint16)(dst_p - _frontBuffer) & 7))) // Overlay bit is set
-			return kOvlForeground;                  // Found a bit - must be foreground
-		dst_p += kXPix;
-	}
-
-	return kOvlBackground;                          // No bits set, must be background
-}
-
-/**
  * Merge an object frame into _frontBuffer at sx, sy and update rectangle list.
  * If fore TRUE, force object above any overlay
  */
@@ -740,6 +722,24 @@ void Screen_v1d::loadFontArr(Common::ReadStream &in) {
 	}
 }
 
+/**
+ * Return the overlay state (Foreground/Background) of the currently
+ * processed object by looking down the current column for an overlay
+ * base byte set (in which case the object is foreground).
+ */
+overlayState_t Screen_v1d::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
+	debugC(4, kDebugDisplay, "findOvl()");
+
+	for (; y < seq_p->lines; y++) {                 // Each line in object
+		byte ovb = _vm->_object->getBaseBoundary((uint16)(dst_p - _frontBuffer) >> 3); // Ptr into overlay bytes
+		if (ovb)                                    // If any overlay base byte is non-zero then the object is foreground, else back. 
+			return kOvlForeground;
+		dst_p += kXPix;
+	}
+
+	return kOvlBackground;                          // No bits set, must be background
+}
+
 Screen_v1w::Screen_v1w(HugoEngine *vm) : Screen(vm) {
 }
 
@@ -788,6 +788,24 @@ void Screen_v1w::loadFontArr(Common::ReadStream &in) {
 		for (int j = 0; j < numElem; j++)
 			in.readByte();
 	}
+}
+
+/**
+ * Return the overlay state (Foreground/Background) of the currently
+ * processed object by looking down the current column for an overlay
+ * base bit set (in which case the object is foreground).
+ */
+overlayState_t Screen_v1w::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
+	debugC(4, kDebugDisplay, "findOvl()");
+
+	for (; y < seq_p->lines; y++) {                 // Each line in object
+		byte ovb = _vm->_object->getBaseBoundary((uint16)(dst_p - _frontBuffer) >> 3); // Ptr into overlay bits
+		if (ovb & (0x80 >> ((uint16)(dst_p - _frontBuffer) & 7))) // Overlay bit is set
+			return kOvlForeground;                  // Found a bit - must be foreground
+		dst_p += kXPix;
+	}
+
+	return kOvlBackground;                          // No bits set, must be background
 }
 
 } // End of namespace Hugo
