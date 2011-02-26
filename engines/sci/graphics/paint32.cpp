@@ -65,17 +65,6 @@ void GfxPaint32::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, b
 	delete picture;
 }
 
-// This is "hacked" together, because its only used by debug command
-void GfxPaint32::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle) {
-	GfxView *view = _cache->getView(viewId);
-	Common::Rect celRect(50, 50, 50, 50);
-	Common::Rect translatedRect;
-	celRect.bottom += view->getHeight(loopNo, celNo);
-	celRect.right += view->getWidth(loopNo, celNo);
-	view->draw(celRect, celRect, celRect, loopNo, celNo, 255, 0, false);
-	_screen->copyRectToScreen(celRect);
-}
-
 void GfxPaint32::kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
 	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
 }

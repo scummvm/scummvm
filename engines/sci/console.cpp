@@ -40,12 +40,14 @@
 #include "sci/sound/music.h"
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/sound/drivers/map-mt32-to-gm.h"
+#include "sci/graphics/cache.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/view.h"
 
 #include "sci/parser/vocabulary.h"
 
@@ -1503,7 +1505,17 @@ bool Console::cmdDrawCel(int argc, const char **argv) {
 	uint16 loopNo = atoi(argv[2]);
 	uint16 celNo = atoi(argv[3]);
 
-	_engine->_gfxPaint->kernelDrawCel(resourceId, loopNo, celNo, 50, 50, 0, 0, false, NULL_REG);
+	if (_engine->_gfxPaint16) {
+		_engine->_gfxPaint16->kernelDrawCel(resourceId, loopNo, celNo, 50, 50, 0, 0, 128, 128, false, NULL_REG);
+	} else {
+		GfxView *view = _engine->_gfxCache->getView(resourceId);
+		Common::Rect celRect(50, 50, 50, 50);
+		Common::Rect translatedRect;
+		celRect.bottom += view->getHeight(loopNo, celNo);
+		celRect.right += view->getWidth(loopNo, celNo);
+		view->draw(celRect, celRect, celRect, loopNo, celNo, 255, 0, false);
+		_engine->_gfxScreen->copyRectToScreen(celRect);
+	}
 	return true;
 }
 
