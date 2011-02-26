@@ -368,7 +368,7 @@ void MoviePlayerDXA::handleNextFrame() {
 
 bool MoviePlayerDXA::processFrame() {
 	Graphics::Surface *screen = _vm->_system->lockScreen();
-	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, _vm->_screenWidth);
+	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, screen->pitch);
 	_vm->_system->unlockScreen();
 
 	Common::Rational soundTime(_mixer->getSoundElapsedTime(_bgSound), 1000);
@@ -482,7 +482,7 @@ void MoviePlayerSMK::nextFrame() {
 
 bool MoviePlayerSMK::processFrame() {
 	Graphics::Surface *screen = _vm->_system->lockScreen();
-	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, _vm->_screenWidth);
+	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, screen->pitch);
 	_vm->_system->unlockScreen();
 
 	uint32 waitTime = getTimeToNextFrame();
