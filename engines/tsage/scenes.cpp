@@ -401,7 +401,7 @@ void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent
 	int var_6 = 0;
 	int v = 0;
 	while (v < yStart)
-		_zoomPercents[v] = minPercent;
+		_zoomPercents[v++] = minPercent;
 
 	int diff1 = ABS(maxPercent - minPercent);
 	int diff2 = ABS(yEnd - yStart);
