@@ -326,6 +326,7 @@ const CelInfo *GfxView::getCelInfo(int16 loopNo, int16 celNo) const {
 	// it. We just swap the two cels here in the EGA version, making it behave
 	// like the VGA version, thus the game scripts show the correct loop. Fixes
 	// bug #3044500. Note that the same workaround is in getBitmap().
+	// TODO: Check if this issue happens in the original version.
 	if (g_sci->getGameId() == GID_SQ1 && !_resMan->isVGA() && _resourceId == 506) {
 		if ((loopNo == 0 || loopNo == 1) && celNo == 0)
 			celNo = 1;
