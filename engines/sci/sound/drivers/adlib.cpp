@@ -55,7 +55,7 @@ public:
 	virtual ~MidiDriver_AdLib() { }
 
 	// MidiDriver
-	int open(bool isSCI0);
+	int openAdLib(bool isSCI0);
 	void close();
 	void send(uint32 b);
 	MidiChannel *allocateChannel() { return NULL; }
@@ -215,7 +215,7 @@ static const int ym3812_note[13] = {
 	0x2ae
 };
 
-int MidiDriver_AdLib::open(bool isSCI0) {
+int MidiDriver_AdLib::openAdLib(bool isSCI0) {
 	int rate = _mixer->getOutputRate();
 
 	_stereo = STEREO;
@@ -828,7 +828,7 @@ int MidiPlayer_AdLib::open(ResourceManager *resMan) {
 		return -1;
 	}
 
-	return static_cast<MidiDriver_AdLib *>(_driver)->open(_version <= SCI_VERSION_0_LATE);
+	return static_cast<MidiDriver_AdLib *>(_driver)->openAdLib(_version <= SCI_VERSION_0_LATE);
 }
 
 void MidiPlayer_AdLib::close() {
