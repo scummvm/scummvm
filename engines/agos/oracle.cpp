@@ -369,7 +369,7 @@ void AGOSEngine_Feeble::swapCharacterLogo() {
 	}
 }
 
-void AGOSEngine_Feeble::listSaveGames(int n) {
+void AGOSEngine_Feeble::listSaveGamesFeeble() {
 	char b[108];
 	Common::InSaveFile *in;
 	uint16 j, k, z, maxFiles;
@@ -377,8 +377,8 @@ void AGOSEngine_Feeble::listSaveGames(int n) {
 	memset(b, 0, 108);
 
 	maxFiles = countSaveGames() - 1;
-	j = maxFiles - n + 1;
-	k = maxFiles - j + 1;
+	j = maxFiles;
+	k = 1;
 	z = maxFiles;
 	if (getBitFlag(95)) {
 		j++;

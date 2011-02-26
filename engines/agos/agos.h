@@ -2018,7 +2018,7 @@ protected:
 	void scrollOracleUp();
 	void scrollOracleDown();
 
-	void listSaveGames(int n);
+	void listSaveGamesFeeble();
 	void saveUserGame(int slot);
 	void windowBackSpace(WindowBlock *window);
 

@@ -430,8 +430,7 @@ void AGOSEngine_Feeble::off_loadUserGame() {
 }
 
 void AGOSEngine_Feeble::off_listSaveGames() {
-	// 134: dummy opcode?
-	listSaveGames(1);
+	listSaveGamesFeeble();
 }
 
 void AGOSEngine_Feeble::off_checkCD() {
