@@ -26,6 +26,7 @@
 #if defined(__ANDROID__)
 
 #include <sys/time.h>
+#include <sys/resource.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -98,7 +99,9 @@ static inline T scalef(T in, float numerator, float denominator) {
 	return static_cast<float>(in) * numerator / denominator;
 }
 
-OSystem_Android::OSystem_Android() :
+OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
+	_audio_sample_rate(audio_sample_rate),
+	_audio_buffer_size(audio_buffer_size),
 	_screen_changeid(0),
 	_force_redraw(false),
 	_game_texture(0),
@@ -137,6 +140,10 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 	OSystem_Android *system = (OSystem_Android *)arg;
 	DefaultTimerManager *timer = (DefaultTimerManager *)(system->_timer);
 
+	// renice this thread to boost the audio thread
+	if (setpriority(PRIO_PROCESS, 0, 19) < 0)
+		warning("couldn't renice the timer thread");
+
 	JNI::attachThread();
 
 	struct timespec tv;
@@ -147,6 +154,72 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 		timer->handler();
 		nanosleep(&tv, 0);
 	}
+
+	JNI::detachThread();
+
+	return 0;
+}
+
+void *OSystem_Android::audioThreadFunc(void *arg) {
+	JNI::attachThread();
+
+	JNI::setAudioPlay();
+
+	OSystem_Android *system = (OSystem_Android *)arg;
+	Audio::MixerImpl *mixer = system->_mixer;
+
+	uint buf_size = system->_audio_buffer_size;
+
+	JNIEnv *env = JNI::getEnv();
+
+	jbyteArray bufa = env->NewByteArray(buf_size);
+
+	byte *buf;
+	int offset, left, written;
+
+	struct timespec tv;
+	tv.tv_sec = 0;
+	tv.tv_nsec = 20 * 1000 * 1000;
+
+	while (!system->_audio_thread_exit) {
+		buf = (byte *)env->GetPrimitiveArrayCritical(bufa, 0);
+		assert(buf);
+
+		mixer->mixCallback(buf, buf_size);
+
+		env->ReleasePrimitiveArrayCritical(bufa, buf, 0);
+
+		offset = 0;
+		left = buf_size;
+		written = 0;
+
+		while (left > 0) {
+			written = JNI::writeAudio(env, bufa, offset, left);
+
+			if (written < 0) {
+				error("AudioTrack error: %d", written);
+				break;
+			}
+
+			// buffer full
+			if (written < left)
+				nanosleep(&tv, 0);
+
+			offset += written;
+			left -= written;
+		}
+
+		if (written < 0)
+			break;
+
+		// sleep a little, prepare the next buffer, and run into the
+		// blocking AudioTrack.write
+		nanosleep(&tv, 0);
+	}
+
+	JNI::setAudioStop();
+
+	env->DeleteLocalRef(bufa);
 
 	JNI::detachThread();
 
@@ -173,7 +246,7 @@ void OSystem_Android::initBackend() {
 
 	gettimeofday(&_startTime, 0);
 
-	_mixer = new Audio::MixerImpl(this, JNI::getAudioSampleRate());
+	_mixer = new Audio::MixerImpl(this, _audio_sample_rate);
 	_mixer->setReady(true);
 
 	JNI::initBackend();
@@ -181,9 +254,16 @@ void OSystem_Android::initBackend() {
 	_timer_thread_exit = false;
 	pthread_create(&_timer_thread, 0, timerThreadFunc, this);
 
+	_audio_thread_exit = false;
+	pthread_create(&_audio_thread, 0, audioThreadFunc, this);
+
 	OSystem::initBackend();
 
 	setupSurface();
+
+	// renice this thread to boost the audio thread
+	if (setpriority(PRIO_PROCESS, 0, 19) < 0)
+		warning("couldn't renice the main thread");
 }
 
 void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
@@ -390,6 +470,9 @@ void OSystem_Android::deleteMutex(MutexRef mutex) {
 
 void OSystem_Android::quit() {
 	ENTER();
+
+	_audio_thread_exit = true;
+	pthread_join(_audio_thread, 0);
 
 	_timer_thread_exit = true;
 	pthread_join(_timer_thread, 0);

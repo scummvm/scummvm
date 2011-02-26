@@ -39,6 +39,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 
 JavaVM *JNI::_vm = 0;
 jobject JNI::_jobj = 0;
+jobject JNI::_jobj_audio_track = 0;
 
 Common::Archive *JNI::_asset_archive = 0;
 OSystem_Android *JNI::_system = 0;
@@ -56,7 +57,6 @@ jfieldID JNI::_FID_ScummVM_nativeScummVM = 0;
 jmethodID JNI::_MID_displayMessageOnOSD = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_initBackend = 0;
-jmethodID JNI::_MID_audioSampleRate = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getPluginDirectories = 0;
@@ -64,8 +64,14 @@ jmethodID JNI::_MID_setupScummVMSurface = 0;
 jmethodID JNI::_MID_destroyScummVMSurface = 0;
 jmethodID JNI::_MID_swapBuffers = 0;
 
+jmethodID JNI::_MID_AudioTrack_pause = 0;
+jmethodID JNI::_MID_AudioTrack_play = 0;
+jmethodID JNI::_MID_AudioTrack_stop = 0;
+jmethodID JNI::_MID_AudioTrack_write = 0;
+
 const JNINativeMethod JNI::_natives[] = {
-	{ "create", "(Landroid/content/res/AssetManager;)V",
+	{ "create", "(Landroid/content/res/AssetManager;"
+				"Landroid/media/AudioTrack;II)V",
 		(void *)JNI::create },
 	{ "nativeDestroy", "()V",
 		(void *)JNI::destroy },
@@ -73,8 +79,6 @@ const JNINativeMethod JNI::_natives[] = {
 	 	(void *)JNI::main },
 	{ "pushEvent", "(Lorg/inodes/gus/scummvm/Event;)V",
 		(void *)JNI::pushEvent },
-	{ "audioMixCallback", "([B)V",
-		(void *)JNI::audioMixCallback },
 	{ "setConfMan", "(Ljava/lang/String;I)V",
 		(void *)JNI::setConfManInt },
 	{ "setConfMan", "(Ljava/lang/String;Ljava/lang/String;)V",
@@ -193,23 +197,6 @@ void JNI::throwByName(JNIEnv *env, const char *name, const char *msg) {
 }
 
 // calls to the dark side
-
-int JNI::getAudioSampleRate() {
-	JNIEnv *env = JNI::getEnv();
-
-	jint sample_rate = env->CallIntMethod(_jobj, _MID_audioSampleRate);
-
-	if (env->ExceptionCheck()) {
-		warning("Error finding audio sample rate - assuming 11025HZ");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-
-		return 11025;
-	}
-
-	return sample_rate;
-}
 
 void JNI::initBackend() {
 	JNIEnv *env = JNI::getEnv();
@@ -342,15 +329,55 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	}
 }
 
+void JNI::setAudioPause() {
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_pause);
+
+	if (env->ExceptionCheck()) {
+		warning("Error setting AudioTrack: pause");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+}
+
+void JNI::setAudioPlay() {
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_play);
+
+	if (env->ExceptionCheck()) {
+		warning("Error setting AudioTrack: play");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+}
+
+void JNI::setAudioStop() {
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_stop);
+
+	if (env->ExceptionCheck()) {
+		warning("Error setting AudioTrack: stop");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+}
+
 // natives for the dark side
 
-void JNI::create(JNIEnv *env, jobject self, jobject am) {
+void JNI::create(JNIEnv *env, jobject self, jobject am, jobject at,
+					jint audio_sample_rate, jint audio_buffer_size) {
 	assert(!_system);
 
 	_asset_archive = new AndroidAssetArchive(am);
 	assert(_asset_archive);
 
-	_system = new OSystem_Android();
+	_system = new OSystem_Android(audio_sample_rate, audio_buffer_size);
 	assert(_system);
 
 	// weak global ref to allow class to be unloaded
@@ -369,7 +396,6 @@ void JNI::create(JNIEnv *env, jobject self, jobject am) {
 	FIND_METHOD(setWindowCaption, "(Ljava/lang/String;)V");
 	FIND_METHOD(displayMessageOnOSD, "(Ljava/lang/String;)V");
 	FIND_METHOD(initBackend, "()V");
-	FIND_METHOD(audioSampleRate, "()I");
 	FIND_METHOD(showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(getPluginDirectories, "()[Ljava/lang/String;");
@@ -380,6 +406,23 @@ void JNI::create(JNIEnv *env, jobject self, jobject am) {
 #undef FIND_METHOD
 
 	env->SetLongField(self, _FID_ScummVM_nativeScummVM, (jlong)_system);
+
+	_jobj_audio_track = env->NewGlobalRef(at);
+
+	cls = env->GetObjectClass(_jobj_audio_track);
+
+#define FIND_METHOD(name, signature) do {									\
+		_MID_AudioTrack_ ## name = env->GetMethodID(cls, #name, signature);	\
+		if (_MID_AudioTrack_ ## name == 0)									\
+			return;															\
+	} while (0)
+
+	FIND_METHOD(pause, "()V");
+	FIND_METHOD(play, "()V");
+	FIND_METHOD(stop, "()V");
+	FIND_METHOD(write, "([BII)I");
+
+#undef FIND_METHOD
 
 	g_system = _system;
 }
@@ -397,6 +440,7 @@ void JNI::destroy(JNIEnv *env, jobject self) {
 
 	// see above
 	//JNI::getEnv()->DeleteWeakGlobalRef(_jobj);
+	JNI::getEnv()->DeleteGlobalRef(_jobj_audio_track);
 	JNI::getEnv()->DeleteGlobalRef(_jobj);
 }
 
@@ -512,25 +556,6 @@ void JNI::pushEvent(JNIEnv *env, jobject self, jobject java_event) {
 	}
 
 	_system->pushEvent(event);
-}
-
-void JNI::audioMixCallback(JNIEnv *env, jobject self, jbyteArray jbuf) {
-	assert(_system);
-
-	jsize len = env->GetArrayLength(jbuf);
-	jbyte *buf = env->GetByteArrayElements(jbuf, 0);
-
-	if (buf == 0) {
-		warning("Unable to get Java audio byte array. Skipping");
-		return;
-	}
-
-	Audio::MixerImpl *mixer =
-		static_cast<Audio::MixerImpl *>(_system->getMixer());
-	assert(mixer);
-	mixer->mixCallback(reinterpret_cast<byte *>(buf), len);
-
-	env->ReleaseByteArrayElements(jbuf, buf, 0);
 }
 
 void JNI::setConfManInt(JNIEnv *env, jclass cls, jstring key_obj, jint value) {

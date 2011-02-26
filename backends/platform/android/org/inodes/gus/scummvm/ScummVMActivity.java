@@ -49,7 +49,7 @@ public class ScummVMActivity extends Activity {
 			}
 		}
 
-		public MyScummVM() {
+		public MyScummVM() throws Exception {
 			super(ScummVMActivity.this);
 
 			// Enable ScummVM zoning on 'small' screens.
@@ -59,7 +59,7 @@ public class ScummVMActivity extends Activity {
 		}
 
 		@Override
-		protected void initBackend() throws ScummVM.AudioSetupException {
+		protected void initBackend() {
 			synchronized (this) {
 				scummvmRunning = true;
 				notifyAll();
@@ -153,7 +153,13 @@ public class ScummVMActivity extends Activity {
 		main_surface.requestFocus();
 
 		// Start ScummVM
-		scummvm = new MyScummVM();
+		try {
+			scummvm = new MyScummVM();
+		} catch (Exception e) {
+			Log.e(ScummVM.LOG_TAG, "Fatal error", e);
+			finish();
+			return;
+		}
 
 		scummvm_thread = new Thread(new Runnable() {
 				public void run() {

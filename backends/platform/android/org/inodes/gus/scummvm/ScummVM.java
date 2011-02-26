@@ -35,19 +35,48 @@ import java.util.LinkedHashMap;
 public class ScummVM implements SurfaceHolder.Callback {
 	protected final static String LOG_TAG = "ScummVM";
 
-	// bytes. 16bit audio * stereo
-	private final int AUDIO_FRAME_SIZE = 2 * 2;
-	public static class AudioSetupException extends Exception {}
-
 	// native code hangs itself here
 	private long nativeScummVM;
 	boolean scummVMRunning = false;
 
-	private native void create(AssetManager am);
+	private native void create(AssetManager am, AudioTrack audio_track,
+								int sample_rate, int buffer_size);
 
-	public ScummVM(Context context) {
+	public ScummVM(Context context) throws Exception {
+		int sample_rate = AudioTrack.getNativeOutputSampleRate(
+							AudioManager.STREAM_MUSIC);
+		int buffer_size = AudioTrack.getMinBufferSize(sample_rate,
+							AudioFormat.CHANNEL_CONFIGURATION_STEREO,
+							AudioFormat.ENCODING_PCM_16BIT);
+
+		// ~100ms
+		int buffer_size_want = (sample_rate * 2 * 2 / 10) & ~1023;
+
+		if (buffer_size < buffer_size_want) {
+			Log.w(LOG_TAG, String.format(
+				"adjusting audio buffer size (was: %d)", buffer_size));
+
+			buffer_size = buffer_size_want;
+		}
+
+		Log.i(LOG_TAG, String.format("Using %d bytes buffer for %dHz audio",
+										buffer_size, sample_rate));
+
+		AudioTrack audio_track =
+			new AudioTrack(AudioManager.STREAM_MUSIC,
+							sample_rate,
+							AudioFormat.CHANNEL_CONFIGURATION_STEREO,
+							AudioFormat.ENCODING_PCM_16BIT,
+							buffer_size,
+							AudioTrack.MODE_STREAM);
+
+		if (audio_track.getState() != AudioTrack.STATE_INITIALIZED)
+			throw new Exception(
+				String.format("Error initialising AudioTrack: %d",
+								audio_track.getState()));
+
 		// Init C++ code, set nativeScummVM
-		create(context.getAssets());
+		create(context.getAssets(), audio_track, sample_rate, buffer_size);
 	}
 
 	private native void nativeDestroy();
@@ -345,8 +374,6 @@ public class ScummVM implements SurfaceHolder.Callback {
 	// Feed an event to ScummVM.  Safe to call from other threads.
 	final public native void pushEvent(Event e);
 
-	final private native void audioMixCallback(byte[] buf);
-
 	// Runs the actual ScummVM program and returns when it does.
 	// This should not be called from multiple threads simultaneously...
 	final public native int scummVMMain(String[] argv);
@@ -359,131 +386,18 @@ public class ScummVM implements SurfaceHolder.Callback {
 	protected String[] getSysArchives() { return new String[0]; }
 	protected String[] getPluginDirectories() { return new String[0]; }
 
-	protected void initBackend() throws AudioSetupException {
+	protected void initBackend() {
 		createScummVMGLContext();
-		initAudio();
-	}
-
-	private static class AudioThread extends Thread {
-		final private int buf_size;
-		private boolean is_paused = false;
-		final private ScummVM scummvm;
-		final private AudioTrack audio_track;
-
-		AudioThread(ScummVM scummvm, AudioTrack audio_track, int buf_size) {
-			super("AudioThread");
-			this.scummvm = scummvm;
-			this.audio_track = audio_track;
-			this.buf_size = buf_size;
-			setPriority(Thread.MAX_PRIORITY);
-			setDaemon(true);
-		}
-
-		public void pauseAudio() {
-			synchronized (this) {
-				is_paused = true;
-			}
-			audio_track.pause();
-		}
-
-		public void resumeAudio() {
-			synchronized (this) {
-				is_paused = false;
-				notifyAll();
-			}
-			audio_track.play();
-		}
-
-		public void run() {
-			byte[] buf = new byte[buf_size];
-			audio_track.play();
-			int offset = 0;
-			try {
-				while (true) {
-					synchronized (this) {
-						while (is_paused)
-							wait();
-					}
-
-					if (offset == buf.length) {
-						// Grab new audio data
-						scummvm.audioMixCallback(buf);
-						offset = 0;
-					}
-
-					int len = buf.length - offset;
-					int ret = audio_track.write(buf, offset, len);
-					if (ret < 0) {
-						Log.w(LOG_TAG, String.format(
-								"AudioTrack.write(%dB) returned error %d",
-								buf.length, ret));
-						break;
-					} else if (ret != len) {
-						Log.w(LOG_TAG, String.format(
-								"Short audio write.	 Wrote %dB, not %dB",
-								ret, buf.length));
-
-						// Buffer is full, so yield cpu for a while
-						Thread.sleep(100);
-					}
-					offset += ret;
-				}
-			} catch (InterruptedException e) {
-				Log.e(LOG_TAG, "Audio thread interrupted", e);
-			}
-		}
-	}
-	private AudioThread audio_thread;
-
-	final public int audioSampleRate() {
-		return AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC);
-	}
-
-	private void initAudio() throws AudioSetupException {
-		int sample_rate = audioSampleRate();
-		int buf_size =
-			AudioTrack.getMinBufferSize(sample_rate,
-										AudioFormat.CHANNEL_CONFIGURATION_STEREO,
-										AudioFormat.ENCODING_PCM_16BIT);
-		if (buf_size < 0) {
-			// 10ms of audio
-			int guess = AUDIO_FRAME_SIZE * sample_rate / 100;
-
-			Log.w(LOG_TAG, String.format(
-				"Unable to get min audio buffer size (error %d). Guessing %dB.",
-				buf_size, guess));
-
-			buf_size = guess;
-		}
-
-		Log.d(LOG_TAG, String.format("Using %dB buffer for %dHZ audio",
-										buf_size, sample_rate));
-
-		AudioTrack audio_track =
-			new AudioTrack(AudioManager.STREAM_MUSIC,
-							sample_rate,
-							AudioFormat.CHANNEL_CONFIGURATION_STEREO,
-							AudioFormat.ENCODING_PCM_16BIT,
-							buf_size,
-							AudioTrack.MODE_STREAM);
-
-		if (audio_track.getState() != AudioTrack.STATE_INITIALIZED) {
-			Log.e(LOG_TAG, "Error initialising Android audio system.");
-			throw new AudioSetupException();
-		}
-
-		audio_thread = new AudioThread(this, audio_track, buf_size);
-		audio_thread.start();
 	}
 
 	public void pause() {
-		audio_thread.pauseAudio();
-		// TODO: need to pause engine too
+		// TODO: need to pause audio
+		// TODO: need to pause engine
 	}
 
 	public void resume() {
-		// TODO: need to resume engine too
-		audio_thread.resumeAudio();
+		// TODO: need to resume audio
+		// TODO: need to resume engine
 	}
 
 	static {

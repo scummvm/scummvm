@@ -92,6 +92,10 @@ protected:
 
 class OSystem_Android : public BaseBackend, public PaletteManager {
 private:
+	// passed from the dark side
+	int _audio_sample_rate;
+	int _audio_buffer_size;
+
 	int _screen_changeid;
 	int _egl_surface_width;
 	int _egl_surface_height;
@@ -123,6 +127,10 @@ private:
 	pthread_t _timer_thread;
 	static void *timerThreadFunc(void *arg);
 
+	bool _audio_thread_exit;
+	pthread_t _audio_thread;
+	static void *audioThreadFunc(void *arg);
+
 	bool _enable_zoning;
 	bool _virtkeybd_on;
 
@@ -137,7 +145,7 @@ private:
 	void _setCursorPalette(const byte *colors, uint start, uint num);
 
 public:
-	OSystem_Android();
+	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
 	virtual ~OSystem_Android();
 
 	virtual void initBackend();

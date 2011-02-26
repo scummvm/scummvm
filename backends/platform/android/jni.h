@@ -48,7 +48,6 @@ public:
 	static void attachThread();
 	static void detachThread();
 
-	static int getAudioSampleRate();
 	static void initBackend();
 	static void getPluginDirectories(Common::FSList &dirs);
 	static void setWindowCaption(const char *caption);
@@ -60,10 +59,18 @@ public:
 	static inline void destroySurface();
 	static inline bool swapBuffers();
 
+	static void setAudioPause();
+	static void setAudioPlay();
+	static void setAudioStop();
+
+	static inline int writeAudio(JNIEnv *env, jbyteArray &data, int offset,
+									int size);
+
 private:
 	static JavaVM *_vm;
 	// back pointer to (java) peer instance
 	static jobject _jobj;
+	static jobject _jobj_audio_track;
 
 	static Common::Archive *_asset_archive;
 	static OSystem_Android *_system;
@@ -81,7 +88,6 @@ private:
 	static jmethodID _MID_displayMessageOnOSD;
 	static jmethodID _MID_setWindowCaption;
 	static jmethodID _MID_initBackend;
-	static jmethodID _MID_audioSampleRate;
 	static jmethodID _MID_showVirtualKeyboard;
 	static jmethodID _MID_getSysArchives;
 	static jmethodID _MID_getPluginDirectories;
@@ -89,16 +95,21 @@ private:
 	static jmethodID _MID_destroyScummVMSurface;
 	static jmethodID _MID_swapBuffers;
 
+	static jmethodID _MID_AudioTrack_pause;
+	static jmethodID _MID_AudioTrack_play;
+	static jmethodID _MID_AudioTrack_stop;
+	static jmethodID _MID_AudioTrack_write;
+
 	static const JNINativeMethod _natives[];
 
 	static void throwByName(JNIEnv *env, const char *name, const char *msg);
 
 	// natives for the dark side
-	static void create(JNIEnv *env, jobject self, jobject am);
+	static void create(JNIEnv *env, jobject self, jobject am, jobject at,
+						jint sample_rate, jint buffer_size);
 	static void destroy(JNIEnv *env, jobject self);
 	static jint main(JNIEnv *env, jobject self, jobjectArray args);
 	static void pushEvent(JNIEnv *env, jobject self, jobject java_event);
-	static void audioMixCallback(JNIEnv *env, jobject self, jbyteArray jbuf);
 	static void setConfManInt(JNIEnv *env, jclass cls, jstring key_obj,
 								jint value);
 	static void setConfManString(JNIEnv *env, jclass cls, jstring key_obj,
@@ -126,6 +137,10 @@ inline bool JNI::swapBuffers() {
 	JNIEnv *env = JNI::getEnv();
 
 	return env->CallBooleanMethod(_jobj, _MID_swapBuffers);
+}
+
+inline int JNI::writeAudio(JNIEnv *env, jbyteArray &data, int offset, int size) {
+	return env->CallIntMethod(_jobj_audio_track, _MID_AudioTrack_write, data, offset, size);
 }
 
 #endif
