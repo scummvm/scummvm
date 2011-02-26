@@ -97,14 +97,11 @@ public class ScummVMActivity extends Activity {
 
 		@Override
 		protected void showVirtualKeyboard(final boolean enable) {
-			if (getResources().getConfiguration().keyboard ==
-				Configuration.KEYBOARD_NOKEYS) {
-				runOnUiThread(new Runnable() {
-						public void run() {
-							showKeyboard(enable);
-						}
-					});
-			}
+			runOnUiThread(new Runnable() {
+					public void run() {
+						showKeyboard(enable);
+					}
+				});
 		}
 	}
 	private MyScummVM scummvm;
@@ -271,18 +268,16 @@ public class ScummVMActivity extends Activity {
 			if (kevent.getRepeatCount() > 0)
 				// Ignore keyrepeat for menu
 				return false;
-			boolean timeout_fired = false;
-			if (getResources().getConfiguration().keyboard ==
-				Configuration.KEYBOARD_NOKEYS) {
-				timeout_fired = !keycodeMenuTimeoutHandler.hasMessages(MSG_MENU_LONG_PRESS);
-				keycodeMenuTimeoutHandler.removeMessages(MSG_MENU_LONG_PRESS);
-				if (kevent.getAction() == KeyEvent.ACTION_DOWN) {
-					keycodeMenuTimeoutHandler.sendMessageDelayed(
-																 keycodeMenuTimeoutHandler.obtainMessage(MSG_MENU_LONG_PRESS),
-																 ViewConfiguration.getLongPressTimeout());
-					return true;
-				}
+
+			boolean timeout_fired = !keycodeMenuTimeoutHandler.hasMessages(MSG_MENU_LONG_PRESS);
+			keycodeMenuTimeoutHandler.removeMessages(MSG_MENU_LONG_PRESS);
+
+			if (kevent.getAction() == KeyEvent.ACTION_DOWN) {
+				keycodeMenuTimeoutHandler.sendMessageDelayed(keycodeMenuTimeoutHandler.obtainMessage(MSG_MENU_LONG_PRESS),
+															 ViewConfiguration.getLongPressTimeout());
+				return true;
 			}
+
 			if (kevent.getAction() == KeyEvent.ACTION_UP) {
 				if (!timeout_fired)
 					scummvm.pushEvent(new Event(Event.EVENT_MAINMENU));
