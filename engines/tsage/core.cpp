@@ -1045,21 +1045,21 @@ void PaletteRotation::signal() {
 
 	bool flag = true;
 	switch (_rotationMode) {
-	case 0:
+	case -1:
 		if (--_currIndex < _start) {
 			flag = decDuration();
 			if (flag)
 				_currIndex = _end - 1;
 		}
 		break;
-	case 2:
+	case 1:
 		if (++_currIndex >= _end) {
 			flag = decDuration();
 			if (flag)
 				_currIndex = _start;
 		}
 		break;
-	case 3:
+	case 2:
 		if (++_currIndex >= _end) {
 			flag = decDuration();
 			if (flag) {
@@ -1068,7 +1068,7 @@ void PaletteRotation::signal() {
 			}
 		}
 		break;
-	case 4:
+	case 3:
 		if (--_currIndex < _start) {
 			flag = decDuration();
 			if (flag) {
@@ -1114,9 +1114,9 @@ void PaletteRotation::set(ScenePalette *palette, int start, int end, int rotatio
 	_end = end + 1;
 	_rotationMode = rotationMode;
 
-	switch (_rotationMode + 1) {
-	case 0:
-	case 4:
+	switch (_rotationMode) {
+	case -1:
+	case 3:
 		_currIndex = _end;
 		break;
 	default:
@@ -1284,6 +1284,7 @@ PaletteRotation *ScenePalette::addRotation(int start, int end, int rotationMode,
 		duration <<= 1;
 
 	obj->set(this, start, end, rotationMode, duration, action);
+	_listeners.push_back(obj);
 	return obj;
 }
 
