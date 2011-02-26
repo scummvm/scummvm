@@ -401,7 +401,7 @@ void OSystem_Android::copyRectToOverlay(const OverlayColor *buf, int pitch,
 	_overlay_texture->updateBuffer(x, y, w, h, buf, pitch * sizeof(buf[0]));
 
 	// Shouldn't need this, but works around a 'blank screen' bug on Nexus1?
-	updateScreen();
+	//updateScreen();
 }
 
 int16 OSystem_Android::getOverlayHeight() {
