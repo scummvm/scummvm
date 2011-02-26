@@ -13,11 +13,12 @@ public class ScummVMApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
 		// This is still on /data :(
 		cache_dir = getCacheDir();
 		// This is mounted noexec :(
 		//cache_dir = new File(Environment.getExternalStorageDirectory(),
-		//			 "/.ScummVM.tmp");
+		//				"/.ScummVM.tmp");
 		// This is owned by download manager and requires special
 		// permissions to access :(
 		//cache_dir = Environment.getDownloadCacheDirectory();
@@ -27,3 +28,4 @@ public class ScummVMApplication extends Application {
 		return cache_dir;
 	}
 }
+

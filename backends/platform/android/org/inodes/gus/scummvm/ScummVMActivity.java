@@ -38,6 +38,7 @@ public class ScummVMActivity extends Activity {
 			// devices :(
 			DisplayMetrics metrics = new DisplayMetrics();
 			getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
 			try {
 				// This 'density' term is very confusing.
 				int DENSITY_LOW = metrics.getClass().getField("DENSITY_LOW").getInt(null);
@@ -63,6 +64,7 @@ public class ScummVMActivity extends Activity {
 				scummvmRunning = true;
 				notifyAll();
 			}
+
 			super.initBackend();
 		}
 
@@ -104,6 +106,7 @@ public class ScummVMActivity extends Activity {
 				});
 		}
 	}
+
 	private MyScummVM scummvm;
 	private Thread scummvm_thread;
 
@@ -125,18 +128,18 @@ public class ScummVMActivity extends Activity {
 				.setIcon(android.R.drawable.ic_dialog_alert)
 				.setMessage(R.string.no_sdcard)
 				.setNegativeButton(R.string.quit,
-								   new DialogInterface.OnClickListener() {
-									   public void onClick(DialogInterface dialog,
-														   int which) {
-										   finish();
-									   }
-								   })
+									new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog,
+															int which) {
+											finish();
+										}
+									})
 				.show();
+
 			return;
 		}
 
 		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
-		
 		main_surface.setOnTouchListener(new View.OnTouchListener() {
 				public boolean onTouch(View v, MotionEvent event) {
 					return onTouchEvent(event);
@@ -151,6 +154,7 @@ public class ScummVMActivity extends Activity {
 
 		// Start ScummVM
 		scummvm = new MyScummVM();
+
 		scummvm_thread = new Thread(new Runnable() {
 				public void run() {
 					try {
@@ -166,6 +170,7 @@ public class ScummVMActivity extends Activity {
 					}
 				}
 			}, "ScummVM");
+
 		scummvm_thread.start();
 
 		// Block UI thread until ScummVM has started.  In particular,
@@ -207,14 +212,17 @@ public class ScummVMActivity extends Activity {
 			was_paused = true;
 			scummvm.pause();
 		}
+
 		super.onPause();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+
 		if (scummvm != null && was_paused)
 			scummvm.resume();
+
 		was_paused = false;
 	}
 
@@ -222,16 +230,20 @@ public class ScummVMActivity extends Activity {
 	public void onStop() {
 		if (scummvm != null) {
 			scummvm.pushEvent(new Event(Event.EVENT_QUIT));
+
 			try {
-				scummvm_thread.join(1000);	// 1s timeout
+				// 1s timeout
+				scummvm_thread.join(1000);
 			} catch (InterruptedException e) {
 				Log.i(ScummVM.LOG_TAG, "Error while joining ScummVM thread", e);
 			}
 		}
+
 		super.onStop();
 	}
 
 	static final int MSG_MENU_LONG_PRESS = 1;
+
 	private final Handler keycodeMenuTimeoutHandler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -251,7 +263,7 @@ public class ScummVMActivity extends Activity {
 
 	@Override
 	public boolean onKeyMultiple(int keyCode, int repeatCount,
-									 KeyEvent kevent) {
+									KeyEvent kevent) {
 		return onKeyDown(keyCode, kevent);
 	}
 
@@ -261,12 +273,12 @@ public class ScummVMActivity extends Activity {
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_MENU:
 			// Have to reimplement hold-down-menu-brings-up-softkeybd
-			// ourselves, since we are otherwise hijacking the menu
-			// key :(
+			// ourselves, since we are otherwise hijacking the menu key :(
 			// See com.android.internal.policy.impl.PhoneWindow.onKeyDownPanel()
 			// for the usual Android implementation of this feature.
+
+			// Ignore keyrepeat for menu
 			if (kevent.getRepeatCount() > 0)
-				// Ignore keyrepeat for menu
 				return false;
 
 			boolean timeout_fired = !keycodeMenuTimeoutHandler.hasMessages(MSG_MENU_LONG_PRESS);
@@ -274,20 +286,24 @@ public class ScummVMActivity extends Activity {
 
 			if (kevent.getAction() == KeyEvent.ACTION_DOWN) {
 				keycodeMenuTimeoutHandler.sendMessageDelayed(keycodeMenuTimeoutHandler.obtainMessage(MSG_MENU_LONG_PRESS),
-															 ViewConfiguration.getLongPressTimeout());
+																ViewConfiguration.getLongPressTimeout());
 				return true;
 			}
 
 			if (kevent.getAction() == KeyEvent.ACTION_UP) {
 				if (!timeout_fired)
 					scummvm.pushEvent(new Event(Event.EVENT_MAINMENU));
+
 				return true;
 			}
+
 			return false;
+
 		case KeyEvent.KEYCODE_CAMERA:
 		case KeyEvent.KEYCODE_SEARCH:
 			_do_right_click = (kevent.getAction() == KeyEvent.ACTION_DOWN);
 			return true;
+
 		case KeyEvent.KEYCODE_DPAD_CENTER:
 		case KeyEvent.KEYCODE_DPAD_UP:
 		case KeyEvent.KEYCODE_DPAD_DOWN:
@@ -299,45 +315,59 @@ public class ScummVMActivity extends Activity {
 			// Some other handsets lack a trackball, so the DPAD is
 			// the only way of moving the cursor.
 			int motion_action;
+
 			// FIXME: this logic is a mess.
 			if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
 				switch (kevent.getAction()) {
 				case KeyEvent.ACTION_DOWN:
 					motion_action = MotionEvent.ACTION_DOWN;
 					break;
+
 				case KeyEvent.ACTION_UP:
 					motion_action = MotionEvent.ACTION_UP;
 					break;
-				default:  // ACTION_MULTIPLE
+
+				// ACTION_MULTIPLE
+				default:
 					return false;
 				}
-			} else
+			} else {
 				motion_action = MotionEvent.ACTION_MOVE;
+			}
 
 			Event e = new Event(getEventType(motion_action));
+
 			e.mouse_x = 0;
 			e.mouse_y = 0;
 			e.mouse_relative = true;
+
 			switch (keyCode) {
 			case KeyEvent.KEYCODE_DPAD_UP:
 				e.mouse_y = -TRACKBALL_SCALE;
 				break;
+
 			case KeyEvent.KEYCODE_DPAD_DOWN:
 				e.mouse_y = TRACKBALL_SCALE;
 				break;
+
 			case KeyEvent.KEYCODE_DPAD_LEFT:
 				e.mouse_x = -TRACKBALL_SCALE;
 				break;
+
 			case KeyEvent.KEYCODE_DPAD_RIGHT:
 				e.mouse_x = TRACKBALL_SCALE;
 				break;
 			}
+
 			scummvm.pushEvent(e);
+
 			return true;
 		}
+
 		case KeyEvent.KEYCODE_BACK:
 			// skip isSystem() check and fall through to main code
 			break;
+
 		default:
 			if (kevent.isSystem())
 				return false;
@@ -352,51 +382,63 @@ public class ScummVMActivity extends Activity {
 			e.type = Event.EVENT_KEYDOWN;
 			e.synthetic = false;
 			break;
+
 		case KeyEvent.ACTION_UP:
 			e.type = Event.EVENT_KEYUP;
 			e.synthetic = false;
 			break;
+
 		case KeyEvent.ACTION_MULTIPLE:
 			// e.type is handled below
 			e.synthetic = true;
 			break;
+
 		default:
 			return false;
 		}
 
 		e.kbd_keycode = Event.androidKeyMap.containsKey(keyCode) ?
 			Event.androidKeyMap.get(keyCode) : Event.KEYCODE_INVALID;
+
 		e.kbd_ascii = kevent.getUnicodeChar();
+
 		if (e.kbd_ascii == 0)
 			e.kbd_ascii = e.kbd_keycode; // scummvm keycodes are mostly ascii
 
-
 		e.kbd_flags = 0;
+
 		if (kevent.isAltPressed())
 			e.kbd_flags |= Event.KBD_ALT;
-		if (kevent.isSymPressed()) // no ctrl key in android, so use sym (?)
+
+		// no ctrl key in android, so use sym (?)
+		if (kevent.isSymPressed())
 			e.kbd_flags |= Event.KBD_CTRL;
+
 		if (kevent.isShiftPressed()) {
 			if (keyCode >= KeyEvent.KEYCODE_0 &&
-				keyCode <= KeyEvent.KEYCODE_9) {
+					keyCode <= KeyEvent.KEYCODE_9) {
 				// Shift+number -> convert to F* key
 				int offset = keyCode == KeyEvent.KEYCODE_0 ?
 					10 : keyCode - KeyEvent.KEYCODE_1; // turn 0 into 10
+
 				e.kbd_keycode = Event.KEYCODE_F1 + offset;
 				e.kbd_ascii = Event.ASCII_F1 + offset;
-			} else
+			} else {
 				e.kbd_flags |= Event.KBD_SHIFT;
+			}
 		}
 
 		if (kevent.getAction() == KeyEvent.ACTION_MULTIPLE) {
 			for (int i = 0; i <= kevent.getRepeatCount(); i++) {
 				e.type = Event.EVENT_KEYDOWN;
 				scummvm.pushEvent(e);
+
 				e.type = Event.EVENT_KEYUP;
 				scummvm.pushEvent(e);
 			}
-		} else
+		} else {
 			scummvm.pushEvent(e);
+		}
 
 		return true;
 	}
@@ -407,11 +449,14 @@ public class ScummVMActivity extends Activity {
 			_last_click_was_right = _do_right_click;
 			return _last_click_was_right ?
 				Event.EVENT_RBUTTONDOWN : Event.EVENT_LBUTTONDOWN;
+
 		case MotionEvent.ACTION_UP:
 			return _last_click_was_right ?
 				Event.EVENT_RBUTTONUP : Event.EVENT_LBUTTONUP;
+
 		case MotionEvent.ACTION_MOVE:
 			return Event.EVENT_MOUSEMOVE;
+
 		default:
 			return Event.EVENT_INVALID;
 		}
@@ -429,6 +474,7 @@ public class ScummVMActivity extends Activity {
 		e.mouse_y =
 			(int)(event.getY() * event.getYPrecision()) * TRACKBALL_SCALE;
 		e.mouse_relative = true;
+
 		scummvm.pushEvent(e);
 
 		return true;
@@ -437,6 +483,7 @@ public class ScummVMActivity extends Activity {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		int type = getEventType(event.getAction());
+
 		if (type == Event.EVENT_INVALID)
 			return false;
 
@@ -444,6 +491,7 @@ public class ScummVMActivity extends Activity {
 		e.mouse_x = (int)event.getX();
 		e.mouse_y = (int)event.getY();
 		e.mouse_relative = false;
+
 		scummvm.pushEvent(e);
 
 		return true;
@@ -453,6 +501,7 @@ public class ScummVMActivity extends Activity {
 		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
 		InputMethodManager imm = (InputMethodManager)
 			getSystemService(INPUT_METHOD_SERVICE);
+
 		if (show)
 			imm.showSoftInput(main_surface, InputMethodManager.SHOW_IMPLICIT);
 		else
@@ -460,3 +509,4 @@ public class ScummVMActivity extends Activity {
 										InputMethodManager.HIDE_IMPLICIT_ONLY);
 	}
 }
+

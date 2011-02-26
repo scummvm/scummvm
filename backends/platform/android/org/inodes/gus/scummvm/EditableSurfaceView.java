@@ -19,7 +19,7 @@ public class EditableSurfaceView extends SurfaceView {
 	}
 
 	public EditableSurfaceView(Context context, AttributeSet attrs,
-							   int defStyle) {
+								int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
@@ -40,7 +40,9 @@ public class EditableSurfaceView extends SurfaceView {
 					getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(getWindowToken(), 0);
 			}
-			return super.performEditorAction(actionCode); // Sends enter key
+
+			// Sends enter key
+			return super.performEditorAction(actionCode);
 		}
 	}
 
@@ -49,11 +51,12 @@ public class EditableSurfaceView extends SurfaceView {
 		outAttrs.initialCapsMode = 0;
 		outAttrs.initialSelEnd = outAttrs.initialSelStart = -1;
 		outAttrs.inputType = (InputType.TYPE_CLASS_TEXT |
-							  InputType.TYPE_TEXT_VARIATION_NORMAL |
-							  InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
+								InputType.TYPE_TEXT_VARIATION_NORMAL |
+								InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
 		outAttrs.imeOptions = (EditorInfo.IME_ACTION_DONE |
-							   EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+								EditorInfo.IME_FLAG_NO_EXTRACT_UI);
 
 		return new MyInputConnection();
 	}
 }
+
