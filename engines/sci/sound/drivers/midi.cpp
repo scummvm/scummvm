@@ -604,10 +604,13 @@ void MidiPlayer_Midi::readMt32DrvData() {
 	if (f.open("MT32.DRV")) {
 		int size = f.size();
 
-		assert(size >= 166);
-
-		// Send before-SysEx text
-		f.seek(0x59);
+		// Skip before-SysEx text
+		if (size == 1773 || size == 1759)	// XMAS88 / KQ4 early
+			f.seek(0x59);
+		else if (size == 2771)				// LSL2 early
+			f.seek(0x29);
+		else
+			error("Unknown MT32.DRV size (%d)", size);
 
 		// Skip 2 extra 0 bytes in some drivers
 		if (f.readUint16LE() != 0)
@@ -620,25 +623,58 @@ void MidiPlayer_Midi::readMt32DrvData() {
 
 		// Save goodbye message
 		f.read(_goodbyeMsg, 20);
+		_goodbyeMsg[19] = 0;	// make sure that the message is nul-terminated
 
 		// Set volume
 		byte volume = CLIP<uint16>(f.readUint16LE(), 0, 100);
 		setMt32Volume(volume);
 
-		byte reverbSysEx[13];
-		// This old driver should have a full reverb SysEx
-		if ((f.read(reverbSysEx, 13) != 13) || (reverbSysEx[0] != 0xf0) || (reverbSysEx[12] != 0xf7))
-			error("Error reading MT32.DRV");
+		if (size == 2771) {
+			// MT32.DRV in LSL2 early contains more data, like a normal patch
+			byte reverb = f.readByte();
 
-		// Send reverb SysEx
-		sysEx(reverbSysEx + 1, 11);
-		_hasReverb = false;
+			_hasReverb = true;
 
-		f.seek(0x29);
+			// Skip reverb SysEx message
+			f.skip(11);
 
-		// Read AdLib->MT-32 patch map
-		for (int i = 0; i < 48; i++) {
-			_patchMap[i] = f.readByte();
+			// Read reverb data (stored vertically - patch #3117434)
+			for (int j = 0; j < 3; ++j) {
+				for (int i = 0; i < kReverbConfigNr; i++) {
+					_reverbConfig[i][j] = f.readByte();
+				}
+			}
+
+			f.skip(2235);	// skip driver code
+
+			// Patches 1-48
+			sendMt32SysEx(0x50000, static_cast<Common::SeekableReadStream *>(&f), 256);
+			sendMt32SysEx(0x50200, static_cast<Common::SeekableReadStream *>(&f), 128);
+
+			setReverb(reverb);
+
+			// Send after-SysEx text
+			f.seek(0);
+			sendMt32SysEx(0x200000, static_cast<Common::SeekableReadStream *>(&f), 20);
+
+			// Send the mystery SysEx
+			sendMt32SysEx(0x52000a, (const byte *)"\x16\x16\x16\x16\x16\x16", 6);
+		} else {
+			byte reverbSysEx[13];
+			// This old driver should have a full reverb SysEx
+			if ((f.read(reverbSysEx, 13) != 13) || (reverbSysEx[0] != 0xf0) || (reverbSysEx[12] != 0xf7))
+				error("Error reading MT32.DRV");
+
+			// Send reverb SysEx
+			sysEx(reverbSysEx + 1, 11);
+			_hasReverb = false;
+
+			f.seek(0x29);
+
+			// Read AdLib->MT-32 patch map
+			for (int i = 0; i < 48; i++) {
+				_patchMap[i] = f.readByte();
+			}
 		}
 
 		f.close();
