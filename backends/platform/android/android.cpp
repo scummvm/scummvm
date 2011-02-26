@@ -176,7 +176,7 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 
 	byte *buf;
 	int offset, left, written;
-	int samples;
+	int samples, i;
 
 	struct timespec tv_delay;
 	tv_delay.tv_sec = 0;
@@ -188,6 +188,7 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 	tv_full.tv_sec = 0;
 	tv_full.tv_nsec = msecs_full * 1000 * 1000;
 
+	bool silence;
 	uint silence_count = 0;
 
 	while (!system->_audio_thread_exit) {
@@ -196,9 +197,24 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 
 		samples = mixer->mixCallback(buf, buf_size);
 
+		silence = samples < 1;
+
+		// looks stupid, and it is, but currently there's no way to detect
+		// silence-only buffers from the mixer
+		if (!silence) {
+			silence = true;
+
+			for (i = 0; i < samples; i += 2)
+				// SID streams constant crap
+				if (READ_UINT16(buf + i) > 32) {
+					silence = false;
+					break;
+				}
+		}
+
 		env->ReleasePrimitiveArrayCritical(bufa, buf, 0);
 
-		if (samples < 1) {
+		if (silence) {
 			if (!paused)
 				silence_count++;
 
