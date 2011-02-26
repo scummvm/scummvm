@@ -371,7 +371,7 @@ void GfxAnimate::update() {
 			it->showBitsFlag = true;
 
 			it->signal &= ~(kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
-			if ((it->signal & kSignalIgnoreActor) == 0) {
+			if (!(it->signal & kSignalIgnoreActor)) {
 				rect = it->celRect;
 				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(it->priority) - 1, rect.top, rect.bottom - 1);
 				_paint16->fillRect(rect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
@@ -563,7 +563,7 @@ void GfxAnimate::addToPicDrawCels() {
 
 		// draw corresponding cel
 		_paint16->drawCel(view, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
-		if ((it->signal & kSignalIgnoreActor) == 0) {
+		if (!(it->signal & kSignalIgnoreActor)) {
 			it->celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(it->priority) - 1, it->celRect.top, it->celRect.bottom - 1);
 			_paint16->fillRect(it->celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
 		}
