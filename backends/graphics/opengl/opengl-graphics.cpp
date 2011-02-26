@@ -560,7 +560,8 @@ void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int 
 #endif
 
 	// Allocate space for cursor data
-	if (_cursorData.w != w || _cursorData.h != h)
+	if (_cursorData.w != w || _cursorData.h != h ||
+			_cursorData.bytesPerPixel != _cursorFormat.bytesPerPixel)
 		_cursorData.create(w, h, _cursorFormat.bytesPerPixel);
 
 	// Save cursor data
