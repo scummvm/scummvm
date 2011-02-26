@@ -52,7 +52,6 @@ jfieldID JNI::_FID_Event_kbd_flags = 0;
 jfieldID JNI::_FID_Event_mouse_x = 0;
 jfieldID JNI::_FID_Event_mouse_y = 0;
 jfieldID JNI::_FID_Event_mouse_relative = 0;
-jfieldID JNI::_FID_ScummVM_nativeScummVM = 0;
 
 jmethodID JNI::_MID_displayMessageOnOSD = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
@@ -109,10 +108,6 @@ jint JNI::onLoad(JavaVM *vm) {
 		return JNI_ERR;
 
 	if (env->RegisterNatives(cls, _natives, ARRAYSIZE(_natives)) < 0)
-		return JNI_ERR;
-
-	_FID_ScummVM_nativeScummVM = env->GetFieldID(cls, "nativeScummVM", "J");
-	if (_FID_ScummVM_nativeScummVM == 0)
 		return JNI_ERR;
 
 	jclass event = env->FindClass("org/inodes/gus/scummvm/Event");
@@ -415,8 +410,6 @@ void JNI::create(JNIEnv *env, jobject self, jobject am, jobject at,
 
 #undef FIND_METHOD
 
-	env->SetLongField(self, _FID_ScummVM_nativeScummVM, (jlong)_system);
-
 	_jobj_audio_track = env->NewGlobalRef(at);
 
 	cls = env->GetObjectClass(_jobj_audio_track);
@@ -439,7 +432,8 @@ void JNI::create(JNIEnv *env, jobject self, jobject am, jobject at,
 }
 
 void JNI::destroy(JNIEnv *env, jobject self) {
-	assert(_system);
+	if (!_system)
+		return;
 
 	OSystem_Android *tmp = _system;
 	g_system = 0;

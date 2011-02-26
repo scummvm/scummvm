@@ -35,10 +35,6 @@ import java.util.LinkedHashMap;
 public class ScummVM implements SurfaceHolder.Callback {
 	protected final static String LOG_TAG = "ScummVM";
 
-	// native code hangs itself here
-	private long nativeScummVM;
-	boolean scummVMRunning = false;
-
 	private native void create(AssetManager am, AudioTrack audio_track,
 								int sample_rate, int buffer_size);
 
@@ -75,17 +71,14 @@ public class ScummVM implements SurfaceHolder.Callback {
 				String.format("Error initialising AudioTrack: %d",
 								audio_track.getState()));
 
-		// Init C++ code, set nativeScummVM
+		// Init C++ code
 		create(context.getAssets(), audio_track, sample_rate, buffer_size);
 	}
 
 	private native void nativeDestroy();
 
 	public synchronized void destroy() {
-		if (nativeScummVM != 0) {
-			nativeDestroy();
-			nativeScummVM = 0;
-		}
+		nativeDestroy();
 	}
 
 	protected void finalize() {
@@ -295,6 +288,7 @@ public class ScummVM implements SurfaceHolder.Callback {
 
 	// Called by ScummVM thread
 	static private boolean _log_version = true;
+
 	protected void setupScummVMSurface() {
 		try {
 			surfaceLock.acquire();
