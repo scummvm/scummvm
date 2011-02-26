@@ -37,6 +37,64 @@
 
 namespace Hugo {
 
+/**
+ * Following defines the action types and action list
+ */
+enum action_t {                                     // Parameters:
+	ANULL              = 0xff,                      // Special NOP used to 'delete' events in DEL_EVENTS
+	ASCHEDULE          = 0,                         //  0 - Ptr to action list to be rescheduled
+	START_OBJ,                                      //  1 - Object number
+	INIT_OBJXY,                                     //  2 - Object number, x,y
+	PROMPT,                                         //  3 - index of prompt & response string, ptrs to action
+	                                                //      lists.  First if response matches, 2nd if not.
+	BKGD_COLOR,                                     //  4 - new background color
+	INIT_OBJVXY,                                    //  5 - Object number, vx, vy
+	INIT_CARRY,                                     //  6 - Object number, carried status
+	INIT_HF_COORD,                                  //  7 - Object number (gets hero's 'feet' coordinates)
+	NEW_SCREEN,                                     //  8 - New screen number
+	INIT_OBJSTATE,                                  //  9 - Object number, new object state
+	INIT_PATH,                                      // 10 - Object number, new path type
+	COND_R,                                         // 11 - Conditional on object state - req state, 2 act_lists
+	TEXT,                                           // 12 - Simple text box
+	SWAP_IMAGES,                                    // 13 - Swap 2 object images
+	COND_SCR,                                       // 14 - Conditional on current screen
+	AUTOPILOT,                                      // 15 - Set object to home in on another (stationary) object
+	INIT_OBJ_SEQ,                                   // 16 - Object number, sequence index to set curr_seq_p to
+	SET_STATE_BITS,                                 // 17 - Objnum, mask to OR with obj states word
+	CLEAR_STATE_BITS,                               // 18 - Objnum, mask to ~AND with obj states word
+	TEST_STATE_BITS,                                // 19 - Objnum, mask to test obj states word
+	DEL_EVENTS,                                     // 20 - Action type to delete all occurrences of
+	GAMEOVER,                                       // 21 - Disable hero & commands.  Game is over
+	INIT_HH_COORD,                                  // 22 - Object number (gets hero's actual coordinates)
+	EXIT,                                           // 23 - Exit game back to DOS
+	BONUS,                                          // 24 - Get score bonus for an action
+	COND_BOX,                                       // 25 - Conditional on object within bounding box
+	SOUND,                                          // 26 - Set currently playing sound
+	ADD_SCORE,                                      // 27 - Add object's value to current score
+	SUB_SCORE,                                      // 28 - Subtract object's value from current score
+	COND_CARRY,                                     // 29 - Conditional on carrying object
+	INIT_MAZE,                                      // 30 - Start special maze hotspot processing
+	EXIT_MAZE,                                      // 31 - Exit special maze processing
+	INIT_PRIORITY,                                  // 32 - Initialize fbg field
+	INIT_SCREEN,                                    // 33 - Initialise screen field of object
+	AGSCHEDULE,                                     // 34 - Global schedule - lasts over new screen
+	REMAPPAL,                                       // 35 - Remappe palette - palette index, color
+	COND_NOUN,                                      // 36 - Conditional on noun appearing in line
+	SCREEN_STATE,                                   // 37 - Set new screen state - used for comments
+	INIT_LIPS,                                      // 38 - Position lips object for supplied object
+	INIT_STORY_MODE,                                // 39 - Set story mode TRUE/FALSE (user can't type)
+	WARN,                                           // 40 - Same as TEXT but can't dismiss box by typing
+	COND_BONUS,                                     // 41 - Conditional on bonus having been scored
+	TEXT_TAKE,                                      // 42 - Issue text box with "take" info string
+	YESNO,                                          // 43 - Prompt user for Yes or No
+	STOP_ROUTE,                                     // 44 - Skip any route in progress (hero still walks)
+	COND_ROUTE,                                     // 45 - Conditional on route in progress
+	INIT_JUMPEXIT,                                  // 46 - Initialize status.jumpexit
+	INIT_VIEW,                                      // 47 - Initialize viewx, viewy, dir
+	INIT_OBJ_FRAME,                                 // 48 - Object number, seq,frame to set curr_seq_p to
+	OLD_SONG           = 49                         // Added by Strangerke - Set currently playing sound, old way: that is, using a string index instead of a reference in a file
+};
+
 struct act0 {                                       // Type 0 - Schedule
 	action_t actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
@@ -450,6 +508,14 @@ struct event_t {
 	struct event_t *nextEvent;                      // Chain to next event
 };
 
+/**
+ * Following are points for achieving certain actions.
+ */
+struct point_t {
+	byte score;                                     // The value of the point
+	bool scoredFl;                                  // Whether scored yet
+};
+
 class Scheduler {
 public:
 	Scheduler(HugoEngine *vm);
@@ -458,22 +524,23 @@ public:
 	virtual void decodeString(char *line) = 0;
 	virtual void runScheduler() = 0;
 
-	void freeActListArr();
+	int16 calcMaxPoints() const;
+
+	void freeScheduler();
+	void initCypher();
 	void initEventQueue();
 	void insertActionList(const uint16 actIndex);
 	void loadActListArr(Common::ReadStream &in);
 	void loadAlNewscrIndex(Common::ReadStream &in);
+	void loadPoints(Common::SeekableReadStream &in);
+	void loadScreenAct(Common::SeekableReadStream &in);
 	void newScreen(const int screenIndex);
 	void processBonus(const int bonusIndex);
 	void processMaze(const int x1, const int x2, const int y1, const int y2);
+	void restoreSchedulerData(Common::ReadStream *in);
 	void restoreScreen(const int screenIndex);
-	void restoreEvents(Common::ReadStream *f);
-	void saveEvents(Common::WriteStream *f);
+	void saveSchedulerData(Common::WriteStream *out);
 	void waitForRefresh();
-
-	void findAction(act* action, int16* index, int16* subElem);
-	void saveActions(Common::WriteStream* f) const;
-	void restoreActions(Common::ReadStream *f);
 
 protected:
 	HugoEngine *_vm;
@@ -481,8 +548,15 @@ protected:
 	static const int kMaxEvents = 50;               // Max events in event queue
 	static const int kShiftSize = 8;                // Place hero this far inside bounding box
 
+	Common::String _cypher;
+
 	uint16   _actListArrSize;
 	uint16   _alNewscrIndex;
+	uint16   _screenActsSize;
+	uint16 **_screenActs;
+
+	byte     _numBonuses;
+	point_t *_points;
 
 	uint32 _curTick;                                // Current system time in ticks
 	uint32 _oldTime;                                // The previous wall time in ticks
@@ -509,7 +583,17 @@ protected:
 
 	void delEventType(const action_t actTypeDel);
 	void delQueue(event_t *curEvent);
+	void findAction(act* action, int16* index, int16* subElem);
 	void insertAction(act *action);
+	void readAct(Common::ReadStream &in, act &curAct);
+	void restoreActions(Common::ReadStream *f);
+	void restoreEvents(Common::ReadStream *f);
+	void restorePoints(Common::ReadStream *in);
+	void saveActions(Common::WriteStream* f) const;
+	void saveEvents(Common::WriteStream *f);
+	void savePoints(Common::WriteStream *out) const;
+	void screenActions(const int screenNum);
+
 };
 
 class Scheduler_v1d : public Scheduler {

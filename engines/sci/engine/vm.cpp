@@ -47,6 +47,10 @@ const reg_t NULL_REG = {0, 0};
 const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
 const reg_t TRUE_REG = {0, 1};
 //#define VM_DEBUG_SEND
+// Enable the define below to have the VM abort on cases where a conditional 
+// statement is followed by an unconditional jump (which will most likely lead
+// to an infinite loop). Aids in detecting script bugs such as #3040722.
+//#define ABORT_ON_INFINITE_LOOP
 
 #define SCI_XS_CALLEE_LOCALS ((SegmentId)-1)
 
@@ -131,21 +135,6 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 	return 0;
 }
 
-static int validate_arithmetic(reg_t reg) {
-	if (reg.segment) {
-		// The results of this are likely unpredictable... It most likely means that a kernel function is returning something wrong.
-		// If such an error occurs, we usually need to find the last kernel function called and check its return value.
-		error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]. Address: %04x:%04x", reg.segment, PRINT_REG(reg));
-		return 0;
-	}
-
-	return reg.offset;
-}
-
-static int signed_validate_arithmetic(reg_t reg) {
-	return (int16)validate_arithmetic(reg);
-}
-
 static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index) {
 	const char *names[4] = {"global", "local", "temp", "param"};
 
@@ -176,33 +165,7 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 	return true;
 }
 
-static bool validate_unsignedInteger(reg_t reg, uint16 &integer) {
-	if (reg.segment)
-		return false;
-	integer = reg.offset;
-	return true;
-}
-
-static bool validate_signedInteger(reg_t reg, int16 &integer) {
-	if (reg.segment)
-		return false;
-	integer = (int16)reg.offset;
-	return true;
-}
-
 extern const char *opcodeNames[]; // from scriptdebug.cpp
-
-static reg_t arithmetic_lookForWorkaround(const byte opcode, const SciWorkaroundEntry *workaroundList, reg_t value1, reg_t value2) {
-	SciTrackOriginReply originReply;
-	SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, workaroundList, &originReply);
-	if (solution.type == WORKAROUND_NONE)
-		error("%s on non-integer (%04x:%04x, %04x:%04x) from method %s::%s (script %d, room %d, localCall %x)", 
-		opcodeNames[opcode], PRINT_REG(value1), PRINT_REG(value2), originReply.objectName.c_str(), 
-		originReply.methodName.c_str(), originReply.scriptNr, g_sci->getEngineState()->currentRoomNumber(),
-		originReply.localCallOffset);
-	assert(solution.type == WORKAROUND_FAKE);
-	return make_reg(0, solution.value);
-}
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, reg_t default_value) {
 	if (validate_variable(r, stack_base, type, max, index)) {
@@ -427,12 +390,12 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
 
 	while (framesize > 0) {
-		selector = validate_arithmetic(*argp++);
-		argc = validate_arithmetic(*argp);
+		selector = argp->requireUint16();
+		argp++;
+		argc = argp->requireUint16();
 
-		if (argc > 0x800) { // More arguments than the stack could possibly accomodate for
+		if (argc > 0x800)	// More arguments than the stack could possibly accomodate for
 			error("send_selector(): More than 0x800 arguments to function call");
-		}
 
 #ifdef VM_DEBUG_SEND
 		debugN("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
@@ -515,7 +478,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 						if (argNr == 1)
 							debugN(" - ");
 						reg_t curParam = argp[argNr];
-						if (curParam.segment) {
+						if (curParam.isPointer()) {
 							debugN("[%04x:%04x] ", PRINT_REG(curParam));
 							displaySize += 12;
 						} else {
@@ -626,32 +589,6 @@ static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t
 	return &(execStack.back());
 }
 
-static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
-	SegmentObj *mobj = s->_segMan->getSegmentObj(base.segment);
-
-	if (!mobj) {
-		error("[VM] Error: Attempt to add %d to invalid pointer %04x:%04x", offset, PRINT_REG(base));
-		return NULL_REG;
-	}
-
-	switch (mobj->getType()) {
-
-	case SEG_TYPE_LOCALS:
-	case SEG_TYPE_SCRIPT:
-	case SEG_TYPE_STACK:
-	case SEG_TYPE_DYNMEM:
-		base.offset += offset;
-		return base;
-	default:
-		// FIXME: Changed this to warning, because iceman does this during dancing with girl.
-		// Investigate why that is so and either fix the underlying issue or implement a more
-		// specialized workaround!
-		warning("[VM] Error: Attempt to add %d to pointer %04x:%04x, type %d: Pointer arithmetics of this type unsupported", offset, PRINT_REG(base), mobj->getType());
-		return NULL_REG;
-
-	}
-}
-
 static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc, reg_t *argv) {
 	// Add stack frame to indicate we're executing a callk.
 	// This is useful in debugger backtraces if this
@@ -712,7 +649,7 @@ static void	logKernelCall(const KernelFunction *kernelCall, const KernelSubFunct
 			}
 		}
 	}
-	if (result.segment)
+	if (result.isPointer())
 		debugN(" = %04x:%04x\n", PRINT_REG(result));
 	else
 		debugN(" = %d\n", result.offset);
@@ -767,15 +704,15 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	} else {
 		// Sub-functions available, check signature and call that one directly
 		if (argc < 1)
-			error("[VM] k%s[%x]: no subfunction-id parameter given", kernelCall.name, kernelCallNr);
-		if (argv[0].segment)
-			error("[VM] k%s[%x]: given subfunction-id is actually a pointer", kernelCall.name, kernelCallNr);
+			error("[VM] k%s[%x]: no subfunction ID parameter given", kernelCall.name, kernelCallNr);
+		if (argv[0].isPointer())
+			error("[VM] k%s[%x]: given subfunction ID is actually a pointer", kernelCall.name, kernelCallNr);
 		const uint16 subId = argv[0].toUint16();
 		// Skip over subfunction-id
 		argc--;
 		argv++;
 		if (subId >= kernelCall.subFunctionCount)
-			error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.name, subId);
+			error("[VM] k%s: subfunction ID %d requested, but not available", kernelCall.name, subId);
 		const KernelSubFunction &kernelSubCall = kernelCall.subFunctions[subId];
 		if (kernelSubCall.signature && !kernel->signatureMatch(kernelSubCall.signature, argc, argv)) {
 			// Signature mismatch
@@ -808,7 +745,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 			}
 		}
 		if (!kernelSubCall.function)
-			error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.name, subId);
+			error("[VM] k%s: subfunction ID %d requested, but not available", kernelCall.name, subId);
 		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
 		s->r_acc = kernelSubCall.function(s, argc, argv);
 
@@ -824,13 +761,6 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	// Remove callk stack frame again, if there's still an execution stack
 	if (s->_executionStack.begin() != s->_executionStack.end())
 		s->_executionStack.pop_back();
-}
-
-static void gcCountDown(EngineState *s) {
-	if (s->gcCountDown-- <= 0) {
-		s->gcCountDown = s->scriptGCInterval;
-		run_gc(s);
-	}
 }
 
 int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4]) {
@@ -945,6 +875,10 @@ void run_vm(EngineState *s) {
 
 	s->_executionStackPosChanged = true; // Force initialization
 
+#ifdef ABORT_ON_INFINITE_LOOP
+	byte prevOpcode = 0xFF;
+#endif
+
 	while (1) {
 		int var_type; // See description below
 		int var_number;
@@ -1009,191 +943,77 @@ void run_vm(EngineState *s) {
 		byte extOpcode;
 		s->xs->addr.pc.offset += readPMachineInstruction(scr->getBuf() + s->xs->addr.pc.offset, extOpcode, opparams);
 		const byte opcode = extOpcode >> 1;
+		//debug("%s: %d, %d, %d, %d, acc = %04x:%04x, script %d, local script %d", opcodeNames[opcode], opparams[0], opparams[1], opparams[2], opparams[3], PRINT_REG(s->r_acc), scr->getScriptNumber(), local_script->getScriptNumber());
+
+#ifdef ABORT_ON_INFINITE_LOOP
+		if (prevOpcode != 0xFF) {
+			if (prevOpcode == op_eq_  || prevOpcode == op_ne_  ||
+				prevOpcode == op_gt_  || prevOpcode == op_ge_  ||
+				prevOpcode == op_lt_  || prevOpcode == op_le_  ||
+				prevOpcode == op_ugt_ || prevOpcode == op_uge_ ||
+				prevOpcode == op_ult_ || prevOpcode == op_ule_) {
+				if (opcode == op_jmp)
+					error("Infinite loop detected in script %d", scr->getScriptNumber());
+			}
+		}
+
+		prevOpcode = opcode;
+#endif
 
 		switch (opcode) {
 
-		case op_bnot: { // 0x00 (00)
+		case op_bnot: // 0x00 (00)
 			// Binary not
-			int16 value;
-			if (validate_signedInteger(s->r_acc, value))
-				s->r_acc = make_reg(0, 0xffff ^ value);
-			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, NULL_REG);
+			s->r_acc = make_reg(0, 0xffff ^ s->r_acc.requireUint16());
 			break;
-		}
 
 		case op_add: // 0x01 (01)
-			r_temp = POP32();
-
-			 // Happens in SQ1, room 28, when throwing the water at Orat
-			 if (s->r_acc.segment == 0xFFFF) {
-				// WORKAROUND: init uninitialized variable to 0
-				warning("op_add: attempt to write to uninitialized variable");
-				s->r_acc = NULL_REG;
-			 }
-
-			if (r_temp.segment || s->r_acc.segment) {
-				reg_t r_ptr = NULL_REG;
-				int offset;
-				// Pointer arithmetics!
-				if (s->r_acc.segment) {
-					if (r_temp.segment) {
-						error("Attempt to add two pointers, stack=%04x:%04x and acc=%04x:%04x",
-						          PRINT_REG(r_temp), PRINT_REG(s->r_acc));
-						offset = 0;
-					} else {
-						r_ptr = s->r_acc;
-						offset = r_temp.offset;
-					}
-				} else {
-					r_ptr = r_temp;
-					offset = s->r_acc.offset;
-				}
-
-				s->r_acc = pointer_add(s, r_ptr, offset);
-
-			} else
-				s->r_acc = make_reg(0, r_temp.offset + s->r_acc.offset);
+			s->r_acc = POP32() + s->r_acc;
 			break;
 
 		case op_sub: // 0x02 (02)
-			r_temp = POP32();
-			if (r_temp.segment != s->r_acc.segment) {
-				reg_t r_ptr = NULL_REG;
-				int offset;
-				// Pointer arithmetics!
-				if (s->r_acc.segment) {
-					if (r_temp.segment) {
-						error("Attempt to subtract two pointers, stack=%04x:%04x and acc=%04x:%04x",
-						          PRINT_REG(r_temp), PRINT_REG(s->r_acc));
-						offset = 0;
-					} else {
-						r_ptr = s->r_acc;
-						offset = r_temp.offset;
-					}
-				} else {
-					r_ptr = r_temp;
-					offset = s->r_acc.offset;
-				}
-
-				s->r_acc = pointer_add(s, r_ptr, -offset);
-
-			} else {
-				// We can subtract numbers, or pointers with the same segment,
-				// an operation which will yield a number like in C
-				s->r_acc = make_reg(0, r_temp.offset - s->r_acc.offset);
-			}
+			s->r_acc = POP32() - s->r_acc;
 			break;
 
-		case op_mul: { // 0x03 (03)
-			r_temp = POP32();
-			int16 value1, value2;
-			if (validate_signedInteger(s->r_acc, value1) && validate_signedInteger(r_temp, value2))
-				s->r_acc = make_reg(0, value1 * value2);
-			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeMulWorkarounds, s->r_acc, r_temp);
+		case op_mul: // 0x03 (03)
+			s->r_acc = POP32() * s->r_acc;
 			break;
-		}
 
-		case op_div: { // 0x04 (04)
-			r_temp = POP32();
-			int16 divisor, dividend;
-			if (validate_signedInteger(s->r_acc, divisor) && validate_signedInteger(r_temp, dividend))
-				s->r_acc = make_reg(0, (divisor != 0 ? dividend / divisor : 0));
-			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeDivWorkarounds, s->r_acc, r_temp);
+		case op_div: // 0x04 (04)
+			// we check for division by 0 inside the custom reg_t division operator
+			s->r_acc = POP32() / s->r_acc;
 			break;
-		}
 
-		case op_mod: { // 0x05 (05)
-			r_temp = POP32();
-
-			if (getSciVersion() <= SCI_VERSION_0_LATE) {
-				uint16 modulo, value;
-				if (validate_unsignedInteger(s->r_acc, modulo) && validate_unsignedInteger(r_temp, value))
-					s->r_acc = make_reg(0, (modulo != 0 ? value % modulo : 0));
-				else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
-			} else {
-				// In Iceman (and perhaps from SCI0 0.000.685 onwards in general),
-				// handling for negative numbers was added. Since Iceman doesn't
-				// seem to have issues with the older code, we exclude it for now
-				// for simplicity's sake and use the new code for SCI01 and newer
-				// games. Fixes the battlecruiser mini game in SQ5 (room 850),
-				// bug #3035755
-				int16 modulo, value, result;
-				if (validate_signedInteger(s->r_acc, modulo) && validate_signedInteger(r_temp, value)) {
-					modulo = ABS(modulo);
-					result = (modulo != 0 ? value % modulo : 0);
-					if (result < 0)
-						result += modulo;
-					s->r_acc = make_reg(0, result);
-				} else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
-			}
+		case op_mod: // 0x05 (05)
+			// we check for division by 0 inside the custom reg_t modulo operator
+			s->r_acc = POP32() % s->r_acc;
 			break;
-		}
 
-		case op_shr: { // 0x06 (06)
+		case op_shr: // 0x06 (06)
 			// Shift right logical
-			r_temp = POP32();
-			uint16 value, shiftCount;
-			if (validate_unsignedInteger(r_temp, value) && validate_unsignedInteger(s->r_acc, shiftCount))
-				s->r_acc = make_reg(0, value >> shiftCount);
-			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			s->r_acc = POP32() >> s->r_acc;
 			break;
-		}
 
-		case op_shl: { // 0x07 (07)
+		case op_shl: // 0x07 (07)
 			// Shift left logical
-			r_temp = POP32();
-			uint16 value, shiftCount;
-			if (validate_unsignedInteger(r_temp, value) && validate_unsignedInteger(s->r_acc, shiftCount))
-				s->r_acc = make_reg(0, value << shiftCount);
-			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			s->r_acc = POP32() << s->r_acc;
 			break;
-		}
 
-		case op_xor: { // 0x08 (08)
-			r_temp = POP32();
-			uint16 value1, value2;
-			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
-				s->r_acc = make_reg(0, value1 ^ value2);
-			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+		case op_xor: // 0x08 (08)
+			s->r_acc = POP32() ^ s->r_acc;
 			break;
-		}
 
-		case op_and: { // 0x09 (09)
-			r_temp = POP32();
-			uint16 value1, value2;
-			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
-				s->r_acc = make_reg(0, value1 & value2);
-			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeAndWorkarounds, r_temp, s->r_acc);
+		case op_and: // 0x09 (09)
+			s->r_acc = POP32() & s->r_acc;
 			break;
-		}
 
-		case op_or: { // 0x0a (10)
-			r_temp = POP32();
-			uint16 value1, value2;
-			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
-				s->r_acc = make_reg(0, value1 | value2);
-			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeOrWorkarounds, r_temp, s->r_acc);
+		case op_or: // 0x0a (10)
+			s->r_acc = POP32() | s->r_acc;
 			break;
-		}
 
-		case op_neg: { // 0x0b (11)
-			int16 value;
-			if (validate_signedInteger(s->r_acc, value))
-				s->r_acc = make_reg(0, -value);
-			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, NULL_REG);
+		case op_neg:	// 0x0b (11)
+			s->r_acc = make_reg(0, -s->r_acc.requireSint16());
 			break;
-		}
 
 		case op_not: // 0x0c (12)
 			s->r_acc = make_reg(0, !(s->r_acc.offset || s->r_acc.segment));
@@ -1201,186 +1021,57 @@ void run_vm(EngineState *s) {
 			break;
 
 		case op_eq_: // 0x0d (13)
-			// ==
 			s->r_prev = s->r_acc;
-			r_temp = POP32();
-			s->r_acc = make_reg(0, r_temp == s->r_acc);
-			// Explicitly allow pointers to be compared
+			s->r_acc  = make_reg(0, POP32() == s->r_acc);
 			break;
 
 		case op_ne_: // 0x0e (14)
-			// !=
 			s->r_prev = s->r_acc;
-			r_temp = POP32();
-			s->r_acc = make_reg(0, r_temp != s->r_acc);
-			// Explicitly allow pointers to be compared
+			s->r_acc  = make_reg(0, POP32() != s->r_acc);
 			break;
 
 		case op_gt_: // 0x0f (15)
-			// >
 			s->r_prev = s->r_acc;
-			r_temp = POP32();
-			if (r_temp.segment && s->r_acc.segment) {
-				// Signed pointer comparison. We do unsigned comparison instead, as that is probably what was intended.
-				if (r_temp.segment != s->r_acc.segment)
-					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
-				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
-			} else if (r_temp.segment && !s->r_acc.segment) {
-				if (s->r_acc.offset >= 1000)
-					error("[VM] op_gt: comparison between a pointer and number");
-				// Pseudo-WORKAROUND: Sierra allows any pointer <-> value comparison
-				// Happens in SQ1, room 28, when throwing the water at Orat
-				s->r_acc = make_reg(0, 1);
-			} else {
-				int16 compare1, compare2;
-				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
-					s->r_acc = make_reg(0, compare1 > compare2);
-				else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
-			}
+			s->r_acc  = make_reg(0, POP32() > s->r_acc);
 			break;
 
 		case op_ge_: // 0x10 (16)
-			// >=
 			s->r_prev = s->r_acc;
-			r_temp = POP32();
-			if (r_temp.segment && s->r_acc.segment) {
-				if (r_temp.segment != s->r_acc.segment)
-					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
-				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
-			} else {
-				int16 compare1, compare2;
-				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
-					s->r_acc = make_reg(0, compare1 >= compare2);
-				else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeGeWorkarounds, r_temp, s->r_acc);
-			}
+			s->r_acc  = make_reg(0, POP32() >= s->r_acc);
 			break;
 
 		case op_lt_: // 0x11 (17)
-			// <
 			s->r_prev = s->r_acc;
-			r_temp = POP32();
-			if (r_temp.segment && s->r_acc.segment) {
-				if (r_temp.segment != s->r_acc.segment)
-					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
-				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
-			} else if (r_temp.segment && !s->r_acc.segment) {
-				if (s->r_acc.offset >= 1000)
-					error("[VM] op_lt: comparison between a pointer and number");
-				// Pseudo-WORKAROUND: Sierra allows any pointer <-> value comparison
-				// Happens in SQ1, room 58, when giving id-card to robot
-				s->r_acc = make_reg(0, 1);
-			} else {
-				int16 compare1, compare2;
-				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
-					s->r_acc = make_reg(0, compare1 < compare2);
-				else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
-			}
+			s->r_acc  = make_reg(0, POP32() < s->r_acc);
 			break;
 
 		case op_le_: // 0x12 (18)
-			// <=
 			s->r_prev = s->r_acc;
-			r_temp = POP32();
-			if (r_temp.segment && s->r_acc.segment) {
-				if (r_temp.segment != s->r_acc.segment)
-					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
-				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
-			} else {
-				int16 compare1, compare2;
-				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
-					s->r_acc = make_reg(0, compare1 <= compare2);
-				else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeLeWorkarounds, r_temp, s->r_acc);
-			}
+			s->r_acc  = make_reg(0, POP32() <= s->r_acc);
 			break;
 
 		case op_ugt_: // 0x13 (19)
 			// > (unsigned)
 			s->r_prev = s->r_acc;
-			r_temp = POP32();
-
-			// SCI0/SCI1 scripts use this to check whether a
-			// parameter is a pointer or a far text
-			// reference. It is used e.g. by the standard library
-			// Print function to distinguish two ways of calling it:
-			//
-			// (Print "foo") // Pointer to a string
-			// (Print 420 5) // Reference to the fifth message in text resource 420
-
-			// It works because in those games, the maximum resource number is 999,
-			// so any parameter value above that threshold must be a pointer.
-			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
-				s->r_acc = make_reg(0, 1);
-			else if (r_temp.segment && s->r_acc.segment)
-				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
-			else {
-				uint16 compare1, compare2;
-				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
-					s->r_acc = make_reg(0, compare1 > compare2);
-				else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
-			}
+			s->r_acc  = make_reg(0, POP32().gtU(s->r_acc));
 			break;
 
 		case op_uge_: // 0x14 (20)
 			// >= (unsigned)
 			s->r_prev = s->r_acc;
-			r_temp = POP32();
-
-			// See above
-			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
-				s->r_acc = make_reg(0, 1);
-			else if (r_temp.segment && s->r_acc.segment)
-				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
-			else {
-				uint16 compare1, compare2;
-				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
-					s->r_acc = make_reg(0, compare1 >= compare2);
-				else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
-			}
+			s->r_acc  = make_reg(0, POP32().geU(s->r_acc));
 			break;
 
 		case op_ult_: // 0x15 (21)
 			// < (unsigned)
 			s->r_prev = s->r_acc;
-			r_temp = POP32();
-
-			// See above
-			// PQ2 japanese compares pointers to 2000 to find out if its a pointer or a resourceid
-			if (r_temp.segment && (s->r_acc == make_reg(0, 1000) || (s->r_acc == make_reg(0, 2000))))
-				s->r_acc = NULL_REG;
-			else if (r_temp.segment && s->r_acc.segment)
-				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
-			else {
-				uint16 compare1, compare2;
-				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
-					s->r_acc = make_reg(0, compare1 < compare2);
-				else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeUltWorkarounds, r_temp, s->r_acc);
-			}
+			s->r_acc  = make_reg(0, POP32().ltU(s->r_acc));
 			break;
 
 		case op_ule_: // 0x16 (22)
 			// <= (unsigned)
 			s->r_prev = s->r_acc;
-			r_temp = POP32();
-
-			// See above
-			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
-				s->r_acc = NULL_REG;
-			else if (r_temp.segment && s->r_acc.segment)
-				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
-			else {
-				uint16 compare1, compare2;
-				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
-					s->r_acc = make_reg(0, compare1 <= compare2);
-				else
-					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
-			}
+			s->r_acc  = make_reg(0, POP32().leU(s->r_acc));
 			break;
 
 		case op_bt: // 0x17 (23)
@@ -1446,7 +1137,7 @@ void run_vm(EngineState *s) {
 			xs_new = add_exec_stack_entry(s->_executionStack, make_reg(s->xs->addr.pc.segment,
 											localCallOffset),
 											s->xs->sp, s->xs->objp,
-											(validate_arithmetic(*call_base)) + s->restAdjust,
+											(call_base->requireUint16()) + s->restAdjust,
 											call_base, NULL_SELECTOR, -1, localCallOffset, s->xs->objp,
 											s->_executionStack.size()-1, s->xs->local_segment);
 			s->restAdjust = 0; // Used up the &rest adjustment
@@ -1457,16 +1148,20 @@ void run_vm(EngineState *s) {
 		}
 
 		case op_callk: { // 0x21 (33)
-			// Call kernel function
-			gcCountDown(s);
+			// Run the garbage collector, if needed
+			if (s->gcCountDown-- <= 0) {
+				s->gcCountDown = s->scriptGCInterval;
+				run_gc(s);
+			}
 
+			// Call kernel function
 			s->xs->sp -= (opparams[1] >> 1) + 1;
 
 			bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 			if (!oldScriptHeader)
 				s->xs->sp -= s->restAdjust;
 
-			int argc = validate_arithmetic(s->xs->sp[0]);
+			int argc = s->xs->sp[0].requireUint16();
 
 			if (!oldScriptHeader)
 				argc += s->restAdjust;
@@ -1624,7 +1319,7 @@ void run_vm(EngineState *s) {
 			// Send to any class
 			r_temp = s->_segMan->getClassAddress(opparams[0], SCRIPT_GET_LOAD, s->xs->addr.pc);
 
-			if (!r_temp.segment)
+			if (!r_temp.isPointer())
 				error("[VM]: Invalid superclass in object");
 			else {
 				s_temp = s->xs->sp;
@@ -1663,7 +1358,7 @@ void run_vm(EngineState *s) {
 			r_temp.offset = s->variables[var_number] - s->variablesBase[var_number];
 
 			if (temp & 0x08)  // Add accumulator offset if requested
-				r_temp.offset += signed_validate_arithmetic(s->r_acc);
+				r_temp.offset += s->r_acc.requireSint16();
 
 			r_temp.offset += opparams[1];  // Add index
 			r_temp.offset *= 2; // variables are 16 bit
@@ -1707,87 +1402,29 @@ void run_vm(EngineState *s) {
 			validate_property(s, obj, opparams[0]) = POP32();
 			break;
 
-		case op_ipToa: { // 0x35 (53)
-			// Increment Property and copy To Accumulator
+		case op_ipToa: // 0x35 (53)
+		case op_dpToa: // 0x36 (54)
+		case op_ipTos: // 0x37 (55)
+		case op_dpTos: // 0x38 (56)
+			{
+			// Increment/decrement a property and copy to accumulator,
+			// or push to stack
 			reg_t &opProperty = validate_property(s, obj, opparams[0]);
-			uint16 valueProperty;
-			if (validate_unsignedInteger(opProperty, valueProperty))
-				s->r_acc = make_reg(0, valueProperty + 1);
+			if (opcode & 1)
+				opProperty += 1;
 			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG);
-			opProperty = s->r_acc;
-			break;
-		}
+				opProperty -= 1;
 
-		case op_dpToa: { // 0x36 (54)
-			// Decrement Property and copy To Accumulator
-			reg_t &opProperty = validate_property(s, obj, opparams[0]);
-			uint16 valueProperty;
-			if (validate_unsignedInteger(opProperty, valueProperty))
-				s->r_acc = make_reg(0, valueProperty - 1);
+			if (opcode == op_ipToa || opcode == op_dpToa)
+				s->r_acc = opProperty;
 			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeDptoaWorkarounds, opProperty, NULL_REG);
-			opProperty = s->r_acc;
-			break;
-		}
-
-		case op_ipTos: { // 0x37 (55)
-			// Increment Property and push to Stack
-			reg_t &opProperty = validate_property(s, obj, opparams[0]);
-			uint16 valueProperty;
-			if (validate_unsignedInteger(opProperty, valueProperty))
-				valueProperty++;
-			else
-				valueProperty = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG).offset;
-			opProperty = make_reg(0, valueProperty);
-			PUSH(valueProperty);
-			break;
-		}
-
-		case op_dpTos: { // 0x38 (56)
-			// Decrement Property and push to Stack
-			reg_t &opProperty = validate_property(s, obj, opparams[0]);
-			uint16 valueProperty;
-			if (validate_unsignedInteger(opProperty, valueProperty))
-				valueProperty--;
-			else
-				valueProperty = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG).offset;
-			opProperty = make_reg(0, valueProperty);
-			PUSH(valueProperty);
+				PUSH32(opProperty);
 			break;
 		}
 
 		case op_lofsa: // 0x39 (57)
-			// Load Offset to Accumulator
-			s->r_acc.segment = s->xs->addr.pc.segment;
-
-			switch (g_sci->_features->detectLofsType()) {
-			case SCI_VERSION_0_EARLY:
-				s->r_acc.offset = s->xs->addr.pc.offset + opparams[0];
-				break;
-			case SCI_VERSION_1_MIDDLE:
-				s->r_acc.offset = opparams[0];
-				break;
-			case SCI_VERSION_1_1:
-				s->r_acc.offset = opparams[0] + local_script->getScriptSize();
-				break;
-			case SCI_VERSION_3:
-				// In theory this can break if the variant with a one-byte argument is
-				// used. For now, assume it doesn't happen.
-				s->r_acc.offset = local_script->relocateOffsetSci3(s->xs->addr.pc.offset-2);
-				break;
-			default:
-				error("Unknown lofs type");
-			}
-
-			if (s->r_acc.offset >= scr->getBufSize()) {
-				error("VM: lofsa operation overflowed: %04x:%04x beyond end"
-				          " of script (at %04x)", PRINT_REG(s->r_acc), scr->getBufSize());
-			}
-			break;
-
 		case op_lofss: // 0x3a (58)
-			// Load Offset to Stack
+			// Load offset to accumulator or push to stack
 			r_temp.segment = s->xs->addr.pc.segment;
 
 			switch (g_sci->_features->detectLofsType()) {
@@ -1801,17 +1438,22 @@ void run_vm(EngineState *s) {
 				r_temp.offset = opparams[0] + local_script->getScriptSize();
 				break;
 			case SCI_VERSION_3:
-				r_temp.offset = opparams[0];
+				// In theory this can break if the variant with a one-byte argument is
+				// used. For now, assume it doesn't happen.
+				r_temp.offset = local_script->relocateOffsetSci3(s->xs->addr.pc.offset-2);
 				break;
 			default:
 				error("Unknown lofs type");
 			}
 
-			if (r_temp.offset >= scr->getBufSize()) {
-				error("VM: lofss operation overflowed: %04x:%04x beyond end"
+			if (r_temp.offset >= scr->getBufSize())
+				error("VM: lofsa/lofss operation overflowed: %04x:%04x beyond end"
 				          " of script (at %04x)", PRINT_REG(r_temp), scr->getBufSize());
-			}
-			PUSH32(r_temp);
+
+			if (opcode == op_lofsa)
+				s->r_acc = r_temp;
+			else
+				PUSH32(r_temp);
 			break;
 
 		case op_push0: // 0x3b (59)
@@ -1849,8 +1491,14 @@ void run_vm(EngineState *s) {
 		case op_lat: // 0x42 (66)
 		case op_lap: // 0x43 (67)
 			// Load global, local, temp or param variable into the accumulator
+		case op_lagi: // 0x48 (72)
+		case op_lali: // 0x49 (73)
+		case op_lati: // 0x4a (74)
+		case op_lapi: // 0x4b (75)
+			// Same as the 4 ones above, except that the accumulator is used as
+			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0];
+			var_number = opparams[0] + (opcode >= op_lagi ? s->r_acc.requireSint16() : 0);
 			s->r_acc = READ_VAR(var_type, var_number);
 			break;
 
@@ -1859,48 +1507,32 @@ void run_vm(EngineState *s) {
 		case op_lst: // 0x46 (70)
 		case op_lsp: // 0x47 (71)
 			// Load global, local, temp or param variable into the stack
-			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0];
-			PUSH32(READ_VAR(var_type, var_number));
-			break;
-
-		case op_lagi: // 0x48 (72)
-		case op_lali: // 0x49 (73)
-		case op_lati: // 0x4a (74)
-		case op_lapi: { // 0x4b (75)
-			// Load global, local, temp or param variable into the accumulator,
-			// using the accumulator as an additional index
-			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			int16 value;
-			if (!validate_signedInteger(s->r_acc, value))
-				value = arithmetic_lookForWorkaround(opcode, opcodeLaiWorkarounds, s->r_acc, NULL_REG).offset;
-			var_number = opparams[0] + value;
-			s->r_acc = READ_VAR(var_type, var_number);
-			break;
-		}
-
 		case op_lsgi: // 0x4c (76)
 		case op_lsli: // 0x4d (77)
 		case op_lsti: // 0x4e (78)
-		case op_lspi: { // 0x4f (79)
-			// Load global, local, temp or param variable into the stack,
-			// using the accumulator as an additional index
+		case op_lspi: // 0x4f (79)
+			// Same as the 4 ones above, except that the accumulator is used as
+			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			int16 value;
-			if (!validate_signedInteger(s->r_acc, value))
-				value = arithmetic_lookForWorkaround(opcode, opcodeLsiWorkarounds, s->r_acc, NULL_REG).offset;
-			var_number = opparams[0] + value;
+			var_number = opparams[0] + (opcode >= op_lsgi ? s->r_acc.requireSint16() : 0);
 			PUSH32(READ_VAR(var_type, var_number));
 			break;
-		}
 
 		case op_sag: // 0x50 (80)
 		case op_sal: // 0x51 (81)
 		case op_sat: // 0x52 (82)
 		case op_sap: // 0x53 (83)
 			// Save the accumulator into the global, local, temp or param variable
+		case op_sagi: // 0x58 (88)
+		case op_sali: // 0x59 (89)
+		case op_sati: // 0x5a (90)
+		case op_sapi: // 0x5b (91)
+			// Save the accumulator into the global, local, temp or param variable,
+			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0];
+			var_number = opparams[0] + (opcode >= op_sagi ? s->r_acc.requireSint16() : 0);
+			if (opcode >= op_sagi)	// load the actual value to store in the accumulator
+				s->r_acc = POP32();
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
 
@@ -1909,35 +1541,14 @@ void run_vm(EngineState *s) {
 		case op_sst: // 0x56 (86)
 		case op_ssp: // 0x57 (87)
 			// Save the stack into the global, local, temp or param variable
-			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0];
-			WRITE_VAR(var_type, var_number, POP32());
-			break;
-
-		case op_sagi: // 0x58 (88)
-		case op_sali: // 0x59 (89)
-		case op_sati: // 0x5a (90)
-		case op_sapi: // 0x5b (91)
-			// Save the accumulator into the global, local, temp or param variable,
-			// using the accumulator as an additional index
-
-			// Special semantics because it wouldn't really make a whole lot
-			// of sense otherwise, with acc being used for two things
-			// simultaneously...
-			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			s->r_acc = POP32();
-			WRITE_VAR(var_type, var_number, s->r_acc);
-			break;
-
 		case op_ssgi: // 0x5c (92)
 		case op_ssli: // 0x5d (93)
 		case op_ssti: // 0x5e (94)
 		case op_sspi: // 0x5f (95)
-			// Save the stack into the global, local, temp or param variable,
-			// using the accumulator as an additional index
+			// Same as the 4 ones above, except that the accumulator is used as
+			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
+			var_number = opparams[0] + (opcode >= op_ssgi ? s->r_acc.requireSint16() : 0);
 			WRITE_VAR(var_type, var_number, POP32());
 			break;
 
@@ -1947,14 +1558,15 @@ void run_vm(EngineState *s) {
 		case op_plusap: // 0x63 (99)
 			// Increment the global, local, temp or param variable and save it
 			// to the accumulator
+		case op_plusagi: // 0x68 (104)
+		case op_plusali: // 0x69 (105)
+		case op_plusati: // 0x6a (106)
+		case op_plusapi: // 0x6b (107)
+			// Same as the 4 ones above, except that the accumulator is used as
+			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0];
-			r_temp = READ_VAR(var_type, var_number);
-			if (r_temp.segment) {
-				// Pointer arithmetics!
-				s->r_acc = pointer_add(s, r_temp, 1);
-			} else
-				s->r_acc = make_reg(0, r_temp.offset + 1);
+			var_number = opparams[0] + (opcode >= op_plusagi ? s->r_acc.requireSint16() : 0);
+			s->r_acc = READ_VAR(var_type, var_number) + 1;
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
 
@@ -1964,49 +1576,15 @@ void run_vm(EngineState *s) {
 		case op_plussp: // 0x67 (103)
 			// Increment the global, local, temp or param variable and save it
 			// to the stack
-			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0];
-			r_temp = READ_VAR(var_type, var_number);
-			if (r_temp.segment) {
-				// Pointer arithmetics!
-				r_temp = pointer_add(s, r_temp, 1);
-			} else
-				r_temp = make_reg(0, r_temp.offset + 1);
-			PUSH32(r_temp);
-			WRITE_VAR(var_type, var_number, r_temp);
-			break;
-
-		case op_plusagi: // 0x68 (104)
-		case op_plusali: // 0x69 (105)
-		case op_plusati: // 0x6a (106)
-		case op_plusapi: // 0x6b (107)
-			// Increment the global, local, temp or param variable and save it
-			// to the accumulator, using the accumulator as an additional index
-			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = READ_VAR(var_type, var_number);
-			if (r_temp.segment) {
-				// Pointer arithmetics!
-				s->r_acc = pointer_add(s, r_temp, 1);
-			} else
-				s->r_acc = make_reg(0, r_temp.offset + 1);
-			WRITE_VAR(var_type, var_number, s->r_acc);
-			break;
-
 		case op_plussgi: // 0x6c (108)
 		case op_plussli: // 0x6d (109)
 		case op_plussti: // 0x6e (110)
 		case op_plusspi: // 0x6f (111)
-			// Increment the global, local, temp or param variable and save it
-			// to the stack, using the accumulator as an additional index
+			// Same as the 4 ones above, except that the accumulator is used as
+			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = READ_VAR(var_type, var_number);
-			if (r_temp.segment) {
-				// Pointer arithmetics!
-				r_temp = pointer_add(s, r_temp, 1);
-			} else
-				r_temp = make_reg(0, r_temp.offset + 1);
+			var_number = opparams[0] + (opcode >= op_plussgi ? s->r_acc.requireSint16() : 0);
+			r_temp = READ_VAR(var_type, var_number) + 1;
 			PUSH32(r_temp);
 			WRITE_VAR(var_type, var_number, r_temp);
 			break;
@@ -2017,14 +1595,15 @@ void run_vm(EngineState *s) {
 		case op_minusap: // 0x73 (115)
 			// Decrement the global, local, temp or param variable and save it
 			// to the accumulator
+		case op_minusagi: // 0x78 (120)
+		case op_minusali: // 0x79 (121)
+		case op_minusati: // 0x7a (122)
+		case op_minusapi: // 0x7b (123)
+			// Same as the 4 ones above, except that the accumulator is used as
+			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0];
-			r_temp = READ_VAR(var_type, var_number);
-			if (r_temp.segment) {
-				// Pointer arithmetics!
-				s->r_acc = pointer_add(s, r_temp, -1);
-			} else
-				s->r_acc = make_reg(0, r_temp.offset - 1);
+			var_number = opparams[0] + (opcode >= op_minusagi ? s->r_acc.requireSint16() : 0);
+			s->r_acc = READ_VAR(var_type, var_number) - 1;
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
 
@@ -2034,49 +1613,15 @@ void run_vm(EngineState *s) {
 		case op_minussp: // 0x77 (119)
 			// Decrement the global, local, temp or param variable and save it
 			// to the stack
-			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0];
-			r_temp = READ_VAR(var_type, var_number);
-			if (r_temp.segment) {
-				// Pointer arithmetics!
-				r_temp = pointer_add(s, r_temp, -1);
-			} else
-				r_temp = make_reg(0, r_temp.offset - 1);
-			PUSH32(r_temp);
-			WRITE_VAR(var_type, var_number, r_temp);
-			break;
-
-		case op_minusagi: // 0x78 (120)
-		case op_minusali: // 0x79 (121)
-		case op_minusati: // 0x7a (122)
-		case op_minusapi: // 0x7b (123)
-			// Decrement the global, local, temp or param variable and save it
-			// to the accumulator, using the accumulator as an additional index
-			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = READ_VAR(var_type, var_number);
-			if (r_temp.segment) {
-				// Pointer arithmetics!
-				s->r_acc = pointer_add(s, r_temp, -1);
-			} else
-				s->r_acc = make_reg(0, r_temp.offset - 1);
-			WRITE_VAR(var_type, var_number, s->r_acc);
-			break;
-
 		case op_minussgi: // 0x7c (124)
 		case op_minussli: // 0x7d (125)
 		case op_minussti: // 0x7e (126)
 		case op_minusspi: // 0x7f (127)
-			// Decrement the global, local, temp or param variable and save it
-			// to the stack, using the accumulator as an additional index
+			// Same as the 4 ones above, except that the accumulator is used as
+			// an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
-			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = READ_VAR(var_type, var_number);
-			if (r_temp.segment) {
-				// Pointer arithmetics!
-				r_temp = pointer_add(s, r_temp, -1);
-			} else
-				r_temp = make_reg(0, r_temp.offset - 1);
+			var_number = opparams[0] + (opcode >= op_minussgi ? s->r_acc.requireSint16() : 0);
+			r_temp = READ_VAR(var_type, var_number) - 1;
 			PUSH32(r_temp);
 			WRITE_VAR(var_type, var_number, r_temp);
 			break;

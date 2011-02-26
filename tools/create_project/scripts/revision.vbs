@@ -28,7 +28,7 @@ Option Explicit
 ' Working copy check priority:
 '   True:   TortoiseSVN -> SVN -> Git -> Hg
 '   False:  Git -> Hg -> TortoiseSVN -> SVN
-Dim prioritySVN: prioritySVN = True
+Dim prioritySVN: prioritySVN = False
 
 Dim FSO : Set FSO = CreateObject("Scripting.FileSystemObject")
 Dim WshShell : Set WshShell = CreateObject("WScript.Shell")

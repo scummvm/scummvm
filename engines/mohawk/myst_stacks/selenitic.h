@@ -32,16 +32,17 @@
 
 namespace Mohawk {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
-
-class MohawkEngine_Myst;
 class MystResourceType8;
 struct MystScriptEntry;
 
-class MystScriptParser_Selenitic : public MystScriptParser {
+namespace MystStacks {
+
+#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+
+class Selenitic : public MystScriptParser {
 public:
-	MystScriptParser_Selenitic(MohawkEngine_Myst *vm);
-	~MystScriptParser_Selenitic();
+	Selenitic(MohawkEngine_Myst *vm);
+	~Selenitic();
 
 	void disablePersistentScripts();
 	void runPersistentScripts();
@@ -135,6 +136,7 @@ private:
 	void mazeRunnerBacktrack(uint16 &oldPosition);
 };
 
+} // End of namespace MystStacks
 }
 
 #undef DECLARE_OPCODE

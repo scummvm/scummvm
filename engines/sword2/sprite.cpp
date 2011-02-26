@@ -747,9 +747,9 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 		for (i = 0; i < rs.height(); i++) {
 			for (j = 0; j < rs.width(); j++) {
 				if (src[j] && lightMap[j]) {
-					uint8 r = ((32 - lightMap[j]) * _palette[src[j] * 4 + 0]) >> 5;
-					uint8 g = ((32 - lightMap[j]) * _palette[src[j] * 4 + 1]) >> 5;
-					uint8 b = ((32 - lightMap[j]) * _palette[src[j] * 4 + 2]) >> 5;
+					uint8 r = ((32 - lightMap[j]) * _palette[src[j] * 3 + 0]) >> 5;
+					uint8 g = ((32 - lightMap[j]) * _palette[src[j] * 3 + 1]) >> 5;
+					uint8 b = ((32 - lightMap[j]) * _palette[src[j] * 3 + 2]) >> 5;
 					src[j] = quickMatch(r, g, b);
 				}
 			}
@@ -787,12 +787,12 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 			for (i = 0; i < rs.height(); i++) {
 				for (j = 0; j < rs.width(); j++) {
 					if (src[j]) {
-						uint8 r1 = _palette[src[j] * 4 + 0];
-						uint8 g1 = _palette[src[j] * 4 + 1];
-						uint8 b1 = _palette[src[j] * 4 + 2];
-						uint8 r2 = _palette[dst[j] * 4 + 0];
-						uint8 g2 = _palette[dst[j] * 4 + 1];
-						uint8 b2 = _palette[dst[j] * 4 + 2];
+						uint8 r1 = _palette[src[j] * 3 + 0];
+						uint8 g1 = _palette[src[j] * 3 + 1];
+						uint8 b1 = _palette[src[j] * 3 + 2];
+						uint8 r2 = _palette[dst[j] * 3 + 0];
+						uint8 g2 = _palette[dst[j] * 3 + 1];
+						uint8 b2 = _palette[dst[j] * 3 + 2];
 
 						uint8 r = (r1 * n + r2 * (8 - n)) >> 3;
 						uint8 g = (g1 * n + g2 * (8 - n)) >> 3;

@@ -45,15 +45,14 @@ public:
 	MidiPlayer(MidiDriver *driver);
 	~MidiPlayer();
 
-	bool isPlaying() { return _isPlaying; }
-
-	int getVolume() { return _masterVolume; }
+	bool isPlaying() const;
+	int getVolume() const;
 
 	void adjustVolume(int diff);
 	void pause(bool p);
 	void play(uint8 *stream, uint16 size);
 	void setChannelVolume(int channel);
-	void setLooping(bool loop) { _isLooping = loop; }
+	void setLooping(bool loop);
 	void setVolume(int volume);
 	void stop();
 	void syncVolume();
@@ -62,15 +61,15 @@ public:
 	// MidiDriver interface
 	int open();
 
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
+	MidiChannel *allocateChannel();
+	MidiChannel *getPercussionChannel();
 
 	void close();
 	void metaEvent(byte type, byte *data, uint16 length);
 	void send(uint32 b);
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
 
-	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
+	uint32 getBaseTempo();
 
 private:
 	static void timerCallback(void *p);

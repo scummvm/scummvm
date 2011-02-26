@@ -54,11 +54,11 @@ class Route {
 public:
 	Route(HugoEngine *vm);
 
-	void  resetRoute()          {_routeIndex = -1;   }
-	int16 getRouteIndex() const {return _routeIndex; }
+	void  resetRoute();
+	int16 getRouteIndex() const;
 
 	void processRoute();
-	bool startRoute(const go_t go_for, const int16 id, int16 cx, int16 cy);
+	bool startRoute(const go_t routeType, const int16 objId, int16 cx, int16 cy);
 	void setDirection(const uint16 keyCode);
 	void setWalk(const uint16 direction);
 
@@ -73,8 +73,8 @@ private:
 	uint16 _oldWalkDirection;                       // Last direction char
 
 	int16  _routeIndex;                             // Index into route list, or -1
-	go_t   _go_for;                                 // Purpose of an automatic route
-	int16  _go_id;                                  // Index of exit of object walking to
+	go_t   _routeType;                              // Purpose of an automatic route
+	int16  _routeObjId;                             // Index of exit of object walking to
 
 	byte _boundaryMap[kYPix][kXPix];                // Boundary byte map
 	segment_t _segment[kMaxSeg];                    // List of points in fill-path

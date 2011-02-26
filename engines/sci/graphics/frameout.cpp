@@ -58,6 +58,12 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 GfxFrameout::~GfxFrameout() {
 }
 
+void GfxFrameout::clear() {
+	_screenItems.clear();
+	_planes.clear();
+	_planePictures.clear();
+}
+
 void GfxFrameout::kernelAddPlane(reg_t object) {
 	PlaneEntry newPlane;
 
@@ -584,6 +590,11 @@ void GfxFrameout::kernelFrameout() {
 					uint16 startX = itemEntry->x + it->planeRect.left;
 					uint16 curY = itemEntry->y + it->planeRect.top;
 					const char *txt = text.c_str();
+					// HACK. The plane sometimes doesn't contain the correct width. This
+					// hack breaks the dialog options when speaking with Grace, but it's
+					// the best we got up to now. This happens because of the unimplemented
+					// kTextWidth function in SCI32.
+					// TODO: Remove this once kTextWidth has been implemented.
 					uint16 w = it->planeRect.width() >= 20 ? it->planeRect.width() : _screen->getWidth() - 10;
 					int16 charCount;
 

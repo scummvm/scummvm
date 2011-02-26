@@ -106,9 +106,6 @@ public:
 	void bitsGetRect(byte *memoryPtr, Common::Rect *destRect);
 	void bitsRestore(byte *memoryPtr);
 
-	void getPalette(Palette *pal);
-	void setPalette(Palette *pal);
-
 	void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel = 1);
 
 	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
@@ -184,6 +181,8 @@ private:
 	// This defines whether or not the font we're drawing is already scaled
 	// to the screen size (and we therefore should not upscale it ourselves).
 	bool _fontIsUpscaled;
+
+	uint16 getLowResScreenHeight();
 };
 
 } // End of namespace Sci

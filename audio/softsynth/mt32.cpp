@@ -315,9 +315,9 @@ int MidiDriver_MT32::open() {
 
 	if (screenFormat.bytesPerPixel == 1) {
 		const byte dummy_palette[] = {
-			0, 0, 0, 0,		// background
-			0, 171, 0, 0,	// border, font
-			171, 0, 0, 0	// fill
+			0, 0, 0,		// background
+			0, 171, 0,	// border, font
+			171, 0, 0	// fill
 		};
 
 		g_system->getPaletteManager()->setPalette(dummy_palette, 0, 3);

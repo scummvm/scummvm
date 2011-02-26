@@ -18,7 +18,6 @@ MODULE_OBJS = \
 	mohawk.o \
 	myst.o \
 	myst_areas.o \
-	myst_vars.o \
 	myst_scripts.o \
 	myst_state.o \
 	resource.o \

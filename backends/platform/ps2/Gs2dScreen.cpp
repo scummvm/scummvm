@@ -408,25 +408,33 @@ void Gs2dScreen::unlockScreen() {
 	SignalSema(g_DmacSema);
 }
 
-void Gs2dScreen::setPalette(const uint32 *pal, uint8 start, uint16 num) {
+void Gs2dScreen::setPalette(const uint8 *pal, uint8 start, uint16 num) {
 	assert(start + num <= 256);
 
 	WaitSema(g_DmacSema);
 	for (uint16 cnt = 0; cnt < num; cnt++) {
 		uint16 dest = start + cnt;
 		dest = (dest & 0xE7) | ((dest & 0x8) << 1) | ((dest & 0x10) >> 1); // rearrange like the GS expects it
-		_clut[dest] = pal[cnt] & 0xFFFFFF;
+
+		uint32 color = pal[0] | (pal[1] << 8) | (pal[2] << 16);
+		_clut[dest] = color;
+		pal += 3;
 	}
 	_clutChanged = true;
 	SignalSema(g_DmacSema);
 }
 
-void Gs2dScreen::grabPalette(uint32 *pal, uint8 start, uint16 num) {
+void Gs2dScreen::grabPalette(uint8 *pal, uint8 start, uint16 num) {
 	assert(start + num <= 256);
 	for (uint16 cnt = 0; cnt < num; cnt++) {
 		uint16 src = start + cnt;
 		src = (src & 0xE7) | ((src & 0x8) << 1) | ((src & 0x10) >> 1);
-		pal[cnt] = _clut[src];
+
+		uint32 color = _clut[src];
+		pal[0] = (color >>  0) & 0xFF;
+		pal[1] = (color >>  8) & 0xFF;
+		pal[2] = (color >> 16) & 0xFF;
+		pal += 3;
 	}
 }
 

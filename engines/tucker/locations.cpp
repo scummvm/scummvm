@@ -660,7 +660,7 @@ void TuckerEngine::execData3PostUpdate_locationNum8() {
 				_locationBackgroundGfxBuf[offset + 640 * j + i] = colorsTable[(j - 1) * 3  + i + 1];
 			}
 		}
-		addDirtyRect(_updateLocationXPosTable2[0] - 1, _updateLocationYPosTable2[0] + 1, 3, 4);
+		addDirtyRect(_updateLocationXPosTable2[0] - 1, _updateLocationYPosTable2[0], 3, 4);
 		_updateLocationYPosTable2[0] += 2;
 		if (_updateLocationYPosTable2[0] > 120) {
 			_updateLocationYPosTable2[0] = 0;
@@ -676,7 +676,7 @@ void TuckerEngine::execData3PostUpdate_locationNum8() {
 
 void TuckerEngine::updateSprite_locationNum9_0(int i) {
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
-		_spritesTable[0].needUpdate = 1;
+		_spritesTable[i].needUpdate = 1;
 		_spritesTable[i].state = 3;
 	} else if (_updateLocationCounter2 > 0 || getRandomNumber() > 30000) {
 		_spritesTable[i].state = 1;
@@ -974,7 +974,7 @@ void TuckerEngine::updateSprite_locationNum14(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum14() {
-	if (_yPosCurrent >= 126)
+	if (_yPosCurrent >= 127)
 		return;
 
 	if (!isSoundPlaying(0)) {
@@ -1021,7 +1021,7 @@ void TuckerEngine::execData3PreUpdate_locationNum14() {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum14Helper1(int i) {
-	const int y = 1872; // FIXME: bug, 187/182 ?
+	const int y = 117 * 16;
 	if (_updateLocation14ObjNum[i] == 0) {
 		if (getRandomNumber() <= 30000) {
 			return;
@@ -1031,9 +1031,8 @@ void TuckerEngine::execData3PreUpdate_locationNum14Helper1(int i) {
 		_updateLocation14Step[i] = -55 - getRandomNumber() / 512;
 		_updateLocation14ObjNum[i] = 231;
 		_updateLocation14Delay[i] = 16 + getRandomNumber() / 2048;
-		// FIXME: bug, missing return ?
 	}
-	_updateLocation14Step[i] = 4;
+	_updateLocation14Step[i] += 4;
 	_updateLocationYPosTable2[i] += _updateLocation14Step[i];
 	if (_updateLocationYPosTable2[i] > y) {
 		_updateLocationYPosTable2[i] = y;
@@ -1792,11 +1791,11 @@ void TuckerEngine::execData3PreUpdate_locationNum29() {
 			_updateLocationFadePaletteCounter = 0;
 		}
 		const int d = _updateLocationFadePaletteCounter / 2;
-		uint8 scrollPal[5 * 4];
+		uint8 scrollPal[5 * 3];
 		for (int i = 0; i < 5; ++i) {
-			scrollPal[i * 4]     = r[i + d];
-			scrollPal[i * 4 + 1] = g[i + d];
-			scrollPal[i * 4 + 2] = b[i + d];
+			scrollPal[i * 3]     = r[i + d];
+			scrollPal[i * 3 + 1] = g[i + d];
+			scrollPal[i * 3 + 2] = b[i + d];
 		}
 		_system->getPaletteManager()->setPalette(scrollPal, 118, 5);
 		if (_flagsTable[143] == 1) {
@@ -2484,7 +2483,8 @@ void TuckerEngine::updateSprite_locationNum58(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum58() {
-	if (_flagsTable[190] < 3 && _xPosCurrent > 310) {
+	// workaround original game glitch #2872348: do not change position on location change
+	if (_nextLocationNum == 0 && _flagsTable[190] < 3 && _xPosCurrent > 310) {
 		_xPosCurrent = 310;
 		_panelLockedFlag = 0;
 	}

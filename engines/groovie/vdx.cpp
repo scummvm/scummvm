@@ -555,15 +555,8 @@ void VDXPlayer::setPalette(uint8 *palette) {
 	if (_flagSkipPalette)
 		return;
 
-	uint8 palBuf[4 * 256];
 	debugC(7, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: Setting palette");
-	for (int i = 0; i < 256; i++) {
-		palBuf[(i * 4) + 0] = palette[(i * 3) + 0];
-		palBuf[(i * 4) + 1] = palette[(i * 3) + 1];
-		palBuf[(i * 4) + 2] = palette[(i * 3) + 2];
-		palBuf[(i * 4) + 3] = 0;
-	}
-	_syst->getPaletteManager()->setPalette(palBuf, 0, 256);
+	_syst->getPaletteManager()->setPalette(palette, 0, 256);
 }
 
 } // End of Groovie namespace

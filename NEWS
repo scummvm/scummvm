@@ -9,6 +9,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Toonstruck.
 
  General
+   - Added support for loadable modules on platforms without a dynamic loader.
+     (GSoC Task)
    - Added Danish translation.
    - Added Norwegian Bokmaal translation.
    - Added Norwegian Nynorsk translation.
@@ -75,20 +77,43 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  SCUMM:
    - Improved support for FM-TOWNS versions of games.
 
+ Sky:
+   - Fixed crashes on sequences for several backends
+     (e.g. OpenGL, including Android)
+
  Teenagent:
    - Closed memory leaks.
 
  Tinsel:
    - Closed memory leaks in Coroutines.
+   - Added enhanced music support for the German CD "Neon Edition" re-release
+     of Discworld 1.
 
  Touche:
    - Corrected memory leaks and minor issues.
 
  SDL:
+   - Added support for OpenGL. (GSoC Task)
    - Closed memory leaks in Mouse Surfaces.
 
- PSP:
+ PSP port:
+   - Added support for loadable modules.
    - Added image viewer.
+
+ PS2 port:
+   - Added support for loadable modules.
+
+ Nintendo DS port:
+   - Added support for loadable modules.
+
+ Wii/GameCube port:
+   - Added support for loadable modules.
+   - Fixed 16bit mouse cursors on HE games.
+
+ Android port:
+   - Switched to the official NDK toolchain for building.
+   - Fixed GFX output for various devices.
+   - Fixed various crashes.
 
 1.2.1 (2010-12-19)
  General

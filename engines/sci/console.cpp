@@ -40,12 +40,14 @@
 #include "sci/sound/music.h"
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/sound/drivers/map-mt32-to-gm.h"
+#include "sci/graphics/cache.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/view.h"
 
 #include "sci/parser/vocabulary.h"
 
@@ -773,17 +775,16 @@ bool Console::cmdResourceTypes(int argc, const char **argv) {
 
 bool Console::cmdHexgrep(int argc, const char **argv) {
 	if (argc < 4) {
-		DebugPrintf("Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers.\n");
+		DebugPrintf("Searches some resources for a particular sequence of bytes, represented as decimal or hexadecimal numbers.\n");
 		DebugPrintf("Usage: %s <resource type> <resource number> <search string>\n", argv[0]);
 		DebugPrintf("<resource number> can be a specific resource number, or \"all\" for all of the resources of the specified type\n");
-		DebugPrintf("EXAMPLES:\n  hexgrep script all e8 03 c8 00\n  hexgrep pic 042 fe");
+		DebugPrintf("EXAMPLES:\n  hexgrep script all 0xe8 0x03 0xc8 0x00\n  hexgrep pic 0x42 0xfe\n");
 		cmdResourceTypes(argc, argv);
 		return true;
 	}
 
 	ResourceType restype = parseResourceType(argv[1]);
 	int resNumber = 0, resMax = 0;
-	char seekString[500];
 	Resource *script = NULL;
 
 	if (restype == kResourceTypeInvalid) {
@@ -793,17 +794,18 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 
 	if (!scumm_stricmp(argv[2], "all")) {
 		resNumber = 0;
-		resMax = 999;
+		resMax = 65535;
 	} else {
 		resNumber = resMax = atoi(argv[2]);
 	}
 
-	strcpy(seekString, argv[3]);
+	// Convert the bytes
+	Common::Array<int> byteString;
+	byteString.resize(argc - 3);
 
-	// Construct the seek string
-	for (int i = 4; i < argc; i++) {
-		strcat(seekString, argv[i]);
-	}
+	for (uint i = 0; i < byteString.size(); i++)
+		if (!parseInteger(argv[i + 3], byteString[i]))
+			return true;
 
 	for (; resNumber <= resMax; resNumber++) {
 		script = _engine->getResMan()->findResource(ResourceId(restype, resNumber), 0);
@@ -813,13 +815,13 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 			int output_script_name = 0;
 
 			while (seeker < script->size) {
-				if (script->data[seeker] == seekString[comppos]) {
+				if (script->data[seeker] == byteString[comppos]) {
 					if (comppos == 0)
 						seekerold = seeker;
 
 					comppos++;
 
-					if (comppos == strlen(seekString)) {
+					if (comppos == byteString.size()) {
 						comppos = 0;
 						seeker = seekerold + 1;
 
@@ -1503,7 +1505,14 @@ bool Console::cmdDrawCel(int argc, const char **argv) {
 	uint16 loopNo = atoi(argv[2]);
 	uint16 celNo = atoi(argv[3]);
 
-	_engine->_gfxPaint->kernelDrawCel(resourceId, loopNo, celNo, 50, 50, 0, 0, false, NULL_REG);
+	if (_engine->_gfxPaint16) {
+		_engine->_gfxPaint16->kernelDrawCel(resourceId, loopNo, celNo, 50, 50, 0, 0, 128, 128, false, NULL_REG);
+	} else {
+		GfxView *view = _engine->_gfxCache->getView(resourceId);
+		Common::Rect celRect(50, 50, 50 + view->getWidth(loopNo, celNo), 50 + view->getHeight(loopNo, celNo));
+		view->draw(celRect, celRect, celRect, loopNo, celNo, 255, 0, false);
+		_engine->_gfxScreen->copyRectToScreen(celRect);
+	}
 	return true;
 }
 

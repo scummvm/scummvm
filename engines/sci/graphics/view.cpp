@@ -313,6 +313,25 @@ int16 GfxView::getHeight(int16 loopNo, int16 celNo) const {
 
 const CelInfo *GfxView::getCelInfo(int16 loopNo, int16 celNo) const {
 	assert(_loopCount);
+
+	// WORKAROUND for the EGA version of SQ1: View 506 is the portrait of the 
+	// skimmer buyer in room 41 in SQ1. Loop 0 is his face looking left (shown
+	// the first time Roger arrives in Ulence Flats) and loop 1 is his face
+	// looking right (shown the second time he appears, when he makes the
+	// second offer for the skimmer). In the VGA version, the first two loops
+	// have 2 cels, a valid one (cel 0) and an invalid one (cel 1). In the EGA 
+	// version, the cels in these two loops have been swapped. The game scripts,
+	// however seem to get confused by this situation, and when they check loop
+	// 1, cel 0 via kCelHigh and kCelWide regard it as invalid and never show
+	// it. We just swap the two cels here in the EGA version, making it behave
+	// like the VGA version, thus the game scripts show the correct loop. Fixes
+	// bug #3044500. Note that the same workaround is in getBitmap().
+	// TODO: Check if this issue happens in the original version.
+	if (g_sci->getGameId() == GID_SQ1 && !_resMan->isVGA() && _resourceId == 506) {
+		if ((loopNo == 0 || loopNo == 1) && celNo == 0)
+			celNo = 1;
+	}
+
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return &_loop[loopNo].cel[celNo];
@@ -346,12 +365,9 @@ void GfxView::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, C
 
 void GfxView::getCelSpecialHoyle4Rect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect &outRect) const {
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
-	int16 adjustY = y - celInfo->height + celInfo->displaceY + 1;
-	int16 adjustX = x - ((celInfo->width - 1) >> 1) + celInfo->displaceX;
-	outRect.top += adjustY;
-	outRect.bottom += adjustY;
-	outRect.left += adjustX;
-	outRect.right += adjustX;
+	int16 adjustY = y + celInfo->displaceY - celInfo->height + 1;
+	int16 adjustX = x + celInfo->displaceX - ((celInfo->width - 1) >> 1);
+	outRect.translate(adjustX, adjustY);
 }
 
 void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect &outRect) const {
@@ -519,6 +535,13 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 }
 
 const byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
+	// WORKAROUND for the EGA version of SQ1, same as the one in getCelInfo().
+	// Check getCelInfo() above for more information.
+	if (g_sci->getGameId() == GID_SQ1 && !_resMan->isVGA() && _resourceId == 506) {
+		if ((loopNo == 0 || loopNo == 1) && celNo == 0)
+			celNo = 1;
+	}
+
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	if (_loop[loopNo].cel[celNo].rawBitmap)
@@ -655,10 +678,9 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 	const byte drawMask = (priority == 255) ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
 	int x, y;
 
-	if (_embeddedPal) {
+	if (_embeddedPal)
 		// Merge view palette in...
 		_palette->set(&_viewPalette, false);
-	}
 
 	const int16 width = MIN(clipRect.width(), celWidth);
 	const int16 height = MIN(clipRect.height(), celHeight);
@@ -679,7 +701,7 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 						// UpscaledHires means view is hires and is supposed to
 						// get drawn onto lowres screen.
 						// FIXME(?): we can't read priority directly with the
-						// hires coordinates. may not be needed at all in kq6
+						// hires coordinates. May not be needed at all in kq6
 						_screen->putPixelOnDisplay(x2, y2, palette->mapping[color]);
 					}
 				}
@@ -718,10 +740,9 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	int16 scaledWidth, scaledHeight;
 	int pixelNo, scaledPixel, scaledPixelNo, prevScaledPixelNo;
 
-	if (_embeddedPal) {
+	if (_embeddedPal)
 		// Merge view palette in...
 		_palette->set(&_viewPalette, false);
-	}
 
 	scaledWidth = (celInfo->width * scaleX) >> 7;
 	scaledHeight = (celInfo->height * scaleY) >> 7;

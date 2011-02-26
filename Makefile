@@ -76,7 +76,7 @@ ZIP     ?= zip -q
 # Misc stuff - you should never have to edit this                     #
 #######################################################################
 
-EXECUTABLE  := scummvm$(EXEEXT)
+EXECUTABLE  := $(EXEPRE)scummvm$(EXEEXT)
 
 include $(srcdir)/Makefile.common
 

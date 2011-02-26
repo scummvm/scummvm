@@ -35,8 +35,9 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
-MystScriptParser_Stoneship::MystScriptParser_Stoneship(MohawkEngine_Myst *vm) :
+Stoneship::Stoneship(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm), _state(vm->_gameState->_stoneship) {
 	setupOpcodes();
 
@@ -60,12 +61,12 @@ MystScriptParser_Stoneship::MystScriptParser_Stoneship(MohawkEngine_Myst *vm) :
 		_state.generatorPowerAvailable = 0;
 }
 
-MystScriptParser_Stoneship::~MystScriptParser_Stoneship() {
+Stoneship::~Stoneship() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Stoneship::x, #x))
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Stoneship::x, #x))
 
-void MystScriptParser_Stoneship::setupOpcodes() {
+void Stoneship::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, o_pumpTurnOff);
 	OPCODE(101, o_brotherDoorOpen);
@@ -111,14 +112,14 @@ void MystScriptParser_Stoneship::setupOpcodes() {
 
 #undef OPCODE
 
-void MystScriptParser_Stoneship::disablePersistentScripts() {
+void Stoneship::disablePersistentScripts() {
 	_batteryCharging = false;
 	_batteryDepleting = false;
 	_batteryGaugeRunning = false;
 	_telescopeRunning = false;
 }
 
-void MystScriptParser_Stoneship::runPersistentScripts() {
+void Stoneship::runPersistentScripts() {
 	if (_batteryCharging)
 		chargeBattery_run();
 
@@ -135,7 +136,7 @@ void MystScriptParser_Stoneship::runPersistentScripts() {
 		tunnel_run();
 }
 
-uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
+uint16 Stoneship::getVar(uint16 var) {
 	switch(var) {
 	case 0: // Water Drained From Lighthouse / Right Button Of Pump
 		return _state.pumpState == 4;
@@ -260,7 +261,7 @@ uint16 MystScriptParser_Stoneship::getVar(uint16 var) {
 	}
 }
 
-void MystScriptParser_Stoneship::toggleVar(uint16 var) {
+void Stoneship::toggleVar(uint16 var) {
 	switch(var) {
 	case 0: // Water Drained From Lighthouse / Right Button Of Pump
 		if (_state.pumpState == 4)
@@ -326,7 +327,7 @@ void MystScriptParser_Stoneship::toggleVar(uint16 var) {
 	}
 }
 
-bool MystScriptParser_Stoneship::setVarValue(uint16 var, uint16 value) {
+bool Stoneship::setVarValue(uint16 var, uint16 value) {
 	bool refresh = false;
 
 	switch (var) {
@@ -380,7 +381,7 @@ bool MystScriptParser_Stoneship::setVarValue(uint16 var, uint16 value) {
 	return refresh;
 }
 
-void MystScriptParser_Stoneship::o_pumpTurnOff(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_pumpTurnOff(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Turn off previous pump selection", op);
 
 	if (_state.pumpState) {
@@ -410,7 +411,7 @@ void MystScriptParser_Stoneship::o_pumpTurnOff(uint16 op, uint16 var, uint16 arg
 	}
 }
 
-void MystScriptParser_Stoneship::o_brotherDoorOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_brotherDoorOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Open brother door", op);
 
 	_brotherDoorOpen = 1;
@@ -418,7 +419,7 @@ void MystScriptParser_Stoneship::o_brotherDoorOpen(uint16 op, uint16 var, uint16
 	animatedUpdate(argc, argv, 5);
 }
 
-void MystScriptParser_Stoneship::o_cabinBookMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_cabinBookMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Play Book Room Movie", op);
 
 	uint16 startTime = argv[0];
@@ -429,7 +430,7 @@ void MystScriptParser_Stoneship::o_cabinBookMovie(uint16 op, uint16 var, uint16 
 	_vm->_video->waitUntilMovieEnds(book);
 }
 
-void MystScriptParser_Stoneship::o_drawerOpenSirius(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_drawerOpenSirius(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Open drawer", op);
 
 	MystResourceType8 *drawer = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
@@ -447,18 +448,18 @@ void MystScriptParser_Stoneship::o_drawerOpenSirius(uint16 op, uint16 var, uint1
 	_vm->_gfx->runTransition(transition, drawer->getRect(), 25, 5);
 }
 
-void MystScriptParser_Stoneship::o_drawerClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_drawerClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Close drawer", op);
 	drawerClose(argv[0]);
 }
 
-void MystScriptParser_Stoneship::o_telescopeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_telescopeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	_telescopeOldMouse = mouse.x;
 	_vm->_cursor->setCursor(700);
 }
 
-void MystScriptParser_Stoneship::o_telescopeMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_telescopeMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Telescope move", op);
 
 	MystResourceType11 *display = static_cast<MystResourceType11 *>(_invokingResource);
@@ -477,11 +478,11 @@ void MystScriptParser_Stoneship::o_telescopeMove(uint16 op, uint16 var, uint16 a
     _vm->_system->updateScreen();
 }
 
-void MystScriptParser_Stoneship::o_telescopeStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_telescopeStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_vm->checkCursorHints();
 }
 
-void MystScriptParser_Stoneship::o_generatorStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_generatorStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generator start", op);
 
 	MystResourceType11 *handle = static_cast<MystResourceType11 *>(_invokingResource);
@@ -507,7 +508,7 @@ void MystScriptParser_Stoneship::o_generatorStart(uint16 op, uint16 var, uint16 
 		_vm->_sound->replaceSoundMyst(soundId, Audio::Mixer::kMaxChannelVolume, true);
 }
 
-void MystScriptParser_Stoneship::o_generatorStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_generatorStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generator stop", op);
 
 	_batteryCharging = false;
@@ -534,7 +535,7 @@ void MystScriptParser_Stoneship::o_generatorStop(uint16 op, uint16 var, uint16 a
 		_vm->_sound->replaceSoundMyst(soundId);
 }
 
-void MystScriptParser_Stoneship::chargeBattery_run() {
+void Stoneship::chargeBattery_run() {
 	uint32 time = _vm->_system->getMillis();
 
 	if (time > _batteryNextTime) {
@@ -543,7 +544,7 @@ void MystScriptParser_Stoneship::chargeBattery_run() {
 	}
 }
 
-uint16 MystScriptParser_Stoneship::batteryRemainingCharge() {
+uint16 Stoneship::batteryRemainingCharge() {
 	uint32 time = _vm->_system->getMillis();
 
 	if (_state.generatorDepletionTime > time) {
@@ -553,7 +554,7 @@ uint16 MystScriptParser_Stoneship::batteryRemainingCharge() {
 	}
 }
 
-void MystScriptParser_Stoneship::batteryDeplete_run() {
+void Stoneship::batteryDeplete_run() {
 	uint32 time = _vm->_system->getMillis();
 
 	if (time > _batteryNextTime) {
@@ -574,7 +575,7 @@ void MystScriptParser_Stoneship::batteryDeplete_run() {
 	}
 }
 
-void MystScriptParser_Stoneship::o_drawerOpenAchenar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_drawerOpenAchenar(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Open drawer", op);
 
 	MystResourceType8 *drawer = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
@@ -582,7 +583,7 @@ void MystScriptParser_Stoneship::o_drawerOpenAchenar(uint16 op, uint16 var, uint
 	_vm->_gfx->runTransition(5, drawer->getRect(), 25, 5);
 }
 
-void MystScriptParser_Stoneship::o_hologramPlayback(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_hologramPlayback(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 2013 (Achenar's Rose-Skull Hologram)
 	debugC(kDebugScript, "Opcode %d: Rose-Skull Hologram Playback", op);
 
@@ -604,12 +605,12 @@ void MystScriptParser_Stoneship::o_hologramPlayback(uint16 op, uint16 var, uint1
 	_vm->_video->delayUntilMovieEnds(displayMovie);
 }
 
-void MystScriptParser_Stoneship::o_hologramSelectionStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_hologramSelectionStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hologram start move", op);
 	//_vm->_cursor->setCursor(0);
 }
 
-void MystScriptParser_Stoneship::o_hologramSelectionMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_hologramSelectionMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hologram move", op);
 
 	MystResourceType11 *handle = static_cast<MystResourceType11 *>(_invokingResource);
@@ -636,12 +637,12 @@ void MystScriptParser_Stoneship::o_hologramSelectionMove(uint16 op, uint16 var, 
 	}
 }
 
-void MystScriptParser_Stoneship::o_hologramSelectionStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_hologramSelectionStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hologram stop move", op);
 	_vm->checkCursorHints();
 }
 
-void MystScriptParser_Stoneship::o_compassButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_compassButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Compass rose button pressed", op);
 	// Used on Card 2111 (Compass Rose)
 	// Called when Button Clicked.
@@ -663,7 +664,7 @@ void MystScriptParser_Stoneship::o_compassButton(uint16 op, uint16 var, uint16 a
 	o_redrawCard(op, var, argc, argv);
 }
 
-void MystScriptParser_Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Chest valve videos", op);
 
 	Common::String movie = _vm->wrapMovieFilename("ligspig", kStoneshipStack);
@@ -699,7 +700,7 @@ void MystScriptParser_Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint1
 	}
 }
 
-void MystScriptParser_Stoneship::o_chestDropKey(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_chestDropKey(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: drop chest key", op);
 
 	// If holding Key to Lamp Room Trapdoor, drop to bottom of
@@ -710,7 +711,7 @@ void MystScriptParser_Stoneship::o_chestDropKey(uint16 op, uint16 var, uint16 ar
 	}
 }
 
-void MystScriptParser_Stoneship::o_trapLockOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_trapLockOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Trap lock open video", op);
 
 	Common::String movie = _vm->wrapMovieFilename("openloc", kStoneshipStack);
@@ -729,7 +730,7 @@ void MystScriptParser_Stoneship::o_trapLockOpen(uint16 op, uint16 var, uint16 ar
 		_vm->_sound->playSound(4143);
 }
 
-void MystScriptParser_Stoneship::o_sideDoorsMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_sideDoorsMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Cards 2285, 2289, 2247, 2251 (Side Doors in Tunnels Down To Brothers Rooms)
 	uint16 movieId = argv[0];
 
@@ -765,14 +766,14 @@ void MystScriptParser_Stoneship::o_sideDoorsMovies(uint16 op, uint16 var, uint16
 	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser_Stoneship::o_cloudOrbEnter(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_cloudOrbEnter(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Cloud orb enter", op);
 
 	_vm->_sound->replaceSoundMyst(_cloudOrbSound, Audio::Mixer::kMaxChannelVolume, true);
 	_cloudOrbMovie->playMovie();
 }
 
-void MystScriptParser_Stoneship::o_cloudOrbLeave(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_cloudOrbLeave(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Cloud orb leave", op);
 
 	_cloudOrbMovie->pauseMovie(true);
@@ -780,7 +781,7 @@ void MystScriptParser_Stoneship::o_cloudOrbLeave(uint16 op, uint16 var, uint16 a
 	_vm->_gfx->runTransition(5, _invokingResource->getRect(), 4, 0);
 }
 
-void MystScriptParser_Stoneship::o_drawerCloseOpened(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_drawerCloseOpened(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Close open drawer", op);
 
 	uint16 drawerOpen = getVar(var);
@@ -788,7 +789,7 @@ void MystScriptParser_Stoneship::o_drawerCloseOpened(uint16 op, uint16 var, uint
 		drawerClose(argv[0] + drawerOpen - 1);
 }
 
-void MystScriptParser_Stoneship::drawerClose(uint16 drawer) {
+void Stoneship::drawerClose(uint16 drawer) {
 	_chestDrawersOpen = 0;
 	_vm->drawCardBackground();
 	_vm->drawResourceImages();
@@ -797,19 +798,19 @@ void MystScriptParser_Stoneship::drawerClose(uint16 drawer) {
 	_vm->_gfx->runTransition(6, res->getRect(), 25, 5);
 }
 
-void MystScriptParser_Stoneship::o_hologramDisplay_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_hologramDisplay_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hologram display init", op);
 	_hologramDisplay = static_cast<MystResourceType6 *>(_invokingResource);
 
 	_hologramDisplayPos = 0;
 }
 
-void MystScriptParser_Stoneship::o_hologramSelection_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_hologramSelection_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hologram selection init", op);
 	_hologramSelection = static_cast<MystResourceType6 *>(_invokingResource);
 }
 
-void MystScriptParser_Stoneship::batteryGaugeUpdate() {
+void Stoneship::batteryGaugeUpdate() {
 	uint16 charge = 0;
 
 	if (_state.generatorDepletionTime) {
@@ -823,7 +824,7 @@ void MystScriptParser_Stoneship::batteryGaugeUpdate() {
 	_batteryGauge->setRect(rect);
 }
 
-void MystScriptParser_Stoneship::o_battery_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_battery_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 2160 (Lighthouse Battery Pack Closeup)
 	debugC(kDebugScript, "Opcode %d: Battery init", op);
 
@@ -832,7 +833,7 @@ void MystScriptParser_Stoneship::o_battery_init(uint16 op, uint16 var, uint16 ar
 	batteryGaugeUpdate();
 }
 
-void MystScriptParser_Stoneship::o_tunnelEnter_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_tunnelEnter_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Tunnel enter", op);
 
 	o_tunnel_init(op, var, argc, argv);
@@ -841,13 +842,13 @@ void MystScriptParser_Stoneship::o_tunnelEnter_init(uint16 op, uint16 var, uint1
 	_tunnelNextTime = _vm->_system->getMillis() + 1500;
 }
 
-void MystScriptParser_Stoneship::o_batteryGauge_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_batteryGauge_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Battery gauge init", op);
 	_batteryLastCharge = batteryRemainingCharge();
 	_batteryGaugeRunning = true;
 }
 
-void MystScriptParser_Stoneship::batteryGauge_run() {
+void Stoneship::batteryGauge_run() {
 	uint16 batteryCharge = batteryRemainingCharge();
 
 	if (batteryCharge != _batteryLastCharge) {
@@ -863,7 +864,7 @@ void MystScriptParser_Stoneship::batteryGauge_run() {
 	}
 }
 
-void MystScriptParser_Stoneship::o_tunnel_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_tunnel_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 		debugC(kDebugScript, "Opcode %d: Tunnel card init", op);
 
 		_tunnelImagesCount = argv[0];
@@ -880,7 +881,7 @@ void MystScriptParser_Stoneship::o_tunnel_init(uint16 op, uint16 var, uint16 arg
 		debugC(kDebugScript, "\tsoundIdAlarm: %d", _tunnelAlarmSound);
 }
 
-void MystScriptParser_Stoneship::tunnel_run() {
+void Stoneship::tunnel_run() {
 	uint32 time = _vm->_system->getMillis();
 
 	if (time > _tunnelNextTime) {
@@ -903,19 +904,19 @@ void MystScriptParser_Stoneship::tunnel_run() {
 	}
 }
 
-void MystScriptParser_Stoneship::o_tunnelLeave_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_tunnelLeave_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Tunnel leave", op);
 
 	_tunnelRunning = false;
 }
 
-void MystScriptParser_Stoneship::o_chest_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_chest_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Chest init", op);
 
 	_state.chestOpenState = 0;
 }
 
-void MystScriptParser_Stoneship::o_telescope_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_telescope_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Telescope init", op);
 
 	// Used in Card 2218 (Telescope view)
@@ -929,7 +930,7 @@ void MystScriptParser_Stoneship::o_telescope_init(uint16 op, uint16 var, uint16 
 	_telescopeNexTime = _vm->_system->getMillis() + 1000;
 }
 
-void MystScriptParser_Stoneship::telescope_run() {
+void Stoneship::telescope_run() {
 	uint32 time = _vm->_system->getMillis();
 
 	if (time > _telescopeNexTime) {
@@ -942,7 +943,7 @@ void MystScriptParser_Stoneship::telescope_run() {
 	}
 }
 
-void MystScriptParser_Stoneship::telescopeLighthouseDraw() {
+void Stoneship::telescopeLighthouseDraw() {
 	if (_telescopePosition > 1137 && _telescopePosition < 1294) {
 		uint16 imageId = _telescopeLighthouseOff;
 
@@ -964,7 +965,7 @@ void MystScriptParser_Stoneship::telescopeLighthouseDraw() {
 	}
 }
 
-void MystScriptParser_Stoneship::o_achenarDrawers_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_achenarDrawers_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Achenar's Room Drawers Init", op);
 
 	// Used for Card 2004 (Achenar's Room Drawers)
@@ -982,7 +983,7 @@ void MystScriptParser_Stoneship::o_achenarDrawers_init(uint16 op, uint16 var, ui
 	}
 }
 
-void MystScriptParser_Stoneship::o_cloudOrb_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Stoneship::o_cloudOrb_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Cloud orb init", op);
 
 	_cloudOrbMovie = static_cast<MystResourceType6 *>(_invokingResource);
@@ -990,4 +991,5 @@ void MystScriptParser_Stoneship::o_cloudOrb_init(uint16 op, uint16 var, uint16 a
 	_cloudOrbStopSound = argv[1];
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

@@ -204,7 +204,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		}
 	//	if (num == 255) consolePrintf("pal:%d r:%d g:%d b:%d\n", r, red, green, blue);
 
-		colors += 4;
+		colors += 3;
 	}
 }
 
@@ -235,7 +235,7 @@ void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 		u16 paletteValue = red | (green << 5) | (blue << 10);
 		_cursorPalette[r] = paletteValue;
 
-		colors += 4;
+		colors += 3;
 	}
 
 	_disableCursorPalette = false;
@@ -266,7 +266,6 @@ void OSystem_DS::grabPalette(unsigned char *colours, uint start, uint num) {
 		*colours++ = (BG_PALETTE[r] & 0x001F) << 3;
 		*colours++ = (BG_PALETTE[r] & 0x03E0) >> 5 << 3;
 		*colours++ = (BG_PALETTE[r] & 0x7C00) >> 10 << 3;
-		colours++;
 	}
 }
 

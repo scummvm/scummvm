@@ -38,7 +38,7 @@ namespace Mohawk {
 InfoDialog::InfoDialog(MohawkEngine *vm, const Common::String &message) : _vm(vm), GUI::Dialog(0, 0, 1, 1), _message(message) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 
-	_text = new GUI::StaticTextWidget(this, 4, 4, 10, 10, _message, Graphics::kTextAlignCenter);
+	_text = new GUI::StaticTextWidget(this, 0, 0, 10, 10, _message, Graphics::kTextAlignCenter);
 }
 
 void InfoDialog::setInfoText(const Common::String &message) {
@@ -58,7 +58,7 @@ void InfoDialog::reflowLayout() {
 	_x = (screenW - width) / 2;
 	_y = (screenH - height) / 2;
 
-	_text->setSize(_w - 8, _h);
+	_text->setSize(_w, _h);
 }
 
 PauseDialog::PauseDialog(MohawkEngine *vm, const Common::String &message) : InfoDialog(vm, message) {

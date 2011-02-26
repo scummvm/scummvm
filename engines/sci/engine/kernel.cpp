@@ -533,6 +533,7 @@ void Kernel::mapFunctions() {
 
 	switch (g_sci->getPlatform()) {
 	case Common::kPlatformPC:
+	case Common::kPlatformFMTowns:
 		platformMask = SIGFOR_DOS;
 		break;
 	case Common::kPlatformPC98:

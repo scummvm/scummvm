@@ -433,8 +433,7 @@ void TownsScreen::toggleLayers(int flag) {
 	_numDirtyRects = FULL_REDRAW;
 
 	memset(_outBuffer, 0, _pitch * _height);
-	updateOutputBuffer();
-	outputToScreen();
+	update();
 
 	_system->updateScreen();
 }

@@ -38,6 +38,7 @@ MODULE_OBJS := \
 	engine/state.o \
 	engine/static_selectors.o \
 	engine/vm.o \
+	engine/vm_types.o \
 	engine/workarounds.o \
 	graphics/animate.o \
 	graphics/cache.o \

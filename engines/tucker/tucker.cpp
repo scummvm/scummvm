@@ -127,7 +127,7 @@ void TuckerEngine::restart() {
 	_syncCounter = 0;
 	_lastFrameTime = _system->getMillis();
 	_mainLoopCounter1 = _mainLoopCounter2 = 0;
-	_timerCounter1 = _timerCounter2 = 0;
+	_timerCounter2 = 0;
 	_partNum = _currentPartNum = 0;
 	_locationNum = 0;
 	_nextLocationNum = ConfMan.getInt("boot_param");
@@ -273,7 +273,6 @@ void TuckerEngine::restart() {
 	_xPosCurrent = 160;
 	_characterSpeechDataPtr = 0;
 	_ptTextOffset = 0;
-	memset(_ctable01Table_sprite, 0, sizeof(_ctable01Table_sprite));
 	memset(_characterAnimationsTable, 0, sizeof(_characterAnimationsTable));
 	memset(_characterStateTable, 0, sizeof(_characterStateTable));
 	_backgroundSprOffset = 0;
@@ -556,13 +555,7 @@ void TuckerEngine::mainLoop() {
 		if (_inputKeys[kInputKeyToggleTextSpeech]) {
 			_inputKeys[kInputKeyToggleTextSpeech] = false;
 			if ((_gameFlags & kGameFlagNoSubtitles) == 0) {
-				if (_displaySpeechText) {
-					_displaySpeechText = false;
-//					kDefaultCharSpeechSoundCounter = 1;
-				} else {
-					_displaySpeechText = true;
-//					kDefaultCharSpeechSoundCounter = 70;
-				}
+				_displaySpeechText = !_displaySpeechText;
 				ConfMan.setBool("subtitles", _displaySpeechText);
 			}
 		}
@@ -595,13 +588,11 @@ void TuckerEngine::mainLoop() {
 void TuckerEngine::waitForTimer(int ticksCount) {
 	uint32 end = _lastFrameTime + ticksCount * 1000 / 46;
 	do {
-		++_timerCounter1;
 		parseEvents();
 		_system->delayMillis(10);
 		_lastFrameTime = _system->getMillis();
 	} while (!_fastMode && _lastFrameTime < end);
 	_timerCounter2 += ticksCount;
-	_timerCounter1 = 0;
 }
 
 void TuckerEngine::parseEvents() {
@@ -674,8 +665,8 @@ void TuckerEngine::updateCursorPos(int x, int y) {
 
 void TuckerEngine::setCursorNum(int num) {
 	_cursorNum = num;
-	const int cursorW = 16;
-	const int cursorH = 16;
+	static const int cursorW = 16;
+	static const int cursorH = 16;
 	CursorMan.replaceCursor(_cursorGfxBuf + _cursorNum * 256, cursorW, cursorH, 1, 1, 0);
 }
 
@@ -942,31 +933,29 @@ void TuckerEngine::updateFlagsForCharPosition() {
 }
 
 void TuckerEngine::fadeOutPalette(int colorsCount) {
-	uint8 pal[256 * 4];
+	uint8 pal[256 * 3];
 	_system->getPaletteManager()->grabPalette(pal, 0, colorsCount);
 	for (int color = 0; color < colorsCount; ++color) {
 		for (int i = 0; i < 3; ++i) {
-			const int c = int(pal[color * 4 + i]) + kFadePaletteStep * 4;
-			pal[color * 4 + i] = MIN<int>(c, _currentPalette[color * 3 + i]);
+			const int c = int(pal[color * 3 + i]) + kFadePaletteStep * 3;
+			pal[color * 3 + i] = MIN<int>(c, _currentPalette[color * 3 + i]);
 		}
 	}
 	_system->getPaletteManager()->setPalette(pal, 0, colorsCount);
 	_system->updateScreen();
-	waitForTimer(1);
 }
 
 void TuckerEngine::fadeInPalette(int colorsCount) {
-	uint8 pal[256 * 4];
+	uint8 pal[256 * 3];
 	_system->getPaletteManager()->grabPalette(pal, 0, colorsCount);
 	for (int color = 0; color < colorsCount; ++color) {
 		for (int i = 0; i < 3; ++i) {
-			const int c = int(pal[color * 4 + i]) - kFadePaletteStep * 4;
-			pal[color * 4 + i] = MAX<int>(c, 0);
+			const int c = int(pal[color * 3 + i]) - kFadePaletteStep * 3;
+			pal[color * 3 + i] = MAX<int>(c, 0);
 		}
 	}
 	_system->getPaletteManager()->setPalette(pal, 0, colorsCount);
 	_system->updateScreen();
-	waitForTimer(1);
 }
 
 void TuckerEngine::fadePaletteColor(int color, int step) {
@@ -980,7 +969,7 @@ void TuckerEngine::fadePaletteColor(int color, int step) {
 }
 
 void TuckerEngine::setBlackPalette() {
-	uint8 pal[256 * 4];
+	uint8 pal[256 * 3];
 	memset(pal, 0, sizeof(pal));
 	_system->getPaletteManager()->setPalette(pal, 0, 256);
 }
@@ -1098,17 +1087,15 @@ void TuckerEngine::stopSounds() {
 }
 
 void TuckerEngine::playSounds() {
-	for (int i = 0; i < 29; ++i) {
-		if (i < _locationSoundsCount) {
-			if (_locationSoundsTable[i].type == 1 || _locationSoundsTable[i].type == 2 || _locationSoundsTable[i].type == 5 ||
-				(_locationSoundsTable[i].type == 7 && _flagsTable[_locationSoundsTable[i].flagNum] == _locationSoundsTable[i].flagValueStartFx)) {
-				startSound(_locationSoundsTable[i].offset, i, _locationSoundsTable[i].volume);
-			}
+	for (int i = 0; i < _locationSoundsCount; ++i) {
+		if (_locationSoundsTable[i].type == 1 || _locationSoundsTable[i].type == 2 || _locationSoundsTable[i].type == 5 ||
+			(_locationSoundsTable[i].type == 7 && _flagsTable[_locationSoundsTable[i].flagNum] == _locationSoundsTable[i].flagValueStartFx)) {
+			startSound(_locationSoundsTable[i].offset, i, _locationSoundsTable[i].volume);
 		}
-		if (i < _locationMusicsCount) {
-			if (_locationMusicsTable[i].flag > 0) {
-				startMusic(_locationMusicsTable[i].offset, i, _locationMusicsTable[i].volume);
-			}
+	}
+	for (int i = 0; i < _locationMusicsCount; ++i) {
+		if (_locationMusicsTable[i].flag > 0) {
+			startMusic(_locationMusicsTable[i].offset, i, _locationMusicsTable[i].volume);
 		}
 	}
 }
@@ -1430,7 +1417,6 @@ void TuckerEngine::redrawPanelOverBackground() {
 }
 
 void TuckerEngine::drawConversationTexts() {
-	int x = 0;
 	int y = 141;
 	int flag = 0;
 	for (int i = 0; i <  _conversationOptionsCount; ++i) {
@@ -1438,7 +1424,7 @@ void TuckerEngine::drawConversationTexts() {
 		if ((_mousePosY > y && _mousePosY < y + 11) || _nextTableToLoadIndex == i) {
 			color = 106;
 		}
-		drawSpeechText(x, y, _characterSpeechDataPtr, _instructionsActionsTable[i], color);
+		drawSpeechText(0, y, _characterSpeechDataPtr, _instructionsActionsTable[i], color);
 		if (_mousePosY > y && _mousePosY < _conversationOptionLinesCount * 10 + y + 1) {
 			_nextTableToLoadIndex = i;
 			flag = 1;
@@ -1757,6 +1743,8 @@ void TuckerEngine::drawCurrentSprite() {
 	if ((_locationNum == 17 || _locationNum == 18) && _currentSpriteAnimationFrame == 16) {
 		return;
 	}
+	// Workaround original game glitch: location 14 contains some colors from [0xE0-0xF8] in a walkable area (tracker item #3106542)
+	const bool color248Only = (_locationNum == 14);
 	SpriteFrame *chr = &_spriteFramesTable[_currentSpriteAnimationFrame];
 	int yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr->yOffset;
 	int xPos = _xPosCurrent;
@@ -1766,7 +1754,7 @@ void TuckerEngine::drawCurrentSprite() {
 		xPos -= chr->xSize + chr->xOffset - 14;
 	}
 	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr->sourceOffset, chr->xSize, chr->ySize,
-		chr->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0);
+		chr->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0, color248Only);
 	addDirtyRect(xPos, yPos, chr->xSize, chr->ySize);
 	if (_currentSpriteAnimationLength > 1) {
 		SpriteFrame *chr2 = &_spriteFramesTable[_currentSpriteAnimationFrame2];
@@ -1778,7 +1766,7 @@ void TuckerEngine::drawCurrentSprite() {
 			xPos -= chr2->xSize + chr2->xOffset - 14;
 		}
 		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr2->sourceOffset, chr2->xSize, chr2->ySize,
-			chr2->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0);
+			chr2->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0, color248Only);
 		addDirtyRect(xPos, yPos, chr2->xSize, chr2->ySize);
 	}
 }
@@ -1929,7 +1917,9 @@ void TuckerEngine::drawSprite(int num) {
 			Graphics::decodeRLE_248(dstPtr, srcPtr, srcW, srcH, 0, s->yMaxBackground, s->flipX != 0);
 			break;
 		}
-		addDirtyRect(xPos, srcY, srcW, srcH);
+		const int xR = srcX + (s->gfxBackgroundOffset % 640);
+		const int yR = srcY + (s->gfxBackgroundOffset / 640);
+		addDirtyRect(xR, yR, srcW, srcH);
 	}
 }
 
@@ -1980,12 +1970,10 @@ void TuckerEngine::drawInfoString() {
 	if (_actionRequiresTwoObjects) {
 		verbPreposition = (_actionVerb == 5) ? 12 : 11;
 		verbPrepositionWidth = getStringWidth(verbPreposition, infoStrBuf) + 4;
-		if (_gameLang == Common::FR_FRA || _gameLang == Common::DE_DEU) {
-			if ((_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition > 0) {
-				infoStringWidth = 0;
-				verbWidth = 0;
-				object1NameWidth = 0;
-			}
+		if (_gameLang != Common::EN_ANY && (_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition > 0) {
+			infoStringWidth = 0;
+			verbWidth = 0;
+			object1NameWidth = 0;
 		}
 		infoStringWidth += verbPrepositionWidth;
 		if (_actionObj2Num > 0 || _actionObj2Type > 0) {
@@ -1993,7 +1981,7 @@ void TuckerEngine::drawInfoString() {
 		}
 	}
 	const int xPos = 159 - infoStringWidth / 2;
-	if (verbPreposition == 0 || (_actionObj2Num == 0 && _actionObj2Type == 0)) {
+	if (_gameLang == Common::EN_ANY || (_actionObj2Num == 0 && _actionObj2Type == 0) || verbPreposition == 0) {
 		drawItemString(xPos, _actionVerb + 1, infoStrBuf);
 		if (_actionObj1Num > 0 || _actionObj1Type > 0) {
 			drawItemString(xPos + 4 + verbWidth, _actionObj1Num + 1, obj1StrBuf);
@@ -2891,7 +2879,11 @@ void TuckerEngine::updateCharSpeechSound(bool displayText) {
 	if (_charSpeechSoundCounter == 0) {
 		return;
 	}
-	--_charSpeechSoundCounter;
+	if (_displaySpeechText) {
+		_charSpeechSoundCounter = 0;
+	} else {
+		--_charSpeechSoundCounter;
+	}
 	if (_charSpeechSoundCounter == 0) {
 		_charSpeechSoundCounter = isSpeechSoundPlaying() ? 1 : 0;
 		if (_charSpeechSoundCounter == 0) {
@@ -3091,6 +3083,11 @@ int TuckerEngine::readTableInstructionCode(int *index) {
 }
 
 int TuckerEngine::readTableInstructionParam(int len) {
+	// skip duplicated minus signs (bua,--1, c0a,--1, ...)
+	if (len >= 3 && memcmp(_tableInstructionsPtr, "--", 2) == 0) {
+		++_tableInstructionsPtr;
+		--len;
+	}
 	char *end = 0;
 	const int param = strtol((const char *)_tableInstructionsPtr, &end, 10);
 	if (end != (const char *)_tableInstructionsPtr + len) {

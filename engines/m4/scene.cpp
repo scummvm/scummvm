@@ -149,11 +149,11 @@ void Scene::showCodes() {
 		for (int i = 0; i < _walkSurface->width() * _walkSurface->height(); i++)
 			destP[i] = (srcP[i] & 0x10) ? 0xFF : 0;
 
-		byte colors[256 * 4];
+		byte colors[256 * 3];
 		memset(colors, 0, sizeof(colors));
-		colors[255 * 4 + 0] = 255;
-		colors[255 * 4 + 1] = 255;
-		colors[255 * 4 + 2] = 255;
+		colors[255 * 3 + 0] = 255;
+		colors[255 * 3 + 1] = 255;
+		colors[255 * 3 + 2] = 255;
 		_vm->_palette->setPalette(colors, 0, 256);
 	} else {
 		// MADS handling

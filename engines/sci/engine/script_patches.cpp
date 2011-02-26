@@ -355,12 +355,12 @@ const uint16 freddypharkasPatchScoreDisposal[] = {
 };
 
 //  script 235 of freddy pharkas rm235::init and sEnterFrom500::changeState
-//   disable icon 7+8 of iconbar (CD only). When picking up the cannister after
+//   disable icon 7+8 of iconbar (CD only). When picking up the canister after
 //   placing it down, the scripts will disable all the other icons. This results
 //   in IconBar::disable doing endless loops even in sierra sci, because there
 //   is no enabled icon left. We remove disabling of icon 8 (which is help),
 //   this fixes the issue.
-const byte freddypharkasSignatureCannisterHang[] = {
+const byte freddypharkasSignatureCanisterHang[] = {
 	12,
 	0x38, 0xf1, 0x00, // pushi f1 (selector disable)
 	0x7a,             // push2
@@ -371,7 +371,7 @@ const byte freddypharkasSignatureCannisterHang[] = {
 	0
 };
 
-const uint16 freddypharkasPatchCannisterHang[] = {
+const uint16 freddypharkasPatchCanisterHang[] = {
 	PATCH_ADDTOOFFSET | +3,
 	0x78,             // push1
 	PATCH_ADDTOOFFSET | +2,
@@ -418,7 +418,7 @@ const uint16 freddypharkasPatchLadderEvent[] = {
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature freddypharkasSignatures[] = {
 	{      0, "CD: score early disposal",                    1, PATCH_MAGICDWORD(0x39, 0x0d, 0x43, 0x75),    -3, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
-	{    235, "CD: cannister pickup hang",                   3, PATCH_MAGICDWORD(0x39, 0x07, 0x39, 0x08),    -4, freddypharkasSignatureCannisterHang, freddypharkasPatchCannisterHang },
+	{    235, "CD: canister pickup hang",                   3, PATCH_MAGICDWORD(0x39, 0x07, 0x39, 0x08),    -4, freddypharkasSignatureCanisterHang, freddypharkasPatchCanisterHang },
 	{    320, "ladder event issue",                          2, PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -618,6 +618,36 @@ const uint16 kq5PatchCdHarpyVolume[] = {
 //    script, description,                                      magic DWORD,                                 adjust
 const SciScriptSignature kq5Signatures[] = {
 	{      0, "CD: harpy volume change",                     1, PATCH_MAGICDWORD(0x80, 0x91, 0x01, 0x18),     0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+// When giving the milk bottle to one of the babies in the garden in KQ6 (room
+// 480), script 481 starts a looping baby cry sound. However, that particular
+// script also has an overriden check method (cryMusic::check). This method
+// explicitly restarts the sound, even if it's set to be looped, thus the same
+// sound is played twice, squelching all other sounds. We just rip the
+// unnecessary cryMusic::check method out, thereby stopping the sound from
+// constantly restarting (since it's being looped anyway), thus the normal
+// game speech can work while the baby cry sound is heard. Fixes bug #3034579.
+const byte kq6SignatureDuplicateBabyCry[] = {
+	10,
+	0x83, 0x00,         // lal 00
+    0x31, 0x1e,         // bnt 1e  [07f4]
+    0x78,               // push1
+    0x39, 0x04,         // pushi 04
+    0x43, 0x75, 0x02,   // callk DoAudio[75] 02
+	0
+};
+
+const uint16 kq6PatchDuplicateBabyCry[] = {
+	0x48,              // ret
+	PATCH_END
+};
+
+//    script, description,                                      magic DWORD,                                 adjust
+const SciScriptSignature kq6Signatures[] = {
+	{    481, "duplicate baby cry",                          1, PATCH_MAGICDWORD(0x83, 0x00, 0x31, 0x1e),     0, kq6SignatureDuplicateBabyCry, kq6PatchDuplicateBabyCry },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -928,9 +958,26 @@ const uint16 qfg3PatchWindowDispose[] = {
 	PATCH_END
 };
 
+// Script 23 in QFG3 has a typo/bug which makes it loop endlessly and
+// read garbage. Fixes bug #3040722.
+const byte qfg3DialogCrash[] = {
+	5,
+	0x34, 0xe7, 0x03,  // ldi 3e7 (999)
+	0x22,              // lt?
+	0x33,              // jmp [back] ---> BUG! Infinite loop
+};
+
+const uint16 qfg3PatchDialogCrash[] = {
+	0x34, 0xe7, 0x03,  // ldi 3e7 (999)
+	0x22,              // lt?
+	0x31,              // bnt [back]
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg3Signatures[] = {
 	{     22, "window dispose",                                 1, PATCH_MAGICDWORD(0x39, 0x05, 0x39, 0x0d),   0,         qfg3WindowDispose,        qfg3PatchWindowDispose },
+	{     23, "dialog crash",                                   1, PATCH_MAGICDWORD(0xe7, 0x03, 0x22, 0x33),  -1,           qfg3DialogCrash,          qfg3PatchDialogCrash },
 	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x2a, 0x31, 0x0b, 0x7a),  -1, qfg3SignatureImportDialog,         qfg3PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -1218,6 +1265,9 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 #endif
 	case GID_KQ5:
 		signatureTable = kq5Signatures;
+		break;
+	case GID_KQ6:
+		signatureTable = kq6Signatures;
 		break;
 	case GID_LAURABOW2:
 		signatureTable = laurabow2Signatures;

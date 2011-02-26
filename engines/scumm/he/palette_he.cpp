@@ -380,21 +380,8 @@ void ScummEngine_v99he::updatePalette() {
 		return;
 
 	int num = _palDirtyMax - _palDirtyMin + 1;
-	int i;
 
-	byte palette_colors[1024];
-	byte *p = palette_colors;
-
-	for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
-		byte *data = _hePalettes + 1024 + i * 3;
-
-		*p++ = data[0];
-		*p++ = data[1];
-		*p++ = data[2];
-		*p++ = 0;
-	}
-
-	_system->getPaletteManager()->setPalette(palette_colors, _palDirtyMin, num);
+	_system->getPaletteManager()->setPalette(_hePalettes + 1024 + _palDirtyMin * 3, _palDirtyMin, num);
 
 	_palDirtyMax = -1;
 	_palDirtyMin = 256;

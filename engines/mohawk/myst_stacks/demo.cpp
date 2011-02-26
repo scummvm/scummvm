@@ -29,25 +29,26 @@
 #include "gui/message.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
-MystScriptParser_Demo::MystScriptParser_Demo(MohawkEngine_Myst *vm) : MystScriptParser_Intro(vm) {
+Demo::Demo(MohawkEngine_Myst *vm) : Intro(vm) {
 	setupOpcodes();
 }
 
-MystScriptParser_Demo::~MystScriptParser_Demo() {
+Demo::~Demo() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Demo::x, #x))
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Demo::x, #x))
 
 #define OVERRIDE_OPCODE(opcode, x) \
 	for (uint32 i = 0; i < _opcodes.size(); i++) \
 		if (_opcodes[i]->op == opcode) { \
-			_opcodes[i]->proc = (OpcodeProcMyst) &MystScriptParser_Demo::x; \
+			_opcodes[i]->proc = (OpcodeProcMyst) &Demo::x; \
 			_opcodes[i]->desc = #x; \
 			break; \
 		}
 
-void MystScriptParser_Demo::setupOpcodes() {
+void Demo::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OVERRIDE_OPCODE(100, opcode_100);
 	OPCODE(101, opcode_101);
@@ -63,14 +64,14 @@ void MystScriptParser_Demo::setupOpcodes() {
 #undef OPCODE
 #undef OVERRIDE_OPCODE
 
-void MystScriptParser_Demo::disablePersistentScripts() {
-	MystScriptParser_Intro::disablePersistentScripts();
+void Demo::disablePersistentScripts() {
+	Intro::disablePersistentScripts();
 
 	_enabled201 = false;
 }
 
-void MystScriptParser_Demo::runPersistentScripts() {
-	MystScriptParser_Intro::runPersistentScripts();
+void Demo::runPersistentScripts() {
+	Intro::runPersistentScripts();
 	
 	if (_enabled201) {
 		// Used on Card 2001, 2002 and 2003
@@ -79,11 +80,11 @@ void MystScriptParser_Demo::runPersistentScripts() {
 	}
 }
 
-void MystScriptParser_Demo::opcode_100(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Demo::opcode_100(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// TODO: Fill in Function...
 }
 
-void MystScriptParser_Demo::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Demo::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used on Card 2000, 2002 and 2003
@@ -94,7 +95,7 @@ void MystScriptParser_Demo::opcode_101(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Demo::opcode_102(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Demo::opcode_102(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used on Card 2002 and 2003
@@ -105,7 +106,7 @@ void MystScriptParser_Demo::opcode_102(uint16 op, uint16 var, uint16 argc, uint1
 		unknown(op, var, argc, argv);
 }
 
-void MystScriptParser_Demo::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Demo::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	varUnusedCheck(op, var);
 
 	// Used on Card 2001, 2002 and 2003
@@ -116,11 +117,12 @@ void MystScriptParser_Demo::opcode_201(uint16 op, uint16 var, uint16 argc, uint1
 }
 
 
-void MystScriptParser_Demo::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Demo::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used on Card 2000
 	varUnusedCheck(op, var);
 
 	// TODO: Fill in Function...
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

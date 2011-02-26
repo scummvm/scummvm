@@ -128,12 +128,7 @@ Common::Error AGOSEngine_PN::go() {
 
 	if (getFeatures() & GF_EGA) {
 		// Set EGA Palette
-		for (int i = 0; i < 16; i++) {
-			_displayPalette[i * 4 + 0] = egaPalette[i * 3 + 0];
-			_displayPalette[i * 4 + 1] = egaPalette[i * 3 + 1];
-			_displayPalette[i * 4 + 2] = egaPalette[i * 3 + 2];
-			_displayPalette[i * 4 + 3] = 0;
-		}
+		memcpy(_displayPalette, egaPalette, sizeof(egaPalette));
 		_paletteFlag = 1;
 	}
 

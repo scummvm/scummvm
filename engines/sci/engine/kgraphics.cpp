@@ -364,6 +364,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	if (!g_sci->_gfxText16) {
 		// TODO: Implement this
 		textWidth = 0; textHeight = 0;
+		warning("TODO: implement kTextSize for SCI32");
 	} else
 #endif
 		g_sci->_gfxText16->kernelTextSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
@@ -1201,14 +1202,12 @@ reg_t kShow(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
-	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
-	kStub(s, argc, argv);
-
 	uint16 operation = argv[0].toUint16();
 
 	switch (operation) {
-	case 0:	{ // Initialize remapping to base. 0 turns remapping off.
-		//int16 unk1 = (argc >= 2) ? argv[1].toSint16() : 0;
+	case 0:	{ // Set remapping to base. 0 turns remapping off.
+		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
+		warning("kRemapColors: Set remapping to base %d", base);
 		}
 		break;
 	case 1:	{ // unknown
@@ -1218,18 +1217,32 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 		//int16 unk3 = argv[3].toSint16();
 		//uint16 unk4 = argv[4].toUint16();
 		//uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
+		kStub(s, argc, argv);
 		}
 		break;
 	case 2:	{ // remap by percent
-		//int16 unk1 = argv[1].toSint16();
-		//uint16 percent = argv[2].toUint16();
-		//uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
+		// This adjusts the alpha value of a specific color, and it operates on
+		// an RGBA palette. Since we're operating on an RGB palette, we just
+		// modify the color intensity instead
+		// TODO: From what I understand, palette remapping should be placed
+		// separately, so that it can be reset by case 0 above. Thus, we
+		// should adjust the functionality of the Palette class accordingly.
+		int16 color = argv[1].toSint16();
+		if (color >= 10)
+			color -= 10;
+		uint16 percent = argv[2].toUint16(); // 0 - 100
+		if (argc >= 4)
+			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
+		g_sci->_gfxPalette->kernelSetIntensity(color, 255, percent, false);
 		}
 		break;
 	case 3:	{ // remap to gray
-		//int16 unk1 = argv[1].toSint16();
-		//int16 percent = argv[2].toSint16();	// 0 - 100
-		//uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
+		// NOTE: This adjusts the alpha value of a specific color, and it operates on
+		// an RGBA palette
+		int16 color = argv[1].toSint16();	// this is subtracted from a maximum color value, and can be offset by 10
+		int16 percent = argv[2].toSint16(); // 0 - 100
+		uint16 unk3 = (argc >= 4) ? argv[3].toUint16() : 0;
+		warning("kRemapColors: RemapToGray color %d by %d percent (unk3 = %d)", color, percent, unk3);
 		}
 		break;
 	case 4:	{ // unknown
@@ -1237,11 +1250,13 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 		//uint16 unk2 = argv[2].toUint16();
 		//uint16 unk3 = argv[3].toUint16();
 		//uint16 unk4 = (argc >= 5) ? argv[4].toUint16() : 0;
+		kStub(s, argc, argv);
 		}
 		break;
 	case 5:	{ // increment color
 		//int16 unk1 = argv[1].toSint16();
 		//uint16 unk2 = argv[2].toUint16();
+		kStub(s, argc, argv);
 		}
 		break;
 	default:

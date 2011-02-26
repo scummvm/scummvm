@@ -144,8 +144,7 @@ void FileManager_v3d::readOverlay(const int screenNum, image_pt image, ovl_t ove
 			break;
 		}
 		if (i == 0) {
-			for (int idx = 0; idx < kOvlSize; idx++)
-				image[idx] = 0;
+			memset(image, 0, sizeof(image));
 			return;
 		}
 
@@ -158,7 +157,7 @@ void FileManager_v3d::readOverlay(const int screenNum, image_pt image, ovl_t ove
 			else if (data >= 0) {                   // Copy next data+1 literally
 				for (i = 0; i <= (byte)data; i++, k++)
 					*tmpImage++ = _sceneryArchive1.readByte();
-			} else {                            // Repeat next byte -data+1 times
+			} else {                                // Repeat next byte -data+1 times
 				int16 j = _sceneryArchive1.readByte();
 
 				for (i = 0; i < (byte)(-data + 1); i++, k++)
@@ -184,8 +183,7 @@ void FileManager_v3d::readOverlay(const int screenNum, image_pt image, ovl_t ove
 			break;
 		}
 		if (i == 0) {
-			for (int idx = 0; idx < kOvlSize; idx++)
-				image[idx] = 0;
+			memset(image, 0, sizeof(image));
 			return;
 		}
 

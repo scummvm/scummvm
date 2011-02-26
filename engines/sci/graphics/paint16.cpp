@@ -121,11 +121,10 @@ void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common:
 
 	Common::Rect clipRectTranslated = clipRect;
 	_ports->offsetRect(clipRectTranslated);
-	if (scaleX == 128 && scaleY == 128) {
+	if (scaleX == 128 && scaleY == 128)
 		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, false);
-	} else {
+	else
 		view->drawScaled(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, scaleX, scaleY);
-	}
 }
 
 // This is used as replacement for drawCelAndShow() when hires-cels are drawn to
@@ -278,9 +277,8 @@ void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte color,
 }
 
 void GfxPaint16::frameRect(const Common::Rect &rect) {
-	Common::Rect r;
+	Common::Rect r = rect;
 	// left
-	r = rect;
 	r.right = rect.left + 1;
 	paintRect(r);
 	// right

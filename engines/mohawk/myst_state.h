@@ -203,6 +203,7 @@ public:
 	    7 = Code Lock Shape #4 (Right)
 	*/
 	struct Mechanical {
+		uint32 achenarCrateOpened;
 		uint16 achenarPanelState;
 		uint16 sirrusPanelState;
 		uint16 staircaseState;

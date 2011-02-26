@@ -64,7 +64,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		_height = 480;
 	} else {
 		_width = 320;
-		_height = 200;
+		_height = getLowResScreenHeight();
 	}
 
 	// Japanese versions of games use hi-res font on upscaled version of the game.
@@ -132,10 +132,12 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	if (g_sci->hasMacIconBar()) {
 		// For SCI1.1 Mac games with the custom icon bar, we need to expand the screen
 		// to accommodate for the icon bar. Of course, both KQ6 and QFG1 VGA differ in size.
+		// We add 2 to the height of the icon bar to add a buffer between the screen and the
+		// icon bar (as did the original interpreter).
 		if (g_sci->getGameId() == GID_KQ6)
-			initGraphics(_displayWidth, _displayHeight + 26, _displayWidth > 320);
+			initGraphics(_displayWidth, _displayHeight + 26 + 2, _displayWidth > 320);
 		else if (g_sci->getGameId() == GID_FREDDYPHARKAS)
-			initGraphics(_displayWidth, _displayHeight + 28, _displayWidth > 320);
+			initGraphics(_displayWidth, _displayHeight + 28 + 2, _displayWidth > 320);
 		else
 			error("Unknown SCI1.1 Mac game");
 	} else
@@ -509,34 +511,6 @@ void GfxScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 }
 
-void GfxScreen::getPalette(Palette *pal) {
-	// just copy palette to system
-	byte bpal[4 * 256];
-	// Get current palette, update it and put back
-	g_system->getPaletteManager()->grabPalette(bpal, 0, 256);
-	for (int16 i = 1; i < 255; i++) {
-		pal->colors[i].r = bpal[i * 4];
-		pal->colors[i].g = bpal[i * 4 + 1];
-		pal->colors[i].b = bpal[i * 4 + 2];
-	}
-}
-
-void GfxScreen::setPalette(Palette *pal) {
-	// just copy palette to system
-	byte bpal[4 * 256];
-	// Get current palette, update it and put back
-	g_system->getPaletteManager()->grabPalette(bpal, 0, 256);
-	for (int16 i = 0; i < 256; i++) {
-		if (!pal->colors[i].used)
-			continue;
-		bpal[i * 4] = CLIP(pal->colors[i].r * pal->intensity[i] / 100, 0, 255);
-		bpal[i * 4 + 1] = CLIP(pal->colors[i].g * pal->intensity[i] / 100, 0, 255);
-		bpal[i * 4 + 2] = CLIP(pal->colors[i].b * pal->intensity[i] / 100, 0, 255);
-		bpal[i * 4 + 3] = 100;
-	}
-	g_system->getPaletteManager()->setPalette(bpal, 0, 256);
-}
-
 void GfxScreen::setVerticalShakePos(uint16 shakePos) {
 	if (!_upscaledHires)
 		g_system->setShakePos(shakePos);
@@ -741,6 +715,24 @@ int16 GfxScreen::kernelPicNotValid(int16 newPicNotValid) {
 	}
 
 	return oldPicNotValid;
+}
+
+uint16 GfxScreen::getLowResScreenHeight() {
+	// Some Mac SCI1/1.1 games only take up 190 rows and do not
+	// have the menu bar.
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+		switch (g_sci->getGameId()) {
+		case GID_FREDDYPHARKAS:
+		case GID_KQ5:
+		case GID_KQ6:
+			return 190;
+		default:
+			break;
+		}
+	}
+
+	// Everything else is 200
+	return 200;
 }
 
 } // End of namespace Sci

@@ -531,7 +531,7 @@ protected:
 	void op_true();
 	void op_false();
 	void op_push();
-	void op_testFalse();
+	void op_not();
 	void op_add();
 	void op_sub();
 	void op_mul();
@@ -539,7 +539,7 @@ protected:
 	void op_mod();
 	void op_and();
 	void op_or();
-	void op_not();
+	void op_neg();
 	void op_testGreater();
 	void op_testEquals();
 	void op_testLower();
@@ -781,7 +781,7 @@ protected:
 	int _fullRedrawCounter;
 	int _menuRedrawCounter;
 	uint8 *_offscreenBuffer;
-	uint8 _paletteBuffer[256 * 4];
+	uint8 _paletteBuffer[256 * 3];
 	Common::Rect _dirtyRectsTable[NUM_DIRTY_RECTS];
 	int _dirtyRectsTableCount;
 

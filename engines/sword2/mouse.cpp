@@ -1410,8 +1410,8 @@ void Mouse::addHuman() {
 	// info
 
 	if (_vm->_debugger->_testingSnR) {
-		uint8 black[4] = {   0,  0,    0,   0 };
-		uint8 white[4] = { 255, 255, 255,   0 };
+		uint8 black[3] = {   0,  0,    0 };
+		uint8 white[3] = { 255, 255, 255 };
 
 		// Testing logic scripts by simulating instant Save & Restore
 

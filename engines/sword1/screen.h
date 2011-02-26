@@ -161,8 +161,8 @@ private:
 
 	static RoomDef _roomDefTable[TOTAL_ROOMS]; // from ROOMS.C (not const, see fnSetParallax)
 
-	uint8 _targetPalette[256 * 4];
-	uint8 _currentPalette[256 * 4]; // for fading
+	uint8 _targetPalette[256 * 3];
+	uint8 _currentPalette[256 * 3]; // for fading
 	uint8 _fadingStep;
 	int8  _fadingDirection; // 1 for fade up, -1 for fade down
 	bool _isBlack; // if the logic already faded down the palette, this is set to show the

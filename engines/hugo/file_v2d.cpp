@@ -137,8 +137,7 @@ void FileManager_v2d::readOverlay(const int screenNum, image_pt image, ovl_t ove
 		break;
 	}
 	if (i == 0) {
-		for (int idx = 0; idx < kOvlSize; idx++)
-			image[idx] = 0;
+		memset(image, 0, sizeof(image));
 		return;
 	}
 

@@ -522,6 +522,60 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Harry and the Haunted House v1.0E
+	// English Windows 3.11
+	// From strangerke
+	{
+		{
+			"harryhh",
+			"",
+			AD_ENTRY1("HHHB.LB", "267bb6e3c8f237ca98b02c07b9c4013f"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// Harry and the Haunted House v1.0E
+	// French Windows 3.11
+	// From strangerke
+	{
+		{
+			"harryhh",
+			"",
+			AD_ENTRY1("HHHF.LB", "7e5da86f19935bdf8fa89bbd39446543"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// Harry and the Haunted House v1.0E
+	// German Windows 3.11
+	// From strangerke
+	{
+		{
+			"harryhh",
+			"",
+			AD_ENTRY1("HHHD.LB", "85c0a816efeb679739158789befb2be8"),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
 	{
 		{
 			"carmentq",
@@ -690,9 +744,6 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// FIXME: Mac version of Dr. Seuss's ABC uses V1 archive format, but has
-	//        V2 script format. Currently the engine aborts after the "A--B--C" intro with:
-	//        failed to read script entry correctly (8 bytes left): type 0x0067, event 0x0004, opcode 0x0006, param 0x0001!
 	{
 		{
 			"seussabc",
@@ -703,7 +754,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV1,
+		GType_LIVINGBOOKSV2,
 		0,
 		0
 	},
@@ -1159,7 +1210,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV4,
 		0,
-		0,
+		0
 	},
 
 	{
@@ -1174,7 +1225,25 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV4,
 		0,
+		0
+	},
+
+	// Rugrats Adventure Game
+	// French Windows
+	// From Strangerke
+	{
+		{
+			"rugrats",
+			"",
+			AD_ENTRY1("outline", "36225e0b4986a80135cfdd9643cc7030"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV4,
 		0,
+		0
 	},
 
 	{
@@ -1222,6 +1291,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// While this entry has a v2 interpreter, it still has v1 data
 	{
 		{
 			"lbsampler",
@@ -1232,7 +1302,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_LIVINGBOOKSV1, // v2 Mac games are really still v1
+		GType_LIVINGBOOKSV1,
 		0,
 		"Living Books Sampler"
 	},

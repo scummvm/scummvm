@@ -194,21 +194,21 @@ void Screen::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 
 			}
 
 			if (!transparent) {
-				uint32 r1 = _palette[c1 * 4 + 0];
-				uint32 g1 = _palette[c1 * 4 + 1];
-				uint32 b1 = _palette[c1 * 4 + 2];
+				uint32 r1 = _palette[c1 * 3 + 0];
+				uint32 g1 = _palette[c1 * 3 + 1];
+				uint32 b1 = _palette[c1 * 3 + 2];
 
-				uint32 r2 = _palette[c2 * 4 + 0];
-				uint32 g2 = _palette[c2 * 4 + 1];
-				uint32 b2 = _palette[c2 * 4 + 2];
+				uint32 r2 = _palette[c2 * 3 + 0];
+				uint32 g2 = _palette[c2 * 3 + 1];
+				uint32 b2 = _palette[c2 * 3 + 2];
 
-				uint32 r3 = _palette[c3 * 4 + 0];
-				uint32 g3 = _palette[c3 * 4 + 1];
-				uint32 b3 = _palette[c3 * 4 + 2];
+				uint32 r3 = _palette[c3 * 3 + 0];
+				uint32 g3 = _palette[c3 * 3 + 1];
+				uint32 b3 = _palette[c3 * 3 + 2];
 
-				uint32 r4 = _palette[c4 * 4 + 0];
-				uint32 g4 = _palette[c4 * 4 + 1];
-				uint32 b4 = _palette[c4 * 4 + 2];
+				uint32 r4 = _palette[c4 * 3 + 0];
+				uint32 g4 = _palette[c4 * 3 + 1];
+				uint32 b4 = _palette[c4 * 3 + 2];
 
 				uint32 r5 = (r1 * xFrac + r2 * (dstWidth - xFrac)) / dstWidth;
 				uint32 g5 = (g1 * xFrac + g2 * (dstWidth - xFrac)) / dstWidth;

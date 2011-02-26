@@ -125,10 +125,10 @@ void OSystem_SDL::init() {
 	if (_timerManager == 0)
 		_timerManager = new SdlTimerManager();
 
-	#ifdef USE_OPENGL
-		// Setup a list with both SDL and OpenGL graphics modes
-		setupGraphicsModes();
-	#endif
+#ifdef USE_OPENGL
+	// Setup a list with both SDL and OpenGL graphics modes
+	setupGraphicsModes();
+#endif
 }
 
 void OSystem_SDL::initBackend() {
@@ -148,11 +148,15 @@ void OSystem_SDL::initBackend() {
 			Common::String gfxMode(ConfMan.get("gfx_mode"));
 			bool use_opengl = false;
 			const OSystem::GraphicsMode *mode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
+			int i = 0;
 			while (mode->name) {
-				if (scumm_stricmp(mode->name, gfxMode.c_str()) == 0)
+				if (scumm_stricmp(mode->name, gfxMode.c_str()) == 0) {
+					_graphicsMode = i + _sdlModesCount;
 					use_opengl = true;
+				}
 
 				mode++;
+				++i;
 			}
 
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
@@ -464,6 +468,7 @@ int OSystem_SDL::getDefaultGraphicsMode() const {
 bool OSystem_SDL::setGraphicsMode(int mode) {
 	const OSystem::GraphicsMode *srcMode;
 	int i;
+
 	// Check if mode is from SDL or OpenGL
 	if (mode < _sdlModesCount) {
 		srcMode = SdlGraphicsManager::supportedGraphicsModes();
@@ -472,28 +477,34 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		srcMode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
 		i = _sdlModesCount;
 	}
+
 	// Loop through modes
 	while (srcMode->name) {
 		if (i == mode) {
 			// If the new mode and the current mode are not from the same graphics
 			// manager, delete and create the new mode graphics manager
 			if (_graphicsMode >= _sdlModesCount && mode < _sdlModesCount) {
+				debug(1, "switching to plain SDL graphics");
 				delete _graphicsManager;
 				_graphicsManager = new SdlGraphicsManager(_eventSource);
 				((SdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
 			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
+				debug(1, "switching to OpenGL graphics");
 				delete _graphicsManager;
 				_graphicsManager = new OpenGLSdlGraphicsManager();
 				((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
 			}
+
 			_graphicsMode = mode;
 			return _graphicsManager->setGraphicsMode(srcMode->id);
 		}
+
 		i++;
 		srcMode++;
 	}
+
 	return false;
 }
 

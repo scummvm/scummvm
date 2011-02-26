@@ -1166,25 +1166,25 @@ void SdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x, int
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 #ifdef USE_RGB_COLOR
-	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth * _screenFormat.bytesPerPixel + x * _screenFormat.bytesPerPixel;
-	if (_videoMode.screenWidth == w && pitch == w * _screenFormat.bytesPerPixel) {
-		memcpy(dst, src, h*w*_screenFormat.bytesPerPixel);
+	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x * _screenFormat.bytesPerPixel;
+	if (_videoMode.screenWidth == w && pitch == _screen->pitch) {
+		memcpy(dst, src, h*pitch);
 	} else {
 		do {
 			memcpy(dst, src, w * _screenFormat.bytesPerPixel);
 			src += pitch;
-			dst += _videoMode.screenWidth * _screenFormat.bytesPerPixel;
+			dst += _screen->pitch;
 		} while (--h);
 	}
 #else
-	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth + x;
-	if (_videoMode.screenWidth == pitch && pitch == w) {
+	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x;
+	if (_screen->pitch == pitch && pitch == w) {
 		memcpy(dst, src, h*w);
 	} else {
 		do {
 			memcpy(dst, src, w);
 			src += pitch;
-			dst += _videoMode.screenWidth;
+			dst += _screen->pitch;
 		} while (--h);
 	}
 #endif
@@ -1337,11 +1337,10 @@ void SdlGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
 	const byte *b = colors;
 	uint i;
 	SDL_Color *base = _currentPalette + start;
-	for (i = 0; i < num; i++) {
+	for (i = 0; i < num; i++, b += 3) {
 		base[i].r = b[0];
 		base[i].g = b[1];
 		base[i].b = b[2];
-		b += 4;
 	}
 
 	if (start < _paletteDirtyStart)
@@ -1365,10 +1364,9 @@ void SdlGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
 	const SDL_Color *base = _currentPalette + start;
 
 	for (uint i = 0; i < num; ++i) {
-		colors[i * 4] = base[i].r;
-		colors[i * 4 + 1] = base[i].g;
-		colors[i * 4 + 2] = base[i].b;
-		colors[i * 4 + 3] = 0xFF;
+		colors[i * 3] = base[i].r;
+		colors[i * 3 + 1] = base[i].g;
+		colors[i * 3 + 2] = base[i].b;
 	}
 }
 
@@ -1377,11 +1375,10 @@ void SdlGraphicsManager::setCursorPalette(const byte *colors, uint start, uint n
 	const byte *b = colors;
 	uint i;
 	SDL_Color *base = _cursorPalette + start;
-	for (i = 0; i < num; i++) {
+	for (i = 0; i < num; i++, b += 3) {
 		base[i].r = b[0];
 		base[i].g = b[1];
 		base[i].b = b[2];
-		b += 4;
 	}
 
 	_cursorPaletteDisabled = false;

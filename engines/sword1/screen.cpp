@@ -144,19 +144,19 @@ void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
 	}
 
 	for (uint32 cnt = 0; cnt < length; cnt++) {
-		_targetPalette[(start + cnt) * 4 + 0] = palData[cnt * 3 + 0] << 2;
-		_targetPalette[(start + cnt) * 4 + 1] = palData[cnt * 3 + 1] << 2;
-		_targetPalette[(start + cnt) * 4 + 2] = palData[cnt * 3 + 2] << 2;
+		_targetPalette[(start + cnt) * 3 + 0] = palData[cnt * 3 + 0] << 2;
+		_targetPalette[(start + cnt) * 3 + 1] = palData[cnt * 3 + 1] << 2;
+		_targetPalette[(start + cnt) * 3 + 2] = palData[cnt * 3 + 2] << 2;
 	}
 	_resMan->resClose(id);
 	_isBlack = false;
 	if (fadeUp) {
 		_fadingStep = 1;
 		_fadingDirection = FADE_UP;
-		memset(_currentPalette, 0, 256 * 4);
+		memset(_currentPalette, 0, 256 * 3);
 		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
 	} else
-		_system->getPaletteManager()->setPalette(_targetPalette + 4 * start, start, length);
+		_system->getPaletteManager()->setPalette(_targetPalette + 3 * start, start, length);
 }
 
 void Screen::fullRefresh() {
@@ -1125,11 +1125,11 @@ void Screen::flushPsxCache() {
 
 void Screen::fadePalette() {
 	if (_fadingStep == 16)
-		memcpy(_currentPalette, _targetPalette, 256 * 4);
+		memcpy(_currentPalette, _targetPalette, 256 * 3);
 	else if ((_fadingStep == 1) && (_fadingDirection == FADE_DOWN)) {
-		memset(_currentPalette, 0, 4 * 256);
+		memset(_currentPalette, 0, 3 * 256);
 	} else
-		for (uint16 cnt = 0; cnt < 256 * 4; cnt++)
+		for (uint16 cnt = 0; cnt < 256 * 3; cnt++)
 			_currentPalette[cnt] = (_targetPalette[cnt] * _fadingStep) >> 4;
 
 	_fadingStep += _fadingDirection;

@@ -54,9 +54,18 @@ public:
 	virtual void introInit() = 0;
 	virtual bool introPlay() = 0;
 
+	void freeIntroData();
+	void loadIntroData(Common::SeekableReadStream &in);
+
+	byte getIntroSize() const;
+
 protected:
 	HugoEngine *_vm;
-	int16 introTicks;                               // Count calls to introPlay()
+
+	byte *_introX;
+	byte *_introY;
+	byte  _introXSize;
+	int16  introTicks;                              // Count calls to introPlay()
 };
 
 class intro_v1w : public IntroHandler {

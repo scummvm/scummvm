@@ -38,6 +38,7 @@ namespace Sci {
 enum {
 	SCI0_RESMAP_ENTRIES_SIZE = 6,
 	SCI1_RESMAP_ENTRIES_SIZE = 6,
+	KQ5FMT_RESMAP_ENTRIES_SIZE = 7,
 	SCI11_RESMAP_ENTRIES_SIZE = 5
 };
 
@@ -427,10 +428,8 @@ void MacResourceForkResourceSource::loadResource(ResourceManager *resMan, Resour
 			stream = _macResMan->getResource(tagArray[i], res->getNumber());
 	}
 
-	if (!stream)
-		error("Could not get Mac resource fork resource: %s", res->_id.toString().c_str());
-
-	decompressResource(stream, res);
+	if (stream)
+		decompressResource(stream, res);
 }
 
 bool MacResourceForkResourceSource::isCompressableResource(ResourceType type) const {
@@ -458,6 +457,13 @@ void MacResourceForkResourceSource::decompressResource(Common::SeekableReadStrea
 	// be compressed.
 	bool canBeCompressed = !(g_sci && g_sci->getGameId() == GID_KQ6) && isCompressableResource(resource->_id.getType()); 
 	uint32 uncompressedSize = 0;
+
+	// GK2 Mac is crazy. In its Patches resource fork, picture 2315 is not
+	// compressed and it is hardcoded in the executable to say that it's
+	// not compressed. Why didn't they just add four zeroes to the end of
+	// the resource? (Checked with PPC disasm)
+	if (g_sci && g_sci->getGameId() == GID_GK2 && resource->_id.getType() == kResourceTypePic && resource->_id.getNumber() == 2315)
+		canBeCompressed = false;
 
 	// Get the uncompressed size from the end of the resource
 	if (canBeCompressed && stream->size() > 4) {
@@ -1108,6 +1114,8 @@ const char *ResourceManager::versionDescription(ResVersion version) const {
 		return "SCI0 / Early SCI1";
 	case kResVersionSci1Middle:
 		return "Middle SCI1";
+	case kResVersionKQ5FMT:
+		return "KQ5 FM Towns";
 	case kResVersionSci1Late:
 		return "Late SCI1";
 	case kResVersionSci11:
@@ -1157,6 +1165,14 @@ ResVersion ResourceManager::detectMapVersion() {
 	fileStream->seek(-4, SEEK_END);
 	uint32 uEnd = fileStream->readUint32LE();
 	if (uEnd == 0xFFFFFFFF) {
+		// check if the last 7 bytes are all ff, indicating a KQ5 FM-Towns map
+		fileStream->seek(-7, SEEK_END);
+		fileStream->read(buff, 3);
+		if (buff[0] == 0xff && buff[1] == 0xff && buff[2] == 0xff) {
+			delete fileStream;
+			return kResVersionKQ5FMT;
+		}
+
 		// check if 0 or 01 - try to read resources in SCI0 format and see if exists
 		fileStream->seek(0, SEEK_SET);
 		while (fileStream->read(buff, 6) == 6 && !(buff[0] == 0xFF && buff[1] == 0xFF && buff[2] == 0xFF)) {
@@ -1554,7 +1570,7 @@ void ResourceManager::readResourcePatches() {
 
 int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 	Common::SeekableReadStream *fileStream = 0;
-	ResourceType type;
+	ResourceType type = kResourceTypeInvalid;	// to silence a false positive in MSVC
 	uint16 number, id;
 	uint32 offset;
 
@@ -1571,10 +1587,15 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 
 	fileStream->seek(0, SEEK_SET);
 
-	byte bMask = (_mapVersion == kResVersionSci1Middle) ? 0xF0 : 0xFC;
-	byte bShift = (_mapVersion == kResVersionSci1Middle) ? 28 : 26;
+	byte bMask = (_mapVersion >= kResVersionSci1Middle) ? 0xF0 : 0xFC;
+	byte bShift = (_mapVersion >= kResVersionSci1Middle) ? 28 : 26;
 
 	do {
+		// King's Quest 5 FM-Towns uses a 7 byte version of the SCI1 Middle map,
+		// splitting the type from the id.
+		if (_mapVersion == kResVersionKQ5FMT)
+			type = convertResType(fileStream->readByte());
+
 		id = fileStream->readUint16LE();
 		offset = fileStream->readUint32LE();
 
@@ -1583,11 +1604,17 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			warning("Error while reading %s", map->getLocationName().c_str());
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
+	
 		if (offset == 0xFFFFFFFF)
 			break;
 
-		type = convertResType(id >> 11);
-		number = id & 0x7FF;
+		if (_mapVersion == kResVersionKQ5FMT) {
+			number = id;
+		} else {
+			type = convertResType(id >> 11);
+			number = id & 0x7FF;
+		}
+
 		ResourceId resId = ResourceId(type, number);
 		// adding a new resource
 		if (_resMap.contains(resId) == false) {
@@ -2226,6 +2253,7 @@ void ResourceManager::detectSciVersion() {
 		s_sciVersion = SCI_VERSION_1_EARLY;
 		return;
 	case kResVersionSci1Middle:
+	case kResVersionKQ5FMT:
 		s_sciVersion = SCI_VERSION_1_MIDDLE;
 		return;
 	case kResVersionSci1Late:

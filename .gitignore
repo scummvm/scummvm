@@ -1,3 +1,4 @@
+
 *~
 .*.swp
 .*.swo
@@ -18,9 +19,8 @@ lib*.a
 /MT32_CONTROL.ROM
 /MT32_PCM.ROM
 /ScummVM.app
-
-/backends/platform/android/org/inodes/gus/scummvm/R.java
-/backends/platform/android/org/inodes/gus/scummvm/Manifest.java
+/.project
+/.cproject
 
 /backends/platform/dc/gui
 /backends/platform/dc/graphics
@@ -66,17 +66,12 @@ lib*.a
 /dists/iphone/scummvm.xcodeproj/*.mode1v3
 /dists/iphone/scummvm.xcodeproj/*.pbxuser
 
-/dists/msvc8/*_Debug
-/dists/msvc8/*_Release
-/dists/msvc8/*.suo
-/dists/msvc8/*.ncb
-/dists/msvc8/*.user
-
-/dists/msvc9/*_Debug
-/dists/msvc9/*_Release
-/dists/msvc9/*.suo
-/dists/msvc9/*.ncb
-/dists/msvc9/*.user
+/dists/msvc*/[Dd]ebug*/
+/dists/msvc*/[Rr]elease*/
+/dists/msvc*/*.lib
+/dists/msvc*/*.SAV
+/dists/msvc*/*.dat
+/dists/msvc*/*.dll
 
 /doc/*.aux
 /doc/*.dvi
@@ -105,3 +100,39 @@ lib*.a
 /tools/qtable/qtable
 /tools/skycpt/skycpt
 
+#ignore thumbnails created by windows
+Thumbs.db
+#Ignore files build by Visual Studio
+*.obj
+*.exe
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+*.sbr
+*.sdf
+*.opensdf
+obj/
+_ReSharper*/
+ipch/
+[Tt]est[Rr]esult*
+*.vcproj
+*.sln
+*.vsprops
+*.props
+*.vcxproj*
+*.bat
+*.tss
+
+#Ignore default Visual Studio build folders
+[Dd]ebug/
+[Rr]elease/

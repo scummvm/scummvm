@@ -62,8 +62,8 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
 	_videoMode.antialiasing = false;
 
-	_gamePalette = (byte *)calloc(sizeof(byte) * 4, 256);
-	_cursorPalette = (byte *)calloc(sizeof(byte) * 4, 256);
+	_gamePalette = (byte *)calloc(sizeof(byte) * 3, 256);
+	_cursorPalette = (byte *)calloc(sizeof(byte) * 3, 256);
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {
@@ -135,6 +135,8 @@ int OpenGLGraphicsManager::getDefaultGraphicsMode() const {
 
 bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
 	assert(_transactionMode == kTransactionActive);
+
+	setScale(2);
 
 	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
 		return true;
@@ -314,7 +316,7 @@ void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num)
 #endif
 
 	// Save the screen palette
-	memcpy(_gamePalette + start * 4, colors, num * 4);
+	memcpy(_gamePalette + start * 3, colors, num * 3);
 
 	_screenNeedsRedraw = true;
 
@@ -330,7 +332,7 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
 #endif
 
 	// Copies current palette to buffer
-	memcpy(colors, _gamePalette + start * 4, num * 4);
+	memcpy(colors, _gamePalette + start * 3, num * 3);
 }
 
 void OpenGLGraphicsManager::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
@@ -341,9 +343,9 @@ void OpenGLGraphicsManager::copyRectToScreen(const byte *buf, int pitch, int x, 
 
 	// Copy buffer data to game screen internal buffer
 	const byte *src = buf;
-	byte *dst = (byte *)_screenData.pixels + y * _screenData.pitch;
+	byte *dst = (byte *)_screenData.pixels + y * _screenData.pitch + x * _screenData.bytesPerPixel;
 	for (int i = 0; i < h; i++) {
-		memcpy(dst + x * _screenData.bytesPerPixel, src, w * _screenData.bytesPerPixel);
+		memcpy(dst, src, w * _screenData.bytesPerPixel);
 		src += pitch;
 		dst += _screenData.pitch;
 	}
@@ -558,7 +560,8 @@ void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int 
 #endif
 
 	// Allocate space for cursor data
-	if (_cursorData.w != w || _cursorData.h != h)
+	if (_cursorData.w != w || _cursorData.h != h ||
+			_cursorData.bytesPerPixel != _cursorFormat.bytesPerPixel)
 		_cursorData.create(w, h, _cursorFormat.bytesPerPixel);
 
 	// Save cursor data
@@ -580,7 +583,7 @@ void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uin
 	assert(colors);
 	
 	// Save the cursor palette
-	memcpy(_cursorPalette + start * 4, colors, num * 4);
+	memcpy(_cursorPalette + start * 3, colors, num * 3);
 
 	_cursorPaletteDisabled = false;
 	_cursorNeedsRedraw = true;
@@ -686,9 +689,9 @@ void OpenGLGraphicsManager::refreshGameScreen() {
 		byte *dst = surface;
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
-				dst[0] = _gamePalette[src[j] * 4];
-				dst[1] = _gamePalette[src[j] * 4 + 1];
-				dst[2] = _gamePalette[src[j] * 4 + 2];
+				dst[0] = _gamePalette[src[j] * 3];
+				dst[1] = _gamePalette[src[j] * 3 + 1];
+				dst[2] = _gamePalette[src[j] * 3 + 2];
 				dst += 3;
 			}
 			src += _screenData.pitch;
@@ -728,9 +731,9 @@ void OpenGLGraphicsManager::refreshOverlay() {
 		byte *dst = surface;
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
-				dst[0] = _gamePalette[src[j] * 4];
-				dst[1] = _gamePalette[src[j] * 4 + 1];
-				dst[2] = _gamePalette[src[j] * 4 + 2];
+				dst[0] = _gamePalette[src[j] * 3];
+				dst[1] = _gamePalette[src[j] * 3 + 1];
+				dst[2] = _gamePalette[src[j] * 3 + 2];
 				dst += 3;
 			}
 			src += _screenData.pitch;
@@ -754,11 +757,17 @@ void OpenGLGraphicsManager::refreshOverlay() {
 void OpenGLGraphicsManager::refreshCursor() {
 	_cursorNeedsRedraw = false;
 
-	if (_cursorFormat.bytesPerPixel == 1) {
-		// Create a temporary RGBA8888 surface
-		byte *surface = new byte[_cursorState.w * _cursorState.h * 4];
-		memset(surface, 0, _cursorState.w * _cursorState.h * 4);
+	// Allocate a texture big enough for cursor
+	_cursorTexture->allocBuffer(_cursorState.w, _cursorState.h);
 
+	// Create a temporary RGBA8888 surface
+	byte *surface = new byte[_cursorState.w * _cursorState.h * 4];
+	memset(surface, 0, _cursorState.w * _cursorState.h * 4);
+
+	byte *dst = surface;
+
+	// Convert the paletted cursor to RGBA8888
+	if (_cursorFormat.bytesPerPixel == 1) {
 		// Select palette
 		byte *palette;
 		if (_cursorPaletteDisabled)
@@ -768,27 +777,52 @@ void OpenGLGraphicsManager::refreshCursor() {
 
 		// Convert the paletted cursor to RGBA8888
 		const byte *src = (byte *)_cursorData.pixels;
-		byte *dst = surface;
 		for (int i = 0; i < _cursorState.w * _cursorState.h; i++) {
 			// Check for keycolor
 			if (src[i] != _cursorKeyColor) {
-				dst[0] = palette[src[i] * 4];
-				dst[1] = palette[src[i] * 4 + 1];
-				dst[2] = palette[src[i] * 4 + 2];
+				dst[0] = palette[src[i] * 3];
+				dst[1] = palette[src[i] * 3 + 1];
+				dst[2] = palette[src[i] * 3 + 2];
 				dst[3] = 255;
 			}
 			dst += 4;
 		}
+	} else {
+		const bool gotNoAlpha = (_cursorFormat.aLoss == 8);
 
-		// Allocate a texture big enough for cursor
-		_cursorTexture->allocBuffer(_cursorState.w, _cursorState.h);
+		// Convert the RGB cursor to RGBA8888
+		if (_cursorFormat.bytesPerPixel == 2) {
+			const uint16 *src = (uint16 *)_cursorData.pixels;
+			for (int i = 0; i < _cursorState.w * _cursorState.h; i++) {
+				// Check for keycolor
+				if (src[i] != _cursorKeyColor) {
+					_cursorFormat.colorToARGB(src[i], dst[3], dst[0], dst[1], dst[2]);
 
-		// Update the texture with new cursor
-		_cursorTexture->updateBuffer(surface, _cursorState.w * 4, 0, 0, _cursorState.w, _cursorState.h);
+					if (gotNoAlpha)
+						dst[3] = 255;
+				}
+				dst += 4;
+			}
+		} else if (_cursorFormat.bytesPerPixel == 4) {
+			const uint32 *src = (uint32 *)_cursorData.pixels;
+			for (int i = 0; i < _cursorState.w * _cursorState.h; i++) {
+				// Check for keycolor
+				if (src[i] != _cursorKeyColor) {
+					_cursorFormat.colorToARGB(src[i], dst[3], dst[0], dst[1], dst[2]);
 
-		// Free the temp surface
-		delete[] surface;
+					if (gotNoAlpha)
+						dst[3] = 255;
+				}
+				dst += 4;
+			}
+		}
 	}
+
+	// Update the texture with new cursor
+	_cursorTexture->updateBuffer(surface, _cursorState.w * 4, 0, 0, _cursorState.w, _cursorState.h);
+
+	// Free the temp surface
+	delete[] surface;
 }
 
 void OpenGLGraphicsManager::refreshCursorScale() {
@@ -873,6 +907,11 @@ void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, 
 		intFormat = GL_RGBA;
 		glFormat = GL_RGBA;
 		gltype = GL_UNSIGNED_SHORT_5_5_5_1;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) { // RGB555
+		bpp = 2;
+		intFormat = GL_RGB;
+		glFormat = GL_BGRA;
+		gltype = GL_UNSIGNED_SHORT_1_5_5_5_REV;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)) { // RGBA4444
 		bpp = 2;
 		intFormat = GL_RGBA;
@@ -1059,9 +1098,13 @@ void OpenGLGraphicsManager::initGL() {
 
 void OpenGLGraphicsManager::loadTextures() {
 #ifdef USE_RGB_COLOR
-	if (_transactionDetails.formatChanged && _gameTexture)
+	if (_transactionDetails.formatChanged && _gameTexture) {
 		delete _gameTexture;
+		_gameTexture = 0;
+	}
 #endif
+
+	uint gameScreenBPP = 0;
 
 	if (!_gameTexture) {
 		byte bpp;
@@ -1073,6 +1116,7 @@ void OpenGLGraphicsManager::loadTextures() {
 #else
 		getGLPixelFormat(Graphics::PixelFormat::createFormatCLUT8(), bpp, intformat, format, type);
 #endif
+		gameScreenBPP = bpp;
 		_gameTexture = new GLTexture(bpp, intformat, format, type);
 	} else
 		_gameTexture->refresh();
@@ -1118,6 +1162,14 @@ void OpenGLGraphicsManager::loadTextures() {
 	_screenNeedsRedraw = true;
 	_overlayNeedsRedraw = true;
 	_cursorNeedsRedraw = true;
+
+	// We need to setup a proper unpack alignment value here, else we will
+	// get problems with the texture updates, in case the surface data is
+	// not properly aligned.
+	// For now we use the gcd of the game screen format and 2, since 2 is
+	// the BPP value for the overlay and the OSD.
+	if (gameScreenBPP)
+		glPixelStorei(GL_UNPACK_ALIGNMENT, Common::gcd<uint>(gameScreenBPP, 2));
 
 #ifdef USE_OSD
 	if (!_osdTexture)
@@ -1165,40 +1217,33 @@ uint OpenGLGraphicsManager::getAspectRatio() {
 		return _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
 }
 
-void OpenGLGraphicsManager::adjustMouseEvent(const Common::Event &event) {
-	if (!event.synthetic) {
-		Common::Event newEvent(event);
-		newEvent.synthetic = true;
+void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
+	if (_videoMode.mode == OpenGL::GFX_NORMAL) {
+		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
+			x = x * _videoMode.overlayWidth / _videoMode.hardwareWidth;
+		if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
+			y = y * _videoMode.overlayHeight / _videoMode.hardwareHeight;
 
-		if (_videoMode.mode == OpenGL::GFX_NORMAL) {
-			if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
-				newEvent.mouse.x = newEvent.mouse.x * _videoMode.overlayWidth / _videoMode.hardwareWidth;
-			if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
-				newEvent.mouse.y = newEvent.mouse.y * _videoMode.overlayHeight / _videoMode.hardwareHeight;
-
-			if (!_overlayVisible) {
-				newEvent.mouse.x /= _videoMode.scaleFactor;
-				newEvent.mouse.y /= _videoMode.scaleFactor;
-			}
-
-		} else {
-			newEvent.mouse.x -= _displayX;
-			newEvent.mouse.y -= _displayY;
-
-			if (_overlayVisible) {
-				if (_displayWidth != _videoMode.overlayWidth)
-					newEvent.mouse.x = newEvent.mouse.x * _videoMode.overlayWidth / _displayWidth;
-				if (_displayHeight != _videoMode.overlayHeight)
-					newEvent.mouse.y = newEvent.mouse.y * _videoMode.overlayHeight / _displayHeight;
-			} else {
-				if (_displayWidth != _videoMode.screenWidth)
-					newEvent.mouse.x = newEvent.mouse.x * _videoMode.screenWidth / _displayWidth;
-				if (_displayHeight != _videoMode.screenHeight)
-					newEvent.mouse.y = newEvent.mouse.y * _videoMode.screenHeight / _displayHeight;
-			}
+		if (!_overlayVisible) {
+			x /= _videoMode.scaleFactor;
+			y /= _videoMode.scaleFactor;
 		}
 
-		g_system->getEventManager()->pushEvent(newEvent);
+	} else {
+		x -= _displayX;
+		y -= _displayY;
+
+		if (_overlayVisible) {
+			if (_displayWidth != _videoMode.overlayWidth)
+				x = x * _videoMode.overlayWidth / _displayWidth;
+			if (_displayHeight != _videoMode.overlayHeight)
+				y = y * _videoMode.overlayHeight / _displayHeight;
+		} else {
+			if (_displayWidth != _videoMode.screenWidth)
+				x = x * _videoMode.screenWidth / _displayWidth;
+			if (_displayHeight != _videoMode.screenHeight)
+				y = y * _videoMode.screenHeight / _displayHeight;
+		}
 	}
 }
 
@@ -1215,7 +1260,12 @@ bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONUP:
 	case Common::EVENT_MBUTTONUP:
-		adjustMouseEvent(event);
+		if (!event.synthetic) {
+			Common::Event newEvent(event);
+			newEvent.synthetic = true;
+			adjustMousePosition(newEvent.mouse.x, newEvent.mouse.y);
+			g_system->getEventManager()->pushEvent(newEvent);
+		}
 		return !event.synthetic;
 
 	default:

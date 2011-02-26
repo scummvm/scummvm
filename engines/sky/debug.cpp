@@ -1071,11 +1071,11 @@ void Debug::logic(uint32 logic) {
 void Debug::script(uint32 command, uint16 *scriptData) {
 	debug(6, "SCRIPT: %s", opcodes[command]);
 	if (command == 0 || command == 6)
-		debug(6, " %s", scriptVars[READ_LE_UINT16(scriptData)/4]);
+		debug(6, " %s", scriptVars[(*scriptData)/4]);
 	else {
 		int i;
 		for (i = 0; i < opcode_par[command]; i++) {
-			debug(6, " %d", READ_LE_UINT16(scriptData + i));
+			debug(6, " %d", *(scriptData + i));
 		}
 	}
 	debug(6, " ");	// Print an empty line as separator

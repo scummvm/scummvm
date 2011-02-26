@@ -125,7 +125,6 @@ public:
 		pal[0] = red << 2;
 		pal[1] = green << 2;
 		pal[2] = blue << 2;
-		pal[3] = 0;
 	}
 	void setPalColor(byte *pal, Color &color) {
 		setPalColor(pal, color.red, color.green, color.blue);

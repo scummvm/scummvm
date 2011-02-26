@@ -133,6 +133,7 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 void PalettesToVideoDAC() {
 	PALQ *pPalQ;				// palette Q iterator
 	VIDEO_DAC_Q *pDACtail = vidDACdata;	// set tail pointer
+	byte pal[768];
 
 	// while Q is not empty
 	while (pDAChead != pDACtail) {
@@ -164,8 +165,14 @@ void PalettesToVideoDAC() {
 			pColours = pDACtail->pal.pRGBarray;
 		}
 
+		for (int i = 0; i < pDACtail->numColours; ++i) {
+			pal[i * 3 + 0] = TINSEL_GetRValue(pColours[i]);
+			pal[i * 3 + 1] = TINSEL_GetGValue(pColours[i]);
+			pal[i * 3 + 2] = TINSEL_GetBValue(pColours[i]);
+		}
+
 		// update the system palette
-		g_system->getPaletteManager()->setPalette((const byte *)pColours, pDACtail->destDACindex, pDACtail->numColours);
+		g_system->getPaletteManager()->setPalette(pal, pDACtail->destDACindex, pDACtail->numColours);
 
 		// update tail pointer
 		pDACtail++;

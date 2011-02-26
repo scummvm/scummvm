@@ -149,7 +149,7 @@ void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLu
 	glBindTexture(GL_TEXTURE_2D, _textureName); CHECK_GL_ERROR();
 
 	// Check if the buffer has its data contiguously
-	if (static_cast<int>(w) * _bytesPerPixel == pitch && w == _textureWidth) {
+	if (static_cast<int>(w) * _bytesPerPixel == pitch) {
 		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
 						_glFormat, _glType, buf); CHECK_GL_ERROR();
 	} else {

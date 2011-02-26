@@ -32,15 +32,16 @@
 
 namespace Mohawk {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
-
-class MohawkEngine_Myst;
 struct MystScriptEntry;
 
-class MystScriptParser_Stoneship : public MystScriptParser {
+namespace MystStacks {
+
+#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+
+class Stoneship : public MystScriptParser {
 public:
-	MystScriptParser_Stoneship(MohawkEngine_Myst *vm);
-	~MystScriptParser_Stoneship();
+	Stoneship(MohawkEngine_Myst *vm);
+	~Stoneship();
 
 	void disablePersistentScripts();
 	void runPersistentScripts();
@@ -142,6 +143,7 @@ private:
 	uint16 batteryRemainingCharge();
 };
 
+} // End of namespace MystStacks
 }
 
 #undef DECLARE_OPCODE

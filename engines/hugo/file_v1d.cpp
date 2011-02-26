@@ -63,8 +63,7 @@ void FileManager_v1d::readOverlay(const int screenNum, image_pt image, const ovl
 	Common::String buf = Common::String(_vm->_text->getScreenNames(screenNum)) + Common::String(ovl_ext[overlayType]);
 
 	if (!Common::File::exists(buf)) {
-		for (int i = 0; i < kOvlSize; i++)
-			image[i] = 0;
+		memset(image, 0, sizeof(image));
 		warning("File not found: %s", buf.c_str());
 		return;
 	}

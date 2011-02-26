@@ -233,13 +233,12 @@ uint16 MystScriptParser::getVar(uint16 var) {
 		return _globals.ending;
 	default:
 		warning("Unimplemented var getter 0x%02x (%d)", var, var);
-		return _vm->_varStore->getVar(var);
+		return 0;
 	}
 }
 
 void MystScriptParser::toggleVar(uint16 var) {
 	warning("Unimplemented var toggle 0x%02x (%d)", var, var);
-	_vm->_varStore->setVar(var, (_vm->_varStore->getVar(var) + 1) % 2);
 }
 
 bool MystScriptParser::setVarValue(uint16 var, uint16 value) {
@@ -248,7 +247,6 @@ bool MystScriptParser::setVarValue(uint16 var, uint16 value) {
 			_tempVar = value;
 	} else {
 		warning("Unimplemented var setter 0x%02x (%d)", var, var);
-		_vm->_varStore->setVar(var, value);
 	}
 
 	return false;
@@ -600,6 +598,10 @@ void MystScriptParser::o_copyBackBufferToScreen(uint16 op, uint16 var, uint16 ar
 
 void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	uint16 imageId = argv[0];
+
+	// WORKAROUND wrong image id in mechanical staircase
+	if (imageId == 7158)
+		imageId = 7178;
 
 	Common::Rect srcRect = Common::Rect(argv[1], argv[2], argv[3], argv[4]);
 

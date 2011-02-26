@@ -92,6 +92,12 @@ Audio::AudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList) {
 	case GType_LIVINGBOOKSV1:
 		audStream = makeOldMohawkWaveStream(_vm->getResource(ID_WAV, id));
 		break;
+	case GType_LIVINGBOOKSV2:
+		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+			audStream = makeOldMohawkWaveStream(_vm->getResource(ID_WAV, id));
+			break;
+		}
+		// fall through
 	default:
 		audStream = makeMohawkWaveStream(_vm->getResource(ID_TWAV, id), cueList);
 	}

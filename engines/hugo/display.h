@@ -61,12 +61,11 @@ public:
 	void     displayFrame(const int sx, const int sy, seq_t *seq, const bool foreFl);
 	void     displayList(dupdate_t update, ...);
 	void     displayRect(const int16 x, const int16 y, const int16 dx, const int16 dy);
-	void     drawHotspots();
+	void     drawBoundaries();
 	void     drawRectangle(const bool filledFl, const int16 x1, const int16 y1, const int16 x2, const int16 y2, const int color);
 	void     drawShape(const int x, const int y, const int color1, const int color2);
 	void     drawStatusText();
-	void     freeFonts();
-	void     freePalette();
+	void     freeScreen();
 	void     hideCursor();
 	void     initDisplay();
 	void     initNewScreenDisplay();
@@ -74,7 +73,7 @@ public:
 	void     moveImage(image_pt srcImage, const int16 x1, const int16 y1, const int16 dx, int16 dy, const int16 width1, image_pt dstImage, const int16 x2, const int16 y2, const int16 width2);
 	void     remapPal(uint16 oldIndex, uint16 newIndex);
 	void     resetInventoryObjId();
-	void     restorePal(Common::SeekableReadStream *f);
+	void     restorePal(Common::ReadStream *f);
 	void     savePal(Common::WriteStream *f) const;
 	void     setBackgroundColor(const uint16 color);
 	void     setCursorPal();
@@ -84,25 +83,11 @@ public:
 	void     userHelp() const;
 	void     writeStr(int16 sx, const int16 sy, const char *s, const byte color);
 
-	icondib_t &getIconBuffer() {
-		return _iconBuffer;
-	}
-
-	viewdib_t &getBackBuffer() {
-		return _backBuffer;
-	}
-
-	viewdib_t &getBackBufferBackup() {
-		return _backBufferBackup;
-	}
-
-	viewdib_t &getFrontBuffer() {
-		return _frontBuffer;
-	}
-
-	viewdib_t &getGUIBuffer() {
-		return _GUIBuffer;
-	}
+	icondib_t &getIconBuffer();
+	viewdib_t &getBackBuffer();
+	viewdib_t &getBackBufferBackup();
+	viewdib_t &getFrontBuffer();
+	viewdib_t &getGUIBuffer();
 
 protected:
 	HugoEngine *_vm;
@@ -116,10 +101,6 @@ protected:
 	static const byte stdMouseCursorHeight = 20;
 	static const byte stdMouseCursorWidth = 12;
 
-	inline bool isInX(const int16 x, const rect_t *rect) const;
-	inline bool isInY(const int16 y, const rect_t *rect) const;
-	inline bool isOverlapping(const rect_t *rectA, const rect_t *rectB) const;
-
 	bool fontLoadedFl[kNumFonts];
 
 	// Fonts used in dib (non-GDI)
@@ -129,6 +110,14 @@ protected:
 	byte *_font[kNumFonts][kFontLength];            // Ptrs to each char
 	byte *_mainPalette;
 	int16 _arrayFontSize[kNumFonts];
+
+	viewdib_t _frontBuffer;
+
+	inline bool isInX(const int16 x, const rect_t *rect) const;
+	inline bool isInY(const int16 y, const rect_t *rect) const;
+	inline bool isOverlapping(const rect_t *rectA, const rect_t *rectB) const;
+
+	virtual overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) = 0;
 
 private:
 	byte     *_curPalette;
@@ -140,9 +129,6 @@ private:
 	int16 mergeLists(rect_t *list, rect_t *blist, const int16 len, int16 blen);
 	int16 center(const char *s) const;
 
-	overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y);
-
-	viewdib_t _frontBuffer;
 	viewdib_t _backBuffer;
 	viewdib_t _GUIBuffer;                              // User interface images
 	viewdib_t _backBufferBackup;                       // Backup _backBuffer during inventory
@@ -166,6 +152,8 @@ public:
 
 	void loadFont(int16 fontId);
 	void loadFontArr(Common::ReadStream &in);
+protected:
+	overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y);
 };
 
 class Screen_v1w : public Screen {
@@ -175,6 +163,8 @@ public:
 
 	void loadFont(int16 fontId);
 	void loadFontArr(Common::ReadStream &in);
+protected:
+	overlayState_t findOvl(seq_t *seq_p, image_pt dst_p, uint16 y);
 };
 
 } // End of namespace Hugo

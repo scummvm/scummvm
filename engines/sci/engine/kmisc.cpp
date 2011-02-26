@@ -362,21 +362,32 @@ reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 
 	switch (argv[0].toUint16()) {
-	case 0:
-		// Add the icons
+	case 0: // InitIconBar
 		for (int i = 0; i < argv[1].toUint16(); i++)
 			g_sci->_gfxMacIconBar->addIcon(argv[i + 2]);
 
-		g_sci->_gfxMacIconBar->drawIcons();
+		// TODO: Should return icon bar handle
+		// Said handle is then used by DisposeIconBar
 		break;
-	case 2:
-	case 3:
-	case 4:
-		// TODO: Other calls seem to handle selecting/deselecting them
+	case 1: // DisposeIconBar
+		warning("kIconBar(Dispose)");
+		break;
+	case 2: // EnableIconBar (0xffff = all)
+		debug(0, "kIconBar(Enable, %d)", argv[1].toUint16());
+		g_sci->_gfxMacIconBar->setIconEnabled(argv[1].toUint16(), true);
+		break;
+	case 3: // DisableIconBar (0xffff = all)
+		debug(0, "kIconBar(Disable, %d)", argv[1].toUint16());
+		g_sci->_gfxMacIconBar->setIconEnabled(argv[1].toUint16(), false);
+		break;
+	case 4: // SetIconBarIcon
+		warning("kIconBar(SetIcon, %d, %d)", argv[1].toUint16(), argv[2].toUint16());
 		break;
 	default:
-		warning("Unknown kIconBar subop %d", argv[0].toUint16());
+		error("Unknown kIconBar(%d)", argv[0].toUint16());
 	}
+
+	g_sci->_gfxMacIconBar->drawIcons();
 
 	return NULL_REG;
 }
@@ -389,23 +400,28 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argv[0].toUint16()) {
 	case 0:
-		// Set Mac cursor remap
-		g_sci->_gfxCursor->setMacCursorRemapList(argc - 1, argv + 1);
+		// Subop 0 has changed a few times
+		// In SCI1, its usage is still unknown
+		// In SCI1.1, it's NOP
+		// In SCI32, it's used for remapping cursor ID's
+		if (getSciVersion() >= SCI_VERSION_2_1) // Set Mac cursor remap
+			g_sci->_gfxCursor->setMacCursorRemapList(argc - 1, argv + 1);
+		else if (getSciVersion() != SCI_VERSION_1_1)
+			warning("Unknown SCI1 kMacPlatform(0) call");
 		break;
-	case 1:
-		// Unknown
-		break;
-	case 2:
-		// Unknown
-		break;
-	case 3:
-		// Unknown
-		break;
-	case 4:
-		// Handle icon bar code
+	case 4: // Handle icon bar code
 		return kIconBar(s, argc - 1, argv + 1);
+	case 7: // Unknown, but always return -1
+		return SIGNAL_REG;
+	case 1:	// Unknown, calls QuickDraw region functions (KQ5, QFG1VGA)
+	case 2: // Unknown, "UseNextWaitEvent" (Various)
+	case 3: // Unknown, "ProcessOpenDocuments" (Various)
+	case 5: // Unknown, plays a sound (KQ7)
+	case 6: // Unknown, menu-related (Unused?)
+		warning("Unhandled kMacPlatform(%d)", argv[0].toUint16());
+		break;
 	default:
-		warning("Unknown kMacPlatform subop %d", argv[0].toUint16());
+		error("Unknown kMacPlatform(%d)", argv[0].toUint16());
 	}
 
 	return s->r_acc;
@@ -455,7 +471,8 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		warning("STUB: kPlatform(CDCheck)");
 		break;
 	case kPlatformUnk0:
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1 && argc > 1)
+		// For Mac versions, kPlatform(0) with other args has more functionality
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh && argc > 1)
 			return kMacPlatform(s, argc - 1, argv + 1);
 		// Otherwise, fall through
 	case kPlatformGetPlatform:

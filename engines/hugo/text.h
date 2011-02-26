@@ -32,18 +32,18 @@ public:
 	TextHandler(HugoEngine *vm);
 	~TextHandler();
 
-	const char  *getNoun(int idx1, int idx2) const     { return _arrayNouns[idx1][idx2];   }
-	const char  *getScreenNames(int screenIndex) const { return _screenNames[screenIndex]; }
-	const char  *getStringtData(int stringIndex) const { return _stringtData[stringIndex]; }
-	const char  *getTextData(int textIndex) const      { return _textData[textIndex];      }
-	const char  *getTextEngine(int engineIndex) const  { return _textEngine[engineIndex];  }
-	const char  *getTextIntro(int introIndex) const    { return _textIntro[introIndex];    }
-	const char  *getTextMouse(int mouseIndex) const    { return _textMouse[mouseIndex];    }
-	const char  *getTextParser(int parserIndex) const  { return _textParser[parserIndex];  }
-	const char  *getTextUtil(int utilIndex) const      { return _textUtil[utilIndex];      }
-	const char  *getVerb(int idx1, int idx2) const     { return _arrayVerbs[idx1][idx2];   }
-	char **getNounArray(int idx1) { return _arrayNouns[idx1]; }
-	char **getVerbArray(int idx1) { return _arrayVerbs[idx1]; }
+	const char *getNoun(int idx1, int idx2) const;
+	const char *getScreenNames(int screenIndex) const;
+	const char *getStringtData(int stringIndex) const;
+	const char *getTextData(int textIndex) const;
+	const char *getTextEngine(int engineIndex) const;
+	const char *getTextIntro(int introIndex) const;
+	const char *getTextMouse(int mouseIndex) const;
+	const char *getTextParser(int parserIndex) const;
+	const char *getTextUtil(int utilIndex) const;
+	const char *getVerb(int idx1, int idx2) const;
+	char **getNounArray(int idx1) const;
+	char **getVerbArray(int idx1) const;
 
 	void loadAllTexts(Common::ReadStream &in);
 	void freeAllTexts();

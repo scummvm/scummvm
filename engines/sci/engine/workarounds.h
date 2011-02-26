@@ -68,16 +68,7 @@ struct SciWorkaroundEntry {
 	SciWorkaroundSolution newValue;
 };
 
-extern const SciWorkaroundEntry opcodeDivWorkarounds[];
-extern const SciWorkaroundEntry opcodeDptoaWorkarounds[];
-extern const SciWorkaroundEntry opcodeGeWorkarounds[];
-extern const SciWorkaroundEntry opcodeLeWorkarounds[];
-extern const SciWorkaroundEntry opcodeUltWorkarounds[];
-extern const SciWorkaroundEntry opcodeLaiWorkarounds[];
-extern const SciWorkaroundEntry opcodeLsiWorkarounds[];
-extern const SciWorkaroundEntry opcodeMulWorkarounds[];
-extern const SciWorkaroundEntry opcodeAndWorkarounds[];
-extern const SciWorkaroundEntry opcodeOrWorkarounds[];
+extern const SciWorkaroundEntry arithmeticWorkarounds[];
 extern const SciWorkaroundEntry uninitializedReadWorkarounds[];
 extern const SciWorkaroundEntry kAbs_workarounds[];
 extern const SciWorkaroundEntry kCelHigh_workarounds[];

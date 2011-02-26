@@ -1081,7 +1081,7 @@ void ScummEngine::updatePalette() {
 	int num = _palDirtyMax - first + 1;
 	int i;
 
-	byte palette_colors[1024];
+	byte palette_colors[3 * 256];
 	byte *p = palette_colors;
 
 	for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
@@ -1108,12 +1108,10 @@ void ScummEngine::updatePalette() {
 			*p++ = brightness;
 			*p++ = brightness;
 			*p++ = brightness;
-			*p++ = 0;
 		} else {
 			*p++ = data[0];
 			*p++ = data[1];
 			*p++ = data[2];
-			*p++ = 0;
 		}
 	}
 
@@ -1126,7 +1124,7 @@ void ScummEngine::updatePalette() {
 		p = palette_colors;
 		for (i = first; i < first + num; ++i) {
 			_16BitPalette[i] = get16BitColor(p[0], p[1], p[2]);
-			p += 4;
+			p += 3;
 		}
 		return;
 	}

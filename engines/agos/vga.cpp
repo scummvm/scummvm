@@ -935,8 +935,8 @@ void AGOSEngine::vc22_setPalette() {
 
 	if (getGameType() == GType_PN) {
 		if (b > 128) {
-			b-= 128;
-			palptr = _displayPalette + 64;
+			b -= 128;
+			palptr = _displayPalette + 3 * 16;
 		}
 	} else if (getGameType() == GType_ELVIRA1) {
 		if (b >= 1000) {
@@ -956,24 +956,22 @@ void AGOSEngine::vc22_setPalette() {
 			num = 13;
 
 			for (int i = 0; i < 19; i++) {
-				palptr[(13 + i) * 4 + 0] = extraColors[i * 3 + 0] * 4;
-				palptr[(13 + i) * 4 + 1] = extraColors[i * 3 + 1] * 4;
-				palptr[(13 + i) * 4 + 2] = extraColors[i * 3 + 2] * 4;
-				palptr[(13 + i) * 4 + 3] = 0;
+				palptr[(13 + i) * 3 + 0] = extraColors[i * 3 + 0] * 4;
+				palptr[(13 + i) * 3 + 1] = extraColors[i * 3 + 1] * 4;
+				palptr[(13 + i) * 3 + 2] = extraColors[i * 3 + 2] * 4;
 			}
 		}
 	}
 
 	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
 		// Custom palette used for icon area
-		palptr = &_displayPalette[13 * 64];
+		palptr = &_displayPalette[13 * 3 * 16];
 		for (uint8 c = 0; c < 16; c++) {
 			palptr[0] = iconPalette[c * 3 + 0] * 2;
 			palptr[1] = iconPalette[c * 3 + 1] * 2;
 			palptr[2] = iconPalette[c * 3 + 2] * 2;
-			palptr[3] = 0;
 
-			palptr += 4;
+			palptr += 3;
 		};
 		palptr = _displayPalette;
 	}
@@ -986,9 +984,8 @@ void AGOSEngine::vc22_setPalette() {
 		palptr[0] = ((color & 0xf00) >> 8) * 32;
 		palptr[1] = ((color & 0x0f0) >> 4) * 32;
 		palptr[2] = ((color & 0x00f) >> 0) * 32;
-		palptr[3] = 0;
 
-		palptr += 4;
+		palptr += 3;
 		src += 2;
 	} while (--num);
 
@@ -1212,10 +1209,9 @@ void AGOSEngine::vc33_setMouseOn() {
 		_mouseHideCount = 1;
 		if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 			// Set mouse palette
-			_displayPalette[65 * 4 + 0] = 48 * 4;
-			_displayPalette[65 * 4 + 1] = 48 * 4;
-			_displayPalette[65 * 4 + 2] = 40 * 4;
-			_displayPalette[65 * 4 + 3] = 0;
+			_displayPalette[65 * 3 + 0] = 48 * 4;
+			_displayPalette[65 * 3 + 1] = 48 * 4;
+			_displayPalette[65 * 3 + 2] = 40 * 4;
 			_paletteFlag = 1;
 		}
 		mouseOn();
@@ -1313,11 +1309,10 @@ void AGOSEngine::vc37_pokePalette() {
 	if (getGameType() == GType_PN && (getFeatures() & GF_EGA))
 		return;
 
-	byte *palptr = _displayPalette + offs * 4;
+	byte *palptr = _displayPalette + offs * 3;
 	palptr[0] = ((color & 0xf00) >> 8) * 32;
 	palptr[1] = ((color & 0x0f0) >> 4) * 32;
 	palptr[2] = ((color & 0x00f) >> 0) * 32;
-	palptr[3] = 0;
 
 	if (!(_videoLockOut & 0x20)) {
 		_paletteFlag = 1;

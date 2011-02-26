@@ -1177,12 +1177,10 @@ bool Scene::processEventQueue() {
 
 void Scene::setPalette(unsigned mul) {
 	//debug(0, "setPalette(%u)", mul);
-	byte p[1024];
+	byte p[3*256];
 
-	memset(p, 0, 1024);
-	for (int i = 0; i < 256; ++i) {
-		for (int c = 0; c < 3; ++c)
-			p[i * 4 + c] = (unsigned)palette[i * 3 + c] * mul;
+	for (int i = 0; i < 3*256; ++i) {
+		p[i] = (unsigned)palette[i] * mul;
 	}
 
 	_system->getPaletteManager()->setPalette(p, 0, 256);

@@ -63,7 +63,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	_skyCompact = skyCompact;
 
 	int i;
-	uint8 tmpPal[1024];
+	uint8 tmpPal[VGA_COLOURS * 3];
 
 	_gameGrid = (uint8 *)malloc(GRID_X * GRID_Y * 2);
 	forceRefresh();
@@ -72,21 +72,20 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	_scrollScreen = NULL;
 
 	//blank the first 240 colors of the palette
-	memset(tmpPal, 0, GAME_COLOURS * 4);
+	memset(tmpPal, 0, GAME_COLOURS * 3);
 
 	//set the remaining colors
 	for (i = 0; i < (VGA_COLOURS-GAME_COLOURS); i++) {
-		tmpPal[4 * GAME_COLOURS + i * 4] = (_top16Colours[i * 3] << 2) + (_top16Colours[i * 3] >> 4);
-		tmpPal[4 * GAME_COLOURS + i * 4 + 1] = (_top16Colours[i * 3 + 1] << 2) + (_top16Colours[i * 3 + 1] >> 4);
-		tmpPal[4 * GAME_COLOURS + i * 4 + 2] = (_top16Colours[i * 3 + 2] << 2) + (_top16Colours[i * 3 + 2] >> 4);
-		tmpPal[4 * GAME_COLOURS + i * 4 + 3] = 0x00;
+		tmpPal[3 * GAME_COLOURS + i * 3 + 0] = (_top16Colours[i * 3 + 0] << 2) + (_top16Colours[i * 3 + 0] >> 4);
+		tmpPal[3 * GAME_COLOURS + i * 3 + 1] = (_top16Colours[i * 3 + 1] << 2) + (_top16Colours[i * 3 + 1] >> 4);
+		tmpPal[3 * GAME_COLOURS + i * 3 + 2] = (_top16Colours[i * 3 + 2] << 2) + (_top16Colours[i * 3 + 2] >> 4);
 	}
 
 	//set the palette
 	_system->getPaletteManager()->setPalette(tmpPal, 0, VGA_COLOURS);
 	_currentPalette = 0;
 
-	_seqInfo.framesLeft = 0;
+	_seqInfo.nextFrame = _seqInfo.framesLeft = 0;
 	_seqInfo.seqData = _seqInfo.seqDataPos = NULL;
 	_seqInfo.running = false;
 }
@@ -116,8 +115,8 @@ void Screen::setPalette(uint8 *pal) {
 
 void Screen::setPaletteEndian(uint8 *pal) {
 #ifdef SCUMM_BIG_ENDIAN
-	uint8 endPalette[256 * 3];
-	for (uint16 cnt = 0; cnt < 256 * 3; cnt++)
+	uint8 endPalette[VGA_COLOURS * 3];
+	for (uint16 cnt = 0; cnt < VGA_COLOURS * 3; cnt++)
 		endPalette[cnt] = pal[cnt ^ 1];
 	convertPalette(endPalette, _palette);
 #else
@@ -128,12 +127,12 @@ void Screen::setPaletteEndian(uint8 *pal) {
 }
 
 void Screen::halvePalette() {
-	uint8 halfPalette[1024];
+	uint8 halfPalette[VGA_COLOURS * 3];
+
 	for (uint8 cnt = 0; cnt < GAME_COLOURS; cnt++) {
-		halfPalette[(cnt << 2) | 0] = _palette[(cnt << 2) | 0] >> 1;
-		halfPalette[(cnt << 2) | 1] = _palette[(cnt << 2) | 1] >> 1;
-		halfPalette[(cnt << 2) | 2] = _palette[(cnt << 2) | 2] >> 1;
-		halfPalette[(cnt << 2) | 3] = 0;
+		halfPalette[cnt * 3 + 0] = _palette[cnt * 3 + 0] >> 1;
+		halfPalette[cnt * 3 + 1] = _palette[cnt * 3 + 1] >> 1;
+		halfPalette[cnt * 3 + 2] = _palette[cnt * 3 + 2] >> 1;
 	}
 	_system->getPaletteManager()->setPalette(halfPalette, 0, GAME_COLOURS);
 }
@@ -165,14 +164,14 @@ void Screen::showScreen(uint8 *pScreen) {
 	_system->updateScreen();
 }
 
-void Screen::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0..63 rgb to 4byte 0..255 rgbx
+//convert 3 byte 0..63 rgb to 3 byte 0..255 rgb
+void Screen::convertPalette(uint8 *inPal, uint8* outPal) {
 	int i;
 
 	for (i = 0; i < VGA_COLOURS; i++) {
-		outPal[4 * i] = (inPal[3 * i] << 2) + (inPal[3 * i] >> 4);
-		outPal[4 * i + 1] = (inPal[3 * i + 1] << 2) + (inPal[3 * i + 1] >> 4);
-		outPal[4 * i + 2] = (inPal[3 * i + 2] << 2) + (inPal[3 * i + 2] >> 4);
-		outPal[4 * i + 3] = 0x00;
+		outPal[3 * i + 0] = (inPal[3 * i + 0] << 2) + (inPal[3 * i + 0] >> 4);
+		outPal[3 * i + 1] = (inPal[3 * i + 1] << 2) + (inPal[3 * i + 1] >> 4);
+		outPal[3 * i + 2] = (inPal[3 * i + 2] << 2) + (inPal[3 * i + 2] >> 4);
 	}
 }
 
@@ -248,7 +247,7 @@ void Screen::fnFadeDown(uint32 scroll) {
 		uint32 delayTime = _system->getMillis();
 		for (uint8 cnt = 0; cnt < 32; cnt++) {
 			delayTime += 20;
-			palette_fadedown_helper((uint32 *)_palette, GAME_COLOURS);
+			palette_fadedown_helper(_palette, GAME_COLOURS);
 			_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLOURS);
 			_system->updateScreen();
 			int32 waitTime = (int32)delayTime - _system->getMillis();
@@ -266,23 +265,24 @@ void Screen::fnFadeDown(uint32 scroll) {
 	}
 }
 
-void Screen::palette_fadedown_helper(uint32 *pal, uint num) {
-	byte *p = (byte *)pal;
-
+void Screen::palette_fadedown_helper(uint8 *pal, uint num) {
 	do {
-		if (p[0] >= 8)
-			p[0] -= 8;
+		if (pal[0] >= 8)
+			pal[0] -= 8;
 		else
-			p[0] = 0;
-		if (p[1] >= 8)
-			p[1] -= 8;
+			pal[0] = 0;
+
+		if (pal[1] >= 8)
+			pal[1] -= 8;
 		else
-			p[1] = 0;
-		if (p[2] >= 8)
-			p[2] -= 8;
+			pal[1] = 0;
+
+		if (pal[2] >= 8)
+			pal[2] -= 8;
 		else
-			p[2] = 0;
-		p += sizeof(uint32);
+			pal[2] = 0;
+
+		pal += 3;
 	} while (--num);
 }
 
@@ -296,20 +296,23 @@ void Screen::paletteFadeUp(uint16 fileNr) {
 }
 
 void Screen::paletteFadeUp(uint8 *pal) {
-	byte tmpPal[1024];
+	byte tmpPal[VGA_COLOURS * 3];
 
 	convertPalette(pal, tmpPal);
 
 	uint32 delayTime = _system->getMillis();
 	for (uint8 cnt = 1; cnt <= 32; cnt++) {
 		delayTime += 20;
+
 		for (uint8 colCnt = 0; colCnt < GAME_COLOURS; colCnt++) {
-			_palette[(colCnt << 2) | 0] = (tmpPal[(colCnt << 2) | 0] * cnt) >> 5;
-			_palette[(colCnt << 2) | 1] = (tmpPal[(colCnt << 2) | 1] * cnt) >> 5;
-			_palette[(colCnt << 2) | 2] = (tmpPal[(colCnt << 2) | 2] * cnt) >> 5;
+			_palette[colCnt * 3 + 0] = (tmpPal[colCnt * 3 + 0] * cnt) >> 5;
+			_palette[colCnt * 3 + 1] = (tmpPal[colCnt * 3 + 1] * cnt) >> 5;
+			_palette[colCnt * 3 + 2] = (tmpPal[colCnt * 3 + 2] * cnt) >> 5;
 		}
+
 		_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLOURS);
 		_system->updateScreen();
+
 		int32 waitTime = (int32)delayTime - _system->getMillis();
 		if (waitTime < 0)
 			waitTime = 0;
@@ -328,8 +331,8 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 		if (palette == NULL)
 			error("Screen::fnFadeUp: can't fetch compact %X", palNum);
 #ifdef SCUMM_BIG_ENDIAN
-		byte tmpPal[256 * 3];
-		for (uint16 cnt = 0; cnt < 256*3; cnt++)
+		byte tmpPal[VGA_COLOURS * 3];
+		for (uint16 cnt = 0; cnt < VGA_COLOURS * 3; cnt++)
 			tmpPal[cnt] = palette[cnt ^ 1];
 		paletteFadeUp(tmpPal);
 #else
@@ -348,7 +351,7 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 				scrOldPtr += GAME_SCREEN_WIDTH;
 			}
 			showScreen(_scrollScreen);
-			waitForTimer();
+			waitForTick();
 		}
 		showScreen(_currentScreen);
 	} else if (scroll == 321) {	// scroll right (going left)
@@ -364,7 +367,7 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 				scrOldPtr += GAME_SCREEN_WIDTH;
 			}
 			showScreen(_scrollScreen);
-			waitForTimer();
+			waitForTick();
 		}
 		showScreen(_currentScreen);
 	}
@@ -374,22 +377,39 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 	}
 }
 
-void Screen::waitForTimer() {
-	Common::EventManager *eventMan = _system->getEventManager();
-	_gotTick = false;
-	while (!_gotTick) {
-		Common::Event event;
+void Screen::waitForTick() {
+	uint32 start = _system->getMillis();
+	uint32 end = start + 20 - (start % 20);
+	uint32 remain;
 
-		_system->delayMillis(10);
+	Common::EventManager *eventMan = _system->getEventManager();
+	Common::Event event;
+
+	while (true) {
 		while (eventMan->pollEvent(event))
 			;
+
+		start = _system->getMillis();
+
+		if (start >= end)
+			return;
+
+		remain = end - start;
+		if (remain < 10) {
+			_system->delayMillis(remain);
+			return;
+		}
+
+		_system->delayMillis(10);
 	}
 }
 
 void Screen::waitForSequence() {
 	Common::EventManager *eventMan = _system->getEventManager();
+	Common::Event event;
+
 	while (_seqInfo.running) {
-		Common::Event event;
+		processSequence();
 
 		_system->delayMillis(20);
 		while (eventMan->pollEvent(event))
@@ -397,106 +417,106 @@ void Screen::waitForSequence() {
 	}
 }
 
-void Screen::handleTimer() {
-	_gotTick = true;
-	if (_seqInfo.running)
-		processSequence();
-}
-
 void Screen::startSequence(uint16 fileNum) {
 	_seqInfo.seqData = _skyDisk->loadFile(fileNum);
+	_seqInfo.nextFrame = _system->getMillis() + 60;
 	_seqInfo.framesLeft = _seqInfo.seqData[0];
 	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
-	_seqInfo.delay = SEQ_DELAY;
 	_seqInfo.running = true;
 	_seqInfo.runningItem = false;
 }
 
 void Screen::startSequenceItem(uint16 itemNum) {
 	_seqInfo.seqData = (uint8 *)SkyEngine::fetchItem(itemNum);
+	_seqInfo.nextFrame = _system->getMillis() + 60;
 	_seqInfo.framesLeft = _seqInfo.seqData[0] - 1;
 	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
-	_seqInfo.delay = SEQ_DELAY;
 	_seqInfo.running = true;
 	_seqInfo.runningItem = true;
 }
 
 void Screen::stopSequence() {
 	_seqInfo.running = false;
-	waitForTimer();
-	waitForTimer();
-	_seqInfo.framesLeft = 0;
+	waitForTick();
+	waitForTick();
+	_seqInfo.nextFrame = _seqInfo.framesLeft = 0;
 	free(_seqInfo.seqData);
 	_seqInfo.seqData = _seqInfo.seqDataPos = NULL;
 }
 
 void Screen::processSequence() {
+	if (!_seqInfo.running)
+		return;
+
+	if (_system->getMillis() < _seqInfo.nextFrame)
+		return;
+
+	_seqInfo.nextFrame += 60;
+
+	memset(_seqGrid, 0, 12 * 20);
+
 	uint32 screenPos = 0;
 
-	_seqInfo.delay--;
-	if (_seqInfo.delay == 0) {
-		_seqInfo.delay = SEQ_DELAY;
-		memset(_seqGrid, 0, 12 * 20);
-
-		uint8 nrToSkip, nrToDo, cnt;
+	uint8 nrToSkip, nrToDo, cnt;
+	do {
 		do {
-			do {
-				nrToSkip = _seqInfo.seqDataPos[0];
-				_seqInfo.seqDataPos++;
-				screenPos += nrToSkip;
-			} while (nrToSkip == 0xFF);
-			do {
-				nrToDo = _seqInfo.seqDataPos[0];
-				_seqInfo.seqDataPos++;
+			nrToSkip = _seqInfo.seqDataPos[0];
+			_seqInfo.seqDataPos++;
+			screenPos += nrToSkip;
+		} while (nrToSkip == 0xFF);
 
-				uint8 gridSta = (uint8)((screenPos / (GAME_SCREEN_WIDTH * 16))*20 + ((screenPos % GAME_SCREEN_WIDTH) >> 4));
-				uint8 gridEnd = (uint8)(((screenPos+nrToDo) / (GAME_SCREEN_WIDTH * 16))*20 + (((screenPos+nrToDo) % GAME_SCREEN_WIDTH) >> 4));
-				gridSta = MIN(gridSta, (uint8)(12 * 20 - 1));
-				gridEnd = MIN(gridEnd, (uint8)(12 * 20 - 1));
-				if (gridEnd >= gridSta)
-					for (cnt = gridSta; cnt <= gridEnd; cnt++)
-						_seqGrid[cnt] = 1;
-				else {
-					for (cnt = gridSta; cnt < (gridSta / 20 + 1) * 20; cnt++)
-						_seqGrid[cnt] = 1;
-					for (cnt = (gridEnd / 20) * 20; cnt <= gridEnd; cnt++)
-						_seqGrid[cnt] = 1;
-				}
+		do {
+			nrToDo = _seqInfo.seqDataPos[0];
+			_seqInfo.seqDataPos++;
 
-				for (cnt = 0; cnt < nrToDo; cnt++) {
-					_currentScreen[screenPos] = _seqInfo.seqDataPos[0];
-					_seqInfo.seqDataPos++;
-					screenPos++;
-				}
-			} while (nrToDo == 0xFF);
-		} while (screenPos < (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT));
-		uint8 *gridPtr = _seqGrid; uint8 *scrPtr = _currentScreen; uint8 *rectPtr = NULL;
-		uint8 rectWid = 0, rectX = 0, rectY = 0;
-		for (uint8 cnty = 0; cnty < 12; cnty++) {
-			for (uint8 cntx = 0; cntx < 20; cntx++) {
-				if (*gridPtr) {
-					if (!rectWid) {
-						rectX = cntx;
-						rectY = cnty;
-						rectPtr = scrPtr;
-					}
-					rectWid++;
-				} else if (rectWid) {
-					_system->copyRectToScreen(rectPtr, GAME_SCREEN_WIDTH, rectX << 4, rectY << 4, rectWid << 4, 16);
-					rectWid = 0;
-				}
-				scrPtr += 16;
-				gridPtr++;
+			uint8 gridSta = (uint8)((screenPos / (GAME_SCREEN_WIDTH * 16))*20 + ((screenPos % GAME_SCREEN_WIDTH) >> 4));
+			uint8 gridEnd = (uint8)(((screenPos+nrToDo) / (GAME_SCREEN_WIDTH * 16))*20 + (((screenPos+nrToDo) % GAME_SCREEN_WIDTH) >> 4));
+			gridSta = MIN(gridSta, (uint8)(12 * 20 - 1));
+			gridEnd = MIN(gridEnd, (uint8)(12 * 20 - 1));
+			if (gridEnd >= gridSta)
+				for (cnt = gridSta; cnt <= gridEnd; cnt++)
+					_seqGrid[cnt] = 1;
+			else {
+				for (cnt = gridSta; cnt < (gridSta / 20 + 1) * 20; cnt++)
+					_seqGrid[cnt] = 1;
+				for (cnt = (gridEnd / 20) * 20; cnt <= gridEnd; cnt++)
+					_seqGrid[cnt] = 1;
 			}
-			if (rectWid) {
+
+			for (cnt = 0; cnt < nrToDo; cnt++) {
+				_currentScreen[screenPos] = _seqInfo.seqDataPos[0];
+				_seqInfo.seqDataPos++;
+				screenPos++;
+			}
+		} while (nrToDo == 0xFF);
+	} while (screenPos < (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT));
+	uint8 *gridPtr = _seqGrid; uint8 *scrPtr = _currentScreen; uint8 *rectPtr = NULL;
+	uint8 rectWid = 0, rectX = 0, rectY = 0;
+	for (uint8 cnty = 0; cnty < 12; cnty++) {
+		for (uint8 cntx = 0; cntx < 20; cntx++) {
+			if (*gridPtr) {
+				if (!rectWid) {
+					rectX = cntx;
+					rectY = cnty;
+					rectPtr = scrPtr;
+				}
+				rectWid++;
+			} else if (rectWid) {
 				_system->copyRectToScreen(rectPtr, GAME_SCREEN_WIDTH, rectX << 4, rectY << 4, rectWid << 4, 16);
 				rectWid = 0;
 			}
-			scrPtr += 15 * GAME_SCREEN_WIDTH;
+			scrPtr += 16;
+			gridPtr++;
 		}
-		_system->updateScreen();
-		_seqInfo.framesLeft--;
+		if (rectWid) {
+			_system->copyRectToScreen(rectPtr, GAME_SCREEN_WIDTH, rectX << 4, rectY << 4, rectWid << 4, 16);
+			rectWid = 0;
+		}
+		scrPtr += 15 * GAME_SCREEN_WIDTH;
 	}
+	_system->updateScreen();
+	_seqInfo.framesLeft--;
+
 	if (_seqInfo.framesLeft == 0) {
 		_seqInfo.running = false;
 		if (!_seqInfo.runningItem)

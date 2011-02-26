@@ -248,13 +248,13 @@ void Control::askForCd() {
 		fontId = CZECH_SR_FONT;
 	_font = (uint8*)_resMan->openFetchRes(fontId);
 	uint8 *pal = (uint8*)_resMan->openFetchRes(SR_PALETTE);
-	uint8 *palOut = (uint8*)malloc(256 * 4);
+	uint8 *palOut = (uint8*)malloc(256 * 3);
 	for (uint16 cnt = 1; cnt < 256; cnt++) {
-		palOut[cnt * 4 + 0] = pal[cnt * 3 + 0] << 2;
-		palOut[cnt * 4 + 1] = pal[cnt * 3 + 1] << 2;
-		palOut[cnt * 4 + 2] = pal[cnt * 3 + 2] << 2;
+		palOut[cnt * 3 + 0] = pal[cnt * 3 + 0] << 2;
+		palOut[cnt * 3 + 1] = pal[cnt * 3 + 1] << 2;
+		palOut[cnt * 3 + 2] = pal[cnt * 3 + 2] << 2;
 	}
-	palOut[0] = palOut[1] = palOut[2] = palOut[3] = 0;
+	palOut[0] = palOut[1] = palOut[2] = 0;
 	_resMan->resClose(SR_PALETTE);
 	_system->getPaletteManager()->setPalette(palOut, 0, 256);
 	free(palOut);
@@ -318,13 +318,13 @@ uint8 Control::runPanel() {
 	_redFont = (uint8*)_resMan->openFetchRes(redFontId);
 
 	uint8 *pal = (uint8*)_resMan->openFetchRes(SR_PALETTE);
-	uint8 *palOut = (uint8*)malloc(256 * 4);
+	uint8 *palOut = (uint8*)malloc(256 * 3);
 	for (uint16 cnt = 1; cnt < 256; cnt++) {
-		palOut[cnt * 4 + 0] = pal[cnt * 3 + 0] << 2;
-		palOut[cnt * 4 + 1] = pal[cnt * 3 + 1] << 2;
-		palOut[cnt * 4 + 2] = pal[cnt * 3 + 2] << 2;
+		palOut[cnt * 3 + 0] = pal[cnt * 3 + 0] << 2;
+		palOut[cnt * 3 + 1] = pal[cnt * 3 + 1] << 2;
+		palOut[cnt * 3 + 2] = pal[cnt * 3 + 2] << 2;
 	}
-	palOut[0] = palOut[1] = palOut[2] = palOut[3] = 0;
+	palOut[0] = palOut[1] = palOut[2] = 0;
 	_resMan->resClose(SR_PALETTE);
 	_system->getPaletteManager()->setPalette(palOut, 0, 256);
 	free(palOut);

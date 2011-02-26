@@ -58,7 +58,7 @@ private:
 	// Palette fading
 	void applyFading(int step);
 	int _fading;
-	byte _paletteFull[256 * 4];
+	byte _paletteFull[256 * 3];
 	uint32 _fadeStartTime;
 };
 

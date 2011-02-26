@@ -192,18 +192,18 @@ bool Parser_v1d::isObjectVerb_v1(const char *word, object_t *obj) {
 		return false;
 
 	int i;
-	for (i = 0; _vm->_cmdList[cmdIndex][i].verbIndex != 0; i++) { // For each cmd
-		if (!strcmp(word, _vm->_text->getVerb(_vm->_cmdList[cmdIndex][i].verbIndex, 0))) // Is this verb catered for?
+	for (i = 0; _cmdList[cmdIndex][i].verbIndex != 0; i++) { // For each cmd
+		if (!strcmp(word, _vm->_text->getVerb(_cmdList[cmdIndex][i].verbIndex, 0))) // Is this verb catered for?
 			break;
 	}
 
-	if (_vm->_cmdList[cmdIndex][i].verbIndex == 0)  // No
+	if (_cmdList[cmdIndex][i].verbIndex == 0)       // No
 		return false;
 
 	// Verb match found, check all required objects are being carried
-	cmd *cmnd = &_vm->_cmdList[cmdIndex][i];        // ptr to struct cmd
+	cmd *cmnd = &_cmdList[cmdIndex][i];             // ptr to struct cmd
 	if (cmnd->reqIndex) {                           // At least 1 thing in list
-		uint16 *reqs = _vm->_arrayReqs[cmnd->reqIndex]; // ptr to list of required objects
+		uint16 *reqs = _arrayReqs[cmnd->reqIndex];  // ptr to list of required objects
 		for (i = 0; reqs[i]; i++) {                 // for each obj
 			if (!_vm->_object->isCarrying(reqs[i])) {
 				Utils::Box(kBoxAny, "%s", _vm->_text->getTextData(cmnd->textDataNoCarryIndex));
@@ -286,7 +286,7 @@ void Parser_v1d::dropObject(object_t *obj) {
 bool Parser_v1d::isCatchallVerb_v1(bool testNounFl, const char *noun, const char *verb, objectList_t obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(%d, %s, %s, object_list_t obj)", (testNounFl) ? 1 : 0, noun, verb);
 
-	if (_maze.enabledFl)
+	if (_vm->_maze.enabledFl)
 		return false;
 
 	if (testNounFl && !noun)
@@ -372,7 +372,7 @@ void Parser_v1d::lineHandler() {
 	// SAVE/RESTORE
 	if (!strcmp("save", _vm->_line)) {
 		if (gameStatus.gameOverFl)
-			Utils::gameOverMsg();
+			_vm->gameOverMsg();
 		else
 			_vm->_file->saveGame(-1, Common::String());
 		return;
@@ -391,8 +391,9 @@ void Parser_v1d::lineHandler() {
 	if (strspn(_vm->_line, " ") == strlen(_vm->_line)) // Nothing but spaces!
 		return;
 
-	if (gameStatus.gameOverFl) {                    // No commands allowed!
-		Utils::gameOverMsg();
+	if (gameStatus.gameOverFl) {
+		// No commands allowed!
+		_vm->gameOverMsg();
 		return;
 	}
 
@@ -413,16 +414,16 @@ void Parser_v1d::lineHandler() {
 						return;
 				}
 			}
-			if ((*farComment == '\0') && isBackgroundWord_v1(noun, verb, _vm->_backgroundObjects[*_vm->_screen_p]))
+			if ((*farComment == '\0') && isBackgroundWord_v1(noun, verb, _backgroundObjects[*_vm->_screen_p]))
 				return;
 		} while (noun);
 	}
 	noun = findNextNoun(noun);
 	if (*farComment != '\0')                        // An object matched but not near enough
 		Utils::Box(kBoxAny, "%s", farComment);
-	else if (!isCatchallVerb_v1(true, noun, verb, _vm->_catchallList) &&
-		     !isCatchallVerb_v1(false, noun, verb, _vm->_backgroundObjects[*_vm->_screen_p])  &&
-		     !isCatchallVerb_v1(false, noun, verb, _vm->_catchallList))
+	else if (!isCatchallVerb_v1(true, noun, verb, _catchallList) &&
+		     !isCatchallVerb_v1(false, noun, verb, _backgroundObjects[*_vm->_screen_p])  &&
+		     !isCatchallVerb_v1(false, noun, verb, _catchallList))
 		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBEh_1d));
 }
 
@@ -430,7 +431,7 @@ void Parser_v1d::showInventory() const {
 	status_t &gameStatus = _vm->getGameStatus();
 	if (gameStatus.viewState == kViewPlay) {
 		if (gameStatus.gameOverFl)
-			Utils::gameOverMsg();
+			_vm->gameOverMsg();
 		else
 			showDosInventory();
 	}

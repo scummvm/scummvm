@@ -121,6 +121,7 @@ void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 #endif
 		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),	// RGB565
 		Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),	// RGB5551
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),	// RGBA4444
 #ifndef USE_GLES
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)   // ARGB4444
@@ -194,6 +195,18 @@ void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
 	int scaledX = x;
 	int scaledY = y;
+
+	int16 currentX = _cursorState.x;
+	int16 currentY = _cursorState.y;
+
+	adjustMousePosition(currentX, currentY);
+
+	// Do not adjust the real screen position, when the current game / overlay
+	// coordinates match the requested coordinates. This avoids a slight
+	// movement which might occur otherwise when the mouse is at a subpixel
+	// position.
+	if (x == currentX && y == currentY)
+		return;
 
 	if (_videoMode.mode == OpenGL::GFX_NORMAL) {
 		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)

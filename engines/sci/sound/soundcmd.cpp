@@ -445,8 +445,16 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 
 	if (musicSlot->fadeCompleted) {
 		musicSlot->fadeCompleted = false;
-		// We need signal for sci0 at least in iceman as well (room 14, fireworks)
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		// We need signal for sci0 at least in iceman as well (room 14,
+		// fireworks).
+		// It is also needed in other games, e.g. LSL6 when talking to the
+		// receptionist (bug #3192166).
+		if (g_sci->getGameId() == GID_LONGBOW && g_sci->getEngineState()->currentRoomNumber() == 95) {
+			// HACK: Don't set a signal here in the intro of Longbow, as that makes some dialog
+			// boxes disappear too soon (bug #3044844).
+		} else {
+			writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		}
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
 			processStopSound(obj, false);
 		} else {

@@ -117,9 +117,11 @@ public:
 	}
 
 	/**
-	 * Returns the palette of the specified PNG8 image
+	 * Returns the palette of the specified PNG8 image.
+	 *
+	 * Note that the palette's format is RGBA.
 	 */
-	void getPalette(byte *palette, byte &entries) {
+	void getPalette(byte *palette, uint16 &entries) {
 		if (_header.colorType != kIndexed)
 			error("Palette requested for a non-indexed PNG");
 		palette = _palette;

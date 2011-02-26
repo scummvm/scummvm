@@ -23,7 +23,10 @@
  *
  */
 
-#if defined(ANDROID)
+#ifndef _ANDROID_ASSET_H_
+#define _ANDROID_ASSET_H_
+
+#if defined(__ANDROID__)
 
 #include <jni.h>
 
@@ -51,3 +54,5 @@ private:
 };
 
 #endif
+#endif
+

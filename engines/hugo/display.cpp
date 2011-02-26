@@ -40,6 +40,7 @@
 #include "hugo/inventory.h"
 #include "hugo/util.h"
 #include "hugo/object.h"
+#include "hugo/mouse.h"
 
 namespace Hugo {
 /**
@@ -104,17 +105,37 @@ Screen::Screen(HugoEngine *vm) : _vm(vm) {
 Screen::~Screen() {
 }
 
+icondib_t &Screen::getIconBuffer() {
+	return _iconBuffer;
+}
+
+viewdib_t &Screen::getBackBuffer() {
+	return _backBuffer;
+}
+
+viewdib_t &Screen::getBackBufferBackup() {
+	return _backBufferBackup;
+}
+
+viewdib_t &Screen::getFrontBuffer() {
+	return _frontBuffer;
+}
+
+viewdib_t &Screen::getGUIBuffer() {
+	return _GUIBuffer;
+}
+
 /**
  * Replace the palette by the main palette
  */
 void Screen::createPal() {
 	debugC(1, kDebugDisplay, "createPal");
-
-	g_system->getPaletteManager()->setPalette(_mainPalette, 0, _paletteSize / 4);
+	g_system->getPaletteManager()->setPalette(_mainPalette, 0, _paletteSize / 3);
 }
 
 void Screen::setCursorPal() {
-	CursorMan.replaceCursorPalette(_curPalette, 0, _paletteSize / 4);
+	debugC(1, kDebugDisplay, "setCursorPal");
+	CursorMan.replaceCursorPalette(_curPalette, 0, _paletteSize / 3);
 }
 
 /**
@@ -170,14 +191,11 @@ void Screen::displayRect(const int16 x, const int16 y, const int16 dx, const int
 void Screen::remapPal(const uint16 oldIndex, const uint16 newIndex) {
 	debugC(1, kDebugDisplay, "Remap_pal(%d, %d)", oldIndex, newIndex);
 
-	byte pal[4];
+	_curPalette[3 * oldIndex + 0] = _mainPalette[newIndex * 3 + 0];
+	_curPalette[3 * oldIndex + 1] = _mainPalette[newIndex * 3 + 1];
+	_curPalette[3 * oldIndex + 2] = _mainPalette[newIndex * 3 + 2];
 
-	pal[0] = _curPalette[4 * oldIndex + 0] = _mainPalette[newIndex * 4 + 0];
-	pal[1] = _curPalette[4 * oldIndex + 1] = _mainPalette[newIndex * 4 + 1];
-	pal[2] = _curPalette[4 * oldIndex + 2] = _mainPalette[newIndex * 4 + 2];
-	pal[3] = _curPalette[4 * oldIndex + 3] = _mainPalette[newIndex * 4 + 3];
-
-	g_system->getPaletteManager()->setPalette(pal, oldIndex, 1);
+	g_system->getPaletteManager()->setPalette(_curPalette, oldIndex, 1);
 }
 
 /**
@@ -193,21 +211,13 @@ void Screen::savePal(Common::WriteStream *f) const {
 /**
  * Restore the current palette from a savegame
  */
-void Screen::restorePal(Common::SeekableReadStream *f) {
+void Screen::restorePal(Common::ReadStream *f) {
 	debugC(1, kDebugDisplay, "restorePal()");
-
-	byte pal[4];
 
 	for (int i = 0; i < _paletteSize; i++)
 		_curPalette[i] = f->readByte();
 
-	for (int i = 0; i < _paletteSize / 4; i++) {
-		pal[0] = _curPalette[i * 4 + 0];
-		pal[1] = _curPalette[i * 4 + 1];
-		pal[2] = _curPalette[i * 4 + 2];
-		pal[3] = _curPalette[i * 4 + 3];
-		g_system->getPaletteManager()->setPalette(pal, i, 1);
-	}
+	g_system->getPaletteManager()->setPalette(_curPalette, 0, _paletteSize / 3);
 }
 
 
@@ -220,24 +230,6 @@ void Screen::setBackgroundColor(const uint16 color) {
 	debugC(1, kDebugDisplay, "setBackgroundColor(%d)", color);
 
 	remapPal(0, color);
-}
-
-/**
- * Return the overlay state (Foreground/Background) of the currently
- * processed object by looking down the current column for an overlay
- * base bit set (in which case the object is foreground).
- */
-overlayState_t Screen::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
-	debugC(4, kDebugDisplay, "findOvl()");
-
-	for (; y < seq_p->lines; y++) {                 // Each line in object
-		byte ovb = _vm->_object->getBaseBoundary((uint16)(dst_p - _frontBuffer) >> 3); // Ptr into overlay bits
-		if (ovb & (0x80 >> ((uint16)(dst_p - _frontBuffer) & 7))) // Overlay bit is set
-			return kOvlForeground;                  // Found a bit - must be foreground
-		dst_p += kXPix;
-	}
-
-	return kOvlBackground;                          // No bits set, must be background
 }
 
 /**
@@ -584,17 +576,12 @@ void Screen::loadPalette(Common::ReadStream &in) {
 }
 
 /**
- * Free main and current palettes
+ * Free fonts, main and current palettes
  */
-void Screen::freePalette() {
+void Screen::freeScreen() {
 	free(_curPalette);
 	free(_mainPalette);
-}
 
-/**
- * Free fonts
- */
-void Screen::freeFonts() {
 	for (int i = 0; i < kNumFonts; i++) {
 		if (_arrayFont[i])
 			free(_arrayFont[i]);
@@ -606,11 +593,7 @@ void Screen::selectInventoryObjId(const int16 objId) {
 	_vm->_inventory->setInventoryObjId(objId);      // Select new object
 
 	// Find index of icon
-	int16 iconId = 0;                               // Find index of dragged icon
-	for (; iconId < _vm->_maxInvent; iconId++) {
-		if (objId == _vm->_invent[iconId])
-			break;
-	}
+	int16 iconId = _vm->_inventory->findIconId(objId);
 
 	// Compute source coordinates in dib_u
 	int16 ux = (iconId + kArrowNumb) * kInvDx % kXPix;
@@ -653,31 +636,27 @@ bool Screen::isInY(const int16 y, const rect_t *rect) const {
  * Check if two rectangles are overlapping
  */
 bool Screen::isOverlapping(const rect_t *rectA, const rect_t *rectB) const {
-	return (isInX(rectA->x, rectB) || isInX(rectA->x + rectA->dx, rectB) || isInX(rectB->x, rectA) || isInX(rectB->x + rectB->dx, rectA)) && 
+	return (isInX(rectA->x, rectB) || isInX(rectA->x + rectA->dx, rectB) || isInX(rectB->x, rectA) || isInX(rectB->x + rectB->dx, rectA)) &&
 		   (isInY(rectA->y, rectB) || isInY(rectA->y + rectA->dy, rectB) || isInY(rectB->y, rectA) || isInY(rectB->y + rectB->dy, rectA));
 }
 
 /**
- * Display exit hotspots in God Mode ('PPG')
+ * Display active boundaries in God Mode ('PPG')
  * Light Red   = Exit hotspots
  * Light Green = Visible objects
  * White       = Fixed objects, parts of background
  */
-void Screen::drawHotspots() {
+void Screen::drawBoundaries() {
 	if (!_vm->getGameStatus().godModeFl)
 		return;
 
-	for (int i = 0; _vm->_hotspots[i].screenIndex >= 0; i++) {
-		hotspot_t *hotspot = &_vm->_hotspots[i];
-		if (hotspot->screenIndex == _vm->_hero->screenIndex)
-			drawRectangle(false, hotspot->x1, hotspot->y1, hotspot->x2, hotspot->y2, _TLIGHTRED);
-	}
+	_vm->_mouse->drawHotspots();
 
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		object_t *obj = &_vm->_object->_objects[i]; // Get pointer to object
 		if (obj->screenIndex == *_vm->_screen_p) {
 			if ((obj->currImagePtr != 0) && (obj->cycling != kCycleInvisible))
-				drawRectangle(false, obj->x + obj->currImagePtr->x1, obj->y + obj->currImagePtr->y1, 
+				drawRectangle(false, obj->x + obj->currImagePtr->x1, obj->y + obj->currImagePtr->y1,
 				                     obj->x + obj->currImagePtr->x2, obj->y + obj->currImagePtr->y2, _TLIGHTGREEN);
 			else if ((obj->currImagePtr == 0) && (obj->vxPath != 0) && !obj->carriedFl)
 				drawRectangle(false, obj->oldx, obj->oldy, obj->oldx + obj->vxPath, obj->oldy + obj->vyPath, _TBRIGHTWHITE);
@@ -743,6 +722,24 @@ void Screen_v1d::loadFontArr(Common::ReadStream &in) {
 	}
 }
 
+/**
+ * Return the overlay state (Foreground/Background) of the currently
+ * processed object by looking down the current column for an overlay
+ * base byte set (in which case the object is foreground).
+ */
+overlayState_t Screen_v1d::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
+	debugC(4, kDebugDisplay, "findOvl()");
+
+	for (; y < seq_p->lines; y++) {                 // Each line in object
+		byte ovb = _vm->_object->getBaseBoundary((uint16)(dst_p - _frontBuffer) >> 3); // Ptr into overlay bytes
+		if (ovb)                                    // If any overlay base byte is non-zero then the object is foreground, else back. 
+			return kOvlForeground;
+		dst_p += kXPix;
+	}
+
+	return kOvlBackground;                          // No bits set, must be background
+}
+
 Screen_v1w::Screen_v1w(HugoEngine *vm) : Screen(vm) {
 }
 
@@ -791,6 +788,24 @@ void Screen_v1w::loadFontArr(Common::ReadStream &in) {
 		for (int j = 0; j < numElem; j++)
 			in.readByte();
 	}
+}
+
+/**
+ * Return the overlay state (Foreground/Background) of the currently
+ * processed object by looking down the current column for an overlay
+ * base bit set (in which case the object is foreground).
+ */
+overlayState_t Screen_v1w::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
+	debugC(4, kDebugDisplay, "findOvl()");
+
+	for (; y < seq_p->lines; y++) {                 // Each line in object
+		byte ovb = _vm->_object->getBaseBoundary((uint16)(dst_p - _frontBuffer) >> 3); // Ptr into overlay bits
+		if (ovb & (0x80 >> ((uint16)(dst_p - _frontBuffer) & 7))) // Overlay bit is set
+			return kOvlForeground;                  // Found a bit - must be foreground
+		dst_p += kXPix;
+	}
+
+	return kOvlBackground;                          // No bits set, must be background
 }
 
 } // End of namespace Hugo

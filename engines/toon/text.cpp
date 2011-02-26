@@ -57,7 +57,7 @@ int32 TextResource::getNext(int32 offset) {
 
 	uint16 *table = (uint16 *)_textData + 1;
 	int a = getId(offset);
-	return table[a+1];
+	return READ_LE_UINT16(table + a + 1);
 }
 
 int32 TextResource::getId(int32 offset) {
@@ -66,7 +66,7 @@ int32 TextResource::getId(int32 offset) {
 	uint16 *table = (uint16 *)_textData + 1;
 	int32 found = -1;
 	for (int32 i = 0; i < _numTexts; i++) {
-		if (offset == table[i]) {
+		if (offset == READ_LE_UINT16(table + i)) {
 			found = i;
 			break;
 		}
@@ -80,7 +80,7 @@ char *TextResource::getText(int32 offset) {
 	uint16 *table = (uint16 *)_textData + 1;
 	int32 found = -1;
 	for (int32 i = 0; i < _numTexts; i++) {
-		if (offset == table[i]) {
+		if (offset == READ_LE_UINT16(table + i)) {
 			found = i;
 			break;
 		}
@@ -88,7 +88,7 @@ char *TextResource::getText(int32 offset) {
 	if (found < 0)
 		return NULL;
 
-	int32 realOffset = ((uint16 *)_textData + 1 + _numTexts)[found];
+	int32 realOffset = READ_LE_UINT16((uint16 *)_textData + 1 + _numTexts + found);
 	return (char *)_textData + realOffset;
 }
 

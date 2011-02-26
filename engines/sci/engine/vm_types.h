@@ -41,6 +41,30 @@ struct reg_t {
 		return !(offset || segment);
 	}
 
+	uint16 toUint16() const {
+		return offset;
+	}
+
+	int16 toSint16() const {
+		return (int16) offset;
+	}
+
+	bool isNumber() const {
+		return !segment;
+	}
+
+	bool isPointer() const {
+		return segment != 0 && segment != 0xFFFF;
+	}
+
+	uint16 requireUint16() const;
+	int16 requireSint16() const;
+
+	bool isInitialized() const {
+		return segment != 0xFFFF;
+	}
+
+	// Comparison operators
 	bool operator==(const reg_t &x) const {
 		return (offset == x.offset) && (segment == x.segment);
 	}
@@ -49,13 +73,59 @@ struct reg_t {
 		return (offset != x.offset) || (segment != x.segment);
 	}
 
-	uint16 toUint16() const {
-		return offset;
+	bool operator>(const reg_t right) const;
+	bool operator>=(const reg_t right) const {
+		if (*this == right)
+			return true;
+		return *this > right;
+	}
+	bool operator<(const reg_t right) const;
+	bool operator<=(const reg_t right) const {
+		if (*this == right)
+			return true;
+		return *this < right;
 	}
 
-	int16 toSint16() const {
-		return (int16) offset;
+	// Same as the normal operators, but perform unsigned
+	// integer checking
+	bool gtU(const reg_t right) const;
+	bool geU(const reg_t right) const {
+		if (*this == right)
+			return true;
+		return gtU(right);
 	}
+	bool ltU(const reg_t right) const;
+	bool leU(const reg_t right) const {
+		if (*this == right)
+			return true;
+		return ltU(right);
+	}
+
+	bool pointerComparisonWithInteger(const reg_t right) const;
+
+	// Arithmetic operators
+	reg_t operator+(const reg_t right) const;
+	reg_t operator-(const reg_t right) const;
+	reg_t operator*(const reg_t right) const;
+	reg_t operator/(const reg_t right) const;
+	reg_t operator%(const reg_t right) const;
+	reg_t operator>>(const reg_t right) const;
+	reg_t operator<<(const reg_t right) const;
+
+	reg_t operator+(int16 right) const;
+	reg_t operator-(int16 right) const;
+
+	void operator+=(const reg_t &right) { *this = *this + right; }
+	void operator-=(const reg_t &right) { *this = *this - right; }
+	void operator+=(int16 right) { *this = *this + right; }
+	void operator-=(int16 right) { *this = *this - right; }
+
+	// Boolean operators
+	reg_t operator&(const reg_t right) const;
+	reg_t operator|(const reg_t right) const;
+	reg_t operator^(const reg_t right) const;
+
+	reg_t lookForWorkaround(const reg_t right) const;
 };
 
 static inline reg_t make_reg(SegmentId segment, uint16 offset) {

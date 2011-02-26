@@ -1897,11 +1897,11 @@ int32 Logic::fnColour(int32 *params) {
 #define GREEN	3
 #define BLUE	4
 
-static const uint8 black[4]	= {  0,    0,   0,   0 };
-static const uint8 white[4]	= { 255, 255, 255,   0 };
-static const uint8 red[4]	= { 255,   0,   0,   0 };
-static const uint8 green[4]	= {   0, 255,   0,   0 };
-static const uint8 blue[4]	= {   0,   0, 255,   0 };
+static const uint8 black[3]	= {  0,    0,   0 };
+static const uint8 white[3]	= { 255, 255, 255 };
+static const uint8 red[3]	= { 255,   0,   0 };
+static const uint8 green[3]	= {   0, 255,   0 };
+static const uint8 blue[3]	= {   0,   0, 255 };
 #endif
 
 int32 Logic::fnFlash(int32 *params) {
@@ -2163,7 +2163,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	// zero the entire palette in case we're about to fade up!
 
-	byte pal[4 * 256];
+	byte pal[3 * 256];
 
 	memset(pal, 0, sizeof(pal));
 	_vm->_screen->setPalette(0, 256, pal, RDPAL_INSTANT);

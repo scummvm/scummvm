@@ -593,7 +593,7 @@ protected:
 	void loadCharSizeDta();
 	void loadPanel();
 	void loadBudSpr(int startOffset);
-	int loadCTable01(int index, int firstSpriteNum);
+	int loadCTable01(int index, int firstSpriteNum, int *framesCount);
 	void loadCTable02(int fl);
 	void loadLoc();
 	void loadObj();
@@ -624,7 +624,6 @@ protected:
 	uint32 _lastFrameTime;
 	int _mainLoopCounter1;
 	int _mainLoopCounter2;
-	int _timerCounter1;
 	int _timerCounter2;
 	int _flagsTable[kFlagsTableSize];
 	int _partNum;
@@ -803,7 +802,6 @@ protected:
 	int _yPosCurrent;
 	const uint8 *_characterSpeechDataPtr;
 	int _ptTextOffset;
-	int _ctable01Table_sprite[20];
 	int _characterAnimationsTable[200];
 	int _characterStateTable[200];
 	int _backgroundSprOffset;
@@ -977,7 +975,7 @@ private:
 	const SequenceUpdateFunc *_updateFunc;
 	int _updateFuncIndex;
 	Video::FlicDecoder _flicPlayer[2];
-	uint8 _animationPalette[256 * 4];
+	uint8 _animationPalette[256 * 3];
 	int _soundSeqDataCount;
 	int _soundSeqDataIndex;
 	const SoundSequenceData *_soundSeqData;

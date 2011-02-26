@@ -44,12 +44,14 @@
 #include "hugo/schedule.h"
 #include "hugo/text.h"
 #include "hugo/inventory.h"
+#include "hugo/mouse.h"
 
 namespace Hugo {
 
-ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0) {
+ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0), _uses(0) {
 	_numObj = 0;
 	_objCount = 0;
+	_usesSize = 0;
 	memset(_objBound, '\0', sizeof(overlay_t));
 	memset(_boundary, '\0', sizeof(overlay_t));
 	memset(_overlay,  '\0', sizeof(overlay_t));
@@ -57,6 +59,41 @@ ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm), _objects(0) {
 }
 
 ObjectHandler::~ObjectHandler() {
+}
+
+byte ObjectHandler::getBoundaryOverlay(uint16 index) const {
+	return _boundary[index];
+}
+
+byte ObjectHandler::getObjectBoundary(uint16 index) const {
+	return _objBound[index];
+}
+
+byte ObjectHandler::getBaseBoundary(uint16 index) const {
+	return _ovlBase[index];
+}
+
+byte ObjectHandler::getFirstOverlay(uint16 index) const {
+	return _overlay[index];
+}
+
+bool ObjectHandler::isCarried(int objIndex) const {
+	return _objects[objIndex].carriedFl;
+}
+
+void ObjectHandler::setCarry(int objIndex, bool val) {
+	_objects[objIndex].carriedFl = val;
+}
+
+void ObjectHandler::setVelocity(int objIndex, int8 vx, int8 vy) {
+	_objects[objIndex].vx = vx;
+	_objects[objIndex].vy = vy;
+}
+
+void ObjectHandler::setPath(int objIndex, path_t pathType, int16 vxPath, int16 vyPath) {
+	_objects[objIndex].pathType = pathType;
+	_objects[objIndex].vxPath = vxPath;
+	_objects[objIndex].vyPath = vyPath;
 }
 
 /**
@@ -107,20 +144,20 @@ void ObjectHandler::useObject(int16 objId) {
 		if ((obj->genericCmd & TAKE) || obj->objValue)  // Get collectible item
 			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_take, 0), _vm->_text->getNoun(obj->nounIndex, 0));
 		else if (obj->cmdIndex != 0)                // Use non-collectible item if able
-			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_cmdList[obj->cmdIndex][0].verbIndex, 0), _vm->_text->getNoun(obj->nounIndex, 0));
-		else if ((verb = _vm->useBG(_vm->_text->getNoun(obj->nounIndex, 0))) != 0)
+			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(obj->cmdIndex), 0), _vm->_text->getNoun(obj->nounIndex, 0));
+		else if ((verb = _vm->_parser->useBG(_vm->_text->getNoun(obj->nounIndex, 0))) != 0)
 			sprintf(_vm->_line, "%s %s", verb, _vm->_text->getNoun(obj->nounIndex, 0));
 		else
 			return;                                 // Can't use object directly
 	} else {
 		// Use status.objid on objid
 		// Default to first cmd verb
-		sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(_vm->_cmdList[_objects[inventObjId].cmdIndex][0].verbIndex, 0),
+		sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(_objects[inventObjId].cmdIndex), 0),
 			                       _vm->_text->getNoun(_objects[inventObjId].nounIndex, 0),
 			                       _vm->_text->getNoun(obj->nounIndex, 0));
 
 		// Check valid use of objects and override verb if necessary
-		for (uses_t *use = _vm->_uses; use->objId != _numObj; use++) {
+		for (uses_t *use = _uses; use->objId != _numObj; use++) {
 			if (inventObjId == use->objId) {
 				// Look for secondary object, if found use matching verb
 				bool foundFl = false;
@@ -211,40 +248,52 @@ void ObjectHandler::lookObject(object_t *obj) {
 }
 
 /**
- * Free all object images
+ * Free all object images, uses and ObjArr (before exiting)
  */
 void ObjectHandler::freeObjects() {
 	debugC(1, kDebugObject, "freeObjects");
 
-	// Nothing to do if not allocated yet
-	if (_vm->_hero == 0 || _vm->_hero->seqList[0].seqPtr == 0)
-		return;
-
-	// Free all sequence lists and image data
-	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];
-		for (int j = 0; j < obj->seqNumb; j++) {
-			seq_t *seq = obj->seqList[j].seqPtr;
-			seq_t *next;
-			if (seq == 0) // Failure during database load
-				break;
-			if (seq->imagePtr != 0) {
-				free(seq->imagePtr);
-				seq->imagePtr = 0;
-			}
-			seq = seq->nextSeqPtr;
-			while (seq != obj->seqList[j].seqPtr) {
+	if (_vm->_hero != 0 && _vm->_hero->seqList[0].seqPtr != 0) {
+		// Free all sequence lists and image data
+		for (int16 i = 0; i < _numObj; i++) {
+			object_t *obj = &_objects[i];
+			for (int16 j = 0; j < obj->seqNumb; j++) {
+				seq_t *seq = obj->seqList[j].seqPtr;
+				seq_t *next;
+				if (seq == 0) // Failure during database load
+					break;
 				if (seq->imagePtr != 0) {
 					free(seq->imagePtr);
 					seq->imagePtr = 0;
 				}
-				next = seq->nextSeqPtr;
+				seq = seq->nextSeqPtr;
+				while (seq != obj->seqList[j].seqPtr) {
+					if (seq->imagePtr != 0) {
+						free(seq->imagePtr);
+						seq->imagePtr = 0;
+					}
+					next = seq->nextSeqPtr;
+					free(seq);
+					seq = next;
+				}
 				free(seq);
-				seq = next;
 			}
-			free(seq);
 		}
 	}
+
+	if (_uses) {
+		for (int16 i = 0; i < _usesSize; i++)
+			free(_uses[i].targets);
+		free(_uses);
+	}
+
+	for(int16 i = 0; i < _objCount; i++) {
+		free(_objects[i].stateDataIndex);
+		_objects[i].stateDataIndex = 0;
+	}
+
+	free(_objects);
+	_objects = 0;
 }
 
 /**
@@ -354,122 +403,114 @@ bool ObjectHandler::findObjectSpace(object_t *obj, int16 *destx, int16 *desty) {
 	return foundFl;
 }
 
-/**
- * Free ObjectArr (before exiting)
- */
-void ObjectHandler::freeObjectArr() {
-	for(int16 i = 0; i < _objCount; i++) {
-		free(_objects[i].stateDataIndex);
-		_objects[i].stateDataIndex = 0;
+void ObjectHandler::readUse(Common::ReadStream &in, uses_t &curUse) {
+	curUse.objId = in.readSint16BE();
+	curUse.dataIndex = in.readUint16BE();
+	uint16 numSubElem = in.readUint16BE();
+	curUse.targets = (target_t *)malloc(sizeof(target_t) * numSubElem);
+	for (int j = 0; j < numSubElem; j++) {
+		curUse.targets[j].nounIndex = in.readUint16BE();
+		curUse.targets[j].verbIndex = in.readUint16BE();
 	}
-	free(_objects);
-	_objects = 0;
+}
+/**
+ * Load _uses from Hugo.dat
+ */
+void ObjectHandler::loadObjectUses(Common::ReadStream &in) {
+	uses_t tmpUse;
+	//Read _uses
+	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
+		tmpUse.targets = 0;
+		uint16 numElem = in.readUint16BE();
+		if (varnt == _vm->_gameVariant) {
+			_usesSize = numElem;
+			_uses = (uses_t *)malloc(sizeof(uses_t) * numElem);
+		}
+
+		for (int i = 0; i < numElem; i++)
+			readUse(in, (varnt == _vm->_gameVariant) ? _uses[i] : tmpUse);
+
+		if (tmpUse.targets)
+			free(tmpUse.targets);
+	}
 }
 
+void ObjectHandler::readObject(Common::ReadStream &in, object_t &curObject) {
+	curObject.nounIndex = in.readUint16BE();
+	curObject.dataIndex = in.readUint16BE();
+	uint16 numSubElem = in.readUint16BE();
+
+	if (numSubElem == 0)
+		curObject.stateDataIndex = 0;
+	else
+		curObject.stateDataIndex = (uint16 *)malloc(sizeof(uint16) * numSubElem);
+	for (int j = 0; j < numSubElem; j++)
+		curObject.stateDataIndex[j] = in.readUint16BE();
+
+	curObject.pathType = (path_t) in.readSint16BE();
+	curObject.vxPath = in.readSint16BE();
+	curObject.vyPath = in.readSint16BE();
+	curObject.actIndex = in.readUint16BE();
+	curObject.seqNumb = in.readByte();
+	curObject.currImagePtr = 0;
+
+	if (curObject.seqNumb == 0) {
+		curObject.seqList[0].imageNbr = 0;
+		curObject.seqList[0].seqPtr = 0;
+	}
+
+	for (int j = 0; j < curObject.seqNumb; j++) {
+		curObject.seqList[j].imageNbr = in.readUint16BE();
+		curObject.seqList[j].seqPtr = 0;
+	}
+
+	curObject.cycling = (cycle_t)in.readByte();
+	curObject.cycleNumb = in.readByte();
+	curObject.frameInterval = in.readByte();
+	curObject.frameTimer = in.readByte();
+	curObject.radius = in.readByte();
+	curObject.screenIndex = in.readByte();
+	curObject.x = in.readSint16BE();
+	curObject.y = in.readSint16BE();
+	curObject.oldx = in.readSint16BE();
+	curObject.oldy = in.readSint16BE();
+	curObject.vx = in.readByte();
+	curObject.vy = in.readByte();
+	curObject.objValue = in.readByte();
+	curObject.genericCmd = in.readSint16BE();
+	curObject.cmdIndex = in.readUint16BE();
+	curObject.carriedFl = (in.readByte() != 0);
+	curObject.state = in.readByte();
+	curObject.verbOnlyFl = (in.readByte() != 0);
+	curObject.priority = in.readByte();
+	curObject.viewx = in.readSint16BE();
+	curObject.viewy = in.readSint16BE();
+	curObject.direction = in.readSint16BE();
+	curObject.curSeqNum = in.readByte();
+	curObject.curImageNum = in.readByte();
+	curObject.oldvx = in.readByte();
+	curObject.oldvy = in.readByte();
+}
 /**
  * Load ObjectArr from Hugo.dat
  */
 void ObjectHandler::loadObjectArr(Common::ReadStream &in) {
 	debugC(6, kDebugObject, "loadObject(&in)");
+	object_t tmpObject;
 
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numElem = in.readUint16BE();
+		tmpObject.stateDataIndex = 0;
 		if (varnt == _vm->_gameVariant) {
 			_objCount = numElem;
 			_objects = (object_t *)malloc(sizeof(object_t) * numElem);
-			for (int i = 0; i < numElem; i++) {
-				_objects[i].nounIndex = in.readUint16BE();
-				_objects[i].dataIndex = in.readUint16BE();
-				uint16 numSubElem = in.readUint16BE();
-				if (numSubElem == 0)
-					_objects[i].stateDataIndex = 0;
-				else
-					_objects[i].stateDataIndex = (uint16 *)malloc(sizeof(uint16) * numSubElem);
-				for (int j = 0; j < numSubElem; j++)
-					_objects[i].stateDataIndex[j] = in.readUint16BE();
-				_objects[i].pathType = (path_t) in.readSint16BE();
-				_objects[i].vxPath = in.readSint16BE();
-				_objects[i].vyPath = in.readSint16BE();
-				_objects[i].actIndex = in.readUint16BE();
-				_objects[i].seqNumb = in.readByte();
-				_objects[i].currImagePtr = 0;
-				if (_objects[i].seqNumb == 0) {
-					_objects[i].seqList[0].imageNbr = 0;
-					_objects[i].seqList[0].seqPtr = 0;
-				}
-				for (int j = 0; j < _objects[i].seqNumb; j++) {
-					_objects[i].seqList[j].imageNbr = in.readUint16BE();
-					_objects[i].seqList[j].seqPtr = 0;
-				}
-				_objects[i].cycling = (cycle_t)in.readByte();
-				_objects[i].cycleNumb = in.readByte();
-				_objects[i].frameInterval = in.readByte();
-				_objects[i].frameTimer = in.readByte();
-				_objects[i].radius = in.readByte();
-				_objects[i].screenIndex = in.readByte();
-				_objects[i].x = in.readSint16BE();
-				_objects[i].y = in.readSint16BE();
-				_objects[i].oldx = in.readSint16BE();
-				_objects[i].oldy = in.readSint16BE();
-				_objects[i].vx = in.readByte();
-				_objects[i].vy = in.readByte();
-				_objects[i].objValue = in.readByte();
-				_objects[i].genericCmd = in.readSint16BE();
-				_objects[i].cmdIndex = in.readUint16BE();
-				_objects[i].carriedFl = (in.readByte() != 0);
-				_objects[i].state = in.readByte();
-				_objects[i].verbOnlyFl = (in.readByte() != 0);
-				_objects[i].priority = in.readByte();
-				_objects[i].viewx = in.readSint16BE();
-				_objects[i].viewy = in.readSint16BE();
-				_objects[i].direction = in.readSint16BE();
-				_objects[i].curSeqNum = in.readByte();
-				_objects[i].curImageNum = in.readByte();
-				_objects[i].oldvx = in.readByte();
-				_objects[i].oldvy = in.readByte();
-			}
-		} else {
-			for (int i = 0; i < numElem; i++) {
-				in.readUint16BE();
-				in.readUint16BE();
-				uint16 numSubElem = in.readUint16BE();
-				for (int j = 0; j < numSubElem; j++)
-					in.readUint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readUint16BE();
-				numSubElem = in.readByte();
-				for (int j = 0; j < numSubElem; j++)
-					in.readUint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readSint16BE();
-				in.readUint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readSint16BE();
-				in.readSint16BE();
-				in.readUint16BE();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-				in.readByte();
-			}
 		}
+
+		for (int i = 0; i < numElem; i++)
+			readObject(in, (varnt == _vm->_gameVariant) ? _objects[i] : tmpObject);
+
+		if (tmpObject.stateDataIndex)
+			free(tmpObject.stateDataIndex);
 	}
 }
 
@@ -746,14 +787,10 @@ void ObjectHandler::boundaryCollision(object_t *obj) {
 			x = obj->x + obj->currImagePtr->x1;
 		int y = obj->y + obj->currImagePtr->y2;
 
-		for (int i = 0; _vm->_hotspots[i].screenIndex >= 0; i++) {
-			hotspot_t *hotspot = &_vm->_hotspots[i];
-			if (hotspot->screenIndex == obj->screenIndex)
-				if ((x >= hotspot->x1) && (x <= hotspot->x2) && (y >= hotspot->y1) && (y <= hotspot->y2)) {
-					_vm->_scheduler->insertActionList(hotspot->actIndex);
-					break;
-				}
-		}
+		int16 index = _vm->_mouse->findExit(x, y, obj->screenIndex);
+		if (index >= 0)
+			_vm->_scheduler->insertActionList(_vm->_mouse->getHotspotActIndex(index));
+
 	} else {
 		// Check whether an object collided with HERO
 		int dx = _vm->_hero->x + _vm->_hero->currImagePtr->x1 - obj->x - obj->currImagePtr->x1;

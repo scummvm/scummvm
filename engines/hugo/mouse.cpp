@@ -47,12 +47,64 @@
 
 namespace Hugo {
 
-MouseHandler::MouseHandler(HugoEngine *vm) : _vm(vm) {
+MouseHandler::MouseHandler(HugoEngine *vm) : _vm(vm), _hotspots(0) {
 	_leftButtonFl  = false;
 	_rightButtonFl = false;
 	_jumpExitFl = false;                            // Can't jump to a screen exit
 	_mouseX = kXPix / 2;
 	_mouseY = kYPix / 2;
+}
+
+void MouseHandler::resetLeftButton() {
+	_leftButtonFl = false;
+}
+
+void MouseHandler::resetRightButton() {
+	_rightButtonFl = false;
+}
+
+void MouseHandler::setLeftButton() {
+	_leftButtonFl = true;
+}
+
+void MouseHandler::setRightButton() {
+	_rightButtonFl = true;
+}
+
+void MouseHandler::setJumpExitFl(bool fl) {
+	_jumpExitFl = fl;
+}
+
+void MouseHandler::setMouseX(int x) {
+	_mouseX = x;
+}
+
+void MouseHandler::setMouseY(int y) {
+	_mouseY = y;
+}
+
+void MouseHandler::freeHotspots() {
+	free(_hotspots);
+}
+
+bool MouseHandler::getJumpExitFl() const {
+	return _jumpExitFl;
+}
+
+int MouseHandler::getMouseX() const {
+	return _mouseX;
+}
+
+int MouseHandler::getMouseY() const {
+	return _mouseY;
+}
+
+int16 MouseHandler::getDirection(const int16 hotspotId) const {
+	return _hotspots[hotspotId].direction;
+}
+
+int16 MouseHandler::getHotspotActIndex(const int16 hotspotId) const {
+	return _hotspots[hotspotId].actIndex;
 }
 
 /**
@@ -84,13 +136,12 @@ void MouseHandler::cursorText(const char *buffer, const int16 cx, const int16 cy
  * Find the exit hotspot containing cx, cy.
  * Return hotspot index or -1 if not found.
  */
-int16 MouseHandler::findExit(const int16 cx, const int16 cy) {
-	debugC(2, kDebugMouse, "findExit(%d, %d)", cx, cy);
+int16 MouseHandler::findExit(const int16 cx, const int16 cy, byte screenId) {
+	debugC(2, kDebugMouse, "findExit(%d, %d, %d)", cx, cy, screenId);
 
-	int i = 0;
-	for (hotspot_t *hotspot = _vm->_hotspots; hotspot->screenIndex >= 0; i++, hotspot++) {
-		if (hotspot->screenIndex == *_vm->_screen_p) {
-			if (cx >= hotspot->x1 && cx <= hotspot->x2 && cy >= hotspot->y1 && cy <= hotspot->y2)
+	for (int i = 0; _hotspots[i].screenIndex >= 0; i++) {
+		if (_hotspots[i].screenIndex == screenId) {
+			if (cx >= _hotspots[i].x1 && cx <= _hotspots[i].x2 && cy >= _hotspots[i].y1 && cy <= _hotspots[i].y2)
 				return i;
 		}
 	}
@@ -174,20 +225,20 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 		_vm->_screen->displayList(kDisplayAdd, 0, kDibOffY, kXPix, kInvDy);
 		break;
 	case kExitHotspot:                              // Walk to exit hotspot
-		i = findExit(cx, cy);
-		x = _vm->_hotspots[i].viewx;
-		y = _vm->_hotspots[i].viewy;
+		i = findExit(cx, cy, *_vm->_screen_p);
+		x = _hotspots[i].viewx;
+		y = _hotspots[i].viewy;
 		if (x >= 0) {                               // Hotspot refers to an exit
 			// Special case of immediate exit
 			if (_jumpExitFl) {
 				// Get rid of iconbar if necessary
 				if (_vm->_inventory->getInventoryState() != kInventoryOff)
 					_vm->_inventory->setInventoryState(kInventoryUp);
-				_vm->_scheduler->insertActionList(_vm->_hotspots[i].actIndex);
+				_vm->_scheduler->insertActionList(_hotspots[i].actIndex);
 			} else {    // Set up route to exit spot
-				if (_vm->_hotspots[i].direction == Common::KEYCODE_RIGHT)
+				if (_hotspots[i].direction == Common::KEYCODE_RIGHT)
 					x -= kHeroMaxWidth;
-				else if (_vm->_hotspots[i].direction == Common::KEYCODE_LEFT)
+				else if (_hotspots[i].direction == Common::KEYCODE_LEFT)
 					x += kHeroMaxWidth;
 				if (!_vm->_route->startRoute(kRouteExit, i, x, y))
 					Utils::Box(kBoxAny, "%s", _vm->_text->getTextMouse(kMsNoWayText)); // Can't get there
@@ -278,8 +329,8 @@ void MouseHandler::mouseHandler() {
 
 		// Process cursor over an exit hotspot
 		if (objId == -1) {
-			int i = findExit(cx, cy);
-			if (i != -1 && _vm->_hotspots[i].viewx >= 0) {
+			int i = findExit(cx, cy, *_vm->_screen_p);
+			if (i != -1 && _hotspots[i].viewx >= 0) {
 				objId = kExitHotspot;
 				cursorText(_vm->_text->getTextMouse(kMsExit), cx, cy, U_FONT8, _TBRIGHTWHITE);
 			}
@@ -294,4 +345,42 @@ void MouseHandler::mouseHandler() {
 	resetRightButton();
 }
 
+void MouseHandler::readHotspot(Common::ReadStream &in, hotspot_t &hotspot) {
+	hotspot.screenIndex = in.readSint16BE();
+	hotspot.x1 = in.readSint16BE();
+	hotspot.y1 = in.readSint16BE();
+	hotspot.x2 = in.readSint16BE();
+	hotspot.y2 = in.readSint16BE();
+	hotspot.actIndex = in.readUint16BE();
+	hotspot.viewx = in.readSint16BE();
+	hotspot.viewy = in.readSint16BE();
+	hotspot.direction = in.readSint16BE();
+}
+
+/**
+ * Load hotspots data from hugo.dat
+ */
+void MouseHandler::loadHotspots(Common::ReadStream &in) {
+	hotspot_t *wrkHotspots = 0;
+	hotspot_t tmp;
+	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
+		int numRows = in.readUint16BE();
+		if (varnt == _vm->_gameVariant)
+			_hotspots = wrkHotspots = (hotspot_t *)malloc(sizeof(hotspot_t) * numRows);
+
+		for (int i = 0; i < numRows; i++)
+			readHotspot(in, (varnt == _vm->_gameVariant) ? wrkHotspots[i] : tmp);
+	}
+}
+
+/**
+ * Display hotspot boundaries for the current screen
+ */
+void MouseHandler::drawHotspots() const {
+	for (int i = 0; _hotspots[i].screenIndex >= 0; i++) {
+		hotspot_t *hotspot = &_hotspots[i];
+		if (hotspot->screenIndex == _vm->_hero->screenIndex)
+			_vm->_screen->drawRectangle(false, hotspot->x1, hotspot->y1, hotspot->x2, hotspot->y2, _TLIGHTRED);
+	}
+}
 } // End of namespace Hugo

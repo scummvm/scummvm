@@ -362,6 +362,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 				fwrite(&tmp, 2, 1, resOutf);
 			}
 		}
+		printf("DEBUG lcnt: %lu Output File Position: 0x%08lX\r\n", lcnt, ftell(debOutf));
 	}
 	cptSize[0] = ftell(debOutf) - cptSize[0];
 	cptSize[1] = ftell(resOutf) - cptSize[1];
@@ -390,6 +391,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 		fwrite(dlinks + cnt * 2 + 1, 2, 1, resOutf);
 	}
 	printf("Processing diff data...\n");
+	printf("DEBUG Output File Position: 0x%08lX\r\n", ftell(debOutf));
 	// 288 diffdata
 	FILE *dif = fopen("288diff.txt", "r");
 	assert(dif);
@@ -448,6 +450,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 	fwrite(diff, 2, diffDest, resOutf);
 
 	printf("Converting Save data...\n");
+	printf("DEBUG Output File Position: 0x%08lX\r\n", ftell(debOutf));
 	// the IDs of the compacts to be saved
 	char cptName[1024];
 	uint16 saveIds[2048];
@@ -503,6 +506,8 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 		fwrite(&tmp, 2, 1, debOutf);
 		tmp = 0;
 		fwrite(&tmp, 2, 1, debOutf);
+		
+		printf("DEBUG Output File Position: 0x%08lX\r\n", ftell(debOutf));
 		printf("reset destination: %ld\n", ftell(debOutf));
 		for (int cnt = 0; cnt < 6; cnt++) {
 			printf("Processing diff v0.0%03d\n", gameVers[cnt]);
@@ -527,6 +532,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 			fwrite(&diffPos, 1, 2, debOutf);
 			fwrite(diff, 2, 2 * diffPos, debOutf);
 			printf("diff v0.0%03d: 2 * 2 * %d\n", gameVers[cnt], diffPos);
+			printf("DEBUG Output File Position: 0x%08lX\r\n", ftell(debOutf));
 		}
 		free(buf288);
 	} else {

@@ -32,15 +32,16 @@
 
 namespace Mohawk {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
-
-class MohawkEngine_Myst;
 struct MystScriptEntry;
 
-class MystScriptParser_Slides : public MystScriptParser {
+namespace MystStacks {
+
+#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+
+class Slides : public MystScriptParser {
 public:
-	MystScriptParser_Slides(MohawkEngine_Myst *vm);
-	~MystScriptParser_Slides();
+	Slides(MohawkEngine_Myst *vm);
+	~Slides();
 
 	void disablePersistentScripts();
 	void runPersistentScripts();
@@ -57,6 +58,7 @@ private:
 	uint32 _lastCardTime;
 };
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk
 
 #undef DECLARE_OPCODE

@@ -3243,23 +3243,21 @@ void ToucheEngine::clearDirtyRects() {
 }
 
 void ToucheEngine::setPalette(int firstColor, int colorCount, int rScale, int gScale, int bScale) {
-	uint8 pal[256 * 4];
+	uint8 pal[256 * 3];
 	for (int i = firstColor; i < firstColor + colorCount; ++i) {
-		int r = _paletteBuffer[i * 4 + 0];
+		int r = _paletteBuffer[i * 3 + 0];
 		r = (r * rScale) >> 8;
-		pal[i * 4 + 0] = (uint8)r;
+		pal[i * 3 + 0] = (uint8)r;
 
-		int g = _paletteBuffer[i * 4 + 1];
+		int g = _paletteBuffer[i * 3 + 1];
 		g = (g * gScale) >> 8;
-		pal[i * 4 + 1] = (uint8)g;
+		pal[i * 3 + 1] = (uint8)g;
 
-		int b = _paletteBuffer[i * 4 + 2];
+		int b = _paletteBuffer[i * 3 + 2];
 		b = (b * bScale) >> 8;
-		pal[i * 4 + 2] = (uint8)b;
-
-		pal[i * 4 + 3] = 0;
+		pal[i * 3 + 2] = (uint8)b;
 	}
-	_system->getPaletteManager()->setPalette(&pal[firstColor * 4], firstColor, colorCount);
+	_system->getPaletteManager()->setPalette(&pal[firstColor * 3], firstColor, colorCount);
 }
 
 void ToucheEngine::updateScreenArea(int x, int y, int w, int h) {

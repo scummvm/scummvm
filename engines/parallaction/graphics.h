@@ -250,7 +250,7 @@ public:
 	void setEntry(uint index, int red, int green, int blue);
 	void makeGrayscale();
 	void fadeTo(const Palette& target, uint step);
-	uint fillRGBA(byte *rgba);
+	uint fillRGB(byte *rgb);
 
 	void rotate(uint first, uint last, bool forward);
 };

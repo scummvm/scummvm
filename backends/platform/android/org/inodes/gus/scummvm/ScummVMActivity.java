@@ -52,7 +52,9 @@ public class ScummVMActivity extends Activity {
 			super(ScummVMActivity.this);
 
 			// Enable ScummVM zoning on 'small' screens.
-			enableZoning(usingSmallScreen());
+			// FIXME make this optional for the user
+			// disabled for now since it crops too much
+			//enableZoning(usingSmallScreen());
 		}
 
 		@Override
@@ -73,7 +75,7 @@ public class ScummVMActivity extends Activity {
 
 		@Override
 		protected void displayMessageOnOSD(String msg) {
-			Log.i(this.toString(), "OSD: " + msg);
+			Log.i(LOG_TAG, "OSD: " + msg);
 			Toast.makeText(ScummVMActivity.this, msg, Toast.LENGTH_LONG).show();
 		}
 
@@ -95,14 +97,11 @@ public class ScummVMActivity extends Activity {
 
 		@Override
 		protected void showVirtualKeyboard(final boolean enable) {
-			if (getResources().getConfiguration().keyboard ==
-				Configuration.KEYBOARD_NOKEYS) {
-				runOnUiThread(new Runnable() {
-						public void run() {
-							showKeyboard(enable);
-						}
-					});
-			}
+			runOnUiThread(new Runnable() {
+					public void run() {
+						showKeyboard(enable);
+					}
+				});
 		}
 	}
 	private MyScummVM scummvm;
@@ -137,6 +136,7 @@ public class ScummVMActivity extends Activity {
 		}
 
 		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
+		
 		main_surface.setOnTouchListener(new View.OnTouchListener() {
 				public boolean onTouch(View v, MotionEvent event) {
 					return onTouchEvent(event);
@@ -156,7 +156,7 @@ public class ScummVMActivity extends Activity {
 					try {
 						runScummVM();
 					} catch (Exception e) {
-						Log.e("ScummVM", "Fatal error in ScummVM thread", e);
+						Log.e(ScummVM.LOG_TAG, "Fatal error in ScummVM thread", e);
 						new AlertDialog.Builder(ScummVMActivity.this)
 							.setTitle("Error")
 							.setMessage(e.toString())
@@ -174,8 +174,7 @@ public class ScummVMActivity extends Activity {
 		try {
 			scummvm.waitUntilRunning();
 		} catch (InterruptedException e) {
-			Log.e(this.toString(),
-				  "Interrupted while waiting for ScummVM.initBackend", e);
+			Log.e(ScummVM.LOG_TAG, "Interrupted while waiting for ScummVM.initBackend", e);
 			finish();
 		}
 
@@ -190,7 +189,7 @@ public class ScummVMActivity extends Activity {
 			"--config=" + getFileStreamPath("scummvmrc").getPath(),
 			"--path=" + Environment.getExternalStorageDirectory().getPath(),
 			"--gui-theme=scummmodern",
-			"--savepath=" + getDir("saves", 0).getPath(),
+			"--savepath=" + getDir("saves", 0).getPath()
 		};
 
 		int ret = scummvm.scummVMMain(args);
@@ -226,8 +225,7 @@ public class ScummVMActivity extends Activity {
 			try {
 				scummvm_thread.join(1000);	// 1s timeout
 			} catch (InterruptedException e) {
-				Log.i(this.toString(),
-					  "Error while joining ScummVM thread", e);
+				Log.i(ScummVM.LOG_TAG, "Error while joining ScummVM thread", e);
 			}
 		}
 		super.onStop();
@@ -270,18 +268,16 @@ public class ScummVMActivity extends Activity {
 			if (kevent.getRepeatCount() > 0)
 				// Ignore keyrepeat for menu
 				return false;
-			boolean timeout_fired = false;
-			if (getResources().getConfiguration().keyboard ==
-				Configuration.KEYBOARD_NOKEYS) {
-				timeout_fired = !keycodeMenuTimeoutHandler.hasMessages(MSG_MENU_LONG_PRESS);
-				keycodeMenuTimeoutHandler.removeMessages(MSG_MENU_LONG_PRESS);
-				if (kevent.getAction() == KeyEvent.ACTION_DOWN) {
-					keycodeMenuTimeoutHandler.sendMessageDelayed(
-																 keycodeMenuTimeoutHandler.obtainMessage(MSG_MENU_LONG_PRESS),
-																 ViewConfiguration.getLongPressTimeout());
-					return true;
-				}
+
+			boolean timeout_fired = !keycodeMenuTimeoutHandler.hasMessages(MSG_MENU_LONG_PRESS);
+			keycodeMenuTimeoutHandler.removeMessages(MSG_MENU_LONG_PRESS);
+
+			if (kevent.getAction() == KeyEvent.ACTION_DOWN) {
+				keycodeMenuTimeoutHandler.sendMessageDelayed(keycodeMenuTimeoutHandler.obtainMessage(MSG_MENU_LONG_PRESS),
+															 ViewConfiguration.getLongPressTimeout());
+				return true;
 			}
+
 			if (kevent.getAction() == KeyEvent.ACTION_UP) {
 				if (!timeout_fired)
 					scummvm.pushEvent(new Event(Event.EVENT_MAINMENU));

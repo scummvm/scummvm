@@ -41,7 +41,7 @@ void ToucheEngine::setupOpcodes() {
 		&ToucheEngine::op_true,
 		&ToucheEngine::op_false,
 		&ToucheEngine::op_push,
-		&ToucheEngine::op_testFalse,
+		&ToucheEngine::op_not,
 		/* 0x08 */
 		&ToucheEngine::op_add,
 		&ToucheEngine::op_sub,
@@ -51,7 +51,7 @@ void ToucheEngine::setupOpcodes() {
 		&ToucheEngine::op_mod,
 		&ToucheEngine::op_and,
 		&ToucheEngine::op_or,
-		&ToucheEngine::op_not,
+		&ToucheEngine::op_neg,
 		/* 0x10 */
 		&ToucheEngine::op_testGreater,
 		&ToucheEngine::op_testEquals,
@@ -250,8 +250,8 @@ void ToucheEngine::op_push() {
 	*_script.stackDataPtr = 0;
 }
 
-void ToucheEngine::op_testFalse() {
-	debugC(9, kDebugOpcodes, "ToucheEngine::op_testFalse()");
+void ToucheEngine::op_not() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_not()");
 	if (*_script.stackDataPtr == 0) {
 		*_script.stackDataPtr = -1;
 	} else {
@@ -309,8 +309,8 @@ void ToucheEngine::op_or() {
 	*_script.stackDataPtr |= val;
 }
 
-void ToucheEngine::op_not() {
-	debugC(9, kDebugOpcodes, "ToucheEngine::op_not()");
+void ToucheEngine::op_neg() {
+	debugC(9, kDebugOpcodes, "ToucheEngine::op_neg()");
 	uint16 val = *_script.stackDataPtr;
 	*_script.stackDataPtr = ~val;
 }

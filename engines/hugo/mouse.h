@@ -39,17 +39,25 @@ public:
 	MouseHandler(HugoEngine *vm);
 	void mouseHandler();
 
-	void resetLeftButton()      { _leftButtonFl  = false; }
-	void resetRightButton()     { _rightButtonFl = false; }
-	void setLeftButton()        { _leftButtonFl  = true;  }
-	void setRightButton()       { _rightButtonFl = true;  }
-	void setJumpExitFl(bool fl) { _jumpExitFl = fl;       }
-	void setMouseX(int x)       { _mouseX = x;            }
-	void setMouseY(int y)       { _mouseY = y;            }
+	void resetLeftButton();
+	void resetRightButton();
+	void setLeftButton();
+	void setRightButton();
+	void setJumpExitFl(bool fl);
+	void setMouseX(int x);
+	void setMouseY(int y);
+	void freeHotspots();
 
-	bool getJumpExitFl()  const { return _jumpExitFl;     }
-	int  getMouseX()      const { return _mouseX;         }
-	int  getMouseY()      const { return _mouseY;         }
+	bool getJumpExitFl() const;
+	int  getMouseX() const;
+	int  getMouseY() const;
+
+	int16 getDirection(const int16 hotspotId) const;
+	int16 getHotspotActIndex(const int16 hotspotId) const;
+
+	void  drawHotspots() const;
+	int16 findExit(const int16 cx, const int16 cy, byte screenId);
+	void  loadHotspots(Common::ReadStream &in);
 
 private:
 	HugoEngine *_vm;
@@ -65,6 +73,7 @@ private:
 		kMsExit      = 1
 	};
 
+	hotspot_t *_hotspots;
 	bool  _leftButtonFl;                                // Left mouse button pressed
 	bool  _rightButtonFl;                               // Right button pressed
 	int   _mouseX;
@@ -72,9 +81,9 @@ private:
 	bool  _jumpExitFl;                                  // Allowed to jump to a screen exit
 
 	void  cursorText(const char *buffer, const int16 cx, const int16 cy, const uif_t fontId, const int16 color);
-	int16 findExit(const int16 cx, const int16 cy);
 	void  processRightClick(const int16 objId, const int16 cx, const int16 cy);
 	void  processLeftClick(const int16 objId, const int16 cx, const int16 cy);
+	void  readHotspot(Common::ReadStream &in, hotspot_t &hotspot);
 };
 
 } // End of namespace Hugo

@@ -159,15 +159,7 @@ void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 	debug(9, "Display::palSet(%d, %d)", start, end);
 	const int numColors = end - start + 1;
 	assert(numColors <= 256);
-	uint8 tempPal[256 * 4];
-	pal += start * 3;
-	for (int i = 0; i < numColors; i++) {
-		tempPal[4 * i + 0] = *pal++;
-		tempPal[4 * i + 1] = *pal++;
-		tempPal[4 * i + 2] = *pal++;
-		tempPal[4 * i + 3] = 0;
-	}
-	_system->getPaletteManager()->setPalette(tempPal, start, numColors);
+	_system->getPaletteManager()->setPalette(pal + start * 3, start, numColors);
 	if (updateScreen) {
 		_vm->input()->delay(20);
 	}

@@ -145,7 +145,7 @@ void Parser_v1w::lineHandler() {
 
 	if (gameStatus.gameOverFl) {
 		// No commands allowed!
-		Utils::gameOverMsg();
+		_vm->gameOverMsg();
 		return;
 	}
 
@@ -172,14 +172,14 @@ void Parser_v1w::lineHandler() {
 	}
 
 	// No objects match command line, try background and catchall commands
-	if (isBackgroundWord_v3(_vm->_backgroundObjects[*_vm->_screen_p]))
+	if (isBackgroundWord_v3(_backgroundObjects[*_vm->_screen_p]))
 		return;
-	if (isCatchallVerb_v3(_vm->_backgroundObjects[*_vm->_screen_p]))
+	if (isCatchallVerb_v3(_backgroundObjects[*_vm->_screen_p]))
 		return;
 
-	if (isBackgroundWord_v3(_vm->_catchallList))
+	if (isBackgroundWord_v3(_catchallList))
 		return;
-	if (isCatchallVerb_v3(_vm->_catchallList))
+	if (isCatchallVerb_v3(_catchallList))
 		return;
 
 	// If a not-near comment was generated, print it
@@ -191,7 +191,7 @@ void Parser_v1w::lineHandler() {
 	// Nothing matches.  Report recognition success to user.
 	const char *verb = findVerb();
 	const char *noun = findNoun();
-	if (verb == _vm->_text->getVerb(_vm->_look, 0) && _maze.enabledFl) {
+	if (verb == _vm->_text->getVerb(_vm->_look, 0) && _vm->_maze.enabledFl) {
 		Utils::Box(kBoxAny, "%s", _vm->_text->getTextParser(kTBMaze));
 		_vm->_object->showTakeables();
 	} else if (verb && noun) {                      // A combination I didn't think of
@@ -209,7 +209,7 @@ void Parser_v1w::showInventory() const {
 	status_t &gameStatus = _vm->getGameStatus();
 	istate_t inventState = _vm->_inventory->getInventoryState();
 	if (gameStatus.gameOverFl) {
-		Utils::gameOverMsg();
+		_vm->gameOverMsg();
 	} else if ((inventState == kInventoryOff) && (gameStatus.viewState == kViewPlay)) {
 		_vm->_inventory->setInventoryState(kInventoryDown);
 		gameStatus.viewState = kViewInvent;

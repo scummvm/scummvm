@@ -421,13 +421,13 @@ void View::installBG(uint16 id) {
 void View::setColors(Common::SeekableReadStream *tpalStream) {
 	uint16 colorStart = tpalStream->readUint16BE();
 	uint16 colorCount = tpalStream->readUint16BE();
-	byte *palette = new byte[colorCount * 4];
+	byte *palette = new byte[colorCount * 3];
 
 	for (uint16 i = 0; i < colorCount; i++) {
-		palette[i * 4] = tpalStream->readByte();
-		palette[i * 4 + 1] = tpalStream->readByte();
-		palette[i * 4 + 2] = tpalStream->readByte();
-		palette[i * 4 + 3] = tpalStream->readByte();
+		palette[i * 3 + 0] = tpalStream->readByte();
+		palette[i * 3 + 1] = tpalStream->readByte();
+		palette[i * 3 + 2] = tpalStream->readByte();
+		tpalStream->readByte();
 	}
 
 	// TODO: copy into temporary buffer

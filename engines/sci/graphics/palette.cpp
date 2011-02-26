@@ -69,11 +69,24 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 	_useMerging = useMerging;
 
 	palVaryInit();
+
+	_macClut = 0;
+	loadMacIconBarPalette();
+	
+#ifdef ENABLE_SCI32
+	_clutTable = 0;
+#endif
 }
 
 GfxPalette::~GfxPalette() {
 	if (_palVaryResourceId != -1)
 		palVaryRemoveTimer();
+
+	delete[] _macClut;
+
+#ifdef ENABLE_SCI32
+	unloadClut();
+#endif
 }
 
 bool GfxPalette::isMerging() {
@@ -163,39 +176,42 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 // Will try to set amiga palette by using "spal" file. If not found, we return false
 bool GfxPalette::setAmiga() {
 	Common::File file;
-	int curColor, byte1, byte2;
 
 	if (file.open("spal")) {
-		for (curColor = 0; curColor < 32; curColor++) {
-			byte1 = file.readByte();
-			byte2 = file.readByte();
-			if ((byte1 == EOF) || (byte2 == EOF))
+		for (int curColor = 0; curColor < 32; curColor++) {
+			byte byte1 = file.readByte();
+			byte byte2 = file.readByte();
+
+			if (file.eos())
 				error("Amiga palette file ends prematurely");
+
 			_sysPalette.colors[curColor].used = 1;
 			_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
 			_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
 			_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
 		}
-		file.close();
+
 		// Directly set the palette, because setOnScreen() wont do a thing for amiga
-		_screen->setPalette(&_sysPalette);
+		copySysPaletteToScreen();
 		return true;
 	}
+
 	return false;
 }
 
 // Called from picture class, some amiga sci1 games set half of the palette
 void GfxPalette::modifyAmigaPalette(byte *data) {
-	int16 curColor, curPos = 0;
-	byte byte1, byte2;
-	for (curColor = 0; curColor < 16; curColor++) {
-		byte1 = data[curPos++];
-		byte2 = data[curPos++];
+	int16 curPos = 0;
+
+	for (int curColor = 0; curColor < 16; curColor++) {
+		byte byte1 = data[curPos++];
+		byte byte2 = data[curPos++];
 		_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
 		_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
 		_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
 	}
-	_screen->setPalette(&_sysPalette);
+
+	copySysPaletteToScreen();
 }
 
 static byte blendColors(byte c1, byte c2) {
@@ -289,19 +305,20 @@ bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {
 			newPalette->mapping[i] = i;
 		}
 	}
+
 	// We don't update the timestamp for SCI1.1, it's only updated on kDrawPic calls
 	return paletteChanged;
 }
 
 bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 	uint16 res;
-	int i,j;
 	bool paletteChanged = false;
 
-	// colors 0 (black) and 255 (white) are not affected by merging
-	for (i = 1; i < 255; i++) {
-		if (!newPalette->colors[i].used)// color is not used - so skip it
+	for (int i = 1; i < 255; i++) {
+		// skip unused colors
+		if (!newPalette->colors[i].used)
 			continue;
+
 		// forced palette merging or dest color is not used yet
 		if (force || (!_sysPalette.colors[i].used)) {
 			_sysPalette.colors[i].used = newPalette->colors[i].used;
@@ -314,6 +331,7 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 			newPalette->mapping[i] = i;
 			continue;
 		}
+
 		// is the same color already at the same position? -> match it directly w/o lookup
 		//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
 		//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
@@ -321,14 +339,18 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 			newPalette->mapping[i] = i;
 			continue;
 		}
+
 		// check if exact color could be matched
 		res = matchColor(newPalette->colors[i].r, newPalette->colors[i].g, newPalette->colors[i].b);
 		if (res & 0x8000) { // exact match was found
 			newPalette->mapping[i] = res & 0xFF;
 			continue;
 		}
+
+		int j = 1;
+
 		// no exact match - see if there is an unused color
-		for (j = 1; j < 256; j++)
+		for (; j < 256; j++) {
 			if (!_sysPalette.colors[j].used) {
 				_sysPalette.colors[j].used = newPalette->colors[i].used;
 				_sysPalette.colors[j].r = newPalette->colors[i].r;
@@ -338,6 +360,8 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 				paletteChanged = true;
 				break;
 			}
+		}
+	
 		// if still no luck - set an approximate color
 		if (j == 256) {
 			newPalette->mapping[i] = res & 0xFF;
@@ -347,6 +371,7 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 
 	if (!forceRealMerge)
 		_sysPalette.timestamp = g_system->getMillis() * 60 / 1000;
+
 	return paletteChanged;
 }
 
@@ -396,11 +421,36 @@ void GfxPalette::setOnScreen() {
 	// We dont change palette at all times for amiga
 	if (_resMan->isAmiga32color())
 		return;
-	_screen->setPalette(&_sysPalette);
 
-	// Redraw the Mac SCI1.1 Icon bar every palette change
-	if (g_sci->_gfxMacIconBar)
-		g_sci->_gfxMacIconBar->drawIcons();
+	copySysPaletteToScreen();
+}
+
+static byte convertMacGammaToSCIGamma(int comp) {
+	return (byte)sqrt(comp * 255.0f);
+}
+
+void GfxPalette::copySysPaletteToScreen() {
+	// just copy palette to system
+	byte bpal[3 * 256];
+
+	// Get current palette, update it and put back
+	g_system->getPaletteManager()->grabPalette(bpal, 0, 256);
+
+	for (int16 i = 0; i < 256; i++) {
+		if (colorIsFromMacClut(i)) {
+			// If we've got a Mac CLUT, override the SCI palette with its non-black colors
+			bpal[i * 3    ] = convertMacGammaToSCIGamma(_macClut[i * 3    ]);
+			bpal[i * 3 + 1] = convertMacGammaToSCIGamma(_macClut[i * 3 + 1]);
+			bpal[i * 3 + 2] = convertMacGammaToSCIGamma(_macClut[i * 3 + 2]);
+		} else if (_sysPalette.colors[i].used != 0) {
+			// Otherwise, copy to the screen
+			bpal[i * 3    ] = CLIP(_sysPalette.colors[i].r * _sysPalette.intensity[i] / 100, 0, 255);
+			bpal[i * 3 + 1] = CLIP(_sysPalette.colors[i].g * _sysPalette.intensity[i] / 100, 0, 255);
+			bpal[i * 3 + 2] = CLIP(_sysPalette.colors[i].b * _sysPalette.intensity[i] / 100, 0, 255);
+		}
+	}
+
+	g_system->getPaletteManager()->setPalette(bpal, 0, 256);
 }
 
 bool GfxPalette::kernelSetFromResource(GuiResourceId resourceId, bool force) {
@@ -412,6 +462,7 @@ bool GfxPalette::kernelSetFromResource(GuiResourceId resourceId, bool force) {
 		set(&palette, force);
 		return true;
 	}
+
 	return false;
 }
 
@@ -557,7 +608,16 @@ void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
 }
 
 void GfxPalette::kernelSyncScreenPalette() {
-	_screen->getPalette(&_sysPalette);
+	// just copy palette to system
+	byte bpal[3 * 256];
+
+	// Get current palette, update it and put back
+	g_system->getPaletteManager()->grabPalette(bpal, 0, 256);
+	for (int16 i = 1; i < 255; i++) {
+		_sysPalette.colors[i].r = bpal[i * 3];
+		_sysPalette.colors[i].g = bpal[i * 3 + 1];
+		_sysPalette.colors[i].b = bpal[i * 3 + 2];
+	}
 }
 
 // palVary
@@ -786,5 +846,126 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 		_sysPaletteChanged = false;
 	}
 }
+
+byte GfxPalette::findMacIconBarColor(byte r, byte g, byte b) {
+	// Find the best color for use with the Mac icon bar
+
+	byte found = 0xFF;
+	uint diff = 0xFFFFFFFF;
+
+	for (uint16 i = 0; i < 256; i++) {
+		// Use the difference of the top 4 bits
+		int dr = (_macClut[i * 3    ] & 0xf0) - (r & 0xf0);
+		int dg = (_macClut[i * 3 + 1] & 0xf0) - (g & 0xf0);
+		int db = (_macClut[i * 3 + 2] & 0xf0) - (b & 0xf0);
+
+		uint cdiff = ABS(dr) + ABS(dg) + ABS(db);
+
+		if (cdiff == 0)
+			return i;
+		else if (cdiff < diff) {
+			found = i;
+			diff = cdiff;
+		}
+	}
+
+	return found;
+}
+
+void GfxPalette::loadMacIconBarPalette() {
+	if (!g_sci->hasMacIconBar())
+		return;
+
+	Common::SeekableReadStream *clutStream = g_sci->getMacExecutable()->getResource(MKID_BE('clut'), 150);
+
+	if (!clutStream)
+		error("Could not find clut 150 for the Mac icon bar");
+
+	clutStream->readUint32BE(); // seed
+	clutStream->readUint16BE(); // flags
+	uint16 colorCount = clutStream->readUint16BE() + 1;
+	assert(colorCount == 256);
+
+	_macClut = new byte[256 * 3];
+
+	for (uint16 i = 0; i < colorCount; i++) {
+		clutStream->readUint16BE();
+		_macClut[i * 3    ] = clutStream->readUint16BE() >> 8;
+		_macClut[i * 3 + 1] = clutStream->readUint16BE() >> 8;
+		_macClut[i * 3 + 2] = clutStream->readUint16BE() >> 8;
+	}
+
+	// Adjust bounds on the KQ6 palette
+	// We don't use all of it for the icon bar
+	if (g_sci->getGameId() == GID_KQ6)
+		memset(_macClut + 32 * 3, 0, (256 - 32) * 3);
+
+	// Force black/white
+	_macClut[0x00 * 3    ] = 0;
+	_macClut[0x00 * 3 + 1] = 0;
+	_macClut[0x00 * 3 + 2] = 0;
+	_macClut[0xff * 3    ] = 0xff;
+	_macClut[0xff * 3 + 1] = 0xff;
+	_macClut[0xff * 3 + 2] = 0xff;
+
+	delete clutStream;
+}
+
+bool GfxPalette::colorIsFromMacClut(byte index) {
+	return index != 0 && _macClut && (_macClut[index * 3] != 0 || _macClut[index * 3 + 1] != 0 || _macClut[index * 3 + 1] != 0);
+}
+
+#ifdef ENABLE_SCI32
+
+bool GfxPalette::loadClut(uint16 clutId) {
+	// loadClut() will load a color lookup table from a clu file and set
+	// the palette found in the file. This is to be used with Phantasmagoria 2.
+
+	unloadClut();
+
+	Common::String filename = Common::String::format("%d.clu", clutId);
+	Common::File clut;
+
+	if (!clut.open(filename) || clut.size() != 0x10000 + 236 * 3)
+		return false;
+
+	// Read in the lookup table
+	// It maps each RGB565 color to a palette index
+	_clutTable = new byte[0x10000];
+	clut.read(_clutTable, 0x10000);
+
+	Palette pal;
+	memset(&pal, 0, sizeof(Palette));
+
+	// Setup 1:1 mapping
+	for (int i = 0; i < 256; i++)
+		pal.mapping[i] = i;
+
+	// Now load in the palette
+	for (int i = 1; i <= 236; i++) {
+		pal.colors[i].used = 1;
+		pal.colors[i].r = clut.readByte();
+		pal.colors[i].g = clut.readByte();
+		pal.colors[i].b = clut.readByte();
+	}
+
+	set(&pal, true);
+	setOnScreen();
+	return true;
+}
+
+byte GfxPalette::matchClutColor(uint16 color) {
+	// Match a color in RGB565 format to a palette index based on the loaded CLUT
+	assert(_clutTable);
+	return _clutTable[color];
+}
+
+void GfxPalette::unloadClut() {
+	// This will only unload the actual table, but not reset any palette
+	delete[] _clutTable;
+	_clutTable = 0;
+}
+ 
+#endif
 
 } // End of namespace Sci

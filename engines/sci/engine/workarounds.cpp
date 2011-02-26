@@ -34,69 +34,18 @@
 namespace Sci {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
-const SciWorkaroundEntry opcodeDivWorkarounds[] = {
-	{ GID_QFG1VGA,       301,   928,  0,              "Blink", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // when entering inn, gets called with 1 parameter, but 2nd parameter is used for div which happens to be an object
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call, index,            workaround
-const SciWorkaroundEntry opcodeDptoaWorkarounds[] = {
-	{ GID_LSL6,           360,  938,  0,               "ROsc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
-	{ GID_LSL6HIRES,      360,64938,  0,               "ROsc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
-	{ GID_SQ5,            200,  939,  0,                "Osc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when going back to bridge the crew is goofing off, we get an object as cycle count
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
-const SciWorkaroundEntry opcodeGeWorkarounds[] = {
-	{ GID_HOYLE1,           5,  213,  0,                   "", "export 0",       -1,    0, { WORKAROUND_FAKE,   1 } }, // happens sometimes during cribbage - bug #3038433
-	{ GID_MOTHERGOOSE256,   4,  998,  0,               "door", "setCel",         -1,    0, { WORKAROUND_FAKE,   1 } }, // after giving the king his pipe back, listening to his song and leaving the castle - bug #3051475
-	{ GID_PQ3,             31,   31,  0,              "rm031", "init",           -1,    0, { WORKAROUND_FAKE,   1 } }, // pq3 english: when exiting the car, while morales is making phonecalls - bug #3037565
-	{ GID_MOTHERGOOSEHIRES,90,   90,  0,      "newGameButton", "select",         -1,    0, { WORKAROUND_FAKE,   0 } }, // MUMG Deluxe, when selecting "New Game" in the main menu. It tries to compare an integer with a list. Needs to return false for the game to continue.
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
-const SciWorkaroundEntry opcodeLeWorkarounds[] = {
-	{ GID_PEPPER,         370,   23,  0,    "eastExitFeature", "onMe",           -1,    0, { WORKAROUND_FAKE,   1 } }, // Pugh's office, when trying to use either the left or right exits, gets called on an integer and a pointer - bug #3040142
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
-const SciWorkaroundEntry opcodeUltWorkarounds[] = {
-	{ GID_HOYLE3,         400,   0,  1,           "Character", "say",           -1,    0, { WORKAROUND_FAKE,   0 } }, // While playing Pachisi, when any character starts to talk - bug #3038837
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
-const SciWorkaroundEntry opcodeLaiWorkarounds[] = {
-	{ GID_CAMELOT,         92,   92,  0,     "endingCartoon2", "changeState", 0x20d,    0, { WORKAROUND_FAKE,   0 } }, // during the ending, sub gets called with no parameters, uses parameter 1 which is theGrail in this case - bug #3044734
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
-const SciWorkaroundEntry opcodeLsiWorkarounds[] = {
-	{ GID_QFG2,           200,  200,  0,              "astro", "messages",       -1,    0, { WORKAROUND_FAKE,   0 } }, // when getting asked for your name by the astrologer bug #3039879
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
-const SciWorkaroundEntry opcodeMulWorkarounds[] = {
-	{ GID_FANMADE,        516,  983,  0,             "Wander", "setTarget",      -1,    0, { WORKAROUND_FAKE,   0 } }, // The Legend of the Lost Jewel Demo (fan made): called with object as second parameter when attacked by insects - bug #3038913
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
-const SciWorkaroundEntry opcodeAndWorkarounds[] = {
-	{ GID_MOTHERGOOSE256,  -1,  999,  0,               "Event", "new",           -1,     0, { WORKAROUND_FAKE,   0 } }, // constantly during the game
-	// ^^ TODO: which of the mother goose versions is affected by this? EGA? SCI1? SCI1.1?
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
-const SciWorkaroundEntry opcodeOrWorkarounds[] = {
-	{ GID_ECOQUEST2,      100,    0,  0,                "Rain", "points",     0xcc6,     0, { WORKAROUND_FAKE,   0 } }, // when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #3034464
-	{ GID_MOTHERGOOSE256,  -1,    4,  0,               "rm004", "doit",          -1,     0, { WORKAROUND_FAKE,   0 } }, // when going north and reaching the castle (rooms 4 and 37) - bug #3038228
+const SciWorkaroundEntry arithmeticWorkarounds[] = {
+	{ GID_CAMELOT,         92,   92,  0,     "endingCartoon2", "changeState", 0x20d,    0, { WORKAROUND_FAKE,   0 } }, // op_lai: during the ending, sub gets called with no parameters, uses parameter 1 which is theGrail in this case - bug #3044734
+	{ GID_ECOQUEST2,      100,    0,  0,                "Rain", "points",     0xcc6,    0, { WORKAROUND_FAKE,   0 } }, // op_or: when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #3034464
+	{ GID_FANMADE,        516,  983,  0,             "Wander", "setTarget",      -1,    0, { WORKAROUND_FAKE,   0 } }, // op_mul: The Legend of the Lost Jewel Demo (fan made): called with object as second parameter when attacked by insects - bug #3038913
+	{ GID_ICEMAN,         199,  977,  0,            "Grooper", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // op_add: While dancing with the girl
+	{ GID_MOTHERGOOSE256,  -1,  999,  0,               "Event", "new",           -1,    0, { WORKAROUND_FAKE,   0 } }, // op_and: constantly during the game (SCI1 version)
+	{ GID_MOTHERGOOSE256,  -1,    4,  0,               "rm004", "doit",          -1,    0, { WORKAROUND_FAKE,   0 } }, // op_or: when going north and reaching the castle (rooms 4 and 37) - bug #3038228
+	{ GID_MOTHERGOOSEHIRES,90,   90,  0,      "newGameButton", "select",         -1,    0, { WORKAROUND_FAKE,   0 } }, // op_ge: MUMG Deluxe, when selecting "New Game" in the main menu. It tries to compare an integer with a list. Needs to return false for the game to continue.
+	{ GID_QFG1VGA,        301,  928,  0,              "Blink", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // op_div: when entering the inn, gets called with 1 parameter, but 2nd parameter is used for div which happens to be an object
+	{ GID_QFG2,           200,  200,  0,              "astro", "messages",       -1,    0, { WORKAROUND_FAKE,   0 } }, // op_lsi: when getting asked for your name by the astrologer bug #3039879
+	// TODO: The SQ5 workaround below may no longer be necessary
+	{ GID_SQ5,            200,  939,  0,                "Osc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // op_dpToa: when going back to bridge the crew is goofing off, we get an object as cycle count
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -136,6 +85,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	// ^^ shouldn't be needed anymore, we got a script patch instead (kq5PatchCdHarpyVolume)
 	{ GID_KQ5,            25,    25,  0,              "rm025", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // inside witch forest, when going to the room where the walking rock is
 	{ GID_KQ5,            55,    55,  0,         "helpScript", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // when giving the tambourine to the monster in the labyrinth (only happens at one of the locations) - bug #3041262
+	{ GID_KQ5,            -1,   755,  0,              "gcWin", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu in the FM-Towns version
 	{ GID_KQ6,            -1,    30,  0,               "rats", "changeState",    -1,   -1, { WORKAROUND_FAKE,   0 } }, // rats in the catacombs (temps 1 - 5) - bugs #3034597, #3035495, #3035824
 	{ GID_KQ6,           210,   210,  0,              "rm210", "scriptCheck",    -1,    0, { WORKAROUND_FAKE,   1 } }, // using inventory in that room - bug #3034565
 	{ GID_KQ6,           500,   500,  0,              "rm500", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // going to island of the beast
@@ -266,6 +216,7 @@ const SciWorkaroundEntry kDisplay_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kDirLoop_workarounds[] = {
 	{ GID_KQ4,             4,   992,  0,              "Avoid", "doit",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // when the ogre catches you in front of his house, second parameter points to the same object as the first parameter, instead of being an integer (the angle) - bug #3042964
+	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
@@ -327,7 +278,7 @@ const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
 	{ GID_LSL6,           -1,    86,  0,             "LL6Inv", "show",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens when restoring, is called with hunk segment, but hunk is not allocated at that time
 	// ^^ TODO: check, if this is really a script error or an issue with our restore code
 	{ GID_LSL6,           -1,    86,  0,             "LL6Inv", "hide",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens during the game, gets called with 1 extra parameter
-	{ GID_SQ5,           850,   850,  0,         "quirksTurn", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens while playing Battle Cruiser (invalid segment) - bug #3056811
+	{ GID_SQ5,           850,   850,  0,                 NULL, "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens while playing Battle Cruiser (invalid segment) - bug #3056811
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -357,6 +308,7 @@ const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
 	{ GID_KQ5,            -1,   981,  0,           "myWindow",     "dispose",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing any dialog box, accidental additional parameter specified - bug #3036331
 	{ GID_KQ5,            -1,   995,  0,               "invW",        "doit",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing the inventory window, accidental additional parameter specified
 	{ GID_KQ5,            -1,   995,  0,                   "",    "export 0",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when opening the gem pouch, accidental additional parameter specified - bug #3039395
+	{ GID_KQ5,            -1,   403,  0,          "KQ5Window",     "dispose",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the FM Towns version when closing any dialog box, accidental additional parameter specified
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

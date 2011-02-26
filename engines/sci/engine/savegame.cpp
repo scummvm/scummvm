@@ -47,6 +47,10 @@
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
 
+#ifdef ENABLE_SCI32
+#include "sci/graphics/frameout.h"
+#endif
+
 namespace Sci {
 
 
@@ -130,6 +134,13 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		// Reset _scriptSegMap, to be restored below
 		_scriptSegMap.clear();
+
+#ifdef ENABLE_SCI32
+		// Clear any planes/screen items currently showing so they
+		// don't show up after the load.
+		if (getSciVersion() >= SCI_VERSION_2)
+			g_sci->_gfxFrameout->clear();
+#endif
 	}
 
 	s.skip(4, VER(14), VER(18));		// OBSOLETE: Used to be _exportsAreWide
@@ -144,17 +155,15 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		SegmentType type = (s.isSaving() && mobj) ? mobj->getType() : SEG_TYPE_INVALID;
 		s.syncAsUint32LE(type);
 
-		// If we were saving and mobj == 0, or if we are loading and this is an
-		// entry marked as empty -> skip to next
-		if (type == SEG_TYPE_INVALID)
+		if (type == SEG_TYPE_HUNK) {
+			// Don't save or load HunkTable segments
 			continue;
-
-		// Don't save or load HunkTable segments
-		if (type == SEG_TYPE_HUNK)
+		} else if (type == SEG_TYPE_INVALID) {
+			// If we were saving and mobj == 0, or if we are loading and this is an
+			// entry marked as empty -> skip to next
 			continue;
-
-		// Don't save or load the obsolete system string segments
-		if (type == 5) {
+		} else if (type == 5) {
+			// Don't save or load the obsolete system string segments
 			if (s.isSaving()) {
 				continue;
 			} else {
@@ -168,6 +177,14 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 				_heap[i] = NULL;	// set as freed
 				continue;
 			}
+#ifdef ENABLE_SCI32
+		} else if (type == SEG_TYPE_ARRAY) {
+			// Set the correct segment for SCI32 arrays
+			_arraysSegId = i;
+		} else if (type == SEG_TYPE_STRING) {
+			// Set the correct segment for SCI32 strings
+			_stringSegId = i;
+#endif
 		}
 
 		if (s.isLoading())
@@ -178,8 +195,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		// Let the object sync custom data
 		mobj->saveLoadWithSerializer(s);
 
-
-		if (type == SEG_TYPE_SCRIPT && s.getVersion() >= 28) {
+		if (type == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
 
 			// If we are loading a script, perform some extra steps
@@ -196,7 +212,8 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 			}
 
 			// Sync the script's string heap
-			scr->syncStringHeap(s);
+			if (s.getVersion() >= 28)
+				scr->syncStringHeap(s);
 		}
 	}
 

@@ -261,6 +261,9 @@ Common::Error SciEngine::run() {
 	syncSoundSettings();
 	syncIngameAudioOptions();
 
+	// Load our Mac executable here for icon bar palettes and high-res fonts
+	loadMacExecutable();
+
 	// Initialize all graphics related subsystems
 	initGraphics();
 
@@ -424,7 +427,17 @@ static byte patchGameRestoreSave[] = {
 	0x76,              // push0
 	0x38, 0xff, 0xff,  // pushi -1
 	0x76,              // push0
-	0x43, 0xff, 0x06,  // call kRestoreGame/kSaveGame (will get fixed directly)
+	0x43, 0xff, 0x06,  // callk kRestoreGame/kSaveGame (will get fixed directly)
+	0x48,              // ret
+};
+
+// SCI2 version: Same as above, but the second parameter to callk is a word
+static byte patchGameRestoreSaveSci2[] = {
+	0x39, 0x03,        // pushi 03
+	0x76,              // push0
+	0x38, 0xff, 0xff,  // pushi -1
+	0x76,              // push0
+	0x43, 0xff, 0x06, 0x00, // callk kRestoreGame/kSaveGame (will get fixed directly)
 	0x48,              // ret
 };
 
@@ -443,8 +456,8 @@ void SciEngine::patchGameSaveRestore() {
 	const byte *scriptSavePtr = NULL;
 	byte kernelIdSave = 0;
 
-	// this feature is currently not supported on SCI32
-	if (getSciVersion() >= SCI_VERSION_2)
+	// This feature is currently not supported in SCI21 or SCI3
+	if (getSciVersion() >= SCI_VERSION_2_1)
 		return;
 
 	switch (_gameId) {
@@ -506,13 +519,21 @@ void SciEngine::patchGameSaveRestore() {
 	if (scriptRestorePtr) {
 		// Now patch in our code
 		byte *patchPtr = const_cast<byte *>(scriptRestorePtr);
-		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+		if (getSciVersion() <= SCI_VERSION_1_1)
+			memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+		else if (getSciVersion() == SCI_VERSION_2)
+			memcpy(patchPtr, patchGameRestoreSaveSci2, sizeof(patchGameRestoreSaveSci2));
+		// TODO: SCI21/SCI3
 		patchPtr[8] = kernelIdRestore;
 	}
 	if (scriptSavePtr) {
 		// Now patch in our code
 		byte *patchPtr = const_cast<byte *>(scriptSavePtr);
-		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+		if (getSciVersion() <= SCI_VERSION_1_1)
+			memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+		else if (getSciVersion() == SCI_VERSION_2)
+			memcpy(patchPtr, patchGameRestoreSaveSci2, sizeof(patchGameRestoreSaveSci2));
+		// TODO: SCI21/SCI3
 		patchPtr[8] = kernelIdSave;
 	}
 }
@@ -854,6 +875,36 @@ void SciEngine::syncIngameAudioOptions() {
 				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
 			}
 		}
+	}
+}
+
+void SciEngine::loadMacExecutable() {
+	if (getPlatform() != Common::kPlatformMacintosh || getSciVersion() < SCI_VERSION_1_EARLY || getSciVersion() > SCI_VERSION_1_1)
+		return;
+
+	Common::String filename;
+
+	switch (getGameId()) {
+	case GID_KQ6:
+		filename = "King's Quest VI";
+		break;
+	case GID_FREDDYPHARKAS:
+		filename = "Freddy Pharkas";
+		break;
+	default:
+		break;
+	}
+
+	if (filename.empty())
+		return;
+
+	if (!_macExecutable.open(filename) || !_macExecutable.hasResFork()) {
+		// KQ6/Freddy require the executable to load their icon bar palettes
+		if (hasMacIconBar())
+			error("Could not load Mac resource fork '%s'", filename.c_str());
+		
+		// TODO: Show some sort of warning dialog saying they can't get any
+		// high-res Mac fonts, when we get to that point ;)
 	}
 }
 

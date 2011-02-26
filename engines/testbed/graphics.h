@@ -79,14 +79,14 @@ public:
 
 private:
 	/**
-	 * A Palette consists of 4 components RGBA.
+	 * A Palette consists of 3 components RGB.
 	 * As of now we only take 3 colors
 	 * 0 (R:0, G:0, B:0) Black (kColorBlack)
 	 * 1 (R:255, G:255, B:255) White (kColorWhite)
 	 * 2 (R:255, G:255, B:255) your customized color (by default white) (kColorCustom)
 	 * The remaining values are zero
 	 */
-	static byte _palette[256 * 4];
+	static byte _palette[256 * 3];
 };
 
 } // End of namespace Testbed

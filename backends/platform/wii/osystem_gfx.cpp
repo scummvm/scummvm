@@ -326,23 +326,23 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 	const byte *s = colors;
 	u16 *d = _texGame.palette;
 
-	for (uint i = 0; i < num; ++i) {
+	for (uint i = 0; i < num; ++i, s +=3)
 		d[start + i] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(s[0], s[1], s[2]);
-		s += 4;
-	}
 
 	gfx_tex_flush_palette(&_texGame);
+
+	s = colors;
+	d = _cursorPalette;
+
+	for (uint i = 0; i < num; ++i, s += 3) {
+		d[start + i] = Graphics::ARGBToColor<Graphics::ColorMasks<3444> >(0xff, s[0], s[1], s[2]);
+	}
 
 	if (_cursorPaletteDisabled) {
 		assert(_texMouse.palette);
 
-		s = colors;
-		d = _texMouse.palette;
-
-		for (uint i = 0; i < num; ++i) {
-			d[start + i] = Graphics::ARGBToColor<Graphics::ColorMasks<3444> >(0xff, s[0], s[1], s[2]);
-			s += 4;
-		}
+		memcpy((u8 *)_texMouse.palette + start * 2,
+			(u8 *)_cursorPalette + start * 2, num * 2);
 
 		_cursorPaletteDirty = true;
 	}
@@ -357,13 +357,11 @@ void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) {
 	byte *d = colors;
 
 	u8 r, g, b;
-	for (uint i = 0; i < num; ++i) {
+	for (uint i = 0; i < num; ++i, d += 3) {
 		Graphics::colorToRGB<Graphics::ColorMasks<565> >(s[start + i], r, g, b);
 		d[0] = r;
 		d[1] = g;
 		d[2] = b;
-		d[3] = 0xff;
-		d += 4;
 	}
 }
 
@@ -388,10 +386,8 @@ void OSystem_Wii::setCursorPalette(const byte *colors, uint start, uint num) {
 	const byte *s = colors;
 	u16 *d = _texMouse.palette;
 
-	for (uint i = 0; i < num; ++i) {
+	for (uint i = 0; i < num; ++i, s += 3)
 		d[start + i] = Graphics::ARGBToColor<Graphics::ColorMasks<3444> >(0xff, s[0], s[1], s[2]);
-		s += 4;
-	}
 
 	_cursorPaletteDirty = true;
 }

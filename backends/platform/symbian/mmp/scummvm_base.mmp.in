@@ -51,7 +51,7 @@ ALWAYS_BUILD_AS_ARM
 
 // *** Include paths
 
-USERINCLUDE	    ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\sound
+USERINCLUDE	    ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\audio
 USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl
 
 SYSTEMINCLUDE	\epoc32\include\ESDL
@@ -95,7 +95,7 @@ SOURCEPATH ..\..\..\..\gui
 //SOURCE KeysDialog.cpp
 //SOURCE Actions.cpp
 
-SOURCEPATH ..\..\..\..\sound
+SOURCEPATH ..\..\..\..\audio
 //START_AUTO_OBJECTS_SOUND_//
 
 	// empty base file, will be updated by Perl build scripts
@@ -110,6 +110,12 @@ SOURCE rate_arm.cpp		// ARM version: add ASM .cpp wrapper
 SOURCE rate_arm_asm.s	// ARM version: add ASM routines
 #endif
 
+SOURCEPATH ..\..\..\..\video
+//START_AUTO_OBJECTS_VIDEO_//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_VIDEO_//
 
 // add a few files manually, since they are not parsed from modules.mk files
 SOURCEPATH ..\..\..\..

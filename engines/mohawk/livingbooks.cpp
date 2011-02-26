@@ -55,7 +55,7 @@ Common::Rect MohawkEngine_LivingBooks::readRect(Common::SeekableSubReadStreamEnd
 	Common::Rect rect;
 
 	// the V1 mac games have their rects in QuickDraw order
-	if (getGameType() == GType_LIVINGBOOKSV1 && getPlatform() == Common::kPlatformMacintosh) {
+	if (isPreMohawk() && getPlatform() == Common::kPlatformMacintosh) {
 		rect.top = stream->readSint16();
 		rect.left = stream->readSint16();
 		rect.bottom = stream->readSint16();
@@ -685,7 +685,12 @@ Common::String MohawkEngine_LivingBooks::convertWinFileName(const Common::String
 }
 
 MohawkArchive *MohawkEngine_LivingBooks::createMohawkArchive() const {
-	return (getGameType() == GType_LIVINGBOOKSV1) ? new LivingBooksArchive_v1() : new MohawkArchive();
+	return isPreMohawk() ? new LivingBooksArchive_v1() : new MohawkArchive();
+}
+
+bool MohawkEngine_LivingBooks::isPreMohawk() const {
+	return getGameType() == GType_LIVINGBOOKSV1
+		|| (getGameType() == GType_LIVINGBOOKSV2 && getPlatform() == Common::kPlatformMacintosh);
 }
 
 void MohawkEngine_LivingBooks::addNotifyEvent(NotifyEvent event) {
@@ -1195,7 +1200,7 @@ void LBAnimationNode::draw(const Common::Rect &_bounds) {
 
 	uint16 resourceId = _parent->getResource(_currentCel - 1);
 
-	if (_vm->getGameType() != GType_LIVINGBOOKSV1) {
+	if (!_vm->isPreMohawk()) {
 		Common::Point offset = _parent->getOffset(_currentCel - 1);
 		xOffset -= offset.x;
 		yOffset -= offset.y;
@@ -1391,7 +1396,7 @@ bool LBAnimationNode::transparentAt(int x, int y) {
 
 	uint16 resourceId = _parent->getResource(_currentCel - 1);
 
-	if (_vm->getGameType() != GType_LIVINGBOOKSV1) {
+	if (!_vm->isPreMohawk()) {
 		Common::Point offset = _parent->getOffset(_currentCel - 1);
 		x += offset.x;
 		y += offset.y;
@@ -1492,7 +1497,7 @@ void LBAnimation::loadShape(uint16 resourceId) {
 
 	Common::SeekableSubReadStreamEndian *shapeStream = _vm->wrapStreamEndian(ID_SHP, resourceId);
 
-	if (_vm->getGameType() == GType_LIVINGBOOKSV1) {
+	if (_vm->isPreMohawk()) {
 		if (shapeStream->size() < 6)
 			error("V1 SHP Record size too short (%d)", shapeStream->size());
 
@@ -1875,8 +1880,8 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 			error("not enough bytes (%d) in kLBEventNotified, opcode 0x%04x", size, entry->opcode);
 		entry->matchFrom = stream->readUint16();
 		entry->matchNotify = stream->readUint16();
-		debug(4, "kLBEventNotified: unknowns %04x, %04x",
-			entry->matchFrom, entry->matchNotify);
+		debug(4, "kLBEventNotified: matches %04x (from %04x)",
+			entry->matchNotify, entry->matchFrom);
 		size -= 4;
 	}
 
@@ -2267,7 +2272,7 @@ void LBItem::stop() {
 void LBItem::notify(uint16 data, uint16 from) {
 	if (_timingMode == kLBAutoSync) {
 		// TODO: is this correct?
-		if (_periodMin == from && _periodMax == data) {
+		if (_periodMin == data && _periodMax == from) {
 			debug(2, "Handling notify 0x%04x (from %d)", data, from);
 			setNextTime(0, 0);
 		}
@@ -2284,7 +2289,7 @@ void LBItem::runScript(uint event, uint16 data, uint16 from) {
 			continue;
 
 		if (event == kLBEventNotified) {
-			if (entry->matchFrom != from || entry->matchNotify != data)
+			if ((entry->matchFrom && entry->matchFrom != from) || entry->matchNotify != data)
 				continue;
 		}
 
@@ -2983,8 +2988,17 @@ void LBPaletteItem::readData(uint16 type, uint16 size, Common::SeekableSubReadSt
 		if (_drawStart + _drawCount > 256)
 			error("encountered palette trying to set more than 256 colors");
 		assert(size == 8 + _drawCount * 4);
-		_palette = new byte[_drawCount * 4];
-		stream->read(_palette, _drawCount * 4);
+
+		// TODO: _drawCount is really more like _drawEnd, so once we're sure that
+		// there's really no use for the palette entries before _drawCount, we
+		// might want to just discard them here, at load time.
+		_palette = new byte[_drawCount * 3];
+		for (uint i = 0; i < _drawCount; i++) {
+			_palette[i*3 + 0] = stream->readByte();
+			_palette[i*3 + 1] = stream->readByte();
+			_palette[i*3 + 2] = stream->readByte();
+			stream->readByte();
+		}
 		}
 		break;
 
@@ -3022,7 +3036,7 @@ void LBPaletteItem::update() {
 
 			// TODO: actual fading-in
 			if (_visible && _globalVisible) {
-				_vm->_system->getPaletteManager()->setPalette(_palette + _drawStart * 4, _drawStart, _drawCount);
+				_vm->_system->getPaletteManager()->setPalette(_palette + _drawStart * 3, _drawStart, _drawCount - _drawStart);
 				_vm->_needsRedraw = true;
 			}
 		}
@@ -3128,6 +3142,11 @@ bool LBLiveTextItem::contains(Common::Point point) {
 void LBLiveTextItem::paletteUpdate(uint16 word, bool on) {
 	_vm->_needsRedraw = true;
 
+	// Sometimes the last phrase goes out-of-bounds, the original engine
+	// only checks the words which are valid in the palette updating code.
+	if (word >= _words.size())
+		return;
+
 	if (_resourceId) {
 		// with a resource, we draw a bitmap in draw() rather than changing the palette
 		return;
@@ -3194,7 +3213,7 @@ void LBLiveTextItem::drawWord(uint word, uint yPos) {
 }
 
 void LBLiveTextItem::handleMouseDown(Common::Point pos) {
-	if (_neverEnabled || !_enabled || !_globalEnabled || _currentPhrase != 0xFFFF)
+	if (_neverEnabled || !_enabled || !_globalEnabled || _playing)
 		return LBItem::handleMouseDown(pos);
 
 	pos.x -= _rect.left;
@@ -3226,16 +3245,13 @@ bool LBLiveTextItem::togglePlaying(bool playing, bool restart) {
 	if (!playing)
 		return LBItem::togglePlaying(playing, restart);
 	if (_neverEnabled || !_enabled || !_globalEnabled)
-		return (_currentPhrase != 0xFFFF);
+		return _playing;
 
 	// TODO: handle this properly
 	_vm->_sound->stopSound();
 
 	_currentWord = 0xFFFF;
-
-	// some LiveText items don't have any phrases!
-	if (_phrases.size() > 0)
-		_currentPhrase = 0;
+	_currentPhrase = 0xFFFF;
 
 	return true;
 }
@@ -3247,7 +3263,7 @@ void LBLiveTextItem::stop() {
 }
 
 void LBLiveTextItem::notify(uint16 data, uint16 from) {
-	if (_neverEnabled || !_enabled || !_globalEnabled || _currentPhrase == 0xFFFF)
+	if (_neverEnabled || !_enabled || !_globalEnabled || !_playing)
 		return LBItem::notify(data, from);
 
 	if (_currentWord != 0xFFFF) {
@@ -3265,8 +3281,10 @@ void LBLiveTextItem::notify(uint16 data, uint16 from) {
 			}
 			_currentPhrase = i;
 			// TODO: not sure this is the correct logic
-			if (i == _phrases.size() - 1)
+			if (i == _phrases.size() - 1) {
 				_currentPhrase = 0xFFFF;
+				done(true);
+			}
 		} else if (_phrases[i].highlightEnd == data && _phrases[i].endId == from) {
 			debug(2, "Disabling phrase %d", i);
 			for (uint j = 0; j < _phrases[i].wordCount; j++) {

@@ -37,6 +37,17 @@
 
 namespace Hugo {
 
+struct target_t {                                   // Secondary target for action
+	uint16 nounIndex;                               // Secondary object
+	uint16 verbIndex;                               // Action on secondary object
+};
+
+struct uses_t {                                     // Define uses of certain objects
+	int16     objId;                                // Primary object
+	uint16    dataIndex;                            // String if no secondary object matches
+	target_t *targets;                              // List of secondary targets
+};
+
 class ObjectHandler {
 public:
 	ObjectHandler(HugoEngine *vm);
@@ -50,10 +61,10 @@ public:
 	object_t  *_objects;
 	uint16    _numObj;
 
-	byte getBoundaryOverlay(uint16 index) const { return _boundary[index]; }
-	byte getObjectBoundary(uint16 index)  const { return _objBound[index]; }
-	byte getBaseBoundary(uint16 index)    const { return _ovlBase[index];  }
-	byte getFirstOverlay(uint16 index)    const { return _overlay[index];  }
+	byte getBoundaryOverlay(uint16 index) const;
+	byte getObjectBoundary(uint16 index) const;
+	byte getBaseBoundary(uint16 index) const;
+	byte getFirstOverlay(uint16 index) const;
 
 	int  deltaX(const int x1, const int x2, const int vx, int y) const;
 	int  deltaY(const int x1, const int x2, const int vy, const int y) const;
@@ -74,10 +85,12 @@ public:
 	int16 findObject(uint16 x, uint16 y);
 	void freeObjects();
 	void loadObjectArr(Common::ReadStream &in);
-	void freeObjectArr();
+	void loadObjectUses(Common::ReadStream &in);
 	void loadNumObj(Common::ReadStream &in);
 	void lookObject(object_t *obj);
 	void readObjectImages();
+	void readObject(Common::ReadStream &in, object_t &curObject);
+	void readUse(Common::ReadStream &in, uses_t &curUse);
 	void restoreAllSeq();
 	void restoreObjects(Common::SeekableReadStream *in);
 	void saveObjects(Common::WriteStream *out);
@@ -88,24 +101,11 @@ public:
 
 	static int y2comp(const void *a, const void *b);
 
-	bool isCarried(int objIndex) {
-		return _objects[objIndex].carriedFl;
-	}
+	bool isCarried(int objIndex) const;
+	void setCarry(int objIndex, bool val);
+	void setVelocity(int objIndex, int8 vx, int8 vy);
+	void setPath(int objIndex, path_t pathType, int16 vxPath, int16 vyPath);
 
-	void setCarry(int objIndex, bool val) {
-		_objects[objIndex].carriedFl = val;
-	}
-
-	void setVelocity(int objIndex, int8 vx, int8 vy) {
-		_objects[objIndex].vx = vx;
-		_objects[objIndex].vy = vy;
-	}
-
-	void setPath(int objIndex, path_t pathType, int16 vxPath, int16 vyPath) {
-		_objects[objIndex].pathType = pathType;
-		_objects[objIndex].vxPath = vxPath;
-		_objects[objIndex].vyPath = vyPath;
-	}
 protected:
 	HugoEngine *_vm;
 
@@ -114,11 +114,13 @@ protected:
 	static const int kMaxObjNumb = 128;             // Used in Update_images()
 
 	uint16     _objCount;
+	uses_t    *_uses;
+	uint16     _usesSize;
 
 	void restoreSeq(object_t *obj);
 
 	inline bool checkBoundary(int16 x, int16 y);
-	template <typename T> 
+	template <typename T>
 	inline int sign(T a) { if ( a < 0) return -1; else return 1; }
 };
 

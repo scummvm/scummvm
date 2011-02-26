@@ -81,23 +81,14 @@ reg_t GfxCompare::canBeHereCheckRectList(reg_t checkObject, const Common::Rect &
 		curObject = curNode->value;
 		if (curObject != checkObject) {
 			signal = readSelectorValue(_segMan, curObject, SELECTOR(signal));
-			if ((signal & (kSignalIgnoreActor | kSignalRemoveView | kSignalNoUpdate)) == 0) {
+			if (!(signal & (kSignalIgnoreActor | kSignalRemoveView | kSignalNoUpdate))) {
 				curRect.left = readSelectorValue(_segMan, curObject, SELECTOR(brLeft));
 				curRect.top = readSelectorValue(_segMan, curObject, SELECTOR(brTop));
 				curRect.right = readSelectorValue(_segMan, curObject, SELECTOR(brRight));
 				curRect.bottom = readSelectorValue(_segMan, curObject, SELECTOR(brBottom));
 				// Check if curRect is within checkRect
-				// TODO: This check is slightly odd, because it means that a rect is not contained
-				// in itself. It may very well be that the original SCI engine did it just
-				// this way, so it should not be changed lightly. However, somebody should
-				// confirm whether the original engine really did it this way. Then, update
-				// this comment accordingly, and, if necessary, fix the code.
-				if (curRect.right > checkRect.left &&
-				    curRect.left < checkRect.right &&
-				    curRect.bottom > checkRect.top &&
-				    curRect.top < checkRect.bottom) {
+				if (checkRect.contains(curRect))
 					return curObject;
-				}
 			}
 		}
 		curAddress = curNode->succ;

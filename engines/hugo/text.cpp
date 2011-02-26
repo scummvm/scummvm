@@ -29,12 +29,60 @@
 
 namespace Hugo {
 
-TextHandler::TextHandler(HugoEngine *vm) : _vm(vm), _textData(0), _stringtData(0), 
-	_textEngine(0), _textIntro(0), _textMouse(0), _textParser(0), _textUtil(0), 
+TextHandler::TextHandler(HugoEngine *vm) : _vm(vm), _textData(0), _stringtData(0),
+	_textEngine(0), _textIntro(0), _textMouse(0), _textParser(0), _textUtil(0),
 	_screenNames(0), _arrayNouns(0), _arrayVerbs(0) {
 }
 
 TextHandler::~TextHandler() {
+}
+
+const char *TextHandler::getNoun(int idx1, int idx2) const {
+	return _arrayNouns[idx1][idx2];
+}
+
+const char *TextHandler::getScreenNames(int screenIndex) const {
+	return _screenNames[screenIndex];
+}
+
+const char *TextHandler::getStringtData(int stringIndex) const {
+	return _stringtData[stringIndex];
+}
+
+const char *TextHandler::getTextData(int textIndex) const {
+	return _textData[textIndex];
+}
+
+const char *TextHandler::getTextEngine(int engineIndex) const {
+	return _textEngine[engineIndex];
+}
+
+const char *TextHandler::getTextIntro(int introIndex) const {
+	return _textIntro[introIndex];
+}
+
+const char *TextHandler::getTextMouse(int mouseIndex) const {
+	return _textMouse[mouseIndex];
+}
+
+const char *TextHandler::getTextParser(int parserIndex) const {
+	return _textParser[parserIndex];
+}
+
+const char *TextHandler::getTextUtil(int utilIndex) const {
+	return _textUtil[utilIndex];
+}
+
+const char *TextHandler::getVerb(int idx1, int idx2) const {
+	return _arrayVerbs[idx1][idx2];
+}
+
+char **TextHandler::getNounArray(int idx1) const {
+	return _arrayNouns[idx1];
+}
+
+char **TextHandler::getVerbArray(int idx1) const {
+	return _arrayVerbs[idx1];
 }
 
 char **TextHandler::loadTextsVariante(Common::ReadStream &in, uint16 *arraySize) {

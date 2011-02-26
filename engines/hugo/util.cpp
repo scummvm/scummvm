@@ -140,13 +140,6 @@ char *Utils::Box(box_t dismiss, const char *s, ...) {
 	return buffer;
 }
 
-/**
- * Print options for user when dead
- */
-void Utils::gameOverMsg(void) {
-	Utils::Box(kBoxOk, "%s", HugoEngine::get()._text->getTextUtil(kGameOver));
-}
-
 char *Utils::strlwr(char *buffer) {
 	char *result = buffer;
 

@@ -46,11 +46,49 @@ namespace Hugo {
 
 static const int kMaxDisp = (kXPix / kInvDx);       // Max icons displayable
 
-InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm) {
+InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm), _invent(0) {
 	_firstIconId = 0;
 	_inventoryState  = kInventoryOff;               // Inventory icon bar state
 	_inventoryHeight = 0;                           // Inventory icon bar pos
 	_inventoryObjId  = -1;                          // Inventory object selected (none)
+	_maxInvent = 0;
+}
+
+void InventoryHandler::setInventoryObjId(int16 objId) {
+	_inventoryObjId = objId;
+}
+
+void InventoryHandler::setInventoryState(istate_t state) {
+	_inventoryState = state;
+}
+
+void InventoryHandler::freeInvent() {
+	free(_invent);
+}
+
+int16 InventoryHandler::getInventoryObjId() const {
+	return _inventoryObjId;
+}
+
+istate_t InventoryHandler::getInventoryState() const {
+	return _inventoryState;
+}
+
+/**
+ * Read _invent from Hugo.dat
+ */
+void InventoryHandler::loadInvent(Common::SeekableReadStream &in) {
+	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
+		int16 numElem = in.readUint16BE();
+		if (varnt == _vm->_gameVariant) {
+			_maxInvent = numElem;
+			_invent = (int16 *)malloc(sizeof(int16) * numElem);
+			for (int i = 0; i < numElem; i++)
+				_invent[i] = in.readSint16BE();
+		} else {
+			in.skip(numElem * sizeof(int16));
+		}
+	}
 }
 
 /**
@@ -78,7 +116,7 @@ void InventoryHandler::constructInventory(const int16 imageTotNumb, int displayN
 	int16 displayed = 0;
 	int16 carried = 0;
 	for (int16 i = 0; (i < imageTotNumb) && (displayed < displayNumb); i++) {
-		if (_vm->_object->isCarried(_vm->_invent[i])) {
+		if (_vm->_object->isCarried(_invent[i])) {
 			// Check still room to display and past first scroll index
 			if (displayed < displayNumb && carried >= firstObjId) {
 				// Compute source coordinates in dib_u
@@ -107,8 +145,8 @@ int16 InventoryHandler::processInventory(const invact_t action, ...) {
 	int16 imageNumb;                                // Total number of inventory items
 	int displayNumb;                                // Total number displayed/carried
 	// Compute total number and number displayed, i.e. number carried
-	for (imageNumb = 0, displayNumb = 0; imageNumb < _vm->_maxInvent && _vm->_invent[imageNumb] != -1; imageNumb++) {
-		if (_vm->_object->isCarried(_vm->_invent[imageNumb]))
+	for (imageNumb = 0, displayNumb = 0; imageNumb < _maxInvent && _invent[imageNumb] != -1; imageNumb++) {
+		if (_vm->_object->isCarried(_invent[imageNumb]))
 			displayNumb++;
 	}
 
@@ -234,6 +272,20 @@ void InventoryHandler::runInventory() {
 		_vm->_screen->displayList(kDisplayDisplay); // Blit the display list to screen
 		break;
 	}
+}
+
+
+/**
+ * Find index of dragged icon
+ */
+int16 InventoryHandler::findIconId(int16 objId) {
+	int16 iconId = 0;
+	for (; iconId < _maxInvent; iconId++) {
+		if (objId == _invent[iconId])
+			break;
+	}
+
+	return iconId;
 }
 
 } // End of namespace Hugo

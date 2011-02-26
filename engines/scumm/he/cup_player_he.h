@@ -90,7 +90,7 @@ protected:
 	int _playbackRate;
 	int _width, _height;
 
-	uint8 _paletteData[256 * 4];
+	uint8 _paletteData[256 * 3];
 	bool _paletteChanged;
 	uint8 *_offscreenBuffer;
 

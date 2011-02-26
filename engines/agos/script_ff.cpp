@@ -640,7 +640,7 @@ void AGOSEngine_Feeble::off_restartClock() {
 
 void AGOSEngine_Feeble::off_setColor() {
 	// 195: set palette color
-	uint16 c = getVarOrByte() * 4;
+	uint16 c = getVarOrByte() * 3;
 	uint8 r = getVarOrByte();
 	uint8 g = getVarOrByte();
 	uint8 b = getVarOrByte();

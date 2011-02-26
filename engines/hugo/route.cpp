@@ -39,13 +39,22 @@
 #include "hugo/route.h"
 #include "hugo/object.h"
 #include "hugo/inventory.h"
+#include "hugo/mouse.h"
 
 namespace Hugo {
 Route::Route(HugoEngine *vm) : _vm(vm) {
 	_oldWalkDirection = 0;
 	_routeIndex       = -1;                         // Hero not following a route
-	_go_for           = kRouteSpace;                // Hero walking to space
-	_go_id            = -1;                         // Hero not walking to anything
+	_routeType        = kRouteSpace;                // Hero walking to space
+	_routeObjId       = -1;                         // Hero not walking to anything
+}
+
+void Route::resetRoute() {
+	_routeIndex = -1;
+}
+
+int16 Route::getRouteIndex() const {
+	return _routeIndex;
 }
 
 /**
@@ -442,26 +451,26 @@ void Route::processRoute() {
 		// Arrived at final node?
 		if (--_routeIndex < 0) {
 			// See why we walked here
-			switch (_go_for) {
+			switch (_routeType) {
 			case kRouteExit:                        // Walked to an exit, proceed into it
-				setWalk(_vm->_hotspots[_go_id].direction);
+				setWalk(_vm->_mouse->getDirection(_routeObjId));
 				break;
 			case kRouteLook:                        // Look at an object
 				if (turnedFl) {
-					_vm->_object->lookObject(&_vm->_object->_objects[_go_id]);
+					_vm->_object->lookObject(&_vm->_object->_objects[_routeObjId]);
 					turnedFl = false;
 				} else {
-					setDirection(_vm->_object->_objects[_go_id].direction);
+					setDirection(_vm->_object->_objects[_routeObjId].direction);
 					_routeIndex++;                  // Come round again
 					turnedFl = true;
 				}
 				break;
 			case kRouteGet:                         // Get (or use) an object
 				if (turnedFl) {
-					_vm->_object->useObject(_go_id);
+					_vm->_object->useObject(_routeObjId);
 					turnedFl = false;
 				} else {
-					setDirection(_vm->_object->_objects[_go_id].direction);
+					setDirection(_vm->_object->_objects[_routeObjId].direction);
 					_routeIndex++;                  // Come round again
 					turnedFl = true;
 				}
@@ -493,8 +502,8 @@ void Route::processRoute() {
  * go_for is the purpose, id indexes the exit or object to walk to
  * Returns FALSE if route not found
  */
-bool Route::startRoute(const go_t go_for, const int16 id, int16 cx, int16 cy) {
-	debugC(1, kDebugRoute, "startRoute(%d, %d, %d, %d)", go_for, id, cx, cy);
+bool Route::startRoute(const go_t routeType, const int16 objId, int16 cx, int16 cy) {
+	debugC(1, kDebugRoute, "startRoute(%d, %d, %d, %d)", routeType, objId, cx, cy);
 
 	// Don't attempt to walk if user does not have control
 	if (_vm->_hero->pathType != kPathUser)
@@ -504,11 +513,11 @@ bool Route::startRoute(const go_t go_for, const int16 id, int16 cx, int16 cy) {
 	if (_vm->_inventory->getInventoryState() != kInventoryOff)
 		_vm->_inventory->setInventoryState(kInventoryUp);
 
-	_go_for = go_for;                               // Purpose of trip
-	_go_id  = id;                                   // Index of exit/object
+	_routeType = routeType;                         // Purpose of trip
+	_routeObjId  = objId;                           // Index of exit/object
 
 	// Adjust destination to center hero if walking to cursor
-	if (_go_for == kRouteSpace)
+	if (_routeType == kRouteSpace)
 		cx -= kHeroMinWidth / 2;
 
 	bool foundFl = false;                           // TRUE if route found ok

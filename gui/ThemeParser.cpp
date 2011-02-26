@@ -861,30 +861,50 @@ bool ThemeParser::resolutionCheck(const Common::String &resolution) {
 		return true;
 
 	Common::StringTokenizer globTokenizer(resolution, ", ");
-	Common::String cur, w, h;
-	bool definedRes = false;
+	Common::String cur;
 
 	while (!globTokenizer.empty()) {
-		bool ignore = false;
 		cur = globTokenizer.nextToken();
 
-		if (cur[0] == '-') {
-			ignore = true;
-			cur.deleteChar(0);
-		} else {
-			definedRes = true;
+		bool lt;
+		int val;
+
+		if (cur.size() < 5) {
+			warning("Invalid theme 'resolution' token '%s'", resolution.c_str());
+			return false;
 		}
 
-		Common::StringTokenizer resTokenizer(cur, "x");
-		w = resTokenizer.nextToken();
-		h = resTokenizer.nextToken();
+		if (cur[0] == 'x') {
+			val = g_system->getOverlayWidth();
+		} else if (cur[0] == 'y') {
+			val = g_system->getOverlayHeight();
+		} else {
+			warning("Error parsing theme 'resolution' token '%s'", resolution.c_str());
+			return false;
+		}
 
-		if ((w == "X" || atoi(w.c_str()) == g_system->getOverlayWidth()) &&
-			(h == "Y" || atoi(h.c_str()) == g_system->getOverlayHeight()))
-			return !ignore;
+		if (cur[1] == '<') {
+			lt = true;
+		} else if (cur[1] == '>') {
+			lt = false;
+		} else {
+			warning("Error parsing theme 'resolution' token '%s'", resolution.c_str());
+			return false;
+		}
+
+		int token = atoi(cur.c_str() + 2);
+
+		// check inverse for unfulfilled requirements
+		if (lt) {
+			if (val >= token)
+				return false;
+		} else {
+			if (val <= token)
+				return false;
+		}
 	}
 
-	return !definedRes;
+	return true;
 }
 
 } // End of namespace GUI

@@ -156,7 +156,7 @@ void OSystem_Dreamcast::setPalette(const byte *colors, uint start, uint num)
       *dst++ = ((colors[0]<<7)&0x7c00)|
 	((colors[1]<<2)&0x03e0)|
 	((colors[2]>>3)&0x001f);
-      colors += 4;
+      colors += 3;
     }
   _screen_dirty = true;
 }
@@ -169,7 +169,7 @@ void OSystem_Dreamcast::setCursorPalette(const byte *colors, uint start, uint nu
       *dst++ = ((colors[0]<<7)&0x7c00)|
 	((colors[1]<<2)&0x03e0)|
 	((colors[2]>>3)&0x001f);
-      colors += 4;
+      colors += 3;
     }
   _enable_cursor_palette = true;
 }
@@ -188,8 +188,7 @@ void OSystem_Dreamcast::grabPalette(byte *colors, uint start, uint num)
       colors[0] = ((p&0x7c00)>>7)|((p&0x7000)>>12);
       colors[1] = ((p&0x03e0)>>2)|((p&0x0380)>>7);
       colors[2] = ((p&0x001f)<<3)|((p&0x001c)>>2);
-      colors[3] = 0xff;
-      colors += 4;
+      colors += 3;
     }
 }
 

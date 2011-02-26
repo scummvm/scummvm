@@ -1193,7 +1193,7 @@ void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
 /**********************************************************
  *	Screen/overlay management
  *********************************************************/
-void ThemeEngine::updateScreen() {
+void ThemeEngine::updateScreen(bool render) {
 	if (!_bufferQueue.empty()) {
 		_vectorRenderer->setSurface(&_backBuffer);
 
@@ -1218,7 +1218,8 @@ void ThemeEngine::updateScreen() {
 		_screenQueue.clear();
 	}
 
-	renderDirtyScreen();
+	if (render)
+		renderDirtyScreen();
 }
 
 void ThemeEngine::addDirtyRect(Common::Rect r) {
@@ -1327,10 +1328,9 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 				const int index = colorsFound++;
 				colorToIndex[col] = index;
 
-				_cursorPal[index * 4 + 0] = r;
-				_cursorPal[index * 4 + 1] = g;
-				_cursorPal[index * 4 + 2] = b;
-				_cursorPal[index * 4 + 3] = 0xFF;
+				_cursorPal[index * 3 + 0] = r;
+				_cursorPal[index * 3 + 1] = g;
+				_cursorPal[index * 3 + 2] = b;
 
 				if (colorsFound > MAX_CURS_COLORS) {
 					warning("Cursor contains too many colors (%d, but only %d are allowed)", colorsFound, MAX_CURS_COLORS);

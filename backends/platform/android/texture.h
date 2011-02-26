@@ -23,7 +23,10 @@
  *
  */
 
-#if defined(ANDROID)
+#ifndef _ANDROID_TEXTURE_H_
+#define _ANDROID_TEXTURE_H_
+
+#if defined(__ANDROID__)
 
 #include <GLES/gl.h>
 
@@ -38,31 +41,60 @@ public:
 
 	GLESTexture();
 	virtual ~GLESTexture();
+
 	virtual void reinitGL();
 	virtual void allocBuffer(GLuint width, GLuint height);
-	const Graphics::Surface* surface_const() const { return &_surface; }
-	GLuint width() const { return _surface.w; }
-	GLuint height() const { return _surface.h; }
-	GLuint texture_name() const { return _texture_name; }
-	bool dirty() const { return _all_dirty || !_dirty_rect.isEmpty(); }
+
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
-							  const void* buf, int pitch);
+								const void *buf, int pitch);
 	virtual void fillBuffer(byte x);
-	virtual void drawTexture() {
+
+	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
+
+	inline GLuint width() const {
+		return _surface.w;
+	}
+
+	inline GLuint height() const {
+		return _surface.h;
+	}
+
+	inline GLuint texture_name() const {
+		return _texture_name;
+	}
+
+	inline const Graphics::Surface *surface_const() const {
+		return &_surface;
+	}
+
+	inline Graphics::Surface *surface() {
+		setDirty();
+		return &_surface;
+	}
+
+	inline bool dirty() const {
+		return _all_dirty || !_dirty_rect.isEmpty();
+	}
+
+	inline void drawTexture() {
 		drawTexture(0, 0, _surface.w, _surface.h);
 	}
-	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
 protected:
 	virtual byte bytesPerPixel() const = 0;
 	virtual GLenum glFormat() const = 0;
 	virtual GLenum glType() const = 0;
-	virtual size_t paletteSize() const { return 0; };
-	void setDirty() {
+
+	virtual size_t paletteSize() const {
+		return 0;
+	}
+
+	inline void setDirty() {
 		_all_dirty = true;
 		_dirty_rect = Common::Rect();
 	}
-	void setDirtyRect(const Common::Rect& r) {
+
+	inline void setDirtyRect(const Common::Rect& r) {
 		if (!_all_dirty) {
 			if (_dirty_rect.isEmpty())
 				_dirty_rect = r;
@@ -70,28 +102,47 @@ protected:
 				_dirty_rect.extend(r);
 		}
 	}
+
 	GLuint _texture_name;
 	Graphics::Surface _surface;
 	GLuint _texture_width;
 	GLuint _texture_height;
 	bool _all_dirty;
-	Common::Rect _dirty_rect;  // Covers dirty area
+
+	// Covers dirty area
+	Common::Rect _dirty_rect;
 };
 
 // RGBA4444 texture
 class GLES4444Texture : public GLESTexture {
 protected:
-	virtual byte bytesPerPixel() const { return 2; }
-	virtual GLenum glFormat() const { return GL_RGBA; }
-	virtual GLenum glType() const { return GL_UNSIGNED_SHORT_4_4_4_4; }
+	virtual byte bytesPerPixel() const {
+		return 2;
+	}
+
+	virtual GLenum glFormat() const {
+		return GL_RGBA;
+	}
+
+	virtual GLenum glType() const {
+		return GL_UNSIGNED_SHORT_4_4_4_4;
+	}
 };
 
 // RGB565 texture
 class GLES565Texture : public GLESTexture {
 protected:
-	virtual byte bytesPerPixel() const { return 2; }
-	virtual GLenum glFormat() const { return GL_RGB; }
-	virtual GLenum glType() const { return GL_UNSIGNED_SHORT_5_6_5; }
+	virtual byte bytesPerPixel() const {
+		return 2;
+	}
+
+	virtual GLenum glFormat() const {
+		return GL_RGB;
+	}
+
+	virtual GLenum glType() const {
+		return GL_UNSIGNED_SHORT_5_6_5;
+	}
 };
 
 // RGB888 256-entry paletted texture
@@ -99,42 +150,65 @@ class GLESPaletteTexture : public GLESTexture {
 public:
 	GLESPaletteTexture();
 	virtual ~GLESPaletteTexture();
+
 	virtual void allocBuffer(GLuint width, GLuint height);
 	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
-							  const void* buf, int pitch);
-	Graphics::Surface* surface() {
-		setDirty();
-		return &_surface;
+								const void *buf, int pitch);
+	virtual void fillBuffer(byte x);
+
+	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
+
+	inline void drawTexture() {
+		drawTexture(0, 0, _surface.w, _surface.h);
 	}
-	void* pixels() {
-		setDirty();
-		return _surface.pixels;
-	}
-	const byte* palette_const() const { return _texture; };
-	byte* palette() {
+
+	inline const byte *palette_const() const {
+		return _texture;
+	};
+
+	inline byte *palette() {
 		setDirty();
 		return _texture;
 	};
-	virtual void drawTexture() {
-		drawTexture(0, 0, _surface.w, _surface.h);
-	}
-	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
-	virtual void fillBuffer(byte x);
+
 protected:
-	virtual byte bytesPerPixel() const { return 1; }
-	virtual GLenum glFormat() const { return GL_RGB; }
-	virtual GLenum glType() const { return GL_PALETTE8_RGB8_OES; }
-	virtual size_t paletteSize() const { return 256 * 3; };
-	virtual void uploadTexture() const;
-	byte* _texture;
+	virtual byte bytesPerPixel() const {
+		return 1;
+	}
+
+	virtual GLenum glFormat() const {
+		return GL_RGB;
+	}
+
+	virtual GLenum glType() const {
+		return GL_PALETTE8_RGB8_OES;
+	}
+
+	virtual size_t paletteSize() const {
+		return 256 * 3;
+	}
+
+	void uploadTexture() const;
+
+	byte *_texture;
 };
 
 // RGBA8888 256-entry paletted texture
 class GLESPaletteATexture : public GLESPaletteTexture {
 protected:
-	virtual GLenum glFormat() const { return GL_RGBA; }
-	virtual GLenum glType() const { return GL_PALETTE8_RGBA8_OES; }
-	virtual size_t paletteSize() const { return 256 * 4; };
+	virtual GLenum glFormat() const {
+		return GL_RGBA;
+	}
+
+	virtual GLenum glType() const {
+		return GL_PALETTE8_RGBA8_OES;
+	}
+
+	virtual size_t paletteSize() const {
+		return 256 * 4;
+	}
 };
 
 #endif
+#endif
+

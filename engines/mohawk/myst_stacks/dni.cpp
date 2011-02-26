@@ -32,19 +32,20 @@
 #include "mohawk/myst_stacks/dni.h"
 
 namespace Mohawk {
+namespace MystStacks {
 
-MystScriptParser_Dni::MystScriptParser_Dni(MohawkEngine_Myst *vm) :
+Dni::Dni(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm) {
 	setupOpcodes();
 	_notSeenAtrus = true;
 }
 
-MystScriptParser_Dni::~MystScriptParser_Dni() {
+Dni::~Dni() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MystScriptParser_Dni::x, #x))
+#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Dni::x, #x))
 
-void MystScriptParser_Dni::setupOpcodes() {
+void Dni::setupOpcodes() {
 	// "Stack-Specific" Opcodes
 	OPCODE(100, NOP);
 	OPCODE(101, o_handPage);
@@ -58,13 +59,13 @@ void MystScriptParser_Dni::setupOpcodes() {
 
 #undef OPCODE
 
-void MystScriptParser_Dni::disablePersistentScripts() {
+void Dni::disablePersistentScripts() {
 	_atrusRunning = false;
 	_waitForLoop = false;
 	_atrusLeft = false;
 }
 
-void MystScriptParser_Dni::runPersistentScripts() {
+void Dni::runPersistentScripts() {
 	if (_atrusRunning)
 		atrus_run();
 
@@ -75,7 +76,7 @@ void MystScriptParser_Dni::runPersistentScripts() {
 		atrusLeft_run();
 }
 
-uint16 MystScriptParser_Dni::getVar(uint16 var) {
+uint16 Dni::getVar(uint16 var) {
 	switch(var) {
 	case 0: // Atrus Gone (from across room)
 		return _globals.ending == 2;
@@ -95,7 +96,7 @@ uint16 MystScriptParser_Dni::getVar(uint16 var) {
 	}
 }
 
-void MystScriptParser_Dni::o_handPage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Dni::o_handPage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Hand page to Atrus", op);
 	// Used in Card 5014 (Atrus)
 
@@ -118,7 +119,7 @@ void MystScriptParser_Dni::o_handPage(uint16 op, uint16 var, uint16 argc, uint16
 	}
 }
 
-void MystScriptParser_Dni::atrusLeft_run() {
+void Dni::atrusLeft_run() {
 	if (_vm->_system->getMillis() > _atrusLeftTime + 63333) {
 		_video = _vm->wrapMovieFilename("atrus2", kDniStack);
 		VideoHandle atrus = _vm->_video->playMovie(_video, 215, 77);
@@ -137,7 +138,7 @@ void MystScriptParser_Dni::atrusLeft_run() {
 	}
 }
 
-void MystScriptParser_Dni::loopVideo_run() {
+void Dni::loopVideo_run() {
 	if (!_vm->_video->isVideoPlaying()) {
 		VideoHandle atrus = _vm->_video->playMovie(_video, 215, 77);
 		_vm->_video->setVideoBounds(atrus, Audio::Timestamp(0, _loopStart, 600), Audio::Timestamp(0, _loopEnd, 600));
@@ -147,7 +148,7 @@ void MystScriptParser_Dni::loopVideo_run() {
 	}
 }
 
-void MystScriptParser_Dni::atrus_run() {
+void Dni::atrus_run() {
 	if (_globals.ending == 2) {
 		// Wait for atrus to come back
 		_atrusLeft = true;
@@ -188,10 +189,11 @@ void MystScriptParser_Dni::atrus_run() {
 	}
 }
 
-void MystScriptParser_Dni::o_atrus_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Dni::o_atrus_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Atrus init", op);
 
 	_atrusRunning = true;
 }
 
+} // End of namespace MystStacks
 } // End of namespace Mohawk

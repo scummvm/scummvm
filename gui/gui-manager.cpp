@@ -201,14 +201,15 @@ void GuiManager::redraw() {
 			_theme->clearAll();
 			_theme->openDialog(true, ThemeEngine::kShadingNone);
 
-			for (i = 0; i < _dialogStack.size() - 1; i++) {
+			for (i = 0; i < _dialogStack.size() - 1; i++)
 				_dialogStack[i]->drawDialog();
-			}
 
 			_theme->finishBuffering();
 
+			// fall through
+
 		case kRedrawOpenDialog:
-			_theme->updateScreen();
+			_theme->updateScreen(false);
 			_theme->openDialog(true, shading);
 			_dialogStack.top()->drawDialog();
 			_theme->finishBuffering();
@@ -441,10 +442,10 @@ void GuiManager::closeTopDialog() {
 
 void GuiManager::setupCursor() {
 	const byte palette[] = {
-		255, 255, 255, 0,
-		255, 255, 255, 0,
-		171, 171, 171, 0,
-		 87,  87,  87, 0
+		255, 255, 255,
+		255, 255, 255,
+		171, 171, 171,
+		 87,  87,  87
 	};
 
 	CursorMan.pushCursorPalette(palette, 0, 4);

@@ -48,10 +48,37 @@
 namespace Hugo {
 FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
 	has_read_header = false;
-	firstUIFFl = true; 
+	firstUIFFl = true;
 }
 
 FileManager::~FileManager() {
+}
+
+/**
+ * Name scenery and objects picture databases
+ */
+const char *FileManager::getBootFilename() const {
+	return "HUGO.BSF";
+}
+
+const char *FileManager::getObjectFilename() const {
+	return "objects.dat";
+}
+
+const char *FileManager::getSceneryFilename() const {
+	return "scenery.dat";
+}
+
+const char *FileManager::getSoundFilename() const {
+	return "sounds.dat";
+}
+
+const char *FileManager::getStringFilename() const {
+	return "strings.dat";
+}
+
+const char *FileManager::getUifFilename() const {
+	return "uif.dat";
 }
 
 /**
@@ -369,31 +396,20 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	for (int i = 0; i < _vm->_numScreens; i++)
 		out->writeByte(_vm->_screenStates[i]);
 
-	// Save points table
-	for (int i = 0; i < _vm->_numBonuses; i++) {
-		out->writeByte(_vm->_points[i].score);
-		out->writeByte((_vm->_points[i].scoredFl) ? 1 : 0);
-	}
-
-	// Now save current time and all current events in event queue
-	_vm->_scheduler->saveEvents(out);
-
-	// Now save current actions
-	_vm->_scheduler->saveActions(out);
-
+	_vm->_scheduler->saveSchedulerData(out);
 	// Save palette table
 	_vm->_screen->savePal(out);
 
 	// Save maze status
-	out->writeByte((_maze.enabledFl) ? 1 : 0);
-	out->writeByte(_maze.size);
-	out->writeSint16BE(_maze.x1);
-	out->writeSint16BE(_maze.y1);
-	out->writeSint16BE(_maze.x2);
-	out->writeSint16BE(_maze.y2);
-	out->writeSint16BE(_maze.x3);
-	out->writeSint16BE(_maze.x4);
-	out->writeByte(_maze.firstScreenIndex);
+	out->writeByte((_vm->_maze.enabledFl) ? 1 : 0);
+	out->writeByte(_vm->_maze.size);
+	out->writeSint16BE(_vm->_maze.x1);
+	out->writeSint16BE(_vm->_maze.y1);
+	out->writeSint16BE(_vm->_maze.x2);
+	out->writeSint16BE(_vm->_maze.y2);
+	out->writeSint16BE(_vm->_maze.x3);
+	out->writeSint16BE(_vm->_maze.x4);
+	out->writeByte(_vm->_maze.firstScreenIndex);
 
 	out->finalize();
 
@@ -475,33 +491,21 @@ bool FileManager::restoreGame(const int16 slot) {
 	for (int i = 0; i < _vm->_numScreens; i++)
 		_vm->_screenStates[i] = in->readByte();
 
-	// Restore points table
-	for (int i = 0; i < _vm->_numBonuses; i++) {
-		_vm->_points[i].score = in->readByte();
-		_vm->_points[i].scoredFl = (in->readByte() == 1);
-	}
-
-	_vm->_object->restoreAllSeq();
-
-	// Now restore time of the save and the event queue
-	_vm->_scheduler->restoreEvents(in);
-
-	// Now restore actions
-	_vm->_scheduler->restoreActions(in);
+	_vm->_scheduler->restoreSchedulerData(in);
 
 	// Restore palette and change it if necessary
 	_vm->_screen->restorePal(in);
 
 	// Restore maze status
-	_maze.enabledFl = (in->readByte() == 1);
-	_maze.size = in->readByte();
-	_maze.x1 = in->readSint16BE();
-	_maze.y1 = in->readSint16BE();
-	_maze.x2 = in->readSint16BE();
-	_maze.y2 = in->readSint16BE();
-	_maze.x3 = in->readSint16BE();
-	_maze.x4 = in->readSint16BE();
-	_maze.firstScreenIndex = in->readByte();
+	_vm->_maze.enabledFl = (in->readByte() == 1);
+	_vm->_maze.size = in->readByte();
+	_vm->_maze.x1 = in->readSint16BE();
+	_vm->_maze.y1 = in->readSint16BE();
+	_vm->_maze.x2 = in->readSint16BE();
+	_vm->_maze.y2 = in->readSint16BE();
+	_vm->_maze.x3 = in->readSint16BE();
+	_vm->_maze.x4 = in->readSint16BE();
+	_vm->_maze.firstScreenIndex = in->readByte();
 
 	delete in;
 	return true;
@@ -526,16 +530,16 @@ void FileManager::printBootText() {
 	}
 
 	// Allocate space for the text and print it
-	char *buf = (char *)malloc(_boot.exit_len + 1);
+	char *buf = (char *)malloc(_vm->_boot.exit_len + 1);
 	if (buf) {
 		// Skip over the boot structure (already read) and read exit text
-		ofp.seek((long)sizeof(_boot), SEEK_SET);
-		if (ofp.read(buf, _boot.exit_len) != (size_t)_boot.exit_len)
+		ofp.seek((long)sizeof(_vm->_boot), SEEK_SET);
+		if (ofp.read(buf, _vm->_boot.exit_len) != (size_t)_vm->_boot.exit_len)
 			error("Error while reading startup file");
 
 		// Decrypt the exit text, using CRYPT substring
 		int i;
-		for (i = 0; i < _boot.exit_len; i++)
+		for (i = 0; i < _vm->_boot.exit_len; i++)
 			buf[i] ^= cypher[i % strlen(cypher)];
 
 		buf[i] = '\0';
@@ -565,19 +569,19 @@ void FileManager::readBootFile() {
 		}
 	}
 
-	if (ofp.size() < (int32)sizeof(_boot))
+	if (ofp.size() < (int32)sizeof(_vm->_boot))
 		error("Corrupted startup file");
 
-	_boot.checksum = ofp.readByte();
-	_boot.registered = ofp.readByte();
-	ofp.read(_boot.pbswitch, sizeof(_boot.pbswitch));
-	ofp.read(_boot.distrib, sizeof(_boot.distrib));
-	_boot.exit_len = ofp.readUint16LE();
+	_vm->_boot.checksum = ofp.readByte();
+	_vm->_boot.registered = ofp.readByte();
+	ofp.read(_vm->_boot.pbswitch, sizeof(_vm->_boot.pbswitch));
+	ofp.read(_vm->_boot.distrib, sizeof(_vm->_boot.distrib));
+	_vm->_boot.exit_len = ofp.readUint16LE();
 
-	byte *p = (byte *)&_boot;
+	byte *p = (byte *)&_vm->_boot;
 
 	byte checksum = 0;
-	for (uint32 i = 0; i < sizeof(_boot); i++) {
+	for (uint32 i = 0; i < sizeof(_vm->_boot); i++) {
 		checksum ^= p[i];
 		p[i] ^= cypher[i % strlen(cypher)];
 	}
