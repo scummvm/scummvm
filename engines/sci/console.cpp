@@ -1509,10 +1509,7 @@ bool Console::cmdDrawCel(int argc, const char **argv) {
 		_engine->_gfxPaint16->kernelDrawCel(resourceId, loopNo, celNo, 50, 50, 0, 0, 128, 128, false, NULL_REG);
 	} else {
 		GfxView *view = _engine->_gfxCache->getView(resourceId);
-		Common::Rect celRect(50, 50, 50, 50);
-		Common::Rect translatedRect;
-		celRect.bottom += view->getHeight(loopNo, celNo);
-		celRect.right += view->getWidth(loopNo, celNo);
+		Common::Rect celRect(50, 50, 50 + view->getWidth(loopNo, celNo), 50 + view->getHeight(loopNo, celNo));
 		view->draw(celRect, celRect, celRect, loopNo, celNo, 255, 0, false);
 		_engine->_gfxScreen->copyRectToScreen(celRect);
 	}
