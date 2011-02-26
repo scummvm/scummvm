@@ -2138,18 +2138,18 @@ void SceneObject::draw() {
  * in case it is moving
  */
 void SceneObject::updateScreen() {
-	Rect objRect = _paneRects[CURRENT_PANENUM];
+	Rect srcRect = _paneRects[CURRENT_PANENUM];
 	const Rect &sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
-	objRect.left = (objRect.left / 4) * 4;
-	objRect.right = ((objRect.right + 3) / 4) * 4;
-	objRect.clip(_globals->_sceneManager._scene->_sceneBounds);
+	srcRect.left = (srcRect.left / 4) * 4;
+	srcRect.right = ((srcRect.right + 3) / 4) * 4;
+	srcRect.clip(_globals->_sceneManager._scene->_sceneBounds);
 
-	if (objRect.isValidRect()) {
-		Rect tempRect  = objRect;
-		tempRect.translate(-_globals->_sceneOffset.x, -_globals->_sceneOffset.y);
-		objRect.translate(-sceneBounds.left, -sceneBounds.top);
+	if (srcRect.isValidRect()) {
+		Rect destRect  = srcRect;
+		destRect.translate(-_globals->_sceneOffset.x, -_globals->_sceneOffset.y);
+		destRect.translate(-sceneBounds.left, -sceneBounds.top);
 
-		_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface, objRect, tempRect);
+		_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface, srcRect, destRect);
 	}
 }
 
@@ -2280,6 +2280,7 @@ redraw:
 
 		// Update the palette
 		_globals->_sceneManager.fadeInIfNecessary();
+		_globals->_sceneManager._scene->_sceneMode = 0;
 		_globals->_paneRefreshFlag[paneNum] = 0;
 
 		// Loop through the object list, removing any objects and refreshing the screen as necessary
