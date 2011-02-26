@@ -50,6 +50,7 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_towerRotationBlinkLabel = false;
 	_libraryBookcaseChanged = false;
 	_dockVaultState = 0;
+	_cabinDoorOpened = 0;
 	_cabinMatchState = 2;
 	_matchBurning = false;
 	_tree = 0;
