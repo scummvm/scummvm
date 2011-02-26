@@ -277,6 +277,7 @@ void GfxSurface::setSurface(Graphics::Surface *s) {
  * Specifies that the surface should maintain it's own internal surface
  */
 void GfxSurface::create(int width, int height) {
+	assert((width >= 0) && (height >= 0));
 	_screenSurface = false;
 	_customSurface = new Graphics::Surface();
 	_customSurface->create(width, height, 1);

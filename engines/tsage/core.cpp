@@ -1662,6 +1662,7 @@ void SceneObject::setPosition(const Common::Point &p, int yDiff) {
 }
 
 void SceneObject::setZoom(int percent) {
+	assert(_percent >= 0);
 	if (percent != _percent) {
 		_percent = percent;
 		_flags |= OBJFLAG_PANES;

@@ -3002,13 +3002,13 @@ void Scene1000::Action3::zoom(bool up) {
 
 	if (up) {
 		while ((scene->_object3._percent < 100) && !_vm->shouldQuit()) {
-			scene->_object3.changeZoom(scene->_object3._percent + 5);
+			scene->_object3.changeZoom(MIN(scene->_object3._percent + 5, 100));
 			_globals->_sceneObjects->draw();
 			_globals->_events.delay(1);
 		}
 	} else {
 		while ((scene->_object3._percent > 0) && !_vm->shouldQuit()) {
-			scene->_object3.changeZoom(scene->_object3._percent - 5);
+			scene->_object3.changeZoom(MAX(scene->_object3._percent - 5, 0));
 			_globals->_sceneObjects->draw();
 			_globals->_events.delay(1);
 		}
