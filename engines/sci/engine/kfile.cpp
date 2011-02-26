@@ -253,6 +253,7 @@ reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
 	debugC(kDebugLevelFile, "kFGets(%d, %d)", handle, maxsize);
 	int readBytes = fgets_wrapper(s, buf, maxsize, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
+	delete[] buf;
 	return readBytes ? argv[0] : NULL_REG;
 }
 
