@@ -64,6 +64,7 @@ jmethodID JNI::_MID_setupScummVMSurface = 0;
 jmethodID JNI::_MID_destroyScummVMSurface = 0;
 jmethodID JNI::_MID_swapBuffers = 0;
 
+jmethodID JNI::_MID_AudioTrack_flush = 0;
 jmethodID JNI::_MID_AudioTrack_pause = 0;
 jmethodID JNI::_MID_AudioTrack_play = 0;
 jmethodID JNI::_MID_AudioTrack_stop = 0;
@@ -332,6 +333,15 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 void JNI::setAudioPause() {
 	JNIEnv *env = JNI::getEnv();
 
+	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_flush);
+
+	if (env->ExceptionCheck()) {
+		warning("Error flushing AudioTrack");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+
 	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_pause);
 
 	if (env->ExceptionCheck()) {
@@ -417,6 +427,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject am, jobject at,
 			return;															\
 	} while (0)
 
+	FIND_METHOD(flush, "()V");
 	FIND_METHOD(pause, "()V");
 	FIND_METHOD(play, "()V");
 	FIND_METHOD(stop, "()V");

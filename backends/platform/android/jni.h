@@ -95,6 +95,7 @@ private:
 	static jmethodID _MID_destroyScummVMSurface;
 	static jmethodID _MID_swapBuffers;
 
+	static jmethodID _MID_AudioTrack_flush;
 	static jmethodID _MID_AudioTrack_pause;
 	static jmethodID _MID_AudioTrack_play;
 	static jmethodID _MID_AudioTrack_stop;

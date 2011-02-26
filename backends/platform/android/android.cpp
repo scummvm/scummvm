@@ -163,8 +163,6 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 void *OSystem_Android::audioThreadFunc(void *arg) {
 	JNI::attachThread();
 
-	JNI::setAudioPlay();
-
 	OSystem_Android *system = (OSystem_Android *)arg;
 	Audio::MixerImpl *mixer = system->_mixer;
 
@@ -174,20 +172,59 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 
 	jbyteArray bufa = env->NewByteArray(buf_size);
 
+	bool paused = true;
+
 	byte *buf;
 	int offset, left, written;
+	int samples;
 
-	struct timespec tv;
-	tv.tv_sec = 0;
-	tv.tv_nsec = 20 * 1000 * 1000;
+	struct timespec tv_delay;
+	tv_delay.tv_sec = 0;
+	tv_delay.tv_nsec = 20 * 1000 * 1000;
+
+	uint msecs_full = buf_size * 1000 / (mixer->getOutputRate() * 2 * 2);
+
+	struct timespec tv_full;
+	tv_full.tv_sec = 0;
+	tv_full.tv_nsec = msecs_full * 1000 * 1000;
+
+	uint silence_count = 0;
 
 	while (!system->_audio_thread_exit) {
 		buf = (byte *)env->GetPrimitiveArrayCritical(bufa, 0);
 		assert(buf);
 
-		mixer->mixCallback(buf, buf_size);
+		samples = mixer->mixCallback(buf, buf_size);
 
 		env->ReleasePrimitiveArrayCritical(bufa, buf, 0);
+
+		if (samples < 1) {
+			if (!paused)
+				silence_count++;
+
+			// only pause after a while to prevent toggle mania
+			if (silence_count > 32) {
+				if (!paused) {
+					LOGD("AudioTrack pause");
+
+					JNI::setAudioPause();
+					paused = true;
+				}
+
+				nanosleep(&tv_full, 0);
+
+				continue;
+			}
+		}
+
+		if (paused) {
+			LOGD("AudioTrack play");
+
+			JNI::setAudioPlay();
+			paused = false;
+
+			silence_count = 0;
+		}
 
 		offset = 0;
 		left = buf_size;
@@ -203,7 +240,7 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 
 			// buffer full
 			if (written < left)
-				nanosleep(&tv, 0);
+				nanosleep(&tv_delay, 0);
 
 			offset += written;
 			left -= written;
@@ -214,7 +251,7 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 
 		// sleep a little, prepare the next buffer, and run into the
 		// blocking AudioTrack.write
-		nanosleep(&tv, 0);
+		nanosleep(&tv_delay, 0);
 	}
 
 	JNI::setAudioStop();
