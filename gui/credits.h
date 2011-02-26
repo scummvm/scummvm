@@ -456,7 +456,7 @@ static const char *credits[] = {
 "C0""Martin Doucha",
 "C2""CinE engine objectification",
 "C0""Thomas Fach-Pedersen",
-"C2""ProTracker module player",
+"C2""ProTracker module player, Smacker video decoder",
 "C0""Tobias Gunkel",
 "C2""Sound support for C64 version of MM/Zak, Loom PCE support",
 "C0""Janne Huttunen",

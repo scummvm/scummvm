@@ -958,7 +958,7 @@ begin_credits("Credits");
 		  add_person("Stuart Caie", "", "Decoders for Amiga and AtariST data files (AGOS engine)");
 		  add_person("Paolo Costabel", "", "PSP port contributions");
 		  add_person("Martin Doucha", "next_ghost", "CinE engine objectification");
-		  add_person("Thomas Fach-Pedersen", "madmoose", "ProTracker module player");
+		  add_person("Thomas Fach-Pedersen", "madmoose", "ProTracker module player, Smacker video decoder");
 		  add_person("Tobias Gunkel", "hennymcc", "Sound support for C64 version of MM/Zak, Loom PCE support");
 		  add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
 		  add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");

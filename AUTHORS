@@ -405,7 +405,7 @@ Other contributions
                              engine)
      Paolo Costabel        - PSP port contributions
      Martin Doucha         - CinE engine objectification
-     Thomas Fach-Pedersen  - ProTracker module player
+     Thomas Fach-Pedersen  - ProTracker module player, Smacker video decoder
      Tobias Gunkel         - Sound support for C64 version of MM/Zak, Loom
                              PCE support
      Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
