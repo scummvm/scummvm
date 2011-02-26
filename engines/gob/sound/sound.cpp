@@ -648,7 +648,7 @@ void Sound::bgPlay(const char *file, SoundType type) {
 
 	debugC(1, kDebugSound, "BackgroundAtmosphere: Playing \"%s\"", file);
 
-	_bgatmos->stop();
+	_bgatmos->stopBA();
 	_bgatmos->queueClear();
 
 	SoundDesc *sndDesc = new SoundDesc;
@@ -658,7 +658,7 @@ void Sound::bgPlay(const char *file, SoundType type) {
 	}
 
 	_bgatmos->queueSample(*sndDesc);
-	_bgatmos->play();
+	_bgatmos->playBA();
 }
 
 void Sound::bgPlay(const char *base, const char *ext, SoundType type, int count) {
@@ -667,7 +667,7 @@ void Sound::bgPlay(const char *base, const char *ext, SoundType type, int count)
 
 	debugC(1, kDebugSound, "BackgroundAtmosphere: Playing \"%s\" (%d)", base, count);
 
-	_bgatmos->stop();
+	_bgatmos->stopBA();
 	_bgatmos->queueClear();
 
 	int length = strlen(base) + 7;
@@ -684,7 +684,7 @@ void Sound::bgPlay(const char *base, const char *ext, SoundType type, int count)
 			delete sndDesc;
 	}
 
-	_bgatmos->play();
+	_bgatmos->playBA();
 }
 
 void Sound::bgStop() {
@@ -693,7 +693,7 @@ void Sound::bgStop() {
 
 	debugC(1, kDebugSound, "BackgroundAtmosphere: Stopping playback");
 
-	_bgatmos->stop();
+	_bgatmos->stopBA();
 	_bgatmos->queueClear();
 }
 

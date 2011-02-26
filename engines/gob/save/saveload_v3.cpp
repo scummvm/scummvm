@@ -367,7 +367,7 @@ int SaveLoad_v3::ScreenshotHandler::File::getSlotRemainder(int32 offset) const {
 	return ((offset - _shotIndexSize) % _shotSize);
 }
 
-void SaveLoad_v3::ScreenshotHandler::File::buildIndex(byte *buffer) const {
+void SaveLoad_v3::ScreenshotHandler::File::buildScreenshotIndex(byte *buffer) const {
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *in;
 
@@ -418,12 +418,12 @@ bool SaveLoad_v3::ScreenshotHandler::load(int16 dataVar, int32 size, int32 offse
 
 		if (_sShotType == kScreenshotTypeGob3) {
 			// Create/Fake the index
-			_file->buildIndex(_index + 40);
+			_file->buildScreenshotIndex(_index + 40);
 			// The last 10 bytes are 0
 			memset(_index + 70, 0, 10);
 		} else if (_sShotType == kScreenshotTypeLost) {
 			// Create/Fake the index
-			_file->buildIndex(_index);
+			_file->buildScreenshotIndex(_index);
 			// The last byte is 0
 			_index[30] = 0;
 		}

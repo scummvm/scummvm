@@ -46,8 +46,8 @@ public:
 	BackgroundAtmosphere(Audio::Mixer &mixer);
 	~BackgroundAtmosphere();
 
-	void play();
-	void stop();
+	void playBA();
+	void stopBA();
 
 	void setPlayMode(PlayMode mode);
 
