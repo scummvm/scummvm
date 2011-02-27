@@ -103,9 +103,9 @@ void ConfigManager::loadConfigFile(const String &filename) {
 	FSNode node(filename);
 	File cfg_file;
 	if (!cfg_file.open(node)) {
-		debug("Creating configuration file: %s\n", filename.c_str());
+		debug("Creating configuration file: %s", filename.c_str());
 	} else {
-		debug("Using configuration file: %s\n", _filename.c_str());
+		debug("Using configuration file: %s", _filename.c_str());
 		loadFromStream(cfg_file);
 	}
 }
