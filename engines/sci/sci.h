@@ -246,7 +246,6 @@ public:
 	inline Vocabulary *getVocabulary() const { return _vocabulary; }
 	inline EventManager *getEventManager() const { return _eventMan; }
 	inline reg_t getGameObject() const { return _gameObjectAddress; }
-	inline reg_t getGameSuperClassAddress() const { return _gameSuperClassAddress; }
 
 	Common::RandomSource &getRNG() { return _rng; }
 
@@ -375,7 +374,6 @@ private:
 	int16 _vocabularyLanguage;
 	EventManager *_eventMan;
 	reg_t _gameObjectAddress; /**< Pointer to the game object */
-	reg_t _gameSuperClassAddress; // Address of the super class of the game object
 	Console *_console;
 	Common::RandomSource _rng;
 	Common::MacResManager _macExecutable;

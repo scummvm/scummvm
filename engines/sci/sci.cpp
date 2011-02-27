@@ -213,7 +213,6 @@ Common::Error SciEngine::run() {
 	// Add the after market GM patches for the specified game, if they exist
 	_resMan->addNewGMPatch(_gameId);
 	_gameObjectAddress = _resMan->findGameObject();
-	_gameSuperClassAddress = NULL_REG;
 
 	SegManager *segMan = new SegManager(_resMan);
 
@@ -250,7 +249,6 @@ Common::Error SciEngine::run() {
 		warning("Could not get game object, aborting...");
 		return Common::kUnknownError;
 	}
-	_gameSuperClassAddress = gameObject->getSuperClassSelector();
 
 	script_adjust_opcode_formats();
 
@@ -441,19 +439,24 @@ static byte patchGameRestoreSaveSci2[] = {
 	0x48,              // ret
 };
 
+static void patchGameSaveRestoreCode(SegManager *segMan, reg_t methodAddress, byte id) {
+	Script *script = segMan->getScript(methodAddress.segment);
+	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.offset));
+	if (getSciVersion() <= SCI_VERSION_1_1)
+		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
+	else if (getSciVersion() == SCI_VERSION_2)
+		memcpy(patchPtr, patchGameRestoreSaveSci2, sizeof(patchGameRestoreSaveSci2));
+	// TODO: SCI21/SCI3
+	patchPtr[8] = id;
+}
+
 void SciEngine::patchGameSaveRestore() {
 	SegManager *segMan = _gamestate->_segMan;
 	const Object *gameObject = segMan->getObject(_gameObjectAddress);
-	const uint16 gameMethodCount = gameObject->getMethodCount();
-	const Object *gameSuperObject = segMan->getObject(_gameSuperClassAddress);
+	const Object *gameSuperObject = segMan->getObject(gameObject->getSuperClassSelector());
 	if (!gameSuperObject)
 		gameSuperObject = gameObject;	// happens in KQ5CD, when loading saved games before r54510
-	const uint16 gameSuperMethodCount = gameSuperObject->getMethodCount();
-	reg_t methodAddress;
-	const uint16 kernelCount = _kernel->getKernelNamesSize();
-	const byte *scriptRestorePtr = NULL;
 	byte kernelIdRestore = 0;
-	const byte *scriptSavePtr = NULL;
 	byte kernelIdSave = 0;
 
 	// This feature is currently not supported in SCI21 or SCI3
@@ -473,7 +476,8 @@ void SciEngine::patchGameSaveRestore() {
 	if (ConfMan.getBool("sci_originalsaveload"))
 		return;
 
-	for (uint16 kernelNr = 0; kernelNr < kernelCount; kernelNr++) {
+	uint16 kernelNamesSize = _kernel->getKernelNamesSize();
+	for (uint16 kernelNr = 0; kernelNr < kernelNamesSize; kernelNr++) {
 		Common::String kernelName = _kernel->getKernelName(kernelNr);
 		if (kernelName == "RestoreGame")
 			kernelIdRestore = kernelNr;
@@ -481,60 +485,29 @@ void SciEngine::patchGameSaveRestore() {
 			kernelIdSave = kernelNr;
 	}
 
-	// Search for gameobject-superclass ::restore
-	for (uint16 methodNr = 0; methodNr < gameSuperMethodCount; methodNr++) {
+	// Search for gameobject superclass ::restore
+	uint16 gameSuperObjectMethodCount = gameSuperObject->getMethodCount();
+	for (uint16 methodNr = 0; methodNr < gameSuperObjectMethodCount; methodNr++) {
 		uint16 selectorId = gameSuperObject->getFuncSelector(methodNr);
 		Common::String methodName = _kernel->getSelectorName(selectorId);
-		if (methodName == "restore") {
-			methodAddress = gameSuperObject->getFunction(methodNr);
-			Script *script = segMan->getScript(methodAddress.segment);
-			scriptRestorePtr = script->getBuf(methodAddress.offset);
-		}
-		if (methodName == "save") {
-			methodAddress = gameSuperObject->getFunction(methodNr);
-			Script *script = segMan->getScript(methodAddress.segment);
-			scriptSavePtr = script->getBuf(methodAddress.offset);
+		if (methodName == "restore")
+			patchGameSaveRestoreCode(segMan, gameSuperObject->getFunction(methodNr), kernelIdRestore);
+		else if (methodName == "save") {
+			if (_gameId != GID_FAIRYTALES)	// Fairy Tales saves automatically without a dialog
+				patchGameSaveRestoreCode(segMan, gameSuperObject->getFunction(methodNr), kernelIdSave);
 		}
 	}
 
-	// Search for gameobject ::save, if there is one patch that one instead
-	for (uint16 methodNr = 0; methodNr < gameMethodCount; methodNr++) {
+	// Search for gameobject ::save, if there is one patch that one too
+	uint16 gameObjectMethodCount = gameObject->getMethodCount();
+	for (uint16 methodNr = 0; methodNr < gameObjectMethodCount; methodNr++) {
 		uint16 selectorId = gameObject->getFuncSelector(methodNr);
 		Common::String methodName = _kernel->getSelectorName(selectorId);
 		if (methodName == "save") {
-			methodAddress = gameObject->getFunction(methodNr);
-			Script *script = segMan->getScript(methodAddress.segment);
-			scriptSavePtr = script->getBuf(methodAddress.offset);
+			if (_gameId != GID_FAIRYTALES)	// Fairy Tales saves automatically without a dialog
+				patchGameSaveRestoreCode(segMan, gameObject->getFunction(methodNr), kernelIdSave);
 			break;
 		}
-	}
-
-	switch (_gameId) {
-	case GID_FAIRYTALES: // fairy tales automatically saves w/o dialog
-		scriptSavePtr = NULL;
-	default:
-		break;
-	}
-
-	if (scriptRestorePtr) {
-		// Now patch in our code
-		byte *patchPtr = const_cast<byte *>(scriptRestorePtr);
-		if (getSciVersion() <= SCI_VERSION_1_1)
-			memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
-		else if (getSciVersion() == SCI_VERSION_2)
-			memcpy(patchPtr, patchGameRestoreSaveSci2, sizeof(patchGameRestoreSaveSci2));
-		// TODO: SCI21/SCI3
-		patchPtr[8] = kernelIdRestore;
-	}
-	if (scriptSavePtr) {
-		// Now patch in our code
-		byte *patchPtr = const_cast<byte *>(scriptSavePtr);
-		if (getSciVersion() <= SCI_VERSION_1_1)
-			memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
-		else if (getSciVersion() == SCI_VERSION_2)
-			memcpy(patchPtr, patchGameRestoreSaveSci2, sizeof(patchGameRestoreSaveSci2));
-		// TODO: SCI21/SCI3
-		patchPtr[8] = kernelIdSave;
 	}
 }
 
