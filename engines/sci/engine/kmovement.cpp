@@ -388,12 +388,10 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 				return s->r_acc;
 		}
 	}
-	if (handleMoveCount) {
-		if (getSciVersion() <= SCI_VERSION_1_EGA)
-			writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), mover_moveCnt);
-		else
-			writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), client_moveSpeed);
-	}
+
+	if (handleMoveCount)
+		writeSelectorValue(segMan, mover, SELECTOR(b_movCnt), mover_moveCnt);
+
 	return s->r_acc;
 }
 
