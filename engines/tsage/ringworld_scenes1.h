@@ -476,32 +476,6 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList);
 };
 
-class Scene1000: public Scene {
-	/* Actions */
-	class Action1: public Action {
-	public:
-		virtual void signal();
-	};
-	class Action2: public Action {
-	public:
-		virtual void signal();
-	};
-	class Action3: public Action {
-	private:
-		void zoom(bool up);
-	public:
-		virtual void signal();
-	};
-
-public:
-	SceneObject _object1, _object2, _object3, _object4;
-	Action1 _action1;
-	Action2 _action2;
-	Action3 _action3;
-
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-};
-
 class Scene6100: public Scene {
 	/* Actions */
 	class Action1: public Action {

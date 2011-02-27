@@ -28,11 +28,13 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 #include "tsage/ringworld_scenes1.h"
+#include "tsage/ringworld_scenes2.h"
 
 namespace tSage {
 
 Scene *SceneFactory::createScene(int sceneNumber) {
 	switch (sceneNumber) {
+	/* Scene group 1 */
 	// Kziniti Palace (Introduction)
 	case 10: return new Scene10();
 	// Outer Space (Introduction)
@@ -51,10 +53,13 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 90: return new Scene90();
 	// Ship Close-up
 	case 95: return new Scene95();
-	// Title screen
-	case 1000: return new Scene1000();
 	// Sunflower navigation sequence
 	case 6100: return new Scene6100();
+
+	/* Scene group 2 */
+	// Title screen
+	case 1000: return new Scene1000();
+
 
 	default:
 		error("Unknown scene number - %d", sceneNumber);

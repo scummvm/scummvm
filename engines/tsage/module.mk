@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	resources.o \
 	ringworld_logic.o \
 	ringworld_scenes1.o \
+	ringworld_scenes2.o \
 	saveload.o \
 	scenes.o \
 	sound.o \
