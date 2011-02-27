@@ -2628,6 +2628,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
+	// Police Quest: SWAT - English DOS (from GOG.com)
+	// Executable scanning reports "2.100.002", VERSION file reports "1.0c"
+	{"pqswat", "", {
+		{"resmap.000", 0, "1c2563fee189885e29d9348f37306d94", 12175},
+		{"ressci.000", 0, "b2e1826ca81ce2e7e764587f5a14eee9", 127149181},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Police Quest: SWAT - English Windows (from the Police Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0c"
 	// Original DOS/Windows release VERSION file reports "1.000" is the same
