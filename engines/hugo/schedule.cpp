@@ -707,8 +707,6 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
 	f->writeSint16BE(headIndex);
 	f->writeSint16BE(tailIndex);
 
-	warning("save - %ld %ld %ld", freeIndex, headIndex, tailIndex);
-
 	// Convert event ptrs to indexes
 	for (int16 i = 0; i < kMaxEvents; i++) {
 		event_t *wrkEvent = &_events[i];
