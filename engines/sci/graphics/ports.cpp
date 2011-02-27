@@ -311,7 +311,7 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	// bit of the left dimension in their interpreter. It seems Sierra did it
 	// for EGA byte alignment (EGA uses 1 byte for 2 pixels) and left it in
 	// their interpreter even in the newer VGA games.
-	r.left = r.left & 0x7FFE;
+	r.left = r.left & 0xFFFE;
 
 	if (r.width() > _screen->getWidth()) {
 		// We get invalid dimensions at least at the end of sq3 (script bug!).
