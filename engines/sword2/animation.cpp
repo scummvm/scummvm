@@ -182,17 +182,18 @@ void MoviePlayer::closeTextObject(uint32 index, byte *screen, uint16 pitch) {
 				int frameHeight = _decoder->getHeight();
 				int frameX = (_system->getWidth() - frameWidth) / 2;
 				int frameY = (_system->getHeight() - frameHeight) / 2;
+				byte black = findBlackPalIndex();
 
 				byte *dst = screen + _textY * pitch;
 
 				for (int y = 0; y < text->_textSprite.h; y++) {
 					if (_textY + y < frameY || _textY + y >= frameY + frameHeight) {
-						memset(dst + _textX, findBlackPalIndex(), text->_textSprite.w);
+						memset(dst + _textX, black, text->_textSprite.w);
 					} else {
 						if (frameX > _textX)
-							memset(dst + _textX, findBlackPalIndex(), frameX - _textX);
+							memset(dst + _textX, black, frameX - _textX);
 						if (frameX + frameWidth < _textX + text->_textSprite.w)
-							memset(dst + frameX + frameWidth, findBlackPalIndex(), _textX + text->_textSprite.w - (frameX + frameWidth));
+							memset(dst + frameX + frameWidth, black, _textX + text->_textSprite.w - (frameX + frameWidth));
 					}
 
 					dst += pitch;
