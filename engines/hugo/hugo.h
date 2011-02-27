@@ -29,7 +29,7 @@
 #include "engines/engine.h"
 #include "common/file.h"
 #include "hugo/console.h"
-#include "hugo/menu.h"
+#include "hugo/dialogs.h"
 
 // This include is here temporarily while the engine is being refactored.
 #include "hugo/game.h"
