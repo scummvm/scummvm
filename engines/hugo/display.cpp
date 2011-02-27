@@ -243,7 +243,7 @@ void Screen::displayFrame(const int sx, const int sy, seq_t *seq, const bool for
 	image_pt subFrontBuffer = &_frontBuffer[sy * kXPix + sx]; // Ptr to offset in _frontBuffer
 	int16 frontBufferwrap = kXPix - seq->x2 - 1;     // Wraps dest_p after each line
 	int16 imageWrap = seq->bytesPerLine8 - seq->x2 - 1;
-	overlayState_t overlayState = kOvlUndef;        // Overlay state of object
+	overlayState_t overlayState = (foreFl) ? kOvlForeground : kOvlUndef; // Overlay state of object
 	for (uint16 y = 0; y < seq->lines; y++) {       // Each line in object
 		for (uint16 x = 0; x <= seq->x2; x++) {
 			if (*image) {                           // Non-transparent
@@ -251,7 +251,7 @@ void Screen::displayFrame(const int sx, const int sy, seq_t *seq, const bool for
 				if (ovlBound & (0x80 >> ((uint16)(subFrontBuffer - _frontBuffer) & 7))) { // Overlay bit is set
 					if (overlayState == kOvlUndef)  // Overlay defined yet?
 						overlayState = findOvl(seq, subFrontBuffer, y);// No, find it.
-					if (foreFl || overlayState == kOvlForeground) // Object foreground
+					if (overlayState == kOvlForeground) // Object foreground
 						*subFrontBuffer = *image;   // Copy pixel
 				} else {                            // No overlay
 					*subFrontBuffer = *image;       // Copy pixel
@@ -730,11 +730,12 @@ void Screen_v1d::loadFontArr(Common::ReadStream &in) {
 overlayState_t Screen_v1d::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
 	debugC(4, kDebugDisplay, "findOvl()");
 
-	for (; y < seq_p->lines; y++) {                 // Each line in object
-		byte ovb = _vm->_object->getBaseBoundary((uint16)(dst_p - _frontBuffer) >> 3); // Ptr into overlay bytes
-		if (ovb)                                    // If any overlay base byte is non-zero then the object is foreground, else back. 
+	uint16 index = (uint16)(dst_p - _frontBuffer) >> 3;
+
+	for (int i = 0; i < seq_p->lines-y; i++) {      // Each line in object
+		if (_vm->_object->getBaseBoundary(index))   // If any overlay base byte is non-zero then the object is foreground, else back. 
 			return kOvlForeground;
-		dst_p += kXPix;
+		index += kCompLineSize;
 	}
 
 	return kOvlBackground;                          // No bits set, must be background

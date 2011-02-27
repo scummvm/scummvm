@@ -631,6 +631,13 @@ void HugoEngine::readScreenFiles(const int screenNum) {
 
 	_file->readBackground(screenNum);               // Scenery file
 	memcpy(_screen->getBackBuffer(), _screen->getFrontBuffer(), sizeof(_screen->getFrontBuffer())); // Make a copy
+
+	// Workaround for graphic glitches in DOS versions. Cleaning the overlays fix the problem
+	memset(_object->_objBound, '\0', sizeof(overlay_t));
+	memset(_object->_boundary, '\0', sizeof(overlay_t));
+	memset(_object->_overlay,  '\0', sizeof(overlay_t));
+	memset(_object->_ovlBase,  '\0', sizeof(overlay_t));
+
 	_file->readOverlay(screenNum, _object->_boundary, kOvlBoundary); // Boundary file
 	_file->readOverlay(screenNum, _object->_overlay, kOvlOverlay);   // Overlay file
 	_file->readOverlay(screenNum, _object->_ovlBase, kOvlBase);      // Overlay base file
