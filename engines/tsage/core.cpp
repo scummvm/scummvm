@@ -1160,7 +1160,7 @@ ScenePalette::ScenePalette(int paletteNum) {
 }
 
 bool ScenePalette::loadPalette(int paletteNum) {
-	byte *palData = _vm->_dataManager->getResource(RES_PALETTE, paletteNum, 0);
+	byte *palData = _vm->_dataManager->getResource(RES_PALETTE, paletteNum, 0, true);
 	if (!palData)
 		return false;
 
