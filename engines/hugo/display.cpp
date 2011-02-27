@@ -189,13 +189,13 @@ void Screen::displayRect(const int16 x, const int16 y, const int16 dx, const int
  * Alse save the new color in the current palette.
  */
 void Screen::remapPal(const uint16 oldIndex, const uint16 newIndex) {
-	debugC(1, kDebugDisplay, "Remap_pal(%d, %d)", oldIndex, newIndex);
+	debugC(1, kDebugDisplay, "RemapPal(%d, %d)", oldIndex, newIndex);
 
 	_curPalette[3 * oldIndex + 0] = _mainPalette[newIndex * 3 + 0];
 	_curPalette[3 * oldIndex + 1] = _mainPalette[newIndex * 3 + 1];
 	_curPalette[3 * oldIndex + 2] = _mainPalette[newIndex * 3 + 2];
 
-	g_system->getPaletteManager()->setPalette(_curPalette, oldIndex, 1);
+	g_system->getPaletteManager()->setPalette(_curPalette, 0, _paletteSize / 3);
 }
 
 /**
