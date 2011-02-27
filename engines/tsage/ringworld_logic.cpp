@@ -47,9 +47,9 @@ Scene *SceneFactory::createScene(int sceneNumber) {
 	case 50: return new Scene50();
 	// Flycycle controls
 	case 60: return new Scene60();
-	//
+	// Shipyard Entrance
 	case 90: return new Scene90();
-	//
+	// Ship Close-up
 	case 95: return new Scene95();
 	// Title screen
 	case 1000: return new Scene1000();

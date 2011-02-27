@@ -438,14 +438,6 @@ class Scene90: public Scene {
 	public:
 		virtual void doAction(int action);
 	};
-	class Object3: public SceneObject {
-	public:
-		virtual void doAction(int action);
-	};
-	class Object4: public SceneObject {
-	public:
-		virtual void doAction(int action);
-	};
 public:
 	SequenceManager _sequenceManager;
 	SpeakerSText _speakerSText;
@@ -453,8 +445,9 @@ public:
 	SpeakerQL _speakerQL;
 	SpeakerSR _speakerSR;
 	SpeakerMText _speakerMText;
-	Action _action1;
-	SceneObject _object1, _object2;
+	Action1 _action1;
+	Object1 _object1;
+	Object2 _object2;
 	DisplayObject _object3, _object4, _object5;
 	SceneObject _object6;
 	DisplayHotspot _item1, _item2, _item3;

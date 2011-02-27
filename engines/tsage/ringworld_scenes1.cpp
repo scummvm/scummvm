@@ -2399,7 +2399,7 @@ void Scene60::process(Event &event) {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 90
+ * Scene 90 - Shipyard Entrance
  *
  *--------------------------------------------------------------------------*/
 
@@ -2520,7 +2520,7 @@ void Scene90::Object2::doAction(int action) {
 		scene->_object6.postInit();
 		scene->_object6.setVisage(90);
 		scene->_object6.setStrip(6);
-		scene->_object6.setPosition(Common::Point(210, 184));
+		scene->_object6.setPosition(Common::Point(184, 210));
 		scene->_object6.flag100();
 
 		scene->_sceneMode = 91;
@@ -2610,6 +2610,7 @@ void Scene90::postInit(SceneObjectList *OwnerList) {
 	_object2.setVisage(90);
 	_object2.animate(ANIM_MODE_1, NULL);
 	_object2.setPosition(Common::Point(315, 185));
+	_object2._strip = 2;
 	_globals->_sceneItems.push_back(&_object2);
 
 	_object3.postInit();
@@ -2657,7 +2658,7 @@ void Scene90::signal() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 95 - 
+ * Scene 95 - Ship Close-up
  *
  *--------------------------------------------------------------------------*/
 
