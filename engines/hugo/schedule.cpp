@@ -707,22 +707,22 @@ void Scheduler::saveEvents(Common::WriteStream *f) {
 	f->writeSint16BE(headIndex);
 	f->writeSint16BE(tailIndex);
 
+	warning("save - %ld %ld %ld", freeIndex, headIndex, tailIndex);
+
 	// Convert event ptrs to indexes
-	event_t  saveEventArr[kMaxEvents];              // Convert event ptrs to indexes
 	for (int16 i = 0; i < kMaxEvents; i++) {
 		event_t *wrkEvent = &_events[i];
-		saveEventArr[i] = *wrkEvent;
 
- 		// fix up action pointer (to do better)
+		// fix up action pointer (to do better)
 		int16 index, subElem;
-		findAction(saveEventArr[i].action, &index, &subElem);
-		saveEventArr[i].action = (act*)((index << 16)| subElem);
-
-		saveEventArr[i].prevEvent = (wrkEvent->prevEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->prevEvent - _events);
-		saveEventArr[i].nextEvent = (wrkEvent->nextEvent == 0) ? (event_t *) - 1 : (event_t *)(wrkEvent->nextEvent - _events);
+		findAction(wrkEvent[i].action, &index, &subElem);
+		f->writeSint16BE(index);
+		f->writeSint16BE(subElem);
+		f->writeByte((wrkEvent[i].localActionFl) ? 1 : 0);
+		f->writeUint32BE(wrkEvent[i].time);
+		f->writeSint16BE((wrkEvent->prevEvent == 0) ? -1 : (wrkEvent->prevEvent - _events));
+		f->writeSint16BE((wrkEvent->nextEvent == 0) ? -1 : (wrkEvent->nextEvent - _events));
 	}
-
-	f->write(saveEventArr, sizeof(saveEventArr));
 }
 
 /**
@@ -780,7 +780,7 @@ void Scheduler::saveActions(Common::WriteStream* f) const {
 * Find the index in the action list to be able to serialize the action to save game
 */
 
-void Scheduler::findAction(act* action, int16* index, int16* subElem) {
+void Scheduler::findAction(const act* action, int16* index, int16* subElem) {
 	
 	assert(index && subElem);
 	if (!action) {
@@ -837,22 +837,30 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
 	int16 freeIndex = f->readSint16BE();            // Free list index
 	int16 headIndex = f->readSint16BE();            // Head of list index
 	int16 tailIndex = f->readSint16BE();            // Tail of list index
-	f->read(savedEvents, sizeof(savedEvents));
 
 	event_t *wrkEvent;
 	// Restore events indexes to pointers
 	for (int i = 0; i < kMaxEvents; i++) {
 		wrkEvent = &savedEvents[i];
 		_events[i] = *wrkEvent;
+
+		int16 index = f->readSint16BE();
+		int16 subElem = f->readSint16BE();
+
 		// fix up action pointer (to do better)
-		int32 val = (size_t)_events[i].action;
-		if ((val & 0xffff) == 0xffff) {
+		if ((index == -1) && (subElem == -1))
 			_events[i].action = 0;
-		} else {
-			_events[i].action = (act*)&_actListArr[val >> 16][val & 0xffff];
-		}
-		_events[i].prevEvent = (wrkEvent->prevEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->prevEvent ];
-		_events[i].nextEvent = (wrkEvent->nextEvent == (event_t *) - 1) ? (event_t *)0 : &_events[(size_t)wrkEvent->nextEvent ];
+		else
+			_events[i].action = (act*)&_actListArr[index][subElem];
+
+		_events[i].localActionFl = (f->readByte() == 1) ? true : false; 
+		_events[i].time = f->readUint32BE();
+
+		int16 prevIndex = f->readSint16BE();
+		int16 nextIndex = f->readSint16BE();
+
+		_events[i].prevEvent = (prevIndex == -1) ? (event_t *)0 : &_events[prevIndex];
+		_events[i].nextEvent = (nextIndex == -1) ? (event_t *)0 : &_events[nextIndex];
 	}
 	_freeEvent = (freeIndex == -1) ? 0 : &_events[freeIndex];
 	_headEvent = (headIndex == -1) ? 0 : &_events[headIndex];
@@ -860,7 +868,7 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
 
 	// Adjust times to fit our time
 	uint32 curTime = getTicks();
-	wrkEvent = _headEvent;                              // The earliest event
+	wrkEvent = _headEvent;                          // The earliest event
 	while (wrkEvent) {                              // While mature events found
 		wrkEvent->time = wrkEvent->time - saveTime + curTime;
 		wrkEvent = wrkEvent->nextEvent;

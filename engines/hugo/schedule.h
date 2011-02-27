@@ -583,7 +583,7 @@ protected:
 
 	void delEventType(const action_t actTypeDel);
 	void delQueue(event_t *curEvent);
-	void findAction(act* action, int16* index, int16* subElem);
+	void findAction(const act* action, int16* index, int16* subElem);
 	void insertAction(act *action);
 	void readAct(Common::ReadStream &in, act &curAct);
 	void restoreActions(Common::ReadStream *f);
